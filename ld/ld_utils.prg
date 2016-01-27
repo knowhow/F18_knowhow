@@ -9,9 +9,7 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-
 #include "f18.ch"
-
 
 FUNCTION calc_mbruto()
 
@@ -141,7 +139,7 @@ FUNCTION get_dopr( cDopr, cTipRada )
    GO TOP
    SEEK cDopr
    DO WHILE !Eof() .AND. dopr->id == cDopr
-	
+
       // provjeri tip rada
       IF Empty( dopr->tiprada ) .AND. cTipRada $ tr_list()
          // ovo je u redu...
@@ -149,9 +147,9 @@ FUNCTION get_dopr( cDopr, cTipRada )
          SKIP
          LOOP
       ENDIF
-	
+
       nIzn := dopr->iznos
-	
+
       EXIT
 
    ENDDO
@@ -226,20 +224,20 @@ FUNCTION bruto_osn( nIzn, cTipRada, nLOdb, nSKoef, cTrosk )
          nBrt := ROUND2( ( ( nIzn - nLOdb ) / 0.9 + nLOdb ) ;
             / 0.69,gZaok2 )
       ENDIF
-		
+
       // samostalni poslodavci
    CASE cTipRada == "S"
       nBrt := ROUND2( nIzn * nSKoef,gZaok2 )
-	
+
       // predsjednicki clanovi
    CASE cTipRada == "P"
       nBrt := ROUND2( ( nIzn * 1.11111 ) / 0.96, gZaok2 )
-	
+
       // republika srpska
    CASE cTipRada == "R"
       nTmp := Round( ( nLOdb * parobr->k5 ), 2 )
       nBrt := ROUND2( ( nIzn - nTmp ) / parobr->k6, gZaok2 )
-	
+
       // ugovor o djelu i autorski honorar
    CASE cTipRada $ "A#U"
 
@@ -252,12 +250,12 @@ FUNCTION bruto_osn( nIzn, cTipRada, nLOdb, nSKoef, cTrosk )
       IF cTrosk == "N"
          nTr := 0
       ENDIF
-		
+
       nBrt := ROUND2( nIzn / ( ( ( 100 - nTr ) * 0.96 * 0.90 + nTr ) / 100 ), gZaok2 )
-		
+
       // ako je u RS-u, nema troskova, i drugi koeficijent
       IF radnik_iz_rs( radn->idopsst, radn->idopsrad )
-			
+
          nBrt := ROUND2( nIzn * 1.111112, gZaok2 )
       ENDIF
 
@@ -290,7 +288,7 @@ FUNCTION bruto_isp( nNeto, cTipRada, nLOdb, nSKoef, cTrosk )
    CASE Empty( cTipRada )
       cPrn := AllTrim( Str( nNeto ) ) + " * " + ;
          AllTrim( Str( parobr->k5 ) ) + " ="
-	
+
       // nerezidenti
    CASE cTipRada == "N"
       cPrn := AllTrim( Str( nNeto ) ) + " * " + ;
@@ -310,23 +308,23 @@ FUNCTION bruto_isp( nNeto, cTipRada, nLOdb, nSKoef, cTrosk )
    CASE cTipRada == "S"
       cPrn := AllTrim( Str( nNeto ) ) + " * " + ;
          AllTrim( Str( nSKoef ) ) + " ="
-	
+
       // clanovi predsjednistva
    CASE cTipRada == "P"
       cPrn := AllTrim( Str( nNeto ) ) + " * 1.11111 / 0.96 ="
-	
+
       // republika srpska
    CASE cTipRada == "R"
-		
+
       nTmp := Round( ( nLOdb * parobr->k5 ), 2 )
 
       cPrn := "( " + AllTrim( Str( nNeto ) ) + " - " + ;
          AllTrim( Str( nTmp ) ) + " ) / " + ;
          AllTrim( Str( parobr->k6 ) ) + " ="
-	
+
       // ugovor o djelu
    CASE cTipRada $ "A#U"
-	
+
       IF cTipRada == "U"
          nTr := gUgTrosk
       ELSE
@@ -336,13 +334,13 @@ FUNCTION bruto_isp( nNeto, cTipRada, nLOdb, nSKoef, cTrosk )
       IF cTrosk == "N"
          nTr := 0
       ENDIF
-		
+
       nProc := ( ( ( 100 - nTr ) * 0.96 * 0.90 + nTr ) / 100 )
-	
+
       cPrn := AllTrim( Str( nNeto ) ) + " / " + AllTrim( Str( nProc, 12, 6 ) ) + " ="
       // ako je u RS-u, nema troskova, i drugi koeficijent
       IF radnik_iz_rs( radn->idopsst, radn->idopsrad )
-			
+
          cPrn := AllTrim( Str( nNeto ) ) + " * 1.111112 ="
       ENDIF
 
@@ -370,9 +368,9 @@ FUNCTION min_bruto( nBruto, nSati )
 
    // puno radno vrijeme ili rad na 4 sata
    IF ( nSati = nParSati ) .OR. ( nParSati / 2 = nSati ) .OR. ( radn->k1 $ "M#P" )
-	
+
       nTmpSati := nSati
-	
+
       IF radn->k1 == "P"
          nTmpSati := nSati * 2
       ENDIF
@@ -814,8 +812,3 @@ FUNCTION IspisObr()
 
 FUNCTION Obr2_9()
    RETURN lViseObr .AND. !Empty( cObracun ) .AND. cObracun <> "1"
-
-
-
-
-

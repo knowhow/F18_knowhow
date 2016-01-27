@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -12,42 +12,39 @@
 
 #include "f18.ch"
 
-
-
 // ------------------------------------
-// pozicionira se na grupu 
+// pozicionira se na grupu
 // ------------------------------------
-function gr_pos( cId )
-local nTArea := SELECT()
-local lRet := .f.
+FUNCTION gr_pos( cId )
 
-select (F_KONTO)
-if !used()
-	O_KONTO
-endif
-select konto
-seek cId
+   LOCAL nTArea := Select()
+   LOCAL lRet := .F.
 
-if FOUND()
-	lRet := .t.
-endif
+   SELECT ( F_KONTO )
+   IF !Used()
+      O_KONTO
+   ENDIF
+   SELECT konto
+   SEEK cId
 
-select (nTArea)
-return lRet
+   IF Found()
+      lRet := .T.
+   ENDIF
+
+   SELECT ( nTArea )
+
+   RETURN lRet
 
 
 // -------------------------------------------
 // vraca naziv grupe
 // -------------------------------------------
-function g_gr_naz( cId )
-local xRet := ""
+FUNCTION g_gr_naz( cId )
 
-if gr_pos( cId )
-	xRet := ALLTRIM( konto->naz )
-endif
+   LOCAL xRet := ""
 
-return xRet
+   IF gr_pos( cId )
+      xRet := AllTrim( konto->naz )
+   ENDIF
 
-
-
-
+   RETURN xRet

@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out knowhow ERP, a free and open source 
+/*
+ * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
  * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -16,290 +16,295 @@
 // ---------------------------------------------------------
 // unos radnih sati kod obracuna plate
 // ---------------------------------------------------------
-function FillRadSati( cIdRadnik, nRadniSati )
+FUNCTION FillRadSati( cIdRadnik, nRadniSati )
 
-// uzmi prethodne sate...
-cSatiPredhodni := GetStatusRSati( cIdRadnik )   
+   // uzmi prethodne sate...
+   cSatiPredhodni := GetStatusRSati( cIdRadnik )
 
-if Pitanje(, Lokal( "Unos placenih sati (D/N)?"), "D" ) == "N"
-    return VAL( cSatiPredhodni )
-endif
+   IF Pitanje(, Lokal( "Unos placenih sati (D/N)?" ), "D" ) == "N"
+      RETURN Val( cSatiPredhodni )
+   ENDIF
 
-nPlacenoRSati := 0
-cOdgovor := "D"
+   nPlacenoRSati := 0
+   cOdgovor := "D"
 
-Box(, 9, 48 )
-    @ m_x + 1, m_y + 2 SAY Lokal("Radnik:   ") + ALLTRIM(cIdRadnik)
-    @ m_x + 2, m_y + 2 SAY Lokal("Ostalo iz predhodnih obracuna: ") + ALLTRIM(cSatiPredhodni) + " sati"
-    @ m_x + 3, m_y + 2 SAY "-----------------------------------------------"
-    @ m_x + 4, m_y + 2 SAY Lokal("Uplaceno sati: ") GET nPlacenoRSati PICT "99999999" 
-    read
-    @ m_x + 5, m_y + 2 SAY "-----------------------------------------------"
-    @ m_x + 6, m_y + 2 SAY Lokal("Radni sati ovaj mjesec  : ") + ALLTRIM(STR(nRadniSati))
-    @ m_x + 7, m_y + 2 SAY Lokal("Placeni sati ovaj mjesec: ") + ALLTRIM(STR(nPlacenoRSati))
-    @ m_x + 8, m_y + 2 SAY Lokal("Ostalo ") + ALLTRIM(STR(nRadniSati-nPlacenoRSati+VAL(cSatiPredhodni))) + Lokal(" sati za sljedeci mjesec !")
-    @ m_x + 9, m_y + 2 SAY Lokal("Sacuvati promjene (D/N)? ") GET cOdgovor VALID cOdgovor$"DN" PICT "@!"
-    read
-    
-    if cOdgovor=="D"    
-        UbaciURadneSate( cIdRadnik, nRadniSati-nPlacenoRSati )
-    else
-        MsgBeep(Lokal("Promjene nisu sacuvane !!!"))
-    endif
-BoxC()
+   Box(, 9, 48 )
+   @ m_x + 1, m_y + 2 SAY Lokal( "Radnik:   " ) + AllTrim( cIdRadnik )
+   @ m_x + 2, m_y + 2 SAY Lokal( "Ostalo iz predhodnih obracuna: " ) + AllTrim( cSatiPredhodni ) + " sati"
+   @ m_x + 3, m_y + 2 SAY "-----------------------------------------------"
+   @ m_x + 4, m_y + 2 SAY Lokal( "Uplaceno sati: " ) GET nPlacenoRSati PICT "99999999"
+   READ
+   @ m_x + 5, m_y + 2 SAY "-----------------------------------------------"
+   @ m_x + 6, m_y + 2 SAY Lokal( "Radni sati ovaj mjesec  : " ) + AllTrim( Str( nRadniSati ) )
+   @ m_x + 7, m_y + 2 SAY Lokal( "Placeni sati ovaj mjesec: " ) + AllTrim( Str( nPlacenoRSati ) )
+   @ m_x + 8, m_y + 2 SAY Lokal( "Ostalo " ) + AllTrim( Str( nRadniSati - nPlacenoRSati + Val( cSatiPredhodni ) ) ) + Lokal( " sati za sljedeci mjesec !" )
+   @ m_x + 9, m_y + 2 SAY Lokal( "Sacuvati promjene (D/N)? " ) GET cOdgovor VALID cOdgovor $ "DN" PICT "@!"
+   READ
 
-return VAL(cSatiPredhodni)
+   IF cOdgovor == "D"
+      UbaciURadneSate( cIdRadnik, nRadniSati - nPlacenoRSati )
+   ELSE
+      MsgBeep( Lokal( "Promjene nisu sacuvane !!!" ) )
+   ENDIF
+   BoxC()
+
+   RETURN Val( cSatiPredhodni )
 
 
 // ------------------------------------------------
 // vraca status uplacenih sati za tekuci mjesec
 // ------------------------------------------------
-function GetUplaceniRSati(cIdRadn)
-local nArr
-local nSati := 0
-nArr := SELECT()
+FUNCTION GetUplaceniRSati( cIdRadn )
 
-select radsat
-hseek cIdRadn
+   LOCAL nArr
+   LOCAL nSati := 0
 
-if FOUND() .and. field->idradn == cIdRadn
-    nSati := field->up_sati
-endif
+   nArr := Select()
 
-select (nArr)
+   SELECT radsat
+   hseek cIdRadn
 
-return STR(nSati)
+   IF Found() .AND. field->idradn == cIdRadn
+      nSati := field->up_sati
+   ENDIF
+
+   SELECT ( nArr )
+
+   RETURN Str( nSati )
 
 
 
 // ------------------------------------------------
 // vraca status radnih sati za obracun
 // ------------------------------------------------
-function GetStatusRSati(cIdRadn)
-local nArr
-local nSati := 0
-nArr:=SELECT()
+FUNCTION GetStatusRSati( cIdRadn )
 
-select radsat
-hseek cIdRadn
+   LOCAL nArr
+   LOCAL nSati := 0
 
-if FOUND() .and. field->idradn == cIdRadn
-    nSati:=field->sati
-endif
+   nArr := Select()
 
-select (nArr)
+   SELECT radsat
+   hseek cIdRadn
 
-return STR(nSati)
+   IF Found() .AND. field->idradn == cIdRadn
+      nSati := field->sati
+   ENDIF
+
+   SELECT ( nArr )
+
+   RETURN Str( nSati )
 
 
 // ----------------------------------------------------
 // ubaci podatke u tabelu radnih sati
 // ----------------------------------------------------
-function UbaciURadneSate( id_radnik, iznos_sati )
-local _t_area := SELECT()
-local _rec
+FUNCTION UbaciURadneSate( id_radnik, iznos_sati )
 
-select radsat
-set order to tag "IDRADN"
-go top
-seek id_radnik
+   LOCAL _t_area := Select()
+   LOCAL _rec
 
-if FOUND()
-    _rec := dbf_get_rec()
-    _rec["sati"] := _rec["sati"] + iznos_sati
-else
-    append blank
-    _rec := dbf_get_rec()
-    _rec["idradn"] := id_radnik
-    _rec["sati"] := iznos_sati
-endif
+   SELECT radsat
+   SET ORDER TO TAG "IDRADN"
+   GO TOP
+   SEEK id_radnik
 
-update_rec_server_and_dbf( "ld_radsat", _rec, 1, "FULL" )
+   IF Found()
+      _rec := dbf_get_rec()
+      _rec[ "sati" ] := _rec[ "sati" ] + iznos_sati
+   ELSE
+      APPEND BLANK
+      _rec := dbf_get_rec()
+      _rec[ "idradn" ] := id_radnik
+      _rec[ "sati" ] := iznos_sati
+   ENDIF
 
-select ( _t_area )
+   update_rec_server_and_dbf( "ld_radsat", _rec, 1, "FULL" )
 
-return
+   SELECT ( _t_area )
+
+   RETURN
 
 
 // ---------------------------------
 // upisi u iznos radne sate
 // ---------------------------------
-function delRadSati( id_radnik, iznos_sati )
-local _t_arr := SELECT()
-local _rec
+FUNCTION delRadSati( id_radnik, iznos_sati )
 
-select radsat
-set order to tag "IDRADN"
-go top
-seek id_radnik
+   LOCAL _t_arr := Select()
+   LOCAL _rec
 
-if Found()    
-    _rec := dbf_get_rec()
-    _rec["sati"] := iznos_sati
-    update_rec_server_and_dbf( "ld_radsat", _rec, 1, "FULL" )  
-endif
+   SELECT radsat
+   SET ORDER TO TAG "IDRADN"
+   GO TOP
+   SEEK id_radnik
 
-select ( _t_arr )
+   IF Found()
+      _rec := dbf_get_rec()
+      _rec[ "sati" ] := iznos_sati
+      update_rec_server_and_dbf( "ld_radsat", _rec, 1, "FULL" )
+   ENDIF
 
-return
+   SELECT ( _t_arr )
+
+   RETURN
 
 // -------------------------------------------------
 // ispravka pregled radnih sati
 // -------------------------------------------------
-function edRadniSati()
-private ImeKol := {}
-private Kol := {}
+FUNCTION edRadniSati()
 
-PushWa()
+   PRIVATE ImeKol := {}
+   PRIVATE Kol := {}
 
-O_RADN
-O_RADSAT
-select radsat
-set order to tag "IDRADN"
-go top
+   PushWa()
 
-private Imekol := {}
+   O_RADN
+   O_RADSAT
+   SELECT radsat
+   SET ORDER TO TAG "IDRADN"
+   GO TOP
 
-AADD(ImeKol, {"radn",         {|| IdRadn   } } )
-AADD(ImeKol, {"ime i prezime", {|| g_naziv(IdRadn) } } )
-AADD(ImeKol, {"sati",          {|| sati   } } )
-AADD(ImeKol, {"status",        {|| status   } } )
+   PRIVATE Imekol := {}
 
-Kol:={}
+   AAdd( ImeKol, { "radn",         {|| IdRadn   } } )
+   AAdd( ImeKol, { "ime i prezime", {|| g_naziv( IdRadn ) } } )
+   AAdd( ImeKol, { "sati",          {|| sati   } } )
+   AAdd( ImeKol, { "status",        {|| status   } } )
 
-for i:=1 to LEN(ImeKol)
-    AADD(Kol,i)
-next
+   Kol := {}
 
-Box(, MAXROWS() - 16, MAXCOLS() - 5 )
-    ObjDbedit("RadSat", MAXROWS() - 16, MAXCOLS() - 5,{|| key_handler()},"Pregled radnih sati za radnike","", , , , )
-Boxc()
+   FOR i := 1 TO Len( ImeKol )
+      AAdd( Kol, i )
+   NEXT
 
-PopwA()
+   Box(, MAXROWS() - 16, MAXCOLS() - 5 )
+   ObjDbedit( "RadSat", MAXROWS() - 16, MAXCOLS() - 5, {|| key_handler() }, "Pregled radnih sati za radnike", "", , , , )
+   Boxc()
 
-return
+   PopwA()
+
+   RETURN
 
 
 
 // ---------------------------------------
 // key handler za radne sate
 // ---------------------------------------
-static function key_handler()
-local _rec
+STATIC FUNCTION key_handler()
 
-do case
-    case CH == K_F2
-        
-        Box(,1,40)
-            nSati := field->sati
-            @ m_x+1,m_y+2 SAY "novi sati:" GET nSati
-            read
-        BoxC()
+   LOCAL _rec
 
-        if LastKey() == K_ESC
-            return DE_CONT
-        else
-            _rec := dbf_get_rec()
-            _rec["sati"] := nSati
-            update_rec_server_and_dbf( "ld_radsat", _rec, 1, "FULL" )
-            return DE_REFRESH
-        endif
+   DO CASE
+   CASE CH == K_F2
 
-    case CH == K_CTRL_T
-        if Pitanje(,"izbrisati stavku ?","N") == "D"
-            _rec := dbf_get_rec()
-            delete_rec_server_and_dbf( "ld_radsat", _rec, 1, "FULL" )
-            return DE_REFRESH
-        endif
-    
-    case CH == K_CTRL_P
-        stRadniSati()
-        return DE_CONT
-endcase
+      Box(, 1, 40 )
+      nSati := field->sati
+      @ m_x + 1, m_y + 2 SAY "novi sati:" GET nSati
+      READ
+      BoxC()
 
-return DE_CONT
+      IF LastKey() == K_ESC
+         RETURN DE_CONT
+      ELSE
+         _rec := dbf_get_rec()
+         _rec[ "sati" ] := nSati
+         update_rec_server_and_dbf( "ld_radsat", _rec, 1, "FULL" )
+         RETURN DE_REFRESH
+      ENDIF
+
+   CASE CH == K_CTRL_T
+      IF Pitanje(, "izbrisati stavku ?", "N" ) == "D"
+         _rec := dbf_get_rec()
+         delete_rec_server_and_dbf( "ld_radsat", _rec, 1, "FULL" )
+         RETURN DE_REFRESH
+      ENDIF
+
+   CASE CH == K_CTRL_P
+      stRadniSati()
+      RETURN DE_CONT
+   ENDCASE
+
+   RETURN DE_CONT
 
 
 // -----------------------------------------------
 // printanje sadrzaja radnih sati
 // -----------------------------------------------
-static function stRadniSati()
-local nCnt
-local cTxt := ""
-local cLine := ""
-local aSati
+STATIC FUNCTION stRadniSati()
 
-select radsat
-set order to tag "1"
-go top
+   LOCAL nCnt
+   LOCAL cTxt := ""
+   LOCAL cLine := ""
+   LOCAL aSati
 
-START PRINT CRET
+   SELECT radsat
+   SET ORDER TO TAG "1"
+   GO TOP
 
-?
-P_COND
+   START PRINT CRET
 
-cTxt += PADR("r.br",5)
-cTxt += SPACE(1)
-cTxt += PADR("id", 6)
-cTxt += SPACE(1)
-cTxt += PADR("naziv radnika", 25)
-cTxt += SPACE(1)
-cTxt += PADR("radni sati", 10)
-cTxt += SPACE(1)
-cTxt += PADR("status", 6)
+   ?
+   P_COND
 
-cLine += REPLICATE("-", 5)
-cLine += SPACE(1)
-cLine += REPLICATE("-", 6)
-cLine += SPACE(1)
-cLine += REPLICATE("-", 25)
-cLine += SPACE(1)
-cLine += REPLICATE("-", 10)
-cLine += SPACE(1)
-cLine += REPLICATE("-", 6)
+   cTxt += PadR( "r.br", 5 )
+   cTxt += Space( 1 )
+   cTxt += PadR( "id", 6 )
+   cTxt += Space( 1 )
+   cTxt += PadR( "naziv radnika", 25 )
+   cTxt += Space( 1 )
+   cTxt += PadR( "radni sati", 10 )
+   cTxt += Space( 1 )
+   cTxt += PadR( "status", 6 )
 
-? "Pregled radnih sati:"
+   cLine += Replicate( "-", 5 )
+   cLine += Space( 1 )
+   cLine += Replicate( "-", 6 )
+   cLine += Space( 1 )
+   cLine += Replicate( "-", 25 )
+   cLine += Space( 1 )
+   cLine += Replicate( "-", 10 )
+   cLine += Space( 1 )
+   cLine += Replicate( "-", 6 )
 
-? cLine
-? cTxt
-? cLine
+   ? "Pregled radnih sati:"
 
-aSati := {}
+   ? cLine
+   ? cTxt
+   ? cLine
 
-nCnt := 0
-do while !EOF() 
+   aSati := {}
 
-    if field->sati = 0
-        skip
-        loop
-    endif
+   nCnt := 0
+   DO WHILE !Eof()
 
-    AADD( aSati, { idradn, PADR( g_naziv( idradn ), 25 ), sati, status } )
-    
-    skip
-enddo
+      IF field->sati = 0
+         SKIP
+         LOOP
+      ENDIF
 
-// sada istampaj
-// napravi sort po ime+prezime
-ASORT( aSati,,,{|x,y| x[2] < y[2] } )
+      AAdd( aSati, { idradn, PadR( g_naziv( idradn ), 25 ), sati, status } )
 
-for i:=1 to LEN( aSati )
-    
-    ? PADL( ALLTRIM( STR( ++ nCnt )), 4 ) + "."
-    @ prow(), pcol()+1 SAY aSati[i, 1]
-    @ prow(), pcol()+1 SAY aSati[i, 2]
-    @ prow(), pcol()+1 SAY aSati[i, 3]
-    @ prow(), pcol()+1 SAY aSati[i, 4]
+      SKIP
+   ENDDO
 
-next
+   // sada istampaj
+   // napravi sort po ime+prezime
+   ASort( aSati,,, {| x, y| x[ 2 ] < y[ 2 ] } )
 
-? cLine
+   FOR i := 1 TO Len( aSati )
 
-FF
-END PRINT
+      ? PadL( AllTrim( Str( ++nCnt ) ), 4 ) + "."
+      @ PRow(), PCol() + 1 SAY aSati[ i, 1 ]
+      @ PRow(), PCol() + 1 SAY aSati[ i, 2 ]
+      @ PRow(), PCol() + 1 SAY aSati[ i, 3 ]
+      @ PRow(), PCol() + 1 SAY aSati[ i, 4 ]
 
-return
+   NEXT
 
+   ? cLine
 
+   FF
+   ENDPRINT
 
-
+   RETURN

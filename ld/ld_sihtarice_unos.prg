@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out knowhow ERP, a free and open source 
+/*
+ * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
  * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -12,386 +12,391 @@
 #include "f18.ch"
 
 
-function UnosSiht()
-local cidradn,cIdRj,nGodina,nMjesec
+FUNCTION UnosSiht()
 
-MsgBeep("http://redmine.bring.out.ba/issues/25986")
-return .f.
+   LOCAL cidradn, cIdRj, nGodina, nMjesec
 
-Private GetList:={}
-DO WHILE .T. // G.PETLJA
+   IF .T.
+      MsgBeep( "http://redmine.bring.out.ba/issues/25986" )
+      RETURN .F.
+   ENDIF
 
-nGodina:=_Godina
-nMjesec:=_Mjesec
-cIDradn:=_Idradn
-cIDrj:=_IdRj
+   PRIVATE GetList := {}
+   DO WHILE .T. // G.PETLJA
 
-O_NORSIHT   // sifrarnik normi koje se koriste u sihtarici
-O_TPRSIHT   // tipovi primanja koji se unose u kroz sihtarice
+      nGodina := _Godina
+      nMjesec := _Mjesec
+      cIDradn := _Idradn
+      cIDrj := _IdRj
 
-
-select (F_RADSIHT)
-if !used(); O_RADSIHT; endif
-
-Scatter()
-_Godina:=nGodina
-_Mjesec:=nmjesec
-eIdradn:=cIdRAdn
-_IdRj:=cIdRj
-_Dan:=1
-_DanDio:=" "
+      O_NORSIHT   // sifrarnik normi koje se koriste u sihtarici
+      O_TPRSIHT   // tipovi primanja koji se unose u kroz sihtarice
 
 
-if _BrBod=0
- _BrBod:=radn->brbod
-endif
+      SELECT ( F_RADSIHT )
+      IF !Used(); O_RADSIHT; ENDIF
 
-Box(,6 ,68)
-@ m_x+0,m_y+2 SAY "SIHTARICA:"
-
- nDan:=1
- do while .t.
-
- @ m_x+1,m_Y+2 SAY "Dan" GET _dan pict "99"
- @ m_x+1,col()+2 SAY "Dio dana" GET _dandio valid _dandio$" 12345678" pict "@!"
- @ m_x+1,col()+2 SAY "Broj bodova" GET _BrBod pict "99999.999"  ;
-    when {|| _BrBod:=BodovaNaDan(ngodina,nmjesec,cidradn,cidrj,_dan,_dandio),;
-              _Brbod:=iif(_BrBod=0,radn->brbod,_BrBod), .t.}
- read
-
-    if lastkey()=K_ESC; exit; endif
- if _Dan>31 .or. _dan=0; exit; endif
-
-
- select TPRSiht; go top; _idtippr:=ID
- do while .t.
-
-    @ m_x+2,m_y+2 SAY "   Primanje" GET _idtippr ;
-            valid  empty(_idtippr) .or. P_TPRSiht(@_idtippr,2,25) pict "@!"
-
-    read
-    if lastkey()=K_ESC; exit; endif
-    select RADSIHT
-    seek str(_godina,4)+str(_mjesec,2)+_IdRadn+_IdRj+str(_dan,2)+_dandio+_idtippr
-    if found() // uzmi tekuce vrijednosti
-      _izvrseno:=izvrseno
-      _bodova:=bodova
-      _idnorsiht:=idnorsiht
-    else
-      _bodova:=0
-      _izvrseno:=0
-      _idnorsiht:=space(4)
-    endif
-    select TPRSiht; hseek _idtippr
-    if tprSiht->k1="F"
-     @ m_x+3,m_y+2 SAY "Sifra Norme" GET _IdNorSiht ;
-             valid  P_NorSiht(@_idNorSiht)
-
-    else
-      _IdNorSiht:=space(4)
-       @ m_x+3,m_y+2 SAY space(25)
-    endif
-
-
-    @ m_x+3,m_y+40 SAY "    Izvrseno" GET _Izvrseno  pict "999999.999" ;
-            when !empty(_idtippr)
-
-    @ m_x+5,m_y+40 SAY "Ukupno bodova" GET _Bodova pict "99999999.99" ;
-          when   {|| _Bodova:=_BrBod*_izvrseno/iif(TPRSiht->k1="F",NorSiht->Iznos,1), .f.}
-
-    read
-
-    if empty(_idtippr)
-       // ako je primanje prazno - prevrni na slijedeci dan
-       exit
-    endif
-    select RADSIHT
-    seek str(_godina,4)+str(_mjesec,2)+_IdRadn+_IdRj+str(_dan,2)+_dandio+_idtippr
-
-    if round(_izvrseno,4)<>0 .or. round(_Bodova,4)<>0   // nije nulirano
-       if !found(); append blank; endif
-       Gather()
-    else
-       if found() // a sadr§aj je 0
-          my_delete()
-       endif
-    endif
-
-    select TPRSiht;seek _idtippr; skip; _idtippr:=id
-    if eof(); exit; endif
- enddo
-    ++_Dan ; if _Dan>31 .or. _dan=0; exit; endif
- enddo
-
-Boxc()
-
-// zavrseno azuriranje RADSIHT
-***************************************************************
-START PRINT CRET
-P_12CPI
-? gTS + ":", gnFirma
-?? "; Radna jedinica:",cIdRj
-?
-? "Godina:",str(ngodina,4),"/",str(nmjesec,2)
-?
-? "*** Pregled Sihtarice za:"
-?? cIDradn,radn->naz
-?
-P_COND2
-
-Linija()
-?
-select TPRSiht; go top
-?? space(3)+" "+space(6)+" "
-fPrvi:=.t.
-do while !eof()
-  if fprvi
-     ?? space(4)+" "
-     fprvi:=.f.
-  endif
-  ?? padc(id,22)
-  skip
-enddo
-select TPRSiht; go top
-?
-?? space(3)+" "+space(6)+" "
-fPRvi:=.t.
-do while !eof()
-  if fprvi
-     ?? space(4)+" "
-     fprvi:=.f.
-  endif
-  ?? padc(alltrim(naz),22)
-  skip
-enddo
-?
-?? space(3)+" "+space(6)+" "
-select TPRSiht; go top
-fPRvi:=.t.
-do while !eof()
-  if fprvi
-     ?? space(4)+" "
-     fprvi:=.f.
-  endif
-  ?? padc("izvrseno/bodova",22)
-  skip
-enddo
-
-Linija()
-
-private aSihtUk:={}
-
-for i:=1 to TPRSiht->(reccount2())
- AADd(aSihtUk,0)
-next
-
-for nDan:=1  to 31
-
- for nDanDio:=0 to 8
-  cDanDio:=IF(nDanDio==0," ",STR(nDanDio,1))
-
-
-  _BrBod:=BodovaNaDan(ngodina,nmjesec,cidradn,cidrj,ndan,cDanDio)
-
-  IF _brbod==0 .and. !EMPTY(cDanDio)
-    LOOP
-  ENDIF
-
-  IF cDanDio==" "
-    ? str(ndan,3)
-  ELSE
-    ? " /"+cDanDio
-  ENDIF
-  ?? str(_BrBod,6,2)
-
-  ?? " "
-
-  select TPRSiht; go top
-  fPRvi:=.t.
-
-  nPozicija:=0
-  do while !eof()
-    ++nPozicija
-
-    select RADSIHT
-    seek str(ngodina,4)+str(nmjesec,2)+cIdRadn+cIdRj+str(ndan,2)+cDanDio+tprsiht->id
-
-    // utvrdi çifru norme za dan
-    if fprvi   // odstampaj sifru norme
-      if  dan=ndan .and. dandio==cDanDio .and. idtippr="01"
-       ?? idNorSiht+" "
-      else
-       ?? space(4)+" "
-      endif
-      fPRvi:=.f.
-    endif
-
-    if found()
       Scatter()
-      ?? str(_Izvrseno,10,2),str(_Bodova,10,2)+" "
-      aSihtUk[nPozicija]+=_Bodova
-    else
-      ?? space(22)
-      aSihtUk[nPozicija]+=0
-    endif
-
-    select TPRSiht;  skip
-  enddo
- next
-next
-
-Linija()
-?
-?? space(3)+" "+space(6)+" "
-select TPRSiht; go top
-fPRvi:=.t.
-i:=0
-_BrBod:=radn->brbod
-if _brbod=0
-   MsgBeep("U sifrarniku radnika definisite broj bodova za radnika !")
-endif
-
-do while !eof()
-  ++i
-  if fprvi
-     ?? space(4)+" "
-     fprvi:=.f.
-  endif
-  ?? space(10), str(aSihtUk[i],10,2)
-  cPom:=id  // napuni Karticu radnika !!!!!
-  if _Brbod<>0
-    _s&cPom:=aSihtUk[i]/_Brbod
-  endif
-  skip
-enddo
-Linija()
-FF
-END PRINT
-
-if pitanje(,"Zavrsili ste unos sihtarice ?","D")=="D"
-   exit
-endif
+      _Godina := nGodina
+      _Mjesec := nmjesec
+      eIdradn := cIdRAdn
+      _IdRj := cIdRj
+      _Dan := 1
+      _DanDio := " "
 
 
-ENDDO // glavna petlja
+      IF _BrBod = 0
+         _BrBod := radn->brbod
+      ENDIF
 
-select TPRSiht; use
-//select RadSiht; use
-select NorSiht; use
+      Box(, 6, 68 )
+      @ m_x + 0, m_y + 2 SAY "SIHTARICA:"
 
-select ld
+      nDan := 1
+      DO WHILE .T.
 
-return (nil)
+         @ m_x + 1, m_Y + 2 SAY "Dan" GET _dan PICT "99"
+         @ m_x + 1, Col() + 2 SAY "Dio dana" GET _dandio VALID _dandio $ " 12345678" PICT "@!"
+         @ m_x + 1, Col() + 2 SAY "Broj bodova" GET _BrBod PICT "99999.999"  ;
+            when {|| _BrBod := BodovaNaDan( ngodina, nmjesec, cidradn, cidrj, _dan, _dandio ), ;
+            _Brbod := iif( _BrBod = 0, radn->brbod, _BrBod ), .T. }
+         READ
+
+         IF LastKey() = K_ESC; exit; ENDIF
+         IF _Dan > 31 .OR. _dan = 0; exit; ENDIF
+
+
+         SELECT TPRSiht; GO top; _idtippr := ID
+         DO WHILE .T.
+
+            @ m_x + 2, m_y + 2 SAY "   Primanje" GET _idtippr ;
+               VALID  Empty( _idtippr ) .OR. P_TPRSiht( @_idtippr, 2, 25 ) PICT "@!"
+
+            READ
+            IF LastKey() = K_ESC; exit; ENDIF
+            SELECT RADSIHT
+            SEEK Str( _godina, 4 ) + Str( _mjesec, 2 ) + _IdRadn + _IdRj + Str( _dan, 2 ) + _dandio + _idtippr
+            IF Found() // uzmi tekuce vrijednosti
+               _izvrseno := izvrseno
+               _bodova := bodova
+               _idnorsiht := idnorsiht
+            ELSE
+               _bodova := 0
+               _izvrseno := 0
+               _idnorsiht := Space( 4 )
+            ENDIF
+            SELECT TPRSiht; hseek _idtippr
+            IF tprSiht->k1 = "F"
+               @ m_x + 3, m_y + 2 SAY "Sifra Norme" GET _IdNorSiht ;
+                  VALID  P_NorSiht( @_idNorSiht )
+
+            ELSE
+               _IdNorSiht := Space( 4 )
+               @ m_x + 3, m_y + 2 SAY Space( 25 )
+            ENDIF
+
+
+            @ m_x + 3, m_y + 40 SAY "    Izvrseno" GET _Izvrseno  PICT "999999.999" ;
+               WHEN !Empty( _idtippr )
+
+            @ m_x + 5, m_y + 40 SAY "Ukupno bodova" GET _Bodova PICT "99999999.99" ;
+               when   {|| _Bodova := _BrBod * _izvrseno / iif( TPRSiht->k1 = "F", NorSiht->Iznos, 1 ), .F. }
+
+            READ
+
+            IF Empty( _idtippr )
+               // ako je primanje prazno - prevrni na slijedeci dan
+               EXIT
+            ENDIF
+            SELECT RADSIHT
+            SEEK Str( _godina, 4 ) + Str( _mjesec, 2 ) + _IdRadn + _IdRj + Str( _dan, 2 ) + _dandio + _idtippr
+
+            IF Round( _izvrseno, 4 ) <> 0 .OR. Round( _Bodova, 4 ) <> 0   // nije nulirano
+               IF !Found(); APPEND blank; ENDIF
+               Gather()
+            ELSE
+               IF Found() // a sadr§aj je 0
+                  my_delete()
+               ENDIF
+            ENDIF
+
+            SELECT TPRSiht;SEEK _idtippr; skip; _idtippr := id
+            IF Eof(); exit; ENDIF
+         ENDDO
+         ++_Dan ; IF _Dan > 31 .OR. _dan = 0; exit; ENDIF
+      ENDDO
+
+      Boxc()
+
+      // zavrseno azuriranje RADSIHT
+      // **************************************************************
+      START PRINT CRET
+
+      P_12CPI
+      ? gTS + ":", gnFirma
+      ?? "; Radna jedinica:", cIdRj
+      ?
+      ? "Godina:", Str( ngodina, 4 ), "/", Str( nmjesec, 2 )
+      ?
+      ? "*** Pregled Sihtarice za:"
+      ?? cIDradn, radn->naz
+      ?
+      P_COND2
+
+      Linija()
+      ?
+      SELECT TPRSiht; GO TOP
+      ?? Space( 3 ) + " " + Space( 6 ) + " "
+      fPrvi := .T.
+      DO WHILE !Eof()
+         IF fprvi
+            ?? Space( 4 ) + " "
+            fprvi := .F.
+         ENDIF
+         ?? PadC( id, 22 )
+         SKIP
+      ENDDO
+      SELECT TPRSiht; GO TOP
+      ?
+      ?? Space( 3 ) + " " + Space( 6 ) + " "
+      fPRvi := .T.
+      DO WHILE !Eof()
+         IF fprvi
+            ?? Space( 4 ) + " "
+            fprvi := .F.
+         ENDIF
+         ?? PadC( AllTrim( naz ), 22 )
+         SKIP
+      ENDDO
+      ?
+      ?? Space( 3 ) + " " + Space( 6 ) + " "
+      SELECT TPRSiht; GO TOP
+      fPRvi := .T.
+      DO WHILE !Eof()
+         IF fprvi
+            ?? Space( 4 ) + " "
+            fprvi := .F.
+         ENDIF
+         ?? PadC( "izvrseno/bodova", 22 )
+         SKIP
+      ENDDO
+
+      Linija()
+
+      PRIVATE aSihtUk := {}
+
+      FOR i := 1 TO TPRSiht->( reccount2() )
+         AAdd( aSihtUk, 0 )
+      NEXT
+
+      FOR nDan := 1  TO 31
+
+         FOR nDanDio := 0 TO 8
+            cDanDio := IF( nDanDio == 0, " ", Str( nDanDio, 1 ) )
+
+
+            _BrBod := BodovaNaDan( ngodina, nmjesec, cidradn, cidrj, ndan, cDanDio )
+
+            IF _brbod == 0 .AND. !Empty( cDanDio )
+               LOOP
+            ENDIF
+
+            IF cDanDio == " "
+               ? Str( ndan, 3 )
+            ELSE
+               ? " /" + cDanDio
+            ENDIF
+            ?? Str( _BrBod, 6, 2 )
+
+            ?? " "
+
+            SELECT TPRSiht; GO TOP
+            fPRvi := .T.
+
+            nPozicija := 0
+            DO WHILE !Eof()
+               ++nPozicija
+
+               SELECT RADSIHT
+               SEEK Str( ngodina, 4 ) + Str( nmjesec, 2 ) + cIdRadn + cIdRj + Str( ndan, 2 ) + cDanDio + tprsiht->id
+
+               // utvrdi çifru norme za dan
+               IF fprvi   // odstampaj sifru norme
+                  IF  dan = ndan .AND. dandio == cDanDio .AND. idtippr = "01"
+                     ?? idNorSiht + " "
+                  ELSE
+                     ?? Space( 4 ) + " "
+                  ENDIF
+                  fPRvi := .F.
+               ENDIF
+
+               IF Found()
+                  Scatter()
+                  ?? Str( _Izvrseno, 10, 2 ), Str( _Bodova, 10, 2 ) + " "
+                  aSihtUk[ nPozicija ] += _Bodova
+               ELSE
+                  ?? Space( 22 )
+                  aSihtUk[ nPozicija ] += 0
+               ENDIF
+
+               SELECT TPRSiht;  SKIP
+            ENDDO
+         NEXT
+      NEXT
+
+      Linija()
+      ?
+      ?? Space( 3 ) + " " + Space( 6 ) + " "
+      SELECT TPRSiht; GO TOP
+      fPRvi := .T.
+      i := 0
+      _BrBod := radn->brbod
+      IF _brbod = 0
+         MsgBeep( "U sifrarniku radnika definisite broj bodova za radnika !" )
+      ENDIF
+
+      DO WHILE !Eof()
+         ++i
+         IF fprvi
+            ?? Space( 4 ) + " "
+            fprvi := .F.
+         ENDIF
+         ?? Space( 10 ), Str( aSihtUk[ i ], 10, 2 )
+         cPom := id  // napuni Karticu radnika !!!!!
+         IF _Brbod <> 0
+            _s&cPom := aSihtUk[ i ] / _Brbod
+         ENDIF
+         SKIP
+      ENDDO
+      Linija()
+      FF
+      ENDPRINT
+
+      IF pitanje(, "Zavrsili ste unos sihtarice ?", "D" ) == "D"
+         EXIT
+      ENDIF
+
+
+   ENDDO // glavna petlja
+
+   SELECT TPRSiht; USE
+   // select RadSiht; use
+   SELECT NorSiht; USE
+
+   SELECT ld
+
+   RETURN ( nil )
 
 
 // --------------------------
 // obrada sihtarice
 // --------------------------
-function UzmiSiht()
+FUNCTION UzmiSiht()
 
-MsgBeep("http://redmine.bring.out.ba/issues/25986")
-return .f.
+   MsgBeep( "http://redmine.bring.out.ba/issues/25986" )
+
+   RETURN .F.
 
 O_PARAMS
 
-private cZadnjiRadnik:=cIdRadn
-private cSection:="S"
+PRIVATE cZadnjiRadnik := cIdRadn
+PRIVATE cSection := "S"
 
-RPar("zr", @cZadnjiRAdnik)
+RPar( "zr", @cZadnjiRAdnik )
 
-select F_RADSIHT
-if !used()
-	O_RADSIHT
-endif
+SELECT F_RADSIHT
+IF !Used()
+O_RADSIHT
+ENDIF
 
-select radsiht
-seek str(_godina,4)+str(cmjesec,2)+cZadnjiRadnik+cIdRj
-if found() // ovaj je radnik fakat radjen
-	seek str(_godina,4)+str(cmjesec,2)+cidradn+cIdRj
-	if !found()
-	// ako je ovaj radnik vec radjen ne pitaj nista za preuzimanje
-		if pitanje(,'Zelite li preuzeti sihtaricu od radnika '+cZadnjiRadnik+' D/N','D')=='D'
-			select radsiht
-			seek str(_godina,4)+str(cmjesec,2)+cZadnjiRadnik+cIdRj
-			private nTSrec:=0
-			do while !eof() .and. (str(godina,4)+str(mjesec,2)+idradn+IdRj)==(str(_godina,4)+str(cmjesec,2)+cZadnjiRadnik+cIdRj)
-				skip
-				nTSrec:=recno()
-				skip -1
-				Scatter('w')
-				wIdRadn:=cidradn  
-				// sve je isto osim sifre radnika
-				append blank
-				Gather('w')
-				go nTSrec
-			enddo
-		endif // pitanje
-	endif
-endif
+SELECT radsiht
+SEEK Str( _godina, 4 ) + Str( cmjesec, 2 ) + cZadnjiRadnik + cIdRj
+IF Found() // ovaj je radnik fakat radjen
+SEEK Str( _godina, 4 ) + Str( cmjesec, 2 ) + cidradn + cIdRj
+IF !Found()
+// ako je ovaj radnik vec radjen ne pitaj nista za preuzimanje
+IF pitanje(, 'Zelite li preuzeti sihtaricu od radnika ' + cZadnjiRadnik + ' D/N', 'D' ) == 'D'
+SELECT radsiht
+SEEK Str( _godina, 4 ) + Str( cmjesec, 2 ) + cZadnjiRadnik + cIdRj
+PRIVATE nTSrec := 0
+DO WHILE !Eof() .AND. ( Str( godina, 4 ) + Str( mjesec, 2 ) + idradn + IdRj ) == ( Str( _godina, 4 ) + Str( cmjesec, 2 ) + cZadnjiRadnik + cIdRj )
+SKIP
+nTSrec := RecNo()
+SKIP -1
+Scatter( 'w' )
+wIdRadn := cidradn
+// sve je isto osim sifre radnika
+APPEND BLANK
+Gather( 'w' )
+GO nTSrec
+ENDDO
+ENDIF // pitanje
+ENDIF
+ENDIF
 
 Unossiht()
 
-select params
-private cSection:="S"
-select radsiht
-seek str(_godina,4)+str(cmjesec,2)+cIdRadn+cIdRj
-if found()  // nesto je bilo u sihtarici
-	select params
-	cZadnjiRadnik:=cIdRadn
-	WPar("zr",cZadnjiRAdnik)
-endif
+SELECT params
+PRIVATE cSection := "S"
+SELECT radsiht
+SEEK Str( _godina, 4 ) + Str( cmjesec, 2 ) + cIdRadn + cIdRj
+IF Found()  // nesto je bilo u sihtarici
+SELECT params
+cZadnjiRadnik := cIdRadn
+WPar( "zr", cZadnjiRAdnik )
+ENDIF
 
-select params
-use
-select radsiht
-use
+SELECT params
+USE
+SELECT radsiht
+USE
 
-return
+   RETURN
 
-//----------------------
-//----------------------
-static function Linija()
+// ----------------------
+// ----------------------
+STATIC FUNCTION Linija()
 
-?
-?? padc("---",3) + " " + replicate("-",6) + " "
+   ?
+   ?? PadC( "---", 3 ) + " " + Replicate( "-", 6 ) + " "
 
-fprvi:=.t.
-select TPRSiht
-go top
-go top
+   fprvi := .T.
+   SELECT TPRSiht
+   GO TOP
+   GO TOP
 
-do while !eof()
-  if fprvi
-     ?? replicate("-",4) + " "
-     fprvi:=.f.
-  endif
-  ?? replicate("-",10) + " " + replicate("-",10) + " "
-  skip
-enddo
+   DO WHILE !Eof()
+      IF fprvi
+         ?? Replicate( "-", 4 ) + " "
+         fprvi := .F.
+      ENDIF
+      ?? Replicate( "-", 10 ) + " " + Replicate( "-", 10 ) + " "
+      SKIP
+   ENDDO
 
-return (nil)
+   RETURN ( nil )
 
 
 // -------------------------------
 // -------------------------------
-function P_TPRSiht(cId,dx,dy)
-local nArr
-nArr:=SELECT()
-private imekol
-private kol
+FUNCTION P_TPRSiht( cId, dx, dy )
 
-select (F_TPRSIHT)
-if (!used())
-	O_TPRSIHT
-endif
-select (nArr)
+   LOCAL nArr
 
-ImeKol:={ { padr("Id",4), {|| id}, "id", {|| .t.}, {|| vpsifra(wid)} },;
-          { padr("Naziv",30), {||  naz}, "naz" }                    , ;
-          { padC("K1",3), {|| padc(K1,3)}, "k1"  }  ;
-       }
-Kol:={1,2,3}
-return PostojiSifra(F_TPRSIHT,1,10,55,"Lista: Tipovi primanja u sihtarici",@cId,dx,dy)
+   nArr := Select()
+   PRIVATE imekol
+   PRIVATE kol
 
+   SELECT ( F_TPRSIHT )
+   IF ( !Used() )
+      O_TPRSIHT
+   ENDIF
+   SELECT ( nArr )
 
+   ImeKol := { { PadR( "Id", 4 ), {|| id }, "id", {|| .T. }, {|| vpsifra( wid ) } }, ;
+      { PadR( "Naziv", 30 ), {||  naz }, "naz" }, ;
+      { PadC( "K1", 3 ), {|| PadC( K1, 3 ) }, "k1"  }  ;
+      }
+   Kol := { 1, 2, 3 }
 
+   RETURN PostojiSifra( F_TPRSIHT, 1, 10, 55, "Lista: Tipovi primanja u sihtarici", @cId, dx, dy )

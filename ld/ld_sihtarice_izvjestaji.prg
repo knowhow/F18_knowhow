@@ -23,7 +23,6 @@ STATIC __tp4
 STATIC __tp5
 
 
-
 FUNCTION ld_utrosak_po_sihtaricama()
 
    LOCAL cRj := Space( 60 )
@@ -87,9 +86,9 @@ FUNCTION ld_utrosak_po_sihtaricama()
       VALID {|| _show_get_item_value( g_tp_naz( cDodPr5 ), 20 ), .T. }
 
    READ
-	
+
    clvbox()
-	
+
    ESC_BCR
 
    BoxC()
@@ -166,7 +165,7 @@ STATIC FUNCTION _obr_2_arr( aArr )
    GO TOP
 
    DO WHILE !Eof()
-	
+
       AAdd( aArr, { field->godina, ;
          field->mjesec, ;
          field->idradn, ;
@@ -227,7 +226,7 @@ STATIC FUNCTION _gen_rpt( nGod_od, nMj_od, cRadnik, cGroup, aObr )
 
 
    DO WHILE !Eof()
-	
+
       cGr_siht := field->idkonto
       cGr_naz := g_gr_naz( cGr_siht )
       cRa_siht := field->idradn
@@ -245,7 +244,7 @@ STATIC FUNCTION _gen_rpt( nGod_od, nMj_od, cRadnik, cGroup, aObr )
          SKIP
          LOOP
       ENDIF
-	
+
       cRa_naz := aObr[ nTmp, 4 ]
       nSati := aObr[ nTmp, 5 ]
       nPrih := aObr[ nTmp, 6 ]
@@ -265,7 +264,7 @@ STATIC FUNCTION _gen_rpt( nGod_od, nMj_od, cRadnik, cGroup, aObr )
 
       SELECT r_export
       APPEND BLANK
-	
+
       REPLACE field->mjesec WITH nRa_mj
       REPLACE field->godina WITH nRa_god
       REPLACE field->idradn WITH cRa_siht
@@ -445,7 +444,7 @@ STATIC FUNCTION _print_rpt()
       // if prow() > 64
       // FF
       // endif
-	
+
       cGr_id := field->group
 
       nU_sati := 0
@@ -512,7 +511,7 @@ STATIC FUNCTION _print_rpt()
          nU_tp_3 += field->tp_3
          nU_tp_4 += field->tp_4
          nU_tp_5 += field->tp_5
-		
+
          nT_sati += field->sati
          nT_bruto += field->bruto
          nT_neto += field->neto
@@ -540,7 +539,7 @@ STATIC FUNCTION _print_rpt()
       @ PRow(), PCol() + 1 SAY Str( nU_d_zdr, 12, 2 )
       @ PRow(), PCol() + 1 SAY Str( nU_d_nez, 12, 2 )
       @ PRow(), PCol() + 1 SAY Str( nU_i_por, 12, 2 )
-	
+
       IF !Empty( __tp1 )
          @ PRow(), PCol() + 1 SAY Str( nU_tp_1, 12, 2 )
       ENDIF
@@ -556,7 +555,7 @@ STATIC FUNCTION _print_rpt()
       IF !Empty( __tp5 )
          @ PRow(), PCol() + 1 SAY Str( nU_tp_5, 12, 2 )
       ENDIF
-	
+
       ?
 
    ENDDO
@@ -571,7 +570,7 @@ STATIC FUNCTION _print_rpt()
    @ PRow(), PCol() + 1 SAY Str( nT_d_zdr, 12, 2 )
    @ PRow(), PCol() + 1 SAY Str( nT_d_nez, 12, 2 )
    @ PRow(), PCol() + 1 SAY Str( nT_i_por, 12, 2 )
-	
+
    IF !Empty( __tp1 )
       @ PRow(), PCol() + 1 SAY Str( nT_tp_1, 12, 2 )
    ENDIF
@@ -587,7 +586,7 @@ STATIC FUNCTION _print_rpt()
    IF !Empty( __tp5 )
       @ PRow(), PCol() + 1 SAY Str( nT_tp_5, 12, 2 )
    ENDIF
-	
+
    ? cLine
 
    FF

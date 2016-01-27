@@ -10,10 +10,7 @@
  */
 
 
-
 #include "f18.ch"
-
-
 
 FUNCTION zadnji_dan_mjeseca( nMonth )
 
@@ -69,15 +66,15 @@ FUNCTION radnik_iz_rs( cOpsst, cOpsrad )
    LOCAL lRet := .F.
    LOCAL cSql, oQry
 
-   cSql := "SELECT reg FROM fmk.ops " 
+   cSql := "SELECT reg FROM fmk.ops "
    cSql += "WHERE id = " + _sql_quote( cOpsSt )
 
    oQry := _sql_query( my_server(), cSql )
 
-   IF is_var_objekat_tpquery( oQry ) 
+   IF is_var_objekat_tpquery( oQry )
       IF oQry:FieldGet(1) == "2"
          lRet := .T.
-      ENDIF   
+      ENDIF
    ENDIF
 
    RETURN lRet
@@ -85,20 +82,20 @@ FUNCTION radnik_iz_rs( cOpsst, cOpsrad )
 
 
 FUNCTION ld_iz_koje_opcine_je_radnik( cIdRadn )
-   
+
    LOCAL cOpc := ""
    LOCAL cSql, oQry
- 
+
    cSql := "SELECT idopsst FROM fmk.ld_radn WHERE id = " + _sql_quote( cIdRadn )
 
    oQry := _sql_query( my_server(), cSql )
 
-   IF is_var_objekat_tpquery( oQry ) 
+   IF is_var_objekat_tpquery( oQry )
       cOpc := hb_utf8tostr( oQry:FieldGet(1) )
    ENDIF
 
    RETURN cOpc
- 
+
 
 
 FUNCTION ld_specifikacija_plate()
@@ -124,10 +121,10 @@ FUNCTION ld_specifikacija_plate()
    LOCAL _a_benef := {}
    LOCAL _omjer_zdravstvo, _omjer_nezap
    LOCAL nDopr1X
-   LOCAL nDopr2X 
+   LOCAL nDopr2X
    LOCAL nDopr3X
    LOCAL nDopr5X
-   LOCAL nDopr6X 
+   LOCAL nDopr6X
    LOCAL nDopr7X
    LOCAL nPojDoprI
    LOCAL nObrCount := 0
@@ -736,7 +733,7 @@ FUNCTION ld_specifikacija_plate()
             AAdd( aOps, { RADN->idopsst, "", Max( ld->uneto, PAROBR->prosld * gPDLimit / 100 ) } )
          ENDIF
       ENDIF
-      
+
       ++ nObrCount
 
       SKIP 1

@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -13,91 +13,89 @@
 #include "f18.ch"
 #include "hbclass.ch"
 
-// ----------------------------------------------------------
-// ----------------------------------------------------------
-CLASS TDbLd INHERIT TDB 
-	method New
-	method install	
-	method kreiraj	
+
+CLASS TDbLd INHERIT TDB
+
+   METHOD NEW
+   METHOD install
+   METHOD kreiraj
+
 ENDCLASS
 
 
-// --------------------------------------------
-// --------------------------------------------
-method New()
+METHOD New()
 
- ::super:new()
- ::cName:="LD"
- ::lAdmin:=.f.
+   ::super:new()
+   ::cName := "LD"
+   ::lAdmin := .F.
 
- ::kreiraj()
+   ::kreiraj()
 
-return self
+   RETURN self
 
 
 // -------------------------------------------------
 // -------------------------------------------------
-method install(cKorisn,cSifra,p3,p4,p5,p6,p7)
-	install_start(goModul,.f.)
-return
+METHOD install( cKorisn, cSifra, p3, p4, p5, p6, p7 )
+
+   install_start( goModul, .F. )
+
+   RETURN
 
 
 // -------------------------------------------------
 // -------------------------------------------------
-method kreiraj(nArea)
+METHOD kreiraj( nArea )
 
-cDirRad := my_home()
-cDirSif := my_home()
-cDirPriv := my_home()
+   cDirRad := my_home()
+   cDirSif := my_home()
+   cDirPriv := my_home()
 
-if (nArea==nil)
-    nArea:=-1
-endif
+   IF ( nArea == nil )
+      nArea := -1
+   ENDIF
 
-if (nArea<>-1)
-	CreSystemDb(nArea)
-endif
+   IF ( nArea <> -1 )
+      CreSystemDb( nArea )
+   ENDIF
 
-// REKLD
-aDbf:={}
-AADD( aDbf, {"GODINA"     ,  "C" ,  4, 0})
-AADD( aDbf, {"MJESEC"     ,  "C" ,  2, 0})
-AADD( aDbf, {"ID"         ,  "C" , 40, 0})
-AADD( aDbf, {"OPIS"       ,  "C" , 40, 0})
-AADD( aDbf, {"IZNOS1"     ,  "N" , 18, 4})
-AADD( aDbf, {"IZNOS2"     ,  "N" , 18, 4})
-AADD( aDbf, {"IDPARTNER"  ,  "C" ,  6, 0})
+   // REKLD
+   aDbf := {}
+   AAdd( aDbf, { "GODINA",  "C",  4, 0 } )
+   AAdd( aDbf, { "MJESEC",  "C",  2, 0 } )
+   AAdd( aDbf, { "ID",  "C", 40, 0 } )
+   AAdd( aDbf, { "OPIS",  "C", 40, 0 } )
+   AAdd( aDbf, { "IZNOS1",  "N", 18, 4 } )
+   AAdd( aDbf, { "IZNOS2",  "N", 18, 4 } )
+   AAdd( aDbf, { "IDPARTNER",  "C",  6, 0 } )
 
-if !FILE( f18_ime_dbf( "REKLD" ) )
-    DBCreate2( "REKLD", aDbf )
-endif
+   IF !File( f18_ime_dbf( "REKLD" ) )
+      DBCreate2( "REKLD", aDbf )
+   ENDIF
 
-CREATE_INDEX("1","godina+mjesec+id", "REKLD" )
-CREATE_INDEX("2","godina+mjesec+id+idpartner", "REKLD" )
+   CREATE_INDEX( "1", "godina+mjesec+id", "REKLD" )
+   CREATE_INDEX( "2", "godina+mjesec+id+idpartner", "REKLD" )
 
-AADD( aDbf, {"IDRNAL"  ,  "C" , 10, 0})
+   AAdd( aDbf, { "IDRNAL",  "C", 10, 0 } )
 
-if !FILE(f18_ime_dbf( "REKLDP" ))
-    DBCreate2( "REKLDP", aDbf )
-endif
+   IF !File( f18_ime_dbf( "REKLDP" ) )
+      DBCreate2( "REKLDP", aDbf )
+   ENDIF
 
-CREATE_INDEX("1","godina+mjesec+id+idRNal", "REKLDP" )
-
-
-aDbf := {} 
-AADD( aDbf, {"ID"     ,  "C" ,  1, 0})
-AADD( aDbf, {"IDOPS"  ,  "C" ,  4, 0})
-AADD( aDbf, {"IZNOS"  ,  "N" , 18, 4})
-AADD( aDbf, {"IZNOS2" ,  "N" , 18, 4})
-AADD( aDbf, {"LJUDI"  ,  "N" ,  4, 0})
-
-if !FILE( f18_ime_dbf("OPSLD") )
-    DBCreate2( "OPSLD", aDbf )
-endif
-
-CREATE_INDEX("1","id+idops", "OPSLD" )
-
-return
+   CREATE_INDEX( "1", "godina+mjesec+id+idRNal", "REKLDP" )
 
 
+   aDbf := {}
+   AAdd( aDbf, { "ID",  "C",  1, 0 } )
+   AAdd( aDbf, { "IDOPS",  "C",  4, 0 } )
+   AAdd( aDbf, { "IZNOS",  "N", 18, 4 } )
+   AAdd( aDbf, { "IZNOS2",  "N", 18, 4 } )
+   AAdd( aDbf, { "LJUDI",  "N",  4, 0 } )
 
+   IF !File( f18_ime_dbf( "OPSLD" ) )
+      DBCreate2( "OPSLD", aDbf )
+   ENDIF
+
+   CREATE_INDEX( "1", "id+idops", "OPSLD" )
+
+   RETURN

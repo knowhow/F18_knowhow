@@ -11,7 +11,6 @@
 
 #include "f18.ch"
 
-
 FUNCTION ld_specifikacija_po_rj()
 
    cGodina  := gGodina

@@ -14,7 +14,6 @@
 #include "f18.ch"
 
 
-
 FUNCTION ld_specifikacija_po_rasponima_primanja()
 
    gnLMarg := 0
@@ -239,6 +238,3 @@ STATIC FUNCTION filter_specifikacija_raspon()
    SKIP -1
 
    RETURN .T.
-
-
-

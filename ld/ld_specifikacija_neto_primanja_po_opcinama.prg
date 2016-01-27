@@ -27,7 +27,7 @@ STATIC FUNCTION otvori_tabele()
    O_RADN
    O_LD
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -53,7 +53,7 @@ FUNCTION ld_specifikacija_neto_primanja_po_opcinama()
    @ m_x + 4, m_y + 2 SAY8 "Koeficijent benef.radnog staža (prazno-svi): "  GET  cKBenef VALID Empty( cKBenef ) .OR. P_KBenef( @cKBenef )
    @ m_x + 5, m_y + 2 SAY "Vrsta posla (prazno-svi): "  GET  cVPosla
    @ m_x + 8, m_y + 2 SAY8 "Sortirati po(1-šifri,2-prezime+ime)"  GET cVarSort VALID cVarSort $ "12"  PICT "9"
-   READ 
+   READ
    clvbox()
    ESC_BCR
    BoxC()
@@ -201,7 +201,7 @@ FUNCTION ld_specifikacija_neto_primanja_po_opcinama()
 
    my_close_all_dbf()
 
-   RETURN 
+   RETURN
 
 
 
@@ -311,7 +311,3 @@ STATIC FUNCTION zaglavlje_izvjestaja( cVPosla, cKBenef )
    ? cLinija
 
    RETURN
-
-
-
-

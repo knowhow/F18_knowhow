@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -16,484 +16,492 @@
 // -----------------------------------------------
 // definisanje sihtarice
 // -----------------------------------------------
-function def_siht( lNew )
-local nBoxX := 10
-local nBoxY := 65
-local nX := 1
-local cIdRadn := SPACE(6)
-local nGodina := gGodina
-local nMjesec := gMjesec
-local cGroup := SPACE(7)
-local cOpis := SPACE(50)
+FUNCTION def_siht( lNew )
 
-select (F_RADSIHT)
-if !used()
-    O_RADSIHT
-endif
+   LOCAL nBoxX := 10
+   LOCAL nBoxY := 65
+   LOCAL nX := 1
+   LOCAL cIdRadn := Space( 6 )
+   LOCAL nGodina := gGodina
+   LOCAL nMjesec := gMjesec
+   LOCAL cGroup := Space( 7 )
+   LOCAL cOpis := Space( 50 )
 
-select radsiht
-set order to tag "2"
+   SELECT ( F_RADSIHT )
+   IF !Used()
+      O_RADSIHT
+   ENDIF
 
-Box(, nBoxX, nBoxY )
-    
-   do while .t.
+   SELECT radsiht
+   SET ORDER TO TAG "2"
 
-    @ m_x + nX, m_y + 2 SAY "*** Unos / obrada sihtarica po grupama"
-    
-    ++ nX
-    ++ nX
+   Box(, nBoxX, nBoxY )
 
-    @ m_x + nX, m_y + 2 SAY "godina" GET nGodina PICT "9999"
-    @ m_x + nX, col() + 2 SAY "mjesec" GET nMjesec PICT "99"
+   DO WHILE .T.
 
-    ++ nX
-    
-    @ m_x + nX, m_y + 2 SAY "grupa:" GET cGroup ;
-        VALID { || p_konto( @cGroup ), ;
-            _show_get_item_value( g_gr_naz( cGroup ), 40 ) }
+      @ m_x + nX, m_y + 2 SAY "*** Unos / obrada sihtarica po grupama"
 
-    ++ nX
+      ++ nX
+      ++ nX
 
-    @ m_x + nX, m_y + 2 SAY "opis:" GET cOpis PICT "@S40"
+      @ m_x + nX, m_y + 2 SAY "godina" GET nGodina PICT "9999"
+      @ m_x + nX, Col() + 2 SAY "mjesec" GET nMjesec PICT "99"
 
-    ++ nX
-    
-    @ m_x + nX, m_y + 2 SAY "radnik:" GET cIdRadn ;
-        VALID { || p_radn( @cIdRadn ), ;
-            _show_get_item_value( _rad_ime( cIdRadn), 30 )}
+      ++ nX
 
-    read
+      @ m_x + nX, m_y + 2 SAY "grupa:" GET cGroup ;
+         VALID {|| p_konto( @cGroup ), ;
+         _show_get_item_value( g_gr_naz( cGroup ), 40 ) }
 
-    if LastKey() == K_ESC
-        exit
-    endif
+      ++ nX
 
-    // pronadji ovaj zapis u RADSIHT
-    select radsiht
-    go top
-    seek cGroup + STR(nGodina) + STR(nMjesec) + cIdRadn
+      @ m_x + nX, m_y + 2 SAY "opis:" GET cOpis PICT "@S40"
 
-    if !FOUND()
+      ++ nX
 
-        append blank
-        set_global_memvars_from_dbf()
+      @ m_x + nX, m_y + 2 SAY "radnik:" GET cIdRadn ;
+         VALID {|| p_radn( @cIdRadn ), ;
+         _show_get_item_value( _rad_ime( cIdRadn ), 30 ) }
 
-        _godina := nGodina
-        _mjesec := nMjesec
-        _idkonto := cGroup
-        _opis := cOpis
-        _idradn := cIdRadn
-        _dandio := "G"
-        _izvrseno := 0
-        _bodova := 0
+      READ
 
-    else
+      IF LastKey() == K_ESC
+         EXIT
+      ENDIF
 
-        set_global_memvars_from_dbf()
+      // pronadji ovaj zapis u RADSIHT
+      SELECT radsiht
+      GO TOP
+      SEEK cGroup + Str( nGodina ) + Str( nMjesec ) + cIdRadn
 
-    endif
+      IF !Found()
 
-    ++ nX
-    ++ nX
+         APPEND BLANK
+         set_global_memvars_from_dbf()
 
-    @ m_x + nX, m_y + 2 SAY "broj odradjenih sati:" GET _izvrseno ;
-        PICT "99999.99"
+         _godina := nGodina
+         _mjesec := nMjesec
+         _idkonto := cGroup
+         _opis := cOpis
+         _idradn := cIdRadn
+         _dandio := "G"
+         _izvrseno := 0
+         _bodova := 0
 
-    ++ nX
-    
-    @ m_x + nX, m_y + 2 SAY "od toga nocni rad:" GET _bodova ;
-        PICT "99999.99"
+      ELSE
 
-    read
+         set_global_memvars_from_dbf()
 
-    if LastKey() == K_ESC
-        exit
-    endif
-    
-    _vals := get_dbf_global_memvars() 
+      ENDIF
 
-    update_rec_server_and_dbf( "ld_radsiht", _vals, 1, "FULL" ) 
+      ++ nX
+      ++ nX
 
-    // resetuj varijable
-    cIdRadn := SPACE(6)
+      @ m_x + nX, m_y + 2 SAY "broj odradjenih sati:" GET _izvrseno ;
+         PICT "99999.99"
 
-    nX := 1
+      ++ nX
 
-   enddo
-    
-BoxC()
+      @ m_x + nX, m_y + 2 SAY "od toga nocni rad:" GET _bodova ;
+         PICT "99999.99"
 
-return
+      READ
+
+      IF LastKey() == K_ESC
+         EXIT
+      ENDIF
+
+      _vals := get_dbf_global_memvars()
+
+      update_rec_server_and_dbf( "ld_radsiht", _vals, 1, "FULL" )
+
+      // resetuj varijable
+      cIdRadn := Space( 6 )
+
+      nX := 1
+
+   ENDDO
+
+   BoxC()
+
+   RETURN
 
 
 // ---------------------------------------------------
 // uslovi izvjestaja
 // ---------------------------------------------------
-static function g_vars( nGod, nMj, cRadn, cGroup )
-local nRet := 1
-private GetList := {}
+STATIC FUNCTION g_vars( nGod, nMj, cRadn, cGroup )
 
-Box(, 2, 60)
-    @ m_x + 1, m_y + 2 SAY "Godina" GET nGod PICT "9999"
-    @ m_x + 1, col() + 2 SAY "Godina" GET nMj PICT "99"
-    @ m_x + 2, m_y + 2 SAY "Grupa" GET cGroup ;
-        VALID EMPTY(cGroup) .or. p_konto(@cGroup)
-    @ m_x + 2, col() + 2 SAY "Radnik" GET cRadn ;
-        VALID EMPTY(cRadn) .or. p_radn(@cRadn)
-    read
-BoxC()
+   LOCAL nRet := 1
+   PRIVATE GetList := {}
 
-if LastKey() == K_ESC
-    nRet := 0
-endif
+   Box(, 2, 60 )
+   @ m_x + 1, m_y + 2 SAY "Godina" GET nGod PICT "9999"
+   @ m_x + 1, Col() + 2 SAY "Godina" GET nMj PICT "99"
+   @ m_x + 2, m_y + 2 SAY "Grupa" GET cGroup ;
+      VALID Empty( cGroup ) .OR. p_konto( @cGroup )
+   @ m_x + 2, Col() + 2 SAY "Radnik" GET cRadn ;
+      VALID Empty( cRadn ) .OR. p_radn( @cRadn )
+   READ
+   BoxC()
 
-return nRet
+   IF LastKey() == K_ESC
+      nRet := 0
+   ENDIF
+
+   RETURN nRet
 
 
 
 // --------------------------------------------
 // daj mi obradjene sihtarice
-// 
+//
 // lInfo - za prikaz na kartici .t.
 // vraca ukupne sate radnika
 // --------------------------------------------
-function get_siht( lInfo, nGodina, nMjesec, cIdRadn, cGroup )
-local nTArea := SELECT()
-local cFilter := ""
-local nLineLen := 100
-local nVar := 1
+FUNCTION get_siht( lInfo, nGodina, nMjesec, cIdRadn, cGroup )
 
-select F_RADN
-if !used()
-    O_RADN
-endif
+   LOCAL nTArea := Select()
+   LOCAL cFilter := ""
+   LOCAL nLineLen := 100
+   LOCAL nVar := 1
 
-if pcount() <= 1
-    
-    // nema parametara unesenih
-    nMjesec := gMjesec
-    nGodina := gGodina
-    cGroup := SPACE(7)
-    cIdRadn := SPACE(6)
+   SELECT F_RADN
+   IF !Used()
+      O_RADN
+   ENDIF
 
-    if g_vars( @nGodina, @nMjesec, @cIdRadn, @cGroup ) == 0
-        return
-    endif
+   IF PCount() <= 1
 
-endif
+      // nema parametara unesenih
+      nMjesec := gMjesec
+      nGodina := gGodina
+      cGroup := Space( 7 )
+      cIdRadn := Space( 6 )
 
-if pcount() == 0
-    lInfo := .f.
-endif
+      IF g_vars( @nGodina, @nMjesec, @cIdRadn, @cGroup ) == 0
+         RETURN
+      ENDIF
 
-if !EMPTY( cIdRadn )
-    nLineLen := 80
-endif
+   ENDIF
 
-if lInfo == .t.
-    nVar := 0
-endif
+   IF PCount() == 0
+      lInfo := .F.
+   ENDIF
 
-sort_siht( nGodina, nMjesec, cIdRadn, cGroup, nVar )
+   IF !Empty( cIdRadn )
+      nLineLen := 80
+   ENDIF
 
-if nVar > 0
-    set order to tag "2"
-else
-    set order to tag "2i"
-endif
+   IF lInfo == .T.
+      nVar := 0
+   ENDIF
 
-go top
+   sort_siht( nGodina, nMjesec, cIdRadn, cGroup, nVar )
 
-if lInfo == .f.
-    START PRINT CRET
-    ?
-endif
+   IF nVar > 0
+      SET ORDER TO TAG "2"
+   ELSE
+      SET ORDER TO TAG "2i"
+   ENDIF
 
-? "Lista satnica po sihtarici: ", STR(nMjesec) + "/" + STR(nGodina) 
-? REPLICATE( "-", nLineLen )
-? PADR("rbr", 4), ;
-    PADR("objekat", 30), ;
-    if(EMPTY(cIdRadn), PADR("radnik", 20), ""), ;
-    PADR("sati", 15), PADR("nocni",15), PADR("redovni",15)
+   GO TOP
 
-? REPLICATE( "-", nLineLen )
+   IF lInfo == .F.
+      START PRINT CRET
+      ?
+   ENDIF
 
-nT_sati := 0
-nT_nsati := 0
-nT_razl := 0
+   ? "Lista satnica po sihtarici: ", Str( nMjesec ) + "/" + Str( nGodina )
+   ? Replicate( "-", nLineLen )
+   ? PadR( "rbr", 4 ), ;
+      PadR( "objekat", 30 ), ;
+      if( Empty( cIdRadn ), PadR( "radnik", 20 ), "" ), ;
+      PadR( "sati", 15 ), PadR( "nocni", 15 ), PadR( "redovni", 15 )
 
-nTCol := 30
+   ? Replicate( "-", nLineLen )
 
-nCnt := 0
+   nT_sati := 0
+   nT_nsati := 0
+   nT_razl := 0
 
-do while !EOF()
+   nTCol := 30
 
-    ? PADL( ALLTRIM(STR(++nCnt)) + ".", 4 )
-    @ prow(), pcol()+1 SAY PADR( g_gr_naz( field->idkonto ), 30 )
-    
-    if EMPTY( cIdRadn )
-        @ prow(), pcol()+1 SAY PADR( _rad_ime( field->idradn ), 20 )
-    endif
+   nCnt := 0
 
-    @ prow(), nTCol := pcol()+1 SAY STR( field->izvrseno, 12, 2 )
-    @ prow(), pcol()+1 SAY STR( field->bodova, 12, 2 )
-    @ prow(), pcol()+1 SAY STR( field->izvrseno - field->bodova, 12, 2 )
+   DO WHILE !Eof()
 
-    nT_sati += field->izvrseno
-    nT_nsati += field->bodova
-    nT_razl += field->izvrseno - field->bodova
+      ? PadL( AllTrim( Str( ++nCnt ) ) + ".", 4 )
+      @ PRow(), PCol() + 1 SAY PadR( g_gr_naz( field->idkonto ), 30 )
 
-    skip
-enddo
+      IF Empty( cIdRadn )
+         @ PRow(), PCol() + 1 SAY PadR( _rad_ime( field->idradn ), 20 )
+      ENDIF
 
-? REPLICATE("-", nLineLen )
-? "UKUPNO SATI:"
-@ prow(), nTCOL SAY STR(nT_sati, 12, 2)
-@ prow(), pcol()+1 SAY STR(nT_nsati, 12, 2)
-@ prow(), pcol()+1 SAY STR(nT_razl, 12, 2)
-? REPLICATE("-", nLineLen )
+      @ PRow(), nTCol := PCol() + 1 SAY Str( field->izvrseno, 12, 2 )
+      @ PRow(), PCol() + 1 SAY Str( field->bodova, 12, 2 )
+      @ PRow(), PCol() + 1 SAY Str( field->izvrseno - field->bodova, 12, 2 )
 
-if lInfo == .f.
-    FF
-    END PRINT
-endif
+      nT_sati += field->izvrseno
+      nT_nsati += field->bodova
+      nT_razl += field->izvrseno - field->bodova
 
-select F_RADN
-if !used()
-    O_RADN
-endif
+      SKIP
+   ENDDO
 
-select F_RADSIHT
-if !used()
-    O_RADSIHT
-endif
+   ? Replicate( "-", nLineLen )
+   ? "UKUPNO SATI:"
+   @ PRow(), nTCOL SAY Str( nT_sati, 12, 2 )
+   @ PRow(), PCol() + 1 SAY Str( nT_nsati, 12, 2 )
+   @ PRow(), PCol() + 1 SAY Str( nT_razl, 12, 2 )
+   ? Replicate( "-", nLineLen )
 
-go top
-set filter to
+   IF lInfo == .F.
+      FF
+      ENDPRINT
+   ENDIF
 
-select (nTArea)
-return nT_sati
+   SELECT F_RADN
+   IF !Used()
+      O_RADN
+   ENDIF
+
+   SELECT F_RADSIHT
+   IF !Used()
+      O_RADSIHT
+   ENDIF
+
+   GO TOP
+   SET FILTER TO
+
+   SELECT ( nTArea )
+
+   RETURN nT_sati
 
 
 
 // --------------------------------------------
 // lista sihtarice
-// 
+//
 // --------------------------------------------
-function get_siht2()
-local nTArea := SELECT()
-local cFilter := ""
-local nLineLen := 70
-local nMjesec
-local nGodina
-local cGroup
-local cIdRadn
-local nCol := 12
-local aSiht
-local i
+FUNCTION get_siht2()
 
-// nema parametara unesenih
-nMjesec := gMjesec
-nGodina := gGodina
-cGroup := SPACE(7)
-cIdRadn := SPACE(6)
+   LOCAL nTArea := Select()
+   LOCAL cFilter := ""
+   LOCAL nLineLen := 70
+   LOCAL nMjesec
+   LOCAL nGodina
+   LOCAL cGroup
+   LOCAL cIdRadn
+   LOCAL nCol := 12
+   LOCAL aSiht
+   LOCAL i
 
-select F_RADN
-if !used()
-    O_RADN
-endif
+   // nema parametara unesenih
+   nMjesec := gMjesec
+   nGodina := gGodina
+   cGroup := Space( 7 )
+   cIdRadn := Space( 6 )
 
-if g_vars( @nGodina, @nMjesec, @cIdRadn, @cGroup ) == 0
-    return
-endif
+   SELECT F_RADN
+   IF !Used()
+      O_RADN
+   ENDIF
 
-sort_siht( nGodina, nMjesec, cIdRadn, cGroup )
-set order to tag "4"
-// "4","idradn+str(godina)+str(mjesec)+idkonto"
-go top
+   IF g_vars( @nGodina, @nMjesec, @cIdRadn, @cGroup ) == 0
+      RETURN
+   ENDIF
 
-START PRINT CRET
-?
+   sort_siht( nGodina, nMjesec, cIdRadn, cGroup )
+   SET ORDER TO TAG "4"
+   // "4","idradn+str(godina)+str(mjesec)+idkonto"
+   GO TOP
 
-? "Lista satnica po sihtarici: ", STR(nMjesec) + "/" + STR(nGodina) 
-? REPLICATE( "-", nLineLen )
-? PADR("rbr", 5), PADR("radnik", 20), PADR("sati", 15), PADR("nocni", 15), ;
-    PADR("redovni", 15)
-? REPLICATE( "-", nLineLen )
+   START PRINT CRET
+   ?
 
-nT_sati := 0
-nT_nsati := 0
+   ? "Lista satnica po sihtarici: ", Str( nMjesec ) + "/" + Str( nGodina )
+   ? Replicate( "-", nLineLen )
+   ? PadR( "rbr", 5 ), PadR( "radnik", 20 ), PadR( "sati", 15 ), PadR( "nocni", 15 ), ;
+      PadR( "redovni", 15 )
+   ? Replicate( "-", nLineLen )
 
-nT_tsati := 0
-nT_tnsati := 0
+   nT_sati := 0
+   nT_nsati := 0
 
-nT_razl := 0
-nT_trazl := 0
+   nT_tsati := 0
+   nT_tnsati := 0
 
-nCnt := 0
+   nT_razl := 0
+   nT_trazl := 0
 
-aSiht := {}
+   nCnt := 0
 
-// zavrti se po radnicima...
-do while !EOF()
+   aSiht := {}
 
-  cId_radn := field->idradn
-  nT_sati := 0
-  nT_nsati := 0
-  nT_razl := 0
+   // zavrti se po radnicima...
+   DO WHILE !Eof()
 
-  do while !EOF() .and. field->idradn == cId_radn
+      cId_radn := field->idradn
+      nT_sati := 0
+      nT_nsati := 0
+      nT_razl := 0
 
-    nT_sati += field->izvrseno
-    nT_nsati += field->bodova
-    nT_razl += field->izvrseno - field->bodova
+      DO WHILE !Eof() .AND. field->idradn == cId_radn
 
-    nT_tsati += field->izvrseno
-    nT_tnsati += field->bodova
-    nT_trazl += field->izvrseno - field->bodova
+         nT_sati += field->izvrseno
+         nT_nsati += field->bodova
+         nT_razl += field->izvrseno - field->bodova
 
-    skip
-  
-  enddo
+         nT_tsati += field->izvrseno
+         nT_tnsati += field->bodova
+         nT_trazl += field->izvrseno - field->bodova
 
-  AADD( aSiht, { PADR(_rad_ime(cId_radn), 20), STR(nT_sati,12,2), ;
-    STR(nT_nsati, 12, 2), STR(nT_razl, 12, 2) } )
+         SKIP
 
-enddo
+      ENDDO
 
-if LEN( aSiht ) > 0
+      AAdd( aSiht, { PadR( _rad_ime( cId_radn ), 20 ), Str( nT_sati, 12, 2 ), ;
+         Str( nT_nsati, 12, 2 ), Str( nT_razl, 12, 2 ) } )
 
-  // napravi sortiranje
-  ASORT( aSiht,,,{|x,y| x[1] < y[1] } )
+   ENDDO
 
-  // sada ispisi
-  for i:=1 to len( aSiht )
+   IF Len( aSiht ) > 0
 
-    // ispisi ukupno
-    ? PADL( ALLTRIM( STR( ++nCnt, 4 )) + ".", 5 )
-    @ prow(), pcol()+1 SAY aSiht[i, 1]
-    @ prow(), nCol := pcol()+1 SAY aSiht[i, 2]
-    @ prow(), pcol()+1 SAY aSiht[i, 3]
-    @ prow(), pcol()+1 SAY aSiht[i, 4]
+      // napravi sortiranje
+      ASort( aSiht,,, {| x, y| x[ 1 ] < y[ 1 ] } )
 
-  next
+      // sada ispisi
+      FOR i := 1 TO Len( aSiht )
 
-  ? REPLICATE("-", nLineLen )
-  ? "UKUPNO SATI: "
-  @ prow(), nCol SAY STR( nT_tsati, 12, 2 )
-  @ prow(), pcol()+1 SAY STR( nT_tnsati, 12, 2 )
-  @ prow(), pcol()+1 SAY STR( nT_trazl, 12, 2 )
-  ? REPLICATE("-", nLineLen )
+         // ispisi ukupno
+         ? PadL( AllTrim( Str( ++nCnt, 4 ) ) + ".", 5 )
+         @ PRow(), PCol() + 1 SAY aSiht[ i, 1 ]
+         @ PRow(), nCol := PCol() + 1 SAY aSiht[ i, 2 ]
+         @ PRow(), PCol() + 1 SAY aSiht[ i, 3 ]
+         @ PRow(), PCol() + 1 SAY aSiht[ i, 4 ]
 
-endif
+      NEXT
 
-FF
-END PRINT
+      ? Replicate( "-", nLineLen )
+      ? "UKUPNO SATI: "
+      @ PRow(), nCol SAY Str( nT_tsati, 12, 2 )
+      @ PRow(), PCol() + 1 SAY Str( nT_tnsati, 12, 2 )
+      @ PRow(), PCol() + 1 SAY Str( nT_trazl, 12, 2 )
+      ? Replicate( "-", nLineLen )
 
-select F_RADN
-if !used()
-    O_RADN
-endif
+   ENDIF
 
-select F_RADSIHT
-if !used()
-    O_RADSIHT
-endif
+   FF
+   ENDPRINT
 
-go top
-set filter to
+   SELECT F_RADN
+   IF !Used()
+      O_RADN
+   ENDIF
 
-select (nTArea)
-return
+   SELECT F_RADSIHT
+   IF !Used()
+      O_RADSIHT
+   ENDIF
+
+   GO TOP
+   SET FILTER TO
+
+   SELECT ( nTArea )
+
+   RETURN
 
 
 // ------------------------------------------------------------
 // sortiranje sihtarice
 // ------------------------------------------------------------
-function sort_siht( nGodina, nMjesec, cIdRadn, cGroup, nVar )
-local cFilter
+FUNCTION sort_siht( nGodina, nMjesec, cIdRadn, cGroup, nVar )
 
-if nVar == nil
-    nVar := 0
-endif
+   LOCAL cFilter
 
-cFilter := "godina =" + STR( nGodina )  
-cFilter += " .and. mjesec = " + STR( nMjesec )
-cFilter += " .and. dandio == 'G' "
+   IF nVar == nil
+      nVar := 0
+   ENDIF
 
-if !EMPTY( cIdRadn )
-    cFilter += " .and. idradn == " + cm2str( cIdRadn )
-endif
+   cFilter := "godina =" + Str( nGodina )
+   cFilter += " .and. mjesec = " + Str( nMjesec )
+   cFilter += " .and. dandio == 'G' "
 
-if !EMPTY( cGroup )
-    cFilter += " .and. idkonto == " + cm2str( cGroup )
-endif
+   IF !Empty( cIdRadn )
+      cFilter += " .and. idradn == " + cm2str( cIdRadn )
+   ENDIF
 
-select (F_RADSIHT)
-if !used()
-    O_RADSIHT
-endif
+   IF !Empty( cGroup )
+      cFilter += " .and. idkonto == " + cm2str( cGroup )
+   ENDIF
 
-select radsiht
-set filter to &cFilter
-set order to tag "2"
-go top
+   SELECT ( F_RADSIHT )
+   IF !Used()
+      O_RADSIHT
+   ENDIF
 
-if nVar == 1
-    set order to tag "2i"
-    go top
-endif
+   SELECT radsiht
+   SET FILTER to &cFilter
+   SET ORDER TO TAG "2"
+   GO TOP
 
-return
+   IF nVar == 1
+      SET ORDER TO TAG "2i"
+      GO TOP
+   ENDIF
+
+   RETURN
 
 
 // ------------------------------------------
 // brisanje sihtarice
 // ------------------------------------------
-function del_siht()
-local nMjesec := gMjesec
-local nGodina := gGodina
-local cGroup := SPACE(7)
-local cIdRadn := SPACE(6)
-local nTArea := SELECT()
-local cFilter := ""
-local _rec, _t_rec
+FUNCTION del_siht()
 
-if g_vars( @nGodina, @nMjesec, @cIdRadn, @cGroup ) == 0
-    return
-endif
+   LOCAL nMjesec := gMjesec
+   LOCAL nGodina := gGodina
+   LOCAL cGroup := Space( 7 )
+   LOCAL cIdRadn := Space( 6 )
+   LOCAL nTArea := Select()
+   LOCAL cFilter := ""
+   LOCAL _rec, _t_rec
 
-sort_siht( nGodina, nMjesec, cIdRadn, cGroup )
+   IF g_vars( @nGodina, @nMjesec, @cIdRadn, @cGroup ) == 0
+      RETURN
+   ENDIF
 
-if Pitanje(,"Pobrisati zapise sa ovim kriterijem (D/N)","N") == "N"
-    return
-endif
+   sort_siht( nGodina, nMjesec, cIdRadn, cGroup )
 
-set order to tag "2"
-go top
+   IF Pitanje(, "Pobrisati zapise sa ovim kriterijem (D/N)", "N" ) == "N"
+      RETURN
+   ENDIF
 
-nCnt := 0
-do while !EOF()
+   SET ORDER TO TAG "2"
+   GO TOP
 
-    ++ nCnt
+   nCnt := 0
+   DO WHILE !Eof()
 
-    SKIP 1
-    _t_rec := RECNO() 
-    SKIP -1
+      ++ nCnt
 
-    _rec := dbf_get_rec()
-    delete_rec_server_and_dbf( "ld_radsiht", _rec )
+      SKIP 1
+      _t_rec := RecNo()
+      SKIP -1
 
-    GO ( _t_rec )
+      _rec := dbf_get_rec()
+      delete_rec_server_and_dbf( "ld_radsiht", _rec )
 
-enddo
+      GO ( _t_rec )
 
-go top
-set filter to
+   ENDDO
 
-msgbeep("pobrisao " + ALLTRIM(STR(nCnt)) + " zapisa..." )
+   GO TOP
+   SET FILTER TO
 
-return
+   msgbeep( "pobrisao " + AllTrim( Str( nCnt ) ) + " zapisa..." )
+
+   RETURN
 
 
 
@@ -502,44 +510,42 @@ return
 // cItem - string za prikazati
 // nPadR - n vrijednost pad-a
 // ------------------------------------------------
-function _show_get_item_value(cItem, nPadR)
+FUNCTION _show_get_item_value( cItem, nPadR )
 
-if nPadR <> nil
-    cItem := PADR( cItem, nPadR )
-endif
-@ row(), col() + 3 SAY cItem
+   IF nPadR <> nil
+      cItem := PadR( cItem, nPadR )
+   ENDIF
+   @ Row(), Col() + 3 SAY cItem
 
-return .t.
+   RETURN .T.
 
 
 // ------------------------------------------------
 // vraca ime i prezime radnika
 // ------------------------------------------------
-function _rad_ime( cId, lImeOca )
-local xRet := ""
-local nTArea := SELECT()
+FUNCTION _rad_ime( cId, lImeOca )
 
-if lImeOca == nil
-    lImeOca := .f.
-endif
+   LOCAL xRet := ""
+   LOCAL nTArea := Select()
 
-select (F_RADN)
-if !used()
-    O_RADN
-endif
+   IF lImeOca == nil
+      lImeOca := .F.
+   ENDIF
 
-seek cId
+   SELECT ( F_RADN )
+   IF !Used()
+      O_RADN
+   ENDIF
 
-xRet := ALLTRIM( field->ime )
-xRet += " "
-if lImeOca == .t.
-    xRet += "(" + ALLTRIM( field->imerod ) + ") "
-endif
-xRet += ALLTRIM( field->naz )
+   SEEK cId
 
-select (nTArea)
-return xRet
+   xRet := AllTrim( field->ime )
+   xRet += " "
+   IF lImeOca == .T.
+      xRet += "(" + AllTrim( field->imerod ) + ") "
+   ENDIF
+   xRet += AllTrim( field->naz )
 
+   SELECT ( nTArea )
 
-
-
+   RETURN xRet

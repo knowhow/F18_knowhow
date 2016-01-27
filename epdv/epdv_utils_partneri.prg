@@ -10,7 +10,7 @@
  */
 
 
-#include "epdv.ch"
+#include "f18.ch"
 
 
 FUNCTION s_partner( cIdPartn )

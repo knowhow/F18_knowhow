@@ -681,6 +681,8 @@ FUNCTION SortPrez( cId )
    RETURN cVrati
 
 
+// HACK: 2i indeks sortime pravi probleme
+/*
 FUNCTION SortIme( cId )
 
    LOCAL cVrati := ""
@@ -693,28 +695,12 @@ FUNCTION SortIme( cId )
    SET ORDER TO TAG "1"
 
    HSEEK cId
-
    cVrati := ime + naz + imerod + id
 
    SELECT ( nArr )
 
    RETURN cVrati
-
-
-FUNCTION SortVar( cId )
-
-   LOCAL cVrati := ""
-   LOCAL nArr := Select()
-
-   O_RADKR
-   SEEK cId
-   SELECT RJES
-   SEEK RADKR->naosnovu + RADKR->idradn
-   cVrati := varijanta
-   SELECT ( nArr )
-
-   RETURN cVrati
-
+*/
 
 
 FUNCTION NLjudi()

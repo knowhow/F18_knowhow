@@ -28,6 +28,10 @@
     {
       "name": "NOTE",
       "hidden": false
+    },
+    {
+      "name": "HACK",
+      "hidden": false
     }
   ],
   "marked": {

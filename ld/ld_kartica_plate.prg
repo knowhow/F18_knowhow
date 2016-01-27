@@ -179,7 +179,7 @@ FUNCTION ld_kartica_plate( cIdRj, cMjesec, cGodina, cIdRadn, cObrac )
    DO WHILE !Eof() .AND. cgodina == godina .AND. idrj = cidrj .AND. cmjesec = mjesec .AND. idradn = cIdRadn .AND. !( lViseObr .AND. !Empty( cObracun ) .AND. obr <> cObracun )
 
       aNeta := {}
-	
+
       IF lViseObr .AND. Empty( cObracun )
          ScatterS( Godina, Mjesec, IdRJ, IdRadn )
       ELSE
@@ -197,7 +197,7 @@ FUNCTION ld_kartica_plate( cIdRj, cMjesec, cGodina, cIdRadn, cObrac )
       SELECT ld
 
       AAdd( aNeta, { vposla->idkbenef, _UNeto } )
-	
+
       __var_obr := get_varobr()
 
       IF cRTRada == "S"
@@ -261,7 +261,7 @@ FUNCTION ZaglKar()
       ENDDO
    ENDIF
 
-   ? LOKAL( "OBRACUN PLATE ZA" ) + Space( 1 ) + Str( mjesec, 2 ) + "/" + Str( godina, 4 ) + " (obr. " + IspisObr() + ")", " ZA " + Upper( Trim( gTS ) ), gNFirma
+   ?U "OBRAČUN PLATE ZA" + Space( 1 ) + Str( mjesec, 2 ) + "/" + Str( godina, 4 ) + " (obr. " + IspisObr() + ")", " ZA " + Upper( Trim( gTS ) ), gNFirma
    ? "RJ:", idrj, ld_rj->naz
    ? idradn, "-", RADNIK, "  Mat.br:", radn->matbr
    ShowHiredFromTo( radn->hiredfrom, radn->hiredto, "" )
@@ -284,7 +284,7 @@ FUNCTION ZaglKar()
    IF __var_obr == "2"
        ?? Space( 2 ) + Lokal( "Koef.licnog odbitka:" ), AllTrim( Str( g_klo( ld->ulicodb ) ) )
    ENDIF
-	
+
    IF __radni_sati == "D"
        ?? Space( 2 ) + Lokal( "Radni sati:   " ) + AllTrim( Str( ld->radsat ) )
    ENDIF
@@ -457,6 +457,3 @@ FUNCTION ld_kumulativna_primanja( cIdRadn, cIdPrim )
    PopWA()
 
    RETURN nVrati
-
-
-

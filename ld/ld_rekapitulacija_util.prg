@@ -1248,7 +1248,7 @@ FUNCTION IspisKred( lSvi )
       IF gReKrOs == "X"
 
          ? cLinija
-         ? "  ", Lokal( "Od toga pojedinacni krediti:" )
+         ?U "  ", "Od toga pojedinačni krediti:"
 
          SELECT RADKR
          SET ORDER TO TAG "3"
@@ -1275,8 +1275,7 @@ FUNCTION IspisKred( lSvi )
                HSEEK cIdRadnKR
 
                SELECT RADKR
-               // TODO: ovdje je stajalo RADNIK, takvo polje ne postoji ?!
-               cOpis2 := "RADNIK"
+               cOpis2 := RADNIK
                nUkKrRad := 0
 
                DO WHILE !Eof() .AND. IDKRED == cIdKred .AND. cNaOsnovu == NAOSNOVU .AND. cIdRadnKR == IDRADN
@@ -1347,7 +1346,7 @@ FUNCTION IspisKred( lSvi )
       ELSE
 
          ? cLinija
-         ? "  ", Lokal( "Od toga pojedinacni krediti:" )
+         ?U "  ", "Od toga pojedinačni krediti:"
          cOpis2 := ""
          SELECT radkr
          SET ORDER TO TAG "3"

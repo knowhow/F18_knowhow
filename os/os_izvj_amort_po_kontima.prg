@@ -10,7 +10,7 @@
  */
 
 
-#include "os.ch"
+#include "f18.ch"
 
 
 function os_amortizacija_po_kontima()

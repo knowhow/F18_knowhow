@@ -42,11 +42,11 @@ FUNCTION ld_opci_sifrarnici()
    AAdd( _opcexe, {|| P_Radn() } )
    AAdd( _opc, lokal( "5. radne jedinice" ) )
    AAdd( _opcexe, {|| P_LD_RJ() } )
-   AAdd( _opc, lokal( "6. opstine" ) )
+   AAdd( _opc, lokal( "6. opštine" ) )
    AAdd( _opcexe, {|| P_Ops() } )
    AAdd( _opc, lokal( "9. vrste posla" ) )
    AAdd( _opcexe, {|| P_VPosla() } )
-   AAdd( _opc, lokal( "B. strucne spreme" ) )
+   AAdd( _opc, lokal( "B. stručne spreme" ) )
    AAdd( _opcexe, {|| P_StrSpr() } )
    AAdd( _opc, lokal( "C. kreditori" ) )
    AAdd( _opcexe, {|| P_Kred() } )
@@ -69,7 +69,7 @@ FUNCTION ld_opci_sifrarnici()
 
    f18_menu( "op", .F., _izbor, _opc, _opcexe )
 
-   RETURN
+   RETURN .T.
 
 
 

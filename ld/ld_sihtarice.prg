@@ -180,7 +180,7 @@ FUNCTION get_siht( lInfo, nGodina, nMjesec, cIdRadn, cGroup )
       cIdRadn := Space( 6 )
 
       IF g_vars( @nGodina, @nMjesec, @cIdRadn, @cGroup ) == 0
-         RETURN
+         RETURN .F.
       ENDIF
 
    ENDIF
@@ -199,11 +199,12 @@ FUNCTION get_siht( lInfo, nGodina, nMjesec, cIdRadn, cGroup )
 
    sort_siht( nGodina, nMjesec, cIdRadn, cGroup, nVar )
 
-   IF nVar > 0
+   // HACK: 2i index ld_rasiht ne valja
+   //IF nVar > 0
       SET ORDER TO TAG "2"
-   ELSE
-      SET ORDER TO TAG "2i"
-   ENDIF
+   //ELSE
+   //  SET ORDER TO TAG "2i"
+   //ENDIF
 
    GO TOP
 
@@ -309,7 +310,7 @@ FUNCTION get_siht2()
    ENDIF
 
    IF g_vars( @nGodina, @nMjesec, @cIdRadn, @cGroup ) == 0
-      RETURN
+      RETURN .F.
    ENDIF
 
    sort_siht( nGodina, nMjesec, cIdRadn, cGroup )
@@ -446,13 +447,13 @@ FUNCTION sort_siht( nGodina, nMjesec, cIdRadn, cGroup, nVar )
    SET ORDER TO TAG "2"
    GO TOP
 
-   IF nVar == 1
-      SET ORDER TO TAG "2i"
-      GO TOP
-   ENDIF
+   // HACK: 2i ld_radsiht ne valja
+   //IF nVar == 1
+   //    SET ORDER TO TAG "2i"
+   //    GO TOP
+   //ENDIF
 
-   RETURN
-
+   RETURN .T.
 
 // ------------------------------------------
 // brisanje sihtarice
@@ -468,7 +469,7 @@ FUNCTION del_siht()
    LOCAL _rec, _t_rec
 
    IF g_vars( @nGodina, @nMjesec, @cIdRadn, @cGroup ) == 0
-      RETURN
+      RETURN .F.
    ENDIF
 
    sort_siht( nGodina, nMjesec, cIdRadn, cGroup )

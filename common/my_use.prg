@@ -141,6 +141,7 @@ FUNCTION my_use( alias, table, new_area, _rdd, semaphore_param, excl, select_wa 
    LOCAL _tmp
    LOCAL nSelect
    LOCAL lOdradioFullSynchro := .F.
+   LOCAL lUspjesno
 
    IF excl == NIL
       excl := .F.
@@ -201,7 +202,7 @@ FUNCTION my_use( alias, table, new_area, _rdd, semaphore_param, excl, select_wa 
          dbf_semaphore_synchro( table, @lOdradioFullSynchro )
 
          IF lOdradioFullSynchro
-            set_a_dbf_rec_chk0( _a_dbf_rec["table"] )   
+            set_a_dbf_rec_chk0( _a_dbf_rec["table"] )
          ENDIF
 
          IF !_a_dbf_rec[ "chk0" ]
@@ -226,16 +227,16 @@ FUNCTION my_use( alias, table, new_area, _rdd, semaphore_param, excl, select_wa 
 
    nCnt := 0
 
+   lUspjesno := .F.
    DO WHILE nCnt < 10
 
       BEGIN SEQUENCE WITH {| err| Break( err ) }
+
          dbUseArea( new_area, _rdd, _dbf, alias, !excl, .F. )
          IF File( ImeDbfCdx( _dbf ) )
             dbSetIndex( ImeDbfCDX( _dbf ) )
          ENDIF
-
-         // uspješno otvorena tabela
-         nCnt := 100
+         lUspjesno := .T.
 
       RECOVER USING oError
 
@@ -248,11 +249,11 @@ FUNCTION my_use( alias, table, new_area, _rdd, semaphore_param, excl, select_wa 
 
    ENDDO
 
-   IF nCnt < 100
+   IF !lUspjesno
       RaiseError( "ERROR: my_use " + table + " neusjesno !" )
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 

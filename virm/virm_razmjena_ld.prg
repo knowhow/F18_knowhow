@@ -10,7 +10,7 @@
  */
 
 
-#include "virm.ch"
+#include "f18.ch"
 
 
 STATIC FUNCTION _o_tables()

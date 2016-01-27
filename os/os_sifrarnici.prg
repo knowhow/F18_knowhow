@@ -10,7 +10,7 @@
  */
 
 
-#include "os.ch"
+#include "f18.ch"
 
 
 static function _o_sif_tables()

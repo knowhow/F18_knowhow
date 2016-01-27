@@ -843,10 +843,7 @@ STATIC FUNCTION _ld_calc_totals( lSvi, a_benef )
       PopuniOpsLD()
 
       IF RADN->isplata == "TR"  // isplata na tekuci racun
-
-         // RekapLd( cId, nGodina, nMjesec, nIzn1, nIzn2, cIdPartner, cOpis, cOpis2, lObavDodaj, cIzdanje )
-         // TODO: ovdje je stajalo RADNIK, takvo polje ne postoji
-         cOpis2 := "RADNIK"
+         cOpis2 := RADNIK
          Rekapld( "IS_" + RADN->idbanka, cGodina, cMjesecDo, _UIznos, 0, RADN->idbanka, RADN->brtekr, cOpis2, .T. )
       ENDIF
 

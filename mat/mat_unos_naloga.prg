@@ -10,7 +10,7 @@
  */
 
 
-#include "mat.ch"
+#include "f18.ch"
 
 STATIC PicDEM := "9999999.99"
 STATIC PicBHD := "999999999.99"
@@ -80,9 +80,9 @@ FUNCTION mat_unos_naloga()
 
    Box(, __unos_x, __unos_y )
 
-   @ m_x + __unos_x - 2, m_y + 2 SAY " <c-N>  Nove Stavke       ³ <ENT> Ispravi stavku   ³ <c-T> Brisi Stavku "
-   @ m_x + __unos_x - 1, m_y + 2 SAY " <c-A>  Ispravka naloga   ³ <c-P> Stampa naloga    ³ <a-A> Azuriranje   "
-   @ m_x + __unos_x, m_y + 2 SAY " <c-F9> Brisi pripremu    ³ <F5>  Kontrola zbira   ³                    "
+   @ m_x + __unos_x - 2, m_y + 2 SAY " <c-N>  Nove Stavke       ï¿½ <ENT> Ispravi stavku   ï¿½ <c-T> Brisi Stavku "
+   @ m_x + __unos_x - 1, m_y + 2 SAY " <c-A>  Ispravka naloga   ï¿½ <c-P> Stampa naloga    ï¿½ <a-A> Azuriranje   "
+   @ m_x + __unos_x, m_y + 2 SAY " <c-F9> Brisi pripremu    ï¿½ <F5>  Kontrola zbira   ï¿½                    "
 
    ObjDbedit( "PNal", __unos_x, __unos_y, {|| mat_pripr_key_handler() }, "", "Priprema..", , , , , 3 )
 

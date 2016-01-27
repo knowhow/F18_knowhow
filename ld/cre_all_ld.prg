@@ -142,7 +142,6 @@ FUNCTION cre_all_ld_sif( ver )
    CREATE_INDEX( "ID", "id", _alias )
 
 
-
    // --------------------------------------------------------
    // VPOSLA.DBF
    // --------------------------------------------------------
@@ -194,7 +193,6 @@ FUNCTION cre_all_ld_sif( ver )
    CREATE_INDEX( "ID", "id", _alias )
 
    RETURN .T.
-
 
 
 
@@ -612,7 +610,9 @@ FUNCTION cre_all_ld( ver )
    CREATE_INDEX( "2", "idkonto+str(godina)+str(mjesec)+idradn", _alias )
    CREATE_INDEX( "3", "idnorsiht+str(godina)+str(mjesec)+idradn", _alias )
    CREATE_INDEX( "4", "idradn+str(godina)+str(mjesec)+idkonto", _alias )
-   CREATE_INDEX( "2i", "idkonto+SORTIME(idradn)+str(godina)+str(mjesec)", _alias )
+
+   // HACK: 2i indeks sortime pravi probleme
+   //CREATE_INDEX( "2i", "idkonto+SORTIME(idradn)+str(godina)+str(mjesec)", _alias )
 
 
    // ------------------------------------------------------------

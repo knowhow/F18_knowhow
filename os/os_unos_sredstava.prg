@@ -9,7 +9,7 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-#include "os.ch"
+#include "f18.ch"
 
 
 static function _o_tables()

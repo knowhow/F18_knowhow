@@ -9,7 +9,7 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-#include "os.ch"
+#include "f18.ch"
 
 
 FUNCTION MainOs( cKorisn, cSifra, p3, p4, p5, p6, p7 )

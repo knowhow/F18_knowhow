@@ -10,7 +10,7 @@
  */
 
 
-#include "virm.ch"
+#include "f18.ch"
 
 function virm_prenos_kalk()
 local _firma := PADR( fetch_metric("virm_org_id", nil, "" ), 6 )
@@ -119,7 +119,7 @@ DO WHILE !EOF()
   SELECT POM
     APPEND BLANK
       c77 := TRIM(KALVIR->formula)
-      c77 := &c77    // samo da se izvrçi f-ja IzKalk() ako je ima
+      c77 := &c77    // samo da se izvrï¿½i f-ja IzKalk() ako je ima
       REPLACE IDVRPRIM WITH KALVIR->id ,;
               ROBA     WITH qqRoba     ,;
               KONTO    WITH qqKonto    ,;
@@ -241,7 +241,7 @@ CLOSERET
 // --------------------------------------
 // cRoba : uslov za obuhvatanje artikala
 // cKonto: uslov za obuhvatanje konta
-// cIzraz: izraz za utvrÐivanje iznosa
+// cIzraz: izraz za utvrï¿½ivanje iznosa
 // cMP   : "M"-magacin ili "P"-prodavnica
 // cRT   : prvi parametar je uslov za "R"-roba , "T" tarifa
 // ----------------------------------------------------------

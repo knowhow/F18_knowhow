@@ -10,7 +10,7 @@
  */
 
 
-#include "os.ch"
+#include "f18.ch"
 
 
 
@@ -199,7 +199,7 @@ do while !eof() .and. ( field->idrj = cIdrj .or. empty(cidrj))
                 select_os_sii()
             endif
 
-            // utvrdjivanje da li sredstvo ima sadaçnju vrijednost
+            // utvrdjivanje da li sredstvo ima sadaï¿½nju vrijednost
             // --------------------------------------------------
 
             lImaSadVr:=.f.

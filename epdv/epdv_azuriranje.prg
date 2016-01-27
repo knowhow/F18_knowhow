@@ -10,7 +10,7 @@
  */
 
 
-#include "epdv.ch"
+#include "f18.ch"
 
 FUNCTION azur_kif()
    RETURN azur_ku_ki( "KIF" )

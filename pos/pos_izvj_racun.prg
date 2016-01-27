@@ -80,29 +80,29 @@ FUNCTION pos_stampa_racuna( cIdPos, cBrDok, lPrepis, cIdVrsteP, dDatumRn, aVezan
       ENDIF
 
       DO WHILE !Eof() .AND. &cPosDB->( IdPos + IdVd + DToS( Datum ) + BrDok ) == ( cIdPos + VD_RN + DToS( dDatumRn ) + cBrDok )
-	
+
          nIznos += Kolicina * Cijena
-	
+
          SELECT odj
          seek &cPosDB->idodj
          select &cPosDB
-  	
+
          IF Right( odj->naz, 5 ) == "#1#0#"
             nNeplaca += Kolicina * Cijena - ncijena * Kolicina
          ELSEIF Right( odj->naz, 6 ) == "#1#50#"
             nNeplaca += Kolicina * Cijena / 2 - ncijena
          ENDIF
-	
+
          IF ( gPopVar = "P" .AND. gClanPopust )
             IF !Empty( cPartner )
                nNeplaca += kolicina * NCijena
             ENDIF
          ENDIF
-	
+
          IF ( gPopVar = "P" .AND. !gClanPopust )
             nNeplaca += kolicina * NCijena
          ENDIF
-	
+
          SKIP
       ENDDO
 
@@ -137,7 +137,7 @@ FUNCTION pos_stampa_racuna( cIdPos, cBrDok, lPrepis, cIdVrsteP, dDatumRn, aVezan
       ELSE
          cBrDok := &cPosDB->brdok
       ENDIF
-	
+
       cPom := " * "
       Scatter()
       _Kolicina := 0
@@ -160,9 +160,9 @@ FUNCTION pos_stampa_racuna( cIdPos, cBrDok, lPrepis, cIdVrsteP, dDatumRn, aVezan
             ? aPom[ i ]
          NEXT
          SELECT &cPosDB
-		
+
          nIznosSt := _Kolicina * ( _Cijena - _NCijena )
-   		
+
          IF gKolDec == N_ROUNDTO
             ? Space( 1 ) + PadR( "(T" + AllTrim( _IdTarifa ) + ")", 6 ) + Str( _Kolicina, 9, N_ROUNDTO ), if( !lPrepis, _Jmj, roba->jmj ), "x "
          ELSE
@@ -174,11 +174,11 @@ FUNCTION pos_stampa_racuna( cIdPos, cBrDok, lPrepis, cIdVrsteP, dDatumRn, aVezan
             ?? PadR( AllTrim( Str( _Cijena, 8, gCijDec ) ), 8 ) + Str( nIznosSt, 8, N_ROUNDTO )
          ENDIF
       ENDIF
-  	
+
       // obracun poreza
       SELECT TARIFA
       Seek2( _IdTarifa )
-		
+
       IF glPorezNaSvakuStavku
          nPPP := tarifa->opp
          nPPU := tarifa->ppp
@@ -233,7 +233,7 @@ FUNCTION pos_stampa_racuna( cIdPos, cBrDok, lPrepis, cIdVrsteP, dDatumRn, aVezan
             aRekPor[ nPoz ][ 3 ] += aIPor[ 2 ]
             aRekPor[ nPoz ][ 4 ] += aIPor[ 3 ]
          ENDIF
-	
+
       ENDIF
       SELECT &cPosDB
    ENDDO
@@ -473,7 +473,7 @@ FUNCTION StampaPrep( cIdPos, cDatBrDok, aVezani, fEkran, lViseOdjednom, lOnlyFil
          IF gBrojSto == "D"
             //
          ENDIF
-		
+
          // select pom
          // seek POS->IdRoba+POS->IdCijena+STR (POS->Cijena, 10, 3)
          // if Found()
@@ -488,7 +488,7 @@ FUNCTION StampaPrep( cIdPos, cDatBrDok, aVezani, fEkran, lViseOdjednom, lOnlyFil
          // replace datum WITH pos->datum
          // endif
          // select pos
-    		
+
          nIznos += pos->( kolicina * cijena )
          SELECT odj
          SEEK pos->idodj
@@ -519,13 +519,11 @@ FUNCTION StampaPrep( cIdPos, cDatBrDok, aVezani, fEkran, lViseOdjednom, lOnlyFil
       ELSE
          pos_stampa_racuna( cIdPos, pos_doks->brdok, .T., pos_doks->idvrstep, pos_doks->datum, aVezani )
       ENDIF
-	
+
       RETURN
    ENDIF
 
-   // TODO: ovu funkciju izbaciti
-   // napraviti sve kroz StampaRac() kao sto je slucaj sa novim obracunom poreza
-   // Ostavljeno trenutno samo u ovoj varijanti (Ugostiteljstvo)
+   // TODO: ovu funkciju izbaciti, napraviti sve kroz StampaRac() kao sto je slucaj sa novim obracunom poreza, Ostavljeno trenutno samo u ovoj varijanti (Ugostiteljstvo)
 
    IF fEkran
       IF !lViseOdjednom
@@ -740,33 +738,33 @@ FUNCTION StampaRekap( cIdRadnik, cBrojStola, dDatumOd, dDatumDo )
    nCnt := 0
 
    DO WHILE !Eof() .AND. field->idpos == gIdPos .AND. field->idradnik == cIdRadnik .AND. field->datum <= dDatumDo .AND. field->datum >= dDatumOd
-	
+
       IF field->zakljucen <> "N"
          SKIP
          LOOP
       ENDIF
-	
+
       IF ( field->sto <> cBrojStola )
          SKIP
          LOOP
       ENDIF
       // markiraj ga kao zakljucen sa Z
       IF ( field->zakljucen == "N" )
-		
+
          ++nCnt
-		
+
          IF nTek == 0
             nTek := RecNo()
          ENDIF
-		
+
          AAdd( aGrupni, { pos_doks->idpos, pos_doks->brdok, pos_doks->idvrstep, pos_doks->datum } )
-		
+
          nTRec := RecNo()
          SKIP
          nNNRec := RecNo()
          SKIP -1
          REPLACE field->zakljucen WITH "Z"
-		
+
          GO nNNRec
       ENDIF
    ENDDO
@@ -956,7 +954,7 @@ FUNCTION fill_rb_traka( cIdPos, cBrDok, dDatRn, lPrepis, aRacuni, cTime )
 
       dDatRn := aRacuni[ i, 4 ]
       cBrDok := aRacuni[ i, 2 ]
-	
+
       IF lPrepis == .T.
          cStalRac := cBrDok
       ENDIF
@@ -970,7 +968,7 @@ FUNCTION fill_rb_traka( cIdPos, cBrDok, dDatRn, lPrepis, aRacuni, cTime )
       SET ORDER TO TAG "1"
       GO TOP
       SEEK cIdPos + VD_RN + DToS( dDatRn ) + cBrDok
-	
+
       // msgbeep( _pos->brdok + "," + cIdPos + "," + VD_RN + "," + cBrDok + "," + DTOS( dDatRn ) )
 
       IF !lPrepis
@@ -987,7 +985,7 @@ FUNCTION fill_rb_traka( cIdPos, cBrDok, dDatRn, lPrepis, aRacuni, cTime )
          SELECT dokspf
          SET ORDER TO TAG "1"
          hseek cIdPos + VD_RN + DToS( dDatRn ) + cBrDok
-		
+
          SELECT pos_doks
          Seek2( cIdPos + VD_RN + DToS( dDatRn ) + cBrDok )
          cSto := pos_doks->sto
@@ -999,22 +997,22 @@ FUNCTION fill_rb_traka( cIdPos, cBrDok, dDatRn, lPrepis, aRacuni, cTime )
             cBrStola := AllTrim( Str( pos_doks->sto_br ) )
          ENDIF
       ENDIF
-	
+
       SELECT osob
       SET ORDER TO TAG "NAZ"
       hseek cIdRadnik
       cRdnkNaz := osob->naz
-	
+
       SELECT vrstep
       SET ORDER TO TAG "ID"
       hseek cVrstaP
-	
+
       IF !Found()
          cNazVrstaP := "GOTOVINA"
       ELSE
          cNazVrstaP := AllTrim( vrstep->naz )
       ENDIF
-	
+
       IF lPrepis == .T.
          SELECT pos
       ELSE
@@ -1023,7 +1021,7 @@ FUNCTION fill_rb_traka( cIdPos, cBrDok, dDatRn, lPrepis, aRacuni, cTime )
 
       DO WHILE !Eof() .AND. iif( lPrepis == .T., pos->( idpos + idvd + DToS( datum ) + brdok ) == ( cIdPos + VD_RN + DToS( dDatRn ) + cBrDok ), ;
             _pos->( idpos + idvd + DToS( datum ) + brdok ) == ( cIdPos + VD_RN + DToS( dDatRn ) + cBrDok ) )
-			
+
          nCjenBPDV := 0
          nCjenPDV := 0
          nKolicina := 0
@@ -1032,22 +1030,22 @@ FUNCTION fill_rb_traka( cIdPos, cBrDok, dDatRn, lPrepis, aRacuni, cTime )
          nCjen2PDV := 0
          nPDV := 0
          nIznPop := 0
-			
+
          cIdRoba := field->idroba
          cIdTarifa := field->idtarifa
-		
+
          SELECT roba
          hseek cIdRoba
          cJmj := roba->jmj
          cRobaNaz := AllTrim( roba->naz )
-	
+
          // seek-uj tarifu
          SELECT tarifa
          hseek cIdTarifa
          nPPDV := tarifa->opp
 
          nStPP := 0
-	
+
          IF lPrepis == .T.
             SELECT pos
          ELSE
@@ -1069,23 +1067,23 @@ FUNCTION fill_rb_traka( cIdPos, cBrDok, dDatRn, lPrepis, aRacuni, cTime )
          ENDCASE
 
          nPopust := 0
-		
+
          IF Round( nIznPop, 4 ) <> 0
-		
+
             // cjena 2 : cjena sa pdv - iznos popusta
             nCjen2PDV := nCjenPDV - nIznPop
-			
+
             // cjena 2 : cjena bez pdv - iznos popusta bez pdv
             nCjen2BPDV := nCjenBPDV - ( nIznPop / ( 1 + nPPDV / 100 ) )
-			
+
             // procenat popusta
             nPopust := ( ( nIznPop / ( 1 + nPPDV / 100 ) ) / nCjenBPDV ) * 100
-			
+
          ENDIF
-		
+
          // izracunaj ukupno za stavku
          nUkupno := ( nKolicina * nCjenPDV ) - ( nKolicina * nIznPop )
-		
+
          // izracunaj ukupnu vrijednost pdv-a
          nVPDV := ( ( nKolicina * nCjenBPDV ) - ( nKolicina * ( nIznPop / ( 1 + nPPDV / 100 ) ) ) ) * ( nPPDV / 100 )
 
@@ -1100,7 +1098,7 @@ FUNCTION fill_rb_traka( cIdPos, cBrDok, dDatRn, lPrepis, aRacuni, cTime )
             // ukupno popust
             nUPopust += ( nCjenBPDV - nCjen2BPDV ) * nKolicina
          ENDIF
-		
+
          // ukupno bez pdv-a - popust
          nUBPDVPopust := nUBPDV - nUPopust
 
@@ -1109,11 +1107,11 @@ FUNCTION fill_rb_traka( cIdPos, cBrDok, dDatRn, lPrepis, aRacuni, cTime )
          ELSE
             nUkStavka := nUBPDVPopust
          ENDIF
-		
+
          ++ nCSum
 
          dodaj_stavku_racuna( cStalRac, Str( nCSum, 3 ), "", cIdRoba, cRobaNaz, cJmj, nKolicina, Round( nCjenPDV, 3 ), Round( nCjenBPDV, 3 ), Round( nCjen2PDV, 3 ), Round( nCjen2BPDV, 3 ), Round( nPopust, 2 ), Round( nPPDV, 2 ), Round( nVPDV, 3 ), Round( nUkStavka, 3 ), 0, 0 )
-	
+
          IF lPrepis == .T.
             SELECT pos
          ELSE
@@ -1130,7 +1128,7 @@ FUNCTION fill_rb_traka( cIdPos, cBrDok, dDatRn, lPrepis, aRacuni, cTime )
 
    // dodaj zapis u drn.dbf
    add_drn( cStalRac, dDatRn, nil, nil, cTime, Round( nUBPDV, 2 ), Round( nUPopust, 2 ), Round( nUBPDVPopust, 2 ), Round( nUPDV, 2 ), Round( nUTotal - nFZaokr, 2 ), nCSum, 0, nFZaokr, 0 )
-	
+
    // mjesto nastanka racuna
    add_drntext( "R01", gRnMjesto )
    // dodaj naziv radnika

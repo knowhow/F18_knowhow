@@ -10,7 +10,7 @@
  */
 
 
-#include "os.ch"
+#include "f18.ch"
 
 
 function os_amortizacija_po_stopama()
@@ -173,7 +173,7 @@ do while !eof() .and. (idrj=cidrj .or. empty(cidrj))
                 endif
 
 
-                // utvrÐivanje da li sredstvo ima sadaçnju vrijednost
+                // utvrï¿½ivanje da li sredstvo ima sadaï¿½nju vrijednost
                 // --------------------------------------------------
                 lImaSadVr:=.f.
                 if cPromj <> "3"

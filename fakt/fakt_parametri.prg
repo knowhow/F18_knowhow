@@ -84,7 +84,6 @@ PROCEDURE fakt_params( read )
 
       // TODO: prebaciti na get_set sistem
       __fakt_params[ "def_rj" ] := fetch_metric( "fakt_default_radna_jedinica", my_user(), Space( 2 ) )
-
       __fakt_params[ "barkod" ] := fetch_metric( "fakt_prikaz_barkod", my_user(), "0" )
 
       // TODO: ugasiti ovaj globalni parametar

@@ -10,7 +10,7 @@
  */
 
 
-#include "epdv.ch"
+#include "f18.ch"
 
 function s_tarifa(cIdTar)
 local cPom := ""

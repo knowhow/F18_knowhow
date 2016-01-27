@@ -13,6 +13,7 @@
 
 STATIC __LD_FIELDS_COUNT := 60
 
+
 FUNCTION cre_all_ld_sif( ver )
 
    LOCAL _table_name, _alias, _created
@@ -263,6 +264,12 @@ FUNCTION cre_all_ld( ver )
    _table_name := "ld_radn"
 
    IF_NOT_FILE_DBF_CREATE
+
+   // 1.0.0
+   IF ver[ "current" ] > 0 .AND. ver[ "current" ] < 010000
+      modstru( { "*" + _table_name, "A ST_INVALID I 1 0" } )
+   ENDIF
+
    IF_C_RESET_SEMAPHORE
    CREATE_INDEX( "1", "id", _alias )
    CREATE_INDEX( "2", "naz", _alias )

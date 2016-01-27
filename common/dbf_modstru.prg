@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out knowhow ERP, a free and open source 
+/*
+ * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
  * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -16,405 +16,408 @@
  * string_par - .t. ako saljem string umjesto imena fajla
  */
 
-// ----------------------------------
-// ----------------------------------
-function modstru_form_file(chs_file)
-local oFile
-local _ret := {}
+FUNCTION modstru_form_file( chs_file )
 
-oFile := TFileRead():New(chs_file)
-oFile:Open()
+   LOCAL oFile
+   LOCAL _ret := {}
 
-do while oFile:MoreToRead()
-  AADD(_ret, oFile:ReadLine())
-enddo
+   oFile := TFileRead():New( chs_file )
+   oFile:Open()
 
-oFile:Close()
+   DO WHILE oFile:MoreToRead()
+      AAdd( _ret, oFile:ReadLine() )
+   ENDDO
 
-modstru(_ret)
+   oFile:Close()
 
-// ------------------------------------------------------------------
-//  Modstru({"*fin_budzet", "C IDKONTO C 10 0",  "A IDKONTO2 C 7 0"})
-// ------------------------------------------------------------------
-function modstru(a_commands)
-local _path, _ime_dbf
-local _brisi_dbf := .f.,  _rename_dbf := NIL
-local _linija := 0
-local _lin
-local _stru_changed := .f.
-local _curr_stru, _new_stru
-local _full_name
-local _msg
+   modstru( _ret )
 
-CLOSE ALL
+   // ------------------------------------------------------------------
+   // Modstru({"*fin_budzet", "C IDKONTO C 10 0",  "A IDKONTO2 C 7 0"})
+   // ------------------------------------------------------------------
 
-log_write("Modstru cmd: " + pp(a_commands), 7)
+FUNCTION modstru( a_commands )
 
-Box(, 6, 65, .f., "DBF modstru")
+   LOCAL _path, _ime_dbf
+   LOCAL _brisi_dbf := .F.,  _rename_dbf := NIL
+   LOCAL _linija := 0
+   LOCAL _lin
+   LOCAL _stru_changed := .F.
+   LOCAL _curr_stru, _new_stru
+   LOCAL _full_name
+   LOCAL _msg
 
-@ m_x + 1, m_y + 2 SAY "DBF modifikacija struktura"
+   CLOSE ALL
 
+altd()
 
-_ime_dbf:=""
-_path := my_home()
+   log_write( "MODSTRU cmd: " + pp( a_commands ), 3 )
 
-for each _lin in a_commands
-  
-    if empty(_lin) .or.  left(_lin, 1) == ";"
-        loop
-    endif
+   Box(, 6, 65, .F., "DBF modstru" )
 
-    if LEFT(_lin, 1) == "*"
-      
-       kopi(_path, _ime_dbf, _curr_stru, _new_stru, @_brisi_dbf, @_rename_dbf, @_stru_changed)
-       
-       _lin := substr(_lin, 2, len(trim(_lin))-1)
-
-       _ime_dbf := ALLTRIM(_lin)
+   @ m_x + 1, m_y + 2 SAY "DBF modifikacija struktura"
 
 
-       _full_name := _path + _ime_dbf + "." + DBFEXT       
-       if file(_full_name)
-           select 1
+   _ime_dbf := ""
+   _path := my_home()
 
-           _msg := "START modstru: " + _path + _ime_dbf
-           log_write( _msg, 5 )
-           @ m_x + 3, m_y + 2 SAY _msg
+   FOR EACH _lin in a_commands
 
-           USE  (_path + _ime_dbf) ALIAS OLDDBF EXCLUSIVE
-       else
-           _ime_dbf := "*i"
-           BoxC()
-           log_write( "MODSTRU, nepostojeca tabela: " +  _full_name, 2 )
-           return .f.
-       endif
+      IF Empty( _lin ) .OR.  Left( _lin, 1 ) == ";"
+         LOOP
+      ENDIF
 
-       _stru_changed := .f.   
-  
-       _curr_stru := DBSTRUCT()
-       _new_stru := ACLONE(_curr_stru)      
+      IF Left( _lin, 1 ) == "*"
 
-        if empty(_ime_dbf)
+         kopi( _path, _ime_dbf, _curr_stru, _new_stru, @_brisi_dbf, @_rename_dbf, @_stru_changed )
+
+         _lin := SubStr( _lin, 2, Len( Trim( _lin ) ) -1 )
+
+         _ime_dbf := AllTrim( _lin )
+
+
+         _full_name := _path + _ime_dbf + "." + DBFEXT
+         IF File( _full_name )
+            SELECT 1
+
+            _msg := "START modstru: " + _path + _ime_dbf
+            log_write( _msg, 3 )
+            @ m_x + 3, m_y + 2 SAY _msg
+
+            USE  ( _path + _ime_dbf ) ALIAS OLDDBF EXCLUSIVE
+         ELSE
+            _ime_dbf := "*i"
+            BoxC()
+            log_write( "MODSTRU, nepostojeca tabela: " +  _full_name, 2 )
+            RETURN .F.
+         ENDIF
+
+         _stru_changed := .F.
+
+         _curr_stru := dbStruct()
+         _new_stru := AClone( _curr_stru )
+
+         IF Empty( _ime_dbf )
             log_write( "MODSTRU, nije zadat DBF fajl nad kojim se vrsi modifikacija strukture !", 3 )
             CLOSE ALL
-            return .f.
-        endif
+            RETURN .F.
+         ENDIF
 
 
-    else
-         _op := Rjec(@_lin)
-         if !chs_op(_op, @_lin, @_curr_stru, @_new_stru, @_brisi_dbf, @_rename_dbf, @_stru_changed)
-              log_write( "MODSTRU, problem: " + _ime_dbf, 2 )
-         endif
-    endif
-next
+      ELSE
+         _op := Rjec( @_lin )
+         IF !chs_op( _op, @_lin, @_curr_stru, @_new_stru, @_brisi_dbf, @_rename_dbf, @_stru_changed )
+            log_write( "MODSTRU, problem: " + _ime_dbf, 2 )
+         ENDIF
+      ENDIF
+   NEXT
 
-kopi(_path, _ime_dbf, _curr_stru, _new_stru, @_brisi_dbf, @_rename_dbf, @_stru_changed)
+   kopi( _path, _ime_dbf, _curr_stru, _new_stru, @_brisi_dbf, @_rename_dbf, @_stru_changed )
 
-log_write("END modstru ", 2)
+   log_write( "END modstru ", 2 )
 
-BoxC()
-CLOSE ALL
-return
+   BoxC()
+   CLOSE ALL
+
+   RETURN .T.
 
 
-// ---------------------------------------------------------------------------------------
-// ---------------------------------------------------------------------------------------
-static function chs_op(op, lin, curr_stru, new_stru, brisi_dbf, rename_dbf, stru_changed)
+STATIC FUNCTION chs_op( op, lin, curr_stru, new_stru, brisi_dbf, rename_dbf, stru_changed )
 
-local _ime_p, _tip, _len, _dec
-local _ime_p_2, _tip_2, _len_2, _dec_2
-local _pos, _pos_2
-local _l := lin
+   LOCAL _ime_p, _tip, _len, _dec
+   LOCAL _ime_p_2, _tip_2, _len_2, _dec_2
+   LOCAL _pos, _pos_2
+   LOCAL _l := lin
 
-op := ALLTRIM(op)
+   op := AllTrim( op )
 
-DO CASE
+   DO CASE
 
    CASE op == "IZBRISIDBF"
-          brisi_dbf:=.t.
+      brisi_dbf := .T.
 
    CASE op == "IMEDBF"
-          rename_dbf :=Rjec(@lin)
+      rename_dbf := Rjec( @lin )
 
    CASE op == "A"
-          _ime_p := Rjec(@lin)
-          _tip := Rjec(@lin)
-          _len := VAL(Rjec(@lin))
-          _dec := VAL(Rjec(@lin))
-          if !(_len > 0 .and. _len > _dec) .or. ( _tip == "C" .and. _dec > 0) .or. !(_tip $ "CNDM")
-                log_write( "MODSTRU, greska: dodavanje polja, linija: " + _l, 5 )
-                return .f.
-          endif
+      _ime_p := Rjec( @lin )
+      _tip := Rjec( @lin )
+      _len := Val( Rjec( @lin ) )
+      _dec := Val( Rjec( @lin ) )
+      IF !( _len > 0 .AND. _len > _dec ) .OR. ( _tip == "C" .AND. _dec > 0 ) .OR. !( _tip $ "CNDMI" )
+         log_write( "MODSTRU, greska: dodavanje polja, linija: " + _l, 5 )
+         RETURN .F.
+      ENDIF
 
-          _pos := ASCAN(curr_stru, {|x| x[1]== _ime_p})
-          if _pos <> 0
-                log_write( "MODSTRU, greska: polje " + _ime_p + " vec postoji u DBF-u, linija: " + _l, 5 )
-                return .f.
-          endif
+      _pos := AScan( curr_stru, {| x| x[ 1 ] == _ime_p } )
+      IF _pos <> 0
+         log_write( "MODSTRU, greska: polje " + _ime_p + " vec postoji u DBF-u, linija: " + _l, 5 )
+         RETURN .F.
+      ENDIF
 
-          log_write( "MODSTRU, dodajem polje: " + _ime_p + ", tip: " + _tip + ", duzina: " + ALLTRIM(STR(_len )) + ", dec: " + ALLTRIM( STR( _dec )), 5 )
-          AADD(new_stru, { _ime_p, _tip, _len, _dec} )
-         
-         stru_changed := .t.
+      log_write( "MODSTRU, dodajem polje: " + _ime_p + ", tip: " + _tip + ", duzina: " + AllTrim( Str( _len ) ) + ", dec: " + AllTrim( Str( _dec ) ), 5 )
+      AAdd( new_stru, { _ime_p, _tip, _len, _dec } )
+
+      stru_changed := .T.
 
    CASE op == "D"
 
-          _ime_p := upper(Rjec(@lin))
-          _pos := ASCAN(new_stru, {|x| x[1]== _ime_p})
-          if _pos<>0
-                log_write( "MODSTRU, brisem polje: " + _ime_p, 5 )
-                ADEL (new_stru, _pos)
-                // prepakuj array
-                Prepakuj(@new_stru)  
-                stru_changed := .t.
-          else
-                log_write( "MODSTRU, greska: brisanje nepostojeceg polja, linija: " + _l, 5 )
-                return .f.
-          endif
+      _ime_p := Upper( Rjec( @lin ) )
+      _pos := AScan( new_stru, {| x| x[ 1 ] == _ime_p } )
+      IF _pos <> 0
+         log_write( "MODSTRU, brisem polje: " + _ime_p, 5 )
+         ADel ( new_stru, _pos )
+         // prepakuj array
+         Prepakuj( @new_stru )
+         stru_changed := .T.
+      ELSE
+         log_write( "MODSTRU, greska: brisanje nepostojeceg polja, linija: " + _l, 5 )
+         RETURN .F.
+      ENDIF
 
-    CASE op == "C"
+   CASE op == "C"
 
-          _ime_p := upper (Rjec(@lin))
-          _tip :=   Rjec(@lin)
-          _len :=   VAL(Rjec(@lin))
-          _dec :=   VAL(Rjec(@lin))
-           
-          _pos := ASCAN(curr_stru, {|x| x[1]== _ime_p .and. x[2]== _tip .and. x[3]== _len .and. x[4]== _dec})
-           if _pos ==0
-                log_write( "MODSTRU, greska: zadana je promjena nepostojeceg polja, linija: " + _l, 5 )
-                return .f.
-           endif
+      _ime_p := Upper ( Rjec( @lin ) )
+      _tip :=   Rjec( @lin )
+      _len :=   Val( Rjec( @lin ) )
+      _dec :=   Val( Rjec( @lin ) )
 
-           _ime_p_2 := UPPER(Rjec(@lin))
-           _tip_2 := UPPER(Rjec(@lin))
-           _len_2 := VAL(Rjec(@lin))
-           _dec_2 := VAL(Rjec(@lin))
-                 
-           _pos_2 := ASCAN( curr_stru, {|x| x[1]== _ime_p_2})
-           if _pos_2 <> 0 .and.  _ime_p <> _ime_p_2
-                log_write( "MODSTRU, greska: zadana je promjena u postojece polje, linija: " + _l, 5 )
-                return .f.
-           endif
-           stru_changed :=.t.
+      _pos := AScan( curr_stru, {| x| x[ 1 ] == _ime_p .AND. x[ 2 ] == _tip .AND. x[ 3 ] == _len .AND. x[ 4 ] == _dec } )
+      IF _pos == 0
+         log_write( "MODSTRU, greska: zadana je promjena nepostojeceg polja, linija: " + _l, 5 )
+         RETURN .F.
+      ENDIF
 
-           if _tip == _tip_2
-               stru_changed := .t.
-           endif
- 
-            if ( _tip=="N" .and. _tip_2=="C")   
-               stru_changed := .t.
-            endif
-            
-            if ( _tip=="C" .and. _tip_2=="N")   
-               stru_changed := .t.
-            endif
-            
-            if ( _tip=="C" .and. _tip_2=="D")   
-                stru_changed := .t.
-            endif
-                
-            if !stru_changed
-                log_write( "MODSTRU, greska: neispravna konverzija, linija: " + _l, 5 )
-                return .f.
-            endif
+      _ime_p_2 := Upper( Rjec( @lin ) )
+      _tip_2 := Upper( Rjec( @lin ) )
+      _len_2 := Val( Rjec( @lin ) )
+      _dec_2 := Val( Rjec( @lin ) )
 
-            AADD(curr_stru[_pos], _ime_p_2)
-            AADD(curr_stru[_pos], _tip_2)
-            AADD(curr_stru[_pos], _len_2)
-            AADD(curr_stru[_pos], _dec_2)
-                    
+      _pos_2 := AScan( curr_stru, {| x| x[ 1 ] == _ime_p_2 } )
+      IF _pos_2 <> 0 .AND.  _ime_p <> _ime_p_2
+         log_write( "MODSTRU, greska: zadana je promjena u postojece polje, linija: " + _l, 5 )
+         RETURN .F.
+      ENDIF
+      stru_changed := .T.
 
-            _pos := ASCAN(new_stru, {|x| x[1]==_ime_p.and. x[2]==_tip .and. x[3]==_len .and. x[4]==_dec})
-            new_stru[_pos] := { _ime_p_2, _tip_2, _len_2, _dec_2 }
+      IF _tip == _tip_2
+         stru_changed := .T.
+      ENDIF
 
-            log_write( "MODSTRU, vrsim promjenu: " + _ime_p + ", tip: " + _tip + ", duzina: " + ALLTRIM( STR(_len)) + ", dec: " + ALLTRIM(STR( _dec )) + " -> " + _ime_p_2 + ", tip: " + _tip_2 + ", duzina: " + ALLTRIM(STR(_len_2)) + ", dec: " +  ALLTRIM(STR(_dec_2)), 5 )
- 
-             stru_changed := .t.          
+      IF ( _tip == "N" .AND. _tip_2 == "C" )
+         stru_changed := .T.
+      ENDIF
 
-    OTHERWISE
-           log_write( "MODSTRU, greska nepostojeca operacija: " + op, 5 )
-           return .f.
+      IF ( _tip == "C" .AND. _tip_2 == "N" )
+         stru_changed := .T.
+      ENDIF
 
-END CASE
+      IF ( _tip == "C" .AND. _tip_2 == "D" )
+         stru_changed := .T.
+      ENDIF
+
+      IF !stru_changed
+         log_write( "MODSTRU, greska: neispravna konverzija, linija: " + _l, 5 )
+         RETURN .F.
+      ENDIF
+
+      AAdd( curr_stru[ _pos ], _ime_p_2 )
+      AAdd( curr_stru[ _pos ], _tip_2 )
+      AAdd( curr_stru[ _pos ], _len_2 )
+      AAdd( curr_stru[ _pos ], _dec_2 )
 
 
-return .t. 
+      _pos := AScan( new_stru, {| x| x[ 1 ] == _ime_p .AND. x[ 2 ] == _tip .AND. x[ 3 ] == _len .AND. x[ 4 ] == _dec } )
+      new_stru[ _pos ] := { _ime_p_2, _tip_2, _len_2, _dec_2 }
+
+      log_write( "MODSTRU, vrsim promjenu: " + _ime_p + ", tip: " + _tip + ", duzina: " + AllTrim( Str( _len ) ) + ", dec: " + AllTrim( Str( _dec ) ) + " -> " + _ime_p_2 + ", tip: " + _tip_2 + ", duzina: " + AllTrim( Str( _len_2 ) ) + ", dec: " +  AllTrim( Str( _dec_2 ) ), 5 )
+
+      stru_changed := .T.
+
+   OTHERWISE
+      log_write( "MODSTRU, greska nepostojeca operacija: " + op, 5 )
+      RETURN .F.
+
+   END CASE
+
+   RETURN .T.
 
 
 // -----------------------------
 // ime_dbf obavezno "fin_budzet"
 // -----------------------------
-function kopi(path, ime_dbf, curr_stru, new_stru, brisi_dbf, rename_dbf, stru_changed)
-local _pos, _pos_2
-local _ext, _ime_old, _ime_new
-local _ime_p, _row, _path_2, _tmp
-local _ime_file, _ime_tmp, _ime_bak
-local _cdx_file
-local _f
-local _cnt 
+FUNCTION kopi( path, ime_dbf, curr_stru, new_stru, brisi_dbf, rename_dbf, stru_changed )
 
-_f := path + ime_dbf + "."
-if brisi_dbf
-     select OLDDBF
-     use
+   LOCAL _pos, _pos_2
+   LOCAL _ext, _ime_old, _ime_new
+   LOCAL _ime_p, _row, _path_2, _tmp
+   LOCAL _ime_file, _ime_tmp, _ime_bak
+   LOCAL _cdx_file
+   LOCAL _f
+   LOCAL _cnt
 
-     ferase(_f + DBFEXT)
-     log_write( "MODSTRU, brisem: " + _f + DBFEXT, 5 )
+   _f := path + ime_dbf + "."
+   IF brisi_dbf
+      SELECT OLDDBF
+      USE
 
-     ferase(_f +  MEMOEXT)
-     log_write( "MODSTRU, brisem: " + _f + MEMOEXT, 5 )
+      FErase( _f + DBFEXT )
+      log_write( "MODSTRU, brisem: " + _f + DBFEXT, 5 )
 
-     brisi_dbf := .f.
-     return
-endif
+      FErase( _f +  MEMOEXT )
+      log_write( "MODSTRU, brisem: " + _f + MEMOEXT, 5 )
 
-if rename_dbf != NIL
+      brisi_dbf := .F.
+      RETURN
+   ENDIF
 
-     select OLDDBF
-     use
-     for each _ext in {DBFEXT, MEMOEXT}
+   IF rename_dbf != NIL
 
-       _ime_old := _f  +  _ext
-       _ime_new := path + rename_dbf + _ext
-       if FRENAME(_ime_old, _ime_new) == 0
-          log_write( "MODSTRU, preimenovao: " + _ime_old + " U " + _ime_new, 5 )
-       endif
+      SELECT OLDDBF
+      USE
+      FOR EACH _ext in { DBFEXT, MEMOEXT }
 
-     next
-     rename_dbf := NIL
-endif
+         _ime_old := _f  +  _ext
+         _ime_new := path + rename_dbf + _ext
+         IF FRename( _ime_old, _ime_new ) == 0
+            log_write( "MODSTRU, preimenovao: " + _ime_old + " U " + _ime_new, 5 )
+         ENDIF
+
+      NEXT
+      rename_dbf := NIL
+   ENDIF
 
 
-if stru_changed
+   IF stru_changed
 
-     _cdx_file := path + ime_dbf + "." + INDEXEXT
-     if FILE(_cdx_file)
-       FERASE( path + _cdx_file)
-     endif
+      _cdx_file := path + ime_dbf + "." + INDEXEXT
+      IF File( _cdx_file )
+         FErase( path + _cdx_file )
+      ENDIF
 
-     for each _tmp in { MEMOEXT, INDEXEXT, DBFEXT} 
-        FERASE(path + "modstru_tmp." + _tmp)
-     next
+      FOR EACH _tmp in { MEMOEXT, INDEXEXT, DBFEXT }
+         FErase( path + "modstru_tmp." + _tmp )
+      NEXT
 
-     DBCREATE( my_home() + "modstru_tmp." + DBFEXT, new_stru)
+      dbCreate( my_home() + "modstru_tmp." + DBFEXT, new_stru )
 
-     select 2
-     USE ( my_home() + "modstru_tmp." + DBFEXT) ALIAS "tmp" EXCLUSIVE 
-     
-     select OLDDBF 
-     
+      SELECT 2
+      USE ( my_home() + "modstru_tmp." + DBFEXT ) ALIAS "tmp" EXCLUSIVE
 
-     @ m_x + 5, m_y + 2 SAY RECCOUNT()
-     set order to 0
-     go top
+      SELECT OLDDBF
 
-     _cnt := 0
-     do while !eof()
 
-        select tmp
-     
-        APPEND BLANK
+      @ m_x + 5, m_y + 2 SAY RecCount()
+      SET ORDER TO 0
+      GO TOP
 
-        for _i := 1 to LEN(curr_stru)
-         
-            _ime_p := curr_stru[_i, 1]
-         
-            if len(curr_stru[_i]) > 4
+      _cnt := 0
+      DO WHILE !Eof()
 
-                _ime_p_new := curr_stru[_i, 5]
-                DO CASE
-                    CASE curr_stru[_i, 2] == curr_stru[_i, 6]
-                        EVAL(FIELDBLOCK(_ime_p_new),  EVAL( FIELDWBLOCK(_ime_p, 1) ))
- 
-                    CASE (curr_stru[_i, 2] $ "BNIY") .and.  (curr_stru[_i, 6] $ "BNYI")
-                        // jedan tip numerika u drugi tip numerika
-                        EVAL(FIELDBLOCK(_ime_p_new),  EVAL( FIELDWBLOCK(_ime_p, 1) )) 
+         SELECT tmp
 
-                    CASE curr_stru[_i, 2] == "C" .and. (curr_stru[_i, 6] $ "BNIY")
-                        EVAL(FIELDBLOCK(_ime_p_new),  VAL(EVAL( FIELDWBLOCK(_ime_p, 1) )))
- 
-                    CASE (curr_stru[_i, 2] $ "BNIY") .and. curr_stru[_i, 6] == "C"
-                        EVAL(FIELDBLOCK(_ime_p_new),  STR(EVAL( FIELDWBLOCK(_ime_p, 1) )))
- 
-                    CASE curr_stru[_i, 2] == "C" .and. curr_stru[_i, 6] == "D"
-                        EVAL(FIELDBLOCK(_ime_p_new),  CTOD(EVAL( FIELDWBLOCK(_ime_p, 1) ))) 
-                
-                END CASE
+         APPEND BLANK
 
-             else
-                 _pos := ASCAN( new_stru, {|x| _ime_p== x[1]} )
-                 if _pos <> 0 
-                     EVAL(FIELDBLOCK(_ime_p),  EVAL( FIELDWBLOCK(_ime_p, 1) )) 
-                 endif
-             endif
-        next
+         FOR _i := 1 TO Len( curr_stru )
 
-        select OLDDBF
+            _ime_p := curr_stru[ _i, 1 ]
 
-        ++ _cnt
-        if (_cnt % 5) == 0
-              @ m_x + 5, m_y + 15 SAY _cnt
-        endif
+            IF Len( curr_stru[ _i ] ) > 4
 
-        skip
-    
-    enddo
+               _ime_p_new := curr_stru[ _i, 5 ]
+               DO CASE
+               CASE curr_stru[ _i, 2 ] == curr_stru[ _i, 6 ]
+                  Eval( FieldBlock( _ime_p_new ),  Eval( FieldWBlock( _ime_p, 1 ) ) )
 
-   CLOSE ALL
-     
-   for each _tmp in { DBFEXT, MEMOEXT, INDEXEXT }
+               CASE ( curr_stru[ _i, 2 ] $ "BNIY" ) .AND.  ( curr_stru[ _i, 6 ] $ "BNYI" )
+                  // jedan tip numerika u drugi tip numerika
+                  Eval( FieldBlock( _ime_p_new ),  Eval( FieldWBlock( _ime_p, 1 ) ) )
 
-      _ime_file := _f + _tmp
-      // modstru_tmp.dbf
-      _ime_tmp := my_home() + "modstru_tmp." + _tmp
-      // fin_suban.dbf_bak
-      _ime_bak := _f + _tmp + "_bak"
+               CASE curr_stru[ _i, 2 ] == "C" .AND. ( curr_stru[ _i, 6 ] $ "BNIY" )
+                  Eval( FieldBlock( _ime_p_new ),  Val( Eval( FieldWBlock( _ime_p, 1 ) ) ) )
 
-      if FILE(_ime_file)
-        FERASE(_ime_bak)
-        FRENAME(_ime_file, _ime_bak)
-        FRENAME(_ime_tmp, _ime_file)
-      endif
+               CASE ( curr_stru[ _i, 2 ] $ "BNIY" ) .AND. curr_stru[ _i, 6 ] == "C"
+                  Eval( FieldBlock( _ime_p_new ),  Str( Eval( FieldWBlock( _ime_p, 1 ) ) ) )
 
-   next
- 
-endif
+               CASE curr_stru[ _i, 2 ] == "C" .AND. curr_stru[ _i, 6 ] == "D"
+                  Eval( FieldBlock( _ime_p_new ),  CToD( Eval( FieldWBlock( _ime_p, 1 ) ) ) )
 
-return
+               END CASE
+
+            ELSE
+               _pos := AScan( new_stru, {| x| _ime_p == x[ 1 ] } )
+               IF _pos <> 0
+                  Eval( FieldBlock( _ime_p ),  Eval( FieldWBlock( _ime_p, 1 ) ) )
+               ENDIF
+            ENDIF
+         NEXT
+
+         SELECT OLDDBF
+
+         ++ _cnt
+         IF ( _cnt % 5 ) == 0
+            @ m_x + 5, m_y + 15 SAY _cnt
+         ENDIF
+
+         SKIP
+
+      ENDDO
+
+      CLOSE ALL
+
+      FOR EACH _tmp in { DBFEXT, MEMOEXT, INDEXEXT }
+
+         _ime_file := _f + _tmp
+         // modstru_tmp.dbf
+         _ime_tmp := my_home() + "modstru_tmp." + _tmp
+         // fin_suban.dbf_bak
+         _ime_bak := _f + _tmp + "_bak"
+
+         IF File( _ime_file )
+            FErase( _ime_bak )
+            FRename( _ime_file, _ime_bak )
+            FRename( _ime_tmp, _ime_file )
+         ENDIF
+
+      NEXT
+
+   ENDIF
+
+   RETURN
 
 
 // -------------------
 // -------------------
-function Rjec(cLin)
-local cOp, nPos
+FUNCTION Rjec( cLin )
 
-nPos:=aT(" ",cLin)
-if nPos==0 .and. !empty(cLin) // zadnje polje
-  cOp:=alltrim(clin)
-  cLin:=""
-  return cOp
-endif
+   LOCAL cOp, nPos
 
-cOp  := alltrim(left(cLin,nPos-1))
-cLin := right(cLin,len(cLin)-nPos)
-cLin := alltrim(cLin)
-return cOp
+   nPos := At( " ", cLin )
+   IF nPos == 0 .AND. !Empty( cLin ) // zadnje polje
+      cOp := AllTrim( clin )
+      cLin := ""
+      RETURN cOp
+   ENDIF
 
+   cOp  := AllTrim( Left( cLin, nPos - 1 ) )
+   cLin := Right( cLin, Len( cLin ) -nPos )
+   cLin := AllTrim( cLin )
 
-function Prepakuj(aNStru)
-local i, aPom
-
-aPom:={}
-
-for i:=1 to LEN(aNStru)
-  if aNStru[i]<>nil
-     AADD(aPom, aNStru[i])
-  endif
-next
-
-aNStru := ACLONE(aPom)
-
-return nil
+   RETURN cOp
 
 
+FUNCTION Prepakuj( aNStru )
+
+   LOCAL i, aPom
+
+   aPom := {}
+
+   FOR i := 1 TO Len( aNStru )
+      IF aNStru[ i ] <> nil
+         AAdd( aPom, aNStru[ i ] )
+      ENDIF
+   NEXT
+
+   aNStru := AClone( aPom )
+
+   RETURN NIL

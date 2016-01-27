@@ -86,4 +86,4 @@ FUNCTION cre_fin_mat( ver )
 
    CREATE_INDEX( "1", "idFirma+IdVD+BRDok", _alias )
 
-   RETURN
+   RETURN .T.

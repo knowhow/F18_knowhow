@@ -18,11 +18,13 @@ FUNCTION server_db_version()
    LOCAL _ret
    LOCAL _server := pg_server()
 
-   _qry := "SELECT u2.knowhow_package_version('fmk')"
+altd()
+   //_qry := "SELECT u2.knowhow_package_version('fmk')"
+   _qry := "select max(version) from schema_migrations"
 
    _ret := _sql_query( _server, _qry )
 
-   IF ValType( _ret ) == "L"
+   IF _ret:EOF()
       RETURN -1
    ENDIF
 

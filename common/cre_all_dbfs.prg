@@ -119,8 +119,7 @@ FUNCTION cre_all_dbfs( ver )
 
    log_write( "END crea_all_dbfs", 5 )
 
-   RETURN
-
+   RETURN .T.
 
 
 
@@ -129,8 +128,7 @@ FUNCTION CreSystemDb( ver )
    _kreiraj_params_tabele( ver )
    _kreiraj_adrese( ver )
 
-   RETURN
-
+   RETURN .T.
 
 
 
@@ -203,7 +201,7 @@ FUNCTION _kreiraj_adrese( ver )
 
    CREATE_INDEX( "ID", "id+naz", _alias )
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -235,7 +233,7 @@ FUNCTION CreGparam( nArea )
       CREATE_INDEX( "ID", "fsec+fh+fvar+rbr", cImeDBF )
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 FUNCTION KonvParams( cImeDBF )
@@ -258,7 +256,7 @@ FUNCTION KonvParams( cImeDBF )
    ENDIF
    CLOSE ALL
 
-   RETURN
+   RETURN .T.
 
 
 FUNCTION dbf_ext_na_kraju( cIme )
@@ -268,6 +266,7 @@ FUNCTION dbf_ext_na_kraju( cIme )
       cIme := cIme + "." + DBFEXT
    ENDIF
 
+   RETURN cIme
 
 /*
     aDbf := { ... struktura dbf .. }

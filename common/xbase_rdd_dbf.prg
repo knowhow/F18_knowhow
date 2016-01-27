@@ -12,32 +12,31 @@
 #include "f18.ch"
 
 
-function f18_ime_dbf( xTableRec )
+FUNCTION f18_ime_dbf( xTableRec )
 
    LOCAL _pos
    LOCAL _a_dbf_rec
    LOCAL _ret
- 
 
-   SWITCH VALTYPE( xTableRec ) 
+   SWITCH ValType( xTableRec )
 
    CASE "H"
       _a_dbf_rec := xTableRec
       EXIT
    CASE "C"
-      _a_dbf_rec := get_a_dbf_rec( FILEBASE( xTableRec, .t. ) )
-     EXIT
+      _a_dbf_rec := get_a_dbf_rec( FILEBASE( xTableRec, .T. ) )
+      EXIT
    OTHERWISE
-      Alert( "f1_ime_dbf arg ?! " + hb_valToStr( xTableRec ) )
+      Alert( "f1_ime_dbf arg ?! " + hb_ValToStr( xTableRec ) )
    ENDSWITCH
-  
-    if _a_dbf_rec[ "table" ] == "x"
-        Alert( "f18_ime_dbf alias :" + ToStr( xTableRec ) )
-    endif
 
-    _ret := my_home() + _a_dbf_rec["table"] + "." + DBFEXT
+   IF _a_dbf_rec[ "table" ] == "x"
+      Alert( "f18_ime_dbf alias :" + ToStr( xTableRec ) )
+   ENDIF
 
-return _ret
+   _ret := my_home() + _a_dbf_rec[ "table" ] + "." + DBFEXT
+
+   RETURN _ret
 
 
 
@@ -100,15 +99,23 @@ FUNCTION is_dbf_struktura_polja_identicna( cTable, cPolje, nLen, nWidth )
 
 
 FUNCTION my_reccount()
+
    RETURN RecCount()
 
+
+
 FUNCTION my_delete()
+
    RETURN delete_with_rlock()
+
+
 
 FUNCTION my_delete_with_pack()
 
    my_delete()
+
    RETURN my_dbf_pack()
+
 
 FUNCTION delete_with_rlock()
 
@@ -116,9 +123,11 @@ FUNCTION delete_with_rlock()
       DELETE
       my_unlock()
       RETURN .T.
-   ELSE
-      RETURN .F.
    ENDIF
+
+   RETURN .F.
+
+
 
 /*
    ferase_dbf( "konto", .T. ) => izbriši tabelu "konto.dbf"
@@ -194,8 +203,7 @@ FUNCTION repair_dbfs()
 
    cre_all_dbfs( _ver )
 
-   RETURN
-
+   RETURN .T.
 
 
 
@@ -203,12 +211,15 @@ FUNCTION repair_dbfs()
 // open exclusive, open_index - otvoriti index
 // ------------------------------------------------------
 FUNCTION reopen_shared( dbf_table, open_index )
+
    RETURN reopen_dbf( .F., dbf_table, open_index )
 
 
 
 FUNCTION reopen_exclusive( dbf_table, open_index )
+
    RETURN reopen_dbf( .T., dbf_table, open_index )
+
 
 
 FUNCTION reopen_dbf( excl, dbf_table, open_index )
@@ -224,7 +235,7 @@ FUNCTION reopen_dbf( excl, dbf_table, open_index )
 
    _a_dbf_rec  := get_a_dbf_rec( dbf_table, .T. )
    IF _a_dbf_rec[ "sql" ]
-        RETURN .F.
+      RETURN .F.
    ENDIF
 
    SELECT ( _a_dbf_rec[ "wa" ] )
@@ -245,9 +256,9 @@ FUNCTION reopen_dbf( excl, dbf_table, open_index )
 
    RECOVER USING _err
 
-         cMsg := "ERROR reopen_dbf: " + _err:description + ": tbl:" + _dbf + " excl:" + ToStr( excl )
-         log_write( cMsg, 2 )
-         lRet := .F.
+      cMsg := "ERROR reopen_dbf: " + _err:description + ": tbl:" + _dbf + " excl:" + ToStr( excl )
+      log_write( cMsg, 2 )
+      lRet := .F.
 
    END SEQUENCE
 
@@ -286,7 +297,7 @@ FUNCTION reopen_exclusive_and_zap( dbf_table, open_index )
 
 
 FUNCTION my_dbf_zap( cTabelaOrAlias )
-   
+
    LOCAL cAlias
    LOCAL lRet
 
@@ -300,15 +311,16 @@ FUNCTION my_dbf_zap( cTabelaOrAlias )
    lRet := reopen_exclusive_and_zap( cAlias, .T. )
    PopWa()
 
-   RETURN lRet   
- 
+   RETURN lRet
+
+
 FUNCTION my_dbf_pack( lOpenUSharedRezimu )
 
    LOCAL lRet
    LOCAL cAlias
    LOCAL cMsg
-   
-   cAlias := ALIAS()
+
+   cAlias := Alias()
 
    IF lOpenUSharedRezimu == NIL
       lOpenUSharedRezimu := .T.
@@ -321,17 +333,18 @@ FUNCTION my_dbf_pack( lOpenUSharedRezimu )
       __dbPack()
    ENDIF
 
-   IF !lRet .OR. lOpenUSharedRezimu  
-     // ako je neuspjesan bio reopetn u ekskluzivnom režimu obavezno otvoriti ponovo
-     lRet := reopen_dbf( .F., cAlias, .T. )
+   IF !lRet .OR. lOpenUSharedRezimu
+      // ako je neuspjesan bio reopetn u ekskluzivnom režimu obavezno otvoriti ponovo
+      lRet := reopen_dbf( .F., cAlias, .T. )
    ENDIF
 
    IF Alias() <> cAlias
-        PopWa()
-        cMsg := "my_dbf_pack :" + Alias() + " <> " + cAlias
-        RaiseError( cMsg )
+      PopWa()
+      cMsg := "my_dbf_pack :" + Alias() + " <> " + cAlias
+      RaiseError( cMsg )
    ENDIF
    PopWa()
+
    RETURN lRet
 
 
@@ -371,9 +384,7 @@ FUNCTION pakuj_dbf( a_dbf_rec, lSilent )
 
    END SEQUENCE
 
-   RETURN
-
-
+   RETURN .T.
 
 
 
@@ -411,16 +422,15 @@ FUNCTION full_table_synchro()
 
 STATIC FUNCTION zatvori_dbf( value )
 
-   SELECT( value[ 'wa' ] )
+   Select( value[ 'wa' ] )
 
    IF Used()
       // ostalo je još otvorenih DBF-ova
       USE
       RETURN .F.
-   ELSE
-      RETURN .T.
    ENDIF
 
+   RETURN .T.
 
 
 FUNCTION dbf_open_and_count( a_dbf_rec, cnt, del )

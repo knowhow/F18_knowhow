@@ -42,8 +42,8 @@ FUNCTION read_dbf_version_from_config()
 
    RETURN _ret
 
-// ---------------------------------------
-// ---------------------------------------
+
+
 FUNCTION write_dbf_version_to_config()
 
    LOCAL _ini_params
@@ -62,4 +62,4 @@ FUNCTION write_dbf_version_to_config()
       MsgBeep( "problem write params" + _ini_params )
    ENDIF
 
-   RETURN
+   RETURN .T.

@@ -19,11 +19,11 @@ FUNCTION P_Radn( cId, dx, dy )
 
    LOCAL i, lRet
 
-
-   PRIVATE imekol
+   PRIVATE ImeKol
    PRIVATE kol
    PRIVATE cFooter := ""
    PRIVATE lPInfo := .F.
+
    IF PCount() = 0
       lPInfo := .T.
    ENDIF
@@ -116,10 +116,6 @@ FUNCTION P_Radn( cId, dx, dy )
 
    Kol := {}
 
-   FOR i := 1 TO Len( ImeKol )
-      AAdd( Kol, I )
-   NEXT
-
    IF gMinR == "B"
       ImeKol[ 6 ] := { Lokal( PadR( "MinR", 7 ) ), {|| Transform( kminrad, "9999.99" ) }, "kminrad" }
    ENDIF
@@ -130,8 +126,14 @@ FUNCTION P_Radn( cId, dx, dy )
       IF radn->( FieldPos( cPom ) <> 0 )
          cPom2 := IzFmkIni( "LD", "OpisRadn" + cPom, "KOEF_" + cPom, KUMPATH )
          AAdd( ImeKol, { cPom + "(" + cPom2 + ")", {|| &cPom. }, cPom } )
-         AAdd( Kol, nPom + 1 )
+         // AAdd( Kol, nPom + 1 )
       ENDIF
+   NEXT
+
+   AAdd( ImeKol, { Lokal( PadR( "st.invalid", 10 ) ), {|| st_invalid }, "st_invalid" } )
+
+   FOR i := 1 TO Len( ImeKol )
+      AAdd( Kol, I )
    NEXT
 
    lRet := PostojiSifra( F_RADN, 1, MAXROWS() - 15, MAXCOLS() - 15, Lokal( "Lista radnika" ) + Space( 5 ) + "<S> filter radnika on/off", @cId, dx, dy, {| Ch| RadBl( Ch ) },,,,, { "ID" } )
@@ -620,11 +622,11 @@ FUNCTION P_TipPr2( cId, dx, dy )
    PRIVATE kol
 
    ImeKol := { { PadR( "Id", 2 ), {|| id }, "id", {|| .T. }, {|| vpsifra( wid ) } }, ;
-      { PadR( "Naziv", 20 ), {||  naz }, "naz" },;
-      {      "Aktivan", {||  PadC( aktivan, 7 ) }, "aktivan" },;
-      {      "Fiksan", {||  PadC( fiksan, 7 ) }, "fiksan" },;
-      { PadR( "U fond s.", 10 ), {||  PadC( ufs, 10 ) }, "ufs" },;
-      { PadR( "U neto", 6 ), {||  PadC( uneto, 6 ) }, "uneto" },;
+      { PadR( "Naziv", 20 ), {||  naz }, "naz" }, ;
+      {      "Aktivan", {||  PadC( aktivan, 7 ) }, "aktivan" }, ;
+      {      "Fiksan", {||  PadC( fiksan, 7 ) }, "fiksan" }, ;
+      { PadR( "U fond s.", 10 ), {||  PadC( ufs, 10 ) }, "ufs" }, ;
+      { PadR( "U neto", 6 ), {||  PadC( uneto, 6 ) }, "uneto" }, ;
       { PadR( "Formula", 200 ), {|| formula }, "formula"  }, ;
       { PadR( "Opis", 8 ), {|| opis }, "opis"  } ;
       }
@@ -660,7 +662,6 @@ FUNCTION P_LD_RJ( cId, dx, dy )
    LOCAL lRet
    PRIVATE imekol := {}
    PRIVATE kol := {}
-
 
    PushWA()
 
@@ -714,12 +715,12 @@ FUNCTION P_Kred( cId, dx, dy )
    PRIVATE imekol, kol
 
    ImeKol := { { PadR( "Id", 6 ), {|| id }, "id", {|| .T. }, {|| vpsifra( wid ) } }, ;
-      { PadR( "Naziv", 30 ), {||  naz }, "naz" },;
-      { PadR( "Adresa", 30 ),{||  adresa }, "adresa" },;
-      { PadR( "Mjesto", 20 ),{||  mjesto }, "mjesto" },;
-      { PadR( "PTT", 5 ),{||  ptt }, "ptt" },;
-      { PadR( "Filijala", 30 ),{||  fil }, "fil" },;
-      { PadR( "Racun", 20 ),{||  ziro }, "ziro" },;
+      { PadR( "Naziv", 30 ), {||  naz }, "naz" }, ;
+      { PadR( "Adresa", 30 ), {||  adresa }, "adresa" }, ;
+      { PadR( "Mjesto", 20 ), {||  mjesto }, "mjesto" }, ;
+      { PadR( "PTT", 5 ), {||  ptt }, "ptt" }, ;
+      { PadR( "Filijala", 30 ), {||  fil }, "fil" }, ;
+      { PadR( "Racun", 20 ), {||  ziro }, "ziro" }, ;
       { PadR( "Partija", 20 ), {||  zirod }, "zirod" }                 ;
       }
 

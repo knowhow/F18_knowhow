@@ -15,7 +15,7 @@
 function s_tarifa(cIdTar)
 local cPom := ""
 
-PushWa()
+PushWA()
 
 SELECT (F_TARIFA)
 
@@ -42,7 +42,7 @@ return cPom
 function g_pdv_stopa(cIdTar)
 local nStopa
 
-PushWa()
+PushWA()
 
 SELECT (F_TARIFA)
 

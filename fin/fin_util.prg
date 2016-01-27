@@ -172,7 +172,7 @@ NEXT
 ? "sa papirnim kopijama te zatim ponovo azurirati."
 
 FF
-END PRINT
+ENDPRINT
 
 return
 
@@ -423,7 +423,7 @@ endif
 my_close_all_dbf()
 
 ff
-end print
+ENDPRINT
 
 
 return

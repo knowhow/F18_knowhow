@@ -166,7 +166,7 @@ FUNCTION pos_stampa_dokumenta()
       ENDIF
    ENDIF
 
-   END PRINT
+   ENDPRINT
 
    RETURN
 

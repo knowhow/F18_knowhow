@@ -29,7 +29,7 @@ FUNCTION P_Roba( cId, dx, dy, cSeek )
 
    ImeKol := {}
 
-   PushWa()
+   PushWA()
    O_ROBA_NOT_USED
 
    AAdd( ImeKol, { PadC( "ID", 10 ),  {|| id }, "id", {|| .T. }, {|| sifra_postoji( wId ) } } )

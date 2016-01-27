@@ -176,7 +176,7 @@ FUNCTION fin_sinteticki_nalog( kumulativ )
 
    FF
 
-   END PRINT
+   ENDPRINT
 
    IF kumulativ
       my_close_all_dbf()

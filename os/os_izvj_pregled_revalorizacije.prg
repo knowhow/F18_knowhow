@@ -265,7 +265,7 @@ endif
 ?
 ? "Napomena: Kolona 'Otp. vrijednost' prikazuje otpisanu vrijednost sredstva sa uracunatom amortizacijom za ovu godinu"
 FF
-end print
+ENDPRINT
 
 my_close_all_dbf()
 return

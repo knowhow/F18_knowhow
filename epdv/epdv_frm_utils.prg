@@ -17,7 +17,7 @@ FUNCTION v_id_tar( cIdTar, nOsnov, nPdv,  nShow, lNova )
    LOCAL nStopa
    LOCAL nPrerPdv
 
-   PushWa()
+   PushWA()
 
    P_Tarifa( @cIdTar )
 

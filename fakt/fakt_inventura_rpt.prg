@@ -118,7 +118,7 @@ FUNCTION RptInv()
    @ PRow(), PCol() + 1 SAY nTotd PICTURE PicDem
    ? cLin
 
-   END PRINT
+   ENDPRINT
 
    O_FAKT_PRIPR
    SELECT fakt_pripr

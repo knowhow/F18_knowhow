@@ -314,7 +314,7 @@ FUNCTION fakt_kartica()
       lPrviProlaz := .F.
 
       IF cPredh == "2"     // dakle sa prethodnim stanjem
-         PushWa()
+         PushWA()
          SELECT fakt
          SET FILTER TO
          IF fID_J
@@ -470,7 +470,7 @@ FUNCTION fakt_kartica()
       FF
    ENDIF
 
-   END PRINT
+   ENDPRINT
    my_close_all_dbf()
 
    RETURN

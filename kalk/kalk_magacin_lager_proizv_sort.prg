@@ -544,7 +544,7 @@ P_COND
 @ PROW(), 100 SAY "Str."+STR(::nStr,3)
 ? "Preduzece: ", gNFirma, 
 ?
-PushWa()
+PushWA()
 
 SELECT konto
 SEEK ::cIdKonto

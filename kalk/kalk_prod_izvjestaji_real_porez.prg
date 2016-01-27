@@ -455,7 +455,7 @@ ELSE
   NEXT
 ENDIF
 
-END PRINT
+ENDPRINT
 
 my_close_all_dbf()
 return

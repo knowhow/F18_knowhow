@@ -83,7 +83,7 @@ ENDDO
 ? _line
 
 FF
-END PRINT
+ENDPRINT
 
 my_close_all_dbf()
 return

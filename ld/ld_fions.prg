@@ -561,7 +561,7 @@ FUNCTION Predhodni( i, cVar, cObr )
       RETURN 0
    ENDIF
 
-   PushWa()
+   PushWA()
 
    // CREATE_INDEX("LDi1","str(godina)+idrj+str(mjesec)+idradn","LD")
    // CREATE_INDEX("LDi2","str(godina)+str(mjesec)+idradn","LD")
@@ -617,7 +617,7 @@ FUNCTION PrimSM( cOznaka, cTipPr )
 
    PRIVATE cpom := ""
 
-   PushWa()
+   PushWA()
 
    SELECT ( F_LDSM )
    IF !Used()
@@ -653,7 +653,7 @@ FUNCTION FillR( xValue, xIzn )
 
    LOCAL _rec
 
-   PushWa()
+   PushWA()
    SELECT radn
 
    _rec := dbf_get_rec()
@@ -672,7 +672,7 @@ FUNCTION GETR( cPrompt, xValue )
    LOCAL _rec
    PRIVATE Getlist := {}
 
-   PushWa()
+   PushWA()
    SELECT radn
 
    nRezult := &xValue

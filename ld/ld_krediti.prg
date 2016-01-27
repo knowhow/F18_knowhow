@@ -328,7 +328,7 @@ FUNCTION ld_krediti_key_handler( Ch )
    CASE Ch == K_CTRL_T
       nRet := DE_REFRESH
    CASE Ch == K_CTRL_P
-      PushWa()
+      PushWA()
       // StRjes(radkr->idradn,radkr->idkred,radkr->naosnovu)
       PopWA()
       nRet := DE_REFRESH
@@ -466,7 +466,7 @@ FUNCTION SumKredita()
    LOCAL fUsed := .T.
    LOCAL cTRada := " "
 
-   PushWa()
+   PushWA()
 
    SELECT ( F_RADKR )
    IF !Used()
@@ -523,7 +523,7 @@ FUNCTION Okreditu( _idradn, cIdkred, cNaOsnovu, _mjesec, _godina )
    LOCAL nUkupno, nPlaceno, nNTXORd
    LOCAL fused := .T.
 
-   PushWa()
+   PushWA()
 
    SELECT ( F_RADKR )
 
@@ -836,7 +836,7 @@ FUNCTION ld_lista_kredita()
    ENDDO
 
    FF
-   END PRINT
+   ENDPRINT
 
    my_close_all_dbf()
 
@@ -906,7 +906,7 @@ FUNCTION P_Krediti
    LOCAL i
    PRIVATE ImeKol
 
-   PushWa()
+   PushWA()
 
    SELECT radkr
    SET ORDER TO TAG "2"

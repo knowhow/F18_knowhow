@@ -610,7 +610,7 @@ STATIC FUNCTION _print_list( cMFrom, cMTo, cYear, nRptVar1, nRptVar2, cKred )
    ? p_potpis()
 
    FF
-   END PRINT
+   ENDPRINT
 
    RETURN
 

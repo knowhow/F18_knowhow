@@ -242,7 +242,7 @@ FUNCTION print_imp_exp_report( data )
 
 
    FF
-   END PRINT
+   ENDPRINT
 
    RETURN
 

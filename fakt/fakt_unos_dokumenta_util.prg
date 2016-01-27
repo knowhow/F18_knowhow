@@ -794,7 +794,7 @@ FUNCTION InoKlauzula()
 
    LOCAL _rec
 
-   PushWa()
+   PushWA()
 
    SELECT FTXT
    SEEK "IN"
@@ -824,7 +824,7 @@ FUNCTION KmsKlauzula()
 
    LOCAL _rec
 
-   PushWa()
+   PushWA()
 
    SELECT FTXT
    SEEK "KS"
@@ -1252,7 +1252,7 @@ FUNCTION TarifaR( cRegion, cIdRoba, aPorezi )
    LOCAL cTarifa
    PRIVATE cPolje
 
-   PushWa()
+   PushWA()
 
    IF Empty( cRegion )
       cPolje := "IdTarifa"
@@ -2055,7 +2055,7 @@ FUNCTION fakt_brisi_stavku_pripreme()
 
    ENDIF
 
-   PushWa()
+   PushWA()
 
    // pobrisi i fakt atribute ove stavke...
    oAtrib := F18_DOK_ATRIB():new( "fakt", F_FAKT_ATRIB )

@@ -111,7 +111,7 @@ FUNCTION KaLabelBKod()
          IF IzFmkIni( "BARKOD", "EAN", "", SIFPATH ) == "13"
             cIBK := NoviBK_A()
          ENDIF
-         PushWa()
+         PushWA()
          SET ORDER TO TAG "BARKOD"
          SEEK cIBK
          IF Found()
@@ -251,7 +251,7 @@ FUNCTION FaLabelBKod()
             cIBK := NoviBK_A()
          ENDIF
 
-         PushWa()
+         PushWA()
          SET ORDER TO TAG "BARKOD"
          SEEK cIBK
          IF Found()
@@ -540,7 +540,7 @@ FUNCTION tezinski_barkod( id, tezina, pop_push )
    _tb_tezina := PadR( Right( id, _tez_len ), _tez_len - 1 )
 
    IF pop_push
-      PushWa()
+      PushWA()
    ENDIF
 
    SELECT roba

@@ -197,7 +197,7 @@ FUNCTION ld_specifikacija_neto_primanja_po_opcinama()
    ENDDO
 
    FF
-   END PRINT
+   ENDPRINT
 
    my_close_all_dbf()
 

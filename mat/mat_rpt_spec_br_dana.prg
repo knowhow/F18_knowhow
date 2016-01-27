@@ -68,7 +68,7 @@ P_COND2
 _show_report( _params, _line )
 
 FF
-END PRINT
+ENDPRINT
 
 return
 

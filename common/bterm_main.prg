@@ -120,7 +120,7 @@ STATIC FUNCTION check_barkod_import()
    NEXT
 
    FF
-   END PRINT
+   ENDPRINT
 
    RETURN aErr
 

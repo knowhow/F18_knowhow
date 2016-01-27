@@ -83,7 +83,7 @@ STATIC FUNCTION GetVars( cVarijanta, cKolicina, tkm_no, len_naz )
          lOpened := .F.
       ENDIF
 
-      PushWa()
+      PushWA()
       SELECT kalk_pripr
       GO TOP
 

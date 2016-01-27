@@ -203,7 +203,7 @@ return
 function gvim_end()
 
 ?
-END PRINT
+ENDPRINT
 
 // vrati tekuce parametre
 gPrinter := par_1

@@ -197,7 +197,7 @@ ENDDO // eof
 
 FF
 
-END PRINT
+ENDPRINT
 
 closeret
 return

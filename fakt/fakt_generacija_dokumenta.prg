@@ -71,7 +71,7 @@ FUNCTION fakt_generisi_inventuru( cIdRj )
       SEEK cIdRj + cIdRoba
       lFoundUPripremi := Found()
       SELECT fakt
-      PushWa()
+      PushWA()
       IF !( lFoundUPripremi )
          fakt_stanje_artikla( cIdRj, cIdroba, @nUl, @nIzl, @nRezerv, @nRevers, .T. )
          IF ( nUl - nIzl - nRevers ) <> 0
@@ -315,7 +315,7 @@ FUNCTION fakt_generisi_racun_iz_pripreme()
    _br_dok := PadR( Replicate( "0", 5 ), 8 )
 
    SELECT fakt_pripr
-   PushWa()
+   PushWA()
 
    GO TOP
    _t_rec := 0

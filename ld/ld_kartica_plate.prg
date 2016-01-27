@@ -223,7 +223,7 @@ FUNCTION ld_kartica_plate( cIdRj, cMjesec, cGodina, cIdRadn, cObrac )
       FF
    ENDIF
 
-   END PRINT
+   ENDPRINT
 
    IF PCount() < 4
       my_close_all_dbf()

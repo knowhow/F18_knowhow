@@ -407,7 +407,7 @@ FUNCTION pos_kartica_artikla()
    ENDDO
 
    PaperFeed()
-   END PRINT
+   ENDPRINT
 
    CLOSE ALL
 

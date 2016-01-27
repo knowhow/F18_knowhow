@@ -308,7 +308,7 @@ if empty(qidAm)
 endif
 
 FF
-end print
+ENDPRINT
 
 if lExpRpt
     tbl_export()

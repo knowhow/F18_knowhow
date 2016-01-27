@@ -104,7 +104,7 @@ enddo
 
 FF
 
-END PRINT
+ENDPRINT
 
 return
 

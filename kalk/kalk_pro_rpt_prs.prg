@@ -344,7 +344,7 @@ endif
 ? cLine
 
 FF
-END PRINT
+ENDPRINT
 
 return
 
@@ -629,7 +629,7 @@ enddo
 
 
 FF
-END PRINT
+ENDPRINT
 
 return
 

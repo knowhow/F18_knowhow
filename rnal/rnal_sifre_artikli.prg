@@ -1843,6 +1843,6 @@ FUNCTION rpt_artikli_bez_elemenata()
    NEXT
 
    FF
-   END PRINT
+   ENDPRINT
 
    RETURN

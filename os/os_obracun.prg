@@ -434,7 +434,7 @@ FUNCTION os_obracun_amortizacije()
    @ PRow(), PCol() + 1 SAY nUkupno * nBBK PICT "99,999,999,999,999"
 
    FF
-   END PRINT
+   ENDPRINT
 
    my_close_all_dbf()
 
@@ -892,7 +892,7 @@ FUNCTION os_obracun_revalorizacije()
    ? "------------------------------------------------------"
    ?
    FF
-   end print
+   ENDPRINT
    closeret
 
    RETURN
@@ -910,7 +910,7 @@ FUNCTION izracunaj_os_reval( d1, d2, nRevAm )
    LOCAL nMjesOD, nMjesDo, nIzn, nIzn2, nk1, nk2, nkoef
 
    IF Year( d1 ) < Year( d2 )
-      PushWa()
+      PushWA()
       SELECT reval
       nTrecRev := RecNo()
       SEEK Str( Year( d1 ), 4 )

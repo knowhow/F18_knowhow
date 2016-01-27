@@ -206,7 +206,7 @@ enddo
 ?
 
 FF
-END PRINT
+ENDPRINT
 
 RptSendEmail(lAutoSent)
 

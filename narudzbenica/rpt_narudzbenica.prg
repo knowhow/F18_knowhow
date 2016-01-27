@@ -415,7 +415,7 @@ STATIC FUNCTION nar_header()
    cPTT := get_dtxt_opis( "K11" )
 
 
-   PushWa()
+   PushWA()
    SELECT F_PARTN
    IF !Used()
       O_PARTN

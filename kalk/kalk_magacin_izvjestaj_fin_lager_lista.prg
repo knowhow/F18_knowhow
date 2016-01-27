@@ -393,7 +393,7 @@ FUNCTION FLLM()
    ENDIF
 
    FF
-   END PRINT
+   ENDPRINT
 
    // pregled izvjestaja nakon generisanja u spreadsheet aplikaciji
    IF _export

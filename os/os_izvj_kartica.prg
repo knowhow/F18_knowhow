@@ -205,7 +205,7 @@ o_os_sii()
   ENDDO
 
   FF
-  END PRINT
+  ENDPRINT
 
 CLOSERET
 return

@@ -164,7 +164,7 @@ if fZaklj
 	PaperFeed()
 	END PRN2
 else
-	END PRINT
+	ENDPRINT
 endif
 
 my_close_all_dbf()

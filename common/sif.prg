@@ -40,7 +40,7 @@ FUNCTION p_sifra( nDbf, xIndex, nVisina, nSirina, cNaslov, cID, dx, dy,  bBlok, 
 
    PRIVATE cOrderTag
 
-   PushWa()
+   PushWA()
    PushSifV()
 
    IF lInvert == NIL
@@ -432,7 +432,7 @@ STATIC FUNCTION ed_sql_sif( nDbf, cNaslov, bBlok, aZabrane, aZabIsp )
 
    CASE Ch == K_CTRL_P
 
-      PushWa()
+      PushWA()
       IzborP2( Kol, PRIVPATH + Alias() )
       IF LastKey() == K_ESC
          RETURN DE_CONT
@@ -1075,7 +1075,7 @@ FUNCTION sifarnik_brisi_stavku()
 
    _alias := Alias()
 
-   PushWa()
+   PushWA()
 
    sql_table_update( nil, "BEGIN" )
    IF !f18_lock_tables( { Lower( Alias() ) }, .T. )
@@ -1131,7 +1131,7 @@ FUNCTION sifarnik_brisi_stavku()
 
 FUNCTION sifarnik_brisi_sve()
 
-   PushWa()
+   PushWA()
 
    IF Pitanje( , "Želite li sigurno izbrisati SVE zapise (D/N) ?", "N" ) == "N"
       RETURN DE_CONT
@@ -1196,7 +1196,7 @@ FUNCTION sifra_postoji( wId, cTag )
 
    cUpozorenje := "Vrijednost polja " + cTag + " već postoji !"
 
-   PushWa()
+   PushWA()
 
    SET ORDER TO TAG ( cTag )
    SEEK wId

@@ -307,7 +307,7 @@ STATIC FUNCTION DefKonv()
 
 FUNCTION Adresar()
 
-   PushWa()
+   PushWA()
 
    SELECT ( F_ADRES )
    IF !Used()
@@ -370,7 +370,7 @@ FUNCTION P_Adres( cId, dx, dy )
       AAdd( Kol, i )
    NEXT
 
-   PushWa()
+   PushWA()
 
    sif_sifk_fill_kol( PadR( "ADRES", 8 ), @ImeKol, @Kol )
 

@@ -67,7 +67,7 @@ FUNCTION fin_nalog_azurirani()
    fin_nalog( "2", NIL, dDatNal )
    my_close_all_dbf()
 
-   END PRINT
+   ENDPRINT
 
 
    RETURN
@@ -192,7 +192,7 @@ FUNCTION fin_gen_psuban_stampa_nalozi( lAuto, dDatNal )
       oNalozi:addNalog( oNalog )
 
       IF !lAuto
-         PushWa()
+         PushWA()
          my_close_all_dbf()
          f18_end_print( NIL, @_print_opt )
          fin_open_psuban()
@@ -590,7 +590,7 @@ FUNCTION fin_gen_sint_stavke( lAuto, dDatNal )
       ENDIF
 
       SELECT PSUBAN
-      PushWa()
+      PushWA()
 
       IF cDN == "D"
          SELECT PANAL

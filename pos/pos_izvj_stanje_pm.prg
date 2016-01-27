@@ -408,7 +408,7 @@ if cVrstaRs<>"S"
 endif
 
 FF
-END PRINT
+ENDPRINT
 
 close all
 return

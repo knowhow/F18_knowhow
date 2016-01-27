@@ -92,7 +92,7 @@ FUNCTION p_partneri( cId, dx, dy, lEmptyIdOk )
       RETURN .T.
    ENDIF
 
-   PushWa()
+   PushWA()
    O_PARTN_NOT_USED
 
    ImeKol := {}
@@ -287,7 +287,7 @@ FUNCTION g_part_fax( cIdPartner )
 
    LOCAL cFax
 
-   PushWa()
+   PushWA()
 
    SELECT F_PARTN
    IF !Used()
@@ -311,7 +311,7 @@ FUNCTION g_part_name( cIdPartner )
 
    LOCAL cRet
 
-   PushWa()
+   PushWA()
 
    SELECT F_PARTN
    IF !Used()

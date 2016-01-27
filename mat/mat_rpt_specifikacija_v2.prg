@@ -297,7 +297,7 @@ DO WHILE !eof()
 ENDDO 
 // firma
 
-END PRINT
+ENDPRINT
 
 my_close_all_dbf()
 return
@@ -410,7 +410,7 @@ if EMPTY(cIdRoba)
        ,"Specifikacija svih artikala - pregled za period od "+DTOC(dod)+" do "+DTOC(ddo),;
                                {|| FFor2s()},IF(gOstr=="D",,-1),,,,,)
   FF
-  END PRINT
+  ENDPRINT
 
 ELSE
 
@@ -458,7 +458,7 @@ ELSE
        ,"Specifikacija artikla - pregled po pogonima za period od "+DTOC(dod)+" do "+DTOC(ddo),;
                                {|| FFor1s()},IF(gOstr=="D",,-1),,,,,)
   FF
-  END PRINT
+  ENDPRINT
 ENDIF
 
 CLOSERET

@@ -155,7 +155,7 @@ STATIC FUNCTION _rpt_info( info )
    NEXT
 
    FF
-   END PRINT
+   ENDPRINT
 
    RETURN
 

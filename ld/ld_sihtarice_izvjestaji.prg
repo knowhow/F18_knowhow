@@ -590,7 +590,7 @@ STATIC FUNCTION _print_rpt()
    ? cLine
 
    FF
-   END PRINT
+   ENDPRINT
 
    RETURN
 

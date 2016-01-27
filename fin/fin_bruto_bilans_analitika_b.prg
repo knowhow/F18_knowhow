@@ -362,7 +362,7 @@ FUNCTION fin_bb_analitika_b( params )
    ?U M10
 
    FF
-   END PRINT
+   ENDPRINT
 
    my_close_all_dbf()
 

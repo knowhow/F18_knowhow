@@ -157,7 +157,7 @@ FUNCTION edRadniSati()
    PRIVATE ImeKol := {}
    PRIVATE Kol := {}
 
-   PushWa()
+   PushWA()
 
    O_RADN
    O_RADSAT

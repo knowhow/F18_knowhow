@@ -294,7 +294,7 @@ FUNCTION ld_kartica_plate_za_vise_mjeseci()
    ENDDO
 
    FF
-   END PRINT
+   ENDPRINT
    my_close_all_dbf()
 
    RETURN

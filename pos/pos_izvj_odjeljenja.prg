@@ -298,7 +298,7 @@ endif
       ? REPL ("=", 40)
     EndIF
   ENDIF
-  END PRINT
+  ENDPRINT
 CLOSERET
 *}
 
@@ -827,7 +827,7 @@ O_POS_DOKS
       ? REPL ("*", 40)
     EndIF
   ENDIF
-  END PRINT
+  ENDPRINT
 CLOSERET
 *}
 

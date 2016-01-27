@@ -15,7 +15,7 @@
 
 FUNCTION SifkFill( cSifk, cSifv, cSifrarnik, cIDSif )
 
-   PushWa()
+   PushWA()
 
    USE ( cSifK ) NEW   ALIAS _SIFK
    USE ( cSifV ) NEW   ALIAS _SIFV
@@ -71,7 +71,7 @@ FUNCTION SifkFill( cSifk, cSifv, cSifrarnik, cIDSif )
 FUNCTION SifkOsv( cSifk, cSifv, cSifrarnik, cIDSif )
 
    // {
-   PushWa()
+   PushWA()
 
    USE ( cSifK ) NEW   ALIAS _SIFK
    USE ( cSifV ) NEW   ALIAS _SIFV

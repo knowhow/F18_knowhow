@@ -2486,7 +2486,7 @@ FUNCTION kalk_centr_stampa_dokumenta()
       FF
 
       // zapamti tabelu, zapis na kojima si stao
-      PushWa()
+      PushWA()
       my_close_all_dbf()
       ENDPRINT
 

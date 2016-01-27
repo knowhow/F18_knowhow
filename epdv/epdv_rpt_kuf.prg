@@ -535,7 +535,7 @@ STATIC FUNCTION show_rpt()
    kuf_linija()
 
    FF
-   END PRINT
+   ENDPRINT
 
    RETURN
 

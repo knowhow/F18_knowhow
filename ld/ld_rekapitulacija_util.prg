@@ -36,7 +36,7 @@ FUNCTION RekapLd( cId, nGodina, nMjesec, nIzn1, nIzn2, cIdPartner, cOpis, cOpis2
       cIzdanje := ""
    ENDIF
 
-   pushwa()
+   PushWA()
 
    SELECT rekld
    IF lObavDodaj
@@ -91,16 +91,16 @@ FUNCTION BoxRekSvi()
    Box(, 10 + iif( IsRamaGlas(), 1, 0 ), 75 )
    DO WHILE .T.
 
-      @ m_x + 2, m_y + 2 SAY "Vrsta djelatnosti: "  GET cRTipRada VALID val_tiprada( cRTipRada ) PICT "@!"
+      @ m_x + 2, m_y + 2 SAY8 "Vrsta djelatnosti: "  GET cRTipRada VALID val_tiprada( cRTipRada ) PICT "@!"
 
-      @ m_x + 3, m_y + 2 SAY "Radne jedinice: "  GET  qqRJ PICT "@!S25"
-      @ m_x + 4, m_y + 2 SAY "Za mjesece od:"  GET  cmjesec  PICT "99" VALID {|| cMjesecDo := cMjesec, .T. }
-      @ m_x + 4, Col() + 2 SAY "do:"  GET  cMjesecDo  PICT "99" VALID cMjesecDo >= cMjesec
-      @ m_x + 4, Col() + 2 SAY "Obracun: " GET cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
-      @ m_x + 5, m_y + 2 SAY "Godina: "  GET  cGodina  PICT "9999"
-      @ m_x + 7, m_y + 2 SAY "Stručna Sprema: "  GET  cStrSpr PICT "@!" VALID Empty( cStrSpr ) .OR. P_StrSpr( @cStrSpr )
-      @ m_x + 8, m_y + 2 SAY "Opština stanovanja: "  GET  cOpsSt PICT "@!" VALID Empty( cOpsSt ) .OR. P_Ops( @cOpsSt )
-      @ m_x + 9, m_y + 2 SAY "Opština rada:       "  GET  cOpsRad  PICT "@!" VALID Empty( cOpsRad ) .OR. P_Ops( @cOpsRad )
+      @ m_x + 3, m_y + 2 SAY8 "Radne jedinice: "  GET  qqRJ PICT "@!S25"
+      @ m_x + 4, m_y + 2 SAY8 "Za mjesece od:"  GET  cmjesec  PICT "99" VALID {|| cMjesecDo := cMjesec, .T. }
+      @ m_x + 4, Col() + 2 SAY8 "do:"  GET  cMjesecDo  PICT "99" VALID cMjesecDo >= cMjesec
+      @ m_x + 4, Col() + 2 SAY8 "Obracun: " GET cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
+      @ m_x + 5, m_y + 2 SAY8 "Godina: "  GET  cGodina  PICT "9999"
+      @ m_x + 7, m_y + 2 SAY8 "Stručna Sprema: "  GET  cStrSpr PICT "@!" VALID Empty( cStrSpr ) .OR. P_StrSpr( @cStrSpr )
+      @ m_x + 8, m_y + 2 SAY8 "Opština stanovanja: "  GET  cOpsSt PICT "@!" VALID Empty( cOpsSt ) .OR. P_Ops( @cOpsSt )
+      @ m_x + 9, m_y + 2 SAY8 "Opština rada:       "  GET  cOpsRad  PICT "@!" VALID Empty( cOpsRad ) .OR. P_Ops( @cOpsRad )
 
       READ
 
@@ -127,15 +127,15 @@ FUNCTION BoxRekJ()
 
    Box(, 8 + IF( IsRamaGlas(), 1, 0 ), 75 )
 
-   @ m_x + 1, m_y + 2 SAY "Vrsta djelatnosti: "  GET cRTipRada VALID val_tiprada( cRTipRada ) PICT "@!"
-   @ m_x + 2, m_y + 2 SAY "Radna jedinica: "  GET cIdRJ
-   @ m_x + 3, m_y + 2 SAY "Za mjesece od:"  GET  cmjesec  PICT "99" VALID {|| cMjesecDo := cMjesec, .T. }
-   @ m_x + 3, Col() + 2 SAY "do:"  GET  cMjesecDo  PICT "99" VALID cMjesecDo >= cMjesec
-   @ m_x + 3, Col() + 2 SAY "Obracun: " GET cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
-   @ m_x + 4, m_y + 2 SAY "Godina: "  GET  cGodina  PICT "9999"
-   @ m_x + 6, m_y + 2 SAY "Stručna Sprema: "  GET  cStrSpr PICT "@!" VALID Empty( cStrSpr ) .OR. P_StrSpr( @cStrSpr )
-   @ m_x + 7, m_y + 2 SAY "Opština stanovanja: "  GET  cOpsSt PICT "@!" VALID Empty( cOpsSt ) .OR. P_Ops( @cOpsSt )
-   @ m_x + 8, m_y + 2 SAY "Opština rada:       "  GET  cOpsRad  PICT "@!" VALID Empty( cOpsRad ) .OR. P_Ops( @cOpsRad )
+   @ m_x + 1, m_y + 2 SAY8 "Vrsta djelatnosti: "  GET cRTipRada VALID val_tiprada( cRTipRada ) PICT "@!"
+   @ m_x + 2, m_y + 2 SAY8 "Radna jedinica: "  GET cIdRJ
+   @ m_x + 3, m_y + 2 SAY8 "Za mjesece od:"  GET  cmjesec  PICT "99" VALID {|| cMjesecDo := cMjesec, .T. }
+   @ m_x + 3, Col() + 2 SAY8 "do:"  GET  cMjesecDo  PICT "99" VALID cMjesecDo >= cMjesec
+   @ m_x + 3, Col() + 2 SAY8 "Obracun: " GET cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
+   @ m_x + 4, m_y + 2 SAY8 "Godina: "  GET  cGodina  PICT "9999"
+   @ m_x + 6, m_y + 2 SAY8 "Stručna Sprema: "  GET  cStrSpr PICT "@!" VALID Empty( cStrSpr ) .OR. P_StrSpr( @cStrSpr )
+   @ m_x + 7, m_y + 2 SAY8 "Opština stanovanja: "  GET  cOpsSt PICT "@!" VALID Empty( cOpsSt ) .OR. P_Ops( @cOpsSt )
+   @ m_x + 8, m_y + 2 SAY8 "Opština rada:       "  GET  cOpsRad  PICT "@!" VALID Empty( cOpsRad ) .OR. P_Ops( @cOpsRad )
 
    READ
 
@@ -1326,7 +1326,7 @@ FUNCTION IspisKred( lSvi )
 
                   _kr_partija := AllTrim( kred->zirod )
                   RekapLD( "KRED" + cIdKred + cNaOsnovu, cGodina, cMjesecDo, nUkKrRad, 0, ;
-                       cIdkred, cNaosnovu, AllTrim( cOpis2 ) + ", " + _kr_partija, .T. )
+                     cIdkred, cNaosnovu, AllTrim( cOpis2 ) + ", " + _kr_partija, .T. )
 
                ENDIF
 

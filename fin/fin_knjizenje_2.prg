@@ -113,7 +113,7 @@ LOCAL nRec:=0
       SKIP 1
     ENDIF
   ENDDO
-  END PRINT
+  ENDPRINT
   GO (nRec)
 RETURN (NIL)
 

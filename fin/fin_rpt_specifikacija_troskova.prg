@@ -146,7 +146,7 @@ nTO_rash := ( nLD_ras + nTmpBr + nLD_bruto + nKALK_ras + nFIN_ras )
 ? cLine
 
 FF
-END PRINT
+ENDPRINT
 
 return
 

@@ -13,7 +13,7 @@
 
 FUNCTION kontrola_zbira_naloga()
 
-   PushWa()
+   PushWA()
 
    SELECT ( F_FIN_PRIPR )
    IF !Used()

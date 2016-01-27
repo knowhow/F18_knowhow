@@ -1258,7 +1258,7 @@ STATIC FUNCTION show_last_racun( cIdPartner, cDestinacija, cIdRoba )
    cRacun := "00000000"
    cDestinacija := AllTrim( cDestinacija )
    select_fakt_pripr()
-   PushWa()
+   PushWA()
 
    GO TOP
 

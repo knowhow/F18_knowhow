@@ -337,7 +337,7 @@ FUNCTION ld_specifikacija_po_mjesecima()
    my_close_all_dbf()
 
    FF
-   END PRINT
+   ENDPRINT
 
    RETURN
 

@@ -308,7 +308,7 @@ enddo
 @ prow()+1, 25 SAY "  ___________________            ______________________"
 @ prow()+1, 25 SAY "     Blagajna                           Kontrola       "
 FF
-end print
+ENDPRINT
 closeret
 
 
@@ -575,7 +575,7 @@ enddo
 
 FF
 
-end print
+ENDPRINT
 
 closeret
 return

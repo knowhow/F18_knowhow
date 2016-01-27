@@ -429,7 +429,7 @@ STATIC FUNCTION gen_fin_kif_item( cSezona )
       ENDIF
 	
       PRIVATE _uk_pdv :=  0
-      PushWa()
+      PushWA()
       // --------------------------------------------------------------
       SELECT SUBAN
       GO ( nRecNoSuban )
@@ -602,7 +602,7 @@ STATIC FUNCTION trazi_dob( nRecNo, cIdFirma, cIdVn, cBrNal, cBrDok, nRbr )
 
    LOCAL i
 
-   PushWa()
+   PushWA()
 
    SELECT suban_2
 

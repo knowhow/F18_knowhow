@@ -14,7 +14,7 @@
 
 FUNCTION fakt_print_narudzbenica( cIdFirma, cIdTipDok, cBrDok )
 
-   PushWa()
+   PushWA()
 
    close_open_fakt_tabele()
 

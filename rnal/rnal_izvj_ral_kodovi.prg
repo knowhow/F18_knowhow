@@ -312,6 +312,6 @@ STATIC FUNCTION _r_ral_calc( dD_from, dD_to, nOper )
    my_close_all_dbf()
 
    FF
-   END PRINT
+   ENDPRINT
 
    RETURN

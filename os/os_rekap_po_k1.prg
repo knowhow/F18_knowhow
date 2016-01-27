@@ -133,7 +133,7 @@ do while !eof()
 
 enddo
 
-END PRINT
+ENDPRINT
 
 my_close_all_dbf()
 return

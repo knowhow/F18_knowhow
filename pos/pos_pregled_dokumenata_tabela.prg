@@ -275,7 +275,7 @@ FUNCTION pos_stampa_dokumenta_key_handler( dDat0, dDat1 )
                SKIP 1
             ENDDO
 
-            END PRINT
+            ENDPRINT
 
          ELSEIF cOdg == "D"
 
@@ -320,7 +320,7 @@ FUNCTION pos_stampa_dokumenta_key_handler( dDat0, dDat1 )
 
       IF pos_doks->idvd == "42"
 
-         PushWa()
+         PushWA()
          print_zak_br( pos_doks->zak_br )
          o_pos_tables()
          PopWa()

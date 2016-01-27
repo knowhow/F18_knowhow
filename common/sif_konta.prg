@@ -22,7 +22,7 @@ FUNCTION P_Konto( cId, dx, dy )
    ImeKol := {}
    Kol := {}
 
-   PushWa()
+   PushWA()
    O_KONTO_NOT_USED
 
    AAdd( ImeKol, { PadC( "ID", 7 ), {|| id }, "id", {|| .T. }, {|| sifra_postoji( wId ) } } )

@@ -154,7 +154,7 @@ FUNCTION P_Valuta( cid, dx, dy )
    ImeKol := {}
    Kol := {}
 
-   PushWa()
+   PushWA()
 
    O_VALUTE
 

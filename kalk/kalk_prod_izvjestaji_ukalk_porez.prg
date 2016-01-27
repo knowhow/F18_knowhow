@@ -273,7 +273,7 @@ ENDDO
 
 ?
 FF
-END PRINT
+ENDPRINT
 set softseek on
 
 closeret
@@ -507,7 +507,7 @@ ENDDO
 ?
 FF
 
-END PRINT
+ENDPRINT
 set softseek on
 
 closeret

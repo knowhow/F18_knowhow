@@ -83,7 +83,7 @@ FUNCTION epdv_otvori_kif_tabele( lPriprema )
 // ------------------------
 FUNCTION next_r_br( cTblName )
 
-   PushWa()
+   PushWA()
    DO CASE
    CASE cTblName == "P_KUF"
       SELECT p_kuf
@@ -104,7 +104,7 @@ FUNCTION next_r_br( cTblName )
 // ------------------------
 FUNCTION next_g_r_br( cTblName )
 
-   PushWa()
+   PushWA()
    DO CASE
    CASE cTblName == "KUF"
       SELECT kuf
@@ -128,7 +128,7 @@ FUNCTION next_br_dok( cTblName )
 
    LOCAL nLastBrDok
 
-   PushWa()
+   PushWA()
    DO CASE
    CASE cTblName == "KUF"
       SELECT kuf

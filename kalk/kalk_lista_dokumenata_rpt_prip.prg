@@ -34,7 +34,7 @@ do while !eof()
   ? cIdFirma+"-"+cIdVd+"-"+cBrDok, dDatDok, STR(nStavki,4), space(2), "__"
 enddo
 ? m
-END PRINT
+ENDPRINT
 closeret
 return
 *}

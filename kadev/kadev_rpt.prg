@@ -90,7 +90,7 @@ IF cPrikInt=="D"
 ENDIF
 
 
-// çtampanje izvjeçtaja
+// ï¿½tampanje izvjeï¿½taja
 // --------------------
 SELECT KADEV_0; GO TOP
 
@@ -129,7 +129,7 @@ ENDIF
 
 FF
 
-END PRINT
+ENDPRINT
 
 my_close_all_dbf()
 return
@@ -250,7 +250,7 @@ ENDIF
 
 // FF
 
-END PRINT
+ENDPRINT
 
 my_close_all_dbf()
 return

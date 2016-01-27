@@ -202,7 +202,7 @@ FUNCTION ld_specifikacija_po_rj()
       {|| formula_izvjestaja() }, IF( gOstr == "D",, -1 ),,,,, )
 
    FF
-   END PRINT
+   ENDPRINT
 
    my_close_all_dbf()
 

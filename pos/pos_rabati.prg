@@ -250,7 +250,7 @@ next
 ?
 ?
 
-END PRINT
+ENDPRINT
 
 return
 *}

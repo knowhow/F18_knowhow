@@ -262,7 +262,7 @@ FUNCTION ld_platni_spisak()
    NEXT
 
 
-   END PRINT
+   ENDPRINT
 
    my_close_all_dbf()
 
@@ -599,7 +599,7 @@ FUNCTION ld_platni_spisak_tekuci_racun( cVarijanta )
       CloseFileBanka( nH )
    ENDIF
 
-   END PRINT
+   ENDPRINT
 
    my_close_all_dbf()
 
@@ -898,7 +898,7 @@ FUNCTION ld_pregled_isplate_za_tekuci_racun( cVarijanta )
       CloseFileBanka( nH )
    ENDIF
 
-   END PRINT
+   ENDPRINT
 
    my_close_all_dbf()
 

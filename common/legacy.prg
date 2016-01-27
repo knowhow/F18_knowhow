@@ -413,7 +413,7 @@ ENDIF
 
 IF gPrinter <> cTekPrinter
 gPrinter := cTekPrinter
-PushWa()
+PushWA()
 O_GPARAMS
 PRIVATE cSection := "P"
 PRIVATE cHistory := gPrinter
@@ -581,7 +581,7 @@ FUNCTION PPrint()
    LOCAL ch
    LOCAL cSekvence := "N"
 
-   PushWa()
+   PushWA()
 
    SET CURSOR ON
    IF gPicSif == "8"

@@ -19,7 +19,7 @@ FUNCTION s_partner( cIdPartn )
    LOCAL cIdBroj
    LOCAL cPdvBroj
 
-   PushWa()
+   PushWA()
 
    o_partn()
 
@@ -80,7 +80,7 @@ FUNCTION my_firma( lRetArray )
    LOCAL cPom := gNFirma
    LOCAL _fields
 
-   PushWa()
+   PushWA()
 
    IF lRetArray == nil
       lRetArray := .F.
@@ -177,7 +177,7 @@ FUNCTION part_rejon( cIdPart )
 
    LOCAL cRejon
 
-   PushWa()
+   PushWA()
 
    o_partn()
    GO TOP

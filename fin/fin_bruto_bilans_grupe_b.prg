@@ -310,7 +310,7 @@ FUNCTION fin_bb_grupe_b( params )
    ?U M10
 
    FF
-   END PRINT
+   ENDPRINT
 
    my_close_all_dbf()
 

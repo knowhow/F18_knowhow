@@ -355,7 +355,7 @@ FUNCTION ld_pregled_plata()
    ? p_potpis()
 
    FF
-   END PRINT
+   ENDPRINT
 
    my_close_all_dbf()
 

@@ -78,7 +78,7 @@ endif
 ? cLm+"UKUPNO      : "+STR(nIznU2)
 ? cLm+"------------------------------------"
 
-END PRINT
+ENDPRINT
 CLOSERET
 *}
 

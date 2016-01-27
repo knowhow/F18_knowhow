@@ -265,7 +265,7 @@ if gVrstaRS<>"S"
 	PaperFeed()
 endif
 
-END PRINT
+ENDPRINT
 
 CLOSERET
 *}
@@ -417,7 +417,7 @@ if gVrstaRS<>"S"
 	PaperFeed()
 endif
 
-END PRINT
+ENDPRINT
 CLOSERET
 *}
 

@@ -298,7 +298,7 @@ endif
 
 ?
 
-END PRINT
+ENDPRINT
 
 return
 

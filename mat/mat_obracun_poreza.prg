@@ -133,5 +133,5 @@ enddo
 @ prow(),pcol()+1 SAY nT4  pict picdem
 @ prow(),pcol()+1 SAY nT5  pict picdem
 ? m
-END PRINT
+ENDPRINT
 closeret

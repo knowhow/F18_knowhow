@@ -21,7 +21,7 @@
 
 FUNCTION Dupli( cIdFirma, cIdVn, cBrNal )
 
-   PushWa()
+   PushWA()
 
    SELECT NALOG
    SET ORDER TO TAG "1"

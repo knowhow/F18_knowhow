@@ -21,7 +21,7 @@ FUNCTION P_Tarifa( cid, dx, dy )
    ImeKol := {}
    Kol := {}
 
-   PushWa()
+   PushWA()
    O_TARIFA
 
    AAdd( ImeKol, { "ID", {|| id }, "id", {|| .T. }, {|| sifra_postoji( wId ) }  } )
@@ -60,7 +60,7 @@ FUNCTION Tarifa( cIdKonto, cIdRoba, aPorezi, cIdTar )
    lUsedRoba := .T.
    lUsedTarifa := .T.
 
-   PushWa()
+   PushWA()
 
    IF Empty( cIdKonto )
       cPolje := "IdTarifa"

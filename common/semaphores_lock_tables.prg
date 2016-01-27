@@ -46,7 +46,7 @@ FUNCTION f18_lock_tables( a_tables, lAlreadyInTransakcija )
    LOCAL _ok := .T.
    LOCAL _i, _tbl, _dbf_rec
 
-   PushWa()
+   PushWA()
 
    hb_default( @lAlreadyInTransakcija, .F. )
 

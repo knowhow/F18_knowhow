@@ -366,10 +366,10 @@ IF lTekuci
   IF fZaklj
     END PRN2
   Else
-    END PRINT
+    ENDPRINT
   EndIF
 ELSE
-  END PRINT
+  ENDPRINT
 ENDIF
 
 IF fZaklj

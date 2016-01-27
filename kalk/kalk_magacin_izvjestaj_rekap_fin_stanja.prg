@@ -220,7 +220,7 @@ FUNCTION RFLLM()
    ? cLine
 
    FF
-   END PRINT
+   ENDPRINT
 
    my_close_all_dbf()
 

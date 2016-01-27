@@ -492,7 +492,7 @@ STATIC FUNCTION show_rpt()
    kif_linija()
 
    FF
-   END PRINT
+   ENDPRINT
 
    RETURN
 

@@ -1123,7 +1123,7 @@ STATIC FUNCTION ZaOdgovarajuci()
 FUNCTION IzfUgovor()
 
    IF IzFMkIni( 'FIN', 'VidiUgovor', 'N' ) == "D"
-      Pushwa()
+      PushWA()
 
       SELECT ( F_UGOV )
       IF !Used()

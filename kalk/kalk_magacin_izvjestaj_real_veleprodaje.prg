@@ -369,7 +369,7 @@ endif
 
 FF
 
-END PRINT
+ENDPRINT
 closeret
 return
 *}

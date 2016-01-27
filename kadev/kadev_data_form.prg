@@ -342,7 +342,7 @@ IF gPrinter=="L"
 ENDIF
 
 FF
-END PRINT             
+ENDPRINT             
 
 kadev_o_tables()
 kadev_set_relations()

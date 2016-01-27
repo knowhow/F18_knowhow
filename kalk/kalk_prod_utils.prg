@@ -340,7 +340,7 @@ FUNCTION FaktMPC( nMPC, cseek, dDatum )
    LOCAL nOrder
    nMPC := UzmiMPCSif()
    SELECT kalk
-   PushWa()
+   PushWA()
    SET FILTER TO
    // nOrder:=indexord()
    SET ORDER TO TAG "4" // idFirma+pkonto+idroba+dtos(datdok)
@@ -443,7 +443,7 @@ FUNCTION StaviMPCSif( nCijena, lUpit )
    ENDIF
 
    IF lAzuriraj
-      PushWa()
+      PushWA()
       SELECT ROBA
       _rec := dbf_get_rec()
       _rec[ cMpc ] := nCijena

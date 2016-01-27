@@ -88,7 +88,7 @@ FUNCTION update_idbr_pdvb_from_regb()
 
    LOCAL oPartnId, cRegB, cIdBr, cPdvBr
 
-   PushWa()
+   PushWA()
 
    SELECT PARTN
 

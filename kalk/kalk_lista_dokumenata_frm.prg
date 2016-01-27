@@ -366,7 +366,7 @@ STATIC FUNCTION pregled_dokumenata_hron_keyhandler( Ch )
       SELECT kalk_doks
       nRet := DE_CONT
    CASE Ch == K_CTRL_P
-      PushWa()
+      PushWA()
       cSeek := idfirma + idvd + brdok
       my_close_all_dbf()
       kalk_centr_stampa_dokumenta( .T., cSeek )

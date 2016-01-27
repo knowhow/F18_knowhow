@@ -193,7 +193,7 @@ STATIC FUNCTION stampaj_tkm( vars )
    ? _line
 
    FF
-   END PRINT
+   ENDPRINT
 
    RETURN
 

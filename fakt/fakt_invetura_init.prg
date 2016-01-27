@@ -222,7 +222,7 @@ METHOD loadFromTbl()
    IF !::oOwner:lPartnerLoaded
       if ::nRbr > 1
          // memo polje sa podacima partnera je popunjeno samo u prvoj stavci
-         PushWa()
+         PushWA()
          GO TOP
       ENDIF
       aMemo := ParsMemo( field->txt )

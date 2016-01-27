@@ -298,7 +298,7 @@ endif
    	endif
 	
 	FF
-	END PRINT
+	ENDPRINT
 	CLOSERET
 return
 *}

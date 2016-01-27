@@ -261,7 +261,7 @@ FUNCTION StampaInv( fLista, lAzurirana )
       PaperFeed ()
    ENDIF
 
-   END PRINT
+   ENDPRINT
 
    RETURN
 // }
@@ -296,7 +296,7 @@ FUNCTION StampaPLI( cBrDok )
       SKIP
    ENDDO
    PaperFeed ()
-   END PRINT
+   ENDPRINT
 
    RETURN
 
@@ -317,7 +317,7 @@ FUNCTION PrepisInvNiv( fInvent )
 
    SELECT pos
 
-   PushWa()
+   PushWA()
    USE
 
    SELECT pos_doks

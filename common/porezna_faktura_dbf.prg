@@ -193,7 +193,7 @@ FUNCTION get_drn_datum_isporuke()
 
    LOCAL xRet
 
-   PushWa()
+   PushWA()
 
    IF !Used( F_DRN )
       O_DRN

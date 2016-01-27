@@ -129,7 +129,7 @@ StampaTabele(aKol,{|| FSvaki1()},,gTabela,,;
      ,"Isporuceni asortiman - pregled po kupcima za period od "+DTOC(ddatod)+" do "+DTOC(ddatdo),;
                              {|| FFor1()},IF(gOstr=="D",,-1),,,,,)
 
-END PRINT
+ENDPRINT
 
 CLOSERET
 
@@ -253,7 +253,7 @@ StampaTabele(aKol,{|| FSvaki1()},,gTabela,,;
      ,"Pregled cijena za "+qqRoba+"-"+TRIM(ROBA->naz)+" za period od "+DTOC(ddatod)+" do "+DTOC(ddatdo),;
                              {|| FFor2()},IF(gOstr=="D",,-1),,,,,,.f.)
 
-END PRINT
+ENDPRINT
 
 my_close_all_dbf()
 return

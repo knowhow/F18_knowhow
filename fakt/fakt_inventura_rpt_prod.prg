@@ -58,7 +58,7 @@ FUNCTION RptInvObrPopisa()
 
    PrnClanoviKomisije()
 
-   END PRINT
+   ENDPRINT
 
    SELECT fakt_pripr
    GO nRecNo

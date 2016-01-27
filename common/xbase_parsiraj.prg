@@ -56,7 +56,7 @@ FUNCTION Parsiraj( cFilterUpit, cImeSifre, cTip, lRekurzivno, nSifWA )
       IF !Empty( cFilterUpit )
          nPos := AtToken( cFilterUpit, ";" )  // 12121;21212;1A -> 1A
          nsiflen := Len( cFilterUpit )
-         pushwa()
+         PushWA()
          SELECT ( nSifWA )
          IF nPos <> 0
             cIddd := PadR( SubStr( cFilterUpit, nPos ), Len( id ) )

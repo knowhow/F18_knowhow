@@ -514,7 +514,7 @@ STATIC FUNCTION prikazi_pregled_ukupno( cRj, cGodina, cMjOd, cMjDo, cRadnik, ;
    ? cLine
 
    FF
-   END PRINT
+   ENDPRINT
 
    RETURN
 
@@ -720,7 +720,7 @@ STATIC FUNCTION prikazi_pregled( cRj, cGodina, cMjOd, cMjDo, cRadnik, ;
    ? cLine
 
    FF
-   END PRINT
+   ENDPRINT
 
    RETURN
 

@@ -394,7 +394,7 @@ enddo
 my_unlock()
 
 my_close_all_dbf()
-END PRINT
+ENDPRINT
 
 return
 

@@ -84,7 +84,7 @@ FUNCTION lst_tek_dan()
    ? cLine
 
    FF
-   END PRINT
+   ENDPRINT
 
    RETURN
 
@@ -233,7 +233,7 @@ FUNCTION lst_ch_date()
    ? cLine
 
    FF
-   END PRINT
+   ENDPRINT
 
    RETURN
 
@@ -326,7 +326,7 @@ FUNCTION lst_real_tek_dan()
    ? cLine
 
    FF
-   END PRINT
+   ENDPRINT
 
    RETURN
 
@@ -465,7 +465,7 @@ FUNCTION lst_vrok_tek_dan()
    ? cLine
 
    FF
-   END PRINT
+   ENDPRINT
 
    IF cEmail == "D"
       gPrinter := cPrinter

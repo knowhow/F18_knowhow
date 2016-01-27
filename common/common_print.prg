@@ -570,7 +570,7 @@ FUNCTION SetGParams( cs,ch,cid,cvar,cval )
    LOCAL cPosebno := "N"
    PRIVATE GetList := {}
 
-   PushWa()
+   PushWA()
 
    PRIVATE cSection := cs
    PRIVATE cHistory := ch

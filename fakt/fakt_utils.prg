@@ -77,7 +77,7 @@ FUNCTION fakt_objekat_naz( id_obj )
 
    LOCAL _ret := ""
 
-   PushWa()
+   PushWA()
 
    O_FAKT_OBJEKTI
 
@@ -105,7 +105,7 @@ FUNCTION fakt_objekat_id( id_firma, id_tipdok, br_dok )
    LOCAL _ret := ""
    LOCAL _memo
 
-   PushWa()
+   PushWA()
    IF id_firma == NIL
       id_firma = fakt->idfirma
       id_tipdok = fakt->idtipdok

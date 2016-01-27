@@ -315,7 +315,7 @@ STATIC FUNCTION StKartKup()
    GO ( nRec )
 
    FF
-   END PRINT
+   ENDPRINT
 
    RETURN NIL
 
@@ -453,7 +453,7 @@ FUNCTION SaldaKupaca( lPocStanje )
    ?
    ? " " + PadC( AllTrim( Str( nStrana ) ) + ". i posljednja strana", 78 )
    FF
-   END PRINT
+   ENDPRINT
 
    CLOSERET
 

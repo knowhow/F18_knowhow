@@ -282,7 +282,7 @@ FUNCTION fakt_set_broj_dokumenta()
    LOCAL _fakt_params := fakt_params()
    LOCAL oAtrib
 
-   PushWa()
+   PushWA()
 
    SELECT fakt_pripr
    GO TOP

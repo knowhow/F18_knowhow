@@ -296,7 +296,7 @@ FUNCTION zapp( pack )
    recover
 
       log_write( "ZAP shared: " + Alias(), 5 )
-      PushWa()
+      PushWA()
       DO WHILE .T.
 
          // neophodno, posto je index po kriteriju deleted() !!

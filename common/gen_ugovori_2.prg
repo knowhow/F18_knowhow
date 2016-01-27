@@ -387,7 +387,7 @@ if cDatLFakt == nil
 endif
 
 
-PushWa()
+PushWA()
 
 dPom := dDatObr
 
@@ -997,7 +997,7 @@ for _i := 1 to LEN( data )
 next
 
 FF
-END PRINT
+ENDPRINT
 
 return
 

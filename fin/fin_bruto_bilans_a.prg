@@ -1109,7 +1109,7 @@ METHOD FinBrutoBilans:print_txt()
    ::rekapitulacija_klasa()
 
    FF
-   END PRINT
+   ENDPRINT
 
    my_close_all_dbf()
 

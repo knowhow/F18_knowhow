@@ -282,7 +282,7 @@ FUNCTION kalk_mag_promet_grupe_partnera()
 
    ? m
    FF
-   END PRINT
+   ENDPRINT
 
    IF gKalks
       SELECT kalk

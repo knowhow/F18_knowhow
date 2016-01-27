@@ -122,7 +122,7 @@ FUNCTION StampZaduz( cIdVd, cBrDok )
       ?
       ? PadL ( AllTrim ( gKorIme ), 39 )
 
-      END PRINT
+      ENDPRINT
 
       O_PRIPRZ
       GO nPrevRec
@@ -270,7 +270,7 @@ FUNCTION PrepisZad( cNazDok )
       PaperFeed()
    ENDIF
 
-   END PRINT
+   ENDPRINT
 
    SELECT ( _t_area )
 

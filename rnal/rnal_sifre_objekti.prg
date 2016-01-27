@@ -173,7 +173,7 @@ FUNCTION g_obj_desc( nObj_id, lEmpty )
 
    LOCAL cObjDesc := "?????"
 
-   PushWa()
+   PushWA()
 
    IF lEmpty == nil
       lEmpty := .F.

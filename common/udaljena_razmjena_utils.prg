@@ -703,7 +703,7 @@ FUNCTION _fill_sifk( sifrarnik, id_sif )
 
    LOCAL _rec
 
-   PushWa()
+   PushWA()
 
    SELECT e_sifk
 

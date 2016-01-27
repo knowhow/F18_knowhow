@@ -339,7 +339,7 @@ r_linija()
   
 
 FF
-END PRINT
+ENDPRINT
 return
 *}
 

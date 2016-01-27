@@ -560,7 +560,7 @@ endif
 
 aBanke := array_from_sifv( "PARTN", "BANK", cIdPartn )
 
-PushWa()
+PushWA()
 
 select banke
 
@@ -907,7 +907,7 @@ go top
 
 StampaTabele( _arr, , 2, gTabela, {|| .t. }, "4", "REKAPITULACIJA UPLATA", {|| .t. } )
  
-END PRINT
+ENDPRINT
 
 O_VIRM_PRIPR
 

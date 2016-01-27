@@ -323,7 +323,7 @@ STATIC FUNCTION print_delphi_label( aStampati, modul )
             cIBK := NoviBK_A()
          ENDIF
 
-         PushWa()
+         PushWA()
 
          SET ORDER TO TAG "BARKOD"
          SEEK cIBK

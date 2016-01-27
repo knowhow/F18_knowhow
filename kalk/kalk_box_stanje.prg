@@ -134,7 +134,7 @@ local picdem:="9999999.999", nR, nC, nTSta := 0, nTUl := 0, nTIzl := 0,;
  nLenDP := IF( LEN(aDodPar)>0 , LEN(aDodPar)+1 , 0 )
 
  select roba
- //PushWa()
+ //PushWA()
  set order to tag "ID"; seek cIdRoba
  Box( , MIN( 6+nLen+INT((nLenDP)/2) , 23 ) , 75 )
   Beep(1)

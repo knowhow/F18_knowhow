@@ -74,7 +74,7 @@ local _radn_id := SPACE(13)
 
 O_KADEV_0
 
-PushWa()
+PushWA()
 nOldArr := SELECT()
 
 _o_tables()
@@ -292,7 +292,7 @@ ENDIF
 
 O_KADEV_0
 
-PushWa()
+PushWA()
 nOldArr:=SELECT()
 
 O_KADEV_1

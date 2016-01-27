@@ -19,7 +19,7 @@ FUNCTION P_Ops( cId, dx, dy )
    PRIVATE Kol
 
   
-   hWorkArea := PushWa()
+   hWorkArea := PushWA()
 
    IF !hWorkArea[ 'sql' ] .AND. cId != NIL
         // ako je SQL tabela onda je cId UTF8 string

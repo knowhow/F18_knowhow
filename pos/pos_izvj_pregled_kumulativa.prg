@@ -124,7 +124,7 @@ else
 	PaperFeed()
 endif
 
-END PRINT
+ENDPRINT
 select pos_doks
 return
 *}

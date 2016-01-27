@@ -378,7 +378,7 @@ FUNCTION FaktVPC( nVPC, cseek, dDatum )
    ENDIF
 
    SELECT kalk
-   PushWa()
+   PushWA()
    SET FILTER TO
    // nOrder:=indexord()
    SET ORDER TO TAG "3" // idFirma+mkonto+idroba+dtos(datdok)
@@ -1210,7 +1210,7 @@ FUNCTION p_nc_ctrl( aCtrl )
    NEXT
 
    FF
-   END PRINT
+   ENDPRINT
 
    SELECT ( nTArea )
 
@@ -1237,7 +1237,7 @@ FUNCTION IsMagSNab()
 
    LOCAL lN1 := .F.
 
-   PushWa()
+   PushWA()
 
    // da li je uopste otvoren koncij
    SELECT F_KONCIJ

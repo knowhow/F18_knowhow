@@ -334,7 +334,7 @@ do while !EOF()
 
     IF fZaklj
         PaperFeed()
-        END PRINT
+        ENDPRINT
     EndIF
 enddo
 
@@ -342,7 +342,7 @@ IF !fZaklj
     IF cVrstaRs <> "S"
         PaperFeed ()
     EndIF
-    END PRINT
+    ENDPRINT
 EndIF
 
 close all

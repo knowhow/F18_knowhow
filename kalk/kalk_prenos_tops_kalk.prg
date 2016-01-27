@@ -479,7 +479,7 @@ next
 ? "Ukupno razlika:", ALLTRIM(STR( _razlika, 12, 2 ))
 
 FF
-END PRINT
+ENDPRINT
 
 return
 

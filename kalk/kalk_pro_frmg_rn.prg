@@ -98,7 +98,7 @@ do case
 
      nRet:=DE_REFRESH
  case Ch==K_CTRL_P
-     PushWa()
+     PushWA()
      cSeek:=idfirma+idvd+brdok
      my_close_all_dbf()
      kalk_centr_stampa_dokumenta(.t.,cSeek)

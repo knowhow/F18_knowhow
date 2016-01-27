@@ -155,7 +155,7 @@ IF gVrstaRS == "K"
   PaperFeed ()
 ENDIF
 
-END PRINT
+ENDPRINT
 
 close all
 return

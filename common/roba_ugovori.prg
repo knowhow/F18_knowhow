@@ -296,7 +296,7 @@ FUNCTION vrati_opis_ugovora( cIdUgov )
 
    LOCAL cOpis := ""
 
-   PushWa()
+   PushWA()
 
    SELECT (F_RUGOV)
    IF !USED()

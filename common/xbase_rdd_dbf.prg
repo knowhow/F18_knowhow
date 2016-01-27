@@ -296,7 +296,7 @@ FUNCTION my_dbf_zap( cTabelaOrAlias )
       cAlias := Alias()
    ENDIF
 
-   PushWa()
+   PushWA()
    lRet := reopen_exclusive_and_zap( cAlias, .T. )
    PopWa()
 
@@ -314,7 +314,7 @@ FUNCTION my_dbf_pack( lOpenUSharedRezimu )
       lOpenUSharedRezimu := .T.
    ENDIF
 
-   PushWa()
+   PushWA()
    lRet :=  reopen_dbf( .T., cAlias, .T. )
 
    IF lRet

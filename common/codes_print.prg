@@ -269,7 +269,7 @@ if (gPrinter=="L" .or. gA43=="4" .and. nSirIzvj>165)
 endif
 
 if !lBezUpita
-	END PRINT
+	ENDPRINT
 endif
 
 return nil

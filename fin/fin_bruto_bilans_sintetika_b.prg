@@ -372,7 +372,7 @@ FUNCTION fin_bb_sintetika_b( params )
 
    FF
 
-   END PRINT
+   ENDPRINT
 
    my_close_all_dbf()
 

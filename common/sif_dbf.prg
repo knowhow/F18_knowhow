@@ -39,7 +39,7 @@ FUNCTION PostojiSifra( nDbf, nNtx, nVisina, nSirina, cNaslov, cID, dx, dy,  bBlo
 
    PRIVATE nOrdId
 
-   PushWa()
+   PushWA()
    PushSifV()
 
    IF invert == NIL
@@ -547,7 +547,7 @@ STATIC FUNCTION EdSif( nDbf, cNaslov, bBlok, aZabrane, aZabIsp )
 
    CASE Ch == K_CTRL_P
 
-      PushWa()
+      PushWA()
       IzborP2( Kol, PRIVPATH + Alias() )
       IF LastKey() == K_ESC
          RETURN DE_CONT

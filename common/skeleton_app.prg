@@ -262,7 +262,7 @@ METHOD gParams()
 
    IF Used()
       lPushWa := .T.
-      PushWa()
+      PushWA()
    ELSE
       lPushWa := .F.
    ENDIF

@@ -481,7 +481,7 @@ FUNCTION kalk_set_broj_dokumenta()
    LOCAL _firma, _td, _null_brdok
    LOCAL _konto := ""
 
-   PushWa()
+   PushWA()
 
    SELECT kalk_pripr
    GO TOP
@@ -623,7 +623,7 @@ FUNCTION KnjizSt()
 
    SELECT kalk
 
-   PushWa()
+   PushWA()
 
    SET ORDER TO TAG "4"
 

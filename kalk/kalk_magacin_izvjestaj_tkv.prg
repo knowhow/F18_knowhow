@@ -246,7 +246,7 @@ enddo
 ? _line
 
 FF
-END PRINT
+ENDPRINT
 
 return
 

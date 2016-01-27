@@ -101,7 +101,7 @@ STATIC FUNCTION _gen_rpt( dD_from, dD_to, nOper, nVar )
    my_close_all_dbf()
 
    FF
-   END PRINT
+   ENDPRINT
 
    RETURN
 

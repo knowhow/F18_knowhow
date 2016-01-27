@@ -227,7 +227,7 @@ if gVrstaRS<>"S"
 endif
 
 if fSolo
-	END PRINT
+	ENDPRINT
 endif
 
 close all

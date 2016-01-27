@@ -147,7 +147,7 @@ STATIC FUNCTION _p_error( aArr )
    NEXT
 
    FF
-   END PRINT
+   ENDPRINT
 
    RETURN
 
@@ -1784,7 +1784,7 @@ STATIC FUNCTION _p_rpt_spec( dD1, dD2 )
    my_close_all_dbf()
 
    FF
-   END PRINT
+   ENDPRINT
 
    RETURN
 

@@ -28,7 +28,7 @@ FUNCTION P_Radn( cId, dx, dy )
       lPInfo := .T.
    ENDIF
 
-   PushWa()
+   PushWA()
    O_RADN_NOT_USED
 
 
@@ -662,7 +662,7 @@ FUNCTION P_LD_RJ( cId, dx, dy )
    PRIVATE kol := {}
 
 
-   PushWa()
+   PushWA()
 
    O_LD_RJ_NOT_USED
 
@@ -874,7 +874,7 @@ FUNCTION P_POR( cId, dx, dy )
       AAdd( Kol, i )
    NEXT
 
-   PushWa()
+   PushWA()
 
    O_SIFK
    O_SIFV
@@ -966,7 +966,7 @@ FUNCTION P_DOPR( cId, dx, dy )
       AAdd( Kol, i )
    NEXT
 
-   PushWa()
+   PushWA()
 
    O_SIFK
    O_SIFV

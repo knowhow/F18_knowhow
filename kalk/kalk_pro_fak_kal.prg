@@ -339,7 +339,7 @@ next
 ? "broju fakture."
 
 FF
-END PRINT
+ENDPRINT
 
 return
 

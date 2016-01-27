@@ -77,7 +77,7 @@ FUNCTION KalkRobaBlock( Ch )
 
    ELSEIF Ch == K_F8
 
-      PushWa()
+      PushWA()
       nRet := CjenR()
       OSifBaze()
       SELECT ROBA
@@ -90,7 +90,7 @@ FUNCTION KalkRobaBlock( Ch )
          RETURN 6
       ENDIF
       TB:Stabilize()
-      PushWa()
+      PushWA()
       m_strings( roba->strings, roba->id )
       SELECT roba
       PopWa()
@@ -99,7 +99,7 @@ FUNCTION KalkRobaBlock( Ch )
    ELSEIF Upper( Chr( Ch ) ) == "S"
 
       TB:Stabilize()
-      PushWa()
+      PushWA()
       KalkStanje( roba->id )
       PopWa()
       RETURN 6

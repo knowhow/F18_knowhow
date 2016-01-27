@@ -194,7 +194,7 @@ function epl2_end()
 
 ?
 // zavrsi stampu
-END PRINT
+ENDPRINT
 
 // vrati tekuce parametre
 gPrinter := par_1

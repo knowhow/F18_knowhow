@@ -50,7 +50,7 @@ for i:=1 to LEN(ImeKol)
 	AADD( Kol, i )
 next
 
-return PostojiSifra(F_KDV_NERDAN,"ID",10,70,"Lista neradnih danaÍÍÍ<F5>-generisi subote i nedjelje",@cId,dx,dy,{|Ch| NerDanBlok(Ch)})
+return PostojiSifra(F_KDV_NERDAN,"ID",10,70,"Lista neradnih danaï¿½ï¿½ï¿½<F5>-generisi subote i nedjelje",@cId,dx,dy,{|Ch| NerDanBlok(Ch)})
 
 
 // --------------------------------------
@@ -214,7 +214,7 @@ ImeKol:={ { PADR("RJ",57),  {|| IdRJ+"-"+P_KADEV_RJ(idrj,-2)}       },;
         }
 Kol:={1,2,3,4,5,6,7,8,9,10,11,12,13,14,15}
 
-PushWa()
+PushWA()
 
 select kdv_RjRMJ
 set order to tag "ID"
@@ -360,7 +360,7 @@ for i:=1 to LEN(ImeKol)
 	AADD(Kol, i)
 next
 
-return PostojiSifra(F_KDV_RJES,1,10,60,"Lista rjesenja ÍÍÍÍ <F5> - definisi rjesenje",@cId,dx,dy,{|Ch| RjesBlok(Ch)})
+return PostojiSifra(F_KDV_RJES,1,10,60,"Lista rjesenja ï¿½ï¿½ï¿½ï¿½ <F5> - definisi rjesenje",@cId,dx,dy,{|Ch| RjesBlok(Ch)})
 
 
 

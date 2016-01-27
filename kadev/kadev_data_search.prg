@@ -520,14 +520,14 @@ local cBr
 // Ch:=Lastkey()
 
  if Ch==K_CTRL_K
-   PushWa()
+   PushWA()
    TekRec:=kadev_0->(RECNO())
    PRIVATE aRB,aRE,aRU,aVrSlVr
    Karton({|| aVrSlVr:=GMJD((nArr)->VrSlVr),aRE:=GMJD((nArr)->RadStE), aRB:=GMJD((nArr)->RadStB), aRU:=ADDGMJD(aRB,aRE),kadev_0->(recno())==TekRec})
    PopWa()
    return DE_CONT
  elseif Ch==K_CTRL_A
-   PushWa()
+   PushWA()
    go top
    PRIVATE aRB,aRE,ARu,aVrSlVr
    Karton({|| aVrSlVr:=GMJD((nArr)->VrSlVr),aRE:=GMJD((nArr)->RadStE), aRB:=GMJD((nArr)->RadStB),aRU:=ADDGMJD(aRB,aRE),.t.})
@@ -535,7 +535,7 @@ local cBr
    return DE_CONT
  elseif Ch=K_ENTER
    
-    PushWa()
+    PushWA()
     select kadev_0
     
     set_global_vars_from_dbf()
@@ -562,7 +562,7 @@ local cBr
    return DE_CONT
   endif
  elseif Ch==K_CTRL_P
-   PushWa()
+   PushWA()
    go top
    PRIVATE aRB,aRE,aRU
 
@@ -669,7 +669,7 @@ do while !eof() .and. kadev_0->id==kadev_1->id
     Tacno(aUsl1k).and.Tacno(aUsl1l).and.Tacno(aUsl1m)
   cVrati:=cVrati+"Promjena:"+idpromj+" Rj-RMJ:"+idrj+"-"+idrmj+" Datum:"+DTOC(datumod)+"-"+DTOC(datumdo)+;
           " K:"+idk+" Atributi(N1,N2,C1,C2):"+STR(nAtr1)+","+STR(nAtr2)+","+catr1+","+catr2+;
-          " Dokument:"+dokument+"  Opis:"+opis+" "+REPLICATE("ú",69)+" "
+          " Dokument:"+dokument+"  Opis:"+opis+" "+REPLICATE("ï¿½",69)+" "
  endif
  skip
 enddo
@@ -828,7 +828,7 @@ ENDIF
 
 // init detaila
 nCDet1:=0
-AADD(aDetInit,{|| nCDet1:=0, PushWa(), dbselectArea(F_KADEV_1),dbseek(kadev_0->id) } )
+AADD(aDetInit,{|| nCDet1:=0, PushWA(), dbselectArea(F_KADEV_1),dbseek(kadev_0->id) } )
 
 // uslov detaila
 AADD(aDetUsl,{|| id=kadev_0->id})
@@ -867,7 +867,7 @@ IF gPrinter=="L"
 	gPO_Port()
 ENDIF
 
-END PRINT
+ENDPRINT
 select (F_KADEV_0)
 
 return nil
@@ -1039,7 +1039,7 @@ PROCEDURE BirajPrelom()
 RETURN
 
 
-// str.sprema predviÐena pravilnikom
+// str.sprema predviï¿½ena pravilnikom
 function StrSprPP()
 local cV
  cV := "od "+KDV_RJRMJ->IdStrSprOd+" do "+KDV_RJRMJ->IdStrSprDo

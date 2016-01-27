@@ -730,7 +730,7 @@ STATIC FUNCTION show_rpt()
    ?? "Ime, prezime"
 
    FF
-   END PRINT
+   ENDPRINT
 
    RETURN
 

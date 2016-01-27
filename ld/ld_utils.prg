@@ -621,7 +621,7 @@ FUNCTION ld_obracun_napravljen_vise_puta()
    NEXT
 
    FF
-   END PRINT
+   ENDPRINT
 
    my_close_all_dbf()
 

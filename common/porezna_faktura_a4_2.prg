@@ -174,7 +174,7 @@ FUNCTION st_pf_a4_2( lStartPrint )
 
    IF lStartPrint
       FF
-      END PRINT
+      ENDPRINT
    ENDIF
 
    RETURN

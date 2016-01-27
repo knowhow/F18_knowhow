@@ -164,7 +164,7 @@ endif
 
 EJECTA0
 
-END PRINT
+ENDPRINT
 
 my_close_all_dbf()
 return

@@ -225,7 +225,7 @@ FUNCTION IzSifk( dbf_name, ozna, u_id_sif, return_nil )
 
    LOCAL _tmp
 
-   PushWa()
+   PushWA()
    _tmp := get_sifk_value( dbf_name, ozna, u_id_sif, return_nil )
    PopWa()
 
@@ -365,7 +365,7 @@ FUNCTION IzSifkWV( cDBF, cOznaka, cWhen, cValid )
 
    LOCAL xRet := ""
 
-   PushWa()
+   PushWA()
 
    cDBF := PadR( cDBF, SIFK_LEN_DBF )
    cOznaka := PadR( cOznaka, SIFK_LEN_OZNAKA )
@@ -413,7 +413,7 @@ FUNCTION USifk( dbf_name, ozna, u_id_sif, val, transaction )
    ENDIF
 
    cIdSif := ( Unicode():New( u_id_sif ) ):getString()
-   PushWa()
+   PushWA()
 
    dbf_name := PadR( dbf_name, SIFK_LEN_DBF )
    ozna     := PadR( ozna, SIFK_LEN_OZNAKA )
@@ -566,7 +566,7 @@ FUNCTION ImaUSifv( cDBF, cOznaka, cVrijednost, cIdSif )
 
    xVal := NIL
 
-   PushWa()
+   PushWA()
 
    SELECT F_SIFV
    use_sql_sifv( cDbf, cOznaka, NIL, cVrijednost )

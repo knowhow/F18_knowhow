@@ -517,7 +517,7 @@ STATIC FUNCTION EdKonsROS()
          IF LastKey() <> K_ESC
 
             SELECT suban
-            PushWa()
+            PushWA()
             SET ORDER TO TAG "3"
             SEEK _idfirma + _idkonto + _idpartner + obrdok
 

@@ -323,7 +323,7 @@ METHOD itemsCount()
 
    LOCAL nCnt
 
-   PushWa()
+   PushWA()
    SELECT fakt_pripr
    nCnt := 0
    DO WHILE !Eof()

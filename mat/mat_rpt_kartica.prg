@@ -144,7 +144,7 @@ nUkDug:=nUkPot:=nUkDug2:=nUkPot2:=0
 enddo
 
 FF
-END PRINT
+ENDPRINT
 
 my_close_all_dbf()
 return
@@ -307,7 +307,7 @@ enddo // eof
 
 EJECTNA0
 
-END PRINT
+ENDPRINT
 
 set filter to
 my_close_all_dbf()
@@ -441,7 +441,7 @@ nUk2Saldo:=nUkUk2Dug-nUkUk2Pot
 nUkUkDug:=nUkUkPot:=nUkUk2Dug:=nUkUk2Pot:=0
 
 EJECTNA0
-END PRINT
+ENDPRINT
 my_close_all_dbf()
 return
 
@@ -842,7 +842,7 @@ do while !eof() .and. IdFirma==_id_firma
 enddo 
 
 FF
-END PRINT
+ENDPRINT
 
 my_close_all_dbf()
 return

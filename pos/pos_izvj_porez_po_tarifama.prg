@@ -258,7 +258,7 @@ if gVrstaRS<>"S"
 endif
 
 if fSolo
-	END PRINT
+	ENDPRINT
 endif
 
 set filter to

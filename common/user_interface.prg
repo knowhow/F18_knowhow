@@ -1028,7 +1028,7 @@ FUNCTION UGlavnomMeniju()
       RETURN fRet
    ENDIF
 
-   PushWa()
+   PushWA()
    FOR i := 1 TO 100
       SELECT ( i )
       IF Used()

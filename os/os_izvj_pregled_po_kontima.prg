@@ -559,7 +559,7 @@ endif
 
 FF
 
-end print
+ENDPRINT
 
 my_close_all_dbf()
 return

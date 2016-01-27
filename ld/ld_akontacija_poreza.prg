@@ -357,7 +357,7 @@ STATIC FUNCTION ak_print( dDatIspl, cPeriod, cTipRada )
    ak_potpis()
 
    FF
-   END PRINT
+   ENDPRINT
 
    RETURN
 

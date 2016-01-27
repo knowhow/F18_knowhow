@@ -273,7 +273,7 @@ endif
 ? "                                                      3.___________________"
 
 FF
-END PRINT
+ENDPRINT
 
 if _export
 	tbl_export()

@@ -110,7 +110,7 @@ FUNCTION Id2Naz()
 
    LOCAL nSel := Select()
 
-   Pushwa()
+   PushWA()
    SELECT roba
    HSEEK sast->id2
    popwa()
@@ -414,7 +414,7 @@ FUNCTION P_Barkod( cBK )
    LOCAL fRet := .F.
    LOCAL nRec := RecNo()
 
-   PushWa()
+   PushWA()
    SET ORDER TO TAG "BARKOD"
    SEEK cBK
    IF !Empty( cBK ) .AND. Found() .AND. nRec <> RecNo()

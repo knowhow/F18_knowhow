@@ -404,7 +404,7 @@ FUNCTION kalk_kartica_prodavnica()
    my_close_all_dbf()
 
    FF
-   END PRINT
+   ENDPRINT
 
    RETURN
 
@@ -642,7 +642,7 @@ FUNCTION NPArtikli()
 
    FF
 
-   END PRINT
+   ENDPRINT
 
    CLOSERET
 

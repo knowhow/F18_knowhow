@@ -30,7 +30,7 @@ if ALLTRIM(cLokal) == "0"
 	return cString
 endif
 
-PushWa()
+PushWA()
 SELECT F_LOKAL
 if !used()
 	O_LOKAL
@@ -70,7 +70,7 @@ return cString
 function next_id_str()
 local nNext
 
-PushWa()
+PushWA()
 SET ORDER TO TAG "ID_STR"
 GO BOTTOM
 nNext := id_str + 1

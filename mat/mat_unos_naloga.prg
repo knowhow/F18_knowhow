@@ -378,7 +378,7 @@ FUNCTION mat_pripr_key_handler()
    CASE Ch == K_F5
 
       // kontrola zbira za jedan mat_nalog
-      PushWa()
+      PushWA()
 
       Box( "kzb", 8, 60, .F., "Kontrola zbira naloga" )
 
@@ -600,7 +600,7 @@ FUNCTION zbir_mat_naloga( duguje, potrazuje, firma, vn, broj )
 
 FUNCTION mat_dupli_nalog( cBrNal, cVN, cIdFirma )
 
-   PushWa()
+   PushWA()
    SELECT mat_nalog
    SEEK cIdFirma + cVN + cBrNal
    IF Found()
@@ -850,7 +850,7 @@ FUNCTION mat_st_anal_nalog( fnovi )
       ENDIF
 
       FF
-      END PRINT
+      ENDPRINT
 
    ENDDO  // eof()
 

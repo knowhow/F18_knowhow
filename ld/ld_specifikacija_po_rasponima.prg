@@ -217,7 +217,7 @@ FUNCTION ld_specifikacija_po_rasponima_primanja()
       {|| filter_specifikacija_raspon() }, IF( gOstr == "D",, -1 ),,,,, )
 
    FF
-   END PRINT
+   ENDPRINT
 
    my_close_all_dbf()
    RETURN

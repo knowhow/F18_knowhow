@@ -104,7 +104,7 @@ Sifra    Naziv              JMJ Kolicina
   Else
     PaperFeed()
   EndIF
-  END PRINT
+  ENDPRINT
   select pos_doks
 RETURN
 *}

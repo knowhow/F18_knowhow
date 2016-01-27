@@ -61,7 +61,7 @@ FUNCTION FaRobaBlock( Ch )
 
    ELSEIF Upper( Chr( Ch ) ) == "S"
       TB:Stabilize()
-      PushWa()
+      PushWA()
       FaktStanje( roba->id )
       PopWa()
       RETURN 6
@@ -190,7 +190,7 @@ FUNCTION fakt_box_stanje( aStanje, cIdroba )
    nLenDP := IF( Len( aDodPar ) > 0, Len( aDodPar ) + 1, 0 )
 
    SELECT roba
-   // PushWa()
+   // PushWA()
    SET ORDER TO TAG "ID"; SEEK cIdRoba
    Box(, 6 + nLen + Int( ( nLenDP ) / 2 ), 75 )
    Beep( 1 )

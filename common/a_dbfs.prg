@@ -349,7 +349,7 @@ FUNCTION set_dbf_fields_from_struct( rec )
       RETURN .F.
    ENDIF
 
-   PushWa()
+   PushWA()
 
    SELECT ( rec[ "wa" ] )
 

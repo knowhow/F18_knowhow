@@ -398,7 +398,7 @@ STATIC FUNCTION gen_fin_kuf_item( cSezona )
       ENDIF
 	
       PRIVATE _uk_pdv :=  0
-      PushWa()
+      PushWA()
       SELECT SUBAN
       GO ( nRecNoSuban )
 
@@ -554,7 +554,7 @@ STATIC FUNCTION trazi_dob( nRecNo, cIdFirma, cIdVn, cBrNal, cBrDok, nRbr )
 
    LOCAL i
 
-   PushWa()
+   PushWA()
 
    SELECT suban_2
 
@@ -592,7 +592,7 @@ FUNCTION traz_pdv_dob( nRecNo, cIdFirma, cIdVn, cBrNal, cBrDok, nRbr, cOpis )
       cOpis := suban->opis
    ENDIF
 
-   PushWa()
+   PushWA()
 
    SELECT suban_2
 
@@ -690,7 +690,7 @@ FUNCTION trazi_kto( cIdKonto, nRecNo, cIdFirma, cIdVn, cBrNal, cBrDok, nRbr, cOp
       cOpis := suban->opis
    ENDIF
 
-   PushWa()
+   PushWA()
 
    SELECT suban_2
 

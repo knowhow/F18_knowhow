@@ -198,7 +198,7 @@ select kdv_rjrmj; set order to tag "ID"
      ?
  endif
 
- end print
+ ENDPRINT
 
 
 my_close_all_dbf()

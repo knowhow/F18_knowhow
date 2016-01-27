@@ -851,7 +851,7 @@ FUNCTION DatVal()
    PRIVATE GetList := {}
 
    // uzmi datval iz doks2
-   PushWa()
+   PushWA()
 
    O_KALK_DOKS2
    SET ORDER TO TAG "1"

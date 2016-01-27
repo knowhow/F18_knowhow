@@ -199,7 +199,7 @@ FUNCTION fin_set_broj_dokumenta()
    LOCAL _firma, _td, _null_brdok
    LOCAL _len_broj := 8
 
-   PushWa()
+   PushWA()
 
    SELECT fin_pripr
    GO TOP

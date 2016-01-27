@@ -229,7 +229,7 @@ STATIC FUNCTION _print_log_data( data, params, print_to_file )
       f18_end_print( _log_path + _log_file, "D" )
    ELSE
       FF
-      END PRINT
+      ENDPRINT
    ENDIF
 
    RETURN _log_file

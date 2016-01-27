@@ -565,7 +565,7 @@ FUNCTION ObrtPoMjF()
       Legenda()
    ENDIF
 
-   end print
+   ENDPRINT
    my_close_all_dbf()
 
    RETURN

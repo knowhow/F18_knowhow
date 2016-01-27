@@ -66,7 +66,7 @@ do while !EOF() .and. idvd == VD_REK
 	skip
 enddo
 
-END PRINT
+ENDPRINT
 
 my_close_all_dbf()
 

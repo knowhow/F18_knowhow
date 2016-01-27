@@ -592,7 +592,7 @@ STATIC FUNCTION printaj_specifikaciju_txt( params )
    my_close_all_dbf()
 
    FF
-   END PRINT
+   ENDPRINT
 
    RETURN
 

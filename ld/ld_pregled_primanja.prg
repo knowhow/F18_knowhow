@@ -273,7 +273,7 @@ FUNCTION ld_pregled_primanja()
    ?
    p_potpis()
    FF
-   END PRINT
+   ENDPRINT
    my_close_all_dbf()
 
    RETURN

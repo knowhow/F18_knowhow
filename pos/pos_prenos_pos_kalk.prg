@@ -574,7 +574,7 @@ STATIC FUNCTION _print_report( datum_od, datum_do, kolicina, iznos, broj_stavki 
    ? "  U kupan iznos:", AllTrim( Str( iznos, 12, 2 ) )
 
    FF
-   END PRINT
+   ENDPRINT
 
    RETURN
 

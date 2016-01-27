@@ -717,7 +717,7 @@ if LEN( aPomFakt ) > 0
 	?
 
 	FF
-	END PRINT
+	ENDPRINT
 
 	aFakt := aPomFakt
 	return 0
@@ -764,7 +764,7 @@ if (LEN(aPomPart) > 0 .or. LEN(aPomArt) > 0)
 	endif
 	
 	FF
-	END PRINT
+	ENDPRINT
 
 	return .f.
 endif
@@ -795,7 +795,7 @@ if (LEN(aPomPart) > 0)
 	?
 
 	FF
-	END PRINT
+	ENDPRINT
 
 endif
 
@@ -856,7 +856,7 @@ if (LEN(aPomRoba) > 0)
 	?
 
 	FF
-	END PRINT
+	ENDPRINT
 
 endif
 
@@ -1367,7 +1367,7 @@ if nCnt > 0
 	?
 	
 	FF
-	END PRINT
+	ENDPRINT
 endif
 
 if cCtrl_art == "D" .and. LEN( aArr_ctrl ) > 0
@@ -1383,7 +1383,7 @@ if cCtrl_art == "D" .and. LEN( aArr_ctrl ) > 0
 	next
 	
 	FF
-	END PRINT
+	ENDPRINT
 
 endif
 
@@ -2088,7 +2088,7 @@ if LEN(aRpt) > 0
 	?
 	
 	FF
-	END PRINT
+	ENDPRINT
 endif
 
 return

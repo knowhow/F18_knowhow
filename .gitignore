@@ -1,5 +1,6 @@
 .h
 *.bak
+*.BAK
 .r
 .d
 F18.app
@@ -20,3 +21,4 @@ t.prg
 pg_log
 darwin/
 tags
+

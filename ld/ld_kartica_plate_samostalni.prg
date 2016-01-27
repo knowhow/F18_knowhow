@@ -15,8 +15,6 @@
 STATIC DUZ_STRANA := 64
 
 
-
-
 FUNCTION ld_kartica_plate_samostalni( cIdRj, cMjesec, cGodina, cIdRadn, cObrac, aNeta )
 
    LOCAL nKRedova
@@ -51,16 +49,16 @@ FUNCTION ld_kartica_plate_samostalni( cIdRj, cMjesec, cGodina, cIdRadn, cObrac, 
    ENDIF
 
    FOR i := 1 TO cLDPolja
-	
+
       cPom := PadL( AllTrim( Str( i ) ), 2, "0" )
-	
+
       SELECT tippr
       SEEK cPom
-	
+
       IF tippr->( Found() ) .AND. tippr->aktivan == "D"
 
          IF _i&cpom <> 0 .OR. _s&cPom <> 0
-			
+
             IF tippr->( FieldPos( "TPR_TIP" ) ) <> 0
                // uzmi osnovice
                IF tippr->tpr_tip == "N"
@@ -83,16 +81,16 @@ FUNCTION ld_kartica_plate_samostalni( cIdRj, cMjesec, cGodina, cIdRadn, cObrac, 
                   nOsnOstalo += _i&cPom
                ENDIF
             ENDIF
-			
-				
+
+
             IF "SUMKREDITA" $ tippr->formula
-				
+
                SELECT radkr
                SET ORDER TO 1
                SEEK Str( _godina, 4 ) + Str( _mjesec, 2 ) + _idradn
                ukredita := 0
-				
-				
+
+
                DO WHILE !Eof() .AND. _godina == godina .AND. _mjesec = mjesec .AND. idradn == _idradn
                   SELECT kred
                   hseek radkr->idkred
@@ -101,7 +99,7 @@ FUNCTION ld_kartica_plate_samostalni( cIdRj, cMjesec, cGodina, cIdRadn, cObrac, 
                   ukredita += iznos
                   SKIP 1
                ENDDO
-				
+
                SELECT ld
             ENDIF
          ENDIF
@@ -109,32 +107,32 @@ FUNCTION ld_kartica_plate_samostalni( cIdRj, cMjesec, cGodina, cIdRadn, cObrac, 
    NEXT
 
    IF gPrBruto == "D"
-	
+
       // prikaz bruto iznosa
-	
+
       SELECT ( F_POR )
-	
+
       IF !Used()
          O_POR
       ENDIF
-	
+
       SELECT ( F_DOPR )
-	
+
       IF !Used()
          O_DOPR
       ENDIF
-	
+
       SELECT ( F_KBENEF )
-	
+
       IF !Used()
          O_KBENEF
       ENDIF
 
       nBO := 0
       nBFO := 0
-	
+
       nOsnZaBr := nOsnNeto
-	
+
       nBo := bruto_osn( nOsnZaBr, cRTipRada, nLicOdbitak, nRPrKoef )
 
       IF UBenefOsnovu()
@@ -147,40 +145,40 @@ FUNCTION ld_kartica_plate_samostalni( cIdRj, cMjesec, cGodina, cIdRadn, cObrac, 
       ? cLMSK + "1. OSNOVA ZA OBRACUN:"
 
       @ PRow(), 60 + Len( cLMSK ) SAY nOsnZaBr PICT gpici
-	
+
       ? cMainLine
       ? cLMSK + "2. PROPISANI KOEFICIJENT:"
 
       @ PRow(), 60 + Len( cLMSK ) SAY nRPrKoef PICT gpici
-	
+
       ? cMainLine
       ? cLMSK + "3. BRUTO OSNOVA :  ", bruto_isp( nOsnZaBr, cRTipRada, nLicOdbitak, nRPrKoef )
 
       @ PRow(), 60 + Len( cLMSK ) SAY nBo PICT gpici
-	
+
       ? cMainLine
-	
+
       // razrada doprinosa ....
-	
+
       ? cLmSK + cDoprSpace + Lokal( "Obracun doprinosa:" )
-	
+
       SELECT dopr
       GO TOP
-	
+
       nPom := 0
       nDopr := 0
       nUkDoprIz := 0
       nC1 := 20 + Len( cLMSK )
-	
+
       DO WHILE !Eof()
-	
+
          IF dopr->tiprada <> "S"
             SKIP
             LOOP
          ENDIF
 
          IF dopr->( FieldPos( "DOP_TIP" ) ) <> 0
-			
+
             IF dopr->dop_tip == "N" .OR. dopr->dop_tip == " "
                nOsn := nOsnNeto
             ELSEIF dopr->dop_tip == "2"
@@ -188,29 +186,29 @@ FUNCTION ld_kartica_plate_samostalni( cIdRj, cMjesec, cGodina, cIdRadn, cObrac, 
             ELSEIF dopr->dop_tip == "P"
                nOsn := nOsnNeto + nOsnOstalo
             ENDIF
-		
+
          ENDIF
-		
+
          PozicOps( DOPR->poopst )
-			
+
          IF !ImaUOp( "DOPR", DOPR->id ) .OR. !lPrikSveDopr .AND. !DOPR->ID $ cPrikDopr
             SKIP 1
             LOOP
          ENDIF
-		
+
          IF Right( id, 1 ) == "X"
             ? cDoprLine
          ENDIF
-		
+
          ? cLMSK + cDoprSpace + id, "-", naz
          @ PRow(), PCol() + 1 SAY iznos PICT "99.99%"
-		
+
          IF Empty( idkbenef )
             // doprinos udara na neto
             @ PRow(), PCol() + 1 SAY nBo PICT gpici
             nC1 := PCol() + 1
             @ PRow(), PCol() + 1 SAY nPom := Max( dlimit, Round( iznos / 100 * nBO, gZaok2 ) ) PICT gpici
-			
+
             IF dopr->id == "1X"
                nUkDoprIz += nPom
             ENDIF
@@ -224,23 +222,23 @@ FUNCTION ld_kartica_plate_samostalni( cIdRj, cMjesec, cGodina, cIdRadn, cObrac, 
                @ PRow(), PCol() + 1 SAY nPom PICT gpici
             ENDIF
          ENDIF
-		
+
          IF Right( id, 1 ) == "X"
-			
+
             ? cDoprLine
             ?
             nDopr += nPom
-		
+
          ENDIF
-		
+
          IF !lSkrivena .AND. PRow() > 57 + gPStranica
             FF
          ENDIF
-		
+
          SKIP 1
-		
+
       ENDDO
-	
+
       ? cMainLine
       ?  cLMSK + Lokal( "UKUPNO ZA ISPLATU" )
       @ PRow(), 60 + Len( cLMSK ) SAY nOsnZaBr PICT gpici
@@ -284,4 +282,4 @@ FUNCTION ld_kartica_plate_samostalni( cIdRj, cMjesec, cGodina, cIdRadn, cObrac, 
       FF
    ENDIF
 
-   RETURN
+   RETURN .T.

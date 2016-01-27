@@ -14,8 +14,6 @@
 
 STATIC __var_obr
 
-
-
 FUNCTION RekapLd( cId, nGodina, nMjesec, nIzn1, nIzn2, cIdPartner, cOpis, cOpis2, lObavDodaj, cIzdanje )
 
    IF lObavDodaj == nil
@@ -54,13 +52,13 @@ FUNCTION RekapLd( cId, nGodina, nMjesec, nIzn1, nIzn2, cIdPartner, cOpis, cOpis2
       id    WITH  cId, ;
       iznos1 WITH nIzn1, iznos2 WITH nIzn2, ;
       idpartner WITH cIdPartner, ;
-      opis WITH cOpis,;
+      opis WITH cOpis, ;
       opis2 WITH cOpis2
 
 
    popwa()
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -81,9 +79,7 @@ FUNCTION ORekap()
 
    tipprn_use()
 
-   RETURN
-
-
+   RETURN .T.
 
 
 FUNCTION BoxRekSvi()
@@ -92,20 +88,19 @@ FUNCTION BoxRekSvi()
 
    nArr := Select()
 
-   Box(, 10 + IF( IsRamaGlas(), 1, 0 ), 75 )
+   Box(, 10 + iif( IsRamaGlas(), 1, 0 ), 75 )
    DO WHILE .T.
 
-      @ m_x + 2, m_y + 2 SAY "Vrsta djelatnosti: "  GET cRTipRada ;
-            VALID val_tiprada( cRTipRada ) PICT "@!"
+      @ m_x + 2, m_y + 2 SAY "Vrsta djelatnosti: "  GET cRTipRada VALID val_tiprada( cRTipRada ) PICT "@!"
 
       @ m_x + 3, m_y + 2 SAY "Radne jedinice: "  GET  qqRJ PICT "@!S25"
       @ m_x + 4, m_y + 2 SAY "Za mjesece od:"  GET  cmjesec  PICT "99" VALID {|| cMjesecDo := cMjesec, .T. }
       @ m_x + 4, Col() + 2 SAY "do:"  GET  cMjesecDo  PICT "99" VALID cMjesecDo >= cMjesec
       @ m_x + 4, Col() + 2 SAY "Obracun: " GET cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
       @ m_x + 5, m_y + 2 SAY "Godina: "  GET  cGodina  PICT "9999"
-      @ m_x + 7, m_y + 2 SAY "Strucna Sprema: "  GET  cStrSpr PICT "@!" VALID Empty( cStrSpr ) .OR. P_StrSpr( @cStrSpr )
-      @ m_x + 8, m_y + 2 SAY "Opstina stanovanja: "  GET  cOpsSt PICT "@!" VALID Empty( cOpsSt ) .OR. P_Ops( @cOpsSt )
-      @ m_x + 9, m_y + 2 SAY "Opstina rada:       "  GET  cOpsRad  PICT "@!" VALID Empty( cOpsRad ) .OR. P_Ops( @cOpsRad )
+      @ m_x + 7, m_y + 2 SAY "Stručna Sprema: "  GET  cStrSpr PICT "@!" VALID Empty( cStrSpr ) .OR. P_StrSpr( @cStrSpr )
+      @ m_x + 8, m_y + 2 SAY "Opština stanovanja: "  GET  cOpsSt PICT "@!" VALID Empty( cOpsSt ) .OR. P_Ops( @cOpsSt )
+      @ m_x + 9, m_y + 2 SAY "Opština rada:       "  GET  cOpsRad  PICT "@!" VALID Empty( cOpsRad ) .OR. P_Ops( @cOpsRad )
 
       READ
 
@@ -121,7 +116,7 @@ FUNCTION BoxRekSvi()
 
    SELECT ( nArr )
 
-   RETURN
+   RETURN .T.
 
 
 FUNCTION BoxRekJ()
@@ -131,35 +126,37 @@ FUNCTION BoxRekJ()
    nArr := Select()
 
    Box(, 8 + IF( IsRamaGlas(), 1, 0 ), 75 )
-   @ m_x + 1, m_y + 2 SAY "Vrsta djelatnosti: "  GET cRTipRada ;
-         VALID val_tiprada( cRTipRada ) PICT "@!"
+
+   @ m_x + 1, m_y + 2 SAY "Vrsta djelatnosti: "  GET cRTipRada VALID val_tiprada( cRTipRada ) PICT "@!"
    @ m_x + 2, m_y + 2 SAY "Radna jedinica: "  GET cIdRJ
    @ m_x + 3, m_y + 2 SAY "Za mjesece od:"  GET  cmjesec  PICT "99" VALID {|| cMjesecDo := cMjesec, .T. }
    @ m_x + 3, Col() + 2 SAY "do:"  GET  cMjesecDo  PICT "99" VALID cMjesecDo >= cMjesec
    @ m_x + 3, Col() + 2 SAY "Obracun: " GET cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
    @ m_x + 4, m_y + 2 SAY "Godina: "  GET  cGodina  PICT "9999"
-   @ m_x + 6, m_y + 2 SAY "Strucna Sprema: "  GET  cStrSpr PICT "@!" VALID Empty( cStrSpr ) .OR. P_StrSpr( @cStrSpr )
-   @ m_x + 7, m_y + 2 SAY "Opstina stanovanja: "  GET  cOpsSt PICT "@!" VALID Empty( cOpsSt ) .OR. P_Ops( @cOpsSt )
-   @ m_x + 8, m_y + 2 SAY "Opstina rada:       "  GET  cOpsRad  PICT "@!" VALID Empty( cOpsRad ) .OR. P_Ops( @cOpsRad )
+   @ m_x + 6, m_y + 2 SAY "Stručna Sprema: "  GET  cStrSpr PICT "@!" VALID Empty( cStrSpr ) .OR. P_StrSpr( @cStrSpr )
+   @ m_x + 7, m_y + 2 SAY "Opština stanovanja: "  GET  cOpsSt PICT "@!" VALID Empty( cOpsSt ) .OR. P_Ops( @cOpsSt )
+   @ m_x + 8, m_y + 2 SAY "Opština rada:       "  GET  cOpsRad  PICT "@!" VALID Empty( cOpsRad ) .OR. P_Ops( @cOpsRad )
+
    READ
+
    ClvBox()
    ESC_BCR
    BoxC()
 
    SELECT ( nArr )
 
-   RETURN
+   RETURN .T.
 
 
 FUNCTION CreRekLD()
 
-   aDbf := { { "GODINA",  "C",  4, 0 },;
-      { "MJESEC",  "C",  2, 0 },;
-      { "ID",  "C", 40, 0 },;
-      { "opis",  "C", 100, 0 },;
-      { "opis2",  "C", 100, 0 },;
-      { "iznos1",  "N", 25, 4 },;
-      { "iznos2",  "N", 25, 4 },;
+   aDbf := { { "GODINA",  "C",  4, 0 }, ;
+      { "MJESEC",  "C",  2, 0 }, ;
+      { "ID",  "C", 40, 0 }, ;
+      { "opis",  "C", 100, 0 }, ;
+      { "opis2",  "C", 100, 0 }, ;
+      { "iznos1",  "N", 25, 4 }, ;
+      { "iznos2",  "N", 25, 4 }, ;
       { "idpartner",  "C",  6, 0 } }
 
 
@@ -173,15 +170,15 @@ FUNCTION CreRekLD()
    SET ORDER TO TAG "1"
    USE
 
-   RETURN
+   RETURN .T.
 
 
 FUNCTION CreOpsLD()
 
-   aDbf := { { "ID","C", 1, 0 }, ;
-      { "PORID","C", 2, 0 }, ;
-      { "IDOPS","C", 4, 0 }, ;
-      { "IZNOS","N", 25, 4 }, ;
+   aDbf := { { "ID", "C", 1, 0 }, ;
+      { "PORID", "C", 2, 0 }, ;
+      { "IDOPS", "C", 4, 0 }, ;
+      { "IZNOS", "N", 25, 4 }, ;
       { "IZNOS2", "N", 25, 4 }, ;
       { "IZNOS3", "N", 25, 4 }, ;
       { "IZNOS4", "N", 25, 4 }, ;
@@ -200,7 +197,7 @@ FUNCTION CreOpsLD()
       { "T_IZ_3", "N", 25, 4 }, ;
       { "T_IZ_4", "N", 25, 4 }, ;
       { "T_IZ_5", "N", 25, 4 }, ;
-      { "LJUDI","N", 10, 0 } }
+      { "LJUDI", "N", 10, 0 } }
 
 
    IF File( PRIVPATH + "OPSLD.DBF" )
@@ -209,13 +206,13 @@ FUNCTION CreOpsLD()
    ENDIF
 
    DBCreate2( "opsld", aDbf )
-   SELECT( F_OPSLD )
+   Select( F_OPSLD )
    my_usex( "opsld" )
 
    INDEX ON PORID + ID + IDOPS TAG "1"
    USE
 
-   RETURN
+   RETURN .T.
 
 
 FUNCTION PopuniOpsLD( cTip, cPorId, aPorezi )
@@ -286,6 +283,7 @@ FUNCTION PopuniOpsLD( cTip, cPorId, aPorezi )
             nT_iz_5 := aPorezi[ i, 6 ]
          ENDIF
       NEXT
+
    ELSE
       cPorId := "  "
       nOsnovica := _ouneto
@@ -341,6 +339,7 @@ FUNCTION PopuniOpsLD( cTip, cPorId, aPorezi )
       ENDIF
 
    ELSE
+
       APPEND BLANK
       REPLACE id WITH "1"
       REPLACE porid WITH cPorId
@@ -1056,7 +1055,7 @@ FUNCTION napr_obracun( lSvi, a_benef )
       PopuniOpsLD()
 
       IF RADN->isplata == "TR"  // isplata na tekuci racun
-         Rekapld( "IS_" + RADN->idbanka, cgodina, cmjesecDo,_UIznos, 0, RADN->idbanka, RADN->brtekr, RADNIK, .T. )
+         Rekapld( "IS_" + RADN->idbanka, cgodina, cmjesecDo, _UIznos, 0, RADN->idbanka, RADN->brtekr, RADNIK, .T. )
       ENDIF
 
       SELECT ld
@@ -1221,8 +1220,8 @@ FUNCTION IspisTP( lSvi )
             ENDIF
          ENDIF
 
-         IF !EMPTY( cTipPrElem ) .AND. cPom == cTipPrElem
-            aRekap[ i, 2 ] := ABS( aRekap[ i, 2 ] )
+         IF !Empty( cTipPrElem ) .AND. cPom == cTipPrElem
+            aRekap[ i, 2 ] := Abs( aRekap[ i, 2 ] )
          ENDIF
 
          IF cMjesec == cMjesecDo

@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out knowhow ERP, a free and open source 
+/*
+ * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
  * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -12,81 +12,82 @@
 #include "f18.ch"
 
 
-function TAppModNew(oParent, cVerzija, cPeriod, cKorisn, cSifra, p3,p4,p5,p6,p7)
+FUNCTION TAppModNew( oParent, cVerzija, cPeriod, cKorisn, cSifra, p3, p4, p5, p6, p7 )
 
-local oObj
+   LOCAL oObj
 
-oObj:=TAppMod():new()
+   oObj := TAppMod():new()
 
-return oObj
+   RETURN oObj
 
 
 #include "hbclass.ch"
 
-CLASS TAppMod 
-  DATA cName
-  DATA oParent
-  DATA oDatabase
-  DATA oDesktop
-  DATA cVerzija
-  DATA cPeriod
-  DATA cKorisn
-  DATA cSifra
-  DATA cP3
-  DATA cP4
-  DATA cP5
-  DATA cP6
-  DATA cP7
-  DATA cSqlLogBase
-  DATA lSqlDirektno
-  DATA lStarted
-  DATA lTerminate
-  
-  method new
-  method hasParent
-  method setParent
-  method getParent
-  method setName
-  method run
-  method quit
-  method gProc
-  method gParams
-  method setTGVars
-  
+CLASS TAppMod
+
+   DATA cName
+   DATA oParent
+   DATA oDatabase
+   DATA oDesktop
+   DATA cVerzija
+   DATA cPeriod
+   DATA cKorisn
+   DATA cSifra
+   DATA cP3
+   DATA cP4
+   DATA cP5
+   DATA cP6
+   DATA cP7
+   DATA cSqlLogBase
+   DATA lSqlDirektno
+   DATA lStarted
+   DATA lTerminate
+
+   METHOD NEW
+   METHOD hasParent
+   METHOD setParent
+   METHOD getParent
+   METHOD setName
+   METHOD RUN
+   METHOD QUIT
+   METHOD gProc
+   METHOD gParams
+   METHOD setTGVars
+
 ENDCLASS
 
 
 
-METHOD new(oParent, cModul, cVerzija, cPeriod, cKorisn, cSifra, p3,p4,p5,p6,p7) CLASS TAppMod
+METHOD new( oParent, cModul, cVerzija, cPeriod, cKorisn, cSifra, p3, p4, p5, p6, p7 ) CLASS TAppMod
 
-::lStarted:=nil
+   ::lStarted := nil
 
-::cName:=cModul
-::oParent:=oParent
-::oDatabase:=nil
-::cVerzija:=cVerzija
-::cPeriod:=cPeriod
-::cKorisn:=cKorisn
-::cSifra:=cSifra
-::cP3:=p3
-::cP4:=p4
-::cP5:=p5
-::cP6:=p6
-::cP7:=p7
-::lTerminate:=.f.
+   ::cName := cModul
+   ::oParent := oParent
+   ::oDatabase := nil
+   ::cVerzija := cVerzija
+   ::cPeriod := cPeriod
+   ::cKorisn := cKorisn
+   ::cSifra := cSifra
+   ::cP3 := p3
+   ::cP4 := p4
+   ::cP5 := p5
+   ::cP6 := p6
+   ::cP7 := p7
+   ::lTerminate := .F.
 
-return
+   RETURN
 
 
 /*! \fn *bool TAppMod::hasParent()
  *  \brief ima li objekat "roditelja"
  */
- 
-*bool TAppMod::hasParent()
 
-method hasParent()
+// bool TAppMod::hasParent()
 
-return !(::oParent==nil)
+METHOD hasParent()
+
+   RETURN !( ::oParent == nil )
 
 
 
@@ -95,58 +96,60 @@ return !(::oParent==nil)
  *
  *  Roditelj je programski modul (objekat) koji je izvrsio kreiranje ovog objekta. To bi znacilo za oPos to parent oFMK - "master" aplikacijski modul koji poziva pojedinacne programske module (oFIN, oKALK, oFAKT)
  */
-*TObject TAppMod::setParent(TObject oParent)
+// TObject TAppMod::setParent(TObject oParent)
 
-method setParent(oParent)
+METHOD setParent( oParent )
 
-::parent:=oParent
+   ::parent := oParent
 
-return
+   RETURN
 
 
 /*! \fn *TObject TAppMod::getParent()
  *  \brief Daj mi roditelja ovog objekta
  */
 
-*TObject TAppMod::getParent()
+// TObject TAppMod::getParent()
 
-method getParent()
-return ::oParent
-
-
-
-*string TAppMod::setName(string cName)
-
-method setName()
-::cName:="SCAPP"
-return
+METHOD getParent()
+   return ::oParent
 
 
-*void TAppMod::run()
 
-method run()
+// string TAppMod::setName(string cName)
 
-if ::oDesktop == NIL
-    ::oDesktop := TDesktopNew()
-endif
+METHOD setName()
 
-if ::lStarted == NIL
-    ::lStarted := .f.
-endif
+   ::cName := "SCAPP"
 
-SC_START( self, .t. )
+   RETURN
 
-// da se zna da je objekat jednom vec startovan
-::lStarted:=.t.
 
-if ::lTerminate
-    ::quit()
-    return
-endif
+// void TAppMod::run()
 
-::MMenu()
+METHOD run()
 
-return
+   if ::oDesktop == NIL
+      ::oDesktop := TDesktopNew()
+   ENDIF
+
+   if ::lStarted == NIL
+      ::lStarted := .F.
+   ENDIF
+
+   SC_START( self, .T. )
+
+   // da se zna da je objekat jednom vec startovan
+   ::lStarted := .T.
+
+   if ::lTerminate
+      ::quit()
+      RETURN
+   ENDIF
+
+   ::MMenu()
+
+   RETURN .T.
 
 
 
@@ -154,38 +157,39 @@ return
 // *void TAppMod::gProc(char Ch)
 // -----------------------------------------
 
-method gProc(Ch)
-local lPushWa
-local i
+METHOD gProc( Ch )
 
-do case
+   LOCAL lPushWa
+   LOCAL i
 
-    case (Ch==K_SH_F1)
-        Calc()
- 
-    case (Ch == K_SH_F6 )
-        f18_old_session()
+   DO CASE
 
-    case (Ch==K_SH_F2 .or. Ch==K_CTRL_F2)
-        PPrint()
-    
-    case Ch==K_SH_F10
-        ::gParams()
-    
-    case Ch==K_SH_F9
-        Adresar()
-    
-    otherwise
-        if !("U" $ TYPE("gaKeys"))
-            for i:=1 to LEN(gaKeys)
-                if (Ch==gaKeys[i,1])
-                    EVAL(gaKeys[i,2])
-                endif
-            next
-        endif
-endcase
+   CASE ( Ch == K_SH_F1 )
+      Calc()
 
-return
+   CASE ( Ch == K_SH_F6 )
+      f18_old_session()
+
+   CASE ( Ch == K_SH_F2 .OR. Ch == K_CTRL_F2 )
+      PPrint()
+
+   CASE Ch == K_SH_F10
+      ::gParams()
+
+   CASE Ch == K_SH_F9
+      Adresar()
+
+   OTHERWISE
+      IF !( "U" $ Type( "gaKeys" ) )
+         FOR i := 1 TO Len( gaKeys )
+            IF ( Ch == gaKeys[ i, 1 ] )
+               Eval( gaKeys[ i, 2 ] )
+            ENDIF
+         NEXT
+      ENDIF
+   ENDCASE
+
+   RETURN .T.
 
 
 
@@ -195,319 +199,323 @@ return
  *
  *  \todo proceduru izlaska revidirati, izbaciti Rad.sys iz upotrebe, kao i korisn.dbf
  */
- 
-*void TAppMod::quit(bool lVratiSeURP)
 
-method quit(lVratiseURP)
+// void TAppMod::quit(bool lVratiSeURP)
 
-local cKontrDbf
-my_close_all_dbf()
+METHOD quit( lVratiseURP )
 
-if (lVratiseURP==nil)
-  lVratiseURP:=.t.
-endif
+   LOCAL cKontrDbf
 
-SETCOLOR(StaraBoja)
+   my_close_all_dbf()
+
+   IF ( lVratiseURP == nil )
+      lVratiseURP := .T.
+   ENDIF
+
+   SetColor( StaraBoja )
 
 /*
 if lVratiseURP // zatvori korisnika
   if !empty(goModul:oDataBase:cSezonDir)
     // prebaci se u radno podrucje, ali nemoj to zapisati
-    URadPodr(.f.)  
+    URadPodr(.f.)
   endif
 endif
 */
 
-::lTerminate:=.t.
+   ::lTerminate := .T.
 
-CLEAR SCREEN
+   CLEAR SCREEN
 
-if !(::hasParent())
-  if !gReadonly
-    if FOUND()
-      SELECT korisn
-      if RLOCK()
-           REPLACE field->nk WITH .f.
-      endif
-    else
+   IF !( ::hasParent() )
+      IF !gReadonly
+         IF Found()
+            SELECT korisn
+            IF RLock()
+               REPLACE field->nk WITH .F.
+            ENDIF
+         ELSE
+            QUIT
+         ENDIF
+         USE
+         MsgO( "Brisem RAD.SYS ..." )
+         ERASE Rad.sys
+         MsgC()
+      ENDIF
       QUIT
-    endif
-    USE
-    MsgO("Brisem RAD.SYS ...")
-      ERASE Rad.sys
-    MsgC()
-  endif
-  QUIT
-endif
+   ENDIF
 
-return
+   RETURN
 
 
 
-*void TAppMod::gParams()
+// void TAppMod::gParams()
 
-method gParams()
+METHOD gParams()
 
-local cFMKINI:="N"
-local cPosebno:="N"
-local cOldBoje:=SETCOLOR(INVERT)
-local cInstall:="N"
-local lPushWa := .f.
-private GetList:={}
+   LOCAL cFMKINI := "N"
+   LOCAL cPosebno := "N"
+   LOCAL cOldBoje := SetColor( INVERT )
+   LOCAL cInstall := "N"
+   LOCAL lPushWa := .F.
+   PRIVATE GetList := {}
 
-if used()
-  lPushWa:=.t.
-  PushWa()
-else
-  lPushWa:=.f.
-endif
+   IF Used()
+      lPushWa := .T.
+      PushWa()
+   ELSE
+      lPushWa := .F.
+   ENDIF
 
-private cSection:="1"
-private cHistory:=" "
-private aHistory:={}
+   PRIVATE cSection := "1"
+   PRIVATE cHistory := " "
+   PRIVATE aHistory := {}
 
-select (F_PARAMS)
-USE
-O_PARAMS
+   SELECT ( F_PARAMS )
+   USE
+   O_PARAMS
 
-RPar("p?",@cPosebno)
+   RPar( "p?", @cPosebno )
 
-gArhDir:=padr(gArhDir, 100)
-gPFont:=padr(gPFont, 20)
+   gArhDir := PadR( gArhDir, 100 )
+   gPFont := PadR( gPFont, 20 )
 
-Box(, 20, 70)
-    set cursor on
-    @ m_x+ 1,m_y+2 SAY "Parametre pohraniti posebno za korisnika "  GET cPosebno valid cPosebno $ "DN" pict "@!"
-    read
-    WPAr("p?",cPosebno)
-    select params
-    use
-    if cPosebno=="D"
-       select (F_GPARAMSP)
-       use
-       O_GPARAMSP
-    else
-       select (F_GPARAMS)
-       use
-       O_GPARAMS
-    endif
+   Box(, 20, 70 )
+   SET CURSOR ON
+   @ m_x + 1, m_y + 2 SAY "Parametre pohraniti posebno za korisnika "  GET cPosebno VALID cPosebno $ "DN" PICT "@!"
+   READ
+   WPAr( "p?", cPosebno )
+   SELECT params
+   USE
+   IF cPosebno == "D"
+      SELECT ( F_GPARAMSP )
+      USE
+      O_GPARAMSP
+   ELSE
+      SELECT ( F_GPARAMS )
+      USE
+      O_GPARAMS
+   ENDIF
 
-   gPtkonv := padr(gPtkonv, 2)
-  gLokal := PADR(gLokal, 2)
-   @ m_x+ 3,m_y+2 SAY "Konverzija znakova BEZ, 7-852, 7-A, 852-7, 852-A"
-   @ m_x+ 4,m_y+2 SAY "                    0  / 1   /  2  / 3   /   4  "  GET gPTKonv pict "@!" valid subst(gPtkonv,2,1)$ " 1"
-   @ m_x+ 6,m_y+2 SAY "Unos podataka u sifrarnike velika/mala slova/konv.u 852 (V/M/8)"  GET gPicSif valid gpicsif $ "VM8" pict "@!"
-   @ m_x+ 7,m_y+2 SAY "Stroga kontrola ispravki/brisanja sifara     (D/N)"  GET gSKSif valid gSKSif $ "DN" pict "@!"
-   @ m_x+ 8,m_y+2 SAY "Direktorij pomocne kopije podataka" GET gArhDir pict "@S20"
-   @ m_x+ 9,m_y+2 SAY "Default odgovor na pitanje 'Izlaz direktno na printer?' (D/N/V/E)" GET gcDirekt valid gcDirekt $ "DNVER" pict "@!"
-   @ m_x+10,m_y+2 SAY "Shema boja za prikaz na ekranu 'V' (B1/B2/.../B7):" GET gShemaVF
-   @ m_x+11,m_y+2 SAY "Windows font:" GET gPFont
-   @ m_x+12,m_y+2 SAY "Kodna strana:" GET gKodnaS valid gKodnaS $ "78" pict "9"
-   @ m_x+12,col()+2 SAY "Word 97  D/N:" GET gWord97 valid gWord97 $ "DN" pict "@!"
-   @ m_x+12,col()+2 SAY "Zaok 50f (5):" GET g50f    valid g50f    $ " 5" pict "9"
-   @ m_x+14,m_y+2 SAY "Omoguciti kolor-prikaz? (D/N)" GET gFKolor valid gFKolor$"DN" pict "@!"
-   @ m_x+15,col()+2 SAY "SQL log ? (D/N)" GET gSql pict "@!"
- 
-  @ m_x+16,m_y+2 SAY "PDV rezim rada? (D/N)" GET gPDV pict "@!" VALID gPDV$"DN"
+   gPtkonv := PadR( gPtkonv, 2 )
+   gLokal := PadR( gLokal, 2 )
+   @ m_x + 3, m_y + 2 SAY "Konverzija znakova BEZ, 7-852, 7-A, 852-7, 852-A"
+   @ m_x + 4, m_y + 2 SAY "                    0  / 1   /  2  / 3   /   4  "  GET gPTKonv PICT "@!" VALID subst( gPtkonv, 2, 1 ) $ " 1"
+   @ m_x + 6, m_y + 2 SAY "Unos podataka u sifrarnike velika/mala slova/konv.u 852 (V/M/8)"  GET gPicSif VALID gpicsif $ "VM8" PICT "@!"
+   @ m_x + 7, m_y + 2 SAY "Stroga kontrola ispravki/brisanja sifara     (D/N)"  GET gSKSif VALID gSKSif $ "DN" PICT "@!"
+   @ m_x + 8, m_y + 2 SAY "Direktorij pomocne kopije podataka" GET gArhDir PICT "@S20"
+   @ m_x + 9, m_y + 2 SAY "Default odgovor na pitanje 'Izlaz direktno na printer?' (D/N/V/E)" GET gcDirekt VALID gcDirekt $ "DNVER" PICT "@!"
+   @ m_x + 10, m_y + 2 SAY "Shema boja za prikaz na ekranu 'V' (B1/B2/.../B7):" GET gShemaVF
+   @ m_x + 11, m_y + 2 SAY "Windows font:" GET gPFont
+   @ m_x + 12, m_y + 2 SAY "Kodna strana:" GET gKodnaS VALID gKodnaS $ "78" PICT "9"
+   @ m_x + 12, Col() + 2 SAY "Word 97  D/N:" GET gWord97 VALID gWord97 $ "DN" PICT "@!"
+   @ m_x + 12, Col() + 2 SAY "Zaok 50f (5):" GET g50f    VALID g50f    $ " 5" PICT "9"
+   @ m_x + 14, m_y + 2 SAY "Omoguciti kolor-prikaz? (D/N)" GET gFKolor VALID gFKolor $ "DN" PICT "@!"
+   @ m_x + 15, Col() + 2 SAY "SQL log ? (D/N)" GET gSql PICT "@!"
 
-   @ m_x+17, m_y+2 SAY "Lokalizacija 0/hr/ba/en/sr " GET gLokal ;
-    VALID gLokal $ "0 #hr#ba#sr#en" ;
-   
-   @ m_x+18, m_y+2 SAY "PDF stampa (N/D/X)?" GET gPDFPrint VALID {|| gPDFPrint $ "DNX" .and. if(gPDFPrint $ "XD", pdf_box(), .t. ) } PICT "@!"
-  
-  @ m_x+20,m_y+2 SAY "Ispravka FMK.INI (D/S/P/K/M/N)" GET cFMKINI valid cFMKINI $ "DNSPKM" pict "@!"
-   @ m_x+20,m_y+36 SAY "M - FMKMREZ"
-    
-   
-  READ
-BoxC()
+   @ m_x + 16, m_y + 2 SAY "PDV rezim rada? (D/N)" GET gPDV PICT "@!" VALID gPDV $ "DN"
 
-if cFMKIni $ "DSPKM"
-  private cKom:="q "
-     if cFMKINI=="D"
-         cKom+=EXEPATH
-     elseif  cFMKINI=="K"
-         cKom+=KUMPATH
-     elseif  cFMKINI=="P"
-         cKom+=PRIVPATH
-     elseif  cFMKINI=="S"
-         cKom+=SIFPATH
-     endif
-      //-- M je za ispravku FMKMREZ.BAT
-      if cFMKINI=="M"
-         cKom+=EXEPATH+"FMKMREZ.BAT"
-      else
-         cKom+="FMK.INI"
-      endif
+   @ m_x + 17, m_y + 2 SAY "Lokalizacija 0/hr/ba/en/sr " GET gLokal ;
+      VALID gLokal $ "0 #hr#ba#sr#en" ;
 
-     Box(,25,80)
-       f18_run(ckom)
-     BoxC()
-     IniRefresh() // izbrisi iz cache-a
-endif
+      @ m_x + 18, m_y + 2 SAY "PDF stampa (N/D/X)?" GET gPDFPrint VALID {|| gPDFPrint $ "DNX" .AND. if( gPDFPrint $ "XD", pdf_box(), .T. ) } PICT "@!"
+
+   @ m_x + 20, m_y + 2 SAY "Ispravka FMK.INI (D/S/P/K/M/N)" GET cFMKINI VALID cFMKINI $ "DNSPKM" PICT "@!"
+   @ m_x + 20, m_y + 36 SAY "M - FMKMREZ"
 
 
-if lastkey()<>K_ESC
-  Wpar("pt", gPTKonv)
-    Wpar("pS", gPicSif)
-    Wpar("SK", gSKSif)
-    Wpar("DO", gcDirekt)
-    Wpar("FK", gFKolor)
-    Wpar("S9", gSQL)
-    UzmiIzIni(KUMPATH+"fmk.ini","Svi","SqlLog",gSql,"WRITE")
-    Wpar("SB", gShemaVF)
-    Wpar("Ad", trim(gArhDir))
-    Wpar("FO", trim(gPFont))
-    Wpar("KS", gKodnaS)
-    Wpar("W7", gWord97)
-    Wpar("5f", g50f)
-    Wpar("pR", gPDFPrint)
-    WPar("L8", ALLTRIM(gLokal) )
-endif
+   READ
+   BoxC()
 
-KonvTable()
+   IF cFMKIni $ "DSPKM"
+      PRIVATE cKom := "q "
+      IF cFMKINI == "D"
+         cKom += EXEPATH
+      ELSEIF  cFMKINI == "K"
+         cKom += KUMPATH
+      ELSEIF  cFMKINI == "P"
+         cKom += PRIVPATH
+      ELSEIF  cFMKINI == "S"
+         cKom += SIFPATH
+      ENDIF
+      // -- M je za ispravku FMKMREZ.BAT
+      IF cFMKINI == "M"
+         cKom += EXEPATH + "FMKMREZ.BAT"
+      ELSE
+         cKom += "FMK.INI"
+      ENDIF
 
-select gparams
-use
+      Box(, 25, 80 )
+      f18_run( ckom )
+      BoxC()
+      IniRefresh() // izbrisi iz cache-a
+   ENDIF
 
-SETCOLOR(cOldBoje)
 
-if lPushWa
-  PopWa()
-endif
-return
+   IF LastKey() <> K_ESC
+      Wpar( "pt", gPTKonv )
+      Wpar( "pS", gPicSif )
+      Wpar( "SK", gSKSif )
+      Wpar( "DO", gcDirekt )
+      Wpar( "FK", gFKolor )
+      Wpar( "S9", gSQL )
+      UzmiIzIni( KUMPATH + "fmk.ini", "Svi", "SqlLog", gSql, "WRITE" )
+      Wpar( "SB", gShemaVF )
+      Wpar( "Ad", Trim( gArhDir ) )
+      Wpar( "FO", Trim( gPFont ) )
+      Wpar( "KS", gKodnaS )
+      Wpar( "W7", gWord97 )
+      Wpar( "5f", g50f )
+      Wpar( "pR", gPDFPrint )
+      WPar( "L8", AllTrim( gLokal ) )
+   ENDIF
+
+   KonvTable()
+
+   SELECT gparams
+   USE
+
+   SetColor( cOldBoje )
+
+   IF lPushWa
+      PopWa()
+   ENDIF
+
+   RETURN
 
 // ------------------------------------------------------------
 // prikaz dodatnog box-a za stimanje parametara PDF stampe
 // ------------------------------------------------------------
-static function pdf_box()
-local nX := 1
-private GetList:={}
+STATIC FUNCTION pdf_box()
 
-if Pitanje(,"Podesiti parametre PDF stampe (D/N) ?", "D" ) == "N"
-  return .t.
-endif
+   LOCAL nX := 1
+   PRIVATE GetList := {}
 
-Box(, 10, 75 )
-  
-  @ m_x + nX, m_y + 2 SAY "Podesavanje parametara PDF stampe *******"
-  
-  nX += 2
-  
-  @ m_x + nX, m_y + 2 SAY "PDF preglednik:" GET gPDFViewer VALID _g_pdf_viewer(@gPDFViewer) PICT "@S56"
-  
+   IF Pitanje(, "Podesiti parametre PDF stampe (D/N) ?", "D" ) == "N"
+      RETURN .T.
+   ENDIF
+
+   Box(, 10, 75 )
+
+   @ m_x + nX, m_y + 2 SAY "Podesavanje parametara PDF stampe *******"
+
+   nX += 2
+
+   @ m_x + nX, m_y + 2 SAY "PDF preglednik:" GET gPDFViewer VALID _g_pdf_viewer( @gPDFViewer ) PICT "@S56"
+
    nX += 1
-  
-  @ m_x + nX, m_y + 2 SAY "Printanje PDF-a bez poziva preglednika (D/N)?" GET gPDFPAuto VALID gPDFPAuto $ "DN" PICT "@!"
-  
-  nX += 2
-  
-  @ m_x + nX, m_y + 2 SAY "Default printer:" GET gDefPrinter PICT "@S55"
-  
 
-  read
-BoxC()
+   @ m_x + nX, m_y + 2 SAY "Printanje PDF-a bez poziva preglednika (D/N)?" GET gPDFPAuto VALID gPDFPAuto $ "DN" PICT "@!"
 
-if LastKey() <> K_ESC
+   nX += 2
 
-  // generisi yml fajl iz parametara
-  wr_to_yml()
+   @ m_x + nX, m_y + 2 SAY "Default printer:" GET gDefPrinter PICT "@S55"
 
-  // snimi parametre.....
-  Wpar( "pV", gPDFViewer )
-  Wpar( "dP", gDefPrinter )
-  Wpar( "pA", gPDFPAuto )
-  
-endif
 
-return .t.
+   READ
+   BoxC()
+
+   IF LastKey() <> K_ESC
+
+      // generisi yml fajl iz parametara
+      wr_to_yml()
+
+      // snimi parametre.....
+      Wpar( "pV", gPDFViewer )
+      Wpar( "dP", gDefPrinter )
+      Wpar( "pA", gPDFPAuto )
+
+   ENDIF
+
+   RETURN .T.
 
 
 // ---------------------------------------------
 // upisi u yml fajl podesenja
 // ---------------------------------------------
-static function wr_to_yml( cFName )
-local nH
-local cParams := ""
-local cNewRow := CHR(13) + CHR(10)
+STATIC FUNCTION wr_to_yml( cFName )
 
-if cFName == nil
-  cFName := "fmk_pdf.yml"
-endif
+   LOCAL nH
+   LOCAL cParams := ""
+   LOCAL cNewRow := Chr( 13 ) + Chr( 10 )
 
-// write params to yml
-cParams += "pdf_viewer: " + ALLTRIM(gPDFviewer)
-cParams += cNewRow
-cParams += "print_to: " + ALLTRIM(gDefPrinter)
+   IF cFName == nil
+      cFName := "fmk_pdf.yml"
+   ENDIF
 
-// kreiraj fajl
-nH := FCREATE( EXEPATH + cFName )
-// upisi u fajl
-FWRITE( nH, cParams )
-// zatvori fajl
-FCLOSE( EXEPATH + cFName )
+   // write params to yml
+   cParams += "pdf_viewer: " + AllTrim( gPDFviewer )
+   cParams += cNewRow
+   cParams += "print_to: " + AllTrim( gDefPrinter )
 
-return
+   // kreiraj fajl
+   nH := FCreate( EXEPATH + cFName )
+   // upisi u fajl
+   FWrite( nH, cParams )
+   // zatvori fajl
+   FClose( EXEPATH + cFName )
+
+   RETURN
 
 
 
 // -------------------------------------------
 // vraca lokaciju pdf viewera
 // -------------------------------------------
-static function _g_pdf_viewer( cViewer )
-local cViewName := "acrord32.exe"
-local cViewPath := "c:\progra~1\adobe\"
-local aPath := DIRECTORY(cViewPath + "*.*", "D")
-local cPom
+STATIC FUNCTION _g_pdf_viewer( cViewer )
 
-if !EMPTY(cViewer)
-  return .t.
-endif
+   LOCAL cViewName := "acrord32.exe"
+   LOCAL cViewPath := "c:\progra~1\adobe\"
+   LOCAL aPath := Directory( cViewPath + "*.*", "D" )
+   LOCAL cPom
 
-ASORT(aPath, {|x,y| x[1] < y[1] })
+   IF !Empty( cViewer )
+      RETURN .T.
+   ENDIF
 
-nScan := ASCAN( aPath, {|xVal| UPPER(xVal[1]) = "ACRO" })
+   ASort( aPath, {| x, y| x[ 1 ] < y[ 1 ] } )
 
-if nScan > 0
-  cPom := ALLTRIM( aPath[nScan, 1] )
+   nScan := AScan( aPath, {| xVal| Upper( xVal[ 1 ] ) = "ACRO" } )
 
-  cViewer := cViewPath + cPom
-  cViewer += SLASH + "reader" + SLASH
-  cViewer += cViewName
-  
-  cViewer := PADR( cViewer, 150 )
-  
-endif
+   IF nScan > 0
+      cPom := AllTrim( aPath[ nScan, 1 ] )
 
-if !EMPTY(cViewer) .and. !FILE( cViewer )
-  msgbeep("Ne mogu naci Acrobat Reader!#Podesite rucno lokaciju preglednika...")
-endif
+      cViewer := cViewPath + cPom
+      cViewer += SLASH + "reader" + SLASH
+      cViewer += cViewName
 
-return .t.
+      cViewer := PadR( cViewer, 150 )
+
+   ENDIF
+
+   IF !Empty( cViewer ) .AND. !File( cViewer )
+      msgbeep( "Ne mogu naci Acrobat Reader!#Podesite rucno lokaciju preglednika..." )
+   ENDIF
+
+   RETURN .T.
 
 
-/*! \fn TAppMod::setTGVars() 
+/*! \fn TAppMod::setTGVars()
  *  \brief Setuje globalne varijable, te setuje incijalne vrijednosti objekata koji pripadaju glavnom app objektu
  */
 
-*void TAppMod::setTGVars()
+// void TAppMod::setTGVars()
 
-method setTGVars()
+METHOD setTGVars()
 
-::cSqlLogBase:=IzFmkIni("Sql","SqlLogBase","c:"+SLASH+"sigma")
-gSqlLogBase:=::cSqlLogBase
+   ::cSqlLogBase := IzFmkIni( "Sql", "SqlLogBase", "c:" + SLASH + "sigma" )
+   gSqlLogBase := ::cSqlLogBase
 
-if IzFmkIni("Sql","SqlDirektno","D")=="D"
-  ::lSqlDirektno:=.t.
-else
-  ::lSqlDirektno:=.f.
-endif
+   IF IzFmkIni( "Sql", "SqlDirektno", "D" ) == "D"
+      ::lSqlDirektno := .T.
+   ELSE
+      ::lSqlDirektno := .F.
+   ENDIF
 
-if (::oDesktop!=nil)
-  ::oDesktop:=nil
-endif
+   IF ( ::oDesktop != nil )
+      ::oDesktop := nil
+   ENDIF
 
-::oDesktop:=TDesktopNew()
-  
-return
+   ::oDesktop := TDesktopNew()
 
+   RETURN

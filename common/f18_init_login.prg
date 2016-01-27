@@ -402,7 +402,6 @@ METHOD F18Login:main_db_login_form()
    @ 5, 5, 18, 77 BOX B_DOUBLE_SINGLE
 
    ++ _x
-
    @ _x, _left SAY PadC( "***** Unestite podatke za pristup *****", 60 )
 
    ++ _x
@@ -423,12 +422,10 @@ METHOD F18Login:main_db_login_form()
 
    ++ _x
    ++ _x
-
    @ _x, _left SAY PadL( "KORISNIK:", 15 ) GET _user PICT "@S30"
 
    ++ _x
    ++ _x
-
    @ _x, _left SAY PadL( "LOZINKA:", 15 ) GET _pwd PICT "@S30" // COLOR "BG/BG"
 
    READ
@@ -455,8 +452,6 @@ METHOD F18Login:main_db_login_form()
    _ok := .T.
 
    RETURN _ok
-
-
 
 
 

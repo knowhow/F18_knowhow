@@ -76,20 +76,20 @@ REQUEST HB_GT_WVT_DEFAULT
 #else
 
 #ifdef GT_DEFAULT_TRM
-   REQUEST HB_GT_TRM_DEFAULT
+REQUEST HB_GT_TRM_DEFAULT
 #else
-   #ifdef GT_DEFAULT_QT
-      REQUEST HB_GT_QTC_DEFAULT
-   #else
-      REQUEST HB_GT_XWC_DEFAULT
-   #endif
+#ifdef GT_DEFAULT_QT
+REQUEST HB_GT_QTC_DEFAULT
+#else
+REQUEST HB_GT_XWC_DEFAULT
+#endif
 #endif
 
 #endif
 
 rddSetDefault( RDDENGINE )
 
-SET( _SET_AUTOPEN, .F.  )
+Set( _SET_AUTOPEN, .F.  )
 
 init_harbour()
 
@@ -107,7 +107,7 @@ SetgaSDbfs()
 set_global_vars_0()
 PtxtSekvence()
 
-__my_error_handler := { | objError, lShowreport, lQuit | GlobalErrorHandler( objError, lShowReport, lQuit ) }
+__my_error_handler := {| objError, lShowreport, lQuit | GlobalErrorHandler( objError, lShowReport, lQuit ) }
 __global_error_handler := ErrorBlock( __my_error_handler )
 
 set_screen_dimensions()
@@ -115,13 +115,13 @@ set_screen_dimensions()
 init_gui()
 
 IF no_sql_mode()
-   set_f18_home( "f18_test" )
-   RETURN .T.
+set_f18_home( "f18_test" )
+RETURN .T.
 ENDIF
 
 f18_init_app_login( NIL, arg_v )
 
-RETURN .T.
+   RETURN .T.
 
 
 
@@ -201,7 +201,7 @@ FUNCTION f18_init_app_login( force_connect, arg_v )
             post_login()
             f18_app_parameters( .T. )
             set_hot_keys()
-			get_log_level_from_params()
+            get_log_level_from_params()
 
             module_menu( arg_v )
 
@@ -248,8 +248,6 @@ FUNCTION f18_old_session()
 
 
 
-
-
 // -------------------------------
 // init harbour postavke
 // -------------------------------
@@ -259,18 +257,18 @@ FUNCTION init_harbour()
    // epoha je u stvari 1999, 2000 itd
    SET EPOCH TO 1960
    SET DATE TO GERMAN
-   REQUEST HB_CODEPAGE_SL852
-   REQUEST HB_CODEPAGE_SLISO
+REQUEST HB_CODEPAGE_SL852
+REQUEST HB_CODEPAGE_SLISO
 
-   hb_cdpSelect( "SL852" )
-   hb_SetTermCP( "SLISO" )
+hb_cdpSelect( "SL852" )
+hb_SetTermCP( "SLISO" )
 
-   SET DELETED ON
+SET DELETED ON
 
-   SetCancel( .F. )
+SetCancel( .F. )
 
-   SET( _SET_EVENTMASK, INKEY_ALL )
-   MSetCursor( .T. )
+Set( _SET_EVENTMASK, INKEY_ALL )
+MSetCursor( .T. )
 
    RETURN .T.
 
@@ -292,15 +290,15 @@ FUNCTION set_screen_dimensions()
 
 // IF _pix_width == NIL
 
-//    maxrows( 40 )
-//    maxcols( 150 )
+// maxrows( 40 )
+// maxcols( 150 )
 
-    IF SetMode( maxrow(), maxcol() )
-           log_write( "setovanje ekrana: setovan ekran po rezoluciji" )
-    ELSE
-           log_write( "setovanje ekrana: ne mogu setovati ekran po trazenoj rezoluciji !" )
-           QUIT_1
-    ENDIF
+IF SetMode( MaxRow(), MaxCol() )
+log_write( "setovanje ekrana: setovan ekran po rezoluciji" )
+ELSE
+log_write( "setovanje ekrana: ne mogu setovati ekran po trazenoj rezoluciji !" )
+QUIT_1
+ENDIF
 
    RETURN .T.
 // ENDIF
@@ -375,7 +373,7 @@ _get_screen_resolution_from_config()
 hb_gtInfo( HB_GTI_FONTNAME, font_name() )
 
 #ifndef __PLATFORM__DARWIN
-  hb_gtInfo( HB_GTI_FONTWIDTH, font_width() )
+hb_gtInfo( HB_GTI_FONTWIDTH, font_width() )
 #endif
 
 hb_gtInfo( HB_GTI_FONTSIZE, font_size() )
@@ -453,7 +451,6 @@ FUNCTION _write_server_params_to_config()
       MsgBeep( "problem ini write" )
    ENDIF
 
-
 FUNCTION post_login( gVars )
 
    LOCAL _ver
@@ -499,6 +496,7 @@ FUNCTION post_login( gVars )
 STATIC FUNCTION _get_log_level_from_params()
 
    log_level( 7 )
+
    RETURN .T.
 
 #else
@@ -509,6 +507,7 @@ STATIC FUNCTION _get_log_level_from_params()
 STATIC FUNCTION get_log_level_from_params()
 
    log_level( fetch_metric( "log_level", NIL, 3 ) )
+
    RETURN .T.
 
 #endif
@@ -594,13 +593,13 @@ FUNCTION font_width( x )
 
 #ifdef __PLATFORM__DARWIN
 
-    if  x != 100
-       __font_width := x
-    else
-       __font_width := font_size()
-    endif
+      IF  x != 100
+         __font_width := x
+      ELSE
+         __font_width := font_size()
+      ENDIF
 #else
-     __font_width := x
+      __font_width := x
 #endif
 
    ENDIF
@@ -840,7 +839,7 @@ FUNCTION my_server_login( params, conn_type )
       params[ "port" ], ;
       if( conn_type == 1, params[ "schema" ], "public" ) )
 
-   IF !( _server:NetErr() .AND. !EMPTY(_server:ErrorMsg()))
+   IF !( _server:NetErr() .AND. !Empty( _server:ErrorMsg() ) )
 
       my_server( _server )
 

@@ -13,7 +13,6 @@
 
 STATIC __LD_FIELDS_COUNT := 60
 
-
 FUNCTION cre_all_ld_sif( ver )
 
    LOCAL _table_name, _alias, _created
@@ -198,8 +197,7 @@ FUNCTION cre_all_ld_sif( ver )
 
 
 
-// -------------------------------
-// -------------------------------
+
 FUNCTION cre_all_ld( ver )
 
    LOCAL aDbf
@@ -268,7 +266,6 @@ FUNCTION cre_all_ld( ver )
 
    IF_NOT_FILE_DBF_CREATE
    IF_C_RESET_SEMAPHORE
-
    CREATE_INDEX( "1", "id", _alias )
    CREATE_INDEX( "2", "naz", _alias )
 
@@ -278,7 +275,6 @@ FUNCTION cre_all_ld( ver )
    // -------------------------------------
    _alias := "_RADN"
    _table_name := "_ld_radn"
-
    IF_NOT_FILE_DBF_CREATE
 
 
@@ -405,7 +401,6 @@ FUNCTION cre_all_ld( ver )
 
    CREATE_INDEX( "1", "Obr+str(godina)+str(mjesec)+idradn+idrj", _alias )
    CREATE_INDEX( "RADN", "idradn", _alias )
-
 
    kreiraj_tabelu_ld__ld( aDbf )
 
@@ -695,4 +690,4 @@ STATIC FUNCTION prosiri_numericka_polja_tabele( aDbf )
       ENDIF
    NEXT
 
-   RETURN
+   RETURN .T.

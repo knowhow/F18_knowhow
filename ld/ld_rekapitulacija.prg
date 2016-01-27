@@ -88,9 +88,8 @@ FUNCTION ld_rekapitulacija( lSvi )
 
    IF lSvi
 
-      cFilt1 := ".t." + ;
-         IF( Empty( cStrSpr ), "", ".and.IDSTRSPR == " + cm2str( cStrSpr ) ) + ;
-         IF( Empty( qqRJ ), "", ".and." + aUsl1 )
+      cFilt1 := ".t." + IIF( Empty( cStrSpr ), "", ".and.IDSTRSPR == " + cm2str( cStrSpr ) ) + ;
+         IIF( Empty( qqRJ ), "", ".and." + aUsl1 )
 
       IF cMjesec != cMjesecDo
          cFilt1 := cFilt1 + ".and. mjesec >= " + cm2str( cMjesec ) + ;
@@ -101,8 +100,7 @@ FUNCTION ld_rekapitulacija( lSvi )
 
    ELSE
 
-      cFilt1 := ".t." + ;
-         IF( Empty( cStrSpr ), "", ".and. IDSTRSPR == " + cm2str( cStrSpr ) )
+      cFilt1 := ".t." +  IIF( Empty( cStrSpr ), "", ".and. IDSTRSPR == " + cm2str( cStrSpr ) )
       IF cMjesec != cMjesecDo
          cFilt1 := cFilt1 + ".and. mjesec >= " + cm2str( cMjesec ) + ;
             ".and. mjesec <= " + cm2str( cMjesecDo ) + ".and. godina = " + cm2str( cGodina )
@@ -751,7 +749,7 @@ STATIC FUNCTION _calc_totals( lSvi, a_benef )
       nPorNrOsnova := min_neto( nPorNROsnova, _usati )
 
       if cTipRada $ "A#U"
-          // poreska osnova ugovori o djelu cine i troskovi 
+          // poreska osnova ugovori o djelu cine i troskovi
           nPorNROsnova += nRTrosk
       endif
 

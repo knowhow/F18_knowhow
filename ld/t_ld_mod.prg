@@ -9,10 +9,7 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-
 #include "f18.ch"
-#include "hbclass.ch"
-
 
 CLASS TLdMod FROM TAppMod
 
@@ -69,7 +66,7 @@ METHOD mMenuStandard
    AAdd( opcexe, {|| ld_export_banke() } )
    AAdd( opc, "------------------------------------" )
    AAdd( opcexe, nil )
-   AAdd( opc, "S. šifrarnici" )
+   AAdd( opc, "S. šifarnici plate" )
    AAdd( opcexe, {|| ld_sifrarnici() } )
    AAdd( opc, "------------------------------------" )
    AAdd( opcexe, nil )
@@ -81,7 +78,7 @@ METHOD mMenuStandard
    AAdd( opcexe, {|| ld_gen_virm() } )
    AAdd( opc, "------------------------------------" )
    AAdd( opcexe, nil )
-   AAdd( opc, "X. parametri     " )
+   AAdd( opc, "X. parametri plate " )
    AAdd( opcexe, {|| ld_parametri() } )
 
    Menu_SC( "gld", .T. )
@@ -155,4 +152,3 @@ METHOD setGVars()
    gGlBaza := "LD.DBF"
 
    RETURN
-

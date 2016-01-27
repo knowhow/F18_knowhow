@@ -48,7 +48,7 @@ STATIC FUNCTION izvjestaji_kartice()
    AAdd( _opcexe, {|| ld_kartica_plate() } )
    AAdd( _opc, "2. kartica plate za više mjeseci" )
    AAdd( _opcexe, {|| ld_kartica_plate_za_vise_mjeseci() } )
- 
+
    f18_menu( "krt", .F., _izbor, _opc, _opcexe )
 
    RETURN
@@ -69,7 +69,7 @@ STATIC FUNCTION izvjestaji_obrasci()
    AAdd( _opcexe, {|| ld_asd_aug_obrazac() } )
    AAdd( _opc, "4. prijave doprinosa (JS-3400)" )
    AAdd( _opcexe, {|| ld_js3400_obrazac() } )
- 
+
    f18_menu( "obr", .F., _izbor, _opc, _opcexe )
 
    RETURN
@@ -145,7 +145,7 @@ STATIC FUNCTION izvjestaji_ostali()
 
    f18_menu( "ost", .F., _izbor, _opc, _opcexe )
 
-   RETURN
+   RETURN .T.
 
 
 STATIC FUNCTION izvjestaji_rekapitulacije()
@@ -161,6 +161,4 @@ STATIC FUNCTION izvjestaji_rekapitulacije()
 
    f18_menu( "rekap", .F., _izbor, _opc, _opcexe )
 
-   RETURN
-
-
+   RETURN .T.

@@ -117,7 +117,7 @@ FUNCTION P_Radn( cId, dx, dy )
    Kol := {}
 
    IF gMinR == "B"
-      ImeKol[ 6 ] := { Lokal( PadR( "MinR", 7 ) ), {|| Transform( kminrad, "9999.99" ) }, "kminrad" }
+      ImeKol[ 6 ] := { PadR( "MinR", 7 ), {|| Transform( kminrad, "9999.99" ) }, "kminrad" }
    ENDIF
 
    FOR i := 1 TO 9
@@ -130,7 +130,10 @@ FUNCTION P_Radn( cId, dx, dy )
       ENDIF
    NEXT
 
+   AAdd( ImeKol, { Lokal( PadR( "vr.invalid", 10 ) ), {|| vr_invalid }, "vr_invalid", ;
+                   {|| .T.}, {|| Wvr_invalid==0 .OR. valid_vrsta_invaliditeta( wvr_invalid ) } } )
    AAdd( ImeKol, { Lokal( PadR( "st.invalid", 10 ) ), {|| st_invalid }, "st_invalid" } )
+
 
    FOR i := 1 TO Len( ImeKol )
       AAdd( Kol, I )

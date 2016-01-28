@@ -11,6 +11,13 @@
 
 #include "f18.ch"
 
+STATIC saVrsteInvaliditeta := ;
+      {                        ;
+      "invalid rada",          ;
+      "ratni vojni invalid",   ;
+      "civilni invalid"        ;
+      }
+
 FUNCTION valid_stepen_invaliditeta( nStepen )
 
    nStepen := Round( nStepen, 0 )
@@ -22,3 +29,31 @@ FUNCTION valid_stepen_invaliditeta( nStepen )
    ENDIF
 
    RETURN .F.
+
+
+FUNCTION valid_vrsta_invaliditeta( nVrsta )
+
+   LOCAL cVrsta := get_vrsta_invaliditeta( nVrsta )
+   LOCAL cTmp, cItem, nCnt
+
+   IF ( Empty( cVrsta ) )
+      cTmp := "Vrste invaliditeta:#"
+      nCnt := 1
+      FOR EACH cItem IN saVrsteInvaliditeta
+         cTmp += Str( nCnt++, 2, 0 ) + "." + cItem + "#"
+      NEXT
+      MsgBeep( cTmp )
+      RETURN .F.
+   ENDIF
+
+   RETURN .T.
+
+
+FUNCTION get_vrsta_invaliditeta( nVrsta )
+
+   IF nVrsta < 1 .OR. nVrsta > Len( saVrsteInvaliditeta )
+      RETURN ""
+   ENDIF
+
+   altd()
+   RETURN saVrsteInvaliditeta[ nVrsta ]

@@ -11,6 +11,8 @@
 
 #include "f18.ch"
 
+REQUEST HB_CODEPAGE_SL852
+REQUEST HB_CODEPAGE_SLISO
 
 STATIC __server := NIL
 STATIC __server_params := NIL
@@ -53,12 +55,6 @@ STATIC __font_width := 15
 
 #endif
 
-STATIC __log_level := 3
-
-
-FUNCTION f18_init_app( arg_v )
-
-   LOCAL oLogin
 
 #ifdef NTX_INDICES
 REQUEST DBFNTX
@@ -86,6 +82,15 @@ REQUEST HB_GT_XWC_DEFAULT
 #endif
 
 #endif
+
+STATIC __log_level := 3
+
+
+FUNCTION f18_init_app( arg_v )
+
+   LOCAL oLogin
+
+
 
 rddSetDefault( RDDENGINE )
 
@@ -151,9 +156,6 @@ FUNCTION f18_init_app_opts()
    RETURN .T.
 
 
-
-
-
 // -----------------------------------------------------
 // inicijalna login opcija
 // -----------------------------------------------------
@@ -214,7 +216,7 @@ FUNCTION f18_init_app_login( force_connect, arg_v )
       QUIT
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 STATIC FUNCTION _show_info()
@@ -233,7 +235,7 @@ STATIC FUNCTION _show_info()
    _txt := PadC( ". . . . . . k o n e k c i j a    n a    b a z u   u   t o k u . . . . . . .", _y )
    @ _x + 1, 2 SAY8 _txt
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -257,8 +259,7 @@ FUNCTION init_harbour()
    // epoha je u stvari 1999, 2000 itd
    SET EPOCH TO 1960
    SET DATE TO GERMAN
-REQUEST HB_CODEPAGE_SL852
-REQUEST HB_CODEPAGE_SLISO
+
 
 hb_cdpSelect( "SL852" )
 hb_SetTermCP( "SLISO" )
@@ -283,15 +284,16 @@ FUNCTION set_screen_dimensions()
 
    _msg := "screen res: " + AllTrim( to_str( _pix_width ) ) + " " + AllTrim( to_str( _pix_height ) ) + " varijanta: "
 
-#ifdef NODE
+//#ifdef NODE
 
-   RETURN .T.
-#endif
+//   RETURN .T.
+//#endif
 
-// IF _pix_width == NIL
 
-// maxrows( 40 )
-// maxcols( 150 )
+IF _pix_width == NIL
+
+ maxrows( 40 )
+ maxcols( 150 )
 
 IF SetMode( MaxRow(), MaxCol() )
 log_write( "setovanje ekrana: setovan ekran po rezoluciji" )
@@ -301,7 +303,7 @@ QUIT_1
 ENDIF
 
    RETURN .T.
-// ENDIF
+ENDIF
 
 DO CASE
 
@@ -309,7 +311,7 @@ DO CASE
 CASE _pix_width >= 1440 .AND. _pix_height >= 900
 
 font_size( 24 )
-font_width( 100 )
+font_width( 12 )
 maxrows( 35 )
 maxcols( 119 )
 
@@ -328,7 +330,7 @@ log_write( _msg + "2longMac" )
 #else
 
 font_size( 24 )
-font_width( 100 )
+font_width( 12 )
 maxrows( 35 )
 maxcols( 105 )
 
@@ -340,7 +342,7 @@ log_write( _msg + "2long" )
 CASE _pix_width >= 1280 .AND. _pix_height >= 800
 
 font_size( 22 )
-font_width( 100 )
+font_width( 11 )
 maxrows( 35 )
 maxcols( 115 )
 
@@ -349,7 +351,7 @@ log_write( _msg + "2" )
 CASE  _pix_width >= 1024 .AND. _pix_height >= 768
 
 font_size( 20 )
-font_width( 100 )
+font_width( 10 )
 maxrows( 35 )
 maxcols( 100 )
 
@@ -366,7 +368,6 @@ maxcols( 100 )
 log_write( _msg + "4" )
 
 ENDCASE
-
 
 _get_screen_resolution_from_config()
 
@@ -385,7 +386,11 @@ log_write( "setovanje ekrana: ne mogu setovati ekran po trazenoj rezoluciji !" )
 QUIT_1
 ENDIF
 
-   RETURN
+#ifdef F18_DEBUG
+ MsgBeep( str(maxrows()) + " " +  str(maxcols()) )
+#endif
+
+RETURN .T.
 
 #ifdef TEST
 
@@ -607,8 +612,6 @@ FUNCTION font_width( x )
    RETURN __font_width
 
 
-// -------------------------
-// -------------------------
 FUNCTION font_size( x )
 
    IF ValType( x ) == "N"
@@ -617,9 +620,7 @@ FUNCTION font_size( x )
 
    RETURN __font_size
 
-// ----------------------------
-// vraca nivo logiranja
-// ----------------------------
+
 FUNCTION log_level( x )
 
    IF ValType( x ) == "N"
@@ -634,8 +635,7 @@ FUNCTION log_level( x )
    RETURN __log_level
 #endif
 
-// ------------------------------------------
-// ------------------------------------------
+
 STATIC FUNCTION f18_form_login( server_params )
 
    LOCAL _ret
@@ -861,10 +861,6 @@ FUNCTION my_server_login( params, conn_type )
    ENDIF
 
 
-
-   // --------------------------
-   // --------------------------
-
 FUNCTION my_server_logout()
 
    IF ValType( __server ) == "O"
@@ -873,8 +869,7 @@ FUNCTION my_server_logout()
 
    RETURN __server
 
-// -----------------------------
-// -----------------------------
+
 FUNCTION my_server_search_path( path )
 
    LOCAL _key := "search_path"
@@ -921,14 +916,9 @@ FUNCTION _path_quote( path )
 
    IF ( At( path, " " ) != 0 ) .AND. ( At( PATH, '"' ) == 0 )
       RETURN  '"' + path + '"'
-   ELSE
-      RETURN PATH
    ENDIF
 
-
-
-   // -----------------------------
-   // ------------------------------
+      RETURN PATH
 
 FUNCTION my_home_root( home_root )
 
@@ -939,8 +929,6 @@ FUNCTION my_home_root( home_root )
    RETURN __f18_home_root
 
 
-// ----------------------------
-// ----------------------------
 FUNCTION set_f18_home_root()
 
    LOCAL home
@@ -961,8 +949,6 @@ FUNCTION set_f18_home_root()
    RETURN .T.
 
 
-// -----------------------------
-// ------------------------------
 FUNCTION my_home_backup( home_backup )
 
    IF home_backup != NIL
@@ -973,8 +959,7 @@ FUNCTION my_home_backup( home_backup )
 
 
 
-// ----------------------------
-// ----------------------------
+
 FUNCTION set_f18_home_backup( database )
 
    LOCAL _home := hb_DirSepAdd( my_home_root() + "backup" )
@@ -1057,8 +1042,7 @@ STATIC FUNCTION f18_no_login_quit()
 
    RETURN
 
-// ---------------
-// ---------------
+
 FUNCTION relogin()
 
    LOCAL oBackup := F18Backup():New()
@@ -1085,8 +1069,7 @@ FUNCTION relogin()
    RETURN _ret
 
 
-// -------------------------------
-// -------------------------------
+
 FUNCTION log_write( msg, level, silent )
 
    LOCAL _msg_time
@@ -1141,8 +1124,7 @@ FUNCTION server_log_enable()
    RETURN
 
 
-// -------------------------------------------------
-// -------------------------------------------------
+
 FUNCTION log_create()
 
    IF ( __log_handle := FCreate( F18_LOG_FILE ) ) == -1
@@ -1153,8 +1135,7 @@ FUNCTION log_create()
 
    RETURN
 
-// -------------------------------------------------
-// -------------------------------------------------
+
 FUNCTION log_close()
 
    FClose( __log_handle )
@@ -1162,8 +1143,7 @@ FUNCTION log_close()
    RETURN .T.
 
 
-// ----------------------------------
-// ----------------------------------
+
 FUNCTION log_handle( handle )
 
    IF handle != NIL
@@ -1173,8 +1153,6 @@ FUNCTION log_handle( handle )
    RETURN __log_handle
 
 
-// ----------------------------
-// ----------------------------
 FUNCTION view_log()
 
    LOCAL _cmd
@@ -1187,8 +1165,7 @@ FUNCTION view_log()
 
    RETURN .T.
 
-// ------------------------------------------------
-// ------------------------------------------------
+
 FUNCTION set_hot_keys()
 
    SetKey( K_SH_F1, {|| Calc() } )
@@ -1215,3 +1192,5 @@ FUNCTION run_on_startup()
       _fakt_doks:pretvori_otpremnice_u_racun()
 
    END
+
+RETURN .t.

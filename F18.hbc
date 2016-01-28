@@ -14,6 +14,7 @@ libs=hbpgsql
 libs=sddpg
 
 {mingw}libpaths=/usr/i586-mingw32msvc/lib
+#{mingw}libpaths=c:/PostgreSQL/9.4/lib
 {darwin}libpaths=/Library/PostgreSQL/9.1/lib
 
 mt=yes

@@ -43,22 +43,18 @@ FUNCTION def_siht( lNew )
 
       ++ nX
       ++ nX
-
       @ m_x + nX, m_y + 2 SAY "godina" GET nGodina PICT "9999"
       @ m_x + nX, Col() + 2 SAY "mjesec" GET nMjesec PICT "99"
 
       ++ nX
-
       @ m_x + nX, m_y + 2 SAY "grupa:" GET cGroup ;
          VALID {|| p_konto( @cGroup ), ;
          _show_get_item_value( g_gr_naz( cGroup ), 40 ) }
 
       ++ nX
-
       @ m_x + nX, m_y + 2 SAY "opis:" GET cOpis PICT "@S40"
 
       ++ nX
-
       @ m_x + nX, m_y + 2 SAY "radnik:" GET cIdRadn ;
          VALID {|| p_radn( @cIdRadn ), ;
          _show_get_item_value( _rad_ime( cIdRadn ), 30 ) }
@@ -96,12 +92,10 @@ FUNCTION def_siht( lNew )
 
       ++ nX
       ++ nX
-
       @ m_x + nX, m_y + 2 SAY "broj odradjenih sati:" GET _izvrseno ;
          PICT "99999.99"
 
       ++ nX
-
       @ m_x + nX, m_y + 2 SAY "od toga nocni rad:" GET _bodova ;
          PICT "99999.99"
 
@@ -124,7 +118,7 @@ FUNCTION def_siht( lNew )
 
    BoxC()
 
-   RETURN
+   RETURN .T.
 
 
 // ---------------------------------------------------

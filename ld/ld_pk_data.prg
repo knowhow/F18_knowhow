@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -12,251 +12,258 @@
 
 #include "f18.ch"
 
-static __IDRADN := ""
+STATIC __IDRADN := ""
 
 
 // -------------------------------------------
 // prikaz podataka o clanovima
 // -------------------------------------------
-function pk_data( cId, dx, dy )
-local i
-local cHeader := ""
-private ImeKol
-private Kol
+FUNCTION pk_data( cId, dx, dy )
 
-__IDRADN := cID
+   LOCAL i
+   LOCAL cHeader := ""
+   PRIVATE ImeKol
+   PRIVATE Kol
 
-cHeader += "Podaci o izdrzavanim clanovima " 
+   __IDRADN := cID
 
-select pk_data
-set filter to
+   cHeader += "Podaci o izdrzavanim clanovima "
 
-// setuj filter
-set_filt( cId )
+   SELECT pk_data
+   SET FILTER TO
 
-// setuj kolone tabele
-set_a_kol(@ImeKol, @Kol)
+   // setuj filter
+   set_filt( cId )
 
-PostojiSifra(F_PK_DATA, 1, 10, 77, cHeader, ;
-	nil, dx, dy, {|Ch| key_handler(Ch)})
+   // setuj kolone tabele
+   set_a_kol( @ImeKol, @Kol )
 
-return
+   PostojiSifra( F_PK_DATA, 1, 10, 77, cHeader, ;
+      nil, dx, dy, {| Ch| key_handler( Ch ) } )
+
+   RETURN
 
 // ------------------------------------------
 // setuje filter na bazi
 // ------------------------------------------
-static function set_filt( cId )
-local cFilt := ""
+STATIC FUNCTION set_filt( cId )
 
-cFilt := "idradn == " + cm2str(cId)
-set filter to &cFilt
-go top
+   LOCAL cFilt := ""
 
-return
+   cFilt := "idradn == " + cm2str( cId )
+   SET FILTER to &cFilt
+   GO TOP
+
+   RETURN
 
 
 // -----------------------------------------
 // setovanje kolona prikaza
 // -----------------------------------------
-static function set_a_kol(aImeKol, aKol)
-local i
+STATIC FUNCTION set_a_kol( aImeKol, aKol )
 
-aImeKol := {}
-aKol := {}
+   LOCAL i
 
-AADD(aImeKol, { "ident.", {|| PADR(s_ident( ident ),15) }, "ident"  })
-AADD(aImeKol, { "rbr.", {|| PADR(STR(rbr),3) }, "rbr"  })
-AADD(aImeKol, { "prezime i ime", {|| PADR(ime_pr,15)+"..." }, "ime_pr"  })
-AADD(aImeKol, { "JMB", {|| jmb }, "jmb"  })
-AADD(aImeKol, { "k.srod", {|| sr_kod }, "sr_kod"  })
-AADD(aImeKol, { "naz.srodstva", {|| sr_naz }, "sr_naz"  })
-AADD(aImeKol, { "vl.prihod", {|| prihod }, "prihod"  })
-AADD(aImeKol, { "udio", {|| udio }, "udio"  })
-AADD(aImeKol, { "koef.", {|| koef }, "koef"  })
+   aImeKol := {}
+   aKol := {}
 
-for i:=1 TO LEN(aImeKol)
-	AADD(aKol, i)
-next
+   AAdd( aImeKol, { "ident.", {|| PadR( s_ident( ident ), 15 ) }, "ident"  } )
+   AAdd( aImeKol, { "rbr.", {|| PadR( Str( rbr ), 3 ) }, "rbr"  } )
+   AAdd( aImeKol, { "prezime i ime", {|| PadR( ime_pr, 15 ) + "..." }, "ime_pr"  } )
+   AAdd( aImeKol, { "JMB", {|| jmb }, "jmb"  } )
+   AAdd( aImeKol, { "k.srod", {|| sr_kod }, "sr_kod"  } )
+   AAdd( aImeKol, { "naz.srodstva", {|| sr_naz }, "sr_naz"  } )
+   AAdd( aImeKol, { "vl.prihod", {|| prihod }, "prihod"  } )
+   AAdd( aImeKol, { "udio", {|| udio }, "udio"  } )
+   AAdd( aImeKol, { "koef.", {|| koef }, "koef"  } )
 
-return
+   FOR i := 1 TO Len( aImeKol )
+      AAdd( aKol, i )
+   NEXT
+
+   RETURN
 
 
 // --------------------------------
 // key handler
 // --------------------------------
-static function key_handler(Ch)
-local GetList:={}
-local nRec:=0
+STATIC FUNCTION key_handler( Ch )
 
-do case
-		
-	case (Ch == K_F2)
-		// ispravka stavke
-		unos_clan( .f. )
-		return 7
-	
-	case (Ch == K_CTRL_N)
-		
-		// nova stavka
-	   	unos_clan( .t. )
-	  	return 7
-	
-endcase
+   LOCAL GetList := {}
+   LOCAL nRec := 0
 
-return DE_CONT
+   DO CASE
+
+   CASE ( Ch == K_F2 )
+      // ispravka stavke
+      unos_clan( .F. )
+      RETURN 7
+
+   CASE ( Ch == K_CTRL_N )
+
+      // nova stavka
+      unos_clan( .T. )
+      RETURN 7
+
+   ENDCASE
+
+   RETURN DE_CONT
 
 
 
 // -----------------------------------
 // unos clanova
 // -----------------------------------
-function unos_clan( lNew )
-local nBoxLen:=10
-local nX
+FUNCTION unos_clan( lNew )
 
-Box(, 12,70,.f.)
+   LOCAL nBoxLen := 10
+   LOCAL nX
 
-   do while .t.
-	
-	nX := 1
+   Box(, 12, 70, .F. )
 
-    set_global_memvars_from_dbf()
+   DO WHILE .T.
 
-	if lNew == .t.
-		_idradn := __IDRADN
-		_ident := " "
-		_rbr := 0
-		_ime_pr := PADR("", LEN(_ime_pr))
-		_jmb := PADR("", LEN(_jmb))
-		_sr_naz := PADR("", LEN(_sr_naz))
-		_sr_kod := 0
-		_prihod := 0
-		_udio := 0
-		_koef := 0
-	endif
+      nX := 1
 
-	@ nXX:=m_x + nX, nYY:=m_y + 2 SAY PADL("ident.", nBoxLen) ;
-		GET _ident ;
-      		WHEN lNew ;
-		VALID {|| g_ident( @_ident ), ;
-			_n_rbr(@_rbr, __IDRADN, _ident), ;
-			p_ident( _ident, nXX, nYY ) }
-      		
-	++ nX
+      set_global_memvars_from_dbf()
 
-	@ m_x + nX, m_y + 2 SAY PADL("rbr", nBoxLen) ;
-		GET _rbr ;
-		WHEN lNew ;
-		VALID _g_koef( @_koef, _ident, _rbr ) ;
-		PICT "999"
+      IF lNew == .T.
+         _idradn := __IDRADN
+         _ident := " "
+         _rbr := 0
+         _ime_pr := PadR( "", Len( _ime_pr ) )
+         _jmb := PadR( "", Len( _jmb ) )
+         _sr_naz := PadR( "", Len( _sr_naz ) )
+         _sr_kod := 0
+         _prihod := 0
+         _udio := 0
+         _koef := 0
+      ENDIF
 
-	++ nX
-	
-	@ m_x + nX, m_y + 2 SAY PADL("prez.i ime", nBoxLen) ;
-		GET _ime_pr ;
-		VALID !EMPTY( _ime_pr ) 
+      @ nXX := m_x + nX, nYY := m_y + 2 SAY PadL( "ident.", nBoxLen ) ;
+         GET _ident ;
+         WHEN lNew ;
+         VALID {|| g_ident( @_ident ), ;
+         _n_rbr( @_rbr, __IDRADN, _ident ), ;
+         p_ident( _ident, nXX, nYY ) }
 
-	++ nX
-	
-	@ m_x + nX, m_y + 2 SAY PADL("jmb", nBoxLen) ;
-		GET _jmb ;
-		VALID !EMPTY( _jmb ) 
+      ++ nX
 
-	++ nX
-	
-	@ m_x + nX, m_y + 2 SAY PADL("'kod' sr.", nBoxLen) ;
-		GET _sr_kod ;
-		WHEN _ident $ "34" ;
-		VALID {|| sr_list(@_sr_kod), ;
-			_sr_naz := PADR( g_srodstvo( _sr_kod ), ;
-		LEN(_sr_naz)), .t. } ;
-		PICT "99"
+      @ m_x + nX, m_y + 2 SAY PadL( "rbr", nBoxLen ) ;
+         GET _rbr ;
+         WHEN lNew ;
+         VALID _g_koef( @_koef, _ident, _rbr ) ;
+         PICT "999"
 
-	++ nX
-	
-	@ m_x + nX, m_y + 2 SAY PADL("srodstvo", nBoxLen) ;
-		GET _sr_naz ;
-		WHEN _ident $ "34" 
-	
-	++ nX
-	
-	@ m_x + nX, m_y + 2 SAY PADL("vl.prihod", nBoxLen) ;
-		GET _prihod PICT "9999999.99"
+      ++ nX
 
-	++ nX
-	
-	@ m_x + nX, m_y + 2 SAY PADL("udio", nBoxLen) ;
-		GET _udio PICT "999"
+      @ m_x + nX, m_y + 2 SAY PadL( "prez.i ime", nBoxLen ) ;
+         GET _ime_pr ;
+         VALID !Empty( _ime_pr )
 
-	++ nX
-	
-	@ m_x + nX, m_y + 2 SAY PADL("koef.", nBoxLen) ;
-		GET _koef PICT "9.999"
+      ++ nX
 
-	read
+      @ m_x + nX, m_y + 2 SAY PadL( "jmb", nBoxLen ) ;
+         GET _jmb ;
+         VALID !Empty( _jmb )
+
+      ++ nX
+
+      @ m_x + nX, m_y + 2 SAY PadL( "'kod' sr.", nBoxLen ) ;
+         GET _sr_kod ;
+         WHEN _ident $ "34" ;
+         VALID {|| sr_list( @_sr_kod ), ;
+         _sr_naz := PadR( g_srodstvo( _sr_kod ), ;
+         Len( _sr_naz ) ), .T. } ;
+         PICT "99"
+
+      ++ nX
+
+      @ m_x + nX, m_y + 2 SAY PadL( "srodstvo", nBoxLen ) ;
+         GET _sr_naz ;
+         WHEN _ident $ "34"
+
+      ++ nX
+
+      @ m_x + nX, m_y + 2 SAY PadL( "vl.prihod", nBoxLen ) ;
+         GET _prihod PICT "9999999.99"
+
+      ++ nX
+
+      @ m_x + nX, m_y + 2 SAY PadL( "udio", nBoxLen ) ;
+         GET _udio PICT "999"
+
+      ++ nX
+
+      @ m_x + nX, m_y + 2 SAY PadL( "koef.", nBoxLen ) ;
+         GET _koef PICT "9.999"
+
+      READ
 
 
-    f18_lock_tables({"ld_pk_data"})	
-    sql_table_update( nil, "BEGIN" )
+      f18_lock_tables( { "ld_pk_data" } )
+      sql_table_update( nil, "BEGIN" )
 
-	if LastKey() <> K_ESC
+      IF LastKey() <> K_ESC
 
-        if lNew == .t.
-            append blank
-        endif
+         IF lNew == .T.
+            APPEND BLANK
+         ENDIF
 
-		_vals := get_dbf_global_memvars()
-		update_rec_server_and_dbf( "ld_pk_data", _vals, 1, "CONT" )
-        
-        if lNew == .f.
-            exit
-        endif	
+         _vals := get_dbf_global_memvars()
+         update_rec_server_and_dbf( "ld_pk_data", _vals, 1, "CONT" )
 
-    endif
+         IF lNew == .F.
+            EXIT
+         ENDIF
 
-    f18_free_tables({"ld_pk_data"})	
-    sql_table_update( nil, "END" )
+      ENDIF
 
-	if LastKey() == K_ESC
-		exit
-	endif
-    
-    enddo
+      f18_free_tables( { "ld_pk_data" } )
+      sql_table_update( nil, "END" )
 
-BoxC()
+      IF LastKey() == K_ESC
+         EXIT
+      ENDIF
 
-return 7
+   ENDDO
+
+   BoxC()
+
+   RETURN 7
 
 
 // ----------------------------------------------
 // novi broj
 // ----------------------------------------------
-static function _n_rbr( nRbr, cIdRadn, cIdent )
-local nTArea := SELECT()
-local nTRec := RECNO()
+STATIC FUNCTION _n_rbr( nRbr, cIdRadn, cIdent )
 
-select pk_data
-set order to tag "1"
+   LOCAL nTArea := Select()
+   LOCAL nTRec := RecNo()
 
-seek cIdRadn + cIdent
+   SELECT pk_data
+   SET ORDER TO TAG "1"
 
-nRbr := 0
+   SEEK cIdRadn + cIdent
 
-do while !EOF() .and. field->idradn == cIdRadn ;
-	.and. field->ident == cIdent
-	
-	nRbr := field->rbr + 1
-	
-	skip
-enddo
+   nRbr := 0
 
-if nRbr = 0
-	nRbr := 1
-endif
+   DO WHILE !Eof() .AND. field->idradn == cIdRadn ;
+         .AND. field->ident == cIdent
 
-go (nTRec)
-select (nTArea)
-return .t.
+      nRbr := field->rbr + 1
+
+      SKIP
+   ENDDO
+
+   IF nRbr = 0
+      nRbr := 1
+   ENDIF
+
+   GO ( nTRec )
+   SELECT ( nTArea )
+
+   RETURN .T.
 
 
 
@@ -264,86 +271,88 @@ return .t.
 // -------------------------------------------------
 // funkcija vraca listu identifikatora
 // -------------------------------------------------
-static function g_ident( cIdent )
-local lRet := .f.
+STATIC FUNCTION g_ident( cIdent )
 
-if cIdent $ "1234"
-	lRet := .t.
-endif
+   LOCAL lRet := .F.
 
-return lRet
+   IF cIdent $ "1234"
+      lRet := .T.
+   ENDIF
+
+   RETURN lRet
 
 
 // ----------------------------------------
 // prikazi identifikator
 // ----------------------------------------
-static function p_ident( cIdent, nX, nY )
-local cVal := s_ident( cIdent )
+STATIC FUNCTION p_ident( cIdent, nX, nY )
 
-@ nX, nY + 20 SAY PADR( cVal, 20 )
+   LOCAL cVal := s_ident( cIdent )
 
-return .t.
+   @ nX, nY + 20 SAY PadR( cVal, 20 )
+
+   RETURN .T.
 
 
 // ------------------------------------------
 // daj vrijednost polja
 // ------------------------------------------
-static function s_ident( cIdent )
-local cVal := "?????"
+STATIC FUNCTION s_ident( cIdent )
 
-do case
-	case cIdent == "1"
-		cVal := "bracni drug"
-	case cIdent == "2"
-		cVal := "izdr.djeca"
-	case cIdent == "3"
-		cVal := "clan porodice"
-	case cIdent == "4"
-		cVal := "clan por.inv."
-endcase
+   LOCAL cVal := "?????"
 
-return cVal
+   DO CASE
+   CASE cIdent == "1"
+      cVal := "bracni drug"
+   CASE cIdent == "2"
+      cVal := "izdr.djeca"
+   CASE cIdent == "3"
+      cVal := "clan porodice"
+   CASE cIdent == "4"
+      cVal := "clan por.inv."
+   ENDCASE
+
+   RETURN cVal
 
 
 
 // ----------------------------------------------
 // vraca koeficijent za clanove porodice
 // ----------------------------------------------
-static function _g_koef( nKoef, cIdent, nRbr )
+STATIC FUNCTION _g_koef( nKoef, cIdent, nRbr )
 
-do case
-	case cIdent == "1"
-		// bracni drug
-		nKoef := 0.5	
-	case cIdent == "2"
-		// djeca
-		nKoef := _g_k_dj( nRbr )
-	case cIdent == "3"
-		// uzi clanovi porodice
-		nKoef := 0.3
-	case cIdent == "4"
-		// uzi clanovi porodice - invalidi
-		nKoef := 0.3
-endcase
+   DO CASE
+   CASE cIdent == "1"
+      // bracni drug
+      nKoef := 0.5
+   CASE cIdent == "2"
+      // djeca
+      nKoef := _g_k_dj( nRbr )
+   CASE cIdent == "3"
+      // uzi clanovi porodice
+      nKoef := 0.3
+   CASE cIdent == "4"
+      // uzi clanovi porodice - invalidi
+      nKoef := 0.3
+   ENDCASE
 
-return .t.
+   RETURN .T.
 
 
 // -----------------------------------------
 // vraca koeficijent za djecu
 // -----------------------------------------
-static function _g_k_dj( nRbr )
-local nKoef := 0.5
+STATIC FUNCTION _g_k_dj( nRbr )
 
-do case
-	case nRbr = 1
-		nKoef := 0.5
-	case nRbr = 2
-		nKoef := 0.7
-	case nRbr >= 3
-		nKoef := 0.9
-endcase
+   LOCAL nKoef := 0.5
 
-return nKoef
+   DO CASE
+   CASE nRbr = 1
+      nKoef := 0.5
+   CASE nRbr = 2
+      nKoef := 0.7
+   CASE nRbr >= 3
+      nKoef := 0.9
+   ENDCASE
 
-
+   RETURN nKoef

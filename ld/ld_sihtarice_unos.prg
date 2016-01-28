@@ -290,71 +290,73 @@ FUNCTION UnosSiht()
 
 // --------------------------
 // obrada sihtarice
+// TODO: mrtva funkcija
 // --------------------------
 FUNCTION UzmiSiht()
 
-   MsgBeep( "http://redmine.bring.out.ba/issues/25986" )
+   IF .T.
+      MsgBeep( "http://redmine.bring.out.ba/issues/25986" )
 
-   RETURN .F.
+      RETURN .F.
+   ENDIF
 
-O_PARAMS
+   O_PARAMS
 
-PRIVATE cZadnjiRadnik := cIdRadn
-PRIVATE cSection := "S"
+   PRIVATE cZadnjiRadnik := cIdRadn
+   PRIVATE cSection := "S"
 
-RPar( "zr", @cZadnjiRAdnik )
+   RPar( "zr", @cZadnjiRAdnik )
 
-SELECT F_RADSIHT
-IF !Used()
-O_RADSIHT
-ENDIF
+   SELECT F_RADSIHT
+   IF !Used()
+      O_RADSIHT
+   ENDIF
 
-SELECT radsiht
-SEEK Str( _godina, 4 ) + Str( cmjesec, 2 ) + cZadnjiRadnik + cIdRj
-IF Found() // ovaj je radnik fakat radjen
-SEEK Str( _godina, 4 ) + Str( cmjesec, 2 ) + cidradn + cIdRj
-IF !Found()
-// ako je ovaj radnik vec radjen ne pitaj nista za preuzimanje
-IF pitanje(, 'Zelite li preuzeti sihtaricu od radnika ' + cZadnjiRadnik + ' D/N', 'D' ) == 'D'
-SELECT radsiht
-SEEK Str( _godina, 4 ) + Str( cmjesec, 2 ) + cZadnjiRadnik + cIdRj
-PRIVATE nTSrec := 0
-DO WHILE !Eof() .AND. ( Str( godina, 4 ) + Str( mjesec, 2 ) + idradn + IdRj ) == ( Str( _godina, 4 ) + Str( cmjesec, 2 ) + cZadnjiRadnik + cIdRj )
-SKIP
-nTSrec := RecNo()
-SKIP -1
-Scatter( 'w' )
-wIdRadn := cidradn
-// sve je isto osim sifre radnika
-APPEND BLANK
-Gather( 'w' )
-GO nTSrec
-ENDDO
-ENDIF // pitanje
-ENDIF
-ENDIF
+   SELECT radsiht
+   SEEK Str( _godina, 4 ) + Str( cmjesec, 2 ) + cZadnjiRadnik + cIdRj
+   IF Found() // ovaj je radnik fakat radjen
+      SEEK Str( _godina, 4 ) + Str( cmjesec, 2 ) + cidradn + cIdRj
+      IF !Found()
+         // ako je ovaj radnik vec radjen ne pitaj nista za preuzimanje
+         IF pitanje(, 'Zelite li preuzeti sihtaricu od radnika ' + cZadnjiRadnik + ' D/N', 'D' ) == 'D'
+            SELECT radsiht
+            SEEK Str( _godina, 4 ) + Str( cmjesec, 2 ) + cZadnjiRadnik + cIdRj
+            PRIVATE nTSrec := 0
+            DO WHILE !Eof() .AND. ( Str( godina, 4 ) + Str( mjesec, 2 ) + idradn + IdRj ) == ( Str( _godina, 4 ) + Str( cmjesec, 2 ) + cZadnjiRadnik + cIdRj )
+               SKIP
+               nTSrec := RecNo()
+               SKIP -1
+               Scatter( 'w' )
+               wIdRadn := cidradn
+               // sve je isto osim sifre radnika
+               APPEND BLANK
+               Gather( 'w' )
+               GO nTSrec
+            ENDDO
+         ENDIF // pitanje
+      ENDIF
+   ENDIF
 
-Unossiht()
+   Unossiht()
 
-SELECT params
-PRIVATE cSection := "S"
-SELECT radsiht
-SEEK Str( _godina, 4 ) + Str( cmjesec, 2 ) + cIdRadn + cIdRj
-IF Found()  // nesto je bilo u sihtarici
-SELECT params
-cZadnjiRadnik := cIdRadn
-WPar( "zr", cZadnjiRAdnik )
-ENDIF
+   SELECT params
+   PRIVATE cSection := "S"
+   SELECT radsiht
+   SEEK Str( _godina, 4 ) + Str( cmjesec, 2 ) + cIdRadn + cIdRj
+   IF Found()  // nesto je bilo u sihtarici
+      SELECT params
+      cZadnjiRadnik := cIdRadn
+      WPar( "zr", cZadnjiRAdnik )
+   ENDIF
 
-SELECT params
-USE
-SELECT radsiht
-USE
+   SELECT params
+   USE
+   SELECT radsiht
+   USE
 
    RETURN
 
-// ----------------------
-// ----------------------
+
 STATIC FUNCTION Linija()
 
    ?

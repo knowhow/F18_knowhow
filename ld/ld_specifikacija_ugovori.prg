@@ -13,7 +13,6 @@
 #include "f18.ch"
 
 
-
 FUNCTION ld_specifikacija_plate_ostali()
 
    LOCAL GetList := {}
@@ -93,44 +92,44 @@ FUNCTION ld_specifikacija_plate_ostali()
    dDatIspl := Date()
 
    DO WHILE .T.
-	
+
       Box(, 11, 75 )
-     		
+
       @ m_x + 1, m_y + 2 SAY "Radna jedinica (prazno-sve): " ;
          GET qqIdRJ PICT "@!S15"
 
       @ m_x + 2, m_y + 2 SAY "Opstina stanov.(prazno-sve): " ;
          GET qqOpSt PICT "@!S20"
-		
+
       @ m_x + 2, Col() + 1 SAY "Obr.:" GET cObracun ;
          WHEN HelpObr( .T., cObracun ) ;
          VALID ValObr( .T., cObracun )
-     	
+
       @ m_x + 3, m_y + 2 SAY "Period od:" GET nDanOd PICT "99"
       @ m_x + 3, Col() + 1 SAY "/" GET nMjesecOd PICT "99"
       @ m_x + 3, Col() + 1 SAY "/" GET nGodinaOd PICT "9999"
       @ m_x + 3, Col() + 1 SAY "do:" GET nDanDo PICT "99"
       @ m_x + 3, Col() + 1 SAY "/" GET nMjesecDo PICT "99"
       @ m_x + 3, Col() + 1 SAY "/" GET nGodinaDo PICT "9999"
-     	
-		
+
+
       @ m_x + 4, m_y + 2 SAY " Naziv: " GET cFirmNaz
       @ m_x + 5, m_y + 2 SAY "Adresa: " GET cFirmAdresa
       @ m_x + 6, m_y + 2 SAY "Opcina: " GET cFirmOpc
       @ m_x + 7, m_y + 2 SAY "Vrsta djelatnosti: " GET cFirmVD
-     		
+
       @ m_x + 4, m_y + 52 SAY "ID.broj :" GET cMatBR
       @ m_x + 5, m_y + 52 SAY "Dat.ispl:" GET dDatIspl
-     		
-		
+
+
       @ m_x + 9, m_y + 2 SAY "Doprinos zdravstvo (iz)" GET cDopr1
       @ m_x + 10, m_y + 2 SAY "     Doprinos pio (na)" GET cDopr2
-		
+
       READ
       clvbox()
       ESC_BCR
       BoxC()
-   	
+
       aUslRJ := Parsiraj( qqIdRj, "IDRJ" )
       aUslOpSt := Parsiraj( qqOpSt, "IDOPSST" )
       IF ( aUslRJ <> NIL .AND. aUslOpSt <> nil )
@@ -256,12 +255,12 @@ FUNCTION ld_specifikacija_plate_ostali()
 
       nRSpr_koef := 0
       nTrosk := 0
-	
+
       lInRS := radnik_iz_rs( radn->idopsst, radn->idopsrad ) .AND. cRTR $ "A#U"
 
       // da li koristi troskove
       cKTrosk := radn->trosk
-	
+
       SELECT LD
 
       IF ! ( RADN->( &aUslOpSt ) )
@@ -275,7 +274,7 @@ FUNCTION ld_specifikacija_plate_ostali()
       nUNeto += ld->uneto
 
       nBrSaTr := bruto_osn( ld->uneto, cRTR, nKoefLO, nRSpr_koef, cKTrosk )
- 	
+
       // samo za povremene
       IF cRTR $ "A#U"
          nUBrSaTr += nBrSaTr
@@ -327,7 +326,7 @@ FUNCTION ld_specifikacija_plate_ostali()
          // dohodak
          nPom := nBrOsnPov
          UzmiIzIni( cIniName, 'Varijable', 'POVDOH', FormNum2( nPom, 16, gPici2 ), 'WRITE' )
-	
+
       ELSE
          nPom := nBrOsnDr
          UzmiIzIni( cIniName, 'Varijable', 'DRDOH', FormNum2( nPom, 16, gPici2 ), 'WRITE' )
@@ -381,7 +380,7 @@ FUNCTION ld_specifikacija_plate_ostali()
          nDrD1X := round2( nBrOsnDr * nkD1X / 100, gZaok2 )
          nDrD2X := round2( nBrOsnDr * nkD2X / 100, gZaok2 )
       ENDIF
-		
+
       nPojD1X := round2( nBO * nkD1X / 100, gZaok2 )
 
       // upisi povremeni poslovi doprinosi
@@ -389,7 +388,7 @@ FUNCTION ld_specifikacija_plate_ostali()
       UzmiIzIni( cIniName, 'Varijable', 'POVDZ', FormNum2( nPom, 16, gPici2 ), 'WRITE' )
       nPom := nPovD2X
       UzmiIzIni( cIniName, 'Varijable', 'POVDP', FormNum2( nPom, 16, gPici2 ), 'WRITE' )
-	
+
       // upisi ostali samostalni rad - doprinosi
       nPom := nDrD1X
       UzmiIzIni( cIniName, 'Varijable', 'DRDZDR', FormNum2( nPom, 16, gPici2 ), 'WRITE' )
@@ -414,7 +413,7 @@ FUNCTION ld_specifikacija_plate_ostali()
          nUOsnDr += nOsnDr
       ENDIF
 
- 	
+
       // porez na platu i ostali porez
       SELECT POR
       GO TOP
@@ -427,7 +426,7 @@ FUNCTION ld_specifikacija_plate_ostali()
             SKIP 1
             LOOP
          ENDIF
-     		
+
          IF por->por_tip == "B"
             IF cRTR $ "A#U"
                nPNaPlPov  += POR->iznos * Max( nOsnPov, PAROBR->prosld * gPDLimit / 100 ) / 100

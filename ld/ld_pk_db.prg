@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out knowhow ERP, a free and open source 
+/*
+ * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
  * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -15,307 +15,316 @@
 // --------------------------------------
 // otvara tabele za unos podataka
 // --------------------------------------
-function o_pk_tbl()
+FUNCTION o_pk_tbl()
 
-select F_PK_RADN
-if !used()
-	O_PK_RADN
-endif
+   SELECT F_PK_RADN
+   IF !Used()
+      O_PK_RADN
+   ENDIF
 
-select F_PK_DATA
-if !used()
-	O_PK_DATA
-endif
+   SELECT F_PK_DATA
+   IF !Used()
+      O_PK_DATA
+   ENDIF
 
-return
+   RETURN
 
 
 
 // ------------------------------------------
 // brisanje poreske kartice radnika
 // ------------------------------------------
-function pk_delete( cIdRadn )
-local nTA
+FUNCTION pk_delete( cIdRadn )
 
-if Pitanje(,"Izbrisati podatke poreske kartice radnika ?", "N") == "N"
-	return
-endif
+   LOCAL nTA
 
-nTA := SELECT()
-nCnt := 0
+   IF Pitanje(, "Izbrisati podatke poreske kartice radnika ?", "N" ) == "N"
+      RETURN
+   ENDIF
 
-o_pk_tbl()
+   nTA := Select()
+   nCnt := 0
 
-f18_lock_tables({"ld_pk_radn"})
-sql_table_update( nil, "BEGIN" )
+   o_pk_tbl()
 
-// izbrisi pk_radn
-select pk_radn
-go top
-seek cIdRadn
+   f18_lock_tables( { "ld_pk_radn" } )
+   sql_table_update( nil, "BEGIN" )
 
-do while !EOF() .and. field->idradn == cIdRadn
+   // izbrisi pk_radn
+   SELECT pk_radn
+   GO TOP
+   SEEK cIdRadn
 
-	_del_rec := dbf_get_rec()
-    delete_rec_server_and_dbf( "ld_pk_radn", _del_rec, 1, "CONT" )
+   DO WHILE !Eof() .AND. field->idradn == cIdRadn
 
-	++ nCnt
-	skip
+      _del_rec := dbf_get_rec()
+      delete_rec_server_and_dbf( "ld_pk_radn", _del_rec, 1, "CONT" )
 
-enddo
+      ++ nCnt
+      SKIP
 
-// izbrisi pk_data
-select pk_data
-go top
-seek cIdRadn
+   ENDDO
 
-if FOUND()
-    _del_rec := dbf_get_rec()
-    delete_rec_server_and_dbf( "ld_pk_data", _del_rec, 2, "CONT" )
-endif
+   // izbrisi pk_data
+   SELECT pk_data
+   GO TOP
+   SEEK cIdRadn
 
-f18_free_tables({"ld_pk_radn"})
-sql_table_update( nil, "END" )
+   IF Found()
+      _del_rec := dbf_get_rec()
+      delete_rec_server_and_dbf( "ld_pk_data", _del_rec, 2, "CONT" )
+   ENDIF
 
-if nCnt > 0 
-	msgbeep("Izbrisano " + ALLTRIM(STR(nCnt)) + " zapisa !")
-endif
+   f18_free_tables( { "ld_pk_radn" } )
+   sql_table_update( nil, "END" )
 
-return 
+   IF nCnt > 0
+      msgbeep( "Izbrisano " + AllTrim( Str( nCnt ) ) + " zapisa !" )
+   ENDIF
+
+   RETURN
 
 
 // ------------------------------------
-// vraca novi zahtjev 
+// vraca novi zahtjev
 // ------------------------------------
-function n_zahtjev()
-local nRet := 0
-local nTArea := SELECT()
-local nBroj := 9999999
+FUNCTION n_zahtjev()
 
-select pk_radn
-set order to tag "2"
+   LOCAL nRet := 0
+   LOCAL nTArea := Select()
+   LOCAL nBroj := 9999999
 
-seek nBroj
-skip -1
+   SELECT pk_radn
+   SET ORDER TO TAG "2"
 
-if field->zahtjev = 0
-	nRet := 1
-else
-	nRet := field->zahtjev + 1
-endif
+   SEEK nBroj
+   SKIP -1
 
-set order to tag "1"
+   IF field->zahtjev = 0
+      nRet := 1
+   ELSE
+      nRet := field->zahtjev + 1
+   ENDIF
 
-select (nTArea)
-return nRet
+   SET ORDER TO TAG "1"
+
+   SELECT ( nTArea )
+
+   RETURN nRet
 
 
 
 // --------------------------------
 // vraca srodstvo za "kod"
 // --------------------------------
-function g_srodstvo( nId )
-local cRet := "???"
-local aPom
-local nScan
+FUNCTION g_srodstvo( nId )
 
-// napuni matricu sa srodstvima
-aPom := a_srodstvo()
+   LOCAL cRet := "???"
+   LOCAL aPom
+   LOCAL nScan
 
-nScan := ASCAN( aPom, {|xVal| xVal[1] = nId } )
+   // napuni matricu sa srodstvima
+   aPom := a_srodstvo()
 
-if nScan <> 0
-	cRet := aPom[ nScan, 2 ]
-endif
+   nScan := AScan( aPom, {| xVal| xVal[ 1 ] = nId } )
 
-return cRet
+   IF nScan <> 0
+      cRet := aPom[ nScan, 2 ]
+   ENDIF
+
+   RETURN cRet
 
 
 
 // ---------------------------------------------
 // vraca matricu popunjenu sa srodstvima
 // ---------------------------------------------
-function a_srodstvo()
-local aRet := {}
+FUNCTION a_srodstvo()
 
-AADD( aRet, { 1, "Otac" } )
-AADD( aRet, { 2, "Majka" } )
-AADD( aRet, { 3, "Otac supruznika" } )
-AADD( aRet, { 4, "Majka supruznika" } )
-AADD( aRet, { 5, "Sin" } )
-AADD( aRet, { 6, "Kcerka" } )
-AADD( aRet, { 7, "Unuk" } )
-AADD( aRet, { 8, "Unuka" } )
-AADD( aRet, { 9, "Djed" } )
-AADD( aRet, { 10, "Baka" } )
-AADD( aRet, { 11, "Djed supruznika" } )
-AADD( aRet, { 12, "Baka supruznika" } )
-AADD( aRet, { 13, "Bivsi supruznik" } )
-AADD( aRet, { 14, "Poocim" } )
-AADD( aRet, { 15, "Pomajka" } )
-AADD( aRet, { 16, "Poocim supruznika" } )
-AADD( aRet, { 17, "Pomajka supruznika" } )
-AADD( aRet, { 18, "Pocerka" } )
-AADD( aRet, { 19, "Posinak" } )
+   LOCAL aRet := {}
 
-return aRet
+   AAdd( aRet, { 1, "Otac" } )
+   AAdd( aRet, { 2, "Majka" } )
+   AAdd( aRet, { 3, "Otac supruznika" } )
+   AAdd( aRet, { 4, "Majka supruznika" } )
+   AAdd( aRet, { 5, "Sin" } )
+   AAdd( aRet, { 6, "Kcerka" } )
+   AAdd( aRet, { 7, "Unuk" } )
+   AAdd( aRet, { 8, "Unuka" } )
+   AAdd( aRet, { 9, "Djed" } )
+   AAdd( aRet, { 10, "Baka" } )
+   AAdd( aRet, { 11, "Djed supruznika" } )
+   AAdd( aRet, { 12, "Baka supruznika" } )
+   AAdd( aRet, { 13, "Bivsi supruznik" } )
+   AAdd( aRet, { 14, "Poocim" } )
+   AAdd( aRet, { 15, "Pomajka" } )
+   AAdd( aRet, { 16, "Poocim supruznika" } )
+   AAdd( aRet, { 17, "Pomajka supruznika" } )
+   AAdd( aRet, { 18, "Pocerka" } )
+   AAdd( aRet, { 19, "Posinak" } )
+
+   RETURN aRet
 
 
 // -----------------------------------------
 // lista srodstva u GET rezimu na unosu
 // odabir srodstva
 // -----------------------------------------
-function sr_list( nSrodstvo )
-local nXX := m_x
-local nYY := m_y
+FUNCTION sr_list( nSrodstvo )
 
-if nSrodstvo > 0
-	return .t.
-endif
+   LOCAL nXX := m_x
+   LOCAL nYY := m_y
 
-// napuni matricu sa srodstvima
-aSrodstvo := a_srodstvo()
+   IF nSrodstvo > 0
+      RETURN .T.
+   ENDIF
 
-// odaberi element
-nSrodstvo := _pick_srodstvo( aSrodstvo )
+   // napuni matricu sa srodstvima
+   aSrodstvo := a_srodstvo()
 
-m_x := nXX
-m_y := nYY
+   // odaberi element
+   nSrodstvo := _pick_srodstvo( aSrodstvo )
 
-return .t.
+   m_x := nXX
+   m_y := nYY
+
+   RETURN .T.
 
 // -----------------------------------------
 // uzmi element...
 // -----------------------------------------
-static function _pick_srodstvo( aSr )
-local nChoice := 1
-local nRet
-local i
-local cPom
-private GetList:={}
-private izbor := 1
-private opc := {}
-private opcexe := {}
+STATIC FUNCTION _pick_srodstvo( aSr )
 
-for i:=1 to LEN( aSr )
+   LOCAL nChoice := 1
+   LOCAL nRet
+   LOCAL i
+   LOCAL cPom
+   PRIVATE GetList := {}
+   PRIVATE izbor := 1
+   PRIVATE opc := {}
+   PRIVATE opcexe := {}
 
-	cPom := PADL( ALLTRIM(STR( aSr[i, 1] )), 2 ) + ". " + PADR( aSr[i, 2] , 20 )
-	
-	AADD(opc, cPom)
-	AADD(opcexe, {|| nChoice := izbor, izbor := 0 })
-	
-next
+   FOR i := 1 TO Len( aSr )
 
-Menu_sc("izbor")
+      cPom := PadL( AllTrim( Str( aSr[ i, 1 ] ) ), 2 ) + ". " + PadR( aSr[ i, 2 ], 20 )
 
-if LastKey() == K_ESC
+      AAdd( opc, cPom )
+      AAdd( opcexe, {|| nChoice := izbor, izbor := 0 } )
 
-	nChoice := 0
-	nRet := 0
-	
-else
-	nRet := aSr[ nChoice, 1 ]
-endif
+   NEXT
 
-return nRet
+   Menu_sc( "izbor" )
+
+   IF LastKey() == K_ESC
+
+      nChoice := 0
+      nRet := 0
+
+   ELSE
+      nRet := aSr[ nChoice, 1 ]
+   ENDIF
+
+   RETURN nRet
 
 
 // -------------------------------------------------
 // vraca odbitak za clanove po identifikatoru
 // -------------------------------------------------
-function lo_clan( cIdent, cIdRadn )
-local nOdb := 0
-local nTArea := SELECT()
+FUNCTION lo_clan( cIdent, cIdRadn )
 
-select pk_data
-set order to tag "1"
+   LOCAL nOdb := 0
+   LOCAL nTArea := Select()
 
-seek cIdRadn + cIdent
+   SELECT pk_data
+   SET ORDER TO TAG "1"
 
-do while !EOF() .and. field->idradn == cIdRadn ;
-		.and. field->ident == cIdent
+   SEEK cIdRadn + cIdent
 
-	nOdb += field->koef
-	skip
-enddo
+   DO WHILE !Eof() .AND. field->idradn == cIdRadn ;
+         .AND. field->ident == cIdent
 
-select (nTArea)
-return nOdb
+      nOdb += field->koef
+      SKIP
+   ENDDO
+
+   SELECT ( nTArea )
+
+   RETURN nOdb
 
 
 // ----------------------------------------------
 // setovanje datuma za sve poreske kartice
 // ----------------------------------------------
-function pk_set_date()
-local nTArea := SELECT()
-local dN_date
-local dT_date
-local cGrDate
-local nCnt := 0
-local _rec
+FUNCTION pk_set_date()
 
-if g_date( @dT_date, @dN_date, @cGrDate ) == 0
-	return
-endif
+   LOCAL nTArea := Select()
+   LOCAL dN_date
+   LOCAL dT_date
+   LOCAL cGrDate
+   LOCAL nCnt := 0
+   LOCAL _rec
 
-select pk_radn
-set order to tag "1"
+   IF g_date( @dT_date, @dN_date, @cGrDate ) == 0
+      RETURN
+   ENDIF
 
-go top
+   SELECT pk_radn
+   SET ORDER TO TAG "1"
 
-do while !EOF()
-	
-	if ( cGrDate == "D" )
-		if ( field->datum <= dT_date )
+   GO TOP
+
+   DO WHILE !Eof()
+
+      IF ( cGrDate == "D" )
+         IF ( field->datum <= dT_date )
             _rec := dbf_get_rec()
-            _rec["datum"] := dN_date
-            update_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" )
-			++ nCnt 
-		endif
-	else
-        _rec := dbf_get_rec()
-        _rec["datum"] := dN_date
-        update_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" )
-		++ nCnt 
-	endif
-	
-	skip
-enddo
+            _rec[ "datum" ] := dN_date
+            update_rec_server_and_dbf( Alias(), _rec, 1, "FULL" )
+            ++ nCnt
+         ENDIF
+      ELSE
+         _rec := dbf_get_rec()
+         _rec[ "datum" ] := dN_date
+         update_rec_server_and_dbf( Alias(), _rec, 1, "FULL" )
+         ++ nCnt
+      ENDIF
 
-if nCnt > 0
-	msgbeep("izvrsene " + ALLTRIM(STR(nCnt)) + " promjene !!!")
-endif
+      SKIP
+   ENDDO
 
-select (nTArea)
+   IF nCnt > 0
+      msgbeep( "izvrsene " + AllTrim( Str( nCnt ) ) + " promjene !!!" )
+   ENDIF
 
-return
+   SELECT ( nTArea )
 
-
-static function g_date( dTmp_date, dDate, cGrDate )
-local nRet := 1
-private GetList := {}
-
-dDate := CTOD("01.01.09")
-dTmp_date := DATE()
-cGrDate := "N"
-
-box(, 4, 65 )
-	@ m_x + 1, m_y + 2 SAY "postavi tekuci datum na:" GET dDate
-	@ m_x + 2, m_y + 2 SAY "gledati granicni datum ?" GET cGrDate ;
-		VALID cGrDate $ "DN" PICT "@!"
-	read
-	
-	if cGrDate == "D"
-		@ m_x + 3, m_y + 2 SAY "<= od" GET dTmp_Date
-		read
-	endif
-	
-boxc()
-
-if LastKey() == K_ESC
-	nRet := 0
-endif
-
-return nRet
+   RETURN
 
 
+STATIC FUNCTION g_date( dTmp_date, dDate, cGrDate )
+
+   LOCAL nRet := 1
+   PRIVATE GetList := {}
+
+   dDate := CToD( "01.01.09" )
+   dTmp_date := Date()
+   cGrDate := "N"
+
+   box(, 4, 65 )
+   @ m_x + 1, m_y + 2 SAY "postavi tekuci datum na:" GET dDate
+   @ m_x + 2, m_y + 2 SAY "gledati granicni datum ?" GET cGrDate ;
+      VALID cGrDate $ "DN" PICT "@!"
+   READ
+
+   IF cGrDate == "D"
+      @ m_x + 3, m_y + 2 SAY "<= od" GET dTmp_Date
+      READ
+   ENDIF
+
+   boxc()
+
+   IF LastKey() == K_ESC
+      nRet := 0
+   ENDIF
+
+   RETURN nRet

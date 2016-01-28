@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -16,35 +16,39 @@
 // -----------------------------------------------
 // vraca tip algoritma iz sifrarnika poreza
 // -----------------------------------------------
-function get_algoritam()
-local xRet := ""
-local nTArea := SELECT()
+FUNCTION get_algoritam()
 
-select por
+   LOCAL xRet := ""
+   LOCAL nTArea := Select()
 
-if por->(FIELDPOS("ALGORITAM")) <> 0
-	xRet := field->algoritam
-endif
+   SELECT por
 
-select (nTArea)
-return xRet
+   IF por->( FieldPos( "ALGORITAM" ) ) <> 0
+      xRet := field->algoritam
+   ENDIF
+
+   SELECT ( nTArea )
+
+   RETURN xRet
 
 
 // -----------------------------------------------
 // vraca prirodu obracuna poreza
 // -----------------------------------------------
-function get_pr_obracuna()
-local xRet := " "
-local nTArea := SELECT()
+FUNCTION get_pr_obracuna()
 
-select por
+   LOCAL xRet := " "
+   LOCAL nTArea := Select()
 
-if por->(FIELDPOS("POR_TIP")) <> 0
-	xRet := field->por_tip
-endif
+   SELECT por
 
-select (nTArea)
-return xRet
+   IF por->( FieldPos( "POR_TIP" ) ) <> 0
+      xRet := field->por_tip
+   ENDIF
+
+   SELECT ( nTArea )
+
+   RETURN xRet
 
 
 // -------------------------------------------
@@ -53,192 +57,197 @@ return xRet
 // nOsnNeto - osnovica neto
 // nOsnOstalo - osnovica ostala primanja
 // -------------------------------------------
-function obr_por( cId, nOsnNeto, nOsnOstalo )
-local aPor := {}
-local aPorTek := {}
-local cAlg := ""
-local cPrObr := ""
-local nPorTot := 0
-local nIznos := 0
-local i
+FUNCTION obr_por( cId, nOsnNeto, nOsnOstalo )
 
-// uzmi koji je algoritam
-cAlg := get_algoritam()
-cPrObr := get_pr_obracuna()
+   LOCAL aPor := {}
+   LOCAL aPorTek := {}
+   LOCAL cAlg := ""
+   LOCAL cPrObr := ""
+   LOCAL nPorTot := 0
+   LOCAL nIznos := 0
+   LOCAL i
 
-if cPrObr == "N" .or. cPrObr == " " .or. cPrObr == "B" 
+   // uzmi koji je algoritam
+   cAlg := get_algoritam()
+   cPrObr := get_pr_obracuna()
 
-	// osnovica je neto
-	nIznos := nOsnNeto
+   IF cPrObr == "N" .OR. cPrObr == " " .OR. cPrObr == "B"
 
-elseif cPrObr == "2"
-	
-	// osnovica je ostala primanja
-	nIznos := nOsnOstalo 
-	
-elseif cPrObr == "P"
-	
-	// osnovica je neto + ostala primanja
-	nIznos := nOsnNeto + nOsnOstalo
-	
-endif
+      // osnovica je neto
+      nIznos := nOsnNeto
 
-select por
- 
-if cAlg == "S"
+   ELSEIF cPrObr == "2"
 
-	// stepenasti obracun
-	aPortek := _get_portek( 2 )
-	aPor := obr_por_st( aPorTek, nIznos )	
-	
-else
-	// standardni obracun
-	aPorTek := _get_portek( 1 )
-	aPor := obr_por_os( aPorTek, nIznos )
-	
-endif
+      // osnovica je ostala primanja
+      nIznos := nOsnOstalo
 
-return aPor
+   ELSEIF cPrObr == "P"
+
+      // osnovica je neto + ostala primanja
+      nIznos := nOsnNeto + nOsnOstalo
+
+   ENDIF
+
+   SELECT por
+
+   IF cAlg == "S"
+
+      // stepenasti obracun
+      aPortek := _get_portek( 2 )
+      aPor := obr_por_st( aPorTek, nIznos )
+
+   ELSE
+      // standardni obracun
+      aPorTek := _get_portek( 1 )
+      aPor := obr_por_os( aPorTek, nIznos )
+
+   ENDIF
+
+   RETURN aPor
 
 // ---------------------------------------------
 // ispis poreza
 // lWOpis - bez opisa id, naz
 // ---------------------------------------------
-function isp_por( aPor, cPorType, cMargina, lIspis, lWOpis )
-local nRet := 0
+FUNCTION isp_por( aPor, cPorType, cMargina, lIspis, lWOpis )
 
-if lIspis == nil
-	lIspis := .t.
-endif
+   LOCAL nRet := 0
 
-if lWOpis == nil
-	lWOpis := .f.
-endif
+   IF lIspis == nil
+      lIspis := .T.
+   ENDIF
 
-if cPorType == "S"
-	nRet := isp_por_st( aPor, cMargina, lIspis )
-else
-	nRet := isp_por_os( aPor, cMargina, lIspis, lWOpis )
-endif
+   IF lWOpis == nil
+      lWOpis := .F.
+   ENDIF
 
-return nRet
+   IF cPorType == "S"
+      nRet := isp_por_st( aPor, cMargina, lIspis )
+   ELSE
+      nRet := isp_por_os( aPor, cMargina, lIspis, lWOpis )
+   ENDIF
+
+   RETURN nRet
 
 // -----------------------------------------
 // ispis poreza, osnovni obracun
 // -----------------------------------------
-static function isp_por_os( aPor, cMargina, lIspis, lWOpis )
-local nTotal := 0
-local i := 1
+STATIC FUNCTION isp_por_os( aPor, cMargina, lIspis, lWOpis )
 
-if lIspis == .t.
-	
-	? cMargina
+   LOCAL nTotal := 0
+   LOCAL i := 1
 
-	if lWOpis == .f.
-		?? aPor[i, 1], "-", aPor[i, 2]
-		@ prow(),pcol()+1 SAY aPor[i, 3] pict "99.99%"
-		nC1 := pcol() + 1
-		@ prow(),pcol()+1 SAY aPor[i, 5] pict gPici
-		@ prow(),pcol()+1 SAY aPor[i, 4] pict gPici
-	else
-		cTmp := aPor[i, 2] + " " + ;
-			ALLTRIM(STR(aPor[i, 5])) + ;
-			" * " + ALLTRIM(STR(aPor[i, 3], 2)) + "%"
- 		@ prow(),pcol()+1 SAY SPACE(10) + cTmp
-	endif
-endif
+   IF lIspis == .T.
 
-nTotal += aPor[i, 4]
+      ? cMargina
 
-if nTotal < 0
-	nTotal := 0
-endif
+      IF lWOpis == .F.
+         ?? aPor[ i, 1 ], "-", aPor[ i, 2 ]
+         @ PRow(), PCol() + 1 SAY aPor[ i, 3 ] PICT "99.99%"
+         nC1 := PCol() + 1
+         @ PRow(), PCol() + 1 SAY aPor[ i, 5 ] PICT gPici
+         @ PRow(), PCol() + 1 SAY aPor[ i, 4 ] PICT gPici
+      ELSE
+         cTmp := aPor[ i, 2 ] + " " + ;
+            AllTrim( Str( aPor[ i, 5 ] ) ) + ;
+            " * " + AllTrim( Str( aPor[ i, 3 ], 2 ) ) + "%"
+         @ PRow(), PCol() + 1 SAY Space( 10 ) + cTmp
+      ENDIF
+   ENDIF
 
-return nTotal
+   nTotal += aPor[ i, 4 ]
+
+   IF nTotal < 0
+      nTotal := 0
+   ENDIF
+
+   RETURN nTotal
 
 
 // ------------------------------------
 // ispis poreza, stepenasti obracun
 // ------------------------------------
-static function isp_por_st( aPor, cMargina, lIspis )
-local i
-local nTotal := 0
-local cPom := ""
+STATIC FUNCTION isp_por_st( aPor, cMargina, lIspis )
 
-if LEN(aPor) == 0
-	return 0
-endif
+   LOCAL i
+   LOCAL nTotal := 0
+   LOCAL cPom := ""
 
-if lIspis == .t.
-	
-	? cMargina + aPor[1, 1] + " - " + aPor[1, 2]
-	?? "( Obracun stepen.poreza )"
-	? cMargina + REPLICATE("-", 60)
+   IF Len( aPor ) == 0
+      RETURN 0
+   ENDIF
 
-endif
+   IF lIspis == .T.
 
-for i:=1 to LEN( aPor )
-	
-	if lIspis == .t.
-		
-		nRazlika := aPor[i, 3] - aPor[i, 4]
-	
-		? cMargina + "("
-	
-		@ prow(), pcol()+1 SAY aPor[i, 3] pict "9999.99"
-		@ prow(), pcol()+1 SAY " - "
-		@ prow(), pcol()+1 SAY aPor[i, 4] pict "9999.99"
-		@ prow(), pcol()+1 SAY ") = "
-		@ prow(), pcol()+1 SAY nRazlika pict "9999.99"
-		@ prow(), pcol()+1 SAY " * "
-		@ prow(), pcol()+1 SAY aPor[i, 5] pict "99.99%"
-		@ prow(), pcol()+1 SAY " ="
-		@ prow(), pcol()+1 SAY aPor[i, 6] pict gPici
-	endif
-	
-	nTotal += aPor[i, 6]
+      ? cMargina + aPor[ 1, 1 ] + " - " + aPor[ 1, 2 ]
+      ?? "( Obracun stepen.poreza )"
+      ? cMargina + Replicate( "-", 60 )
 
-next
+   ENDIF
+
+   FOR i := 1 TO Len( aPor )
+
+      IF lIspis == .T.
+
+         nRazlika := aPor[ i, 3 ] - aPor[ i, 4 ]
+
+         ? cMargina + "("
+
+         @ PRow(), PCol() + 1 SAY aPor[ i, 3 ] PICT "9999.99"
+         @ PRow(), PCol() + 1 SAY " - "
+         @ PRow(), PCol() + 1 SAY aPor[ i, 4 ] PICT "9999.99"
+         @ PRow(), PCol() + 1 SAY ") = "
+         @ PRow(), PCol() + 1 SAY nRazlika PICT "9999.99"
+         @ PRow(), PCol() + 1 SAY " * "
+         @ PRow(), PCol() + 1 SAY aPor[ i, 5 ] PICT "99.99%"
+         @ PRow(), PCol() + 1 SAY " ="
+         @ PRow(), PCol() + 1 SAY aPor[ i, 6 ] PICT gPici
+      ENDIF
+
+      nTotal += aPor[ i, 6 ]
+
+   NEXT
 
 
-if lIspis == .t. .and. ROUND(nTotal, 2) <> 0
+   IF lIspis == .T. .AND. Round( nTotal, 2 ) <> 0
 
-	? cMargina + REPLICATE("-", 60)
-	cPom := "Ukupno poreske obaveze:"
-	? cMargina + cPom
-	
-	@ prow(), pcol() + (60 - LEN(cPom) - LEN(gPici)) SAY nTotal PICT gPici
-	? cMargina + REPLICATE("-", 60)
-	
-endif
+      ? cMargina + Replicate( "-", 60 )
+      cPom := "Ukupno poreske obaveze:"
+      ? cMargina + cPom
 
-return nTotal
+      @ PRow(), PCol() + ( 60 - Len( cPom ) - Len( gPici ) ) SAY nTotal PICT gPici
+      ? cMargina + Replicate( "-", 60 )
+
+   ENDIF
+
+   RETURN nTotal
 
 
 
 // ---------------------------------------------------
 // obracun standardni poreza
 // ---------------------------------------------------
-static function obr_por_os( aPorTek, nIznos )
-local aPor := {}
-local nPorIznos
-local nDLimit := 0
-local nPor := 0
-local i:=1
+STATIC FUNCTION obr_por_os( aPorTek, nIznos )
 
-nDLimit := aPorTek[i, 4]
-nPor := aPorTek[i, 3]
-nOsnovica := MAX( nIznos, PAROBR->prosld * gPDLimit/100 ) 
+   LOCAL aPor := {}
+   LOCAL nPorIznos
+   LOCAL nDLimit := 0
+   LOCAL nPor := 0
+   LOCAL i := 1
 
-//nPorIznos := MAX( nDLimit, ROUND( nPor/100 * MAX( nIznos, PAROBR->PROSLD * gPDLIMIT / 100), gZaok2 ))
+   nDLimit := aPorTek[ i, 4 ]
+   nPor := aPorTek[ i, 3 ]
+   nOsnovica := Max( nIznos, PAROBR->prosld * gPDLimit / 100 )
 
-nPorIznos := nIznos * nPor/100
-nPorIznos := ROUND( nPorIznos, 2 )
+   // nPorIznos := MAX( nDLimit, ROUND( nPor/100 * MAX( nIznos, PAROBR->PROSLD * gPDLIMIT / 100), gZaok2 ))
 
-AADD(aPor, { aPorTek[i, 1], aPorTek[i, 2], ;
-	nPor, nPorIznos, nOsnovica })		
+   nPorIznos := nIznos * nPor / 100
+   nPorIznos := Round( nPorIznos, 2 )
 
-return aPor
+   AAdd( aPor, { aPorTek[ i, 1 ], aPorTek[ i, 2 ], ;
+      nPor, nPorIznos, nOsnovica } )
+
+   RETURN aPor
 
 
 
@@ -247,52 +256,53 @@ return aPor
 // aPorTek - matrica sa poreznim stopama i limitima
 // nIznos - obracunska osnovica
 // ------------------------------------------------
-static function obr_por_st( aPorTek, nIznos )
-local aPor := {}
-local i
-local nDLimit := 0
-local nGLimit := 0
-local nStopa := 0
-local nPom
+STATIC FUNCTION obr_por_st( aPorTek, nIznos )
 
-for i := 1 to LEN(aPorTek)
+   LOCAL aPor := {}
+   LOCAL i
+   LOCAL nDLimit := 0
+   LOCAL nGLimit := 0
+   LOCAL nStopa := 0
+   LOCAL nPom
 
-	nDLimit := aPorTek[i, 4]
-	nGLimit := aPorTek[i, 5]
-	
-	nStopa := aPorTek[i, 3]
+   FOR i := 1 TO Len( aPorTek )
 
-	cPorSifra := aPorTek[i, 1]
-	cPorNaz := aPorTek[i, 2]
+      nDLimit := aPorTek[ i, 4 ]
+      nGLimit := aPorTek[ i, 5 ]
 
-	if i == 1
-		if nIznos < nDLimit
-			EXIT
-		endif
-	endif
+      nStopa := aPorTek[ i, 3 ]
 
-	if ( nIznos > nDLimit .and. nIznos < nGLimit )
-		
-		nPom := nIznos - nDLimit
-		nPorIznos := nPom * ( nStopa / 100 )
-		
-		AADD(aPor, { cPorSifra, cPorNaz, ;
-			nIznos, nDLimit, nStopa, nPorIznos })
-		
-		EXIT
-		
-	else
-		nPom := nGLimit - nDLimit
-		nPorIznos := nPom * ( nStopa / 100 )
+      cPorSifra := aPorTek[ i, 1 ]
+      cPorNaz := aPorTek[ i, 2 ]
 
-		AADD(aPor, { cPorSifra, cPorNaz, ;
-			nGLimit, nDLimit, nStopa, nPorIznos })
-		
-	endif
-	
-next
+      IF i == 1
+         IF nIznos < nDLimit
+            EXIT
+         ENDIF
+      ENDIF
 
-return aPor
+      IF ( nIznos > nDLimit .AND. nIznos < nGLimit )
+
+         nPom := nIznos - nDLimit
+         nPorIznos := nPom * ( nStopa / 100 )
+
+         AAdd( aPor, { cPorSifra, cPorNaz, ;
+            nIznos, nDLimit, nStopa, nPorIznos } )
+
+         EXIT
+
+      ELSE
+         nPom := nGLimit - nDLimit
+         nPorIznos := nPom * ( nStopa / 100 )
+
+         AAdd( aPor, { cPorSifra, cPorNaz, ;
+            nGLimit, nDLimit, nStopa, nPorIznos } )
+
+      ENDIF
+
+   NEXT
+
+   RETURN aPor
 
 
 
@@ -300,44 +310,43 @@ return aPor
 // vraca matricu sa porezima i stopama
 //
 // aPor := { nStopa, nLimitMin, nLimitMax }
-// nvar - varijanta 1 - standardna 
-//        varijanta 2 - stepenasti
+// nvar - varijanta 1 - standardna
+// varijanta 2 - stepenasti
 // -------------------------------------------
-static function _get_portek( nVar )
-local aPor := {}
-local i
-local nStopa
-local nLimit
-local nLimitPr
-local cPom
+STATIC FUNCTION _get_portek( nVar )
 
-if nVar == 2
-    for i:=1 to 5
-	
-	cPom := "S_STO_" + ALLTRIM(STR(i))
-	nStopa := &cPom
+   LOCAL aPor := {}
+   LOCAL i
+   LOCAL nStopa
+   LOCAL nLimit
+   LOCAL nLimitPr
+   LOCAL cPom
 
-	cPom := "S_IZN_" + ALLTRIM(STR(i))
-	nLimit := &cPom
-	
-	if nStopa <> 0
-		
-		// prethodna stopa
-		cPom := "S_IZN_" + ALLTRIM(STR(i-1))
-		nLimitPr := &cPom
-		
-		AADD(aPor, { por->id, por->naz, nStopa, nLimitPr, nLimit })
-	endif
-	
-    next
+   IF nVar == 2
+      FOR i := 1 TO 5
 
-else
-	
-	nStopa := field->iznos 
-	AADD(aPor, { por->id, por->naz, nStopa, por->dlimit })
-	
-endif
+         cPom := "S_STO_" + AllTrim( Str( i ) )
+         nStopa := &cPom
 
-return aPor
+         cPom := "S_IZN_" + AllTrim( Str( i ) )
+         nLimit := &cPom
 
+         IF nStopa <> 0
 
+            // prethodna stopa
+            cPom := "S_IZN_" + AllTrim( Str( i - 1 ) )
+            nLimitPr := &cPom
+
+            AAdd( aPor, { por->id, por->naz, nStopa, nLimitPr, nLimit } )
+         ENDIF
+
+      NEXT
+
+   ELSE
+
+      nStopa := field->iznos
+      AAdd( aPor, { por->id, por->naz, nStopa, por->dlimit } )
+
+   ENDIF
+
+   RETURN aPor

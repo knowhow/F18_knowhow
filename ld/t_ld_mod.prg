@@ -83,7 +83,7 @@ METHOD mMenuStandard
 
    Menu_SC( "gld", .T. )
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -151,4 +151,4 @@ METHOD setGVars()
 
    gGlBaza := "LD.DBF"
 
-   RETURN
+   RETURN .T.

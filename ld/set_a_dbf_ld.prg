@@ -24,7 +24,7 @@ FUNCTION set_a_dbf_ld_sif()
    set_a_dbf_sifarnik( "strspr", "STRSPR", F_STRSPR     )
    set_a_dbf_sifarnik( "kbenef", "KBENEF", F_KBENEF     )
 
-   RETURN
+   RETURN .T.
 
 FUNCTION set_a_dbf_ld()
 

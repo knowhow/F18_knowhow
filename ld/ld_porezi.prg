@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -15,365 +15,366 @@
 // -------------------------------------
 // obracun i prikaz poreza
 // -------------------------------------
-function obr_porez( nPor, nPor2, nPorOps, nPorOps2, nUPorOl, cTipPor )
-local cAlgoritam := ""
-local nOsnova := 0
+FUNCTION obr_porez( nPor, nPor2, nPorOps, nPorOps2, nUPorOl, cTipPor )
 
-if cTipPor == nil
-	cTipPor := ""
-endif
+   LOCAL cAlgoritam := ""
+   LOCAL nOsnova := 0
 
-select por
-go top
+   IF cTipPor == nil
+      cTipPor := ""
+   ENDIF
 
-nPom:=0
-nPor:=0
-nPor2:=0
-nPorOps:=0
-nPorOps2:=0
-nC1:=20
+   SELECT por
+   GO TOP
 
-cLinija:="----------------------- -------- ----------- -----------"
+   nPom := 0
+   nPor := 0
+   nPor2 := 0
+   nPorOps := 0
+   nPorOps2 := 0
+   nC1 := 20
 
-if cUmPD=="D"
-	m+=" ----------- -----------"
-endif
+   cLinija := "----------------------- -------- ----------- -----------"
 
-if cUmPD=="D"
-	P_12CPI
-	? "----------------------- -------- ----------- ----------- ----------- -----------"
-	? Lokal("                                 Obracunska     Porez    Preplaceni     Porez   ")
-	? Lokal("     Naziv poreza          %      osnovica   po obracunu    porez     za uplatu ")
-	? "          (1)             (2)        (3)     (4)=(2)*(3)     (5)     (6)=(4)-(5)"
-	? "----------------------- -------- ----------- ----------- ----------- -----------"
-endif
+   IF cUmPD == "D"
+      m += " ----------- -----------"
+   ENDIF
 
-do while !eof()
-	
-	cAlgoritam := get_algoritam()
-	
-	// ako to nije taj tip poreza preskoci
-	if !EMPTY( cTipPor )
-		if por_tip <> cTipPor
-			skip
-			loop
-		endif
-	endif
+   IF cUmPD == "D"
+      P_12CPI
+      ? "----------------------- -------- ----------- ----------- ----------- -----------"
+      ? Lokal( "                                 Obracunska     Porez    Preplaceni     Porez   " )
+      ? Lokal( "     Naziv poreza          %      osnovica   po obracunu    porez     za uplatu " )
+      ? "          (1)             (2)        (3)     (4)=(2)*(3)     (5)     (6)=(4)-(5)"
+      ? "----------------------- -------- ----------- ----------- ----------- -----------"
+   ENDIF
 
-	if prow() > ( 64 + gPStranica )
-		//FF
-	endif
+   DO WHILE !Eof()
 
-	? id, "-", naz
-	
-	if cAlgoritam == "S"
-		@ prow(), pcol() + 1 SAY "st.por"
-	else
-		@ prow(), pcol() + 1 SAY iznos pict "99.99%"
-	endif
-	
-	nC1 := pcol() + 1
-	
-	if !EMPTY(poopst)
-     		
-		if poopst=="1"
-       			?? Lokal(" (po opst.stan)")
-     		elseif poopst=="2"
-       			?? Lokal(" (po opst.stan)")
-     		elseif poopst=="3"
-       			?? Lokal(" (po kant.stan)")
-     		elseif poopst=="4"
-       			?? Lokal(" (po kant.rada)")
-     		elseif poopst=="5"
-       			?? Lokal(" (po ent. stan)")
-     		elseif poopst=="6"
-       			?? Lokal(" (po ent. rada)")
-       			?? Lokal(" (po opst.rada)")
-     		endif
-     		
-		nOOP:=0      
-		// ukupna Osnovica za Obracun Poreza za po opstinama
-     		
-		nPOLjudi:=0  
-     		// ukup.ljudi za po opstinama
-     		
-		nPorOps:=0
-     		nPorOps2:=0
-     		
-		if cAlgoritam == "S"
-			cSeek := por->id
-		else
-			cSeek := SPACE(2)
-		endif
-		
-		select opsld
-     		seek cSeek + por->poopst
-     		
-		? strtran(cLinija,"-","=")
-     		
-		do while !eof() .and. porid == cSeek ;
-			.and. id == por->poopst
-		
-			cOpst := opsld->idops
-			
-			select ops
-			hseek cOpst
-			
-			select opsld
-		        
-			if !ImaUOp("POR", POR->id)
-		        	
-				skip 1
-			   	loop
-				
-		        endif
-		        
-			if cAlgoritam == "S"
-				
-			  ? idops, ops->naz
-				
-			  nPom := 0
-			  
-			  do while !EOF() .and. porid == cSeek ;
-				.and. id == por->poopst ;
-				.and. idops == cOpst
-				
-				if t_iz_1 <> 0
-				  ? " -obracun za stopu "
-				  @ prow(), pcol()+1 SAY t_st_1 pict "99.99%"
-				  @ prow(), pcol()+1 SAY "="
-		        	  @ prow(), pcol()+1 SAY t_iz_1 pict gpici
-		        	endif
-				
-				if t_iz_2 <> 0
-				  ? " -obracun za stopu "
-				  @ prow(), pcol()+1 SAY t_st_2 pict "99.99%"
-				  @ prow(), pcol()+1 SAY "="
-		        	  @ prow(), pcol()+1 SAY t_iz_2 pict gpici
-		        	endif
-				
-				if t_iz_3 <> 0
-				  ? " -obracun za stopu "
-				  @ prow(), pcol()+1 SAY t_st_3 pict "99.99%"
-				  @ prow(), pcol()+1 SAY "="
-		        	  @ prow(), pcol()+1 SAY t_iz_3 pict gpici
-		        	endif
-				
-				if t_iz_4 <> 0
-				  ? " -obracun za stopu "
-				  @ prow(), pcol()+1 SAY t_st_4 pict "99.99%"
-				  @ prow(), pcol()+1 SAY "="
-		        	  @ prow(), pcol()+1 SAY t_iz_4 pict gpici
-		        	endif
-			
-				if t_iz_5 <> 0
-				  ? " -obracun za stopu "
-				  @ prow(), pcol()+1 SAY t_st_5 pict "99.99%"
-				  @ prow(), pcol()+1 SAY "="
-		        	  @ prow(), pcol()+1 SAY t_iz_5 pict gpici
-		        	endif
-			
-				nPom += t_iz_1
-				nPom += t_iz_2 
-				nPom += t_iz_3
-				nPom += t_iz_4
-				nPom += t_iz_5
-				
-				skip
-					
-			  enddo
+      cAlgoritam := get_algoritam()
 
-			  @ prow(), pcol()+1 SAY "UK="
-			  @ prow(), pcol()+1 SAY nPom PICT gPici
-			  
-			  Rekapld("POR"+por->id+idops,cGodina,cMjesec,nPom,iznos,idops,NLjudi())
-			  
-			else
-			
-			  ? idops, ops->naz
-		       	  
-			  // ovo je osnovica za porez
-			  nTmpPor := iznos
+      // ako to nije taj tip poreza preskoci
+      IF !Empty( cTipPor )
+         IF por_tip <> cTipPor
+            SKIP
+            LOOP
+         ENDIF
+      ENDIF
 
-			  if por->por_tip == "B"
-			  	// ako je na bruto onda je ovo osnovica
-			  	nTmpPor := iznos3
-			  elseif por->por_tip == "R"
-			  	// ako je na ruke onda je osnovica
-				nTmpPor := iznos5
-			  endif
+      IF PRow() > ( 64 + gPStranica )
+         // FF
+      ENDIF
 
-			  @ prow(), nC1 SAY nTmpPor picture gpici
-			  
-			  // osnovica ne moze biti negativna
-			  if nTmpPor < 0
-			  	nTmpPor := 0
-			  endif
+      ? id, "-", naz
 
-			  nPom := round2(max(por->dlimit,por->iznos/100*nTmpPor),gZaok2)
-			  
-			  @ prow(), pcol()+1 SAY nPom pict gpici
-		        
-			  if cUmPD=="D"
-		        	@ prow(),pcol()+1 SAY nPom2:=round2(max(por->dlimit,por->iznos/100*piznos),gZaok2) pict gpici
-		        	@ prow(),pcol()+1 SAY nPom-nPom2 pict gpici
-		        	
-				Rekapld("POR"+por->id+idops,cgodina,cmjesec,nPom-nPom2,0,idops,NLjudi())
-		        	nPorOps2 += nPom2
-		          else
-		        	
-				Rekapld("POR"+por->id+idops,cgodina,cmjesec,nPom,nTmpPor,idops,NLjudi())
-			  endif
-		        
-			endif
-			
-			nOOP += nTmpPor
-		        
-			nOsnova += nTmpPor
+      IF cAlgoritam == "S"
+         @ PRow(), PCol() + 1 SAY "st.por"
+      ELSE
+         @ PRow(), PCol() + 1 SAY iznos PICT "99.99%"
+      ENDIF
 
-			nPOLjudi += ljudi
-		        nPorOps += nPom
-		       
-		        if cAlgoritam <> "S"
-				skip
-		        endif
-			
-			if prow() > (64 + gPStranica)
-				//FF
-			endif
-		
-		enddo
-		select por
-		
-		? cLinija
-		
-		nPor += nPorOps
-		nPor2 += nPorOps2
-		
-	endif
-   	
-	if !EMPTY(poopst)
-	
-     		? Lokal("Ukupno po ops.:")
-     		
-		@ prow(), nC1 SAY nOOP pict gpici
-     		@ prow(),pcol()+1 SAY nPorOps   pict gpici
-     		
-		if cUmPD=="D"
-       			@ prow(),pcol()+1 SAY nPorOps2   pict gpici
-       			@ prow(),pcol()+1 SAY nPorOps-nPorOps2   pict gpici
-       			Rekapld("POR"+por->id,cgodina,cmjesec,nPorOps-nPorOps2,0,,NLjudi())
-     		else
-       			Rekapld("POR"+por->id,cgodina,cmjesec,nPorOps,nOOP,,"("+ALLTRIM(STR(nPOLjudi))+")")
-     		endif
-		
-     		? cLinija
-   	else
-     		
-		nTmpOsnova := nUNeto
-		if por->por_tip == "B"
-			nTmpOsnova := nUPorOsnova
-		elseif por->por_tip == "R"
-			nTmpOsnova := nUPorNROsnova
-		endif
-		
-		if nTmpOsnova < 0
-			nTmpOsnova := 0
-		endif
-		
-		nOsnova := nTmpOsnova
+      nC1 := PCol() + 1
 
-		@ prow(),nC1 SAY nTmpOsnova pict gpici
-		@ prow(),pcol()+1 SAY nPom:=round2(max(dlimit,iznos/100*nTmpOsnova),gZaok2) pict gpici
-     		if cUmPD=="D"
-       			@ prow(),pcol()+1 SAY nPom2:=round2(max(dlimit,iznos/100*nUNeto2),gZaok2) pict gpici
-       			@ prow(),pcol()+1 SAY nPom-nPom2 pict gpici
-       			Rekapld("POR"+por->id,cgodina,cmjesec,nPom-nPom2,0)
-       			nPor2+=nPom2
-     		else
-       			Rekapld("POR"+por->id,cgodina,cmjesec,nPom,nTmpOsnova,,"("+ALLTRIM(STR(nLjudi))+")")
-     		endif
-     		
-		nPor += nPom
-   	endif
-	
-	skip
-enddo
+      IF !Empty( poopst )
 
-? cLinija
-? Lokal("Ukupno Porez")
-@ prow(),nC1 SAY space(len(gpici))
-@ prow(),pcol()+1 SAY nPor - nUPorOl pict gpici
+         IF poopst == "1"
+            ?? Lokal( " (po opst.stan)" )
+         ELSEIF poopst == "2"
+            ?? Lokal( " (po opst.stan)" )
+         ELSEIF poopst == "3"
+            ?? Lokal( " (po kant.stan)" )
+         ELSEIF poopst == "4"
+            ?? Lokal( " (po kant.rada)" )
+         ELSEIF poopst == "5"
+            ?? Lokal( " (po ent. stan)" )
+         ELSEIF poopst == "6"
+            ?? Lokal( " (po ent. rada)" )
+            ?? Lokal( " (po opst.rada)" )
+         ENDIF
 
-if cUmPD=="D"
-	@ prow(),PCOL()+1 SAY nPor2              pict gpici
-  	@ prow(),pcol()+1 SAY nPor-nUPorOl-nPor2 pict gpici
-endif
+         nOOP := 0
+         // ukupna Osnovica za Obracun Poreza za po opstinama
 
-? cLinija
+         nPOLjudi := 0
+         // ukup.ljudi za po opstinama
 
-return nOsnova
+         nPorOps := 0
+         nPorOps2 := 0
+
+         IF cAlgoritam == "S"
+            cSeek := por->id
+         ELSE
+            cSeek := Space( 2 )
+         ENDIF
+
+         SELECT opsld
+         SEEK cSeek + por->poopst
+
+         ? StrTran( cLinija, "-", "=" )
+
+         DO WHILE !Eof() .AND. porid == cSeek ;
+               .AND. id == por->poopst
+
+            cOpst := opsld->idops
+
+            SELECT ops
+            hseek cOpst
+
+            SELECT opsld
+
+            IF !ImaUOp( "POR", POR->id )
+
+               SKIP 1
+               LOOP
+
+            ENDIF
+
+            IF cAlgoritam == "S"
+
+               ? idops, ops->naz
+
+               nPom := 0
+
+               DO WHILE !Eof() .AND. porid == cSeek ;
+                     .AND. id == por->poopst ;
+                     .AND. idops == cOpst
+
+                  IF t_iz_1 <> 0
+                     ? " -obracun za stopu "
+                     @ PRow(), PCol() + 1 SAY t_st_1 PICT "99.99%"
+                     @ PRow(), PCol() + 1 SAY "="
+                     @ PRow(), PCol() + 1 SAY t_iz_1 PICT gpici
+                  ENDIF
+
+                  IF t_iz_2 <> 0
+                     ? " -obracun za stopu "
+                     @ PRow(), PCol() + 1 SAY t_st_2 PICT "99.99%"
+                     @ PRow(), PCol() + 1 SAY "="
+                     @ PRow(), PCol() + 1 SAY t_iz_2 PICT gpici
+                  ENDIF
+
+                  IF t_iz_3 <> 0
+                     ? " -obracun za stopu "
+                     @ PRow(), PCol() + 1 SAY t_st_3 PICT "99.99%"
+                     @ PRow(), PCol() + 1 SAY "="
+                     @ PRow(), PCol() + 1 SAY t_iz_3 PICT gpici
+                  ENDIF
+
+                  IF t_iz_4 <> 0
+                     ? " -obracun za stopu "
+                     @ PRow(), PCol() + 1 SAY t_st_4 PICT "99.99%"
+                     @ PRow(), PCol() + 1 SAY "="
+                     @ PRow(), PCol() + 1 SAY t_iz_4 PICT gpici
+                  ENDIF
+
+                  IF t_iz_5 <> 0
+                     ? " -obracun za stopu "
+                     @ PRow(), PCol() + 1 SAY t_st_5 PICT "99.99%"
+                     @ PRow(), PCol() + 1 SAY "="
+                     @ PRow(), PCol() + 1 SAY t_iz_5 PICT gpici
+                  ENDIF
+
+                  nPom += t_iz_1
+                  nPom += t_iz_2
+                  nPom += t_iz_3
+                  nPom += t_iz_4
+                  nPom += t_iz_5
+
+                  SKIP
+
+               ENDDO
+
+               @ PRow(), PCol() + 1 SAY "UK="
+               @ PRow(), PCol() + 1 SAY nPom PICT gPici
+
+               Rekapld( "POR" + por->id + idops, cGodina, cMjesec, nPom, iznos, idops, NLjudi() )
+
+            ELSE
+
+               ? idops, ops->naz
+
+               // ovo je osnovica za porez
+               nTmpPor := iznos
+
+               IF por->por_tip == "B"
+                  // ako je na bruto onda je ovo osnovica
+                  nTmpPor := iznos3
+               ELSEIF por->por_tip == "R"
+                  // ako je na ruke onda je osnovica
+                  nTmpPor := iznos5
+               ENDIF
+
+               @ PRow(), nC1 SAY nTmpPor PICTURE gpici
+
+               // osnovica ne moze biti negativna
+               IF nTmpPor < 0
+                  nTmpPor := 0
+               ENDIF
+
+               nPom := round2( Max( por->dlimit, por->iznos / 100 * nTmpPor ), gZaok2 )
+
+               @ PRow(), PCol() + 1 SAY nPom PICT gpici
+
+               IF cUmPD == "D"
+                  @ PRow(), PCol() + 1 SAY nPom2 := round2( Max( por->dlimit, por->iznos / 100 * piznos ), gZaok2 ) PICT gpici
+                  @ PRow(), PCol() + 1 SAY nPom - nPom2 PICT gpici
+
+                  Rekapld( "POR" + por->id + idops, cgodina, cmjesec, nPom - nPom2, 0, idops, NLjudi() )
+                  nPorOps2 += nPom2
+               ELSE
+
+                  Rekapld( "POR" + por->id + idops, cgodina, cmjesec, nPom, nTmpPor, idops, NLjudi() )
+               ENDIF
+
+            ENDIF
+
+            nOOP += nTmpPor
+
+            nOsnova += nTmpPor
+
+            nPOLjudi += ljudi
+            nPorOps += nPom
+
+            IF cAlgoritam <> "S"
+               SKIP
+            ENDIF
+
+            IF PRow() > ( 64 + gPStranica )
+               // FF
+            ENDIF
+
+         ENDDO
+         SELECT por
+
+         ? cLinija
+
+         nPor += nPorOps
+         nPor2 += nPorOps2
+
+      ENDIF
+
+      IF !Empty( poopst )
+
+         ? Lokal( "Ukupno po ops.:" )
+
+         @ PRow(), nC1 SAY nOOP PICT gpici
+         @ PRow(), PCol() + 1 SAY nPorOps   PICT gpici
+
+         IF cUmPD == "D"
+            @ PRow(), PCol() + 1 SAY nPorOps2   PICT gpici
+            @ PRow(), PCol() + 1 SAY nPorOps - nPorOps2   PICT gpici
+            Rekapld( "POR" + por->id, cgodina, cmjesec, nPorOps - nPorOps2, 0,, NLjudi() )
+         ELSE
+            Rekapld( "POR" + por->id, cgodina, cmjesec, nPorOps, nOOP,, "(" + AllTrim( Str( nPOLjudi ) ) + ")" )
+         ENDIF
+
+         ? cLinija
+      ELSE
+
+         nTmpOsnova := nUNeto
+         IF por->por_tip == "B"
+            nTmpOsnova := nUPorOsnova
+         ELSEIF por->por_tip == "R"
+            nTmpOsnova := nUPorNROsnova
+         ENDIF
+
+         IF nTmpOsnova < 0
+            nTmpOsnova := 0
+         ENDIF
+
+         nOsnova := nTmpOsnova
+
+         @ PRow(), nC1 SAY nTmpOsnova PICT gpici
+         @ PRow(), PCol() + 1 SAY nPom := round2( Max( dlimit, iznos / 100 * nTmpOsnova ), gZaok2 ) PICT gpici
+         IF cUmPD == "D"
+            @ PRow(), PCol() + 1 SAY nPom2 := round2( Max( dlimit, iznos / 100 * nUNeto2 ), gZaok2 ) PICT gpici
+            @ PRow(), PCol() + 1 SAY nPom - nPom2 PICT gpici
+            Rekapld( "POR" + por->id, cgodina, cmjesec, nPom - nPom2, 0 )
+            nPor2 += nPom2
+         ELSE
+            Rekapld( "POR" + por->id, cgodina, cmjesec, nPom, nTmpOsnova,, "(" + AllTrim( Str( nLjudi ) ) + ")" )
+         ENDIF
+
+         nPor += nPom
+      ENDIF
+
+      SKIP
+   ENDDO
+
+   ? cLinija
+   ? Lokal( "Ukupno Porez" )
+   @ PRow(), nC1 SAY Space( Len( gpici ) )
+   @ PRow(), PCol() + 1 SAY nPor - nUPorOl PICT gpici
+
+   IF cUmPD == "D"
+      @ PRow(), PCol() + 1 SAY nPor2              PICT gpici
+      @ PRow(), PCol() + 1 SAY nPor - nUPorOl - nPor2 PICT gpici
+   ENDIF
+
+   ? cLinija
+
+   RETURN nOsnova
 
 
 
 // ----------------------------------------------------
 // izracunaj porez na osnovu tipa
 // ----------------------------------------------------
-function izr_porez( nOsnovica, cTipPor )
-local nPor
-local nPom
-local nPorOl
-local cAlgoritam
-local aPor
+FUNCTION izr_porez( nOsnovica, cTipPor )
 
-if cTipPor == nil
-	cTipPor := ""
-endif
+   LOCAL nPor
+   LOCAL nPom
+   LOCAL nPorOl
+   LOCAL cAlgoritam
+   LOCAL aPor
 
-O_POR
+   IF cTipPor == nil
+      cTipPor := ""
+   ENDIF
 
-select por
-go top
-	
-nPom:=0
-nPor:=0
-nPorOl:=0
+   O_POR
 
-do while !EOF()
-	
-	// vrati algoritam poreza
-	cAlgoritam := get_algoritam()
-	
-	PozicOps( POR->poopst )
-	
-	IF !ImaUOp("POR",POR->id)
-		SKIP 1
-		LOOP
-	ENDIF
-		
-	// sracunaj samo poreze na bruto
-	if !EMPTY(cTipPor) .and. por->por_tip <> cTipPor
-		skip 
-		loop
-	endif
-	
-	// obracunaj porez
-	aPor := obr_por( por->id, nOsnovica, 0 )
-	
-	nTmp := isp_por( aPor, cAlgoritam, "", .f., .t. )
-	
-	if nTmp < 0
-		nTmp := 0
-	endif
+   SELECT por
+   GO TOP
 
-	nPor += nTmp
-	
-	skip 1
+   nPom := 0
+   nPor := 0
+   nPorOl := 0
 
-enddo
+   DO WHILE !Eof()
 
-select por
-go top
+      // vrati algoritam poreza
+      cAlgoritam := get_algoritam()
 
-return nPor
+      PozicOps( POR->poopst )
 
+      IF !ImaUOp( "POR", POR->id )
+         SKIP 1
+         LOOP
+      ENDIF
+
+      // sracunaj samo poreze na bruto
+      IF !Empty( cTipPor ) .AND. por->por_tip <> cTipPor
+         SKIP
+         LOOP
+      ENDIF
+
+      // obracunaj porez
+      aPor := obr_por( por->id, nOsnovica, 0 )
+
+      nTmp := isp_por( aPor, cAlgoritam, "", .F., .T. )
+
+      IF nTmp < 0
+         nTmp := 0
+      ENDIF
+
+      nPor += nTmp
+
+      SKIP 1
+
+   ENDDO
+
+   SELECT por
+   GO TOP
+
+   RETURN nPor

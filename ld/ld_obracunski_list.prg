@@ -37,7 +37,7 @@ FUNCTION ol_o_tbl()
    O_POR
    O_LD
 
-   RETURN
+   RETURN .T.
 
 // ---------------------------------------------------------
 // sortiranje tabele LD
@@ -299,7 +299,7 @@ FUNCTION ld_olp_gip_obrazac()
    g_per_oddo( cMj_od, cGod_od, cMj_do, cGod_do, @dPerOd, @dPerDo )
 
    IF cWinPrint == "E"
-	
+
       nPorGodina := cGod_do
 
       @ m_x + 16, m_y + 2 SAY "P.godina" GET nPorGodina ;
@@ -309,14 +309,14 @@ FUNCTION ld_olp_gip_obrazac()
 
       @ m_x + 17, m_y + 2 SAY "operacija: 1 (novi) 2 (izmjena) 3 (brisanje)" ;
          GET nOper PICT "9"
-	
+
       READ
    ENDIF
 
    cOperacija := g_operacija( nOper )
 
    clvbox()
-	
+
    ESC_BCR
 
    BoxC()
@@ -475,7 +475,7 @@ FUNCTION g_br_zaht()
    GO TOP
 
    DO WHILE !Eof()
-	
+
       cT_radnik := field->idradn
       nCnt := 0
 
@@ -483,7 +483,7 @@ FUNCTION g_br_zaht()
          nCnt := 1
          SKIP
       ENDDO
-	
+
       nRet += nCnt
 
    ENDDO
@@ -665,10 +665,10 @@ STATIC FUNCTION _fill_e_xml( file_name )
    GO TOP
 
    DO WHILE !Eof()
-	
+
       // po radniku
       cT_radnik := field->idradn
-	
+
       // pronadji radnika u sifrarniku
       SELECT radn
       SEEK cT_radnik
@@ -678,7 +678,7 @@ STATIC FUNCTION _fill_e_xml( file_name )
       xml_subnode( "Obrazac1022", .F. )
 
       xml_subnode( "Dio1PodaciOPoslodavcuIPoreznomObvezniku", .F. )
-	
+
       xml_node( "JIBJMBPoslodavca", AllTrim( cPredJmb ) )
       xml_node( "Naziv", to_xml_encoding( AllTrim( cPredNaz ) ) )
       xml_node( "AdresaSjedista", to_xml_encoding( AllTrim( cPredAdr ) ) )
@@ -688,14 +688,14 @@ STATIC FUNCTION _fill_e_xml( file_name )
       xml_node( "AdresaPrebivalista", to_xml_encoding( AllTrim( radn->streetname ) + ;
          " " + AllTrim( radn->streetnum ) ) )
       xml_node( "PoreznaGodina", Str( nPorGodina ) )
-	
+
       xml_node( "PeriodOd", xml_date( dPerOd ) )
       xml_node( "PeriodDo", xml_date( dPerDo ) )
 
       xml_subnode( "Dio1PodaciOPoslodavcuIPoreznomObvezniku", .T. )
-	
+
       xml_subnode( "Dio2PodaciOPrihodimaDoprinosimaIPorezu", .F. )
-	
+
       nT_prih := 0
       nT_pros := 0
       nT_bruto := 0
@@ -710,18 +710,18 @@ STATIC FUNCTION _fill_e_xml( file_name )
       nT_bbd := 0
       nT_klo := 0
       nT_lodb := 0
-		
+
       nCnt := 0
 
       DO WHILE !Eof() .AND. field->idradn == cT_radnik
-		
+
          // ukupni doprinosi
          REPLACE field->dop_uk WITH field->dop_pio + ;
             field->dop_nez + field->dop_zdr
 
          REPLACE field->osn_por with ( field->bruto - field->dop_uk ) - ;
             field->l_odb
-	
+
          // ako je neoporeziv radnik, nema poreza
          IF !radn_oporeziv( field->idradn, field->idrj ) .OR. ;
                field->osn_por < 0
@@ -736,13 +736,13 @@ STATIC FUNCTION _fill_e_xml( file_name )
 
          REPLACE field->neto with ( field->bruto - field->dop_uk ) - ;
             field->izn_por
-	
+
          IF field->tiprada $ " #I#N#"
             REPLACE field->neto with ;
                min_neto( field->neto, field->sati )
          ENDIF
 
-		
+
          xml_subnode( "PodaciOPrihodimaDoprinosimaIPorezu", .F. )
 
          xml_node( "Mjesec", Str( field->mj_ispl ) )
@@ -764,23 +764,23 @@ STATIC FUNCTION _fill_e_xml( file_name )
          xml_node( "UkupniDoprinosi", Str( field->dop_uk, 12, 2 ) )
          xml_node( "PlacaBezDoprinosa", ;
             Str( field->bruto - field->dop_uk, 12, 2 ) )
-		
+
          xml_node( "FaktorLicnihOdbitakaPremaPoreznojKartici", ;
             Str( field->klo, 12, 2 ) )
-		
+
          xml_node( "IznosLicnogOdbitka", Str( field->l_odb, 12, 2 ) )
-		
+
          xml_node( "OsnovicaPoreza", Str( field->osn_por, 12, 2 ) )
          xml_node( "IznosUplacenogPoreza", Str( field->izn_por, 12, 2 ) )
-		
+
          xml_node( "NetoPlaca", Str( field->neto, 12, 2 ) )
          xml_node( "DatumUplate", xml_date( field->datispl ) )
-		
+
          // xml_node("opis", to_xml_encoding( ALLTRIM( field->naziv ) ) )
          // xml_node("uk", STR( field->ukupno, 12, 2 ) )
 
          xml_subnode( "PodaciOPrihodimaDoprinosimaIPorezu", .T. )
-		
+
          nT_prih += field->prihod
          nT_pros += field->prihost
          nT_bruto += field->bruto
@@ -835,7 +835,7 @@ STATIC FUNCTION _fill_e_xml( file_name )
       xml_subnode( "Dokument", .F. )
       xml_node( "Operacija", cOperacija )
       xml_subnode( "Dokument", .T. )
-	
+
 
       xml_subnode( "Obrazac1022", .T. )
 
@@ -895,10 +895,10 @@ STATIC FUNCTION _fill_xml( cTip, xml_file )
    GO TOP
 
    DO WHILE !Eof()
-	
+
       // po radniku
       cT_radnik := field->idradn
-	
+
       // pronadji radnika u sifrarniku
       SELECT radn
       SEEK cT_radnik
@@ -912,7 +912,7 @@ STATIC FUNCTION _fill_xml( cTip, xml_file )
          ") " + AllTrim( radn->naz ) ) )
 
       xml_node( "mb", AllTrim( radn->matbr ) )
-	
+
       xml_node( "adr", to_xml_encoding( AllTrim( radn->streetname ) + ;
          " " + AllTrim( radn->streetnum ) ) )
 
@@ -933,7 +933,7 @@ STATIC FUNCTION _fill_xml( cTip, xml_file )
       nT_d_nez := 0
       nT_klo := 0
       nT_lodb := 0
-		
+
       nCnt := 0
 
       DO WHILE !Eof() .AND. field->idradn == cT_radnik
@@ -972,7 +972,7 @@ STATIC FUNCTION _fill_xml( cTip, xml_file )
                ( field->bruto - field->dop_uk ) - ;
                field->izn_por
          ENDIF
-	
+
          IF ( cTip <> "3" .OR. cTip <> "4" ) .AND. ;
                field->tiprada $ " #I#N#"
             REPLACE field->neto with ;
@@ -1009,7 +1009,7 @@ STATIC FUNCTION _fill_xml( cTip, xml_file )
          xml_node( "opis", to_xml_encoding( AllTrim( field->naziv ) ) )
 
          xml_subnode( "obracun", .T. )
-		
+
          nT_prih += field->prihod
          nT_pros += field->prihost
          nT_bruto += field->bruto
@@ -1051,7 +1051,7 @@ STATIC FUNCTION _fill_xml( cTip, xml_file )
       xml_node( "l_odb", Str( nT_lodb, 12, 2 ) )
 
       xml_subnode( "total", .T. )
-	
+
       // zatvori radnika
       xml_subnode( "radnik", .T. )
 
@@ -1167,7 +1167,7 @@ FUNCTION ol_fill_data( cRj, cRjDef, cGod_od, cGod_do, cMj_od, cMj_do, ;
             LOOP
          ENDIF
       ENDIF
-	
+
       cTipRada := g_tip_rada( ld->idradn, ld->idrj )
       lInRS := radnik_iz_rs( radn->idopsst, radn->idopsrad )
 
@@ -1176,7 +1176,7 @@ FUNCTION ol_fill_data( cRj, cRjDef, cGod_od, cGod_do, cMj_od, cMj_do, ;
 
       SELECT radn
       SEEK cT_radnik
-	
+
       IF cRptTip $ "3#4"
          IF ( cTipRada $ " #I#N" )
             SELECT ld
@@ -1211,7 +1211,7 @@ FUNCTION ol_fill_data( cRj, cRjDef, cGod_od, cGod_do, cMj_od, cMj_do, ;
       nTp5 := 0
 
       DO WHILE !Eof() .AND. field->idradn == cT_radnik
-	
+
          IF ld_date( field->godina, field->mjesec ) < ;
                ld_date( cGod_od, cMj_od )
             SKIP
@@ -1223,7 +1223,7 @@ FUNCTION ol_fill_data( cRj, cRjDef, cGod_od, cGod_do, cMj_od, cMj_do, ;
             SKIP
             LOOP
          ENDIF
-	
+
          // radna jedinica
          cRadJed := ld->idrj
 
@@ -1231,7 +1231,7 @@ FUNCTION ol_fill_data( cRj, cRjDef, cGod_od, cGod_do, cMj_od, cMj_do, ;
          cTipRada := g_tip_rada( ld->idradn, ld->idrj )
          cTrosk := radn->trosk
          lInRS := radnik_iz_rs( radn->idopsst, radn->idopsrad )
-	
+
          IF cRptTip $ "3#4"
             IF ( cTipRada $ " #I#N" )
                SKIP
@@ -1246,7 +1246,7 @@ FUNCTION ol_fill_data( cRj, cRjDef, cGod_od, cGod_do, cMj_od, cMj_do, ;
 
          ParObr( ld->mjesec, ld->godina, IF( lViseObr, ld->obr, ), ;
             ld->idrj )
-		
+
          nPrDobra := 0
          nTP_off := 0
 
@@ -1259,7 +1259,7 @@ FUNCTION ol_fill_data( cRj, cRjDef, cGod_od, cGod_do, cMj_od, cMj_do, ;
                nPrDobra += IF( cPom $ cPrimDobra, LD->&( "I" + cPom ), 0 )
             NEXT
          ENDIF
-	
+
          IF !Empty( cTP_off )
             FOR o := 1 TO 60
                cPom := IF( o > 9, Str( o, 2 ), "0" + Str( o, 1 ) )
@@ -1269,7 +1269,7 @@ FUNCTION ol_fill_data( cRj, cRjDef, cGod_od, cGod_do, cMj_od, cMj_do, ;
                nTP_off += IF( cPom $ cTP_off, LD->&( "I" + cPom ), 0 )
             NEXT
          ENDIF
-	
+
          // ostali tipovi primanja
          IF !Empty( cTp1 )
             nTp1 := LD->&( "I" + cTp1 )
@@ -1291,12 +1291,12 @@ FUNCTION ol_fill_data( cRj, cRjDef, cGod_od, cGod_do, cMj_od, cMj_do, ;
          nNeto := field->uneto
          nKLO := g_klo( field->ulicodb )
          nL_odb := field->ulicodb
-		
+
          // tipovi primanja koji ne ulaze u bruto osnovicu
          IF ( nTP_off > 0 )
             nNeto := ( nNeto - nTP_off )
          ENDIF
-		
+
          nBruto := bruto_osn( nNeto, cTipRada, nL_odb )
 
          nMBruto := nBruto
@@ -1306,27 +1306,27 @@ FUNCTION ol_fill_data( cRj, cRjDef, cGod_od, cGod_do, cMj_od, cMj_do, ;
             // minimalni bruto
             nMBruto := min_bruto( nBruto, field->usati )
          ENDIF
-		
+
          // ugovori o djelu
          IF cTipRada == "U" .AND. cTrosk <> "N"
-			
+
             nTrosk := ROUND2( nMBruto * ( gUgTrosk / 100 ), gZaok2 )
-			
+
             IF lInRs == .T.
                nTrosk := 0
             ENDIF
-			
+
          ENDIF
 
          // autorski honorar
          IF cTipRada == "A" .AND. cTrosk <> "N"
-			
+
             nTrosk := ROUND2( nMBruto * ( gAhTrosk / 100 ), gZaok2 )
-			
+
             IF lInRs == .T.
                nTrosk := 0
             ENDIF
-			
+
          ENDIF
 
          IF cRptTip $ "3#4"
@@ -1346,7 +1346,7 @@ FUNCTION ol_fill_data( cRj, cRjDef, cGod_od, cGod_do, cMj_od, cMj_do, ;
          IF nPrDobra > 0
             nBrDobra := bruto_osn( nPrDobra, cTipRada, nL_odb )
          ENDIF
-		
+
          // ocitaj doprinose, njihove iznose
          nDopr10 := get_dopr( cDopr10, cTipRada )
          nDopr11 := get_dopr( cDopr11, cTipRada )
@@ -1360,10 +1360,10 @@ FUNCTION ol_fill_data( cRj, cRjDef, cGod_od, cGod_do, cMj_od, cMj_do, ;
 
          // zbirni je zbir ova tri doprinosa
          nIDopr1X := Round( nIDopr10 + nIDopr11 + nIDopr12, 4 )
-		
+
          // ukupno dopr iz 31%
          // nDoprIz := u_dopr_iz( nMBruto, cTipRada )
-		
+
          // osnovica za porez
          IF cRptTip $ "3#4"
             nPorOsn := ( nMBruto - nIDopr1X ) - nL_odb
@@ -1381,7 +1381,7 @@ FUNCTION ol_fill_data( cRj, cRjDef, cGod_od, cGod_do, cMj_od, cMj_do, ;
          nPorez := izr_porez( nPorOsn, "B" )
 
          SELECT ld
-	
+
          // na ruke je
          IF cRptTip $ "3#4"
             nNaRuke := Round( ( nMBruto - nIDopr1X - nPorez ) ;
@@ -1402,13 +1402,13 @@ FUNCTION ol_fill_data( cRj, cRjDef, cGod_od, cGod_do, cMj_od, cMj_do, ;
          cVrstaIspl := ""
          dDatIspl := Date()
          cObr := " "
-		
+
          IF lViseObr
             cObr := field->obr
          ENDIF
 
          IF lDatIspl
-			
+
             // radna jedinica
             cTmpRj := field->idrj
             IF !Empty( cRJDef )
@@ -1456,7 +1456,7 @@ FUNCTION ol_fill_data( cRj, cRjDef, cGod_od, cGod_do, cMj_od, cMj_do, ;
             nTp3, ;
             nTp4, ;
             nTp5 )
-				
+
          SELECT ld
          SKIP
 

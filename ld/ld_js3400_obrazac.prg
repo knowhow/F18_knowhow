@@ -197,7 +197,7 @@ FUNCTION ld_js3400_obrazac()
    // stampa izvjestaja xml/oo3
    _xml_print( cTipRpt )
 
-   RETURN
+   RETURN .T.
 
 
 // ------------------------------------------------------

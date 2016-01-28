@@ -141,7 +141,7 @@ FUNCTION module_menu( arg_v )
             MsgBeep( oBackup:backup_in_progress_info() )
          ENDIF
 
-      CASE mnu_choice > 0 
+      CASE mnu_choice > 0
          IF mnu_choice <= LEN( menuexec )
             Eval( menuexec[ mnu_choice ] )
          ENDIF
@@ -187,7 +187,7 @@ STATIC FUNCTION set_menu_choices( menuop, menuexec, p3, p4, p5, p6, p7 )
 
    IF f18_use_module( "ld" )
       _brojac := PadL( AllTrim( Str( ++_count ) ), 2 )
-      AAdd( menuop, _brojac + ". LD    # obracun plata" )
+      AAdd( menuop, _brojac + ". LD    # obračun plata" )
       AAdd( menuexec, {|| MainLd( my_user(), "dummy", p3, p4, p5, p6, p7 ) } )
    ENDIF
 
@@ -238,20 +238,19 @@ STATIC FUNCTION set_menu_choices( menuop, menuexec, p3, p4, p5, p6, p7 )
    AAdd( menuexec, {|| NIL } )
 
    // ostale opcije...
-   AAdd( menuop, " B. Backup podataka" )
+   AAdd( menuop, " B. backup podataka" )
    AAdd( menuexec, {|| f18_backup_data() } )
-   AAdd( menuop, " F. Forsirana sinhronizacija podataka" )
+   AAdd( menuop, " F. forsirana sinhronizacija podataka" )
    AAdd( menuexec, {|| F18AdminOpts():New():force_synchro_db() } )
-   AAdd( menuop, " P. Parametri aplikacije" )
+   AAdd( menuop, " P. parametri aplikacije" )
    AAdd( menuexec, {|| f18_app_parameters() } )
-   AAdd( menuop, " W. Pregled log-a" )
+   AAdd( menuop, " W. pregled log-a" )
    AAdd( menuexec, {|| f18_view_log() } )
-   AAdd( menuop, " V. VPN podrska" )
+   AAdd( menuop, " V. vpn podrska" )
    AAdd( menuexec, {|| vpn_support() } )
 
-   RETURN
+   RETURN .T.
 
 
 FUNCTION hb_SendMail( ... )
   RETURN tip_MailSend( ... )
-

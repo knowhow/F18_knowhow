@@ -14,24 +14,24 @@
 
 FUNCTION ld_krediti_menu()
 
-   LOCAL _izbor:=1
-   LOCAL _opc:={}
-   LOCAL _opcexe:={}
+   LOCAL _izbor := 1
+   LOCAL _opc := {}
+   LOCAL _opcexe := {}
 
-   AADD( _opc, "1. novi kredit                                  ")
-   AADD( _opcexe, {|| ld_novi_kredit() })
-   AADD( _opc, "2. pregled/ispravka kredita")
-   AADD( _opcexe, {|| ld_ispravka_kredita() })
-   AADD( _opc, "3. lista kredita za jednog kreditora ")
-   AADD( _opcexe, {|| ld_lista_kredita() })
-   AADD( _opc, "4. brisanje kredita")
-   AADD( _opcexe, {|| ld_brisanje_kredita() })
-   AADD( _opc, "5. specifikacija kredita po kreditorima")
-   AADD( _opcexe, {|| ld_kred_specifikacija() } )
+   AAdd( _opc, "1. novi kredit                                  " )
+   AAdd( _opcexe, {|| ld_novi_kredit() } )
+   AAdd( _opc, "2. pregled/ispravka kredita" )
+   AAdd( _opcexe, {|| ld_ispravka_kredita() } )
+   AAdd( _opc, "3. lista kredita za jednog kreditora " )
+   AAdd( _opcexe, {|| ld_lista_kredita() } )
+   AAdd( _opc, "4. brisanje kredita" )
+   AAdd( _opcexe, {|| ld_brisanje_kredita() } )
+   AAdd( _opc, "5. specifikacija kredita po kreditorima" )
+   AAdd( _opcexe, {|| ld_kred_specifikacija() } )
 
-   f18_menu( "kred", .f., _izbor, _opc, _opcexe )
+   f18_menu( "kred", .F., _izbor, _opc, _opcexe )
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -190,7 +190,7 @@ FUNCTION ld_novi_kredit()
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -244,7 +244,7 @@ FUNCTION ld_ispravka_kredita
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
 
 FUNCTION ld_krediti_key_handler( Ch )
@@ -1081,6 +1081,7 @@ FUNCTION DatRazmak( dDatDo, dDatOd, nMjeseci, nDana )
 FUNCTION DanaUmjesecu( dDatum )
 
    LOCAL nDatZM
+
    nDatZM := EoM( dDatum )
 
    RETURN Day( nDatZM )

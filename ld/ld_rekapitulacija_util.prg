@@ -134,7 +134,7 @@ FUNCTION BoxRekJ()
    @ m_x + 6, m_y + 2 SAY8 "Stručna Sprema: "  GET  cStrSpr PICT "@!" VALID Empty( cStrSpr ) .OR. P_StrSpr( @cStrSpr )
    @ m_x + 7, m_y + 2 SAY8 "Opština stanovanja:  "  GET  cOpsSt PICT "@!" VALID Empty( cOpsSt ) .OR. P_Ops( @cOpsSt )
    @ m_x + 8, m_y + 2 SAY8 "Opština rada:        "  GET  cOpsRad  PICT "@!" VALID Empty( cOpsRad ) .OR. P_Ops( @cOpsRad )
-   @ m_x + 9, m_y + 2 SAY8 "stepen invaliditeta: "  GET  nStepenInvaliditeta  VALID valid_stepen_invaliditeta( @nStepenInvaliditeta )
+   @ m_x + 9, m_y + 2 SAY8 "Stepen invaliditeta: "  GET  nStepenInvaliditeta  VALID valid_stepen_invaliditeta( @nStepenInvaliditeta )
 
    READ
 
@@ -801,7 +801,7 @@ FUNCTION PopuniOpsLD( cTip, cPorId, aPorezi )
 
    SELECT ld
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -1061,11 +1061,10 @@ FUNCTION napr_obracun( lSvi, a_benef )
       SKIP
    ENDDO
 
-   RETURN
+   RETURN .T.
 
 
-// ----------------------------------------
-// ----------------------------------------
+
 FUNCTION ZaglSvi()
 
    SELECT por
@@ -1102,11 +1101,9 @@ FUNCTION ZaglSvi()
    ENDIF
    ?
 
-   RETURN
+   RETURN .T.
 
 
-// ----------------------------
-// ----------------------------
 FUNCTION ZaglJ()
 
    O_LD_RJ
@@ -1131,7 +1128,8 @@ FUNCTION ZaglJ()
 
    ?
 
-   RETURN
+   RETURN .T.
+
 
 
 FUNCTION IspisTP( lSvi )
@@ -1234,7 +1232,7 @@ FUNCTION IspisTP( lSvi )
 
    NEXT
 
-   RETURN
+   RETURN .T.
 
 
 FUNCTION IspisKred( lSvi )
@@ -1438,7 +1436,8 @@ FUNCTION IspisKred( lSvi )
       ENDIF
    ENDIF
 
-   RETURN
+   RETURN .T.
+
 
 
 FUNCTION PoTekRacunima()
@@ -1461,7 +1460,7 @@ FUNCTION PoTekRacunima()
    NEXT
    SELECT ( nMArr )
 
-   RETURN
+   RETURN .T.
 
 
 // ----------------------------------------------
@@ -1498,7 +1497,7 @@ FUNCTION ProizvTP()
       ENDIF
    ENDDO
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -1510,4 +1509,4 @@ FUNCTION PrikKBO()
    @ PRow(), PCol() + 1 SAY nBo := round2( parobr->k3 / 100 * nUNetoOsnova, gZaok2 ) PICT gpici
    ?
 
-   RETURN
+   RETURN .T.

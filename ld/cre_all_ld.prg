@@ -260,6 +260,7 @@ FUNCTION cre_all_ld( ver )
    AAdd( aDBf, { 'OPOR', 'C',   1,  0 } )
    AAdd( aDBf, { 'TROSK', 'C',   1,  0 } )
    AAdd( aDBf, { 'ST_INVALID', 'I',   1,  0 } )
+   AAdd( aDBf, { 'VR_INVALID', 'I',   1,  0 } )
 
 
    _alias := "RADN"
@@ -268,8 +269,8 @@ FUNCTION cre_all_ld( ver )
    IF_NOT_FILE_DBF_CREATE
 
    // 1.0.0
-   IF ver[ "current" ] > 0 .AND. ver[ "current" ] < 010000
-      modstru( { "*" + _table_name, "A ST_INVALID I 1 0" } )
+   IF ver[ "current" ] > 0 .AND. ver[ "current" ] < 010002
+      modstru( { "*" + _table_name, "A ST_INVALID I 1 0", "A VR_INVALID I 1 0" } )
    ENDIF
 
    IF_C_RESET_SEMAPHORE
@@ -285,8 +286,8 @@ FUNCTION cre_all_ld( ver )
    IF_NOT_FILE_DBF_CREATE
 
    // 1.0.0
-   IF ver[ "current" ] > 0 .AND. ver[ "current" ] < 010001
-      modstru( { "*" + _table_name, "A ST_INVALID I 1 0" } )
+   IF ver[ "current" ] > 0 .AND. ver[ "current" ] < 010002
+      modstru( { "*" + _table_name, "A ST_INVALID I 1 0", "A VR_INVALID I 1 0" } )
    ENDIF
 
    // ----------------------------------------------

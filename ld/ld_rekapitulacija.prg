@@ -48,7 +48,8 @@ FUNCTION ld_rekapitulacija( lSvi )
    nBO := 0
    cRTipRada := " "
    nKoefLO := 0
-   nStepenInvaliditeta := 0
+   PRIVATE nStepenInvaliditeta := 0
+   PRIVATE nVrstaInvaliditeta := 0
 
    IF lSvi == NIL
       lSvi := .F.

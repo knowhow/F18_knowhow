@@ -31,16 +31,16 @@ FUNCTION valid_stepen_invaliditeta( nStepen )
    RETURN .F.
 
 
-FUNCTION valid_vrste_invaliditeta( nVrsta )
+FUNCTION valid_vrsta_invaliditeta( nVrsta )
 
    LOCAL cVrsta := get_vrsta_invaliditeta( nVrsta )
    LOCAL cTmp, cItem, nCnt
 
-   IF ( EMPTY( cVrsta ) )
+   IF ( Empty( cVrsta ) )
       cTmp := "Vrste invaliditeta:#"
       nCnt := 1
       FOR EACH cItem IN saVrsteInvaliditeta
-        cTmp += STR( nCnt, 2, 0 ) + "." + cItem + "#"
+         cTmp += Str( nCnt++, 2, 0 ) + "." + cItem + "#"
       NEXT
       MsgBeep( cTmp )
       RETURN .F.
@@ -51,8 +51,9 @@ FUNCTION valid_vrste_invaliditeta( nVrsta )
 
 FUNCTION get_vrsta_invaliditeta( nVrsta )
 
-   IF nVrsta < 1 .AND. nVrsta > Len( saVrsteInvaliditeta )
+   IF nVrsta < 1 .OR. nVrsta > Len( saVrsteInvaliditeta )
       RETURN ""
    ENDIF
 
-   RETURN saVrsteInvaliditeta[ nVrsta - 1 ]
+   altd()
+   RETURN saVrsteInvaliditeta[ nVrsta ]

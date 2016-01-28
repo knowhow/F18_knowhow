@@ -90,39 +90,41 @@ FUNCTION f18_init_app( arg_v )
 
    LOCAL oLogin
 
-   rddSetDefault( RDDENGINE )
 
-   Set( _SET_AUTOPEN, .F.  )
 
-   init_harbour()
+rddSetDefault( RDDENGINE )
 
-   PUBLIC gRj         := "N"
-   PUBLIC gReadOnly   := .F.
-   PUBLIC gSQL        := "N"
-   PUBLIC gOModul     := NIL
-   PUBLIC cDirPriv    := ""
-   PUBLIC cDirRad     := ""
-   PUBLIC cDirSif     := ""
-   PUBLIC glBrojacPoKontima := .T.
+Set( _SET_AUTOPEN, .F.  )
 
-   set_f18_home_root()
-   SetgaSDbfs()
-   set_global_vars_0()
-   PtxtSekvence()
+init_harbour()
 
-   __my_error_handler := {| objError, lShowreport, lQuit | GlobalErrorHandler( objError, lShowReport, lQuit ) }
-   __global_error_handler := ErrorBlock( __my_error_handler )
+PUBLIC gRj         := "N"
+PUBLIC gReadOnly   := .F.
+PUBLIC gSQL        := "N"
+PUBLIC gOModul     := NIL
+PUBLIC cDirPriv    := ""
+PUBLIC cDirRad     := ""
+PUBLIC cDirSif     := ""
+PUBLIC glBrojacPoKontima := .T.
 
-   set_screen_dimensions()
+set_f18_home_root()
+SetgaSDbfs()
+set_global_vars_0()
+PtxtSekvence()
 
-   init_gui()
+__my_error_handler := {| objError, lShowreport, lQuit | GlobalErrorHandler( objError, lShowReport, lQuit ) }
+__global_error_handler := ErrorBlock( __my_error_handler )
 
-   IF no_sql_mode()
-      set_f18_home( "f18_test" )
-      RETURN .T.
-   ENDIF
+set_screen_dimensions()
 
-   f18_init_app_login( NIL, arg_v )
+init_gui()
+
+IF no_sql_mode()
+set_f18_home( "f18_test" )
+RETURN .T.
+ENDIF
+
+f18_init_app_login( NIL, arg_v )
 
    RETURN .T.
 
@@ -152,9 +154,6 @@ FUNCTION f18_init_app_opts()
    f18_menu( "mn", .F., _izbor, _opc, _opcexe  )
 
    RETURN .T.
-
-
-
 
 
 // -----------------------------------------------------
@@ -262,15 +261,15 @@ FUNCTION init_harbour()
    SET DATE TO GERMAN
 
 
-   hb_cdpSelect( "SL852" )
-   hb_SetTermCP( "SLISO" )
+hb_cdpSelect( "SL852" )
+hb_SetTermCP( "SLISO" )
 
-   SET DELETED ON
+SET DELETED ON
 
-   SetCancel( .F. )
+SetCancel( .F. )
 
-   Set( _SET_EVENTMASK, INKEY_ALL )
-   MSetCursor( .T. )
+Set( _SET_EVENTMASK, INKEY_ALL )
+MSetCursor( .T. )
 
    RETURN .T.
 
@@ -285,113 +284,113 @@ FUNCTION set_screen_dimensions()
 
    _msg := "screen res: " + AllTrim( to_str( _pix_width ) ) + " " + AllTrim( to_str( _pix_height ) ) + " varijanta: "
 
-   // #ifdef NODE
+//#ifdef NODE
 
-   // RETURN .T.
-   // #endif
-
-
-   IF _pix_width == NIL
-
-      maxrows( 40 )
-      maxcols( 150 )
-
-      IF SetMode( MaxRow(), MaxCol() )
-         log_write( "setovanje ekrana: setovan ekran po rezoluciji" )
-      ELSE
-         log_write( "setovanje ekrana: ne mogu setovati ekran po trazenoj rezoluciji !" )
-         QUIT_1
-      ENDIF
-
-      RETURN .T.
-   ENDIF
-
-   DO CASE
+//   RETURN .T.
+//#endif
 
 
-   CASE _pix_width >= 1440 .AND. _pix_height >= 900
+IF _pix_width == NIL
 
-      font_size( 24 )
-      font_width( 12 )
-      maxrows( 35 )
-      maxcols( 119 )
+ maxrows( 40 )
+ maxcols( 150 )
 
-      log_write( _msg + "1" )
-
-   CASE _pix_width >= 1280 .AND. _pix_height >= 820
-
-#ifdef  __PLATFORM__DARWIN
-      // font_name("Ubuntu Mono")
-      font_name( "ubuntu mono" )
-      font_size( 24 )
-      font_width( 12 )
-      maxrows( 35 )
-      maxcols( 110 )
-      log_write( _msg + "2longMac" )
-#else
-
-      font_size( 24 )
-      font_width( 12 )
-      maxrows( 35 )
-      maxcols( 105 )
-
-
-      log_write( _msg + "2long" )
-#endif
-
-
-   CASE _pix_width >= 1280 .AND. _pix_height >= 800
-
-      font_size( 22 )
-      font_width( 11 )
-      maxrows( 35 )
-      maxcols( 115 )
-
-      log_write( _msg + "2" )
-
-   CASE  _pix_width >= 1024 .AND. _pix_height >= 768
-
-      font_size( 20 )
-      font_width( 10 )
-      maxrows( 35 )
-      maxcols( 100 )
-
-      log_write( _msg + "3" )
-
-   OTHERWISE
-
-      font_size( 16 )
-      font_width( 8 )
-
-      maxrows( 35 )
-      maxcols( 100 )
-
-      log_write( _msg + "4" )
-
-   ENDCASE
-
-   _get_screen_resolution_from_config()
-
-   hb_gtInfo( HB_GTI_FONTNAME, font_name() )
-
-#ifndef __PLATFORM__DARWIN
-   hb_gtInfo( HB_GTI_FONTWIDTH, font_width() )
-#endif
-
-   hb_gtInfo( HB_GTI_FONTSIZE, font_size() )
-
-   IF SetMode( maxrows(), maxcols() )
-      log_write( "setovanje ekrana: setovan ekran po rezoluciji" )
-   ELSE
-      log_write( "setovanje ekrana: ne mogu setovati ekran po trazenoj rezoluciji !" )
-      QUIT_1
-   ENDIF
-
-#ifdef F18_DEBUG
-   MsgBeep( Str( maxrows() ) + " " +  Str( maxcols() ) )
-#endif
+IF SetMode( MaxRow(), MaxCol() )
+log_write( "setovanje ekrana: setovan ekran po rezoluciji" )
+ELSE
+log_write( "setovanje ekrana: ne mogu setovati ekran po trazenoj rezoluciji !" )
+QUIT_1
+ENDIF
 
    RETURN .T.
+ENDIF
+
+DO CASE
+
+
+CASE _pix_width >= 1440 .AND. _pix_height >= 900
+
+font_size( 24 )
+font_width( 12 )
+maxrows( 35 )
+maxcols( 119 )
+
+log_write( _msg + "1" )
+
+CASE _pix_width >= 1280 .AND. _pix_height >= 820
+
+#ifdef  __PLATFORM__DARWIN
+// font_name("Ubuntu Mono")
+font_name( "ubuntu mono" )
+font_size( 24 )
+font_width( 12 )
+maxrows( 35 )
+maxcols( 110 )
+log_write( _msg + "2longMac" )
+#else
+
+font_size( 24 )
+font_width( 12 )
+maxrows( 35 )
+maxcols( 105 )
+
+
+log_write( _msg + "2long" )
+#endif
+
+
+CASE _pix_width >= 1280 .AND. _pix_height >= 800
+
+font_size( 22 )
+font_width( 11 )
+maxrows( 35 )
+maxcols( 115 )
+
+log_write( _msg + "2" )
+
+CASE  _pix_width >= 1024 .AND. _pix_height >= 768
+
+font_size( 20 )
+font_width( 10 )
+maxrows( 35 )
+maxcols( 100 )
+
+log_write( _msg + "3" )
+
+OTHERWISE
+
+font_size( 16 )
+font_width( 8 )
+
+maxrows( 35 )
+maxcols( 100 )
+
+log_write( _msg + "4" )
+
+ENDCASE
+
+_get_screen_resolution_from_config()
+
+hb_gtInfo( HB_GTI_FONTNAME, font_name() )
+
+#ifndef __PLATFORM__DARWIN
+hb_gtInfo( HB_GTI_FONTWIDTH, font_width() )
+#endif
+
+hb_gtInfo( HB_GTI_FONTSIZE, font_size() )
+
+IF SetMode( maxrows(), maxcols() )
+log_write( "setovanje ekrana: setovan ekran po rezoluciji" )
+ELSE
+log_write( "setovanje ekrana: ne mogu setovati ekran po trazenoj rezoluciji !" )
+QUIT_1
+ENDIF
+
+#ifdef F18_DEBUG
+ MsgBeep( str(maxrows()) + " " +  str(maxcols()) )
+#endif
+
+RETURN .T.
 
 #ifdef TEST
 
@@ -861,6 +860,7 @@ FUNCTION my_server_login( params, conn_type )
 
    ENDIF
 
+
 FUNCTION my_server_logout()
 
    IF ValType( __server ) == "O"
@@ -918,7 +918,7 @@ FUNCTION _path_quote( path )
       RETURN  '"' + path + '"'
    ENDIF
 
-   RETURN PATH
+      RETURN PATH
 
 FUNCTION my_home_root( home_root )
 
@@ -1193,4 +1193,4 @@ FUNCTION run_on_startup()
 
    END
 
-   RETURN .T.
+RETURN .t.

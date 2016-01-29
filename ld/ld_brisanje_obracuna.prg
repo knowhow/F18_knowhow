@@ -44,11 +44,9 @@ FUNCTION BrisiRadnika()
    O_RADN
    O_LD
 
-   IF Logirati( goModul:oDataBase:cName, "DOK", "BRISIRADNIKA" )
-      lLogBrRadn := .T.
-   ELSE
-      lLogBrRadn := .F.
-   ENDIF
+
+   lLogBrRadn := .F.
+
 
    DO WHILE .T.
 
@@ -87,11 +85,8 @@ FUNCTION BrisiRadnika()
                _rec := dbf_get_rec()
                delete_rec_server_and_dbf( "ld_ld", _rec, 1, "FULL" )
 
-               MsgBeep( "Izbrisan obracun za radnika: " + cIdRadn + "  !!!" )
+               MsgBeep( "Izbrisan obračun za radnika: " + cIdRadn + "  !!!" )
 
-               IF lLogBrRadn
-                  EventLog( nUser, goModul:oDataBase:cName, "DOK", "BRISIRADNIKA", nil, nil, nil, nil, cIdRj, Str( cMjesec, 2 ), "Rad:" + cIdRadn + " God:" + Str( cGodina, 4 ), Date(), Date(), "", "Brisanje obracuna za jednog radnika" )
-               ENDIF
 
             ENDIF
          ELSE
@@ -162,11 +157,8 @@ FUNCTION BrisiMjesec()
 
    O_RADN
 
-   IF Logirati( goModul:oDataBase:cName, "DOK", "BRISIMJESEC" )
-      lLogBrMjesec := .T.
-   ELSE
-      lLogBrMjesec := .F.
-   ENDIF
+   lLogBrMjesec := .F.
+
 
    DO WHILE .T.
 

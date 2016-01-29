@@ -46,7 +46,7 @@ FUNCTION ld_unos_obracuna()
          SELECT ld
 
          cIdRadn := field->idRadn
-         
+
          IF ( _UIznos < 0 )
             Beep( 2 )
             Msg( Lokal( "Radnik ne može imati platu u negativnom iznosu !" ) )
@@ -102,7 +102,7 @@ FUNCTION ld_unos_obracuna()
 
       Beep( 1 )
 
-   ENDDO 
+   ENDDO
 
    RETURN
 
@@ -213,11 +213,8 @@ STATIC FUNCTION ld_unos_obracuna_box( lSaveObracun )
    cGodina := gGodina
    cObracun := gObracun
 
-   IF Logirati( "LD", "DOK", "UNOS" )
-      lLogUnos := .T.
-   ELSE
-      lLogUnos := .F.
-   ENDIF
+
+   lLogUnos := .F.
 
    OObracun()
 
@@ -400,10 +397,10 @@ STATIC FUNCTION kalkulisi_uneto_usati_uiznos_za_radnika()
 
    hData := izracunaj_uneto_usati_za_radnika()
 
-   _usati := hData["usati"] 
-   _uneto := hData["uneto"] 
+   _usati := hData["usati"]
+   _uneto := hData["uneto"]
    _uodbici := hData["uodbici"]
-   _uiznos := hData["uneto"] + hData["uodbici"] 
+   _uiznos := hData["uneto"] + hData["uodbici"]
 
    RETURN NIL
 
@@ -672,5 +669,3 @@ FUNCTION ValRNal( cPom, i )
    ENDIF
 
    RETURN .T.
-
-

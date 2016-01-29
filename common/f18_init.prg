@@ -1053,7 +1053,7 @@ FUNCTION log_write( msg, level, silent )
 
    // treba li logirati ?
    IF level > log_level()
-      RETURN
+      RETURN .T.
    ENDIF
 
    _msg_time := DToC( Date() )
@@ -1074,7 +1074,7 @@ FUNCTION log_write( msg, level, silent )
 #endif
 #endif
 
-   RETURN
+   RETURN .T.
 
 FUNCTION server_log()
    RETURN __server_log

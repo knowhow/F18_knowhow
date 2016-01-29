@@ -35,7 +35,7 @@ FUNCTION OFmkSvi()
 
    O_FAKT_OBJEKTI
 
-   RETURN
+   RETURN .T.
 
 
 FUNCTION OSifVindija()

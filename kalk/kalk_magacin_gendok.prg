@@ -549,27 +549,9 @@ FUNCTION KorekPC()
 
    ENDDO
 
-   nTArea := Select()
-
-   IF Logirati( goModul:oDataBase:cName, "DOK", "GENERACIJA" )
-
-      SELECT kalk_pripr
-      GO TOP
-      cOpis := kalk_pripr->idfirma + "-" + ;
-         kalk_pripr->idvd + "-" + ;
-         kalk_pripr->brdok
-
-      EventLog( nUser, goModul:oDataBase:cName, "DOK", "GENERACIJA", ;
-         nil, nil, nil, nil, ;
-         cOpis, "", "", kalk_pripr->datdok, Date(), ;
-         "", "Opcija korekcije prodajnih cijena" )
-   ENDIF
-
-   SELECT ( nTArea )
-
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
 
 

@@ -569,13 +569,6 @@ FUNCTION edit_fin_pripr()
    LOCAL lLogBrisanje := .F.
    LOCAL _log_info
 
-   IF Logirati( goModul:oDataBase:cName, "DOK", "UNOS" )
-      lLogUnos := .T.
-   ENDIF
-
-   IF Logirati( goModul:oDataBase:cName, "DOK", "BRISANJE" )
-      lLogBrisanje := .T.
-   ENDIF
 
    IF ( Ch == K_CTRL_T .OR. Ch == K_ENTER ) .AND. RecCount2() == 0
       RETURN DE_CONT
@@ -626,7 +619,7 @@ FUNCTION edit_fin_pripr()
          cBDP := field->d_p
          dBDatnal := field->datdok
          cBIznos := Str( field->iznosbhd )
- 
+
          my_rlock()
          DELETE
          my_unlock()
@@ -767,13 +760,6 @@ FUNCTION edit_fin_pripr()
                fin_pripr->idvn + "-" + ;
                fin_pripr->brnal
 
-            EventLog( nUser, goModul:oDataBase:cName, ;
-               "DOK", "UNOS", ;
-               nil, nil, nil, nil, ;
-               "nalog: " + cOpis, "duguje=" + Str( nDug ) + ;
-               " potrazuje=" + Str( nPot ), "", ;
-               Date(), Date(), ;
-               "", "Unos novih stavki na nalog" )
          ENDIF
 
       ENDDO
@@ -788,7 +774,7 @@ FUNCTION edit_fin_pripr()
          _log_info := fin_pripr->idfirma + "-" + fin_pripr->idvn + "-" + fin_pripr->brnal
 
          fin_reset_broj_dokumenta( fin_pripr->idfirma, fin_pripr->idvn, fin_pripr->brnal )
-         
+
 		 my_dbf_zap()
 
          BrisiPBaze()

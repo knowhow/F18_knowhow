@@ -383,7 +383,6 @@
 
 // security system tabele
 #xcommand O_EVENTS  => select (F_EVENTS); my_use ("events") ; set order to tag "ID"
-#xcommand O_EVENTLOG  => select (F_EVENTLOG); my_use ("eventlog") ; set order to tag "ID"
 #xcommand O_USERS  => select (F_USERS); my_use ("users") ; set order to tag "ID"
 #xcommand O_GROUPS  => select (F_GROUPS); my_use ("groups") ; set order to tag "ID"
 #xcommand O_RULES  => select (F_RULES); my_use ("fmkrules") ; set order to tag "ID"

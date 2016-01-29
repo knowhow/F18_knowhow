@@ -598,21 +598,8 @@ FUNCTION v_dop_tip( cTip )
    RETURN .T.
 
 
-// ------------------------------------------
-// ------------------------------------------
-FUNCTION TprBl( Ch )
 
-   IF Logirati( goModul:oDataBase:cName, "SIF", "EDITTIPPR" )
-      SELECT tippr
-      IF ( Ch == K_F2 )
-         MsgO( "Evidentiram stanje sifrarnika..." )
-         cStanje := ( tippr->id + "-" + tippr->aktivan + "-" + tippr->fiksan + "-" + tippr->uneto + "-" + tippr->ufs )
-         EventLog( nUser, goModul:oDataBase:cName, "SIF", "EDITTIPPR", nil, nil, nil, nil, "", "", cStanje, Date(), Date(), "F-" + AllTrim( tippr->formula ), "Promjena stanja sifrarnika tippr" )
-         SELECT tippr
-         MsgC()
-         RETURN DE_REFRESH
-      ENDIF
-   ENDIF
+FUNCTION TprBl( Ch )
 
    RETURN DE_CONT
 
@@ -635,28 +622,14 @@ FUNCTION P_TipPr2( cId, dx, dy )
       }
    Kol := { 1, 2, 3, 4, 5, 6, 7, 8 }
 
-   RETURN PostojiSifra( F_TIPPR2, 1, MAXROWS() -15, MAXCOLS() -20, Lokal( "Tipovi primanja za obracun 2" ),  @cId, dx, dy, {| Ch| Tpr2Bl( Ch ) },,,,, { "ID" } )
+   RETURN PostojiSifra( F_TIPPR2, 1, MAXROWS() -15, MAXCOLS() -20, Lokal( "Tipovi primanja za obracun 2" ),  @cId, dx, dy, ;
+     {| Ch| Tpr2Bl( Ch ) },,,,, { "ID" } )
 
 
 
-// -----------------------------------------------
-// -----------------------------------------------
 FUNCTION Tpr2Bl( Ch )
 
-   IF Logirati( goModul:oDataBase:cName, "SIF", "EDITTIPPR2" )
-      SELECT tippr
-      IF ( Ch == K_F2 )
-         MsgO( "Evidentiram stanje sifrarnika..." )
-         cStanje := ( tippr->id + "-" + tippr->aktivan + "-" + tippr->fiksan + "-" + tippr->uneto + "-" + tippr->ufs )
-         EventLog( nUser, goModul:oDataBase:cName, "SIF", "EDITTIPPR2", nil, nil, nil, nil, "", "", cStanje, Date(), Date(), "F-" + AllTrim( tippr->formula ), "Promjena stanja sifranika tippr2" )
-         SELECT tippr
-         MsgC()
-         RETURN DE_REFRESH
-      ENDIF
-   ENDIF
-
    RETURN DE_CONT
-
 
 
 
@@ -689,7 +662,6 @@ FUNCTION P_LD_RJ( cId, dx, dy )
    PopWa( F_LD_RJ )
 
    RETURN lRet
-
 
 
 
@@ -733,8 +705,7 @@ FUNCTION P_Kred( cId, dx, dy )
    RETURN PostojiSifra( F_KRED, 1, MAXROWS() -15, MAXCOLS() -20, Lokal( "Lista kreditora" ), @cId, dx, dy )
 
 
-// -----------------------------
-// -----------------------------
+
 FUNCTION KrBlok( Ch )
 
    IF ( Ch == K_CTRL_T )
@@ -752,8 +723,7 @@ FUNCTION KrBlok( Ch )
    RETURN DE_CONT
 
 
-// ------------------------------------------------
-// ------------------------------------------------
+
 FUNCTION ImaURadKr( cKljuc, cTag )
 
    LOCAL lVrati := .F.

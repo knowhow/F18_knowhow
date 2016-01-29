@@ -196,12 +196,6 @@ FUNCTION bris_svo_smece()
 
    nTArea := Select()
 
-   IF Logirati( goModul:oDataBase:cName, "DOK", "SMECE" )
-      EventLog( nUser, goModul:oDataBase:cName, "DOK", "SMECE", ;
-         nil, nil, nil, nil, ;
-         "", "", "", Date(), Date(), "", ;
-         "Brisanje kompletne tabele smeca" )
-   ENDIF
 
    SELECT ( nTArea )
 
@@ -245,7 +239,7 @@ FUNCTION azuriraj_smece( lSilent )
       IF Found()
          // ima vec u smecu !
          lFound := .T.
-		
+
          IF lSilent == .F.
             msgbeep( "U smecu vec postoji isti dokument !" )
             closeret
@@ -254,9 +248,9 @@ FUNCTION azuriraj_smece( lSilent )
       ENDIF
 
       SELECT fakt_pripr
-	
+
       IF lFound == .T.
-		
+
          GO ( nRecNO )
 
          my_flock()
@@ -340,7 +334,7 @@ FUNCTION povrat_smece( cIdFirma, cIdtipdok, cBrDok )
    ENDIF
 
    IF Pitanje( "", "Iz smeca " + cIdFirma + "-" + cIdtipdok + "-" + AllTrim( cBrDok ) + " povuci u pripremu (D/N) ?", "D" ) == "N"
-	
+
       IF !lSilent
          my_close_all_dbf()
          RETURN

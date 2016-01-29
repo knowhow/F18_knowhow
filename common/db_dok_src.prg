@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -16,227 +16,244 @@
 // ------------------------------------------------------
 // kreiranje tabela DOKSRC i P_DOKSRC
 // ------------------------------------------------------
-function cre_doksrc(ver)
-local aDbf := {}
-local cDokSrcName := "DOKSRC"
-local cPDokSrcName := "P_" + cDokSrcName
-local nBrDokLen := 8
+FUNCTION cre_doksrc( ver )
 
-AADD(aDBf,{ "idfirma"             , "C" ,   2 ,  0 })
-AADD(aDBf,{ "idvd"                , "C" ,   2 ,  0 })
-AADD(aDBf,{ "brdok"               , "C" ,  nBrDokLen ,  0 })
-AADD(aDBf,{ "datdok"              , "D" ,   8 ,  0 })
-AADD(aDBf,{ "src_modul"           , "C" ,  10 ,  0 })
-AADD(aDBf,{ "src_idfirm"         , "C" ,   2 ,  0 })
-AADD(aDBf,{ "src_idvd"            , "C" ,   2 ,  0 })
-AADD(aDBf,{ "src_brdok"           , "C" ,   8 ,  0 })
-AADD(aDBf,{ "src_datdok"          , "D" ,   8 ,  0 })
-AADD(aDBf,{ "src_kto_ra"         , "C" ,   7 ,  0 })
-AADD(aDBf,{ "src_kto_za"         , "C" ,   7 ,  0 })
-AADD(aDBf,{ "src_partne"         , "C" ,   6 ,  0 })
-AADD(aDBf,{ "src_opis"            , "C" ,  30 ,  0 })
+   LOCAL aDbf := {}
+   LOCAL cDokSrcName := "DOKSRC"
+   LOCAL cPDokSrcName := "P_" + cDokSrcName
+   LOCAL nBrDokLen := 8
 
-if !FILE( f18_ime_dbf(cDokSrcName) )
-	DBCREATE2(cDokSrcName + ".dbf", aDbf)
-endif
+   AAdd( aDBf, { "idfirma", "C",   2,  0 } )
+   AAdd( aDBf, { "idvd", "C",   2,  0 } )
+   AAdd( aDBf, { "brdok", "C",  nBrDokLen,  0 } )
+   AAdd( aDBf, { "datdok", "D",   8,  0 } )
+   AAdd( aDBf, { "src_modul", "C",  10,  0 } )
+   AAdd( aDBf, { "src_idfirm", "C",   2,  0 } )
+   AAdd( aDBf, { "src_idvd", "C",   2,  0 } )
+   AAdd( aDBf, { "src_brdok", "C",   8,  0 } )
+   AAdd( aDBf, { "src_datdok", "D",   8,  0 } )
+   AAdd( aDBf, { "src_kto_ra", "C",   7,  0 } )
+   AAdd( aDBf, { "src_kto_za", "C",   7,  0 } )
+   AAdd( aDBf, { "src_partne", "C",   6,  0 } )
+   AAdd( aDBf, { "src_opis", "C",  30,  0 } )
 
-// indexi....
-CREATE_INDEX("1","idfirma+idvd+brdok+DTOS(datdok)+src_modul+src_idfirm+src_idvd+src_brdok+DTOS(src_datdok)", cDokSrcName)
-CREATE_INDEX("2","src_modul+src_idfirm+src_idvd+src_brdok+DTOS(src_datdok)", cDokSrcName)
+   IF !File( f18_ime_dbf( cDokSrcName ) )
+      DBCREATE2( cDokSrcName + ".dbf", aDbf )
+   ENDIF
 
-// kreiraj u PRIVPATH
-if !FILE( f18_ime_dbf(cPDokSrcName))
-	DBCREATE2(PRIVPATH + cPDokSrcName + ".DBF", aDbf)
-endif
-// indexi....
-CREATE_INDEX("1","idfirma+idvd+brdok+DTOS(datdok)+src_modul+src_idfirm+src_idvd+src_brdok+DTOS(src_datdok)", PRIVPATH + cPDokSrcName)
-CREATE_INDEX("2","src_modul+src_idfirm+src_idvd+src_brdok+DTOS(src_datdok)", PRIVPATH + cPDokSrcName)
+   // indexi....
+   CREATE_INDEX( "1", "idfirma+idvd+brdok+DTOS(datdok)+src_modul+src_idfirm+src_idvd+src_brdok+DTOS(src_datdok)", cDokSrcName )
+   CREATE_INDEX( "2", "src_modul+src_idfirm+src_idvd+src_brdok+DTOS(src_datdok)", cDokSrcName )
 
-cre_p_update()
+   // kreiraj u PRIVPATH
+   IF !File( f18_ime_dbf( cPDokSrcName ) )
+      DBCREATE2( PRIVPATH + cPDokSrcName + ".DBF", aDbf )
+   ENDIF
+   // indexi....
+   CREATE_INDEX( "1", "idfirma+idvd+brdok+DTOS(datdok)+src_modul+src_idfirm+src_idvd+src_brdok+DTOS(src_datdok)", PRIVPATH + cPDokSrcName )
+   CREATE_INDEX( "2", "src_modul+src_idfirm+src_idvd+src_brdok+DTOS(src_datdok)", PRIVPATH + cPDokSrcName )
 
-return
+   cre_p_update()
+
+   RETURN
 
 // ------------------------------------------------------
 // dodaj novi zapis u p_doksrc
 // ------------------------------------------------------
-function add_p_doksrc( cFirma, cTD, cBrDok, dDatDok, ;
-		cSrcModName, cSrcFirma, cSrcTD, cSrcBrDok, ;
-		dSrcDatDok, cSrcKto1, cSrcKto2, cSrcPartn, ;
-		cSrcOpis, cPath )
+FUNCTION add_p_doksrc( cFirma, cTD, cBrDok, dDatDok, ;
+      cSrcModName, cSrcFirma, cSrcTD, cSrcBrDok, ;
+      dSrcDatDok, cSrcKto1, cSrcKto2, cSrcPartn, ;
+      cSrcOpis, cPath )
 
-local nTArea := SELECT()
+   LOCAL nTArea := Select()
 
-// ako ne postoji doksrc, ne radi nista!
-if !is_doksrc()
-	return
-endif
+   // ako ne postoji doksrc, ne radi nista!
+   IF !is_doksrc()
+      RETURN
+   ENDIF
 
-cSrcModName := PADR(cSrcModName, 10)
-cSrcBrDok := PADR(ALLTRIM(cSrcBrDok), 8)
+   cSrcModName := PadR( cSrcModName, 10 )
+   cSrcBrDok := PadR( AllTrim( cSrcBrDok ), 8 )
 
-// ako postoji zapis source-a u tabeli... preskoci
-if seek_p_src(cSrcModName, cSrcFirma, cSrcTD, cSrcBrDok, dSrcDatDok)
-	select (nTArea)
-	return
-endif
+   // ako postoji zapis source-a u tabeli... preskoci
+   IF seek_p_src( cSrcModName, cSrcFirma, cSrcTD, cSrcBrDok, dSrcDatDok )
+      SELECT ( nTArea )
+      RETURN
+   ENDIF
 
-o_p_doksrc(cPath)
+   o_p_doksrc( cPath )
 
-select p_doksrc
-append blank
+   SELECT p_doksrc
+   APPEND BLANK
 
-replace field->idfirma    with cFirma
-replace field->idvd       with cTD
-replace field->brdok      with cBrDok
-replace field->datdok     with dDatDok
-replace field->src_modul  with cSrcModName
-replace field->src_idfirm with cSrcFirma
-replace field->src_idvd   with cSrcTD
-replace field->src_brdok  with cSrcBrDok
-replace field->src_datdok with dSrcDatDok
-replace field->src_kto_ra with cSrcKto1
-replace field->src_kto_za with cSrcKto2
-replace field->src_partne with cSrcPartn
-replace field->src_opis   with cSrcOpis
+   REPLACE field->idfirma    WITH cFirma
+   REPLACE field->idvd       WITH cTD
+   REPLACE field->brdok      WITH cBrDok
+   REPLACE field->datdok     WITH dDatDok
+   REPLACE field->src_modul  WITH cSrcModName
+   REPLACE field->src_idfirm WITH cSrcFirma
+   REPLACE field->src_idvd   WITH cSrcTD
+   REPLACE field->src_brdok  WITH cSrcBrDok
+   REPLACE field->src_datdok WITH dSrcDatDok
+   REPLACE field->src_kto_ra WITH cSrcKto1
+   REPLACE field->src_kto_za WITH cSrcKto2
+   REPLACE field->src_partne WITH cSrcPartn
+   REPLACE field->src_opis   WITH cSrcOpis
 
-select p_doksrc
-use
+   SELECT p_doksrc
+   USE
 
-select (nTArea)
+   SELECT ( nTArea )
 
-return
+   RETURN
 
 
 // ---------------------------------------
 // otvaranje tabele p_doksrc
 // ---------------------------------------
-function o_p_doksrc(cPath)
-O_P_DOKSRC
-return
+FUNCTION o_p_doksrc( cPath )
+
+   O_P_DOKSRC
+
+   RETURN
 
 
 // --------------------------------------
 // otvaranje tabele doksrc
 // --------------------------------------
-function o_doksrc(cPath)
-O_DOKSRC
-return
+FUNCTION o_doksrc( cPath )
+
+   O_DOKSRC
+
+   RETURN
 
 
 // -----------------------------------
 // zapuje p_doksrc
 // -----------------------------------
-function zap_p_doksrc(cPath)
-local nTArea := SELECT()
-// ako postoji tabela...
-if is_doksrc()
-	o_p_doksrc(cPath)
-	select p_doksrc
-	zapp()
-	select p_doksrc
-	use
-	select (nTArea)
-endif
-return
+FUNCTION zap_p_doksrc( cPath )
+
+   LOCAL nTArea := Select()
+
+   // ako postoji tabela...
+   IF is_doksrc()
+      o_p_doksrc( cPath )
+      SELECT p_doksrc
+      zapp()
+      SELECT p_doksrc
+      USE
+      SELECT ( nTArea )
+   ENDIF
+
+   RETURN
 
 
 // --------------------------------------------------
 // vrati iz kumulativa u pripr
 // --------------------------------------------------
-static function doksrc_to_p(cFirma, cIdVd, cBrDok, dDatDok)
-local nTArea := SELECT()
-local cSeek := ""
-local _rec
+STATIC FUNCTION doksrc_to_p( cFirma, cIdVd, cBrDok, dDatDok )
 
-O_P_DOKSRC
-O_DOKSRC
+   LOCAL nTArea := Select()
+   LOCAL cSeek := ""
+   LOCAL _rec
 
-zap_p_doksrc()
+   O_P_DOKSRC
+   O_DOKSRC
 
-select doksrc
-set order to tag "1"
-go top
+   zap_p_doksrc()
 
-cSeek := cFirma + cIdVd + cBrDok
-if dDatDok <> nil
-	cSeek += DTOS(dDatDok)
-endif
+   SELECT doksrc
+   SET ORDER TO TAG "1"
+   GO TOP
 
-seek cSeek
+   cSeek := cFirma + cIdVd + cBrDok
+   IF dDatDok <> nil
+      cSeek += DToS( dDatDok )
+   ENDIF
 
-do while !EOF() .and. field->idfirma == cFirma ;
-		.and. field->idvd == cIdVd ;
-		.and. field->brdok == cBrDok ;
-		.and. IF(dDatDok<>nil, field->datdok == dDatDok, .t.)
-	
-	
-	_rec := dbf_get_rec()
-	
-	select p_doksrc
-	append blank
-	
-    dbf_update_rec( _rec )
-	
-	select doksrc
-	skip
-	
-enddo
+   SEEK cSeek
 
-select (nTArea)
-return
+   DO WHILE !Eof() .AND. field->idfirma == cFirma ;
+         .AND. field->idvd == cIdVd ;
+         .AND. field->brdok == cBrDok ;
+         .AND. IF( dDatDok <> nil, field->datdok == dDatDok, .T. )
+
+
+      _rec := dbf_get_rec()
+
+      SELECT p_doksrc
+      APPEND BLANK
+
+      dbf_update_rec( _rec )
+
+      SELECT doksrc
+      SKIP
+
+   ENDDO
+
+   SELECT ( nTArea )
+
+   RETURN
 
 // ---------------------------------------------------
 // brisanje zapisa iz tabele DOKSRC
 // ---------------------------------------------------
-function d_doksrc(cFirma, cIdVd, cBrDok, dDatDok)
-local nTArea := SELECT()
-local cSeek := ""
+FUNCTION d_doksrc( cFirma, cIdVd, cBrDok, dDatDok )
 
-O_DOKSRC
-select doksrc
-set order to tag "1"
-go top
+   LOCAL nTArea := Select()
+   LOCAL cSeek := ""
 
-cSeek := cFirma + cIdVd + cBrDok
-if dDatDok <> nil
-	cSeek += DTOS(dDatDok)
-endif
+   O_DOKSRC
+   SELECT doksrc
+   SET ORDER TO TAG "1"
+   GO TOP
 
-seek cSeek
+   cSeek := cFirma + cIdVd + cBrDok
+   IF dDatDok <> nil
+      cSeek += DToS( dDatDok )
+   ENDIF
 
-// izbrisi iz doksrc
-do while !EOF() .and. field->idfirma == cFirma ;
-		.and. field->idvd == cIdVd ;
-		.and. field->brdok == cBrDok ;
-		.and. IF(dDatDok <> nil, field->datdok == dDatDok, .t.)
-	delete
-	skip
-enddo
+   SEEK cSeek
 
-select (nTArea)
-return
+   // izbrisi iz doksrc
+   DO WHILE !Eof() .AND. field->idfirma == cFirma ;
+         .AND. field->idvd == cIdVd ;
+         .AND. field->brdok == cBrDok ;
+         .AND. IF( dDatDok <> nil, field->datdok == dDatDok, .T. )
+      DELETE
+      SKIP
+   ENDDO
+
+   SELECT ( nTArea )
+
+   RETURN
 
 // -----------------------------------------------------
 // povrat doksrc...
 // -----------------------------------------------------
-function povrat_doksrc(cFirma, cIdVd, cBrDok, dDatDok)
-// doksrc -> p_doksrc
-doksrc_to_p(cFirma, cIdVd, cBrDok, dDatDok)
-// brisi doksrc
-d_doksrc(cFirma, cIdVd, cBrDok, dDatDok)
-return
+FUNCTION povrat_doksrc( cFirma, cIdVd, cBrDok, dDatDok )
+
+   // doksrc -> p_doksrc
+   doksrc_to_p( cFirma, cIdVd, cBrDok, dDatDok )
+   // brisi doksrc
+   d_doksrc( cFirma, cIdVd, cBrDok, dDatDok )
+
+   RETURN
 
 
 
 // -----------------------------------------
 // provjerava da li postoje tabele DOKSRC
 // -----------------------------------------
-function is_doksrc()
-local lRet := .f.
-if FILE("DOKSRC.DBF")
-	lRet := .t.
-endif
-return lRet
+FUNCTION is_doksrc()
+
+   LOCAL lRet := .F.
+
+   IF File( "DOKSRC.DBF" )
+      lRet := .T.
+   ENDIF
+
+   RETURN lRet
 
 
 // ------------------------------------------------------
@@ -244,146 +261,150 @@ return lRet
 // cPPath - privpath
 // cKPath - kumpath
 // ------------------------------------------------------
-function p_to_doksrc(cPPath, cKPath)
-local nTArea := SELECT()
-local nTRecNR := (nTArea)->(RecNo())
+FUNCTION p_to_doksrc( cPPath, cKPath )
 
-// ako ne postoji doksrc, ne radi nista!
-if !is_doksrc()
-	return
-endif
+   LOCAL nTArea := Select()
+   LOCAL nTRecNR := ( nTArea )->( RecNo() )
 
-if cPPath == nil
-	cPPath := PRIVPATH
-endif
-if cKPath == nil
-	cKPath := KUMPATH
-endif
+   // ako ne postoji doksrc, ne radi nista!
+   IF !is_doksrc()
+      RETURN
+   ENDIF
 
-o_p_doksrc(cPPath)
-o_doksrc(cKPath)
+   IF cPPath == nil
+      cPPath := PRIVPATH
+   ENDIF
+   IF cKPath == nil
+      cKPath := KUMPATH
+   ENDIF
 
-select p_doksrc
-go top
+   o_p_doksrc( cPPath )
+   o_doksrc( cKPath )
 
-// provjeri broj zapisa...
-if p_doksrc->(RecCount2()) == 0 
-	select (nTArea)
-	return
-endif
+   SELECT p_doksrc
+   GO TOP
 
-// izbrisi ako vec postoji taj dokument...
-d_doksrc(p_doksrc->idfirma, p_doksrc->idvd, p_doksrc->brdok, p_doksrc->datdok)
+   // provjeri broj zapisa...
+   IF p_doksrc->( RecCount2() ) == 0
+      SELECT ( nTArea )
+      RETURN
+   ENDIF
 
-select p_doksrc
-go top
+   // izbrisi ako vec postoji taj dokument...
+   d_doksrc( p_doksrc->idfirma, p_doksrc->idvd, p_doksrc->brdok, p_doksrc->datdok )
 
-MsgO("Azuriram DOKSRC....")
+   SELECT p_doksrc
+   GO TOP
 
-do while !EOF()
-	
-	_rec := dbf_get_rec()
-	
-	select doksrc
-	
-	append blank
-	
-	update_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL")
-	
-	select p_doksrc
-	
-	skip
-enddo
+   MsgO( "Azuriram DOKSRC...." )
 
-MsgC()
+   DO WHILE !Eof()
 
-select p_doksrc
-zapp()
+      _rec := dbf_get_rec()
 
-select p_doksrc
-use
-select doksrc
-use
+      SELECT doksrc
 
-select (nTArea)
-return
+      APPEND BLANK
+
+      update_rec_server_and_dbf( Alias(), _rec, 1, "FULL" )
+
+      SELECT p_doksrc
+
+      SKIP
+   ENDDO
+
+   MsgC()
+
+   SELECT p_doksrc
+   zapp()
+
+   SELECT p_doksrc
+   USE
+   SELECT doksrc
+   USE
+
+   SELECT ( nTArea )
+
+   RETURN
 
 
 // ----------------------------------------------------
 // seekuj p_doksrc za dokumentom, da li postoji
 // ----------------------------------------------------
-static function seek_p_dok(cFirma, cIdVd, cBrDok, dDatum)
-local nTArea := SELECT()
-local cSeek 
-local lReturn := .f.
+STATIC FUNCTION seek_p_dok( cFirma, cIdVd, cBrDok, dDatum )
 
-O_P_DOKSRC
-select p_doksrc
-set order to tag "1"
-go top
+   LOCAL nTArea := Select()
+   LOCAL cSeek
+   LOCAL lReturn := .F.
 
-cSeek := cFirma
+   O_P_DOKSRC
+   SELECT p_doksrc
+   SET ORDER TO TAG "1"
+   GO TOP
 
-if cIdVD <> nil
-	cSeek += cIdVd
-endif
-if cBrDok <> nil
-	cSeek += cBrDok
-endif
-if dDatum <> nil
-	cSeek += DTOS(dDatum)
-endif
+   cSeek := cFirma
 
-seek cSeek
+   IF cIdVD <> nil
+      cSeek += cIdVd
+   ENDIF
+   IF cBrDok <> nil
+      cSeek += cBrDok
+   ENDIF
+   IF dDatum <> nil
+      cSeek += DToS( dDatum )
+   ENDIF
 
-if FOUND()
-	lReturn := .t.
-endif
+   SEEK cSeek
 
-select (nTArea)
+   IF Found()
+      lReturn := .T.
+   ENDIF
 
-return lReturn
+   SELECT ( nTArea )
+
+   RETURN lReturn
 
 
 
 // ----------------------------------------------------
 // seekuj p_doksrc za src dokumentom, da li postoji
 // ----------------------------------------------------
-static function seek_p_src(cModul, cFirma, cIdVd, cBrDok, dDatum)
-local nTArea := SELECT()
-local cSeek 
-local lReturn := .f.
+STATIC FUNCTION seek_p_src( cModul, cFirma, cIdVd, cBrDok, dDatum )
 
-O_P_DOKSRC
-select p_doksrc
-set order to tag "2"
-go top
+   LOCAL nTArea := Select()
+   LOCAL cSeek
+   LOCAL lReturn := .F.
 
-cSeek := cModul + cFirma
+   O_P_DOKSRC
+   SELECT p_doksrc
+   SET ORDER TO TAG "2"
+   GO TOP
 
-if cIdVD <> nil
-	cSeek += cIdVd
-endif
+   cSeek := cModul + cFirma
 
-if cBrDok <> nil
-	cSeek += cBrDok
-endif
+   IF cIdVD <> nil
+      cSeek += cIdVd
+   ENDIF
 
-if dDatum <> nil
-	cSeek += DTOS(dDatum)
-endif
+   IF cBrDok <> nil
+      cSeek += cBrDok
+   ENDIF
 
-seek cSeek
+   IF dDatum <> nil
+      cSeek += DToS( dDatum )
+   ENDIF
 
-if FOUND()
-	lReturn := .t.
-endif
+   SEEK cSeek
 
-set order to tag "1"
+   IF Found()
+      lReturn := .T.
+   ENDIF
 
-select (nTArea)
+   SET ORDER TO TAG "1"
 
-return lReturn
+   SELECT ( nTArea )
+
+   RETURN lReturn
 
 
 
@@ -402,62 +423,66 @@ return lReturn
 // itd...
 // ----------------------------------------------------------
 
-function cre_p_update()
-local aDBF := {}
-local cDbfName := "P_UPDATE"
+FUNCTION cre_p_update()
 
-AADD(aDBf,{ "modul"               , "C" ,  10 ,  0 })
-AADD(aDBf,{ "idkonto"             , "C" ,   7 ,  0 })
-AADD(aDBf,{ "p_updated"           , "C" ,   1 ,  0 })
-AADD(aDBf,{ "p_up_date"           , "D" ,   8 ,  0 })
-AADD(aDBf,{ "p_up_time"           , "C" ,  10 ,  0 })
+   LOCAL aDBF := {}
+   LOCAL cDbfName := "P_UPDATE"
 
-// kreiraj u KUMPATH
-if !FILE( f18_ime_dbf(cDbfName))
-	DBCREATE2(cDbfName + ".DBF", aDbf)
-endif
-// indexi....
-CREATE_INDEX("1","modul+idkonto+p_updated", cDbfName)
+   AAdd( aDBf, { "modul", "C",  10,  0 } )
+   AAdd( aDBf, { "idkonto", "C",   7,  0 } )
+   AAdd( aDBf, { "p_updated", "C",   1,  0 } )
+   AAdd( aDBf, { "p_up_date", "D",   8,  0 } )
+   AAdd( aDBf, { "p_up_time", "C",  10,  0 } )
 
-return
+   // kreiraj u KUMPATH
+   IF !File( f18_ime_dbf( cDbfName ) )
+      DBCREATE2( cDbfName + ".DBF", aDbf )
+   ENDIF
+   // indexi....
+   CREATE_INDEX( "1", "modul+idkonto+p_updated", cDbfName )
+
+   RETURN
 
 
 // -----------------------------------------
 // otvoranje tabele p_update
 // -----------------------------------------
-function o_p_update(cPath)
-local nTArea := SELECT()
+FUNCTION o_p_update( cPath )
 
-if (cPath == nil)
-	cPath := KUMPATH
-endif
+   LOCAL nTArea := Select()
 
-cPath := ALLTRIM(cPath)
+   IF ( cPath == nil )
+      cPath := KUMPATH
+   ENDIF
 
-AddBS(@cPath)
+   cPath := AllTrim( cPath )
 
-if !FILE(ToUnix(cPath + "P_UPDATE.DBF"))
-	select (nTArea)
-	return 0
-endif
+   AddBS( @cPath )
 
-select (240)
-use (cPath + "P_UPDATE") alias p_update
-set order to tag "1"
+   IF !File( ToUnix( cPath + "P_UPDATE.DBF" ) )
+      SELECT ( nTArea )
+      RETURN 0
+   ENDIF
 
-select (nTArea)
+   SELECT ( 240 )
+   USE ( cPath + "P_UPDATE" ) ALIAS p_update
+   SET ORDER TO TAG "1"
 
-return 1
+   SELECT ( nTArea )
+
+   RETURN 1
 
 
 
 // -----------------------------------
 // zatvaranje tabele p_update
 // -----------------------------------
-function c_p_update()
-select p_update
-use
-return 1
+FUNCTION c_p_update()
+
+   SELECT p_update
+   USE
+
+   RETURN 1
 
 
 // -----------------------------------------------
@@ -465,64 +490,65 @@ return 1
 // lReturn - .t. - treba skenirati
 // lReturn - .f. - ne treba skenirati
 // -----------------------------------------------
-function scan_p_update(cModul, cKonto, cPath)
-local lReturn := .f.
-local nTArea := SELECT()
+FUNCTION scan_p_update( cModul, cKonto, cPath )
 
-// otvori update
-if o_p_update(cPath) == 0
-	return
-endif
+   LOCAL lReturn := .F.
+   LOCAL nTArea := Select()
 
-select p_update
-set order to tag "1"
-go top
-seek PADR(cModul, 10) + cKonto
+   // otvori update
+   IF o_p_update( cPath ) == 0
+      RETURN
+   ENDIF
 
-if FOUND()
-	if field->p_updated == "N"
-		lReturn := .t.
-	endif
-endif
+   SELECT p_update
+   SET ORDER TO TAG "1"
+   GO TOP
+   SEEK PadR( cModul, 10 ) + cKonto
 
-// zatvori p_update
-c_p_update()
+   IF Found()
+      IF field->p_updated == "N"
+         lReturn := .T.
+      ENDIF
+   ENDIF
 
-select (nTArea)
+   // zatvori p_update
+   c_p_update()
 
-return lReturn
+   SELECT ( nTArea )
+
+   RETURN lReturn
 
 
 // -----------------------------------------------
 // dodaje zapis u tabelu p_update
 // -----------------------------------------------
-function add_p_update(cModul, cKonto, cUpd, cPath)
-local nTArea:=SELECT()
+FUNCTION add_p_update( cModul, cKonto, cUpd, cPath )
 
-// otvori p_update
-if o_p_update(cPath) == 0
-	return
-endif
+   LOCAL nTArea := Select()
 
-select p_update
-set order to tag "1"
-go top
-seek PADR(cModul,10) + cKonto
+   // otvori p_update
+   IF o_p_update( cPath ) == 0
+      RETURN
+   ENDIF
 
-if !FOUND()
-	append blank
-endif
+   SELECT p_update
+   SET ORDER TO TAG "1"
+   GO TOP
+   SEEK PadR( cModul, 10 ) + cKonto
 
-replace modul with cModul
-replace idkonto with cKonto
-replace p_updated with cUpd
-replace p_up_date with DATE()
-replace p_up_time with TIME()
+   IF !Found()
+      APPEND BLANK
+   ENDIF
 
-// zatvori p_update
-c_p_update()
+   REPLACE modul WITH cModul
+   REPLACE idkonto WITH cKonto
+   REPLACE p_updated WITH cUpd
+   REPLACE p_up_date WITH Date()
+   REPLACE p_up_time WITH Time()
 
-select (nTArea)
-return 
+   // zatvori p_update
+   c_p_update()
 
+   SELECT ( nTArea )
 
+   RETURN

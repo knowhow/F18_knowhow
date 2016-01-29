@@ -1,31 +1,30 @@
 /*
- * This file is part of the bring.out FMK, a free and open source
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+ * This file is part of the bring.out knowhow ERP, a free and open source
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
 
-
 #include "f18.ch"
 
 
-/*! \ingroup ini
-  * \var *string FmkIni_ExePath_Fakt_Ugovori_Dokumenata_Izgenerisati
-  * \brief Broj ugovora koji se obrade pri jednom pozivu opcije generisanja faktura na osnovu ugovora
-  * \param 1 - default vrijednost
+/* ingroup ini
+  * var *string FmkIni_ExePath_Fakt_Ugovori_Dokumenata_Izgenerisati
+  * brief Broj ugovora koji se obrade pri jednom pozivu opcije generisanja faktura na osnovu ugovora
+  * param 1 - default vrijednost
   */
 // string FmkIni_ExePath_Fakt_Ugovori_Dokumenata_Izgenerisati;
 
 
-/*! \ingroup ini
-  * \var *string FmkIni_ExePath_Fakt_Ugovori_N1
-  * \brief Koristi li se za generaciju faktura po ugovorima parametar N1 ?
-  * \param D - da, default vrijednost
-  * \param N - ne
+/* ingroup ini
+  * var *string FmkIni_ExePath_Fakt_Ugovori_N1
+  * brief Koristi li se za generaciju faktura po ugovorima parametar N1 ?
+  * param D - da, default vrijednost
+  * param N - ne
   */
 // string FmkIni_ExePath_Fakt_Ugovori_N1;
 
@@ -39,30 +38,31 @@
 // string FmkIni_ExePath_Fakt_Ugovori_N2;
 
 
-/*! \ingroup ini
-  * \var *string FmkIni_ExePath_Fakt_Ugovori_N3
-  * \brief Koristi li se za generaciju faktura po ugovorima parametar N3 ?
-  * \param D - da, default vrijednost
-  * \param N - ne
+/* ingroup ini
+  * var *string FmkIni_ExePath_Fakt_Ugovori_N3
+  * brief Koristi li se za generaciju faktura po ugovorima parametar N3 ?
+  * param D - da, default vrijednost
+  * param N - ne
   */
 // string FmkIni_ExePath_Fakt_Ugovori_N3;
 
 
-/*! \ingroup ini
-  * \var *string FmkIni_ExePath_FAKT_Ugovori_SumirajIstuSifru
-  * \brief Da li ce se pri generisanju fakture na osnovu ugovora sabirati kolicine stavki iz ugovora koje sadrze isti artikal u jednu stavku na dokumentu
-  * \param D - da, default vrijednost
-  * \param N - ne
+/* ingroup ini
+  * var *string FmkIni_ExePath_FAKT_Ugovori_SumirajIstuSifru
+  * brief Da li ce se pri generisanju fakture na osnovu ugovora sabirati kolicine stavki iz ugovora koje sadrze isti artikal u jednu stavku na dokumentu
+  * param D - da, default vrijednost
+  * param N - ne
   */
 // string FmkIni_ExePath_FAKT_Ugovori_SumirajIstuSifru;
 
 
-/*! \ingroup ini
-  * \var *string FmkIni_ExePath_Fakt_Ugovori_UNapomenuSamoBrUgovora
-  * \brief Da li ce se pri generisanju faktura na osnovu ugovora u napomenu dodati iza teksta "VEZA:" samo broj ugovora
-  * \param D - da, default vrijednost
-  * \param N - ne, ispisace se i tekst "UGOVOR:", te datum ugovora
+/* ingroup ini
+  * var *string FmkIni_ExePath_Fakt_Ugovori_UNapomenuSamoBrUgovora
+  * brief Da li ce se pri generisanju faktura na osnovu ugovora u napomenu dodati iza teksta "VEZA:" samo broj ugovora
+  * param D - da, default vrijednost
+  * param N - ne, ispisace se i tekst "UGOVOR:", te datum ugovora
   */
+  
 // string FmkIni_ExePath_Fakt_Ugovori_UNapomenuSamoBrUgovora;
 
 
@@ -91,7 +91,7 @@ FUNCTION m_gen_ug()
       gen_ug_2()
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 // -----------------------------------------

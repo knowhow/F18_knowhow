@@ -55,5 +55,4 @@ FUNCTION get_vrsta_invaliditeta( nVrsta )
       RETURN ""
    ENDIF
 
-   altd()
    RETURN saVrsteInvaliditeta[ nVrsta ]

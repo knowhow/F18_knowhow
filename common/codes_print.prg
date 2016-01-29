@@ -31,7 +31,7 @@
  *
  *- Kol - sarzi raspored polja,
  *        npr:
- *	    Kol:={0,1,0,2.............}
+ *     Kol:={0,1,0,2.............}
  *
  *- RKol (opciono)
  *      [1] broj kolone u kojoj se prikazuje (iz niza Kol)
@@ -42,409 +42,419 @@
  *
  */
 
-function Izlaz(Zaglavlje, ImeDat, bFor, fIndex, lBezUpita)
-local i,k
-local bErrorHandler
-local bLastHandler
-local objErrorInfo
-local nStr
-local nSort
-local cStMemo:="N"
-local aKol:={}
-local j
-local xPom
-local nDuz1
-local nDuz2
-local cRazmak:="N"
-local nSlogova
-local nSirIzvj:=0
+FUNCTION Izlaz( Zaglavlje, ImeDat, bFor, fIndex, lBezUpita )
 
-private cNazMemo:=""
-private RedBr
-private Getlist:={}
+   LOCAL i, k
+   LOCAL bErrorHandler
+   LOCAL bLastHandler
+   LOCAL objErrorInfo
+   LOCAL nStr
+   LOCAL nSort
+   LOCAL cStMemo := "N"
+   LOCAL aKol := {}
+   LOCAL j
+   LOCAL xPom
+   LOCAL nDuz1
+   LOCAL nDuz2
+   LOCAL cRazmak := "N"
+   LOCAL nSlogova
+   LOCAL nSirIzvj := 0
 
-if lBezUpita==nil
-	lBezUpita:=.f.
-endif
-if fIndex==nil
-	fIndex:=.t.
-endif
-if Zaglavlje==nil
-	Zaglavlje:=""
-endif
-if ImeDat==nil
-	ImeDat:=""
-endif
-if "U" $ TYPE("gOdvTab")
-	gOdvTab:="N"
-endif
-if "U" $ TYPE("RKol")
-	RKol:=nil
-endif
-if "U" $ TYPE("gPostotak")
-	gPostotak:="N"
-endif
+   PRIVATE cNazMemo := ""
+   PRIVATE RedBr
+   PRIVATE Getlist := {}
 
- if lBezUpita
- else
-  Zaglavlje:=PADR(Zaglavlje,70)
-  nColStr:=80
-  nSort:="ID       "
-  Box(,8,76,.t.)
-  SET CURSOR ON
-  @ m_x+1,m_y+20 SAY "Tekst koji se stampa kao naslov:"
-  @ m_x+2,m_y+3  GET Zaglavlje
-  cValid:=""
-  if fIndex
-   for i:=1 to 10
-    if upper(ordname(i))<>"BRISAN"
-     cValid+="#"+upper(ordname(i))
-    endif
-   next
-   @ m_x+3,m_y+3  SAY "Nacin sortiranja (ID/NAZ):" GET nSort VALID   alltrim(nSort) $ cValid pict "@!"
-  endif
-  @ m_x+4,m_y+3  SAY "Odvajati redove linijom (D/N) ?" GET gOdvTab VALID gOdvTab $ "DN" PICTURE "@!"
-  @ m_x+5,m_y+3  SAY "Razmak izmedju redova   (D/N) ?" GET cRazmak VALID cRazmak $ "DN" PICTURE "@!"
-  READ
+   IF lBezUpita == nil
+      lBezUpita := .F.
+   ENDIF
+   IF fIndex == nil
+      fIndex := .T.
+   ENDIF
+   IF Zaglavlje == nil
+      Zaglavlje := ""
+   ENDIF
+   IF ImeDat == nil
+      ImeDat := ""
+   ENDIF
+   IF "U" $ Type( "gOdvTab" )
+      gOdvTab := "N"
+   ENDIF
+   IF "U" $ Type( "RKol" )
+      RKol := nil
+   ENDIF
+   IF "U" $ Type( "gPostotak" )
+      gPostotak := "N"
+   ENDIF
 
- endif
+   IF lBezUpita
+   ELSE
+      Zaglavlje := PadR( Zaglavlje, 70 )
+      nColStr := 80
+      nSort := "ID       "
+      Box(, 8, 76, .T. )
+      SET CURSOR ON
+      @ m_x + 1, m_y + 20 SAY "Tekst koji se stampa kao naslov:"
+      @ m_x + 2, m_y + 3  GET Zaglavlje
+      cValid := ""
+      IF fIndex
+         FOR i := 1 TO 10
+            IF Upper( ordName( i ) ) <> "BRISAN"
+               cValid += "#" + Upper( ordName( i ) )
+            ENDIF
+         NEXT
+         @ m_x + 3, m_y + 3  SAY "Nacin sortiranja (ID/NAZ):" GET nSort VALID   AllTrim( nSort ) $ cValid PICT "@!"
+      ENDIF
+      @ m_x + 4, m_y + 3  SAY "Odvajati redove linijom (D/N) ?" GET gOdvTab VALID gOdvTab $ "DN" PICTURE "@!"
+      @ m_x + 5, m_y + 3  SAY "Razmak izmedju redova   (D/N) ?" GET cRazmak VALID cRazmak $ "DN" PICTURE "@!"
+      READ
 
- lImaSifK:=.f.
- if ASCAN( ImeKol , { |x| LEN(x)>2 .and. VALTYPE(x[3])=="C" .and. "SIFK->"$x[3] } ) <> 0
-   lImaSifK:=.t.
- endif
+   ENDIF
 
- if LEN(ImeKol[1])>2 .and. !lImaSifK
-  private aStruct:=DBSTRUCT(), anDuz[FCOUNT(),2], ctxt2
-  for i:=1 to len(aStruct)
+   lImaSifK := .F.
+   IF AScan( ImeKol, {|x| Len( x ) > 2 .AND. ValType( x[ 3 ] ) == "C" .AND. "SIFK->" $ x[ 3 ] } ) <> 0
+      lImaSifK := .T.
+   ENDIF
 
-    // treci element jednog reda u matrici imekol
-    k:= ASCAN(ImeKol, {|x| FIELD(i)==UPPER(x[3])})
+   IF Len( ImeKol[ 1 ] ) > 2 .AND. !lImaSifK
+      PRIVATE aStruct := dbStruct(), anDuz[ FCount(), 2 ], ctxt2
+      FOR i := 1 TO Len( aStruct )
 
-    j:=IF(k<>0, Kol[k], 0)
+         // treci element jednog reda u matrici imekol
+         k := AScan( ImeKol, {| x| FIELD( i ) == Upper( x[ 3 ] ) } )
 
-    if j<>0
-      xPom:=EVAL(ImeKol[k,2])
-      anDuz[j,1]:=MAX( LEN(ImeKol[k,1]) , LEN(IF(VALTYPE(xPom)=="D",;
-                  DTOC(xPom),IF(VALTYPE(xPom)=="N",STR(xPom),xPom))) )
-      if anDuz[j,1]>100
-        anDuz[j,1]:=100
-        anDuz[j,2]:={ ImeKol[k,1], ImeKol[k,2],.f.,;
-                      "P",;
-                      anDuz[j,1], IIF(aStruct[i,2]=="N", aStruct[i,4],0) }
-      else
-        anDuz[j,2]:={ ImeKol[k,1],ImeKol[k,2],.f., VALTYPE(EVAL(ImeKol[k,2])), anDuz[j,1],IF(aStruct[i,2]=="N",aStruct[i,4],0) }
-      endif
-    else
-     if aStruct[i,2]=="M"
-       @ m_x+6, m_y+3 SAY "Stampati "+aStruct[i,1] GET cStMemo pict "@!" valid cStMemo $ "DN"
-       READ
-       if cStMemo=="D"
-         cNazMemo:=aStruct[i,1]
-       endif
-     endif
-    endif
-  next
+         j := IF( k <> 0, Kol[ k ], 0 )
 
-  AADD(aKol, {"R.br.", {|| STR(RedBr,4)+"."}, .f., "C", 5, 0, 1, 1})
-  j:=1
-  for i:=1 to len(aStruct)
-    if anDuz[i,1]!=nil
-      ++j
-      AADD(anDuz[i,2],1); AADD(anDuz[i,2],j)
-      AADD(aKol,anDuz[i,2])
-    endif
-  next
+         IF j <> 0
+            xPom := Eval( ImeKol[ k, 2 ] )
+            anDuz[ j, 1 ] := Max( Len( ImeKol[ k, 1 ] ), Len( IF( ValType( xPom ) == "D", ;
+               DToC( xPom ), IF( ValType( xPom ) == "N", Str( xPom ), xPom ) ) ) )
+            IF anDuz[ j, 1 ] > 100
+               anDuz[ j, 1 ] := 100
+               anDuz[ j, 2 ] := { ImeKol[ k, 1 ], ImeKol[ k, 2 ], .F., ;
+                  "P", ;
+                  anDuz[ j, 1 ], iif( aStruct[ i, 2 ] == "N", aStruct[ i, 4 ], 0 ) }
+            ELSE
+               anDuz[ j, 2 ] := { ImeKol[ k, 1 ], ImeKol[ k, 2 ], .F., ValType( Eval( ImeKol[ k, 2 ] ) ), anDuz[ j, 1 ], IF( aStruct[ i, 2 ] == "N", aStruct[ i, 4 ], 0 ) }
+            ENDIF
+         ELSE
+            IF aStruct[ i, 2 ] == "M"
+               @ m_x + 6, m_y + 3 SAY "Stampati " + aStruct[ i, 1 ] GET cStMemo PICT "@!" VALID cStMemo $ "DN"
+               READ
+               IF cStMemo == "D"
+                  cNazMemo := aStruct[ i, 1 ]
+               ENDIF
+            ENDIF
+         ENDIF
+      NEXT
 
-  if !EMPTY(cNazMemo)
-    AADD(aKol,{cNazMemo,{|| ctxt2},.f.,"P",30,0,1,++j})
-  endif
- else
-  AADD(aKol,{"R.br.",{|| STR(RedBr,4)+"."},.f.,"C",5,0,1,1})
-  aPom:={}
-  for i:=1 to LEN(Kol); AADD(aPom,{Kol[i],i}); next
-  ASORT(aPom,,,{|x,y| x[1]<y[1]})
-  j:=0
-  for i:=1 to LEN(Kol)
-    if aPom[i,1]>0
-      ++j
-      aPom[i,1]:=j
-    endif
-  next
-  ASORT(aPom,,,{|x,y| x[2]<y[2]})
-  for i:=1 to LEN(Kol)
-  	Kol[i]:=aPom[i,1]
-  next
-  aPom:={}
-  for i:=1 to LEN(Kol)
-    if Kol[i]>0
-      xPom:=EVAL(ImeKol[i,2])
-      if LEN(ImeKol[i])>2 .and. VALTYPE(ImeKol[i,3])=="C" .and. "SIFK->"$ImeKol[i,3]
-        AADD(aKol,{ImeKol[i,1],ImeKol[i,2],IF(LEN(ImeKol[i])>2.and.VALTYPE(ImeKol[i,3])=="L",ImeKol[i,3],.f.),;
-                 IF(SIFK->veza=="N","P",VALTYPE(xPom)),;
-                 IF(SIFK->veza=="N",SIFK->duzina+1,MAX(SIFK->duzina,LEN(TRIM(ImeKol[i,1])))),;
-                 IF(VALTYPE(xPom)=="N",SIFK->f_decimal,0),1,Kol[i]+1})
-        loop
-      endif
-      nDuz1:=IF(LEN(ImeKol[i])>4.and.VALTYPE(ImeKol[i,5])=="N",ImeKol[i,5],LENx(xPom))
-      nDuz2:=IF(LEN(ImeKol[i])>5.and.VALTYPE(ImeKol[i,6])=="N",ImeKol[i,6],IF( VALTYPE(xPom)=="N" , nDuz1-AT(".",STR(xPom)) , 0 ))
-      nPosRKol:=0
-      if RKol!=nil .and. TrebaPrelom(Kol[i],@nPosRKol)
-        AADD(aKol,{ImeKol[i,1],ImeKol[i,2],IF(LEN(ImeKol[i])>2,ImeKol[i,3],.f.),;
-                 "P",;
-                 RKol[nPosRKol,4],nDuz2,1,Kol[i]+1})
-      else
-        AADD(aKol,{ImeKol[i,1],ImeKol[i,2],IF(LEN(ImeKol[i])>2.and.VALTYPE(ImeKol[i,3])=="L",ImeKol[i,3],.f.),;
-                 IF(LEN(ImeKol[i])>3.and.VALTYPE(ImeKol[i,4])=="C".and.ImeKol[i,4]$"N#C#D#P",ImeKol[i,4],IF(nDuz1>100,"P",VALTYPE(xPom))),;
-                 IF(nDuz1>100,100,nDuz1),nDuz2,1,Kol[i]+1})
-      endif
-    endif
-  next
- endif
+      AAdd( aKol, { "R.br.", {|| Str( RedBr, 4 ) + "." }, .F., "C", 5, 0, 1, 1 } )
+      j := 1
+      FOR i := 1 TO Len( aStruct )
+         IF anDuz[ i, 1 ] != nil
+            ++j
+            AAdd( anDuz[ i, 2 ], 1 ); AAdd( anDuz[ i, 2 ], j )
+            AAdd( aKol, anDuz[ i, 2 ] )
+         ENDIF
+      NEXT
 
- BoxC()
- if !lBezUpita
-	START PRINT RET
- endif
+      IF !Empty( cNazMemo )
+         AAdd( aKol, { cNazMemo, {|| ctxt2 }, .F., "P", 30, 0, 1, ++j } )
+      ENDIF
+   ELSE
+      AAdd( aKol, { "R.br.", {|| Str( RedBr, 4 ) + "." }, .F., "C", 5, 0, 1, 1 } )
+      aPom := {}
+      FOR i := 1 TO Len( Kol ); AAdd( aPom, { Kol[ i ], i } ); NEXT
+      ASort( aPom,,, {| x, y| x[ 1 ] < y[ 1 ] } )
+      j := 0
+      FOR i := 1 TO Len( Kol )
+         IF aPom[ i, 1 ] > 0
+            ++j
+            aPom[ i, 1 ] := j
+         ENDIF
+      NEXT
+      ASort( aPom,,, {| x, y| x[ 2 ] < y[ 2 ] } )
+      FOR i := 1 TO Len( Kol )
+         Kol[ i ] := aPom[ i, 1 ]
+      NEXT
+      aPom := {}
+      FOR i := 1 TO Len( Kol )
+         IF Kol[ i ] > 0
+            xPom := Eval( ImeKol[ i, 2 ] )
+            IF Len( ImeKol[ i ] ) > 2 .AND. ValType( ImeKol[ i, 3 ] ) == "C" .AND. "SIFK->" $ ImeKol[ i, 3 ]
+               AAdd( aKol, { ImeKol[ i, 1 ], ImeKol[ i, 2 ], IF( Len( ImeKol[ i ] ) > 2 .AND. ValType( ImeKol[ i, 3 ] ) == "L", ImeKol[ i, 3 ], .F. ), ;
+                  IF( SIFK->veza == "N", "P", ValType( xPom ) ), ;
+                  IF( SIFK->veza == "N", SIFK->duzina + 1, Max( SIFK->duzina, Len( Trim( ImeKol[ i, 1 ] ) ) ) ), ;
+                  IF( ValType( xPom ) == "N", SIFK->f_decimal, 0 ), 1, Kol[ i ] + 1 } )
+               LOOP
+            ENDIF
+            nDuz1 := IF( Len( ImeKol[ i ] ) > 4 .AND. ValType( ImeKol[ i, 5 ] ) == "N", ImeKol[ i, 5 ], LENx( xPom ) )
+            nDuz2 := IF( Len( ImeKol[ i ] ) > 5 .AND. ValType( ImeKol[ i, 6 ] ) == "N", ImeKol[ i, 6 ], IF( ValType( xPom ) == "N", nDuz1 - At( ".", Str( xPom ) ), 0 ) )
+            nPosRKol := 0
+            IF RKol != NIL .AND. TrebaPrelom( Kol[ i ], @nPosRKol )
+               AAdd( aKol, { ImeKol[ i, 1 ], ImeKol[ i, 2 ], IF( Len( ImeKol[ i ] ) > 2, ImeKol[ i, 3 ], .F. ), ;
+                  "P", ;
+                  RKol[ nPosRKol, 4 ], nDuz2, 1, Kol[ i ] + 1 } )
+            ELSE
+               AAdd( aKol, { ImeKol[ i, 1 ], ImeKol[ i, 2 ], IF( Len( ImeKol[ i ] ) > 2 .AND. ValType( ImeKol[ i, 3 ] ) == "L", ImeKol[ i, 3 ], .F. ), ;
+                  IF( Len( ImeKol[ i ] ) > 3 .AND. ValType( ImeKol[ i, 4 ] ) == "C" .AND. ImeKol[ i, 4 ] $ "N#C#D#P", ImeKol[ i, 4 ], IF( nDuz1 > 100, "P", ValType( xPom ) ) ), ;
+                  IF( nDuz1 > 100, 100, nDuz1 ), nDuz2, 1, Kol[ i ] + 1 } )
+            ENDIF
+         ENDIF
+      NEXT
+   ENDIF
 
- for i:=1 to LEN(aKol)
-   if aKol[i,7]==1
-	nSirIzvj += ( aKol[i,5] + 1 )
-   endif
- next
- ++nSirIzvj
+   BoxC()
+   IF !lBezUpita
+      START PRINT RET
+   ENDIF
 
- if "U" $ TYPE("gnLMarg")
- 	gnLMarg:=0
- endif
- if "U" $ TYPE("gA43")
- 	gA43:="4"
- endif
- if "U" $ TYPE("gTabela")
- 	gTabela:=0
- endif
- if "U" $ TYPE("gOstr")
- 	gOstr:="D"
- endif
+   FOR i := 1 TO Len( aKol )
+      IF aKol[ i, 7 ] == 1
+         nSirIzvj += ( aKol[ i, 5 ] + 1 )
+      ENDIF
+   NEXT
+   ++nSirIzvj
 
- if lBezUpita
- 	gOstr:="N"
- endif
+   IF "U" $ Type( "gnLMarg" )
+      gnLMarg := 0
+   ENDIF
+   IF "U" $ Type( "gA43" )
+      gA43 := "4"
+   ENDIF
+   IF "U" $ Type( "gTabela" )
+      gTabela := 0
+   ENDIF
+   IF "U" $ Type( "gOstr" )
+      gOstr := "D"
+   ENDIF
 
- if gPrinter=="L" .or. gA43=="4" .and. nSirIzvj>165
-   gPO_Land()
- endif
+   IF lBezUpita
+      gOstr := "N"
+   ENDIF
 
- if !EMPTY(Zaglavlje)
-   QQOUT(SPACE(gnLMarg))
-   gP10CPI(); gPB_ON()
-   QQOUT(PADC(ALLTRIM(Zaglavlje), 79 * IF(gA43=="4",1,2)-gnLMarg))
-   gPB_OFF()
-   QOUT()
- endif
- if fIndex
-   for i:=1 to 10
-     if upper(TRIM(ordkey(i)))==upper(TRIM(nSort))
-       nSort:=i
-       exit
-     endif
-   next
-   DBSETORDER(nSort)
- endif
- COUNT to nSlogova
- GO TOP
- RedBr:=0
- if cRazmak=="D"
- 	AADD(aKol,{"",{|| " "},.f.,"C",aKol[1,5],0,2,1})
- endif
+   IF gPrinter == "L" .OR. gA43 == "4" .AND. nSirIzvj > 165
+      gPO_Land()
+   ENDIF
 
-
-StampaTabele(aKol,{|| ZaRedBlok()},gnLMarg,;
-          IF(UPPER(RIGHT(ALLTRIM(SET(_SET_PRINTFILE)),3))=="RTF",9,gTabela),;
-          ,IF(gPrinter=="L","L4",gA43=="4"),;
-          ,,IF(gOstr=="N",-1,),,gOdvTab=="D",,nSlogova,"Kreiranje tabele")
-
-if (gPrinter=="L" .or. gA43=="4" .and. nSirIzvj>165)
-	gPO_Port()
-endif
-
-if !lBezUpita
-	ENDPRINT
-endif
-
-return nil
+   IF !Empty( Zaglavlje )
+      QQOut( Space( gnLMarg ) )
+      gP10CPI(); gPB_ON()
+      QQOut( PadC( AllTrim( Zaglavlje ), 79 * IF( gA43 == "4", 1, 2 ) -gnLMarg ) )
+      gPB_OFF()
+      QOut()
+   ENDIF
+   IF fIndex
+      FOR i := 1 TO 10
+         IF Upper( Trim( ordKey( i ) ) ) == Upper( Trim( nSort ) )
+            nSort := i
+            EXIT
+         ENDIF
+      NEXT
+      dbSetOrder( nSort )
+   ENDIF
+   COUNT TO nSlogova
+   GO TOP
+   RedBr := 0
+   IF cRazmak == "D"
+      AAdd( aKol, { "", {|| " " }, .F., "C", aKol[ 1, 5 ], 0, 2, 1 } )
+   ENDIF
 
 
-function ZaRedBlok()
-*{
-++RedBr
+   StampaTabele( aKol, {|| ZaRedBlok() }, gnLMarg, ;
+      IF( Upper( Right( AllTrim( Set( _SET_PRINTFILE ) ), 3 ) ) == "RTF", 9, gTabela ), ;
+      , IF( gPrinter == "L", "L4", gA43 == "4" ), ;
+      ,, IF( gOstr == "N", -1, ),, gOdvTab == "D",, nSlogova, "Kreiranje tabele" )
 
-WhileEvent(RedBr,nil)
+   IF ( gPrinter == "L" .OR. gA43 == "4" .AND. nSirIzvj > 165 )
+      gPO_Port()
+   ENDIF
 
-if !EMPTY(cNazMemo)
-    ctxt2:=UkloniRet(cNazMemo,.f.)
-endif
+   IF !lBezUpita
+      ENDPRINT
+   ENDIF
 
-return .t.
-*}
-
-function UkloniRet(xTekst,lPrazno)
-*{
-local cTekst
- if lPrazno==nil; lPrazno:=.f.; endif
- if VALTYPE(xTekst)=="B"
-   cTekst:=strtran(EVAL(xTekst),"�"+Chr(10),"")
- else
-   cTekst:=strtran(&xTekst,"�"+Chr(10),"")
- endif
- if lPrazno
-  cTekst:=strtran(cTekst,NRED,NRED+space(7))
- else
-  cTekst:=strtran(cTekst,NRED," ")
- endif
-return cTekst
-*}
+   RETURN NIL
 
 
-static function Karaktera(cK)
-*{
-if cK=="10"
-  return 80
-elseif cK=="12"
-  return 92
-elseif cK=="17"
-  return 132
-elseif cK=="20"
-  return 156
-endif
-*}
+FUNCTION ZaRedBlok()
+
+   // {
+   ++RedBr
+
+   WhileEvent( RedBr, nil )
+
+   IF !Empty( cNazMemo )
+      ctxt2 := UkloniRet( cNazMemo, .F. )
+   ENDIF
+
+   RETURN .T.
+// }
+
+FUNCTION UkloniRet( xTekst, lPrazno )
+
+   // {
+   LOCAL cTekst
+   IF lPrazno == nil; lPrazno := .F. ; ENDIF
+   IF ValType( xTekst ) == "B"
+      cTekst := StrTran( Eval( xTekst ), "�" + Chr( 10 ), "" )
+   ELSE
+      cTekst := StrTran( &xTekst, "�" + Chr( 10 ), "" )
+   ENDIF
+   IF lPrazno
+      cTekst := StrTran( cTekst, NRED, NRED + Space( 7 ) )
+   ELSE
+      cTekst := StrTran( cTekst, NRED, " " )
+   ENDIF
+
+   RETURN cTekst
+// }
 
 
-function IzborP2(Kol,cImef)
-*{
-private aOBjG,cKolona,Kl
+STATIC FUNCTION Karaktera( cK )
 
-Kl:=ARRAY(len(Kol))
-ACOPY(Kol,Kl)
+   // {
+   IF cK == "10"
+      RETURN 80
+   ELSEIF cK == "12"
+      RETURN 92
+   ELSEIF cK == "17"
+      RETURN 132
+   ELSEIF cK == "20"
+      RETURN 156
+   ENDIF
+   // }
 
-if FILE(cImef+MEMOEXT)
- RESTORE FROM &cImeF ADDITIVE // u~itavanje string kolona
- for i:=1 to LEN(Kl)
-   if valtype(cKolona)=="C"
-     Kl[i]:=VAL(SUBSTR(cKolona,(i-1)*2+1,2))
-   else
-     Kl[i]:=0
-   endif
- next
-endif
+FUNCTION IzborP2( Kol, cImef )
 
-nDiv:=INT(Len(Kol)/3+1)
-wx:=nDiv+2
+   // {
+   PRIVATE aOBjG, cKolona, Kl
 
-BOX('',wx,77,.t.,"","Izbor polja za prikaz")
-SET CURSOR ON
+   Kl := Array( Len( Kol ) )
+   ACopy( Kol, Kl )
 
-Odg=' '
+   IF File( cImef + MEMOEXT )
+      RESTORE FROM &cImeF ADDITIVE // u~itavanje string kolona
+      FOR i := 1 TO Len( Kl )
+         IF ValType( cKolona ) == "C"
+            Kl[ i ] := Val( SubStr( cKolona, ( i - 1 ) * 2 + 1, 2 ) )
+         ELSE
+            Kl[ i ] := 0
+         ENDIF
+      NEXT
+   ENDIF
 
-aObjG:=ARRAY(Len(Kl)+1)
+   nDiv := Int( Len( Kol ) / 3 + 1 )
+   wx := nDiv + 2
 
-for i:=1 to Len(Kl)
- j:=(i-1) % nDiv
- cIDx:=alltrim(str(i))
- if i/nDiv<=1
-   ystep=25
- elseif i/nDiv<=2
-   yStep=51
- elseif i/nDiv<=3
-   yStep=76
- else
-   ? "Preveliki broj kolona ...(izl.prg)"
-   QUIT_1
- endif
- aObjG[i]:=GetNew(m_x+j+1,m_y+yStep)
- @ aObjG[i]:row,(aObjG[i]:col)-22 SAY PADR(ALLTRIM(ImeKol[i,1]),20)
- aObjG[i]:name:="Kl["+cIdx+"]"
+   BOX( '', wx, 77, .T., "", "Izbor polja za prikaz" )
+   SET CURSOR ON
 
- b1:= "Kl["+cIdx+"]"                                                    // 3
- aObjG[i]:block:={|cVal| IF(PCOUNT()==0,&b1.,&b1.:=cVal)}               // 3
+   Odg = ' '
 
- aObjG[i]:picture:="99"
- aObjG[i]:postBlock:={|nVal| DobraKol(@Kl,&cIdx.)}
+   aObjG := Array( Len( Kl ) + 1 )
 
- aObjG[i]:display()
-next
+   FOR i := 1 TO Len( Kl )
+      j := ( i - 1 ) % nDiv
+      cIDx := AllTrim( Str( i ) )
+      IF i / nDiv <= 1
+         ystep = 25
+      ELSEIF i / nDiv <= 2
+         yStep = 51
+      ELSEIF i / nDiv <= 3
+         yStep = 76
+      ELSE
+         ? "Preveliki broj kolona ...(izl.prg)"
+         QUIT_1
+      ENDIF
+      aObjG[ i ] := GetNew( m_x + j + 1, m_y + yStep )
+      @ aObjG[ i ]:row, ( aObjG[ i ]:col ) -22 SAY PadR( AllTrim( ImeKol[ i, 1 ] ), 20 )
+      aObjG[ i ]:name := "Kl[" + cIdx + "]"
 
-aObjG[Len(Kl)+1]:=GetNew()
-aObjG[Len(Kl)+1]:row:=m_x+wx
-aObjG[Len(Kl)+1]:col:=m_y+40
-aObjG[Len(Kl)+1]:name:="Odg"
-aObjG[Len(Kl)+1]:block:={|cVal| iif(cVal==nil,Odg,Odg:=cVal)}
-aObjG[Len(Kl)+1]:display()
-@ m_x+wx,m_y+8 SAY 'Kraj - <PgDown>, Nuliraj-<F5>'
-set key K_F5  to Nuliraj()
- ReadModal(aObjG)
-set key K_F5
-BoxC()
-if LastKey()== K_ESC
-   return
-END IF
+      b1 := "Kl[" + cIdx + "]"                                                    // 3
+      aObjG[ i ]:block := {| cVal| IF( PCount() == 0, &b1., &b1. := cVal ) }               // 3
 
-cKolona:=""
-AEVAL(Kl, {|broj| cKolona:=cKolona+STR(Broj,2)})
-// Pretvaranje matrice u jedan string radi mogu}nosti pohranjivanja
-// matrice kao karakterne memorijske varijable
-SAVE  ALL LIKE cKolona to &cImeF
-ACOPY(Kl,Kol)
-return
-*}
+      aObjG[ i ]:picture := "99"
+      aObjG[ i ]:postBlock := {| nVal| DobraKol( @Kl, &cIdx. ) }
+
+      aObjG[ i ]:display()
+   NEXT
+
+   aObjG[ Len( Kl ) + 1 ] := GetNew()
+   aObjG[ Len( Kl ) + 1 ]:row := m_x + wx
+   aObjG[ Len( Kl ) + 1 ]:col := m_y + 40
+   aObjG[ Len( Kl ) + 1 ]:name := "Odg"
+   aObjG[ Len( Kl ) + 1 ]:block := {| cVal| iif( cVal == nil, Odg, Odg := cVal ) }
+   aObjG[ Len( Kl ) + 1 ]:display()
+   @ m_x + wx, m_y + 8 SAY 'Kraj - <PgDown>, Nuliraj-<F5>'
+   SET KEY K_F5  TO Nuliraj()
+   ReadModal( aObjG )
+   SET KEY K_F5
+   BoxC()
+   IF LastKey() == K_ESC
+      RETURN
+   END IF
+
+   cKolona := ""
+   AEval( Kl, {| broj| cKolona := cKolona + Str( Broj, 2 ) } )
+   // Pretvaranje matrice u jedan string radi mogu}nosti pohranjivanja
+   // matrice kao karakterne memorijske varijable
+   SAVE  ALL LIKE cKolona to &cImeF
+   ACopy( Kl, Kol )
+
+   RETURN
+// }
 
 /*
  * function DobraKol(Kol,i)
  * Nalazenje kolona koje se stampaju, Koristi je IzborP2
  */
 
-function DobraKol(Kol,i)
-*{
-local n
+FUNCTION DobraKol( Kol, i )
 
-if Kol[i]=0 ; return .T. ; END IF
-n:=0
-for k:=1 to LEN(Kol)
-  if Kol[i]=Kol[k] ; n++ ; END IF
-next
-if n>1
-  return .F.
-else
-  if Kol[i]>Len(Kol)
-     return .f.
-  endif
-  return .t.
-END IF
+   LOCAL nNum
+   LOCAL k
 
-return
-*}
+   IF Kol[ i ] = 0 ; RETURN .T. ; END IF
+   nNum := 0
+   FOR k := 1 TO Len( Kol )
+      IF Kol[ i ] = Kol[ k ] ; nNum++ ; END IF
+   NEXT
+   IF nNum > 1
+      RETURN .F.
+   ELSE
+      IF Kol[ i ] > Len( Kol )
+         RETURN .F.
+      ENDIF
+      RETURN .T.
+   END IF
 
-function Nuliraj()
-*{
-local i
- for i:=1 to len(Kl)
-   Kl[i]:=0
- next
- AEVAL(aObjG,{|oE|  oE:Display() })
-return
-*}
+   RETURN .T.
 
-static function TrebaPrelom(nPos,nPosRKol)
-*{
-local lVrati:=.f., i:=0
- for i:=1 to LEN(RKol)
-   if RKol[i,1]==nPos
-     if RKol[i,3]=="D"; lVrati:=.t.; nPosRKol:=i ; endif
-     exit
-   endif
- next
-return lVrati
-*}
+
+FUNCTION Nuliraj()
+
+   LOCAL i
+
+   FOR i := 1 TO Len( Kl )
+      Kl[ i ] := 0
+   NEXT
+   AEval( aObjG, {| oE|  oE:Display() } )
+
+   RETURN
+
+
+STATIC FUNCTION TrebaPrelom( nPos, nPosRKol )
+
+   LOCAL lVrati := .F., i := 0
+   FOR i := 1 TO Len( RKol )
+      IF RKol[ i, 1 ] == nPos
+         IF RKol[ i, 3 ] == "D"; lVrati := .T. ; nPosRKol := i ; ENDIF
+         EXIT
+      ENDIF
+   NEXT
+
+   RETURN lVrati
+
 
 
 
@@ -494,589 +504,603 @@ return lVrati
  *
  */
 
-function StampaTabele(aKol, bZaRed, nOdvoji, nCrtice, bUslov, lA4papir,cNaslov, bFor,nStr,lOstr,lLinija,bSubTot,nSlogova,cTabBr,lCTab,bZagl)
+FUNCTION StampaTabele( aKol, bZaRed, nOdvoji, nCrtice, bUslov, lA4papir, cNaslov, bFor, nStr, lOstr, lLinija, bSubTot, nSlogova, cTabBr, lCTab, bZagl )
 
-local cOk, nKol:=0, i:=0, xPom, cTek1:="Prenos sa str.", lMozeL:=.f.
-local cTek2:="U K U P N O:"
-local nDReda:=0
-local cTek3:="Ukupno na str."
-local cPom
-local lPrenos:=.f.,cLM,cLM2,nMDReda,aPom:={},nSuma,nRed:=0,j:=0,xPom1,xPom2
-local aPrZag:={},aPrSum:={},aPrStav:={},nSubTot,xTot:={.f.,""},lPRed:=.f.
-local nPRed:=0,aPRed:={},l:=0,nBrojacSlogova:=0
-local xPodvuci:="", cPodvuci:=" "
-local lFor:=.f., k:=0
-private glNeSkipuj:=.f.
-if "U" $ TYPE("gaDodStavke"); gaDodStavke:={}; endif
-if "U" $ TYPE("gaSubTotal"); gaSubTotal:={}; endif
-if "U" $ TYPE("gnRedova"); gnRedova:=64; endif
-if "U" $ TYPE("gbFIznos"); gbFIznos:=nil; endif
-if !("U" $ TYPE("gPStranica")); gnRedova:=64+gPStranica; endif
-if bSubTot==nil; bSubTot:={|| {.f.,}}; xTot:={.f.,}; endif
-if lLinija==nil; lLinija:=.f.; endif
-if lOstr==nil; lOstr:=.t.; endif
-if nStr==nil; nStr:=1; endif
-if nCrtice==nil; nCrtice:=1; endif
-if nOdvoji==nil; nOdvoji:=0; endif
+   LOCAL cOk, nKol := 0, i := 0, xPom, cTek1 := "Prenos sa str.", lMozeL := .F.
+   LOCAL cTek2 := "U K U P N O:"
+   LOCAL nDReda := 0
+   LOCAL cTek3 := "Ukupno na str."
+   LOCAL cPom
+   LOCAL lPrenos := .F., cLM, cLM2, nMDReda, aPom := {}, nSuma, nRed := 0, j := 0, xPom1, xPom2
+   LOCAL aPrZag := {}, aPrSum := {}, aPrStav := {}, nSubTot, xTot := { .F., "" }, lPRed := .F.
+   LOCAL nPRed := 0, aPRed := {}, l := 0, nBrojacSlogova := 0
+   LOCAL xPodvuci := "", cPodvuci := " "
+   LOCAL lFor := .F., k := 0
+   PRIVATE glNeSkipuj := .F.
 
-if bUslov == nil
- 	bUslov := {|| INKEY(), IF( LASTKEY() == 27, PrekSaEsc(), .t. ) }
-endif
+   IF "U" $ Type( "gaDodStavke" ); gaDodStavke := {}; ENDIF
+   IF "U" $ Type( "gaSubTotal" ); gaSubTotal := {}; ENDIF
+   IF "U" $ Type( "gnRedova" ); gnRedova := 64; ENDIF
+   IF "U" $ Type( "gbFIznos" ); gbFIznos := nil; ENDIF
+   IF !( "U" $ Type( "gPStranica" ) ); gnRedova := 64 + gPStranica; ENDIF
+   IF bSubTot == nil; bSubTot := {|| { .F., } }; xTot := { .F., }; ENDIF
+   IF lLinija == nil; lLinija := .F. ; ENDIF
+   IF lOstr == nil; lOstr := .T. ; ENDIF
+   IF nStr == nil; nStr := 1; ENDIF
+   IF nCrtice == nil; nCrtice := 1; ENDIF
+   IF nOdvoji == nil; nOdvoji := 0; ENDIF
 
-if bZaRed==nil
- 	bZaRed:={|| .t.}
-endif
+   IF bUslov == nil
+      bUslov := {|| Inkey(), IF( LastKey() == 27, PrekSaEsc(), .T. ) }
+   ENDIF
 
- if bFor==nil; bFor:={|| .t.}; endif
- if lCTab==nil; lCTab:=.t.; endif
- if lA4papir==nil; lA4papir:="4"; endif
- if VALTYPE(lA4papir)=="L"; lA4papir:=IF(lA4papir,"4","3"); endif
- if nCrtice==9; nStr:=-1; lOstr:=.f.; endif
- if nSlogova!=nil; Postotak(1,nSlogova,cTabBr,,,.f.); endif
+   IF bZaRed == nil
+      bZaRed := {|| .T. }
+   ENDIF
 
- AEVAL(aKol,{|x| xPom:=x[8],xPom1:=x[5],xPom2:=x[3],IF(ASCAN(aPom,{|y| y[1]==xPom})==0,EVAL({|| nDReda+=xPom1,AADD(aPom,{xPom,xPom1,xPom2})}),),;
-                 IF(x[3],lPrenos:=.t.,),IF(x[8]>nKol,nKol:=x[8],),IF(x[7]>nRed,nRed:=x[7],),IF(x[4]=="P",lPRed:=.t.,)})
- ASORT(aPom,,,{|x,y| x[1]<y[1]})
+   IF bFor == nil; bFor := {|| .T. }; ENDIF
+   IF lCTab == nil; lCTab := .T. ; ENDIF
+   IF lA4papir == nil; lA4papir := "4"; ENDIF
+   IF ValType( lA4papir ) == "L"; lA4papir := IF( lA4papir, "4", "3" ); ENDIF
+   IF nCrtice == 9; nStr := -1; lOstr := .F. ; ENDIF
+   IF nSlogova != nil; Postotak( 1, nSlogova, cTabBr,,, .F. ); ENDIF
 
- for i:=1 to nRed
-  for j:=1 to nKol
-   if ASCAN(aKol,{|x| x[7]==i.and.x[8]==j})==0
-     AADD(aKol,{"",{|| "#"},.f.,"C",aPom[j,2],0,i,j})
-   endif
-  next
- next
+   AEval( aKol, {| x| xPom := x[ 8 ], xPom1 := x[ 5 ], xPom2 := x[ 3 ], IF( AScan( aPom, {| y| y[ 1 ] == xPom } ) == 0, Eval( {|| nDReda += xPom1, AAdd( aPom, { xPom, xPom1, xPom2 } ) } ), ), ;
+      IF( x[ 3 ], lPrenos := .T., ), IF( x[ 8 ] > nKol, nKol := x[ 8 ], ), IF( x[ 7 ] > nRed, nRed := x[ 7 ], ), IF( x[ 4 ] == "P", lPRed := .T., ) } )
+   ASort( aPom,,, {| x, y| x[ 1 ] < y[ 1 ] } )
 
- ASORT(aKol,,,{|x,y| 100*x[7]+x[8]<100*y[7]+y[8]})
+   FOR i := 1 TO nRed
+      FOR j := 1 TO nKol
+         IF AScan( aKol, {| x| x[ 7 ] == i .AND. x[ 8 ] == j } ) == 0
+            AAdd( aKol, { "", {|| "#" }, .F., "C", aPom[ j, 2 ], 0, i, j } )
+         ENDIF
+      NEXT
+   NEXT
 
- for i:=1 to nKol
-  for j:=1 to nRed
-   if aKol[(j-1)*nKol+i][3]
-     aPom[i][3]:=.t.
-     if ASCAN(aPrSum,j)==0
-       AADD(aPrSum,j)
-     endif
-   endif
-   if !EMPTY(aKol[(j-1)*nKol+i][1])
-     if ASCAN(aPrZag,j)==0
-       AADD(aPrZag,j)
-     endif
-   endif
-   xPom:=EVAL(aKol[(j-1)*nKol+i][2])
-   if VALTYPE(xPom)=="C"
-    if xPom!="#"
-     if ASCAN(aPrStav,j)==0
-       AADD(aPrStav,j)
-     endif
-    else
-     aKol[(j-1)*nKol+i][2]:={|| ""}
-    endif
-   else
-    if ASCAN(aPrStav,j)==0
-      AADD(aPrStav,j)
-    endif
-   endif
-  next
- next
+   ASort( aKol,,, {| x, y| 100 * x[ 7 ] + x[ 8 ] < 100 * y[ 7 ] + y[ 8 ] } )
 
- ASORT(aPrZag); ASORT(aPrSum); ASORT(aPrStav)
- nDReda+=nKol+1+nOdvoji
- nMDReda:=IF(lA4papir=="POS",40,MDDReda(nDReda,lA4papir))
- cLM:=IF(nMDReda-nDReda>=0,SPACE(nOdvoji+INT((nMDReda-nDReda)/2)),"")
- cLM2:=IF(nMDReda-nDReda>=0.and.!lCTab,SPACE(nOdvoji),cLM)
- GuSt2(nDReda,lA4papir)
+   FOR i := 1 TO nKol
+      FOR j := 1 TO nRed
+         IF aKol[ ( j - 1 ) * nKol + i ][ 3 ]
+            aPom[ i ][ 3 ] := .T.
+            IF AScan( aPrSum, j ) == 0
+               AAdd( aPrSum, j )
+            ENDIF
+         ENDIF
+         IF !Empty( aKol[ ( j - 1 ) * nKol + i ][ 1 ] )
+            IF AScan( aPrZag, j ) == 0
+               AAdd( aPrZag, j )
+            ENDIF
+         ENDIF
+         xPom := Eval( aKol[ ( j - 1 ) * nKol + i ][ 2 ] )
+         IF ValType( xPom ) == "C"
+            IF xPom != "#"
+               IF AScan( aPrStav, j ) == 0
+                  AAdd( aPrStav, j )
+               ENDIF
+            ELSE
+               aKol[ ( j - 1 ) * nKol + i ][ 2 ] := {|| "" }
+            ENDIF
+         ELSE
+            IF AScan( aPrStav, j ) == 0
+               AAdd( aPrStav, j )
+            ENDIF
+         ENDIF
+      NEXT
+   NEXT
 
- if nStr>=0.and.(prow()>(gnRedova+IF(gPrinter="R",2,0)-7-LEN(aPrStav)-LEN(aPrZag)).or.prow()>(gnRedova+IF(gPrinter="R",2,0)-11-LEN(aPrStav)-LEN(aPrZag)).and.cNaslov!=nil)
-   if gPrinter!="R"
-     do while prow()<gnRedova-2; QOUT(); enddo
-     xPom:=STR(nStr,3)+". strana"
-     QOUT(cLM+PADC(xPom,nDReda-nOdvoji))
-   endif
-   gPFF(); SETPRC(0,0)
-   if !(bZagl==nil)
-     EVAL(bZagl)
-   endif
-   ++nStr
- endif
+   ASort( aPrZag ); ASort( aPrSum ); ASort( aPrStav )
+   nDReda += nKol + 1 + nOdvoji
+   nMDReda := IF( lA4papir == "POS", 40, MDDReda( nDReda, lA4papir ) )
+   cLM := IF( nMDReda - nDReda >= 0, Space( nOdvoji + Int( ( nMDReda - nDReda ) / 2 ) ), "" )
+   cLM2 := IF( nMDReda - nDReda >= 0 .AND. !lCTab, Space( nOdvoji ), cLM )
+   GuSt2( nDReda, lA4papir )
 
-if nCrtice == 0
-    cOk := {"-", "-", " ", "-", " ", "-", " ", "-", "-", " ", "-", " ", "-", "-", "-", " "}
-elseif nCrtice == 1
+   IF nStr >= 0 .AND. ( PRow() > ( gnRedova + IF( gPrinter = "R", 2, 0 ) -7 -Len( aPrStav ) -Len( aPrZag ) ) .OR. PRow() > ( gnRedova + IF( gPrinter = "R", 2, 0 ) -11 -Len( aPrStav ) -Len( aPrZag ) ) .AND. cNaslov != nil )
+      IF gPrinter != "R"
+         DO WHILE PRow() < gnRedova - 2; QOut(); ENDDO
+         xPom := Str( nStr, 3 ) + ". strana"
+         QOut( cLM + PadC( xPom, nDReda - nOdvoji ) )
+      ENDIF
+      gPFF(); SetPRC( 0, 0 )
+      IF !( bZagl == nil )
+         Eval( bZagl )
+      ENDIF
+      ++nStr
+   ENDIF
 
-    #ifdef __PLATFORM__WINDOWS
-        cOk := {"+", "-", "+", "+", ":", "+", "+", "+", "+", "+", "+", ":", "-", "+", "+", "+"}
-    #else
-        cOk := {"�", "�", "�", "�", "�", "�", "�", "�", "�", "�", "�", "�", "�", "�", "�", "�"}
-    #endif
+   IF nCrtice == 0
+      cOk := { "-", "-", " ", "-", " ", "-", " ", "-", "-", " ", "-", " ", "-", "-", "-", " " }
+   ELSEIF nCrtice == 1
 
-elseif nCrtice == 9
-    // rtf-fajlovi
-    cOk := {" ", " ", " ", " ", "#", " ", " ", " ", " ", " ", " ", "#", " ", " ", " ", " "}
-else
-    cOk := {"�", "�", "�", "�", "�", "�", "�", "�", "�", "�", "�", "�", "�", "�", "�", "�"}
-endif
-          // 1    2    3    4    5    6    7    8    9    10   11   12   13   14   15   16
+#ifdef __PLATFORM__WINDOWS
+      cOk := { "+", "-", "+", "+", ":", "+", "+", "+", "+", "+", "+", ":", "-", "+", "+", "+" }
+#else
+      cOk := { "�", "�", "�", "�", "�", "�", "�", "�", "�", "�", "�", "�", "�", "�", "�", "�" }
+#endif
 
-nSuma := ARRAY(nKol)
-AFILL(nSuma,0)
-nSuma:=AMFILL(nSuma,nRed)
-nSubTot := ARRAY(nKol)
-AFILL(nSubTot,0)
-nSubTot:=AMFILL(nSubTot,nRed)
+   ELSEIF nCrtice == 9
+      // rtf-fajlovi
+      cOk := { " ", " ", " ", " ", "#", " ", " ", " ", " ", " ", " ", "#", " ", " ", " ", " " }
+   ELSE
+      cOk := { "�", "�", "�", "�", "�", "�", "�", "�", "�", "�", "�", "�", "�", "�", "�", "�" }
+   ENDIF
+   // 1    2    3    4    5    6    7    8    9    10   11   12   13   14   15   16
 
-if cNaslov!=nil
-   QOUT(cLM2+cOk[1]+REPLICATE(cOk[2],nDReda-nOdvoji-2)+cOk[4])
-   QOUT(cLM2+cOk[12]+SPACE(nDReda-nOdvoji-2)+cOk[12])
-   QOUT(cLM2+cOk[12]+PADC(ALLTRIM(cNaslov),nDReda-nOdvoji-2)+cOk[12])
-   QOUT(cLM2+cOk[12]+SPACE(nDReda-nOdvoji-2)+cOk[12])
- endif
- i:=0; QOUT(cLM2+IF(cNaslov!=nil,cOk[6],cOk[1]))
- AEVAL(aPom,{|x| ++i,QQOUT(REPLICATE(cOk[2],x[2])+IF(i<nKol,cOk[3],IF(cNaslov!=nil,cOk[8],cOk[4])))})
+   nSuma := Array( nKol )
+   AFill( nSuma, 0 )
+   nSuma := AMFILL( nSuma, nRed )
+   nSubTot := Array( nKol )
+   AFill( nSubTot, 0 )
+   nSubTot := AMFILL( nSubTot, nRed )
 
- for j:=1 to LEN(aPrZag)
-   i:=0; QOUT(cLM2+cOk[12])
-   AEVAL(aKol,{|x| ++i,QQOUT(PADC(x[1],x[5])+IF(i<nKol,cOk[5],cOk[12]))},(aPrZag[j]-1)*nKol+1,nKol)
- next
+   IF cNaslov != nil
+      QOut( cLM2 + cOk[ 1 ] + Replicate( cOk[ 2 ], nDReda - nOdvoji - 2 ) + cOk[ 4 ] )
+      QOut( cLM2 + cOk[ 12 ] + Space( nDReda - nOdvoji - 2 ) + cOk[ 12 ] )
+      QOut( cLM2 + cOk[ 12 ] + PadC( AllTrim( cNaslov ), nDReda - nOdvoji - 2 ) + cOk[ 12 ] )
+      QOut( cLM2 + cOk[ 12 ] + Space( nDReda - nOdvoji - 2 ) + cOk[ 12 ] )
+   ENDIF
+   i := 0; QOut( cLM2 + IF( cNaslov != nil, cOk[ 6 ], cOk[ 1 ] ) )
+   AEval( aPom, {| x| ++i, QQOut( Replicate( cOk[ 2 ], x[ 2 ] ) + IF( i < nKol, cOk[ 3 ], IF( cNaslov != nil, cOk[ 8 ], cOk[ 4 ] ) ) ) } )
 
- i:=0; QOUT(cLM2+cOk[6])
- AEVAL(aPom,{|x| ++i,QQOUT(REPLICATE(cOk[2],x[2])+IF(i<nKol,cOk[7],cOk[8]))})
+   FOR j := 1 TO Len( aPrZag )
+      i := 0; QOut( cLM2 + cOk[ 12 ] )
+      AEval( aKol, {| x| ++i, QQOut( PadC( x[ 1 ], x[ 5 ] ) + IF( i < nKol, cOk[ 5 ], cOk[ 12 ] ) ) }, ( aPrZag[ j ] -1 ) * nKol + 1, nKol )
+   NEXT
 
- // idemo po bazi
- // -------------
- do while !EOF() .and. EVAL(bUslov)
+   i := 0; QOut( cLM2 + cOk[ 6 ] )
+   AEval( aPom, {| x| ++i, QQOut( Replicate( cOk[ 2 ], x[ 2 ] ) + IF( i < nKol, cOk[ 7 ], cOk[ 8 ] ) ) } )
 
-  if nSlogova!=nil
-  	Postotak(2,++nBrojacSlogova)
-  endif
+   // idemo po bazi
+   // -------------
+   DO WHILE !Eof() .AND. Eval( bUslov )
 
-  // evaluacija "ZA" bloka (korisnicke "FOR" funkcije)
-  // -------------------------------------------------
-  if !(lFor:=EVAL(bFor))
-    if EMPTY(gaDodStavke) .and. EMPTY(gaSubTotal)
-      if !glNeSkipuj
-      	SKIP 1
-      endif
-      loop
-    endif
-  endif
+      IF nSlogova != nil
+         Postotak( 2, ++nBrojacSlogova )
+      ENDIF
 
-  if lFor
+      // evaluacija "ZA" bloka (korisnicke "FOR" funkcije)
+      // -------------------------------------------------
+      IF !( lFor := Eval( bFor ) )
+         IF Empty( gaDodStavke ) .AND. Empty( gaSubTotal )
+            IF !glNeSkipuj
+               SKIP 1
+            ENDIF
+            LOOP
+         ENDIF
+      ENDIF
 
-    // evaluacija bloka internog subtotala
-    // -----------------------------------
-    if lMozeL; xTot:=EVAL(bSubTot); endif
+      IF lFor
 
-    // izvrsimo blok koji se izvrsava za svaku stavku koja se stampa
-    // -------------------------------------------------------------
-    xPodvuci:=EVAL(bZaRed)
-    // treba li na kraju izvrsiti podvlacenje
-    // --------------------------------------
-    if VALTYPE(xPodvuci)=="C" .and. LEFT(UPPER(xPodvuci),7)=="PODVUCI"
-      cPodvuci:=RIGHT(xPodvuci,1)
-      xPodvuci:=.t.
-    else
-      xPodvuci:=.f.
-    endif
+         // evaluacija bloka internog subtotala
+         // -----------------------------------
+         IF lMozeL; xTot := Eval( bSubTot ); ENDIF
 
-  endif
+         // izvrsimo blok koji se izvrsava za svaku stavku koja se stampa
+         // -------------------------------------------------------------
+         xPodvuci := Eval( bZaRed )
+         // treba li na kraju izvrsiti podvlacenje
+         // --------------------------------------
+         IF ValType( xPodvuci ) == "C" .AND. Left( Upper( xPodvuci ), 7 ) == "PODVUCI"
+            cPodvuci := Right( xPodvuci, 1 )
+            xPodvuci := .T.
+         ELSE
+            xPodvuci := .F.
+         ENDIF
 
-  // ako ima kolona koje moraju za jednu stavku ici u vise redova
-  // potrebno je izracunati max.broj tih redova (nPRed)
-  // ------------------------------------------------------------
-  if lfor .and. lPRed
-    aPRed:={}; nPRed:=0
-    AEVAL(aKol,{|x| IF(LEFT(x[4],1)=="P", IF(!EMPTY(xPom:=LomiGa(EVAL(x[2]),IF(LEN(x[4])>1,VAL(SUBSTR(x[4],2)),1),0,x[5])),AADD(aPRed,{xPom,x[5],LEN(xPom)/x[5],x[8],LEN(xPom)/x[5],x[7]}),),)})
-    ASORT(aPRed,,,{|x,y| x[4]<y[4]})
-    AEVAL(aPRed,{|x| IF(nPRed<x[3]+x[6]-1,nPRed:=x[3]+x[6]-1,)})
-  endif
+      ENDIF
 
-  // ispitivanje uslova za prelazak na novu stranicu
-  // -----------------------------------------------
-  if lfor .and. nStr>=0 .and. (prow()>gnRedova+IF(gPrinter="R",2,0)-IF(xPodvuci,1,0)-5-MAX(LEN(aPrStav),nPRed)-IF(lPrenos,LEN(aPrSum)*IF(xTot[1],(2+1/LEN(aPrSum)),1),0))
-    NaSljedStranu(@lMozeL,@lPrenos,cLM2,cOk,aPom,nKol,@nStr,cLM,;
-                  nDReda,nOdvoji,aPrSum,aKol,nSuma,cTek3,bZagl,;
-                  cNaslov,aPrZag,cTek1,xTot)
-  endif
+      // ako ima kolona koje moraju za jednu stavku ici u vise redova
+      // potrebno je izracunati max.broj tih redova (nPRed)
+      // ------------------------------------------------------------
+      IF lfor .AND. lPRed
+         aPRed := {}; nPRed := 0
+         AEval( aKol, {| x| IF( Left( x[ 4 ], 1 ) == "P", IF( !Empty( xPom := LomiGa( Eval( x[ 2 ] ), IF( Len( x[ 4 ] ) > 1, Val( SubStr( x[ 4 ], 2 ) ), 1 ), 0, x[ 5 ] ) ), AAdd( aPRed, { xPom, x[ 5 ], Len( xPom ) / x[ 5 ], x[ 8 ], Len( xPom ) / x[ 5 ], x[ 7 ] } ), ), ) } )
+         ASort( aPRed,,, {| x, y| x[ 4 ] < y[ 4 ] } )
+         AEval( aPRed, {| x| IF( nPRed < x[ 3 ] + x[ 6 ] -1, nPRed := x[ 3 ] + x[ 6 ] -1, ) } )
+      ENDIF
 
-  // stampanje internog subtotala
-  // ----------------------------
-  if lfor .and. xTot[1]
-    //  podvlacenje prije subtotala (ako nije prvi red na stranici)
-    if lMozeL
-     i:=0; QOUT(cLM2+cOk[6])
-     AEVAL(aPom,{|x| ++i,;
-      QQOUT(REPLICATE(cOk[2],x[2])+IF(i<nKol,IF(!x[3].and.!aPom[i+1,3],cOk[10],cOk[7]),cOk[8]))})
-    endif
-    for j:=1 to LEN(aPrSum)
-      i:=0; cPom:=""
-      AEVAL(aKol,{|x| ++i,;
-       cPom+=IF(x[3],STR(nSubTot[aPrSum[j]][i],x[5],x[6]),SPACE(x[5]))+IF(i<nKol,IF(!aPom[i,3].and.!aPom[i+1,3]," ",cOk[5]),cOk[12]),nSubTot[aPrSum[j]][i]:=0},(aPrSum[j]-1)*nKol+1,nKol)
-      xPom:=IF(j==LEN(aPrSum),xTot[2],SPACE(LEN(xTot[2])))
-      QOUT(cLM2+cOk[12]+STRTRAN(cPom,SPACE(LEN(xPom)),xPom,1,1))
-    next
-    i:=0
-    QOUT(cLM2+cOk[6])
-    AEVAL(aPom,{|x| ++i,;
-     QQOUT(REPLICATE(cOk[2],x[2])+IF(i<nKol,IF(!x[3].and.!aPom[i+1,3],cOk[3],cOk[7]),cOk[8]))})
-    lMozeL:=.f.
-  endif
+      // ispitivanje uslova za prelazak na novu stranicu
+      // -----------------------------------------------
+      IF lfor .AND. nStr >= 0 .AND. ( PRow() > gnRedova + IF( gPrinter = "R", 2, 0 ) -IF( xPodvuci, 1, 0 ) -5 -Max( Len( aPrStav ), nPRed ) -IF( lPrenos, Len( aPrSum ) * IF( xTot[ 1 ], ( 2 + 1 / Len( aPrSum ) ), 1 ), 0 ) )
+         NaSljedStranu( @lMozeL, @lPrenos, cLM2, cOk, aPom, nKol, @nStr, cLM, ;
+            nDReda, nOdvoji, aPrSum, aKol, nSuma, cTek3, bZagl, ;
+            cNaslov, aPrZag, cTek1, xTot )
+      ENDIF
 
-  // odvajanje stavki linijom (ako je zadano i ako nije prvi red)
-  // ------------------------------------------------------------
-  if lLinija.and.lMozeL
-   i:=0; QOUT(cLM2+cOk[14])
-   AEVAL(aPom,{|x| ++i,QQOUT(REPLICATE(cOk[13],x[2])+IF(i<nKol,cOk[16],cOk[15]))})
-  endif
+      // stampanje internog subtotala
+      // ----------------------------
+      IF lfor .AND. xTot[ 1 ]
+         // podvlacenje prije subtotala (ako nije prvi red na stranici)
+         IF lMozeL
+            i := 0; QOut( cLM2 + cOk[ 6 ] )
+            AEval( aPom, {| x| ++i, ;
+               QQOut( Replicate( cOk[ 2 ], x[ 2 ] ) + IF( i < nKol, IF( !x[ 3 ] .AND. !aPom[ i + 1, 3 ], cOk[ 10 ], cOk[ 7 ] ), cOk[ 8 ] ) ) } )
+         ENDIF
+         FOR j := 1 TO Len( aPrSum )
+            i := 0; cPom := ""
+            AEval( aKol, {| x| ++i, ;
+               cPom += IF( x[ 3 ], Str( nSubTot[ aPrSum[ j ] ][ i ], x[ 5 ], x[ 6 ] ), Space( x[ 5 ] ) ) + IF( i < nKol, IF( !aPom[ i, 3 ] .AND. !aPom[ i + 1, 3 ], " ", cOk[ 5 ] ), cOk[ 12 ] ), nSubTot[ aPrSum[ j ] ][ i ] := 0 }, ( aPrSum[ j ] -1 ) * nKol + 1, nKol )
+            xPom := IF( j == Len( aPrSum ), xTot[ 2 ], Space( Len( xTot[ 2 ] ) ) )
+            QOut( cLM2 + cOk[ 12 ] + StrTran( cPom, Space( Len( xPom ) ), xPom, 1, 1 ) )
+         NEXT
+         i := 0
+         QOut( cLM2 + cOk[ 6 ] )
+         AEval( aPom, {| x| ++i, ;
+            QQOut( Replicate( cOk[ 2 ], x[ 2 ] ) + IF( i < nKol, IF( !x[ 3 ] .AND. !aPom[ i + 1, 3 ], cOk[ 3 ], cOk[ 7 ] ), cOk[ 8 ] ) ) } )
+         lMozeL := .F.
+      ENDIF
 
-  if lFor
+      // odvajanje stavki linijom (ako je zadano i ako nije prvi red)
+      // ------------------------------------------------------------
+      IF lLinija .AND. lMozeL
+         i := 0; QOut( cLM2 + cOk[ 14 ] )
+         AEval( aPom, {| x| ++i, QQOut( Replicate( cOk[ 13 ], x[ 2 ] ) + IF( i < nKol, cOk[ 16 ], cOk[ 15 ] ) ) } )
+      ENDIF
 
-    // dvostruka petlja u kojoj se vrsi sabiranje totala, internih subtotala
-    // i stampanje stavke  ( j=broj reda stavke, i=kolona stavke )
-    // ---------------------------------------------------------------------
-    for j:=1 to MAX(LEN(aPrStav),nPRed)
-     QOUT(cLM2+cOk[12])
-     for i:=1 to nKol
-       if j<=LEN(aPrStav)
-        xPom:=EVAL(aKol[(aPrStav[j]-1)*nKol+i,2])
-        if aKol[(aPrStav[j]-1)*nKol+i,3].and.VALTYPE(xPom)=="N"
-          if len( aKol[(aPrStav[j]-1)*nKol+i] ) >=9   // postoji bSuma
-           xPom:=EVAL(aKol[(aPrStav[j]-1)*nKol+i,9])
-          endif
-          nSuma[aPrStav[j]][i]+=xPom
-          if xTot[2]!=nil; nSubTot[aPrStav[j]][i]+=xPom; endif
-        endif
-        xPom:=EVAL(aKol[(aPrStav[j]-1)*nKol+i,2])
-        if aKol[(aPrStav[j]-1)*nKol+i,4]="N"
-          if VALTYPE(xPom)!="N" .or. ROUND(xPom,aKol[(aPrStav[j]-1)*nKol+i,6])==0 .and. RIGHT(aKol[(aPrStav[j]-1)*nKol+i,4],1)=="-"
-            QQOUT(SPACE(aKol[(aPrStav[j]-1)*nKol+i,5]))
-          else
-            if gbFIznos!=nil
-              QQOUT( EVAL( gbFIznos,;
-                           xPom,;
-                           aKol[(aPrStav[j]-1)*nKol+i,5],;
-                           aKol[(aPrStav[j]-1)*nKol+i,6] );
-                   )
-            else
-              QQOUT(STR(xPom,aKol[(aPrStav[j]-1)*nKol+i,5],aKol[(aPrStav[j]-1)*nKol+i,6]))
-            endif
-          endif
-        elseif aKol[(aPrStav[j]-1)*nKol+i,4]=="C"
-          QQOUT(PADR(xPom,aKol[(aPrStav[j]-1)*nKol+i,5]))
-        elseif aKol[(aPrStav[j]-1)*nKol+i,4]=="D"
-          QQOUT(PADC(DTOC(xPom),aKol[(aPrStav[j]-1)*nKol+i,5]))
-        elseif LEFT(aKol[(aPrStav[j]-1)*nKol+i,4],1)=="P"
-          l:=ASCAN(aPRed,{|x| x[4]==i})
-          if l>0
-           xPom:=IF(aPRed[l,3]>0,SUBSTR(aPRed[l,1],(aPRed[l,5]-aPRed[l,3])*aPRed[l,2]+1,aPRed[l,2]),SPACE(aPRed[l,2]))
-           --aPRed[l,3]
-           QQOUT(xPom)
-          else
-           QQOUT(SPACE(aKol[i,5]))
-          endif
-        endif
-       else
-        if (l:=ASCAN(aPRed,{|x| x[4]==i}))!=0
-          xPom:=IF(aPRed[l,3]>0,SUBSTR(aPRed[l,1],(aPRed[l,5]-aPRed[l,3])*aPRed[l,2]+1,aPRed[l,2]),SPACE(aPRed[l,2]))
-          --aPRed[l,3]
-          QQOUT(xPom)
-        else
-          QQOUT(SPACE(aKol[i,5]))
-        endif
-       endif
-       QQOUT(IF(i<nKol,cOk[5],cOk[12]))
-     next
-    next
+      IF lFor
 
-  endif
+         // dvostruka petlja u kojoj se vrsi sabiranje totala, internih subtotala
+         // i stampanje stavke  ( j=broj reda stavke, i=kolona stavke )
+         // ---------------------------------------------------------------------
+         FOR j := 1 TO Max( Len( aPrStav ), nPRed )
+            QOut( cLM2 + cOk[ 12 ] )
+            FOR i := 1 TO nKol
+               IF j <= Len( aPrStav )
+                  xPom := Eval( aKol[ ( aPrStav[ j ] -1 ) * nKol + i, 2 ] )
+                  IF aKol[ ( aPrStav[ j ] -1 ) * nKol + i, 3 ] .AND. ValType( xPom ) == "N"
+                     IF Len( aKol[ ( aPrStav[ j ] -1 ) * nKol + i ] ) >= 9   // postoji bSuma
+                        xPom := Eval( aKol[ ( aPrStav[ j ] -1 ) * nKol + i, 9 ] )
+                     ENDIF
+                     nSuma[ aPrStav[ j ] ][ i ] += xPom
+                     IF xTot[ 2 ] != nil; nSubTot[ aPrStav[ j ] ][ i ] += xPom; ENDIF
+                  ENDIF
+                  xPom := Eval( aKol[ ( aPrStav[ j ] -1 ) * nKol + i, 2 ] )
+                  IF aKol[ ( aPrStav[ j ] -1 ) * nKol + i, 4 ] = "N"
+                     IF ValType( xPom ) != "N" .OR. Round( xPom, aKol[ ( aPrStav[ j ] -1 ) * nKol + i, 6 ] ) == 0 .AND. Right( aKol[ ( aPrStav[ j ] -1 ) * nKol + i, 4 ], 1 ) == "-"
+                        QQOut( Space( aKol[ ( aPrStav[ j ] -1 ) * nKol + i, 5 ] ) )
+                     ELSE
+                        IF gbFIznos != nil
+                           QQOut( Eval( gbFIznos, ;
+                              xPom, ;
+                              aKol[ ( aPrStav[ j ] -1 ) * nKol + i, 5 ], ;
+                              aKol[ ( aPrStav[ j ] -1 ) * nKol + i, 6 ] );
+                              )
+                        ELSE
+                           QQOut( Str( xPom, aKol[ ( aPrStav[ j ] -1 ) * nKol + i, 5 ], aKol[ ( aPrStav[ j ] -1 ) * nKol + i, 6 ] ) )
+                        ENDIF
+                     ENDIF
+                  ELSEIF aKol[ ( aPrStav[ j ] -1 ) * nKol + i, 4 ] == "C"
+                     QQOut( PadR( xPom, aKol[ ( aPrStav[ j ] -1 ) * nKol + i, 5 ] ) )
+                  ELSEIF aKol[ ( aPrStav[ j ] -1 ) * nKol + i, 4 ] == "D"
+                     QQOut( PadC( DToC( xPom ), aKol[ ( aPrStav[ j ] -1 ) * nKol + i, 5 ] ) )
+                  ELSEIF Left( aKol[ ( aPrStav[ j ] -1 ) * nKol + i, 4 ], 1 ) == "P"
+                     l := AScan( aPRed, {| x| x[ 4 ] == i } )
+                     IF l > 0
+                        xPom := IF( aPRed[ l, 3 ] > 0, SubStr( aPRed[ l, 1 ], ( aPRed[ l, 5 ] -aPRed[ l, 3 ] ) * aPRed[ l, 2 ] + 1, aPRed[ l, 2 ] ), Space( aPRed[ l, 2 ] ) )
+                        --aPRed[l,3 ]
+                        QQOut( xPom )
+                     ELSE
+                        QQOut( Space( aKol[ i, 5 ] ) )
+                     ENDIF
+                  ENDIF
+               ELSE
+                  IF ( l := AScan( aPRed, {| x| x[ 4 ] == i } ) ) != 0
+                     xPom := IF( aPRed[ l, 3 ] > 0, SubStr( aPRed[ l, 1 ], ( aPRed[ l, 5 ] -aPRed[ l, 3 ] ) * aPRed[ l, 2 ] + 1, aPRed[ l, 2 ] ), Space( aPRed[ l, 2 ] ) )
+                     --aPRed[l,3 ]
+                     QQOut( xPom )
+                  ELSE
+                     QQOut( Space( aKol[ i, 5 ] ) )
+                  ENDIF
+               ENDIF
+               QQOut( IF( i < nKol, cOk[ 5 ], cOk[ 12 ] ) )
+            NEXT
+         NEXT
 
-  // stampanje stavke koja sluzi samo za podvlacenje
-  // -----------------------------------------------
-  if lfor .and. xPodvuci
-    i:=0
-    QOUT(cLM2+cOk[12])
-    AEVAL(aPom,{|x| ++i,QQOUT(REPLICATE(cPodvuci,x[2])+IF(i<nKol,cOk[5],cOk[12]))})
-  endif
+      ENDIF
 
-  if !( EMPTY(gaDodStavke) )
-    for j:=1 to LEN(gaDodStavke)
-      // ispitaj da li je potreban prelazak na novu stranicu
-      if nStr>=0 .and. (prow()>gnRedova+IF(gPrinter="R",2,0)-5-1-IF(lPrenos,1,0))
-        NaSljedStranu(@lMozeL,@lPrenos,cLM2,cOk,aPom,nKol,@nStr,cLM,;
-                      nDReda,nOdvoji,aPrSum,aKol,nSuma,cTek3,bZagl,;
-                      cNaslov,aPrZag,cTek1,xTot)
-      endif
-      // odstampaj liniju za odvajanje ako je potrebno (samo za j==1)
-      if j==1 .and. lLinija.and.lMozeL
-       i:=0; QOUT(cLM2+cOk[14])
-       AEVAL(aPom,{|x| ++i,QQOUT(REPLICATE(cOk[13],x[2])+IF(i<nKol,cOk[16],cOk[15]))})
-      endif
+      // stampanje stavke koja sluzi samo za podvlacenje
+      // -----------------------------------------------
+      IF lfor .AND. xPodvuci
+         i := 0
+         QOut( cLM2 + cOk[ 12 ] )
+         AEval( aPom, {| x| ++i, QQOut( Replicate( cPodvuci, x[ 2 ] ) + IF( i < nKol, cOk[ 5 ], cOk[ 12 ] ) ) } )
+      ENDIF
 
-      QOUT(cLM2+cOk[12])
-      for i:=1 to nKol
-        // izvrsi sumiranje
-         xPom:=gaDodStavke[j,i]
-        if aKol[i,3] .and. xPom!=nil
-          nSuma[1,i]+=xPom
-        endif
-        // odstampaj stavku
-        StStavku(aKol,xPom,i,nKol,cOk)
-      next
-    next
-  endif
+      IF !( Empty( gaDodStavke ) )
+         FOR j := 1 TO Len( gaDodStavke )
+            // ispitaj da li je potreban prelazak na novu stranicu
+            IF nStr >= 0 .AND. ( PRow() > gnRedova + IF( gPrinter = "R", 2, 0 ) -5 -1 -IF( lPrenos, 1, 0 ) )
+               NaSljedStranu( @lMozeL, @lPrenos, cLM2, cOk, aPom, nKol, @nStr, cLM, ;
+                  nDReda, nOdvoji, aPrSum, aKol, nSuma, cTek3, bZagl, ;
+                  cNaslov, aPrZag, cTek1, xTot )
+            ENDIF
+            // odstampaj liniju za odvajanje ako je potrebno (samo za j==1)
+            IF j == 1 .AND. lLinija .AND. lMozeL
+               i := 0; QOut( cLM2 + cOk[ 14 ] )
+               AEval( aPom, {| x| ++i, QQOut( Replicate( cOk[ 13 ], x[ 2 ] ) + IF( i < nKol, cOk[ 16 ], cOk[ 15 ] ) ) } )
+            ENDIF
 
-
-  if !( EMPTY(gaSubTotal) )
-    lMozeL:=.t.
-    for k:=1 to LEN(gaSubTotal)
-      // ispitaj da li je potreban prelazak na novu stranicu
-      if nStr>=0 .and. (prow()>gnRedova+IF(gPrinter="R",2,0)-5-2-IF(lPrenos,1,0))
-        if k>1
-          i:=0; QOUT(cLM2+cOk[6])
-          AEVAL(aPom,{|x| ++i,;
-           QQOUT(REPLICATE(cOk[2],x[2])+IF(i<nKol,IF(!(x[3].or.VALTYPE(gaSubTotal[k,i])=="N").and.!(aPom[i+1,3].or.VALTYPE(gaSubTotal[k,i+1])=="N"),cOk[3],cOk[7]),cOk[8]))})
-        endif
-        NaSljedStranu(@lMozeL,@lPrenos,cLM2,cOk,aPom,nKol,@nStr,cLM,;
-                      nDReda,nOdvoji,aPrSum,aKol,nSuma,cTek3,bZagl,;
-                      cNaslov,aPrZag,cTek1,{.t.,})
-      endif
-      //  podvlacenje prije subtotala (ako nije prvi red na stranici)
-      if lMozeL
-       i:=0; QOUT(cLM2+cOk[6])
-       AEVAL(aPom,{|x| ++i,;
-        QQOUT(REPLICATE(cOk[2],x[2])+IF(i<nKol,IF(!(x[3].or.VALTYPE(gaSubTotal[k,i])=="N").and.!(aPom[i+1,3].or.VALTYPE(gaSubTotal[k,i+1])=="N"),cOk[10],cOk[7]),cOk[8]))})
-      elseif k>1
-       i:=0; QOUT(cLM2+cOk[6])
-       AEVAL(aPom,{|x| ++i,;
-        QQOUT(REPLICATE(cOk[2],x[2])+IF(i<nKol,IF(!(x[3].or.VALTYPE(gaSubTotal[k,i])=="N").and.!(aPom[i+1,3].or.VALTYPE(gaSubTotal[k,i+1])=="N"),cOk[2],cOk[7]),cOk[8]))})
-      endif
-      // stampanje subtotala
-      i:=0; cPom:=""
-      AEVAL(aKol,{|x| ++i,;
-       cPom+=IF(x[3].or.VALTYPE(gaSubTotal[k,i])=="N",STR(gaSubTotal[k,i],x[5],x[6]),SPACE(x[5]))+IF(i<nKol,IF(!(aPom[i,3].or.VALTYPE(gaSubTotal[k,i])=="N").and.!(aPom[i+1,3].or.VALTYPE(gaSubTotal[k,i+1])=="N")," ",cOk[5]),cOk[12])},1,nKol)
-      xPom:=ATAIL(gaSubTotal[k])
-      QOUT(cLM2+cOk[12]+STRTRAN(cPom,SPACE(LEN(xPom)),xPom,1,1))
-      if k==LEN(gaSubTotal)
-        i:=0; QOUT(cLM2+cOk[6])
-        AEVAL(aPom,{|x| ++i,;
-         QQOUT(REPLICATE(cOk[2],x[2])+IF(i<nKol,IF(!(x[3].or.VALTYPE(gaSubTotal[k,i])=="N").and.!(aPom[i+1,3].or.VALTYPE(gaSubTotal[k,i+1])=="N"),cOk[3],cOk[7]),cOk[8]))})
-      endif
-      lMozeL:=.f.
-    next
-    if !glNeSkipuj
-    	SKIP 1
-    endif
-    loop
-  endif
-
-  lMozeL:=.t.
-
-  if !glNeSkipuj; SKIP 1; endif
- enddo  // kraj setnje po bazi
-
- if nSlogova!=nil
- 	Postotak(-1,,,,,.f.)
- endif
-
- // na posljednjoj stranici prikazi interni subtotal ako treba
- // ----------------------------------------------------------
- if xTot[2]!=nil
-   xTot:=EVAL(bSubTot)
-   if lMozeL
-    i:=0; QOUT(cLM2+cOk[6])
-    AEVAL(aPom,{|x| ++i,;
-     QQOUT(REPLICATE(cOk[2],x[2])+IF(i<nKol,IF(!x[3].and.!aPom[i+1,3],cOk[10],cOk[7]),cOk[8]))})
-   endif
-   for j:=1 to LEN(aPrSum)
-     i:=0; cPom:=""
-     AEVAL(aKol,{|x| ++i,;
-      cPom+=IF(x[3],STR(nSubTot[aPrSum[j]][i],x[5],x[6]),SPACE(x[5]))+IF(i<nKol,IF(!aPom[i,3].and.!aPom[i+1,3]," ",cOk[5]),cOk[12])},(aPrSum[j]-1)*nKol+1,nKol)
-     xPom:=IF(j==LEN(aPrSum),xTot[2],SPACE(LEN(xTot[2])))
-     QOUT(cLM2+cOk[12]+STRTRAN(cPom,SPACE(LEN(xPom)),xPom,1,1))
-   next
- endif
-
- if !lPrenos
-   // zavrsi posljednju stranicu: bez sumiranja
-   // -----------------------------------------
-   i:=0; QOUT(cLM2+cOk[9])
-   AEVAL(aPom,{|x| ++i, QQOUT(REPLICATE(cOk[2],x[2])+IF(i<nKol,cOk[10],cOk[11]))})
-   if (nStr>=0 .and. lOstr)
-     if gPrinter!="R"
-       do while prow()<gnRedova-2; QOUT(); enddo
-       xPom:=STR(nStr,3)+". strana"
-       QOUT(cLM+PADC(xPom,nDReda-nOdvoji))
-     endif
-     gPFF(); SETPRC(0,0)
-     if !(bZagl==nil)
-       EVAL(bZagl)
-     endif
-   endif
- else
-   // zavrsi posljednju stranicu: prikazi sumiranje
-   // ---------------------------------------------
-   i:=0; QOUT(cLM2+cOk[6])
-   AEVAL(aPom,{|x| ++i,;
-    QQOUT(REPLICATE(cOk[2],x[2])+IF(i<nKol,IF(!x[3].and.!aPom[i+1,3],IF(xTot[1],cOk[2],cOk[10]),cOk[7]),cOk[8]))})
-   for j:=1 to LEN(aPrSum)
-    i:=0; cPom:=""
-    AEVAL(aKol,{|x| ++i,;
-     cPom+=IF(x[3],STR(nSuma[aPrSum[j]][i],x[5],x[6]),SPACE(x[5]))+IF(i<nKol,IF(!aPom[i,3].and.!aPom[i+1,3]," ",cOk[5]),cOk[12])},(aPrSum[j]-1)*nKol+1,nKol)
-    QOUT(cLM2+cOk[12]+IF(j==LEN(aPrSum),STRTRAN(cPom,SPACE(LEN(cTek2)),cTek2,1,1),cPom))
-   next
-   i:=0; QOUT(cLM2+cOk[9])
-   AEVAL(aPom,{|x| ++i,;
-    QQOUT(REPLICATE(cOk[2],x[2])+IF(i<nKol,IF(!x[3].and.!aPom[i+1,3],cOk[2],cOk[10]),cOk[11]))})
- endif
-
-return nSuma
-*}
+            QOut( cLM2 + cOk[ 12 ] )
+            FOR i := 1 TO nKol
+               // izvrsi sumiranje
+               xPom := gaDodStavke[ j, i ]
+               IF aKol[ i, 3 ] .AND. xPom != nil
+                  nSuma[ 1, i ] += xPom
+               ENDIF
+               // odstampaj stavku
+               StStavku( aKol, xPom, i, nKol, cOk )
+            NEXT
+         NEXT
+      ENDIF
 
 
-function MDDReda(nZnak,lA4papir)
-*{
-nZnak=IF(lA4papir=="4",nZnak*2-1,IF(lA4papir=="L4",nZnak*1.4545-1,nZnak))
-return INT(IF(nZnak<161,160,IF(nZnak<193,192,IF(nZnak<275,274,320)))/IF(lA4papir=="4",2,IF(lA4papir=="L4",1.4545,1)))
+      IF !( Empty( gaSubTotal ) )
+         lMozeL := .T.
+         FOR k := 1 TO Len( gaSubTotal )
+            // ispitaj da li je potreban prelazak na novu stranicu
+            IF nStr >= 0 .AND. ( PRow() > gnRedova + IF( gPrinter = "R", 2, 0 ) -5 -2 -IF( lPrenos, 1, 0 ) )
+               IF k > 1
+                  i := 0; QOut( cLM2 + cOk[ 6 ] )
+                  AEval( aPom, {| x| ++i, ;
+                     QQOut( Replicate( cOk[ 2 ], x[ 2 ] ) + IF( i < nKol, IF( !( x[ 3 ] .OR. ValType( gaSubTotal[ k, i ] ) == "N" ) .AND. !( aPom[ i + 1, 3 ] .OR. ValType( gaSubTotal[ k, i + 1 ] ) == "N" ), cOk[ 3 ], cOk[ 7 ] ), cOk[ 8 ] ) ) } )
+               ENDIF
+               NaSljedStranu( @lMozeL, @lPrenos, cLM2, cOk, aPom, nKol, @nStr, cLM, ;
+                  nDReda, nOdvoji, aPrSum, aKol, nSuma, cTek3, bZagl, ;
+                  cNaslov, aPrZag, cTek1, { .T., } )
+            ENDIF
+            // podvlacenje prije subtotala (ako nije prvi red na stranici)
+            IF lMozeL
+               i := 0; QOut( cLM2 + cOk[ 6 ] )
+               AEval( aPom, {| x| ++i, ;
+                  QQOut( Replicate( cOk[ 2 ], x[ 2 ] ) + IF( i < nKol, IF( !( x[ 3 ] .OR. ValType( gaSubTotal[ k, i ] ) == "N" ) .AND. !( aPom[ i + 1, 3 ] .OR. ValType( gaSubTotal[ k, i + 1 ] ) == "N" ), cOk[ 10 ], cOk[ 7 ] ), cOk[ 8 ] ) ) } )
+            ELSEIF k > 1
+               i := 0; QOut( cLM2 + cOk[ 6 ] )
+               AEval( aPom, {| x| ++i, ;
+                  QQOut( Replicate( cOk[ 2 ], x[ 2 ] ) + IF( i < nKol, IF( !( x[ 3 ] .OR. ValType( gaSubTotal[ k, i ] ) == "N" ) .AND. !( aPom[ i + 1, 3 ] .OR. ValType( gaSubTotal[ k, i + 1 ] ) == "N" ), cOk[ 2 ], cOk[ 7 ] ), cOk[ 8 ] ) ) } )
+            ENDIF
+            // stampanje subtotala
+            i := 0; cPom := ""
+            AEval( aKol, {| x| ++i, ;
+               cPom += IF( x[ 3 ] .OR. ValType( gaSubTotal[ k, i ] ) == "N", Str( gaSubTotal[ k, i ], x[ 5 ], x[ 6 ] ), Space( x[ 5 ] ) ) + IF( i < nKol, IF( !( aPom[ i, 3 ] .OR. ValType( gaSubTotal[ k, i ] ) == "N" ) .AND. !( aPom[ i + 1, 3 ] .OR. ValType( gaSubTotal[ k, i + 1 ] ) == "N" ), " ", cOk[ 5 ] ), cOk[ 12 ] ) }, 1, nKol )
+            xPom := ATail( gaSubTotal[ k ] )
+            QOut( cLM2 + cOk[ 12 ] + StrTran( cPom, Space( Len( xPom ) ), xPom, 1, 1 ) )
+            IF k == Len( gaSubTotal )
+               i := 0; QOut( cLM2 + cOk[ 6 ] )
+               AEval( aPom, {| x| ++i, ;
+                  QQOut( Replicate( cOk[ 2 ], x[ 2 ] ) + IF( i < nKol, IF( !( x[ 3 ] .OR. ValType( gaSubTotal[ k, i ] ) == "N" ) .AND. !( aPom[ i + 1, 3 ] .OR. ValType( gaSubTotal[ k, i + 1 ] ) == "N" ), cOk[ 3 ], cOk[ 7 ] ), cOk[ 8 ] ) ) } )
+            ENDIF
+            lMozeL := .F.
+         NEXT
+         IF !glNeSkipuj
+            SKIP 1
+         ENDIF
+         LOOP
+      ENDIF
 
-return
+      lMozeL := .T.
+
+      IF !glNeSkipuj; SKIP 1; ENDIF
+   ENDDO  // kraj setnje po bazi
+
+   IF nSlogova != nil
+      Postotak( -1,,,,, .F. )
+   ENDIF
+
+   // na posljednjoj stranici prikazi interni subtotal ako treba
+   // ----------------------------------------------------------
+   IF xTot[ 2 ] != nil
+      xTot := Eval( bSubTot )
+      IF lMozeL
+         i := 0; QOut( cLM2 + cOk[ 6 ] )
+         AEval( aPom, {| x| ++i, ;
+            QQOut( Replicate( cOk[ 2 ], x[ 2 ] ) + IF( i < nKol, IF( !x[ 3 ] .AND. !aPom[ i + 1, 3 ], cOk[ 10 ], cOk[ 7 ] ), cOk[ 8 ] ) ) } )
+      ENDIF
+      FOR j := 1 TO Len( aPrSum )
+         i := 0; cPom := ""
+         AEval( aKol, {| x| ++i, ;
+            cPom += IF( x[ 3 ], Str( nSubTot[ aPrSum[ j ] ][ i ], x[ 5 ], x[ 6 ] ), Space( x[ 5 ] ) ) + IF( i < nKol, IF( !aPom[ i, 3 ] .AND. !aPom[ i + 1, 3 ], " ", cOk[ 5 ] ), cOk[ 12 ] ) }, ( aPrSum[ j ] -1 ) * nKol + 1, nKol )
+         xPom := IF( j == Len( aPrSum ), xTot[ 2 ], Space( Len( xTot[ 2 ] ) ) )
+         QOut( cLM2 + cOk[ 12 ] + StrTran( cPom, Space( Len( xPom ) ), xPom, 1, 1 ) )
+      NEXT
+   ENDIF
+
+   IF !lPrenos
+      // zavrsi posljednju stranicu: bez sumiranja
+      // -----------------------------------------
+      i := 0; QOut( cLM2 + cOk[ 9 ] )
+      AEval( aPom, {| x| ++i, QQOut( Replicate( cOk[ 2 ], x[ 2 ] ) + IF( i < nKol, cOk[ 10 ], cOk[ 11 ] ) ) } )
+      IF ( nStr >= 0 .AND. lOstr )
+         IF gPrinter != "R"
+            DO WHILE PRow() < gnRedova - 2; QOut(); ENDDO
+            xPom := Str( nStr, 3 ) + ". strana"
+            QOut( cLM + PadC( xPom, nDReda - nOdvoji ) )
+         ENDIF
+         gPFF(); SetPRC( 0, 0 )
+         IF !( bZagl == nil )
+            Eval( bZagl )
+         ENDIF
+      ENDIF
+   ELSE
+      // zavrsi posljednju stranicu: prikazi sumiranje
+      // ---------------------------------------------
+      i := 0; QOut( cLM2 + cOk[ 6 ] )
+      AEval( aPom, {| x| ++i, ;
+         QQOut( Replicate( cOk[ 2 ], x[ 2 ] ) + IF( i < nKol, IF( !x[ 3 ] .AND. !aPom[ i + 1, 3 ], IF( xTot[ 1 ], cOk[ 2 ], cOk[ 10 ] ), cOk[ 7 ] ), cOk[ 8 ] ) ) } )
+      FOR j := 1 TO Len( aPrSum )
+         i := 0; cPom := ""
+         AEval( aKol, {| x| ++i, ;
+            cPom += IF( x[ 3 ], Str( nSuma[ aPrSum[ j ] ][ i ], x[ 5 ], x[ 6 ] ), Space( x[ 5 ] ) ) + IF( i < nKol, IF( !aPom[ i, 3 ] .AND. !aPom[ i + 1, 3 ], " ", cOk[ 5 ] ), cOk[ 12 ] ) }, ( aPrSum[ j ] -1 ) * nKol + 1, nKol )
+         QOut( cLM2 + cOk[ 12 ] + IF( j == Len( aPrSum ), StrTran( cPom, Space( Len( cTek2 ) ), cTek2, 1, 1 ), cPom ) )
+      NEXT
+      i := 0; QOut( cLM2 + cOk[ 9 ] )
+      AEval( aPom, {| x| ++i, ;
+         QQOut( Replicate( cOk[ 2 ], x[ 2 ] ) + IF( i < nKol, IF( !x[ 3 ] .AND. !aPom[ i + 1, 3 ], cOk[ 2 ], cOk[ 10 ] ), cOk[ 11 ] ) ) } )
+   ENDIF
+
+   RETURN nSuma
+// }
+
+
+FUNCTION MDDReda( nZnak, lA4papir )
+
+   // {
+   nZnak = IF( lA4papir == "4", nZnak * 2 -1, IF( lA4papir == "L4", nZnak * 1.4545 -1, nZnak ) )
+
+   RETURN Int( IF( nZnak < 161, 160, IF( nZnak < 193, 192, IF( nZnak < 275, 274, 320 ) ) ) / IF( lA4papir == "4", 2, IF( lA4papir == "L4", 1.4545, 1 ) ) )
+
+   RETURN
 
 
 
-function nPodStr(cPod,cStr)
-local nVrati:=0,nPod:=LEN(cPod)
- for i:=1 to LEN(cStr)+1-nPod
-  if SUBSTR(cStr,i,nPod)==cPod; nVrati++; endif
- next
-return nVrati
+FUNCTION nPodStr( cPod, cStr )
+
+   LOCAL nVrati := 0, nPod := Len( cPod )
+
+   FOR i := 1 TO Len( cStr ) + 1 -nPod
+      IF SubStr( cStr, i, nPod ) == cPod; nVrati++; ENDIF
+   NEXT
+
+   RETURN nVrati
 
 
 // ---------------------------------------------------
 // sredi kodove u matrici za prikaz na izvjestajim
 // ---------------------------------------------------
-static function sredi_crtice( arr, tip )
-local _i
-local _konv := fetch_metric( "proiz_fin_konverzija", my_user(), "N" )
+STATIC FUNCTION sredi_crtice( arr, tip )
+
+   LOCAL _i
+   LOCAL _konv := fetch_metric( "proiz_fin_konverzija", my_user(), "N" )
 
 #ifdef __PLATFORM__WINDOWS
 
-for _i := 1 to LEN( arr )
-    if _konv == "D"
-        arr[ _i ] := to_win1250_encoding( arr[ _i ] )
-    endif
-next
+   FOR _i := 1 TO Len( arr )
+      IF _konv == "D"
+         arr[ _i ] := to_win1250_encoding( arr[ _i ] )
+      ENDIF
+   NEXT
 
 #endif
 
-return
+   RETURN
 
 
 
-function PrekSaEsc()
-Msg("Priprema izvjestaja prekinuta tipkom <Esc>!",2)
-return .f.
+FUNCTION PrekSaEsc()
+
+   Msg( "Priprema izvjestaja prekinuta tipkom <Esc>!", 2 )
+
+   RETURN .F.
 
 
-function NaSljedStranu(lMozeL,lPrenos,cLM2,cOk,aPom,nKol,nStr,cLM,nDReda,nOdvoji,aPrSum,aKol,nSuma,cTek3,bZagl,cNaslov,aPrZag,cTek1,xTot)
-*{
-  local i, xPom, j, cPom
-    lMozeL:=.f.
-    if !lPrenos
-      i:=0; QOUT(cLM2+cOk[9])
-      AEVAL(aPom,{|x| ++i,QQOUT(REPLICATE(cOk[2],x[2])+IF(i<nKol,cOk[10],cOk[11]))})
-      if gPrinter!="R"
-        QOUT(); QOUT(); xPom:=STR(nStr,3)+". strana"
-        QOUT(cLM+PADC(xPom,nDReda-nOdvoji))
-      endif
-    else
-      i:=0; QOUT(cLM2+cOk[6])
-      AEVAL(aPom,{|x| ++i,;
-       QQOUT(REPLICATE(cOk[2],x[2])+IF(i<nKol,IF(!x[3].and.!aPom[i+1,3],cOk[10],cOk[7]),cOk[8]))})
-      for j:=1 to LEN(aPrSum)
-        i:=0; cPom:=""
-        AEVAL(aKol,{|x| ++i,;
-         cPom+=IF(x[3],STR(nSuma[aPrSum[j]][i],x[5],x[6]),SPACE(x[5]))+IF(i<nKol,IF(!aPom[i,3].and.!aPom[i+1,3]," ",cOk[5]),cOk[12])},(aPrSum[j]-1)*nKol+1,nKol)
-        xPom:=IF(j==LEN(aPrSum),cTek3+STR(nStr,3)+":",SPACE(LEN(cTek3)+4))
-        QOUT(cLM2+cOk[12]+STRTRAN(cPom,SPACE(LEN(xPom)),xPom,1,1))
-      next
-      i:=0; QOUT(cLM2+cOk[9])
-      AEVAL(aPom,{|x| ++i,;
-       QQOUT(REPLICATE(cOk[2],x[2])+IF(i<nKol,IF(!x[3].and.!aPom[i+1,3],cOk[2],cOk[10]),cOk[11]))})
-    endif
-    gPFF(); SETPRC(0,0)
-    if !(bZagl==nil)
-      EVAL(bZagl)
-    endif
-    if cNaslov!=nil
-      QOUT(cLM2+cOk[1]+REPLICATE(cOk[2],nDReda-nOdvoji-2)+cOk[4])
-      QOUT(cLM2+cOk[12]+SPACE(nDReda-nOdvoji-2)+cOk[12])
-      QOUT(cLM2+cOk[12]+PADC(ALLTRIM(cNaslov),nDReda-nOdvoji-2)+cOk[12])
-      QOUT(cLM2+cOk[12]+SPACE(nDReda-nOdvoji-2)+cOk[12])
-    endif
-    i:=0; QOUT(cLM2+IF(cNaslov!=nil,cOk[6],cOk[1]))
-    AEVAL(aPom,{|x| ++i,QQOUT(REPLICATE(cOk[2],x[2])+IF(i<nKol,cOk[3],IF(cNaslov!=nil,cOk[8],cOk[4])))})
-    for j:=1 to LEN(aPrZag)
-      i:=0; QOUT(cLM2+cOk[12])
-      AEVAL(aKol,{|x| ++i,QQOUT(PADC(x[1],x[5])+IF(i<nKol,cOk[5],cOk[12]))},(aPrZag[j]-1)*nKol+1,nKol)
-    next
-    if !lPrenos
-       i:=0; QOUT(cLM2+cOk[6])
-       AEVAL(aPom,{|x| ++i,QQOUT(REPLICATE(cOk[2],x[2])+IF(i<nKol,cOk[7],cOk[8]))})
-    else
-       i:=0; QOUT(cLM2+cOk[6])
-       AEVAL(aPom,{|x| ++i,;
-        QQOUT(REPLICATE(cOk[2],x[2])+IF(i<nKol,IF(!x[3].and.!aPom[i+1,3],cOk[10],cOk[7]),cOk[8]))})
-       for j:=1 to LEN(aPrSum)
-         i:=0; cPom:=""
-         AEVAL(aKol,{|x| ++i,;
-          cPom+=IF(x[3],STR(nSuma[aPrSum[j]][i],x[5],x[6]),SPACE(x[5]))+IF(i<nKol,IF(!aPom[i,3].and.!aPom[i+1,3]," ",cOk[5]),cOk[12])},(aPrSum[j]-1)*nKol+1,nKol)
-         xPom:=IF(j==LEN(aPrSum),cTek1+STR(nStr,3)+":",SPACE(LEN(cTek1)+4))
-         QOUT(cLM2+cOk[12]+STRTRAN(cPom,SPACE(LEN(xPom)),xPom,1,1))
-       next
-        i:=0; QOUT(cLM2+cOk[6])
-        AEVAL(aPom,{|x| ++i,;
-         QQOUT(REPLICATE(cOk[2],x[2])+IF(i<nKol,IF(!x[3].and.!aPom[i+1,3],IF(xTot[1],cOk[2],cOk[3]),cOk[7]),cOk[8]))})
-    endif
-    ++nStr
-return
-*}
+FUNCTION NaSljedStranu( lMozeL, lPrenos, cLM2, cOk, aPom, nKol, nStr, cLM, nDReda, nOdvoji, aPrSum, aKol, nSuma, cTek3, bZagl, cNaslov, aPrZag, cTek1, xTot )
 
-static function StStavku(aKol,xPom,i,nKol,cOk)
-*{
-if xPom==nil
-   QQOUT(SPACE(aKol[i,5]))
- elseif aKol[i,4]="N"
-   if VALTYPE(xPom)!="N" .or. ROUND(xPom,aKol[i,6])==0 .and. RIGHT(aKol[i,4],1)=="-"
-     QQOUT(SPACE(aKol[i,5]))
-   else
-     if gbFIznos!=nil
-       QQOUT( EVAL( gbFIznos,;
-                    xPom,;
-                    aKol[i,5],;
-                    aKol[i,6] );
-            )
-     else
-       QQOUT(STR(xPom,aKol[i,5],aKol[i,6]))
-     endif
-   endif
- elseif aKol[i,4]=="C"
-   QQOUT(PADR(xPom,aKol[i,5]))
- elseif aKol[i,4]=="D"
-   QQOUT(PADC(DTOC(xPom),aKol[i,5]))
- endif
- QQOUT(IF(i<nKol,cOk[5],cOk[12]))
+   // {
+   LOCAL i, xPom, j, cPom
+   lMozeL := .F.
+   IF !lPrenos
+      i := 0; QOut( cLM2 + cOk[ 9 ] )
+      AEval( aPom, {| x| ++i, QQOut( Replicate( cOk[ 2 ], x[ 2 ] ) + IF( i < nKol, cOk[ 10 ], cOk[ 11 ] ) ) } )
+      IF gPrinter != "R"
+         QOut(); QOut(); xPom := Str( nStr, 3 ) + ". strana"
+         QOut( cLM + PadC( xPom, nDReda - nOdvoji ) )
+      ENDIF
+   ELSE
+      i := 0; QOut( cLM2 + cOk[ 6 ] )
+      AEval( aPom, {| x| ++i, ;
+         QQOut( Replicate( cOk[ 2 ], x[ 2 ] ) + IF( i < nKol, IF( !x[ 3 ] .AND. !aPom[ i + 1, 3 ], cOk[ 10 ], cOk[ 7 ] ), cOk[ 8 ] ) ) } )
+      FOR j := 1 TO Len( aPrSum )
+         i := 0; cPom := ""
+         AEval( aKol, {| x| ++i, ;
+            cPom += IF( x[ 3 ], Str( nSuma[ aPrSum[ j ] ][ i ], x[ 5 ], x[ 6 ] ), Space( x[ 5 ] ) ) + IF( i < nKol, IF( !aPom[ i, 3 ] .AND. !aPom[ i + 1, 3 ], " ", cOk[ 5 ] ), cOk[ 12 ] ) }, ( aPrSum[ j ] -1 ) * nKol + 1, nKol )
+         xPom := IF( j == Len( aPrSum ), cTek3 + Str( nStr, 3 ) + ":", Space( Len( cTek3 ) + 4 ) )
+         QOut( cLM2 + cOk[ 12 ] + StrTran( cPom, Space( Len( xPom ) ), xPom, 1, 1 ) )
+      NEXT
+      i := 0; QOut( cLM2 + cOk[ 9 ] )
+      AEval( aPom, {| x| ++i, ;
+         QQOut( Replicate( cOk[ 2 ], x[ 2 ] ) + IF( i < nKol, IF( !x[ 3 ] .AND. !aPom[ i + 1, 3 ], cOk[ 2 ], cOk[ 10 ] ), cOk[ 11 ] ) ) } )
+   ENDIF
+   gPFF(); SetPRC( 0, 0 )
+   IF !( bZagl == nil )
+      Eval( bZagl )
+   ENDIF
+   IF cNaslov != nil
+      QOut( cLM2 + cOk[ 1 ] + Replicate( cOk[ 2 ], nDReda - nOdvoji - 2 ) + cOk[ 4 ] )
+      QOut( cLM2 + cOk[ 12 ] + Space( nDReda - nOdvoji - 2 ) + cOk[ 12 ] )
+      QOut( cLM2 + cOk[ 12 ] + PadC( AllTrim( cNaslov ), nDReda - nOdvoji - 2 ) + cOk[ 12 ] )
+      QOut( cLM2 + cOk[ 12 ] + Space( nDReda - nOdvoji - 2 ) + cOk[ 12 ] )
+   ENDIF
+   i := 0; QOut( cLM2 + IF( cNaslov != nil, cOk[ 6 ], cOk[ 1 ] ) )
+   AEval( aPom, {| x| ++i, QQOut( Replicate( cOk[ 2 ], x[ 2 ] ) + IF( i < nKol, cOk[ 3 ], IF( cNaslov != nil, cOk[ 8 ], cOk[ 4 ] ) ) ) } )
+   FOR j := 1 TO Len( aPrZag )
+      i := 0; QOut( cLM2 + cOk[ 12 ] )
+      AEval( aKol, {| x| ++i, QQOut( PadC( x[ 1 ], x[ 5 ] ) + IF( i < nKol, cOk[ 5 ], cOk[ 12 ] ) ) }, ( aPrZag[ j ] -1 ) * nKol + 1, nKol )
+   NEXT
+   IF !lPrenos
+      i := 0; QOut( cLM2 + cOk[ 6 ] )
+      AEval( aPom, {| x| ++i, QQOut( Replicate( cOk[ 2 ], x[ 2 ] ) + IF( i < nKol, cOk[ 7 ], cOk[ 8 ] ) ) } )
+   ELSE
+      i := 0; QOut( cLM2 + cOk[ 6 ] )
+      AEval( aPom, {| x| ++i, ;
+         QQOut( Replicate( cOk[ 2 ], x[ 2 ] ) + IF( i < nKol, IF( !x[ 3 ] .AND. !aPom[ i + 1, 3 ], cOk[ 10 ], cOk[ 7 ] ), cOk[ 8 ] ) ) } )
+      FOR j := 1 TO Len( aPrSum )
+         i := 0; cPom := ""
+         AEval( aKol, {| x| ++i, ;
+            cPom += IF( x[ 3 ], Str( nSuma[ aPrSum[ j ] ][ i ], x[ 5 ], x[ 6 ] ), Space( x[ 5 ] ) ) + IF( i < nKol, IF( !aPom[ i, 3 ] .AND. !aPom[ i + 1, 3 ], " ", cOk[ 5 ] ), cOk[ 12 ] ) }, ( aPrSum[ j ] -1 ) * nKol + 1, nKol )
+         xPom := IF( j == Len( aPrSum ), cTek1 + Str( nStr, 3 ) + ":", Space( Len( cTek1 ) + 4 ) )
+         QOut( cLM2 + cOk[ 12 ] + StrTran( cPom, Space( Len( xPom ) ), xPom, 1, 1 ) )
+      NEXT
+      i := 0; QOut( cLM2 + cOk[ 6 ] )
+      AEval( aPom, {| x| ++i, ;
+         QQOut( Replicate( cOk[ 2 ], x[ 2 ] ) + IF( i < nKol, IF( !x[ 3 ] .AND. !aPom[ i + 1, 3 ], IF( xTot[ 1 ], cOk[ 2 ], cOk[ 3 ] ), cOk[ 7 ] ), cOk[ 8 ] ) ) } )
+   ENDIF
+   ++nStr
 
-return
-*}
+   RETURN
+// }
 
-function DajRed(tekst,kljuc)
-*{
-local cVrati:="", nPom:=0, nPoc:=0
-  nPom := AT( kljuc , tekst )
-  nPoc := RAT( NRED , LEFT(tekst,nPom) )
-  nKraj:= AT(  NRED , SUBSTR(tekst,nPom) )
-  nPoc := IF(nPoc==0,1,nPoc+2)
-  nKraj:= IF(nKraj==0,LEN(tekst),nPom-1+nKraj+1)
-  cVrati:=SUBSTR(tekst,nPoc,nKraj-nPoc+1)
-return cVrati
-*}
+STATIC FUNCTION StStavku( aKol, xPom, i, nKol, cOk )
 
-function WhileEvent(nValue, nCnt)
-return
+   // {
+   IF xPom == nil
+      QQOut( Space( aKol[ i, 5 ] ) )
+   ELSEIF aKol[ i, 4 ] = "N"
+      IF ValType( xPom ) != "N" .OR. Round( xPom, aKol[ i, 6 ] ) == 0 .AND. Right( aKol[ i, 4 ], 1 ) == "-"
+         QQOut( Space( aKol[ i, 5 ] ) )
+      ELSE
+         IF gbFIznos != nil
+            QQOut( Eval( gbFIznos, ;
+               xPom, ;
+               aKol[ i, 5 ], ;
+               aKol[ i, 6 ] );
+               )
+         ELSE
+            QQOut( Str( xPom, aKol[ i, 5 ], aKol[ i, 6 ] ) )
+         ENDIF
+      ENDIF
+   ELSEIF aKol[ i, 4 ] == "C"
+      QQOut( PadR( xPom, aKol[ i, 5 ] ) )
+   ELSEIF aKol[ i, 4 ] == "D"
+      QQOut( PadC( DToC( xPom ), aKol[ i, 5 ] ) )
+   ENDIF
+   QQOut( IF( i < nKol, cOk[ 5 ], cOk[ 12 ] ) )
+
+   RETURN
+// }
+
+FUNCTION DajRed( tekst, kljuc )
+
+   // {
+   LOCAL cVrati := "", nPom := 0, nPoc := 0
+   nPom := At( kljuc, tekst )
+   nPoc := RAt( NRED, Left( tekst, nPom ) )
+   nKraj := At(  NRED, SubStr( tekst, nPom ) )
+   nPoc := IF( nPoc == 0, 1, nPoc + 2 )
+   nKraj := IF( nKraj == 0, Len( tekst ), nPom - 1 + nKraj + 1 )
+   cVrati := SubStr( tekst, nPoc, nKraj - nPoc + 1 )
+
+   RETURN cVrati
+// }
+
+FUNCTION WhileEvent( nValue, nCnt )
+   RETURN

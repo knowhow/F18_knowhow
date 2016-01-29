@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -14,99 +14,103 @@
 
 
 // ----------------------------------
-// pregled destinacije 
+// pregled destinacije
 // ----------------------------------
-function P_Destin(cId, cPartId, dx,dy)
-local GetList:={}
-private ImeKol:={}
-private Kol:={}
-private cLastOznaka:=" "
-private cIdTek:=cPartId
-private nArr:=SELECT()
+FUNCTION P_Destin( cId, cPartId, dx, dy )
 
-SELECT DEST
-SET ORDER TO TAG "ID"
+   LOCAL GetList := {}
+   PRIVATE ImeKol := {}
+   PRIVATE Kol := {}
+   PRIVATE cLastOznaka := " "
+   PRIVATE cIdTek := cPartId
+   PRIVATE nArr := Select()
 
-HSEEK cIdTek + cId
+   SELECT DEST
+   SET ORDER TO TAG "ID"
 
-SET SCOPE TO cIdTek
+   HSEEK cIdTek + cId
 
-ImeKol:={ ;
-          { "OZNAKA"  , {|| OZNAKA },  "OZNAKA"  },;
-          { "NAZIV"   , {|| NAZ    },  "NAZ"     },;
-          { "NAZIV2"  , {|| NAZ2   },  "NAZ2"    },;
-          { "PTT"     , {|| PTT    },  "PTT"     },;
-          { "MJESTO"  , {|| MJESTO },  "MJESTO"  },;
-          { "ADRESA"  , {|| ADRESA },  "ADRESA"  },;
-          { "TELEFON" , {|| TELEFON},  "TELEFON" },;
-          { "FAX"     , {|| FAX    },  "FAX"     },;
-          { "MOBTEL"  , {|| MOBTEL },  "MOBTEL"  };
-         }
-for i:=1 to len(ImeKol); AADD(Kol,i); next
+   SET SCOPE TO cIdTek
 
-PostojiSifra( F_DEST, "ID", 10, 70, "Destinacije za:" + cIdTek + "-" + Ocitaj( F_PARTN, cIdTek,"naz"), , , , {|Ch| EdDestBlok(Ch)},,,,.f.)
+   ImeKol := { ;
+      { "OZNAKA", {|| OZNAKA },  "OZNAKA"  }, ;
+      { "NAZIV", {|| NAZ    },  "NAZ"     }, ;
+      { "NAZIV2", {|| NAZ2   },  "NAZ2"    }, ;
+      { "PTT", {|| PTT    },  "PTT"     }, ;
+      { "MJESTO", {|| MJESTO },  "MJESTO"  }, ;
+      { "ADRESA", {|| ADRESA },  "ADRESA"  }, ;
+      { "TELEFON", {|| TELEFON },  "TELEFON" }, ;
+      { "FAX", {|| FAX    },  "FAX"     }, ;
+      { "MOBTEL", {|| MOBTEL },  "MOBTEL"  };
+      }
+   FOR i := 1 TO Len( ImeKol ); AAdd( Kol, i ); NEXT
 
-cId := cLastOznaka
-set scope to
-select (nArr)
-return .t.
+   PostojiSifra( F_DEST, "ID", 10, 70, "Destinacije za:" + cIdTek + "-" + Ocitaj( F_PARTN, cIdTek, "naz" ), , , , {| Ch| EdDestBlok( Ch ) },,,, .F. )
+
+   cId := cLastOznaka
+   SET scope TO
+   SELECT ( nArr )
+
+   RETURN .T.
 
 // --------------------------------
 // key handler
 // --------------------------------
-function EdDestBlok(Ch,cDest)
-local GetList:={}
-local nRet:=DE_CONT
-do case
-  case Ch==K_F2  .or. Ch==K_CTRL_N
+FUNCTION EdDestBlok( Ch, cDest )
 
-     sID       := cIdTek
-     sOZNAKA   := IF(Ch==K_CTRL_N,cDest,OZNAKA)
-     sNAZ      := IF(Ch==K_CTRL_N,Ocitaj(F_PARTN,cIdTek,"naz"),NAZ)
-     sNAZ2     := IF(Ch==K_CTRL_N,Ocitaj(F_PARTN,cIdTek,"naz2"),NAZ2)
-     sPTT      := PTT
-     sMJESTO   := MJESTO
-     sADRESA   := ADRESA
-     sTELEFON  := TELEFON
-     sFAX      := FAX
-     sMOBTEL   := MOBTEL
+   LOCAL GetList := {}
+   LOCAL nRet := DE_CONT
 
-     Box(, 11,75,.f.)
-       @ m_x+ 2,m_y+2 SAY "Oznaka destinacije" GET sOZNAKA   PICT "@!"
-       @ m_x+ 3,m_y+2 SAY "NAZIV             " GET sNAZ
-       @ m_x+ 4,m_y+2 SAY "NAZIV2            " GET sNAZ2
-       @ m_x+ 5,m_y+2 SAY "PTT broj          " GET sPTT      PICT "@!"
-       @ m_x+ 6,m_y+2 SAY "Mjesto            " GET sMJESTO   PICT "@!"
-       @ m_x+ 7,m_y+2 SAY "Adresa            " GET sADRESA   PICT "@!"
-       @ m_x+ 8,m_y+2 SAY "Telefon           " GET sTELEFON  PICT "@!"
-       @ m_x+ 9,m_y+2 SAY "Fax               " GET sFAX      PICT "@!"
-       @ m_x+10,m_y+2 SAY "Mobitel           " GET sMOBTEL   PICT "@!"
-       read
-     BoxC()
-     if Ch==K_CTRL_N .and. lastkey()<>K_ESC
-        append blank
-        replace id with sid
-     endif
-     if lastkey()<>K_ESC
-       replace OZNAKA   WITH sOZNAKA  ,;
-               NAZ      WITH sNAZ     ,;
-               NAZ2     WITH sNAZ2    ,;
-               PTT      WITH sPTT     ,;
-               MJESTO   WITH sMJESTO  ,;
-               ADRESA   WITH sADRESA  ,;
-               TELEFON  WITH sTELEFON ,;
-               FAX      WITH sFAX     ,;
-               MOBTEL   WITH sMOBTEL
-     endif
-     nRet:=DE_REFRESH
-  case Ch==K_CTRL_T
-     if Pitanje(,"Izbrisati stavku ?","N")=="D"
-        delete
-     endif
-     nRet:=DE_DEL
-  case Ch==K_ESC .or. Ch==K_ENTER
-     cLastOznaka:=DEST->OZNAKA
+   DO CASE
+   CASE Ch == K_F2  .OR. Ch == K_CTRL_N
 
-endcase
-return nRet
+      sID       := cIdTek
+      sOZNAKA   := IF( Ch == K_CTRL_N, cDest, OZNAKA )
+      sNAZ      := IF( Ch == K_CTRL_N, Ocitaj( F_PARTN, cIdTek, "naz" ), NAZ )
+      sNAZ2     := IF( Ch == K_CTRL_N, Ocitaj( F_PARTN, cIdTek, "naz2" ), NAZ2 )
+      sPTT      := PTT
+      sMJESTO   := MJESTO
+      sADRESA   := ADRESA
+      sTELEFON  := TELEFON
+      sFAX      := FAX
+      sMOBTEL   := MOBTEL
 
+      Box(, 11, 75, .F. )
+      @ m_x + 2, m_y + 2 SAY "Oznaka destinacije" GET sOZNAKA   PICT "@!"
+      @ m_x + 3, m_y + 2 SAY "NAZIV             " GET sNAZ
+      @ m_x + 4, m_y + 2 SAY "NAZIV2            " GET sNAZ2
+      @ m_x + 5, m_y + 2 SAY "PTT broj          " GET sPTT      PICT "@!"
+      @ m_x + 6, m_y + 2 SAY "Mjesto            " GET sMJESTO   PICT "@!"
+      @ m_x + 7, m_y + 2 SAY "Adresa            " GET sADRESA   PICT "@!"
+      @ m_x + 8, m_y + 2 SAY "Telefon           " GET sTELEFON  PICT "@!"
+      @ m_x + 9, m_y + 2 SAY "Fax               " GET sFAX      PICT "@!"
+      @ m_x + 10, m_y + 2 SAY "Mobitel           " GET sMOBTEL   PICT "@!"
+      READ
+      BoxC()
+      IF Ch == K_CTRL_N .AND. LastKey() <> K_ESC
+         APPEND BLANK
+         REPLACE id WITH sid
+      ENDIF
+      IF LastKey() <> K_ESC
+         REPLACE OZNAKA   WITH sOZNAKA,;
+            NAZ      WITH sNAZ,;
+            NAZ2     WITH sNAZ2,;
+            PTT      WITH sPTT,;
+            MJESTO   WITH sMJESTO,;
+            ADRESA   WITH sADRESA,;
+            TELEFON  WITH sTELEFON,;
+            FAX      WITH sFAX,;
+            MOBTEL   WITH sMOBTEL
+      ENDIF
+      nRet := DE_REFRESH
+   CASE Ch == K_CTRL_T
+      IF Pitanje(, "Izbrisati stavku ?", "N" ) == "D"
+         DELETE
+      ENDIF
+      nRet := DE_DEL
+   CASE Ch == K_ESC .OR. Ch == K_ENTER
+      cLastOznaka := DEST->OZNAKA
+
+   ENDCASE
+
+   RETURN nRet

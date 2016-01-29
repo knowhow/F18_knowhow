@@ -48,7 +48,7 @@ FUNCTION PostojiSifra( nDbf, nNtx, nVisina, nSirina, cNaslov, cID, dx, dy,  bBlo
 
    SELECT ( nDbf )
 
-   IF USED() .AND. (rddName() ==  "SQLMIX")
+   IF Used() .AND. ( rddName() ==  "SQLMIX" )
       PopSifV()
       PopWa()
       RETURN p_sifra( nDbf, nNtx, nVisina, nSirina, cNaslov, @cID, dx, dy,  bBlok, aPoredak, bPodvuci, aZabrane, invert, aZabIsp )
@@ -84,8 +84,7 @@ FUNCTION PostojiSifra( nDbf, nNtx, nVisina, nSirina, cNaslov, cID, dx, dy,  bBlo
    ENDIF
 
    IF ( fPonaz .AND. ( cNazSrch == "" .OR. !Trim( cNazSrch ) == Trim( naz ) ) ) ;
-         .OR. cId == NIL ;
-         .OR. ( !Found() .AND. cNaslov <> NIL ) ;
+         .OR. cId == NIL .OR. ( !Found() .AND. cNaslov <> NIL ) ;
          .OR. ( cNaslov <> NIL .AND. Left( cNaslov, 1 ) = "#" )
 
       lPrviPoziv := .T.
@@ -369,8 +368,8 @@ FUNCTION set_mc_imekol( nDBF )
    IF nSeek > 0
 
       bPom := {|| ;
-         PadR( AllTrim( &cFldID ) +  IIF( !Empty( &cFldMatchCode ), ;
-         IIF( Len( AllTrim( &cFldMatchCode ) ) > 4, ;
+         PadR( AllTrim( &cFldID ) +  iif( !Empty( &cFldMatchCode ), ;
+         iif( Len( AllTrim( &cFldMatchCode ) ) > 4, ;
          "/" + Left( AllTrim( &cFldMatchCode ), 2 ) + "..", ;
          "/" + Left( AllTrim( &cFldMatchCode ), 4 ) ), ;
          "" ), ;
@@ -495,17 +494,17 @@ STATIC FUNCTION EdSif( nDbf, cNaslov, bBlok, aZabrane, aZabIsp )
       RETURN DE_CONT
    ENDIF
 
-   #ifndef TEST
+#ifndef TEST
 
-      IF ( Ch == K_CTRL_N .OR. Ch == K_CTRL_A .OR. Ch == K_F2 .OR. ;
+   IF ( Ch == K_CTRL_N .OR. Ch == K_CTRL_A .OR. Ch == K_F2 .OR. ;
          Ch == K_CTRL_T .OR. Ch == K_F4 .OR. Ch == K_CTRL_F9 .OR. Ch == K_F10 ) .AND. ;
          ( !ImaPravoPristupa( goModul:oDatabase:cName, "SIF", "EDSIF" ) )
 
-          RETURN DE_CONT
+      RETURN DE_CONT
 
-      ENDIF
+   ENDIF
 
-   #endif
+#endif
 
    DO CASE
 
@@ -719,7 +718,7 @@ FUNCTION EditSifItem( Ch, nOrder, aZabIsp, lNovi )
                   IF nKolona = 1
                      ++nTekRed
                   ENDIF
-                  @ m_x + nTekRed, m_y + nKolona SAY PadL( AllTrim( ImeKol[ i, 1 ] ),15 )
+                  @ m_x + nTekRed, m_y + nKolona SAY PadL( AllTrim( ImeKol[ i, 1 ] ), 15 )
                   @ m_x + nTekRed, Col() + 1 SAY Eval( ImeKol[ i, 2 ] )
                ELSE
                   ++nNestampati
@@ -946,8 +945,6 @@ STATIC FUNCTION add_match_code( ImeKol, Kol )
       ENDIF
 
    ENDIF
-
-
 
 FUNCTION SetSifVars()
 
@@ -1312,7 +1309,7 @@ FUNCTION UslovSif()
 
    SkratiAZaD( @aStruct )
 
-   Box( "", IIF( Len( aStruct ) > 22, 22, Len( aStruct ) ), 67, .F.,"", "Postavi kriterije za pretrazivanje" )
+   Box( "", iif( Len( aStruct ) > 22, 22, Len( aStruct ) ), 67, .F., "", "Postavi kriterije za pretrazivanje" )
 
    PRIVATE Getlist := {}
 
@@ -1413,24 +1410,24 @@ FUNCTION P_Sifk( cId, dx, dy )
    Kol := {}
    O_SIFK
    O_SIFV
-   ImeKol := { { PadR( "Id", 15 ),      {|| ToStrU(id) }, "id"  },;
-      { PadR( "Naz", 25 ),     {|| ToStrU( naz ) }, "naz" },;
-      { PadR( "Sort", 4 ),     {|| sort }, "sort" },;
-      { PadR( "Oznaka", 4 ),   {|| ToStrU( oznaka ) }, "oznaka" },;
-      { PadR( "Veza", 4 ),     {|| veza }, "veza" },;
-      { PadR( "Izvor", 15 ),   {|| izvor }, "izvor" },;
-      { PadR( "Uslov", 30 ),   {|| PadR( uslov, 30 ) }, "uslov" },;
-      { PadR( "Tip", 3 ),      {|| tip }, "tip" },;
-      { PadR( "Unique", 3 ),   {|| f_unique }, "f_unique", NIL, NIL, NIL, NIL, NIL, NIL, 20 },;
-      { PadR( "Duz", 3 ),      {|| duzina }, "duzina" },;
-      { PadR( "Dec", 3 ),      {|| f_decimal }, "f_decimal" },;
-      { PadR( "K Validacija", 50 ), {|| PadR( KValid, 50 ) }, "KValid" },;
-      { PadR( "K When", 50 ),  {|| KWhen }, "KWhen" },;
-      { PadR( "UBrowsu", 4 ),  {|| UBrowsu }, "UBrowsu" },;
-      { PadR( "EdKolona", 4 ), {|| EdKolona }, "EdKolona" },;
-      { PadR( "K1", 4 ),       {|| k1 }, "k1" },;
-      { PadR( "K2", 4 ),       {|| k2 }, "k2" },;
-      { PadR( "K3", 4 ),       {|| k3 }, "k3" },;
+   ImeKol := { { PadR( "Id", 15 ),      {|| ToStrU( id ) }, "id"  }, ;
+      { PadR( "Naz", 25 ),     {|| ToStrU( naz ) }, "naz" }, ;
+      { PadR( "Sort", 4 ),     {|| sort }, "sort" }, ;
+      { PadR( "Oznaka", 4 ),   {|| ToStrU( oznaka ) }, "oznaka" }, ;
+      { PadR( "Veza", 4 ),     {|| veza }, "veza" }, ;
+      { PadR( "Izvor", 15 ),   {|| izvor }, "izvor" }, ;
+      { PadR( "Uslov", 30 ),   {|| PadR( uslov, 30 ) }, "uslov" }, ;
+      { PadR( "Tip", 3 ),      {|| tip }, "tip" }, ;
+      { PadR( "Unique", 3 ),   {|| f_unique }, "f_unique", NIL, NIL, NIL, NIL, NIL, NIL, 20 }, ;
+      { PadR( "Duz", 3 ),      {|| duzina }, "duzina" }, ;
+      { PadR( "Dec", 3 ),      {|| f_decimal }, "f_decimal" }, ;
+      { PadR( "K Validacija", 50 ), {|| PadR( KValid, 50 ) }, "KValid" }, ;
+      { PadR( "K When", 50 ),  {|| KWhen }, "KWhen" }, ;
+      { PadR( "UBrowsu", 4 ),  {|| UBrowsu }, "UBrowsu" }, ;
+      { PadR( "EdKolona", 4 ), {|| EdKolona }, "EdKolona" }, ;
+      { PadR( "K1", 4 ),       {|| k1 }, "k1" }, ;
+      { PadR( "K2", 4 ),       {|| k2 }, "k2" }, ;
+      { PadR( "K3", 4 ),       {|| k3 }, "k3" }, ;
       { PadR( "K4", 4 ),       {|| k4 }, "k4" }             ;
       }
 
@@ -1543,5 +1540,3 @@ FUNCTION SeekBarKod( cId, cIdBk, lNFGR )
    ENDIF
 
    RETURN
-
-

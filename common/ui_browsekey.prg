@@ -1,184 +1,183 @@
-/* 
- * This file is part of the bring.out knowhow ERP, a free and open source 
+/*
+ * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
  * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
 
 #include "f18.ch"
-#include "dbstruct.ch"
-#include "error.ch"
-#include "setcurs.ch"
-#include "f18_separator.ch"
+
 
 // ------------------------------------------------------
 // ------------------------------------------------------
-function BrowseKey(y1, x1, y2, x2, ImeKol, bfunk, uslov, traz, brkol, dx, dy, bPodvuci)
+FUNCTION BrowseKey( y1, x1, y2, x2, ImeKol, bfunk, uslov, traz, brkol, dx, dy, bPodvuci )
 
-static poziv:=0
-local lk, REKORD,TCol
-local nCurRec:=1
-local nRecCnt:=0
+   STATIC poziv := 0
+   LOCAL lk, REKORD, TCol
+   LOCAL nCurRec := 1
+   LOCAL nRecCnt := 0
 
-Private TB
-private usl
+   PRIVATE TB
+   PRIVATE usl
 
-usl='USL'+alltrim(str(POZIV,2))
-POZIV++
-&usl=uslov
-TB:=tbrowsedb(y1,x1,y2,x2)
+   usl = 'USL' + AllTrim( Str( POZIV, 2 ) )
+   POZIV++
+   &usl = uslov
+   TB := TBrowseDB( y1, x1, y2, x2 )
 
-TB:headsep := BROWSE_HEAD_SEP
-TB:colsep := BROWSE_COL_SEP
+   TB:headsep := BROWSE_HEAD_SEP
+   TB:colsep := BROWSE_COL_SEP
 
-if eof()
-   skip -1
-endif
+   IF Eof()
+      SKIP -1
+   ENDIF
 
-seek traz
-do while  &(&usl)
-   nRecCnt ++
-   skip
-enddo
+   SEEK traz
+   DO while  &( &usl )
+      nRecCnt ++
+      SKIP
+   ENDDO
 
-seek traz          
-if !found()
-   nCurRec:=0
-endif
+   SEEK traz
+   IF !Found()
+      nCurRec := 0
+   ENDIF
 
-for i:=1 to len(ImeKol)
-    TCol:=tbcolumnnew(ImeKol[i,1],Imekol[i,2])
-    if bPodvuci<>NIL
-        TCol:colorBlock:={|| iif(EVAL(bPodvuci),{5,2},{1,2}) }
-    endif
-    TB:addcolumn(TCol)
-next
+   FOR i := 1 TO Len( ImeKol )
+      TCol := TBColumnNew( ImeKol[ i, 1 ], Imekol[ i, 2 ] )
+      IF bPodvuci <> NIL
+         TCol:colorBlock := {|| iif( Eval( bPodvuci ), { 5, 2 }, { 1, 2 } ) }
+      ENDIF
+      TB:addcolumn( TCol )
+   NEXT
 
-if !empty(brkol) .and. valtype(brkol)='N'
-  TB:freeze :=brkol
-endif
+   IF !Empty( brkol ) .AND. ValType( brkol ) = 'N'
+      TB:freeze := brkol
+   ENDIF
 
-TB:skipblock:={|x| korisnik(x, traz, dx, dy, @nCurRec, @nRecCnt)}
+   TB:skipblock := {| x| korisnik( x, traz, dx, dy, @nCurRec, @nRecCnt ) }
 
-EVAL(bfunk,0)
+   Eval( bfunk, 0 )
 
-do while .t.
-   if dx<>NIL .and. dy<>NIL
-     @ m_x+dx, m_y+dy say STR(nRecCnt,4)
-   endif
+   DO WHILE .T.
+      IF dx <> NIL .AND. dy <> NIL
+         @ m_x + dx, m_y + dy SAY Str( nRecCnt, 4 )
+      ENDIF
 
-   do while !Tb:stable .and. ((lk := INKEY()) == 0)
-       Tb:stabilize()
-   enddo
+      DO WHILE !Tb:stable .AND. ( ( lk := Inkey() ) == 0 )
+         Tb:stabilize()
+      ENDDO
 
-   if TB:stable .AND. (lk := INKEY()) == 0
+      IF TB:stable .AND. ( lk := Inkey() ) == 0
 
-      if dx<>NIL .and. dy<>NIL
-         @ m_x + dx, m_y + dy say STR(nRecCnt,4)
-      endif
+         IF dx <> NIL .AND. dy <> NIL
+            @ m_x + dx, m_y + dy SAY Str( nRecCnt, 4 )
+         ENDIF
 
-      lk := inkey(0)
-   endif
-
-
+         lk := Inkey( 0 )
+      ENDIF
 
 
-   if lk==K_ESC
-      POZIV--
-   exit
 
-   elseif lk=K_DOWN
-          TB:down()
-   elseif lk=K_UP
-          TB:up()
-   elseif lk=K_RIGHT
-          TB:right()
-   elseif lk=K_LEFT
-          TB:left()
-   elseif lk=K_END
-          TB:end()
-   elseif lk=K_HOME
-          TB:home()
-   elseif lk=K_PGDN
-          TB:pagedown()
-   elseif lk=K_PGUP
-          TB:pageup()
-   elseif lk=26
-           TB:panleft()
-   elseif lk=2
-           TB:panright()
-   else
-      povrat:=EVAL(bFunk,lk)
-      if povrat==0
+
+      IF lk == K_ESC
          POZIV--
-         exit
-      elseif povrat==DE_ADD
-         nRecCnt++
-         TB:refreshall()
-      elseif povrat==DE_DEL
-         if nRecCnt>0
+         EXIT
+
+      ELSEIF lk = K_DOWN
+         TB:down()
+      ELSEIF lk = K_UP
+         TB:up()
+      ELSEIF lk = K_RIGHT
+         TB:Right()
+      ELSEIF lk = K_LEFT
+         TB:Left()
+      ELSEIF lk = K_END
+         TB:end()
+      ELSEIF lk = K_HOME
+         TB:home()
+      ELSEIF lk = K_PGDN
+         TB:pagedown()
+      ELSEIF lk = K_PGUP
+         TB:pageup()
+      ELSEIF lk = 26
+         TB:panleft()
+      ELSEIF lk = 2
+         TB:panright()
+      ELSE
+         povrat := Eval( bFunk, lk )
+         IF povrat == 0
+            POZIV--
+            EXIT
+         ELSEIF povrat == DE_ADD
+            nRecCnt++
+            TB:refreshall()
+         ELSEIF povrat == DE_DEL
+            IF nRecCnt > 0
                nRecCnt--
-         endif
-         TB:refreshall()
-      elseif povrat==DE_REFRESH
-         TB:refreshall()
-      endif
-   endif
+            ENDIF
+            TB:refreshall()
+         ELSEIF povrat == DE_REFRESH
+            TB:refreshall()
+         ENDIF
+      ENDIF
 
-enddo
-return (nil)
+   ENDDO
+
+   RETURN ( nil )
 
 
 // ------------------------------------------------------------
 // ------------------------------------------------------------
-static function Korisnik(nRequest, traz, dx, dy, nCurRec, nRecCnt)
+STATIC FUNCTION Korisnik( nRequest, traz, dx, dy, nCurRec, nRecCnt )
 
-local nCount
-nCount := 0
-if LastRec() != 0
-   if .not.&(&usl)
-      seek traz
-      if .not. &(&usl)
-         go bottom
-         skip 1
-      endif
-      nRequest=0
-   endif
-   if nRequest>0
-      do while nCount<nRequest .and. &(&usl)
-         skip 1
-         nCurRec++
-         if Eof() .or. ! &(&usl)
-            skip -1
-            nCurRec--
-            exit
-         endif
-         nCount++
-      enddo
-   elseif nRequest<0
-      do while nCount>nRequest .and. &(&usl)
-         skip -1
-         nCurRec--
-         if ( Bof() )
+   LOCAL nCount
+
+   nCount := 0
+   IF LastRec() != 0
+      IF !&( &usl )
+         SEEK traz
+         IF ! &( &usl )
+            GO BOTTOM
+            SKIP 1
+         ENDIF
+         nRequest = 0
+      ENDIF
+      IF nRequest > 0
+         DO WHILE nCount < nRequest .AND. &( &usl )
+            SKIP 1
             nCurRec++
-            exit
-         endif
-         nCount--
-      enddo
-      if ! &(&usl)
-         skip 1
-         nCurRec++
-         nCount++
-      endif
-   endif
-endif
-if dx<>NIL .and. dy<>NIL
-  //  @ m_x+dx,m_y+dy say STR(nCurRec,4)+"/"+STR(nRecCnt,4)
-  @ m_x+dx,m_y+dy say STR(nRecCnt,4)
-endif
-return (nCount)
+            IF Eof() .OR. ! &( &usl )
+               SKIP -1
+               nCurRec--
+               EXIT
+            ENDIF
+            nCount++
+         ENDDO
+      ELSEIF nRequest < 0
+         DO WHILE nCount > nRequest .AND. &( &usl )
+            SKIP -1
+            nCurRec--
+            IF ( Bof() )
+               nCurRec++
+               EXIT
+            ENDIF
+            nCount--
+         ENDDO
+         IF ! &( &usl )
+            SKIP 1
+            nCurRec++
+            nCount++
+         ENDIF
+      ENDIF
+   ENDIF
+   IF dx <> NIL .AND. dy <> NIL
+      // @ m_x+dx,m_y+dy say STR(nCurRec,4)+"/"+STR(nRecCnt,4)
+      @ m_x + dx, m_y + dy SAY Str( nRecCnt, 4 )
+   ENDIF
 
+   RETURN ( nCount )

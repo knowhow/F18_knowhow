@@ -11,7 +11,6 @@
 
 #include "f18.ch"
 
-
 FUNCTION f18_ime_dbf( xTableRec )
 
    LOCAL _pos

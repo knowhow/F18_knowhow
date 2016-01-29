@@ -28,9 +28,8 @@ STATIC aWaStack := {}
 
 FUNCTION PushWA()
 
-   LOCAL hRet := hb_hash()
+   LOCAL hRet := hb_Hash()
    LOCAL cFilter, lSql
-
 
    IF Used()
 
@@ -46,17 +45,19 @@ FUNCTION PushWA()
       hRet[ 'filter' ] := cFilter
       hRet[ 'recno' ] := RecNo()
       hRet[ 'sql' ] := lSql
-      StackPush( aWAStack, hRet )
+
    ELSE
       hRet[ 'wa' ] := NIL
       hRet[ 'index' ] := NIL
       hRet[ 'filter' ] := NIL
       hRet[ 'recno' ] := -1
       hRet[ 'sql' ] := .F.
-      StackPush( aWAStack, hRet )
+
    ENDIF
 
-   RETURN
+   StackPush( aWAStack, hRet )
+
+   RETURN hRet
 
 
 /*
@@ -73,7 +74,7 @@ FUNCTION PopWA( nWANeDiraj )
    LOCAL i
 
    IF nWaNeDiraj == NIL
-     nWaNeDiraj := -1
+      nWaNeDiraj := -1
    ENDIF
 
    hRet := StackPop( aWaStack )
@@ -82,17 +83,17 @@ FUNCTION PopWA( nWANeDiraj )
    IF hRet[ 'wa' ] <> NIL  .AND. ( hRet[ 'wa' ] != nWaNeDiraj )
 
       // select
-      SELECT( hRet[ 'wa' ] )
+      Select( hRet[ 'wa' ] )
 
-      IF USED()
+      IF Used()
          ordSetFocus( hRet[ 'index' ] )
 
          IF !Empty( hRet[ 'filter' ] )
-             SET FILTER to &( hRet[ 'filter' ] )
+            SET FILTER to &( hRet[ 'filter' ] )
          ELSE
             IF !Empty( dbFilter() )
-                SET FILTER TO
-             ENDIF
+               SET FILTER TO
+            ENDIF
          ENDIF
 
          GO hRet[ 'recno' ]
@@ -105,7 +106,7 @@ FUNCTION PopWA( nWANeDiraj )
 
 FUNCTION index_tag_num( name )
 
-   IF !USED()
+   IF !Used()
       RETURN -1
    ENDIF
 
@@ -124,9 +125,10 @@ FUNCTION index_tag_num( name )
 /*
      dbf lock / unlock
 */
+
 FUNCTION my_flock()
 
-   IF USED() .AND.  ( rddName() != "SQLMIX" )
+   IF Used() .AND.  ( rddName() != "SQLMIX" )
       RETURN FLock()
    ELSE
       RETURN .T.
@@ -134,7 +136,7 @@ FUNCTION my_flock()
 
 FUNCTION my_rlock()
 
-   IF USED() .AND. ( rddName() != "SQLMIX" )
+   IF Used() .AND. ( rddName() != "SQLMIX" )
       RETURN RLock()
    ELSE
       RETURN .T.
@@ -142,7 +144,7 @@ FUNCTION my_rlock()
 
 FUNCTION my_unlock()
 
-   IF USED() .AND. ( rddName() != "SQLMIX" )
+   IF Used() .AND. ( rddName() != "SQLMIX" )
       RETURN dbUnlock()
    ELSE
       RETURN .T.
@@ -153,6 +155,7 @@ FUNCTION my_unlock()
    provjeri da li je potrebno pakovati dbfcdx tabelu
    - da li se nakupilo deleted zapisa
 */
+
 FUNCTION hocu_li_pakovati_dbf( cnt, del )
 
    LOCAL _pack_alg

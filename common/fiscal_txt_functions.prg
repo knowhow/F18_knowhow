@@ -26,7 +26,7 @@ FUNCTION _txt_copy( cFile, cDest )
 
    RESTORE SCREEN FROM cScreen
 
-   RETURN
+   RETURN .T.
 
 
 // -------------------------------------------------
@@ -41,7 +41,7 @@ FUNCTION _g_f_struct( cFileName )
    DO CASE
 
    CASE cFileName == "RACUN_TXT"
-		
+
       // fiskalni racun broj (1-5)
       AAdd( aRet, { "N", 5, 0 } )
       // tip racuna (6)
@@ -79,7 +79,7 @@ FUNCTION _g_f_struct( cFileName )
       AAdd( aRet, { "N", 12, 2 } )
 
    CASE cFileName == "RACUN_MEM"
-		
+
       // slobodan red teksta
       AAdd( aRet, { "C", 32, 0 } )
 
@@ -97,7 +97,7 @@ FUNCTION _g_f_struct( cFileName )
       AAdd( aRet, { "N", 5, 0 } )
       // broj reklamnog racuna (26-31)
       AAdd( aRet, { "N", 5, 0 } )
-	
+
    CASE cFileName == "NIVELACIJA"
 
       // redni broj nivelacije (1-5)
@@ -116,7 +116,7 @@ FUNCTION _g_f_struct( cFileName )
       AAdd( aRet, { "N", 12, 2 } )
 
    CASE cFileName == "POREZI"
-	
+
       // sifra stope (1)
       AAdd( aRet, { "N", 1, 0 } )
       // naziv poreske stope u pravilniku (2-17)
@@ -125,7 +125,7 @@ FUNCTION _g_f_struct( cFileName )
       AAdd( aRet, { "N", 5, 2 } )
 
    CASE cFileName == "ROBA"
-		
+
       // sifra robe (1-5)
       AAdd( aRet, { "N", 5, 0 } )
       // naziv robe (6-37)
@@ -138,16 +138,16 @@ FUNCTION _g_f_struct( cFileName )
       AAdd( aRet, { "N", 1, 0 } )
       // cijena robe (55-67)
       AAdd( aRet, { "N", 12, 2 } )
-	
+
    CASE cFileName == "ROBAGRUPE"
-	
+
       // sifra  (1-2)
       AAdd( aRet, { "N", 2, 0 } )
       // naziv  (3-19)
       AAdd( aRet, { "C", 17, 0 } )
 
    CASE cFileName == "PARTNERI"
-	
+
       // sifra  (1-5)
       AAdd( aRet, { "N", 5, 0 } )
       // naziv  (6-36)
@@ -162,7 +162,7 @@ FUNCTION _g_f_struct( cFileName )
       AAdd( aRet, { "C", 21, 2 } )
 
    CASE cFileName == "OPERATERI"
-		
+
       // sifra operatera (1-2)
       AAdd( aRet, { "N", 2, 0 } )
       // naziv operatera (3-18)
@@ -171,7 +171,7 @@ FUNCTION _g_f_struct( cFileName )
       AAdd( aRet, { "C", 20, 0 } )
 
    CASE cFileName == "OBJEKTI"
-		
+
       // sifra  (1-5)
       AAdd( aRet, { "N", 5, 0 } )
       // naziv  (6-36)
@@ -186,10 +186,10 @@ FUNCTION _g_f_struct( cFileName )
       AAdd( aRet, { "C", 31, 0 } )
 
    CASE cFileName == "POS_RN"
-		
+
       // pos racun - stavke
       AAdd( aRet, { "C", 100, 0 } )
-		
+
    ENDCASE
 
    RETURN aRet
@@ -228,13 +228,13 @@ FUNCTION _a_to_file( cFilePath, cFileName, aStruct, aData, ;
 
    // prodji kroz podatke u aData
    FOR i := 1 TO Len( aData )
-	
+
       cLine := ""
 
       // prodji kroz strukturu jednog zapisa u matrici
       // i napuni liniju...
       FOR ii := 1 TO Len( aStruct )
-		
+
          cType := aStruct[ ii, 1 ]
          nLen := aStruct[ ii, 2 ]
          nDec := aStruct[ ii, 3 ]
@@ -242,13 +242,13 @@ FUNCTION _a_to_file( cFilePath, cFileName, aStruct, aData, ;
          IF cType == "C"
             xVal := PadR( aData[ i, ii ], nLen )
          ELSEIF cType == "N"
-			
+
             IF nDec > 0
                xVal := AllTrim( Str( aData[ i, ii ], nLen, nDec ) )
             ELSE
                xVal := AllTrim( Str( aData[ i, ii ] ) )
             ENDIF
-		
+
             IF lTrim == .F.
                xVal := PadL( xVal, nLen, cNumFill )
             ENDIF
@@ -263,7 +263,7 @@ FUNCTION _a_to_file( cFilePath, cFileName, aStruct, aData, ;
          IF lTrim == .T.
             xVal := AllTrim( xVal )
          ENDIF
-		
+
          IF ii = Len( aStruct ) .AND. lLastSep == .F.
             cLine += xVal
          ELSE
@@ -274,7 +274,7 @@ FUNCTION _a_to_file( cFilePath, cFileName, aStruct, aData, ;
 
       ?? cLine
       ?
-	
+
       ++ nCount
 
    NEXT
@@ -330,7 +330,7 @@ FUNCTION _dbf_to_file( cFilePath, cFileName, aStruct, cDBF, ;
       // prodji kroz strukturu jednog zapisa u matrici
       // i napuni liniju...
       FOR ii := 1 TO Len( aStruct )
-		
+
          cType := aStruct[ ii, 1 ]
          nLen := aStruct[ ii, 2 ]
          nDec := aStruct[ ii, 3 ]
@@ -338,13 +338,13 @@ FUNCTION _dbf_to_file( cFilePath, cFileName, aStruct, cDBF, ;
          IF cType == "C"
             xVal := PadR( &( exp->( FieldName( ii ) ) ), nLen )
          ELSEIF cType == "N"
-			
+
             IF nDec > 0
                xVal := AllTrim( Str( &( exp->( FieldName( ii ) ) ), nLen, nDec ) )
             ELSE
                xVal := AllTrim( Str( &( exp->( FieldName( ii ) ) ) ) )
             ENDIF
-		
+
             IF lTrim == .F.
                xVal := PadL( xVal, nLen, cNumFill )
             ENDIF
@@ -359,7 +359,7 @@ FUNCTION _dbf_to_file( cFilePath, cFileName, aStruct, cDBF, ;
          IF lTrim == .T.
             xVal := AllTrim( xVal )
          ENDIF
-		
+
          IF ii = Len( aStruct ) .AND. lLastSep == .F.
             cLine += xVal
          ELSE
@@ -370,7 +370,7 @@ FUNCTION _dbf_to_file( cFilePath, cFileName, aStruct, cDBF, ;
 
       ?? to_win1250_encoding( hb_StrToUTF8( cLine ), .T. )
       ?
-	
+
       ++ nCount
 
       SKIP

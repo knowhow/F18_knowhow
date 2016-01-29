@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out knowhow ERP, a free and open source 
+/*
+ * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning suite,
  * Copyright (c) 1994-2011 by bring.out d.o.o Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including knowhow ERP specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -15,1079 +15,1097 @@
 // ------------------------------
 // parametri generacije ugovora
 // ------------------------------
-static function g_ug_params(dDatObr, dDatGen, dDatVal, dDatLUpl, cKtoDug, cKtoPot, cOpis, cIdArt, nGenCh, cDestin, cDatLFakt, dLFakt, cAutoAzur )
-local dPom
-local nX := 2
-local nBoxLen := 20
+STATIC FUNCTION g_ug_params( dDatObr, dDatGen, dDatVal, dDatLUpl, cKtoDug, cKtoPot, cOpis, cIdArt, nGenCh, cDestin, cDatLFakt, dLFakt, cAutoAzur )
 
-dDatGen := DATE()
+   LOCAL dPom
+   LOCAL nX := 2
+   LOCAL nBoxLen := 20
 
-// datum posljednjeg fakturisanja
-dLFakt := g_lst_fakt()
-// datum posljenje uplate u fin
-dDatLUpl := CToD("")
-// konto kupac
-cKtoDug := fetch_metric( "ugovori_konto_duguje", nil, PADR("2110", 7) )
-// konto dobavljac
-cKtoPot := fetch_metric( "ugovori_konto_potrazuje", nil, PADR("5410", 7) )
-// opis
-cOpis := PADR("", 100)
-// artikal
-cIdArt := PADR("", 10)
-// destinacije
-cDestin := "N"
-// datum posljednjeg fakturisanja partnera
-cDatLFakt := "N"
-cAutoAzur := "D"
+   dDatGen := Date()
 
-// choice
-nGenCh := 0
+   // datum posljednjeg fakturisanja
+   dLFakt := g_lst_fakt()
+   // datum posljenje uplate u fin
+   dDatLUpl := CToD( "" )
+   // konto kupac
+   cKtoDug := fetch_metric( "ugovori_konto_duguje", nil, PadR( "2110", 7 ) )
+   // konto dobavljac
+   cKtoPot := fetch_metric( "ugovori_konto_potrazuje", nil, PadR( "5410", 7 ) )
+   // opis
+   cOpis := PadR( "", 100 )
+   // artikal
+   cIdArt := PadR( "", 10 )
+   // destinacije
+   cDestin := "N"
+   // datum posljednjeg fakturisanja partnera
+   cDatLFakt := "N"
+   cAutoAzur := "D"
 
-if dDatObr == nil
-    dDatObr := DATE()
-endif
-if dDatVal == nil
-    dDatVal := DATE()
-endif
+   // choice
+   nGenCh := 0
 
-dPom := dDatObr
+   IF dDatObr == nil
+      dDatObr := Date()
+   ENDIF
+   IF dDatVal == nil
+      dDatVal := Date()
+   ENDIF
 
-// mjesec na koji se odnosi fakturisanje
-nMjesec := MONTH(dPom)
-// godina na koju se odnosi fakturisanje
-nGodina := YEAR(dPom)
+   dPom := dDatObr
 
-Box("#PARAMETRI ZA GENERACIJU FAKTURA PO UGOVORIMA v2", 22, 70)
+   // mjesec na koji se odnosi fakturisanje
+   nMjesec := Month( dPom )
+   // godina na koju se odnosi fakturisanje
+   nGodina := Year( dPom )
 
-@ m_x + nX, m_y + 2 SAY PADL("Gen. ?/fakt/ponuda (0/1/2)", nBoxLen + 6 ) GET nGenCh ;
-    PICT "9"
+   Box( "#PARAMETRI ZA GENERACIJU FAKTURA PO UGOVORIMA v2", 22, 70 )
 
-nX += 1
+   @ m_x + nX, m_y + 2 SAY PadL( "Gen. ?/fakt/ponuda (0/1/2)", nBoxLen + 6 ) GET nGenCh ;
+      PICT "9"
 
-@ m_x + nX, m_y + 2 SAY PADL("Datum fakturisanja", nBoxLen) GET dDatGen 
+   nX += 1
 
-nX += 2
+   @ m_x + nX, m_y + 2 SAY PadL( "Datum fakturisanja", nBoxLen ) GET dDatGen
 
-@ m_x + nX, m_y + 2 SAY PADL("Datum valute", nBoxLen) GET dDatVal 
+   nX += 2
 
-nX += 2
+   @ m_x + nX, m_y + 2 SAY PadL( "Datum valute", nBoxLen ) GET dDatVal
 
-@ m_x + nX, m_y + 2 SAY PADL("Fakt.za mjesec", nBoxLen) GET nMjesec PICT "99" VALID nMjesec >= 1 .or. nMjesec <= 12
-@ m_x + nX, col() + 2 SAY "godinu" GET nGodina PICT "9999"
+   nX += 2
 
-nX += 2
-@ m_x + nX, m_y + 2 SAY PADL("Konto duguje", nBoxLen) GET cKtoDug VALID P_Konto(@cKtoDug)
+   @ m_x + nX, m_y + 2 SAY PadL( "Fakt.za mjesec", nBoxLen ) GET nMjesec PICT "99" VALID nMjesec >= 1 .OR. nMjesec <= 12
+   @ m_x + nX, Col() + 2 SAY "godinu" GET nGodina PICT "9999"
 
-++ nX
-@ m_x + nX, m_y + 2 SAY PADL("Konto potrazuje", nBoxLen) GET cKtoPot VALID P_Konto(@cKtoPot)
+   nX += 2
+   @ m_x + nX, m_y + 2 SAY PadL( "Konto duguje", nBoxLen ) GET cKtoDug VALID P_Konto( @cKtoDug )
 
-nX += 2
-@ m_x + nX, m_y + 2 SAY PADL("Dat.zadnje upl.fin", nBoxLen) GET dDatLUpl ;
-   WHEN {|| dDatLUpl := dDatGen - 1, .t. }
+   ++ nX
+   @ m_x + nX, m_y + 2 SAY PadL( "Konto potrazuje", nBoxLen ) GET cKtoPot VALID P_Konto( @cKtoPot )
 
-nX += 2
+   nX += 2
+   @ m_x + nX, m_y + 2 SAY PadL( "Dat.zadnje upl.fin", nBoxLen ) GET dDatLUpl ;
+      WHEN {|| dDatLUpl := dDatGen - 1, .T. }
 
-@ m_x + nX, m_y + 2 SAY PADL("Fakturisati artikal (prazno-svi)", nBoxLen + 10) GET cIdArt VALID EMPTY(cIdArt) .or. p_roba( @cIdArt )
+   nX += 2
 
-nX += 2
+   @ m_x + nX, m_y + 2 SAY PadL( "Fakturisati artikal (prazno-svi)", nBoxLen + 10 ) GET cIdArt VALID Empty( cIdArt ) .OR. p_roba( @cIdArt )
 
-@ m_x + nX, m_y + 2 SAY PADL("Opis", nBoxLen) GET cOpis ;
-   WHEN  {|| cOpis := IIF( EMPTY(cOpis), PADR("Obracun " + fakt_do(dDatObr), 100), cOpis), .t.} ;
-   PICT "@S40"
+   nX += 2
 
-if is_dest()
+   @ m_x + nX, m_y + 2 SAY PadL( "Opis", nBoxLen ) GET cOpis ;
+      WHEN  {|| cOpis := iif( Empty( cOpis ), PadR( "Obracun " + fakt_do( dDatObr ), 100 ), cOpis ), .T. } ;
+      PICT "@S40"
 
-    nX += 2
-    
-    @ m_x + nX, m_y + 2 SAY PADL("Uzeti u obzir destinacije ?", nBoxLen + 10) GET cDestin VALID cDestin $ "DN" PICT "@!"
+   IF is_dest()
 
-    nX += 1
-    
-    @ m_x + nX, m_y + 2 SAY PADL("Gledati datum zadnjeg fakturisanja ?", nBoxLen + 16) GET cDatLFakt VALID cDatLFakt $ "DN" PICT "@!"
-    
-    nX += 1
-    
-    @ m_x + nX, m_y + 2 SAY PADL("Datum zadnjeg fakturisanja ?", nBoxLen + 16) GET dLFakt 
+      nX += 2
+      @ m_x + nX, m_y + 2 SAY PadL( "Uzeti u obzir destinacije ?", nBoxLen + 10 ) GET cDestin VALID cDestin $ "DN" PICT "@!"
 
-else
-    cDestin := nil
-endif
+      nX += 1
+      @ m_x + nX, m_y + 2 SAY PadL( "Gledati datum zadnjeg fakturisanja ?", nBoxLen + 16 ) GET cDatLFakt VALID cDatLFakt $ "DN" PICT "@!"
 
-nX += 1    
-@ m_x + nX, m_y + 2 SAY PADL( "Automatski azuriraj fakture (D/N) ?", nBoxLen + 16) GET cAutoAzur ;
-    VALID cAutoAzur $ "DN" PICT "@!"
+      nX += 1
+      @ m_x + nX, m_y + 2 SAY PadL( "Datum zadnjeg fakturisanja ?", nBoxLen + 16 ) GET dLFakt
 
-read
+   ELSE
+      cDestin := nil
+   ENDIF
 
-BoxC()
+   nX += 1
+   @ m_x + nX, m_y + 2 SAY PadL( "Automatski azuriraj fakture (D/N) ?", nBoxLen + 16 ) GET cAutoAzur ;
+      VALID cAutoAzur $ "DN" PICT "@!"
 
-ESC_RETURN 0
+   READ
 
-dDatObr := mo_ye(nMjesec, nGodina)
+   BoxC()
 
-// snimi parametre
-set_metric( "ugovori_konto_duguje", nil, cKtoDug )
-set_metric( "ugovori_konto_potrazuje", nil, cKtoPot )
+   ESC_RETURN 0
 
-return 1
+   dDatObr := mo_ye( nMjesec, nGodina )
+
+   // snimi parametre
+   set_metric( "ugovori_konto_duguje", nil, cKtoDug )
+   set_metric( "ugovori_konto_potrazuje", nil, cKtoPot )
+
+   RETURN 1
 
 
 // -------------------------------------------
 // generacija ugovora - varijanta 2
 // -------------------------------------------
-function gen_ug_2()
-local dDatObr
-local dDatVal
-local dDatLUpl
-local cKtoDug
-local cKtoPot
-local cOpis
-local cFilter
-local lSetParams := .f.
-local cUId
-local cUPartner
-local nSaldo
-local nSaldoPDV
-local cNBrDok
-local nFaktBr
-local nMjesec
-local nGodina
-local dDatGen := DATE()
-local cFaktOd
-local cFaktDo
-local cIdArt
-local cIdFirma
-local nTArea
-local cDestin
-local nGenCh
-local cGenTipDok := ""
-local cDatLFakt
-local dLFakt
-local __where, _rec
-local _count := 0
-local _auto_azur
-local _doks_generated := {}
+FUNCTION gen_ug_2()
 
-// otvori tabele
-o_ugov()
+   LOCAL dDatObr
+   LOCAL dDatVal
+   LOCAL dDatLUpl
+   LOCAL cKtoDug
+   LOCAL cKtoPot
+   LOCAL cOpis
+   LOCAL cFilter
+   LOCAL lSetParams := .F.
+   LOCAL cUId
+   LOCAL cUPartner
+   LOCAL nSaldo
+   LOCAL nSaldoPDV
+   LOCAL cNBrDok
+   LOCAL nFaktBr
+   LOCAL nMjesec
+   LOCAL nGodina
+   LOCAL dDatGen := Date()
+   LOCAL cFaktOd
+   LOCAL cFaktDo
+   LOCAL cIdArt
+   LOCAL cIdFirma
+   LOCAL nTArea
+   LOCAL cDestin
+   LOCAL nGenCh
+   LOCAL cGenTipDok := ""
+   LOCAL cDatLFakt
+   LOCAL dLFakt
+   LOCAL __where, _rec
+   LOCAL _count := 0
+   LOCAL _auto_azur
+   LOCAL _doks_generated := {}
 
-// otvori parametre generacije
-lSetParams := .t.
+   // otvori tabele
+   o_ugov()
 
-if lSetParams .and. g_ug_params(@dDatObr, @dDatGen, @dDatVal, @dDatLUpl, @cKtoDug, @cKtoPot, @cOpis, @cIdArt, @nGenCh, @cDestin, @cDatLFakt, @dLFakt, @_auto_azur ) == 0
-    return
-endif
+   // otvori parametre generacije
+   lSetParams := .T.
 
-// otvori i fakt
-O_FAKT
-O_FAKT_PRIPR
+   IF lSetParams .AND. g_ug_params( @dDatObr, @dDatGen, @dDatVal, @dDatLUpl, @cKtoDug, @cKtoPot, @cOpis, @cIdArt, @nGenCh, @cDestin, @cDatLFakt, @dLFakt, @_auto_azur ) == 0
+      RETURN
+   ENDIF
 
-if RecCount2() <> 0
-    MsgBeep("U pripremi postoje dokumenti#Prekidam generaciju!")
-    my_close_all_dbf()
-    return
-endif
+   // otvori i fakt
+   O_FAKT
+   O_FAKT_PRIPR
 
-// ako postoji vec generisano za datum sta izadji ili nastavi
-if lSetParams .and. postoji_generacija(dDatObr, cIdArt) == 0
-    return
-endif
+   IF RecCount2() <> 0
+      MsgBeep( "U pripremi postoje dokumenti#Prekidam generaciju!" )
+      my_close_all_dbf()
+      RETURN
+   ENDIF
 
-// dodaj u gen_ug novu generaciju
-if lSetParams
-    
-    select gen_ug
-    set order to tag "dat_obr"
-    seek DTOS(dDatObr)
-    
-    if !FOUND()
-        append blank
-    endif
+   // ako postoji vec generisano za datum sta izadji ili nastavi
+   IF lSetParams .AND. postoji_generacija( dDatObr, cIdArt ) == 0
+      RETURN
+   ENDIF
 
-    _rec := dbf_get_rec()
-    
-    _rec["dat_obr"] := dDatObr
-    _rec["dat_gen"] := dDatGen
-    _rec["dat_u_fin"] := dDatLUpl
-    _rec["kto_kup"] := cKtoDug
-    _rec["kto_dob"] := cKtoPot
-    _rec["opis"] := cOpis
+   // dodaj u gen_ug novu generaciju
+   IF lSetParams
 
-    update_rec_server_and_dbf( "fakt_gen_ug", _rec, 1, "FULL" )
+      SELECT gen_ug
+      SET ORDER TO TAG "dat_obr"
+      SEEK DToS( dDatObr )
 
-endif
+      IF !Found()
+         APPEND BLANK
+      ENDIF
 
-// filter na samo aktivne ugovore
-cFilter := "aktivan == 'D'"
+      _rec := dbf_get_rec()
 
-select ugov
-set order to tag "ID"
-set filter to &cFilter
-go top
+      _rec[ "dat_obr" ] := dDatObr
+      _rec[ "dat_gen" ] := dDatGen
+      _rec[ "dat_u_fin" ] := dDatLUpl
+      _rec[ "kto_kup" ] := cKtoDug
+      _rec[ "kto_dob" ] := cKtoPot
+      _rec[ "opis" ] := cOpis
 
-nSaldo := 0
-nSaldoPDV := 0
-nNBrDok := ""
+      update_rec_server_and_dbf( "fakt_gen_ug", _rec, 1, "FULL" )
 
-// ukupni broj faktura
-nFaktBr := 0
+   ENDIF
 
-if nGenCh == 1
-    cGenTipDok := "10"
-endif
+   // filter na samo aktivne ugovore
+   cFilter := "aktivan == 'D'"
 
-if nGenCh == 2
-    cGenTipDok := "20" 
-endif
+   SELECT ugov
+   SET ORDER TO TAG "ID"
+   SET FILTER to &cFilter
+   GO TOP
 
-Box(,3, 60)
+   nSaldo := 0
+   nSaldoPDV := 0
+   nNBrDok := ""
 
-@ m_x + 1, m_y + 2 SAY "Generacija ugovora u toku..."
+   // ukupni broj faktura
+   nFaktBr := 0
 
-cFaktOd := ""
-cFaktDo := ""
+   IF nGenCh == 1
+      cGenTipDok := "10"
+   ENDIF
 
-// precesljaj ugovore u UGOV
-do while !EOF()
+   IF nGenCh == 2
+      cGenTipDok := "20"
+   ENDIF
 
-    // da li ima stavki za fakturisanje ???
-    if !ima_u_rugov( ugov->id, cIdArt )
-        skip
-        loop
-    endif
-    
-    select ugov
-    
-    // provjeri da li treba fakturisati ???
-    if !treba_generisati( ugov->id, dDatObr, cDatLFakt, dLFakt )
-        skip
-        loop
-    endif
-    
-    if !EMPTY( cIdArt )
-        // uzmi firmu na osnovu artikla
-        cIdFirma := g_idfirma( cIdArt )
-    else
-        cIdFirma := gFirma
-    endif
+   Box(, 3, 60 )
 
-    ++ _count
+   @ m_x + 1, m_y + 2 SAY "Generacija ugovora u toku..."
 
-    if EMPTY(cGenTipDok)
-        cGenTipDok := ugov->idtipdok
-    endif
-        
-    cNBrDok := fakt_novi_broj_dokumenta( cIdFirma, cGenTipDok )
-    
-    if _count == 1    
-        cFaktOd := cNBrDok
-    endif
+   cFaktOd := ""
+   cFaktDo := ""
 
-    cUId := ugov->id
-    cUPartner := ugov->idpartner
+   // precesljaj ugovore u UGOV
+   DO WHILE !Eof()
 
-    // destinacije ...
-    if cDestin <> nil .and. cDestin == "D"
-        cDefDest := ugov->def_dest 
-    else
-        cDefDest := nil
-    endif
+      // da li ima stavki za fakturisanje ???
+      IF !ima_u_rugov( ugov->id, cIdArt )
+         SKIP
+         LOOP
+      ENDIF
 
-    @ m_x + 2, m_y + 2 SAY "Ug / Partner -> " + cUId + " / " + cUPartner
-    
-    // generisi ugovor za partnera
-    g_ug_f_partner(cUId, cUPartner, dDatObr, dDatVal, @nSaldo, @nSaldoPDV, @nFaktBr, @cNBrDok, cIdArt, cIdFirma, cDefDest, cGenTipDok, @_doks_generated )
-    
-    select ugov
-    skip
+      SELECT ugov
 
-enddo
+      // provjeri da li treba fakturisati ???
+      IF !treba_generisati( ugov->id, dDatObr, cDatLFakt, dLFakt )
+         SKIP
+         LOOP
+      ENDIF
 
-cFaktDo := cNBrDok
+      IF !Empty( cIdArt )
+         // uzmi firmu na osnovu artikla
+         cIdFirma := g_idfirma( cIdArt )
+      ELSE
+         cIdFirma := gFirma
+      ENDIF
+
+      ++ _count
+
+      IF Empty( cGenTipDok )
+         cGenTipDok := ugov->idtipdok
+      ENDIF
+
+      cNBrDok := fakt_novi_broj_dokumenta( cIdFirma, cGenTipDok )
+
+      IF _count == 1
+         cFaktOd := cNBrDok
+      ENDIF
+
+      cUId := ugov->id
+      cUPartner := ugov->idpartner
+
+      // destinacije ...
+      IF cDestin <> NIL .AND. cDestin == "D"
+         cDefDest := ugov->def_dest
+      ELSE
+         cDefDest := nil
+      ENDIF
+
+      @ m_x + 2, m_y + 2 SAY "Ug / Partner -> " + cUId + " / " + cUPartner
+
+      // generisi ugovor za partnera
+      g_ug_f_partner( cUId, cUPartner, dDatObr, dDatVal, @nSaldo, @nSaldoPDV, @nFaktBr, @cNBrDok, cIdArt, cIdFirma, cDefDest, cGenTipDok, @_doks_generated )
+
+      SELECT ugov
+      SKIP
+
+   ENDDO
+
+   cFaktDo := cNBrDok
 
 
-// upisi u gen_ug salda
-select gen_ug
-set order to tag "dat_obr"
-go top
-seek DTOS(dDatObr) + cIdArt
+   // upisi u gen_ug salda
+   SELECT gen_ug
+   SET ORDER TO TAG "dat_obr"
+   GO TOP
+   SEEK DToS( dDatObr ) + cIdArt
 
-if Found()    
+   IF Found()
 
-    _rec := dbf_get_rec()
-    _rec["fakt_br"] := nFaktBr
-    _rec["saldo"] := nSaldo
-    _rec["saldo_pdv"] := nSaldoPDV
-    _rec["dat_gen"] := dDatGen
-    _rec["dat_val"] := dDatVal
-    _rec["brdok_od"] := cFaktOd
-    _rec["brdok_do"] := cFaktDo
+      _rec := dbf_get_rec()
+      _rec[ "fakt_br" ] := nFaktBr
+      _rec[ "saldo" ] := nSaldo
+      _rec[ "saldo_pdv" ] := nSaldoPDV
+      _rec[ "dat_gen" ] := dDatGen
+      _rec[ "dat_val" ] := dDatVal
+      _rec[ "brdok_od" ] := cFaktOd
+      _rec[ "brdok_do" ] := cFaktDo
 
-    update_rec_server_and_dbf( "fakt_gen_ug", _rec, 1, "FULL" )
-	my_use_semaphore_on()
+      update_rec_server_and_dbf( "fakt_gen_ug", _rec, 1, "FULL" )
+      my_use_semaphore_on()
 
-endif
+   ENDIF
 
-BoxC()
+   BoxC()
 
-// prikazi info generacije
-s_gen_info( dDatObr )
+   // prikazi info generacije
+   s_gen_info( dDatObr )
 
-// ako je opcija automatike ukljucena
-if _auto_azur == "D"
-    // funkcija azuriranja modula FAKT
-    azur_fakt( .t. )
-endif
+   // ako je opcija automatike ukljucena
+   IF _auto_azur == "D"
+      // funkcija azuriranja modula FAKT
+      azur_fakt( .T. )
+   ENDIF
 
-// prikazi info o generisanim dokumentima
-info_generated_data( _doks_generated )
+   // prikazi info o generisanim dokumentima
+   info_generated_data( _doks_generated )
 
-return
+   RETURN
 
 
 // --------------------------------------------
 // vraca firmu na osnovu roba->k2
 // --------------------------------------------
-static function g_idfirma( cArt_id )
-local nTArea := SELECT()
-local cFirma := gFirma
+STATIC FUNCTION g_idfirma( cArt_id )
 
-select roba
-go top
-seek cArt_id
+   LOCAL nTArea := Select()
+   LOCAL cFirma := gFirma
 
-if FOUND()
-    if !EMPTY( field->k2 ) ;
-        .and. LEN( ALLTRIM(field->k2) ) == 2 
-        
-        cFirma := ALLTRIM( field->k2 )
-    
-    endif
-endif
+   SELECT roba
+   GO TOP
+   SEEK cArt_id
 
-select (nTArea)
+   IF Found()
+      IF !Empty( field->k2 ) ;
+            .AND. Len( AllTrim( field->k2 ) ) == 2
 
-return cFirma
+         cFirma := AllTrim( field->k2 )
+
+      ENDIF
+   ENDIF
+
+   SELECT ( nTArea )
+
+   RETURN cFirma
 
 
 // ------------------------------------------
 // da li partnera treba generisati
 // ------------------------------------------
-static function treba_generisati( cUgovId, dDatObr, cDatLFakt, dLFakt )
-local nPMonth
-local nPYear
-local i
-local lNasaoObracun
-// predhodni obracun
-local dPObr
-local cNFakt
+STATIC FUNCTION treba_generisati( cUgovId, dDatObr, cDatLFakt, dLFakt )
 
-if cDatLFakt == nil
-    cDatLFakt := "N"
-endif
+   LOCAL nPMonth
+   LOCAL nPYear
+   LOCAL i
+   LOCAL lNasaoObracun
 
+   // predhodni obracun
+   LOCAL dPObr
+   LOCAL cNFakt
 
-PushWA()
-
-dPom := dDatObr
-
-SELECT ugov
-SEEK cUgovId
+   IF cDatLFakt == nil
+      cDatLFakt := "N"
+   ENDIF
 
 
-// pogledaj datum zadnjeg fakturisanja....
-if cDatLFakt == "D" 
-    if !EMPTY( ugov->dat_l_fakt ) .and. ugov->dat_l_fakt < dLFakt
-        PopWa()
-        return .f.
-    endif
-endif
+   PushWA()
 
-// istekao je krajnji rok trajanja ugovora
-if ugov->datdo < dDatObr
-    PopWa()
-    return .f.
-endif
+   dPom := dDatObr
 
-// nivo fakturisanja
-cFNivo := ugov->f_nivo
+   SELECT ugov
+   SEEK cUgovId
 
-SELECT gen_ug_p
-SET ORDER TO TAG "DAT_OBR"
 
-// GODISNJI NIVO...
-if ugov->f_nivo == "G"
+   // pogledaj datum zadnjeg fakturisanja....
+   IF cDatLFakt == "D"
+      IF !Empty( ugov->dat_l_fakt ) .AND. ugov->dat_l_fakt < dLFakt
+         PopWa()
+         RETURN .F.
+      ENDIF
+   ENDIF
 
-    dPObr := ugov->dat_l_fakt
-    
-    PopWa()
+   // istekao je krajnji rok trajanja ugovora
+   IF ugov->datdo < dDatObr
+      PopWa()
+      RETURN .F.
+   ENDIF
 
-    if dDatObr - 365 >= dPObr
-        return .t.
-    else
-        return .f.
-    endif
+   // nivo fakturisanja
+   cFNivo := ugov->f_nivo
 
-else
-    
-    lNasaoObracun := .f.
-    // gledamo obracune u predhodnih 6 mjeseci
-    for i:=1 to 6
+   SELECT gen_ug_p
+   SET ORDER TO TAG "DAT_OBR"
 
-        // predhodni mjesec (datum) u odnosu na dPom
-        dPObr := pr_mjesec(dPom)
+   // GODISNJI NIVO...
+   IF ugov->f_nivo == "G"
 
-        // ima li ovaj obracun pohranjen
-        SELECT gen_ug_p
-        SEEK DTOS(dPObr) + cUgovId + ugov->IdPartner
+      dPObr := ugov->dat_l_fakt
 
-        if found()
-            lNasaoObracun :=.t.
-            exit
-        else
-            // nisam nasao ovaj obracun, 
+      PopWa()
+
+      IF dDatObr - 365 >= dPObr
+         RETURN .T.
+      ELSE
+         RETURN .F.
+      ENDIF
+
+   ELSE
+
+      lNasaoObracun := .F.
+      // gledamo obracune u predhodnih 6 mjeseci
+      FOR i := 1 TO 6
+
+         // predhodni mjesec (datum) u odnosu na dPom
+         dPObr := pr_mjesec( dPom )
+
+         // ima li ovaj obracun pohranjen
+         SELECT gen_ug_p
+         SEEK DToS( dPObr ) + cUgovId + ugov->IdPartner
+
+         IF Found()
+            lNasaoObracun := .T.
+            EXIT
+         ELSE
+            // nisam nasao ovaj obracun,
             // pokusaj ponovo mjesec ispred ...
             dPom := dPObr
-        endif
-    next
-    
-    if !lNasaoObracun
-        // nisam nasao obracun, ovo je prva generacija
-        // pa je u ugov upisan datum posljednjeg obracuna
-        dPObr := ugov->dat_l_fakt
-    else
-        // ako su rucno pravljene fakture (unaprijed)
-        // u ugov se upisuje do kada je to pravljeno
-        if ugov->dat_l_fakt >= dDatObr
+         ENDIF
+      NEXT
+
+      IF !lNasaoObracun
+         // nisam nasao obracun, ovo je prva generacija
+         // pa je u ugov upisan datum posljednjeg obracuna
+         dPObr := ugov->dat_l_fakt
+      ELSE
+         // ako su rucno pravljene fakture (unaprijed)
+         // u ugov se upisuje do kada je to pravljeno
+         IF ugov->dat_l_fakt >= dDatObr
             dPObr := ugov->dat_l_fakt
-        endif
-    endif
+         ENDIF
+      ENDIF
 
-    PopWa()
+      PopWa()
 
-    if dDatObr > dPObr
-        return .t.
-    else
-        return .f.
-    endif
-endif
+      IF dDatObr > dPObr
+         RETURN .T.
+      ELSE
+         RETURN .F.
+      ENDIF
+   ENDIF
 
-return
+   RETURN
 
 // -----------------------------------
 // predhodni mjesec
 // -----------------------------------
-static function pr_mjesec(dPom)
-local nPMonth
-local nPYear
+STATIC FUNCTION pr_mjesec( dPom )
 
-nPMonth := Month(dPom) - 1
-nPYear := Year(dPom)
+   LOCAL nPMonth
+   LOCAL nPYear
 
-if nPMonth == 0
-    // dPom je bio 01/YYYY
-    nPMonth := 12
-    nPYear --
-endif
-return  dPObr := mo_ye(nPMonth, nPYear)
+   nPMonth := Month( dPom ) - 1
+   nPYear := Year( dPom )
+
+   IF nPMonth == 0
+      // dPom je bio 01/YYYY
+      nPMonth := 12
+      nPYear --
+   ENDIF
+
+   RETURN  dPObr := mo_ye( nPMonth, nPYear )
 
 
 // -----------------------------------------
 // da li ima stavki u rugovu za ugovor
 // -----------------------------------------
-static function ima_u_rugov( cIdUgovor, cArt_id )
-local nTArr
-local lRet := .f.
-nTArr := SELECT()
-select rugov
+STATIC FUNCTION ima_u_rugov( cIdUgovor, cArt_id )
 
-if cArt_id == nil
-    cArt_id := ""
-endif
+   LOCAL nTArr
+   LOCAL lRet := .F.
 
-if EMPTY( cArt_id )
-    seek cIdUgovor
-else
-    seek cIdUgovor + cArt_id
-endif
+   nTArr := Select()
+   SELECT rugov
 
-if Found()
-    lRet := .t.
-endif
+   IF cArt_id == nil
+      cArt_id := ""
+   ENDIF
 
-select (nTArr)
+   IF Empty( cArt_id )
+      SEEK cIdUgovor
+   ELSE
+      SEEK cIdUgovor + cArt_id
+   ENDIF
 
-return lRet
+   IF Found()
+      lRet := .T.
+   ENDIF
+
+   SELECT ( nTArr )
+
+   RETURN lRet
 
 
 // --------------------------------
 // prikazi info o generaciji
 // --------------------------------
-static function s_gen_info( dDat )
-local cPom
+STATIC FUNCTION s_gen_info( dDat )
 
-select gen_ug
-set order to tag "dat_obr"
-go top
-seek DTOS( dDat )
+   LOCAL cPom
 
-if Found()
-    
-    cPom := "Generisani ugovor za " + DToC(dDat)
-    cPom += "##"
-    cPom += "Broj faktura: " + ALLTRIM(STR(field->fakt_br))
-    cPom += "#"
-    cPom += "Saldo: " + ALLTRIM(STR(field->saldo, 12, 2 ))
-    cPom += "#"
-    cPom += "PDV: " + ALLTRIM(STR(field->saldo_pdv, 12, 2 ))
-    cPom += "#"
-    cPom += "Fakture od: " + ALLTRIM( gen_ug->brdok_od ) + " - " + ALLTRIM( gen_ug->brdok_do )
+   SELECT gen_ug
+   SET ORDER TO TAG "dat_obr"
+   GO TOP
+   SEEK DToS( dDat )
 
-    MsgBeep( cPom )
+   IF Found()
 
-endif
+      cPom := "Generisani ugovor za " + DToC( dDat )
+      cPom += "##"
+      cPom += "Broj faktura: " + AllTrim( Str( field->fakt_br ) )
+      cPom += "#"
+      cPom += "Saldo: " + AllTrim( Str( field->saldo, 12, 2 ) )
+      cPom += "#"
+      cPom += "PDV: " + AllTrim( Str( field->saldo_pdv, 12, 2 ) )
+      cPom += "#"
+      cPom += "Fakture od: " + AllTrim( gen_ug->brdok_od ) + " - " + AllTrim( gen_ug->brdok_do )
 
-return
+      MsgBeep( cPom )
+
+   ENDIF
+
+   RETURN
 
 
 // ------------------------------------
 // nastimaj partnera u PARTN
 // ------------------------------------
-static function n_partner(cId)
-local nTArr
-nTArr := SELECT()
-select partn
-seek cId
-select (nTArr)
-return
+STATIC FUNCTION n_partner( cId )
+
+   LOCAL nTArr
+
+   nTArr := Select()
+   SELECT partn
+   SEEK cId
+   SELECT ( nTArr )
+
+   RETURN
 
 
 // ------------------------------------
 // nastimaj roba u ROBI
 // ------------------------------------
-static function n_roba(cId)
-local nTArr
-nTArr := SELECT()
-select roba
-seek cId
-select (nTArr)
-return
+STATIC FUNCTION n_roba( cId )
+
+   LOCAL nTArr
+
+   nTArr := Select()
+   SELECT roba
+   SEEK cId
+   SELECT ( nTArr )
+
+   RETURN
 
 
 // ------------------------------------
 // nastimaj destinaciju u DEST
 // ------------------------------------
-static function n_dest(cPartn, cDest)
-local nTArr
-local lRet := .f.
-nTArr := SELECT()
-select dest
-set order to tag "ID"
-go top
-seek cPartn + cDest
+STATIC FUNCTION n_dest( cPartn, cDest )
 
-if FOUND()
-    lRet := .t.
-endif
+   LOCAL nTArr
+   LOCAL lRet := .F.
 
-select (nTArr)
-return lRet
+   nTArr := Select()
+   SELECT dest
+   SET ORDER TO TAG "ID"
+   GO TOP
+   SEEK cPartn + cDest
+
+   IF Found()
+      lRet := .T.
+   ENDIF
+
+   SELECT ( nTArr )
+
+   RETURN lRet
 
 
 // ----------------------------------------------------------
 // generacija ugovora za jednog partnera
 // aData - sadrzi matricu generisanih faktura sa opisima
 // ----------------------------------------------------------
-static function g_ug_f_partner(cUId, cUPartn, dDatObr, dDatVal, nGSaldo, nGSaldoPDV, nFaktBr, cBrDok, cArtikal, cFirma, cDestin, cFTipDok, aData )
-local dDatGen
-local cIdUgov
-local i
-local nRbr
-local nCijena
-local nFaktIzn:=0
-local nFaktPDV:=0
-local cTxt1
-local cTxt2
-local cTxt3
-local cTxt4
-local cTxt5
-local nSaldoKup:=0
-local nSaldoDob:=0
-local dPUplKup:=CTOD("")
-local dPPromKup:=CTOD("")
-local dPPRomDob:=CTOD("")
-local cPom
-local nCount
-local nPorez
-local cKtoPot
-local cKtoDug
-local dDatLFakt
-local nMjesec
-local nGodina
-local lFromDest
-local _rec
-local __destinacija
+STATIC FUNCTION g_ug_f_partner( cUId, cUPartn, dDatObr, dDatVal, nGSaldo, nGSaldoPDV, nFaktBr, cBrDok, cArtikal, cFirma, cDestin, cFTipDok, aData )
 
-select gen_ug
-set order to tag "dat_obr"
-seek DTOS(dDatObr)
+   LOCAL dDatGen
+   LOCAL cIdUgov
+   LOCAL i
+   LOCAL nRbr
+   LOCAL nCijena
+   LOCAL nFaktIzn := 0
+   LOCAL nFaktPDV := 0
+   LOCAL cTxt1
+   LOCAL cTxt2
+   LOCAL cTxt3
+   LOCAL cTxt4
+   LOCAL cTxt5
+   LOCAL nSaldoKup := 0
+   LOCAL nSaldoDob := 0
+   LOCAL dPUplKup := CToD( "" )
+   LOCAL dPPromKup := CToD( "" )
+   LOCAL dPPRomDob := CToD( "" )
+   LOCAL cPom
+   LOCAL nCount
+   LOCAL nPorez
+   LOCAL cKtoPot
+   LOCAL cKtoDug
+   LOCAL dDatLFakt
+   LOCAL nMjesec
+   LOCAL nGodina
+   LOCAL lFromDest
+   LOCAL _rec
+   LOCAL __destinacija
 
-cKtoPot := gen_ug->kto_dob
-cKtoDug := gen_ug->kto_kup
-dDatLUpl := gen_ug->dat_u_fin
-dDatGen := gen_ug->dat_gen
-nMjesec := gen_ug->(MONTH(dat_obr))
-nGodina := gen_ug->(YEAR(dat_obr))
+   SELECT gen_ug
+   SET ORDER TO TAG "dat_obr"
+   SEEK DToS( dDatObr )
 
-// nastimaj PARTN na partnera
-n_partner(cUPartn)
+   cKtoPot := gen_ug->kto_dob
+   cKtoDug := gen_ug->kto_kup
+   dDatLUpl := gen_ug->dat_u_fin
+   dDatGen := gen_ug->dat_gen
+   nMjesec := gen_ug->( Month( dat_obr ) )
+   nGodina := gen_ug->( Year( dat_obr ) )
 
-if EMPTY(cFTipDok)
-    cFTipdok := ugov->idtipdok
-endif
+   // nastimaj PARTN na partnera
+   n_partner( cUPartn )
 
-nRbr := 0
-cIdUgov := ugov->id
+   IF Empty( cFTipDok )
+      cFTipdok := ugov->idtipdok
+   ENDIF
 
-select rugov
-nCount := 0
+   nRbr := 0
+   cIdUgov := ugov->id
 
-// prodji kroz rugov
-do while !EOF() .and. ( id == cUId )
-    
-    lFromDest := .f.
+   SELECT rugov
+   nCount := 0
 
-    if !EMPTY( cArtikal )
-        
-        // ako postoji zadata roba... 
-        // ako rugov->idroba nije predmet fakturisanja
-        // preskoci tu stavku ...
-        
-        if cArtikal <> rugov->idroba
-            
-            select rugov
-            skip
-            loop
-            
-        endif
-        
-    endif
+   // prodji kroz rugov
+   DO WHILE !Eof() .AND. ( id == cUId )
 
-    nCijena := rugov->cijena
-    nKolicina := rugov->kolicina
-    nRabat := rugov->rabat
+      lFromDest := .F.
 
-    // nastimaj destinaciju
-    if cDestin <> nil .and. !EMPTY( cDestin )
-    
-        // postoji def. destinacija za svu robu
-        if n_dest( cUPartn, cDestin )
-            lFromDest := .t.
-        endif
-        
-    elseif cDestin <> nil .and. EMPTY( cDestin )
-        
-        // za svaku robu treba posebna faktura
-        if n_dest( cUPartn, rugov->dest )
-            lFromDest := .t.
-        endif
-        
-        // daj novi broj dokumenta....
-        if lFromDest == .t. .and. nCount > 0
-            
+      IF !Empty( cArtikal )
+
+         // ako postoji zadata roba...
+         // ako rugov->idroba nije predmet fakturisanja
+         // preskoci tu stavku ...
+
+         IF cArtikal <> rugov->idroba
+
+            SELECT rugov
+            SKIP
+            LOOP
+
+         ENDIF
+
+      ENDIF
+
+      nCijena := rugov->cijena
+      nKolicina := rugov->kolicina
+      nRabat := rugov->rabat
+
+      // nastimaj destinaciju
+      IF cDestin <> NIL .AND. !Empty( cDestin )
+
+         // postoji def. destinacija za svu robu
+         IF n_dest( cUPartn, cDestin )
+            lFromDest := .T.
+         ENDIF
+
+      ELSEIF cDestin <> NIL .AND. Empty( cDestin )
+
+         // za svaku robu treba posebna faktura
+         IF n_dest( cUPartn, rugov->dest )
+            lFromDest := .T.
+         ENDIF
+
+         // daj novi broj dokumenta....
+         IF lFromDest == .T. .AND. nCount > 0
+
             // uvecaj uk.broj gen.faktura
             ++ nFaktBr
 
             // resetuj brojac stavki na 0
             nRbr := 0
-            
+
             // uvecaj broj dokumenta
             cBrDok := fakt_novi_broj_dokumenta( cFirma, cFTipDok )
 
-        endif
-        
-    endif
-    
-    // nastimaj roba na rugov-idroba
-    n_roba(rugov->idroba)
-    
-    // uzmi porez na osnovu robe
-    select tarifa
-    seek roba->idtarifa
-    nPorez := tarifa->opp
+         ENDIF
 
-    select fakt_pripr
-    append blank
-    
-    ++ nCount
-    
-    Scatter()
-    
-    // ako je roba tip U
-    if roba->tip == "U"
-        
-        // aMemo[1]
-        // pronadji djoker #ZA_MJ#
-        cPom := str_za_mj(roba->naz, nMjesec, nGodina)
-        
-        // dodaj ovo u _txt
-        a_to_txt( cPom )
-    else
-        // aMemo[1]
-        a_to_txt("", .t.)
-    endif
+      ENDIF
 
-    // samo na prvoj stavci generisi txt
-    if nRbr == 0
-            
-        // nadji tekstove
-        cTxt1 := f_ftxt(ugov->idtxt)
-        cTxt2 := f_ftxt(ugov->iddodtxt)
-        cTxt3 := f_ftxt(ugov->txt2)
-        cTxt4 := f_ftxt(ugov->txt3)
-        cTxt5 := f_ftxt(ugov->txt4)
-        
-        select fakt_pripr
-    
-        // aMemo[2]
-        cPom := cTxt1 + cTxt2 + cTxt3 + cTxt4 + cTxt5
-        // dodaj u polje _txt
-        a_to_txt(cPom)
-        
-        // dodaj podatke o partneru
-        
-        // aMemo[3]
-        // naziv partnera
-        cPom := ALLTRIM(partn->naz)
-        a_to_txt(cPom)
-        
-        // adresa
-        // aMemo[4]
-        cPom := ALLTRIM(partn->adresa)
-        a_to_txt(cPom)
-        
-        // ptt i mjesto
-        // aMemo[5]
-        cPom := ALLTRIM(partn->ptt)
-        cPom += " "
-        cPom += ALLTRIM(partn->mjesto)
-        a_to_txt(cPom)
+      // nastimaj roba na rugov-idroba
+      n_roba( rugov->idroba )
 
-        // br.otpremnice i datum
-        // aMemo[6,7]
-        a_to_txt("", .t.)   
-        a_to_txt("", .t.)   
-        
-        // br. ugov
-        // aMemo[8]
-        a_to_txt(ugov->id, .t.) 
+      // uzmi porez na osnovu robe
+      SELECT tarifa
+      SEEK roba->idtarifa
+      nPorez := tarifa->opp
 
-        cPom := DToC(dDatGen)
+      SELECT fakt_pripr
+      APPEND BLANK
 
-        // datum isporuke 
-        // aMemo[9]
-        cPom := DTOC(dDatVal)
-        a_to_txt(cPom)
-    
-        // datum valute
-        // aMemo[10]
-        a_to_txt(cPom)
+      ++ nCount
 
-        __destinacija := ""
+      Scatter()
 
-        if lFromDest == .t.
-            
+      // ako je roba tip U
+      IF roba->tip == "U"
+
+         // aMemo[1]
+         // pronadji djoker #ZA_MJ#
+         cPom := str_za_mj( roba->naz, nMjesec, nGodina )
+
+         // dodaj ovo u _txt
+         a_to_txt( cPom )
+      ELSE
+         // aMemo[1]
+         a_to_txt( "", .T. )
+      ENDIF
+
+      // samo na prvoj stavci generisi txt
+      IF nRbr == 0
+
+         // nadji tekstove
+         cTxt1 := f_ftxt( ugov->idtxt )
+         cTxt2 := f_ftxt( ugov->iddodtxt )
+         cTxt3 := f_ftxt( ugov->txt2 )
+         cTxt4 := f_ftxt( ugov->txt3 )
+         cTxt5 := f_ftxt( ugov->txt4 )
+
+         SELECT fakt_pripr
+
+         // aMemo[2]
+         cPom := cTxt1 + cTxt2 + cTxt3 + cTxt4 + cTxt5
+         // dodaj u polje _txt
+         a_to_txt( cPom )
+
+         // dodaj podatke o partneru
+
+         // aMemo[3]
+         // naziv partnera
+         cPom := AllTrim( partn->naz )
+         a_to_txt( cPom )
+
+         // adresa
+         // aMemo[4]
+         cPom := AllTrim( partn->adresa )
+         a_to_txt( cPom )
+
+         // ptt i mjesto
+         // aMemo[5]
+         cPom := AllTrim( partn->ptt )
+         cPom += " "
+         cPom += AllTrim( partn->mjesto )
+         a_to_txt( cPom )
+
+         // br.otpremnice i datum
+         // aMemo[6,7]
+         a_to_txt( "", .T. )
+         a_to_txt( "", .T. )
+
+         // br. ugov
+         // aMemo[8]
+         a_to_txt( ugov->id, .T. )
+
+         cPom := DToC( dDatGen )
+
+         // datum isporuke
+         // aMemo[9]
+         cPom := DToC( dDatVal )
+         a_to_txt( cPom )
+
+         // datum valute
+         // aMemo[10]
+         a_to_txt( cPom )
+
+         __destinacija := ""
+
+         IF lFromDest == .T.
+
             // dodaj prazne zapise
             cPom := " "
-            for i:=11 to 17
-                a_to_txt(cPom, .t.)
-            next
-            
+            FOR i := 11 TO 17
+               a_to_txt( cPom, .T. )
+            NEXT
+
             // uzmi iz destinacije
             cPom := ""
-            cPom += ALLTRIM( dest->naziv ) 
-            
-            if !EMPTY( dest->naziv2 )
-                cPom += " "
-                cPom += ALLTRIM( dest->naziv2 )
-            endif
-            
-            if !EMPTY( dest->mjesto )
-                cPom += ", "
-                cPom += ALLTRIM( dest->mjesto )
-            endif
-            
-            if !EMPTY( dest->adresa )
-                cPom += ", "
-                cPom += ALLTRIM( dest->adresa )
-            endif
-            
-            if !EMPTY( dest->ptt )
-                cPom += ", "
-                cPom += ALLTRIM( dest->ptt )
-            endif
-            
-            if !EMPTY( dest->telefon )
-                cPom += ", tel: "
-                cPom += ALLTRIM( dest->telefon )
-            endif
-            
-            if !EMPTY( dest->fax ) 
-                cPom += ", fax: "
-                cPom += ALLTRIM( dest->fax )
-            endif
+            cPom += AllTrim( dest->naziv )
+
+            IF !Empty( dest->naziv2 )
+               cPom += " "
+               cPom += AllTrim( dest->naziv2 )
+            ENDIF
+
+            IF !Empty( dest->mjesto )
+               cPom += ", "
+               cPom += AllTrim( dest->mjesto )
+            ENDIF
+
+            IF !Empty( dest->adresa )
+               cPom += ", "
+               cPom += AllTrim( dest->adresa )
+            ENDIF
+
+            IF !Empty( dest->ptt )
+               cPom += ", "
+               cPom += AllTrim( dest->ptt )
+            ENDIF
+
+            IF !Empty( dest->telefon )
+               cPom += ", tel: "
+               cPom += AllTrim( dest->telefon )
+            ENDIF
+
+            IF !Empty( dest->fax )
+               cPom += ", fax: "
+               cPom += AllTrim( dest->fax )
+            ENDIF
 
             __destinacija := cPom
 
-            a_to_txt( cPom, .t. )
-            
-        endif
+            a_to_txt( cPom, .T. )
 
-    endif
-    
-    select fakt_pripr
-    
-    _idfirma := cFirma
-    _idpartner := cUPartn
-    _zaokr := ugov->zaokr
-    _rbr := STR(++nRbr, 3)
-    _idtipdok := cFTipDok
-    _brdok := cBrDok
-    _datdok := dDatGen
-    _datpl := dDatGen
-    _kolicina := nKolicina
-    _idroba := rugov->idroba
-    _cijena := nCijena
-    
-    // setuj iz sifrarnika
-    if _cijena == 0
-        fakt_setuj_cijenu( "1" ) 
-        nCijena := _cijena
-    endif
-        
-    _rabat := rugov->rabat
-    
-    // ne smije se setovati porez u tabeli pripreme,
-    // napravit ce kurslus !!
-    //_porez := rugov->porez
+         ENDIF
 
-    _dindem := ugov->dindem
-        
-    nFaktIzn += nKolicina * nCijena
-    nFaktPDV += nFaktIzn * (nPorez/100)
-    
-    nGSaldo += nFaktIzn
-    nGSaldoPDV += nFaktPDV
+      ENDIF
 
-    // dodaj u kontrolnu matricu sta je generisano
-    add_to_generated_data( @aData, _idfirma, _idtipdok, _brdok, _idpartner, __destinacija )
-   
-    my_rlock() 
-    Gather()
-    my_unlock()
-    
-    // resetuj _txt
-    _txt := ""
+      SELECT fakt_pripr
 
-    select rugov
-    skip
+      _idfirma := cFirma
+      _idpartner := cUPartn
+      _zaokr := ugov->zaokr
+      _rbr := Str( ++nRbr, 3 )
+      _idtipdok := cFTipDok
+      _brdok := cBrDok
+      _datdok := dDatGen
+      _datpl := dDatGen
+      _kolicina := nKolicina
+      _idroba := rugov->idroba
+      _cijena := nCijena
 
-enddo
+      // setuj iz sifrarnika
+      IF _cijena == 0
+         fakt_setuj_cijenu( "1" )
+         nCijena := _cijena
+      ENDIF
 
-// saldo kupca
-nSaldoKup := get_fin_partner_saldo(cUPartn, cKtoDug)
-// saldo dobavljaca
-nSaldoDob := get_fin_partner_saldo(cUPartn, cKtoPot)
-// datum zadnje uplate kupca
-dPUplKup := g_dpupl_part(cUPartn, cKtoDug)
-// datum zadnje promjene kupac
-dPPromKup := g_dpprom_part(cUPartn, cKtoDug)
-// datum zadnje promjene dobavljac
-dPPromDob := g_dpprom_part(cUPartn, cKtoPot)
+      _rabat := rugov->rabat
 
-// dodaj stavku u gen_ug_p
-a_to_gen_p( dDatObr, cUId, cUPartn, nSaldoKup,nSaldoDob, dPUplKup, dPPromKup, dPPromDob,nFaktIzn, nFaktPdv )
+      // ne smije se setovati porez u tabeli pripreme,
+      // napravit ce kurslus !!
+      // _porez := rugov->porez
 
-// uvecaj broj faktura
-++ nFaktBr
+      _dindem := ugov->dindem
 
-select gen_ug
-set order to tag "dat_obr"
-seek DTOS(dDatGen)
+      nFaktIzn += nKolicina * nCijena
+      nFaktPDV += nFaktIzn * ( nPorez / 100 )
 
-if Found()
-    
-	_rec := dbf_get_rec()
-    // broj prve fakture
-    if EMPTY( field->brdok_od )
-        _rec["brdok_od"] := cBrDok
-    endif
-    _rec["brdok_do"] := cBrDok
-    update_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" )
-endif
+      nGSaldo += nFaktIzn
+      nGSaldoPDV += nFaktPDV
 
-// vrati se na pripremu i pregledaj djokere na _TXT
-select fakt_pripr
-nTRec := RecNo()
+      // dodaj u kontrolnu matricu sta je generisano
+      add_to_generated_data( @aData, _idfirma, _idtipdok, _brdok, _idpartner, __destinacija )
 
-// vrati se na prvu stavku ove fakture
-skip -(nCount - 1)
+      my_rlock()
+      Gather()
+      my_unlock()
 
-Scatter()
+      // resetuj _txt
+      _txt := ""
 
-// obradi djokere
-txt_djokeri(nSaldoKup, nSaldoDob, dPUplKup, dPPromKup, dPPromDob, dDatLUpl, cUPartn )
+      SELECT rugov
+      SKIP
 
-my_rlock()
-Gather()
-my_unlock()
+   ENDDO
 
-go (nTRec)
+   // saldo kupca
+   nSaldoKup := get_fin_partner_saldo( cUPartn, cKtoDug )
+   // saldo dobavljaca
+   nSaldoDob := get_fin_partner_saldo( cUPartn, cKtoPot )
+   // datum zadnje uplate kupca
+   dPUplKup := g_dpupl_part( cUPartn, cKtoDug )
+   // datum zadnje promjene kupac
+   dPPromKup := g_dpprom_part( cUPartn, cKtoDug )
+   // datum zadnje promjene dobavljac
+   dPPromDob := g_dpprom_part( cUPartn, cKtoPot )
 
-return
+   // dodaj stavku u gen_ug_p
+   a_to_gen_p( dDatObr, cUId, cUPartn, nSaldoKup, nSaldoDob, dPUplKup, dPPromKup, dPPromDob, nFaktIzn, nFaktPdv )
+
+   // uvecaj broj faktura
+   ++ nFaktBr
+
+   SELECT gen_ug
+   SET ORDER TO TAG "dat_obr"
+   SEEK DToS( dDatGen )
+
+   IF Found()
+
+      _rec := dbf_get_rec()
+      // broj prve fakture
+      IF Empty( field->brdok_od )
+         _rec[ "brdok_od" ] := cBrDok
+      ENDIF
+      _rec[ "brdok_do" ] := cBrDok
+      update_rec_server_and_dbf( Alias(), _rec, 1, "FULL" )
+   ENDIF
+
+   // vrati se na pripremu i pregledaj djokere na _TXT
+   SELECT fakt_pripr
+   nTRec := RecNo()
+
+   // vrati se na prvu stavku ove fakture
+   SKIP -( nCount - 1 )
+
+   Scatter()
+
+   // obradi djokere
+   txt_djokeri( nSaldoKup, nSaldoDob, dPUplKup, dPPromKup, dPPromDob, dDatLUpl, cUPartn )
+
+   my_rlock()
+   Gather()
+   my_unlock()
+
+   GO ( nTRec )
+
+   RETURN
 
 
 // ----------------------------------------------------------------------
 // dodaj u kontrolnu matricu sta je generisano
 // ----------------------------------------------------------------------
-static function add_to_generated_data( data, ;
-                id_firma, id_tip_dok, br_dok, ;
-                id_partner, destinacija )
+STATIC FUNCTION add_to_generated_data( data, ;
+      id_firma, id_tip_dok, br_dok, ;
+      id_partner, destinacija )
 
-_scan := ASCAN( data, { |srch| srch[1] == id_firma .and.  srch[2] == id_tip_dok .and.  srch[3] == br_dok })
+   _scan := AScan( data, {|srch| srch[ 1 ] == id_firma .AND.  srch[ 2 ] == id_tip_dok .AND.  srch[ 3 ] == br_dok } )
 
-if _scan == 0
-    AADD( data, { id_firma, id_tip_dok, br_dok, id_partner, destinacija } )
-endif
+   IF _scan == 0
+      AAdd( data, { id_firma, id_tip_dok, br_dok, id_partner, destinacija } )
+   ENDIF
 
-return
+   RETURN
 
 // ----------------------------------------------------------------------
 // prikaz generisanih podataka
-// 
+//
 // data = [ idfirma, idtipdok, brdok, idpartner, destinacija ]
 // ----------------------------------------------------------------------
-static function info_generated_data( data )
-local _i
-local _cnt := 0
+STATIC FUNCTION info_generated_data( data )
 
-START PRINT CRET
+   LOCAL _i
+   LOCAL _cnt := 0
 
-O_PARTN
+   START PRINT CRET
 
-?
-? "Pregled generisanih dokumenata prema kupcima:"
-? "----------------------------------------------"
-P_COND2
-? 
-? PADR( "R.br", 5 ), PADR( "dokument", 15 ), PADR( "partner", 34 ), PADR( "destinacija", 100 )
-? REPLICATE( "-", 150 )
+   O_PARTN
 
-for _i := 1 to LEN( data )
-    
-    select partn
-    hseek data[ _i, 4 ]
+   ?
+   ? "Pregled generisanih dokumenata prema kupcima:"
+   ? "----------------------------------------------"
+   P_COND2
+   ?
+   ? PadR( "R.br", 5 ), PadR( "dokument", 15 ), PadR( "partner", 34 ), PadR( "destinacija", 100 )
+   ? Replicate( "-", 150 )
 
-    ? PADL( ALLTRIM( STR( ++_cnt ) ), 4 ) + "."
+   FOR _i := 1 TO Len( data )
 
-    @ prow(), pcol() + 1 SAY PADR( data[ _i, 1 ] + "-" + data[ _i, 2 ] + "-" + ALLTRIM( data[ _i, 3 ] ) , 15 )
-    @ prow(), pcol() + 1 SAY PADR( data[ _i, 4 ], 6 ) + " - " + PADR( partn->naz, 25 )
-    @ prow(), pcol() + 1 SAY PADR( data[ _i, 5 ], 100 )
+      SELECT partn
+      hseek DATA[ _i, 4 ]
 
-next
+      ? PadL( AllTrim( Str( ++_cnt ) ), 4 ) + "."
 
-FF
-ENDPRINT
+      @ PRow(), PCol() + 1 SAY PadR( DATA[ _i, 1 ] + "-" + DATA[ _i, 2 ] + "-" + AllTrim( DATA[ _i, 3 ] ), 15 )
+      @ PRow(), PCol() + 1 SAY PadR( DATA[ _i, 4 ], 6 ) + " - " + PadR( partn->naz, 25 )
+      @ PRow(), PCol() + 1 SAY PadR( DATA[ _i, 5 ], 100 )
 
-return
+   NEXT
+
+   FF
+   ENDPRINT
+
+   RETURN
 
 
 
 // --------------------------------------------
 // provjerava da li postoji generacija u GEN_UG
 // --------------------------------------------
-static function postoji_generacija( dDatObr, cIdArt )
+STATIC FUNCTION postoji_generacija( dDatObr, cIdArt )
 
-if !EMPTY( cIdArt )
-    return 1
-endif
+   IF !Empty( cIdArt )
+      RETURN 1
+   ENDIF
 
-select gen_ug
-set order to tag "dat_obr"
-seek DTOS(dDatObr)
+   SELECT gen_ug
+   SET ORDER TO TAG "dat_obr"
+   SEEK DToS( dDatObr )
 
-if !FOUND()
-    return 1
-endif
+   IF !Found()
+      RETURN 1
+   ENDIF
 
-if Pitanje(,"Obracun " + fakt_do(dDatObr) + " postoji, ponoviti (D/N)?", "D") == "D"
-    vrati_nazad( dDatObr, cIdArt )
+   IF Pitanje(, "Obracun " + fakt_do( dDatObr ) + " postoji, ponoviti (D/N)?", "D" ) == "D"
+      vrati_nazad( dDatObr, cIdArt )
 
-    my_close_all_dbf()
-    o_ugov()
-    // otvori i fakt
-    O_FAKT
-    O_FAKT_PRIPR
-    SELECT gen_ug
-    set order to tag "dat_obr"
-    seek DTOS(dDatObr)
-    return 1
-endif
+      my_close_all_dbf()
+      o_ugov()
+      // otvori i fakt
+      O_FAKT
+      O_FAKT_PRIPR
+      SELECT gen_ug
+      SET ORDER TO TAG "dat_obr"
+      SEEK DToS( dDatObr )
+      RETURN 1
+   ENDIF
 
-return 0
+   RETURN 0
 
 
 // ---------------------------------------------
 // vrati obracun nazad
 // ---------------------------------------------
-static function vrati_nazad( dDatObr, cIdArt )
-local cBrDokOdDo
-local cFirma := gFirma
+STATIC FUNCTION vrati_nazad( dDatObr, cIdArt )
 
-select gen_ug
-set order to tag "dat_obr"
-go top
-seek DTOS(dDatObr)
+   LOCAL cBrDokOdDo
+   LOCAL cFirma := gFirma
 
-if !found()
-    MsgBeep("Obracun " + fakt_do(dDatObr) + " ne postoji")
-    return
-endif
+   SELECT gen_ug
+   SET ORDER TO TAG "dat_obr"
+   GO TOP
+   SEEK DToS( dDatObr )
 
-if !EMPTY(cIdArt)
-    cFirma := g_idfirma( cIdArt )
-endif
+   IF !Found()
+      MsgBeep( "Obracun " + fakt_do( dDatObr ) + " ne postoji" )
+      RETURN
+   ENDIF
 
-if fakt_dokument_postoji( cFirma, "10", gen_ug->brdok_od) .and. ;
-    fakt_dokument_postoji( cFirma, "10", gen_ug->brdok_do)
-    
-    cBrDokOdDo := gen_ug->brdok_od + "--" +  gen_ug->brdok_do + ";"
-    Povrat_fakt_po_kriteriju( cBrDokOdDo, nil, nil, cFirma )
+   IF !Empty( cIdArt )
+      cFirma := g_idfirma( cIdArt )
+   ENDIF
 
-endif
+   IF fakt_dokument_postoji( cFirma, "10", gen_ug->brdok_od ) .AND. ;
+         fakt_dokument_postoji( cFirma, "10", gen_ug->brdok_do )
 
-// izbrisi pripremu
-O_FAKT_PRIPR
+      cBrDokOdDo := gen_ug->brdok_od + "--" +  gen_ug->brdok_do + ";"
+      Povrat_fakt_po_kriteriju( cBrDokOdDo, nil, nil, cFirma )
 
-fakt_brisanje_pripreme()
+   ENDIF
 
-return
+   // izbrisi pripremu
+   O_FAKT_PRIPR
+
+   fakt_brisanje_pripreme()
+
+   RETURN
 
 
 
 // ------------------------------------------------
 // vraca datum zadnjeg fakturisanja
 // ------------------------------------------------
-static function g_lst_fakt()
-local nTArea := SELECT()
-local dGen
-select gen_ug
-set order to tag "dat_obr"
-go bottom
-dGen := field->dat_gen
-select (nTArea)
-return dGen
+STATIC FUNCTION g_lst_fakt()
 
+   LOCAL nTArea := Select()
+   LOCAL dGen
 
+   SELECT gen_ug
+   SET ORDER TO TAG "dat_obr"
+   GO BOTTOM
+   dGen := field->dat_gen
+   SELECT ( nTArea )
 
-
+   RETURN dGen

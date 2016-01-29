@@ -32,18 +32,17 @@ FUNCTION my_use_semaphore_off()
    __my_use_semaphore := .F.
    log_write( "stanje semafora : OFF", 6 )
 
-   RETURN
+   RETURN .T.
 
 FUNCTION my_use_semaphore_on()
 
    __my_use_semaphore := .T.
    log_write( "stanje semafora : ON", 6 )
 
-   RETURN
+   RETURN .T.
 
 FUNCTION my_use_semaphore()
    RETURN __my_use_semaphore
-
 
 
 FUNCTION my_usex( alias, table, new_area, _rdd, semaphore_param )
@@ -57,8 +56,7 @@ FUNCTION my_usex( alias, table, new_area, _rdd, semaphore_param )
 FUNCTION my_use_temp( alias, table, new_area, excl )
 
    LOCAL nCnt, nSelect, _a_dbf_rec, _tmp
-   LOCAL _force_erase
-   LOCAL _err
+   LOCAL oError
 
    IF excl == NIL
       excl := .F.
@@ -123,7 +121,7 @@ FUNCTION my_use_temp( alias, table, new_area, excl )
       RaiseError( "ERROR: my_use " + table + " neusjesno !" )
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 // ----------------------------------------------------------------
 // semaphore_param se prosjedjuje eval funkciji ..from_sql_server
@@ -142,6 +140,8 @@ FUNCTION my_use( alias, table, new_area, _rdd, semaphore_param, excl, select_wa 
    LOCAL nSelect
    LOCAL lOdradioFullSynchro := .F.
    LOCAL lUspjesno
+   LOCAL oError
+   LOCAL _a_dbf_rec
 
    IF excl == NIL
       excl := .F.
@@ -185,7 +185,7 @@ FUNCTION my_use( alias, table, new_area, _rdd, semaphore_param, excl, select_wa 
    table := _a_dbf_rec[ "table" ]
 
    IF ValType( table ) != "C"
-      _msg := ProcName( 2 ) + "(" + AllTrim( Str( ProcLine( 2 ) ) ) + ") table name VALTYPE = " + ValType( type )
+      _msg := ProcName( 2 ) + "(" + AllTrim( Str( ProcLine( 2 ) ) ) + ") table name VALTYPE = " + ValType( table )
       Alert( _msg )
       log_write( _msg, 5 )
       QUIT_1
@@ -228,7 +228,7 @@ FUNCTION my_use( alias, table, new_area, _rdd, semaphore_param, excl, select_wa 
    nCnt := 0
 
    lUspjesno := .F.
-   DO WHILE nCnt < 10
+   DO WHILE ( !lUspjesno ) .AND. ( nCnt < 10 )
 
       BEGIN SEQUENCE WITH {| err| Break( err ) }
 

@@ -6,74 +6,76 @@
 // citaj vrijednost ini fajla
 // .t. ako je sve ok
 // --------------------------------------------------------------
-function f18_ini_read( sect, ini, global )
-local tmp_ini_section
-local tmp_key
-local ini_file
-local ini_read
+FUNCTION f18_ini_read( sect, ini, global )
 
-if (global == NIL) .or. (global == .f.)
-	ini_file := my_home() + INI_FNAME
-else
-	ini_file := my_home_root() + INI_FNAME
-endif
+   LOCAL tmp_ini_section
+   LOCAL tmp_key
+   LOCAL ini_file
+   LOCAL ini_read
 
-if !FILE( ini_file )
-	log_write( "Ne postoji ini fajl " + ini_file )
-else
-    ini_read := hb_iniread( ini_file )
-endif
+   IF ( global == NIL ) .OR. ( global == .F. )
+      ini_file := my_home() + INI_FNAME
+   ELSE
+      ini_file := my_home_root() + INI_FNAME
+   ENDIF
+
+   IF !File( ini_file )
+      log_write( "Ne postoji ini fajl " + ini_file )
+   ELSE
+      ini_read := hb_iniRead( ini_file )
+   ENDIF
 
 
-if EMPTY( ini_read )
-	log_write( "Fajl je prazan: " + ini_file )
+   IF Empty( ini_read )
+      log_write( "Fajl je prazan: " + ini_file )
 
-else
-    if HB_HHASKEY(ini_read, sect)
+   ELSE
+      IF hb_HHasKey( ini_read, sect )
 
-    tmp_ini_section := ini_read[sect]
-    for each tmp_key in ini:Keys
+         tmp_ini_section := ini_read[ sect ]
+         FOR EACH tmp_key in ini:Keys
             // napuni ini sa onim sto si procitao
-            if HB_HHASKEY(tmp_ini_section, tmp_key)
-                ini[tmp_key] := tmp_ini_section[tmp_key]
-            endif
-    next
-        
-    endif
-endif
- 
-return .t.
+            IF hb_HHasKey( tmp_ini_section, tmp_key )
+               ini[ tmp_key ] := tmp_ini_section[ tmp_key ]
+            ENDIF
+         NEXT
 
-function f18_ini_write( sect, ini, global )
-local tmp_key
-local ini_file
-local ini_read
+      ENDIF
+   ENDIF
 
-if (global == NIL) .or. (global == .f.)
-	ini_file := my_home() + INI_FNAME
-else
-	ini_file := my_home_root() + INI_FNAME
-endif
+   RETURN .T.
 
-ini_read := hb_iniread( ini_file )
+FUNCTION f18_ini_write( sect, ini, global )
 
-if EMPTY(ini_read)
-   ini_read := hb_hash()
-endif
+   LOCAL tmp_key
+   LOCAL ini_file
+   LOCAL ini_read
 
-if !HB_HHASKEY(ini_read, sect)
-   ini_read[sect] := hb_hash()
-endif
+   IF ( global == NIL ) .OR. ( global == .F. )
+      ini_file := my_home() + INI_FNAME
+   ELSE
+      ini_file := my_home_root() + INI_FNAME
+   ENDIF
 
-// napuni ini_read sa vrijednostima iz ini matrice
-for each tmp_key in ini:Keys
-       ini_read[sect][tmp_key] := ini[tmp_key]
-next
+   ini_read := hb_iniRead( ini_file )
+
+   IF Empty( ini_read )
+      ini_read := hb_Hash()
+   ENDIF
+
+   IF !hb_HHasKey( ini_read, sect )
+      ini_read[ sect ] := hb_Hash()
+   ENDIF
+
+   // napuni ini_read sa vrijednostima iz ini matrice
+   FOR EACH tmp_key in ini:Keys
+      ini_read[ sect ][ tmp_key ] := ini[ tmp_key ]
+   NEXT
 
 
-if !hb_IniWrite( ini_file, ini_read, "#F18 config", "#end of config" )
-	log_write( "Ne mogu snimiti ini fajl "  + ini_file )
-    return .f.
-endif
+   IF !hb_iniWrite( ini_file, ini_read, "#F18 config", "#end of config" )
+      log_write( "Ne mogu snimiti ini fajl "  + ini_file )
+      RETURN .F.
+   ENDIF
 
-return .t.
+   RETURN .T.

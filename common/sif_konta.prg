@@ -42,6 +42,7 @@ FUNCTION P_Konto( cId, dx, dy )
 /*
    Funkcija vraca vrijednost polja naziv po zadatom idkonto
 */
+
 FUNCTION GetNameFromKonto( cIdKonto )
 
    LOCAL nArr

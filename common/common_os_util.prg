@@ -11,7 +11,6 @@
 
 #include "f18.ch"
 
-#define D_STAROST_DANA   25
 
 PROCEDURE OutMsg( hFile, cMsg )
 

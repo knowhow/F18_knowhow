@@ -35,32 +35,31 @@ FUNCTION run_sql_query( qry, retry )
       quit_1
    ENDIF
 
-   //IF _server:TransactionStatus() > 0
-     // lRestorePoint := .T.
-   //ENDIF
+   // IF _server:TransactionStatus() > 0
+   // lRestorePoint := .T.
+   // ENDIF
 
    FOR _i := 1 TO retry
 
       IF _i > 1
-         MsgO( "Pokušavam izvršiti SQL upit: " + qry + " pokušaj: " + ALLTRIM( STR( _i ) ) )
+         MsgO( "Pokušavam izvršiti SQL upit: " + qry + " pokušaj: " + AllTrim( Str( _i ) ) )
          lMsg := .T.
       ENDIF
-       
+
       BEGIN SEQUENCE WITH {| err| Break( err ) }
 
-         //IF lRestorePoint
-           // _qry_obj := _server:Query( "SAVEPOINT " + cSavePointName + ";" )
-         //ENDIF
-
+         // IF lRestorePoint
+         // _qry_obj := _server:Query( "SAVEPOINT " + cSavePointName + ";" )
+         // ENDIF
          _qry_obj := _server:Query( qry + ";" )
 
-      RECOVER 
+      RECOVER
 
          hb_idleSleep( 1 )
 
       END SEQUENCE
 
-      IF _qry_obj:NetErr() .AND. !EMPTY(_qry_obj:ErrorMsg()) 
+      IF _qry_obj:NetErr() .AND. !Empty( _qry_obj:ErrorMsg() )
 
          cErrorMsg := "ERROR RUN_SQL_QRY: " + _qry_obj:ErrorMsg() + " QRY:" + qry
 
@@ -131,6 +130,3 @@ FUNCTION is_var_objekat_tipa( xVar, cClassName )
    ENDIF
 
    RETURN .F.
-
-
-

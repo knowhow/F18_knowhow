@@ -13,26 +13,66 @@
 #define FMK_DEFINED
 #define F18_DEFINED
 
-#include "o_f18.ch"
-#include "f_f18.ch"
 #include "inkey.ch"
+#include "getexit.ch"
 #include "box.ch"
 #include "dbedit.ch"
-#include "hbclass.ch"
 #include "achoice.ch"
+
+#include "hbclass.ch"
 #include "fileio.ch"
 #require "rddsql"
 #require "sddpg"
 #include "dbinfo.ch"
 #include "error.ch"
-#include "f18_separator.ch"
-#include "f18_ver.ch"
 #include "error.ch"
 #include "fileio.ch"
 #include "hbclass.ch"
-#include "f18_cre_all.ch"
+
+
 #include "set.ch"
 #include "hbgtinfo.ch"
+#include "common.ch"
+#include "dbstruct.ch"
+#include "setcurs.ch"
+#include "dbedit.ch"
+
+#include "hbthread.ch"
+
+#include "o_f18.ch"
+#include "f_f18.ch"
+#include "f18_separator.ch"
+#include "f18_rabat.ch"
+#include "f18_ver.ch"
+#include "f18_request.ch"
+#include "f18_cre_all.ch"
+
+#define CHR254   254
+#define D_STAROST_DANA   25
+
+
+#define oF_ERROR_MIN          1
+#define oF_CREATE_OBJECT      1
+#define oF_OPEN_FILE          2
+#define oF_READ_FILE          3
+#define oF_CLOSE_FILE         4
+#define oF_ERROR_MAX          4
+#define oF_DEFAULT_READ_SIZE  4096
+
+
+#define K_UNDO          K_CTRL_U
+// format of array used to preserve state variables
+#define GSV_KILLREAD  1
+#define GSV_BUMPTOP  2
+#define GSV_BUMPBOT  3
+#define GSV_LASTEXIT  4
+#define GSV_LASTPOS  5
+#define GSV_ACTIVEGET  6
+#define GSV_READVAR   7
+#define GSV_READPROCNAME 8
+#define GSV_READPROCLINE 9
+
+#define GSV_COUNT  9
 
 /*
 

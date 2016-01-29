@@ -1,116 +1,113 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+/*
+ * This file is part of the bring.out knowhow ERP, a free and open source
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
 
-
 #include "f18.ch"
 
-// -----------------------------
-// -----------------------------
-function ScreenSaver()
+FUNCTION ScreenSaver()
 
+   LOCAL nBroji3
+   LOCAL i, nRow, nCol, x := 0, y := 0, nSek, xs := 0, ys := 0, cTXT
+   LOCAL cOC := Set( _SET_COLOR )
 
-local nBroji3
-local i, nRow, nCol, x:=0, y:=0, nSek, xs:=0, ys:=0, cTXT
-local cOC:=SET(_SET_COLOR)
+   nRow := Row()
+   nCol := Col()
 
-nRow:=row()
-nCol:=col()
+   cScr := SaveScreen()
+   SET COLOR TO "W/N"
+   SET CURSOR OFF
+   nSek := Seconds()
+   cTXT := "bring.out Sarajevo"
+   nBroji3 := Seconds()
+   DO WHILE NextKey() == 0
+      IF GwStaMai( @nBroji3 ) $ "CB_KRAJ#CB_IDLE"
 
-cScr:=SaveScreen()
-SET COLOR TO "W/N"
-set cursor off
-nSek:=SECONDS()
-cTXT:="bring.out Sarajevo"
-nBroji3:=Seconds()
-do while nextkey()==0
-     	if GwStaMai(@nBroji3) $ "CB_KRAJ#CB_IDLE"
-         	
-		// callback funkcija trazi kraj
-         	exit
-	endif
-     IF SECONDS()-nSek >= 1.2
-       CLS
-       nSek:=SECONDS()
-       xs := x
-       ys := y
-       DO WHILE x=xs .or. y=ys
-         x := RANDOM()%25
-         y := RANDOM()%(80-LEN(cTXT))
-       ENDDO
-       VuciULin(xs,ys,x,y,cTXT)
-     ENDIF
-enddo
-set cursor on
-cls
-SET(_SET_COLOR,cOC)
-restore screen from cScr
+         // callback funkcija trazi kraj
+         EXIT
+      ENDIF
+      IF Seconds() -nSek >= 1.2
+         CLS
+         nSek := Seconds()
+         xs := x
+         ys := y
+         DO WHILE x = xs .OR. y = ys
+            x := RANDOM() % 25
+            y := RANDOM() % ( 80 -Len( cTXT ) )
+         ENDDO
+         VuciULin( xs, ys, x, y, cTXT )
+      ENDIF
+   ENDDO
+   SET CURSOR ON
+   cls
+   Set( _SET_COLOR, cOC )
+   RESTORE SCREEN FROM cScr
 
-// pozicioniraj kursor tamo gdje je i bio !
-@ nRow, nCol SAY ""     
-return
+   // pozicioniraj kursor tamo gdje je i bio !
+   @ nRow, nCol SAY ""
+
+   RETURN
 
 
 // ---------------------------------------
 // ---------------------------------------
-function VuciULin(xs, ys, x, y, cTXT)
+FUNCTION VuciULin( xs, ys, x, y, cTXT )
 
-local a,b,i,j,is:=99
+   LOCAL a, b, i, j, is := 99
 
-if y==ys .or. x==xs
-	return
-endif
-a:=(y-ys)/(x-xs)
-b:=y-a*x
-for j:=ys to y step IF(ys>y,-1,1)
-   i := ROUND( (j-b) / a , 0 )
-   if is==99 .or. is<>i
-     @ i,j  SAY cTxt
-     is:=i
-   endif
-next
-return
+   IF y == ys .OR. x == xs
+      RETURN
+   ENDIF
+   a := ( y - ys ) / ( x - xs )
+   b := y - a * x
+   FOR j := ys TO y STEP IF( ys > y, -1, 1 )
+      i := Round( ( j - b ) / a, 0 )
+      IF is == 99 .OR. is <> i
+         @ i, j  SAY cTxt
+         is := i
+      ENDIF
+   NEXT
+
+   RETURN
 
 // -------------------------------------------------------
 // -------------------------------------------------------
-function WaitScrSav(lKeyb)
+FUNCTION WaitScrSav( lKeyb )
 
-local cTmp
-LOCAL nBroji, nBroji2, nChar, nCekaj
+   LOCAL cTmp
+   LOCAL nBroji, nBroji2, nChar, nCekaj
 
-return inkey(0)
+   RETURN Inkey( 0 )
 
-IF lKeyb==NIL
-	lKeyb:=.f.
+IF lKeyb == NIL
+lKeyb := .F.
 ENDIF
 
-nBroji:=SECONDS()
-nBroji2:=SECONDS()
+nBroji := Seconds()
+nBroji2 := Seconds()
 
-nCekaj:=gCekaScreenSaver
+nCekaj := gCekaScreenSaver
 
-while (nChar := inkey()) == 0
-   cTmp:=CekaHandler(@nBroji2)
+WHILE ( nChar := Inkey() ) == 0
+cTmp := CekaHandler( @nBroji2 )
 
-   if (SECONDS()-nBroji)/60 >= nCekaj
-     screensaver()
-     nBroji:=SECONDS()
-     if !lKeyb
-       CistiTipke()
-     endif
-   endif
-enddo
+IF ( Seconds() -nBroji ) / 60 >= nCekaj
+screensaver()
+nBroji := Seconds()
+IF !lKeyb
+CistiTipke()
+ENDIF
+ENDIF
+ENDDO
 
 IF lKeyb
-  Keyboard Chr(nChar)
+KEYBOARD Chr( nChar )
 ENDIF
 
-RETURN nChar
-
+   RETURN nChar

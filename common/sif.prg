@@ -11,7 +11,6 @@
 
 #include "f18.ch"
 
-#include "dbstruct.ch"
 
 STATIC __PSIF_NIVO__ := 0
 STATIC __A_SIFV__ := { { NIL, NIL, NIL }, { NIL, NIL, NIL }, { NIL, NIL, NIL }, { NIL, NIL, NIL } }
@@ -61,7 +60,7 @@ FUNCTION p_sifra( nDbf, xIndex, nVisina, nSirina, cNaslov, cID, dx, dy,  bBlok, 
    IF dx <> NIL .AND. dx < 0
       IF !Found()
          GO BOTTOM
-         SKIP  
+         SKIP
          cRet := &( FieldName( -dx ) )
          SKIP -1
       ELSE
@@ -244,7 +243,7 @@ STATIC FUNCTION sif_katbr_zvjezdica( cId, cIdBK, fId_j )
 
          SELECT roba
          SET ORDER TO TAG "ID"
-      
+
          SEEK cId
          cId := Id
          IF fid_j
@@ -555,7 +554,7 @@ STATIC FUNCTION edit_sql_sif_item( Ch, cOrderTag, aZabIsp, lNovi )
       NEXT
 
       i := 1
-      FOR _jg := 1 TO 3  
+      FOR _jg := 1 TO 3
 
          IF _jg == 1
             Box( NIL, Min( MAXROWS() -7, nTrebaRedova ) + 1, MAXCOLS() -20, .F. )
@@ -687,7 +686,7 @@ FUNCTION snimi_promjene_sifarnika( lNovi, cTekuciZapis )
    LOCAL cAlias := Alias()
    LOCAL cEditovaniZapis
    LOCAL lSqlTable
-   LOCAL lAppended := .F. 
+   LOCAL lAppended := .F.
 
    lSqlTable := is_sql_table( cAlias )
 
@@ -1233,7 +1232,7 @@ FUNCTION is_sifra_postoji_u_sifarniku( hTekuciRec )
 
    LOCAL lRet := .F.
    LOCAL cAlias := Alias()
-   LOCAL hTblRec := get_a_dbf_rec( cAlias, .T. ) 
+   LOCAL hTblRec := get_a_dbf_rec( cAlias, .T. )
    LOCAL cTable, cWhere
 
    IF ValType( hTblRec ) <> "H"
@@ -1248,7 +1247,7 @@ FUNCTION is_sifra_postoji_u_sifarniku( hTekuciRec )
    IF LEFT( cTable, 4 ) <> "fmk."
       cTable := "fmk." + cTable
    ENDIF
- 
+
    cWhere := napravi_where_uslov_na_osnovu_hash_matrica( hTblRec, hTekuciRec )
 
    IF EMPTY( cWhere )
@@ -1265,13 +1264,13 @@ FUNCTION is_sifra_postoji_u_sifarniku( hTekuciRec )
 
 STATIC FUNCTION napravi_where_uslov_na_osnovu_hash_matrica( hTblRec, hRec )
 
-   LOCAL cSqlFields, aDbfFields, i, aTmp 
+   LOCAL cSqlFields, aDbfFields, i, aTmp
    LOCAL cWhere := ""
    LOCAL cTmp := ""
 
    cSqlFields := hTblRec["algoritam"][1]["sql_in"]
    aDbfFields := hTblRec["algoritam"][1]["dbf_key_fields"]
- 
+
    IF cSqlFields == NIL .OR. EMPTY( cSqlFields )
       RETURN cWhere
    ENDIF
@@ -1285,7 +1284,7 @@ STATIC FUNCTION napravi_where_uslov_na_osnovu_hash_matrica( hTblRec, hRec )
          aTmp := aDbfFields[i]
          cTmp += Str( hRec[ aTmp[1] ], aTmp[2], 0 )
       ELSE
-         cTmp += hRec[ aDbfFields[i] ] 
+         cTmp += hRec[ aDbfFields[i] ]
       ENDIF
    NEXT
 
@@ -1295,8 +1294,6 @@ STATIC FUNCTION napravi_where_uslov_na_osnovu_hash_matrica( hTblRec, hRec )
 
    cWhere := cSqlFields
    cWhere += " = "
-   cWhere += _sql_quote( cTmp ) 
+   cWhere += _sql_quote( cTmp )
 
    RETURN cWhere
-
-

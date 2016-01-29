@@ -10,8 +10,7 @@
  */
 
 #include "f18.ch"
-#include "hbclass.ch"
-#include "common.ch"
+
 
 CLASS CsvReader
 
@@ -33,8 +32,7 @@ CLASS CsvReader
 ENDCLASS
 
 
-// -----------------------------------------------------
-// -----------------------------------------------------
+
 METHOD CsvReader:New()
 
    ::memname := "csvimp"

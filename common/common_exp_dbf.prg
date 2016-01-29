@@ -11,6 +11,7 @@
 
 
 #include "f18.ch"
+
 STATIC __table := "r_export"
 
 
@@ -20,7 +21,7 @@ FUNCTION t_exp_create( field_list )
    FErase( my_home() + __table + ".dbf" )
    dbcreate2( my_home() + __table, field_list )
 
-   RETURN
+   RETURN .T.
 
 
 FUNCTION tbl_export()

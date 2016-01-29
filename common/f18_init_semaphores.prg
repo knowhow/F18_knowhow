@@ -16,11 +16,6 @@ FUNCTION refresh_me( a_dbf_rec, lSilent, lFromMyUse )
 
    LOCAL _wa, _del, _cnt, _msg_1, _msg_2, _cnt_sql
    LOCAL _dbf_pack_algoritam
-   LOCAL lInTransaction := .F.
-
-   //IF my_server():transactionStatus() > 0
-     // lInTransaction := .T.
-   //ENDIF
 
    IF lSilent == NIL
       lSilent := .T.
@@ -53,12 +48,6 @@ FUNCTION refresh_me( a_dbf_rec, lSilent, lFromMyUse )
       USE
    ENDIF
 
-   //IF !lInTransaction
-     // sql_table_update( NIL, "BEGIN" )
-     // IF !f18_lock_tables( { a_dbf_rec["table"] }, .T. )
-      //   sql_table_update( NIL, "END" )
-     // ENDIF
-   //ENDIF
 
    _cnt_sql := table_count( a_dbf_rec["table"] )
 
@@ -66,10 +55,6 @@ FUNCTION refresh_me( a_dbf_rec, lSilent, lFromMyUse )
    dbf_open_temp( a_dbf_rec, @_cnt, @_del )
    USE
 
-   //IF !lInTransaction
-     // f18_free_tables( { a_dbf_rec["table"] } )
-     // sql_table_update( NIL, "END" )
-   //ENDIF
 
    _msg_1 := "nakon sync: " +  a_dbf_rec[ "alias" ] + " / " + a_dbf_rec[ "table" ]
    _msg_2 := "cnt = " + AllTrim( Str( _cnt, 0 ) ) + " / " + AllTrim( Str( _del, 0 ) )
@@ -125,4 +110,4 @@ STATIC FUNCTION dbf_open_temp( a_dbf_rec, cnt, del )
    USE
    SET DELETED ON
 
-   RETURN
+   RETURN .T.

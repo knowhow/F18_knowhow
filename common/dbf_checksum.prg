@@ -30,11 +30,11 @@ FUNCTION check_recno_and_fix( dbf_alias, cnt_sql, cnt_dbf, full_synchro )
    _a_dbf_rec :=  get_a_dbf_rec( dbf_alias )
    _sql_table :=  my_server_params()[ "schema" ] + "." + _a_dbf_rec[ "table" ]
 
-   nSelect := SELECT ( _a_dbf_rec[ "alias" ] )
+   nSelect := Select ( _a_dbf_rec[ "alias" ] )
 
    IF nSelect > 0
-         SELECT( nSelect )
-         USE
+      Select( nSelect )
+      USE
    ENDIF
 
    SELECT ( _a_dbf_rec[ "wa" ] )
@@ -43,33 +43,33 @@ FUNCTION check_recno_and_fix( dbf_alias, cnt_sql, cnt_dbf, full_synchro )
    _udbf := my_home() + _a_dbf_rec[ "table" ]
 
    IF cnt_dbf == NIL
-   
-        BEGIN SEQUENCE WITH {| err| Break( err ) }
 
-            SELECT ( _a_dbf_rec[ "wa" ] )
-            dbUseArea( .F., DBFENGINE, _udbf, _a_dbf_rec[ "alias" ], .T., .F. )
-            IF File( ImeDbfCdx( _udbf ) )
-                dbSetIndex( ImeDbfCDX( _udbf ) )
-            ENDIF
+      BEGIN SEQUENCE WITH {| err| Break( err ) }
 
-            _opened := .T.
-            
-             // reccount() se ne moze iskoristiti jer prikazuje i deleted zapise
-             // count je vremenski skupa operacija za velike tabele !
-             COUNT TO cnt_dbf
-             USE
+         SELECT ( _a_dbf_rec[ "wa" ] )
+         dbUseArea( .F., DBFENGINE, _udbf, _a_dbf_rec[ "alias" ], .T., .F. )
+         IF File( ImeDbfCdx( _udbf ) )
+            dbSetIndex( ImeDbfCDX( _udbf ) )
+         ENDIF
 
-             log_write( "DBF recs " + _a_dbf_rec[ "alias" ] + ": " + AllTrim( Str( cnt_dbf, 10 ) ) + " / sql recs " + _sql_table + ": " + AllTrim( Str( cnt_sql, 10 ) ), 7 )
+         _opened := .T.
 
-         RECOVER USING _err
+         // reccount() se ne moze iskoristiti jer prikazuje i deleted zapise
+         // count je vremenski skupa operacija za velike tabele !
+         COUNT TO cnt_dbf
+         USE
 
-              log_write( "ERROR: check_recno dbUseArea " + _udbf + " MSG: " +  _err:Description, 2 )
+         log_write( "DBF recs " + _a_dbf_rec[ "alias" ] + ": " + AllTrim( Str( cnt_dbf, 10 ) ) + " / sql recs " + _sql_table + ": " + AllTrim( Str( cnt_sql, 10 ) ), 7 )
 
-          ENDSEQUENCE
+      RECOVER USING _err
 
-    ENDIF
+         log_write( "ERROR: check_recno dbUseArea " + _udbf + " MSG: " +  _err:Description, 2 )
 
-    IF cnt_sql <> cnt_dbf
+      END SEQUENCE
+
+   ENDIF
+
+   IF cnt_sql <> cnt_dbf
 
       cErrMsg := "full synchro, ERROR: "
       cErrMsg += "broj zapisa DBF tabele " + _a_dbf_rec[ "alias" ] + ": " + AllTrim( Str( cnt_dbf, 10 ) ) + " "
@@ -79,11 +79,11 @@ FUNCTION check_recno_and_fix( dbf_alias, cnt_sql, cnt_dbf, full_synchro )
 
       IF full_synchro
 
-          IF cnt_dbf > 0
-             notify_podrska( cErrMsg )
-          ENDIF
+         IF cnt_dbf > 0
+            notify_podrska( cErrMsg )
+         ENDIF
 
-          full_synchro( _a_dbf_rec[ "table" ], 50000 )
+         full_synchro( _a_dbf_rec[ "table" ], 50000 )
 
       ENDIF
 

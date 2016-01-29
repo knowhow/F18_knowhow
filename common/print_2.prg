@@ -92,9 +92,9 @@ FUNCTION f18_end_print( f_name, print_opt )
    SET PRINTER TO
    SET CONSOLE ON
 
-   #ifdef TEST
-      RETURN
-   #endif
+   // #ifdef TEST
+   // RETURN
+   // #endif
 
    Tone( 440, 2 )
    Tone( 440, 2 )
@@ -111,51 +111,25 @@ FUNCTION f18_end_print( f_name, print_opt )
 
    CASE print_opt $ "E#F#G"
 
-      #ifdef __PLATFORM__WINDOWS
-         direct_print_windows( f_name, _port )
-      #else
-         direct_print_unix( f_name, _port )
-      #endif
+#ifdef __PLATFORM__WINDOWS
+      direct_print_windows( f_name, _port )
+#else
+      direct_print_unix( f_name, _port )
+#endif
 
    OTHERWISE
 
-     _cmd := "f18_editor " + f_name
-     _ret := f18_run( _cmd )
+      _cmd := "f18_editor " + f_name
+      _ret := f18_run( _cmd )
 
-     IF _ret <> 0
-        MsgBeep ( "f18_edit nije u pathu ?!##" + "cmd:" + _cmd )
-     ENDIF
+      IF _ret <> 0
+         MsgBeep ( "f18_edit nije u pathu ?!##" + "cmd:" + _cmd )
+      ENDIF
    END CASE
 
-   RETURN
+   RETURN .T.
 
 
-/*
-   Opis: šalje izvještaj na email podrške
-*/
-STATIC FUNCTION txt_izvjestaj_podrska_email( file_name )
-
-   LOCAL _attach, _body, _subject, _mail_params
-
-   // Uzorak TXT izvještaja, F18 1.7.21, rg_2013/bjasko, 02.04.04, 15:00:07
-   _subject := "Uzorak TXT izvještaja, F18 "
-   _subject += F18_VER
-   _subject += ", " + my_server_params()["database"] + "/" + ALLTRIM( f18_user() )
-   _subject += ", " + DTOC( DATE() ) + " " + PADR( TIME(), 8 )
-
-   _body := "U prilogu primjer TXT izvještaja"
-
-   _mail_params := email_hash_za_podrska_bring_out( _subject, _body )
-
-   _attach := { file_name }
-
-   MsgO( "Slanje email-a u toku ..." )
-
-   f18_email_send( _mail_params, _attach )
-
-   MsgC()
-
-   RETURN
 
 
 
@@ -206,7 +180,7 @@ STATIC FUNCTION direct_print_unix( f_name, port_number )
       MsgBeep( "Greška sa direktnom štampom !" )
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 STATIC FUNCTION direct_print_windows( f_name, port_number )
@@ -228,7 +202,7 @@ STATIC FUNCTION direct_print_windows( f_name, port_number )
       MsgBeep( "Greška sa direktnom štampom !" )
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 STATIC FUNCTION set_print_f_name( f_name )
@@ -257,7 +231,7 @@ STATIC FUNCTION read_printer_params()
 
    gPStranica := fetch_metric( "print_dodatni_redovi_po_stranici", nil, 0 )
 
-   RETURN
+   RETURN .T.
 
 
 FUNCTION GpIni( document_name )
@@ -274,7 +248,7 @@ FUNCTION GpIni( document_name )
       QQOut( "#%DOCNA#" + document_name )
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 FUNCTION gpPicH( nRows )
@@ -516,7 +490,7 @@ FUNCTION set_epson_print_codes()
    gPReset := ""
    gPFF := Chr( 12 )
 
-   RETURN
+   RETURN .T.
 
 
 FUNCTION InigHP()
@@ -539,7 +513,7 @@ FUNCTION InigHP()
    PUBLIC gRPL_Normal := "&l6D&a3L"
    PUBLIC gRPL_Gusto := "&l8D(s12H&a6L"
 
-   RETURN
+   RETURN .T.
 
 
 FUNCTION All_GetPstr()
@@ -565,7 +539,7 @@ FUNCTION All_GetPstr()
    RETURN
 
 
-FUNCTION SetGParams( cs,ch,cid,cvar,cval )
+FUNCTION SetGParams( cs, ch, cid, cvar, cval )
 
    LOCAL cPosebno := "N"
    PRIVATE GetList := {}

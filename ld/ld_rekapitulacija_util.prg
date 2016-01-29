@@ -84,9 +84,8 @@ FUNCTION ORekap()
 
 FUNCTION BoxRekSvi()
 
-   LOCAL nArr
 
-   nArr := Select()
+   PushWa()
 
    Box(, 11 + iif( IsRamaGlas(), 1, 0 ), 75 )
    DO WHILE .T.
@@ -117,7 +116,8 @@ FUNCTION BoxRekSvi()
    ENDDO
    BoxC()
 
-   SELECT ( nArr )
+   PopWa()
+   altd()
 
    RETURN .T.
 
@@ -137,7 +137,7 @@ FUNCTION BoxRekJ()
    @ m_x + 6, m_y + 2 SAY8 "Stručna Sprema: "  GET  cStrSpr PICT "@!" VALID Empty( cStrSpr ) .OR. P_StrSpr( @cStrSpr )
    @ m_x + 7, m_y + 2 SAY8 "Opština stanovanja:  "  GET  cOpsSt PICT "@!" VALID Empty( cOpsSt ) .OR. P_Ops( @cOpsSt )
    @ m_x + 8, m_y + 2 SAY8 "Opština rada:        "  GET  cOpsRad  PICT "@!" VALID Empty( cOpsRad ) .OR. P_Ops( @cOpsRad )
-   
+
    @ m_x + 9, m_y + 2 SAY8 "Vrsta invaliditeta (0 sve)  : "  GET  nVrstaInvaliditeta  PICT "9" VALID nVrstaInvaliditeta == 0 .OR. valid_vrsta_invaliditeta( @nVrstaInvaliditeta )
    @ m_x +10, m_y + 2 SAY8 "Stepen invaliditeta (>)     : "  GET  nStepenInvaliditeta  PICT "99" VALID valid_stepen_invaliditeta( @nStepenInvaliditeta )
 

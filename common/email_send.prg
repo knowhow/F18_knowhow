@@ -13,7 +13,6 @@
 #include "f18.ch"
 #include "simpleio.ch"
 
-
 // ---------------------------------------------------------
 // centralna funkcija za slanje email-a
 //
@@ -235,7 +234,5 @@ FUNCTION email_hash_za_podrska_bring_out( subject, body )
    _mail_params["mail_cc"] := ""
    _mail_params["mail_bcc"] := ""
    _mail_params["mail_reply_to"] := ""
- 
+
    RETURN _mail_params
-
-

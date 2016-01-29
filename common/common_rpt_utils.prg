@@ -5,14 +5,13 @@
  *  \brief formatira datum sa stoljecem (dUlazni)=> cDat
  *  \param dUlazni - ulazni datum
  */
- 
-function FormDat1(dUlazni)
 
-LOCAL cVrati
- 
-  SET CENTURY ON
-  cVrati:=DTOC(dUlazni)+"."
-  SET CENTURY OFF
-RETURN cVrati
+FUNCTION FormDat1( dUlazni )
 
+   LOCAL cVrati
 
+   SET CENTURY ON
+   cVrati := DToC( dUlazni ) + "."
+   SET CENTURY OFF
+
+   RETURN cVrati

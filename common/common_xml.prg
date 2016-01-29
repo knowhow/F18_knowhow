@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -16,171 +16,180 @@
 // ------------------------------------
 // xml node
 // ------------------------------------
-function xml_node( cName, cData, lWrite )
-local cTmp
+FUNCTION xml_node( cName, cData, lWrite )
 
-if lWrite == nil
-	lWrite := .t.
-endif
+   LOCAL cTmp
 
-// eg. 
-// cName = "position"
-// cData = "x26"
-// => <position>x26</position>
+   IF lWrite == nil
+      lWrite := .T.
+   ENDIF
 
-cTmp := _bracket( cName, .f. )
-cTmp += ALLTRIM(cData)
-cTmp += _bracket( cName, .t. )
+   // eg.
+   // cName = "position"
+   // cData = "x26"
+   // => <position>x26</position>
 
-if lWrite == .t.
-	?? cTmp
-	?
-endif
+   cTmp := _bracket( cName, .F. )
+   cTmp += AllTrim( cData )
+   cTmp += _bracket( cName, .T. )
 
-return cTmp
+   IF lWrite == .T.
+      ?? cTmp
+      ?
+   ENDIF
+
+   RETURN cTmp
 
 
 // ------------------------------------
 // xml single node
 // ------------------------------------
-function xml_snode( cName, cData, lWrite )
-local cTmp
+FUNCTION xml_snode( cName, cData, lWrite )
 
-if lWrite == nil
-	lWrite := .t.
-endif
+   LOCAL cTmp
 
-// eg. 
-// cName = position
-// cData = bcr="22" vat="33"
-// => <position bcr="22" vat="33" />
+   IF lWrite == nil
+      lWrite := .T.
+   ENDIF
 
-cTmp := _sbracket( cName + " " + cData )
+   // eg.
+   // cName = position
+   // cData = bcr="22" vat="33"
+   // => <position bcr="22" vat="33" />
 
-if lWrite == .t.
-	?? cTmp
-	?
-endif
+   cTmp := _sbracket( cName + " " + cData )
 
-return cTmp
+   IF lWrite == .T.
+      ?? cTmp
+      ?
+   ENDIF
+
+   RETURN cTmp
 
 
 
 // ----------------------------------------------
 // xml subnode
 // ----------------------------------------------
-function xml_subnode( cName, lEscape, lWrite )
-local cTmp
+FUNCTION xml_subnode( cName, lEscape, lWrite )
 
-if lWrite == nil
-	lWrite := .t.
-endif
+   LOCAL cTmp
 
-// eg.
-// cName = "position"
-// => <position> (lEscape = .f.)
-// => </position> (lEscape = .t.)
+   IF lWrite == nil
+      lWrite := .T.
+   ENDIF
 
-cTmp := _bracket( cName, lEscape ) 
+   // eg.
+   // cName = "position"
+   // => <position> (lEscape = .f.)
+   // => </position> (lEscape = .t.)
 
-if lWrite == .t.
-	?? cTmp
-	?
-endif
+   cTmp := _bracket( cName, lEscape )
 
-return cTmp
+   IF lWrite == .T.
+      ?? cTmp
+      ?
+   ENDIF
+
+   RETURN cTmp
 
 
 
 // ----------------------------------------------------
 // xml header
 // ----------------------------------------------------
-function xml_head( lWrite, cTxt )
-local cTmp := '<?xml version="1.0" encoding="UTF-8"?>'
+FUNCTION xml_head( lWrite, cTxt )
 
-if cTxt == nil
-	cTxt := cTmp
-endif
+   LOCAL cTmp := '<?xml version="1.0" encoding="UTF-8"?>'
 
-if lWrite == nil
-	lWrite := .t.
-endif
+   IF cTxt == nil
+      cTxt := cTmp
+   ENDIF
 
-if lWrite == .t.
-	?? cTxt
-	?
-endif
+   IF lWrite == nil
+      lWrite := .T.
+   ENDIF
 
-return cTxt
+   IF lWrite == .T.
+      ?? cTxt
+      ?
+   ENDIF
+
+   RETURN cTxt
 
 
 // --------------------------------------------
 // stavi single string u zagrade (single node)
 // --------------------------------------------
-static function _sbracket( cStr )
-local cRet
+STATIC FUNCTION _sbracket( cStr )
 
-cRet := "<"
+   LOCAL cRet
 
-cRet += cStr
-cRet += " /"
-cRet += ">"
+   cRet := "<"
 
-return cRet
+   cRet += cStr
+   cRet += " /"
+   cRet += ">"
+
+   RETURN cRet
 
 
 // --------------------------------------------
 // stavi string u zagrade
 // --------------------------------------------
-static function _bracket( cStr, lEsc )
-local cRet
+STATIC FUNCTION _bracket( cStr, lEsc )
 
-cRet := "<"
-if lEsc == .t.
-	cRet += "/"
-endif
-cRet += cStr
-cRet += ">"
+   LOCAL cRet
 
-return cRet
+   cRet := "<"
+   IF lEsc == .T.
+      cRet += "/"
+   ENDIF
+   cRet += cStr
+   cRet += ">"
+
+   RETURN cRet
 
 
 // --------------------------------
 // otvori xml fajl za upis
 // --------------------------------
-function open_xml( cFile )
+FUNCTION open_xml( cFile )
 
-if cFile == nil
-	cFile := my_home() + "data.xml"
-endif
+   IF cFile == nil
+      cFile := my_home() + "data.xml"
+   ENDIF
 
-set printer to (cFile)
-set printer on
-set console off
-return
+   SET PRINTER to ( cFile )
+   SET PRINTER ON
+   SET CONSOLE OFF
+
+   RETURN
 
 
 // --------------------------------
 // zatvori fajl za upis
 // --------------------------------
-function close_xml()
-set printer to
-set printer off
-set console on
-return
+FUNCTION close_xml()
+
+   SET PRINTER TO
+   SET PRINTER OFF
+   SET CONSOLE ON
+
+   RETURN
 
 
 // ----------------------------------------------
 // datum za xml dokument
 // ----------------------------------------------
-function xml_date( dDate )
-local cRet := ""
+FUNCTION xml_date( dDate )
 
-cRet := ALLTRIM( STR( YEAR(dDate )) )
-cRet += "-"
-cRet += PADL( ALLTRIM( STR( MONTH(dDate)) ), 2, "0" )
-cRet += "-"
-cRet += PADL( ALLTRIM( STR( DAY(dDate)) ), 2, "0" )
+   LOCAL cRet := ""
 
-return cRet
+   cRet := AllTrim( Str( Year( dDate ) ) )
+   cRet += "-"
+   cRet += PadL( AllTrim( Str( Month( dDate ) ) ), 2, "0" )
+   cRet += "-"
+   cRet += PadL( AllTrim( Str( Day( dDate ) ) ), 2, "0" )
 
+   RETURN cRet

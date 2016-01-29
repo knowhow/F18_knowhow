@@ -12,7 +12,6 @@
 #include "f18.ch"
 
 
-
 // -----------------------------------------------------------------------------------------------------
 // synchro dbf tabele na osnovu id-ova koje su poslali drugi
 // -----------------------------------------------------------------------------------------------------
@@ -23,12 +22,10 @@ FUNCTION ids_synchro( dbf_table )
 
    _ids_queries := create_queries_from_ids( dbf_table )
 
-
    // _ids_queries["ids"] = {  {"00113333 1", "0011333 2"}, {"00224444"}  }
    // _ids_queries["qry"] = {  "select .... in ... rpad('0011333  1') ...", "select .. in ... rpad("0022444")" }
 
    log_write( "START ids_synchro", 9 )
-
    log_write( "ids_synchro ids_queries: " + pp( _ids_queries ), 7 )
 
    DO WHILE .T.
@@ -69,7 +66,6 @@ FUNCTION ids_synchro( dbf_table )
 
       ENDIF
    NEXT
-
 
    log_write( "END ids_synchro", 9 )
 
@@ -156,11 +152,11 @@ FUNCTION push_ids_to_semaphore( table, ids, to_myself )
    // na kraju uradi update verzije semafora, push operacija
    update_semaphore_version_after_push( table, to_myself )
 
-   IF ValType( _ret ) == "O"
+   IF ValType( _ret ) == "O" .AND. EMPTY( _ret:ErrorMsg() )
       RETURN .T.
-   ELSE
-      RETURN .F.
    ENDIF
+
+   RETURN .F.
 
 
 /*
@@ -451,7 +447,7 @@ FUNCTION delete_ids_in_dbf( dbf_table, ids, algoritam )
 
    log_write( "delete_ids_in_dbf(), zavrsio", 9 )
 
-   RETURN
+   RETURN .T.
 
 
 // ----------------------------------------------------------

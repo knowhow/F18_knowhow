@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -12,588 +12,604 @@
 
 #include "f18.ch"
 
-static LEN_TRAKA  := 40
+STATIC LEN_TRAKA  := 40
 
-static LEN_RAZMAK :=  0
-static LEN_RBR    :=  3
-static LEN_NAZIV  := 25
-static LEN_UKUPNO := 10
+STATIC LEN_RAZMAK :=  0
+STATIC LEN_RBR    :=  3
+STATIC LEN_NAZIV  := 25
+STATIC LEN_UKUPNO := 10
 
-static PIC_UKUPNO := "9999999.99"
+STATIC PIC_UKUPNO := "9999999.99"
 
 // glavna funkcija za stampu PDV blag.racuna na traci
 // lStartPrint - .t. - pozivaju se funkcije za stampu START PRINT itd...
-function rb_print(lStartPrint)
-*{
-local nIznUkupno
-local lPrintPfTraka := .f.
-local lGetKupData := .f.
-local lAzurDok := .f.
-local lJedanRacun
+FUNCTION rb_print( lStartPrint )
 
-if lStartPrint == nil
-	lStartPrint := .t.
-endif
+   LOCAL nIznUkupno
+   LOCAL lPrintPfTraka := .F.
+   LOCAL lGetKupData := .F.
+   LOCAL lAzurDok := .F.
+   LOCAL lJedanRacun
 
-lJedanRacun := lStartPrint
+   IF lStartPrint == nil
+      lStartPrint := .T.
+   ENDIF
 
-close_open_racun_tbl()
+   lJedanRacun := lStartPrint
 
-if !racun_tbl_checksum()
-	MsgBeep("Stampanje onemoguceno! checksum error!!!")
-	return .f.
-endif
+   close_open_racun_tbl()
 
-nIznUkupno := get_rb_ukupno()
-// da li uopste stampati fakture - parametri
-isPfTraka(@lPrintPfTraka)
-// da li je ovo prepis dokumenta
-isAzurDok(@lAzurDok)
+   IF !racun_tbl_checksum()
+      MsgBeep( "Stampanje onemoguceno! checksum error!!!" )
+      RETURN .F.
+   ENDIF
 
-// podaci o kupcu
-if (lJedanRacun .and. nIznUkupno <= 100)
-	if lPrintPfTraka
-		if Pitanje(,"Stampati poresku fakturu (D/N)?", "N") == "D"
-			lGetKupData := .t.
-		endif
-	endif
-endif
+   nIznUkupno := get_rb_ukupno()
+   // da li uopste stampati fakture - parametri
+   isPfTraka( @lPrintPfTraka )
+   // da li je ovo prepis dokumenta
+   isAzurDok( @lAzurDok )
 
-// ako je racun veci od 100 - nudi po defaultu poresku fakturu
-if (lJedanRacun .and. nIznUkupno > 100)
-	if lPrintPfTraka
-		lGetKupData := .t.
-	endif
-endif
+   // podaci o kupcu
+   IF ( lJedanRacun .AND. nIznUkupno <= 100 )
+      IF lPrintPfTraka
+         IF Pitanje(, "Stampati poresku fakturu (D/N)?", "N" ) == "D"
+            lGetKupData := .T.
+         ENDIF
+      ENDIF
+   ENDIF
 
-if lJedanRacun .and. (lGetKupData .and. !lAzurDok)
-	// daj nam podatke o kupcu
-	get_kup_data()
-endif
+   // ako je racun veci od 100 - nudi po defaultu poresku fakturu
+   IF ( lJedanRacun .AND. nIznUkupno > 100 )
+      IF lPrintPfTraka
+         lGetKupData := .T.
+      ENDIF
+   ENDIF
 
-if lJedanRacun
-	// Ispisi iznos racuna velikim slovima
-	ShowIznRac(nIznUkupno)
-endif
+   IF lJedanRacun .AND. ( lGetKupData .AND. !lAzurDok )
+      // daj nam podatke o kupcu
+      get_kup_data()
+   ENDIF
 
-// vidjeti sta sa ovim
-if gDisplay=="D"
-	Send2ComPort(CHR(10)+CHR(13))
-	Send2ComPort(CHR(10)+CHR(13))
-	Send2ComPort(CHR(30) + "UKUPAN IZNOS RN:")
-	Send2ComPort(CHR(22))
-	Send2ComPort(CHR(13))
-	Send2ComPort(ALLTRIM(STR(nIznUkupno, 10, 2)))
-endif
+   IF lJedanRacun
+      // Ispisi iznos racuna velikim slovima
+      ShowIznRac( nIznUkupno )
+   ENDIF
 
-// stampaj racun
-st_rb_traka(lStartPrint, lAzurDok)
+   // vidjeti sta sa ovim
+   IF gDisplay == "D"
+      Send2ComPort( Chr( 10 ) + Chr( 13 ) )
+      Send2ComPort( Chr( 10 ) + Chr( 13 ) )
+      Send2ComPort( Chr( 30 ) + "UKUPAN IZNOS RN:" )
+      Send2ComPort( Chr( 22 ) )
+      Send2ComPort( Chr( 13 ) )
+      Send2ComPort( AllTrim( Str( nIznUkupno, 10, 2 ) ) )
+   ENDIF
 
-if lJedanRacun .and. lGetKupData
-	st_pf_traka()
-endif
+   // stampaj racun
+   st_rb_traka( lStartPrint, lAzurDok )
 
-if lJedanRacun
-	// skloni iznos racuna
-	BoxC()
-endif
+   IF lJedanRacun .AND. lGetKupData
+      st_pf_traka()
+   ENDIF
 
-return
+   IF lJedanRacun
+      // skloni iznos racuna
+      BoxC()
+   ENDIF
+
+   RETURN
 
 
 
 // ----------------------------------------------
 // varijable za stampu racuna
 // ----------------------------------------------
-function get_rb_vars(nFeedLines, cOLadSkv, cSTrakSkv, nPdvCijene, lStampId, nVrRedukcije, lPrKupac )
-local cTmp
+FUNCTION get_rb_vars( nFeedLines, cOLadSkv, cSTrakSkv, nPdvCijene, lStampId, nVrRedukcije, lPrKupac )
 
-// broj linija za odcjepanje trake
-nFeedLines := VAL(get_dtxt_opis("P12"))
-cOLadSkv := get_dtxt_opis("P13") // sekv.za otv.ladice
-cSTrakSkv := get_dtxt_opis("P14") // sekv.za sjec.trake
-nPdvCijene := VAL(get_dtxt_opis("P20")) // cijene sa pdv, bez pdv
-cTmp := get_dtxt_opis("P21") // prikaz id artikal na racunu
-lStampId := .f.
-lPrKupac := .f.
+   LOCAL cTmp
 
-if ( cTmp == "D" )
-	lStampId := .t.
-endif
+   // broj linija za odcjepanje trake
+   nFeedLines := Val( get_dtxt_opis( "P12" ) )
+   cOLadSkv := get_dtxt_opis( "P13" ) // sekv.za otv.ladice
+   cSTrakSkv := get_dtxt_opis( "P14" ) // sekv.za sjec.trake
+   nPdvCijene := Val( get_dtxt_opis( "P20" ) ) // cijene sa pdv, bez pdv
+   cTmp := get_dtxt_opis( "P21" ) // prikaz id artikal na racunu
+   lStampId := .F.
+   lPrKupac := .F.
 
-nVrRedukcije := VAL(get_dtxt_opis("P22")) // redukcija trake
+   IF ( cTmp == "D" )
+      lStampId := .T.
+   ENDIF
 
-// ispis kupca na racunu
-cTmp := get_dtxt_opis("P23")
-if cTmp == "D"
-	lPrKupac := .t.
-endif
+   nVrRedukcije := Val( get_dtxt_opis( "P22" ) ) // redukcija trake
 
-return
+   // ispis kupca na racunu
+   cTmp := get_dtxt_opis( "P23" )
+   IF cTmp == "D"
+      lPrKupac := .T.
+   ENDIF
 
-
-function isAzurDok(lRet)
-local cTemp 
-cTemp := get_dtxt_opis("D01")
-if cTemp == "A"
-	lRet := .t.
-elseif cTemp == "S"
-	lRet := .t.
-else
-	lRet := .f.
-endif
-return
-*}
+   RETURN
 
 
-function isPfTraka(lRet)
-*{
-// inace iscitati parametar
-if gPorFakt == "D"
-	lRet := .t.
-else
-	lRet := .f.
-endif
-return
-*}
+FUNCTION isAzurDok( lRet )
+
+   LOCAL cTemp
+
+   cTemp := get_dtxt_opis( "D01" )
+   IF cTemp == "A"
+      lRet := .T.
+   ELSEIF cTemp == "S"
+      lRet := .T.
+   ELSE
+      lRet := .F.
+   ENDIF
+
+   RETURN
+// }
+
+
+FUNCTION isPfTraka( lRet )
+
+   // {
+   // inace iscitati parametar
+   IF gPorFakt == "D"
+      lRet := .T.
+   ELSE
+      lRet := .F.
+   ENDIF
+
+   RETURN
+// }
 
 
 // ---------------------------------------
 // vraca ukupan iznos racuna
 // ---------------------------------------
-function get_rb_ukupno()
-local nUkupno:=0
-local nTArea := SELECT()
+FUNCTION get_rb_ukupno()
 
-select drn
-go top
-do while !EOF()
-	nUkupno += field->ukupno
-	skip
-enddo
+   LOCAL nUkupno := 0
+   LOCAL nTArea := Select()
 
-select (nTArea)
-return nUkupno
+   SELECT drn
+   GO TOP
+   DO WHILE !Eof()
+      nUkupno += field->ukupno
+      SKIP
+   ENDDO
 
+   SELECT ( nTArea )
 
-function get_rn_mjesto()
-*{
-local cMjesto := get_dtxt_opis("R01")
-return cMjesto
-*}
+   RETURN nUkupno
 
 
-function rb_traka_line(cLine)
-*{
-cLine := REPLICATE("-", LEN_RBR) + " " + REPLICATE("-", LEN_NAZIV) + " " + REPLICATE("-", LEN_UKUPNO)
-return
-*}
+FUNCTION get_rn_mjesto()
+
+   // {
+   LOCAL cMjesto := get_dtxt_opis( "R01" )
+
+   RETURN cMjesto
+// }
+
+
+FUNCTION rb_traka_line( cLine )
+
+   // {
+   cLine := Replicate( "-", LEN_RBR ) + " " + Replicate( "-", LEN_NAZIV ) + " " + Replicate( "-", LEN_UKUPNO )
+
+   RETURN
+// }
 
 
 // st_rb_traka() - funkcija za stampu stavki trake
 // lStartPrint - ako je .t. pozivaju se funkcije stampe
-function st_rb_traka(lStartPrint, lAzurDok)
-*{
-local cBrDok
-local dDatDok
-local aRNaz
-local cArtikal
-local cLine
-local lViseRacuna := .f.
-local nPFeed
+FUNCTION st_rb_traka( lStartPrint, lAzurDok )
 
-// sekv.otvaranja ladice
-local cOtvLadSkv
-// prikaz kupca na racunu
-local lKupac
+   // {
+   LOCAL cBrDok
+   LOCAL dDatDok
+   LOCAL aRNaz
+   LOCAL cArtikal
+   LOCAL cLine
+   LOCAL lViseRacuna := .F.
+   LOCAL nPFeed
 
-// sekv.sjecenja trake
-local cSjeTraSkv 
+   // sekv.otvaranja ladice
+   LOCAL cOtvLadSkv
+   // prikaz kupca na racunu
+   LOCAL lKupac
 
-local cZakBr:=""
-local nSetCijene
-local lStRobaId
-local nRedukcija
-local cRb_row
-local aRb_row
-local aRb_row_1
-local aRb_row_2
-local nRedova1
-local nRedova2
-local cPop_row
-local cPom
-local nLen
-local cNum
+   // sekv.sjecenja trake
+   LOCAL cSjeTraSkv
 
-if lStartPrint
-	STARTPRINTPORT CRET gLocPort, SPACE(5)
-endif
+   LOCAL cZakBr := ""
+   LOCAL nSetCijene
+   LOCAL lStRobaId
+   LOCAL nRedukcija
+   LOCAL cRb_row
+   LOCAL aRb_row
+   LOCAL aRb_row_1
+   LOCAL aRb_row_2
+   LOCAL nRedova1
+   LOCAL nRedova2
+   LOCAL cPop_row
+   LOCAL cPom
+   LOCAL nLen
+   LOCAL cNum
 
-rb_traka_line(@cLine)
+   IF lStartPrint
+      STARTPRINTPORT CRET gLocPort, Space( 5 )
+   ENDIF
 
-// uzmi glavne varijable
-get_rb_vars(@nPFeed, @cOtvLadSkv, @cSjeTraSkv, @nSetCijene, @lStRobaId, @nRedukcija, @lKupac)
+   rb_traka_line( @cLine )
 
-hd_rb_traka(nRedukcija)
+   // uzmi glavne varijable
+   get_rb_vars( @nPFeed, @cOtvLadSkv, @cSjeTraSkv, @nSetCijene, @lStRobaId, @nRedukcija, @lKupac )
 
-if lKupac == .t.
-	// ispis kupca ako je potreban
-	kup_rb_traka()
-endif
+   hd_rb_traka( nRedukcija )
 
-select drn
-go top
-// ako postoji vise zapisa onda ima vise racuna
-if RecCount2() > 1
-	lViseRacuna := .t.
-endif
+   IF lKupac == .T.
+      // ispis kupca ako je potreban
+      kup_rb_traka()
+   ENDIF
 
-select rn
-set order to tag "1"
-go top
+   SELECT drn
+   GO TOP
+   // ako postoji vise zapisa onda ima vise racuna
+   IF RecCount2() > 1
+      lViseRacuna := .T.
+   ENDIF
 
-// mjesto i datum racuna
-? SPACE(LEN_RAZMAK) + " " + drn->vrijeme + PADL(get_rn_mjesto() + ", " + DToC(drn->datdok), 32)
+   SELECT rn
+   SET ORDER TO TAG "1"
+   GO TOP
 
-? cLine
+   // mjesto i datum racuna
+   ? Space( LEN_RAZMAK ) + " " + drn->vrijeme + PadL( get_rn_mjesto() + ", " + DToC( drn->datdok ), 32 )
 
-// broj racuna
-cPom:=  "BLAGAJNA RACUN br. " + ALLTRIM(drn->brdok)
+   ? cLine
 
-if lAzurDok
-	if lStartPrint
-		cPom += SPACE(8) + "PREPIS"
-	endif
-endif
+   // broj racuna
+   cPom :=  "BLAGAJNA RACUN br. " + AllTrim( drn->brdok )
 
-? PADC(cPom, LEN_TRAKA)
+   IF lAzurDok
+      IF lStartPrint
+         cPom += Space( 8 ) + "PREPIS"
+      ENDIF
+   ENDIF
 
-
-? cLine
-
-// opis kolona
-// setcijene = 1 (sa pdv)
-// setcijene = 2 (bez pdv)
-
-cPom := "" 
-cPom += PADC("Rbr", LEN_RBR)
-cPom += " "
-cPom += PADC("Artikal (jmj), kol x cij", LEN_NAZIV)
-cPom += " "
-if nSetCijene == 2
-	cPom += PADC("Uk.sa.PDV", LEN_UKUPNO)
-else
-	cPom += PADC("Uk.sa.PDV", LEN_UKUPNO)
-endif
-
-? cPom
-
-? cLine
-
-select rn
-
-// stampa stavki racuna
-do while !EOF()
-
-	// odredi tip cijene za prikaz
-	if nSetCijene == 2 // cijena sa pdv
-		nPdvCijena := rn->cjenpdv
-		nRnUkupno := rn->ukupno
-	else
-		nPdvCijena := rn->cjenbpdv
-		nRnUkupno := rn->ukupno
-	endif
-
-	// R.br
-	cStr1 := PADR(rn->rbr, LEN_RBR) +  " "            
-	
-	// id.roba
-	if lStRobaId // prikaz id robe .t. 
-		cStr1 += ALLTRIM(rn->idroba) + " - " 
-	endif
-
-	// naziv
-	cStr1 += ALLTRIM(rn->robanaz) 
-	
-	// jmj
-	cStr1 += " (" + ALLTRIM(rn->jmj) + ")" 
-	
-	// prvi dio do kolicine
-	cStr2 := ""
-	
-	// kolicina
-	cStr2 += " " + ALLTRIM(show_number(rn->kolicina, nil, -10))
-	
-	// puta
-	cStr2 += " x " 
-	
-	// cijena
-	cStr2 += ALLTRIM(show_number(nPdvCijena, nil, -10))
+   ? PadC( cPom, LEN_TRAKA )
 
 
-	// da li postoji popust
-	if Round(rn->cjen2pdv, 4) <> 0
-		
-		// cijena sa pdv
-		if nSetCijene == 2 
-			nPopcjen := rn->cjen2pdv
-		else
-			nPopcjen := rn->cjen2bpdv
-		endif
-	
-		cStr2 += " , cij-pop " + ALLTRIM( show_number(rn->popust, nil, -5)) + "% = "
-		cStr2 += ALLTRIM(show_number(nPopcjen, nil, -10))
-		
-	endif
+   ? cLine
+
+   // opis kolona
+   // setcijene = 1 (sa pdv)
+   // setcijene = 2 (bez pdv)
+
+   cPom := ""
+   cPom += PadC( "Rbr", LEN_RBR )
+   cPom += " "
+   cPom += PadC( "Artikal (jmj), kol x cij", LEN_NAZIV )
+   cPom += " "
+   IF nSetCijene == 2
+      cPom += PadC( "Uk.sa.PDV", LEN_UKUPNO )
+   ELSE
+      cPom += PadC( "Uk.sa.PDV", LEN_UKUPNO )
+   ENDIF
+
+   ? cPom
+
+   ? cLine
+
+   SELECT rn
+
+   // stampa stavki racuna
+   DO WHILE !Eof()
+
+      // odredi tip cijene za prikaz
+      IF nSetCijene == 2 // cijena sa pdv
+         nPdvCijena := rn->cjenpdv
+         nRnUkupno := rn->ukupno
+      ELSE
+         nPdvCijena := rn->cjenbpdv
+         nRnUkupno := rn->ukupno
+      ENDIF
+
+      // R.br
+      cStr1 := PadR( rn->rbr, LEN_RBR ) +  " "
+
+      // id.roba
+      IF lStRobaId // prikaz id robe .t.
+         cStr1 += AllTrim( rn->idroba ) + " - "
+      ENDIF
+
+      // naziv
+      cStr1 += AllTrim( rn->robanaz )
+
+      // jmj
+      cStr1 += " (" + AllTrim( rn->jmj ) + ")"
+
+      // prvi dio do kolicine
+      cStr2 := ""
+
+      // kolicina
+      cStr2 += " " + AllTrim( show_number( rn->kolicina, nil, -10 ) )
+
+      // puta
+      cStr2 += " x "
+
+      // cijena
+      cStr2 += AllTrim( show_number( nPdvCijena, nil, -10 ) )
 
 
-	cNum := ALLTRIM(show_number(nRnUkupno, PIC_UKUPNO))
-	
-	// sve spoji pa presjeci
-	aRb_row_1 := SjeciStr(cStr1 + cStr2, LEN_TRAKA - LEN_RAZMAK - LEN_RBR - 1)
-	// trebam redova u varijanti 1
-	nRedova1 := LEN(aRb_row_1)
-	if  LEN_RAZMAK + LEN_RBR + 1 + LEN(TRIM(aRb_row_1[nRedova1])) + 1 + LEN(cNum) > LEN_TRAKA
-		++nRedova1
-	endif
-	
-	// varijanta 2 prvo presjeci string 1
-	aRb_row_2 := SjeciStr(cStr1, LEN_TRAKA - LEN_RAZMAK - LEN_RBR - 1)
-	
-	// nastiklaj matricu
-	SjeciStr(cStr2, LEN_TRAKA - LEN_RAZMAK - LEN_RBR - 1, @aRb_row_2)
-	
-	nRedova2 := LEN(aRb_row_2)
-	if  LEN_RAZMAK + LEN_RBR + 1 + LEN(TRIM(aRb_row_2[nRedova2])) + 1 + LEN(cNum) > LEN_TRAKA
-		++nRedova2
-	endif
-	
-	if nRedova2 > nRedova1
-		aRb_row := aRb_row_1
-	else
-		// ljepsa varijanta
-		aRb_row := aRb_row_2
-	endif
-		
-	// prikazi sve do predzanjeg reda
-	for i:=1 to (LEN(aRb_row)-1)
-		? SPACE(LEN_RAZMAK)
-		if i > 1
-			?? space(LEN_RBR + 1)
-		endif
-		?? aRb_row[i]
-		
-		nLenRow := LEN(TRIM(aRb_row[i]))
-	next
-	
-	// ostaje prikaz zadnjeg reda
-	cPom := TRIM( aRb_row[LEN(aRb_row)] )
-	nLen := LEN(cPom)
-	
+      // da li postoji popust
+      IF Round( rn->cjen2pdv, 4 ) <> 0
 
-	// ako se ne moze nastiklati iznos ukupno na zadnji red
-	// onda ga i neces dodavati sad
-	if LEN_RAZMAK + LEN_RBR + 1 + nLen + 1 + LEN(cNum)  > LEN_TRAKA 
-		? SPACE(LEN_RAZMAK)
-		?? SPACE(LEN_RBR + 1)
-		?? cPom
-		cPom := ""
-		nLen := 0
-	endif
+         // cijena sa pdv
+         IF nSetCijene == 2
+            nPopcjen := rn->cjen2pdv
+         ELSE
+            nPopcjen := rn->cjen2bpdv
+         ENDIF
 
-	
-	// ispis zadnjeg reda
-	? SPACE(LEN_RAZMAK)
-	
-	
-	// nije prvi red napravi indent za redni broj
-	if LEN(aRb_row) > 1
-		?? SPACE(LEN_RBR + 1) 
-		cPom += PADL( cNum , LEN_TRAKA - nLen - LEN_RBR - LEN_RAZMAK - 1)
-	else
-		// prvi red
-		cPom += PADL( cNum , LEN_TRAKA - nLen - LEN_RAZMAK)
-	endif
-	?? cPom
-	
-	skip
-enddo
+         cStr2 += " , cij-pop " + AllTrim( show_number( rn->popust, nil, -5 ) ) + "% = "
+         cStr2 += AllTrim( show_number( nPopcjen, nil, -10 ) )
 
-? cLine
+      ENDIF
 
-? SPACE(LEN_RAZMAK) + PADL("Ukupno bez PDV (KM):", LEN_TRAKA - LEN_UKUPNO - 1), show_number(drn->ukbezpdv, PIC_UKUPNO)
-// dodaj i popust
-if Round(drn->ukpopust, 2) <> 0
-	? SPACE(LEN_RAZMAK) + PADL("Popust (KM):", LEN_TRAKA - LEN_UKUPNO - 1), show_number(drn->ukpopust, PIC_UKUPNO)
-	? SPACE(LEN_RAZMAK) + PADL("Uk.bez.PDV-popust (KM):", LEN_TRAKA - LEN_UKUPNO - 1), show_number(drn->ukbpdvpop, PIC_UKUPNO)
-endif
-? SPACE(LEN_RAZMAK) + PADL("PDV 17% :", LEN_TRAKA - LEN_UKUPNO - 1), show_number(drn->ukpdv, PIC_UKUPNO)
 
-if ROUND(drn->zaokr, 2) <> 0
-	? SPACE(LEN_RAZMAK) + PADL("zaokruzenje (+/-):", LEN_TRAKA - LEN_UKUPNO - 1), show_number(ABS(drn->zaokr), PIC_UKUPNO)
-endif
+      cNum := AllTrim( show_number( nRnUkupno, PIC_UKUPNO ) )
 
-? cLine
-? SPACE(LEN_RAZMAK) + PADL("UKUPNO ZA NAPLATU (KM):", LEN_TRAKA - LEN_UKUPNO - 1), PADL(show_number(drn->ukupno,"******9.99"), LEN_UKUPNO)
-? cLine
+      // sve spoji pa presjeci
+      aRb_row_1 := SjeciStr( cStr1 + cStr2, LEN_TRAKA - LEN_RAZMAK - LEN_RBR - 1 )
+      // trebam redova u varijanti 1
+      nRedova1 := Len( aRb_row_1 )
+      IF  LEN_RAZMAK + LEN_RBR + 1 + Len( Trim( aRb_row_1[ nRedova1 ] ) ) + 1 + Len( cNum ) > LEN_TRAKA
+         ++nRedova1
+      ENDIF
 
-ft_rb_traka()
+      // varijanta 2 prvo presjeci string 1
+      aRb_row_2 := SjeciStr( cStr1, LEN_TRAKA - LEN_RAZMAK - LEN_RBR - 1 )
 
-for i:=1 to nPFeed
-	?
-next
+      // nastiklaj matricu
+      SjeciStr( cStr2, LEN_TRAKA - LEN_RAZMAK - LEN_RBR - 1, @aRb_row_2 )
 
-if lStartPrint 
-	// odsjeci traku
-	sjeci_traku(cSjeTraSkv)
-	// otvori ladicu
-	otvori_ladicu(cOtvLadSkv)
-endif
+      nRedova2 := Len( aRb_row_2 )
+      IF  LEN_RAZMAK + LEN_RBR + 1 + Len( Trim( aRb_row_2[ nRedova2 ] ) ) + 1 + Len( cNum ) > LEN_TRAKA
+         ++nRedova2
+      ENDIF
 
-if lStartPrint
-	END PRN2 13
-endif
+      IF nRedova2 > nRedova1
+         aRb_row := aRb_row_1
+      ELSE
+         // ljepsa varijanta
+         aRb_row := aRb_row_2
+      ENDIF
 
-return
-*}
+      // prikazi sve do predzanjeg reda
+      FOR i := 1 to ( Len( aRb_row ) -1 )
+         ? Space( LEN_RAZMAK )
+         IF i > 1
+            ?? Space( LEN_RBR + 1 )
+         ENDIF
+         ?? aRb_row[ i ]
+
+         nLenRow := Len( Trim( aRb_row[ i ] ) )
+      NEXT
+
+      // ostaje prikaz zadnjeg reda
+      cPom := Trim( aRb_row[ Len( aRb_row ) ] )
+      nLen := Len( cPom )
+
+
+      // ako se ne moze nastiklati iznos ukupno na zadnji red
+      // onda ga i neces dodavati sad
+      IF LEN_RAZMAK + LEN_RBR + 1 + nLen + 1 + Len( cNum )  > LEN_TRAKA
+         ? Space( LEN_RAZMAK )
+         ?? Space( LEN_RBR + 1 )
+         ?? cPom
+         cPom := ""
+         nLen := 0
+      ENDIF
+
+
+      // ispis zadnjeg reda
+      ? Space( LEN_RAZMAK )
+
+
+      // nije prvi red napravi indent za redni broj
+      IF Len( aRb_row ) > 1
+         ?? Space( LEN_RBR + 1 )
+         cPom += PadL( cNum, LEN_TRAKA - nLen - LEN_RBR - LEN_RAZMAK - 1 )
+      ELSE
+         // prvi red
+         cPom += PadL( cNum, LEN_TRAKA - nLen - LEN_RAZMAK )
+      ENDIF
+      ?? cPom
+
+      SKIP
+   ENDDO
+
+   ? cLine
+
+   ? Space( LEN_RAZMAK ) + PadL( "Ukupno bez PDV (KM):", LEN_TRAKA - LEN_UKUPNO - 1 ), show_number( drn->ukbezpdv, PIC_UKUPNO )
+   // dodaj i popust
+   IF Round( drn->ukpopust, 2 ) <> 0
+      ? Space( LEN_RAZMAK ) + PadL( "Popust (KM):", LEN_TRAKA - LEN_UKUPNO - 1 ), show_number( drn->ukpopust, PIC_UKUPNO )
+      ? Space( LEN_RAZMAK ) + PadL( "Uk.bez.PDV-popust (KM):", LEN_TRAKA - LEN_UKUPNO - 1 ), show_number( drn->ukbpdvpop, PIC_UKUPNO )
+   ENDIF
+   ? Space( LEN_RAZMAK ) + PadL( "PDV 17% :", LEN_TRAKA - LEN_UKUPNO - 1 ), show_number( drn->ukpdv, PIC_UKUPNO )
+
+   IF Round( drn->zaokr, 2 ) <> 0
+      ? Space( LEN_RAZMAK ) + PadL( "zaokruzenje (+/-):", LEN_TRAKA - LEN_UKUPNO - 1 ), show_number( Abs( drn->zaokr ), PIC_UKUPNO )
+   ENDIF
+
+   ? cLine
+   ? Space( LEN_RAZMAK ) + PadL( "UKUPNO ZA NAPLATU (KM):", LEN_TRAKA - LEN_UKUPNO - 1 ), PadL( show_number( drn->ukupno, "******9.99" ), LEN_UKUPNO )
+   ? cLine
+
+   ft_rb_traka()
+
+   FOR i := 1 TO nPFeed
+      ?
+   NEXT
+
+   IF lStartPrint
+      // odsjeci traku
+      sjeci_traku( cSjeTraSkv )
+      // otvori ladicu
+      otvori_ladicu( cOtvLadSkv )
+   ENDIF
+
+   IF lStartPrint
+      ENDPRN2 13
+   ENDIF
+
+   RETURN
+// }
 
 // -----------------------------------
 // -----------------------------------
-function hd_rb_traka(nRedukcija)
-*{
-local cDuplaLin
-local cINaziv
-local cIAdresa
-local cIIdBroj
-local cIPM
-local cITelef
-local cRaz2 := SPACE(LEN_RAZMAK + 1)
+FUNCTION hd_rb_traka( nRedukcija )
 
-cDuplaLin := REPLICATE("=", LEN_TRAKA - LEN_RAZMAK - 1)
-cINaziv := get_dtxt_opis("I01")
-cIAdresa := get_dtxt_opis("I02")
-cIIdBroj := get_dtxt_opis("I03")
-cIPM := ALLTRIM( get_dtxt_opis("I04") )
-cITelef := ALLTRIM( get_dtxt_opis("I05") )
+   // {
+   LOCAL cDuplaLin
+   LOCAL cINaziv
+   LOCAL cIAdresa
+   LOCAL cIIdBroj
+   LOCAL cIPM
+   LOCAL cITelef
+   LOCAL cRaz2 := Space( LEN_RAZMAK + 1 )
 
-// stampaj header
+   cDuplaLin := Replicate( "=", LEN_TRAKA - LEN_RAZMAK - 1 )
+   cINaziv := get_dtxt_opis( "I01" )
+   cIAdresa := get_dtxt_opis( "I02" )
+   cIIdBroj := get_dtxt_opis( "I03" )
+   cIPM := AllTrim( get_dtxt_opis( "I04" ) )
+   cITelef := AllTrim( get_dtxt_opis( "I05" ) )
 
-if ( nRedukcija < 1 )
-	? SPACE(LEN_RAZMAK) + " " + cDuplaLin
-endif
+   // stampaj header
 
-? cRaz2 + " " + cINaziv
+   IF ( nRedukcija < 1 )
+      ? Space( LEN_RAZMAK ) + " " + cDuplaLin
+   ENDIF
 
-if (nRedukcija < 1)
-	? cRaz2 + " " + REPLICATE("-", LEN(cINaziv))
-endif
+   ? cRaz2 + " " + cINaziv
 
-? cRaz2 + " Adresa : " + cIAdresa
-? cRaz2 + " ID broj: " + cIIdBroj
+   IF ( nRedukcija < 1 )
+      ? cRaz2 + " " + Replicate( "-", Len( cINaziv ) )
+   ENDIF
 
-if ( nRedukcija < 1 )
-	? cRaz2 + " " + REPLICATE("-", LEN_TRAKA - 11)
-endif
+   ? cRaz2 + " Adresa : " + cIAdresa
+   ? cRaz2 + " ID broj: " + cIIdBroj
 
-if !EMPTY(cIPM) .and. cIPM <> "-"
-  if ( nRedukcija > 0 )
-	? cRaz2 + "  PM:", cIPM
-  else
-	? cRaz2 + " Prodajno mjesto:"
-	? cRaz2 + " " + cIPM
-  endif
-endif
+   IF ( nRedukcija < 1 )
+      ? cRaz2 + " " + Replicate( "-", LEN_TRAKA - 11 )
+   ENDIF
 
-if !EMPTY(cITelef) .and. cITelef <> "-"
-	? cRaz2 + " Telefon: " + cITelef
-endif
+   IF !Empty( cIPM ) .AND. cIPM <> "-"
+      IF ( nRedukcija > 0 )
+         ? cRaz2 + "  PM:", cIPM
+      ELSE
+         ? cRaz2 + " Prodajno mjesto:"
+         ? cRaz2 + " " + cIPM
+      ENDIF
+   ENDIF
 
-if ( nRedukcija < 1 )
-	? SPACE(LEN_RAZMAK) + " " + cDuplaLin
-endif
+   IF !Empty( cITelef ) .AND. cITelef <> "-"
+      ? cRaz2 + " Telefon: " + cITelef
+   ENDIF
 
-?
+   IF ( nRedukcija < 1 )
+      ? Space( LEN_RAZMAK ) + " " + cDuplaLin
+   ENDIF
 
-return
-*}
+   ?
 
-
-function g_br_stola(cBrStola)
-*{
-cBrStola := get_dtxt_opis("R11")
-if cBrStola == "-"
-	cBrStola := ""
-endif
-return
-*}
+   RETURN
+// }
 
 
-function g_vez_racuni(aRacuni)
-*{
-local cRead
-cRead := get_dtxt_opis("R12")
-if cRead == "-"
-	aRacuni := {}
-	return
-endif
-aRacuni:=SjeciStr(cRead, 20)
-return
-*}
+FUNCTION g_br_stola( cBrStola )
+
+   // {
+   cBrStola := get_dtxt_opis( "R11" )
+   IF cBrStola == "-"
+      cBrStola := ""
+   ENDIF
+
+   RETURN
+// }
 
 
-function ft_rb_traka(cIdRadnik)
-*{
-local cRadnik
-local cSmjena
-local cVrstaP
-local cPomTxt1
-local cPomTxt2
-local cPomTxt3
-local cBrStola
-local cVezRacuni:=""
-local aVezRacuni:={}
+FUNCTION g_vez_racuni( aRacuni )
 
-cRadnik := get_dtxt_opis("R02")
-cSmjena := get_dtxt_opis("R03")
-cVrstaP := get_dtxt_opis("R05")
-cPomTxt1 := get_dtxt_opis("R06")
-cPomTxt2 := get_dtxt_opis("R07")
-cPomTxt3 := get_dtxt_opis("R08")
+   // {
+   LOCAL cRead
+   cRead := get_dtxt_opis( "R12" )
+   IF cRead == "-"
+      aRacuni := {}
+      RETURN
+   ENDIF
+   aRacuni := SjeciStr( cRead, 20 )
 
-g_br_stola(@cBrStola)
-g_vez_racuni(@aVezRacuni)
-
-? SPACE(LEN_RAZMAK) + " " + PADR(cRadnik,27), PADL("Smjena: " + cSmjena, 10)
-if !EMPTY(cBrStola)
-	? SPACE(LEN_RAZMAK) + " Sto.br:" + SPACE(1) + cBrStola
-	if LEN(aVezRacuni) > 0
-		?? " RN: "
-		for i:=1 to LEN(aVezRacuni)
-			if i == 1
-				?? aVezRacuni[i]
-			else
-				? SPACE(LEN_RAZMAK) + " " + aVezRacuni[i]
-			endif
-		next
-	endif
-else
-	?
-endif
-? SPACE(LEN_RAZMAK) + " Placanje izvrseno: " + cVrstaP 
-
-// pomocni text na racunu
-if !EMPTY(cPomTXT1)
-	?
-	? SPACE(LEN_RAZMAK) + " " + cPomTxt1
-endif
-if !EMPTY(cPomTxt2)
-	? SPACE(LEN_RAZMAK) + " " + cPomTxt2
-endif
-if !EMPTY(cPomTxt3)
-	? SPACE(LEN_RAZMAK) + " " + cPomTxt3
-endif
-
-return
-*}
+   RETURN
+// }
 
 
+FUNCTION ft_rb_traka( cIdRadnik )
+
+   // {
+   LOCAL cRadnik
+   LOCAL cSmjena
+   LOCAL cVrstaP
+   LOCAL cPomTxt1
+   LOCAL cPomTxt2
+   LOCAL cPomTxt3
+   LOCAL cBrStola
+   LOCAL cVezRacuni := ""
+   LOCAL aVezRacuni := {}
+
+   cRadnik := get_dtxt_opis( "R02" )
+   cSmjena := get_dtxt_opis( "R03" )
+   cVrstaP := get_dtxt_opis( "R05" )
+   cPomTxt1 := get_dtxt_opis( "R06" )
+   cPomTxt2 := get_dtxt_opis( "R07" )
+   cPomTxt3 := get_dtxt_opis( "R08" )
+
+   g_br_stola( @cBrStola )
+   g_vez_racuni( @aVezRacuni )
+
+   ? Space( LEN_RAZMAK ) + " " + PadR( cRadnik, 27 ), PadL( "Smjena: " + cSmjena, 10 )
+   IF !Empty( cBrStola )
+      ? Space( LEN_RAZMAK ) + " Sto.br:" + Space( 1 ) + cBrStola
+      IF Len( aVezRacuni ) > 0
+         ?? " RN: "
+         FOR i := 1 TO Len( aVezRacuni )
+            IF i == 1
+               ?? aVezRacuni[ i ]
+            ELSE
+               ? Space( LEN_RAZMAK ) + " " + aVezRacuni[ i ]
+            ENDIF
+         NEXT
+      ENDIF
+   ELSE
+      ?
+   ENDIF
+   ? Space( LEN_RAZMAK ) + " Placanje izvrseno: " + cVrstaP
+
+   // pomocni text na racunu
+   IF !Empty( cPomTXT1 )
+      ?
+      ? Space( LEN_RAZMAK ) + " " + cPomTxt1
+   ENDIF
+   IF !Empty( cPomTxt2 )
+      ? Space( LEN_RAZMAK ) + " " + cPomTxt2
+   ENDIF
+   IF !Empty( cPomTxt3 )
+      ? Space( LEN_RAZMAK ) + " " + cPomTxt3
+   ENDIF
+
+   RETURN .T.

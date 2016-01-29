@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out knowhow ERP, a free and open source 
+/*
+ * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
  * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -14,106 +14,110 @@
 // -----------------------------------
 // pretraga po match_code polju
 // -----------------------------------
-function m_code_src()
-local cSrch
-local cFilter
+FUNCTION m_code_src()
 
-if !is_m_code()
-	// ne postoji polje match_code
-	return 0
-endif
+   LOCAL cSrch
+   LOCAL cFilter
 
-Box(, 7, 60)
-	private GetList:={}
-	cSrch:=SPACE(20)
-	set cursor on
-	@ m_x+1, m_y+2 SAY "Match code:" GET cSrch VALID !EMPTY(cSrch)
-	@ m_x+3, m_y+2 SAY "Uslovi za pretragu:" COLOR "I"
-	@ m_x+4, m_y+2 SAY " /ABC = m.code pocinje sa 'ABC'  ('ABC001')"
-	@ m_x+5, m_y+2 SAY " ABC/ = m.code zavrsava sa 'ABC' ('001ABC')"
-	@ m_x+6, m_y+2 SAY " #ABC = 'ABC' je unutar m.code  ('01ABC11')"
-	@ m_x+7, m_y+2 SAY " ABC  = m.code je striktno 'ABC'    ('ABC')"
-	read
-BoxC()
+   IF !is_m_code()
+      // ne postoji polje match_code
+      RETURN 0
+   ENDIF
 
-// na esc 0
-if LastKey() == K_ESC
-	return 0
-endif
+   Box(, 7, 60 )
+   PRIVATE GetList := {}
+   cSrch := Space( 20 )
+   SET CURSOR ON
+   @ m_x + 1, m_y + 2 SAY "Match code:" GET cSrch VALID !Empty( cSrch )
+   @ m_x + 3, m_y + 2 SAY "Uslovi za pretragu:" COLOR "I"
+   @ m_x + 4, m_y + 2 SAY " /ABC = m.code pocinje sa 'ABC'  ('ABC001')"
+   @ m_x + 5, m_y + 2 SAY " ABC/ = m.code zavrsava sa 'ABC' ('001ABC')"
+   @ m_x + 6, m_y + 2 SAY " #ABC = 'ABC' je unutar m.code  ('01ABC11')"
+   @ m_x + 7, m_y + 2 SAY " ABC  = m.code je striktno 'ABC'    ('ABC')"
+   READ
+   BoxC()
 
-cSrch := TRIM(cSrch)
-// sredi filter
-g_mc_filter(@cFilter, cSrch)
+   // na esc 0
+   IF LastKey() == K_ESC
+      RETURN 0
+   ENDIF
 
-if !EMPTY(cFilter)
-	// set matchcode filter
-     	s_mc_filter(cFilter)  
-else
-	set filter to
-	go top
-endif
-   
-return 1
+   cSrch := Trim( cSrch )
+   // sredi filter
+   g_mc_filter( @cFilter, cSrch )
+
+   IF !Empty( cFilter )
+      // set matchcode filter
+      s_mc_filter( cFilter )
+   ELSE
+      SET FILTER TO
+      GO TOP
+   ENDIF
+
+   RETURN 1
 
 
 // ------------------------------------------
 // provjerava da li postoji polje match_code
 // ------------------------------------------
-function is_m_code()
-if fieldpos("MATCH_CODE")<>0
-	return .t.
-endif
-return .f.
+FUNCTION is_m_code()
+
+   IF FieldPos( "MATCH_CODE" ) <> 0
+      RETURN .T.
+   ENDIF
+
+   RETURN .F.
 
 
 // ---------------------------------
 // setuj match code filter
 // ---------------------------------
-static function s_mc_filter(cFilter)
-set filter to &cFilter
-go top
-return
+STATIC FUNCTION s_mc_filter( cFilter )
+
+   SET FILTER to &cFilter
+   GO TOP
+
+   RETURN
 
 // -------------------------------------
 // sredi filter po match_code za tabelu
 // -------------------------------------
-static function g_mc_filter(cFilt, cSrch)
-local cPom
-local nLeft
+STATIC FUNCTION g_mc_filter( cFilt, cSrch )
 
-cFilt:="TRIM(match_code)"
-cSrch := TRIM(cSrch)
+   LOCAL cPom
+   LOCAL nLeft
 
-do case
-	case LEFT(cSrch, 1) == "/"
-	
-		// match code pocinje
-		cPom := STRTRAN(cSrch, "/", "")
-		cFilt += "=" + Cm2Str(cPom)
-		
-	case LEFT(cSrch, 1) == "#"
-		
-		// pretraga unutar match codea
-		cPom := STRTRAN(cSrch, "#", "")
-		
-		cFilt := Cm2Str(ALLTRIM(cPom))
-		cFilt += "$ match_code"
+   cFilt := "TRIM(match_code)"
+   cSrch := Trim( cSrch )
 
-	case RIGHT(cSrch, 1) == "/"
-		
-		// match code zavrsava sa...
-		cPom := STRTRAN(cSrch, "/", "")
-		nLeft := LEN(ALLTRIM(cPom))
-		
-		cFilt := "RIGHT(ALLTRIM(match_code),"+ALLTRIM(STR(nLeft))+")"
-		cFilt += "==" + Cm2Str(ALLTRIM(cPom))
-		
-	otherwise
-		
-		// striktna pretraga
-		cFilt += "==" + Cm2Str(cSrch)
-endcase
+   DO CASE
+   CASE Left( cSrch, 1 ) == "/"
 
-return
+      // match code pocinje
+      cPom := StrTran( cSrch, "/", "" )
+      cFilt += "=" + Cm2Str( cPom )
 
+   CASE Left( cSrch, 1 ) == "#"
 
+      // pretraga unutar match codea
+      cPom := StrTran( cSrch, "#", "" )
+
+      cFilt := Cm2Str( AllTrim( cPom ) )
+      cFilt += "$ match_code"
+
+   CASE Right( cSrch, 1 ) == "/"
+
+      // match code zavrsava sa...
+      cPom := StrTran( cSrch, "/", "" )
+      nLeft := Len( AllTrim( cPom ) )
+
+      cFilt := "RIGHT(ALLTRIM(match_code)," + AllTrim( Str( nLeft ) ) + ")"
+      cFilt += "==" + Cm2Str( AllTrim( cPom ) )
+
+   OTHERWISE
+
+      // striktna pretraga
+      cFilt += "==" + Cm2Str( cSrch )
+   ENDCASE
+
+   RETURN

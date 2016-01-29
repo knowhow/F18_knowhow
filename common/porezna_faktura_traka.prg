@@ -1,16 +1,16 @@
 /*
- * This file is part of the bring.out FMK, a free and open source
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+ * This file is part of the bring.out knowhow ERP, a free and open source
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
 
-
 #include "f18.ch"
+
 
 STATIC LEN_KOLICINA := 9
 STATIC LEN_CIJENA := 12
@@ -26,7 +26,7 @@ FUNCTION pf_traka_print()
    close_open_racun_tbl()
    st_pf_traka()
 
-   RETURN
+   RETURN .T.
 
 
 FUNCTION f7_pf_traka( lSilent )
@@ -40,14 +40,14 @@ FUNCTION f7_pf_traka( lSilent )
    isPfTraka( @lPfTraka )
 
    IF !lSilent .AND. Pitanje(, "Stampati poresku fakturu za zadnji racun (D/N)?", "D" ) == "N"
-      RETURN
+      RETURN .F.
    ENDIF
 
    close_open_racun_tbl()
 
    IF !lPfTraka
       IF !get_kup_data()
-         RETURN
+         RETURN .F.
       ENDIF
    ENDIF
 
@@ -95,30 +95,30 @@ FUNCTION get_kup_data()
    ENDIF
 
    Box(, 7, 65 )
-	
+
    nMX := m_x
    nMY := m_y
-	
+
    @ 1 + m_x, 2 + m_y SAY "Podaci o kupcu:" COLOR "I"
    @ 2 + m_x, 2 + m_y SAY8 "Naziv (pravnog ili fizičkog lica):" GET cKNaziv VALID !Empty( cKNaziv ) .AND. get_arr_kup_data( @cKNaziv, @cKAdres, @cKIdBroj ) PICT "@S20"
    READ
-	
+
    m_x := nMX
    m_y := nMY
-	
+
    @ 3 + m_x, 2 + m_y SAY "Adresa:" GET cKAdres VALID !Empty( cKAdres )
    @ 4 + m_x, 2 + m_y SAY "Identifikacijski broj:" GET cKIdBroj VALID !Empty( cKIdBroj )
    @ 5 + m_x, 2 + m_y SAY "Datum isporuke " GET dDatIsp
 
    @ 7 + m_x, 2 + m_y SAY "Unos podataka ispravan (D/N)?" GET cUnosOk VALID cUnosOk $ "DN" PICT "@!"
    READ
-	
+
    BoxC()
 
    IF ( cUnosOk <> "D" ) .OR. ( LastKey() == K_ESC )
       RETURN .F.
    ENDIF
-	
+
    // dodaj parametre u drntext
    add_drntext( "K01", cKNaziv )
    add_drntext( "K02", cKAdres )
@@ -217,8 +217,8 @@ FUNCTION st_pf_traka()
 
       // kolicina, jmj, cjena sa pdv
       ? cRazmak + Str( rn->kolicina, LEN_KOLICINA, DEC_KOLICINA ), Str( rn->cjenbpdv, LEN_CIJENA, DEC_CIJENA )
-	
-	
+
+
       // ukupna vrijednost bez pdv-a je uvijek bez popusta iskazana
       // jer se popust na dnu iskazuje
       ?? " "
@@ -233,8 +233,8 @@ FUNCTION st_pf_traka()
          ?? Str( rn->cjen2bpdv, LEN_CIJENA, DEC_CIJENA )
 
       ENDIF
-	
-	
+
+
       SKIP
    ENDDO
 
@@ -323,9 +323,9 @@ FUNCTION get_arr_kup_data( cKupac, cKAdr, cKIdBroj )
    aKupci := fnd_kup_data( cKupac )
 
    IF Len( aKupci ) > 0
-	
+
       nKupIzbor := list_kup_data( aKupci )
-	
+
       // odabrano je ESC
       IF nKupIzbor == nil
          RETURN .F.
@@ -334,7 +334,7 @@ FUNCTION get_arr_kup_data( cKupac, cKAdr, cKIdBroj )
       cKupac := aKupci[ nKupIzbor, 1 ]
       cKAdr := aKupci[ nKupIzbor, 2 ]
       cKIdBroj := aKupci[ nKupIzbor, 3 ]
-	
+
       RETURN .T.
    ELSE
       MsgBeep( "Trazeni pojam ne postoji u tabeli kupaca !" )

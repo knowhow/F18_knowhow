@@ -10,8 +10,6 @@
  */
 
 #include "f18.ch"
-#include "common.ch"
-
 
 
 // --------------------------------------------------------
@@ -66,7 +64,6 @@ FUNCTION update_dbf_from_server( table, algoritam )
    IF algoritam == "FULL"
 
       log_write( "update_dbf_from_server(), iniciraj full synchro", 8 )
-
       // full synchro ne treba otvorenu tabelu, on je ionako zapuje
       full_synchro ( table, _step )
 
@@ -83,7 +80,6 @@ FUNCTION update_dbf_from_server( table, algoritam )
    USE
 
    log_write( "update_dbf_from_server table: " + table + " synchro cache: " + Str( Seconds() - _seconds ), 5 )
-
    log_write( "END update_dbf_from_server", 9 )
 
    RETURN .T.

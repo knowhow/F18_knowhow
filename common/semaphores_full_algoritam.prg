@@ -30,8 +30,9 @@ FUNCTION full_synchro( dbf_table, step_size )
    LOCAL _sql_fetch_time, _dbf_write_time
 
    IF s_lInSync
-      RETURN
+      RETURN .F.
    ENDIF
+
    s_lInSync := .T.
 
    IF step_size == NIL
@@ -52,6 +53,7 @@ FUNCTION full_synchro( dbf_table, step_size )
    _sql_fields := sql_fields( _a_dbf_rec[ "dbf_fields" ] )
 
    _sql_order  := _a_dbf_rec[ "sql_order" ]
+
 
    // .t. - brisi indeksni fajl tako da se full sinchro obavlja bez azuriranja indeksa
    // .f. - otvori indeks
@@ -96,7 +98,7 @@ FUNCTION full_synchro( dbf_table, step_size )
       @ Row(), Col() + 2 SAY _count
 
       log_write( "STEP full_synchro tabela: " + dbf_table + " " + AllTrim( Str( _offset + step_size ) ) + " / " + AllTrim( Str( _count ) ), 7 )
-      
+
    NEXT
 
    IF log_level() > 6

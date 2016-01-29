@@ -1,14 +1,13 @@
 /*
- * This file is part of the bring.out FMK, a free and open source
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+ * This file is part of the bring.out knowhow ERP, a free and open source
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
-
 
 #include "f18.ch"
 
@@ -59,7 +58,7 @@ FUNCTION fiscal_out_filename( file_name, rn_broj, trig )
       // odredjuje PLU ili CLI ili RCP na osnovu trigera
       _ret := StrTran( _f_name, "TR$", trig )
       _ret := Upper( _ret )
-	
+
       IF ".XML" $ Upper( trig )
          _ret := trig
       ENDIF
@@ -117,7 +116,7 @@ FUNCTION gen_plu( nVal )
       IF LastKey() == K_ESC
          RETURN .F.
       ENDIF
-      
+
       nVal := posljednji_plu_artikla() + 1
 
    ENDIF
@@ -181,7 +180,7 @@ FUNCTION gen_all_plu( lSilent )
 
    Box(, 1, 50 )
    DO WHILE !Eof()
-	
+
       IF lReset == .F.
          // preskoci ako vec postoji PLU i
          // neces RESET
@@ -190,7 +189,7 @@ FUNCTION gen_all_plu( lSilent )
             LOOP
          ENDIF
       ENDIF
-	
+
       ++ nCnt
       ++ nP_PLU
 
@@ -205,7 +204,7 @@ FUNCTION gen_all_plu( lSilent )
 
       @ m_x + 1, m_y + 2 SAY PadR( "idroba: " + field->id + ;
          " -> PLU: " + AllTrim( Str( nP_PLU ) ), 30 )
-	
+
       SKIP
 
    ENDDO
@@ -466,17 +465,17 @@ FUNCTION provjeri_kolicine_i_cijene_fiskalnog_racuna( items, storno, level, drv 
 
       IF ( !is_ispravna_kolicina( _kolicina ) .OR. !is_ispravna_cijena( _cijena ) ) ;
             .OR. !is_ispravna_cijena( _plu_cijena )
-		
+
          lImaGreska := .T.
 
          IF ( level > 1 .AND. _kolicina > 1 )
-			
+
             prepakuj_vrijednosti_na_100_komada( @_kolicina, @_cijena, @_plu_cijena, @_naziv )
-			
+
             items[ _i, 5 ] := _cijena
             items[ _i, 10 ] := _plu_cijena
             items[ _i, 6 ] := _kolicina
-            items[ _i, 4 ] := _naziv		
+            items[ _i, 4 ] := _naziv
 
             lImaGreska := .F.
 
@@ -497,7 +496,7 @@ FUNCTION provjeri_kolicine_i_cijene_fiskalnog_racuna( items, storno, level, drv 
       MsgBeep( "Pojedini artikli na računu su prepakovani na 100 kom !" )
 
    ELSEIF ( _fix > 0 .AND. level == 1 ) .OR. lImaGreska
-	
+
       _ret := -99
 
       MsgBeep( "Pojedinim artiklima je količina/cijena van dozvoljenog ranga#Prekidam operaciju !" )

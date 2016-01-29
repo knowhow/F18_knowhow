@@ -10,10 +10,6 @@
  */
 
 #include "f18.ch"
-#include "hbthread.ch"
-#include "hbclass.ch"
-#include "hbgtinfo.ch"
-#include "common.ch"
 
 
 CLASS F18Backup
@@ -299,11 +295,11 @@ METHOD F18Backup:Backup_server()
    IF _ok
 
       log_write( "backup kreiran uspjesno: " + ::backup_path + ::backup_filename, 6 )
-      
+
       IF !EMPTY( ::removable_drive )
          ++ _x
          @ _x, _y SAY "Prebacujem backup na udaljenu lokaciju ... "
-    
+
          IF ::backup_to_removable()
             @ _x, Col() SAY "OK" COLOR _color_ok
          ELSE
@@ -585,7 +581,7 @@ FUNCTION f18_backup_data_thread( type_def )
 #else
    #ifdef __PLATFORM__DARWIN
    _w := hb_gtCreate( "QTC" )
-  #else 
+  #else
    _w := hb_gtCreate( "XWC" )
   #endif
 #endif

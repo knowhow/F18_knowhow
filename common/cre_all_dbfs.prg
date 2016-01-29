@@ -14,6 +14,7 @@
 /*
    Kreiraj sve DBFCDX
 */
+
 FUNCTION cre_all_dbfs( ver )
 
    LOCAL _first_start := fetch_metric( "f18_first_start", my_user(), 0 )

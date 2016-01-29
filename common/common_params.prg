@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -12,223 +12,220 @@
 
 #include "f18.ch"
 
-#define  CHR254   254
+
+FUNCTION RPar( cImeVar, xArg )
+
+   LOCAL cPom, clTip
+
+   SEEK cSection + cHistory + cImeVar + "1"
+
+   IF Found()
+      cPom := ""
+      clTip := tip
+
+      DO WHILE !Eof() .AND. ( cSection + cHistory + cImeVar == Fsec + cHistory + Fvar )
+         cPom += Fv
+         SKIP
+      ENDDO
+
+      cPom := Left( cPom, At( Chr( CHR254 ), cPom ) -1 )
+      IF clTip = "C"
+         xArg := cPom
+      ELSEIF clTip == "N"
+         xArg := Val( cPom )
+      ELSEIF clTip == "D"
+         xArg := CToD( cPom )
+      ELSEIF clTip == "L"
+         xArg := iif( cPom == "0", .F., .T. )
+      ENDIF
+
+   ENDIF
+
+   IF clTip == "C" .AND. gKonvertPath == "D" .AND. ( ":\" $ xArg )
+      // konvertuj lokacije npr C:\SIGMA -> I:\VAR\DATA1\SIGMA
+      KonvertPath( @xArg )
+   ENDIF
+
+   RETURN NIL
 
 
-function RPar(cImeVar, xArg)
+FUNCTION KonvertPath( cPath )
 
-local cPom, clTip
+   LOCAL cPom, nKNum, cPravilo
 
-SEEK cSection + cHistory + cImeVar + "1"
+   nKNum := Val( IzFmkIni( "KonvertPath", "kNum", "0" ) )
+   ? "poslije .. ", nKNum
+   Inkey( 10 )
 
-if found() 
-  cPom:=""
-  clTip:=tip
+   FOR i := 1 TO nKNum
+      cPravilo := IzFmkIni( "KonvertPath", "k" + AllTrim( Str( i ) ), "" )
+      cPIz := Token( cPravilo, " ", 1 )
+      cPU := Token( cPravilo, " ", 2 )
+      cPom = StrTran( cPom, cPIz, cPU )
+      IF cPom <> Upper( cPath )
+         // doslo je do promjene
+         cPath := cPom
+         EXIT
+      ENDIF
+   NEXT
 
-  do while !eof() .and. (cSection+cHistory+cImeVar==Fsec+cHistory+Fvar)
-    cPom+=Fv
-    skip
-  enddo
-
-  cPom:=left(cPom,AT(chr(CHR254),cPom)-1)
-  if clTip="C"
-     xArg:=cPom
-  elseif clTip=="N"
-     xArg:=val(cPom)
-  elseif clTip=="D"
-     xArg:=ctod(cPom)
-  elseif clTip=="L"
-     xArg:=iif(cPom=="0",.f.,.t.)
-  endif
-
-endif
-
-if clTip=="C" .and. gKonvertPath=="D" .and. ( ":\" $ xArg ) 
-    // konvertuj lokacije npr C:\SIGMA -> I:\VAR\DATA1\SIGMA
-    KonvertPath(@xArg)
-endif
-
-RETURN NIL
+   RETURN
 
 
-function KonvertPath(cPath)
+FUNCTION WPar( cImeVar, xArg, fSQL, cAkcija )
 
-local cPom, nKNum, cPravilo
+   LOCAL cPom, nRec
 
+   IF Type( "gSql" ) <> "C"
+      gSql := "N"
+   ENDIF
+   IF ( goModul:lSqlDirektno == nil )
+      goModul:lSqlDirektno := .T.
+   ENDIF
 
-nKNum:=VAL(IzFmkIni("KonvertPath", "kNum", "0"))
-? "poslije .. ", nKNum
-inkey(10)
+   IF gReadonly
+      RETURN .T.
+   ENDIF
 
-for i:=1 to nKNum
-  cPravilo:=IzFmkIni("KonvertPath", "k"+alltrim(str(i)), "")
-  cPIz:=Token(cPravilo, " ",1)
-  cPU :=Token(cPravilo, " ",2)
-  cPom=STRTRAN(cPom, cPIz, cPU)
-  if cPom <> UPPER(cPath)
-     // doslo je do promjene
-     cPath:=cPom
-     exit
-  endif
-next
-return
+   // ako gSQL nije D onda u svakom slucaju ne radi SQL azuriranja
+   IF ( gSQL == "N" )
+      fSQL := .F.
+   ENDIF
+   IF ( fSQL == nil )
+      fSQL := .F.
+   ENDIF
+   IF ( cAkcija == nil )
+      cAkcija := "A"
+   ENDIF
 
+   SEEK cSection + cHistory + cImeVar
 
-function WPar(cImeVar, xArg, fSQL, cAkcija)
-
-local cPom, nRec
-
-if TYPE("gSql")<>"C"
-	gSql:="N"
-endif
-if (goModul:lSqlDirektno==nil)
-	goModul:lSqlDirektno:=.t.
-endif
-
-if gReadonly
-	return .t.
-endif
-
-// ako gSQL nije D onda u svakom slucaju ne radi SQL azuriranja
-if (gSQL=="N")
-	fSQL:=.f.
-endif
-if (fSQL==nil)
-	fSQL:=.f.
-endif
-if (cAkcija==nil)
-	cAkcija:="A"
-endif
-
-seek cSection+cHistory+cImeVar
-
- if found()
-  if my_flock()
-    do while !eof() .and. cSection+cHistory+cImeVar==Fsec+Fh+Fvar
-      skip
-      nRec:=recno()
-      skip -1
-      dbdelete2()
-      go nRec
-    enddo
-  else
-    MsgBeep("FLOCK:parametri nedostupni!!")
-  endif
-  my_unlock()
- endif
+   IF Found()
+      IF my_flock()
+         DO WHILE !Eof() .AND. cSection + cHistory + cImeVar == Fsec + Fh + Fvar
+            SKIP
+            nRec := RecNo()
+            SKIP -1
+            dbdelete2()
+            GO nRec
+         ENDDO
+      ELSE
+         MsgBeep( "FLOCK:parametri nedostupni!!" )
+      ENDIF
+      my_unlock()
+   ENDIF
 
 
-clTip:=valtype(xArg)
-if clTip=="C"
-  cPom:=xArg
-elseif clTip=="N"
-  cPom:=str(xArg)
-elseif clTip=="D"
-  cPom:=dtoc(xArg)
-elseif clTip=="L"
-  cPom:=iif(xArg,"1","0")
-endif
-cPom+=chr(CHR254)
+   clTip := ValType( xArg )
+   IF clTip == "C"
+      cPom := xArg
+   ELSEIF clTip == "N"
+      cPom := Str( xArg )
+   ELSEIF clTip == "D"
+      cPom := DToC( xArg )
+   ELSEIF clTip == "L"
+      cPom := iif( xArg, "1", "0" )
+   ENDIF
+   cPom += Chr( CHR254 )
 
-cRbr:="0"
-do while len(cPom)<>0
-	append blank
+   cRbr := "0"
+   DO WHILE Len( cPom ) <> 0
+      APPEND BLANK
 
-	Chadd(@cRbr,1)
+      Chadd( @cRbr, 1 )
 
-	replace Fh with chistory,;
-		Fsec with cSection,;
-		Fvar with cImeVar,;
-		tip with clTip,;
-		rBr with cRbr,;
-		Fv   with left(cPom,15)
+      REPLACE Fh WITH chistory, ;
+         Fsec WITH cSection, ;
+         Fvar WITH cImeVar, ;
+         tip WITH clTip, ;
+         rBr WITH cRbr, ;
+         Fv   WITH Left( cPom, 15 )
 
-	cPom:=substr(cPom,16)
-enddo
+      cPom := SubStr( cPom, 16 )
+   ENDDO
 
-return nil
-
-
-static function NextAkcija(cAkcija)
+   RETURN NIL
 
 
-if goModul:lSqlDirektno
-	cAkcija:="L"
-endif
+STATIC FUNCTION NextAkcija( cAkcija )
 
-if cAkcija=="A"
-	cAkcija:="A"
-elseif cAkcija=="P" .or. cAkcija=="D"
-	cAkcija:="D"
-elseif cAkcija=="Z"
-	cAkcija:="Z"
-endif
+   IF goModul:lSqlDirektno
+      cAkcija := "L"
+   ENDIF
 
-return
+   IF cAkcija == "A"
+      cAkcija := "A"
+   ELSEIF cAkcija == "P" .OR. cAkcija == "D"
+      cAkcija := "D"
+   ELSEIF cAkcija == "Z"
+      cAkcija := "Z"
+   ENDIF
 
-
-function Params1()
-
-local ncx,ncy,nOldc
-
-if cHistory=="*" 
-
-  seek cSection
-  do while !eof() .and. cSection==Fsec
-    cH:=Fh
-    do while !eof() .and. cSection==Fsec .and. ch==Fh
-      skip
-    enddo
-    AADD(aHistory,{ch})
-  enddo
-
-  if len(aHistory)>0
-   @ -1,70 SAY ""
-   cHistory:=(ABrowse(aHistory,10,1,{|ch|  HistUser(ch)}))[1]
-  else
-   cHistory:=" "
-  endif
-endif
-
-return NIL
+   RETURN
 
 
-function Params2()
+FUNCTION Params1()
 
-local ncx,ncy,nOldC
+   LOCAL ncx, ncy, nOldc
 
-tone(320,1)
-tone(320,1)
-return .t.
+   IF cHistory == "*"
 
-function HistUser(Ch)
+      SEEK cSection
+      DO WHILE !Eof() .AND. cSection == Fsec
+         cH := Fh
+         DO WHILE !Eof() .AND. cSection == Fsec .AND. ch == Fh
+            SKIP
+         ENDDO
+         AAdd( aHistory, { ch } )
+      ENDDO
 
-local nRec,cHi
+      IF Len( aHistory ) > 0
+         @ -1, 70 SAY ""
+         cHistory := ( ABrowse( aHistory, 10, 1, {| ch|  HistUser( ch ) } ) )[ 1 ]
+      ELSE
+         cHistory := " "
+      ENDIF
+   ENDIF
 
-do case
- case Ch==K_ENTER
-  return DE_ABORT
- case Ch=K_CTRL_T
-  if len(aHistory)>1
-   cHi:=aHistory[aBrowRow(),1]
-   ADEL(aHistory,aBrowRow())
-   ASIZE(aHistory,len(aHistory)-1)
-   seek cSection+cHi
-   do while !eof() .and. cSection+cHi==Fsec+Fh
-	skip
-      	nRec:=recno()
-	skip -1
-      	delete
-      	go nRec
-   enddo
-  else
-    Beep(2)
-  endif
-  return DE_REFRESH
-  // izbrisi tekuci element
- otherwise
-  return DE_CONT
-endcase
+   RETURN NIL
 
-return nil
 
+FUNCTION Params2()
+
+   LOCAL ncx, ncy, nOldC
+
+   Tone( 320, 1 )
+   Tone( 320, 1 )
+
+   RETURN .T.
+
+FUNCTION HistUser( Ch )
+
+   LOCAL nRec, cHi
+
+   DO CASE
+   CASE Ch == K_ENTER
+      RETURN DE_ABORT
+   CASE Ch = K_CTRL_T
+      IF Len( aHistory ) > 1
+         cHi := aHistory[ aBrowRow(), 1 ]
+         ADel( aHistory, aBrowRow() )
+         ASize( aHistory, Len( aHistory ) -1 )
+         SEEK cSection + cHi
+         DO WHILE !Eof() .AND. cSection + cHi == Fsec + Fh
+            SKIP
+            nRec := RecNo()
+            SKIP -1
+            DELETE
+            GO nRec
+         ENDDO
+      ELSE
+         Beep( 2 )
+      ENDIF
+      RETURN DE_REFRESH
+      // izbrisi tekuci element
+   OTHERWISE
+      RETURN DE_CONT
+   ENDCASE
+
+   RETURN NIL

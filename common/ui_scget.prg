@@ -10,13 +10,10 @@
  */
 
 #include "f18.ch"
-#include "set.ch"
-#include "inkey.ch"
-#include "getexit.ch"
+
 
 THREAD STATIC  __get_list
 
-#define K_UNDO          K_CTRL_U
 
 // state variables for active READ
 STATIC FORMAT
@@ -30,19 +27,6 @@ STATIC ActiveGet
 STATIC ReadProcName
 STATIC ReadProcLine
 
-
-// format of array used to preserve state variables
-#define GSV_KILLREAD  1
-#define GSV_BUMPTOP  2
-#define GSV_BUMPBOT  3
-#define GSV_LASTEXIT  4
-#define GSV_LASTPOS  5
-#define GSV_ACTIVEGET  6
-#define GSV_READVAR   7
-#define GSV_READPROCNAME 8
-#define GSV_READPROCLINE 9
-
-#define GSV_COUNT  9
 
 // Modifications
 #ifndef NOCHANGES
@@ -115,7 +99,7 @@ FUNCTION ReadModSC( GetList, nTime, nStartAt )
          // use custom reader block
          Eval( get:reader, get )
       ELSE
-		
+
          GetReadSC( get )
       ENDIF
 
@@ -143,16 +127,16 @@ FUNCTION ReadModSC( GetList, nTime, nStartAt )
 * Standard modal read of a single GET.
 */
 PROCEDURE getReadSC( get )
-		
+
    // read the GET if the WHEN condition is satisfied
    IF ( GetPreValSC( get ) )
 
       // activate the GET for reading
       get:SetFocus()
 
-		
+
       DO WHILE ( get:exitState == GE_NOEXIT )
-			
+
 
          // check for initial typeout (no editable positions)
          IF ( get:typeOut )
@@ -202,7 +186,7 @@ PROCEDURE GetApplyKSC( get, key )
 
    DO CASE
 
-	
+
       //
       // Time-out
       //
@@ -227,7 +211,7 @@ PROCEDURE GetApplyKSC( get, key )
       get:exitState := GE_ENTER
 
    CASE ( key == K_ESC )
-	
+
       // MsgBeep("pritisnut ESCAPE")
       IF ( Set( _SET_ESCAPE ) )
          get:undo()
@@ -260,7 +244,7 @@ PROCEDURE GetApplyKSC( get, key )
 
 
    CASE ( key == K_INS )
-      SET( _SET_INSERT, !Set( _SET_INSERT ) )
+      Set( _SET_INSERT, !Set( _SET_INSERT ) )
       ShowScoreboard()
 
    CASE ( key == K_UNDO )
@@ -430,9 +414,9 @@ FUNCTION GetPstValSC( get )
       Updated := saveUpdated
 
       IF ( KillReadSC )
-		
+
          // MsgBeep("KillreadSC=.t./2")
-		
+
          // provokes ReadModal() exit
          get:exitState := GE_ESCAPE
          valid := .T.
@@ -471,7 +455,7 @@ FUNCTION GetDoSetKSC( keyBlock, get )
 
 
    IF ( KillReadSC )
-		
+
       // MsgBeep("KillreadSC=.t. / 3")
       get:exitState := GE_ESCAPE  // provokes ReadModal() exit
    END
@@ -916,7 +900,6 @@ FUNCTION get_field_set_focus( f_name )
          GetList[ _i ]:PreBlock := {|| .F. }
       ENDIF
    NEXT
-
 
 FUNCTION restore_get_list()
 

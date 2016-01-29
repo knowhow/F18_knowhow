@@ -44,14 +44,14 @@ FUNCTION OSifVindija()
    O_VOZILA
    O_KALPOS
 
-   RETURN
+   RETURN .T.
 
 
 FUNCTION OSifFtxt()
 
    O_FTXT
 
-   RETURN
+   RETURN .T.
 
 
 FUNCTION OSifUgov()
@@ -64,7 +64,7 @@ FUNCTION OSifUgov()
    O_SIFK
    O_SIFV
 
-   RETURN
+   RETURN .T.
 
 
 // ---------------------------

@@ -12,7 +12,6 @@
 #include "f18.ch"
 
 
-
 FUNCTION GlobalErrorHandler( err_obj, lShowErrorReport, lQuitApp )
 
    LOCAL _i, _err_code

@@ -12,8 +12,7 @@
 
 #include "f18.ch"
 
-// ------------------------------------
-// ------------------------------------
+
 FUNCTION browse_tnal( cId, dx, dy )
 
    LOCAL nTArea
@@ -42,5 +41,4 @@ FUNCTION browse_tnal( cId, dx, dy )
 
 FUNCTION P_VN( cId, dx, dy )
 
-    RETURN browse_tnal( @cId, dx, dy )
-
+   RETURN browse_tnal( @cId, dx, dy )

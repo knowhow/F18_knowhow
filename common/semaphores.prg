@@ -10,8 +10,6 @@
  */
 
 #include "f18.ch"
-#include "common.ch"
-
 
 /*
    moguci statusi:
@@ -31,8 +29,8 @@ FUNCTION lock_semaphore( table, status, lUnlockTable )
    LOCAL _user_locked := ""
    LOCAL cSemaphoreStatus
 
-   IF skip_semaphore( table)
-        RETURN .T.
+   IF skip_semaphore( table )
+      RETURN .T.
    ENDIF
 
    IF lUnlockTable == NIL
@@ -101,7 +99,7 @@ FUNCTION lock_semaphore( table, status, lUnlockTable )
 
    log_write( "table: " + table + ", status:" + status + " - END", 7 )
 
-   IF !EMPTY( _ret:ErrorMsg() )
+   IF !Empty( _ret:ErrorMsg() )
       log_write( "qry error: " + _qry + " : " + _ret:ErrorMsg(), 2 )
       RaiseError( _qry )
    ENDIF
@@ -131,6 +129,7 @@ FUNCTION get_semaphore_locked_by_me_status_user( table )
 
 
 */
+
 FUNCTION get_semaphore_status( table )
 
    LOCAL _qry
@@ -138,8 +137,8 @@ FUNCTION get_semaphore_status( table )
    LOCAL _server := pg_server()
    LOCAL _user   := f18_user()
 
-   IF skip_semaphore( table)
-        RETURN "free"
+   IF skip_semaphore( table )
+      RETURN "free"
    ENDIF
 
    _qry := "SELECT algorithm FROM fmk.semaphores_" + table + " WHERE user_code=" + _sql_quote( _user )
@@ -200,13 +199,15 @@ FUNCTION get_semaphore_version( table, last )
    LOCAL _tbl
    LOCAL _server := pg_server()
    LOCAL _user := f18_user()
+   LOCAL _msg
 
-
-   IF skip_semaphore( table)
-        RETURN 1
+   IF skip_semaphore( table )
+      RETURN 1
    ENDIF
 
-   // trebam last_version
+   insert_semaphore_if_not_exists( table )
+
+   // last_version ili tekuca
    IF last == NIL
       last := .F.
    ENDIF
@@ -225,7 +226,7 @@ FUNCTION get_semaphore_version( table, last )
 
    _tbl_obj := _sql_query( _server, _qry )
 
-   IF _tbl_obj:eof()
+   IF sql_query_bez_zapisa( _tbl_obj )
       _msg = "problem sa:" + _qry
       log_write( _msg, 2 )
       MsgBeep( 2 )
@@ -248,11 +249,12 @@ FUNCTION get_semaphore_version_h( table )
    LOCAL _server := pg_server()
    LOCAL _user := f18_user()
    LOCAL _ret := hb_Hash()
+   LOCAL _msg
 
-   IF skip_semaphore( table)
-        _ret[ "version" ] := 1
-        _ret[ "last_version" ] := 1
-        RETURN _ret
+   IF skip_semaphore( table )
+      _ret[ "version" ] := 1
+      _ret[ "last_version" ] := 1
+      RETURN _ret
    ENDIF
 
 
@@ -292,22 +294,17 @@ FUNCTION reset_semaphore_version( table )
    LOCAL _user := f18_user()
    LOCAL _server := pg_server()
 
-   IF skip_semaphore( table)
-        RETURN .T.
+   IF skip_semaphore( table )
+      RETURN .T.
    ENDIF
-
 
    _tbl := "fmk.semaphores_" + Lower( table )
-   _result := table_count( _tbl, "user_code=" + _sql_quote( _user ) )
 
-   IF ( _result == 0 )
-      log_write( "reset semaphore " + _tbl + " insert ", 1 )
-      _qry := "INSERT INTO " + _tbl + "(user_code, last_trans_version, version, algorithm) " + ;
-         "VALUES(" + _sql_quote( _user )  + ", 0, -1, 'free')"
-   ELSE
-      log_write( "reset semaphore " + _tbl + " update ", 1 )
-      _qry := "UPDATE " + _tbl + " SET version=-1, last_trans_version=(CASE WHEN last_trans_version IS NULL THEN 0 ELSE last_trans_version END) WHERE user_code =" + _sql_quote( _user )
-   ENDIF
+   insert_semaphore_if_not_exists( table )
+
+   log_write( "reset semaphore " + _tbl + " update ", 1 )
+   _qry := "UPDATE " + _tbl + " SET version=-1, last_trans_version=(CASE WHEN last_trans_version IS NULL THEN 0 ELSE last_trans_version END) WHERE user_code =" + _sql_quote( _user )
+
 
    _ret := _sql_query( _server, _qry )
    _qry := "SELECT version from " + _tbl + " WHERE user_code =" + _sql_quote( _user )
@@ -332,8 +329,8 @@ FUNCTION push_dat_to_semaphore( table, date )
    LOCAL _user := f18_user()
    LOCAL _server := pg_server()
 
-   IF skip_semaphore( table)
-        RETURN .F.
+   IF skip_semaphore( table )
+      RETURN .F.
    ENDIF
 
 
@@ -405,8 +402,6 @@ FUNCTION table_count( table, condition )
    RETURN _result
 
 
-
-
 // --------------------------------------------------------------------------------
 // napuni dbf tabelu sa podacima sa servera
 // dbf_tabela mora biti otvorena i u tekucoj WA
@@ -461,9 +456,9 @@ FUNCTION fill_dbf_from_server( dbf_table, sql_query, sql_fetch_time, dbf_write_t
       NEXT
 
       IF lShowInfo
-          IF _counter % 500 == 0
-             @ m_x + 7, m_y + 2 SAY8 "synchro '" + dbf_table + "' broj obrađenih zapisa: " + AllTrim( Str( _counter ) )
-          ENDIF
+         IF _counter % 500 == 0
+            @ m_x + 7, m_y + 2 SAY8 "synchro '" + dbf_table + "' broj obrađenih zapisa: " + AllTrim( Str( _counter ) )
+         ENDIF
       ENDIF
 
       _qry_obj:Skip()
@@ -495,7 +490,7 @@ FUNCTION field_in_blacklist( field_name, blacklist )
       RETURN _ok
    ENDIF
 
-   IF AScan( blacklist, {|val| val == field_name } ) > 0
+   IF AScan( blacklist, {| val| val == field_name } ) > 0
       _ok := .T.
    ENDIF
 
@@ -524,8 +519,8 @@ FUNCTION update_semaphore_version_after_push( table, to_myself )
       to_myself := .F.
    ENDIF
 
-   IF skip_semaphore( table)
-        RETURN .F.
+   IF skip_semaphore( table )
+      RETURN .F.
    ENDIF
 
    log_write( "START: update semaphore version after push", 7 )
@@ -533,7 +528,6 @@ FUNCTION update_semaphore_version_after_push( table, to_myself )
    _a_dbf_rec := get_a_dbf_rec( table )
 
    _tbl := "fmk.semaphores_" + Lower( table )
-   _result := table_count( _tbl, "user_code=" + _sql_quote( _user ) )
    _versions := get_semaphore_version_h( table )
 
    _last_ver := _versions[ "last_version" ]
@@ -545,21 +539,9 @@ FUNCTION update_semaphore_version_after_push( table, to_myself )
 
    _ver_user := _last_ver
    ++ _ver_user
-   cVerUser := ALLTRIM( STR( _ver_user ) )
+   cVerUser := AllTrim( Str( _ver_user ) )
 
-   IF ( _result == 0 )
-
-      // user po prvi put radi sa tabelom semafora, iniciraj full sync
-      _id_full := "ARRAY[" + _sql_quote( "#F" ) + "]"
-
-      _qry := "INSERT INTO " + _tbl + "(user_code, version, last_trans_version, ids) " + ;
-         "VALUES(" + _sql_quote( _user )  + ", " + cVerUser + ", (select max(last_trans_version) from " +  _tbl + "), " + _id_full + ")"
-
-      _ret := _sql_query( _server, _qry )
-
-      log_write( "Dodajem novu stavku semafora za tabelu: " + _tbl + " user: " + _user + " ver.user: " + cVerUser, 7 )
-
-   ENDIF
+   insert_semaphore_if_not_exists( table )
 
    _qry := ""
 
@@ -571,8 +553,7 @@ FUNCTION update_semaphore_version_after_push( table, to_myself )
    // svim userima setuj last_trans_version
    _qry += "UPDATE " + _tbl + " SET last_trans_version=" + cVerUser + "; "
    // kod svih usera verzija ne moze biti veca od posljednje
-   _qry += "UPDATE " + _tbl + " SET version=" + cVerUser + ;
-      " WHERE version > " + cVerUser + ";"
+   _qry += "UPDATE " + _tbl + " SET version=" + cVerUser + " WHERE version > " + cVerUser + ";"
    _ret := _sql_query( _server, _qry )
 
    log_write( "END: update semaphore version after push user: " + _user + ", tabela: " + _tbl + ", last_ver=" + Str( _ver_user ), 7 )
@@ -587,24 +568,27 @@ FUNCTION update_semaphore_version_after_push( table, to_myself )
 // ------------------------------------------------------------------------
 FUNCTION nuliraj_ids_and_update_my_semaphore_ver( table )
 
-   LOCAL _tbl, _count
+   LOCAL _tbl
    LOCAL _ret
    LOCAL _user := f18_user()
    LOCAL _server := pg_server()
-   LOCAL _free
-   LOCAL _sem_status
+   LOCAL _qry
 
-   IF skip_semaphore( table)
-        RETURN .F.
+   IF skip_semaphore( table )
+      RETURN .F.
    ENDIF
 
    log_write( "START: nuliraj ids-ove - user: " + _user, 7 )
 
    _tbl := "fmk.semaphores_" + Lower( table )
-   _qry := "UPDATE " + _tbl + " SET "
-   _qry += " ids=NULL , dat=NULL,"
-   _qry += " version=last_trans_version"
-   _qry += " WHERE user_code =" + _sql_quote( _user )
+
+   insert_semaphore_if_not_exists( table )
+
+
+   _qry := "UPDATE " + _tbl + " SET " + ;
+      " ids=NULL , dat=NULL," + ;
+      " version=last_trans_version" + ;
+      " WHERE user_code =" + _sql_quote( _user )
 
    _ret := _sql_query( _server, _qry )
 
@@ -613,12 +597,53 @@ FUNCTION nuliraj_ids_and_update_my_semaphore_ver( table )
    RETURN _ret
 
 
+/*
+   TODO: ukloniti ovo ako ne trebamo _id_full
+   IF ( _result == 0 )
+
+      // user po prvi put radi sa tabelom semafora, iniciraj full sync
+      _id_full := "ARRAY[" + _sql_quote( "#F" ) + "]"
+
+      _qry := "INSERT INTO " + _tbl + "(user_code, version, last_trans_version, ids) " + ;
+         "VALUES(" + _sql_quote( _user )  + ", " + cVerUser + ", (select max(last_trans_version) from " +  _tbl + "), " + _id_full + ")"
+
+      _ret := _sql_query( _server, _qry )
+
+      log_write( "Dodajem novu stavku semafora za tabelu: " + _tbl + " user: " + _user + " ver.user: " + cVerUser, 7 )
+
+   ENDIF
+*/
+
+FUNCTION insert_semaphore_if_not_exists( cTable )
+
+   LOCAL nCnt
+   LOCAL _server := pg_server()
+   LOCAL _user := f18_user()
+   LOCAL _qry
+   LOCAL _ret
+   LOCAL cSqlTbl
+
+   cSqlTbl := "fmk.semaphores_" + Lower( cTable )
+
+
+   nCnt := table_count( cSqlTbl, "user_code=" + _sql_quote( _user ) )
+
+   IF ( nCnt == 0 )
+      _qry := "INSERT INTO " + cSqlTbl + "(user_code, last_trans_version, version, algorithm) " + ;
+         "VALUES(" + _sql_quote( _user )  + ", 0, -1, 'free')"
+      _ret := _sql_query( _server, _qry )
+      RETURN Empty( _ret:ErrMsg() )
+   ENDIF
+
+   RETURN .T.
+
+
 STATIC FUNCTION skip_semaphore( table )
 
-   table := LOWER( table )
+   table := Lower( table )
 
    IF table == "sifk" .OR. table == "sifv"
-        RETURN .T.
+      RETURN .T.
    ENDIF
 
    RETURN .F.

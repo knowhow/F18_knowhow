@@ -33,7 +33,7 @@ FUNCTION P_Tarifa( cid, dx, dy )
    NEXT
 
    lRet := p_sifra( F_TARIFA, 1, MAXROWS() - 15, MAXCOLS() - 25, "Tarifne grupe", @cid, dx, dy )
-	
+
    PopWa()
 
    RETURN lRet
@@ -91,7 +91,7 @@ FUNCTION Tarifa( cIdKonto, cIdRoba, aPorezi, cIdTar )
    ENDIF
 
    IF cIdTar == nil
-      SELECT( F_ROBA )
+      Select( F_ROBA )
       IF ( !Used() )
          lUsedRoba := .F.
          O_ROBA
@@ -99,7 +99,7 @@ FUNCTION Tarifa( cIdKonto, cIdRoba, aPorezi, cIdTar )
       SEEK cIdRoba
       cTarifa := &cPolje
 
-      SELECT( F_TARIFA )
+      Select( F_TARIFA )
       IF ( !Used() )
          lUsedTarifa := .F.
          O_TARIFA
@@ -108,7 +108,7 @@ FUNCTION Tarifa( cIdKonto, cIdRoba, aPorezi, cIdTar )
       cIdTarifa := tarifa->id
    ELSE
       cTarifa := cIdTar
-      SELECT( F_TARIFA )
+      Select( F_TARIFA )
       IF ( !Used() )
          lUsedTarifa := .F.
          O_TARIFA
@@ -120,12 +120,12 @@ FUNCTION Tarifa( cIdKonto, cIdRoba, aPorezi, cIdTar )
    SetAPorezi( @aPorezi )
 
    IF ( !lUsedRoba )
-      SELECT( F_ROBA )
+      Select( F_ROBA )
       USE
    ENDIF
 
    IF ( !lUsedTarifa )
-      SELECT( F_TARIFA )
+      Select( F_TARIFA )
       USE
    ENDIF
 
@@ -177,7 +177,7 @@ FUNCTION MpcSaPorUgost( nPosebniPorez, nPorezNaRuc, aPorezi )
    // MpcSaPP = PosebniPorez/StopaPP + PorezNaRuc
 
    nPom := nPosebniPorez / ( aPorezi[ POR_P_PRUC ] / 100 ) + nPorezNaRUC
-	
+
    RETURN nPom
 
 
@@ -325,16 +325,15 @@ FUNCTION Izn_P_PPP( nMpcBp, aPorezi, aPoreziIzn, nMpcSaP )
    LOCAL nPom
    LOCAL nUkPor
 
-      // zadate je cijena sa porezom, utvrdi cijenu bez poreza
-      IF nMpcBp == nil
-         // PPP - PDV,
-         // PP -  porez na potrosnju
-         nUkPor := aPorezi[ POR_PPP ] + aPorezi[ POR_PP ]
-         nMpcBp := nMpcSaP / ( nUkPor / 100 + 1 )
-      ENDIF
+   // zadate je cijena sa porezom, utvrdi cijenu bez poreza
+   IF nMpcBp == nil
+      // PPP - PDV,
+      // PP -  porez na potrosnju
+      nUkPor := aPorezi[ POR_PPP ] + aPorezi[ POR_PP ]
+      nMpcBp := nMpcSaP / ( nUkPor / 100 + 1 )
+   ENDIF
 
-      nPom := nMpcBP * aPorezi[ POR_PPP ] / 100
-
+   nPom := nMpcBP * aPorezi[ POR_PPP ] / 100
 
    RETURN nPom
 
@@ -348,6 +347,7 @@ FUNCTION Izn_P_PPP( nMpcBp, aPorezi, aPoreziIzn, nMpcSaP )
 FUNCTION Izn_P_PPU( nMPCBp, aPorezi, aPoreziIzn )
 
    LOCAL nPom
+
    nPom := nMpcBp * ( aPorezi[ POR_PPP ] / 100 + 1 ) * ( aPorezi[ POR_PPU ] / 100 )
 
    RETURN nPom
@@ -365,7 +365,6 @@ FUNCTION Izn_P_PP( nMpcBp, aPorezi, aPoreziIzn )
    LOCAL nMpcSaPor
    LOCAL nPom
    LOCAL nUkPor
-
 
    IF glUgost
       nPom := nMpcBp * aPorezi[ POR_PP ] / 100
@@ -444,14 +443,14 @@ FUNCTION Izn_P_PRugost( nMpcSaPP, nMPCBp, nNc, aPorezi, aPoreziIzn )
    CASE gUgostVarijanta $ "MPCSAPOR"
       // uvijek je osnova mpc
       nPom := ( nMpcSaPP * nDLRUC ) * nPStopaMPP
-		
+
    CASE gUgostVarijanta = "RMARZA_DLIMIT"
       // realizovana marza ili dlimit
       nPom := Max( ( nMpcSaPP * nDLRUC ) * nPStopaMPP, nMarza * nPStopaMPP )
    OTHERWISE
       nPom := -9999999
    ENDCASE
-				
+
    RETURN nPom
 
 
@@ -543,7 +542,7 @@ FUNCTION KorekTar()
    ENDDO
    BoxC()
 
-   SELECT( nKumArea )
+   Select( nKumArea )
    USE
 
    CLOSERET

@@ -10,10 +10,7 @@
  */
 
 #include "f18.ch"
-#include "dbstruct.ch"
-#include "error.ch"
-#include "setcurs.ch"
-#include "f18_separator.ch"
+
 
 /*
    browse_tbl (cImeBoxa,  xw, yw, bUserF,  cMessTop, cMessBot, lInvert, aMessage, nFreeze, bPodvuci, nPrazno, nGPrazno, aPoredak, skipblock)
@@ -523,7 +520,7 @@ STATIC FUNCTION standardne_browse_komande( TB, Ch, nRez, nPored, aPoredak )
 
    ENDCASE
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -568,8 +565,8 @@ STATIC FUNCTION ObjDbGet()
    ENDIF
 
    // Restore state
-   SET( _SET_SCOREBOARD, lScore )
-   SET( _SET_EXIT, lExit )
+   Set( _SET_SCOREBOARD, lScore )
+   Set( _SET_EXIT, lExit )
    SetKey( K_INS, bIns )
 
    // Get the record's key value (or NIL) after the GET
@@ -605,10 +602,8 @@ STATIC FUNCTION ObjDbGet()
 
 
 
-// --------------------------------------------------------------
-// --------------------------------------------------------------
-STATIC FUNCTION EditPolja( nX, nY, xIni, cNazPolja, ;
-      bWhen, bValid, cBoje )
+
+STATIC FUNCTION EditPolja( nX, nY, xIni, cNazPolja, bWhen, bValid, cBoje )
 
    LOCAL i
    LOCAL cStaraVr := gTBDir
@@ -759,31 +754,31 @@ STATIC FUNCTION EvEr( cExpr, cMes, cT )
 
 FUNCTION browse_brisi_stavku( lPack )
 
-if lPack == NIL
-   lPack := .T.
-ENDIF
+   IF lPack == NIL
+      lPack := .T.
+   ENDIF
 
-if Pitanje( , "Želite izbrisati ovu stavku ?","D") == "D"
+   IF Pitanje( , "Želite izbrisati ovu stavku ?", "D" ) == "D"
 
-         my_rlock()
-         delete
-         my_unlock()
+      my_rlock()
+      DELETE
+      my_unlock()
 
-         if lPack
-               my_dbf_pack()
-         endif
+      IF lPack
+         my_dbf_pack()
+      ENDIF
 
-         return DE_REFRESH
-endif
+      RETURN DE_REFRESH
+   ENDIF
 
-return DE_CONT
+   RETURN DE_CONT
 
 
 FUNCTION browse_brisi_pripremu()
 
-   if Pitanje(, "Želite li izbrisati pripremu !!????", "N" ) == "D"
-       my_dbf_zap()
-       RETURN DE_REFRESH
-   endif
+   IF Pitanje(, "Želite li izbrisati pripremu !!????", "N" ) == "D"
+      my_dbf_zap()
+      RETURN DE_REFRESH
+   ENDIF
 
-   return DE_CONT
+   RETURN DE_CONT

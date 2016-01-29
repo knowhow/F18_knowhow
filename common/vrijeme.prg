@@ -15,11 +15,10 @@
 STATIC _datum
 
 
-
 /*
    Opis: vraća tekući datum sa servera
 
-   Usage: 
+   Usage:
       danasnji_datum() => vraća vrijednost statičke varijable _datum
 
 */
@@ -30,8 +29,8 @@ FUNCTION danasnji_datum()
 
 /*
    Opis: vraća/setuje statičku varijablu _datum
-  
-   Usage: 
+
+   Usage:
       datum_server() => vraća vrijednost statičke varijable _datum
       datum_server(.T.) => iščitava vrijednost sa sql servera i setuje statičku varijablu _datum
 
@@ -41,13 +40,12 @@ FUNCTION datum_server( lSet )
    IF lSet == NIL
       lSet := .F.
    ENDIF
-   
+
    IF lSet .OR. _datum == NIL
       _datum := datum_server_sql()
    ENDIF
 
    RETURN _datum
-
 
 
 
@@ -67,5 +65,3 @@ STATIC FUNCTION datum_server_sql()
    ENDIF
 
    RETURN _date
-
-

@@ -26,4 +26,4 @@ FUNCTION m_fmkrules()
 
    Menu_SC( "rules" )
 
-   RETURN
+   RETURN .T.

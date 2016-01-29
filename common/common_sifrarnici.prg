@@ -64,7 +64,7 @@ FUNCTION SifFmkSvi()
       AAdd( opcexe, {|| MsgBeep( F18_SECUR_WARRNING ) } )
    ENDIF
 
-   AAdd( opc, "7. općine" )
+   AAdd( opc, "7. opštine" )
    IF ( ImaPravoPristupa( "FMK", "SIF", "OPCINEOPEN" ) )
       AAdd( opcexe, {|| P_Ops() } )
    ELSE

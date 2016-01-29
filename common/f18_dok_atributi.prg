@@ -10,9 +10,6 @@
  */
 
 #include "f18.ch"
-#include "hbclass.ch"
-#include "hbgtinfo.ch"
-#include "common.ch"
 
 
 CLASS F18_DOK_ATRIB
@@ -296,7 +293,7 @@ METHOD F18_DOK_ATRIB:get_atrib_list_from_server()
       RETURN NIL
    ENDIF
 
-   _table:GoTo(1)
+   _table:GoTo( 1 )
 
    DO WHILE !_table:Eof()
       oItem := _table:GetRow()
@@ -462,8 +459,8 @@ METHOD F18_DOK_ATRIB:update_atrib_rbr()
    LOCAL _idfirma, _idtipdok, _brdok, _rbr, _atribut, _update_rbr
    LOCAL _rec, _t_rec
 
-   IF !hb_hHasKey( ::dok_hash, "update_rbr" )
-       RETURN .F.
+   IF !hb_HHasKey( ::dok_hash, "update_rbr" )
+      RETURN .F.
    ENDIF
 
    _idfirma := ::dok_hash[ "idfirma" ]
@@ -486,7 +483,7 @@ METHOD F18_DOK_ATRIB:update_atrib_rbr()
       SKIP -1
 
       _rec := dbf_get_rec()
-      _rec["rbr"] := _rbr
+      _rec[ "rbr" ] := _rbr
       dbf_update_rec( _rec )
 
       GO ( _t_rec )

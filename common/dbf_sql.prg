@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out knowhow ERP, a free and open source 
+/*
+ * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
  * Copyright (c) 1994-2011 by bring.out d.o.o Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including knowhow ERP specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -14,55 +14,54 @@
 // ------------------------------
 // no_lock - ne zakljucavaj
 // ------------------------------
-function dbf_update_rec( vars, no_lock )
-local _key
-local _field_b
-local _msg
-local _a_dbf_rec
+FUNCTION dbf_update_rec( vars, no_lock )
 
-if no_lock == NIL
-   no_lock := .f.
-endif
+   LOCAL _key
+   LOCAL _field_b
+   LOCAL _msg
+   LOCAL _a_dbf_rec
 
-if !used()
-   _msg := "dbf_update_rec - nema otvoren dbf"
-   log_write( _msg, 1 )
-   Alert(_msg)
-   quit_1
-endif
+   IF no_lock == NIL
+      no_lock := .F.
+   ENDIF
 
-if no_lock .or. my_rlock()
+   IF !Used()
+      _msg := "dbf_update_rec - nema otvoren dbf"
+      log_write( _msg, 1 )
+      Alert( _msg )
+      quit_1
+   ENDIF
 
-    _a_dbf_rec := get_a_dbf_rec( ALIAS() )
-    
-    for each _key in vars:Keys
+   IF no_lock .OR. my_rlock()
 
-        // blacklistovano polje
-        if field_in_blacklist( _key, _a_dbf_rec["blacklisted"] )
+      _a_dbf_rec := get_a_dbf_rec( Alias() )
+
+      FOR EACH _key in vars:Keys
+
+         // blacklistovano polje
+         IF field_in_blacklist( _key, _a_dbf_rec[ "blacklisted" ] )
             LOOP
-        endif
+         ENDIF
 
-        // replace polja
-        if FIELDPOS( _key ) == 0
-           _msg := RECI_GDJE_SAM + "dbf field " + _key + " ne postoji u " + ALIAS()
-           //Alert(_msg)
-           log_write( _msg, 1 )
-        else
-           _field_b := FIELDBLOCK(_key)
-           // napuni field sa vrijednosti
-           EVAL( _field_b, vars[_key] )
-        endif
+         // replace polja
+         IF FieldPos( _key ) == 0
+            _msg := RECI_GDJE_SAM + "dbf field " + _key + " ne postoji u " + Alias()
+            // Alert(_msg)
+            log_write( _msg, 1 )
+         ELSE
+            _field_b := FieldBlock( _key )
+            // napuni field sa vrijednosti
+            Eval( _field_b, vars[ _key ] )
+         ENDIF
 
-    next
- 
-    if !no_lock 
+      NEXT
+
+      IF !no_lock
          my_unlock()
-    endif
-else
-    MsgBeep( "Ne mogu rlock-ovati:" + ALIAS())
-    return .f.
-endif
+      ENDIF
+   ELSE
+      MsgBeep( "Ne mogu rlock-ovati:" + Alias() )
+      RETURN .F.
+   ENDIF
 
-return .t.
-
-
+   RETURN .T.

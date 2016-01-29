@@ -27,7 +27,7 @@ FUNCTION init_threads()
    _db_thread_id  :=  hb_threadStart(  hb_bitOr( HB_THREAD_INHERIT_PUBLIC, HB_THREAD_MEMVARS_COPY ), @_db_thread_fn() )
    // --------------
 
-   RETURN
+   RETURN .T.
 
 // SELECT F_PARTN
 // if used()

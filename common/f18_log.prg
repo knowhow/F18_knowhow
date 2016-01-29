@@ -23,7 +23,7 @@ FUNCTION f18_view_log( _params )
    ENDIF
 
    IF _params == NIL .AND. !uslovi_pregleda_loga( @_params )
-      RETURN
+      RETURN .F.
    ENDIF
 
    _data := _log_get_data( _params )

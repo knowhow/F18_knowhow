@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -14,350 +14,359 @@
 
 
 // id partner
-static __partn
-static __ugov
-static __dest_len
-static _x_pos
-static _y_pos
+STATIC __partn
+STATIC __ugov
+STATIC __dest_len
+STATIC _x_pos
+STATIC _y_pos
 
 // ----------------------------------
-// pregled destinacije 
+// pregled destinacije
 // ----------------------------------
-function p_dest_2( cId, cPartId, dx, dy )
-local nArr := SELECT()
-local cHeader := ""
-local cFooter := ""
-local xRet
-private ImeKol
-private Kol
+FUNCTION p_dest_2( cId, cPartId, dx, dy )
 
-_x_pos := MAXROWS() - 15
-_y_pos := MAXCOLS() - 5
+   LOCAL nArr := Select()
+   LOCAL cHeader := ""
+   LOCAL cFooter := ""
+   LOCAL xRet
+   PRIVATE ImeKol
+   PRIVATE Kol
 
-cHeader += "Destinacije za: " 
-cHeader += cPartId 
-cHeader += "-" 
-cHeader += PADR( Ocitaj(F_PARTN, cPartId, "naz"), 20 ) + ".."
+   _x_pos := MAXROWS() - 15
+   _y_pos := MAXCOLS() - 5
 
-select dest
-set order to tag "IDDEST"
+   cHeader += "Destinacije za: "
+   cHeader += cPartId
+   cHeader += "-"
+   cHeader += PadR( Ocitaj( F_PARTN, cPartId, "naz" ), 20 ) + ".."
 
-if !EMPTY(cPartId)
-	__partn := cPartId
-else
-	__partn := SPACE(6)
-endif
+   SELECT dest
+   SET ORDER TO TAG "IDDEST"
 
-__ugov := ugov->id
-__dest_len := 6
+   IF !Empty( cPartId )
+      __partn := cPartId
+   ELSE
+      __partn := Space( 6 )
+   ENDIF
 
-// postavi filter
-set_f_tbl( cPartId )
+   __ugov := ugov->id
+   __dest_len := 6
 
-// setuj kolone
-set_a_kol( @ImeKol, @Kol )
+   // postavi filter
+   set_f_tbl( cPartId )
 
-xRet := PostojiSifra(F_DEST, "IDDEST", _x_pos, _y_pos, cHeader, @cId, dx, dy,{|Ch| key_handler(Ch)} )
+   // setuj kolone
+   set_a_kol( @ImeKol, @Kol )
 
-set filter to
+   xRet := PostojiSifra( F_DEST, "IDDEST", _x_pos, _y_pos, cHeader, @cId, dx, dy, {| Ch| key_handler( Ch ) } )
 
-select (nArr)
+   SET FILTER TO
 
-return xRet
+   SELECT ( nArr )
+
+   RETURN xRet
 
 
 // setovanje filtera na tabeli destinacija
-static function set_f_tbl( cPart )
-local cFilt := ".t."
+STATIC FUNCTION set_f_tbl( cPart )
 
-if cPart <> nil .and. !EMPTY(cPart)
-	cFilt += ".and. idpartner == " + Cm2Str( cPart )
-endif
+   LOCAL cFilt := ".t."
 
-if cFilt == ".t."
-	cFilt := ""
-endif
+   IF cPart <> NIL .AND. !Empty( cPart )
+      cFilt += ".and. idpartner == " + Cm2Str( cPart )
+   ENDIF
 
-if !EMPTY( cFilt )
-	set filter to &cFilt
-else
-	set filter to
-endif
+   IF cFilt == ".t."
+      cFilt := ""
+   ENDIF
 
-go top
+   IF !Empty( cFilt )
+      SET FILTER to &cFilt
+   ELSE
+      SET FILTER TO
+   ENDIF
 
-return
+   GO TOP
+
+   RETURN
 
 
 // ----------------------------------------------------
 // setovanje kolona tabele
 // ----------------------------------------------------
-static function set_a_kol( aImeKol, aKol )
-local i
+STATIC FUNCTION set_a_kol( aImeKol, aKol )
 
-aImeKol := {}
-aKol := {}
+   LOCAL i
 
-AADD(aImeKol, { "Naziv" , {|| PADR(ALLTRIM(naziv) + "/" + ALLTRIM(naziv2), 50) }, "naziv" } )
-AADD(aImeKol, { "Mjesto" , {|| PADR( ALLTRIM(mjesto) + "/" + ALLTRIM(adresa), 20) }, "mjesto" })
-AADD(aImeKol, { "Telefon", {|| PADR(telefon, 10) }, "telefon" })
-AADD(aImeKol, { "Fax", {|| PADR(fax, 10) }, "fax" } )
-AADD(aImeKol, { "Mobitel", {|| PADR(mobitel, 10) }, "mobitel" } )
+   aImeKol := {}
+   aKol := {}
 
-for i:=1 to LEN(aImeKol)
-	AADD(aKol, i)
-next
+   AAdd( aImeKol, { "Naziv", {|| PadR( AllTrim( naziv ) + "/" + AllTrim( naziv2 ), 50 ) }, "naziv" } )
+   AAdd( aImeKol, { "Mjesto", {|| PadR( AllTrim( mjesto ) + "/" + AllTrim( adresa ), 20 ) }, "mjesto" } )
+   AAdd( aImeKol, { "Telefon", {|| PadR( telefon, 10 ) }, "telefon" } )
+   AAdd( aImeKol, { "Fax", {|| PadR( fax, 10 ) }, "fax" } )
+   AAdd( aImeKol, { "Mobitel", {|| PadR( mobitel, 10 ) }, "mobitel" } )
 
-return
+   FOR i := 1 TO Len( aImeKol )
+      AAdd( aKol, i )
+   NEXT
+
+   RETURN
 
 
 
 // --------------------------------
 // key handler
 // --------------------------------
-static function key_handler( Ch )
+STATIC FUNCTION key_handler( Ch )
 
-@ m_x + 17, 6 SAY "<S> setuj kao def.destin.za fakturisanje"
+   @ m_x + 17, 6 SAY "<S> setuj kao def.destin.za fakturisanje"
 
-do case
-	case Ch == K_CTRL_N
-	
-		edit_dest( .t. )
-		return 7
-		
-	case Ch == K_F2
-		
-		edit_dest( .f. )
-		return 7
+   DO CASE
+   CASE Ch == K_CTRL_N
 
-	case UPPER(CHR(Ch)) == "S"
-		
-		// set as default...
-		set_as_default( __ugov, id )
-		
-endcase
+      edit_dest( .T. )
+      RETURN 7
 
-return DE_CONT
+   CASE Ch == K_F2
+
+      edit_dest( .F. )
+      RETURN 7
+
+   CASE Upper( Chr( Ch ) ) == "S"
+
+      // set as default...
+      set_as_default( __ugov, id )
+
+   ENDCASE
+
+   RETURN DE_CONT
 
 
 // ----------------------------------------------------
 // vraca novi broj destinacije
 // ----------------------------------------------------
-static function n_dest_id()
-local xRet := "  1"
-local nTArea := SELECT()
-local nTRec := RECNO()
-local cTBFilter := DBFilter()
+STATIC FUNCTION n_dest_id()
 
-select dest
-set filter to
-set order to tag "IDDEST"
-go bottom
+   LOCAL xRet := "  1"
+   LOCAL nTArea := Select()
+   LOCAL nTRec := RecNo()
+   LOCAL cTBFilter := dbFilter()
 
-xRet := PADL( ALLTRIM( STR( VAL(field->id) + 1 ) ), __dest_len, "0" )
+   SELECT dest
+   SET FILTER TO
+   SET ORDER TO TAG "IDDEST"
+   GO BOTTOM
 
-set order to tag "ID"
+   xRet := PadL( AllTrim( Str( Val( field->id ) + 1 ) ), __dest_len, "0" )
 
-select (nTArea)
-set filter to &cTbFilter
-go (nTRec)
+   SET ORDER TO TAG "ID"
 
-return xRet
+   SELECT ( nTArea )
+   SET FILTER to &cTbFilter
+   GO ( nTRec )
+
+   RETURN xRet
 
 
 
 // -----------------------------------
 // edit destinacije
 // -----------------------------------
-static function edit_dest( lNova )
-local nRec
-local nBoxLen := 20
-local nX := 1
-local _rec
-private GetList:={}
+STATIC FUNCTION edit_dest( lNova )
 
-if lNova
-	nRec := RECNO()
-	GO BOTTOM
-	SKIP 1
-endif
+   LOCAL nRec
+   LOCAL nBoxLen := 20
+   LOCAL nX := 1
+   LOCAL _rec
+   PRIVATE GetList := {}
 
-// bivsi scatter() 	    
-set_global_memvars_from_dbf()
-	   
-if lNova
+   IF lNova
+      nRec := RecNo()
+      GO BOTTOM
+      SKIP 1
+   ENDIF
 
-	_idpartner := __partn
-	// uvecaj id automatski
-	_id := n_dest_id()
-	_mjesto := SPACE(LEN(_mjesto))
-	_adresa := SPACE(LEN(_adresa))
-	_naziv := SPACE(LEN(_naziv))
-	_naziv2 := SPACE(LEN(_naziv2))
-	_telefon := SPACE(LEN(_telefon))
-	_fax := SPACE(LEN(_fax))
-	_mobitel := SPACE(LEN(_mobitel))
-	_ptt := SPACE(LEN(_mobitel))
-	
-endif
+   // bivsi scatter()
+   set_global_memvars_from_dbf()
 
-Box(, 16, 75 )
+   IF lNova
 
-if lNova
-	@ m_x + nX, m_y + 2 SAY PADL("*** Unos nove destinacije", 65)
-else
+      _idpartner := __partn
+      // uvecaj id automatski
+      _id := n_dest_id()
+      _mjesto := Space( Len( _mjesto ) )
+      _adresa := Space( Len( _adresa ) )
+      _naziv := Space( Len( _naziv ) )
+      _naziv2 := Space( Len( _naziv2 ) )
+      _telefon := Space( Len( _telefon ) )
+      _fax := Space( Len( _fax ) )
+      _mobitel := Space( Len( _mobitel ) )
+      _ptt := Space( Len( _mobitel ) )
 
-	@ m_x + nX, m_y + 2 SAY PADL("*** Ispravka destinacije", 65)
-endif
+   ENDIF
 
-++nX
+   Box(, 16, 75 )
 
-@ m_x + nX, m_y + 2 SAY PADR("Partner: " + ALLTRIM(_idpartner) + " , dest.rbr: " + ALLTRIM(_id), 70)
+   IF lNova
+      @ m_x + nX, m_y + 2 SAY PadL( "*** Unos nove destinacije", 65 )
+   ELSE
 
-nX += 2
+      @ m_x + nX, m_y + 2 SAY PadL( "*** Ispravka destinacije", 65 )
+   ENDIF
 
-@ m_x + nX, m_y + 2 SAY PADL("Naziv:", nBoxLen) GET _naziv
+   ++nX
 
-++ nX
+   @ m_x + nX, m_y + 2 SAY PadR( "Partner: " + AllTrim( _idpartner ) + " , dest.rbr: " + AllTrim( _id ), 70 )
 
-@ m_x + nX, m_y + 2 SAY PADL("Naziv 2:", nBoxLen) GET _naziv2 
+   nX += 2
 
-++ nX
+   @ m_x + nX, m_y + 2 SAY PadL( "Naziv:", nBoxLen ) GET _naziv
 
-@ m_x + nX, m_y + 2 SAY PADL("Mjesto:", nBoxLen) GET _mjesto 
+   ++ nX
 
-++ nX
+   @ m_x + nX, m_y + 2 SAY PadL( "Naziv 2:", nBoxLen ) GET _naziv2
 
-@ m_x + nX, m_y + 2 SAY PADL("Adresa:", nBoxLen) GET _adresa
+   ++ nX
 
-++ nX
+   @ m_x + nX, m_y + 2 SAY PadL( "Mjesto:", nBoxLen ) GET _mjesto
 
-@ m_x + nX, m_y + 2 SAY PADL("PTT:", nBoxLen) GET _ptt 
+   ++ nX
 
-++ nX
+   @ m_x + nX, m_y + 2 SAY PadL( "Adresa:", nBoxLen ) GET _adresa
 
-@ m_x + nX, m_y + 2 SAY PADL("Telefon:", nBoxLen) GET _telefon
+   ++ nX
 
-++ nX
+   @ m_x + nX, m_y + 2 SAY PadL( "PTT:", nBoxLen ) GET _ptt
 
-@ m_x + nX, m_y + 2 SAY PADL("Fax:", nBoxLen) GET _fax
+   ++ nX
 
-++ nX
+   @ m_x + nX, m_y + 2 SAY PadL( "Telefon:", nBoxLen ) GET _telefon
 
-@ m_x + nX, m_y + 2 SAY PADL("Mobitel:", nBoxLen) GET _mobitel
+   ++ nX
 
-read
+   @ m_x + nX, m_y + 2 SAY PadL( "Fax:", nBoxLen ) GET _fax
 
-BoxC()
+   ++ nX
 
-if LastKey() == K_ESC
-	return DE_CONT
-endif
+   @ m_x + nX, m_y + 2 SAY PadL( "Mobitel:", nBoxLen ) GET _mobitel
 
-if lNova
-	append blank
-endif
+   READ
 
-// bivsi gather()
-_rec := get_dbf_global_memvars()
-update_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" )
+   BoxC()
 
-if lNova
-	go (nRec)
-endif
+   IF LastKey() == K_ESC
+      RETURN DE_CONT
+   ENDIF
 
-return 7
+   IF lNova
+      APPEND BLANK
+   ENDIF
+
+   // bivsi gather()
+   _rec := get_dbf_global_memvars()
+   update_rec_server_and_dbf( Alias(), _rec, 1, "FULL" )
+
+   IF lNova
+      GO ( nRec )
+   ENDIF
+
+   RETURN 7
 
 
 // --------------------------------------------
 // vraca info o destinaciji
 // --------------------------------------------
-function get_dest_info( cPartn, cDest, nLen )
-local xRet := "---"
-local nTArea := SELECT()
+FUNCTION get_dest_info( cPartn, cDest, nLen )
 
-if nLen == nil
-	nLen := 15
-endif
+   LOCAL xRet := "---"
+   LOCAL nTArea := Select()
 
-select dest
-set order to tag "ID"
-hseek cPartn + cDest
+   IF nLen == nil
+      nLen := 15
+   ENDIF
 
-if FOUND() 
-	if cPartn == field->idpartner .and. cDest == field->id
-		xRet := ALLTRIM(field->naziv) + ":" + ALLTRIM(field->naziv2) + ":" + ALLTRIM(field->adresa)
-	endif
-endif
+   SELECT dest
+   SET ORDER TO TAG "ID"
+   hseek cPartn + cDest
 
-xRet := PADR( xRet, nLen )
+   IF Found()
+      IF cPartn == field->idpartner .AND. cDest == field->id
+         xRet := AllTrim( field->naziv ) + ":" + AllTrim( field->naziv2 ) + ":" + AllTrim( field->adresa )
+      ENDIF
+   ENDIF
 
-select (nTArea)
-return xRet
+   xRet := PadR( xRet, nLen )
+
+   SELECT ( nTArea )
+
+   RETURN xRet
 
 
 // --------------------------------------------
 // vraca box info o destinaciji
 // --------------------------------------------
-function get_dest_binfo( nX, nY, cPartn, cDest )
-local xRet := "---"
-local nTArea := SELECT()
-local _len := 65
+FUNCTION get_dest_binfo( nX, nY, cPartn, cDest )
 
-nX := nX + 3
-select dest
-set order to tag "ID"
-go top
-hseek cPartn + cDest
+   LOCAL xRet := "---"
+   LOCAL nTArea := Select()
+   LOCAL _len := 65
 
-if FOUND() 
-	if cPartn == field->idpartner .and. cDest == field->id
-		
-		cPom := ALLTRIM( field->naziv) + ", " + ALLTRIM(field->naziv2)
-		
-		@ nX, 2 SAY SPACE( _len ) COLOR "I"
-		@ nX, 2 SAY PADR( cPom, _len ) COLOR "I"
+   nX := nX + 3
+   SELECT dest
+   SET ORDER TO TAG "ID"
+   GO TOP
+   hseek cPartn + cDest
 
-		cPom := ALLTRIM(field->adresa) + ", " + ALLTRIM(field->telefon)
-		
-		@ nX + 1, 2 SAY SPACE( _len ) COLOR "I"
-		@ nX + 1, 2 SAY PADR( cPom, _len ) COLOR "I"
-		
-	endif
-endif
+   IF Found()
+      IF cPartn == field->idpartner .AND. cDest == field->id
 
-select (nTArea)
-return
+         cPom := AllTrim( field->naziv ) + ", " + AllTrim( field->naziv2 )
+
+         @ nX, 2 SAY Space( _len ) COLOR "I"
+         @ nX, 2 SAY PadR( cPom, _len ) COLOR "I"
+
+         cPom := AllTrim( field->adresa ) + ", " + AllTrim( field->telefon )
+
+         @ nX + 1, 2 SAY Space( _len ) COLOR "I"
+         @ nX + 1, 2 SAY PadR( cPom, _len ) COLOR "I"
+
+      ENDIF
+   ENDIF
+
+   SELECT ( nTArea )
+
+   RETURN
 
 
 // ----------------------------------------
 // set default destinacija
 // ----------------------------------------
-function set_as_default( cUgovId, cDest )
-local nTArea := SELECT()
-local nRec
-local _rec
+FUNCTION set_as_default( cUgovId, cDest )
 
-if Pitanje(,"Setovati kao glavnu destinaciju fakturisanja (D/N)?", "D") == "N"
-	return
-endif
+   LOCAL nTArea := Select()
+   LOCAL nRec
+   LOCAL _rec
 
-select ugov
-set order to tag "ID"
-nRec := RECNO()
-seek cUgovId
+   IF Pitanje(, "Setovati kao glavnu destinaciju fakturisanja (D/N)?", "D" ) == "N"
+      RETURN
+   ENDIF
 
-if FOUND()
-    _rec := dbf_get_rec()
-    _rec["def_dest"] := cDest
-    update_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" )
-	MsgBeep("Destinacija '" + ALLTRIM(cDest) + "' setovana#za ugovor " + cUgovId + " !!!")
-endif
+   SELECT ugov
+   SET ORDER TO TAG "ID"
+   nRec := RecNo()
+   SEEK cUgovId
 
-select ugov
-go (nRec)
+   IF Found()
+      _rec := dbf_get_rec()
+      _rec[ "def_dest" ] := cDest
+      update_rec_server_and_dbf( Alias(), _rec, 1, "FULL" )
+      MsgBeep( "Destinacija '" + AllTrim( cDest ) + "' setovana#za ugovor " + cUgovId + " !!!" )
+   ENDIF
 
-select (nTArea)
-return
+   SELECT ugov
+   GO ( nRec )
 
+   SELECT ( nTArea )
 
+   RETURN

@@ -31,7 +31,7 @@
        update_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" )
 
   na isti nacin se koristi i u kombinaciji sa:
-      
+
         delete_rec_server_and_dbf()
 
 
@@ -131,5 +131,3 @@ FUNCTION f18_free_tables( a_tables )
    my_use_semaphore_on()
 
    RETURN _ok
-
-

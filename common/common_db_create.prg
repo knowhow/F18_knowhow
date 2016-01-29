@@ -1,45 +1,45 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
 
-
 #include "f18.ch"
-#include "f18_rabat.ch"
 
-/*! \fn CreRabDB()
- *  \brief Kreira tabelu rabat u SIFPATH
+
+/*! fn CreRabDB()
+ *  brief Kreira tabelu rabat u SIFPATH
  */
- 
-function CreRabDB()
-// RABAT.DBF
-aDbf:={}
-AADD(aDbf,{"IDRABAT"      , "C", 10, 0})
-AADD(aDbf,{"TIPRABAT"     , "C", 10, 0})
-AADD(aDbf,{"DATUM"        , "D",  8, 0})
-AADD(aDbf,{"DANA"         , "N",  5, 0})
-AADD(aDbf,{"IDROBA"       , "C", 10, 0})
-AADD(aDbf,{"IZNOS1"       , "N",  8, 2})
-AADD(aDbf,{"IZNOS2"       , "N",  8, 2})
-AADD(aDbf,{"IZNOS3"       , "N",  8, 2})
-AADD(aDbf,{"IZNOS4"       , "N",  8, 2})
-AADD(aDbf,{"IZNOS5"       , "N",  8, 2})
-AADD(aDbf,{"SKONTO"       , "N",  8, 2})
 
-if !File(f18_ime_dbf("rabat"))
-	DbCreate2( "rabat", aDbf)
-endif
+FUNCTION CreRabDB()
 
-CREATE_INDEX("1", "IDRABAT+TIPRABAT+IDROBA", SIFPATH + "rabat.dbf", .t.)
-CREATE_INDEX("2", "IDRABAT+TIPRABAT+DTOS(DATUM)", SIFPATH + "rabat.dbf", .t.)
+   // RABAT.DBF
+   aDbf := {}
+   AAdd( aDbf, { "IDRABAT", "C", 10, 0 } )
+   AAdd( aDbf, { "TIPRABAT", "C", 10, 0 } )
+   AAdd( aDbf, { "DATUM", "D",  8, 0 } )
+   AAdd( aDbf, { "DANA", "N",  5, 0 } )
+   AAdd( aDbf, { "IDROBA", "C", 10, 0 } )
+   AAdd( aDbf, { "IZNOS1", "N",  8, 2 } )
+   AAdd( aDbf, { "IZNOS2", "N",  8, 2 } )
+   AAdd( aDbf, { "IZNOS3", "N",  8, 2 } )
+   AAdd( aDbf, { "IZNOS4", "N",  8, 2 } )
+   AAdd( aDbf, { "IZNOS5", "N",  8, 2 } )
+   AAdd( aDbf, { "SKONTO", "N",  8, 2 } )
 
-return
+   IF !File( f18_ime_dbf( "rabat" ) )
+      DbCreate2( "rabat", aDbf )
+   ENDIF
+
+   CREATE_INDEX( "1", "IDRABAT+TIPRABAT+IDROBA", SIFPATH + "rabat.dbf", .T. )
+   CREATE_INDEX( "2", "IDRABAT+TIPRABAT+DTOS(DATUM)", SIFPATH + "rabat.dbf", .T. )
+
+   RETURN
 
 
 /*! \fn GetRabForArticle(cIdRab, cTipRab, cIdRoba, nTekIznos)
@@ -50,27 +50,28 @@ return
  *  \param cIdRoba - id roba
  *  \return nRet - vrijednost rabata
  */
-function GetRabForArticle(cIdRab, cTipRab, cIdRoba, nTekIznos)
-*{
-local nArr
-nArr:=SELECT()
+FUNCTION GetRabForArticle( cIdRab, cTipRab, cIdRoba, nTekIznos )
 
-cIdRab := PADR(cIdRab, 10)
-cTipRab := PADR(cTipRab, 10)
+   // {
+   LOCAL nArr
+   nArr := Select()
 
-O_RABAT
-select rabat
-set order to tag "1"
-go top
-seek cIdRab + cTipRab + cIdRoba
+   cIdRab := PadR( cIdRab, 10 )
+   cTipRab := PadR( cTipRab, 10 )
 
-// vrati iznos rabata za tekucu vriijednost polja IZNOSn
-nRet:=GetRabIznos(nTekIznos)
+   O_RABAT
+   SELECT rabat
+   SET ORDER TO TAG "1"
+   GO TOP
+   SEEK cIdRab + cTipRab + cIdRoba
 
-select (nArr)
+   // vrati iznos rabata za tekucu vriijednost polja IZNOSn
+   nRet := GetRabIznos( nTekIznos )
 
-return nRet
-*}
+   SELECT ( nArr )
+
+   RETURN nRet
+
 
 
 /*! \fn GetDaysForRabat(cIdRab, cTipRab)
@@ -79,43 +80,46 @@ return nRet
  *  \param cTipRab - tip rabata
  *  \return nRet - vrijednost dana
  */
-function GetDaysForRabat(cIdRab, cTipRab)
-*{
-local nArr
-nArr:=SELECT()
+FUNCTION GetDaysForRabat( cIdRab, cTipRab )
 
-cIdRab := PADR(cIdRab, 10)
-cTipRab := PADR(cTipRab, 10)
+   // {
+   LOCAL nArr
+   nArr := Select()
 
-O_RABAT
-select rabat
-set order to tag "1"
-go top
-seek cIdRab + cTipRab
-nRet:=field->dana
-select (nArr)
+   cIdRab := PadR( cIdRab, 10 )
+   cTipRab := PadR( cTipRab, 10 )
 
-return nRet
-*}
+   O_RABAT
+   SELECT rabat
+   SET ORDER TO TAG "1"
+   GO TOP
+   SEEK cIdRab + cTipRab
+   nRet := field->dana
+   SELECT ( nArr )
+
+   RETURN nRet
+// }
 
 
 /*! \fn GetRabIznos(cTekIzn)
  *  \brief Vraca iznos rabata za zadati cTekIznos (vrijednost polja)
  *  \param cTekIzn - tekuce polje koje se uzima
  */
-function GetRabIznos(cTekIzn)
-*{
-if (cTekIzn == nil)
-	cTekIzn := "1"
-endif
+FUNCTION GetRabIznos( cTekIzn )
 
-// primjer: "iznos" + cTekIzn
-//           iznos1 ili iznos3
-cField := "iznos" + ALLTRIM(cTekIzn)
-// izvrsi macro evaluaciju
-nRet := field->&cField
-return nRet
-*}
+   // {
+   IF ( cTekIzn == nil )
+      cTekIzn := "1"
+   ENDIF
+
+   // primjer: "iznos" + cTekIzn
+   // iznos1 ili iznos3
+   cField := "iznos" + AllTrim( cTekIzn )
+   // izvrsi macro evaluaciju
+   nRet := field->&cField
+
+   RETURN nRet
+// }
 
 
 /*! \fn GetSkontoArticle(cIdRab, cTipRab, cIdRoba)
@@ -125,33 +129,33 @@ return nRet
  *  \param cIdRoba - id roba
  *  \return nRet - vrijednost skonto
  */
-function GetSkontoArticle(cIdRab, cTipRab, cIdRoba)
-*{
-local nArr
-nArr:=SELECT()
+FUNCTION GetSkontoArticle( cIdRab, cTipRab, cIdRoba )
 
-cIdRab := PADR(cIdRab, 10)
-cTipRab := PADR(cTipRab, 10)
-O_RABAT
-select rabat
-set order to tag "1"
-go top
-seek cIdRab + cTipRab + cIdRoba
-nRet:=field->skonto
-select (nArr)
+   // {
+   LOCAL nArr
+   nArr := Select()
 
-return nRet
-*}
+   cIdRab := PadR( cIdRab, 10 )
+   cTipRab := PadR( cTipRab, 10 )
+   O_RABAT
+   SELECT rabat
+   SET ORDER TO TAG "1"
+   GO TOP
+   SEEK cIdRab + cTipRab + cIdRoba
+   nRet := field->skonto
+   SELECT ( nArr )
+
+   RETURN nRet
+// }
 
 
 // ------------------------------------
 // dodaj match_code u browse
 // ------------------------------------
-function add_mcode(aKolona)
-if fieldpos("MATCH_CODE") <> 0
-	AADD(aKolona, { PADC("MATCH CODE",10), {|| match_code}, "match_code" })
-endif
-return
+FUNCTION add_mcode( aKolona )
 
+   IF FieldPos( "MATCH_CODE" ) <> 0
+      AAdd( aKolona, { PadC( "MATCH CODE", 10 ), {|| match_code }, "match_code" } )
+   ENDIF
 
-
+   RETURN

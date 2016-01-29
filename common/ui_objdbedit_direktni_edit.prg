@@ -1,109 +1,106 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+/*
+ * This file is part of the bring.out knowhow ERP, a free and open source
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
 
-
 #include "f18.ch"
-#include "dbstruct.ch"
-#include "error.ch"
-#include "setcurs.ch"
-#include "f18_separator.ch"
 
-// ---------------------------------------------------------
-// ---------------------------------------------------------
-function DaTBDirektni(lIzOBJDB)
- 
-LOCAL i,j,k
- IF lIzOBJDB==NIL; lIzOBJDB:=.f.; ENDIF
 
- if aParametri[9]==0
-  IF !lIzOBJDB; BoxC(); ENDIF
-  Box(aParametri[1],aParametri[2],aParametri[3],aParametri[4],aParametri[5])
- else
-  @ m_x+aParametri[2]-aParametri[9],m_y+1 SAY PADC("-",aParametri[3],"-")
- endif
 
- IF ! ( "U" $ TYPE("adImeKol") )
-   ImeKol:=adImeKol
- ENDIF
- IF ! ( "U" $ TYPE("adKol") )
-   Kol:=adKol
- ENDIF
+FUNCTION DaTBDirektni( lIzOBJDB )
 
-   //@ m_x,m_y+2 SAY aParametri[8]+"�UPOZORENJE: Mod direktnog unosa u tabelu!"
-   @ m_x,m_y+2 SAY aParametri[8]+IF(!lIzOBJDB,REPL("�",42),"")
-   //@ m_x+aParametri[2]+1,m_y+2 SAY aParametri[7]+"�UPOZORENJE: Mod direktnog unosa u tabelu!"
-   @ m_x+aParametri[2]+1,m_y+2 SAY aParametri[7] COLOR "GR+/B"
+   LOCAL i, j, k
 
-   @ m_x+1,m_y+aParametri[3]-6 SAY STR(RecCount2(),5)
-   TB:=TBRowseDB(m_x+2+aParametri[10],m_y+1,m_x+aParametri[2]-aParametri[9]-iif(aParametri[9]<>0,1,0),m_y+aParametri[3])
+   IF lIzOBJDB == NIL; lIzOBJDB := .F. ; ENDIF
+
+   IF aParametri[ 9 ] == 0
+      IF !lIzOBJDB; BoxC(); ENDIF
+      Box( aParametri[ 1 ], aParametri[ 2 ], aParametri[ 3 ], aParametri[ 4 ], aParametri[ 5 ] )
+   ELSE
+      @ m_x + aParametri[ 2 ] -aParametri[ 9 ], m_y + 1 SAY PadC( "-", aParametri[ 3 ], "-" )
+   ENDIF
+
+   IF ! ( "U" $ Type( "adImeKol" ) )
+      ImeKol := adImeKol
+   ENDIF
+   IF ! ( "U" $ Type( "adKol" ) )
+      Kol := adKol
+   ENDIF
+
+   // @ m_x,m_y+2 SAY aParametri[8]+"�UPOZORENJE: Mod direktnog unosa u tabelu!"
+   @ m_x, m_y + 2 SAY aParametri[ 8 ] + IF( !lIzOBJDB, REPL( "�", 42 ), "" )
+   // @ m_x+aParametri[2]+1,m_y+2 SAY aParametri[7]+"�UPOZORENJE: Mod direktnog unosa u tabelu!"
+   @ m_x + aParametri[ 2 ] + 1, m_y + 2 SAY aParametri[ 7 ] COLOR "GR+/B"
+
+   @ m_x + 1, m_y + aParametri[ 3 ] -6 SAY Str( RecCount2(), 5 )
+   TB := TBrowseDB( m_x + 2 + aParametri[ 10 ], m_y + 1, m_x + aParametri[ 2 ] -aParametri[ 9 ] -iif( aParametri[ 9 ] <> 0, 1, 0 ), m_y + aParametri[ 3 ] )
    Tb:skipBlock     := TBSkipBlock
-   Tb:goTopBlock    := {|| GoTopDB(@nTbLine)}
-   Tb:goBottomBlock := {|| GoBottomDB(@nTBLine)}
+   Tb:goTopBlock    := {|| GoTopDB( @nTbLine ) }
+   Tb:goBottomBlock := {|| GoBottomDB( @nTBLine ) }
 
    // Dodavanje kolona  za stampanje
-   FOR k:=1 TO Len(Kol)
-     i:=ASCAN(Kol,k)
-     IF i<>0
-        TCol:=TBColumnNew(ImeKol[i,1],ImeKol[i,2])
-        if aParametri[11]<>NIL
-          TCol:colorBlock:={|| iif(EVAL(aParametri[11]),{5,2},{1,2}) }
-        endif
-        TB:addColumn(TCol)
-     END IF
+   FOR k := 1 TO Len( Kol )
+      i := AScan( Kol, k )
+      IF i <> 0
+         TCol := TBColumnNew( ImeKol[ i, 1 ], ImeKol[ i, 2 ] )
+         IF aParametri[ 11 ] <> NIL
+            TCol:colorBlock := {|| iif( Eval( aParametri[ 11 ] ), { 5, 2 }, { 1, 2 } ) }
+         ENDIF
+         TB:addColumn( TCol )
+      END IF
    NEXT
-   TB:headSep := CHR(220)
+   TB:headSep := Chr( 220 )
 
-   //TB:colsep :=CHR(219)
+   // TB:colsep :=CHR(219)
    TB:colsep := BROWSE_COL_SEP
 
-   if aParametri[6]==NIL
-      TB:Freeze:=1
-   else
-      Tb:Freeze:=aParametri[6]
-   endif
-RETURN
+   IF aParametri[ 6 ] == NIL
+      TB:Freeze := 1
+   ELSE
+      Tb:Freeze := aParametri[ 6 ]
+   ENDIF
+
+   RETURN .T.
 
 
 
-static function GoBottomDB( nTBLine )
+STATIC FUNCTION GoBottomDB( nTBLine )
 
-// You are receiving a reference
-   DBGOBOTTOM()
+   // You are receiving a reference
+   dbGoBottom()
    nTBLine := nTBLastLine
-   RETURN (NIL)
+
+   RETURN ( NIL )
 
 
-// -------------------------------------------
-// -------------------------------------------
-static function GoTopDB( nTBLine )
 
-// You are receiving a reference
-   DBGOTOP()
+STATIC FUNCTION GoTopDB( nTBLine )
+
+   // You are receiving a reference
+   dbGoTop()
    // Since you are pointing to the first record
    // your current line should be 1
    nTBLine := 1
-   RETURN (NIL)
+
+   RETURN ( NIL )
 
 
-// -----------------------------------------
-// -----------------------------------------
-function SkipDB( nRequest, nTBLine )
 
-// nTBLine is a reference
+FUNCTION SkipDB( nRequest, nTBLine )
+
+   // nTBLine is a reference
    LOCAL nActually := 0
 
    IF nRequest == 0
-      DBSKIP(0)
+      dbSkip( 0 )
 
-   ELSEIF nRequest > 0 .AND. !EOF()
+   ELSEIF nRequest > 0 .AND. !Eof()
       WHILE nActually < nRequest
          IF nTBLine < nTBLastLine
             // This will print up to nTBLastLine of text
@@ -112,12 +109,12 @@ function SkipDB( nRequest, nTBLine )
 
          ELSE
             // Go to the next record
-            DBSKIP(+1)
+            dbSkip( + 1 )
             nTBLine := 1
 
          ENDIF
-         IF EOF()
-            DBSKIP(-1)
+         IF Eof()
+            dbSkip( -1 )
             nTBLine := nTBLastLine
             EXIT
          ENDIF
@@ -132,14 +129,14 @@ function SkipDB( nRequest, nTBLine )
             --nTBLine
 
          ELSE
-            DBSKIP(-1)
-            IF !BOF()
+            dbSkip( -1 )
+            IF !Bof()
                nTBLine := nTBLastLine
 
             ELSE
                // You need this. Believe me!
                nTBLine := 1
-               GOTO RECNO()
+               GOTO RecNo()
                EXIT
 
             ENDIF
@@ -150,7 +147,5 @@ function SkipDB( nRequest, nTBLine )
       END
 
    ENDIF
-   RETURN (nActually)
 
-
-
+   RETURN ( nActually )

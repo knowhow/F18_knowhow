@@ -1,150 +1,151 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
 
 
 #include "f18.ch"
-#include "fileio.ch"
+
 
 // File cache buffer
-*string
-static cCache
-*;
+// string
+STATIC cCache
+// ;
 
 // Name of the .INI file that is in the cache buffer
-*string 
-static cIniFile
-*;
+// string
+STATIC cIniFile
+// ;
 
-//#include "COMMON.CH"
+// #include "COMMON.CH"
 
-static INI_DATA := {}
-static INI_NAME := ''
-static INI_SECTION := 'xx'
-
-
-function R_IniRead ( cSection, cEntry, cDefault, cFName, lAppend )
-
-local	nHandle
-local	cString
-local	nPos
-local	nEnd
-local	aEntries := {}
-local   lPom0, lPom
-
-if lAppend==NIL
-	lAppend:=.f.
-endif
+STATIC INI_DATA := {}
+STATIC INI_NAME := ''
+STATIC INI_SECTION := 'xx'
 
 
-// Extension omitted : Add default extension
-if ( At ( '.', cFName ) == 0 )
-   cFName -= '.INI'
-endif
+FUNCTION R_IniRead ( cSection, cEntry, cDefault, cFName, lAppend )
 
-if ( cIniFile == NIL )
-   // First time ... (buffer not in cache)
-   cIniFile := ''
-endif
+   LOCAL nHandle
+   LOCAL cString
+   LOCAL nPos
+   LOCAL nEnd
+   LOCAL aEntries := {}
+   LOCAL   lPom0, lPom
 
-// Check the filename
-if ( cIniFile != cFName )
-   // Other .INI file name : file not in cache !
-   
-   if ( nHandle := FOpen ( cFName, FO_READ + FO_SHARED ) ) < 5
-      // Error opening .INI file
-      return nil
-   endif
-   
-   // INI file opened ...
-   
-   // Read complete file into cCache
-   ReadFile(nHandle)
-   
-   // File not needed anymore ...
-   FClose(nHandle)
-   
-   // File in cache ...
-   cIniFile := cFName
-   
-endif
+   IF lAppend == NIL
+      lAppend := .F.
+   ENDIF
 
-lPom0:= SeekSection(cSection, @nPos)
-if lPom0   
-   
-   // Section FOUND, nPos points to the start of the section
-   if cEntry = NIL
-      // return ALL ENTRIES IN SECTION !
-      
-      // nPos points to start of section
-      
-      // Skip [section] + NRED
-      nPos = nPos + 4 + Len ( cSection )
-      
-      // nPos points to start of first entry
-      DO WHILE nPos <= Len ( cCache ) .and. SubStr ( cCache, nPos, 1 ) != '['
-         
-         nEnd    := I_At ( '=', .f., nPos )
-         cEntry  := SubStr ( cCache, nPos, nEnd - nPos )
-         nPos    := nEnd + 1
-         nEnd    := I_At ( NRED, .f., nPos )
-         cString := SubStr ( cCache, nPos, nEnd - nPos )
-         AAdd ( aEntries, { cEntry, cString } )
-         nPos    := nEnd + 2
-         
-         DO WHILE SubStr(cCache, nPos, 2) = NRED
-            // Skip NRED's, if any
-            nPos += 2
+
+   // Extension omitted : Add default extension
+   IF ( At ( '.', cFName ) == 0 )
+      cFName -= '.INI'
+   ENDIF
+
+   IF ( cIniFile == NIL )
+      // First time ... (buffer not in cache)
+      cIniFile := ''
+   ENDIF
+
+   // Check the filename
+   IF ( cIniFile != cFName )
+      // Other .INI file name : file not in cache !
+
+      IF ( nHandle := FOpen ( cFName, FO_READ + FO_SHARED ) ) < 5
+         // Error opening .INI file
+         RETURN NIL
+      ENDIF
+
+      // INI file opened ...
+
+      // Read complete file into cCache
+      ReadFile( nHandle )
+
+      // File not needed anymore ...
+      FClose( nHandle )
+
+      // File in cache ...
+      cIniFile := cFName
+
+   ENDIF
+
+   lPom0 := SeekSection( cSection, @nPos )
+   IF lPom0
+
+      // Section FOUND, nPos points to the start of the section
+      IF cEntry = NIL
+         // return ALL ENTRIES IN SECTION !
+
+         // nPos points to start of section
+
+         // Skip [section] + NRED
+         nPos = nPos + 4 + Len ( cSection )
+
+         // nPos points to start of first entry
+         DO WHILE nPos <= Len ( cCache ) .AND. SubStr ( cCache, nPos, 1 ) != '['
+
+            nEnd    := I_At ( '=', .F., nPos )
+            cEntry  := SubStr ( cCache, nPos, nEnd - nPos )
+            nPos    := nEnd + 1
+            nEnd    := I_At ( NRED, .F., nPos )
+            cString := SubStr ( cCache, nPos, nEnd - nPos )
+            AAdd ( aEntries, { cEntry, cString } )
+            nPos    := nEnd + 2
+
+            DO WHILE SubStr( cCache, nPos, 2 ) = NRED
+               // Skip NRED's, if any
+               nPos += 2
+            ENDDO
+
          ENDDO
-         
-      ENDDO
-      
-      return aEntries
-      
-   else
-      // Locate specified entry
-      nPos := I_At(Upper(cEntry)+'=', .t., nPos )
-      
-      if ( nPos > 0 )
-         // Entry found, nPos points to start of entry
-         
-         // Skip 'entry=' part
-         nPos += Len ( cEntry )
-         
-         // Return value
-         return SubStr ( cCache, nPos+1, ;
-            I_At ( NRED, .f., nPos+1 ) - nPos - 1 )
-         
-      endif
-      
-   endif
-   
-else
-   // Section not found
-   if ( VALTYPE(cEntry) != "C" ) 
-      // Request to return all entries in section ...
-      return NIL
-   endif
-endif
+
+         RETURN aEntries
+
+      ELSE
+         // Locate specified entry
+         nPos := I_At( Upper( cEntry ) + '=', .T., nPos )
+
+         IF ( nPos > 0 )
+            // Entry found, nPos points to start of entry
+
+            // Skip 'entry=' part
+            nPos += Len ( cEntry )
+
+            // Return value
+            RETURN SubStr ( cCache, nPos + 1, ;
+               I_At ( NRED, .F., nPos + 1 ) - nPos - 1 )
+
+         ENDIF
+
+      ENDIF
+
+   ELSE
+      // Section not found
+      IF ( ValType( cEntry ) != "C" )
+         // Request to return all entries in section ...
+         RETURN NIL
+      ENDIF
+   ENDIF
 
 
-if (lAppend)
-   // CREATE A NEW cDEFAULT ENTRY, if THE SPECIFIED ENTRY NOT EXISTS
-   R_IniWrite ( cSection, cEntry, cDefault, cIniFile )
-endif
+   IF ( lAppend )
+      // CREATE A NEW cDEFAULT ENTRY, if THE SPECIFIED ENTRY NOT EXISTS
+      R_IniWrite ( cSection, cEntry, cDefault, cIniFile )
+   ENDIF
 
 
-// Return default value
+   // Return default value
 
-IniRefresh()
-return cDefault
+   IniRefresh()
+
+   RETURN cDefault
 
 
 
@@ -159,213 +160,216 @@ return cDefault
  *
  */
 
-function R_IniWrite( cSection, cEntry, cString, cFName )
+FUNCTION R_IniWrite( cSection, cEntry, cString, cFName )
 
-local	nHandle
-local	nBytes
-local	nPos
-local	nEntry
+   LOCAL nHandle
+   LOCAL nBytes
+   LOCAL nPos
+   LOCAL nEntry
 
-if (cFName==NIL) .or. Valtype ( cFName ) != 'C'
-   // Required parameter !
-   return .f.
-endif
+   IF ( cFName == NIL ) .OR. ValType ( cFName ) != 'C'
+      // Required parameter !
+      RETURN .F.
+   ENDIF
 
-if (cSection==NIL) .or. Valtype ( cSection ) != 'C'
-   // Required paramter !
-   return .f.
-endif
+   IF ( cSection == NIL ) .OR. ValType ( cSection ) != 'C'
+      // Required paramter !
+      RETURN .F.
+   ENDIF
 
-// Append default extension (if no extension present)
-if At ( '.', cFName ) = 0
-   cFName -= '.INI'
-endif
+   // Append default extension (if no extension present)
+   IF At ( '.', cFName ) = 0
+      cFName -= '.INI'
+   ENDIF
 
-if cIniFile = NIL
-   // First time ...
-   cIniFile := ''
-endif
+   IF cIniFile = NIL
+      // First time ...
+      cIniFile := ''
+   ENDIF
 
-// Check the filename
-if (cIniFile != cFName)
-   // If file name is the SAME : file is still in Cache buffer (cCache) ...
-   
-   // Other .INI file or the first time
-   if (nHandle:=FOPEN(cFName, FO_READWRITE + FO_SHARED)) < 5
-      // Error opening .INI file
-      
-      if (nHandle:=FCreate(cFName, FC_NORMAL)) < 5
-         // Error creating .INI file
-	IniRefresh()
-         return .f.
-         
-      else
-         // .INI file created : Write Section and Entry
-         PutSection( nHandle, cSection )
-         
-         PutEntry ( nHandle, cEntry, cString )
-         
-         // ReRead file to adjust cCache cache
-         
-	 ReadFile(nHandle)
-         FClose(nHandle)
-         
-         // Buffer in cache ...
-         cIniFile := cFName
-         
-	IniRefresh()
-         return .t.
-         
-      endif
-      
-   endif
-   
-   // Read complete file into cCache
-   //Logg("Ini fajl name:" + cFName)
-   ReadFile(nHandle)
-   
-   // Buffer in cache ...
-   cIniFile := cFName
-   
-endif
+   // Check the filename
+   IF ( cIniFile != cFName )
+      // If file name is the SAME : file is still in Cache buffer (cCache) ...
 
-nPos:=0
+      // Other .INI file or the first time
+      IF ( nHandle := FOpen( cFName, FO_READWRITE + FO_SHARED ) ) < 5
+         // Error opening .INI file
 
-lPom:=SeekSection( cSection, @nPos)
-if !lPom
-   // Section NOT present : append SECTION AND ENTRY !
-   if (nHandle==NIL)
-      // File not presently open
-      nHandle := FOpen ( cFName, FO_READWRITE + FO_SHARED )
-   endif
-   
-   // Pointer to end-of-file
-   FSeek(nHandle, 0, FS_END)
-   
-   // APPEND NEW SECTION (separated with an empty line)
-   FWrite (nHandle, NRED, 2)
-   PutSection (nHandle, cSection)
-   
-   PutEntry(nHandle, cEntry, cString)
-   
-   // ReRead file to adjust cCache ....
-   ReadFile(nHandle)
-   
-else
-   // SECTION ALREADY PRESENT
-   // nPos points to the start of the section
-   
-   if cEntry==NIL
-      
-      // DELETE COMPLETE SECTION !
-      // nPos points to start of section
-      if ( nEntry := I_At ( '[', .f., nPos + 1 ) ) = 0
-         // No next section : delete to end-of-file
-         nEntry := Len ( cCache ) + 1
-      endif
-      
-      // Delete bytes from string
-      cCache:=Stuff(cCache, nPos, nEntry - nPos, '')
-      ReWrite(nHandle,cFName)
-	IniRefresh()
-      return .t.
-      
-   endif
-   
-   // Skip section + NRED
-   nPos = nPos + 4 + Len ( cSection )
-   
-   if ( nEntry := I_At ( Upper ( cEntry ) + '=', .t., nPos ) ) = 0
-      
-      // ENTRY NOT FOUND : APPEND ENTRY
-      if cString != NIL
-         // Locate start of next SECTION
-         if nHandle = NIL
-            nHandle := FOpen ( cFName, FO_READWRITE + FO_SHARED )
-         endif
-         
-         if ( nEntry := I_At ( '[', .f., nPos ) ) = 0
-            
-            // Last section : append to end of file
-            FSEEK ( nHandle, 0, FS_END )
-            
+         IF ( nHandle := FCreate( cFName, FC_NORMAL ) ) < 5
+            // Error creating .INI file
+            IniRefresh()
+            RETURN .F.
+
+         ELSE
+            // .INI file created : Write Section and Entry
+            PutSection( nHandle, cSection )
+
             PutEntry ( nHandle, cEntry, cString )
-            
-            // ReRead file to adjust cCache
-            ReadFile( nHandle )
-            
-         else
-            //-- Next section present at : nEntry - 2
-            
-            //-- INSERT ENTRY AT END OF SECTION
-            DO WHILE SubStr ( cCache, nEntry-2, 2 ) = NRED
-               //-- Skip NRED's, if any ...
-               nEntry -= 2
-            ENDDO
-            
-            //-- Keep 1 NRED string ...
-            nEntry += 2
-            
-            cCache:=Stuff(cCache, nEntry, 0, cEntry + '=' + cString + NRED)
-            
-            ReWrite(nHandle, cFName)
-            
-		IniRefresh()
-            return .t.
-            
-         endif
-         
-      endif
-      
-   else
-      //-- ENTRY FOUND : REPLACE VALUE
-      
-      if (cString == NIL)
-         //-- DELETE ENTRY !
-         
-         // nEntry points to first pos of entry name
-         nPos := I_At(NRED, .f., nEntry ) + 2
-         
-         // Delete bytes from string
-         cCache := Stuff ( cCache, nEntry, nPos - nEntry, '' )
-      else
-         // REPLACE VALUE
-         
-         // nEntry points to first pos of entry name
-         
-         nEntry  := nEntry + Len ( cEntry ) + 1
-         cCache := Stuff ( cCache, nEntry, ;
-            At ( NRED, SubStr ( cCache, nEntry ) ) - 1, cString )
-         
-      endif
-      
-      ReWrite ( nHandle, cFName )
-	IniRefresh()
-      
-      return .t.
-      
-   endif
-   
-endif
-FClose ( nHandle )
 
-IniRefresh()
-return .t.
+            // ReRead file to adjust cCache cache
+
+            ReadFile( nHandle )
+            FClose( nHandle )
+
+            // Buffer in cache ...
+            cIniFile := cFName
+
+            IniRefresh()
+            RETURN .T.
+
+         ENDIF
+
+      ENDIF
+
+      // Read complete file into cCache
+      // Logg("Ini fajl name:" + cFName)
+      ReadFile( nHandle )
+
+      // Buffer in cache ...
+      cIniFile := cFName
+
+   ENDIF
+
+   nPos := 0
+
+   lPom := SeekSection( cSection, @nPos )
+   IF !lPom
+      // Section NOT present : append SECTION AND ENTRY !
+      IF ( nHandle == NIL )
+         // File not presently open
+         nHandle := FOpen ( cFName, FO_READWRITE + FO_SHARED )
+      ENDIF
+
+      // Pointer to end-of-file
+      FSeek( nHandle, 0, FS_END )
+
+      // APPEND NEW SECTION (separated with an empty line)
+      FWrite ( nHandle, NRED, 2 )
+      PutSection ( nHandle, cSection )
+
+      PutEntry( nHandle, cEntry, cString )
+
+      // ReRead file to adjust cCache ....
+      ReadFile( nHandle )
+
+   ELSE
+      // SECTION ALREADY PRESENT
+      // nPos points to the start of the section
+
+      IF cEntry == NIL
+
+         // DELETE COMPLETE SECTION !
+         // nPos points to start of section
+         IF ( nEntry := I_At ( '[', .F., nPos + 1 ) ) = 0
+            // No next section : delete to end-of-file
+            nEntry := Len ( cCache ) + 1
+         ENDIF
+
+         // Delete bytes from string
+         cCache := Stuff( cCache, nPos, nEntry - nPos, '' )
+         ReWrite( nHandle, cFName )
+         IniRefresh()
+         RETURN .T.
+
+      ENDIF
+
+      // Skip section + NRED
+      nPos = nPos + 4 + Len ( cSection )
+
+      IF ( nEntry := I_At ( Upper ( cEntry ) + '=', .T., nPos ) ) = 0
+
+         // ENTRY NOT FOUND : APPEND ENTRY
+         IF cString != NIL
+            // Locate start of next SECTION
+            IF nHandle = NIL
+               nHandle := FOpen ( cFName, FO_READWRITE + FO_SHARED )
+            ENDIF
+
+            IF ( nEntry := I_At ( '[', .F., nPos ) ) = 0
+
+               // Last section : append to end of file
+               FSeek ( nHandle, 0, FS_END )
+
+               PutEntry ( nHandle, cEntry, cString )
+
+               // ReRead file to adjust cCache
+               ReadFile( nHandle )
+
+            ELSE
+               // -- Next section present at : nEntry - 2
+
+               // -- INSERT ENTRY AT END OF SECTION
+               DO WHILE SubStr ( cCache, nEntry - 2, 2 ) = NRED
+                  // -- Skip NRED's, if any ...
+                  nEntry -= 2
+               ENDDO
+
+               // -- Keep 1 NRED string ...
+               nEntry += 2
+
+               cCache := Stuff( cCache, nEntry, 0, cEntry + '=' + cString + NRED )
+
+               ReWrite( nHandle, cFName )
+
+               IniRefresh()
+               RETURN .T.
+
+            ENDIF
+
+         ENDIF
+
+      ELSE
+         // -- ENTRY FOUND : REPLACE VALUE
+
+         IF ( cString == NIL )
+            // -- DELETE ENTRY !
+
+            // nEntry points to first pos of entry name
+            nPos := I_At( NRED, .F., nEntry ) + 2
+
+            // Delete bytes from string
+            cCache := Stuff ( cCache, nEntry, nPos - nEntry, '' )
+         ELSE
+            // REPLACE VALUE
+
+            // nEntry points to first pos of entry name
+
+            nEntry  := nEntry + Len ( cEntry ) + 1
+            cCache := Stuff ( cCache, nEntry, ;
+               At ( NRED, SubStr ( cCache, nEntry ) ) - 1, cString )
+
+         ENDIF
+
+         ReWrite ( nHandle, cFName )
+         IniRefresh()
+
+         RETURN .T.
+
+      ENDIF
+
+   ENDIF
+   FClose ( nHandle )
+
+   IniRefresh()
+
+   RETURN .T.
 
 
 
 /*! \fn I_At(cSearch, cString, nStart)
  *  \param nStart - pocni pretragu od nStart pozicije
  */
-static function I_At(cSearch, lUpper, nStart)
+STATIC FUNCTION I_At( cSearch, lUpper, nStart )
 
-local nPos
-if lUpper
-	nPos := At( cSearch, SubStr(UPPER(cCache), nStart) )
-else
-	nPos := At( cSearch, SubStr(cCache, nStart) )
-endif
-return if ( nPos > 0, nPos + nStart - 1, 0 )
+   LOCAL nPos
+
+   IF lUpper
+      nPos := At( cSearch, SubStr( Upper( cCache ), nStart ) )
+   ELSE
+      nPos := At( cSearch, SubStr( cCache, nStart ) )
+   ENDIF
+
+   RETURN IF ( nPos > 0, nPos + nStart - 1, 0 )
 
 
 /*! \fn IzFmkIni(cSection, cVar, cValue, cLokacija )
@@ -379,181 +383,185 @@ return if ( nPos > 0, nPos + nStart - 1, 0 )
  * // uzmi vrijednost varijable Debug, sekcija Gateway, iz EXEPATH/FMK.INI
  * cDN:=IzFmkIni("Gateway","Debug","N",EXEPATH)
  * \endcode
- * 
+ *
  * \sa R_IniWrite
  *
  */
 
-function IzFmkIni(cSection, cVar, cValue, cLokacija, lAppend)
+FUNCTION IzFmkIni( cSection, cVar, cValue, cLokacija, lAppend )
 
-local cRez:=""
-local cNazIni := 'FMK.INI'
+   LOCAL cRez := ""
+   LOCAL cNazIni := 'FMK.INI'
 
-cLokacija := my_home_root()
+   cLokacija := my_home_root()
 
-if (lAppend==nil)
-	lAppend:=.f.
-endif
-
-
-if !file(cLokacija + cNazIni)
-  nFH:=FCreate(cLokacija+cNazIni)
-  FWrite(nFh,";------- Ini Fajl FMK-------")
-  Fclose(nFH)
-endif
-cRez:=R_IniRead( cSection, cVar,  "", cLokacija + cNazIni)
-
-if (lAppend .and. EMPTY(cRez))
-	// nije toga bilo u fmk.ini
-  	R_IniWrite(cSection, cVar, cValue, cLokacija + cNazIni)
-	IniRefresh()
-  	return cValue
-elseif (EMPTY(cRez))
-	IniRefresh()
-	return cValue
-else
-	IniRefresh()
-	return cRez
-endif
-
-return
+   IF ( lAppend == nil )
+      lAppend := .F.
+   ENDIF
 
 
+   IF !File( cLokacija + cNazIni )
+      nFH := FCreate( cLokacija + cNazIni )
+      FWrite( nFh, ";------- Ini Fajl FMK-------" )
+      FClose( nFH )
+   ENDIF
+   cRez := R_IniRead( cSection, cVar,  "", cLokacija + cNazIni )
 
-function TEMPINI(cSection, cVar, cValue, cread)
+   IF ( lAppend .AND. Empty( cRez ) )
+      // nije toga bilo u fmk.ini
+      R_IniWrite( cSection, cVar, cValue, cLokacija + cNazIni )
+      IniRefresh()
+      RETURN cValue
+   ELSEIF ( Empty( cRez ) )
+      IniRefresh()
+      RETURN cValue
+   ELSE
+      IniRefresh()
+      RETURN cRez
+   ENDIF
 
-*
-* cValue  - tekuca vrijednost
-* cREAD = "WRITE" , "READ"
-
-local cRez:=""
-local cNazIni:=EXEPATH+'TEMP.INI'
-
-if cread==NIL
- read:="READ"
-endif
-
-
-if !file(EXEPATH+'TEMP.INI')
-  nFH:=FCreate(EXEPATH+'TEMP.INI')
-  FWrite(nFh,";------- Ini Fajl TMP-------")
-  Fclose(nFH)
-endif
-cRez:=R_IniRead ( cSection, cVar,  "", cNazIni)
-
-if empty(cRez) .or. cRead=="WRITE"  // nije toga bilo u fmk.ini
-  R_IniWrite(cSection,cVar,cValue, cNazIni)
-  return cValue
-else
-  return cRez
-endif
-
-return
+   RETURN
 
 
 
-function IniRefresh()
+FUNCTION TEMPINI( cSection, cVar, cValue, cread )
+
+   //
+   // cValue  - tekuca vrijednost
+   // cREAD = "WRITE" , "READ"
+
+   LOCAL cRez := ""
+   LOCAL cNazIni := EXEPATH + 'TEMP.INI'
+
+   IF cread == NIL
+      read := "READ"
+   ENDIF
 
 
-//cCache:=NIL
-//cIniFile:=NIL
-cCache:=""
-cIniFile:=""
-// trazi novo citanje ini fajla !
+   IF !File( EXEPATH + 'TEMP.INI' )
+      nFH := FCreate( EXEPATH + 'TEMP.INI' )
+      FWrite( nFh, ";------- Ini Fajl TMP-------" )
+      FClose( nFH )
+   ENDIF
+   cRez := R_IniRead ( cSection, cVar,  "", cNazIni )
 
-return
+   IF Empty( cRez ) .OR. cRead == "WRITE"  // nije toga bilo u fmk.ini
+      R_IniWrite( cSection, cVar, cValue, cNazIni )
+      RETURN cValue
+   ELSE
+      RETURN cRez
+   ENDIF
 
-
-
-function UzmiIzINI(cNazIni,cSection, cVar, cValue, cread)
-
-*
-* cValue  - tekuca vrijednost
-* cREAD = "WRITE" , "READ"
-
-local cRez:=""
-
-if cread==NIL
- read:="READ"
-endif
-
-if !file(cNazIni)
-  nFH:=FCreate(cNazIni)
-  FWrite(nFh,";------- Ini Fajl "+cNazIni+"-------")
-  Fclose(nFH)
-endif
-cRez:=R_IniRead ( cSection, cVar,  "", cNazIni)
-
-if empty(cRez) .or. cRead=="WRITE"
-  if valtype(cValue) = "N"
-    R_IniWrite(cSection,cVar,str(cValue,22,2), cNazIni)
-  else
-    R_IniWrite(cSection,cVar,cValue, cNazIni)
-  endif
-  return cValue
-else
-  return cRez
-endif
-return
+   RETURN
 
 
 
-static function SeekSection( sect, pos )
-// Look for the specified section in buffer
+FUNCTION IniRefresh()
 
-pos:= At ('['+Upper (sect)+']', Upper (cCache) )  
+   // cCache:=NIL
+   // cIniFile:=NIL
+   cCache := ""
+   cIniFile := ""
+   // trazi novo citanje ini fajla !
 
-return pos>0
-
-
-
-static function ReadFile( hnd)
-
-
-//if VALTYPE(gCnt1)<>"N"
-//	gCnt1:=0
-//endif
-//gCnt1++
-//cCache:="[xx]"
-//return
-
-// Read complete file into cache buffer
-cCache:=Space( FSeek ( hnd, 0, FS_END ) )
-FSeek ( hnd, 0, FS_SET )
-FRead ( hnd, @cCache, Len(cCache) ) 
-return
-
-
-static function PutSection(hnd, sect)
-
-if !EMPTY( sect )
-  return FWrite ( hnd, '[' + sect + ']' + NRED )
-else
-  return nil
-endif
-return
+   RETURN
 
 
 
-static function PutEntry( hnd,entry,val )
+FUNCTION UzmiIzINI( cNazIni, cSection, cVar, cValue, cread )
 
-if !Empty ( entry ) .and. !Empty ( val )
- return FWrite ( hnd, entry + '=' + val + NRED )
-else
- return nil
-endif
+   //
+   // cValue  - tekuca vrijednost
+   // cREAD = "WRITE" , "READ"
+
+   LOCAL cRez := ""
+
+   IF cread == NIL
+      read := "READ"
+   ENDIF
+
+   IF !File( cNazIni )
+      nFH := FCreate( cNazIni )
+      FWrite( nFh, ";------- Ini Fajl " + cNazIni + "-------" )
+      FClose( nFH )
+   ENDIF
+   cRez := R_IniRead ( cSection, cVar,  "", cNazIni )
+
+   IF Empty( cRez ) .OR. cRead == "WRITE"
+      IF ValType( cValue ) = "N"
+         R_IniWrite( cSection, cVar, Str( cValue, 22, 2 ), cNazIni )
+      ELSE
+         R_IniWrite( cSection, cVar, cValue, cNazIni )
+      ENDIF
+      RETURN cValue
+   ELSE
+      RETURN cRez
+   ENDIF
+
+   RETURN
 
 
-// Rewrite complete file from buffer
-static function ReWrite(hnd,fnm)
 
-if ( hnd!=NIL )
-   FClose(hnd)
-endif
-hnd := FCreate ( fnm, FC_NORMAL )
-FWrite ( hnd, cCache )
-FClose ( hnd ) 
-return
+STATIC FUNCTION SeekSection( sect, pos )
+
+   // Look for the specified section in buffer
+
+   pos := At ( '[' + Upper ( sect ) + ']', Upper ( cCache ) )
+
+   RETURN pos > 0
+
+
+
+STATIC FUNCTION ReadFile( hnd )
+
+   // if VALTYPE(gCnt1)<>"N"
+   // gCnt1:=0
+   // endif
+   // gCnt1++
+   // cCache:="[xx]"
+   // return
+
+   // Read complete file into cache buffer
+   cCache := Space( FSeek ( hnd, 0, FS_END ) )
+   FSeek ( hnd, 0, FS_SET )
+   FRead ( hnd, @cCache, Len( cCache ) )
+
+   RETURN
+
+
+STATIC FUNCTION PutSection( hnd, sect )
+
+   IF !Empty( sect )
+      RETURN FWrite ( hnd, '[' + sect + ']' + NRED )
+   ELSE
+      RETURN NIL
+   ENDIF
+
+   RETURN
+
+
+
+STATIC FUNCTION PutEntry( hnd, entry, val )
+
+   IF !Empty ( entry ) .AND. !Empty ( val )
+      RETURN FWrite ( hnd, entry + '=' + val + NRED )
+   ELSE
+      RETURN NIL
+   ENDIF
+
+
+   // Rewrite complete file from buffer
+
+STATIC FUNCTION ReWrite( hnd, fnm )
+
+   IF ( hnd != NIL )
+      FClose( hnd )
+   ENDIF
+   hnd := FCreate ( fnm, FC_NORMAL )
+   FWrite ( hnd, cCache )
+   FClose ( hnd )
+
+   RETURN
 
 
 /*****************************************************************************/
@@ -578,14 +586,14 @@ local nKPointer := 0
 local cString
 
 if cDefault==NIL
-	cDefault:= ''
+ cDefault:= ''
 endif
 cString := cDefault
 
 
 begin sequence
 
-   if !(INI_NAME == cFile) .or. !(INI_SECTION == cSection) 
+   if !(INI_NAME == cFile) .or. !(INI_SECTION == cSection)
       //if !init_profile( cFile )
       //procitaj samo jednu sekciju
       if !init_profile( cFile, cSection )
@@ -640,7 +648,7 @@ INI_NAME := ''
 
 
 if (cSection == NIL)
-	cSection:=""
+ cSection:=""
 endif
 INI_SECTION := cSection
 
@@ -657,32 +665,32 @@ if retval
       if !lFoundSection
          if left( cThisLine, 1 ) == '[' .and. right( cThisLine, 1 ) == ']'
             if cSection==""
-	    	//bilo koja sekcija
-	    	lFoundSection := .t.
-	    else
-	    	if '[' + UPPER(cSection) + ']' == UPPER(ALLTRIM(cThisLine)) 
-			lFoundSection := .t.
-		else
-			//ogranicavamo se samo na zeljenu sekciju
-			loop
-		endif
-	    endif
-         
-	 else
+      //bilo koja sekcija
+      lFoundSection := .t.
+     else
+      if '[' + UPPER(cSection) + ']' == UPPER(ALLTRIM(cThisLine))
+   lFoundSection := .t.
+  else
+   //ogranicavamo se samo na zeljenu sekciju
+   loop
+  endif
+     endif
+
+  else
             loop
          endif
       else
-      	 //vec sam nasao sekciju i !(cSection=="")	
+        //vec sam nasao sekciju i !(cSection=="")
          if !(cSection=="") .and. (left( cThisLine, 1 ) == '[' .and. right( cThisLine, 1 ) == ']')
-	 	//ovo je nova sekcija, a mi zelimo samo jednu sekciju procitati
-		return retval
-	 endif
-	 
+   //ovo je nova sekcija, a mi zelimo samo jednu sekciju procitati
+  return retval
+  endif
+
       endif
 
       if left( cThisLine, 1 ) == '[' .and. right( cThisLine, 1 ) == ']'
          //dodajem sekciju
-	 aadd( INI_DATA, { upper( cThisLine ), {} } )
+  aadd( INI_DATA, { upper( cThisLine ), {} } )
          nLastElement ++
       else
          eqat := at( '=', cThisLine )
@@ -1048,12 +1056,12 @@ return oBuffObj
  *  \param cKey      - Variable
  *  \param cDefault  - Default value of Variable
  *  \param cLokacija - Default = EXEPATH, or PRIVPATH, or SIFPATH or KUMPATH (FileName='FMK.INI')
- *  \param lAppend   - True - ako zapisa u ini-ju nema dodaj ga, default True	       
+ *  \param lAppend   - True - ako zapisa u ini-ju nema dodaj ga, default True
  * \code
  * // uzmi vrijednost varijable Debug, sekcija Gateway, iz EXEPATH/FMK.INI
  * cDN:=IzFmkIni("Gateway","Debug","N",EXEPATH)
  * \endcode
- * 
+ *
  * \sa R_IniWrite
  *
  */
@@ -1064,11 +1072,11 @@ local cRez:=""
 local cNazIni:='FMK.INI'
 
 if (cLokacija=nil)
-	cLokacija:=EXEPATH
+ cLokacija:=EXEPATH
 endif
 
 if (lAppend==nil)
-	lAppend:=.t.
+ lAppend:=.t.
 endif
 
 if !file(cLokacija+cNazIni)
@@ -1080,13 +1088,13 @@ endif
 cRez:=R_IniRead( cSection, cVar,  "", cLokacija + cNazIni)
 
 if (lAppend .and. EMPTY(cRez))
-	// nije toga bilo u fmk.ini
-  	R_IniWrite(cSection, cVar, cValue, cLokacija + cNazIni)
-	IniRefresh()
-  	return cValue
+ // nije toga bilo u fmk.ini
+   R_IniWrite(cSection, cVar, cValue, cLokacija + cNazIni)
+ IniRefresh()
+   return cValue
 else
-	IniRefresh()
-	return cRez
+ IniRefresh()
+ return cRez
 endif
 
 return ProfileString( cLokacija+cNazIni, cSection, cKey, cDefault )
@@ -1094,4 +1102,3 @@ return ProfileString( cLokacija+cNazIni, cSection, cKey, cDefault )
 
 
 */
-

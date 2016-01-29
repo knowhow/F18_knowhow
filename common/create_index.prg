@@ -10,10 +10,8 @@
  */
 
 #include "f18.ch"
-#include "fileio.ch"
 
 STATIC OID_ASK := "0"
-
 STATIC nSlogova := 0
 
 FUNCTION create_index( cImeInd, xKljuc, alias, silent )

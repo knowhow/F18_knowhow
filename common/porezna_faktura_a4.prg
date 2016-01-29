@@ -1,16 +1,16 @@
 /*
- * This file is part of the bring.out FMK, a free and open source
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+ * This file is part of the bring.out knowhow ERP, a free and open source
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
 
-
 #include "f18.ch"
+
 
 STATIC LEN_RBR := 6
 // naziv dobra
@@ -199,38 +199,38 @@ FUNCTION st_pf_a4( lStartPrint, cDocumentName )
 
    // data
    DO WHILE !Eof()
-	
+
       // uzmi naziv u matricu
       cNazivDobra := NazivDobra( rn->idroba, rn->robanaz, rn->jmj )
       aNazivDobra := SjeciStr( cNazivDobra, LEN_NAZIV )
-	
+
       // PRVI RED
       // redni broj ili podbroj
       ? RAZMAK
-	
+
       IF Empty( rn->podbr )
          ?? PadL( rn->rbr + ")", LEN_RBR )
       ELSE
          ?? PadL( rn->rbr + "." + AllTrim( rn->podbr ), LEN_RBR )
       ENDIF
       ?? " "
-	
+
       // idroba, naziv robe, kolicina, jmj
       ?? PadR( aNazivDobra[ 1 ], LEN_NAZIV )
       ?? " "
 
       nQty := PCol()
-	
+
       ?? show_number( rn->kolicina, PIC_KOLICINA )
       ?? " "
-	
+
       // cijene
       IF !lSamoKol
-		
+
          // cijena bez pdv
          ?? show_number( rn->cjenbpdv, PIC_CIJENA )
          ?? " "
-		
+
          IF lShowPopust
             // procenat popusta
             ?? show_popust( rn->popust )
@@ -240,14 +240,14 @@ FUNCTION st_pf_a4( lStartPrint, cDocumentName )
             ?? show_number( rn->cjen2bpdv, PIC_CIJENA )
             ?? " "
          ENDIF
-		
+
          // ukupno bez pdv
          ?? show_number( rn->cjenbpdv * rn->kolicina,  PIC_VRIJEDNOST )
       ENDIF
-	
-	
+
+
       IF Len( aNazivDobra ) > 1
-	
+
          // OSTALI REDOVI
          FOR _i := 2 TO Len( aNazivDobra )
             ? RAZMAK
@@ -255,9 +255,9 @@ FUNCTION st_pf_a4( lStartPrint, cDocumentName )
             ?? Space( LEN_RBR )
             ?? PadR( aNazivDobra[ _i ], LEN_NAZIV )
          NEXT
-	
+
       ENDIF
-	
+
       // opis
       IF !Empty( rn->opis )
          ? RAZMAK
@@ -273,7 +273,7 @@ FUNCTION st_pf_a4( lStartPrint, cDocumentName )
          ?? Space( LEN_RBR )
          ?? AllTrim( rn->c1 ) + ", " + AllTrim( rn->c2 ) + ", " + AllTrim( rn->c3 )
       ENDIF
-	
+
       // provjeri za novu stranicu
       IF PRow() > nDodRedova + LEN_STRANICA - DSTR_KOREKCIJA() - PICT_KOREKCIJA( nStr )
          ++nStr
@@ -287,7 +287,7 @@ FUNCTION st_pf_a4( lStartPrint, cDocumentName )
 
    // provjeri za novu stranicu
    IF PRow() > nDodRedova + ( LEN_STRANICA - LEN_REKAP_PDV ) - DSTR_KOREKCIJA() - PICT_KOREKCIJA( nStr )
-	
+
       ++nStr
       Nstr_a4( nStr, .T. )
 
@@ -310,7 +310,7 @@ FUNCTION st_pf_a4( lStartPrint, cDocumentName )
    IF PRow() > nDodRedova + ( LEN_STRANICA - LEN_REKAP_PDV ) - DSTR_KOREKCIJA() - PICT_KOREKCIJA( nStr )
       ++nStr
       Nstr_a4( nStr, .T. )
-	
+
    endif
 
    ?
@@ -532,7 +532,7 @@ FUNCTION a4_header()
          // ostatak
          cIBanke := SubStr( cIBanke, nPos1 + 2 )
       ENDDO
-	
+
    ELSE
       aIBanke  := SjeciStr( cIBanke, 68 )
    ENDIF
@@ -768,7 +768,7 @@ FUNCTION pf_a4_kupac( cRazmak )
    CASE cIdVd == "12" .AND. cInoDomaci == "KOMISION"
       cPom := lokal( "Komisionar:" )
       lKomision := .T.
-	
+
    CASE AllTrim( cInoDomaci ) == "INO"
 
       DO CASE
@@ -777,7 +777,7 @@ FUNCTION pf_a4_kupac( cRazmak )
       OTHERWISE
          cPom := lokal( "Partner" )
       ENDCASE
-		
+
    CASE AllTrim( cInoDomaci ) == "DOMACA"
 
       DO CASE
@@ -788,7 +788,7 @@ FUNCTION pf_a4_kupac( cRazmak )
       OTHERWISE
          cPom := lokal( "Partner:" )
       ENDCASE
-		
+
    OTHERWISE
       DO CASE
       CASE cIdVd == "12"
@@ -798,7 +798,7 @@ FUNCTION pf_a4_kupac( cRazmak )
       OTHERWISE
          cPom := lokal( "Partner" )
       ENDCASE
-	
+
    endcase
 
    I_ON
@@ -874,10 +874,10 @@ FUNCTION pf_a4_kupac( cRazmak )
    ENDIF
 
    IF !Empty( cDokVeza ) .AND. cDokVeza <> "-"
-	
+
       cDokVeza := "Veza: " + AllTrim( cDokVeza )
       aDokVeza := SjeciStr( cDokVeza, 70 )
-	
+
       FOR i := 1 TO Len( aDokVeza )
          p_line( Space( 2 ), 10, .F., .T. )
          ?? aDokVeza[ i ]
@@ -885,10 +885,10 @@ FUNCTION pf_a4_kupac( cRazmak )
    ENDIF
 
    IF !Empty( cRNalId ) .AND. cRNalId <> "-"
-	
+
       cPom := " R.nal.: "
       cPom += "(" + cRNalId + ") " + cRNalDesc
-	
+
       IF Empty( cDokVeza )
          p_line( Space( 2 ), 10, .F., .T. )
       ENDIF
@@ -897,20 +897,20 @@ FUNCTION pf_a4_kupac( cRazmak )
    ENDIF
 
    IF !Empty( cDestinacija )
-	
+
       p_line( Replicate( "-", LEN_KUPAC - 10 ), 10, .F. )
- 	
+
       cPom := lokal( "Za: " )  + AllTrim( cDestinacija )
       aPom := SjeciStr( cPom, 75 )
-	
+
       B_ON
-	
+
       FOR i := 1 TO Len( aPom )
          p_line( aPom[ i ], 12, .F. )
       NEXT
-	
+
       B_OFF
-	
+
       ?
    ENDIF
 
@@ -1050,12 +1050,12 @@ STATIC FUNCTION print_total( cValuta, cLine )
       ? RAZMAK
       ?? PadL( lokal( "Popust (" ) + cValuta + ") :", LEN_UKUPNO )
       ?? show_number( drn->ukpopust, PIC_VRIJEDNOST )
-		
+
       ? RAZMAK
       ?? PadL( lokal( "Uk.bez.PDV-popust (" ) + cValuta + ") :", LEN_UKUPNO )
       ?? show_number( drn->ukbpdvpop, PIC_VRIJEDNOST )
    ENDIF
-	
+
 
    ? RAZMAK
    ?? PadL( lokal( "PDV 17% :" ), LEN_UKUPNO )
@@ -1067,7 +1067,7 @@ STATIC FUNCTION print_total( cValuta, cLine )
       ?? PadL( lokal( "Zaokruzenje (+/-):" ), LEN_UKUPNO )
       ?? show_number( Abs( drn->zaokr ), PIC_VRIJEDNOST )
    ENDIF
-	
+
    ? cLine
    ? RAZMAK
    // ipak izleti za dva karaktera rekapitulacija u bold rezimu
@@ -1083,7 +1083,7 @@ STATIC FUNCTION print_total( cValuta, cLine )
          ? RAZMAK
          ?? PadL( lokal( "Popust na teret prodavca (" ) + cValuta + ") :", LEN_UKUPNO )
          ?? show_number( drn->ukpoptp, PIC_VRIJEDNOST )
-		
+
          ? RAZMAK
          ?? Space( 50 - 2 )
          B_ON
@@ -1092,7 +1092,7 @@ STATIC FUNCTION print_total( cValuta, cLine )
          B_OFF
       ENDIF
    ENDIF
-	
+
    cSlovima := get_dtxt_opis( "D04" )
    ? RAZMAK
    B_ON

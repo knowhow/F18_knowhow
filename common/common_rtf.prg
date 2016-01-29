@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out knowhow ERP, a free and open source 
+/*
+ * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning suite,
  * Copyright (c) 1994-2011 by bring.out d.o.o Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including knowhow ERP specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -14,244 +14,250 @@
 #define MM 56.69895
 
 
-*   aRow[1] = { 10 mm, { "b", "s", 0.1 } , { "t", "s", 0.1} }
-*   pozicija s lijeva
+// aRow[1] = { 10 mm, { "b", "s", 0.1 } , { "t", "s", 0.1} }
+// pozicija s lijeva
 
-function WWRowDef(aRows,nLeft,ntrgaph,nHigh)
+FUNCTION WWRowDef( aRows, nLeft, ntrgaph, nHigh )
 
-local nrow,i
+   LOCAL nrow, i
 
-?? "\trowd "
-if nTrGaph==NIL
-  nTrGaph:=1
-endif
-?? "\trgaph"+Top(nTrgaph)
+   ?? "\trowd "
+   IF nTrGaph == NIL
+      nTrGaph := 1
+   ENDIF
+   ?? "\trgaph" + Top( nTrgaph )
 
-if nLeft==NIL
- nLeft:=0
-endif
-?? "\trleft"+ToP(nLeft)
+   IF nLeft == NIL
+      nLeft := 0
+   ENDIF
+   ?? "\trleft" + ToP( nLeft )
 
-if nHigh<>NIL
- ?? "\trrh"+ToP(nHigh)
-endif
+   IF nHigh <> NIL
+      ?? "\trrh" + ToP( nHigh )
+   ENDIF
 
-nTekPos:=nLeft
-for nrow:=1 to len(aRows)
-   for i:=2 to len(aRows[nRow])
-     ?? "\clbrdr"+aRows[nRow,i,1]
-     ?? "\brdr"+aRows[nRow,i,2]
-     ?? "\brdrw"+ToP(aRows[nRow,i,3])
-   next
-   nTekPos+=aRows[nRow,1]
-   ?? "\cellx"+ToP(nTekPos)+NL
-next
-?? "\pard\intbl "
-return
+   nTekPos := nLeft
+   FOR nrow := 1 TO Len( aRows )
+      FOR i := 2 TO Len( aRows[ nRow ] )
+         ?? "\clbrdr" + aRows[ nRow, i, 1 ]
+         ?? "\brdr" + aRows[ nRow, i, 2 ]
+         ?? "\brdrw" + ToP( aRows[ nRow, i, 3 ] )
+      NEXT
+      nTekPos += aRows[ nRow, 1 ]
+      ?? "\cellx" + ToP( nTekPos ) + NL
+   NEXT
+   ?? "\pard\intbl "
 
-
-function WWCells(aCells)
-*
-*
-
-for i:=1 to len(aCells)
- ?? aCells[i]+"\cell "
-next
-?? "\pard\intbl\row"+NL
+   RETURN
 
 
-function WWTBox(nL,nT,nWX,nWY,cTxt,cTipL,aCL,nWL,;
-                aCF,aCB,cPatt)
-*
-*
+FUNCTION WWCells( aCells )
 
-?? "{\*\do\dobxpage\dobypage\dptxbx\dptxbxmar20{\dptxbxtext \pard\plain"+NL
-??  cTxt+"\par}"+NL
-?? "\dpx"+ToP(nL)+"\dpy"+ToP(nT)+"\dpxsize"+ToP(nWX)+"\dpysize"+ToP(nWY)
-?? "\dpline"
-if cTipL=="0"
-  ?? "hollow"
-elseif cTipL=="1"
-  ?? "solid"
-elseif cTipL=="2"
-  ?? "dadodo"
-elseif cTipL=="3"
-  ?? "dado"
-elseif cTipL=="4"
-  ?? "dot"
-elseif cTipL=="5"
-  ?? "hash"
-endif
-?? "\dplinecor"+alltrim(str(aCL[1],3,0))
-?? "\dplinecog"+alltrim(str(aCL[2],3,0))
-?? "\dplinecob"+alltrim(str(aCL[3],3,0))
-?? "\dplinew"+ToP(nWL)
-?? "\dpfillfgcr"+alltrim(str(aCF[1],3,0))
-?? "\dpfillfgcg"+alltrim(str(aCF[2],3,0))
-?? "\dpfillfgcb"+alltrim(str(aCF[3],3,0))
-?? "\dpfillbgcr"+alltrim(str(aCB[1],3,0))
-?? "\dpfillbgcg"+alltrim(str(aCB[2],3,0))
-?? "\dpfillbgcb"+alltrim(str(aCB[3],3,0))
-?? "\dpfillpat"+cPatt+"}"+NL
+   //
+   //
 
+   FOR i := 1 TO Len( aCells )
+      ?? aCells[ i ] + "\cell "
+   NEXT
+   ?? "\pard\intbl\row" + NL
 
+FUNCTION WWTBox( nL, nT, nWX, nWY, cTxt, cTipL, aCL, nWL, ;
+      aCF, aCB, cPatt )
 
+   //
+   //
 
-function WWInit0()
-*
+   ?? "{\*\do\dobxpage\dobypage\dptxbx\dptxbxmar20{\dptxbxtext \pard\plain" + NL
+   ??  cTxt + "\par}" + NL
+   ?? "\dpx" + ToP( nL ) + "\dpy" + ToP( nT ) + "\dpxsize" + ToP( nWX ) + "\dpysize" + ToP( nWY )
+   ?? "\dpline"
+   IF cTipL == "0"
+      ?? "hollow"
+   ELSEIF cTipL == "1"
+      ?? "solid"
+   ELSEIF cTipL == "2"
+      ?? "dadodo"
+   ELSEIF cTipL == "3"
+      ?? "dado"
+   ELSEIF cTipL == "4"
+      ?? "dot"
+   ELSEIF cTipL == "5"
+      ?? "hash"
+   ENDIF
+   ?? "\dplinecor" + AllTrim( Str( aCL[ 1 ], 3, 0 ) )
+   ?? "\dplinecog" + AllTrim( Str( aCL[ 2 ], 3, 0 ) )
+   ?? "\dplinecob" + AllTrim( Str( aCL[ 3 ], 3, 0 ) )
+   ?? "\dplinew" + ToP( nWL )
+   ?? "\dpfillfgcr" + AllTrim( Str( aCF[ 1 ], 3, 0 ) )
+   ?? "\dpfillfgcg" + AllTrim( Str( aCF[ 2 ], 3, 0 ) )
+   ?? "\dpfillfgcb" + AllTrim( Str( aCF[ 3 ], 3, 0 ) )
+   ?? "\dpfillbgcr" + AllTrim( Str( aCB[ 1 ], 3, 0 ) )
+   ?? "\dpfillbgcg" + AllTrim( Str( aCB[ 2 ], 3, 0 ) )
+   ?? "\dpfillbgcb" + AllTrim( Str( aCB[ 3 ], 3, 0 ) )
+   ?? "\dpfillpat" + cPatt + "}" + NL
 
-?? "{\rtf1\ansi\ansicpg1250\deff4\deflang1050"
-return nil
+FUNCTION WWInit0()
 
+   //
 
-function WWinit1()
-*
+   ?? "{\rtf1\ansi\ansicpg1250\deff4\deflang1050"
 
-?? "\windowctrl\ftnbj\aenddoc\formshade \fet0\sectd\linex0\endnhere\pard\plain\f1\fs20"+NL
-return nil
-
-
-
-function WWFontTbl()
-*
-
-?? "{\fonttbl{\f1\fswiss\fcharset238\fprq2 Arial CE;}{\f2\fswiss\fcharset238\fprq2 "+trim(gPFont)+";}}"
-?? NL
-return
+   RETURN NIL
 
 
-function WWStyleTbl()
-*
+FUNCTION WWinit1()
 
-?? "{\stylesheet {\f2\fs20 \snext0 Normal;}{\*\cs10 \additive Default Paragraph Font;}"
-?? "{\s20\qc\sb40\sa0\sl-400\slmult0 \f2\fs20 \sbasedon0\snext20 estyle1;}}"+NL
+   //
+
+   ?? "\windowctrl\ftnbj\aenddoc\formshade \fet0\sectd\linex0\endnhere\pard\plain\f1\fs20" + NL
+
+   RETURN NIL
 
 
 
+FUNCTION WWFontTbl()
 
-function WWEnd()
-?? "\par}"
+   //
 
+   ?? "{\fonttbl{\f1\fswiss\fcharset238\fprq2 Arial CE;}{\f2\fswiss\fcharset238\fprq2 " + Trim( gPFont ) + ";}}"
+   ?? NL
 
-function WWSetMarg(nLeft,nTop,nRight,nBottom)
-*
-
-if nLeft<>NIL
- ?? "\marglsxn"+ToP(nLeft)
-endif
-if nRight<>NIL
- ?? "\margrsxn"+ToP(nRight)
-endif
-if nTop<>NIL
- ?? "\margtsxn"+ToP(nTop)
-endif
-if nTop<>NIL
- ?? "\margbsxn"+ToP(nBottom)
-endif
+   RETURN
 
 
+FUNCTION WWStyleTbl()
+
+   //
+
+   ?? "{\stylesheet {\f2\fs20 \snext0 Normal;}{\*\cs10 \additive Default Paragraph Font;}"
+   ?? "{\s20\qc\sb40\sa0\sl-400\slmult0 \f2\fs20 \sbasedon0\snext20 estyle1;}}" + NL
+
+FUNCTION WWEnd()
+
+   ?? "\par}"
+
+FUNCTION WWSetMarg( nLeft, nTop, nRight, nBottom )
+
+   //
+
+   IF nLeft <> NIL
+      ?? "\marglsxn" + ToP( nLeft )
+   ENDIF
+   IF nRight <> NIL
+      ?? "\margrsxn" + ToP( nRight )
+   ENDIF
+   IF nTop <> NIL
+      ?? "\margtsxn" + ToP( nTop )
+   ENDIF
+   IF nTop <> NIL
+      ?? "\margbsxn" + ToP( nBottom )
+   ENDIF
+
+FUNCTION ToP( nMilim )
+
+   //
+
+   RETURN AllTrim( Str ( Round( nMilim * MM, 0 ) ) )
 
 
-function ToP(nMilim)
-*
+FUNCTION ToRtfstr( cStr )
 
-return alltrim( str (round(nMilim*MM,0)) )
+   LOCAL cPom, i, cChar
 
+   cPom := ""
+   FOR i := 1 TO Len( cStr )
+      cChar := SubStr( cStr, i, 1 )
+      IF cChar == "{"
+         cPom += "\{"
+      ELSEIF cChar == "}"
+         cPom += "\}"
+      ELSEIF cChar == "\"
+         cPom += "\\"
+      ELSEIF cChar $ "ÔøΩ"
+         cPom += "\'9a"
+      ELSEIF cChar $ "ÔøΩ"
+         cPom += "\'8a"
+      ELSEIF cChar $ "ÔøΩ"
+         IF gWord97 == "D"
+            cPom += "\u263\'63"
+         ELSE
+            cPom += "\'e6"
+         ENDIF
+      ELSEIF cChar $ "ÔøΩ"
+         IF gWord97 == "D"
+            cPom += "\u262\'43"
+         ELSE
+            cPom += "\'c6"
+         ENDIF
+      ELSEIF cChar $ "ÔøΩ"
+         IF gWord97 == "D"
+            cPom += "\u269\'63"
+         ELSE
+            cPom += "\'e8"
+         ENDIF
+      ELSEIF cChar $ "ÔøΩ"
+         IF gWord97 == "D"
+            cPom += "\u268\'43"
+         ELSE
+            cPom += "\'c8"
+         ENDIF
+      ELSEIF cChar $ "ÔøΩ"
+         IF gWord97 == "D"
+            cPom += "\u273\'64"
+         ELSE
+            cPom += "\'f0"
+         ENDIF
+      ELSEIF cChar $ "ÔøΩ"
+         IF gWord97 == "D"
+            cPom += "\u272\'do"
+         ELSE
+            cPom += "\'d0"
+         ENDIF
+      ELSEIF cChar $ "ÔøΩ"
+         cPom += "\'9e"
+      ELSEIF cChar $ "ÔøΩ"
+         cPom += "\'8e"
+      ELSEIF SubStr( cStr, i, 2 ) == NL
+         cPom += "\par "
+         ++i
+      ELSE
+         cPom += SubStr( cStr, i, 1 )
+      ENDIF
+   NEXT
 
-function ToRtfstr(cStr)
-
-local cPom,i,cChar
-cPom:=""
-for i:=1 to len(cStr)
-  cChar:=substr(cStr,i,1)
-  if cChar=="{"
-    cPom+="\{"
-  elseif cChar=="}"
-    cPom+="\}"
-  elseif cChar=="\"
-    cPom+="\\"
-  elseif cChar $ "Á"
-    cPom+="\'9a"
-  elseif cChar $ "Ê"
-    cPom+="\'8a"
-  elseif cChar $ "Ü"
-    if gWord97=="D"
-     cPom+="\u263\'63"
-    else
-     cPom+="\'e6"
-    endif
-  elseif cChar $ "è"
-    if gWord97=="D"
-     cPom+="\u262\'43"
-    else
-     cPom+="\'c6"
-    endif
-  elseif cChar $ "ü"
-    if gWord97=="D"
-     cPom+="\u269\'63"
-    else
-     cPom+="\'e8"
-    endif
-  elseif cChar $ "¨"
-    if gWord97=="D"
-     cPom+="\u268\'43"
-    else
-     cPom+="\'c8"
-    endif
-  elseif cChar $ "–"
-    if gWord97=="D"
-     cPom+="\u273\'64"
-    else
-     cPom+="\'f0"
-    endif
-  elseif cChar $ "—"
-    if gWord97=="D"
-     cPom+="\u272\'do"
-    else
-     cPom+="\'d0"
-    endif
-  elseif cChar $ "ß"
-    cPom+="\'9e"
-  elseif cChar $ "¶"
-    cPom+="\'8e"
-  elseif substr(cStr,i,2)==NL
-    cPom+="\par "
-    ++i
-  else
-    cPom+=substr(cStr,i,1)
-  endif
-next
-return cPom
+   RETURN cPom
 
 
-function WWSetPage(cFormat,cPL)
-*
-*
+FUNCTION WWSetPage( cFormat, cPL )
 
-if upper(cFormat)=="A4"
-  if cpl==NIL .or. upper(cPL)="P" // portrait
-     ?? "\pgwsxn11907\pghsxn16840"
-  else
-     ?? "\pgwsxn16840\pghsxn11907"
-  endif
+   //
+   //
 
-elseif upper(cFormat)=="A3"
-  if cpl==NIL .or. upper(cPL)="P" // portrait
-     ?? "\pgwsxn16839\pghsxn23814"
-  else
-     ?? "\pgwsxn23814\pghsxn16839"
-  endif
-endif
-return NIL
+   IF Upper( cFormat ) == "A4"
+      IF cpl == NIL .OR. Upper( cPL ) = "P" // portrait
+         ?? "\pgwsxn11907\pghsxn16840"
+      ELSE
+         ?? "\pgwsxn16840\pghsxn11907"
+      ENDIF
+
+   ELSEIF Upper( cFormat ) == "A3"
+      IF cpl == NIL .OR. Upper( cPL ) = "P" // portrait
+         ?? "\pgwsxn16839\pghsxn23814"
+      ELSE
+         ?? "\pgwsxn23814\pghsxn16839"
+      ENDIF
+   ENDIF
+
+   RETURN NIL
 
 
-function WWInsPict(cIme,cPath)
+FUNCTION WWInsPict( cIme, cPath )
 
-if cpath=NIL
-  cPath:="c:/sigma/"
-else
- cPath:=strtran(cpath,"\","/")  // rtf to trazi
-endif
-?? "{\field{\*\fldinst { INCLUDEPICTURE "+cpath+cime+"\\d  \\* MERGEFORMAT }}\par}"
-return
+   IF cpath = NIL
+      cPath := "c:/sigma/"
+   ELSE
+      cPath := StrTran( cpath, "\", "/" )  // rtf to trazi
+   ENDIF
+   ?? "{\field{\*\fldinst { INCLUDEPICTURE " + cpath + cime + "\\d  \\* MERGEFORMAT }}\par}"
 
+   RETURN

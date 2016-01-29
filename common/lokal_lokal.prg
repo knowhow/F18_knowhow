@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -16,64 +16,67 @@
 // lokalizira string u skladu sa
 // trenutnom postavkom lokalizacije
 // ---------------------------------------
-function lokal(cString, cLokal )
-local cPrevod
-local nIdStr
+FUNCTION lokal( cString, cLokal )
 
-cString := hb_UTF8ToStr( cString )
+   LOCAL cPrevod
+   LOCAL nIdStr
 
-if (cLokal == nil)
-	cLokal := gLokal
-endif
-	
-if ALLTRIM(cLokal) == "0"
-	return cString
-endif
+   cString := hb_UTF8ToStr( cString )
 
-PushWA()
-SELECT F_LOKAL
-if !used()
-	O_LOKAL
-endif
+   IF ( cLokal == nil )
+      cLokal := gLokal
+   ENDIF
 
-SET ORDER TO TAG "IDNAZ"
-// nadji izvorni string
-SEEK "0 " + cString + "##"
+   IF AllTrim( cLokal ) == "0"
+      RETURN cString
+   ENDIF
 
-if !found()
-	APPEND BLANK
-	replace id with "0 ",;
-		naz with cString+"##",;
-		id_str with next_id_str()
-else
-	nIdStr := id_str
-	// nadji prevod - za tekucu lokalizaciju
-	SET ORDER TO TAG "ID"
-	SEEK PADR(cLokal, 2) + STR(nIdStr, 6, 0)
-	if found()
-		// postoji prevod
-		
-		// "neki tekst##            "
-		cString := RTRIM(naz)
-		// "neki tekst##"
-		cString := LEFT(cString, LEN(cString) - 2)
-		// "neki tekst"
-	endif
-	
-endif
-PopWa()
-return cString
+   PushWA()
+   SELECT F_LOKAL
+   IF !Used()
+      O_LOKAL
+   ENDIF
+
+   SET ORDER TO TAG "IDNAZ"
+   // nadji izvorni string
+   SEEK "0 " + cString + "##"
+
+   IF !Found()
+      APPEND BLANK
+      REPLACE id WITH "0 ", ;
+         naz WITH cString + "##", ;
+         id_str WITH next_id_str()
+   ELSE
+      nIdStr := id_str
+      // nadji prevod - za tekucu lokalizaciju
+      SET ORDER TO TAG "ID"
+      SEEK PadR( cLokal, 2 ) + Str( nIdStr, 6, 0 )
+      IF Found()
+         // postoji prevod
+
+         // "neki tekst##            "
+         cString := RTrim( naz )
+         // "neki tekst##"
+         cString := Left( cString, Len( cString ) - 2 )
+         // "neki tekst"
+      ENDIF
+
+   ENDIF
+   PopWa()
+
+   RETURN cString
 
 // ----------------------
 // sljedeci id na redu
 // ----------------------
-function next_id_str()
-local nNext
+FUNCTION next_id_str()
 
-PushWA()
-SET ORDER TO TAG "ID_STR"
-GO BOTTOM
-nNext := id_str + 1
-PopWa()
+   LOCAL nNext
 
-return nNext
+   PushWA()
+   SET ORDER TO TAG "ID_STR"
+   GO BOTTOM
+   nNext := id_str + 1
+   PopWa()
+
+   RETURN nNext

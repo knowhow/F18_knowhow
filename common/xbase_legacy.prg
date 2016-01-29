@@ -10,7 +10,7 @@
  */
 
 #include "f18.ch"
-#include "fileio.ch"
+
 
 STATIC aBoxStack := {}
 STATIC nPos := 0
@@ -333,8 +333,8 @@ FUNCTION EofFndRet( ef, close )
 
    IF ef // eof()
       IF Eof()
-            Beep( 1 )
-            Msg( cStr, 6 )
+         Beep( 1 )
+         Msg( cStr, 6 )
          fRet := .T.
       ENDIF
    ELSE

@@ -36,7 +36,7 @@ FUNCTION f18_create_dir( location )
 
       IF _create <> 0
          log_write( "f18_create_dir(), problem sa kreiranjem direktorija: " + location, 5 )
-      endif
+      ENDIF
 
    ENDIF
 
@@ -132,7 +132,7 @@ FUNCTION pp( x )
    _tmp := ""
 
    _type := ValType( x )
-   
+
    IF _type == "H"
       _tmp += "(hash): "
       FOR EACH _key in x:Keys
@@ -276,16 +276,17 @@ FUNCTION create_f18_dokumenti_on_desktop( desktop_path )
    LOCAL _desk_folder := "F18_dokumenti"
    LOCAL _cre
 
-   #ifdef __PLATFORM__WINDOWS
-      _home_path := hb_DirSepAdd( GetEnv( "USERPROFILE" ) ) 
-      _desk_path := _home_path + "Desktop" + SLASH
-   #else
-      _home_path := hb_DirSepAdd( GetEnv( "HOME" ) ) 
-      _desk_path := _home_path + "Desktop" + SLASH
-      IF DirChange( _desk_path ) != 0
-         _desk_path := _home_path + "Radna površ" + SLASH
-      ENDIF
-   #endif
+#ifdef __PLATFORM__WINDOWS
+
+   _home_path := hb_DirSepAdd( GetEnv( "USERPROFILE" ) )
+   _desk_path := _home_path + "Desktop" + SLASH
+#else
+   _home_path := hb_DirSepAdd( GetEnv( "HOME" ) )
+   _desk_path := _home_path + "Desktop" + SLASH
+   IF DirChange( _desk_path ) != 0
+      _desk_path := _home_path + "Radna površ" + SLASH
+   ENDIF
+#endif
 
    desktop_path := _desk_path + _desk_folder + SLASH
 
@@ -296,5 +297,3 @@ FUNCTION create_f18_dokumenti_on_desktop( desktop_path )
    DirChange( my_home() )
 
    RETURN
-
-

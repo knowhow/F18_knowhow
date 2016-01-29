@@ -14,14 +14,12 @@
 STATIC s_cId_taksa := "TAKGORI-M "
 
 
-
 STATIC FUNCTION is_modul_pos()
    IF goModul:oDataBase:cName == "POS"
       RETURN .T.
    ELSE
       RETURN .F.
    ENDIF
-
 
 
 FUNCTION valid_taksa_gorivo( cError, nGorivoKolicina, nTaksaKolicina )
@@ -45,7 +43,7 @@ FUNCTION valid_taksa_gorivo( cError, nGorivoKolicina, nTaksaKolicina )
    nTaksaKolicina := 0
 
    DO WHILE !Eof()
- 
+
       IF artikal_je_gorivo( field->idroba )
          nGorivoKolicina += field->kolicina
       ENDIF
@@ -72,7 +70,7 @@ FUNCTION valid_taksa_gorivo( cError, nGorivoKolicina, nTaksaKolicina )
 
 
 
-STATIC FUNCTION artikal_je_gorivo( cIdRoba )  
+STATIC FUNCTION artikal_je_gorivo( cIdRoba )
 
    LOCAL lRet := .F.
    LOCAL cSql, oQuery
@@ -84,13 +82,13 @@ STATIC FUNCTION artikal_je_gorivo( cIdRoba )
       lRet := .T.
    ENDIF
 
-   RETURN lRet 
+   RETURN lRet
 
 
 
 
 FUNCTION valid_dodaj_taksu_za_gorivo()
-  
+
    LOCAL cError := ""
    LOCAL nGorivoKolicina := 0
    LOCAL nTaksaKolicina := 0
@@ -100,7 +98,7 @@ FUNCTION valid_dodaj_taksu_za_gorivo()
    IF !valid_taksa_gorivo( @cError, @nGorivoKolicina, @nTaksaKolicina )
 
        MsgBeep( cError )
-    
+
        nDodajTakse := nGorivoKolicina - nTaksaKolicina
 
        IF nDodajTakse > 0
@@ -111,7 +109,7 @@ FUNCTION valid_dodaj_taksu_za_gorivo()
 
        ELSE
           error_dodaj_stavku_takse_goriva()
-       ENDIF 
+       ENDIF
 
        lRet := .F.
 
@@ -185,7 +183,7 @@ STATIC FUNCTION dodaj_taksu_za_gorivo_na_pos_racun( nKolicina )
    hRec["robanaz"] := roba->naz
    hRec["jmj"] := roba->jmj
 
-   dbf_update_rec( hRec ) 
+   dbf_update_rec( hRec )
 
    RETURN .T.
 
@@ -262,4 +260,3 @@ STATIC FUNCTION dodaj_sifru_takse_u_tarife()
    ENDIF
 
    RETURN lOk
-

@@ -1,8 +1,8 @@
 #include "f18.ch"
 
 
-
 // k1 - karakteristike
+
 FUNCTION P_K1( cId, dx, dy )
 
    LOCAL _area, _i

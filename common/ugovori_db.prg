@@ -23,7 +23,7 @@ FUNCTION db_cre_ugov( ver )
    cre_tbl( "GEN_UG_P", ver )
    cre_tbl( "DEST", ver )
 
-   RETURN
+   RETURN .T.
 
 
 

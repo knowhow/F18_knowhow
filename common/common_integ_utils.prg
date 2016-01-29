@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -19,15 +19,17 @@
  *  \param cKonto - konto prodavnice u kalk-u
  *  \param cPath - putanja do kalk.dbf
  */
-function GetKalkVars(cFirma, cKonto, cPath)
-// firma je uvijek 50
-cFirma:="50"
-// konto prodavnicki
-cKonto := IzFmkIni("TOPS", "TopsKalkKonto", "13270", KUMPATH)
-cKonto := PADR(cKonto, 7)
-// putanja
-cPath := IzFmkIni("TOPS", "KalkKumPath", "i:\sigma", KUMPATH)
-return
+FUNCTION GetKalkVars( cFirma, cKonto, cPath )
+
+   // firma je uvijek 50
+   cFirma := "50"
+   // konto prodavnicki
+   cKonto := IzFmkIni( "TOPS", "TopsKalkKonto", "13270", KUMPATH )
+   cKonto := PadR( cKonto, 7 )
+   // putanja
+   cPath := IzFmkIni( "TOPS", "KalkKumPath", "i:\sigma", KUMPATH )
+
+   RETURN
 
 
 
@@ -35,76 +37,80 @@ return
  *  \brief Vraca tekucu godinu, ako je tek.datum veci od 10.01.TG onda je godina = TG, ako je tek.datum <= 10.01.TG onda je godina (TG - 1)
  *  \return string cYear
  */
-function IntegTekGod()
-*{
-local dTDate
-local dPDate
-local dTYear
-local cYear
+FUNCTION IntegTekGod()
 
-dTYear := YEAR(DATE()) // tekuca godina
-dPDate := SToD(ALLTRIM(STR(dTYear))+"0110") // preracunati datum
-dTDate := DATE() // tekuci datum
+   // {
+   LOCAL dTDate
+   LOCAL dPDate
+   LOCAL dTYear
+   LOCAL cYear
 
-if dTDate > dPDate
-	cYear := ALLTRIM( STR( YEAR( DATE() ) ))	
-else
-	cYear := ALLTRIM( STR( YEAR( DATE() ) - 1 ))
-endif
+   dTYear := Year( Date() ) // tekuca godina
+   dPDate := SToD( AllTrim( Str( dTYear ) ) + "0110" ) // preracunati datum
+   dTDate := Date() // tekuci datum
 
-return cYear
-*}
+   IF dTDate > dPDate
+      cYear := AllTrim( Str( Year( Date() ) ) )
+   ELSE
+      cYear := AllTrim( Str( Year( Date() ) - 1 ) )
+   ENDIF
 
-/*! \fn IntegTekDat() 
+   RETURN cYear
+// }
+
+/*! \fn IntegTekDat()
  *  \brief Vraca datum od kada pocinje tekuca godina TOPS, 01.01.TG
  */
-function IntegTekDat()
-*{
-local dYear
-local cDate
+FUNCTION IntegTekDat()
 
-dYear := YEAR(DATE())
-cDate := ALLTRIM( IntegTekGod() ) + "0101"
+   // {
+   LOCAL dYear
+   LOCAL cDate
 
-return SToD(cDate)
-*}
+   dYear := Year( Date() )
+   cDate := AllTrim( IntegTekGod() ) + "0101"
+
+   RETURN SToD( cDate )
+// }
 
 /*! \fn AddToErrors(cType, cIdRoba, cDoks, cOpis)
  *  \brief dodaj zapis u tabelu errors
  */
-function AddToErrors(cType, cIDroba, cDoks, cOpis)
-*{
-O_ERRORS
-append blank
-replace field->type with cType
-replace field->idroba with cIdRoba
-replace field->doks with cDoks
-replace field->opis with cOpis
+FUNCTION AddToErrors( cType, cIDroba, cDoks, cOpis )
 
-return
-*}
+   // {
+   O_ERRORS
+   APPEND BLANK
+   REPLACE field->TYPE WITH cType
+   REPLACE field->idroba WITH cIdRoba
+   REPLACE field->doks WITH cDoks
+   REPLACE field->opis WITH cOpis
+
+   RETURN
+// }
 
 
 /*! \fn GetErrorDesc(cType)
  *  \brief Vrati naziv greske po cType
  *  \param cType - tip greske, C, W, N ...
  */
-function GetErrorDesc(cType)
-*{
-cRet := ""
-do case
-	case cType == "C"
-		cRet := "Critical:"
-	case cType == "N"
-		cRet := "Normal:  "
-	case cType == "W"
-		cRet := "Warrning:"
-	case cType == "P"
-		cRet := "Probably OK:"
-endcase
+FUNCTION GetErrorDesc( cType )
 
-return cRet
-*}
+   // {
+   cRet := ""
+   DO CASE
+   CASE cType == "C"
+      cRet := "Critical:"
+   CASE cType == "N"
+      cRet := "Normal:  "
+   CASE cType == "W"
+      cRet := "Warrning:"
+   CASE cType == "P"
+      cRet := "Probably OK:"
+   ENDCASE
+
+   RETURN cRet
+// }
 
 
 /*! \fn RptInteg()
@@ -112,143 +118,145 @@ return cRet
  *  \param lFilter - filter za kriticne greske
  *  \param lAutoSent - automatsko slanje email-a
  */
-function RptInteg(lFilter, lAutoSent)
-*{
-if (lFilter == nil)
-	lFilter := .f.
-endif
-if (lAutoSent == nil)
-	lAutoSent := .f.
-endif
+FUNCTION RptInteg( lFilter, lAutoSent )
 
-O_ERRORS
-select errors
-set order to tag "1"
-if RecCount() == 0
-	MsgBeep("Integritet podataka ok")
-	//return
-endif
+   // {
+   IF ( lFilter == nil )
+      lFilter := .F.
+   ENDIF
+   IF ( lAutoSent == nil )
+      lAutoSent := .F.
+   ENDIF
 
-lOnlyCrit:=.f.
-if lFilter .and. Pitanje(,"Prikazati samo critical errors (D/N)?","N")=="D"
-	lOnlyCrit:=.t.
-endif
+   O_ERRORS
+   SELECT errors
+   SET ORDER TO TAG "1"
+   IF RecCount() == 0
+      MsgBeep( "Integritet podataka ok" )
+      // return
+   ENDIF
 
-START PRINT CRET
+   lOnlyCrit := .F.
+   IF lFilter .AND. Pitanje(, "Prikazati samo critical errors (D/N)?", "N" ) == "D"
+      lOnlyCrit := .T.
+   ENDIF
 
-? "Rezultati analize integriteta podataka"
-? "===================================================="
-?
+   START PRINT CRET
 
-nCrit:=0
-nNorm:=0
-nWarr:=0
-nPrOk:=0
-nCnt:=1
-cTmpDoks:="XXXX"
+   ? "Rezultati analize integriteta podataka"
+   ? "===================================================="
+   ?
+
+   nCrit := 0
+   nNorm := 0
+   nWarr := 0
+   nPrOk := 0
+   nCnt := 1
+   cTmpDoks := "XXXX"
 
 
-go top
-do while !EOF()
-	cErRoba := field->idroba
-	if lOnlyCrit .and. ALLTRIM(field->type) == "C"
-		? STR(nCnt, 4) + ". " + ALLTRIM(field->idroba)
-	endif
-	if !lOnlyCrit
-		? STR(nCnt, 4) + ". " + ALLTRIM(field->idroba)
-	endif
-	
-	do while !EOF() .and. field->idroba == cErRoba
-		
-		if lOnlyCrit .and. ALLTRIM(field->type) <> "C"
-			skip
-			loop
-		endif
-		
-		// ako je prazno DOKSERR onda fali doks
-		if cErRoba = "DOKSERR"
-			if ALLTRIM(field->doks) == cTmpDoks
-				skip
-				loop
-			endif
-		endif
-		
-		cTmpDoks := ALLTRIM(field->doks)
-		
-		++nCnt
-		
-		? SPACE(5) + GetErrorDesc(ALLTRIM(field->type)), ALLTRIM(field->doks), ALLTRIM(field->opis)	
-	
-		if ALLTRIM(field->type) == "C"
-			++ nCrit 
-		endif
-		if ALLTRIM(field->type) == "N"
-			++ nNorm 
-		endif
-		if ALLTRIM(field->type) == "W"
-			++ nWarr 
-		endif
-		if ALLTRIM(field->type) == "P"
-			++ nPrOk
-		endif
-	
-		skip
-	enddo
-enddo
+   GO TOP
+   DO WHILE !Eof()
+      cErRoba := field->idroba
+      IF lOnlyCrit .AND. AllTrim( field->type ) == "C"
+         ? Str( nCnt, 4 ) + ". " + AllTrim( field->idroba )
+      ENDIF
+      IF !lOnlyCrit
+         ? Str( nCnt, 4 ) + ". " + AllTrim( field->idroba )
+      ENDIF
 
-?
-? "-----------------------------------------"
-? "Critical errors:", ALLTRIM(STR(nCrit))
-? "Normal errors:", ALLTRIM(STR(nNorm))
-? "Warrnings:", ALLTRIM(STR(nWarr))
-? "Probably OK:", ALLTRIM(STR(nPrOK))
-?
-?
+      DO WHILE !Eof() .AND. field->idroba == cErRoba
 
-FF
-ENDPRINT
+         IF lOnlyCrit .AND. AllTrim( field->type ) <> "C"
+            SKIP
+            LOOP
+         ENDIF
 
-RptSendEmail(lAutoSent)
+         // ako je prazno DOKSERR onda fali doks
+         IF cErRoba = "DOKSERR"
+            IF AllTrim( field->doks ) == cTmpDoks
+               SKIP
+               LOOP
+            ENDIF
+         ENDIF
 
-return
-*}
+         cTmpDoks := AllTrim( field->doks )
+
+         ++nCnt
+
+         ? Space( 5 ) + GetErrorDesc( AllTrim( field->type ) ), AllTrim( field->doks ), AllTrim( field->opis )
+
+         IF AllTrim( field->type ) == "C"
+            ++ nCrit
+         ENDIF
+         IF AllTrim( field->type ) == "N"
+            ++ nNorm
+         ENDIF
+         IF AllTrim( field->type ) == "W"
+            ++ nWarr
+         ENDIF
+         IF AllTrim( field->type ) == "P"
+            ++ nPrOk
+         ENDIF
+
+         SKIP
+      ENDDO
+   ENDDO
+
+   ?
+   ? "-----------------------------------------"
+   ? "Critical errors:", AllTrim( Str( nCrit ) )
+   ? "Normal errors:", AllTrim( Str( nNorm ) )
+   ? "Warrnings:", AllTrim( Str( nWarr ) )
+   ? "Probably OK:", AllTrim( Str( nPrOK ) )
+   ?
+   ?
+
+   FF
+   ENDPRINT
+
+   RptSendEmail( lAutoSent )
+
+   RETURN
+// }
 
 /*! \fn RptSendEmail()
  *  \brief Slanje reporta na email
  */
-function RptSendEmail(lAuto)
-*{
-local cScript
-local cPSite
-local cRptFile
+FUNCTION RptSendEmail( lAuto )
 
-if (lAuto == nil)
-	lAuto := .f.
-endif
-// postavi pitanje ako nije lAuto
-if !lAuto .and. Pitanje(,"Proslijediti report email-om (D/N)?", "D") == "N"
-	return
-endif
+   // {
+   LOCAL cScript
+   LOCAL cPSite
+   LOCAL cRptFile
 
-// setuj varijable
-GetSendVars(@cScript, @cPSite, @cRptFile)
-// komanda je sljedeca
-cKom := cScript + " " + cPSite + " " + cRptFile 
+   IF ( lAuto == nil )
+      lAuto := .F.
+   ENDIF
+   // postavi pitanje ako nije lAuto
+   IF !lAuto .AND. Pitanje(, "Proslijediti report email-om (D/N)?", "D" ) == "N"
+      RETURN
+   ENDIF
 
-// snimi sliku i ocisti ekran
-save screen to cRbScr
-clear screen
+   // setuj varijable
+   GetSendVars( @cScript, @cPSite, @cRptFile )
+   // komanda je sljedeca
+   cKom := cScript + " " + cPSite + " " + cRptFile
 
-? "err2mail send..."
-// pokreni komandu
-f18_run(cKom)
+   // snimi sliku i ocisti ekran
+   SAVE SCREEN TO cRbScr
+   CLEAR SCREEN
 
-Sleep(3)
-// vrati staro stanje ekrana
-restore screen from cRbScr
+   ? "err2mail send..."
+   // pokreni komandu
+   f18_run( cKom )
 
-return
-*}
+   Sleep( 3 )
+   // vrati staro stanje ekrana
+   RESTORE SCREEN FROM cRbScr
+
+   RETURN
+// }
 
 
 /*! \fn GetSendVars(cScript)
@@ -256,169 +264,176 @@ return
  *  \param cPSite - prodavnicki site
  *  \param cRptFile - report fajl
  */
-function GetSendVars(cScript, cPSite, cRptFile)
+FUNCTION GetSendVars( cScript, cPSite, cRptFile )
 
-cScript := IzFmkIni("Ruby","Err2Mail","c:\sigma\err2mail.rb", EXEPATH)
-cPSite := ALLTRIM(STR(gSqlSite))
-cRptFile := PRIVPATH + "outf.txt"
+   cScript := IzFmkIni( "Ruby", "Err2Mail", "c:\sigma\err2mail.rb", EXEPATH )
+   cPSite := AllTrim( Str( gSqlSite ) )
+   cRptFile := PRIVPATH + "outf.txt"
 
-return
+   RETURN
 
 
 
 /*! \fn BrisiError()
  *  \brief Brisanje tabele Errors.dbf
  */
-function BrisiError()
+FUNCTION BrisiError()
 
-O_ERRORS
-select errors
-zapp()
+   O_ERRORS
+   SELECT errors
+   zapp()
 
-return
+   RETURN
 
 /*! \fn EmptDInt(nInteg)
  *  \brief Da li je prazna tabela dinteg
  */
-function EmptDInt(nInteg)
-*{
-local cInteg := ALLTRIM(STR(nInteg))
-local cTbl := "DINTEG" + cInteg
-O_DINTEG1
-O_DINTEG2
-select &cTbl
+FUNCTION EmptDInt( nInteg )
 
-if RecCount() == 0
-	MsgBeep("Tabela " + cTbl + " je prazna !!!")
-	return .t.
-else
-	return .f.
-endif
+   // {
+   LOCAL cInteg := AllTrim( Str( nInteg ) )
+   LOCAL cTbl := "DINTEG" + cInteg
+   O_DINTEG1
+   O_DINTEG2
+   select &cTbl
 
-return
-*}
+   IF RecCount() == 0
+      MsgBeep( "Tabela " + cTbl + " je prazna !!!" )
+      RETURN .T.
+   ELSE
+      RETURN .F.
+   ENDIF
 
-
-
-function SetGenSif1()
-*{
-// da li je generisan log
-if ALLTRIM(integ1->c3) == "G"
-	return .t.
-else
-	replace integ1->c3 with "G"
-	return .f.
-endif
-return .f.
-*}
+   RETURN
+// }
 
 
-function SetGenSif2()
-*{
-// da li je generisan log
-if ALLTRIM(integ2->c3) == "G"
-	return .t.
-else
-	replace integ2->c3 with "G"
-	return .f.
-endif
-return .f.
-*}
+
+FUNCTION SetGenSif1()
+
+   // {
+   // da li je generisan log
+   IF AllTrim( integ1->c3 ) == "G"
+      RETURN .T.
+   ELSE
+      REPLACE integ1->c3 WITH "G"
+      RETURN .F.
+   ENDIF
+
+   RETURN .F.
+// }
+
+
+FUNCTION SetGenSif2()
+
+   // {
+   // da li je generisan log
+   IF AllTrim( integ2->c3 ) == "G"
+      RETURN .T.
+   ELSE
+      REPLACE integ2->c3 WITH "G"
+      RETURN .F.
+   ENDIF
+
+   RETURN .F.
+// }
 
 
 // provjera tabele robe
-function roba_integ(cPKonto, cFmkSifPath, cPosSifPath, cPosKumPath)
-local cRobaName := "ROBA"
-local cPosName := "POS"
+FUNCTION roba_integ( cPKonto, cFmkSifPath, cPosSifPath, cPosKumPath )
 
-cFmkSifPath := ALLTRIM(cFmkSifPath)
-AddBS(@cFmkSifPath)
+   LOCAL cRobaName := "ROBA"
+   LOCAL cPosName := "POS"
 
-cPosSifPath := ALLTRIM(cPosSifPath)
-AddBS(@cPosSifPath)
+   cFmkSifPath := AllTrim( cFmkSifPath )
+   AddBS( @cFmkSifPath )
 
-cPosKumPath := ALLTRIM(cPosKumPath)
-AddBS(@cPosKumPath)
+   cPosSifPath := AllTrim( cPosSifPath )
+   AddBS( @cPosSifPath )
 
-// FMK roba
-select (F_ROBA)
-use (cFmkSifPath + cRobaName)
-set order to tag "ID"
+   cPosKumPath := AllTrim( cPosKumPath )
+   AddBS( @cPosKumPath )
 
-// POS roba
-select (0)
-use (cPosSifPath + cRobaName) alias P_ROBA
-set order to tag "ID"
+   // FMK roba
+   SELECT ( F_ROBA )
+   USE ( cFmkSifPath + cRobaName )
+   SET ORDER TO TAG "ID"
 
-// POS kumulativ
-select (249)
-use (cPosKumPath + cPosName) alias P_POS
-// idroba
-set order to tag "6"
+   // POS roba
+   SELECT ( 0 )
+   USE ( cPosSifPath + cRobaName ) ALIAS P_ROBA
+   SET ORDER TO TAG "ID"
 
-MsgO("integritet roba pos->fmk....")
-// provjeri u smijeru pos->fmk
-pos_fmk_roba(cPKonto)
-MsgC()
+   // POS kumulativ
+   SELECT ( 249 )
+   USE ( cPosKumPath + cPosName ) ALIAS P_POS
+   // idroba
+   SET ORDER TO TAG "6"
 
-// zatvori tabele
-select roba
-use
+   MsgO( "integritet roba pos->fmk...." )
+   // provjeri u smijeru pos->fmk
+   pos_fmk_roba( cPKonto )
+   MsgC()
 
-select p_roba
-use
+   // zatvori tabele
+   SELECT roba
+   USE
 
-select p_pos
-use
+   SELECT p_roba
+   USE
 
-return
+   SELECT p_pos
+   USE
+
+   RETURN
 
 
 // provjera u smijeru pos->fmk
-static function pos_fmk_roba(cPKonto)
-local cRTemp
+STATIC FUNCTION pos_fmk_roba( cPKonto )
 
-select p_roba
-go top
+   LOCAL cRTemp
 
-do while !EOF() 
+   SELECT p_roba
+   GO TOP
 
-	cRTemp := field->id
+   DO WHILE !Eof()
 
-	// provjeri da li se spominje u POS-u
-	select p_pos
-	hseek cRTemp
-	
-	// ako se ne spominje i preskoci ga, ovo je nebitna sifra...
-	if !FOUND()
-		select p_roba
-		skip
-		loop
-	endif
-	
-	select roba
-	hseek cRTemp
-	
-	if !FOUND()
-		AddToErrors("C", cRTemp, "", "Konto: " + ALLTRIM(cPKonto) + ", FMK, nepostojeca sifra artikla !!!")
-	endif
-	
-	select p_roba
-	skip
-enddo
+      cRTemp := field->id
 
-return
+      // provjeri da li se spominje u POS-u
+      SELECT p_pos
+      hseek cRTemp
+
+      // ako se ne spominje i preskoci ga, ovo je nebitna sifra...
+      IF !Found()
+         SELECT p_roba
+         SKIP
+         LOOP
+      ENDIF
+
+      SELECT roba
+      hseek cRTemp
+
+      IF !Found()
+         AddToErrors( "C", cRTemp, "", "Konto: " + AllTrim( cPKonto ) + ", FMK, nepostojeca sifra artikla !!!" )
+      ENDIF
+
+      SELECT p_roba
+      SKIP
+   ENDDO
+
+   RETURN
 
 
 // provjera u smijeru fmk->pos
-static function fmk_pos_roba(cSifra)
-select p_roba
-go top
-seek cSifra
+STATIC FUNCTION fmk_pos_roba( cSifra )
 
-if !Found()
-	AddToErrors("C", cSifra, "", "TOPSK, nepostojeca sifra artikla !!!")
-endif
-return
+   SELECT p_roba
+   GO TOP
+   SEEK cSifra
 
+   IF !Found()
+      AddToErrors( "C", cSifra, "", "TOPSK, nepostojeca sifra artikla !!!" )
+   ENDIF
 
+   RETURN

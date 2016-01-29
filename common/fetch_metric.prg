@@ -12,121 +12,127 @@
 #include "f18.ch"
 
 
-function fetch_metric(sect, user, default_value)
-local _temp_qry
-local _table
-local _server := pg_server()
-local _ret := ""
+FUNCTION fetch_metric( sect, user, default_value )
 
-if default_value == NIL
-  default_value := ""
-endif
+   LOCAL _temp_qry
+   LOCAL _table
+   LOCAL _server := pg_server()
+   LOCAL _ret := ""
 
-if user != NIL
-   if user == "<>"
-      sect += "/" + f18_user()
-   else
-      sect += "/" + user
-   endif
-endif
+   IF default_value == NIL
+      default_value := ""
+   ENDIF
 
-_temp_qry := "SELECT fetchmetrictext(" + _sql_quote(sect)  + ")"
+   IF user != NIL
+      IF user == "<>"
+         sect += "/" + f18_user()
+      ELSE
+         sect += "/" + user
+      ENDIF
+   ENDIF
 
-_table := _sql_query( _server, _temp_qry )
+   _temp_qry := "SELECT fetchmetrictext(" + _sql_quote( sect )  + ")"
 
-IF VALTYPE(_table) != "O"
-   return default_value
-ENDIF
+   _table := _sql_query( _server, _temp_qry )
 
-_ret := _table:Fieldget(1)
+   IF ValType( _table ) != "O"
+      RETURN default_value
+   ENDIF
 
-if _ret == "!!notfound!!"
-   return default_value
-else
-   return str_to_val(_ret, default_value)
-endif
+   _ret := _table:FieldGet( 1 )
+
+   IF _ret == "!!notfound!!"
+      RETURN default_value
+   ELSE
+      RETURN str_to_val( _ret, default_value )
+   ENDIF
 
 
 
-// --------------------------------------------------------------
-// setuj parametre u metric tabelu
-// --------------------------------------------------------------
-function set_metric(sect, user, value)
-local _table
-local _temp_qry
-local _server := pg_server()
-local _val
+   // --------------------------------------------------------------
+   // setuj parametre u metric tabelu
+   // --------------------------------------------------------------
 
-if user != NIL
-   if user == "<>"
-      sect += "/" + f18_user()
-   else
-      sect += "/" + user
-   endif
-endif
+FUNCTION set_metric( sect, user, value )
 
-SET CENTURY ON
-_val := hb_ValToStr(value)
-SET CENTURY OFF
+   LOCAL _table
+   LOCAL _temp_qry
+   LOCAL _server := pg_server()
+   LOCAL _val
 
-_temp_qry := "SELECT fmk.setmetric(" + _sql_quote(sect) + "," + _sql_quote(_val) +  ")"
-_table := _sql_query( _server, _temp_qry )
-if _table == NIL
-	MsgBeep( "problem sa:" + _temp_qry )
-    return .f.
-endif
+   IF user != NIL
+      IF user == "<>"
+         sect += "/" + f18_user()
+      ELSE
+         sect += "/" + user
+      ENDIF
+   ENDIF
 
-return _table:Fieldget( _table:Fieldpos("setmetric") )
+   SET CENTURY ON
+   _val := hb_ValToStr( value )
+   SET CENTURY OFF
+
+   _temp_qry := "SELECT fmk.setmetric(" + _sql_quote( sect ) + "," + _sql_quote( _val ) +  ")"
+   _table := _sql_query( _server, _temp_qry )
+   IF _table == NIL
+      MsgBeep( "problem sa:" + _temp_qry )
+      RETURN .F.
+   ENDIF
+
+   RETURN _table:FieldGet( _table:FieldPos( "setmetric" ) )
 
 // --------------------------------------------------------------
 // --------------------------------------------------------------------
-static function str_to_val(str_val, default_value)
-local _val_type := VALTYPE(default_value)
+STATIC FUNCTION str_to_val( str_val, default_value )
 
-do case
-	case _val_type == "C"
-		return HB_UTF8TOSTR( str_val )
-	case _val_type == "N"
-		return VAL(str_val)
-	case _val_type == "D"
-		return CTOD(str_val)
-	case _val_type == "L"
-		if LOWER(str_val) == ".t."
-			return .t.
-		else
-			return .f.
-		endif
-end case
+   LOCAL _val_type := ValType( default_value )
 
-return NIL
+   DO CASE
+   CASE _val_type == "C"
+      RETURN hb_UTF8ToStr( str_val )
+   CASE _val_type == "N"
+      RETURN Val( str_val )
+   CASE _val_type == "D"
+      RETURN CToD( str_val )
+   CASE _val_type == "L"
+      IF Lower( str_val ) == ".t."
+         RETURN .T.
+      ELSE
+         RETURN .F.
+      ENDIF
+   END CASE
+
+   RETURN NIL
 
 
 // ----------------------------------------------------------
 // set/get globalne parametre F18
 // ----------------------------------------------------------
-function get_set_global_param(param_name, value, def_value)
-local _ret
+FUNCTION get_set_global_param( param_name, value, def_value )
 
-if value == NIL
-   _ret := fetch_metric(param_name, NIL, def_value)
-else
-   set_metric(param_name, NIL, value)
-   _ret := value
-endif
+   LOCAL _ret
 
-return _ret
+   IF value == NIL
+      _ret := fetch_metric( param_name, NIL, def_value )
+   ELSE
+      set_metric( param_name, NIL, value )
+      _ret := value
+   ENDIF
+
+   RETURN _ret
 
 // ----------------------------------------------------------
 // set/get user parametre F18
 // ----------------------------------------------------------
-function get_set_user_param(param_name, value, def_value)
-local _ret
+FUNCTION get_set_user_param( param_name, value, def_value )
 
-if value == NIL
-   _ret := fetch_metric(param_name, my_user(), def_value)
-else
-   set_metric(param_name, my_user(), value)
-   _ret := value
-endif
+   LOCAL _ret
 
-return _ret
+   IF value == NIL
+      _ret := fetch_metric( param_name, my_user(), def_value )
+   ELSE
+      set_metric( param_name, my_user(), value )
+      _ret := value
+   ENDIF
+
+   RETURN _ret

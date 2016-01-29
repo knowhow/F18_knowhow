@@ -406,6 +406,7 @@ STATIC FUNCTION KonIzBlok()
 
    DO CASE
    CASE Ch == K_CTRL_P
+
       // --------- stampanje definicije izvjestaja ---------
       // ---------------------------------------------------
       SELECT IZVJE

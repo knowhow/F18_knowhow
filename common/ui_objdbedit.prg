@@ -10,10 +10,7 @@
  */
 
 #include "f18.ch"
-#include "dbstruct.ch"
-#include "error.ch"
-#include "setcurs.ch"
-#include "f18_separator.ch"
+
 
 /*! \fn function ObjDBedit(cImeBoxa,  xw, yw, bUserF,  cMessTop, cMessBot, lInvert, aMessage, nFreeze, bPodvuci, nPrazno, nGPrazno, aPoredak, skipblock)
  * \brief Glavna funkcija tabelarnog prikaza podataka
@@ -221,7 +218,7 @@ FUNCTION ObjDBedit( cImeBoxa, xw, yw, bUserF, cMessTop, cMessBot, lInvert, aMess
 
    ENDDO
 
-   RETURN
+   RETURN .T.
 
 
 FUNCTION NeTBDirektni( params, lIzOBJDB )
@@ -299,7 +296,7 @@ STATIC FUNCTION ForceStable()
    DO WHILE ! TB:stabilize()
    ENDDO
 
-   RETURN
+   RETURN .T.
 
 STATIC FUNCTION InsToggle()
 
@@ -311,7 +308,7 @@ STATIC FUNCTION InsToggle()
       SetCursor( SC_INSERT )
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 FUNCTION StandTBKomande( TB, Ch, nRez, nPored, aPoredak )
@@ -334,7 +331,7 @@ FUNCTION StandTBKomande( TB, Ch, nRez, nPored, aPoredak )
    CASE Ch == K_CTRL_F
 
       bTekCol := ( TB:getColumn( TB:colPos ) ):Block
-     	
+
       IF ValType( Eval( bTekCol ) ) == "C"
 
          Box( "bFind", 2, 50, .F. )
@@ -382,109 +379,109 @@ FUNCTION StandTBKomande( TB, Ch, nRez, nPored, aPoredak )
 
    CASE Ch == K_ALT_R
 
-         PRIVATE cKolona
+      PRIVATE cKolona
 
-         IF ValType( TB ) == "O" .AND. Len( Imekol[ TB:colPos ] ) > 2
+      IF ValType( TB ) == "O" .AND. Len( Imekol[ TB:colPos ] ) > 2
 
-            IF !Empty( ImeKol[ TB:colPos, 3 ] )
+         IF !Empty( ImeKol[ TB:colPos, 3 ] )
 
-               cKolona := ImeKol[ TB:ColPos, 3 ]
+            cKolona := ImeKol[ TB:ColPos, 3 ]
 
-               IF ValType( &cKolona ) $ "CD"
+            IF ValType( &cKolona ) $ "CD"
 
-                  Box(, 3, 60, .F. )
+               Box(, 3, 60, .F. )
 
-                  PRIVATE GetList := {}
-                  SET CURSOR ON
+               PRIVATE GetList := {}
+               SET CURSOR ON
 
-                  @ m_x + 1, m_y + 2 SAY "Uzmi podatke posljednje pretrage ?" GET _last_srch VALID _last_srch $ "DN" PICT "@!"
+               @ m_x + 1, m_y + 2 SAY "Uzmi podatke posljednje pretrage ?" GET _last_srch VALID _last_srch $ "DN" PICT "@!"
 
-                  READ
+               READ
 
-                  _sect := "_brow_fld_find_" + AllTrim( Lower( cKolona ) )
-                  _trazi_val := &cKolona
-                			
-                  IF _last_srch == "D"
-                     _trazi_val := fetch_metric( _sect, "<>", _trazi_val )
-                  ENDIF
+               _sect := "_brow_fld_find_" + AllTrim( Lower( cKolona ) )
+               _trazi_val := &cKolona
 
-                  _zamijeni_val := _trazi_val
-                  _sect := "_brow_fld_repl_" + AllTrim( Lower( cKolona ) )
-								
-                  IF _last_srch == "D"
-                     _zamijeni_val := fetch_metric( _sect, "<>", _zamijeni_val )
-                  ENDIF
-
-                  _pict := ""
-
-                  IF ValType( _trazi_val ) == "C" .AND. Len( _trazi_val ) > 45
-                     _pict := "@S45"
-                  ENDIF
-
-                  @ m_x + 2, m_y + 2 SAY PadR( _tr, 12 ) GET _trazi_val PICT _pict
-                  @ m_x + 3, m_y + 2 SAY PadR( _zam, 12 ) GET _zamijeni_val PICT _pict
-
-                  READ
-
-                  BoxC()
-
-                  IF LastKey() == K_ESC
-                     RETURN DE_CONT
-                  ENDIF
-
-                  IF replace_kolona_in_table( cKolona, _trazi_val, _zamijeni_val, _last_srch )
-                     TB:RefreshAll()
-                  ELSE
-                     RETURN DE_CONT
-                  ENDIF
-            	
+               IF _last_srch == "D"
+                  _trazi_val := fetch_metric( _sect, "<>", _trazi_val )
                ENDIF
+
+               _zamijeni_val := _trazi_val
+               _sect := "_brow_fld_repl_" + AllTrim( Lower( cKolona ) )
+
+               IF _last_srch == "D"
+                  _zamijeni_val := fetch_metric( _sect, "<>", _zamijeni_val )
+               ENDIF
+
+               _pict := ""
+
+               IF ValType( _trazi_val ) == "C" .AND. Len( _trazi_val ) > 45
+                  _pict := "@S45"
+               ENDIF
+
+               @ m_x + 2, m_y + 2 SAY PadR( _tr, 12 ) GET _trazi_val PICT _pict
+               @ m_x + 3, m_y + 2 SAY PadR( _zam, 12 ) GET _zamijeni_val PICT _pict
+
+               READ
+
+               BoxC()
+
+               IF LastKey() == K_ESC
+                  RETURN DE_CONT
+               ENDIF
+
+               IF replace_kolona_in_table( cKolona, _trazi_val, _zamijeni_val, _last_srch )
+                  TB:RefreshAll()
+               ELSE
+                  RETURN DE_CONT
+               ENDIF
+
             ENDIF
          ENDIF
+      ENDIF
 
    CASE Ch == K_ALT_S
 
-         PRIVATE cKolona
+      PRIVATE cKolona
 
-         IF ValType( TB ) == "O" .AND. Len( Imekol[ TB:colPos ] ) > 2
+      IF ValType( TB ) == "O" .AND. Len( Imekol[ TB:colPos ] ) > 2
 
-            IF !Empty( ImeKol[ TB:colPos, 3 ] )
+         IF !Empty( ImeKol[ TB:colPos, 3 ] )
 
-               cKolona := ImeKol[ TB:ColPos, 3 ]
+            cKolona := ImeKol[ TB:ColPos, 3 ]
 
-               IF ValType( &cKolona ) == "N"
+            IF ValType( &cKolona ) == "N"
 
-                  Box(, 3, 66, .F. )
+               Box(, 3, 66, .F. )
 
-                  PRIVATE GetList := {}
-                  SET CURSOR ON
+               PRIVATE GetList := {}
+               SET CURSOR ON
 
-                  _trazi_val := &cKolona
-                  _trazi_usl := Space( 80 )
+               _trazi_val := &cKolona
+               _trazi_usl := Space( 80 )
 
-                  @ m_x + 1, m_y + 2 SAY "Postavi na:" GET _trazi_val
-                  @ m_x + 2, m_y + 2 SAY "Uslov za obuhvatanje stavki (prazno-sve):" GET _trazi_usl ;
-                     PICT "@S20" ;
-                     VALID Empty( _trazi_usl ) .OR. EvEr( _trazi_usl, "Greška! Neispravno postavljen uslov!" )
-                  READ
+               @ m_x + 1, m_y + 2 SAY "Postavi na:" GET _trazi_val
+               @ m_x + 2, m_y + 2 SAY "Uslov za obuhvatanje stavki (prazno-sve):" GET _trazi_usl ;
+                  PICT "@S20" ;
+                  VALID Empty( _trazi_usl ) .OR. EvEr( _trazi_usl, "Greška! Neispravno postavljen uslov!" )
+               READ
 
-                  BoxC()
+               BoxC()
 
-                  IF LastKey() == K_ESC
-                      RETURN DE_CONT
-                  ENDIF
+               IF LastKey() == K_ESC
+                  RETURN DE_CONT
+               ENDIF
 
-                  IF zamjeni_numericka_polja_u_tabeli( cKolona, _trazi_val, _trazi_usl )		
-                     TB:RefreshAll()
-                  ELSE
-                     RETURN DE_CONT
-                  ENDIF
-                  
+               IF zamjeni_numericka_polja_u_tabeli( cKolona, _trazi_val, _trazi_usl )
+                  TB:RefreshAll()
+               ELSE
+                  RETURN DE_CONT
                ENDIF
 
             ENDIF
 
          ENDIF
+
+      ENDIF
 
    CASE Ch == K_CTRL_U .AND. nPored > 1
 
@@ -507,7 +504,7 @@ FUNCTION StandTBKomande( TB, Ch, nRez, nPored, aPoredak )
 
    ENDCASE
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -522,41 +519,41 @@ FUNCTION zamjeni_numericka_polja_u_tabeli( cKolona, cTrazi, cUslov )
 
    SET ORDER TO 0
 
-   IF Pitanje(, "Promjena će se izvršiti u " + IIF( Empty( cUslov ), "svim ", "" ) + "stavkama" + ;
-          IIF( !Empty( cUslov ), " koje obuhvata uslov", "" ) + ". Želite nastaviti ?", "N" ) == "N"
-       RETURN lRet
+   IF Pitanje(, "Promjena će se izvršiti u " + iif( Empty( cUslov ), "svim ", "" ) + "stavkama" + ;
+         iif( !Empty( cUslov ), " koje obuhvata uslov", "" ) + ". Želite nastaviti ?", "N" ) == "N"
+      RETURN lRet
    ENDIF
 
    IF lImaSemafor
-       sql_table_update( nil, "BEGIN" )
-       IF !f18_lock_tables( { Lower( Alias() ) }, .T. )
-           sql_table_update( nil, "END" )
-           RETURN lRet
-       ENDIF
+      sql_table_update( nil, "BEGIN" )
+      IF !f18_lock_tables( { Lower( Alias() ) }, .T. )
+         sql_table_update( nil, "END" )
+         RETURN lRet
+      ENDIF
    ENDIF
 
    GO TOP
 
    DO WHILE !Eof()
 
-       IF Empty( cUslov ) .OR. &( cUslov )
+      IF Empty( cUslov ) .OR. &( cUslov )
 
-           _rec := dbf_get_rec()
-           _rec[ Lower( cKolona ) ] := cTrazi
+         _rec := dbf_get_rec()
+         _rec[ Lower( cKolona ) ] := cTrazi
 
-           IF lImaSemafor
-               lOk := update_rec_server_and_dbf( Alias(), _rec, 1, "CONT" )
-           ELSE
-               dbf_update_rec( _rec )
-           ENDIF
+         IF lImaSemafor
+            lOk := update_rec_server_and_dbf( Alias(), _rec, 1, "CONT" )
+         ELSE
+            dbf_update_rec( _rec )
+         ENDIF
 
-       ENDIF
+      ENDIF
 
-       IF !lOk
-          EXIT
-       ENDIF
+      IF !lOk
+         EXIT
+      ENDIF
 
-       SKIP
+      SKIP
 
    ENDDO
 
@@ -572,7 +569,7 @@ FUNCTION zamjeni_numericka_polja_u_tabeli( cKolona, cTrazi, cUslov )
       lRet := .T.
    ENDIF
 
-   IF lRet	                  
+   IF lRet
       dbSetOrder( nOrder )
       GO nRec
    ENDIF
@@ -600,7 +597,7 @@ FUNCTION replace_kolona_in_table( cKolona, trazi_val, zamijeni_val, last_search 
    GO TOP
 
    _saved := .F.
-	
+
    _has_semaphore := alias_has_semaphore()
 
    IF _has_semaphore
@@ -732,8 +729,8 @@ STATIC FUNCTION ObjDbGet()
    ENDIF
 
    // Restore state
-   SET( _SET_SCOREBOARD, lScore )
-   SET( _SET_EXIT, lExit )
+   Set( _SET_SCOREBOARD, lScore )
+   Set( _SET_EXIT, lExit )
    SetKey( K_INS, bIns )
 
    // Get the record's key value (or NIL) after the GET
@@ -851,7 +848,7 @@ STATIC FUNCTION EditPolja( nX, nY, xIni, cNazPolja, ;
       ENDIF
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 /*! \fn function TBPomjeranje(TB, cPomjeranje)
@@ -890,8 +887,6 @@ FUNCTION TBPomjeranje( TB, cPomjeranje )
    ELSEIF ( cPomjeranje ) = "0"
       TB:PanHome()
    ENDIF
-
-
 
 FUNCTION EvEr( cExpr, cMes, cT )
 

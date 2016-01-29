@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out knowhow ERP, a free and open source 
+/*
+ * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
  * Copyright (c) 1994-2011 by bring.out d.o.o Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including knowhow ERP specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -14,84 +14,85 @@
 // ------------------------------------
 // set_global_vars_from_dbf("w")
 // geerise public vars wId, wNaz ..
-// sa vrijednostima dbf polja Id, Naz 
+// sa vrijednostima dbf polja Id, Naz
 // -------------------------------------
-function set_global_memvars_from_dbf(zn)
+FUNCTION set_global_memvars_from_dbf( zn )
 
-return set_global_vars_from_dbf(zn)
+   RETURN set_global_vars_from_dbf( zn )
 
 // --------------------------------------------------
 // TODO: ime set_global_vars_from_dbf je legacy
 // --------------------------------------------------
-function set_global_vars_from_dbf(zn)
+FUNCTION set_global_vars_from_dbf( zn )
 
-local _i, _struct, _field, _var
+   LOCAL _i, _struct, _field, _var
 
-private cImeP, cVar
+   PRIVATE cImeP, cVar
 
-if zn == NIL 
-  zn := "_"
-endif
+   IF zn == NIL
+      zn := "_"
+   ENDIF
 
-_struct := DBSTRUCT()
+   _struct := dbStruct()
 
-for _i := 1 to LEN(_struct)
-   _field := _struct[_i, 1]
+   FOR _i := 1 TO Len( _struct )
+      _field := _struct[ _i, 1 ]
 
-    if !("#"+ _field +"#" $ "#BRISANO#_OID_#_COMMIT_#")
-        _var := zn + _field
-        // kreiram public varijablu sa imenom vrijednosti _var varijable
-        __MVPUBLIC(_var)
-        EVAL(MEMVARBLOCK(_var), EVAL(FIELDBLOCK(_field))) 
+      IF !( "#" + _field + "#" $ "#BRISANO#_OID_#_COMMIT_#" )
+         _var := zn + _field
+         // kreiram public varijablu sa imenom vrijednosti _var varijable
+         __mvPublic( _var )
+         Eval( MemVarBlock( _var ), Eval( FieldBlock( _field ) ) )
 
-    endif
-next
+      ENDIF
+   NEXT
 
-return .t.
+   RETURN .T.
 
-function get_dbf_global_memvars( zn, rel, lUtf )
-local _ime_polja, _i, _struct
-local _ret := hb_hash()
+FUNCTION get_dbf_global_memvars( zn, rel, lUtf )
 
-if zn == nil
-    zn := "_"
-endif
+   LOCAL _ime_polja, _i, _struct
+   LOCAL _ret := hb_Hash()
 
-// da li da pobrisem odmah iz memorije...
-if rel == NIL
-    rel := .t.
-endif
+   IF zn == nil
+      zn := "_"
+   ENDIF
 
-if lUtf == NIL
-   lUtf := .f.
-endif
+   // da li da pobrisem odmah iz memorije...
+   IF rel == NIL
+      rel := .T.
+   ENDIF
 
-_struct := DBSTRUCT()
+   IF lUtf == NIL
+      lUtf := .F.
+   ENDIF
 
-for _i := 1 to len(_struct)
+   _struct := dbStruct()
 
-    _ime_polja := _struct[_i, 1]
-   
-    if !("#"+ _ime_polja + "#" $ "#BRISANO#_OID_#_COMMIT_#")
+   FOR _i := 1 TO Len( _struct )
 
-        // punimo hash matricu sa vrijednostima public varijabli
-        // _ret["idfirma"] := wIdFirma, za zn = "w"
-        _ret[ LOWER(_ime_polja) ] := EVAL( MEMVARBLOCK( zn + _ime_polja) )
-        
-        IF ( VALTYPE( _ret[ LOWER(_ime_polja) ] ) == "C" ) .AND.  lUtf 
-            _ret[ LOWER(_ime_polja) ] := hb_StrToUtf8 ( _ret[ LOWER(_ime_polja) ]  )
-        ENDIF
+      _ime_polja := _struct[ _i, 1 ]
 
-        if rel
+      IF !( "#" + _ime_polja + "#" $ "#BRISANO#_OID_#_COMMIT_#" )
+
+         // punimo hash matricu sa vrijednostima public varijabli
+         // _ret["idfirma"] := wIdFirma, za zn = "w"
+         _ret[ Lower( _ime_polja ) ] := Eval( MemVarBlock( zn + _ime_polja ) )
+
+         IF ( ValType( _ret[ Lower( _ime_polja ) ] ) == "C" ) .AND.  lUtf
+            _ret[ Lower( _ime_polja ) ] := hb_StrToUTF8 ( _ret[ Lower( _ime_polja ) ]  )
+         ENDIF
+
+         IF rel
             // oslobadja public ili private varijablu
-            __MVXRELEASE( zn + _ime_polja)
-        endif
+            __mvXRelease( zn + _ime_polja )
+         ENDIF
 
-  endif
+      ENDIF
 
-next
+   NEXT
 
-return _ret
+   RETURN _ret
 
 
 
@@ -100,62 +101,62 @@ return _ret
 // fakt_fakt -> fakt
 // fakt_doks -> fakt
 // -----------------------------------------
-static function _table_base( a_dbf_rec )
-local _table := ""
-local _sep := "_"
-local _arr
+STATIC FUNCTION _table_base( a_dbf_rec )
+
+   LOCAL _table := ""
+   LOCAL _sep := "_"
+   LOCAL _arr
+
+   IF _sep $ a_dbf_rec[ "table" ]
+      _arr := toktoniz( a_dbf_rec[ "table" ], _sep )
+      IF Len( _arr ) > 1
+         _table := _arr[ 1 ]
+      ENDIF
+   ENDIF
+
+   RETURN _table
 
 
-if _sep $ a_dbf_rec["table"]
-	_arr := toktoniz( a_dbf_rec["table"], _sep )	
-	if LEN( _arr ) > 1
-		_table := _arr[1]
-	endif
-endif
+FUNCTION iterate_through_active_tables( iterate_block )
 
-return _table
+   LOCAL _key
+   LOCAL _f18_dbf
+   LOCAL _temp_tbl
+   LOCAL _sql_tbl := .F.
 
-// ----------------------------------------------------
-// ----------------------------------------------------
-function iterate_through_active_tables(iterate_block)
-local _key
-local _f18_dbf
-local _temp_tbl
-local _sql_tbl := .f.
+   get_dbf_params_from_config()
+   _f18_dbfs := f18_dbfs()
 
-get_dbf_params_from_config()
-_f18_dbfs := f18_dbfs()
+   FOR EACH _key in _f18_dbfs:Keys
 
-for each _key in _f18_dbfs:Keys
+      _temp_tbl := _f18_dbfs[ _key ][ "temp" ]
 
-    _temp_tbl := _f18_dbfs[_key]["temp"]
+      // sql tabela
+      IF hb_HHasKey( _f18_dbfs[ _key ], "sql" )
+         IF _f18_dbfs[ _key ][ "sql" ]
+            _sql_tbl := .T.
+         ENDIF
+      ENDIF
 
-    // sql tabela
-    if hb_hhaskey( _f18_dbfs[_key], "sql" )
-         if _f18_dbfs[_key]["sql"]
-               _sql_tbl := .t.
-         endif
-    endif
-         
-    if !_temp_tbl .and. !_sql_tbl
+      IF !_temp_tbl .AND. !_sql_tbl
 
-		_tbl_base := _table_base( _f18_dbfs[_key] )
+         _tbl_base := _table_base( _f18_dbfs[ _key ] )
 
-		// radi os/sii
-		if _tbl_base == "sii"
-			_tbl_base := "os"
-		endif
+         // radi os/sii
+         IF _tbl_base == "sii"
+            _tbl_base := "os"
+         ENDIF
 
-                // EMPTY - sifarnici (roba, tarifa itd)
-		if  EMPTY( _tbl_base ) .or. f18_use_module( _tbl_base )
-			EVAL(iterate_block, _f18_dbfs[_key] )
-		endif
+         // EMPTY - sifarnici (roba, tarifa itd)
+         IF  Empty( _tbl_base ) .OR. f18_use_module( _tbl_base )
+            Eval( iterate_block, _f18_dbfs[ _key ] )
+         ENDIF
 
-    endif
+      ENDIF
 
-next
+   NEXT
 
-return .t.
+   RETURN .T.
 
 // ---------------------------------------------------------------
 // utvrdjuje da li se tabela koristi
@@ -163,39 +164,37 @@ return .t.
 // ako je use KALK = N, is_active_dbf_table("kalk_kalk") => .f.
 //
 // ---------------------------------------------------------------
-function is_active_dbf_table(table)
-local _key
-local _f18_dbf
-local _temp_tbl
+FUNCTION is_active_dbf_table( table )
 
-_f18_dbfs := f18_dbfs()
+   LOCAL _key
+   LOCAL _f18_dbf
+   LOCAL _temp_tbl
 
-// tabela sa ovakvim imenom uopste ne postoji
-if  !HB_HHASKEY(_f18_dbfs, table)
-  return .f.
-endif
+   _f18_dbfs := f18_dbfs()
 
-
-_temp_tbl := _f18_dbfs[table]["temp"]
-
-  
-if !_temp_tbl
-
-		_tbl_base := _table_base( _f18_dbfs[table] )
-
-		// radi os/sii
-		if _tbl_base == "sii"
-			_tbl_base := "os"
-		endif
-
-        // EMPTY - sifarnici (roba, tarifa itd)
-		if  EMPTY(_tbl_base) .or. f18_use_module( _tbl_base )
-            return .t.
-		endif
-
-endif
-
-return .f.
+   // tabela sa ovakvim imenom uopste ne postoji
+   IF  !hb_HHasKey( _f18_dbfs, table )
+      RETURN .F.
+   ENDIF
 
 
+   _temp_tbl := _f18_dbfs[ table ][ "temp" ]
 
+
+   IF !_temp_tbl
+
+      _tbl_base := _table_base( _f18_dbfs[ table ] )
+
+      // radi os/sii
+      IF _tbl_base == "sii"
+         _tbl_base := "os"
+      ENDIF
+
+      // EMPTY - sifarnici (roba, tarifa itd)
+      IF  Empty( _tbl_base ) .OR. f18_use_module( _tbl_base )
+         RETURN .T.
+      ENDIF
+
+   ENDIF
+
+   RETURN .F.

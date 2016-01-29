@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -13,24 +13,26 @@
 #include "f18.ch"
 
 // parametri funkcija
-static par_1 
-static par_2
-static par_3
-static par_4
-static last_nX
-static last_nY
-static txt_in_name
-static txt_out_name
-static desktop_path
+STATIC par_1
+STATIC par_2
+STATIC par_3
+STATIC par_4
+STATIC last_nX
+STATIC last_nY
+STATIC txt_in_name
+STATIC txt_out_name
+STATIC desktop_path
 
 // ----------------------------------------------------
 // dodaje opciju u matricu opcija...
 // aOpt - matrica koja se proslijedjuje po referenci
 // cOption - string opcije npr "set readonly"
 // ----------------------------------------------------
-function add_gvim_options(aOpt, cOption)
-AADD(aOpt, { '"' + cOption + '"' })
-return
+FUNCTION add_gvim_options( aOpt, cOption )
+
+   AAdd( aOpt, { '"' + cOption + '"' } )
+
+   RETURN
 
 
 
@@ -39,192 +41,194 @@ return
 // aArgs - matrica koja se proslijedjuje po referenci
 // cArg - string argumneta npr "-c"
 // ----------------------------------------------------
-function add_gvim_args(aArgs, cArg)
-AADD(aArgs, { cArg })
-return
+FUNCTION add_gvim_args( aArgs, cArg )
+
+   AAdd( aArgs, { cArg } )
+
+   RETURN
 
 
 // -----------------------------------------
 // pokrece gvim sa zadanim parametrima...
 // -----------------------------------------
-function gvim_cmd()
-local aOpts := {}
-local aArgs := {}
-local cPom
+FUNCTION gvim_cmd()
 
-// setovanje argumenata gvim-a (aArgs)
-// -----------------------------------
-// -n (no swap file)
-cPom := "-n"
-add_gvim_args(@aArgs, cPom)
+   LOCAL aOpts := {}
+   LOCAL aArgs := {}
+   LOCAL cPom
 
-// -R (read only)
-cPom := "-R"
-add_gvim_args(@aArgs, cPom)
+   // setovanje argumenata gvim-a (aArgs)
+   // -----------------------------------
+   // -n (no swap file)
+   cPom := "-n"
+   add_gvim_args( @aArgs, cPom )
+
+   // -R (read only)
+   cPom := "-R"
+   add_gvim_args( @aArgs, cPom )
 
 
-// setovanje opcija gvim gui-ja (aOpts)
-// ------------------------------------
-// readonly
-//cPom := 'set readonly'
-//add_gvim_options(@aOpts, cPom)
+   // setovanje opcija gvim gui-ja (aOpts)
+   // ------------------------------------
+   // readonly
+   // cPom := 'set readonly'
+   // add_gvim_options(@aOpts, cPom)
 
-// pokreni gvim sa opcijama
-r_gvim_cmd(aArgs, aOpts)
+   // pokreni gvim sa opcijama
+   r_gvim_cmd( aArgs, aOpts )
 
-return
+   RETURN
 
 
 // -------------------------------------------------
 // pokrece gvim iz cmd line-a
 // aOpts - matrica sa opcijama
-// aArgs - matrica sa argumnetima 
+// aArgs - matrica sa argumnetima
 // -------------------------------------------------
-static function r_gvim_cmd(aArgs, aOpts)
-// gvim pokretacka komanda
-local cGvimCmd := ""
-local cSpace := SPACE(1)
-local nOpts
-local nArgs
+STATIC FUNCTION r_gvim_cmd( aArgs, aOpts )
 
-// putanja i naziv bat fajla za pokretanje gvim-a
-cRunGvim := PRIVPATH + "run_gvim.bat"
+   // gvim pokretacka komanda
+   LOCAL cGvimCmd := ""
+   LOCAL cSpace := Space( 1 )
+   LOCAL nOpts
+   LOCAL nArgs
 
-// putanja do desktopa
-desktop_path := '%HOMEDRIVE%%HOMEPATH%\Desktop\'
+   // putanja i naziv bat fajla za pokretanje gvim-a
+   cRunGvim := PRIVPATH + "run_gvim.bat"
 
-cGvimCmd += 'gvim'
+   // putanja do desktopa
+   desktop_path := '%HOMEDRIVE%%HOMEPATH%\Desktop\'
 
-if LEN(aArgs) > 0
-	for nArgs := 1 to LEN(aArgs)
-		cGvimCmd += cSpace
-		cGvimCmd += ALLTRIM(aArgs[nArgs, 1])
-		// generise sljedeci string, npr: ' -n'
-	next
-endif
+   cGvimCmd += 'gvim'
 
-// prodji kroz matricu opcija i dodaj ih u gvimcmd ....
-if LEN(aOpts) > 0
-	for nOpts:=1 to LEN(aOpts)
-		// maksimalni broj opcija je 10, preko toga ne idi...
-		if nOpts == 11
-			exit
-		endif
-		
-		cGvimCmd += cSpace
-		cGvimCmd += '-c'
-		cGvimCmd += cSpace
-		cGvimCmd += ALLTRIM(aOpts[nOpts, 1])
-		// generise sljedeci string, npr: ' -c "set readonly"'
-	next
-endif
+   IF Len( aArgs ) > 0
+      FOR nArgs := 1 TO Len( aArgs )
+         cGvimCmd += cSpace
+         cGvimCmd += AllTrim( aArgs[ nArgs, 1 ] )
+         // generise sljedeci string, npr: ' -n'
+      NEXT
+   ENDIF
 
-cGvimCmd += cSpace
+   // prodji kroz matricu opcija i dodaj ih u gvimcmd ....
+   IF Len( aOpts ) > 0
+      FOR nOpts := 1 TO Len( aOpts )
+         // maksimalni broj opcija je 10, preko toga ne idi...
+         IF nOpts == 11
+            EXIT
+         ENDIF
 
-if UPPER(RIGHT(txt_out_name, 4)) <> ".TXT"
-	txt_out_name += ".TXT"
-endif
+         cGvimCmd += cSpace
+         cGvimCmd += '-c'
+         cGvimCmd += cSpace
+         cGvimCmd += AllTrim( aOpts[ nOpts, 1 ] )
+         // generise sljedeci string, npr: ' -c "set readonly"'
+      NEXT
+   ENDIF
 
-cGvimCmd += '"' + desktop_path + txt_out_name + '"'
+   cGvimCmd += cSpace
 
-set printer to (cRunGvim)
-set printer on
-set console off
+   IF Upper( Right( txt_out_name, 4 ) ) <> ".TXT"
+      txt_out_name += ".TXT"
+   ENDIF
 
-// definisi komande bat fajla...
+   cGvimCmd += '"' + desktop_path + txt_out_name + '"'
 
-// pobrisi swap fajl ako je ostao... ali prvo attribut promjeni
-// posto je swp hidden...
-? 'ATTRIB -H "' + desktop_path + '.' + txt_out_name + '.swp"'
-? 'DEL "' + desktop_path + '.' + txt_out_name + '.swp"'
+   SET PRINTER to ( cRunGvim )
+   SET PRINTER ON
+   SET CONSOLE OFF
 
-// komanda kopiranja fajla outf.txt na desktop
-? 'COPY ' + PRIVPATH + txt_in_name + ' "' + desktop_path + txt_out_name + '"'
+   // definisi komande bat fajla...
 
-// komanda za pokretanje gvima
-? cGvimCmd
+   // pobrisi swap fajl ako je ostao... ali prvo attribut promjeni
+   // posto je swp hidden...
+   ? 'ATTRIB -H "' + desktop_path + '.' + txt_out_name + '.swp"'
+   ? 'DEL "' + desktop_path + '.' + txt_out_name + '.swp"'
 
-set printer to
-set printer off
-set console on
+   // komanda kopiranja fajla outf.txt na desktop
+   ? 'COPY ' + PRIVPATH + txt_in_name + ' "' + desktop_path + txt_out_name + '"'
 
-Run( 'start ' + cRunGvim )
+   // komanda za pokretanje gvima
+   ? cGvimCmd
 
-return
+   SET PRINTER TO
+   SET PRINTER OFF
+   SET CONSOLE ON
+
+   Run( 'start ' + cRunGvim )
+
+   RETURN
 
 
 // ---------------------------------------
 // start print u GVIM
 // cOut_name - ime izlaznog txt fajla
 // ---------------------------------------
-function gvim_print(cOut_Name)
+FUNCTION gvim_print( cOut_Name )
 
-last_nX := 0
-last_nY := 0
+   last_nX := 0
+   last_nY := 0
 
-par_1 := gPrinter
-par_2 := gcDirekt
-par_3 := gPTKonv
-par_4 := gKodnaS
+   par_1 := gPrinter
+   par_2 := gcDirekt
+   par_3 := gPTKonv
+   par_4 := gKodnaS
 
-txt_in_name := OUTF_FILE
+   txt_in_name := OUTF_FILE
 
-if ( cOut_name == nil )
-	txt_out_name := txt_in_name
-else
-	txt_out_name := cOut_name
-endif
+   IF ( cOut_name == nil )
+      txt_out_name := txt_in_name
+   ELSE
+      txt_out_name := cOut_name
+   ENDIF
 
-// uzmi parametre iz printera "G"
-SELECT F_GPARAMS
-if !used()
-        O_GPARAMS
-endif
+   // uzmi parametre iz printera "G"
+   SELECT F_GPARAMS
+   IF !Used()
+      O_GPARAMS
+   ENDIF
 
-gPrinter := "G"
-gPTKonv := "0 "
-gKodnaS := "8"
+   gPrinter := "G"
+   gPTKonv := "0 "
+   gKodnaS := "8"
 
-private cSection:="P"
-private cHistory:=gPrinter
-private aHistory:={}
+   PRIVATE cSection := "P"
+   PRIVATE cHistory := gPrinter
+   PRIVATE aHistory := {}
 
-RPar_Printer()
+   RPar_Printer()
 
-START PRINT CRET
+   START PRINT CRET
 
-return
+   RETURN
 
 
 
 // -------------------------------------
 // vrati standardne printer parametre
 // -------------------------------------
-function gvim_end()
+FUNCTION gvim_end()
 
-?
-ENDPRINT
+   ?
+   ENDPRINT
 
-// vrati tekuce parametre
-gPrinter := par_1
-gcDirekt := par_2
-gPTKonv := par_3
-gKodnaS := par_4
+   // vrati tekuce parametre
+   gPrinter := par_1
+   gcDirekt := par_2
+   gPTKonv := par_3
+   gKodnaS := par_4
 
-SELECT F_GPARAMS
-if !used()
-        O_GPARAMS
-endif
+   SELECT F_GPARAMS
+   IF !Used()
+      O_GPARAMS
+   ENDIF
 
-private cSection:="P"
-private cHistory:=gPrinter
-private aHistory:={}
+   PRIVATE cSection := "P"
+   PRIVATE cHistory := gPrinter
+   PRIVATE aHistory := {}
 
-RPar_Printer()
+   RPar_Printer()
 
-select gparams
-use
+   SELECT gparams
+   USE
 
-return
-
-
+   RETURN

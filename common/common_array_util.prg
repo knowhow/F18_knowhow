@@ -11,7 +11,7 @@
 
 
 #include "inkey.ch"
-#include "dbedit.ch"
+
 
 // This static maintains the "current row" for ABrowse()
 STATIC nRow

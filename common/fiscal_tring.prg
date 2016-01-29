@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -13,44 +13,44 @@
 #include "f18.ch"
 
 
-static LEN_KOLICINA := 8
-static LEN_CIJENA := 10
-static LEN_VRIJEDNOST := 12
-static PIC_KOLICINA := ""
-static PIC_VRIJEDNOST := ""
-static PIC_CIJENA := ""
-static __zahtjev_nula := "0"
+STATIC LEN_KOLICINA := 8
+STATIC LEN_CIJENA := 10
+STATIC LEN_VRIJEDNOST := 12
+STATIC PIC_KOLICINA := ""
+STATIC PIC_VRIJEDNOST := ""
+STATIC PIC_CIJENA := ""
+STATIC __zahtjev_nula := "0"
 
-static __xml_head := 'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"'
+STATIC __xml_head := 'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"'
 
 // direktorij odgovora
-static _d_answer := "odgovori"
+STATIC _d_answer := "odgovori"
 
 // trigeri za naziv fajla
 // stampa fiskalnog racuna
-static _tr_rac := "sfr"
+STATIC _tr_rac := "sfr"
 // stampa reklamnog racuna
-static _tr_rrac := "srr"
+STATIC _tr_rrac := "srr"
 // stampa dnevnog izvjestaja
-static _tr_drep := "sdi"
+STATIC _tr_drep := "sdi"
 // stampa periodicnog izvjestaja
-static _tr_prep := "spi"
+STATIC _tr_prep := "spi"
 // stampa nefiskalni tekst
-static _tr_ntxt := "snd"
+STATIC _tr_ntxt := "snd"
 // unos novca
-static _tr_p_in := "un"
+STATIC _tr_p_in := "un"
 // povrat novca
-static _tr_p_out := "pn"
+STATIC _tr_p_out := "pn"
 // stampa duplikata
-static _tr_dbl := "dup"
+STATIC _tr_dbl := "dup"
 // reset data on PU server
-static _tr_x := "rst"
+STATIC _tr_x := "rst"
 // inicijalizacija
-static _tr_init := "init"
+STATIC _tr_init := "init"
 // ponisti racun
-static _tr_crac := "pon"
+STATIC _tr_crac := "pon"
 // presjek stanja
-static _tr_xrpt := "sps"
+STATIC _tr_xrpt := "sps"
 
 // legenda nTrig vrijednosti za trigere...
 // 1 - stampa racuna
@@ -86,7 +86,7 @@ static _tr_xrpt := "sps"
 
 
 // struktura matrice aKupac
-// 
+//
 // aKupac[1] - idbroj kupca
 // aKupac[2] - naziv
 // aKupac[3] - adresa
@@ -97,223 +97,225 @@ static _tr_xrpt := "sps"
 // -------------------------------------------------------------------
 // stampa fiskalnog racuna tring fiskalizacija
 // -------------------------------------------------------------------
-function tring_rn( dev_param, items, head, storno )
-local _xml, _vrsta_zahtjeva
-local _i
-local _racun_broj
-local _vr_plac, _total_plac
-local _art_plu, _art_naz, _art_jmj, _cijena, _kolicina
-local _rabat, _grupa, _plu
-local _customer := .f.
-local _err_level := 0
-local _reklamni_racun
-local _trig
-local _f_name := dev_param["out_file"]
-local _f_path := dev_param["out_dir"]
+FUNCTION tring_rn( dev_param, items, head, storno )
 
-// stampanje racuna
-_vrsta_zahtjeva := "0"
+   LOCAL _xml, _vrsta_zahtjeva
+   LOCAL _i
+   LOCAL _racun_broj
+   LOCAL _vr_plac, _total_plac
+   LOCAL _art_plu, _art_naz, _art_jmj, _cijena, _kolicina
+   LOCAL _rabat, _grupa, _plu
+   LOCAL _customer := .F.
+   LOCAL _err_level := 0
+   LOCAL _reklamni_racun
+   LOCAL _trig
+   LOCAL _f_name := dev_param[ "out_file" ]
+   LOCAL _f_path := dev_param[ "out_dir" ]
 
-if storno
-	// stampanje reklamnog racuna
-	_vrsta_zahtjeva := "2"
-	_reklamni_racun := ALLTRIM( items[ 1, 8 ] )
-endif
+   // stampanje racuna
+   _vrsta_zahtjeva := "0"
 
-PIC_KOLICINA := "9999999.99"
-PIC_VRIJEDNOST := "9999999.99"
-PIC_CIJENA := "9999999.99"
+   IF storno
+      // stampanje reklamnog racuna
+      _vrsta_zahtjeva := "2"
+      _reklamni_racun := AllTrim( items[ 1, 8 ] )
+   ENDIF
 
-if head <> NIL .and. LEN( head ) > 0
-	_customer := .t.
-endif
+   PIC_KOLICINA := "9999999.99"
+   PIC_VRIJEDNOST := "9999999.99"
+   PIC_CIJENA := "9999999.99"
 
-// to je zapravo broj racuna !!!
-_racun_broj := items[ 1, 1 ]
+   IF head <> NIL .AND. Len( head ) > 0
+      _customer := .T.
+   ENDIF
 
-_trig := 1
+   // to je zapravo broj racuna !!!
+   _racun_broj := items[ 1, 1 ]
 
-// putanja do izlaznog xml fajla
-if storno
-	_f_name := fiscal_out_filename( dev_param["out_file"], __zahtjev_nula, _tr_rrac )
-	_trig := 2
-else
-	_f_name := fiscal_out_filename( dev_param["out_file"], __zahtjev_nula, _tr_rac )
-endif
+   _trig := 1
 
-// c:\tring\xml\sfr.001
-_xml := _f_path + _f_name
+   // putanja do izlaznog xml fajla
+   IF storno
+      _f_name := fiscal_out_filename( dev_param[ "out_file" ], __zahtjev_nula, _tr_rrac )
+      _trig := 2
+   ELSE
+      _f_name := fiscal_out_filename( dev_param[ "out_file" ], __zahtjev_nula, _tr_rac )
+   ENDIF
 
-// brisi answer
-tring_delete_answer( dev_param, _trig )
+   // c:\tring\xml\sfr.001
+   _xml := _f_path + _f_name
 
-// otvori xml
-open_xml( _xml )
+   // brisi answer
+   tring_delete_answer( dev_param, _trig )
 
-// upisi header
-xml_head()
+   // otvori xml
+   open_xml( _xml )
 
-xml_subnode( "RacunZahtjev " + __xml_head, .f.)
+   // upisi header
+   xml_head()
 
-  xml_node( "BrojZahtjeva", _racun_broj )
-  
-  // 0 - stampa sve stavke i zatvara racun
-  // 1 - stampa stavku po stavku
-  // 
-  // Mi cemo koristiti varijantu "0"
-  xml_node( "VrstaZahtjeva", _vrsta_zahtjeva )
-  
-  xml_subnode( "NoviObjekat", .f. )
+   xml_subnode( "RacunZahtjev " + __xml_head, .F. )
 
-    // ako ima podataka o kupcu
-    if _customer
-    
-  	    xml_subnode("Kupac", .f.)
+   xml_node( "BrojZahtjeva", _racun_broj )
 
-	        xml_node("IDbroj", head[ 1, 1 ] )
-	        xml_node("Naziv", to_xml_encoding( head[ 1, 2 ] ) )
-	        xml_node("Adresa", to_xml_encoding( head[ 1, 3 ] ) )
-	        xml_node("PostanskiBroj", head[ 1, 4 ] )
-	        xml_node("Grad", to_xml_encoding( head[ 1, 5 ] ) )
-  	
-	    xml_subnode("Kupac", .t.)	
+   // 0 - stampa sve stavke i zatvara racun
+   // 1 - stampa stavku po stavku
+   //
+   // Mi cemo koristiti varijantu "0"
+   xml_node( "VrstaZahtjeva", _vrsta_zahtjeva )
 
-    endif
-    
-    xml_subnode("StavkeRacuna", .f.)
+   xml_subnode( "NoviObjekat", .F. )
 
-    for _i := 1 to LEN( items )
+   // ako ima podataka o kupcu
+   IF _customer
 
-	    _art_id := items[ _i, 3 ]
-	    _art_naz := ALLTRIM( PADR( items[ _i, 4 ], 36 ))
-	    _art_jmj := items[ _i, 16 ]
-	    _cijena := items[ _i, 5 ]
-	    _kolicina := items[ _i, 6 ]
-	    _rabat := items[ _i, 11 ]
-	    _tarfa := fiscal_txt_get_tarifa( items[ _i, 7 ], dev_param["pdv"], "TRING" )
-	    _grupa := ""
-	    _plu := ALLTRIM( STR( items[ _i, 9 ] ))
+      xml_subnode( "Kupac", .F. )
 
-	    xml_subnode("RacunStavka", .f.)
-	
-	        xml_subnode("artikal", .f.)
-	
-	            xml_node("Sifra", _plu )
-	            xml_node("Naziv", to_xml_encoding( _art_naz ) )
-	            xml_node("JM", to_xml_encoding( PADR( _art_jmj, 2 ) ) )
-	            xml_node("Cijena", show_number( _cijena, PIC_CIJENA ) )
-	            xml_node("Stopa", _tarifa )
+      xml_node( "IDbroj", head[ 1, 1 ] )
+      xml_node( "Naziv", to_xml_encoding( head[ 1, 2 ] ) )
+      xml_node( "Adresa", to_xml_encoding( head[ 1, 3 ] ) )
+      xml_node( "PostanskiBroj", head[ 1, 4 ] )
+      xml_node( "Grad", to_xml_encoding( head[ 1, 5 ] ) )
 
-	        xml_subnode("artikal", .t.)
+      xml_subnode( "Kupac", .T. )
 
-	        xml_node("Kolicina", show_number( _kolicina, PIC_KOLICINA ) )
-	        xml_node("Rabat", show_number( _rabat, PIC_VRIJEDNOST ) )
+   ENDIF
 
-	    xml_subnode("RacunStavka", .t.)
+   xml_subnode( "StavkeRacuna", .F. )
 
-    next
+   FOR _i := 1 TO Len( items )
 
-    xml_subnode("StavkeRacuna", .t.)
+      _art_id := items[ _i, 3 ]
+      _art_naz := AllTrim( PadR( items[ _i, 4 ], 36 ) )
+      _art_jmj := items[ _i, 16 ]
+      _cijena := items[ _i, 5 ]
+      _kolicina := items[ _i, 6 ]
+      _rabat := items[ _i, 11 ]
+      _tarfa := fiscal_txt_get_tarifa( items[ _i, 7 ], dev_param[ "pdv" ], "TRING" )
+      _grupa := ""
+      _plu := AllTrim( Str( items[ _i, 9 ] ) )
 
-    // vrste placanja, oznaka:
-    //   "GOTOVINA"
-    //   "CEK"
-    //   "VIRMAN"
-    //   "KARTICA"
+      xml_subnode( "RacunStavka", .F. )
 
-    if ALLTRIM( items[ 1, 13 ]) == "3" .and. storno
-        _vr_plac := fiscal_txt_get_vr_plac( "2", "TRING" )
-    else
-        _vr_plac := fiscal_txt_get_vr_plac( "0", "TRING" )
-    endif
+      xml_subnode( "artikal", .F. )
 
-    _total_plac := 0
+      xml_node( "Sifra", _plu )
+      xml_node( "Naziv", to_xml_encoding( _art_naz ) )
+      xml_node( "JM", to_xml_encoding( PadR( _art_jmj, 2 ) ) )
+      xml_node( "Cijena", show_number( _cijena, PIC_CIJENA ) )
+      xml_node( "Stopa", _tarifa )
 
-    xml_subnode("VrstePlacanja", .f.)
-      xml_subnode("VrstaPlacanja", .f.)
+      xml_subnode( "artikal", .T. )
 
-         xml_node("Oznaka", _vr_plac ) 
-         xml_node("Iznos", ALLTRIM( STR( _total_plac ) ) )
+      xml_node( "Kolicina", show_number( _kolicina, PIC_KOLICINA ) )
+      xml_node( "Rabat", show_number( _rabat, PIC_VRIJEDNOST ) )
 
-      xml_subnode("VrstaPlacanja", .t.)
-    xml_subnode("VrstePlacanja", .t.)
+      xml_subnode( "RacunStavka", .T. )
 
-    xml_node("Napomena", "racun br: " + _racun_broj )
-    
-    if storno
-       xml_node("BrojRacuna", _reklamni_racun )
-    else
-       xml_node("BrojRacuna", _racun_broj )
-    endif
+   NEXT
 
-  xml_subnode("NoviObjekat", .t.)
+   xml_subnode( "StavkeRacuna", .T. )
 
-xml_subnode("RacunZahtjev", .t.)
+   // vrste placanja, oznaka:
+   // "GOTOVINA"
+   // "CEK"
+   // "VIRMAN"
+   // "KARTICA"
 
-close_xml()
+   IF AllTrim( items[ 1, 13 ] ) == "3" .AND. storno
+      _vr_plac := fiscal_txt_get_vr_plac( "2", "TRING" )
+   ELSE
+      _vr_plac := fiscal_txt_get_vr_plac( "0", "TRING" )
+   ENDIF
 
-return _err_level
+   _total_plac := 0
+
+   xml_subnode( "VrstePlacanja", .F. )
+   xml_subnode( "VrstaPlacanja", .F. )
+
+   xml_node( "Oznaka", _vr_plac )
+   xml_node( "Iznos", AllTrim( Str( _total_plac ) ) )
+
+   xml_subnode( "VrstaPlacanja", .T. )
+   xml_subnode( "VrstePlacanja", .T. )
+
+   xml_node( "Napomena", "racun br: " + _racun_broj )
+
+   IF storno
+      xml_node( "BrojRacuna", _reklamni_racun )
+   ELSE
+      xml_node( "BrojRacuna", _racun_broj )
+   ENDIF
+
+   xml_subnode( "NoviObjekat", .T. )
+
+   xml_subnode( "RacunZahtjev", .T. )
+
+   close_xml()
+
+   RETURN _err_level
 
 
 // ----------------------------------------------
 // polog novca u uredjaj
 // ----------------------------------------------
-function tring_polog( dev_param )
-local _f_name
-local _xml
-local _zahtjev_broj := "0"
-local _zahtjev_vrsta := "7"
-local _cash := 0
-local _trig := 6 
+FUNCTION tring_polog( dev_param )
 
-Box(, 1, 50 )
-	@ m_x + 1, m_y + 2 SAY "Unesi polog:" GET _cash ;
-		PICT "999999.99"
-	read
-BoxC()
+   LOCAL _f_name
+   LOCAL _xml
+   LOCAL _zahtjev_broj := "0"
+   LOCAL _zahtjev_vrsta := "7"
+   LOCAL _cash := 0
+   LOCAL _trig := 6
 
-if _cash = 0 .or. LastKey() == K_ESC
-	return
-endif
+   Box(, 1, 50 )
+   @ m_x + 1, m_y + 2 SAY "Unesi polog:" GET _cash ;
+      PICT "999999.99"
+   READ
+   BoxC()
 
-_f_name := fiscal_out_filename( dev_param["out_file"], __zahtjev_nula, _tr_p_in )
+   IF _cash = 0 .OR. LastKey() == K_ESC
+      RETURN
+   ENDIF
 
-if _cash < 0
-	// ovo je povrat
-	_zahtjev_vrsta := "8"
-	_f_name := fiscal_out_filename( dev_param["out_file"], __zahtjev_nula, _tr_p_out )
-	_trig := 7
-endif
+   _f_name := fiscal_out_filename( dev_param[ "out_file" ], __zahtjev_nula, _tr_p_in )
 
-// brisi answer
-tring_delete_answer( dev_param, _trig )
+   IF _cash < 0
+      // ovo je povrat
+      _zahtjev_vrsta := "8"
+      _f_name := fiscal_out_filename( dev_param[ "out_file" ], __zahtjev_nula, _tr_p_out )
+      _trig := 7
+   ENDIF
 
-// c:\tring\xml\unosnovca.001
-_xml := dev_param["out_dir"] + _f_name
+   // brisi answer
+   tring_delete_answer( dev_param, _trig )
 
-// otvori xml
-open_xml( _xml )
+   // c:\tring\xml\unosnovca.001
+   _xml := dev_param[ "out_dir" ] + _f_name
 
-// upisi header
-xml_head()
+   // otvori xml
+   open_xml( _xml )
 
-xml_subnode("RacunZahtjev " + __xml_head, .f.)
+   // upisi header
+   xml_head()
 
-  xml_node("BrojZahtjeva", _zahtjev_broj )
-  xml_node("VrstaZahtjeva", _zahtjev_vrsta )
-  
-  xml_subnode("NoviObjekat", .f. )
-     
-        xml_node( "Oznaka", "Gotovina" )
-        xml_node( "Iznos", ALLTRIM( STR( _cash, 12, 2 ) ) )
-     
-  xml_subnode("NoviObjekat", .t. )
-  
-xml_subnode("RacunZahtjev", .t.)
+   xml_subnode( "RacunZahtjev " + __xml_head, .F. )
 
-close_xml()
+   xml_node( "BrojZahtjeva", _zahtjev_broj )
+   xml_node( "VrstaZahtjeva", _zahtjev_vrsta )
 
-return
+   xml_subnode( "NoviObjekat", .F. )
+
+   xml_node( "Oznaka", "Gotovina" )
+   xml_node( "Iznos", AllTrim( Str( _cash, 12, 2 ) ) )
+
+   xml_subnode( "NoviObjekat", .T. )
+
+   xml_subnode( "RacunZahtjev", .T. )
+
+   close_xml()
+
+   RETURN
 
 
 
@@ -321,376 +323,387 @@ return
 // ----------------------------------------------
 // prepis dokumenata
 // ----------------------------------------------
-function tring_double( dev_param )
-local cF_out
-local cXml
-local cBr_zahtjeva := "0"
-local cVr_zahtjeva := "3"
-local nFisc_no := 0
-local nTrigg := 8
+FUNCTION tring_double( dev_param )
 
-Box(,1,50)
-	@ m_x + 1, m_y + 2 SAY "Duplikat racuna:" GET nFisc_no
-	read
-BoxC()
+   LOCAL cF_out
+   LOCAL cXml
+   LOCAL cBr_zahtjeva := "0"
+   LOCAL cVr_zahtjeva := "3"
+   LOCAL nFisc_no := 0
+   LOCAL nTrigg := 8
 
-if nFisc_no = 0 .or. LastKey() == K_ESC
-	return
-endif
+   Box(, 1, 50 )
+   @ m_x + 1, m_y + 2 SAY "Duplikat racuna:" GET nFisc_no
+   READ
+   BoxC()
 
-cF_out := fiscal_out_filename( dev_param["out_file"], __zahtjev_nula, _tr_dbl )
+   IF nFisc_no = 0 .OR. LastKey() == K_ESC
+      RETURN
+   ENDIF
 
-// c:\tring\xml\stampatiperiodicniizvjestaj.001
-cXML := dev_param["out_dir"] + cF_out
+   cF_out := fiscal_out_filename( dev_param[ "out_file" ], __zahtjev_nula, _tr_dbl )
 
-// brisi answer
-tring_delete_answer( dev_param, nTrigg )
+   // c:\tring\xml\stampatiperiodicniizvjestaj.001
+   cXML := dev_param[ "out_dir" ] + cF_out
 
-// otvori xml
-open_xml( cXml )
+   // brisi answer
+   tring_delete_answer( dev_param, nTrigg )
 
-// upisi header
-xml_head()
+   // otvori xml
+   open_xml( cXml )
 
-xml_subnode("Zahtjev " + __xml_head, .f.)
+   // upisi header
+   xml_head()
 
-  xml_node("BrojZahtjeva", ALLTRIM(STR(nFisc_no)) )
-  xml_node("VrstaZahtjeva", cVr_zahtjeva )
-  xml_node("Parametri", "" )
- 
-xml_subnode("Zahtjev", .t.)
+   xml_subnode( "Zahtjev " + __xml_head, .F. )
 
-// zatvori fajl...
-close_xml()
+   xml_node( "BrojZahtjeva", AllTrim( Str( nFisc_no ) ) )
+   xml_node( "VrstaZahtjeva", cVr_zahtjeva )
+   xml_node( "Parametri", "" )
 
-return
+   xml_subnode( "Zahtjev", .T. )
+
+   // zatvori fajl...
+   close_xml()
+
+   RETURN
 
 
 // ----------------------------------------------
 // periodicni izvjestaj
 // ----------------------------------------------
-function tring_per_rpt( dev_param )
-local cF_out
-local cXml
-local cBr_zahtjeva := "0"
-local cVr_zahtjeva := "5"
-local cDatumOd := ""
-local cDatumDo := ""
-local dD_od := DATE()-30
-local dD_do := DATE()
-local nTrigg := 4
+FUNCTION tring_per_rpt( dev_param )
 
-Box(,1,50)
-	@ m_x + 1, m_y + 2 SAY "Od datuma:" GET dD_od
-	@ m_x + 1, col() + 1 SAY "do:" GET dD_do
-	read
-BoxC()
+   LOCAL cF_out
+   LOCAL cXml
+   LOCAL cBr_zahtjeva := "0"
+   LOCAL cVr_zahtjeva := "5"
+   LOCAL cDatumOd := ""
+   LOCAL cDatumDo := ""
+   LOCAL dD_od := Date() -30
+   LOCAL dD_do := Date()
+   LOCAL nTrigg := 4
 
-cDatumOd := _fix_date( dD_od )
-cDatumDo := _fix_date( dD_do )
+   Box(, 1, 50 )
+   @ m_x + 1, m_y + 2 SAY "Od datuma:" GET dD_od
+   @ m_x + 1, Col() + 1 SAY "do:" GET dD_do
+   READ
+   BoxC()
 
-cF_out := fiscal_out_filename( dev_param["out_file"], __zahtjev_nula, _tr_prep )
+   cDatumOd := _fix_date( dD_od )
+   cDatumDo := _fix_date( dD_do )
 
-// c:\tring\xml\stampatiperiodicniizvjestaj.001
-cXML := dev_param["out_dir"] + cF_out
+   cF_out := fiscal_out_filename( dev_param[ "out_file" ], __zahtjev_nula, _tr_prep )
 
-// brisi answer
-tring_delete_answer( dev_param, nTrigg )
+   // c:\tring\xml\stampatiperiodicniizvjestaj.001
+   cXML := dev_param[ "out_dir" ] + cF_out
 
-// otvori xml
-open_xml( cXml )
+   // brisi answer
+   tring_delete_answer( dev_param, nTrigg )
 
-// upisi header
-xml_head()
+   // otvori xml
+   open_xml( cXml )
 
-xml_subnode("Zahtjev " + __xml_head, .f.)
+   // upisi header
+   xml_head()
 
-  xml_node("BrojZahtjeva", cBr_zahtjeva )
-  xml_node("VrstaZahtjeva", cVr_zahtjeva )
-  
-  xml_subnode("Parametri", .f. )
-     
-     xml_subnode("Parametar", .f. )
-        xml_node( "Naziv", "odDatuma" )
-        xml_node( "Vrijednost", cDatumOd )
-     xml_subnode("Parametar", .t. )
-     
-     xml_subnode("Parametar", .f. )
-        xml_node( "Naziv", "doDatuma" )
-        xml_node( "Vrijednost", cDatumDo )
-     xml_subnode("Parametar", .t. )
-    
-  xml_subnode("Parametri", .t. )
-  
-xml_subnode("Zahtjev", .t.)
+   xml_subnode( "Zahtjev " + __xml_head, .F. )
 
-// zatvori fajl...
-close_xml()
+   xml_node( "BrojZahtjeva", cBr_zahtjeva )
+   xml_node( "VrstaZahtjeva", cVr_zahtjeva )
 
-return
+   xml_subnode( "Parametri", .F. )
+
+   xml_subnode( "Parametar", .F. )
+   xml_node( "Naziv", "odDatuma" )
+   xml_node( "Vrijednost", cDatumOd )
+   xml_subnode( "Parametar", .T. )
+
+   xml_subnode( "Parametar", .F. )
+   xml_node( "Naziv", "doDatuma" )
+   xml_node( "Vrijednost", cDatumDo )
+   xml_subnode( "Parametar", .T. )
+
+   xml_subnode( "Parametri", .T. )
+
+   xml_subnode( "Zahtjev", .T. )
+
+   // zatvori fajl...
+   close_xml()
+
+   RETURN
 
 // ----------------------------------------------
 // reset zahtjeva
 // ----------------------------------------------
-function tring_reset( dev_param )
-local cF_out
-local cXml
-local nTrigg := 9
+FUNCTION tring_reset( dev_param )
 
-cF_out := fiscal_out_filename( dev_param["out_file"], __zahtjev_nula, _tr_x )
+   LOCAL cF_out
+   LOCAL cXml
+   LOCAL nTrigg := 9
 
-// c:\tring\xml\reset.001
-cXML := dev_param["out_dir"] + cF_out
+   cF_out := fiscal_out_filename( dev_param[ "out_file" ], __zahtjev_nula, _tr_x )
 
-// brisi answer
-tring_delete_answer( dev_param, nTrigg )
+   // c:\tring\xml\reset.001
+   cXML := dev_param[ "out_dir" ] + cF_out
 
-// otvori xml
-open_xml( cXml )
+   // brisi answer
+   tring_delete_answer( dev_param, nTrigg )
 
-// upisi header
-xml_head()
+   // otvori xml
+   open_xml( cXml )
 
-xml_node("boolean", "false" )
+   // upisi header
+   xml_head()
 
-// zatvori fajl...
-close_xml()
+   xml_node( "boolean", "false" )
 
-return
+   // zatvori fajl...
+   close_xml()
+
+   RETURN
 
 
 // ----------------------------------------------
 // inicijalizacija
 // ----------------------------------------------
-function tring_init( dev_param, cOper, cPwd )
-local cF_out
-local cXml
-local nTrigg := 10
+FUNCTION tring_init( dev_param, cOper, cPwd )
 
-cF_out := fiscal_out_filename( dev_param["out_file"], __zahtjev_nula, _tr_init )
+   LOCAL cF_out
+   LOCAL cXml
+   LOCAL nTrigg := 10
 
-cOper := ALLTRIM( dev_param["op_id"] )
+   cF_out := fiscal_out_filename( dev_param[ "out_file" ], __zahtjev_nula, _tr_init )
 
-// c:\tring\xml\inicijalizacija.001
-cXML := dev_param["out_dir"] + cF_out
+   cOper := AllTrim( dev_param[ "op_id" ] )
 
-// brisi answer
-tring_delete_answer( dev_param, nTrigg )
+   // c:\tring\xml\inicijalizacija.001
+   cXML := dev_param[ "out_dir" ] + cF_out
 
-// otvori xml
-open_xml( cXml )
+   // brisi answer
+   tring_delete_answer( dev_param, nTrigg )
 
-// upisi header
-xml_head()
+   // otvori xml
+   open_xml( cXml )
 
-xml_subnode("Operator " + __xml_head, .f.)
+   // upisi header
+   xml_head()
 
-  xml_node("BrojOperatora", cOper )
-  xml_node("Lozinka", cPwd )
-  
-xml_subnode("Operator", .t.)
+   xml_subnode( "Operator " + __xml_head, .F. )
 
-// zatvori fajl...
-close_xml()
+   xml_node( "BrojOperatora", cOper )
+   xml_node( "Lozinka", cPwd )
 
-return
+   xml_subnode( "Operator", .T. )
+
+   // zatvori fajl...
+   close_xml()
+
+   RETURN
 
 
 // ----------------------------------------------
 // prekini racun
 // ----------------------------------------------
-function tring_close_rn( dev_param )
-local cF_out
-local cXml
-local cBr_zahtjeva := "0"
-local cVr_zahtjeva := "9"
-local nTrigg := 11
+FUNCTION tring_close_rn( dev_param )
 
-cF_out := fiscal_out_filename( dev_param["out_file"], __zahtjev_nula, _tr_crac )
+   LOCAL cF_out
+   LOCAL cXml
+   LOCAL cBr_zahtjeva := "0"
+   LOCAL cVr_zahtjeva := "9"
+   LOCAL nTrigg := 11
 
-// c:\tring\xml\prekiniracun.001
-cXML := dev_param["out_dir"] + cF_out
+   cF_out := fiscal_out_filename( dev_param[ "out_file" ], __zahtjev_nula, _tr_crac )
 
-// brisi out
-tring_delete_answer( dev_param, nTrigg )
+   // c:\tring\xml\prekiniracun.001
+   cXML := dev_param[ "out_dir" ] + cF_out
 
-// otvori xml
-open_xml( cXml )
+   // brisi out
+   tring_delete_answer( dev_param, nTrigg )
 
-// upisi header
-xml_head()
+   // otvori xml
+   open_xml( cXml )
 
-xml_subnode("Zahtjev " + __xml_head, .f.)
+   // upisi header
+   xml_head()
 
-  xml_node("BrojZahtjeva", cBr_zahtjeva )
-  xml_node("VrstaZahtjeva", cVr_zahtjeva )
-  xml_node("Parametri", "" )
-  
-xml_subnode("Zahtjev", .t.)
+   xml_subnode( "Zahtjev " + __xml_head, .F. )
 
-// zatvori fajl...
-close_xml()
+   xml_node( "BrojZahtjeva", cBr_zahtjeva )
+   xml_node( "VrstaZahtjeva", cVr_zahtjeva )
+   xml_node( "Parametri", "" )
 
-return
+   xml_subnode( "Zahtjev", .T. )
+
+   // zatvori fajl...
+   close_xml()
+
+   RETURN
 
 
 // ----------------------------------------------
 // presjek stanja
 // ----------------------------------------------
-function tring_x_rpt( dev_param )
-local cF_out
-local cXml
-local cBr_zahtjeva := "0"
-local cVr_zahtjeva := "3"
-local nTrigg := 5 
+FUNCTION tring_x_rpt( dev_param )
 
-cF_out := fiscal_out_filename( dev_param["out_file"], __zahtjev_nula, _tr_xrpt )
+   LOCAL cF_out
+   LOCAL cXml
+   LOCAL cBr_zahtjeva := "0"
+   LOCAL cVr_zahtjeva := "3"
+   LOCAL nTrigg := 5
 
-// c:\tring\xml\stampatidnevniizvjestaj.001
-cXML := dev_param["out_dir"] + cF_out
+   cF_out := fiscal_out_filename( dev_param[ "out_file" ], __zahtjev_nula, _tr_xrpt )
 
-tring_delete_answer( dev_param, nTrigg )
+   // c:\tring\xml\stampatidnevniizvjestaj.001
+   cXML := dev_param[ "out_dir" ] + cF_out
 
-// otvori xml
-open_xml( cXml )
+   tring_delete_answer( dev_param, nTrigg )
 
-// upisi header
-xml_head()
+   // otvori xml
+   open_xml( cXml )
 
-xml_subnode("Zahtjev " + __xml_head, .f.)
+   // upisi header
+   xml_head()
 
-  xml_node("BrojZahtjeva", cBr_zahtjeva )
-  xml_node("VrstaZahtjeva", cVr_zahtjeva )
-  xml_node("Parametri", "" )
-  
-xml_subnode("Zahtjev", .t.)
+   xml_subnode( "Zahtjev " + __xml_head, .F. )
 
-// zatvori fajl...
-close_xml()
+   xml_node( "BrojZahtjeva", cBr_zahtjeva )
+   xml_node( "VrstaZahtjeva", cVr_zahtjeva )
+   xml_node( "Parametri", "" )
 
-return
+   xml_subnode( "Zahtjev", .T. )
+
+   // zatvori fajl...
+   close_xml()
+
+   RETURN
 
 
 // ----------------------------------------------
 // dnevni izvjestaj
 // ----------------------------------------------
-function tring_daily_rpt( dev_param )
-local cF_out
-local cXml
-local cBr_zahtjeva := "0"
-local cVr_zahtjeva := "4"
-local nTrigg := 3
-local _param_date, _param_time
-local _rpt_type := "Z"
+FUNCTION tring_daily_rpt( dev_param )
 
-if Pitanje(,"Stampati dnevni izvjestaj", "D") == "N"
-	return
-endif
+   LOCAL cF_out
+   LOCAL cXml
+   LOCAL cBr_zahtjeva := "0"
+   LOCAL cVr_zahtjeva := "4"
+   LOCAL nTrigg := 3
+   LOCAL _param_date, _param_time
+   LOCAL _rpt_type := "Z"
 
-_param_date := "zadnji_" + _rpt_type + "_izvjestaj_datum"
-_param_time := "zadnji_" + _rpt_type + "_izvjestaj_vrijeme"
+   IF Pitanje(, "Stampati dnevni izvjestaj", "D" ) == "N"
+      RETURN
+   ENDIF
 
-// iscitaj zadnje formirane izvjestaje...
-_last_date := fetch_metric( _param_date, NIL, CTOD("") )
-_last_time := PADR( fetch_metric( _param_time, NIL, "" ), 5 )
+   _param_date := "zadnji_" + _rpt_type + "_izvjestaj_datum"
+   _param_time := "zadnji_" + _rpt_type + "_izvjestaj_vrijeme"
 
-if DATE() == _last_date
-    MsgBeep( "Zadnji dnevni izvjestaj radjen " + DTOC( _last_date) + " u " + _last_time )
-endif
+   // iscitaj zadnje formirane izvjestaje...
+   _last_date := fetch_metric( _param_date, NIL, CToD( "" ) )
+   _last_time := PadR( fetch_metric( _param_time, NIL, "" ), 5 )
 
-cF_out := fiscal_out_filename( dev_param["out_file"], __zahtjev_nula, _tr_drep )
+   IF Date() == _last_date
+      MsgBeep( "Zadnji dnevni izvjestaj radjen " + DToC( _last_date ) + " u " + _last_time )
+   ENDIF
 
-// c:\tring\xml\stampatidnevniizvjestaj.001
-cXML := dev_param["out_dir"] + cF_out
+   cF_out := fiscal_out_filename( dev_param[ "out_file" ], __zahtjev_nula, _tr_drep )
 
-tring_delete_answer( dev_param, nTrigg )
+   // c:\tring\xml\stampatidnevniizvjestaj.001
+   cXML := dev_param[ "out_dir" ] + cF_out
 
-// otvori xml
-open_xml( cXml )
+   tring_delete_answer( dev_param, nTrigg )
 
-// upisi header
-xml_head()
+   // otvori xml
+   open_xml( cXml )
 
-xml_subnode("Zahtjev " + __xml_head, .f.)
+   // upisi header
+   xml_head()
 
-  xml_node("BrojZahtjeva", cBr_zahtjeva )
-  xml_node("VrstaZahtjeva", cVr_zahtjeva )
-  xml_node("Parametri", "" )
-  
-xml_subnode("Zahtjev", .t.)
+   xml_subnode( "Zahtjev " + __xml_head, .F. )
 
-// zatvori fajl...
-close_xml()
+   xml_node( "BrojZahtjeva", cBr_zahtjeva )
+   xml_node( "VrstaZahtjeva", cVr_zahtjeva )
+   xml_node( "Parametri", "" )
 
-// upisi zadnji dnevni izvjestaj
-set_metric( _param_date, NIL, DATE() )
-set_metric( _param_time, NIL, TIME() )
+   xml_subnode( "Zahtjev", .T. )
 
-// nakon ovoga provjeri
-return
+   // zatvori fajl...
+   close_xml()
+
+   // upisi zadnji dnevni izvjestaj
+   set_metric( _param_date, NIL, Date() )
+   set_metric( _param_time, NIL, Time() )
+
+   // nakon ovoga provjeri
+
+   RETURN
 
 
 // ----------------------------------------------
 // brise fajlove iz ulaznog direktorija
 // ----------------------------------------------
-function tring_delete_out( dev_param, trig )
-local _trig := trg_trig( trig )
-local _file
+FUNCTION tring_delete_out( dev_param, trig )
 
-_file := dev_param["out_dir"] + fiscal_out_filename( dev_param["out_file"], __zahtjev_nula, _trig )
+   LOCAL _trig := trg_trig( trig )
+   LOCAL _file
 
-if FILE( _file )
-	FERASE( _file )
-endif
+   _file := dev_param[ "out_dir" ] + fiscal_out_filename( dev_param[ "out_file" ], __zahtjev_nula, _trig )
 
-return
+   IF File( _file )
+      FErase( _file )
+   ENDIF
+
+   RETURN
 
 
 // ----------------------------------------------
 // brise fajlove iz direktorija odgovora
 // ----------------------------------------------
-function tring_delete_answer( dev_param, trig )
-local _trig := trg_trig( trig )
-local _file
+FUNCTION tring_delete_answer( dev_param, trig )
 
-_file := dev_param["out_dir"] + _d_answer + SLASH + ;
-            fiscal_out_filename( dev_param["out_file"], __zahtjev_nula, _trig )
+   LOCAL _trig := trg_trig( trig )
+   LOCAL _file
 
-if FILE( _file )
-    FERASE( _file )
-endif
+   _file := dev_param[ "out_dir" ] + _d_answer + SLASH + ;
+      fiscal_out_filename( dev_param[ "out_file" ], __zahtjev_nula, _trig )
 
-return
+   IF File( _file )
+      FErase( _file )
+   ENDIF
+
+   RETURN
 
 
 // ----------------------------------------------
 // brise fajlove iz ulaznog direktorija
 // ----------------------------------------------
-function tring_delete_tmp( dev_param, cPodDir )
-local cTmp 
+FUNCTION tring_delete_tmp( dev_param, cPodDir )
 
-if cPodDir == nil
-	cPodDir := ""
-endif
+   LOCAL cTmp
 
-msgo("brisem tmp fajlove...")
+   IF cPodDir == nil
+      cPodDir := ""
+   ENDIF
 
-cF_path := dev_param["out_dir"]
+   msgo( "brisem tmp fajlove..." )
 
-if !EMPTY(cPoddir)
-	cF_path += cPodDir + SLASH
-endif
+   cF_path := dev_param[ "out_dir" ]
 
-cTmp := "*.*"
+   IF !Empty( cPoddir )
+      cF_path += cPodDir + SLASH
+   ENDIF
 
-AEVAL( DIRECTORY(cF_path + cTmp), {|aFile| FERASE( cF_path + ;
-	ALLTRIM( aFile[1]) ) })
+   cTmp := "*.*"
 
-sleep(1)
+   AEval( Directory( cF_path + cTmp ), {| aFile| FErase( cF_path + ;
+      AllTrim( aFile[ 1 ] ) ) } )
 
-msgc()
+   sleep( 1 )
 
-return
+   msgc()
+
+   RETURN
 
 
 
@@ -698,37 +711,38 @@ return
 // ---------------------------------------------
 // fiksiraj datum za xml
 // ---------------------------------------------
-static function _fix_date( dDate , cPattern )
-local cRet := ""
-local nYear := YEAR( dDate )
-local nMonth := MONTH ( dDate )
-local nDay := DAY ( dDate )
+STATIC FUNCTION _fix_date( dDate, cPattern )
 
-if cPattern == nil
-	cPattern := ""
-endif
+   LOCAL cRet := ""
+   LOCAL nYear := Year( dDate )
+   LOCAL nMonth := Month ( dDate )
+   LOCAL nDay := Day ( dDate )
 
-if Empty( cPattern )
+   IF cPattern == nil
+      cPattern := ""
+   ENDIF
 
-	cRet := ALLTRIM( STR ( nDay ) ) + "." + ;
-		ALLTRIM( STR( nMonth) ) + "." + ;
-		ALLTRIM( STR( nYear ) )
-	
-	return cRet
+   IF Empty( cPattern )
 
-endif
+      cRet := AllTrim( Str ( nDay ) ) + "." + ;
+         AllTrim( Str( nMonth ) ) + "." + ;
+         AllTrim( Str( nYear ) )
 
-// MM.DD.YYYY
+      RETURN cRet
 
-cPattern := STRTRAN( cPattern, "MM", ALLTRIM(STR(nMonth))) 
-cPattern := STRTRAN( cPattern, "DD", ALLTRIM(STR(nDay))) 
-cPattern := STRTRAN( cPattern, "YYYY", ALLTRIM(STR(nYear))) 
-// if .YY in pattern
-cPattern := STRTRAN( cPattern, "YY", ALLTRIM(PADL(STR(nYear),2))) 
+   ENDIF
 
-cRet := cPattern
+   // MM.DD.YYYY
 
-return cRet
+   cPattern := StrTran( cPattern, "MM", AllTrim( Str( nMonth ) ) )
+   cPattern := StrTran( cPattern, "DD", AllTrim( Str( nDay ) ) )
+   cPattern := StrTran( cPattern, "YYYY", AllTrim( Str( nYear ) ) )
+   // if .YY in pattern
+   cPattern := StrTran( cPattern, "YY", AllTrim( PadL( Str( nYear ), 2 ) ) )
+
+   cRet := cPattern
+
+   RETURN cRet
 
 
 
@@ -736,121 +750,122 @@ return cRet
 // ------------------------------------------
 // procitaj gresku
 // ------------------------------------------
-function tring_read_error( dev_param, fisc_no, trig )
-local _err := 0
-local _trig := trg_trig( trig )
-local _f_name
-local _i, _time
-local _err_data, _scan, _err_txt
-local _ok
-local _o_file
+FUNCTION tring_read_error( dev_param, fisc_no, trig )
 
-_time := dev_param["timeout"]
+   LOCAL _err := 0
+   LOCAL _trig := trg_trig( trig )
+   LOCAL _f_name
+   LOCAL _i, _time
+   LOCAL _err_data, _scan, _err_txt
+   LOCAL _ok
+   LOCAL _o_file
 
-// primjer: c:\tring\xml\odgovori\sfr.001
-_f_name := dev_param["out_dir"] + ;
-            _d_answer + ;
-            SLASH + ;
-            fiscal_out_filename( dev_param["out_file"], __zahtjev_nula, _trig )
+   _time := dev_param[ "timeout" ]
 
-_err_data := {}
+   // primjer: c:\tring\xml\odgovori\sfr.001
+   _f_name := dev_param[ "out_dir" ] + ;
+      _d_answer + ;
+      SLASH + ;
+      fiscal_out_filename( dev_param[ "out_file" ], __zahtjev_nula, _trig )
 
-Box(, 3, 60 )
+   _err_data := {}
 
-@ m_x + 1, m_y + 2 SAY "Uredjaj ID: " + ALLTRIM( STR( dev_param["id"] ) ) + ;
-                    " : " + PADR( dev_param["name"], 40 )
+   Box(, 3, 60 )
 
-do while _time > 0
-	
-	-- _time
+   @ m_x + 1, m_y + 2 SAY "Uredjaj ID: " + AllTrim( Str( dev_param[ "id" ] ) ) + ;
+      " : " + PadR( dev_param[ "name" ], 40 )
 
-	if FILE( _f_name )
-		// fajl se pojavio - izadji iz petlje !
-		exit
-	endif
+   DO WHILE _time > 0
 
-	@ m_x + 3, m_y + 2 SAY PADR( "Cekam na fiskalni uredjaj: " + ALLTRIM( STR( _time ) ), 48)
+      -- _time
 
-	sleep(1)
+      IF File( _f_name )
+         // fajl se pojavio - izadji iz petlje !
+         EXIT
+      ENDIF
 
-enddo
+      @ m_x + 3, m_y + 2 SAY PadR( "Cekam na fiskalni uredjaj: " + AllTrim( Str( _time ) ), 48 )
 
-BoxC()
+      sleep( 1 )
 
-if !FILE( _f_name )
-	msgbeep("Fajl " + _f_name + " ne postoji !!!")
-    fisc_no := 0
-	_err := -9
-	return _err
-endif
+   ENDDO
 
-fisc_no := 0
+   BoxC()
 
-_o_file := TFileRead():New( _f_name )
-_o_file:Open()
+   IF !File( _f_name )
+      msgbeep( "Fajl " + _f_name + " ne postoji !!!" )
+      fisc_no := 0
+      _err := -9
+      RETURN _err
+   ENDIF
 
-if _o_file:Error()
-	MsgBeep( _o_file:ErrorMsg( "Problem sa otvaranjem fajla: " + _f_name ) )
-	return -9
-endif
+   fisc_no := 0
 
-_fisc_txt := ""
-_ok := .f.
+   _o_file := TFileRead():New( _f_name )
+   _o_file:Open()
 
-// prodji kroz svaku liniju i procitaj zapise
-while _o_file:MoreToRead()
-	
-	// uzmi u cErr liniju fajla
-	_err_txt := hb_strtoutf8( _o_file:ReadLine() )
+   IF _o_file:Error()
+      MsgBeep( _o_file:ErrorMsg( "Problem sa otvaranjem fajla: " + _f_name ) )
+      RETURN -9
+   ENDIF
 
-	// ovo je dodavanje artikla
-	if ( "<?xml" $ _err_txt ) .or. ;
-		( "<KasaOdgovor" $ _err_txt ) .or. ; 
-		( "</KasaOdgovor" $ _err_txt ) .or. ;
-		( "<Odgovor" $ _err_txt ) .or. ;
-		( "</Odgovor" $ _err_txt )
-		// preskoci
-		loop
-	endif
+   _fisc_txt := ""
+   _ok := .F.
 
-	AADD( _err_data, _err_txt )	
+   // prodji kroz svaku liniju i procitaj zapise
+   WHILE _o_file:MoreToRead()
 
-enddo
+      // uzmi u cErr liniju fajla
+      _err_txt := hb_StrToUTF8( _o_file:ReadLine() )
 
-_o_file:Close()
+      // ovo je dodavanje artikla
+      IF ( "<?xml" $ _err_txt ) .OR. ;
+            ( "<KasaOdgovor" $ _err_txt ) .OR. ;
+            ( "</KasaOdgovor" $ _err_txt ) .OR. ;
+            ( "<Odgovor" $ _err_txt ) .OR. ;
+            ( "</Odgovor" $ _err_txt )
+         // preskoci
+         LOOP
+      ENDIF
 
-// sad imam matricu sa linijama
-// aErr_data[1, "<Naziv>OK</Naziv>"]
-// aErr_data[2, "<Vrijednost></Vrijednost>"]
-// aErr_data[3, "<Naziv>BrojFiskalnogRacuna</Naziv>"]
-// aErr_data[4, "<Vrijednost>5</Vrijednost>"]
-// ... itd...
+      AAdd( _err_data, _err_txt )
 
-// prvo provjeri da li je komanda ok
-_scan := ASCAN( _err_data, {| val | "<VrstaOdgovora>OK" $ val })
-if _scan <> 0
-	// ovo je ok racun ili bilo koja komanda
-	_ok := .t.
-endif
+   ENDDO
 
-if _ok == .f.
-	// nije ispravna komanda
-	_err := 1
-	return _err
-endif
+   _o_file:Close()
 
-// sada cemo potraziti broj fiskalnog racuna
-_scan := ASCAN( _err_data, ;
-	{| val | "<Naziv>BrojFiskalnogRacuna" $ val })
+   // sad imam matricu sa linijama
+   // aErr_data[1, "<Naziv>OK</Naziv>"]
+   // aErr_data[2, "<Vrijednost></Vrijednost>"]
+   // aErr_data[3, "<Naziv>BrojFiskalnogRacuna</Naziv>"]
+   // aErr_data[4, "<Vrijednost>5</Vrijednost>"]
+   // ... itd...
 
-if _scan <> 0
-	// imamo racun
-	// ali se krije na sljedecoj liniji
-	// zato + 1
-	fisc_no := _g_fisc_no( _err_data[ _scan + 1 ] )
-endif
+   // prvo provjeri da li je komanda ok
+   _scan := AScan( _err_data, {| val | "<VrstaOdgovora>OK" $ val } )
+   IF _scan <> 0
+      // ovo je ok racun ili bilo koja komanda
+      _ok := .T.
+   ENDIF
 
-return _err
+   IF _ok == .F.
+      // nije ispravna komanda
+      _err := 1
+      RETURN _err
+   ENDIF
+
+   // sada cemo potraziti broj fiskalnog racuna
+   _scan := AScan( _err_data, ;
+      {| val | "<Naziv>BrojFiskalnogRacuna" $ val } )
+
+   IF _scan <> 0
+      // imamo racun
+      // ali se krije na sljedecoj liniji
+      // zato + 1
+      fisc_no := _g_fisc_no( _err_data[ _scan + 1 ] )
+   ENDIF
+
+   RETURN _err
 
 
 
@@ -858,15 +873,18 @@ return _err
 // ------------------------------------------------------
 // vraca broj fiskalnog racuna iz linije fajla
 // ------------------------------------------------------
-static function _g_fisc_no( row )
-local _fiscal_no := 0
-row := STRTRAN( row, '<Vrijednost xsi:type="xsd:long">', '' )
-row := STRTRAN( row, '</Vrijednost>', '' )
-// ostatak bi trebao da bude samo broj fiskalnog racuna :)
-if !EMPTY( row )
-	_fiscal_no := VAL( ALLTRIM( row ) )
-endif
-return _fiscal_no
+STATIC FUNCTION _g_fisc_no( row )
+
+   LOCAL _fiscal_no := 0
+
+   row := StrTran( row, '<Vrijednost xsi:type="xsd:long">', '' )
+   row := StrTran( row, '</Vrijednost>', '' )
+   // ostatak bi trebao da bude samo broj fiskalnog racuna :)
+   IF !Empty( row )
+      _fiscal_no := Val( AllTrim( row ) )
+   ENDIF
+
+   RETURN _fiscal_no
 
 
 
@@ -875,53 +893,47 @@ return _fiscal_no
 // ------------------------------------------
 // vraca triger za tring filename
 // ------------------------------------------
-function trg_trig( nTrig )
-local cTrig := ""
+FUNCTION trg_trig( nTrig )
 
-do case
-	case nTrig = 1
-		// stampa racuna
-		cTrig := _tr_rac
-	case nTrig = 2
-		// stampa reklamnog racuna
-		cTrig := _tr_rrac
-	case nTrig = 3
-		// stampa dnevnog izvjestaja
-		cTrig := _tr_drep
-	case nTrig = 4
-		// stampa periodicnog izvjestaja
-		cTrig := _tr_prep
-	case nTrig = 5
-		// stampa presjeka stanja
-		cTrig := _tr_xrep
-	case nTrig = 6
-		// polog in
-		cTrig := _tr_p_in
-	case nTrig = 7
-		// polog out
-		cTrig := _tr_p_out
-	case nTrig = 8
-		// duplikat
-		cTrig := _tr_dbl
-	case nTrig = 9
-		// reset podataka na serveru
-		cTrig := _tr_x
-	case nTrig = 10
-		// inicijalizacija
-		cTrig := _tr_init
-	case nTrig = 11
-		// ponisti racun
-		cTrig := _tr_crac
-	otherwise
-		// u drugom slucaju nema trigera
-		cTrig := "xxx"
-endcase
+   LOCAL cTrig := ""
 
-return cTrig
+   DO CASE
+   CASE nTrig = 1
+      // stampa racuna
+      cTrig := _tr_rac
+   CASE nTrig = 2
+      // stampa reklamnog racuna
+      cTrig := _tr_rrac
+   CASE nTrig = 3
+      // stampa dnevnog izvjestaja
+      cTrig := _tr_drep
+   CASE nTrig = 4
+      // stampa periodicnog izvjestaja
+      cTrig := _tr_prep
+   CASE nTrig = 5
+      // stampa presjeka stanja
+      cTrig := _tr_xrep
+   CASE nTrig = 6
+      // polog in
+      cTrig := _tr_p_in
+   CASE nTrig = 7
+      // polog out
+      cTrig := _tr_p_out
+   CASE nTrig = 8
+      // duplikat
+      cTrig := _tr_dbl
+   CASE nTrig = 9
+      // reset podataka na serveru
+      cTrig := _tr_x
+   CASE nTrig = 10
+      // inicijalizacija
+      cTrig := _tr_init
+   CASE nTrig = 11
+      // ponisti racun
+      cTrig := _tr_crac
+   OTHERWISE
+      // u drugom slucaju nema trigera
+      cTrig := "xxx"
+   ENDCASE
 
-
-
-
-
-
-
+   RETURN cTrig

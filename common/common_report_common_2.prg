@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out knowhow ERP, a free and open source 
+/*
+ * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning suite,
  * Copyright (c) 1994-2011 by bring.out d.o.o Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including knowhow ERP specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -13,306 +13,314 @@
 
 #include "f18.ch"
 
-function IniRPT()
+FUNCTION IniRPT()
 
-Public aTijelo:={}
-Public aTijeloP:={}
-Public aDetP:={}
-Public aDetUsl:={}
-Public aDetInit:={}
-Public aDetEnd:={}
-Public aDetCalc:={}
-Public aDetFor:={}
-Public aGH:={}
-Public aGF:={}
-Public aInitG:={}
-Public aGHP:={}
-Public aGFP:={}
-Public aUslG:={}
-Public aCalcG:={}
+   PUBLIC aTijelo := {}
+   PUBLIC aTijeloP := {}
+   PUBLIC aDetP := {}
+   PUBLIC aDetUsl := {}
+   PUBLIC aDetInit := {}
+   PUBLIC aDetEnd := {}
+   PUBLIC aDetCalc := {}
+   PUBLIC aDetFor := {}
+   PUBLIC aGH := {}
+   PUBLIC aGF := {}
+   PUBLIC aInitG := {}
+   PUBLIC aGHP := {}
+   PUBLIC aGFP := {}
+   PUBLIC aUslG := {}
+   PUBLIC aCalcG := {}
 
-return
-
-
-
-function R2(cImeDef,cOutf,bFor,nDuzSif)
-*
-
-local fpg,ng
-IF nDuzSif==NIL; nDuzSif:=0; ENDIF
-
-NBRG:=len(aInitG)
-ASIZE(aGF,NBRG)
-ASIZE(aGH,NBRG)
-
-
-ProcitajRep(cImeDef)
-
-fpg:=.f.
-do while !eof() .and.  eval(bFor)
-
- for ng:=NBRG  to  1 step -1
-   if eval(aUslG[ng]) .and. fPG
-      skip -1
-      Ispisi(ng,@aGF,@aGFP)
-      skip
-   endif
- next
-
- for ng:=1  to NBRG
-   fPG:=.t.
-   if eval(aUslG[ng])
-      eval(aInitG[ng])
-      Ispisi(ng,@aGH,@aGHP)
-   endif
-   EVAL(aCalcG[ng])
- next
-
- // sada idemo na tijelo
- PRIVATE nTekPT:=1
- for nT:=1 to len(aTijelo)
-   if aTijelo[nT,1]=="&"
-     IspisiT(nt,nDuzSif)
-   elseif aTijelo[nT,1] $ "123"
-     nDet:=val(aTijelo[nT,1])
-     eval(aDetInit[nDet])
-     cTekRed:=aTijelo[nT,2]
-     IspisiD(nDet)
-     eval(aDetEnd[nDet])
-   endif
- next
-
- SKIP
-enddo
-
-if fpg  // ako je izvr{en prolaz kroz grupu
- for i:=NBRG to 1  step -1 // footer
-   skip -1
-   Ispisi(i,@aGF,@aGFP)
-   skip
- next
-endif
-
-RETURN NIL
+   RETURN
 
 
 
-function Ispisi(nRedBr,aLinije,aPolja)
-*
-*
-* za grupa header,footer
+FUNCTION R2( cImeDef, cOutf, bFor, nDuzSif )
 
-local i,nTekP,cTekRed,cC,nPreskoci
+   //
 
-  NTEKP:=1
-  NPRESKOCI:=0
+   LOCAL fpg, ng
+   IF nDuzSif == NIL; nDuzSif := 0; ENDIF
 
-  cTekRed:=aLinije[nRedBr]
+   NBRG := Len( aInitG )
+   ASize( aGF, NBRG )
+   ASize( aGH, NBRG )
 
-  FOR I:=1 TO LEN(cTekRed)  // cTekRed je gornja varijabla
-   IF NPRESKOCI==0
-     CC:=SUBSTR(CTEKRED,I,1)
-     IF CC=="#"
-      XPOLJE:=TOSTR(   EVAL( (aPolja[nRedBr])[NTEKP++] )    )
-       QQOUT(XPOLJE)
-       NPRESKOCI:=LEN(XPOLJE)-1
-     ELSE
-      if cC<>"\"
-       QQOUT(CC)
-      endif
-     ENDIF
-   ELSE
-     NPRESKOCI--
+
+   ProcitajRep( cImeDef )
+
+   fpg := .F.
+   DO WHILE !Eof() .AND.  Eval( bFor )
+
+      FOR ng := NBRG  TO  1 STEP -1
+         IF Eval( aUslG[ ng ] ) .AND. fPG
+            SKIP -1
+            Ispisi( ng, @aGF, @aGFP )
+            SKIP
+         ENDIF
+      NEXT
+
+      FOR ng := 1  TO NBRG
+         fPG := .T.
+         IF Eval( aUslG[ ng ] )
+            Eval( aInitG[ ng ] )
+            Ispisi( ng, @aGH, @aGHP )
+         ENDIF
+         Eval( aCalcG[ ng ] )
+      NEXT
+
+      // sada idemo na tijelo
+      PRIVATE nTekPT := 1
+      FOR nT := 1 TO Len( aTijelo )
+         IF aTijelo[ nT, 1 ] == "&"
+            IspisiT( nt, nDuzSif )
+         ELSEIF aTijelo[ nT, 1 ] $ "123"
+            nDet := Val( aTijelo[ nT, 1 ] )
+            Eval( aDetInit[ nDet ] )
+            cTekRed := aTijelo[ nT, 2 ]
+            IspisiD( nDet )
+            Eval( aDetEnd[ nDet ] )
+         ENDIF
+      NEXT
+
+      SKIP
+   ENDDO
+
+   IF fpg  // ako je izvr{en prolaz kroz grupu
+      FOR i := NBRG TO 1  STEP -1 // footer
+         SKIP -1
+         Ispisi( i, @aGF, @aGFP )
+         SKIP
+      NEXT
    ENDIF
-  NEXT
 
-return nil
+   RETURN NIL
 
 
-function IspisiT(nRedBr,nDuzSif)
-*
-*  Ispisi tijelo
 
-local i,cC,nPreskoci,nMemoLin,nLinPredh,fUMemu,nMemoLen
-  NPRESKOCI:=0
-  cTekRed:=aTijelo[nRedBr,2]
-  nLinPredh:=1
-  nMemoLin:=0
-  fUMemu:=.f.
-  FOR I:=1 TO LEN(cTekRed)  // cTekRed je gornja varijabla
-   IF NPRESKOCI==0
-     CC:=SUBSTR(CTEKRED,I,1)
-     if cC==Chr(10)
-      if fUMemu
-       QQOUT(CHR(10))
-       i:=nLinPredh
-       LOOP
-      else
-       nLinPredh:=i
-      endif
-     endif
-     IF CC=="#" .and. valtype(aTijeloP[NTEKPT])=="A"
-      fUMemu:=.t.
-      if nMemoLin==0
-        xMemo:=EVAL(aTijeloP[NTEKPT,1])
-        nMemoLen:=aTijeloP[NTEKPT,2]
-        nMemoCount:=MLCOUNT(xMemo,nMemoLen)
-        if nmemocount==0
-         fUMemu:=.f.
-         QQOUT(" ")
-         NTEKPT++
-        endif
-      endif
-      if nMemoLin<nMemoCount
-        QQOUT(LEFT(memoline(xMemo,nMemoLen,++nMemoLin),nMemoLen))
-        nPreskoci:=nMemoLen-1+nDuzSif
-       if nMemoLin==nMemoCount
-         fUMemu:=.f.
-         nMemoLin:=0
-         NTEKPT++
-       endif
-      endif
-     ELSEIF CC=="#"
-      XPOLJE:=TOSTR(   EVAL( aTijeloP[NTEKPT++] )    )
-      QQOUT(XPOLJE)
-       NPRESKOCI:=LEN(XPOLJE)-1+nDuzSif
-     ELSE
-      if cC<>"\"
-       QQOUT(CC)
-      endif
-     ENDIF
-   ELSE
-     NPRESKOCI--
+FUNCTION Ispisi( nRedBr, aLinije, aPolja )
+
+   //
+   //
+   // za grupa header,footer
+
+   LOCAL i, nTekP, cTekRed, cC, nPreskoci
+
+   NTEKP := 1
+   NPRESKOCI := 0
+
+   cTekRed := aLinije[ nRedBr ]
+
+   FOR I := 1 TO Len( cTekRed )  // cTekRed je gornja varijabla
+      IF NPRESKOCI == 0
+         CC := SubStr( CTEKRED, I, 1 )
+         IF CC == "#"
+            XPOLJE := TOSTR(   Eval( ( aPolja[ nRedBr ] )[ NTEKP++ ] )    )
+            QQOut( XPOLJE )
+            NPRESKOCI := Len( XPOLJE ) -1
+         ELSE
+            IF cC <> "\"
+               QQOut( CC )
+            ENDIF
+         ENDIF
+      ELSE
+         NPRESKOCI--
+      ENDIF
+   NEXT
+
+   RETURN NIL
+
+
+FUNCTION IspisiT( nRedBr, nDuzSif )
+
+   //
+   // Ispisi tijelo
+
+   LOCAL i, cC, nPreskoci, nMemoLin, nLinPredh, fUMemu, nMemoLen
+   NPRESKOCI := 0
+   cTekRed := aTijelo[ nRedBr, 2 ]
+   nLinPredh := 1
+   nMemoLin := 0
+   fUMemu := .F.
+   FOR I := 1 TO Len( cTekRed )  // cTekRed je gornja varijabla
+      IF NPRESKOCI == 0
+         CC := SubStr( CTEKRED, I, 1 )
+         IF cC == Chr( 10 )
+            IF fUMemu
+               QQOut( Chr( 10 ) )
+               i := nLinPredh
+               LOOP
+            ELSE
+               nLinPredh := i
+            ENDIF
+         ENDIF
+         IF CC == "#" .AND. ValType( aTijeloP[ NTEKPT ] ) == "A"
+            fUMemu := .T.
+            IF nMemoLin == 0
+               xMemo := Eval( aTijeloP[ NTEKPT, 1 ] )
+               nMemoLen := aTijeloP[ NTEKPT, 2 ]
+               nMemoCount := MLCount( xMemo, nMemoLen )
+               IF nmemocount == 0
+                  fUMemu := .F.
+                  QQOut( " " )
+                  NTEKPT++
+               ENDIF
+            ENDIF
+            IF nMemoLin < nMemoCount
+               QQOut( Left( MemoLine( xMemo, nMemoLen, ++nMemoLin ), nMemoLen ) )
+               nPreskoci := nMemoLen - 1 + nDuzSif
+               IF nMemoLin == nMemoCount
+                  fUMemu := .F.
+                  nMemoLin := 0
+                  NTEKPT++
+               ENDIF
+            ENDIF
+         ELSEIF CC == "#"
+            XPOLJE := TOSTR(   Eval( aTijeloP[ NTEKPT++ ] )    )
+            QQOut( XPOLJE )
+            NPRESKOCI := Len( XPOLJE ) -1 + nDuzSif
+         ELSE
+            IF cC <> "\"
+               QQOut( CC )
+            ENDIF
+         ENDIF
+      ELSE
+         NPRESKOCI--
+      ENDIF
+   NEXT
+
+   RETURN
+
+
+
+FUNCTION IspisiD( nRedBr )
+
+   // Ispisi detalj
+
+   LOCAL i, nTekP, nLinPoc, cC, nPreskoci, nMemoLin, nLinPredh, fUMemu, nMemoLen
+
+   DO WHILE Eval( aDetUsl[ nRedBr ] )
+
+      IF aDetFor[ nRedBr ] == NIL .OR. Eval( aDetFor[ nRedBr ] )
+         Eval( aDetCalc[ nRedBr ] )
+         NTEKP := 1
+         NPRESKOCI := 0
+         nLinPredh := 1
+         nMemoLin := 0
+         fUMemu := .F.
+         FOR I := 1 TO Len( cTekRed )  // cTekRed je gornja varijabla
+            IF NPRESKOCI == 0
+               CC := SubStr( CTEKRED, I, 1 )
+               IF cC == Chr( 10 )
+                  IF fUMemu
+                     QQOut( Chr( 10 ) )
+                     i := nLinPredh
+                     LOOP
+                  ELSE
+                     nLinPredh := i
+                  ENDIF
+               ENDIF
+
+               IF CC == "#" .AND. ValType( aDetP[ nRedBr, NTEKP ] ) == "A"
+                  fUMemu := .T.
+                  IF nMemoLin == 0
+                     xMemo := Eval( aDetP[ nRedBr, NTEKP, 1 ] )
+                     nMemoLen := ( aDetP[ nRedBr, NTEKP ] )[ 2 ]
+                     nMemoCount := MLCount( xMemo, 60 )
+                     IF nmemocount == 0
+                        fUMemu := .F.
+                        QQOut( " " )
+                        NTEKP++
+                     ENDIF
+                  ENDIF
+                  IF nMemoLin < nMemoCount
+                     QQOut( MemoLine( xMemo, nMemoLen, ++nMemoLin ) )
+                     nPreskoci := nMemoLen - 1
+                     IF nMemoLin == nMemoCount
+                        nMemoLin := 0
+                        fUMemu := .F.
+                        NTEKP++
+                     ENDIF
+                  ENDIF
+
+               ELSEIF cC == "#"
+                  XPOLJE := TOSTR(   Eval( ( aDetP[ nRedBr ] )[ NTEKP++ ] )    )
+                  QQOut( XPOLJE )
+                  NPRESKOCI := Len( XPOLJE ) -1
+               ELSE
+                  IF cC <> "\"
+                     QQOut( CC )
+                  ENDIF
+               ENDIF
+
+            ELSE
+               NPRESKOCI--
+            ENDIF
+         NEXT
+      ENDIF // aDetFor
+
+      SKIP
+   ENDDO
+
+   RETURN
+
+
+FUNCTION ProcitajRep( cImef )
+
+   LOCAL nH := FOpen( cImeF )
+   LOCAL cBuf := Space( 512 )
+   LOCAL nPreskoci := 0
+   LOCAL cTekRed := ""
+   LOCAL cTipL := "&", cTipL2
+   LOCAL cC := ""
+
+   DO WHILE .T.
+      nB := FRead( nH, @cBuf, 512 )
+      FOR i := 1 TO nB
+         IF cC == "\"
+            cC := "\" + SubStr( cBuf, i, 1 )
+         ELSE
+            cC := SubStr( cBuf, i, 1 )
+         ENDIF
+         IF Len( cC ) == 2
+            IF cTipL <> cC
+               IF !Empty( cTekRed )
+                  cTipL2 := SubStr( cTipL, 2, 1 )
+                  IF ChSub( cTipL2, "a" ) >= 0
+                     aGF[ ChSub( cTipL2, "`" ) ] := cTekRed
+                  ELSEIF ChSub( cTipL2, "A" ) >= 0
+                     aGH[ ChSub( cTipL2, "@" ) ] := cTekRed
+                  ELSE
+                     AAdd( aTijelo, { SubStr( cTipL, 2, 1 ), cTekRed } )
+                  ENDIF
+               ENDIF
+               cTekRed := ""
+               cTipL := cC
+            ENDIF
+         ELSE
+            IF cC <> "\"
+               cTekRed += cC
+            ENDIF
+         ENDIF
+      NEXT
+      IF nB < 512; exit; ENDIF
+   ENDDO
+
+   IF !Empty( cTekRed )
+      cTipL2 := SubStr( cTipL, 2, 1 )
+      IF ChSub( cTipL2, "a" ) >= 0
+         aGF[ ChSub( cTipL2, "`" ) ] := cTekRed
+      ELSEIF ChSub( cTipL2, "A" ) >= 0
+         aGH[ ChSub( cTipL2, "@" ) ] := cTekRed
+      ELSE
+         AAdd( aTijelo, { SubStr( cTipL, 2, 1 ), cTekRed } )
+      ENDIF
    ENDIF
-  NEXT
-RETURN
+   cTekRed := ""
+   cTipL := cC
+   FClose( nH )
 
-
-
-function IspisiD(nRedBr)
-* Ispisi detalj
-
-local i,nTekP,nLinPoc,cC,nPreskoci,nMemoLin,nLinPredh,fUMemu,nMemoLen
-
-DO WHILE EVAL(aDetUsl[nRedBr])
-
-if aDetFor[nRedBr]==NIL .or. eval(aDetFor[nRedBr])
-  EVAL(aDetCalc[nRedBr])
-  NTEKP:=1
-  NPRESKOCI:=0
-  nLinPredh:=1
-  nMemoLin:=0
-  fUMemu:=.f.
-  FOR I:=1 TO LEN(cTekRed)  // cTekRed je gornja varijabla
-   IF NPRESKOCI==0
-     CC:=SUBSTR(CTEKRED,I,1)
-     if cC==Chr(10)
-      if fUMemu
-       QQOUT(CHR(10))
-       i:=nLinPredh
-       LOOP
-      else
-       nLinPredh:=i
-      endif
-     endif
-
-     IF CC=="#" .and. valtype(aDetP[nRedBr,NTEKP])=="A"
-      fUMemu:=.t.
-      if nMemoLin==0
-        xMemo:=EVAL(aDetP[nRedBr,NTEKP,1])
-        nMemoLen:=(aDetP[nRedBr,NTEKP])[2]
-        nMemoCount:=MLCOUNT(xMemo,60)
-        if nmemocount==0
-         fUMemu:=.f.
-         QQOUT(" ")
-         NTEKP++
-        endif
-      endif
-      if nMemoLin<nMemoCount
-        QQOUT(memoline(xMemo,nMemoLen,++nMemoLin))
-        nPreskoci:=nMemoLen-1
-       if nMemoLin==nMemoCount
-         nMemoLin:=0
-         fUMemu:=.f.
-         NTEKP++
-       endif
-      endif
-
-     ELSEIF cC=="#"
-      XPOLJE:=TOSTR(   EVAL( (aDetP[nRedBr])[NTEKP++] )    )
-      QQOUT(XPOLJE)
-        NPRESKOCI:=LEN(XPOLJE)-1
-     ELSE
-      if cC<>"\"
-       QQOUT(CC)
-      endif
-     ENDIF
-
-   ELSE
-     NPRESKOCI--
-   ENDIF
-  NEXT
-ENDIF // aDetFor
-
-SKIP
-ENDDO
-
-return
-
-
-FUNCTION ProcitajRep(cImef)
-local nH:=FOPEN(cImeF)
-local cBuf:=SPACE(512)
-local nPreskoci:=0
-local cTekRed:=""
-local cTipL:="&",cTipL2
-local cC:=""
-do while .t.
-   nB:=fread(nH,@cBuf,512)
-   for i:=1 to nB
-     if cC=="\"
-      cC:="\"+substr(cBuf,i,1)
-     else
-      cC:=substr(cBuf,i,1)
-     endif
-     if len(cC)==2
-      if cTipL<>cC
-        if !empty(cTekRed)
-         cTipL2:=Substr(cTipL,2,1)
-         if ChSub(cTipL2,"a")>=0
-           aGF[ChSub(cTipL2,"`")]:=cTekRed
-         elseif ChSub(cTipL2,"A")>=0
-           aGH[ChSub(cTipL2,"@")]:=cTekRed
-         else
-           AADD(aTijelo,{substr(cTipL,2,1),cTekRed})
-         endif
-        endif
-        cTekRed:=""
-        cTipL:=cC
-      endif
-     else
-       if cC<>"\"
-        cTekRed+=cC
-       endif
-     endif
-   next
-   if nB<512; exit; endif
-enddo
-
-if !empty(cTekRed)
- cTipL2:=Substr(cTipL,2,1)
- if ChSub(cTipL2,"a")>=0
-   aGF[ChSub(cTipL2,"`")]:=cTekRed
- elseif ChSub(cTipL2,"A")>=0
-   aGH[ChSub(cTipL2,"@")]:=cTekRed
- else
-   AADD(aTijelo,{substr(cTipL,2,1),cTekRed})
- endif
-endif
-cTekRed:=""
-cTipL:=cC
-FCLOSE(nH)
-RETURN
+   RETURN
 
 
 /*! \fn SetRptLineAndText(aLineArgs, nVariant)
@@ -320,49 +328,42 @@ RETURN
  *  \param aLineArgs - matrica argumenata
  *  \param nVariant - varijanta, 0 - linija, 1 - prvi red izvjestaja, 2 - drugi red izvjestaja
  *  \example: aLineArgs := {2, 5, 5, 3}
- *            ret: -- ----- ----- --- 
+ *            ret: -- ----- ----- ---
  */
- 
-function SetRptLineAndText(aLineArgs, nVariant, cDelimiter)
 
+FUNCTION SetRptLineAndText( aLineArgs, nVariant, cDelimiter )
 
-local cLine := ""
+   LOCAL cLine := ""
 
-if nVariant == nil
-	// po def. je linija	
-	nVariant := 0
-endif
-if cDelimiter == nil
-	cDelimiter := " "
-endif
+   IF nVariant == nil
+      // po def. je linija
+      nVariant := 0
+   ENDIF
+   IF cDelimiter == nil
+      cDelimiter := " "
+   ENDIF
 
-for i:=1 to LEN(aLineArgs)
-	if nVariant == 0
-		cLine += REPLICATE("-", aLineArgs[i, 1])
-	elseif nVariant == 1
-		nEmptyFill:=aLineArgs[i, 1] - LEN(aLineArgs[i, 2])
-		cLine += aLineArgs[i, 2] + SPACE(nEmptyFill)	
-	elseif nVariant == 2
-		nEmptyFill:=aLineArgs[i, 1] - LEN(aLineArgs[i, 3])
-		cLine += aLineArgs[i, 3] + SPACE(nEmptyFill)
-	elseif nVariant == 3
-		nEmptyFill:=aLineArgs[i, 1] - LEN(aLineArgs[i, 4])
-		cLine += aLineArgs[i, 4] + SPACE(nEmptyFill)
-	endif
-		
-	if i <> LEN(aLineArgs)
-		if nVariant == 0
-			cLine += " "
-		else
-			cLine += cDelimiter
-		endif
-	endif
-next
+   FOR i := 1 TO Len( aLineArgs )
+      IF nVariant == 0
+         cLine += Replicate( "-", aLineArgs[ i, 1 ] )
+      ELSEIF nVariant == 1
+         nEmptyFill := aLineArgs[ i, 1 ] - Len( aLineArgs[ i, 2 ] )
+         cLine += aLineArgs[ i, 2 ] + Space( nEmptyFill )
+      ELSEIF nVariant == 2
+         nEmptyFill := aLineArgs[ i, 1 ] - Len( aLineArgs[ i, 3 ] )
+         cLine += aLineArgs[ i, 3 ] + Space( nEmptyFill )
+      ELSEIF nVariant == 3
+         nEmptyFill := aLineArgs[ i, 1 ] - Len( aLineArgs[ i, 4 ] )
+         cLine += aLineArgs[ i, 4 ] + Space( nEmptyFill )
+      ENDIF
 
-return cLine
+      IF i <> Len( aLineArgs )
+         IF nVariant == 0
+            cLine += " "
+         ELSE
+            cLine += cDelimiter
+         ENDIF
+      ENDIF
+   NEXT
 
-
-
-
-
-
+   RETURN cLine

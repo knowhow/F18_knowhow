@@ -378,17 +378,6 @@ STATIC FUNCTION ed_sql_sif( nDbf, cNaslov, bBlok, aZabrane, aZabIsp )
       RETURN DE_CONT
    ENDIF
 
-   #ifndef TEST
-
-      IF ( Ch == K_CTRL_N .OR. Ch == K_CTRL_A .OR. Ch == K_F2 .OR. ;
-         Ch == K_CTRL_T .OR. Ch == K_F4 .OR. Ch == K_CTRL_F9 .OR. Ch == K_F10 ) .AND. ;
-         ( !ImaPravoPristupa( goModul:oDatabase:cName, "SIF", "EDSIF" ) )
-
-          RETURN DE_CONT
-
-      ENDIF
-
-   #endif
 
    DO CASE
 

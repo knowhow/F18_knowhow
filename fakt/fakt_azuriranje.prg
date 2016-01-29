@@ -341,10 +341,10 @@ STATIC FUNCTION fakt_azur_dbf( id_firma, id_tip_dok, br_dok, lSilent )
 
 /*
    Opis: formira string naziva partnera za tabelu FAKT_DOKS polje "partner"
-   
+
    Format: naziv adresa, ptt mjesto
 
-   Primjer: "bring.out" d.o.o. Juraja Najtharta 3, 71000 Sarajevo 
+   Primjer: "bring.out" d.o.o. Juraja Najtharta 3, 71000 Sarajevo
 */
 
 STATIC FUNCTION naziv_partnera_za_tabelu_doks( cId_partner )
@@ -458,7 +458,7 @@ FUNCTION get_fakt_doks_data( id_firma, id_tip_dok, br_dok )
 
 
 /*
-   Opis: izračunava vrijednost dokumenta iz tabele pripreme FAKT_PRIPR za polja 
+   Opis: izračunava vrijednost dokumenta iz tabele pripreme FAKT_PRIPR za polja
            FAKT_DOKS->IZNOS
            FAKT_DOKS->RABAT
 
@@ -521,7 +521,7 @@ FUNCTION izracunaj_ukupni_iznos_dokumenta_iz_pripreme( id_firma, id_tipdok, br_d
    Opis: vraća dokumente iz pripreme u matricu u formatu:
 
         array[ idfirma, idtipdok, brdok ]
-       
+
    Napomena: u pripremi može biti više dokumenata
 */
 
@@ -626,16 +626,16 @@ FUNCTION fakt_sredi_redni_broj_u_pripremi()
    GO TOP
 
    DO WHILE !Eof()
-	
+
       _firma := field->idfirma
       _tdok  := field->idtipdok
       _broj  := field->brdok
       _cnt   := 0
 
       DO WHILE !Eof() .AND. field->idfirma == _firma .AND. field->idtipdok == _tdok .AND. field->brdok == _broj
-					
+
          SKIP 1
-		
+
          _t_rec := RecNo()
 
          SKIP -1
@@ -645,7 +645,7 @@ FUNCTION fakt_sredi_redni_broj_u_pripremi()
          dbf_update_rec( _rec )
 
          GO ( _t_rec )
-	
+
       ENDDO
 
    ENDDO
@@ -662,10 +662,6 @@ FUNCTION fakt_brisanje_pripreme()
    LOCAL _id_firma, _tip_dok, _br_dok
    LOCAL oAtrib
 
-   IF !( ImaPravoPristupa( goModul:oDataBase:cName, "DOK", "BRISANJE" ) )
-      MsgBeep( cZabrana )
-      RETURN DE_CONT
-   ENDIF
 
    IF Pitanje(, "Želite li izbrisati pripremu !!????", "N" ) == "D"
 
@@ -779,5 +775,3 @@ FUNCTION fakt_generisi_storno_dokument( id_firma, id_tip_dok, br_dok )
    ENDIF
 
    RETURN
-
-

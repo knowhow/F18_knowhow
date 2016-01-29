@@ -21,11 +21,9 @@ FUNCTION MnuPregledDokumenata()
    AAdd( opcexe, {|| KontrZb() } )
 
    AAdd( opc, "2. štampanje ažuriranog dokumenta" )
-   IF ( ImaPravoPristupa( goModul:oDatabase:cName, "DOK", "MNUSTAMPAAZURNALOGA" ) )
+
       AAdd( opcexe, {|| fin_stampa_azur_naloga_menu() } )
-   ELSE
-      AAdd( opcexe, {|| MsgBeep( cZabrana ) } )
-   ENDIF
+
 
    AAdd( opc, "3. stampa liste dokumenata" )
    AAdd( opcexe, {|| fin_stampa_liste_naloga() } )
@@ -35,4 +33,4 @@ FUNCTION MnuPregledDokumenata()
 
    Menu_SC( "pgl" )
 
-   RETURN
+   RETURN .T.

@@ -490,7 +490,7 @@ STATIC FUNCTION key_handler()
 
    CASE ( Upper( Chr( Ch ) ) == "A" )
 
-      nScn := AScan( aDocs, {|xVar| xVar[ 1 ] == docs->doc_no } )
+      nScn := AScan( aDocs, {| xVar| xVar[ 1 ] == docs->doc_no } )
 
       IF nScn == 0
 
@@ -507,7 +507,7 @@ STATIC FUNCTION key_handler()
 
    CASE ( Upper( Chr( Ch ) ) == "Y" )
 
-      nScn := AScan( aDocs, {|xVar| xVar[ 1 ] == docs->doc_no } )
+      nScn := AScan( aDocs, {| xVar| xVar[ 1 ] == docs->doc_no } )
 
       IF nScn <> 0
          aDocs[ nScn, 1 ] := -99
@@ -551,14 +551,6 @@ STATIC FUNCTION key_handler()
 
    CASE ( Upper( Chr( Ch ) ) == "Q" )
 
-      IF !ImaPravoPristupa( goModul:oDataBase:cName, "DOK", "QUICKSEARCH" )
-
-         MsgBeep( cZabrana )
-
-         SELECT docs
-         RETURN DE_CONT
-
-      ENDIF
 
       cFilt := _quick_srch_()
 
@@ -638,12 +630,12 @@ STATIC FUNCTION key_handler()
    CASE ( Upper( Chr( Ch ) ) == "L" )
 
       nDoc_no := docs->doc_no
-	  nTRec := RecNo()
+      nTRec := RecNo()
 
       rnal_pregled_loga_za_nalog( nDoc_no )
 
       SELECT docs
-	  set_f_kol( cTmpFilter )
+      set_f_kol( cTmpFilter )
 
       GO ( nTRec )
 
@@ -1006,13 +998,13 @@ STATIC FUNCTION set_a_kol( aImeKol, aKol, nStatus )
    ENDIF
 
    AAdd( aImeKol, { "Prioritet", ;
-      {|| PadR( s_priority( doc_priori ),10 ) }, ;
+      {|| PadR( s_priority( doc_priori ), 10 ) }, ;
       "doc_priori", ;
       {|| .T. }, ;
       {|| .T. } } )
 
    AAdd( aImeKol, { "Vr.plac", ;
-      {|| PadR( s_pay_id( doc_pay_id ),10 ) }, ;
+      {|| PadR( s_pay_id( doc_pay_id ), 10 ) }, ;
       "doc_pay_id", ;
       {|| .T. }, ;
       {|| .T. } } )
@@ -1322,7 +1314,7 @@ STATIC FUNCTION show_c_list( aArr )
          @ m_x + i, Col() + 1 SAY ", " + AllTrim( aArr[ i, 3 ] )
 
 
-      next
+      NEXT
 
       @ m_x + Len( aArr ) + 1, m_y + 2 GET cGet
 

@@ -20,60 +20,36 @@ FUNCTION SifFmkRoba()
    LOCAL _izbor := 1
 
    AAdd( _opc, "1. roba                               " )
-   IF ( ImaPravoPristupa( goModul:oDataBase:cName, "SIF", "ROBAOPEN" ) )
-      AAdd( _opcexe, {|| P_Roba() } )
-   ELSE
-      AAdd( _opcexe, {|| MsgBeep( F18_SECUR_WARRNING ) } )
-   ENDIF
+   AAdd( _opcexe, {|| P_Roba() } )
+
 
    AAdd( _opc, "2. tarife" )
-   IF ( ImaPravoPristupa( goModul:oDataBase:cName, "SIF", "TARIFAOPEN" ) )
-      AAdd( _opcexe, {|| P_Tarifa() } )
-   ELSE
-      AAdd( _opcexe, {|| MsgBeep( F18_SECUR_WARRNING ) } )
-   ENDIF
+   AAdd( _opcexe, {|| P_Tarifa() } )
+
 
    AAdd( _opc, "3. konta - tipovi cijena" )
-   IF ( ImaPravoPristupa( goModul:oDataBase:cName, "SIF", "KONC1OPEN" ) )
-      AAdd( _opcexe, {|| P_Koncij() } )
-   ELSE
-      AAdd( _opcexe, {|| MsgBeep( F18_SECUR_WARRNING ) } )
-   ENDIF
+   AAdd( _opcexe, {|| P_Koncij() } )
+
 
    AAdd( _opc, "4. konta - atributi / 2 " )
-   IF ( ImaPravoPristupa( goModul:oDataBase:cName, "SIF", "KONC2OPEN" ) )
-      AAdd( _opcexe, {|| P_Koncij2() } )
-   ELSE
-      AAdd( _opcexe, {|| MsgBeep( F18_SECUR_WARRNING ) } )
-   ENDIF
+   AAdd( _opcexe, {|| MsgBeep( F18_SECUR_WARRNING ) } )
+
 
    AAdd( _opc, "5. trfp - sheme kontiranja u fin" )
-   IF ( ImaPravoPristupa( goModul:oDataBase:cName, "SIF", "TRFPOPEN" ) )
-      AAdd( _opcexe, {|| P_TrFP() } )
-   ELSE
-      AAdd( _opcexe, {|| MsgBeep( F18_SECUR_WARRNING ) } )
-   ENDIF
+   AAdd( _opcexe, {|| P_TrFP() } )
+
 
    AAdd( _opc, "6. sastavnice" )
-   IF ( ImaPravoPristupa( goModul:oDataBase:cName, "SIF", "SASTOPEN" ) )
-      AAdd( _opcexe, {|| P_Sast() } )
-   ELSE
-      AAdd( _opcexe, {|| MsgBeep( F18_SECUR_WARRNING ) } )
-   ENDIF
+   AAdd( _opcexe, {|| P_Sast() } )
+
 
    AAdd( _opc, "8. sifk - karakteristike" )
-   IF ( ImaPravoPristupa( goModul:oDataBase:cName, "SIF", "SIFKOPEN" ) )
-      AAdd( _opcexe, {|| P_SifK() } )
-   ELSE
-      AAdd( _opcexe, {|| MsgBeep( F18_SECUR_WARRNING ) } )
-   ENDIF
+   AAdd( _opcexe, {|| P_SifK() } )
+
 
    AAdd( _opc, "9. strings - karakteristike " )
-   IF ( ImaPravoPristupa( goModul:oDataBase:cName, "SIF", "STROPEN" ) )
-      AAdd( _opcexe, {|| p_strings() } )
-   ELSE
-      AAdd( _opcexe, {|| MsgBeep( F18_SECUR_WARRNING ) } )
-   ENDIF
+   AAdd( _opcexe, {|| p_strings() } )
+
 
    my_close_all_dbf()
    OFmkRoba()
@@ -82,4 +58,4 @@ FUNCTION SifFmkRoba()
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.

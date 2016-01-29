@@ -46,23 +46,15 @@ FUNCTION kalk_ostale_operacije_doks()
    LOCAL _izbor := 1
 
    AAdd( _opc, "1. povrat dokumenta u pripremu" )
+   AAdd( _opcexe, {|| kalk_povrat_dokumenta() } )
 
-   IF ( ImaPravoPristupa( goModul:oDataBase:cName, "DOK", "POVRATDOK" ) )
-      AAdd( _opcexe, {|| kalk_povrat_dokumenta() } )
-   ELSE
-      AAdd( _opcexe, {|| MsgBeep( cZabrana ) } )
-   ENDIF
 
    AAdd( _opc, "S. pregled smeća " )
-   IF ( ImaPravoPristupa( goModul:oDataBase:cName, "DOK", "SMECEPREGLED" ) )
-      AAdd( _opcexe, {|| kalk_pripr9view() } )
-   ELSE
-      AAdd( _opcexe, {|| MsgBeep( cZabrana ) } )
-   ENDIF
+   AAdd( _opcexe, {|| kalk_pripr9view() } )
 
 
    f18_menu( "mazd", .F., _izbor, _opc, _opcexe )
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.

@@ -18,79 +18,51 @@ FUNCTION SifFmkSvi()
    PRIVATE opcexe := {}
 
    AAdd( opc, "1. partneri                          " )
-   IF ( ImaPravoPristupa( "FMK", "SIF", "PARTNOPEN" ) )
-      AAdd( opcexe, {|| P_Firma() } )
-   ELSE
-      AAdd( opcexe, {|| MsgBeep( F18_SECUR_WARRNING ) } )
-   ENDIF
+
+   AAdd( opcexe, {|| P_Firma() } )
+
 
    IF ( goModul:oDataBase:cName <> "FIN" )
       AAdd( opc, "2. konta" )
-      IF ( ImaPravoPristupa( "FMK", "SIF", "KONTOOPEN" ) )
-         AAdd( opcexe, {|| P_Konto() } )
-      ELSE
-         AAdd( opcexe, {|| MsgBeep( F18_SECUR_WARRNING ) } )
-      ENDIF
+
+      AAdd( opcexe, {|| P_Konto() } )
+
    ELSE
       AAdd( opc, "2. ----------------- " )
       AAdd( opcexe, {|| NotImp() } )
    ENDIF
 
    AAdd( opc, "3. tipovi naloga" )
-   IF ( ImaPravoPristupa( "FMK", "SIF", "TIPNALOPEN" ) )
-      AAdd( opcexe, {|| browse_tnal() } )
-   ELSE
-      AAdd( opcexe, {|| MsgBeep( F18_SECUR_WARRNING ) } )
-   ENDIF
+   AAdd( opcexe, {|| browse_tnal() } )
+
 
    AAdd( opc, "4. tipovi dokumenata" )
-   IF ( ImaPravoPristupa( "FMK", "SIF", "TIPDOKOPEN" ) )
-      AAdd( opcexe, {|| browse_tdok() } )
-   ELSE
-      AAdd( opcexe, {|| MsgBeep( F18_SECUR_WARRNING ) } )
-   ENDIF
+   AAdd( opcexe, {|| browse_tdok() } )
+
 
    AAdd( opc, "5. valute" )
-   IF ( ImaPravoPristupa( "FMK", "SIF", "VALUTEOPEN" ) )
-      AAdd( opcexe, {|| P_Valuta() } )
-   ELSE
-      AAdd( opcexe, {|| MsgBeep( F18_SECUR_WARRNING ) } )
-   ENDIF
+   AAdd( opcexe, {|| P_Valuta() } )
+
 
    AAdd( opc, "6. radne jedinice" )
-   IF ( ImaPravoPristupa( "FMK", "SIF", "RJOPEN" ) )
-      AAdd( opcexe, {|| P_RJ() } )
-   ELSE
-      AAdd( opcexe, {|| MsgBeep( F18_SECUR_WARRNING ) } )
-   ENDIF
+   AAdd( opcexe, {|| P_RJ() } )
+
 
    AAdd( opc, "7. opštine" )
-   IF ( ImaPravoPristupa( "FMK", "SIF", "OPCINEOPEN" ) )
-      AAdd( opcexe, {|| P_Ops() } )
-   ELSE
-      AAdd( opcexe, {|| MsgBeep( F18_SECUR_WARRNING ) } )
-   ENDIF
+   AAdd( opcexe, {|| P_Ops() } )
+
 
    AAdd( opc, "8. banke" )
-   IF ( ImaPravoPristupa( "FMK", "SIF", "BANKEOPEN" ) )
-      AAdd( opcexe, {|| P_Banke() } )
-   ELSE
-      AAdd( opcexe, {|| MsgBeep( F18_SECUR_WARRNING ) } )
-   ENDIF
+   AAdd( opcexe, {|| P_Banke() } )
+
 
    AAdd( opc, "9. sifk - karakteristike" )
-   IF ( ImaPravoPristupa( "FMK", "SIF", "SIFKOPEN" ) )
-      AAdd( opcexe, {|| P_SifK() } )
-   ELSE
-      AAdd( opcexe, {|| MsgBeep( F18_SECUR_WARRNING ) } )
-   ENDIF
+   AAdd( opcexe, {|| P_SifK() } )
+
 
    AAdd( opc, "A. vrste plaćanja" )
-   IF ( ImaPravoPristupa( "FMK", "SIF", "SIFKOPEN" ) )
-      AAdd( opcexe, {|| P_VrsteP() } )
-   ELSE
-      AAdd( opcexe, {|| MsgBeep( F18_SECUR_WARRNING ) } )
-   ENDIF
+   AAdd( opcexe, {|| P_VrsteP() } )
+
 
    IF ( IsRamaGlas() .OR.  gModul == "FAKT" .AND. glRadNal )
       AAdd( opc, "R. objekti" )
@@ -114,7 +86,7 @@ FUNCTION SifFmkSvi()
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
 
 

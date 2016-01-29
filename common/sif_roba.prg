@@ -59,14 +59,10 @@ FUNCTION P_Roba( cId, dx, dy, cSeek )
 
    AAdd( ImeKol, { PadC( "VPC", 10 ), {|| Transform( VPC, "999999.999" ) }, "vpc", nil, nil, nil, gPicCDEM  } )
 
-   // VPC2
-   IF ( ImaPravoPristupa( goModul:oDataBase:cName, "SIF", "SHOWVPC2" ) )
-      AAdd( ImeKol, { PadC( "VPC2", 10 ), {|| Transform( VPC2, "999999.999" ) }, "vpc2", NIL, NIL, NIL, gPicCDEM   } )
-   ENDIF
 
-   IF roba->( FieldPos( "PLC" ) ) <> 0  .AND. IzFMkIni( "SifRoba", "PlanC", "N", SIFPATH ) == "D"
-      AAdd( ImeKol, { PadC( "Plan.C", 10 ), {|| Transform( PLC, "999999.999" ) }, "PLC", NIL, NIL, NIL, gPicCDEM    } )
-   ENDIF
+   AAdd( ImeKol, { PadC( "VPC2", 10 ), {|| Transform( VPC2, "999999.999" ) }, "vpc2", NIL, NIL, NIL, gPicCDEM   } )
+   AAdd( ImeKol, { PadC( "Plan.C", 10 ), {|| Transform( PLC, "999999.999" ) }, "PLC", NIL, NIL, NIL, gPicCDEM    } )
+
 
    AAdd( ImeKol, { PadC( "MPC1", 10 ), {|| Transform( MPC, "999999.999" ) }, "mpc", NIL, NIL, NIL, gPicCDEM  } )
 
@@ -87,9 +83,8 @@ FUNCTION P_Roba( cId, dx, dy, cSeek )
 
    NEXT
 
-   IF ( ImaPravoPristupa( goModul:oDataBase:cName, "SIF", "SHOWNC" ) )
-      AAdd( ImeKol, { PadC( "NC", 10 ), {|| Transform( NC, gPicCDEM ) }, "NC", NIL, NIL, NIL, gPicCDEM  } )
-   ENDIF
+
+   AAdd( ImeKol, { PadC( "NC", 10 ), {|| Transform( NC, gPicCDEM ) }, "NC", NIL, NIL, NIL, gPicCDEM  } )
 
    AAdd( ImeKol, { "Tarifa", {|| IdTarifa }, "IdTarifa", {|| .T. }, {|| P_Tarifa( @wIdTarifa ), roba_opis_edit()  }   } )
    AAdd( ImeKol, { "Tip", {|| " " + Tip + " " }, "Tip", {|| .T. }, {|| wTip $ " TUCKVPSXY" }, NIL, NIL, NIL, NIL, 27 } )

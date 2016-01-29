@@ -12,14 +12,6 @@
 #include "f18.ch"
 
 
-FUNCTION ImaPravoPristupa( obj, komponenta, funct )
-
-   LOCAL _ret := .T.
-
-   RETURN _ret
-
-
-
 FUNCTION GetUserID()
 
    LOCAL cTmpQry

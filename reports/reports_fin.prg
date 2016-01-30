@@ -25,4 +25,4 @@ FUNCTION fin_suban_izvjestaji()
 
    f18_menu( "fr", .F., _izbor, _opc, _opcexe )
 
-   RETURN
+   RETURN .T.

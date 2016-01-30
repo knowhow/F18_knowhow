@@ -10,7 +10,7 @@
  */
 
 #include "f18.ch"
-#include "f18_separator.ch"
+
 
 STATIC cTekucaRj := ""
 STATIC __par_len
@@ -61,17 +61,17 @@ FUNCTION KnjNal()
    o_fin_edit()
 
    ImeKol := { ;
-      { "F.",            {|| dbSelectArea( F_FIN_PRIPR ), IdFirma }, "IdFirma" },;
-      { "VN",            {|| IdVN    }, "IdVN" },;
+      { "F.",            {|| dbSelectArea( F_FIN_PRIPR ), IdFirma }, "IdFirma" }, ;
+      { "VN",            {|| IdVN    }, "IdVN" }, ;
       { "Br.",           {|| BrNal   }, "BrNal" }, ;
-      { "R.br",          {|| RBr     }, "rbr", {|| wrbr() }, {|| vrbr() } },;
-      { "Konto",         {|| IdKonto }, "IdKonto", {|| .T. }, {|| P_Konto( @_IdKonto ), .T. } },;
-      { "Partner",       {|| IdPartner }, "IdPartner" },;
-      { "Br.veze ",      {|| BrDok   }, "BrDok" },;
-      { "Datum",         {|| DatDok  }, "DatDok" },;
-      { "D/P",           {|| D_P     }, "D_P" },;
-      { "Iznos " + ALLTRIM( ValDomaca() ), {|| Transform( IznosBHD, FormPicL( gPicBHD, 15 ) ) }, "iznosbhd" },;
-      { "Iznos " + ALLTRIM( ValPomocna() ), {|| Transform( IznosDEM, FormPicL( gPicDEM, 10 ) ) }, "iznosdem" },;
+      { "R.br",          {|| RBr     }, "rbr", {|| wrbr() }, {|| vrbr() } }, ;
+      { "Konto",         {|| IdKonto }, "IdKonto", {|| .T. }, {|| P_Konto( @_IdKonto ), .T. } }, ;
+      { "Partner",       {|| IdPartner }, "IdPartner" }, ;
+      { "Br.veze ",      {|| BrDok   }, "BrDok" }, ;
+      { "Datum",         {|| DatDok  }, "DatDok" }, ;
+      { "D/P",           {|| D_P     }, "D_P" }, ;
+      { "Iznos " + AllTrim( ValDomaca() ), {|| Transform( IznosBHD, FormPicL( gPicBHD, 15 ) ) }, "iznosbhd" }, ;
+      { "Iznos " + AllTrim( ValPomocna() ), {|| Transform( IznosDEM, FormPicL( gPicDEM, 10 ) ) }, "iznosdem" }, ;
       { "Opis",          {|| PadR( Left( Opis, 37 ) + iif( Len( AllTrim( Opis ) ) > 37, "...", "" ), 40 )  }, "OPIS" }, ;
       { "K1",            {|| k1      }, "k1" }, ;
       { "K2",            {|| k2      }, "k2" }, ;
@@ -97,14 +97,14 @@ FUNCTION KnjNal()
 
    _opt_row := PadR( "<c+N> Nova stavka", _opt_d ) + _sep
    _opt_row += PadR( " <ENT> Ispravka", _opt_d ) + _sep
-   _opt_row += PadR( " <c+T> Briši stavku" , _opt_d ) + _sep
+   _opt_row += PadR( " <c+T> Briši stavku", _opt_d ) + _sep
    _opt_row += " <P> Povrat naloga"
 
    @ m_x + _x_row - 3, m_y + 2 SAY8 _opt_row
 
    _opt_row := PadR( "<c+A> Ispravka stavki", _opt_d ) + _sep
    _opt_row += PadR( " <c+P> Štampa naloga", _opt_d ) + _sep
-   _opt_row += PadR( " <a+A> Ažuriranje" , _opt_d ) + _sep
+   _opt_row += PadR( " <a+A> Ažuriranje", _opt_d ) + _sep
    _opt_row += " <x> Ažur.bez stampe"
 
    @ m_x + _x_row - 2, m_y + 2 SAY8 _opt_row
@@ -305,7 +305,7 @@ FUNCTION edit_fin_priprema()
    ENDIF
 
    IF gRj == "D"
-      @ m_x + 11, Col() + 2 SAY "RJ" GET _idrj VALID EMPTY( _idrj ) .OR. P_Rj( @_idrj ) PICT "@!"
+      @ m_x + 11, Col() + 2 SAY "RJ" GET _idrj VALID Empty( _idrj ) .OR. P_Rj( @_idrj ) PICT "@!"
    ENDIF
 
    IF gTroskovi == "D"
@@ -321,11 +321,11 @@ FUNCTION edit_fin_priprema()
 
    @ m_x + 14, m_y + 2 SAY "Partner:" GET _IdPartner PICT "@!" ;
       VALID ;
-      {|| IIF( Empty( _idpartner ), Reci( 14, 20, Space( 25 ) ), ), ;
+      {|| iif( Empty( _idpartner ), Reci( 14, 20, Space( 25 ) ), ), ;
       ( P_Firma( @_IdPartner, 14, 20 ) ) .AND. fin_pravilo_partner() .AND. ;
-      IIF( g_knjiz_help == "D" .AND. !Empty( _idpartner ), g_box_stanje( _idpartner, _idkonto, NIL ), .T. ) } ;
+      iif( g_knjiz_help == "D" .AND. !Empty( _idpartner ), g_box_stanje( _idpartner, _idkonto, NIL ), .T. ) } ;
       WHEN ;
-      {|| IIF( ChkKtoMark( _idkonto ), .T., .F. ) }
+      {|| iif( ChkKtoMark( _idkonto ), .T., .F. ) }
 
 
    @ m_x + 16, m_y + 2  SAY8 "Duguje/Potražuje (1/2):" GET _D_P VALID V_DP() .AND. fin_pravilo_dug_pot() .AND. fin_pravilo_broj_veze()
@@ -569,7 +569,6 @@ FUNCTION edit_fin_pripr()
    LOCAL lLogBrisanje := .F.
    LOCAL _log_info
 
-
    IF ( Ch == K_CTRL_T .OR. Ch == K_ENTER ) .AND. RecCount2() == 0
       RETURN DE_CONT
    ENDIF
@@ -775,7 +774,7 @@ FUNCTION edit_fin_pripr()
 
          fin_reset_broj_dokumenta( fin_pripr->idfirma, fin_pripr->idvn, fin_pripr->brnal )
 
-		 my_dbf_zap()
+         my_dbf_zap()
 
          BrisiPBaze()
 
@@ -1214,13 +1213,15 @@ FUNCTION BrDokOK()
 
 
 FUNCTION SetTekucaRJ( cRJ )
+
    set_metric( "fin_knjiz_tek_rj", my_home(), cRJ )
+
    RETURN
 
 
 
 FUNCTION GetTekucaRJ()
-   RETURN fetch_metric( "fin_knjiz_tek_rj", my_home(), PADR( "", __rj_len ) )
+   RETURN fetch_metric( "fin_knjiz_tek_rj", my_home(), PadR( "", __rj_len ) )
 
 
 

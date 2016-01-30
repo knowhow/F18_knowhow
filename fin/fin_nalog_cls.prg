@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out knowhow ERP, a free and open source 
+/*
+ * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
  * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -14,17 +14,17 @@
 
 /* ---------------------------------------- CLASS FinNalozi ------------------------------------------------------- */
 
-
 CLASS FinNalozi
-   
+
    METHOD New()
    METHOD addNalog( oFinNalog )                // dodaj FinNalog
    METHOD getNalog( cIdFirma, cIdVn, cBrNal )  // nađi FinNalog na osnovu broja
    METHOD valid()
    METHOD showErrors()
- 
+
    DATA aNalozi // ARRAY OF FinNalog
    DATA cErrors // sve poruke o gresci
+
 ENDCLASS
 
 
@@ -32,54 +32,56 @@ METHOD FinNalozi:New()
 
    ::aNalozi := {}
    ::cErrors := ""
+
    RETURN Self
 
 
 METHOD FinNalozi:addNalog( oFinNalog )
 
-    AADD( ::aNalozi, oFinNalog )
-    RETURN .T.
+   AAdd( ::aNalozi, oFinNalog )
+
+   RETURN .T.
 
 
 METHOD FinNalozi:getNalog( cIdFirma, cIdVn, cBrNal )
 
-    LOCAL nPos
+   LOCAL nPos
 
-    nPos := ASCAN( ::aNalozi, { | oNalog |  oNalog:cIdFirma == cIdFirma .AND. oNalog:cIdVN == cIdVN .AND. oNalog:cBrNal == cBrNal  } )
+   nPos := AScan( ::aNalozi, {| oNalog |  oNalog:cIdFirma == cIdFirma .AND. oNalog:cIdVN == cIdVN .AND. oNalog:cBrNal == cBrNal  } )
 
-    IF nPos > 0
-        RETURN ::aNalozi[ nPos ]
-    ENDIF
+   IF nPos > 0
+      RETURN ::aNalozi[ nPos ]
+   ENDIF
 
-    RETURN NIL
+   RETURN NIL
 
 
 METHOD FinNalozi:valid()
 
    LOCAL cError, nPos
-   
+
    ::cErrors := ""
-   AEVAL( ::aNalozi, { | oNalog | oNalog:valid(), IIF( oNalog:lError, ::cErrors += "#" + oNalog:cError + "#", .F. ) } )
-   nPos := AScan( ::aNalozi, { | oNalog | oNalog:lError } )
+   AEval( ::aNalozi, {| oNalog | oNalog:valid(), iif( oNalog:lError, ::cErrors += "#" + oNalog:cError + "#", .F. ) } )
+   nPos := AScan( ::aNalozi, {| oNalog | oNalog:lError } )
 
    IF nPos > 0
-         RETURN .F.
+      RETURN .F.
    ENDIF
 
    RETURN .T.
-       
+
 
 METHOD FinNalozi:showErrors()
 
    MsgBeep( ::cErrors )
-   
-   RETURN NIL       
+
+   RETURN NIL
 
 /* ---------------------------------------- CLASS FinNalog ------------------------------------------------------- */
 
 CLASS FinNalog
 
-   Method New( cIdFirma, cIdVn, cBrNal )
+   METHOD New( cIdFirma, cIdVn, cBrNal )
    METHOD addStavka( dDatDok ) // dodaj stavku u FIN nalog, interesuje nas sao datum dokumenta
    METHOD setDatumNaloga()
    METHOD cBroj()
@@ -112,7 +114,7 @@ METHOD FinNalog:New( cIdFirma, cIdVN, cBrNal )
 
    ::lError := .F.
    ::cError := ""
-   
+
    RETURN Self
 
 
@@ -126,24 +128,25 @@ METHOD FinNalog:cBroj()
 */
 METHOD FinNalog:addStavka( dDatDok )
 
-    IF ::dMinDatDok == NIL
-         ::dMinDatDok := dDatDok
-    ENDIF
+   IF ::dMinDatDok == NIL
+      ::dMinDatDok := dDatDok
+   ENDIF
 
-    IF ::dMaxDatDok == NIL
-        ::dMaxDatDok := dDatDok
-    ENDIF
-  
-    IF dDatDok < ::dMinDatDok 
-         ::dMinDatDok := dDatDok
-    ENDIF
+   IF ::dMaxDatDok == NIL
+      ::dMaxDatDok := dDatDok
+   ENDIF
 
-    IF dDatDok > ::dMaxDatDok
-         ::dMaxDatDok := dDatDok
-    ENDIF
+   IF dDatDok < ::dMinDatDok
+      ::dMinDatDok := dDatDok
+   ENDIF
 
-    ::setDatumNaloga()
-    RETURN .T.
+   IF dDatDok > ::dMaxDatDok
+      ::dMaxDatDok := dDatDok
+   ENDIF
+
+   ::setDatumNaloga()
+
+   RETURN .T.
 
 
 METHOD FinNalog:setDatumNaloga()
@@ -161,20 +164,20 @@ METHOD FinNalog:validDatumi()
    ::cError := ""
 
    // godina za sve stavke mora biti ista
-   IF YEAR( ::dMinDatDok ) != YEAR( ::dMaxDatDok )
-        ::cError += "stavke " + ::cBroj() + " obuhvataju više od jedne godine" 
-        RETURN .F.
+   IF Year( ::dMinDatDok ) != Year( ::dMaxDatDok )
+      ::cError += "stavke " + ::cBroj() + " obuhvataju više od jedne godine"
+      RETURN .F.
    ENDIF
 
    // sve stavke naloga moraju pripadati jednom mjesecu
-   IF MONTH( ::dMinDatDok ) != MONTH( ::dMaxDatDok )
-        IF !EMPTY( ::cError )
-             ::cError += "#"
-        ENDIF
-        ::cError += "stavke " + ::cBroj() + " se odnose na više mjeseci"
-        RETURN .F.
+   IF Month( ::dMinDatDok ) != Month( ::dMaxDatDok )
+      IF !Empty( ::cError )
+         ::cError += "#"
+      ENDIF
+      ::cError += "stavke " + ::cBroj() + " se odnose na više mjeseci"
+      RETURN .F.
    ENDIF
-        
+
    RETURN .T.
 
 
@@ -186,4 +189,3 @@ METHOD FinNalog:valid()
    ::lError := !lRet
 
    RETURN lRet
-

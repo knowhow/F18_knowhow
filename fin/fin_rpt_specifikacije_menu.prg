@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1994-2011 by bring.out d.o.o Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including knowhow ERP specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -15,82 +15,82 @@
 // ------------------------------------------------------
 // meni specifikacija
 // ------------------------------------------------------
-function fin_menu_specifikacije()
-local _izbor := 1
-local _opc := {}
-local _opcexe := {}
+FUNCTION fin_menu_specifikacije()
 
-AADD( _opc, "1. specifikacije (txt)          " )
-AADD( _opcexe, { || _txt_specif_mnu() } )
-AADD( _opc, "2. specifikacije (odt)          " )
-AADD( _opcexe, { || _sql_specif_mnu() } )
+   LOCAL _izbor := 1
+   LOCAL _opc := {}
+   LOCAL _opcexe := {}
 
-f18_menu( "spec", .f., _izbor, _opc, _opcexe )
+   AAdd( _opc, "1. specifikacije (txt)          " )
+   AAdd( _opcexe, {|| _txt_specif_mnu() } )
+   AAdd( _opc, "2. specifikacije (odt)          " )
+   AAdd( _opcexe, {|| _sql_specif_mnu() } )
 
-return
+   f18_menu( "spec", .F., _izbor, _opc, _opcexe )
+
+   RETURN
 
 
 // ------------------------------------------------------
 // meni specifikacija sql
 // ------------------------------------------------------
-static function _sql_specif_mnu()
-local _izbor := 1
-local _opc := {}
-local _opcexe := {}
+STATIC FUNCTION _sql_specif_mnu()
 
-AADD( _opc, "1. specifikacija po subanalitickim kontima          " )
-AADD( _opcexe, { || fin_suban_specifikacija_sql() } )
+   LOCAL _izbor := 1
+   LOCAL _opc := {}
+   LOCAL _opcexe := {}
 
-f18_menu( "spsql", .f., _izbor, _opc, _opcexe )
+   AAdd( _opc, "1. specifikacija po subanalitickim kontima          " )
+   AAdd( _opcexe, {|| fin_suban_specifikacija_sql() } )
 
-return
+   f18_menu( "spsql", .F., _izbor, _opc, _opcexe )
 
-
-
-
-static function _txt_specif_mnu()
-local _opc := {}
-local _opcexe := {}
-local _izbor := 1
-
-AADD( _opc, "1. partnera na kontu                                        ")
-AADD( _opcexe, {|| SpecDPK()} )
-AADD( _opc, "2. otvorene stavke preko-do odredjenog broja dana za konto")
-AADD( _opcexe, {|| SpecBrDan()} )
-AADD( _opc, "3. konta za partnera")
-AADD( _opcexe, {|| SpecPop()} )
-AADD( _opc, "4. po analitickim kontima")
-AADD( _opcexe, {|| SpecPoK()} )
-AADD( _opc, "5. po subanalitickim kontima")
-AADD( _opcexe, {|| SpecPoKP()} )
-AADD( _opc, "6. za subanaliticki konto / 2")
-AADD( _opcexe, {|| SpecSubPro()} )
-AADD( _opc, "7. za subanaliticki konto/konto2")
-AADD( _opcexe, {|| SpecKK2()} )
-AADD( _opc, "8. pregled novih dugovanja/potrazivanja")
-AADD( _opcexe, {|| PregNDP()} ) 
-AADD( _opc, "9. pregled partnera bez prometa")
-AADD( _opcexe, {|| PartVanProm()} )
-
-if gRJ=="D" .or. gTroskovi=="D"
-	AADD( _opc, "A. izvrsenje budzeta/pregled rashoda")
-	AADD( _opcexe, {|| IzvrsBudz()} )
-	AADD( _opc, "B. pregled prihoda" )
-	AADD( _opcexe, {|| Prihodi()})
-endif
-
-AADD( _opc, "C. otvorene stavke po dospijecu - po racunima (kao kartica)")
-AADD( _opcexe, {|| SpecPoDosp(.t.)})
-AADD( _opc, "D. otvorene stavke po dospijecu - specifikacija partnera")
-AADD( _opcexe, {|| SpecPoDosp(.f.)})
-AADD( _opc, "F. pregled dugovanja partnera po rocnim intervalima ")
-AADD( _opcexe, {|| SpecDugPartnera() } )
-AADD( _opc, "S. specifikacija troskova po gradilistima ")
-AADD( _opcexe, {|| r_spec_tr() } )
-
-f18_menu( "spct", .f., _izbor, _opc, _opcexe )
-
-return
+   RETURN
 
 
 
+
+STATIC FUNCTION _txt_specif_mnu()
+
+   LOCAL _opc := {}
+   LOCAL _opcexe := {}
+   LOCAL _izbor := 1
+
+   AAdd( _opc, "1. partnera na kontu                                        " )
+   AAdd( _opcexe, {|| SpecDPK() } )
+   AAdd( _opc, "2. otvorene stavke preko-do odredjenog broja dana za konto" )
+   AAdd( _opcexe, {|| SpecBrDan() } )
+   AAdd( _opc, "3. konta za partnera" )
+   AAdd( _opcexe, {|| SpecPop() } )
+   AAdd( _opc, "4. po analitickim kontima" )
+   AAdd( _opcexe, {|| SpecPoK() } )
+   AAdd( _opc, "5. po subanalitickim kontima" )
+   AAdd( _opcexe, {|| SpecPoKP() } )
+   AAdd( _opc, "6. za subanaliticki konto / 2" )
+   AAdd( _opcexe, {|| SpecSubPro() } )
+   AAdd( _opc, "7. za subanaliticki konto/konto2" )
+   AAdd( _opcexe, {|| SpecKK2() } )
+   AAdd( _opc, "8. pregled novih dugovanja/potrazivanja" )
+   AAdd( _opcexe, {|| PregNDP() } )
+   AAdd( _opc, "9. pregled partnera bez prometa" )
+   AAdd( _opcexe, {|| PartVanProm() } )
+
+   IF gRJ == "D" .OR. gTroskovi == "D"
+      AAdd( _opc, "A. izvrsenje budzeta/pregled rashoda" )
+      AAdd( _opcexe, {|| IzvrsBudz() } )
+      AAdd( _opc, "B. pregled prihoda" )
+      AAdd( _opcexe, {|| Prihodi() } )
+   ENDIF
+
+   AAdd( _opc, "C. otvorene stavke po dospijecu - po racunima (kao kartica)" )
+   AAdd( _opcexe, {|| SpecPoDosp( .T. ) } )
+   AAdd( _opc, "D. otvorene stavke po dospijecu - specifikacija partnera" )
+   AAdd( _opcexe, {|| SpecPoDosp( .F. ) } )
+   AAdd( _opc, "F. pregled dugovanja partnera po rocnim intervalima " )
+   AAdd( _opcexe, {|| SpecDugPartnera() } )
+   AAdd( _opc, "S. specifikacija troskova po gradilistima " )
+   AAdd( _opcexe, {|| r_spec_tr() } )
+
+   f18_menu( "spct", .F., _izbor, _opc, _opcexe )
+
+   RETURN

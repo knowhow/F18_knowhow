@@ -12,7 +12,6 @@
 #include "f18.ch"
 
 
-
 FUNCTION fin_admin_opcije_menu()
 
    PRIVATE opc := {}

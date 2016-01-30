@@ -59,7 +59,7 @@ FUNCTION st_sv_nal()
 
    tbl_export()
 
-   RETURN
+   RETURN .T.
 
 
 // ---------------------------------------------

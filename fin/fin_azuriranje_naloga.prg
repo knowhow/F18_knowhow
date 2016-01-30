@@ -16,7 +16,6 @@ STATIC __tbl_nalog := "fin_nalog"
 STATIC __tbl_anal := "fin_anal"
 STATIC __tbl_sint := "fin_sint"
 
-
 FUNCTION fin_azuriranje_naloga( automatic )
 
    LOCAL oServer := my_server()

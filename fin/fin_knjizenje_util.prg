@@ -46,7 +46,7 @@ FUNCTION SetDatUPripr()
 
    CLOSERET
 
-   RETURN
+   RETURN .T.
 
 /*! \fn K3Iz256(cK3)
  *  \brief
@@ -75,7 +75,7 @@ FUNCTION K3Iz256( cK3 )
    ENDIF
 
    RETURN cK3
-// }
+
 
 
 /*! \fn K3U256(cK3)

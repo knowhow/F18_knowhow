@@ -15,7 +15,6 @@
 STATIC picBHD
 STATIC picDEM
 
-
 STATIC FUNCTION _o_tables()
 
    O_KOMP_POT

@@ -11,7 +11,7 @@
 
 
 #include "f18.ch"
-#include "f18_separator.ch"
+
 
 FUNCTION Ostav()
 
@@ -378,7 +378,7 @@ FUNCTION fin_automatsko_zatvaranje_otvorenih_stavki( lAuto, cKto, cPtn )
    nC := 0
 
    @ m_x + 1, m_y + 2 SAY "Zatvoreno:"
-   @ m_x + 1, m_y + 12 SAY nC  
+   @ m_x + 1, m_y + 12 SAY nC
 
    SEEK cidfirma + cidkonto
    EOF CRET
@@ -419,7 +419,7 @@ FUNCTION fin_automatsko_zatvaranje_otvorenih_stavki( lAuto, cKto, cPtn )
       IF Abs( Round( nDugBHD - nPotBHD, 3 ) ) <= gnLOSt .AND. cOtvSt == "1"
 
          SEEK cIdFirma + cIdKonto + cIdPartner + cBrDok
-         @ m_x + 1, m_y + 12 SAY ++nC 
+         @ m_x + 1, m_y + 12 SAY ++nC
 
          DO WHILE !Eof() .AND. cIdKonto = IdKonto .AND. cIdPartner == IdPartner .AND. cBrDok = BrDok
 
@@ -469,18 +469,18 @@ STATIC FUNCTION ponisti_markere_postojecih_stavki( cIdFirma, cIdKonto, cIdPartne
    LOCAL lOk := .T.
 
    sql_table_update( nil, "BEGIN" )
-      
+
    IF !f18_lock_tables( { "fin_suban" }, .T. )
       sql_table_update( nil, "END" )
       RETURN lRet
    ENDIF
 
    Box(, 3, 65 )
-  
+
    @ m_x + 1, m_y + 2 SAY8 "Brišem markere postojećih stavki tabele..."
 
    DO WHILE !Eof() .AND. idfirma == cidfirma .AND. cIdKonto = IdKonto
-         
+
       IF !Empty( cIdPartner )
          IF ( cIdPartner <> idpartner )
             SKIP
@@ -491,7 +491,7 @@ STATIC FUNCTION ponisti_markere_postojecih_stavki( cIdFirma, cIdKonto, cIdPartne
       _rec := dbf_get_rec()
       _rec[ "otvst" ] := " "
 
-      @ m_x + 2, m_y + 2 SAY "nalog: " + _rec["idvn"] + "-" + ALLTRIM( _rec["brnal"] ) + " / stavka: " + _rec["rbr"]
+      @ m_x + 2, m_y + 2 SAY "nalog: " + _rec[ "idvn" ] + "-" + AllTrim( _rec[ "brnal" ] ) + " / stavka: " + _rec[ "rbr" ]
 
       lOk := update_rec_server_and_dbf( "fin_suban", _rec, 1, "CONT" )
 
@@ -933,7 +933,7 @@ FUNCTION StKart( fSolo, fTiho, bFilter )
    ENDIF
 
    IF fsolo == NIL
-      fSolo := .F.  
+      fSolo := .F.
    ENDIF
 
    IF gVar1 == "0"
@@ -1321,8 +1321,6 @@ FUNCTION StKart( fSolo, fTiho, bFilter )
    ELSE
       RETURN ( NIL )
    ENDIF
-
-
 
 FUNCTION fin_create_pom_table( fTiho, nParLen )
 
@@ -2197,7 +2195,7 @@ STATIC FUNCTION promjene_otvorenih_stavki_se_mogu_azurirati()
       SELECT suban
       GO osuban->_recno
 
-      IF EOF() .OR. idfirma <> osuban->idfirma .OR. idvn <> osuban->idvn .OR. brnal <> osuban->brnal .OR. idkonto <> osuban->idkonto .OR. idpartner <> osuban->idpartner .OR. d_p <> osuban->d_p
+      IF Eof() .OR. idfirma <> osuban->idfirma .OR. idvn <> osuban->idvn .OR. brnal <> osuban->brnal .OR. idkonto <> osuban->idkonto .OR. idpartner <> osuban->idpartner .OR. d_p <> osuban->d_p
          lRet := .F.
          MsgBeep( "Izgleda da je drugi korisnik radio na ovom partneru#Prekidam operaciju !!!" )
          EXIT
@@ -2219,7 +2217,7 @@ STATIC FUNCTION dodaj_promjene_iz_osuban_u_suban()
    LOCAL lOk := .T.
 
    sql_table_update( nil, "BEGIN" )
-      
+
    IF !f18_lock_tables( { "fin_suban" }, .T. )
       sql_table_update( nil, "END" )
       MsgBeep( "Ne mogu zaključati tabelu fin_suban !#Operacija poništena." )
@@ -2263,13 +2261,13 @@ STATIC FUNCTION dodaj_promjene_iz_osuban_u_suban()
 
 
 STATIC FUNCTION brisi_otvorene_stavke_iz_tabele_suban()
-   
+
    LOCAL _rec
    LOCAL lOk := .T.
    LOCAL lRet := .F.
-   
+
    sql_table_update( nil, "BEGIN" )
-      
+
    IF !f18_lock_tables( { "fin_suban" }, .T. )
       sql_table_update( nil, "END" )
       MsgBeep( "Problem sa zaključavanjem tabele fin_suban !#Prekidam operaciju." )

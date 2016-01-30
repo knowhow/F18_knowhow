@@ -22,4 +22,4 @@ FUNCTION rnal_mnu_admin()
 
    f18_menu( "administracija", .F., izbor, opc, opcexe )
 
-   RETURN
+   RETURN .T.

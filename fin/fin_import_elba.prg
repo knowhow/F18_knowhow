@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1994-2011 by bring.out d.o.o Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including knowhow ERP specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -13,353 +13,361 @@
 #include "f18.ch"
 
 // vars
-static __delimit
-static __rbr
-static __nalbr
-static __k_kup
-
+STATIC __delimit
+STATIC __rbr
+STATIC __nalbr
+STATIC __k_kup
 
 // ----------------------------------------
 // import elba txt... glavna funkcija
 // ----------------------------------------
-function _imp_elba_txt( cTxt )
-local nItems
-local cImpView 
+FUNCTION _imp_elba_txt( cTxt )
 
-if cTxt == nil
-	cTxt := ""
-endif
+   LOCAL nItems
+   LOCAL cImpView
 
-// provjeri da li je priprema prazna
-if __ck_pripr() > 0
-	MsgBeep("Priprema mora biti prazna !!!#Ispraznite pripremu i ponovite proceduru.")
-	return
-endif
+   IF cTxt == nil
+      cTxt := ""
+   ENDIF
 
-// uzmi parametre...
-if _get_params( @cTxt, @cImpView ) == 0
-	MsgBeep("Prekidam operaciju...")
-	return
-endif
+   // provjeri da li je priprema prazna
+   IF __ck_pripr() > 0
+      MsgBeep( "Priprema mora biti prazna !!!#Ispraznite pripremu i ponovite proceduru." )
+      RETURN
+   ENDIF
 
-O_FIN_PRIPR
-O_NALOG
+   // uzmi parametre...
+   IF _get_params( @cTxt, @cImpView ) == 0
+      MsgBeep( "Prekidam operaciju..." )
+      RETURN
+   ENDIF
 
-// delimiter je TAB
-__delimit := CHR(9)
+   O_FIN_PRIPR
+   O_NALOG
 
-// kupac konto 
-__k_kup := r_get_konto( "KUP_KONTO" )
+   // delimiter je TAB
+   __delimit := Chr( 9 )
+
+   // kupac konto
+   __k_kup := r_get_konto( "KUP_KONTO" )
 
 
-// uzmi lokaciju fajla txt ako nije proslijedjeno...
-if EMPTY( cTxt )
-	_g_elba_file( @cTxt )
-endif
+   // uzmi lokaciju fajla txt ako nije proslijedjeno...
+   IF Empty( cTxt )
+      _g_elba_file( @cTxt )
+   ENDIF
 
-// napuni pripremu sa stavkama... iz txt
-nItems := _g_el_items( cTxt, cImpView )
+   // napuni pripremu sa stavkama... iz txt
+   nItems := _g_el_items( cTxt, cImpView )
 
-if nItems > 0
-	MsgBeep("Obradjeno: " + ALLTRIM(STR(nItems)) + " stavki.#Stavke se nalaze u pripremi.")
-endif
+   IF nItems > 0
+      MsgBeep( "Obradjeno: " + AllTrim( Str( nItems ) ) + " stavki.#Stavke se nalaze u pripremi." )
+   ENDIF
 
-return
+   RETURN
 
 // -------------------------------------------------------
 // provjerava koliko zapisa postoji u pripremi
 // -------------------------------------------------------
-static function __ck_pripr()
-local nReturn := 0
-O_FIN_PRIPR
-select fin_pripr
-nReturn := RecCount2()
-return nReturn
+STATIC FUNCTION __ck_pripr()
+
+   LOCAL nReturn := 0
+
+   O_FIN_PRIPR
+   SELECT fin_pripr
+   nReturn := RecCount2()
+
+   RETURN nReturn
 
 
 // -------------------------------------------
 // parametri importa
 // -------------------------------------------
-static function _get_params( cFile, cImpView )
-local nX := 1
-local cImpOk := "D"
-local GetList := {}
+STATIC FUNCTION _get_params( cFile, cImpView )
 
-cFile := PADR( "c:\temp\elba.txt", 300 )
-cFile := fetch_metric( "import_elba_lokacija_fajla", my_user(), cFile )
-cImpView := "D"
+   LOCAL nX := 1
+   LOCAL cImpOk := "D"
+   LOCAL GetList := {}
 
-Box(, 9, 65)
+   cFile := PadR( "c:\temp\elba.txt", 300 )
+   cFile := fetch_metric( "import_elba_lokacija_fajla", my_user(), cFile )
+   cImpView := "D"
 
-	@ m_x + nX, m_y + 2 SAY "Parametri importa" COLOR "BG+/B"
+   Box(, 9, 65 )
 
-	nX += 2
+   @ m_x + nX, m_y + 2 SAY "Parametri importa" COLOR "BG+/B"
 
-	@ m_x + nX, m_y + 2 SAY "Lokacija i naziv fajla za import:"
+   nX += 2
 
-	nX += 1
-	
-	@ m_x + nX, m_y + 2 GET cFile PICT "@S60" VALID _file_valid( cFile )
+   @ m_x + nX, m_y + 2 SAY "Lokacija i naziv fajla za import:"
 
-	nX += 2
-	
-	@ m_x + nX, m_y + 2 SAY "Pregled importa (D/N)?" GET cImpView VALID cImpView $ "DN" PICT "@!"
-	
-	nX += 2
-	
-	@ m_x + nX, m_y + 2 SAY "Importovati podatke (D/N)?" GET cImpOk VALID cImpOk $ "DN" PICT "@!"
+   nX += 1
 
-	read
-	
-BoxC()
+   @ m_x + nX, m_y + 2 GET cFile PICT "@S60" VALID _file_valid( cFile )
 
-if LastKey() == K_ESC .or. cImpOk == "N"
-	return 0
-endif
+   nX += 2
 
-cFile := ALLTRIM( cFile )
-set_metric( "import_elba_lokacija_fajla", my_user(), cFile )
+   @ m_x + nX, m_y + 2 SAY "Pregled importa (D/N)?" GET cImpView VALID cImpView $ "DN" PICT "@!"
 
-return 1
+   nX += 2
+
+   @ m_x + nX, m_y + 2 SAY "Importovati podatke (D/N)?" GET cImpOk VALID cImpOk $ "DN" PICT "@!"
+
+   READ
+
+   BoxC()
+
+   IF LastKey() == K_ESC .OR. cImpOk == "N"
+      RETURN 0
+   ENDIF
+
+   cFile := AllTrim( cFile )
+   set_metric( "import_elba_lokacija_fajla", my_user(), cFile )
+
+   RETURN 1
 
 // ------------------------------------------
 // validacija fajla
 // ------------------------------------------
-static function _file_valid( cFile )
-local lRet := .t.
+STATIC FUNCTION _file_valid( cFile )
 
-cFile := ALLTRIM(cFile)
+   LOCAL lRet := .T.
 
-if EMPTY(cFile)
-	MsgBeep("Lokacija i ime fajla moraju biti popunjeni !")
-	lRet := .f.
-else
-	if !FILE(cFile)
-		MsgBeep("Ovaj fajl ne postoji !!!")
-		lRet := .f.
-	endif
-endif
+   cFile := AllTrim( cFile )
 
-return lRet
+   IF Empty( cFile )
+      MsgBeep( "Lokacija i ime fajla moraju biti popunjeni !" )
+      lRet := .F.
+   ELSE
+      IF !File( cFile )
+         MsgBeep( "Ovaj fajl ne postoji !!!" )
+         lRet := .F.
+      ENDIF
+   ENDIF
+
+   RETURN lRet
 
 
 // -------------------------------------------------------
 // vraca gdje se nalazi txt fajl za import
 // -------------------------------------------------------
-static function _g_elba_file( cTxt )
-cTxt := EXEPATH + "elba.txt"
-return
+STATIC FUNCTION _g_elba_file( cTxt )
+
+   cTxt := EXEPATH + "elba.txt"
+
+   RETURN
 
 
 // -------------------------------------------------------
 // vraca matricu napunjenu stavkama iz txt fajla...
 // -------------------------------------------------------
-static function _g_el_items( cTxt, cImpView )
-local nItems := 0
-local aHeader := {}
-local aItem := {}
-local cTemp := ""
-local i
-local cNalBr
+STATIC FUNCTION _g_el_items( cTxt, cImpView )
 
-local _o_file
+   LOCAL nItems := 0
+   LOCAL aHeader := {}
+   LOCAL aItem := {}
+   LOCAL cTemp := ""
+   LOCAL i
+   LOCAL cNalBr
 
-private aPartArr := {}
-private GetList:={}
+   LOCAL _o_file
 
-__nalbr := ""
-__rbr := 0
+   PRIVATE aPartArr := {}
+   PRIVATE GetList := {}
 
-_o_file := TFileRead():New( cTxt )
-_o_file:Open()
+   __nalbr := ""
+   __rbr := 0
 
-if _o_file:Error()
-	msgbeep( _o_file:ErrorMsg( "Problem sa otvaranjem fajla: ") )
-	return 0
-endif
+   _o_file := TFileRead():New( cTxt )
+   _o_file:Open()
 
-Box( , 22, 70)
+   IF _o_file:Error()
+      msgbeep( _o_file:ErrorMsg( "Problem sa otvaranjem fajla: " ) )
+      RETURN 0
+   ENDIF
 
-@ m_x + 1, m_y + 2 SAY "Vrsim import podataka u pripremu ..." COLOR "BG+/B"
+   Box( , 22, 70 )
 
-//for i:=1 to nFLines
-while _o_file:MoreToRead()
+   @ m_x + 1, m_y + 2 SAY "Vrsim import podataka u pripremu ..." COLOR "BG+/B"
 
-	cTemp := hb_strtoutf8( _o_file:ReadLine() )
+   // for i:=1 to nFLines
+   WHILE _o_file:MoreToRead()
 
-	if EMPTY(cTemp)
-		loop
-	endif
+      cTemp := hb_StrToUTF8( _o_file:ReadLine() )
 
-	aItem := TokToNiz( cTemp, __delimit )
+      IF Empty( cTemp )
+         LOOP
+      ENDIF
 
-	aFinItem := {}
-	
-	// izvuci u FIN pripr matricu aFinItem podatke za nalog
-	if _g_elba_item( aItem, aHeader, @aFinItem, cTemp, nItems ) == .t.
-			
-		// sada ubaci elba item u pripr
-		_i_elba_item( aFinItem, cImpView )
-			
-		++ nItems
-		
-		@ m_x + 3, m_y + 2 SAY PADR("", 60) COLOR "BG+/B"
-		@ m_x + 3, m_y + 2 SAY "stavka " + ALLTRIM(STR( nItems )) COLOR "BG+/B"
-		
-	else
-		
-		// ovo su parametri izvoda...
-		aHeader := aItem
-		
-		__nalbr := PADL( aHeader[1], 8 , "0" )
+      aItem := TokToNiz( cTemp, __delimit )
 
-		@ m_x + 4, m_y + 2 SAY "Izvod broj: " + PADL(aHeader[1], 8, "0")
-		
-	endif
-	
-enddo	
+      aFinItem := {}
 
-_o_file:Close()
+      // izvuci u FIN pripr matricu aFinItem podatke za nalog
+      IF _g_elba_item( aItem, aHeader, @aFinItem, cTemp, nItems ) == .T.
 
-// sada uzmi pravi broj naloga i broj veze
-select fin_pripr
-set order to tag "0"
-go top
-my_flock()
-do while !EOF()
-	replace brnal with __nalbr
-	replace brdok with __nalbr
-	skip
-enddo
-my_unlock()
-set order to tag "1"
-go top
+         // sada ubaci elba item u pripr
+         _i_elba_item( aFinItem, cImpView )
 
-BoxC()
+         ++ nItems
 
+         @ m_x + 3, m_y + 2 SAY PadR( "", 60 ) COLOR "BG+/B"
+         @ m_x + 3, m_y + 2 SAY "stavka " + AllTrim( Str( nItems ) ) COLOR "BG+/B"
 
-return nItems
+      ELSE
+
+         // ovo su parametri izvoda...
+         aHeader := aItem
+
+         __nalbr := PadL( aHeader[ 1 ], 8, "0" )
+
+         @ m_x + 4, m_y + 2 SAY "Izvod broj: " + PadL( aHeader[ 1 ], 8, "0" )
+
+      ENDIF
+
+   ENDDO
+
+   _o_file:Close()
+
+   // sada uzmi pravi broj naloga i broj veze
+   SELECT fin_pripr
+   SET ORDER TO TAG "0"
+   GO TOP
+   my_flock()
+   DO WHILE !Eof()
+      REPLACE brnal WITH __nalbr
+      REPLACE brdok WITH __nalbr
+      SKIP
+   ENDDO
+   my_unlock()
+   SET ORDER TO TAG "1"
+   GO TOP
+
+   BoxC()
+
+   RETURN nItems
 
 
 // ----------------------------------------------------------------
 // vraca napunjenu matricu aFin pripremljenu za import u pripr
 // ----------------------------------------------------------------
-static function _g_elba_item( aItem, aHeader, aFin, cLine, nLineNo )
-local nItemLen := LEN(aItem)
-local cFirma := gFirma
-local cIdVn := "I1"
+STATIC FUNCTION _g_elba_item( aItem, aHeader, aFin, cLine, nLineNo )
 
-aFin := {}
+   LOCAL nItemLen := Len( aItem )
+   LOCAL cFirma := gFirma
+   LOCAL cIdVn := "I1"
 
-// aFin[1] = idfirma
-// aFin[2] = idvn
-// aFin[3] = brnal
-// aFin[4] = brveze
-// aFin[5] = datnal
-// aFin[6] = konto
-// aFin[7] = partner
-// aFin[8] = duguje / potrazuje
-// aFin[9] = valuta
-// aFin[10] = iznos
-// aFin[11] = opis
-// aFin[12] = naziv firme iz TXT fajla
+   aFin := {}
 
-
-if aItem[1] $ "+-"
+   // aFin[1] = idfirma
+   // aFin[2] = idvn
+   // aFin[3] = brnal
+   // aFin[4] = brveze
+   // aFin[5] = datnal
+   // aFin[6] = konto
+   // aFin[7] = partner
+   // aFin[8] = duguje / potrazuje
+   // aFin[9] = valuta
+   // aFin[10] = iznos
+   // aFin[11] = opis
+   // aFin[12] = naziv firme iz TXT fajla
 
 
-	// standardna transakcija....
-	if nItemLen == 12
-		
-		// {1} - tip transakcije (+/-)
-		// {2} - datum i vrijeme "27.11.2006 15:15:02"
-		// {3} - broj transakcije
-		// {4} - uplata UP, ili ???
-		// {5} - 2664508 ????
-		// {6} - 0 ????
-		// {7} - Banka naziv
-		// {8} - transakcijski racun primaoca
-		// {9} - naziv firme
-		// {10} - opis + "/" + racun + puni naziv firme
-		// {11} - valuta KM ili drugo
-		// {12} - iznos
+   IF aItem[ 1 ] $ "+-"
 
-		AADD(aFin, { cFirma, ;
-			cIdVn, ;
-			__nalbr, ;
-			__nalbr, ;
-			_g_elba_date( aItem[2]), ;
-			_g_konto(aItem[1], aItem[10] ), ;
-			_g_partn(aItem[1], aItem[9], aItem[8] ), ;
-			_g_elba_dp( aItem[1] ), ;
-			aItem[11], ;
-			VAL( aItem[12] ), ;
-			_g_opis( aItem[10] ), ;
-			ALLTRIM( aItem[9] ) })
-	
-	
-	//elseif nItemLen == 11
-	
-	//	AADD(aFin, { cFirma, ;
-	//		cIdVn, ;
-	//		__nalbr, ;
-	//		__nalbr, ;
-	//		_g_elba_date( aItem[2]), ;
-	//		_g_konto(aItem[1], aItem[9]), ;
-	//		_g_partn(aItem[1], aItem[8], aItem[7] ), ;
-	//		_g_elba_dp( aItem[1] ), ;
-	//		aItem[10], ;
-	//		VAL( aItem[11] ), ;
-	//		_g_opis( aItem[9] ) })
-	
-		
-	
-	// naknada - transakcija
-	elseif nItemLen == 9
 
-		// matrica je sljedeca
-		// aItem
-		// ----------------------------------
-		// {1} - tip transakcije (+/-)
-		// {2} - datum i vrijeme "27.11.2006 15:15:02"
-		// {3} - vrsta transakcije  (NR)
-		// {4} - broj dokumenta (XXXX)
-		// {5} - ???? (0)
-		// {6} - primaoc racun  (005914)
-		// {7} - opis stavke (obracun naknade za juli)
-		// {8} - valuta (KM)
-		// {9} - iznos (5)
-		
+      // standardna transakcija....
+      IF nItemLen == 12
 
-		AADD(aFin, { cFirma, ;
-			cIdVn, ;
-			__nalbr, ;
-			__nalbr, ;
-			_g_elba_date( aItem[2]), ;
-			_g_konto(aItem[1], aItem[3] ), ;
-			_g_partn(aItem[1], aItem[5], aItem[3] ), ;
-			_g_elba_dp( aItem[1] ), ;
-			aItem[8], ;
-			VAL( aItem[9] ), ;
-			_g_opis( aItem[7] ), ;
-			ALLTRIM(aItem[3]) + " - " + ALLTRIM(aItem[4]) })
-	
-	else
-		
-		msgbeep("nepoznata transakcija#broj elemenata = " + ;
-			ALLTRIM(STR(LEN(aItem))) + " ???#" + ;
-			"linija broj: " + ALLTRIM(STR(nLineNo)) )
-		msgbeep( cLine )
-		
-		return .f.
-		
-	endif
+         // {1} - tip transakcije (+/-)
+         // {2} - datum i vrijeme "27.11.2006 15:15:02"
+         // {3} - broj transakcije
+         // {4} - uplata UP, ili ???
+         // {5} - 2664508 ????
+         // {6} - 0 ????
+         // {7} - Banka naziv
+         // {8} - transakcijski racun primaoca
+         // {9} - naziv firme
+         // {10} - opis + "/" + racun + puni naziv firme
+         // {11} - valuta KM ili drugo
+         // {12} - iznos
 
-else
-	return .f.
-endif
+         AAdd( aFin, { cFirma, ;
+            cIdVn, ;
+            __nalbr, ;
+            __nalbr, ;
+            _g_elba_date( aItem[ 2 ] ), ;
+            _g_konto( aItem[ 1 ], aItem[ 10 ] ), ;
+            _g_partn( aItem[ 1 ], aItem[ 9 ], aItem[ 8 ] ), ;
+            _g_elba_dp( aItem[ 1 ] ), ;
+            aItem[ 11 ], ;
+            Val( aItem[ 12 ] ), ;
+            _g_opis( aItem[ 10 ] ), ;
+            AllTrim( aItem[ 9 ] ) } )
 
-return .t.
+
+         // elseif nItemLen == 11
+
+         // AADD(aFin, { cFirma, ;
+         // cIdVn, ;
+         // __nalbr, ;
+         // __nalbr, ;
+         // _g_elba_date( aItem[2]), ;
+         // _g_konto(aItem[1], aItem[9]), ;
+         // _g_partn(aItem[1], aItem[8], aItem[7] ), ;
+         // _g_elba_dp( aItem[1] ), ;
+         // aItem[10], ;
+         // VAL( aItem[11] ), ;
+         // _g_opis( aItem[9] ) })
+
+
+
+         // naknada - transakcija
+      ELSEIF nItemLen == 9
+
+         // matrica je sljedeca
+         // aItem
+         // ----------------------------------
+         // {1} - tip transakcije (+/-)
+         // {2} - datum i vrijeme "27.11.2006 15:15:02"
+         // {3} - vrsta transakcije  (NR)
+         // {4} - broj dokumenta (XXXX)
+         // {5} - ???? (0)
+         // {6} - primaoc racun  (005914)
+         // {7} - opis stavke (obracun naknade za juli)
+         // {8} - valuta (KM)
+         // {9} - iznos (5)
+
+
+         AAdd( aFin, { cFirma, ;
+            cIdVn, ;
+            __nalbr, ;
+            __nalbr, ;
+            _g_elba_date( aItem[ 2 ] ), ;
+            _g_konto( aItem[ 1 ], aItem[ 3 ] ), ;
+            _g_partn( aItem[ 1 ], aItem[ 5 ], aItem[ 3 ] ), ;
+            _g_elba_dp( aItem[ 1 ] ), ;
+            aItem[ 8 ], ;
+            Val( aItem[ 9 ] ), ;
+            _g_opis( aItem[ 7 ] ), ;
+            AllTrim( aItem[ 3 ] ) + " - " + AllTrim( aItem[ 4 ] ) } )
+
+      ELSE
+
+         msgbeep( "nepoznata transakcija#broj elemenata = " + ;
+            AllTrim( Str( Len( aItem ) ) ) + " ???#" + ;
+            "linija broj: " + AllTrim( Str( nLineNo ) ) )
+         msgbeep( cLine )
+
+         RETURN .F.
+
+      ENDIF
+
+   ELSE
+      RETURN .F.
+   ENDIF
+
+   RETURN .T.
 
 
 
@@ -368,568 +376,578 @@ return .t.
 // aItem - matrica sa stavkom
 // aHeader - ovo su parametri header izvoda...
 // ----------------------------------------------------
-static function _i_elba_item( aFinItem, cImpView )
-local cFirma
-local cIdVn
-local cBrNal
-local cOpis
-local cKtoProt
-local cDP
-local cRbr
-local cKonto
-local cPartner
-local cPartRule
-local nIznos
-local cPartOpis
-local nCurr := 1
+STATIC FUNCTION _i_elba_item( aFinItem, cImpView )
 
-// RULES get
-// ----------------------------------------------
-// vraca konto protustavke - maticna banka
-// recimo: 2001
-cKtoProt := PADR( r_get_konto("PROT_KONTO"), 7)
+   LOCAL cFirma
+   LOCAL cIdVn
+   LOCAL cBrNal
+   LOCAL cOpis
+   LOCAL cKtoProt
+   LOCAL cDP
+   LOCAL cRbr
+   LOCAL cKonto
+   LOCAL cPartner
+   LOCAL cPartRule
+   LOCAL nIznos
+   LOCAL cPartOpis
+   LOCAL nCurr := 1
 
-
-// items get
-// ----------------------------------------------
-
-// firma
-cFirma := aFinItem[ nCurr, 1 ]
-// vrsta naloga 
-cIdVn := aFinItem[ nCurr, 2 ]
-// brnal
-cBrNal := aFinItem[ nCurr, 3 ]
-// broj veze
-cBrVeze := PADR( aFinItem[ nCurr, 4 ], 10)
-// datum dokumenta
-dDatDok := aFinItem[ nCurr, 5 ]
-// konto
-cKonto := PADR(aFinItem[ nCurr, 6 ], 7)
-// partner
-cPartner := PADR( aFinItem[ nCurr, 7 ], 6)
-// duguje/potrazuje
-cDP := aFinItem[ nCurr, 8 ]
-// valuta
-cValuta := aFinItem[ nCurr, 9 ]
-// iznos dokumenta
-nIznos := aFinItem[ nCurr, 10 ]
-// opis
-cOpis := PADR(aFinItem[ nCurr, 11 ], 40)
-// opis partnera
-cPartOpis := aFinItem[ nCurr, 12 ] 
-
-// vrati iz RULES partnera prema kontu - ako postoji !!
-// i postavi to kao partnera za ovu stavku
-
-cPartRule := r_get_kpartn( cKonto )
-if !EMPTY(cPartRule) .and. ALLTRIM(cPartRule) <> "XX"
-	cPartner := cPartRule
-endif
+   // RULES get
+   // ----------------------------------------------
+   // vraca konto protustavke - maticna banka
+   // recimo: 2001
+   cKtoProt := PadR( r_get_konto( "PROT_KONTO" ), 7 )
 
 
-// sredi redni broj stavke
-++__rbr
-cRbr := STR( __rbr, 4)
+   // items get
+   // ----------------------------------------------
 
-if cImpView == "D"
+   // firma
+   cFirma := aFinItem[ nCurr, 1 ]
+   // vrsta naloga
+   cIdVn := aFinItem[ nCurr, 2 ]
+   // brnal
+   cBrNal := aFinItem[ nCurr, 3 ]
+   // broj veze
+   cBrVeze := PadR( aFinItem[ nCurr, 4 ], 10 )
+   // datum dokumenta
+   dDatDok := aFinItem[ nCurr, 5 ]
+   // konto
+   cKonto := PadR( aFinItem[ nCurr, 6 ], 7 )
+   // partner
+   cPartner := PadR( aFinItem[ nCurr, 7 ], 6 )
+   // duguje/potrazuje
+   cDP := aFinItem[ nCurr, 8 ]
+   // valuta
+   cValuta := aFinItem[ nCurr, 9 ]
+   // iznos dokumenta
+   nIznos := aFinItem[ nCurr, 10 ]
+   // opis
+   cOpis := PadR( aFinItem[ nCurr, 11 ], 40 )
+   // opis partnera
+   cPartOpis := aFinItem[ nCurr, 12 ]
 
-	@ m_x + 6, m_y + 2 SAY SPACE(70)
-	@ m_x + 6, m_y + 2 SAY PADR(cPartOpis, 45) + " -> partner fmk:" GET cPartner
-	
-	@ m_x + 7, m_y + 2 SAY "datum knjizenja:" GET dDatDok
-	@ m_x + 7, col() + 2 SAY "broj veze:" GET cBrVeze
-	@ m_x + 8, m_y + 2 SAY "opis knjizenja:" GET cOpis
-	@ m_x + 9, m_y + 2 SAY REPLICATE("=", 60)
-	
-	
-	@ m_x + 11, m_y + 2 SAY PADR("rbr.stavke:", 20) GET cRbr
-	@ m_x + 12, m_y + 2 SAY "dug/pot:" GET cDP
-	@ m_x + 12, col() + 2 SAY "konto:" GET cKonto
-	@ m_x + 12, col() + 2 SAY PADR("IZNOS STAVKE:", 20, 20) GET nIznos PICT "9999999.99"
+   // vrati iz RULES partnera prema kontu - ako postoji !!
+   // i postavi to kao partnera za ovu stavku
 
-	if LastKey() <> K_ESC
-		read
-	endif
-
-endif
-
-select fin_pripr
-append blank
-
-replace idfirma with cFirma
-replace idvn with cIdVn
-replace brnal with cBrNal
-replace brdok with cBrVeze
-replace opis with cOpis
-replace rbr with cRbr
-replace datdok with dDatDok
-replace d_p with cDP
-replace idkonto with cKonto
-replace idpartner with cPartner
-
-if cValuta == "KM"
-	replace iznosbhd with nIznos
-else
-	replace iznosdem with nIznos
-endif
+   cPartRule := r_get_kpartn( cKonto )
+   IF !Empty( cPartRule ) .AND. AllTrim( cPartRule ) <> "XX"
+      cPartner := cPartRule
+   ENDIF
 
 
-// druga stavka naloga, racun vb
-// PROTUSTAVKA....
+   // sredi redni broj stavke
+   ++__rbr
+   cRbr := Str( __rbr, 4 )
 
-if cDP == "1"
-	cDP := "2"
-else
-	cDP := "1"
-endif
+   IF cImpView == "D"
 
+      @ m_x + 6, m_y + 2 SAY Space( 70 )
+      @ m_x + 6, m_y + 2 SAY PadR( cPartOpis, 45 ) + " -> partner fmk:" GET cPartner
 
-// sredi opet redni broj za protustavku
-++__rbr
-cRbr := STR(__rbr, 4)
-
-
-if cImpView == "D"
-	
-	@ m_x + 13, m_y + 2 SAY REPLICATE("-", 60)
-	@ m_x + 14, m_y + 2 SAY PADR("rbr.protustavke:", 20) GET cRbr
-	@ m_x + 15, m_y + 2 SAY "dug/pot:" GET cDP
-	@ m_x + 15, col() + 2 SAY "konto:" GET cKtoProt
-	@ m_x + 15, col() + 2 SAY PADR("IZNOS PROTUSTAVKE:", 20) GET nIznos PICT "9999999.99"
-
-	if lastKey() <> K_ESC
-		read
-	endif
-
-endif
-
-select fin_pripr
-append blank
+      @ m_x + 7, m_y + 2 SAY "datum knjizenja:" GET dDatDok
+      @ m_x + 7, Col() + 2 SAY "broj veze:" GET cBrVeze
+      @ m_x + 8, m_y + 2 SAY "opis knjizenja:" GET cOpis
+      @ m_x + 9, m_y + 2 SAY Replicate( "=", 60 )
 
 
-replace idfirma with cFirma
-replace idvn with cIdVn
-replace brnal with cBrNal
-replace rbr with cRbr
-replace datdok with dDatDok
-replace d_p with cDP
-replace opis with cOpis
-replace brdok with cBrVeze
-replace idkonto with cKtoProt
-replace idpartner with ""
+      @ m_x + 11, m_y + 2 SAY PadR( "rbr.stavke:", 20 ) GET cRbr
+      @ m_x + 12, m_y + 2 SAY "dug/pot:" GET cDP
+      @ m_x + 12, Col() + 2 SAY "konto:" GET cKonto
+      @ m_x + 12, Col() + 2 SAY PadR( "IZNOS STAVKE:", 20, 20 ) GET nIznos PICT "9999999.99"
 
-if ALLTRIM( cValuta ) == "KM"
-	replace iznosbhd with nIznos
-else
-	replace iznosdem with nIznos
-endif
+      IF LastKey() <> K_ESC
+         READ
+      ENDIF
+
+   ENDIF
+
+   SELECT fin_pripr
+   APPEND BLANK
+
+   REPLACE idfirma WITH cFirma
+   REPLACE idvn WITH cIdVn
+   REPLACE brnal WITH cBrNal
+   REPLACE brdok WITH cBrVeze
+   REPLACE opis WITH cOpis
+   REPLACE rbr WITH cRbr
+   REPLACE datdok WITH dDatDok
+   REPLACE d_p WITH cDP
+   REPLACE idkonto WITH cKonto
+   REPLACE idpartner WITH cPartner
+
+   IF cValuta == "KM"
+      REPLACE iznosbhd WITH nIznos
+   ELSE
+      REPLACE iznosdem WITH nIznos
+   ENDIF
 
 
-return
+   // druga stavka naloga, racun vb
+   // PROTUSTAVKA....
+
+   IF cDP == "1"
+      cDP := "2"
+   ELSE
+      cDP := "1"
+   ENDIF
+
+
+   // sredi opet redni broj za protustavku
+   ++__rbr
+   cRbr := Str( __rbr, 4 )
+
+
+   IF cImpView == "D"
+
+      @ m_x + 13, m_y + 2 SAY Replicate( "-", 60 )
+      @ m_x + 14, m_y + 2 SAY PadR( "rbr.protustavke:", 20 ) GET cRbr
+      @ m_x + 15, m_y + 2 SAY "dug/pot:" GET cDP
+      @ m_x + 15, Col() + 2 SAY "konto:" GET cKtoProt
+      @ m_x + 15, Col() + 2 SAY PadR( "IZNOS PROTUSTAVKE:", 20 ) GET nIznos PICT "9999999.99"
+
+      IF LastKey() <> K_ESC
+         READ
+      ENDIF
+
+   ENDIF
+
+   SELECT fin_pripr
+   APPEND BLANK
+
+
+   REPLACE idfirma WITH cFirma
+   REPLACE idvn WITH cIdVn
+   REPLACE brnal WITH cBrNal
+   REPLACE rbr WITH cRbr
+   REPLACE datdok WITH dDatDok
+   REPLACE d_p WITH cDP
+   REPLACE opis WITH cOpis
+   REPLACE brdok WITH cBrVeze
+   REPLACE idkonto WITH cKtoProt
+   REPLACE idpartner WITH ""
+
+   IF AllTrim( cValuta ) == "KM"
+      REPLACE iznosbhd WITH nIznos
+   ELSE
+      REPLACE iznosdem WITH nIznos
+   ENDIF
+
+   RETURN
 
 
 
 // ---------------------------------------------
 // vraca datum iz elba txt datumskog polja
 // ---------------------------------------------
-static function _g_elba_date( cDate )
-local dDate 
-dDate := CTOD( LEFT( cDate, 10 ) )
-return dDate
+STATIC FUNCTION _g_elba_date( cDate )
+
+   LOCAL dDate
+
+   dDate := CToD( Left( cDate, 10 ) )
+
+   RETURN dDate
 
 
 // ---------------------------------------------
 // vraca D/P za tip transakcije
 // ---------------------------------------------
-static function _g_elba_dp( cTransType )
-local cRet := "1"
+STATIC FUNCTION _g_elba_dp( cTransType )
 
-cTransType := ALLTRIM(cTransType)
-do case
-	case cTransType == "-"
-		cRet := "1"
-	case cTransType == "+"
-		cRet := "2"
-endcase
+   LOCAL cRet := "1"
 
-return cRet
+   cTransType := AllTrim( cTransType )
+   DO CASE
+   CASE cTransType == "-"
+      cRet := "1"
+   CASE cTransType == "+"
+      cRet := "2"
+   ENDCASE
+
+   RETURN cRet
 
 
 // ---------------------------------------------
 // vraca D/P za naknade
 // ---------------------------------------------
-static function _g_nakn_dp( cTransType )
-local cRet := "1"
+STATIC FUNCTION _g_nakn_dp( cTransType )
 
-cTransType := ALLTRIM(cTransType)
-do case
-	case cTransType == "-"
-		cRet := "1"
-	case cTransType == "+"
-		cRet := "2"
-endcase
+   LOCAL cRet := "1"
 
-return cRet
+   cTransType := AllTrim( cTransType )
+   DO CASE
+   CASE cTransType == "-"
+      cRet := "1"
+   CASE cTransType == "+"
+      cRet := "2"
+   ENDCASE
+
+   RETURN cRet
 
 
 // -----------------------------------------------
 // vraca konto po pretpostavci...
 // -----------------------------------------------
-static function _g_konto( cTrans, cOpis )
-local cKonto := "?????"
-local cKtoKup := __k_kup
+STATIC FUNCTION _g_konto( cTrans, cOpis )
 
-if "NR" $ cOpis
-	cKonto := r_get_konto( "UPL_KONTO", "NR" )
-	return cKonto
-	
-elseif "PRK" $ cOpis
-	cKonto := r_get_konto( "UPL_KONTO", "PRK" )
-	return cKonto
-	
-endif
+   LOCAL cKonto := "?????"
+   LOCAL cKtoKup := __k_kup
 
-// ako je uplata na nas racun onda je to KUPAC 2120
-if ALLTRIM(cTrans) == "+"
-	cKonto := cKtoKup
-	return cKonto
-endif
+   IF "NR" $ cOpis
+      cKonto := r_get_konto( "UPL_KONTO", "NR" )
+      RETURN cKonto
 
-cOpis := KonvZnWin( cOpis )
+   ELSEIF "PRK" $ cOpis
+      cKonto := r_get_konto( "UPL_KONTO", "PRK" )
+      RETURN cKonto
 
-if ALLTRIM(cTrans) == "-"
+   ENDIF
 
-	do case
-		
-		case "PROVIZIJA" $ UPPER(cOpis)
-			cKonto := r_get_konto( "UPL_KONTO", "PROVIZIJA" )
-		
-		case "PDV" $ cOpis
-			cKonto := r_get_konto( "UPL_KONTO", "PDV")
-		
-		otherwise 
-			cKonto := r_get_konto( "UPL_KONTO")
-	endcase
+   // ako je uplata na nas racun onda je to KUPAC 2120
+   IF AllTrim( cTrans ) == "+"
+      cKonto := cKtoKup
+      RETURN cKonto
+   ENDIF
 
-endif
+   cOpis := KonvZnWin( cOpis )
 
-return cKonto
+   IF AllTrim( cTrans ) == "-"
+
+      DO CASE
+
+      CASE "PROVIZIJA" $ Upper( cOpis )
+         cKonto := r_get_konto( "UPL_KONTO", "PROVIZIJA" )
+
+      CASE "PDV" $ cOpis
+         cKonto := r_get_konto( "UPL_KONTO", "PDV" )
+
+      OTHERWISE
+         cKonto := r_get_konto( "UPL_KONTO" )
+      ENDCASE
+
+   ENDIF
+
+   RETURN cKonto
 
 // --------------------------------------------------
 // uzmi partnera za stavku
 // --------------------------------------------------
-static function _g_partn( cTrType, cTxt, cTrRN )
-local nSeek
+STATIC FUNCTION _g_partn( cTrType, cTxt, cTrRN )
 
-cTxt := KonvZnWin( cTxt )
+   LOCAL nSeek
+
+   cTxt := KonvZnWin( cTxt )
 
 
-if ALLTRIM(cTrRN) $ "#PRK#NR#"
-	return ""
-endif
+   IF AllTrim( cTrRN ) $ "#PRK#NR#"
+      RETURN ""
+   ENDIF
 
-// pokusaj pronaci po matrici
-nSeek := ASCAN(aPartArr, {|xVal| xVal[1] == cTxt })
+   // pokusaj pronaci po matrici
+   nSeek := AScan( aPartArr, {| xVal| xVal[ 1 ] == cTxt } )
 
-if nSeek <> 0
+   IF nSeek <> 0
 
-	// nasao sam ga u matrici
-	return aPartArr[ nSeek, 2 ]
-	
-endif
+      // nasao sam ga u matrici
+      RETURN aPartArr[ nSeek, 2 ]
 
-if ALLTRIM( cTrType ) == "+"
-	
-	// trazi partnera za uplate na zr
-	_g_part_upl( cTxt )
+   ENDIF
 
-elseif ALLTRIM( cTrType ) == "-"
-	
-	// trazi partnera za isplate sa zr
-	_g_part_isp( cTxt, cTrRN )
-endif
+   IF AllTrim( cTrType ) == "+"
 
-return
+      // trazi partnera za uplate na zr
+      _g_part_upl( cTxt )
+
+   ELSEIF AllTrim( cTrType ) == "-"
+
+      // trazi partnera za isplate sa zr
+      _g_part_isp( cTxt, cTrRN )
+   ENDIF
+
+   RETURN
 
 
 // -----------------------------------------------
 // vraca id partnera za uplate na zr
 // -----------------------------------------------
-static function _g_part_upl( cTxt )
-local nTArea := SELECT()
-local cDesc := ""
-local cBank := ""
-local cPartnId := "?????"
-local nSeek
+STATIC FUNCTION _g_part_upl( cTxt )
 
-// uzmi banku i opis ako postoji "/"
-if LEFT(cTxt, 1) == "/"
-	
-	cDesc := ALLTRIM( SUBSTR( cTxt, 18, LEN(cTxt) ) )
-	cBank := ALLTRIM( SUBSTR( cTxt, 2, 16 ) )
+   LOCAL nTArea := Select()
+   LOCAL cDesc := ""
+   LOCAL cBank := ""
+   LOCAL cPartnId := "?????"
+   LOCAL nSeek
 
-else
+   // uzmi banku i opis ako postoji "/"
+   IF Left( cTxt, 1 ) == "/"
 
-	cDesc := ALLTRIM( cTxt )
-	
-endif
+      cDesc := AllTrim( SubStr( cTxt, 18, Len( cTxt ) ) )
+      cBank := AllTrim( SubStr( cTxt, 2, 16 ) )
 
-cDesc := KonvZnWin( cDesc )
+   ELSE
 
-// pokusaj naci po banci...
-cPartnId := _src_p_bank( cBank )
+      cDesc := AllTrim( cTxt )
 
-// ako nema nista, pokusaj po nazivu....
-if EMPTY(cPartnId)
-	cPartnId := _src_p_desc( cDesc )
-endif
+   ENDIF
 
-// ako nema nista... ???
-if EMPTY(cPartnId)
-	
-	Msgbeep("Nepostojeci partner !!!#Opis: " + PADR(cTxt, 50) + ;
-		"")
-	cPartnId := PADR(cDesc, 3) + ".."
-	
-	// otvori sifranik..
-	p_firma(@cPartnId)
-	
-	// setuj partneru transakcijski racun
-	_set_part_bank( cPartnId, cBank )
+   cDesc := KonvZnWin( cDesc )
 
-endif
+   // pokusaj naci po banci...
+   cPartnId := _src_p_bank( cBank )
+
+   // ako nema nista, pokusaj po nazivu....
+   IF Empty( cPartnId )
+      cPartnId := _src_p_desc( cDesc )
+   ENDIF
+
+   // ako nema nista... ???
+   IF Empty( cPartnId )
+
+      Msgbeep( "Nepostojeci partner !!!#Opis: " + PadR( cTxt, 50 ) + ;
+         "" )
+      cPartnId := PadR( cDesc, 3 ) + ".."
+
+      // otvori sifranik..
+      p_firma( @cPartnId )
+
+      // setuj partneru transakcijski racun
+      _set_part_bank( cPartnId, cBank )
+
+   ENDIF
 
 
-nSeek := ASCAN(aPartArr, {|xVal| xVal[2] == cPartnId }) 
+   nSeek := AScan( aPartArr, {| xVal| xVal[ 2 ] == cPartnId } )
 
-if nSeek == 0
-	AADD(aPartArr, { cTxt, cPartnId })
-endif
+   IF nSeek == 0
+      AAdd( aPartArr, { cTxt, cPartnId } )
+   ENDIF
 
-select (nTArea)
+   SELECT ( nTArea )
 
-return cPartnId
+   RETURN cPartnId
 
 
 // -----------------------------------------------
 // vraca id partnera za isplate sa zr
 // -----------------------------------------------
-static function _g_part_isp( cTxt, cTrRN )
-local nTArea := SELECT()
-local cDesc := ""
-local cBank := ""
-local cPartnId := "?????"
-local nSeek 
+STATIC FUNCTION _g_part_isp( cTxt, cTrRN )
 
-// uzmi banku i opis ako postoji "/"
-if LEFT(cTxt, 1) == "/"
-	cDesc := ALLTRIM( SUBSTR( cTxt, 18, LEN(cTxt) ) )
-else
-	cDesc := ALLTRIM( cTxt )
-endif
+   LOCAL nTArea := Select()
+   LOCAL cDesc := ""
+   LOCAL cBank := ""
+   LOCAL cPartnId := "?????"
+   LOCAL nSeek
 
-cDesc := KonvZnWin( cDesc )
+   // uzmi banku i opis ako postoji "/"
+   IF Left( cTxt, 1 ) == "/"
+      cDesc := AllTrim( SubStr( cTxt, 18, Len( cTxt ) ) )
+   ELSE
+      cDesc := AllTrim( cTxt )
+   ENDIF
 
-
-// pokusaj naci po banci...
-cPartnId := _src_p_bank( cTrRN )
-
-// ako nema nista, pokusaj po nazivu....
-if EMPTY(cPartnId)
-	
-	//cPartnId := _src_p_desc( cDesc )
-	
-	Msgbeep("Nepostojeci partner !!!#Opis: " + PADR(cTxt, 50) + ;
-		"#" + "trans.rn: " + cTrRN )
-	
-	cPartnId := PADR(cDesc, 3) + ".."
-	
-	// otvori sifranik..
-	p_firma(@cPartnId)
-	
-	// setuj partneru transakcijski racun
-	_set_part_bank( cPartnId, cTrRN )
-	
-endif
+   cDesc := KonvZnWin( cDesc )
 
 
-nSeek := ASCAN(aPartArr, {|xVal| xVal[2] == cPartnId }) 
+   // pokusaj naci po banci...
+   cPartnId := _src_p_bank( cTrRN )
 
-if nSeek == 0
-	AADD(aPartArr, { cTxt, cPartnId })
-endif
+   // ako nema nista, pokusaj po nazivu....
+   IF Empty( cPartnId )
 
-select (nTArea)
+      // cPartnId := _src_p_desc( cDesc )
 
-return cPartnId
+      Msgbeep( "Nepostojeci partner !!!#Opis: " + PadR( cTxt, 50 ) + ;
+         "#" + "trans.rn: " + cTrRN )
+
+      cPartnId := PadR( cDesc, 3 ) + ".."
+
+      // otvori sifranik..
+      p_firma( @cPartnId )
+
+      // setuj partneru transakcijski racun
+      _set_part_bank( cPartnId, cTrRN )
+
+   ENDIF
+
+
+   nSeek := AScan( aPartArr, {| xVal| xVal[ 2 ] == cPartnId } )
+
+   IF nSeek == 0
+      AAdd( aPartArr, { cTxt, cPartnId } )
+   ENDIF
+
+   SELECT ( nTArea )
+
+   RETURN cPartnId
 
 
 // ------------------------------------------------
 // setovanje bank racuna za partnera
 // ------------------------------------------------
-static function _set_part_bank( cPartn, cBank )
-local cRead := ""
-local nTArea := SELECT()
-local cOldBank
-local cNewBank
+STATIC FUNCTION _set_part_bank( cPartn, cBank )
 
-// nema banke, nista...
-if EMPTY(cBank)
-	select (nTArea)
-	return
-endif
+   LOCAL cRead := ""
+   LOCAL nTArea := Select()
+   LOCAL cOldBank
+   LOCAL cNewBank
 
-O_SIFK
-O_SIFV
+   // nema banke, nista...
+   IF Empty( cBank )
+      SELECT ( nTArea )
+      RETURN
+   ENDIF
 
-cNewBank := ""
+   O_SIFK
+   O_SIFV
 
-// stara banka
-cOldBank := ALLTRIM( IzSifKPartn( "BANK", cPartn ) )
+   cNewBank := ""
 
-// dodaj staru banku ako postoji
-if !EMPTY( cOldBank )
-	cNewBank += cOldBank
-endif
+   // stara banka
+   cOldBank := AllTrim( IzSifKPartn( "BANK", cPartn ) )
 
-// dodaj i , posto je potrebno
-if RIGHT( cNewBank, 1 ) <> ","
-	cNewBank += ","
-endif
+   // dodaj staru banku ako postoji
+   IF !Empty( cOldBank )
+      cNewBank += cOldBank
+   ENDIF
 
-// dodaj konacno novu banku...
-cNewBank += cBank
+   // dodaj i , posto je potrebno
+   IF Right( cNewBank, 1 ) <> ","
+      cNewBank += ","
+   ENDIF
 
-USifK( "PARTN", "BANK", cPartn, Unicode():New( cNewBank, .F. ) )
+   // dodaj konacno novu banku...
+   cNewBank += cBank
 
-select (nTArea)
+   USifK( "PARTN", "BANK", cPartn, Unicode():New( cNewBank, .F. ) )
 
-return
+   SELECT ( nTArea )
+
+   RETURN
 
 
 
 // ------------------------------------------------------
 // pretraga partnera po nazivu ili dijelu naziva
 // ------------------------------------------------------
-static function _src_p_desc( cDesc )
-local aTemp
-local cTemp := ""
-local cPartner := ""
+STATIC FUNCTION _src_p_desc( cDesc )
 
-if EMPTY(cDesc)
-	return cPartner
-endif
+   LOCAL aTemp
+   LOCAL cTemp := ""
+   LOCAL cPartner := ""
 
-aTemp := TokToNiz( cDesc, " ")
+   IF Empty( cDesc )
+      RETURN cPartner
+   ENDIF
 
-if LEN(aTemp) > 1
-	
-	cTemp := ALLTRIM( aTemp[1] )
+   aTemp := TokToNiz( cDesc, " " )
 
-	if LEN( cTemp ) < 4
-		cTemp += " " + ALLTRIM( aTemp[2] )
-	endif
+   IF Len( aTemp ) > 1
 
-else
-	
-	cTemp := ALLTRIM(aTemp[1])
+      cTemp := AllTrim( aTemp[ 1 ] )
 
-endif
+      IF Len( cTemp ) < 4
+         cTemp += " " + AllTrim( aTemp[ 2 ] )
+      ENDIF
 
-O_PARTN
-set order to tag "naz"
-go top
-seek cTemp
+   ELSE
 
-if FOUND()
-	cPartner := partn->id
-endif
+      cTemp := AllTrim( aTemp[ 1 ] )
 
-return cPartner
+   ENDIF
+
+   O_PARTN
+   SET ORDER TO TAG "naz"
+   GO TOP
+   SEEK cTemp
+
+   IF Found()
+      cPartner := partn->id
+   ENDIF
+
+   RETURN cPartner
 
 
 // -------------------------------------------
 // pretraga po banci - SIFV
 // -------------------------------------------
-static function _src_p_bank( cBank )
-local cPartner := ""
-local nTArea := SELECT()
+STATIC FUNCTION _src_p_bank( cBank )
 
-if EMPTY(cBank)
-	return cPartner
-endif
+   LOCAL cPartner := ""
+   LOCAL nTArea := Select()
 
-O_PARTN
-O_SIFV
-select sifv
-set order to tag "NAZ"
+   IF Empty( cBank )
+      RETURN cPartner
+   ENDIF
 
-go top
+   O_PARTN
+   O_SIFV
+   SELECT sifv
+   SET ORDER TO TAG "NAZ"
 
-seek PADR("PARTN", 8) + PADR("BANK", 4) 
+   GO TOP
 
-do while !EOF() .and. field->id == PADR("PARTN", 8) ;
-		.and. field->oznaka == PADR("BANK", 4)
+   SEEK PadR( "PARTN", 8 ) + PadR( "BANK", 4 )
 
-	
-	// ako trazena banka postoji vec u bankama...
-	if ( cBank $ field->naz )
-	
-	  cPartner := PADR( ALLTRIM( sifv->idsif ), 6)
-	
-	  // sada pogledaj da li taj partner postoji uopste
-	  select partn
- 	  go top
-	  seek cPartner
+   DO WHILE !Eof() .AND. field->id == PadR( "PARTN", 8 ) ;
+         .AND. field->oznaka == PadR( "BANK", 4 )
 
-	  if FOUND() .and. field->id == cPartner
-		exit
-	  endif
-	
-	endif
-	
-	cPartner := ""
-	
-	// idi dalje i vidi ima li koga...
-	select sifv
-	
-	skip
 
-enddo
+      // ako trazena banka postoji vec u bankama...
+      IF ( cBank $ field->naz )
 
-return cPartner
+         cPartner := PadR( AllTrim( sifv->idsif ), 6 )
+
+         // sada pogledaj da li taj partner postoji uopste
+         SELECT partn
+         GO TOP
+         SEEK cPartner
+
+         IF Found() .AND. field->id == cPartner
+            EXIT
+         ENDIF
+
+      ENDIF
+
+      cPartner := ""
+
+      // idi dalje i vidi ima li koga...
+      SELECT sifv
+
+      SKIP
+
+   ENDDO
+
+   RETURN cPartner
 
 
 
 // ----------------------------------------------
 // vraca opis ...
 // ----------------------------------------------
-static function _g_opis( cOpis )
-local cRet := ""
-local aTemp
+STATIC FUNCTION _g_opis( cOpis )
 
-aTemp := TokToNiz( cOpis, "/" )
+   LOCAL cRet := ""
+   LOCAL aTemp
 
-cRet := ALLTRIM( aTemp[1] )
+   aTemp := TokToNiz( cOpis, "/" )
 
-cRet := KonvZnWin( cRet )
+   cRet := AllTrim( aTemp[ 1 ] )
 
-return PADR( cRet, 40 )
+   cRet := KonvZnWin( cRet )
+
+   RETURN PadR( cRet, 40 )
 
 
 // -------------------------------------------------
 // vraca broj veze...
 // -------------------------------------------------
-static function _g_br_veze( cTrans, dDatum, cOpis )
-local cRet := ""
+STATIC FUNCTION _g_br_veze( cTrans, dDatum, cOpis )
 
-do case 
-	case "PDV" $ cOpis
-		cRet := "pdv " + PADL( ALLTRIM( STR( MONTH(dDatum) - 1 ) ), 2, "0")
-endcase
+   LOCAL cRet := ""
 
-return cRet
+   DO CASE
+   CASE "PDV" $ cOpis
+      cRet := "pdv " + PadL( AllTrim( Str( Month( dDatum ) - 1 ) ), 2, "0" )
+   ENDCASE
 
-
-
-
+   RETURN cRet

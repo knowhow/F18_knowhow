@@ -23,7 +23,6 @@ CLASS FinBrutoBilans
 
    VAR pict_iznos
    VAR tip
-
    // tip: 1 - subanaliticki
    // tip: 2 - analiticki
    // tip: 3 - sinteticki
@@ -237,7 +236,7 @@ METHOD FinBrutoBilans:get_vars()
       _id_rj := SPACE(6)
       @ m_x + _x, m_y + 2 SAY8 "Radna jedinica ( 999999-sve ): " GET _id_rj
    ENDIF
- 	
+
    ++ _x
    @ m_x + _x, m_y + 2 SAY8 "Format izvještaja (1 - A3, 2 - A4, 3 - A4L) ?" GET _format PICT "@S1" VALID _format $ "123"
 
@@ -410,7 +409,7 @@ METHOD FinBrutoBilans:get_data()
    _data := _sql_query( _server, _qry )
    MsgC()
 
-   IF !is_var_objekat_tpquery( _data ) 
+   IF !is_var_objekat_tpquery( _data )
       MsgBeep( "Ne postoje traženi podaci !!!" )
       RETURN NIL
    ENDIF
@@ -599,7 +598,7 @@ METHOD FinBrutoBilans:gen_xml()
          _u_ps_dug := _u_ps_pot := _u_kum_dug := _u_kum_pot := _u_tek_dug := _u_tek_pot := _u_sld_dug := _u_sld_pot := 0
 
          DO WHILE !Eof() .AND. Left( field->idkonto, _sint_len ) == _sint
-            	
+
             xml_subnode( "item", .F. )
 
             xml_node( "rb", AllTrim( Str( ++_count ) ) )
@@ -616,12 +615,12 @@ METHOD FinBrutoBilans:gen_xml()
                ENDIF
 
             elseif ::tip == 2 .OR. ::tip == 3
-				
+
                xml_node( "part", "" )
                xml_node( "naz", to_xml_encoding( field->konto ) )
 
             ELSE
-		
+
                xml_node( "part", "" )
                xml_node( "naz", "" )
 

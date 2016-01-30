@@ -41,7 +41,7 @@ FUNCTION fin_kamate_menu()
 
    f18_menu( "kamat", .F., _izbor, _opc, _opcexe )
 
-   RETURN
+   RETURN .T.
 
 
 // ---------------------------------------------
@@ -306,7 +306,7 @@ STATIC FUNCTION _key_handler()
       O_KAM_PRIPR
       SELECT ( nArr )
       RETURN DE_REFRESH
-	
+
    CASE Ch == K_ALT_P
 
       SELECT kam_pripr
@@ -553,33 +553,33 @@ STATIC FUNCTION ObracV( cIdPartner, fprint, cVarObrac )
    IF fprint
 
       nPdvTotal := nKamate * ( 17 / 100 )
-	
+
       cTxtPdv := "PDV (17%)"
       cTxtPdv += " "
       cTxtPdv += Replicate( ".", 44 )
       cTxtPdv += Str( nPdvTotal, 12, 2 )
       cTxtPdv += " KM"
-		
+
       cTxtUkupno := "Ukupno sa PDV"
       cTxtUkupno += " "
       cTxtUkupno += Replicate( ".", 40 )
       cTxtUkupno += Str( nKamate + nPdvTotal, 12, 2 )
       cTxtUkupno += " KM"
-	
+
       ?
       P_10CPI
       ?? PadC( "- Strana " + Str( ++nStr, 4 ) + "-", 80 )
       ?
-	
+
       SELECT partn
       hseek cIdPartner
-	
+
       cPom := Trim( partn->adresa )
-	
+
       IF !Empty( partn->telefon )
          cPom += ", TEL:" + partn->telefon
       ENDIF
-	
+
       cPom := PadR( cPom, 42 )
       dDatPom := gDatObr
 
@@ -651,14 +651,14 @@ STATIC FUNCTION ObracV( cIdPartner, fprint, cVarObrac )
             nGlavnBD := kam_pripr->osnovica
             fPrviBD := .F.
          ELSE
-  		
+
             IF cVarObrac == "Z"
                nGlavnBD := kam_pripr->osnovica + nKumKamSD
             ELSE
                nGlavnBD := kam_pripr->osnovica
             ENDIF
          ENDIF
-	
+
          nGlavn := nGlavnBD
 
          SELECT ks
@@ -669,10 +669,10 @@ STATIC FUNCTION ObracV( cIdPartner, fprint, cVarObrac )
          ENDIF
 
          DO WHILE .T.
-		
+
             dDDatDo := Min( field->DatDO, dDatDo )
             nPeriod := dDDatDo - dDatOd + 1
-		
+
             IF ( cVarObrac == "P" )
                IF ( Prestupna( Year( dDatOd ) ) )
                   nExp := 366
@@ -722,29 +722,29 @@ STATIC FUNCTION ObracV( cIdPartner, fprint, cVarObrac )
                cPom777 := IzFmkIni( "KAM", "FormulaZaProstuKamatu", "nGlavn*nKStopa*nPeriod/nExp", KUMPATH )
                nIznKam := &( cPom777 )
             ENDIF
-			
+
             nIznKam := Round( nIznKam, 2 )
 
             IF fprint
-  			
+
                IF PRow() > 55
                   FF
                   Nstrana()
                ENDIF
-  			
+
                IF fStampajbr
                   ? " " + cBrdok + " "
                   fStampajBr := .F.
                ELSE
                   ? " " + Space( 10 ) + " "
                ENDIF
-  			
+
                ?? dDatOd, dDDatDo
-  			
+
                @ PRow(), PCol() + 1 SAY nPeriod PICT "999"
                @ PRow(), PCol() + 1 SAY nOsnovSD PICT picdem
                @ PRow(), PCol() + 1 SAY nGlavn PICT picdem
-  			
+
                IF ( cVarObrac == "Z" )
                   @ PRow(), PCol() + 1 SAY field->tip
                   @ PRow(), PCol() + 1 SAY field->stkam PICT "999.99"

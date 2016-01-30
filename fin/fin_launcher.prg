@@ -11,19 +11,17 @@
 
 #include "f18.ch"
 
-EXTERNAL DESCEND
-EXTERNAL RIGHT
 
+FUNCTION MainFin( cKorisn, cSifra, p3, p4, p5, p6, p7 )
 
-function MainFin(cKorisn, cSifra, p3, p4, p5, p6, p7)
-local oFin
-local cModul := "FIN"
-public gKonvertPath := "D"
-public goModul
+   LOCAL oFin
+   LOCAL cModul := "FIN"
+   PUBLIC gKonvertPath := "D"
+   PUBLIC goModul
 
-oFin := TFinMod():new(NIL, cModul, F18_VER, F18_VER_DATE , cKorisn, cSifra, p3,p4,p5,p6,p7)
-goModul := oFin
+   oFin := TFinMod():new( NIL, cModul, F18_VER, F18_VER_DATE, cKorisn, cSifra, p3, p4, p5, p6, p7 )
+   goModul := oFin
 
-oFin:run()
+   oFin:run()
 
-return
+   RETURN .T.

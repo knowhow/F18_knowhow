@@ -12,11 +12,11 @@
 #include "f18.ch"
 
 
-/*! \fn Dupli(cIdFirma,cIdVn,cBrNal)
- *  \brief Provjera duplog naloga
- *  \param cIdFirma
- *  \param cIdVn
- *  \param cBrNal
+/*  Dupli(cIdFirma,cIdVn,cBrNal)
+ *  brief Provjera duplog naloga
+ *  param cIdFirma
+ *  param cIdVn
+ *  param cBrNal
  */
 
 FUNCTION Dupli( cIdFirma, cIdVn, cBrNal )

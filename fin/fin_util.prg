@@ -15,42 +15,50 @@
 // ----------------------------------
 // fix brnal
 // ----------------------------------
-function _f_brnal( cBrNal )
+FUNCTION _f_brnal( cBrNal )
 
-if RIGHT( ALLTRIM( cBrNal ), 1 ) == "*"
-    cBrNal := STRTRAN( cBrNal, "*", "" )
-    cBrNal := PADL( ALLTRIM( cBrNal ), 8 )
-elseif LEFT( ALLTRIM( cBrNal ), 1 ) == "*"
-    cBrNal := STRTRAN( cBrNal, "*", "" )
-    cBrNal := PADR( ALLTRIM( cBrNal ), 8 )
-else
-    if !EMPTY( ALLTRIM(cBrNal) ) .and. LEN(ALLTRIM(cBrNal)) < 8
-	    cBrNal := PADL( ALLTRIM(cBrNal), 8, "0" )
-    endif
-endif
+   IF Right( AllTrim( cBrNal ), 1 ) == "*"
+      cBrNal := StrTran( cBrNal, "*", "" )
+      cBrNal := PadL( AllTrim( cBrNal ), 8 )
+   ELSEIF Left( AllTrim( cBrNal ), 1 ) == "*"
+      cBrNal := StrTran( cBrNal, "*", "" )
+      cBrNal := PadR( AllTrim( cBrNal ), 8 )
+   ELSE
+      IF !Empty( AllTrim( cBrNal ) ) .AND. Len( AllTrim( cBrNal ) ) < 8
+         cBrNal := PadL( AllTrim( cBrNal ), 8, "0" )
+      ENDIF
+   ENDIF
 
-return .t.
-
-
-function Izvj0()
-Izvjestaji()
-return
+   RETURN .T.
 
 
+FUNCTION Izvj0()
 
-function Preknjizenje()
-Prefin_unos_naloga()
-return
+   Izvjestaji()
 
-
-function Prebfin_kartica()
-fin_prekart()
-return
+   RETURN
 
 
-function GenPocStanja()
-PrenosFin()
-return
+
+FUNCTION Preknjizenje()
+
+   Prefin_unos_naloga()
+
+   RETURN
+
+
+FUNCTION Prebfin_kartica()
+
+   fin_prekart()
+
+   RETURN
+
+
+FUNCTION GenPocStanja()
+
+   PrenosFin()
+
+   RETURN
 
 
 
@@ -58,123 +66,126 @@ return
 // ------------------------------------------------------
 // stampa ostatka opisa
 // ------------------------------------------------------
-function OstatakOpisa(cO,nCO,bUslov,nSir)
+FUNCTION OstatakOpisa( cO, nCO, bUslov, nSir )
 
-if nSir == NIL
-    nSir := 20
-endif
+   IF nSir == NIL
+      nSir := 20
+   ENDIF
 
-do while LEN(cO) > nSir
-    if bUslov != NIL
-        EVAL(bUslov)
-    endif
-    cO := SUBSTR(cO,nSir+1)
-    if !EMPTY(PADR(cO,nSir))
-        @ prow()+1, nCO SAY PADR(cO,nSir)
-    endif
-enddo
+   DO WHILE Len( cO ) > nSir
+      IF bUslov != NIL
+         Eval( bUslov )
+      ENDIF
+      cO := SubStr( cO, nSir + 1 )
+      IF !Empty( PadR( cO, nSir ) )
+         @ PRow() + 1, nCO SAY PadR( cO, nSir )
+      ENDIF
+   ENDDO
 
-return
-
-
+   RETURN
 
 
-function ImaUSubanNemaUNalog()
-local _i
-local _area
-local _alias
-local _n_scan
-local _a_error := {}
-local _broj_naloga := ""
 
-my_close_all_dbf()
 
-O_NALOG
-O_SUBAN
-O_ANAL
-O_SINT
+FUNCTION ImaUSubanNemaUNalog()
 
-FOR _i := 1 TO 3
+   LOCAL _i
+   LOCAL _area
+   LOCAL _alias
+   LOCAL _n_scan
+   LOCAL _a_error := {}
+   LOCAL _broj_naloga := ""
 
-    IF _i == 1
-		    _alias := "suban"
-	ELSEIF _i == 2
-		    _alias := "anal"
-	ELSE
-		    _alias := "sint"
-	ENDIF
+   my_close_all_dbf()
 
-	SELECT &_alias
-	GO TOP
+   O_NALOG
+   O_SUBAN
+   O_ANAL
+   O_SINT
 
-    DO WHILE !EOF().and. INKEY() != 27
+   FOR _i := 1 TO 3
 
-        SELECT nalog
-        GO TOP
-        SEEK &_alias->(idfirma + idvn + brnal)
+      IF _i == 1
+         _alias := "suban"
+      ELSEIF _i == 2
+         _alias := "anal"
+      ELSE
+         _alias := "sint"
+      ENDIF
 
-		IF !Found()
+      SELECT &_alias
+      GO TOP
 
-			SELECT &_alias
+      DO WHILE !Eof() .AND. Inkey() != 27
+
+         SELECT nalog
+         GO TOP
+         SEEK &_alias->( idfirma + idvn + brnal )
+
+         IF !Found()
+
+            SELECT &_alias
 
             _broj_naloga := field->idfirma + "-" + field->idvn + "-" + field->brnal
-            _n_scan := ASCAN( _a_error, { |_var| _var[1] == _alias .and. _var[2] == _broj_naloga } )
+            _n_scan := AScan( _a_error, {|_var| _var[ 1 ] == _alias .AND. _var[ 2 ] == _broj_naloga } )
 
             // dadaj u matricu gresaka, ako nema tog naloga
             IF _n_scan == 0
-                AADD( _a_error, { _alias, _broj_naloga } )
+               AAdd( _a_error, { _alias, _broj_naloga } )
             ENDIF
 
-	    ENDIF
+         ENDIF
 
-		SELECT &_alias
-		SKIP 1
+         SELECT &_alias
+         SKIP 1
 
-    ENDDO
-NEXT
+      ENDDO
+   NEXT
 
-// ispisi greske ako postoje !
-_ispisi_greske( _a_error )
+   // ispisi greske ako postoje !
+   _ispisi_greske( _a_error )
 
-my_close_all_dbf()
-return
+   my_close_all_dbf()
+
+   RETURN
 
 
 // -----------------------------------------------
 // ispis gresaka nakon provjere
 // -----------------------------------------------
-static function _ispisi_greske( a_error )
-local _i
+STATIC FUNCTION _ispisi_greske( a_error )
 
-IF LEN( a_error ) == 0 .OR. a_error == NIL
-    return
-ENDIF
+   LOCAL _i
 
-START PRINT CRET
+   IF Len( a_error ) == 0 .OR. a_error == NIL
+      RETURN
+   ENDIF
 
-?
-? "Pregled ispravnosti podataka:"
-? "============================="
-?
-? "Potrebno odraditi korekciju sljedecih naloga:"
-? "---------------------------------------------"
+   START PRINT CRET
 
-FOR _i := 1 TO LEN( a_error )
+   ?
+   ? "Pregled ispravnosti podataka:"
+   ? "============================="
+   ?
+   ? "Potrebno odraditi korekciju sljedecih naloga:"
+   ? "---------------------------------------------"
 
-    ? PADL( "tabela: " + a_error[ _i, 1 ], 15 ) + ", " + a_error[ _i, 2 ]
+   FOR _i := 1 TO Len( a_error )
 
-NEXT
+      ? PadL( "tabela: " + a_error[ _i, 1 ], 15 ) + ", " + a_error[ _i, 2 ]
 
-?
-? "NAPOMENA:"
-? "========="
-? "Naloge je potrebno vratiti u pripremu, provjeriti njihovu ispravnost"
-? "sa papirnim kopijama te zatim ponovo azurirati."
+   NEXT
 
-FF
-ENDPRINT
+   ?
+   ? "NAPOMENA:"
+   ? "========="
+   ? "Naloge je potrebno vratiti u pripremu, provjeriti njihovu ispravnost"
+   ? "sa papirnim kopijama te zatim ponovo azurirati."
 
-return
+   FF
+   ENDPRINT
+
+   RETURN
 
 
 
@@ -182,27 +193,30 @@ return
 // ----------------------------------
 // storniranje naloga
 // ----------------------------------
-function StornoNaloga()
-Povrat_fin_naloga(.t.)
-return
+FUNCTION StornoNaloga()
+
+   Povrat_fin_naloga( .T. )
+
+   RETURN
 
 
 // ---------------------------------------------
 // vraca unos granicnog datuma za report
 // ---------------------------------------------
-static function _g_gr_date()
-local dDate := DATE()
+STATIC FUNCTION _g_gr_date()
 
-Box(,1, 45)
-	@ m_x + 1, m_y + 2 SAY "Unesi granicni datum" GET dDate
-	read
-BoxC()
+   LOCAL dDate := Date()
 
-if LASTKEY() == K_ESC
-	return nil
-endif
+   Box(, 1, 45 )
+   @ m_x + 1, m_y + 2 SAY "Unesi granicni datum" GET dDate
+   READ
+   BoxC()
 
-return dDate
+   IF LastKey() == K_ESC
+      RETURN NIL
+   ENDIF
+
+   RETURN dDate
 
 
 
@@ -211,240 +225,239 @@ return dDate
 // "Unos datuma naloga = 'D'"
 //
 // ----------------------------------------------------------------
-function daterr_rpt()
+FUNCTION daterr_rpt()
 
-local __brnal
-local __idfirma
-local __idvn
-local __t_date
-local dSubanDate
-local nTotErrors := 0
-local nNalCnt := 0
-local nMonth
-local nSubanKto
-local nGrDate
-local nGrMonth
-local nGrSaldo := 0
+   LOCAL __brnal
+   LOCAL __idfirma
+   LOCAL __idvn
+   LOCAL __t_date
+   LOCAL dSubanDate
+   LOCAL nTotErrors := 0
+   LOCAL nNalCnt := 0
+   LOCAL nMonth
+   LOCAL nSubanKto
+   LOCAL nGrDate
+   LOCAL nGrMonth
+   LOCAL nGrSaldo := 0
 
-my_close_all_dbf()
+   my_close_all_dbf()
 
-O_SUBAN
-select suban
-set order to tag "10"
-// idfirma+idvn+brnal+idkonto+datdok
+   O_SUBAN
+   SELECT suban
+   SET ORDER TO TAG "10"
+   // idfirma+idvn+brnal+idkonto+datdok
 
-O_ANAL
-select anal
-set order to tag "2"
+   O_ANAL
+   SELECT anal
+   SET ORDER TO TAG "2"
 
-O_NALOG
-select nalog
-set order to tag "1"
-go top
+   O_NALOG
+   SELECT nalog
+   SET ORDER TO TAG "1"
+   GO TOP
 
-// granicni datum
-dGrDate := nil
+   // granicni datum
+   dGrDate := nil
 
-if pitanje(,"Gledati granicni datum ?", "N") == "D"
-	dGrDate := _g_gr_date()
-endif
+   IF pitanje(, "Gledati granicni datum ?", "N" ) == "D"
+      dGrDate := _g_gr_date()
+   ENDIF
 
-start print cret
+   start PRINT cret
 
-? "------------------------------------------------"
-? "Lista naloga sa neispravnim datumima:"
-? "------------------------------------------------"
-? "       broj           datum    datum    datum   "
-? " R.br  naloga         naloga   suban.   anal.   "
-? "                               prva.st  prva.st "
-? "------ ------------- -------- -------- -------- "
+   ? "------------------------------------------------"
+   ? "Lista naloga sa neispravnim datumima:"
+   ? "------------------------------------------------"
+   ? "       broj           datum    datum    datum   "
+   ? " R.br  naloga         naloga   suban.   anal.   "
+   ? "                               prva.st  prva.st "
+   ? "------ ------------- -------- -------- -------- "
 
-do while !EOF()
+   DO WHILE !Eof()
 
-	// init. variables
+      // init. variables
 
-	__idfirma := field->idfirma
-	__brnal := field->brnal
-	__idvn := field->idvn
+      __idfirma := field->idfirma
+      __brnal := field->brnal
+      __idvn := field->idvn
 
-	// datum naloga
-	__t_date := field->datnal
+      // datum naloga
+      __t_date := field->datnal
 
-	++ nNalCnt
+      ++ nNalCnt
 
-	// provjeri suban.dbf
+      // provjeri suban.dbf
 
-	select suban
-	go top
-	seek __idfirma + __idvn + __brnal
+      SELECT suban
+      GO TOP
+      SEEK __idfirma + __idvn + __brnal
 
-	if !FOUND()
+      IF !Found()
 
-		select nalog
-		skip
-		loop
+         SELECT nalog
+         SKIP
+         LOOP
 
-	endif
+      ENDIF
 
-	dSubanDate := field->datdok
+      dSubanDate := field->datdok
 
-	// 1. provjeri prvo da li je razlicit datum naloga i subanalitike
+      // 1. provjeri prvo da li je razlicit datum naloga i subanalitike
 
-	if __t_date <> dSubanDate
+      IF __t_date <> dSubanDate
 
-		// uzmi datum sa prve stavke subanilitike
+         // uzmi datum sa prve stavke subanilitike
 
-		cSubanKto := field->idkonto
-		nMonth := MONTH( field->datdok )
+         cSubanKto := field->idkonto
+         nMonth := Month( field->datdok )
 
-		do while !EOF() .and. field->idfirma == __idfirma ;
-				.and. field->idvn == __idvn ;
-				.and. field->brnal == __brnal ;
-				.and. field->idkonto == cSubanKto
+         DO WHILE !Eof() .AND. field->idfirma == __idfirma ;
+               .AND. field->idvn == __idvn ;
+               .AND. field->brnal == __brnal ;
+               .AND. field->idkonto == cSubanKto
 
-			if MONTH(field->datdok) == nMonth
-				dSubanDate := field->datdok
-			endif
+            IF Month( field->datdok ) == nMonth
+               dSubanDate := field->datdok
+            ENDIF
 
-			skip
+            SKIP
 
-		enddo
+         ENDDO
 
 
-		// provjeri analitiku
+         // provjeri analitiku
 
-		select anal
-		go top
-		seek __idfirma + __idvn + __brnal
+         SELECT anal
+         GO TOP
+         SEEK __idfirma + __idvn + __brnal
 
-		if !FOUND()
-			select nalog
-			skip
-			loop
-		endif
+         IF !Found()
+            SELECT nalog
+            SKIP
+            LOOP
+         ENDIF
 
-		if field->datnal <> dSubanDate
+         IF field->datnal <> dSubanDate
 
-			++ nTotErrors
+            ++ nTotErrors
 
-			? STR(nTotErrors, 5) + ") " + __idfirma + "-" + ;
-				__idvn + "-" + ALLTRIM(__brnal), __t_date, dSubanDate, field->datnal
+            ? Str( nTotErrors, 5 ) + ") " + __idfirma + "-" + ;
+               __idvn + "-" + AllTrim( __brnal ), __t_date, dSubanDate, field->datnal
 
 
-		endif
+         ENDIF
 
 
-	endif
+      ENDIF
 
 
-	// 2. provjeri granicni datum
+      // 2. provjeri granicni datum
 
-	if dGrDate <> nil
+      IF dGrDate <> nil
 
-		select suban
-		go top
-		seek __idfirma + __idvn + __brnal
+         SELECT suban
+         GO TOP
+         SEEK __idfirma + __idvn + __brnal
 
-		lManji := .f.
-		lVeci := .f.
+         lManji := .F.
+         lVeci := .F.
 
 
-		// mjesec granicnog datuma
-		nGrMonth := MONTH( dGrDate )
+         // mjesec granicnog datuma
+         nGrMonth := Month( dGrDate )
 
-		// to znaci da nalog mora da sadrzi samo taj mjesec ili manji
+         // to znaci da nalog mora da sadrzi samo taj mjesec ili manji
 
-		// prodji po nalogu....
-		do while !EOF() .and. suban->(idfirma+idvn+brnal) == ;
-			(__idfirma + __idvn + __brnal)
+         // prodji po nalogu....
+         DO WHILE !Eof() .AND. suban->( idfirma + idvn + brnal ) == ;
+               ( __idfirma + __idvn + __brnal )
 
-			// ako u subanalitici ima manji datum od
-			// granicnog datuma
-			if suban->datdok <= dGrDate
+            // ako u subanalitici ima manji datum od
+            // granicnog datuma
+            IF suban->datdok <= dGrDate
 
-				lManji := .t.
+               lManji := .T.
 
-				// saldiraj ga
-				if suban->d_p == "1"
-					nGrSaldo += suban->iznosbhd
-				else
-					nGrSaldo -= suban->iznosbhd
-				endif
+               // saldiraj ga
+               IF suban->d_p == "1"
+                  nGrSaldo += suban->iznosbhd
+               ELSE
+                  nGrSaldo -= suban->iznosbhd
+               ENDIF
 
-			endif
+            ENDIF
 
-			// ako u subanalitici ima veci datum od
-			// granicnog datuma i iskace iz mjeseca
-			if suban->datdok > dGrDate .and. ;
-				MONTH(suban->datdok) > nGrMonth
+            // ako u subanalitici ima veci datum od
+            // granicnog datuma i iskace iz mjeseca
+            IF suban->datdok > dGrDate .AND. ;
+                  Month( suban->datdok ) > nGrMonth
 
-				lVeci := .t.
-			endif
+               lVeci := .T.
+            ENDIF
 
-			skip
+            SKIP
 
-		enddo
+         ENDDO
 
-		// ako unutar jednog naloga ima i veci i manji datum od
-		// granicnog datuma pretpostavljamo da je to error
+         // ako unutar jednog naloga ima i veci i manji datum od
+         // granicnog datuma pretpostavljamo da je to error
 
-		if lManji == .t. .and. lVeci == .t.
+         IF lManji == .T. .AND. lVeci == .T.
 
-			++ nTotErrors
+            ++ nTotErrors
 
-			? STR(nTotErrors, 5) + ") " + __idfirma + "-" + ;
-				__idvn + "-" + ALLTRIM(__brnal), ;
-				nalog->datnal, "ERR: granicni datum"
+            ? Str( nTotErrors, 5 ) + ") " + __idfirma + "-" + ;
+               __idvn + "-" + AllTrim( __brnal ), ;
+               nalog->datnal, "ERR: granicni datum"
 
-		endif
+         ENDIF
 
-	endif
+      ENDIF
 
 
-	select nalog
-	skip
+      SELECT nalog
+      SKIP
 
-enddo
+   ENDDO
 
-if nTotErrors == 0
-	?
-	? "   !!!!! Nema gresaka !!!!!"
-	?
-endif
+   IF nTotErrors == 0
+      ?
+      ? "   !!!!! Nema gresaka !!!!!"
+      ?
+   ENDIF
 
-if dGrDate <> nil .and. nGrSaldo <> 0
+   IF dGrDate <> NIL .AND. nGrSaldo <> 0
 
-	?
-	? " Razlika utvrdjena po granicnom datumu =", STR( nGrSaldo, 12, 2)
-	?
+      ?
+      ? " Razlika utvrdjena po granicnom datumu =", Str( nGrSaldo, 12, 2 )
+      ?
 
-endif
+   ENDIF
 
-my_close_all_dbf()
+   my_close_all_dbf()
 
-ff
-ENDPRINT
+   ff
+   ENDPRINT
 
+   RETURN
 
-return
 
 
+FUNCTION BBMnoziSaK( cTip )
 
-function BBMnoziSaK( cTip )
+   LOCAL nArr := Select()
 
-  LOCAL nArr := SELECT()
-
-  IF cTip == ValDomaca() .and. IzFMKIni("FIN","BrutoBilansUDrugojValuti","N",KUMPATH)=="D"
-    Box(,5,70)
-      @ m_x+2, m_y+2 SAY "Pomocna valuta      " GET cBBV pict "@!" valid ImaUSifVal(cBBV)
-      @ m_x+3, m_y+2 SAY "Omjer pomocna/domaca" GET nBBK WHEN {|| nBBK:=OmjerVal2(cBBV,cTip),.t.} PICT "999999999.999999999"
+   IF cTip == ValDomaca() .AND. IzFMKIni( "FIN", "BrutoBilansUDrugojValuti", "N", KUMPATH ) == "D"
+      Box(, 5, 70 )
+      @ m_x + 2, m_y + 2 SAY "Pomocna valuta      " GET cBBV PICT "@!" VALID ImaUSifVal( cBBV )
+      @ m_x + 3, m_y + 2 SAY "Omjer pomocna/domaca" GET nBBK WHEN {|| nBBK := OmjerVal2( cBBV, cTip ), .T. } PICT "999999999.999999999"
       READ
-    BoxC()
-  ELSE
-    cBBV := cTip
-    nBBK := 1
-  ENDIF
+      BoxC()
+   ELSE
+      cBBV := cTip
+      nBBK := 1
+   ENDIF
 
-  SELECT (nArr)
+   SELECT ( nArr )
 
-RETURN
+   RETURN

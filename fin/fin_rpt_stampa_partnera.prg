@@ -1,110 +1,109 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1994-2011 by bring.out d.o.o Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including knowhow ERP specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
 
 #include "f18.ch"
 
-function Rpt_StanjePartnera()
+FUNCTION Rpt_StanjePartnera()
 
-O_PRENHH
-O_PARTN
+   O_PRENHH
+   O_PARTN
 
-Box(,5,60)
-	cDN:="N"
-	cPartner:=SPACE(6)
-	@ 1+m_x, 2+m_y SAY "Partner: " GET cPartner VALID EMPTY(cPartner) .or. P_Firma(@cPartner)
-	@ 2+m_x, 2+m_y SAY "Prikazati samo ukupno stanje " GET cDN VALID cDN$"DN" PICT "@!"
-	read
-BoxC()
+   Box(, 5, 60 )
+   cDN := "N"
+   cPartner := Space( 6 )
+   @ 1 + m_x, 2 + m_y SAY "Partner: " GET cPartner VALID Empty( cPartner ) .OR. P_Firma( @cPartner )
+   @ 2 + m_x, 2 + m_y SAY "Prikazati samo ukupno stanje " GET cDN VALID cDN $ "DN" PICT "@!"
+   READ
+   BoxC()
 
-if LastKey()==K_ESC
-	return
-endif
+   IF LastKey() == K_ESC
+      RETURN
+   ENDIF
 
-select prenhh
-set order to tag "1"
-go top
+   SELECT prenhh
+   SET ORDER TO TAG "1"
+   GO TOP
 
-START PRINT CRET
-if !EMPTY(cPartner)
-	seek cPartner	
-endif
+   START PRINT CRET
+   IF !Empty( cPartner )
+      SEEK cPartner
+   ENDIF
 
-nUkupno:=0
-nBrojac:=0
+   nUkupno := 0
+   nBrojac := 0
 
-? "Izvjestaj izgenerisanih podataka o stanju partnera"
-? "na dan: ", Date()
-?
-if cDN=="N"
-	? "Legenda: "
-	? "         F-POCST   - pocetno stanje FIN"
-	? "         F-61-0022 - FIN nalog 61-0022 (primjer)"   
-endif
-?
-? "----------------------------------------------------------------------------------------------"
-? "Rbr. IDPartner/Naziv                    Datum    DatVal    Dok.    Veza       Dug/Pot   Iznos "
-? "----------------------------------------------------------------------------------------------"
-do while !EOF() .and. if(!EMPTY(cPartner), idpartner==cPartner, .t.)
-	if cDN=="N"
-		if ALLTRIM(field->dokument)=="STPART"
-			skip
-			loop
-		endif
-	else
-		if ALLTRIM(field->dokument)<>"STPART"
-			skip
-			loop
-		endif
-	endif
-	
-	select partn
-	hseek PADR(prenhh->idpartner, 6)
-	cNazPartn:=field->naz
-	
-	select prenhh
+   ? "Izvjestaj izgenerisanih podataka o stanju partnera"
+   ? "na dan: ", Date()
+   ?
+   IF cDN == "N"
+      ? "Legenda: "
+      ? "         F-POCST   - pocetno stanje FIN"
+      ? "         F-61-0022 - FIN nalog 61-0022 (primjer)"
+   ENDIF
+   ?
+   ? "----------------------------------------------------------------------------------------------"
+   ? "Rbr. IDPartner/Naziv                    Datum    DatVal    Dok.    Veza       Dug/Pot   Iznos "
+   ? "----------------------------------------------------------------------------------------------"
+   DO WHILE !Eof() .AND. if( !Empty( cPartner ), idpartner == cPartner, .T. )
+      IF cDN == "N"
+         IF AllTrim( field->dokument ) == "STPART"
+            SKIP
+            LOOP
+         ENDIF
+      ELSE
+         IF AllTrim( field->dokument ) <> "STPART"
+            SKIP
+            LOOP
+         ENDIF
+      ENDIF
 
-	
-	++nBrojac
-	
-	? STR(nBrojac, 4) + ". "
-	?? field->idpartner
-	?? cNazPartn
-	?? field->datum, " "
-	?? field->datval, " "
-	if cDN=="N"
-		?? field->dokument
-	else
-		?? SPACE(10)
-	endif
-	?? field->veza, SPACE(3)
-	?? field->d_p
-	?? field->iznos
-	
-	if field->d_p=="D"
-		nUkupno+=field->iznos
-	else
-		nUkupno-=field->iznos
-	endif
-	
-	skip
-enddo
+      SELECT partn
+      hseek PadR( prenhh->idpartner, 6 )
+      cNazPartn := field->naz
 
-?
-? "-------------------------------------------------------------------------------------------"
-? "UKUPNO: " + SPACE(60), nUkupno
-?
+      SELECT prenhh
 
-FF
 
-ENDPRINT
+      ++nBrojac
 
-return
+      ? Str( nBrojac, 4 ) + ". "
+      ?? field->idpartner
+      ?? cNazPartn
+      ?? field->datum, " "
+      ?? field->datval, " "
+      IF cDN == "N"
+         ?? field->dokument
+      ELSE
+         ?? Space( 10 )
+      ENDIF
+      ?? field->veza, Space( 3 )
+      ?? field->d_p
+      ?? field->iznos
 
+      IF field->d_p == "D"
+         nUkupno += field->iznos
+      ELSE
+         nUkupno -= field->iznos
+      ENDIF
+
+      SKIP
+   ENDDO
+
+   ?
+   ? "-------------------------------------------------------------------------------------------"
+   ? "UKUPNO: " + Space( 60 ), nUkupno
+   ?
+
+   FF
+
+   ENDPRINT
+
+   RETURN

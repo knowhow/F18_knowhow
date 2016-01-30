@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -12,199 +12,200 @@
 
 #include "f18.ch"
 
-static picdem := "9999999999999.99"
+STATIC picdem := "9999999999999.99"
 
 
 // --------------------------------------------------
 // obracun kamata izvjestaj
 // --------------------------------------------------
-function kamate_obracun_pojedinacni( fVise )
-local nKumKam := 0
-local nGlavn := 2892359.28
-local dDatOd := CTOD("01.02.92")
-local dDatDo := CTOD("30.09.96")
+FUNCTION kamate_obracun_pojedinacni( fVise )
 
-private cVarObracuna := "Z"
+   LOCAL nKumKam := 0
+   LOCAL nGlavn := 2892359.28
+   LOCAL dDatOd := CToD( "01.02.92" )
+   LOCAL dDatDo := CToD( "30.09.96" )
 
-if fvise = NIL
-	fVise := .f.
-endif
+   PRIVATE cVarObracuna := "Z"
 
-if !fVise
+   IF fvise = NIL
+      fVise := .F.
+   ENDIF
 
-	Box( "#OBRACUN KAMATE ZA JEDNU GLAVNICU", 3, 77 )
- 		@ m_x + 1, m_y + 2 SAY "Glavnica:" GET nGlavn PICT "9999999999999.99"
- 		@ m_x + 2, m_y + 2 SAY "Od datuma:" GET dDatOd
- 		@ m_x + 2, col() + 2 SAY "do:" GET dDatDo
- 		@ m_x + 3, m_y + 2 SAY "Varijanta obracuna kamate (Z-zatezna kamata,P-prosti kamatni racun)" GET cVarObracuna VALID cVarObracuna$"ZP" PICT "@!"
- 		read
-		ESC_BCR
-	BoxC()
+   IF !fVise
 
-endif 
+      Box( "#OBRACUN KAMATE ZA JEDNU GLAVNICU", 3, 77 )
+      @ m_x + 1, m_y + 2 SAY "Glavnica:" GET nGlavn PICT "9999999999999.99"
+      @ m_x + 2, m_y + 2 SAY "Od datuma:" GET dDatOd
+      @ m_x + 2, Col() + 2 SAY "do:" GET dDatDo
+      @ m_x + 3, m_y + 2 SAY "Varijanta obracuna kamate (Z-zatezna kamata,P-prosti kamatni racun)" GET cVarObracuna VALID cVarObracuna $ "ZP" PICT "@!"
+      READ
+      ESC_BCR
+      BoxC()
 
-O_KS
-set order to tag "2"
+   ENDIF
 
-START PRINT CRET
+   O_KS
+   SET ORDER TO TAG "2"
 
-?
-P_10CPI
-? space(45), "K A M A T E"
-?
-?
-B_ON
-? space(45),"Preduzece:", gNFirma
-B_OFF
-?
-? "Partner: _____________________________________"
-?
-? "Obracun kamate po dokumentu : ________________ "
-?
-?
+   START PRINT CRET
 
-if ( cVarObracuna == "Z" )
-	? "Obracun zatezne kamate za period:",dDatOd,"-",dDatDo
-else
-	? "Prosti kamatni obracun za period:",dDatOd,"-",dDatDo
-endif
+   ?
+   P_10CPI
+   ? Space( 45 ), "K A M A T E"
+   ?
+   ?
+   B_ON
+   ? Space( 45 ), "Preduzece:", gNFirma
+   B_OFF
+   ?
+   ? "Partner: _____________________________________"
+   ?
+   ? "Obracun kamate po dokumentu : ________________ "
+   ?
+   ?
 
-?
-? "   Glavnica:"
-@ prow(), pcol()+1 SAY nGlavn pict picDEM
+   IF ( cVarObracuna == "Z" )
+      ? "Obracun zatezne kamate za period:", dDatOd, "-", dDatDo
+   ELSE
+      ? "Prosti kamatni obracun za period:", dDatOd, "-", dDatDo
+   ENDIF
 
-if ( cVarObracuna == "Z" )
-	? m := "-------- -------- --- ---------------- ---------- ------- ----------------"
-	? "     Period       Dana      Osnovica     Tip kam.  Konform.      Iznos"
-	? "                                         i stopa    koef         kamate"
-else
-	? m := "-------- -------- --- ---------------- --------- ----------------"
-	? "     Period       Dana    Osnovica       Stopa       Iznos"
-	? "                                                     kamate"
-endif
+   ?
+   ? "   Glavnica:"
+   @ PRow(), PCol() + 1 SAY nGlavn PICT picDEM
 
-? m
+   IF ( cVarObracuna == "Z" )
+      ? m := "-------- -------- --- ---------------- ---------- ------- ----------------"
+      ? "     Period       Dana      Osnovica     Tip kam.  Konform.      Iznos"
+      ? "                                         i stopa    koef         kamate"
+   ELSE
+      ? m := "-------- -------- --- ---------------- --------- ----------------"
+      ? "     Period       Dana    Osnovica       Stopa       Iznos"
+      ? "                                                     kamate"
+   ENDIF
 
-nKumKam := 0
+   ? m
 
-seek dtos(dDatOd)
-if dDatOd < ks->DatOd .or. EOF()
-	skip -1
-endif
+   nKumKam := 0
 
-do while .t.
+   SEEK DToS( dDatOd )
+   IF dDatOd < ks->DatOd .OR. Eof()
+      SKIP -1
+   ENDIF
 
-	ddDatDo := MIN( ks->DatDO, dDatDo )
+   DO WHILE .T.
 
-	nPeriod:= ddDatDo-dDatOd+1
+      ddDatDo := Min( ks->DatDO, dDatDo )
 
-	if (cVarObracuna=="P")
-		if (Prestupna(YEAR(dDatOd)))
-			nExp:=366
-		else
-			nExp:=365
-		endif
-	else
-		if ks->tip=="G"
-			if ks->duz==0
-				nExp:=365
-			else
-				nExp:=ks->duz
-			endif
-		elseif ks->tip=="M"
-			if ks->duz==0
-				dExp:= "01."
-				if month(ddDatdo)==12
-					dExp+="01."+alltrim(str(year(ddDatdo)+1))
-				else
-					dExp+=alltrim(str(month(ddDatdo)+1))+"."+alltrim(str(year(ddDatdo)))
-				endif
-				nExp:=day(ctod(dExp)-1)
-			else
-				nExp:=ks->duz
-			endif
-		elseif ks->tip=="3"
-			nExp:=ks->duz
-		endif
-	endif
-	
-	if ks->den<>0  .and. dDatOd==ks->datod
- 		? "********* Izvrsena Denominacija osnovice sa koeficijentom:",ks->den,"****"
- 		nGlavn:=round(nGlavn*ks->den,2)
- 		nKumKam:=round(nKumKam*ks->den,2)
-	endif
+      nPeriod := ddDatDo - dDatOd + 1
 
-	if (cVarObracuna=="Z") 
-		nKKam:=((1+ks->stkam/100)^(nPeriod/nExp) - 1.00000)
-		nIznKam:=nKKam*nGlavn
-	else
-		nKStopa:=ks->stkam/100
-		nIznKam := nGlavn * nKStopa * nPeriod/nExp 
-	endif
+      IF ( cVarObracuna == "P" )
+         IF ( Prestupna( Year( dDatOd ) ) )
+            nExp := 366
+         ELSE
+            nExp := 365
+         ENDIF
+      ELSE
+         IF ks->tip == "G"
+            IF ks->duz == 0
+               nExp := 365
+            ELSE
+               nExp := ks->duz
+            ENDIF
+         ELSEIF ks->tip == "M"
+            IF ks->duz == 0
+               dExp := "01."
+               IF Month( ddDatdo ) == 12
+                  dExp += "01." + AllTrim( Str( Year( ddDatdo ) + 1 ) )
+               ELSE
+                  dExp += AllTrim( Str( Month( ddDatdo ) + 1 ) ) + "." + AllTrim( Str( Year( ddDatdo ) ) )
+               ENDIF
+               nExp := Day( CToD( dExp ) -1 )
+            ELSE
+               nExp := ks->duz
+            ENDIF
+         ELSEIF ks->tip == "3"
+            nExp := ks->duz
+         ENDIF
+      ENDIF
 
-	nIznKam:=round(nIznKam,2)
+      IF ks->den <> 0  .AND. dDatOd == ks->datod
+         ? "********* Izvrsena Denominacija osnovice sa koeficijentom:", ks->den, "****"
+         nGlavn := Round( nGlavn * ks->den, 2 )
+         nKumKam := Round( nKumKam * ks->den, 2 )
+      ENDIF
 
-	? dDatOd, ddDatDo
+      IF ( cVarObracuna == "Z" )
+         nKKam := ( ( 1 + ks->stkam / 100 ) ^ ( nPeriod / nExp ) - 1.00000 )
+         nIznKam := nKKam * nGlavn
+      ELSE
+         nKStopa := ks->stkam / 100
+         nIznKam := nGlavn * nKStopa * nPeriod / nExp
+      ENDIF
 
-	@ prow(), pcol() + 1 SAY nPeriod pict "999"
-	@ prow(), pcol() + 1 SAY nGlavn pict picdem
+      nIznKam := Round( nIznKam, 2 )
 
-	if ( cVarObracuna == "Z" )
-		@ prow(),pcol()+1 SAY ks->tip
-		@ prow(),pcol()+1 SAY ks->stkam
-		@ prow(),pcol()+1 SAY nKKam*100 pict "9999.99"
-	else
-		@ prow(),pcol()+1 SAY ks->stkam
-	endif
+      ? dDatOd, ddDatDo
 
-	@ prow(),pcol()+1 SAY nIznKam pict picdem
+      @ PRow(), PCol() + 1 SAY nPeriod PICT "999"
+      @ PRow(), PCol() + 1 SAY nGlavn PICT picdem
 
-	nKumKam+=nIznKam
-	
-	if (cVarObracuna=="Z")
-		nGlavn+=nIznKam
-	endif
+      IF ( cVarObracuna == "Z" )
+         @ PRow(), PCol() + 1 SAY ks->tip
+         @ PRow(), PCol() + 1 SAY ks->stkam
+         @ PRow(), PCol() + 1 SAY nKKam * 100 PICT "9999.99"
+      ELSE
+         @ PRow(), PCol() + 1 SAY ks->stkam
+      ENDIF
 
-	if dDatDo <= ks->datdo 
-        // kraj obracuna
- 		exit
-	endif
-	
-	skip
+      @ PRow(), PCol() + 1 SAY nIznKam PICT picdem
 
-	dDatOd := ks->DatOd
+      nKumKam += nIznKam
 
-enddo
+      IF ( cVarObracuna == "Z" )
+         nGlavn += nIznKam
+      ENDIF
 
-? m
-?
-? "Ukupno kamata    :",transform(nKumKam,"999,999,999,999,999.99")
-?
-if (cVarObracuna=="Z")
-	? "NOVO STANJE      :",transform(nGlavn,"999,999,999,999,999.99")
-else
-	? "GLAVNICA+KAMATA  :",transform(nGlavn+nKumKam,"999,999,999,999,999.99")
-endif
+      IF dDatDo <= ks->datdo
+         // kraj obracuna
+         EXIT
+      ENDIF
 
-?
+      SKIP
 
-FF
-ENDPRINT
+      dDatOd := ks->DatOd
 
-my_close_all_dbf()
-return
+   ENDDO
+
+   ? m
+   ?
+   ? "Ukupno kamata    :", Transform( nKumKam, "999,999,999,999,999.99" )
+   ?
+   IF ( cVarObracuna == "Z" )
+      ? "NOVO STANJE      :", Transform( nGlavn, "999,999,999,999,999.99" )
+   ELSE
+      ? "GLAVNICA+KAMATA  :", Transform( nGlavn + nKumKam, "999,999,999,999,999.99" )
+   ENDIF
+
+   ?
+
+   FF
+   ENDPRINT
+
+   my_close_all_dbf()
+
+   RETURN
 
 
 
 // Racuna prestupnu godinu
-function Prestupna( nGodina )
-local lPrestupna
-lPrestupna := .f.
-if nGodina % 4 == 0
-	lPrestupna := .t.
-endif
-return lPrestupna
+FUNCTION Prestupna( nGodina )
 
+   LOCAL lPrestupna
 
+   lPrestupna := .F.
+   IF nGodina % 4 == 0
+      lPrestupna := .T.
+   ENDIF
 
-
+   RETURN lPrestupna

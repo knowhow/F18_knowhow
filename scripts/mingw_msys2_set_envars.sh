@@ -1,16 +1,11 @@
 export HB_ARCHITECTURE=win
 export HB_COMPILER=mingw
 
-#QT_VER=5.3
-MINGW_VER=482_32
 
 C_ROOT=C:
 
-#export TEMP=$C_ROOT\\tmp
-#export TMP=$C_ROOT\\tmp
 
-
-HB_ROOT=$C_ROOT\\knowhowERP\\hbwin
+HB_ROOT=$C_ROOT\\hbwin
 
 
 # mingw g++

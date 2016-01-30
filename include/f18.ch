@@ -47,6 +47,16 @@
 #include "f18_request.ch"
 #include "f18_cre_all.ch"
 
+#ifndef TEST
+  #ifndef F18_RELEASE_DEFINED
+      #include "f18_release.ch"
+  #endif
+#else
+  #ifndef F18_TEST_DEFINED
+      #include "f18_test.ch"
+  #endif
+#endif
+
 #define CHR254   254
 #define D_STAROST_DANA   25
 
@@ -74,26 +84,7 @@
 
 #define GSV_COUNT  9
 
-/*
 
-// NTX
-#define NTX_INDICES
-#undef  CDX_INDICES
-
-
-#define INDEXEXT      "ntx"
-#define OLD_INDEXEXT  "cdx"
-#define DBFEXT        "dbf"
-#define MEMOEXT       "dbt"
-
-#define  INDEXEXTENS  "ntx"
-#define  MEMOEXTENS   "dbt"
-
-
-#define RDDENGINE "DBFNTX"
-#define DBFENGINE "DBFNTX"
-
-*/
 
 // CDX
 #define CDX_INDICES
@@ -140,15 +131,6 @@
 
 #define F18_SECUR_WARRNING "Opcija nije dostupna za ovaj nivo !#Da bi koristili opciju potrebna podesenja privilegija"
 
-#ifndef TEST
-  #ifndef F18_RELEASE_DEFINED
-      #include "f18_release.ch"
-  #endif
-#else
-  #ifndef F18_TEST_DEFINED
-      #include "f18_test.ch"
-  #endif
-#endif
 
 // F18.log, F18_2.log, F18_3.log ...
 #define F18_LOG_FILE "F18.log"
@@ -497,6 +479,7 @@
 // ----- fin.ch ------------
 #define D_FI_VERZIJA "0.9.0"
 #define D_FI_PERIOD "11.94-25.11.11"
+#define DABLAGAS lBlagAsis .and. _IDVN == cBlagIDVN
 
 // ------- ld.ch -----------
 #define D_LD_VERZIJA "0.2.0"

@@ -31,14 +31,14 @@ FUNCTION fin_suban_kartica_sql( otv_stavke )
    ENDIF
 
    IF !_get_vars( @_rpt_vars )
-      RETURN
+      RETURN .F.
    ENDIF
 
    _rpt_data := _cre_rpt( _rpt_vars, otv_stavke )
 
    IF _rpt_data == NIL
       Msgbeep( "Problem sa generisanjem izvještaja !" )
-      RETURN
+      RETURN .F.
    ENDIF
 
    IF _rpt_vars[ "export_dbf" ] == "D"
@@ -64,8 +64,7 @@ FUNCTION fin_suban_kartica_sql( otv_stavke )
       f18_open_mime_document( my_home() + "r_export.dbf" )
    ENDIF
 
-   RETURN
-
+   RETURN .T.
 
 
 STATIC FUNCTION _get_vars( rpt_vars )

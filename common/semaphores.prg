@@ -632,7 +632,7 @@ FUNCTION insert_semaphore_if_not_exists( cTable )
       _qry := "INSERT INTO " + cSqlTbl + "(user_code, last_trans_version, version, algorithm) " + ;
          "VALUES(" + _sql_quote( _user )  + ", 0, -1, 'free')"
       _ret := _sql_query( _server, _qry )
-      RETURN Empty( _ret:ErrMsg() )
+      RETURN Empty( _ret:ErrorMsg() )
    ENDIF
 
    RETURN .T.

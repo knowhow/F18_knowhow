@@ -69,7 +69,7 @@ STATIC FUNCTION k_handler( Ch )
          add_prevod()
          aZabIsp := {}
          nOrder := IndexOrd()
-         nRet := EditSifItem( Ch, nOrder, aZabIsp )
+         nRet := browse_edit_stavka( Ch, nOrder, aZabIsp )
          IF nRet <> 1
             EXIT
          ENDIF

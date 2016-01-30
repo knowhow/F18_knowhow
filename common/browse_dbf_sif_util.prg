@@ -90,7 +90,7 @@ FUNCTION p_sifra( nDbf, xIndex, nVisina, nSirina, cNaslov, cID, dx, dy,  bBlok, 
          GO TOP
       ENDIF
 
-      browse_table_sql(, nVisina, nSirina,  {|| ed_sql_sif( nDbf, cNaslov, bBlok, aZabrane, aZabIsp ) }, ToStrU( cNaslov ) , "", lInvert, _komande, 1, bPodvuci, , , aPoredak )
+      browse_table_sql(, nVisina, nSirina,  {|| ed_sql_sif( nDbf, cNaslov, bBlok, aZabrane, aZabIsp ) }, ToStrU( cNaslov ), "", lInvert, _komande, 1, bPodvuci, , , aPoredak )
 
       IF Type( "id" ) $ "U#UE"
          cID := ( nDbf )->( FieldGet( 1 ) )
@@ -144,7 +144,7 @@ STATIC FUNCTION sif_set_order( xIndex, cOrderTag, fID_j )
          ordSetFocus( cOrderTag )
       ELSE
 
-         IF EMPTY( cOrderTag )
+         IF Empty( cOrderTag )
             SET ORDER TO TAG "2"
          ENDIF
       ENDIF
@@ -265,7 +265,7 @@ FUNCTION sif_point_or_slash( cId, fPoNaz, cOrderTag, cUslovSrch, cNazSrch )
 
    cId := PadR( cId, 10 )
 
-   IF !EMPTY( cOrderTag )
+   IF !Empty( cOrderTag )
       ordSetFocus( "NAZ" )
    ELSE
       ordSetFocus( "2" )
@@ -503,6 +503,7 @@ STATIC FUNCTION edit_sql_sif_item( Ch, cOrderTag, aZabIsp, lNovi )
    PRIVATE aUsl
    PRIVATE aStruct
 
+
    nPrevRecNo := RecNo()
 
    cTekuciZapis := vrati_vrijednosti_polja_sifarnika_u_string( "w" )
@@ -661,7 +662,7 @@ STATIC FUNCTION edit_sql_sif_item( Ch, cOrderTag, aZabIsp, lNovi )
       GO ( nPrevRecNo )
    ENDIF
 
-   ordSetFocus( cOrderTag)
+   ordSetFocus( cOrderTag )
 
    RETURN 1
 
@@ -703,7 +704,7 @@ FUNCTION snimi_promjene_sifarnika( lNovi, cTekuciZapis )
    lOk := update_rec_server_and_dbf( cAlias, _rec, 1, "CONT" )
 
    IF lOk
-       lOk := update_sifk_na_osnovu_ime_kol_from_global_var( ImeKol, "w", lNovi, "CONT" )
+      lOk := update_sifk_na_osnovu_ime_kol_from_global_var( ImeKol, "w", lNovi, "CONT" )
    ENDIF
 
    IF lOk
@@ -733,8 +734,8 @@ FUNCTION snimi_promjene_sifarnika( lNovi, cTekuciZapis )
       cEditovaniZapis := vrati_vrijednosti_polja_sifarnika_u_string( "w" )
       IF cEditovaniZapis <> cTekuciZapis
          log_write( "F18_DOK_OPER: " + ;
-              IIF( lNovi, "dodan novi", "ispravljen" ) + " zapis tabele " + cAlias + ;
-              IIF( !lNovi, " postojeći zapis: " + cTekuciZapis, "" ) + " novi zapis: " + cEditovaniZapis , 2 )
+            iif( lNovi, "dodan novi", "ispravljen" ) + " zapis tabele " + cAlias + ;
+            iif( !lNovi, " postojeći zapis: " + cTekuciZapis, "" ) + " novi zapis: " + cEditovaniZapis, 2 )
       ENDIF
    ENDIF
 
@@ -896,7 +897,7 @@ FUNCTION sif_sql_getlist( var_name, GetList, lZabIsp, aZabIsp, lShowGrup, Ch, nG
       _valid_block := bValid
    ENDIF
 
-   @ m_x + nTekRed, m_y + nKolona SAY  IIF( nKolona > 1, "  " + AllTrim( ImeKol[ i, 1 ] ), PadL( AllTrim( ImeKol[ i, 1 ] ), 15 ) )  + " "
+   @ m_x + nTekRed, m_y + nKolona SAY  iif( nKolona > 1, "  " + AllTrim( ImeKol[ i, 1 ] ), PadL( AllTrim( ImeKol[ i, 1 ] ), 15 ) )  + " "
 
    if &var_name == NIL
       tmpRec = RecNo()
@@ -910,8 +911,8 @@ FUNCTION sif_sql_getlist( var_name, GetList, lZabIsp, aZabIsp, lShowGrup, Ch, nG
       &var_name = hb_UTF8ToStr( &var_name )
    ENDIF
 
-    AAdd( GetList, _GET_( &var_name, var_name,  cPic, _valid_block, _when_block ) ) ;;
-    ATail( GetList ):display()
+   AAdd( GetList, _GET_( &var_name, var_name,  cPic, _valid_block, _when_block ) ) ;;
+      ATail( GetList ):display()
 
    RETURN .T.
 
@@ -933,7 +934,7 @@ STATIC FUNCTION add_match_code( ImeKol, Kol )
 
    ENDIF
 
-
+   RETURN .T.
 
 /*
    vraca naziv polja + vrijednost za tekuci alias
@@ -990,7 +991,7 @@ STATIC FUNCTION set_sif_vars()
       &cVar := &cImeP
    NEXT
 
-   RETURN
+   RETURN .T.
 
 
 FUNCTION sifarnik_set_roba_defaults()
@@ -1001,7 +1002,7 @@ FUNCTION sifarnik_set_roba_defaults()
 
    widtarifa := PadR( "PDV17", 6 )
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -1115,8 +1116,6 @@ FUNCTION sifarnik_brisi_stavku()
       RETURN DE_CONT
    ENDIF
 
-
-
 FUNCTION sifarnik_brisi_sve()
 
    PushWA()
@@ -1148,7 +1147,7 @@ STATIC FUNCTION PushSifV()
       AAdd( __A_SIFV__, { "", 0, 0 } )
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -1156,7 +1155,7 @@ STATIC FUNCTION PopSifV()
 
    --__PSIF_NIVO__
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -1228,18 +1227,18 @@ FUNCTION is_sifra_postoji_u_sifarniku( hTekuciRec )
       RETURN lRet
    ENDIF
 
-   IF hTblRec["temp"]
+   IF hTblRec[ "temp" ]
       RETURN lRet
    ENDIF
 
-   cTable := hTblRec["table"]
-   IF LEFT( cTable, 4 ) <> "fmk."
+   cTable := hTblRec[ "table" ]
+   IF Left( cTable, 4 ) <> "fmk."
       cTable := "fmk." + cTable
    ENDIF
 
    cWhere := napravi_where_uslov_na_osnovu_hash_matrica( hTblRec, hTekuciRec )
 
-   IF EMPTY( cWhere )
+   IF Empty( cWhere )
       RETURN lRet
    ENDIF
 
@@ -1257,27 +1256,27 @@ STATIC FUNCTION napravi_where_uslov_na_osnovu_hash_matrica( hTblRec, hRec )
    LOCAL cWhere := ""
    LOCAL cTmp := ""
 
-   cSqlFields := hTblRec["algoritam"][1]["sql_in"]
-   aDbfFields := hTblRec["algoritam"][1]["dbf_key_fields"]
+   cSqlFields := hTblRec[ "algoritam" ][ 1 ][ "sql_in" ]
+   aDbfFields := hTblRec[ "algoritam" ][ 1 ][ "dbf_key_fields" ]
 
-   IF cSqlFields == NIL .OR. EMPTY( cSqlFields )
+   IF cSqlFields == NIL .OR. Empty( cSqlFields )
       RETURN cWhere
    ENDIF
 
-   IF aDbfFields == NIL .OR. LEN( aDbfFields ) == 0
+   IF aDbfFields == NIL .OR. Len( aDbfFields ) == 0
       RETURN cWhere
    ENDIF
 
-   FOR i := 1 TO LEN( aDbfFields )
-      IF ValType( aDbfFields[i] ) == "A"
-         aTmp := aDbfFields[i]
-         cTmp += Str( hRec[ aTmp[1] ], aTmp[2], 0 )
+   FOR i := 1 TO Len( aDbfFields )
+      IF ValType( aDbfFields[ i ] ) == "A"
+         aTmp := aDbfFields[ i ]
+         cTmp += Str( hRec[ aTmp[ 1 ] ], aTmp[ 2 ], 0 )
       ELSE
-         cTmp += hRec[ aDbfFields[i] ]
+         cTmp += hRec[ aDbfFields[ i ] ]
       ENDIF
    NEXT
 
-   IF EMPTY( cTmp )
+   IF Empty( cTmp )
       RETURN cWhere
    ENDIF
 

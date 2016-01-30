@@ -316,7 +316,6 @@ STATIC FUNCTION standardne_browse_komande( TB, Ch, nRez, nPored, aPoredak )
 
    LOCAL _tr := hb_UTF8ToStr( "Traži:" ), _zam := "Zamijeni sa:"
    LOCAL _last_srch := "N"
-   LOCAL _has_semaphore := .F.
    LOCAL cSmj, i, K, aUF
    LOCAL cLoc := Space( 40 )
    LOCAL cStVr, cNovVr, nRec, nOrder, xcpos, ycpos
@@ -440,8 +439,7 @@ STATIC FUNCTION standardne_browse_komande( TB, Ch, nRez, nPored, aPoredak )
 
       PRIVATE cKolona
 
-      // imamo li semafor na tabeli ?
-      _has_semaphore := alias_has_semaphore()
+
       cKolona := ImeKol[ TB:ColPos, 3 ]
 
       IF Len( Imekol[ TB:colPos ] ) > 2 .AND. !Empty( cKolona ) .AND. ValType( &cKolona ) == "N"

@@ -259,7 +259,7 @@ FUNCTION set_a_dbf_rec_chk0( table )
 // ---------------------------------------------------
 // da li alias ima semafor ?
 // ---------------------------------------------------
-FUNCTION alias_has_semaphore( alias )
+FUNCTION dbf_alias_has_semaphore( alias )
 
    LOCAL _ret := .F.
    LOCAL _msg, _rec, _keys, _dbf_tbl, _key
@@ -297,7 +297,6 @@ FUNCTION alias_has_semaphore( alias )
    ENDIF
 
    RETURN _ret
-
 
 
 
@@ -452,7 +451,7 @@ FUNCTION my_close_all_dbf()
 
    ENDDO
 
-   RETURN
+   RETURN .T.
 
 
 FUNCTION is_sql_table( cDbf )

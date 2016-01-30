@@ -515,7 +515,7 @@ FUNCTION zamjeni_numericka_polja_u_tabeli( cKolona, cTrazi, cUslov )
    LOCAL lOk := .T.
    LOCAL nRec := RecNo()
    LOCAL nOrder := IndexOrd()
-   LOCAL lImaSemafor := alias_has_semaphore()
+   LOCAL lImaSemafor := dbf_alias_has_semaphore()
    LOCAL _rec
 
    SET ORDER TO 0
@@ -599,7 +599,7 @@ FUNCTION replace_kolona_in_table( cKolona, trazi_val, zamijeni_val, last_search 
 
    _saved := .F.
 
-   _has_semaphore := alias_has_semaphore()
+   _has_semaphore := dbf_alias_has_semaphore()
 
    IF _has_semaphore
       sql_table_update( nil, "BEGIN" )

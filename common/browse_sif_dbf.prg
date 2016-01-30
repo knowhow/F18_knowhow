@@ -325,8 +325,8 @@ FUNCTION sif_dbf_point_or_slash( cId, fPoNaz, nOrdId, cUslovSrch, cNazSrch )
 
    RETURN .T.
 
-// --------------------------
-// --------------------------
+
+
 FUNCTION ID_J( nOffSet )
 
    IF nOffset = NIL
@@ -338,7 +338,8 @@ FUNCTION ID_J( nOffSet )
       RETURN __A_SIFV__[ 1, 1 ]
    ENDIF
 
-   RETURN
+   RETURN .T.
+
 
 // -------------------------------------------
 // setuje match_code imekol {}
@@ -352,7 +353,7 @@ FUNCTION set_mc_imekol( nDBF )
    cFldMatchCode := "MATCH_CODE"
 
    IF ( nDBF == F_SIFK ) .OR. ( nDBF == F_SIFV ) .OR. ( nDBF == F_OPS )
-      RETURN
+      RETURN .T.
    ENDIF
 
    // ako nema polja match code ... nista...
@@ -415,7 +416,7 @@ STATIC FUNCTION PushSifV()
       AAdd( __A_SIFV__, { "", 0, 0 } )
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 STATIC FUNCTION PopSifV()
@@ -513,7 +514,7 @@ STATIC FUNCTION sif_komande( nDbf, cNaslov, bBlok, aZabrane, aZabIsp )
 
       Tb:RefreshCurrent()
 
-      IF EditSifItem( Ch, nOrder, aZabIsp, .T. ) == 1
+      IF browse_edit_stavka( Ch, nOrder, aZabIsp, .T. ) == 1
          RETURN DE_REFRESH
       ENDIF
 
@@ -523,7 +524,7 @@ STATIC FUNCTION sif_komande( nDbf, cNaslov, bBlok, aZabrane, aZabIsp )
 
       Tb:RefreshCurrent()
 
-      IF EditSifItem( Ch, nOrder, aZabIsp, .F. ) == 1
+      IF browse_edit_stavka( Ch, nOrder, aZabIsp, .F. ) == 1
          RETURN DE_REFRESH
       ENDIF
 
@@ -585,7 +586,7 @@ STATIC FUNCTION sif_komande( nDbf, cNaslov, bBlok, aZabrane, aZabIsp )
 
 
 
-FUNCTION EditSifItem( Ch, nOrder, aZabIsp, lNovi )
+FUNCTION browse_edit_stavka( Ch, nOrder, aZabIsp, lNovi )
 
    LOCAL i
    LOCAL j
@@ -613,6 +614,9 @@ FUNCTION EditSifItem( Ch, nOrder, aZabIsp, lNovi )
    PRIVATE aQQ
    PRIVATE aUsl
    PRIVATE aStruct
+
+   altd()
+   dbf_refresh()
 
    nPrevRecNo := RecNo()
 
@@ -910,8 +914,7 @@ FUNCTION sif_dbf_getlist( var_name, GetList, lZabIsp, aZabIsp, lShowGrup, Ch, nG
    RETURN .T.
 
 
-// -----------------------------------------
-// -----------------------------------------
+
 STATIC FUNCTION add_match_code( ImeKol, Kol )
 
    LOCAL  _pos, cMCField := Alias()
@@ -952,8 +955,6 @@ FUNCTION SetSifVars()
 
 
 
-// -------------------------------------------------------
-// -------------------------------------------------------
 FUNCTION SifPopup( nOrder )
 
    PRIVATE Opc := {}
@@ -961,11 +962,11 @@ FUNCTION SifPopup( nOrder )
    PRIVATE Izbor
 
    AAdd( Opc, "1. novi                  " )
-   AAdd( opcexe, {|| EditSifItem( K_CTRL_N, nOrder, NIL, .T. ) } )
+   AAdd( opcexe, {|| browse_edit_stavka( K_CTRL_N, nOrder, NIL, .T. ) } )
    AAdd( Opc, "2. edit  " )
-   AAdd( opcexe, {|| EditSifItem( K_F2, nOrder, NIL, .F. ) } )
+   AAdd( opcexe, {|| browse_edit_stavka( K_F2, nOrder, NIL, .F. ) } )
    AAdd( Opc, "3. dupliciraj  " )
-   AAdd( opcexe, {|| EditSifItem( K_F4, nOrder, NIL, .T. ) } )
+   AAdd( opcexe, {|| browse_edit_stavka( K_F4, nOrder, NIL, .T. ) } )
    AAdd( Opc, "4. <a+R> za sifk polja  " )
    AAdd( opcexe, {|| repl_sifk_item() } )
    AAdd( Opc, "5. copy polje -> sifk polje  " )

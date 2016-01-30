@@ -638,6 +638,37 @@ FUNCTION insert_semaphore_if_not_exists( cTable )
    RETURN .T.
 
 
+FUNCTION dbf_refresh( cTable )
+
+   LOCAL _server := pg_server()
+   LOCAL _user := f18_user()
+   LOCAL _qry
+   LOCAL _ret
+   LOCAL aDbfRec, cSqlTbl
+
+
+   IF  cTable == nil
+      cTable := Alias()
+   ENDIF
+
+   aDbfRec := get_a_dbf_rec( cTable )
+   cSqlTbl := "fmk.semaphores_" + aDbfRec[ 'table' ]
+
+   IF skip_semaphore( aDbfRec[ 'table' ] )
+         RETURN .F.
+   ENDIF
+
+   _qry := "SELECT last_trans_version-version FROM " + cSqlTbl + " WHERE user_code=" + _sql_quote( _user )
+   _ret := _sql_query( _server, _qry )
+
+   IF ( _ret:FieldGet( 1 ) > 0 )
+      PushWa()
+      my_use( Alias() )
+      PopWa()
+   ENDIF
+
+   RETURN .T.
+
 STATIC FUNCTION skip_semaphore( table )
 
    table := Lower( table )

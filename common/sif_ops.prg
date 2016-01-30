@@ -18,7 +18,7 @@ FUNCTION P_Ops( cId, dx, dy )
    PRIVATE ImeKol
    PRIVATE Kol
 
-altd()
+
    hWorkArea := PushWA()
 
    IF !hWorkArea[ 'sql' ] .AND. cId != NIL

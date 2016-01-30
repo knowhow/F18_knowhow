@@ -458,6 +458,10 @@ STATIC FUNCTION sif_komande( nDbf, cNaslov, bBlok, aZabrane, aZabIsp )
 
    Ch := LastKey()
 
+   IF dbf_refresh()
+      Tb:RefreshAll()
+   ENDIF
+
    aStruct := dbStruct()
    SkratiAZaD ( @aStruct )
    FOR i := 1 TO Len( aStruct )
@@ -582,7 +586,7 @@ STATIC FUNCTION sif_komande( nDbf, cNaslov, bBlok, aZabrane, aZabIsp )
 
    ENDCASE
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -614,9 +618,6 @@ FUNCTION browse_edit_stavka( Ch, nOrder, aZabIsp, lNovi )
    PRIVATE aQQ
    PRIVATE aUsl
    PRIVATE aStruct
-
-   altd()
-   dbf_refresh()
 
    nPrevRecNo := RecNo()
 

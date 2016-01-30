@@ -355,9 +355,9 @@ FUNCTION set_screen_dimensions()
       QUIT_1
    ENDIF
 
-#ifdef F18_DEBUG
-   MsgBeep( Str( maxrows() ) + " " +  Str( maxcols() ) )
-#endif
+//#ifdef F18_DEBUG
+//   MsgBeep( Str( maxrows() ) + " " +  Str( maxcols() ) )
+//#endif
 
    RETURN .T.
 

@@ -665,9 +665,10 @@ FUNCTION dbf_refresh( cTable )
       PushWa()
       my_use( Alias() )
       PopWa()
+      RETURN .T.
    ENDIF
 
-   RETURN .T.
+   RETURN .F.
 
 STATIC FUNCTION skip_semaphore( table )
 

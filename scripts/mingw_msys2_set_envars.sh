@@ -1,30 +1,33 @@
 export HB_ARCHITECTURE=win
 export HB_COMPILER=mingw
 
-QT_VER=5.3
+#QT_VER=5.3
 MINGW_VER=482_32
 
-#C_ROOT=/cygdrive/c
 C_ROOT=C:
 
-export TEMP=$C_ROOT\\tmp
-export TMP=$C_ROOT\\tmp
+#export TEMP=$C_ROOT\\tmp
+#export TMP=$C_ROOT\\tmp
 
 
 HB_ROOT=$C_ROOT\\knowhowERP\\hbwin
 
-export PATH=c:\\Qt\\$QT_VER\\mingw$MINGW_VER\\bin:$HB_ROOT\\bin:$C_ROOT\\PostgreSQL\\bin:$PATH
 
 # mingw g++
-export PATH=C:\\Qt\\Tools\\mingw$MINGW_VER\\bin:$PATH
+#export PATH=C:\\Qt\\Tools\\mingw$MINGW_VER\\bin:$PATH
 
 export HB_INC_INSTALL=$HB_ROOT\\include
 export HB_LIB_INSTALL=$HB_ROOT\\lib
 
 export HB_INSTALL_PREFIX=$HB_ROOT
 
-export HB_WITH_QT=c:\\Qt\\$QT_VER\\mingw$MINGW_VER\\include
-export HB_WITH_PGSQL=c:\\PostgreSQL\\include
+#export HB_WITH_QT=c:\\Qt\\$QT_VER\\mingw$MINGW_VER\\include
+
+export MSYS2=c:\\msys32\\mingw32
+
+export PATH=$MSYS2\\bin:$PATH
+export HB_WITH_PGSQL=$MSYS2\\include
+export HB_WITH_OPENSSL=$MSYS2\\include
 #HB_WITH_MYSQL=c:\\mysql\\include
 
 

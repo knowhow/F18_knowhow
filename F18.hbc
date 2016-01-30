@@ -13,6 +13,7 @@ libs=hbpgsql
 {win}libs=libpq
 libs=sddpg
 
+{mingw}libpaths=c:/msys32/mingw32/lib
 {darwin}libpaths=/Library/PostgreSQL/9.1/lib
 
 mt=yes

@@ -28,7 +28,7 @@ FUNCTION __rpt_info( nLeft )
 
    @ PRow(), nLeft SAY cDesc
 
-   RETURN
+   RETURN .T.
 
 
 

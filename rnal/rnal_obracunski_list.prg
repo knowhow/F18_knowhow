@@ -11,79 +11,81 @@
 
 #include "f18.ch"
 
-static LEN_IT_NO := 4
-static LEN_DESC := 95
+STATIC LEN_IT_NO := 4
+STATIC LEN_DESC := 95
 
-static LEN_LINE1 := 115
+STATIC LEN_LINE1 := 115
 
-static COL_RBR := 3
-static COL_ITEM := 15
+STATIC COL_RBR := 3
+STATIC COL_ITEM := 15
 
-static LEN_QTTY := 10
-static LEN_DIMENSION := 10
-static LEN_VALUE := 10
+STATIC LEN_QTTY := 10
+STATIC LEN_DIMENSION := 10
+STATIC LEN_VALUE := 10
 
-static PIC_QTTY := "9999999.99"
-static PIC_VALUE := "9999999.99"
-static PIC_DIMENSION := "9999999.99"
+STATIC PIC_QTTY := "9999999.99"
+STATIC PIC_VALUE := "9999999.99"
+STATIC PIC_DIMENSION := "9999999.99"
 
-static LEN_PAGE := 58
+STATIC LEN_PAGE := 58
 
-static RAZMAK := " "
+STATIC RAZMAK := " "
 
-static nPage := 0
-static lPrintedTotal := .f.
+STATIC nPage := 0
+STATIC lPrintedTotal := .F.
 
 // ako se koristi PTXT onda se ova korekcija primjenjuje
 // za prikaz vecih fontova
-static nDuzStrKorekcija := 0
+STATIC nDuzStrKorekcija := 0
 
 
 // ----------------------------------------------
 // definicija linije za glavnu tabelu sa stavkama
 // nVar - 1 = nalog
-//        2 = obracunski list
+// 2 = obracunski list
 // ----------------------------------------------
-static function g_line( )
-local cLine
+STATIC FUNCTION g_line()
 
-if gGnUse == "N"
-    // posto nema gn-a
-    // smanji glavnu liniju
-    LEN_LINE1 := 92
-endif
+   LOCAL cLine
 
-// linija za obra�unski list
-cLine := RAZMAK
-cLine += REPLICATE("-", LEN_LINE1 )
+   IF gGnUse == "N"
+      // posto nema gn-a
+      // smanji glavnu liniju
+      LEN_LINE1 := 92
+   ENDIF
 
-return cLine
+   // linija za obracunski list
+   cLine := RAZMAK
+   cLine += Replicate( "-", LEN_LINE1 )
+
+   RETURN cLine
 
 
 // ----------------------------------------------
 // definicija linije unutar glavne tabele
 // ----------------------------------------------
-static function g_line2( )
-local cLine
+STATIC FUNCTION g_line2()
 
-// linija za obra�unski list
-cLine := SPACE( COL_ITEM )
-cLine += REPLICATE("-", LEN_QTTY)
-cLine += " " + REPLICATE("-", LEN_DIMENSION)
-cLine += " " + REPLICATE("-", LEN_DIMENSION)
+   LOCAL cLine
 
-if gGnUse == "D"
-    cLine += " " + REPLICATE("-", LEN_DIMENSION)
-    cLine += " " + REPLICATE("-", LEN_DIMENSION)
-endif
+   // linija za obra�unski list
+   cLine := Space( COL_ITEM )
+   cLine += Replicate( "-", LEN_QTTY )
+   cLine += " " + Replicate( "-", LEN_DIMENSION )
+   cLine += " " + Replicate( "-", LEN_DIMENSION )
 
-// ukidam liniju koja je sluzila za bruto
-//cLine += " " + REPLICATE("-", LEN_VALUE)
-cLine += " " + REPLICATE("-", LEN_VALUE)
-cLine += " " + REPLICATE("-", LEN_VALUE)
-cLine += " " + REPLICATE("-", LEN_VALUE)
+   IF gGnUse == "D"
+      cLine += " " + Replicate( "-", LEN_DIMENSION )
+      cLine += " " + Replicate( "-", LEN_DIMENSION )
+   ENDIF
 
-return cLine
+   // ukidam liniju koja je sluzila za bruto
+   // cLine += " " + REPLICATE("-", LEN_VALUE)
+   cLine += " " + Replicate( "-", LEN_VALUE )
+   cLine += " " + Replicate( "-", LEN_VALUE )
+   cLine += " " + Replicate( "-", LEN_VALUE )
+
+   RETURN cLine
 
 
 
@@ -91,184 +93,185 @@ return cLine
 // glavna funkcija za poziv stampe obracunskog lista
 // lStartPrint - pozovi funkcije stampe START PRINT
 // -----------------------------------------------------
-function obrl_print( lStartPrint )
+FUNCTION obrl_print( lStartPrint )
 
-// ako je nil onda je uvijek .t.
-if ( lStartPrint == nil )
-    lStartPrint := .t.
-endif
+   // ako je nil onda je uvijek .t.
+   IF ( lStartPrint == nil )
+      lStartPrint := .T.
+   ENDIF
 
-LEN_QTTY := LEN(PIC_QTTY)
-LEN_VALUE := LEN(PIC_VALUE)
-LEN_DIMENSION := LEN(PIC_DIMENSION)
+   LEN_QTTY := Len( PIC_QTTY )
+   LEN_VALUE := Len( PIC_VALUE )
+   LEN_DIMENSION := Len( PIC_DIMENSION )
 
-// razmak ce biti
-RAZMAK := SPACE(gDl_margina)
-// nek je razmak 1
-RAZMAK := SPACE(1)
+   // razmak ce biti
+   RAZMAK := Space( gDl_margina )
+   // nek je razmak 1
+   RAZMAK := Space( 1 )
 
-t_rpt_open()
+   t_rpt_open()
 
-select t_docit
-set order to tag "3"
-go top
+   SELECT t_docit
+   SET ORDER TO TAG "3"
+   GO TOP
 
-// stampaj obracunski listic
-p_a4_obrl( lStartPrint )
+   // stampaj obracunski listic
+   p_a4_obrl( lStartPrint )
 
-return
+   RETURN
 
 
 // -----------------------------------
 // stampa obracunskog lista...
 // -----------------------------------
-function p_a4_obrl(lStartPrint)
-local lShow_zagl
-local i
-local nItem := 0
-local lPrintRek := .f.
-local cPrintRek := "N"
-local cCust
-local nCust
-local nCont
+FUNCTION p_a4_obrl( lStartPrint )
 
-nDuzStrKorekcija := 0
-lPrintedTotal := .f.
+   LOCAL lShow_zagl
+   LOCAL i
+   LOCAL nItem := 0
+   LOCAL lPrintRek := .F.
+   LOCAL cPrintRek := "N"
+   LOCAL cCust
+   LOCAL nCust
+   LOCAL nCont
 
-if lStartPrint
+   nDuzStrKorekcija := 0
+   lPrintedTotal := .F.
 
-    if !StartPrint(nil, nil)
-        my_close_all_dbf()
-        return
-    endif
+   IF lStartPrint
 
-endif
+      IF !StartPrint( nil, nil )
+         my_close_all_dbf()
+         RETURN
+      ENDIF
 
-nTTotal := VAL(g_t_pars_opis("N10"))
+   ENDIF
 
-// zaglavlje
-obrl_header()
+   nTTotal := Val( g_t_pars_opis( "N10" ) )
 
-cLine := g_line(2)
-cLine2 := g_line2()
+   // zaglavlje
+   obrl_header()
 
-// broj dokumenta.....
-cDoc_no := g_t_pars_opis("N01")
-cDoc_date := g_t_pars_opis("N02")
-cDoc_time := g_t_pars_opis("N12")
-cDocs := g_t_pars_opis("N14")
-nCust := VAL(g_t_pars_opis("P01"))
-nCont := VAL(g_t_pars_opis("P10"))
-cObject := g_t_pars_opis("P21")
+   cLine := g_line( 2 )
+   cLine2 := g_line2()
 
-// kupac ?
-cCust := _cust_cont( nCust, nCont )
+   // broj dokumenta.....
+   cDoc_no := g_t_pars_opis( "N01" )
+   cDoc_date := g_t_pars_opis( "N02" )
+   cDoc_time := g_t_pars_opis( "N12" )
+   cDocs := g_t_pars_opis( "N14" )
+   nCust := Val( g_t_pars_opis( "P01" ) )
+   nCont := Val( g_t_pars_opis( "P10" ) )
+   cObject := g_t_pars_opis( "P21" )
 
-// stampa rekapitulacije
-cPrintRek := g_t_pars_opis("N20")
+   // kupac ?
+   cCust := _cust_cont( nCust, nCont )
 
-if cPrintRek == "D"
-    lPrintRek := .t.
-endif
+   // stampa rekapitulacije
+   cPrintRek := g_t_pars_opis( "N20" )
 
-// setuj len_ukupno
-LEN_TOTAL := LEN( cLine )
+   IF cPrintRek == "D"
+      lPrintRek := .T.
+   ENDIF
 
-? RAZMAK + "SPECIFIKACIJA, "
+   // setuj len_ukupno
+   LEN_TOTAL := Len( cLine )
 
-if "," $ cDocs
+   ? RAZMAK + "SPECIFIKACIJA, "
 
-    ?? "prema nalozima:" + cDocs
+   IF "," $ cDocs
 
-else
+      ?? "prema nalozima:" + cDocs
 
-    ?? "prema nalogu br.:" + cDoc_no
-    ? RAZMAK + "Datum naloga: " + cDoc_date + ", vrijeme naloga: " + cDoc_time
-endif
+   ELSE
 
-// kupac, objekat
-? RAZMAK + "Kupac: " + ALLTRIM( cCust ) + ", obj: " + ALLTRIM( cObject )
+      ?? "prema nalogu br.:" + cDoc_no
+      ? RAZMAK + "Datum naloga: " + cDoc_date + ", vrijeme naloga: " + cDoc_time
+   ENDIF
 
-?
+   // kupac, objekat
+   ? RAZMAK + "Kupac: " + AllTrim( cCust ) + ", obj: " + AllTrim( cObject )
 
-select t_docit
-set order to tag "3"
-go top
+   ?
 
-B_OFF
+   SELECT t_docit
+   SET ORDER TO TAG "3"
+   GO TOP
 
-P_COND
+   B_OFF
 
-// print header tabele
-s_tbl_header()
+   P_COND
 
-select t_docit
-set order to tag "3"
+   // print header tabele
+   s_tbl_header()
 
-nPage := 1
-aArt_desc := {}
-nArt_id := 0
-nArt_tmp := 0
-nUTotal := 0
-nUTot_m := 0
-nUNeto := 0
-nUBruto := 0
-nUQty := 0
-nUHeig := 0
-nUWidt := 0
-nUZHeig := 0
-nUZWidt := 0
+   SELECT t_docit
+   SET ORDER TO TAG "3"
 
-nTTotal := 0
-nTTot_m := 0
-nTNeto := 0
-nTBruto := 0
-nTQty := 0
-nTHeig := 0
-nTWidt := 0
-nTZHeig := 0
-nTZWidt := 0
+   nPage := 1
+   aArt_desc := {}
+   nArt_id := 0
+   nArt_tmp := 0
+   nUTotal := 0
+   nUTot_m := 0
+   nUNeto := 0
+   nUBruto := 0
+   nUQty := 0
+   nUHeig := 0
+   nUWidt := 0
+   nUZHeig := 0
+   nUZWidt := 0
 
-cDocXX := "XX"
+   nTTotal := 0
+   nTTot_m := 0
+   nTNeto := 0
+   nTBruto := 0
+   nTQty := 0
+   nTHeig := 0
+   nTWidt := 0
+   nTZHeig := 0
+   nTZWidt := 0
 
-nItem := 0
+   cDocXX := "XX"
 
-// stampaj podatke
-do while !EOF()
+   nItem := 0
 
-    nDoc_no := field->doc_no
+   // stampaj podatke
+   DO WHILE !Eof()
 
-    do while !EOF() .and. field->doc_no == nDoc_no
+      nDoc_no := field->doc_no
 
-        cArt_sh := field->art_sh_des
+      DO WHILE !Eof() .AND. field->doc_no == nDoc_no
 
-        // da li se stavka stampa ili ne ?
-        if field->print == "N"
-            skip
-            loop
-        endif
+         cArt_sh := field->art_sh_des
 
-        cDoc_no := docno_str( field->doc_no )
-        cDoc_it_no := docit_str( field->doc_it_no )
+         // da li se stavka stampa ili ne ?
+         IF field->print == "N"
+            SKIP
+            LOOP
+         ENDIF
 
-        if cDocXX <> cDoc_no
+         cDoc_no := docno_str( field->doc_no )
+         cDoc_it_no := docit_str( field->doc_it_no )
+
+         IF cDocXX <> cDoc_no
 
             ? RAZMAK
 
             // nalog broj
-            ?? "stavke naloga broj: " + ALLTRIM( cDoc_no )
+            ?? "stavke naloga broj: " + AllTrim( cDoc_no )
 
-        endif
+         ENDIF
 
-        do while !EOF() .and. field->doc_no == nDoc_no ;
-            .and. PADR(field->art_sh_des,150) == ;
-                PADR(cArt_sh,150)
+         DO WHILE !Eof() .AND. field->doc_no == nDoc_no ;
+               .AND. PadR( field->art_sh_des, 150 ) == ;
+               PadR( cArt_sh, 150 )
 
             // da li se stavka stampa ili ne ?
-            if field->print == "N"
-                skip
-                loop
-            endif
+            IF field->print == "N"
+               SKIP
+               LOOP
+            ENDIF
 
             cDoc_no := docno_str( field->doc_no )
             cDoc_it_no := docit_str( field->doc_it_no )
@@ -308,17 +311,17 @@ do while !EOF()
             nTZHeig += nZaHeig
             nTZWidt += nZaWidt
 
-            if EMPTY( field->art_desc )
-                cArt_desc := "-//-"
-            else
-                cArt_desc := ALLTRIM( field->art_desc )
-            endif
+            IF Empty( field->art_desc )
+               cArt_desc := "-//-"
+            ELSE
+               cArt_desc := AllTrim( field->art_desc )
+            ENDIF
 
             // redni broj u nalogu
-            cArt_desc := "(" + ALLTRIM(STR(field->doc_it_no)) + ") " + cArt_desc
+            cArt_desc := "(" + AllTrim( Str( field->doc_it_no ) ) + ") " + cArt_desc
 
             // pozicija ako postotoji
-            cArt_desc += "; " + ALLTRIM( field->doc_it_des )
+            cArt_desc += "; " + AllTrim( field->doc_it_des )
 
             aArt_desc := SjeciStr( cArt_desc, LEN_DESC )
 
@@ -328,405 +331,408 @@ do while !EOF()
 
             ++ nItem
 
-            ? RAZMAK + SPACE( COL_RBR )
+            ? RAZMAK + Space( COL_RBR )
 
             // r.br
-            ?? PADL(ALLTRIM( STR(nItem) ) + ")", LEN_IT_NO)
+            ?? PadL( AllTrim( Str( nItem ) ) + ")", LEN_IT_NO )
 
             ?? " "
 
             // proizvod, naziv robe, jmj
-            ?? aArt_desc[1]
+            ?? aArt_desc[ 1 ]
 
             // drugi red artikla
-            if LEN(aArt_desc) > 1
+            IF Len( aArt_desc ) > 1
 
-                for i:=2 to LEN(aArt_desc)
+               FOR i := 2 TO Len( aArt_desc )
 
-                    ? RAZMAK + SPACE( COL_RBR + LEN_IT_NO )
-                    ?? " "
+                  ? RAZMAK + Space( COL_RBR + LEN_IT_NO )
+                  ?? " "
 
-                    ?? aArt_desc[ i ]
+                  ?? aArt_desc[ i ]
 
-                    // provjeri za novu stranicu
-                    if prow() > LEN_PAGE - DSTR_KOREKCIJA()
-                        ++ nPage
-                        Nstr_a4(nPage, .t.)
-                        P_COND
-                    endif
-                next
+                  // provjeri za novu stranicu
+                  IF PRow() > LEN_PAGE - DSTR_KOREKCIJA()
+                     ++ nPage
+                     Nstr_a4( nPage, .T. )
+                     P_COND
+                  ENDIF
+               NEXT
 
-            endif
+            ENDIF
 
             // novi red
-            ? SPACE( COL_ITEM )
+            ? Space( COL_ITEM )
 
-            nCol_item := pcol()
+            nCol_item := PCol()
 
             // kolicina
-            ?? show_number(nQty, nil, -10 )
+            ?? show_number( nQty, nil, -10 )
             ?? " "
 
             // sirina
-            ?? show_number(nWidt, nil, -10 )
+            ?? show_number( nWidt, nil, -10 )
             ?? " "
 
             // visina
-            ?? show_number(nHeig, nil, -10 )
+            ?? show_number( nHeig, nil, -10 )
             ?? " "
 
             // zaokruzenja po GN-u
-            if gGnUse == "D"
-                // sirina
-                ?? show_number(nZaWidt, nil, -10 )
-                ?? " "
+            IF gGnUse == "D"
+               // sirina
+               ?? show_number( nZaWidt, nil, -10 )
+               ?? " "
 
-                // visina
-                ?? show_number(nZaHeig, nil, -10 )
-                ?? " "
+               // visina
+               ?? show_number( nZaHeig, nil, -10 )
+               ?? " "
 
-            endif
+            ENDIF
 
             // neto
-            ?? show_number(nNeto, nil, -10 )
+            ?? show_number( nNeto, nil, -10 )
             ?? " "
 
             // bruto nije potreban na nalogu....
             // bruto
-            //?? PADR( "_", 10 , "_")
-            //?? " "
+            // ?? PADR( "_", 10 , "_")
+            // ?? " "
 
             // ukupno m2
-            ?? show_number(nTotal, nil, -10 )
+            ?? show_number( nTotal, nil, -10 )
             ?? " "
 
             // ukupno m
-            ?? show_number(nTot_m, nil, -10 )
+            ?? show_number( nTot_m, nil, -10 )
 
             // provjeri za novu stranicu
-            if prow() > LEN_PAGE - DSTR_KOREKCIJA()
+            IF PRow() > LEN_PAGE - DSTR_KOREKCIJA()
 
-                ++ nPage
-                Nstr_a4(nPage, .t.)
+               ++ nPage
+               Nstr_a4( nPage, .T. )
 
-                P_COND
+               P_COND
 
-            endif
+            ENDIF
 
 
-            select t_docit
-            skip
+            SELECT t_docit
+            SKIP
 
-        enddo
+         ENDDO
 
-        nTmp := COL_ITEM
-        nRepl := 94
-        if gGnUse == "N"
+         nTmp := COL_ITEM
+         nRepl := 94
+         IF gGnUse == "N"
             nRepl := 84
-        endif
+         ENDIF
 
-        // ispis totala po istim artiklima
+         // ispis totala po istim artiklima
 
-        ? SPACE( nTmp - 6 )
+         ? Space( nTmp - 6 )
 
-        ?? REPLICATE( "-", nRepl )
+         ?? Replicate( "-", nRepl )
 
-        //B_ON
+         // B_ON
 
-        ? PADL( "total:", nTmp )
+         ? PadL( "total:", nTmp )
 
-        //?? " "
+         // ?? " "
 
-        // kolicina
-        ?? show_number(nUQty, nil, -10 )
-        ?? " "
+         // kolicina
+         ?? show_number( nUQty, nil, -10 )
+         ?? " "
 
-        // sirina - ne treba
-        ?? SPACE(10)
-        //?? show_number(nUWidt, nil, -10 )
-        ?? " "
+         // sirina - ne treba
+         ?? Space( 10 )
+         // ?? show_number(nUWidt, nil, -10 )
+         ?? " "
 
-        // visina - ne treba
-        //?? show_number(nUHeig, nil, -10 )
-        ?? SPACE(10)
-        ?? " "
+         // visina - ne treba
+         // ?? show_number(nUHeig, nil, -10 )
+         ?? Space( 10 )
+         ?? " "
 
-        // zaokruzenja po GN-u
+         // zaokruzenja po GN-u
 
-        if gGnUse == "D"
+         IF gGnUse == "D"
             // sirina
-            ?? show_number(nUZWidt, nil, -10 )
+            ?? show_number( nUZWidt, nil, -10 )
             ?? " "
 
             // visina
-            ?? show_number(nUZHeig, nil, -10 )
+            ?? show_number( nUZHeig, nil, -10 )
             ?? " "
-        endif
+         ENDIF
 
-        // neto
-        ?? show_number(nUNeto, nil, -10 )
-        ?? " "
+         // neto
+         ?? show_number( nUNeto, nil, -10 )
+         ?? " "
 
-        // bruto
-        //?? PADR( "", 10  )
-        //?? " "
+         // bruto
+         // ?? PADR( "", 10  )
+         // ?? " "
 
-        // ukupno m2
-        ?? show_number(nUTotal, nil, -10 )
-        ?? " "
+         // ukupno m2
+         ?? show_number( nUTotal, nil, -10 )
+         ?? " "
 
-        // total m
-        ?? show_number(nUTot_m, nil, -10 )
+         // total m
+         ?? show_number( nUTot_m, nil, -10 )
 
-        ? SPACE( nTmp - 6 )
+         ? Space( nTmp - 6 )
 
-        ?? REPLICATE( "", nRepl )
+         ?? Replicate( "", nRepl )
 
-        // resetuj varijable totale
+         // resetuj varijable totale
 
-        nUTotal := 0
-        nUTot_m := 0
-        nUNeto := 0
-        nUBruto := 0
-        nUQty := 0
-        nUHeig := 0
-        nUWidt := 0
-        nUZHeig := 0
-        nUZWidt := 0
+         nUTotal := 0
+         nUTot_m := 0
+         nUNeto := 0
+         nUBruto := 0
+         nUQty := 0
+         nUHeig := 0
+         nUWidt := 0
+         nUZHeig := 0
+         nUZWidt := 0
 
-        cDocXX := cDoc_no
+         cDocXX := cDoc_no
 
-        // provjeri za novu stranicu
-        if prow() > LEN_PAGE - DSTR_KOREKCIJA()
+         // provjeri za novu stranicu
+         IF PRow() > LEN_PAGE - DSTR_KOREKCIJA()
 
             ++ nPage
-            Nstr_a4(nPage, .t.)
+            Nstr_a4( nPage, .T. )
 
             P_COND
 
-        endif
+         ENDIF
 
-    enddo
+      ENDDO
 
-enddo
+   ENDDO
 
-// provjeri za novu stranicu
-if prow() > LEN_PAGE - DSTR_KOREKCIJA()
-    ++nPage
-    Nstr_a4(nPage, .t.)
-    P_COND
-endif
+   // provjeri za novu stranicu
+   IF PRow() > LEN_PAGE - DSTR_KOREKCIJA()
+      ++nPage
+      Nstr_a4( nPage, .T. )
+      P_COND
+   ENDIF
 
-? cLine
+   ? cLine
 
-// r.br
-? PADL( "U K U P N O : ", COL_ITEM )
+   // r.br
+   ? PadL( "U K U P N O : ", COL_ITEM )
 
-//?? " "
+   // ?? " "
 
-// kolicina
-?? show_number(nTQty, nil, -10 )
-?? " "
+   // kolicina
+   ?? show_number( nTQty, nil, -10 )
+   ?? " "
 
-// sirina
-//?? show_number(nTWidt, nil, -10 )
-?? SPACE(10)
-?? " "
+   // sirina
+   // ?? show_number(nTWidt, nil, -10 )
+   ?? Space( 10 )
+   ?? " "
 
-// visina
-//?? show_number(nTHeig, nil, -10 )
-?? SPACE(10)
-?? " "
+   // visina
+   // ?? show_number(nTHeig, nil, -10 )
+   ?? Space( 10 )
+   ?? " "
 
-// zaokruzenja po GN-u
+   // zaokruzenja po GN-u
 
-if gGnUse == "D"
+   IF gGnUse == "D"
 
-    // sirina
-    ?? show_number(nTZWidt, nil, -10 )
-    ?? " "
+      // sirina
+      ?? show_number( nTZWidt, nil, -10 )
+      ?? " "
 
-    // visina
-    ?? show_number(nTZHeig, nil, -10 )
-    ?? " "
+      // visina
+      ?? show_number( nTZHeig, nil, -10 )
+      ?? " "
 
-endif
+   ENDIF
 
-// neto
-?? show_number(nTNeto, nil, -10 )
-?? " "
+   // neto
+   ?? show_number( nTNeto, nil, -10 )
+   ?? " "
 
-// bruto
-//?? PADR( "_", 10 , "_" )
-//?? " "
+   // bruto
+   // ?? PADR( "_", 10 , "_" )
+   // ?? " "
 
-// ukupno m2
-?? show_number(nTTotal, nil, -10 )
-?? " "
+   // ukupno m2
+   ?? show_number( nTTotal, nil, -10 )
+   ?? " "
 
-?? show_number(nTTot_m, nil, -10 )
+   ?? show_number( nTTot_m, nil, -10 )
 
-? cLine
+   ? cLine
 
-// prikazi GN tabelu.....
-if gGnUse == "D"
-    s_gn_tbl()
-endif
+   // prikazi GN tabelu.....
+   IF gGnUse == "D"
+      s_gn_tbl()
+   ENDIF
 
-// prikazi rekapitulaciju dodatnog repromaterijala
-s_nal_rekap( lPrintRek )
+   // prikazi rekapitulaciju dodatnog repromaterijala
+   s_nal_rekap( lPrintRek )
 
-P_12CPI
+   P_12CPI
 
-s_obrl_footer()
+   s_obrl_footer()
 
-if lStartPrint
-    FF
-    EndPrint()
-endif
+   IF lStartPrint
+      FF
+      EndPrint()
+   ENDIF
 
-return
+   RETURN
 
 
 // ---------------------------------------------
 // prikaz GN tabele
 // ---------------------------------------------
-static function s_gn_tbl()
-local aGn := {}
-local cLine := SPACE(1) + REPLICATE("-", 125)
-local cTxt := SPACE(1) + "GN tabela (izrazena u mm):"
-local i
-local nTmp
-local nTmp2
-local nX
-local nY
-local nX_pos
-local nY_pos
+STATIC FUNCTION s_gn_tbl()
 
-// napuni gn matricu
-aGn := arr_gn()
+   LOCAL aGn := {}
+   LOCAL cLine := Space( 1 ) + Replicate( "-", 125 )
+   LOCAL cTxt := Space( 1 ) + "GN tabela (izrazena u mm):"
+   LOCAL i
+   LOCAL nTmp
+   LOCAL nTmp2
+   LOCAL nX
+   LOCAL nY
+   LOCAL nX_pos
+   LOCAL nY_pos
 
-P_COND2
+   // napuni gn matricu
+   aGn := arr_gn()
 
-?
-? cLine
-? cTxt
-? cLine
+   P_COND2
 
-for i := 1 to LEN( aGn )
+   ?
+   ? cLine
+   ? cTxt
+   ? cLine
 
-    if i = 1
-        ? SPACE(1)
-    endif
+   FOR i := 1 TO Len( aGn )
 
-    if i%25 = 0
-        ? SPACE(1)
-    endif
+      IF i = 1
+         ? Space( 1 )
+      ENDIF
 
-    @ prow(), pcol() + 1 SAY ;
-        PADL( ALLTRIM( STR( aGn[ i, 1 ] )), 4 )
+      IF i % 25 = 0
+         ? Space( 1 )
+      ENDIF
 
-next
+      @ PRow(), PCol() + 1 SAY ;
+         PadL( AllTrim( Str( aGn[ i, 1 ] ) ), 4 )
 
-? cLine
+   NEXT
 
+   ? cLine
 
-return
+   RETURN
 
 
 
 // ----------------------------------------
 // footer obracunskog lista
 // ----------------------------------------
-static function s_obrl_footer()
-local cPom
+STATIC FUNCTION s_obrl_footer()
 
-cPom := "UKUPNO BRUTO: ________________________________"
-?
-? RAZMAK + SPACE(5) + cPom
+   LOCAL cPom
 
-cPom := "Izdao: _________________"
-cPom += SPACE(10)
-cPom += "Primio: _________________"
+   cPom := "UKUPNO BRUTO: ________________________________"
+   ?
+   ? RAZMAK + Space( 5 ) + cPom
 
-?
-? RAZMAK + SPACE(5) + cPom
+   cPom := "Izdao: _________________"
+   cPom += Space( 10 )
+   cPom += "Primio: _________________"
 
-return
+   ?
+   ? RAZMAK + Space( 5 ) + cPom
+
+   RETURN
 
 
 
 // -----------------------------------------
 // zaglavlje glavne tabele sa stavkama
 // -----------------------------------------
-static function s_tbl_header()
-local cLine
-local cLine2
-local cRow1
-local cRow2
+STATIC FUNCTION s_tbl_header()
 
-cLine := g_line(2)
-cLine2 := g_line2()
+   LOCAL cLine
+   LOCAL cLine2
+   LOCAL cRow1
+   LOCAL cRow2
 
-? cLine
+   cLine := g_line( 2 )
+   cLine2 := g_line2()
 
-cRow1 := RAZMAK
-cRow2 := ""
+   ? cLine
 
-cRow1 += PADR("nalog / artikal", 20)
+   cRow1 := RAZMAK
+   cRow2 := ""
 
-cRow2 += SPACE( COL_ITEM )
-cRow2 += PADC("Kol.", LEN_QTTY)
-cRow2 += " " + PADC("Sir. (mm)", LEN_DIMENSION)
-cRow2 += " " + PADC("Vis. (mm)", LEN_DIMENSION)
+   cRow1 += PadR( "nalog / artikal", 20 )
 
-if gGnUse == "D"
-    cRow2 += " " + PADC("Sir.GN", LEN_DIMENSION)
-    cRow2 += " " + PADC("Vis.GN", LEN_DIMENSION)
-endif
+   cRow2 += Space( COL_ITEM )
+   cRow2 += PadC( "Kol.", LEN_QTTY )
+   cRow2 += " " + PadC( "Sir. (mm)", LEN_DIMENSION )
+   cRow2 += " " + PadC( "Vis. (mm)", LEN_DIMENSION )
 
-cRow2 += " " + PADC("Neto (kg)", LEN_VALUE)
-// bruto ukidamo kao kolonu
-//cRow2 += " " + PADC("Bruto (kg)", LEN_VALUE)
-cRow2 += " " + PADC("Povrsina (m2)", LEN_VALUE)
-cRow2 += " " + PADC("Obim (m)", LEN_VALUE)
+   IF gGnUse == "D"
+      cRow2 += " " + PadC( "Sir.GN", LEN_DIMENSION )
+      cRow2 += " " + PadC( "Vis.GN", LEN_DIMENSION )
+   ENDIF
 
-? cRow1
-? cLine2
-? cRow2
+   cRow2 += " " + PadC( "Neto (kg)", LEN_VALUE )
+   // bruto ukidamo kao kolonu
+   // cRow2 += " " + PADC("Bruto (kg)", LEN_VALUE)
+   cRow2 += " " + PadC( "Povrsina (m2)", LEN_VALUE )
+   cRow2 += " " + PadC( "Obim (m)", LEN_VALUE )
 
-? cLine
+   ? cRow1
+   ? cLine2
+   ? cRow2
 
-return
+   ? cLine
+
+   RETURN
 
 
 // -----------------------------------------
 // funkcija za ispis headera
 // -----------------------------------------
-static function obrl_header()
-local cDLHead
-local cSLHead
-local cINaziv
-local cRazmak := SPACE(2)
+STATIC FUNCTION obrl_header()
 
-// naziv
-cINaziv  := ALLTRIM(gFNaziv)
+   LOCAL cDLHead
+   LOCAL cSLHead
+   LOCAL cINaziv
+   LOCAL cRazmak := Space( 2 )
 
-// double line header
-cDLHead := REPLICATE("=", 60)
+   // naziv
+   cINaziv  := AllTrim( gFNaziv )
 
-// single line header
-cSLHead := REPLICATE("-", LEN(gFNaziv))
+   // double line header
+   cDLHead := Replicate( "=", 60 )
 
-// prvo se pozicioniraj na g.marginu
-for i:=1 to gDg_margina
-    ?
-next
+   // single line header
+   cSLHead := Replicate( "-", Len( gFNaziv ) )
 
-p_line(cRazmak + cDlhead, 10, .t.)
-p_line(cRazmak + cINaziv, 10, .t.)
-p_line(cRazmak + cDlhead, 10, .t.)
+   // prvo se pozicioniraj na g.marginu
+   FOR i := 1 TO gDg_margina
+      ?
+   NEXT
 
-?
+   p_line( cRazmak + cDlhead, 10, .T. )
+   p_line( cRazmak + cINaziv, 10, .T. )
+   p_line( cRazmak + cDlhead, 10, .T. )
 
-return
+   ?
+
+   RETURN

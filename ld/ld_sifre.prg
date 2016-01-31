@@ -18,6 +18,8 @@ STATIC __filter_radn := .F.
 FUNCTION P_Radn( cId, dx, dy )
 
    LOCAL i, lRet
+   LOCAL cPom, nPom, cPom2
+   LOCAL aKol
 
    PRIVATE ImeKol
    PRIVATE kol
@@ -63,11 +65,16 @@ FUNCTION P_Radn( cId, dx, dy )
 
    ENDIF
 
-   AAdd( ImeKol, { Lokal( PadR( "StrSpr", 6 ) ), {|| PadC( Idstrspr, 6 ) }, "idstrspr", {|| .T. }, {|| P_StrSpr( @wIdStrSpr ) } } )
-   AAdd( ImeKol, { Lokal( PadR( "V.Posla", 6 ) ), {|| PadC( IdVPosla, 6 ) }, "IdVPosla", {|| .T. }, {|| Empty( widvposla ) .OR. P_VPosla( @wIdVPosla ) } } )
-   AAdd( ImeKol, { Lokal( PadR( "Ops.Stan", 8 ) ), {|| PadC( IdOpsSt, 8 ) }, "IdOpsSt", {|| .T. }, {|| P_Ops( @wIdOpsSt ) } } )
-   AAdd( ImeKol, { Lokal( PadR( "Ops.Rada", 8 ) ), {|| PadC( IdOpsRad, 8 ) }, "IdOpsRad", {|| .T. }, {|| P_Ops( @wIdOpsRad ) } } )
-   AAdd( ImeKol, { Lokal( PadR( "Maticni Br.", 13 ) ), {|| PadC( matbr, 13 ) }, "MatBr", {|| .T. }, {|| .T. } } )
+   AAdd( ImeKol, { Lokal( PadR( "StrSpr", 6 ) ), {|| PadC( Idstrspr, 6 ) }, "idstrspr",;
+         {|| .T. }, {|| P_StrSpr( @wIdStrSpr ) } } )
+   AAdd( ImeKol, { Lokal( PadR( "V.Posla", 6 ) ), {|| PadC( IdVPosla, 6 ) }, "IdVPosla",;
+         {|| .T. }, {|| Empty( widvposla ) .OR. P_VPosla( @wIdVPosla ) } } )
+   AAdd( ImeKol, { Lokal( PadR( "Ops.Stan", 8 ) ), {|| PadC( IdOpsSt, 8 ) }, "IdOpsSt",;
+        {|| .T. }, {|| P_Ops( @wIdOpsSt ) } } )
+   AAdd( ImeKol, { Lokal( PadR( "Ops.Rada", 8 ) ), {|| PadC( IdOpsRad, 8 ) }, "IdOpsRad",;
+        {|| .T. }, {|| P_Ops( @wIdOpsRad ) } } )
+   AAdd( ImeKol, { Lokal( PadR( "Maticni Br.", 13 ) ), {|| PadC( matbr, 13 ) }, "MatBr",;
+        {|| .T. }, {|| .T. } } )
    AAdd( ImeKol, { Lokal( PadR( "Dat.Od", 8 ) ), {|| datod }, "datod", {|| .T. }, {|| .T. } } )
    AAdd( ImeKol, { Lokal( PadR( "POL", 3 ) ), {|| PadC( pol, 3 ) }, "POL", {|| .T. }, {|| wPol $ "MZ" } } )
    AAdd( ImeKol, { PadR( "K1", 2 ), {|| PadC( k1, 2 ) }, "K1", {|| .T. }, {|| .T. } } )
@@ -78,9 +85,9 @@ FUNCTION P_Radn( cId, dx, dy )
 
    AAdd( ImeKol, { Lokal( PadR( "Radno mjesto", 30 ) ), {|| rmjesto }, "RMJESTO", {|| .T. }, {|| .T. } } )
 
-   AAdd( ImeKol, { Lokal( PadR( "Br. Knjizice ", 12 ) ), {|| PadC( brknjiz, 12 ) }, "brknjiz", {|| .T. }, {|| .T. } } )
+   AAdd( ImeKol, { Lokal( PadR( "Br.Knjizice ", 12 ) ), {|| PadC( brknjiz, 12 ) }, "brknjiz", {|| .T. }, {|| .T. } } )
 
-   AAdd( ImeKol, { Lokal( PadR( "Br. Tekuceg rac.", 20 ) ), {|| PadC( brtekr, 20 ) }, "brtekr", {|| .T. }, {|| .T. } } )
+   AAdd( ImeKol, { Lokal( PadR( "Br.Tekuceg rac.", 20 ) ), {|| PadC( brtekr, 20 ) }, "brtekr", {|| .T. }, {|| .T. } } )
 
    AAdd( ImeKol, { Lokal( PadR( "Isplata", 7 ) ), {|| PadC( isplata, 7 ) }, "isplata", {|| .T. }, {|| wIsplata $ "  #TR#SK#BL" .OR. MsgIspl() } } )
    AAdd( ImeKol, { Lokal( PadR( "Banka", 6 ) ), {|| PadC( idbanka, 6 ) }, "idbanka", {|| .T. }, {|| Empty( WIDBANKA ) .OR. P_Kred( @widbanka ) } } )
@@ -94,14 +101,16 @@ FUNCTION P_Radn( cId, dx, dy )
    ENDIF
 
    IF radn->( FieldPos( "IDRJ" ) <> 0 )
-      AAdd( ImeKol, { "ID RJ", {|| idrj }, "idrj", {|| .T. }, {|| Empty( wIdRj ) .OR. P_LD_Rj( @wIdRj ) } } )
+      AAdd( ImeKol, { "ID RJ", {|| idrj }, "idrj", ;
+        {|| .T. }, {|| Empty( wIdRj ) .OR. P_LD_Rj( @wIdRj ) } } )
    ENDIF
 
    // Dodaj specificna polja za popunu obrasca DP
    IF radn->( FieldPos( "STREETNAME" ) <> 0 )
       AAdd( ImeKol, { Lokal( PadC( "Ime ul.", 40 ) ), {|| streetname }, "streetname" } )
       AAdd( ImeKol, { Lokal( PadC( "Broj ul.", 10 ) ), {|| streetnum }, "streetnum" } )
-      AAdd( ImeKol, { Lokal( PadC( "Zaposl.od", 12 ) ), {|| hiredfrom }, "hiredfrom", {|| .T. }, {|| P_HiredFrom( @wHiredfrom ) } } )
+      AAdd( ImeKol, { Lokal( PadC( "Zaposl.od", 12 ) ), {|| hiredfrom }, "hiredfrom", ;
+            {|| .T. }, {|| P_HiredFrom( @wHiredfrom ) } } )
       AAdd( ImeKol, { Lokal( PadC( "Zaposl.do", 12 ) ), {|| hiredto }, "hiredto" } )
    ENDIF
 
@@ -126,13 +135,17 @@ FUNCTION P_Radn( cId, dx, dy )
       IF radn->( FieldPos( cPom ) <> 0 )
          cPom2 := IzFmkIni( "LD", "OpisRadn" + cPom, "KOEF_" + cPom, KUMPATH )
          AAdd( ImeKol, { cPom + "(" + cPom2 + ")", {|| &cPom. }, cPom } )
-         // AAdd( Kol, nPom + 1 )
       ENDIF
    NEXT
 
-   AAdd( ImeKol, { Lokal( PadR( "vr.invalid", 10 ) ), {|| vr_invalid }, "vr_invalid", ;
-                   {|| .T.}, {|| Wvr_invalid==0 .OR. valid_vrsta_invaliditeta( wvr_invalid ) } } )
-   AAdd( ImeKol, { Lokal( PadR( "st.invalid", 10 ) ), {|| st_invalid }, "st_invalid" } )
+   aKol := { PadR( "vr.invalid", 10 ) , {|| Transform( field->vr_invalid, "9") }, "vr_invalid", ;
+           {|| .T.}, {|| Wvr_invalid==0 .OR. valid_vrsta_invaliditeta( Wvr_invalid ) }, NIL,  "9" }
+
+   AAdd( ImeKol,  aKol )
+
+   aKol := { PadR( "st.invalid", 10 ), {|| Transform( field->st_invalid, "99") }, "st_invalid", ;
+           {|| .T.}, { || Wst_invalid > 0 }, NIL, "999"  }
+   AAdd( ImeKol,  aKol )
 
 
    FOR i := 1 TO Len( ImeKol )
@@ -155,7 +168,7 @@ STATIC FUNCTION _radn_filter( lFiltered )
    LOCAL _t_area := Select()
 
    IF radn->( FieldPos( "aktivan" ) ) = 0
-      RETURN
+      RETURN .F.
    ENDIF
 
    IF lFiltered == nil
@@ -177,7 +190,7 @@ STATIC FUNCTION _radn_filter( lFiltered )
 
    SELECT ( _t_area )
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -225,7 +238,7 @@ STATIC FUNCTION p_pkartica( cIdRadn )
 
    SELECT ( nTA )
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -392,10 +405,10 @@ STATIC FUNCTION _filter_radn()
 
    Box(, 6, 70 )
 
-   @ m_x + _x, m_y + 2 SAY "*** FILTER SIFRARNIKA RADNIKA"
+   @ m_x + _x, m_y + 2 SAY8 "*** FILTER ŠIFARNIKA RADNIKA"
 
    ++ _x
-   @ m_x + _x, m_y + 2 SAY "     IME:" GET _ime PICT "@S40"
+   @ m_x + _x, m_y + 2 SAY8 "     IME:" GET _ime PICT "@S40"
 
    ++ _x
    @ m_x + _x, m_y + 2 SAY " PREZIME:" GET _prezime PICT "@S40"
@@ -475,15 +488,12 @@ STATIC FUNCTION _filter_radn()
 
 
 
-
-
-
 FUNCTION MsgIspl()
 
    Box(, 3, 50 )
-   @ m_x + 1, m_y + 2 SAY Lokal( "Vazece sifre su: TR - tekuci racun   " )
-   @ m_x + 2, m_y + 2 SAY Lokal( "                 SK - stedna knjizica" )
-   @ m_x + 3, m_y + 2 SAY Lokal( "                 BL - blagajna" )
+   @ m_x + 1, m_y + 2 SAY8 "Vazeće šifre su: TR - tekući racun   "
+   @ m_x + 2, m_y + 2 SAY8 "                 SK - štedna knjizica"
+   @ m_x + 3, m_y + 2 SAY8 "                 BL - blagajna"
    Inkey( 0 )
    BoxC()
 
@@ -545,8 +555,6 @@ FUNCTION g_tp_naz( cId )
 
 
 
-// --------------------------------------------
-// --------------------------------------------
 FUNCTION P_TipPr( cId, dx, dy )
 
    LOCAL i
@@ -803,8 +811,7 @@ FUNCTION ImaUObrac( cKljuc, cTag )
    RETURN lVrati
 
 
-// ---------------------------------
-// ---------------------------------
+
 FUNCTION P_POR( cId, dx, dy )
 
    LOCAL i
@@ -985,8 +992,6 @@ FUNCTION P_DOPR( cId, dx, dy )
 
 
 
-// --------------------------------
-// --------------------------------
 FUNCTION P_KBenef( cId, dx, dy )
 
    PRIVATE imekol
@@ -1053,8 +1058,7 @@ FUNCTION P_NorSiht( cId, dx, dy )
 
 
 
-// -----------------------
-// -----------------------
+
 FUNCTION TotBrisRadn()
 
    LOCAL cSigurno := "N"

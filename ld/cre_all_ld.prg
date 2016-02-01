@@ -199,10 +199,9 @@ FUNCTION cre_all_ld_sif( ver )
 
 FUNCTION cre_all_ld( ver )
 
-   LOCAL aDbf
+   LOCAL aDbf, hIndexes, cKey
    LOCAL _alias, _table_name
    LOCAL _created
-   LOCAL _i, _field_sati, _field_iznos
    LOCAL _tmp
 
    // -----------------------
@@ -346,47 +345,9 @@ FUNCTION cre_all_ld( ver )
    // LD
    // ---------------------------------------------------
 
-   aDBf := {}
-   AAdd( aDBf, { 'Godina', 'N',   4,  0 } )
-   AAdd( aDBf, { 'IDRJ', 'C',   2,  0 } )
-   AAdd( aDBf, { 'IDRADN', 'C',   6,  0 } )
-   AAdd( aDBf, { 'Mjesec', 'N',   2,  0 } )
-   AAdd( aDBf, { 'BRBOD', 'N',  11,  2 } )
-   AAdd( aDBf, { 'IdStrSpr', 'C',   3,  0 } )
-   AAdd( aDBf, { 'IdVPosla', 'C',   2,  0 } )
-   AAdd( aDBf, { 'KMinRad', 'N',   7,  2 } )
+   aDbf := a_dbf_ld_ld()
+   hIndexes := h_ld_ld_indexes()
 
-   // generisanje kolona iznos/sati
-   FOR _i := 1 TO __LD_FIELDS_COUNT
-
-      _field_sati := "S" + PadL( AllTrim( Str( _i ) ), 2, "0" )
-      _field_iznos := "I" + PadL( AllTrim( Str( _i ) ), 2, "0" )
-
-      AAdd( aDBf, { _field_sati, 'N',   6,  2 } )
-      AAdd( aDBf, { _field_iznos, 'N',  12,  2 } )
-
-   NEXT
-
-   AAdd( aDBf, { 'USATI', 'N',   8,  1 } )
-   AAdd( aDBf, { 'UNETO', 'N',  13,  2 } )
-   AAdd( aDBf, { 'UODBICI', 'N',  13,  2 } )
-   AAdd( aDBf, { 'UIZNOS', 'N',  13,  2 } )
-   AAdd( aDBf, { 'UNETO2', 'N',  13,  2 } )
-   AAdd( aDBf, { 'UBRUTO', 'N',  13,  2 } )
-   AAdd( aDBf, { 'UPOREZ', 'N',  13,  2 } )
-   AAdd( aDBf, { 'UPOR_ST', 'N',  10,  2 } )
-   AAdd( aDBf, { 'UDOPR', 'N',  13,  2 } )
-   AAdd( aDBf, { 'UDOP_ST', 'N',  10,  2 } )
-   AAdd( aDBf, { 'NAKN_OPOR', 'N',  13,  2 } )
-   AAdd( aDBf, { 'NAKN_NEOP', 'N',  13,  2 } )
-   AAdd( aDBf, { 'ULICODB', 'N',  13,  2 } )
-   AAdd( aDBf, { 'TIPRADA', 'C',   1,  2 } )
-   AAdd( aDBf, { 'OPOR', 'C',   1,  2 } )
-   AAdd( aDBf, { 'TROSK', 'C',   1,  2 } )
-   AAdd( aDBf, { 'VAROBR', 'C',   1,  0 } )
-   AAdd( aDBf, { 'V_ISPL', 'C',   2,  0 } )
-   AAdd( aDBf, { 'OBR', 'C',   1,  0 } )
-   AAdd( aDBf, { 'RADSAT', 'N',  10,  0 } )
 
    _alias := "LD"
    _table_name := "ld_ld"
@@ -394,13 +355,10 @@ FUNCTION cre_all_ld( ver )
    IF_NOT_FILE_DBF_CREATE
    IF_C_RESET_SEMAPHORE
 
-   CREATE_INDEX( "1", "str(godina)+idrj+str(mjesec)+obr+idradn", _alias )
-   CREATE_INDEX( "2", "str(godina)+str(mjesec)+obr+idradn+idrj", _alias )
-   CREATE_INDEX( "3", "str(godina)+idrj+idradn", _alias )
-   CREATE_INDEX( "4", "str(godina)+idradn+str(mjesec)+obr", _alias )
-   CREATE_INDEX( "1U", "str(godina)+idrj+str(mjesec)+idradn", _alias )
-   CREATE_INDEX( "2U", "str(godina)+str(mjesec)+idradn+idrj", _alias )
-   CREATE_INDEX( "RADN", "idradn", _alias )
+
+   FOR EACH cKey IN hIndexes:Keys
+      CREATE_INDEX( cKey, hIndexes[ cKey ], _alias )
+   NEXT
 
 
    // --------------------------------------
@@ -626,7 +584,7 @@ FUNCTION cre_all_ld( ver )
    CREATE_INDEX( "4", "idradn+str(godina)+str(mjesec)+idkonto", _alias )
 
    // HACK: 2i indeks sortime pravi probleme
-   //CREATE_INDEX( "2i", "idkonto+SORTIME(idradn)+str(godina)+str(mjesec)", _alias )
+   // CREATE_INDEX( "2i", "idkonto+SORTIME(idradn)+str(godina)+str(mjesec)", _alias )
 
 
    // ------------------------------------------------------------
@@ -705,3 +663,66 @@ STATIC FUNCTION prosiri_numericka_polja_tabele( aDbf )
    NEXT
 
    RETURN .T.
+
+
+FUNCTION a_dbf_ld_ld()
+
+   LOCAL aDbf, _i, _field_sati, _field_iznos
+
+   aDBf := {}
+   AAdd( aDBf, { 'Godina', 'N',   4,  0 } )
+   AAdd( aDBf, { 'IDRJ', 'C',   2,  0 } )
+   AAdd( aDBf, { 'IDRADN', 'C',   6,  0 } )
+   AAdd( aDBf, { 'Mjesec', 'N',   2,  0 } )
+   AAdd( aDBf, { 'BRBOD', 'N',  11,  2 } )
+   AAdd( aDBf, { 'IdStrSpr', 'C',   3,  0 } )
+   AAdd( aDBf, { 'IdVPosla', 'C',   2,  0 } )
+   AAdd( aDBf, { 'KMinRad', 'N',   7,  2 } )
+
+   // generisanje kolona iznos/sati
+   FOR _i := 1 TO __LD_FIELDS_COUNT
+
+      _field_sati := "S" + PadL( AllTrim( Str( _i ) ), 2, "0" )
+      _field_iznos := "I" + PadL( AllTrim( Str( _i ) ), 2, "0" )
+
+      AAdd( aDBf, { _field_sati, 'N',   6,  2 } )
+      AAdd( aDBf, { _field_iznos, 'N',  12,  2 } )
+
+   NEXT
+
+   AAdd( aDBf, { 'USATI', 'N',   8,  1 } )
+   AAdd( aDBf, { 'UNETO', 'N',  13,  2 } )
+   AAdd( aDBf, { 'UODBICI', 'N',  13,  2 } )
+   AAdd( aDBf, { 'UIZNOS', 'N',  13,  2 } )
+   AAdd( aDBf, { 'UNETO2', 'N',  13,  2 } )
+   AAdd( aDBf, { 'UBRUTO', 'N',  13,  2 } )
+   AAdd( aDBf, { 'UPOREZ', 'N',  13,  2 } )
+   AAdd( aDBf, { 'UPOR_ST', 'N',  10,  2 } )
+   AAdd( aDBf, { 'UDOPR', 'N',  13,  2 } )
+   AAdd( aDBf, { 'UDOP_ST', 'N',  10,  2 } )
+   AAdd( aDBf, { 'NAKN_OPOR', 'N',  13,  2 } )
+   AAdd( aDBf, { 'NAKN_NEOP', 'N',  13,  2 } )
+   AAdd( aDBf, { 'ULICODB', 'N',  13,  2 } )
+   AAdd( aDBf, { 'TIPRADA', 'C',   1,  2 } )
+   AAdd( aDBf, { 'OPOR', 'C',   1,  2 } )
+   AAdd( aDBf, { 'TROSK', 'C',   1,  2 } )
+   AAdd( aDBf, { 'VAROBR', 'C',   1,  0 } )
+   AAdd( aDBf, { 'V_ISPL', 'C',   2,  0 } )
+   AAdd( aDBf, { 'OBR', 'C',   1,  0 } )
+   AAdd( aDBf, { 'RADSAT', 'N',  10,  0 } )
+
+   RETURN aDbf
+
+FUNCTION h_ld_ld_indexes()
+
+   LOCAL hIndexes := hb_Hash()
+
+   hIndexes[ "1" ] := "str(godina,4,0)+idrj+str(mjesec,2,0)+obr+idradn"
+   hIndexes[ "2" ] := "str(godina,4,0)+str(mjesec,2,0)+obr+idradn+idrj"
+   hIndexes[ "3" ] := "str(godina,4,0)+idrj+idradn"
+   hIndexes[ "4" ] := "str(godina,4,0)+idradn+str(mjesec,2,0)+obr"
+   hIndexes[ "1U" ] := "str(godina,4,0)+idrj+str(mjesec,2,0)+idradn"
+   hIndexes[ "2U" ] := "str(godina,4,0)+str(mjesec,2,0)+idradn+idrj"
+   hIndexes[ "RADN" ] := "idradn"
+
+   RETURN hIndexes

@@ -46,7 +46,7 @@ FUNCTION set_sql_search_path()
    LOCAL _result
 
    _result := _server:Query( _qry )
-   IF (_result:NetErr()) .AND. !EMPTY(_result:ErrorMsg())
+   IF ( _result:NetErr() ) .AND. !Empty( _result:ErrorMsg() )
       MsgBeep( "ERR?! :" + _qry )
       RETURN .F.
    ELSE
@@ -76,13 +76,15 @@ FUNCTION _sql_quote( xVar )
 
    IF ValType( xVar ) == "C"
       cOut := StrTran( xVar, "'", "''" )
-      cOut := "'" + hb_StrToUtf8( cOut ) + "'"
+      cOut := "'" + hb_StrToUTF8( cOut ) + "'"
    ELSEIF ValType( xVar ) == "D"
       IF xVar == CToD( "" )
          cOut := "'1000-01-01'"
       ELSE
          cOut := "'" + _sql_date_str( xVar ) + "'"
       ENDIF
+   ELSEIF ValType( xVar ) == "N"
+      cOut := AllTrim( Str( xVar ) )
    ELSE
       cOut := "NULL"
    ENDIF
@@ -365,7 +367,7 @@ FUNCTION _sql_cond_parse( field_name, cond, not )
       _ret := " ( " + _ret + " ) "
    ENDIF
 
-   IF EMPTY( _ret )
+   IF Empty( _ret )
       _ret := " TRUE "
    ENDIF
 
@@ -488,7 +490,7 @@ FUNCTION _select_all_from_table( table, fields, where_cond, order_fields )
 
    _data := _sql_query( _srv, _qry )
 
-   IF  _data:eof() == 0
+   IF  _data:Eof() == 0
       _data := NIL
    ENDIF
 
@@ -588,7 +590,7 @@ FUNCTION sql_update_table_from_hash( table, op, hash, where_fields )
    _result := _sql_query( _server, _qry )
 
    // obradi gresku !
-   IF _result:eof()
+   IF _result:Eof()
       _sql_query( _server, "ROLLBACK;" )
    ELSE
       _sql_query( _server, "COMMIT;" )
@@ -825,8 +827,6 @@ FUNCTION _set_sql_record_to_hash( table, id )
 
 
 
-// -----------------------------------------------------------
-// -----------------------------------------------------------
 FUNCTION query_row( row, field_name )
 
    LOCAL _ret := NIL
@@ -840,3 +840,66 @@ FUNCTION query_row( row, field_name )
    ENDIF
 
    RETURN _ret
+
+
+// --------------------------------------------------------
+// sql_table_empty("tnal") => .t. ako je sql tabela prazna
+// ---------------------------------------------------------
+FUNCTION sql_table_empty( alias )
+
+   LOCAL _a_dbf_rec := get_a_dbf_rec( alias, .T. )
+
+   IF _a_dbf_rec[ "temp" ]
+      RETURN .T.
+   ENDIF
+
+   RETURN table_count( "fmk." + _a_dbf_rec[ "table" ] ) == 0
+
+
+FUNCTION sql_from_adbf( aDbf, cTable )
+
+   LOCAL i
+   LOCAL cRet := ""
+   LOCAL cField, cFieldPrefix := ""
+
+   IF cTable != NIL
+      cFieldPrefix := cTable + "."
+   ENDIF
+
+
+   FOR i := 1 TO Len( aDbf )
+
+      cField := cFieldPrefix + aDbf[ i, 1 ]
+
+      DO CASE
+      CASE aDbf[ i, 2 ] == "C"
+         // naz2::char(4)
+         cRet += cField + "::char(" + AllTrim( Str( aDbf[ i, 3 ] ) ) + ")"
+
+      CASE aDbf[ i, 2 ] == "N"
+         // COALESCE(kurs1,0)::numeric(18,8) AS kurs1
+         cRet += "COALESCE(" + cField + ",0)::numeric(" + ;
+            AllTrim( Str( aDbf[ i, 3 ] ) ) + "," + AllTrim( Str( aDbf[ i, 4 ] ) ) + ")"
+
+      CASE aDbf[ i, 2 ] == "I"
+         cRet += "COALESCE(" + cField + ",0)::integer"
+
+
+      CASE aDbf[ i, 2 ] == "D"
+         // (CASE WHEN datum IS NULL THEN '1960-01-01'::date ELSE datum END) AS datum
+         cRet += "(CASE WHEN " + cField + "IS NULL THEN '1960-01-01'::date ELSE " + cField + ;
+            " END)"
+
+      OTHERWISE
+         MsgBeep( "ERROR sql_from_adbf field type !" )
+         RETURN NIL
+      ENDCASE
+      cRet += " AS " + aDbf[ i, 1 ]
+
+      IF i < Len( aDbf )
+         cRet += ","
+      ENDIF
+
+   NEXT
+
+   RETURN cRet

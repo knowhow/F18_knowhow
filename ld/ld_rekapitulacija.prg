@@ -1,14 +1,13 @@
 /*
- * This file is part of the bring.out FMK, a free and open source
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+ * This file is part of the bring.out knowhow ERP, a free and open source
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
-
 
 #include "f18.ch"
 
@@ -24,7 +23,7 @@ FUNCTION ld_rekapitulacija( lSvi )
    PRIVATE nKrug := 1
    PRIVATE nUPorOl := 0
    PRIVATE cFilt1 := ""
-   PRIVATE cNaslovRekap := Lokal( "LD: Rekapitulacija primanja" )
+   PRIVATE cNaslovRekap := "LD: Rekapitulacija primanja"
    PRIVATE aUsl1, aUsl2
    PRIVATE aNetoMj
    PRIVATE cDoprSpace := ""
@@ -39,10 +38,10 @@ FUNCTION ld_rekapitulacija( lSvi )
 
    cIdRadn := Space( _LR_ )
    cIdRj := gRj
-   cMjesec := gMjesec
-   cGodina := gGodina
+   nMjesec := gMjesec
+   nGodina := gGodina
    cObracun := gObracun
-   cMjesecDo := cMjesec
+   nMjesecDo := nMjesec
    nStrana := 0
    aUkTr := {}
    nBO := 0
@@ -78,6 +77,8 @@ FUNCTION ld_rekapitulacija( lSvi )
    ENDIF
 
    SELECT ld
+   USE
+   use_sql_ld_ld( nGodina, nMjesec, nMjesecDo, nVrstaInvaliditeta, nStepenInvaliditeta)
 
    cObracun := Trim( cObracun )
 
@@ -93,11 +94,11 @@ FUNCTION ld_rekapitulacija( lSvi )
    hParams[ 'q_rj' ] := qqRj
 
    hParams[ 'usl1' ] := aUsl1
-   hParams[ 'mjesec' ] := cMjesec
-   hParams[ 'mjesec_do' ] := cMjesecDo
+   hParams[ 'mjesec' ] := nMjesec
+   hParams[ 'mjesec_do' ] := nMjesecDo
 
    hParams[ 'obracun' ] := cObracun
-   hParams[ 'godina' ] := cgodina
+   hParams[ 'godina' ] := nGodina
 
    cFilt1 := get_ld_rekap_filter( hParams )
 
@@ -109,14 +110,14 @@ FUNCTION ld_rekapitulacija( lSvi )
    ENDIF
 
    IF !lSvi
-      SEEK Str( cGodina, 4 ) + cIdRj + Str( cMjesec, 2 ) + cObracun
+      SEEK Str( nGodina, 4 ) + cIdRj + Str( nMjesec, 2 ) + cObracun
       EOF CRET
    ELSE
-      SEEK Str( cGodina, 4 ) + Str( cMjesec, 2 ) + cObracun
+      SEEK Str( nGodina, 4 ) + Str( nMjesec, 2 ) + cObracun
       EOF CRET
    ENDIF
 
-   PoDoIzSez( cGodina, cMjesecDo )
+   PoDoIzSez( nGodina, nMjesecDo )
 
    CreOpsLD()
    CreRekLD()
@@ -141,7 +142,7 @@ FUNCTION ld_rekapitulacija( lSvi )
    ENDIF
 
    // samo pozicionira bazu PAROBR na odgovarajuci zapis
-   ParObr( cMjesec, cGodina, cObracun, iif( !lSvi, cIdRj, ) )
+   ParObr( nMjesec, nGodina, cObracun, iif( !lSvi, cIdRj, ) )
 
    PRIVATE aRekap[ cLDPolja, 2 ]
 
@@ -182,18 +183,18 @@ FUNCTION ld_rekapitulacija( lSvi )
 
    SELECT ld
 
-   IF cMjesec != cMjesecDo
+   IF nMjesec != nMjesecDo
       IF lSvi
          GO TOP
-         PRIVATE bUslov := {|| godina == cGodina .AND. mjesec >= cMjesec .AND. mjesec <= cMjesecDo .AND. obr = cObracun }
+         PRIVATE bUslov := {|| field->godina == nGodina .AND. field->mjesec >= nMjesec .AND. field->mjesec <= nMjesecDo .AND. field->obr = cObracun }
       ELSE
-         PRIVATE bUslov := {|| godina == cGodina .AND. idrj == cIdRj .AND. mjesec >= cMjesec .AND. mjesec <= cMjesecDo .AND. obr = cObracun }
+         PRIVATE bUslov := {|| field->godina == nGodina .AND. field->idrj == cIdRj .AND. field->mjesec >= nMjesec .AND. field->mjesec <= nMjesecDo .AND. field->obr = cObracun }
       ENDIF
    ELSE
       IF lSvi
-         PRIVATE bUslov := {|| cGodina == godina .AND. cMjesec = mjesec .AND. obr = cObracun }
+         PRIVATE bUslov := {|| nGodina == field->godina .AND. nMjesec == field->mjesec .AND. field->obr == cObracun }
       ELSE
-         PRIVATE bUslov := {|| cGodina == godina .AND. cIdrj == idrj .AND. cMjesec = mjesec .AND. obr = cObracun }
+         PRIVATE bUslov := {|| nGodina == field->godina .AND. cIdrj == field->idrj .AND. nMjesec == field->mjesec .AND. field->obr == cObracun }
       ENDIF
    ENDIF
 
@@ -451,14 +452,14 @@ FUNCTION ld_rekapitulacija( lSvi )
 
    IF f18_use_module( "virm" ) .AND. Pitanje(, "Generisati virmane za ovaj obračun plate ? (D/N)", "N" ) == "D"
       virm_set_global_vars()
-      set_metric( "virm_godina", my_user(), cGodina )
-      set_metric( "virm_mjesec", my_user(), cMjesec )
+      set_metric( "virm_godina", my_user(), nGodina )
+      set_metric( "virm_mjesec", my_user(), nMjesec )
       virm_prenos_ld( .T. )
       unos_virmana()
       my_close_all_dbf()
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 STATIC FUNCTION nstr()
@@ -811,7 +812,7 @@ STATIC FUNCTION _ld_calc_totals( lSvi, a_benef )
       nUIznos += _UIznos  // ukupno iznos
       nUOdbici += _UOdbici  // ukupno odbici
 
-      IF cMjesec <> cMjesecDo
+      IF nMjesec <> nMjesecDo
 
          nPom := AScan( aNetoMj, {| x| x[ 1 ] == mjesec } )
 
@@ -835,7 +836,7 @@ STATIC FUNCTION _ld_calc_totals( lSvi, a_benef )
 
       IF RADN->isplata == "TR"  // isplata na tekuci racun
          cOpis2 := RADNIK
-         Rekapld( "IS_" + RADN->idbanka, cGodina, cMjesecDo, _UIznos, 0, RADN->idbanka, RADN->brtekr, cOpis2, .T. )
+         Rekapld( "IS_" + RADN->idbanka, nGodina, nMjesecDo, _UIznos, 0, RADN->idbanka, RADN->brtekr, cOpis2, .T. )
       ENDIF
 
       SELECT ld
@@ -873,18 +874,18 @@ FUNCTION get_ld_rekap_filter( hParams )
    LOCAL qqRj := hParams[ 'q_rj' ]
    LOCAL aUsl1 := hParams[ 'usl1' ]
    LOCAL cObracun := hParams[ 'obracun' ]
-   LOCAL cGodina := hParams[ 'godina' ]
-   LOCAL cMjesec := hParams[ 'mjesec' ]
-   LOCAL cMjesecDo := hParams[ 'mjesec_do' ]
+   LOCAL nGodina := hParams[ 'godina' ]
+   LOCAL nMjesec := hParams[ 'mjesec' ]
+   LOCAL nMjesecDo := hParams[ 'mjesec_do' ]
 
    IF lSvi
 
       cFilt1 := ".t." + iif( Empty( cStrSpr ), "", ".and.IDSTRSPR == " + cm2str( cStrSpr ) ) + ;
          iif( Empty( qqRJ ), "", ".and." + aUsl1 )
 
-      IF cMjesec != cMjesecDo
-         cFilt1 := cFilt1 + ".and. mjesec >= " + cm2str( cMjesec ) + ;
-            ".and. mjesec <= " + cm2str( cMjesecDo ) + ".and. godina = " + cm2str( cGodina )
+      IF nMjesec != nMjesecDo
+         cFilt1 := cFilt1 + ".and. mjesec >= " + cm2str( nMjesec ) + ;
+            ".and. mjesec <= " + cm2str( nMjesecDo ) + ".and. godina = " + cm2str( nGodina )
       ENDIF
 
       GO TOP
@@ -892,9 +893,9 @@ FUNCTION get_ld_rekap_filter( hParams )
    ELSE
 
       cFilt1 := ".t." +  iif( Empty( cStrSpr ), "", ".and. IDSTRSPR == " + cm2str( cStrSpr ) )
-      IF cMjesec != cMjesecDo
-         cFilt1 := cFilt1 + ".and. mjesec >= " + cm2str( cMjesec ) + ;
-            ".and. mjesec <= " + cm2str( cMjesecDo ) + ".and. godina = " + cm2str( cGodina )
+      IF nMjesec != nMjesecDo
+         cFilt1 := cFilt1 + ".and. mjesec >= " + cm2str( nMjesec ) + ;
+            ".and. mjesec <= " + cm2str( nMjesecDo ) + ".and. godina = " + cm2str( nGodina )
       ENDIF
 
    ENDIF

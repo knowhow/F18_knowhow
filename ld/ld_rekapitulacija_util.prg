@@ -56,7 +56,7 @@ FUNCTION RekapLd( cId, nGodina, nMjesec, nIzn1, nIzn2, cIdPartner, cOpis, cOpis2
       opis2 WITH cOpis2
 
 
-   popwa()
+   PopWA()
 
    RETURN .T.
 
@@ -93,16 +93,16 @@ FUNCTION BoxRekSvi()
       @ m_x + 2, m_y + 2 SAY8 "Vrsta djelatnosti: "  GET cRTipRada VALID val_tiprada( cRTipRada ) PICT "@!"
 
       @ m_x + 3, m_y + 2 SAY8 "Radne jedinice: "  GET  qqRJ PICT "@!S25"
-      @ m_x + 4, m_y + 2 SAY8 "Za mjesece od:"  GET  cmjesec  PICT "99" VALID {|| cMjesecDo := cMjesec, .T. }
-      @ m_x + 4, Col() + 2 SAY8 "do:"  GET  cMjesecDo  PICT "99" VALID cMjesecDo >= cMjesec
+      @ m_x + 4, m_y + 2 SAY8 "Za mjesece od:"  GET  nMjesec  PICT "99" VALID {|| nMjesecDo := nMjesec, .T. }
+      @ m_x + 4, Col() + 2 SAY8 "do:"  GET  nMjesecDo  PICT "99" VALID nMjesecDo >= nMjesec
       @ m_x + 4, Col() + 2 SAY8 "Obracun: " GET cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
-      @ m_x + 5, m_y + 2 SAY8 "Godina: "  GET  cGodina  PICT "9999"
+      @ m_x + 5, m_y + 2 SAY8 "Godina: "  GET  nGodina  PICT "9999"
       @ m_x + 7, m_y + 2 SAY8 "Stručna Sprema: "  GET  cStrSpr PICT "@!" VALID Empty( cStrSpr ) .OR. P_StrSpr( @cStrSpr )
       @ m_x + 8, m_y + 2 SAY8 "Opština stanovanja: "  GET  cOpsSt PICT "@!" VALID Empty( cOpsSt ) .OR. P_Ops( @cOpsSt )
       @ m_x + 9, m_y + 2 SAY8 "Opština rada:       "  GET  cOpsRad  PICT "@!" VALID Empty( cOpsRad ) .OR. P_Ops( @cOpsRad )
 
       @ m_x +10, m_y + 2 SAY8 "Vrsta invaliditeta (0 sve)  : "  GET  nVrstaInvaliditeta  PICT "9" VALID nVrstaInvaliditeta == 0 .OR. valid_vrsta_invaliditeta( @nVrstaInvaliditeta )
-      @ m_x +11, m_y + 2 SAY8 "Stepen invaliditeta (>)     : "  GET  nStepenInvaliditeta  PICT "99" VALID valid_stepen_invaliditeta( @nStepenInvaliditeta )
+      @ m_x +11, m_y + 2 SAY8 "Stepen invaliditeta (>=)    : "  GET  nStepenInvaliditeta  PICT "999" VALID valid_stepen_invaliditeta( @nStepenInvaliditeta )
 
       READ
 
@@ -117,7 +117,6 @@ FUNCTION BoxRekSvi()
    BoxC()
 
    PopWa()
-   altd()
 
    RETURN .T.
 
@@ -130,16 +129,16 @@ FUNCTION BoxRekJ()
 
    @ m_x + 1, m_y + 2 SAY8 "Vrsta djelatnosti: "  GET cRTipRada VALID val_tiprada( cRTipRada ) PICT "@!"
    @ m_x + 2, m_y + 2 SAY8 "Radna jedinica: "  GET cIdRJ
-   @ m_x + 3, m_y + 2 SAY8 "Za mjesece od:"  GET  cmjesec  PICT "99" VALID {|| cMjesecDo := cMjesec, .T. }
-   @ m_x + 3, Col() + 2 SAY8 "do:"  GET  cMjesecDo  PICT "99" VALID cMjesecDo >= cMjesec
+   @ m_x + 3, m_y + 2 SAY8 "Za mjesece od:"  GET  nMjesec  PICT "99" VALID {|| nMjesecDo := nMjesec, .T. }
+   @ m_x + 3, Col() + 2 SAY8 "do:"  GET  nMjesecDo  PICT "99" VALID nMjesecDo >= nMjesec
    @ m_x + 3, Col() + 2 SAY8 "Obracun: " GET cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
-   @ m_x + 4, m_y + 2 SAY8 "Godina: "  GET  cGodina  PICT "9999"
+   @ m_x + 4, m_y + 2 SAY8 "Godina: "  GET  nGodina  PICT "9999"
    @ m_x + 6, m_y + 2 SAY8 "Stručna Sprema: "  GET  cStrSpr PICT "@!" VALID Empty( cStrSpr ) .OR. P_StrSpr( @cStrSpr )
    @ m_x + 7, m_y + 2 SAY8 "Opština stanovanja:  "  GET  cOpsSt PICT "@!" VALID Empty( cOpsSt ) .OR. P_Ops( @cOpsSt )
    @ m_x + 8, m_y + 2 SAY8 "Opština rada:        "  GET  cOpsRad  PICT "@!" VALID Empty( cOpsRad ) .OR. P_Ops( @cOpsRad )
 
    @ m_x + 9, m_y + 2 SAY8 "Vrsta invaliditeta (0 sve)  : "  GET  nVrstaInvaliditeta  PICT "9" VALID nVrstaInvaliditeta == 0 .OR. valid_vrsta_invaliditeta( @nVrstaInvaliditeta )
-   @ m_x +10, m_y + 2 SAY8 "Stepen invaliditeta (>)     : "  GET  nStepenInvaliditeta  PICT "99" VALID valid_stepen_invaliditeta( @nStepenInvaliditeta )
+   @ m_x +10, m_y + 2 SAY8 "Stepen invaliditeta (>=)    : "  GET  nStepenInvaliditeta  PICT "999" VALID valid_stepen_invaliditeta( @nStepenInvaliditeta )
 
    READ
 
@@ -810,9 +809,7 @@ FUNCTION PopuniOpsLD( cTip, cPorId, aPorezi )
 
 
 
-// -----------------------------------------------------
-// napravi obracun
-// -----------------------------------------------------
+
 FUNCTION napr_obracun( lSvi, a_benef )
 
    LOCAL i
@@ -1037,7 +1034,7 @@ FUNCTION napr_obracun( lSvi, a_benef )
       nUIznos += _UIznos  // ukupno iznos
       nUOdbici += _UOdbici  // ukupno odbici
 
-      IF cMjesec <> cMjesecDo
+      IF nMjesec <> nMjesecDo
 
          nPom := AScan( aNetoMj, {| x| x[ 1 ] == mjesec } )
 
@@ -1059,7 +1056,7 @@ FUNCTION napr_obracun( lSvi, a_benef )
       PopuniOpsLD()
 
       IF RADN->isplata == "TR"  // isplata na tekuci racun
-         Rekapld( "IS_" + RADN->idbanka, cgodina, cmjesecDo, _UIznos, 0, RADN->idbanka, RADN->brtekr, RADNIK, .T. )
+         Rekapld( "IS_" + RADN->idbanka, nGodina, nMjesecDo, _UIznos, 0, RADN->idbanka, RADN->brtekr, RADNIK, .T. )
       ENDIF
 
       SELECT ld
@@ -1078,7 +1075,7 @@ FUNCTION ZaglSvi()
    SELECT ld_rj
    P_10CPI
 
-   ?? Lokal( "Obuhvacene radne jedinice: " )
+   ?U "Obuhvaćene radne jedinice: "
    IF !Empty( qqRJ )
       SET FILTER TO &aUsl2
       GO TOP
@@ -1094,14 +1091,14 @@ FUNCTION ZaglSvi()
 
    B_ON
 
-   IF cMjesec == cMjesecDo
-      ? Lokal( "Firma:" ), gNFirma, "  " + Lokal( "Mjesec:" ), Str( cmjesec, 2 ) + IspisObr()
-      ?? "    " + Lokal( "Godina:" ), Str( cGodina, 4 )
+   IF nMjesec == nMjesecDo
+      ? Lokal( "Firma:" ), gNFirma, "  " + Lokal( "Mjesec:" ), Str( nMjesec, 2 ) + IspisObr()
+      ?? "    " + Lokal( "Godina:" ), Str( nGodina, 4 )
       B_OFF
       ? IF( gBodK == "1", Lokal( "Vrijednost boda:" ), Lokal( "Vr.koeficijenta:" ) ), Transform( parobr->vrbod, "99999.99999" )
    ELSE
-      ? Lokal( "Firma:" ), gNFirma, "  " + Lokal( "Za mjesece od:" ), Str( cmjesec, 2 ), "do", Str( cmjesecDo, 2 ) + IspisObr()
-      ?? "    " + Lokal( "Godina:" ), Str( cGodina, 4 )
+      ? Lokal( "Firma:" ), gNFirma, "  " + Lokal( "Za mjesece od:" ), Str( nMjesec, 2 ), "do", Str( nMjesecDo, 2 ) + IspisObr()
+      ?? "    " + Lokal( "Godina:" ), Str( nGodina, 4 )
       B_OFF
    ENDIF
    ?
@@ -1120,19 +1117,18 @@ FUNCTION ZaglJ()
 
    ?
    B_ON
-   IF cMjesec == cMjesecDo
-      ? Lokal( "RJ:" ), cIdRj, ld_rj->naz, Space( 2 ) + Lokal( "Mjesec:" ), Str( cmjesec, 2 ) + IspisObr()
-      ?? Space( 4 ) + Lokal( "Godina:" ), Str( cGodina, 4 )
+   IF nMjesec == nMjesecDo
+      ? Lokal( "RJ:" ), cIdRj, ld_rj->naz, Space( 2 ) + Lokal( "Mjesec:" ), Str( nMjesec, 2 ) + IspisObr()
+      ?? Space( 4 ) + Lokal( "Godina:" ), Str( nGodina, 4 )
       B_OFF
       ? if( gBodK == "1", Lokal( "Vrijednost boda:" ), Lokal( "Vr.koeficijenta:" ) ), Transform( parobr->vrbod, "99999.99999" )
    ELSE
-      ? Lokal( "RJ:" ), cidrj, ld_rj->naz, "  " + Lokal( "Za mjesece od:" ), Str( cmjesec, 2 ), "do", Str( cmjesecDo, 2 ) + IspisObr()
-      ?? Space( 4 ) + Lokal( "Godina:" ), Str( cGodina, 4 )
+      ? Lokal( "RJ:" ), cidrj, ld_rj->naz, "  " + Lokal( "Za mjesece od:" ), Str( nMjesec, 2 ), "do", Str( nMjesecDo, 2 ) + IspisObr()
+      ?? Space( 4 ) + Lokal( "Godina:" ), Str( nGodina, 4 )
       B_OFF
    ENDIF
 
    ?
-
    RETURN .T.
 
 
@@ -1226,10 +1222,10 @@ FUNCTION IspisTP( lSvi )
             aRekap[ i, 2 ] := Abs( aRekap[ i, 2 ] )
          ENDIF
 
-         IF cMjesec == cMjesecDo
-            Rekapld( "PRIM" + tippr->id, cgodina, cmjesec, aRekap[ i, 2 ], aRekap[ i, 1 ] )
+         IF nMjesec == nMjesecDo
+            Rekapld( "PRIM" + tippr->id, nGodina, nMjesec, aRekap[ i, 2 ], aRekap[ i, 1 ] )
          ELSE
-            Rekapld( "PRIM" + tippr->id, cgodina, cMjesecDo, aRekap[ i, 2 ], aRekap[ i, 1 ] )
+            Rekapld( "PRIM" + tippr->id, nGodina, nMjesecDo, aRekap[ i, 2 ], aRekap[ i, 1 ] )
          ENDIF
 
          IspisKred( lSvi )
@@ -1254,8 +1250,8 @@ FUNCTION IspisKred( lSvi )
 
          SELECT RADKR
          SET ORDER TO TAG "3"
-         SET FILTER TO Str( cGodina, 4 ) + Str( cMjesec, 2 ) <= Str( godina, 4 ) + Str( mjesec, 2 ) .AND. ;
-            Str( cGodina, 4 ) + Str( cMjesecDo, 2 ) >= Str( godina, 4 ) + Str( mjesec, 2 )
+         SET FILTER TO Str( nGodina, 4 ) + Str( nMjesec, 2 ) <= Str( godina, 4 ) + Str( mjesec, 2 ) .AND. ;
+            Str( nGodina, 4 ) + Str( nMjesecDo, 2 ) >= Str( godina, 4 ) + Str( mjesec, 2 )
          GO TOP
 
          DO WHILE !Eof()
@@ -1290,10 +1286,10 @@ FUNCTION IspisKred( lSvi )
                      // rekap za sve rj
                      SELECT ld
                      SET ORDER TO tag ( TagVO( "2" ) )
-                     hseek Str( cGodina, 4 ) + Str( mj, 2 ) + cObracun + radkr->idradn
+                     hseek Str( nGodina, 4 ) + Str( mj, 2 ) + cObracun + radkr->idradn
 
                      _t_rec := RecNo()
-                     DO WHILE !Eof() .AND. godina == cGodina .AND. mjesec == cMjesec .AND. ;
+                     DO WHILE !Eof() .AND. godina == nGodina .AND. mjesec == nMjesec .AND. ;
                            obr == cObracun .AND. idradn == radkr->idradn
                         IF ld->i30 <> 0
                            _found := .T.
@@ -1306,7 +1302,7 @@ FUNCTION IspisKred( lSvi )
                   ELSE
                      // rekap za jednu rj
                      SELECT ld
-                     hseek  Str( cGodina, 4 ) + cIdrj + Str( mj, 2 ) + IF( !Empty( cObracun ), cObracun, "" ) + radkr->idradn
+                     hseek  Str( nGodina, 4 ) + cIdrj + Str( mj, 2 ) + IF( !Empty( cObracun ), cObracun, "" ) + radkr->idradn
                      // ako ima radnika i ako mu je podatak kredita unesen na obracunu
                      IF Found() .AND. ld->i30 <> 0
                         _found := .T.
@@ -1327,7 +1323,7 @@ FUNCTION IspisKred( lSvi )
                IF nUkKrRad <> 0
 
                   _kr_partija := AllTrim( kred->zirod )
-                  RekapLD( "KRED" + cIdKred + cNaOsnovu, cGodina, cMjesecDo, nUkKrRad, 0, ;
+                  RekapLD( "KRED" + cIdKred + cNaOsnovu, nGodina, nMjesecDo, nUkKrRad, 0, ;
                      cIdkred, cNaosnovu, AllTrim( cOpis2 ) + ", " + _kr_partija, .T. )
 
                ENDIF
@@ -1375,10 +1371,10 @@ FUNCTION IspisKred( lSvi )
                IF lSvi
                   SELECT ld
                   SET ORDER TO tag ( TagVO( "2" ) )
-                  hseek  Str( cGodina, 4 ) + Str( cmjesec, 2 ) + if( lViseObr .AND. !Empty( cObracun ), cObracun, "" ) + radkr->idradn
+                  hseek  Str( nGodina, 4 ) + Str( nMjesec, 2 ) + if( lViseObr .AND. !Empty( cObracun ), cObracun, "" ) + radkr->idradn
                ELSE
                   SELECT ld
-                  hseek  Str( cGodina, 4 ) + cidrj + Str( cmjesec, 2 ) + if( lViseObr .AND. !Empty( cObracun ), cObracun, "" ) + radkr->idradn
+                  hseek  Str( nGodina, 4 ) + cidrj + Str( nMjesec, 2 ) + if( lViseObr .AND. !Empty( cObracun ), cObracun, "" ) + radkr->idradn
                ENDIF
 
                IF Found()
@@ -1387,25 +1383,25 @@ FUNCTION IspisKred( lSvi )
 
                SELECT radkr
 
-               IF _found .AND. godina == cGodina .AND. mjesec == cMjesec
+               IF _found .AND. godina == nGodina .AND. mjesec == nMjesec
                   nUkKred += iznos
                ENDIF
 
-               IF cMjesecDo > cMjesec
-                  FOR mj := cMjesec + 1 TO cMjesecDo
+               IF nMjesecDo > nMjesec
+                  FOR mj := nMjesec + 1 TO nMjesecDo
                      IF lSvi
                         SELECT ld
                         SET ORDER TO tag ( TagVO( "2" ) )
-                        hseek  Str( cGodina, 4 ) + Str( mj, 2 ) + if( lViseObr .AND. !Empty( cObracun ), cObracun, "" ) + radkr->idradn
+                        hseek  Str( nGodina, 4 ) + Str( mj, 2 ) + if( lViseObr .AND. !Empty( cObracun ), cObracun, "" ) + radkr->idradn
                         // "LDi2","str(godina)+str(mjesec)+idradn"
                      ELSE
                         SELECT ld
-                        hseek  Str( cGodina, 4 ) + cidrj + Str( mj, 2 ) + if( lViseObr .AND. !Empty( cObracun ), cObracun, "" ) + radkr->idradn
+                        hseek  Str( nGodina, 4 ) + cidrj + Str( mj, 2 ) + if( lViseObr .AND. !Empty( cObracun ), cObracun, "" ) + radkr->idradn
                      ENDIF // lSvi
 
                      SELECT radkr
 
-                     IF ld->( Found() ) .AND. godina == cgodina .AND. mjesec = mj
+                     IF ld->( Found() ) .AND. godina == nGodina .AND. mjesec = mj
                         nUkKred += iznos
                      ENDIF
                   NEXT
@@ -1426,11 +1422,11 @@ FUNCTION IspisKred( lSvi )
 
                _kr_partija := AllTrim( kred->zirod )
 
-               IF cMjesec == cMjesecDo
-                  Rekapld( "KRED" + cIdkred + cNaOsnovu, cGodina, cMjesec, nUkKred, 0, ;
+               IF nMjesec == nMjesecDo
+                  Rekapld( "KRED" + cIdkred + cNaOsnovu, nGodina, nMjesec, nUkKred, 0, ;
                      cIdKred, cNaosnovu, AllTrim( cOpis2 ) + ", " + _kr_partija )
                ELSE
-                  Rekapld( "KRED" + cIdKred + cNaosnovu, cGodina, cMjesecDo, nUkkred, 0, ;
+                  Rekapld( "KRED" + cIdKred + cNaosnovu, nGodina, nMjesecDo, nUkkred, 0, ;
                      cIdKred, cNaosnovu, AllTrim( cOpis2 ) + ", " + _kr_partija )
                ENDIF
 
@@ -1489,10 +1485,10 @@ FUNCTION ProizvTP()
       ELSE
          @ PRow(), 42 SAY round2( &cPom, gZaok2 ) PICT gpici
       ENDIF
-      IF cMjesec == cMjesecDo
-         Rekapld( "PRIM" + tippr->id, cgodina, cmjesec, round2( &cpom, gZaok2 ), 0 )
+      IF nMjesec == nMjesecDo
+         Rekapld( "PRIM" + tippr->id, nGodina, nMjesec, round2( &cpom, gZaok2 ), 0 )
       ELSE
-         Rekapld( "PRIM" + tippr->id, cgodina, cMjesecDo, round2( &cpom, gZaok2 ), 0 )
+         Rekapld( "PRIM" + tippr->id, nGodina, nMjesecDo, round2( &cpom, gZaok2 ), 0 )
       ENDIF
 
       SKIP

@@ -143,8 +143,8 @@ FUNCTION P_Radn( cId, dx, dy )
 
    AAdd( ImeKol,  aKol )
 
-   aKol := { PadR( "st.invalid", 10 ), {|| Transform( field->st_invalid, "99") }, "st_invalid", ;
-           {|| .T.}, { || Wst_invalid > 0 }, NIL, "999"  }
+   aKol := { PadR( "st.invalid", 10 ), {|| Transform( field->st_invalid, "999") }, "st_invalid", ;
+           {|| .T.}, { || Wst_invalid >= 0 }, NIL, "999"  }
    AAdd( ImeKol,  aKol )
 
 
@@ -152,7 +152,7 @@ FUNCTION P_Radn( cId, dx, dy )
       AAdd( Kol, I )
    NEXT
 
-   lRet := PostojiSifra( F_RADN, 1, MAXROWS() - 15, MAXCOLS() - 15, Lokal( "Lista radnika" ) + Space( 5 ) + "<S> filter radnika on/off", @cId, dx, dy, {| Ch| RadBl( Ch ) },,,,, { "ID" } )
+   lRet := PostojiSifra( F_RADN, 1, MAXROWS() - 15, MAXCOLS() - 15, "Lista radnika" + Space( 5 ) + "<S> filter radnika on/off", @cId, dx, dy, {| Ch| RadBl( Ch ) },,,,, { "ID" } )
 
    PopWa( F_RADN )
 

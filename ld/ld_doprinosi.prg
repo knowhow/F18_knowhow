@@ -234,13 +234,13 @@ FUNCTION obr_doprinos( nDopr, nDopr2, cTRada, a_benef )
                   @ PRow(), PCol() + 1 SAY  nPom2 PICTURE gpici
                   @ PRow(), PCol() + 1 SAY  nPom - nPom2 PICTURE gpici
 
-                  Rekapld( "DOPR" + dopr->id + idops, cgodina, cmjesec, nPom - nPom2, 0, idops, NLjudi() )
+                  Rekapld( "DOPR" + dopr->id + idops, nGodina, nMjesec, nPom - nPom2, 0, idops, NLjudi() )
                   nDoprOps2 += nPom2
                   nDoprOps += nPom
 
                ELSE
 
-                  Rekapld( "DOPR" + dopr->id + opsld->idops, cgodina, cmjesec, npom, nBOOps, idops, NLjudi() )
+                  Rekapld( "DOPR" + dopr->id + opsld->idops, nGodina, nMjesec, npom, nBOOps, idops, NLjudi() )
                   nDoprOps += nPom
                ENDIF
 
@@ -266,11 +266,11 @@ FUNCTION obr_doprinos( nDopr, nDopr2, cTRada, a_benef )
 
                @ PRow(), PCol() + 1 SAY nDoprOps2 PICT gpici
                @ PRow(), PCol() + 1 SAY nDoprOps - nDoprOps2 PICT gpici
-               Rekapld( "DOPR" + dopr->id, cgodina, cmjesec, nDoprOps - nDoprOps2, 0,, NLjudi() )
+               Rekapld( "DOPR" + dopr->id, nGodina, nMjesec, nDoprOps - nDoprOps2, 0,, NLjudi() )
                nPom2 := nDoprOps2
             ELSE
                IF nDoprOps > 0
-                  Rekapld( "DOPR" + dopr->id, cgodina, cmjesec, nDoprOps, nOOD,, "(" + AllTrim( Str( nPOLjudi ) ) + ")" )
+                  Rekapld( "DOPR" + dopr->id, nGodina, nMjesec, nDoprOps, nOOD,, "(" + AllTrim( Str( nPOLjudi ) ) + ")" )
                ENDIF
             ENDIF
 
@@ -334,9 +334,9 @@ FUNCTION obr_doprinos( nDopr, nDopr2, cTRada, a_benef )
             IF cUmPD == "D"
                @ PRow(), PCol() + 1 SAY nPom2 PICT gpici
                @ PRow(), PCol() + 1 SAY nPom - nPom2 PICT gpici
-               Rekapld( "DOPR" + dopr->id, cgodina, cmjesec, nPom - nPom2, 0 )
+               Rekapld( "DOPR" + dopr->id, nGodina, nMjesec, nPom - nPom2, 0 )
             ELSE
-               Rekapld( "DOPR" + dopr->id, cgodina, cmjesec, nPom, nBO,, "(" + AllTrim( Str( nLjudi ) ) + ")" )
+               Rekapld( "DOPR" + dopr->id, nGodina, nMjesec, nPom, nBO,, "(" + AllTrim( Str( nLjudi ) ) + ")" )
             ENDIF
          ENDIF
 

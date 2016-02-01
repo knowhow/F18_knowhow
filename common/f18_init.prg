@@ -204,6 +204,9 @@ STATIC FUNCTION _show_info()
    _txt := PadC( ". . . . . . k o n e k c i j a    n a    b a z u   u   t o k u . . . . . . .", _y )
    @ _x + 1, 2 SAY8 _txt
 
+
+   hb_idleAdd( {||  hb_DispOutAt( maxrows(),  maxcols() - 8, Time() ) } )
+
    RETURN .T.
 
 

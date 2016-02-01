@@ -32,9 +32,9 @@ FUNCTION modstru_form_file( chs_file )
 
    modstru( _ret )
 
-   // ------------------------------------------------------------------
-   // Modstru({"*fin_budzet", "C IDKONTO C 10 0",  "A IDKONTO2 C 7 0"})
-   // ------------------------------------------------------------------
+/*
+ Modstru({"*fin_budzet", "C IDKONTO C 10 0",  "A IDKONTO2 C 7 0"})
+*/
 
 FUNCTION modstru( a_commands )
 
@@ -143,7 +143,7 @@ STATIC FUNCTION chs_op( op, lin, curr_stru, new_stru, brisi_dbf, rename_dbf, str
       _tip := Rjec( @lin )
       _len := Val( Rjec( @lin ) )
       _dec := Val( Rjec( @lin ) )
-      IF !( _len > 0 .AND. _len > _dec ) .OR. ( _tip == "C" .AND. _dec > 0 ) .OR. !( _tip $ "CNDMI" )
+      IF !( _len > 0 .AND. _len > _dec ) .OR. ( _tip == "C" .AND. _dec > 0 ) .OR. !( _tip $ "CNDMIYB" )
          log_write( "MODSTRU, greska: dodavanje polja, linija: " + _l, 5 )
          RETURN .F.
       ENDIF
@@ -200,6 +200,10 @@ STATIC FUNCTION chs_op( op, lin, curr_stru, new_stru, brisi_dbf, rename_dbf, str
       stru_changed := .T.
 
       IF _tip == _tip_2
+         stru_changed := .T.
+      ENDIF
+
+      IF ( _tip == "N" .AND. _tip_2 == "BY" )
          stru_changed := .T.
       ENDIF
 
@@ -267,7 +271,7 @@ FUNCTION kopi( path, ime_dbf, curr_stru, new_stru, brisi_dbf, rename_dbf, stru_c
       log_write( "MODSTRU, brisem: " + _f + MEMOEXT, 5 )
 
       brisi_dbf := .F.
-      RETURN
+      RETURN .F.
    ENDIF
 
    IF rename_dbf != NIL
@@ -382,11 +386,10 @@ FUNCTION kopi( path, ime_dbf, curr_stru, new_stru, brisi_dbf, rename_dbf, stru_c
 
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
-// -------------------
-// -------------------
+
 FUNCTION Rjec( cLin )
 
    LOCAL cOp, nPos

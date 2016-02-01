@@ -447,6 +447,7 @@ FUNCTION fill_dbf_from_server( dbf_table, sql_query, sql_fetch_time, dbf_write_t
 
          _fld := FieldBlock( _dbf_fields[ _i ] )
 
+
          IF ValType( Eval( _fld ) ) $ "CM"
             Eval( _fld, hb_UTF8ToStr( _qry_obj:FieldGet( _qry_obj:FieldPos( _dbf_fields[ _i ] ) ) ) )
          ELSE
@@ -454,7 +455,7 @@ FUNCTION fill_dbf_from_server( dbf_table, sql_query, sql_fetch_time, dbf_write_t
          ENDIF
 
       NEXT
-
+          
       IF lShowInfo
          IF _counter % 500 == 0
             @ m_x + 7, m_y + 2 SAY8 "synchro '" + dbf_table + "' broj obrađenih zapisa: " + AllTrim( Str( _counter ) )
@@ -472,7 +473,7 @@ FUNCTION fill_dbf_from_server( dbf_table, sql_query, sql_fetch_time, dbf_write_t
 
    dbf_write_time := Seconds() - dbf_write_time
 
-   RETURN
+   RETURN .T.
 
 
 

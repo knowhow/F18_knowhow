@@ -12,7 +12,7 @@
 #define F18_VER_DEFINED
 
 #define F18_VER       "1.7.150"
-#define F18_VER_DATE  "30.01.2016"
+#define F18_VER_DATE  "31.01.2016"
 
 #define FMK_LIB_VER   "4.3.4"
 
@@ -20,7 +20,7 @@
 
 #define F18_DBF_VER_MAJOR  1
 #define F18_DBF_VER_MINOR  0
-#define F18_DBF_VER_PATCH  2
+#define F18_DBF_VER_PATCH  3
 
 #define SERVER_DB_VER_MAJOR  0
 #define SERVER_DB_VER_MINOR  0

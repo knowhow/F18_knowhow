@@ -1,253 +1,251 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
 
 
 #include "f18.ch"
-#include "achoice.ch"
-#include "fileio.ch"
 
 
-function SC_START(oApp, lSezone)
-local cImeDbf
-local _i
-public gAppSrv
+FUNCTION SC_START( oApp, lSezone )
 
-if !oApp:lStarted  
-    RDDSETDEFAULT( RDDENGINE )
-    ? "startujem oApp:db()"
-    oApp:initdb()
-endif
+   LOCAL cImeDbf
+   LOCAL _i
+   PUBLIC gAppSrv
 
-SetgaSDbfs()
+   IF !oApp:lStarted
+      // rddSetDefault( RDDENGINE )
+      // ? "startujem oApp:db()"
+      oApp:initdb()
+   ENDIF
 
-set_global_vars_0()
+   SetgaSDbfs()
 
-gModul   := oApp:cName
-gVerzija := oApp:cVerzija
+   set_global_vars_0()
 
-gAppSrv := .f.
+   gModul   := oApp:cName
+   gVerzija := oApp:cVerzija
 
-SetNaslov(oApp)
+   gAppSrv := .F.
 
-oApp:oDatabase:lAdmin:=.t.
+   SetNaslov( oApp )
 
-CreGParam()
+   oApp:oDatabase:lAdmin := .T.
 
-set_global_vars_0_prije_prijave()
+   CreGParam()
 
-// inicijalizacija, prijava
-InitE( oApp )
+   set_global_vars_0_prije_prijave()
 
-set_global_vars_0_nakon_prijave()
+   // inicijalizacija, prijava
+   InitE( oApp )
 
-if oApp:lTerminate
-    return
-endif
+   set_global_vars_0_nakon_prijave()
 
-oApp:oDatabase:install()
+   IF oApp:lTerminate
+      RETURN
+   ENDIF
 
-KonvTable()
+   oApp:oDatabase:install()
 
-IniPrinter()
+   KonvTable()
 
-gReadOnly := .f.
+   IniPrinter()
 
-SET EXCLUSIVE OFF
+   gReadOnly := .F.
 
-//Setuj globalne varijable varijable modula 
-oApp:setGVars()
+   SET EXCLUSIVE OFF
 
-return
+   // Setuj globalne varijable varijable modula
+   oApp:setGVars()
 
-
-
-
-// --------------------------------------------------------
-// --------------------------------------------------------
-function SetNaslov(oApp)
-gNaslov:= oApp:cName + " F18, " + oApp:cPeriod 
-return
+   RETURN .T.
 
 
-// -------------------------------------------------
-// -------------------------------------------------
-function InitE(oApp)
 
-if (oApp:cKorisn<>nil .and. oApp:cSifra==nil)
 
-    ? "Koristenje:  ImePrograma "
-    ? "             ImePrograma ImeKorisnika Sifra"
-    ?
-    quit
+FUNCTION SetNaslov( oApp )
 
-endif
+   gNaslov := oApp:cName + " F18, " + oApp:cPeriod
 
-AFILL(h,"")
+   RETURN .T.
 
-nOldCursor:=IIF(readinsert(),2,1)
 
-if !gAppSrv
-  standardboje()
-endif
+FUNCTION InitE( oApp )
 
-SET KEY K_INS TO ToggleINS()
+   IF ( oApp:cKorisn <> NIL .AND. oApp:cSifra == nil )
+
+      ? "Koristenje:  ImePrograma "
+      ? "             ImePrograma ImeKorisnika Sifra"
+      ?
+      QUIT
+
+   ENDIF
+
+   AFill( h, "" )
+
+   nOldCursor := iif( ReadInsert(), 2, 1 )
+
+   IF !gAppSrv
+      standardboje()
+   ENDIF
+
+   SET KEY K_INS TO ToggleINS()
 
 #ifdef __PLATFORM__DARWIN
-    SET KEY K_F12 TO ToggleIns()
+   SET KEY K_F12 TO ToggleIns()
 #endif
 
-SET MESSAGE TO 24 CENTER
-SET DATE GERMAN
-SET SCOREBOARD OFF
+   SET MESSAGE TO 24 CENTER
+   SET DATE GERMAN
+   SET SCOREBOARD OFF
 
-SET CONFIRM ON
+   SET CONFIRM ON
 
-SET WRAP ON
-SET ESCAPE ON
-SET SOFTSEEK ON
-// naslovna strana
+   SET WRAP ON
+   SET ESCAPE ON
+   SET SOFTSEEK ON
+   // naslovna strana
 
-if gAppSrv
-  ? gNaslov, oApp:cVerzija  
-  Prijava(oApp, .f. )
-  return
-endif
+   IF gAppSrv
+      ? gNaslov, oApp:cVerzija
+      Prijava( oApp, .F. )
+      RETURN
+   ENDIF
 
-NaslEkran(.t.)
-ToggleIns()
-ToggleIns()
+   NaslEkran( .T. )
+   ToggleIns()
+   ToggleIns()
 
-@ 10,35 SAY ""
-// prijava
+   @ 10, 35 SAY ""
+   // prijava
 
-if !oApp:lStarted
-  if (oApp:cKorisn<>nil .and. oApp:cSifra<>nil)
-   if oApp:cP3<>nil 
-     Prijava(oApp,.f.)  // bez prijavnog Box-a
-   else
-     Prijava(oApp)
-     PokreniInstall(oApp)
-   endif
-  else
-   Prijava(oApp)
-  endif
-endif
+   IF !oApp:lStarted
+      IF ( oApp:cKorisn <> NIL .AND. oApp:cSifra <> nil )
+         IF oApp:cP3 <> nil
+            Prijava( oApp, .F. )  // bez prijavnog Box-a
+         ELSE
+            Prijava( oApp )
+            PokreniInstall( oApp )
+         ENDIF
+      ELSE
+         Prijava( oApp )
+      ENDIF
+   ENDIF
 
-say_database_info()
-return nil
+   say_database_info()
 
-
-
-function PokreniInstall(oApp)
-
-local cFile
-local lPitaj
-
-lPitaj:=.f.
-
-cFile:=oApp:oDatabase:cDirPriv
-
-if (cFile==nil)
-  return
-endif
-
-if !IsDirectory(cFile)
-  lPitaj:=.t.
-endif
-
-cFile:=oApp:oDatabase:cDirSif
-if !IsDirectory(cFile)
-  lPitaj:=.t.
-endif
-
-cFile:=oApp:oDatabase:cDirKum
-if !IsDirectory(cFile)
-  lPitaj:=.t.
-endif
-
-if lPitaj
-  if Pitanje(,"Pokrenuti instalacijsku proceduru ?","D")=="D"
-    oApp:oDatabase:install()
-  endif
-endif
-
-return
+   RETURN NIL
 
 
 
-function mpar37(x, oApp)
+FUNCTION PokreniInstall( oApp )
+
+   LOCAL cFile
+   LOCAL lPitaj
+
+   lPitaj := .F.
+
+   cFile := oApp:oDatabase:cDirPriv
+
+   IF ( cFile == nil )
+      RETURN
+   ENDIF
+
+   IF !IsDirectory( cFile )
+      lPitaj := .T.
+   ENDIF
+
+   cFile := oApp:oDatabase:cDirSif
+   IF !IsDirectory( cFile )
+      lPitaj := .T.
+   ENDIF
+
+   cFile := oApp:oDatabase:cDirKum
+   IF !IsDirectory( cFile )
+      lPitaj := .T.
+   ENDIF
+
+   IF lPitaj
+      IF Pitanje(, "Pokrenuti instalacijsku proceduru ?", "D" ) == "D"
+         oApp:oDatabase:install()
+      ENDIF
+   ENDIF
+
+   RETURN
 
 
-// proslijedjeni su parametri
-lp3:=oApp:cP3
-lp4:=oApp:cP4
-lp5:=oApp:cP5
-lp6:=oApp:cP6
-lp7:=oApp:cP7
 
-return ( (lp3<>NIL .and. upper(lp3)==x) .or. (lp4<>NIL .and. upper(lp4)==x) .or. ;
-         (lp5<>NIL .and. upper(lp5)==x) .or. (lp6<>NIL .and. upper(lp6)==x) .or. ;
-         (lp7<>NIL .and. upper(lp7)==x) )
+FUNCTION mpar37( x, oApp )
 
+   // proslijedjeni su parametri
+   lp3 := oApp:cP3
+   lp4 := oApp:cP4
+   lp5 := oApp:cP5
+   lp6 := oApp:cP6
+   lp7 := oApp:cP7
 
-
-function mpar37cnt(oApp)
-
-local nCnt:=0
-
-if oApp:cP3<>nil
-  ++nCnt
-endif
-if oApp:cP4<>nil
-  ++nCnt
-endif
-if oApp:cP5<>nil
-  ++nCnt
-endif
-if oApp:cP6<>nil
-  ++nCnt
-endif
-if oApp:cP7<>nil
-  ++nCnt
-endif
-
-return nCnt
+   RETURN ( ( lp3 <> NIL .AND. Upper( lp3 ) == x ) .OR. ( lp4 <> NIL .AND. Upper( lp4 ) == x ) .OR. ;
+      ( lp5 <> NIL .AND. Upper( lp5 ) == x ) .OR. ( lp6 <> NIL .AND. Upper( lp6 ) == x ) .OR. ;
+      ( lp7 <> NIL .AND. Upper( lp7 ) == x ) )
 
 
-function mparstring(oApp)
 
-local cPars
-cPars:=""
+FUNCTION mpar37cnt( oApp )
 
-if oApp:cP3<>NIL
-  cPars+="'"+oApp:cP3+"'"
-endif
-if oApp:cP4<>NIL
-  if !empty(cPars); cPars+=", ";endif
-  cPars+="'"+oApp:cP4+"'"
-endif
-if oApp:cP5<>NIL
-  if !empty(cPars); cPars+=", ";endif
-  cPars+="'"+oApp:cP5+"'"
-endif
-if oApp:cP6<>NIL
-  if !empty(cPars); cPars+=", ";endif
-  cPars+="'"+oApp:cP6+"'"
-endif
-if oApp:cP7<>NIL
-  if !empty(cPars); cPars+=", ";endif
-  cPars+="'"+oApp:cP7+"'"
-endif
+   LOCAL nCnt := 0
 
-return cPars
+   IF oApp:cP3 <> nil
+      ++nCnt
+   ENDIF
+   IF oApp:cP4 <> nil
+      ++nCnt
+   ENDIF
+   IF oApp:cP5 <> nil
+      ++nCnt
+   ENDIF
+   IF oApp:cP6 <> nil
+      ++nCnt
+   ENDIF
+   IF oApp:cP7 <> nil
+      ++nCnt
+   ENDIF
+
+   RETURN nCnt
+
+
+FUNCTION mparstring( oApp )
+
+   LOCAL cPars
+
+   cPars := ""
+
+   IF oApp:cP3 <> NIL
+      cPars += "'" + oApp:cP3 + "'"
+   ENDIF
+   IF oApp:cP4 <> NIL
+      IF !Empty( cPars ); cPars += ", ";ENDIF
+      cPars += "'" + oApp:cP4 + "'"
+   ENDIF
+   IF oApp:cP5 <> NIL
+      IF !Empty( cPars ); cPars += ", ";ENDIF
+      cPars += "'" + oApp:cP5 + "'"
+   ENDIF
+   IF oApp:cP6 <> NIL
+      IF !Empty( cPars ); cPars += ", ";ENDIF
+      cPars += "'" + oApp:cP6 + "'"
+   ENDIF
+   IF oApp:cP7 <> NIL
+      IF !Empty( cPars ); cPars += ", ";ENDIF
+      cPars += "'" + oApp:cP7 + "'"
+   ENDIF
+
+   RETURN cPars
 
 
 
@@ -258,94 +256,94 @@ return cPars
  *  \todo Prijava je primjer klasicne kobasica funkcije ! Razbiti je.
  *  \todo prijavu na osnovu scshell.ini izdvojiti kao posebnu funkciju
  */
- 
-function Prijava(oApp, lScreen)
+
+FUNCTION Prijava( oApp, lScreen )
+
+   LOCAL i
+   LOCAL nRec
+   LOCAL cKontrDbf
+   LOCAL cCD
+
+   LOCAL cPom
+   LOCAL cPom2
+   LOCAL lRegularnoZavrsen
+
+   IF lScreen == nil
+      lScreen := .T.
+   ENDIF
 
 
-local i
-local nRec
-local cKontrDbf
-local cCD
+   @ 3, 4 SAY ""
+   IF ( gfKolor == "D" .AND. IsColor() )
+      Normal := "GR+/B,R/N+,,,N/W"
+   ELSE
+      Normal := "W/N,N/W,,,N/W"
+   ENDIF
 
-local cPom
-local cPom2
-local lRegularnoZavrsen
+   IF !oApp:lStarted
+      IF lScreen
+         // korisn->nk napustiti
+         // PozdravMsg(gNaslov, gVerzija, korisn->nk)
+         // lGreska:=.f.
+         PozdravMsg( gNaslov, gVerzija, .F. )
+      ENDIF
+   ENDIF
 
-if lScreen==nil
-  lScreen:=.t.
-endif
+   IF ( gfKolor == "D" .AND. IsColor() )
+      Normal := "W/B,R/N+,,,N/W"
+   ELSE
+      Normal := "W/N,N/W,,,N/W"
+   ENDIF
 
+   CLOSERET
 
-@ 3,4 SAY ""
-if (gfKolor=="D" .and. ISCOLOR())
-  Normal:="GR+/B,R/N+,,,N/W"
-else
-  Normal:="W/N,N/W,,,N/W"
-endif
+   RETURN NIL
 
-if !oApp:lStarted
-  if lScreen
-    //korisn->nk napustiti
-    //PozdravMsg(gNaslov, gVerzija, korisn->nk)
-    //lGreska:=.f.
-    PozdravMsg(gNaslov, gVerzija, .f.)
-  endif
-endif
+STATIC FUNCTION PrijRunInstall( m_sif, cKom )
 
-if (gfKolor=="D" .and. ISCOLOR())
-  Normal := "W/B,R/N+,,,N/W"
-else
-  Normal := "W/N,N/W,,,N/W"
-endif
+   IF m_sif == "I"
+      cKom := cKom := "I" + gModul + " " + ImeKorisn + " " + CryptSC( sifrakorisn )
+   ENDIF
+   IF m_sif == "IM"
+      cKom += "  /M"
+   ENDIF
+   IF m_sif == "II"
+      cKom += "  /I"
+   ENDIF
+   IF m_sif == "IR"
+      cKom += "  /R"
+   ENDIF
+   IF m_sif == "IP"
+      cKom += "  /P"
+   ENDIF
+   IF m_sif == "IB"
+      cKom += "  /B"
+   ENDIF
+   RunInstall( cKom )
 
-CLOSERET
-return nil
-
-static function PrijRunInstall(m_sif, cKom)
-
-
-if m_sif=="I"
-  cKom:=cKom:="I"+gModul+" "+ImeKorisn+" "+CryptSC(sifrakorisn)
-endif
-if m_sif=="IM"
-  cKom+="  /M"
-endif
-if m_sif=="II"
-  cKom+="  /I"
-endif
-if m_sif=="IR"
-  cKom+="  /R"
-endif
-if m_sif=="IP"
-  cKom+="  /P"
-endif
-if m_sif=="IB"
-  cKom+="  /B"
-endif
-RunInstall(cKom)
-
-return
+   RETURN
 
 
-function RunInstall(cKom)
+FUNCTION RunInstall( cKom )
 
-local lIB
+   LOCAL lIB
 
-lIB:=.f.
+   lIB := .F.
 
-if (cKom==nil)
-  cKom:=""
-endif
+   IF ( cKom == nil )
+      cKom := ""
+   ENDIF
 
-//MsgBeep("cKom="+cKom)
-if (" /B" $ cKom)
-  goModul:cP7:="/B"
-  lIb:=.t.
-endif
-goModul:oDatabase:install()
+   // MsgBeep("cKom="+cKom)
+   IF ( " /B" $ cKom )
+      goModul:cP7 := "/B"
+      lIb := .T.
+   ENDIF
+   goModul:oDatabase:install()
 
-if (lIB)
-  goModul:cP7:=""
-  lIB:=.f.
-endif
+   IF ( lIB )
+      goModul:cP7 := ""
+      lIB := .F.
+   ENDIF
 
+   RETURN .T.

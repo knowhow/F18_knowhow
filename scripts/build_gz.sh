@@ -26,7 +26,7 @@ then
 fi
 
 
-WINDOWS=`echo $HB_PLATFORM| grep -c win`
+WINDOWS=`echo $HB_ARCHITECTURE| grep -c win`
 DARWIN=`uname| grep -c Darwin`
 
 #ARCH=`$HOSTTYPE`

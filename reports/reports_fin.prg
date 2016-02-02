@@ -20,7 +20,7 @@ FUNCTION fin_suban_izvjestaji()
 
    AAdd( _opc, "1. subanalitička kartica                           " )
    AAdd( _opcexe, {|| fin_suban_kartica_sql( NIL ) } )
-   AAdd( _opc, "2. subanalitiška specifikacija  " )
+   AAdd( _opc, "2. subanalitička specifikacija  " )
    AAdd( _opcexe, {|| fin_suban_specifikacija_sql() } )
 
    f18_menu( "fr", .F., _izbor, _opc, _opcexe )

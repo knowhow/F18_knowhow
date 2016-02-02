@@ -1,64 +1,62 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+/*
+ * This file is part of the bring.out knowhow ERP, a free and open source
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
 
+#include "f18.ch"
 
-#include "hbclass.ch"
 
-// ----------------------------------------------------------
-// ----------------------------------------------------------
-CLASS TDbReports INHERIT TDB 
-	method New
-	method install	
-	method kreiraj	
+
+CLASS TDbReports INHERIT TDB
+
+   METHOD NEW
+   METHOD install
+   METHOD kreiraj
+
 ENDCLASS
 
 
-// --------------------------------------------
-// --------------------------------------------
-method New()
 
- ::super:new()
- ::cName:="REPORTS"
- ::lAdmin:=.f.
- ::kreiraj()
+METHOD New()
 
-return self
+   ::super:new()
+   ::cName := "REPORTS"
+   ::lAdmin := .F.
+   ::kreiraj()
 
-// -----------------------------------------------------------------
-// -----------------------------------------------------------------
-method install()
-install_start( goModul, .f. )
-return
+   RETURN self
 
 
-// -----------------------------------------------------------------
-// -----------------------------------------------------------------
-method kreiraj(nArea)
-local cImeDbf
+METHOD install()
 
-cDirRad := my_home()
-cDirSif := my_home()
-cDirPriv := my_home()
+   install_start( goModul, .F. )
 
-if ( nArea == NIL )
-	nArea := -1
-endif
-
-Beep(1)
-
-if ( nArea <> -1 )
-	CreSystemDb( nArea )
-endif
-
-return
+   RETURN
 
 
 
+METHOD kreiraj( nArea )
+
+   LOCAL cImeDbf
+
+   cDirRad := my_home()
+   cDirSif := my_home()
+   cDirPriv := my_home()
+
+   IF ( nArea == NIL )
+      nArea := -1
+   ENDIF
+
+   Beep( 1 )
+
+   IF ( nArea <> -1 )
+      CreSystemDb( nArea )
+   ENDIF
+
+   RETURN

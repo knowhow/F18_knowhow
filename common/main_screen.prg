@@ -1,16 +1,16 @@
 /*
- * This file is part of the bring.out FMK, a free and open source
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+ * This file is part of the bring.out knowhow ERP, a free and open source
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
 
-
 #include "f18.ch"
+
 
 FUNCTION TDesktopNew()
 
@@ -24,12 +24,9 @@ FUNCTION TDesktopNew()
    oObj:cColTitle := "GR+/N"
    oObj:cColBorder := "GR+/N"
    oObj:cColFont := "W/N  ,R/BG ,,,B/W"
-	
+
    RETURN oObj
 
-
-
-#include "hbclass.ch"
 
 CREATE CLASS TDesktop
 
@@ -39,7 +36,7 @@ CREATE CLASS TDesktop
    VAR cColTitle
    VAR cColBorder
    VAR cColFont
-	
+
 
    // tekuce koordinate
    VAR nRow
@@ -79,7 +76,7 @@ METHOD showLine( cTekst, cRow )
       @ nRow, nCol SAY cTekst
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 METHOD setColors( cIzbor )
@@ -90,7 +87,7 @@ METHOD setColors( cIzbor )
          ::cColTitle := "GR+/N"
          ::cColBorder  := "GR+/N"
          ::cColFont := "W/N  ,R/BG ,,,B/W"
-	
+
       CASE cIzbor == "B2"
          ::cColTitle := "N/G"
          ::cColBorder := "N/G"
@@ -136,7 +133,7 @@ METHOD showSezona( cSezona )
 
    @ 3, MAXCOLS() -10 SAY "Sez: " + cSezona COLOR INVERT
 
-   RETURN
+   RETURN .T.
 
 
 METHOD showMainScreen( lClear )
@@ -154,7 +151,8 @@ METHOD showMainScreen( lClear )
    @ 0, 2 SAY '<ESC> Izlaz' COLOR INVERT
    @ 0, Col() + 2 SAY danasnji_datum() COLOR INVERT
 
-   @ MAXROWS() - 1, MAXCOLS() - 16 SAY fmklibver()
+   // TODO: ukloniti
+   // @ MAXROWS() - 1, MAXCOLS() - 16 SAY fmklibver()
 
    DispBox( 2, 0, 4, MAXCOLS() - 1, B_DOUBLE + ' ', NORMAL )
 
@@ -168,14 +166,14 @@ METHOD showMainScreen( lClear )
    f18_ispisi_status_podrucja( _ver_pos )
    f18_ispisi_status_modula()
 
-   RETURN
+   RETURN .T.
 
 
 FUNCTION f18_ispisi_status_log_levela()
 
-   @ MAXROWS() -1, 1 SAY "log level: " + AllTrim( Str( log_level() ) )
+   @ MAXROWS(), 1 SAY "log level: " + AllTrim( Str( log_level() ) )
 
-   RETURN
+   RETURN .T.
 
 
 FUNCTION f18_ispisi_status_podrucja( position )
@@ -197,7 +195,6 @@ FUNCTION f18_ispisi_status_podrucja( position )
    ENDIF
 
    RETURN
-
 
 
 

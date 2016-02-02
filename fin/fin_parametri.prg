@@ -162,29 +162,24 @@ STATIC FUNCTION par_izgled()
    @ m_x + nX, m_y + 2 SAY "*************** Varijante izgleda i prikaza:"
 
    nX := nX + 2
-
    @ m_x + nX, m_y + 2 SAY "Potpis na kraju naloga? (D/N):" GET gPotpis VALID gPotpis $ "DN"  PICT "@!"
 
    ++ nX
-
-   @ m_x + nX, m_y + 2 SAY "Varijanta izvjestaja 0-dvovalutno 1-jednovalutno " GET gVar1 VALID gVar1 $ "01"
-
-   ++ nX
-
-   @ m_x + nX, m_y + 2 SAY "Prikaz iznosa u " + ValPomocna() GET gPicDEM
+   @ m_x + nX, m_y + 2 SAY8 "Varijanta izvještaja 0-dvovalutno 1-jednovalutno " GET gVar1 VALID gVar1 $ "01"
 
    ++ nX
-
-   @ m_x + nX, m_y + 2 SAY "Prikaz iznosa u " + ValDomaca() GET gPicBHD
-
-   ++ nX
-   @ m_x + nX, m_y + 2 SAY "Sintetika i analitika se kreiraju u izvjestajima? (D/N)" GET gSAKrIz VALID gSAKrIz $ "DN" PICT "@!"
+   @ m_x + nX, m_y + 2 SAY8 "Prikaz iznosa u " + ValPomocna() GET gPicDEM
 
    ++ nX
-   @ m_x + nX, m_y + 2 SAY "U subanalitici prikazati nazive i konta i partnera? (D/N)" GET gVSubOp VALID gVSubOp $ "DN" PICTURE "@!"
+   @ m_x + nX, m_y + 2 SAY8 "Prikaz iznosa u " + ValDomaca() GET gPicBHD
 
    ++ nX
+   @ m_x + nX, m_y + 2 SAY8 "Sintetika i analitika se kreiraju u izvještajima? (D/N)" GET gSAKrIz VALID gSAKrIz $ "DN" PICT "@!"
 
+   ++ nX
+   @ m_x + nX, m_y + 2 SAY8 "U subanalitici prikazati nazive i konta i partnera? (D/N)" GET gVSubOp VALID gVSubOp $ "DN" PICTURE "@!"
+
+   ++ nX
    @ m_x + nX, m_y + 2 SAY "Razmak izmedju kartica - br.redova (99-uvijek nova stranica): " GET gnRazRed PICTURE "99"
 
    ++ nX
@@ -197,14 +192,13 @@ STATIC FUNCTION par_izgled()
       fin_write_params()
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 // ----------------------------------
 // citanje parametara
 // ----------------------------------
 FUNCTION fin_read_params()
-
 
    gDatval := fetch_metric( "fin_evidencija_datum_valute", nil, gDatVal )
    gDatnal := fetch_metric( "fin_evidencija_datum_naloga", nil, gDatNal )
@@ -237,7 +231,7 @@ FUNCTION fin_read_params()
 
    gVar1 := PadR( gVar1, 1 )
 
-   RETURN
+   RETURN .T.
 
 
 // -------------------------------

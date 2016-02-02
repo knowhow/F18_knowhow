@@ -34,24 +34,19 @@ FUNCTION _f_brnal( cBrNal )
 
 FUNCTION Izvj0()
 
-   Izvjestaji()
-
-   RETURN
+   RETURN fin_izvjestaji()
 
 
 
 FUNCTION Preknjizenje()
 
-   Prefin_unos_naloga()
-
-   RETURN
+   RETURN Prefin_unos_naloga()
 
 
 FUNCTION Prebfin_kartica()
 
-   fin_prekart()
+   RETURN fin_prekart()
 
-   RETURN
 
 
 FUNCTION GenPocStanja()
@@ -127,7 +122,7 @@ FUNCTION ImaUSubanNemaUNalog()
             SELECT &_alias
 
             _broj_naloga := field->idfirma + "-" + field->idvn + "-" + field->brnal
-            _n_scan := AScan( _a_error, {|_var| _var[ 1 ] == _alias .AND. _var[ 2 ] == _broj_naloga } )
+            _n_scan := AScan( _a_error, {| _var| _var[ 1 ] == _alias .AND. _var[ 2 ] == _broj_naloga } )
 
             // dadaj u matricu gresaka, ako nema tog naloga
             IF _n_scan == 0

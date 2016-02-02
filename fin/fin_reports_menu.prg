@@ -12,7 +12,7 @@
 #include "f18.ch"
 
 
-FUNCTION Izvjestaji()
+FUNCTION fin_izvjestaji()
 
    PRIVATE Izbor := 1
    PRIVATE opc := {}

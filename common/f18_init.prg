@@ -191,7 +191,7 @@ FUNCTION f18_init_app_login( force_connect, arg_v )
 STATIC FUNCTION _show_info()
 
    LOCAL _x, _y
-   LOCAL _txt := ""
+   LOCAL _txt
 
    _x := ( MAXROWS() / 2 ) - 12
    _y := MAXCOLS()
@@ -205,11 +205,21 @@ STATIC FUNCTION _show_info()
    @ _x + 1, 2 SAY8 _txt
 
 
+   Set( _SET_EVENTMASK, INKEY_ALL )
+
+
    hb_idleAdd( {||  hb_DispOutAt( maxrows(),  maxcols() - 8, Time() ) } )
+   hb_idleAdd( {||  hb_DispOutAt( maxrows(),  maxcols() - 8 - 8 - 1, "< CALC >" ), MUpdate(), ;
+      iif( !in_calc() .AND. MINRECT( maxrows(), maxcols() - 8 - 8 - 1, maxrows(), maxcols() - 8 - 1 ), Calc(), NIL ) } )
 
    RETURN .T.
 
+FUNCTION MUPDATE()
 
+   //@ MaxRow() - 1,  4 SAY MRow() PICTURE "9999"
+   //@ MaxRow() - 1, 12 SAY MCol() PICTURE "9999"
+
+   RETURN 0
 
 // prelazak iz sezone u sezonu
 FUNCTION f18_old_session()
@@ -358,9 +368,9 @@ FUNCTION set_screen_dimensions()
       QUIT_1
    ENDIF
 
-//#ifdef F18_DEBUG
-//   MsgBeep( Str( maxrows() ) + " " +  Str( maxcols() ) )
-//#endif
+   // #ifdef F18_DEBUG
+   // MsgBeep( Str( maxrows() ) + " " +  Str( maxcols() ) )
+   // #endif
 
    RETURN .T.
 
@@ -831,7 +841,7 @@ FUNCTION my_server_login( params, conn_type )
       RETURN .F.
 
    ENDIF
-   
+
    RETURN .T.
 
 FUNCTION my_server_logout()

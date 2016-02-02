@@ -14,24 +14,27 @@
 
 FUNCTION GlobalErrorHandler( err_obj, lShowErrorReport, lQuitApp )
 
-   LOCAL _i, _err_code
+   LOCAL _i, _err_code, _cmd
    LOCAL _out_file
    LOCAL _msg, _log_msg := "BUG REPORT: "
    LOCAL lNotify := .F.
+   LOCAL bErr
 
-   AltD()
+   bErr := ErrorBlock( {| oError | Break( oError ) })
 
    hb_default( @lQuitApp, .T. )
    hb_default( @lShowErrorReport, .T. )
 
    IF !lShowErrorReport
       lNotify := .T.
+   ELSE
+      BEEP( 5 )
    ENDIF
 
    _err_code := err_obj:genCode
 
 
-   BEEP( 5 )
+
    _out_file := my_home_root() + "error.txt"
 
    PTxtSekvence()
@@ -52,7 +55,6 @@ FUNCTION GlobalErrorHandler( err_obj, lShowErrorReport, lQuitApp )
    ? _msg
 
    _log_msg += _msg
-
    ?
 
    _msg := "SubSystem/severity    : " + err_obj:SubSystem + " " + to_str( err_obj:severity )
@@ -152,7 +154,9 @@ FUNCTION GlobalErrorHandler( err_obj, lShowErrorReport, lQuitApp )
       QUIT_1
    ENDIF
 
-   RETURN
+   ErrorBlock( bErr )
+
+   RETURN .T.
 
 
 

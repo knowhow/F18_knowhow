@@ -22,9 +22,8 @@ FUNCTION gSjeciStr()
    ELSE
       QQOut( gSjeciStr )
    ENDIF
-   konvtable()
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -34,7 +33,6 @@ FUNCTION gOtvorStr()
    IF gPrinter <> "R"
       QQOut( gOtvorStr )
    ENDIF
-   konvtable()
 
    RETURN
 

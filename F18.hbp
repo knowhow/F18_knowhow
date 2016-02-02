@@ -19,12 +19,14 @@ common/*.prg
 libF18_narudzbenica.a
 libF18_string.a
 
--DDEFINE2
--DDEBUG
 -inc
 -Iinclude
 {F18_DEBUG}-DF18_DEBUG
 {F18_DEBUG}-b
+{F18_DEBUG}-trace
+
+{!F18_DEBUG}-q
+{F18_DEBUG}-lmy_hbuddall
 
 {F18_GT_CONSOLE}-DGT_DEFAULT_CONSOLE
 {F18_GT_QT}-DGT_DEFAULT_QT
@@ -39,9 +41,6 @@ libF18_string.a
 
 {LX_CENTOS&linux}-lpq
 {!LX_CENTOS&linux}-lpq
-
-{darwin|linux|win}-lmy_hbuddall
-
 
 F18.hbc
 sddpg.hbc

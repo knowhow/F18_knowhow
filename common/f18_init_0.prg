@@ -32,11 +32,9 @@ FUNCTION start_module( oApp, lSezone )
 
    gModul   := oApp:cName
    gVerzija := oApp:cVerzija
-
    gAppSrv := .F.
 
    SetNaslov( oApp )
-
 
    CreGParam()
 
@@ -50,9 +48,6 @@ FUNCTION start_module( oApp, lSezone )
    IF oApp:lTerminate
       RETURN .T.
    ENDIF
-
-
-   KonvTable()
 
    IniPrinter()
 
@@ -89,9 +84,8 @@ FUNCTION InitE( oApp )
 
    nOldCursor := iif( ReadInsert(), 2, 1 )
 
-   IF !gAppSrv
-      standardboje()
-   ENDIF
+   standardboje()
+
 
    SET KEY K_INS TO ToggleINS()
 
@@ -102,19 +96,13 @@ FUNCTION InitE( oApp )
    SET MESSAGE TO 24 CENTER
    SET DATE GERMAN
    SET SCOREBOARD OFF
-
    SET CONFIRM ON
-
    SET WRAP ON
    SET ESCAPE ON
    SET SOFTSEEK ON
-   // naslovna strana
 
-   IF gAppSrv
-      ? gNaslov, oApp:cVerzija
-      Prijava( oApp, .F. )
-      RETURN
-   ENDIF
+
+   AltD()
 
    NaslEkran( .T. )
    ToggleIns()
@@ -233,7 +221,6 @@ FUNCTION Prijava( oApp, lScreen )
    IF lScreen == nil
       lScreen := .T.
    ENDIF
-
 
    @ 3, 4 SAY ""
    IF ( gfKolor == "D" .AND. IsColor() )

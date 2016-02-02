@@ -10,8 +10,7 @@
  */
 
 #include "f18.ch"
-#include "inkey.ch"
-#include "hbthread.ch"
+
 
 STATIC __relogin_opt := .F.
 
@@ -26,9 +25,10 @@ FUNCTION Main( p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11 )
 
    set_f18_params( p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11 )
 
+
    f18_init_app( _arg_v )
 
-   RETURN
+   RETURN .T.
 
 #endif
 
@@ -142,7 +142,7 @@ FUNCTION module_menu( arg_v )
          ENDIF
 
       CASE mnu_choice > 0
-         IF mnu_choice <= LEN( menuexec )
+         IF mnu_choice <= Len( menuexec )
             Eval( menuexec[ mnu_choice ] )
          ENDIF
       ENDCASE
@@ -253,4 +253,4 @@ STATIC FUNCTION set_menu_choices( menuop, menuexec, p3, p4, p5, p6, p7 )
 
 
 FUNCTION hb_SendMail( ... )
-  RETURN tip_MailSend( ... )
+   RETURN tip_MailSend( ... )

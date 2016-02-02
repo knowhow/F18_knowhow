@@ -42,17 +42,17 @@ FUNCTION fakt_unos_dokumenta()
    PRIVATE ImeKol := { ;
       { "Red.br",  {|| dbSelectArea( F_FAKT_PRIPR ), Rbr()                   } }, ;
       { "Partner/Roba",  {|| Part1Stavka() + Roba()  } }, ;
-      { "Kolicina",  {|| kolicina  } }, ;
+      { _ue("Količina"),  {|| kolicina  } }, ;
       { "Cijena",    {|| Cijena    }, "cijena"    }, ;
       { "Rabat",    {|| Transform( Rabat, "999.99" ) }, "Rabat"  }, ;
-      { "Real.Marza", {|| Transform( get_realizovana_marza( NIL, field->idRoba, field->datDok, field->Cijena * ( 1 -field->Rabat / 100 ) ), "999.99" )  } }, ;
-      { "Nab.Cj",   {|| Transform( get_nabavna_cijena( NIL, field->idRoba, field->DatDok ), "99999.999" ) } }, ;
+      { _ue("Real.Marža"), {|| fakt_unos_prikaz_marza() } }, ;
+      { "Nab.Cj",   {|| fakt_unos_prikaz_nab_cj() } }, ;
       { "RJ",  {|| idfirma                 }, "idfirma"   }, ;
       { "Serbr",         {|| SerBr                   }, "serbr"     }, ;
       { "Partn",         {|| IdPartner               }, "IdPartner" }, ;
       { "IdTipDok",      {|| IdTipDok                }, "Idtipdok"  }, ;
       { "DinDem",        {|| dindem                  }, "dindem"    }, ;
-      { "Brdok",         {|| Brdok                   }, "Brdok"     }, ;
+      { "Brdok",        {|| Brdok                   }, "Brdok"     }, ;
       { "DatDok",        {|| DATDOK                  }, "DATDOK"    } ;
       }
 
@@ -65,7 +65,6 @@ FUNCTION fakt_unos_dokumenta()
       AAdd( Kol, _i )
    NEXT
 
-   // inicijalizacija staticki varijabli...
    // marker fiskalnih racuna
    __fiscal_marker := .F.
 
@@ -82,9 +81,9 @@ FUNCTION fakt_unos_dokumenta()
 
    _opt_d := ( _y / 4 )
 
-   _opt_row := PadR( "<c+N> Nova stavka", _opt_d ) + _sep
-   _opt_row += PadR( "<ENT> Ispravka", _opt_d ) + _sep
-   _opt_row += PadR( hb_UTF8ToStr( "<c+T> Briši stavku" ), _opt_d ) + _sep
+   _opt_row := PadR( _ue("<c+N> Nova stavka"), _opt_d ) + _sep
+   _opt_row += PadR( _ue("<ENT> Ispravka"), _opt_d ) + _sep
+   _opt_row += PadR( _ue( "<c+T> Briši stavku" ), _opt_d ) + _sep
 
    @ m_x + _x - 4, m_y + 2 SAY _opt_row
 
@@ -115,6 +114,24 @@ FUNCTION fakt_unos_dokumenta()
    my_close_all_dbf()
 
    RETURN .T.
+
+
+STATIC FUNCTION fakt_unos_prikaz_marza()
+
+   IF field->IdTipDok == "10" .OR. field->IdTipDok == "20"
+      RETURN Transform( get_realizovana_marza( NIL, field->idRoba, field->datDok, field->Cijena * ( 1 -field->Rabat / 100 ) ), "999.99" )
+   ENDIF
+
+   RETURN "000.00"
+
+
+STATIC FUNCTION fakt_unos_prikaz_nab_cj()
+
+   IF field->IdTipDok == "10" .OR. field->IdTipDok == "20"
+      RETURN Transform( get_nabavna_cijena( NIL, field->idRoba, field->DatDok ), "99999.999" )
+   ENDIF
+
+   RETURN "00000.000"
 
 
 

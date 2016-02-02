@@ -149,15 +149,14 @@ FUNCTION sjeci_traku( cSekv )
 
    // {
    IF Empty( cSekv )
-      RETURN
+      RETURN .F.
    ENDIF
    Setpxlat()
    IF gPrinter <> "R"
       QQOut( cSekv )
    ENDIF
-   konvtable()
 
-   RETURN
+   RETURN .T.
 // }
 
 
@@ -172,9 +171,8 @@ FUNCTION otvori_ladicu( cSekv )
    IF gPrinter <> "R"
       QQOut( cSekv )
    ENDIF
-   konvtable()
 
-   RETURN
+   RETURN .T.
 
 
 // ----------------------------------------------

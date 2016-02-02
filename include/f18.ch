@@ -152,7 +152,7 @@
 
 #command ?U  [<explist,...>]         => QOutU( <explist> )
 #command ??U [<explist,...>]         => QQOutU( <explist> )
-
+#translate _ue( <arg> )              => hb_UTF8ToStr( <arg> )
 
 #command RREPLACE <f1> WITH <v1> [, <fN> WITH <vN> ]    ;
       => my_rlock();

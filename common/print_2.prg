@@ -263,7 +263,6 @@ FUNCTION gpPicH( nRows )
       cPom := PadL( AllTrim( Str( nRows ) ), 2, "0" )
       Setpxlat()
       QQOut( "#%PH0" + cPom + "#" )
-      konvtable( .T. )
    ENDIF
 
    RETURN ""
@@ -372,7 +371,6 @@ FUNCTION gRPL_Normal()
 
    Setpxlat()
    QQOut( gRPL_Normal )
-   konvtable( iif( gPrinter = "R", .T., NIL ) )
 
    RETURN ""
 
@@ -380,7 +378,6 @@ FUNCTION gRPL_Gusto()
 
    Setpxlat()
    QQOut( gRPL_Gusto )
-   konvtable( iif( gPrinter = "R", .T., NIL ) )
 
    RETURN ""
 
@@ -569,7 +566,6 @@ FUNCTION SetGParams( cs, ch, cid, cvar, cval )
 
    &cVar := cVal
    Wpar( cId, &cVar )
-   KonvTable()
    SELECT gparams
    USE
    PopWa()

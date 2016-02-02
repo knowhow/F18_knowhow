@@ -24,8 +24,6 @@ STATIC __f18_home_backup := NIL
 
 THREAD STATIC __log_handle := NIL
 
-STATIC __my_error_handler := NIL
-STATIC __global_error_handler := NIL
 STATIC __test_mode := .F.
 STATIC __no_sql_mode := .F.
 
@@ -82,8 +80,10 @@ FUNCTION f18_init_app( arg_v )
    set_global_vars_0()
    PtxtSekvence()
 
-   __my_error_handler := {| objError, lShowreport, lQuit | GlobalErrorHandler( objError, lShowReport, lQuit ) }
-   __global_error_handler := ErrorBlock( __my_error_handler )
+   ErrorBlock( {| objError, lShowreport, lQuit | GlobalErrorHandler( objError, lShowReport, lQuit ) } )
+
+   AltD()
+
 
    set_screen_dimensions()
 
@@ -460,7 +460,7 @@ FUNCTION post_login( gVars )
    in_dbf_refresh( .T. )
    cre_all_dbfs( _ver )
    in_dbf_refresh( .F. )
-   
+
    kreiraj_pa_napuni_partn_idbr_pdvb ()
 
    // inicijaliziraj "dbf_key_fields" u __f18_dbf hash matrici
@@ -972,11 +972,7 @@ FUNCTION set_f18_home( database )
 
    RETURN .T.
 
-FUNCTION my_error_handler()
-   RETURN  __my_error_handler
 
-FUNCTION global_error_handler()
-   RETURN  __global_error_handler
 
 FUNCTION dummy_error_handler()
    RETURN {| err| Break( err ) }
@@ -1147,8 +1143,7 @@ FUNCTION set_hot_keys()
    SetKey( K_SH_F1, {|| Calc() } )
    SetKey( K_SH_F6, {|| f18_old_session() } )
 
-   RETURN
-
+   RETURN .T.
 
 // ---------------------------------------------
 // pokreni odredjenu funkciju odmah na pocetku

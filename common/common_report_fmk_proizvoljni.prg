@@ -673,7 +673,7 @@ FUNCTION TxtUKod( cTxt, cBUI )
 
 FUNCTION StKod( cKod )
 
-   Setpxlat(); QQOut( cKod ); konvtable()
+   Setpxlat(); QQOut( cKod )
 
    RETURN ""
 

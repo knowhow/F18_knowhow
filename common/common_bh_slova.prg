@@ -193,9 +193,6 @@ FUNCTION KSto7_old( cStr )
 
    RETURN cStr
 
-FUNCTION KonvTable( fGraf )
-
-   RETURN NIL
 
 // ---------------------------------------------------
 // konverzija u utf-8

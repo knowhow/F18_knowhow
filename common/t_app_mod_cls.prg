@@ -359,7 +359,6 @@ METHOD gParams()
       WPar( "L8", AllTrim( gLokal ) )
    ENDIF
 
-   KonvTable()
 
    SELECT gparams
    USE

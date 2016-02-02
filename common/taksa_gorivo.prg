@@ -15,7 +15,7 @@ STATIC s_cId_taksa := "TAKGORI-M "
 
 
 STATIC FUNCTION is_modul_pos()
-   IF goModul:oDataBase:cName == "POS"
+   IF tekuci_modul() == "POS"
       RETURN .T.
    ELSE
       RETURN .F.

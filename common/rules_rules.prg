@@ -102,11 +102,11 @@ FUNCTION p_fmkrules( cId, dx, dy, aSpecKol, bRBlock )
    ENDIF
 
    cHeader += " "
-   cHeader += AllTrim( goModul:oDataBase:cName )
+   cHeader += AllTrim( tekuci_modul() )
    cHeader += " "
    cHeader += "pravila : RULES "
 
-   cModName := goModul:oDataBase:cName
+   cModName := tekuci_modul()
    cModName := PadR( cModName, 10 )
 
    // sredi kolone
@@ -130,7 +130,7 @@ STATIC FUNCTION set_mod_filt()
 
    LOCAL cFilt := ""
 
-   cFilt := "modul_name = " + cm2str( PadR( goModul:oDataBase:cName, 10 ) )
+   cFilt := "modul_name = " + cm2str( PadR( tekuci_modul(), 10 ) )
 
    SET FILTER to &cFilt
 
@@ -209,7 +209,7 @@ STATIC FUNCTION set_a_kol( aImeKol, aKol, aSpecKol )
 // ----------------------------------------------
 STATIC FUNCTION _w_mod_name( cName )
 
-   cName := PadR( goModul:oDataBase:cName, 10 )
+   cName := PadR( tekuci_modul(), 10 )
 
    RETURN .T.
 
@@ -289,7 +289,7 @@ FUNCTION _last_no( cRuleObj )
    LOCAL nNo := 0
    LOCAL nSelect := Select()
    LOCAL nRec := RecNo()
-   LOCAL cModul := PadR( goModul:oDataBase:cName, 10 )
+   LOCAL cModul := PadR( tekuci_modul(), 10 )
 
    cRuleObj := PadR( cRuleObj, 30 )
 

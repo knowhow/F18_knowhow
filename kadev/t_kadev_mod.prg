@@ -1,27 +1,24 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
 
 
 #include "kadev.ch"
-#include "hbclass.ch"
 
 
-// -----------------------------------------------
-// -----------------------------------------------
+
 CLASS TKadevMod FROM TAppMod
 	method New
 	method setGVars
 	method mMenu
 	method mMenuStandard
-	method initdb
 END CLASS
 
 // -----------------------------------------------
@@ -31,11 +28,6 @@ method new(p1, p2, p3, p4, p5, p6, p7, p8, p9)
 return self
 
 
-// -----------------------------------------------
-// -----------------------------------------------
-method initdb()
-::oDatabase:=TDbKadev():new()
-return nil
 
 
 // -----------------------------------------------
@@ -111,15 +103,15 @@ public gnLMarg := 1
 // lijeva margina
 public gnTMarg := 1
 // top-gornja margina teksta
-public gTabela := 1         
+public gTabela := 1
 // fino crtanje tabele
-public gA43 := "4"           
+public gA43 := "4"
 // format papira
-public gnRedova := 64        
+public gnRedova := 64
 // za ostranicavanje - broj redova po stranici
-public gOstr := "D"          
+public gOstr := "D"
 // ostranicavanje
-public gPostotak := "D"      
+public gPostotak := "D"
 // prikaz procenta uradjenog posla (znacajno kod
 // dugih cekanja na izvrsenje opcije)
 public gDodKar1 := "Karakteristika 1"
@@ -140,5 +132,3 @@ else
 endif
 
 return
-
-

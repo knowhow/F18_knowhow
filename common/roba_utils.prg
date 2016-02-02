@@ -17,10 +17,10 @@
 FUNCTION OpenDB()
 
    O_ROBA
-   IF ( goModul:oDataBase:cName == "KALK" )
+   IF ( tekuci_modul() == "KALK" )
       O_KALK
    ENDIF
-   IF ( goModul:oDataBase:cName == "FAKT" )
+   IF ( tekuci_modul() == "FAKT" )
       O_FAKT
    ENDIF
 

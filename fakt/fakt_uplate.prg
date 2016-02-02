@@ -326,6 +326,8 @@ STATIC FUNCTION StKartKup()
 // Izvjestaj koji aje salda svih kupaca
 // lPocStanje - .t.-generisi i pocetno stanje, .f.-daj samo pregled
 // -----------------------------------------------------------------------
+
+/*
 FUNCTION SaldaKupaca( lPocStanje )
 
    LOCAL nUkZaduz
@@ -381,7 +383,7 @@ FUNCTION SaldaKupaca( lPocStanje )
       ENDIF
 
       SET CURSOR ON
-	
+
       EXIT
 
    ENDDO
@@ -443,9 +445,9 @@ FUNCTION SaldaKupaca( lPocStanje )
             SELECT partn
          ENDIF
       ENDIF
-	
+
       SKIP 1
-	
+
    ENDDO
 
    ? m2
@@ -460,9 +462,7 @@ FUNCTION SaldaKupaca( lPocStanje )
    RETURN NIL
 
 
-/*! \fn GPSUplata()
- *  \brief Generisanje pocetnog stanja za evidenciju uplata
- */
+
 FUNCTION GPSUplata()
 
    LOCAL gSezonDir
@@ -477,3 +477,5 @@ FUNCTION GPSUplata()
    ENDIF
 
    RETURN NIL
+
+*/

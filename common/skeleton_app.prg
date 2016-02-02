@@ -137,7 +137,7 @@ METHOD run()
       ::lStarted := .F.
    ENDIF
 
-   SC_START( self, .T. )
+   start_module( self, .T. )
 
    // da se zna da je objekat jednom vec startovan
    ::lStarted := .T.
@@ -214,14 +214,7 @@ METHOD quit( lVratiseURP )
 
    SetColor( StaraBoja )
 
-/*
-if lVratiseURP // zatvori korisnika
-  if !empty(goModul:oDataBase:cSezonDir)
-    // prebaci se u radno podrucje, ali nemoj to zapisati
-    URadPodr(.f.)
-  endif
-endif
-*/
+
 
    ::lTerminate := .T.
 

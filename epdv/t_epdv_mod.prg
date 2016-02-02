@@ -11,7 +11,6 @@
 
 
 #include "f18.ch"
-#include "hbclass.ch"
 
 
 CLASS TEpdvMod FROM TAppMod
@@ -20,7 +19,6 @@ CLASS TEpdvMod FROM TAppMod
    METHOD setGVars
    METHOD mMenu
    METHOD mMenuStandard
-   METHOD initdb
    METHOD srv
 
 END CLASS
@@ -31,12 +29,6 @@ METHOD new( p1, p2, p3, p4, p5, p6, p7, p8, p9 )
 
    RETURN self
 
-
-METHOD initdb()
-
-   ::oDatabase := TDbEpdv():new()
-
-   RETURN NIL
 
 
 

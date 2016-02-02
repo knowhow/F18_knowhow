@@ -288,14 +288,14 @@ FUNCTION EndPrint()
          cKom := PRIVPATH + cFName
 
          IF gPrinter == "R"
-            IF gPDFprint == "X" .AND. goModul:oDataBase:cName == "FAKT"
+            IF gPDFprint == "X" .AND. tekuci_modul() == "FAKT"
                IF Pitanje(, "Print u PDF/PTXT (D/N)?", "D" ) == "D"
                   PDFView( cKom )
                ELSE
                   Ptxt( cKom )
                ENDIF
             ELSEIF gPDFprint == "D" .AND. ;
-                  goModul:oDataBase:cName == "FAKT"
+                  tekuci_modul() == "FAKT"
                PDFView( cKom )
             ELSE
                Ptxt( cKom )

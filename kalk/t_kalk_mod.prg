@@ -11,17 +11,14 @@
 
 
 #include "f18.ch"
-#include "hbclass.ch"
 
-// -----------------------------------------------
-// -----------------------------------------------
+
 CLASS TKalkMod FROM TAppMod
 
    METHOD NEW
    METHOD setGVars
    METHOD mMenu
    METHOD mMenuStandard
-   METHOD initdb
 
 END CLASS
 
@@ -31,13 +28,6 @@ METHOD new( p1, p2, p3, p4, p5, p6, p7, p8, p9 )
    ::super:new( p1, p2, p3, p4, p5, p6, p7, p8, p9 )
 
    RETURN self
-
-
-METHOD initdb()
-
-   ::oDatabase := TDbKalk():new()
-
-   RETURN NIL
 
 
 
@@ -228,13 +218,11 @@ METHOD setGVars()
    PUBLIC lKoristitiBK := .F.
    PUBLIC lPrikPRUC := .F.
    PUBLIC gDuzKonto
-   IF ValType( ::oDatabase ) == "O" .AND. !::oDatabase:lAdmin
-      O_KALK_PRIPR
-      gDuzKonto := Len( mkonto )
-      USE
-   ELSE
-      gDuzKonto := 7
-   ENDIF
+
+
+   O_KALK_PRIPR
+   gDuzKonto := Len( mkonto )
+
 
    PUBLIC glZabraniVisakIP
    PUBLIC glBrojacPoKontima := .F.
@@ -325,7 +313,7 @@ METHOD setGVars()
 
    gTops := fetch_metric( "kalk_prenos_pos", f18_user(), gTops )
    gFakt := fetch_metric( "kalk_prenos_fakt", f18_user(), gFakt )
-   gTopsDest := PADR( fetch_metric( "kalk_destinacija_topska", f18_user(), gTopsDest ), 100 )
+   gTopsDest := PadR( fetch_metric( "kalk_destinacija_topska", f18_user(), gTopsDest ), 100 )
    gMultiPM := fetch_metric( "kalk_tops_prenos_vise_prodajnih_mjesta", f18_user(), gMultiPM )
    gMPCPomoc := fetch_metric( "kalk_pomoc_sa_mpc", nil, gMPCPomoc )
    gKolicFakt := fetch_metric( "kalk_kolicina_kod_nivelacije_fakt", nil, gKolicFakt )

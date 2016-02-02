@@ -59,7 +59,7 @@ FUNCTION spec_an()
    LOCAL lSilent
    LOCAL lWriteKParam
    LOCAL cP_path := PRIVPATH
-   LOCAL cT_sez := goModul:oDataBase:cSezona
+   LOCAL cT_sez := tekuca_sezona()
 
    PRIVATE nC := 66
 

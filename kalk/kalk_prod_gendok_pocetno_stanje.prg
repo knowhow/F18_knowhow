@@ -9,14 +9,15 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-
 #include "f18.ch"
+
+/* TODO: izbaciti
 
 FUNCTION PocStProd()
 
    lager_lista_prodavnica( .T. )
    IF !Empty( goModul:oDataBase:cSezonDir ) .AND. Pitanje(, "Prebaciti dokument u radno područje", "D" ) == "D"
-      O_KALK_PRIPRRP
+    //  O_KALK_PRIPRRP
       O_KALK_PRIPR
       IF reccount2() <> 0
          SELECT kalk_priprrp
@@ -29,3 +30,5 @@ FUNCTION PocStProd()
    my_close_all_dbf()
 
    RETURN NIL
+
+*/

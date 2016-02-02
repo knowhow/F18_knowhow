@@ -253,7 +253,7 @@ FUNCTION ImaUProsGod( nPrSez, cIdPartner, cIdRoba, nNC )
    dLastNab := CToD( "" )
    nArr := Select()
    FOR i := 1 TO nPrSez
-      cSez := Str( Val( goModul:oDatabase:cSezona ) -i, 4 )
+      cSez := Str( Val( tekuca_sezona() ) -i, 4 )
       cPom := "KALK" + cSez
       IF SELECT( cPom ) = 0
          SELECT 0

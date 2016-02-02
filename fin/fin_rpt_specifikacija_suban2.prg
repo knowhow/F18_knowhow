@@ -77,7 +77,7 @@ FUNCTION spec_sub()
    LOCAL cOpcine := Space( 20 )
    LOCAL cVN := Space( 20 )
    LOCAL cP_Path := PRIVPATH
-   LOCAL cT_sez := goModul:oDataBase:cSezona
+   LOCAL cT_sez := tekuca_sezona()
    LOCAL i
    LOCAL nYearFrom
    LOCAL nYearTo

@@ -49,46 +49,32 @@ FUNCTION cre_all_dbfs( ver )
    IF f18_use_module( "fin" )
       // glavni fin tabele
       cre_all_fin( ver )
-      _db := TDbFin():new()
-      _db:kreiraj()
    ENDIF
 
    IF f18_use_module( "kalk" )
       cre_all_kalk( ver )
-      _db := TDbKalk():new()
-      _db:kreiraj()
    ENDIF
 
    IF f18_use_module( "fakt" )
       cre_all_fakt( ver )
-      _db := TDbFakt():new()
-      _db:kreiraj()
    ENDIF
 
    IF f18_use_module( "ld" )
       cre_all_ld( ver )
-      _db := TDbLd():new()
-      _db:kreiraj()
    ENDIF
 
 
    IF f18_use_module( "os" )
       cre_all_os( ver )
-      _db := TDbOs():new()
-      _db:kreiraj()
    ENDIF
 
 
    IF f18_use_module( "virm" )
       cre_all_virm( ver )
-      _db := TDbVirm():new()
-      _db:kreiraj()
    ENDIF
 
    IF f18_use_module( "kadev" )
       cre_all_kadev( ver )
-      _db := TDbKadev():new()
-      _db:kreiraj()
    ENDIF
 
    IF f18_use_module( "epdv" )
@@ -97,20 +83,14 @@ FUNCTION cre_all_dbfs( ver )
 
    IF f18_use_module( "pos" )
       cre_all_pos( ver )
-      _db := TDbPos():new()
-      _db:kreiraj()
    ENDIF
 
    IF f18_use_module( "rnal" )
       cre_all_rnal( ver )
-      _db := TDbRnal():new()
-      _db:kreiraj()
    ENDIF
 
    IF f18_use_module( "mat" )
       cre_all_mat( ver )
-      _db := TDbMat():new()
-      _db:kreiraj()
    ENDIF
 
    IF _first_start = 0
@@ -291,3 +271,68 @@ FUNCTION dbCreate2( ime_dbf, struct_dbf, driver )
    dbCreate( ime_dbf, struct_dbf, driver )
 
    RETURN .T.
+
+
+FUNCTION g_pos_pripr_fields()
+
+   LOCAL aDbf
+
+   // _POS, _PRIPR, PRIPRZ, PRIPRG, _POSP
+   aDbf := {}
+   AAdd ( aDbf, { "BRDOK",     "C",  6, 0 } )
+   AAdd ( aDbf, { "CIJENA",    "N", 10, 3 } )
+   AAdd ( aDbf, { "DATUM",     "D",  8, 0 } )
+   AAdd ( aDbf, { "GT",        "C",  1, 0 } )
+   AAdd ( aDbf, { "IDCIJENA",  "C",  1, 0 } )
+   AAdd ( aDbf, { "IDDIO",     "C",  2, 0 } )
+   AAdd ( aDbf, { "IDGOST",    "C",  8, 0 } )
+   AAdd ( aDbf, { "IDODJ",     "C",  2, 0 } )
+   AAdd ( aDbf, { "IDPOS",     "C",  2, 0 } )
+   AAdd ( aDbf, { "IDRADNIK",  "C",  4, 0 } )
+   AAdd ( aDbf, { "IDROBA",    "C", 10, 0 } )
+
+   AAdd ( aDbf, { "IDTARIFA",  "C",  6, 0 } )
+   AAdd ( aDbf, { "IDVD",      "C",  2, 0 } )
+   AAdd ( aDbf, { "IDVRSTEP",  "C",  2, 0 } )
+   AAdd ( aDbf, { "JMJ",       "C",  3, 0 } )
+
+   // za inventuru, nivelaciju
+   AAdd ( aDbf, { "KOL2",      "N", 18, 3 } )
+   AAdd ( aDbf, { "KOLICINA",  "N", 18, 3 } )
+   AAdd ( aDbf, { "M1",        "C",  1, 0 } )
+   AAdd ( aDbf, { "MU_I",      "C",  1, 0 } )
+   AAdd ( aDbf, { "NCIJENA",   "N", 10, 3 } )
+   AAdd ( aDbf, { "PLACEN",    "C",  1, 0 } )
+   AAdd ( aDbf, { "PREBACEN",  "C",  1, 0 } )
+   AAdd ( aDbf, { "ROBANAZ",   "C", 40, 0 } )
+   AAdd ( aDbf, { "SMJENA",    "C",  1, 0 } )
+   AAdd ( aDbf, { "STO",       "C",  3, 0 } )
+   AAdd ( aDbf, { "STO_BR",    "N",  3, 0 } )
+   AAdd ( aDbf, { "ZAK_BR",    "N",  4, 0 } )
+   AAdd ( aDbf, { "FISC_RN",   "N", 10, 0 } )
+
+   AAdd ( aDbf, { "VRIJEME",   "C",  5, 0 } )
+
+   AAdd( aDBf, { 'K1', 'C',   4,  0 } )
+   // planika: dobavljac   - grupe artikala
+   AAdd( aDBf, { 'K2', 'C',   4,  0 } )
+   // planika: stavljaju se oznake za velicinu obuce
+   // X - ne broji se parovno
+
+   AAdd( aDBf, { 'K7', 'C',   1,  0 } )
+   AAdd( aDBf, { 'K8', 'C',   2,  0 } )
+   AAdd( aDBf, { 'K9', 'C',   3,  0 } )
+   // planika: stavljaju se oznake za velicinu obuce
+   // X - ne broji se parovno
+
+   AAdd( aDBf, { 'N1', 'N',  12,  2 } )
+   AAdd( aDBf, { 'N2', 'N',  12,  2 } )
+
+   AAdd( aDBf, { 'BARKOD', 'C',  13,  0 } )
+   AAdd( aDBf, { 'KATBR', 'C',  14,  0 } )
+
+   AAdd( aDBf, { 'C_1', 'C',   6,  0 } )
+   AAdd( aDBf, { 'C_2', 'C',  10,  0 } )
+   AAdd( aDBf, { 'C_3', 'C',  50,  0 } )
+
+   RETURN aDbf

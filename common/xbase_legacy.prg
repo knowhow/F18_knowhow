@@ -433,8 +433,7 @@ FUNCTION DbfPath( nPath )
       RETURN SLASH
    CASE nPath == P_KUMSQLPATH
       RETURN KUMPATH + "SQL" + SLASH
-   CASE nPath == P_SECPATH
-      RETURN goModul:oDatabase:cSigmaBD + SLASH + "SECURITY" + SLASH
+
    END CASE
 
    RETURN

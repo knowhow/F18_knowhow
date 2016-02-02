@@ -20,7 +20,7 @@ FUNCTION i_dodaj_sifre()
    // radi inicijalizacije varijabli definisimo neki programski modul
 
    _omodul := TKalkMod():new( nil, "KALK", F18_VER, F18_VER_DATE, "test", "test" )
-   _omodul:initdb()
+
 
    goModul := _omodul
 

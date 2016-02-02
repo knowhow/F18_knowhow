@@ -102,7 +102,7 @@ FUNCTION StrKZN_old( cInput, cIz, cU )
       aIz := a437
    ELSEIF cIz == "8"
       aIz := a852
-   ELSEIF ( goModul:oDataBase:cName == "LD" .AND. cIz == "B" )
+   ELSEIF ( tekuci_modul() == "LD" .AND. cIz == "B" )
       aIz := aEngB
    ELSEIF ( cIz == "W" )
       aIz := aWin
@@ -116,7 +116,7 @@ FUNCTION StrKZN_old( cInput, cIz, cU )
       aU := a852
    ELSEIF cU == "U"
       aU := aUTF
-   ELSEIF goModul:oDataBase:cName == "LD" .AND. cU == "B"
+   ELSEIF tekuci_modul() == "LD" .AND. cU == "B"
       aU := aEngB
    ELSE
       aU := aEng
@@ -129,14 +129,14 @@ FUNCTION StrKZN_old( cInput, cIz, cU )
    cPocStanjeSif := cInput
 
    FOR i := 1 TO 10
-      IF ( goModul:oDataBase:cName == "LD" .AND. i == 5 )
+      IF ( tekuci_modul() == "LD" .AND. i == 5 )
          IF At( "D@", cInput ) <> 0
             cInput := StrTran( cInput, "D@", "DZ" )
          ELSEIF At( "D|", cInput ) <> 0
             cInput := StrTran( cInput, "D|", "DZ" )
          ENDIF
       ENDIF
-      IF ( goModul:oDataBase:cName == "LD" .AND. i == 10 )
+      IF ( tekuci_modul() == "LD" .AND. i == 10 )
          IF At( "d�", cInput ) <> 0
             cInput := StrTran( cInput, "d�", "dz" )
          ELSEIF At( "d`", cInput ) <> 0

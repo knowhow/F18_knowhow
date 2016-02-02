@@ -363,7 +363,7 @@ FUNCTION cre_all_ld( ver )
       _field_iznos := "I" + PadL( AllTrim( Str( _i ) ), 2, "0" )
 
       AAdd( aDBf, { _field_sati, 'N',   6,  2 } )
-      //AAdd( aDBf, { _field_iznos, 'N',  12,  2 } )
+      // AAdd( aDBf, { _field_iznos, 'N',  12,  2 } )
       AAdd( aDBf, { _field_iznos, 'Y',  8,  2 } )
 
    NEXT
@@ -391,26 +391,26 @@ FUNCTION cre_all_ld( ver )
    AAdd( aDBf, { 'RADSAT', 'N',  10,  0 } )
 */
 
-AAdd( aDBf, { 'USATI',   'N',   8,  1 } )
-AAdd( aDBf, { 'UNETO',   'Y',  8,  2 } )
-AAdd( aDBf, { 'UODBICI', 'Y',  8,  2 } )
-AAdd( aDBf, { 'UIZNOS',  'Y',  8,  2 } )
-AAdd( aDBf, { 'UNETO2',  'Y',  8,  2 } )
-AAdd( aDBf, { 'UBRUTO',  'Y',  8,  2 } )
-AAdd( aDBf, { 'UPOREZ',  'Y',  8,  2 } )
-AAdd( aDBf, { 'UPOR_ST', 'Y',  8,  2 } )
-AAdd( aDBf, { 'UDOPR',   'Y',  8,  2 } )
-AAdd( aDBf, { 'UDOP_ST', 'Y',  8,  2 } )
-AAdd( aDBf, { 'NAKN_OPOR', 'Y',  8,  2 } )
-AAdd( aDBf, { 'NAKN_NEOP', 'Y',  8,  2 } )
-AAdd( aDBf, { 'ULICODB',  'Y',  8,  2 } )
-AAdd( aDBf, { 'TIPRADA',  'C',   1,  2 } )
-AAdd( aDBf, { 'OPOR',     'C',   1,  2 } )
-AAdd( aDBf, { 'TROSK',    'C',   1,  2 } )
-AAdd( aDBf, { 'VAROBR',   'C',   1,  0 } )
-AAdd( aDBf, { 'V_ISPL',   'C',   2,  0 } )
-AAdd( aDBf, { 'OBR',      'C',   1,  0 } )
-AAdd( aDBf, { 'RADSAT',   'Y',   8,  0 } )
+   AAdd( aDBf, { 'USATI',   'N',   8,  1 } )
+   AAdd( aDBf, { 'UNETO',   'Y',  8,  2 } )
+   AAdd( aDBf, { 'UODBICI', 'Y',  8,  2 } )
+   AAdd( aDBf, { 'UIZNOS',  'Y',  8,  2 } )
+   AAdd( aDBf, { 'UNETO2',  'Y',  8,  2 } )
+   AAdd( aDBf, { 'UBRUTO',  'Y',  8,  2 } )
+   AAdd( aDBf, { 'UPOREZ',  'Y',  8,  2 } )
+   AAdd( aDBf, { 'UPOR_ST', 'Y',  8,  2 } )
+   AAdd( aDBf, { 'UDOPR',   'Y',  8,  2 } )
+   AAdd( aDBf, { 'UDOP_ST', 'Y',  8,  2 } )
+   AAdd( aDBf, { 'NAKN_OPOR', 'Y',  8,  2 } )
+   AAdd( aDBf, { 'NAKN_NEOP', 'Y',  8,  2 } )
+   AAdd( aDBf, { 'ULICODB',  'Y',  8,  2 } )
+   AAdd( aDBf, { 'TIPRADA',  'C',   1,  2 } )
+   AAdd( aDBf, { 'OPOR',     'C',   1,  2 } )
+   AAdd( aDBf, { 'TROSK',    'C',   1,  2 } )
+   AAdd( aDBf, { 'VAROBR',   'C',   1,  0 } )
+   AAdd( aDBf, { 'V_ISPL',   'C',   2,  0 } )
+   AAdd( aDBf, { 'OBR',      'C',   1,  0 } )
+   AAdd( aDBf, { 'RADSAT',   'Y',   8,  0 } )
 
    _alias := "LD"
    _table_name := "ld_ld"
@@ -419,67 +419,67 @@ AAdd( aDBf, { 'RADSAT',   'Y',   8,  0 } )
 
    IF ver[ "current" ] > 0 .AND. ver[ "current" ] < 010003
       modstru( { "*" + _table_name, ;
-         "C I01 N 12 2 I01 Y 8 2",;
-         "C I02 N 12 2 I02 Y 8 2",;
-         "C I03 N 12 2 I03 Y 8 2",;
-         "C I04 N 12 2 I04 Y 8 2",;
-         "C I05 N 12 2 I05 Y 8 2",;
-         "C I06 N 12 2 I06 Y 8 2",;
-         "C I07 N 12 2 I07 Y 8 2",;
-         "C I08 N 12 2 I08 Y 8 2",;
-         "C I09 N 12 2 I09 Y 8 2",;
-         "C I10 N 12 2 I10 Y 8 2",;
-         "C I11 N 12 2 I11 Y 8 2",;
-         "C I12 N 12 2 I12 Y 8 2",;
-         "C I13 N 12 2 I13 Y 8 2",;
-         "C I14 N 12 2 I14 Y 8 2",;
-         "C I15 N 12 2 I15 Y 8 2",;
-         "C I16 N 12 2 I16 Y 8 2",;
-         "C I17 N 12 2 I17 Y 8 2",;
-         "C I18 N 12 2 I18 Y 8 2",;
-         "C I19 N 12 2 I19 Y 8 2",;
-         "C I20 N 12 2 I20 Y 8 2",;
-         "C I21 N 12 2 I21 Y 8 2",;
-         "C I22 N 12 2 I22 Y 8 2",;
-         "C I23 N 12 2 I23 Y 8 2",;
-         "C I24 N 12 2 I24 Y 8 2",;
-         "C I25 N 12 2 I25 Y 8 2",;
-         "C I26 N 12 2 I26 Y 8 2",;
-         "C I27 N 12 2 I27 Y 8 2",;
-         "C I28 N 12 2 I28 Y 8 2",;
-         "C I29 N 12 2 I29 Y 8 2",;
-         "C I30 N 12 2 I30 Y 8 2",;
-         "C I31 N 12 2 I31 Y 8 2",;
-         "C I32 N 12 2 I32 Y 8 2",;
-         "C I33 N 12 2 I33 Y 8 2",;
-         "C I34 N 12 2 I34 Y 8 2",;
-         "C I35 N 12 2 I35 Y 8 2",;
-         "C I36 N 12 2 I36 Y 8 2",;
-         "C I37 N 12 2 I37 Y 8 2",;
-         "C I38 N 12 2 I38 Y 8 2",;
-         "C I39 N 12 2 I39 Y 8 2",;
-         "C I40 N 12 2 I40 Y 8 2",;
-         "C I41 N 12 2 I41 Y 8 2",;
-         "C I42 N 12 2 I42 Y 8 2",;
-         "C I43 N 12 2 I43 Y 8 2",;
-         "C I44 N 12 2 I44 Y 8 2",;
-         "C I45 N 12 2 I45 Y 8 2",;
-         "C I46 N 12 2 I46 Y 8 2",;
-         "C I47 N 12 2 I47 Y 8 2",;
-         "C I48 N 12 2 I48 Y 8 2",;
-         "C I49 N 12 2 I49 Y 8 2",;
-         "C I50 N 12 2 I50 Y 8 2",;
-         "C I51 N 12 2 I51 Y 8 2",;
-         "C I52 N 12 2 I52 Y 8 2",;
-         "C I53 N 12 2 I53 Y 8 2",;
-         "C I54 N 12 2 I54 Y 8 2",;
-         "C I55 N 12 2 I55 Y 8 2",;
-         "C I56 N 12 2 I56 Y 8 2",;
-         "C I57 N 12 2 I57 Y 8 2",;
-         "C I58 N 12 2 I58 Y 8 2",;
-         "C I59 N 12 2 I59 Y 8 2",;
+         "C I01 N 12 2 I01 Y 8 2", ;
+         "C I02 N 12 2 I02 Y 8 2", ;
+         "C I03 N 12 2 I03 Y 8 2", ;
+         "C I04 N 12 2 I04 Y 8 2", ;
+         "C I05 N 12 2 I05 Y 8 2", ;
+         "C I06 N 12 2 I06 Y 8 2", ;
+         "C I07 N 12 2 I07 Y 8 2", ;
+         "C I08 N 12 2 I08 Y 8 2", ;
+         "C I09 N 12 2 I09 Y 8 2", ;
+         "C I10 N 12 2 I10 Y 8 2", ;
+         "C I11 N 12 2 I11 Y 8 2", ;
+         "C I12 N 12 2 I12 Y 8 2", ;
+         "C I13 N 12 2 I13 Y 8 2", ;
+         "C I14 N 12 2 I14 Y 8 2", ;
+         "C I15 N 12 2 I15 Y 8 2", ;
+         "C I16 N 12 2 I16 Y 8 2", ;
+         "C I17 N 12 2 I17 Y 8 2", ;
+         "C I18 N 12 2 I18 Y 8 2", ;
+         "C I19 N 12 2 I19 Y 8 2", ;
+         "C I20 N 12 2 I20 Y 8 2", ;
+         "C I21 N 12 2 I21 Y 8 2", ;
+         "C I22 N 12 2 I22 Y 8 2", ;
+         "C I23 N 12 2 I23 Y 8 2", ;
+         "C I24 N 12 2 I24 Y 8 2", ;
+         "C I25 N 12 2 I25 Y 8 2", ;
+         "C I26 N 12 2 I26 Y 8 2", ;
+         "C I27 N 12 2 I27 Y 8 2", ;
+         "C I28 N 12 2 I28 Y 8 2", ;
+         "C I29 N 12 2 I29 Y 8 2", ;
+         "C I30 N 12 2 I30 Y 8 2", ;
+         "C I31 N 12 2 I31 Y 8 2", ;
+         "C I32 N 12 2 I32 Y 8 2", ;
+         "C I33 N 12 2 I33 Y 8 2", ;
+         "C I34 N 12 2 I34 Y 8 2", ;
+         "C I35 N 12 2 I35 Y 8 2", ;
+         "C I36 N 12 2 I36 Y 8 2", ;
+         "C I37 N 12 2 I37 Y 8 2", ;
+         "C I38 N 12 2 I38 Y 8 2", ;
+         "C I39 N 12 2 I39 Y 8 2", ;
+         "C I40 N 12 2 I40 Y 8 2", ;
+         "C I41 N 12 2 I41 Y 8 2", ;
+         "C I42 N 12 2 I42 Y 8 2", ;
+         "C I43 N 12 2 I43 Y 8 2", ;
+         "C I44 N 12 2 I44 Y 8 2", ;
+         "C I45 N 12 2 I45 Y 8 2", ;
+         "C I46 N 12 2 I46 Y 8 2", ;
+         "C I47 N 12 2 I47 Y 8 2", ;
+         "C I48 N 12 2 I48 Y 8 2", ;
+         "C I49 N 12 2 I49 Y 8 2", ;
+         "C I50 N 12 2 I50 Y 8 2", ;
+         "C I51 N 12 2 I51 Y 8 2", ;
+         "C I52 N 12 2 I52 Y 8 2", ;
+         "C I53 N 12 2 I53 Y 8 2", ;
+         "C I54 N 12 2 I54 Y 8 2", ;
+         "C I55 N 12 2 I55 Y 8 2", ;
+         "C I56 N 12 2 I56 Y 8 2", ;
+         "C I57 N 12 2 I57 Y 8 2", ;
+         "C I58 N 12 2 I58 Y 8 2", ;
+         "C I59 N 12 2 I59 Y 8 2", ;
          "C I60 N 12 2 I60 Y 8 2" ;
-       } )
+         } )
    ENDIF
 
    IF_C_RESET_SEMAPHORE
@@ -716,7 +716,7 @@ AAdd( aDBf, { 'RADSAT',   'Y',   8,  0 } )
    CREATE_INDEX( "4", "idradn+str(godina)+str(mjesec)+idkonto", _alias )
 
    // HACK: 2i indeks sortime pravi probleme
-   //CREATE_INDEX( "2i", "idkonto+SORTIME(idradn)+str(godina)+str(mjesec)", _alias )
+   // CREATE_INDEX( "2i", "idkonto+SORTIME(idradn)+str(godina)+str(mjesec)", _alias )
 
 
    // ------------------------------------------------------------
@@ -762,6 +762,46 @@ AAdd( aDBf, { 'RADSAT',   'Y',   8,  0 } )
 
    CREATE_INDEX( "ID", "id", _alias )
    CREATE_INDEX( "NAZ", "NAZ", _alias )
+
+
+   // REKLD
+   aDbf := {}
+   AAdd( aDbf, { "GODINA",  "C",  4, 0 } )
+   AAdd( aDbf, { "MJESEC",  "C",  2, 0 } )
+   AAdd( aDbf, { "ID",  "C", 40, 0 } )
+   AAdd( aDbf, { "OPIS",  "C", 40, 0 } )
+   AAdd( aDbf, { "IZNOS1",  "N", 18, 4 } )
+   AAdd( aDbf, { "IZNOS2",  "N", 18, 4 } )
+   AAdd( aDbf, { "IDPARTNER",  "C",  6, 0 } )
+
+   IF !File( f18_ime_dbf( "REKLD" ) )
+      DBCreate2( "REKLD", aDbf )
+   ENDIF
+
+   CREATE_INDEX( "1", "godina+mjesec+id", "REKLD" )
+   CREATE_INDEX( "2", "godina+mjesec+id+idpartner", "REKLD" )
+
+   AAdd( aDbf, { "IDRNAL",  "C", 10, 0 } )
+
+   IF !File( f18_ime_dbf( "REKLDP" ) )
+      DBCreate2( "REKLDP", aDbf )
+   ENDIF
+
+   CREATE_INDEX( "1", "godina+mjesec+id+idRNal", "REKLDP" )
+
+
+   aDbf := {}
+   AAdd( aDbf, { "ID",  "C",  1, 0 } )
+   AAdd( aDbf, { "IDOPS",  "C",  4, 0 } )
+   AAdd( aDbf, { "IZNOS",  "N", 18, 4 } )
+   AAdd( aDbf, { "IZNOS2",  "N", 18, 4 } )
+   AAdd( aDbf, { "LJUDI",  "N",  4, 0 } )
+
+   IF !File( f18_ime_dbf( "OPSLD" ) )
+      DBCreate2( "OPSLD", aDbf )
+   ENDIF
+
+   CREATE_INDEX( "1", "id+idops", "OPSLD" )
 
    RETURN .T.
 

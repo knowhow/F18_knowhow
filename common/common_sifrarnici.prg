@@ -22,7 +22,7 @@ FUNCTION SifFmkSvi()
    AAdd( opcexe, {|| P_Firma() } )
 
 
-   IF ( goModul:oDataBase:cName <> "FIN" )
+   IF ( tekuci_modul() <> "FIN" )
       AAdd( opc, "2. konta" )
 
       AAdd( opcexe, {|| P_Konto() } )

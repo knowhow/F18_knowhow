@@ -94,19 +94,19 @@ FUNCTION kalk_dokument_postoji( cFirma, cIdVd, cBroj )
    LOCAL lExist := .F.
    LOCAL cWhere
 
-   cWhere := "idfirma = " + _sql_quote( cFirma ) 
-   cWhere += " AND idvd = " + _sql_quote( cIdVd ) 
+   cWhere := "idfirma = " + _sql_quote( cFirma )
+   cWhere += " AND idvd = " + _sql_quote( cIdVd )
    cWhere += " AND brdok = " + _sql_quote( cBroj )
 
    IF table_count( "fmk.kalk_doks", cWhere ) > 0
       lExist := .T.
-   ENDIF 
+   ENDIF
 
    IF !lExist
       IF table_count( "fmk.kalk_kalk", cWhere ) > 0
          lExist := .T.
       ENDIF
-   ENDIF 
+   ENDIF
 
    RETURN lExist
 
@@ -1723,7 +1723,7 @@ FUNCTION kalk_export()
    LOCAL lWriteKParam := .T.
    LOCAL lInSez
    LOCAL cP_path := PRIVPATH
-   LOCAL cT_sez := goModul:oDataBase:cSezona
+   LOCAL cT_sez := tekuca_sezona()
    LOCAL cG_sez := cT_sez
    LOCAL cU_dok := Space( 100 )
    LOCAL dD_from := CToD( "" )

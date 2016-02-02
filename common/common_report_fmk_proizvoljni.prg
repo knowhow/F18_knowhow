@@ -37,7 +37,7 @@ FUNCTION proizvoljni_izvjestaji()
    PRIVATE cPIKSif := ""
    PRIVATE cPIImeKP := ""
 
-   IF goModul:oDatabase:cName == "KALK"
+   IF tekuci_modul() == "KALK"
       OtBazPIKalk()
    ELSE
       OtBazPIFin()
@@ -103,10 +103,10 @@ FUNCTION proizvoljni_izvjestaji()
 
    PrikaziTI( cBrI )
 
-   IF goModul:oDataBase:cName == "KALK"
+   IF tekuci_modul() == "KALK"
       GenProIzvKalk()
       OtBazPIKalk()
-   ELSEIF goModul:oDataBase:cName == "FIN"
+   ELSEIF tekuci_modul() == "FIN"
       GenProIzvFin()
       OtBazPIFin()
    ENDIF
@@ -123,10 +123,10 @@ FUNCTION proizvoljni_izvjestaji()
       CASE izbor == 0
          EXIT
       CASE izbor == 1
-         IF goModul:oDataBase:cName == "KALK"
+         IF tekuci_modul() == "KALK"
             GenProIzvKalk()
             OtBazPIKalk()
-         ELSEIF goModul:oDataBase:cName == "FIN"
+         ELSEIF tekuci_modul() == "FIN"
             GenProIzvFin()
             OtBazPIFin()
          ENDIF
@@ -141,9 +141,9 @@ FUNCTION proizvoljni_izvjestaji()
       CASE izbor == 5
          P_KolProIzv()
       CASE izbor == 6
-         IF goModul:oDatabase:cName == "KALK"
+         IF tekuci_modul() == "KALK"
             ParSviIzvjKalk()
-         ELSEIF goModul:oDataBase:cName == "FIN"
+         ELSEIF tekuci_modul() == "FIN"
             ParSviIzvjFin()
          ENDIF
       CASE izbor == 7

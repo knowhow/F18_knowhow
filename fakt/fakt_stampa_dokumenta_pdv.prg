@@ -108,14 +108,14 @@ FUNCTION StdokPDV( cIdFirma, cIdTipDok, cBrDok, lJFill )
       omp_print()
    ELSE
       IF cIdTipDok == "11" .AND. gMPPrint $ "DXT"
-	
+
          IF gMPPrint == "D" .OR. ( gMpPrint == "X" .AND. Pitanje(, "Stampati na traku (D/N)?", "D" ) == "D" ) .OR. gMPPrint == "T"
-	
+
             // stampa na traku
             gLocPort := "LPT" + AllTrim( gMpLocPort )
 
             lStartPrint := .T.
-		
+
             cPrn := gPrinter
             gPrinter := "0"
 
@@ -123,7 +123,7 @@ FUNCTION StdokPDV( cIdFirma, cIdTipDok, cBrDok, lJFill )
                // test mode
                gPrinter := "R"
             ENDIF
-	
+
             st_rb_traka( lStartPrint, lPrepisDok )
 
             gPrinter := cPrn
@@ -304,7 +304,7 @@ STATIC FUNCTION fill_porfakt_data( dok, params )
 
       aMemo := ParsMemo( field->txt )
       cIdRoba := field->idroba
-	
+
       IF roba->tip == "U"
          cRobaNaz := aMemo[ 1 ]
       ELSE
@@ -318,7 +318,7 @@ STATIC FUNCTION fill_porfakt_data( dok, params )
       IF glRGrPrn == "D"
          cPom := _op_gr( roba->id, "GR1" ) + ": " + _val_gr( roba->id, "GR1" ) + ;
             ", " + _op_gr( roba->id, "GR2" ) + ": " + _val_gr( roba->id, "GR2" )
-		
+
          cRobaNaz += " "
          cRobaNaz += cPom
          SELECT fakt_pripr
@@ -336,14 +336,14 @@ STATIC FUNCTION fill_porfakt_data( dok, params )
       nCj2BPDV := 0
       nVPopust := 0
       nPPDV := 0
-	
+
       cRbr := field->rbr
       cPodBr := field->podbr
       cJmj := roba->jmj
 
       // procenat pdv-a
       nPPDV := tarifa->opp
-	
+
       cIdPartner := field->idpartner
 
       IF Empty( cIdPartner )
@@ -361,7 +361,7 @@ STATIC FUNCTION fill_porfakt_data( dok, params )
 
       // rn Veleprodaje
       IF dok[ "idtipdok" ] $ "10#11#12#13#20#22#25"
-		
+
          // ino faktura
          IF IsIno( cIdPartner )
             nPPDV := 0
@@ -409,7 +409,7 @@ STATIC FUNCTION fill_porfakt_data( dok, params )
          nPopust := field->rabat
          nPopNaTeretProdavca := 0
       ENDIF
-	
+
       // ako je 13-ka ili 27-ca
       // cijena bez pdv se utvrdjuje unazad
       IF ( field->idtipdok == "13" .AND. glCij13Mpc ) .OR. ( field->idtipdok $ "11#27" .AND. gMP $ "1234567" )
@@ -429,22 +429,22 @@ STATIC FUNCTION fill_porfakt_data( dok, params )
          // vrijednost popusta
          nVPopust := ( nCjBPDV * ( nPopust / 100 ) )
       ENDIF
-	
+
       // resetuj prije eventualnog setovanja
       nVPopNaTeretProdavca := 0
-	
+
       // izacunaj vrijednost popusta na teret prodavca
       IF Round( nPopNaTeretProdavca, 4 ) <> 0
          // vrijednost popusta
          nVPopNaTeretProdavca := ( nCjBPDV * ( nPopNaTeretProdavca / 100 ) )
       ENDIF
 
-	
+
       // cijena sa popustom bez pdv-a
       nCj2BPDV := ( nCjBPDV - nVPopust )
       // izracuna PDV na cijenu sa popustom
       nCj2PDV := ( nCj2BPDV * ( 1 + nPPDV / 100 ) )
-	
+
       // ukupno stavka
       nUkStavka := nKol * nCj2PDV
       nUkStavke := Round( nUkStavka, ZAO_VRIJEDNOST() + iif( idtipdok $ "11#13", 4, 0 ) )
@@ -453,7 +453,7 @@ STATIC FUNCTION fill_porfakt_data( dok, params )
       nPom1 := Round( nPom1, ZAO_VRIJEDNOST() + iif( idtipdok $ "11#13", 4, 0 ) )
       // ukupno bez pdv
       nUkBPDV += nPom1
-	
+
 
       // ukupno popusta za stavku
       nPom2 := nKol * nVPopust
@@ -468,14 +468,14 @@ STATIC FUNCTION fill_porfakt_data( dok, params )
       nPom3 := nPom1 - nPom2
       nPom3 := Round( nPom3, ZAO_VRIJEDNOST() + iif( idtipdok $ "11#13", 4, 0 ) )
       nUkBPDVPop += nPom3
-	
+
 
       // ukupno PDV za stavku = (ukupno bez pdv - ukupno popust) * stopa
       nPom4 := nPom3 * nPPDV / 100
       // povecaj preciznost
       nPom4 := Round( nPom4, ZAO_VRIJEDNOST() + iif( idtipdok $ "11#13", 4, 2 ) )
       nUkPDV += nPom4
-	
+
       // ukupno za stavku sa pdv-om
       nTotal +=  nPom3 + nPom4
 
@@ -484,9 +484,9 @@ STATIC FUNCTION fill_porfakt_data( dok, params )
       nUkPopNaTeretProdavca += nPom5
 
       ++ nCSum
-	
+
       nUkKol += nKol
-	
+
       dodaj_stavku_racuna( dok[ "brdok" ], cRbr, cPodBr, cIdRoba, cRobaNaz, cJmj, nKol, nCjPDV, nCjBPDV, nCj2PDV, nCj2BPDV, nPopust, nPPDV, nVPDV, nUkStavka, nPopNaTeretProdavca, nVPopNaTeretProdavca, "", "", "", cOpis )
 
       SELECT fakt_pripr
@@ -499,14 +499,12 @@ STATIC FUNCTION fill_porfakt_data( dok, params )
 
    nTotal := ( nUkBPDVPop + nUkPDV )
 
-   IF goModul:oDataBase:cSezona >= "2011"
-      nFZaokr := zaokr_5pf( nTotal )
-      IF gZ_5pf == "N"
-         nFZaokr := 0
-      ENDIF
-   ELSE
-      nFZaokr := Round( nTotal, ZAO_VRIJEDNOST() ) - ROUND2( Round( nTotal, ZAO_VRIJEDNOST() ), gFZaok )
+
+   nFZaokr := zaokr_5pf( nTotal )
+   IF gZ_5pf == "N"
+      nFZaokr := 0
    ENDIF
+
 
    IF ( gFZaok <> 9 .AND. Round( nFZaokr, 4 ) <> 0 )
       nDrnZaokr := nFZaokr
@@ -634,7 +632,7 @@ STATIC FUNCTION fill_porfakt_data( dok, params )
 
    CASE !Empty( cPdvOslobadjanje )
       add_drntext( "P11", cPdvOslobadjanje )
-	
+
    OTHERWISE
       // domaca faktura
       add_drntext( "P11", "DOMACA" )
@@ -674,7 +672,7 @@ STATIC FUNCTION fill_porfakt_data( dok, params )
       gPtxtSw := "/noline /s /l /p"
    CASE nSw5 == 1
       gPtxtSw := "/p"
-		
+
    OTHERWISE
       // citaj ini fajl
       gPtxtSw := nil
@@ -928,7 +926,7 @@ FUNCTION _txt_djokeri( cTxt, cPartn )
 
    // saldo kupca
    nSaldoKup := get_fin_partner_saldo( cPartn, __KTO_DUG, gFirma )
-		
+
    // saldo dobavljaca
    nSaldoDob := get_fin_partner_saldo( cPartn, __KTO_POT, gFirma )
 
@@ -946,22 +944,22 @@ FUNCTION _txt_djokeri( cTxt, cPartn )
    // SALDO KUPCA
    // -------------------------------------------------------
    IF At( cStrSlKup, cTxt ) <> 0
-		
+
       IF gShSld == "D"
 
          cPom := AllTrim( Str( Round( nSaldoKup, 2 ) ) ) + " KM"
          cPom2 := ""
-		
+
          IF __SH_SLD_VAR == 2
             cPom2 := "Va posljednji saldo iznosi: "
          ENDIF
       ELSE
-	
+
          cPom := ""
          cPom2 := ""
-	
+
       ENDIF
-	
+
       cTxt := StrTran( cTxt, cStrSlKup, cPom2 + " " + cPom )
    ENDIF
 
@@ -970,22 +968,22 @@ FUNCTION _txt_djokeri( cTxt, cPartn )
    // SALDO DOBAVLJACA
    // -------------------------------------------------------
    IF At( cStrSlDob, cTxt ) <> 0
-		
+
       IF gShSld == "D"
 
          cPom := AllTrim( Str( Round( nSaldoDob, 2 ) ) ) + " KM"
          cPom2 := ""
-		
+
          IF __SH_SLD_VAR == 2
             cPom2 := "Na posljednji saldo iznosi: "
          ENDIF
       ELSE
-	
+
          cPom := ""
          cPom2 := ""
-	
+
       ENDIF
-	
+
       cTxt := StrTran( cTxt, cStrSlDob, cPom2 + " " + cPom )
    ENDIF
 
@@ -993,22 +991,22 @@ FUNCTION _txt_djokeri( cTxt, cPartn )
    // SALDO KUPCA/DOBAVLJACA prebijeno
    // -------------------------------------------------------
    IF At( cStrSlKD, cTxt ) <> 0
-		
+
       IF gShSld == "D"
 
          cPom := AllTrim( Str( Round( nSaldoKup, 2 ) - Round( nSaldoDob, 2 ) ) ) + " KM"
          cPom2 := ""
-		
+
          IF __SH_SLD_VAR == 2
             cPom2 := "Prebijeno stanje kupac/dobavljac : "
          ENDIF
       ELSE
-	
+
          cPom := ""
          cPom2 := ""
-	
+
       ENDIF
-	
+
       cTxt := StrTran( cTxt, cStrSlKD, cPom2 + " " + cPom )
    ENDIF
 
@@ -1017,9 +1015,9 @@ FUNCTION _txt_djokeri( cTxt, cPartn )
    // DATUM POSLJEDNJE UPLATE KUPCA/DOBAVLJACA
    // -------------------------------------------------------
    IF At( cStrDUpKup, cTxt ) <> 0
-	
+
       IF gShSld == "D"
-		
+
 
          // datum posljednje uplate kupca
          cPom := DToC( dPUplKup )
@@ -1031,9 +1029,9 @@ FUNCTION _txt_djokeri( cTxt, cPartn )
 
          cPom := ""
          cPom2 := ""
-	
+
       ENDIF
-	
+
       cTxt := StrTran( cTxt, cStrDUpKup, cPom2 + " " + cPom )
 
    ENDIF
@@ -1042,23 +1040,23 @@ FUNCTION _txt_djokeri( cTxt, cPartn )
    // DATUM POSLJEDNJE PROMJENE NA KONTU KUPCA
    // -------------------------------------------------------
    IF At( cStrDPrKup, cTxt ) <> 0
-	
+
       IF gShSld == "D"
-	
+
          // datum posljednje promjene kupac
          cPom := DToC( dPPromKup )
          cPom2 := ""
          IF __SH_SLD_VAR == 2
             cPom2 := "Datum posljednje promjene na kontu kupca: "
          ENDIF
-	
+
       ELSE
-	
+
          cPom := ""
          cPom2 := ""
 
       ENDIF
-	
+
       cTxt := StrTran( cTxt, cStrDPrKup, cPom2 + " " + cPom )
 
    ENDIF
@@ -1067,10 +1065,10 @@ FUNCTION _txt_djokeri( cTxt, cPartn )
    // DATUM POSLJEDNJE PROMJENE NA KONTU DOBAVLJACA
    // -------------------------------------------------------
    IF At( cStrDPrDob, cTxt ) <> 0
-	
+
       IF gShSld == "D"
-	
-	
+
+
          // datum posljednje promjene dobavljac
          cPom := DToC( dPPromDob )
          cPom2 := ""
@@ -1079,12 +1077,12 @@ FUNCTION _txt_djokeri( cTxt, cPartn )
          ENDIF
 
       ELSE
-	
+
          cPom := ""
          cPom2 := ""
-	
+
       ENDIF
-	
+
       cTxt := StrTran( cTxt, cStrDPrDob, cPom2 + " " + cPom )
 
    ENDIF
@@ -1097,11 +1095,11 @@ STATIC FUNCTION set_partner_id_broj( cId )
 
    LOCAL cBroj := ""
    LOCAL cIdBroj := firma_id_broj( cId )
-   LOCAL cPdvBroj := firma_pdv_broj( cId ) 
+   LOCAL cPdvBroj := firma_pdv_broj( cId )
 
    cBroj += cIdBroj
 
-   IF !EMPTY( cPdvBroj )
+   IF !Empty( cPdvBroj )
       cBroj += " PDV broj: " + cPdvBroj
    ENDIF
 
@@ -1138,7 +1136,7 @@ STATIC FUNCTION fill_part_data( cId, lPdvObveznik )
 
    IF !lFromMemo .AND. partn->id == cId
       cIdBroj := firma_id_broj( cId )
-      cPdvBroj := firma_pdv_broj( cId ) 
+      cPdvBroj := firma_pdv_broj( cId )
       cPorBroj := IzSifKPartn( "PORB", cId, .F. )
       cBrRjes := IzSifKPartn( "BRJS", cId, .F. )
       cBrUpisa := IzSifKPartn( "BRUP", cId, .F. )

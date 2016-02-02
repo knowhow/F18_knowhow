@@ -83,7 +83,7 @@ FUNCTION ispitaj_pravilo_konto()
    LOCAL nTArea := Select()
 
    LOCAL cObj := "KNJIZ_KONTO"
-   LOCAL cMod := goModul:oDataBase:cName
+   LOCAL cMod := tekuci_modul()
 
    LOCAL nErrLevel
    LOCAL cKtoList
@@ -170,7 +170,7 @@ FUNCTION ispitaj_pravilo_partner()
    LOCAL nTArea := Select()
 
    LOCAL cObj := "KNJIZ_PARTNER_KONTO"
-   LOCAL cMod := goModul:oDataBase:cName
+   LOCAL cMod := tekuci_modul()
 
    LOCAL nErrLevel
    LOCAL cKtoList
@@ -235,7 +235,7 @@ FUNCTION ispitaj_pravilo_dug_pot()
    LOCAL nTArea := Select()
 
    LOCAL cObj := "KNJIZ_DP_PARTNER_KONTO"
-   LOCAL cMod := goModul:oDataBase:cName
+   LOCAL cMod := tekuci_modul()
 
    LOCAL nErrLevel
    LOCAL cKtoList
@@ -404,7 +404,7 @@ FUNCTION ispitaj_pravilo_broj_veze()
    LOCAL nTArea := Select()
 
    LOCAL cObj := "KNJIZ_BROJ_VEZE"
-   LOCAL cMod := goModul:oDataBase:cName
+   LOCAL cMod := tekuci_modul()
 
    LOCAL nErrLevel
    LOCAL cKtoList
@@ -473,7 +473,7 @@ FUNCTION r_get_konto( cCond, cPartner )
    LOCAL nTArea := Select()
 
    LOCAL cObj := "ELBA_IMPORT"
-   LOCAL cMod := goModul:oDataBase:cName
+   LOCAL cMod := tekuci_modul()
    LOCAL cKonto := "XX"
 
    O_FMKRULES
@@ -522,7 +522,7 @@ FUNCTION r_get_kpartn( cKonto )
    LOCAL nTArea := Select()
 
    LOCAL cObj := "ELBA_IMPORT"
-   LOCAL cMod := goModul:oDataBase:cName
+   LOCAL cMod := tekuci_modul()
    LOCAL cCond := "KTO_PARTN"
    LOCAL cPartn := ""
 

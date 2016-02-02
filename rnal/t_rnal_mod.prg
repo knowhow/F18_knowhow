@@ -20,7 +20,6 @@ CLASS TRnalMod FROM TAppMod
    METHOD mMenu
    METHOD mStartUp
    METHOD mMenuStandard
-   METHOD initdb
    METHOD srv
 
 ENDCLASS
@@ -33,13 +32,6 @@ METHOD new( p1, p2, p3, p4, p5, p6, p7, p8, p9 )
    RETURN self
 
 
-// -----------------------------------------------
-// -----------------------------------------------
-METHOD initdb()
-
-   ::oDatabase := TDbRnal():new()
-
-   RETURN NIL
 
 
 // -----------------------------------------------

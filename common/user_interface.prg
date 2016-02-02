@@ -1024,7 +1024,7 @@ FUNCTION UGlavnomMeniju()
    LOCAL i
    LOCAL fRet := .T.
 
-   IF goModul:oDataBase:cName == "LD"
+   IF tekuci_modul() == "LD"
       RETURN fRet
    ENDIF
 

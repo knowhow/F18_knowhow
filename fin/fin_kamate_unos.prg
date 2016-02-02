@@ -9,7 +9,6 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-
 #include "f18.ch"
 
 STATIC picdem := "9999999999.99"
@@ -26,7 +25,7 @@ FUNCTION fin_kamate_menu()
    LOCAL _opc := {}
    LOCAL _opcexe := {}
 
-   AAdd( _opc, "1. obracun pojedinacnog dokumenta              " )
+   AAdd( _opc, "1. obračun pojedinacnog dokumenta              " )
    AAdd( _opcexe, {|| kamate_obracun_pojedinacni() } )
    AAdd( _opc, "2. unos/ispravka pripreme kamata   " )
    AAdd( _opcexe, {|| kamate_unos() } )
@@ -75,12 +74,12 @@ FUNCTION kamate_unos()
    @ m_x + ( _x - 2 ), m_y + 2 SAY " <c-N>  Nove Stavke      ³ <ENT> Ispravi stavku   ³ <c-T> Brisi Stavku"
    @ m_x + ( _x - 1 ), m_y + 2 SAY " <c-A>  Ispravka Dokum.  ³ <c-P> Stampa svi KL    ³ <c-U> Lista uk.dug"
    @ m_x + _x, m_y + 2 SAY " <c-F9> Brisi pripremu   ³ <a-P> Stampa pojedinac.³                   "
-   ObjDbedit( "PNal", _x, _y,{|| _key_handler() }, "", "KAMATE Priprema.....ÍÍÍÍÍ", , , , , 3 )
+   ObjDbedit( "PNal", _x, _y, {|| _key_handler() }, "", "KAMATE Priprema.....ÍÍÍÍÍ", , , , , 3 )
    BoxC()
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
 
 // otvaranje potrebnih tabela
@@ -209,7 +208,7 @@ STATIC FUNCTION _key_handler()
       DO WHILE !Eof()
          SKIP
          nTR2 := RecNo()
-         skip - 1
+         SKIP - 1
          Scatter()
          @ m_x + 1, m_y + 1 CLEAR TO m_x + 12, m_y + 74
          IF ispravka_unosa( .F. ) == 0
@@ -338,7 +337,7 @@ STATIC FUNCTION _key_handler()
 
       RETURN DE_REFRESH
 
-   CASE Ch == K_ALT_A
+   CASE is_key_alt_a( Ch )
       RETURN DE_REFRESH
 
    ENDCASE

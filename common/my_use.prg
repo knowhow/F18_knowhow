@@ -80,7 +80,7 @@ FUNCTION my_use_temp( alias, table, new_area, excl )
       nSelect := Select( _a_dbf_rec[ "alias" ] )
       IF nSelect > 0 .AND. ( nSelect <> _a_dbf_rec[ "wa" ] )
          log_write( "WARNING: " + _a_dbf_rec[ "table" ] + " na WA=" + Str( nSelect ) + " ?", 3 )
-         SELECT( nSelect )
+         Select( nSelect )
          USE
       ENDIF
 
@@ -167,7 +167,7 @@ FUNCTION my_use( alias, table, new_area, _rdd, semaphore_param, excl, select_wa 
    nSelect := Select( _a_dbf_rec[ "alias" ] )
    IF nSelect > 0 .AND. ( nSelect <> _a_dbf_rec[ "wa" ] )
       log_write( "WARNING: " + _a_dbf_rec[ "table" ] + " na WA=" + Str( nSelect ) + " ?", 3 )
-      SELECT( nSelect )
+      Select( nSelect )
       USE
    ENDIF
    // pozicioniraj se na WA rezervisanu za ovu tabelu
@@ -202,7 +202,7 @@ FUNCTION my_use( alias, table, new_area, _rdd, semaphore_param, excl, select_wa 
          dbf_semaphore_synchro( table, @lOdradioFullSynchro )
 
          IF lOdradioFullSynchro
-            set_a_dbf_rec_chk0( _a_dbf_rec["table"] )
+            set_a_dbf_rec_chk0( _a_dbf_rec[ "table" ] )
          ENDIF
 
          IF !_a_dbf_rec[ "chk0" ]
@@ -284,40 +284,26 @@ FUNCTION my_use_error( table, alias, oError )
 FUNCTION dbf_semaphore_synchro( table, lFullSynchro )
 
    LOCAL lRet := .T.
-   LOCAL _version, _last_version
+   LOCAL hVersion
 
    lFullSynchro := .F.
 
    log_write( "START dbf_semaphore_synchro", 9 )
 
-   _version :=  get_semaphore_version( table )
+   hVersion :=  get_semaphore_version_h( table )
 
-   DO WHILE .T.
+   IF ( hVersion[ 'version' ] == -1 )
+      log_write( "full synchro version semaphore version -1", 7 )
+      lFullSynchro := .T.
+      update_dbf_from_server( table, "FULL" )
+   ELSE
 
-      IF ( _version == -1 )
-         log_write( "full synchro version semaphore version -1", 7 )
-         lFullSynchro := .T.
-         update_dbf_from_server( table, "FULL" )
-      ELSE
-         _last_version := last_semaphore_version( table )
-         IF ( _version < _last_version )
-            log_write( "dbf_semaphore_synchro/1, my_use" + table + " osvjeziti dbf cache: ver: " + AllTrim( Str( _version, 10 ) ) + " last_ver: " + AllTrim( Str( _last_version, 10 ) ), 5 )
-            update_dbf_from_server( table, "IDS" )
-         ENDIF
+      IF ( hVersion[ 'version' ] < hVersion[ 'last_version' ] )
+         log_write( "dbf_semaphore_synchro/1, my_use" + table + " osvjeziti dbf cache: ver: " + ;
+            AllTrim( Str( hVersion [ 'version' ], 10 ) ) + " last_ver: " + AllTrim( Str( hVersion[ 'last_version' ], 10 ) ), 5 )
+         update_dbf_from_server( table, "IDS" )
       ENDIF
-
-      // posljednja provjera ... mozda je neko
-      // u medjuvremenu mjenjao semafor
-      _last_version := last_semaphore_version( table )
-      _version      := get_semaphore_version( table )
-
-      IF _version >= _last_version
-         EXIT
-      ENDIF
-
-      log_write( "dbf_semaphore_synchro/2, _last_version: " + Str( _last_version ) + " _version: " + Str( _version ), 5 )
-
-   ENDDO
+   ENDIF
 
    log_write( "END dbf_semaphore_synchro", 9 )
 

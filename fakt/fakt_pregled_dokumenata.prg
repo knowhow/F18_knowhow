@@ -60,7 +60,7 @@ FUNCTION fakt_pregled_liste_dokumenata()
       _objekat_id := Space( 10 )
    ENDIF
 
-   Box( , 13 + IIF( _vrste_pl .OR. lOpcine .OR. _objekti, 6, 0 ), 77 )
+   Box( , 13 + iif( _vrste_pl .OR. lOpcine .OR. _objekti, 6, 0 ), 77 )
 
    cIdFirma := fetch_metric( "fakt_stampa_liste_id_firma", _curr_user, cIdFirma )
    qqTipDok := fetch_metric( "fakt_stampa_liste_dokumenti", _curr_user, qqTipDok )
@@ -177,7 +177,7 @@ FUNCTION fakt_pregled_liste_dokumenata()
    ENDIF
 
    IF !Empty( cOpcina )
-      cFilter += ".and. " + aUslOpc 
+      cFilter += ".and. " + aUslOpc
    ENDIF
 
    IF _objekti .AND. !Empty( _objekat_id )
@@ -458,7 +458,7 @@ STATIC FUNCTION prikazi_broj_fiskalnog_racuna( model )
       @ m_x + 1, m_y + 2 SAY PadR( "", 60 )
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -482,6 +482,7 @@ FUNCTION fakt_tabela_komande( lOpcine, fakt_doks_filt, model )
 
    CASE Ch == K_ENTER
 
+altd()
       nRet := print_porezna_faktura( lOpcine )
       _refresh := .T.
 
@@ -605,7 +606,7 @@ FUNCTION fakt_tabela_komande( lOpcine, fakt_doks_filt, model )
 
       IF field->idtipdok $ "10#11"
 
-         IF postoji_fiskalni_racun( fakt_doks->idfirma, fakt_doks->idtipdok, fakt_doks->brdok, model ) 
+         IF postoji_fiskalni_racun( fakt_doks->idfirma, fakt_doks->idtipdok, fakt_doks->brdok, model )
             MsgBeep( "Fiskalni račun već štampan za ovaj dokument !#Ako je potrebna ponovna štampa resetujte broj veze." )
             RETURN DE_CONT
          ENDIF
@@ -663,7 +664,7 @@ FUNCTION fakt_tabela_komande( lOpcine, fakt_doks_filt, model )
    CASE Chr( Ch ) $ "nN"
 
       SELECT fakt_doks
-      fakt_print_narudzbenica( field->idFirma, field->IdTipDok, field->BrDok)
+      fakt_print_narudzbenica( field->idFirma, field->IdTipDok, field->BrDok )
       nRet := DE_CONT
       _refresh := .T.
 
@@ -962,12 +963,11 @@ FUNCTION fakt_zagl_real_partnera()
 */
 FUNCTION flt_fakt_part_opc()
 
-  LOCAL cRet
+   LOCAL cRet
 
-  SELECT partn
-  SEEK fakt_doks->idpartner
-  cRet := partn->idops
-  SELECT fakt_doks
+   SELECT partn
+   SEEK fakt_doks->idpartner
+   cRet := partn->idops
+   SELECT fakt_doks
 
-  RETURN cRet
-
+   RETURN cRet

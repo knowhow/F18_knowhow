@@ -11,12 +11,8 @@
 
 
 #include "f18.ch"
-#include "f18_separator.ch"
 
 
-
-// -------------------------------------------------------------------------
-// -------------------------------------------------------------------------
 FUNCTION fakt_lista_dokumenata_tabelarni_pregled( lVrsteP, lOpcine, cFilter )
 
    LOCAL i
@@ -68,13 +64,13 @@ FUNCTION fakt_lista_dokumenata_tabelarni_pregled( lVrsteP, lOpcine, cFilter )
 
    Box( , _x, _y )
 
-   @ m_x + _x - 4, m_y + 2 SAY PadR( " <ENTER> Stampa TXT", _w1 ) + ;
+   @ m_x + _x - 4, m_y + 2 SAY8 PadR( " <ENTER> Štampa TXT", _w1 ) + ;
       BROWSE_COL_SEP + PadR( " < P > Povrat dokumenta", _w1 ) + ;
       BROWSE_COL_SEP + PadR( " < I > Informacije", _w1 )
-   @ m_x + _x - 3, m_y + 2 SAY PadR( " < a+P > Stampa ODT", _w1 ) + ;
+   @ m_x + _x - 3, m_y + 2 SAY8 PadR( " < a+P > Štampa ODT", _w1 ) + ;
       BROWSE_COL_SEP + PadR( " < S > Storno dokument", _w1 ) + ;
       BROWSE_COL_SEP + PadR( " < c+V > Setuj vezu fisk.", _w1 )
-   @ m_x + _x - 2, m_y + 2 SAY PadR( " < R > Stampa fisk.racuna", _w1 ) + ;
+   @ m_x + _x - 2, m_y + 2 SAY8 PadR( " < R > Štampa fisk.računa", _w1 ) + ;
       BROWSE_COL_SEP + PadR( " < F > ponuda->racun", _w1 ) + ;
       BROWSE_COL_SEP + PadR( " < F5 > Refresh ", _w1 )
    @ m_x + _x - 1, m_y + 2 SAY PadR( " < W > Dupliciraj", _w1 ) + ;
@@ -125,14 +121,14 @@ FUNCTION fakt_lista_dokumenata_tabelarni_pregled( lVrsteP, lOpcine, cFilter )
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
 
 STATIC FUNCTION g_fiscal_info( model )
 
    LOCAL cInfo := " "
 
-   IF !postoji_fiskalni_racun( fakt_doks->idfirma, fakt_doks->idtipdok, fakt_doks->brdok, model ) 
+   IF !postoji_fiskalni_racun( fakt_doks->idfirma, fakt_doks->idtipdok, fakt_doks->brdok, model )
       cInfo := " "
    ELSE
       cInfo := "F"

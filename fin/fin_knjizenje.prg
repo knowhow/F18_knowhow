@@ -808,7 +808,7 @@ FUNCTION edit_fin_pripr()
       RETURN DE_REFRESH
 
 
-   CASE Ch == K_ALT_A
+   CASE is_key_alt_a( Ch )
 
       fin_set_broj_dokumenta()
       fin_azuriranje_naloga()

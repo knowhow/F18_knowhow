@@ -111,3 +111,22 @@ FUNCTION is_var_objekat_tipa( xVar, cClassName )
 FUNCTION sql_error_in_query( oQry )
 
    RETURN ( oQry:NetErr() ) .AND. !Empty( oQry:ErrorMsg() )
+
+
+FUNCTION sql_query_bez_zapisa( ret )
+
+   SWITCH ValType( ret )
+   CASE "L"
+      RETURN .T.
+   CASE "O"
+      // TPQQuery nema nijednog zapisa
+      IF ret:lEof .AND. ret:lBof
+         RETURN .T.
+      ENDIF
+      EXIT
+   OTHERWISE
+      MsgBeep( "sql_query ? ret valtype: " + ValType( ret ) )
+      QUIT_1
+   END SWITCH
+
+   RETURN .F.

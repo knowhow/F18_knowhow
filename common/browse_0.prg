@@ -12,7 +12,7 @@
 #include "f18.ch"
 
 
-/*! fn function ObjDBedit(cImeBoxa,  xw, yw, bUserF,  cMessTop, cMessBot, lInvert, aMessage, nFreeze, bPodvuci, nPrazno, nGPrazno, aPoredak, skipblock)
+/* fn function ObjDBedit(cImeBoxa,  xw, yw, bUserF,  cMessTop, cMessBot, lInvert, aMessage, nFreeze, bPodvuci, nPrazno, nGPrazno, aPoredak, skipblock)
  * brief Glavna funkcija tabelarnog prikaza podataka
  * param cImeBoxa - ime box-a
  * param xw - duzina
@@ -25,18 +25,18 @@
  * Funkcija ObjDbedit koristi se za prikaz tabelarnih podataka. Koristi je sifarski sistem, tablela pripreme itd ...
 */
 
-/*! \var ImeKol
- \brief Privatna Varijabla koja se inicijalizira prije "ulaska" u ObjDBedit
- \param - [ 1] Zalavlje kolone
- \param - [ 2] kodni blok za prikaz kolone {|| id}
- \param - [ 3] izraz koji se edituje (string), obradjuje sa & operatorom
- \param - [ 4] kodni blok When
- \param - [ 5] kodni blok Valid
- \param - [ 6] -
- \param - [ 7] picture
- \param - [ 8] - ima jos getova
- \param - [ 9] -
- \param - [10] NIL - prikazi u sljedecem redu,  15 - prikazi u koloni my+15  broj kolone pri editu sa <F2>
+/* var ImeKol
+ brief Privatna Varijabla koja se inicijalizira prije "ulaska" u ObjDBedit
+ param - [ 1] Zalavlje kolone
+ param - [ 2] kodni blok za prikaz kolone {|| id}
+ param - [ 3] izraz koji se edituje (string), obradjuje sa & operatorom
+ param - [ 4] kodni blok When
+ param - [ 5] kodni blok Valid
+ param - [ 6] -
+ param - [ 7] picture
+ param - [ 8] - ima jos getova
+ param - [ 9] -
+ param - [10] NIL - prikazi u sljedecem redu,  15 - prikazi u koloni my+15  broj kolone pri editu sa <F2>
 */
 
 
@@ -291,6 +291,10 @@ FUNCTION create_tbrowsedb( params, lIzOBJDB )
    RETURN .T.
 
 
+FUNCTION browse_force_stable()
+   RETURN ForceStable()
+
+   
 STATIC FUNCTION ForceStable()
 
    DO WHILE ! TB:stabilize()

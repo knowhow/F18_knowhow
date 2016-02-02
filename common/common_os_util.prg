@@ -11,6 +11,15 @@
 
 #include "f18.ch"
 
+FUNCTION is_mac_osx()
+
+#ifdef __PLATFORM__DARWIN
+   RETURN .T.
+#else
+
+   RETURN .F.
+#endif
+
 
 PROCEDURE OutMsg( hFile, cMsg )
 
@@ -33,20 +42,20 @@ FUNCTION GetExePath( cPath )
 
    LOCAL cRet := ""
    LOCAL i
-   LOCAL n := 0
+   LOCAL nBr := 0
    LOCAL cTmp
 
    FOR i := 1 TO Len( cPath )
 
       cTmp := SubStr( cPath, i, 1 )
 
-      IF cTmp == "\"
-         n += 1
+      IF cTmp == SLASH
+         nBr += 1
       ENDIF
 
       cRet += cTmp
 
-      IF n = 2
+      IF nBr == 2
          EXIT
       ENDIF
 
@@ -420,8 +429,7 @@ FUNCTION f18_open_document( document )
    RETURN _ret
 
 
-// ----------------------------
-// ----------------------------
+
 FUNCTION open_folder( folder )
 
    LOCAL _cmd

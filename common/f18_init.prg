@@ -212,6 +212,9 @@ STATIC FUNCTION _show_info()
    hb_idleAdd( {||  hb_DispOutAt( maxrows(),  maxcols() - 8 - 8 - 1, "< CALC >" ), MUpdate(), ;
       iif( !in_calc() .AND. MINRECT( maxrows(), maxcols() - 8 - 8 - 1, maxrows(), maxcols() - 8 - 1 ), Calc(), NIL ) } )
 
+   hb_idleAdd( {|| !in_dbf_refresh() .AND. dbf_refresh() } )
+
+
    RETURN .T.
 
 FUNCTION MUPDATE()

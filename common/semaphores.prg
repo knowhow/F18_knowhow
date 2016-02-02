@@ -11,6 +11,8 @@
 
 #include "f18.ch"
 
+STATIC s_lInDbfRefresh := .F.
+
 /*
    moguci statusi:
         lock
@@ -168,24 +170,6 @@ FUNCTION last_semaphore_version( table )
    RETURN _ret:FieldGet( 1 )
 
 
-
-FUNCTION sql_query_bez_zapisa( ret )
-
-   SWITCH ValType( ret )
-   CASE "L"
-      RETURN .T.
-   CASE "O"
-      // TPQQuery nema nijednog zapisa
-      IF ret:lEof .AND. ret:lBof
-         RETURN .T.
-      ENDIF
-      EXIT
-   OTHERWISE
-      MsgBeep( "sql_query ? ret valtype: " + ValType( ret ) )
-      QUIT_1
-   END SWITCH
-
-   RETURN .F.
 
 
 // -----------------------------------------------------------------------
@@ -455,7 +439,7 @@ FUNCTION fill_dbf_from_server( dbf_table, sql_query, sql_fetch_time, dbf_write_t
          ENDIF
 
       NEXT
-          
+
       IF lShowInfo
          IF _counter % 500 == 0
             @ m_x + 7, m_y + 2 SAY8 "synchro '" + dbf_table + "' broj obrađenih zapisa: " + AllTrim( Str( _counter ) )
@@ -638,6 +622,8 @@ FUNCTION insert_semaphore_if_not_exists( cTable )
 
    RETURN .T.
 
+FUNCTION in_dbf_refresh()
+   RETURN s_lInDbfRefresh
 
 FUNCTION dbf_refresh( cTable )
 
@@ -647,35 +633,57 @@ FUNCTION dbf_refresh( cTable )
    LOCAL _ret
    LOCAL aDbfRec, cSqlTbl
 
+   IF s_lInDbfRefresh
+      RETURN .F.
+   ENDIF
+   s_lInDbfRefresh := .T.
 
    IF  cTable == nil
+      IF !Used() .OR. ( rddName() ==  "SQLMIX" )
+         s_lInDbfRefresh := .F.
+         RETURN .F.
+      ENDIF
       cTable := Alias()
    ENDIF
+
 
    aDbfRec := get_a_dbf_rec( cTable )
    cSqlTbl := "fmk.semaphores_" + aDbfRec[ 'table' ]
 
    IF skip_semaphore( aDbfRec[ 'table' ] )
-         RETURN .F.
+      s_lInDbfRefresh := .F.
+      RETURN .F.
    ENDIF
 
    _qry := "SELECT last_trans_version-version FROM " + cSqlTbl + " WHERE user_code=" + _sql_quote( _user )
    _ret := _sql_query( _server, _qry )
 
+   IF sql_query_bez_zapisa( _ret )
+      Alert( "error: " + _qry + " msg: " + _ret:ErrorMsg() )
+      s_lInDbfRefresh := .F.
+      RETURN .F.
+   ENDIF
+
    IF ( _ret:FieldGet( 1 ) > 0 )
       PushWa()
       my_use( Alias() )
       PopWa()
+      s_lInDbfRefresh := .F.
       RETURN .T.
    ENDIF
+
+   s_lInDbfRefresh := .F.
 
    RETURN .F.
 
 STATIC FUNCTION skip_semaphore( table )
 
-   table := Lower( table )
+   LOCAL hRec
 
-   IF table == "sifk" .OR. table == "sifv"
+   table := Lower( table )
+   hRec := get_a_dbf_rec( table )
+
+   IF hRec[ 'sql' ] .OR. hRec[ 'temp' ]
       RETURN .T.
    ENDIF
 

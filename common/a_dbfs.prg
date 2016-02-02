@@ -43,7 +43,7 @@ FUNCTION set_a_dbfs()
    set_a_dbf_mat()
    set_a_dbf_kadev()
 
-   RETURN
+   RETURN .T.
 
 // ------------------------------------------------
 // za sve tabele kreiraj dbf_fields strukturu

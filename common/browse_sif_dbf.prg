@@ -11,7 +11,6 @@
 
 #include "f18.ch"
 
-
 STATIC __PSIF_NIVO__ := 0
 STATIC __A_SIFV__ := { { NIL, NIL, NIL }, { NIL, NIL, NIL }, { NIL, NIL, NIL }, { NIL, NIL, NIL } }
 
@@ -191,12 +190,12 @@ STATIC FUNCTION sif_seek( cId, cIdBK, cUslovSrch, cNazSrch, fId_j, nOrdId )
    LOCAL _tezina := 0
 
    IF cId == NIL
-      RETURN
+      RETURN .F.
    ENDIF
 
    IF ValType( cId ) == "N"
       SEEK Str( cId )
-      RETURN
+      RETURN .T.
    ENDIF
 
    IF Right( Trim( cId ), 1 ) == "*"
@@ -213,7 +212,7 @@ STATIC FUNCTION sif_seek( cId, cIdBK, cUslovSrch, cNazSrch, fId_j, nOrdId )
 
    IF Found()
       cId := &( FieldName( 1 ) )
-      RETURN
+      RETURN .T.
    ENDIF
 
    IF Len( cId ) > 10
@@ -458,9 +457,11 @@ STATIC FUNCTION sif_komande( nDbf, cNaslov, bBlok, aZabrane, aZabIsp )
 
    Ch := LastKey()
 
+/* TODO: ukloniti
    IF dbf_refresh()
       Tb:RefreshAll()
    ENDIF
+ */
 
    aStruct := dbStruct()
    SkratiAZaD ( @aStruct )
@@ -587,7 +588,6 @@ STATIC FUNCTION sif_komande( nDbf, cNaslov, bBlok, aZabrane, aZabIsp )
    ENDCASE
 
    RETURN .T.
-
 
 
 FUNCTION browse_edit_stavka( Ch, nOrder, aZabIsp, lNovi )
@@ -952,7 +952,7 @@ FUNCTION SetSifVars()
       &cVar := &cImeP
    NEXT
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -1526,4 +1526,4 @@ FUNCTION SeekBarKod( cId, cIdBk, lNFGR )
       GO ( nRec )
    ENDIF
 
-   RETURN
+   RETURN .T.

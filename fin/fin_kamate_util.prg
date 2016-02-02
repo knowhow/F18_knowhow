@@ -47,8 +47,6 @@ FUNCTION fin_kamate_generisi_mj_uplate()
    fill( nRataIznos, nDanUplate, ( cNaredni == "N" ) )
 
 
-   // ---------------------------------------------------
-   // ----------------------------------------------------
 
 STATIC FUNCTION fill( nRataIznos, nDanUplate, lNaredni )
 
@@ -107,8 +105,8 @@ STATIC FUNCTION add_month( nMonth, nYear )
 
    RETURN
 
-// --------------------------------------------
-// --------------------------------------------
+
+
 STATIC FUNCTION d_m_y( nDay, nMonth, nYear )
 
    LOCAL cPom

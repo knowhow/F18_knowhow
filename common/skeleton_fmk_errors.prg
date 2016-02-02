@@ -13,8 +13,6 @@
 
 
 
-// ------------------------------------------
-// ------------------------------------------
 FUNCTION MyErrorHandler( objErr, lLocalHandler )
 
    LOCAL cOldDev
@@ -33,22 +31,23 @@ FUNCTION MyErrorHandler( objErr, lLocalHandler )
    cOldCon  := Set( _SET_CONSOLE, "ON" )
    cOldPrn  := Set( _SET_PRINTER, "" )
    cOldFile := Set( _SET_PRINTFILE, "" )
+   altd()
    BEEP( 5 )
 
    nErr := objErr:genCode
 
    IF objErr:genCode = EG_PRINT
-      MsgO( objErr:description + ':Greska sa stampacem !!!!' )
+      MsgO( objErr:description + ':Greska sa stampacem !' )
    ELSEIF ObjErr:genCode = EG_CREATE
-      MsgO( ObjErr:description + ':Ne mogu kreirati fajl !!!!' )
+      MsgO( ObjErr:description + ':Ne mogu kreirati fajl !' )
    ELSEIF objErr:genCode = EG_OPEN
-      MsgO( ObjErr:description + ':Ne mogu otvoriti fajl !!!!' )
+      MsgO( ObjErr:description + ':Ne mogu otvoriti fajl !' )
    ELSEIF objErr:genCode = EG_CLOSE
-      MsgO( objErr:description + ':Ne mogu zatvoriti fajl !!!!' )
+      MsgO( objErr:description + ':Ne mogu zatvoriti fajl !' )
    ELSEIF objErr:genCode = EG_READ
-      MsgO( objErr:description + ':Ne mogu procitati fajl !!!!' )
+      MsgO( objErr:description + ':Ne mogu procitati fajl !' )
    ELSEIF objErr:genCode = EG_WRITE
-      MsgO( objErr:description + ':Ne mogu zapisati u fajl !!!!' )
+      MsgO( objErr:description + ':Ne mogu zapisati u fajl !' )
    ELSE
       MsgO( objErr:description + ' Greska !!!!' )
    ENDIF

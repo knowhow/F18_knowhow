@@ -18,7 +18,7 @@
 // vraca lRet - .t. ako je sve ok,
 // .f. ako nije
 // --------------------------------
-FUNCTION KontrZb( bDat, lSilent )
+FUNCTION fin_kontrola_zbira( bDat, lSilent )
 
    LOCAL lRet := .T.
    LOCAL nSaldo := 0
@@ -66,12 +66,13 @@ FUNCTION KontrZb( bDat, lSilent )
 
       SET CURSOR OFF
 
-      _line := Replicate( "�", 10 ) + "�" + Replicate( "�", 16 ) + "�" + Replicate( "�", 16 ) + "�" + Replicate( "�", 16 ) + "�" + Replicate( "�", 16 )
+      _line := Replicate( "=", 10 ) + " " + Replicate( "=", 16 ) + " " + ;
+         Replicate( "=", 16 ) + " " + Replicate( "=", 16 ) + " " + Replicate( "=", 16 )
 
-      @ m_x + 1, m_y + 11 SAY "�" + PadC( "NALOZI", 16 ) + ;
-         "�" + PadC( "SINTETIKA", 16 ) + ;
-         "�" + PadC( "ANALITIKA", 16 ) + ;
-         "�" + PadC( "SUBANALITIKA", 16 )
+      @ m_x + 1, m_y + 11 SAY "|" + PadC( "NALOZI", 16 ) + ;
+         "|" + PadC( "SINTETIKA", 16 ) + ;
+         "|" + PadC( "ANALITIKA", 16 ) + ;
+         "|" + PadC( "SUBANALITIKA", 16 )
 
       @ m_x + 2, m_y + 1 SAY _line
 
@@ -88,10 +89,10 @@ FUNCTION KontrZb( bDat, lSilent )
 
       FOR i := 11 TO 65 STEP 17
          FOR j := 3 TO 9
-            @ m_x + j, m_y + i SAY "�"
+            @ m_x + j, m_y + i SAY "|"
          NEXT
       NEXT
-	
+
       picBHD := FormPicL( "9 " + gPicBHD, 16 )
       picDEM := FormPicL( "9 " + gPicDEM, 16 )
 
@@ -99,7 +100,7 @@ FUNCTION KontrZb( bDat, lSilent )
 
    SELECT nalog
    GO TOP
-	
+
    nDug := nPot := nDu2 := nPo2 := 0
    DO WHILE !Eof() .AND. Inkey() != 27
       IF ( bDat )
@@ -206,7 +207,7 @@ FUNCTION KontrZb( bDat, lSilent )
             LOOP
          ENDIF
       ENDIF
-		
+
       IF D_P == "1"
          nDug += Iznosbhd
          nDu2 += Iznosdem
@@ -277,11 +278,11 @@ FUNCTION auto_kzb()
       RETURN
    ENDIF
 
-   lKzbOk := kontrzb( nil, .T. )
+   lKzbOk := fin_kontrola_zbira( nil, .T. )
 
    IF !lKzbOk
       MsgBeep( "Kontrola zbira datoteka je pronasla greske!#Pregledajte greske..." )
-      kontrzb()
+      fin_kontrola_zbira()
    ENDIF
 
    SELECT ( nTArea )

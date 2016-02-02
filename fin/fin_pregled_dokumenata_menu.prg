@@ -18,7 +18,7 @@ FUNCTION MnuPregledDokumenata()
    PRIVATE Izbor := 1
 
    AAdd( opc, "1. kontrola zbira datoteka                     " )
-   AAdd( opcexe, {|| KontrZb() } )
+   AAdd( opcexe, {|| fin_kontrola_zbira() } )
 
    AAdd( opc, "2. štampanje ažuriranog dokumenta" )
 
@@ -29,7 +29,7 @@ FUNCTION MnuPregledDokumenata()
    AAdd( opcexe, {|| fin_stampa_liste_naloga() } )
 
    AAdd( opc, "4. kontrola zbira datoteka za period" )
-   AAdd( opcexe, {|| KontrZb( .T. ) } )
+   AAdd( opcexe, {|| fin_kontrola_zbira( .T. ) } )
 
    Menu_SC( "pgl" )
 

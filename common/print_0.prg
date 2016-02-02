@@ -216,13 +216,6 @@ FUNCTION EndPrint()
    SET PRINTER TO
    SET CONSOLE ON
 
-   // u test rezimu se ne pokrece editor
-   // #ifdef TEST
-
-   // RETURN .T.
-   // #endif
-
-   // cOutfTxt:= IzFMKIni('Printeri','DirektnoOUTFTXT','N')
    cOutfTxt := ""
 
    nSek2 := Seconds()
@@ -475,10 +468,9 @@ FUNCTION EPrint2( xPos )
 
    Tone( 440, 2 )
    Tone( 440, 2 )
-   Msg( "Stampanje zavrseno. Pritisnite bilo koju tipku za nastavak rada!", ;
-      15, xPos )
+   Msg( "Stampanje zavrseno. Pritisnite bilo koju tipku za nastavak rada!",  15, xPos )
 
-   RETURN
+   RETURN .T.
 
 
 // ------------------------------------------

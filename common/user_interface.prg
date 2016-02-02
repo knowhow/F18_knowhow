@@ -458,12 +458,12 @@ FUNCTION BoxCLS()
    RETURN
 
 
-// ------------------
-// ------------------
+
 FUNCTION Beep( nPuta )
 
    LOCAL _i
 
+altd()
 #ifndef TEST
 
    FOR _i := 1 TO nPuta
@@ -471,7 +471,7 @@ FUNCTION Beep( nPuta )
    NEXT
 #endif
 
-   RETURN
+   RETURN .T.
 
 
 FUNCTION CentrTxt( tekst, lin )

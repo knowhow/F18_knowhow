@@ -242,7 +242,7 @@ STATIC FUNCTION formiraj_finansijski_nalog( lAuto )
    IF !f18_use_module( "fin" )
       RETURN
    ENDIF
-         
+
    IF ( gaFin == "D" .OR. gaMat == "D" )
       IF kalk_kontiranje_naloga( .T., lAuto )
          fin_nalog_priprema_kalk( lAuto )
@@ -260,7 +260,7 @@ STATIC FUNCTION formiraj_fakt_zavisne_dokumente()
 
    IF !f18_use_module( "fakt" )
       RETURN
-   ENDIF 
+   ENDIF
 
    IF gAFakt != "D"
       RETURN
@@ -361,8 +361,6 @@ STATIC FUNCTION kalk_azur_dbf( lAuto, lViseDok, aOstaju, aRezim, lBrStDoks )
    LOCAL nRabat := 0
    LOCAL cOpis
    LOCAL nBrStavki
-
-   Tone( 360, 2 )
 
    MsgO( "Ažuriram pripremu u DBF tabele..." )
 
@@ -915,8 +913,3 @@ FUNCTION kalk_dokumenti_iz_pripreme_u_matricu()
    ENDDO
 
    RETURN _arr
-
-
-
-
-

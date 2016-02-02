@@ -171,7 +171,7 @@ FUNCTION select_print_mode( cDirekt )
 
    nWidth := 35
 
-   Tone( 400, 2 )
+   Tone( 350, 2 )
 
    m_x := 8
    m_y := 38 - Round( nWidth / 2, 0 )
@@ -212,7 +212,7 @@ FUNCTION select_print_mode( cDirekt )
 
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 FUNCTION GetLozinka( nSiflen )

@@ -120,7 +120,7 @@ FUNCTION kontrola_zbira_naloga()
 
    PopWA()
 
-   RETURN
+   RETURN .T.
 
 
 FUNCTION kontrola_zbira_naloga_kalk( lAuto )
@@ -134,9 +134,9 @@ FUNCTION kontrola_zbira_naloga_kalk( lAuto )
    ENDIF
 
    Box( "kzb", 12, 70, .F., "Kontrola zbira FIN naloga" )
-	
+
    SET CURSOR ON
- 	
+
    cIdFirma := IdFirma
    cIdVN := IdVN
    cBrNal := BrNal
@@ -153,7 +153,7 @@ FUNCTION kontrola_zbira_naloga_kalk( lAuto )
 
 
    DO WHILE  !Eof() .AND. ( IdFirma + IdVn + BrNal == cIdFirma + cIdVn + cBrNal )
-   		
+
       IF D_P == "1"
          dug += IznosBHD
          dug2 += iznosdem
@@ -161,16 +161,16 @@ FUNCTION kontrola_zbira_naloga_kalk( lAuto )
          pot += IznosBHD
          pot2 += iznosdem
       ENDIF
-   		
+
       SKIP
    ENDDO
- 	
+
    SKIP -1
- 	
+
    Scatter()
 
    cPic := "999 999 999 999.99"
- 	
+
    @ m_x + 5, m_y + 2 SAY "Zbir naloga:"
    @ m_x + 6, m_y + 2 SAY "     Duguje:"
    @ m_x + 6, Col() + 2 SAY Dug PICTURE cPic
@@ -183,63 +183,63 @@ FUNCTION kontrola_zbira_naloga_kalk( lAuto )
    @ m_x + 8, Col() + 2 SAY Dug2 - Pot2  PICTURE cPic
 
    IF Round( Dug - Pot, 2 ) <> 0
-   		
+
       PRIVATE cDN := "D"
-   		
+
       IF lAuto == .F.
-			
+
          SET CURSOR ON
-			
+
          @ m_x + 10, m_y + 2 SAY "Zelite li uravnoteziti nalog (D/N) ?" GET cDN valid ( cDN $ "DN" ) PICT "@!"
-   		
+
          READ
-		
+
       ELSE
          // uravnoteziti nalog ako je auto import
          cDN := "D"
       ENDIF
-		
+
       IF cDN == "D"
-     	
+
          _Opis := "GRESKA ZAOKRUZ."
          _BrDok := ""
          _D_P := "2"
          _IdKonto := Space( 7 )
-     			
+
          IF lAuto == .F.
-			
+
             @ m_x + 11, m_y + 2 SAY "Staviti na konto ?" ;
                GET _IdKonto VALID P_Konto( @_IdKonto )
             @ m_x + 11, Col() + 1 SAY "Datum dokumenta:" GET _DatDok
-     			
+
             READ
-			
+
          ELSE
-			
+
             _idkonto := gAImpRKonto
-			
+
             IF Empty( _idkonto )
                _idkonto := "1370   "
             ENDIF
-			
+
          ENDIF
-			
+
          IF lAuto == .T. .OR. LastKey() <> K_ESC
-			       				
+
             _Rbr := Str( Val( _Rbr ) + 1, 4 )
             _IdPartner := ""
             _IznosBHD := Dug - Pot
-       			
+
             nTArea := Select()
-				
+
             DinDem( NIL, NIL, "_IZNOSBHD" )
-       			
+
             SELECT ( nTArea )
-			
+
             APPEND BLANK
-       				
+
             Gather()
-				
+
          ENDIF
       ENDIF
    ENDIF
@@ -247,4 +247,4 @@ FUNCTION kontrola_zbira_naloga_kalk( lAuto )
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.

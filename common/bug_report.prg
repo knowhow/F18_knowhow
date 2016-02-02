@@ -19,6 +19,8 @@ FUNCTION GlobalErrorHandler( err_obj, lShowErrorReport, lQuitApp )
    LOCAL _msg, _log_msg := "BUG REPORT: "
    LOCAL lNotify := .F.
 
+   AltD()
+
    hb_default( @lQuitApp, .T. )
    hb_default( @lShowErrorReport, .T. )
 
@@ -27,6 +29,7 @@ FUNCTION GlobalErrorHandler( err_obj, lShowErrorReport, lQuitApp )
    ENDIF
 
    _err_code := err_obj:genCode
+
 
    BEEP( 5 )
    _out_file := my_home_root() + "error.txt"
@@ -222,7 +225,7 @@ STATIC FUNCTION current_dbf_info()
 
    LOCAL _struct, _i
 
-   ? "Trenutno radno podrucje:", Alias(),", record:", RecNo(), "/", RecCount()
+   ? "Trenutno radno podrucje:", Alias(), ", record:", RecNo(), "/", RecCount()
 
    _struct := dbStruct()
 
@@ -269,14 +272,14 @@ STATIC FUNCTION send_email( err_obj, lNotify )
    ENDIF
 
    DO CASE
-         CASE _answ $ "D#N#A"
-              IF _answ $ "DN"
-                   IF Pitanje(, "Poslati poruku greške email-om podrški bring.out-a (D/N) ?", _answ ) == "N"
-                        RETURN .F.
-                   ENDIF
-              ENDIF
-         OTHERWISE
-              RETURN .F.
+   CASE _answ $ "D#N#A"
+      IF _answ $ "DN"
+         IF Pitanje(, "Poslati poruku greške email-om podrški bring.out-a (D/N) ?", _answ ) == "N"
+            RETURN .F.
+         ENDIF
+      ENDIF
+   OTHERWISE
+      RETURN .F.
    ENDCASE
 
    // BUG F18 1.7.21, rg_2013/bjasko, 02.04.04, 15:00:07, variable does not exist
@@ -287,11 +290,11 @@ STATIC FUNCTION send_email( err_obj, lNotify )
    ENDIF
 
    _subject += F18_VER
-   _subject += ", " + my_server_params()["database"] + "/" + ALLTRIM( f18_user() )
-   _subject += ", " + DTOC( DATE() ) + " " + PADR( TIME(), 8 )
+   _subject += ", " + my_server_params()[ "database" ] + "/" + AllTrim( f18_user() )
+   _subject += ", " + DToC( Date() ) + " " + PadR( Time(), 8 )
 
    IF err_obj != NIL
-         _subject += ", " + ALLTRIM( err_obj:description ) + "/" + ALLTRIM( err_obj:operation )
+      _subject += ", " + AllTrim( err_obj:description ) + "/" + AllTrim( err_obj:operation )
    ENDIF
 
    _body := "U prilogu zip fajl sa sadržajem trenutne greške i log fajlom servera"
@@ -300,9 +303,9 @@ STATIC FUNCTION send_email( err_obj, lNotify )
 
    _attachment := send_email_attachment()
 
-   if VALTYPE( _attachment ) == "L"
-         RETURN .F.
-   endif
+   IF ValType( _attachment ) == "L"
+      RETURN .F.
+   ENDIF
 
    _attach := { _attachment }
 
@@ -312,7 +315,7 @@ STATIC FUNCTION send_email( err_obj, lNotify )
 
    MsgC()
 
-   FERASE( _attachment )
+   FErase( _attachment )
 
    RETURN .T.
 
@@ -327,23 +330,23 @@ STATIC FUNCTION send_email_attachment()
    LOCAL _log_file, _log_params
    LOCAL _error_file := "error.txt"
 
-   _filename := ALLTRIM( _server["database"] )
-   _filename += "_" + ALLTRIM( f18_user() )
-   _filename += "_" + DTOS( DATE() )
-   _filename += "_" + STRTRAN( TIME(), ":", "" )
+   _filename := AllTrim( _server[ "database" ] )
+   _filename += "_" + AllTrim( f18_user() )
+   _filename += "_" + DToS( Date() )
+   _filename += "_" + StrTran( Time(), ":", "" )
    _filename += ".zip"
 
-   _log_params := hb_hash()
-   _log_params["date_from"] := DATE()
-   _log_params["date_to"] := DATE()
-   _log_params["limit"] := 1000
-   _log_params["conds_true"] := ""
-   _log_params["conds_false"] := ""
-   _log_params["doc_oper"] := "N"
+   _log_params := hb_Hash()
+   _log_params[ "date_from" ] := Date()
+   _log_params[ "date_to" ] := Date()
+   _log_params[ "limit" ] := 1000
+   _log_params[ "conds_true" ] := ""
+   _log_params[ "conds_false" ] := ""
+   _log_params[ "doc_oper" ] := "N"
    _log_file := f18_view_log( _log_params )
 
-   AADD( _a_files, _error_file )
-   AADD( _a_files, _log_file )
+   AAdd( _a_files, _error_file )
+   AAdd( _a_files, _log_file )
 
    DirChange( _path )
 
@@ -351,9 +354,9 @@ STATIC FUNCTION send_email_attachment()
 
    DirChange( my_home() )
 
-   if _err <> 0
-        RETURN .F.
-   endif
+   IF _err <> 0
+      RETURN .F.
+   ENDIF
 
    RETURN ( _path + _filename )
 
@@ -371,6 +374,6 @@ FUNCTION notify_podrska( cErrorMsg )
    oErr:subCode := 1000
    oErr:Description := cErrorMsg
 
-   EVAL( ErrorBlock(), oErr, .F., .F. )
+   Eval( ErrorBlock(), oErr, .F., .F. )
 
    RETURN .T.

@@ -831,6 +831,8 @@ FUNCTION my_server_login( params, conn_type )
       RETURN .F.
 
    ENDIF
+   
+   RETURN .T.
 
 FUNCTION my_server_logout()
 

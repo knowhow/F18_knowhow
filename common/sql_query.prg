@@ -12,17 +12,37 @@
 #include "f18.ch"
 
 
+FUNCTION set_sql_search_path()
+
+   LOCAL _server := my_server()
+   LOCAL _path := my_server_search_path()
+
+   LOCAL _qry := "SET search_path TO " + _path + ";"
+   LOCAL _result
+
+   _result := _server:Query( _qry )
+
+   IF sql_error_in_query( _result )
+      MsgBeep( "ERR?! :" + _qry )
+      RETURN .F.
+   ELSE
+      log_write( "sql() set search path ok", 9 )
+   ENDIF
+
+   RETURN _result
+
+
+
 FUNCTION _sql_query( oServer, cQuery, silent )
+
    RETURN run_sql_query( cQuery, 10 )
 
 
 FUNCTION run_sql_query( qry, retry )
 
    LOCAL _i, _qry_obj, lMsg := .F.
-   LOCAL cErrorMsg
    LOCAL _server := my_server()
-   LOCAL lRestorePoint := .F.
-   LOCAL cSavePointName := f18_user() + "_save_point"
+   LOCAL _msg
 
    IF retry == NIL
       retry := 10
@@ -35,9 +55,6 @@ FUNCTION run_sql_query( qry, retry )
       quit_1
    ENDIF
 
-   // IF _server:TransactionStatus() > 0
-   // lRestorePoint := .T.
-   // ENDIF
 
    FOR _i := 1 TO retry
 
@@ -48,9 +65,6 @@ FUNCTION run_sql_query( qry, retry )
 
       BEGIN SEQUENCE WITH {| err| Break( err ) }
 
-         // IF lRestorePoint
-         // _qry_obj := _server:Query( "SAVEPOINT " + cSavePointName + ";" )
-         // ENDIF
          _qry_obj := _server:Query( qry + ";" )
 
       RECOVER
@@ -59,9 +73,9 @@ FUNCTION run_sql_query( qry, retry )
 
       END SEQUENCE
 
-      IF _qry_obj:NetErr() .AND. !Empty( _qry_obj:ErrorMsg() )
+      IF sql_error_in_query( _qry_obj )
 
-         cErrorMsg := "ERROR RUN_SQL_QRY: " + _qry_obj:ErrorMsg() + " QRY:" + qry
+         // TODO:  cErrorMsg := "ERROR RUN_SQL_QRY: " + _qry_obj:ErrorMsg() + " QRY:" + qry
 
          IF _i == retry
             MsgC()
@@ -72,49 +86,11 @@ FUNCTION run_sql_query( qry, retry )
          _i := retry + 1
       ENDIF
 
-      IIF( lMsg, MsgC(), NIL )
+      iif( lMsg, MsgC(), NIL )
 
    NEXT
 
    RETURN _qry_obj
-
-
-
-FUNCTION _sql_query_orig( oServer, cQuery, silent )
-
-   LOCAL oQuery, cMsg
-
-   IF silent == NIL
-      silent := .F.
-   ENDIF
-
-#ifdef NODE
-   log_write( cQuery, 1 )
-#endif
-
-   oQuery := oServer:Query( cQuery + ";" )
-
-   IF oQuery:lError
-
-      cMsg := oQuery:cError
-
-      IF !Empty( cMsg )
-         log_write( "ERROR: _sql_query: " + cQuery + "err msg:" + cMsg, 1, silent )
-
-         IF !silent
-            Alert( cQuery + " : " + cMsg )
-         ENDIF
-      ENDIF
-
-      RETURN .F.
-
-   ELSE
-
-      log_write( "QRY OK: _sql_query: " + cQuery, 9, silent )
-
-   ENDIF
-
-   RETURN oQuery
 
 
 
@@ -130,3 +106,8 @@ FUNCTION is_var_objekat_tipa( xVar, cClassName )
    ENDIF
 
    RETURN .F.
+
+
+FUNCTION sql_error_in_query( oQry )
+
+   RETURN ( oQry:NetErr() ) .AND. !Empty( oQry:ErrorMsg() )

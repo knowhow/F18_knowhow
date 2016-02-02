@@ -575,13 +575,17 @@ FUNCTION cre_all_ld( ver )
    _alias := "RADSIHT"
    _table_name := "ld_radsiht"
 
+   IF ver[ "current" ] > 0 .AND. ver[ "current" ] < 010002
+      ferase_cdx( _table_name )
+   ENDIF
+
    IF_NOT_FILE_DBF_CREATE
    IF_C_RESET_SEMAPHORE
 
-   CREATE_INDEX( "1", "str(godina)+str(mjesec)+idradn+idrj+str(dan)+dandio+idtippr", _alias  )
-   CREATE_INDEX( "2", "idkonto+str(godina)+str(mjesec)+idradn", _alias )
-   CREATE_INDEX( "3", "idnorsiht+str(godina)+str(mjesec)+idradn", _alias )
-   CREATE_INDEX( "4", "idradn+str(godina)+str(mjesec)+idkonto", _alias )
+   CREATE_INDEX( "1", "str(godina,4,0)+str(mjesec,2,0)+idradn+idrj+str(dan)+dandio+idtippr", _alias  )
+   CREATE_INDEX( "2", "idkonto+str(godina,4,0)+str(mjesec,2,0)+idradn", _alias )
+   CREATE_INDEX( "3", "idnorsiht+str(godina,4,0)+str(mjesec,2,0)+idradn", _alias )
+   CREATE_INDEX( "4", "idradn+str(godina,4,0)+str(mjesec,2,0)+idkonto", _alias )
 
    // HACK: 2i indeks sortime pravi probleme
    // CREATE_INDEX( "2i", "idkonto+SORTIME(idradn)+str(godina)+str(mjesec)", _alias )

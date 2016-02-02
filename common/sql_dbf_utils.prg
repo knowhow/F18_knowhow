@@ -34,27 +34,6 @@ FUNCTION sql_fields( fields )
 
 
 
-// -------------------------------------
-// setovanje sql schema path-a
-// -----------------------------------
-FUNCTION set_sql_search_path()
-
-   LOCAL _server := my_server()
-   LOCAL _path := my_server_search_path()
-
-   LOCAL _qry := "SET search_path TO " + _path + ";"
-   LOCAL _result
-
-   _result := _server:Query( _qry )
-   IF ( _result:NetErr() ) .AND. !Empty( _result:ErrorMsg() )
-      MsgBeep( "ERR?! :" + _qry )
-      RETURN .F.
-   ELSE
-      log_write( "sql() set search path ok", 9 )
-   ENDIF
-
-   RETURN _result
-
 
 // ----------------------------------------
 // sql date

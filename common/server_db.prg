@@ -18,12 +18,11 @@ FUNCTION server_db_version()
    LOCAL _ret
    LOCAL _server := pg_server()
 
-   // TODO izbaciti _qry := "SELECT u2.knowhow_package_version('fmk')"
-   _qry := "select max(version) from schema_migrations"
+   _qry := "select max(version) from public.schema_migrations"
 
    _ret := _sql_query( _server, _qry )
 
-   IF _ret:EOF()
+   IF sql_error_in_query( _ret )
       RETURN -1
    ENDIF
 
@@ -52,7 +51,7 @@ FUNCTION check_server_db_version()
       MsgBeep( _msg )
 
       OutMsg( 1, _msg + hb_osNewLine() )
-      //QUIT_1
+      // QUIT_1
    ENDIF
 
    RETURN .T.

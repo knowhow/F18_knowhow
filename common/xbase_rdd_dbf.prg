@@ -191,6 +191,24 @@ FUNCTION ferase_dbf( tbl_name, lSilent )
    RETURN .T.
 
 
+
+FUNCTION ferase_cdx( tbl_name )
+
+   LOCAL _tmp
+
+   tbl_name := f18_ime_dbf( tbl_name )
+
+   _tmp := StrTran( tbl_name, DBFEXT, INDEXEXT )
+   IF File( _tmp )
+      log_write( "ferase_cdx, brisem: " + _tmp, 3 )
+      IF FErase( _tmp ) != 0
+         log_write( "ferase_cdx : " + _tmp + "neuspjesno !", 3 )
+         RETURN .F.
+      ENDIF
+   ENDIF
+
+   RETURN .T.
+
 // ------------------------------------------
 // kreira sve potrbne indekse
 // ------------------------------------------

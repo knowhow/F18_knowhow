@@ -16,7 +16,7 @@
 FUNCTION PocStProd()
 
    lager_lista_prodavnica( .T. )
-   IF !Empty( goModul:oDataBase:cSezonDir ) .AND. Pitanje(, "Prebaciti dokument u radno područje", "D" ) == "D"
+x   IF !Empty( goModul:oDataBase:cSezonDir ) .AND. Pitanje(, "Prebaciti dokument u radno područje", "D" ) == "D"
     //  O_KALK_PRIPRRP
       O_KALK_PRIPR
       IF reccount2() <> 0

@@ -242,12 +242,15 @@ FUNCTION spec_an()
       ENDDO
    NEXT
 
+/*
+   TODO: izbaciti
    // uvijek na kraju budi u trenutnom radnom podrucju
    IF lInSez = .T.
       goModul:oDataBase:logAgain( cT_sez, lSilent, lWriteKParam )
       // otvori pomocnu tabelu opet...
       o_tmp( cP_path )
    ENDIF
+*/
 
    Pic := PicBhd
 

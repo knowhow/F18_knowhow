@@ -81,8 +81,6 @@ METHOD mMenuStandard()
    AAdd( opcexe, {|| nil } )
    AAdd( opc, "P. povrat naloga u pripremu" )
    AAdd( opcexe, {|| mat_povrat_naloga() } )
-   AAdd( opc, "9. administracija baze podataka" )
-   AAdd( opcexe, {|| mat_admin_menu() } )
    AAdd( opc, "------------------------------------" )
    AAdd( opcexe, {|| nil } )
    AAdd( opc, "X. parametri" )
@@ -90,7 +88,7 @@ METHOD mMenuStandard()
 
    Menu_SC( "gmat", .T. )
 
-   RETURN
+   RETURN .T.
 
 
 

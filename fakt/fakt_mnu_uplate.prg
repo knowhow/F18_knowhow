@@ -22,11 +22,12 @@ FUNCTION mnu_fakt_uplate()
    AAdd( _opcexe, {|| Uplate() } )
    AAdd( _opc, "2. lista salda kupaca" )
 
-/* TODO: fix or out?   
+/* TODO: fix or out?
    AAdd( _opcexe, {|| SaldaKupaca() } )
    AAdd( _opc, "3. pocetno stanje za evidenciju uplata" )
-*/
+
    AAdd( _opcexe, {|| GPSUplata() } )
+*/
 
    f18_menu( "upl", .F., _izbor, _opc, _opcexe )
 

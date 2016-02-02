@@ -21,13 +21,10 @@ FUNCTION TAppModNew( oParent, cVerzija, cPeriod, cKorisn, cSifra, p3, p4, p5, p6
    RETURN oObj
 
 
-#include "hbclass.ch"
-
 CLASS TAppMod
 
    DATA cName
    DATA oParent
-   DATA oDatabase
    DATA oDesktop
    DATA cVerzija
    DATA cPeriod
@@ -64,7 +61,6 @@ METHOD new( oParent, cModul, cVerzija, cPeriod, cKorisn, cSifra, p3, p4, p5, p6,
 
    ::cName := cModul
    ::oParent := oParent
-   ::oDatabase := nil
    ::cVerzija := cVerzija
    ::cPeriod := cPeriod
    ::cKorisn := cKorisn
@@ -76,7 +72,7 @@ METHOD new( oParent, cModul, cVerzija, cPeriod, cKorisn, cSifra, p3, p4, p5, p6,
    ::cP7 := p7
    ::lTerminate := .F.
 
-   RETURN
+   RETURN .T.
 
 
 /*! \fn *bool TAppMod::hasParent()
@@ -102,7 +98,7 @@ METHOD setParent( oParent )
 
    ::parent := oParent
 
-   RETURN
+   RETURN .T.
 
 
 /*! \fn *TObject TAppMod::getParent()
@@ -122,7 +118,7 @@ METHOD setName()
 
    ::cName := "SCAPP"
 
-   RETURN
+   RETURN .T.
 
 
 // void TAppMod::run()
@@ -144,7 +140,7 @@ METHOD run()
 
    if ::lTerminate
       ::quit()
-      RETURN
+      RETURN .F.
    ENDIF
 
    ::MMenu()

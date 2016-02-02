@@ -299,13 +299,15 @@ FUNCTION spec_sub()
 
    FOR i := nYearFrom TO nYearTo
 
+/*
+TODO: izbaciti
       IF lInSez == .T.
          // logiraj se u godinu
-         goModul:oDataBase:logAgain( AllTrim( Str( i ) ), ;
-            lSilent, lWriteKParam )
+         goModul:oDataBase:logAgain( AllTrim( Str( i ) ), lSilent, lWriteKParam )
          // otvori export tabelu u tekucoj sezoni
          o_tmp( cP_Path )
       ENDIF
+*/
 
       O_RJ
       O_PARTN
@@ -533,11 +535,13 @@ FUNCTION spec_sub()
       ENDDO
    NEXT
 
+/* TODO: izbaciti
    // uvijek se vrati u radno podrucje
    IF lInSez == .T.
       goModul:oDataBase:logAgain( cT_sez, lSilent, lWriteKParam )
       o_tmp( cP_Path )
    ENDIF
+*/
 
    // ako je export izvjestaja onda ne pozivaj stampu !
    IF lExpRpt

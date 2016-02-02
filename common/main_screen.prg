@@ -194,7 +194,7 @@ FUNCTION f18_ispisi_status_podrucja( position )
       @ position, MAXCOLS() - 35 SAY8 PadC( _txt, 30 ) COLOR _color
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 

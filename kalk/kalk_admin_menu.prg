@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -13,55 +13,55 @@
 #include "f18.ch"
 
 
-function MAdminKALK()
-local _opc := {}
-local _opcexe := {}
-local _izbor := 1
+FUNCTION MAdminKALK()
 
-AADD( _opc,"1. sređivanje kartica                                            ")
-AADD( _opcexe, {|| MenuSK() })
-AADD( _opc,"5. kopiraj set cijena iz/u")
-AADD( _opcexe, {|| kopiraj_set_cijena()})
-AADD( _opc,"7. export kalk baza podataka")
-AADD( _opcexe, {|| kalk_export()})
-AADD( _opc,"8. kontrola maloprodajnih cijena ")
-AADD( _opcexe, {|| sifre_artikli_provjera_mp_cijena() })
-AADD( _opc,"9. kontrola duplih barkodova ")
-AADD( _opcexe, {|| rpt_dupli_barkod() })
-AADD( _opc,"A. formiraj MPC iz VPC ")
-AADD( _opcexe, {|| roba_setuj_mpc_iz_vpc() })
+   LOCAL _opc := {}
+   LOCAL _opcexe := {}
+   LOCAL _izbor := 1
 
-f18_menu("admk", .f., _izbor, _opc, _opcexe )
+   AAdd( _opc, "1. sređivanje kartica                                            " )
+   AAdd( _opcexe, {|| MenuSK() } )
+   AAdd( _opc, "5. kopiraj set cijena iz/u" )
+   AAdd( _opcexe, {|| kopiraj_set_cijena() } )
 
-my_close_all_dbf()
-return
+   AAdd( _opc, "8. kontrola maloprodajnih cijena " )
+   AAdd( _opcexe, {|| sifre_artikli_provjera_mp_cijena() } )
+   AAdd( _opc, "9. kontrola duplih barkodova " )
+   AAdd( _opcexe, {|| rpt_dupli_barkod() } )
+   AAdd( _opc, "A. formiraj MPC iz VPC " )
+   AAdd( _opcexe, {|| roba_setuj_mpc_iz_vpc() } )
 
+   f18_menu( "admk", .F., _izbor, _opc, _opcexe )
 
+   my_close_all_dbf()
 
-function MenuSK()
-
-PRIVATE Opc:={}
-PRIVATE opcexe:={}
-AADD(Opc,"1. korekcija prodajne cijene - nivelacija (VPC iz sifr.robe)    ")
-AADD(opcexe, {|| KorekPC() })
-AADD(Opc,"2. ispravka sifre artikla u dokumentima i sifrarniku")
-AADD(opcexe, {|| RobaIdSredi() })
-AADD(Opc,"3. korekcija nc storniranjem grešaka tipa NC=0   ")
-AADD(opcexe, {|| KorekNC() })
-AADD(Opc,"4. korekcija nc pomoću dok.95 (NC iz sifr.robe)")
-AADD(opcexe, {|| KorekNC2() })
-AADD(Opc,"5. korekcija prodajne cijene - nivelacija (MPC iz sifr.robe)")
-AADD(opcexe, {|| KorekMPC() })
-AADD(Opc,"6. postavljanje tarife u dokumentima na vrijednost iz sifrarnika")
-AADD(opcexe, {|| KorekTar() })
-AADD(Opc,"7. svodjenje artikala na primarno pakovanje")
-AADD(opcexe, {|| NaPrimPak() })
-
-private Izbor:=1
-Menu_SC("kska")
-
-my_close_all_dbf()
-return
+   RETURN
 
 
 
+FUNCTION MenuSK()
+
+   PRIVATE Opc := {}
+   PRIVATE opcexe := {}
+
+   AAdd( Opc, "1. korekcija prodajne cijene - nivelacija (VPC iz sifr.robe)    " )
+   AAdd( opcexe, {|| KorekPC() } )
+   AAdd( Opc, "2. ispravka sifre artikla u dokumentima i sifrarniku" )
+   AAdd( opcexe, {|| RobaIdSredi() } )
+   AAdd( Opc, "3. korekcija nc storniranjem grešaka tipa NC=0   " )
+   AAdd( opcexe, {|| KorekNC() } )
+   AAdd( Opc, "4. korekcija nc pomoću dok.95 (NC iz sifr.robe)" )
+   AAdd( opcexe, {|| KorekNC2() } )
+   AAdd( Opc, "5. korekcija prodajne cijene - nivelacija (MPC iz sifr.robe)" )
+   AAdd( opcexe, {|| KorekMPC() } )
+   AAdd( Opc, "6. postavljanje tarife u dokumentima na vrijednost iz sifrarnika" )
+   AAdd( opcexe, {|| KorekTar() } )
+   AAdd( Opc, "7. svodjenje artikala na primarno pakovanje" )
+   AAdd( opcexe, {|| NaPrimPak() } )
+
+   PRIVATE Izbor := 1
+   Menu_SC( "kska" )
+
+   my_close_all_dbf()
+
+   RETURN

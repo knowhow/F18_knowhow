@@ -113,6 +113,7 @@ FUNCTION f18_free_tables( a_tables )
 
    LOCAL _ok := .T.
    LOCAL _i, _tbl, _dbf_rec
+   LOCAL cMsg
 
    IF Len( a_tables ) == NIL
       RETURN .F.
@@ -126,7 +127,12 @@ FUNCTION f18_free_tables( a_tables )
       ENDIF
    NEXT
 
-   log_write( "uspjesno izvrseno oslobadjanje tabela " + pp( a_tables ), 7 )
+   cMsg := "uspjesno izvrseno oslobadjanje tabela " + pp( a_tables )
+   log_write( cMsg, 7 )
+
+#ifdef F18_DEBUG
+   MsgBeep( cMsg )
+#endif
 
    my_use_semaphore_on()
 

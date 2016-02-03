@@ -84,7 +84,7 @@ FUNCTION TxtErase( cTxtFile, lErase )
 
    IF FErase( cTxtFile ) == -1
       MsgBeep( "Ne mogu izbrisati " + cTxtFile )
-      ShowFError()
+      
    ENDIF
 
    RETURN

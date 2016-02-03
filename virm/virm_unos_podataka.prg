@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -76,7 +76,7 @@ select virm_pripr
 
 do case
 
-    case Ch == K_ALT_P      
+    case Ch == K_ALT_P
         // rekapitulacija uplata
         _rekapitulacija_uplata()
         go (nRec)
@@ -99,7 +99,7 @@ do case
         return DE_REFRESH
 
     case CHR(Ch) $ "eE"
-    
+
         virm_export_banke()
 
         return DE_CONT
@@ -122,7 +122,7 @@ do case
     case Ch == K_CTRL_P
         stampa_virmana_drb()
         return DE_REFRESH
-  
+
     case Ch == K_CTRL_A
         PushWA()
         select virm_pripr
@@ -148,8 +148,8 @@ do case
          BoxC()
          return DE_REFRESH
 
-     case Ch == K_CTRL_N  
-        
+     case Ch == K_CTRL_N
+
         // nove stavke
 
         nDug := 0
@@ -172,7 +172,7 @@ do case
             select virm_pripr
             APPEND BLANK
             my_rlock()
-            Gather() 
+            Gather()
             my_unlock()
         enddo
 
@@ -180,7 +180,7 @@ do case
         return DE_REFRESH
 
     case Ch == K_ENTER
-       
+
         Box( "ent", MAXROWS() - 11, MAXCOLS() - 5, .f. )
         Scatter()
         if _virm_edit_pripr(.f.)==0
@@ -279,20 +279,20 @@ ESC_RETURN 0
  _IznosSTR:="="+IF( _iznos==0.and.gINulu=="N" , SPACE(6) , ALLTRIM(STRTRAN(STR(_iznos),".",",")) )
 
 
-if vrprim->Idpartner = "JP" 
-    
+if vrprim->Idpartner = "JP"
+
     // javni prihod
-    
+
     _vupl := "0"
 
     // setovanje varijabli: _kome_zr , _kome_txt, _budzorg
     // pretpostavke: kursor VRPRIM-> podesen na tekuce primanje
     SetJPVar()
-    
+
     _kome_txt := vrprim->naz
 
     @ m_x + 5, m_y + 2 SAY "Primaoc (partner/banka):" + trim(_kome_txt)
-  
+
     if fnovi
 
         if len(_IdJPrih) < 6
@@ -300,9 +300,9 @@ if vrprim->Idpartner = "JP"
             _IdJPrih := PADR( _IdJPrih , 6)
         endif
     endif
-  
+
     @ m_x + 13, m_y + 20 SAY replicate("-",56)
-    
+
     @ m_x + 14, m_y + 20 SAY "Broj por.obveznika" GET _bpo
     @ m_x + 14, col() + 2 SAY "V.uplate " GET _VUpl
 
@@ -312,25 +312,25 @@ if vrprim->Idpartner = "JP"
     @ m_x + 16, m_y + 60 SAY "Do:" GET _PDo
     @ m_x + 17, m_y + 55 SAY "Budz.org" GET _BudzOrg
     @ m_x + 18, m_y + 20 SAY "Poziv na broj:    " GET _PNaBr
-  
+
   read
-  
+
   ESC_RETURN 0
-  
+
 else
-  
+
   @ m_x+13 ,  m_y+20 SAY replicate("",56)
 
   _BPO := space(len(_BPO))
-  _IdOps := space(len(_IdOps)) 
+  _IdOps := space(len(_IdOps))
   _IdJPrih:=space(len(_IdJPrih))
   _BudzOrg := SPACE(LEN(_BudzOrg))
   _PNabr:= space(len(_PNaBr ))
   _IdOps:= space(len(_IdOps ))
-  _POd := ctod("") 
+  _POd := ctod("")
   _PDo := ctod("")
   _VUPL=""
-  
+
 endif
 
 return 1
@@ -343,7 +343,7 @@ _kome_zr := _idbanka2
 
 select partn
 seek _u_korist
- 
+
 //--- Uslov za ispis adrese u polju primaoca (MUP ZE-DO)
 if IzFmkIni("Primaoc","UnosAdrese","N",KUMPATH)=="D"
     _kome_txt := ALLTRIM( naz ) + ", " + ALLTRIM( mjesto ) + ", " + ALLTRIM( adresa )
@@ -426,7 +426,6 @@ local _marker := "N"
 local _i
 local _konverzija := fetch_metric( "virm_konverzija_delphirb", nil, "5" )
 
-bErr := ERRORBLOCK( { |o| MyErrH(o) } )
 
 BEGIN SEQUENCE
     O_IZLAZ
@@ -437,7 +436,6 @@ RECOVER
     return
 END SEQUENCE
 
-bErr := ERRORBLOCK( bErr )
 
 Box(,2,70)
     @ m_x+1,m_y+2 SAY "Broj virmana od sljedece pozicije:" GET _br_virmana pict "999"
@@ -467,9 +465,9 @@ do while !eof()
         replace _st_ with "*"
     endif
 
-    select izlaz 
+    select izlaz
     append blank
-    
+
     KonvZnWin( @_ko_txt, _konverzija )
     KonvZnWin( @_kome_txt, _konverzija )
     KonvZnWin( @_svrha_doz, _konverzija )
@@ -487,10 +485,10 @@ do while !eof()
     _dat_upl  = Razrijedi(DTOC(_dat_upl))     // datum uplate
 
     Gather()
-    
+
     select virm_pripr
     skip
-    
+
     if _i >= _br_virmana
         exit
     endif
@@ -528,7 +526,7 @@ use
 my_close_all_dbf()
 
 // ovdje treba kod za filovanje datoteke IZLAZ.DBF
-if LastKey() != K_ESC 
+if LastKey() != K_ESC
     f18_rtm_print( _rtm_file, "izlaz", "1" )
 endif
 
@@ -594,11 +592,11 @@ if LEN( aBanke ) > 1
     if !fSilent
         MsgBeep( "Partner " + cIdPartn + " ima racune kod vise banaka, odaberite banku." )
     endif
-    
+
     private h[ LEN( aBanke ) ]
-    
+
     AFILL( h, "" )
-    
+
     do while .t.
 
         izbor := menu( "ab-1", aBanke, izbor, .f., "1" )
@@ -688,7 +686,7 @@ for i := LEN( cIdJPrih ) to 1 step -1
         // analiticki prihod
         aRez[2] := naz
     endif
-    
+
     if FOUND()
 
         do while !EOF() .and. Id == PADR( cPom, LEN(cIdJPrih) )
@@ -721,7 +719,7 @@ for i := LEN( cIdJPrih ) to 1 step -1
             endif
 
             if fOk
-                if EMPTY(aRez[2]) 
+                if EMPTY(aRez[2])
                     // nisam jos nasao naziv
                     aRez[2] := racun
                 endif
@@ -729,11 +727,11 @@ for i := LEN( cIdJPrih ) to 1 step -1
                 aRez[3] := budzorg
                 exit
             endif
-            
+
             skip
-    
+
         enddo
-        
+
         if fOk
             exit
         endif
@@ -750,7 +748,7 @@ return aRez
 
 // setovanje varijabli: _kome_zr , _kome_txt, _budzorg
 // pretpostavke: kursor VRPRIM-> podesen na tekuce primanje
-// 
+//
 // formula moze biti:
 // ------------------------------
 // 712221-103
@@ -763,20 +761,20 @@ local aJPrih
 
 _idjprih := TOKEN( vrprim->racun, "-", 1 )
 
-_tmp_1 := TOKEN( vrprim->racun, "-", 2 ) 
+_tmp_1 := TOKEN( vrprim->racun, "-", 2 )
 // <- moze biti opcina, kanton ili entitet ili nista
 
-_tmp_2 := TOKEN( vrprim->racun, "-", 3 ) 
+_tmp_2 := TOKEN( vrprim->racun, "-", 3 )
 // <- moze se iskoristiti za opcinu
 
 _tmp_1 := ALLTRIM( _tmp_1 )
-_tmp_2 := ALLTRIM( _tmp_2 ) 
+_tmp_2 := ALLTRIM( _tmp_2 )
 
-if LEN( _tmp_1 ) == 3 
-    
+if LEN( _tmp_1 ) == 3
+
     _idops := _tmp_1
     aJPrih := JPrih( _idjprih, _idops, "", "" )
-    
+
     _kome_zr := aJPrih[1]
     _budzorg:=  aJPrih[3]
 
@@ -795,12 +793,12 @@ elseif LEN( _tmp_1 ) == 1
     aJPrih := JPrih( _idjprih, "", "", _tmp_1 )
     _kome_zr := aJPrih[1]
     _budzorg := aJPrih[3]
-    
+
 elseif LEN( _tmp_1 ) == 0
-    
+
     // jedinstveni uplatni racun
     _idops := SPACE(3)
-    _idjprih := PADR( _idjprih, 6 ) 
+    _idjprih := PADR( _idjprih, 6 )
     // duzina sifre javnog prihoda
     aJPrih := JPrih( _idjprih, "", "", _tmp_1 )
     _kome_zr := aJPrih[1]
@@ -822,14 +820,14 @@ select virm_pripr
 go top
 
 do while !eof()
-    
+
     select vrprim
     seek virm_pripr->svrha_pl
-    
+
     select virm_pripr
     Scatter()
-    
-    if vrprim->idpartner = "JP" 
+
+    if vrprim->idpartner = "JP"
         // javni prihod
         SetJPVar()
     endif
@@ -853,15 +851,15 @@ function OpcRada()
 local cVrati := "   "
 local cOR := ""
 local nArr := SELECT()
-  
+
 cOR := IzFmkIni("VIRM","OpcRada","XXXX",KUMPATH)
-  
+
 IF EMPTY(cOR)
     RETURN ""
 ENDIF
-  
+
 SELECT (F_OPS)
-  
+
 IF !USED()
     O_OPS
     SEEK cOR
@@ -878,7 +876,7 @@ ELSE
     ENDIF
     PopWA()
 ENDIF
-  
+
 SELECT (nArr)
 RETURN cVrati
 
@@ -897,8 +895,8 @@ PushWA()
 START PRINT RET
 ?
 P_COND
-  
-_arr := { ; 
+
+_arr := { ;
         { "PRIMALAC", {|| kome_txt }, .f., "C", 55, 0, 1, 1 }, ;
         { "ZIRO RACUN", {|| kome_zr }, .f., "C", 16, 0, 1, 2 }, ;
         { "IZNOS      ", {|| iznos }, .t., "N", 15, 2, 1, 3 } ;
@@ -906,7 +904,7 @@ _arr := { ;
 go top
 
 StampaTabele( _arr, , 2, gTabela, {|| .t. }, "4", "REKAPITULACIJA UPLATA", {|| .t. } )
- 
+
 ENDPRINT
 
 O_VIRM_PRIPR
@@ -923,6 +921,3 @@ cVrati:=STRTRAN(cVrati,".",":")
 cVrati:=STRTRAN(cVrati,",",".")
 cVrati:=STRTRAN(cVrati,":",",")
 RETURN cVrati
-
-
-

@@ -2261,6 +2261,7 @@ FUNCTION kalk_centr_stampa_dokumenta()
       cSeek := ""
    ENDIF
 
+
    my_close_all_dbf()
 
    _o_ctrl_tables( fstara )

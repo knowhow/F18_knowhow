@@ -123,11 +123,11 @@ FUNCTION GenProIzvKalk()
    USE
    IF FErase( PRIVPATH + "POM.DBF" ) == -1
       MsgBeep( "Ne mogu izbrisati POM.DBF!" )
-      ShowFError()
+
    ENDIF
    IF FErase( PRIVPATH + "POM.CDX" ) == -1
       MsgBeep( "Ne mogu izbrisati POM.CDX!" )
-      ShowFError()
+      
    ENDIF
 
    aDbf := {}

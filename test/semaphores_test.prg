@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out knowhow ERP, a free and open source 
+/*
+ * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
  * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -15,144 +15,145 @@
 #define F_TEST_SEM_1 9001
 #define F_TEST_SEM_2 9002
 
-function test_semaphores()
-local _i
-local _ime_f
-local _dbf_struct := {}
-local _server_params
-local _qry
-local _table_name, _alias
-local _thread_2_id
-local _rec
+FUNCTION test_semaphores()
 
-_ime_f := "test_sem_1"
+   LOCAL _i
+   LOCAL _ime_f
+   LOCAL _dbf_struct := {}
+   LOCAL _server_params
+   LOCAL _qry
+   LOCAL _table_name, _alias
+   LOCAL _thread_2_id
+   LOCAL _rec
 
-_i := ASCAN(gaDBFs, {|x|  x[2] == UPPER(_ime_f) })
-if _i == 0
-  AADD(gaDBFs, { F_TEST_SEM_1,  "TEST_SEM_1",  "test_sem_1", {|alg| test_sem_1_from_sql_server(alg) }, "IDS", {"id"}, {|x| sql_where_block("test_sem_1", x)}, "ID"})
-endif
+   _ime_f := "test_sem_1"
 
-cre_t_1("test_sem_1", .t.)
+   _i := AScan( gaDBFs, {| x|  x[ 2 ] == Upper( _ime_f ) } )
+   IF _i == 0
+      AAdd( gaDBFs, { F_TEST_SEM_1,  "TEST_SEM_1",  "test_sem_1", {| alg| test_sem_1_from_sql_server( alg ) }, "IDS", { "id" }, {| x| sql_where_block( "test_sem_1", x ) }, "ID" } )
+   ENDIF
 
-TEST_LINE(login_as("admin"), .t.)
+   cre_t_1( "test_sem_1", .T. )
 
-_qry := "drop table if exists fmk." + _ime_f + "; "
-_qry += "create table " + _ime_f + "(" 
-_qry += " id varchar(4) PRIMARY KEY, naz varchar(20)" 
-_qry += "); " 
-_qry += "GRANT ALL ON TABLE fmk." + _ime_f + " TO xtrole;"
+   TEST_LINE( login_as( "admin" ), .T. )
 
-run_sql_query(_qry)
+   _qry := "drop table if exists fmk." + _ime_f + "; "
+   _qry += "create table " + _ime_f + "("
+   _qry += " id varchar(4) PRIMARY KEY, naz varchar(20)"
+   _qry += "); "
+   _qry += "GRANT ALL ON TABLE fmk." + _ime_f + " TO xtrole;"
 
-create_semaphore(_ime_f)
+   run_sql_query( _qry )
 
-TEST_LINE(login_as("test1"), .t.)
+   create_semaphore( _ime_f )
 
-
-// ------------------------
-_ime_f := "test_sem_2"
-// ------------------------
-
-_i := ASCAN(gaDBFs, {|x|  x[2] == UPPER(_ime_f) })
-if _i == 0
-  AADD(gaDBFs, { F_TEST_SEM_2,  "TEST_SEM_2",  "test_sem_2", {|alg| test_sem_2_from_sql_server(alg) }, "IDS", { {"godina", 4}, {"mjesec", 2}, "oznaka" }, {|x| sql_where_block("test_sem_2", x)}, "IDN"})
-endif
-
-TEST_LINE(sql_concat_ids("test_sem_2"), "to_char(godina,'9999') || to_char(mjesec,'99') || oznaka")
-
-_dbf_struct := {}
-AADD(_dbf_struct,      { 'godina' ,  'N' ,   4 ,  0 })
-AADD(_dbf_struct,      { 'mjesec' ,  'N' ,   2 ,  0 })
-AADD(_dbf_struct,      { 'oznaka' ,  'C' ,   2 ,  0 })
-AADD(_dbf_struct,      { 'NAZ' , 'C' ,  10 ,  0 })
-       
-DBCREATE2(_ime_f, _dbf_struct)
-
-CREATE_INDEX("IDN", "STR(godina, 4) + STR(mjesec, 2) + oznaka", _ime_f)  
-CREATE_INDEX("NAZ", "naz", _ime_f)
-
-login_as("admin")
-
-_qry := "drop table if exists fmk." + _ime_f + "; "
-_qry += "create table " + _ime_f + "(" 
-_qry += " godina int, mjesec int, oznaka varchar(2), naz varchar(10), PRIMARY KEY(godina, mjesec, oznaka)" 
-_qry += "); " 
-_qry += "GRANT ALL ON TABLE fmk." + _ime_f + " TO xtrole;"
-run_sql_query(_qry)
-
-create_semaphore(_ime_f)
+   TEST_LINE( login_as( "test1" ), .T. )
 
 
+   // ------------------------
+   _ime_f := "test_sem_2"
+   // ------------------------
 
-upgrade_test_tables_semaphore_v2()
+   _i := AScan( gaDBFs, {| x|  x[ 2 ] == Upper( _ime_f ) } )
+   IF _i == 0
+      AAdd( gaDBFs, { F_TEST_SEM_2,  "TEST_SEM_2",  "test_sem_2", {| alg| test_sem_2_from_sql_server( alg ) }, "IDS", { { "godina", 4 }, { "mjesec", 2 }, "oznaka" }, {| x| sql_where_block( "test_sem_2", x ) }, "IDN" } )
+   ENDIF
 
-TEST_LINE( is_table_column_exists("test_sem_1", "b_year"), .t. )
-TEST_LINE( is_table_column_exists("test_sem_1", "b_seasson"), .t. )
-TEST_LINE( is_table_column_exists("test_sem_1", "org_id"), .t. )
+   TEST_LINE( sql_concat_ids( "test_sem_2" ), "to_char(godina,'9999') || to_char(mjesec,'99') || oznaka" )
 
-TEST_LINE( is_table_column_exists("test_sem_2", "b_year"), .t. )
+   _dbf_struct := {}
+   AAdd( _dbf_struct,      { 'godina',  'N',   4,  0 } )
+   AAdd( _dbf_struct,      { 'mjesec',  'N',   2,  0 } )
+   AAdd( _dbf_struct,      { 'oznaka',  'C',   2,  0 } )
+   AAdd( _dbf_struct,      { 'NAZ', 'C',  10,  0 } )
+
+   DBCREATE2( _ime_f, _dbf_struct )
+
+   CREATE_INDEX( "IDN", "STR(godina, 4) + STR(mjesec, 2) + oznaka", _ime_f )
+   CREATE_INDEX( "NAZ", "naz", _ime_f )
+
+   login_as( "admin" )
+
+   _qry := "drop table if exists fmk." + _ime_f + "; "
+   _qry += "create table " + _ime_f + "("
+   _qry += " godina int, mjesec int, oznaka varchar(2), naz varchar(10), PRIMARY KEY(godina, mjesec, oznaka)"
+   _qry += "); "
+   _qry += "GRANT ALL ON TABLE fmk." + _ime_f + " TO xtrole;"
+   run_sql_query( _qry )
+
+   create_semaphore( _ime_f )
 
 
 
+   upgrade_test_tables_semaphore_v2()
 
-_alias := "test_sem_1"
-_table_name := _alias
-? "before reset", _table_name
-reset_semaphore_version(_table_name)
-? "after reset", _table_name
+   TEST_LINE( is_table_column_exists( "test_sem_1", "b_year" ), .T. )
+   TEST_LINE( is_table_column_exists( "test_sem_1", "b_seasson" ), .T. )
+   TEST_LINE( is_table_column_exists( "test_sem_1", "org_id" ), .T. )
 
-// -------------------------------
-SELECT F_TEST_SEM_1
-use
-
-login_as("test2")
-my_usex(_alias)
-my_server_logout()
+   TEST_LINE( is_table_column_exists( "test_sem_2", "b_year" ), .T. )
 
 
-login_as("test1")
-_thread_2_id  :=  hb_threadStart(  HB_BITOR( HB_THREAD_INHERIT_PUBLIC, HB_THREAD_MEMVARS_COPY ), @_thread_2_fn() )
-
-//hb_threadJoin( _thread_2_id )
-
-my_usex(_alias)
-TEST_LINE(ALIAS(), UPPER(_alias))
-
-_rec := dbf_get_rec()
-
-for _i := 1 to 500
-  APPEND BLANK
-  _rec["id"] := STR(_i, 4)
-  _rec["naz"] := "naz " + STR(_i, 4)
-  update_rec_server_and_dbf(_table_name, _rec)
-next
-
-TEST_LINE(reccount(), 500)
 
 
-use
+   _alias := "test_sem_1"
+   _table_name := _alias
+   ? "before reset", _table_name
+   reset_semaphore_version( _table_name )
+   ? "after reset", _table_name
 
-login_as("test3")
-my_usex(_alias)
-TEST_LINE(ALIAS(), UPPER(_alias))
-use
+   // -------------------------------
+   SELECT F_TEST_SEM_1
+   USE
 
-
-login_as("test2")
-my_usex(_alias)
-
-// user: test3, ids = "{<FULL>/}"
-use
-login_as("test3")
-my_usex(_alias)
+   login_as( "test2" )
+   my_usex( _alias )
+   my_server_logout()
 
 
-// user: test2, ids = "{<FULL>/}"
-use
-login_as("test2")
-my_usex(_alias)
+   login_as( "test1" )
+   _thread_2_id  :=  hb_threadStart(  hb_bitOr( HB_THREAD_INHERIT_PUBLIC, HB_THREAD_MEMVARS_COPY ), @_thread_2_fn() )
 
-use
+   // hb_threadJoin( _thread_2_id )
+
+   my_usex( _alias )
+   TEST_LINE( Alias(), Upper( _alias ) )
+
+   _rec := dbf_get_rec()
+
+   FOR _i := 1 TO 500
+      APPEND BLANK
+      _rec[ "id" ] := Str( _i, 4 )
+      _rec[ "naz" ] := "naz " + Str( _i, 4 )
+      update_rec_server_and_dbf( _table_name, _rec )
+   NEXT
+
+   TEST_LINE( RecCount(), 500 )
+
+
+   USE
+
+   login_as( "test3" )
+   my_usex( _alias )
+   TEST_LINE( Alias(), Upper( _alias ) )
+   USE
+
+
+   login_as( "test2" )
+   my_usex( _alias )
+
+   // user: test3, ids = "{<FULL>/}"
+   USE
+   login_as( "test3" )
+   my_usex( _alias )
+
+
+   // user: test2, ids = "{<FULL>/}"
+   USE
+   login_as( "test2" )
+   my_usex( _alias )
+
+   USE
 
 
 /*
@@ -177,161 +178,168 @@ my_usex(_alias)
 use
 
 */
-return .t.
+
+   RETURN .T.
 
 // -----------------------------------------
 // -----------------------------------------
-function test_sem_1_from_sql_server(algoritam)
-local _result := .f.
-local _i
-local _tbl := "test_sem_1"
+FUNCTION test_sem_1_from_sql_server( algoritam )
 
-lock_semaphore( _tbl, "lock" )
-_result := update_dbf_from_server(_tbl, algoritam)
-lock_semaphore( _tbl, "free" )
+   LOCAL _result := .F.
+   LOCAL _i
+   LOCAL _tbl := "test_sem_1"
 
-return _result
+   lock_semaphore( _tbl, "lock" )
+   _result := update_dbf_from_server( _tbl, algoritam )
+   lock_semaphore( _tbl, "free" )
+
+   RETURN _result
 
 
 // -----------------------------------------
 // -----------------------------------------
-function test_sem_2_from_sql_server(algoritam)
-local _result := .f.
-local _i
-local _tbl := "test_sem_2"
+FUNCTION test_sem_2_from_sql_server( algoritam )
 
-_result := update_dbf_from_server(_tbl, algoritam)
+   LOCAL _result := .F.
+   LOCAL _i
+   LOCAL _tbl := "test_sem_2"
 
-return _result
+   _result := update_dbf_from_server( _tbl, algoritam )
+
+   RETURN _result
 
 
 // -------------------------------
 // -------------------------------
-static function login_as(user)
-local _server_params
+STATIC FUNCTION login_as( user )
 
-_server_params := my_server_params()
+   LOCAL _server_params
 
-? "logout ", _server_params["user"]
-my_server_logout()
+   _server_params := my_server_params()
 
-_server_params["user"] := user
-_server_params["password"] := user
+   ? "logout ", _server_params[ "user" ]
+   my_server_logout()
 
-my_server_params(_server_params)
+   _server_params[ "user" ] := user
+   _server_params[ "password" ] := user
 
-if my_server_login()
-   return .t.
-else
-   return .f.
-endif
+   my_server_params( _server_params )
 
-// ------------------------------------
-// ------------------------------------
-function create_semaphore(table_name)
-local _qry, _ret
+   IF my_server_login()
+      RETURN .T.
+   ELSE
+      RETURN .F.
+   ENDIF
 
-_qry := "drop table if exists fmk.semaphores_" + table_name + "; "
-_qry += "create table fmk.semaphores_" + table_name + "("
-_qry += "user_code varchar(20), b_year integer DEFAULT date_part('year', now())  CHECK (b_year > 1990 AND b_year < 2990), b_season integer DEFAULT 0, client_id integer DEFAULT 0, version bigint NOT NULL, last_trans_version bigint, last_trans_time timestamp DEFAULT now(), last_trans_user_code varchar(20), dat date, algorithm varchar(20) DEFAULT 'full', ids text[], PRIMARY KEY(user_code, b_year, b_season, client_id)"
-_qry += "); " 
-_qry += "GRANT ALL ON TABLE fmk.semaphores_" + table_name + " TO xtrole;"
 
-_ret := run_sql_query(_qry)
 
-if VALTYPE(_ret)  == "O"
-   return .t.
-else
-   return .f.
-endif
+FUNCTION create_semaphore( table_name )
 
-// -------------------------------------
-// -------------------------------------
-function upgrade_test_tables_semaphore_v2()
-local _qry, _qry_obj, _table
+   LOCAL _qry, _ret
 
-// select tablename from pg_catalog.pg_tables where schemaname = 'fmk' and NOT ( (tablename LIKE 'semaphores_%') OR (tablename LIKE 'test_%') OR (tablename LIKE 'pkg%') OR (tablename = 'metric') OR (tablename = 'client_id')) order by tablename;
+   _qry := "drop table if exists sem." + table_name + "; "
+   _qry += "create table sem." + table_name + "("
+   _qry += "user_code varchar(20), b_year integer DEFAULT date_part('year', now())  CHECK (b_year > 1990 AND b_year < 2990), b_season integer DEFAULT 0, client_id integer DEFAULT 0, version bigint NOT NULL, last_trans_version bigint, last_trans_time timestamp DEFAULT now(), last_trans_user_code varchar(20), dat date, algorithm varchar(20) DEFAULT 'full', ids text[], PRIMARY KEY(user_code, b_year, b_season, client_id)"
+   _qry += "); "
+   _qry += "GRANT ALL ON TABLE sem." + table_name + " TO xtrole;"
 
-_qry := "select tablename from pg_catalog.pg_tables where schemaname = 'fmk' and (tablename LIKE 'test_%')  order by tablename;"
+   _ret := run_sql_query( _qry )
 
-_qry_obj := run_sql_query(_qry)
+   IF ValType( _ret )  == "O"
+      RETURN .T.
+   ELSE
+      RETURN .F.
+   ENDIF
 
-DO WHILE ! _qry_obj:Eof()    
-    _table := _qry_obj:FieldGet(1)
-    alter_table_semaphore_v2(_table)
+FUNCTION upgrade_test_tables_semaphore_v2()
 
-    _qry_obj:Skip()
-ENDDO
+   LOCAL _qry, _qry_obj, _table
 
-_qry_obj:Close()
+   // select tablename from pg_catalog.pg_tables where schemaname = 'fmk' and NOT ( (tablename LIKE 'semaphores_%') OR (tablename LIKE 'test_%') OR (tablename LIKE 'pkg%') OR (tablename = 'metric') OR (tablename = 'client_id')) order by tablename;
 
-return .t.
+   _qry := "select tablename from pg_catalog.pg_tables where schemaname = 'fmk' and (tablename LIKE 'test_%')  order by tablename;"
+
+   _qry_obj := run_sql_query( _qry )
+
+   DO WHILE ! _qry_obj:Eof()
+      _table := _qry_obj:FieldGet( 1 )
+      alter_table_semaphore_v2( _table )
+
+      _qry_obj:Skip()
+   ENDDO
+
+   _qry_obj:Close()
+
+   RETURN .T.
 
 // ---------------------------------
 // ---------------------------------
-function alter_table_semaphore_v2(table)
-local _qry, _ret
+FUNCTION alter_table_semaphore_v2( table )
 
-_qry := "ALTER TABLE fmk." + table + " ADD COLUMN org_id integer DEFAULT 0,  ADD COLUMN b_year integer DEFAULT 0, ADD COLUMN b_seasson integer DEFAULT 0;"
+   LOCAL _qry, _ret
 
-_qry += "ALTER TABLE fmk." +  table + " DROP CONSTRAINT " + table + "_pkey, ADD PRIMARY KEY " + sql_primary_key(table) + ";"
+   _qry := "ALTER TABLE fmk." + table + " ADD COLUMN org_id integer DEFAULT 0,  ADD COLUMN b_year integer DEFAULT 0, ADD COLUMN b_seasson integer DEFAULT 0;"
 
-_ret := run_sql_query(_qry)
+   _qry += "ALTER TABLE fmk." +  table + " DROP CONSTRAINT " + table + "_pkey, ADD PRIMARY KEY " + sql_primary_key( table ) + ";"
 
-if VALTYPE(_ret)  == "O"
-   return .t.
-else
-   return .f.
-endif
+   _ret := run_sql_query( _qry )
 
-// -------------------------------------------
-// -------------------------------------------
-function is_table_column_exists(table, column)
-local _qry, _ret
+   IF ValType( _ret )  == "O"
+      RETURN .T.
+   ELSE
+      RETURN .F.
+   ENDIF
 
-_qry := "SELECT count(column_name) FROM information_schema.columns WHERE table_name =" + _sql_quote(table) + " AND table_schema='fmk' AND column_name=" + _sql_quote(LOWER(column))
+   // -------------------------------------------
+   // -------------------------------------------
 
-_ret := run_sql_query(_qry)
+FUNCTION is_table_column_exists( table, column )
 
-if VALTYPE(_ret)  == "O"
-   return (_ret:FieldGet(1) == 1)
-else
-   return .f.
-endif
+   LOCAL _qry, _ret
 
+   _qry := "SELECT count(column_name) FROM information_schema.columns WHERE table_name =" + _sql_quote( table ) + " AND table_schema='fmk' AND column_name=" + _sql_quote( Lower( column ) )
 
-// --------------------------------
-// --------------------------------
-function _thread_2_fn()
-local _table_name := "test_sem_1"
+   _ret := run_sql_query( _qry )
 
-log_handle(FCREATE(STRTRAN(F18_LOG_FILE, ".log", "_2.log")) )
-
-log_write("--- thread 2: ----")
-
-? "... thread_2_fn ..."
-_get_server_params_from_config()
-
-log_write(pp(my_server_params()))
-
-if !login_as("test2")
-  log_write("login thread neuspjesan !!!!")
-  log_close()
-  return .f.
-endif
-? pp(my_server_params())
-
-log_write(ToStr(TIME()) + ": ... thread_2_fn ... lock")
-lock_semaphore(_table_name, "lock")
-//? "... thread_2_fn ... lock", my_user(), VALTYPE(my_server()), get_semaphore_version(_table_name)
-//? "my_home", my_home(), "sempahore status:", get_semaphore_status(_table_name)
-
-hb_IdleSleep(10)
-log_write(ToStr(TIME()) + ": ... thread_2_fn ... unlock")
-lock_semaphore(_table_name, "free")
-
-my_server_logout()
-return
+   IF ValType( _ret )  == "O"
+      RETURN ( _ret:FieldGet( 1 ) == 1 )
+   ELSE
+      RETURN .F.
+   ENDIF
 
 
+   // --------------------------------
+   // --------------------------------
 
+FUNCTION _thread_2_fn()
+
+   LOCAL _table_name := "test_sem_1"
+
+   log_handle( FCreate( StrTran( F18_LOG_FILE, ".log", "_2.log" ) ) )
+
+   log_write( "--- thread 2: ----" )
+
+   ? "... thread_2_fn ..."
+   _get_server_params_from_config()
+
+   log_write( pp( my_server_params() ) )
+
+   IF !login_as( "test2" )
+      log_write( "login thread neuspjesan !!!!" )
+      log_close()
+      RETURN .F.
+   ENDIF
+   ? pp( my_server_params() )
+
+   log_write( ToStr( Time() ) + ": ... thread_2_fn ... lock" )
+   lock_semaphore( _table_name, "lock" )
+   // ? "... thread_2_fn ... lock", my_user(), VALTYPE(my_server()), get_semaphore_version(_table_name)
+   // ? "my_home", my_home(), "sempahore status:", get_semaphore_status(_table_name)
+
+   hb_idleSleep( 10 )
+   log_write( ToStr( Time() ) + ": ... thread_2_fn ... unlock" )
+   lock_semaphore( _table_name, "free" )
+
+   my_server_logout()
+
+   RETURN

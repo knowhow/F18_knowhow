@@ -300,7 +300,7 @@ FUNCTION dbf_semaphore_synchro( table, lFullSynchro )
 
       IF ( hVersion[ 'version' ] < hVersion[ 'last_version' ] )
          log_write( "dbf_semaphore_synchro/1, my_use" + table + " osvjeziti dbf cache: ver: " + ;
-            AllTrim( Str( hVersion [ 'version' ], 10 ) ) + " last_ver: " + AllTrim( Str( hVersion[ 'last_version' ], 10 ) ), 5 )
+            AllTrim( Str( hVersion[ 'version' ], 10 ) ) + " last_ver: " + AllTrim( Str( hVersion[ 'last_version' ], 10 ) ), 5 )
          update_dbf_from_server( table, "IDS" )
       ENDIF
    ENDIF

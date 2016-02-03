@@ -100,7 +100,7 @@ FUNCTION push_ids_to_semaphore( table, ids, to_myself )
    log_write( "START push_ids_to_semaphore", 9 )
    log_write( "push ids: " + table + " / " + pp( ids ), 5 )
 
-   _tbl := "fmk.semaphores_" + Lower( table )
+   _tbl := "sem." + Lower( table )
 
    // treba dodati id za sve DRUGE korisnike
    _result := table_count( _tbl, iif( to_myself, NIL, "user_code <> " + _sql_quote( _user ) ) )
@@ -180,7 +180,7 @@ FUNCTION get_ids_from_semaphore( table )
 
    log_write( "START get_ids_from_semaphore", 7 )
 
-   _tbl := "fmk.semaphores_" + Lower( table )
+   _tbl := "sem." + Lower( table )
 
    IF !lAllreadyInTransaction
       run_sql_query( "BEGIN; SET TRANSACTION ISOLATION LEVEL SERIALIZABLE" )

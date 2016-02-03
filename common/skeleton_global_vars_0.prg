@@ -223,11 +223,9 @@ FUNCTION IniGParam2()
 
    IF ( cPosebno == "D" )
 
-      bErr := ErrorBlock( {| o| MyErrH( o ) } )
       O_GPARAMSP
       SEEK "1"
 
-      bErr := ErrorBlock( bErr )
 
       Rpar( "pt", @gPTKonv )
       Rpar( "pS", @gPicSif )

@@ -138,7 +138,7 @@ FUNCTION StartPrint( lUFajl, cF, cDocumentName )
    ELSE
       // radi se o fajlu
       IF DRVPATH $ cKom
-         bErr := ErrorBlock( {| o| MyErrH( o ) } )
+      
          BEGIN SEQUENCE
             SET PRINTER to ( ckom )
          recover
@@ -150,7 +150,7 @@ FUNCTION StartPrint( lUFajl, cF, cDocumentName )
 
             SET PRINTER to ( cKom )
          END SEQUENCE
-         bErr := ErrorBlock( bErr )
+
       ELSE
          IF gnDebug >= 5
             MsgBeep( "set printer to (cKom)##var cKom=" + AllTrim( cKom ) )

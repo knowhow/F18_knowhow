@@ -482,7 +482,6 @@ FUNCTION fakt_tabela_komande( lOpcine, fakt_doks_filt, model )
 
    CASE Ch == K_ENTER
 
-altd()
       nRet := print_porezna_faktura( lOpcine )
       _refresh := .T.
 

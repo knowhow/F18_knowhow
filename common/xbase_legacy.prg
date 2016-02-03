@@ -284,7 +284,7 @@ FUNCTION zapp( pack )
       pack := .F.
    ENDIF
 
-   bErr := ErrorBlock( {| o| MyErrH( o ) } )
+
    BEGIN SEQUENCE
 
       log_write( "ZAP exclusive: " + Alias(), 5 )
@@ -312,7 +312,7 @@ FUNCTION zapp( pack )
       PopWa()
 
    END SEQUENCE
-   bErr := ErrorBlock( bErr )
+
 
    RETURN NIL
 

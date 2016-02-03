@@ -463,7 +463,6 @@ FUNCTION Beep( nPuta )
 
    LOCAL _i
 
-altd()
 #ifndef TEST
 
    FOR _i := 1 TO nPuta

@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -66,27 +66,27 @@ nX := 1
 Box(, 10, 70)
 
 	@ m_x + nX, m_y + 2 SAY "Podesenja importa ********"
-	
+
 	nX += 2
-	
+
 	@ m_x + nX, m_y + 2 SAY "Stampati dokumente pri auto obradi (D/N)" GET gAImpPrint VALID gAImpPrint $ "DN" PICT "@!"
 
 	nX += 1
-	
-	@ m_x + nX, m_y + 2 SAY "Automatska ravnoteza naloga na konto: " GET gAImpRKonto 
-	
+
+	@ m_x + nX, m_y + 2 SAY "Automatska ravnoteza naloga na konto: " GET gAImpRKonto
+
 	nX += 1
-	
+
 	@ m_x + nX, m_y + 2 SAY "Provjera broj naloga (minus karaktera):" GET gAImpRight PICT "9"
 
 
-	read	
+	read
 BoxC()
 
 if LastKey() <> K_ESC
-	
+
 	O_PARAMS
-	
+
 	private cSection := "7"
 	private cHistory := " "
 	private aHistory := {}
@@ -94,10 +94,10 @@ if LastKey() <> K_ESC
 	WPar("ap", gAImpPrint )
 	WPar("ak", gAImpRKonto )
 	WPar("ar", gAImpRight )
-	
+
 	select params
 	use
-	
+
 endif
 
 return
@@ -167,7 +167,7 @@ endif
 
 if TTbl2Kalk( aFaktEx, lFtSkip, lNegative, cCtrl_art ) == 0
 	MsgBeep("Operacija prekinuta!")
-	return 
+	return
 endif
 
 // obrada dokumenata iz pript tabele
@@ -262,7 +262,7 @@ Txt2TTbl(aDbf, aRules, cImpFile)
 if CheckPartn() > 0
 	if Pitanje(,"Izvrsiti import partnera (D/N)?", "D") == "N"
 		MsgBeep("Opcija prekinuta!")
-		return 
+		return
 	endif
 else
 	MsgBeep("Nema novih partnera za import !")
@@ -270,7 +270,7 @@ else
 endif
 
 // ova opcija ipak i nije toliko dobra da se radi!
-// 
+//
 //lEdit := Pitanje(,"Izvrsiti korekcije postojecih podataka (D/N)?", "N") == "D"
 lEdit := .f.
 
@@ -323,7 +323,7 @@ Txt2TTbl( aDbf, aRules, cImpFile )
 if CheckRoba() > 0
 	if Pitanje(,"Importovati nove cijene u sifrarnika robe (D/N)?", "D") == "N"
 		MsgBeep("Opcija prekinuta!")
-		return 
+		return
 	endif
 else
 	MsgBeep("Nema novih stavki za import !")
@@ -400,7 +400,7 @@ return
 
 
 // -------------------------------------
-// matrica sa strukturom 
+// matrica sa strukturom
 // tabele ROBA
 // -------------------------------------
 static function SetTblRoba(aDbf)
@@ -430,7 +430,7 @@ AADD(aRule, {"SUBSTR(cVar, 4, 2)"})
 AADD(aRule, {"SUBSTR(cVar, 7, 8)"})
 // datdok
 AADD(aRule, {"CTOD(SUBSTR(cVar, 16, 10))"})
-// idpartner 
+// idpartner
 AADD(aRule, {"SUBSTR(cVar, 27, 6)"})
 // id pm
 AADD(aRule, {"SUBSTR(cVar, 34, 3)"})
@@ -477,7 +477,7 @@ AADD(aRule, {"SUBSTR(cVar, 8, 25)"})
 AADD(aRule, {"SUBSTR(cVar, 34, 5)"})
 // mjesto
 AADD(aRule, {"SUBSTR(cVar, 40, 16)"})
-// adresa 
+// adresa
 AADD(aRule, {"SUBSTR(cVar, 57, 24)"})
 // ziror
 AADD(aRule, {"SUBSTR(cVar, 82, 22)"})
@@ -544,7 +544,7 @@ return
 
 
 /*! \fn Txt2TTbl(aDbf, aRules, cTxtFile)
- *  \brief Kreiranje temp tabele, te prenos zapisa iz text fajla "cTextFile" u tabelu putem aRules pravila 
+ *  \brief Kreiranje temp tabele, te prenos zapisa iz text fajla "cTextFile" u tabelu putem aRules pravila
  *  \param aDbf - struktura tabele
  *  \param aRules - pravila upisivanja jednog zapisa u tabelu, princip uzimanja zapisa iz linije text fajla
  *  \param cTxtFile - txt fajl za import
@@ -577,15 +577,15 @@ endif
 
 // prodji kroz svaku liniju i insertuj zapise u temp.dbf
 while _o_file:MoreToRead()
-	
+
 	// uzmi u cText liniju fajla
 	cVar := hb_strtoutf8( _o_file:ReadLine() )
-	
+
 	// selektuj temp tabelu
 	select temp
 	// dodaj novi zapis
 	append blank
-	
+
 	for nCt:=1 to LEN(aRules)
 		fname := FIELD(nCt)
 		xVal := aRules[nCt, 1]
@@ -639,7 +639,7 @@ cTmpTbl := "temp"
 
 if File( f18_ime_dbf( cTmpTbl ) ) .and. FErase( f18_ime_dbf( cTmpTbl ) ) == -1
 		MsgBeep("Ne mogu izbrisati TEMP.DBF!")
-    	ShowFError()
+  
 endif
 
 DbCreate2(cTmpTbl, aDbf)
@@ -700,17 +700,17 @@ if LEN( aPomFakt ) > 0
 
 	START PRINT CRET
 
-	?	
+	?
 	? "Kontrola azuriranih dokumenata:"
 	? "-------------------------------"
 	? "Broj fakture => kalkulacija"
 	? "-------------------------------"
-	? 
-	
+	?
+
 	for i:=1 to LEN(aPomFakt)
 		? aPomFakt[i, 1] + " => " + aPomFakt[i, 2]
 	next
-	
+
 	?
 	? "Kontrolom azuriranih dokumenata, uoceno da se vec pojavljuju"
 	? "navedeni brojevi faktura iz fajla za import !"
@@ -721,7 +721,7 @@ if LEN( aPomFakt ) > 0
 
 	aFakt := aPomFakt
 	return 0
-	
+
 endif
 
 aFakt := aPomFakt
@@ -740,13 +740,13 @@ aPomPart := ParExist()
 aPomArt  := TempArtExist( lSifDob )
 
 if (LEN(aPomPart) > 0 .or. LEN(aPomArt) > 0)
-	
+
 	START PRINT CRET
-	
+
 	if (LEN(aPomPart) > 0)
 		? "Lista nepostojecih partnera:"
 		? "----------------------------"
-		? 
+		?
 		for i:=1 to LEN(aPomPart)
 			? aPomPart[i, 1]
 		next
@@ -756,13 +756,13 @@ if (LEN(aPomPart) > 0 .or. LEN(aPomArt) > 0)
 	if (LEN(aPomArt) > 0)
 		? "Lista nepostojecih artikala:"
 		? "----------------------------"
-		? 
+		?
 		for ii:=1 to LEN(aPomArt)
 			? aPomArt[ii, 1]
 		next
 		?
 	endif
-	
+
 	FF
 	ENDPRINT
 
@@ -782,12 +782,12 @@ static function CheckPartn()
 aPomPart := ParExist(.t.)
 
 if (LEN(aPomPart) > 0)
-	
+
 	START PRINT CRET
-	
+
 	? "Lista nepostojecih partnera:"
 	? "----------------------------"
-	? 
+	?
 	for i:=1 to LEN(aPomPart)
 		? aPomPart[i, 1]
 		?? " " + aPomPart[i, 2]
@@ -804,31 +804,31 @@ return LEN(aPomPart)
 
 
 
-// -------------------------------------------------------------------------- 
+// --------------------------------------------------------------------------
 // Provjerava i daje listu promjena na robi
-// -------------------------------------------------------------------------- 
+// --------------------------------------------------------------------------
 static function CheckRoba()
 
 aPomRoba := SDobExist( .t. )
 
 if (LEN(aPomRoba) > 0)
-	
+
 	START PRINT CRET
-	
+
 	? "Lista promjena u sifrarniku robe:"
 	? "---------------------------------------------------------------------------"
 	? "sifradob    naziv                          stara cijena -> nova cijena "
 	? "---------------------------------------------------------------------------"
-	? 
-	
+	?
+
 	for i:=1 to LEN(aPomRoba)
-		
+
 		? aPomRoba[i, 2]
-		
+
 		?? " " + aPomRoba[i, 9]
-		
+
 		if aPomRoba[i, 1] == "1"
-			
+
 			if aPomRoba[i, 3] == "001"
 				// vpc
 				nCijena := aPomRoba[i, 6]
@@ -839,20 +839,20 @@ if (LEN(aPomRoba) > 0)
 				// mpc
 				nCijena := aPomRoba[i, 8]
 			endif
-			
+
 			?? STR( nCijena, 12, 2 )
 			?? STR( aPomRoba[i, 4], 12, 2 )
-		
+
 			if nCijena = aPomRoba[i, 4]
 				?? " x"
 			endif
-		
+
 		else
-			?? " ovog artikla nema u sifrarniku !" 
+			?? " ovog artikla nema u sifrarniku !"
 		endif
-	
+
 	next
-	
+
 	?
 
 	FF
@@ -876,25 +876,25 @@ go top
 aRet := {}
 
 do while !EOF()
-	
+
 	select roba
 	set order to tag "SIFRADOB"
 	go top
-	
+
 	seek temp->sifradob
-	
+
 	if Found()
 		cInd := "1"
 	else
 		cInd := "0"
 	endif
-	
+
 	AADD(aRet, {cInd, temp->sifradob, temp->idpm, temp->mpc, roba->id, ;
 				roba->vpc, roba->vpc2, roba->mpc, temp->naz } )
-	
+
 	select temp
 	skip
-	
+
 enddo
 
 return aRet
@@ -944,7 +944,7 @@ static function GetKTipDok(cFaktTD, cPm)
 cRet := ""
 
 if (cFaktTD == "" .or. cFaktTD == nil)
-	return "XX" 
+	return "XX"
 endif
 
 do case
@@ -952,27 +952,27 @@ do case
 	// FAKT 10 -> KALK 14
 	case cFaktTD == "10"
 		cRet := "14"
-		
+
 	// diskont vindija
 	// FAKT 11 -> KALK 41
 	case (cFaktTD == "11" .and. cPm >= "200")
 		cRet := "41"
-		
+
 	// zaduzenje prodavnica
 	// FAKT 13 -> KALK 11
 	case (cFaktTD == "11" .and. cPm < "200")
 		cRet := "11"
-		
+
 	// kalo, rastur - otpis
 	// radio se u kalku
 	case cFaktTD $ "90#91#92"
 		cRet := "95"
-	
+
 	// Knjizna obavjest
 	// 70 -> KALK KO
 	case cFaktTD == "70"
 		cRet := "KO"
-		
+
 endcase
 
 return cRet
@@ -1067,12 +1067,12 @@ do while !EOF()
 	endif
 
 	cTDok := GetKTipDok(ALLTRIM(temp->idtipdok), temp->idpm)
-	
+
 	if cBrFakt == cDok
 		skip
 		loop
 	endif
-	
+
 	select kalk_doks
 
 	if nRight > 0
@@ -1080,7 +1080,7 @@ do while !EOF()
 	else
 		set order to tag "V_BRF"
 	endif
-	
+
 	go top
 
 	if nRight > 0
@@ -1088,18 +1088,18 @@ do while !EOF()
 	else
 		seek PADR(cBrFakt, 10) + cTDok
 	endif
-	
-	if FOUND()	
+
+	if FOUND()
 		AADD(aRet, {cBrOriginal, ;
 			doks->idfirma + "-" + ;
 			doks->idvd + "-" + ;
 			ALLTRIM(doks->brdok)})
-	
+
 	endif
-	
+
 	select temp
 	skip
-	
+
 	cDok := cBrFakt
 
 enddo
@@ -1170,12 +1170,12 @@ do while !EOF()
 
 		select roba
 		set order to tag "ID_VSD"
-		
+
 		cTmp_dob := PADL( ALLTRIM(temp->idroba), 5, "0" )
-		
+
 		go top
 		seek cTmp_dob
-		
+
 		cTmp_roba := field->id
 
 		O_CACHE
@@ -1183,19 +1183,19 @@ do while !EOF()
 		set order to tag "1"
 		go top
 		seek PADR( cTmp_kto, 7 ) + PADR( cTmp_roba, 10 )
-		
+
 		if FOUND() .and. gNC_ctrl > 0 .and. ( field->odst > gNC_ctrl )
-			// dodaj sporne u kontrolnu matricu 
+			// dodaj sporne u kontrolnu matricu
 
 			nT_scan := ASCAN( aArr_ctrl, ;
 				{|xVal| xVal[1] + PADR( xVal[2], 10 ) == ;
 					cTDok + PADR( ALLTRIM( cFakt ), 10 ) } )
-			
+
 			if nT_scan = 0
 				AADD( aArr_ctrl, { cTDok, ;
 					PADR( ALLTRIM(cFakt), 10 ) } )
 			endif
-			
+
 		endif
 
 		select temp
@@ -1214,11 +1214,11 @@ do while !EOF()
 			endif
 		endif
 	endif
-	
+
 	if cTDok <> cPTDok
 		nUvecaj := 0
 	endif
-	
+
 	if cFakt <> cPFakt
 		++ nUvecaj
 		cBrojKalk := GetNextKalkDoc(gFirma, cTDok, nUvecaj)
@@ -1235,7 +1235,7 @@ do while !EOF()
 			endif
 		endif
 	endif
-	
+
 	// pronadji robu
 	select roba
 	set order to tag "ID_VSD"
@@ -1251,7 +1251,7 @@ do while !EOF()
 
 		select kalk_doks2
 		hseek gFirma + cTDok + cBrojKalk
-		
+
 		if !FOUND()
 			append blank
 			replace idvd with "14"
@@ -1260,13 +1260,13 @@ do while !EOF()
 		endif
 
 		replace DatVal with temp->datval
-	
+
 	endif
 
     // konta...
 	_id_konto := GetKtKalk( cTDok, temp->idpm, "Z", cIdPJ )
 	_id_konto2 := GetKtKalk( cTDok, temp->idpm, "R", cIdPJ )
-	
+
     // pozicioniraj se na konto zaduzuje
     select koncij
     set order to tag "ID"
@@ -1276,35 +1276,35 @@ do while !EOF()
 	// dodaj zapis u kalk_pripr
 	select pript
 	append blank
-	
+
 	replace idfirma with gFirma
 	replace rbr with STR(++nRbr, 3)
-	
+
 	// uzmi pravilan tip dokumenta za kalk
 	replace idvd with cTDok
-	
+
 	replace brdok with cBrojKalk
 	replace datdok with temp->datdok
 	replace idpartner with temp->idpartner
 	replace idtarifa with ROBA->idtarifa
 	replace brfaktp with cFakt
 	replace datfaktp with temp->datdok
-	
+
 	// konta:
 	// =====================
 	// zaduzuje
 	replace idkonto with _id_konto
 	// razduzuje
-	replace idkonto2 with _id_konto2 
-	
+	replace idkonto2 with _id_konto2
+
 	replace idzaduz2 with ""
-	
+
 	// spec.za tip dok 11
 	if cTDok $ "11#41"
-		
+
         replace tmarza2 with "A"
 		replace tprevoz with "A"
-		
+
         if cTDok == "11"
             // uzmi mpc iz sifrarnika roba prema podesenju u konciju...
 			replace mpcsapp with UzmiMpcSif()
@@ -1313,20 +1313,20 @@ do while !EOF()
 		endif
 
 	endif
-	
+
 	replace kolicina with temp->kolicina
 	replace idroba with roba->id
 	replace nc with ROBA->nc
 	replace vpc with temp->cijena
 	replace rabatv with temp->rabatp
 	replace mpc with temp->porez
-	
+
 	cPFakt := cFakt
 	cPTDok := cTDok
 	cPPm := cPm
-	
+
 	++ nCnt
-	
+
 	select temp
 	skip
 enddo
@@ -1335,16 +1335,16 @@ enddo
 if nCnt > 0
 
 	ASORT(aPom,,,{|x,y| x[1]+"-"+x[2] < y[1]+"-"+y[2]})
-	
+
 	START PRINT CRET
 	? "========================================"
 	? "Generisani sljedeci dokumenti:          "
 	? "========================================"
 	? "Dokument     * Sporna NC"
 	? "----------------------------------------"
-	
+
 	for i:=1 to LEN(aPom)
-		
+
 		cT_tipdok := aPom[i, 1]
 		cT_brdok := aPom[i, 2]
 		cT_brfakt := aPom[i, 3]
@@ -1354,7 +1354,7 @@ if nCnt > 0
 		      nT_scan := ASCAN( aArr_ctrl, ;
 				{|xVal| xVal[1] + PADR( xVal[2], 10 ) == ;
 					cT_tipdok + PADR( cT_brfakt, 10 ) } )
-		
+
 		      if nT_scan <> 0
 			cT_ctrl := " !!! ERROR !!!"
 		      endif
@@ -1363,45 +1363,45 @@ if nCnt > 0
 		? cT_tipdok + " - " + cT_brdok, cT_ctrl
 
 	next
-	
+
 	?
-	
+
 	FF
 	ENDPRINT
 endif
 
 if cCtrl_art == "D" .and. LEN( aArr_ctrl ) > 0
-	
+
 	START PRINT CRET
-	
-	? 
+
+	?
 	? "Ispusteni dokumenti:"
 	? "------------------------------------"
 
 	for xy := 1 to LEN( aArr_ctrl )
-		? aArr_ctrl[xy, 1] + "-" + aArr_ctrl[xy, 2] 
+		? aArr_ctrl[xy, 1] + "-" + aArr_ctrl[xy, 2]
 	next
-	
+
 	FF
 	ENDPRINT
 
 endif
 
-// pobrisi ispustene dokumente 
+// pobrisi ispustene dokumente
 if cCtrl_art == "D" .and. LEN( aArr_ctrl ) > 0
 
 	nT_scan := 0
-	
+
 	select pript
 	set order to tag "0"
 	go top
 
 	do while !EOF()
-		
+
 		nT_scan := ASCAN(aArr_ctrl, ;
 			{|xval| xval[1] + PADR( xval[2], 10 ) == ;
 			field->idvd + PADR( field->brfaktp, 10 ) })
-		
+
 		if nT_scan <> 0
 			delete
 		endif
@@ -1422,7 +1422,7 @@ return 1
  *  \param cTip - tip "Z" zad. i "R" razd.
  *  \param cPoslovnica - poslovnica tuzla ili sarajevo
  */
- 
+
 static function GetKtKalk(cTipDok, cPm, cTip, cPoslovnica)
 
 do case
@@ -1470,7 +1470,7 @@ do while !EOF()
 	cTmpPar := ALLTRIM(temp->idpartner)
 	go top
 	seek cTmpPar
-	
+
 	// ako si nasao:
 	//  1. ako je lEditOld .t. onda ispravi postojeci
 	//  2. ako je lEditOld .f. onda preskoci
@@ -1484,20 +1484,20 @@ do while !EOF()
 	else
 		lNovi := .t.
 	endif
-	
+
 	// dodaj zapis u partn
 	select partn
-	
+
 	if lNovi
 		append blank
 	endif
-	
+
 	if !lNovi .and. !lEditOld
 		select temp
 		skip
 		loop
 	endif
-	
+
 	replace id with temp->idpartner
 	cNaz := temp->naz
 	replace naz with KonvZnWin(@cNaz, "8")
@@ -1517,7 +1517,7 @@ do while !EOF()
 	USifK("PARTN", "USTN", temp->idpartner, temp->ustn)
 	USifK("PARTN", "BRUP", temp->idpartner, temp->brupis)
 	USifK("PARTN", "BRJS", temp->idpartner, temp->brjes)
-	
+
 	select temp
 	skip
 enddo
@@ -1542,18 +1542,18 @@ do while !EOF()
 	// pronadji robu
 	select roba
 	set order to tag "SIFRADOB"
-	
+
 	cTmpSif := ALLTRIM(temp->sifradob)
-	
+
 	go top
 	seek cTmpSif
-	
+
 	if !Found()
-	
+
 		// da li treba dodavati novi zapis ...
-	
+
 	else
-		
+
 		// mjenja se VPC
 		if temp->idpm == "001"
 			if field->vpc <> temp->mpc
@@ -1570,9 +1570,9 @@ do while !EOF()
 				replace field->mpc with temp->mpc
 			endif
 		endif
-		
+
 	endif
-	
+
 	select temp
 	skip
 enddo
@@ -1616,7 +1616,7 @@ if LastKey()==K_ESC
 endif
 
 return 1
-  
+
 
 
 
@@ -1643,7 +1643,7 @@ endif
 
 lAutom := .f.
 if Pitanje(, "Automatski asistent i ažuriranje naloga (D/N)?", "D") == "D"
-	lAutom := .t. 
+	lAutom := .t.
 endif
 
 
@@ -1687,17 +1687,17 @@ do while !EOF()
 		skip
 		loop
 	endif
-	
+
 	// daj novi broj dokumenta kalk
 	nT_area := SELECT()
 	cN_kalk_dok := GetNextKalkDoc(cFirma, cIdVd, 1)
 	select (nT_area)
-	
+
 	@ 3+m_x, 2+m_y SAY "Prebacujem: " + cFirma + "-" + cIdVd + "-" + cBrDok
-	
+
 	nStCnt := 0
 	do while !EOF() .and. field->brdok = cBrDok .and. field->idfirma = cFirma .and. field->idvd = cIdVd
-		
+
 		// jedan po jedan row azuriraj u kalk_pripr
 		select kalk_pripr
 		append blank
@@ -1707,17 +1707,17 @@ do while !EOF()
 		select kalk_pripr
 		_brdok := cN_kalk_dok
 		Gather()
-		
+
 		select pript
 		skip
 		++ nStCnt
-		
+
 		nPTRec := RecNo()
 
 		@ 5+m_x, 13+m_y SAY SPACE(5)
 		@ 5+m_x, 2+m_y SAY "Broj stavki:" + ALLTRIM(STR(nStCnt))
 	enddo
-	
+
 	// nakon sto smo prebacili dokument u kalk_pripremu obraditi ga
 	if lAutom
 		// snimi zapis u params da znas dokle si dosao
@@ -1726,10 +1726,10 @@ do while !EOF()
 		SaveObrada(nPTRec)
 		O_PRIPT
 	endif
-	
+
 	select pript
 	go nPTRec
-	
+
 enddo
 
 BoxC()
@@ -1780,7 +1780,7 @@ Rpar("is", @nDosaoDo)
 
 if nDosaoDo == nil
 	MsgBeep("Nema nista zapisano u parametrima!#Prekidam operaciju!")
-	return 	
+	return
 endif
 
 if nDosaoDo == 0
@@ -1852,35 +1852,35 @@ o_kalk_edit()
 private nRslt
 
 do while (ChkKkalk_pripr(cIdVd, @nRslt) <> 0)
-	
+
 	// vezni dokument u kalk_pripremi je ok
 	if nRslt == 1
-		
+
 		if lAsPokreni
 			// otvori kalk_pripremu
 			kalk_unos_stavki_dokumenta(.t.)
 		else
 			o_kalk_edit()
 		endif
-		
+
 		if lStampaj == .t.
 			kalk_centr_stampa_dokumenta(nil, nil, .t.)
 		endif
-		
+
 		kalk_azuriranje_dokumenta( .t. )
 		o_kalk_edit()
-		
+
 	endif
 
-	// vezni dokument ne pripada azuriranom dokumentu 
+	// vezni dokument ne pripada azuriranom dokumentu
 	// sta sa njim
-	
+
 	if nRslt >= 2
-		
+
 		MsgBeep("Postoji dokument u kalk_pripremi koji je sumljiv!!!#Radi se o veznom dokumentu ili nekoj drugoj gresci...#Obradite ovaj dokument i autoimport ce nastaviti dalje sa radom !")
 		kalk_unos_stavki_dokumenta()
 		o_kalk_edit()
-		
+
 	endif
 enddo
 
@@ -2031,7 +2031,7 @@ do while !EOF()
 	endif
 
 	cSStr := SUBSTR(field->id, 1, 1)
-	
+
 	// provjeri karakteristicnost robe
 	if cSStr == "K" .or. cSStr == "P"
 		// roba KOKA LEN 5 sifradob
@@ -2043,14 +2043,14 @@ do while !EOF()
 		skip
 		loop
 	endif
-	
+
 	// upisi zapis
 	Scatter()
 	_sifradob := cSifra
     my_rlock()
 	Gather()
     my_unlock()
-	
+
 	// potrazi sifru u matrici
 	nRes := ASCAN(aSDob, {|aVal| aVal[1] == cSifra})
 	if nRes == 0
@@ -2059,14 +2059,14 @@ do while !EOF()
 		AADD(aRpt, {cSifra, aSDob[nRes, 2]})
 		AADD(aRpt, {cSifra, field->id})
 	endif
-	
+
 	++ nCnt
-	
+
 	@ 3+m_x, 2+m_y SAY "FMK sifra " + ALLTRIM(field->id) + " => sifra dob. " + cSifra
 	@ 5+m_x, 2+m_y SAY " => ukupno " + ALLTRIM(STR(nCnt))
 
 	skip
-	
+
 enddo
 
 BoxC()
@@ -2077,21 +2077,18 @@ if LEN(aRpt) > 0
 	? "KONTROLA DULIH SIFARA VINDIJA_FAKT:"
 	? "==================================="
 	? "Sifra Vindija_FAKT -> Sifra FMK  "
-	? 
-	
+	?
+
 	for i:=1 to LEN(aRpt)
 		? aRpt[i, 1] + " -> " + aRpt[i, 2]
 	next
-	
+
 	?
 	? "Provjerite navedene sifre..."
 	?
-	
+
 	FF
 	ENDPRINT
 endif
 
 return
-
-
-

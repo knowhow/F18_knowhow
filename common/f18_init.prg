@@ -168,12 +168,12 @@ FUNCTION f18_init_app_login( force_connect, arg_v )
 
          IF oLogin:_company_db_connected
 
-            _show_info()
+            show_sacekaj()
             post_login()
             f18_app_parameters( .T. )
             set_hot_keys()
             get_log_level_from_params()
-
+            add_idle_handlers()
             module_menu( arg_v )
 
          ENDIF
@@ -188,7 +188,7 @@ FUNCTION f18_init_app_login( force_connect, arg_v )
    RETURN .T.
 
 
-STATIC FUNCTION _show_info()
+STATIC FUNCTION show_sacekaj()
 
    LOCAL _x, _y
    LOCAL _txt
@@ -207,22 +207,19 @@ STATIC FUNCTION _show_info()
 
    Set( _SET_EVENTMASK, INKEY_ALL )
 
+   RETURN .T.
+
+
+FUNCTION add_idle_handlers()
 
    hb_idleAdd( {||  hb_DispOutAt( maxrows(),  maxcols() - 8, Time() ) } )
-   hb_idleAdd( {||  hb_DispOutAt( maxrows(),  maxcols() - 8 - 8 - 1, "< CALC >" ), MUpdate(), ;
+   hb_idleAdd( {||  hb_DispOutAt( maxrows(),  maxcols() - 8 - 8 - 1, "< CALC >" ), ;
       iif( !in_calc() .AND. MINRECT( maxrows(), maxcols() - 8 - 8 - 1, maxrows(), maxcols() - 8 - 1 ), Calc(), NIL ) } )
 
    hb_idleAdd( {|| !in_dbf_refresh() .AND. dbf_refresh() } )
 
-
    RETURN .T.
 
-FUNCTION MUPDATE()
-
-   //@ MaxRow() - 1,  4 SAY MRow() PICTURE "9999"
-   //@ MaxRow() - 1, 12 SAY MCol() PICTURE "9999"
-
-   RETURN 0
 
 // prelazak iz sezone u sezonu
 FUNCTION f18_old_session()
@@ -449,7 +446,6 @@ FUNCTION post_login( gVars )
       gVars := .T.
    ENDIF
 
-
    // ~/.F18/empty38/
    set_f18_home( my_server_params()[ "database" ] )
    log_write( "home baze: " + my_home() )
@@ -461,7 +457,10 @@ FUNCTION post_login( gVars )
    // setuje u matricu sve tabele svih modula
    set_a_dbfs()
 
+   in_dbf_refresh( .T. )
    cre_all_dbfs( _ver )
+   in_dbf_refresh( .F. )
+   
    kreiraj_pa_napuni_partn_idbr_pdvb ()
 
    // inicijaliziraj "dbf_key_fields" u __f18_dbf hash matrici
@@ -482,14 +481,6 @@ FUNCTION post_login( gVars )
    RETURN .T.
 
 
-#ifdef NODE
-STATIC FUNCTION _get_log_level_from_params()
-
-   log_level( 7 )
-
-   RETURN .T.
-
-#else
 
 // -----------------------------------------------------------
 // vraca informaciju o nivou logiranja aplikcije
@@ -500,7 +491,6 @@ STATIC FUNCTION get_log_level_from_params()
 
    RETURN .T.
 
-#endif
 
 // ------------------------------------------------------------
 // vraca informacije iz inija vezane za screen rezoluciju

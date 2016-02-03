@@ -618,7 +618,7 @@ STATIC FUNCTION CreTemp( aDbf, lIndex )
 
    IF File( f18_ime_dbf( cTmpTbl ) ) .AND. FErase( f18_ime_dbf( cTmpTbl ) ) == -1
       MsgBeep( "Ne mogu izbrisati TEMP.DBF!" )
-      ShowFError()
+
    ENDIF
 
    DbCreate2( cTmpTbl, aDbf )

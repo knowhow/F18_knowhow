@@ -503,7 +503,6 @@ STATIC FUNCTION edit_sql_sif_item( Ch, cOrderTag, aZabIsp, lNovi )
    PRIVATE aUsl
    PRIVATE aStruct
 
-
    nPrevRecNo := RecNo()
 
    cTekuciZapis := vrati_vrijednosti_polja_sifarnika_u_string( "w" )
@@ -1054,22 +1053,22 @@ STATIC FUNCTION _fix_usl( xUsl )
 
 FUNCTION sifarnik_brisi_stavku()
 
-   LOCAL _rec_dbf, _rec, _alias
-   LOCAL lOk := .T.
+   LOCAL _rec_dbf, _rec, cAlias
+   LOCAL lOk
    LOCAL hRec
 
    IF Pitanje( , "Želite li izbrisati ovu stavku (D/N) ?", "D" ) == "N"
       RETURN DE_CONT
    ENDIF
 
-   _alias := Alias()
+   cAlias := Lower( Alias() )
 
    PushWA()
 
    sql_table_update( nil, "BEGIN" )
-   IF !f18_lock_tables( { Lower( Alias() ) }, .T. )
+   IF !f18_lock_tables( { cAlias }, .T. )
       sql_table_update( nil, "END" )
-      MsgBeep( "Ne mogu zaključati tabelu " + Alias() + "!#Prekidam operaciju." )
+      MsgBeep( "Ne mogu zaključati tabelu " + cAlias + "!#Prekidam operaciju." )
       RETURN DE_CONT
    ENDIF
 
@@ -1077,30 +1076,24 @@ FUNCTION sifarnik_brisi_stavku()
 
    hRec := _rec_dbf
 
-   lOk := delete_rec_server_and_dbf( _alias, _rec_dbf, 1, "CONT" )
+   lOk := delete_rec_server_and_dbf( cAlias, _rec_dbf, 1, "CONT" )
 
    IF lOk .AND. hb_HHasKey( _rec_dbf, "id" )
 
-      SELECT ( F_SIFK )
-      IF !Used()
-         O_SIFK
-      ENDIF
-
-      SELECT ( F_SIFV )
-      IF !Used()
-         O_SIFV
-      ENDIF
-
+      O_SIFV
       _rec := hb_Hash()
-      _rec[ "id" ]    := PadR( _alias, 8 )
+      _rec[ "id" ]    := PadR( cAlias, 8 )
       _rec[ "idsif" ] := PadR( _rec_dbf[ "id" ], 15 )
       lOk := delete_rec_server_and_dbf( "sifv", _rec, 3, "CONT" )
 
    ENDIF
 
    IF lOk
-      f18_free_tables( { Lower( Alias() ) } )
       sql_table_update( nil, "END" )
+#ifdef F18_DEBUG
+      MsgBeep( "table " + cAlias  + " updated and locked" )
+#endif
+      f18_free_tables( { cAlias } )
       log_write( "F18_DOK_OPER: brisanje stavke iz šifrarnika, stavka " + pp( hRec ), 2 )
    ELSE
       sql_table_update( nil, "ROLLBACK" )
@@ -1112,9 +1105,10 @@ FUNCTION sifarnik_brisi_stavku()
 
    IF lOk
       RETURN DE_REFRESH
-   ELSE
-      RETURN DE_CONT
    ENDIF
+
+   RETURN DE_CONT
+
 
 FUNCTION sifarnik_brisi_sve()
 

@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -33,14 +33,14 @@ local nT1:=nT4:=nT5:=nT6:=nT7:=0
 local nTT1:=nTT4:=nTT5:=nTT6:=nTT7:=0
 local n1:=n4:=n5:=n6:=n7:=0
 local nCol1:=0
-local PicCDEM:=REPLICATE("9", VAL(gFPicCDem)) + gPicCDEM 
-local PicProc:=gPicProc      
-local PicDEM:=REPLICATE("9", VAL(gFPicDem)) + gPicDEM 
-local Pickol:=gPicKol  
+local PicCDEM:=REPLICATE("9", VAL(gFPicCDem)) + gPicCDEM
+local PicProc:=gPicProc
+local PicDEM:=REPLICATE("9", VAL(gFPicDem)) + gPicDEM
+local Pickol:=gPicKol
 local i:=0
 private aPorezi
 
-lVoSaTa := .f. 
+lVoSaTa := .f.
 dDat1 := dDat2 := CTOD("")
 cVDok := "99"
 qqKonto := PADR( "1320;", 60 )
@@ -64,13 +64,13 @@ Box(,6,70)
             cPojed:="D"
             @ m_x+5,m_y+2  SAY "Prikaz pojedinacnih uplata? (D/N)" GET cPojed  valid cPojed $ "DN" PICT "@!"
         endif
-        
+
         read
         ESC_BCR
 
         aUsl1:=Parsiraj(qqKonto,"PKonto")
         aUsl2:=Parsiraj(qqTarifa,"IdTarifa")
-        
+
         if aUsl1<>NIL .and. aUsl2<>NIL
             exit
         endif
@@ -90,7 +90,7 @@ if lVoSaTa
   	select kalk
 endif
 
-fSaberikol := .f. 
+fSaberikol := .f.
 
 if cVDok == "99"
 	cVDok := "41#42#43#47#82#IP"
@@ -110,7 +110,7 @@ if aUsl2 <> ".t."
 endif
 
 set filter to &cFilt1
-go top   
+go top
 
 EOF CRET
 
@@ -140,7 +140,7 @@ nKI:=nPRUC:=0
 n1:=n4:=n5:=n6:=n7:=n8:=0
 
 do while !EOF() .and. IspitajPrekid()
-    
+
     B := 0
     cIdFirma:=KALK->IdFirma
 
@@ -161,25 +161,25 @@ do while !EOF() .and. IspitajPrekid()
             ? "Kriterij za tarife:",trim(qqTarifa)
             ?
         endif
-    
+
         if VAL(gFPicDem) > 0
     	    P_COND2
         else
    	        P_COND
         endif
-    
+
         ?
         ? cLine
         ? cText1
         ? cText2
         ? cLine
-  
+
     endif
 
     nT1:=nT4:=nT5:=nT6:=nT7:=nT8:=0
     nTP:=0
     cLastTarifa:=""
-  
+
     aPorezi:={}
 
     DO WHILE !EOF() .AND. cIdFirma==KALK->IdFirma .and. IspitajPrekid()
@@ -190,18 +190,18 @@ do while !EOF() .and. IspitajPrekid()
      	select tarifa
      	hseek cIdTarifa
      	select kalk
-     	
+
 	    VtPorezi()
 
 	    cIdTarifa := Tarifa(pkonto, idroba, @aPorezi, cIdTarifa)
-	
+
 	    nMPV:=0
      	nNv:=0
      	nPopust:=0
     	nMPVSaPP:=0
-	 
-     
-        IF lVoSaTa  
+
+
+        IF lVoSaTa
             //ovo nema veze sa ugostiteljstvom
             SELECT POM
             FOR i:=1 TO 3
@@ -212,7 +212,7 @@ do while !EOF() .and. IspitajPrekid()
 		            REPLACE P_PPP WITH aPorezi[POR_PPP]
 		            REPLACE P_PPU WITH aPorezi[POR_PPU]
 		            REPLACE P_PP WITH aPorezi[POR_PP]
-	   
+
 		            IF cPojed=="D" .and. i==2
 			            REPLACE DOKUM  WITH KALK->(IDVD+BRDOK)
 			            REPLACE DATDOK WITH KALK->DATDOK
@@ -221,16 +221,16 @@ do while !EOF() .and. IspitajPrekid()
             NEXT
             SELECT KALK
         ENDIF
-     
+
         cPoDok:=IDVD+BRDOK
         cLastTarifa:=cIdTarifa
         nPRUC:=0
         DO WHILE !EOF() .AND. cIdFirma==IdFirma .and. cIdtarifa==IdTarifa .and. IF(cPojed=="D",cPoDok==IDVD+BRDOK,.t.) .and. IspitajPrekid()
 
             select roba
-	        hseek kalk->idroba 
+	        hseek kalk->idroba
             select KALK
-	
+
             if lVoSaTa
                 // vodi samo tarife
 	            if ! (idvd $ "41#42")
@@ -262,7 +262,7 @@ do while !EOF() .and. IspitajPrekid()
                             REPLACE mpv      WITH mpv      - npMPV              ,;
                                     popust   WITH popust   - npPop              ,;
                                     mpvsapor WITH mpvsapor - npMPVP
-    
+
                     ENDCASE
                 NEXT
                 my_unlock()
@@ -270,9 +270,9 @@ do while !EOF() .and. IspitajPrekid()
             else
 
 	            // vodi po artiklima
-	  
+
 	            // prikaz dokumenata IP, a ne robe tipa "T"
-                if cTU=="2" .and.  roba->tip $ "UT"  
+                if cTU=="2" .and.  roba->tip $ "UT"
                     skip 1
 	                loop
                 endif
@@ -296,12 +296,12 @@ do while !EOF() .and. IspitajPrekid()
 	            nMPV+=nMpc*nKolicina
 	            nMpvSaPP+=field->mpcSaPP*nKolicina
 	            nNv+=field->nc*nKolicina
-	  
+
                 if fSaberikol .and. !( roba->K2 = 'X')
 	  	            nKI+=nKolicina
 	            endif
-	  
-                if !pu_i=="I"	  
+
+                if !pu_i=="I"
           	        nPopust+=RabatV*nKolicina
 	            endif
 
@@ -311,7 +311,7 @@ do while !EOF() .and. IspitajPrekid()
         ENDDO
 
         IF !lVoSaTa
-     
+
 	        if prow() > ( RPT_PAGE_LEN + gPStranica )
 		        FF
 	        endif
@@ -324,22 +324,22 @@ do while !EOF() .and. IspitajPrekid()
 	        // neslaganja sume poreza sa porezom izracunatim na osnovu ukupnih
 	        // nMpv i nMpvSaPP jer se pojedinacno mozda koristi ponegdje limit
 	        // a ukupno se koristi uvijek ili ne koristi nikako
-	
+
 	        @ prow()+1,0      SAY space(6)+cIdTarifa
 	        nCol1:=pcol()+4
 	        @ prow(),pcol()+4 SAY n1:=nMPV     PICT   PicDEM
-       
+
 	        @ prow(),pcol()+1 SAY aPorezi[POR_PPP] PICT   PicProc
        	    @ prow(),pcol()+1 SAY PrPPUMP()    PICT   PicProc
   	        @ prow(),pcol()+1 SAY aPorezi[POR_PP] PICT PicProc
-       
+
 	        @ prow(),pcol()+1 SAY n4:=nPorez   PICT   PicDEM
 	        @ prow(),pcol()+1 SAY n5:=nPorez2  PICT   PicDEM
 	        @ prow(),pcol()+1 SAY n6:=nPorez3  PICT   PicDEM
 	        @ prow(),pcol()+1 SAY n7:=nPorez+nPorez2+nPorez3  PICTURE   PicDEM
 	        @ prow(),pcol()+1 SAY nP:=nPopust PICTURE   PicDEM
 	        @ prow(),pcol()+1 SAY n8:=nMPVSAPP PICTURE   PicDEM
-	
+
 	        nT1+=n1
 	        nT4+=n4
 	        nT5+=n5
@@ -347,18 +347,18 @@ do while !EOF() .and. IspitajPrekid()
 	        nTP+=nP
 	        nT7+=n7
 	        nT8+=n8
-     
-        ENDIF
-    ENDDO 
 
-  
+        ENDIF
+    ENDDO
+
+
     IF !lVoSaTa
         // obracun po artiklima
-    
+
         if prow() > ( RPT_PAGE_LEN + gPStranica )
     	    FF
         endif
-    
+
         ? cLine
         ? "UKUPNO:"
         @ prow(),nCol1     SAY  nT1     pict picdem
@@ -371,16 +371,16 @@ do while !EOF() .and. IspitajPrekid()
         @ prow(),pcol()+1  SAY  nT7     pict picdem
         @ prow(),pcol()+1  SAY  nTP     pict picdem
         @ prow(),pcol()+1  SAY  nT8     pict picdem
-    
+
         ? cLine
-    
+
         if fSaberikol
             ? "UKUPNO (KOLICINE):"
             @ prow(), ncol1 + (len(gPicDEM)+1)*9 SAY nKI pict gpickol
             ? cLine
         endif
     ENDIF
-ENDDO 
+ENDDO
 
 set softseek on
 
@@ -463,16 +463,16 @@ return
 
 // kreiranje i otvaranje pomocne baze POM.DBF
 static function CrePom()
-  select 0      
+  select 0
   // idi na slobodno podrucje
   cPom:=PRIVPATH+"POM"
   IF FILE(cPom+".DBF") .and. ferase(PRIVPATH+"POM.DBF")==-1
     MsgBeep("Ne mogu izbrisati POM.DBF!")
-    ShowFError()
+
   ENDIF
   IF FILE(cPom+".CDX") .and. ferase(PRIVPATH+"POM.CDX")==-1
     MsgBeep("Ne mogu izbrisati POM.CDX!")
-    ShowFError()
+
   ENDIF
   // ferase(cPom+".CDX")
   aDbf := {}
@@ -498,7 +498,7 @@ static function CrePom()
   ELSE
     INDEX ON ID+TARIFA TAG "1"
   ENDIF
-  SET ORDER TO TAG "1" 
+  SET ORDER TO TAG "1"
   GO TOP
 
 return .t.
@@ -543,5 +543,3 @@ else
 	nVrati := nOsnPC * ( 1 - ( nPP+nPPP/(1+nPPP)+nDLRUC*(1-nPP)*nMPP/(1+nMPP) ) )
 endif
 return nVrati
-
-

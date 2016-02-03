@@ -25,3 +25,6 @@ echo "\\copy ( $SQL ) TO '$FILE_NAME' CSV HEADER QUOTE '\"'" | psql -h $PSQL_HOS
 
 echo created: 
 ls -l $FILE_NAME
+
+$(uname -a | grep -q Darwin) && echo ovo je mac osx && open $FILE_NAME
+

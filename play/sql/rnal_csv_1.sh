@@ -2,16 +2,17 @@
 
 GODINA=2015
 VRSTA_DOK=NP
-ROUND_NUM=0
+ROUND_NUM=2
 FILE_NAME="rnal_1.csv"
 PSQL_HOST=localhost
 PSQL_USER=postgres
 PSQL_DB=rg_2015
+DIVISOR=1000000
 
 SQL=""
 SQL="$SQL select"
 SQL="$SQL rnal_articles.art_id, rnal_articles.art_desc, rnal_articles.art_full_d,"
-SQL="$SQL  round( sum(rnal_doc_it.doc_it_qtt * rnal_doc_it.doc_it_wid * rnal_doc_it.doc_it_hei), $ROUND_NUM) as uk_povrsina_m2"
+SQL="$SQL  round( sum(rnal_doc_it.doc_it_qtt * rnal_doc_it.doc_it_wid * rnal_doc_it.doc_it_hei)/$DIVISOR, $ROUND_NUM) as uk_povrsina_m2"
 SQL="$SQL  from fmk.rnal_docs"
 SQL="$SQL  join fmk.rnal_doc_it  ON rnal_doc_it.doc_no = rnal_docs.doc_no"
 SQL="$SQL  left join fmk.rnal_articles ON fmk.rnal_doc_it.art_id = fmk.rnal_articles.art_id"

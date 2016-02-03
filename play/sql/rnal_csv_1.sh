@@ -1,11 +1,12 @@
 #!/bin/bash
 
-F18_DB=rg_2015
 GODINA=2015
 VRSTA_DOK=NP
 ROUND_NUM=0
 FILE_NAME="rnal_1.csv"
+PSQL_HOST=localhost
 PSQL_USER=postgres
+PSQL_DB=rg_2015
 
 SQL=""
 SQL="$SQL select"
@@ -20,7 +21,7 @@ SQL="$SQL  order by art_desc"
 
 echo "sql=$SQL"
 
-echo "\\copy ( $SQL ) TO '$FILE_NAME' CSV HEADER QUOTE '\"'" | psql -H $F18_DB -U $PSQL_USER
+echo "\\copy ( $SQL ) TO '$FILE_NAME' CSV HEADER QUOTE '\"'" | psql -h $PSQL_HOST -U $PSQL_USER $PSQL_DB
 
 echo created: 
 ls -l $FILE_NAME

@@ -39,12 +39,3 @@ libF18_string.a
 {LX_64&linux}-lz
 {!LX_64&linux}-lz
 
-{LX_CENTOS&linux}-lpq
-{!LX_CENTOS&linux}-lpq
-
-F18.hbc
-sddpg.hbc
-hbmzip.hbc
-hbpgsql.hbc
-xhb.hbc
-hbtip.hbc

@@ -21,16 +21,8 @@ libF18_string.a
 
 -inc
 -Iinclude
-{F18_DEBUG}-DF18_DEBUG
-{F18_DEBUG}-b
-{F18_DEBUG}-trace
 
-{!F18_DEBUG}-q
 {F18_DEBUG}-lmy_hbuddall
-
-{F18_GT_CONSOLE}-DGT_DEFAULT_CONSOLE
-{F18_GT_QT}-DGT_DEFAULT_QT
-{F18_GT_GUI}-DGT_DEFAULT_GUI
 
 {darwin}-L./darwin
 {!LX_64&linux}-L./linux_32

@@ -1,4 +1,4 @@
-f18.hbc  -DDEFINE2 -inc
+-inc
 -hblib
 -oF18_string
 -Iinclude

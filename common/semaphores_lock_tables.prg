@@ -68,7 +68,6 @@ FUNCTION f18_lock_tables( a_tables, lAlreadyInTransakcija )
       IF _ok
 
          IIF( lAlreadyInTransakcija, NIL, sql_table_update( nil, "END" ) )
-
          log_write( "uspjesno izvrsen lock tabela " + pp( a_tables ), 7 )
 
          // nakon uspjesnog lockovanja svih tabela preuzeti promjene od drugih korisnika

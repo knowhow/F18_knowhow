@@ -48,7 +48,6 @@ FUNCTION refresh_me( a_dbf_rec, lSilent, lFromMyUse )
       USE
    ENDIF
 
-
    _cnt_sql := table_count( a_dbf_rec["table"] )
 
    // 3) ponovo otvori nakon sinhronizacije

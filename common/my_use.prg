@@ -123,6 +123,7 @@ FUNCTION my_use_temp( alias, table, new_area, excl )
 
    RETURN .T.
 
+
 // ----------------------------------------------------------------
 // semaphore_param se prosjedjuje eval funkciji ..from_sql_server
 // ----------------------------------------------------------------
@@ -142,6 +143,10 @@ FUNCTION my_use( alias, table, new_area, _rdd, semaphore_param, excl, select_wa 
    LOCAL lUspjesno
    LOCAL oError
    LOCAL _a_dbf_rec
+
+   IF PCount() == 1
+       RETURN my_use_simple( alias )
+   ENDIF
 
    IF excl == NIL
       excl := .F.
@@ -255,6 +260,69 @@ FUNCTION my_use( alias, table, new_area, _rdd, semaphore_param, excl, select_wa 
 
    RETURN .T.
 
+
+
+FUNCTION my_use_simple( cAlias )
+
+/*
+   LOCAL nCnt
+   LOCAL _msg
+   LOCAL _err
+   LOCAL _pos
+   LOCAL _version, _last_version
+   LOCAL _area
+   LOCAL _force_erase := .F.
+   LOCAL _dbf
+   LOCAL _tmp
+   LOCAL nSelect
+   LOCAL lOdradioFullSynchro := .F.
+   LOCAL lUspjesno
+   LOCAL oError
+*/
+   LOCAL nCnt, oError, lUspjesno, cFullDbf
+   LOCAL aDbfRec
+   LOCAL lExcl := .F.
+   LOCAL cRdd := DBFENGINE
+
+   aDbfRec := get_a_dbf_rec( cAlias, .T. )
+   SELECT ( aDbfRec[ "wa" ] )
+
+   dbf_refresh( aDbfRec[ 'alias' ] )
+
+   IF Used()
+      USE
+   ENDIF
+
+   cFullDbf := my_home() + aDbfRec[ 'table' ]
+
+   nCnt := 0
+
+   lUspjesno := .F.
+   DO WHILE ( !lUspjesno ) .AND. ( nCnt < 10 )
+
+      BEGIN SEQUENCE WITH {| err| Break( err ) }
+
+         dbUseArea( .F., cRdd, cFullDbf, aDbfRec[ 'table' ], !lExcl, .F. )
+         IF File( ImeDbfCdx( cFullDbf ) )
+            dbSetIndex( ImeDbfCDX( cFullDbf ) )
+         ENDIF
+         lUspjesno := .T.
+
+      RECOVER USING oError
+
+         my_use_error( aDbfRec[ 'table' ], aDbfRec[ 'alias' ], oError )
+         hb_idleSleep( 1 )
+      END SEQUENCE
+
+      nCnt ++
+
+   ENDDO
+
+   IF !lUspjesno
+      RaiseError( "ERROR: my_use " + aDbfRec[ 'table' ] + " neusjesno !" )
+   ENDIF
+
+   RETURN .T.
 
 
 /*

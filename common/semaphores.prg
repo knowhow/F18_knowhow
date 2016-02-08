@@ -403,7 +403,7 @@ FUNCTION fill_dbf_from_server( dbf_table, sql_query, sql_fetch_time, dbf_write_t
    LOCAL _qry_obj
    LOCAL _retry := 3
    LOCAL _a_dbf_rec
-   LOCAL _dbf_alias, _dbf_fields
+   LOCAL _dbf_alias, _dbf_fields, cSyncalias
 
    IF lShowInfo == NIL
       lShowInfo := .F.
@@ -427,6 +427,11 @@ FUNCTION fill_dbf_from_server( dbf_table, sql_query, sql_fetch_time, dbf_write_t
 
    dbf_write_time := Seconds()
 
+   cSyncAlias := 'sync_' + _a_dbf_rec[ 'table' ]
+   IF !Used( cSyncAlias )
+      USE ( my_home() + _a_dbf_rec[ 'table' ] ) Alias ( cSyncAlias )  NEW
+   ENDIF
+
    DO WHILE !_qry_obj:Eof()
 
       ++ _counter
@@ -435,7 +440,6 @@ FUNCTION fill_dbf_from_server( dbf_table, sql_query, sql_fetch_time, dbf_write_t
       FOR _i := 1 TO Len( _dbf_fields )
 
          _fld := FieldBlock( _dbf_fields[ _i ] )
-
 
          IF ValType( Eval( _fld ) ) $ "CM"
             Eval( _fld, hb_UTF8ToStr( _qry_obj:FieldGet( _qry_obj:FieldPos( _dbf_fields[ _i ] ) ) ) )
@@ -456,8 +460,10 @@ FUNCTION fill_dbf_from_server( dbf_table, sql_query, sql_fetch_time, dbf_write_t
 
    ENDDO
 
+   SELECT (cSyncAlias)
+   USE
+   
    log_write( "fill_dbf_from_server(), table: " + dbf_table + ", count: " + AllTrim( Str( _counter ) ), 7 )
-
    log_write( "fill_dbf_from_server(), zavrsio", 9 )
 
    dbf_write_time := Seconds() - dbf_write_time
@@ -634,13 +640,15 @@ FUNCTION in_dbf_refresh( lRefresh )
 
    RETURN s_lInDbfRefresh
 
+
 FUNCTION dbf_refresh( cTable )
 
    LOCAL _server := pg_server()
    LOCAL _user := f18_user()
    LOCAL _qry
    LOCAL _ret
-   LOCAL aDbfRec, cSqlTbl
+   LOCAL aDbfRec
+   LOCAL hVersions, nLastVersion, nVersion
 
    IF s_lInDbfRefresh
       RETURN .F.
@@ -655,35 +663,31 @@ FUNCTION dbf_refresh( cTable )
       cTable := Alias()
    ENDIF
 
-
    aDbfRec := get_a_dbf_rec( cTable )
-   cSqlTbl := "sem." + aDbfRec[ 'table' ]
 
    IF skip_semaphore( aDbfRec[ 'table' ] )
       s_lInDbfRefresh := .F.
       RETURN .F.
    ENDIF
 
-   _qry := "SELECT last_trans_version-version FROM " + cSqlTbl + " WHERE user_code=" + _sql_quote( _user )
-   _ret := _sql_query( _server, _qry )
+   hVersions := get_semaphore_version_h( aDbfRec[ 'table' ] )
 
-   IF sql_query_bez_zapisa( _ret )
-      Alert( "error: " + _qry + " msg: " + _ret:ErrorMsg() )
-      s_lInDbfRefresh := .F.
-      RETURN .F.
+   nLastVersion := hVersions[ "last_version" ]
+   nVersion  := hVersions[ "version" ]
+
+   IF ( nVersion == -1 )
+      update_dbf_from_server( aDbfRec[ 'table' ], "FULL" )
+      hVersions := get_semaphore_version_h( aDbfRec[ 'table' ] )
    ENDIF
 
-   IF ( _ret:FieldGet( 1 ) > 0 )
-      PushWa()
-      my_use( Alias() )
-      PopWa()
-      s_lInDbfRefresh := .F.
-      RETURN .T.
+   IF ( hVersions[ 'version' ] < hVersions[ 'last_version' ] )
+      update_dbf_from_server( aDbfRec[ 'table' ], "IDS" )
    ENDIF
 
    s_lInDbfRefresh := .F.
 
-   RETURN .F.
+   RETURN .T.
+
 
 STATIC FUNCTION skip_semaphore( table )
 

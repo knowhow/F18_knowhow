@@ -44,8 +44,7 @@ FUNCTION init_threads()
 */
 // endif
 
-// ---------------------
-// ---------------------
+
 FUNCTION _db_thread_fn()
 
    LOCAL _query_b

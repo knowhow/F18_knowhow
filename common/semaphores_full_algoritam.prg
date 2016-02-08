@@ -54,10 +54,10 @@ FUNCTION full_synchro( dbf_table, step_size )
 
    _sql_order  := _a_dbf_rec[ "sql_order" ]
 
-
+   // TODO: brisati reopen
    // .t. - brisi indeksni fajl tako da se full sinchro obavlja bez azuriranja indeksa
    // .f. - otvori indeks
-   reopen_exclusive_and_zap( _a_dbf_rec[ "table" ], .T., .F. )
+   //reopen_exclusive_and_zap( _a_dbf_rec[ "table" ], .T., .F. )
 
    Box(, 10, 70 )
 
@@ -115,12 +115,13 @@ FUNCTION full_synchro( dbf_table, step_size )
 
    BoxC()
 
-   MsgO( "Reindex nakon full sync: " + dbf_table )
-   log_write( "reopen nakon full_sync START:" + dbf_table, 3 )
-   IF reopen_exclusive( _a_dbf_rec[ "table" ], .T. )
-      REINDEX
-   ENDIF
-   MsgC()
+   // TODO: brisati
+   //MsgO( "Reindex nakon full sync: " + dbf_table )
+   //log_write( "reopen nakon full_sync START:" + dbf_table, 3 )
+   //IF reopen_exclusive( _a_dbf_rec[ "table" ], .T. )
+   //    REINDEX
+   //ENDIF
+   //MsgC()
 
    USE
 

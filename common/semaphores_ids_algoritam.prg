@@ -18,9 +18,12 @@
 FUNCTION ids_synchro( dbf_table )
 
    LOCAL _i, _ids_queries
-   LOCAL _zap
+   LOCAL _zap, aDbfRec
 
-   _ids_queries := create_queries_from_ids( dbf_table )
+   aDbfRec := get_a_dbf_rec( dbf_table, .T. )
+
+
+   _ids_queries := create_queries_from_ids( aDbfRec[ 'table' ] )
 
    // _ids_queries["ids"] = {  {"00113333 1", "0011333 2"}, {"00224444"}  }
    // _ids_queries["qry"] = {  "select .... in ... rpad('0011333  1') ...", "select .. in ... rpad("0022444")" }
@@ -37,14 +40,12 @@ FUNCTION ids_synchro( dbf_table )
 
          // postoji zahtjev za full synchro
          full_synchro( dbf_table, 50000, .F. )
-
          // otvoricu tabelu ponovo ... ekskluzivno, ne bi to trebalo biti problem
-         reopen_shared( dbf_table, .T. )
+         // reopen_shared( dbf_table, .T. )
 
          ADel( _zap, _ids_queries[ "qry" ] )
-
          // ponovo kreiraj _ids_queries u slucaju da je bilo jos azuriranja
-         _ids_queries := create_queries_from_ids( dbf_table )
+         _ids_queries := create_queries_from_ids( aDbfRec[ 'table' ] )
 
       ELSE
          EXIT
@@ -59,10 +60,9 @@ FUNCTION ids_synchro( dbf_table )
       IF _ids_queries[ "ids" ][ _i ] != NIL
 
          // pobrisi u dbf-u id-ove koji su u semaforu tabele
-         delete_ids_in_dbf( dbf_table, _ids_queries[ "ids" ][ _i ], _i )
-
+         delete_ids_in_dbf( aDbfRec[ 'table' ], _ids_queries[ "ids" ][ _i ], _i )
          // dodaj sa servera
-         fill_dbf_from_server( dbf_table, _ids_queries[ "qry" ][ _i ] )
+         fill_dbf_from_server( aDbfRec[ 'table' ], _ids_queries[ "qry" ][ _i ] )
 
       ENDIF
    NEXT
@@ -70,7 +70,6 @@ FUNCTION ids_synchro( dbf_table )
    log_write( "END ids_synchro", 9 )
 
    RETURN .T.
-
 
 
 // -------------------------------------------------
@@ -152,7 +151,7 @@ FUNCTION push_ids_to_semaphore( table, ids, to_myself )
    // na kraju uradi update verzije semafora, push operacija
    update_semaphore_version_after_push( table, to_myself )
 
-   IF ValType( _ret ) == "O" .AND. EMPTY( _ret:ErrorMsg() )
+   IF ValType( _ret ) == "O" .AND. Empty( _ret:ErrorMsg() )
       RETURN .T.
    ENDIF
 
@@ -292,6 +291,7 @@ FUNCTION create_queries_from_ids( table )
    LOCAL _ret := hb_Hash()
    LOCAL _sql_fields
    LOCAL _algoritam, _alg
+   LOCAL _sql_tbl
 
    _a_dbf_rec := get_a_dbf_rec( table )
 
@@ -397,7 +397,7 @@ FUNCTION delete_ids_in_dbf( dbf_table, ids, algoritam )
    LOCAL _dbf_alias
    LOCAL _dbf_tag
    LOCAL _key_block
-   LOCAL _i
+   LOCAL _i, cSyncAlias
 
    log_write( "delete_ids_in_dbf(), poceo", 9 )
 
@@ -416,6 +416,12 @@ FUNCTION delete_ids_in_dbf( dbf_table, ids, algoritam )
 
    IF ValType( ids ) != "A"
       Alert( "ids type ? " + ValType( ids ) )
+   ENDIF
+
+   cSyncAlias := 'sync_' + _a_dbf_rec[ 'table' ]
+
+   IF !Used( cSyncAlias )
+      USE ( my_home() + _a_dbf_rec[ 'table' ] ) Alias ( cSyncAlias )  NEW
    ENDIF
 
    DO WHILE .T.
@@ -443,8 +449,11 @@ FUNCTION delete_ids_in_dbf( dbf_table, ids, algoritam )
       ENDIF
    ENDDO
 
-   log_write( "delete_ids_in_dbf(), table: " + dbf_table + "/ dbf_tag =" + _dbf_tag + " pobrisao iz lokalnog dbf-a zapisa = " + AllTrim( Str( _counter ) ), 5 )
+   AltD()
+   SELECT ( cSyncAlias )
+   USE
 
+   log_write( "delete_ids_in_dbf(), table: " + dbf_table + "/ dbf_tag =" + _dbf_tag + " pobrisao iz lokalnog dbf-a zapisa = " + AllTrim( Str( _counter ) ), 5 )
    log_write( "delete_ids_in_dbf(), zavrsio", 9 )
 
    RETURN .T.

@@ -71,8 +71,8 @@ FUNCTION update_dbf_from_server( table, algoritam )
       log_write( "update_dbf_from_server(), iniciraj ids synchro", 8 )
 
       // samo otvori tabelu da je ids_synchro moze napuniti
-      SELECT ( _dbf_wa )
-      my_use ( _dbf_alias, table, .F., "SEMAPHORE" )
+      // SELECT ( _dbf_wa )
+      // my_use ( _dbf_alias, table, .F., "SEMAPHORE" )
 
       ids_synchro  ( table )
    ENDIF

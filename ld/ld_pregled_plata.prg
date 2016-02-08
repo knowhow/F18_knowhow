@@ -1,14 +1,13 @@
 /*
- * This file is part of the bring.out FMK, a free and open source
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+ * This file is part of the bring.out knowhow ERP, a free and open source
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
-
 
 #include "f18.ch"
 
@@ -53,14 +52,14 @@ FUNCTION ld_pregled_plata()
    IF lViseObr
       @ m_x + 2, Col() + 2 SAY "Obracun:" GET cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
    ENDIF
-   @ m_x + 3, m_y + 2 SAY "Godina: "  GET  cGodina  PICT "9999"
-   @ m_x + 4, m_y + 2 SAY "Koeficijent benef.radnog staza (prazno-svi): "  GET  cKBenef VALID Empty( cKBenef ) .OR. P_KBenef( @cKBenef )
-   @ m_x + 5, m_y + 2 SAY "Vrsta posla (prazno-svi): "  GET  cVPosla
-   @ m_x + 7, m_y + 2 SAY "Sifra primanja minuli: "  GET  cIdMinuli PICT "@!"
-   @ m_x + 8, m_y + 2 SAY Lokal( "Sortirati po(1-sifri,2-prezime+ime)" )  GET cVarSort VALID cVarSort $ "12"  PICT "9"
+   @ m_x + 3, m_y + 2 SAY8 "Godina: "  GET  cGodina  PICT "9999"
+   @ m_x + 4, m_y + 2 SAY8 "Koeficijent benef.radnog staža (prazno-svi): "  GET  cKBenef VALID Empty( cKBenef ) .OR. P_KBenef( @cKBenef )
+   @ m_x + 5, m_y + 2 SAY8 "Vrsta posla (prazno-svi): "  GET  cVPosla
+   @ m_x + 7, m_y + 2 SAY8 "Šifra primanja minuli: "  GET  cIdMinuli PICT "@!"
+   @ m_x + 8, m_y + 2 SAY8 Lokal( "Sortirati po(1-sifri,2-prezime+ime)" )  GET cVarSort VALID cVarSort $ "12"  PICT "9"
    @ m_x + 9, m_y + 2 SAY "Prikaz bruto iznosa ?" GET cPrBruto ;
       VALID cPrBruto $ "DN" PICT "@!"
-   @ m_x + 11, m_y + 2 SAY "Kontrola (br.-dopr.-porez)+(prim.van neta)-(odbici)=(za isplatu)? (D/N)" GET cKontrola VALID cKontrola $ "DN" PICT "@!"
+   @ m_x + 11, m_y + 2 SAY8 "Kontrola (br.-dopr.-porez)+(prim.van neta)-(odbici)=(za isplatu)? (D/N)" GET cKontrola VALID cKontrola $ "DN" PICT "@!"
    read; clvbox(); ESC_BCR
    BoxC()
 
@@ -68,11 +67,11 @@ FUNCTION ld_pregled_plata()
    SELECT PARAMS
    USE
 
-   ParObr( cMjesec, cGodina, IF( lViseObr, cObracun, ) )
+   ParObr( cMjesec, cGodina, IIF( lViseObr, cObracun, ) )
 
    tipprn_use()
 
-   IF !Empty( ckbenef )
+   IF !Empty( cKbenef )
       SELECT kbenef
       hseek  ckbenef
    ENDIF
@@ -172,15 +171,15 @@ FUNCTION ld_pregled_plata()
    nUNeto := 0
 
    DO WHILE !Eof() .AND.  cgodina == godina .AND. idrj = cidrj .AND. cmjesec = mjesec .AND. !( lViseObr .AND. !Empty( cObracun ) .AND. obr <> cObracun )
-	
+
       ParObr( ld->mjesec, ld->godina, IF( lViseObr, cObracun, ), ld->idrj )
-	
+
       IF lViseObr .AND. Empty( cObracun )
          ScatterS( godina, mjesec, idrj, idradn )
       ELSE
          Scatter()
       ENDIF
- 	
+
       SELECT radn
       hseek _idradn
       SELECT vposla
@@ -188,46 +187,46 @@ FUNCTION ld_pregled_plata()
       SELECT kbenef
       hseek vposla->idkbenef
       SELECT ld
- 	
+
       IF !Empty( cvposla ) .AND. cvposla <> Left( _idvposla, 2 )
          SKIP
          LOOP
       ENDIF
- 	
+
       IF !Empty( ckbenef ) .AND. ckbenef <> kbenef->id
          SKIP
          LOOP
       ENDIF
-	
+
       nVanP := 0
       nVanM := 0
       nMinuli := 0
- 	
+
       FOR i := 1 TO cLDPolja
-  		
+
          cPom := PadL( AllTrim( Str( i ) ), 2, "0" )
          SELECT tippr
          SEEK cPom
          SELECT ld
 
          IF tippr->( Found() ) .AND. tippr->aktivan == "D"
-   			
+
             nIznos := _i&cpom
-   			
+
             IF tippr->uneto == "N" .AND. nIznos <> 0
-       				
+
                IF nIznos > 0
                   nVanP += nIznos
                ELSE
                   nVanM += nIznos
                ENDIF
-   			
+
             ELSEIF tippr->uneto == "D" .AND. nIznos <> 0
-       				
+
                IF cPom == cIdMinuli
                   nMinuli := nIznos
                ENDIF
-   			
+
             ENDIF
          ENDIF
       NEXT
@@ -252,7 +251,7 @@ FUNCTION ld_pregled_plata()
       cOpor := radn->opor
       cTrosk := radn->trosk
       nLicOdb := _ulicodb
-		
+
       nBO := bruto_osn( _uneto, cRTipRada, nLicOdb, nPrKoef, cTrosk )
       nMBO := nBO
 
@@ -271,12 +270,12 @@ FUNCTION ld_pregled_plata()
       ENDIF
 
       nDoprIz := u_dopr_iz( nMBO, cRTipRada )
-		
+
       nPorez := 0
       IF radn_oporeziv( ld->idradn, ld->idrj ) .AND. cRTipRada <> "S"
          nPorez := izr_porez( nBrOsn - nDoprIz - nLicOdb, "B" )
       ENDIF
-		
+
       nNeto := ( nBrOsn - nDoprIz )
       nNetNr := ( nBrOsn - nDoprIz - nPorez )
 
@@ -284,14 +283,14 @@ FUNCTION ld_pregled_plata()
 
       ? Str( ++nRbr, 4 ) + ".", idradn, RADNIK
       nC1 := PCol() + 1
- 	
+
       @ PRow(), PCol() + 1 SAY _usati PICT gpics
- 	
+
       IF gVarPP == "2"
          @ PRow(), PCol() + 1 SAY _uneto - nMinuli PICT gpici
          @ PRow(), PCol() + 1 SAY nMinuli PICT gpici
       ENDIF
- 	
+
       @ PRow(), PCol() + 1 SAY _uneto PICT gpici
       @ PRow(), PCol() + 1 SAY nBrOsn PICT gpici
       @ PRow(), PCol() + 1 SAY nDoprIz PICT gpici
@@ -311,7 +310,7 @@ FUNCTION ld_pregled_plata()
                @ PRow(), PCol() + 1 SAY "ERR"
             ENDIF
       ENDIF
-	
+
       nT1 += _usati
       nT2a += _uneto - nMinuli
       nT2b += nMinuli

@@ -227,10 +227,11 @@ FUNCTION repair_dbfs()
 // ------------------------------------------------------
 // open exclusive, open_index - otvoriti index
 // ------------------------------------------------------
-FUNCTION reopen_shared( dbf_table, open_index )
+/*
+// FUNCTION reopen_shared( dbf_table, open_index )
 
    RETURN reopen_dbf( .F., dbf_table, open_index )
-
+*/
 
 
 FUNCTION reopen_exclusive( dbf_table, open_index )

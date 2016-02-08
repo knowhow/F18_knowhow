@@ -1,4 +1,3 @@
-f18.hbc -DPROBA -DDEFINE2 -DDEBUG -inc
 -hblib
 -oF18_narudzbenica
 -Iinclude

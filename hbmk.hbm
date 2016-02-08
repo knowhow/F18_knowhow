@@ -1,0 +1,17 @@
+{F18_GT_CONSOLE}-DGT_DEFAULT_CONSOLE
+{F18_GT_QT}-DGT_DEFAULT_QT
+{F18_GT_GUI}-DGT_DEFAULT_GUI
+
+{F18_DEBUG}-DF18_DEBUG
+{F18_DEBUG}-b
+{F18_DEBUG}-trace
+{!F18_DEBUG}-q
+
+F18.hbc
+sddpg.hbc
+hbmzip.hbc
+hbpgsql.hbc
+xhb.hbc
+hbtip.hbc
+
+

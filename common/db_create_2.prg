@@ -23,15 +23,8 @@ FUNCTION OFmkSvi()
    O_BANKE
    O_OPS
 
-   SELECT ( F_SIFK )
-   IF !Used()
-      O_SIFK
-   ENDIF
-
-   SELECT ( F_SIFV )
-   IF !Used()
-      O_SIFV
-   ENDIF
+   O_SIFK
+   O_SIFV
 
    O_FAKT_OBJEKTI
 

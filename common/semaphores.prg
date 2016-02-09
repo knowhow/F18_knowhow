@@ -254,7 +254,7 @@ FUNCTION get_semaphore_version_h( table )
    IF sql_query_bez_zapisa( _tbl_obj )
       _msg = "problem sa:" + _qry
       log_write( _msg, 2 )
-      MsgBeep( 2 )
+      MsgBeep( _msg )
       QUIT_1
    ENDIF
 

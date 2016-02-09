@@ -51,9 +51,11 @@ STATIC __font_width := 15
 
 #endif
 
-
-STATIC __log_level := 3
-
+#ifdef F18_DEBUG
+STATIC __log_level := F18_DEFAULT_LOG_LEVEL_DEBUG
+#else
+STATIC __log_level := F18_DEFAULT_LOG_LEVEL
+#endif
 
 
 FUNCTION f18_init_app( arg_v )
@@ -76,15 +78,12 @@ FUNCTION f18_init_app( arg_v )
    PUBLIC glBrojacPoKontima := .T.
 
    set_f18_home_root()
-   SetgaSDbfs()
    set_global_vars_0()
    PtxtSekvence()
 
    ErrorBlock( {| objError, lShowreport, lQuit | GlobalErrorHandler( objError, lShowReport, lQuit ) } )
 
    AltD()
-
-
    set_screen_dimensions()
 
    init_gui()
@@ -216,7 +215,7 @@ FUNCTION add_idle_handlers()
    hb_idleAdd( {||  hb_DispOutAt( maxrows(),  maxcols() - 8 - 8 - 1, "< CALC >" ), ;
       iif( !in_calc() .AND. MINRECT( maxrows(), maxcols() - 8 - 8 - 1, maxrows(), maxcols() - 8 - 1 ), Calc(), NIL ) } )
 
-   hb_idleAdd( {|| !in_dbf_refresh() .AND. dbf_refresh() } )
+   hb_idleAdd( {|| dbf_refresh() } )
 
    RETURN .T.
 
@@ -454,12 +453,9 @@ FUNCTION post_login( gVars )
 
    _ver := read_dbf_version_from_config()
 
-   // setuje u matricu sve tabele svih modula
    set_a_dbfs()
 
-   in_dbf_refresh( .T. )
    cre_all_dbfs( _ver )
-   in_dbf_refresh( .F. )
 
    kreiraj_pa_napuni_partn_idbr_pdvb ()
 
@@ -487,7 +483,11 @@ FUNCTION post_login( gVars )
 // -----------------------------------------------------------
 STATIC FUNCTION get_log_level_from_params()
 
-   log_level( fetch_metric( "log_level", NIL, 3 ) )
+#ifdef F18_DEBUG
+   log_level( fetch_metric( "log_level", NIL, F18_DEFAULT_LOG_LEVEL_DEBUG ) )
+#else
+   log_level( fetch_metric( "log_level", NIL, F18_DEFAULT_LOG_LEVEL ) )
+#endif
 
    RETURN .T.
 
@@ -1012,7 +1012,7 @@ STATIC FUNCTION f18_no_login_quit()
 
    QUIT_1
 
-   RETURN
+   RETURN .T.
 
 
 FUNCTION relogin()
@@ -1070,13 +1070,11 @@ FUNCTION log_write( msg, level, silent )
    // baca mi ove poruke u outf.txt
    // FWRITE( __log_handle, _msg_time + msg + hb_eol() )
 
-#ifndef TEST
-#ifndef NODE
    IF server_log()
       server_log_write( msg, silent )
    ENDIF
-#endif
-#endif
+
+   ?E _msg_time, msg
 
    RETURN .T.
 
@@ -1087,13 +1085,13 @@ FUNCTION server_log_disable()
 
    __server_log := .F.
 
-   RETURN
+   RETURN .T.
 
 FUNCTION server_log_enable()
 
    __server_log := .T.
 
-   RETURN
+   RETURN .T.
 
 
 

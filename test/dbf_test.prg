@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out knowhow ERP, a free and open source 
+/*
+ * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
  * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -21,10 +21,6 @@ local _field_10
 _ime_f := "test_dbf_1"
 
 
-_i := ASCAN(gaDBFs, {|x|  x[2] == UPPER(_ime_f) })
-if _i == 0
-  AADD(gaDBFs, { 400,  UPPER(_ime_f),  _ime_f  } )
-endif
 _plaho_dugacko_polje := "ja_sam_plaho_dugacko_polje"
 
 ferase_dbf(_ime_f)
@@ -33,10 +29,10 @@ ferase_dbf(_ime_f)
 AADD(_dbf_struct,      { 'ID' ,  'C' ,   2 ,  0 })
 AADD(_dbf_struct,      { 'NAZ' , 'C' ,  10 ,  0 })
 AADD(_dbf_struct,      { _plaho_dugacko_polje , 'C' ,  20 ,  0 })
-       
+
 DBCREATE2(_ime_f, _dbf_struct)
 
-CREATE_INDEX("ID",  "id", _ime_f)  
+CREATE_INDEX("ID",  "id", _ime_f)
 CREATE_INDEX("NAZ", "naz", _ime_f)
 CREATE_INDEX("NAZ2", LEFT(_plaho_dugacko_polje, 10) , _ime_f)
 

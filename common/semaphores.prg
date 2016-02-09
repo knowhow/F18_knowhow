@@ -11,7 +11,8 @@
 
 #include "f18.ch"
 
-STATIC s_lInDbfRefresh := .F.
+STATIC s_hlInDbfRefresh := NIL
+STATIC s_aLastRefresh := { "x", 0 }
 
 /*
    moguci statusi:
@@ -265,10 +266,11 @@ FUNCTION get_semaphore_version_h( table )
 
 
 
-// ------------------------------------------
-// reset_semaphore_version( "konto")
-// set version to -1
-// -------------------------------------------
+/*
+ reset_semaphore_version( "konto")
+ set version to -1
+*/
+
 FUNCTION reset_semaphore_version( table )
 
    LOCAL _ret
@@ -284,7 +286,8 @@ FUNCTION reset_semaphore_version( table )
 
    _tbl := "sem." + Lower( table )
 
-   insert_semaphore_if_not_exists( table )
+altd()
+   insert_semaphore_if_not_exists( table, .T. )
 
    log_write( "reset semaphore " + _tbl + " update ", 1 )
    _qry := "UPDATE " + _tbl + " SET version=-1, last_trans_version=(CASE WHEN last_trans_version IS NULL THEN 0 ELSE last_trans_version END) WHERE user_code =" + _sql_quote( _user )
@@ -385,16 +388,16 @@ FUNCTION table_count( table, condition )
    log_write( "table: " + table + " count = " + AllTrim( Str( _table_obj:FieldGet( 1 ) ) ), 8 )
 
 
-
    _result := _table_obj:FieldGet( 1 )
 
    RETURN _result
 
 
-// --------------------------------------------------------------------------------
-// napuni dbf tabelu sa podacima sa servera
-// dbf_tabela mora biti otvorena i u tekucoj WA
-// --------------------------------------------------------------------------------
+/*
+ napuni dbf tabelu sa podacima sa servera
+  dbf_tabela mora biti otvorena i u tekucoj WA
+*/
+
 FUNCTION fill_dbf_from_server( dbf_table, sql_query, sql_fetch_time, dbf_write_time, lShowInfo )
 
    LOCAL _counter := 0
@@ -403,7 +406,7 @@ FUNCTION fill_dbf_from_server( dbf_table, sql_query, sql_fetch_time, dbf_write_t
    LOCAL _qry_obj
    LOCAL _retry := 3
    LOCAL _a_dbf_rec
-   LOCAL _dbf_alias, _dbf_fields, cSyncalias
+   LOCAL _dbf_alias, _dbf_fields, cSyncalias, cFullDbf, cFullIdx
 
    IF lShowInfo == NIL
       lShowInfo := .F.
@@ -417,19 +420,22 @@ FUNCTION fill_dbf_from_server( dbf_table, sql_query, sql_fetch_time, dbf_write_t
    _qry_obj := run_sql_query( sql_query, _retry )
    sql_fetch_time := Seconds() - sql_fetch_time
 
-   IF !Used() .OR. ( _dbf_alias != Alias() )
-      Alert( ProcName( 1 ) + "(" + AllTrim( Str( ProcLine( 1 ) ) ) + ") " + dbf_table + " dbf mora biti otvoren !" )
-      log_write( "ERR - tekuci dbf alias je " + Alias() + " a treba biti " + _dbf_alias, 2 )
-      QUIT_1
-   ENDIF
-
    log_write( "fill_dbf_from_server(), poceo", 9 )
 
    dbf_write_time := Seconds()
 
-   cSyncAlias := 'sync_' + _a_dbf_rec[ 'table' ]
-   IF !Used( cSyncAlias )
-      USE ( my_home() + _a_dbf_rec[ 'table' ] ) Alias ( cSyncAlias )  NEW
+   PushWa()
+
+   cFullDbf := my_home() + _a_dbf_rec[ 'table' ]
+   cFullIdx := ImeDbfCDX( cFullDbf )
+
+   cSyncAlias := Upper( 'SYNC__' + _a_dbf_rec[ 'table' ] )
+   IF Select( cSyncAlias ) == 0
+      SELECT ( _a_dbf_rec[ 'wa' ] + 1000 )
+      USE ( cFullDbf ) Alias ( cSyncAlias )  SHARED
+      IF FILE( cFullIdx )
+        dbSetIndex( cFullIdx )
+      ENDIF
    ENDIF
 
    DO WHILE !_qry_obj:Eof()
@@ -457,16 +463,18 @@ FUNCTION fill_dbf_from_server( dbf_table, sql_query, sql_fetch_time, dbf_write_t
 
       _qry_obj:Skip()
 
-
    ENDDO
 
-   SELECT (cSyncAlias)
-   USE
-   
+   IF Select( cSyncAlias ) > 0
+      USE
+   ENDIF
+
    log_write( "fill_dbf_from_server(), table: " + dbf_table + ", count: " + AllTrim( Str( _counter ) ), 7 )
    log_write( "fill_dbf_from_server(), zavrsio", 9 )
 
    dbf_write_time := Seconds() - dbf_write_time
+
+   PopWa()
 
    RETURN .T.
 
@@ -610,7 +618,7 @@ FUNCTION nuliraj_ids_and_update_my_semaphore_ver( table )
    ENDIF
 */
 
-FUNCTION insert_semaphore_if_not_exists( cTable )
+FUNCTION insert_semaphore_if_not_exists( cTable ,lIgnoreChk0 )
 
    LOCAL nCnt
    LOCAL _server := pg_server()
@@ -619,7 +627,13 @@ FUNCTION insert_semaphore_if_not_exists( cTable )
    LOCAL _ret
    LOCAL cSqlTbl
 
+   hb_default( @lIgnoreChk0, .F. )
+
    cSqlTbl := "sem." + Lower( cTable )
+
+   IF !lIgnoreChk0 .AND. is_chk0( cTable )
+       RETURN .F.
+   ENDIF
 
    nCnt := table_count( cSqlTbl, "user_code=" + _sql_quote( _user ) )
 
@@ -632,50 +646,86 @@ FUNCTION insert_semaphore_if_not_exists( cTable )
 
    RETURN .T.
 
-FUNCTION in_dbf_refresh( lRefresh )
 
-   IF lRefresh != nil
-      s_lInDbfRefresh := lRefresh
+FUNCTION in_dbf_refresh( cTable, lRefresh )
+
+   IF s_hlInDbfRefresh == nil
+      s_hlInDbfRefresh := hb_Hash()
    ENDIF
 
-   RETURN s_lInDbfRefresh
+   IF ! hb_HHasKey( s_hlInDbfRefresh, cTable )
+      s_hlInDbfRefresh[ cTable ]  := .F.
+   ENDIF
+
+   IF lRefresh != nil
+      s_hlInDbfRefresh[ cTable ] := lRefresh
+   ENDIF
+
+   RETURN s_hlInDbfRefresh[ cTable ]
+
+
+FUNCTION set_last_refresh( cTable )
+
+   IF cTable <> nil
+      s_aLastRefresh[ 1 ] := cTable
+      s_aLastRefresh[ 2 ] := Seconds()
+   ENDIF
+
+   RETURN s_aLastRefresh
+
+FUNCTION is_last_refresh_before( cTable, nSeconds )
+
+   IF cTable ==  s_aLastRefresh[ 1 ] .AND. ( Seconds() - s_aLastRefresh[ 2 ] )  < nSeconds
+      RETURN .T.
+   ENDIF
+
+   RETURN .F.
+
 
 
 FUNCTION dbf_refresh( cTable )
 
-   LOCAL _server := pg_server()
-   LOCAL _user := f18_user()
-   LOCAL _qry
-   LOCAL _ret
    LOCAL aDbfRec
-   LOCAL hVersions, nLastVersion, nVersion
-
-   IF s_lInDbfRefresh
-      RETURN .F.
-   ENDIF
-   s_lInDbfRefresh := .T.
+   LOCAL hVersions
 
    IF  cTable == nil
       IF !Used() .OR. ( rddName() ==  "SQLMIX" )
-         s_lInDbfRefresh := .F.
          RETURN .F.
       ENDIF
       cTable := Alias()
+
+      IF Left( cTable, 6 ) == "SYNC__"
+         RETURN .F.
+      ENDIF
    ENDIF
 
-   aDbfRec := get_a_dbf_rec( cTable )
+   aDbfRec := get_a_dbf_rec( cTable, .T. )
 
    IF skip_semaphore( aDbfRec[ 'table' ] )
-      s_lInDbfRefresh := .F.
       RETURN .F.
    ENDIF
 
+   IF in_dbf_refresh( aDbfRec[ 'table' ] )
+      RETURN .F.
+   ENDIF
+
+   IF is_last_refresh_before( aDbfRec[ 'table' ], 5 ) // last refresh of table < 5 sec before
+      RETURN .F.
+   ENDIF
+
+#ifdef F18_DEBUG
+   log_write( "going to refresh: " + aDbfRec[ 'table' ], 5 )
+#endif
+
+   in_dbf_refresh( aDbfRec[ 'table' ], .T. )
+
+   PushWA()
+
+   dbf_refresh_0( aDbfRec   )
+
    hVersions := get_semaphore_version_h( aDbfRec[ 'table' ] )
 
-   nLastVersion := hVersions[ "last_version" ]
-   nVersion  := hVersions[ "version" ]
-
-   IF ( nVersion == -1 )
+   IF ( hVersions[ "version" ] == -1 )
       update_dbf_from_server( aDbfRec[ 'table' ], "FULL" )
       hVersions := get_semaphore_version_h( aDbfRec[ 'table' ] )
    ENDIF
@@ -684,17 +734,84 @@ FUNCTION dbf_refresh( cTable )
       update_dbf_from_server( aDbfRec[ 'table' ], "IDS" )
    ENDIF
 
-   s_lInDbfRefresh := .F.
+   in_dbf_refresh( aDbfRec[ 'table' ], .F. )
+
+   PopWa()
+   set_last_refresh( aDbfRec[ 'table' ] )
 
    RETURN .T.
 
+
+
+STATIC FUNCTION dbf_refresh_0( aDbfRec )
+
+   LOCAL cMsg1, cMsg2, lSilent := .F.
+   LOCAL nCntSql, nCntDbf, nDeleted
+
+   IF is_chk0( aDbfRec[ "table" ])
+      log_write( "chk0 already set: " + aDbfRec[ "table" ], 7 )
+      RETURN .F.
+   ENDIF
+
+   set_a_dbf_rec_chk0( aDbfRec[ "table" ] )
+
+   cMsg1 := "START chk0 not set, start dbf_refresh_0: " + aDbfRec[ "alias" ] + " / " + aDbfRec[ "table" ]
+
+   IF ! lSilent
+      Box( "#Molimo sačekajte...", 7, 60 )
+      @ m_x + 1, m_y + 2 SAY cMsg1
+   ENDIF
+
+   log_write( "stanje dbf " +  cMsg1, 8 )
+   nCntSql := table_count( aDbfRec[ "table" ] )
+
+   // 3) ponovo otvori nakon sinhronizacije
+   dbf_open_temp_and_count( aDbfRec, @nCntDbf, @nDeleted )
+
+   cMsg1 := "nakon sync: " +  aDbfRec[ "alias" ] + " / " + aDbfRec[ "table" ]
+   cMsg2 := "cnt_sql: " + AllTrim( Str( nCntSql, 0 ) ) + " cnt_dbf: " + AllTrim( Str( nCntDbf, 0 ) ) + " del_dbf: " + AllTrim( Str( nDeleted, 0 ) )
+
+   IF ! lSilent
+      @ m_x + 4, m_y + 2 SAY cMsg1
+      @ m_x + 5, m_y + 2 SAY cMsg2
+   ENDIF
+
+   log_write( cMsg1 + " " + cMsg2, 8 )
+
+   // 4) uradi check i fix ako treba
+   //
+   // _cnt - _del je broj aktivnih dbf zapisa, dajemo taj info check_recno funkciji
+   // ako se utvrti greska uradi full sync
+   check_recno_and_fix( aDbfRec[ "table" ], nCntSql, nCntDbf - nDeleted, .T. )
+
+   cMsg1 := aDbfRec[ "alias" ] + " / " + aDbfRec[ "table" ]
+   cMsg2 := "cnt_sql: " + AllTrim( Str( nCntSql, 0 ) ) + " cnt_dbf: " + AllTrim( Str( nCntDbf, 0 ) ) + " del_dbf: " + AllTrim( Str( nDeleted, 0 ) )
+
+   IF ! lSilent
+      @ m_x + 4, m_y + 2 SAY cMsg1
+      @ m_x + 5, m_y + 2 SAY cMsg2
+      BoxC()
+   ENDIF
+
+   log_write( "END refresh_me " +  cMsg1 + " " + cMsg2, 8 )
+
+   IF hocu_li_pakovati_dbf( nCntDbf, nDeleted )
+      pakuj_dbf( aDbfRec, .T. )
+   ENDIF
+
+   RETURN .T.
 
 STATIC FUNCTION skip_semaphore( table )
 
    LOCAL hRec
 
    table := Lower( table )
-   hRec := get_a_dbf_rec( table )
+
+   IF Left( table, 6 ) == "sync__"
+      RETURN .T.
+   ENDIF
+
+   hRec := get_a_dbf_rec( table, .T. )
 
    IF hRec[ 'sql' ] .OR. hRec[ 'temp' ]
       RETURN .T.

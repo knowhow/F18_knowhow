@@ -1,17 +1,17 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
 
 
 #include "f18.ch"
- 
+
 function OdrediSmjenu(lOdredi)
 local cOK:=" "
 private dDatum:=gDatum
@@ -66,7 +66,7 @@ endif
 
 if d_Pos > d_Doks
 	// postoji promet u _POS i to nezakljucen
-	dDatum := d_Pos 
+	dDatum := d_Pos
 	cSmjena := s_Pos
 endif
 
@@ -103,7 +103,7 @@ return
 /*! \fn DatumOK()
  *  \brief
  */
- 
+
 static function DatumOK()
 *{
 
@@ -115,7 +115,7 @@ endif
 return (.t.)
 
 
- 
+
 static function SmjenaOK()
 *{
 if Empty(s_Pos)
@@ -148,11 +148,11 @@ return (.t.)
 
 /*! \fn ProvKonzBaze(dDatum,cSmjena)
  *  \brief Provjerava konzistentnost podataka.
- *  \brief Ako su svi racuni zakljuceni ova funkcija ZAPPuje POS. 
+ *  \brief Ako su svi racuni zakljuceni ova funkcija ZAPPuje POS.
  *  \param dDatum
  *  \param cSmjena
  */
- 
+
 function ProvKonzBaze(dDatum, cSmjena)
 *{
 local dPrevDat
@@ -286,7 +286,7 @@ do while !eof() .and. pos_doks->IdVd=="42" .and. pos_doks->Datum==dPrevDat
 enddo
 
 // podesim datum i smjenu
-SavegDatum:=gDatum 
+SavegDatum:=gDatum
 SavegSmjena:=gSmjena
 gDatum:=dPrevDat
 gSmjena:=cPrevSmj
@@ -313,7 +313,7 @@ return .t.
 /*! \fn ZakljRadnik()
  *  \brief Zakljucenje radnika
  */
- 
+
 function ZakljRadnik(Ch)
 *{
 local cIdSave
@@ -357,7 +357,7 @@ return (DE_CONT)
 /*! \fn NovaSmjGas()
  *  \brief
  */
- 
+
 function NovaSmjGas()
 *{
 local aOpcn[2]
@@ -399,7 +399,7 @@ return
 /*! \fn OtvoriSmjenu()
  *  \brief Otvaranje smjene
  */
- 
+
 function OtvoriSmjenu()
 *{
 local fImaNezak:=.f.
@@ -443,5 +443,3 @@ gSmjena:=STR(VAL(gSmjena)+1,LEN(gSmjena))
 MsgBeep("Otvorena je smjena "+gSmjena)
 my_close_all_dbf()
 return
-
-

@@ -21,7 +21,8 @@ FUNCTION pos_azuriraj_racun( cIdPos, cBrojRacuna, cVrijeme, cNacPlac, cIdGost )
    LOCAL lOk := .T.
    LOCAL lRet := .F.
 
-   otvori_pos_tabele_bez_semafora()
+
+  o_pos_tables()
 
    IF !racun_se_moze_azurirati( cIdPos, VD_RN, gDatum, cBrojRacuna )
       RETURN lRet
@@ -42,7 +43,7 @@ FUNCTION pos_azuriraj_racun( cIdPos, cBrojRacuna, cVrijeme, cNacPlac, cIdGost )
    SELECT pos_doks
    APPEND BLANK
 
-   cDokument := ALLTRIM( cIdPos ) + "-" + VD_RN + "-" + ALLTRIM( cBrojRacuna ) + " " + DTOC( gDatum ) 
+   cDokument := ALLTRIM( cIdPos ) + "-" + VD_RN + "-" + ALLTRIM( cBrojRacuna ) + " " + DTOC( gDatum )
 
    _rec := dbf_get_rec()
    _rec[ "idpos" ] := cIdPos
@@ -143,15 +144,6 @@ STATIC FUNCTION priprema_set_order_to()
    RETURN
 
 
-STATIC FUNCTION otvori_pos_tabele_bez_semafora()
-
-   my_use_semaphore_off()
-   o_pos_tables()
-   my_use_semaphore_on()
-
-   RETURN
-
-
 STATIC FUNCTION racun_se_moze_azurirati( cIdPos, cIdVd, dDatum, cBroj )
 
    LOCAL lRet := .F.
@@ -162,7 +154,7 @@ STATIC FUNCTION racun_se_moze_azurirati( cIdPos, cIdVd, dDatum, cBroj )
    ENDIF
 
    SELECT _pos_pripr
-  
+
    IF RecCount() == 0
       MsgBeep( "Priprema računa je prazna, ažuriranje nije moguće !" )
       RETURN lRet
@@ -175,11 +167,8 @@ STATIC FUNCTION racun_se_moze_azurirati( cIdPos, cIdVd, dDatum, cBroj )
    IF field->brdok <> "PRIPR" .AND. field->idpos <> cIdPos
       MsgBeep( "Pogrešne stavke računa !#Ažuriranje onemogućeno." )
       RETURN lRet
-   ENDIF 
+   ENDIF
 
    lRet := .T.
 
    RETURN lRet
-
-
-

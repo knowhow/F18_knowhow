@@ -11,10 +11,10 @@
 
 #define F18_VER_DEFINED
 
-#define F18_VER       "1.7.161"
+#define F18_VER       "1.7.170"
 #define F18_VER_DATE  "05.02.2016"
 
-#define FMK_LIB_VER   "4.3.4"
+#define FMK_LIB_VER   "5.0.0"
 
 #define F18_TEMPLATE_VER "2.3.0"
 

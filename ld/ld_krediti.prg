@@ -488,8 +488,8 @@ FUNCTION SumKredita()
 
    nIznos := 0
 
-   f18_lock_tables( { "ld_radkr" } )
    sql_table_update( nil, "BEGIN" )
+   f18_lock_tables( { "ld_radkr" }, .T. )
 
    DO WHILE !Eof() .AND. _godina == godina .AND. _mjesec == mjesec .AND. idradn == _idradn
 
@@ -504,8 +504,8 @@ FUNCTION SumKredita()
 
    ENDDO
 
-   f18_free_tables( { "ld_radkr" } )
    sql_table_update( nil, "END" )
+   f18_free_tables( { "ld_radkr" } )
 
    IF !fUsed
       SELECT radkr

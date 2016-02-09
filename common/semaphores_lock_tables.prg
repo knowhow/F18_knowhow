@@ -55,7 +55,7 @@ FUNCTION f18_lock_tables( a_tables, lAlreadyInTransakcija )
       RETURN .F.
    ENDIF
 
-   IF  IIF( lAlreadyInTransakcija, .T. , sql_table_update( nil, "BEGIN" ) )
+   IF  iif( lAlreadyInTransakcija, .T., sql_table_update( nil, "BEGIN" ) )
 
       FOR _i := 1 TO Len( a_tables )
          _dbf_rec := get_a_dbf_rec( a_tables[ _i ] )
@@ -67,24 +67,21 @@ FUNCTION f18_lock_tables( a_tables, lAlreadyInTransakcija )
 
       IF _ok
 
-         IIF( lAlreadyInTransakcija, NIL, sql_table_update( nil, "END" ) )
+         iif( lAlreadyInTransakcija, NIL, sql_table_update( nil, "END" ) )
          log_write( "uspjesno izvrsen lock tabela " + pp( a_tables ), 7 )
 
-         // nakon uspjesnog lockovanja svih tabela preuzeti promjene od drugih korisnika
-         my_use_semaphore_on()
 
          FOR _i := 1 TO Len( a_tables )
             _dbf_rec := get_a_dbf_rec( a_tables[ _i ] )
-            _tbl := _dbf_rec[ "table" ]
             IF !_dbf_rec[ "sql" ]
-               my_use( _tbl, NIL, NIL, NIL, NIL, NIL, .T. )
+               dbf_refresh( _dbf_rec[ "table" ] )
             ENDIF
          NEXT
-         my_use_semaphore_off()
+
 
       ELSE
          log_write( "ERROR: nisam uspio napraviti lock tabela " + pp( a_tables ), 2 )
-         IIF( lAlreadyInTransakcija, .T., sql_table_update( nil, "ROLLBACK" ) )
+         iif( lAlreadyInTransakcija, .T., sql_table_update( nil, "ROLLBACK" ) )
          _ok := .F.
 
       ENDIF
@@ -119,7 +116,7 @@ FUNCTION f18_free_tables( a_tables )
    ENDIF
 
    FOR _i := 1 TO Len( a_tables )
-      _dbf_rec := get_a_dbf_rec( a_tables[ _i ] )
+      _dbf_rec := get_a_dbf_rec( a_tables[ _i ], .T. )
       _tbl := _dbf_rec[ "table" ]
       IF !_dbf_rec[ "sql" ]
          lock_semaphore( _tbl, "free" )
@@ -132,7 +129,5 @@ FUNCTION f18_free_tables( a_tables )
 #ifdef F18_DEBUG
    MsgBeep( cMsg )
 #endif
-
-   my_use_semaphore_on()
 
    RETURN _ok

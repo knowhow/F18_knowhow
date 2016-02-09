@@ -604,7 +604,7 @@ FUNCTION ld_obracun_napravljen_vise_puta()
 
    IF Len( _data ) == 0
       my_close_all_dbf()
-      RETURN
+      RETURN .F.
    ENDIF
 
    START PRINT CRET
@@ -625,7 +625,7 @@ FUNCTION ld_obracun_napravljen_vise_puta()
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
 
 

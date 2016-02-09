@@ -11,13 +11,13 @@
 
 #include "f18.ch"
 
-// ----------------------------------------------------------------------------------------------------------
-// update podataka za jedan dbf zapis na serveru
-//
-// mijenja zapis na serveru, pa ako je sve ok onda uradi update dbf-a
-//
-// update_rec_server_and_dbf( table, values, 1, "FULL") - zapocni/zavrsi transakciju unutar funkcije
-// -----------------------------------------------------------------------------------------------------------
+/*
+  update podataka za jedan dbf zapis na serveru
+  mijenja zapis na serveru, pa ako je sve ok onda uradi update dbf-a
+
+ update_rec_server_and_dbf( table, values, 1, "FULL") - zapocni/zavrsi transakciju unutar funkcije
+*/
+
 FUNCTION update_rec_server_and_dbf( table, values, algoritam, transaction, lock )
 
    LOCAL _ids := {}
@@ -37,7 +37,6 @@ FUNCTION update_rec_server_and_dbf( table, values, algoritam, transaction, lock 
 
    IF lock == NIL
       IF transaction == "FULL"
-         my_use_semaphore_off()
          lock := .T.
       ELSE
          lock := .F.
@@ -180,7 +179,6 @@ FUNCTION update_rec_server_and_dbf( table, values, algoritam, transaction, lock 
 
    IF lock
       lock_semaphore( table, "free" )
-      my_use_semaphore_on()
    ENDIF
 
    log_write( "END update_rec_server_and_dbf " + table, 9 )
@@ -208,7 +206,6 @@ FUNCTION delete_rec_server_and_dbf( table, values, algoritam, transaction, lock 
 
    IF lock == NIL
       IF transaction == "FULL"
-         my_use_semaphore_off()
          lock := .T.
       ELSE
          lock := .F.
@@ -330,7 +327,6 @@ FUNCTION delete_rec_server_and_dbf( table, values, algoritam, transaction, lock 
 
    IF lock
       lock_semaphore( table, "free" )
-      my_use_semaphore_on()
    ENDIF
 
    log_write( "delete rec server, zavrsio", 9 )

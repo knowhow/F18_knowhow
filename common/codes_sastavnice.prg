@@ -157,7 +157,7 @@ STATIC FUNCTION sast_repl_all()
       IF !f18_lock_tables( { "sast" }, .T. )
          sql_table_update( nil, "END" )
          MsgBeep( "Greska sa lock-om tabele sast !" )
-         RETURN
+         RETURN .F.
       ENDIF
 
       SELECT sast
@@ -238,7 +238,7 @@ STATIC FUNCTION pr_uces_sast()
                lOk := update_rec_server_and_dbf( Alias(), _rec, 1, "CONT" )
             ENDIF
          ENDIF
- 
+
          IF !lOk
             EXIT
          ENDIF

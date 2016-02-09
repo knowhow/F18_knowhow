@@ -294,7 +294,7 @@ FUNCTION create_tbrowsedb( params, lIzOBJDB )
 FUNCTION browse_force_stable()
    RETURN ForceStable()
 
-   
+
 STATIC FUNCTION ForceStable()
 
    DO WHILE ! TB:stabilize()
@@ -521,6 +521,7 @@ FUNCTION zamjeni_numericka_polja_u_tabeli( cKolona, cTrazi, cUslov )
    LOCAL nOrder := IndexOrd()
    LOCAL lImaSemafor := dbf_alias_has_semaphore()
    LOCAL _rec
+   LOCAL cAlias
 
    SET ORDER TO 0
 
@@ -529,9 +530,11 @@ FUNCTION zamjeni_numericka_polja_u_tabeli( cKolona, cTrazi, cUslov )
       RETURN lRet
    ENDIF
 
+   cAlias := LOWER( Alias() )
+
    IF lImaSemafor
       sql_table_update( nil, "BEGIN" )
-      IF !f18_lock_tables( { Lower( Alias() ) }, .T. )
+      IF !f18_lock_tables( {  cAlias }, .T. )
          sql_table_update( nil, "END" )
          RETURN lRet
       ENDIF
@@ -565,7 +568,7 @@ FUNCTION zamjeni_numericka_polja_u_tabeli( cKolona, cTrazi, cUslov )
    IF lImaSemafor
       IF lOk
          lRet := .T.
-         f18_free_tables( { Lower( Alias() ) } )
+         f18_free_tables( { cAlias } )
          sql_table_update( nil, "END" )
       ELSE
          sql_table_update( nil, "ROLLBACK" )
@@ -594,9 +597,12 @@ FUNCTION replace_kolona_in_table( cKolona, trazi_val, zamijeni_val, last_search 
    LOCAL cDio1, cDio2
    LOCAL _sect
    LOCAL lOk := .T.
+   LOCAL cAlias
 
    nRec := RecNo()
    nOrder := IndexOrd()
+   cAlias := Lower( Alias() )
+
 
    SET ORDER TO 0
    GO TOP
@@ -607,9 +613,9 @@ FUNCTION replace_kolona_in_table( cKolona, trazi_val, zamijeni_val, last_search 
 
    IF _has_semaphore
       sql_table_update( nil, "BEGIN" )
-      IF !f18_lock_tables( { Lower( Alias() ) }, .T. )
+      IF !f18_lock_tables( { cAlias  }, .T. )
          sql_table_update( nil, "END" )
-         MsgBeep( "Ne mogu zaključati " + Alias() + "!?" )
+         MsgBeep( "Ne mogu zaključati " + cAlias + "!?" )
          RETURN lRet
       ENDIF
    ENDIF
@@ -622,7 +628,7 @@ FUNCTION replace_kolona_in_table( cKolona, trazi_val, zamijeni_val, last_search 
          _rec[ Lower( cKolona ) ] := zamijeni_val
 
          IF _has_semaphore
-            lOk := update_rec_server_and_dbf( Alias(), _rec, 1, "CONT" )
+            lOk := update_rec_server_and_dbf( cAlias, _rec, 1, "CONT" )
          ELSE
             dbf_update_rec( _rec )
          ENDIF
@@ -655,7 +661,7 @@ FUNCTION replace_kolona_in_table( cKolona, trazi_val, zamijeni_val, last_search 
             _rec[ Lower( cKolona ) ] := StrTran( _rec[ Lower( cKolona ) ], cDio1, cDio2 )
 
             IF _has_semaphore
-               lOk := update_rec_server_and_dbf( Alias(), _rec, 1, "CONT" )
+               lOk := update_rec_server_and_dbf( cAlias, _rec, 1, "CONT" )
             ELSE
                dbf_update_rec( _rec )
             ENDIF
@@ -675,7 +681,7 @@ FUNCTION replace_kolona_in_table( cKolona, trazi_val, zamijeni_val, last_search 
    IF _has_semaphore
       IF lOk
          lRet := .T.
-         f18_free_tables( { Lower( Alias() ) } )
+         f18_free_tables( { cAlias } )
          sql_table_update( nil, "END" )
       ELSE
          sql_table_update( nil, "ROLLBACK" )

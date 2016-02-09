@@ -457,11 +457,6 @@ STATIC FUNCTION sif_komande( nDbf, cNaslov, bBlok, aZabrane, aZabIsp )
 
    Ch := LastKey()
 
-/* TODO: ukloniti
-   IF dbf_refresh()
-      Tb:RefreshAll()
-   ENDIF
- */
 
    aStruct := dbStruct()
    SkratiAZaD ( @aStruct )

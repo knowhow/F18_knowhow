@@ -320,7 +320,6 @@ METHOD F18Login:company_db_relogin( server_param, database, session )
          ENDIF
       ENDIF
 
-      SetgaSDbfs()
 
       CLOSE ALL
 
@@ -335,8 +334,6 @@ METHOD F18Login:company_db_relogin( server_param, database, session )
       f18_app_parameters( .T. )
 
       set_hot_keys()
-
-      goModul:setGVars()
 
       say_database_info()
 

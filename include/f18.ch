@@ -47,6 +47,10 @@
 #include "f18_request.ch"
 #include "f18_cre_all.ch"
 
+#define F18_DEFAULT_LOG_LEVEL_DEBUG 9
+#define F18_DEFAULT_LOG_LEVEL       3
+
+
 #ifndef TEST
   #ifndef F18_RELEASE_DEFINED
       #include "f18_release.ch"
@@ -138,7 +142,7 @@
 #define OUT_ODT_FILE "out.odt"
 #define DATA_XML_FILE "data.xml"
 
-#command QUIT_1                    => ErrorLevel(1); __Quit()
+#command QUIT_1                    => ErrorLevel(1); Altd(); __Quit()
 
 #command @ <row>, <col> SAY8 <exp> [PICTURE <pic>] [COLOR <clr>] => ;
          DevPos( <row>, <col> ) ; DevOutPict( hb_utf8toStr( <exp> ), <pic> [, <clr>] )
@@ -475,6 +479,12 @@
                   <{for}>, <{while}>, <next>, <rec>, <.rest.>, <rdd>    ;
                 )
 
+
+#command ?C  [ <xList,...> ] => ( OutStd( hb_eol() ) [, OutStd( <xList> ) ] )
+#command ??C [ <xList,...> ] => OutStd( <xList> )
+
+#command ?E  [ <xList,...> ] => ( OutErr( hb_eol() ) [, OutErr( <xList> ) ] )
+#command ??E [ <xList,...> ] => OutErr( <xList> )
 
 // ----- fin.ch ------------
 #define D_FI_VERZIJA "0.9.0"

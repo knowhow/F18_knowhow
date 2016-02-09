@@ -323,7 +323,6 @@ FUNCTION gen_ug_2()
       _rec[ "brdok_do" ] := cFaktDo
 
       update_rec_server_and_dbf( "fakt_gen_ug", _rec, 1, "FULL" )
-      my_use_semaphore_on()
 
    ENDIF
 

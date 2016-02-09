@@ -19,8 +19,6 @@ FUNCTION set_a_dbfs()
    LOCAL _dbf_fields, _sql_order
    LOCAL _alg
 
-   PUBLIC gaDbfs := {}
-
    __f18_dbfs := hb_Hash()
 
    set_a_dbf_sif()
@@ -179,10 +177,12 @@ FUNCTION get_a_dbf_rec( tbl, _only_basic_params )
             // zadana je workarea
             IF __f18_dbfs[ _key ][ "wa" ] == tbl
                _dbf_tbl := _key
+               EXIT
             ENDIF
          ELSE
             IF __f18_dbfs[ _key ][ "alias" ] == Upper( tbl )
                _dbf_tbl := _key
+               EXIT
             ENDIF
          ENDIF
       NEXT
@@ -226,12 +226,11 @@ FUNCTION get_a_dbf_rec( tbl, _only_basic_params )
       _rec[ "chk0" ] := .F.
    ENDIF
 
-
    IF _only_basic_params
       RETURN _rec
    ENDIF
 
-   // nije zadano - ja cu na osnovu strukture dbf-a
+   // nije zadano - na osnovu strukture dbf-a
    // napraviti dbf_fields
    IF !hb_HHasKey( _rec, "dbf_fields" ) .OR. _rec[ "dbf_fields" ] == NIL
       set_dbf_fields_from_struct( @_rec )
@@ -253,6 +252,10 @@ FUNCTION set_a_dbf_rec_chk0( table )
 
    RETURN .T.
 
+
+FUNCTION is_chk0( table )
+
+      RETURN __f18_dbfs[ table ][ "chk0" ]
 
 
 
@@ -302,7 +305,6 @@ FUNCTION dbf_alias_has_semaphore( alias )
 
 // ----------------------------------------------
 // setujem "sql_order" hash na osnovu
-// gaDBFS[_pos][6]
 // rec["dbf_fields"]
 // ----------------------------------------------
 FUNCTION sql_order_from_key_fields( dbf_key_fields )

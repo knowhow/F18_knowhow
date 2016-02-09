@@ -28,10 +28,6 @@ FUNCTION test_semaphores()
 
    _ime_f := "test_sem_1"
 
-   _i := AScan( gaDBFs, {| x|  x[ 2 ] == Upper( _ime_f ) } )
-   IF _i == 0
-      AAdd( gaDBFs, { F_TEST_SEM_1,  "TEST_SEM_1",  "test_sem_1", {| alg| test_sem_1_from_sql_server( alg ) }, "IDS", { "id" }, {| x| sql_where_block( "test_sem_1", x ) }, "ID" } )
-   ENDIF
 
    cre_t_1( "test_sem_1", .T. )
 
@@ -49,15 +45,6 @@ FUNCTION test_semaphores()
 
    TEST_LINE( login_as( "test1" ), .T. )
 
-
-   // ------------------------
-   _ime_f := "test_sem_2"
-   // ------------------------
-
-   _i := AScan( gaDBFs, {| x|  x[ 2 ] == Upper( _ime_f ) } )
-   IF _i == 0
-      AAdd( gaDBFs, { F_TEST_SEM_2,  "TEST_SEM_2",  "test_sem_2", {| alg| test_sem_2_from_sql_server( alg ) }, "IDS", { { "godina", 4 }, { "mjesec", 2 }, "oznaka" }, {| x| sql_where_block( "test_sem_2", x ) }, "IDN" } )
-   ENDIF
 
    TEST_LINE( sql_concat_ids( "test_sem_2" ), "to_char(godina,'9999') || to_char(mjesec,'99') || oznaka" )
 

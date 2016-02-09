@@ -1381,7 +1381,7 @@ METHOD F18AdminOpts:force_synchro_db()
    write_dbf_version_to_config()
    check_server_db_version()
 
-   RETURN
+   RETURN .T.
 
 
 

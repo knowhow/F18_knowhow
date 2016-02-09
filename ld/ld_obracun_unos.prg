@@ -218,6 +218,7 @@ STATIC FUNCTION ld_unos_obracuna_box( lSaveObracun )
 
    OObracun()
 
+
    lNovi := .F.
 
    Box( , MAXROWS() -10, MAXCOLS() -10 )

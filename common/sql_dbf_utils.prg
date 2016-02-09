@@ -129,132 +129,6 @@ FUNCTION sql_where_from_dbf_key_fields( dbf_key_fields, rec, lSqlTable )
 
 
 
-// ---------------------------------------
-// hernad izbaciti iz upotrebe !
-// koristiti gornju funkciju
-// ---------------------------------------
-FUNCTION sql_where_block( table_name, x )
-
-   LOCAL _ret, _pos, _fields, _item, _key
-
-   _pos := AScan( gaDBFS, {| x| x[ 3 ] == table_name } )
-
-   IF _pos == 0
-      MsgBeep( ProcLine( 1 ) + "sql_where_block tbl ne postoji" + table_name )
-      log_write( "ERR sql_where: " + table_name )
-      QUIT_1
-   ENDIF
-
-   // npr. _fields := {{"godina", 4}, "idrj", {"mjesec", 2}, "obr", "idradn" }
-   _fields := gaDBFS[ _pos, 6 ]
-
-   _ret := ""
-   FOR EACH _item in _fields
-
-      IF !Empty( _ret )
-         _ret += " AND "
-      ENDIF
-
-      IF ValType( _item ) == "A"
-         // numeric
-         _key := Lower( _item[ 1 ] )
-         _ret += _item[ 1 ] + "=" + Str( x[ _key ], _item[ 2 ] )
-
-      ELSEIF ValType( _item ) == "C"
-         _key := Lower( _item )
-         _ret += _item + "=" + _sql_quote( x[ _key ] )
-
-      ELSE
-         MsgBeep( ProcName( 1 ) + "valtype _item ?!" )
-         QUIT_1
-      ENDIF
-
-   NEXT
-
-   RETURN _ret
-
-// ---------------------------------------
-// ---------------------------------------
-FUNCTION sql_concat_ids( table_name )
-
-   LOCAL _ret, _pos, _fields, _item
-
-   _pos := AScan( gaDBFS, {| x| x[ 3 ] == table_name } )
-
-   IF _pos == 0
-      MsgBeep( ProcLine( 1 ) + "sql tbl ne postoji in gaDBFs " + table_name )
-      QUIT_1
-   ENDIF
-
-   // npr. _fields := {{"godina", 4}, "idrj", {"mjesec", 2}, "obr", "idradn" }
-   _fields := gaDBFS[ _pos, 6 ]
-
-   _ret := ""
-
-   FOR EACH _item in _fields
-
-      IF !Empty( _ret )
-         _ret += " || "
-      ENDIF
-
-      IF ValType( _item ) == "A"
-         // numeric
-         // to_char(godina, '9999')
-         _ret += "to_char(" + _item[ 1 ] + ",'" + Replicate( "9", _item[ 2 ] ) + "')"
-
-      ELSEIF ValType( _item ) == "C"
-         _ret += _item
-
-      ELSE
-         MsgBeep( ProcName( 1 ) + "valtype _item ?!" )
-         QUIT_1
-      ENDIF
-
-   NEXT
-
-   RETURN _ret
-
-// ---------------------------------------
-// ---------------------------------------
-FUNCTION sql_primary_key( table_name )
-
-   LOCAL _ret, _pos, _fields, _i, _item
-
-   _pos := AScan( gaDBFS, {| x| x[ 3 ] == Lower( table_name ) } )
-
-   IF _pos == 0
-      MsgBeep( ProcLine( 1 ) + "sql tbl ne postoji in gaDBFs " + table_name )
-      QUIT_1
-   ENDIF
-
-   // npr. _fields := {{"godina", 4}, "idrj", {"mjesec", 2}, "obr", "idradn" }
-   _fields := gaDBFS[ _pos, 6 ]
-
-   _ret := "(org_id, b_year, b_seasson"
-
-   FOR EACH _item in _fields
-
-      _ret += ", "
-      IF ValType( _item ) == "A"
-         // numericko polje
-         _ret += _item[ 1 ]
-
-      ELSEIF ValType( _item ) == "C"
-         _ret += _item
-
-      ELSE
-         MsgBeep( ProcName( 1 ) + " valtype _item ?!" )
-         QUIT_1
-      ENDIF
-
-   NEXT
-
-   _ret += ")"
-
-   RETURN _ret
-
-
-
 // -----------------------------------------------------
 // parsiranje datuma u sql izrazu
 // -----------------------------------------------------
@@ -821,9 +695,10 @@ FUNCTION query_row( row, field_name )
    RETURN _ret
 
 
-// --------------------------------------------------------
-// sql_table_empty("tnal") => .t. ako je sql tabela prazna
-// ---------------------------------------------------------
+/*
+/ sql_table_empty("tnal") => .t. ako je sql tabela prazna
+*/
+
 FUNCTION sql_table_empty( alias )
 
    LOCAL _a_dbf_rec := get_a_dbf_rec( alias, .T. )

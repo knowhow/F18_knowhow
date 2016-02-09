@@ -16,7 +16,7 @@
 THREAD STATIC _log_db_handle := NIL
 THREAD STATIC _db_thread_id := NIL
 
-FUNCTION db_trehad_id()
+FUNCTION db_thread_id()
    RETURN _db_thread_id
 
 FUNCTION init_threads()
@@ -59,9 +59,6 @@ FUNCTION _db_thread_fn()
       QUIT_1
    ENDIF
 
-
-   _arr := gADBFs
-   // a_dbfs()
 
    log_write_db( my_home() )
 

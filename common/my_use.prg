@@ -13,46 +13,22 @@
 #include "common.ch"
 
 
-THREAD STATIC __my_use_semaphore := .T.
 
-// --------------------------------------
-// iskljuci logiku provjere semafora
-// neophodno u procedurama azuriranja
-//
-// if azur_sql()
-// my_use_semaphore_off()
-// otvori_dbfs()
-// azur_dbf()
-// my_use_semaphore_on()
-// endif
-//
-// --------------------------------------
-FUNCTION my_use_semaphore_off()
+FUNCTION my_usex( alias, table, new_area )
 
-   __my_use_semaphore := .F.
-   log_write( "stanje semafora : OFF", 6 )
+   IF PCount() > 3
+      Alert( "my_usex error > 3" )
+   ENDIF
+   AltD()
 
-   RETURN .T.
-
-FUNCTION my_use_semaphore_on()
-
-   __my_use_semaphore := .T.
-   log_write( "stanje semafora : ON", 6 )
-
-   RETURN .T.
-
-FUNCTION my_use_semaphore()
-   RETURN __my_use_semaphore
+   RETURN my_use_temp( alias, table, new_area, .T. )
 
 
-FUNCTION my_usex( alias, table, new_area, _rdd, semaphore_param )
-   RETURN my_use( alias, table, new_area, _rdd, semaphore_param, .T. )
+/*
+ uopste ne koristi logiku semafora, koristiti za temp tabele
+ kod opcija exporta importa
+*/
 
-
-// ---------------------------------------------------------------
-// uopste ne koristi logiku semafora, koristiti za temp tabele
-// kod opcija exporta importa
-// ---------------------------------------------------------------
 FUNCTION my_use_temp( alias, table, new_area, excl )
 
    LOCAL nCnt, nSelect, _a_dbf_rec, _tmp
@@ -75,8 +51,12 @@ FUNCTION my_use_temp( alias, table, new_area, excl )
 
    BEGIN SEQUENCE WITH {| err| Break( err ) }
 
-      // trebam samo osnovne parametre
       _a_dbf_rec := get_a_dbf_rec( _tmp, .T. )
+
+      IF table == nil
+         table := my_home() + _a_dbf_rec[ "table" ]
+      ENDIF
+
       nSelect := Select( _a_dbf_rec[ "alias" ] )
       IF nSelect > 0 .AND. ( nSelect <> _a_dbf_rec[ "wa" ] )
          log_write( "WARNING: " + _a_dbf_rec[ "table" ] + " na WA=" + Str( nSelect ) + " ?", 3 )
@@ -84,7 +64,7 @@ FUNCTION my_use_temp( alias, table, new_area, excl )
          USE
       ENDIF
 
-      IF ! new_area
+      IF !new_area
          SELECT ( _a_dbf_rec[ "wa" ] )
       ENDIF
 
@@ -145,8 +125,15 @@ FUNCTION my_use( alias, table, new_area, _rdd, semaphore_param, excl, select_wa 
    LOCAL _a_dbf_rec
 
    IF PCount() == 1
-       RETURN my_use_simple( alias )
+      RETURN my_use_simple( alias )
    ENDIF
+
+   // todo: my_use legacy
+
+#ifdef F18_DEBUG
+   MsgBeep( "my_use legacy sekvenca - out " )
+#endif
+   AltD()
 
    IF excl == NIL
       excl := .F.
@@ -202,7 +189,7 @@ FUNCTION my_use( alias, table, new_area, _rdd, semaphore_param, excl, select_wa 
 
    IF !( _a_dbf_rec[ "temp" ] )
 
-      IF ( _rdd != "SEMAPHORE" ) .AND. my_use_semaphore()
+      IF ( _rdd != "SEMAPHORE" )
 
          dbf_semaphore_synchro( table, @lOdradioFullSynchro )
 
@@ -264,36 +251,20 @@ FUNCTION my_use( alias, table, new_area, _rdd, semaphore_param, excl, select_wa 
 
 FUNCTION my_use_simple( cAlias )
 
-/*
-   LOCAL nCnt
-   LOCAL _msg
-   LOCAL _err
-   LOCAL _pos
-   LOCAL _version, _last_version
-   LOCAL _area
-   LOCAL _force_erase := .F.
-   LOCAL _dbf
-   LOCAL _tmp
-   LOCAL nSelect
-   LOCAL lOdradioFullSynchro := .F.
-   LOCAL lUspjesno
-   LOCAL oError
-*/
-   LOCAL nCnt, oError, lUspjesno, cFullDbf
+   LOCAL nCnt, oError, lUspjesno, cFullDbf, cFullIdx
    LOCAL aDbfRec
    LOCAL lExcl := .F.
    LOCAL cRdd := DBFENGINE
 
    aDbfRec := get_a_dbf_rec( cAlias, .T. )
-   SELECT ( aDbfRec[ "wa" ] )
+
 
    dbf_refresh( aDbfRec[ 'alias' ] )
 
-   IF Used()
-      USE
-   ENDIF
 
    cFullDbf := my_home() + aDbfRec[ 'table' ]
+   cFullIdx := ImeDbfCdx( cFullDbf )
+
 
    nCnt := 0
 
@@ -302,9 +273,18 @@ FUNCTION my_use_simple( cAlias )
 
       BEGIN SEQUENCE WITH {| err| Break( err ) }
 
-         dbUseArea( .F., cRdd, cFullDbf, aDbfRec[ 'table' ], !lExcl, .F. )
-         IF File( ImeDbfCdx( cFullDbf ) )
-            dbSetIndex( ImeDbfCDX( cFullDbf ) )
+         IF nCnt > 0
+            log_write( "use_cnt=" + AllTrim( Str( nCnt ) ) + " t: " + aDbfRec[ 'table' ] + " a: " + aDbfRec[ 'alias' ], 5 )
+         ENDIF
+
+         SELECT ( aDbfRec[ "wa" ] )
+         IF Select( aDbfRec[ 'alias' ] ) > 0
+            USE
+         ENDIF
+
+         dbUseArea( .F., cRdd, cFullDbf, aDbfRec[ 'alias' ], !lExcl, .F. )
+         IF File(  cFullIdx )
+            dbSetIndex( cFullIdx )
          ENDIF
          lUspjesno := .T.
 

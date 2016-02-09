@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out knowhow ERP, a free and open source 
+/*
+ * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
  * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -21,15 +21,11 @@ local _tmp
 
 close all
 
-_i := ASCAN(gaDBFs, {|x|  x[2] == UPPER(_ime_f) })
-if _i == 0
-  AADD(gaDBFs, { 101,  UPPER(_ime_f),  _ime_f  } )
-endif
 
 AADD(_dbf_struct,      { 'ID' ,  'C' ,    2 ,  0 })
 AADD(_dbf_struct,      { 'NAZ' , 'C' ,   10 ,  0 })
 AADD(_dbf_struct,      { 'DEST' , 'C' ,  60 ,  0 })
-       
+
 DBCREATE2(_ime_f, _dbf_struct)
 cre_index_tsifv_k(_ime_f)
 
@@ -99,10 +95,10 @@ use
 my_use("sifk")
 SET ORDER TO TAG "ID2"
 seek _id_sif + _karakteristika
-TEST_LINE( field->id + field->oznaka, _id_sif + _karakteristika) 
+TEST_LINE( field->id + field->oznaka, _id_sif + _karakteristika)
 
 seek _id_sif + _karakteristika_n
-TEST_LINE( field->id + field->oznaka, _id_sif + _karakteristika_n) 
+TEST_LINE( field->id + field->oznaka, _id_sif + _karakteristika_n)
 
 // izbrisacu sada sifk
 TEST_LINE( ferase_dbf("sifk"), .t. )
@@ -116,11 +112,11 @@ my_use("sifk")
 SET ORDER TO TAG "ID2"
 seek _id_sif + _karakteristika
 _header := "NAKON FERASE: "
-TEST_LINE( _header + field->id + field->oznaka + sifk->tip + sifk->veza + STR(sifk->duzina, 2), _header + _id_sif + _karakteristika + "C1" + STR(K1_LEN, 2)) 
+TEST_LINE( _header + field->id + field->oznaka + sifk->tip + sifk->veza + STR(sifk->duzina, 2), _header + _id_sif + _karakteristika + "C1" + STR(K1_LEN, 2))
 
 seek _id_sif + _karakteristika_n
 _header := "NAKON FERASE: "
-TEST_LINE( _header + field->id + field->oznaka + sifk->tip + sifk->veza + STR(sifk->duzina, 2), _header + _id_sif + _karakteristika_n + "CN" + STR(KN_LEN, 2)) 
+TEST_LINE( _header + field->id + field->oznaka + sifk->tip + sifk->veza + STR(sifk->duzina, 2), _header + _id_sif + _karakteristika_n + "CN" + STR(KN_LEN, 2))
 
 USE
 close all
@@ -140,9 +136,9 @@ TEST_LINE(IzSifk(_id_sif, _karakteristika, "01"), PADR("K1VAL3", K1_LEN ))
 
 _tmp := PADR("K2VAL1", KN_LEN) + ","
 _tmp += PADR("K2VAL2", KN_LEN) + ","
-_tmp += PADR("K2VAL4", KN_LEN) 
+_tmp += PADR("K2VAL4", KN_LEN)
 
-_tmp := PADR(_tmp, 190) 
+_tmp := PADR(_tmp, 190)
 TEST_LINE(IzSifk(_id_sif, _karakteristika_n, "01"), _tmp)
 
 
@@ -168,7 +164,7 @@ if !FOUND()
     _rec["duzina"] := duzina
     _rec["veza"] := veza
 
-    if !update_rec_server_and_dbf("sifk", _rec, fields, where_block) 
+    if !update_rec_server_and_dbf("sifk", _rec, fields, where_block)
         delete_with_rlock()
     endif
 endif
@@ -177,8 +173,6 @@ return
 
 
 function cre_index_tsifv_k(ime_f)
- CREATE_INDEX("ID",  "id", ime_f)  
+ CREATE_INDEX("ID",  "id", ime_f)
  CREATE_INDEX("NAZ", "naz", ime_f)
 return
-
-

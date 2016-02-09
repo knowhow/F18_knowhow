@@ -369,6 +369,8 @@ FUNCTION my_dbf_pack( lOpenUSharedRezimu )
 
 FUNCTION pakuj_dbf( a_dbf_rec, lSilent )
 
+   LOCAL _err
+
    log_write( "PACK table " + a_dbf_rec[ "alias" ], 2 )
 
    BEGIN SEQUENCE WITH {| err| Break( err ) }
@@ -451,16 +453,27 @@ STATIC FUNCTION zatvori_dbf( value )
    RETURN .T.
 
 
-FUNCTION dbf_open_and_count( a_dbf_rec, cnt, del )
 
-   SELECT ( a_dbf_rec[ "wa" ] )
-   my_use_temp( a_dbf_rec[ "alias" ], my_home() + a_dbf_rec[ "table" ], .F., .F. ) // new_area = .F. , eksluzivno = .F.
+
+FUNCTION dbf_open_temp_and_count( a_dbf_rec, nCnt, nDel )
+
+   LOCAL cAliasTemp := "temp__" + a_dbf_rec[ "alias" ]
+   LOCAL cFullDbf := my_home() + a_dbf_rec[ "table" ]
+   LOCAL cFullIdx
+
+   cFullIdx := ImeDbfCdx( cFullDbf )
+
+   SELECT ( a_dbf_rec[ "wa" ] + 2000 )
+   USE  ( cFullDbf ) Alias ( cAliasTemp )  SHARED
+   IF File( cFullIdx )
+      dbSetIndex( ImeDbfCdx( cFullDbf ) )
+   ENDIF
 
    SET DELETED OFF
 
    SET ORDER TO TAG "DEL"
-   COUNT TO del
-   cnt := RecCount()
+   COUNT TO nDel
+   nCnt := RecCount()
 
    USE
    SET DELETED ON

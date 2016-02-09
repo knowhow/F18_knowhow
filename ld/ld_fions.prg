@@ -697,8 +697,7 @@ FUNCTION GETR( cPrompt, xValue )
 
 
 
-// ------------------------
-// ------------------------
+
 FUNCTION FillBrBod( _brbod )
 
    LOCAL _vars
@@ -717,7 +716,11 @@ FUNCTION FillBrBod( _brbod )
 
    ENDIF
 
-   SELECT ld
+   IF SELECT( "ld" ) == 0
+      Alert( "fillbrbod Alias ld not ?!")
+      altd()
+      //O_LD
+   ENDIF
 
    RETURN .T.
 

@@ -672,7 +672,7 @@ FUNCTION snimi_promjene_sifarnika( lNovi, cTekuciZapis )
    LOCAL lRet := .F.
    LOCAL lOk := .T.
    LOCAL _rec
-   LOCAL cAlias := Alias()
+   LOCAL cAlias := Lower( Alias() )
    LOCAL cEditovaniZapis
    LOCAL lSqlTable
    LOCAL lAppended := .F.
@@ -683,7 +683,7 @@ FUNCTION snimi_promjene_sifarnika( lNovi, cTekuciZapis )
 
    sql_table_update( nil, "BEGIN" )
 
-   IF !f18_lock_tables( { Lower( cAlias ) }, .T. )
+   IF !f18_lock_tables( { cAlias }, .T. )
       sql_table_update( nil, "END" )
       Msgbeep( "Ne mogu zaključati tabelu " + cAlias + "!#Prekidam operaciju." )
       RETURN lRet
@@ -709,7 +709,7 @@ FUNCTION snimi_promjene_sifarnika( lNovi, cTekuciZapis )
    IF lOk
 
       lRet := .T.
-      f18_free_tables( { Lower( cAlias ) } )
+      f18_free_tables( { cAlias } )
       sql_table_update( nil, "END" )
       log_write( "F18_DOK_OPER: dodavanje/ispravka zapisa u šifrarnik " + cAlias, 2 )
 

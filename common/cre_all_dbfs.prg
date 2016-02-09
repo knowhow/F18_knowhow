@@ -152,7 +152,6 @@ FUNCTION _kreiraj_params_tabele()
 
 
 
-
 FUNCTION _kreiraj_adrese( ver )
 
    LOCAL _table_name, _alias, _created
@@ -257,11 +256,10 @@ FUNCTION dbf_ext_na_kraju( cIme )
 
 FUNCTION dbCreate2( ime_dbf, struct_dbf, driver )
 
-   LOCAL _pos
+
    LOCAL _ime_cdx
 
    ime_dbf := f18_ime_dbf( ime_dbf )
-
    _ime_cdx := ImeDbfCdx( ime_dbf )
 
    IF Right( _ime_cdx, 4 ) == "." + INDEXEXT

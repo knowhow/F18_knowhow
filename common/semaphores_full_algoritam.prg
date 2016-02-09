@@ -13,10 +13,10 @@
 
 STATIC s_lInSync := .F.
 
-// ---------------------------------------------------------
-// napuni tablu sa servera
-// step_size - broj zapisa koji se citaju u jednom query-u
-// ---------------------------------------------------------
+/*
+ napuni tablu sa servera
+  step_size - broj zapisa koji se citaju u jednom query-u
+*/
 FUNCTION full_synchro( dbf_table, step_size )
 
    LOCAL _seconds
@@ -28,6 +28,8 @@ FUNCTION full_synchro( dbf_table, step_size )
    LOCAL _sql_order
    LOCAL _opened
    LOCAL _sql_fetch_time, _dbf_write_time
+   LOCAL _msg
+
 
    IF s_lInSync
       RETURN .F.
@@ -41,7 +43,7 @@ FUNCTION full_synchro( dbf_table, step_size )
 
    nuliraj_ids_and_update_my_semaphore_ver( dbf_table )
 
-   // transakcija mi treba da bih sakrio promjene koje prave druge
+   // transakcija treba da se ne bi vidjele promjene koje prave drugi
    // ako nemam transakcije onda se moze desiti ovo:
    // 1) odabarem 100 000 zapisa i pocnem ih uzimati po redu (po dokumentima)
    // 2) drugi korisnik izmijeni neki stari dokument u sredini prenosa i u njega doda 500 stavki
@@ -54,14 +56,12 @@ FUNCTION full_synchro( dbf_table, step_size )
 
    _sql_order  := _a_dbf_rec[ "sql_order" ]
 
-   // TODO: brisati reopen
-   // .t. - brisi indeksni fajl tako da se full sinchro obavlja bez azuriranja indeksa
-   // .f. - otvori indeks
-   //reopen_exclusive_and_zap( _a_dbf_rec[ "table" ], .T., .F. )
+   reopen_exclusive_and_zap( _a_dbf_rec[ "table" ], .T., .T. )
+   USE
 
    Box(, 10, 70 )
 
-   @ m_x + 1, m_y + 2 SAY "full synchro: " + _sql_table + " => " + dbf_table
+   @ m_x + 1, m_y + 2 SAY8 "full synchro: " + _sql_table + " => " + dbf_table
 
    run_sql_query( "BEGIN; SET TRANSACTION ISOLATION LEVEL SERIALIZABLE" )
    _count := table_count( _sql_table, "true" )
@@ -73,7 +73,7 @@ FUNCTION full_synchro( dbf_table, step_size )
    IF _sql_fields == NIL
       _msg := "sql_fields za " + _sql_table + " nije setovan ... sinhro nije moguć"
       log_write( "full_synchro: " + _msg, 2 )
-      msgbeep( _msg )
+      MsgBeep( _msg )
       RaiseError( _msg )
    ENDIF
 
@@ -115,15 +115,6 @@ FUNCTION full_synchro( dbf_table, step_size )
 
    BoxC()
 
-   // TODO: brisati
-   //MsgO( "Reindex nakon full sync: " + dbf_table )
-   //log_write( "reopen nakon full_sync START:" + dbf_table, 3 )
-   //IF reopen_exclusive( _a_dbf_rec[ "table" ], .T. )
-   //    REINDEX
-   //ENDIF
-   //MsgC()
-
-   USE
 
    log_write( "END full_synchro tabela: " + dbf_table +  " cnt: " + AllTrim( Str( _count ) ), 3 )
 

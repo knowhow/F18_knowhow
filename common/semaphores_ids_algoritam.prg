@@ -12,16 +12,16 @@
 #include "f18.ch"
 
 
-// -----------------------------------------------------------------------------------------------------
-// synchro dbf tabele na osnovu id-ova koje su poslali drugi
-// -----------------------------------------------------------------------------------------------------
+/*
+ synchro dbf tabele na osnovu id-ova koje su poslali drugi
+*/
+
 FUNCTION ids_synchro( dbf_table )
 
    LOCAL _i, _ids_queries
    LOCAL _zap, aDbfRec
 
    aDbfRec := get_a_dbf_rec( dbf_table, .T. )
-
 
    _ids_queries := create_queries_from_ids( aDbfRec[ 'table' ] )
 
@@ -397,7 +397,7 @@ FUNCTION delete_ids_in_dbf( dbf_table, ids, algoritam )
    LOCAL _dbf_alias
    LOCAL _dbf_tag
    LOCAL _key_block
-   LOCAL _i, cSyncAlias
+   LOCAL _i, cSyncAlias, cFullDbf, cFullIdx
 
    log_write( "delete_ids_in_dbf(), poceo", 9 )
 
@@ -409,19 +409,35 @@ FUNCTION delete_ids_in_dbf( dbf_table, ids, algoritam )
 
    _key_block := _alg[ algoritam ][ "dbf_key_block" ]
 
-   // pobrisimo sve dbf zapise na kojima su drugi radili
-   SET ORDER TO TAG ( _dbf_tag )
-
    _counter := 0
 
    IF ValType( ids ) != "A"
       Alert( "ids type ? " + ValType( ids ) )
    ENDIF
 
-   cSyncAlias := 'sync_' + _a_dbf_rec[ 'table' ]
+   cSyncAlias := Upper( 'SYNC__' + _a_dbf_rec[ 'table' ] )
+   PushWa()
 
-   IF !Used( cSyncAlias )
-      USE ( my_home() + _a_dbf_rec[ 'table' ] ) Alias ( cSyncAlias )  NEW
+   cFullDbf := my_home() + _a_dbf_rec[ 'table' ]
+   cFullIdx := ImeDbfCDX( cFullDbf )
+
+   IF Select( cSyncAlias ) == 0
+      SELECT ( _a_dbf_rec[ 'wa' ] + 1000 )
+      USE ( cFullDbf ) Alias ( cSyncAlias ) SHARED
+      IF File( cFullIdx )
+         dbSetIndex( cFullIdx )
+      ENDIF
+   ELSE
+      Alert( "sync alias used ?:" + cSyncAlias )
+      log_write( "error sync alias used " + cSyncAlias, 2)
+   ENDIF
+
+   // pobrisimo sve dbf zapise na kojima su drugi radili
+
+   SET ORDER TO TAG ( _dbf_tag )
+   IF Empty( ordName() )
+      Alert( "delete ordname error: " + Alias() + " / " + _dbf_tag )
+      QUIT_1
    ENDIF
 
    DO WHILE .T.
@@ -431,7 +447,6 @@ FUNCTION delete_ids_in_dbf( dbf_table, ids, algoritam )
       FOR EACH _tmp_id in ids
 
          HSEEK _tmp_id
-
          DO WHILE !Eof() .AND. Eval( _key_block ) == _tmp_id
             SKIP
             _rec := RecNo()
@@ -449,9 +464,11 @@ FUNCTION delete_ids_in_dbf( dbf_table, ids, algoritam )
       ENDIF
    ENDDO
 
-   AltD()
-   SELECT ( cSyncAlias )
-   USE
+   IF Select( cSyncAlias ) > 0
+      USE
+   ENDIF
+
+   PopWa()
 
    log_write( "delete_ids_in_dbf(), table: " + dbf_table + "/ dbf_tag =" + _dbf_tag + " pobrisao iz lokalnog dbf-a zapisa = " + AllTrim( Str( _counter ) ), 5 )
    log_write( "delete_ids_in_dbf(), zavrsio", 9 )

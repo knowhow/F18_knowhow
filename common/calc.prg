@@ -26,9 +26,12 @@ FUNCTION Calc()
    LOCAL GetList := {}
    PRIVATE cIzraz := Space( 40 )
 
+
    IF s_lInCalculator
       RETURN .F.
    ENDIF
+
+altd()
 
    s_lInCalculator := .T.
 

@@ -51,7 +51,7 @@ FUNCTION refresh_me( a_dbf_rec, lSilent, lFromMyUse )
    _cnt_sql := table_count( a_dbf_rec["table"] )
 
    // 3) ponovo otvori nakon sinhronizacije
-   dbf_open_temp( a_dbf_rec, @_cnt, @_del )
+   dbf_open_temp_and_count( a_dbf_rec, @_cnt, @_del )
    USE
 
 
@@ -71,7 +71,6 @@ FUNCTION refresh_me( a_dbf_rec, lSilent, lFromMyUse )
    // ako se utvrti greska uradi full sync
    check_recno_and_fix( a_dbf_rec[ "table" ], _cnt_sql, _cnt - _del, .T. )
 
-   USE
    _msg_1 := a_dbf_rec[ "alias" ] + " / " + a_dbf_rec[ "table" ]
    _msg_2 := "cnt = "  + AllTrim( Str( _cnt, 0 ) ) + " / " + AllTrim( Str( _del, 0 ) )
 
@@ -90,23 +89,5 @@ FUNCTION refresh_me( a_dbf_rec, lSilent, lFromMyUse )
    IF ! lSilent
       BoxC()
    ENDIF
-
-   RETURN .T.
-
-
-
-STATIC FUNCTION dbf_open_temp( a_dbf_rec, cnt, del )
-
-   SELECT ( a_dbf_rec[ "wa" ] )
-   my_use_temp( a_dbf_rec[ "alias" ], my_home() + a_dbf_rec[ "table" ], .F., .F. ) // new_area = .F. , eksluzivno = .F.
-
-   SET DELETED OFF
-
-   SET ORDER TO TAG "DEL"
-   COUNT TO del
-   cnt := RecCount()
-
-   USE
-   SET DELETED ON
 
    RETURN .T.

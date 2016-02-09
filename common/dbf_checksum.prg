@@ -18,10 +18,11 @@ FUNCTION check_recno_and_fix( dbf_alias, cnt_sql, cnt_dbf, full_synchro )
 
    LOCAL nSelect
    LOCAL _a_dbf_rec
-   LOCAL _opened := .F.
    LOCAL _sql_table
    LOCAL _dbf, _udbf
    LOCAL cErrMsg
+   LOCAL cAliasCheck
+   LOCAL _err
 
    IF full_synchro == NIL
       full_synchro := .F.
@@ -30,15 +31,9 @@ FUNCTION check_recno_and_fix( dbf_alias, cnt_sql, cnt_dbf, full_synchro )
    _a_dbf_rec :=  get_a_dbf_rec( dbf_alias )
    _sql_table :=  my_server_params()[ "schema" ] + "." + _a_dbf_rec[ "table" ]
 
-   nSelect := Select ( _a_dbf_rec[ "alias" ] )
+   cAliasCheck := "CHECK__" + _a_dbf_rec[ "alias" ]
 
-   IF nSelect > 0
-      Select( nSelect )
-      USE
-   ENDIF
-
-   SELECT ( _a_dbf_rec[ "wa" ] )
-   USE
+   PushWa()
 
    _udbf := my_home() + _a_dbf_rec[ "table" ]
 
@@ -46,13 +41,8 @@ FUNCTION check_recno_and_fix( dbf_alias, cnt_sql, cnt_dbf, full_synchro )
 
       BEGIN SEQUENCE WITH {| err| Break( err ) }
 
-         SELECT ( _a_dbf_rec[ "wa" ] )
-         dbUseArea( .F., DBFENGINE, _udbf, _a_dbf_rec[ "alias" ], .T., .F. )
-         IF File( ImeDbfCdx( _udbf ) )
-            dbSetIndex( ImeDbfCDX( _udbf ) )
-         ENDIF
-
-         _opened := .T.
+         SELECT ( _a_dbf_rec[ "wa" ] + 3000 )
+         USE ( _udbf ) ALIAS ( cAliasCheck ) SHARE
 
          // reccount() se ne moze iskoristiti jer prikazuje i deleted zapise
          // count je vremenski skupa operacija za velike tabele !
@@ -89,8 +79,6 @@ FUNCTION check_recno_and_fix( dbf_alias, cnt_sql, cnt_dbf, full_synchro )
 
    ENDIF
 
-   IF _opened
-      USE
-   ENDIF
+   PopWa()
 
    RETURN .T.

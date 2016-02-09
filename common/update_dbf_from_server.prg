@@ -12,9 +12,10 @@
 #include "f18.ch"
 
 
-// --------------------------------------------------------
-// get data from sql server, push to dbf
-// --------------------------------------------------------
+/*
+   get data from sql server, push to dbf
+*/
+
 FUNCTION update_dbf_from_server( table, algoritam )
 
    LOCAL _qry
@@ -69,15 +70,8 @@ FUNCTION update_dbf_from_server( table, algoritam )
 
    ELSE
       log_write( "update_dbf_from_server(), iniciraj ids synchro", 8 )
-
-      // samo otvori tabelu da je ids_synchro moze napuniti
-      // SELECT ( _dbf_wa )
-      // my_use ( _dbf_alias, table, .F., "SEMAPHORE" )
-
       ids_synchro  ( table )
    ENDIF
-
-   USE
 
    log_write( "update_dbf_from_server table: " + table + " synchro cache: " + Str( Seconds() - _seconds ), 5 )
    log_write( "END update_dbf_from_server", 9 )

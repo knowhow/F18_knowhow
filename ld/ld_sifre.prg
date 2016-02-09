@@ -165,7 +165,8 @@ FUNCTION P_Radn( cId, dx, dy )
 STATIC FUNCTION _radn_filter( lFiltered )
 
    LOCAL cFilter := ""
-   LOCAL _t_area := Select()
+
+   PushWa()
 
    IF radn->( FieldPos( "aktivan" ) ) = 0
       RETURN .F.
@@ -188,7 +189,7 @@ STATIC FUNCTION _radn_filter( lFiltered )
       GO TOP
    ENDIF
 
-   SELECT ( _t_area )
+   PopWa()
 
    RETURN .T.
 
@@ -1148,8 +1149,9 @@ FUNCTION TotBrisRadn()
 
    ENDDO
 
-   f18_free_tables( { "ld_radn", "ld_radkr" } )
    sql_table_update( nil, "END" )
+   f18_free_tables( { "ld_radn", "ld_radkr" } )
+
 
    SET KEY K_F5 TO
 

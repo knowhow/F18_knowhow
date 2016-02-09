@@ -17,8 +17,7 @@
 FUNCTION proizvoljni_izvjestaji_db_cre()
 
    LOCAL aDbf
-   LOCAL _alias, _table_name
-   LOCAL _created
+   LOCAL _alias, _table_name, _created
 
    aDBf := {}
    AAdd( aDBf, { 'ID', 'C',   2,  0 } )

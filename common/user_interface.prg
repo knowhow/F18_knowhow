@@ -276,9 +276,6 @@ FUNCTION Box( BoxId, N, Length, Inv, chMsg, cHelpT )
    LOCAL LocalC, cPom, cNaslovBoxa
    LOCAL _m_x, _m_y, _n
 
-   IF gAppSrv
-      RETURN
-   ENDIF
 
    cPom := Set( _SET_DEVICE )
    cNaslovBoxa := ""
@@ -348,12 +345,12 @@ FUNCTION Box( BoxId, N, Length, Inv, chMsg, cHelpT )
    @ m_x, m_y TO m_x + N + 1, m_y + Length + 2 DOUBLE
 
    IF !Empty( cNaslovBoxa )
-      @ m_x, m_y + 2 SAY cNaslovBoxa COLOR "GR+/B"
+      @ m_x, m_y + 2 SAY8 cNaslovBoxa COLOR "GR+/B"
    ENDIF
 
    SET( _SET_DEVICE, cPom )
 
-   RETURN
+   RETURN .T.
 
 
 FUNCTION BoxC()

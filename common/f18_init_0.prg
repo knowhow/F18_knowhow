@@ -26,7 +26,6 @@ FUNCTION start_module( oApp, lSezone )
    LOCAL _i
    PUBLIC gAppSrv
 
-   SetgaSDbfs()
 
    set_global_vars_0()
 
@@ -101,8 +100,6 @@ FUNCTION InitE( oApp )
    SET ESCAPE ON
    SET SOFTSEEK ON
 
-
-   AltD()
 
    NaslEkran( .T. )
    ToggleIns()

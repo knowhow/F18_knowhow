@@ -196,7 +196,6 @@ FUNCTION cre_all_ld_sif( ver )
    RETURN .T.
 
 
-
 FUNCTION cre_all_ld( ver )
 
    LOCAL aDbf, hIndexes, cKey
@@ -299,6 +298,7 @@ FUNCTION cre_all_ld( ver )
    AAdd( aDBf, { 'NAZ', 'C',  35,  0 } )
    AAdd( aDBf, { 'TIPRADA', 'C',   1,  0 } )
    AAdd( aDBf, { 'OPOR', 'C',   1,  0 } )
+
 
    _alias := "LD_RJ"
    _table_name := "ld_rj"

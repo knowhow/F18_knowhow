@@ -108,51 +108,47 @@ FUNCTION ld_specifikacija_plate_samostalni()
    dDatIspl := Date()
 
    DO WHILE .T.
-	
-      Box(, 13, 75 )
-     		
-      @ m_x + 1, m_y + 2 SAY "Radna jedinica (prazno-sve): " ;
-         GET qqIdRJ PICT "@!S15"
 
-      @ m_x + 2, m_y + 2 SAY "Opstina stanov.(prazno-sve): " ;
-         GET qqOpSt PICT "@!S20"
-		
-      @ m_x + 2, Col() + 1 SAY "Obr.:" GET cObracun ;
-         WHEN HelpObr( .T., cObracun ) ;
+      Box(, 13, 75 )
+
+      @ m_x + 1, m_y + 2 SAY "Radna jedinica (prazno-sve): " GET qqIdRJ PICT "@!S15"
+
+      @ m_x + 2, m_y + 2 SAY "Opstina stanov.(prazno-sve): "  GET qqOpSt PICT "@!S20"
+
+      @ m_x + 2, Col() + 1 SAY "Obr.:" GET cObracun   WHEN HelpObr( .T., cObracun ) ;
          VALID ValObr( .T., cObracun )
-     	
+
       @ m_x + 3, m_y + 2 SAY "Period od:" GET nDanOd PICT "99"
       @ m_x + 3, Col() + 1 SAY "/" GET nMjesecOd PICT "99"
       @ m_x + 3, Col() + 1 SAY "/" GET nGodinaOd PICT "9999"
       @ m_x + 3, Col() + 1 SAY "do:" GET nDanDo PICT "99"
       @ m_x + 3, Col() + 1 SAY "/" GET nMjesecDo PICT "99"
       @ m_x + 3, Col() + 1 SAY "/" GET nGodinaDo PICT "9999"
-     	
+
       @ m_x + 4, m_y + 2 SAY " Naziv: " GET cFirmNaz
       @ m_x + 5, m_y + 2 SAY "Adresa: " GET cFirmAdresa
       @ m_x + 6, m_y + 2 SAY "Opcina: " GET cFirmOpc
       @ m_x + 7, m_y + 2 SAY "Vrsta djelatnosti: " GET cFirmVD
-     		
+
       @ m_x + 4, m_y + 52 SAY "ID.broj :" GET cMatBR
       @ m_x + 5, m_y + 52 SAY "Dat.ispl:" GET dDatIspl
-     		
-      @ m_x + 8, m_y + 2 SAY "Poduzetnik:" GET cRadn ;
-         VALID P_RADN( @cRadn )
-     		
+
+      @ m_x + 8, m_y + 2 SAY "Poduzetnik:" GET cRadn  VALID P_RADN( @cRadn )
+
       @ m_x + 10, m_y + 2 SAY "          Doprinos pio (iz+na):" GET cDopr1
       @ m_x + 11, m_y + 2 SAY "    Doprinos zdravstvo (iz+na):" GET cDopr2
       @ m_x + 12, m_y + 2 SAY "Doprinos nezaposlenost (iz+na):" GET cDopr3
-     		
+
       READ
-     		
+
       clvbox()
       ESC_BCR
-   	
+
       BoxC()
-   	
+
       aUslRJ := Parsiraj( qqIdRj, "IDRJ" )
       aUslOpSt := Parsiraj( qqOpSt, "IDOPSST" )
-   	
+
       IF ( aUslRJ <> NIL .AND. aUslOpSt <> nil )
          EXIT
       ENDIF
@@ -265,7 +261,7 @@ FUNCTION ld_specifikacija_plate_samostalni()
       // ukupno bruto
       nPom := nBrutoOsnova
       UzmiIzIni( cIniName, 'Varijable', 'U017', FormNum2( nPom, 16, gPici2 ), 'WRITE' )
-	
+
       SELECT DOPR
       GO TOP
 
@@ -284,7 +280,7 @@ FUNCTION ld_specifikacija_plate_samostalni()
          ELSE
             nBOO := nBrutoOsnova
          ENDIF
-		
+
          SKIP 1
       ENDDO
 
@@ -326,7 +322,6 @@ FUNCTION ld_specifikacija_plate_samostalni()
       UzmiIzIni( cIniName, 'Varijable', 'D11_2I', FormNum2( nPom, 16, gPici2 ), 'WRITE' )
       nPom := nDopr3X
       UzmiIzIni( cIniName, 'Varijable', 'D11_3I', FormNum2( nPom, 16, gPici2 ), 'WRITE' )
-
 
 
       SELECT LD
@@ -372,4 +367,4 @@ FUNCTION ld_specifikacija_plate_samostalni()
 
    ENDIF
 
-   RETURN
+   RETURN .T.

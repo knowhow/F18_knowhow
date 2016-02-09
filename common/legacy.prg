@@ -19,27 +19,6 @@ STATIC cTekprinter := ""
 STATIC cFName
 
 
-FUNCTION SetgaSDBFs()
-
-   PUBLIC gaSDBFs := { ;
-      { F_GPARAMS, "GPARAMS",  P_ROOTPATH }, ;
-      { F_GPARAMSP, "GPARAMS",  P_PRIVPATH }, ;
-      { F_PARAMS, "PARAMS", P_PRIVPATH }, ;
-      { F_KORISN, "KORISN", P_TEKPATH }, ;
-      { F_MPARAMS, "MPARAMS", P_TEKPATH }, ;
-      { F_KPARAMS, "KPARAMS", P_KUMPATH }, ;
-      { F_SECUR, "SECUR", P_KUMPATH }, ;
-      { F_ADRES, "ADRES", P_SIFPATH }, ;
-      { F_SIFK, "SIFK", P_SIFPATH }, ;
-      { F_SIFV, "SIFV", P_SIFPATH  }, ;
-      { F_TMP, "TMP", P_PRIVPATH }, ;
-      { F_SQLPAR, "SQLPAR", P_KUMSQLPATH };
-      }
-
-   RETURN .T.
-
-
-
 /*!  PreuzSezSPK(cSif)
  *  \brief Preuzimanje sifre iz sezone
  *  \param cSif

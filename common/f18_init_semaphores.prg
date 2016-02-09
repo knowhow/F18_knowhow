@@ -30,7 +30,7 @@ FUNCTION refresh_me( a_dbf_rec, lSilent, lFromMyUse )
    ENDIF
 
    _wa := a_dbf_rec[ "wa" ]
-   set_a_dbf_rec_chk0( a_dbf_rec[ "table" ] )
+
 
    _msg_1 := "START refresh_me: " + a_dbf_rec[ "alias" ] + " / " + a_dbf_rec[ "table" ]
 
@@ -89,5 +89,7 @@ FUNCTION refresh_me( a_dbf_rec, lSilent, lFromMyUse )
    IF ! lSilent
       BoxC()
    ENDIF
+
+   set_a_dbf_rec_chk0( a_dbf_rec[ "table" ] )
 
    RETURN .T.

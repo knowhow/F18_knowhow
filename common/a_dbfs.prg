@@ -189,8 +189,15 @@ FUNCTION get_a_dbf_rec( tbl, _only_basic_params )
    ENDIF
 
    IF _dbf_tbl == "x"
-      _msg := "dbf alias " + tbl + " ne postoji u a_dbf_rec ?!"
-      RaiseError( _msg )
+      _msg := "ERROR: x dbf alias " + tbl + " ne postoji u a_dbf_rec ?!"
+      _rec := hb_hash()
+      _rec[ "temp" ] := .T.
+      _rec[ "table"] := tbl
+      _rec[ "alias"] := tbl
+      _rec[ "sql" ] := .F.
+      log_write( _msg, 1)
+      RETURN _rec
+
    ENDIF
 
    IF hb_HHasKey( __f18_dbfs, _dbf_tbl )

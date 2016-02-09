@@ -184,9 +184,6 @@ FUNCTION get_semaphore_version( table, last )
    LOCAL _user := f18_user()
    LOCAL _msg
 
-   IF skip_semaphore( table )
-      RETURN 1
-   ENDIF
 
    insert_semaphore_if_not_exists( table )
 
@@ -286,8 +283,7 @@ FUNCTION reset_semaphore_version( table )
 
    _tbl := "sem." + Lower( table )
 
-altd()
-   insert_semaphore_if_not_exists( table, .T. )
+   insert_semaphore_if_not_exists( table )
 
    log_write( "reset semaphore " + _tbl + " update ", 1 )
    _qry := "UPDATE " + _tbl + " SET version=-1, last_trans_version=(CASE WHEN last_trans_version IS NULL THEN 0 ELSE last_trans_version END) WHERE user_code =" + _sql_quote( _user )
@@ -578,17 +574,12 @@ FUNCTION nuliraj_ids_and_update_my_semaphore_ver( table )
    LOCAL _server := pg_server()
    LOCAL _qry
 
-   IF skip_semaphore( table )
-      RETURN .F.
-   ENDIF
+
+   insert_semaphore_if_not_exists( table )
 
    log_write( "START: nuliraj ids-ove - user: " + _user, 7 )
 
    _tbl := "sem." + Lower( table )
-
-   insert_semaphore_if_not_exists( table )
-
-
    _qry := "UPDATE " + _tbl + " SET " + ;
       " ids=NULL , dat=NULL," + ;
       " version=last_trans_version" + ;
@@ -627,6 +618,10 @@ FUNCTION insert_semaphore_if_not_exists( cTable ,lIgnoreChk0 )
    LOCAL _ret
    LOCAL cSqlTbl
 
+   IF skip_semaphore( cTable )
+      RETURN .F.
+   ENDIF
+
    hb_default( @lIgnoreChk0, .F. )
 
    cSqlTbl := "sem." + Lower( cTable )
@@ -634,6 +629,7 @@ FUNCTION insert_semaphore_if_not_exists( cTable ,lIgnoreChk0 )
    IF !lIgnoreChk0 .AND. is_chk0( cTable )
        RETURN .F.
    ENDIF
+
 
    nCnt := table_count( cSqlTbl, "user_code=" + _sql_quote( _user ) )
 
@@ -749,11 +745,9 @@ STATIC FUNCTION dbf_refresh_0( aDbfRec )
    LOCAL nCntSql, nCntDbf, nDeleted
 
    IF is_chk0( aDbfRec[ "table" ])
-      log_write( "chk0 already set: " + aDbfRec[ "table" ], 7 )
+      log_write( "chk0 already set: " + aDbfRec[ "table" ], 9 )
       RETURN .F.
    ENDIF
-
-   set_a_dbf_rec_chk0( aDbfRec[ "table" ] )
 
    cMsg1 := "START chk0 not set, start dbf_refresh_0: " + aDbfRec[ "alias" ] + " / " + aDbfRec[ "table" ]
 
@@ -765,7 +759,6 @@ STATIC FUNCTION dbf_refresh_0( aDbfRec )
    log_write( "stanje dbf " +  cMsg1, 8 )
    nCntSql := table_count( aDbfRec[ "table" ] )
 
-   // 3) ponovo otvori nakon sinhronizacije
    dbf_open_temp_and_count( aDbfRec, @nCntDbf, @nDeleted )
 
    cMsg1 := "nakon sync: " +  aDbfRec[ "alias" ] + " / " + aDbfRec[ "table" ]
@@ -798,6 +791,8 @@ STATIC FUNCTION dbf_refresh_0( aDbfRec )
    IF hocu_li_pakovati_dbf( nCntDbf, nDeleted )
       pakuj_dbf( aDbfRec, .T. )
    ENDIF
+
+   set_a_dbf_rec_chk0( aDbfRec[ "table" ] )
 
    RETURN .T.
 

@@ -10,15 +10,16 @@
  */
 
 #command IF_NOT_FILE_DBF_CREATE => _created := .f. ;
-                                   ;if !FILE(f18_ime_dbf(_alias));
-                                   ;  DBCREATE2(_alias, aDbf);
-                                   ;   _created := .t. ;
-                                   ;else;
-                                   ;  my_use(_alias);
-                                   ;  if reccount() == 0 .and. !sql_table_empty(_alias);
-                                   ;       _created := .t.;
-                                   ;  end;
-                                   ;  use;
+                                   ;insert_semaphore_if_not_exists( _table_name , .T. )    ;
+                                   ;if !FILE(f18_ime_dbf(_alias))                          ;
+                                   ;  DBCREATE2(_alias, aDbf)                              ;
+                                   ;   _created := .t.                                     ;
+                                   ;else                                                   ;
+                                   ;  my_use(_alias)                                       ;
+                                   ;  if reccount() == 0 .and. !sql_table_empty(_alias)    ;
+                                   ;       _created := .t.                                 ;
+                                   ;  end                                                  ;
+                                   ;  use                                                  ;
                                    ;end
 
 #command IF_C_RESET_SEMAPHORE  => if _created ; reset_semaphore_version(_table_name) ;  my_use(_alias);  use ; end

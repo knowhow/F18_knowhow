@@ -741,8 +741,13 @@ FUNCTION dbf_refresh( cTable )
 
 STATIC FUNCTION dbf_refresh_0( aDbfRec )
 
-   LOCAL cMsg1, cMsg2, lSilent := .F.
+   LOCAL cMsg1, cMsg2
    LOCAL nCntSql, nCntDbf, nDeleted
+#ifdef F18_DEBUG
+   LOCAL lSilent := .F.
+#ELSE
+   LOCAL lSilent := .T.
+#endif
 
    IF is_chk0( aDbfRec[ "table" ])
       log_write( "chk0 already set: " + aDbfRec[ "table" ], 9 )

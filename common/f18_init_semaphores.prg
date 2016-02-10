@@ -51,7 +51,7 @@ FUNCTION refresh_me_izbaciti( a_dbf_rec, lSilent, lFromMyUse )
    _cnt_sql := table_count( a_dbf_rec["table"] )
 
    // 3) ponovo otvori nakon sinhronizacije
-   dbf_open_temp_and_count( a_dbf_rec, @_cnt, @_del )
+   dbf_open_temp_and_count( a_dbf_rec, _cnt_sql, @_cnt, @_del )
    USE
 
 

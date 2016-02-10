@@ -60,12 +60,12 @@ FUNCTION update_rec_server_and_dbf( table, values, algoritam, transaction, lock 
    // trebamo where str za stanje dbf-a
    set_table_values_algoritam_vars( @table, @_values_dbf, @algoritam, @transaction, @_a_dbf_rec, @_alg, @_where_str_dbf, @_alg_tag )
 
-   IF lock
-      lock_semaphore( table, "lock" )
-   ENDIF
-
    IF transaction $ "FULL#BEGIN"
       sql_table_update( table, "BEGIN" )
+   ENDIF
+
+   IF lock
+      lock_semaphore( table, "lock" )
    ENDIF
 
    // izbrisi sa servera stare vrijednosti za values
@@ -106,6 +106,9 @@ FUNCTION update_rec_server_and_dbf( table, values, algoritam, transaction, lock 
          log_write( _msg, 1 )
          Alert( _msg )
 
+         IF lock
+            lock_semaphore( table, "free" )
+         ENDIF
          RETURN .F.
 
       ENDIF
@@ -122,6 +125,9 @@ FUNCTION update_rec_server_and_dbf( table, values, algoritam, transaction, lock 
       log_write( _msg, 1 )
       Alert( _msg )
 
+      IF lock
+         lock_semaphore( table, "free" )
+      ENDIF
       RETURN .F.
 
    ENDIF
@@ -226,12 +232,12 @@ FUNCTION delete_rec_server_and_dbf( table, values, algoritam, transaction, lock 
 
    log_write( "delete rec server, poceo", 9 )
 
-   IF lock
-      lock_semaphore( table, "lock" )
-   ENDIF
-
    IF transaction $ "FULL#BEGIN"
       sql_table_update( table, "BEGIN" )
+   ENDIF
+
+   IF lock
+      lock_semaphore( table, "lock" )
    ENDIF
 
    IF sql_table_update( table, "del", nil, _where_str )
@@ -242,8 +248,8 @@ FUNCTION delete_rec_server_and_dbf( table, values, algoritam, transaction, lock 
       push_ids_to_semaphore( table, _ids )
 
       SELECT ( _a_dbf_rec[ "wa" ] )
-      IF !USED()
-           my_use( _a_dbf_rec[ "table" ] )
+      IF !Used()
+         my_use( _a_dbf_rec[ "table" ] )
       ENDIF
 
       IF index_tag_num( _alg[ "dbf_tag" ] ) < 1
@@ -328,7 +334,6 @@ FUNCTION delete_rec_server_and_dbf( table, values, algoritam, transaction, lock 
    IF lock
       lock_semaphore( table, "free" )
    ENDIF
-
    log_write( "delete rec server, zavrsio", 9 )
 
    RETURN _ret
@@ -446,10 +451,10 @@ STATIC FUNCTION set_table_values_algoritam_vars( table, values, algoritam, trans
             set_rec_from_dbstruct( @a_dbf_rec )
 
             uValue := Unicode():New( values[ _key ], lSqlTable )
-            values[ _key ] := uValue:padr( a_dbf_rec[ "dbf_fields_len" ][ _key ][ 2 ] )
+            values[ _key ] := uValue:PadR( a_dbf_rec[ "dbf_fields_len" ][ _key ][ 2 ] )
             IF !lSqlTable
                // DBFCDX tabela mora sadržati CP 852 string
-               values[ _key ] := hb_Utf8ToStr( values[ _key ] )
+               values[ _key ] := hb_UTF8ToStr( values[ _key ] )
             ENDIF
 
             // provjeri prvi dio kljuca
@@ -466,7 +471,7 @@ STATIC FUNCTION set_table_values_algoritam_vars( table, values, algoritam, trans
 
    NEXT
 
-   BEGIN SEQUENCE WITH {|err| err:cargo := { "var",  "values", values }, GlobalErrorHandler( err ) }
+   BEGIN SEQUENCE WITH {| err| err:cargo := { "var",  "values", values }, GlobalErrorHandler( err ) }
       where_str := sql_where_from_dbf_key_fields( alg[ "dbf_key_fields" ], values, lSqlTable )
    END SEQUENCE
 

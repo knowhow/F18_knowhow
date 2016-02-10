@@ -47,8 +47,9 @@ FUNCTION pk_delete( cIdRadn )
 
    o_pk_tbl()
 
-   f18_lock_tables( { "ld_pk_radn" } )
    sql_table_update( nil, "BEGIN" )
+   f18_lock_tables( { "ld_pk_data", "ld_pk_radn" }, .T. )
+
 
    // izbrisi pk_radn
    SELECT pk_radn
@@ -75,14 +76,15 @@ FUNCTION pk_delete( cIdRadn )
       delete_rec_server_and_dbf( "ld_pk_data", _del_rec, 2, "CONT" )
    ENDIF
 
-   f18_free_tables( { "ld_pk_radn" } )
    sql_table_update( nil, "END" )
+   f18_free_tables( { "ld_pk_data", "ld_pk_radn" } )
+
 
    IF nCnt > 0
       msgbeep( "Izbrisano " + AllTrim( Str( nCnt ) ) + " zapisa !" )
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 // ------------------------------------

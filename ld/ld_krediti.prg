@@ -279,8 +279,9 @@ FUNCTION ld_krediti_key_handler( Ch )
 
          SEEK cIdRadn + cIdKred + cNaOsnovu
 
-         f18_lock_tables( { "ld_radkr" } )
          sql_table_update( nil, "BEGIN" )
+         f18_lock_tables( { "ld_radkr" }, .T. )
+
 
          DO WHILE !Eof() .AND. ( field->idradn + field->idkred + field->naosnovu ) == ( cIdRadn + cIdKred + cNaOsnovu )
 
@@ -297,8 +298,9 @@ FUNCTION ld_krediti_key_handler( Ch )
 
          ENDDO
 
-         f18_free_tables( { "ld_radkr" } )
+
          sql_table_update( nil, "END" )
+         f18_free_tables( { "ld_radkr" } )
 
       ENDIF
 
@@ -381,8 +383,9 @@ FUNCTION ld_krediti_redefinisanje_rata()
 
       nTotalKr := 0
 
-      f18_lock_tables( { "ld_radkr" } )
       sql_table_update( nil, "BEGIN" )
+      f18_lock_tables( { "ld_radkr" }, .T. )
+
 
       DO WHILE !Eof() .AND. cKreditor == idkred ;
             .AND. idradn = _idradn ;
@@ -448,8 +451,9 @@ FUNCTION ld_krediti_redefinisanje_rata()
          ENDIF
       ENDDO
 
-      f18_free_tables( { "ld_radkr" } )
       sql_table_update( nil, "END" )
+      f18_free_tables( { "ld_radkr" } )
+
 
       log_write( "F18_DOK_OPER: ld, redefinisanje kredita za radnika: " + cIdRadn, 2 )
 
@@ -1143,8 +1147,9 @@ FUNCTION ld_brisanje_kredita()
    SET ORDER TO TAG "2"
    SEEK cIdRadn + cIdKred + cNaOsnovu
 
-   f18_lock_tables( { "ld_radkr" } )
    sql_table_update( nil, "BEGIN" )
+   f18_lock_tables( { "ld_radkr" }, .T. )
+
 
    nStavki := 0
    DO WHILE !Eof() .AND. idradn + idkred + naosnovu == cIdRadn + cIdKred + cNaOsnovu
@@ -1159,8 +1164,9 @@ FUNCTION ld_brisanje_kredita()
       GO ( nRec )
    ENDDO
 
-   f18_free_tables( { "ld_radkr" } )
    sql_table_update( nil, "END" )
+   f18_free_tables( { "ld_radkr" } )
+
 
    IF nStavki > 0
       MsgBeep( "Sve neotplacene rate (ukupno " + AllTrim( Str( nStavki ) ) + ") kredita izbrisane!" )

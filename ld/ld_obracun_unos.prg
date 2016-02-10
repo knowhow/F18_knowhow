@@ -12,7 +12,6 @@
 #include "f18.ch"
 
 
-
 FUNCTION ld_unos_obracuna()
 
    LOCAL lSaveObracun
@@ -48,8 +47,7 @@ FUNCTION ld_unos_obracuna()
          cIdRadn := field->idRadn
 
          IF ( _UIznos < 0 )
-            Beep( 2 )
-            Msg( Lokal( "Radnik ne može imati platu u negativnom iznosu !" ) )
+            MsgBeep( "Radnik ne može imati platu u negativnom iznosu !"  )
          ENDIF
 
          nPom := 0
@@ -67,7 +65,7 @@ FUNCTION ld_unos_obracuna()
             IF !update_rec_server_and_dbf( "ld_ld",  _vals, 1, "FULL" )
                delete_with_rlock()
             ELSE
-               log_write( "F18_DOK_OPER: ld, " + IF( lNovi, "unos novog", "korekcija" ) + " obracuna plate - radnik: " + ld->idradn + ", mjesec: " + AllTrim( Str( ld->mjesec ) ) + ", godina: " + AllTrim( Str( ld->godina ) ), 2 )
+               log_write( "F18_DOK_OPER: ld, " + IIF( lNovi, "unos novog", "korekcija" ) + " obracuna plate - radnik: " + ld->idradn + ", mjesec: " + AllTrim( Str( ld->mjesec ) ) + ", godina: " + AllTrim( Str( ld->godina ) ), 2 )
             ENDIF
 
          ELSE
@@ -84,7 +82,7 @@ FUNCTION ld_unos_obracuna()
 
          SELECT ( F_LD )
          IF !Used()
-            RETURN
+            RETURN .F.
          ENDIF
 
          SELECT ld
@@ -93,7 +91,7 @@ FUNCTION ld_unos_obracuna()
             delete_with_rlock()
          ENDIF
 
-         RETURN
+         RETURN .F.
 
       ENDIF
 
@@ -104,7 +102,7 @@ FUNCTION ld_unos_obracuna()
 
    ENDDO
 
-   RETURN
+   RETURN .T.
 
 
 

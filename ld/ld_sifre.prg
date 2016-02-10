@@ -70,16 +70,16 @@ FUNCTION P_Radn( cId, dx, dy )
 
    ENDIF
 
-   AAdd( ImeKol, { Lokal( PadR( "StrSpr", 6 ) ), {|| PadC( field->Idstrspr, 6 ) }, "idstrspr",;
-         {|| .T. }, {|| P_StrSpr( @wIdStrSpr ) } } )
-   AAdd( ImeKol, { Lokal( PadR( "V.Posla", 6 ) ), {|| PadC( field->IdVPosla, 6 ) }, "IdVPosla",;
-         {|| .T. }, {|| Empty( wIdvposla ) .OR. P_VPosla( @wIdVPosla ) } } )
-   AAdd( ImeKol, { Lokal( PadR( "Ops.Stan", 8 ) ), {|| PadC( field->IdOpsSt, 8 ) }, "IdOpsSt",;
-        {|| .T. }, {|| P_Ops( @wIdOpsSt ) } } )
-   AAdd( ImeKol, { Lokal( PadR( "Ops.Rada", 8 ) ), {|| PadC( field->IdOpsRad, 8 ) }, "IdOpsRad",;
-        {|| .T. }, {|| P_Ops( @wIdOpsRad ) } } )
-   AAdd( ImeKol, { Lokal( PadR( "Maticni Br.", 13 ) ), {|| PadC( field->matbr, 13 ) }, "MatBr",;
-        {|| .T. }, {|| .T. } } )
+   AAdd( ImeKol, { Lokal( PadR( "StrSpr", 6 ) ), {|| PadC( field->Idstrspr, 6 ) }, "idstrspr", ;
+      {|| .T. }, {|| P_StrSpr( @wIdStrSpr ) } } )
+   AAdd( ImeKol, { Lokal( PadR( "V.Posla", 6 ) ), {|| PadC( field->IdVPosla, 6 ) }, "IdVPosla", ;
+      {|| .T. }, {|| Empty( wIdvposla ) .OR. P_VPosla( @wIdVPosla ) } } )
+   AAdd( ImeKol, { Lokal( PadR( "Ops.Stan", 8 ) ), {|| PadC( field->IdOpsSt, 8 ) }, "IdOpsSt", ;
+      {|| .T. }, {|| P_Ops( @wIdOpsSt ) } } )
+   AAdd( ImeKol, { Lokal( PadR( "Ops.Rada", 8 ) ), {|| PadC( field->IdOpsRad, 8 ) }, "IdOpsRad", ;
+      {|| .T. }, {|| P_Ops( @wIdOpsRad ) } } )
+   AAdd( ImeKol, { Lokal( PadR( "Maticni Br.", 13 ) ), {|| PadC( field->matbr, 13 ) }, "MatBr", ;
+      {|| .T. }, {|| .T. } } )
    AAdd( ImeKol, { Lokal( PadR( "Dat.Od", 8 ) ), {|| field->datod }, "datod", {|| .T. }, {|| .T. } } )
    AAdd( ImeKol, { Lokal( PadR( "POL", 3 ) ), {|| PadC( field->pol, 3 ) }, "POL", {|| .T. }, {|| wPol $ "MZ" } } )
    AAdd( ImeKol, { PadR( "K1", 2 ), {|| PadC( field->k1, 2 ) }, "K1", {|| .T. }, {|| .T. } } )
@@ -107,7 +107,7 @@ FUNCTION P_Radn( cId, dx, dy )
 
    IF radn->( FieldPos( "IDRJ" ) <> 0 )
       AAdd( ImeKol, { "ID RJ", {|| field->idrj }, "idrj", ;
-        {|| .T. }, {|| Empty( wIdRj ) .OR. P_LD_Rj( @wIdRj ) } } )
+         {|| .T. }, {|| Empty( wIdRj ) .OR. P_LD_Rj( @wIdRj ) } } )
    ENDIF
 
    // Dodaj specificna polja za popunu obrasca DP
@@ -115,7 +115,7 @@ FUNCTION P_Radn( cId, dx, dy )
       AAdd( ImeKol, { Lokal( PadC( "Ime ul.", 40 ) ), {|| field->streetname }, "streetname" } )
       AAdd( ImeKol, { Lokal( PadC( "Broj ul.", 10 ) ), {|| field->streetnum }, "streetnum" } )
       AAdd( ImeKol, { Lokal( PadC( "Zaposl.od", 12 ) ), {|| field->hiredfrom }, "hiredfrom", ;
-            {|| .T. }, {|| P_HiredFrom( @wHiredfrom ) } } )
+         {|| .T. }, {|| P_HiredFrom( @wHiredfrom ) } } )
       AAdd( ImeKol, { Lokal( PadC( "Zaposl.do", 12 ) ), {|| field->hiredto }, "hiredto" } )
    ENDIF
 
@@ -143,13 +143,13 @@ FUNCTION P_Radn( cId, dx, dy )
       ENDIF
    NEXT
 
-   aKol := { PadR( "vr.invalid", 10 ) , {|| Transform( field->vr_invalid, "9") }, "vr_invalid", ;
-           {|| .T.}, {|| Wvr_invalid==0 .OR. valid_vrsta_invaliditeta( Wvr_invalid ) }, NIL,  "9" }
+   aKol := { PadR( "vr.invalid", 10 ), {|| Transform( field->vr_invalid, "9" ) }, "vr_invalid", ;
+      {|| .T. }, {|| Wvr_invalid == 0 .OR. valid_vrsta_invaliditeta( Wvr_invalid ) }, NIL,  "9" }
 
    AAdd( ImeKol,  aKol )
 
-   aKol := { PadR( "st.invalid", 10 ), {|| Transform( field->st_invalid, "999") }, "st_invalid", ;
-           {|| .T.}, { || Wst_invalid >= 0 }, NIL, "999"  }
+   aKol := { PadR( "st.invalid", 10 ), {|| Transform( field->st_invalid, "999" ) }, "st_invalid", ;
+      {|| .T. }, {|| Wst_invalid >= 0 }, NIL, "999"  }
    AAdd( ImeKol,  aKol )
 
 
@@ -281,8 +281,9 @@ FUNCTION RadBl( Ch )
       SELECT radn
       GO TOP
 
-      f18_lock_tables( { "ld_radn" } )
       sql_table_update( nil, "BEGIN" )
+      f18_lock_tables( { "ld_radn" }, .T. )
+
 
       DO WHILE !Eof()
 
@@ -308,8 +309,9 @@ FUNCTION RadBl( Ch )
          SKIP
       ENDDO
 
-      f18_free_tables( { "ld_radn" } )
       sql_table_update( nil, "END" )
+      f18_free_tables( { "ld_radn" } )
+
       MsgC()
 
       GO TOP
@@ -637,7 +639,7 @@ FUNCTION P_TipPr2( cId, dx, dy )
    Kol := { 1, 2, 3, 4, 5, 6, 7, 8 }
 
    RETURN PostojiSifra( F_TIPPR2, 1, MAXROWS() -15, MAXCOLS() -20, Lokal( "Tipovi primanja za obracun 2" ),  @cId, dx, dy, ;
-     {| Ch| Tpr2Bl( Ch ) },,,,, { "ID" } )
+      {| Ch| Tpr2Bl( Ch ) },,,,, { "ID" } )
 
 
 
@@ -1104,8 +1106,8 @@ FUNCTION TotBrisRadn()
          LOOP
       ENDIF
 
-      f18_lock_tables( { "ld_radn", "ld_radkr" } )
-      sql_table_update( nil, "BEGIN" )
+sql_table_update( nil, "BEGIN" )
+      f18_lock_tables( { "ld_ld", "ld_radn", "ld_radkr" }, .T. )
 
       // brisem ga iz sifarnika radnika
       // -------------------------------
@@ -1155,8 +1157,7 @@ FUNCTION TotBrisRadn()
    ENDDO
 
    sql_table_update( nil, "END" )
-   f18_free_tables( { "ld_radn", "ld_radkr" } )
-
+   f18_free_tables( { "ld_ld", "ld_radn", "ld_radkr" } )
 
    SET KEY K_F5 TO
 
@@ -1164,7 +1165,7 @@ FUNCTION TotBrisRadn()
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
 
 FUNCTION PrTotBr( cIdRadn )

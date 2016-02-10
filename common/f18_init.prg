@@ -445,6 +445,8 @@ FUNCTION post_login( gVars )
       gVars := .T.
    ENDIF
 
+   server_log_enable()
+
    // ~/.F18/empty38/
    set_f18_home( my_server_params()[ "database" ] )
    log_write( "home baze: " + my_home() )
@@ -454,9 +456,7 @@ FUNCTION post_login( gVars )
    _ver := read_dbf_version_from_config()
 
    set_a_dbfs()
-
    cre_all_dbfs( _ver )
-
    kreiraj_pa_napuni_partn_idbr_pdvb ()
 
    // inicijaliziraj "dbf_key_fields" u __f18_dbf hash matrici
@@ -1031,7 +1031,6 @@ FUNCTION relogin()
    _get_server_params_from_config()
 
    IF f18_form_login()
-      server_log_enable()
       post_login()
    ENDIF
 

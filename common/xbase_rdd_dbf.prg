@@ -455,27 +455,67 @@ STATIC FUNCTION zatvori_dbf( value )
 
 
 
-FUNCTION dbf_open_temp_and_count( a_dbf_rec, nCnt, nDel )
+FUNCTION dbf_open_temp_and_count( aDbfRec, nCntSql, nCnt, nDel )
 
-   LOCAL cAliasTemp := "temp__" + a_dbf_rec[ "alias" ]
-   LOCAL cFullDbf := my_home() + a_dbf_rec[ "table" ]
+   LOCAL cAliasTemp := "temp__" + aDbfRec[ "alias" ]
+   LOCAL cFullDbf := my_home() + aDbfRec[ "table" ]
    LOCAL cFullIdx
+   LOCAL bKeyBlock, cEmptyRec, nDel0, nCnt2
 
    cFullIdx := ImeDbfCdx( cFullDbf )
 
-   SELECT ( a_dbf_rec[ "wa" ] + 2000 )
+   SELECT ( aDbfRec[ "wa" ] + 2000 )
    USE  ( cFullDbf ) Alias ( cAliasTemp )  SHARED
    IF File( cFullIdx )
       dbSetIndex( ImeDbfCdx( cFullDbf ) )
    ENDIF
 
    SET DELETED OFF
-
    SET ORDER TO TAG "DEL"
    COUNT TO nDel
    nCnt := RecCount()
+
+   IF Abs( nCntSql - nCnt + nDel ) > 0
+
+      AltD()
+      // delete empty dbf records
+      bKeyBlock := aDbfRec[ "algoritam" ][ 1 ][ "dbf_key_block" ]
+      IF hb_HHasKey( aDbfRec[ "algoritam" ][ 1 ], "dbf_key_empty_rec" )
+
+         nDel0 := nDel
+         SET ORDER TO
+         SET DELETED ON
+         cEmptyRec := aDbfRec[ "algoritam" ][ 1 ][ "dbf_key_empty_rec" ]
+
+         nCnt2 := 0
+         dbEval( {|| delete_empty_records( bKeyBlock, cEmptyRec, @nCnt2 ) } )
+         SET DELETED OFF
+         SET ORDER TO TAG "DEL"
+         COUNT TO nDel
+         log_write( "DELETING (nDel0:" + ;
+            AllTrim( Str( nDel0 ) ) + ") empty records for dbf: " + ;
+            aDbfRec[ "table" ] + " nDel:" + AllTrim( Str( nDel ) ) + ;
+            " nCnt2= " + AllTrim( Str ( nCnt2 ) ), 1 )
+      ELSE
+         log_write( "ERR tbl:" + aDbfRec[ "table" ] + "not defined dbf_key_empty_rec", 1 )
+      ENDIF
+
+   ENDIF
 
    USE
    SET DELETED ON
 
    RETURN .T.
+
+
+STATIC FUNCTION delete_empty_records( bKeyBlock, cEmptyRec, nCnt2 )
+
+   IF Eval( bKeyBlock ) == cEmptyRec
+      RLock()
+      dbDelete()
+      dbUnlock()
+      nCnt2++
+      RETURN .T.
+   ENDIF
+
+   RETURN .F.

@@ -53,7 +53,7 @@ FUNCTION set_a_dbf_ld()
    set_a_dbf_sifarnik( "ld_norsiht", "NORSIHT", F_NORSIHT   )
    set_a_dbf_sifarnik( "ld_tprsiht", "TPRSIHT", F_TPRSIHT   )
 
-   RETURN
+   RETURN .T.
 
 
 FUNCTION set_a_dbf_ld_ld()
@@ -74,7 +74,8 @@ FUNCTION set_a_dbf_ld_ld()
 
    // algoritam 1 - default
    _alg := hb_Hash()
-   _alg[ "dbf_key_block" ]  := {|| Str( field->godina, 4 ) + field->idrj + Str( field->mjesec, 2 ) + field->obr + field->idradn }
+   _alg[ "dbf_key_block" ]  := {|| Str( field->godina, 4, 0 ) + field->idrj + Str( field->mjesec, 2, 0 ) + field->obr + field->idradn }
+   _alg[ "dbf_key_empty_rec" ] := STR( 0, 4, 0) + SPACE( 2 ) + STR( 0, 2, 0) + " " + SPACE( 6 )
    _alg[ "dbf_key_fields" ] := { { "godina", 4 }, "idrj", { "mjesec", 2 }, "obr", "idradn" }
    _alg[ "sql_in" ]         := "lpad(godina::char(4), 4) || rpad(idrj, 2) || lpad(mjesec::char(2),2) || rpad(obr,1) || rpad(idradn,6)"
    _alg[ "dbf_tag" ]        := "1"
@@ -92,7 +93,7 @@ FUNCTION set_a_dbf_ld_ld()
 
    f18_dbfs_add( _tbl, @_item )
 
-   RETURN
+   RETURN .T.
 
 
 FUNCTION set_a_dbf_ld_radn()

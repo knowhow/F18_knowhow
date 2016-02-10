@@ -19,6 +19,7 @@ FUNCTION GlobalErrorHandler( err_obj, lShowErrorReport, lQuitApp )
    LOCAL _msg, _log_msg := "BUG REPORT: "
    LOCAL lNotify := .F.
    LOCAL bErr
+   LOCAL nI, cMsg
 
    bErr := ErrorBlock( {| oError | Break( oError ) })
 
@@ -44,7 +45,6 @@ FUNCTION GlobalErrorHandler( err_obj, lShowErrorReport, lQuitApp )
    SET DEVICE TO PRINTER
    SET PRINTER to ( _out_file )
    SET PRINTER ON
-
    P_12CPI
 
    ? Replicate( "=", 84 )
@@ -92,13 +92,7 @@ FUNCTION GlobalErrorHandler( err_obj, lShowErrorReport, lQuitApp )
    _log_msg += " ; " + _msg
 
    ? "---", Replicate( "-", 80 )
-   FOR _i := 1 TO 30
-      IF !Empty( ProcName( _i ) )
-         _msg := Str( _i, 3 ) + " " + ProcName( _i ) + " / " + AllTrim( Str( ProcLine( _i ), 6 ) )
-         ? _msg
-         _log_msg += " ; " + _msg
-      ENDIF
-   NEXT
+   LOG_CALL_STACK _log_msg .T.
    ? "---", Replicate( "-", 80 )
    ?
 

@@ -276,7 +276,8 @@ FUNCTION unos_datuma_isplate_place()
 FUNCTION g_isp_date( cRj, nGod, nMjesec, cObr, nMjIsp, cIsplZa, cVrsta )
 
    LOCAL dDate := CToD( "" )
-   LOCAL nTArea := Select()
+
+   PushWa()
 
    nMjIsp := 0
    cIsplZa := Space( 50 )
@@ -308,17 +309,17 @@ FUNCTION g_isp_date( cRj, nGod, nMjesec, cObr, nMjIsp, cIsplZa, cVrsta )
       dDate := CToD( "" )
    ENDIF
 
-   SELECT ( nTArea )
+   PopWa()
 
    RETURN dDate
 
 
-STATIC FUNCTION s_isp_date( cRj, nGod, nMjesec, cObr, dDatIspl, nMjIspl, ;
-      cIsplZa, cVrsta )
+STATIC FUNCTION s_isp_date( cRj, nGod, nMjesec, cObr, dDatIspl, nMjIspl, cIsplZa, cVrsta )
 
-   LOCAL nTArea := Select()
    LOCAL _rec
    LOCAL _field_ids, _where_cond
+
+   PushWA()
 
    SELECT F_OBRACUNI
    IF !Used()
@@ -358,12 +359,11 @@ STATIC FUNCTION s_isp_date( cRj, nGod, nMjesec, cObr, dDatIspl, nMjIspl, ;
 
    ENDIF
 
-   // azuriranje na sql server
    update_rec_server_and_dbf( "ld_obracuni", _rec, 1, "FULL" )
 
-   SELECT ( nTArea )
+   PopWa()
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -377,20 +377,20 @@ FUNCTION ld_provjeri_dat_isplate_za_mjesec( godina, mjesec, rj )
    _qry += "FROM fmk.ld_ld ld "
    _qry += "LEFT JOIN fmk.ld_obracuni obr ON ld.godina = obr.godina AND ld.mjesec = obr.mjesec AND obr.status = 'G' "
 
-   IF rj <> NIL .and. !EMPTY( rj )
+   IF rj <> NIL .AND. !Empty( rj )
       _qry += " AND obr.rj = " + _sql_quote( rj )
    ELSE
       _qry += " AND ld.idrj = obr.rj"
    ENDIF
 
    _qry += " WHERE "
-   _qry += " ld.godina = " + ALLTRIM( STR( godina ) )
-   _qry += " AND ld.mjesec = " + ALLTRIM( STR( mjesec ) )
+   _qry += " ld.godina = " + AllTrim( Str( godina ) )
+   _qry += " AND ld.mjesec = " + AllTrim( Str( mjesec ) )
    _qry += " AND obr.dat_ispl IS NULL "
    _qry += "GROUP BY ld.godina, ld.mjesec, ld.idrj, obr.dat_ispl  "
 
    _data := _sql_query( my_server(), _qry )
 
-   _count := _data:FieldGet(1)
+   _count := _data:FieldGet( 1 )
 
    RETURN _count

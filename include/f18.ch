@@ -50,6 +50,17 @@
 #define F18_DEFAULT_LOG_LEVEL_DEBUG 9
 #define F18_DEFAULT_LOG_LEVEL       3
 
+#xcommand LOG_CALL_STACK <cLogStr> <lStdOut>     ;
+  => FOR nI := 1 TO 30                             ;
+    ;  IF !Empty( ProcName( nI ) )                 ;
+    ;   cMsg := Str( nI, 3 ) + " " + ProcName( nI ) + " / " + AllTrim( Str( ProcLine( nI ), 6 ) ) ;
+    ;   IF <lStdOut>               ;
+    ;        QOut( cMsg )          ;
+    ;   END                        ;
+    ;   <cLogStr> := <cLogStr> + " // " + cMsg    ;
+    ;  END                                  ;
+    ; NEXT
+
 
 #ifndef TEST
   #ifndef F18_RELEASE_DEFINED
@@ -114,7 +125,7 @@
     => replsql_dummy()
 
 #define SEMAPHORE_LOCK_RETRY_IDLE_TIME 1
-#define SEMAPHORE_LOCK_RETRY_NUM 50
+#define SEMAPHORE_LOCK_RETRY_NUM 10
 
 #define SIFK_LEN_DBF     8
 #define SIFK_LEN_OZNAKA  4
@@ -167,10 +178,10 @@
 #define EXEPATH   my_home_root()
 #define SIFPATH   my_home()
 
-#define PRIVPATH my_home()
+#define PRIVPATH  my_home()
 
-#define KUMPATH  my_home()
-#define CURDIR   my_home()
+#define KUMPATH   my_home()
+#define CURDIR    my_home()
 
 #define I_ID 1
 #define DE_ADD  5

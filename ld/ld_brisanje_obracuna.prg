@@ -102,9 +102,9 @@ FUNCTION BrisiRadnika()
 
             Postotak( 1, RecCount(), "Ukloni 0 zapise" )
 
-            f18_lock_tables( { "ld_ld" } )
             sql_table_update( nil, "BEGIN" )
 
+            f18_lock_tables( { "ld_ld" }, .T. )
             DO WHILE !Eof()
 
                nPom := 0
@@ -128,11 +128,12 @@ FUNCTION BrisiRadnika()
 
             Postotak( 0 )
 
-            f18_free_tables( { "ld_ld" } )
+
             sql_table_update( nil, "END" )
+            f18_free_tables( { "ld_ld" } )
 
          ELSE
-            MsgBeep( "Neko vec koristi datoteku LD !!!" )
+            MsgBeep( "Neko već koristi datoteku LD !" )
          ENDIF
       ENDIF
 
@@ -142,7 +143,7 @@ FUNCTION BrisiRadnika()
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
 
 

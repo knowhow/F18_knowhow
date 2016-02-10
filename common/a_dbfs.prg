@@ -33,13 +33,28 @@ FUNCTION set_a_dbfs()
    set_a_dbf_ld()
    set_a_dbf_ld_sif()
 
-   set_a_dbf_pos()
    set_a_dbf_epdv()
    set_a_dbf_os()
-   set_a_dbf_virm()
-   set_a_dbf_rnal()
-   set_a_dbf_mat()
-   set_a_dbf_kadev()
+
+   IF f18_use_module( "pos" )
+      set_a_dbf_pos()
+   ENDIF
+
+   IF f18_use_module( "virm" ) .OR. f18_use_module( "ld" )
+      set_a_dbf_virm()
+   ENDIF
+
+   IF f18_use_module( "rnal" )
+      set_a_dbf_rnal()
+   ENDIF
+
+   IF f18_use_module( "mat" )
+      set_a_dbf_mat()
+   ENDIF
+
+   IF f18_use_module( "kadev" )
+      set_a_dbf_kadev()
+   ENDIF
 
    RETURN .T.
 
@@ -52,7 +67,7 @@ FUNCTION set_a_dbfs_key_fields()
 
    FOR EACH _key in __f18_dbfs:Keys
 
-      // nije zadano - ja cu na osnovu strukture dbf-a
+      // nije zadano - na osnovu strukture dbf-a
       // napraviti dbf_fields
       IF !hb_HHasKey( __f18_dbfs[ _key ], "dbf_fields" )  .OR.  __f18_dbfs[ _key ][ "dbf_fields" ] == NIL
          set_dbf_fields_from_struct( @__f18_dbfs[ _key ] )
@@ -190,12 +205,12 @@ FUNCTION get_a_dbf_rec( tbl, _only_basic_params )
 
    IF _dbf_tbl == "x"
       _msg := "ERROR: x dbf alias " + tbl + " ne postoji u a_dbf_rec ?!"
-      _rec := hb_hash()
+      _rec := hb_Hash()
       _rec[ "temp" ] := .T.
-      _rec[ "table"] := tbl
-      _rec[ "alias"] := tbl
+      _rec[ "table" ] := tbl
+      _rec[ "alias" ] := tbl
       _rec[ "sql" ] := .F.
-      log_write( _msg, 1)
+      log_write( _msg, 1 )
       RETURN _rec
 
    ENDIF
@@ -238,7 +253,6 @@ FUNCTION get_a_dbf_rec( tbl, _only_basic_params )
    ENDIF
 
    // nije zadano - na osnovu strukture dbf-a
-   // napraviti dbf_fields
    IF !hb_HHasKey( _rec, "dbf_fields" ) .OR. _rec[ "dbf_fields" ] == NIL
       set_dbf_fields_from_struct( @_rec )
    ENDIF
@@ -262,7 +276,7 @@ FUNCTION set_a_dbf_rec_chk0( table )
 
 FUNCTION is_chk0( table )
 
-      RETURN __f18_dbfs[ table ][ "chk0" ]
+   RETURN __f18_dbfs[ table ][ "chk0" ]
 
 
 
@@ -349,9 +363,13 @@ FUNCTION set_dbf_fields_from_struct( rec )
 
    LOCAL lTabelaOtvorenaOvdje := .F.
    LOCAL _dbf
-   LOCAL lSql
+   LOCAL _err
+   LOCAL cLogMsg
 
-   lSql := hb_hHasKey( rec, "sql") .AND. ValType( rec[ "sql" ] ) == "L"  .AND. rec[ "sql" ]
+   LOCAL lSql
+   LOCAL nI, cMsg
+
+   lSql := hb_HHasKey( rec, "sql" ) .AND. ValType( rec[ "sql" ] ) == "L"  .AND. rec[ "sql" ]
 
    IF rec[ "temp" ]  // ovi podaci ne trebaju za temp tabele
       RETURN .F.
@@ -374,21 +392,23 @@ FUNCTION set_dbf_fields_from_struct( rec )
          rec[ "dbf_fields" ]     := NIL
          rec[ "dbf_fields_len" ] := NIL
 
-         _msg := "ERR-DBF: " + _err:description + ": tbl:" + my_home() + rec[ "table" ] + " alias:" + rec[ "alias" ] + " se ne moze otvoriti ?!"
-         log_write( _msg, 5 )
-         RETURN .T.
+         cLogMsg := "ERR-DBF: " + _err:description + ": tbl:" + my_home() + rec[ "table" ] + " alias:" + rec[ "alias" ] + " se ne moze otvoriti ?!"
+         LOG_CALL_STACK cLogMsg .F.
+
+         log_write( cLogMsg, 5 )
+         RETURN .F.
 
       END SEQUENCE
       lTabelaOtvorenaOvdje := .T.
    ENDIF
 
 
-   IF !USED() .AND. lSql
-         rec[ "dbf_fields" ]     := NIL
-         rec[ "dbf_fields_len" ] := NIL
+   IF !Used() .AND. lSql
+      rec[ "dbf_fields" ]     := NIL
+      rec[ "dbf_fields_len" ] := NIL
    ELSE
-         rec[ "dbf_fields" ] := NIL
-         set_rec_from_dbstruct( @rec )
+      rec[ "dbf_fields" ] := NIL
+      set_rec_from_dbstruct( @rec )
    ENDIF
 
    IF lTabelaOtvorenaOvdje
@@ -396,6 +416,7 @@ FUNCTION set_dbf_fields_from_struct( rec )
    ENDIF
 
    PopWa()
+
    RETURN .T.
 
 
@@ -484,7 +505,7 @@ FUNCTION is_sql_table( cDbf )
 
 STATIC FUNCTION zatvori_dbf( value )
 
-   SELECT( value[ 'wa' ] )
+   Select( value[ 'wa' ] )
 
    IF Used()
       // ostalo je još otvorenih DBF-ova

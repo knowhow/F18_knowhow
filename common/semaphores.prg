@@ -42,7 +42,6 @@ FUNCTION lock_semaphore( table, status, lUnlockTable )
    ENDIF
 
    // status se moze mijenjati samo ako neko drugi nije lock-ovao tabelu
-
    log_write( "table: " + table + ", status:" + status + " START", 8 )
 
    _i := 0
@@ -643,7 +642,6 @@ FUNCTION dbf_refresh( cTable )
 
    PushWA()
 
-   dbf_refresh_0( aDbfRec   )
 
    hVersions := get_semaphore_version_h( aDbfRec[ 'table' ] )
 
@@ -655,6 +653,8 @@ FUNCTION dbf_refresh( cTable )
    IF ( hVersions[ 'version' ] < hVersions[ 'last_version' ] )
       update_dbf_from_server( aDbfRec[ 'table' ], "IDS" )
    ENDIF
+
+   dbf_refresh_0( aDbfRec )
 
    in_dbf_refresh( aDbfRec[ 'table' ], .F. )
 
@@ -669,6 +669,7 @@ STATIC FUNCTION dbf_refresh_0( aDbfRec )
 
    LOCAL cMsg1, cMsg2
    LOCAL nCntSql, nCntDbf, nDeleted
+
 #ifdef F18_DEBUG
    LOCAL lSilent := .F.
 #else
@@ -690,7 +691,7 @@ STATIC FUNCTION dbf_refresh_0( aDbfRec )
    log_write( "stanje dbf " +  cMsg1, 8 )
 
    nCntSql := table_count( aDbfRec[ "table" ] )
-   dbf_open_temp_and_count( aDbfRec, @nCntDbf, @nDeleted )
+   dbf_open_temp_and_count( aDbfRec, nCntSql, @nCntDbf, @nDeleted )
 
    cMsg1 := "nakon sync: " +  aDbfRec[ "alias" ] + " / " + aDbfRec[ "table" ]
    cMsg2 := "cnt_sql: " + AllTrim( Str( nCntSql, 0 ) ) + " cnt_dbf: " + AllTrim( Str( nCntDbf, 0 ) ) + " del_dbf: " + AllTrim( Str( nDeleted, 0 ) )
@@ -701,6 +702,7 @@ STATIC FUNCTION dbf_refresh_0( aDbfRec )
    ENDIF
 
    log_write( cMsg1 + " " + cMsg2, 8 )
+
 
    check_recno_and_fix( aDbfRec[ "table" ], nCntSql, nCntDbf - nDeleted )
 

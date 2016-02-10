@@ -11,12 +11,14 @@
 
 #include "f18.ch"
 
-FUNCTION use_sql_ld_ld( nGodina, nMjesec, nMjesecDo, nVrInvalid, nStInvalid )
+FUNCTION use_sql_ld_ld( nGodina, nMjesec, nMjesecDo, nVrInvalid, nStInvalid, cFilter )
 
    LOCAL cSql
    LOCAL aDbf := a_dbf_ld_ld()
    LOCAL cTable := "ld_ld"
    LOCAL hIndexes, cKey
+
+   hb_default( @cFilter, ".t.")
 
    cSql := "SELECT "
    cSql += sql_from_adbf( @aDbf, cTable )
@@ -41,8 +43,9 @@ FUNCTION use_sql_ld_ld( nGodina, nMjesec, nMjesecDo, nVrInvalid, nStInvalid )
 
    hIndexes := h_ld_ld_indexes()
 
+altd()
    FOR EACH cKey IN hIndexes:Keys
-      INDEX ON  &(hIndexes[ cKey ])  TAG ( cKey ) TO ( cTable )
+      INDEX ON  &(hIndexes[ cKey ])  TAG ( cKey ) TO ( cTable ) FOR &cFilter
    NEXT
    SET ORDER TO TAG "1"
 

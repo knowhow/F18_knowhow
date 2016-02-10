@@ -1,16 +1,16 @@
 /*
- * This file is part of the bring.out FMK, a free and open source
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+ * This file is part of the bring.out knowhow ERP, a free and open source
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
 
-
 #include "f18.ch"
+
 
 STATIC __var_obr
 
@@ -105,12 +105,12 @@ FUNCTION BoxRekSvi()
       @ m_x +11, m_y + 2 SAY8 "Stepen invaliditeta (>=)    : "  GET  nStepenInvaliditeta  PICT "999" VALID valid_stepen_invaliditeta( @nStepenInvaliditeta )
 
       READ
-
       ClvBox()
+
       ESC_BCR
       aUsl1 := Parsiraj( qqRJ, "IDRJ" )
-      aUsl2 := Parsiraj( qqRJ, "ID" )
-      IF aUsl1 <> NIL .AND. aUsl2 <> nil
+      aUsl2 := Parsiraj( qqRJ, "ID" ) // koristi se u zagl_rekapitulacija_plata_svi za filtriranje radnih jedinica
+      IF aUsl1 <> NIL
          EXIT
       ENDIF
    ENDDO
@@ -1067,7 +1067,7 @@ FUNCTION napr_obracun( lSvi, a_benef )
 
 
 
-FUNCTION ZaglSvi()
+FUNCTION zagl_rekapitulacija_plata_svi()
 
    SELECT por
    GO TOP

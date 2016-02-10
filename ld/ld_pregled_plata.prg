@@ -12,7 +12,7 @@
 #include "f18.ch"
 
 
-FUNCTION ld_pregled_plata()
+FUNCTION pregled_plata()
 
    LOCAL nC1 := 20
    LOCAL cPrBruto := "N"
@@ -43,14 +43,17 @@ FUNCTION ld_pregled_plata()
    PRIVATE cKBenef := " "
    PRIVATE cVPosla := "  "
 
+   PRIVATE nStepenInvaliditeta := 0
+   PRIVATE nVrstaInvaliditeta := 0
+
    cIdMinuli := "17"
    cKontrola := "N"
 
-   Box(, 11, 75 )
-   @ m_x + 1, m_y + 2 SAY Lokal( "Radna jedinica (prazno-sve): " )  GET cIdRJ
-   @ m_x + 2, m_y + 2 SAY "Mjesec: "  GET  cMjesec  PICT "99"
+   Box(, 14, 75 )
+   @ m_x + 1, m_y + 2 SAY8 Lokal( "Radna jedinica (prazno-sve): " )  GET cIdRJ
+   @ m_x + 2, m_y + 2 SAY8 "Mjesec: "  GET  cMjesec  PICT "99"
    IF lViseObr
-      @ m_x + 2, Col() + 2 SAY "Obracun:" GET cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
+      @ m_x + 2, Col() + 2 SAY8 "Obračun:" GET cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
    ENDIF
    @ m_x + 3, m_y + 2 SAY8 "Godina: "  GET  cGodina  PICT "9999"
    @ m_x + 4, m_y + 2 SAY8 "Koeficijent benef.radnog staža (prazno-svi): "  GET  cKBenef VALID Empty( cKBenef ) .OR. P_KBenef( @cKBenef )
@@ -60,27 +63,38 @@ FUNCTION ld_pregled_plata()
    @ m_x + 9, m_y + 2 SAY "Prikaz bruto iznosa ?" GET cPrBruto ;
       VALID cPrBruto $ "DN" PICT "@!"
    @ m_x + 11, m_y + 2 SAY8 "Kontrola (br.-dopr.-porez)+(prim.van neta)-(odbici)=(za isplatu)? (D/N)" GET cKontrola VALID cKontrola $ "DN" PICT "@!"
-   read; clvbox(); ESC_BCR
+
+
+   @ m_x + 13, m_y + 2 SAY8 "Vrsta invaliditeta (0 sve)  : "  GET  nVrstaInvaliditeta  PICT "9" VALID nVrstaInvaliditeta == 0 .OR. valid_vrsta_invaliditeta( @nVrstaInvaliditeta )
+   @ m_x + 14, m_y + 2 SAY8 "Stepen invaliditeta (>=)    : "  GET  nStepenInvaliditeta  PICT "999" VALID valid_stepen_invaliditeta( @nStepenInvaliditeta )
+
+   READ
+   clvbox()
+   ESC_BCR
    BoxC()
 
    WPar( "VS", cVarSort )
    SELECT PARAMS
    USE
 
-   ParObr( cMjesec, cGodina, IIF( lViseObr, cObracun, ) )
+   ParObr( cMjesec, cGodina, iif( lViseObr, cObracun, ) )
 
    tipprn_use()
 
    IF !Empty( cKbenef )
       SELECT kbenef
-      hseek  ckbenef
+      hseek  cKbenef
    ENDIF
+
    IF !Empty( cVPosla )
       SELECT vposla
-      hseek  cvposla
+      hseek  cVposla
    ENDIF
 
    SELECT ld
+   USE
+   AltD()
+   use_sql_ld_ld( cGodina, cMjesec, cMjesec, nVrstaInvaliditeta, nStepenInvaliditeta )
 
    // 1 - "str(godina)+idrj+str(mjesec)+idradn"
    // 2 - "str(godina)+str(mjesec)+idradn"
@@ -89,7 +103,7 @@ FUNCTION ld_pregled_plata()
       cidrj := ""
       IF cVarSort == "1"
          SET ORDER TO tag ( TagVO( "2" ) )
-         hseek Str( cGodina, 4 ) + Str( cmjesec, 2 ) + if( lViseObr .AND. !Empty( cObracun ), cObracun, "" )
+         HSEEK Str( cGodina, 4, 0 ) + Str( cMjesec, 2, 0 ) + iif( lViseObr .AND. !Empty( cObracun ), cObracun, "" )
       ELSE
          Box(, 2, 30 )
          nSlog := 0
@@ -112,8 +126,8 @@ FUNCTION ld_pregled_plata()
          nSlog := 0
          cSort1 := "SortPrez(IDRADN)"
          cFilt := "IDRJ==" + _filter_quote( cIdRj ) + ".and." + ;
-            IF( Empty( cMjesec ), ".t.", "MJESEC==" + _filter_quote( cMjesec ) ) + ".and." + ;
-            IF( Empty( cGodina ), ".t.", "GODINA==" + _filter_quote( cGodina ) )
+            iif( Empty( cMjesec ), ".t.", "MJESEC==" + _filter_quote( cMjesec ) ) + ".and." + ;
+            iif( Empty( cGodina ), ".t.", "GODINA==" + _filter_quote( cGodina ) )
          IF lViseObr .AND. !Empty( cObracun )
             cFilt += ".and.OBR=" + _filter_quote( cObracun )
          ENDIF
@@ -145,10 +159,10 @@ FUNCTION ld_pregled_plata()
       m += " " + Replicate( "-", 12 )
    ENDIF
 
-   bZagl := {|| ZPregPl() }
+   bZagl := {|| zagl_pregled_plata() }
 
    SELECT ld_rj
-   hseek ld->idrj
+   HSEEK ld->idrj
    SELECT ld
 
    START PRINT CRET
@@ -303,12 +317,12 @@ FUNCTION ld_pregled_plata()
       @ PRow(), PCol() + 1 SAY _uiznos PICT gpici
 
       IF cKontrola == "D"
-            nKontrola := ( nBrOsn - nDoprIz - nPorez ) + nVanP + nVanM
-            IF Round( _uiznos, 2 ) = Round( nKontrola, 2 )
-               // nista
-            ELSE
-               @ PRow(), PCol() + 1 SAY "ERR"
-            ENDIF
+         nKontrola := ( nBrOsn - nDoprIz - nPorez ) + nVanP + nVanM
+         IF Round( _uiznos, 2 ) = Round( nKontrola, 2 )
+            // nista
+         ELSE
+            @ PRow(), PCol() + 1 SAY "ERR"
+         ENDIF
       ENDIF
 
       nT1 += _usati
@@ -362,7 +376,7 @@ FUNCTION ld_pregled_plata()
 
 
 
-STATIC FUNCTION ZPregPl()
+STATIC FUNCTION zagl_pregled_plata()
 
    ?
 
@@ -371,36 +385,45 @@ STATIC FUNCTION ZPregPl()
    ? Upper( gTS ) + ":", gnFirma
    ?
 
-   IF Empty( cidrj )
-      ? Lokal( "Pregled za sve RJ ukupno:" )
+   IF Empty( cIdrj )
+      ? "Pregled za sve RJ ukupno:"
    ELSE
-      ? Lokal( "RJ:" ), cIdRj, ld_rj->naz
+      ? "RJ:", cIdRj, ld_rj->naz
    ENDIF
 
-   ?? Space( 2 ) + Lokal( "Mjesec:" ), Str( cmjesec, 2 ) + IspisObr()
-   ?? Space( 4 ) + Lokal( "Godina:" ), Str( cGodina, 5 )
+   ?? Space( 2 ) + "Mjesec:", Str( cMjesec, 2 ) + IspisObr()
+   ?? Space( 4 ) + "Godina:", Str( cGodina, 5 )
 
-   DevPos( PRow(), 74 )
+   ?? SPACE(10), " Str.", Str( ++nStrana, 3 )
 
-   ?? Lokal( "Str." ), Str( ++nStrana, 3 )
+   IF nVrstaInvaliditeta > 0 .OR. nStepenInvaliditeta > 0
+      ?
+   ENDIF
+   IF nVrstaInvaliditeta > 0
+      ?? " Vr.invaliditeta:", Str( nVrstaInvaliditeta, 1, 0 )
+   ENDIF
+   IF nStepenInvaliditeta > 0
+      ?? " St.invaliditeta", Str( nStepenInvaliditeta, 3, 0 )
+   ENDIF
 
-   IF !Empty( cvposla )
-      ? Lokal( "Vrsta posla:" ), cvposla, "-", vposla->naz
+
+   IF !Empty( cVposla )
+      ? "Vrsta posla:", cVposla, "-", vposla->naz
    ENDIF
    IF !Empty( cKBenef )
-      ? Lokal( "Stopa beneficiranog r.st:" ), ckbenef, "-", kbenef->naz, ":", kbenef->iznos
+      ? "Stopa beneficiranog r.st:", cKbenef, "-", kbenef->naz, ":", kbenef->iznos
    ENDIF
 
    ? m
 
    IF gVarPP == "2"
-         ? Lokal( " Rbr * Sifra*         Naziv radnika            *  Sati   *   Redovan *  Minuli   *   Neto    *       VAN NETA       * ZA ISPLATU*" )
-         ? Lokal( "     *      *                                  *         *     rad   *   rad     *           * Primanja  * Obustave *           *" )
+      ?U " Rbr * Šifra*         Naziv radnika            *  Sati   *   Redovan *  Minuli   *   Neto    *       VAN NETA       * ZA ISPLATU*"
+      ?U "     *      *                                  *         *     rad   *   rad     *           * Primanja  * Obustave *           *"
    ELSE
-         ? Lokal( " Rbr * Sifra*         Naziv radnika            *  Sati   * Primanja  * Bruto pl. * Dopr (iz) * L.odbici  *  Porez    *    Neto   *  Na ruke  *  Ostale  *  Odbici    * ZA ISPLATU*" )
-         ? "     *      *                                  *         *           * 1 x koef. *  1 x 31%  *           *    10%    *   (2-3)   *  (2-3-5)  * naknade  *            *(7 + 8 + 9)*"
-         ? "     *      *                                  *         *    (1)    *    (2)    *    (3)    *    (4)    *   (5)     *    (6)    *    (7)    *    (8)   *    (9)     *    (10)   *"
+      ?U " Rbr * Šifra*         Naziv radnika            *  Sati   * Primanja  * Bruto pl. * Dopr (iz) * L.odbici  *  Porez    *    Neto   *  Na ruke  *  Ostale  *  Odbici    * ZA ISPLATU*"
+      ?U "     *      *                                  *         *           * 1 x koef. *  1 x 31%  *           *    10%    *   (2-3)   *  (2-3-5)  * naknade  *            *(7 + 8 + 9)*"
+      ?U "     *      *                                  *         *    (1)    *    (2)    *    (3)    *    (4)    *   (5)     *    (6)    *    (7)    *    (8)   *    (9)     *    (10)   *"
    ENDIF
    ? m
 
-   RETURN
+   RETURN .T.

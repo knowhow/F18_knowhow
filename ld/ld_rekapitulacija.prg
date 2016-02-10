@@ -78,16 +78,8 @@ FUNCTION ld_rekapitulacija( lSvi )
 
    SELECT ld
    USE
-   altd()
-   use_sql_ld_ld( nGodina, nMjesec, nMjesecDo, nVrstaInvaliditeta, nStepenInvaliditeta)
 
    cObracun := Trim( cObracun )
-
-   IF lSvi
-      SET ORDER TO tag ( TagVO( "2" ) )
-   ELSE
-      SET ORDER TO tag ( TagVO( "1" ) )
-   ENDIF
 
    hParams := hb_Hash()
    hParams[ 'svi' ] := lSvi
@@ -103,18 +95,27 @@ FUNCTION ld_rekapitulacija( lSvi )
 
    cFilt1 := get_ld_rekap_filter( hParams )
 
+   AltD()
+   use_sql_ld_ld( nGodina, nMjesec, nMjesecDo, nVrstaInvaliditeta, nStepenInvaliditeta, cFilt1 )
 
-   IF cFilt1 == ".t."
-      SET FILTER TO
+
+   IF lSvi
+      SET ORDER TO tag ( TagVO( "2" ) )
    ELSE
-      SET FILTER TO &cFilt1
+      SET ORDER TO tag ( TagVO( "1" ) )
    ENDIF
 
+   // IF cFilt1 == ".t."
+   // SET FILTER TO
+   // ELSE
+   // SET FILTER TO &cFilt1
+   // ENDIF
+
    IF !lSvi
-      SEEK Str( nGodina, 4, 0) + cIdRj + Str( nMjesec, 2, 0) + cObracun
+      SEEK Str( nGodina, 4, 0 ) + cIdRj + Str( nMjesec, 2, 0 ) + cObracun
       EOF CRET
    ELSE
-      SEEK Str( nGodina, 4, 0) + Str( nMjesec, 2, 0) + cObracun
+      SEEK Str( nGodina, 4, 0 ) + Str( nMjesec, 2, 0 ) + cObracun
       EOF CRET
    ENDIF
 
@@ -222,7 +223,7 @@ FUNCTION ld_rekapitulacija( lSvi )
    ENDIF
 
    IF lSvi
-      ZaglSvi()
+      zagl_rekapitulacija_plata_svi()
    ELSE
       ZaglJ()
    ENDIF
@@ -879,6 +880,8 @@ FUNCTION get_ld_rekap_filter( hParams )
    LOCAL nMjesec := hParams[ 'mjesec' ]
    LOCAL nMjesecDo := hParams[ 'mjesec_do' ]
 
+   AltD()
+
    IF lSvi
 
       cFilt1 := ".t." + iif( Empty( cStrSpr ), "", ".and.IDSTRSPR == " + cm2str( cStrSpr ) ) + ;
@@ -888,8 +891,6 @@ FUNCTION get_ld_rekap_filter( hParams )
          cFilt1 := cFilt1 + ".and. mjesec >= " + cm2str( nMjesec ) + ;
             ".and. mjesec <= " + cm2str( nMjesecDo ) + ".and. godina = " + cm2str( nGodina )
       ENDIF
-
-      GO TOP
 
    ELSE
 

@@ -13,7 +13,6 @@
 #include "f18.ch"
 
 
-
 FUNCTION kalk_povrat_dokumenta()
 
    LOCAL lBrisiKumulativ
@@ -30,7 +29,7 @@ FUNCTION kalk_povrat_dokumenta()
       Beep( 1 )
       povrat_najnovije_kalkulacije()
       my_close_all_dbf()
-      RETURN
+      RETURN .F.
    ENDIF
 
    otvori_kalk_tabele_za_povrat()
@@ -55,18 +54,18 @@ FUNCTION kalk_povrat_dokumenta()
    IF _br_dok = "."
       kalk_povrat_prema_kriteriju()
       my_close_all_dbf()
-      RETURN
+      RETURN .F.
    ENDIF
 
    IF !kalk_dokument_postoji( _id_firma, _id_vd, _br_dok )
       MsgBeep( "Traženi dokument ne postoji na serveru !"  )
       my_close_all_dbf()
-      RETURN
+      RETURN .F.
    ENDIF
 
    IF Pitanje( "", "Kalk. " + _id_firma + "-" + _id_vd + "-" + _br_dok + " vratiti u pripremu (D/N) ?", "D" ) == "N"
       my_close_all_dbf()
-      RETURN
+      RETURN .F.
    ENDIF
 
    lBrisiKumulativ := Pitanje(, "Izbrisati dokument iz kumulativne tabele (D/N) ?", "D" ) == "D"
@@ -97,7 +96,7 @@ FUNCTION kalk_povrat_dokumenta()
       MsgO( "Brišem KALK dokument iz kumulativa ..." )
 
       SELECT kalk
-      hseek _id_firma + _id_vd + _br_dok
+      HSEEK _id_firma + _id_vd + _br_dok
 
       IF Found()
          _del_rec := dbf_get_rec()
@@ -119,8 +118,9 @@ FUNCTION kalk_povrat_dokumenta()
       MsgC()
 
       IF lOk
-         f18_free_tables( { "kalk_doks", "kalk_kalk", "kalk_doks2" } )
          sql_table_update( nil, "END" )
+         f18_free_tables( { "kalk_doks", "kalk_kalk", "kalk_doks2" } )
+
          log_write( "F18_DOK_OPER: povrat dokumenta u pripremu, kalk: " + _id_firma + "-" + _id_vd + "-" + ALLTRIM( _br_dok ), 2 )
       ELSE
          sql_table_update( nil, "ROLLBACK" )
@@ -131,7 +131,7 @@ FUNCTION kalk_povrat_dokumenta()
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
 
 

@@ -568,7 +568,7 @@ FUNCTION V_kol10()
       IF nkols < Abs( _kolicina )
          _ERROR := "1"
          Beep( 2 )
-         Msg( "Na stanju je samo kolicina:" + Str( nkols, 12, 3 ) )
+         error_tab( "Na stanju je samo količina:" + Str( nKols, 12, 3 ) )
       ENDIF
       SELECT kalk_pripr
    ENDIF

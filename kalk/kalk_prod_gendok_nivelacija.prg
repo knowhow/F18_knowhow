@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -12,1168 +12,1176 @@
 
 #include "f18.ch"
 
-*array
-static aPorezi:={}
-*;
+// array
+STATIC aPorezi := {}
+// ;
 
 
-function get_nivel_p()
-*{
-local aProd // matrica sa prodavnicama
-local cProd // prodavnica
-local cPKonto
-local dDatDok
-local cGlStanje:="D"
+FUNCTION get_nivel_p()
+
+   // {
+   LOCAL aProd // matrica sa prodavnicama
+   LOCAL cProd // prodavnica
+   LOCAL cPKonto
+   LOCAL dDatDok
+   LOCAL cGlStanje := "D"
 
 
-O_KONTO
+   O_KONTO
 
-Box(,4,70)
-	cProd:=SPACE(7)
-	dDatDok:=date()
-	@ m_x+1,m_Y+2 SAY "Prodavnica (prazno-sve)" GET cProd VALID Empty(cProd) .or. P_Konto(@cProd)
-	@ m_x+2,m_Y+2 SAY "Datum" GET dDatDok
-	@ m_x+3,m_Y+2 SAY "Nivelisati samo robu na stanju (D/N)?" GET cGlStanje VALID cGlStanje $ "DN" PICT "@!"
-	read
-	ESC_BCR
-BoxC() 
+   Box(, 4, 70 )
+   cProd := Space( 7 )
+   dDatDok := Date()
+   @ m_x + 1, m_Y + 2 SAY "Prodavnica (prazno-sve)" GET cProd VALID Empty( cProd ) .OR. P_Konto( @cProd )
+   @ m_x + 2, m_Y + 2 SAY "Datum" GET dDatDok
+   @ m_x + 3, m_Y + 2 SAY "Nivelisati samo robu na stanju (D/N)?" GET cGlStanje VALID cGlStanje $ "DN" PICT "@!"
+   READ
+   ESC_BCR
+   BoxC()
 
-if Pitanje(,"Generisati nivelacije (D/N)?","D") == "N"
-	return
-endif
+   IF Pitanje(, "Generisati nivelacije (D/N)?", "D" ) == "N"
+      RETURN
+   ENDIF
 
-aProd:={}
+   aProd := {}
 
-if Empty(ALLTRIM(cProd))
-	// napuni matricu sa prodavnckim kontima
-	GetProdKto(@aProd)
-else
-	AADD(aProd, { cProd })
-endif
+   IF Empty( AllTrim( cProd ) )
+      // napuni matricu sa prodavnckim kontima
+      GetProdKto( @aProd )
+   ELSE
+      AAdd( aProd, { cProd } )
+   ENDIF
 
-// provjeri velicinu matrice
-if LEN(aProd) == 0
-	MsgBeep("Ne postoje definisane prodavnice u KONCIJ-u!")
-	return
-endif
+   // provjeri velicinu matrice
+   IF Len( aProd ) == 0
+      MsgBeep( "Ne postoje definisane prodavnice u KONCIJ-u!" )
+      RETURN
+   ENDIF
 
-lGlStanje := .t.
+   lGlStanje := .T.
 
-if cGlStanje == "N"
-	lGlStanje := .f.
-endif
+   IF cGlStanje == "N"
+      lGlStanje := .F.
+   ENDIF
 
-// kreiraj tabelu PRIPT
-CrePripTDbf()
+   // kreiraj tabelu PRIPT
+   CrePripTDbf()
 
-// pokreni generisanje nivelacija
-Box(, 2, 65)
-@ 1+m_x, 2+m_y SAY "Vrsim generisanje nivelacije za " + ALLTRIM(STR(LEN(aProd)))+ " prodavnicu..."
+   // pokreni generisanje nivelacija
+   Box(, 2, 65 )
+   @ 1 + m_x, 2 + m_y SAY "Vrsim generisanje nivelacije za " + AllTrim( Str( Len( aProd ) ) ) + " prodavnicu..."
 
-O_KALK_DOKS
+   O_KALK_DOKS
 
-nUvecaj := 1
-for nCnt:=1 to LEN(aProd)
-	// daj broj kalkulacije
-	cBrKalk:=GetNextKalkDoc(gFirma, "19", nUvecaj)
-	cPKonto:=aProd[nCnt, 1]
-	
-	@ 2+m_x, 2+m_y SAY STR(nCnt, 3) + " Prodavnica: " + ALLTRIM(cPKonto) + "   dokument: "+ gFirma + "-19-" + ALLTRIM(cBrKalk)
-	
-	gen_nivel_p(cPKonto, dDatDok, cBrKalk, lGlStanje)
-	
-	++ nUvecaj
-next
+   nUvecaj := 1
+   FOR nCnt := 1 TO Len( aProd )
+      // daj broj kalkulacije
+      cBrKalk := GetNextKalkDoc( gFirma, "19", nUvecaj )
+      cPKonto := aProd[ nCnt, 1 ]
 
-BoxC()
+      @ 2 + m_x, 2 + m_y SAY Str( nCnt, 3 ) + " Prodavnica: " + AllTrim( cPKonto ) + "   dokument: " + gFirma + "-19-" + AllTrim( cBrKalk )
 
-result_nivel_p()
+      gen_nivel_p( cPKonto, dDatDok, cBrKalk, lGlStanje )
 
-return
+      ++ nUvecaj
+   NEXT
+
+   BoxC()
+
+   result_nivel_p()
+
+   RETURN
 
 
 
-function get_zcnivel()
-local aProd // matrica sa prodavnicama
-local cProd // prodavnica
-local cPKonto
-local dDatDok
+FUNCTION get_zcnivel()
 
-O_KONTO
+   LOCAL aProd // matrica sa prodavnicama
+   LOCAL cProd // prodavnica
+   LOCAL cPKonto
+   LOCAL dDatDok
 
-Box(,4,70)
-	cProd:=SPACE(7)
-	dDatDok:=date()
-	@ m_x+1,m_Y+2 SAY "Prodavnica (prazno-sve)" GET cProd VALID Empty(cProd) .or. P_Konto(@cProd)
-	@ m_x+2,m_Y+2 SAY "Datum" GET dDatDok
-	read
-	ESC_BCR
-BoxC() 
+   O_KONTO
 
-if Pitanje(,"Generisati nivelacije (D/N)?","D") == "N"
-	return
-endif
+   Box(, 4, 70 )
+   cProd := Space( 7 )
+   dDatDok := Date()
+   @ m_x + 1, m_Y + 2 SAY "Prodavnica (prazno-sve)" GET cProd VALID Empty( cProd ) .OR. P_Konto( @cProd )
+   @ m_x + 2, m_Y + 2 SAY "Datum" GET dDatDok
+   READ
+   ESC_BCR
+   BoxC()
 
-aProd:={}
+   IF Pitanje(, "Generisati nivelacije (D/N)?", "D" ) == "N"
+      RETURN
+   ENDIF
 
-if Empty(ALLTRIM(cProd))
-	// napuni matricu sa prodavnckim kontima
-	GetProdKto(@aProd)
-else
-	AADD(aProd, { cProd })
-endif
+   aProd := {}
 
-// provjeri velicinu matrice
-if LEN(aProd) == 0
-	MsgBeep("Ne postoje definisane prodavnice u KONCIJ-u!")
-	return
-endif
+   IF Empty( AllTrim( cProd ) )
+      // napuni matricu sa prodavnckim kontima
+      GetProdKto( @aProd )
+   ELSE
+      AAdd( aProd, { cProd } )
+   ENDIF
 
-// kreiraj tabelu PRIPT
-CrePripTDbf()
+   // provjeri velicinu matrice
+   IF Len( aProd ) == 0
+      MsgBeep( "Ne postoje definisane prodavnice u KONCIJ-u!" )
+      RETURN
+   ENDIF
 
-// pokreni generisanje nivelacija
-Box(, 2, 65)
-@ 1+m_x, 2+m_y SAY "Vrsim generisanje nivelacije za " + ALLTRIM(STR(LEN(aProd)))+ " prodavnicu..."
+   // kreiraj tabelu PRIPT
+   CrePripTDbf()
 
-O_KALK_DOKS
+   // pokreni generisanje nivelacija
+   Box(, 2, 65 )
+   @ 1 + m_x, 2 + m_y SAY "Vrsim generisanje nivelacije za " + AllTrim( Str( Len( aProd ) ) ) + " prodavnicu..."
 
-nUvecaj := 1
-for nCnt:=1 to LEN(aProd)
-	// daj broj kalkulacije
-	cBrKalk:=GetNextKalkDoc(gFirma, "19", nUvecaj)
-	cPKonto:=aProd[nCnt, 1]
-	
-	@ 2+m_x, 2+m_y SAY STR(nCnt, 3) + " Prodavnica: " + ALLTRIM(cPKonto) + "   dokument: "+ gFirma + "-19-" + ALLTRIM(cBrKalk)
-	
-	gen_zcnivel(cPKonto, dDatDok, cBrKalk)
-	
-	++ nUvecaj
-next
+   O_KALK_DOKS
 
-BoxC()
+   nUvecaj := 1
+   FOR nCnt := 1 TO Len( aProd )
+      // daj broj kalkulacije
+      cBrKalk := GetNextKalkDoc( gFirma, "19", nUvecaj )
+      cPKonto := aProd[ nCnt, 1 ]
 
-result_nivel_p()
+      @ 2 + m_x, 2 + m_y SAY Str( nCnt, 3 ) + " Prodavnica: " + AllTrim( cPKonto ) + "   dokument: " + gFirma + "-19-" + AllTrim( cBrKalk )
 
-return
+      gen_zcnivel( cPKonto, dDatDok, cBrKalk )
+
+      ++ nUvecaj
+   NEXT
+
+   BoxC()
+
+   result_nivel_p()
+
+   RETURN
 
 
 // --------------------------------------------------------------------
 // generisanje nivalacije za prodavnicu
-//  cPKonto - prodavnicki konto
-//  dDatDok - datum dokumenta nivelacije
-//  cBrKalk - broj dokumenta nivelacije
-//  lGledajStanje - .t. - gledaj sta je na stanju pa to nivelisi
+// cPKonto - prodavnicki konto
+// dDatDok - datum dokumenta nivelacije
+// cBrKalk - broj dokumenta nivelacije
+// lGledajStanje - .t. - gledaj sta je na stanju pa to nivelisi
 // --------------------------------------------------------------------
-function gen_nivel_p(cPKonto, dDatDok, cBrKalk, lGledajStanje)
-local nRbr
-local cIdFirma 
-local cIdVd
-local cIdRoba
-local nNivCijena
-local nStCijena
+FUNCTION gen_nivel_p( cPKonto, dDatDok, cBrKalk, lGledajStanje )
 
-O_PRIPT
-O_KALK
-O_ROBA
-O_KONTO
-O_KONCIJ
-O_TARIFA
+   LOCAL nRbr
+   LOCAL cIdFirma
+   LOCAL cIdVd
+   LOCAL cIdRoba
+   LOCAL nNivCijena
+   LOCAL nStCijena
 
-nRbr:=0
+   O_PRIPT
+   O_KALK
+   O_ROBA
+   O_KONTO
+   O_KONCIJ
+   O_TARIFA
 
-cIdFirma := gFirma
+   nRbr := 0
 
-select koncij
-seek TRIM(cPKonto)
+   cIdFirma := gFirma
 
-select roba
-set order to tag "ID"
-go top
-do while !eof()
+   SELECT koncij
+   SEEK Trim( cPKonto )
 
-	// provjeri polje ROBA->ZANIVEL
-	// ako je prazno preskoci
-	if field->tip $ "UT"
-		skip
-		loop
-	endif
-	
-	if Round(field->zanivel,4) == 0
-		skip
-		loop
-	endif
-	
-	cIdRoba:=field->id
-	nNivCijena:=field->zanivel
-	// uzmi MPC iz sifrarnika
-	nStCijena:=UzmiMpcSif()
+   SELECT roba
+   SET ORDER TO TAG "ID"
+   GO TOP
+   DO WHILE !Eof()
 
-	nUlaz:=0
-	nIzlaz:=0
+      // provjeri polje ROBA->ZANIVEL
+      // ako je prazno preskoci
+      IF field->tip $ "UT"
+         SKIP
+         LOOP
+      ENDIF
 
-	select kalk
-	set order to tag "4"
-	//"KALKi4","idFirma+Pkonto+idroba+dtos(datdok)+PU_I+IdVD","KALK")
-	
-	seek cIdFirma + cPkonto + cIdRoba
+      IF Round( field->zanivel, 4 ) == 0
+         SKIP
+         LOOP
+      ENDIF
 
-	do while !EOF() .and. cIdFirma + cPKonto + cIdRoba == field->idFirma + field->pkonto + field->idroba
-	
-		if field->datdok > dDatDok  // preskoci
-      			skip
-			loop
-  		endif
+      cIdRoba := field->id
+      nNivCijena := field->zanivel
+      // uzmi MPC iz sifrarnika
+      nStCijena := UzmiMpcSif()
 
-  		if pu_i=="1"
-    			nUlaz+=kolicina-GKolicina-GKolicin2
-		elseif pu_i=="5"  .and. !(idvd $ "12#13#22")
-    			nIzlaz+=kolicina
-		elseif pu_i=="5"  .and. (idvd $ "12#13#22")    // povrat
-    			nUlaz-=kolicina
-		elseif pu_i=="3"    // nivelacija
-    			//nMPVU+=mpcsapp*kolicina
-		elseif pu_i=="I"
-    			nIzlaz+=gkolicin2
-  		endif
-		
-		skip
-	enddo // po orderu 4
+      nUlaz := 0
+      nIzlaz := 0
 
-	// ako je Stanje <> 0 preskoci
-	if Round(nUlaz-nIzlaz,4) == 0
-		if lGledajStanje
-			select roba
-			skip
-			loop
-		endif
-	endif
+      SELECT kalk
+      SET ORDER TO TAG "4"
+      // "KALKi4","idFirma+Pkonto+idroba+dtos(datdok)+PU_I+IdVD","KALK")
 
-	// upisi u pript
-	select pript
- 	//scatter()
- 	//append ncnl
-	append blank
-	Scatter()
- 	_idfirma := cIdFirma
-	_idkonto := cPKonto
-	_pkonto := cPKonto
-	_pu_i := "3"
- 	_idroba := cIdRoba
-	_idtarifa := Tarifa(cPKonto, cIdRoba, @aPorezi, roba->idtarifa)
- 	_idvd := "19"
-	_brdok := cBrKalk
- 	_tmarza2 := "A"
-	_rbr := RedniBroj(++nRbr)
- 	_kolicina := nUlaz-nIzlaz
- 	_datdok := dDatDok
-	_datfaktp := dDatDok
-	_MPCSaPP := nNivCijena - nStCijena
-	_MPC := 0
-	_fcj := nStCijena
-	_mpc := MpcBezPor(nNivCijena, aPorezi, , _nc) - MpcBezPor(nStCijena, aPorezi, , _nc)
-	
-	_error := "0"
-	
-	Gather()
+      SEEK cIdFirma + cPkonto + cIdRoba
 
-	select roba
-	skip
-enddo
- 
-return
+      DO WHILE !Eof() .AND. cIdFirma + cPKonto + cIdRoba == field->idFirma + field->pkonto + field->idroba
+
+         IF field->datdok > dDatDok  // preskoci
+            SKIP
+            LOOP
+         ENDIF
+
+         IF pu_i == "1"
+            nUlaz += kolicina - GKolicina - GKolicin2
+         ELSEIF pu_i == "5"  .AND. !( idvd $ "12#13#22" )
+            nIzlaz += kolicina
+         ELSEIF pu_i == "5"  .AND. ( idvd $ "12#13#22" )    // povrat
+            nUlaz -= kolicina
+         ELSEIF pu_i == "3"    // nivelacija
+            // nMPVU+=mpcsapp*kolicina
+         ELSEIF pu_i == "I"
+            nIzlaz += gkolicin2
+         ENDIF
+
+         SKIP
+      ENDDO // po orderu 4
+
+      // ako je Stanje <> 0 preskoci
+      IF Round( nUlaz - nIzlaz, 4 ) == 0
+         IF lGledajStanje
+            SELECT roba
+            SKIP
+            LOOP
+         ENDIF
+      ENDIF
+
+      // upisi u pript
+      SELECT pript
+      // scatter()
+      // append ncnl
+      APPEND BLANK
+      Scatter()
+      _idfirma := cIdFirma
+      _idkonto := cPKonto
+      _pkonto := cPKonto
+      _pu_i := "3"
+      _idroba := cIdRoba
+      _idtarifa := Tarifa( cPKonto, cIdRoba, @aPorezi, roba->idtarifa )
+      _idvd := "19"
+      _brdok := cBrKalk
+      _tmarza2 := "A"
+      _rbr := RedniBroj( ++nRbr )
+      _kolicina := nUlaz - nIzlaz
+      _datdok := dDatDok
+      _datfaktp := dDatDok
+      _MPCSaPP := nNivCijena - nStCijena
+      _MPC := 0
+      _fcj := nStCijena
+      _mpc := MpcBezPor( nNivCijena, aPorezi, , _nc ) - MpcBezPor( nStCijena, aPorezi, , _nc )
+
+      _error := "0"
+
+      Gather()
+
+      SELECT roba
+      SKIP
+   ENDDO
+
+   RETURN
 
 
 // prebaci iz zanivel2 u zanivel
-function zaniv2_zaniv()
+FUNCTION zaniv2_zaniv()
 
-if !SigmaSif("NIVEL")
-	MsgBeep("Ne cackaj!")
-	return
-endif
+   IF !SigmaSif( "NIVEL" )
+      MsgBeep( "Ne cackaj!" )
+      RETURN
+   ENDIF
 
-MsgBeep("Ova opcija ce kopirati postojece vrijednosti polja N.CIJENA 2#u polje N.CIJENA 1!")
+   MsgBeep( "Ova opcija ce kopirati postojece vrijednosti polja N.CIJENA 2#u polje N.CIJENA 1!" )
 
-if Pitanje(,"Kopirati vrijednosti","N") == "N"
-	return
-endif
+   IF Pitanje(, "Kopirati vrijednosti", "N" ) == "N"
+      RETURN
+   ENDIF
 
-if !USED(F_ROBA)
-	O_ROBA
-endif
+   IF !Used( F_ROBA )
+      O_ROBA
+   ENDIF
 
-select roba
-set order to tag "ID"
-go top
+   SELECT roba
+   SET ORDER TO TAG "ID"
+   GO TOP
 
-Box(,3, 70)
-do while !EOF()
+   Box(, 3, 70 )
+   DO WHILE !Eof()
 
-	if ROUND(field->zaniv2, 4) == 0
-		skip
-		loop
-	endif
-	
-	@ 1+m_x, 2+m_y SAY "ID roba: " + field->id
-	
-	replace zanivel with zaniv2
-	
-	@ 2+m_x, 2+m_y SAY "Update cijena " + ALLTRIM(STR(field->zanivel)) 	
-	skip
-enddo
+      IF Round( field->zaniv2, 4 ) == 0
+         SKIP
+         LOOP
+      ENDIF
 
-BoxC()
+      @ 1 + m_x, 2 + m_y SAY "ID roba: " + field->id
+
+      REPLACE zanivel WITH zaniv2
+
+      @ 2 + m_x, 2 + m_y SAY "Update cijena " + AllTrim( Str( field->zanivel ) )
+      SKIP
+   ENDDO
+
+   BoxC()
 
 
-MsgBeep("Zavrseno kopiranje !")
+   MsgBeep( "Zavrseno kopiranje !" )
 
-return
+   RETURN
 
 
 
 // ----------------------------------------------
 // setuj mpc na osnovu postojeceg polja
 // ----------------------------------------------
-function set_mpc_2()
-local cSetCj := "3"
-local cUzCj := "1"
-local nUvecaj := 0
-local nZaok := 2
+FUNCTION set_mpc_2()
 
-if !SigmaSif("SETMPC")
-	MsgBeep("Ne cackaj!")
-	return
-endif
+   LOCAL cSetCj := "3"
+   LOCAL cUzCj := "1"
+   LOCAL nUvecaj := 0
+   LOCAL nZaok := 2
 
-box(, 4, 55)
-	
-	@ m_x + 1, m_y + 2 SAY "        Setuj MPC (1,2,3):" GET cSetCj ;
-		VALID cSetCj $ "12345"
-	@ m_x + 2, m_y + 2 SAY "    Na osnovu MPC (1,2,3):" GET cUzCJ ;
-		VALID cUzCj $ "12345"
-	@ m_x + 3, m_y + 2 SAY "                   za (%):" GET nUvecaj ;
-		PICT "999.999"
-	@ m_x + 4, m_y + 2 SAY "  novu cijenu zaokruzi na:" GET nZaok ;
-		PICT "9"
-	read
-boxc()
+   IF !SigmaSif( "SETMPC" )
+      MsgBeep( "Ne cackaj!" )
+      RETURN
+   ENDIF
+
+   box(, 4, 55 )
+
+   @ m_x + 1, m_y + 2 SAY "        Setuj MPC (1,2,3):" GET cSetCj ;
+      VALID cSetCj $ "12345"
+   @ m_x + 2, m_y + 2 SAY "    Na osnovu MPC (1,2,3):" GET cUzCJ ;
+      VALID cUzCj $ "12345"
+   @ m_x + 3, m_y + 2 SAY "                   za (%):" GET nUvecaj ;
+      PICT "999.999"
+   @ m_x + 4, m_y + 2 SAY "  novu cijenu zaokruzi na:" GET nZaok ;
+      PICT "9"
+   READ
+   boxc()
 
 
-if nUvecaj = 0 .or. Pitanje(,"Setovati cijene","N") == "N"
-	return
-endif
+   IF nUvecaj = 0 .OR. Pitanje(, "Setovati cijene", "N" ) == "N"
+      RETURN
+   ENDIF
 
-if !USED(F_ROBA)
-	O_ROBA
-endif
+   IF !Used( F_ROBA )
+      O_ROBA
+   ENDIF
 
-if cUzCj == "1"
-	cUField := "MPC"
-else
-	cUField := "MPC" + cUzCj
-endif
+   IF cUzCj == "1"
+      cUField := "MPC"
+   ELSE
+      cUField := "MPC" + cUzCj
+   ENDIF
 
-if cSetCj == "1"
-	cSField := "MPC"
-else
-	cSField := "MPC" + cSetCj
-endif
+   IF cSetCj == "1"
+      cSField := "MPC"
+   ELSE
+      cSField := "MPC" + cSetCj
+   ENDIF
 
-select roba
-set order to tag "ID"
-go top
+   SELECT roba
+   SET ORDER TO TAG "ID"
+   GO TOP
 
-Box(,1, 70)
+   Box(, 1, 70 )
 
-do while !EOF()
+   DO WHILE !Eof()
 
-	// ako je uzorak cijena = 0 preskoci
-	if &cUField = 0
-		skip
-		loop
-	endif
-	
-	@ 1 + m_x, 2 + m_y SAY "ID roba: " + field->id
-	
-	replace &cSField with ROUND( &cUField * nUvecaj, nZaok )
-	
-	skip
-enddo
+      // ako je uzorak cijena = 0 preskoci
+      if &cUField = 0
+         SKIP
+         LOOP
+      ENDIF
 
-BoxC()
+      @ 1 + m_x, 2 + m_y SAY "ID roba: " + field->id
 
-MsgBeep("Zavrseno setovanje cijena!")
+      replace &cSField WITH Round( &cUField * nUvecaj, nZaok )
 
-return
+      SKIP
+   ENDDO
+
+   BoxC()
+
+   MsgBeep( "Zavrseno setovanje cijena!" )
+
+   RETURN
 
 
 
 
 // setuj mpc iz polja zanivel nakon nivelacije
-function set_mpc_iz_zanivel()
-local cSetCj := "1"
+FUNCTION set_mpc_iz_zanivel()
+
+   LOCAL cSetCj := "1"
+
+   IF !SigmaSif( "SETMPC" )
+      MsgBeep( "Ne cackaj!" )
+      RETURN
+   ENDIF
+
+   MsgBeep( "Ova opcija se iskljucivo pokrece#nakon obradjenih nivelacija!" )
 
 
-if !SigmaSif("SETMPC")
-	MsgBeep("Ne cackaj!")
-	return
-endif
+   box(, 1, 55 )
+   @ m_x + 1, m_y + 2 SAY "Setovati MPC(1, 2, 3, 4) ?" GET cSetCj VALID cSetCj $ "12345"
 
-MsgBeep("Ova opcija se iskljucivo pokrece#nakon obradjenih nivelacija!")
-
-
-box(, 1, 55)
-	@ m_x + 1, m_y + 2 SAY "Setovati MPC(1, 2, 3, 4) ?" GET cSetCj VALID cSetCj $ "12345"
-	
-	read
-boxc()
+   READ
+   boxc()
 
 
-if Pitanje(,"Setovati nove cijene","N") == "N"
-	return
-endif
+   IF Pitanje(, "Setovati nove cijene", "N" ) == "N"
+      RETURN
+   ENDIF
 
-if !USED(F_ROBA)
-	O_ROBA
-endif
+   IF !Used( F_ROBA )
+      O_ROBA
+   ENDIF
 
 
-if cSetCj == "1"
-	cField := "MPC"
-else
-	cField := "MPC" + cSetCj
-endif
+   IF cSetCj == "1"
+      cField := "MPC"
+   ELSE
+      cField := "MPC" + cSetCj
+   ENDIF
 
-select roba
-set order to tag "ID"
-go top
+   SELECT roba
+   SET ORDER TO TAG "ID"
+   GO TOP
 
-Box(,3, 70)
-do while !EOF()
+   Box(, 3, 70 )
+   DO WHILE !Eof()
 
-	if ROUND(field->zanivel, 4) == 0
-		skip
-		loop
-	endif
-	
-	@ 1+m_x, 2+m_y SAY "ID roba: " + field->id
-	
-	// sacuvaj backup u zaniv2
-	replace zaniv2 with &cField
-	// prebaci iz zanivel u mpc
-	replace &cField with zanivel
-	
-	@ 2+m_x, 2+m_y SAY "Update cijena " + ALLTRIM(STR(field->zanivel)) + " -> " + ALLTRIM(STR( &cField ))
-	
-	skip
-enddo
+      IF Round( field->zanivel, 4 ) == 0
+         SKIP
+         LOOP
+      ENDIF
 
-BoxC()
+      @ 1 + m_x, 2 + m_y SAY "ID roba: " + field->id
 
-MsgBeep("Zavrseno setovanje cijena!")
+      // sacuvaj backup u zaniv2
+      REPLACE zaniv2 with &cField
+      // prebaci iz zanivel u mpc
+      replace &cField WITH zanivel
 
-return
+      @ 2 + m_x, 2 + m_y SAY "Update cijena " + AllTrim( Str( field->zanivel ) ) + " -> " + AllTrim( Str( &cField ) )
+
+      SKIP
+   ENDDO
+
+   BoxC()
+
+   MsgBeep( "Zavrseno setovanje cijena!" )
+
+   RETURN
 
 
 
 // generisanje nivelacije sa zadzavanjem cijena
-function gen_zcnivel(cPKonto, dDatDok, cBrKalk)
-*{
-local nRbr
-local cIdFirma 
-local cIdVd
-local cIdRoba
-local cIdTarifa
-local nNivCijena
-local nStCijena
+FUNCTION gen_zcnivel( cPKonto, dDatDok, cBrKalk )
 
-O_PRIPT
-O_KALK
-O_ROBA
-O_KONTO
-O_KONCIJ
-O_TARIFA
+   // {
+   LOCAL nRbr
+   LOCAL cIdFirma
+   LOCAL cIdVd
+   LOCAL cIdRoba
+   LOCAL cIdTarifa
+   LOCAL nNivCijena
+   LOCAL nStCijena
 
-nRbr:=0
+   O_PRIPT
+   O_KALK
+   O_ROBA
+   O_KONTO
+   O_KONCIJ
+   O_TARIFA
 
-cIdFirma := gFirma
+   nRbr := 0
 
-select koncij
-seek TRIM(cPKonto)
+   cIdFirma := gFirma
 
-
-select kalk
-set order to tag "4"
-go top
-//"KALKi4","idFirma+Pkonto+idroba+dtos(datdok)+PU_I+IdVD","KALK")
-	
-seek cIdFirma + cPkonto
-
-do while !EOF() .and. cIdFirma + cPKonto == field->idFirma + field->pkonto 
-	
-	cIdRoba:=field->idroba
-	
-	nUlaz:=0
-	nIzlaz:=0
-
-	do while !EOF() .and. cIdFirma + cPKonto + cIdRoba == field->idfirma + field->pkonto + field->idroba
-		
-		if field->datdok > dDatDok
-		        // preskoci
-			skip
-			loop
-		endif
-
-		if pu_i=="1"
-			nUlaz+=kolicina-GKolicina-GKolicin2
-		elseif pu_i=="5"  .and. !(idvd $ "12#13#22")
-    			nIzlaz+=kolicina
-		elseif pu_i=="5"  .and. (idvd $ "12#13#22")    
-		        // povrat
-    			nUlaz -= kolicina
-		elseif pu_i=="3"    
-		        // nivelacija
-    			//nMPVU+=mpcsapp*kolicina
-		elseif pu_i=="I"
-    			nIzlaz += gKolicin2
-  		endif
-		
-		skip
-	
-	enddo 
-
-	// ako je Stanje <> 0 preskoci
-	if Round (nUlaz-nIzlaz, 4) == 0
-		select kalk
-		loop
-	endif
-
-	// nadji robu
-	select roba
-	set order to tag "ID"
-	hseek cIdRoba
-        cIdTarifa := roba->idtarifa
-	
-	// nadji tarifu
-	select tarifa
-	set order to tag "ID"
-	hseek cIdTarifa
-	nTarStopa := tarifa->opp
-	
-	select kalk
-
-	// stara cijena !!!
-	// ako KARTICA NE VALJA OVAJ DOKUMENT NECE VALJATI
-	// prije pokretanja ove nivelacije mora se provjeriti 
-	// da li ima ERR na lager listi !!!!!
-	// ako ima mora se ta greska ispraviti
-	nStCijena := roba->mpc
-	
-	// maloprodajna cijena bez poreza PP
-	nMpcbpPP := nStCijena / (1 + (nTarStopa / 100))
-	// maloprodajna cijena bez poreza PDV
-	nMpcbpPDV := nStCijena / (1 + (17 / 100))
-	
-	// razlika bez poreza
-	nCRazlbp := nMpcbpPDV - nMpcbpPP
-	// razlika sa uracunatim porezom
-	nCRazlsp := nCRazlbp * (1 + (nTarStopa / 100))
-	// nova cijena je stara mpc + razlika sa porezom
-	nNivCijena := nStCijena + nCRazlsp
-	
-	// upisi u pript
-	select pript
-	append blank
-	Scatter()
-	_idfirma := cIdFirma
-	_idkonto := cPKonto
-	_pkonto := cPKonto
-	_pu_i := "3"
-	_idroba := cIdRoba
-	_idtarifa := Tarifa(cPKonto, cIdRoba, @aPorezi, cIdTarifa)
-	_idvd := "19"
-	_brdok := cBrKalk
-	_tmarza2 := "A"
-	_rbr := RedniBroj(++nRbr)
-	_kolicina := nUlaz-nIzlaz
-	_datdok := dDatDok
-	_datfaktp := dDatDok
-	//_MPCSaPP := nNivCijena - nStCijena
-	//_MPC := 0
-	_MPCSaPP := nCRazlsp
-	_fcj := nStCijena
-	//_MPC := MpcBezPor(nNivCijena, aPorezi, , _nc) - MpcBezPor(nStCijena, aPorezi, , _nc)
-	_MPC := nCRazlbp 
-	_error := "0"
-	Gather()
-
-	select kalk
-enddo
- 
-return
-*}
+   SELECT koncij
+   SEEK Trim( cPKonto )
 
 
+   SELECT kalk
+   SET ORDER TO TAG "4"
+   GO TOP
+   // "KALKi4","idFirma+Pkonto+idroba+dtos(datdok)+PU_I+IdVD","KALK")
+
+   SEEK cIdFirma + cPkonto
+
+   DO WHILE !Eof() .AND. cIdFirma + cPKonto == field->idFirma + field->pkonto
+
+      cIdRoba := field->idroba
+
+      nUlaz := 0
+      nIzlaz := 0
+
+      DO WHILE !Eof() .AND. cIdFirma + cPKonto + cIdRoba == field->idfirma + field->pkonto + field->idroba
+
+         IF field->datdok > dDatDok
+            // preskoci
+            SKIP
+            LOOP
+         ENDIF
+
+         IF pu_i == "1"
+            nUlaz += kolicina - GKolicina - GKolicin2
+         ELSEIF pu_i == "5"  .AND. !( idvd $ "12#13#22" )
+            nIzlaz += kolicina
+         ELSEIF pu_i == "5"  .AND. ( idvd $ "12#13#22" )
+            // povrat
+            nUlaz -= kolicina
+         ELSEIF pu_i == "3"
+            // nivelacija
+            // nMPVU+=mpcsapp*kolicina
+         ELSEIF pu_i == "I"
+            nIzlaz += gKolicin2
+         ENDIF
+
+         SKIP
+
+      ENDDO
+
+      // ako je Stanje <> 0 preskoci
+      IF Round ( nUlaz - nIzlaz, 4 ) == 0
+         SELECT kalk
+         LOOP
+      ENDIF
+
+      // nadji robu
+      SELECT roba
+      SET ORDER TO TAG "ID"
+      hseek cIdRoba
+      cIdTarifa := roba->idtarifa
+
+      // nadji tarifu
+      SELECT tarifa
+      SET ORDER TO TAG "ID"
+      hseek cIdTarifa
+      nTarStopa := tarifa->opp
+
+      SELECT kalk
+
+      // stara cijena !!!
+      // ako KARTICA NE VALJA OVAJ DOKUMENT NECE VALJATI
+      // prije pokretanja ove nivelacije mora se provjeriti
+      // da li ima ERR na lager listi !!!!!
+      // ako ima mora se ta greska ispraviti
+      nStCijena := roba->mpc
+
+      // maloprodajna cijena bez poreza PP
+      nMpcbpPP := nStCijena / ( 1 + ( nTarStopa / 100 ) )
+      // maloprodajna cijena bez poreza PDV
+      nMpcbpPDV := nStCijena / ( 1 + ( 17 / 100 ) )
+
+      // razlika bez poreza
+      nCRazlbp := nMpcbpPDV - nMpcbpPP
+      // razlika sa uracunatim porezom
+      nCRazlsp := nCRazlbp * ( 1 + ( nTarStopa / 100 ) )
+      // nova cijena je stara mpc + razlika sa porezom
+      nNivCijena := nStCijena + nCRazlsp
+
+      // upisi u pript
+      SELECT pript
+      APPEND BLANK
+      Scatter()
+      _idfirma := cIdFirma
+      _idkonto := cPKonto
+      _pkonto := cPKonto
+      _pu_i := "3"
+      _idroba := cIdRoba
+      _idtarifa := Tarifa( cPKonto, cIdRoba, @aPorezi, cIdTarifa )
+      _idvd := "19"
+      _brdok := cBrKalk
+      _tmarza2 := "A"
+      _rbr := RedniBroj( ++nRbr )
+      _kolicina := nUlaz - nIzlaz
+      _datdok := dDatDok
+      _datfaktp := dDatDok
+      // _MPCSaPP := nNivCijena - nStCijena
+      // _MPC := 0
+      _MPCSaPP := nCRazlsp
+      _fcj := nStCijena
+      // _MPC := MpcBezPor(nNivCijena, aPorezi, , _nc) - MpcBezPor(nStCijena, aPorezi, , _nc)
+      _MPC := nCRazlbp
+      _error := "0"
+      Gather()
+
+      SELECT kalk
+   ENDDO
+
+   RETURN
+// }
 
 
-function result_nivel_p()
-*{
-local cVarijanta
-local cKolNula
 
-if Pitanje(,"Izvrsiti uvid u rezultate nivelacija (D/N)?", "D") == "N"
-	return
-endif
 
-Box(,5, 65)
-	cVarijanta := "2"
-	cKolNula := "N"
-	@ 1+m_x, 2+m_y SAY "Varijanta prikaza:"
-	@ 2+m_x, 2+m_y SAY "  - sa detaljima (1)"
-	@ 3+m_x, 2+m_y SAY "  - bez detalja  (2)" GET cVarijanta VALID !Empty(cVarijanta) .and. cVarijanta $ "12"
-	@ 5+m_x, 2+m_y SAY "Prikaz kolicina 0 (D/N)" GET cKolNula VALID !Empty(cKolNula) .and. cKolNula $ "DN" PICT "@!"
-	read
-	ESC_BCR
-BoxC()
+FUNCTION result_nivel_p()
 
-st_res_niv_p(cVarijanta, cKolNula)
+   // {
+   LOCAL cVarijanta
+   LOCAL cKolNula
 
-return
+   IF Pitanje(, "Izvrsiti uvid u rezultate nivelacija (D/N)?", "D" ) == "N"
+      RETURN
+   ENDIF
+
+   Box(, 5, 65 )
+   cVarijanta := "2"
+   cKolNula := "N"
+   @ 1 + m_x, 2 + m_y SAY "Varijanta prikaza:"
+   @ 2 + m_x, 2 + m_y SAY "  - sa detaljima (1)"
+   @ 3 + m_x, 2 + m_y SAY "  - bez detalja  (2)" GET cVarijanta VALID !Empty( cVarijanta ) .AND. cVarijanta $ "12"
+   @ 5 + m_x, 2 + m_y SAY "Prikaz kolicina 0 (D/N)" GET cKolNula VALID !Empty( cKolNula ) .AND. cKolNula $ "DN" PICT "@!"
+   READ
+   ESC_BCR
+   BoxC()
+
+   st_res_niv_p( cVarijanta, cKolNula )
+
+   RETURN
 
 
 // -----------------------------------------
 // obrada nivelacije iz PRIPT tabele
 // -----------------------------------------
-function obr_nivel_p()
-local nRecP
-local lGenFinFakt
-local lStampati
+FUNCTION obr_nivel_p()
 
-if Pitanje(,"Obraditi nivelaciju iz pomocne tabele (D/N)?", "N") == "N"
-	return
-endif
+   LOCAL nRecP
+   LOCAL lGenFinFakt
+   LOCAL lStampati
 
-O_PRIPT
-nRecP := RecCount()
+   IF Pitanje(, "Obraditi nivelaciju iz pomocne tabele (D/N)?", "N" ) == "N"
+      RETURN
+   ENDIF
 
-if nRecP == 0
-	MsgBeep("Nije generisana nivelacija, opcija 9. !")
-	return
-endif
+   O_PRIPT
+   nRecP := RecCount()
 
-lStampati := .t.
+   IF nRecP == 0
+      MsgBeep( "Nije generisana nivelacija, opcija 9. !" )
+      RETURN
+   ENDIF
 
-if Pitanje(,"Stampati dokumente (D/N)","N") == "N"
-	lStampati := .f.
-endif
+   lStampati := .T.
 
-lGenFinFakt := .f.
+   IF Pitanje(, "Stampati dokumente (D/N)", "N" ) == "N"
+      lStampati := .F.
+   ENDIF
 
-if Pitanje(, "Generisati FIN/FAKT dokumente (D/N)", "N") == "D"
-	lGenFinFakt := .t.
-endif
+   lGenFinFakt := .F.
 
-if !lGenFinFakt
-	// snimi stanje parametara
-	cTmpFin := gAFin
-	cTmpMat := gAMat
-	cTmpFakt := gAFakt
+   IF Pitanje(, "Generisati FIN/FAKT dokumente (D/N)", "N" ) == "D"
+      lGenFinFakt := .T.
+   ENDIF
 
-	gAFin := "0"
-	gAMat := "N"
-	gAFakt := "N"
-endif
+   IF !lGenFinFakt
+      // snimi stanje parametara
+      cTmpFin := gAFin
+      cTmpMat := gAMat
+      cTmpFakt := gAFakt
 
-// pokreni obradu pript bez asistenta
-ObradiImport(0, .f., lStampati)
+      gAFin := "0"
+      gAMat := "N"
+      gAFakt := "N"
+   ENDIF
 
-if !lGenFinFakt
-	// vrati parametre...
-	gAFin := cTmpFin
-	gAMat := cTmpMat
-	gAFakt := cTmpFakt
-endif
+   // pokreni obradu pript bez asistenta
+   ObradiImport( 0, .F., lStampati )
 
-return
+   IF !lGenFinFakt
+      // vrati parametre...
+      gAFin := cTmpFin
+      gAMat := cTmpMat
+      gAFakt := cTmpFakt
+   ENDIF
+
+   RETURN
 
 
 
 // -----------------------------------------
 // stampa rezultata - efekata nivelacije
 // cVar - varijanta
-// cKolNula - 
+// cKolNula -
 // -----------------------------------------
-function st_res_niv_p(cVar, cKolNula)
-local cIdFirma
-local cIdVd
-local cBrDok
-local cIdRoba
-local cRobaNaz
-local cProd
-local cPorez
-local nUStVrbpdv
-local nUStVrspdv
-local nUNVrbpdv 
-local nUNVrspdv 
-local nURazlbpdv
-local nURazlspdv
+FUNCTION st_res_niv_p( cVar, cKolNula )
 
-O_PRIPT
-O_POBJEKTI
-O_ROBA
-O_TARIFA
+   LOCAL cIdFirma
+   LOCAL cIdVd
+   LOCAL cBrDok
+   LOCAL cIdRoba
+   LOCAL cRobaNaz
+   LOCAL cProd
+   LOCAL cPorez
+   LOCAL nUStVrbpdv
+   LOCAL nUStVrspdv
+   LOCAL nUNVrbpdv
+   LOCAL nUNVrspdv
+   LOCAL nURazlbpdv
+   LOCAL nURazlspdv
 
-if IsPDV()
-	cPorez := "PDV"	
-else
-	cPorez := "PP"
-endif
+   O_PRIPT
+   O_POBJEKTI
+   O_ROBA
+   O_TARIFA
 
-select pript
-set order to tag "1"
-go top
+   IF IsPDV()
+      cPorez := "PDV"
+   ELSE
+      cPorez := "PP"
+   ENDIF
 
-START PRINT CRET
+   SELECT pript
+   SET ORDER TO TAG "1"
+   GO TOP
 
-?
-? "Prikaz efekata nivelacije za sve prodavnice, na dan " + DToC(DATE())
-?
+   START PRINT CRET
 
-cLine := REPLICATE("-", 10)
-cLine += SPACE(1)
-cLine += REPLICATE("-", 15)
-cLine += SPACE(1)
-cLine += REPLICATE("-", 35)
-cLine += SPACE(1)
-cLine += REPLICATE("-", 35)
-cLine += SPACE(1)
-cLine += REPLICATE("-", 35)
-cLine += SPACE(1)
+   ?
+   ? "Prikaz efekata nivelacije za sve prodavnice, na dan " + DToC( Date() )
+   ?
 
-st_zagl(cLine)
+   cLine := Replicate( "-", 10 )
+   cLine += Space( 1 )
+   cLine += Replicate( "-", 15 )
+   cLine += Space( 1 )
+   cLine += Replicate( "-", 35 )
+   cLine += Space( 1 )
+   cLine += Replicate( "-", 35 )
+   cLine += Space( 1 )
+   cLine += Replicate( "-", 35 )
+   cLine += Space( 1 )
 
-// total varijable
-nTStVrbpdv := 0
-nTStVrspdv := 0
-nTNVrbpdv := 0
-nTNVrspdv := 0
-nTRazlbpdv := 0
-nTRazlspdv := 0
+   st_zagl( cLine )
 
-do while !EOF()
-	
-	cIdFirma := field->idfirma
-	cIdVd := field->idvd
-	cBrDok := field->brdok
-	
-	nUStVrbpdv := 0
-	nUStVrspdv := 0
-	nUNVrbpdv := 0
-	nUNVrspdv := 0
-	nURazlbpdv := 0
-	nURazlspdv := 0
-	
-	cProd := field->pkonto
-	
-	do while !EOF() .and. pript->(idfirma+idvd+brdok) == cIdFirma+cIdVd+cBrDok
-		cIdRoba := field->idroba
-		cIdTar := field->idtarifa
-		
-		select roba
-		set order to tag "ID"
-		hseek cIdRoba
-		
-		select tarifa
-		seek cIdTar
-		
-		select pript
-		
-		// kolicina
-		nKolicina := field->kolicina
-		
-		// da li je kolicina 0
-		if cKolNula == "N"
-			if ROUND(nKolicina, 4) == 0
-				skip
-				loop
-			endif
-		endif
-		
-		// stara cijena sa pdv
-		nSCijspdv := field->fcj
-		
-		// nova cijena sa pdv
-		nNCijspdv := field->fcj + field->mpcsapp
-		
-		// RUC sa pdv
-		nRazlCij := nSCijspdv - nNCijspdv
-		
-		// stara vrijednost sa pdv
-		nStVrspdv := nKolicina * (field->fcj)
+   // total varijable
+   nTStVrbpdv := 0
+   nTStVrspdv := 0
+   nTNVrbpdv := 0
+   nTNVrspdv := 0
+   nTRazlbpdv := 0
+   nTRazlspdv := 0
 
-		// stara vrijednost bez pdv
-		nStVrbpdv := nKolicina * (field->fcj / ( 1 + (tarifa->opp / 100) ) )
-		
-		// vrijednost nova cijena sa pdv
-		nNVrspdv := nKolicina * nNCijspdv
-		
-		// vrijednost nova bez pdv
-		nNVrbpdv := nKolicina * (nNCijspdv / (1 + (tarifa->opp / 100) ) )
-		
-		// razlika sa pdv
-		nRazlspdv := nStVrspdv - nNVrspdv
-		
-		// razlika bez pdv
-		nRazlbpdv := nStVrbpdv - nNVrbpdv
-		
-		if cVar == "1"
-			// vidi da li treba nova strana
-			nstr(cLine)
-			
-			// prikazi stavku
-			? cIdRoba
-			?? SPACE(1) 
-			?? PADR(roba->naz, 15)
-			
-			// cijene
-			@ prow(), pcol()+2 SAY ROUND(nSCijspdv, 3) PICT gPicCDem
-			@ prow(), pcol()+2 SAY ROUND(nNCijspdv, 3) PICT gPicCDem
-			@ prow(), pcol()+2 SAY ROUND(nRazlCij, 3) PICT gPicCDem
-			// sa pdv
-			@ prow(), pcol()+2 SAY ROUND(nStVrspdv, 3) PICT gPicDem
-			@ prow(), pcol()+2 SAY ROUND(nNVrspdv, 3) PICT gPicDem
-			@ prow(), pcol()+2 SAY ROUND(nRazlspdv, 3) PICT gPicDem
-			// bez pdv
-			@ prow(), pcol()+2 SAY ROUND(nStVrbpdv, 3) PICT gPicDem
-			@ prow(), pcol()+2 SAY ROUND(nNVrbpdv, 3) PICT gPicDem
-			@ prow(), pcol()+2 SAY ROUND(nRazlbpdv, 3) PICT gPicDem
-		endif
-	
-		// dodaj ukupno prodavnica
-		nUStVrbpdv += nStVrbpdv
-		nUNVrbpdv += nNVrbpdv
-		nUStVrspdv += nStVrspdv
-		nUNVrspdv += nNVrspdv
-		nURazlbpdv += nRazlbpdv
-		nURazlspdv += nRazlspdv
+   DO WHILE !Eof()
 
-		// dodaj na total
-		nTStVrbpdv += nStVrbpdv
-		nTNVrbpdv += nNVrbpdv
-		nTStVrspdv += nStVrspdv
-		nTNVrspdv += nNVrspdv
-		nTRazlbpdv += nRazlbpdv
-		nTRazlspdv += nRazlspdv
+      cIdFirma := field->idfirma
+      cIdVd := field->idvd
+      cBrDok := field->brdok
 
-		skip
-	enddo
-	
-	if cVar == "1"
-		? cLine
-	endif 
-	
-	// vidi da li treba nova strana
-	nstr(cLine)
-	
-	// uzmi naziv objekta
-	cObjNaz := g_obj_naz(cProd)
-	
-	? PADR("UKUPNO " + ALLTRIM(cProd) + "-" + ALLTRIM(cObjNaz), 26)
-	@ prow(), pcol()+2 SAY SPACE(LEN(gPicCDem))
-	@ prow(), pcol()+2 SAY SPACE(LEN(gPicCDem))
-	@ prow(), pcol()+2 SAY SPACE(LEN(gPicCDem))
-	// sa pdv
-	@ prow(), pcol()+2 SAY ROUND(nUStVrspdv, 3) PICT gPicDem
-	@ prow(), pcol()+2 SAY ROUND(nUNVrspdv, 3) PICT gPicDem
-	@ prow(), pcol()+2 SAY ROUND(nURazlspdv, 3) PICT gPicDem
-	// bez pdv
-	@ prow(), pcol()+2 SAY ROUND(nUStVrbpdv, 3) PICT gPicDem
-	@ prow(), pcol()+2 SAY ROUND(nUNVrbpdv, 3) PICT gPicDem
-	@ prow(), pcol()+2 SAY ROUND(nURazlbpdv, 3) PICT gPicDem
-	
-	if cVar == "1"
-		? cLine
-	endif
-enddo
+      nUStVrbpdv := 0
+      nUStVrspdv := 0
+      nUNVrbpdv := 0
+      nUNVrspdv := 0
+      nURazlbpdv := 0
+      nURazlspdv := 0
 
-// provjeri za novi red
-nstr(cLine)
+      cProd := field->pkonto
 
-? cLine
+      DO WHILE !Eof() .AND. pript->( idfirma + idvd + brdok ) == cIdFirma + cIdVd + cBrDok
+         cIdRoba := field->idroba
+         cIdTar := field->idtarifa
 
-// total - sve prodavnice
-? PADR("SVE PRODAVNICE UKUPNO:",26)
-@ prow(), pcol()+2 SAY SPACE(LEN(gPicCDem))
-@ prow(), pcol()+2 SAY SPACE(LEN(gPicCDem))
-@ prow(), pcol()+2 SAY SPACE(LEN(gPicCDem))
-// sa pdv
-@ prow(), pcol()+2 SAY ROUND(nTStVrspdv, 3) PICT gPicDem
-@ prow(), pcol()+2 SAY ROUND(nTNVrspdv, 3) PICT gPicDem
-@ prow(), pcol()+2 SAY ROUND(nTRazlspdv, 3) PICT gPicDem
-// bez pdv
-@ prow(), pcol()+2 SAY ROUND(nTStVrbpdv, 3) PICT gPicDem
-@ prow(), pcol()+2 SAY ROUND(nTNVrbpdv, 3) PICT gPicDem
-@ prow(), pcol()+2 SAY ROUND(nTRazlbpdv, 3) PICT gPicDem
-	
-? cLine
+         SELECT roba
+         SET ORDER TO TAG "ID"
+         hseek cIdRoba
+
+         SELECT tarifa
+         SEEK cIdTar
+
+         SELECT pript
+
+         // kolicina
+         nKolicina := field->kolicina
+
+         // da li je kolicina 0
+         IF cKolNula == "N"
+            IF Round( nKolicina, 4 ) == 0
+               SKIP
+               LOOP
+            ENDIF
+         ENDIF
+
+         // stara cijena sa pdv
+         nSCijspdv := field->fcj
+
+         // nova cijena sa pdv
+         nNCijspdv := field->fcj + field->mpcsapp
+
+         // RUC sa pdv
+         nRazlCij := nSCijspdv - nNCijspdv
+
+         // stara vrijednost sa pdv
+         nStVrspdv := nKolicina * ( field->fcj )
+
+         // stara vrijednost bez pdv
+         nStVrbpdv := nKolicina * ( field->fcj / ( 1 + ( tarifa->opp / 100 ) ) )
+
+         // vrijednost nova cijena sa pdv
+         nNVrspdv := nKolicina * nNCijspdv
+
+         // vrijednost nova bez pdv
+         nNVrbpdv := nKolicina * ( nNCijspdv / ( 1 + ( tarifa->opp / 100 ) ) )
+
+         // razlika sa pdv
+         nRazlspdv := nStVrspdv - nNVrspdv
+
+         // razlika bez pdv
+         nRazlbpdv := nStVrbpdv - nNVrbpdv
+
+         IF cVar == "1"
+            // vidi da li treba nova strana
+            nstr( cLine )
+
+            // prikazi stavku
+            ? cIdRoba
+            ?? Space( 1 )
+            ?? PadR( roba->naz, 15 )
+
+            // cijene
+            @ PRow(), PCol() + 2 SAY Round( nSCijspdv, 3 ) PICT gPicCDem
+            @ PRow(), PCol() + 2 SAY Round( nNCijspdv, 3 ) PICT gPicCDem
+            @ PRow(), PCol() + 2 SAY Round( nRazlCij, 3 ) PICT gPicCDem
+            // sa pdv
+            @ PRow(), PCol() + 2 SAY Round( nStVrspdv, 3 ) PICT gPicDem
+            @ PRow(), PCol() + 2 SAY Round( nNVrspdv, 3 ) PICT gPicDem
+            @ PRow(), PCol() + 2 SAY Round( nRazlspdv, 3 ) PICT gPicDem
+            // bez pdv
+            @ PRow(), PCol() + 2 SAY Round( nStVrbpdv, 3 ) PICT gPicDem
+            @ PRow(), PCol() + 2 SAY Round( nNVrbpdv, 3 ) PICT gPicDem
+            @ PRow(), PCol() + 2 SAY Round( nRazlbpdv, 3 ) PICT gPicDem
+         ENDIF
+
+         // dodaj ukupno prodavnica
+         nUStVrbpdv += nStVrbpdv
+         nUNVrbpdv += nNVrbpdv
+         nUStVrspdv += nStVrspdv
+         nUNVrspdv += nNVrspdv
+         nURazlbpdv += nRazlbpdv
+         nURazlspdv += nRazlspdv
+
+         // dodaj na total
+         nTStVrbpdv += nStVrbpdv
+         nTNVrbpdv += nNVrbpdv
+         nTStVrspdv += nStVrspdv
+         nTNVrspdv += nNVrspdv
+         nTRazlbpdv += nRazlbpdv
+         nTRazlspdv += nRazlspdv
+
+         SKIP
+      ENDDO
+
+      IF cVar == "1"
+         ? cLine
+      ENDIF
+
+      // vidi da li treba nova strana
+      nstr( cLine )
+
+      // uzmi naziv objekta
+      cObjNaz := g_obj_naz( cProd )
+
+      ? PadR( "UKUPNO " + AllTrim( cProd ) + "-" + AllTrim( cObjNaz ), 26 )
+      @ PRow(), PCol() + 2 SAY Space( Len( gPicCDem ) )
+      @ PRow(), PCol() + 2 SAY Space( Len( gPicCDem ) )
+      @ PRow(), PCol() + 2 SAY Space( Len( gPicCDem ) )
+      // sa pdv
+      @ PRow(), PCol() + 2 SAY Round( nUStVrspdv, 3 ) PICT gPicDem
+      @ PRow(), PCol() + 2 SAY Round( nUNVrspdv, 3 ) PICT gPicDem
+      @ PRow(), PCol() + 2 SAY Round( nURazlspdv, 3 ) PICT gPicDem
+      // bez pdv
+      @ PRow(), PCol() + 2 SAY Round( nUStVrbpdv, 3 ) PICT gPicDem
+      @ PRow(), PCol() + 2 SAY Round( nUNVrbpdv, 3 ) PICT gPicDem
+      @ PRow(), PCol() + 2 SAY Round( nURazlbpdv, 3 ) PICT gPicDem
+
+      IF cVar == "1"
+         ? cLine
+      ENDIF
+   ENDDO
+
+   // provjeri za novi red
+   nstr( cLine )
+
+   ? cLine
+
+   // total - sve prodavnice
+   ? PadR( "SVE PRODAVNICE UKUPNO:", 26 )
+   @ PRow(), PCol() + 2 SAY Space( Len( gPicCDem ) )
+   @ PRow(), PCol() + 2 SAY Space( Len( gPicCDem ) )
+   @ PRow(), PCol() + 2 SAY Space( Len( gPicCDem ) )
+   // sa pdv
+   @ PRow(), PCol() + 2 SAY Round( nTStVrspdv, 3 ) PICT gPicDem
+   @ PRow(), PCol() + 2 SAY Round( nTNVrspdv, 3 ) PICT gPicDem
+   @ PRow(), PCol() + 2 SAY Round( nTRazlspdv, 3 ) PICT gPicDem
+   // bez pdv
+   @ PRow(), PCol() + 2 SAY Round( nTStVrbpdv, 3 ) PICT gPicDem
+   @ PRow(), PCol() + 2 SAY Round( nTNVrbpdv, 3 ) PICT gPicDem
+   @ PRow(), PCol() + 2 SAY Round( nTRazlbpdv, 3 ) PICT gPicDem
+
+   ? cLine
 
 
-FF
+   FF
 
-ENDPRINT
+   ENDPRINT
 
-return
+   RETURN
 
 
 
 // stampa zaglavlja
-static function st_zagl(cLine)
-local cHead1
-local cHead2
-local cSep := "*"
+STATIC FUNCTION st_zagl( cLine )
 
-P_COND
+   LOCAL cHead1
+   LOCAL cHead2
+   LOCAL cSep := "*"
 
-? cLine
+   P_COND
 
-// prva linija headera
-cHead1 := PADC("SIFRA", 10)
-cHead1 += cSep
-cHead1 += PADC("NAZIV", 15)
-cHead1 += cSep
-cHead1 += PADC("CIJENE SA PDV", 35)
-cHead1 += cSep
-cHead1 += PADC("VRIJEDNOST SA PDV", 35)
-cHead1 += cSep
-cHead1 += PADC("VRIJEDNOST BEZ PDV", 35)
-cHead1 += cSep
+   ? cLine
 
-// druga linija headera
-cHead2 := PADC("ARTIKLA", 10)
-cHead2 += cSep
-cHead2 += PADC("ARTIKLA", 15)
-cHead2 += cSep
-cHead2 += PADC("STARA", 11)
-cHead2 += cSep
-cHead2 += PADC("NOVA", 11)
-cHead2 += cSep
-cHead2 += PADC("RAZLIKA", 11)
-cHead2 += cSep
-cHead2 += PADC("STARA C", 11)
-cHead2 += cSep
-cHead2 += PADC("NOVA C", 11)
-cHead2 += cSep
-cHead2 += PADC("RAZLIKA", 11)
-cHead2 += cSep
-cHead2 += PADC("STARA C", 11)
-cHead2 += cSep
-cHead2 += PADC("NOVA C", 11)
-cHead2 += cSep
-cHead2 += PADC("RAZLIKA", 11)
-cHead2 += cSep
+   // prva linija headera
+   cHead1 := PadC( "SIFRA", 10 )
+   cHead1 += cSep
+   cHead1 += PadC( "NAZIV", 15 )
+   cHead1 += cSep
+   cHead1 += PadC( "CIJENE SA PDV", 35 )
+   cHead1 += cSep
+   cHead1 += PadC( "VRIJEDNOST SA PDV", 35 )
+   cHead1 += cSep
+   cHead1 += PadC( "VRIJEDNOST BEZ PDV", 35 )
+   cHead1 += cSep
 
-? cHead1
-? cHead2
+   // druga linija headera
+   cHead2 := PadC( "ARTIKLA", 10 )
+   cHead2 += cSep
+   cHead2 += PadC( "ARTIKLA", 15 )
+   cHead2 += cSep
+   cHead2 += PadC( "STARA", 11 )
+   cHead2 += cSep
+   cHead2 += PadC( "NOVA", 11 )
+   cHead2 += cSep
+   cHead2 += PadC( "RAZLIKA", 11 )
+   cHead2 += cSep
+   cHead2 += PadC( "STARA C", 11 )
+   cHead2 += cSep
+   cHead2 += PadC( "NOVA C", 11 )
+   cHead2 += cSep
+   cHead2 += PadC( "RAZLIKA", 11 )
+   cHead2 += cSep
+   cHead2 += PadC( "STARA C", 11 )
+   cHead2 += cSep
+   cHead2 += PadC( "NOVA C", 11 )
+   cHead2 += cSep
+   cHead2 += PadC( "RAZLIKA", 11 )
+   cHead2 += cSep
 
-? cLine
+   ? cHead1
+   ? cHead2
 
-return
+   ? cLine
+
+   RETURN
 
 
 // prelaz na novu stranicu
-static function nstr(cLine)
+STATIC FUNCTION nstr( cLine )
 
-if prow() > 58
-	FF
-	st_zagl(cLine)
-endif
+   IF PRow() > 58
+      FF
+      st_zagl( cLine )
+   ENDIF
 
-return
+   RETURN
 
 
 // obrazac o promjeni cijena za sve prodavnice
-function o_pr_cijena()
-local cProred
-local cPodvuceno
-local aDoks
-local i
+FUNCTION o_pr_cijena()
 
-cProred:="N"
-cPodvuceno:="N"
+   LOCAL cProred
+   LOCAL cPodvuceno
+   LOCAL aDoks
+   LOCAL i
 
-MsgBeep("Opcija stampa obrasce o promjeni cijena#na osnovu generisane nivelacije!")
+   cProred := "N"
+   cPodvuceno := "N"
 
-Box(,2,60)
-	@ m_x+1,m_y+2 SAY "Prikazati sa proredom:" GET cProred valid cProred $"DN" pict "@!"
- 	@ m_x+2,m_y+2 SAY "Prikazati podvuceno  :" GET cPodvuceno valid cPodvuceno $ "DN" pict "@!"
-	read
-	ESC_BCR
-BoxC()
+   MsgBeep( "Opcija stampa obrasce o promjeni cijena#na osnovu generisane nivelacije!" )
 
-if Lastkey()==K_ESC
-	return
-endif
+   Box(, 2, 60 )
+   @ m_x + 1, m_y + 2 SAY "Prikazati sa proredom:" GET cProred VALID cProred $ "DN" PICT "@!"
+   @ m_x + 2, m_y + 2 SAY "Prikazati podvuceno  :" GET cPodvuceno VALID cPodvuceno $ "DN" PICT "@!"
+   READ
+   ESC_BCR
+   BoxC()
 
-O_PARTN
-O_ROBA
-O_TARIFA
-O_PRIPT
+   IF LastKey() == K_ESC
+      RETURN
+   ENDIF
 
-// uzmi u matricu prodavnice
-g_pript_doks(@aDoks)
+   O_PARTN
+   O_ROBA
+   O_TARIFA
+   O_PRIPT
 
-// ima li dokumenata
-if LEN(aDoks) == 0
-	MsgBeep("Nema dokumenata!")
-	return
-endif
+   // uzmi u matricu prodavnice
+   g_pript_doks( @aDoks )
 
-// prodji po dokumentima
-for i:=1 to LEN(aDoks)
+   // ima li dokumenata
+   IF Len( aDoks ) == 0
+      MsgBeep( "Nema dokumenata!" )
+      RETURN
+   ENDIF
 
-	// upit za stampu
-	Box(,5, 60)
-		cOdgovor := "D"
-		@ m_x+1, m_y+2 SAY "Stampati obrazac za dokument: 19-" + ALLTRIM(aDoks[i, 1])
-		@ m_x+3, m_y+2 SAY "D/N (X - prekini)" GET cOdgovor VALID cOdgovor $ "DNX" PICT "@!"
-	read
-	BoxC()
-	
-	// ako je X - izadji skroz
-	if cOdgovor == "X"
-		exit
-	endif
+   // prodji po dokumentima
+   FOR i := 1 TO Len( aDoks )
 
-	// ako je N - izadji samo iz tekuceg
-	if cOdgovor == "N"
-		loop
-	endif
-	
-	// stampaj obrazac
-	st_pr_cijena(gFirma, "19", aDoks[i, 1], cPodvuceno, cProred)
-next
+      // upit za stampu
+      Box(, 5, 60 )
+      cOdgovor := "D"
+      @ m_x + 1, m_y + 2 SAY "Stampati obrazac za dokument: 19-" + AllTrim( aDoks[ i, 1 ] )
+      @ m_x + 3, m_y + 2 SAY "D/N (X - prekini)" GET cOdgovor VALID cOdgovor $ "DNX" PICT "@!"
+      READ
+      BoxC()
 
+      // ako je X - izadji skroz
+      IF cOdgovor == "X"
+         EXIT
+      ENDIF
 
-return
+      // ako je N - izadji samo iz tekuceg
+      IF cOdgovor == "N"
+         LOOP
+      ENDIF
+
+      // stampaj obrazac
+      st_pr_cijena( gFirma, "19", aDoks[ i, 1 ], cPodvuceno, cProred )
+   NEXT
+
+   RETURN
 
 
 // vrati u matricu brojeve dokumenata
-static function g_pript_doks(aArr)
-aArr:={}
-select pript
-go top
+STATIC FUNCTION g_pript_doks( aArr )
 
-do while !EOF()
-	if ASCAN(aArr, {|xVar| xVar[1] == field->brdok }) == 0
-		AADD(aArr, {field->brdok})
-	endif
-	skip
-enddo
+   aArr := {}
+   SELECT pript
+   GO TOP
 
-return 
+   DO WHILE !Eof()
+      IF AScan( aArr, {| xVar| xVar[ 1 ] == field->brdok } ) == 0
+         AAdd( aArr, { field->brdok } )
+      ENDIF
+      SKIP
+   ENDDO
+
+   RETURN
 
 
 
 // stampa obrasca o promjeni cijena
-function st_pr_cijena(cFirma, cIdTip, cBrDok, cPodvuceno, cProred)
-local nCol1:=0
-local nCol2:=0
-local nPom:=0
+FUNCTION st_pr_cijena( cFirma, cIdTip, cBrDok, cPodvuceno, cProred )
 
-select PRIPT
-set order to tag "1"
-go top
-seek cFirma + cIdTip + cBrDok
+   LOCAL nCol1 := 0
+   LOCAL nCol2 := 0
+   LOCAL nPom := 0
 
-nStr:=0
+   SELECT PRIPT
+   SET ORDER TO TAG "1"
+   GO TOP
+   SEEK cFirma + cIdTip + cBrDok
 
-cIdKonto:=IdKonto
-cObjNaz:=g_obj_naz(cIdKonto)
+   nStr := 0
 
-START PRINT CRET
+   cIdKonto := IdKonto
+   cObjNaz := g_obj_naz( cIdKonto )
 
-?
+   START PRINT CRET
 
-Preduzece()
+   ?
 
-P_10CPI
-B_ON
-? padl("Prodavnica: " + ALLTRIM(cIdKonto) + "-" + ALLTRIM(cObjNaz),74)
-?
-?
-? PADC("PROMJENA CIJENA U PRODAVNICI ___________________, Datum _________",80)
-?
-B_OFF
+   Preduzece()
 
-P_COND
+   P_10CPI
+   B_ON
+   ? PadL( "Prodavnica: " + AllTrim( cIdKonto ) + "-" + AllTrim( cObjNaz ), 74 )
+   ?
+   ?
+   ? PadC( "PROMJENA CIJENA U PRODAVNICI ___________________, Datum _________", 80 )
+   ?
+   B_OFF
 
-?
+   P_COND
 
-@ prow(), 110 SAY "Str:" + STR(++nStr, 3)
+   ?
 
-m:= "--- --------------------------------------------------- ---------- ---------- ---------- ------------- ------------- -------------"
+   @ PRow(), 110 SAY "Str:" + Str( ++nStr, 3 )
 
-? m
+   m := "--- --------------------------------------------------- ---------- ---------- ---------- ------------- ------------- -------------"
 
-? "*R *  Sifra   *        Naziv                           *  STARA   *   NOVA   * promjena *  zaliha     *   iznos     *  ukupno    *"
-? "*BR*          *                                        *  cijena  *  cijena  *  cijene  * (kolicina)  *   poreza    * promjena   *"
+   ? m
 
-? m
+   ? "*R *  Sifra   *        Naziv                           *  STARA   *   NOVA   * promjena *  zaliha     *   iznos     *  ukupno    *"
+   ? "*BR*          *                                        *  cijena  *  cijena  *  cijene  * (kolicina)  *   poreza    * promjena   *"
 
-do while !eof() .and. cFirma==pript->IdFirma .and.  cBrDok==pript->BrDok .and. cIdTip==pript->IdVD
-	
-	select ROBA
-    	HSEEK PRIPT->IdRoba
-    	
-	select TARIFA
-    	HSEEK PRIPT->IdTarifa
-    	
-	select PRIPT
-    
-   	DokNovaStrana(110, @nStr, IIF(cProred=="D", 2, 1))
-      
-      	?
-	
-      	if cPodvuceno=="D"
-       		U_ON
-      	endif
-	
-      	?? field->rbr + " " + field->idroba + " " + PADR(trim(LEFT(ROBA->naz,35)) + " (" + ROBA->jmj + ")", 40)
-      	
-	@ prow(),pcol()+1 SAY field->FCJ PICT gPicCDEM
-      	@ prow(),pcol()+1 SAY field->MPCSAPP+FCJ PICT gPicCDEM
-      	@ prow(),pcol()+1 SAY field->MPCSAPP PICT gPicCDEM
-      	
-	if cPodvuceno=="D"
-       		U_OFF
-      	endif
-      	
-	@ prow(),pcol()+1 SAY "_____________"
-      	@ prow(),pcol()+1 SAY "_____________"
-      	@ prow(),pcol()+1 SAY "_____________"
-      	
-	if cProred=="D"
-        	?
-      	endif
-    	
-	skip
-enddo
+   ? m
 
-DokNovaStrana(110, @nStr, 12)
+   DO WHILE !Eof() .AND. cFirma == pript->IdFirma .AND.  cBrDok == pript->BrDok .AND. cIdTip == pript->IdVD
 
-? m
-? " UKUPNO "
-? m
-?
-?
-?
-P_10CPI
+      SELECT ROBA
+      HSEEK PRIPT->IdRoba
 
-PrnClanoviKomisije()
+      SELECT TARIFA
+      HSEEK PRIPT->IdTarifa
 
-ENDPRINT
+      SELECT PRIPT
 
-return
+      DokNovaStrana( 110, @nStr, iif( cProred == "D", 2, 1 ) )
 
+      ?
 
+      IF cPodvuceno == "D"
+         U_ON
+      ENDIF
 
+      ?? field->rbr + " " + field->idroba + " " + PadR( Trim( Left( ROBA->naz, 35 ) ) + " (" + ROBA->jmj + ")", 40 )
+
+      @ PRow(), PCol() + 1 SAY field->FCJ PICT gPicCDEM
+      @ PRow(), PCol() + 1 SAY field->MPCSAPP + FCJ PICT gPicCDEM
+      @ PRow(), PCol() + 1 SAY field->MPCSAPP PICT gPicCDEM
+
+      IF cPodvuceno == "D"
+         U_OFF
+      ENDIF
+
+      @ PRow(), PCol() + 1 SAY "_____________"
+      @ PRow(), PCol() + 1 SAY "_____________"
+      @ PRow(), PCol() + 1 SAY "_____________"
+
+      IF cProred == "D"
+         ?
+      ENDIF
+
+      SKIP
+   ENDDO
+
+   DokNovaStrana( 110, @nStr, 12 )
+
+   ? m
+   ? " UKUPNO "
+   ? m
+   ?
+   ?
+   ?
+   P_10CPI
+
+   PrnClanoviKomisije()
+
+   ENDPRINT
+
+   RETURN

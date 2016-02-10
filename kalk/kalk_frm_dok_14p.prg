@@ -106,9 +106,6 @@ FUNCTION Get1_14PDV()
 
    _GKolicina := 0
 
-   // ////// kalkulacija nabavne cijene
-   // ////// nKolZN:=kolicina koja je na stanju a porijeklo je od zadnje nabavke
-
    nKolS := 0
    nKolZN := 0
    nc1 := 0
@@ -171,7 +168,7 @@ FUNCTION Get1_14PDV()
          when {|| _VPCSAPP := iif( _VPC <> 0, _VPC * ( 1 -_RabatV / 100 ) * ( 1 + _MPC / 100 ), 0 ), ShowGets(), .T. } ;
          valid {|| _vpcsappp := iif( _VPCsap <> 0, _vpcsap + _PNAP, _VPCSAPPP ), .T. }
 
-   ELSE 
+   ELSE
       _VPCsaPP := 0
       @ m_x + 17, m_y + 2  SAY8 "PC SA PDV "
       @ m_x + 17, m_Y + 50 GET _vpcSaPP PICTURE picdem ;
@@ -241,7 +238,7 @@ FUNCTION Get1_14PDV()
 
 
 
-/* 
+/*
    pPDV14(fret)
    Prikaz PDV pri unosu 14-ke
  */

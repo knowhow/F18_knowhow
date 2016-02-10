@@ -20,7 +20,7 @@ FUNCTION kalk_pregled_dokumenata()
    LOCAL _izbor := 1
 
    AAdd( _opc, "1. štampa ažuriranog dokumenta              " )
-   AAdd( _opcexe, {|| kalk_centr_stampa_dokumenta( .T. ) } )
+   AAdd( _opcexe, {|| kalk_stampa_dokumenta( .T. ) } )
 
    AAdd( _opc, "2. štampa liste dokumenata" )
    AAdd( _opcexe, {|| StDoks() } )

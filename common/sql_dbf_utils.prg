@@ -295,7 +295,7 @@ FUNCTION _sql_get_value( table_name, field_name, cond )
 // --------------------------------------------------------------------
 // vraca sve zapise iz tabele po zadatom uslovu
 // --------------------------------------------------------------------
-FUNCTION _select_all_from_table( table, fields, where_cond, order_fields )
+FUNCTION select_all_records_from_table( table, fields, where_cond, order_fields )
 
    LOCAL _srv := my_server()
    LOCAL _qry, _data, _i, _n, _o
@@ -343,7 +343,7 @@ FUNCTION _select_all_from_table( table, fields, where_cond, order_fields )
 
    _data := _sql_query( _srv, _qry )
 
-   IF  _data:Eof() == 0
+   IF  sql_query_no_records( _data )
       _data := NIL
    ENDIF
 
@@ -671,9 +671,9 @@ FUNCTION _set_sql_record_to_hash( table, id )
    LOCAL _hash
 
    IF ValType( id ) == "N"
-      _hash := _sql_query_record_to_hash( _select_all_from_table( table, NIL, { "id = " + AllTrim( Str( id ) ) } ) )
+      _hash := _sql_query_record_to_hash( select_all_records_from_table( table, NIL, { "id = " + AllTrim( Str( id ) ) } ) )
    ELSE
-      _hash := _sql_query_record_to_hash( _select_all_from_table( table, NIL, { "id = " + _sql_quote( id ) } ) )
+      _hash := _sql_query_record_to_hash( select_all_records_from_table( table, NIL, { "id = " + _sql_quote( id ) } ) )
    ENDIF
 
    RETURN _hash

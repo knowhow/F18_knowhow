@@ -608,8 +608,7 @@ STATIC FUNCTION kalk_provjera_integriteta( aDoks, lViseDok )
       SEEK cIdFirma + cIdVD + cBrDok
 
       IF Found()
-         Beep( 1 )
-         Msg( "Već postoji dokument pod brojem " + cIdFirma + "-" + cIdvd + "-" + AllTrim( cBrDok ) )
+         error_tab( "Već postoji dokument pod brojem " + cIdFirma + "-" + cIdvd + "-" + AllTrim( cBrDok ) )
          IF !lViseDok
             my_close_all_dbf()
             RETURN .F.

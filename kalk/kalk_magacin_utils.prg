@@ -40,11 +40,13 @@ FUNCTION KalkNabP( cIdFirma, cIdroba, cIdkonto, nKolicina, nKolZN, nNC, nSNC, dD
    SEEK cIdFirma + cIdKonto + cIdRoba + Chr( 254 )
    SKIP -1
 
-   IF cIdfirma + cIdkonto + cIdroba == idfirma + pkonto + idroba .AND. _datdok < datdok
-      Beep( 2 )
-      Msg( "Postoji dokument " + idfirma + "-" + idvd + "-" + brdok + " na datum: " + DToC( datdok ), 4 )
+
+   IF cIdfirma + cIdkonto + cIdroba == field->idfirma + field->pkonto + field->idroba .AND. _datdok < field->datdok
+
+       error_tab( " Postoji dokument " + idfirma + "-" + idvd + "-" + brdok + " na datum: " + DToC( datdok ) )
       _ERROR := "1"
    ENDIF
+
 
    nLen := 1
 
@@ -774,7 +776,7 @@ FUNCTION V_KolMag()
    IF nKolS < _Kolicina
       Beep( 4 )
       CLEAR TYPEAHEAD
-      Msg( "Ukupno na stanju je samo" + Str( nKolS, 10, 4 ) + " robe !!", 6 )
+      error_tab( "Ukupno na stanju je samo" + Str( nKolS, 10, 4 ) + " robe !!", 6 )
       _ERROR := "1"
    ENDIF
 
@@ -901,9 +903,8 @@ FUNCTION KalkNab( cIdFirma, cIdRoba, cIdKonto, nKolicina, nKolZN, nNC, nSNc, dDa
    SEEK cIdFirma + cIdKonto + cIdRoba + "X"
 
    SKIP -1
-   IF ( ( cIdFirma + cIdKonto + cIdRoba ) == ( idfirma + mkonto + idroba ) ) .AND. _datdok < datdok
-      Beep( 2 )
-      Msg( "Postoji dokument " + idfirma + "-" + idvd + "-" + brdok + " na datum: " + DToC( datdok ), 4 )
+   IF ( ( cIdFirma + cIdKonto + cIdRoba ) == ( field->idfirma + field->mkonto + field->idroba ) ) .AND. _datdok < field->datdok
+      error_tab( "Postoji dokument " + field->idfirma + "-" + field->idvd + "-" + field->brdok + " na datum: " + DToC( field->datdok ), 4 )
       _ERROR := "1"
    ENDIF
 
@@ -922,7 +923,7 @@ FUNCTION KalkNab( cIdFirma, cIdRoba, cIdKonto, nKolicina, nKolZN, nNC, nSNc, dDa
 
    // ovo je prvi prolaz
    // u njemu se proracunava totali za jednu karticu
-   hseek cIdFirma + cIdKonto + cIdRoba
+   HSEEK cIdFirma + cIdKonto + cIdRoba
    DO WHILE !Eof() .AND. ( ( cIdFirma + cIdKonto + cIdRoba ) == ( idFirma + mkonto + idroba ) ) .AND. _datdok >= datdok
 
       IF mu_i == "1" .OR. mu_i == "5"
@@ -1119,7 +1120,7 @@ FUNCTION a_nc_ctrl( aCtrl, cIdRoba, nKol, nSnc, nZadnjaNC )
 
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 // ------------------------------------------------
 // popup kod nabavne cijene
@@ -1139,7 +1140,7 @@ FUNCTION p_nc_popup( cIdRoba )
 
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 // ------------------------------------------------
@@ -1214,7 +1215,7 @@ FUNCTION p_nc_ctrl( aCtrl )
 
    SELECT ( nTArea )
 
-   RETURN
+   RETURN .T.
 
 
 

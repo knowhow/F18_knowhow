@@ -113,6 +113,13 @@ FUNCTION sql_error_in_query( oQry )
    RETURN ( oQry:NetErr() ) .AND. !Empty( oQry:ErrorMsg() )
 
 
+
+FUNCTION sql_query_no_records( ret )
+
+   RETURN sql_query_bez_zapisa( ret )
+
+
+
 FUNCTION sql_query_bez_zapisa( ret )
 
    SWITCH ValType( ret )

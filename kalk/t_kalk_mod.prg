@@ -80,7 +80,7 @@ METHOD mMenuStandard
    AAdd( opc, "------------------------------------" )
    AAdd( opcexe, nil )
    AAdd( opc,   "A. štampa ažuriranog dokumenta" )
-   AAdd( opcexe, {|| kalk_centr_stampa_dokumenta( .T. ) } )
+   AAdd( opcexe, {|| kalk_stampa_dokumenta( .T. ) } )
    AAdd( opc,   "P. povrat dokumenta u pripremu" )
    AAdd( opcexe, {|| kalk_povrat_dokumenta() } )
    AAdd( opc, "------------------------------------" )

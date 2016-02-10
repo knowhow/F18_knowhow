@@ -1,17 +1,19 @@
 /*
- * This file is part of the bring.out FMK, a free and open source
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+ * This file is part of the bring.out knowhow ERP, a free and open source
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
 
-
 #include "f18.ch"
 
+MEMVAR GetList, m_x, m_y
+MEMVAR nRbr, fNovi
+MEMVAR _DatFaktP, _datDok, _brFaktP
 
 FUNCTION Get1_PR()
 
@@ -23,26 +25,24 @@ FUNCTION Get1_PR()
 
    SELECT kalk_pripr
 
-   IF nRbr == 1 .AND. fnovi
-      _DatFaktP := _datdok
+   IF nRbr == 1 .AND. fNovi
+      _DatFaktP := _datDok
    ENDIF
 
    IF nRbr == 1
 
-      @ m_x + 6, m_y + 2 SAY "Broj fakture" GET _brfaktp
-      @ m_x + 7, m_y + 2 SAY "Mag .got.proizvoda zaduzuje" GET _IdKonto VALID  P_Konto( @_IdKonto, 21, 5 ) PICT "@!"
-      @ m_x + 8, m_y + 2 SAY "Mag. sirovina razduzuje    " GET _IdKonto2 PICT "@!" VALID P_Konto( @_IdKonto2 )
-      @ m_x + 12, m_y + 2 SAY "Proizvod  " GET _IdRoba PICT "@!" valid  {|| P_Roba( @_IdRoba ), Reci( 12, 24, Trim( Left( roba->naz, 40 ) ) + " (" + ROBA->jmj + ")", 40 ), _IdTarifa := iif( fnovi, ROBA->idtarifa, _IdTarifa ), .T. }
+      @ m_x + 6, m_y + 2 SAY8 "Broj fakture" GET _brFaktP
+      @ m_x + 7, m_y + 2 SAY8 "Mag .got.proizvoda zadužuje" GET _IdKonto VALID  P_Konto( @_IdKonto, 21, 5 ) PICT "@!"
+      @ m_x + 8, m_y + 2 SAY8 "Mag. sirovina razdužuje    " GET _IdKonto2 PICT "@!" VALID P_Konto( @_IdKonto2 )
+      @ m_x + 12, m_y + 2 SAY8 "Proizvod  " GET _IdRoba PICT "@!" valid  {|| P_Roba( @_IdRoba ), Reci( 12, 24, Trim( Left( roba->naz, 40 ) ) + " (" + ROBA->jmj + ")", 40 ), _IdTarifa := iif( fnovi, ROBA->idtarifa, _IdTarifa ), .T. }
       @ m_x + 12, m_y + 70 GET _IdTarifa WHEN gPromTar == "N" VALID P_Tarifa( @_IdTarifa )
 
       SELECT tarifa
-      hseek _IdTarifa
+      HSEEK _IdTarifa
 
-      // postavi TARIFA na pravu poziciju
       SELECT kalk_pripr
-      // napuni tarifu
 
-      @ m_x + 13, m_y + 2 SAY "Kolicina  " GET _Kolicina PICT PicKol VALID _Kolicina <> 0
+      @ m_x + 13, m_y + 2 SAY8 "Količina  " GET _Kolicina PICT PicKol VALID _Kolicina <> 0
 
       READ
 
@@ -57,10 +57,10 @@ FUNCTION Get1_PR()
       SELECT kalk_pripr
       GO BOTTOM
 
-      IF Val( rbr ) < 900 .OR. ( Val( rbr ) > 1 .AND. Pitanje(, "Zelite li izbrisati izgenerisane sirovine ?", "N" ) == "D" )
+      IF Val( rbr ) < 900 .OR. ( Val( rbr ) > 1 ;
+         .AND. Pitanje(, "Želite li izbrisati izgenerisane sirovine ?", "N" ) == "D" )
 
          my_flock()
-
          DO WHILE !Bof() .AND. Val( rbr ) > 900
             SKIP -1
             nTrec := RecNo()
@@ -68,7 +68,6 @@ FUNCTION Get1_PR()
             my_delete()
             GO nTrec
          ENDDO
-
          my_unlock()
 
          SELECT ROBA
@@ -152,12 +151,14 @@ FUNCTION Get1_PR()
          ENDIF
          // roba->tip == "P"
       ENDIF
+
       SELECT kalk_pripr
       GO nTPriPrec
       IF gNW <> "X"
          @ m_x + 10, m_y + 42  SAY "Zaduzuje: "   GET _IdZaduz  PICT "@!" VALID Empty( _idZaduz ) .OR. P_Firma( @_IdZaduz, 24 )
       ENDIF
       READ
+
       ESC_RETURN K_ESC
    ELSE
 
@@ -199,7 +200,7 @@ FUNCTION Get1_PR()
             Msg( "Datum nabavke je " + DToC( dDatNab ) + " sirovina " + sast->id2, 4 )
          ENDIF
          IF Round( nKols - _kolicina, 4 ) < 0
-            MsgBeep( "Na stanju je samo :" + Str( nkols, 15, 3 ) )
+            error_tab( "Na stanju je samo :" + Str( nKols, 15, 3 ) )
             _error := "1"
          ENDIF
       ENDIF

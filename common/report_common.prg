@@ -87,7 +87,7 @@ METHOD ReportCommon:get_company( id_firma )
       IF id_firma == NIL
          id_firma := gFirma
       ENDIF
-      _data := _select_all_from_table( "fmk.partn", { "naz", "naz2" }, { "id = " + _sql_quote( id_firma ) } )
+      _data := select_all_records_from_table( "fmk.partn", { "naz", "naz2" }, { "id = " + _sql_quote( id_firma ) } )
       oRow := _data:GetRow( 1 )
       _comp += id_firma + " " + ;
          hb_UTF8ToStr( AllTrim( oRow:FieldGet( oRow:FieldPos( "naz" ) ) ) ) + " " + ;

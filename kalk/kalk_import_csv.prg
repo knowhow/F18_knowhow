@@ -902,7 +902,7 @@ STATIC FUNCTION ObradiDokument( lAsPokreni, lStampaj )
 
    IF lStampaj == .T.
       // odstampaj kalk
-      kalk_centr_stampa_dokumenta( nil, nil, .T. )
+      kalk_stampa_dokumenta( nil, nil, .T. )
    ENDIF
 
    // azuriraj kalk

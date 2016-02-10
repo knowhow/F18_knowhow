@@ -369,7 +369,7 @@ STATIC FUNCTION pregled_dokumenata_hron_keyhandler( Ch )
       PushWA()
       cSeek := idfirma + idvd + brdok
       my_close_all_dbf()
-      kalk_centr_stampa_dokumenta( .T., cSeek )
+      kalk_stampa_dokumenta( .T., cSeek )
       O_KALK
       O_KALK_DOKS
       PopWA()

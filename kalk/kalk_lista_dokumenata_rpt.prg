@@ -177,7 +177,7 @@ qqVD := TRIM(qqVD)
 seek cIdFirma + qqVD
 
 if cStampaj == "D"
-	kalk_centr_stampa_dokumenta( .t., "IZDOKS" )
+	kalk_stampa_dokumenta( .t., "IZDOKS" )
    	my_close_all_dbf()
 	return
 endif

@@ -347,7 +347,7 @@ FUNCTION kalk_pripr_key_handler()
    CASE Ch == K_CTRL_P
 
       my_close_all_dbf()
-      kalk_centr_stampa_dokumenta()
+      kalk_stampa_dokumenta()
 
       my_close_all_dbf()
       o_kalk_edit()
@@ -1875,7 +1875,7 @@ FUNCTION Savjetnik()
    SET DEFAULT TO
    SET PRINTER to ( ckom )
    SET PRINTER ON
-   SET( _SET_DEFAULT, cDDir )
+   Set( _SET_DEFAULT, cDDir )
 
    SELECT kalk_pripr
    GO TOP
@@ -2006,13 +2006,12 @@ STATIC FUNCTION NazProdObj()
 
 
 
-/*! \fn PlusMinusKol()
+/*! fn PlusMinusKol()
  *  \brief Mijenja predznak kolicini u svim stavkama u kalk_pripremi
  */
 
 FUNCTION PlusMinusKol()
 
-   // {
    o_kalk_edit()
    SELECT kalk_pripr
    GO TOP
@@ -2042,7 +2041,7 @@ FUNCTION PlusMinusKol()
 
 FUNCTION UzmiTarIzSif()
 
-   // {
+
    o_kalk_edit()
    SELECT kalk_pripr
    GO TOP
@@ -2098,7 +2097,7 @@ FUNCTION DiskMPCSAPP()
    KEYBOARD Chr( K_ESC )
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -2109,7 +2108,7 @@ FUNCTION DiskMPCSAPP()
 
 FUNCTION MPCSAPPuSif()
 
-   // {
+
    o_kalk_edit()
    SELECT kalk_pripr
    GO TOP
@@ -2173,8 +2172,8 @@ FUNCTION MPCSAPPiz80uSif()
 
 
 
-/*! \fn VPCSifUDok()
- *  \brief Filuje VPC u svim stavkama u kalk_pripremi odgovarajucom VPC iz sifrarnika robe
+/*! fn VPCSifUDok()
+ *  brief Filuje VPC u svim stavkama u kalk_pripremi odgovarajucom VPC iz sifrarnika robe
  */
 
 FUNCTION VPCSifUDok()
@@ -2201,12 +2200,12 @@ FUNCTION VPCSifUDok()
    KEYBOARD Chr( K_ESC )
    my_close_all_dbf()
 
-   RETURN
-// }
+   RETURN .T.
 
 
 
-STATIC FUNCTION _o_ctrl_tables( azurirana )
+
+STATIC FUNCTION kalk_open_tables( azurirana )
 
    O_KONCIJ
    O_ROBA
@@ -2225,10 +2224,8 @@ STATIC FUNCTION _o_ctrl_tables( azurirana )
 
 
 
-// ---------------------------------------------------
-// centralna funkcija za stampu dokumenta
-// ---------------------------------------------------
-FUNCTION kalk_centr_stampa_dokumenta()
+
+FUNCTION kalk_stampa_dokumenta()
 
    PARAMETERS fStara, cSeek, lAuto
    LOCAL nCol1
@@ -2261,10 +2258,9 @@ FUNCTION kalk_centr_stampa_dokumenta()
       cSeek := ""
    ENDIF
 
-
    my_close_all_dbf()
 
-   _o_ctrl_tables( fstara )
+   kalk_open_tables( fstara )
 
    SELECT kalk_pripr
    SET ORDER TO TAG "1"
@@ -2325,7 +2321,7 @@ FUNCTION kalk_centr_stampa_dokumenta()
       IF !kalkulacija_ima_sve_cijene( cIdFirma, cIdVd, cBrDok )
          MsgBeep( "Unutar kalkulacije nedostaju pojedine cijene bitne za obračun!#Štampanje onemogućeno." )
          my_close_all_dbf()
-         RETURN
+         RETURN .F.
       ENDIF
 
       IF ( cSeek != 'IZDOKS' )
@@ -2400,11 +2396,7 @@ FUNCTION kalk_centr_stampa_dokumenta()
             IF ( c10Var == "3" )
                Stkalk14_3()
             ELSE
-               IF IsPDV()
-                  StKalk14PDV()
-               ELSE
-                  Stkalk14()
-               ENDIF
+               StKalk14PDV()
             ENDIF
          ELSEIF ( cidvd $ "16#95#96#97" ) .AND. IsPDV()
             IF gPDVMagNab == "D"
@@ -2415,18 +2407,18 @@ FUNCTION kalk_centr_stampa_dokumenta()
          ELSEIF ( cidvd $ "95#96#97#16" ) .AND. !IsPDV()
             IF ( gVarEv == "2" )
                Stkalk95_sk()
-            ELSEIF ( gmagacin == "1" )
+            ELSEIF ( gMagacin == "1" )
                Stkalk95_1()
             ELSE
                Stkalk95()
             ENDIF
          ELSEIF ( cidvd $ "41#42#43#47#49" )
             StKalk41()
-         ELSEIF ( cidvd == "18" )
+         ELSEIF ( cIdvd == "18" )
             StKalk18()
-         ELSEIF ( cidvd == "19" )
+         ELSEIF ( cIdvd == "19" )
             StKalk19()
-         ELSEIF ( cidvd == "80" )
+         ELSEIF ( cIdvd == "80" )
             StKalk80()
          ELSEIF ( cidvd == "81" )
             IF ( c10Var == "1" )
@@ -2446,7 +2438,7 @@ FUNCTION kalk_centr_stampa_dokumenta()
             ENDIF
             StkalkRN()
          ELSEIF ( cidvd == "PR" )
-            StkalkPR()
+            st_kalk_dokument_pr()
          ENDIF
 
          IF ( cSeek != 'IZDOKS' )
@@ -2491,7 +2483,7 @@ FUNCTION kalk_centr_stampa_dokumenta()
       my_close_all_dbf()
       ENDPRINT
 
-      _o_ctrl_tables( fstara )
+      kalk_open_tables( fstara )
       PopWa()
 
       IF ( cidvd $ "80#11#81#12#13#IP#19" )

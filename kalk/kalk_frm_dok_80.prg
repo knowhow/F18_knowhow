@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -15,193 +15,194 @@
 // ------------------------------------------------------------
 // prijem prodavnica, predispozicija
 // ------------------------------------------------------------
-function Get1_80( atrib )
-local _x := 5
-local _kord_x := 0
-local _unos_left := 40
-private aPorezi := {}
-private fMarza := " "
+FUNCTION Get1_80( atrib )
 
-if nRbr == 1 .and. fnovi
-    _DatFaktP := _datdok
-endif
+   LOCAL _x := 5
+   LOCAL _kord_x := 0
+   LOCAL _unos_left := 40
+   PRIVATE aPorezi := {}
+   PRIVATE fMarza := " "
 
-if nRbr == 1 .or. !fnovi
-    
-    _kord_x := m_x + _x
+   IF nRbr == 1 .AND. fnovi
+      _DatFaktP := _datdok
+   ENDIF
 
-    @ m_x + _x, m_y + 2 SAY "Temeljnica:" GET _BrFaktP
-    @ m_x + _x, col() + 1 SAY "Datum:" GET _DatFaktP
+   IF nRbr == 1 .OR. !fnovi
 
-    ++ _x
+      _kord_x := m_x + _x
 
-    @ m_x + _x, m_y + 2 SAY "Konto zaduzuje/razduzuje:" GET _IdKonto VALID {|| P_Konto( @_IdKonto ), ispisi_naziv_sifre( F_KONTO, _idkonto, _kord_x - 1, 40, 20 ) } PICT "@!"
+      @ m_x + _x, m_y + 2 SAY "Temeljnica:" GET _BrFaktP
+      @ m_x + _x, Col() + 1 SAY "Datum:" GET _DatFaktP
 
-    if gNW <> "X"
-        @ m_x + _x, m_y + 50  SAY "Partner zaduzuje:" GET _IdZaduz PICT "@!" VALID EMPTY(_idZaduz) .or. P_Firma( @_IdZaduz )
-    endif
+      ++ _x
 
-    ++ _x
-    _kord_x := m_x + _x
+      @ m_x + _x, m_y + 2 SAY "Konto zaduzuje/razduzuje:" GET _IdKonto VALID {|| P_Konto( @_IdKonto ), ispisi_naziv_sifre( F_KONTO, _idkonto, _kord_x - 1, 40, 20 ) } PICT "@!"
 
-    @ m_x + _x, m_y + 2 SAY "Prenos na konto:" GET _IdKonto2 VALID {|| EMPTY( _idkonto2 ) .or. P_Konto( @_IdKonto2 ), ispisi_naziv_sifre( F_KONTO, _idkonto2, _kord_x, 30, 20 )  } PICT "@!"
+      IF gNW <> "X"
+         @ m_x + _x, m_y + 50  SAY "Partner zaduzuje:" GET _IdZaduz PICT "@!" VALID Empty( _idZaduz ) .OR. P_Firma( @_IdZaduz )
+      ENDIF
 
-    if gNW<>"X"
-        @ m_x + _x, m_y + 50 SAY "Partner zaduzuje:" GET _IdZaduz2 PICT "@!" VALID EMPTY(_idZaduz) .or. P_Firma( @_IdZaduz2 )
-    endif
+      ++ _x
+      _kord_x := m_x + _x
 
-    read
+      @ m_x + _x, m_y + 2 SAY "Prenos na konto:" GET _IdKonto2 VALID {|| Empty( _idkonto2 ) .OR. P_Konto( @_IdKonto2 ), ispisi_naziv_sifre( F_KONTO, _idkonto2, _kord_x, 30, 20 )  } PICT "@!"
 
-    ESC_RETURN K_ESC
+      IF gNW <> "X"
+         @ m_x + _x, m_y + 50 SAY "Partner zaduzuje:" GET _IdZaduz2 PICT "@!" VALID Empty( _idZaduz ) .OR. P_Firma( @_IdZaduz2 )
+      ENDIF
 
+      READ
 
-else
-
-    @ m_x + _x, m_y + 2 SAY "Temeljnica: "
-    ?? _BrFaktP
-    @ m_x + _x, col() + 2 SAY "Datum: "
-    ?? _DatFaktP
-    
-    ++ _x
-    
-    @ m_x + _x, m_y + 2 SAY "Konto zaduzuje/razduzuje: "
-    ?? _IdKonto
-    if gNW <> "X"
-        @ m_x + _x, col() + 2  SAY "Partner zaduzuje: "
-        ?? _IdZaduz
-    endif
-    
-    ++ _x
-    @ m_x + _x, m_y + 2 SAY "Prenos na konto: "
-    ?? _IdKonto2
-    if gNW <> "X"
-        @ m_x + _x, col() + 2 SAY "Partner zaduzuje: "
-        ?? _IdZaduz2
-    endif
-    
-    read
-    ESC_RETURN K_ESC
-
-endif
-
-select kalk_pripr
-
-++ _x
-++ _x
-
-_kord_x := m_x + _x
-
-if lKoristitiBK
-    @ m_x + _x, m_y + 2 SAY "Artikal  " GET _IdRoba PICT "@!S10" ;
-        WHEN {|| _IdRoba := PADR( _idroba, VAL( gDuzSifIni ) ), .t. } ;
-        VALID {|| VRoba_lv( fNovi, @aPorezi ), ispisi_naziv_sifre( F_ROBA, _idroba, _kord_x, 25, 40 ) }
-else
-    @ m_x + _x, m_y + 2 SAY "Artikal  " GET _IdRoba PICT "@!" ;
-        VALID {|| VRoba_lv( fNovi, @aPorezi ), ispisi_naziv_sifre( F_ROBA, _idroba, _kord_x, 25, 40 ) }
-endif
-
-@ m_x + _x, m_y + ( MAXCOLS() - 20 ) SAY "Tarifa:" GET _IdTarifa ;
-    WHEN gPromTar == "N" VALID P_Tarifa( @_IdTarifa )
-
-VTPorezi()
-
-++ _x
-@ m_x + _x, m_y + 2 SAY "Kolicina " GET _Kolicina PICT PicKol VALID _Kolicina <> 0
-
-read
-ESC_RETURN K_ESC
-
-if lKoristitiBK
-    _idRoba := LEFT( _idRoba, 10 )
-endif
-
-select roba
-hseek _idroba
-
-select tarifa
-seek roba->idtarifa
-
-select koncij
-seek trim( _idkonto )
-
-select kalk_pripr  
-
-_pkonto := _idkonto
-
-DatPosljP()
-DuplRoba()
-
-if fNovi
-
-    select koncij
-    seek TRIM( _idkonto )
-
-    select roba
-    HSEEK _idroba
-
-    _mpcsapp := UzmiMPCSif()
-
-    _TMarza2 := "%"
-    _TCarDaz := "%"
-    _CarDaz := 0
-
-endif
-
-select kalk_pripr
-
-// NC
-
-++ _x
-++ _x
-
-_kord_x := m_x + _x
-
-@ m_x + _x, m_y + 2 SAY "NABAVNA CJENA:"
-@ m_x + _x, m_y + _unos_left GET _nc WHEN VKol( _kord_x - 2 ) PICT PicDEM 
-
-++ _x
-@ m_x + _x, m_y + 2 SAY "MARZA:" GET _TMarza2 VALID _Tmarza2 $ "%AU" PICT "@!"
-@ m_x + _x, m_y + _unos_left GET _Marza2 PICT PicDEM VALID {|| _vpc := _nc, .t. }       
-@ m_x + _x, col() + 1 GET fMarza PICT "@!"
-
-++ _x
-@ m_x + _x, m_y + 2 SAY "MALOPROD. CIJENA (MPC):"
-@ m_x + _x, m_y + _unos_left GET _mpc ;
-    PICT PicDEM;
-    WHEN W_MPC_( "80", ( fMarza == "F" ), @aPorezi ) ;
-    VALID V_Mpc_( "80", ( fMarza == "F" ), @aPorezi )
-
-++ _x
-SayPorezi_lv( _x, aPorezi )
-
-++ _x
-if IsPDV()
-    @ m_x + _x, m_y + 2 SAY "PC SA PDV:"
-else
-    @ m_x + _x, m_y + 2 SAY "MPC SA POREZOM:"
-endif
-
-@ m_x + _x, m_y + _unos_left GET _MPCSaPP PICT PicDEM VALID V_MpcSaPP_( "80", .f., @aPorezi, .t. )
-
-read
-ESC_RETURN K_ESC
+      ESC_RETURN K_ESC
 
 
-select koncij
-seek trim(_idkonto)
+   ELSE
 
-StaviMPCSif( _MpcSapp, .t. )
+      @ m_x + _x, m_y + 2 SAY "Temeljnica: "
+      ?? _BrFaktP
+      @ m_x + _x, Col() + 2 SAY "Datum: "
+      ?? _DatFaktP
 
-select kalk_pripr
+      ++ _x
 
-_PKonto:=_Idkonto
-_PU_I:="1"
-_MKonto:=""
-_MU_I:=""
+      @ m_x + _x, m_y + 2 SAY "Konto zaduzuje/razduzuje: "
+      ?? _IdKonto
+      IF gNW <> "X"
+         @ m_x + _x, Col() + 2  SAY "Partner zaduzuje: "
+         ?? _IdZaduz
+      ENDIF
 
-nStrana := 3
+      ++ _x
+      @ m_x + _x, m_y + 2 SAY "Prenos na konto: "
+      ?? _IdKonto2
+      IF gNW <> "X"
+         @ m_x + _x, Col() + 2 SAY "Partner zaduzuje: "
+         ?? _IdZaduz2
+      ENDIF
 
-return lastkey()
+      READ
+      ESC_RETURN K_ESC
+
+   ENDIF
+
+   SELECT kalk_pripr
+
+   ++ _x
+   ++ _x
+
+   _kord_x := m_x + _x
+
+   IF lKoristitiBK
+      @ m_x + _x, m_y + 2 SAY "Artikal  " GET _IdRoba PICT "@!S10" ;
+         WHEN {|| _IdRoba := PadR( _idroba, Val( gDuzSifIni ) ), .T. } ;
+         VALID {|| VRoba_lv( fNovi, @aPorezi ), ispisi_naziv_sifre( F_ROBA, _idroba, _kord_x, 25, 40 ) }
+   ELSE
+      @ m_x + _x, m_y + 2 SAY "Artikal  " GET _IdRoba PICT "@!" ;
+         VALID {|| VRoba_lv( fNovi, @aPorezi ), ispisi_naziv_sifre( F_ROBA, _idroba, _kord_x, 25, 40 ) }
+   ENDIF
+
+   @ m_x + _x, m_y + ( MAXCOLS() - 20 ) SAY "Tarifa:" GET _IdTarifa ;
+      WHEN gPromTar == "N" VALID P_Tarifa( @_IdTarifa )
+
+   VTPorezi()
+
+   ++ _x
+   @ m_x + _x, m_y + 2 SAY "Kolicina " GET _Kolicina PICT PicKol VALID _Kolicina <> 0
+
+   READ
+   ESC_RETURN K_ESC
+
+   IF lKoristitiBK
+      _idRoba := Left( _idRoba, 10 )
+   ENDIF
+
+   SELECT roba
+   hseek _idroba
+
+   SELECT tarifa
+   SEEK roba->idtarifa
+
+   SELECT koncij
+   SEEK Trim( _idkonto )
+
+   SELECT kalk_pripr
+
+   _pkonto := _idkonto
+
+   DatPosljP()
+   DuplRoba()
+
+   IF fNovi
+
+      SELECT koncij
+      SEEK Trim( _idkonto )
+
+      SELECT roba
+      HSEEK _idroba
+
+      _mpcsapp := UzmiMPCSif()
+
+      _TMarza2 := "%"
+      _TCarDaz := "%"
+      _CarDaz := 0
+
+   ENDIF
+
+   SELECT kalk_pripr
+
+   // NC
+
+   ++ _x
+   ++ _x
+
+   _kord_x := m_x + _x
+
+   @ m_x + _x, m_y + 2 SAY "NABAVNA CJENA:"
+   @ m_x + _x, m_y + _unos_left GET _nc WHEN VKol( _kord_x - 2 ) PICT PicDEM
+
+   ++ _x
+   @ m_x + _x, m_y + 2 SAY "MARZA:" GET _TMarza2 VALID _Tmarza2 $ "%AU" PICT "@!"
+   @ m_x + _x, m_y + _unos_left GET _Marza2 PICT PicDEM VALID {|| _vpc := _nc, .T. }
+   @ m_x + _x, Col() + 1 GET fMarza PICT "@!"
+
+   ++ _x
+   @ m_x + _x, m_y + 2 SAY "MALOPROD. CIJENA (MPC):"
+   @ m_x + _x, m_y + _unos_left GET _mpc ;
+      PICT PicDEM;
+      WHEN W_MPC_( "80", ( fMarza == "F" ), @aPorezi ) ;
+      VALID V_Mpc_( "80", ( fMarza == "F" ), @aPorezi )
+
+   ++ _x
+   SayPorezi_lv( _x, aPorezi )
+
+   ++ _x
+   IF IsPDV()
+      @ m_x + _x, m_y + 2 SAY "PC SA PDV:"
+   ELSE
+      @ m_x + _x, m_y + 2 SAY "MPC SA POREZOM:"
+   ENDIF
+
+   @ m_x + _x, m_y + _unos_left GET _MPCSaPP PICT PicDEM VALID V_MpcSaPP_( "80", .F., @aPorezi, .T. )
+
+   READ
+   ESC_RETURN K_ESC
+
+
+   SELECT koncij
+   SEEK Trim( _idkonto )
+
+   StaviMPCSif( _MpcSapp, .T. )
+
+   SELECT kalk_pripr
+
+   _PKonto := _Idkonto
+   _PU_I := "1"
+   _MKonto := ""
+   _MU_I := ""
+
+   nStrana := 3
+
+   RETURN LastKey()
 
 
 
@@ -209,160 +210,160 @@ return lastkey()
 // PROTUSTAVKA 80-ka, druga strana
 // _odlval nalazi se u knjiz, filuje staru vrijenost
 // _odlvalb nalazi se u knjiz, filuje staru vrijenost nabavke
-function Get1_80b()
-local cSvedi := fetch_metric( "kalk_dok_80_predispozicija_set_cijena", my_user(), " " )
-local _x := 2
-local _kord_x := 0
-local _unos_left := 40
-private aPorezi := {}
-private PicDEM := "9999999.99999999" 
+FUNCTION Get1_80b()
 
-fnovi := .t.
+   LOCAL cSvedi := fetch_metric( "kalk_dok_80_predispozicija_set_cijena", my_user(), " " )
+   LOCAL _x := 2
+   LOCAL _kord_x := 0
+   LOCAL _unos_left := 40
+   PRIVATE aPorezi := {}
+   PRIVATE PicDEM := "9999999.99999999"
 
-PicKol := "999999.999"
+   fnovi := .T.
 
-Beep(1)
+   PicKol := "999999.999"
 
-@ m_x + _x, m_y + 2 SAY "PROTUSTAVKA   ( S - svedi M - mpc sifr i ' ' - ne diraj ):"
-@ m_x + _x, col() + 2 GET cSvedi VALID cSvedi $ " SM" PICT "@!"
+   Beep( 1 )
 
-read
+   @ m_x + _x, m_y + 2 SAY "PROTUSTAVKA   ( S - svedi M - mpc sifr i ' ' - ne diraj ):"
+   @ m_x + _x, Col() + 2 GET cSvedi VALID cSvedi $ " SM" PICT "@!"
 
-// zapamti zadnji unos
-set_metric( "kalk_dok_80_predispozicija_set_cijena", my_user(), cSvedi )
+   READ
 
-_x := 12
-_kord_x := m_x + _x 
+   // zapamti zadnji unos
+   set_metric( "kalk_dok_80_predispozicija_set_cijena", my_user(), cSvedi )
 
-@ m_x + _x, m_y + 2 SAY "Artikal  " GET _IdRoba PICT "@!" ;
-    VALID {|| VRoba_lv(fNovi, @aPorezi), ispisi_naziv_sifre( F_ROBA, _idroba, _kord_x, 21, 20 ) }
+   _x := 12
+   _kord_x := m_x + _x
 
-@ m_x + _x, m_y + ( MAXCOLS() - 20 ) SAY "Tarifa:" ;
-    GET _IdTarifa WHEN gPromTar == "N" VALID P_Tarifa(@_IdTarifa)
+   @ m_x + _x, m_y + 2 SAY "Artikal  " GET _IdRoba PICT "@!" ;
+      VALID {|| VRoba_lv( fNovi, @aPorezi ), ispisi_naziv_sifre( F_ROBA, _idroba, _kord_x, 21, 20 ) }
 
-read
+   @ m_x + _x, m_y + ( MAXCOLS() - 20 ) SAY "Tarifa:" ;
+      GET _IdTarifa WHEN gPromTar == "N" VALID P_Tarifa( @_IdTarifa )
 
-ESC_RETURN K_ESC
+   READ
 
-select koncij
-seek trim( _idkonto )
+   ESC_RETURN K_ESC
 
-select kalk_pripr 
+   SELECT koncij
+   SEEK Trim( _idkonto )
 
-_pkonto := _idkonto
+   SELECT kalk_pripr
 
-DatPosljP()
+   _pkonto := _idkonto
 
-private fMarza := " "
+   DatPosljP()
 
-++ _x
-@ m_x + _x, m_y + 2 SAY "Kolicina " GET _Kolicina PICT PicKol VALID _Kolicina <> 0
+   PRIVATE fMarza := " "
 
-select koncij
-seek TRIM( _idkonto )
+   ++ _x
+   @ m_x + _x, m_y + 2 SAY "Kolicina " GET _Kolicina PICT PicKol VALID _Kolicina <> 0
 
-select ROBA
-hseek _idroba
+   SELECT koncij
+   SEEK Trim( _idkonto )
 
-// ako nije popunjeno
-_mpcsapp := UzmiMPCSif()
-_TMarza2 := "%"
-_TCarDaz := "%"
-_CarDaz := 0
+   SELECT ROBA
+   hseek _idroba
 
-select kalk_pripr
+   // ako nije popunjeno
+   _mpcsapp := UzmiMPCSif()
+   _TMarza2 := "%"
+   _TCarDaz := "%"
+   _CarDaz := 0
 
-// NC
-++ _x
+   SELECT kalk_pripr
 
-_kord_x := m_x + _x
+   // NC
+   ++ _x
 
-@ m_x + _x, m_y + 2 SAY "NABAVNA CIJENA:"
-@ m_x + _x, m_y + _unos_left GET _NC PICT PicDEM when VKol( _kord_x )
+   _kord_x := m_x + _x
 
-// MARZA
-++ _x
-@ m_x + _x, m_y + 2 SAY "MARZA:" GET _TMarza2  VALID _Tmarza2 $ "%AU" PICT "@!"
-@ m_x + _x, m_y + _unos_left  GET _Marza2 PICT PicDEM valid {|| _vpc:=_nc, .t.}
-@ m_x + _x, col() + 1 GET fMarza pict "@!"
+   @ m_x + _x, m_y + 2 SAY "NABAVNA CIJENA:"
+   @ m_x + _x, m_y + _unos_left GET _NC PICT PicDEM WHEN VKol( _kord_x )
 
-++ _x
-if IsPDV()
-    @ m_x + _x, m_y + 2  SAY "PROD.CIJENA BEZ PDV:"
-else
-    @ m_x + _x, m_y + 2  SAY "MALOPROD. CJENA (MPC):"
-endif
+   // MARZA
+   ++ _x
+   @ m_x + _x, m_y + 2 SAY "MARZA:" GET _TMarza2  VALID _Tmarza2 $ "%AU" PICT "@!"
+   @ m_x + _x, m_y + _unos_left  GET _Marza2 PICT PicDEM valid {|| _vpc := _nc, .T. }
+   @ m_x + _x, Col() + 1 GET fMarza PICT "@!"
 
-@ m_x + _x, m_y + _unos_left GET _mpc PICT PicDEM ;
-    WHEN WMpc_lv(nil, nil, aPorezi) ;
-    VALID VMpc_lv(nil, nil, aPorezi)
-           
-++ _x
+   ++ _x
+   IF IsPDV()
+      @ m_x + _x, m_y + 2  SAY "PROD.CIJENA BEZ PDV:"
+   ELSE
+      @ m_x + _x, m_y + 2  SAY "MALOPROD. CJENA (MPC):"
+   ENDIF
 
-SayPorezi_lv( _x, aPorezi)
+   @ m_x + _x, m_y + _unos_left GET _mpc PICT PicDEM ;
+      WHEN WMpc_lv( nil, nil, aPorezi ) ;
+      VALID VMpc_lv( nil, nil, aPorezi )
 
-++ _x
+   ++ _x
 
-if IsPDV()
-    @ m_x + _x, m_y+2 SAY "P.CIJENA SA PDV:"
-else
-    @ m_x + _x, m_y+2 SAY "MPC SA POREZOM:"
-endif
+   SayPorezi_lv( _x, aPorezi )
 
-@ m_x + _x, m_y + _unos_left GET _mpcsapp PICT PicDEM ;
-     valid {|| Svedi( cSvedi ), VMpcSapp_lv( nil, nil, aPorezi ) }
+   ++ _x
 
-read
+   IF IsPDV()
+      @ m_x + _x, m_y + 2 SAY "P.CIJENA SA PDV:"
+   ELSE
+      @ m_x + _x, m_y + 2 SAY "MPC SA POREZOM:"
+   ENDIF
 
-ESC_RETURN K_ESC
+   @ m_x + _x, m_y + _unos_left GET _mpcsapp PICT PicDEM ;
+      valid {|| Svedi( cSvedi ), VMpcSapp_lv( nil, nil, aPorezi ) }
 
-select koncij
-seek TRIM( _idkonto )
+   READ
 
-StaviMPCSif( _mpcsapp, .t. )
+   ESC_RETURN K_ESC
 
-select kalk_pripr
+   SELECT koncij
+   SEEK Trim( _idkonto )
 
-_PKonto := _Idkonto
-_PU_I := "1"
-_MKonto := ""
-_MU_I := ""
+   StaviMPCSif( _mpcsapp, .T. )
 
-nStrana := 3
+   SELECT kalk_pripr
 
-return lastkey()
+   _PKonto := _Idkonto
+   _PU_I := "1"
+   _MKonto := ""
+   _MU_I := ""
 
+   nStrana := 3
 
-
+   RETURN LastKey()
 
 
-function Svedi(cSvedi)
 
-if cSvedi == "M"
 
-    select koncij
-    seek TRIM( _idkonto )
-    select roba
-    hseek _idroba
-    _mpcsapp := UzmiMPCSif()
-    
-elseif cSvedi == "S"
 
-    if _mpcsapp <> 0
-        _kolicina := -round(_oldval/_mpcsapp,4)
-    else
-        _kolicina := 99999999
-    endif
+FUNCTION Svedi( cSvedi )
 
-    if _kolicina <> 0
-        _nc := abs( _oldvaln/_kolicina )
-    else
-        _nc := 0
-   endif
-endif
+   IF cSvedi == "M"
 
-return .t.
+      SELECT koncij
+      SEEK Trim( _idkonto )
+      SELECT roba
+      hseek _idroba
+      _mpcsapp := UzmiMPCSif()
 
+   ELSEIF cSvedi == "S"
+
+      IF _mpcsapp <> 0
+         _kolicina := -Round( _oldval / _mpcsapp, 4 )
+      ELSE
+         _kolicina := 99999999
+      ENDIF
+
+      IF _kolicina <> 0
+         _nc := Abs( _oldvaln / _kolicina )
+      ELSE
+         _nc := 0
+      ENDIF
+   ENDIF
+
+   RETURN .T.
 
 
 
@@ -371,48 +372,42 @@ return .t.
  *  \brief Validacija unesene kolicine u dokumentu tipa 80
  */
 
-static function VKol( x_kord )
+STATIC FUNCTION VKol( x_kord )
 
-if _kolicina < 0  
-
-    // storno
-    //////// kalkulacija nabavne cijene
-    //////// nKolZN:=kolicina koja je na stanju a porijeklo je od zadnje nabavke
-
-    nKolS := 0
-    nKolZN := 0
-
-    nc1 := nc2 := 0
-
-    dDatNab:=ctod("")
-
-    if !EMPTY( gMetodaNC )
-        MsgO("Racunam stanje u prodavnici")
-        KalkNabP( _idfirma, _idroba, _idkonto, @nKolS, @nKolZN, @nc1, @nc2, @dDatNab) 
-        MsgC()
-        @ x_kord, m_y + 30 SAY "Ukupno na stanju "
-        @ x_kord, col() + 2 SAY nKols PICT pickol
-    endif
-
-    if dDatNab > _DatDok
-        Beep(1)
-        Msg("Datum nabavke je "+dtoc(dDatNab),4)
-    endif
-
-    if _nc == 0
-        _nc:=nc2
-    endif
-
-    if nKols < ABS( _kolicina )
-        _ERROR := "1"
-        Beep(2)
-        Msg("Na stanju je samo kolicina:"+str(nkols,12,3))
-    endif
-
-    select kalk_pripr
-
-endif
-
-return .t.
+   IF _kolicina < 0
 
 
+      nKolS := 0
+      nKolZN := 0
+
+      nc1 := nc2 := 0
+
+      dDatNab := CToD( "" )
+
+      IF !Empty( gMetodaNC )
+         MsgO( "Racunam stanje u prodavnici" )
+         KalkNabP( _idfirma, _idroba, _idkonto, @nKolS, @nKolZN, @nc1, @nc2, @dDatNab )
+         MsgC()
+         @ x_kord, m_y + 30 SAY "Ukupno na stanju "
+         @ x_kord, Col() + 2 SAY nKols PICT pickol
+      ENDIF
+
+      IF dDatNab > _DatDok
+         Beep( 1 )
+         Msg( "Datum nabavke je " + DToC( dDatNab ), 4 )
+      ENDIF
+
+      IF _nc == 0
+         _nc := nc2
+      ENDIF
+
+      IF nKols < Abs( _kolicina )
+         _ERROR := "1"
+         error_tab( "Na stanju je samo kolicina:" + Str( nKols, 12, 3 ) )
+      ENDIF
+
+      SELECT kalk_pripr
+
+   ENDIF
+
+   RETURN .T.

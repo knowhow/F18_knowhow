@@ -123,15 +123,18 @@ FUNCTION my_use( alias, table, new_area, _rdd, semaphore_param, excl, select_wa 
    LOCAL lUspjesno
    LOCAL oError
    LOCAL _a_dbf_rec
+   LOCAL nI, cMsg, cStack := ""
 
-   IF PCount() == 1
-      RETURN my_use_simple( alias )
+   IF PCount() <= 2
+      RETURN my_use_simple( alias, table )
    ENDIF
 
    // todo: my_use legacy
 
 #ifdef F18_DEBUG
    MsgBeep( "my_use legacy sekvenca - out " )
+   LOG_CALL_STACK cStack .F.
+   Alert( cStack )
 #endif
    AltD() // legacy stop
 
@@ -249,22 +252,25 @@ FUNCTION my_use( alias, table, new_area, _rdd, semaphore_param, excl, select_wa 
 
 
 
-FUNCTION my_use_simple( cAlias )
+FUNCTION my_use_simple( cAlias, cTable )
 
    LOCAL nCnt, oError, lUspjesno, cFullDbf, cFullIdx
    LOCAL aDbfRec
    LOCAL lExcl := .F.
    LOCAL cRdd := DBFENGINE
 
-   aDbfRec := get_a_dbf_rec( cAlias, .T. )
+   IF cTable != NIL
+      // my_use( kalk_pripr, kalk_kalk )
+      aDbfRec := get_a_dbf_rec( cTable, .T. )
+   ELSE
+      aDbfRec := get_a_dbf_rec( cAlias, .T. )
+      cAlias :=  aDbfRec[ 'alias' ]
+   ENDIF
 
-
-   dbf_refresh( aDbfRec[ 'alias' ] )
-
+   dbf_refresh( aDbfRec[ 'table' ] )
 
    cFullDbf := my_home() + aDbfRec[ 'table' ]
    cFullIdx := ImeDbfCdx( cFullDbf )
-
 
    nCnt := 0
 
@@ -274,15 +280,15 @@ FUNCTION my_use_simple( cAlias )
       BEGIN SEQUENCE WITH {| err| Break( err ) }
 
          IF nCnt > 0
-            log_write( "use_cnt=" + AllTrim( Str( nCnt ) ) + " t: " + aDbfRec[ 'table' ] + " a: " + aDbfRec[ 'alias' ], 5 )
+            log_write( "use_cnt=" + AllTrim( Str( nCnt ) ) + " t: " + aDbfRec[ 'table' ] + " a: " + cAlias, 5 )
          ENDIF
 
          SELECT ( aDbfRec[ "wa" ] )
-         IF Select( aDbfRec[ 'alias' ] ) > 0
+         IF Select( cAlias ) > 0
             USE
          ENDIF
 
-         dbUseArea( .F., cRdd, cFullDbf, aDbfRec[ 'alias' ], !lExcl, .F. )
+         dbUseArea( .F., cRdd, cFullDbf, cAlias, !lExcl, .F. )
          IF File(  cFullIdx )
             dbSetIndex( cFullIdx )
          ENDIF
@@ -291,7 +297,7 @@ FUNCTION my_use_simple( cAlias )
          lUspjesno := .T.
 
       RECOVER USING oError
-         my_use_error( aDbfRec[ 'table' ], aDbfRec[ 'alias' ], oError )
+         my_use_error( aDbfRec[ 'table' ], cAlias, oError )
          hb_idleSleep( 1 )
 
       END SEQUENCE

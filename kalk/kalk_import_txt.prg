@@ -1,347 +1,350 @@
 /*
- * This file is part of the bring.out FMK, a free and open source
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+ * This file is part of the bring.out knowhow ERP, a free and open source
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
 
-
 #include "f18.ch"
 
+
 // stampanje dokumenata .t. or .f.
-static __stampaj
+STATIC __stampaj
 
 // ---------------------------------------------
 // glavni meni importa
 // ---------------------------------------------
-function MnuImpTxt()
-private izbor:=1
-private opc:={}
-private opcexe:={}
+FUNCTION MnuImpTxt()
 
-__stampaj := .f.
+   PRIVATE izbor := 1
+   PRIVATE opc := {}
+   PRIVATE opcexe := {}
 
-if gAImpPrint == "D"
-	__stampaj := .t.
-endif
+   __stampaj := .F.
 
-AADD(opc, "1. import vindija racun                 ")
-AADD(opcexe, {|| ImpTxtDok()})
-AADD(opc, "2. import vindija partner               ")
-AADD(opcexe, {|| ImpTxtPartn()})
-AADD(opc, "3. import vindija roba               ")
-AADD(opcexe, {|| ImpTxtRoba()})
-AADD(opc, "4. popuna polja sifra dobavljaca ")
-AADD(opcexe, {|| FillDobSifra()})
-AADD(opc, "5. nastavak obrade dokumenata ... ")
-AADD(opcexe, {|| RestoreObrada()})
-AADD(opc, "6. podesenja importa ")
-AADD(opcexe, {|| aimp_setup()})
-AADD(opc, "7. kreiraj pomocnu tabelu stanja")
-AADD(opcexe, {|| gen_cache()})
-AADD(opc, "8. pregled pomocne tabele stanja")
-AADD(opcexe, {|| brow_cache()})
+   IF gAImpPrint == "D"
+      __stampaj := .T.
+   ENDIF
 
-Menu_SC("itx")
+   AAdd( opc, "1. import vindija racun                 " )
+   AAdd( opcexe, {|| ImpTxtDok() } )
+   AAdd( opc, "2. import vindija partner               " )
+   AAdd( opcexe, {|| ImpTxtPartn() } )
+   AAdd( opc, "3. import vindija roba               " )
+   AAdd( opcexe, {|| ImpTxtRoba() } )
+   AAdd( opc, "4. popuna polja sifra dobavljaca " )
+   AAdd( opcexe, {|| FillDobSifra() } )
+   AAdd( opc, "5. nastavak obrade dokumenata ... " )
+   AAdd( opcexe, {|| RestoreObrada() } )
+   AAdd( opc, "6. podesenja importa " )
+   AAdd( opcexe, {|| aimp_setup() } )
+   AAdd( opc, "7. kreiraj pomocnu tabelu stanja" )
+   AAdd( opcexe, {|| gen_cache() } )
+   AAdd( opc, "8. pregled pomocne tabele stanja" )
+   AAdd( opcexe, {|| brow_cache() } )
 
-return
+   Menu_SC( "itx" )
+
+   RETURN
 
 
 
 // ----------------------------------
 // podesenja importa
 // ----------------------------------
-static function aimp_setup()
-local nX
-local GetList:={}
+STATIC FUNCTION aimp_setup()
 
-gAImpRKonto := PADR( gAImpRKonto, 7 )
+   LOCAL nX
+   LOCAL GetList := {}
 
-nX := 1
+   gAImpRKonto := PadR( gAImpRKonto, 7 )
 
-Box(, 10, 70)
+   nX := 1
 
-	@ m_x + nX, m_y + 2 SAY "Podesenja importa ********"
+   Box(, 10, 70 )
 
-	nX += 2
+   @ m_x + nX, m_y + 2 SAY "Podesenja importa ********"
 
-	@ m_x + nX, m_y + 2 SAY "Stampati dokumente pri auto obradi (D/N)" GET gAImpPrint VALID gAImpPrint $ "DN" PICT "@!"
+   nX += 2
+   @ m_x + nX, m_y + 2 SAY "Stampati dokumente pri auto obradi (D/N)" GET gAImpPrint VALID gAImpPrint $ "DN" PICT "@!"
 
-	nX += 1
+   nX += 1
+   @ m_x + nX, m_y + 2 SAY "Automatska ravnoteza naloga na konto: " GET gAImpRKonto
 
-	@ m_x + nX, m_y + 2 SAY "Automatska ravnoteza naloga na konto: " GET gAImpRKonto
-
-	nX += 1
-
-	@ m_x + nX, m_y + 2 SAY "Provjera broj naloga (minus karaktera):" GET gAImpRight PICT "9"
+   nX += 1
+   @ m_x + nX, m_y + 2 SAY "Provjera broj naloga (minus karaktera):" GET gAImpRight PICT "9"
 
 
-	read
-BoxC()
+   READ
+   BoxC()
 
-if LastKey() <> K_ESC
+   IF LastKey() <> K_ESC
 
-	O_PARAMS
+      O_PARAMS
 
-	private cSection := "7"
-	private cHistory := " "
-	private aHistory := {}
+      PRIVATE cSection := "7"
+      PRIVATE cHistory := " "
+      PRIVATE aHistory := {}
 
-	WPar("ap", gAImpPrint )
-	WPar("ak", gAImpRKonto )
-	WPar("ar", gAImpRight )
+      WPar( "ap", gAImpPrint )
+      WPar( "ak", gAImpRKonto )
+      WPar( "ar", gAImpRight )
 
-	select params
-	use
+      SELECT params
+      USE
 
-endif
+   ENDIF
 
-return
+   RETURN
 
 
 /*! \fn ImpTxtDok()
  *  \brief Import dokumenta
  */
-function ImpTxtDok()
-local cCtrl_art := "N"
-private cExpPath
-private cImpFile
+FUNCTION ImpTxtDok()
 
-CrePripTDbf()
+   LOCAL cCtrl_art := "N"
+   PRIVATE cExpPath
+   PRIVATE cImpFile
 
-// setuj varijablu putanje exportovanih fajlova
-GetExpPath( @cExpPath )
+   CrePripTDbf()
 
-// daj mi filter za import MP ili VP
-cFFilt := GetImpFilter()
+   // setuj varijablu putanje exportovanih fajlova
+   GetExpPath( @cExpPath )
 
-if gNC_ctrl > 0 .and. Pitanje(,"Ispusti artikle sa problematicnom nc (D/N)", ;
-	"N" ) == "D"
-	cCtrl_art := "D"
-endif
+   // daj mi filter za import MP ili VP
+   cFFilt := GetImpFilter()
 
-// daj mi pregled fajlova za import, te setuj varijablu cImpFile
-if _gFList( cFFilt, cExpPath, @cImpFile ) == 0
-	return
-endif
+   IF gNC_ctrl > 0 .AND. Pitanje(, "Ispusti artikle sa problematicnom nc (D/N)", ;
+         "N" ) == "D"
+      cCtrl_art := "D"
+   ENDIF
 
-// provjeri da li je fajl za import prazan
-if CheckFile(cImpFile)==0
-	MsgBeep("Odabrani fajl je prazan!#!!! Prekidam operaciju !!!")
-	return
-endif
+   // daj mi pregled fajlova za import, te setuj varijablu cImpFile
+   IF _gFList( cFFilt, cExpPath, @cImpFile ) == 0
+      RETURN
+   ENDIF
 
-private aDbf:={}
-private aRules:={}
-private aFaktEx
-private lFtSkip := .f.
-private lNegative := .f.
+   // provjeri da li je fajl za import prazan
+   IF CheckFile( cImpFile ) == 0
+      MsgBeep( "Odabrani fajl je prazan!#!!! Prekidam operaciju !!!" )
+      RETURN
+   ENDIF
 
-// setuj polja temp tabele u matricu aDbf
-SetTblDok(@aDbf)
-// setuj pravila upisa podataka u temp tabelu
-SetRuleDok(@aRules)
-// prebaci iz txt => temp tbl
-Txt2TTbl(aDbf, aRules, cImpFile)
+   PRIVATE aDbf := {}
+   PRIVATE aRules := {}
+   PRIVATE aFaktEx
+   PRIVATE lFtSkip := .F.
+   PRIVATE lNegative := .F.
 
-if !CheckDok()
-	MsgBeep("Prekidamo operaciju !!!#Nepostojece sifre!!!")
-	return
-endif
+   // setuj polja temp tabele u matricu aDbf
+   SetTblDok( @aDbf )
+   // setuj pravila upisa podataka u temp tabelu
+   SetRuleDok( @aRules )
+   // prebaci iz txt => temp tbl
+   Txt2TTbl( aDbf, aRules, cImpFile )
 
-if CheckBrFakt( @aFaktEx ) == 0
-	if Pitanje(,"Preskociti ove dokumente prilikom importa (D/N)?","D")=="D"
-		lFtSkip := .t.
-	endif
-endif
+   IF !CheckDok()
+      MsgBeep( "Prekidamo operaciju !!!#Nepostojece sifre!!!" )
+      RETURN
+   ENDIF
 
-lNegative := .f.
+   IF CheckBrFakt( @aFaktEx ) == 0
+      IF Pitanje(, "Preskociti ove dokumente prilikom importa (D/N)?", "D" ) == "D"
+         lFtSkip := .T.
+      ENDIF
+   ENDIF
 
-if Pitanje(,"Prebaciti prvo negatine dokumente (povrate) ?", "D") == "D"
-	lNegative := .t.
-endif
+   lNegative := .F.
 
-if TTbl2Kalk( aFaktEx, lFtSkip, lNegative, cCtrl_art ) == 0
-	MsgBeep("Operacija prekinuta!")
-	return
-endif
+   IF Pitanje(, "Prebaciti prvo negatine dokumente (povrate) ?", "D" ) == "D"
+      lNegative := .T.
+   ENDIF
 
-// obrada dokumenata iz pript tabele
-MnuObrDok()
+   IF TTbl2Kalk( aFaktEx, lFtSkip, lNegative, cCtrl_art ) == 0
+      MsgBeep( "Operacija prekinuta!" )
+      RETURN
+   ENDIF
 
-TxtErase(cImpFile, .t.)
+   // obrada dokumenata iz pript tabele
+   MnuObrDok()
 
-return
+   TxtErase( cImpFile, .T. )
+
+   RETURN
 
 
 
 /*! \fn GetImpFilter()
  *  \brief Vraca filter za naziv dokumenta u zavisnosti sta je odabrano VP ili MP
  */
-static function GetImpFilter()
-cVPMP := "V"
-// pozovi box za izbor
-Box(,5, 60)
-	@ 1+m_x, 2+m_y SAY "Importovati:"
-	@ 2+m_x, 2+m_y SAY "----------------------------------"
-	@ 3+m_x, 2+m_y SAY "Veleprodaja (V)"
-	@ 4+m_x, 2+m_y SAY "Maloprodaja (M)"
-	@ 5+m_x, 17+m_y SAY "izbor =>" GET cVPMP VALID cVPMP$"MV" .and. !Empty(cVPMP) PICT "@!"
-	read
-BoxC()
+STATIC FUNCTION GetImpFilter()
 
-// filter za veleprodaju
-cRet := "R*.R??"
+   cVPMP := "V"
+   // pozovi box za izbor
+   Box(, 5, 60 )
+   @ 1 + m_x, 2 + m_y SAY "Importovati:"
+   @ 2 + m_x, 2 + m_y SAY "----------------------------------"
+   @ 3 + m_x, 2 + m_y SAY "Veleprodaja (V)"
+   @ 4 + m_x, 2 + m_y SAY "Maloprodaja (M)"
+   @ 5 + m_x, 17 + m_y SAY "izbor =>" GET cVPMP VALID cVPMP $ "MV" .AND. !Empty( cVPMP ) PICT "@!"
+   READ
+   BoxC()
 
-// postavi filter za fajlove
-do case
-	case cVPMP == "M"
-		cRet := "M*.M??"
-	case cVPMP == "V"
-		cRet := "R*.R??"
-endcase
+   // filter za veleprodaju
+   cRet := "R*.R??"
 
-return cRet
+   // postavi filter za fajlove
+   DO CASE
+   CASE cVPMP == "M"
+      cRet := "M*.M??"
+   CASE cVPMP == "V"
+      cRet := "R*.R??"
+   ENDCASE
+
+   RETURN cRet
 
 
 
 /*! \fn MnuObrDok()
  *  \brief Obrada dokumenata iz pomocne tabele
  */
-static function MnuObrDok()
+STATIC FUNCTION MnuObrDok()
 
-if Pitanje(,"Obraditi dokumente iz pomocne tabele (D/N)?", "D") == "D"
-	ObradiImport( nil, nil, __stampaj )
-else
-	MsgBeep("Dokumenti nisu obradjeni!#Obrada se moze uraditi i naknadno!")
-	my_close_all_dbf()
-endif
+   IF Pitanje(, "Obraditi dokumente iz pomocne tabele (D/N)?", "D" ) == "D"
+      ObradiImport( nil, nil, __stampaj )
+   ELSE
+      MsgBeep( "Dokumenti nisu obradjeni!#Obrada se moze uraditi i naknadno!" )
+      my_close_all_dbf()
+   ENDIF
 
-return
+   RETURN
 
 
 
 /*! \fn ImpTxtPartn()
  *  \brief Import sifrarnika partnera
  */
-static function ImpTxtPartn()
-private cExpPath
-private cImpFile
+STATIC FUNCTION ImpTxtPartn()
 
-// setuj varijablu putanje exportovanih fajlova
-GetExpPath( @cExpPath )
+   PRIVATE cExpPath
+   PRIVATE cImpFile
 
-cFFilt := "p*.p??"
+   // setuj varijablu putanje exportovanih fajlova
+   GetExpPath( @cExpPath )
 
-// daj mi pregled fajlova za import, te setuj varijablu cImpFile
-if _gFList( cFFilt, cExpPath, @cImpFile ) == 0
-	return
-endif
+   cFFilt := "p*.p??"
 
-// provjeri da li je fajl za import prazan
-if CheckFile( cImpFile ) == 0
-	MsgBeep("Odabrani fajl je prazan!#!!! Prekidam operaciju !!!")
-	return
-endif
+   // daj mi pregled fajlova za import, te setuj varijablu cImpFile
+   IF _gFList( cFFilt, cExpPath, @cImpFile ) == 0
+      RETURN
+   ENDIF
 
-private aDbf := {}
-private aRules := {}
+   // provjeri da li je fajl za import prazan
+   IF CheckFile( cImpFile ) == 0
+      MsgBeep( "Odabrani fajl je prazan!#!!! Prekidam operaciju !!!" )
+      RETURN
+   ENDIF
 
-// setuj polja temp tabele u matricu aDbf
-SetTblPartner( @aDbf )
-// setuj pravila upisa podataka u temp tabelu
-SetRulePartn( @aRules )
+   PRIVATE aDbf := {}
+   PRIVATE aRules := {}
 
-// prebaci iz txt => temp tbl
-Txt2TTbl(aDbf, aRules, cImpFile)
+   // setuj polja temp tabele u matricu aDbf
+   SetTblPartner( @aDbf )
+   // setuj pravila upisa podataka u temp tabelu
+   SetRulePartn( @aRules )
 
-if CheckPartn() > 0
-	if Pitanje(,"Izvrsiti import partnera (D/N)?", "D") == "N"
-		MsgBeep("Opcija prekinuta!")
-		return
-	endif
-else
-	MsgBeep("Nema novih partnera za import !")
-	return
-endif
+   // prebaci iz txt => temp tbl
+   Txt2TTbl( aDbf, aRules, cImpFile )
 
-// ova opcija ipak i nije toliko dobra da se radi!
-//
-//lEdit := Pitanje(,"Izvrsiti korekcije postojecih podataka (D/N)?", "N") == "D"
-lEdit := .f.
+   IF CheckPartn() > 0
+      IF Pitanje(, "Izvrsiti import partnera (D/N)?", "D" ) == "N"
+         MsgBeep( "Opcija prekinuta!" )
+         RETURN
+      ENDIF
+   ELSE
+      MsgBeep( "Nema novih partnera za import !" )
+      RETURN
+   ENDIF
 
-if TTbl2Partn( lEdit ) == 0
-	MsgBeep("Operacija prekinuta!")
-	return
-endif
+   // ova opcija ipak i nije toliko dobra da se radi!
+   //
+   // lEdit := Pitanje(,"Izvrsiti korekcije postojecih podataka (D/N)?", "N") == "D"
+   lEdit := .F.
 
-MsgBeep("Operacija zavrsena !")
+   IF TTbl2Partn( lEdit ) == 0
+      MsgBeep( "Operacija prekinuta!" )
+      RETURN
+   ENDIF
 
-TxtErase(cImpFile)
+   MsgBeep( "Operacija zavrsena !" )
 
-return
+   TxtErase( cImpFile )
+
+   RETURN
 
 
 
 // ------------------------------------------
 // import sifrarnika robe
 // ------------------------------------------
-static function ImpTxtRoba()
-private cExpPath
-private cImpFile
+STATIC FUNCTION ImpTxtRoba()
 
-// setuj varijablu putanje exportovanih fajlova
-GetExpPath( @cExpPath )
+   PRIVATE cExpPath
+   PRIVATE cImpFile
 
-cFFilt := "s*.s??"
+   // setuj varijablu putanje exportovanih fajlova
+   GetExpPath( @cExpPath )
 
-// daj mi pregled fajlova za import, te setuj varijablu cImpFile
-if _gFList( cFFilt, cExpPath, @cImpFile ) == 0
-	return
-endif
+   cFFilt := "s*.s??"
 
-// provjeri da li je fajl za import prazan
-if CheckFile( cImpFile ) == 0
-	MsgBeep("Odabrani fajl je prazan!#!!! Prekidam operaciju !!!")
-	return
-endif
+   // daj mi pregled fajlova za import, te setuj varijablu cImpFile
+   IF _gFList( cFFilt, cExpPath, @cImpFile ) == 0
+      RETURN
+   ENDIF
 
-private aDbf:={}
-private aRules:={}
-// setuj polja temp tabele u matricu aDbf
-SetTblRoba( @aDbf )
-// setuj pravila upisa podataka u temp tabelu
-SetRuleRoba( @aRules )
+   // provjeri da li je fajl za import prazan
+   IF CheckFile( cImpFile ) == 0
+      MsgBeep( "Odabrani fajl je prazan!#!!! Prekidam operaciju !!!" )
+      RETURN
+   ENDIF
 
-// prebaci iz txt => temp tbl
-Txt2TTbl( aDbf, aRules, cImpFile )
+   PRIVATE aDbf := {}
+   PRIVATE aRules := {}
+   // setuj polja temp tabele u matricu aDbf
+   SetTblRoba( @aDbf )
+   // setuj pravila upisa podataka u temp tabelu
+   SetRuleRoba( @aRules )
 
-if CheckRoba() > 0
-	if Pitanje(,"Importovati nove cijene u sifrarnika robe (D/N)?", "D") == "N"
-		MsgBeep("Opcija prekinuta!")
-		return
-	endif
-else
-	MsgBeep("Nema novih stavki za import !")
-	return
-endif
+   // prebaci iz txt => temp tbl
+   Txt2TTbl( aDbf, aRules, cImpFile )
 
-lEdit := .f.
+   IF CheckRoba() > 0
+      IF Pitanje(, "Importovati nove cijene u sifrarnika robe (D/N)?", "D" ) == "N"
+         MsgBeep( "Opcija prekinuta!" )
+         RETURN
+      ENDIF
+   ELSE
+      MsgBeep( "Nema novih stavki za import !" )
+      RETURN
+   ENDIF
 
-if TTbl2Roba( lEdit ) == 0
-	MsgBeep("Operacija prekinuta!")
-	return
-endif
+   lEdit := .F.
 
-MsgBeep("Operacija zavrsena !")
+   IF TTbl2Roba( lEdit ) == 0
+      MsgBeep( "Operacija prekinuta!" )
+      RETURN
+   ENDIF
 
-TxtErase(cImpFile)
+   MsgBeep( "Operacija zavrsena !" )
 
-return
+   TxtErase( cImpFile )
+
+   RETURN
 
 
 
@@ -349,53 +352,53 @@ return
  *  \brief Setuj matricu sa poljima tabele dokumenata RACUN
  *  \param aDbf - matrica
  */
-static function SetTblDok(aDbf)
+STATIC FUNCTION SetTblDok( aDbf )
 
-AADD(aDbf,{"idfirma", "C", 2, 0})
-AADD(aDbf,{"idtipdok", "C", 2, 0})
-AADD(aDbf,{"brdok", "C", 8, 0})
-AADD(aDbf,{"datdok", "D", 8, 0})
-AADD(aDbf,{"idpartner", "C", 6, 0})
-AADD(aDbf,{"idpm", "C", 3, 0})
-AADD(aDbf,{"dindem", "C", 3, 0})
-AADD(aDbf,{"zaokr", "N", 1, 0})
-AADD(aDbf,{"rbr", "C", 3, 0})
-AADD(aDbf,{"idroba", "C", 10, 0})
-AADD(aDbf,{"kolicina", "N", 14, 5})
-AADD(aDbf,{"cijena", "N", 14, 5})
-AADD(aDbf,{"rabat", "N", 14, 5})
-AADD(aDbf,{"porez", "N", 14, 5})
-AADD(aDbf,{"rabatp", "N", 14, 5})
-AADD(aDbf,{"datval", "D", 8, 0})
-AADD(aDbf,{"obrkol", "N", 14, 5})
-AADD(aDbf,{"idpj", "C", 3, 0})
-AADD(aDbf,{"dtype", "C", 3, 0})
+   AAdd( aDbf, { "idfirma", "C", 2, 0 } )
+   AAdd( aDbf, { "idtipdok", "C", 2, 0 } )
+   AAdd( aDbf, { "brdok", "C", 8, 0 } )
+   AAdd( aDbf, { "datdok", "D", 8, 0 } )
+   AAdd( aDbf, { "idpartner", "C", 6, 0 } )
+   AAdd( aDbf, { "idpm", "C", 3, 0 } )
+   AAdd( aDbf, { "dindem", "C", 3, 0 } )
+   AAdd( aDbf, { "zaokr", "N", 1, 0 } )
+   AAdd( aDbf, { "rbr", "C", 3, 0 } )
+   AAdd( aDbf, { "idroba", "C", 10, 0 } )
+   AAdd( aDbf, { "kolicina", "N", 14, 5 } )
+   AAdd( aDbf, { "cijena", "N", 14, 5 } )
+   AAdd( aDbf, { "rabat", "N", 14, 5 } )
+   AAdd( aDbf, { "porez", "N", 14, 5 } )
+   AAdd( aDbf, { "rabatp", "N", 14, 5 } )
+   AAdd( aDbf, { "datval", "D", 8, 0 } )
+   AAdd( aDbf, { "obrkol", "N", 14, 5 } )
+   AAdd( aDbf, { "idpj", "C", 3, 0 } )
+   AAdd( aDbf, { "dtype", "C", 3, 0 } )
 
-return
+   RETURN
 
 /*! \fn SetTblPartner(aDbf)
  *  \brief Set polja tabele partner
  *  \param aDbf - matrica sa def.polja
  */
-static function SetTblPartner(aDbf)
+STATIC FUNCTION SetTblPartner( aDbf )
 
-AADD(aDbf,{"idpartner", "C", 6, 0})
-AADD(aDbf,{"naz", "C", 25, 0})
-AADD(aDbf,{"ptt", "C", 5, 0})
-AADD(aDbf,{"mjesto", "C", 16, 0})
-AADD(aDbf,{"adresa", "C", 24, 0})
-AADD(aDbf,{"ziror", "C", 22, 0})
-AADD(aDbf,{"telefon", "C", 12, 0})
-AADD(aDbf,{"fax", "C", 12, 0})
-AADD(aDbf,{"idops", "C", 4, 0})
-AADD(aDbf,{"rokpl", "N", 5, 0})
-AADD(aDbf,{"porbr", "C", 16, 0})
-AADD(aDbf,{"idbroj", "C", 16, 0})
-AADD(aDbf,{"ustn", "C", 20, 0})
-AADD(aDbf,{"brupis", "C", 20, 0})
-AADD(aDbf,{"brjes", "C", 20, 0})
+   AAdd( aDbf, { "idpartner", "C", 6, 0 } )
+   AAdd( aDbf, { "naz", "C", 25, 0 } )
+   AAdd( aDbf, { "ptt", "C", 5, 0 } )
+   AAdd( aDbf, { "mjesto", "C", 16, 0 } )
+   AAdd( aDbf, { "adresa", "C", 24, 0 } )
+   AAdd( aDbf, { "ziror", "C", 22, 0 } )
+   AAdd( aDbf, { "telefon", "C", 12, 0 } )
+   AAdd( aDbf, { "fax", "C", 12, 0 } )
+   AAdd( aDbf, { "idops", "C", 4, 0 } )
+   AAdd( aDbf, { "rokpl", "N", 5, 0 } )
+   AAdd( aDbf, { "porbr", "C", 16, 0 } )
+   AAdd( aDbf, { "idbroj", "C", 16, 0 } )
+   AAdd( aDbf, { "ustn", "C", 20, 0 } )
+   AAdd( aDbf, { "brupis", "C", 20, 0 } )
+   AAdd( aDbf, { "brjes", "C", 20, 0 } )
 
-return
+   RETURN
 
 
 
@@ -403,15 +406,15 @@ return
 // matrica sa strukturom
 // tabele ROBA
 // -------------------------------------
-static function SetTblRoba(aDbf)
+STATIC FUNCTION SetTblRoba( aDbf )
 
-AADD(aDbf,{"idpm", "C", 3, 0})
-AADD(aDbf,{"datum", "C", 10, 0})
-AADD(aDbf,{"sifradob", "C", 10, 0})
-AADD(aDbf,{"naz", "C", 30, 0})
-AADD(aDbf,{"mpc", "N", 15, 5})
+   AAdd( aDbf, { "idpm", "C", 3, 0 } )
+   AAdd( aDbf, { "datum", "C", 10, 0 } )
+   AAdd( aDbf, { "sifradob", "C", 10, 0 } )
+   AAdd( aDbf, { "naz", "C", 30, 0 } )
+   AAdd( aDbf, { "mpc", "N", 15, 5 } )
 
-return
+   RETURN
 
 
 
@@ -420,46 +423,46 @@ return
  *  \brief Setovanje pravila upisa zapisa u temp tabelu
  *  \param aRule - matrica pravila
  */
-static function SetRuleDok(aRule)
+STATIC FUNCTION SetRuleDok( aRule )
 
-// idfirma
-AADD(aRule, {"SUBSTR(cVar, 1, 2)"})
-// idtipdok
-AADD(aRule, {"SUBSTR(cVar, 4, 2)"})
-// brdok
-AADD(aRule, {"SUBSTR(cVar, 7, 8)"})
-// datdok
-AADD(aRule, {"CTOD(SUBSTR(cVar, 16, 10))"})
-// idpartner
-AADD(aRule, {"SUBSTR(cVar, 27, 6)"})
-// id pm
-AADD(aRule, {"SUBSTR(cVar, 34, 3)"})
-// dindem
-AADD(aRule, {"SUBSTR(cVar, 38, 3)"})
-// zaokr
-AADD(aRule, {"VAL(SUBSTR(cVar, 42, 1))"})
-// rbr
-AADD(aRule, {"STR(VAL(SUBSTR(cVar, 44, 3)),3)"})
-// idroba
-AADD(aRule, {"ALLTRIM(SUBSTR(cVar, 48, 5))"})
-// kolicina
-AADD(aRule, {"VAL(SUBSTR(cVar, 54, 16))"})
-// cijena
-AADD(aRule, {"VAL(SUBSTR(cVar, 71, 16))"})
-// rabat
-AADD(aRule, {"VAL(SUBSTR(cVar, 88, 14))"})
-// porez
-AADD(aRule, {"VAL(SUBSTR(cVar, 103, 14))"})
-// procenat rabata
-AADD(aRule, {"VAL(SUBSTR(cVar, 118, 14))"})
-// datum valute
-AADD(aRule, {"CTOD(SUBSTR(cVar, 133, 10))"})
-// obracunska kolicina
-AADD(aRule, {"VAL(SUBSTR(cVar, 144, 16))"})
-// poslovna jedinica "kod"
-AADD(aRule, {"SUBSTR(cVar, 161, 3)"})
+   // idfirma
+   AAdd( aRule, { "SUBSTR(cVar, 1, 2)" } )
+   // idtipdok
+   AAdd( aRule, { "SUBSTR(cVar, 4, 2)" } )
+   // brdok
+   AAdd( aRule, { "SUBSTR(cVar, 7, 8)" } )
+   // datdok
+   AAdd( aRule, { "CTOD(SUBSTR(cVar, 16, 10))" } )
+   // idpartner
+   AAdd( aRule, { "SUBSTR(cVar, 27, 6)" } )
+   // id pm
+   AAdd( aRule, { "SUBSTR(cVar, 34, 3)" } )
+   // dindem
+   AAdd( aRule, { "SUBSTR(cVar, 38, 3)" } )
+   // zaokr
+   AAdd( aRule, { "VAL(SUBSTR(cVar, 42, 1))" } )
+   // rbr
+   AAdd( aRule, { "STR(VAL(SUBSTR(cVar, 44, 3)),3)" } )
+   // idroba
+   AAdd( aRule, { "ALLTRIM(SUBSTR(cVar, 48, 5))" } )
+   // kolicina
+   AAdd( aRule, { "VAL(SUBSTR(cVar, 54, 16))" } )
+   // cijena
+   AAdd( aRule, { "VAL(SUBSTR(cVar, 71, 16))" } )
+   // rabat
+   AAdd( aRule, { "VAL(SUBSTR(cVar, 88, 14))" } )
+   // porez
+   AAdd( aRule, { "VAL(SUBSTR(cVar, 103, 14))" } )
+   // procenat rabata
+   AAdd( aRule, { "VAL(SUBSTR(cVar, 118, 14))" } )
+   // datum valute
+   AAdd( aRule, { "CTOD(SUBSTR(cVar, 133, 10))" } )
+   // obracunska kolicina
+   AAdd( aRule, { "VAL(SUBSTR(cVar, 144, 16))" } )
+   // poslovna jedinica "kod"
+   AAdd( aRule, { "SUBSTR(cVar, 161, 3)" } )
 
-return
+   RETURN
 
 
 
@@ -467,60 +470,60 @@ return
  *  \brief Setovanje pravila upisa zapisa u temp tabelu
  *  \param aRule - matrica pravila
  */
-static function SetRulePartn(aRule)
+STATIC FUNCTION SetRulePartn( aRule )
 
-// id
-AADD(aRule, {"SUBSTR(cVar, 1, 6)"})
-// naz
-AADD(aRule, {"SUBSTR(cVar, 8, 25)"})
-// ptt
-AADD(aRule, {"SUBSTR(cVar, 34, 5)"})
-// mjesto
-AADD(aRule, {"SUBSTR(cVar, 40, 16)"})
-// adresa
-AADD(aRule, {"SUBSTR(cVar, 57, 24)"})
-// ziror
-AADD(aRule, {"SUBSTR(cVar, 82, 22)"})
-// telefon
-AADD(aRule, {"SUBSTR(cVar, 105, 12)"})
-// fax
-AADD(aRule, {"SUBSTR(cVar, 118, 12)"})
-// idops
-AADD(aRule, {"SUBSTR(cVar, 131, 4)"})
-// rokpl
-AADD(aRule, {"VAL(SUBSTR(cVar, 136, 5))"})
-// porbr
-AADD(aRule, {"SUBSTR(cVar, 143, 16)"})
-// idbroj
-AADD(aRule, {"SUBSTR(cVar, 160, 16)"})
-// ustn
-AADD(aRule, {"SUBSTR(cVar, 177, 20)"})
-// brupis
-AADD(aRule, {"SUBSTR(cVar, 198, 20)"})
-// brjes
-AADD(aRule, {"SUBSTR(cVar, 219, 20)"})
+   // id
+   AAdd( aRule, { "SUBSTR(cVar, 1, 6)" } )
+   // naz
+   AAdd( aRule, { "SUBSTR(cVar, 8, 25)" } )
+   // ptt
+   AAdd( aRule, { "SUBSTR(cVar, 34, 5)" } )
+   // mjesto
+   AAdd( aRule, { "SUBSTR(cVar, 40, 16)" } )
+   // adresa
+   AAdd( aRule, { "SUBSTR(cVar, 57, 24)" } )
+   // ziror
+   AAdd( aRule, { "SUBSTR(cVar, 82, 22)" } )
+   // telefon
+   AAdd( aRule, { "SUBSTR(cVar, 105, 12)" } )
+   // fax
+   AAdd( aRule, { "SUBSTR(cVar, 118, 12)" } )
+   // idops
+   AAdd( aRule, { "SUBSTR(cVar, 131, 4)" } )
+   // rokpl
+   AAdd( aRule, { "VAL(SUBSTR(cVar, 136, 5))" } )
+   // porbr
+   AAdd( aRule, { "SUBSTR(cVar, 143, 16)" } )
+   // idbroj
+   AAdd( aRule, { "SUBSTR(cVar, 160, 16)" } )
+   // ustn
+   AAdd( aRule, { "SUBSTR(cVar, 177, 20)" } )
+   // brupis
+   AAdd( aRule, { "SUBSTR(cVar, 198, 20)" } )
+   // brjes
+   AAdd( aRule, { "SUBSTR(cVar, 219, 20)" } )
 
-return
+   RETURN .T.
 
 
 
 // ---------------------------------------------
 // pravila za import tabele robe
 // ---------------------------------------------
-static function SetRuleRoba(aRule)
+STATIC FUNCTION SetRuleRoba( aRule )
 
-// idpm
-AADD(aRule, {"SUBSTR(cVar, 1, 3)"})
-// datum
-AADD(aRule, {"SUBSTR(cVar, 5, 10)"})
-// sifra dobavljaca
-AADD(aRule, {"SUBSTR(cVar, 16, 6)"})
-// naziv
-AADD(aRule, {"SUBSTR(cVar, 22, 30)"})
-// mpc
-AADD(aRule, {"VAL( STRTRAN( SUBSTR(cVar, 53, 10), ',', '.' ) )"})
+   // idpm
+   AAdd( aRule, { "SUBSTR(cVar, 1, 3)" } )
+   // datum
+   AAdd( aRule, { "SUBSTR(cVar, 5, 10)" } )
+   // sifra dobavljaca
+   AAdd( aRule, { "SUBSTR(cVar, 16, 6)" } )
+   // naziv
+   AAdd( aRule, { "SUBSTR(cVar, 22, 30)" } )
+   // mpc
+   AAdd( aRule, { "VAL( STRTRAN( SUBSTR(cVar, 53, 10), ',', '.' ) )" } )
 
-return
+   RETURN
 
 
 
@@ -530,16 +533,15 @@ return
  *  \brief Vraca podesenje putanje do exportovanih fajlova
  *  \param cPath - putanja, zadaje se sa argumentom @ kao priv.varijabla
  */
-static function GetExpPath(cPath)
+STATIC FUNCTION GetExpPath( cPath )
 
-cPath := fetch_metric( "kalk_import_txt_path", my_user(), "" )
+   cPath := fetch_metric( "kalk_import_txt_path", my_user(), "" )
 
-if EMPTY( cPath ) .or. cPath == NIL
-	cPath := "c:\liste\"
-endif
+   IF Empty( cPath ) .OR. cPath == NIL
+      cPath := "c:" + SLASH + "liste" + SLASH
+   ENDIF
 
-return
-
+   RETURN .T.
 
 
 
@@ -549,74 +551,75 @@ return
  *  \param aRules - pravila upisivanja jednog zapisa u tabelu, princip uzimanja zapisa iz linije text fajla
  *  \param cTxtFile - txt fajl za import
  */
- */
-static function Txt2TTbl(aDbf, aRules, cTxtFile)
-local _o_file
+// /
+STATIC FUNCTION Txt2TTbl( aDbf, aRules, cTxtFile )
 
-// prvo kreiraj tabelu temp
-my_close_all_dbf()
+   LOCAL _o_file
 
-CreTemp( aDbf )
-O_TEMP
+   // prvo kreiraj tabelu temp
+   my_close_all_dbf()
 
-if !File( f18_ime_dbf( "TEMP" ) )
-	MsgBeep("Ne mogu kreirati fajl TEMP.DBF!")
-	return
-endif
+   CreTemp( aDbf )
+   O_TEMP
 
-// zatim iscitaj fajl i ubaci podatke u tabelu
+   IF !File( f18_ime_dbf( "TEMP" ) )
+      MsgBeep( "Ne mogu kreirati fajl TEMP.DBF!" )
+      RETURN .F.
+   ENDIF
 
-cTxtFile := ALLTRIM( cTxtFile )
+   // zatim iscitaj fajl i ubaci podatke u tabelu
 
-_o_file := TFileRead():New( cTxtFile )
-_o_file:Open()
+   cTxtFile := AllTrim( cTxtFile )
 
-if _o_file:Error()
-	MsgBeep( _o_file:ErrorMsg( "Problem sa otvaranjem fajla: " ) )
-endif
+   _o_file := TFileRead():New( cTxtFile )
+   _o_file:Open()
 
-// prodji kroz svaku liniju i insertuj zapise u temp.dbf
-while _o_file:MoreToRead()
+   IF _o_file:Error()
+      MsgBeep( _o_file:ErrorMsg( "Problem sa otvaranjem fajla: " ) )
+   ENDIF
 
-	// uzmi u cText liniju fajla
-	cVar := hb_strtoutf8( _o_file:ReadLine() )
+   // prodji kroz svaku liniju i insertuj zapise u temp.dbf
+   WHILE _o_file:MoreToRead()
 
-	// selektuj temp tabelu
-	select temp
-	// dodaj novi zapis
-	append blank
+      // uzmi u cText liniju fajla
+      cVar := hb_StrToUTF8( _o_file:ReadLine() )
 
-	for nCt:=1 to LEN(aRules)
-		fname := FIELD(nCt)
-		xVal := aRules[nCt, 1]
-		replace &fname with &xVal
-	next
+      // selektuj temp tabelu
+      SELECT temp
+      // dodaj novi zapis
+      APPEND BLANK
 
-enddo
+      FOR nCt := 1 TO Len( aRules )
+         fname := FIELD( nCt )
+         xVal := aRules[ nCt, 1 ]
+         replace &fname with &xVal
+      NEXT
 
-_o_file:Close()
+   ENDDO
 
-select temp
+   _o_file:Close()
 
-// proði kroz temp i napuni da li je dtype pozitivno ili negativno
-// ali samo ako je u pitanju racun tabela... !
-if temp->(fieldpos("idtipdok")) <> 0
-	go top
-    my_flock()
-	do while !EOF()
-		if field->idtipdok == "10" .and. field->kolicina < 0
-			replace field->dtype with "0"
-		else
-			replace field->dtype with "1"
-		endif
-		skip
-	enddo
-    my_unlock()
-endif
+   SELECT temp
 
-MsgBeep("Import txt => temp - OK")
+   // proði kroz temp i napuni da li je dtype pozitivno ili negativno
+   // ali samo ako je u pitanju racun tabela... !
+   IF temp->( FieldPos( "idtipdok" ) ) <> 0
+      GO TOP
+      my_flock()
+      DO WHILE !Eof()
+         IF field->idtipdok == "10" .AND. field->kolicina < 0
+            REPLACE field->dtype WITH "0"
+         ELSE
+            REPLACE field->dtype WITH "1"
+         ENDIF
+         SKIP
+      ENDDO
+      my_unlock()
+   ENDIF
 
-return
+   MsgBeep( "Import txt => temp - OK" )
+
+   RETURN
 
 
 
@@ -624,182 +627,187 @@ return
  *  \brief Provjerava da li je fajl prazan
  *  \param cTxtFile - txt fajl
  */
-function CheckFile( cTxtFile )
-nBrLin := BrLinFajla( cTxtFile )
-return nBrLin
+FUNCTION CheckFile( cTxtFile )
+
+   nBrLin := BrLinFajla( cTxtFile )
+
+   RETURN nBrLin
 
 
 
 /*! \fn CreTemp(aDbf)
- *  \brief Kreira tabelu PRIVPATH\TEMP.DBF prema definiciji polja iz aDbf
- *  \param aDbf - def.polja
+ *  brief Kreira tabelu PRIVPATH/TEMP.DBF prema definiciji polja iz aDbf
+ *  param aDbf - def.polja
  */
-static function CreTemp(aDbf)
-cTmpTbl := "temp"
+STATIC FUNCTION CreTemp( aDbf )
 
-if File( f18_ime_dbf( cTmpTbl ) ) .and. FErase( f18_ime_dbf( cTmpTbl ) ) == -1
-		MsgBeep("Ne mogu izbrisati TEMP.DBF!")
-  
-endif
+   cTmpTbl := "temp"
 
-DbCreate2(cTmpTbl, aDbf)
+   IF File( f18_ime_dbf( cTmpTbl ) ) .AND. FErase( f18_ime_dbf( cTmpTbl ) ) == -1
+      MsgBeep( "Ne mogu izbrisati TEMP.DBF!" )
 
-// provjeri jesu li partneri ili dokumenti ili je roba
-if aDbf[1,1] == "idpartner"
-	// partner
-	create_index("1","idpartner", cTmpTbl)
-elseif aDbf[1,1] == "idpm"
-	// roba
-	create_index("1", "sifradob", cTmpTbl)
-else
-	// dokumenti
-	create_index("1","idfirma+idtipdok+brdok+rbr", cTmpTbl)
-	create_index("2","dtype+idfirma+idtipdok+brdok+rbr", cTmpTbl)
-endif
+   ENDIF
 
-return
+   DbCreate2( cTmpTbl, aDbf )
+
+   // provjeri jesu li partneri ili dokumenti ili je roba
+   IF aDbf[ 1, 1 ] == "idpartner"
+      // partner
+      create_index( "1", "idpartner", cTmpTbl )
+   ELSEIF aDbf[ 1, 1 ] == "idpm"
+      // roba
+      create_index( "1", "sifradob", cTmpTbl )
+   ELSE
+      // dokumenti
+      create_index( "1", "idfirma+idtipdok+brdok+rbr", cTmpTbl )
+      create_index( "2", "dtype+idfirma+idtipdok+brdok+rbr", cTmpTbl )
+   ENDIF
+
+   RETURN
 
 
 
-function CrePriptDbf()
-local _pript_tbl := "kalk_pript"
+FUNCTION CrePriptDbf()
 
-my_close_all_dbf()
+   LOCAL _pript_tbl := "kalk_pript"
 
-FErase( my_home() + _pript_tbl + ".dbf" )
-FErase( my_home() + _pript_tbl + ".cdx" )
+   my_close_all_dbf()
 
-O_KALK_PRIPR
+   FErase( my_home() + _pript_tbl + ".dbf" )
+   FErase( my_home() + _pript_tbl + ".cdx" )
 
-// napravi pript sa strukturom tabele kalk_pripr
-copy structure extended to ( my_home() + "struct" )
-create ( my_home() + _pript_tbl ) from ( my_home() + "struct" )
+   O_KALK_PRIPR
 
-use
+   // napravi pript sa strukturom tabele kalk_pripr
+   COPY STRUCTURE EXTENDED to ( my_home() + "struct" )
+   CREATE ( my_home() + _pript_tbl ) from ( my_home() + "struct" )
 
-select ( F_PRIPT )
-my_use_temp( "PRIPT", my_home() + _pript_tbl, .f., .t. )
+   USE
 
-index on ( idfirma + idvd + brdok ) tag "1"
-index on ( idfirma + idvd + brdok + idroba ) tag "2"
+   SELECT ( F_PRIPT )
+   my_use_temp( "PRIPT", my_home() + _pript_tbl, .F., .T. )
 
-use
+   INDEX on ( idfirma + idvd + brdok ) TAG "1"
+   INDEX on ( idfirma + idvd + brdok + idroba ) TAG "2"
 
-return
+   USE
+
+   RETURN
 
 
 
 /*! \fn CheckBrFakt()
  *  \brief Provjeri da li postoji broj fakture u azuriranim dokumentima
  */
-static function CheckBrFakt(aFakt )
+STATIC FUNCTION CheckBrFakt( aFakt )
 
-aPomFakt := FaktExist( gAImpRight )
+   aPomFakt := FaktExist( gAImpRight )
 
-if LEN( aPomFakt ) > 0
+   IF Len( aPomFakt ) > 0
 
-	START PRINT CRET
+      START PRINT CRET
 
-	?
-	? "Kontrola azuriranih dokumenata:"
-	? "-------------------------------"
-	? "Broj fakture => kalkulacija"
-	? "-------------------------------"
-	?
+      ?
+      ? "Kontrola azuriranih dokumenata:"
+      ? "-------------------------------"
+      ? "Broj fakture => kalkulacija"
+      ? "-------------------------------"
+      ?
 
-	for i:=1 to LEN(aPomFakt)
-		? aPomFakt[i, 1] + " => " + aPomFakt[i, 2]
-	next
+      FOR i := 1 TO Len( aPomFakt )
+         ? aPomFakt[ i, 1 ] + " => " + aPomFakt[ i, 2 ]
+      NEXT
 
-	?
-	? "Kontrolom azuriranih dokumenata, uoceno da se vec pojavljuju"
-	? "navedeni brojevi faktura iz fajla za import !"
-	?
+      ?
+      ? "Kontrolom azuriranih dokumenata, uoceno da se vec pojavljuju"
+      ? "navedeni brojevi faktura iz fajla za import !"
+      ?
 
-	FF
-	ENDPRINT
+      FF
+      ENDPRINT
 
-	aFakt := aPomFakt
-	return 0
+      aFakt := aPomFakt
+      RETURN 0
 
-endif
+   ENDIF
 
-aFakt := aPomFakt
+   aFakt := aPomFakt
 
-return 1
+   RETURN 1
 
 
 
 /*! \fn CheckDok()
  *  \brief Provjera da li postoje sve sifre u sifrarnicima za dokumente
  */
-static function CheckDok()
-local lSifDob := .t.
+STATIC FUNCTION CheckDok()
 
-aPomPart := ParExist()
-aPomArt  := TempArtExist( lSifDob )
+   LOCAL lSifDob := .T.
 
-if (LEN(aPomPart) > 0 .or. LEN(aPomArt) > 0)
+   aPomPart := ParExist()
+   aPomArt  := TempArtExist( lSifDob )
 
-	START PRINT CRET
+   IF ( Len( aPomPart ) > 0 .OR. Len( aPomArt ) > 0 )
 
-	if (LEN(aPomPart) > 0)
-		? "Lista nepostojecih partnera:"
-		? "----------------------------"
-		?
-		for i:=1 to LEN(aPomPart)
-			? aPomPart[i, 1]
-		next
-		?
-	endif
+      START PRINT CRET
 
-	if (LEN(aPomArt) > 0)
-		? "Lista nepostojecih artikala:"
-		? "----------------------------"
-		?
-		for ii:=1 to LEN(aPomArt)
-			? aPomArt[ii, 1]
-		next
-		?
-	endif
+      IF ( Len( aPomPart ) > 0 )
+         ? "Lista nepostojecih partnera:"
+         ? "----------------------------"
+         ?
+         FOR i := 1 TO Len( aPomPart )
+            ? aPomPart[ i, 1 ]
+         NEXT
+         ?
+      ENDIF
 
-	FF
-	ENDPRINT
+      IF ( Len( aPomArt ) > 0 )
+         ? "Lista nepostojecih artikala:"
+         ? "----------------------------"
+         ?
+         FOR ii := 1 TO Len( aPomArt )
+            ? aPomArt[ ii, 1 ]
+         NEXT
+         ?
+      ENDIF
 
-	return .f.
-endif
+      FF
+      ENDPRINT
 
-return .t.
+      RETURN .F.
+   ENDIF
+
+   RETURN .T.
 
 
 
 
-/*! \fn CheckPartn()
- *  \Provjerava i daje listu nepostojecih partnera pri importu liste partnera
+/*! fn CheckPartn()
+ *  Provjerava i daje listu nepostojecih partnera pri importu liste partnera
  */
-static function CheckPartn()
+STATIC FUNCTION CheckPartn()
 
-aPomPart := ParExist(.t.)
+   aPomPart := ParExist( .T. )
 
-if (LEN(aPomPart) > 0)
+   IF ( Len( aPomPart ) > 0 )
 
-	START PRINT CRET
+      START PRINT CRET
 
-	? "Lista nepostojecih partnera:"
-	? "----------------------------"
-	?
-	for i:=1 to LEN(aPomPart)
-		? aPomPart[i, 1]
-		?? " " + aPomPart[i, 2]
-	next
-	?
+      ? "Lista nepostojecih partnera:"
+      ? "----------------------------"
+      ?
+      FOR i := 1 TO Len( aPomPart )
+         ? aPomPart[ i, 1 ]
+         ?? " " + aPomPart[ i, 2 ]
+      NEXT
+      ?
 
-	FF
-	ENDPRINT
+      FF
+      ENDPRINT
 
-endif
+   ENDIF
 
-return LEN(aPomPart)
+   RETURN Len( aPomPart )
 
 
 
@@ -807,131 +815,131 @@ return LEN(aPomPart)
 // --------------------------------------------------------------------------
 // Provjerava i daje listu promjena na robi
 // --------------------------------------------------------------------------
-static function CheckRoba()
+STATIC FUNCTION CheckRoba()
 
-aPomRoba := SDobExist( .t. )
+   aPomRoba := SDobExist( .T. )
 
-if (LEN(aPomRoba) > 0)
+   IF ( Len( aPomRoba ) > 0 )
 
-	START PRINT CRET
+      START PRINT CRET
 
-	? "Lista promjena u sifrarniku robe:"
-	? "---------------------------------------------------------------------------"
-	? "sifradob    naziv                          stara cijena -> nova cijena "
-	? "---------------------------------------------------------------------------"
-	?
+      ? "Lista promjena u sifrarniku robe:"
+      ? "---------------------------------------------------------------------------"
+      ? "sifradob    naziv                          stara cijena -> nova cijena "
+      ? "---------------------------------------------------------------------------"
+      ?
 
-	for i:=1 to LEN(aPomRoba)
+      FOR i := 1 TO Len( aPomRoba )
 
-		? aPomRoba[i, 2]
+         ? aPomRoba[ i, 2 ]
 
-		?? " " + aPomRoba[i, 9]
+         ?? " " + aPomRoba[ i, 9 ]
 
-		if aPomRoba[i, 1] == "1"
+         IF aPomRoba[ i, 1 ] == "1"
 
-			if aPomRoba[i, 3] == "001"
-				// vpc
-				nCijena := aPomRoba[i, 6]
-			elseif aPomRoba[i, 3] == "002"
-				// vpc2
-				nCijena := aPomRoba[i, 7]
-			elseif aPomRoba[i, 3] == "003"
-				// mpc
-				nCijena := aPomRoba[i, 8]
-			endif
+            IF aPomRoba[ i, 3 ] == "001"
+               // vpc
+               nCijena := aPomRoba[ i, 6 ]
+            ELSEIF aPomRoba[ i, 3 ] == "002"
+               // vpc2
+               nCijena := aPomRoba[ i, 7 ]
+            ELSEIF aPomRoba[ i, 3 ] == "003"
+               // mpc
+               nCijena := aPomRoba[ i, 8 ]
+            ENDIF
 
-			?? STR( nCijena, 12, 2 )
-			?? STR( aPomRoba[i, 4], 12, 2 )
+            ?? Str( nCijena, 12, 2 )
+            ?? Str( aPomRoba[ i, 4 ], 12, 2 )
 
-			if nCijena = aPomRoba[i, 4]
-				?? " x"
-			endif
+            IF nCijena = aPomRoba[ i, 4 ]
+               ?? " x"
+            ENDIF
 
-		else
-			?? " ovog artikla nema u sifrarniku !"
-		endif
+         ELSE
+            ?? " ovog artikla nema u sifrarniku !"
+         ENDIF
 
-	next
+      NEXT
 
-	?
+      ?
 
-	FF
-	ENDPRINT
+      FF
+      ENDPRINT
 
-endif
+   ENDIF
 
-return LEN(aPomRoba)
+   RETURN Len( aPomRoba )
 
 
 
 // --------------------------------------------------------
 // provjerava da li postoji roba po sifri dobavljaca
 // --------------------------------------------------------
-static function SDobExist()
+STATIC FUNCTION SDobExist()
 
-O_ROBA
-select temp
-go top
+   O_ROBA
+   SELECT temp
+   GO TOP
 
-aRet := {}
+   aRet := {}
 
-do while !EOF()
+   DO WHILE !Eof()
 
-	select roba
-	set order to tag "SIFRADOB"
-	go top
+      SELECT roba
+      SET ORDER TO TAG "SIFRADOB"
+      GO TOP
 
-	seek temp->sifradob
+      SEEK temp->sifradob
 
-	if Found()
-		cInd := "1"
-	else
-		cInd := "0"
-	endif
+      IF Found()
+         cInd := "1"
+      ELSE
+         cInd := "0"
+      ENDIF
 
-	AADD(aRet, {cInd, temp->sifradob, temp->idpm, temp->mpc, roba->id, ;
-				roba->vpc, roba->vpc2, roba->mpc, temp->naz } )
+      AAdd( aRet, { cInd, temp->sifradob, temp->idpm, temp->mpc, roba->id, ;
+         roba->vpc, roba->vpc2, roba->mpc, temp->naz } )
 
-	select temp
-	skip
+      SELECT temp
+      SKIP
 
-enddo
+   ENDDO
 
-return aRet
+   RETURN aRet
 
 
 
 /*! \fn ParExist()
  *  \brief Provjera da li postoje sifre partnera u sifraniku FMK
  */
-static function ParExist(lPartNaz)
+STATIC FUNCTION ParExist( lPartNaz )
 
-O_PARTN
-select temp
-go top
+   O_PARTN
+   SELECT temp
+   GO TOP
 
-if lPartNaz == nil
-	lPartNaz := .f.
-endif
+   IF lPartNaz == nil
+      lPartNaz := .F.
+   ENDIF
 
-aRet:={}
+   aRet := {}
 
-do while !EOF()
-	select partn
-	go top
-	seek temp->idpartner
-	if !Found()
-		if lPartNaz
-			AADD(aRet, {temp->idpartner, temp->naz})
-		else
-			AADD(aRet, {temp->idpartner})
-		endif
-	endif
-	select temp
-	skip
-enddo
+   DO WHILE !Eof()
+      SELECT partn
+      GO TOP
+      SEEK temp->idpartner
+      IF !Found()
+         IF lPartNaz
+            AAdd( aRet, { temp->idpartner, temp->naz } )
+         ELSE
+            AAdd( aRet, { temp->idpartner } )
+         ENDIF
+      ENDIF
+      SELECT temp
+      SKIP
+   ENDDO
 
-return aRet
+   RETURN aRet
 
 
 
@@ -939,77 +947,77 @@ return aRet
  *  \brief Vraca kalk tip dokumenta na osnovu fakt tip dokumenta
  *  \param cFaktTD - fakt tip dokumenta
  */
-static function GetKTipDok(cFaktTD, cPm)
+STATIC FUNCTION GetKTipDok( cFaktTD, cPm )
 
-cRet := ""
+   cRet := ""
 
-if (cFaktTD == "" .or. cFaktTD == nil)
-	return "XX"
-endif
+   IF ( cFaktTD == "" .OR. cFaktTD == nil )
+      RETURN "XX"
+   ENDIF
 
-do case
-	// racuni VP
-	// FAKT 10 -> KALK 14
-	case cFaktTD == "10"
-		cRet := "14"
+   DO CASE
+      // racuni VP
+      // FAKT 10 -> KALK 14
+   CASE cFaktTD == "10"
+      cRet := "14"
 
-	// diskont vindija
-	// FAKT 11 -> KALK 41
-	case (cFaktTD == "11" .and. cPm >= "200")
-		cRet := "41"
+      // diskont vindija
+      // FAKT 11 -> KALK 41
+   CASE ( cFaktTD == "11" .AND. cPm >= "200" )
+      cRet := "41"
 
-	// zaduzenje prodavnica
-	// FAKT 13 -> KALK 11
-	case (cFaktTD == "11" .and. cPm < "200")
-		cRet := "11"
+      // zaduzenje prodavnica
+      // FAKT 13 -> KALK 11
+   CASE ( cFaktTD == "11" .AND. cPm < "200" )
+      cRet := "11"
 
-	// kalo, rastur - otpis
-	// radio se u kalku
-	case cFaktTD $ "90#91#92"
-		cRet := "95"
+      // kalo, rastur - otpis
+      // radio se u kalku
+   CASE cFaktTD $ "90#91#92"
+      cRet := "95"
 
-	// Knjizna obavjest
-	// 70 -> KALK KO
-	case cFaktTD == "70"
-		cRet := "KO"
+      // Knjizna obavjest
+      // 70 -> KALK KO
+   CASE cFaktTD == "70"
+      cRet := "KO"
 
-endcase
+   ENDCASE
 
-return cRet
+   RETURN cRet
 
 
 
 // ---------------------------------------------------------------
 // Vrati konto za prodajno mjesto Vindijine prodavnice
-//    cProd - prodajno mjesto C(3), npr "200"
-//    cPoslovnica - poslovnica sarajevo ili tuzla ili ....
+// cProd - prodajno mjesto C(3), npr "200"
+// cPoslovnica - poslovnica sarajevo ili tuzla ili ....
 // cita iz fmk.ini/kumpath
-//  [Vindija]
-//  VPR200_050=13200
-//  VPR201_050=13201
-//  itd....
+// [Vindija]
+// VPR200_050=13200
+// VPR201_050=13201
+// itd....
 // ---------------------------------------------------------------
-static function GetVPr( cProd, cPoslovnica )
+STATIC FUNCTION GetVPr( cProd, cPoslovnica )
 
-if cProd == "XXX"
-	return "XXXXX"
-endif
+   IF cProd == "XXX"
+      RETURN "XXXXX"
+   ENDIF
 
-if cProd == "" .or. cProd == nil
-	return "XXXXX"
-endif
+   IF cProd == "" .OR. cProd == nil
+      RETURN "XXXXX"
+   ENDIF
 
-if cPoslovnica == "" .or. cPoslovnica == nil
-	return "XXXXX"
-endif
+   IF cPoslovnica == "" .OR. cPoslovnica == nil
+      RETURN "XXXXX"
+   ENDIF
 
-cRet := IzFmkIni( "VINDIJA", "VPR" + cProd + "_" + cPoslovnica, "xxxx", KUMPATH )
+   cRet := IzFmkIni( "VINDIJA", "VPR" + cProd + "_" + cPoslovnica, "xxxx", KUMPATH )
 
-if cRet == "" .or. cRet == nil
-	cRet := "XXXXX"
-endif
+   IF cRet == "" .OR. cRet == nil
+      cRet := "XXXXX"
+   ENDIF
 
-return cRet
+   RETURN cRet
 
 
 // -----------------------------------------------------------
@@ -1018,21 +1026,21 @@ return cRet
 // cTip - "Z" zaduzuje, "R" - razduzuje
 // cPoslovnica -poslovnica vindije sarajevo, tuzla ili ...
 // -----------------------------------------------------------
-static function GetTdKonto(cTipDok, cTip, cPoslovnica)
+STATIC FUNCTION GetTdKonto( cTipDok, cTip, cPoslovnica )
 
-cRet := IzFmkIni("VINDIJA", "TD" + cTipDok + cTip + cPoslovnica, ;
-		"xxxx", KUMPATH)
+   cRet := IzFmkIni( "VINDIJA", "TD" + cTipDok + cTip + cPoslovnica, ;
+      "xxxx", KUMPATH )
 
-// primjer:
-// TD14Z050=1310 // posl.sarajevo
-// TD14R050=1200
-// TD14R042=1201 // posl.tuzla npr...
+   // primjer:
+   // TD14Z050=1310 // posl.sarajevo
+   // TD14R050=1200
+   // TD14R042=1201 // posl.tuzla npr...
 
-if cRet == "" .or. cRet == nil
-	cRet := "XXXXX"
-endif
+   IF cRet == "" .OR. cRet == nil
+      cRet := "XXXXX"
+   ENDIF
 
-return cRet
+   RETURN cRet
 
 
 
@@ -1041,377 +1049,379 @@ return cRet
  *  \brief vraca matricu sa parovima faktura -> pojavljuje se u azur.kalk
  *  \param nRight - npr. bez zadnjih nRight brojeva
  */
-static function FaktExist( nRight )
-local cBrFakt
-local cTDok
+STATIC FUNCTION FaktExist( nRight )
 
-if nRight == nil
-	nRight := 0
-endif
+   LOCAL cBrFakt
+   LOCAL cTDok
 
-O_KALK_DOKS
+   IF nRight == nil
+      nRight := 0
+   ENDIF
 
-select temp
-go top
+   O_KALK_DOKS
 
-aRet := {}
-cDok := "XXXXXX"
+   SELECT temp
+   GO TOP
 
-do while !EOF()
+   aRet := {}
+   cDok := "XXXXXX"
 
-	cBrFakt := ALLTRIM(temp->brdok)
-	cBrOriginal := cBrFakt
+   DO WHILE !Eof()
 
-	if nRight > 0
-		cBrFakt := PADR( cBrFakt, LEN(cBrFakt) - nRight )
-	endif
+      cBrFakt := AllTrim( temp->brdok )
+      cBrOriginal := cBrFakt
 
-	cTDok := GetKTipDok(ALLTRIM(temp->idtipdok), temp->idpm)
+      IF nRight > 0
+         cBrFakt := PadR( cBrFakt, Len( cBrFakt ) - nRight )
+      ENDIF
 
-	if cBrFakt == cDok
-		skip
-		loop
-	endif
+      cTDok := GetKTipDok( AllTrim( temp->idtipdok ), temp->idpm )
 
-	select kalk_doks
+      IF cBrFakt == cDok
+         SKIP
+         LOOP
+      ENDIF
 
-	if nRight > 0
-		set order to tag "V_BRF2"
-	else
-		set order to tag "V_BRF"
-	endif
+      SELECT kalk_doks
 
-	go top
+      IF nRight > 0
+         SET ORDER TO TAG "V_BRF2"
+      ELSE
+         SET ORDER TO TAG "V_BRF"
+      ENDIF
 
-	if nRight > 0
-		seek cTDok + cBrFakt
-	else
-		seek PADR(cBrFakt, 10) + cTDok
-	endif
+      GO TOP
 
-	if FOUND()
-		AADD(aRet, {cBrOriginal, ;
-			doks->idfirma + "-" + ;
-			doks->idvd + "-" + ;
-			ALLTRIM(doks->brdok)})
+      IF nRight > 0
+         SEEK cTDok + cBrFakt
+      ELSE
+         SEEK PadR( cBrFakt, 10 ) + cTDok
+      ENDIF
 
-	endif
+      IF Found()
+         AAdd( aRet, { cBrOriginal, ;
+            doks->idfirma + "-" + ;
+            doks->idvd + "-" + ;
+            AllTrim( doks->brdok ) } )
 
-	select temp
-	skip
+      ENDIF
 
-	cDok := cBrFakt
+      SELECT temp
+      SKIP
 
-enddo
+      cDok := cBrFakt
 
-return aRet
+   ENDDO
+
+   RETURN aRet
 
 
-/*! \fn TTbl2Kalk(aFExist, lFSkip)
- *  \brief kopira podatke iz pomocne tabele u tabelu KALK->PRIPT
- *  \param aFExist matrica sa postojecim fakturama
- *  \param lFSkip preskaci postojece fakture
- *  \param lNegative - prvo prebaci negativne fakture
- *  \param cCtrl_art - preskoci sporne artikle NC u hendeku ! na osnovu CACHE
+/*! fn TTbl2Kalk(aFExist, lFSkip)
+ *  brief kopira podatke iz pomocne tabele u tabelu KALK->PRIPT
+ *  param aFExist matrica sa postojecim fakturama
+ *  param lFSkip preskaci postojece fakture
+ *  param lNegative - prvo prebaci negativne fakture
+ *  param cCtrl_art - preskoci sporne artikle NC u hendeku ! na osnovu CACHE
  *         tabele
  */
-static function TTbl2Kalk(aFExist, lFSkip, lNegative, cCtrl_art )
-local cBrojKalk
-local cTipDok
-local cIdKonto
-local cIdKonto2
-local cIdPJ
-local aArr_ctrl := {}
-local _id_konto, _id_konto2
+STATIC FUNCTION TTbl2Kalk( aFExist, lFSkip, lNegative, cCtrl_art )
 
-O_KALK_PRIPR
-O_KONCIJ
-O_KALK_DOKS
-O_KALK_DOKS2
-O_ROBA
-O_PRIPT
+   LOCAL cBrojKalk
+   LOCAL cTipDok
+   LOCAL cIdKonto
+   LOCAL cIdKonto2
+   LOCAL cIdPJ
+   LOCAL aArr_ctrl := {}
+   LOCAL _id_konto, _id_konto2
 
-select temp
+   O_KALK_PRIPR
+   O_KONCIJ
+   O_KALK_DOKS
+   O_KALK_DOKS2
+   O_ROBA
+   O_PRIPT
 
-if lNegative == nil
-	lNegative := .f.
-endif
+   SELECT temp
 
-if lNegative == .t.
-	set order to tag "2"
-else
-	set order to tag "1"
-endif
+   IF lNegative == nil
+      lNegative := .F.
+   ENDIF
 
-go top
+   IF lNegative == .T.
+      SET ORDER TO TAG "2"
+   ELSE
+      SET ORDER TO TAG "1"
+   ENDIF
 
-nRbr := 0
-nUvecaj := 0
-nCnt := 0
+   GO TOP
 
-cPFakt := "XXXXXX"
-cPTDok := "XX"
-cPPm := "XXX"
-aPom := {}
+   nRbr := 0
+   nUvecaj := 0
+   nCnt := 0
 
-do while !EOF()
+   cPFakt := "XXXXXX"
+   cPTDok := "XX"
+   cPPm := "XXX"
+   aPom := {}
 
-	cFakt := ALLTRIM(temp->brdok)
-	cTDok := GetKTipDok(ALLTRIM(temp->idtipdok), temp->idpm)
-	cPm := temp->idpm
-	cIdPJ := temp->idpj
+   DO WHILE !Eof()
 
-	// pregledaj CACHE, da li treba preskociti ovaj artikal
-	if cCtrl_art == "D"
+      cFakt := AllTrim( temp->brdok )
+      cTDok := GetKTipDok( AllTrim( temp->idtipdok ), temp->idpm )
+      cPm := temp->idpm
+      cIdPJ := temp->idpj
 
-		nT_scan := 0
+      // pregledaj CACHE, da li treba preskociti ovaj artikal
+      IF cCtrl_art == "D"
 
-		cTmp_kto := GetKtKalk( cTDok, temp->idpm, "R", cIdPJ )
+         nT_scan := 0
 
-		select roba
-		set order to tag "ID_VSD"
+         cTmp_kto := GetKtKalk( cTDok, temp->idpm, "R", cIdPJ )
 
-		cTmp_dob := PADL( ALLTRIM(temp->idroba), 5, "0" )
+         SELECT roba
+         SET ORDER TO TAG "ID_VSD"
 
-		go top
-		seek cTmp_dob
+         cTmp_dob := PadL( AllTrim( temp->idroba ), 5, "0" )
 
-		cTmp_roba := field->id
+         GO TOP
+         SEEK cTmp_dob
 
-		O_CACHE
-		select cache
-		set order to tag "1"
-		go top
-		seek PADR( cTmp_kto, 7 ) + PADR( cTmp_roba, 10 )
+         cTmp_roba := field->id
 
-		if FOUND() .and. gNC_ctrl > 0 .and. ( field->odst > gNC_ctrl )
-			// dodaj sporne u kontrolnu matricu
+         O_CACHE
+         SELECT cache
+         SET ORDER TO TAG "1"
+         GO TOP
+         SEEK PadR( cTmp_kto, 7 ) + PadR( cTmp_roba, 10 )
 
-			nT_scan := ASCAN( aArr_ctrl, ;
-				{|xVal| xVal[1] + PADR( xVal[2], 10 ) == ;
-					cTDok + PADR( ALLTRIM( cFakt ), 10 ) } )
+         IF Found() .AND. gNC_ctrl > 0 .AND. ( field->odst > gNC_ctrl )
+            // dodaj sporne u kontrolnu matricu
 
-			if nT_scan = 0
-				AADD( aArr_ctrl, { cTDok, ;
-					PADR( ALLTRIM(cFakt), 10 ) } )
-			endif
+            nT_scan := AScan( aArr_ctrl, ;
+               {| xVal| xVal[ 1 ] + PadR( xVal[ 2 ], 10 ) == ;
+               cTDok + PadR( AllTrim( cFakt ), 10 ) } )
 
-		endif
+            IF nT_scan = 0
+               AAdd( aArr_ctrl, { cTDok, ;
+                  PadR( AllTrim( cFakt ), 10 ) } )
+            ENDIF
 
-		select temp
-	endif
+         ENDIF
 
-	// ako je ukljucena opcija preskakanja postojecih faktura
-	if lFSkip
-		// ako postoji ista u matrici
-		if LEN(aFExist) > 0
-			nFExist := ASCAN(aFExist, {|aVal| ALLTRIM(aVal[1]) == cFakt})
-			if nFExist > 0
-				// prekoci onda ovaj zapis i idi dalje
-				select temp
-				skip
-				loop
-			endif
-		endif
-	endif
+         SELECT temp
+      ENDIF
 
-	if cTDok <> cPTDok
-		nUvecaj := 0
-	endif
+      // ako je ukljucena opcija preskakanja postojecih faktura
+      IF lFSkip
+         // ako postoji ista u matrici
+         IF Len( aFExist ) > 0
+            nFExist := AScan( aFExist, {| aVal| AllTrim( aVal[ 1 ] ) == cFakt } )
+            IF nFExist > 0
+               // prekoci onda ovaj zapis i idi dalje
+               SELECT temp
+               SKIP
+               LOOP
+            ENDIF
+         ENDIF
+      ENDIF
 
-	if cFakt <> cPFakt
-		++ nUvecaj
-		cBrojKalk := GetNextKalkDoc(gFirma, cTDok, nUvecaj)
-		nRbr := 0
-		AADD(aPom, { cTDok, cBrojKalk, cFakt })
-	else
-		// ako su diskontna zaduzenja razgranici ih putem polja prodajno mjesto
-		if cTDok == "11"
-			if cPm <> cPPm
-				++ nUvecaj
-				cBrojKalk := GetNextKalkDoc(gFirma, cTDok, nUvecaj)
-				nRbr := 0
-				AADD(aPom, { cTDok, cBrojKalk, cFakt })
-			endif
-		endif
-	endif
+      IF cTDok <> cPTDok
+         nUvecaj := 0
+      ENDIF
 
-	// pronadji robu
-	select roba
-	set order to tag "ID_VSD"
-	cTmpArt := PADL( ALLTRIM(temp->idroba), 5, "0" )
-	go top
-	seek cTmpArt
+      IF cFakt <> cPFakt
+         ++ nUvecaj
+         cBrojKalk := GetNextKalkDoc( gFirma, cTDok, nUvecaj )
+         nRbr := 0
+         AAdd( aPom, { cTDok, cBrojKalk, cFakt } )
+      ELSE
+         // ako su diskontna zaduzenja razgranici ih putem polja prodajno mjesto
+         IF cTDok == "11"
+            IF cPm <> cPPm
+               ++ nUvecaj
+               cBrojKalk := GetNextKalkDoc( gFirma, cTDok, nUvecaj )
+               nRbr := 0
+               AAdd( aPom, { cTDok, cBrojKalk, cFakt } )
+            ENDIF
+         ENDIF
+      ENDIF
+
+      // pronadji robu
+      SELECT roba
+      SET ORDER TO TAG "ID_VSD"
+      cTmpArt := PadL( AllTrim( temp->idroba ), 5, "0" )
+      GO TOP
+      SEEK cTmpArt
 
 
-	// ovo dodaje datum valute itd...
-	// bitno kod kontiranja kalk->fin
-	// radi datuma valute
-	if cTDok == "14"
+      // ovo dodaje datum valute itd...
+      // bitno kod kontiranja kalk->fin
+      // radi datuma valute
+      IF cTDok == "14"
 
-		select kalk_doks2
-		hseek gFirma + cTDok + cBrojKalk
+         SELECT kalk_doks2
+         hseek gFirma + cTDok + cBrojKalk
 
-		if !FOUND()
-			append blank
-			replace idvd with "14"
-			replace brdok with cBrojKalk
-			replace idfirma with gFirma
-		endif
+         IF !Found()
+            APPEND BLANK
+            REPLACE idvd WITH "14"
+            REPLACE brdok WITH cBrojKalk
+            REPLACE idfirma WITH gFirma
+         ENDIF
 
-		replace DatVal with temp->datval
+         REPLACE DatVal WITH temp->datval
 
-	endif
+      ENDIF
 
-    // konta...
-	_id_konto := GetKtKalk( cTDok, temp->idpm, "Z", cIdPJ )
-	_id_konto2 := GetKtKalk( cTDok, temp->idpm, "R", cIdPJ )
+      // konta...
+      _id_konto := GetKtKalk( cTDok, temp->idpm, "Z", cIdPJ )
+      _id_konto2 := GetKtKalk( cTDok, temp->idpm, "R", cIdPJ )
 
-    // pozicioniraj se na konto zaduzuje
-    select koncij
-    set order to tag "ID"
-    go top
-    seek _id_konto
+      // pozicioniraj se na konto zaduzuje
+      SELECT koncij
+      SET ORDER TO TAG "ID"
+      GO TOP
+      SEEK _id_konto
 
-	// dodaj zapis u kalk_pripr
-	select pript
-	append blank
+      // dodaj zapis u kalk_pripr
+      SELECT pript
+      APPEND BLANK
 
-	replace idfirma with gFirma
-	replace rbr with STR(++nRbr, 3)
+      REPLACE idfirma WITH gFirma
+      REPLACE rbr WITH Str( ++nRbr, 3 )
 
-	// uzmi pravilan tip dokumenta za kalk
-	replace idvd with cTDok
+      // uzmi pravilan tip dokumenta za kalk
+      REPLACE idvd WITH cTDok
 
-	replace brdok with cBrojKalk
-	replace datdok with temp->datdok
-	replace idpartner with temp->idpartner
-	replace idtarifa with ROBA->idtarifa
-	replace brfaktp with cFakt
-	replace datfaktp with temp->datdok
+      REPLACE brdok WITH cBrojKalk
+      REPLACE datdok WITH temp->datdok
+      REPLACE idpartner WITH temp->idpartner
+      REPLACE idtarifa WITH ROBA->idtarifa
+      REPLACE brfaktp WITH cFakt
+      REPLACE datfaktp WITH temp->datdok
 
-	// konta:
-	// =====================
-	// zaduzuje
-	replace idkonto with _id_konto
-	// razduzuje
-	replace idkonto2 with _id_konto2
+      // konta:
+      // =====================
+      // zaduzuje
+      REPLACE idkonto WITH _id_konto
+      // razduzuje
+      REPLACE idkonto2 WITH _id_konto2
 
-	replace idzaduz2 with ""
+      REPLACE idzaduz2 WITH ""
 
-	// spec.za tip dok 11
-	if cTDok $ "11#41"
+      // spec.za tip dok 11
+      IF cTDok $ "11#41"
 
-        replace tmarza2 with "A"
-		replace tprevoz with "A"
+         REPLACE tmarza2 WITH "A"
+         REPLACE tprevoz WITH "A"
 
-        if cTDok == "11"
+         IF cTDok == "11"
             // uzmi mpc iz sifrarnika roba prema podesenju u konciju...
-			replace mpcsapp with UzmiMpcSif()
-		else
-			replace mpcsapp with temp->cijena
-		endif
+            REPLACE mpcsapp WITH UzmiMpcSif()
+         ELSE
+            REPLACE mpcsapp WITH temp->cijena
+         ENDIF
 
-	endif
+      ENDIF
 
-	replace kolicina with temp->kolicina
-	replace idroba with roba->id
-	replace nc with ROBA->nc
-	replace vpc with temp->cijena
-	replace rabatv with temp->rabatp
-	replace mpc with temp->porez
+      REPLACE kolicina WITH temp->kolicina
+      REPLACE idroba WITH roba->id
+      REPLACE nc WITH ROBA->nc
+      REPLACE vpc WITH temp->cijena
+      REPLACE rabatv WITH temp->rabatp
+      REPLACE mpc WITH temp->porez
 
-	cPFakt := cFakt
-	cPTDok := cTDok
-	cPPm := cPm
+      cPFakt := cFakt
+      cPTDok := cTDok
+      cPPm := cPm
 
-	++ nCnt
+      ++ nCnt
 
-	select temp
-	skip
-enddo
+      SELECT temp
+      SKIP
+   ENDDO
 
-// izvjestaj o prebacenim dokumentima....
-if nCnt > 0
+   // izvjestaj o prebacenim dokumentima....
+   IF nCnt > 0
 
-	ASORT(aPom,,,{|x,y| x[1]+"-"+x[2] < y[1]+"-"+y[2]})
+      ASort( aPom,,, {| x, y| x[ 1 ] + "-" + x[ 2 ] < y[ 1 ] + "-" + y[ 2 ] } )
 
-	START PRINT CRET
-	? "========================================"
-	? "Generisani sljedeci dokumenti:          "
-	? "========================================"
-	? "Dokument     * Sporna NC"
-	? "----------------------------------------"
+      START PRINT CRET
+      ? "========================================"
+      ? "Generisani sljedeci dokumenti:          "
+      ? "========================================"
+      ? "Dokument     * Sporna NC"
+      ? "----------------------------------------"
 
-	for i:=1 to LEN(aPom)
+      FOR i := 1 TO Len( aPom )
 
-		cT_tipdok := aPom[i, 1]
-		cT_brdok := aPom[i, 2]
-		cT_brfakt := aPom[i, 3]
-		cT_ctrl := ""
+         cT_tipdok := aPom[ i, 1 ]
+         cT_brdok := aPom[ i, 2 ]
+         cT_brfakt := aPom[ i, 3 ]
+         cT_ctrl := ""
 
-		if cCtrl_art == "D" .and. LEN( aArr_ctrl ) > 0
-		      nT_scan := ASCAN( aArr_ctrl, ;
-				{|xVal| xVal[1] + PADR( xVal[2], 10 ) == ;
-					cT_tipdok + PADR( cT_brfakt, 10 ) } )
+         IF cCtrl_art == "D" .AND. Len( aArr_ctrl ) > 0
+            nT_scan := AScan( aArr_ctrl, ;
+               {| xVal| xVal[ 1 ] + PadR( xVal[ 2 ], 10 ) == ;
+               cT_tipdok + PadR( cT_brfakt, 10 ) } )
 
-		      if nT_scan <> 0
-			cT_ctrl := " !!! ERROR !!!"
-		      endif
-		endif
+            IF nT_scan <> 0
+               cT_ctrl := " !!! ERROR !!!"
+            ENDIF
+         ENDIF
 
-		? cT_tipdok + " - " + cT_brdok, cT_ctrl
+         ? cT_tipdok + " - " + cT_brdok, cT_ctrl
 
-	next
+      NEXT
 
-	?
+      ?
 
-	FF
-	ENDPRINT
-endif
+      FF
+      ENDPRINT
+   ENDIF
 
-if cCtrl_art == "D" .and. LEN( aArr_ctrl ) > 0
+   IF cCtrl_art == "D" .AND. Len( aArr_ctrl ) > 0
 
-	START PRINT CRET
+      START PRINT CRET
 
-	?
-	? "Ispusteni dokumenti:"
-	? "------------------------------------"
+      ?
+      ? "Ispusteni dokumenti:"
+      ? "------------------------------------"
 
-	for xy := 1 to LEN( aArr_ctrl )
-		? aArr_ctrl[xy, 1] + "-" + aArr_ctrl[xy, 2]
-	next
+      FOR xy := 1 TO Len( aArr_ctrl )
+         ? aArr_ctrl[ xy, 1 ] + "-" + aArr_ctrl[ xy, 2 ]
+      NEXT
 
-	FF
-	ENDPRINT
+      FF
+      ENDPRINT
 
-endif
+   ENDIF
 
-// pobrisi ispustene dokumente
-if cCtrl_art == "D" .and. LEN( aArr_ctrl ) > 0
+   // pobrisi ispustene dokumente
+   IF cCtrl_art == "D" .AND. Len( aArr_ctrl ) > 0
 
-	nT_scan := 0
+      nT_scan := 0
 
-	select pript
-	set order to tag "0"
-	go top
+      SELECT pript
+      SET ORDER TO TAG "0"
+      GO TOP
 
-	do while !EOF()
+      DO WHILE !Eof()
 
-		nT_scan := ASCAN(aArr_ctrl, ;
-			{|xval| xval[1] + PADR( xval[2], 10 ) == ;
-			field->idvd + PADR( field->brfaktp, 10 ) })
+         nT_scan := AScan( aArr_ctrl, ;
+            {| xval| xval[ 1 ] + PadR( xval[ 2 ], 10 ) == ;
+            field->idvd + PadR( field->brfaktp, 10 ) } )
 
-		if nT_scan <> 0
-			delete
-		endif
+         IF nT_scan <> 0
+            DELETE
+         ENDIF
 
-		skip
-	enddo
+         SKIP
+      ENDDO
 
-endif
+   ENDIF
 
-return 1
+   RETURN 1
 
 
 
@@ -1423,161 +1433,162 @@ return 1
  *  \param cPoslovnica - poslovnica tuzla ili sarajevo
  */
 
-static function GetKtKalk(cTipDok, cPm, cTip, cPoslovnica)
+STATIC FUNCTION GetKtKalk( cTipDok, cPm, cTip, cPoslovnica )
 
-do case
-	case cTipDok == "14"
-		cRet := GetTDKonto(cTipDok, cTip, cPoslovnica)
-	case cTipDok == "11"
-		if cTip == "R"
-			cRet := GetTDKonto(cTipDok, cTip, cPoslovnica)
-		else
-			cRet := GetVPr(cPm, cPoslovnica)
-		endif
-	case cTipDok == "41"
-		cRet := GetTDKonto(cTipDok, cTip, cPoslovnica)
-	case cTipDok == "95"
-		cRet := GetTDKonto(cTipDok, cTip, cPoslovnica)
-	case cTipDok == "KO"
-		cRet := GetTDKonto(cTipDok, cTip, cPoslovnica)
+   DO CASE
+   CASE cTipDok == "14"
+      cRet := GetTDKonto( cTipDok, cTip, cPoslovnica )
+   CASE cTipDok == "11"
+      IF cTip == "R"
+         cRet := GetTDKonto( cTipDok, cTip, cPoslovnica )
+      ELSE
+         cRet := GetVPr( cPm, cPoslovnica )
+      ENDIF
+   CASE cTipDok == "41"
+      cRet := GetTDKonto( cTipDok, cTip, cPoslovnica )
+   CASE cTipDok == "95"
+      cRet := GetTDKonto( cTipDok, cTip, cPoslovnica )
+   CASE cTipDok == "KO"
+      cRet := GetTDKonto( cTipDok, cTip, cPoslovnica )
 
-endcase
+   ENDCASE
 
-return cRet
-*}
+   RETURN cRet
+
 
 
 /*! \fn TTbl2Partn(lEditOld)
  *  \brief kopira podatke iz pomocne tabele u tabelu PARTN
  *  \param lEditOld - ispraviti stare zapise
  */
-static function TTbl2Partn(lEditOld)
-*{
+STATIC FUNCTION TTbl2Partn( lEditOld )
 
-O_PARTN
-O_SIFK
-O_SIFV
+   // {
 
-select temp
-go top
+   O_PARTN
+   O_SIFK
+   O_SIFV
 
-lNovi := .f.
+   SELECT temp
+   GO TOP
 
-do while !EOF()
+   lNovi := .F.
 
-	// pronadji partnera
-	select partn
-	cTmpPar := ALLTRIM(temp->idpartner)
-	go top
-	seek cTmpPar
+   DO WHILE !Eof()
 
-	// ako si nasao:
-	//  1. ako je lEditOld .t. onda ispravi postojeci
-	//  2. ako je lEditOld .f. onda preskoci
-	if Found()
-		if !lEditOld
-			select temp
-			skip
-			loop
-		endif
-		lNovi := .f.
-	else
-		lNovi := .t.
-	endif
+      // pronadji partnera
+      SELECT partn
+      cTmpPar := AllTrim( temp->idpartner )
+      GO TOP
+      SEEK cTmpPar
 
-	// dodaj zapis u partn
-	select partn
+      // ako si nasao:
+      // 1. ako je lEditOld .t. onda ispravi postojeci
+      // 2. ako je lEditOld .f. onda preskoci
+      IF Found()
+         IF !lEditOld
+            SELECT temp
+            SKIP
+            LOOP
+         ENDIF
+         lNovi := .F.
+      ELSE
+         lNovi := .T.
+      ENDIF
 
-	if lNovi
-		append blank
-	endif
+      // dodaj zapis u partn
+      SELECT partn
 
-	if !lNovi .and. !lEditOld
-		select temp
-		skip
-		loop
-	endif
+      IF lNovi
+         APPEND BLANK
+      ENDIF
 
-	replace id with temp->idpartner
-	cNaz := temp->naz
-	replace naz with KonvZnWin(@cNaz, "8")
-	replace ptt with temp->ptt
-	cMjesto := temp->mjesto
-	replace mjesto with KonvZnWin(@cMjesto, "8")
-	cAdres := temp->adresa
-	replace adresa with KonvZnWin(@cAdres, "8")
-	replace ziror with temp->ziror
-	replace telefon with temp->telefon
-	replace fax with temp->fax
-	replace idops with temp->idops
-	// ubaci --vezane-- podatke i u sifK tabelu
-	USifK("PARTN", "ROKP", temp->idpartner, temp->rokpl)
-	USifK("PARTN", "PORB", temp->idpartner, temp->porbr)
-	USifK("PARTN", "REGB", temp->idpartner, temp->idbroj)
-	USifK("PARTN", "USTN", temp->idpartner, temp->ustn)
-	USifK("PARTN", "BRUP", temp->idpartner, temp->brupis)
-	USifK("PARTN", "BRJS", temp->idpartner, temp->brjes)
+      IF !lNovi .AND. !lEditOld
+         SELECT temp
+         SKIP
+         LOOP
+      ENDIF
 
-	select temp
-	skip
-enddo
+      REPLACE id WITH temp->idpartner
+      cNaz := temp->naz
+      REPLACE naz WITH KonvZnWin( @cNaz, "8" )
+      REPLACE ptt WITH temp->ptt
+      cMjesto := temp->mjesto
+      REPLACE mjesto WITH KonvZnWin( @cMjesto, "8" )
+      cAdres := temp->adresa
+      REPLACE adresa WITH KonvZnWin( @cAdres, "8" )
+      REPLACE ziror WITH temp->ziror
+      REPLACE telefon WITH temp->telefon
+      REPLACE fax WITH temp->fax
+      REPLACE idops WITH temp->idops
+      // ubaci --vezane-- podatke i u sifK tabelu
+      USifK( "PARTN", "ROKP", temp->idpartner, temp->rokpl )
+      USifK( "PARTN", "PORB", temp->idpartner, temp->porbr )
+      USifK( "PARTN", "REGB", temp->idpartner, temp->idbroj )
+      USifK( "PARTN", "USTN", temp->idpartner, temp->ustn )
+      USifK( "PARTN", "BRUP", temp->idpartner, temp->brupis )
+      USifK( "PARTN", "BRJS", temp->idpartner, temp->brjes )
 
-return 1
+      SELECT temp
+      SKIP
+   ENDDO
+
+   RETURN 1
 
 
 // -----------------------------------------
 // napuni iz tmp tabele u robu
 // -----------------------------------------
-static function TTbl2Roba()
+STATIC FUNCTION TTbl2Roba()
 
-O_ROBA
-O_SIFK
-O_SIFV
+   O_ROBA
+   O_SIFK
+   O_SIFV
 
-select temp
-go top
+   SELECT temp
+   GO TOP
 
-do while !EOF()
+   DO WHILE !Eof()
 
-	// pronadji robu
-	select roba
-	set order to tag "SIFRADOB"
+      // pronadji robu
+      SELECT roba
+      SET ORDER TO TAG "SIFRADOB"
 
-	cTmpSif := ALLTRIM(temp->sifradob)
+      cTmpSif := AllTrim( temp->sifradob )
 
-	go top
-	seek cTmpSif
+      GO TOP
+      SEEK cTmpSif
 
-	if !Found()
+      IF !Found()
 
-		// da li treba dodavati novi zapis ...
+         // da li treba dodavati novi zapis ...
 
-	else
+      ELSE
 
-		// mjenja se VPC
-		if temp->idpm == "001"
-			if field->vpc <> temp->mpc
-				replace field->vpc with temp->mpc
-			endif
-		// mjenja se VPC2
-		elseif temp->idpm == "002"
-			if field->vpc2 <> temp->mpc
-				replace field->vpc2 with temp->mpc
-			endif
-		// mjenja se MPC
-		elseif temp->idpm == "003"
-			if field->mpc <> temp->mpc
-				replace field->mpc with temp->mpc
-			endif
-		endif
+         // mjenja se VPC
+         IF temp->idpm == "001"
+            IF field->vpc <> temp->mpc
+               REPLACE field->vpc WITH temp->mpc
+            ENDIF
+            // mjenja se VPC2
+         ELSEIF temp->idpm == "002"
+            IF field->vpc2 <> temp->mpc
+               REPLACE field->vpc2 WITH temp->mpc
+            ENDIF
+            // mjenja se MPC
+         ELSEIF temp->idpm == "003"
+            IF field->mpc <> temp->mpc
+               REPLACE field->mpc WITH temp->mpc
+            ENDIF
+         ENDIF
 
-	endif
+      ENDIF
 
-	select temp
-	skip
-enddo
+      SELECT temp
+      SKIP
+   ENDDO
 
-return 1
+   RETURN 1
 
 
 
@@ -1591,31 +1602,31 @@ return 1
  *  \param cIdKonto2 - konto razduzuje
  *  \param cRazd - razdvajati dokumente po broju fakture (D ili N)
  */
-static function GetKVars(dDatDok, cBrKalk, cTipDok, cIdKonto, cIdKonto2, cRazd)
+STATIC FUNCTION GetKVars( dDatDok, cBrKalk, cTipDok, cIdKonto, cIdKonto2, cRazd )
 
-dDatDok:=DATE()
-cTipDok:="14"
-cIdFirma:=gFirma
-cIdKonto:=PADR("1200",7)
-cIdKonto2:=PADR("1310",7)
-cRazd:="D"
-O_KONTO
-O_KALK_DOKS
-cBrKalk:=GetNextKalkDoc(cIdFirma, cTipDok)
+   dDatDok := Date()
+   cTipDok := "14"
+   cIdFirma := gFirma
+   cIdKonto := PadR( "1200", 7 )
+   cIdKonto2 := PadR( "1310", 7 )
+   cRazd := "D"
+   O_KONTO
+   O_KALK_DOKS
+   cBrKalk := GetNextKalkDoc( cIdFirma, cTipDok )
 
-Box(,15,60)
-	@ m_x+1,m_y+2   SAY "Broj kalkulacije 14-" GET cBrKalk pict "@!"
-  	@ m_x+1,col()+2 SAY "Datum:" GET dDatDok
-  	@ m_x+4,m_y+2   SAY "Konto razduzuje:" GET cIdKonto2 pict "@!" VALID P_Konto(@cIdKonto2)
-  	@ m_x+6,m_y+2   SAY "Razdvajati kalkulacije po broju faktura" GET cRazd pict "@!" valid cRazd$"DN"
-	read
-BoxC()
+   Box(, 15, 60 )
+   @ m_x + 1, m_y + 2   SAY "Broj kalkulacije 14-" GET cBrKalk PICT "@!"
+   @ m_x + 1, Col() + 2 SAY "Datum:" GET dDatDok
+   @ m_x + 4, m_y + 2   SAY "Konto razduzuje:" GET cIdKonto2 PICT "@!" VALID P_Konto( @cIdKonto2 )
+   @ m_x + 6, m_y + 2   SAY "Razdvajati kalkulacije po broju faktura" GET cRazd PICT "@!" VALID cRazd $ "DN"
+   READ
+   BoxC()
 
-if LastKey()==K_ESC
-	return 0
-endif
+   IF LastKey() == K_ESC
+      RETURN 0
+   ENDIF
 
-return 1
+   RETURN 1
 
 
 
@@ -1623,289 +1634,293 @@ return 1
 /*! \fn ObradiImport()
  *  \brief Obrada importovanih dokumenata
  */
-function ObradiImport(nPocniOd, lAsPokreni, lStampaj)
-local cN_kalk_dok := ""
-local nUvecaj := 0
+FUNCTION ObradiImport( nPocniOd, lAsPokreni, lStampaj )
 
-O_KALK_PRIPR
-O_PRIPT
+   LOCAL cN_kalk_dok := ""
+   LOCAL nUvecaj := 0
 
-if lAsPokreni == nil
-	lAsPokreni := .t.
-endif
-if lStampaj == nil
-	lStampaj := .t.
-endif
+   O_KALK_PRIPR
+   O_PRIPT
 
-if nPocniOd == nil
-	nPocniOd := 0
-endif
+   IF lAsPokreni == nil
+      lAsPokreni := .T.
+   ENDIF
+   IF lStampaj == nil
+      lStampaj := .T.
+   ENDIF
 
-lAutom := .f.
-if Pitanje(, "Automatski asistent i ažuriranje naloga (D/N)?", "D") == "D"
-	lAutom := .t.
-endif
+   IF nPocniOd == nil
+      nPocniOd := 0
+   ENDIF
 
-
-// iz kalk_pripr_temp prebaci u kalk_pripr jednu po jednu kalkulaciju
-select pript
-set order to tag "1"
-
-if nPocniOd == 0
-	go top
-else
-	go nPocniOd
-endif
-
-// uzmi parametre koje ces dokumente prenositi
-cBBTipDok := SPACE(30)
-Box(,3, 60)
-	@ 1+m_x, 2+m_y SAY "Prenositi sljedece tipove dokumenata:"
-	@ 3+m_x, 2+m_y SAY "Tip dokumenta (prazno-svi):" GET cBBTipDok PICT "@S25"
-	read
-BoxC()
-
-if !Empty(cBBTipDok)
-	cBBTipDok := ALLTRIM(cBBTipDok)
-endif
-
-//SetKey(K_F3,{|| SaveObrada(nPTRec)})
-
-Box(,10, 70)
-@ 1+m_x, 2+m_y SAY "Obrada dokumenata iz pomocne tabele:" COLOR "I"
-@ 2+m_x, 2+m_y SAY "===================================="
-
-do while !EOF()
-
-	nPTRec:=RecNo()
-	nPCRec:=nPTRec
-	cBrDok := field->brdok
-	cFirma := field->idfirma
-	cIdVd  := field->idvd
-
-	if !Empty(cBBTipDok) .and. !(cIdVd $ cBBTipDok)
-		skip
-		loop
-	endif
-
-	// daj novi broj dokumenta kalk
-	nT_area := SELECT()
-	cN_kalk_dok := GetNextKalkDoc(cFirma, cIdVd, 1)
-	select (nT_area)
-
-	@ 3+m_x, 2+m_y SAY "Prebacujem: " + cFirma + "-" + cIdVd + "-" + cBrDok
-
-	nStCnt := 0
-	do while !EOF() .and. field->brdok = cBrDok .and. field->idfirma = cFirma .and. field->idvd = cIdVd
-
-		// jedan po jedan row azuriraj u kalk_pripr
-		select kalk_pripr
-		append blank
-		Scatter()
-		select pript
-		Scatter()
-		select kalk_pripr
-		_brdok := cN_kalk_dok
-		Gather()
-
-		select pript
-		skip
-		++ nStCnt
-
-		nPTRec := RecNo()
-
-		@ 5+m_x, 13+m_y SAY SPACE(5)
-		@ 5+m_x, 2+m_y SAY "Broj stavki:" + ALLTRIM(STR(nStCnt))
-	enddo
-
-	// nakon sto smo prebacili dokument u kalk_pripremu obraditi ga
-	if lAutom
-		// snimi zapis u params da znas dokle si dosao
-		SaveObrada(nPCRec)
-		ObradiDokument(cIdVd, lAsPokreni, lStampaj)
-		SaveObrada(nPTRec)
-		O_PRIPT
-	endif
-
-	select pript
-	go nPTRec
-
-enddo
-
-BoxC()
-
-// snimi i da je obrada zavrsena
-SaveObrada(0)
-
-MsgBeep("Dokumenti obradjeni!")
-
-return
+   lAutom := .F.
+   IF Pitanje(, "Automatski asistent i ažuriranje naloga (D/N)?", "D" ) == "D"
+      lAutom := .T.
+   ENDIF
 
 
-/*! \fn SaveObrada()
- *  \brief Snima momenat do kojeg je dosao pri obradi dokumenata
+   // iz kalk_pripr_temp prebaci u kalk_pripr jednu po jednu kalkulaciju
+   SELECT pript
+   SET ORDER TO TAG "1"
+
+   IF nPocniOd == 0
+      GO TOP
+   ELSE
+      GO nPocniOd
+   ENDIF
+
+   // uzmi parametre koje ces dokumente prenositi
+   cBBTipDok := Space( 30 )
+   Box(, 3, 60 )
+   @ 1 + m_x, 2 + m_y SAY "Prenositi sljedece tipove dokumenata:"
+   @ 3 + m_x, 2 + m_y SAY "Tip dokumenta (prazno-svi):" GET cBBTipDok PICT "@S25"
+   READ
+   BoxC()
+
+   IF !Empty( cBBTipDok )
+      cBBTipDok := AllTrim( cBBTipDok )
+   ENDIF
+
+   // SetKey(K_F3,{|| SaveObrada(nPTRec)})
+
+   Box(, 10, 70 )
+   @ 1 + m_x, 2 + m_y SAY "Obrada dokumenata iz pomocne tabele:" COLOR "I"
+   @ 2 + m_x, 2 + m_y SAY "===================================="
+
+   DO WHILE !Eof()
+
+      nPTRec := RecNo()
+      nPCRec := nPTRec
+      cBrDok := field->brdok
+      cFirma := field->idfirma
+      cIdVd  := field->idvd
+
+      IF !Empty( cBBTipDok ) .AND. !( cIdVd $ cBBTipDok )
+         SKIP
+         LOOP
+      ENDIF
+
+      // daj novi broj dokumenta kalk
+      nT_area := Select()
+      cN_kalk_dok := GetNextKalkDoc( cFirma, cIdVd, 1 )
+      SELECT ( nT_area )
+
+      @ 3 + m_x, 2 + m_y SAY "Prebacujem: " + cFirma + "-" + cIdVd + "-" + cBrDok
+
+      nStCnt := 0
+      DO WHILE !Eof() .AND. field->brdok = cBrDok .AND. field->idfirma = cFirma .AND. field->idvd = cIdVd
+
+         // jedan po jedan row azuriraj u kalk_pripr
+         SELECT kalk_pripr
+         APPEND BLANK
+         Scatter()
+         SELECT pript
+         Scatter()
+         SELECT kalk_pripr
+         _brdok := cN_kalk_dok
+         Gather()
+
+         SELECT pript
+         SKIP
+         ++ nStCnt
+
+         nPTRec := RecNo()
+
+         @ 5 + m_x, 13 + m_y SAY Space( 5 )
+         @ 5 + m_x, 2 + m_y SAY "Broj stavki:" + AllTrim( Str( nStCnt ) )
+      ENDDO
+
+      // nakon sto smo prebacili dokument u kalk_pripremu obraditi ga
+      IF lAutom
+         // snimi zapis u params da znas dokle si dosao
+         SaveObrada( nPCRec )
+         ObradiDokument( cIdVd, lAsPokreni, lStampaj )
+         SaveObrada( nPTRec )
+         O_PRIPT
+      ENDIF
+
+      SELECT pript
+      GO nPTRec
+
+   ENDDO
+
+   BoxC()
+
+   // snimi i da je obrada zavrsena
+   SaveObrada( 0 )
+
+   MsgBeep( "Dokumenti obradjeni!" )
+
+   RETURN
+
+
+/*! fn SaveObrada()
+ *  brief Snima momenat do kojeg je dosao pri obradi dokumenata
  */
-static function SaveObrada(nPRec)
+STATIC FUNCTION SaveObrada( nPRec )
 
-local nArr
-nArr := SELECT()
+   LOCAL nArr
 
-O_PARAMS
-select params
+   nArr := Select()
 
-private cSection:="K"
-private cHistory:=" "
-private aHistory:={}
+   O_PARAMS
+   SELECT params
 
-Wpar("is", nPRec)
+   PRIVATE cSection := "K"
+   PRIVATE cHistory := " "
+   PRIVATE aHistory := {}
 
-select (nArr)
+   Wpar( "is", nPRec )
 
-return
+   SELECT ( nArr )
+
+   RETURN
 
 
 
-/*! \fn RestoreObrada()
- *  \brief Pokrece ponovo obradu od momenta do kojeg je stao
+/*! fn RestoreObrada()
+ *  brief Pokrece ponovo obradu od momenta do kojeg je stao
  */
-static function RestoreObrada()
+STATIC FUNCTION RestoreObrada()
 
-O_PARAMS
-select params
-private cSection:="K"
-private cHistory:=" "
-private aHistory:={}
-private nDosaoDo
-Rpar("is", @nDosaoDo)
+   O_PARAMS
+   SELECT params
+   PRIVATE cSection := "K"
+   PRIVATE cHistory := " "
+   PRIVATE aHistory := {}
+   PRIVATE nDosaoDo
+   Rpar( "is", @nDosaoDo )
 
-if nDosaoDo == nil
-	MsgBeep("Nema nista zapisano u parametrima!#Prekidam operaciju!")
-	return
-endif
+   IF nDosaoDo == nil
+      MsgBeep( "Nema nista zapisano u parametrima!#Prekidam operaciju!" )
+      RETURN
+   ENDIF
 
-if nDosaoDo == 0
-	MsgBeep("Nema zapisa o prekinutoj obradi!")
-	return
-endif
+   IF nDosaoDo == 0
+      MsgBeep( "Nema zapisa o prekinutoj obradi!" )
+      RETURN
+   ENDIF
 
-O_PRIPT
-select pript
-set order to tag "1"
-go nDosaoDo
+   O_PRIPT
+   SELECT pript
+   SET ORDER TO TAG "1"
+   GO nDosaoDo
 
-if !EOF()
-	MsgBeep("Nastavljam od dokumenta#" + field->idfirma + "-" + field->idvd + "-" + field->brdok)
-else
-	MsgBeep("Kraj tabele, nema nista za obradu!")
-	return
-endif
+   IF !Eof()
+      MsgBeep( "Nastavljam od dokumenta#" + field->idfirma + "-" + field->idvd + "-" + field->brdok )
+   ELSE
+      MsgBeep( "Kraj tabele, nema nista za obradu!" )
+      RETURN
+   ENDIF
 
-if Pitanje(,"Nastaviti sa obradom dokumenata", "D") == "N"
-	MsgBeep("Operacija prekinuta!")
-	return
-endif
+   IF Pitanje(, "Nastaviti sa obradom dokumenata", "D" ) == "N"
+      MsgBeep( "Operacija prekinuta!" )
+      RETURN
+   ENDIF
 
-ObradiImport( nDosaoDo , nil, __stampaj )
+   ObradiImport( nDosaoDo, nil, __stampaj )
 
-return
+   RETURN
 
 
 
-/*! \fn ObradiDokument(cIdVd)
- *  \brief Obrada jednog dokumenta
- *  \param cIdVd - id vrsta dokumenta
+/*! fn ObradiDokument(cIdVd)
+ *  brief Obrada jednog dokumenta
+ *  param cIdVd - id vrsta dokumenta
  */
-static function ObradiDokument(cIdVd, lAsPokreni, lStampaj)
+STATIC FUNCTION ObradiDokument( cIdVd, lAsPokreni, lStampaj )
 
-// 1. pokreni asistenta
-// 2. azuriraj kalk
-// 3. azuriraj FIN
+   // 1. pokreni asistenta
+   // 2. azuriraj kalk
+   // 3. azuriraj FIN
 
-private lAsistRadi:=.f.
+   PRIVATE lAsistRadi := .F.
 
-if lAsPokreni == nil
-	lAsPokreni := .t.
-endif
+   IF lAsPokreni == nil
+      lAsPokreni := .T.
+   ENDIF
 
-if lStampaj == nil
-	lStampaj := .t.
-endif
+   IF lStampaj == nil
+      lStampaj := .T.
+   ENDIF
 
-if lAsPokreni
-	// pozovi asistenta
-	kalk_unos_stavki_dokumenta(.t.)
-else
-	o_kalk_edit()
-endif
+   IF lAsPokreni
+      // pozovi asistenta
+      kalk_unos_stavki_dokumenta( .T. )
+   ELSE
+      o_kalk_edit()
+   ENDIF
 
-if lStampaj == .t.
-	// odstampaj kalk
-	kalk_centr_stampa_dokumenta( nil, nil, .t. )
-endif
+   IF lStampaj == .T.
+      // odstampaj kalk
+      kalk_stampa_dokumenta( nil, nil, .T. )
+   ENDIF
 
-// azuriraj kalk
-kalk_azuriranje_dokumenta( .t. )
+   // azuriraj kalk
+   kalk_azuriranje_dokumenta( .T. )
 
-o_kalk_edit()
+   o_kalk_edit()
 
-// ako postoje zavisni dokumenti non stop ponavljaj proceduru obrade
-private nRslt
+   // ako postoje zavisni dokumenti non stop ponavljaj proceduru obrade
+   PRIVATE nRslt
 
-do while (ChkKkalk_pripr(cIdVd, @nRslt) <> 0)
+   DO WHILE ( ChkKkalk_pripr( cIdVd, @nRslt ) <> 0 )
 
-	// vezni dokument u kalk_pripremi je ok
-	if nRslt == 1
+      // vezni dokument u kalk_pripremi je ok
+      IF nRslt == 1
 
-		if lAsPokreni
-			// otvori kalk_pripremu
-			kalk_unos_stavki_dokumenta(.t.)
-		else
-			o_kalk_edit()
-		endif
+         IF lAsPokreni
+            // otvori kalk_pripremu
+            kalk_unos_stavki_dokumenta( .T. )
+         ELSE
+            o_kalk_edit()
+         ENDIF
 
-		if lStampaj == .t.
-			kalk_centr_stampa_dokumenta(nil, nil, .t.)
-		endif
+         IF lStampaj == .T.
+            kalk_stampa_dokumenta( nil, nil, .T. )
+         ENDIF
 
-		kalk_azuriranje_dokumenta( .t. )
-		o_kalk_edit()
+         kalk_azuriranje_dokumenta( .T. )
+         o_kalk_edit()
 
-	endif
+      ENDIF
 
-	// vezni dokument ne pripada azuriranom dokumentu
-	// sta sa njim
+      // vezni dokument ne pripada azuriranom dokumentu
+      // sta sa njim
 
-	if nRslt >= 2
+      IF nRslt >= 2
 
-		MsgBeep("Postoji dokument u kalk_pripremi koji je sumljiv!!!#Radi se o veznom dokumentu ili nekoj drugoj gresci...#Obradite ovaj dokument i autoimport ce nastaviti dalje sa radom !")
-		kalk_unos_stavki_dokumenta()
-		o_kalk_edit()
+         MsgBeep( "Postoji dokument u kalk_pripremi koji je sumljiv!#Radi se o veznom dokumentu ili nekoj drugoj gresci...#Obradite ovaj dokument i autoimport ce nastaviti dalje sa radom !" )
+         kalk_unos_stavki_dokumenta()
+         o_kalk_edit()
 
-	endif
-enddo
+      ENDIF
+   ENDDO
 
-return
+   RETURN
 
 
 /*! \fn ChkKkalk_pripr(cIdVd, nRes)
  *  \brief Provjeri da li je kalk_priprema prazna
  *  \param cIdVd - id vrsta dokumenta
  */
-static function ChkKkalk_pripr(cIdVd, nRes)
-// provjeri da li je kalk_priprema prazna, ako je prazna vrati 0
-select kalk_pripr
-go top
+STATIC FUNCTION ChkKkalk_pripr( cIdVd, nRes )
 
-if RecCount() == 0
-	// idi dalje...
-	nRes := 0
-	return 0
-endif
+   // provjeri da li je kalk_priprema prazna, ako je prazna vrati 0
+   SELECT kalk_pripr
+   GO TOP
 
-// provjeri koji je dokument u kalk_pripremi u odnosu na cIdVd
-return nRes := ChkTipDok(cIdVd)
+   IF RecCount() == 0
+      // idi dalje...
+      nRes := 0
+      RETURN 0
+   ENDIF
 
-return 0
+   // provjeri koji je dokument u kalk_pripremi u odnosu na cIdVd
+
+   RETURN nRes := ChkTipDok( cIdVd )
+
+   RETURN 0
 
 
 
@@ -1913,37 +1928,37 @@ return 0
  *  \brief Provjeri kalk_pripremu za tip dokumenta
  *  \param cIdVd - vrsta dokumenta
  */
-static function ChkTipDok(cIdVd)
+STATIC FUNCTION ChkTipDok( cIdVd )
 
-nNrRec := RecCount()
-nTmp := 0
-cPrviDok := field->idvd
-nPrviDok := VAL(cPrviDok)
+   nNrRec := RecCount()
+   nTmp := 0
+   cPrviDok := field->idvd
+   nPrviDok := Val( cPrviDok )
 
-do while !EOF()
-	nTmp += VAL(field->idvd)
-	skip
-enddo
+   DO WHILE !Eof()
+      nTmp += Val( field->idvd )
+      SKIP
+   ENDDO
 
-nUzorak := nPrviDok * nNrRec
+   nUzorak := nPrviDok * nNrRec
 
-if nUzorak <> nNrRec * nTmp
-	// ako u kalk_pripremi ima vise dokumenata vrati 2
-	return 3
-endif
+   IF nUzorak <> nNrRec * nTmp
+      // ako u kalk_pripremi ima vise dokumenata vrati 2
+      RETURN 3
+   ENDIF
 
-do case
-	case cIdVd == "14"
-		return ChkTD14(cPrviDok)
-	case cIdVd == "41"
-		return ChkTD41(cPrviDok)
-	case cIdVd == "11"
-		return ChkTD11(cPrviDok)
-	case cIdVD == "95"
-		return ChkTD95(cPrviDok)
-endcase
+   DO CASE
+   CASE cIdVd == "14"
+      RETURN ChkTD14( cPrviDok )
+   CASE cIdVd == "41"
+      RETURN ChkTD41( cPrviDok )
+   CASE cIdVd == "11"
+      RETURN ChkTD11( cPrviDok )
+   CASE cIdVD == "95"
+      RETURN ChkTD95( cPrviDok )
+   ENDCASE
 
-return 0
+   RETURN 0
 
 
 
@@ -1952,143 +1967,143 @@ return 0
  *  \param cVezniDok - dokument iz kalk_pripreme
  *  \result vraca 1 ako je sve ok, ili 2 ako vezni dokument ne odgovara
  */
-static function ChkTD14(cVezniDok)
+STATIC FUNCTION ChkTD14( cVezniDok )
 
-if cVezniDok $ "18#19#95#16#11"
-	return 1
-endif
+   IF cVezniDok $ "18#19#95#16#11"
+      RETURN 1
+   ENDIF
 
-return 2
+   RETURN 2
 
 
 /*! \fn ChkTD41()
  *  \brief Provjeri vezne dokumente za tip dokumenta 41
  */
-static function ChkTD41(cVezniDok)
+STATIC FUNCTION ChkTD41( cVezniDok )
 
-if cVezniDok $ "18#19#95#16#11"
-	return 1
-endif
+   IF cVezniDok $ "18#19#95#16#11"
+      RETURN 1
+   ENDIF
 
-return 2
+   RETURN 2
 
 
 /*! \fn ChkTD11()
  *  \brief Provjeri vezne dokumente za tip dokumenta 11
  */
-static function ChkTD11(cVezniDok)
+STATIC FUNCTION ChkTD11( cVezniDok )
 
-if cVezniDok $ "18#19#95#16#11"
-	return 1
-endif
+   IF cVezniDok $ "18#19#95#16#11"
+      RETURN 1
+   ENDIF
 
-return 2
+   RETURN 2
 
 
 /*! \fn ChkTD95()
  *  \brief Provjeri vezne dokumente za tip dokumenta 95
  */
-static function ChkTD95(cVezniDok)
+STATIC FUNCTION ChkTD95( cVezniDok )
 
-if cVezniDok $ "18#19#95#16#11"
-	return 1
-endif
+   IF cVezniDok $ "18#19#95#16#11"
+      RETURN 1
+   ENDIF
 
-return 2
+   RETURN 2
 
 
 
 /*! \fn FillDobSifra()
  *  \brief Popunjavanje polja sifradob prema kljucu
  */
-static function FillDobSifra()
+STATIC FUNCTION FillDobSifra()
 
-if !SigmaSif("FILLDOB")
-	MsgBeep("Nemate ovlastenja za ovu opciju!!!")
-	return
-endif
+   IF !SigmaSif( "FILLDOB" )
+      MsgBeep( "Nemate ovlastenja za ovu opciju!!!" )
+      RETURN
+   ENDIF
 
-O_ROBA
+   O_ROBA
 
-select roba
-set order to tag "ID"
-go top
+   SELECT roba
+   SET ORDER TO TAG "ID"
+   GO TOP
 
-cSifra:=""
-nCnt := 0
-aRpt := {}
-aSDob := {}
+   cSifra := ""
+   nCnt := 0
+   aRpt := {}
+   aSDob := {}
 
-Box(,5, 60)
-@ 1+m_x, 2+m_y SAY "Vrsim upis sifre dobavaljaca robe:"
-@ 2+m_x, 2+m_y SAY "==================================="
+   Box(, 5, 60 )
+   @ 1 + m_x, 2 + m_y SAY "Vrsim upis sifre dobavaljaca robe:"
+   @ 2 + m_x, 2 + m_y SAY "==================================="
 
-do while !EOF()
-	// ako je prazan zapis preskoci
-	if Empty(field->id)
-		skip
-		loop
-	endif
+   DO WHILE !Eof()
+      // ako je prazan zapis preskoci
+      IF Empty( field->id )
+         SKIP
+         LOOP
+      ENDIF
 
-	cSStr := SUBSTR(field->id, 1, 1)
+      cSStr := SubStr( field->id, 1, 1 )
 
-	// provjeri karakteristicnost robe
-	if cSStr == "K" .or. cSStr == "P"
-		// roba KOKA LEN 5 sifradob
-		cSifra := SUBSTR(RTRIM(field->id), -5)
-	elseif cSStr == "V"
-		// ostala roba
-		cSifra := SUBSTR(RTRIM(field->id), -4)
-	else
-		skip
-		loop
-	endif
+      // provjeri karakteristicnost robe
+      IF cSStr == "K" .OR. cSStr == "P"
+         // roba KOKA LEN 5 sifradob
+         cSifra := SubStr( RTrim( field->id ), -5 )
+      ELSEIF cSStr == "V"
+         // ostala roba
+         cSifra := SubStr( RTrim( field->id ), -4 )
+      ELSE
+         SKIP
+         LOOP
+      ENDIF
 
-	// upisi zapis
-	Scatter()
-	_sifradob := cSifra
-    my_rlock()
-	Gather()
-    my_unlock()
+      // upisi zapis
+      Scatter()
+      _sifradob := cSifra
+      my_rlock()
+      Gather()
+      my_unlock()
 
-	// potrazi sifru u matrici
-	nRes := ASCAN(aSDob, {|aVal| aVal[1] == cSifra})
-	if nRes == 0
-		AADD(aSDob, {cSifra, field->id})
-	else
-		AADD(aRpt, {cSifra, aSDob[nRes, 2]})
-		AADD(aRpt, {cSifra, field->id})
-	endif
+      // potrazi sifru u matrici
+      nRes := AScan( aSDob, {| aVal| aVal[ 1 ] == cSifra } )
+      IF nRes == 0
+         AAdd( aSDob, { cSifra, field->id } )
+      ELSE
+         AAdd( aRpt, { cSifra, aSDob[ nRes, 2 ] } )
+         AAdd( aRpt, { cSifra, field->id } )
+      ENDIF
 
-	++ nCnt
+      ++ nCnt
 
-	@ 3+m_x, 2+m_y SAY "FMK sifra " + ALLTRIM(field->id) + " => sifra dob. " + cSifra
-	@ 5+m_x, 2+m_y SAY " => ukupno " + ALLTRIM(STR(nCnt))
+      @ 3 + m_x, 2 + m_y SAY "FMK sifra " + AllTrim( field->id ) + " => sifra dob. " + cSifra
+      @ 5 + m_x, 2 + m_y SAY " => ukupno " + AllTrim( Str( nCnt ) )
 
-	skip
+      SKIP
 
-enddo
+   ENDDO
 
-BoxC()
+   BoxC()
 
-// ako je report matrica > 0 dakle postoje dupli zapisi
-if LEN(aRpt) > 0
-	START PRINT CRET
-	? "KONTROLA DULIH SIFARA VINDIJA_FAKT:"
-	? "==================================="
-	? "Sifra Vindija_FAKT -> Sifra FMK  "
-	?
+   // ako je report matrica > 0 dakle postoje dupli zapisi
+   IF Len( aRpt ) > 0
+      START PRINT CRET
+      ? "KONTROLA DULIH SIFARA VINDIJA_FAKT:"
+      ? "==================================="
+      ? "Sifra Vindija_FAKT -> Sifra FMK  "
+      ?
 
-	for i:=1 to LEN(aRpt)
-		? aRpt[i, 1] + " -> " + aRpt[i, 2]
-	next
+      FOR i := 1 TO Len( aRpt )
+         ? aRpt[ i, 1 ] + " -> " + aRpt[ i, 2 ]
+      NEXT
 
-	?
-	? "Provjerite navedene sifre..."
-	?
+      ?
+      ? "Provjerite navedene sifre..."
+      ?
 
-	FF
-	ENDPRINT
-endif
+      FF
+      ENDPRINT
+   ENDIF
 
-return
+   RETURN

@@ -124,9 +124,7 @@ FUNCTION Get1_95()
          SELECT kalk_pripr
       ENDIF
 
-
-      // ////// kalkulacija nabavne cijene
-      // ////// nKolZN:=kolicina koja je na stanju a porijeklo je od zadnje nabavke
+      
       nKolS := 0
       nKolZN := 0
       nc1 := nc2 := 0

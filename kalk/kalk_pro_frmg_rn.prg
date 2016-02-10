@@ -101,7 +101,7 @@ do case
      PushWA()
      cSeek:=idfirma+idvd+brdok
      my_close_all_dbf()
-     kalk_centr_stampa_dokumenta(.t.,cSeek)
+     kalk_stampa_dokumenta(.t.,cSeek)
      O_KALK
      O_KALK_DOKS
      PopWA()

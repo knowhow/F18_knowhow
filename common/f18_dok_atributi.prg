@@ -287,7 +287,7 @@ METHOD F18_DOK_ATRIB:get_atrib_list_from_server()
       _where += " AND atribut = " + _sql_quote( _atrib )
    ENDIF
 
-   _table := _select_all_from_table( ::table_name_server, NIL, { _where }, { "atribut" } )
+   _table := select_all_records_from_table( ::table_name_server, NIL, { _where }, { "atribut" } )
 
    IF _table == NIL
       RETURN NIL

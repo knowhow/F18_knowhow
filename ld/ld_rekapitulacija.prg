@@ -78,6 +78,7 @@ FUNCTION ld_rekapitulacija( lSvi )
 
    SELECT ld
    USE
+   altd()
    use_sql_ld_ld( nGodina, nMjesec, nMjesecDo, nVrstaInvaliditeta, nStepenInvaliditeta)
 
    cObracun := Trim( cObracun )
@@ -110,10 +111,10 @@ FUNCTION ld_rekapitulacija( lSvi )
    ENDIF
 
    IF !lSvi
-      SEEK Str( nGodina, 4 ) + cIdRj + Str( nMjesec, 2 ) + cObracun
+      SEEK Str( nGodina, 4, 0) + cIdRj + Str( nMjesec, 2, 0) + cObracun
       EOF CRET
    ELSE
-      SEEK Str( nGodina, 4 ) + Str( nMjesec, 2 ) + cObracun
+      SEEK Str( nGodina, 4, 0) + Str( nMjesec, 2, 0) + cObracun
       EOF CRET
    ENDIF
 

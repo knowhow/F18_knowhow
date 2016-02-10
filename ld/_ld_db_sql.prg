@@ -20,6 +20,7 @@ FUNCTION use_sql_ld_ld( nGodina, nMjesec, nMjesecDo, nVrInvalid, nStInvalid )
 
    cSql := "SELECT "
    cSql += sql_from_adbf( @aDbf, cTable )
+
    cSql += ", ld_radn.vr_invalid, ld_radn.st_invalid "
    cSql += " FROM fmk." + cTable
    cSql += " LEFT JOIN fmk.ld_radn ON ld_ld.idradn = ld_radn.id"
@@ -41,7 +42,7 @@ FUNCTION use_sql_ld_ld( nGodina, nMjesec, nMjesecDo, nVrInvalid, nStInvalid )
    hIndexes := h_ld_ld_indexes()
 
    FOR EACH cKey IN hIndexes:Keys
-      INDEX ON ( hIndexes[ cKey ] ) TAG ( cKey ) TO ( cTable )
+      INDEX ON  &(hIndexes[ cKey ])  TAG ( cKey ) TO ( cTable )
    NEXT
    SET ORDER TO TAG "1"
 

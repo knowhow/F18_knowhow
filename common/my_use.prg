@@ -16,11 +16,11 @@
 
 FUNCTION my_usex( alias, table, new_area )
 
+/*
    IF PCount() > 3
       Alert( "my_usex error > 3" )
    ENDIF
-   AltD()
-
+*/
    RETURN my_use_temp( alias, table, new_area, .T. )
 
 

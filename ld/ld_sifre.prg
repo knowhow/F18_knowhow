@@ -12,6 +12,11 @@
 
 #include "f18.ch"
 
+MEMVAR ImeKol, Kol
+MEMVAR wId, wNaz, wIdRj, wVr_invalid, wSt_invalid
+MEMVAR cFooter, lPInfo
+
+
 STATIC __filter_radn := .F.
 
 
@@ -38,95 +43,95 @@ FUNCTION P_Radn( cId, dx, dy )
    _radn_filter( .T. )
 
    ImeKol := {}
-   AAdd( ImeKol, { Lokal( PadR( "Id", 6 ) ), {|| id }, "id", {|| .T. }, {|| vpsifra( wId, "1" ) } } )
-   AAdd( ImeKol, { Lokal( PadR( "Prezime", 20 ) ), {|| naz }, "naz" } )
-   AAdd( ImeKol, { Lokal( PadR( "Ime roditelja", 15 ) ), {|| imerod }, "imerod" } )
-   AAdd( ImeKol, { Lokal( PadR( "Ime", 15 ) ), {|| ime }, "ime" } )
-   AAdd( ImeKol, { PadR( iif( gBodK == "1", Lokal( "Br.bodova" ), Lokal( "Koeficij." ) ), 10 ), {|| brbod }, "brbod" } )
-   AAdd( ImeKol, { Lokal( PadR( "MinR%", 5 ) ), {|| kminrad }, "kminrad" } )
+   AAdd( ImeKol, { Lokal( PadR( "Id", 6 ) ), {|| field->id }, "id", {|| .T. }, {|| vpsifra( wId, "1" ) } } )
+   AAdd( ImeKol, { Lokal( PadR( "Prezime", 20 ) ), {|| field->naz }, "naz" } )
+   AAdd( ImeKol, { Lokal( PadR( "Ime roditelja", 15 ) ), {|| field->imerod }, "imerod" } )
+   AAdd( ImeKol, { Lokal( PadR( "Ime", 15 ) ), {|| field->ime }, "ime" } )
+   AAdd( ImeKol, { PadR( iif( gBodK == "1", Lokal( "Br.bodova" ), Lokal( "Koeficij." ) ), 10 ), {|| field->brbod }, "brbod" } )
+   AAdd( ImeKol, { Lokal( PadR( "MinR%", 5 ) ), {|| field->kminrad }, "kminrad" } )
 
    IF RADN->( FieldPos( "KLO" ) ) <> 0
 
-      AAdd( ImeKol, { Lokal( PadR( "Koef.l.odb.", 15 ) ), {|| klo }, "klo" } )
-      AAdd( ImeKol, { Lokal( PadR( "Tip rada", 15 ) ), {|| tiprada }, "tiprada", ;
+      AAdd( ImeKol, { Lokal( PadR( "Koef.l.odb.", 15 ) ), {|| field->klo }, "klo" } )
+      AAdd( ImeKol, { Lokal( PadR( "Tip rada", 15 ) ), {|| field->tiprada }, "tiprada", ;
          {|| .T. }, {|| wtiprada $ " #I#A#S#N#P#U#R" .OR. MsgTipRada() } } )
 
       IF RADN->( FieldPos( "SP_KOEF" ) ) <> 0
-         AAdd( ImeKol, { Lokal( PadR( "prop.koef", 15 ) ), {|| sp_koef }, "sp_koef" } )
+         AAdd( ImeKol, { Lokal( PadR( "prop.koef", 15 ) ), {|| field->sp_koef }, "sp_koef" } )
       ENDIF
 
       IF RADN->( FieldPos( "OPOR" ) ) <> 0
-         AAdd( ImeKol, { Lokal( PadR( "oporeziv", 15 ) ), {|| opor }, "opor" } )
+         AAdd( ImeKol, { Lokal( PadR( "oporeziv", 15 ) ), {|| field->opor }, "opor" } )
       ENDIF
 
       IF RADN->( FieldPos( "TROSK" ) ) <> 0
-         AAdd( ImeKol, { Lokal( PadR( "koristi trosk.", 15 ) ), {|| trosk }, "trosk" } )
+         AAdd( ImeKol, { Lokal( PadR( "koristi trosk.", 15 ) ), {|| field->trosk }, "trosk" } )
       ENDIF
 
    ENDIF
 
-   AAdd( ImeKol, { Lokal( PadR( "StrSpr", 6 ) ), {|| PadC( Idstrspr, 6 ) }, "idstrspr",;
+   AAdd( ImeKol, { Lokal( PadR( "StrSpr", 6 ) ), {|| PadC( field->Idstrspr, 6 ) }, "idstrspr",;
          {|| .T. }, {|| P_StrSpr( @wIdStrSpr ) } } )
-   AAdd( ImeKol, { Lokal( PadR( "V.Posla", 6 ) ), {|| PadC( IdVPosla, 6 ) }, "IdVPosla",;
-         {|| .T. }, {|| Empty( widvposla ) .OR. P_VPosla( @wIdVPosla ) } } )
-   AAdd( ImeKol, { Lokal( PadR( "Ops.Stan", 8 ) ), {|| PadC( IdOpsSt, 8 ) }, "IdOpsSt",;
+   AAdd( ImeKol, { Lokal( PadR( "V.Posla", 6 ) ), {|| PadC( field->IdVPosla, 6 ) }, "IdVPosla",;
+         {|| .T. }, {|| Empty( wIdvposla ) .OR. P_VPosla( @wIdVPosla ) } } )
+   AAdd( ImeKol, { Lokal( PadR( "Ops.Stan", 8 ) ), {|| PadC( field->IdOpsSt, 8 ) }, "IdOpsSt",;
         {|| .T. }, {|| P_Ops( @wIdOpsSt ) } } )
-   AAdd( ImeKol, { Lokal( PadR( "Ops.Rada", 8 ) ), {|| PadC( IdOpsRad, 8 ) }, "IdOpsRad",;
+   AAdd( ImeKol, { Lokal( PadR( "Ops.Rada", 8 ) ), {|| PadC( field->IdOpsRad, 8 ) }, "IdOpsRad",;
         {|| .T. }, {|| P_Ops( @wIdOpsRad ) } } )
-   AAdd( ImeKol, { Lokal( PadR( "Maticni Br.", 13 ) ), {|| PadC( matbr, 13 ) }, "MatBr",;
+   AAdd( ImeKol, { Lokal( PadR( "Maticni Br.", 13 ) ), {|| PadC( field->matbr, 13 ) }, "MatBr",;
         {|| .T. }, {|| .T. } } )
-   AAdd( ImeKol, { Lokal( PadR( "Dat.Od", 8 ) ), {|| datod }, "datod", {|| .T. }, {|| .T. } } )
-   AAdd( ImeKol, { Lokal( PadR( "POL", 3 ) ), {|| PadC( pol, 3 ) }, "POL", {|| .T. }, {|| wPol $ "MZ" } } )
-   AAdd( ImeKol, { PadR( "K1", 2 ), {|| PadC( k1, 2 ) }, "K1", {|| .T. }, {|| .T. } } )
-   AAdd( ImeKol, { PadR( "K2", 2 ), {|| PadC( k2, 2 ) }, "K2", {|| .T. }, {|| .T. } } )
-   AAdd( ImeKol, { PadR( "K3", 2 ), {|| PadC( k3, 2 ) }, "K3", {|| .T. }, {|| .T. } } )
-   AAdd( ImeKol, { PadR( "K4", 2 ), {|| PadC( k4, 2 ) }, "K4", {|| .T. }, {|| .T. } } )
-   AAdd( ImeKol, { Lokal( PadR( "PorOl", 6 ) ), {|| porol }, "POROL", {|| .T. }, {|| .T. } } )
+   AAdd( ImeKol, { Lokal( PadR( "Dat.Od", 8 ) ), {|| field->datod }, "datod", {|| .T. }, {|| .T. } } )
+   AAdd( ImeKol, { Lokal( PadR( "POL", 3 ) ), {|| PadC( field->pol, 3 ) }, "POL", {|| .T. }, {|| wPol $ "MZ" } } )
+   AAdd( ImeKol, { PadR( "K1", 2 ), {|| PadC( field->k1, 2 ) }, "K1", {|| .T. }, {|| .T. } } )
+   AAdd( ImeKol, { PadR( "K2", 2 ), {|| PadC( field->k2, 2 ) }, "K2", {|| .T. }, {|| .T. } } )
+   AAdd( ImeKol, { PadR( "K3", 2 ), {|| PadC( field->k3, 2 ) }, "K3", {|| .T. }, {|| .T. } } )
+   AAdd( ImeKol, { PadR( "K4", 2 ), {|| PadC( field->k4, 2 ) }, "K4", {|| .T. }, {|| .T. } } )
+   AAdd( ImeKol, { Lokal( PadR( "PorOl", 6 ) ), {|| field->porol }, "POROL", {|| .T. }, {|| .T. } } )
 
-   AAdd( ImeKol, { Lokal( PadR( "Radno mjesto", 30 ) ), {|| rmjesto }, "RMJESTO", {|| .T. }, {|| .T. } } )
+   AAdd( ImeKol, { Lokal( PadR( "Radno mjesto", 30 ) ), {|| field->rmjesto }, "RMJESTO", {|| .T. }, {|| .T. } } )
 
-   AAdd( ImeKol, { Lokal( PadR( "Br.Knjizice ", 12 ) ), {|| PadC( brknjiz, 12 ) }, "brknjiz", {|| .T. }, {|| .T. } } )
+   AAdd( ImeKol, { Lokal( PadR( "Br.Knjizice ", 12 ) ), {|| PadC( field->brknjiz, 12 ) }, "brknjiz", {|| .T. }, {|| .T. } } )
 
-   AAdd( ImeKol, { Lokal( PadR( "Br.Tekuceg rac.", 20 ) ), {|| PadC( brtekr, 20 ) }, "brtekr", {|| .T. }, {|| .T. } } )
+   AAdd( ImeKol, { Lokal( PadR( "Br.Tekuceg rac.", 20 ) ), {|| PadC( field->brtekr, 20 ) }, "brtekr", {|| .T. }, {|| .T. } } )
 
-   AAdd( ImeKol, { Lokal( PadR( "Isplata", 7 ) ), {|| PadC( isplata, 7 ) }, "isplata", {|| .T. }, {|| wIsplata $ "  #TR#SK#BL" .OR. MsgIspl() } } )
-   AAdd( ImeKol, { Lokal( PadR( "Banka", 6 ) ), {|| PadC( idbanka, 6 ) }, "idbanka", {|| .T. }, {|| Empty( WIDBANKA ) .OR. P_Kred( @widbanka ) } } )
+   AAdd( ImeKol, { Lokal( PadR( "Isplata", 7 ) ), {|| PadC( field->isplata, 7 ) }, "isplata", {|| .T. }, {|| wIsplata $ "  #TR#SK#BL" .OR. MsgIspl() } } )
+   AAdd( ImeKol, { Lokal( PadR( "Banka", 6 ) ), {|| PadC( field->idbanka, 6 ) }, "idbanka", {|| .T. }, {|| Empty( WIDBANKA ) .OR. P_Kred( @widbanka ) } } )
 
-   AAdd( ImeKol, { Lokal( PadR( "OSN.Bol", 11 ) ), {|| osnbol }, "osnbol" } )
+   AAdd( ImeKol, { Lokal( PadR( "OSN.Bol", 11 ) ), {|| field->osnbol }, "osnbol" } )
 
    IF radn->( FieldPos( "N1" ) <> 0 )
-      AAdd( ImeKol, { PadC( "N1", 12 ), {|| n1 }, "n1" } )
-      AAdd( ImeKol, { PadC( "N2", 12 ), {|| n2 }, "n2" } )
-      AAdd( ImeKol, { PadC( "N3", 12 ), {|| n3 }, "n3" } )
+      AAdd( ImeKol, { PadC( "N1", 12 ), {|| field->n1 }, "n1" } )
+      AAdd( ImeKol, { PadC( "N2", 12 ), {|| field->n2 }, "n2" } )
+      AAdd( ImeKol, { PadC( "N3", 12 ), {|| field->n3 }, "n3" } )
    ENDIF
 
    IF radn->( FieldPos( "IDRJ" ) <> 0 )
-      AAdd( ImeKol, { "ID RJ", {|| idrj }, "idrj", ;
+      AAdd( ImeKol, { "ID RJ", {|| field->idrj }, "idrj", ;
         {|| .T. }, {|| Empty( wIdRj ) .OR. P_LD_Rj( @wIdRj ) } } )
    ENDIF
 
    // Dodaj specificna polja za popunu obrasca DP
    IF radn->( FieldPos( "STREETNAME" ) <> 0 )
-      AAdd( ImeKol, { Lokal( PadC( "Ime ul.", 40 ) ), {|| streetname }, "streetname" } )
-      AAdd( ImeKol, { Lokal( PadC( "Broj ul.", 10 ) ), {|| streetnum }, "streetnum" } )
-      AAdd( ImeKol, { Lokal( PadC( "Zaposl.od", 12 ) ), {|| hiredfrom }, "hiredfrom", ;
+      AAdd( ImeKol, { Lokal( PadC( "Ime ul.", 40 ) ), {|| field->streetname }, "streetname" } )
+      AAdd( ImeKol, { Lokal( PadC( "Broj ul.", 10 ) ), {|| field->streetnum }, "streetnum" } )
+      AAdd( ImeKol, { Lokal( PadC( "Zaposl.od", 12 ) ), {|| field->hiredfrom }, "hiredfrom", ;
             {|| .T. }, {|| P_HiredFrom( @wHiredfrom ) } } )
-      AAdd( ImeKol, { Lokal( PadC( "Zaposl.do", 12 ) ), {|| hiredto }, "hiredto" } )
+      AAdd( ImeKol, { Lokal( PadC( "Zaposl.do", 12 ) ), {|| field->hiredto }, "hiredto" } )
    ENDIF
 
 
    IF radn->( FieldPos( "AKTIVAN" ) ) <> 0
-      AAdd( ImeKol, { "Aktivan?", {|| aktivan }, "aktivan" } )
+      AAdd( ImeKol, { "Aktivan?", {|| field->aktivan }, "aktivan" } )
    ENDIF
 
    IF radn->( FieldPos( "BEN_SRMJ" ) ) <> 0
-      AAdd( ImeKol, { "Benef.sifra", {|| ben_srmj }, "ben_srmj" } )
+      AAdd( ImeKol, { "Benef.sifra", {|| field->ben_srmj }, "ben_srmj" } )
    ENDIF
 
    Kol := {}
 
    IF gMinR == "B"
-      ImeKol[ 6 ] := { PadR( "MinR", 7 ), {|| Transform( kminrad, "9999.99" ) }, "kminrad" }
+      ImeKol[ 6 ] := { PadR( "MinR", 7 ), {|| Transform( field->kminrad, "9999.99" ) }, "kminrad" }
    ENDIF
 
    FOR i := 1 TO 9

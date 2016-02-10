@@ -66,7 +66,7 @@ FUNCTION update_dbf_from_server( table, algoritam )
 
       log_write( "update_dbf_from_server(), iniciraj full synchro", 8 )
       // full synchro ne treba otvorenu tabelu, on je ionako zapuje
-      full_synchro ( table, _step )
+      full_synchro ( table, _step, " ALG_FULL " )
 
    ELSE
       log_write( "update_dbf_from_server(), iniciraj ids synchro", 8 )

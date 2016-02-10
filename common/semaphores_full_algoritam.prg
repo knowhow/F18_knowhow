@@ -11,13 +11,15 @@
 
 #include "f18.ch"
 
+MEMVAR m_x, m_y
+
 STATIC s_lInSync := .F.
 
 /*
  napuni tablu sa servera
   step_size - broj zapisa koji se citaju u jednom query-u
 */
-FUNCTION full_synchro( dbf_table, step_size )
+FUNCTION full_synchro( dbf_table, step_size, cInfo )
 
    LOCAL _seconds
    LOCAL _count
@@ -56,6 +58,7 @@ FUNCTION full_synchro( dbf_table, step_size )
 
    _sql_order  := _a_dbf_rec[ "sql_order" ]
 
+   // nuliranje tabele
    reopen_exclusive_and_zap( _a_dbf_rec[ "table" ], .T., .T. )
    USE
 
@@ -77,7 +80,7 @@ FUNCTION full_synchro( dbf_table, step_size )
       RaiseError( _msg )
    ENDIF
 
-   @ m_x + 3, m_y + 2 SAY _count
+   @ m_x + 3, m_y + 2 SAY cInfo + " sql_cnt:" + Alltrim( STR(_count, 10, 0))
 
    FOR _offset := 0 TO _count STEP step_size
 
@@ -114,7 +117,6 @@ FUNCTION full_synchro( dbf_table, step_size )
    ENDIF
 
    BoxC()
-
 
    log_write( "END full_synchro tabela: " + dbf_table +  " cnt: " + AllTrim( Str( _count ) ), 3 )
 

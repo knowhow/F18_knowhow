@@ -246,8 +246,8 @@ STATIC FUNCTION epdv_kif_key_handler()
 
       RETURN DE_REFRESH
 
-   CASE Ch == K_ALT_A
-
+   CASE is_key_alt_a( Ch )
+   
       IF Pitanje( , "Ažurirati pripremu KIF-a (D/N) ?", "N" ) == "D"
          azur_kif()
          RETURN DE_REFRESH
@@ -290,6 +290,3 @@ STATIC FUNCTION epdv_kif_key_handler()
    ENDCASE
 
    RETURN DE_CONT
-
-
-

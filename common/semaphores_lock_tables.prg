@@ -46,8 +46,6 @@ FUNCTION f18_lock_tables( a_tables, lAlreadyInTransakcija )
    LOCAL _ok := .T.
    LOCAL _i, _tbl, _dbf_rec
 
-   PushWA()
-
    hb_default( @lAlreadyInTransakcija, .F. )
 
    IF Len( a_tables ) == NIL
@@ -67,7 +65,9 @@ FUNCTION f18_lock_tables( a_tables, lAlreadyInTransakcija )
 
       IF _ok
 
-         iif( lAlreadyInTransakcija, NIL, sql_table_update( nil, "END" ) )
+         IF !lAlreadyInTransakcija
+            sql_table_update( nil, "END" )
+         ENDIF
          log_write( "uspjesno izvrsen lock tabela " + pp( a_tables ), 7 )
 
 
@@ -78,10 +78,11 @@ FUNCTION f18_lock_tables( a_tables, lAlreadyInTransakcija )
             ENDIF
          NEXT
 
-
       ELSE
          log_write( "ERROR: nisam uspio napraviti lock tabela " + pp( a_tables ), 2 )
-         iif( lAlreadyInTransakcija, .T., sql_table_update( nil, "ROLLBACK" ) )
+         IF !lAlreadyInTransakcija
+            sql_table_update( nil, "ROLLBACK" )
+         ENDIF
          _ok := .F.
 
       ENDIF
@@ -92,8 +93,6 @@ FUNCTION f18_lock_tables( a_tables, lAlreadyInTransakcija )
       log_write( "ERROR: nisam uspio napraviti lock tabela " + pp( a_tables ), 2 )
 
    ENDIF
-
-   PopWA()
 
    RETURN _ok
 

@@ -12,7 +12,7 @@
 #include "f18.ch"
 
 
-FUNCTION refresh_me( a_dbf_rec, lSilent, lFromMyUse )
+FUNCTION refresh_me_izbaciti( a_dbf_rec, lSilent, lFromMyUse )
 
    LOCAL _wa, _del, _cnt, _msg_1, _msg_2, _cnt_sql
    LOCAL _dbf_pack_algoritam
@@ -69,7 +69,7 @@ FUNCTION refresh_me( a_dbf_rec, lSilent, lFromMyUse )
    //
    // _cnt - _del je broj aktivnih dbf zapisa, dajemo taj info check_recno funkciji
    // ako se utvrti greska uradi full sync
-   check_recno_and_fix( a_dbf_rec[ "table" ], _cnt_sql, _cnt - _del, .T. )
+   check_recno_and_fix( a_dbf_rec[ "table" ], _cnt_sql, _cnt - _del, .T. ) // legacy izbaciti
 
    _msg_1 := a_dbf_rec[ "alias" ] + " / " + a_dbf_rec[ "table" ]
    _msg_2 := "cnt = "  + AllTrim( Str( _cnt, 0 ) ) + " / " + AllTrim( Str( _del, 0 ) )

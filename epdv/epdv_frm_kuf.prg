@@ -244,7 +244,7 @@ STATIC FUNCTION epdv_kuf_key_handler()
 
       RETURN DE_REFRESH
 
-   CASE Ch == K_ALT_A
+   CASE is_key_alt_a( Ch )
 
       IF Pitanje( , "Ažurirati KUF dokument (D/N) ?", "N" ) == "D"
          azur_kuf()
@@ -287,4 +287,3 @@ STATIC FUNCTION epdv_kuf_key_handler()
    ENDCASE
 
    RETURN DE_CONT
-

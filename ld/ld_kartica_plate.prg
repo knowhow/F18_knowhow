@@ -372,8 +372,10 @@ STATIC FUNCTION prikazi_primanja()
                @ PRow(), 60 + Len( cLMSK ) SAY niznos        PICT gpici
             ENDIF
          ENDIF
+
          IF "SUMKREDITA" $ tippr->formula
-            SELECT radkr; SET ORDER TO 1
+            SELECT radkr
+            SET ORDER TO 1
             SEEK Str( _godina, 4 ) + Str( _mjesec, 2 ) + _idradn
             ukredita := 0
             IF l2kolone
@@ -385,7 +387,9 @@ STATIC FUNCTION prikazi_primanja()
             ? cLMSK + "    Kreditor   /             na osnovu         Ukupno    Ostalo   Rata"
             ? m2
             DO WHILE !Eof() .AND. _godina == godina .AND. _mjesec = mjesec .AND. idradn == _idradn
-               SELECT kred; hseek radkr->idkred; SELECT radkr
+               SELECT kred
+               hseek radkr->idkred
+               SELECT radkr
                aIznosi := OKreditu( idradn, idkred, naosnovu, _mjesec, _godina )
                ? cLMSK, idkred, Left( kred->naz, 15 ), PadR( naosnovu, 20 )
                @ PRow(), PCol() + 1 SAY aIznosi[ 1 ] PICT "999999.99" // ukupno

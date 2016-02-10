@@ -14,6 +14,7 @@
 STATIC s_hlInDbfRefresh := NIL
 STATIC s_aLastRefresh := { "x", 0 }
 
+MEMVAR m_x, m_y
 /*
    moguci statusi:
         lock
@@ -26,10 +27,10 @@ FUNCTION lock_semaphore( table, status, lUnlockTable )
    LOCAL _qry
    LOCAL _ret
    LOCAL _i
-   LOCAL _err_msg, _msg
+   LOCAL _err_msg
    LOCAL _server := pg_server()
    LOCAL _user   := f18_user()
-   LOCAL _user_locked := ""
+   LOCAL _user_locked
    LOCAL cSemaphoreStatus
 
    IF skip_semaphore( table )
@@ -45,7 +46,6 @@ FUNCTION lock_semaphore( table, status, lUnlockTable )
    log_write( "table: " + table + ", status:" + status + " START", 8 )
 
    _i := 0
-
    WHILE .T.
 
       _i++
@@ -127,8 +127,6 @@ FUNCTION get_semaphore_locked_by_me_status_user( table )
           "free"  - tabela slobodna
           "locked" - zauzeta
           "unknown" - ne mogu dobiti odgovor od servera, vjerovatno free
-
-
 */
 
 FUNCTION get_semaphore_status( table )
@@ -183,7 +181,6 @@ FUNCTION get_semaphore_version( table, last )
    LOCAL _server := pg_server()
    LOCAL _user := f18_user()
    LOCAL _msg
-
 
    insert_semaphore_if_not_exists( table )
 
@@ -271,7 +268,6 @@ FUNCTION get_semaphore_version_h( table )
 FUNCTION reset_semaphore_version( table )
 
    LOCAL _ret
-   LOCAL _result
    LOCAL _qry
    LOCAL _tbl
    LOCAL _user := f18_user()
@@ -287,71 +283,14 @@ FUNCTION reset_semaphore_version( table )
 
    log_write( "reset semaphore " + _tbl + " update ", 1 )
    _qry := "UPDATE " + _tbl + " SET version=-1, last_trans_version=(CASE WHEN last_trans_version IS NULL THEN 0 ELSE last_trans_version END) WHERE user_code =" + _sql_quote( _user )
+   _sql_query( _server, _qry )
 
-
-   _ret := _sql_query( _server, _qry )
    _qry := "SELECT version from " + _tbl + " WHERE user_code =" + _sql_quote( _user )
    _ret := _sql_query( _server, _qry )
 
    log_write( "reset semaphore, select version" + Str( _ret:FieldGet( 1 ) ), 7 )
 
    RETURN _ret:FieldGet( 1 )
-
-
-// ---------------------------------------
-// date algoritam
-// ---------------------------------------
-FUNCTION push_dat_to_semaphore( table, date )
-
-   LOCAL _tbl
-   LOCAL _result
-   LOCAL _ret
-   LOCAL _qry
-   LOCAL _sql_ids
-   LOCAL _i
-   LOCAL _user := f18_user()
-   LOCAL _server := pg_server()
-
-   IF skip_semaphore( table )
-      RETURN .F.
-   ENDIF
-
-
-   _tbl := "sem." + table
-   _result := table_count( _tbl, "user_code=" + _sql_quote( _user ) )
-
-   _qry := "UPDATE " + _tbl + ;
-      " SET dat=" + _sql_quote( date ) + ;
-      " WHERE user_code =" + _sql_quote( _user )
-   _ret := _sql_query( _server, _qry )
-
-   RETURN _ret
-
-
-
-// ---------------------------------------
-// vrati date za DATE algoritam
-// ---------------------------------------
-FUNCTION get_dat_from_semaphore( table )
-
-   LOCAL _server :=  pg_server()
-   LOCAL _tbl
-   LOCAL _tbl_obj
-   LOCAL _qry
-   LOCAL _dat
-
-   _tbl := "sem." + table
-
-   _qry := "SELECT dat FROM " + _tbl + " WHERE user_code=" + _sql_quote( f18_user() )
-   _tbl_obj := _sql_query( _server, _qry )
-   IF sql_query_bez_zapisa( _tbl_obj )
-      MsgBeep( "problem sa:" + _qry )
-      QUIT_1
-   ENDIF
-
-   _dat := oTable:FieldGet( 1 )
-
-   RETURN _dat
 
 
 // ------------------------------
@@ -398,18 +337,16 @@ FUNCTION fill_dbf_from_server( dbf_table, sql_query, sql_fetch_time, dbf_write_t
 
    LOCAL _counter := 0
    LOCAL _i, _fld
-   LOCAL _server := pg_server()
    LOCAL _qry_obj
    LOCAL _retry := 3
    LOCAL _a_dbf_rec
-   LOCAL _dbf_alias, _dbf_fields, cSyncalias, cFullDbf, cFullIdx
+   LOCAL _dbf_fields, cSyncalias, cFullDbf, cFullIdx
 
    IF lShowInfo == NIL
       lShowInfo := .F.
    ENDIF
 
    _a_dbf_rec := get_a_dbf_rec( dbf_table )
-   _dbf_alias := _a_dbf_rec[ "alias" ]
    _dbf_fields := _a_dbf_rec[ "dbf_fields" ]
 
    sql_fetch_time := Seconds()
@@ -429,8 +366,8 @@ FUNCTION fill_dbf_from_server( dbf_table, sql_query, sql_fetch_time, dbf_write_t
    IF Select( cSyncAlias ) == 0
       SELECT ( _a_dbf_rec[ 'wa' ] + 1000 )
       USE ( cFullDbf ) Alias ( cSyncAlias )  SHARED
-      IF FILE( cFullIdx )
-        dbSetIndex( cFullIdx )
+      IF File( cFullIdx )
+         dbSetIndex( cFullIdx )
       ENDIF
    ENDIF
 
@@ -483,7 +420,6 @@ FUNCTION fill_dbf_from_server( dbf_table, sql_query, sql_fetch_time, dbf_write_t
 FUNCTION field_in_blacklist( field_name, blacklist )
 
    LOCAL _ok := .F.
-   LOCAL _scan
 
    // mozda nije definisana blacklista
    IF blacklist == NIL
@@ -502,17 +438,12 @@ FUNCTION field_in_blacklist( field_name, blacklist )
 */
 FUNCTION update_semaphore_version_after_push( table, to_myself )
 
-   LOCAL _ret
-   LOCAL _result
    LOCAL _qry
    LOCAL _tbl
    LOCAL _user := f18_user()
-   LOCAL _last
    LOCAL _server := my_server()
-   LOCAL _ver_user, _last_ver, _id_full
+   LOCAL _ver_user, _last_ver
    LOCAL _versions
-   LOCAL _a_dbf_rec
-   LOCAL _ret_ver
    LOCAL cVerUser
 
    IF to_myself == NIL
@@ -525,13 +456,10 @@ FUNCTION update_semaphore_version_after_push( table, to_myself )
 
    log_write( "START: update semaphore version after push", 7 )
 
-   _a_dbf_rec := get_a_dbf_rec( table )
-
    _tbl := "sem." + Lower( table )
    _versions := get_semaphore_version_h( table )
 
    _last_ver := _versions[ "last_version" ]
-   _version  := _versions[ "version" ]
 
    IF _last_ver < 0
       _last_ver := 1
@@ -554,12 +482,11 @@ FUNCTION update_semaphore_version_after_push( table, to_myself )
    _qry += "UPDATE " + _tbl + " SET last_trans_version=" + cVerUser + "; "
    // kod svih usera verzija ne moze biti veca od posljednje
    _qry += "UPDATE " + _tbl + " SET version=" + cVerUser + " WHERE version > " + cVerUser + ";"
-   _ret := _sql_query( _server, _qry )
+   _sql_query( _server, _qry )
 
    log_write( "END: update semaphore version after push user: " + _user + ", tabela: " + _tbl + ", last_ver=" + Str( _ver_user ), 7 )
 
    RETURN _ver_user
-
 
 
 
@@ -573,7 +500,6 @@ FUNCTION nuliraj_ids_and_update_my_semaphore_ver( table )
    LOCAL _user := f18_user()
    LOCAL _server := pg_server()
    LOCAL _qry
-
 
    insert_semaphore_if_not_exists( table )
 
@@ -609,7 +535,7 @@ FUNCTION nuliraj_ids_and_update_my_semaphore_ver( table )
    ENDIF
 */
 
-FUNCTION insert_semaphore_if_not_exists( cTable ,lIgnoreChk0 )
+FUNCTION insert_semaphore_if_not_exists( cTable, lIgnoreChk0 )
 
    LOCAL nCnt
    LOCAL _server := pg_server()
@@ -627,7 +553,7 @@ FUNCTION insert_semaphore_if_not_exists( cTable ,lIgnoreChk0 )
    cSqlTbl := "sem." + Lower( cTable )
 
    IF !lIgnoreChk0 .AND. is_chk0( cTable )
-       RETURN .F.
+      RETURN .F.
    ENDIF
 
 
@@ -745,11 +671,11 @@ STATIC FUNCTION dbf_refresh_0( aDbfRec )
    LOCAL nCntSql, nCntDbf, nDeleted
 #ifdef F18_DEBUG
    LOCAL lSilent := .F.
-#ELSE
+#else
    LOCAL lSilent := .T.
 #endif
 
-   IF is_chk0( aDbfRec[ "table" ])
+   IF is_chk0( aDbfRec[ "table" ] )
       log_write( "chk0 already set: " + aDbfRec[ "table" ], 9 )
       RETURN .F.
    ENDIF
@@ -762,8 +688,8 @@ STATIC FUNCTION dbf_refresh_0( aDbfRec )
    ENDIF
 
    log_write( "stanje dbf " +  cMsg1, 8 )
-   nCntSql := table_count( aDbfRec[ "table" ] )
 
+   nCntSql := table_count( aDbfRec[ "table" ] )
    dbf_open_temp_and_count( aDbfRec, @nCntDbf, @nDeleted )
 
    cMsg1 := "nakon sync: " +  aDbfRec[ "alias" ] + " / " + aDbfRec[ "table" ]
@@ -776,11 +702,7 @@ STATIC FUNCTION dbf_refresh_0( aDbfRec )
 
    log_write( cMsg1 + " " + cMsg2, 8 )
 
-   // 4) uradi check i fix ako treba
-   //
-   // _cnt - _del je broj aktivnih dbf zapisa, dajemo taj info check_recno funkciji
-   // ako se utvrti greska uradi full sync
-   check_recno_and_fix( aDbfRec[ "table" ], nCntSql, nCntDbf - nDeleted, .T. )
+   check_recno_and_fix( aDbfRec[ "table" ], nCntSql, nCntDbf - nDeleted )
 
    cMsg1 := aDbfRec[ "alias" ] + " / " + aDbfRec[ "table" ]
    cMsg2 := "cnt_sql: " + AllTrim( Str( nCntSql, 0 ) ) + " cnt_dbf: " + AllTrim( Str( nCntDbf, 0 ) ) + " del_dbf: " + AllTrim( Str( nDeleted, 0 ) )

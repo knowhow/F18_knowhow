@@ -199,7 +199,7 @@ FUNCTION my_use( alias, table, new_area, _rdd, semaphore_param, excl, select_wa 
 
          IF !_a_dbf_rec[ "chk0" ]
             // nije nikada uradjena inicijalna kontrola ove tabele
-            refresh_me( _a_dbf_rec, .T., .T. )
+            refresh_me_izbaciti( _a_dbf_rec, .T., .T. )
          ENDIF
 
       ELSE

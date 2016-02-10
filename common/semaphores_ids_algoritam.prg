@@ -11,7 +11,6 @@
 
 #include "f18.ch"
 
-
 /*
  synchro dbf tabele na osnovu id-ova koje su poslali drugi
 */
@@ -38,10 +37,7 @@ FUNCTION ids_synchro( dbf_table )
 
       IF _zap <> 0
 
-         // postoji zahtjev za full synchro
-         full_synchro( dbf_table, 50000, .F. )
-         // otvoricu tabelu ponovo ... ekskluzivno, ne bi to trebalo biti problem
-         // reopen_shared( dbf_table, .T. )
+         full_synchro( dbf_table, 50000, " IDS: UZMI_STANJE_SA_SERVERA " )
 
          ADel( _zap, _ids_queries[ "qry" ] )
          // ponovo kreiraj _ids_queries u slucaju da je bilo jos azuriranja
@@ -283,7 +279,6 @@ FUNCTION get_ids_from_semaphore( table )
 FUNCTION create_queries_from_ids( table )
 
    LOCAL _a_dbf_rec, _msg
-   LOCAL _qry_1, _qry_2
    LOCAL _queries     := {}
    LOCAL _ids, _ids_2 := {}
    LOCAL _sql_ids := {}
@@ -392,19 +387,17 @@ FUNCTION create_queries_from_ids( table )
 FUNCTION delete_ids_in_dbf( dbf_table, ids, algoritam )
 
    LOCAL _a_dbf_rec, _alg
-   LOCAL _counter, _msg
+   LOCAL _counter
    LOCAL _fnd, _tmp_id, _rec
-   LOCAL _dbf_alias
    LOCAL _dbf_tag
    LOCAL _key_block
-   LOCAL _i, cSyncAlias, cFullDbf, cFullIdx
+   LOCAL cSyncAlias, cFullDbf, cFullIdx
 
    log_write( "delete_ids_in_dbf(), poceo", 9 )
 
    _a_dbf_rec := get_a_dbf_rec( dbf_table )
    _alg := _a_dbf_rec[ "algoritam" ]
 
-   _dbf_alias := _a_dbf_rec[ "alias" ]
    _dbf_tag := _alg[ algoritam ][ "dbf_tag" ]
 
    _key_block := _alg[ algoritam ][ "dbf_key_block" ]

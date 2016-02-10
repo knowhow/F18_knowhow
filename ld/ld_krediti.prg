@@ -9,7 +9,6 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-
 #include "f18.ch"
 
 FUNCTION ld_krediti_menu()
@@ -50,6 +49,7 @@ FUNCTION ld_novi_kredit()
    LOCAL nRata    := 0
    LOCAL nRata2   := 0
    LOCAL cOsnov   := Space( 20 )
+   LOCAL nIRata
 
    DO WHILE .T.
 
@@ -93,7 +93,7 @@ FUNCTION ld_novi_kredit()
          IF Pitanje( , "Stavke vec postoje. Zamijeniti novim podacima ?", "D" ) == "N"
             MsgBeep( "Rate nisu formirane! Unesite novu osnovu kredita za zadanog kreditora!" )
             my_close_all_dbf()
-            RETURN
+            RETURN .F.
          ELSE
             _vals := hb_Hash()
             _vals[ "idradn" ]    := cIdRadn
@@ -112,8 +112,8 @@ FUNCTION ld_novi_kredit()
       i := 0
       nTekMj := nMjesec - 1
 
-      f18_lock_tables( { "ld_radkr" } )
       sql_table_update( nil, "BEGIN" )
+      f18_lock_tables( { "ld_radkr" }, .T. )
 
       DO WHILE .T.
 
@@ -160,8 +160,8 @@ FUNCTION ld_novi_kredit()
 
       ENDDO
 
-      f18_free_tables( { "ld_radkr" } )
       sql_table_update( nil, "END" )
+      f18_free_tables( { "ld_radkr" } )
 
       log_write( "F18_DOK_OPER: ld unos novog kredita - radnik: " + cIdRadn + " iznos: " + AllTrim( Str( nIznKred ) ), 2 )
 
@@ -191,8 +191,6 @@ FUNCTION ld_novi_kredit()
    my_close_all_dbf()
 
    RETURN .T.
-
-
 
 
 FUNCTION ld_ispravka_kredita

@@ -26,7 +26,7 @@ FUNCTION full_synchro( dbf_table, step_size, cInfo )
    LOCAL _offset
    LOCAL _qry
    LOCAL _sql_table, _sql_fields
-   LOCAL _a_dbf_rec
+   LOCAL aDbfRec
    LOCAL _sql_order
    LOCAL _opened
    LOCAL _sql_fetch_time, _dbf_write_time
@@ -53,13 +53,13 @@ FUNCTION full_synchro( dbf_table, step_size, cInfo )
    // 3) ako nema transakcije ja cu pokupiti tu promjenu, sa transakcijom ja tu promjenu neću vidjeti
 
    _sql_table  := "fmk." + dbf_table
-   _a_dbf_rec  := get_a_dbf_rec( dbf_table )
-   _sql_fields := sql_fields( _a_dbf_rec[ "dbf_fields" ] )
+   aDbfRec  := get_a_dbf_rec( dbf_table )
+   _sql_fields := sql_fields( aDbfRec[ "dbf_fields" ] )
 
-   _sql_order  := _a_dbf_rec[ "sql_order" ]
+   _sql_order  := aDbfRec[ "sql_order" ]
 
    // nuliranje tabele
-   reopen_exclusive_and_zap( _a_dbf_rec[ "table" ], .T., .T. )
+   reopen_exclusive_and_zap( aDbfRec[ "table" ], .T., .T. )
    USE
 
    Box(, 10, 70 )
@@ -121,5 +121,6 @@ FUNCTION full_synchro( dbf_table, step_size, cInfo )
    log_write( "END full_synchro tabela: " + dbf_table +  " cnt: " + AllTrim( Str( _count ) ), 3 )
 
    s_lInSync := .F.
+   set_a_dbf_rec_chk0( aDbfRec[ "table" ] )
 
    RETURN .T.

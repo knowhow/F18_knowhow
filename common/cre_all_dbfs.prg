@@ -41,8 +41,8 @@ FUNCTION cre_all_dbfs( ver )
    cre_roba( ver )
    cre_partn( ver )
    _kreiraj_adrese( ver )
-   cre_all_ld_sif( ver )
-   cre_all_virm_sif( ver )
+
+
    proizvoljni_izvjestaji_db_cre( ver )
    cre_fin_mat( ver )
 
@@ -60,6 +60,7 @@ FUNCTION cre_all_dbfs( ver )
    ENDIF
 
    IF f18_use_module( "ld" )
+      cre_all_ld_sif( ver )
       cre_all_ld( ver )
    ENDIF
 
@@ -70,6 +71,7 @@ FUNCTION cre_all_dbfs( ver )
 
 
    IF f18_use_module( "virm" )
+      cre_all_virm_sif( ver )
       cre_all_virm( ver )
    ENDIF
 
@@ -255,7 +257,6 @@ FUNCTION dbf_ext_na_kraju( cIme )
 */
 
 FUNCTION dbCreate2( ime_dbf, struct_dbf, driver )
-
 
    LOCAL _ime_cdx
 

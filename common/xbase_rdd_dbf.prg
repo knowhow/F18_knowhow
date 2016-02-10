@@ -477,8 +477,6 @@ FUNCTION dbf_open_temp_and_count( aDbfRec, nCntSql, nCnt, nDel )
 
    IF Abs( nCntSql - nCnt + nDel ) > 0
 
-      AltD()
-      // delete empty dbf records
       bKeyBlock := aDbfRec[ "algoritam" ][ 1 ][ "dbf_key_block" ]
       IF hb_HHasKey( aDbfRec[ "algoritam" ][ 1 ], "dbf_key_empty_rec" )
 

@@ -60,16 +60,16 @@ FUNCTION update_dbf_from_server( table, algoritam )
 
    _seconds := Seconds()
 
-   log_write( "START update_dbf_from_server", 9 )
+   log_write( "START update_dbf_from_server: " + algoritam, 9 )
 
    IF algoritam == "FULL"
 
-      log_write( "update_dbf_from_server(), iniciraj full synchro", 8 )
+      log_write( "iniciraj full synchro:" + table, 8 )
       // full synchro ne treba otvorenu tabelu, on je ionako zapuje
       full_synchro ( table, _step, " ALG_FULL " )
 
    ELSE
-      log_write( "update_dbf_from_server(), iniciraj ids synchro", 8 )
+      log_write( "iniciraj ids synchro:" + table, 8 )
       ids_synchro  ( table )
    ENDIF
 

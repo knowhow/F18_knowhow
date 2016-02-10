@@ -93,7 +93,6 @@ FUNCTION pregled_plata()
 
    SELECT ld
    USE
-   AltD()
    use_sql_ld_ld( cGodina, cMjesec, cMjesec, nVrstaInvaliditeta, nStepenInvaliditeta )
 
    // 1 - "str(godina)+idrj+str(mjesec)+idradn"

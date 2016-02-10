@@ -95,7 +95,6 @@ FUNCTION ld_rekapitulacija( lSvi )
 
    cFilt1 := get_ld_rekap_filter( hParams )
 
-   AltD()
    use_sql_ld_ld( nGodina, nMjesec, nMjesecDo, nVrstaInvaliditeta, nStepenInvaliditeta, cFilt1 )
 
 

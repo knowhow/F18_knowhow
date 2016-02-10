@@ -133,7 +133,7 @@ FUNCTION my_use( alias, table, new_area, _rdd, semaphore_param, excl, select_wa 
 #ifdef F18_DEBUG
    MsgBeep( "my_use legacy sekvenca - out " )
 #endif
-   AltD()
+   AltD() // legacy stop
 
    IF excl == NIL
       excl := .F.
@@ -269,7 +269,7 @@ FUNCTION my_use_simple( cAlias )
    nCnt := 0
 
    lUspjesno := .F.
-   DO WHILE ( !lUspjesno ) .AND. ( nCnt < 10 )
+   DO WHILE ( !lUspjesno ) .AND. ( nCnt < 5 )
 
       BEGIN SEQUENCE WITH {| err| Break( err ) }
 
@@ -286,12 +286,14 @@ FUNCTION my_use_simple( cAlias )
          IF File(  cFullIdx )
             dbSetIndex( cFullIdx )
          ENDIF
+
+
          lUspjesno := .T.
 
       RECOVER USING oError
-
          my_use_error( aDbfRec[ 'table' ], aDbfRec[ 'alias' ], oError )
          hb_idleSleep( 1 )
+
       END SEQUENCE
 
       nCnt ++
@@ -311,9 +313,10 @@ FUNCTION my_use_simple( cAlias )
 
 FUNCTION my_use_error( table, alias, oError )
 
-   LOCAL _msg
+   LOCAL _msg, nI, cMsg
 
    _msg := "ERROR: my_use " + oError:description + ": tbl:" + my_home() + table + " alias:" + alias + " se ne moze otvoriti ?!"
+   LOG_CALL_STACK _msg .F.
    log_write( _msg, 2 )
 
    IF oError:description == "Read error" .OR. oError:description == "Corruption detected"

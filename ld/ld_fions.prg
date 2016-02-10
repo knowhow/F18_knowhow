@@ -718,7 +718,7 @@ FUNCTION FillBrBod( _brbod )
 
    IF SELECT( "ld" ) == 0
       Alert( "fillbrbod Alias ld not ?!")
-      altd()
+      //altd()
       //O_LD
    ENDIF
 

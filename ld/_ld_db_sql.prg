@@ -43,7 +43,6 @@ FUNCTION use_sql_ld_ld( nGodina, nMjesec, nMjesecDo, nVrInvalid, nStInvalid, cFi
 
    hIndexes := h_ld_ld_indexes()
 
-altd()
    FOR EACH cKey IN hIndexes:Keys
       INDEX ON  &(hIndexes[ cKey ])  TAG ( cKey ) TO ( cTable ) FOR &cFilter
    NEXT

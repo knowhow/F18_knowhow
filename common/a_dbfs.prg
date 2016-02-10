@@ -40,7 +40,7 @@ FUNCTION set_a_dbfs()
       set_a_dbf_pos()
    ENDIF
 
-   IF f18_use_module( "virm" ) .OR. f18_use_module( "ld" )
+   IF f18_use_module( "virm" )
       set_a_dbf_virm()
    ENDIF
 
@@ -172,6 +172,7 @@ FUNCTION set_a_dbf_sifarnik( dbf_table, alias, wa, rec, lSql )
 FUNCTION get_a_dbf_rec( tbl, _only_basic_params )
 
    LOCAL _msg, _rec, _keys, _dbf_tbl, _key
+   LOCAL nI, cMsg
 
    _dbf_tbl := "x"
 
@@ -210,6 +211,7 @@ FUNCTION get_a_dbf_rec( tbl, _only_basic_params )
       _rec[ "table" ] := tbl
       _rec[ "alias" ] := tbl
       _rec[ "sql" ] := .F.
+      LOG_CALL_STACK _msg .F.
       log_write( _msg, 1 )
       RETURN _rec
 

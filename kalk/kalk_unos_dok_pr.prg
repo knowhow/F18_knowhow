@@ -93,12 +93,12 @@ FUNCTION kalk_unos_dok_pr()
       SELECT sast
       HSEEK _idroba
 
-      DO WHILE !Eof() .AND. sast->id == _idroba
-         // setaj kroz sast
+      DO WHILE !Eof() .AND. sast->id == _idroba // prolazak kroz sastavnicu
+
          SELECT roba
          hseek sast->id2
 
-         SELECT kalk_pripr
+         //SELECT kalk_pripr
          // LOCATE FOR field->idroba == sast->id2
 
          // IF Found()
@@ -205,6 +205,7 @@ FUNCTION kalk_unos_dok_pr()
    READ
    ESC_RETURN K_ESC
 
+ALTD()
    IF nRbr > 99  // sirovine
       // kalkulacija nabavne cijene
       nKolS := 0
@@ -312,7 +313,7 @@ FUNCTION kalk_unos_dok_pr()
 
    IF nRbr < 10
       _fcj := nNV / _kolicina
-      @ m_x + 15, m_y + 2   SAY "N.CJ Proizvod :"
+      @ m_x + 15, m_y + 2   SAY "Nabc.CJ Proizvod :"
       @ m_x + 15, m_y + 50  GET _FCJ PICTURE PicDEM VALID _fcj > 0 WHEN V_kol10()
       READ
       ESC_RETURN K_ESC

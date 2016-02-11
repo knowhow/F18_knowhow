@@ -45,7 +45,7 @@ FUNCTION omp_print( lStartPrint )
 
    otpr_mp( lStartPrint )
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -214,7 +214,7 @@ FUNCTION otpr_mp( lStartPrint )
       ENDPRINT
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 // uzmi osnovne parametre za stampu dokumenta
@@ -269,8 +269,7 @@ FUNCTION get_omp_vars( nLMargina, nGMargina, nDodRedova, nSlTxtRow, lSamoKol, lZ
    nSw3( Val( get_dtxt_opis( "X06" ) ) )
    nSw4( Val( get_dtxt_opis( "X07" ) ) )
 
-   RETURN
-// }
+   RETURN .T.
 
 
 // zaglavlje glavne tabele sa stavkama
@@ -301,12 +300,11 @@ STATIC FUNCTION st_zagl_data()
 
    ? cLine
 
-   RETURN
-// }
-
+   RETURN .T.
 
 
 // definicija linije za glavnu tabelu sa stavkama
+
 FUNCTION otpr_mp_line()
 
    LOCAL cLine

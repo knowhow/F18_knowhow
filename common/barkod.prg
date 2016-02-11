@@ -181,7 +181,7 @@ FUNCTION KaEdPrLBK()
  */
 FUNCTION FaLabelBKod()
 
-   // {
+
    LOCAL cIBK, cPrefix, cSPrefix
 
    O_SIFK
@@ -312,8 +312,8 @@ FUNCTION FaLabelBKod()
 
 
 
-/*! \fn FaEdPrLBK()
- *  \brief Priprema barkodova
+/*! fn FaEdPrLBK()
+ *  brief Priprema barkodova
  */
 
 FUNCTION FaEdPrLBK()
@@ -326,7 +326,7 @@ FUNCTION FaEdPrLBK()
    RETURN DE_CONT
 
 
-/*!
+/*
  @function    NoviBK_A
  @abstract    Novi Barkod - automatski
  @discussion  Ova fja treba da obezbjedi da program napravi novi interni barkod
@@ -385,12 +385,13 @@ FUNCTION NoviBK_A( cPrefix )
    RETURN cRez
 
 
-/*!
+/*
  @function   KEAN13 ( ckod)
  @abstract   Uvrdi ean13 kontrolni broj
  @discussion xx
  @param      ckod   kod od dvanaest mjesta
 */
+
 FUNCTION KEAN13( cKod )
 
    LOCAL n2, n4

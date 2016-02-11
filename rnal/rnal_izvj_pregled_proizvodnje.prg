@@ -65,7 +65,7 @@ FUNCTION m_get_rpro()
 
    // daj uslove izvjestaja
    IF _g_vars( @dD_From, @dD_To, @nOper, @cArticle, @_export ) == 0
-      RETURN
+      RETURN .T.
    ENDIF
 
    DO CASE
@@ -102,7 +102,7 @@ FUNCTION m_get_rpro()
       f18_run( _rpt_file )
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 // ----------------------------------------
@@ -149,7 +149,7 @@ STATIC FUNCTION _p_error( aArr )
    FF
    ENDPRINT
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -195,26 +195,22 @@ STATIC FUNCTION _g_vars( dDatFrom, dDatTo, nOperater, cArticle, cExport )
 
    Box(, nBoxX, nBoxY )
 
-   @ m_x + nX, m_y + 2 SAY "*** Pregled ucinka proizvodnje"
+   @ m_x + nX, m_y + 2 SAY8 "*** Pregled učinka proizvodnje"
 
    nX += 2
-
    @ m_x + nX, m_y + 2 SAY "Obuhvatiti period od:" GET dDatFrom
    @ m_x + nX, Col() + 1 SAY "do:" GET dDatTo
 
    nX += 2
-
    @ m_x + nX, m_y + 2 SAY "Artikal/element (prazno-svi):" GET cArticle PICT "@S30"
 
    nX += 1
-
    @ m_x + nX, m_y + 2 SAY "-------------- operacije "
 
    nX += 1
    nTmp := nX
 
    // prvi red operacija
-
    @ m_x + nX, m_y + 2 SAY "op. 1:" GET cOp1 ;
       VALID {|| AllTrim( cOp1 ) == "0" .OR. s_aops( @cOp1, cOp1 ), set_var( @nOp1, @cOp1 ), ;
       show_it( g_aop_desc( nOp1 ), 10 ) }

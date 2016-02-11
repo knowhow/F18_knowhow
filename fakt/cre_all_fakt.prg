@@ -13,9 +13,8 @@
 
 FUNCTION cre_all_fakt( ver )
 
-   LOCAL aDbf, oAtrib
+   LOCAL aDbf, _created
    LOCAL _alias, _table_name
-   LOCAL _created
    LOCAL _tbl
 
    // ---------------------------------------------------

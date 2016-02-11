@@ -258,7 +258,6 @@ FUNCTION get_semaphore_version_h( table )
 
 
 
-
 /*
  reset_semaphore_version( "konto")
  set version to -1
@@ -409,7 +408,6 @@ FUNCTION fill_dbf_from_server( dbf_table, sql_query, sql_fetch_time, dbf_write_t
    PopWa()
 
    RETURN .T.
-
 
 
 

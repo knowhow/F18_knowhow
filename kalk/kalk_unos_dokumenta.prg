@@ -386,9 +386,11 @@ FUNCTION kalk_pripr_key_handler()
       RETURN EditStavka()
    CASE Ch == K_CTRL_A .OR. lAsistRadi
       RETURN EditAll()
+
    CASE Ch == K_CTRL_N
       fNovi := .T.
-      RETURN NovaStavka()
+      RETURN kalk_unos_nova_stavka()
+
    CASE Ch == K_CTRL_F8
       RaspTrosk()
       RETURN DE_REFRESH
@@ -595,7 +597,7 @@ FUNCTION EditStavka()
 
 
 
-FUNCTION NovaStavka()
+FUNCTION kalk_unos_nova_stavka()
 
    LOCAL _atributi := hb_Hash()
    LOCAL _dok, _dok_hash
@@ -614,6 +616,12 @@ FUNCTION NovaStavka()
    Box( "knjn", __box_x, __box_y, .F., "Unos novih stavki" )
 
    _TMarza := "A"
+
+   IF field->IdVd == "PR"
+      SET FILTER TO Val( field->rBr ) < 10
+   ELSE
+      SET FILTER TO
+   ENDIF
 
    GO BOTTOM
    IF Left( field->idkonto2, 3 ) = "XXX"
@@ -1358,7 +1366,7 @@ FUNCTION Get1( fNovi, atrib )
       RETURN GET1_RN()
 
    ELSEIF _idvd == "PR"
-      RETURN GET1_PR()
+      RETURN kalk_unos_dok_pr()
    ELSE
       RETURN K_ESC
    ENDIF
@@ -1444,7 +1452,6 @@ FUNCTION Get1Header( fNovi )
    @  m_x + 2, Col() SAY "Vrsta:" GET _idvd VALID P_TipDok( @_idvd, 2, 25 ) PICT "@!"
 
    READ
-
    ESC_RETURN 0
 
    IF fNovi .AND. gBrojac == "D" .AND. ( _idfirma <> idfirma .OR. _idvd <> idvd )
@@ -1479,7 +1486,10 @@ FUNCTION Get1Header( fNovi )
 
    @ m_x + 2, Col() + 2 SAY "Datum:" GET _datdok
 
-   @ m_x + 3, m_y + 2  SAY "Redni broj stavke:" GET nRBr PICT '9999'
+   @ m_x + 3, m_y + 2  SAY "Redni broj stavke:" GET nRBr PICT '9999' ;
+      VALID {|| valid_kalk_rbr_stavke( _idvd ) }
+
+
 
    READ
 
@@ -1488,6 +1498,9 @@ FUNCTION Get1Header( fNovi )
    RETURN 1
 
 
+FUNCTION valid_kalk_rbr_stavke( cIdVd )
+
+   RETURN .T.
 
 
 STATIC FUNCTION izmjeni_sve_stavke_dokumenta( old_dok, new_dok )
@@ -2041,7 +2054,6 @@ FUNCTION PlusMinusKol()
 
 FUNCTION UzmiTarIzSif()
 
-
    o_kalk_edit()
    SELECT kalk_pripr
    GO TOP
@@ -2107,7 +2119,6 @@ FUNCTION DiskMPCSAPP()
  */
 
 FUNCTION MPCSAPPuSif()
-
 
    o_kalk_edit()
    SELECT kalk_pripr

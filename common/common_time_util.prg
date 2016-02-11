@@ -13,7 +13,8 @@
 FUNCTION InRange( xVar, xPoc, xKraj )
 
    IF ValType( xVar ) == "D"
-      xPoc = CToD( xPoc );xKraj := CToD( xKraj )
+      xPoc = CToD( xPoc )
+      xKraj := CToD( xKraj )
    ENDIF
 
    RETURN ( xVar >= xPoc  .AND. xVar <= xKraj )

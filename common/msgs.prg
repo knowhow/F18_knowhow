@@ -14,6 +14,6 @@
 FUNCTION error_tab( cMsg )
 
    Beep( 1 )
-   @ maxrows()-1, 2 SAY  ">>" + cMsg
+   @ maxrows(), 18 SAY8  ">> " + cMsg + " <<" COLOR "I"
 
    RETURN .T.

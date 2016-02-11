@@ -60,7 +60,7 @@ FUNCTION kalk_unos_dok_pr()
    // ove stavke imace  mu_i=="5", mkonto=_idkonto2, nc,nv
    // "KALKi7","idFirma+mkonto+IDZADUZ2+idroba+dtos(datdok)","KALK")
 
-   nTPriPrec := RecNo()
+   //nTPriPrec := RecNo()
 
    SELECT kalk_pripr
 
@@ -177,10 +177,8 @@ FUNCTION kalk_unos_dok_pr()
       // ENDIF
 
       SELECT kalk_pripr
-      GO nTPriPrec
-      IF gNW <> "X"
-         @ m_x + 10, m_y + 42  SAY8 "Zadužuje: "   GET _IdZaduz  PICT "@!" VALID Empty( _idZaduz ) .OR. P_Firma( @_IdZaduz, 24 )
-      ENDIF
+      //GO nTPriPrec
+
       READ
 
       ESC_RETURN K_ESC
@@ -189,9 +187,6 @@ FUNCTION kalk_unos_dok_pr()
       @ m_x + 7, m_y + 2   SAY8 "Mag.gotovih proizvoda zadužuje " ; ?? _IdKonto
       @ m_x + 8, m_y + 2   SAY8 "Mag.sirovina razdužuje         " ; ?? _IdKonto2
 
-      IF gNW <> "X"
-         @ m_x + 10, m_y + 42  SAY8 "Zaduzuje: "; ?? _IdZaduz
-      ENDIF
 
    ENDIF
 
@@ -311,13 +306,13 @@ ALTD()
 
    PopWa()
 
-   IF nRbr < 10
+   //IF nRbr < 10
       _fcj := nNV / _kolicina
       @ m_x + 15, m_y + 2   SAY "Nabc.CJ Proizvod :"
       @ m_x + 15, m_y + 50  GET _FCJ PICTURE PicDEM VALID _fcj > 0 WHEN V_kol10()
       READ
       ESC_RETURN K_ESC
-   ENDIF
+   //ENDIF
 
    _FCJ2 := _FCJ * ( 1 - _Rabat / 100 )
 

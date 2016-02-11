@@ -28,7 +28,7 @@ FUNCTION st_kalk_dokument_pr()
    cIdKonto2 := IdKonto2
 
    P_COND
-   ?? "KALK BR:",  cIdFirma + "-" + cIdVD + "-" + cBrDok, Space( 2 ), P_TipDok( cIdVD, -2 ), Space( 2 ), "Datum:", DatDok
+   ?? "KALK BR:",  cIdFirma + "-" + cIdVD + "-" + cBrDok, Space( 2 ), "PROZVODNJA PO SASTAVNICAMA ", Space( 2 ), "Datum:", DatDok
    @ PRow(), 125 SAY "Str:" + Str( ++nStr, 3 )
 
    SELECT PARTN

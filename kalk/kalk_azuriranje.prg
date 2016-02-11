@@ -1,17 +1,15 @@
 /*
- * This file is part of the bring.out FMK, a free and open source
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+ * This file is part of the bring.out knowhow ERP, a free and open source
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
 
-
 #include "f18.ch"
-
 
 FUNCTION kalk_azuriranje_dokumenta( lAuto )
 
@@ -26,7 +24,7 @@ FUNCTION kalk_azuriranje_dokumenta( lAuto )
    ENDIF
 
    IF !lAuto .AND. Pitanje(, "Želite li izvrsiti ažuriranje KALK dokumenta (D/N) ?", "N" ) == "N"
-      RETURN
+      RETURN .F.
    ENDIF
 
    O_KALK_PRIPR
@@ -36,7 +34,7 @@ FUNCTION kalk_azuriranje_dokumenta( lAuto )
    IF kalk_dokument_postoji( kalk_pripr->idfirma, kalk_pripr->idvd, kalk_pripr->brdok )
       MsgBeep( "Dokument " + kalk_pripr->idfirma + "-" + kalk_pripr->idvd + "-" + ;
          AllTrim( kalk_pripr->brdok ) + " već postoji u bazi !#Promjenite broj dokumenta pa ponovite proceduru ažuriranja." )
-      RETURN
+      RETURN .F.
    ENDIF
 
    SELECT kalk_pripr
@@ -44,7 +42,7 @@ FUNCTION kalk_azuriranje_dokumenta( lAuto )
 
    IF !provjeri_redni_broj()
       MsgBeep( "Redni brojevi dokumenta nisu ispravni !" )
-      RETURN
+      RETURN .F.
    ENDIF
 
    O_KALK_PRIPR2
@@ -62,11 +60,11 @@ FUNCTION kalk_azuriranje_dokumenta( lAuto )
    ENDIF
 
    IF gCijene == "2" .AND. !kalk_provjera_integriteta( @aOstaju, lViseDok )
-      RETURN
+      RETURN .F.
    ENDIF
 
    IF !kalk_provjera_cijena()
-      RETURN
+      RETURN .F.
    ENDIF
 
    lGenerisiZavisne := kalk_generisati_zavisne_dokumente( lAuto )
@@ -79,14 +77,15 @@ FUNCTION kalk_azuriranje_dokumenta( lAuto )
 
       o_kalk_za_azuriranje()
 
+      AltD()
       IF !kalk_azur_dbf( lAuto, lViseDok, aOstaju, aRezim, lBrStDoks )
          MsgBeep( "Neuspješno ažuriranje KALK dokumenta u DBF tabele !" )
-         RETURN
+         RETURN .F.
       ENDIF
 
    ELSE
       MsgBeep( "Neuspješno ažuriranja KALK dokumenta u SQL bazu !" )
-      RETURN
+      RETURN .F.
    ENDIF
 
    F18_DOK_ATRIB():new( "kalk", F_KALK_ATRIB ):zapp_local_table()
@@ -106,7 +105,7 @@ FUNCTION kalk_azuriranje_dokumenta( lAuto )
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -193,7 +192,7 @@ STATIC FUNCTION kalk_vrati_iz_pripr2()
 
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 // ------------------------------------------------------------------------
@@ -279,7 +278,7 @@ STATIC FUNCTION formiraj_fakt_zavisne_dokumente()
 
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 // ----------------------------------------------------------------
@@ -307,7 +306,7 @@ STATIC FUNCTION kalk_ostavi_samo_duple( lViseDok, aOstaju )
 
    MsgBeep( "U kalk_pripremi su ostali dokumenti koji izgleda da vec postoje medju azuriranim!" )
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -345,7 +344,7 @@ STATIC FUNCTION kalk_zavisni_dokumenti()
    Iz13u11()
    InvManj()
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -362,7 +361,7 @@ STATIC FUNCTION kalk_azur_dbf( lAuto, lViseDok, aOstaju, aRezim, lBrStDoks )
    LOCAL cOpis
    LOCAL nBrStavki
 
-   MsgO( "Ažuriram pripremu u DBF tabele..." )
+   MsgO( "Ažuriranje kalk pripr ->  DBF kalk ..." )
 
    SELECT kalk_pripr
    GO TOP
@@ -405,15 +404,13 @@ STATIC FUNCTION kalk_azur_dbf( lAuto, lViseDok, aOstaju, aRezim, lBrStDoks )
       cBrDok := field->brdok
       cIdvd := field->idvd
 
-      IF lViseDok .AND. AScan( aOstaju, cIdFirma + cIdVd + cBrDok ) <> 0
-         // preskoci postojece
+      IF lViseDok .AND. AScan( aOstaju, cIdFirma + cIdVd + cBrDok ) <> 0 // preskoci postojece
          SKIP 1
          LOOP
       ENDIF
 
       SELECT kalk_doks
       APPEND BLANK
-
       _rec := dbf_get_rec()
       _rec[ "idfirma" ] := cIdFirma
       _rec[ "idvd" ] := cIdVd
@@ -425,12 +422,9 @@ STATIC FUNCTION kalk_azur_dbf( lAuto, lViseDok, aOstaju, aRezim, lBrStDoks )
       _rec[ "idzaduz" ] := kalk_pripr->idzaduz
       _rec[ "idzaduz2" ] := kalk_pripr->idzaduz2
       _rec[ "brfaktp" ] := kalk_pripr->brfaktp
-
       dbf_update_rec( _rec, .T. )
 
       SELECT kalk_pripr
-      GO TOP
-
       nBrStavki := 0
 
       DO WHILE !Eof() .AND. cIdfirma == field->idfirma .AND. cBrdok == field->brdok .AND. cIdvd == field->idvd
@@ -441,19 +435,16 @@ STATIC FUNCTION kalk_azur_dbf( lAuto, lViseDok, aOstaju, aRezim, lBrStDoks )
 
          SELECT kalk
          APPEND BLANK
-
          dbf_update_rec( _rec, .T. )
 
          IF cIdVd == "97"
 
             _rec := dbf_get_rec()
             APPEND BLANK
-
             _rec[ "tbanktr" ] := "X"
             _rec[ "mkonto" ] := _idkonto
             _rec[ "mu_i" ] := "1"
             _rec[ "rbr" ] := PadL( Str( 900 + Val( AllTrim( _rbr ) ), 3 ), 3 )
-
             dbf_update_rec( _rec, .T. )
 
          ENDIF
@@ -468,20 +459,16 @@ STATIC FUNCTION kalk_azur_dbf( lAuto, lViseDok, aOstaju, aRezim, lBrStDoks )
 
       ENDDO
 
-      SELECT kalk_doks
-
+      SELECT kalk_doks  // azuriranje cijena
       _rec := dbf_get_rec()
-
       _rec[ "nv" ] := nNv
       _rec[ "vpv" ] := nVpv
       _rec[ "rabat" ] := nRabat
       _rec[ "mpv" ] := nMpv
       _rec[ "podbr" ] := cNPodBr
-
       IF lBrStDoks
          _rec[ "ukstavki" ] := nBrStavki
       ENDIF
-
       dbf_update_rec( _rec, .T. )
 
       SELECT kalk_pripr
@@ -491,7 +478,6 @@ STATIC FUNCTION kalk_azur_dbf( lAuto, lViseDok, aOstaju, aRezim, lBrStDoks )
    MsgC()
 
    RETURN .T.
-
 
 
 STATIC FUNCTION kalk_provjera_cijena()
@@ -570,12 +556,14 @@ STATIC FUNCTION kalk_provjera_integriteta( aDoks, lViseDok )
             RETURN .F.
          ENDIF
 
-         IF gMetodaNC <> " " .AND. field->error == " "
-            Beep( 2 )
-            MSG( "Dokument je izgenerisan, pokrenuti opciju <A> za obradu", 6 )
-            my_close_all_dbf()
-            RETURN .F.
-         ENDIF
+         // TODO: cleanup sumnjive stavke
+         // IF gMetodaNC <> " " .AND. field->error == " "
+         //
+         // MsgBeep( "Dokument je izgenerisan, pokrenuti opciju <A> za obradu", 6 )
+         // my_close_all_dbf()
+         // RETURN .F.
+         // ENDIF
+
          IF dDatDok <> field->datdok
             Beep( 2 )
             IF Pitanje(, "Datum različit u odnosu na prvu stavku. Ispraviti (D/N) ?", "D" ) == "D"
@@ -642,43 +630,43 @@ STATIC FUNCTION kalk_provjeri_duple_dokumente( aRezim )
    GO BOTTOM
 
    cTest := field->idfirma + field->idvd + field->brdok
-
    GO TOP
 
+   // TODO: cleanup vise dokumenata u pripreme
    IF cTest <> field->idfirma + field->idvd + field->brdok
-      Beep( 1 )
-      Msg( "U pripremi je vise dokumenata! Ukoliko želite da ih ažurirate sve#" + ;
-         "odjednom (npr.ako ste ih preuzeli sa drugog racunara putem diskete)#" + ;
-         "na sljedeće pitanje odgovorite sa 'D' i dokumenti ce biti ažurirani#" + ;
-         "bez provjera koje se vrše pri redovnoj obradi podataka." )
-      IF Pitanje(, "Želite li bezuslovno dokumente azurirati? (D/N)", "N" ) == "D"
+      // Beep( 1 )
+      // Msg( "U pripremi je vise dokumenata! Ukoliko želite da ih ažurirate sve#" + ;
+      // "odjednom (npr.ako ste ih preuzeli sa drugog racunara putem diskete)#" + ;
+      // "na sljedeće pitanje odgovorite sa 'D' i dokumenti ce biti ažurirani#" + ;
+      // "bez provjera koje se vrše pri redovnoj obradi podataka." )
+      // IF Pitanje(, "Želite li bezuslovno dokumente azurirati? (D/N)", "N" ) == "D"
 
-         lViseDok := .T.
-         aRezim := {}
+      lViseDok := .T.
+      aRezim := {}
 
-         AAdd( aRezim, gCijene )
-         AAdd( aRezim, gMetodaNC )
-         gCijene   := "1"
-         gMetodaNC := " "
-      ENDIF
+      AAdd( aRezim, gCijene )
+      AAdd( aRezim, gMetodaNC )
+      gCijene   := "1"
+      gMetodaNC := " "
+      // ENDIF
 
    ELSEIF gCijene == "2"
       // ako je samo jedan dokument u kalk_pripremi
 
       DO WHILE !Eof()
-         // i strogi rezim rada
-         IF ERROR == "1"
-            Beep( 1 )
-            Msg( "Program je kontrolisuci redom stavke utvrdio da je stavka#" + ;
+
+         // TODO: cleanup sumnjive stavke
+         IF field->ERROR == "1"
+            error_tab( "Program je kontrolisuci redom stavke utvrdio da je stavka#" + ;
                "br." + rbr + " sumnjiva! Ukoliko bez obzira na to zelite da izvrsite#" + ;
                "azuriranje ovog dokumenta, na sljedece pitanje odgovorite#" + ;
                "sa 'D'." )
-            IF Pitanje(, "Zelite li dokument azurirati bez obzira na upozorenje? (D/N)", "N" ) == "D"
-               aRezim := {}
-               AAdd( aRezim, gCijene )
-               AAdd( aRezim, gMetodaNC )
-               gCijene   := "1"
-            ENDIF
+            // IF Pitanje(, "Zelite li dokument azurirati bez obzira na upozorenje? (D/N)", "N" ) == "D"
+            aRezim := {}
+            AAdd( aRezim, gCijene )
+            AAdd( aRezim, gMetodaNC )
+            gCijene   := "1"
+            // ENDIF
             EXIT
          ENDIF
          SKIP 1
@@ -704,13 +692,13 @@ FUNCTION o_kalk_za_azuriranje( raspored_tr )
    O_KALK_DOKS
 
    IF raspored_tr
-      _raspored_troskova()
+      kalk_raspored_troskova()
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
-STATIC FUNCTION _raspored_troskova()
+STATIC FUNCTION kalk_raspored_troskova()
 
    SELECT kalk_pripr
 
@@ -729,8 +717,7 @@ STATIC FUNCTION _raspored_troskova()
 
    ENDIF
 
-   RETURN
-
+   RETURN .T.
 
 
 
@@ -738,7 +725,7 @@ STATIC FUNCTION kalk_azur_sql()
 
    LOCAL _ok := .T.
    LOCAL lRet := .F.
-   LOCAL _record := hb_Hash()
+   LOCAL _record_dok, _record_item
    LOCAL _doks_nv := 0
    LOCAL _doks_vpv := 0
    LOCAL _doks_mpv := 0
@@ -752,6 +739,9 @@ STATIC FUNCTION kalk_azur_sql()
    LOCAL _ids_doks := {}
    LOCAL _log_dok
    LOCAL oAtrib
+   LOCAL bDokument := {| cIdFirma, cIdVd, cBrDok |   cIdFirma == field->idFirma .AND. ;
+      cIdVd == field->IdVd .AND. cBrDok == field->BrDok }
+   LOCAL cIdVd, cIdFirma, cBrDok
 
    _tbl_kalk := "kalk_kalk"
    _tbl_doks := "kalk_doks"
@@ -773,90 +763,89 @@ STATIC FUNCTION kalk_azur_sql()
    SELECT kalk_pripr
    GO TOP
 
-   _record := dbf_get_rec()
-   _tmp_id := _record[ "idfirma" ] + _record[ "idvd" ] + _record[ "brdok" ]
-   AAdd( _ids_kalk, "#2" + _tmp_id )
-
-   _log_dok := _record[ "idfirma" ] + "-" + _record[ "idvd" ] + "-" + _record[ "brdok" ]
 
    @ m_x + 1, m_y + 2 SAY "kalk_kalk -> server: " + _tmp_id
 
    DO WHILE !Eof()
 
-      kalk_set_doks_total_fields( @_doks_nv, @_doks_vpv, @_doks_mpv, @_doks_rabat )
 
-      _record := dbf_get_rec()
+      cIdFirma := field->idFirma
+      cIdVd := field->idVd
+      cBrDok := field->brDok
 
-      IF !sql_table_update( "kalk_kalk", "ins", _record )
-         _ok := .F.
-         EXIT
-      ENDIF
+      _record_dok := hb_Hash()
+      _record_dok[ "idfirma" ] := cIdFirma
+      _record_dok[ "idvd" ] := cIdVd
+      _record_dok[ "brdok" ] := cBrDok
+      _record_dok[ "datdok" ] := field->datdok
+      _record_dok[ "brfaktp" ] := field->brfaktp
+      _record_dok[ "idpartner" ] := field->idpartner
+      _record_dok[ "idzaduz" ] := field->idzaduz
+      _record_dok[ "idzaduz2" ] := field->idzaduz2
+      _record_dok[ "pkonto" ] := field->pkonto
+      _record_dok[ "mkonto" ] := field->mkonto
+      _record_dok[ "podbr" ] := field->podbr
+      _record_dok[ "sifra" ] := Space( 6 )
 
-      IF _record[ "idvd" ] == "97"
+      _tmp_id := _record_dok[ "idfirma" ] + _record_dok[ "idvd" ] + _record_dok[ "brdok" ]
+      AAdd( _ids_kalk, "#2" + _tmp_id )  // kalk_kalk brisi sve stavke za jedan dokument
+      _log_dok := _record_dok[ "idfirma" ] + "-" + _record_dok[ "idvd" ] + "-" + _record_dok[ "brdok" ]
 
-         _record[ "tbanktr" ] := "X"
-         _record[ "mkonto" ] := _record[ "idkonto" ]
-         _record[ "mu_i" ] := "1"
-         _record[ "rbr" ] := PadL( Str( 900 + Val( AllTrim( _record[ "rbr" ] ) ), 3 ), 3 )
+      DO WHILE !Eof() .AND.  Eval( bDokument, cIdFirma, cIdVd, cBrDok )
 
-         IF !sql_table_update( "kalk_kalk", "ins", _record )
+         kalk_set_doks_total_fields( @_doks_nv, @_doks_vpv, @_doks_mpv, @_doks_rabat )
+
+         _record_item := dbf_get_rec()
+         IF !sql_table_update( "kalk_kalk", "ins", _record_item )
             _ok := .F.
             EXIT
          ENDIF
 
+         IF _record_item[ "idvd" ] == "97"
+            _record_item[ "tbanktr" ] := "X"
+            _record_item[ "mkonto" ] := _record_item[ "idkonto" ]
+            _record_item[ "mu_i" ] := "1"
+            _record_item[ "rbr" ] := PadL( Str( 900 + Val( AllTrim( _record_item[ "rbr" ] ) ), 3 ), 3 )
+
+            IF !sql_table_update( "kalk_kalk", "ins", _record_item )
+               _ok := .F.
+               EXIT
+            ENDIF
+         ENDIF
+         SKIP
+      ENDDO
+
+
+      IF _ok = .T.
+
+         _record_dok[ "nv" ] := _doks_nv
+         _record_dok[ "vpv" ] := _doks_vpv
+         _record_dok[ "rabat" ] := _doks_rabat
+         _record_dok[ "mpv" ] := _doks_mpv
+
+         _tmp_id := _record_dok[ "idfirma" ] + _record_dok[ "idvd" ] + _record_dok[ "brdok" ]
+         AAdd( _ids_doks, _tmp_id )
+
+         @ m_x + 2, m_y + 2 SAY "kalk_doks -> server: " + _tmp_id
+         IF !sql_table_update( "kalk_doks", "ins", _record_dok )
+            _ok := .F.
+         ENDIF
+
       ENDIF
 
-      SKIP
+      IF _ok == .T.
+
+         @ m_x + 3, m_y + 2 SAY "kalk_atributi -> server "
+         oAtrib := F18_DOK_ATRIB():new( "kalk", F_KALK_ATRIB )
+         oAtrib:dok_hash[ "idfirma" ] := _record_dok[ "idfirma" ]
+         oAtrib:dok_hash[ "idtipdok" ] := _record_dok[ "idvd" ]
+         oAtrib:dok_hash[ "brdok" ] := _record_dok[ "brdok" ]
+
+         _ok := oAtrib:atrib_dbf_to_server()
+
+      ENDIF
 
    ENDDO
-
-   IF _ok = .T.
-
-      SELECT kalk_pripr
-      GO TOP
-
-      _record := hb_Hash()
-
-      _record[ "idfirma" ] := field->idfirma
-      _record[ "idvd" ] := field->idvd
-      _record[ "brdok" ] := field->brdok
-      _record[ "datdok" ] := field->datdok
-      _record[ "brfaktp" ] := field->brfaktp
-      _record[ "idpartner" ] := field->idpartner
-      _record[ "idzaduz" ] := field->idzaduz
-      _record[ "idzaduz2" ] := field->idzaduz2
-      _record[ "pkonto" ] := field->pkonto
-      _record[ "mkonto" ] := field->mkonto
-      _record[ "nv" ] := _doks_nv
-      _record[ "vpv" ] := _doks_vpv
-      _record[ "rabat" ] := _doks_rabat
-      _record[ "mpv" ] := _doks_mpv
-      _record[ "podbr" ] := field->podbr
-      _record[ "sifra" ] := Space( 6 )
-
-      _tmp_id := _record[ "idfirma" ] + _record[ "idvd" ] + _record[ "brdok" ]
-      AAdd( _ids_doks, _tmp_id )
-
-      @ m_x + 2, m_y + 2 SAY "kalk_doks -> server: " + _tmp_id
-
-      IF !sql_table_update( "kalk_doks", "ins", _record )
-         _ok := .F.
-      ENDIF
-
-   ENDIF
-
-   IF _ok == .T.
-
-      @ m_x + 3, m_y + 2 SAY "kalk_atributi -> server "
-
-      oAtrib := F18_DOK_ATRIB():new( "kalk", F_KALK_ATRIB )
-      oAtrib:dok_hash[ "idfirma" ] := _record[ "idfirma" ]
-      oAtrib:dok_hash[ "idtipdok" ] := _record[ "idvd" ]
-      oAtrib:dok_hash[ "brdok" ] := _record[ "brdok" ]
-
-      _ok := oAtrib:atrib_dbf_to_server()
-
-   ENDIF
 
 
    IF !_ok

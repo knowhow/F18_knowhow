@@ -14,7 +14,6 @@
 FUNCTION cre_all_kalk( ver )
 
    kreiraj_kalk_bazirane_tabele( ver )
-
    kreiraj_ostale_kalk_tabele( ver )
 
    RETURN .T.
@@ -30,7 +29,7 @@ STATIC FUNCTION kreiraj_ostale_kalk_tabele( ver )
    aDbf := {}
    AAdd( aDBf, { 'IDFIRMA', 'C',   2,  0 } )
    AAdd( aDBf, { 'IDVD', 'C',   2,  0 } )
-   AAdd( aDBf, { 'BRDOK', 'C',   8,  0 } )
+   AAdd( aDBf, { 'BRDOK', 'C',   FIELD_LEN_KALK_BRDOK,  0 } )
    AAdd( aDBf, { 'DATDOK', 'D',   8,  0 } )
    AAdd( aDBf, { 'BRFAKTP', 'C',  10,  0 } )
    AAdd( aDBf, { 'IDPARTNER', 'C',   6,  0 } )
@@ -156,12 +155,12 @@ STATIC FUNCTION definicija_kalk_tabele()
    AAdd( aDBf, { 'IDZADUZ', 'C',   6,  0 } )
    AAdd( aDBf, { 'IDZADUZ2', 'C',   6,  0 } )
    AAdd( aDBf, { 'IDVD', 'C',   2,  0 } )
-   AAdd( aDBf, { 'BRDOK', 'C',   8,  0 } )
+   AAdd( aDBf, { 'BRDOK', 'C',   FIELD_LEN_KALK_BRDOK,  0 } )
    AAdd( aDBf, { 'DATDOK', 'D',   8,  0 } )
    AAdd( aDBf, { 'BRFAKTP', 'C',  10,  0 } )
    AAdd( aDBf, { 'DATFAKTP', 'D',   8,  0 } )
    AAdd( aDBf, { 'IDPARTNER', 'C',   6,  0 } )
-   AAdd( aDBf, { 'RBR', 'C',   3,  0 } )
+   AAdd( aDBf, { 'RBR', 'C',   FIELD_LEN_KALK_RBR,  0 } )
    AAdd( aDBf, { 'PODBR', 'C',   2,  0 } )
    AAdd( aDBf, { 'TPREVOZ', 'C',   1,  0 } )
    AAdd( aDBf, { 'TPREVOZ2', 'C',   1,  0 } )

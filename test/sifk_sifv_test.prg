@@ -11,168 +11,171 @@
 
 #include "f18.ch"
 
-function sifk_sifv_test()
-local _ime_f := "tsifv_k"
-local _dbf_struct := {}
-local _i, _rec
-local _id_sif, _karakteristika, _karakteristika_n
-local _header
-local _tmp
+FUNCTION sifk_sifv_test()
 
-close all
+   LOCAL _ime_f := "tsifv_k"
+   LOCAL _dbf_struct := {}
+   LOCAL _i, _rec
+   LOCAL _id_sif, _karakteristika, _karakteristika_n
+   LOCAL _header
+   LOCAL _tmp
+
+   CLOSE ALL
 
 
-AADD(_dbf_struct,      { 'ID' ,  'C' ,    2 ,  0 })
-AADD(_dbf_struct,      { 'NAZ' , 'C' ,   10 ,  0 })
-AADD(_dbf_struct,      { 'DEST' , 'C' ,  60 ,  0 })
+   AAdd( _dbf_struct,      { 'ID',  'C',    2,  0 } )
+   AAdd( _dbf_struct,      { 'NAZ', 'C',   10,  0 } )
+   AAdd( _dbf_struct,      { 'DEST', 'C',  60,  0 } )
 
-DBCREATE2(_ime_f, _dbf_struct)
-cre_index_tsifv_k(_ime_f)
+   DBCREATE2( _ime_f, _dbf_struct )
+   cre_index_tsifv_k( _ime_f )
 
-close all
-my_usex("sifk")
-delete_all_dbf_and_server("sifk")
+   CLOSE ALL
+   my_usex( "sifk" )
+   delete_all_dbf_and_server( "sifk" )
 
-my_usex("sifv")
-select sifv
-delete_all_dbf_and_server("sifv")
+   my_usex( "sifv" )
+   SELECT sifv
+   delete_all_dbf_and_server( "sifv" )
 
-close all
+   CLOSE ALL
 
-// izbrisacu sada sifk
-TEST_LINE( ferase_dbf("sifk"), .t. )
-TEST_LINE( ferase_dbf("sifv"), .t. )
+   // izbrisacu sada sifk
+   TEST_LINE( ferase_dbf( "sifk" ), .T. )
+   TEST_LINE( ferase_dbf( "sifv" ), .T. )
 
-TEST_LINE( FILE(f18_ime_dbf("sifk")), .f.)
-TEST_LINE( FILE(f18_ime_dbf("sifv")), .f.)
-cre_sifk_sifv()
+   TEST_LINE( File( f18_ime_dbf( "sifk" ) ), .F. )
+   TEST_LINE( File( f18_ime_dbf( "sifv" ) ), .F. )
+   cre_sifk_sifv()
 
-my_use(_ime_f)
+   my_use( _ime_f )
 
-APPEND BLANK
-if !rlock()
-   return .f.
-endif
+   APPEND BLANK
+   IF !RLock()
+      RETURN .F.
+   ENDIF
 
-replace id with "01"
-replace naz with "naz 01"
-replace naz with "dest 01"
+   REPLACE id WITH "01"
+   REPLACE naz WITH "naz 01"
+   REPLACE naz WITH "dest 01"
 
-replace id with "02"
-replace naz with "naz 02"
-replace dest with "dest 02"
+   REPLACE id WITH "02"
+   REPLACE naz WITH "naz 02"
+   REPLACE dest WITH "dest 02"
 
-_id_sif := "tsifv_k"
-_karakteristika := "ka1"
-_karakteristika_n := "kaN"
+   _id_sif := "tsifv_k"
+   _karakteristika := "ka1"
+   _karakteristika_n := "kaN"
 
-O_SIFK
-SET ORDER TO TAG "ID2"
-SEEK _id_sif + _karakteristika
+   O_SIFK
+   SET ORDER TO TAG "ID2"
+   SEEK _id_sif + _karakteristika
 
-TEST_LINE( LEN(_id_sif) <= SIFK_LEN_DBF .and. LEN(_karakteristika) < SIFK_LEN_OZNAKA,  .t.)
+   TEST_LINE( Len( _id_sif ) <= SIFK_LEN_DBF .AND. Len( _karakteristika ) < SIFK_LEN_OZNAKA,  .T. )
 
-_id_sif := PADR(_id_sif, 8)
-_karakteristika   := PADR(_karakteristika, 4)
-_karakteristika_n := PADR(_karakteristika_n, 4)
+   _id_sif := PadR( _id_sif, 8 )
+   _karakteristika   := PadR( _karakteristika, 4 )
+   _karakteristika_n := PadR( _karakteristika_n, 4 )
 
-O_SIFV
+   O_SIFV
 
 #define K1_LEN 9
 #define KN_LEN 7
 
-TEST_LINE( sifk->(reccount()), 0)
-TEST_LINE( sifv->(reccount()), 0)
-append_sifk(_id_sif, _karakteristika, "C", K1_LEN, "1")
-append_sifk(_id_sif, _karakteristika_n, "C", KN_LEN, "N")
+   TEST_LINE( sifk->( RecCount() ), 0 )
+   TEST_LINE( sifv->( RecCount() ), 0 )
+   append_sifk( _id_sif, _karakteristika, "C", K1_LEN, "1" )
+   append_sifk( _id_sif, _karakteristika_n, "C", KN_LEN, "N" )
 
-//,  {"id", "oznaka"} , { |x| "ID=" + _sql_quote(x["id"]) + "and OZNAKA=" + _sql_quote(x["oznaka"]) })
-
-
-SELECT F_SIFK
-use
-
-my_use("sifk")
-SET ORDER TO TAG "ID2"
-seek _id_sif + _karakteristika
-TEST_LINE( field->id + field->oznaka, _id_sif + _karakteristika)
-
-seek _id_sif + _karakteristika_n
-TEST_LINE( field->id + field->oznaka, _id_sif + _karakteristika_n)
-
-// izbrisacu sada sifk
-TEST_LINE( ferase_dbf("sifk"), .t. )
-TEST_LINE( ferase_dbf("sifv"), .t. )
-
-cre_sifk_sifv()
-
-// tako da forsiram full import
-my_use("sifk")
-
-SET ORDER TO TAG "ID2"
-seek _id_sif + _karakteristika
-_header := "NAKON FERASE: "
-TEST_LINE( _header + field->id + field->oznaka + sifk->tip + sifk->veza + STR(sifk->duzina, 2), _header + _id_sif + _karakteristika + "C1" + STR(K1_LEN, 2))
-
-seek _id_sif + _karakteristika_n
-_header := "NAKON FERASE: "
-TEST_LINE( _header + field->id + field->oznaka + sifk->tip + sifk->veza + STR(sifk->duzina, 2), _header + _id_sif + _karakteristika_n + "CN" + STR(KN_LEN, 2))
-
-USE
-close all
+   // ,  {"id", "oznaka"} , { |x| "ID=" + _sql_quote(x["id"]) + "and OZNAKA=" + _sql_quote(x["oznaka"]) })
 
 
-TEST_LINE(USifK(_id_sif, _karakteristika, "01", "K1VAL1"), .t.)
-TEST_LINE(USifK(_id_sif, _karakteristika, "01", "K1VAL2"), .t.)
-TEST_LINE(USifK(_id_sif, _karakteristika, "01", "K1VAL3"), .t.)
+   SELECT F_SIFK
+   USE
+
+   my_use( "sifk" )
+   SET ORDER TO TAG "ID2"
+   SEEK _id_sif + _karakteristika
+   TEST_LINE( field->id + field->oznaka, _id_sif + _karakteristika )
+
+   SEEK _id_sif + _karakteristika_n
+   TEST_LINE( field->id + field->oznaka, _id_sif + _karakteristika_n )
+
+   // izbrisacu sada sifk
+   TEST_LINE( ferase_dbf( "sifk" ), .T. )
+   TEST_LINE( ferase_dbf( "sifv" ), .T. )
+
+   cre_sifk_sifv()
+
+   // tako da forsiram full import
+   my_use( "sifk" )
+
+   SET ORDER TO TAG "ID2"
+   SEEK _id_sif + _karakteristika
+   _header := "NAKON FERASE: "
+   TEST_LINE( _header + field->id + field->oznaka + sifk->tip + sifk->veza + Str( sifk->duzina, 2 ), _header + _id_sif + _karakteristika + "C1" + Str( K1_LEN, 2 ) )
+
+   SEEK _id_sif + _karakteristika_n
+   _header := "NAKON FERASE: "
+   TEST_LINE( _header + field->id + field->oznaka + sifk->tip + sifk->veza + Str( sifk->duzina, 2 ), _header + _id_sif + _karakteristika_n + "CN" + Str( KN_LEN, 2 ) )
+
+   USE
+   CLOSE ALL
+
+
+   TEST_LINE( USifK( _id_sif, _karakteristika, "01", "K1VAL1" ), .T. )
+   TEST_LINE( USifK( _id_sif, _karakteristika, "01", "K1VAL2" ), .T. )
+   TEST_LINE( USifK( _id_sif, _karakteristika, "01", "K1VAL3" ), .T. )
 
 
 
-TEST_LINE(USifK(_id_sif, _karakteristika_n, "01", "K2VAL1,K2VAL3"), .t.)
-TEST_LINE(USifK(_id_sif, _karakteristika_n, "01", "K2VAL4,K2VAL1,K2VAL2"), .t.)
+   TEST_LINE( USifK( _id_sif, _karakteristika_n, "01", "K2VAL1,K2VAL3" ), .T. )
+   TEST_LINE( USifK( _id_sif, _karakteristika_n, "01", "K2VAL4,K2VAL1,K2VAL2" ), .T. )
 
 
-TEST_LINE(IzSifk(_id_sif, _karakteristika, "01"), PADR("K1VAL3", K1_LEN ))
+   TEST_LINE( IzSifk( _id_sif, _karakteristika, "01" ), PadR( "K1VAL3", K1_LEN ) )
 
-_tmp := PADR("K2VAL1", KN_LEN) + ","
-_tmp += PADR("K2VAL2", KN_LEN) + ","
-_tmp += PADR("K2VAL4", KN_LEN)
+   _tmp := PadR( "K2VAL1", KN_LEN ) + ","
+   _tmp += PadR( "K2VAL2", KN_LEN ) + ","
+   _tmp += PadR( "K2VAL4", KN_LEN )
 
-_tmp := PADR(_tmp, 190)
-TEST_LINE(IzSifk(_id_sif, _karakteristika_n, "01"), _tmp)
+   _tmp := PadR( _tmp, 190 )
+   TEST_LINE( IzSifk( _id_sif, _karakteristika_n, "01" ), _tmp )
 
-
-return
+   RETURN
 
 // -------------------------------------------
 // -------------------------------------------
-static function append_sifk(id_sif, karakteristika, tip, duzina, veza, fields, where_block)
-local _rec
+STATIC FUNCTION append_sifk( id_sif, karakteristika, tip, duzina, veza, fields, where_block )
 
-SELECT sifk
-set order to tag "ID2"
-seek padr(id_sif, SIFK_LEN_DBF) + PADR(karakteristika, SIFK_LEN_OZNAKA)
+   LOCAL _rec
 
-if !FOUND()
+   SELECT sifk
+   SET ORDER TO TAG "ID2"
+   SEEK PadR( id_sif, SIFK_LEN_DBF ) + PadR( karakteristika, SIFK_LEN_OZNAKA )
 
-    APPEND BLANK
-    _rec := dbf_get_rec()
-    _rec["id"] := id_sif
-    _rec["oznaka"] := karakteristika
-    _rec["naz"] := karakteristika + " naziv "
-    _rec["tip"] := tip
-    _rec["duzina"] := duzina
-    _rec["veza"] := veza
+   IF !Found()
 
-    if !update_rec_server_and_dbf("sifk", _rec, fields, where_block)
-        delete_with_rlock()
-    endif
-endif
+      APPEND BLANK
+      _rec := dbf_get_rec()
+      _rec[ "id" ] := id_sif
+      _rec[ "oznaka" ] := karakteristika
+      _rec[ "naz" ] := karakteristika + " naziv "
+      _rec[ "tip" ] := tip
+      _rec[ "duzina" ] := duzina
+      _rec[ "veza" ] := veza
 
-return
+      IF !update_rec_server_and_dbf( "sifk", _rec, fields, where_block )
+         delete_with_rlock()
+      ENDIF
+   ENDIF
+
+   RETURN
 
 
-function cre_index_tsifv_k(ime_f)
- CREATE_INDEX("ID",  "id", ime_f)
- CREATE_INDEX("NAZ", "naz", ime_f)
-return
+FUNCTION cre_index_tsifv_k( ime_f )
+
+   CREATE_INDEX( "ID",  "id", ime_f )
+   CREATE_INDEX( "NAZ", "naz", ime_f )
+
+   RETURN

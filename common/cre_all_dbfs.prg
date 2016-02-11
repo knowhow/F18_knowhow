@@ -37,9 +37,9 @@ FUNCTION cre_all_dbfs( ver )
 
    log_write( "START cre_all_dbfs", 5 )
 
-   cre_sifrarnici_1( ver )
-   cre_roba( ver )
-   cre_partn( ver )
+   cre_sifarnici( ver )
+   cre_sif_roba( ver )
+   cre_sif_partn( ver )
    _kreiraj_adrese( ver )
 
 

@@ -1376,8 +1376,8 @@ FUNCTION Get11FromSmece( cBrDok )
    SELECT ( nArr )
    MsgBeep( "Asistentom obraditi dokument !" )
 
-   RETURN
-// }
+   RETURN .F.
+
 
 
 FUNCTION Generisati11_ku()

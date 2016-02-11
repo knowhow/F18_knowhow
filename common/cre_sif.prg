@@ -14,7 +14,7 @@
 // -----------------------------------
 // kreiranje tabela - svi moduli
 // -----------------------------------
-FUNCTION cre_sifrarnici_1( ver )
+FUNCTION cre_sifarnici( ver )
 
    LOCAL _created
    LOCAL _table_name

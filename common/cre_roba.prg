@@ -11,7 +11,7 @@
 
 #include "f18.ch"
 
-FUNCTION cre_roba( ver )
+FUNCTION cre_sif_roba( ver )
 
    LOCAL _table_name, _alias
    LOCAL _created

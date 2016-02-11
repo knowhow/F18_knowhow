@@ -61,6 +61,8 @@
     ;  END                                  ;
     ; NEXT
 
+#define FIELD_LEN_KALK_BRDOK  8
+#define FIELD_LEN_KALK_RBR    3
 
 #ifndef TEST
   #ifndef F18_RELEASE_DEFINED

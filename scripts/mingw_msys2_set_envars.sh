@@ -24,9 +24,8 @@ export HB_WITH_OPENSSL=$MSYS2\\include
 
 . scripts/set_envars.sh
 
-HB_DBG="."
 
-HB_DBG_PATH="."
+HB_DBG=`cygpath -d $PWD`
 
 
 for m in $MODULES

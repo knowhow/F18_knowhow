@@ -1,17 +1,20 @@
 /*
- * This file is part of the bring.out FMK, a free and open source
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+ * This file is part of the bring.out knowhow ERP, a free and open source
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
 
-
 #include "f18.ch"
 
+/*
+   P_Roba( @cId )
+   P_Roba( @cId, NIL, NIL, "IDP") - tag IDP - proizvodi
+*/
 
 FUNCTION P_Roba( cId, dx, dy, cSeek )
 
@@ -19,10 +22,10 @@ FUNCTION P_Roba( cId, dx, dy, cSeek )
    LOCAL bRoba
    LOCAL lArtGroup := .F.
    LOCAL _naz_len := 40
+   LOCAL nI
    PRIVATE ImeKol
    PRIVATE Kol
 
-   // pretraga po dobavljacu
    IF cSeek == NIL
       cSeek := ""
    ENDIF
@@ -33,42 +36,27 @@ FUNCTION P_Roba( cId, dx, dy, cSeek )
    O_ROBA_NOT_USED
 
    AAdd( ImeKol, { PadC( "ID", 10 ),  {|| id }, "id", {|| .T. }, {|| sifra_postoji( wId ) } } )
+   AAdd( ImeKol, { PadC( "Naziv", _naz_len ), {|| Left( field->naz, _naz_len ) }, "naz", {|| .T. }, {|| .T. } } )
+   AAdd( ImeKol, { PadC( "JMJ", 3 ), {|| field->jmj },       "jmj"    } )
 
    AAdd( ImeKol, { PadC( "PLU kod", 8 ),  {|| PadR( fisc_plu, 10 ) }, "fisc_plu", {|| gen_plu( @wfisc_plu ), .F. }, {|| .T. } } )
-
-   IF roba->( FieldPos( "SIFRADOB" ) ) <> 0
-      AAdd( ImeKol, { PadC( "S.dobav.", 13 ), {|| PadR( sifraDob, 13 ) }, "sifradob"   } )
-   ENDIF
-
-   AAdd( ImeKol, { PadC( "Naziv", _naz_len ), {|| Left( naz, _naz_len ) }, "naz", {|| .T. }, {|| .T. } } )
-
-   // jedinica mjere
-   AAdd( ImeKol, { PadC( "JMJ", 3 ), {|| jmj },       "jmj"    } )
+   AAdd( ImeKol, { PadC( "S.dobav.", 13 ), {|| PadR( sifraDob, 13 ) }, "sifradob"   } )
 
    // DEBLJINA i TIP
    IF roba->( FieldPos( "DEBLJINA" ) ) <> 0
-      AAdd( ImeKol, { PadC( "Debljina", 10 ), {|| Transform( debljina, "999999.99" ) }, "debljina", nil, nil, "999999.99" } )
+      AAdd( ImeKol, { PadC( "Debljina", 10 ), {|| Transform( field->debljina, "999999.99" ) }, "debljina", nil, nil, "999999.99" } )
 
-      AAdd( ImeKol, { PadC( "Roba tip", 10 ), {|| roba_tip }, "roba_tip", {|| .T. }, {|| .T. } } )
+      AAdd( ImeKol, { PadC( "Roba tip", 10 ), {|| field->roba_tip }, "roba_tip", {|| .T. }, {|| .T. } } )
    ENDIF
 
-   // STRINGS
-   // IF roba->( FieldPos( "STRINGS" ) ) <> 0
-   // AAdd( ImeKol, { PadC( "Strings", 10 ), {|| strings }, "strings", {|| .T. }, {|| .T. } } )
-   // ENDIF
+   AAdd( ImeKol, { PadC( "VPC", 10 ), {|| Transform( field->VPC, "999999.999" ) }, "vpc", nil, nil, nil, gPicCDEM  } )
+   AAdd( ImeKol, { PadC( "VPC2", 10 ), {|| Transform( field->VPC2, "999999.999" ) }, "vpc2", NIL, NIL, NIL, gPicCDEM   } )
+   AAdd( ImeKol, { PadC( "Plan.C", 10 ), {|| Transform( field->PLC, "999999.999" ) }, "PLC", NIL, NIL, NIL, gPicCDEM    } )
+   AAdd( ImeKol, { PadC( "MPC1", 10 ), {|| Transform( field->MPC, "999999.999" ) }, "mpc", NIL, NIL, NIL, gPicCDEM  } )
 
-   AAdd( ImeKol, { PadC( "VPC", 10 ), {|| Transform( VPC, "999999.999" ) }, "vpc", nil, nil, nil, gPicCDEM  } )
+   FOR nI := 2 TO 4
 
-
-   AAdd( ImeKol, { PadC( "VPC2", 10 ), {|| Transform( VPC2, "999999.999" ) }, "vpc2", NIL, NIL, NIL, gPicCDEM   } )
-   AAdd( ImeKol, { PadC( "Plan.C", 10 ), {|| Transform( PLC, "999999.999" ) }, "PLC", NIL, NIL, NIL, gPicCDEM    } )
-
-
-   AAdd( ImeKol, { PadC( "MPC1", 10 ), {|| Transform( MPC, "999999.999" ) }, "mpc", NIL, NIL, NIL, gPicCDEM  } )
-
-   FOR i := 2 TO 4
-
-      cPom := "mpc" + AllTrim( Str( i ) )
+      cPom := "mpc" + AllTrim( Str( nI ) )
       cPom2 := '{|| transform(' + cPom + ',"999999.999")}'
 
       IF roba->( FieldPos( cPom ) )  <>  0
@@ -80,31 +68,22 @@ FUNCTION P_Roba( cId, dx, dy, cSeek )
          ENDIF
 
       ENDIF
-
    NEXT
 
+   AAdd( ImeKol, { PadC( "NC", 10 ), {|| Transform( field->NC, gPicCDEM ) }, "NC", NIL, NIL, NIL, gPicCDEM  } )
+   AAdd( ImeKol, { "Tarifa", {|| field->IdTarifa }, "IdTarifa", {|| .T. }, {|| P_Tarifa( @wIdTarifa ), roba_opis_edit()  }   } )
+   AAdd( ImeKol, { "Tip", {|| " " + field->Tip + " " }, "Tip", {|| .T. }, {|| wTip $ " TUCKVPSXY" }, NIL, NIL, NIL, NIL, 27 } )
+   AAdd ( ImeKol, { PadC( "BARKOD", 14 ), {|| field->BARKOD }, "BarKod", {|| .T. }, {|| DodajBK( @wBarkod ), sifra_postoji( wbarkod, "BARKOD" ) }  } )
 
-   AAdd( ImeKol, { PadC( "NC", 10 ), {|| Transform( NC, gPicCDEM ) }, "NC", NIL, NIL, NIL, gPicCDEM  } )
+   AAdd ( ImeKol, { PadC( "MINK", 10 ), {|| Transform( field->MINK, "999999.99" ) }, "MINK"   } )
 
-   AAdd( ImeKol, { "Tarifa", {|| IdTarifa }, "IdTarifa", {|| .T. }, {|| P_Tarifa( @wIdTarifa ), roba_opis_edit()  }   } )
-   AAdd( ImeKol, { "Tip", {|| " " + Tip + " " }, "Tip", {|| .T. }, {|| wTip $ " TUCKVPSXY" }, NIL, NIL, NIL, NIL, 27 } )
-
-   AAdd ( ImeKol, { PadC( "BARKOD", 14 ), {|| BARKOD }, "BarKod", {|| .T. }, {|| DodajBK( @wBarkod ), sifra_postoji( wbarkod, "BARKOD" ) }  } )
-
-   AAdd ( ImeKol, { PadC( "MINK", 10 ), {|| Transform( MINK, "999999.99" ) }, "MINK"   } )
-
-   AAdd ( ImeKol, { PadC( "K1", 4 ), {|| k1 }, "k1"   } )
-   AAdd ( ImeKol, { PadC( "K2", 4 ), {|| k2 }, "k2", ;
+   AAdd ( ImeKol, { PadC( "K1", 4 ), {|| field->k1 }, "k1"   } )
+   AAdd ( ImeKol, { PadC( "K2", 4 ), {|| field->k2 }, "k2", ;
       {|| .T. }, {|| .T. }, nil, nil, nil, nil, 35   } )
-   AAdd ( ImeKol, { PadC( "N1", 12 ), {|| N1 }, "N1"   } )
-   AAdd ( ImeKol, { PadC( "N2", 12 ), {|| N2 }, "N2", ;
+   AAdd ( ImeKol, { PadC( "N1", 12 ), {|| field->N1 }, "N1"   } )
+   AAdd ( ImeKol, { PadC( "N2", 12 ), {|| field->N2 }, "N2", ;
       {|| .T. }, {|| .T. }, nil, nil, nil, nil, 35   } )
 
-/*
-   AAdd ( ImeKol, { PadC( "K7", 2 ), {|| k7 }, "k7"   } )
-   AAdd ( ImeKol, { PadC( "K8", 2 ), {|| k8 }, "k8"  } )
-   AAdd ( ImeKol, { PadC( "K9", 3 ), {|| k9 }, "k9" } )
-*/
 
    // AUTOMATSKI TROSKOVI ROBE, samo za KALK
    IF tekuci_modul() == "KALK" .AND. roba->( FieldPos( "TROSK1" ) ) <> 0
@@ -137,8 +116,8 @@ FUNCTION P_Roba( cId, dx, dy, cSeek )
 
    Kol := {}
 
-   FOR i := 1 TO Len( ImeKol )
-      AAdd( Kol, i )
+   FOR nI := 1 TO Len( ImeKol )
+      AAdd( Kol, nI )
    NEXT
 
    SELECT ROBA

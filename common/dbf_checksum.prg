@@ -28,9 +28,9 @@ FUNCTION check_recno_and_fix( cDbfAlias, nCntSql, nCntDbf )
       cErrMsg += "broj zapisa SQL tabele " + _sql_table + ": " + AllTrim( Str( nCntSql, 10 ) )
 
 #ifdef F18_DEBUG
-      IF ABS(nCntDbf - nCntSql) < 2
+      IF ABS(nCntDbf - nCntSql) == 1
           Alert( "jedan zapis razlike ?!")
-          QUIT_1
+          altd()
       ENDIF
 #endif
       log_write( cErrMsg, 3 )

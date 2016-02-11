@@ -10,7 +10,6 @@
  */
 
 #include "f18.ch"
-#include "f18_separator.ch"
 
 STATIC cENTER := Chr( K_ENTER ) + Chr( K_ENTER ) + Chr( K_ENTER )
 STATIC __box_x
@@ -32,7 +31,7 @@ FUNCTION kalk_unos_dokumenta()
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -410,7 +409,8 @@ FUNCTION kalk_pripr_key_handler()
       ENDIF
       RETURN DE_CONT
    CASE Upper( Chr( Ch ) ) == "A" .OR. lAutoAsist
-      RETURN KnjizAsistent()
+
+      RETURN kalk_unos_asistent()
    CASE Upper( Chr( Ch ) ) == "K"
       kalkulacija_cijena( .F. )
       SELECT kalk_pripr
@@ -428,7 +428,7 @@ FUNCTION kalk_pripr_key_handler()
       RETURN DE_CONT
    CASE lAutoObr .AND. lAAsist
       lAAsist := .F.
-      RETURN KnjizAsistent()
+      RETURN kalk_unos_asistent()
    CASE lAutoObr .AND. !lAAsist
       lAutoObr := .F.
       KEYBOARD Chr( K_ESC )
@@ -915,10 +915,18 @@ FUNCTION EditAll()
 
 
 
-FUNCTION KnjizAsistent()
+FUNCTION kalk_unos_asistent()
 
    lAutoAsist := .F.
    lAsistRadi := .T.
+
+   PushWa()
+   IF Select( "kalk_prir" ) > 0
+      IF kalk_pripr->idVd == "PR"
+         RETURN .F.
+      ENDIF
+   ENDIF
+   PopWa()
    cSekv := Chr( K_CTRL_A )
    KEYBOARD cSekv
 
@@ -2643,4 +2651,4 @@ FUNCTION PopustKaoNivelacijaMP()
    ENDIF
    CLOSERET
 
-   RETURN
+   RETURN .T.

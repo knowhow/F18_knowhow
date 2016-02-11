@@ -11,7 +11,7 @@
 
 #include "f18.ch"
 
-FUNCTION cre_partn( ver )
+FUNCTION cre_sif_partn( ver )
 
    LOCAL aDbf := {}
    LOCAL _created, _table_name, _alias

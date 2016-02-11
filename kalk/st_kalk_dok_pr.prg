@@ -20,8 +20,6 @@ FUNCTION st_kalk_dokument_pr()
 
    PRIVATE nPrevoz, nCarDaz, nZavTr, nBankTr, nSpedTr, nMarza, nMarza2
 
-   // iznosi troskova i marzi koji se izracunavaju u KTroskovi()
-
    nStr := 0
    cIdPartner := IdPartner
    cBrFaktP := BrFaktP
@@ -32,7 +30,9 @@ FUNCTION st_kalk_dokument_pr()
    P_COND
    ?? "KALK BR:",  cIdFirma + "-" + cIdVD + "-" + cBrDok, Space( 2 ), P_TipDok( cIdVD, -2 ), Space( 2 ), "Datum:", DatDok
    @ PRow(), 125 SAY "Str:" + Str( ++nStr, 3 )
-   SELECT PARTN; HSEEK cIdPartner
+
+   SELECT PARTN
+   HSEEK cIdPartner
 
    m := "--- ------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ----------"
    ? m
@@ -40,6 +40,7 @@ FUNCTION st_kalk_dokument_pr()
    ?U "*BR*       * TARIFA   * KOLIČINA *          *          *          *          *          *          *          *          *         *"
    ?U "*  *       *          *          *   sum    *   sum    *   sum    *    sum   *   sum    *   sum    *   sum    *   sum    *  sum    *"
    ? m
+
    nTot := nTot1 := nTot2 := nTot3 := nTot4 := nTot5 := nTot6 := nTot7 := nTot8 := nTot9 := nTotA := 0
 
    SELECT kalk_pripr
@@ -47,14 +48,17 @@ FUNCTION st_kalk_dokument_pr()
    bProizvod := {|| AllTrim( Str( Round( Val( field->rBr ) / 100, 0 ) ) ) }
 
    PRIVATE cIdd := field->idpartner + field->brfaktp + field->idkonto + field->idkonto2
-   DO WHILE !Eof() .AND. cIdFirma == IdFirma .AND.  cBrDok == BrDok .AND. cIdVD == IdVD
+   DO WHILE !Eof() .AND. cIdFirma == field->IdFirma .AND.  cBrDok == field->BrDok .AND. cIdVD == field->IdVD
 
-      nT := nT1 := nT2 := nT3 := nT4 := nT5 := nT6 := nT7 := nT8 := nT9 := nTA := 0
-      cBrFaktP := brfaktp; dDatFaktP := datfaktp; cIdpartner := field->idpartner
+      nTnabavna := nT1 := nT2 := nT3 := nT4 := nT5 := nT6 := nT7 := nT8 := nT9 := nTA := 0
+
+      cBrFaktP := field->brfaktp
+      dDatFaktP := field->datfaktp
+      cIdpartner := field->idpartner
 
       cProizvod := "0"
       DO WHILE !Eof() .AND. cIdFirma == IdFirma .AND.  cBrDok == BrDok .AND. cIdVD == IdVD ;
-            .AND. idpartner + brfaktp + DToS( datfaktp ) == cIdpartner + cBrFaktp + DToS( ddatfaktp )
+            .AND. field->idpartner + field->brfaktp + DToS( field->datfaktp ) == cIdpartner + cBrFaktp + DToS( dDatfaktp )
 
 
          KTroskovi()
@@ -71,20 +75,20 @@ FUNCTION st_kalk_dokument_pr()
          ENDIF
 
          IF gKalo == "1"
-            SKol := Kolicina - GKolicina - GKolicin2
+            SKol := field->Kolicina - field->GKolicina - field->GKolicin2
          ELSE
-            SKol := Kolicina
+            SKol := field->Kolicina
          ENDIF
 
-         nU := FCj * Kolicina
-         IF Val( rbr ) > 900
-            nU := NC * Kolicina
+         nUnabavna := field->FCj * field->Kolicina
+         IF Val( field->rbr ) > 99
+            nUnabavna := field->NC * field->Kolicina
          ENDIF
 
          IF gKalo == "1"
-            nU1 := FCj2 * ( GKolicina + GKolicin2 )
+            nU1 := field->FCj2 * ( field->GKolicina + field->GKolicin2 )
          ELSE
-            nU1 := NC * ( GKolicina + GKolicin2 )
+            nU1 := field->NC * ( field->GKolicina + field->GKolicin2 )
          ENDIF
 
          nU3 := nPrevoz * SKol
@@ -92,12 +96,12 @@ FUNCTION st_kalk_dokument_pr()
          nU5 := nSpedTr * SKol
          nU6 := nCarDaz * SKol
          nU7 := nZavTr * SKol
-         nU8 := NC *    ( Kolicina - Gkolicina - GKolicin2 )
-         nU9 := nMarza * ( Kolicina - Gkolicina - GKolicin2 )
-         nUA := VPC   * ( Kolicina - Gkolicina - GKolicin2 )
+         nU8 := field->NC *    ( field->Kolicina - field->Gkolicina - field->GKolicin2 )
+         nU9 := nMarza * ( field->Kolicina - field->Gkolicina - field->GKolicin2 )
+         nUA := field->VPC   * ( field->Kolicina - field->Gkolicina - field->GKolicin2 )
 
          IF Val( field->Rbr ) > 99
-            nT += nU; nT1 += nU1
+            nTNabavna += nUnabavna; nT1 += nU1
             nT3 += nU3; nT4 += nU4; nT5 += nU5; nT6 += nU6
             nT7 += nU7; nT8 += nU8; nT9 += nU9; nTA += nUA
 
@@ -118,7 +122,7 @@ FUNCTION st_kalk_dokument_pr()
 
          @ PRow() + 1, 0 SAY  Rbr PICTURE "999"
          IF Val( rbr ) < 10
-            @  PRow(), PCol() + 1 SAY  idkonto
+            @  PRow(), PCol() + 1 SAY  field->idkonto
          ELSE
             @  PRow(), PCol() + 1 SAY  Space( 7 )
          ENDIF
@@ -162,7 +166,7 @@ FUNCTION st_kalk_dokument_pr()
             @ PRow(), PCol() + 1 SAY nMarza               PICTURE PicDEM
          ENDIF
 
-         @ PRow() + 1, nCol1   SAY nU          PICTURE         PICDEM
+         @ PRow() + 1, nCol1   SAY nUnabavna       PICTURE         PICDEM
          IF Val( rbr ) < 10
             @ PRow(), PCol() + 1  SAY nU3         PICTURE         PICDEM
             @ PRow(), PCol() + 1  SAY nU4         PICTURE         PICDEM
@@ -176,7 +180,7 @@ FUNCTION st_kalk_dokument_pr()
          SKIP
       ENDDO
 
-      nTot += nT; nTot1 += nT1; nTot2 += nT2; nTot3 += nT3; nTot4 += nT4
+      nTot += nTnabavna; nTot1 += nT1; nTot2 += nT2; nTot3 += nT3; nTot4 += nT4
       nTot5 += nT5; nTot6 += nT6; nTot7 += nT7; nTot8 += nT8; nTot9 += nT9; nTotA += nTA
 
    ENDDO

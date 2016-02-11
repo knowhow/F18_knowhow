@@ -108,7 +108,7 @@ FUNCTION fprint_polog( dev_params, nPolog, lShowBox )
       BoxC()
 
       IF nPolog = 0
-         msgbeep( "Vrijednost depozita mora biti <> 0 !" )
+         MsgBeep( "Vrijednost depozita mora biti <> 0 !" )
          RETURN
       ENDIF
 
@@ -378,7 +378,7 @@ FUNCTION fprint_manual_cmd( dev_params )
    IF cErr == "D"
       nErr := fprint_read_error( dev_params, 0 )
       IF nErr <> 0
-         msgbeep( "Postoji greška kod izvršenja proizvoljne komande !" )
+         MsgBeep( "Postoji greška kod izvršenja proizvoljne komande !" )
       ENDIF
    ENDIF
 
@@ -486,14 +486,14 @@ FUNCTION fprint_daily_rpt( dev_params )
          fprint_delete_plu( dev_params, .T. )
          nErr := fprint_read_error( dev_params, 0, NIL, 500 )
          IF nErr <> 0
-            msgbeep( "Greška sa nuliranjem stanja uređaja !" )
+            MsgBeep( "Greška sa nuliranjem stanja uređaja !" )
             RETURN
          ENDIF
       ENDIF
 
       msgc()
       auto_plu( .T., .T., dev_params )
-      msgbeep( "Stanje fiskalnog uređaja je nulirano." )
+      MsgBeep( "Stanje fiskalnog uređaja je nulirano." )
 
    ENDIF
 
@@ -537,7 +537,7 @@ FUNCTION fprint_per_rpt( dev_params )
    _err_level := fprint_read_error( dev_params, 0 )
 
    IF _err_level <> 0
-      msgbeep( "Postoji greška sa štampanjem izvještaja !" )
+      MsgBeep( "Postoji greška sa štampanjem izvještaja !" )
    ENDIF
 
    RETURN _err_level
@@ -1365,7 +1365,7 @@ FUNCTION fprint_delete_answer( params )
    // ako postoji fajl obrisi ga
    IF File( _f_name )
       IF FErase( _f_name ) = -1
-         msgbeep( "Greška sa brisanjem fajla odgovora !" )
+         MsgBeep( "Greška sa brisanjem fajla odgovora !" )
       ENDIF
    ENDIF
 
@@ -1379,7 +1379,7 @@ FUNCTION fprint_delete_out( file_path )
 
    IF File( file_path )
       IF FErase( file_path ) = -1
-         msgbeep( "Greška sa brisanjem izlaznog fajla !" )
+         MsgBeep( "Greška sa brisanjem izlaznog fajla !" )
       ENDIF
    ENDIF
 
@@ -1464,7 +1464,7 @@ FUNCTION fprint_read_error( dev_params, fiscal_no, storno, time_out )
 
 #ifndef TEST
    IF !File( _f_name )
-      msgbeep( "Fajl " + _f_name + " ne postoji !" )
+      MsgBeep( "Fajl " + _f_name + " ne postoji !" )
       fiscal_no := 0
       _err_level := -9
       RETURN _err_level

@@ -241,7 +241,7 @@ FUNCTION azuriraj_smece( lSilent )
          lFound := .T.
 
          IF lSilent == .F.
-            msgbeep( "U smecu vec postoji isti dokument !" )
+            MsgBeep( "U smecu vec postoji isti dokument !" )
             closeret
          ENDIF
 

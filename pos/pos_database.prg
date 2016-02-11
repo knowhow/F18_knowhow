@@ -610,7 +610,7 @@ FUNCTION pos_import_fmk_roba()
    USE
 
    IF lOk .AND. _cnt > 0
-      msgbeep( "Update " + AllTrim( Str( _cnt ) ) + " zapisa !" )
+      MsgBeep( "Update " + AllTrim( Str( _cnt ) ) + " zapisa !" )
    ENDIF
 
    CLOSE ALL

@@ -1595,7 +1595,7 @@ FUNCTION c_cijena( nCijena, cTipDok, lNovidok )
    ENDIF
 
    IF gPratiC == "D" .AND. nRCijena <> NIL .AND. nCijena <> nRCijena
-      msgbeep( "Unesena cijena različita od cijene u šifrarniku !" + ;
+      MsgBeep( "Unesena cijena različita od cijene u šifrarniku !" + ;
          "#Trenutna: " + AllTrim( Str( nCijena, 12, 2 ) ) + ;
          ", šifrarnik: " + AllTrim( Str( nRCijena, 12, 2 ) ) )
       IF Pitanje(, "Koristiti ipak ovu cijenu (D/N) ?", "D" ) == "N"

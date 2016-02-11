@@ -619,7 +619,7 @@ STATIC FUNCTION key_handler()
             nRet := DE_REFRESH
          ENDIF
       ELSE
-         msgbeep( "Za ovu operaciju pozicionirajte se na#unos stavki naloga !!!" )
+         MsgBeep( "Za ovu operaciju pozicionirajte se na#unos stavki naloga !!!" )
       ENDIF
 
       SELECT _doc_it
@@ -638,7 +638,7 @@ STATIC FUNCTION key_handler()
 
          // ima li stavki u nalogu
          IF _doc_integ() == 0
-            msgbeep( "!!! Azuriranje naloga onemoguceno !!!" )
+            MsgBeep( "!!! Azuriranje naloga onemoguceno !!!" )
             m_x := nX
             m_y := nY
             RETURN DE_CONT

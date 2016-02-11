@@ -209,7 +209,7 @@ STATIC FUNCTION lista_racuna_key_handler()
       pos_storno_rn( .T., pos_doks->brdok, pos_doks->datum, ;
          PadR( AllTrim( Str( pos_doks->fisc_rn ) ), 10 ) )
 
-      msgbeep( "Storno račun se nalazi u pripremi !" )
+      MsgBeep( "Storno račun se nalazi u pripremi !" )
 
       SELECT pos_doks
       RETURN DE_REFRESH

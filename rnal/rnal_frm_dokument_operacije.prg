@@ -163,7 +163,7 @@ FUNCTION _cp_oper( nDoc_no, nArt_id, nDoc_it_no )
    GO ( nTRec )
 
    IF nCnt > 0
-      msgbeep( "Kopirano: " + AllTrim( Str( nCnt ) ) + " operacija !" )
+      MsgBeep( "Kopirano: " + AllTrim( Str( nCnt ) ) + " operacija !" )
    ENDIF
 
    RETURN

@@ -135,7 +135,7 @@ STATIC FUNCTION _kont_doks( dD_f, dD_t, cId_td, cId_mkto, ;
    ENDDO
 
    IF nCount > 0
-      msgbeep( "Kontirao " + AllTrim( Str( nCount ) ) + " dokumenata !" )
+      MsgBeep( "Kontirao " + AllTrim( Str( nCount ) ) + " dokumenata !" )
    ENDIF
 
    RETURN

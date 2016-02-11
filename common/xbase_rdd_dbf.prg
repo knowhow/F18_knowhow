@@ -288,14 +288,11 @@ FUNCTION reopen_dbf( excl, dbf_table, open_index )
 // ------------------------------------------------------
 FUNCTION reopen_exclusive_and_zap( dbf_table, open_index )
 
-   LOCAL _a_dbf_rec
-   LOCAL _dbf
-   LOCAL _idx
+   LOCAL _err
 
    IF open_index == NIL
       open_index := .T.
    ENDIF
-
 
 
    BEGIN SEQUENCE WITH {| err | Break( err ) }
@@ -306,6 +303,7 @@ FUNCTION reopen_exclusive_and_zap( dbf_table, open_index )
 
    RECOVER USING _err
 
+      log_write( "ERROR " + _err:Description, 3 )
       reopen_dbf( .F., dbf_table, open_index )
       zapp()
 
@@ -378,9 +376,8 @@ FUNCTION pakuj_dbf( a_dbf_rec, lSilent )
       SELECT ( a_dbf_rec[ "wa" ] )
       my_use_temp( a_dbf_rec[ "alias" ], my_home() + a_dbf_rec[ "table" ], .F., .T. )
 
-
       IF ! lSilent
-         Box( "#Molimo sačekajte...", 7, 60 )
+         Box( "#Molimo sačekajte...", 7, 75 )
          @ m_x + 7, m_y + 2 SAY8 "Pakujem tabelu radi brzine, molim sačekajte ..."
       ENDIF
 

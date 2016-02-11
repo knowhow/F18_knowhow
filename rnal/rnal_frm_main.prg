@@ -318,7 +318,7 @@ STATIC FUNCTION chk_mandatory( cDesc, nDocPriority )
    ENDCASE
 
    IF lRet == .F.
-      msgbeep( "Unos polja obavezan, prioritet = " + ;
+      MsgBeep( "Unos polja obavezan, prioritet = " + ;
          s_priority( nDocPriority ) )
    ENDIF
 

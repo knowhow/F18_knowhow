@@ -82,10 +82,10 @@ FUNCTION pos_fiskalni_racun( id_pos, datum, rn_broj, dev_params, uplaceni_iznos 
          _err_level := pos_to_tremol( id_pos, "42", datum, rn_broj, _items, _storno, _cont )
 
          IF _err_level > 0
-            msgbeep( "Problem sa štampanjem na fiskalni uređaj !" )
+            MsgBeep( "Problem sa štampanjem na fiskalni uređaj !" )
          ENDIF
       ELSE
-         msgbeep( "Problem sa štampanjem na fiskalni uređaj !" )
+         MsgBeep( "Problem sa štampanjem na fiskalni uređaj !" )
       ENDIF
    ENDIF
 
@@ -229,7 +229,7 @@ STATIC FUNCTION pos_fiscal_stavke_racuna( id_pos, tip_dok, datum, rn_broj, storn
    ENDDO
 
    IF Len( _items ) == 0
-      msgbeep( "Nema stavki za štampu na fiskalni uređaj !" )
+      MsgBeep( "Nema stavki za štampu na fiskalni uređaj !" )
       RETURN NIL
    ENDIF
 
@@ -276,7 +276,7 @@ STATIC FUNCTION pos_to_fprint( id_pos, tip_dok, datum, rn_broj, items, storno )
          _err_level := 0
       ELSE
          fprint_delete_out( __device_params )
-         msgbeep( "Greška kod štampanja fiskalnog računa !" )
+         MsgBeep( "Greška kod štampanja fiskalnog računa !" )
       ENDIF
 
    ENDIF
@@ -338,7 +338,7 @@ STATIC FUNCTION pos_to_tremol( id_pos, tip_dok, datum, rn_broj, items, storno, c
 
             pos_doks_update_fisc_rn( id_pos, tip_dok, datum, rn_broj, _fiscal_no )
 
-            msgbeep( "Kreiran fiskalni racun: " + AllTrim( Str( _fiscal_no ) ) )
+            MsgBeep( "Kreiran fiskalni racun: " + AllTrim( Str( _fiscal_no ) ) )
 			
          ENDIF
 	
@@ -376,7 +376,7 @@ STATIC FUNCTION pos_to_hcp( id_pos, tip_dok, datum, rn_broj, items, storno, upla
 	
       IF _fiscal_no > 0
          pos_doks_update_fisc_rn( id_pos, tip_dok, datum, rn_broj, _fiscal_no )
-         msgbeep( "Kreiran fiskalni racun: " + AllTrim( Str( _fiscal_no ) ) )
+         MsgBeep( "Kreiran fiskalni racun: " + AllTrim( Str( _fiscal_no ) ) )
       ENDIF
 
    ENDIF

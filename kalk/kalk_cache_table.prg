@@ -106,7 +106,7 @@ FUNCTION knab_cache( cC_Kto, cC_Roba, nC_Ulaz, nC_Izlaz, ;
          Beep( 4 )
          CLEAR TYPEAHEAD
 
-         msgbeep( "Odstupanje u odnosu na zadnji ulaz je#" + ;
+         MsgBeep( "Odstupanje u odnosu na zadnji ulaz je#" + ;
             AllTrim( Str( Abs( nOdst ) ) ) + " %" + "#" + ;
             "artikal: " + AllTrim( cC_roba ) + " " + ;
             PadR( roba->naz, 15 ) + " nc:" + ;
@@ -553,12 +553,12 @@ STATIC FUNCTION _app_from_sif( cM_list, cP_list, nT_kol, nT_ncproc )
    PRIVATE GetList := {}
 
    IF nT_kol = NIL .OR. nT_kol <= 0
-      msgbeep( "Default kolicina setovana na 0. Kako je to moguce :)" )
+      MsgBeep( "Default kolicina setovana na 0. Kako je to moguce :)" )
       RETURN
    ENDIF
 
    IF nT_ncproc = NIL .OR. nT_ncproc <= 0
-      msgbeep( "Default procenat nc setovan na <= 0. Kako je to moguce :)" )
+      MsgBeep( "Default procenat nc setovan na <= 0. Kako je to moguce :)" )
       RETURN
    ENDIF
 

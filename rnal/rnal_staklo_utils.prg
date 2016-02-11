@@ -736,7 +736,7 @@ FUNCTION val_radius( nRadius, nA, nB )
    ENDIF
 
    IF lRet == .F.
-      msgbeep( "Radijus ne moze biti veci od pola duzine stranice !" )
+      MsgBeep( "Radijus ne moze biti veci od pola duzine stranice !" )
    ENDIF
 
    RETURN lRet

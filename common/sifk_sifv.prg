@@ -621,7 +621,7 @@ STATIC FUNCTION val_fld( cField )
    ENDIF
 
    IF lRet == .F.
-      msgbeep( "Polje ne postoji !!!" )
+      MsgBeep( "Polje ne postoji !!!" )
    ENDIF
 
    RETURN lRet

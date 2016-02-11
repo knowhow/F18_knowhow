@@ -1046,7 +1046,7 @@ FUNCTION KTroskovi()
       IF ( roba->tip == "K" )
          nMarza2 := MPC - VPC * nPPP - nPrevoz
       ELSEIF ( roba->tip == "X" )
-         msgbeep( "nije odradjeno" )
+         MsgBeep( "nije odradjeno" )
       ELSE
          nMarza2 := MPC - VPC - nPrevoz
       ENDIF
@@ -1054,7 +1054,7 @@ FUNCTION KTroskovi()
       IF ( roba->tip == "V" )
          nMarza2 := ( MPC - roba->VPC ) + roba->vpc * nPPP - NC
       ELSEIF ( roba->tip == "X" )
-         msgbeep( "nije odradjeno" )
+         MsgBeep( "nije odradjeno" )
       ELSE
          nMarza2 := MPC - NC
       ENDIF

@@ -331,7 +331,7 @@ STATIC FUNCTION odaberi_shemu_artikla( cSchema, nType )
 
    IF ( aSch == NIL .OR. Len( aSch ) == 0 )
 
-      msgbeep( "Ne postoje definisane šeme, koristim standardnu šemu za tip " + ALLTRIM( STR( nType ) ) )
+      MsgBeep( "Ne postoje definisane šeme, koristim standardnu šemu za tip " + ALLTRIM( STR( nType ) ) )
 
       IF nType == 1
          cSchema := "G"
@@ -1398,7 +1398,7 @@ STATIC FUNCTION pravilo_grupe_elementa( cCode )
    cRule := rnal_format_naziva_elementa( cCode )
 
    IF Empty( cRule )
-      msgbeep( "Pravilo za formiranje naziva elementa ne postoji !!!" )
+      MsgBeep( "Pravilo za formiranje naziva elementa ne postoji !!!" )
    ENDIF
 
    RETURN cRule

@@ -249,7 +249,7 @@ FUNCTION spec_kol_partn()
    aRoba := _g_ini_roba()
 
    IF Len( aRoba ) = 0
-      msgbeep( "Potrebno definisati artikle za izvjestaj !!!" )
+      MsgBeep( "Potrebno definisati artikle za izvjestaj !!!" )
       RETURN
    ENDIF
 

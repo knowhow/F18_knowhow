@@ -380,11 +380,11 @@ FUNCTION RadBl( Ch )
       cTmp := dbFilter()
 
       IF Empty( cTmp )
-         msgbeep( "prikazuju se samo aktivni radnici ..." )
+         MsgBeep( "prikazuju se samo aktivni radnici ..." )
          _radn_filter( .T. )
          RETURN DE_REFRESH
       ELSE
-         msgbeep( "vracam filter na sve radnike ...." )
+         MsgBeep( "vracam filter na sve radnike ...." )
          _radn_filter( .F. )
          RETURN DE_REFRESH
       ENDIF
@@ -596,7 +596,7 @@ FUNCTION P_TipPr( cId, dx, dy )
 FUNCTION v_tpr_tip( cTip )
 
    IF Empty( cTip )
-      msgbeep( "Tip moze biti:##prazno - standardno#N - neto#2 - naknade za rad#X - neoporezive stavke, krediti itd..." )
+      MsgBeep( "Tip moze biti:##prazno - standardno#N - neto#2 - naknade za rad#X - neoporezive stavke, krediti itd..." )
    ENDIF
 
    RETURN .T.
@@ -608,7 +608,7 @@ FUNCTION v_tpr_tip( cTip )
 FUNCTION v_dop_tip( cTip )
 
    IF Empty( cTip )
-      msgbeep( "Tip moze biti:##prazno - standardno#N - neto#2 - ostale naknade#P - neto + ostale naknade#B - bruto#R - neto na ruke" )
+      MsgBeep( "Tip moze biti:##prazno - standardno#N - neto#2 - ostale naknade#P - neto + ostale naknade#B - bruto#R - neto na ruke" )
    ENDIF
 
    RETURN .T.

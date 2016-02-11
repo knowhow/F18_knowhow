@@ -543,7 +543,7 @@ FUNCTION fin_brisanje_markera_otvorenih_stavki()
    SET ORDER TO TAG "1"
    GO TOP
 
-   MsgO( "Brišem markere... molimo sačekajte trenutak ..." )
+   MsgO( "Brisanje markera... molimo sačekajte trenutak ..." )
 
    DO WHILE !Eof()
 
@@ -577,7 +577,6 @@ FUNCTION fin_brisanje_markera_otvorenih_stavki()
    USE
 
    RETURN lRet
-
 
 
 

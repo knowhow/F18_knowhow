@@ -739,7 +739,7 @@ STATIC FUNCTION el_convert( nEl_id, nEl_gr_id, nArt_id )
    cGr_code := AllTrim( g_e_gr_desc( nEl_gr_id, nil, .F. ) )
 
    IF cGr_code <> AllTrim( gGlassJoker )
-      msgbeep( "Konverzija se vrši samo na elementu tipa staklo !!!" )
+      MsgBeep( "Konverzija se vrši samo na elementu tipa staklo !!!" )
       RETURN nRet
    ENDIF
 

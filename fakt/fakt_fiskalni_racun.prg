@@ -1082,7 +1082,7 @@ STATIC FUNCTION fakt_to_tremol( id_firma, tip_dok, br_dok, items, head, storno, 
       IF _fiscal_no > 0
          // prikazi poruku samo u direktnoj stampi
          IF __auto = .F.
-            msgbeep( "Kreiran fiskalni racun broj: " + AllTrim( Str( _fiscal_no ) ) )
+            MsgBeep( "Kreiran fiskalni racun broj: " + AllTrim( Str( _fiscal_no ) ) )
          ENDIF
 
          // ubaci broj fiskalnog racuna u fakturu
@@ -1258,12 +1258,12 @@ STATIC FUNCTION fakt_to_tring( id_firma, tip_dok, br_dok, items, head, storno )
    IF _err_level <> 0
       // ostavit cu answer fajl za svaki slucaj!
       // pobrisi izlazni fajl ako je ostao !
-      msgbeep( "Postoji greska sa stampanjem !!!" )
+      MsgBeep( "Postoji greska sa stampanjem !!!" )
    ELSE
       tring_delete_answer( __device_params, _trig )
       // ubaci broj fiskalnog racuna u fakturu
       set_fiscal_no_to_fakt_doks( id_firma, tip_dok, br_dok, _fiscal_no )
-      msgbeep( "Kreiran fiskalni racun broj: " + AllTrim( Str( _fiscal_no ) ) )
+      MsgBeep( "Kreiran fiskalni racun broj: " + AllTrim( Str( _fiscal_no ) ) )
    ENDIF
 
    RETURN _err_level

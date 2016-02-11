@@ -1408,7 +1408,7 @@ FUNCTION prn_nal()
    SEEK docno_str( nDoc_no )
 
    IF field->doc_no <> nDoc_no
-      msgbeep( "Traženi nalog ne postoji !" )
+      MsgBeep( "Traženi nalog ne postoji !" )
       RETURN
    ENDIF
 

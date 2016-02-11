@@ -149,7 +149,7 @@ STATIC FUNCTION bterm_to_pripr()
    // vrati parametar cijene
    g13dcij := cSave
 
-   msgbeep( "Kreiran je novi dokument i nalazi se u pripremi." )
+   MsgBeep( "Kreiran je novi dokument i nalazi se u pripremi." )
 
    RETURN 1
 

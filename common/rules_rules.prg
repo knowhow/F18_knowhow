@@ -226,7 +226,7 @@ STATIC FUNCTION _w_level( nLev )
    ENDIF
 
    IF lRet == .F.
-      msgbeep( "Nivo greske mora biti u rangu od " + ;
+      MsgBeep( "Nivo greske mora biti u rangu od " + ;
          AllTrim( Str( __LEV_MIN ) ) + " do " + ;
          AllTrim( Str( __LEV_MAX ) ) )
    ENDIF
@@ -369,7 +369,7 @@ FUNCTION sh_rule_err( cMsg, nLevel )
 
    cTxt := _info_level( nLevel ) + cTxt
 
-   msgbeep( cTxt )
+   MsgBeep( cTxt )
 
    RETURN
 

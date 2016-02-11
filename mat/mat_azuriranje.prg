@@ -158,10 +158,10 @@ endif
 if _mat_azur_sql()
     // azuriraj u dbf
     if !_mat_azur_dbf()
-        msgbeep( "Problem sa azuriranjem mat/dbf !" )
+        MsgBeep( "Problem sa azuriranjem mat/dbf !" )
     endif
 else
-    msgbeep( "Problem sa azuriranjem mat/sql !" )
+    MsgBeep( "Problem sa azuriranjem mat/sql !" )
 endif
 
 my_close_all_dbf()

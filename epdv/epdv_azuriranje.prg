@@ -96,7 +96,7 @@ FUNCTION azur_ku_ki( cTbl )
 
    ELSE
 
-      msgbeep( "Neuspješno ažuriranje epdv/sql !" )
+      MsgBeep( "Neuspješno ažuriranje epdv/sql !" )
       RETURN
 
    ENDIF

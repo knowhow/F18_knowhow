@@ -172,7 +172,7 @@ STATIC FUNCTION _v_dn( cDn )
    ENDIF
 
    IF lRet == .F.
-      msgbeep( "Unjeti D ili N" )
+      MsgBeep( "Unjeti D ili N" )
    ENDIF
 
    RETURN lRet

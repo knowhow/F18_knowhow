@@ -11,7 +11,7 @@
 
 #include "f18.ch"
 
-
+MEMVAR m_x, m_y
 
 FUNCTION azur_fakt( lSilent )
 
@@ -20,11 +20,8 @@ FUNCTION azur_fakt( lSilent )
    LOCAL _br_dok
    LOCAL _id_tip_dok
    LOCAL _ok
-   LOCAL _tbl_fakt  := "fakt_fakt"
-   LOCAL _tbl_doks  := "fakt_doks"
-   LOCAL _tbl_doks2 := "fakt_doks2"
    LOCAL _msg
-   LOCAL oAtrib
+   LOCAL _i
 
    IF ( lSilent == nil )
       lSilent := .F.
@@ -141,16 +138,8 @@ STATIC FUNCTION fakt_azur_sql( id_firma, id_tip_dok, br_dok )
 
    LOCAL _ok
    LOCAL _tbl_fakt, _tbl_doks, _tbl_doks2
-   LOCAL _i, _n
-   LOCAL _tmp_id, _tmp_doc
-   LOCAL _ids := {}
-   LOCAL _ids_tmp := {}
-   LOCAL _ids_doc := {}
-   LOCAL _fakt_doks_data
-   LOCAL _fakt_doks2_data
-   LOCAL _fakt_totals
+   LOCAL _tmp_id
    LOCAL _record
-   LOCAL _msg
    LOCAL _ids_fakt  := {}
    LOCAL _ids_doks  := {}
    LOCAL _ids_doks2 := {}
@@ -234,14 +223,14 @@ STATIC FUNCTION fakt_azur_sql( id_firma, id_tip_dok, br_dok )
    ELSE
 
       @ m_x + 4, m_y + 2 SAY "push ids to semaphore: " + _tmp_id
-
       push_ids_to_semaphore( _tbl_fakt, _ids_fakt   )
       push_ids_to_semaphore( _tbl_doks, _ids_doks   )
       push_ids_to_semaphore( _tbl_doks2, _ids_doks2  )
 
+      sql_table_update( nil, "END" )
+
       f18_free_tables( { "fakt_fakt", "fakt_doks", "fakt_doks2" } )
 
-      sql_table_update( nil, "END" )
 
    ENDIF
 
@@ -258,13 +247,13 @@ STATIC FUNCTION fakt_azur_dbf( id_firma, id_tip_dok, br_dok, lSilent )
    LOCAL _fakt_totals
    LOCAL _fakt_doks_data
    LOCAL _fakt_doks2_data
+   LOCAL _msg
 
    close_open_fakt_tabele()
 
    Box( "#Proces ažuriranja dbf-a u toku", 3, 60 )
 
    @ m_x + 1, m_y + 2 SAY "fakt_pripr -> fakt_fakt"
-
    _seek_pripr_dok( id_firma, id_tip_dok, br_dok )
 
    DO WHILE !Eof() .AND. field->idfirma == id_firma .AND. field->idtipdok == id_tip_dok .AND. field->brdok == br_dok
@@ -336,7 +325,6 @@ STATIC FUNCTION fakt_azur_dbf( id_firma, id_tip_dok, br_dok, lSilent )
    _seek_pripr_dok( id_firma, id_tip_dok, br_dok )
 
    RETURN .T.
-
 
 
 /*
@@ -662,7 +650,6 @@ FUNCTION fakt_brisanje_pripreme()
    LOCAL _id_firma, _tip_dok, _br_dok
    LOCAL oAtrib
 
-
    IF Pitanje(, "Želite li izbrisati pripremu !!????", "N" ) == "D"
 
       SELECT fakt_pripr
@@ -703,15 +690,15 @@ FUNCTION fakt_generisi_storno_dokument( id_firma, id_tip_dok, br_dok )
    LOCAL _fiscal_use := fiscal_opt_active()
 
    IF Pitanje( "FORM_STORNO", "Formirati storno dokument (D/N) ?", "D" ) == "N"
-      RETURN
+      RETURN .F.
    ENDIF
 
    O_FAKT_PRIPR
    SELECT fakt_pripr
 
    IF fakt_pripr->( RECCOUNT2() ) <> 0
-      msgbeep( "Priprema nije prazna !!!" )
-      RETURN
+      MsgBeep( "Priprema nije prazna !" )
+      RETURN .F.
    ENDIF
 
    O_FAKT
@@ -769,9 +756,9 @@ FUNCTION fakt_generisi_storno_dokument( id_firma, id_tip_dok, br_dok )
    ENDDO
 
    IF _count > 0
-      msgbeep( "Formiran je dokument " + id_firma + "-" + ;
+      MsgBeep( "Formiran je dokument " + id_firma + "-" + ;
          id_tip_dok + "-" + AllTrim( _novi_br_dok ) + ;
          " u pripremi !" )
    ENDIF
 
-   RETURN
+   RETURN .T.

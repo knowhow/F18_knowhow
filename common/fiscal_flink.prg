@@ -444,7 +444,7 @@ FUNCTION fl_polog( cFPath, cFName, nPolog )
       BoxC()
 
       IF nPolog = 0
-         msgbeep( "Polog mora biti <> 0 !" )
+         MsgBeep( "Polog mora biti <> 0 !" )
          RETURN
       ENDIF
 

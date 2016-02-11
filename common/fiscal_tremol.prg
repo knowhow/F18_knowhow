@@ -850,7 +850,7 @@ FUNCTION tremol_read_error( dev_params, f_name, fisc_no )
    ENDIF
 
    IF !Empty( _tmp )
-      msgbeep( _tmp )
+      MsgBeep( _tmp )
    ENDIF
 
    // obrisi fajl out na kraju !!!

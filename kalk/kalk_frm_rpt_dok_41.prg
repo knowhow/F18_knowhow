@@ -51,16 +51,16 @@ endif
 if cIdVd='47' .or. lVoSaTa
     ? "*R * ROBA     * Kolicina *    MPC   *   PPP %  *   PPU%   *   PP%    *  MPC     *"
     ? "*BR*          *          *          *   PPU    *   PPU    *   PP     *  SA Por  *"
-    ? "*  *          *          *     �    *     �    *    �     *          *    �     *"
+    ? "*  *          *          *    sum   *    sum   *   sum    *          *   sum    *"
 else
     IF lPrikPRUC
         ? "*R * ROBA     * Kolicina *  NAB.CJ  *  MARZA  * POREZ NA *    MPC   *   PPP %  *   PPU%   *   PP%    *MPC sa por*          *  MPC     *"
         ? "*BR*          *          *   U MP   *         *  MARZU   *          *   PPP    *   PPU    *   PP     * -Popust  *  Popust  *  SA Por  *"
-        ? "*  *          *          *    �     *         *     �    *     �    *     �    *    �     *          *    �     *    �     *    �     *"
+        ? "*  *          *          *   sum    *         *    sum   *    sum   *    sum   *   sum    *          *   sum    *   sum    *   sum    *"
     ELSE
         ? "*R * ROBA     * Kolicina *  NAB.CJ  *  MARZA  *    MPC   *   PPP %  *   PPU%   *   PP%    *MPC sa por*          *  MPC     *"
         ? "*BR*          *          *   U MP   *         *          *   PPP    *   PPU    *   PP     * -Popust  *  Popust  *  SA Por  *"
-        ? "*  *          *          *    �     *         *     �    *     �    *    �     *          *    �     *    �     *    �     *"
+        ? "*  *          *          *   sum    *         *    sum   *    sum   *   sum    *          *   sum    *   sum    *   sum    *"
     ENDIF
 endif
 

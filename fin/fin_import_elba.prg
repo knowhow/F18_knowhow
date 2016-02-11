@@ -182,7 +182,7 @@ STATIC FUNCTION _g_el_items( cTxt, cImpView )
    _o_file:Open()
 
    IF _o_file:Error()
-      msgbeep( _o_file:ErrorMsg( "Problem sa otvaranjem fajla: " ) )
+      MsgBeep( _o_file:ErrorMsg( "Problem sa otvaranjem fajla: " ) )
       RETURN 0
    ENDIF
 
@@ -354,10 +354,10 @@ STATIC FUNCTION _g_elba_item( aItem, aHeader, aFin, cLine, nLineNo )
 
       ELSE
 
-         msgbeep( "nepoznata transakcija#broj elemenata = " + ;
+         MsgBeep( "nepoznata transakcija#broj elemenata = " + ;
             AllTrim( Str( Len( aItem ) ) ) + " ???#" + ;
             "linija broj: " + AllTrim( Str( nLineNo ) ) )
-         msgbeep( cLine )
+         MsgBeep( cLine )
 
          RETURN .F.
 

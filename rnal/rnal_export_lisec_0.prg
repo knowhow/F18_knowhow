@@ -97,7 +97,7 @@ FUNCTION exp_2_lisec( nDoc_no, lTemporary, lWriteRel )
    IF cre_exp_file( nDoc_no, cLocation, @cFile, @nHnd ) == 0
 
       SELECT ( nTArea )
-      msgbeep( "Operacija ponistena, nista nije exportovano!" )
+      MsgBeep( "Operacija ponistena, nista nije exportovano!" )
       RETURN
 
    ENDIF

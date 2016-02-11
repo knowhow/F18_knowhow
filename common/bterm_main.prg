@@ -198,7 +198,7 @@ FUNCTION export_BTerm_data()
    _dbf_to_file( cFilePath, cFileName, aStruct, "r_export.dbf", ;
       cSeparator, lTrimData, lLastSeparator )
 
-   msgbeep( "Exportovao " + AllTrim( Str( nCnt ) ) + " zapisa robe !" )
+   MsgBeep( "Exportovao " + AllTrim( Str( nCnt ) ) + " zapisa robe !" )
 
    SELECT ( 249 )
    USE

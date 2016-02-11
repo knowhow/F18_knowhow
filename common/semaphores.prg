@@ -684,7 +684,7 @@ STATIC FUNCTION dbf_refresh_0( aDbfRec )
    cMsg1 := "START chk0 not set, start dbf_refresh_0: " + aDbfRec[ "alias" ] + " / " + aDbfRec[ "table" ]
 
    IF ! lSilent
-      Box( "#Molimo sačekajte...", 7, 60 )
+      Box( "#Molimo sačekajte...", 7, 75 )
       @ m_x + 1, m_y + 2 SAY cMsg1
    ENDIF
 

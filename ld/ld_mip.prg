@@ -348,7 +348,7 @@ FUNCTION ld_mip_obrazac()
    ELSE
       nBrZahtjeva := g_br_zaht()
       _xml_export( cMj, cGod )
-      msgbeep( "Obradjeno " + AllTrim( Str( nBrZahtjeva ) ) + " radnika." )
+      MsgBeep( "Obradjeno " + AllTrim( Str( nBrZahtjeva ) ) + " radnika." )
    ENDIF
 
    RETURN .T.

@@ -359,7 +359,7 @@ FUNCTION ld_olp_gip_obrazac()
    ELSE
       nBrZahtjeva := g_br_zaht()
       _xml_export( cTipRpt, cMj_od, cGod_od )
-      msgbeep( "Obradjeno " + AllTrim( Str( nBrZahtjeva ) ) + " zahtjeva." )
+      MsgBeep( "Obradjeno " + AllTrim( Str( nBrZahtjeva ) ) + " zahtjeva." )
    ENDIF
 
    RETURN

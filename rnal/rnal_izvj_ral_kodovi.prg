@@ -281,7 +281,7 @@ STATIC FUNCTION _r_ral_calc( dD_from, dD_to, nOper )
 
    SELECT _tmp1
    IF RECCOUNT2() == 0
-      msgbeep( "nema podataka" )
+      MsgBeep( "nema podataka" )
       RETURN
    ENDIF
 

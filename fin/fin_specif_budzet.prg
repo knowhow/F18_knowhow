@@ -186,7 +186,7 @@ do while !eof() .and. idfirma==cidfirma
 	seek suban->idrj
 	if !found()
 		if cprov=="D"
-			msgbeep(" RJ:"+suban->idrj+"## <ESC> suti")
+			MsgBeep(" RJ:"+suban->idrj+"## <ESC> suti")
 			if lastkey()==K_ESC
 				cProv:="N"
 			endif

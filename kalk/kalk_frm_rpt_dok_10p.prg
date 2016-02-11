@@ -63,13 +63,13 @@ FUNCTION StKalk10_PDV()
       ? "*R * ROBA     *  FCJ     * NOR.KALO * KASA-    * " + c10T1 + " * " + c10T2 + " * " + c10T3 + " * " + c10T4 + " * " + c10T5 + " *   NC     *  MARZA   * PROD.CIJ.*   PDV%   * PROD.CIJ.*"
       ? "*BR* TARIFA   *  KOLICINA* PRE.KALO * SKONTO   *          *          *          *          *          *          *          * BEZ.PDV  *   PDV    * SA PDV   *"
 
-      ? "*  *          *    �     *    �     *   �      *    �     *    �     *     �    *    �     *    �     *    �     *    �     *    �     *    �     *     �    *"
+      ? "*  *          *   sum    *   sum    *  sum     *   sum    *   sum    *    sum   *   sum    *   sum    *   sum    *   sum    *   sum    *   sum    *    sum   *"
    ELSE
       // prikazi samo do neto cijene - bez pdv-a
       ? "*R * ROBA     *  FCJ     * NOR.KALO * KASA-    * " + c10T1 + " * " + c10T2 + " * " + c10T3 + " * " + c10T4 + " * " + c10T5 + " *   NC     *  MARZA   * PROD.CIJ.*"
       ? "*BR* TARIFA   *  KOLICINA* PRE.KALO * SKONTO   *          *          *          *          *          *          *          * BEZ.PDV  *"
 
-      ? "*  *          *    �     *    �     *   �      *    �     *    �     *     �    *    �     *    �     *    �     *    �     *    �     *"
+      ? "*  *          *   sum    *   sum    *  sum     *   sum    *   sum    *    sum   *   sum    *   sum    *   sum    *   sum    *   sum    *"
 
    ENDIF
 
@@ -216,9 +216,8 @@ FUNCTION StKalk10_PDV()
    ENDIF
 
    ? m
-   ? "Magacin se zaduzuje po nabavnoj vrijednosti " + AllTrim( Transform( nTot8, picdem ) )
+   ?U "Magacin se zadužuje po nabavnoj vrijednosti " + AllTrim( Transform( nTot8, picdem ) )
 
    ? m
 
-   RETURN
-// }
+   RETURN .T.

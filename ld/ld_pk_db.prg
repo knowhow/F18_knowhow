@@ -81,7 +81,7 @@ FUNCTION pk_delete( cIdRadn )
 
 
    IF nCnt > 0
-      msgbeep( "Izbrisano " + AllTrim( Str( nCnt ) ) + " zapisa !" )
+      MsgBeep( "Izbrisano " + AllTrim( Str( nCnt ) ) + " zapisa !" )
    ENDIF
 
    RETURN .T.
@@ -295,7 +295,7 @@ FUNCTION pk_set_date()
    ENDDO
 
    IF nCnt > 0
-      msgbeep( "izvrsene " + AllTrim( Str( nCnt ) ) + " promjene !!!" )
+      MsgBeep( "izvrsene " + AllTrim( Str( nCnt ) ) + " promjene !!!" )
    ENDIF
 
    SELECT ( nTArea )

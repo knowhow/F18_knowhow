@@ -142,7 +142,7 @@ FUNCTION gen_all_plu( lSilent )
    ENDIF
 
    IF lSilent == .F. .AND. !SigmaSIF( "GENPLU" )
-      msgbeep( "Neispravnan unos lozinke !" )
+      MsgBeep( "Neispravnan unos lozinke !" )
       RETURN .F.
    ENDIF
 
@@ -221,7 +221,7 @@ FUNCTION gen_all_plu( lSilent )
 
    IF nCnt > 0
       IF !lSilent
-         msgbeep( "Generisao " + AllTrim( Str( nCnt ) ) + " PLU kodova." )
+         MsgBeep( "Generisao " + AllTrim( Str( nCnt ) ) + " PLU kodova." )
       ENDIF
    ENDIF
 
@@ -277,7 +277,7 @@ FUNCTION auto_plu( reset_plu, silent_mode, dev_params )
 
    IF reset_plu = .T. .AND. !silent_mode
       IF !SigmaSif( "RESET" )
-         msgbeep( "Unesena pogrešna šifra !" )
+         MsgBeep( "Unesena pogrešna šifra !" )
          SELECT ( _t_area )
          RETURN _plu
       ENDIF

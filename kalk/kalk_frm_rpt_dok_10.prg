@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -12,166 +12,168 @@
 
 #include "f18.ch"
 
-function StKalk10_2()
-local nCol1:=nCol2:=0,npom:=0
+FUNCTION StKalk10_2()
 
-Private nPrevoz,nCarDaz,nZavTr,nBankTr,nSpedTr,nMarza,nMarza2
-// iznosi troskova i marzi koji se izracunavaju u KTroskovi()
+   LOCAL nCol1 := nCol2 := 0, npom := 0
 
-nStr:=0
-cIdPartner:=IdPartner; cBrFaktP:=BrFaktP; dDatFaktP:=DatFaktP
+   PRIVATE nPrevoz, nCarDaz, nZavTr, nBankTr, nSpedTr, nMarza, nMarza2
 
-cIdKonto:=IdKonto; cIdKonto2:=IdKonto2
+   // iznosi troskova i marzi koji se izracunavaju u KTroskovi()
 
-P_COND2
-?? "KALK: KALKULACIJA BR:",  cIdFirma+"-"+cIdVD+"-"+cBrDok,SPACE(2), browse_tdok( cIdVD,-2 ), SPACE(2),"Datum:",DatDok
-@ prow(),125 SAY "Str:"+str(++nStr,3)
-select PARTN; HSEEK cIdPartner
+   nStr := 0
+   cIdPartner := IdPartner; cBrFaktP := BrFaktP; dDatFaktP := DatFaktP
 
-?  "DOBAVLJAC:",cIdPartner,"-",naz,SPACE(5),"DOKUMENT Broj:",cBrFaktP,"Datum:",dDatFaktP
+   cIdKonto := IdKonto; cIdKonto2 := IdKonto2
 
-select KONTO; HSEEK cIdKonto
-?  "MAGACINSKI KONTO zaduzuje :",cIdKonto,"-",naz
+   P_COND2
+   ?? "KALK: KALKULACIJA BR:",  cIdFirma + "-" + cIdVD + "-" + cBrDok, Space( 2 ), browse_tdok( cIdVD, -2 ), Space( 2 ), "Datum:", DatDok
+   @ PRow(), 125 SAY "Str:" + Str( ++nStr, 3 )
+   SELECT PARTN; HSEEK cIdPartner
 
-m:="--- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ----------"
+   ?  "DOBAVLJAC:", cIdPartner, "-", naz, Space( 5 ), "DOKUMENT Broj:", cBrFaktP, "Datum:", dDatFaktP
 
-? m
-? "*R * ROBA     *  FCJ     * NOR.KALO * KASA-    * "+c10T1+" * "+c10T2+" * "+c10T3+" * "+c10T4+" * "+c10T5+" *   NC     *"+iif(gVarVP=="1"," MARZA.   "," RUC+PRUC ")+"*  VPC    *"
-? "*BR* TARIFA   *  KOLICINA* PRE.KALO * SKONTO   *          *          *          *          *          *          *          *         *"
-? "*  *          *    �     *    �     *   �      *    �     *    �     *     �    *    �     *    �     *    �     *    �     *   �     *"
+   SELECT KONTO; HSEEK cIdKonto
+   ?  "MAGACINSKI KONTO zaduzuje :", cIdKonto, "-", naz
 
-? m
-nTot:=nTot1:=nTot2:=nTot3:=nTot4:=nTot5:=nTot6:=nTot7:=nTot8:=nTot9:=nTotA:=0
-nTotB:=nTotP:=nTotM:=0
+   m := "--- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ----------"
 
-select kalk_pripr
+   ? m
+   ? "*R * ROBA     *  FCJ     * NOR.KALO * KASA-    * " + c10T1 + " * " + c10T2 + " * " + c10T3 + " * " + c10T4 + " * " + c10T5 + " *   NC     *" + iif( gVarVP == "1", " MARZA.   ", " RUC+PRUC " ) + "*  VPC    *"
+   ? "*BR* TARIFA   *  KOLICINA* PRE.KALO * SKONTO   *          *          *          *          *          *          *          *         *"
+   ? "*  *          *   sum    *   sum    *  sum     *   sum    *   sum    *    sum   *   sum    *   sum    *   sum    *   sum    *  sum    *"
 
-private cIdd:=idpartner+brfaktp+idkonto+idkonto2
+   ? m
+   nTot := nTot1 := nTot2 := nTot3 := nTot4 := nTot5 := nTot6 := nTot7 := nTot8 := nTot9 := nTotA := 0
+   nTotB := nTotP := nTotM := 0
 
-do while !eof() .and. cIdFirma==IdFirma .and.  cBrDok==BrDok .and. cIdVD==IdVD
+   SELECT kalk_pripr
 
-    vise_kalk_dok_u_pripremi(cIdd)
-    RptSeekRT()
-    KTroskovi()
+   PRIVATE cIdd := idpartner + brfaktp + idkonto + idkonto2
 
-    DokNovaStrana(125, @nStr, 2)
+   DO WHILE !Eof() .AND. cIdFirma == IdFirma .AND.  cBrDok == BrDok .AND. cIdVD == IdVD
 
-    if gKalo=="1"
-        SKol:=Kolicina-GKolicina-GKolicin2
-    else
-        SKol:=Kolicina
-    endif
+      vise_kalk_dok_u_pripremi( cIdd )
+      RptSeekRT()
+      KTroskovi()
 
-    nTot+=  (nU:=round(FCj*Kolicina,gZaokr))
-    if gKalo=="1"
-        nTot1+= (nU1:=round(FCj2*(GKolicina+GKolicin2),gZaokr))
-    else
-        // stanex
-        nTot1+= (nU1:=round(NC*(GKolicina+GKolicin2),gZaokr))
-    endif
-    nTot2+= (nU2:=round(-Rabat/100*FCJ*Kolicina,gZaokr))
-    nTot3+= (nU3:=round(nPrevoz*SKol,gZaokr))
-    nTot4+= (nU4:=round(nBankTr*SKol,gZaokr))
-    nTot5+= (nU5:=round(nSpedTr*SKol,gZaokr))
-    nTot6+= (nU6:=round(nCarDaz*SKol,gZaokr))
-    nTot7+= (nU7:=round(nZavTr* SKol,gZaokr))
-    nTot8+= (nU8:=round(NC *    (Kolicina-Gkolicina-GKolicin2),gZaokr) )
-    nTot9+= (nU9:=round(nMarza* (Kolicina-Gkolicina-GKolicin2),gZaokr) )
-    nTotA+= (nUA:=round(VPC   * (Kolicina-Gkolicina-GKolicin2),gZaokr) )
+      DokNovaStrana( 125, @nStr, 2 )
 
-    if gVarVP=="1"
-      nTotB+= round(nU9*tarifa->vpp/100 ,gZaokr) // porez na razliku u cijeni
-    else
-      private cistaMar:=round(nU9/(1+tarifa->vpp/100) ,gZaokr)
-      nTotB+=round( cistaMar*tarifa->vpp/100,gZaokr)  // porez na razliku u cijeni
-    endif
-    @ prow()+1,0 SAY  Rbr PICTURE "999"
-    @ prow(),4 SAY  ""; ?? trim(LEFT(ROBA->naz,40)),"(",ROBA->jmj,")"
-    if roba->(fieldpos("KATBR"))<>0
-       ?? " KATBR:", roba->katbr
-    endif
-    
-    @ prow()+1,4 SAY IdRoba
-    nCol1:=pcol()+1
-    @ prow(),pcol()+1 SAY FCJ                   PICTURE PicCDEM
-    @ prow(),pcol()+1 SAY GKolicina             PICTURE PicKol
-    @ prow(),pcol()+1 SAY -Rabat                PICTURE PicProc
-    @ prow(),pcol()+1 SAY nPrevoz/FCJ2*100      PICTURE PicProc
-    @ prow(),pcol()+1 SAY nBankTr/FCJ2*100      PICTURE PicProc
-    @ prow(),pcol()+1 SAY nSpedTr/FCJ2*100      PICTURE PicProc
-    @ prow(),pcol()+1 SAY nCarDaz/FCJ2*100      PICTURE PicProc
-    @ prow(),pcol()+1 SAY nZavTr/FCJ2*100       PICTURE PicProc
-    @ prow(),pcol()+1 SAY NC                    PICTURE PicCDEM
-    @ prow(),pcol()+1 SAY nMarza/NC*100         PICTURE PicProc
-    @ prow(),pcol()+1 SAY VPC                   PICTURE PicCDEM
+      IF gKalo == "1"
+         SKol := Kolicina - GKolicina - GKolicin2
+      ELSE
+         SKol := Kolicina
+      ENDIF
 
-    @ prow()+1,4 SAY IdTarifa
-    @ prow(),nCol1    SAY Kolicina             PICTURE PicCDEM
-    @ prow(),pcol()+1 SAY GKolicin2            PICTURE PicKol
-    @ prow(),pcol()+1 SAY -Rabat/100*FCJ       PICTURE PicCDEM
-    @ prow(),pcol()+1 SAY nPrevoz              PICTURE PicCDEM
-    @ prow(),pcol()+1 SAY nBankTr              PICTURE PicCDEM
-    @ prow(),pcol()+1 SAY nSpedTr              PICTURE PicCDEM
-    @ prow(),pcol()+1 SAY nCarDaz              PICTURE PicCDEM
-    @ prow(),pcol()+1 SAY nZavTr               PICTURE PicCDEM
-    @ prow(),pcol()+1 SAY 0                    PICTURE PicDEM
-    @ prow(),pcol()+1 SAY nMarza               PICTURE PicCDEM
+      nTot +=  ( nU := Round( FCj * Kolicina, gZaokr ) )
+      IF gKalo == "1"
+         nTot1 += ( nU1 := Round( FCj2 * ( GKolicina + GKolicin2 ), gZaokr ) )
+      ELSE
+         // stanex
+         nTot1 += ( nU1 := Round( NC * ( GKolicina + GKolicin2 ), gZaokr ) )
+      ENDIF
+      nTot2 += ( nU2 := Round( -Rabat / 100 * FCJ * Kolicina, gZaokr ) )
+      nTot3 += ( nU3 := Round( nPrevoz * SKol, gZaokr ) )
+      nTot4 += ( nU4 := Round( nBankTr * SKol, gZaokr ) )
+      nTot5 += ( nU5 := Round( nSpedTr * SKol, gZaokr ) )
+      nTot6 += ( nU6 := Round( nCarDaz * SKol, gZaokr ) )
+      nTot7 += ( nU7 := Round( nZavTr * SKol, gZaokr ) )
+      nTot8 += ( nU8 := Round( NC *    ( Kolicina - Gkolicina - GKolicin2 ), gZaokr ) )
+      nTot9 += ( nU9 := Round( nMarza * ( Kolicina - Gkolicina - GKolicin2 ), gZaokr ) )
+      nTotA += ( nUA := Round( VPC   * ( Kolicina - Gkolicina - GKolicin2 ), gZaokr ) )
 
-    @ prow()+1,nCol1   SAY nU          picture         PICDEM
-    @ prow(),pcol()+1  SAY nU1         picture         PICDEM
-    @ prow(),pcol()+1  SAY nU2         picture         PICDEM
-    @ prow(),pcol()+1  SAY nU3         picture         PICDEM
-    @ prow(),pcol()+1  SAY nU4         picture         PICDEM
-    @ prow(),pcol()+1  SAY nU5         picture         PICDEM
-    @ prow(),pcol()+1  SAY nU6         picture         PICDEM
-    @ prow(),pcol()+1  SAY nU7         picture         PICDEM
-    @ prow(),pcol()+1  SAY nU8         picture         PICDEM
-    @ prow(),pcol()+1  SAY nU9         picture         PICDEM
-    @ prow(),pcol()+1  SAY nUA         picture         PICDEM
+      IF gVarVP == "1"
+         nTotB += Round( nU9 * tarifa->vpp / 100,gZaokr ) // porez na razliku u cijeni
+      ELSE
+         PRIVATE cistaMar := Round( nU9 / ( 1 + tarifa->vpp / 100 ),gZaokr )
+         nTotB += Round( cistaMar * tarifa->vpp / 100, gZaokr )  // porez na razliku u cijeni
+      ENDIF
+      @ PRow() + 1, 0 SAY  Rbr PICTURE "999"
+      @ PRow(), 4 SAY  ""; ?? Trim( Left( ROBA->naz, 40 ) ), "(", ROBA->jmj, ")"
+      IF roba->( FieldPos( "KATBR" ) ) <> 0
+         ?? " KATBR:", roba->katbr
+      ENDIF
 
-  skip
-enddo
+      @ PRow() + 1, 4 SAY IdRoba
+      nCol1 := PCol() + 1
+      @ PRow(), PCol() + 1 SAY FCJ                   PICTURE PicCDEM
+      @ PRow(), PCol() + 1 SAY GKolicina             PICTURE PicKol
+      @ PRow(), PCol() + 1 SAY -Rabat                PICTURE PicProc
+      @ PRow(), PCol() + 1 SAY nPrevoz / FCJ2 * 100      PICTURE PicProc
+      @ PRow(), PCol() + 1 SAY nBankTr / FCJ2 * 100      PICTURE PicProc
+      @ PRow(), PCol() + 1 SAY nSpedTr / FCJ2 * 100      PICTURE PicProc
+      @ PRow(), PCol() + 1 SAY nCarDaz / FCJ2 * 100      PICTURE PicProc
+      @ PRow(), PCol() + 1 SAY nZavTr / FCJ2 * 100       PICTURE PicProc
+      @ PRow(), PCol() + 1 SAY NC                    PICTURE PicCDEM
+      @ PRow(), PCol() + 1 SAY nMarza / NC * 100         PICTURE PicProc
+      @ PRow(), PCol() + 1 SAY VPC                   PICTURE PicCDEM
 
-DokNovaStrana(125, @nStr, 5)
-? m
+      @ PRow() + 1, 4 SAY IdTarifa
+      @ PRow(), nCol1    SAY Kolicina             PICTURE PicCDEM
+      @ PRow(), PCol() + 1 SAY GKolicin2            PICTURE PicKol
+      @ PRow(), PCol() + 1 SAY -Rabat / 100 * FCJ       PICTURE PicCDEM
+      @ PRow(), PCol() + 1 SAY nPrevoz              PICTURE PicCDEM
+      @ PRow(), PCol() + 1 SAY nBankTr              PICTURE PicCDEM
+      @ PRow(), PCol() + 1 SAY nSpedTr              PICTURE PicCDEM
+      @ PRow(), PCol() + 1 SAY nCarDaz              PICTURE PicCDEM
+      @ PRow(), PCol() + 1 SAY nZavTr               PICTURE PicCDEM
+      @ PRow(), PCol() + 1 SAY 0                    PICTURE PicDEM
+      @ PRow(), PCol() + 1 SAY nMarza               PICTURE PicCDEM
 
-@ prow()+1,0        SAY "Ukupno:"
-@ prow(),nCol1     SAY nTot          picture         PICDEM
-@ prow(),pcol()+1  SAY nTot1         picture         PICDEM
-@ prow(),pcol()+1  SAY nTot2         picture         PICDEM
-@ prow(),pcol()+1  SAY nTot3         picture         PICDEM
-@ prow(),pcol()+1  SAY nTot4         picture         PICDEM
-@ prow(),pcol()+1  SAY nTot5         picture         PICDEM
-@ prow(),pcol()+1  SAY nTot6         picture         PICDEM
-@ prow(),pcol()+1  SAY nTot7         picture         PICDEM
-@ prow(),pcol()+1  SAY nTot8         picture         PICDEM
-@ prow(),pcol()+1  SAY nTot9         picture         PICDEM
-@ prow(),pcol()+1  SAY nTotA         picture         PICDEM
+      @ PRow() + 1, nCol1   SAY nU          PICTURE         PICDEM
+      @ PRow(), PCol() + 1  SAY nU1         PICTURE         PICDEM
+      @ PRow(), PCol() + 1  SAY nU2         PICTURE         PICDEM
+      @ PRow(), PCol() + 1  SAY nU3         PICTURE         PICDEM
+      @ PRow(), PCol() + 1  SAY nU4         PICTURE         PICDEM
+      @ PRow(), PCol() + 1  SAY nU5         PICTURE         PICDEM
+      @ PRow(), PCol() + 1  SAY nU6         PICTURE         PICDEM
+      @ PRow(), PCol() + 1  SAY nU7         PICTURE         PICDEM
+      @ PRow(), PCol() + 1  SAY nU8         PICTURE         PICDEM
+      @ PRow(), PCol() + 1  SAY nU9         PICTURE         PICDEM
+      @ PRow(), PCol() + 1  SAY nUA         PICTURE         PICDEM
 
- if g10Porez=="D" .or. gVarVP=="2"
- ? m
- if gVarVP=="1"
-  ? "Ukalkulisani porez na ruc (PRUC):"
-  @ prow(),pcol()+1 SAY nTotB pict picdem
-  @ prow(),pcol()+15 SAY "RUC - PRUC ="
-  @ prow(),pcol()+1 SAY alltrim(transform(nTot9,picdem))
-  @ prow(),pcol()+1 SAY "-"
-  @ prow(),pcol()+1 SAY alltrim(transform(nTotB,picdem))
-  @ prow(),pcol()+1 SAY "="
-  @ prow(),pcol()+1 SAY nTot9-nTotB pict picdem
- else
-  ? "RUC ="
-  @ prow(),pcol()+1 SAY alltrim(transform(nTot9-nTotB,picdem)); ?? ","
-  @ prow(),pcol()+15 SAY "PRUC ="
-  @ prow(),pcol()+1 SAY alltrim(transform(nTotB,picdem)); ?? ","
-  @ prow(),pcol()+15 SAY "RUC + PRUC ="
-  @ prow(),pcol()+1 SAY alltrim(transform(nTot9,picdem))
- endif
- endif
-? m
+      SKIP
+   ENDDO
 
-return
-*}
+   DokNovaStrana( 125, @nStr, 5 )
+   ? m
+
+   @ PRow() + 1, 0        SAY "Ukupno:"
+   @ PRow(), nCol1     SAY nTot          PICTURE         PICDEM
+   @ PRow(), PCol() + 1  SAY nTot1         PICTURE         PICDEM
+   @ PRow(), PCol() + 1  SAY nTot2         PICTURE         PICDEM
+   @ PRow(), PCol() + 1  SAY nTot3         PICTURE         PICDEM
+   @ PRow(), PCol() + 1  SAY nTot4         PICTURE         PICDEM
+   @ PRow(), PCol() + 1  SAY nTot5         PICTURE         PICDEM
+   @ PRow(), PCol() + 1  SAY nTot6         PICTURE         PICDEM
+   @ PRow(), PCol() + 1  SAY nTot7         PICTURE         PICDEM
+   @ PRow(), PCol() + 1  SAY nTot8         PICTURE         PICDEM
+   @ PRow(), PCol() + 1  SAY nTot9         PICTURE         PICDEM
+   @ PRow(), PCol() + 1  SAY nTotA         PICTURE         PICDEM
+
+   IF g10Porez == "D" .OR. gVarVP == "2"
+      ? m
+      IF gVarVP == "1"
+         ? "Ukalkulisani porez na ruc (PRUC):"
+         @ PRow(), PCol() + 1 SAY nTotB PICT picdem
+         @ PRow(), PCol() + 15 SAY "RUC - PRUC ="
+         @ PRow(), PCol() + 1 SAY AllTrim( Transform( nTot9, picdem ) )
+         @ PRow(), PCol() + 1 SAY "-"
+         @ PRow(), PCol() + 1 SAY AllTrim( Transform( nTotB, picdem ) )
+         @ PRow(), PCol() + 1 SAY "="
+         @ PRow(), PCol() + 1 SAY nTot9 - nTotB PICT picdem
+      ELSE
+         ? "RUC ="
+         @ PRow(), PCol() + 1 SAY AllTrim( Transform( nTot9 - nTotB, picdem ) ); ?? ","
+         @ PRow(), PCol() + 15 SAY "PRUC ="
+         @ PRow(), PCol() + 1 SAY AllTrim( Transform( nTotB, picdem ) ); ?? ","
+         @ PRow(), PCol() + 15 SAY "RUC + PRUC ="
+         @ PRow(), PCol() + 1 SAY AllTrim( Transform( nTot9, picdem ) )
+      ENDIF
+   ENDIF
+   ? m
+
+   RETURN
+// }
 
 
 
@@ -179,324 +181,325 @@ return
  *  \brief Stampa kalkulacije 10 - magacin po vp, DEFAULT VARIJANTA
  */
 
-function StKalk10_3(lBezNC)
-*{
-local nCol1:=nCol2:=0,npom:=0
+FUNCTION StKalk10_3( lBezNC )
 
-if lBezNC==NIL
-	lBezNC:=.f.
-endif
+   // {
+   LOCAL nCol1 := nCol2 := 0, npom := 0
 
-Private nPrevoz,nCarDaz,nZavTr,nBankTr,nSpedTr,nMarza,nMarza2
-// iznosi troskova i marzi koji se izracunavaju u KTroskovi()
+   IF lBezNC == NIL
+      lBezNC := .F.
+   ENDIF
 
-
-nStr:=0
-cIdPartner:=IdPartner; cBrFaktP:=BrFaktP; dDatFaktP:=DatFaktP
-
-cIdKonto:=IdKonto; cIdKonto2:=IdKonto2
-
-P_10CPI
-if cidvd=="10".or.cidvd=="70"
-  ?? "ULAZ U MAGACIN - OD DOBAVLJACA"
-endif
-P_COND
-? "KALK: KALKULACIJA BR:",  cIdFirma+"-"+cIdVD+"-"+cBrDok," ,Datum:",DatDok
-@ prow(),125 SAY "Str:"+str(++nStr,3)
-select PARTN; HSEEK cIdPartner
-?
-?  "DOBAVLJAC:",cIdPartner,"-",naz,SPACE(5),"DOKUMENT Broj:",cBrFaktP,"Datum:",dDatFaktP
-?
-select KONCIJ; seek trim(cIdKonto); lNC:=.t.
-IF naz<>"N1"; lNc:=.f.; ENDIF
-select KONTO; HSEEK cIdKonto
-?  "MAGACINSKI KONTO zaduzuje :",cIdKonto,"-",naz
+   PRIVATE nPrevoz, nCarDaz, nZavTr, nBankTr, nSpedTr, nMarza, nMarza2
+   // iznosi troskova i marzi koji se izracunavaju u KTroskovi()
 
 
-if !empty(kalk_pripr->Idzaduz2) 
-	?? " Rad.nalog:", kalk_pripr->Idzaduz2
-endif
+   nStr := 0
+   cIdPartner := IdPartner; cBrFaktP := BrFaktP; dDatFaktP := DatFaktP
 
-if lBezNC
+   cIdKonto := IdKonto; cIdKonto2 := IdKonto2
 
- m:="--- ---------- ----------"+IF(lNC,""," ---------- ----------")
- if gmpcpomoc=="D" .or. (IsPDV() .and. gPDVMagNab == "D")
-   m+= " ----------"
- endif
- ? m
- ? "*R * ROBA     * KOLICINA "+IF(lNC,"","*   PPP    *    VPC  *")
- if gmpcpomoc=="D" .or. (IsPDV() .and. gPDVMagNab == "D")
-   ?? "    MPC   *"
- endif
- ? "*BR* TARIFA   *          "+IF(lNC,"","*          *         *")
- if gmpcpomoc=="D" .or. (IsPDV() .and. gPDVMagNab == "D")
-   ?? "          *"
- endif
-
- ? "*  *          *          "+IF(lNC,"","*          *         *")
- if gmpcpomoc=="D" .or. (IsPDV() .and. gPDVMagNab == "D")
-   ?? "          *"
- endif
-
-else
-
- m:="--- ---------- ---------- ---------- ---------- ---------- ---------- ----------"+IF(lNC,""," ---------- ---------- ----------")
- if gmpcpomoc=="D"
-   m+= " ----------"
- endif
- ? m
- ? "*R * ROBA     *  FCJ     * KOLICINA * RABAT    * FCJ-RAB  * TROSKOVI *    NC    *"+IF(lNC,"",iif(gVarVP=="1"," MARZA.   "," RUC+PRUC ")+"*   PPP    *    VPC  *")
- if gmpcpomoc=="D" .or. (IsPDV() .and. gPDVMagNab == "D")
-   ?? "    MPC   *"
- endif
- ? "*BR* TARIFA   *          *          * DOBAVLJ. *          *          *          *"+IF(lNC,"","          *          *         *")
- if gmpcpomoc=="D"  .or. (IsPDV() .and. gPDVMagNab == "D")
-   ?? "          *"
- endif
-
- ? "*  *          *  FV      *          *          * FV-RABAT *          *          *"+IF(lNC,"","          *          *         *")
- if gmpcpomoc=="D"  .or. (IsPDV() .and. gPDVMagNab == "D")
-   ?? "          *"
- endif
- 
-endif
-
- ? m
- nTot:=nTot1:=nTot2:=nTot3:=nTot4:=nTot5:=nTot6:=nTot7:=nTot8:=nTot9:=nTotA:=0
- nTotB:=0
- nTotP:=nTotQ:=0
- nTotM:=0  // maloprodajna
-select kalk_pripr
-
-private cIdd:=idpartner+brfaktp+idkonto+idkonto2
+   P_10CPI
+   IF cidvd == "10" .OR. cidvd == "70"
+      ?? "ULAZ U MAGACIN - OD DOBAVLJACA"
+   ENDIF
+   P_COND
+   ? "KALK: KALKULACIJA BR:",  cIdFirma + "-" + cIdVD + "-" + cBrDok, " ,Datum:", DatDok
+   @ PRow(), 125 SAY "Str:" + Str( ++nStr, 3 )
+   SELECT PARTN; HSEEK cIdPartner
+   ?
+   ?  "DOBAVLJAC:", cIdPartner, "-", naz, Space( 5 ), "DOKUMENT Broj:", cBrFaktP, "Datum:", dDatFaktP
+   ?
+   SELECT KONCIJ; SEEK Trim( cIdKonto ); lNC := .T.
+   IF naz <> "N1"; lNc := .F. ; ENDIF
+   SELECT KONTO; HSEEK cIdKonto
+   ?  "MAGACINSKI KONTO zaduzuje :", cIdKonto, "-", naz
 
 
-do while !eof() .and. cIdFirma==IdFirma .and.  cBrDok==BrDok .and. cIdVD==IdVD
+   IF !Empty( kalk_pripr->Idzaduz2 )
+      ?? " Rad.nalog:", kalk_pripr->Idzaduz2
+   ENDIF
 
-    vise_kalk_dok_u_pripremi(cIdd)
-    RptSeekRT()
-    KTroskovi()
+   IF lBezNC
 
-    
-    DokNovaStrana(125, @nStr, 2)
+      m := "--- ---------- ----------" + iif( lNC, "", " ---------- ----------" )
+      IF gmpcpomoc == "D" .OR. ( IsPDV() .AND. gPDVMagNab == "D" )
+         m += " ----------"
+      ENDIF
+      ? m
+      ?U "*R * ROBA     * KOLIČINA " + iif( lNC, "", "*   PPP    *    VPC  *" )
+      IF gmpcpomoc == "D" .OR. ( IsPDV() .AND. gPDVMagNab == "D" )
+         ?? "    MPC   *"
+      ENDIF
+      ? "*BR* TARIFA   *          " + iif( lNC, "", "*          *         *" )
+      IF gmpcpomoc == "D" .OR. ( IsPDV() .AND. gPDVMagNab == "D" )
+         ?? "          *"
+      ENDIF
 
-    if gKalo=="1"
-        SKol:=Kolicina-GKolicina-GKolicin2
-    else
-        SKol:=Kolicina
-    endif
+      ? "*  *          *          " + iif( lNC, "", "*          *         *" )
+      IF gmpcpomoc == "D" .OR. ( IsPDV() .AND. gPDVMagNab == "D" )
+         ?? "          *"
+      ENDIF
 
-    nTot+=  (nU:=round(FCj*Kolicina,gZaokr))
-    if gKalo=="1"
-        nTot1+= (nU1:=round(FCj2*(GKolicina+GKolicin2),gZaokr))
-    else
-        nTot1+= (nU1:=round(NC*(GKolicina+GKolicin2),gZaokr))
-    endif
-    nTot2+= (nU2:=round(-Rabat/100*FCJ*Kolicina,gZaokr))
+   ELSE
 
-    nTot3+= (nU3:=round(nPrevoz*SKol,gZaokr))
-    nTot4+= (nU4:=round(nBankTr*SKol,gZaokr))
-    nTot5+= (nU5:=round(nSpedTr*SKol,gZaokr))
-    nTot6+= (nU6:=round(nCarDaz*SKol,gZaokr))
-    nTot7+= (nU7:=round(nZavTr* SKol,gZaokr))
+      m := "--- ---------- ---------- ---------- ---------- ---------- ---------- ----------" + IF( lNC, "", " ---------- ---------- ----------" )
+      IF gmpcpomoc == "D"
+         m += " ----------"
+      ENDIF
+      ? m
+      ? "*R * ROBA     *  FCJ     * KOLICINA * RABAT    * FCJ-RAB  * TROSKOVI *    NC    *" + IF( lNC, "", iif( gVarVP == "1", " MARZA.   ", " RUC+PRUC " ) + "*   PPP    *    VPC  *" )
+      IF gmpcpomoc == "D" .OR. ( IsPDV() .AND. gPDVMagNab == "D" )
+         ?? "    MPC   *"
+      ENDIF
+      ? "*BR* TARIFA   *          *          * DOBAVLJ. *          *          *          *" + IF( lNC, "", "          *          *         *" )
+      IF gmpcpomoc == "D"  .OR. ( IsPDV() .AND. gPDVMagNab == "D" )
+         ?? "          *"
+      ENDIF
 
-    // stanex
-    nTot8+=(nU8:=nU+nU2+nU3+nU4+nU5+nU6+nU7)
+      ? "*  *          *  FV      *          *          * FV-RABAT *          *          *" + IF( lNC, "", "          *          *         *" )
+      IF gmpcpomoc == "D"  .OR. ( IsPDV() .AND. gPDVMagNab == "D" )
+         ?? "          *"
+      ENDIF
 
-    if !(roba->tip $ "VKX")
-     nUP:=0
-    else
-     if roba->tip="X"
-       nTotP+= (nUP:=round(mpcsapp/(1+tarifa->opp/100)*tarifa->opp/100*(Kolicina-Gkolicina-GKolicin2),gZaokr))
-     else
-       nTotP+= (nUP:=round(vpc/(1+tarifa->opp/100)*tarifa->opp/100*(Kolicina-Gkolicina-GKolicin2),gZaokr))
-     endif
-    endif
+   ENDIF
 
+   ? m
+   nTot := nTot1 := nTot2 := nTot3 := nTot4 := nTot5 := nTot6 := nTot7 := nTot8 := nTot9 := nTotA := 0
+   nTotB := 0
+   nTotP := nTotQ := 0
+   nTotM := 0  // maloprodajna
+   SELECT kalk_pripr
 
-    nTotA+= (nUA:=round( VPC   * (Kolicina-Gkolicina-GKolicin2),gZaokr) )
-
-    // stanex   marza
-    nTot9+=(nU9:=round(nUA-nUp-nU8,gZaokr) )
-
-    if gVarVP=="1"
-      nTotB+= round(nU9*tarifa->vpp/100,gZaokr)  // porez na razliku u cijeni
-    else
-      private cistaMar:=round( nU9/(1+tarifa->vpp/100) ,gZaokr)
-      nTotB+= round( cistaMar*tarifa->vpp/100 ,gZaokr) // porez na razliku u cijeni
-    endif
-
-    if gMpcPomoc=="D"
-      nTotM+= (nUM:=round ( roba->mpc*kolicina, gZaokr))
-    endif
-
-    @ prow()+1,0 SAY  Rbr PICTURE "999"
-    @ prow(),4 SAY  ""; ?? trim(LEFT(ROBA->naz,40)),"(",ROBA->jmj,")"
-    if roba->(fieldpos("KATBR"))<>0
-       ?? " KATBR:", roba->katbr
-    endif
-    @ prow()+1,4 SAY IdRoba
-    nCol1:=pcol()+1
-    if !lBezNC
-    	@ prow(),pcol()+1 SAY FCJ                   PICTURE PicCDEM
-    endif
-    @ prow(),pcol()+1 SAY Kolicina              picture pickol
-    if !lBezNC
-    	@ prow(),pcol()+1 SAY -Rabat                PICTURE PicProc
-    	@ prow(),pcol()+1 SAY fcj*(1-Rabat/100)     pict piccdem
-    	@ prow(),pcol()+1 SAY (nprevoz+nbanktr+nspedtr+ncardaz+nZavTr)/FCJ2*100       PICTURE PicProc
-
-    	@ prow(),pcol()+1 SAY NC                    PICTURE PicCDEM
-    endif
-
-    IF !lNC
-      if !lBezNC
-      	@ prow(),pcol()+1 SAY nMarza/NC*100         PICTURE PicProc
-      endif
-      if roba->tip $ "VKX"
-        @ prow(),pcol()+1 SAY tarifa->opp             PICTURE Picproc
-      else
-        @ prow(),pcol()+1 SAY 0                        PICTURE Picproc
-      endif
-      @ prow(),pcol()+1 SAY VPC                   PICTURE PicCDEM
-    ENDIF
-
-    if gMpcPomoc=="D"
-      @ prow(),pcol()+1  SAY roba->mpc       picture         PICCDEM
-    endif
-
-    @ prow()+1,4 SAY IdTarifa
-    @ prow(),nCol1    SAY  space(len(PicProc))
-    if !lBezNC
-    	@ prow(),pcol()+1 SAY  space(len(PicProc))
-    	@ prow(),pcol()+1 SAY -Rabat/100*FCJ       PICTURE PicCDEM
-    	@ prow(),pcol()+1 SAY  space(len(PicProc))
-    	@ prow(),pcol()+1 SAY (nprevoz+nbanktr+nspedtr+ncardaz+nZavTr)  PICTURE PicCDEM
-    	@ prow(),pcol()+1 SAY  space(len(PicProc))
-    endif
-
-    IF !lNC
-      if !lBezNC
-      	@ prow(),pcol()+1 SAY nMarza               PICTURE PicCDEM
-      endif
-      @ prow(),pcol()+1 SAY nUP/kolicina         PICTURE PicCDEM
-    ENDIF
-
-    if lBezNC
-    	@ prow()+1,nCol1   SAY space(len(PicProc))
-	IF !lNC
-       		@ prow(),pcol()+1  SAY nUP         picture         PICDEM
-	       	@ prow(),pcol()+1  SAY nUA         picture         PICDEM
-	ENDIF
-    else
-    	@ prow()+1,nCol1   SAY nU          picture         PICDEM
-    	@ prow(),pcol()+1 SAY space(len(PicProc))
-    	@ prow(),pcol()+1  SAY nU2         picture         PICDEM
-    	@ prow(),pcol()+1  SAY nU+nU2     picture         PICDEM
-    	@ prow(),pcol()+1  SAY nu3+nu4+nu5+nu6+nu7    picture         PICDEM
-    	@ prow(),pcol()+1  SAY nU8         picture         PICDEM
-
-      	IF !lNC
-        	@ prow(),pcol()+1  SAY nU9         picture         PICDEM
-        	@ prow(),pcol()+1  SAY nUP         picture         PICDEM
-        	@ prow(),pcol()+1  SAY nUA         picture         PICDEM
-    	ENDIF
-    endif
-
-    if gMpcPomoc=="D"
-      @ prow(),pcol()+1  SAY nUM         picture         PICDEM
-    endif
-
-  skip
-enddo
+   PRIVATE cIdd := idpartner + brfaktp + idkonto + idkonto2
 
 
-DokNovaStrana(125, @nStr, 5)
-? m
-@ prow()+1,0        SAY "Ukupno:"
+   DO WHILE !Eof() .AND. cIdFirma == IdFirma .AND.  cBrDok == BrDok .AND. cIdVD == IdVD
 
-//stanex   nabavna cijena
-nTot8:=nTot+nTot2+nTot3+nTot4+nTot5+nTot6+nTot7
-nTot9:=nTotA-nTot8-nTotP   // utvrdi razliku izmedju nc i prodajne cijene
+      vise_kalk_dok_u_pripremi( cIdd )
+      RptSeekRT()
+      KTroskovi()
 
-  if lBezNC
-	  @ prow(),nCol1     SAY space(len(PicProc))
-	  IF !lNC
-	  	@ prow(),pcol()+1  SAY nTotP         picture         PICDEM
-	  	@ prow(),pcol()+1  SAY nTotA         picture         PICDEM
-	  ENDIF
-  else
-	  @ prow(),nCol1     SAY nTot          picture         PICDEM
-	  @ prow(),pcol()+1  SAY space(len(PicProc))
-	  @ prow(),pcol()+1  SAY nTot2         picture         PICDEM
-	  @ prow(),pcol()+1  SAY ntot+nTot2         picture         PICDEM
-	  @ prow(),pcol()+1  SAY ntot3+ntot4+ntot5+ntot6+ntot7  picture         PICDEM
-	  @ prow(),pcol()+1  SAY nTot8         picture         PICDEM
-	
-	  IF !lNC
-	    @ prow(),pcol()+1  SAY nTot9         picture         PICDEM
-	    @ prow(),pcol()+1  SAY nTotP         picture         PICDEM
-	    @ prow(),pcol()+1  SAY nTotA         picture         PICDEM
-	  ENDIF
-  endif
+      DokNovaStrana( 125, @nStr, 2 )
 
-  if gMpcPomoc=="D"
-     @ prow(),pcol()+1  SAY nTotM         picture         PICDEM
-  endif
+      IF gKalo == "1"
+         SKol := Kolicina - GKolicina - GKolicin2
+      ELSE
+         SKol := Kolicina
+      ENDIF
 
-if !lBezNC .and. (g10Porez=="D" .or. gVarVP=="2")
- ? m
- if gVarVP=="1"
-  ? "Ukalkulisani porez na ruc (PRUC):"
-  @ prow(),pcol()+1 SAY nTotB pict picdem
-  @ prow(),pcol()+8 SAY "RUC - PRUC ="
-  @ prow(),pcol()+1 SAY alltrim(transform(nTot9,picdem))
-  @ prow(),pcol()+1 SAY "-"
-  @ prow(),pcol()+1 SAY alltrim(transform(nTotB,picdem))
-  @ prow(),pcol()+1 SAY "="
-  @ prow(),pcol()+1 SAY nTot9-nTotB pict picdem
- else
-  ? "RUC ="
-  @ prow(),pcol()+1 SAY alltrim(transform(nTot9-nTotB,picdem)); ?? ","
-  @ prow(),pcol()+8 SAY "PRUC ="
-  @ prow(),pcol()+1 SAY alltrim(transform(nTotB,picdem)); ?? ","
-  @ prow(),pcol()+8 SAY "RUC + PRUC ="
-  @ prow(),pcol()+1 SAY alltrim(transform(nTot9,picdem))
- endif
-endif
+      nTot +=  ( nU := Round( FCj * Kolicina, gZaokr ) )
+      IF gKalo == "1"
+         nTot1 += ( nU1 := Round( FCj2 * ( GKolicina + GKolicin2 ), gZaokr ) )
+      ELSE
+         nTot1 += ( nU1 := Round( NC * ( GKolicina + GKolicin2 ), gZaokr ) )
+      ENDIF
+      nTot2 += ( nU2 := Round( -Rabat / 100 * FCJ * Kolicina, gZaokr ) )
 
-if !lBezNC .and. round(ntot3+ntot4+ntot5+ntot6+ntot7,2) <>0
-DokNovaStrana(125, @nStr, 10)
-?
-?  m
-?  "Troskovi (analiticki):"
-if ntot3<>0
- ?  c10T1,":"
- @ prow(),30 SAY  ntot3 pict picdem
-endif
-if ntot4<>0
- ?  c10T2,":"
- @ prow(),30 SAY  ntot4 pict picdem
-endif
-if ntot5<>0
- ?  c10T3,":"
- @ prow(),30 SAY  ntot5 pict picdem
-endif
-if ntot6<>0
- ?  c10T4,":"
- @ prow(),30 SAY  ntot6 pict picdem
-endif
-if ntot7<>0
- ?  c10T5,":"
- @ prow(),30 SAY  ntot7 pict picdem
-endif
-? m
-? "Ukupno troskova:"
-@ prow(),30 SAY  nTot3+nTot4+nTot5+nTot6+nTot7 pict picdem
-? m
-endif
-return
-*}
+      nTot3 += ( nU3 := Round( nPrevoz * SKol, gZaokr ) )
+      nTot4 += ( nU4 := Round( nBankTr * SKol, gZaokr ) )
+      nTot5 += ( nU5 := Round( nSpedTr * SKol, gZaokr ) )
+      nTot6 += ( nU6 := Round( nCarDaz * SKol, gZaokr ) )
+      nTot7 += ( nU7 := Round( nZavTr * SKol, gZaokr ) )
+
+      // stanex
+      nTot8 += ( nU8 := nU + nU2 + nU3 + nU4 + nU5 + nU6 + nU7 )
+
+      IF !( roba->tip $ "VKX" )
+         nUP := 0
+      ELSE
+         IF roba->tip = "X"
+            nTotP += ( nUP := Round( mpcsapp / ( 1 + tarifa->opp / 100 ) * tarifa->opp / 100 * ( Kolicina - Gkolicina - GKolicin2 ), gZaokr ) )
+         ELSE
+            nTotP += ( nUP := Round( vpc / ( 1 + tarifa->opp / 100 ) * tarifa->opp / 100 * ( Kolicina - Gkolicina - GKolicin2 ), gZaokr ) )
+         ENDIF
+      ENDIF
+
+
+      nTotA += ( nUA := Round( VPC   * ( Kolicina - Gkolicina - GKolicin2 ), gZaokr ) )
+
+      // stanex   marza
+      nTot9 += ( nU9 := Round( nUA - nUp - nU8, gZaokr ) )
+
+      IF gVarVP == "1"
+         nTotB += Round( nU9 * tarifa->vpp / 100, gZaokr )  // porez na razliku u cijeni
+      ELSE
+         PRIVATE cistaMar := Round( nU9 / ( 1 + tarifa->vpp / 100 ),gZaokr )
+         nTotB += Round( cistaMar * tarifa->vpp / 100,gZaokr ) // porez na razliku u cijeni
+      ENDIF
+
+      IF gMpcPomoc == "D"
+         nTotM += ( nUM := Round ( roba->mpc * kolicina, gZaokr ) )
+      ENDIF
+
+      @ PRow() + 1, 0 SAY  Rbr PICTURE "999"
+      @ PRow(), 4 SAY  ""; ?? Trim( Left( ROBA->naz, 40 ) ), "(", ROBA->jmj, ")"
+      IF roba->( FieldPos( "KATBR" ) ) <> 0
+         ?? " KATBR:", roba->katbr
+      ENDIF
+      @ PRow() + 1, 4 SAY IdRoba
+      nCol1 := PCol() + 1
+      IF !lBezNC
+         @ PRow(), PCol() + 1 SAY FCJ                   PICTURE PicCDEM
+      ENDIF
+      @ PRow(), PCol() + 1 SAY Kolicina              PICTURE pickol
+      IF !lBezNC
+         @ PRow(), PCol() + 1 SAY -Rabat                PICTURE PicProc
+         @ PRow(), PCol() + 1 SAY fcj * ( 1 -Rabat / 100 )     PICT piccdem
+         @ PRow(), PCol() + 1 SAY ( nprevoz + nbanktr + nspedtr + ncardaz + nZavTr ) / FCJ2 * 100       PICTURE PicProc
+
+         @ PRow(), PCol() + 1 SAY NC                    PICTURE PicCDEM
+      ENDIF
+
+      IF !lNC
+         IF !lBezNC
+            @ PRow(), PCol() + 1 SAY nMarza / NC * 100         PICTURE PicProc
+         ENDIF
+         IF roba->tip $ "VKX"
+            @ PRow(), PCol() + 1 SAY tarifa->opp             PICTURE Picproc
+         ELSE
+            @ PRow(), PCol() + 1 SAY 0                        PICTURE Picproc
+         ENDIF
+         @ PRow(), PCol() + 1 SAY VPC                   PICTURE PicCDEM
+      ENDIF
+
+      IF gMpcPomoc == "D"
+         @ PRow(), PCol() + 1  SAY roba->mpc       PICTURE         PICCDEM
+      ENDIF
+
+      @ PRow() + 1, 4 SAY IdTarifa
+      @ PRow(), nCol1    SAY  Space( Len( PicProc ) )
+      IF !lBezNC
+         @ PRow(), PCol() + 1 SAY  Space( Len( PicProc ) )
+         @ PRow(), PCol() + 1 SAY -Rabat / 100 * FCJ       PICTURE PicCDEM
+         @ PRow(), PCol() + 1 SAY  Space( Len( PicProc ) )
+         @ PRow(), PCol() + 1 SAY ( nprevoz + nbanktr + nspedtr + ncardaz + nZavTr )  PICTURE PicCDEM
+         @ PRow(), PCol() + 1 SAY  Space( Len( PicProc ) )
+      ENDIF
+
+      IF !lNC
+         IF !lBezNC
+            @ PRow(), PCol() + 1 SAY nMarza               PICTURE PicCDEM
+         ENDIF
+         @ PRow(), PCol() + 1 SAY nUP / kolicina         PICTURE PicCDEM
+      ENDIF
+
+      IF lBezNC
+         @ PRow() + 1, nCol1   SAY Space( Len( PicProc ) )
+         IF !lNC
+            @ PRow(), PCol() + 1  SAY nUP         PICTURE         PICDEM
+            @ PRow(), PCol() + 1  SAY nUA         PICTURE         PICDEM
+         ENDIF
+      ELSE
+         @ PRow() + 1, nCol1   SAY nU          PICTURE         PICDEM
+         @ PRow(), PCol() + 1 SAY Space( Len( PicProc ) )
+         @ PRow(), PCol() + 1  SAY nU2         PICTURE         PICDEM
+         @ PRow(), PCol() + 1  SAY nU + nU2     PICTURE         PICDEM
+         @ PRow(), PCol() + 1  SAY nu3 + nu4 + nu5 + nu6 + nu7    PICTURE         PICDEM
+         @ PRow(), PCol() + 1  SAY nU8         PICTURE         PICDEM
+
+         IF !lNC
+            @ PRow(), PCol() + 1  SAY nU9         PICTURE         PICDEM
+            @ PRow(), PCol() + 1  SAY nUP         PICTURE         PICDEM
+            @ PRow(), PCol() + 1  SAY nUA         PICTURE         PICDEM
+         ENDIF
+      ENDIF
+
+      IF gMpcPomoc == "D"
+         @ PRow(), PCol() + 1  SAY nUM         PICTURE         PICDEM
+      ENDIF
+
+      SKIP
+   ENDDO
+
+
+   DokNovaStrana( 125, @nStr, 5 )
+   ? m
+   @ PRow() + 1, 0        SAY "Ukupno:"
+
+   // stanex   nabavna cijena
+   nTot8 := nTot + nTot2 + nTot3 + nTot4 + nTot5 + nTot6 + nTot7
+   nTot9 := nTotA - nTot8 - nTotP   // utvrdi razliku izmedju nc i prodajne cijene
+
+   IF lBezNC
+      @ PRow(), nCol1     SAY Space( Len( PicProc ) )
+      IF !lNC
+         @ PRow(), PCol() + 1  SAY nTotP         PICTURE         PICDEM
+         @ PRow(), PCol() + 1  SAY nTotA         PICTURE         PICDEM
+      ENDIF
+   ELSE
+      @ PRow(), nCol1     SAY nTot          PICTURE         PICDEM
+      @ PRow(), PCol() + 1  SAY Space( Len( PicProc ) )
+      @ PRow(), PCol() + 1  SAY nTot2         PICTURE         PICDEM
+      @ PRow(), PCol() + 1  SAY ntot + nTot2         PICTURE         PICDEM
+      @ PRow(), PCol() + 1  SAY ntot3 + ntot4 + ntot5 + ntot6 + ntot7  PICTURE         PICDEM
+      @ PRow(), PCol() + 1  SAY nTot8         PICTURE         PICDEM
+
+      IF !lNC
+         @ PRow(), PCol() + 1  SAY nTot9         PICTURE         PICDEM
+         @ PRow(), PCol() + 1  SAY nTotP         PICTURE         PICDEM
+         @ PRow(), PCol() + 1  SAY nTotA         PICTURE         PICDEM
+      ENDIF
+   ENDIF
+
+   IF gMpcPomoc == "D"
+      @ PRow(), PCol() + 1  SAY nTotM         PICTURE         PICDEM
+   ENDIF
+
+   IF !lBezNC .AND. ( g10Porez == "D" .OR. gVarVP == "2" )
+      ? m
+      IF gVarVP == "1"
+         ? "Ukalkulisani porez na ruc (PRUC):"
+         @ PRow(), PCol() + 1 SAY nTotB PICT picdem
+         @ PRow(), PCol() + 8 SAY "RUC - PRUC ="
+         @ PRow(), PCol() + 1 SAY AllTrim( Transform( nTot9, picdem ) )
+         @ PRow(), PCol() + 1 SAY "-"
+         @ PRow(), PCol() + 1 SAY AllTrim( Transform( nTotB, picdem ) )
+         @ PRow(), PCol() + 1 SAY "="
+         @ PRow(), PCol() + 1 SAY nTot9 - nTotB PICT picdem
+      ELSE
+         ? "RUC ="
+         @ PRow(), PCol() + 1 SAY AllTrim( Transform( nTot9 - nTotB, picdem ) ); ?? ","
+         @ PRow(), PCol() + 8 SAY "PRUC ="
+         @ PRow(), PCol() + 1 SAY AllTrim( Transform( nTotB, picdem ) ); ?? ","
+         @ PRow(), PCol() + 8 SAY "RUC + PRUC ="
+         @ PRow(), PCol() + 1 SAY AllTrim( Transform( nTot9, picdem ) )
+      ENDIF
+   ENDIF
+
+   IF !lBezNC .AND. Round( ntot3 + ntot4 + ntot5 + ntot6 + ntot7, 2 ) <> 0
+      DokNovaStrana( 125, @nStr, 10 )
+      ?
+      ?  m
+      ?  "Troskovi (analiticki):"
+      IF ntot3 <> 0
+         ?  c10T1, ":"
+         @ PRow(), 30 SAY  ntot3 PICT picdem
+      ENDIF
+      IF ntot4 <> 0
+         ?  c10T2, ":"
+         @ PRow(), 30 SAY  ntot4 PICT picdem
+      ENDIF
+      IF ntot5 <> 0
+         ?  c10T3, ":"
+         @ PRow(), 30 SAY  ntot5 PICT picdem
+      ENDIF
+      IF ntot6 <> 0
+         ?  c10T4, ":"
+         @ PRow(), 30 SAY  ntot6 PICT picdem
+      ENDIF
+      IF ntot7 <> 0
+         ?  c10T5, ":"
+         @ PRow(), 30 SAY  ntot7 PICT picdem
+      ENDIF
+      ? m
+      ? "Ukupno troskova:"
+      @ PRow(), 30 SAY  nTot3 + nTot4 + nTot5 + nTot6 + nTot7 PICT picdem
+      ? m
+   ENDIF
+
+   RETURN .T.
+
 
 
 
@@ -504,121 +507,121 @@ return
  *  \brief Stampa kalkulacije 10 - varijanta 3, za papir formata A3
  */
 
-function StKalk10_4()
-*{
-local nCol1:=nCol2:=0,npom:=0
-
-Private nPrevoz,nCarDaz,nZavTr,nBankTr,nSpedTr,nMarza,nMarza2
-// iznosi troskova i marzi koji se izracunavaju u KTroskovi()
-
-nStr:=0
-cIdPartner:=IdPartner; cBrFaktP:=BrFaktP; dDatFaktP:=DatFaktP
-
-cIdKonto:=IdKonto; cIdKonto2:=IdKonto2
-
-P_COND2
-?? SPACE(180)+"Str."+str(++nStr,3)     // 220-40
-? PADC("PRIJEMNI LIST - KALKULACIJA BR."+cIdFirma+"-"+cIdVD+"-"+cBrDok+"     Datum:"+DTOC(DatDok),242)
-? PADC(REPLICATE("-",64),242)
-select PARTN; HSEEK cIdPartner
-?
-? SPACE(104)+"DOBAVLJAC: "+cIdPartner+"-"+naz
-? SPACE(104)+"Racun broj: "+cBrFaktP+" od "+DTOC(dDatFaktP)
-?
-select KONTO; HSEEK cIdKonto
-?  "KONTO zaduzuje :",cIdKonto,"-",naz
+FUNCTION StKalk10_4()
 
 
- m:="--- ---------- ----------------------------------- ---"+" ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- -----------"
+   LOCAL nCol1 := nCol2 := 0, npom := 0
 
- ? m
+   PRIVATE nPrevoz, nCarDaz, nZavTr, nBankTr, nSpedTr, nMarza, nMarza2
+   // iznosi troskova i marzi koji se izracunavaju u KTroskovi()
 
- ? "*R.* Sifra    *                                   *Jed*"+"         F A K T U R A          *      R A B A T      *  CARINSKI TROSKOVI  *  OSTALI. ZAV. TROSK.*      M A R Z A      *POREZ NA PROM.PROIZV.*  IZNOS   * VELEPROD.*"
- ? "*br* artikla  *     N A Z I V    A R T I K L A    *mj.*"+"--------------------------------*---------------------*---------------------*---------------------*---------------------*---------------------*  VELE-   *  CIJENA  *"
- ? "*  *          *                                   *   *" + " Kolicina *  Cijena  *   Iznos  *    %     *   Iznos  *    %     *   Iznos  *    %     *   Iznos  *    %     *   Iznos  *    %     *   Iznos  * PRODAJE  *          *"
+   nStr := 0
+   cIdPartner := IdPartner; cBrFaktP := BrFaktP; dDatFaktP := DatFaktP
 
- ? m
- nTot:=nTot1:=nTot2:=nTot3:=nTot4:=nTot5:=nTot6:=nTot7:=nTot8:=nTot9:=nTotA:=0
- nTotB:=0
- nTotP:=nTotQ:=0
-select kalk_pripr
+   cIdKonto := IdKonto; cIdKonto2 := IdKonto2
 
-private cIdd:=idpartner+brfaktp+idkonto+idkonto2
-
-do while !eof() .and. cIdFirma==IdFirma .and.  cBrDok==BrDok .and. cIdVD==IdVD
-
-    vise_kalk_dok_u_pripremi(cIdd)
-    RptSeekRT()
-    KTroskovi()
-    DokNovaStrana(230, @nStr, 2)
+   P_COND2
+   ?? Space( 180 ) + "Str." + Str( ++nStr, 3 )     // 220-40
+   ? PadC( "PRIJEMNI LIST - KALKULACIJA BR." + cIdFirma + "-" + cIdVD + "-" + cBrDok + "     Datum:" + DToC( DatDok ), 242 )
+   ? PadC( Replicate( "-", 64 ), 242 )
+   SELECT PARTN; HSEEK cIdPartner
+   ?
+   ? Space( 104 ) + "DOBAVLJAC: " + cIdPartner + "-" + naz
+   ? Space( 104 ) + "Racun broj: " + cBrFaktP + " od " + DToC( dDatFaktP )
+   ?
+   SELECT KONTO; HSEEK cIdKonto
+   ?  "KONTO zaduzuje :", cIdKonto, "-", naz
 
 
-    if gKalo=="1"
-        SKol:=Kolicina-GKolicina-GKolicin2
-    else
-        SKol:=Kolicina
-    endif
+   m := "--- ---------- ----------------------------------- ---" + " ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- -----------"
 
-    nTot+=  (nU:=round(FCj*Kolicina,gZaokr))
-    if gKalo=="1"
-        nTot1+= (nU1:=round(FCj2*(GKolicina+GKolicin2),gZaokr))
-    else
-        nTot1+= (nU1:=round(NC*(GKolicina+GKolicin2),gZaokr))
-    endif
-    nTot2+= (nU2:=round(-Rabat/100*FCJ*Kolicina,gZaokr))
+   ? m
 
-    nTot3+= (nU3:=round(nPrevoz*SKol,gZaokr))
-    nTot4+= (nU4:=round(nBankTr*SKol,gZaokr))
-    nTot5+= (nU5:=round(nSpedTr*SKol,gZaokr))
-    nTot6+= (nU6:=round(nCarDaz*SKol,gZaokr))
-    nTot7+= (nU7:=round(nZavTr* SKol,gZaokr))
+   ?U "*R.* Sifra    *                                   *Jed*" + "         F A K T U R A          *      R A B A T      *  CARINSKI TROSKOVI  *  OSTALI. ZAV. TROSK.*      M A R Z A      *POREZ NA PROM.PROIZV.*  IZNOS   * VELEPROD.*"
+   ?U "*br* artikla  *     N A Z I V    A R T I K L A    *mj.*" + "--------------------------------*---------------------*---------------------*---------------------*---------------------*---------------------*  VELE-   *  CIJENA  *"
+   ?U "*  *          *                                   *   *" + " Količina *  Cijena  *   Iznos  *    %     *   Iznos  *    %     *   Iznos  *    %     *   Iznos  *    %     *   Iznos  *    %     *   Iznos  * PRODAJE  *          *"
 
-    nTot8+= (nU8:=round(NC *    (Kolicina-Gkolicina-GKolicin2),gZaokr) )
-    nTot9+= (nU9:=round(nMarza* (Kolicina-Gkolicina-GKolicin2),gZaokr) )
-    if !(roba->tip $ "VKX")
-     nUP:=0
-    else
-     if roba->tip="X"
-      nTotP+= (nUP:=round(mpcsapp/(1+tarifa->opp/100)*tarifa->opp/100*(Kolicina-Gkolicina-GKolicin2),gZaokr))
-     else
-      nTotP+= (nUP:=round(vpc/(1+tarifa->opp/100)*tarifa->opp/100*(Kolicina-Gkolicina-GKolicin2),gZaokr))
-     endif
-    endif
-    nTotA+= (nUA:=round(VPC*(Kolicina-Gkolicina-GKolicin2),gZaokr) )
-    if gVarVP=="1"
-      nTotB+= round( nU9*tarifa->vpp/100 ,gZaokr) // porez na razliku u cijeni
-    else
-      private cistaMar:=round(nU9/(1+tarifa->vpp/100) , gZaokr)
-      nTotB+= round(cistaMar*tarifa->vpp/100 , gZaokr)  // porez na razliku u cijeni
-    endif
+   ? m
+   nTot := nTot1 := nTot2 := nTot3 := nTot4 := nTot5 := nTot6 := nTot7 := nTot8 := nTot9 := nTotA := 0
+   nTotB := 0
+   nTotP := nTotQ := 0
+   SELECT kalk_pripr
 
-    @ prow()+1,0 SAY  Rbr PICTURE "999"
-    ?? " "+IdRoba+" "+PADR(ROBA->naz,35)+" "+ROBA->jmj
-    if roba->(fieldpos("KATBR"))<>0
-       ?? " KATBR:", roba->katbr
-    endif
+   PRIVATE cIdd := idpartner + brfaktp + idkonto + idkonto2
 
-    ?? " "+TRANSFORM(Kolicina,pickol)+" "+TRANSFORM(FCJ,PicCDEM)
-    ?? " "+TRANSFORM(nU,PICDEM)+" "+TRANSFORM(rabat,PicProc)
-    ?? " "+TRANSFORM(nU2,PICDEM)+" "+TRANSFORM(100*nU6/nU,PicProc)
-    ?? " "+TRANSFORM(nU6,PICDEM)+" "+TRANSFORM(100*(nU3+nU4+nU5+nU7)/nU,PicProc)
-    ?? " "+TRANSFORM((nU3+nU4+nU5+nU7),PICDEM)+" "+TRANSFORM(100*nMarza/NC,PicProc)
-    ?? " "+TRANSFORM(nU9,PICDEM)
-    
-    ?? " "+TRANSFORM(if(!(roba->tip $ "VKX"),0,tarifa->opp),PicProc)+" "+TRANSFORM(nUP,PICDEM)
-    ?? " "+TRANSFORM(nUA,PICDEM)+" "+TRANSFORM(VPC,PicCDEM)
-  skip
-enddo
+   DO WHILE !Eof() .AND. cIdFirma == IdFirma .AND.  cBrDok == BrDok .AND. cIdVD == IdVD
 
-DokNovaStrana(230, @nStr, 3)
-? m
-? "UKUPNO:" + SPACE(70) + TRANSFORM(nTot,PICDEM)
-?? SPACE(12)+TRANSFORM(nTot2,PICDEM)+SPACE(12)+TRANSFORM(nTot6,PICDEM)
-?? SPACE(12)+TRANSFORM((nTot3+nTot4+nTot5+nTot7),PICDEM)+SPACE(12)+TRANSFORM(nTot9,PICDEM)
-?? SPACE(12)+TRANSFORM(nTotP,PICDEM)
-?? " "+TRANSFORM(nTotA,PICDEM)
-? m
-?
-return
-*}
+      vise_kalk_dok_u_pripremi( cIdd )
+      RptSeekRT()
+      KTroskovi()
+      DokNovaStrana( 230, @nStr, 2 )
 
+
+      IF gKalo == "1"
+         SKol := Kolicina - GKolicina - GKolicin2
+      ELSE
+         SKol := Kolicina
+      ENDIF
+
+      nTot +=  ( nU := Round( FCj * Kolicina, gZaokr ) )
+      IF gKalo == "1"
+         nTot1 += ( nU1 := Round( FCj2 * ( GKolicina + GKolicin2 ), gZaokr ) )
+      ELSE
+         nTot1 += ( nU1 := Round( NC * ( GKolicina + GKolicin2 ), gZaokr ) )
+      ENDIF
+      nTot2 += ( nU2 := Round( -Rabat / 100 * FCJ * Kolicina, gZaokr ) )
+
+      nTot3 += ( nU3 := Round( nPrevoz * SKol, gZaokr ) )
+      nTot4 += ( nU4 := Round( nBankTr * SKol, gZaokr ) )
+      nTot5 += ( nU5 := Round( nSpedTr * SKol, gZaokr ) )
+      nTot6 += ( nU6 := Round( nCarDaz * SKol, gZaokr ) )
+      nTot7 += ( nU7 := Round( nZavTr * SKol, gZaokr ) )
+
+      nTot8 += ( nU8 := Round( NC *    ( Kolicina - Gkolicina - GKolicin2 ), gZaokr ) )
+      nTot9 += ( nU9 := Round( nMarza * ( Kolicina - Gkolicina - GKolicin2 ), gZaokr ) )
+      IF !( roba->tip $ "VKX" )
+         nUP := 0
+      ELSE
+         IF roba->tip = "X"
+            nTotP += ( nUP := Round( mpcsapp / ( 1 + tarifa->opp / 100 ) * tarifa->opp / 100 * ( Kolicina - Gkolicina - GKolicin2 ), gZaokr ) )
+         ELSE
+            nTotP += ( nUP := Round( vpc / ( 1 + tarifa->opp / 100 ) * tarifa->opp / 100 * ( Kolicina - Gkolicina - GKolicin2 ), gZaokr ) )
+         ENDIF
+      ENDIF
+      nTotA += ( nUA := Round( VPC * ( Kolicina - Gkolicina - GKolicin2 ), gZaokr ) )
+      IF gVarVP == "1"
+         nTotB += Round( nU9 * tarifa->vpp / 100,gZaokr ) // porez na razliku u cijeni
+      ELSE
+         PRIVATE cistaMar := Round( nU9 / ( 1 + tarifa->vpp / 100 ), gZaokr )
+         nTotB += Round( cistaMar * tarifa->vpp / 100, gZaokr )  // porez na razliku u cijeni
+      ENDIF
+
+      @ PRow() + 1, 0 SAY  Rbr PICTURE "999"
+      ?? " " + IdRoba + " " + PadR( ROBA->naz, 35 ) + " " + ROBA->jmj
+      IF roba->( FieldPos( "KATBR" ) ) <> 0
+         ?? " KATBR:", roba->katbr
+      ENDIF
+
+      ?? " " + Transform( Kolicina, pickol ) + " " + Transform( FCJ, PicCDEM )
+      ?? " " + Transform( nU, PICDEM ) + " " + Transform( rabat, PicProc )
+      ?? " " + Transform( nU2, PICDEM ) + " " + Transform( 100 * nU6 / nU, PicProc )
+      ?? " " + Transform( nU6, PICDEM ) + " " + Transform( 100 * ( nU3 + nU4 + nU5 + nU7 ) / nU, PicProc )
+      ?? " " + Transform( ( nU3 + nU4 + nU5 + nU7 ), PICDEM ) + " " + Transform( 100 * nMarza / NC, PicProc )
+      ?? " " + Transform( nU9, PICDEM )
+
+      ?? " " + Transform( if( !( roba->tip $ "VKX" ), 0, tarifa->opp ), PicProc ) + " " + Transform( nUP, PICDEM )
+      ?? " " + Transform( nUA, PICDEM ) + " " + Transform( VPC, PicCDEM )
+      SKIP
+   ENDDO
+
+   DokNovaStrana( 230, @nStr, 3 )
+   ? m
+   ? "UKUPNO:" + Space( 70 ) + Transform( nTot, PICDEM )
+   ?? Space( 12 ) + Transform( nTot2, PICDEM ) + Space( 12 ) + Transform( nTot6, PICDEM )
+   ?? Space( 12 ) + Transform( ( nTot3 + nTot4 + nTot5 + nTot7 ), PICDEM ) + Space( 12 ) + Transform( nTot9, PICDEM )
+   ?? Space( 12 ) + Transform( nTotP, PICDEM )
+   ?? " " + Transform( nTotA, PICDEM )
+   ? m
+   ?
+
+   RETURN .T.

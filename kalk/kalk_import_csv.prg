@@ -351,7 +351,7 @@ FUNCTION Txt2TOst( aDbf, cTxtFile )
    _o_file:Open()
 
    IF _o_file:Error()
-      msgbeep( _o_file:ErrorMsg( "Problem sa otvaranjem fajla: " ) )
+      MsgBeep( _o_file:ErrorMsg( "Problem sa otvaranjem fajla: " ) )
       RETURN
    ENDIF
 
@@ -436,7 +436,7 @@ STATIC FUNCTION importost()
    ENDDO
 
    IF nCnt > 0
-      msgbeep( "zamjenjeno " + AllTrim( Str( nCnt ) ) + " stavki..." )
+      MsgBeep( "zamjenjeno " + AllTrim( Str( nCnt ) ) + " stavki..." )
    ENDIF
 
    SELECT ( nTarea )
@@ -484,7 +484,7 @@ FUNCTION Txt2TTbl( aDbf, cTxtFile )
    _o_file:Open()
 
    IF _o_file:Error()
-      msgbeep( _o_file:ErrorMsg( "Problem sa otvaranjem fajla: " ) )
+      MsgBeep( _o_file:ErrorMsg( "Problem sa otvaranjem fajla: " ) )
       RETURN
    ENDIF
 

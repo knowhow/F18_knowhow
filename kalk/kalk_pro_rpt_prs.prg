@@ -37,7 +37,7 @@ endif
 if cExpDbf == "D"
 	
 	if cRekap == "D"
-		msgbeep( "Moguce exportovati samo specifikacija !")
+		MsgBeep( "Moguce exportovati samo specifikacija !")
 		return
 	endif
 	

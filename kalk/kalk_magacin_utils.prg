@@ -203,7 +203,7 @@ FUNCTION KalkNabP( cIdFirma, cIdroba, cIdkonto, nKolicina, nKolZN, nNC, nSNC, dD
          Beep( 4 )
          CLEAR TYPEAHEAD
 
-         msgbeep( "Odstupanje u odnosu na zadnji ulaz je#" + ;
+         MsgBeep( "Odstupanje u odnosu na zadnji ulaz je#" + ;
             AllTrim( Str( Abs( nOdst ) ) ) + " %" + "#" + ;
             "artikal: " + AllTrim( _idroba ) + " " + ;
             PadR( roba->naz, 15 ) + " nc:" + ;
@@ -1064,7 +1064,7 @@ FUNCTION KalkNab( cIdFirma, cIdRoba, cIdKonto, nKolicina, nKolZN, nNC, nSNc, dDa
          Beep( 4 )
          CLEAR TYPEAHEAD
 
-         msgbeep( "Odstupanje u odnosu na zadnji ulaz je#" + ;
+         MsgBeep( "Odstupanje u odnosu na zadnji ulaz je#" + ;
             AllTrim( Str( Abs( nOdst ) ) ) + " %" + "#" + ;
             "artikal: " + AllTrim( _idroba ) + " " + ;
             PadR( roba->naz, 15 ) + " nc:" + ;
@@ -1135,7 +1135,7 @@ FUNCTION p_nc_popup( cIdRoba )
 
       // daj mi odstupanje !
       nOdstupanje := Round( aNC_ctrl[ nScan, 5 ], 2 )
-      msgbeep( "Odstupanje u odnosu na zadnji ulaz je#" + ;
+      MsgBeep( "Odstupanje u odnosu na zadnji ulaz je#" + ;
          AllTrim( Str( nOdstupanje ) ) + " %" )
 
    ENDIF

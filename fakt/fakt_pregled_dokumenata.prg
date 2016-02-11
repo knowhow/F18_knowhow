@@ -506,7 +506,7 @@ FUNCTION fakt_tabela_komande( lOpcine, fakt_doks_filt, model )
 
       IF postoji_fiskalni_racun( fakt_doks->idfirma, fakt_doks->idtipdok, fakt_doks->brdok, model )
 
-         msgbeep( "veza: fiskalni račun već setovana !" )
+         MsgBeep( "veza: fiskalni račun već setovana !" )
 
          IF Pitanje( "FAKT_PROM_VEZU", "Promjeniti postojeću vezu (D/N)?", "N" ) == "N"
             RETURN DE_CONT

@@ -37,7 +37,7 @@ m:="--- ---------- ---------- ---------- ---------- ---------- ---------- ------
 ? m
 ? "*R * ROBA     * Kolicina *   NC     *  VPC    *    MPC   *   PPP %  *   PPP    *  MPC     *"
 ? "*BR*          *          *          *         *          *   PPU %  *   PPU    *  SA Por  *"
-? "*  *          *          *    �     *         *     �    *     �    *    �     *    �     *"
+? "*  *          *          *   sum    *         *    sum   *    sum   *   sum    *   sum    *"
 ? m
 nTot1:=nTot1b:=nTot2:=nTot3:=nTot4:=nTot5:=nTot6:=nTot7:=0
 

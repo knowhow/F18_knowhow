@@ -647,7 +647,7 @@ FUNCTION pr_pr_sast()
    ENDDO
 
    IF Len( aError ) == 0
-      msgbeep( "sve ok :)" )
+      MsgBeep( "sve ok :)" )
       RETURN
    ENDIF
 
@@ -783,7 +783,7 @@ FUNCTION pr_br_sast()
    ENDDO
 
    IF Len( aError ) == 0
-      msgbeep( "sve ok :)" )
+      MsgBeep( "sve ok :)" )
       RETURN
    ENDIF
 
@@ -935,7 +935,7 @@ FUNCTION pr_ned_sast()
    ENDDO
 
    IF Len( aError ) == 0
-      msgbeep( "sve ok :)" )
+      MsgBeep( "sve ok :)" )
       RETURN
    ENDIF
 
@@ -1149,7 +1149,7 @@ FUNCTION pr_dupl_sast()
    boxc()
 
    IF Len( aError ) == 0
-      msgbeep( "sve ok :)" )
+      MsgBeep( "sve ok :)" )
       RETURN
    ENDIF
 
@@ -1274,7 +1274,7 @@ FUNCTION _exp_sast_dbf()
 
    boxc()
 
-   msgbeep( "Podaci se nalaze u " + PRIVPATH + "r_export.dbf tabeli !" )
+   MsgBeep( "Podaci se nalaze u " + PRIVPATH + "r_export.dbf tabeli !" )
 
    SELECT r_export
    USE
@@ -1323,7 +1323,7 @@ FUNCTION _exp_roba_dbf()
 
    boxc()
 
-   msgbeep( "Podaci se nalaze u " + PRIVPATH + "r_export.dbf tabeli !" )
+   MsgBeep( "Podaci se nalaze u " + PRIVPATH + "r_export.dbf tabeli !" )
 
    SELECT r_export
    USE

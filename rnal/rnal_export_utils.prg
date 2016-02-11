@@ -21,7 +21,7 @@ FUNCTION g_exp_location( cLocation )
    cLocation := AllTrim( gExpOutDir )
 
    IF Empty( cLocation )
-      msgbeep( "Nije podesen export direktorij!#Parametri -> 4. parametri exporta" )
+      MsgBeep( "Nije podesen export direktorij!#Parametri -> 4. parametri exporta" )
       nRet := 0
    ENDIF
 
@@ -71,7 +71,7 @@ FUNCTION cre_exp_file( nDoc_no, cLocation, cFileName, nH )
    nH := FCreate( cLocation + cFileName )
 
    IF nH == -1
-      msgbeep( "greska pri kreiranju fajla" )
+      MsgBeep( "greska pri kreiranju fajla" )
    ENDIF
 
    RETURN 1

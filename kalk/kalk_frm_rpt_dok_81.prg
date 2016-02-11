@@ -364,21 +364,21 @@ if !IsPDV()
  IF lPrikPRUC
    ? "*R * ROBA     *  FCJ     * RABAT    *  FCJ-RAB  * TROSKOVI *    NC    * MARZA.   * POREZ NA *   MPC    * MPCSaPP  *"
    ? "*BR* TARIFA   *  KOLICINA* DOBAVLJ  *           *          *          *          *   MARZU  *          *          *"
-   ? "*  *          *    �     *   �      *     �     *          *          *    �     *    �     *    �     *    �     *"
+   ? "*  *          *   sum    *  sum     *    sum    *          *          *   sum    *   sum    *   sum    *   sum    *"
  ELSE
    ? "*R * ROBA     *  FCJ     * RABAT    *  FCJ-RAB  * TROSKOVI *    NC    * MARZA.   *   MPC    * MPCSaPP  *"
    ? "*BR* TARIFA   *  KOLICINA* DOBAVLJ  *           *          *          *          *          *          *"
-   ? "*  *          *    �     *   �      *     �     *          *          *    �     *    �     *    �     *"
+   ? "*  *          *   sum    *  sum     *    sum    *          *          *   sum    *   sum    *   sum    *"
  ENDIF
 else
  IF lPrikPRUC
    ? "*R * ROBA     *  FCJ     * RABAT    *  FCJ-RAB  * TROSKOVI *    NC    * MARZA.   * POREZ NA *   MPC    * MPCSaPDV *"
    ? "*BR* TARIFA   *  KOLICINA* DOBAVLJ  *           *          *          *          *   MARZU  *          *          *"
-   ? "*  *          *    �     *   �      *     �     *          *          *    �     *    �     *    �     *    �     *"
+   ? "*  *          *   sum    *  sum     *    sum    *          *          *   sum    *   sum    *   sum    *   sum    *"
  ELSE
    ? "*R * ROBA     *  FCJ     * RABAT    *  FCJ-RAB  * TROSKOVI *    NC    * MARZA.   *    PC    *  PDV(%)  *    PC    *"
    ? "*BR* TARIFA   *  KOLICINA* DOBAVLJ  *           *          *          *          *  BEZ PDV *  PDV     *  SA PDV  *"
-   ? "*  *          *    �     *   �      *     �     *          *          *    �     *    �     *    �     *          *"
+   ? "*  *          *   sum    *  sum     *    sum    *          *          *   sum    *   sum    *   sum    *          *"
  ENDIF
 
 endif

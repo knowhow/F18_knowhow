@@ -11,6 +11,7 @@
 
 #include "f18.ch"
 
+MEMVAR m_x, m_y
 
 FUNCTION refresh_me_izbaciti( a_dbf_rec, lSilent, lFromMyUse )
 
@@ -31,11 +32,10 @@ FUNCTION refresh_me_izbaciti( a_dbf_rec, lSilent, lFromMyUse )
 
    _wa := a_dbf_rec[ "wa" ]
 
-
    _msg_1 := "START refresh_me: " + a_dbf_rec[ "alias" ] + " / " + a_dbf_rec[ "table" ]
 
    IF ! lSilent
-      Box( "#Molimo sačekajte...", 7, 60 )
+      Box( "#Molimo sačekajte...", 7, 75 )
       @ m_x + 1, m_y + 2 SAY _msg_1
    ENDIF
 

@@ -259,7 +259,7 @@ STATIC FUNCTION ld_unos_obracuna_box( lSaveObracun )
 
    IF nO_ret = 0
 
-      msgbeep( "Ne postoje unešeni parametri obračuna za " + ;
+      MsgBeep( "Ne postoje unešeni parametri obračuna za " + ;
          Str( cMjesec, 2 ) + "/" + Str( cGodina, 4 ) + " !!" )
 
       boxc()
@@ -268,7 +268,7 @@ STATIC FUNCTION ld_unos_obracuna_box( lSaveObracun )
 
    ELSEIF nO_ret = 2
 
-      msgbeep( "Ne postoje unešeni parametri obračuna za " + ;
+      MsgBeep( "Ne postoje unešeni parametri obračuna za " + ;
          Str( cMjesec, 2 ) + "/" + Str( cGodina, 4 ) + " !!" + ;
          "#Koristit ću postojeće parametre." )
    ENDIF

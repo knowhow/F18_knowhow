@@ -295,7 +295,7 @@ FUNCTION _val_konv( cDn )
    IF cDN $ "DN"
       RETURN lRet
    ELSE
-      msgbeep( "Preracun: " + valpomocna() + "=>" + valdomaca() + "#Unjeti 'D' ili 'N' !" )
+      MsgBeep( "Preracun: " + valpomocna() + "=>" + valdomaca() + "#Unjeti 'D' ili 'N' !" )
       lRet := .F.
       RETURN lRet
    ENDIF

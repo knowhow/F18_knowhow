@@ -161,7 +161,7 @@ do while !eof()
             endif
             seek cnovi
             if found()
-                msgbeep("vec postoji "+cid)
+                MsgBeep("vec postoji "+cid)
             else
                 go nTSRec
                 _rec := dbf_get_rec()

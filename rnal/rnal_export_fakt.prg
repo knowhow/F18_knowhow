@@ -180,7 +180,7 @@ FUNCTION exp_2_fmk( lTemp, nDoc_no, aDocList, lNoGen )
             USE
 
             SELECT ( nTArea )
-            msgbeep( "Operacija prekinuta !!!" )
+            MsgBeep( "Operacija prekinuta !!!" )
             RETURN
 
          ENDIF
@@ -198,7 +198,7 @@ FUNCTION exp_2_fmk( lTemp, nDoc_no, aDocList, lNoGen )
             USE
 
             SELECT ( nTArea )
-            msgbeep( "Operacija prekinuta !!!" )
+            MsgBeep( "Operacija prekinuta !!!" )
             RETURN
 
          ENDIF
@@ -405,7 +405,7 @@ FUNCTION exp_2_fmk( lTemp, nDoc_no, aDocList, lNoGen )
                AllTrim( Str( nArt_id ) ), cIdRoba )
 
          ELSE
-            msgbeep( "Neki artikli nemaju definisani u tabeli relacija#Prekidam operaciju !" )
+            MsgBeep( "Neki artikli nemaju definisani u tabeli relacija#Prekidam operaciju !" )
             SELECT ( F_FAKT_PRIPR )
             USE
 
@@ -545,7 +545,7 @@ FUNCTION exp_2_fmk( lTemp, nDoc_no, aDocList, lNoGen )
    SELECT ( F_FAKT_PRIPR )
    USE
 
-   msgbeep( "export dokumenta zavrsen !" )
+   MsgBeep( "export dokumenta zavrsen !" )
 
    SELECT ( nTArea )
 

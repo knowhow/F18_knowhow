@@ -494,7 +494,7 @@ FUNCTION del_siht()
    GO TOP
    SET FILTER TO
 
-   msgbeep( "pobrisao " + AllTrim( Str( nCnt ) ) + " zapisa..." )
+   MsgBeep( "pobrisao " + AllTrim( Str( nCnt ) ) + " zapisa..." )
 
    RETURN
 

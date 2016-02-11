@@ -969,7 +969,7 @@ FUNCTION fill_rb_traka( cIdPos, cBrDok, dDatRn, lPrepis, aRacuni, cTime )
       GO TOP
       SEEK cIdPos + VD_RN + DToS( dDatRn ) + cBrDok
 
-      // msgbeep( _pos->brdok + "," + cIdPos + "," + VD_RN + "," + cBrDok + "," + DTOS( dDatRn ) )
+      // MsgBeep( _pos->brdok + "," + cIdPos + "," + VD_RN + "," + cBrDok + "," + DTOS( dDatRn ) )
 
       IF !lPrepis
          cSto := _pos->sto

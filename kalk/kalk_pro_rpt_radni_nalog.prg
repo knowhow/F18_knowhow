@@ -39,7 +39,7 @@ select PARTN; HSEEK cIdPartner
   ? "*R *Konto  * ROBA     *          *  NCJ     * "+cRNT1+" * "+cRNT2+" * "+cRNT3+" * "+cRNT4+" * "+cRNT5+" * Cij.Kost *  Marza   * Prod.Cj * "
  endif
  ? "*BR*       * TARIFA   * KOLICINA *          *          *          *          *          *          *          *          *         *"
- ? "*  *       *          *          *    �     *    �     *    �     *     �    *    �     *    �     *    �     *    �     *   �     *"
+ ? "*  *       *          *          *   sum    *   sum    *   sum    *    sum   *   sum    *   sum    *   sum    *   sum    *  sum    *"
  ? m
  nTot:=nTot1:=nTot2:=nTot3:=nTot4:=nTot5:=nTot6:=nTot7:=nTot8:=nTot9:=nTotA:=0
 

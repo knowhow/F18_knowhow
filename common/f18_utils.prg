@@ -168,7 +168,7 @@ FUNCTION vpn_support( set_params )
 
 #ifdef __PLATFORM__WINDOWS
 
-   msgbeep( "Opcija nije omogucena !" )
+   MsgBeep( "Opcija nije omogucena !" )
 
    RETURN
 #endif
@@ -239,7 +239,7 @@ STATIC FUNCTION _vpn_start_stop( status, conn_name )
    _err := f18_run( _cmd )
 
    IF _err <> 0
-      msgbeep( "Problem sa vpn konekcijom:#" + AllTrim( conn_name ) + " !???" )
+      MsgBeep( "Problem sa vpn konekcijom:#" + AllTrim( conn_name ) + " !???" )
       RETURN _err
    ENDIF
 

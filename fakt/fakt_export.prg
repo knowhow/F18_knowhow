@@ -182,7 +182,7 @@ STATIC FUNCTION fill_export_table( dD_f, dD_t, cId_f, cId_td )
    ENDDO
 
    IF nCount > 0
-      msgbeep( "Exportovao " + AllTrim( Str( nCount ) ) + " zapisa u R_EXP.DBF !" )
+      MsgBeep( "Exportovao " + AllTrim( Str( nCount ) ) + " zapisa u R_EXP.DBF !" )
    ENDIF
 
    RETURN

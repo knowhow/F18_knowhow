@@ -978,7 +978,7 @@ FUNCTION hcp_delete_cmd_ok( dev_params )
    _tmp := dev_params[ "out_dir" ] + _inp_dir + SLASH + _cmdok
 
    IF FErase( _tmp ) < 0
-      msgbeep( "greska sa brisanjem fajla CMD.OK !" )
+      MsgBeep( "greska sa brisanjem fajla CMD.OK !" )
    ENDIF
 
    RETURN
@@ -998,7 +998,7 @@ FUNCTION hcp_delete_error( dev_params, f_name )
    // primjer: c:\hcp\from_fp\RAC001.ERR
    _f_name := dev_params[ "out_dir" ] + _answ_dir + SLASH + StrTran( f_name, "XML", "ERR" )
    IF FErase( _f_name ) < 0
-      msgbeep( "greska sa brisanjem fajla..." )
+      MsgBeep( "greska sa brisanjem fajla..." )
    ENDIF
 
    RETURN
@@ -1057,7 +1057,7 @@ FUNCTION hcp_read_billstate( dev_params, f_name, storno )
    BoxC()
 
    IF !File( _f_name )
-      msgbeep( "Fajl " + _f_name + " ne postoji !!!" )
+      MsgBeep( "Fajl " + _f_name + " ne postoji !!!" )
       _err := -9
       RETURN _err
    ENDIF
@@ -1113,7 +1113,7 @@ FUNCTION hcp_read_billstate( dev_params, f_name, storno )
 
          _msg += "fiskalni racun: "
 
-         msgbeep( _msg + AllTrim( Str( _fisc_no ) ) )
+         MsgBeep( _msg + AllTrim( Str( _fisc_no ) ) )
 
          EXIT
 
@@ -1178,7 +1178,7 @@ FUNCTION hcp_read_error( dev_params, f_name, trig )
    BoxC()
 
    IF !File( _f_name )
-      msgbeep( "Fajl " + _f_name + " ne postoji !!!" )
+      MsgBeep( "Fajl " + _f_name + " ne postoji !!!" )
       _err := -9
       RETURN _err
    ENDIF
@@ -1216,7 +1216,7 @@ FUNCTION hcp_read_error( dev_params, f_name, trig )
 
 
    IF !Empty( _err_code )
-      msgbeep( "Greska: " + _err_code + " - " + _err_descr )
+      MsgBeep( "Greska: " + _err_code + " - " + _err_descr )
       _err := Val( _err_code )
       FErase( _f_name )
    ENDIF

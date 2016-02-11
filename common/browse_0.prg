@@ -916,7 +916,7 @@ FUNCTION EvEr( cExpr, cMes, cT )
 
    IF !( Type( cPom ) = cT )
       lVrati := .F.
-      msgbeep( cMes )
+      MsgBeep( cMes )
    ENDIF
 
    RETURN lVrati

@@ -477,7 +477,7 @@ STATIC FUNCTION _g_pdf_viewer( cViewer )
    ENDIF
 
    IF !Empty( cViewer ) .AND. !File( cViewer )
-      msgbeep( "Ne mogu naci Acrobat Reader!#Podesite rucno lokaciju preglednika..." )
+      MsgBeep( "Ne mogu naci Acrobat Reader!#Podesite rucno lokaciju preglednika..." )
    ENDIF
 
    RETURN .T.

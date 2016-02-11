@@ -300,11 +300,11 @@ STATIC FUNCTION _print_report_header( id_vd )
    IF id_vd = "47"
       ? "*R * ROBA     * Kolicina *    MPC   *   PDV %  *   MPC     *"
       ? "*BR*          *          *          *   PDV    *  SA PDV   *"
-      ? "*  *          *          *     �    *     �    *     �     *"
+      ? "*  *          *          *    sum   *    sum   *    sum    *"
    ELSE
       ? "*R * ROBA     * Kolicina *  NAB.CJ  *  MARZA  *  Prod.C  *  Popust  * PC-pop.  *   PDV %  *   MPC    * MPC     *"
       ? "*BR*          *          *   U MP   *         *  Prod.V  *          * PV-pop.  *   PDV    *  SA PDV  * SA PDV  *"
-      ? "*  *          *          *    �     *         *     �    *          *          *     �    * - popust *   �     *"
+      ? "*  *          *          *   sum    *         *    sum   *          *          *    sum   * - popust *  sum    *"
    ENDIF
 
    RETURN

@@ -12,7 +12,7 @@
 
 #include "f18.ch"
 
-FUNCTION OFmkSvi()
+FUNCTION open_sif_tables_1()
 
    O_KONTO
    O_PARTN
@@ -22,10 +22,8 @@ FUNCTION OFmkSvi()
    O_RJ
    O_BANKE
    O_OPS
-
    O_SIFK
    O_SIFV
-
    O_FAKT_OBJEKTI
 
    RETURN .T.

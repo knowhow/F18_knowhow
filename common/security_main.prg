@@ -28,13 +28,12 @@ FUNCTION GetUserID()
       QUIT_1
    ENDIF
 
-   //IF Valtype(oTable) == "L" .OR. oTable:Eof()
-   //    RETURN 0
-   IF ValType( oTable ) == "O"
-      RETURN oTable:FieldGet( 1 )
-   ELSE
+   IF sql_error_in_query( oTable )
       RETURN 0
    ENDIF
+
+   RETURN oTable:FieldGet( 1 )
+
 
 
 
@@ -213,7 +212,7 @@ FUNCTION get_list_f18_users()
       RETURN NIL
    ENDIF
 
-   _table:GoTo(1)
+   _table:GoTo( 1 )
 
    FOR _i := 1 TO _table:LastRec()
 

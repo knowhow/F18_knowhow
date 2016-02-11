@@ -77,7 +77,7 @@ FUNCTION SifFmkSvi()
       AAdd( opcexe, {|| P_Lokal() } )
    ENDIF
 
-   OFmkSvi()
+   open_sif_tables_1()
 
    PRIVATE Izbor := 1
    gMeniSif := .T.

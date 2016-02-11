@@ -285,7 +285,7 @@ FUNCTION zapp( pack )
    ENDIF
 
 
-   BEGIN SEQUENCE
+   BEGIN SEQUENCE WITH {| err | Break( err ) }
 
       log_write( "ZAP exclusive: " + Alias(), 5 )
       __dbZap()
@@ -312,7 +312,6 @@ FUNCTION zapp( pack )
       PopWa()
 
    END SEQUENCE
-
 
    RETURN NIL
 

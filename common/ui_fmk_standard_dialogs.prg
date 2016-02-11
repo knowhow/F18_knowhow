@@ -34,10 +34,6 @@ FUNCTION Pitanje( cId, cPitanje, cOdgDefault, cMogOdg )
    PRIVATE GetList := {}
 
 
-   IF gAppSrv
-      RETURN cOdgDefault
-   ENDIF
-
    cPom := Set( _SET_DEVICE )
    SET DEVICE TO SCREEN
 
@@ -71,7 +67,7 @@ FUNCTION Pitanje( cId, cPitanje, cOdgDefault, cMogOdg )
    SET CONFIRM ON
 #endif
 
-   SET( _SET_DEVICE, cPom )
+   Set( _SET_DEVICE, cPom )
 
    RETURN cOdgovor
 
@@ -108,10 +104,6 @@ FUNCTION Pitanje2( cId, cPitanje, cOdgDefault )
    LOCAL cPom := Set( _SET_DEVICE )
    PRIVATE GetList := {}
 
-   IF gAppSrv
-      RETURN cOdgDefault
-   ENDIF
-
    SET DEVICE TO SCREEN
    IF nDuz < 54; nDuz := 54; ENDIF
 
@@ -139,7 +131,7 @@ FUNCTION Pitanje2( cId, cPitanje, cOdgDefault )
    SET CONFIRM ON
 #endif
 
-   SET( _SET_DEVICE, cPom )
+   Set( _SET_DEVICE, cPom )
 
    RETURN cOdg
 
@@ -148,16 +140,10 @@ FUNCTION Pitanje2( cId, cPitanje, cOdgDefault )
 
 FUNCTION print_dialog_box( cDirekt )
 
-   IF gAppSrv
-      RETURN cDirekt
-   ENDIF
-
    SET CONFIRM OFF
    SET CURSOR ON
 
-   IF !gAppSrv
-      cDirekt := select_print_mode( @cDirekt )
-   ENDIF
+   cDirekt := select_print_mode( @cDirekt )
 
    SET CONFIRM ON
 
@@ -277,10 +263,6 @@ FUNCTION GetLozinka( nSiflen )
 FUNCTION PozdravMsg( cNaslov, cVer, lGreska )
 
    LOCAL lInvert
-
-   IF gAppSrv
-      RETURN
-   ENDIF
 
    lInvert := .F.
 

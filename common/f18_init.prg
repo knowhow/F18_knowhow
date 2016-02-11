@@ -11,12 +11,16 @@
 
 #include "f18.ch"
 
+STATIC s_mainThreadID
+STATIC s_threadDbfsID
 
-STATIC __server := NIL
-STATIC __server_params := NIL
+
+STATIC s_psqlServer := NIL
+STATIC s_psqlServerDbfThread := NIL
+STATIC s_psqlServer_params := NIL
 
 // logiranje na server
-STATIC __server_log := .F.
+STATIC s_psqlServer_log := .F.
 
 STATIC __f18_home := NIL
 STATIC __f18_home_root := NIL
@@ -61,10 +65,6 @@ STATIC __log_level := F18_DEFAULT_LOG_LEVEL
 FUNCTION f18_init_app( arg_v )
 
    LOCAL oLogin
-
-   rddSetDefault( RDDENGINE )
-
-   Set( _SET_AUTOPEN, .F.  )
 
    init_harbour()
 
@@ -140,8 +140,8 @@ FUNCTION f18_init_app_login( force_connect, arg_v )
    _get_server_params_from_config()
 
    oLogin := F18Login():New()
-   oLogin:main_db_login( @__server_params, force_connect )
-   __main_db_params := __server_params
+   oLogin:main_db_login( @s_psqlServer_params, force_connect )
+   __main_db_params := s_psqlServer_params
 
    IF oLogin:_main_db_connected
 
@@ -150,7 +150,7 @@ FUNCTION f18_init_app_login( force_connect, arg_v )
       IF oLogin:_login_count > 1
          // ostvari opet konekciju na main_db postgres
          oLogin:disconnect()
-         oLogin:main_db_login( @__server_params, .T. )
+         oLogin:main_db_login( @s_psqlServer_params, .T. )
       ENDIF
 
       // upisi parametre za sljedeci put...
@@ -158,7 +158,7 @@ FUNCTION f18_init_app_login( force_connect, arg_v )
 
       DO WHILE .T.
 
-         IF !oLogin:company_db_login( @__server_params )
+         IF !oLogin:company_db_login( @s_psqlServer_params )
             QUIT
          ENDIF
 
@@ -225,7 +225,7 @@ FUNCTION f18_old_session()
 
    LOCAL oLogin := F18Login():New()
 
-   oLogin:company_db_relogin( @__server_params )
+   oLogin:company_db_relogin( @s_psqlServer_params )
 
    RETURN .T.
 
@@ -236,11 +236,15 @@ FUNCTION f18_old_session()
 // -------------------------------
 FUNCTION init_harbour()
 
+   rddSetDefault( RDDENGINE )
+   Set( _SET_AUTOPEN, .F.  )
+
    SET CENTURY OFF
    // epoha je u stvari 1999, 2000 itd
    SET EPOCH TO 1960
    SET DATE TO GERMAN
 
+   s_mainThreadID := hb_threadSelf()
 
    hb_cdpSelect( "SL852" )
    hb_SetTermCP( "SLISO" )
@@ -264,11 +268,6 @@ FUNCTION set_screen_dimensions()
    LOCAL _pix_height := hb_gtInfo( HB_GTI_DESKTOPHEIGHT )
 
    _msg := "screen res: " + AllTrim( to_str( _pix_width ) ) + " " + AllTrim( to_str( _pix_height ) ) + " varijanta: "
-
-   // #ifdef NODE
-
-   // RETURN .T.
-   // #endif
 
 
    IF _pix_width == NIL
@@ -314,8 +313,6 @@ FUNCTION set_screen_dimensions()
       font_width( 12 )
       maxrows( 35 )
       maxcols( 105 )
-
-
       log_write( _msg + "2long" )
 #endif
 
@@ -367,24 +364,20 @@ FUNCTION set_screen_dimensions()
       QUIT_1
    ENDIF
 
-   // #ifdef F18_DEBUG
-   // MsgBeep( Str( maxrows() ) + " " +  Str( maxcols() ) )
-   // #endif
-
    RETURN .T.
 
 #ifdef TEST
 
 FUNCTION _get_server_params_from_config()
 
-   __server_params := hb_Hash()
-   __server_params[ "port" ] := 5432
-   __server_params[ "database" ] := "f18_test"
-   __server_params[ "host" ] := "localhost"
-   __server_params[ "user" ] := "test1"
-   __server_params[ "schema" ] := "fmk"
-   __server_params[ "password" ] := __server_params[ "user" ]
-   __server_params[ "postgres" ] := "postgres"
+   s_psqlServer_params := hb_Hash()
+   s_psqlServer_params[ "port" ] := 5432
+   s_psqlServer_params[ "database" ] := "f18_test"
+   s_psqlServer_params[ "host" ] := "localhost"
+   s_psqlServer_params[ "user" ] := "test1"
+   s_psqlServer_params[ "schema" ] := "fmk"
+   s_psqlServer_params[ "password" ] := s_psqlServer_params[ "user" ]
+   s_psqlServer_params[ "postgres" ] := "postgres"
 
    RETURN
 
@@ -408,21 +401,21 @@ FUNCTION _get_server_params_from_config()
    ENDIF
 
    // definisi parametre servera
-   __server_params := hb_Hash()
+   s_psqlServer_params := hb_Hash()
 
    // preuzmi iz ini-ja
    FOR EACH _key in _ini_params:Keys
-      __server_params[ _key ] := _ini_params[ _key ]
+      s_psqlServer_params[ _key ] := _ini_params[ _key ]
    NEXT
 
    // port je numeric
-   IF ValType( __server_params[ "port" ] ) == "C"
-      __server_params[ "port" ] := Val( __server_params[ "port" ] )
+   IF ValType( s_psqlServer_params[ "port" ] ) == "C"
+      s_psqlServer_params[ "port" ] := Val( s_psqlServer_params[ "port" ] )
    ENDIF
-   __server_params[ "password" ] := __server_params[ "user" ]
-   __server_params[ "postgres" ] := "postgres"
+   s_psqlServer_params[ "password" ] := s_psqlServer_params[ "user" ]
+   s_psqlServer_params[ "postgres" ] := "postgres"
 
-   RETURN
+   RETURN .T.
 #endif
 
 FUNCTION _write_server_params_to_config()
@@ -430,16 +423,17 @@ FUNCTION _write_server_params_to_config()
    LOCAL _key, _ini_params := hb_Hash()
 
    FOR EACH _key in { "host", "database", "user", "schema", "port", "session" }
-      _ini_params[ _key ] := __server_params[ _key ]
+      _ini_params[ _key ] := s_psqlServer_params[ _key ]
    NEXT
 
    IF !f18_ini_write( F18_SERVER_INI_SECTION + iif( test_mode(), "_test", "" ), _ini_params, .T. )
       MsgBeep( "problem ini write" )
    ENDIF
 
-FUNCTION post_login( gVars )
+   RETURN .T.
 
-   LOCAL _ver
+
+FUNCTION post_login( gVars )
 
    IF gVars == NIL
       gVars := .T.
@@ -453,16 +447,7 @@ FUNCTION post_login( gVars )
 
    hb_gtInfo( HB_GTI_WINTITLE, "[ " + my_server_params()[ "user" ] + " ][ " + my_server_params()[ "database" ] + " ]" )
 
-   _ver := read_dbf_version_from_config()
-
-   set_a_dbfs()
-   cre_all_dbfs( _ver )
-   kreiraj_pa_napuni_partn_idbr_pdvb ()
-
-   // inicijaliziraj "dbf_key_fields" u __f18_dbf hash matrici
-   set_a_dbfs_key_fields()
-
-   write_dbf_version_to_config()
+   s_threadDbfsID := hb_threadStart( @thread_create_dbfs() )
 
    check_server_db_version()
    server_log_enable()
@@ -476,6 +461,41 @@ FUNCTION post_login( gVars )
 
    RETURN .T.
 
+FUNCTION thread_dbfs()
+
+   RETURN s_threadDbfsID
+
+
+FUNCTION main_thread()
+
+   RETURN s_mainThreadID
+
+
+FUNCTION thread_create_dbfs()
+
+   LOCAL _ver
+
+   PRIVATE m_x, m_y, normal
+
+   m_x := 0
+   m_y := 0
+   Normal := "B/W"
+   Invert := "W/B"
+
+   _ver := read_dbf_version_from_config()
+
+   set_a_dbfs()
+   cre_all_dbfs( _ver )
+
+   kreiraj_pa_napuni_partn_idbr_pdvb ()
+
+   // inicijaliziraj "dbf_key_fields" u __f18_dbf hash matrici
+   set_a_dbfs_key_fields()
+
+   write_dbf_version_to_config()
+
+   RETURN .T.
+
 
 
 // -----------------------------------------------------------
@@ -484,6 +504,7 @@ FUNCTION post_login( gVars )
 STATIC FUNCTION get_log_level_from_params()
 
 #ifdef F18_DEBUG
+
    log_level( fetch_metric( "log_level", NIL, F18_DEFAULT_LOG_LEVEL_DEBUG ) )
 #else
    log_level( fetch_metric( "log_level", NIL, F18_DEFAULT_LOG_LEVEL ) )
@@ -602,13 +623,7 @@ FUNCTION log_level( x )
       __log_level := x
    ENDIF
 
-#ifdef TEST
-
-   RETURN 7
-#else
-
    RETURN __log_level
-#endif
 
 
 STATIC FUNCTION f18_form_login( server_params )
@@ -617,7 +632,7 @@ STATIC FUNCTION f18_form_login( server_params )
    LOCAL _server
 
    IF server_params == NIL
-      server_params := __server_params
+      server_params := s_psqlServer_params
    ENDIF
 
    DO WHILE .T.
@@ -714,18 +729,15 @@ STATIC FUNCTION _login_screen( server_params )
 
    ++ nX
    ++ nX
-
    @ nX, nLeft SAY PadL( "Baza:", 15 ) GET cDatabase PICT "@S30"
    @ nX, 55 SAY "Sezona:" GET cSession
 
    ++ nX
    ++ nX
-
    @ nX, nLeft SAY PadL( "KORISNIK:", 15 ) GET cUser PICT "@S30"
 
    ++ nX
    ++ nX
-
    @ nX, nLeft SAY PadL( "LOZINKA:", 15 ) GET cPassword PICT "@S30" COLOR "BG/BG"
 
    READ
@@ -760,11 +772,35 @@ STATIC FUNCTION _login_screen( server_params )
 
 FUNCTION pg_server( server )
 
-   IF server <> NIL
-      __server := server
+   LOCAL hParams, oError
+
+   IF hb_threadSelf() != main_thread()
+      //altd()
+      //?C pp( s_psqlServer_params )
+
+      IF s_psqlServerDbfThread  == NIL
+
+        BEGIN SEQUENCE WITH {| err | Break( err ) }
+
+         s_psqlServerDbfThread := TPQServer():New( s_psqlServer_params[ "host" ], ;
+            s_psqlServer_params[ "database" ], ;
+            s_psqlServer_params[ "user" ], ;
+            s_psqlServer_params[ "password" ], ;
+            s_psqlServer_params[ "port" ], ;
+            s_psqlServer_params[ "schema" ] )
+        RECOVER USING oError
+            ?C oError:description
+            QUIT_1
+        END SEQUENCE
+      ENDIF
+      RETURN s_psqlServerDbfThread
    ENDIF
 
-   RETURN __server
+   IF server <> NIL
+      s_psqlServer := server
+   ENDIF
+
+   RETURN s_psqlServer
 
 FUNCTION my_server( server )
    RETURN pg_server( server )
@@ -778,11 +814,11 @@ FUNCTION my_server_params( params )
 
    IF params <> nil
       FOR EACH _key in params:Keys
-         __server_params[ _key ] := params[ _key ]
+         s_psqlServer_params[ _key ] := params[ _key ]
       NEXT
    ENDIF
 
-   RETURN __server_params
+   RETURN s_psqlServer_params
 
 
 
@@ -791,7 +827,7 @@ FUNCTION my_server_login( params, conn_type )
    LOCAL _key, _server
 
    IF params == NIL
-      params := __server_params
+      params := s_psqlServer_params
    ENDIF
 
    IF conn_type == NIL
@@ -808,11 +844,11 @@ FUNCTION my_server_login( params, conn_type )
    NEXT
 
    _server := TPQServer():New( params[ "host" ], ;
-      if( conn_type == 1, params[ "database" ], "postgres" ), ;
+      iif( conn_type == 1, params[ "database" ], "postgres" ), ;
       params[ "user" ], ;
       params[ "password" ], ;
       params[ "port" ], ;
-      if( conn_type == 1, params[ "schema" ], "public" ) )
+      iif( conn_type == 1, params[ "schema" ], "public" ) )
 
    IF !( _server:NetErr() .AND. !Empty( _server:ErrorMsg() ) )
 
@@ -839,11 +875,11 @@ FUNCTION my_server_login( params, conn_type )
 
 FUNCTION my_server_logout()
 
-   IF ValType( __server ) == "O"
-      __server:Close()
+   IF ValType( s_psqlServer ) == "O"
+      s_psqlServer:Close()
    ENDIF
 
-   RETURN __server
+   RETURN s_psqlServer
 
 
 FUNCTION my_server_search_path( path )
@@ -851,26 +887,26 @@ FUNCTION my_server_search_path( path )
    LOCAL _key := "search_path"
 
    IF path == nil
-      IF !hb_HHasKey( __server_params, _key )
-         __server_params[ _key ] := "fmk, public, u2"
+      IF !hb_HHasKey( s_psqlServer_params, _key )
+         s_psqlServer_params[ _key ] := "fmk, public, u2"
       ENDIF
    ELSE
-      __server_params[ _key ] := path
+      s_psqlServer_params[ _key ] := path
    ENDIF
 
-   RETURN __server_params[ _key ]
+   RETURN s_psqlServer_params[ _key ]
 
 
 FUNCTION f18_user()
-   RETURN __server_params[ "user" ]
+   RETURN s_psqlServer_params[ "user" ]
 
 
 FUNCTION f18_database()
-   RETURN __server_params[ "database" ]
+   RETURN s_psqlServer_params[ "database" ]
 
 
 FUNCTION f18_curr_session()
-   RETURN __server_params[ "session" ]
+   RETURN s_psqlServer_params[ "session" ]
 
 
 FUNCTION my_user()
@@ -1078,17 +1114,17 @@ FUNCTION log_write( msg, level, silent )
    RETURN .T.
 
 FUNCTION server_log()
-   RETURN __server_log
+   RETURN s_psqlServer_log
 
 FUNCTION server_log_disable()
 
-   __server_log := .F.
+   s_psqlServer_log := .F.
 
    RETURN .T.
 
 FUNCTION server_log_enable()
 
-   __server_log := .T.
+   s_psqlServer_log := .T.
 
    RETURN .T.
 

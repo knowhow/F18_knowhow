@@ -98,7 +98,7 @@ FUNCTION LLM()
    ENDIF
 
    _o_tables()
-	
+
    IF fPocStanje == NIL
       fPocStanje := .F.
    ELSE
@@ -147,8 +147,8 @@ FUNCTION LLM()
 
    cArtikalNaz := Space( 30 )
 
-   Box(, 21, 70 )
-	
+   Box(, 21, 80 )
+
    DO WHILE .T.
       IF gNW $ "DX"
          @ m_x + 1, m_y + 2 SAY "Firma "
@@ -163,7 +163,7 @@ FUNCTION LLM()
       @ m_x + 6, m_y + 2 SAY "Partneri " GET qqIdPartner PICT "@!S20"
       @ m_x + 6, Col() + 1 SAY "Br.fakture " GET cFaBrDok  PICT "@!S15"
       @ m_x + 7, m_y + 2 SAY "Prikaz Nab.vrijednosti D/N" GET cPNab  VALID cpnab $ "DN" PICT "@!"
- 		
+
       @ m_x + 7, Col() + 1 SAY "Prikaz samo do nab.vr. D/N" GET cDoNab  VALID cDoNab $ "DN" PICT "@!"
 
       IF ( IsPDV() .AND. ( IsMagPNab() .OR. IsMagSNab() ) )
@@ -178,17 +178,17 @@ FUNCTION LLM()
       @ m_x + 10, m_y + 2 SAY "Datum od " GET dDatOd
       @ m_x + 10, Col() + 2 SAY "do" GET dDatDo
 
-      @ m_x + 11, m_y + 2 SAY "Vrsta stampe TXT/ODT (1/2)" GET _print VALID _print $ "12" PICT "@!"
+      @ m_x + 11, m_y + 2 SAY8 "Vrsta štampe TXT/ODT (1/2)" GET _print VALID _print $ "12" PICT "@!"
 
       @ m_x + 12, m_y + 2 SAY "Postaviti srednju NC u sifrarnik" GET cNCSif PICT "@!" valid ( ( cpnab == "D" .AND. cncsif == "D" ) .OR. cNCSif == "N" )
- 		
+
       IF fPocStanje
          @ m_x + 13, m_y + 2 SAY "Sredi samo stavke kol=0, nv<>0 (0/1/2)" ;
             GET cSrKolNula VALID cSrKolNula $ "012" ;
             PICT "@!"
       ENDIF
 
-      @ m_x + 14, m_y + 2 SAY "Prikaz samo kriticnih zaliha (D/N/O) ?" GET cMinK PICT "@!" VALID cMink $ "DNO"
+      @ m_x + 14, m_y + 2 SAY "Prikaz samo kritičnih zaliha (D/N/O) ?" GET cMinK PICT "@!" VALID cMink $ "DNO"
 
       IF IsVindija()
          cGr := Space( 10 )
@@ -203,15 +203,15 @@ FUNCTION LLM()
       @ m_x + 17, m_y + 30 SAY "Podgrupa artikla:" GET qqRGr2 PICT "@S10"
 
       @ m_x + 18, m_y + 2 SAY "Naziv artikla sadrzi"  GET cArtikalNaz
- 		
+
       IF !Empty( cRNT1 )
          @ m_x + 19, m_y + 2 SAY "Broj radnog naloga:"  GET cRNalBroj PICT "@S20"
       ENDIF
-		
+
       @ m_x + 20, m_y + 2 SAY "Export izvjestaja u dbf?" GET cExpDbf VALID cExpDbf $ "DN" PICT "@!"
-		
+
       @ m_x + 20, Col() + 1 SAY "Pr.dodatnih informacija ?" GET cMoreInfo VALID cMoreInfo $ "DN" PICT "@!"
-		
+
       READ
       ESC_BCR
 
@@ -220,14 +220,14 @@ FUNCTION LLM()
       PRIVATE aUsl3 := Parsiraj( qqIDVD, "idvd" )
       PRIVATE aUsl4 := Parsiraj( qqIDPartner, "idpartner" )
       PRIVATE aUsl5 := Parsiraj( cFaBrDok, "brfaktp" )
-		
+
       qqRGr := AllTrim( qqRGr )
       qqRGr2 := AllTrim( qqRGr2 )
-		
+
       IF !Empty( cRnT1 ) .AND. !Empty( cRNalBroj )
          PRIVATE aUslRn := Parsiraj( cRNalBroj, "idzaduz2" )
       ENDIF
-		
+
       IF aUsl1 <> NIL .AND. aUsl2 <> NIL .AND. aUsl3 <> NIL .AND. aUsl4 <> NIL .AND. ( Empty( cRnT1 ) .OR. Empty( cRNalBroj ) .OR. aUslRn <> NIL ) .AND. aUsl5 <> nil
          EXIT
       ENDIF
@@ -353,7 +353,7 @@ FUNCTION LLM()
    nLen := 1
 
    IF IsPDV()
-	
+
       _set_zagl( @cLine, @cTxt1, @cTxt2, @cTxt3, cSredCij )
 
       __line := cLine
@@ -382,7 +382,7 @@ FUNCTION LLM()
       ENDIF
 
       __line := m
-	
+
    ENDIF
 
    IF koncij->naz $ "P1#P2"
@@ -425,9 +425,9 @@ FUNCTION LLM()
 
    DO WHILE !Eof() .AND. iif( fSint .AND. lSabKon, idfirma, idfirma + mkonto ) = ;
          cidfirma + cSintK .AND. IspitajPrekid()
-	
+
       cIdRoba := Idroba
-	
+
       nUlaz := 0
       nIzlaz := 0
 
@@ -436,7 +436,7 @@ FUNCTION LLM()
 
       nVPVRU := 0
       nVPVRI := 0
-	
+
       nNVU := 0
       nNVI := 0
 
@@ -445,7 +445,7 @@ FUNCTION LLM()
       cMIFakt := ""
       cMINumber := ""
       dMIDate := CToD( "" )
-	
+
       dL_ulaz := CToD( "" )
       dL_izlaz := CToD( "" )
 
@@ -519,13 +519,7 @@ FUNCTION LLM()
       ENDIF
 
       cIdkonto := mkonto
-	
-      // if cMink=="O"
-      // cNula:="D"
-      // endif
-	
-      // ako zelim oznaciti sve kriticne zalihe onda mi trebaju i artikli
-      // sa stanjem 0 !!
+
 
 
       DO WHILE !Eof() .AND. iif( fSint .AND. lSabKon, cIdFirma + cIdRoba == idFirma + idroba, cIdFirma + cIdKonto + cIdRoba == idFirma + mkonto + idroba ) .AND. IspitajPrekid()
@@ -580,7 +574,7 @@ FUNCTION LLM()
             ENDIF
             nRabat += Round(  rabatv / 100 * vpc * kolicina, gZaokr )
             nNVI += Round( nc * kolicina, gZaokr )
-  		
+
             // datum zadnjeg izlaza
             dL_izlaz := field->datdok
 
@@ -600,7 +594,7 @@ FUNCTION LLM()
             nKolicina := -field->kolicina
             nUlaz += nKolicina
             SumirajKolicinu( nKolicina, 0, @nTUlazP, @nTIzlazP )
-     		
+
             IF koncij->naz == "P2"
                nVPVU += Round( -roba->plc * ( kolicina - gkolicina - gkolicin2 ), gZaokr )
                nVPVRU += Round( -roba->plc * ( kolicina - gkolicina - gkolicin2 ), gZaokr )
@@ -608,7 +602,7 @@ FUNCTION LLM()
                nVPVU += Round( -roba->vpc * ( kolicina - gkolicina - gkolicin2 ), gZaokr )
                nVPVRU += Round( -field->vpc * ( kolicina - gkolicina - gkolicin2 ), gZaokr )
             ENDIF
-     		
+
             nNVU += Round( -nc * ( kolicina - gkolicina - gkolicin2 ), gZaokr )
          ENDIF
 
@@ -629,17 +623,17 @@ FUNCTION LLM()
 
          aNaz := Sjecistr( roba->naz, 20 )
          NovaStrana( bZagl )
-	
+
          // rbr, idroba, naziv...
-	
+
          ? Str( ++nRbr, 5 ) + ".", cIdRoba
          nCr := PCol() + 1
-	
+
          @ PRow(), PCol() + 1 SAY aNaz[ 1 ]
 
          cJMJ := ROBA->JMJ
          nVPCIzSif := ROBA->VPC
-	
+
          IF lSvodi
             nKJMJ  := SJMJ( 1,cIdRoba, @cJMJ )
             cJMJ := PadR( cJMJ, Len( ROBA->JMJ ) )
@@ -660,9 +654,9 @@ FUNCTION LLM()
 
             SELECT kalk_pripr
               IF Round( nUlaz - nIzlaz, 4 ) <> 0 .AND. cSrKolNula $ "01"
-       				
+
                   APPEND BLANK
-       				
+
                   REPLACE idfirma WITH cidfirma, idroba WITH cIdRoba, ;
                      idkonto WITH cIdKonto, ;
                      datdok WITH dDatDo + 1, ;
@@ -671,23 +665,23 @@ FUNCTION LLM()
                      kolicina WITH nUlaz - nIzlaz, ;
                      idvd WITH "16", ;
                      brdok WITH cBRPST
-				
+
                   REPLACE nc WITH ( nNVU - nNVI ) / ( nUlaz - nIzlaz )
                   REPLACE vpc WITH ( nVPVU - nVPVI ) / ( nUlaz - nIzlaz )
 
                   IF IsMagPNab()
                      REPLACE vpc WITH nc
                   ENDIF
-    			
+
                ELSEIF cSrKolNula $ "12" .AND. Round( nUlaz - nIzlaz, 4 ) = 0
-				
+
                   // kontrolna opcija
                   // kolicina 0, nabavna cijena <> 0
                   IF ( nNVU - nNVI ) <> 0
-					
+
                      // 1 stavka (minus)
                      APPEND BLANK
-       				
+
                      REPLACE idfirma WITH cidfirma
                      REPLACE idroba WITH cIdRoba
                      REPLACE idkonto WITH cIdKonto
@@ -704,10 +698,10 @@ FUNCTION LLM()
                      IF IsMagPNab()
                         REPLACE vpc WITH nc
                      ENDIF
-    					
+
                      // 2 stavka (plus i nv)
                      APPEND BLANK
-       				
+
                      REPLACE idfirma WITH cidfirma
                      REPLACE idroba WITH cIdRoba
                      REPLACE idkonto WITH cIdKonto
@@ -724,7 +718,7 @@ FUNCTION LLM()
                      IF IsMagPNab()
                         REPLACE vpc WITH nc
                      ENDIF
-    			
+
                   ENDIF
 
                ENDIF
@@ -739,12 +733,12 @@ FUNCTION LLM()
          IF gVarEv == "1"
 
             IF IsMagSNab() .OR. IsMagPNab()
- 			
+
                // NV
                @ PRow(), PCol() + 1 SAY nNVU PICT gpicdem
                @ PRow(), PCol() + 1 SAY nNVI PICT gpicdem
                @ PRow(), PCol() + 1 SAY nNVU - nNVI PICT gpicdem
- 			
+
                IF IsPDV() .AND. cDoNab == "N"
 
                   // PV - samo u pdv rezimu
@@ -764,7 +758,7 @@ FUNCTION LLM()
                   ENDIF
 
                ENDIF
-			
+
                // provjeri greske sa NC
                IF !( koncij->naz = "P" )
                   IF Round( nUlaz - nIzlaz, 4 ) <> 0
@@ -781,12 +775,12 @@ FUNCTION LLM()
                   ENDIF
                ENDIF
             ELSE
-		
+
                @ PRow(), PCol() + 1 SAY nVPVU PICT gpicdem
                @ PRow(), PCol() + 1 SAY nRabat PICT gpicdem
                @ PRow(), PCol() + 1 SAY nVPVI PICT gpicdem
                @ PRow(), PCol() + 1 SAY nVPVU - nVPVI PICT gpicdem
-             		
+
                IF Round( nUlaz - nIzlaz, 4 ) <> 0
                   @ PRow(), PCol() + 1 SAY ( nVPVU - nVPVI ) / ( nUlaz - nIzlaz ) PICT gpiccdem
                   IF !( koncij->naz = "P" )
@@ -826,9 +820,9 @@ FUNCTION LLM()
          IF Len( aNaz ) > 1
             @ PRow(), nCR  SAY aNaz[ 2 ]
          ENDIF
-	
+
          IF gVarEv == "1"
-	
+
             IF cMink <> "N" .AND. nMink > 0
                @ PRow(), ncol0    SAY PadR( "min.kolic:", Len( gpickol ) )
                @ PRow(), PCol() + 1 SAY nKJMJ * nMink  PICT gpickol
@@ -836,7 +830,7 @@ FUNCTION LLM()
                @ PRow(), ncol0  SAY Space( Len( gpickol ) )
                @ PRow(), PCol() + 1 SAY Space( Len( gpickol ) )
             ENDIF
-		
+
             IF cPNAB == "D" .AND. !IsMagPNab()
                IF Round( nulaz - nizlaz, 4 ) <> 0
                   @ PRow(), PCol() + 1 SAY ( nNVU - nNVI ) / ( nUlaz - nIzlaz ) PICT gpicdem
@@ -848,19 +842,19 @@ FUNCTION LLM()
                ELSEIF Round( nUlaz, 4 ) <> 0
                   @ PRow(), PCol() + 1 SAY nNVU / nUlaz PICT gpicdem
                ENDIF
-  			
+
                @ PRow(), nCol1 SAY nNVU PICT gpicdem
                @ PRow(), PCol() + 1 SAY Space( Len( gpicdem ) )
                @ PRow(), PCol() + 1 SAY nNVI PICT gpicdem
                @ PRow(), PCol() + 1 SAY nNVU - nNVI PICT gpicdem
-  			
+
                IF koncij->naz == "P2"
                   // @ prow(),pcol()+1 SAY roba->plc pict gpiccdem
                ELSE
                   @ PRow(), PCol() + 1 SAY KoncijVPC() PICT gpiccdem
                ENDIF
             ENDIF // cbpnab
-		
+
             IF IsMagPNab()
                // ulaz - prazno
                @ PRow(), nCol0 SAY Space( Len( gpickol ) )
@@ -874,9 +868,9 @@ FUNCTION LLM()
                @ PRow(), PCol() + 1 SAY Space( Len( gpicdem ) )
                // prikazi NC
                IF Round( nUlaz - nIzlaz, 4 ) <> 0
-				
+
                   @ PRow(), PCol() + 1 SAY ( nNVU - nNVI ) / ( nUlaz - nIzlaz ) PICT gpicdem
-				
+
                ENDIF
                IF cDoNab == "N"
                   // pv.dug - prazno
@@ -891,7 +885,7 @@ FUNCTION LLM()
                   ENDIF
                ENDIF
             ENDIF
-		
+
             IF cMink == "O" .AND. nMink <> 0 .AND. ( nUlaz - nIzlaz - nMink ) < 0
                B_OFF
             ENDIF
@@ -912,13 +906,13 @@ FUNCTION LLM()
          IF cMoreInfo == "D"
             ? Space( 6 ) + show_more_info( cMIPart, dMIDate, cMINumber, cMI_type )
          ENDIF
-	
+
          IF lExpDbf == .T.
             IF ( cNula == "N" .AND. Round( nUlaz - nIzlaz, 4 ) <> 0 ) ;
                   .OR. ( cNula == "D" )
 
                cTmp := ""
-		
+
                IF roba->( FieldPos( "SIFRADOB" ) ) <> 0
                   cTmp := roba->sifradob
                ENDIF
@@ -945,7 +939,7 @@ FUNCTION LLM()
                ENDIF
             ENDIF
          ENDIF
-	
+
       ENDIF
 
       IF lKoristitiBK
@@ -975,7 +969,7 @@ FUNCTION LLM()
          @ PRow(), PCol() + 1 SAY ntNVU PICT pic_format( gpicdem, ntNVU )
          @ PRow(), PCol() + 1 SAY ntNVI PICT pic_format( gpicdem, ntNVI )
          @ PRow(), PCol() + 1 SAY ntNV PICT pic_format( gpicdem, ntNV )
- 	
+
          IF IsPDV() .AND. cDoNab == "N"
             IF _vpc_iz_sif == "D"
                // PV - samo u pdv rezimu
@@ -991,7 +985,7 @@ FUNCTION LLM()
                @ PRow(), PCol() + 1 SAY ntVPVRU - NtVPVRI PICT pic_format( gpicdem, ( ntVPVRU - ntVPVRI ) )
             ENDIF
          ENDIF
-	
+
       ELSE
          @ PRow(), PCol() + 1 SAY ntVPVU PICT gpicdem
          @ PRow(), PCol() + 1 SAY ntRabat PICT gpicdem
@@ -1038,7 +1032,7 @@ FUNCTION LLM()
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
 
 // --------------------------------------------------
@@ -1110,7 +1104,8 @@ STATIC FUNCTION fill_exp_tbl( nVar, cIdRoba, cSifDob, cNazRoba, cTarifa, ;
       cJmj, nUlaz, nIzlaz, nSaldo, nNVDug, nNVPot, nNV, nNC, ;
       nPVDug, nPVPot, nPV, nPC, nPVrdug, nPVrpot, dL_ulaz, dL_izlaz )
 
-   LOCAL nTArea := Select()
+
+   PushWa()
 
    IF nVar == nil
       nVar := 0
@@ -1157,9 +1152,9 @@ STATIC FUNCTION fill_exp_tbl( nVar, cIdRoba, cSifDob, cNazRoba, cTarifa, ;
       //
    ENDIF
 
-   SELECT ( nTArea )
+   PopWa()
 
-   RETURN
+   RETURN .T.
 
 
 // -------------------------------------------------------------
@@ -1195,36 +1190,36 @@ STATIC FUNCTION _set_zagl( cLine, cTxt1, cTxt2, cTxt3, cSredCij )
    AAdd( aLLM, { nPom, PadC( "STANJE", nPom ), PadC( "", nPom ), PadC( "4 - 5", nPom ) } )
 
    IF gVarEv <> "2"
-	
+
       // magacin nije po nabavnim cijenama
       IF !IsMagPNab()
-		
+
          IF koncij->naz == "P1"
- 			
+
             cC1Row1 := "PV Dug."
             cC2Row1 := "Rabat"
             cC3Row1 := "PV Pot."
             cC4Row1 := "PV"
             cC5Row1 := "Prod.cij."
-			
+
          ELSEIF koncij->naz == "P2"
-		
+
             cC1Row1 := "Plan.vr.D"
             cC2Row1 := "Rabat"
             cC3Row1 := "Plan.vr.P"
             cC4Row1 := "Plan.vr"
             cC5Row1 := "Plan.cij."
-		
+
          ELSE
-			
+
             cC1Row1 := "PV Dug."
             cC2Row1 := "Rabat"
             cC3Row1 := "PV Pot."
             cC4Row1 := "PV"
             cC5Row1 := "Prod.cij"
-	
+
          ENDIF
-		
+
          nPom := Len( gPicCDem )
          // PV Dug.
          AAdd( aLLM, { nPom, PadC( cC1Row1, nPom ), PadC( "", nPom ), PadC( "6", nPom ) } )
@@ -1232,9 +1227,9 @@ STATIC FUNCTION _set_zagl( cLine, cTxt1, cTxt2, cTxt3, cSredCij )
          AAdd( aLLM, { nPom, PadC( cC3Row1, nPom ), PadC( "", nPom ), PadC( "8", nPom ) } )
          AAdd( aLLM, { nPom, PadC( cC4Row1, nPom ), PadC( "", nPom ), PadC( "9", nPom ) } )
          AAdd( aLLM, { nPom, PadC( cC5Row1, nPom ), PadC( "", nPom ), PadC( "10", nPom ) } )
-		
+
       ELSE
-		
+
          // NV podaci
          // -------------------------------
          nPom := Len( gPicCDem )
@@ -1247,7 +1242,7 @@ STATIC FUNCTION _set_zagl( cLine, cTxt1, cTxt2, cTxt3, cSredCij )
 
          IF cDoNab == "N"
             IF IsPDV()
-			
+
                nPom := Len( gPicCDem )
                // pv.dug
                AAdd( aLLM, { nPom, PadC( "PV.Dug.", nPom ), PadC( "", nPom ), PadC( "8", nPom ) } )
@@ -1258,21 +1253,21 @@ STATIC FUNCTION _set_zagl( cLine, cTxt1, cTxt2, cTxt3, cSredCij )
                // PV
                AAdd( aLLM, { nPom, PadC( "PV", nPom ), PadC( "PC", nPom ), PadC( "8 - 10", nPom ) } )
             ELSE
-			
+
                nPom := Len( gPicCDem )
                // PV
                AAdd( aLLM, { nPom, PadC( "PV", nPom ), PadC( "", nPom ), PadC( "8", nPom ) } )
-	
+
             ENDIF
-		
+
          ENDIF
-		
+
       ENDIF
 
    ENDIF
 
    IF cSredCij == "D"
-	
+
       nPom := Len( gPicCDem )
       // sredi cijene
       AAdd( aLLM, { nPom, PadC( "Sred.cij", nPom ), PadC( "", nPom ), PadC( "", nPom ) } )
@@ -1411,7 +1406,7 @@ STATIC FUNCTION ZaglPDV()
 
    SELECT ( nTArea )
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -1423,7 +1418,7 @@ FUNCTION PocStMag()
 
    LLM( .T. )
 
-   RETURN
+   RETURN .T.
 
 
 /*! \fn IsInGroup(cGr, cPodGr, cIdRoba)
@@ -1518,9 +1513,9 @@ STATIC FUNCTION _gen_xml( params )
    xml_node( "tip", "MAGACIN" )
 
    DO WHILE !Eof() .AND. field->idfirma + field->mkonto = _idfirma + _sintk .AND. IspitajPrekid()
-	
+
       _idroba := field->idroba
-	
+
       _ulaz := 0
       _izlaz := 0
 
@@ -1529,7 +1524,7 @@ STATIC FUNCTION _gen_xml( params )
 
       _vpv_ru := 0
       _vpv_ri := 0
-	
+
       _nv_u := 0
       _nv_i := 0
 
@@ -1553,14 +1548,14 @@ STATIC FUNCTION _gen_xml( params )
       ENDIF
 
       SELECT kalk
-	
+
       IF roba->tip $ "TUY"
          SKIP
          LOOP
       ENDIF
 
       _idkonto := field->mkonto
-	
+
       DO WHILE !Eof() .AND. _idfirma + _idkonto + _idroba == field->idfirma + field->mkonto + field->idroba .AND. IspitajPrekid()
 
          IF roba->tip $ "TU"
@@ -1609,7 +1604,7 @@ STATIC FUNCTION _gen_xml( params )
             ENDIF
             _rabat += Round(  rabatv / 100 * vpc * kolicina, gZaokr )
             _nv_i += Round( nc * kolicina, gZaokr )
-  		
+
          ELSEIF field->mu_i == "8"
             _kolicina := -field->kolicina
             _izlaz += _kolicina
@@ -1626,7 +1621,7 @@ STATIC FUNCTION _gen_xml( params )
             _kolicina := -field->kolicina
             _ulaz += _kolicina
             SumirajKolicinu( _kolicina, 0, @_t_ulaz_p, @_t_izlaz_p )
-     		
+
             IF koncij->naz == "P2"
                _vpv_u += Round( -roba->plc * ( kolicina - gkolicina - gkolicin2 ), gZaokr )
                _vpv_ru += Round( -roba->plc * ( kolicina - gkolicina - gkolicin2 ), gZaokr )
@@ -1634,7 +1629,7 @@ STATIC FUNCTION _gen_xml( params )
                _vpv_u += Round( -roba->vpc * ( kolicina - gkolicina - gkolicin2 ), gZaokr )
                _vpv_ru += Round( -field->vpc * ( kolicina - gkolicina - gkolicin2 ), gZaokr )
             ENDIF
-     		
+
             _nv_u += Round( -nc * ( kolicina - gkolicina - gkolicin2 ), gZaokr )
          ENDIF
 
@@ -1651,11 +1646,11 @@ STATIC FUNCTION _gen_xml( params )
          xml_node( "naz", to_xml_encoding( AllTrim( roba->naz ) ) )
          xml_node( "tar", to_xml_encoding( AllTrim( roba->idtarifa ) ) )
          xml_node( "barkod", to_xml_encoding( AllTrim( roba->barkod ) ) )
-	
+
          _jmj := roba->jmj
          _vpc_sif := roba->vpc
          _nc_sif := roba->nc
-	
+
          IF _svodi_jmj
             _k_jmj := SJMJ( 1, _idroba, @_jmj )
             _jmj := PadR( _jmj, Len( roba->jmj ) )

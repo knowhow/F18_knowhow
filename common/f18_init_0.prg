@@ -20,18 +20,17 @@ FUNCTION tekuca_sezona()
    RETURN my_server_params()[ "database" ]
 
 
-FUNCTION start_module( oApp, lSezone )
+FUNCTION start_program_module( oApp, lSezone )
 
    LOCAL cImeDbf
    LOCAL _i
-   PUBLIC gAppSrv
 
 
    set_global_vars_0()
 
    gModul   := oApp:cName
    gVerzija := oApp:cVerzija
-   gAppSrv := .F.
+
 
    SetNaslov( oApp )
 

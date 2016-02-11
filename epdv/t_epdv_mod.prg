@@ -19,7 +19,7 @@ CLASS TEpdvMod FROM TAppMod
    METHOD setGVars
    METHOD mMenu
    METHOD mMenuStandard
-   METHOD srv
+
 
 END CLASS
 
@@ -75,10 +75,9 @@ METHOD mMenuStandard()
 
    Menu_SC( "gpdv", .T., .F. )
 
-   RETURN
+   RETURN .T.
 
-METHOD srv()
-   RETURN
+
 
 
 METHOD setGVars()

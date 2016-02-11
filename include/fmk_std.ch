@@ -225,21 +225,15 @@
                         [PICTURE <pic>]                                 ;
                         [COLOR <color>]                                 ;
                                                                         ;
-      => if gAppSrv; 
-       ;  QQOut(<xpr>); 
-       ; else;
-       ;  DevPos( <row>, <col> )                                         ;
-       ;  DevOutPict( <xpr>, <pic> [, <color>] ) ;
-       ; end
+      =>   DevPos( <row>, <col> )                                         ;
+       ;  DevOutPict( <xpr>, <pic> [, <color>] )
+
 
 
 #command @ <row>, <col> SAY <xpr>                                       ;
                         [COLOR <color>]                                 ;
                                                                         ;
-      => if gAppSrv; 
-       ;   QQout(<xpr>); 
-       ; else;
-       ;  DevPos( <row>, <col> )                                         ;
+      =>   DevPos( <row>, <col> )                                         ;
        ;  DevOut( <xpr> [, <color>] );
        ; end
 
@@ -725,7 +719,7 @@
 
 
 #else
-	
+
 #command @ <row>, <col> GET <var>                                       ;
                         [PICTURE <pic>]                                 ;
                         [VALID <valid>]                                 ;

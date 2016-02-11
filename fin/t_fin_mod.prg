@@ -11,8 +11,6 @@
 
 #include "f18.ch"
 
-#include "hbclass.ch"
-
 CLASS TFinMod FROM TAppMod
 
    METHOD NEW
@@ -35,7 +33,7 @@ METHOD new( p1, p2, p3, p4, p5, p6, p7, p8, p9 )
 
 
 METHOD dummy()
-   RETURN
+   RETURN .T.
 
 
 METHOD mMenu()
@@ -59,6 +57,7 @@ METHOD mMenuStandard()
    LOCAL _izbor := 1
    LOCAL _opc := {}
    LOCAL _opcexe := {}
+
 
    AAdd( _opc, "1. unos/ispravka dokumenta                   " )
    AAdd( _opcexe, {|| fin_unos_naloga() } )

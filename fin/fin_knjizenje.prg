@@ -40,7 +40,7 @@ FUNCTION fin_unos_naloga()
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
 
 /*! \fn KnjNal()

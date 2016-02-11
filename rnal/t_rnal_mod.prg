@@ -20,7 +20,6 @@ CLASS TRnalMod FROM TAppMod
    METHOD mMenu
    METHOD mStartUp
    METHOD mMenuStandard
-   METHOD srv
 
 ENDCLASS
 
@@ -106,15 +105,10 @@ METHOD mMenuStandard()
 
    Menu_SC( "grn", .T. )
 
-   RETURN
+   RETURN .T.
 
 
 
-METHOD srv()
-   RETURN
-
-// -------------------------------------------------
-// -------------------------------------------------
 METHOD setGVars()
 
    set_global_vars()

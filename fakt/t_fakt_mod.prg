@@ -27,7 +27,6 @@ CLASS TFaktMod FROM TAppMod
    METHOD setGVars
    METHOD mMenu
    METHOD mMenuStandard
-   METHOD srv
 
 END CLASS
 
@@ -68,7 +67,7 @@ METHOD mMenuStandard
 
    AAdd( _opc, "1. unos/ispravka dokumenta             " )
    AAdd( _opcexe, {|| fakt_unos_dokumenta() } )
-   AAdd( _opc, "2. izvjestaji" )
+   AAdd( _opc, "2. izvještaji" )
    AAdd( _opcexe, {|| fakt_izvjestaji() } )
    AAdd( _opc, "3. pregled dokumenata" )
    AAdd( _opcexe, {|| fakt_pregled_dokumenata() } )
@@ -98,12 +97,6 @@ METHOD mMenuStandard
    AAdd( _opcexe, {|| mnu_fakt_params() } )
 
    f18_menu( "fmai", .T., _izbor, _opc, _opcexe )
-
-   RETURN .F.
-
-
-
-METHOD srv()
 
    RETURN .F.
 

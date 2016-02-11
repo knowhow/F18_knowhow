@@ -74,12 +74,11 @@ FUNCTION fakt_lager_lista()
    lSaberikol := .F.
    nKU := nKI := 0
 
-   IF !gAppSrv
-      cIdfirma := gFirma
-      qqRoba := ""
-      dDatOd := CToD( "" )
-      dDatDo := Date()
-   ENDIF
+   cIdfirma := gFirma
+   qqRoba := ""
+   dDatOd := CToD( "" )
+   dDatDo := Date()
+
 
    cSaldo0 := "N"
    qqPartn := Space( 20 )
@@ -94,15 +93,12 @@ FUNCTION fakt_lager_lista()
    PRIVATE aHistory := {}
    Params1()
 
-   IF !gAppSrv
-      RPar( "c1", @cIdFirma )
-      RPar( "c2", @qqRoba )
-      RPar( "c7", @qqPartn )
-      RPar( "c8", @qqTipDok )
-      RPar( "d1", @dDatOd )
-      RPar( "d2", @dDatDo )
-   ENDIF
-
+   RPar( "c1", @cIdFirma )
+   RPar( "c2", @qqRoba )
+   RPar( "c7", @qqPartn )
+   RPar( "c8", @qqTipDok )
+   RPar( "d1", @dDatOd )
+   RPar( "d2", @dDatDo )
 
    SELECT fakt
 
@@ -218,14 +214,13 @@ FUNCTION fakt_lager_lista()
    qqRoba := Trim( qqRoba )
 
 
-   IF !gAppSrv
-      WPar( "c1", cIdFirma )
-      WPar( "c2", qqRoba )
-      WPar( "c7", qqPartn )
-      WPar( "c8", qqTipDok )
-      WPar( "d1", dDatOd )
-      WPar( "d2", dDatDo )
-   ENDIF
+   WPar( "c1", cIdFirma )
+   WPar( "c2", qqRoba )
+   WPar( "c7", qqPartn )
+   WPar( "c8", qqTipDok )
+   WPar( "d1", dDatOd )
+   WPar( "d2", dDatDo )
+
 
    USE
 
@@ -255,13 +250,7 @@ FUNCTION fakt_lager_lista()
       SET FILTER to &cFilt
    ENDIF
 
-   IF gAppSrv
-      ? "Filter:", cFilt
-      // set filter to
-   ENDIF
-
    GO TOP
-
 
    EOF CRET
 
@@ -476,7 +465,7 @@ FUNCTION fakt_lager_lista()
                   APPEND BLANK
                   REPLACE idfirma WITH cidfirma, idroba WITH Left( cIdRoba, 10 ), ;
                      datdok WITH dDatDo + 1, ;
-                     idtipdok WITH "00", brdok WITH cBRPST,;
+                     idtipdok WITH "00", brdok WITH cBRPST, ;
                      cijena WITH _cijena, ;
                      dindem WITH "KM ", ;
                      Rbr WITH Rednibroj( ++nRbrPst ), ;
@@ -722,7 +711,7 @@ FUNCTION Zaglfakt_lager_lista()
    IF lBezUlaza
       ?? "R.br  Sifra       Naziv                                  "  + "  Stanje    jmj     "
    ELSE
-      cPomZK := IIF( cUI $ "US", PadC( "Ulaz", 12 ), "" ) + ;
+      cPomZK := iif( cUI $ "US", PadC( "Ulaz", 12 ), "" ) + ;
          IF( cUI $ "IS", PadC( "Izlaz", 12 ), "" ) + ;
          IF( cUI $ "S", PadC( "Stanje", 12 ), "" )
       IF cRR $ "NF"
@@ -871,7 +860,7 @@ STATIC FUNCTION lager_lista_xml( table, params )
    // xml_node( "datum_do", gFirma )
    // xml_node( "roba", gFirma )
 
-   table:GoTo(1)
+   table:GoTo( 1 )
 
    DO WHILE !table:Eof()
 

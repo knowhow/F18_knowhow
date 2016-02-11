@@ -331,8 +331,8 @@ function DioIzvuci(cIdVd)
         Skip; Loop
       EndIF
 
-      select roba; hseek pos->idroba
-      select odj; hseek roba->idodj
+      select roba; HSEEK pos->idroba
+      select odj; HSEEK roba->idodj
       nNeplaca:=0
       if right(odj->naz,5)=="#1#0#"  // proba!!!
        nNeplaca:=pos->(Kolicina*Cijena)
@@ -860,11 +860,11 @@ do while !EOF() .and. pos_doks->IdVd == cIdVd .and. pos_doks->Datum <= dDat1
     	EndIF
 
     	select roba
-		hseek pos->idroba
+		HSEEK pos->idroba
     
 		if roba->( fieldpos("idodj")) <> 0
 			select odj
-			hseek roba->idodj
+			HSEEK roba->idodj
 		endif
 
     	nNeplaca:=0

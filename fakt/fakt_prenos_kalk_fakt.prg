@@ -184,7 +184,7 @@ do while .t.
 
 		// nastimaj robu....
 		select roba
-		hseek kalk->idroba
+		HSEEK kalk->idroba
 		
 		select kalk
 
@@ -194,7 +194,7 @@ do while .t.
 			
 			if lToRacun == .t.
 				
-				hseek cFaktPartn
+				HSEEK cFaktPartn
 			
 				nRokPl := IzSifKPartn( "ROKP", cFaktPartn, .f.)
 				if VALTYPE(nRokPl) == "N" .and. nRokPl > 0
@@ -204,7 +204,7 @@ do while .t.
 				endif
 				
 			else
-				hseek KALK->idpartner
+				HSEEK KALK->idpartner
 			endif
 
 			cTxta := PADR(partn->naz, 30)
@@ -485,9 +485,9 @@ DO WHILE .T.
 		select partn
 		
 		if lToRacun == .t.
-			hseek cFaktPartn
+			HSEEK cFaktPartn
 		else
-			hseek cIdPartner
+			HSEEK cIdPartner
 		endif
 		
 		nRokPl := 0
@@ -548,9 +548,9 @@ DO WHILE .T.
           			select PARTN
 				
 				if lToRacun == .t.
-					hseek cFaktPartn
+					HSEEK cFaktPartn
 				else
-					hseek cIdPartner
+					HSEEK cIdPartner
 				endif
 				
           			_Txt3a:=padr(cIdPartner+".",30)

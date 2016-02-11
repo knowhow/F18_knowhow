@@ -260,7 +260,7 @@ FUNCTION SetK1K2( cG1, cIdTarifa, cIdRoba, nK1, nK2 )
    GO TOP
    DO WHILE ( !Eof()  .AND. field->id < "99" )
       SELECT rekap1
-      hseek  cG1 + cIdtarifa + cIdroba + pobjekti->idobj
+      HSEEK  cG1 + cIdtarifa + cIdroba + pobjekti->idobj
       nK2 += field->k2
       nK1 += field->k1
       SELECT pobjekti
@@ -523,7 +523,7 @@ STATIC FUNCTION ispisi_prodaju( cG1, cIdTarifa, cIdRoba, cDUslov )
       ENDIF
 	
       SELECT rekap1
-      hseek cG1 + cIdTarifa + cIdRoba + pobjekti->idobj
+      HSEEK cG1 + cIdTarifa + cIdRoba + pobjekti->idobj
       IF k4pp <> 0
          @ PRow(), PCol() + 1 SAY StrTran( TRANS( k1, cPicKol ), " ", "*" )
       ELSE

@@ -75,7 +75,7 @@ FUNCTION ld_pregled_primanja()
    tipprn_use()
 
    SELECT tippr
-   hseek cTip
+   HSEEK cTip
 
 
    EOF CRET
@@ -113,7 +113,7 @@ FUNCTION ld_pregled_primanja()
       cidrj := ""
       IF cVarSort == "1"
          SET ORDER TO tag ( TagVO( "2" ) )
-         hseek Str( cGodina, 4 ) + Str( cMjesec, 2 ) + cObracun
+         HSEEK Str( cGodina, 4 ) + Str( cMjesec, 2 ) + cObracun
       ELSE
          Box(, 2, 30 )
          nSlog := 0
@@ -130,7 +130,7 @@ FUNCTION ld_pregled_primanja()
    ELSE
       IF cVarSort == "1"
          SET ORDER TO tag ( TagVO( "1" ) )
-         hseek Str( cGodina, 4 ) + cidrj + Str( cmjesec, 2 ) + cObracun
+         HSEEK Str( cGodina, 4 ) + cidrj + Str( cmjesec, 2 ) + cObracun
       ELSE
          Box(, 2, 30 )
          nSlog := 0
@@ -163,7 +163,7 @@ FUNCTION ld_pregled_primanja()
    bZagl := {|| ZPregPrim() }
 
    SELECT ld_rj
-   hseek ld->idrj
+   HSEEK ld->idrj
    SELECT ld
 
    START PRINT CRET
@@ -204,7 +204,7 @@ FUNCTION ld_pregled_primanja()
          ENDIF
       ENDIF
 
-      SELECT radn; hseek _idradn; SELECT ld
+      SELECT radn; HSEEK _idradn; SELECT ld
 
       DO WHILE .T.
 

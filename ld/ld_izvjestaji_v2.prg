@@ -69,7 +69,7 @@ FUNCTION ld_pregled_primanja_za_period()
    tipprn_use()
 
    SELECT tippr
-   hseek ctip
+   HSEEK ctip
    EOF CRET
 
    SELECT ld
@@ -79,7 +79,7 @@ FUNCTION ld_pregled_primanja_za_period()
    ENDIF
 
    SET ORDER TO tag ( TagVO( "4" ) )
-   hseek Str( cGodina, 4 )
+   HSEEK Str( cGodina, 4 )
 
    EOF CRET
 
@@ -93,7 +93,7 @@ FUNCTION ld_pregled_primanja_za_period()
    ENDIF
    bZagl := {|| ZPregPrimPer() }
 
-   SELECT ld_rj; hseek ld->idrj; SELECT ld
+   SELECT ld_rj; HSEEK ld->idrj; SELECT ld
 
    START PRINT CRET
    P_10CPI
@@ -109,7 +109,7 @@ FUNCTION ld_pregled_primanja_za_period()
 
 
       cIdRadn := idradn
-      SELECT radn; hseek cidradn; SELECT ld
+      SELECT radn; HSEEK cidradn; SELECT ld
 
       wi&cTip := 0
       ws&cTip := 0

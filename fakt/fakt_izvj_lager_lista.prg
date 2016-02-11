@@ -337,7 +337,7 @@ FUNCTION fakt_lager_lista()
 
          IF !Empty( qqPartn )
             SELECT fakt_doks
-            hseek fakt->( IdFirma + idtipdok + brdok )
+            HSEEK fakt->( IdFirma + idtipdok + brdok )
             SELECT fakt
 
             IF !( fakt_doks->partner = qqPartn )
@@ -615,7 +615,7 @@ FUNCTION fakt_lager_lista()
             ? m
          ENDIF
          SELECT tarifa
-         hseek aPorezi[ i, 1 ]
+         HSEEK aPorezi[ i, 1 ]
          fakt_vt_porezi()
          nMPV := aPorezi[ i, 2 ]
          nMPV0 := Round( nMPV / ( _ZPP + ( 1 + _OPP ) * ( 1 + _PPP ) ), ZAOKRUZENJE )
@@ -894,7 +894,7 @@ STATIC FUNCTION lager_lista_xml( table, params )
       _t_izlaz += _izlaz
 
       SELECT roba
-      hseek _id_roba
+      HSEEK _id_roba
 
       _cijena := roba->vpc
 

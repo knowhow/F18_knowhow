@@ -228,7 +228,7 @@ local _txt := "!!! u sifrarniku nema stavke"
 local _t_area := SELECT()
 
 select roba
-hseek id_roba
+HSEEK id_roba
 
 if FOUND()
     _txt := PADL( ALLTRIM( id_roba ), 10 )
@@ -840,7 +840,7 @@ go top
 
 DO WHILE !eof()
 
-   select roba; hseek mat_invent->idroba; select tarifa; hseek roba->idtarifa
+   select roba; HSEEK mat_invent->idroba; select tarifa; HSEEK roba->idtarifa
    select mat_invent
    nMPVSAPP:=kolicina*cijena
    if nMPVSAPP==0; skip; loop; endif
@@ -936,7 +936,7 @@ DO WHILE !EOF() .AND. _id_firma == field->idfirma .and. _konto == field->idkonto
         xml_node( "datum", DTOC( _datum ) )
 
         select partn
-        hseek _id_firma
+        HSEEK _id_firma
 
         xml_node( "fid", to_xml_encoding( gFirma ) )
         xml_node( "fnaz", to_xml_encoding( gNFirma ) )
@@ -944,7 +944,7 @@ DO WHILE !EOF() .AND. _id_firma == field->idfirma .and. _konto == field->idkonto
         if !EMPTY( _konto )
  
             select konto
-            hseek _konto
+            HSEEK _konto
 
             xml_node( "kid", to_xml_encoding( _konto ) )
             xml_node( "knaz", to_xml_encoding( ALLTRIM( field->naz ) ) )
@@ -959,7 +959,7 @@ DO WHILE !EOF() .AND. _id_firma == field->idfirma .and. _konto == field->idkonto
         if !EMPTY( _partner )        
 
             select partn
-            hseek _partner
+            HSEEK _partner
 
             xml_node( "pid", to_xml_encoding( _partner ) )
             xml_node( "pnaz", to_xml_encoding( ALLTRIM( field->naz ) ) )

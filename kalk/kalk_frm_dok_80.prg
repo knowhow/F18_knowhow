@@ -117,7 +117,7 @@ FUNCTION Get1_80( atrib )
    ENDIF
 
    SELECT roba
-   hseek _idroba
+   HSEEK _idroba
 
    SELECT tarifa
    SEEK roba->idtarifa
@@ -264,7 +264,7 @@ FUNCTION Get1_80b()
    SEEK Trim( _idkonto )
 
    SELECT ROBA
-   hseek _idroba
+   HSEEK _idroba
 
    // ako nije popunjeno
    _mpcsapp := UzmiMPCSif()
@@ -345,7 +345,7 @@ FUNCTION Svedi( cSvedi )
       SELECT koncij
       SEEK Trim( _idkonto )
       SELECT roba
-      hseek _idroba
+      HSEEK _idroba
       _mpcsapp := UzmiMPCSif()
 
    ELSEIF cSvedi == "S"

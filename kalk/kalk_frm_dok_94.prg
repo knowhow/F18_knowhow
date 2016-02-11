@@ -81,7 +81,7 @@ FUNCTION Get1_94()
    ENDIF
 
    SELECT koncij; SEEK Trim( _idkonto )  // postavi TARIFA na pravu poziciju
-   SELECT TARIFA; hseek _IdTarifa  // postavi TARIFA na pravu poziciju
+   SELECT TARIFA; HSEEK _IdTarifa  // postavi TARIFA na pravu poziciju
    SELECT kalk_pripr  // napuni tarifu
    _MKonto := _Idkonto; _MU_I := "1"
 

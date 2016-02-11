@@ -631,10 +631,10 @@ ENDDO
 cIniName := my_home() + "proizvj.ini"
 
 select rj
-hseek cGlava
+HSEEK cGlava
    
 select funk
-hseek cFunkc
+HSEEK cFunkc
    
 UzmiIzIni(cIniName,'Varijable','RJ',cGlava,'WRITE')
 UzmiIzIni(cIniName,'Varijable','RJNaz',rj->naz,'WRITE')
@@ -651,7 +651,7 @@ if !empty(cUIdKonto)
         O_KONTO
     endif
     select konto
-    hseek cUIdKonto
+    HSEEK cUIdKonto
     UzmiIzIni(cIniName,'Varijable','KontoNaz',konto->naz, "WRITE")
     use
 else

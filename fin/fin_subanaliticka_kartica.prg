@@ -389,7 +389,7 @@ FUNCTION SubKart( lOtvst )
       ENDIF
       IF !Empty( qqNazKonta )
          SELECT konto
-         hseek cIdKonto
+         HSEEK cIdKonto
          IF !( &( aNK ) )
             SELECT suban
             SKIP 1
@@ -1042,7 +1042,7 @@ FUNCTION Telefon( cTel )
 
    nselect := Select()
    SELECT partn
-   hseek suban->idpartner
+   HSEEK suban->idpartner
    SELECT ( nselect )
 
    RETURN partn->telefon = cTel

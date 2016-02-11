@@ -325,7 +325,7 @@ STATIC FUNCTION _fill_items( lZpoGN, nVar )
 
       // nadji proizvod
       SELECT articles
-      hseek artid_str( nArt_id )
+      HSEEK artid_str( nArt_id )
 
       IF lGroups == .T.
 
@@ -603,7 +603,7 @@ STATIC FUNCTION _fill_it2()
 
       // nadji artikal
       SELECT roba
-      hseek cArt_id
+      HSEEK cArt_id
 
       cArt_desc := AllTrim( roba->naz )
 

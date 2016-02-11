@@ -114,7 +114,7 @@ FUNCTION os_obracun_amortizacije()
       cIdam := field->idam
 
       SELECT amort
-      hseek cIdAm
+      HSEEK cIdAm
 
       select_os_sii()
 
@@ -142,7 +142,7 @@ FUNCTION os_obracun_amortizacije()
          _datum_otpisa := _datotp
 
          SELECT amort
-         hseek _idam
+         HSEEK _idam
 
          select_os_sii()
 
@@ -217,7 +217,7 @@ FUNCTION os_obracun_amortizacije()
 
          // amortizacija promjena
          select_promj()
-         hseek cId
+         HSEEK cId
 
          DO WHILE !Eof() .AND. field->id == cId .AND. field->datum <= dDatObr
 
@@ -359,7 +359,7 @@ FUNCTION os_obracun_amortizacije()
 
             // amortizacija promjena
             select_promj()
-            hseek cId
+            HSEEK cId
 
             DO WHILE !Eof() .AND. field->id == cId .AND. field->datum <= dDatObr
 
@@ -841,7 +841,7 @@ FUNCTION os_obracun_revalorizacije()
          SKIP
          LOOP
       ENDIF
-      SELECT reval; hseek _idrev; select_os_sii()
+      SELECT reval; HSEEK _idrev; select_os_sii()
       nRevAm := 0
       nKoef := izracunaj_os_reval( _datum, iif( !Empty( _datotp ), Min( dDatOBr, _datotp ), dDatObr ), @nRevAm )     // napuni _revp,_revd
       ? _id, _datum, _idrev, _naz
@@ -856,7 +856,7 @@ FUNCTION os_obracun_revalorizacije()
       nURevAm += nRevAm
       Gather()
       PRIVATE cId := _id
-      select_promj(); hseek cid
+      select_promj(); HSEEK cid
       DO WHILE !Eof() .AND. id == cid .AND. datum <= dDatObr
          Scatter()
          nRevAm := 0

@@ -117,7 +117,7 @@ FUNCTION PregProdaje()
          ENDIF
 
          SELECT partn
-         hseek kalk->idPartner
+         HSEEK kalk->idPartner
          SELECT kalk
          IF cSaPSiPM == "D"
             IF !( DInRange( datdok, dOd, dDo ) .OR. DInRange( datdok, dOd - 7, dDo - 7 ) .OR. DInRange( datdok, dOd - 28, dDo - 28 ) ) .OR. !( &aUslKupac ) .OR. !( partn->( &aUslOpstina ) )

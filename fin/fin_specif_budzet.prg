@@ -770,7 +770,7 @@ if ci4=="D"
 			endif
 
 			select konto
-			hseek cKtoStvarni
+			HSEEK cKtoStvarni
 			IF nSlob==0
 				IB_Zagl4()
 				?
@@ -1210,7 +1210,7 @@ do while !eof()
 	cLev1:=idkonto
 	fLev1:=.t.
 	select konto
-	hseek clev1
+	HSEEK clev1
 	select budzet
 	? cLM
 	B_ON
@@ -1228,7 +1228,7 @@ do while !eof()
 		cLev2:=idkonto
 		fLev2:=.t.
 		select konto
-		hseek clev2
+		HSEEK clev2
 		select budzet
 		? cLM
 		B_ON

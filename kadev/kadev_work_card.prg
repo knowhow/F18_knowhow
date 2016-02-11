@@ -72,7 +72,7 @@ select kdv_rjrmj; set order to tag "ID"
  SEEK cOdRJ
  crj:=IdRj
  nPopRJ:=0; nPopRJS:=0
- select kdv_rj; hseek crj; select kdv_rjrmj
+ select kdv_rj; HSEEK crj; select kdv_rjrmj
  ? "****",crj,"****", kdv_rj->naz
  ? replicate('-',80)
 
@@ -100,7 +100,7 @@ select kdv_rjrmj; set order to tag "ID"
      cRj:=IdRJ
      nPopRJ:=nPopRJS:=0
      ?
-     select kdv_rj; hseek crj; select kdv_rjrmj
+     select kdv_rj; HSEEK crj; select kdv_rjrmj
      ? "****",cRj,"****", kdv_rj->naz
      ? replicate('-',80)
      ?
@@ -108,24 +108,24 @@ select kdv_rjrmj; set order to tag "ID"
 
   ? REPLICATE("-",78)
   if prow()>62; FF; endif
-  select kdv_rmj; hseek cRmj
-  select strspr; hseek kdv_rjrmj->idStrSprod
+  select kdv_rmj; HSEEK cRmj
+  select strspr; HSEEK kdv_rjrmj->idStrSprod
   select kdv_rjrmj
   ?  cRMJ,'-',kdv_rmj->naz,' Po sist.izvrsilaca:',BrIzvrs,SPACE(2),"K:"+Idk1+";"+Idk2+";"+Idk3+";"+Idk4
   ?  SPACE(6),"Opis:",Opis
   ?  SPACE(6),"S.Spr:",IdStrSprOd,"-",strspr->naz
-  select kdv_zanim; hseek kdv_rjrmj->idzanim1; select kdv_rjrmj
+  select kdv_zanim; HSEEK kdv_rjrmj->idzanim1; select kdv_rjrmj
   ?  SPACE(6),"Vrsta:",Idzanim1,"-",kdv_zanim->naz
   if !empty(Idzanim2)
-   select kdv_zanim; hseek kdv_rjrmj->idzanim2; select kdv_rjrmj
+   select kdv_zanim; HSEEK kdv_rjrmj->idzanim2; select kdv_rjrmj
    ?  SPACE(6),Idzanim2,"-",kdv_zanim->naz
   endif
   if !empty(Idzanim3)
-   select kdv_zanim; hseek kdv_rjrmj->idzanim3; select kdv_rjrmj
+   select kdv_zanim; HSEEK kdv_rjrmj->idzanim3; select kdv_rjrmj
    ?  SPACE(6),Idzanim3,"-",kdv_zanim->naz
   endif
   if !empty(Idzanim4)
-   select kdv_zanim; hseek kdv_rjrmj->idzanim4; select kdv_rjrmj
+   select kdv_zanim; HSEEK kdv_rjrmj->idzanim4; select kdv_rjrmj
    ?  SPACE(6),Idzanim4,"-",kdv_zanim->naz
   endif
   ? REPLICATE("-",78)
@@ -141,9 +141,9 @@ select kdv_rjrmj; set order to tag "ID"
               loop
             endif
             ? str(++nPopunjeno,5)+'.',trim(prezime)+" ("+trim(ImeRod)+") "+trim(ime)
-            select strspr; hseek kadev_0->idStrspr; select kadev_0
+            select strspr; HSEEK kadev_0->idStrspr; select kadev_0
             ? space(6),IdStrSpr,"-",strspr->naz
-            select kdv_zanim; hseek kadev_0->idzanim; select kadev_0
+            select kdv_zanim; HSEEK kadev_0->idzanim; select kadev_0
             ? space(6),IdZanim,"-",kdv_zanim->naz,SPACE(7),"__________"
             ++nPopRJ
                   ////////// postavljenja radnog staza

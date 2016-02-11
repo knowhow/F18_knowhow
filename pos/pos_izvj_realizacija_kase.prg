@@ -620,7 +620,7 @@ if !fZaklj.and.fPrik$"RO"
 		_IdPos:=POM->IdPos
 		if empty(cIdPos)
 			SELECT KASE
-			hseek _IdPos
+			HSEEK _IdPos
 			? REPL ("-", LEN_TRAKA)
 			? space(1)+_idpos+":", + KASE->Naz
 			? REPL ("-", LEN_TRAKA)
@@ -784,7 +784,7 @@ if (fPrik $ "PO")
 		_IdPos:=pom->IdPos
 		if empty(cIdPos)
 			SELECT kase
-			hseek _IdPos
+			HSEEK _IdPos
 			? REPL("-",LEN_TRAKA)
 			? space(1)+_idpos+":", KASE->Naz
 			? REPL("-",LEN_TRAKA)

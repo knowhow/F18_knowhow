@@ -93,7 +93,7 @@ FUNCTION ld_kartica_plate_samostalni( cIdRj, cMjesec, cGodina, cIdRadn, cObrac, 
 
                DO WHILE !Eof() .AND. _godina == godina .AND. _mjesec = mjesec .AND. idradn == _idradn
                   SELECT kred
-                  hseek radkr->idkred
+                  HSEEK radkr->idkred
                   SELECT radkr
                   aIznosi := OKreditu( idradn, idkred, naosnovu, _mjesec, _godina )
                   ukredita += iznos

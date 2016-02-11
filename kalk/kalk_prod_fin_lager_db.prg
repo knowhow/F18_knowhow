@@ -132,7 +132,7 @@ FUNCTION kalk_gen_fin_stanje_prodavnice( vars )
    SELECT kalk
    SET ORDER TO TAG "5"
 
-   hseek _id_firma
+   HSEEK _id_firma
 
    SELECT koncij
    SEEK Trim( _konto )
@@ -210,12 +210,12 @@ FUNCTION kalk_gen_fin_stanje_prodavnice( vars )
       _t_area := Select()
 
       SELECT tdok
-      hseek _tip_dok
+      HSEEK _tip_dok
       _tip_dok_naz := field->naz
 
       IF !Empty( _id_partner )
          SELECT partn
-         hseek _id_partner
+         HSEEK _id_partner
 
          _partn_naziv := field->naz
          _partn_ptt := field->ptt
@@ -266,7 +266,7 @@ FUNCTION kalk_gen_fin_stanje_prodavnice( vars )
          ENDIF
 
          SELECT roba
-         hseek kalk->idroba
+         HSEEK kalk->idroba
 
          IF ( _gledati_usluge == "N" .AND. roba->tip $ "U" )
             SELECT kalk
@@ -275,7 +275,7 @@ FUNCTION kalk_gen_fin_stanje_prodavnice( vars )
          ENDIF
 
          SELECT tarifa
-         hseek kalk->idtarifa
+         HSEEK kalk->idtarifa
 
          SELECT kalk
 

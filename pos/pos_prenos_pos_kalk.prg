@@ -332,7 +332,7 @@ FUNCTION pos_prenos_inv_2_kalk( id_pos, id_vd, dat_dok, br_dok )
       _id_roba := field->idroba
 
       SELECT roba
-      hseek _id_roba
+      HSEEK _id_roba
 
       SELECT pom
       APPEND BLANK
@@ -487,7 +487,7 @@ FUNCTION pos_prenos_pos_kalk( dDateOd, dDateDo, cIdVd, id_pm )
 
          SELECT roba
          SET ORDER TO TAG "ID"
-         hseek pos->idroba
+         HSEEK pos->idroba
 
          SELECT pom
          SET ORDER TO TAG "1"

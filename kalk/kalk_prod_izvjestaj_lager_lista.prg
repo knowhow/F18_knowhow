@@ -214,7 +214,7 @@ FUNCTION lager_lista_prodavnica()
    SET FILTER to &cFilter
    // "4","idFirma+Pkonto+idroba+dtos(datdok)+PU_I+IdVD","KALKS")
 
-   hseek cIdfirma + cIdkonto
+   HSEEK cIdfirma + cIdkonto
    EOF CRET
 
    IF _print == "2"
@@ -257,7 +257,7 @@ FUNCTION lager_lista_prodavnica()
    start PRINT cret
    ?
    SELECT konto
-   hseek cIdKonto
+   HSEEK cIdKonto
    SELECT KALK
 
    PRIVATE nTStrana := 0
@@ -292,7 +292,7 @@ FUNCTION lager_lista_prodavnica()
       ENDIF
 
       SELECT roba
-      hseek cIdRoba
+      HSEEK cIdRoba
 	
       nMink := roba->mink
 
@@ -469,7 +469,7 @@ FUNCTION lager_lista_prodavnica()
          ENDIF
 		
          SELECT roba
-         hseek cIdRoba
+         HSEEK cIdRoba
 		
          SELECT kalk
          aNaz := Sjecistr( roba->naz, 20 )
@@ -581,7 +581,7 @@ FUNCTION lager_lista_prodavnica()
          SEEK Trim( cIdKonto )
 
          SELECT roba
-         hseek cIdRoba
+         HSEEK cIdRoba
 
          _mpc := UzmiMPCSif()
 
@@ -766,7 +766,7 @@ FUNCTION ZaglLLP( lSint )
       ? "Kriterij za prodavnice:", qqKonto
    ELSE
       SELECT konto
-      hseek cidkonto
+      HSEEK cidkonto
       ? "Prodavnica:", cIdKonto, "-", konto->naz
    ENDIF
 
@@ -1003,7 +1003,7 @@ STATIC FUNCTION _gen_xml( params )
    PRIVATE aPorezi
 
    SELECT konto
-   hseek params[ "idkonto" ]
+   HSEEK params[ "idkonto" ]
 
    _t_ulaz := _t_izlaz := _t_nv_u := _t_nv_i := 0
    _t_mpv_u := _t_mpv_i := _t_rabat := 0
@@ -1029,7 +1029,7 @@ STATIC FUNCTION _gen_xml( params )
       _idroba := field->Idroba
 	
       SELECT roba
-      hseek _idroba
+      HSEEK _idroba
 
       SELECT kalk
 
@@ -1092,7 +1092,7 @@ STATIC FUNCTION _gen_xml( params )
          SEEK _idkonto
 
          SELECT roba
-         hseek _idroba
+         HSEEK _idroba
 
          _mpcs := UzmiMPCSif()
 

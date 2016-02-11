@@ -257,7 +257,7 @@ do while !eof() .and. cIdfirma+cIdvd+cBrDok==idfirma+idvd+brdok
   nU5:=0
   nUp:=0
   select tarifa
-  hseek cIdtarifa
+  HSEEK cIdtarifa
 
   Tarifa(kalk_pripr->pkonto, kalk_pripr->idRoba, @aPorezi)
 
@@ -266,7 +266,7 @@ do while !eof() .and. cIdfirma+cIdvd+cBrDok==idfirma+idvd+brdok
   do while !eof() .and. cIdfirma+cIdVd+cBrDok==idFirma+idVd+brDok .and. idTarifa==cIdTarifa
 
     select roba
-    hseek kalk_pripr->idroba
+    HSEEK kalk_pripr->idroba
     select kalk_pripr
     VtPorezi()
 

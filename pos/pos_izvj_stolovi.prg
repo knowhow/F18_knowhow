@@ -22,7 +22,7 @@ nRet:=0
 select pos_doks
 set order to tag "ZAK"
 go bottom
-hseek gIdPos + "42" + "XXX"
+HSEEK gIdPos + "42" + "XXX"
 skip -1
 
 nRet := (field->zak_br) + 1
@@ -49,7 +49,7 @@ nNext_zak := g_next_zak_br()
 // postavi filter za nStoBr
 select pos_doks
 set order to tag "STO"
-hseek gIdPos + "42" + STR(nStoBr) + cNijeZaklj
+HSEEK gIdPos + "42" + STR(nStoBr) + cNijeZaklj
 
 do while !EOF() .and. pos_doks->idpos == gIdPos .and. pos_doks->idvd == "42" .and. pos_doks->sto_br == nStoBr .and. pos_doks->zak_br == 0
 	++ nCnt
@@ -87,7 +87,7 @@ nArr := SELECT()
 O_POS
 select pos_doks
 set order to tag "ZAK"
-hseek gIdPos + "42" + STR(nZakBr, 6)
+HSEEK gIdPos + "42" + STR(nZakBr, 6)
 
 
 cDokumenti := ""
@@ -168,7 +168,7 @@ SET ORDER TO TAG "1"
 
 select pos_doks
 set order to tag "ZAK"
-hseek gIdPos + "42" + STR(nZakBr, 6)
+HSEEK gIdPos + "42" + STR(nZakBr, 6)
 
 if !found()
 	MsgBeep("racun ZAK.STO=" + STR(nZakBr, 6) + " ne postoji !?")
@@ -204,12 +204,12 @@ do while !EOF() .and. pos_doks->idvd == "42" .and. pos_doks->zak_br == nZakBr
 	
 	select osob
 	set order to tag "NAZ"
-	hseek cIdRadnik
+	HSEEK cIdRadnik
 	cRdnkNaz := osob->naz
 	
 	select vrstep
 	set order to tag "ID"
-	hseek cVrstaP
+	HSEEK cVrstaP
 	
 	if !Found()
 		cNazVrstaP := "GOTOVINA"
@@ -219,7 +219,7 @@ do while !EOF() .and. pos_doks->idvd == "42" .and. pos_doks->zak_br == nZakBr
 	
 
 	select pos
-	hseek pos_doks->(cIdPos+cIdVd+DTOS(dDatRn)+cBrDok)
+	HSEEK pos_doks->(cIdPos+cIdVd+DTOS(dDatRn)+cBrDok)
 	// -------- vrti kroz pos -------------------------
 	do while !eof() .and. (pos->idpos == cIdpos) .and. (pos->idvd == cIdVd) .and.  (pos->datum == dDatRn) .and. (pos->brdok == cBrDok)
 
@@ -237,13 +237,13 @@ do while !EOF() .and. pos_doks->idvd == "42" .and. pos_doks->zak_br == nZakBr
 		cIdTarifa := pos->idtarifa
 
 		select roba
-		hseek cIdRoba
+		HSEEK cIdRoba
 		cJmj := roba->jmj
 		cRobaNaz := roba->naz	
 		
 		// seek-uj tarifu
 		select tarifa
-		hseek cIdTarifa
+		HSEEK cIdTarifa
 		nPPDV := tarifa->opp
 
 
@@ -351,7 +351,7 @@ firma_params_fill()
 
 select pos_dokspf
 set order to tag "1"
-hseek cIdPos + VD_RN + DToS(dDatRn) + cBrDok
+HSEEK cIdPos + VD_RN + DToS(dDatRn) + cBrDok
 
 add_drntext("K01", dokspf->knaz)
 add_drntext("K02", dokspf->kadr)
@@ -378,7 +378,7 @@ O_POS_DOKS
 select pos_doks
 set order to tag "ZAK"
 go top
-hseek gIdPos + "42"
+HSEEK gIdPos + "42"
 
 nTotal := 0
 nStoBr := 0
@@ -558,7 +558,7 @@ O_POS
 O_POS_DOKS
 select pos_doks
 set order to tag "STO"
-hseek gIdPos + "42" + STR(nStoBr) + cNijeZaklj
+HSEEK gIdPos + "42" + STR(nStoBr) + cNijeZaklj
 
 nStanje := 0
 

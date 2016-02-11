@@ -46,7 +46,7 @@ FUNCTION StKalkIP( fZaTops )
 
    P_10CPI
    SELECT konto
-   hseek cidkonto
+   HSEEK cidkonto
    SELECT kalk_pripr
 
    ?? "INVENTURA PRODAVNICA ", cIdkonto, "-", AllTrim( konto->naz )
@@ -255,7 +255,7 @@ FUNCTION StObrazSL()
 
 
    P_10CPI
-   SELECT konto; hseek cidkonto; SELECT kalk_pripr
+   SELECT konto; HSEEK cidkonto; SELECT kalk_pripr
    ?? "INVENTURA PRODAVNICA ", cidkonto, "-", konto->naz
    P_COND
    ?

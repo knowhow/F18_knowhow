@@ -66,7 +66,7 @@ do while !EOF()
 
     // provjeri prvo robu   
     select roba
-    hseek mat_psuban->idroba
+    HSEEK mat_psuban->idroba
     
     if !found()
         Beep(1)
@@ -77,7 +77,7 @@ do while !EOF()
   
     // provjeri partnere
     select partn
-    hseek mat_psuban->idpartner
+    HSEEK mat_psuban->idpartner
     
     if !found() .and. !EMPTY(mat_psuban->idpartner)
         Beep(1)

@@ -89,7 +89,7 @@ IF !(cFilt1==".t.")
   SET FILTER TO &cFilt1
 ENDIF
 
-hseek cIdFirma
+HSEEK cIdFirma
 EOF CRET
 
 private M:="   -------------------------------- ---------- ---------- ---------- ---------- ---------- ---------- ----------" + IF(!IsPDV(), " ----------","")
@@ -126,7 +126,7 @@ DO WHILE !EOF() .and. idfirma==cidfirma .and. cidkonto=mkonto .and. IspitajPreki
   	//Vindija - ispitaj opcine za partnera
   	if IsVindija() .and. !Empty(cOpcine)
   		select partn
-		hseek cIdPartner
+		HSEEK cIdPartner
 		if AT(ALLTRIM(partn->idops), cOpcine)==0
 			select kalk
 			skip
@@ -138,9 +138,9 @@ DO WHILE !EOF() .and. idfirma==cidfirma .and. cidkonto=mkonto .and. IspitajPreki
   	do WHILE !EOF() .and. idfirma==cidfirma .and. idpartner==cidpartner  .and. cidkonto=mkonto .and. IspitajPrekid()
 
    		select roba
-   		hseek kalk->idroba
+   		HSEEK kalk->idroba
    		select tarifa
-   		hseek kalk->idtarifa
+   		HSEEK kalk->idtarifa
    		select kalk
 
    		if idvd = "14"
@@ -223,7 +223,7 @@ DO WHILE !EOF() .and. idfirma==cidfirma .and. cidkonto=mkonto .and. IspitajPreki
  		kalk_zagl_real_partnera()
   	endif
   	select partn
-  	hseek cIdPartner
+  	HSEEK cIdPartner
   	select kalk
   
   	? space(2), cIdPartner, PADR(partn->naz, 25)

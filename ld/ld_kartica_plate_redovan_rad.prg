@@ -202,7 +202,7 @@ FUNCTION ld_kartica_plate_redovan_rad( cIdRj, cMjesec, cGodina, cIdRadn, cObrac,
                SEEK Str( _godina, 4 ) + Str( _mjesec, 2 ) + _idradn
                DO WHILE !Eof() .AND. _godina == godina .AND. _mjesec = mjesec .AND. idradn == _idradn
                   SELECT kred
-                  hseek radkr->idkred
+                  HSEEK radkr->idkred
                   SELECT radkr
                   ? cLMSK + "  ", idkred, Left( kred->naz, 22 ), naosnovu
                   @ PRow(), 58 + Len( cLMSK ) SAY iznos PICT "(" + gpici + ")"
@@ -230,7 +230,7 @@ FUNCTION ld_kartica_plate_redovan_rad( cIdRj, cMjesec, cGodina, cIdRadn, cObrac,
 
                DO WHILE !Eof() .AND. _godina == godina .AND. _mjesec = mjesec .AND. idradn == _idradn
                   SELECT kred
-                  hseek radkr->idkred
+                  HSEEK radkr->idkred
                   SELECT radkr
                   aIznosi := OKreditu( idradn, idkred, naosnovu, _mjesec, _godina )
                   ? cLMSK + " ", idkred, Left( kred->naz, 22 ), PadR( naosnovu, 20 )
@@ -258,12 +258,12 @@ FUNCTION ld_kartica_plate_redovan_rad( cIdRj, cMjesec, cGodina, cIdRadn, cObrac,
       SELECT ld
       PushWA()
       SET ORDER TO TAG "2"
-      hseek Str( _godina, 4 ) + Str( _mjesec, 2 ) + "1" + _idradn + _idrj
+      HSEEK Str( _godina, 4 ) + Str( _mjesec, 2 ) + "1" + _idradn + _idrj
       ?
       ? cLMSK + "Od toga 1. dio:"
       @ PRow(), 60 + Len( cLMSK ) SAY UIznos PICT gpici
       ? cTprLine
-      hseek Str( _godina, 4 ) + Str( _mjesec, 2 ) + "2" + _idradn + _idrj
+      HSEEK Str( _godina, 4 ) + Str( _mjesec, 2 ) + "2" + _idradn + _idrj
       ? cLMSK + "Od toga 2. dio:"
       @ PRow(), 60 + Len( cLMSK ) SAY UIznos PICT gpici
       ? cTprLine

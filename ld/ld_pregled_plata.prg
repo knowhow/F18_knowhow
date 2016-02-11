@@ -83,12 +83,12 @@ FUNCTION pregled_plata()
 
    IF !Empty( cKbenef )
       SELECT kbenef
-      hseek  cKbenef
+      HSEEK  cKbenef
    ENDIF
 
    IF !Empty( cVPosla )
       SELECT vposla
-      hseek  cVposla
+      HSEEK  cVposla
    ENDIF
 
    SELECT ld
@@ -119,7 +119,7 @@ FUNCTION pregled_plata()
    ELSE
       IF cVarSort == "1"
          SET ORDER TO tag ( TagVO( "1" ) )
-         hseek Str( cGodina, 4 ) + cidrj + Str( cmjesec, 2 ) + if( lViseObr .AND. !Empty( cObracun ), cObracun, "" )
+         HSEEK Str( cGodina, 4 ) + cidrj + Str( cmjesec, 2 ) + if( lViseObr .AND. !Empty( cObracun ), cObracun, "" )
       ELSE
          Box(, 2, 30 )
          nSlog := 0
@@ -194,11 +194,11 @@ FUNCTION pregled_plata()
       ENDIF
 
       SELECT radn
-      hseek _idradn
+      HSEEK _idradn
       SELECT vposla
-      hseek _idvposla
+      HSEEK _idvposla
       SELECT kbenef
-      hseek vposla->idkbenef
+      HSEEK vposla->idkbenef
       SELECT ld
 
       IF !Empty( cvposla ) .AND. cvposla <> Left( _idvposla, 2 )

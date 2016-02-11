@@ -258,7 +258,7 @@ FUNCTION gen_ug()
       // prvi krug odredjuje glavnicu
       nGlavnica := 0  // jedna stavka mo§e biti glavnica za ostale
       DO WHILE !Eof() .AND. id == cidugov
-         SELECT roba; hseek rugov->idroba
+         SELECT roba; HSEEK rugov->idroba
          SELECT rugov
          IF K1 == "G"
             // nGlavnica+=kolicina*roba->vpc
@@ -294,17 +294,17 @@ FUNCTION gen_ug()
 
          IF nRbr == 0
             SELECT PARTN
-            hseek ugov->idpartner
+            HSEEK ugov->idpartner
             _txt3b := _txt3c := ""
             _txt3a := PadR( ugov->idpartner + ".", 30 )
 
             IzSifre( .T. )
 
-            SELECT ftxt; hseek ugov->iddodtxt; cDodTxt := Trim( naz )
-            hseek ugov->idtxt
+            SELECT ftxt; HSEEK ugov->iddodtxt; cDodTxt := Trim( naz )
+            HSEEK ugov->idtxt
             PRIVATE _Txt1 := ""
 
-            SELECT roba; hseek rugov->idroba
+            SELECT roba; HSEEK rugov->idroba
             IF roba->tip == "U"
                _txt1 := roba->naz
             ELSE
@@ -369,7 +369,7 @@ FUNCTION gen_ug()
 
          PRIVATE _Txt1 := ""
 
-         SELECT roba; hseek rugov->idroba
+         SELECT roba; HSEEK rugov->idroba
          IF nRbr <> 0 .AND. roba->tip == "U"
             _txt1 := roba->naz
             _txt := Chr( 16 ) + _txt1 + Chr( 17 )
@@ -384,7 +384,7 @@ FUNCTION gen_ug()
          _datpl := dDatDok
          _kolicina := nKolicina
          _idroba := rugov->idroba
-         SELECT roba; hseek _idroba
+         SELECT roba; HSEEK _idroba
 
          SELECT fakt_pripr
          fakt_setuj_cijenu( "1" )

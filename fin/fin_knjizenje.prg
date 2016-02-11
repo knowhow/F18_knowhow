@@ -408,7 +408,7 @@ FUNCTION Partija( cIdKonto )
 
    IF Right( Trim( cIdkonto ), 1 ) == "*"
       SELECT parek
-      hseek StrTran( cIdkonto, "*", "" ) + " "
+      HSEEK StrTran( cIdkonto, "*", "" ) + " "
       cIdkonto := idkonto
       SELECT fin_pripr
    ENDIF
@@ -1197,7 +1197,7 @@ FUNCTION BrDokOK()
    SEEK _idkonto
    IF field->oznaka = "TD"
       SELECT rnal
-      hseek PadR( _brDok, 10 )
+      HSEEK PadR( _brDok, 10 )
       IF !Found() .OR. Empty( _brDok )
          MsgBeep( "Unijeli ste nepostojeci broj radnog naloga. Otvaram sifrarnik radnih##naloga da biste mogli izabrati neki od postojecih!" )
          P_fakt_objekti( @_brDok, 9, 2 )

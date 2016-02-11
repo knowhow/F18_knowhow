@@ -110,7 +110,7 @@ FUNCTION ld_platni_spisak()
       cIdRj := ""
       IF cVarSort == "1"
          SET ORDER TO tag ( TagVO( "2" ) )
-         hseek Str( cGodina, 4 ) + Str( cmjesec, 2 ) + cObracun
+         HSEEK Str( cGodina, 4 ) + Str( cmjesec, 2 ) + cObracun
       ELSE
          Box(, 2, 30 )
          nSlog := 0
@@ -126,7 +126,7 @@ FUNCTION ld_platni_spisak()
 
       IF cVarSort == "1"
          SET ORDER TO tag ( TagVO( "1" ) )
-         hseek Str( cGodina, 4 ) + cidrj + Str( cmjesec, 2 ) + cObracun
+         HSEEK Str( cGodina, 4 ) + cidrj + Str( cmjesec, 2 ) + cObracun
       ELSE
          Box(, 2, 30 )
          nSlog := 0
@@ -149,7 +149,7 @@ FUNCTION ld_platni_spisak()
    bZagl := {|| ZPlatSp() }
 
    SELECT ld_rj
-   hseek ld->idrj
+   HSEEK ld->idrj
    SELECT ld
 
    START PRINT CRET
@@ -176,7 +176,7 @@ FUNCTION ld_platni_spisak()
          ENDIF
 
          SELECT radn
-         hseek _idradn
+         HSEEK _idradn
          SELECT ld
 
          IF nIznosTO = 0
@@ -398,7 +398,7 @@ FUNCTION ld_platni_spisak_tekuci_racun( cVarijanta )
 
       IF cVarSort == "1"
          SET ORDER TO tag ( TagVO( "2" ) )
-         hseek Str( cGodina, 4 ) + Str( cmjesec, 2 ) + cObracun
+         HSEEK Str( cGodina, 4 ) + Str( cmjesec, 2 ) + cObracun
       ELSE
          Box(, 2, 30 )
          nSlog := 0
@@ -416,7 +416,7 @@ FUNCTION ld_platni_spisak_tekuci_racun( cVarijanta )
 
       IF cVarSort == "1"
          SET ORDER TO tag ( TagVO( "1" ) )
-         hseek Str( cGodina, 4 ) + cidrj + Str( cmjesec, 2 ) + cObracun
+         HSEEK Str( cGodina, 4 ) + cidrj + Str( cmjesec, 2 ) + cObracun
       ELSE
          Box(, 2, 30 )
          nSlog := 0
@@ -452,7 +452,7 @@ FUNCTION ld_platni_spisak_tekuci_racun( cVarijanta )
    bZagl := {|| ZPlatSpTR() }
 
    SELECT ld_rj
-   hseek ld->idrj
+   HSEEK ld->idrj
    SELECT ld
 
    START PRINT CRET
@@ -482,7 +482,7 @@ FUNCTION ld_platni_spisak_tekuci_racun( cVarijanta )
          ENDIF
 
          SELECT radn
-         hseek _idradn
+         HSEEK _idradn
          SELECT ld
 
          IF radn->isplata <> cIsplata .OR. ;
@@ -613,8 +613,8 @@ FUNCTION ZPlatSpTR()
 
    SELECT kred
    // ovo izbacio jer ne daje dobar naziv banke!!!
-   // hseek radn->idbanka
-   hseek cIdBanka
+   // HSEEK radn->idbanka
+   HSEEK cIdBanka
    SELECT ld
 
    ?
@@ -792,7 +792,7 @@ FUNCTION ld_pregled_isplate_za_tekuci_racun( cVarijanta )
    bZagl := {|| ZIsplataTR() }
 
    SELECT ld_rj
-   hseek ld->idrj
+   HSEEK ld->idrj
    SELECT ld
 
    START PRINT CRET
@@ -819,7 +819,7 @@ FUNCTION ld_pregled_isplate_za_tekuci_racun( cVarijanta )
          ENDIF
 
          // select radn
-         // hseek _idradn
+         // HSEEK _idradn
          // select ld
 
          IF Empty( cIdTipPr )
@@ -912,8 +912,8 @@ FUNCTION ZIsplataTR()
 
    SELECT kred
    // ovo izbacio jer ne daje dobar naziv banke!!!
-   // hseek radn->idbanka
-   hseek cIdTBanka
+   // HSEEK radn->idbanka
+   HSEEK cIdTBanka
    SELECT ld
 
    ?

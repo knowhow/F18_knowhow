@@ -84,7 +84,7 @@ FUNCTION Get1_16PDV()
    SEEK Trim( _idkonto )
 
    SELECT TARIFA
-   hseek _IdTarifa
+   HSEEK _IdTarifa
 
    SELECT kalk_pripr
    _MKonto := _Idkonto; _MU_I := "1"
@@ -190,7 +190,7 @@ FUNCTION Get1_16bPDV()
    READ
    ESC_RETURN K_ESC
    SELECT TARIFA
-   hseek _IdTarifa
+   HSEEK _IdTarifa
    // postavi TARIFA na pravu poziciju
    SELECT koncij
    SEEK Trim( _idkonto )

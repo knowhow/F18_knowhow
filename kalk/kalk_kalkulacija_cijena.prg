@@ -253,19 +253,19 @@ STATIC FUNCTION gen_kalk_predispozicija_xml( vars )
    PRIVATE aPorezi := {}
 
    SELECT konto
-   hseek kalk_pripr->pkonto
+   HSEEK kalk_pripr->pkonto
 
    _razd_id := kalk_pripr->pkonto
    _razd_naz := konto->naz
 
    GO TOP
-   hseek kalk_pripr->idkonto2
+   HSEEK kalk_pripr->idkonto2
 
    _zad_id := kalk_pripr->idkonto2
    _zad_naz := konto->naz
 
    SELECT tdok
-   hseek kalk_pripr->idvd
+   HSEEK kalk_pripr->idvd
 
    SELECT kalk_pripr
 
@@ -427,13 +427,13 @@ STATIC FUNCTION gen_kalk_mp_xml( vars )
    PRIVATE aPorezi := {}
 
    SELECT konto
-   hseek kalk_pripr->pkonto
+   HSEEK kalk_pripr->pkonto
 
    SELECT partn
-   hseek kalk_pripr->idpartner
+   HSEEK kalk_pripr->idpartner
 
    SELECT tdok
-   hseek kalk_pripr->idvd
+   HSEEK kalk_pripr->idvd
 
    SELECT kalk_pripr
 
@@ -632,13 +632,13 @@ STATIC FUNCTION gen_kalk_vp_xml( vars )
    PRIVATE nPrevoz, nCarDaz, nZavTr, nBankTr, nSpedTr, nMarza, nMarza2
 
    SELECT konto
-   hseek kalk_pripr->mkonto
+   HSEEK kalk_pripr->mkonto
 
    SELECT partn
-   hseek kalk_pripr->idpartner
+   HSEEK kalk_pripr->idpartner
 
    SELECT tdok
-   hseek kalk_pripr->idvd
+   HSEEK kalk_pripr->idvd
 
    SELECT kalk_pripr
 

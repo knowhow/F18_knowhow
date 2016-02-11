@@ -72,7 +72,7 @@ IF !(cFilt1==".t.")
   SET FILTER TO &cFilt1
 ENDIF
 
-hseek cidfirma
+HSEEK cidfirma
 EOF CRET
 
 M:="----------- -------- ---------- -------- ------ ------------- ------------- --------------"
@@ -112,8 +112,8 @@ DO WHILE !EOF() .and. idfirma==cidfirma .and. IspitajPrekid()
      ENDIF
 
      select roba
-     select roba; hseek kalk->idroba
-     select tarifa; hseek kalk->idtarifa; select kalk
+     select roba; HSEEK kalk->idroba
+     select tarifa; HSEEK kalk->idtarifa; select kalk
      VtPorezi()
      nVPVBP:=nVPV/(1+_PORVT)
 

@@ -239,7 +239,7 @@ IF fPrik $ "PO"
 
         if fPrikPrem=="D"
          select roba
-	 	hseek pom->idroba
+	 	HSEEK pom->idroba
 	 	select pom
          if !(roba->k2='X')
             if roba->k7='*'
@@ -428,11 +428,11 @@ do While ! Eof() .and. IdVd==cIdVd .and. pos_doks->Datum <= dDatDo
     EndIF
 
     select roba
-    hseek pos->idroba
+    HSEEK pos->idroba
 
     if roba->(FIELDPOS("idodj")) <> 0
         select odj
-        hseek roba->idodj
+        HSEEK roba->idodj
     endif
 
     nNeplaca:=0

@@ -184,7 +184,7 @@ STATIC FUNCTION lista_racuna_key_handler()
    O_STRAD
 
    SELECT strad
-   hseek gStrad
+   HSEEK gStrad
    cLevel := prioritet
    USE
    SELECT pos_doks

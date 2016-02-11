@@ -346,7 +346,7 @@ FUNCTION povrat_smece( cIdFirma, cIdtipdok, cBrDok )
 
    SELECT fakt_pripr9
 
-   hseek cIdFirma + cIdtipdok + cBrDok
+   HSEEK cIdFirma + cIdtipdok + cBrDok
 
    MsgO( "PRIPREMA" )
 

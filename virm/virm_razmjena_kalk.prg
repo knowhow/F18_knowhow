@@ -168,8 +168,8 @@ DO WHILE !EOF()
 
   cSvrha_pl := idvrprim
   nFormula  := ROUND( iznos , 2 )
-  select VRPRIM; hseek cSvrha_pl
-  select PARTN ; hseek gVirmFirma
+  select VRPRIM; HSEEK cSvrha_pl
+  select PARTN ; HSEEK gVirmFirma
 
   select virm_pripr
   GO BOTTOM

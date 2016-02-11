@@ -1260,7 +1260,7 @@ STATIC FUNCTION TTbl2Kalk( aFExist, lFSkip, lNegative, cCtrl_art )
       IF cTDok == "14"
 
          SELECT kalk_doks2
-         hseek gFirma + cTDok + cBrojKalk
+         HSEEK gFirma + cTDok + cBrojKalk
 
          IF !Found()
             APPEND BLANK

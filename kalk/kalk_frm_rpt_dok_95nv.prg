@@ -80,7 +80,7 @@ else
 endif
 
 select konto
-hseek cKto1
+HSEEK cKto1
 
 ? PADL( cPom, 14 ), ALLTRIM( cKto1 ) + " - " + PADR( konto->naz, 60 )
 
@@ -93,7 +93,7 @@ if !EMPTY( cKto2 )
     endif
 
     select konto
-    hseek cKto2
+    HSEEK cKto2
    
     ? PADL( cPom, 14 ), ALLTRIM( cKto2 ) + " - " + PADR( konto->naz, 60 )
 
@@ -107,7 +107,7 @@ if !EMPTY( cIdZaduz2 )
     endif
 
     go top
-    hseek cIdZaduz2
+    HSEEK cIdZaduz2
 
     ? PADL( "Rad.nalog:", 14 ), ALLTRIM( cIdZaduz2 ) + " - " + ALLTRIM( fakt_objekti->naz )
 
@@ -144,7 +144,7 @@ do while !EOF() .and. cIdFirma == field->IdFirma ;
         O_PARTN
     endif
     select partn
-    hseek cIdPartner
+    HSEEK cIdPartner
 
     // vrni se na kalk
     select kalk_pripr
@@ -160,10 +160,10 @@ do while !EOF() .and. cIdFirma == field->IdFirma ;
         endif
 
         select roba
-        hseek kalk_pripr->idroba
+        HSEEK kalk_pripr->idroba
         
         select tarifa
-        hseek kalk_pripr->idtarifa
+        HSEEK kalk_pripr->idtarifa
 
         select kalk_pripr
         

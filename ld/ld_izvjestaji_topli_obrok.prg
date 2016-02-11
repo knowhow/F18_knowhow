@@ -296,7 +296,7 @@ STATIC FUNCTION _gen_list( cRj, cMonthFrom, cMonthTo, cYear, nDays, ;
    SET ORDER TO TAG "2"
    // godina + mjesec + idradn + idrj
    GO TOP
-   hseek Str( cYear, 4 ) + Str( cMonthFrom, 2 )
+   HSEEK Str( cYear, 4 ) + Str( cMonthFrom, 2 )
 
    Box(, 1, 60 )
 

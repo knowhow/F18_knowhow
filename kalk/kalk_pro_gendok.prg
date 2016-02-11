@@ -90,12 +90,12 @@ do while .t.
   ENDIF
   do while !eof() .and. cIDFirma+'47'+cBrDok47 == idfirma+idvd+brdok
 
-       select ROBA; hseek kalk2->idroba
+       select ROBA; HSEEK kalk2->idroba
 
           select sast
-          hseek  kalk2->idroba
+          HSEEK  kalk2->idroba
           do while !eof() .and. id==kalk2->idroba // setaj kroz sast
-            select roba; hseek sast->id2
+            select roba; HSEEK sast->id2
             select kalk_pripr
             locate for idroba==sast->id2
             if found()

@@ -131,7 +131,7 @@ FUNCTION kalk_kartica_prodavnica()
       SET FILTER to &cFilt
    ENDIF
 
-   hseek cIdFirma + cIdKonto + cIdR
+   HSEEK cIdFirma + cIdKonto + cIdR
 
    EOF CRET
 
@@ -162,10 +162,10 @@ FUNCTION kalk_kartica_prodavnica()
       cIdRoba := idroba
 
       SELECT roba
-      hseek cIdRoba
+      HSEEK cIdRoba
 
       SELECT tarifa
-      hseek roba->idtarifa
+      HSEEK roba->idtarifa
 
       ? __line
 
@@ -406,7 +406,7 @@ FUNCTION kalk_kartica_prodavnica()
    FF
    ENDPRINT
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -438,7 +438,7 @@ STATIC FUNCTION _set_zagl( cLine, cTxt1 )
    cLine := SetRptLineAndText( aKProd, 0 )
    cTxt1 := SetRptLineAndText( aKProd, 1, "*" )
 
-   RETURN
+   RETURN .T.
 
 
 FUNCTION Test( cIdRoba )
@@ -456,7 +456,7 @@ FUNCTION Test( cIdRoba )
 STATIC FUNCTION Zagl()
 
    SELECT konto
-   hseek cIdKonto
+   HSEEK cIdKonto
 
    Preduzece()
    P_12CPI

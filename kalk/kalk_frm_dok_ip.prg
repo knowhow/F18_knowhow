@@ -53,7 +53,7 @@ select koncij
 seek trim(cidkonto)
 select kalk
 
-hseek cidfirma+cidkonto
+HSEEK cidfirma+cidkonto
 
 do while !eof() .and. cidfirma+cidkonto==idfirma+pkonto
 
@@ -63,7 +63,7 @@ do while !eof() .and. cidfirma+cidkonto==idfirma+pkonto
     nRabat:=0
     
     select roba
-    hseek cidroba
+    HSEEK cidroba
     
     select kalk
     
@@ -108,7 +108,7 @@ do while !eof() .and. cidfirma+cidkonto==idfirma+pkonto
 
     if (round(nulaz-nizlaz,4)<>0) .or. (round(nmpvu-nmpvi,4)<>0)
         select roba
-        hseek cidroba
+        HSEEK cidroba
         select kalk_pripr
         scatter()
         append ncnl
@@ -163,7 +163,7 @@ fc := 0
 mpcsapp := 0
 
 select roba
-hseek id_roba
+HSEEK id_roba
 
 if roba->tip $ "UI"
     select ( _t_area )
@@ -171,11 +171,11 @@ if roba->tip $ "UI"
 endif
 
 select koncij
-hseek id_konto
+HSEEK id_konto
 
 select kalk
 set order to tag "4"
-hseek gFirma + id_konto + id_roba 
+HSEEK gFirma + id_konto + id_roba 
 
 do while !EOF() .and. field->idfirma == gFirma .and. field->pkonto == id_konto .and. field->idroba == id_roba
 
@@ -305,7 +305,7 @@ select koncij
 seek TRIM( cIdKonto )
 
 select kalk
-hseek cIdFirma + cIdKonto
+HSEEK cIdFirma + cIdKonto
 
 do while !EOF() .and. cIdFirma + cIdKonto == idfirma + pkonto
 
@@ -313,7 +313,7 @@ do while !EOF() .and. cIdFirma + cIdKonto == idfirma + pkonto
 	
 	select pript
 	set order to tag "2"
-	hseek cIdFirma + "IP" + cOldBrDok + cIdRoba
+	HSEEK cIdFirma + "IP" + cOldBrDok + cIdRoba
 	
 	// ako nadjes robu u dokumentu u pript prekoci ga u INVENTURI!!!	
 	if Found()
@@ -331,10 +331,10 @@ do while !EOF() .and. cIdFirma + cIdKonto == idfirma + pkonto
 	nRabat := 0
 
 	select roba
-	hseek cIdRoba
+	HSEEK cIdRoba
 
     select koncij
-    hseek cIdKonto
+    HSEEK cIdKonto
 
 	select kalk
 
@@ -380,7 +380,7 @@ do while !EOF() .and. cIdFirma + cIdKonto == idfirma + pkonto
 	if ( Round( nUlaz - nIzlaz, 4 ) <> 0 ) .or. ( Round( nMpvu - nMpvi, 4 ) <> 0 )
 
 		select roba
-		hseek cIdRoba
+		HSEEK cIdRoba
 
  		select kalk_pripr
         append blank
@@ -500,7 +500,7 @@ if !EMPTY( gMetodaNC ) .and. _nc = 0 .and. _mpcsapp = 0
 endif
 
 select tarifa
-hseek _idtarifa  
+HSEEK _idtarifa  
 
 select kalk_pripr  
 

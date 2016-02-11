@@ -154,7 +154,7 @@ FUNCTION FLLM()
    SET ORDER TO TAG "5"
    // "idFirma+dtos(datdok)+idvd+brdok+rbr"
 
-   hseek cIdFirma
+   HSEEK cIdFirma
 
    SELECT koncij
    SEEK Trim( cidkonto )
@@ -244,11 +244,11 @@ FUNCTION FLLM()
       _t_area := Select()
 
       SELECT tdok
-      hseek cTipDok
+      HSEEK cTipDok
       cDokNaz := field->naz
 
       SELECT partn
-      hseek cIdPartner
+      HSEEK cIdPartner
 
       cPartnNaz := field->naz
       cPartnPtt := field->ptt
@@ -419,7 +419,7 @@ STATIC FUNCTION ZaglFLLM()
 
    IF cViseKonta == "N"
       SELECT konto
-      hseek cidkonto
+      HSEEK cidkonto
    ENDIF
 
    ?? "KALK: Finansijsko stanje za period", dDatOd, "-", dDatDo, " NA DAN "

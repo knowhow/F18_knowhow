@@ -79,7 +79,7 @@ FUNCTION Get1_16()
    ENDIF
 
    SELECT koncij; SEEK Trim( _idkonto )  // postavi TARIFA na pravu poziciju
-   SELECT TARIFA; hseek _IdTarifa  // postavi TARIFA na pravu poziciju
+   SELECT TARIFA; HSEEK _IdTarifa  // postavi TARIFA na pravu poziciju
    SELECT kalk_pripr  // napuni tarifu
    _MKonto := _Idkonto; _MU_I := "1"
 
@@ -167,7 +167,7 @@ FUNCTION Get1_16b()
    @ m_x + 12, m_y + 70 GET _IdTarifa WHEN gPromTar == "N" VALID P_Tarifa( @_IdTarifa )
 
    read; ESC_RETURN K_ESC
-   SELECT TARIFA; hseek _IdTarifa  // postavi TARIFA na pravu poziciju
+   SELECT TARIFA; HSEEK _IdTarifa  // postavi TARIFA na pravu poziciju
    SELECT koncij; SEEK Trim( _idkonto )
    SELECT kalk_pripr  // napuni tarifu
 

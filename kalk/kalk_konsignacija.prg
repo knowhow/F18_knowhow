@@ -133,9 +133,9 @@ do while .t.
        LOOP
      ENDIF
      do while !eof() .and. cFaktFirma+cIdTipDok+cBrDok==IdFirma+IdTipDok+BrDok
-       select ROBA; hseek fakt->idroba
+       select ROBA; HSEEK fakt->idroba
 
-       select tarifa; hseek roba->idtarifa
+       select tarifa; HSEEK roba->idtarifa
 
        select fakt
        if alltrim(podbr)=="."  .or. idroba="U"

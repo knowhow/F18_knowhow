@@ -267,7 +267,7 @@ FUNCTION Blagajna()
 
    // TAG 1 - "IdFirma+IdKonto+dtos(DatNal)", "ANAL"
 
-   hseek cIdfirma + cIdkonto
+   HSEEK cIdfirma + cIdkonto
    nDugSt := nPotSt := 0
    DO WHILE !Eof() .AND. idfirma == cIdfirma .AND. idkonto == cIdkonto .AND. datnal <= dDatDok
 
@@ -404,7 +404,7 @@ FUNCTION blag_azur()
 
    SELECT SUBAN
    SET ORDER TO TAG "4"
-   hseek cIdFirma + cTipDok + cBrDok
+   HSEEK cIdFirma + cTipDok + cBrDok
 
    // nisam pronasao dokument
    IF !Found()
@@ -531,7 +531,7 @@ FUNCTION blag_azur()
 
    // procesljaj staro stanje
    SELECT anal
-   hseek cIdfirma + cIdkonto
+   HSEEK cIdfirma + cIdkonto
 
    nDugSt := 0
    nPotSt := 0
@@ -589,7 +589,7 @@ STATIC FUNCTION dat_kto_blag( dDatum, cKonto, cFirma, cIdVn, cBrNal )
 
    SELECT suban
    SET ORDER TO TAG "4"
-   hseek cFirma + cIdVn + cBrNal
+   HSEEK cFirma + cIdVn + cBrNal
 
    // nisam pronasao dokument
    IF !Found()

@@ -130,7 +130,7 @@ FUNCTION Get1_10PDV()
    DatPosljK()
 
    SELECT TARIFA
-   hseek _IdTarifa
+   HSEEK _IdTarifa
    SELECT kalk_pripr
 
    ++ _x

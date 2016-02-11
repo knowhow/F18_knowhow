@@ -398,7 +398,7 @@ FUNCTION PDVRekTar41( cIdFirma, cIdVd, cBrDok, nStr )
       nUp := 0
 
       SELECT tarifa
-      hseek cIdtarifa
+      HSEEK cIdtarifa
 
       Tarifa( kalk_pripr->pkonto, kalk_pripr->idroba, @aPorezi, kalk_pripr->idtarifa )
 
@@ -409,7 +409,7 @@ FUNCTION PDVRekTar41( cIdFirma, cIdVd, cBrDok, nStr )
       DO WHILE !Eof() .AND. cIdfirma + cIdVd + cBrDok == field->idFirma + field->idVd + field->brDok .AND. field->idTarifa == cIdTarifa
 
          SELECT roba
-         hseek kalk_pripr->idroba
+         HSEEK kalk_pripr->idroba
 
          SELECT kalk_pripr
 

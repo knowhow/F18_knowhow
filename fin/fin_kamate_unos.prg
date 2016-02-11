@@ -571,7 +571,7 @@ STATIC FUNCTION ObracV( cIdPartner, fprint, cVarObrac )
       ?
 
       SELECT partn
-      hseek cIdPartner
+      HSEEK cIdPartner
 
       cPom := Trim( partn->adresa )
 

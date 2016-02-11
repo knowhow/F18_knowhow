@@ -98,7 +98,7 @@ FUNCTION IspisFirme( cIdRj )
    B_OFF
    IF !Empty( cidrj )
       SELECT rj
-      hseek cidrj
+      HSEEK cidrj
       Select( nOArr )
       ?? "  RJ", rj->naz
    ENDIF

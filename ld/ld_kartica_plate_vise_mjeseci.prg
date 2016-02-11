@@ -90,9 +90,9 @@ FUNCTION ld_kartica_plate_za_vise_mjeseci()
    bZagl := {|| zaglavlje_izvjestaja() }
 
    SELECT vposla
-   hseek ld->idvposla
+   HSEEK ld->idvposla
    SELECT ld_rj
-   hseek ld->idrj
+   HSEEK ld->idrj
    SELECT ld
 
    IF PCount() == 4
@@ -118,16 +118,16 @@ FUNCTION ld_kartica_plate_za_vise_mjeseci()
       ENDIF
 
       IF cRazdvoji == "N"
-         SELECT radn; hseek xidradn
-         SELECT vposla; hseek ld->idvposla
-         SELECT ld_rj; hseek ld->idrj; SELECT ld
+         SELECT radn; HSEEK xidradn
+         SELECT vposla; HSEEK ld->idvposla
+         SELECT ld_rj; HSEEK ld->idrj; SELECT ld
          Eval( bZagl )
       ENDIF
       DO WHILE !Eof() .AND.  cgodina == godina .AND. idrj = cidrj .AND. idradn == xIdRadn
 
          m := "----------------------- --------  ----------------   ------------------"
 
-         SELECT radn; hseek xidradn; SELECT ld
+         SELECT radn; HSEEK xidradn; SELECT ld
 
          IF ( mjesec < cmjesec .OR. mjesec > cmjesec2 )
             skip; LOOP
@@ -229,13 +229,13 @@ FUNCTION ld_kartica_plate_za_vise_mjeseci()
       ELSE
          SELECT _LD
          GO TOP
-         SELECT radn; hseek _LD->idradn
-         SELECT vposla; hseek _LD->idvposla
+         SELECT radn; HSEEK _LD->idradn
+         SELECT vposla; HSEEK _LD->idvposla
          SELECT _LD
          Eval( bZagl )
          ?
          WHILE ! Eof()
-            SELECT ld_rj; hseek _ld->idrj; SELECT _ld
+            SELECT ld_rj; HSEEK _ld->idrj; SELECT _ld
             QOut( "RJ:", idrj, ld_rj->naz )
             ? m
             ? Lokal( " Vrsta                  Opis         sati/iznos             ukupno" )

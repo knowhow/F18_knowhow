@@ -495,10 +495,10 @@ STATIC FUNCTION _ld_calc_totals( lSvi, a_benef )
       ENDIF
 
       SELECT radn
-      hseek _idradn
+      HSEEK _idradn
 
       SELECT vposla
-      hseek _idvposla
+      HSEEK _idvposla
 
       ParObr( ld->mjesec, ld->godina, cObracun, ld->idrj )
 

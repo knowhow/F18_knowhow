@@ -99,7 +99,7 @@ aIzvj:={}
 do while (!eof())
 	cBrDok:=field->brDok
 	select fakt_objekti
-	hseek PADR(cBrDok,10)
+	HSEEK PADR(cBrDok,10)
 	AADD(aIzvj,{cBrDok})
 	nTekRN:=LEN(aIzvj)
 	AADD(aIzvj[nTekRN],"")

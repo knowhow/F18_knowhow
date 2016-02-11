@@ -141,7 +141,7 @@ if !Used()
 endif
 
 select tarifa
-hseek id_tarifa
+HSEEK id_tarifa
 
 select kalk_pripr
 

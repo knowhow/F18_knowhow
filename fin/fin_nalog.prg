@@ -325,13 +325,13 @@ FUNCTION fin_nalog( cInd, lAuto, dDatNal, oNalog )
             IF gVSubOp == "D"
 
                SELECT KONTO
-               hseek ( nArr )->idkonto
+               HSEEK ( nArr )->idkonto
                IF Found()
                   _kto_naz := konto->naz
                ENDIF
 
                SELECT PARTN
-               hseek ( nArr )->idpartner
+               HSEEK ( nArr )->idpartner
                IF Found()
                   _part_naz := partn->naz
                   _part_naz2 := partn->naz2
@@ -342,7 +342,7 @@ FUNCTION fin_nalog( cInd, lAuto, dDatNal, oNalog )
             ELSE
 
                SELECT PARTN
-               hseek ( nArr )->idpartner
+               HSEEK ( nArr )->idpartner
                IF Found()
                   _part_naz := partn->naz
                   _part_naz2 := partn->naz2
@@ -354,7 +354,7 @@ FUNCTION fin_nalog( cInd, lAuto, dDatNal, oNalog )
          ELSE
 
             SELECT KONTO
-            hseek ( nArr )->idkonto
+            HSEEK ( nArr )->idkonto
 
             IF Found()
                _kto_naz := konto->naz
@@ -384,7 +384,7 @@ FUNCTION fin_nalog( cInd, lAuto, dDatNal, oNalog )
             @ PRow(), PCol() + 1 SAY IdTipDok
 
             SELECT TDOK
-            hseek ( nArr )->idtipdok
+            HSEEK ( nArr )->idtipdok
             @ PRow(), PCol() + 1 SAY PadR( naz, 13 )
 
             SELECT ( nArr )
@@ -672,7 +672,7 @@ FUNCTION fin_nalog_zaglavlje( dDatNal )
 
    IF _fin_params[ "fin_tip_dokumenta" ]
       SELECT partn
-      hseek cIdfirma
+      HSEEK cIdfirma
       SELECT ( nArr )
       ? cidfirma, "-", AllTrim( partn->naz )
    ENDIF
@@ -693,7 +693,7 @@ FUNCTION fin_nalog_zaglavlje( dDatNal )
    ENDIF
 
    IF !lDnevnik
-      SELECT TNAL; hseek cidvn
+      SELECT TNAL; HSEEK cidvn
       @ PRow(), PCol() + 4 SAY naz
    ENDIF
 

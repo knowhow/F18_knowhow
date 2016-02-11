@@ -67,7 +67,7 @@ do while !eof()
 
 		if cCijeneIzSif=="D"
 			select roba
-			hseek topsfakt->idRoba
+			HSEEK topsfakt->idRoba
 		endif
 
 		select fakt_pripr
@@ -78,7 +78,7 @@ do while !eof()
 				++nRacuna
 			endif
 			select partn
-			hseek cIdPartner
+			HSEEK cIdPartner
 			_Txt3a:=padr(cIdPartner+".",30)
 			_txt3b:=_txt3c:=""
 			IzSifre(.t.)

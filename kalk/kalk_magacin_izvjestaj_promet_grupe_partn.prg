@@ -123,10 +123,10 @@ FUNCTION kalk_mag_promet_grupe_partnera()
 
    IF fSint .AND. lSabKon
       SET ORDER TO TAG "6"
-      hseek cidfirma
+      HSEEK cidfirma
    ELSE
       SET ORDER TO TAG "3"
-      hseek cidfirma + cidkonto
+      HSEEK cidfirma + cidkonto
    ENDIF
 
    SELECT koncij

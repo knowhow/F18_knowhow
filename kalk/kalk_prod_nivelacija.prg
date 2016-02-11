@@ -75,10 +75,10 @@ FUNCTION Niv_11()
       SEEK Trim( _rec[ "idkonto" ] )
 
       SELECT roba
-      hseek _rec[ "idroba" ]
+      HSEEK _rec[ "idroba" ]
 
       SELECT tarifa
-      hseek roba->idtarifa
+      HSEEK roba->idtarifa
 
       SELECT roba
 

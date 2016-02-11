@@ -500,7 +500,7 @@ if update_roba == NIL
 endif
 
 select roba
-hseek topska->idroba
+HSEEK topska->idroba
 
 if !FOUND()
 
@@ -687,7 +687,7 @@ if ( topska->kolicina == 0 )
 endif
 
 select tarifa
-hseek topska->idtarifa
+HSEEK topska->idtarifa
 _opp := tarifa->opp
 
 select kalk_pripr

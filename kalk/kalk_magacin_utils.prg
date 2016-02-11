@@ -64,7 +64,7 @@ FUNCTION KalkNabP( cIdFirma, cIdroba, cIdkonto, nKolicina, nKolZN, nNC, nSNC, dD
    nZadnjaUNC := 0
 
    // ovo je prvi prolaz
-   hseek cIdFirma + cIdKonto + cIdRoba
+   HSEEK cIdFirma + cIdKonto + cIdRoba
 
    DO WHILE !Eof() .AND. cIdFirma + cIdKonto + cIdroba == idFirma + pkonto + idroba .AND. _datdok >= datdok
 
@@ -94,7 +94,7 @@ FUNCTION KalkNabP( cIdFirma, cIdroba, cIdkonto, nKolicina, nKolZN, nNC, nSNC, dD
 
    // prva nabavka  se prva skida sa stanja
    IF gMetodaNc == "3"
-      hseek cIdFirma + cIdKonto + cIdRoba
+      HSEEK cIdFirma + cIdKonto + cIdRoba
       nSkiniKol := nIzlKol + _Kolicina // skini sa stanja ukupnu izlaznu kolicinu+tekucu kolicinu
       nNabVr := 0  // stanje nabavne vrijednosti
       DO WHILE !Eof() .AND. cIdFirma + cIdKonto + cIdRoba == idFirma + pkonto + idroba .AND. _datdok >= datdok
@@ -424,7 +424,7 @@ FUNCTION PratiKMag( cIdFirma, cIdKonto, cIdRoba )
    // {
    LOCAL nPom
    SELECT kalk ; SET ORDER TO TAG "3"
-   hseek cIdFirma + cIdKonto + cIdRoba
+   HSEEK cIdFirma + cIdKonto + cIdRoba
    // "KALKi3","idFirma+mkonto+idroba+dtos(datdok)+PODBR+MU_I+IdVD",KUMPATH+"KALK")
 
    nVPV := 0
@@ -979,7 +979,7 @@ FUNCTION KalkNab( cIdFirma, cIdRoba, cIdKonto, nKolicina, nKolZN, nNC, nSNc, dDa
    // koliko znam i ovo niko ne koristi svi koriste srednju nabavnu
    // gMetodaNC=="3"  // prva nabavka  se prva skida sa stanja
    IF gMetodaNc == "3"
-      hseek cIdFirma + cIdKonto + cIdRoba
+      HSEEK cIdFirma + cIdKonto + cIdRoba
       nSkiniKol := nIzlKol + _Kolicina // skini sa stanja ukupnu izlaznu kolicinu+tekucu kolicinu
       nNabVr := 0  // stanje nabavne vrijednosti
       DO WHILE !Eof() .AND. cIdFirma + cIdKonto + cIdRoba == idFirma + mkonto + idroba .AND. _datdok >= datdok

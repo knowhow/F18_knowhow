@@ -193,7 +193,7 @@ select kadev_1
 do while field->id = kadev_0->id .and. ( field->datumod < dDoDat )
 
     select kadev_promj
-    hseek kadev_1->idpromj
+    HSEEK kadev_1->idpromj
 
     select kadev_1
 
@@ -418,7 +418,7 @@ fOtvoreno := .f.
 do while id == kadev_0->id .and. ( DatumOd < dDoDat )
 
     select kadev_promj
-    hseek kadev_1->idpromj
+    HSEEK kadev_1->idpromj
 
     select kadev_1
 

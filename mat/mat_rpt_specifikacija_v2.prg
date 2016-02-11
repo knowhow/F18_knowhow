@@ -154,7 +154,7 @@ DO WHILE !eof()
         @ prow()+1,0 SAY KonSeks("KONTO")+":"
         @ prow(),pcol()+1 SAY cIdKonto
         select konto
-        hseek cidkonto
+        HSEEK cidkonto
         @ prow(),pcol()+1 SAY ALLTRIM( naz )
         select mat_suban
         ?  m
@@ -191,7 +191,7 @@ DO WHILE !eof()
         SELECT mat_suban
         cIdRoba:=IdRoba
         select roba
-        hseek cidroba
+        HSEEK cidroba
         select mat_suban
         if !empty(cIdTarifa)
             if roba->idtarifa<>cIdtarifa

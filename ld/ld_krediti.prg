@@ -696,7 +696,7 @@ FUNCTION ld_lista_kredita()
       cIdKred := IdKred
 
       SELECT kred
-      hseek cIdKred
+      HSEEK cIdKred
 
       SELECT radkr
 
@@ -741,7 +741,7 @@ FUNCTION ld_lista_kredita()
          ENDIF
 
          SELECT radn
-         hseek cidradn
+         HSEEK cidradn
          SELECT radkr
 
          ?

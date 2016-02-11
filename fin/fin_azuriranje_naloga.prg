@@ -704,7 +704,7 @@ FUNCTION psuban_partner_check( arr, silent )
    ENDIF
 
    SELECT partn
-   hseek psuban->idpartner
+   HSEEK psuban->idpartner
 
    IF !Found()
 
@@ -742,7 +742,7 @@ FUNCTION psuban_konto_check( arr, silent )
    ENDIF
 
    SELECT konto
-   hseek psuban->idkonto
+   HSEEK psuban->idkonto
 
    IF !Found()
 

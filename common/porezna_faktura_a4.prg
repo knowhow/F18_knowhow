@@ -426,7 +426,7 @@ STATIC FUNCTION pf_a4_sltxt()
 
    SELECT drntext
    SET ORDER TO TAG "1"
-   hseek "F20"
+   HSEEK "F20"
 
    DO WHILE !Eof() .AND. field->tip = "F"
       n := 1

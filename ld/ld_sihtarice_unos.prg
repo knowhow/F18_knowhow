@@ -85,7 +85,7 @@ FUNCTION UnosSiht()
                _izvrseno := 0
                _idnorsiht := Space( 4 )
             ENDIF
-            SELECT TPRSiht; hseek _idtippr
+            SELECT TPRSiht; HSEEK _idtippr
             IF tprSiht->k1 = "F"
                @ m_x + 3, m_y + 2 SAY "Sifra Norme" GET _IdNorSiht ;
                   VALID  P_NorSiht( @_idNorSiht )

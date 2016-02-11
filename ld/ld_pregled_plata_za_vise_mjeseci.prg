@@ -1273,7 +1273,7 @@ STATIC FUNCTION filter_opcina_kanton( id_radn, opcina, kanton )
    LOCAL cKant
 
    SELECT radn
-   hseek id_radn
+   HSEEK id_radn
 
    IF !EMPTY( opcina ) .AND. !( radn->idopsst $ opcina )
        lOk := .F.
@@ -1282,7 +1282,7 @@ STATIC FUNCTION filter_opcina_kanton( id_radn, opcina, kanton )
    IF !EMPTY( kanton ) 
 
       O_OPS
-      hseek radn->idopsst
+      HSEEK radn->idopsst
       
       IF FOUND() .AND. !( ops->idkan $ kanton )
          lOk := .F.

@@ -62,7 +62,7 @@ FUNCTION fakt_pocetno_stanje()
       _stanje := ( _ulaz - _izlaz )
 
       SELECT roba
-      hseek _id_roba
+      HSEEK _id_roba
 
       IF roba->tip == "U" .OR. Round( _stanje, 2 ) == 0
          _data:Skip()
@@ -70,7 +70,7 @@ FUNCTION fakt_pocetno_stanje()
       ENDIF
 
       SELECT partn
-      hseek _partn_id
+      HSEEK _partn_id
 
       SELECT fakt_pripr
       APPEND BLANK

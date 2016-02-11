@@ -328,7 +328,7 @@ endif
 
 set filter to &cFilter
 go top
-hseek cIdFirma
+HSEEK cIdFirma
 
 do while !EOF() .and. field->idfirma == cIdFirma   
 
@@ -522,7 +522,7 @@ endif
 
 set filter to &cFilter
 go top
-hseek cIdFirma
+HSEEK cIdFirma
 
 do while !EOF() .and. field->idfirma == cIdFirma   
 

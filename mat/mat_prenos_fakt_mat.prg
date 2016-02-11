@@ -134,7 +134,7 @@ do while .t.
      if brnal==cBrMat; nRbr:=val(Rbr); endif
      select fakt
      do while !eof() .and. cIdFirma+cIdTipDok+cBrDok==IdFirma+IdTipDok+BrDok
-       select ROBA; hseek fakt->idroba
+       select ROBA; HSEEK fakt->idroba
 
        select fakt
        if alltrim(podbr)=="."
@@ -142,7 +142,7 @@ do while .t.
           loop
        endif
        if fakt->cijena<>roba->mpc  // nivelacija
-        select roba; hseek fakt->idroba
+        select roba; HSEEK fakt->idroba
         select mat_pripr
         APPEND BLANK
         replace idfirma with fakt->idfirma,;

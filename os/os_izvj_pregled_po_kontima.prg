@@ -140,7 +140,7 @@ private nStr:=0
 // strana
 
 select rj
-hseek cIdRj
+HSEEK cIdRj
 
 select_os_sii()
 
@@ -211,7 +211,7 @@ do while !eof() .and. (idrj=cIdRj .or. Empty(cIdRj))
     cNazSKonto := ""
     
     select konto
-    hseek cIdSK
+    HSEEK cIdSK
    
     if FOUND()
         cNazSKonto := ALLTRIM(konto->naz)
@@ -228,7 +228,7 @@ do while !eof() .and. (idrj=cIdRj .or. Empty(cIdRj))
         cNazKonto := ""
 
         select konto
-        hseek cIdKonto
+        HSEEK cIdKonto
 
         if FOUND()
             cNazKonto := ALLTRIM(konto->naz)
@@ -269,7 +269,7 @@ do while !eof() .and. (idrj=cIdRj .or. Empty(cIdRj))
                     _sr_id := field->id
                     select_promj()  
                     // provjeri promjene unutar datuma
-                    hseek _sr_id
+                    HSEEK _sr_id
 
                     do while !eof() .and. _sr_id = field->id
                         if datum>=dDatOd .and. datum<=dDatDo
@@ -288,7 +288,7 @@ do while !eof() .and. (idrj=cIdRj .or. Empty(cIdRj))
                     _sr_datum := field->datum
 
                     select_promj()
-                    hseek _sr_id
+                    HSEEK _sr_id
                     fIma:=.f.
                     do while !eof() .and. field->id == _sr_id .and. field->datum <= gDatObr
                         if (cON=="N" .and. empty( _sr_dat_otp )) .or. ;
@@ -338,7 +338,7 @@ do while !eof() .and. (idrj=cIdRj .or. Empty(cIdRj))
                     _sr_datum := field->datum
 
                     select_promj()
-                    hseek _sr_id
+                    HSEEK _sr_id
                     do while !eof() .and. field->id == _sr_id .and. field->datum <= gDatObr
                         if (cON=="N" .and. empty( _sr_dat_otp )) .or. ;
                             (con="O"  .and. !empty( _sr_dat_otp )) .or.;
@@ -424,7 +424,7 @@ do while !eof() .and. (idrj=cIdRj .or. Empty(cIdRj))
                         _sr_id_am := field->idam
 
                         select_promj()
-                        hseek _sr_id
+                        HSEEK _sr_id
 
                         do while !eof() .and. field->id == _sr_id .and. field->datum <= gDatObr
                             if (cON=="N" .and. empty( _sr_dat_otp )) .or. ;

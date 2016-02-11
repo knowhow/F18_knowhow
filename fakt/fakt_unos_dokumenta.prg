@@ -1523,7 +1523,7 @@ FUNCTION IspisBankeNar( cBanke )
    SELECT banke
    SET ORDER TO TAG "ID"
    FOR i := 1 TO Len( aOpc )
-      hseek SubStr( aOpc[ i ], 1, 3 )
+      HSEEK SubStr( aOpc[ i ], 1, 3 )
       IF Found()
          cVrati += AllTrim( banke->naz ) + ", " + AllTrim( banke->adresa ) + ", " + AllTrim( banke->mjesto ) + ", " + AllTrim( aOpc[ i ] ) + "; "
       ELSE

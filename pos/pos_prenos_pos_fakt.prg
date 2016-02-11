@@ -91,7 +91,7 @@ if eof()
 else
 	if !empty(cIdPartnG)
 		select partn
-		hseek cIdPartnG
+		HSEEK cIdPartnG
 		cIdPartnG:=partn->idfmk
 	else
 		cIdPartnG:=SPACE(LEN(partn->idfmk))
@@ -247,7 +247,7 @@ endif
 
 if !empty(cIdPartnG)
 	select partn
-	hseek cIdPartnG
+	HSEEK cIdPartnG
 	cIdPartnG:=partn->idfmk
 else
 	cIdPartnG:=SPACE(LEN(partn->idfmk))

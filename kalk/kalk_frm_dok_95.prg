@@ -97,7 +97,7 @@ FUNCTION Get1_95()
    SELECT koncij
    SEEK Trim( _idkonto2 )
    SELECT TARIFA
-   hseek _IdTarifa  // postavi TARIFA na pravu poziciju
+   HSEEK _IdTarifa  // postavi TARIFA na pravu poziciju
    SELECT kalk_pripr  // napuni tarifu
 
    @ m_x + 13, m_y + 2   SAY "Kolicina " GET _Kolicina PICTURE PicKol VALID _Kolicina <> 0
@@ -291,7 +291,7 @@ FUNCTION StKalk95()
    SELECT PARTN; HSEEK cIdPartner
 
    IF cidvd == "16"  // doprema robe
-      SELECT konto; hseek cidkonto
+      SELECT konto; HSEEK cidkonto
       P_10CPI; B_ON
       ?
       ? Space( nLijevo ), "PRIJEM U MAGACIN"
@@ -308,10 +308,10 @@ FUNCTION StKalk95()
       ENDIF
       ?
       IF cidvd $ "96#97"  // otprema iz magacina
-         SELECT konto; hseek cidkonto2
+         SELECT konto; HSEEK cidkonto2
          ?  Space( nLijevo ), "KONTO razduzuje :", cIdKonto2, "-", naz
 
-         SELECT konto; hseek cidkonto
+         SELECT konto; HSEEK cidkonto
          B_OFF
          ?  Space( nLijevo ), "KONTO zaduzuje  :", cIdKonto, "-", naz
       ENDIF
@@ -326,7 +326,7 @@ FUNCTION StKalk95()
          B_ON
       ENDIF
       ?
-      SELECT konto; hseek cidkonto2
+      SELECT konto; HSEEK cidkonto2
       ? Space( nLijevo ), "KONTO razduzuje:", cIdKonto2, "-", naz
       B_OFF
    ENDIF
@@ -522,7 +522,7 @@ FUNCTION RadNalOK()
    lOK := .T.
    nLenBrDok := Len( _idZaduz2 )
    SELECT rnal
-   hseek PadR( _idZaduz2, 10 )
+   HSEEK PadR( _idZaduz2, 10 )
    IF !Found()
       MsgBeep( "Unijeli ste nepostojeci broj radnog naloga. Otvaram sifrarnik radnih##naloga da biste mogli izabrati neki od postojecih!" )
       P_fakt_objekti( @_idZaduz2, 8, 60 )

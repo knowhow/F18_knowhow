@@ -585,7 +585,7 @@ FUNCTION ld_obracun_napravljen_vise_puta()
       IF nProlaz > 1
 
          SELECT radn
-         hseek cIdRadn
+         HSEEK cIdRadn
 
          SELECT ld
 

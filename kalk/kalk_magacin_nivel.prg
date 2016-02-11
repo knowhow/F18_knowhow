@@ -74,8 +74,8 @@ do while !eof() .and. cidfirma==idfirma .and. cidvd==idvd .and. cbrdok==brdok
 
 
   scatter()
-  select roba; hseek _idroba
-  select tarifa; hseek roba->idtarifa
+  select roba; HSEEK _idroba
+  select tarifa; HSEEK roba->idtarifa
   frazlika:=.f.
   nRVPC:=KoncijVPC()
   if gCijene="2"  .and. gNiv14="1"

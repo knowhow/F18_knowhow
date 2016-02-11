@@ -277,7 +277,7 @@ FUNCTION fakt_stanje_robe()
 
          IF !Empty( qqPartn )
             SELECT fakt_doks
-            hseek fakt->( IdFirma + idtipdok + brdok )
+            HSEEK fakt->( IdFirma + idtipdok + brdok )
             SELECT fakt
             IF !( fakt_doks->partner = qqPartn )
                SKIP

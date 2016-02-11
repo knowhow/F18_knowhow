@@ -332,7 +332,7 @@ FUNCTION fin_bb_subanalitika_b( params )
          @ PRow(), PCol() + 1 SAY cSinKonto
 
          SELECT KONTO
-         hseek cSinKonto
+         HSEEK cSinKonto
 
          IF cFormat == "1"
             @ PRow(), PCol() + 1 SAY Left( naz, 50 )

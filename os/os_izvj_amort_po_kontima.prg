@@ -123,7 +123,7 @@ P_12CPI
 
 if !empty(cidrj)
     select rj
-    hseek cIdrj
+    HSEEK cIdrj
     select_os_sii()
     ? "Radna jedinica:", cIdrj, rj->naz
 endif
@@ -251,7 +251,7 @@ if cPromj $ "23"  // prikaz promjena
     _sr_kol := field->kolicina
 
     select_promj()
-    hseek _sr_id
+    HSEEK _sr_id
 
     IF cPromj=="2" .and. !eof() .and. field->id == _sr_id .and. field->datum <= gDatObr .or. cPromj=="3"
         IF cPromj=="3"
@@ -282,10 +282,10 @@ nTArea := SELECT()
   
 select konto
   
-hseek cIdKonto
+HSEEK cIdKonto
 cST2:="UK.ANALIT.KONTO '"+cIdKonto+"'"+PADR(konto->naz, 30)+"..."
   
-hseek cIdSK
+HSEEK cIdSK
 cST3:="UK.SINT.KONTO '"+cIdSK+"'"+PADR(konto->naz, 30)+"..."
 
 select (nTArea)
@@ -366,7 +366,7 @@ if cPromj $ "23"
     _sr_kol := field->kolicina
 
     select_promj()  
-    hseek _sr_id
+    HSEEK _sr_id
 
     IF cPromj=="2" .and. !eof() .and. field->id== _sr_id .and. field->datum <= gDatObr .or. cPromj=="3"
 
@@ -399,11 +399,11 @@ select konto
   
 cST1:="                    UK.GRUPA AMORTIZACIJE '"+cIdAM+"'"
   
-hseek cIdKonto
+HSEEK cIdKonto
   
 cST2:="          UK.ANALITICKI KONTO '"+cIdKonto+"'" + PADR(konto->naz, 30) + "..."
 
-hseek cIdSK
+HSEEK cIdSK
   
 cST3:="UK.SINTETICKI KONTO '"+cIdSK+"'" + PADR(konto->naz, 30) + "..."
 cST9:="S V E    U K U P N O"

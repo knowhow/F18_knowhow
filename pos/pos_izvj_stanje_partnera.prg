@@ -133,7 +133,7 @@ do while !eof()
 		endif
 		
 		SELECT POS
-		hseek pos_doks->(IdPos+IdVd+dtos(datum)+BrDok)
+		HSEEK pos_doks->(IdPos+IdVd+dtos(datum)+BrDok)
 		nIznos:=0
 		nDuguje:=0
 		nPotrazuje:=0
@@ -142,7 +142,7 @@ do while !eof()
 			// pretraga po sifri dobavljaca
 			select roba
 			if roba->(fieldpos("sifdob"))<>0
-				hseek pos->idroba
+				HSEEK pos->idroba
 				if roba->id == pos->idroba
 					if !EMPTY(cSifraDob)
 						if (roba->sifdob <> cSifraDob)
@@ -177,7 +177,7 @@ do while !eof()
 	if round(nStanje,4)<>0 .or. cNula=="D"
 		
 		select partn
-		hseek cIdGost
+		HSEEK cIdGost
 		? REPL("-",80)
 		? ALLTRIM(STR(nBrojacPartnera)) + ") " + PADR(ALLTRIM(cIdGost)+" "+partn->Naz,35)+" "
 		if gVrstaRS=="K"
@@ -360,7 +360,7 @@ do while !eof()
 	nStanje:=nPlacNije-nPlacJest
 	if round(nStanje,4)<>0 .or. cNula=="D"
 		select partn
-		hseek cIdGost
+		HSEEK cIdGost
 		? PADR(ALLTRIM(cIdGost)+" "+partn->Naz,35)+" "
 		if gVrstaRS=="K"
 			? SPACE(4)

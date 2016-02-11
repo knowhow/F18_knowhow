@@ -984,7 +984,7 @@ FUNCTION fill_rb_traka( cIdPos, cBrDok, dDatRn, lPrepis, aRacuni, cTime )
          // nadji parametre kupca
          SELECT dokspf
          SET ORDER TO TAG "1"
-         hseek cIdPos + VD_RN + DToS( dDatRn ) + cBrDok
+         HSEEK cIdPos + VD_RN + DToS( dDatRn ) + cBrDok
 
          SELECT pos_doks
          Seek2( cIdPos + VD_RN + DToS( dDatRn ) + cBrDok )
@@ -1000,12 +1000,12 @@ FUNCTION fill_rb_traka( cIdPos, cBrDok, dDatRn, lPrepis, aRacuni, cTime )
 
       SELECT osob
       SET ORDER TO TAG "NAZ"
-      hseek cIdRadnik
+      HSEEK cIdRadnik
       cRdnkNaz := osob->naz
 
       SELECT vrstep
       SET ORDER TO TAG "ID"
-      hseek cVrstaP
+      HSEEK cVrstaP
 
       IF !Found()
          cNazVrstaP := "GOTOVINA"
@@ -1035,13 +1035,13 @@ FUNCTION fill_rb_traka( cIdPos, cBrDok, dDatRn, lPrepis, aRacuni, cTime )
          cIdTarifa := field->idtarifa
 
          SELECT roba
-         hseek cIdRoba
+         HSEEK cIdRoba
          cJmj := roba->jmj
          cRobaNaz := AllTrim( roba->naz )
 
          // seek-uj tarifu
          SELECT tarifa
-         hseek cIdTarifa
+         HSEEK cIdTarifa
          nPPDV := tarifa->opp
 
          nStPP := 0

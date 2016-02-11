@@ -210,7 +210,7 @@ STATIC FUNCTION pocetno_stanje_sql( param )
       __vrijednost += _vrijednost
 
       SELECT roba
-      hseek _id_roba
+      HSEEK _id_roba
 
       IF Round( _kolicina, 2 ) <> 0
 

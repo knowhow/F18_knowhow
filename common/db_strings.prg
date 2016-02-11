@@ -143,7 +143,7 @@ STATIC FUNCTION g_naz_byid( nId )
 
    SELECT strings
    SET ORDER TO TAG "1"
-   hseek Str( nId, 10, 0 )
+   HSEEK Str( nId, 10, 0 )
 
    IF Found()
       cNaz := Trim( field->naz )
@@ -160,13 +160,13 @@ STATIC FUNCTION g_gr_byid( nId )
 
    SELECT strings
    SET ORDER TO TAG "1"
-   hseek Str( nId, 10, 0 )
+   HSEEK Str( nId, 10, 0 )
 
    IF Found()
       nVeza_1 := field->veza_1
 
       // sada trazi grupe - atribute
-      hseek Str( nVeza_1, 10, 0 )
+      HSEEK Str( nVeza_1, 10, 0 )
 
       IF Found()
          // dobio sam grupu
@@ -186,13 +186,13 @@ STATIC FUNCTION g_attr_byid( nId )
 
    SELECT strings
    SET ORDER TO TAG "1"
-   hseek Str( nId, 10, 0 )
+   HSEEK Str( nId, 10, 0 )
 
    IF Found()
       nVeza_1 := field->veza_1
 
       // sada trazi grupe - atribute
-      hseek Str( nVeza_1, 10, 0 )
+      HSEEK Str( nVeza_1, 10, 0 )
 
       IF Found()
          // dobio sam atribut
@@ -210,7 +210,7 @@ STATIC FUNCTION g_attv_byid( nId )
 
    SELECT strings
    SET ORDER TO TAG "1"
-   hseek Str( nId, 10, 0 )
+   HSEEK Str( nId, 10, 0 )
 
    IF Found()
       nAtribut := field->veza_1

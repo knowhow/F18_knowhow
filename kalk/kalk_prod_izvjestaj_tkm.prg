@@ -21,7 +21,7 @@ FUNCTION kalk_tkm()
    LOCAL _calc_rec := 0
 
    IF !get_vars( @_vars )
-      RETURN
+      RETURN .F.
    ENDIF
 
    _calc_rec := kalk_gen_fin_stanje_prodavnice( _vars )
@@ -30,7 +30,7 @@ FUNCTION kalk_tkm()
       stampaj_tkm( _vars )
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 STATIC FUNCTION get_vars( vars )
@@ -50,22 +50,18 @@ STATIC FUNCTION get_vars( vars )
 
    ++ _x
    ++ _x
-
    @ m_x + _x, m_y + 2 SAY "Datum od" GET _d_od
    @ m_x + _x, Col() + 1 SAY "do" GET _d_do
 
    ++ _x
    ++ _x
-
    @ m_x + _x, m_y + 2 SAY "     Konto (prazno-svi):" GET _konta PICT "@S35"
 
    ++ _x
-
    @ m_x + _x, m_y + 2 SAY "Vrste dok. (prazno-svi):" GET _vr_dok PICT "@S35"
 
    ++ _x
    ++ _x
-
    @ m_x + _x, m_y + 2 SAY "Gledati usluge (D/N) ?" GET _usluge PICT "@!" VALID _usluge $ "DN"
 
    READ
@@ -195,7 +191,7 @@ STATIC FUNCTION stampaj_tkm( vars )
    FF
    ENDPRINT
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -219,12 +215,12 @@ STATIC FUNCTION _get_line()
 
 STATIC FUNCTION tkm_zaglavlje( vars )
 
-   ? gFirma, "-", AllTrim( gNFirma )
+   ?U gFirma, "-", AllTrim( gNFirma )
    ?
    ?U Space( 10 ), "TRGOVAČKA KNJIGA NA MALO (TKM) za period od:"
    ?? vars[ "datum_od" ], "do:", vars[ "datum_do" ]
    ?
-   ? "Uslov za prodavnice: "
+   ?U "Uslov za prodavnice: "
 
    IF !Empty( AllTrim( vars[ "konto" ] ) )
       ?? AllTrim( vars[ "konto" ] )
@@ -236,7 +232,7 @@ STATIC FUNCTION tkm_zaglavlje( vars )
 
    ?
 
-   RETURN
+   RETURN .T.
 
 
 STATIC FUNCTION tkm_header()
@@ -276,4 +272,4 @@ STATIC FUNCTION tkm_header()
    ?U _row_1
    ?U _row_2
 
-   RETURN
+   RETURN .T.

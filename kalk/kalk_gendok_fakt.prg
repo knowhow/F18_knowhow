@@ -164,7 +164,7 @@ do while .t.
 
         if kalk_pripr->idvd == "97"
             if lRJKon97
-                hseek cFF97+kalk_pripr->(cIdFakt97+cBrFakt+rbr)
+                HSEEK cFF97+kalk_pripr->(cIdFakt97+cBrFakt+rbr)
                 if found()
                     RREPLACE kolicina with kolicina+nkolicina
                 else
@@ -177,7 +177,7 @@ do while .t.
                 endif
             endif
             if lRJKon97_2
-                hseek cFF97_2+kalk_pripr->(cIdFakt97_2+cBrFakt+rbr)
+                HSEEK cFF97_2+kalk_pripr->(cIdFakt97_2+cBrFakt+rbr)
                 if found()
                     RREPLACE kolicina with kolicina+nkolicina
                 else
@@ -196,7 +196,7 @@ do while .t.
 
         else
 
-            hseek cFaktFirma + kalk_pripr->(cIdFakt+cBrFakt+rbr)
+            HSEEK cFaktFirma + kalk_pripr->(cIdFakt+cBrFakt+rbr)
 
             if found()
                 RREPLACE kolicina with kolicina+nkolicina
@@ -212,9 +212,9 @@ do while .t.
             if kalk_pripr->idvd == "97"
                 if lRJKon97
                     select fakt_pripr
-                    hseek cFF97+pripr->(cIdFakt97+cBrFakt+rbr)
+                    HSEEK cFF97+pripr->(cIdFakt97+cBrFakt+rbr)
                     select konto
-                    hseek kalk_pripr->idkonto
+                    HSEEK kalk_pripr->idkonto
                     cTxta:=padr(kalk_pripr->idkonto,30)
                     cTxtb:=padr(konto->naz,30)
                     cTxtc:=padr("",30)
@@ -227,9 +227,9 @@ do while .t.
                 endif
                 if lRJKon97_2
                     select fakt_pripr
-                    hseek cFF97_2+pripr->(cIdFakt97_2+cBrFakt+rbr)
+                    HSEEK cFF97_2+pripr->(cIdFakt97_2+cBrFakt+rbr)
                     select konto
-                    hseek kalk_pripr->idkonto2
+                    HSEEK kalk_pripr->idkonto2
                     cTxta:=padr(kalk_pripr->idkonto2,30)
                     cTxtb:=padr(konto->naz,30)
                     cTxtc:=padr("",30)
@@ -245,11 +245,11 @@ do while .t.
             else
 
                 select PARTN
-                hseek kalk_pripr->idpartner
+                HSEEK kalk_pripr->idpartner
              
                 if kalk_pripr->idvd $ "11#12#13#95#PR#RN"
                     select konto
-                    hseek kalk_pripr->idkonto
+                    HSEEK kalk_pripr->idkonto
                     cTxta:=padr(kalk_pripr->idkonto,30)
                     cTxtb:=padr(konto->naz,30)
                     cTxtc:=padr("",30)
@@ -281,12 +281,12 @@ do while .t.
                     if !lRJKon97
                         loop
                     endif
-                    hseek cFF97+kalk_pripr->(cIdFakt97+cBrFakt+rbr)
+                    HSEEK cFF97+kalk_pripr->(cIdFakt97+cBrFakt+rbr)
                 else
                     if !lRJKon97_2
                         loop
                     endif
-                    hseek cFF97_2+kalk_pripr->(cIdFakt97_2+cBrFakt+rbr)
+                    HSEEK cFF97_2+kalk_pripr->(cIdFakt97_2+cBrFakt+rbr)
                 endif
             else
                 RREPLACE idfirma with IF(cFaktFirma!=cIdFirma.or.lRJKonto,cFaktFirma, kalk_pripr->idfirma ), rbr with kalk_pripr->Rbr, idtipdok with cIdFakt, brdok with cBrFakt

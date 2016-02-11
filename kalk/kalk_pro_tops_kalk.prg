@@ -130,7 +130,7 @@ endif
 // uzmi iz koncija sve potrebne varijable
 select koncij
 set order to tag "ID"
-hseek cTopsKonto
+HSEEK cTopsKonto
 		
 if !Found()
 	MsgBeep("Ne postoji definisan prod.konto u KONCIJ-u")
@@ -186,7 +186,7 @@ Box(,3,60)
 do while !eof() .and. xpos->idpos == cIdPos
 	if xpos->idvd $ ALLTRIM(cIdTipDok) .and. xpos->datum >= dDatPOd .and. xpos->datum <= dDatPDo 
 		select ROBA
-		hseek xpos->idroba
+		HSEEK xpos->idroba
        				
 		if !Found()
 			select xpos
@@ -202,10 +202,10 @@ do while !eof() .and. xpos->idpos == cIdPos
 				
 		if roba->tip = "P"  // proizvod je!
 			select sast
-          		hseek  xpos->idroba
+          		HSEEK  xpos->idroba
           		do while !eof() .and. id==xpos->idroba 
 				select roba
-				hseek sast->id2
+				HSEEK sast->id2
             			select kalk_pripr
             			locate for idroba==sast->id2
             			if found()

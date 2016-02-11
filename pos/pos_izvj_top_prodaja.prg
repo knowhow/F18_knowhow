@@ -186,10 +186,10 @@ do While !EOF() .and. pos_doks->IdVd==cIdVd .and. pos_doks->Datum <= dDat1
     while !Eof() .and. POS->(IdPos+IdVd+dtos(datum)+BrDok)==pos_doks->(IdPos+IdVd+dtos(datum)+BrDok)
 
         select roba
-		hseek pos->idroba
+		HSEEK pos->idroba
       	if roba->(FIELDPOS("idodj")) <> 0
 			select odj
-			hseek roba->idodj
+			HSEEK roba->idodj
 		endif
         nNeplaca:=0
         if right(odj->naz,5)=="#1#0#"  // proba!!!
@@ -204,7 +204,7 @@ do While !EOF() .and. pos_doks->IdVd==cIdVd .and. pos_doks->Datum <= dDat1
 
       	SELECT POM
         go top
-		hseek POS->IdRoba
+		HSEEK POS->IdRoba
         
         IF !FOUND ()
             APPEND BLANK

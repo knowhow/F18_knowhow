@@ -228,7 +228,7 @@ FUNCTION pf_a4_sltxt( cRazmak, cLine )
 
    SELECT drntext
    SET ORDER TO TAG "1"
-   hseek "F20"
+   HSEEK "F20"
 
    DO WHILE !Eof() .AND. field->tip = "F"
       nFTip := Val( Right( field->tip, 2 ) )

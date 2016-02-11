@@ -486,11 +486,11 @@ TODO: izbaciti
 
          // pronadji opis konta
          SELECT konto
-         hseek cIdKonto
+         HSEEK cIdKonto
 
          // pronadji opis partnera
          SELECT partn
-         hseek cIdPartner
+         HSEEK cIdPartner
 
          SELECT suban
 
@@ -721,7 +721,7 @@ TODO: izbaciti
       IF cSK == "D"
 
          SELECT rj
-         hseek cSin
+         HSEEK cSin
 
          SELECT r_export
 

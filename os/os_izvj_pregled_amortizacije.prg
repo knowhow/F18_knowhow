@@ -92,7 +92,7 @@ private nStr:=0
 // strana
 
 select rj
-hseek cIdrj
+HSEEK cIdrj
 select_os_sii()
 
 P_10CPI
@@ -190,7 +190,7 @@ do while !eof() .and. ( field->idrj = cIdrj .or. empty(cidrj))
                 // uopste promjena
                 _sr_id := field->id
                 select_promj()
-                hseek _sr_id
+                HSEEK _sr_id
                 fIma:=.f.
                 do while !eof() .and. field->id == _sr_id .and. field->datum <= gDatObr
                     fIma:=.t.
@@ -214,7 +214,7 @@ do while !eof() .and. ( field->idrj = cIdrj .or. empty(cidrj))
                 // prikaz promjena
                 _sr_id := field->id
                 select_promj()
-                hseek _sr_id
+                HSEEK _sr_id
                 do while !EOF() .and. field->id == _sr_id .and. field->datum <= gDatObr
                     n1 := 0
                     n2 := amp
@@ -254,7 +254,7 @@ do while !eof() .and. ( field->idrj = cIdrj .or. empty(cidrj))
                     _sr_id := field->id
                     _sr_id_rj := field->idrj
                     select_promj()
-                    hseek _sr_id
+                    HSEEK _sr_id
                     do while !eof() .and. field->id == _sr_id .and. field->datum <= gDatObr
 
                         ? space(5),space(len(id)),space(len( _sr_id_rj )),datum,opis
@@ -311,7 +311,7 @@ do while !eof() .and. ( field->idrj = cIdrj .or. empty(cidrj))
         
         nTArea := SELECT()
         select konto
-        hseek cIdKonto
+        HSEEK cIdKonto
         select (nTArea)
         ? m
         ? " ukupno ", cIdKonto, PADR( konto->naz, 50 )
@@ -333,7 +333,7 @@ do while !eof() .and. ( field->idrj = cIdrj .or. empty(cidrj))
     ? m
     nTArea := SELECT()
     select konto
-    hseek cIdSK
+    HSEEK cIdSK
     select (nTArea)
     ? " UKUPNO ",cIdSK, PADR( konto->naz, 50 )
     @ prow(),ncol1    SAY ndug2*nBBK pict gpici

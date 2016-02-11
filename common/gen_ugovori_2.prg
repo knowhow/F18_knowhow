@@ -1003,7 +1003,7 @@ STATIC FUNCTION info_generated_data( data )
    FOR _i := 1 TO Len( data )
 
       SELECT partn
-      hseek DATA[ _i, 4 ]
+      HSEEK DATA[ _i, 4 ]
 
       ? PadL( AllTrim( Str( ++_cnt ) ), 4 ) + "."
 

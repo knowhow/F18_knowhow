@@ -160,7 +160,7 @@ FUNCTION ObrazInv()
             DO WHILE !Eof() .AND. cG1 == g1  .AND. idtarifa == cIdTarifa
                cIdroba := idroba
                SELECT roba
-               hseek cIdRoba
+               HSEEK cIdRoba
                SELECT rekap1
                nK0 := 0 // u sluceju da je vise objekata u prikazu inventure, saberi
                nK1 := nK2 := nK3 := nK4 := nK5 := nK6 := nK7 := nK8 := 0
@@ -492,7 +492,7 @@ FUNCTION ObrazInv()
             ENDIF
             ? m
             SELECT k1
-            hseek cG1
+            HSEEK cG1
             SELECT rekap1
             ? "Ukupno grupa", cG1, "-", k1->naz
             ? m
@@ -506,7 +506,7 @@ FUNCTION ObrazInv()
             // B_ON
             ? m
             SELECT k1
-            hseek cG1
+            HSEEK cG1
             SELECT rekap1
             ? "Ukupno grupa", cG1, "-", k1->naz
             @ PRow(), nCol1 SAY  nTT10 PICT pickol; ??  "³"
@@ -607,7 +607,7 @@ FUNCTION ObrazInv()
          FOR nCnt := 1 TO Len( aTarGr )
             IF PRow() > PREDOVA; FF; kalk_zagl_inventura(); ENDIF
             SELECT k1
-            hseek aTarGr[ nCnt, 1 ]
+            HSEEK aTarGr[ nCnt, 1 ]
             ? aTarGr[ nCnt, 1 ], k1->naz, "(", Trim( aTarGr[ nCnt, 2 ] ), ")"
             @ PRow(), nCol1 SAY aTarGr[ nCnt, 3 ] PICT pickol; ??  "³"
             @ PRow(), PCol() SAY aTarGr[ nCnt, 4 ] PICT picdem; ??  "³"

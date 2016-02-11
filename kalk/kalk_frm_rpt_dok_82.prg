@@ -136,10 +136,10 @@ nTot5:=nTot6:=nTot7:=0
 do while !eof() .and. cidfirma+cidvd+cbrdok==idfirma+idvd+brdok
   cidtarifa:=idtarifa
   nU1:=nU2:=nU3:=nU4:=0
-  select tarifa; hseek cidtarifa
+  select tarifa; HSEEK cidtarifa
   select kalk_pripr
   do while !eof() .and. cidfirma+cidvd+cbrdok==idfirma+idvd+brdok .and. idtarifa==cidtarifa
-    select roba; hseek kalk_pripr->idroba; select kalk_pripr
+    select roba; HSEEK kalk_pripr->idroba; select kalk_pripr
     VtPorezi()
     nU1+=mpc*kolicina
     nU2+=mpc*_OPP*kolicina

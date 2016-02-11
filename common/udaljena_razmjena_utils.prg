@@ -84,7 +84,7 @@ FUNCTION update_table_konto( zamjena_sifre )
       update_rec_konto_struct( @_app_rec )
 
       SELECT konto
-      hseek _app_rec[ "id" ]
+      HSEEK _app_rec[ "id" ]
 
       _sif_exist := .T.
       IF !Found()
@@ -157,7 +157,7 @@ FUNCTION update_table_partn( zamjena_sifre )
       update_rec_partn_struct( @_app_rec )
 
       SELECT partn
-      hseek _app_rec[ "id" ]
+      HSEEK _app_rec[ "id" ]
 
       _sif_exist := .T.
       IF !Found()
@@ -227,7 +227,7 @@ FUNCTION update_table_roba( zamjena_sifre )
       update_rec_roba_struct( @_app_rec )
 
       SELECT roba
-      hseek _app_rec[ "id" ]
+      HSEEK _app_rec[ "id" ]
 
       _sif_exist := .T.
       IF !Found()

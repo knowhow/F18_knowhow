@@ -342,7 +342,7 @@ STATIC FUNCTION print_frm_asort_nar( vars )
 
    O_PARTN
    SELECT partn
-   hseek r_export->idpartner
+   HSEEK r_export->idpartner
 
    SELECT r_export
 

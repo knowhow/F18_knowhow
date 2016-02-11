@@ -66,7 +66,7 @@ FUNCTION Rpt_StanjePartnera()
       ENDIF
 
       SELECT partn
-      hseek PadR( prenhh->idpartner, 6 )
+      HSEEK PadR( prenhh->idpartner, 6 )
       cNazPartn := field->naz
 
       SELECT prenhh

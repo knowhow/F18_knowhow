@@ -628,7 +628,7 @@ else
 
     cDefault := ""
     select partn
-    hseek cIdpartn
+    HSEEK cIdpartn
 
     cDefault := partn->ziror
 

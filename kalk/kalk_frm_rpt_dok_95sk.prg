@@ -27,7 +27,7 @@ P_12CPI
 @ prow(),76 SAY "Str:"+str(++nStr,3)
 
 if cidvd=="16"  // doprema robe
- select konto; hseek cidkonto
+ select konto; HSEEK cidkonto
  ?
  ? "PRIJEM U MAGACIN (INTERNI DOKUMENT)"
  ?

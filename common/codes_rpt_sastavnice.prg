@@ -66,7 +66,7 @@ FUNCTION ISast()
          nTrec := RecNo()
          SKIP -1
          SELECT roba
-         hseek sast->id  // nema "svog proizvoda"
+         HSEEK sast->id  // nema "svog proizvoda"
          IF !Found()
             SELECT sast
             DELETE

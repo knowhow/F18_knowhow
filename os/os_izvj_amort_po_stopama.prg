@@ -109,7 +109,7 @@ start print cret
 private nStr:=0  // strana
 
 select rj
-hseek cidrj
+HSEEK cidrj
 
 select_os_sii()
 
@@ -163,7 +163,7 @@ do while !eof() .and. (idrj=cidrj .or. empty(cidrj))
                     // uopste promjena
                     _sr_id := field->id
                     select_promj()
-                    hseek _sr_id
+                    HSEEK _sr_id
                     fIma:=.f.
                     do while !eof() .and. field->id == _sr_id .and. field->datum <= gDatObr
                         fIma:=.t.
@@ -185,7 +185,7 @@ do while !eof() .and. (idrj=cidrj .or. empty(cidrj))
                     // prikaz promjena
                     _sr_id := field->id
                     select_promj()
-                    hseek _sr_id
+                    HSEEK _sr_id
                     do while !eof() .and. field->id == _sr_id .and. field->datum <= gDatObr
                         n1 := 0
                         n2 := amp
@@ -235,7 +235,7 @@ do while !eof() .and. (idrj=cidrj .or. empty(cidrj))
                         _sr_id_rj := field->idrj
 
                         select_promj()  
-                        hseek _sr_id
+                        HSEEK _sr_id
 
                         do while !eof() .and. field->id == _sr_id .and. field->datum <= gDatObr
                             ? space(5),space(len(id)),space(len( _sr_id_rj )),datum,opis

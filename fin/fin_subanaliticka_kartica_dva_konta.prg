@@ -440,7 +440,7 @@ FUNCTION SubKart2( lOtvSt )
          ENDIF
          IF nprolaz = 0 .OR. nProlaz = 1
             IF ( idkonto <> cidkonto .OR. idpartner <> cIdpartner ) .AND. cidkonto == qqkonto
-               hseek cidfirma + qqkonto2 + cIdpartner
+               HSEEK cidfirma + qqkonto2 + cIdpartner
             ENDIF
          ENDIF
 
@@ -542,7 +542,7 @@ FUNCTION SubKart2( lOtvSt )
             nTRec := RecNo()
             IF idkonto == qqkonto2
                cIdPartner := idpartner
-               hseek cidfirma + qqkonto + cIdpartner
+               HSEEK cidfirma + qqkonto + cIdpartner
                IF !Found()
                   GO nTRec
                   EXIT

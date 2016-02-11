@@ -108,7 +108,7 @@ FUNCTION V_Podbr()
          nPbr := 0
          DO WHILE !Eof() .AND. cPRoba == id
             SELECT roba
-            hseek sast->id2  // pozicioniraj se na materijal
+            HSEEK sast->id2  // pozicioniraj se na materijal
             SELECT fakt_pripr
             APPEND ncnl
             my_flock()
@@ -167,7 +167,7 @@ FUNCTION fakt_setuj_cijenu( tip_cijene )
    SELECT ( F_RJ )
    IF Used()
       _rj := .T.
-      hseek _idfirma
+      HSEEK _idfirma
    ENDIF
 
    SELECT roba
@@ -249,7 +249,7 @@ FUNCTION V_Kolicina( tip_vpc )
    IF _podbr <> " ."
 
       SELECT rj
-      hseek _idfirma
+      HSEEK _idfirma
 
       cRjTip := rj->tip
 
@@ -1219,8 +1219,8 @@ FUNCTION ObracunajPP( cSetPor, dDatDok )
    DO WHILE !Eof()
       IF cSetPor == "D"
          NSRNPIdRoba()
-         // select roba; hseek fakt_pripr->idroba
-         SELECT tarifa; hseek roba->idtarifa
+         // select roba; HSEEK fakt_pripr->idroba
+         SELECT tarifa; HSEEK roba->idtarifa
          IF Found()
             SELECT fakt_pripr
             REPLACE porez WITH tarifa->opp

@@ -281,7 +281,7 @@ FUNCTION kalk_kontiranje_naloga( fAuto, lAGen, lViseKalk, cNalog, auto_brojac )
          ENDIF
 
          SELECT roba
-         hseek finmat->idroba
+         HSEEK finmat->idroba
 
          SELECT trfp
          GO TOP
@@ -1161,7 +1161,7 @@ FUNCTION RekapK()
             BoxC()
          ENDIF
 
-         hseek cIdFirma + cIdVd + cBrDok
+         HSEEK cIdFirma + cIdVd + cBrDok
 
       ELSE
          GO TOP
@@ -1457,7 +1457,7 @@ FUNCTION RekapK()
 
             IF !Empty( kalk_pripr->mu_i )
                SELECT tarifa
-               hseek roba->idtarifa
+               HSEEK roba->idtarifa
                SELECT finmat
                IF IsPDV()
                   REPLACE UPOREZV WITH  Round( kalk_pripr->( nMarza * kolicina * TARIFA->OPP / 100 / ( 1 + TARIFA->OPP / 100 ) ), gZaokr )
@@ -1465,7 +1465,7 @@ FUNCTION RekapK()
                   REPLACE UPOREZV WITH  Round( kalk_pripr->( nMarza * kolicina * TARIFA->VPP / 100 / ( 1 + TARIFA->VPP / 100 ) ), gZaokr )
                ENDIF
                SELECT tarifa
-               hseek roba->idtarifa
+               HSEEK roba->idtarifa
                SELECT finmat
             ENDIF
 

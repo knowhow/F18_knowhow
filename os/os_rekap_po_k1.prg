@@ -123,7 +123,7 @@ do while !eof()
  
     ? strtran(m,"-","=")
     select k1
-    hseek cK1
+    HSEEK cK1
 
     select_os_sii()
 

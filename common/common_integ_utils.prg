@@ -402,7 +402,7 @@ STATIC FUNCTION pos_fmk_roba( cPKonto )
 
       // provjeri da li se spominje u POS-u
       SELECT p_pos
-      hseek cRTemp
+      HSEEK cRTemp
 
       // ako se ne spominje i preskoci ga, ovo je nebitna sifra...
       IF !Found()
@@ -412,7 +412,7 @@ STATIC FUNCTION pos_fmk_roba( cPKonto )
       ENDIF
 
       SELECT roba
-      hseek cRTemp
+      HSEEK cRTemp
 
       IF !Found()
          AddToErrors( "C", cRTemp, "", "Konto: " + AllTrim( cPKonto ) + ", FMK, nepostojeca sifra artikla !!!" )

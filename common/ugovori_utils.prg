@@ -130,7 +130,7 @@ FUNCTION f_ftxt( cId )
    LOCAL xRet := ""
 
    SELECT ftxt
-   hseek cId
+   HSEEK cId
    xRet := Trim( naz )
 
    RETURN xRet

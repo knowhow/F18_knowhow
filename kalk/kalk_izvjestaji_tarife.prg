@@ -108,8 +108,8 @@ FUNCTION Kart41_42()
    SELECT kalk
    SET ORDER TO TAG "4"
    // idFirma+Pkonto+idroba+dtos(datdok)+podbr+PU_I+IdVD
-   // hseek cidfirma+cidkonto+cidroba
-   hseek cidfirma + cidkonto + cidr
+   // HSEEK cidfirma+cidkonto+cidroba
+   HSEEK cidfirma + cidkonto + cidr
    EOF CRET
 
    gaZagFix := { 7, 4 }
@@ -128,8 +128,8 @@ FUNCTION Kart41_42()
    DO WHILE !Eof() .AND. idFirma + pkonto + idroba = cidfirma + cidkonto + cidr
 
       cidroba := idroba
-      SELECT roba; hseek cidroba
-      SELECT tarifa; hseek roba->idtarifa
+      SELECT roba; HSEEK cidroba
+      SELECT tarifa; HSEEK roba->idtarifa
       ? m
       ? "Artikal:", cidroba, "-", Trim( Left( roba->naz, 40 ) ) + " (" + roba->jmj + ")"
       ? m
@@ -229,7 +229,7 @@ FUNCTION Kart41_42()
 
 STATIC FUNCTION Zagl2()
 
-   SELECT konto; hseek cidkonto
+   SELECT konto; HSEEK cidkonto
 
    Preduzece()
    P_12CPI
@@ -325,8 +325,8 @@ FUNCTION Kart412v2()
    SELECT kalk
    SET ORDER TO TAG "4"
    // idFirma+Pkonto+idroba+dtos(datdok)+podbr+PU_I+IdVD
-   // hseek cidfirma+cidkonto+cidroba
-   hseek cidfirma + cidkonto + cidr
+   // HSEEK cidfirma+cidkonto+cidroba
+   HSEEK cidfirma + cidkonto + cidr
    EOF CRET
 
    gaZagFix := { 7, 4 }
@@ -345,8 +345,8 @@ FUNCTION Kart412v2()
    DO WHILE !Eof() .AND. idFirma + pkonto + idroba = cidfirma + cidkonto + cidr
 
       cidroba := idroba
-      SELECT roba; hseek cidroba
-      SELECT tarifa; hseek roba->idtarifa
+      SELECT roba; HSEEK cidroba
+      SELECT tarifa; HSEEK roba->idtarifa
       ? m
       ? "Artikal:", cidroba, "-", Trim( Left( roba->naz, 40 ) ) + " (" + roba->jmj + ")"
       ? m
@@ -472,7 +472,7 @@ FUNCTION Kart412v2()
 
 STATIC FUNCTION Zagl3()
 
-   SELECT konto; hseek cidkonto
+   SELECT konto; HSEEK cidkonto
 
    Preduzece()
    P_12CPI

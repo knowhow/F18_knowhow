@@ -1131,7 +1131,7 @@ STATIC FUNCTION fill_part_data( cId, lPdvObveznik )
       O_PARTN
       SELECT partn
       SET ORDER TO TAG "ID"
-      hseek cId
+      HSEEK cId
    ENDIF
 
    IF !lFromMemo .AND. partn->id == cId

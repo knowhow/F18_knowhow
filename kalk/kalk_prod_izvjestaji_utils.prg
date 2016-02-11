@@ -106,7 +106,7 @@ for i := 1 to nCntKonto
 		nU3 := 0
 		
 	  	select tarifa
-		hseek cIdtarifa
+		HSEEK cIdtarifa
 
 	  	select kalk_pripr
 
@@ -119,7 +119,7 @@ for i := 1 to nCntKonto
 	    	endif
     	
 			select roba
-			hseek kalk_pripr->idroba
+			HSEEK kalk_pripr->idroba
 	
 			Tarifa( kalk_pripr->pkonto, kalk_pripr->idroba, @aPorezi, cIdTarifa )
 			select kalk_pripr

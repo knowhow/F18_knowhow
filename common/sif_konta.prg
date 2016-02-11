@@ -49,7 +49,7 @@ FUNCTION GetNameFromKonto( cIdKonto )
 
    nArr := Select()
    SELECT konto
-   hseek cIdKonto
+   HSEEK cIdKonto
    cRet := AllTrim( field->naz )
    SELECT ( nArr )
 

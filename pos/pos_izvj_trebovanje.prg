@@ -51,12 +51,12 @@ do while !EOF() .and. _POS->(IdVd+IdRadnik+GT)==("42"+gIdRadnik+OBR_NIJE)
 	?? PADC("TREBOVANJE", 40)
 	cTxt:=""
 	select odj
-	hseek _IdOdj
+	HSEEK _IdOdj
 	if Found()
 		cTxt:=ALLTRIM(odj->Naz)
 	endif
 	select dio
-	hseek _IdDio
+	HSEEK _IdDio
 	if Found()
 		cTxt+="-"+ALLTRIM(dio->Naz)
 	endif

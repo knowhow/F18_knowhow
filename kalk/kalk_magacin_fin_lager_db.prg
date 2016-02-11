@@ -134,7 +134,7 @@ select kalk
 set order to tag "5"
 // "idFirma+dtos(datdok)+idvd+brdok+rbr"
 
-hseek _id_firma
+HSEEK _id_firma
 
 select koncij
 seek TRIM( _konto )
@@ -212,11 +212,11 @@ do while !EOF() .and. _id_firma == field->idfirma .and. IspitajPrekid()
     _t_area := SELECT()
 
     select tdok
-    hseek _tip_dok
+    HSEEK _tip_dok
     _tip_dok_naz := field->naz
 
     select partn
-    hseek _id_partner
+    HSEEK _id_partner
 
     _partn_naziv := field->naz
     _partn_ptt := field->ptt
@@ -258,7 +258,7 @@ do while !EOF() .and. _id_firma == field->idfirma .and. IspitajPrekid()
         endif
 
         select roba
-        hseek kalk->idroba
+        HSEEK kalk->idroba
 
         // treba li gledati usluge ??
         if _gledati_usluge == "N" .and. roba->tip $ "U"

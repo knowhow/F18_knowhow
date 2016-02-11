@@ -207,7 +207,7 @@ STATIC FUNCTION kalk_kopiraj_dokument_u_tabelu_pripreme( cFirma, cIdVd, cBroj )
    LOCAL _rec
 
    SELECT kalk
-   hseek cFirma + cIdVd + cBroj
+   HSEEK cFirma + cIdVd + cBroj
 
    MsgO( "Prebacujem dokument u pripremu ..." )
 

@@ -863,7 +863,7 @@ FUNCTION fakt_real_partnera()
       nRabat := 0
       cIdPartner := idpartner
       SELECT partn
-      hseek cIdPartner
+      HSEEK cIdPartner
       SELECT fakt_doks
 
 

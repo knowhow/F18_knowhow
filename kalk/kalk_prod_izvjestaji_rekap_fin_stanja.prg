@@ -108,7 +108,7 @@ FUNCTION RFLLP()
    cFilt1 := StrTran( cFilt1, ".t..and.", "" )
    SET FILTER to &cFilt1
 
-   hseek cIdFirma
+   HSEEK cIdFirma
 
    SELECT koncij
    SEEK Trim( cIdKonto )
@@ -159,7 +159,7 @@ FUNCTION RFLLP()
       cBroj := pkonto
       DO WHILE !Eof() .AND. cIdFirma + cBroj == idFirma + pkonto .AND. IspitajPrekid()
          SELECT roba
-         hseek kalk->idroba
+         HSEEK kalk->idroba
  		
          SELECT kalk
          IF cTU == "2" .AND.  roba->tip $ "UT"
@@ -173,9 +173,9 @@ FUNCTION RFLLP()
          ENDIF
 
          SELECT roba
-         hseek kalk->idroba
+         HSEEK kalk->idroba
          SELECT tarifa
-         hseek kalk->idtarifa
+         HSEEK kalk->idtarifa
          SELECT kalk
 
          Tarifa( pkonto, idroba, @aPorezi, idtarifa )
@@ -373,7 +373,7 @@ FUNCTION ZaglRFLLP()
    Preduzece()
    P_12CPI
    SELECT konto
-   hseek cidkonto
+   HSEEK cidkonto
    ?? Space( 60 ), " DATUM "
    ?? Date(), Space( 5 ), "Str:", Str( ++nTStrana, 3 )
    IspisNaDan( 5 )

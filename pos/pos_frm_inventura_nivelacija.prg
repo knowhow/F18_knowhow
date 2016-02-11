@@ -556,7 +556,7 @@ FUNCTION edprinv( nInd, datum )
          " total: " + AllTrim( Str( _saldo_izn, 12, 2 ) )
 
       SELECT ( cRSdbf )
-      hseek _idroba
+      HSEEK _idroba
 
       IF nInd == 1
          @ m_x + 0, m_y + 1 SAY _idroba + " : " + AllTrim( naz ) + " (" + AllTrim( idtarifa ) + ")"
@@ -657,7 +657,7 @@ FUNCTION edprinv( nInd, datum )
 
       SELECT ( cRSdbf )
       SET ORDER TO TAG "ID"
-      hseek _idroba
+      HSEEK _idroba
 
       _r_tar := field->idtarifa
       _r_barkod := field->barkod
@@ -897,7 +897,7 @@ FUNCTION _set_cijena_artikla( id_vd, id_roba )
    IF id_vd == VD_INV
 
       SELECT roba
-      hseek id_roba
+      HSEEK id_roba
       _cijena := pos_get_mpc()
 
    ENDIF

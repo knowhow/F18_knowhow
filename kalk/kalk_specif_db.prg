@@ -306,7 +306,7 @@ FUNCTION GenRekap1( aUsl1, aUsl2, aUslR, cKartica, cVarijanta, cKesiraj, fSMark,
       ENDIF
 
       SELECT roba
-      hseek kalk->( idroba )
+      HSEEK kalk->( idroba )
       IF cK7 == "D" .AND. Empty( roba->k7 )
          SELECT kalk
          SKIP
@@ -352,7 +352,7 @@ FUNCTION GenRekap1( aUsl1, aUsl2, aUslR, cKartica, cVarijanta, cKesiraj, fSMark,
          // za sve objekte
          DO WHILE !Eof()
             SELECT rekap1
-            hseek pobjekti->idobj + roba->id
+            HSEEK pobjekti->idobj + roba->id
             IF !Found()
                APPEND BLANK
                REPLACE objekat WITH pobjekti->idobj
@@ -395,7 +395,7 @@ FUNCTION ScanMKonto( dDatOd, dDatDo, cIdKPovrata, cKartica, cVarijanta, cKesiraj
       RETURN 0
    ENDIF
 
-   hseek kalk->( mKonto + idroba )
+   HSEEK kalk->( mKonto + idroba )
 
    IF !Found()
 	

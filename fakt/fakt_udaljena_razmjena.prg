@@ -599,7 +599,7 @@ STATIC FUNCTION __export( vars, a_details )
          ENDIF
 
          SELECT roba
-         hseek _id_roba
+         HSEEK _id_roba
 
          IF Found() .AND. _export_sif == "D"
             _app_rec := dbf_get_rec()
@@ -637,7 +637,7 @@ STATIC FUNCTION __export( vars, a_details )
       ENDDO
 
       SELECT partn
-      hseek _id_partn
+      HSEEK _id_partn
       IF Found() .AND. _export_sif == "D"
          _app_rec := dbf_get_rec()
          SELECT e_partn

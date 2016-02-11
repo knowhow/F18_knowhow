@@ -374,7 +374,7 @@ STATIC FUNCTION fakt_izracunaj_total( arr, partner, tip_dok )
       _iznos := arr[ _i, 2 ]
 
       SELECT tarifa
-      hseek _tar
+      HSEEK _tar
 
       IF tip_dok $ "11#13#23"
          IF !IsIno( partner ) .AND. !IsOslClan( partner ) .AND. tarifa->opp > 0
@@ -421,10 +421,10 @@ STATIC FUNCTION get_a_iznos( idfirma, idtipdok, brdok )
       _rab := field->rabat
 
       SELECT roba
-      hseek _roba
+      HSEEK _roba
 
       SELECT tarifa
-      hseek roba->idtarifa
+      HSEEK roba->idtarifa
 
       _tar := tarifa->id
 
@@ -1031,7 +1031,7 @@ STATIC FUNCTION _get_partner_for_email( id_firma, tip_dok, br_dok )
    _id_vrste_p := field->idvrstep
 
    SELECT partn
-   hseek _partn
+   HSEEK _partn
 
    IF Found()
       _ret := AllTrim( field->naz )

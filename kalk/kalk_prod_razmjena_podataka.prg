@@ -149,12 +149,12 @@ FUNCTION FaKaPrenos_MP_u_razduzenje()
 
          cIdRoba := fakt->idroba
          SELECT ROBA
-         hseek cIdRoba
+         HSEEK cIdRoba
 
          cIdTar := roba->idtarifa
        		
          SELECT tarifa
-         hseek cIdTar
+         HSEEK cIdTar
 
          SELECT koncij
          SEEK Trim( cIdKonto )
@@ -354,10 +354,10 @@ FUNCTION prod_fa_ka_prenos_otpr()
          ENDIF
          DO WHILE !Eof() .AND. cFaktFirma + cIdTipDok + cBrDok == IdFirma + IdTipDok + BrDok
             SELECT ROBA
-            hseek fakt->idroba
+            HSEEK fakt->idroba
 
             SELECT tarifa
-            hseek roba->idtarifa
+            HSEEK roba->idtarifa
             SELECT koncij
             SEEK Trim( cidkonto )
 
@@ -543,9 +543,9 @@ FUNCTION FaKaPrenosRacunMP()
             ENDIF
             DO WHILE !Eof() .AND. cFaktFirma + cIdTipDok + cBrDok == IdFirma + IdTipDok + BrDok
                SELECT ROBA
-               hseek fakt->idroba
+               HSEEK fakt->idroba
                SELECT tarifa
-               hseek roba->idtarifa
+               HSEEK roba->idtarifa
                SELECT fakt
                IF AllTrim( podbr ) == "."
                   SKIP
@@ -785,8 +785,8 @@ FUNCTION FaKaPrenos_01_doprema()
             LOOP
          ENDIF
          DO WHILE !Eof() .AND. cFaktFirma + cIdTipDok + cBrDok == IdFirma + IdTipDok + BrDok
-            SELECT ROBA; hseek fakt->idroba
-            SELECT tarifa; hseek roba->idtarifa
+            SELECT ROBA; HSEEK fakt->idroba
+            SELECT tarifa; HSEEK roba->idtarifa
 
             SELECT fakt
             IF AllTrim( podbr ) == "."
@@ -930,9 +930,9 @@ FUNCTION FaKaPrenos_cm_u_prodavnicu()
             LOOP
          ENDIF
          DO WHILE !Eof() .AND. cFaktFirma + cIdTipDok + cBrDok == IdFirma + IdTipDok + BrDok
-            SELECT ROBA; hseek fakt->idroba
+            SELECT ROBA; HSEEK fakt->idroba
 
-            SELECT tarifa; hseek roba->idtarifa
+            SELECT tarifa; HSEEK roba->idtarifa
             SELECT koncij; SEEK Trim( cidkonto )
 
             SELECT fakt
@@ -1123,7 +1123,7 @@ FUNCTION FaKaPrenos_izlaz_putem_vp()
          ENDIF
 
          IF fdoks2
-            SELECT kalk_doks2; hseek cidfirma + "14" + cbrkalk
+            SELECT kalk_doks2; HSEEK cidfirma + "14" + cbrkalk
             IF !Found()
                APPEND BLANK
                REPLACE idvd WITH "14", ;   // izlazna faktura
@@ -1137,9 +1137,9 @@ FUNCTION FaKaPrenos_izlaz_putem_vp()
          ENDIF
 
          DO WHILE !Eof() .AND. cFaktFirma + cIdTipDok + cBrDok == IdFirma + IdTipDok + BrDok
-            SELECT ROBA; hseek fakt->idroba
+            SELECT ROBA; HSEEK fakt->idroba
 
-            SELECT tarifa; hseek roba->idtarifa
+            SELECT tarifa; HSEEK roba->idtarifa
             SELECT koncij; SEEK Trim( cidkonto )
 
             SELECT fakt
@@ -1386,10 +1386,10 @@ FUNCTION FaKaPrenosRacunMPParagon()
             DO WHILE !Eof() .AND. cFaktFirma + cIdTipDok + cBrDok == IdFirma + IdTipDok + BrDok
 
                SELECT ROBA
-               hseek fakt->idroba
+               HSEEK fakt->idroba
 
                SELECT tarifa
-               hseek roba->idtarifa
+               HSEEK roba->idtarifa
 
                SELECT fakt
 

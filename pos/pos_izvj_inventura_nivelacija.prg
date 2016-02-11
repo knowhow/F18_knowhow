@@ -154,7 +154,7 @@ FUNCTION StampaInv( fLista, lAzurirana )
 
          IF lAzurirana
             SELECT ( cRSdbf )
-            hseek cIdRoba
+            HSEEK cIdRoba
             cRobaNaz := naz
             cJmj := jmj
             SELECT priprz
@@ -331,7 +331,7 @@ FUNCTION PrepisInvNiv( fInvent )
    cIdOdj := priprz->idodj
 
    SELECT ODJ
-   hseek cidodj
+   HSEEK cidodj
 
    IF ODJ->Zaduzuje == "S"
       cRSdbf := "SIROV"

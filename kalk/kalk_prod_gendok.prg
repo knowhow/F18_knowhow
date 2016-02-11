@@ -133,7 +133,7 @@ FUNCTION GenNivP()
 
    SELECT koncij; SEEK Trim( cidkonto )
    SELECT kalk
-   hseek cidfirma + cidvd + colddok
+   HSEEK cidfirma + cidvd + colddok
    DO WHILE !Eof() .AND. cidfirma + cidvd + colddok == idfirma + idvd + brdok
 
       nTrec := RecNo()    // tekuci slog
@@ -141,7 +141,7 @@ FUNCTION GenNivP()
       nUlaz := nIzlaz := 0
       nMPVU := nMPVI := nNVU := nNVI := 0
       nRabat := 0
-      SELECT roba; hseek cidroba; SELECT kalk
+      SELECT roba; HSEEK cidroba; SELECT kalk
       SET ORDER TO TAG "4"
       // "KALKi4","idFirma+Pkonto+idroba+dtos(datdok)+PU_I+IdVD","KALK")
       SEEK cidfirma + cidkonto + cidroba
@@ -186,7 +186,7 @@ FUNCTION GenNivP()
       SELECT kalk; SET ORDER TO TAG "1"; GO nTrec
 
       SELECT roba
-      hseek cidroba
+      HSEEK cidroba
       SELECT kalk_pripr
       scatter()
       APPEND ncnl
@@ -269,7 +269,7 @@ FUNCTION NivPoProc()
    SELECT koncij
    SEEK Trim( cidkonto )
    SELECT kalk
-   hseek cidfirma + cidkonto
+   HSEEK cidfirma + cidkonto
 
    DO WHILE !Eof() .AND. cIdFirma + cIdKonto == idFirma + pKonto
 
@@ -278,7 +278,7 @@ FUNCTION NivPoProc()
       nMPVU := nMPVI := nNVU := nNVI := 0
       nRabat := 0
       SELECT roba
-      hseek cIdRoba
+      HSEEK cIdRoba
       SELECT kalk
 
       DO WHILE !Eof() .AND. cIdFirma + cIdKonto + cIdRoba == idFirma + pKonto + idRoba
@@ -320,7 +320,7 @@ FUNCTION NivPoProc()
       ENDDO
 
       SELECT roba
-      hseek cIdRoba
+      HSEEK cIdRoba
 
       SELECT kalk
 
@@ -532,7 +532,7 @@ FUNCTION KorekMPC()
       nRabat := 0
 
       SELECT roba
-      hseek cIdroba
+      HSEEK cIdroba
       SELECT kalk
 
       IF roba->tip $ "TU"
@@ -716,7 +716,7 @@ FUNCTION Iz13u11()
    PRIVATE nRBr := 0
    DO WHILE !Eof() .AND. cidfirma == idfirma .AND. cidvd == idvd .AND. cbrdok == brdok
       scatter()
-      SELECT roba; hseek _idroba
+      SELECT roba; HSEEK _idroba
       SELECT kalk_pripr2
       APPEND BLANK
 
@@ -779,8 +779,8 @@ FUNCTION Gen41S()
 
    DO WHILE !Eof() .AND. cIdFirma == IdFirma .AND. Pkonto == cPKonto
       cIdTarifa := IdTarifa
-      SELECT roba; hseek kalk->idroba
-      SELECT tarifa; hseek cIdTarifa; SELECT kalk
+      SELECT roba; HSEEK kalk->idroba
+      SELECT tarifa; HSEEK cIdTarifa; SELECT kalk
       VtPorezi()
       nOPP := TARIFA->OPP; nPPP := TARIFA->PPP
       nZPP := tarifa->zpp

@@ -190,7 +190,7 @@ FUNCTION InvManj()
    PRIVATE nRBr := 0, nRBr2 := 0
    DO WHILE !Eof() .AND. cidfirma == idfirma .AND. cidvd == idvd .AND. cbrdok == brdok
       scatter()
-      SELECT roba; hseek _idroba
+      SELECT roba; HSEEK _idroba
 
       IF koncij->naz <> "N1"
          FaktVPC( @nFaktVPC, _idfirma + _idkonto + _idroba )
@@ -308,14 +308,14 @@ FUNCTION MNivPoProc()
 
    SELECT koncij; SEEK Trim( cidkonto )
    SELECT kalk
-   hseek cidfirma + cidkonto
+   HSEEK cidfirma + cidkonto
    DO WHILE !Eof() .AND. cidfirma + cidkonto == idfirma + mkonto
 
       cIdRoba := Idroba
       nUlaz := nIzlaz := 0
       nVPVU := nVPVI := nNVU := nNVI := 0
       nRabat := 0
-      SELECT roba; hseek cidroba; SELECT kalk
+      SELECT roba; HSEEK cidroba; SELECT kalk
       DO WHILE !Eof() .AND. cidfirma + cidkonto + cidroba == idFirma + mkonto + idroba
 
          IF ddatdok < datdok  // preskoci
@@ -358,7 +358,7 @@ FUNCTION MNivPoProc()
          SKIP
       ENDDO
 
-      SELECT roba; hseek cidroba; SELECT kalk
+      SELECT roba; HSEEK cidroba; SELECT kalk
       IF  ( cVarijanta = "1" .AND. roba->n1 = 0 )
          skip; LOOP
       ENDIF
@@ -438,7 +438,7 @@ FUNCTION KorekPC()
    DO WHILE !Eof() .AND. idfirma + mkonto = gFirma + cMagac
 
       cIdRoba := Idroba; nUlaz := nIzlaz := 0; nVPVU := nVPVI := nNVU := nNVI := 0; nRabat := 0
-      SELECT roba; hseek cidroba; SELECT kalk
+      SELECT roba; HSEEK cidroba; SELECT kalk
       IF roba->tip $ "TU"; skip; loop; ENDIF
 
       cIdkonto  := mkonto
@@ -597,7 +597,7 @@ FUNCTION Otprema()
    DO WHILE !Eof() .AND. cidfirma == idfirma .AND. cidvd == idvd .AND. cbrdok == brdok
       scatter()
       SELECT roba
-      hseek _idroba
+      HSEEK _idroba
       SELECT kalk_pripr2
       APPEND BLANK
 

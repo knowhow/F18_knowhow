@@ -486,7 +486,7 @@ STATIC FUNCTION __export( vars, a_details )
 
          // uzmi sada robu sa ove stavke pa je ubaci u e_roba
          SELECT roba
-         hseek _id_roba
+         HSEEK _id_roba
          IF Found() .AND. _export_sif == "D"
             _app_rec := dbf_get_rec()
             SELECT e_roba
@@ -508,7 +508,7 @@ STATIC FUNCTION __export( vars, a_details )
 
       // e sada mozemo komotno ici na export partnera
       SELECT partn
-      hseek _id_partn
+      HSEEK _id_partn
       IF Found() .AND. _export_sif == "D"
          _app_rec := dbf_get_rec()
          SELECT e_partn
@@ -526,7 +526,7 @@ STATIC FUNCTION __export( vars, a_details )
 
       // prvo M_KONTO
       SELECT konto
-      hseek _m_konto
+      HSEEK _m_konto
       IF Found() .AND. _export_sif == "D"
          _app_rec := dbf_get_rec()
          SELECT e_konto
@@ -540,7 +540,7 @@ STATIC FUNCTION __export( vars, a_details )
 
       // zatim P_KONTO
       SELECT konto
-      hseek _p_konto
+      HSEEK _p_konto
       IF Found() .AND. _export_sif == "D"
          _app_rec := dbf_get_rec()
          SELECT e_konto

@@ -103,7 +103,7 @@ endif
       nRbr:=0
       DO WHILE  eval(b1) .and. eval(b2) .and. eval(b3)  // mat_sinteticki konto
          cIdKonto:=IdKonto
-         select KONTO; hseek cIdKonto
+         select KONTO; HSEEK cIdKonto
          select mat_anal
 
          if A==0; Zagl12(); endif

@@ -209,7 +209,7 @@ FUNCTION spec_an()
          ENDDO
 
          SELECT konto
-         hseek cIdKonto
+         HSEEK cIdKonto
 
          SELECT anal
 
@@ -316,7 +316,7 @@ FUNCTION spec_an()
 
          O_KONTO
          SELECT konto
-         hseek cSin
+         HSEEK cSin
          SELECT r_export
 
          ? m

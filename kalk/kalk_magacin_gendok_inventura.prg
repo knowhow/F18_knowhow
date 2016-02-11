@@ -83,7 +83,7 @@ FUNCTION kalk_generisi_inventuru_magacina()
    SEEK Trim( cIdKonto )
 
    SELECT kalk
-   hseek cIdFirma + cIdKonto
+   HSEEK cIdFirma + cIdKonto
 
    DO WHILE !Eof() .AND. cIdFirma + cIdKonto == field->idfirma + field->mkonto
 
@@ -247,7 +247,7 @@ FUNCTION kalk_generisanje_inventure_razlike()
    SEEK Trim( cIdKonto )
 
    SELECT kalk
-   hseek cIdFirma + cIdKonto
+   HSEEK cIdFirma + cIdKonto
 
    DO WHILE !Eof() .AND. cIdFirma + cIdKonto == field->idfirma + field->mkonto
 
@@ -255,7 +255,7 @@ FUNCTION kalk_generisanje_inventure_razlike()
 
       SELECT pript
       SET ORDER TO TAG "2"
-      hseek cIdFirma + cIdVd + cOldBrDok + cIdRoba
+      HSEEK cIdFirma + cIdVd + cOldBrDok + cIdRoba
 
       // ako sam nasao prekoci ovaj zapis
       IF Found()

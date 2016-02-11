@@ -177,7 +177,7 @@ FUNCTION obr_doprinos( nDopr, nDopr2, cTRada, a_benef )
 
             DO WHILE !Eof() .AND. id == dopr->poopst .AND. porid == Space( 2 )
                SELECT ops
-               hseek opsld->idops
+               HSEEK opsld->idops
                SELECT opsld
 
                IF !ImaUOp( "DOPR", DOPR->id )

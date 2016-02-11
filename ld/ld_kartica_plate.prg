@@ -144,9 +144,9 @@ FUNCTION ld_kartica_plate( cIdRj, cMjesec, cGodina, cIdRadn, cObrac )
    nStrana := 0
 
    SELECT vposla
-   hseek ld->idvposla
+   HSEEK ld->idvposla
    SELECT ld_rj
-   hseek ld->idrj
+   HSEEK ld->idrj
    SELECT ld
 
    IF PCount() >= 4
@@ -189,11 +189,11 @@ FUNCTION ld_kartica_plate( cIdRj, cMjesec, cGodina, cIdRadn, cObrac )
       cRTRada := g_tip_rada( _idradn, _idrj )
 
       SELECT radn
-      hseek _idradn
+      HSEEK _idradn
       SELECT vposla
-      hseek _idvposla
+      HSEEK _idvposla
       SELECT ld_rj
-      hseek _idrj
+      HSEEK _idrj
       SELECT ld
 
       AAdd( aNeta, { vposla->idkbenef, _UNeto } )
@@ -388,7 +388,7 @@ STATIC FUNCTION prikazi_primanja()
             ? m2
             DO WHILE !Eof() .AND. _godina == godina .AND. _mjesec = mjesec .AND. idradn == _idradn
                SELECT kred
-               hseek radkr->idkred
+               HSEEK radkr->idkred
                SELECT radkr
                aIznosi := OKreditu( idradn, idkred, naosnovu, _mjesec, _godina )
                ? cLMSK, idkred, Left( kred->naz, 15 ), PadR( naosnovu, 20 )

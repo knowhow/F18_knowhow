@@ -93,7 +93,7 @@ FUNCTION fin_sinteticki_nalog( kumulativ )
          
          DO WHILE  Eval( b1 ) .AND. Eval( b2 ) .AND. Eval( b4 )  
             SELECT KONTO
-            hseek cIdkonto
+            HSEEK cIdkonto
             SELECT PANAL
             P_NRED
             @ PRow(), 0 SAY  ++nRBr PICTURE '9999'
@@ -197,7 +197,7 @@ FUNCTION zagl_sinteticki_nalog( dDatNal )
 
    IF gNW == "N"
       SELECT partn
-      hseek cIdfirma
+      HSEEK cIdfirma
       SELECT panal
       ? cidfirma, "-", partn->naz
    ENDIF

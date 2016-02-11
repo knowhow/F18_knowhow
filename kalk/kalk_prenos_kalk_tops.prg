@@ -175,7 +175,7 @@ _pos_locations := {}
 do while !eof() .and. field->idfirma == id_firma .and. field->idvd == id_tip_dok .and. field->brdok == br_dok
         
     select roba
-    hseek kalk_pripr->idroba
+    HSEEK kalk_pripr->idroba
         
     select koncij
     seek TRIM( kalk_pripr->pkonto )
@@ -440,7 +440,7 @@ return
 static function kalk_dokument_postoji( idfirma, tipdokumenta, brojdokumenta )
 O_KALK_DOKS
 select kalk_doks
-hseek idfirma + tipdokumenta + brojdokumenta
+HSEEK idfirma + tipdokumenta + brojdokumenta
 
 if !Found()  
 	MsgBeep("Dokument " + TRIM(idfirma) + "-" + TRIM(tipdokumenta) + "-" + TRIM(brojdokumenta) + " ne postoji !!!")

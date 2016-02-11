@@ -104,7 +104,7 @@ Box("#UNOS PROMJENA NAD STALNIM SREDSTVIMA", maxrows()-5, maxcols()-5 )
         ENDIF
 
         select amort
-        hseek _id_am
+        HSEEK _id_am
 
         select_os_sii()
 

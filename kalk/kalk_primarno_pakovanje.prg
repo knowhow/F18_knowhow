@@ -142,7 +142,7 @@ FUNCTION NaPrimPak()
          // generisi stavku zaduzenja sekundarnog pakovanja
          // -----------------------------------------------
          IF Len( aSastav ) != 0
-            SELECT ROBA; hseek cidroba
+            SELECT ROBA; HSEEK cidroba
             SELECT kalk_pripr        // kalk_priprema dokumenta
             IF ( ( nulaz - nizlaz )  <> 0 )
                nRBr++
@@ -314,7 +314,7 @@ FUNCTION NaPrPak2()
          // generisi stavku zaduzenja sekundarnog pakovanja
          // -----------------------------------------------
          IF Len( aSastav ) != 0
-            SELECT ROBA; hseek cidroba
+            SELECT ROBA; HSEEK cidroba
             SELECT kalk_pripr        // kalk_priprema dokumenta
             IF ( ( nulaz - nizlaz )  <> 0 )
                nRBr++

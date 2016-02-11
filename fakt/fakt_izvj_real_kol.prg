@@ -380,7 +380,7 @@ FUNCTION fakt_real_kolicina()
          ENDIF
 
          SELECT partn
-         hseek cIdPartner
+         HSEEK cIdPartner
          SELECT fakt
     		
          IF Round( nKolicina, 4 ) <> 0
@@ -488,7 +488,7 @@ FUNCTION fakt_real_kolicina()
             IF lGroup .AND. !Empty( cPGroup )
                cPartn := fakt->idpartner
                SELECT partn
-               hseek cPartn
+               HSEEK cPartn
                SELECT fakt
                IF !p_in_group( cPartn, cPGroup )
                   SKIP
@@ -552,7 +552,7 @@ FUNCTION fakt_real_kolicina()
          ENDIF
     		
          SELECT roba
-         hseek cIdRoba
+         HSEEK cIdRoba
          SELECT fakt
     		
          IF Round( nKolicina, 4 ) <> 0

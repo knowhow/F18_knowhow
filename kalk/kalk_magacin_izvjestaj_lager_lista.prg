@@ -321,10 +321,10 @@ FUNCTION LLM()
 
    IF fSint .AND. lSabKon
       SET ORDER TO TAG "6"
-      hseek cIdFirma
+      HSEEK cIdFirma
    ELSE
       SET ORDER TO TAG "3"
-      hseek cIdFirma + cIdKonto
+      HSEEK cIdFirma + cIdKonto
    ENDIF
 
    SELECT koncij
@@ -450,7 +450,7 @@ FUNCTION LLM()
       dL_izlaz := CToD( "" )
 
       SELECT roba
-      hseek cIdRoba
+      HSEEK cIdRoba
 
       // pretrazi artikle po nazivu
       IF ( !Empty( cArtikalNaz ) .AND. At( AllTrim( cArtikalNaz ), AllTrim( roba->naz ) ) == 0 )
@@ -472,7 +472,7 @@ FUNCTION LLM()
       IF ( IsVindija() .AND. !Empty( cOpcine ) )
          SELECT partn
          SET ORDER TO TAG "ID"
-         hseek kalk->idpartner
+         HSEEK kalk->idpartner
          IF At( AllTrim( partn->idops ), cOpcine ) == 0
             SELECT kalk
             SKIP
@@ -1316,7 +1316,7 @@ STATIC FUNCTION Zagl()
       P_COND2
    ENDIF
    SELECT konto
-   hseek cIdKonto
+   HSEEK cIdKonto
    SET CENTURY ON
    ?? "KALK: LAGER LISTA  ZA PERIOD", dDatOd, "-", dDatdo, "  na dan", Date(), Space( 12 ), "Str:", Str( ++nTStrana, 3 )
 
@@ -1390,7 +1390,7 @@ STATIC FUNCTION ZaglPDV()
    ENDIF
 
    SELECT konto
-   hseek cIdKonto
+   HSEEK cIdKonto
 
    SET CENTURY ON
 
@@ -1498,7 +1498,7 @@ STATIC FUNCTION _gen_xml( params )
    _t_rabat := _t_vpv_ru := _t_vpv_ri := _t_nv := 0
 
    SELECT konto
-   hseek params[ "idkonto" ]
+   HSEEK params[ "idkonto" ]
 
    SELECT kalk
 
@@ -1536,7 +1536,7 @@ STATIC FUNCTION _gen_xml( params )
       _rabat := 0
 
       SELECT roba
-      hseek _idroba
+      HSEEK _idroba
 
       IF ( !Empty( _art_naz ) .AND. At( AllTrim( _art_naz ), AllTrim( roba->naz ) ) == 0 )
          SELECT kalk

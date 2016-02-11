@@ -187,7 +187,7 @@ FUNCTION kalk_povrat_dokumenta_iz_pripr9( cIdFirma, cIdVd, cBrDok )
 
    SELECT kalk_pripr9
 
-   hseek cIdFirma + cIdVd + cBrDok
+   HSEEK cIdFirma + cIdVd + cBrDok
    EOF CRET
 
    MsgO( "PRIPREMA" )

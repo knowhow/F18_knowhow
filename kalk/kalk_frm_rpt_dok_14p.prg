@@ -50,11 +50,11 @@ HSEEK cIdPartner
 
 if cidvd=="94"
 	select konto
-	hseek cidkonto2
+	HSEEK cidkonto2
  	?  "Storno razduzenja KONTA:", cIdKonto, "-", ALLTRIM( naz )
 else
  	select konto
-	hseek cidkonto2
+	HSEEK cidkonto2
  	?  "KONTO razduzuje:", kalk_pripr->mkonto, "-", ALLTRIM( naz )
  	if !empty(kalk_pripr->Idzaduz2)
 		?? " Rad.nalog:", kalk_pripr->Idzaduz2

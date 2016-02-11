@@ -186,9 +186,9 @@ do while !EOF() .and. IspitajPrekid()
 	    cIdKonto:=IdKonto
 	    cIdTarifa:=IdTarifa
 	    select roba
-	    hseek kalk->idroba
+	    HSEEK kalk->idroba
      	select tarifa
-     	hseek cIdTarifa
+     	HSEEK cIdTarifa
      	select kalk
 
 	    VtPorezi()
@@ -228,7 +228,7 @@ do while !EOF() .and. IspitajPrekid()
         DO WHILE !EOF() .AND. cIdFirma==IdFirma .and. cIdtarifa==IdTarifa .and. IF(cPojed=="D",cPoDok==IDVD+BRDOK,.t.) .and. IspitajPrekid()
 
             select roba
-	        hseek kalk->idroba
+	        HSEEK kalk->idroba
             select KALK
 
             if lVoSaTa

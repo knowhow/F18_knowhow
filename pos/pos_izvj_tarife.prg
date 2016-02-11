@@ -47,7 +47,7 @@ FUNCTION pos_rekapitulacija_tarifa( aTarife )
    FOR nCnt := 1 TO Len( aTarife )
 	
       SELECT tarifa
-      hseek aTarife[ nCnt ][ 1 ]
+      HSEEK aTarife[ nCnt ][ 1 ]
       nPDV := tarifa->opp
 		
       ? aTarife[ nCnt ][ 1 ], "(" + Str( nPDV ) + "%)"

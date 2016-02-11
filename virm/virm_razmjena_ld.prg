@@ -211,7 +211,7 @@ STATIC FUNCTION obrada_tekuci_racun( godina, mjesec, dat_virm, r_br, dod_opis )
       _ko_zr := field->ko_zr
 
       SELECT partn
-      hseek gVirmFirma
+      HSEEK gVirmFirma
 
       _total := 0
       _kredit := 0
@@ -318,10 +318,10 @@ STATIC FUNCTION obrada_plate( godina, mjesec, dat_virm, r_br, dod_opis, per_od, 
       _svrha_placanja := AllTrim( field->id )
 
       SELECT vrprim
-      hseek ldvirm->id
+      HSEEK ldvirm->id
 
       SELECT partn
-      hseek gVirmFirma
+      HSEEK gVirmFirma
 
       SELECT virm_pripr
 
@@ -421,7 +421,7 @@ STATIC FUNCTION _ld_vrprim_kredit()
    LOCAL _rec
 
    SELECT vrprim
-   hseek PadR( "KR", Len( field->id ) )
+   HSEEK PadR( "KR", Len( field->id ) )
 
    IF !Found()
 
@@ -446,7 +446,7 @@ STATIC FUNCTION _ld_vrprim_isplata()
    LOCAL _rec
 
    SELECT vrprim
-   hseek PadR( "IS", Len( field->id ) )
+   HSEEK PadR( "IS", Len( field->id ) )
 
    IF !Found()
 
@@ -470,10 +470,10 @@ STATIC FUNCTION _ld_kreditor( id_kred )
    LOCAL _rec
 
    SELECT kred
-   hseek PadR( id_kred, Len( kred->id ) )
+   HSEEK PadR( id_kred, Len( kred->id ) )
 
    SELECT partn
-   hseek PadR( id_kred, Len( partn->id ) )
+   HSEEK PadR( id_kred, Len( partn->id ) )
 
    IF !Found()
 
@@ -543,7 +543,7 @@ STATIC FUNCTION obrada_kredita( godina, mjesec, dat_virm, r_br, dod_opis, bez_nu
       _ko_zr := field->ko_zr
 
       SELECT partn
-      hseek gVirmFirma
+      HSEEK gVirmFirma
 
       _total := 0
       _kredit := 0
@@ -660,7 +660,7 @@ STATIC FUNCTION Rekapld( cId, ;
 
    IF qqPartn == NIL
 
-      hseek Str( nGodina, 4 ) + Str( nMjesec, 2 ) + cId
+      HSEEK Str( nGodina, 4 ) + Str( nMjesec, 2 ) + cId
 
       IF lGroup == .T.
 

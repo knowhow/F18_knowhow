@@ -11,6 +11,7 @@
 
 #include "f18.ch"
 
+MEMVAR Ch, fPoNaz, fID_J
 
 STATIC __PSIF_NIVO__ := 0
 STATIC __A_SIFV__ := { { NIL, NIL, NIL }, { NIL, NIL, NIL }, { NIL, NIL, NIL }, { NIL, NIL, NIL } }
@@ -25,6 +26,7 @@ FUNCTION p_sifra( nDbf, xIndex, nVisina, nSirina, cNaslov, cID, dx, dy,  bBlok, 
       "<a-R> Zamjena vrij.", "<c-A> Cirk.ispravka" }
    LOCAL cUslovSrch :=  ""
    LOCAL cNazSrch
+   LOCAL cOrderTag
 
    PRIVATE fPoNaz := .F.
    PRIVATE fID_J := .F.
@@ -36,8 +38,6 @@ FUNCTION p_sifra( nDbf, xIndex, nVisina, nSirina, cNaslov, cID, dx, dy,  bBlok, 
    FOR _i := 1 TO Len( aZabIsp )
       aZabIsp[ _i ] := Upper( aZabIsp[ _i ] )
    NEXT
-
-   PRIVATE cOrderTag
 
    PushWA()
    PushSifV()
@@ -74,7 +74,7 @@ FUNCTION p_sifra( nDbf, xIndex, nVisina, nSirina, cNaslov, cID, dx, dy,  bBlok, 
 
    ENDIF
 
-   IF ( fPonaz .AND. ( cNazSrch == "" .OR. !Trim( cNazSrch ) == Trim( naz ) ) ) ;
+   IF ( fPonaz .AND. ( cNazSrch == "" .OR. !Trim( cNazSrch ) == Trim( field->naz ) ) ) ;
          .OR. cId == NIL ;
          .OR. ( !Found() .AND. cNaslov <> NIL ) ;
          .OR. ( cNaslov <> NIL .AND. Left( cNaslov, 1 ) = "#" )

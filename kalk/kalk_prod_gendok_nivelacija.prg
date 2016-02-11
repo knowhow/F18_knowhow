@@ -556,13 +556,13 @@ FUNCTION gen_zcnivel( cPKonto, dDatDok, cBrKalk )
       // nadji robu
       SELECT roba
       SET ORDER TO TAG "ID"
-      hseek cIdRoba
+      HSEEK cIdRoba
       cIdTarifa := roba->idtarifa
 
       // nadji tarifu
       SELECT tarifa
       SET ORDER TO TAG "ID"
-      hseek cIdTarifa
+      HSEEK cIdTarifa
       nTarStopa := tarifa->opp
 
       SELECT kalk
@@ -789,7 +789,7 @@ FUNCTION st_res_niv_p( cVar, cKolNula )
 
          SELECT roba
          SET ORDER TO TAG "ID"
-         hseek cIdRoba
+         HSEEK cIdRoba
 
          SELECT tarifa
          SEEK cIdTar

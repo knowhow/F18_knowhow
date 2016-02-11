@@ -326,7 +326,7 @@ do while !eof()
 			i:=0
 			do while (!eof() .and. pobjekti->id<"99")
 				select rekap1
-				hseek cG1+cIdTarifa+cIdRoba+pobjekti->idobj
+				HSEEK cG1+cIdTarifa+cIdRoba+pobjekti->idobj
 				if cRekPoRobama=="D"
 					   if k4pp<>0
 						@ prow(),pcol()+1-IF(lIzaProc,1,0) SAY STRTRAN(TRANS(k1,IF(lIzaProc,"999999",pickol))," ","*")
@@ -464,7 +464,7 @@ do while !eof()
 	endif
 
 	select k1
-	hseek cg1
+	HSEEK cg1
 	select rekap1
 
 	if (cRekPoRobama=="D")

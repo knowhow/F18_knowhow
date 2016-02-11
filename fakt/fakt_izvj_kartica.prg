@@ -336,7 +336,7 @@ FUNCTION fakt_kartica()
             ENDIF
             IF !Empty( cidfirma ); IF idfirma <> cidfirma; skip; loop; end; END
             IF !Empty( qqPartn )
-               SELECT fakt_doks; hseek fakt->( IdFirma + idtipdok + brdok )
+               SELECT fakt_doks; HSEEK fakt->( IdFirma + idtipdok + brdok )
                SELECT fakt; IF !( fakt_doks->partner = qqPartn ); skip; loop; ENDIF
             ENDIF
 
@@ -377,7 +377,7 @@ FUNCTION fakt_kartica()
          IF !Empty( cK2 ); IF ck2 <> K2; skip; loop; end; END // uslov ck2
 
          IF !Empty( qqPartn )
-            SELECT fakt_doks; hseek fakt->( IdFirma + idtipdok + brdok )
+            SELECT fakt_doks; HSEEK fakt->( IdFirma + idtipdok + brdok )
             SELECT fakt; IF !( fakt_doks->partner = qqPartn ); skip; loop; ENDIF
          ENDIF
 
@@ -407,7 +407,7 @@ FUNCTION fakt_kartica()
                ? Space( gnLMarg ); ?? Str( ++nRbr, 3 ) + ".   " + idfirma + "-" + idtipdok + "-" + brdok + Left( serbr, 1 ) + "  " + DToC( datdok )
 
                IF cPPartn == "D"
-                  SELECT fakt_doks; hseek fakt->( IdFirma + idtipdok + brdok ); SELECT fakt
+                  SELECT fakt_doks; HSEEK fakt->( IdFirma + idtipdok + brdok ); SELECT fakt
                   @ PRow(), PCol() + 1 SAY PadR( fakt_doks->Partner, 20 )
                ENDIF
 

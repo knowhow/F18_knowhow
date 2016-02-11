@@ -190,7 +190,7 @@ STATIC FUNCTION printaj_duple_stavke_iz_pripreme()
    DO WHILE !Eof()
 
       SELECT roba
-      hseek kalk_pripr->idroba
+      HSEEK kalk_pripr->idroba
 
       SELECT kalk_pripr
 
@@ -310,7 +310,7 @@ FUNCTION kalk_pripr_key_handler()
 
       RETURN DE_CONT
 
-   CASE Ch == K_ALT_A
+   CASE is_key_alt_a( Ch )
 
       my_close_all_dbf()
 
@@ -1110,7 +1110,7 @@ STATIC FUNCTION kalk_dokument_prenos_cijena()
       ENDIF
 
       SELECT koncij
-      hseek _konto
+      HSEEK _konto
 
       SELECT kalk_pripr
       GO TOP
@@ -1121,7 +1121,7 @@ STATIC FUNCTION kalk_dokument_prenos_cijena()
          _rec := dbf_get_rec()
 
          SELECT roba
-         hseek _rec[ "idroba" ]
+         HSEEK _rec[ "idroba" ]
 
          IF !Found()
             MsgBeep( "Nepostojeća šifra artikla " + _rec[ "idroba" ] )
@@ -1799,8 +1799,8 @@ FUNCTION RaspTrosk( fSilent )
                   ENDIF
                   _TZavTr := "U"
                ENDIF
-               SELECT roba; hseek _idroba
-               SELECT tarifa; hseek _idtarifa; SELECT kalk_pripr
+               SELECT roba; HSEEK _idroba
+               SELECT tarifa; HSEEK _idtarifa; SELECT kalk_pripr
                IF _idvd == "RN"
                   IF Val( _rbr ) < 900
                      NabCj()
@@ -1851,9 +1851,9 @@ FUNCTION RaspTrosk( fSilent )
                _marza := _VPC - _FCJ
                _TMarza := "A"
                SELECT roba
-               hseek _idroba
+               HSEEK _idroba
                SELECT tarifa
-               hseek _idtarifa
+               HSEEK _idtarifa
                SELECT kalk_pripr
                Marza2()
                _TMarza2 := "A"
@@ -2369,7 +2369,7 @@ FUNCTION kalk_stampa_dokumenta()
             cIdfirma := kalk_pripr->idfirma
             cIdvd := kalk_pripr->idvd
             cBrdok := kalk_pripr->brdok
-            hseek cIdFirma + cIdVD + cBrDok
+            HSEEK cIdFirma + cIdVD + cBrDok
          ENDIF
 
          Preduzece()

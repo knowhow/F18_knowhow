@@ -222,7 +222,7 @@ nUkStavki := 0
 do while !EOF() .and. IdFirma = cIdFirma
   
     select partn
-    hseek kalk_doks->idpartner
+    HSEEK kalk_doks->idpartner
 
     select kalk_doks
 

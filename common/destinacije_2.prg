@@ -288,7 +288,7 @@ FUNCTION get_dest_info( cPartn, cDest, nLen )
 
    SELECT dest
    SET ORDER TO TAG "ID"
-   hseek cPartn + cDest
+   HSEEK cPartn + cDest
 
    IF Found()
       IF cPartn == field->idpartner .AND. cDest == field->id
@@ -316,7 +316,7 @@ FUNCTION get_dest_binfo( nX, nY, cPartn, cDest )
    SELECT dest
    SET ORDER TO TAG "ID"
    GO TOP
-   hseek cPartn + cDest
+   HSEEK cPartn + cDest
 
    IF Found()
       IF cPartn == field->idpartner .AND. cDest == field->id

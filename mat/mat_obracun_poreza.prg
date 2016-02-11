@@ -76,8 +76,8 @@ START PRINT CRET
 P_12CPI
 
 do while !eof()
-  select roba; hseek mat_suban->idroba
-  select tarifa; hseek roba->idtarifa
+  select roba; HSEEK mat_suban->idroba
+  select tarifa; HSEEK roba->idtarifa
   select mat_suban
   if Iznos<>0 .and. Kolicina<>0
      nCijena:=Iznos/Kolicina

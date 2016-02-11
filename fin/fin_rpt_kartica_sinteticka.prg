@@ -374,7 +374,7 @@ FUNCTION SinKart2()
       SET FILTER TO &cFilt1
    ENDIF
 
-   hseek cidfirma
+   HSEEK cidfirma
    EOF RET
 
    nStr := 0

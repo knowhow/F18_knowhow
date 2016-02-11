@@ -186,7 +186,7 @@ do while .t.
 	for nCnt := 1 to LEN(aTarife)
 		
 		select tarifa
-		hseek aTarife[nCnt][1]
+		HSEEK aTarife[nCnt][1]
 		nPDV:=tarifa->opp
 		select pos_doks
 

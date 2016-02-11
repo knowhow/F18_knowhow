@@ -82,7 +82,7 @@ FUNCTION Get1_41()
    ENDIF
 
    SELECT TARIFA
-   hseek _IdTarifa
+   HSEEK _IdTarifa
    SELECT koncij
 
    SEEK Trim( _idkonto )

@@ -134,7 +134,7 @@ FUNCTION dodaj_taksu_za_gorivo( nKolicina )
    LOCAL lRet := .T.
 
    O_ROBA
-   hseek s_cId_taksa
+   HSEEK s_cId_taksa
 
    IF !FOUND()
       dodaj_sifru_takse_u_sifarnik_robe()
@@ -225,7 +225,7 @@ STATIC FUNCTION dodaj_sifru_takse_u_sifarnik_robe()
    ENDIF
 
    SELECT roba
-   hseek s_cId_taksa
+   HSEEK s_cId_taksa
 
    RETURN lOk
 

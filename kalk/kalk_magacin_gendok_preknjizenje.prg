@@ -271,10 +271,10 @@ set order to tag "3"
 //"4","idFirma+Mkonto+idroba+dtos(datdok)+PU_I+IdVD","KALKS")
 go top
 
-hseek cIdfirma+cMKonto
+HSEEK cIdfirma+cMKonto
 
 select konto
-hseek cMkonto
+HSEEK cMkonto
 if lPst
 	select kalksez
 else
@@ -319,7 +319,7 @@ do while !eof() .and. cIdFirma+cMKonto==idfirma+Mkonto .and. IspitajPrekid()
 	else
 		select roba
 	endif
-	hseek cIdRoba
+	HSEEK cIdRoba
 
 	if FIELDPOS("ZANIV2") <> 0
 		nAkcizaPorez := zaniv2
@@ -528,7 +528,7 @@ do while !eof() .and. cIdFirma+cMKonto==idfirma+Mkonto .and. IspitajPrekid()
 				  // ubaci novu tarifu robe
 
 				  select roba
-				  hseek cIdRoba
+				  HSEEK cIdRoba
 				
 				  if cCjSet == "1"
 					replace vpc with nNVpcBezPdv

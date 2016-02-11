@@ -76,7 +76,7 @@ FUNCTION seek_partner( cPartner )
 
    SELECT partn
    SET ORDER TO TAG "ID"
-   hseek cPartner
+   HSEEK cPartner
 
    RETURN
 

@@ -172,7 +172,7 @@ do while .t.
      	if fdoks2
         	
             select kalk_doks2
-			hseek cidfirma + "14" + cbrkalk
+			HSEEK cidfirma + "14" + cbrkalk
         	
             if !found()
            		append blank
@@ -199,10 +199,10 @@ do while .t.
      	do while !eof() .and. cFaktFirma+cIdTipDok+cBrDok==IdFirma+IdTipDok+BrDok
 
        		select ROBA
-       		hseek fakt->idroba
+       		HSEEK fakt->idroba
 
        		select tarifa
-       		hseek roba->idtarifa
+       		HSEEK roba->idtarifa
 
        		if (RobaZastCijena(roba->idTarifa) .and. !IsPdvObveznik(cIdPartner))
             	// nije pdv obveznik
@@ -447,10 +447,10 @@ do while .t.
         do while !EOF() .and. cFaktFirma + cIdTipDok + cBrDok == field->IdFirma + field->IdTipDok + field->BrDok
 
             select roba
-            hseek fakt->idroba
+            HSEEK fakt->idroba
 
             select tarifa
-            hseek roba->idtarifa
+            HSEEK roba->idtarifa
 
             select fakt
             if ALLTRIM( podbr ) == "."  .or. roba->tip $ "UY"
@@ -633,10 +633,10 @@ DO WHILE .t.
         ENDIF
      
         SELECT ROBA
-        hseek fakt->idroba
+        HSEEK fakt->idroba
 
         SELECT tarifa
-        hseek roba->idtarifa
+        HSEEK roba->idtarifa
 
         SELECT fakt
 

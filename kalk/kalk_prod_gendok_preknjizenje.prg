@@ -304,10 +304,10 @@ set order to tag "4"
 //"4","idFirma+Pkonto+idroba+dtos(datdok)+PU_I+IdVD","KALKS")
 go top
 
-hseek cIdfirma+cPKonto
+HSEEK cIdfirma+cPKonto
 
 select konto
-hseek cPKonto
+HSEEK cPKonto
 if lPst
 	select kalksez
 else
@@ -363,7 +363,7 @@ do while !eof() .and. cIdFirma+cPKonto==idfirma+pkonto .and. IspitajPrekid()
 	else
 		select roba
 	endif
-	hseek cIdRoba
+	HSEEK cIdRoba
 
 	if FIELDPOS("ZANIV2") <> 0
 		nAkcizaPorez := zaniv2
@@ -662,7 +662,7 @@ do while !eof() .and. cIdFirma+cPKonto==idfirma+pkonto .and. IspitajPrekid()
 
 			if lPst
 				select roba
-				hseek cIdRoba
+				HSEEK cIdRoba
 
 				if cCjSet == "0"
 					// nista - cijene se ne diraju		

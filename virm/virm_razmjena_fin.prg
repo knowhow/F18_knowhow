@@ -72,16 +72,16 @@ do while !eof()
     set order to TAG "IDKONTO"
 
      if empty(fin_pripr->idpartner)
-       hseek fin_pripr->(idkonto)
+       HSEEK fin_pripr->(idkonto)
      else
-       hseek fin_pripr->(idkonto+idpartner)
+       HSEEK fin_pripr->(idkonto+idpartner)
      endif
 
      select VRPRIM
      if found()
         cSvrha_pl:=id
      else // probaj 6000, 6010 naci
-        hseek fin_pripr->(idkonto)
+        HSEEK fin_pripr->(idkonto)
         if found() .and. VRPRIM->dobav=="D"
           cSvrha_pl:=id
           select partn
@@ -125,7 +125,7 @@ do while !eof()
 
      // firma nalogdbodavac
      select partn
-     hseek  gVirmFirma
+     HSEEK  gVirmFirma
 
 
      select virm_pripr

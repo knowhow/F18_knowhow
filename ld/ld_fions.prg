@@ -568,9 +568,9 @@ FUNCTION Predhodni( i, cVar, cObr )
    SET ORDER TO tag ( TagVO( "2", "I" ) )
 
    IF _Mjesec - i < 1
-      hseek Str( _Godina - 1, 4 ) + Str( 12 + _Mjesec - 1, 2 ) + _idradn
+      HSEEK Str( _Godina - 1, 4 ) + Str( 12 + _Mjesec - 1, 2 ) + _idradn
    ELSE
-      hseek Str( _Godina, 4 ) + Str( _Mjesec - i, 2 ) + _idradn
+      HSEEK Str( _Godina, 4 ) + Str( _Mjesec - i, 2 ) + _idradn
    ENDIF
 
    cPom := cVar

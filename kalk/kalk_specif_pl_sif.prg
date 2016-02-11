@@ -145,7 +145,7 @@ endif
 nArr:=SELECT()
 O_ROBA
 select roba
-hseek cIdRoba
+HSEEK cIdRoba
 replace field->idpartner with cIdPartner
 
 select (nArr)

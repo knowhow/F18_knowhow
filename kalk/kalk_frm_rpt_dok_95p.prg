@@ -63,7 +63,7 @@ FUNCTION StKalk95_PDV()
    ENDIF
 
    SELECT konto
-   hseek cKto1
+   HSEEK cKto1
 
 
    ?
@@ -78,7 +78,7 @@ FUNCTION StKalk95_PDV()
       ENDIF
 
       SELECT konto
-      hseek cKto2
+      HSEEK cKto2
       ? PadL( cPom, 14 ), cKto2 + "- " + PadR( konto->naz, 20 )
    ENDIF
    ?

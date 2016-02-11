@@ -198,7 +198,7 @@ do while .t.
 	? m
 	for nCnt := 1 to LEN(aTarife)
 		select tarifa
-		hseek aTarife[nCnt][1]
+		HSEEK aTarife[nCnt][1]
 		nPPP:=tarifa->opp
 		nPPU:=tarifa->ppp
 		select pos_doks
@@ -308,11 +308,11 @@ do while !EOF().and.pos_doks->IdVd==cIdVd.and.pos_doks->Datum<=cDat1
 		else  // cnaplaceno="3"
 		
 			select roba
-			hseek pos->idroba
+			HSEEK pos->idroba
 			
 			if roba->(FIELDPOS("idodj")) <> 0
 				select odj
-				hseek roba->idodj
+				HSEEK roba->idodj
 			endif
 
 			nNeplaca:=0

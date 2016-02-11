@@ -376,7 +376,7 @@ STATIC FUNCTION _spec_zaglavlje( id_firma, id_partner, line )
    @ PRow(), PCol() + 1 SAY id_firma
 
    SELECT partn
-   hseek id_partner
+   HSEEK id_partner
 
    @ PRow(), PCol() + 1 SAY AllTrim( naz )
    @ PRow(), PCol() + 1 SAY AllTrim( naz2 )
@@ -1135,7 +1135,7 @@ STATIC FUNCTION print_ios_txt( params )
    @ PRow() + 1, 1 SAY _id_firma
 
    SELECT partn
-   hseek _id_firma
+   HSEEK _id_firma
 
    @ PRow(), 5 SAY AllTrim( partn->naz )
    @ PRow(), PCol() + 1 SAY AllTrim( partn->naz2 )

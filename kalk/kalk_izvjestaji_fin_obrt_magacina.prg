@@ -230,7 +230,7 @@ FUNCTION ObrtPoMjF()
 
       ? cG1
       SELECT k1
-      hseek cG1
+      HSEEK cG1
       SELECT reka22
       @ PRow(), PCol() + 1 SAY k1->naz
       nCol1 := PCol() + 1
@@ -402,7 +402,7 @@ FUNCTION ObrtPoMjF()
          IF At( cGK1, cGrupeK1 ) <> 0
             ? cGK1
             SELECT k1
-            hseek cGK1
+            HSEEK cGK1
             SELECT reka22
             @ PRow(), PCol() + 1 SAY k1->naz
             nCol := PCol() + 1

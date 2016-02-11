@@ -62,11 +62,11 @@ FUNCTION ld_specifikacija_neto_primanja_po_opcinama()
 
    IF !Empty( cKbenef )
       SELECT kbenef
-      hseek  cKbenef
+      HSEEK  cKbenef
    ENDIF
    IF !Empty( cVPosla )
       SELECT vposla
-      hseek  cVposla
+      HSEEK  cVposla
    ENDIF
 
    napravi_filter_na_tabeli_ld( cIdRj, cGodina, cMjesec, cObracun, cVarSort )
@@ -80,7 +80,7 @@ FUNCTION ld_specifikacija_neto_primanja_po_opcinama()
    bZagl := {|| zaglavlje_izvjestaja( cVPosla, cKBenef ) }
 
    SELECT ld_rj
-   hseek ld->idrj
+   HSEEK ld->idrj
 
    SELECT ld
 
@@ -119,11 +119,11 @@ FUNCTION ld_specifikacija_neto_primanja_po_opcinama()
          ScatterS( godina, mjesec, idrj, idradn )
 
          SELECT radn
-         hseek _idradn
+         HSEEK _idradn
          SELECT vposla
-         hseek _idvposla
+         HSEEK _idvposla
          SELECT kbenef
-         hseek vposla->idkbenef
+         HSEEK vposla->idkbenef
          SELECT ld
          IF !Empty( cVPosla ) .AND. cVPosla <> Left( _idvposla, 2 )
             SKIP

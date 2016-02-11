@@ -116,7 +116,7 @@ DO WHILE !EOF() .and. IspitajPrekid()
      cIdKonto:=IdKonto
      cIdTarifa:=IdTarifa
      select tarifa
-     hseek cIdTarifa
+     HSEEK cIdTarifa
      select kalk
      nVPP:=TARIFA->VPP
      nNVD:=nNVP:=0
@@ -127,7 +127,7 @@ DO WHILE !EOF() .and. IspitajPrekid()
         select KALK
 
         select roba
-	hseek kalk->idroba
+	HSEEK kalk->idroba
 	select kalk
         VtPorezi()
         if _PORVT<>0

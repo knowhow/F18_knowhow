@@ -474,7 +474,7 @@ STATIC FUNCTION _gen_kompen( vars )
 
          IF _prolaz == 0 .OR. _prolaz == 1
             IF ( field->idkonto <> _id_konto .OR. field->idpartner <> _id_partner ) .AND. _id_konto == _usl_kto
-               hseek _id_firma + _usl_kto2 + _id_partner
+               HSEEK _id_firma + _usl_kto2 + _id_partner
             ENDIF
          ENDIF
 
@@ -505,7 +505,7 @@ STATIC FUNCTION _gen_kompen( vars )
             _t_rec := RecNo()
             IF field->idkonto == _usl_kto2
                _id_partner := field->idpartner
-               hseek _id_firma + _usl_kto + _id_partner
+               HSEEK _id_firma + _usl_kto + _id_partner
                IF !Found()
                   GO ( _t_rec )
                   EXIT
@@ -822,7 +822,7 @@ STATIC FUNCTION _fill_partn( part_id, node_name )
 
    SELECT partn
    GO TOP
-   hseek part_id
+   HSEEK part_id
 
    IF !Found()
       MsgBeep( "Partner " + part_id + " ne postoji u sifrarniku !" )

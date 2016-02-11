@@ -65,7 +65,7 @@ FUNCTION KorekNC2()
       nVPVU := nVPVI := nNVU := nNVI := 0
       nRabat := 0
       SELECT roba
-      hseek cIdRoba
+      HSEEK cIdRoba
       SELECT kalk
 
       IF roba->tip $ "TU"

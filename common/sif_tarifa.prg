@@ -513,7 +513,7 @@ FUNCTION KorekTar()
    GO TOP
    DO WHILE !Eof()
       IF ( Empty( cIdVD ) .OR. cIdvd == IDVD ) .AND. ( Empty( cIdTarifa ) .OR. cIdTarifa == ( nKumArea )->IdTarifa )
-         SELECT roba; hseek ( nKumArea )->idroba
+         SELECT roba; HSEEK ( nKumArea )->idroba
          IF !Found()
             MsgBeep( "Artikal " + ( nKumArea )->idroba + " ne postoji u sifraniku robe" )
          ELSE

@@ -122,14 +122,14 @@ DO WHILE !EOF() .and. IspitajPrekid()
   DO WHILE !EOF() .AND. cIdFirma==KALK->IdFirma .and. IspitajPrekid()
      cIdKonto:=IdKonto
      cIdTarifa:=IdTarifa
-     select tarifa; hseek cidtarifa
+     select tarifa; HSEEK cidtarifa
      select kalk
      nVPP:=TARIFA->VPP
      nVPV:=nNV:=0
      nVPVN:=nNVN:=0
      DO WHILE !EOF() .AND. cIdFirma==IdFirma .and. cIdtarifa==IdTarifa .and. IspitajPrekid()
         select KALK
-        select roba; hseek kalk->idroba; select kalk
+        select roba; HSEEK kalk->idroba; select kalk
         VtPorezi()
         if _PORVT<>0
            cVT:=.t.

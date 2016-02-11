@@ -249,7 +249,7 @@ FUNCTION pos_povrat_dokumenta_u_pripremu()
       IF _oper == "2"
 
          SET ORDER TO TAG "1"
-         hseek _rec[ "idroba" ]
+         HSEEK _rec[ "idroba" ]
 
          IF !Found()
             APPEND BLANK

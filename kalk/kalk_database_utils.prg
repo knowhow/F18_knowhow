@@ -615,9 +615,9 @@ FUNCTION KnjizSt()
    LOCAL nRabat := 0
 
    SELECT roba
-   hseek cIdRoba
+   HSEEK cIdRoba
    SELECT koncij
-   hseek cIdKonto
+   HSEEK cIdKonto
 
    SELECT kalk
 
@@ -625,7 +625,7 @@ FUNCTION KnjizSt()
 
    SET ORDER TO TAG "4"
 
-   hseek cIdfirma + cIdKonto + cIdroba
+   HSEEK cIdfirma + cIdKonto + cIdroba
 
    DO WHILE !Eof() .AND. cIdfirma + cIdkonto + cIdroba == field->idfirma + field->pkonto + field->idroba
 
@@ -1490,7 +1490,7 @@ FUNCTION cp_dok_pript( cIdFirma, cIdVd, cBrDok )
    SELECT kalk
    SET ORDER TO TAG "1"
 
-   hseek cIdFirma + cIdVd + cBrDok
+   HSEEK cIdFirma + cIdVd + cBrDok
 
    IF Found()
       MsgO( "Kopiram dokument u pript..." )
@@ -1638,7 +1638,7 @@ STATIC FUNCTION tops_dok_na_stanju( cFirma, cIdVd, cBrDok, cKonto )
 
    SELECT koncij
    SET ORDER TO TAG "ID"
-   hseek cKonto
+   HSEEK cKonto
 
    IF Found()
       cTKPath := AllTrim( field->kumtops )

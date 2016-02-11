@@ -71,7 +71,7 @@ FUNCTION Get1_14PDV()
    ENDIF
 
    SELECT TARIFA
-   hseek _IdTarifa
+   HSEEK _IdTarifa
 
    SELECT ROBA
    HSEEK _IdRoba

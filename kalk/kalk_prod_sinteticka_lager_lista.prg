@@ -89,7 +89,7 @@ FUNCTION LLPS()
    SELECT kalk
    SET ORDER TO TAG "6"
    // CREATE_INDEX("6","idFirma+IdTarifa+idroba",KUMPATH+"KALK")
-   hseek cidfirma
+   HSEEK cidfirma
    EOF CRET
 
    nLen := 1
@@ -138,7 +138,7 @@ FUNCTION LLPS()
    DO WHILE !Eof() .AND. cidfirma == idfirma .AND.  IspitajPrekid()
       cIdRoba := Idroba
       SELECT roba
-      hseek cIdRoba
+      HSEEK cIdRoba
       SELECT kalk
       nUlaz := nIzlaz := 0
       nMPVU := nMPVI := nNVU := nNVI := 0
@@ -226,7 +226,7 @@ FUNCTION LLPS()
 
       NovaStrana( bZagl )
       SELECT roba
-      hseek cidroba
+      HSEEK cidroba
       SELECT kalk
       aNaz := Sjecistr( roba->naz, 20 )
 
@@ -245,7 +245,7 @@ FUNCTION LLPS()
       @ PRow(), PCol() + 1 SAY nMPVU - NMPVI PICT picdem
 
       SELECT roba
-      hseek cIdRoba
+      HSEEK cIdRoba
       _mpc := UzmiMPCSif()
       SELECT kalk
 
@@ -337,7 +337,7 @@ FUNCTION ZaglLLPS( lSint )
       ? "Kriterij za prodavnice:", qqKonto
    ELSE
       SELECT konto
-      hseek cIdKonto
+      HSEEK cIdKonto
       ? "Prodavnica:", cIdKonto, "-", konto->naz
    ENDIF
 

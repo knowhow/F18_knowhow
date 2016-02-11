@@ -160,12 +160,12 @@ FUNCTION Get1_RN()
    @ m_x + 12, m_y + 70 GET _IdTarifa WHEN gPromTar == "N" VALID P_Tarifa( @_IdTarifa )
 
    read; ESC_RETURN K_ESC
-   SELECT koncij; hseek Trim( _idkonto ); SELECT kalk_pripr
+   SELECT koncij; HSEEK Trim( _idkonto ); SELECT kalk_pripr
 
    _MKonto := _Idkonto; _MU_I := "1"
    DatPosljK()
 
-   SELECT TARIFA; hseek _IdTarifa  // postavi TARIFA na pravu poziciju
+   SELECT TARIFA; HSEEK _IdTarifa  // postavi TARIFA na pravu poziciju
    SELECT kalk_pripr  // napuni tarifu
 
    @ m_x + 13, m_y + 2   SAY "Kolicina " GET _Kolicina PICTURE PicKol VALID _Kolicina <> 0

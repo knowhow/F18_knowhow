@@ -113,7 +113,7 @@ set order to tag "5"
 //("5","idFirma+dtos(datdok)+idvd+brdok+rbr","KALK")
 set filter to &cFilt1
 
-// hseek cidfirma
+// HSEEK cidfirma
 go top
 
 select koncij
@@ -201,7 +201,7 @@ do while CMNEOF .and. cidfirma==idfirma .and.  IspitajPrekid()
     do while CMNEOF  .and. cidfirma+dtos(ddatdok)+cbroj==idFirma+dtos(datdok)+idvd+"-"+brdok .and.  IspitajPrekid()
         
         select roba
-        hseek KALK->idroba
+        HSEEK KALK->idroba
         select KALK
 
         showkorner(1,100)
@@ -217,9 +217,9 @@ do while CMNEOF .and. cidfirma==idfirma .and.  IspitajPrekid()
         endif
 
         select roba
-        hseek KALK->idroba
+        HSEEK KALK->idroba
         select tarifa
-        hseek KALK->idtarifa
+        HSEEK KALK->idtarifa
         select KALK
 
         VtPorezi()
@@ -345,7 +345,7 @@ return
 // zaglavlje fin.stanje
 function ZaglFLLP()
 select konto
-hseek cIdKonto
+HSEEK cIdKonto
 Preduzece()
 
 if VAL(gFPicDem) > 0

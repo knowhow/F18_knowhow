@@ -831,9 +831,9 @@ FUNCTION napr_obracun( lSvi, a_benef )
       ENDIF
 
       SELECT radn
-      hseek _idradn
+      HSEEK _idradn
       SELECT vposla
-      hseek _idvposla
+      HSEEK _idvposla
 
       IF ( ( !Empty( cOpsSt ) .AND. cOpsSt <> radn->idopsst ) ) ;
             .OR. ( ( !Empty( cOpsRad ) .AND. cOpsRad <> radn->idopsrad ) )
@@ -1110,7 +1110,7 @@ FUNCTION ZaglJ()
 
    O_LD_RJ
    SELECT ld_rj
-   hseek cIdRj
+   HSEEK cIdRj
    SELECT por
    GO TOP
    SELECT ld
@@ -1286,7 +1286,7 @@ FUNCTION IspisKred( lSvi )
                      // rekap za sve rj
                      SELECT ld
                      SET ORDER TO tag ( TagVO( "2" ) )
-                     hseek Str( nGodina, 4 ) + Str( mj, 2 ) + cObracun + radkr->idradn
+                     HSEEK Str( nGodina, 4 ) + Str( mj, 2 ) + cObracun + radkr->idradn
 
                      _t_rec := RecNo()
                      DO WHILE !Eof() .AND. godina == nGodina .AND. mjesec == nMjesec .AND. ;
@@ -1302,7 +1302,7 @@ FUNCTION IspisKred( lSvi )
                   ELSE
                      // rekap za jednu rj
                      SELECT ld
-                     hseek  Str( nGodina, 4 ) + cIdrj + Str( mj, 2 ) + IF( !Empty( cObracun ), cObracun, "" ) + radkr->idradn
+                     HSEEK  Str( nGodina, 4 ) + cIdrj + Str( mj, 2 ) + IF( !Empty( cObracun ), cObracun, "" ) + radkr->idradn
                      // ako ima radnika i ako mu je podatak kredita unesen na obracunu
                      IF Found() .AND. ld->i30 <> 0
                         _found := .T.
@@ -1353,11 +1353,11 @@ FUNCTION IspisKred( lSvi )
          DO WHILE !Eof()
 
             SELECT kred
-            hseek radkr->idkred
+            HSEEK radkr->idkred
             SELECT radkr
             PRIVATE cidkred := idkred, cNaOsnovu := naosnovu
             SELECT radn
-            hseek radkr->idradn
+            HSEEK radkr->idradn
             SELECT radkr
             // TODO: ovdje je stajalo RADNIK, takvo polje ne postoji
             cOpis2 := "RADNIK"
@@ -1371,10 +1371,10 @@ FUNCTION IspisKred( lSvi )
                IF lSvi
                   SELECT ld
                   SET ORDER TO tag ( TagVO( "2" ) )
-                  hseek  Str( nGodina, 4 ) + Str( nMjesec, 2 ) + if( lViseObr .AND. !Empty( cObracun ), cObracun, "" ) + radkr->idradn
+                  HSEEK  Str( nGodina, 4 ) + Str( nMjesec, 2 ) + if( lViseObr .AND. !Empty( cObracun ), cObracun, "" ) + radkr->idradn
                ELSE
                   SELECT ld
-                  hseek  Str( nGodina, 4 ) + cidrj + Str( nMjesec, 2 ) + if( lViseObr .AND. !Empty( cObracun ), cObracun, "" ) + radkr->idradn
+                  HSEEK  Str( nGodina, 4 ) + cidrj + Str( nMjesec, 2 ) + if( lViseObr .AND. !Empty( cObracun ), cObracun, "" ) + radkr->idradn
                ENDIF
 
                IF Found()
@@ -1392,11 +1392,11 @@ FUNCTION IspisKred( lSvi )
                      IF lSvi
                         SELECT ld
                         SET ORDER TO tag ( TagVO( "2" ) )
-                        hseek  Str( nGodina, 4 ) + Str( mj, 2 ) + if( lViseObr .AND. !Empty( cObracun ), cObracun, "" ) + radkr->idradn
+                        HSEEK  Str( nGodina, 4 ) + Str( mj, 2 ) + if( lViseObr .AND. !Empty( cObracun ), cObracun, "" ) + radkr->idradn
                         // "LDi2","str(godina)+str(mjesec)+idradn"
                      ELSE
                         SELECT ld
-                        hseek  Str( nGodina, 4 ) + cidrj + Str( mj, 2 ) + if( lViseObr .AND. !Empty( cObracun ), cObracun, "" ) + radkr->idradn
+                        HSEEK  Str( nGodina, 4 ) + cidrj + Str( mj, 2 ) + if( lViseObr .AND. !Empty( cObracun ), cObracun, "" ) + radkr->idradn
                      ENDIF // lSvi
 
                      SELECT radkr

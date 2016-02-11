@@ -118,7 +118,7 @@ do while !EOF()
     _id_konto := field->idkonto
     
     select konto
-    hseek _id_konto
+    HSEEK _id_konto
 
     select mat_suban
 
@@ -143,7 +143,7 @@ do while !EOF()
 
         // nadji mi robu
         select roba
-        hseek _id_roba
+        HSEEK _id_roba
         _roba_naz := roba->naz
 
         select mat_suban
@@ -489,7 +489,7 @@ local _r_line_3 := ""
 ? "Firma: " + param["firma"]
 
 select partn
-hseek param["firma"]
+HSEEK param["firma"]
 
 select r_export
 

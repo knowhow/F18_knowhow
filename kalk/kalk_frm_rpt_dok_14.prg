@@ -45,10 +45,10 @@ select PARTN; HSEEK cIdPartner
 ?  "KUPAC:",cIdPartner,"-", PADR( naz, 20 ), SPACE(5),"DOKUMENT Broj:",cBrFaktP,"Datum:",dDatFaktP
 
 if cidvd=="94"
- select konto; hseek cidkonto2
+ select konto; HSEEK cidkonto2
  ?  "Storno razduzenja KONTA:",cIdKonto,"-",naz
 else
- select konto; hseek cidkonto2
+ select konto; HSEEK cidkonto2
  ?  "KONTO razduzuje:",kalk_pripr->mkonto , "-",naz
  if !empty(kalk_pripr->Idzaduz2); ?? " Rad.nalog:",kalk_pripr->Idzaduz2; endif
 endif
@@ -329,10 +329,10 @@ select PARTN; HSEEK cIdPartner
 ?  "KUPAC:",cIdPartner,"-",naz,SPACE(5),"DOKUMENT Broj:",cBrFaktP,"Datum:",dDatFaktP
 
 if cidvd=="94"
- select konto; hseek cidkonto2
+ select konto; HSEEK cidkonto2
  ?  "Storno razduzenja KONTA:",cIdKonto,"-",naz
 else
- select konto; hseek cidkonto2
+ select konto; HSEEK cidkonto2
  ?  "KONTO razduzuje:",kalk_pripr->mkonto,"-",naz
 endif
 

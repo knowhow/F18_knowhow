@@ -59,7 +59,7 @@ os_rpt_default_valute()
 start print cret
 private nStr:=0  // strana
 select rj
-hseek cIdrj
+HSEEK cIdrj
 select_os_sii()
 
 if !EMPTY(cFiltK1)
@@ -140,7 +140,7 @@ do while !eof() .and. (idrj=cidrj .or. empty(cidrj))
                 _sr_id := field->id
  
                 select_promj()
-                hseek _sr_id
+                HSEEK _sr_id
 
                 fIma:=.f.
 
@@ -177,7 +177,7 @@ do while !eof() .and. (idrj=cidrj .or. empty(cidrj))
                 _sr_id_rj := field->idrj
 
                 select_promj()
-                hseek os->id
+                HSEEK os->id
 
                 do while !eof() .and. field->id == _sr_id .and. field->datum <= gDatObr
                     ? space(5),space(len( _sr_id )), space(len( _sr_id_rj )), field->datum, field->opis

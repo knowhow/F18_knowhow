@@ -39,7 +39,7 @@ FUNCTION Get1_18()
    ENDIF
 
    SELECT TARIFA
-   hseek _IdTarifa  // postavi TARIFA na pravu poziciju
+   HSEEK _IdTarifa  // postavi TARIFA na pravu poziciju
    SELECT koncij
    SEEK Trim( _idkonto )
    SELECT kalk_pripr  // napuni tarifu

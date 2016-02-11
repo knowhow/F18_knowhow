@@ -368,7 +368,7 @@ FUNCTION fin_kontiranje_naloga( dDatNal )
       ENDIF
       DO WHILE cIdVD == IdVD .AND. cBrDok == BrDok .AND. !Eof()
          SELECT roba
-         hseek finmat->idroba
+         HSEEK finmat->idroba
          SELECT trfp2
          SEEK cIdVD + " "
          // nemamo vise sema kontiranja kao u kalk

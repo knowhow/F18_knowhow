@@ -70,7 +70,7 @@ FUNCTION RFLLM()
    SELECT kalk
    SET ORDER TO TAG "3"
    // ("3","idFirma+mkonto+idroba+dtos(datdok)+MU_I+IdVD","KALK")
-   hseek cidfirma
+   HSEEK cidfirma
 
    SELECT koncij
    SEEK Trim( cidkonto )
@@ -233,7 +233,7 @@ FUNCTION ZaglRFLLM()
    Preduzece()
    P_12CPI
    SELECT konto
-   hseek cidkonto
+   HSEEK cidkonto
    ?? Space( 60 ), " DATUM "
    ?? Date(), Space( 5 ), "Str:", Str( ++nTStrana, 3 )
    ?

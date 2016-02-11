@@ -261,7 +261,7 @@ FUNCTION SpecDugPartnera()
       // nadji partnera
       IF !Empty( cOpcine )
          SELECT partn
-         hseek cIdPartner
+         HSEEK cIdPartner
          IF At( AllTrim( partn->idops ), cOpcine ) == 0
             SELECT pom
             SKIP

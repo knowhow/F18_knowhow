@@ -331,7 +331,7 @@ FUNCTION get_dtxt_opis( cTip )
    O_DRNTEXT
    SELECT drntext
    SET ORDER TO TAG "1"
-   hseek cTip
+   HSEEK cTip
 
    IF !Found()
       RETURN "-"

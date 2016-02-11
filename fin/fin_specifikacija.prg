@@ -398,7 +398,7 @@ ENDIF
 
 O_SUBAN ; set order to tag "3"
 //"IdFirma+IdKonto+IdPartner+BrDok+dtos(DatDok)"
-hseek cIdFirma+cIdKonto
+HSEEK cIdFirma+cIdKonto
 
 EOF CRET
 
@@ -765,7 +765,7 @@ do whileSC !eof()
        skip
      enddo
    if prow()>60+gPStranica; FF; zagl5(); endif
-   select KONTO; hseek cidkonto; select ANAL
+   select KONTO; HSEEK cidkonto; select ANAL
    if cNula=="D" .or. round(nd-np,3)<>0
     ? cidkonto,KONTO->naz
     nC:=pcol()+1
@@ -1272,11 +1272,11 @@ do whileSC !eof()
 			// ispis partnera
      			if !empty(cIdPartner)
        				select PARTN
-       				hseek cIdPartner
+       				HSEEK cIdPartner
        				select SUBAN
        				if gVSubOp=="D"
          				select KONTO
-					hseek cIdKonto
+					HSEEK cIdKonto
 					select SUBAN
          				cPom:=ALLTRIM(KONTO->naz)+" ("+ALLTRIM(ALLTRIM(PARTN->naz)+PN2())+")"
          				?? PADR(cPom,nDOpis-DifIdP(cidpartner))
@@ -1299,7 +1299,7 @@ do whileSC !eof()
        				endif
      			else
        				select KONTO
-				hseek cIdKonto
+				HSEEK cIdKonto
 				select SUBAN
        				?? padr(KONTO->naz,nDOpis)
      			endif
@@ -1615,10 +1615,10 @@ do whileSC !eof()
    if prow()>60+gPStranica; FF; zagl6(cSkVar); endif
    ? cidkonto,cIdPartner,""
    if !empty(cIdPartner)
-     //select PARTN; hseek cidpartner; select SUBAN
+     //select PARTN; HSEEK cidpartner; select SUBAN
      ?? padr(cNazPARTN,50-DifIdp(cIdPartner))
    else
-     select KONTO; hseek cidkonto; select SUBAN
+     select KONTO; HSEEK cidkonto; select SUBAN
      ?? padr(KONTO->naz,50)
    endif
    nC:=pcol()+1
@@ -1956,7 +1956,7 @@ do whilesc !eof() .and. IdFirma==cIdFirma
       @ prow()+1,0 SAY cidpartner
 
       select partn
-      hseek cIdPartner
+      HSEEK cIdPartner
       select suban
 
       @ prow(),pcol()+1 SAY PADR(partn->naz, 25)
@@ -2096,7 +2096,7 @@ if ausl1<>".t." .or. ausl2<>".t."
 else
   set filter to
 endif
-hseek cIdFirma
+HSEEK cIdFirma
 EOF CRET
 
 
@@ -2158,7 +2158,7 @@ do while cIdFirma==IdFirma .and. !eof()
    ? M
    ? "Uk:"
    @ prow(),PCOL()+1 SAY cIdPartner
-   select PARTN; hseek cIdPartner
+   select PARTN; HSEEK cIdPartner
    @ prow(),pcol()+1 SAY left(naz,28)
    select SUBAN
    @ prow(),nCol1    SAY nUkDugBHD PICT picBHD
@@ -2266,7 +2266,7 @@ IF !(cFilt1==".t.")
   set filter to &cFilt1
 ENDIF
 
-hseek cIdFirma
+HSEEK cIdFirma
 EOF CRET
 
 
@@ -2328,7 +2328,7 @@ do while cIdFirma==IdFirma .and. !eof()
    ? M
    ? "Uk:"
    @ prow(),PCOL()+1 SAY cIdPartner
-   select PARTN; hseek cIdPartner
+   select PARTN; HSEEK cIdPartner
    @ prow(),pcol()+1 SAY left(naz,28)
    select SUBAN
    @ prow(),nCol1    SAY nUkDugBHD PICT picBHD
@@ -2475,7 +2475,7 @@ else
 	endif
 endif
 
-hseek cidfirma+cidkonto
+HSEEK cidfirma+cidkonto
 EOF CRET
 
 if cPG=="D"
@@ -2568,11 +2568,11 @@ do while cidfirma==idfirma .and. !eof() .and. cidkonto==idkonto
 
 		if cPoRP=="1"
 			select rj
-			hseek cidpartner
+			HSEEK cidpartner
 			select suban
 		else
 			select partn
-			hseek cidpartner
+			HSEEK cidpartner
 			select suban
 		endif
 
@@ -2658,7 +2658,7 @@ B_ON
 
 // uzmi konto
 select konto
-hseek cIdKonto
+HSEEK cIdKonto
 select (nTArea)
 
 ? SPACE(2)
@@ -2839,7 +2839,7 @@ if gRJ=="D" .and. len(cIdRJ)<>0
   nArr := SELECT()
   O_RJ
   select rj
-  hseek cIdRj
+  HSEEK cIdRj
 
   if PADR( rj->id, 6 ) == PADR( cIdRj, 6 )
   	cRjNaz:=rj->naz
@@ -3146,7 +3146,7 @@ if !used()
 	O_TRFP2
 endif
 
-hseek "99 " + LEFT(cIdKonto, 1)
+HSEEK "99 " + LEFT(cIdKonto, 1)
 do while !EOF() .and. IDVD=="99" .and. TRIM(idkonto)!=LEFT(cIdKonto,LEN(TRIM(idkonto)))
 	skip 1
 enddo

@@ -548,7 +548,7 @@ STATIC FUNCTION pregled_kartice()
 
    SET CURSOR ON
 
-   SELECT roba; hseek cidroba; SELECT kalk
+   SELECT roba; HSEEK cidroba; SELECT kalk
    IF Empty( cPkonto )
       SELECT koncij; SEEK Trim( cmkonto ); SELECT kalk
       @ m_x + 2, m_y + 1 SAY "Pregled kartice magacin: "; ?? cMkonto, "-", cidroba,"-", Left( roba->naz, 40 )

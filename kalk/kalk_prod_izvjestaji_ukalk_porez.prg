@@ -166,7 +166,7 @@ DO WHILE !EOF() .and. IspitajPrekid()
      cIdKonto:=PKonto
      cIdTarifa:=IdTarifa
      select tarifa
-     hseek cIdtarifa
+     HSEEK cIdtarifa
      select kalk
      
      cIdTarifa:=Tarifa(pkonto, idRoba, @aPorezi, cIdTarifa)
@@ -379,7 +379,7 @@ DO WHILE !EOF() .and. IspitajPrekid()
   DO WHILE !EOF() .AND. cIdFirma==KALK->IdFirma .and. IspitajPrekid()
      cIdKonto:=PKonto
      cIdTarifa:=IdTarifa
-     select tarifa; hseek cidtarifa; select kalk
+     select tarifa; HSEEK cidtarifa; select kalk
      nOPP:=TARIFA->OPP
      nPPP:=TARIFA->PPP
      nPP :=TARIFA->ZPP

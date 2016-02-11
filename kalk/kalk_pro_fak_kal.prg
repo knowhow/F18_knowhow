@@ -158,7 +158,7 @@ do while .t.
         dTmpDate := fakt->datdok
         
         select partn
-        hseek fakt->idpartner
+        HSEEK fakt->idpartner
         
         cTmpPartn := ALLTRIM( partn->naz )
         
@@ -177,7 +177,7 @@ do while .t.
        endif
        
        select ROBA
-       hseek fakt->idroba
+       HSEEK fakt->idroba
        
        // provjeri prije svega uslov za robu...
        if !EMPTY( cRobaUsl )
@@ -205,7 +205,7 @@ do while .t.
       // radi se o proizvodu
 
           select sast
-          hseek  fakt->idroba
+          HSEEK  fakt->idroba
           
       do while !eof() .and. id==fakt->idroba // setaj kroz sast
             
@@ -217,7 +217,7 @@ do while .t.
         endif
         
         select roba
-        hseek sast->id2
+        HSEEK sast->id2
             
         select kalk_pripr
         locate for idroba==sast->id2
@@ -477,15 +477,15 @@ do while .t.
             if idtipdok = cIdTipdok .and. cFaBrDok = brdok 
 
                 select ROBA
-            hseek fakt->idroba
+            HSEEK fakt->idroba
                 if roba->tip="P"  
                 // radi se o proizvodu
                 select sast
-                    hseek  fakt->idroba
+                    HSEEK  fakt->idroba
                     do while !eof() .and. id==fakt->idroba 
                     // setaj kroz sast
                             select roba
-                    hseek sast->id2
+                    HSEEK sast->id2
                             select kalk_pripr
                             locate for idroba==sast->id2
                             if found()
@@ -618,12 +618,12 @@ Box(,15,60)
             if idtipdok $ cIdTipdok .and. dDatFOd<=datdok .and. dDatFDo>=datdok // pripada odabranom intervalu
 
                 select roba
-                hseek fakt->idroba
+                HSEEK fakt->idroba
                 if roba->tip="P"  
                     // radi se o proizvodu
 
                     select roba
-                    hseek fakt->idroba
+                    HSEEK fakt->idroba
                     
                     select kalk_pripr
                     locate for idroba==fakt->idroba
@@ -660,12 +660,12 @@ Box(,15,60)
   
         do while !eof()
             select sast
-            hseek  kalk_pripr->idroba
+            HSEEK  kalk_pripr->idroba
             do while !eof() .and. id==kalk_pripr->idroba 
                 // setaj kroz sast
                 // utvr|ivanje nabavnih cijena po sastavnici !!!!!
                 select roba
-                hseek sast->id2
+                HSEEK sast->id2
                 
                 select kalk_pripr
                 // roba->nc - nabavna cijena sirovine
@@ -678,7 +678,7 @@ Box(,15,60)
 
             select roba 
             // nafiluj nabavne cijene proizvoda u sifrarnik robe!!!
-            hseek kalk_pripr->idroba
+            HSEEK kalk_pripr->idroba
             
             if FOUND()
                 _rec := dbf_get_rec()     

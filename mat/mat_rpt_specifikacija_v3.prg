@@ -361,7 +361,7 @@ do while !EOF()
     enddo
 
     select roba
-    hseek _id_roba
+    HSEEK _id_roba
 
     // da li se grupa odredjuje putem sifre ili iz sifk ?
     if param["grupa_na_osnovu_sifre"] == "D"
@@ -803,7 +803,7 @@ endif
 @ prow(), pcol() + 1 SAY param["firma"]
 
 select partn
-hseek param["firma"]
+HSEEK param["firma"]
 
 @ prow(), pcol() + 1 SAY field->naz
 @ prow(), pcol() + 1 SAY field->naz2

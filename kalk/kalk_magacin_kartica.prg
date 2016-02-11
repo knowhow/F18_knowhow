@@ -165,7 +165,7 @@ FUNCTION kartica_magacin()
       SET FILTER to &cFilt
    ENDIF
 
-   hseek cIdFirma + cIdKonto + cIdR
+   HSEEK cIdFirma + cIdKonto + cIdR
    EOF CRET
 
    SELECT koncij
@@ -196,10 +196,10 @@ FUNCTION kartica_magacin()
 	
       cIdRoba := idroba
       SELECT roba
-      hseek cIdRoba
+      HSEEK cIdRoba
 
       SELECT tarifa
-      hseek roba->idtarifa
+      HSEEK roba->idtarifa
       ? __line
       ? "Artikal:", cIdRoba, "-", Trim( Left( roba->naz, 40 ) ) + iif( lKoristitiBK, " BK:" + roba->barkod, "" ) + " (" + roba->jmj + ")"
 
@@ -812,7 +812,7 @@ STATIC FUNCTION _set_zagl( cLine, cTxt1, cTxt2, cPVSS, cPicKol, cPicCDem )
 STATIC FUNCTION zagl_mag_kart()
 
    SELECT konto
-   hseek cIdKonto
+   HSEEK cIdKonto
 
    ?
 

@@ -1684,14 +1684,14 @@ FUNCTION KontVise()
 
 
    // "1","IdFirma+idvd+brdok"
-   PRIVATE cFilter := "DatDok >= "  + cm2str( dDatOd ) + ".and. DatDok <= " + cm2str( dDatDo ) + ".and. IdVd==" + cm2str( cVrsta )
+   PRIVATE cFilter := "DatDok >= "  + dbf_quote( dDatOd ) + ".and. DatDok <= " + dbf_quote( dDatDo ) + ".and. IdVd==" + dbf_quote( cVrsta )
 
    IF !Empty( cMKonto )
-      cFilter += ".and. mkonto==" + cm2str( cMKonto )
+      cFilter += ".and. mkonto==" + dbf_quote( cMKonto )
    ENDIF
 
    IF !Empty( cPKonto )
-      cFilter += ".and. pkonto==" + cm2str( cPKonto )
+      cFilter += ".and. pkonto==" + dbf_quote( cPKonto )
    ENDIF
 
    SET FILTER TO &cFilter

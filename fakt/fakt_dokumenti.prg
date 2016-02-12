@@ -93,7 +93,7 @@ METHOD FaktDokumenti:za_partnera( idfirma, idtipdok, idpartner )
    // _qry_str += "ON fakt_fakt.idfirma=fakt_doks.idfirma AND fakt_fakt.idtipdok=fakt_doks.idtipdok AND fakt_fakt.brdok=fakt_doks.brdok "
    _qry_str += "WHERE "
 
-   ::_sql_where := "fakt_doks.idfirma=" + _sql_quote( ::p_idfirma ) +  " AND fakt_doks.idtipdok=" + _sql_quote( ::p_idtipdok ) + " AND fakt_doks.idpartner=" + _sql_quote( ::p_idpartner )
+   ::_sql_where := "fakt_doks.idfirma=" + sql_quote( ::p_idfirma ) +  " AND fakt_doks.idtipdok=" + sql_quote( ::p_idtipdok ) + " AND fakt_doks.idpartner=" + sql_quote( ::p_idpartner )
 
    _qry_str += ::_sql_where
    _qry := run_sql_query( _qry_str )
@@ -313,7 +313,7 @@ METHOD FaktDokumenti:generisi_fakt_pripr()
    _sql += " LEFT JOIN fmk.roba "
    _sql += " ON fakt_fakt.idroba=roba.id "
    _sql += " WHERE "
-   _sql += "idfirma=" + _sql_quote( ::p_idfirma ) + " AND  idtipdok=" + _sql_quote( ::p_idtipdok )
+   _sql += "idfirma=" + sql_quote( ::p_idfirma ) + " AND  idtipdok=" + sql_quote( ::p_idtipdok )
    _sql += " AND brdok IN ("
 
    _veza_otpremnice := ""
@@ -326,7 +326,7 @@ METHOD FaktDokumenti:generisi_fakt_pripr()
             _sql += ","
             _veza_otpremnice += ","
          ENDIF
-         _sql += _sql_quote( _item:brdok )
+         _sql += sql_quote( _item:brdok )
          _veza_otpremnice += Trim( _item:brdok )
       ENDIF
    NEXT

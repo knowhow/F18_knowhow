@@ -146,7 +146,7 @@ STATIC FUNCTION obj_filter( nCust_id, cObjDesc )
       ENDIF
 
       cObjDesc := AllTrim( cObjDesc )
-      cFilter += " ALLTRIM(UPPER(obj_desc)) = " + cm2str( Upper( cObjDesc ) )
+      cFilter += " ALLTRIM(UPPER(obj_desc)) = " + dbf_quote( Upper( cObjDesc ) )
 
    ENDIF
 

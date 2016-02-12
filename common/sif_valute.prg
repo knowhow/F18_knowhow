@@ -43,9 +43,9 @@ FUNCTION Kurs( datum, val_iz, val_u )
    ENDIF
 
    IF ( val_iz == "P" .OR. val_iz == "D" )
-      _where := " tip = " + _sql_quote( val_iz )
+      _where := " tip = " + sql_quote( val_iz )
    ELSE
-      _where := " id = " + _sql_quote( val_iz )
+      _where := " id = " + sql_quote( val_iz )
    ENDIF
 
    IF !Empty( datum )
@@ -81,9 +81,9 @@ FUNCTION Kurs( datum, val_iz, val_u )
 
    // valuta u
    IF ( val_u == "P" .OR. val_u == "D" )
-      _where := " tip = " + _sql_quote( val_u )
+      _where := " tip = " + sql_quote( val_u )
    ELSE
-      _where := " id = " + _sql_quote( val_u )
+      _where := " id = " + sql_quote( val_u )
    ENDIF
 
    IF !Empty( datum )
@@ -201,7 +201,7 @@ FUNCTION OmjerVal( ckU, ckIz, dD )
       O_VALUTE
    ENDIF
 
-   PRIVATE cFiltV := "( naz2==" + cm2str( PadR( ckU, 4 ) ) + " .or. naz2==" + cm2str( PadR( ckIz, 4 ) ) + " ) .and. DTOS(datum)<=" + cm2str( DToS( dD ) )
+   PRIVATE cFiltV := "( naz2==" + dbf_quote( PadR( ckU, 4 ) ) + " .or. naz2==" + dbf_quote( PadR( ckIz, 4 ) ) + " ) .and. DTOS(datum)<=" + dbf_quote( DToS( dD ) )
    SET FILTER TO &cFiltV
    SET ORDER TO TAG "ID2"
    GO TOP

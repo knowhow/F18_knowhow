@@ -73,7 +73,7 @@ STATIC FUNCTION set_f_tbl( cPart )
    LOCAL cFilt := ".t."
 
    IF cPart <> NIL .AND. !Empty( cPart )
-      cFilt += ".and. idpartner == " + Cm2Str( cPart )
+      cFilt += ".and. idpartner == " + dbf_quote( cPart )
    ENDIF
 
    IF cFilt == ".t."

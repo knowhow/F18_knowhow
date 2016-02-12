@@ -44,7 +44,7 @@ FUNCTION pos_get_mpc()
    cField := pos_get_mpc_field()
 
    cQry := "SELECT " + cField + " FROM fmk.roba "
-   cQry += "WHERE id = " + _sql_quote( roba->id )         
+   cQry += "WHERE id = " + sql_quote( roba->id )         
    
    oData := _sql_query( my_server(), cQry )
  

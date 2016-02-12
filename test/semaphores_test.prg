@@ -284,7 +284,7 @@ FUNCTION is_table_column_exists( table, column )
 
    LOCAL _qry, _ret
 
-   _qry := "SELECT count(column_name) FROM information_schema.columns WHERE table_name =" + _sql_quote( table ) + " AND table_schema='fmk' AND column_name=" + _sql_quote( Lower( column ) )
+   _qry := "SELECT count(column_name) FROM information_schema.columns WHERE table_name =" + sql_quote( table ) + " AND table_schema='fmk' AND column_name=" + sql_quote( Lower( column ) )
 
    _ret := run_sql_query( _qry )
 

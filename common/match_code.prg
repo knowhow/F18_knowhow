@@ -95,14 +95,14 @@ STATIC FUNCTION g_mc_filter( cFilt, cSrch )
 
       // match code pocinje
       cPom := StrTran( cSrch, "/", "" )
-      cFilt += "=" + Cm2Str( cPom )
+      cFilt += "=" + dbf_quote( cPom )
 
    CASE Left( cSrch, 1 ) == "#"
 
       // pretraga unutar match codea
       cPom := StrTran( cSrch, "#", "" )
 
-      cFilt := Cm2Str( AllTrim( cPom ) )
+      cFilt := dbf_quote( AllTrim( cPom ) )
       cFilt += "$ match_code"
 
    CASE Right( cSrch, 1 ) == "/"
@@ -112,12 +112,12 @@ STATIC FUNCTION g_mc_filter( cFilt, cSrch )
       nLeft := Len( AllTrim( cPom ) )
 
       cFilt := "RIGHT(ALLTRIM(match_code)," + AllTrim( Str( nLeft ) ) + ")"
-      cFilt += "==" + Cm2Str( AllTrim( cPom ) )
+      cFilt += "==" + dbf_quote( AllTrim( cPom ) )
 
    OTHERWISE
 
       // striktna pretraga
-      cFilt += "==" + Cm2Str( cSrch )
+      cFilt += "==" + dbf_quote( cSrch )
    ENDCASE
 
    RETURN

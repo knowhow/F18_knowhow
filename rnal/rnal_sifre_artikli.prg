@@ -450,7 +450,7 @@ STATIC FUNCTION brza_pretraga_filter( cFilter )
 
             cTmp := Upper( AllTrim( aCountTmp[ 1 ] ) )
 
-            cFilter += cm2str( "_" + cTmp )
+            cFilter += dbf_quote( "_" + cTmp )
             cFilter += " $ "
             cFilter += "ALLTRIM(UPPER(art_desc))"
 
@@ -464,7 +464,7 @@ STATIC FUNCTION brza_pretraga_filter( cFilter )
 
             cFilter += "LEFT(ALLTRIM(UPPER(art_desc)), " + AllTrim( Str( nTmp ) ) + ")"
             cFilter += " = "
-            cFilter += cm2str( cTmp )
+            cFilter += dbf_quote( cTmp )
 
 
          ELSEIF nCount > 1
@@ -481,12 +481,12 @@ STATIC FUNCTION brza_pretraga_filter( cFilter )
                   cFilter += " ( "
                   cFilter += "LEFT(ALLTRIM(UPPER(art_desc)), " + AllTrim( Str( nTmp ) ) + ")"
                   cFilter += " = "
-                  cFilter += cm2str( cTmp )
+                  cFilter += dbf_quote( cTmp )
 
                ELSEIF iii > 1
 
                   cTmp := Upper( AllTrim( aArtTmp[ iii ] ) )
-                  cFilter += " .and. " + cm2str( "_" + cTmp )
+                  cFilter += " .and. " + dbf_quote( "_" + cTmp )
                   cFilter += " $ "
                   cFilter += "ALLTRIM(UPPER(art_desc))"
 
@@ -510,7 +510,7 @@ STATIC FUNCTION brza_pretraga_filter( cFilter )
 
          cFilter += "LEFT(ALLTRIM(UPPER(art_desc)), " + AllTrim( Str( nTmp ) ) + ")"
          cFilter += " = "
-         cFilter += cm2str( Upper( cTmp ) )
+         cFilter += dbf_quote( Upper( cTmp ) )
 
       ENDIF
 

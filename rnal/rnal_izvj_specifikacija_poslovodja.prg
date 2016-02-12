@@ -335,7 +335,7 @@ STATIC FUNCTION postavi_filter_na_dokumente( params )
    _filter += " .and. DTOS( " + _date + " ) <= " + _filter_quote( DToS( _dat_do ) )
 
    IF _oper <> 0
-      _filter += " .and. ALLTRIM( STR( operater_i ) ) == " + cm2str( AllTrim( Str( _oper ) ) )
+      _filter += " .and. ALLTRIM( STR( operater_i ) ) == " + dbf_quote( AllTrim( Str( _oper ) ) )
    ENDIF
 
    SELECT docs

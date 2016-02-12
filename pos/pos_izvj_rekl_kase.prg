@@ -137,10 +137,10 @@ SET ORDER TO TAG "2"  // "2" - "IdVd+DTOS (Datum)+Smjena"
 cFilter += " .and. idvd == '98' .and. sto <> 'P   ' " 
 cFilter += " .and. idpos == '" + cIdPos + "'"
 if (dDat0 <> nil)
-	cFilter += " .and. datum >= " + Cm2Str(dDat0) 
+	cFilter += " .and. datum >= " + dbf_quote(dDat0) 
 endif
 if (dDat1 <> nil)
-	cFilter += " .and. datum <= " + Cm2Str(dDat1) 
+	cFilter += " .and. datum <= " + dbf_quote(dDat1) 
 endif
 
 if !(cFilter==".t.")

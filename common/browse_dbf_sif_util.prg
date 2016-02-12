@@ -1276,6 +1276,6 @@ STATIC FUNCTION napravi_where_uslov_na_osnovu_hash_matrica( hTblRec, hRec )
 
    cWhere := cSqlFields
    cWhere += " = "
-   cWhere += _sql_quote( cTmp )
+   cWhere += sql_quote( cTmp )
 
    RETURN cWhere

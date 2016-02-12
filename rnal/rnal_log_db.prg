@@ -24,7 +24,7 @@ FUNCTION use_sql_doc_log( nDoc_no, cDoc_type )
    IF nDoc_no <> NIL
        cWhere := " WHERE doc_no = " + ALLTRIM( STR ( nDoc_no ) )
        IF cDoc_type <> NIL
-           cWhere += " AND doc_log_ty = " + _sql_quote( cDoc_type )
+           cWhere += " AND doc_log_ty = " + sql_quote( cDoc_type )
        ENDIF
    ENDIF
 

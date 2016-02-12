@@ -13,7 +13,7 @@
 
 // --------------------------------------------------
 // funkcija za formatiranje stringa za filter
-// mjenja staru funkciju cm2str()
+// mjenja staru funkciju dbf_quote()
 // --------------------------------------------------
 FUNCTION _filter_quote( value )
 
@@ -28,14 +28,14 @@ FUNCTION _filter_quote( value )
       RETURN hb_ValToStr( value )
    ENDCASE
 
-   RETURN
+   RETURN NIL
 
 
 // ------------------------------------------------------------
 // stara funkcija za formatiranje string-a za filterski uslov
 // mjenja je nova funkcija filter_quote()
 // ------------------------------------------------------------
-FUNCTION cm2str( value )
+FUNCTION dbf_quote( value )
    RETURN _filter_quote( value )
 
 

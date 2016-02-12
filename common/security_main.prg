@@ -21,7 +21,7 @@ FUNCTION GetUserID()
    LOCAL oServer := pg_server()
    LOCAL cUser   := AllTrim( my_user() )
 
-   cTmpQry := "SELECT usr_id FROM " + cTable + " WHERE usr_username = " + _sql_quote( cUser )
+   cTmpQry := "SELECT usr_id FROM " + cTable + " WHERE usr_username = " + sql_quote( cUser )
    oTable := _sql_query( oServer, cTmpQry )
    IF oTable == NIL
       log_write( ProcLine( 1 ) + " : "  + cTmpQry )

@@ -27,15 +27,15 @@ FUNCTION use_sql_ld_ld( nGodina, nMjesec, nMjesecDo, nVrInvalid, nStInvalid, cFi
    cSql += " FROM fmk." + cTable
    cSql += " LEFT JOIN fmk.ld_radn ON ld_ld.idradn = ld_radn.id"
 
-   cSql += " WHERE godina =" + _sql_quote( nGodina ) + ;
-      " AND mjesec>=" + _sql_quote( nMjesec ) + " AND mjesec<=" + _sql_quote( nMjesecDo )
+   cSql += " WHERE godina =" + sql_quote( nGodina ) + ;
+      " AND mjesec>=" + sql_quote( nMjesec ) + " AND mjesec<=" + sql_quote( nMjesecDo )
 
    IF nVrInvalid > 0
-     cSql += "AND vr_invalid = " + _sql_quote( nVrInvalid )
+     cSql += "AND vr_invalid = " + sql_quote( nVrInvalid )
    ENDIF
 
    IF nStInvalid > 0
-     cSql += "AND st_invalid >= " + _sql_quote( nStInvalid )
+     cSql += "AND st_invalid >= " + sql_quote( nStInvalid )
    ENDIF
 
    SELECT F_LD

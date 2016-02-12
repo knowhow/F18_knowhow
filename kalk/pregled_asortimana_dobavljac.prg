@@ -147,7 +147,7 @@ STATIC FUNCTION _izdvoji_ulaze( vars )
    _id_firma := gFirma
 
    IF _dat_od <> CToD( "" )
-      _date += "kalk.datdok >= " + _sql_quote( _dat_od )
+      _date += "kalk.datdok >= " + sql_quote( _dat_od )
    ENDIF
 
    IF _dat_do <> CToD( "" )
@@ -156,7 +156,7 @@ STATIC FUNCTION _izdvoji_ulaze( vars )
          _date += " AND "
       ENDIF
 
-      _date += "kalk.datdok <= " + _sql_quote( _dat_do )
+      _date += "kalk.datdok <= " + sql_quote( _dat_do )
 
    ENDIF
 
@@ -181,11 +181,11 @@ STATIC FUNCTION _izdvoji_ulaze( vars )
       "FROM fmk.kalk_kalk kalk " + ;
       "LEFT JOIN fmk.roba roba ON kalk.idroba = roba.id " + ;
       "WHERE " + ;
-      "kalk.idfirma = " + _sql_quote( _id_firma ) + ;
-      " AND kalk.pkonto = " + _sql_quote( _p_konto ) + ;
-      " AND kalk.idpartner = " + _sql_quote( _dob ) + ;
+      "kalk.idfirma = " + sql_quote( _id_firma ) + ;
+      " AND kalk.pkonto = " + sql_quote( _p_konto ) + ;
+      " AND kalk.idpartner = " + sql_quote( _dob ) + ;
       _date + ;
-      " AND roba.tip NOT IN ( " + _sql_quote( "T" ) + ", " + _sql_quote( "U" ) + " ) " + ;
+      " AND roba.tip NOT IN ( " + sql_quote( "T" ) + ", " + sql_quote( "U" ) + " ) " + ;
       "GROUP BY kalk.pkonto, kalk.idroba, roba.barkod, roba.naz, roba.idtarifa, roba.jmj " + ;
       "ORDER BY kalk.idroba"
 
@@ -249,7 +249,7 @@ STATIC FUNCTION _izdvoji_prodaju( vars )
    _id_firma := gFirma
 
    IF _dat_od <> CToD( "" )
-      _date += "kalk.datdok >= " + _sql_quote( _dat_od ) + " "
+      _date += "kalk.datdok >= " + sql_quote( _dat_od ) + " "
    ENDIF
 
    IF _dat_do <> CToD( "" )
@@ -258,7 +258,7 @@ STATIC FUNCTION _izdvoji_prodaju( vars )
          _date += " AND "
       ENDIF
 
-      _date += " kalk.datdok <= " + _sql_quote( _dat_do ) + " "
+      _date += " kalk.datdok <= " + sql_quote( _dat_do ) + " "
 
    ENDIF
 
@@ -271,8 +271,8 @@ STATIC FUNCTION _izdvoji_prodaju( vars )
       "kalk.idroba idroba, " + ;
       "SUM( " + ;
       "CASE " + ;
-      "WHEN kalk.pu_i = '5' AND kalk.idvd IN ( " + _sql_quote( "12" ) + "," + _sql_quote( "13" ) + " ) THEN -kalk.kolicina " + ;
-      "WHEN kalk.pu_i = '5' AND kalk.idvd NOT IN ( " + _sql_quote( "12" ) + "," + _sql_quote( "13" ) + " ) THEN kalk.kolicina " + ;
+      "WHEN kalk.pu_i = '5' AND kalk.idvd IN ( " + sql_quote( "12" ) + "," + sql_quote( "13" ) + " ) THEN -kalk.kolicina " + ;
+      "WHEN kalk.pu_i = '5' AND kalk.idvd NOT IN ( " + sql_quote( "12" ) + "," + sql_quote( "13" ) + " ) THEN kalk.kolicina " + ;
       "WHEN kalk.idvd = '80' AND kalk.kolicina < 0  THEN -kalk.kolicina " + ;
       "ELSE 0 " + ;
       "END " + ;
@@ -280,10 +280,10 @@ STATIC FUNCTION _izdvoji_prodaju( vars )
       "FROM fmk.kalk_kalk kalk " + ;
       "LEFT JOIN fmk.roba roba ON kalk.idroba = roba.id " + ;
       "WHERE " + ;
-      "kalk.idfirma = " + _sql_quote( _id_firma ) + ;
-      " AND kalk.pkonto = " + _sql_quote( _p_konto ) + ;
+      "kalk.idfirma = " + sql_quote( _id_firma ) + ;
+      " AND kalk.pkonto = " + sql_quote( _p_konto ) + ;
       _date + ;
-      " AND roba.tip NOT IN ( " + _sql_quote( "T" ) + ", " + _sql_quote( "U" ) + " ) " + ;
+      " AND roba.tip NOT IN ( " + sql_quote( "T" ) + ", " + sql_quote( "U" ) + " ) " + ;
       "GROUP BY kalk.pkonto, kalk.idroba " + ;
       "ORDER BY kalk.idroba"
 

@@ -104,7 +104,7 @@ FUNCTION GenProIzvKalk()
    DO WHILE !Eof()
       IF !Empty( KUSLOV )
          ++i
-         AAdd( aKolS, { "KOL" + AllTrim( Str( i ) ), Trim( kuslov ) + IF( Upper( k1 ) == "K", "", ".and.DATDOK>=" + cm2str( dOd ) ), 0, Trim( sizraz ) } )
+         AAdd( aKolS, { "KOL" + AllTrim( Str( i ) ), Trim( kuslov ) + IF( Upper( k1 ) == "K", "", ".and.DATDOK>=" + dbf_quote( dOd ) ), 0, Trim( sizraz ) } )
       ENDIF
       IF "KUMSUMA" $ FORMULA
          lKumSuma := .T.
@@ -194,10 +194,10 @@ FUNCTION GenProIzvKalk()
 
    // dio za aplikaciju
    // ------------------
-   cFilter := "DATDOK<=" + cm2str( dDo )
+   cFilter := "DATDOK<=" + dbf_quote( dDo )
 
    IF !lKumSuma .AND. !lKljuc
-      cFilter += ( ".and.DATDOK>=" + cm2str( dOd ) )
+      cFilter += ( ".and.DATDOK>=" + dbf_quote( dOd ) )
    ENDIF
 
    // priprema kljucnih baza za izvjestaj (indeksi, filteri)

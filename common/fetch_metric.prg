@@ -31,7 +31,7 @@ FUNCTION fetch_metric( sect, user, default_value )
       ENDIF
    ENDIF
 
-   _temp_qry := "SELECT fetchmetrictext(" + _sql_quote( sect )  + ")"
+   _temp_qry := "SELECT fetchmetrictext(" + sql_quote( sect )  + ")"
 
    _table := _sql_query( _server, _temp_qry )
 
@@ -72,7 +72,7 @@ FUNCTION set_metric( sect, user, value )
    _val := hb_ValToStr( value )
    SET CENTURY OFF
 
-   _temp_qry := "SELECT fmk.setmetric(" + _sql_quote( sect ) + "," + _sql_quote( _val ) +  ")"
+   _temp_qry := "SELECT fmk.setmetric(" + sql_quote( sect ) + "," + sql_quote( _val ) +  ")"
    _table := _sql_query( _server, _temp_qry )
    IF _table == NIL
       MsgBeep( "problem sa:" + _temp_qry )

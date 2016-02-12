@@ -146,7 +146,7 @@ FUNCTION kalk_povrat_dokumenta_iz_pripr9( cIdFirma, cIdVd, cBrDok )
          IF Pitanje(, "Povuci u pripremu dokumente sa ovim kriterijom ?", "N" ) == "D"
             SELECT kalk_pripr9
             PRIVATE cFilt1 := ""
-            cFilt1 := "IDFIRMA==" + cm2str( cIdFirma ) + ".and." + aUsl1 + ".and." + aUsl2 + ".and." + aUsl3
+            cFilt1 := "IDFIRMA==" + dbf_quote( cIdFirma ) + ".and." + aUsl1 + ".and." + aUsl2 + ".and." + aUsl3
             cFilt1 := StrTran( cFilt1, ".t..and.", "" )
             IF !( cFilt1 == ".t." )
                SET FILTER TO &cFilt1

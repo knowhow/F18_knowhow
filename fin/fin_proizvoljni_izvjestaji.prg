@@ -77,8 +77,8 @@ FUNCTION PrPromRn()
    // idFirma+IdKonto+dtos(DatDok)+idpartner
 
    cFilter := aUsl1
-   IF !Empty( dOd ); cFilter += ( ".and. DATDOK>=" + cm2str( dOd ) ); ENDIF
-   IF !Empty( dDo ); cFilter += ( ".and. DATDOK<=" + cm2str( dDo ) ); ENDIF
+   IF !Empty( dOd ); cFilter += ( ".and. DATDOK>=" + dbf_quote( dOd ) ); ENDIF
+   IF !Empty( dDo ); cFilter += ( ".and. DATDOK<=" + dbf_quote( dDo ) ); ENDIF
 
    cSort := "dtos(datdok)"
    INDEX ON &cSort TO "SUBTMP" FOR &cFilter

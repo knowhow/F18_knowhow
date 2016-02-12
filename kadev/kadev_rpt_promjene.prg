@@ -122,7 +122,7 @@ STATIC FUNCTION _get_data( param )
    ENDIF
 
    IF !Empty( PARAM[ "spol" ] )
-      _where += " AND main.pol = " + _sql_quote( PARAM[ "spol" ] )
+      _where += " AND main.pol = " + sql_quote( PARAM[ "spol" ] )
    ENDIF
 
    // sredi WHERE upit na kraju...

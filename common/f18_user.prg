@@ -74,14 +74,14 @@ FUNCTION f18_set_user_preferences( params )
 
 
    // setuj parametre na sql serveru....
-   _qry := "SELECT setUserPreference(" + _sql_quote( _user_name ) + ;
-      "," + _sql_quote( "propername" ) + "," + _sql_quote( _proper_name ) + ");"
+   _qry := "SELECT setUserPreference(" + sql_quote( _user_name ) + ;
+      "," + sql_quote( "propername" ) + "," + sql_quote( _proper_name ) + ");"
 
-   _qry += "SELECT setUserPreference(" + _sql_quote( _user_name ) + ;
-      "," + _sql_quote( "email" ) + "," + _sql_quote( _email ) + ");"
+   _qry += "SELECT setUserPreference(" + sql_quote( _user_name ) + ;
+      "," + sql_quote( "email" ) + "," + sql_quote( _email ) + ");"
 
-   _qry += "SELECT setUserPreference(" + _sql_quote( _user_name ) + ;
-      "," + _sql_quote( "active" ) + "," + _sql_quote( "t" ) + ");"
+   _qry += "SELECT setUserPreference(" + sql_quote( _user_name ) + ;
+      "," + sql_quote( "active" ) + "," + sql_quote( "t" ) + ");"
 
    _table := _sql_query( _server, _qry )
 

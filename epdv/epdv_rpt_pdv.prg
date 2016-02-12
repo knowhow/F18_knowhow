@@ -145,7 +145,7 @@ STATIC FUNCTION f_iz_kuf_kif()
 
    PRIVATE cFilter := ""
 
-   cFilter := cm2str( dDatOd ) + " <= datum .and. " + cm2str( dDatDo ) + ">= datum"
+   cFilter := dbf_quote( dDatOd ) + " <= datum .and. " + dbf_quote( dDatDo ) + ">= datum"
 
    O_KUF
    SET FILTER TO &cFilter
@@ -212,7 +212,7 @@ STATIC FUNCTION f_iz_kuf_kif()
 
    O_KIF
 
-   cFilter := cm2str( dDatOd ) + " <= datum .and. " + cm2str( dDatDo ) + ">= datum"
+   cFilter := dbf_quote( dDatOd ) + " <= datum .and. " + dbf_quote( dDatDo ) + ">= datum"
 
    O_KIF
    SET FILTER TO &cFilter

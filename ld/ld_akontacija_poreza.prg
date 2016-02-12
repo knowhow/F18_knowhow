@@ -38,7 +38,7 @@ STATIC FUNCTION ld_sort( cRj, cGodina, cMjesec, cObr )
    PRIVATE cObracun := cObr
 
    IF !Empty( cObr )
-      cFilter += "ld->obr == " + cm2str( cObr )
+      cFilter += "ld->obr == " + dbf_quote( cObr )
    ENDIF
 	
    IF !Empty( cRj )

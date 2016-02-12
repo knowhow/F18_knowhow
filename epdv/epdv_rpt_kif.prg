@@ -281,21 +281,21 @@ STATIC FUNCTION fill_rpt( nBrDok )
    PRIVATE cFilter := ""
 
    IF ( nBrdok == - 999 )
-      cFilter := cm2str( dDatOd ) + " <= datum .and. " + cm2str( dDatDo ) + ">= datum"
+      cFilter := dbf_quote( dDatOd ) + " <= datum .and. " + dbf_quote( dDatDo ) + ">= datum"
    ENDIF
 
    IF !Empty( cTar )
       IF !Empty( cFilter )
          cFilter += " .and. "
       ENDIF
-      cFilter += "id_tar == " + cm2str( cTar )
+      cFilter += "id_tar == " + dbf_quote( cTar )
    ENDIF
 
    IF !Empty( cPart )
       IF !Empty( cFilter )
          cFilter += " .and. "
       ENDIF
-      cFilter += "id_part == " + cm2str( cPart )
+      cFilter += "id_part == " + dbf_quote( cPart )
    ENDIF
 
    SET FILTER TO &cFilter

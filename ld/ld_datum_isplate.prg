@@ -378,7 +378,7 @@ FUNCTION ld_provjeri_dat_isplate_za_mjesec( godina, mjesec, rj )
    _qry += "LEFT JOIN fmk.ld_obracuni obr ON ld.godina = obr.godina AND ld.mjesec = obr.mjesec AND obr.status = 'G' "
 
    IF rj <> NIL .AND. !Empty( rj )
-      _qry += " AND obr.rj = " + _sql_quote( rj )
+      _qry += " AND obr.rj = " + sql_quote( rj )
    ELSE
       _qry += " AND ld.idrj = obr.rj"
    ENDIF

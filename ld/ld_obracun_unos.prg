@@ -620,7 +620,7 @@ STATIC FUNCTION ld_unos_obracuna_tipovi_primanja()
          RETURN
       ENDIF
 
-      cW := "WhUnos(" + cm2str( cIdTp ) + ")"
+      cW := "WhUnos(" + dbf_quote( cIdTp ) + ")"
       cV := "Izracunaj(@" + cIznosTP + ")"
 
       IF ( tippr->( Found() ) .AND. tippr->aktivan == "D" )

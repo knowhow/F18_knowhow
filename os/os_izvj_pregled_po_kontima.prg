@@ -107,7 +107,7 @@ cIdRj := PADR( cIdRj, 4 )
 
 if cDatPer == "D"
     select_promj()
-    PRIVATE cFilt1 := "DATUM>="+cm2str(dDatOd)+".and.DATUM<="+cm2str(dDatDo)
+    PRIVATE cFilt1 := "DATUM>="+dbf_quote(dDatOd)+".and.DATUM<="+dbf_quote(dDatDo)
     set filter to &cFilt1
     select_os_sii()
 endif

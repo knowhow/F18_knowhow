@@ -29,7 +29,7 @@ FUNCTION pos_vrati_broj_racuna_iz_fiskalnog( fisc_rn, broj_racuna, datum_racuna 
       " FROM fmk.pos_pos pp " + ;
       " LEFT JOIN fmk.pos_doks pd " + ;
       " ON pd.idpos = pp.idpos AND pd.idvd = pp.idvd AND pd.brdok = pp.brdok AND pd.datum = pp.datum " + ;
-      " WHERE pd.idpos = " + _sql_quote( _id_pos ) + ;
+      " WHERE pd.idpos = " + sql_quote( _id_pos ) + ;
       " AND pd.idvd = '42' AND pd.fisc_rn = " + AllTrim( Str( fisc_rn ) ) + ;
       " GROUP BY pd.datum, pd.brdok, pd.fisc_rn " + ;
       " ORDER BY pd.datum, pd.brdok, pd.fisc_rn "

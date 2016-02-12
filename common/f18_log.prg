@@ -271,12 +271,12 @@ STATIC FUNCTION sql_log_delete( params )
    LOCAL _curr_date := params[ "current_date" ]
    LOCAL _delete_date := ( _curr_date - _delete_level )
 
-   _where := "( l_time::char(8) <= " + _sql_quote( _delete_date )
-   _where += " AND msg NOT LIKE " + _sql_quote( _dok_oper ) + " ) "
+   _where := "( l_time::char(8) <= " + sql_quote( _delete_date )
+   _where += " AND msg NOT LIKE " + sql_quote( _dok_oper ) + " ) "
    _where += " OR "
    _where += "( EXTRACT( YEAR FROM l_time ) < EXTRACT( YEAR FROM CURRENT_DATE ) "
    _where += " AND "
-   _where += " msg LIKE " + _sql_quote( _dok_oper ) + " ) "
+   _where += " msg LIKE " + sql_quote( _dok_oper ) + " ) "
 
    _qry := "DELETE FROM fmk.log "
    _qry += "WHERE " + _where

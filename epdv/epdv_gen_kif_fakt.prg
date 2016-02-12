@@ -163,10 +163,10 @@ STATIC FUNCTION gen_fakt_kif_item( cSezona )
    SELECT FAKT
    PRIVATE cFilter := ""
 
-   cFilter :=  cm2str( dDatOd ) + " <= datdok .and. " + cm2str( dDatDo ) + ">= datdok"
+   cFilter :=  dbf_quote( dDatOd ) + " <= datdok .and. " + dbf_quote( dDatDo ) + ">= datdok"
 
    // setuj tip dokumenta
-   cFilter :=  cFilter + ".and. IdTipDok == " + cm2str( cTdSrc )
+   cFilter :=  cFilter + ".and. IdTipDok == " + dbf_quote( cTdSrc )
 
 
    // "1","IdFirma+idtipdok+brdok+rbr+podbr"

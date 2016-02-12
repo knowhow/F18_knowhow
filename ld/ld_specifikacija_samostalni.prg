@@ -204,7 +204,7 @@ FUNCTION ld_specifikacija_plate_samostalni()
    ENDIF
 
    IF !Empty( cObracun )
-      cFilt += ( ".and. OBR==" + cm2str( cObracun ) )
+      cFilt += ( ".and. OBR==" + dbf_quote( cObracun ) )
    ENDIF
 
    SET FILTER TO &cFilt

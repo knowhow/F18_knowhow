@@ -424,11 +424,11 @@ FUNCTION sort_siht( nGodina, nMjesec, cIdRadn, cGroup, nVar )
    cFilter += " .and. dandio == 'G' "
 
    IF !Empty( cIdRadn )
-      cFilter += " .and. idradn == " + cm2str( cIdRadn )
+      cFilter += " .and. idradn == " + dbf_quote( cIdRadn )
    ENDIF
 
    IF !Empty( cGroup )
-      cFilter += " .and. idkonto == " + cm2str( cGroup )
+      cFilter += " .and. idkonto == " + dbf_quote( cGroup )
    ENDIF
 
    SELECT ( F_RADSIHT )

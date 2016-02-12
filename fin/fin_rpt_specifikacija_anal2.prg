@@ -164,10 +164,10 @@ FUNCTION spec_an()
       SELECT anal
       SET ORDER TO 1
 
-      cFilt1 := "IdFirma==" + cm2str( cIdFirma )
+      cFilt1 := "IdFirma==" + dbf_quote( cIdFirma )
 
       IF !( Empty( dDatOd ) .AND. Empty( dDatDo ) )
-         cFilt1 += ( ".and.DatNal>=" + cm2str( dDatOd ) + ".and.DatNal<=" + cm2str( dDatDo ) )
+         cFilt1 += ( ".and.DatNal>=" + dbf_quote( dDatOd ) + ".and.DatNal<=" + dbf_quote( dDatDo ) )
       ENDIF
 
       IF aUsl1 <> ".t."

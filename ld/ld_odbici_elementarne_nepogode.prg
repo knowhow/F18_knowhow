@@ -219,7 +219,7 @@ FUNCTION ld_tip_primanja_se_koristi( cTip )
    LOCAL lRet := .F.
    LOCAL cSql
 
-   cSql := "id = " + _sql_quote( cTip )
+   cSql := "id = " + sql_quote( cTip )
   
    IF table_count( "fmk.tippr", cSql ) > 0
       lRet := .T.

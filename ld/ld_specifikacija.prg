@@ -67,7 +67,7 @@ FUNCTION radnik_iz_rs( cOpsst, cOpsrad )
    LOCAL cSql, oQry
 
    cSql := "SELECT reg FROM fmk.ops "
-   cSql += "WHERE id = " + _sql_quote( cOpsSt )
+   cSql += "WHERE id = " + sql_quote( cOpsSt )
 
    oQry := _sql_query( my_server(), cSql )
 
@@ -86,7 +86,7 @@ FUNCTION ld_iz_koje_opcine_je_radnik( cIdRadn )
    LOCAL cOpc := ""
    LOCAL cSql, oQry
 
-   cSql := "SELECT idopsst FROM fmk.ld_radn WHERE id = " + _sql_quote( cIdRadn )
+   cSql := "SELECT idopsst FROM fmk.ld_radn WHERE id = " + sql_quote( cIdRadn )
 
    oQry := _sql_query( my_server(), cSql )
 
@@ -415,7 +415,7 @@ FUNCTION ld_specifikacija_plate()
    ENDIF
 
    IF !Empty( cObracun )
-      cFilt += ( ".and. OBR==" + cm2str( cObracun ) )
+      cFilt += ( ".and. OBR==" + dbf_quote( cObracun ) )
    ENDIF
 
    SET FILTER TO &cFilt

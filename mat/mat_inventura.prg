@@ -112,11 +112,11 @@ _cijena := 0
 SELECT mat_suban
 set order to tag "3"
 
-_filter := "datdok <= " + cm2str( _datum )
+_filter := "datdok <= " + dbf_quote( _datum )
 
 if !EMPTY( _partner )
     _id_partner := _partner
-    _filter += ".and. idpartner == " + cm2str( _partner )
+    _filter += ".and. idpartner == " + dbf_quote( _partner )
 endif
 
 set filter to &(_filter)

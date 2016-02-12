@@ -262,7 +262,7 @@ select mat_suban
 set order to tag "1"
 
 // napravi filter...
-_filter := "idfirma == " + cm2str( _firma )
+_filter := "idfirma == " + dbf_quote( _firma )
 
 if _usl_1 != ".t."
     _filter += " .and. " + _usl_1
@@ -273,8 +273,8 @@ if _usl_2 != ".t."
 endif
 
 if !empty( _dat_od ) .or. !empty( _dat_do )
-    _filter += " .and. DTOS(datdok) <= " + Cm2Str( DTOS( _dat_do ) )
-    _filter += " .and. DTOS(datdok) >= " + Cm2Str( DTOS( _dat_od ) )
+    _filter += " .and. DTOS(datdok) <= " + dbf_quote( DTOS( _dat_do ) )
+    _filter += " .and. DTOS(datdok) >= " + dbf_quote( DTOS( _dat_od ) )
 endif
 
 set filter to &_filter

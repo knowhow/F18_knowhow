@@ -281,7 +281,7 @@ FUNCTION GenRekap1( aUsl1, aUsl2, aUslR, cKartica, cVarijanta, cKesiraj, fSMark,
 
    PRIVATE cFilt1 := ""
 
-   cFilt1 := "DatDok<=" + cm2str( dDatDo ) + ".and.(" + aUsl1 + ".or." + aUsl2 + ")"
+   cFilt1 := "DatDok<=" + dbf_quote( dDatDo ) + ".and.(" + aUsl1 + ".or." + aUsl2 + ")"
 
    IF aUslr <> ".t."
       cFilt1 += ".and." + aUslR
@@ -701,7 +701,7 @@ FUNCTION GenRekap2( lK2X, cC, lPrDatOd, lVpRab, lMarkiranaRoba )
 
    PRIVATE cFilt3 := ""
 
-   cFilt3 := "(" + aUsl1 + ".or." + aUsl2 + ") .and.DATDOK<=" + cm2str( dDatDo )
+   cFilt3 := "(" + aUsl1 + ".or." + aUsl2 + ") .and.DATDOK<=" + dbf_quote( dDatDo )
 
    IF aUslR <> ".t."
       cFilt3 += ".and." + aUslR

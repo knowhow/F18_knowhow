@@ -171,7 +171,7 @@ endif
 SELECT (nKArea)
 // datum azuriranja
 
-PRIVATE cFilter := cm2str(dDatOd) + " <= datum_2 .and. " + cm2str(dDatDo) + ">= datum_2" 
+PRIVATE cFilter := dbf_quote(dDatOd) + " <= datum_2 .and. " + dbf_quote(dDatDo) + ">= datum_2" 
 
 SET FILTER TO &cFilter
 

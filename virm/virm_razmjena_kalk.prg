@@ -98,7 +98,7 @@ use
 
 cFilter:=aUsl1
 
-cFilter += ".and. DatDok>="+cm2str(dDatOd)+".and. DatDok<="+cm2str(dDatDo)
+cFilter += ".and. DatDok>="+dbf_quote(dDatOd)+".and. DatDok<="+dbf_quote(dDatDo)
 
 // postavljamo filter na vrstu i datum dokumenata u KALK.DBF
 // ---------------------------------------------------------

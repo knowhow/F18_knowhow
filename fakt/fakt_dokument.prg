@@ -100,9 +100,9 @@ return .t.
 
 METHOD FaktDokument:set_sql_where()
 
-::p_sql_where := "idfirma=" + _sql_quote(::p_idfirma)
-::p_sql_where += " AND idtipdok=" + _sql_quote(::p_idtipdok) 
-::p_sql_where += " AND brdok=" + _sql_quote(::p_brdok)
+::p_sql_where := "idfirma=" + sql_quote(::p_idfirma)
+::p_sql_where += " AND idtipdok=" + sql_quote(::p_idtipdok) 
+::p_sql_where += " AND brdok=" + sql_quote(::p_brdok)
 
 return .t.
 
@@ -196,22 +196,22 @@ _sql += ";"
 _sql += "CREATE TEMP TABLE " + _tmp_tbl + " AS "
 _sql += "SELECT * FROM fmk.fakt_fakt_atributi WHERE " + ::p_sql_where
 _sql += ";"
-_sql += "UPDATE " + _tmp_tbl + " SET idtipdok=" + _sql_quote(new_idtipdok)
+_sql += "UPDATE " + _tmp_tbl + " SET idtipdok=" + sql_quote(new_idtipdok)
 _sql += ";"
 _sql += "DELETE FROM fmk.fakt_fakt_atributi "
 _sql += " WHERE " + ::p_sql_where 
 _sql += ";"
 
 
-_sql += "UPDATE fmk.fakt_fakt set idtipdok=" + _sql_quote(new_idtipdok)
+_sql += "UPDATE fmk.fakt_fakt set idtipdok=" + sql_quote(new_idtipdok)
 _sql += " WHERE " + ::p_sql_where 
 _sql += ";"
 
-_sql += "UPDATE fmk.fakt_doks set idtipdok=" + _sql_quote(new_idtipdok)
+_sql += "UPDATE fmk.fakt_doks set idtipdok=" + sql_quote(new_idtipdok)
 _sql += " WHERE " + ::p_sql_where 
 _sql += ";"
 
-_sql += "UPDATE fmk.fakt_doks2 set idtipdok=" + _sql_quote(new_idtipdok)
+_sql += "UPDATE fmk.fakt_doks2 set idtipdok=" + sql_quote(new_idtipdok)
 _sql += " WHERE " + ::p_sql_where 
 _sql += ";"
 

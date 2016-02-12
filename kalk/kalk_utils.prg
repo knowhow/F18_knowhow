@@ -138,11 +138,11 @@ STATIC FUNCTION ka_pripr9_set_filter( aUslFirma, aUslDok, dDat1, dDat2 )
    ENDIF
 
    IF !Empty( dDat1 )
-      cFilter += " .and. datdok >= " + Cm2Str( dDat1 )
+      cFilter += " .and. datdok >= " + dbf_quote( dDat1 )
    ENDIF
 
    IF !Empty( dDat2 )
-      cFilter += " .and. datdok <= " + Cm2Str( dDat2 )
+      cFilter += " .and. datdok <= " + dbf_quote( dDat2 )
    ENDIF
 
    SET FILTER to &cFilter

@@ -87,7 +87,7 @@ STATIC FUNCTION set_f_kol( cDesc )
 
    IF !Empty( cDesc )
 
-      cFilter += 'ALLTRIM(UPPER(aop_desc)) = ' + cm2str( Upper( AllTrim( cDesc ) ) )
+      cFilter += 'ALLTRIM(UPPER(aop_desc)) = ' + dbf_quote( Upper( AllTrim( cDesc ) ) )
    ENDIF
 
    IF !Empty( cFilter )

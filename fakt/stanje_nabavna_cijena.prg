@@ -38,10 +38,10 @@ FUNCTION get_nabavna_cijena( cIdKonto, cIdArtikal, dDatum )
    ENDIF
 
    cQuery := "SELECT nv_u, nv_i, ulaz, izlaz from public.sp_konto_stanje(" + ;
-      _sql_quote( "m" ) + "," + ;
-      _sql_quote( cIdKonto ) + "," + ;
-      _sql_quote( cIdArtikal ) + "," + ;
-      _sql_quote( dDatum ) + ")"
+      sql_quote( "m" ) + "," + ;
+      sql_quote( cIdKonto ) + "," + ;
+      sql_quote( cIdArtikal ) + "," + ;
+      sql_quote( dDatum ) + ")"
 
    oRet := _sql_query( oSrv, cQuery )
 

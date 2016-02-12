@@ -50,7 +50,7 @@ STATIC FUNCTION set_filt( cId )
 
    LOCAL cFilt := ""
 
-   cFilt := "idradn == " + cm2str( cId )
+   cFilt := "idradn == " + dbf_quote( cId )
    SET FILTER to &cFilt
    GO TOP
 

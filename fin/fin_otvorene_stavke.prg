@@ -122,11 +122,11 @@ STATIC FUNCTION SpecOtSt()
    ENDIF
 
    IF !Empty( dDatOd )
-      cFilt1 += ".and. IF( EMPTY(datval) , datdok>=" + cm2str( dDatOd ) + " , datval>=" + cm2str( dDatOd ) + " )"
+      cFilt1 += ".and. IF( EMPTY(datval) , datdok>=" + dbf_quote( dDatOd ) + " , datval>=" + dbf_quote( dDatOd ) + " )"
    ENDIF
 
    IF !Empty( dDatDo )
-      cFilt1 += ".and. IF( EMPTY(datval) , datdok<=" + cm2str( dDatDo ) + " , datval<=" + cm2str( dDatDo ) + " )"
+      cFilt1 += ".and. IF( EMPTY(datval) , datdok<=" + dbf_quote( dDatDo ) + " , datval<=" + dbf_quote( dDatDo ) + " )"
    ENDIF
 
    GO TOP

@@ -313,7 +313,7 @@ set order to tag "1"
 go top
 
 // radna jedinica
-cFilter += "idrj=" + cm2str( cGroup )
+cFilter += "idrj=" + dbf_quote( cGroup )
 
 // datumski period
 cFilter += ".and. datdok >= CTOD('" + ;
@@ -507,7 +507,7 @@ set order to tag "2"
 // idfirma+idpartner+idkonto
 
 // radna jedinica
-cFilter += "idrj=" + cm2str( cGroup )
+cFilter += "idrj=" + dbf_quote( cGroup )
 
 // datumski period
 cFilter += ".and. datdok >= CTOD('" + ;

@@ -803,11 +803,11 @@ FUNCTION fakt_real_partnera()
    PRIVATE cFilter := ".t."
 
    IF !Empty( dDatOd ) .OR. !Empty( dDatDo )
-      cFilter += ".and.  datdok>=" + cm2str( dDatOd ) + ".and. datdok<=" + cm2str( dDatDo )
+      cFilter += ".and.  datdok>=" + dbf_quote( dDatOd ) + ".and. datdok<=" + dbf_quote( dDatDo )
    ENDIF
 
    IF cTabela == "D"  // tabel prikaz
-      cFilter += ".and. IdFirma=" + cm2str( cIdFirma )
+      cFilter += ".and. IdFirma=" + dbf_quote( cIdFirma )
    ENDIF
 
    IF !Empty( cBrFakDok )

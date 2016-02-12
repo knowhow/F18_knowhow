@@ -82,7 +82,7 @@ METHOD RNALDamageDocument:get_damage_data()
       "FROM fmk.rnal_doc_lit lit " + ;
       "LEFT JOIN fmk.rnal_doc_log dlog ON lit.doc_no = dlog.doc_no " + ;
       "   AND dlog.doc_log_no = lit.doc_log_no " + ;
-      "WHERE dlog.doc_log_ty = " + _sql_quote( _log_type ) + ;
+      "WHERE dlog.doc_log_ty = " + sql_quote( _log_type ) + ;
       "   AND dlog.doc_no = " + AllTrim( Str( ::doc_no ) ) + " " + ;
       "ORDER BY lit.doc_no, lit.doc_log_no, lit.doc_lit_no"
 
@@ -163,7 +163,7 @@ METHOD RNALDamageDocument:has_damage_data()
    LOCAL _res
    LOCAL _where
 
-   _where := "WHERE doc_log_ty = " + _sql_quote( _log_type ) + ;
+   _where := "WHERE doc_log_ty = " + sql_quote( _log_type ) + ;
       "   AND doc_no = " + AllTrim( Str( ::doc_no ) );
 
       _res := table_count( "fmk.rnal_doc_log", _where )

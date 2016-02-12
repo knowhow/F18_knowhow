@@ -331,11 +331,11 @@ METHOD LDExportTxt:fill_data_from_ld()
 
    _qry += " WHERE ld.godina = " + AllTrim( Str( ::export_params[ "godina" ] ) )
    _qry += " AND ld.mjesec = " + AllTrim( Str( ::export_params[ "mjesec" ] ) )
-   _qry += " AND ld.obr = " + _sql_quote( ::export_params[ "obracun" ] )
-   _qry += " AND rd.isplata = " + _sql_quote( "TR" )
+   _qry += " AND ld.obr = " + sql_quote( ::export_params[ "obracun" ] )
+   _qry += " AND rd.isplata = " + sql_quote( "TR" )
 
    IF !::export_params[ "krediti_export" ]
-      _qry += " AND rd.idbanka = " + _sql_quote( ::export_params[ "banka" ] )
+      _qry += " AND rd.idbanka = " + sql_quote( ::export_params[ "banka" ] )
    ENDIF
 
    IF !Empty( ::export_params[ "rj" ] )
@@ -349,7 +349,7 @@ METHOD LDExportTxt:fill_data_from_ld()
          IF _i > 1
             _qry += ", "
          ENDIF
-         _qry += _sql_quote( _a_kreditor[ _i ] )
+         _qry += sql_quote( _a_kreditor[ _i ] )
       NEXT
       _qry += " ) "
    ENDIF

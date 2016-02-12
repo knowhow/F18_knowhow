@@ -130,7 +130,7 @@ STATIC FUNCTION set_mod_filt()
 
    LOCAL cFilt := ""
 
-   cFilt := "modul_name = " + cm2str( PadR( tekuci_modul(), 10 ) )
+   cFilt := "modul_name = " + dbf_quote( PadR( tekuci_modul(), 10 ) )
 
    SET FILTER to &cFilt
 

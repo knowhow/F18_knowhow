@@ -473,7 +473,7 @@ FUNCTION is_postoji_partner( sifra )
    LOCAL nCount
    LOCAL cWhere
 
-   cWhere := "id = " + _sql_quote( sifra )
+   cWhere := "id = " + sql_quote( sifra )
    nCount := table_count( "fmk.partn", cWhere )
 
    IF nCount > 0

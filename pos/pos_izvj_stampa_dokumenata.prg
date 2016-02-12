@@ -66,7 +66,7 @@ FUNCTION pos_stampa_dokumenta()
    BoxC()
 
    SELECT pos_doks
-   cFilt1 := "DATUM>=" + cm2str( dDatOd ) + ".and.DATUM<=" + cm2str( dDatDo )
+   cFilt1 := "DATUM>=" + dbf_quote( dDatOd ) + ".and.DATUM<=" + dbf_quote( dDatDo )
    SET FILTER to &cFilt1
    SEEK cIdPos + cIdVd
 

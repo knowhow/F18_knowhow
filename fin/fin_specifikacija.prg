@@ -721,9 +721,9 @@ ENDIF
 select ANAL; set order to tag "1"
 
 //cFilt1:="IdFirma=='"+cIdFirma+"'"
-cFilt1:="IdFirma=="+cm2str(cIdFirma)
+cFilt1:="IdFirma=="+dbf_quote(cIdFirma)
 if !(empty(dDatOd) .and. empty(dDatDo))
-  cFilt1 += ( ".and.DatNal>="+cm2str(dDatOd) +".and.DatNal<="+cm2str(dDatDo) )
+  cFilt1 += ( ".and.DatNal>="+dbf_quote(dDatOd) +".and.DatNal<="+dbf_quote(dDatDo) )
 endif
 if aUsl1<>".t."
  cFilt1 += ( ".and."+aUsl1 )
@@ -1084,7 +1084,7 @@ ENDIF
 IF gDUFRJ=="D"
 	cFilter := aUsl3
 ELSE
-  	cFilter := "IdFirma="+cm2str(cidfirma)
+  	cFilter := "IdFirma="+dbf_quote(cidfirma)
 ENDIF
 
 IF !EMPTY(cVN)
@@ -1104,7 +1104,7 @@ if aUsl2<>".t."
 endif
 
 if !empty(dDatOd) .or. !empty(dDatDo)
-   	cFilter += ( ".and. DATDOK>="+cm2str(dDatOd)+".and. DATDOK<="+cm2str(dDatDo) )
+   	cFilter += ( ".and. DATDOK>="+dbf_quote(dDatOd)+".and. DATDOK<="+dbf_quote(dDatDo) )
 endif
 
 if fk1=="D" .and. len(ck1)<>0
@@ -1856,17 +1856,17 @@ if  fk1=="N" .and. fk2=="N" .and. fk3=="N" .and. fk4=="N"
     cFilt1:=aUsl1
    endif
  else
-   cFilt1:="DATDOK>="+cm2str(dDatOd)+".and.DATDOK<="+cm2str(dDatDo)+".and."+aUsl1
+   cFilt1:="DATDOK>="+dbf_quote(dDatOd)+".and.DATDOK<="+dbf_quote(dDatDo)+".and."+aUsl1
  endif
 
 else  // odigraj sa ck4
  if empty(dDatOd) .and. empty(dDatDo)
-   cFilt1:=aUsl1+".and.k1="+cm2str(ck1)+".and.k2="+cm2str(ck2)+;
-                 ".and.k3=ck3.and.k4="+cm2str(ck4)
+   cFilt1:=aUsl1+".and.k1="+dbf_quote(ck1)+".and.k2="+dbf_quote(ck2)+;
+                 ".and.k3=ck3.and.k4="+dbf_quote(ck4)
  else
-   cFilt1:="DATDOK>="+cm2str(dDatOd)+".and.DATDOK<="+cm2str(dDatDo)+".and."+;
-           aUsl1+".and.k1="+cm2str(ck1)+".and.k2="+cm2str(ck2)+;
-                 ".and.k3=ck3.and.k4="+cm2str(ck4)
+   cFilt1:="DATDOK>="+dbf_quote(dDatOd)+".and.DATDOK<="+dbf_quote(dDatDo)+".and."+;
+           aUsl1+".and.k1="+dbf_quote(ck1)+".and.k2="+dbf_quote(ck2)+;
+                 ".and.k3=ck3.and.k4="+dbf_quote(ck4)
  endif
 endif
 

@@ -302,9 +302,9 @@ STATIC FUNCTION _grupno_sql_gen( racuni, params )
    LOCAL _scan
 
    // idfirma
-   _where := "WHERE f.idfirma = " + _sql_quote( params[ "id_firma" ] )
+   _where := "WHERE f.idfirma = " + sql_quote( params[ "id_firma" ] )
    // idtipdok
-   _where += " AND f.idtipdok = " + _sql_quote( params[ "id_tip_dok" ] )
+   _where += " AND f.idtipdok = " + sql_quote( params[ "id_tip_dok" ] )
    // datdok
    IF params[ "datum_od" ] <> CToD( "" )
       _where += " AND " + _sql_date_parse( "f.datdok", params[ "datum_od" ], params[ "datum_do" ] )

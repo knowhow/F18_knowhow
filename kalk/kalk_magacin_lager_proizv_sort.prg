@@ -448,7 +448,7 @@ if (cPom<>".t.")
 endif
 
 if (!EMPTY(::dDatOd) .or. !EMPTY(::dDatDo))
-	cFilter+=".and. DatDok>="+cm2str(::dDatOd)+".and. DatDok<="+cm2str(::dDatDo)
+	cFilter+=".and. DatDok>="+dbf_quote(::dDatOd)+".and. DatDok<="+dbf_quote(::dDatDo)
 endif
 
 SET FILTER TO &cFilter

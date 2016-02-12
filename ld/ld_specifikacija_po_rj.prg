@@ -103,14 +103,14 @@ FUNCTION ld_specifikacija_po_rj()
 
    PRIVATE cFilt := ".t."
    IF !Empty( qqRJ )    ; cFilt += ( ".and." + aUslRJ )                ; ENDIF
-   IF !Empty( cObracun ); cFilt += ( ".and. OBR==" + cm2str( cObracun ) ); ENDIF
+   IF !Empty( cObracun ); cFilt += ( ".and. OBR==" + dbf_quote( cObracun ) ); ENDIF
    IF cMjesecOd != cMjesecDo
-      cFilt := cFilt + ".and.mjesec>=" + cm2str( cMjesecOd ) + ;
-         ".and.mjesec<=" + cm2str( cMjesecDo ) + ;
-         ".and.godina=" + cm2str( cGodina )
+      cFilt := cFilt + ".and.mjesec>=" + dbf_quote( cMjesecOd ) + ;
+         ".and.mjesec<=" + dbf_quote( cMjesecDo ) + ;
+         ".and.godina=" + dbf_quote( cGodina )
    ELSE
-      cFilt := cFilt + ".and.mjesec=" + cm2str( cMjesecOd ) + ;
-         ".and.godina=" + cm2str( cGodina )
+      cFilt := cFilt + ".and.mjesec=" + dbf_quote( cMjesecOd ) + ;
+         ".and.godina=" + dbf_quote( cGodina )
    ENDIF
 
    SELECT LD

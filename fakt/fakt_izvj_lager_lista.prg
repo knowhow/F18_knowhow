@@ -246,7 +246,7 @@ FUNCTION fakt_lager_lista()
    ENDIF
 
    IF !Empty( dDatOd ) .OR. !Empty( dDatDo )
-      cFilt += ".and. DatDok>=" + cm2str( dDatOd ) + ".and. DatDok<=" + cm2str( dDatDo )
+      cFilt += ".and. DatDok>=" + dbf_quote( dDatOd ) + ".and. DatDok<=" + dbf_quote( dDatDo )
    ENDIF
 
    IF cFilt == ".t."

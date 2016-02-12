@@ -126,10 +126,10 @@ IF aUslFunk<>".t."
 	cFilter += IF (!Empty (cFilter), ".and.", "") + aUslFunk
 EndIF
 IF !Empty (dDatOd)
-	cFilter += IF (!Empty (cFilter), ".and.", "") + "DatDok>="+cm2str(dDatOd)
+	cFilter += IF (!Empty (cFilter), ".and.", "") + "DatDok>="+dbf_quote(dDatOd)
 EndIF
 IF !Empty (dDatDo)
-	cFilter += IF (!Empty (cFilter), ".and.", "") + "DatDok<="+cm2str(dDatDo)
+	cFilter += IF (!Empty (cFilter), ".and.", "") + "DatDok<="+dbf_quote(dDatDo)
 EndIF
 
 IF !Empty (cFilter)
@@ -1096,10 +1096,10 @@ IF aUslFunk<>".t."
 	cFilter += IF (!Empty (cFilter), ".and.", "") + aUslFunk
 EndIF
 IF !Empty (dDatOd)
-	cFilter += IF (!Empty (cFilter), ".and.", "") + "DatDok>="+cm2str(dDatOd)
+	cFilter += IF (!Empty (cFilter), ".and.", "") + "DatDok>="+dbf_quote(dDatOd)
 EndIF
 IF !Empty (dDatDo)
-	cFilter += IF (!Empty (cFilter), ".and.", "") + "DatDok<="+cm2str(dDatDo)
+	cFilter += IF (!Empty (cFilter), ".and.", "") + "DatDok<="+dbf_quote(dDatDo)
 EndIF
 
 IF !Empty (cFilter)

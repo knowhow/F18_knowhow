@@ -172,9 +172,9 @@ FUNCTION ld_specifikacija_po_mjesecima()
 
    SELECT LD
 
-   PRIVATE cFilt1 := "GODINA==" + cm2str( cGodina ) + ;
-      IF( Empty( cIdRJ ), "", ".and.IDRJ==" + cm2str( cIdRJ ) ) + ;
-      IF( Empty( cIdRadn ), "", ".and.IDRADN==" + cm2str( cIdRadn ) )
+   PRIVATE cFilt1 := "GODINA==" + dbf_quote( cGodina ) + ;
+      IF( Empty( cIdRJ ), "", ".and.IDRJ==" + dbf_quote( cIdRJ ) ) + ;
+      IF( Empty( cIdRadn ), "", ".and.IDRADN==" + dbf_quote( cIdRadn ) )
 
    SET FILTER TO &cFilt1
    SET ORDER TO TAG "2"

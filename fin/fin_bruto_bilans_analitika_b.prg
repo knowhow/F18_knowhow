@@ -77,13 +77,13 @@ FUNCTION fin_bb_analitika_b( params )
       aUsl1 := Parsiraj( qqKonto, "idkonto" )
       IF !( Empty( dDatOd ) .AND. Empty( dDatDo ) )
          cFilter += ( iif( Empty( cFilter ), "", ".and." ) + ;
-            aUsl1 + ".and. DATNAL>=" + cm2str( dDatOd ) + " .and. DATNAL<=" + cm2str( dDatDo ) )
+            aUsl1 + ".and. DATNAL>=" + dbf_quote( dDatOd ) + " .and. DATNAL<=" + dbf_quote( dDatDo ) )
       ELSE
          cFilter += ( iif( Empty( cFilter ), "", ".and." ) + aUsl1 )
       ENDIF
    ELSEIF !( Empty( dDatOd ) .AND. Empty( dDatDo ) )
       cFilter += ( iif( Empty( cFilter ), "", ".and." ) + ;
-         "DATNAL>=" + cm2str( dDatOd ) + " .and. DATNAL<=" + cm2str( dDatDo ) )
+         "DATNAL>=" + dbf_quote( dDatOd ) + " .and. DATNAL<=" + dbf_quote( dDatDo ) )
    ENDIF
 
    IF Len( cIdFirma ) < 2
@@ -91,7 +91,7 @@ FUNCTION fin_bb_analitika_b( params )
       Box(, 2, 30 )
       nSlog := 0
       nUkupno := RECCOUNT2()
-      cFilt := IF( Empty( cFilter ), "IDFIRMA=" + cm2str( cIdFirma ), cFilter + ".and.IDFIRMA=" + cm2str( cIdFirma ) )
+      cFilt := IF( Empty( cFilter ), "IDFIRMA=" + dbf_quote( cIdFirma ), cFilter + ".and.IDFIRMA=" + dbf_quote( cIdFirma ) )
       cSort1 := "IdKonto+dtos(DatNal)"
       INDEX ON &cSort1 TO "ANATMP" FOR &cFilt Eval( fin_tek_rec_2() ) EVERY 1
       GO TOP

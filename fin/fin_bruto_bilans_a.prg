@@ -343,7 +343,7 @@ METHOD FinBrutoBilans:get_data()
 
    if ::tip == 1
       IF !Empty( _id_rj ) .AND. _id_rj <> "999999"
-         _where += " AND sub.idrj = " + _sql_quote( _id_rj )
+         _where += " AND sub.idrj = " + sql_quote( _id_rj )
       ENDIF
    ENDIF
 

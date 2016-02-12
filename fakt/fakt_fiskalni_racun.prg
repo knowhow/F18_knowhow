@@ -288,9 +288,9 @@ FUNCTION postoji_fiskalni_racun( id_firma, tip_dok, br_dok, model )
       model := fiskalni_uredjaj_model()
    ENDIF
 
-   cWhere := " idfirma = " + _sql_quote( id_firma )
-   cWhere += " AND idtipdok = " + _sql_quote( tip_dok )
-   cWhere += " AND brdok = " + _sql_quote( br_dok )
+   cWhere := " idfirma = " + sql_quote( id_firma )
+   cWhere += " AND idtipdok = " + sql_quote( tip_dok )
+   cWhere += " AND brdok = " + sql_quote( br_dok )
 
    IF ALLTRIM( model ) $ "FPRINT#HCP"
       cWhere += " AND ( ( iznos > 0 AND fisc_rn > 0 ) "

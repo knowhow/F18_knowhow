@@ -133,7 +133,7 @@ METHOD run()
       ::lStarted := .F.
    ENDIF
 
-   start_module( self, .T. )
+   start_f18_program_module( self, .T. )
 
    // da se zna da je objekat jednom vec startovan
    ::lStarted := .T.

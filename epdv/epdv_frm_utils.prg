@@ -48,6 +48,7 @@ FUNCTION v_id_tar( cIdTar, nOsnov, nPdv,  nShow, lNova )
    PopWa()
 
    RETURN .T.
+   
 
 FUNCTION v_part( cIdPart, cIdTar, cTbl, lShow )
 
@@ -65,7 +66,7 @@ FUNCTION v_part( cIdPart, cIdTar, cTbl, lShow )
          ELSE
             MsgBeep( "Ino kupac, setuje tarifu na PDV0IZ !" )
             cIdTar := PadR( "PDV0IZ", 6 )
-			
+
          ENDIF
       ENDIF
    ENDIF

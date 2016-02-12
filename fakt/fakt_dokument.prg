@@ -1,18 +1,15 @@
-/* 
- * This file is part of the bring.out knowhow ERP, a free and open source 
+/*
+ * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
  * Copyright (c) 1994-2011 by bring.out d.o.o Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including knowhow ERP specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
 
 #include "f18.ch"
-
-#include "hbclass.ch"
-#include "common.ch"
 
 
 
@@ -27,12 +24,12 @@ CLASS FaktDokument
 
     ACCESS     broj            INLINE ::p_idfirma + "/" + ::p_idtipdok + "/" + ::p_brdok
 
-    ACCESS     error_message   INLINE ::err_msg 
+    ACCESS     error_message   INLINE ::err_msg
 
-    // info vraca hash matricu: 
+    // info vraca hash matricu:
     //  neto_vrijednost, broj_stavki, distinct_roba, datdok, idpartner
     ACCESS     info            METHOD get_info()
-    METHOD     refresh_info() 
+    METHOD     refresh_info()
 
     METHOD     change_idtipdok(new_idtipdok)
     METHOD     refresh_dbfs()
@@ -53,7 +50,7 @@ CLASS FaktDokument
     DATA       p_h_info
 
     DATA       p_marked      INIT  .f.
- 
+
     DATA       err_msg        INIT ""
     DATA       p_server
     DATA       p_sql_where
@@ -63,12 +60,12 @@ ENDCLASS
 
 
 METHOD FaktDokument:New(idfirma, idtipdok, brdok, server)
-	   
+
    ::p_idfirma := idfirma
    ::p_idtipdok := idtipdok
    ::p_brdok := brdok
-    
-/* 
+
+/*
    if server == NIL
       ::_server := my_server()
    else
@@ -76,7 +73,7 @@ METHOD FaktDokument:New(idfirma, idtipdok, brdok, server)
    endif
 */
 
- 
+
    ::set_sql_where()
 return SELF
 
@@ -101,7 +98,7 @@ return .t.
 METHOD FaktDokument:set_sql_where()
 
 ::p_sql_where := "idfirma=" + sql_quote(::p_idfirma)
-::p_sql_where += " AND idtipdok=" + sql_quote(::p_idtipdok) 
+::p_sql_where += " AND idtipdok=" + sql_quote(::p_idtipdok)
 ::p_sql_where += " AND brdok=" + sql_quote(::p_brdok)
 
 return .t.
@@ -120,7 +117,7 @@ if _ret > 1
     return .f.
 endif
 
-_ret := _qry:FieldGet(1) 
+_ret := _qry:FieldGet(1)
 
 return _ret
 
@@ -133,7 +130,7 @@ return ::info
 METHOD FaktDokument:get_info()
 local _ret := hb_hash()
 local _qry
-local _qry_str 
+local _qry_str
 
 if ::p_h_info != NIL
     return ::p_h_info
@@ -153,14 +150,14 @@ _qry := run_sql_query(_qry_str)
 _ret["distinct_idroba"] := {}
 DO WHILE !_qry:EOF()
     AADD(_ret["distinct_idroba"], _qry:FieldGet(1))
-   _qry:skip() 
+   _qry:skip()
 ENDDO
 
 _qry_str := "SELECT datdok, idpartner from fmk.fakt_doks WHERE " + ::p_sql_where
 _qry := run_sql_query(_qry_str)
 _ret["datdok"] := _qry:FieldGet(1)
 _ret["idpartner"] := _qry:FieldGet(2)
- 
+
 ::p_h_info := _ret
 
 return _ret
@@ -192,27 +189,27 @@ local _tmp_tbl := f18_user() + "_tmp_fakt_atributi"
 
 // prvo sve u temp tabeli uraditi
 _sql := "DROP TABLE IF EXISTS " + _tmp_tbl
-_sql += ";" 
+_sql += ";"
 _sql += "CREATE TEMP TABLE " + _tmp_tbl + " AS "
 _sql += "SELECT * FROM fmk.fakt_fakt_atributi WHERE " + ::p_sql_where
 _sql += ";"
 _sql += "UPDATE " + _tmp_tbl + " SET idtipdok=" + sql_quote(new_idtipdok)
 _sql += ";"
 _sql += "DELETE FROM fmk.fakt_fakt_atributi "
-_sql += " WHERE " + ::p_sql_where 
+_sql += " WHERE " + ::p_sql_where
 _sql += ";"
 
 
 _sql += "UPDATE fmk.fakt_fakt set idtipdok=" + sql_quote(new_idtipdok)
-_sql += " WHERE " + ::p_sql_where 
+_sql += " WHERE " + ::p_sql_where
 _sql += ";"
 
 _sql += "UPDATE fmk.fakt_doks set idtipdok=" + sql_quote(new_idtipdok)
-_sql += " WHERE " + ::p_sql_where 
+_sql += " WHERE " + ::p_sql_where
 _sql += ";"
 
 _sql += "UPDATE fmk.fakt_doks2 set idtipdok=" + sql_quote(new_idtipdok)
-_sql += " WHERE " + ::p_sql_where 
+_sql += " WHERE " + ::p_sql_where
 _sql += ";"
 
 _sql += "INSERT INTO fmk.fakt_fakt_atributi (SELECT * from " + _tmp_tbl + ")"

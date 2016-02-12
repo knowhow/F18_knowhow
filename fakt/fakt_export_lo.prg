@@ -27,7 +27,7 @@ FUNCTION fakt_export_dokument_lo()
    _exp_dok()
    tbl_export()
 
-   RETURN
+   RETURN .T.
 
 
 // ---------------------------------------------
@@ -56,7 +56,7 @@ STATIC FUNCTION _exp_dok()
       AllTrim( get_dtxt_opis( "K10" ) ) + ;
       " " + ;
       AllTrim( get_dtxt_opis( "K11" ) )
-		
+
    cParRegb := get_dtxt_opis( "K03" )
 
    // te tabele iskoristi za export
@@ -70,7 +70,7 @@ STATIC FUNCTION _exp_dok()
 
       SELECT r_export
       APPEND BLANK
-	
+
       REPLACE brdok WITH drn->brdok
       REPLACE rbr WITH rn->rbr
       REPLACE art_id WITH rn->idroba
@@ -80,13 +80,13 @@ STATIC FUNCTION _exp_dok()
       REPLACE dat_dok WITH drn->datdok
       REPLACE par_naz WITH cParNaz
       REPLACE par_regb WITH cParRegb
-	
+
       REPLACE i_kol WITH rn->kolicina
       REPLACE i_bpdv WITH rn->cjenbpdv
       REPLACE i_popust WITH rn->popust
       REPLACE i_bpdvp WITH rn->cjen2bpdv
       REPLACE i_ukupno WITH ( rn->kolicina * rn->cjen2bpdv )
-	
+
       SELECT rn
       SKIP
 

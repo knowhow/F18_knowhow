@@ -9,12 +9,10 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-#include "hbclass.ch"
-#include "common.ch"
+
 #include "f18.ch"
 
-// ------------------------------------------------
-// ------------------------------------------------
+
 CLASS FaktDokumenti
 
    DATA    items

@@ -9,7 +9,6 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-
 #include "f18.ch"
 
 FUNCTION fakt_stanje_artikla( cIdRj, cIdroba, nUl, nIzl, nRezerv, nRevers, lSilent )

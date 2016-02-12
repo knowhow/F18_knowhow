@@ -9,7 +9,6 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-
 #include "f18.ch"
 
 
@@ -155,7 +154,7 @@ FUNCTION Parsiraj( cFilterUpit, cImeSifre, cTip, lRekurzivno, nSifWA )
       ENDIF
 
       IF cOperator == "--" .AND. Empty( cProlaz ) .AND. npoz1 > 0
- 
+
          nPoz1end := NextToken( @cFilterUpit, @cToken )
          cLijevo := Left( cFilterUpit, nPoz1 - 1 )
          cDesno := SubStr( cFilterUpit, nPoz1 + 2, nPoz1end - nPoz1 - 2 )
@@ -167,7 +166,7 @@ FUNCTION Parsiraj( cFilterUpit, cImeSifre, cTip, lRekurzivno, nSifWA )
          CASE cTip == "D"
             cIzraz += "(" + cImeSifre + ">=CTOD('" + cLijevo + "').and." + cImeSifre + "<=CTOD('" + cDesno + "'))"
          ENDCASE
-         
+
          cFilterUpit := SubStr( cFilterUpit, nPoz1End + 1 )
          cProlaz += "O"
       ENDIF
@@ -272,7 +271,7 @@ FUNCTION PrviOperator( cSifra, nPoz1 )
 
 
 FUNCTION  Zagrade( cSifra, nPoz1, nPoz1end )
-   
+
    // cSifra = 930239(3332('3232323))
 
    LOCAL i, nBracket

@@ -1016,7 +1016,7 @@ FUNCTION PodijeliN()
    LOCAL cPomKTO := "9999999"
    LOCAL cIdFirma, cIdVN, cBrNal
 
-   IF !SigmaSif( "PVNAPVN" )
+   IF !spec_funkcije_sifra( "PVNAPVN" )
       RETURN
    ENDIF
 

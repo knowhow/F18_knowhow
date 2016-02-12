@@ -178,7 +178,7 @@ return
 
 
 function RazdvojiDupleInvBr()
-if sigmasif("UNIF")
+if spec_funkcije_sifra("UNIF")
     if pitanje(,"Razdvojiti duple inv.brojeve ?","N")=="D"
         UnifId()
     endif

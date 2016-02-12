@@ -8,7 +8,7 @@
    Donated to the public domain on 2001-04-03 by David G. Holm <dholm@jsd-llc.com>
 */
 
-#include "hbclass.ch"
+#include "f18.ch"
 
 
 CREATE CLASS TFileRead

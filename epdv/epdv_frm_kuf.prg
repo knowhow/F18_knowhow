@@ -19,7 +19,7 @@ FUNCTION epdv_edit_kuf()
    epdv_otvori_kuf_tabele( .T. )
    epdv_kuf_tbl_priprema()
 
-   RETURN
+   RETURN .T.
 
 
 STATIC FUNCTION epdv_kuf_tbl_priprema()
@@ -45,7 +45,7 @@ STATIC FUNCTION epdv_kuf_tbl_priprema()
    BoxC()
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
 
 STATIC FUNCTION set_a_kol_kuf( aKol, aImeKol )

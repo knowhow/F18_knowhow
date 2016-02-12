@@ -18,7 +18,7 @@ FUNCTION epdv_edit_kif()
    epdv_otvori_kif_tabele( .T. )
    epdv_kif_tbl_priprema()
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -247,7 +247,7 @@ STATIC FUNCTION epdv_kif_key_handler()
       RETURN DE_REFRESH
 
    CASE is_key_alt_a( Ch )
-   
+
       IF Pitanje( , "Ažurirati pripremu KIF-a (D/N) ?", "N" ) == "D"
          azur_kif()
          RETURN DE_REFRESH

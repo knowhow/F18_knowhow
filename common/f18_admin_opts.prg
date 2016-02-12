@@ -814,7 +814,7 @@ METHOD F18AdminOpts:new_session()
    LOCAL _res := {}
    LOCAL _ok := .T.
 
-   IF !SigmaSif( "ADMIN" )
+   IF !spec_funkcije_sifra( "ADMIN" )
       MsgBeep( "Opcija zasticena !" )
       RETURN _ok
    ENDIF
@@ -934,7 +934,7 @@ METHOD F18AdminOpts:create_new_db( params, pg_srv )
    // ===============================================================
    IF params == NIL
 
-      IF !SigmaSif( "ADMIN" )
+      IF !spec_funkcije_sifra( "ADMIN" )
          MsgBeep( "Opcija zasticena !" )
          RETURN _ok
       ENDIF
@@ -1117,7 +1117,7 @@ METHOD F18AdminOpts:drop_db( db_name, pg_srv )
 
    IF db_name == NIL
 
-      IF !SigmaSif( "ADMIN" )
+      IF !spec_funkcije_sifra( "ADMIN" )
          MsgBeep( "Opcija zasticena !" )
          _ok := .F.
          RETURN

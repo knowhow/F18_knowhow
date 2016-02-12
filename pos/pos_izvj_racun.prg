@@ -832,7 +832,7 @@ FUNCTION SetujZakljuceno()
    // {
    LOCAL nCounter
 
-   IF !SigmaSif( "RNZAK" )
+   IF !spec_funkcije_sifra( "RNZAK" )
       MsgBeep( "Nemate ovlastenja za koristenje opcije!!!" )
       RETURN
    ENDIF

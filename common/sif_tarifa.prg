@@ -463,7 +463,7 @@ FUNCTION KorekTar()
    LOCAL cTekIdTarifa
    LOCAL cPriprema
 
-   IF !SigmaSif( "SIGMATAR" )
+   IF !spec_funkcije_sifra( "SIGMATAR" )
       RETURN
    ENDIF
 

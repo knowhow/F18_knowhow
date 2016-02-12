@@ -233,9 +233,9 @@
 #command @ <row>, <col> SAY <xpr>                                       ;
                         [COLOR <color>]                                 ;
                                                                         ;
-      =>   DevPos( <row>, <col> )                                         ;
-       ;  DevOut( <xpr> [, <color>] );
-       ; end
+      =>    DevPos( <row>, <col> )                                      ;
+       ;  DevOut( <xpr> [, <color>] )
+
 
 
 ***

@@ -1260,9 +1260,9 @@ FUNCTION kalk_edit_priprema( fNovi, atrib )
       SetKey( K_CTRL_K, {|| a_val_convert() } )
 
       IF nStrana == 1
-         nR := GET1( fNovi, @atrib )
+         nR := kalk_unos_1( fNovi, @atrib )
       ELSEIF nStrana == 2
-         nR := GET2( fNovi )
+         nR := kalk_unos_2( fNovi )
       ENDIF
 
       SetKey( K_PGDN, NIL )
@@ -1301,12 +1301,12 @@ FUNCTION kalk_edit_priprema( fNovi, atrib )
 
 
 
-/*! \fn Get1()
- *  \param fnovi
- *  \brief Prva strana/prozor maske unosa/ispravke stavke dokumenta
+/* fn Get1()
+ *  param fnovi
+ *  brief Prva strana/prozor maske unosa/ispravke stavke dokumenta
  */
 
-FUNCTION Get1( fNovi, atrib )
+FUNCTION kalk_unos_1( fNovi, atrib )
 
    PRIVATE pIzgSt := .F.
    PRIVATE Getlist := {}
@@ -1315,6 +1315,9 @@ FUNCTION Get1( fNovi, atrib )
       RETURN K_ESC
    ENDIF
 
+   SELECT kalk_pripr
+   SET FILTER TO
+   
    IF _idvd == "10"
 
       RETURN Get1_10PDV()
@@ -1347,7 +1350,7 @@ FUNCTION Get1( fNovi, atrib )
       RETURN GET1_41()
 
    ELSEIF _idvd == "81"
-      RETURN get1_81( @atrib )
+      RETURN kalk_unos_dok_81( @atrib )
 
    ELSEIF _idvd == "80"
       RETURN GET1_80( @atrib )
@@ -1379,7 +1382,7 @@ FUNCTION Get1( fNovi, atrib )
       RETURN K_ESC
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 FUNCTION ispisi_naziv_sifre( area, id, x, y, len )
@@ -1416,12 +1419,12 @@ FUNCTION ispisi_naziv_sifre( area, id, x, y, len )
 
 
 
-/*! \fn Get2()
- *  \param fnovi
+/*! fn Get2()
+ *  param fnovi
  *  \brief Druga strana/prozor maske unosa/ispravke stavke dokumenta
  */
 
-FUNCTION Get2( fNovi )
+FUNCTION kalk_unos_2( fNovi )
 
    IF _idvd $ "10"
       IF !IsPDV()

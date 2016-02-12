@@ -10,8 +10,7 @@
  */
 
 #include "f18.ch"
-#include "hbclass.ch"
-#include "common.ch"
+
 
 
 CLASS ReportCommon
@@ -137,7 +136,7 @@ METHOD ReportCommon:get_zaglavlje( item )
          _empty_fill := ::zagl_arr[ _i, 1 ] - Len( ::zagl_arr[ _i, 4 ] )
          _line += ::zagl_arr[ _i, 4 ] + Space( _empty_fill )
       ENDIF
-		
+
       IF _i <> Len( ::zagl_arr )
          IF item == 0
             _line += " "

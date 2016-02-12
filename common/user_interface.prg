@@ -35,11 +35,10 @@ FUNCTION init_gui( clear )
 
    NaslEkran( clear )
 
-   RETURN
+   RETURN .T.
 
 
-// ---------------------------------------------------------
-// ---------------------------------------------------------
+
 FUNCTION Calc_xy( m_x, m_y, N, Length )
 
    LOCAL x, y
@@ -67,7 +66,7 @@ FUNCTION Calc_xy( m_x, m_y, N, Length )
       m_y := Int( ( MAXCOLS() - Length - 2 ) / 2 )
    END IF
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -125,10 +124,10 @@ FUNCTION what_action( nItemNo )
    RETURN cAction
 
 
-/*! \fn Msg(Text,Sec, xPos)
-*   \brief Ispisuje tekst i ceka <Sec> sekundi
-*   \param xPos je pozicija ukoliko se ne zeli centrirati poruka
-*   \note Maksimalna duzina jednog reda je 72 slova
+/* fn Msg(Text,Sec, xPos)
+*   brief Ispisuje tekst i ceka <Sec> sekundi
+*   param xPos je pozicija ukoliko se ne zeli centrirati poruka
+*   note Maksimalna duzina jednog reda je 72 slova
 */
 
 FUNCTION Msg( uText, sec, xPos )
@@ -186,7 +185,8 @@ FUNCTION Msg( uText, sec, xPos )
    MsgC( msg_x1, msg_y1, msg_x2, msg_y2 )
    SET( _SET_DEVICE, cPom )
 
-   RETURN
+   RETURN .T.
+
 
 FUNCTION MsgO( cText, sec, lUtf )
 

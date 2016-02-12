@@ -1,1431 +1,1438 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1994-2011 by bring.out d.o.o Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including knowhow ERP specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
 
- 
+
 #include "f18.ch"
 
 
 
-function IzvrsBudz()
-
-local cLM:=SPACE (5)
-local fKraj
-local n
-private picBHD:=FormPicL(gPicBHD, 15)
-private picDEM:=FormPicL(gPicDEM, 12)
-private cIdKonto
-private cIdFirma:=SPACE(LEN(gFirma))
-private cIdRj:=SPACE(50)
-private cFunk:=SPACE(60)
-private dDatOd:=CTOD("")
-private dDatDo:=DATE()
-private aUslK
-private aUslRj
-private aUslFunk
-private cSpecKonta
-private nProc:=0
-private cBuIz:="N"
-private cPeriod:=PADR("JANUAR - ", 40)
-
-private nKorRed1:=VAL(IzFmkIni("FinBudzet","KorRed1","0",KUMPATH))
-private nKorRed2:=VAL(IzFmkIni("FinBudzet","KorRed2","0",KUMPATH))
-private nKorRed3:=VAL(IzFmkIni("FinBudzet","KorRed3","0",KUMPATH))
-private nKorRed4:=VAL(IzFmkIni("FinBudzet","KorRed4","0",KUMPATH))
-
-cIdKonto:=PADR("6;", 60)
-cSpecKonta:=PADR("", 60)
-
-cI1:="D"
-cI2:="D"
-cI3:="D"
-cI4:="D"
-
-cSTKI1:="N"
-cProv:="D"
-
-private cBRZaZ:=PADR(IzFMKIni('BUDZET','BrRedZaZagl','0',KUMPATH),2)
-
-IF gBuIz=="D"
-	O_BUIZ
-ENDIF
-O_PARTN
-
-do while .t.
-
-	Box (, 22, 75)  // 19
-	@ m_x,m_y+15 SAY "IZVRSENJE BUDZETA / PREGLED RASHODA"
-
-	//  procenat ucesca perioda u godisnjem planu
-	if gNW=="D"
-		cIdFirma:=gFirma
-		@ m_x+1,m_y+2 SAY "Firma "; ?? gFirma,"-",gNFirma
-	else
-		@ m_x+1,m_y+2 SAY "Firma: " GET cIdFirma valid {|| P_Firma(@cIdFirma),cidfirma:=left(cidfirma,2),.t.}
-	endif
-
-	@ m_x+3,m_y+2 SAY "         Konta (prazno-sva)" GET cIdKonto PICT "@S30@!" VALID {|| aUslK := Parsiraj (cIdKonto, "IdKonto"), IIF (aUslK==NIL, .F., .T.)}
-	@ m_x+4,m_y+2 SAY " Razdjel/glava (prazno-svi)" GET cIdRj PICT "@S30@!" VALID {|| aUslRj := Parsiraj (cIdRj, "IdRj"), IIF (aUslRj==NIL, .F., .T.)}
-	@ m_x+5,m_y+2 SAY "Funkc. klasif  (prazno-sve)" GET cFunk PICT "@S30@!" VALID {|| aUslFunk := Parsiraj (cFunk, "Funk", "C"), IIF (aUslFunk==NIL, .F., .T.)}
-	@ m_x+6,m_y+2 SAY "                 Pocevsi od" GET dDatOd VALID dDatOd <= dDatDo
-	@ m_x+7,m_y+2 SAY "               Zakljucno sa" GET dDatDo VALID dDatOd <= dDatDo
-	@ m_x+10,m_y+2 SAY "Procenat u odnosu god. plan" GET nProc PICT "999.99"
-
-	@ m_x+13,m_y+2 SAY "          Obuhvaceni period" GET cPeriod PICT "@!"
-	@ m_x+14,m_y+2 SAY "Izvjestaj 1" GET cI1 pict "@!" valid ci1 $ "DN"
-	@ row(),col()+2 SAY "2:" GET cI2 pict "@!" valid ci2 $ "DN"
-	@ row(),col()+2 SAY "3:" GET cI3 pict "@!" valid ci3 $ "DN"
-	@ row(),col()+2 SAY "4:" GET cI4 pict "@!" valid ci4 $ "DN"
-	@ m_x+16,m_y+2 SAY "Subtotali po analitici za izvjestaj 1 ? (D/N)" GET cSTKI1 pict "@!" valid cSTKI1 $ "DN"
-	@ m_x+18,m_Y+2 SAY "Provjeriti stavke koje nisu definisane u budzetu" GET cProv pict "@!" valid cprov $"DN"
-
-	if gBuIz=="D"
-		cBuIz:="D"
-		@ m_x+19,m_Y+2 SAY "U izvjestaju koristiti korekciju za sortiranje konta? (D/N)" GET cBuIz pict "@!" valid cBuIz $"DN"
-	endif
-
-	@ m_x+20,m_Y+2 SAY "Broj redova za zaglavlje na izvjest. (0 - nista): " get cBRZaZ
-	read
-	ESC_BCR
-	BoxC()
-
-	UzmiIzIni(KUMPATH+'fmk.ini','BUDZET','BrRedZaZagl',cBRZaZ,'WRITE')
-
-	if (aUslK==NIL .or. aUslRJ==NIL .or. aUslFunk==NIL)
-		loop
-	else
-		exit
-	endif
-
-enddo
-
-O_BUDZET
-SET ORDER TO TAG "2"
-
-O_KONTO
-O_RJ
-O_FUNK
-O_SUBAN
-
-SELECT SUBAN
-cFilter := ""
-IF aUslK<>".t."
-	cFilter += aUslK
-EndIF
-IF aUslRj<>".t."
-	cFilter += IF (!Empty (cFilter), ".and.", "") + aUslRj  // cidrj
-EndIF
-IF aUslFunk<>".t."
-	cFilter += IF (!Empty (cFilter), ".and.", "") + aUslFunk
-EndIF
-IF !Empty (dDatOd)
-	cFilter += IF (!Empty (cFilter), ".and.", "") + "DatDok>="+dbf_quote(dDatOd)
-EndIF
-IF !Empty (dDatDo)
-	cFilter += IF (!Empty (cFilter), ".and.", "") + "DatDok<="+dbf_quote(dDatDo)
-EndIF
-
-IF !Empty (cFilter)
-	set Filter to &cFilter
-EndIF
-
-select budzet
-private cFiltB:=""
-IF aUslK<>".t."
-	cFiltB += IF (!Empty (cFiltB), ".and.", "") + aUslK
-EndIF
-IF aUslRj<>".t."
-	cFiltB += IF (!Empty (cFiltB), ".and.", "") + aUslRj
-EndIF
-IF aUslFunk<>".t."
-	cFiltB += IF (!Empty (cFiltB), ".and.", "") + aUslFunk
-EndIF
-set filter to &cFiltB
-
-START PRINT CRET
-P_INI
-?
-F10CPI
-
-select budzet
-if cBuIz=="D"
-	INDEX ON idrj+BuIz(idkonto) TO IZBUD
-	set order to tag "IZBUD"
-else
-	set order to tag "1"  //"1","IdRj+Idkonto"
-endif
-
-SELECT suban
-IF cBuIz=="D"
-	INDEX ON idFirma+BuIz(IdKonto)+dtos(DatDok)+idpartner TO IZSUB
-	set order to tag "IZSUB"
-ELSE
-	set order to tag "5"
-ENDIF
-
-nTotal:=0
-nVanBudzeta:=0
-nVanB2:=0
-
-seek cidfirma
-
-do while !eof() .and. idfirma==cidfirma
-	if d_p=="1"
-		nTotal+=iznosbhd
-	else
-		nTotal-=iznosbhd
-	endif
-	select budzet
-	seek suban->idrj
-	if !found()
-		if cprov=="D"
-			MsgBeep(" RJ:"+suban->idrj+"## <ESC> suti")
-			if lastkey()==K_ESC
-				cProv:="N"
-			endif
-		endif
-		select suban
-		if d_p=="1"
-			nVanBudzeta+=iznosbhd
-		else
-			nVanBudzeta-=iznosbhd
-		endif
-	else // rj postoji
-		select budzet
-		seek suban->(idrj+idkonto)
-		if !found() // potrazi one koje se nece pojaviti u izvjestaju 4
-			skip -1 // idi na predh stavku budzeta
-			if idrj<>suban->idrj
-				if cProv=="D"
-					MsgBeep("Nema u planu:"+suban->idrj+"/"+suban->idkonto+"## <ESC> suti")
-					if lastkey()==K_ESC
-						cProv:="N"
-					endif
-				endif
-				select suban
-				if d_p=="1"
-					nVanB2+=iznosbhd
-				else
-					nVanB2-=iznosbhd
-				endif
-			endif
-		endif
-	endif
-	select suban
-	skip 1
-enddo
-
-
-if cI1=="D"
-	select suban
-	if cBuIz=="D"
-		INDEX ON idFirma+BuIz(IdKonto)+dtos(DatDok)+idpartner TO IZSUB
-		set order to tag "IZSUB"
-	else
-		set order to tag "5"
-	endif
-
-	// izvjestaj 1
-	GO TOP
-	INI
-	F10CPI
-	B_ON
-
-	Razmak(VAL(cBRZaZ))
-
-	?? PADC ("P R E G L E D   R A S H O D A", 80)
-	? PADC ("PO SKUPINAMA TROSKOVA", 80)
-	? PADC ("ZA PERIOD "+ AllTrim (cPeriod), 80)
-	B_OFF
-	?
-
-	P_COND
-	cLM := SPACE (10)
-	th1 := cLM+"                                                                                                                   Ucesce"
-	th2 := cLM+"Ekonom.                                                   Plan za                          Izvrsenje     Procenat  u ukup."
-	th3 := cLM+" kod    Skupina troskova                               tekucu godinu    Plan za period     za period     izvrsenja trosk."
-	th4 := cLM+"                                                         (KM)               (KM)            (KM)          (%)      (%)"
-	  m := cLM+"------- --------------------------------------------- ---------------- ---------------- ---------------- --------- -------"
-
-	fPrvaStr := .T.
-	nPageNo := 2
-	IB_Zagl1()
-	nSlob:=nKorRed1+46-VAL(cBrZaZ)
-	nTot1:=nTot2:=nTot3:=0
-
-	SELECT BUDZET
-	if cBuIz=="D"
-		INDEX ON BuIz(idkonto) TO IZBUD2
-		set order to tag "IZBUD2"
-	else
-		set order to tag "2"    //"2", "Idkonto"
-	endif
-
-	aSTKI1 := { 0, 0, 0, "" }
-
-	GO TOP
-	do While !Eof()
-		cSk := Left (Idkonto, 2)
-		nTotSk := 0
-		nTotPlSk := 0
-		do While !Eof() .and. left(Idkonto,2)=cSk
-			cKto := BuIz(IdKonto)
-			cKtoStvarni := IdKonto
-			IF nSlob = 0
-				IB_Zagl1()
-			EndIF
-
-			// Izracunaj plan za tekucu godinu
-
-			nPlan := 0
-			do While !Eof() .and. BuIz(Idkonto)==cKto
-				nPlan += (Iznos+RebIznos)
-				SKIP 1
-			EndDO
-
-			cBudzetNext:=BuIz(idkonto) // sljedeca stavka u budzetu
-			if eof()
-				cBudzetNext:="XXX"
-			endif
-
-			nTotPlSk += nPlan
-			nPlanPer := nPlan*nProc/100
-			select suban
-			seek cidfirma+cKtoStvarni
-			fUBudzetu:=.t.
-
-			do while fUbudzetu .or. !eof() .and. cidfirma==idfirma .and. BuIz(idkonto)>=cKto .and. BuIz(idkonto)<cBudzetNext
-
-				nTotEK := 0
-				cSKonto:=BuIz(idkonto)
-				cSKontoStvarni:=idkonto
-
-				IF EMPTY(aSTKI1[4])
-					aSTKI1[4] := iif(fUBudzetu,cKtoStvarni,cSKontoStvarni)
-				ENDIF
-
-				do While !Eof() .and. cidfirma==idfirma .and. BuIz(IdKonto)==iif(fUBudzetu,cKto,cSKonto)
-					if d_p=="1"
-						nTotEK += IznosBHD
-					else
-						nTotEK -= IznosBHD
-					endif
-					SKIP 1
-				EndDO
-
-				IF nSlob = 0
-					IB_Zagl1()
-				EndIF
-
-				? cLM
-				SELECT konto
-				HSEEK iif(fUBudzetu,cKtoStvarni,cSKontoStvarni)
-				select suban
-				?? iif(fUBudzetu,cKtoStvarni,cSKontoStvarni), PADR (Konto->Naz, 46)
-				?? TRANSFORM(nPlan,    "9,999,999,999.99"), TRANSFORM(nPlanPer, "9,999,999,999.99"), TRANSFORM(nTotEK,   "9,999,999,999.99")
-				IF nPlanPer > 0
-					?? " "+TRANSFORM(nTotEK*100/nPlanPer, "99,999.99")
-				Else
-					?? SPACE (1+9)
-				EndIF
-				IF nTotal > 0
-					?? " ", STR (nTotEK*100/nTotal, 6, 2)
-				EndIF
-
-				IF cSTKI1=="D"
-					aSTKI1[1] += nPlan
-					aSTKI1[2] += nPlanPer
-					aSTKI1[3] += nTotEk
-					// ispitati (MS)
-					IF EOF() .or. SUBSTR(idkonto,6,2)=="0 " .or. LEFT(aSTKI1[4],5)<>LEFT(idkonto,5)
-						? cLM
-						?? aSTKI1[4], PADR ("UKUPNO", 46, "_")
-						?? TRANSFORM(aSTKI1[1], "9,999,999,999.99"), TRANSFORM(aSTKI1[2], "9,999,999,999.99"), TRANSFORM(aSTKI1[3], "9,999,999,999.99")
-						IF aSTKI1[2] > 0
-							?? " "+TRANSFORM( aSTKI1[3]*100/aSTKI1[2] , "99,999.99")
-						Else
-							?? SPACE (1+9)
-						EndIF
-						IF nTotal > 0
-							?? " ", STR ( aSTKI1[3]*100/nTotal , 6, 2)
-						EndIF
-						aSTKI1[1] := 0
-						aSTKI1[2] := 0
-						aSTKI1[3] := 0
-						aSTKI1[4] := ""
-						nSlob--
-					ENDIF
-				ENDIF
-
-				fUBudzetu:=.f.
-				nSlob --
-				nTotSk += nTotEK
-				nPlan:=0
-				nPlanPer:=0
-
-			enddo // suban
-			select budzet
-		EndDO  //cSK
-
-		IF nSlob < 3
-			IB_Zagl1 ()
-		EndIF
-
-		? m
-		nPlanPer := nTotPlSk*nProc/100
-		?
-		B_ON
-		?? cLM, SPACE (6), PADL ("   UKUPNO SKUPINA TROSKOVA "+cSk+": ", 45), TRANSFORM(nTotPlSk, "9,999,999,999.99"), TRANSFORM(nPlanPer, "9,999,999,999.99"), TRANSFORM(nTotSk,   "9,999,999,999.99")
-		IF nPlanPer > 0
-			?? " "+TRANSFORM(nTotSk*100/nPlanPer, "99,999.99")
-		Else
-			?? SPACE(10)
-		EndIF
-		IF nTotal > 0
-			?? " ", STR (nTotSk*100/nTotal, 5, 2)
-		EndIF
-		nTot1 += nTotPlSk
-		nTot2 += nPlanPer
-		nTot3 += nTotSk
-
-		B_OFF
-		? m
-		nSlob -= 3
-	EndDO // eof
-
-	?
-	B_ON
-	?? cLM, SPACE (6), PADL (" UKUPNI TROSKOVI PO SKUPINAMA: ", 45), TRANSFORM(nTot1, "9,999,999,999.99"), TRANSFORM(nTot2, "9,999,999,999.99"), TRANSFORM(nTot3, "9,999,999,999.99")
-	IF nTot2 > 0
-		?? " "+TRANSFORM(nTot3*100/nTot2, "99,999.99")
-	Else
-		?? SPACE (10)
-	EndIF
-	IF nTotal>0
-		?? " ", STR (nTot3*100/nTotal, 5, 2)
-	EndIF
-	B_OFF
-	? m
-
-	cLM := SPACE (5)
-
-	if !"D" $ ci2 + ci3 + ci4
-		?
-		?
-		?
-		?
-		? Space(80) + "Ministar: _________________________________"
-	endif
-
-	FF
-
-endif // kraj izvjestaja 1
-
-
-if ci2=="D"
-	// izvjestaj 2
-
-	// struktura tro�kova po vrstama
-
-	F10CPI
-	B_ON
-
-//	if !"D" $ ci1   //mjesto za zaglavlje
-		Razmak(VAL(cBRZaZ))
-//	endif
-
-	?? PADC ("STRUKTURA TROSKOVA PO VRSTAMA", 80)
-	? PADC ("ZA PERIOD "+ AllTrim (cPeriod), 80)
-	?
-	B_OFF
-	th1 := cLM+" "+"Vrsta  "+" "+PADR ("Naziv vrste troska", LEN (KONTO->Naz))+" "+PADC ("Iznos ("+AllTrim (ValDomaca())+")", 16)
-
-	m := cLM+" "+REPL ("-", 7)+" "+REPL ("-", LEN(KONTO->Naz))+" "+REPL ("-", 16)
-
-	F12CPI
-	fPrvaStr := .T.
-	nPageNo := 2
-	IB_Zagl2 ()
-
-	nSlob := nKorRed2+50-VAL(cBrZaZ)
-	nTotTr := 0
-
-	select suban
-	if cBuIz=="D"
-		INDEX ON idFirma+BuIz(IdKonto)+dtos(DatDok)+idpartner TO IZSUB
-		set order to tag "IZSUB"
-	else
-		set order to tag "5"
-	endif
-
-	seek cidfirma
-	do While !Eof() .and. idfirma==cidfirma
-		_IdKonto := BuIz(IdKonto)
-		_IdKontoStvarni := IdKonto
-		IF nSlob == 0
-			FF
-			IB_Zagl2 ()
-			nSlob := nKorRed2+50-VAL(cBrZaZ)
-		EndIF
-		SELECT KONTO
-		HSEEK _IdKontoStvarni
-		select suban
-		? cLM, _IdKontoStvarni, KONTO->Naz
-
-		nTotKonto := 0
-		do While !eof() .and. idfirma==cidfirma .and. BuIz(IdKonto)==_IdKonto
-			if d_p=="1"
-				nTotKonto += IznosBHD
-			else
-				nTotKonto -= IznosBHD
-			endif
-			SKIP 1
-		EndDO
-		?? " " + TRANSFORM(nTotKonto, "9,999,999,999.99")
-		nSlob --
-		nTotTr += nTotKonto
-	EndDO
-
-	? m
-	?
-	B_ON
-	?? cLM,PADL("UKUPNI TROSKOVI PO VRSTAMA: ",7+LEN(KONTO->naz)+1)
-	?? " " + TRANSFORM(nTotTr, "9,999,999,999.99")
-	B_OFF
-	? m
-
-	if !"D" $ ci3 + ci4
-		?
-		?
-		?
-		?
-		? Space(80) + "Ministar: _________________________________"
-	endif
-
-	FF
-
-endif // izvjestaj 2
-
-
-if ci3=="D" .or. cI4=="D"
-	select suban
-	MsgO("Kreiram pomocni index ...")
-	set filter to
-	index on idfirma+idrj+BuIz(idkonto) to subrj  for &cFilter// privremeni index
-	set order to tag "SUBRJ"
-	MsgC()
-endif
-
-if ci3=="D"
-	// izvjestaj 3
-
-	// rashodi po potr. jedinicama
-
-	F10CPI
-	B_ON
-
-//	if !"D" $ ci1 + ci2   //mjesto za zaglavlje
-		Razmak(VAL(cBRZaZ))
-//	endif
-
-	?? PADC ("RASHODI PO BUDZETSKIM KORISNICIMA",80)
-	? PADC ("ZA PERIOD "+ AllTrim (cPeriod), 80)
-	?
-	? PADC ("UKUPNI RASHODI PO POTROSACKIM JEDINICAMA", 80)
-	?
-	B_OFF
-
-	cLM := Space (12)
-	th1 := cLM+"                                                       Plan za                          Izvrsenje      Procenat"
-	th2 := cLM+"Razdjel Glava  NAZIV BUDZETSKOG KORISNIKA           tekucu godinu     Plan za period    za period      izvrsenja"
-	th3 := cLM+"                                                          (KM)             (KM)             (KM)          (%)"
-	  m := cLM+"------- ------ ------------------------------------ ---------------- ---------------- ---------------- ---------"
-
-	P_COND
-	fPrvaStr := .T.
-	nPageNo := 2
-	IB_Zagl3()
-	nSlob := nKorRed3+49-VAL(cBrZaZ)
-	nTot1:=nTot2:=nTot3:=0
-
-	SELECT BUDZET
-	if cBuIz=="D"
-		INDEX ON idrj+BuIz(idkonto) TO IZBUD
-		set order to tag "IZBUD"
-	else
-		set order to tag "1"
-	endif
-	//"1","IdRj+Idkonto",KUMPATH+"BUDZET"
-
-	go top
-	do while !eof()
-		cRazd := LEFT (IdRj, 2)
-		nTotRazd := 0
-		nTotPlan := 0
-		fPrvi := .T.
-		do While !Eof() .and. IdRj=cRazd
-			cIdRj:=IdRj
-
-			IF fPrvi
-				IF nSlob = 0
-					FF
-					IB_Zagl3 ()
-					nSlob := nKorRed3+49-VAL(cBrZaZ)
-				EndIF
-				? cLM
-				B_ON
-				SELECT RJ
-				HSEEK PADR (cRazd, LEN (RJ->Id))
-				cRazdNaz := RJ->Naz
-				?? PADR (cRazd, 7), SPACE (6), cRazdNaz
-				B_OFF
-				nSlob --
-				fPrvi := .F.
-				SELECT budzet
-			EndIF
-
-			IF nSlob==0
-				FF
-				IB_Zagl3 ()
-				nSlob := nKorRed3+49-VAL(cBrZaZ)
-				? cLM
-				B_ON
-				?? PADR (cRazd, 7), SPACE (6), cRazdNaz, "(nastavak)"
-				B_OFF
-				nSlob --
-			EndIF
-			? cLM + Space (8)  // 7+1
-			SELECT RJ
-			HSEEK cIdRj
-			select budzet
-			?? cIdRj, RJ->Naz," "
-
-			nPlan := 0
-			do While !Eof() .and. IdRj==cIdRj
-				nPlan+=(Iznos+RebIznos)
-				SKIP 1
-			EndDO
-			nTotPlan += nPlan
-
-			SELECT suban
-			seek cidfirma+cidrj
-			nIzvr := 0
-
-			do While !eof() .and. idfirma==cidfirma .and. IdRj==cIdRj
-				if d_p=="1"
-					nIzvr += IznosBHD
-				else
-					nIzvr -= IznosBHD
-				endif
-				SKIP 1
-			EndDO
-
-			select budzet
-			nTotRazd+=nIzvr
-
-			nPlanProc := nPlan*nProc/100
-			?? TRANSFORM (nPlan, "9,999,999,999.99"), TRANSFORM (nPlanProc, "9,999,999,999.99"), TRANSFORM (nIzvr, "9,999,999,999.99")
-			IF nPlanProc > 0
-				?? " "+TRANSFORM (nIzvr*100/nPlanProc, "99,999.99")
-			EndIF
-			nSlob --
-		EndDO  // cRazd
-		IF nSlob < 2
-			FF
-			IB_Zagl3 ()
-			nSlob := nKorRed3+49-VAL(cBrZaZ)
-			? cLM
-			B_ON
-			?? PADR (cRazd, 7), SPACE (6), cRazdNaz, "(nastavak)"
-			B_OFF
-			nSlob --
-		EndIF
-		?
-		B_ON
-		nPlanProc := nTotPlan*nProc/100
-		?? cLM, space (7), space (6), PADL ("UKUPNO RAZDJEL "+cRazd+":", LEN (RJ->Naz)), TRANSFORM (nTotPlan, "9,999,999,999.99"), TRANSFORM (nPlanProc, "9,999,999,999.99"), TRANSFORM (nTotRazd, "9,999,999,999.99")
-		IF nPlanProc > 0
-			?? " "+TRANSFORM (nTotRazd*100/nPlanProc, "99,999.99")
-		EndIF
-		B_OFF
-		nTot1 += nTotPlan
-		nTot2 += nPlanProc
-		nTot3 += nTotRazd
-		? m
-		nSlob -= 2
-	EndDO  // eof
-
-	?
-	B_ON
-	if nVanBudzeta<>0
-		?? cLM, space (7), space (6), PADL ("STAVKE VAN PLANA BUDZETA:", LEN (RJ->Naz)), TRANSFORM (0, "9,999,999,999.99"), TRANSFORM (0, "9,999,999,999.99"), TRANSFORM (nVanBudzeta, "9,999,999,999.99")
-		?
-	endif
-	?? cLM, space (7), space (6), PADL ("UKUPNO RASHODI PO JEDINICAMA:", LEN (RJ->Naz)), TRANSFORM (nTot1, "9,999,999,999.99"), TRANSFORM (nTot2, "9,999,999,999.99"), TRANSFORM (nTot3+nVanBudzeta, "9,999,999,999.99")
-	IF nTot2 > 0
-		?? " "+TRANSFORM ((nTot3+nVanBudzeta)*100/nTot2, "99,999.99")
-	EndIF
-	B_OFF
-	? m
-
-	if !"D" $ ci4
-		?
-		?
-		?
-		?
-		? Space(80) + "Ministar: _________________________________"
-	endif
-
-
-	//  detaljni izvjestaj
-
-	FF
-
-endif // izvjestaj 3
-
-
-if ci4=="D"
-	// izvjestaj 4
-	F10CPI
-	B_ON
-
-//	if !"D" $ ci1 + ci2 + ci3   //mjesto za zaglavlje
-		Razmak(VAL(cBRZaZ))
-//	endif
-
-	?? PADC ("RASHODI PO BUDZETSKIM KORISNICIMA",80)
-	? PADC ("ZA PERIOD "+ AllTrim (cPeriod), 80)
-	?
-	? PADC ("RASHODI PO POTROSACKIM JEDINICAMA, SKUPINAMA I VRSTAMA TROSKOVA", 80)
-	?
-	B_OFF
-	cLM := SPACE (5)
-	th1 := cLM+"                                                                    Plan za                          Izvrsenje     Procenat"
-	th2 := cLM+"                                                                 tekucu godinu    Plan za period     za period     izvrsenja"
-	th3 := cLM+"NAZIV BUDZETSKOG KORISNIKA, SKUPINA I VRSTA TROSKOVA                 (KM)             (KM)             (KM)           (%)"
-	  m := cLM+"--------------------------------------------------------------- ---------------- ---------------- ---------------- ---------"
-	SELECT BUDZET
-	if cBuIz=="D"
-		INDEX ON idrj+BuIz(idkonto) TO IZBUD
-		SET ORDER TO TAG "IZBUD"
-	else
-		SET ORDER TO tag "1"
-	endif
-	//"1","IdRj+Idkonto",KUMPATH+"BUDZET"
-
-	P_COND
-	fPrvaStr := .T.
-	nPageNo := 2
-	IB_Zagl4()
-	nSlob := nKorRed4+49-VAL(cBrZaZ)
-	nTot1:=nTot2:=nTot3:=0
-
-	SELECT budzet
-	GO TOP
-	cRazdjel:=""
-	nTotIRa:=0
-	nTotPlanRa:=0
-	nURazdjelu:=1
-
-	do While !Eof()
-
-		cIdRj := IdRj
-		SELECT RJ
-		HSEEK cIdRj
-		SELECT budzet
-
-		IF nSlob ==0
-			IB_Zagl4 ()
-		EndIF
-		?
-		B_ON
-		?? cLM + cIdRj, RJ->Naz
-		B_OFF
-		nSlob --
-		cRazdjel:=left(cidrj,2)
-		nTotPlanRj := 0
-		nTotIRJ := 0
-		do while !eof() .and. idrj==cidrj
-			cKto:=BuIz(idkonto)
-			cKtoStvarni:=idkonto
-			nPlan := 0
-			do While !Eof() .and. idrj==cidrj .and. BuIz(Idkonto)==cKto
-				nPlan += BUDZET->(Iznos+RebIznos)
-				SKIP 1
-			EndDO
-			if idrj==cidrj
-				cBudzetNext:=BuIz(idkonto) // sljedeca stavka u budzetu
-			else
-				cBudzetNext:="XXXXX"
-			endif
-			if eof()
-				cBudzetNext:="XXXXX"
-			endif
-
-			select konto
-			HSEEK cKtoStvarni
-			IF nSlob==0
-				IB_Zagl4()
-				?
-				B_ON
-				?? cLM + cIdRj, RJ->Naz, "(nastavak)"
-				B_OFF
-				nSlob --
-			endif
-
-			?
-			B_ON
-			?? cLM + Space (6), cKtoStvarni, konto->Naz
-			B_OFF
-			nSlob --
-
-			fUBudzetu:=.t.
-			select suban
-			seek cidfirma+cidrj+cKtoStvarni
-			nTotek2:=0
-
-			do while fUbudzetu .or. !eof() .and. idfirma==cidfirma .and. idrj==cIdrj .and. BuIz(idkonto)>=cKto .and. BuIz(idkonto)<cBudzetNext
-				cSkonto := BuIz(IdKonto)
-				cSkontoStvarni := IdKonto
-				SELECT konto
-				seek  cSKontoStvarni
-				select suban
-				nTotEk:=0
-				do While !Eof() .and. cidfirma==idfirma .and. idrj==cidrj .and. BuIz(IdKonto)==iif(fUBudzetu,cKto,cSKonto)
-					if d_p=="1"
-						nTotEK += IznosBHD
-					else
-						nTotEK -= IznosBHD
-					endif
-					SKIP 1
-				enddo
-				if nTotEk<>0
-					? cLM+Space (6), cSkontoStvarni, Left (KONTO->Naz, 49)
-					?? Space (16), Space (16), TRANSFORM(nTotEk, "9,999,999,999.99")
-				endif
-				nTotEK2 += nTotEk
-				nSlob --
-				IF nSlob <= 0
-					IB_Zagl4()
-					?
-					B_ON
-					?? cLM + cIdRj, RJ->Naz, "(nastavak)"
-					B_OFF
-					nSlob --
-				EndIF
-
-				fubudzetu:=.f.
-			enddo //fubudzetu
-
-			select budzet
-			?
-			nPlanProc := nPlan * nProc / 100
-			B_ON
-			?? cLM + PADL ("UKUPNO SKUPINA TROSKOVA " + AllTrim (cKtoStvarni), 13+LEN (KONTO->Naz)-7), TRANSFORM(nPlan, "9,999,999,999.99"), TRANSFORM(nPlanProc, "9,999,999,999.99"), TRANSFORM(nTotEK2, "9,999,999,999.99")
-			IF nPlanProc > 0
-				?? " " + TRANSFORM(nTotEk2 * 100 / nPlanProc, "99,999.99")
-			EndIF
-			B_OFF
-			nSlob --
-
-			nTotPlanRj += nPlan
-			nTotIRJ += nTotEK2
-
-			IF nSlob<3
-				IB_Zagl4 ()
-				?
-				B_ON
-				?? cLM + cIdRj, RJ->Naz, "(nastavak)"
-				B_OFF
-				nSlob --
-			EndIF
-		enddo // cidrj
-		nPlanProc := nTotPlanRj * nProc / 100
-		? m
-		?
-		B_ON
-		?? cLM + PADL ("UKUPNO BUDZETSKI KORISNIK " + AllTrim (cIdRj), 13+LEN (KONTO->Naz)-7), TRANSFORM(nTotPlanRj, "9,999,999,999.99"), TRANSFORM(nPlanProc, "9,999,999,999.99"), TRANSFORM(nTotIRJ, "9,999,999,999.99")
-		IF nPlanProc > 0
-			?? " " + TRANSFORM(nTotIRJ * 100 / nPlanProc, "99,999.99")
-		EndIF
-
-		nTotIRa+=nTotIRj
-		nTotPlanRa+=nTotPlanRj
-
-		if left(idrj,2)<>cRazdjel
-			if nURazdjelu>1
-				?
-				nPlanProcRa := nTotPlanRa * nProc / 100
-				?? cLM + PADL ("UKUPNO RAZDJEL " + cRazdjel, 13+LEN (KONTO->Naz)-7), TRANSFORM(nTotPlanRa, "9,999,999,999.99"), TRANSFORM(nPlanProcRa, "9,999,999,999.99"), TRANSFORM(nTotIRa, "9,999,999,999.99")
-				IF nPlanProcRa > 0
-					?? " " + TRANSFORM(nTotIRa * 100 / nPlanProcRa, "99,999.99")
-				endif
-			EndIF
-			nTotIRa:=0
-			nTotPlanRa:=0
-			nURazdjelu:=1
-		else
-			nURazdjelu++
-		endif
-
-		B_OFF
-		nTot1 += nTotPlanRj
-		nTot2 += nPlanProc
-		nTot3 += nTotIRJ
-		? m
-		nSlob -= 3
-
-	enddo  //eof()
-
-	? m
-	?
-	B_ON
-
-	if nVanBudzeta<>0
-		?? cLM + PADL ("STAVKE VAN PLANA BUDZETA:", 13+LEN (KONTO->Naz)-7), TRANSFORM(0, "9,999,999,999.99"), TRANSFORM(0, "9,999,999,999.99"), TRANSFORM(nVanBudzeta+nVanB2, "9,999,999,999.99")
-		?
-	endif
-
-	?? cLM + PADL ("UKUPNO SVI BUDZETSKI KORISNICI:", 13+LEN (KONTO->Naz)-7), TRANSFORM(nTot1, "9,999,999,999.99"), TRANSFORM(nTot2, "9,999,999,999.99"), TRANSFORM(nTot3+nVanBudzeta+nVanB2, "9,999,999,999.99")
-	IF nTot2 > 0
-		?? " " + TRANSFORM((nTot3+nVanBudzeta+nVanB2) * 100 / nTot2, "99,999.99")
-	EndIF
-	B_OFF
-	? m
-
-	?
-	?
-	?
-	?
-	? Space(80) + "Ministar: _________________________________"
-
-	FF
-
-	// izvjestaj 4
-endif
-
-
-ENDPRINT
-CLOSERET
-return
+FUNCTION IzvrsBudz()
+
+   LOCAL cLM := Space ( 5 )
+   LOCAL fKraj
+   LOCAL n
+   PRIVATE picBHD := FormPicL( gPicBHD, 15 )
+   PRIVATE picDEM := FormPicL( gPicDEM, 12 )
+   PRIVATE cIdKonto
+   PRIVATE cIdFirma := Space( Len( gFirma ) )
+   PRIVATE cIdRj := Space( 50 )
+   PRIVATE cFunk := Space( 60 )
+   PRIVATE dDatOd := CToD( "" )
+   PRIVATE dDatDo := Date()
+   PRIVATE aUslK
+   PRIVATE aUslRj
+   PRIVATE aUslFunk
+   PRIVATE cSpecKonta
+   PRIVATE nProc := 0
+   PRIVATE cBuIz := "N"
+   PRIVATE cPeriod := PadR( "JANUAR - ", 40 )
+
+   PRIVATE nKorRed1 := Val( IzFmkIni( "FinBudzet", "KorRed1", "0", KUMPATH ) )
+   PRIVATE nKorRed2 := Val( IzFmkIni( "FinBudzet", "KorRed2", "0", KUMPATH ) )
+   PRIVATE nKorRed3 := Val( IzFmkIni( "FinBudzet", "KorRed3", "0", KUMPATH ) )
+   PRIVATE nKorRed4 := Val( IzFmkIni( "FinBudzet", "KorRed4", "0", KUMPATH ) )
+
+   cIdKonto := PadR( "6;", 60 )
+   cSpecKonta := PadR( "", 60 )
+
+   cI1 := "D"
+   cI2 := "D"
+   cI3 := "D"
+   cI4 := "D"
+
+   cSTKI1 := "N"
+   cProv := "D"
+
+   PRIVATE cBRZaZ := PadR( IzFMKIni( 'BUDZET', 'BrRedZaZagl', '0', KUMPATH ), 2 )
+
+   IF gBuIz == "D"
+      O_BUIZ
+   ENDIF
+   O_PARTN
+
+   DO WHILE .T.
+
+      Box (, 22, 75 )  // 19
+      @ m_x, m_y + 15 SAY "IZVRSENJE BUDZETA / PREGLED RASHODA"
+
+      // procenat ucesca perioda u godisnjem planu
+      IF gNW == "D"
+         cIdFirma := gFirma
+         @ m_x + 1, m_y + 2 SAY "Firma "; ?? gFirma, "-", gNFirma
+      ELSE
+         @ m_x + 1, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| P_Firma( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
+      ENDIF
+
+      @ m_x + 3, m_y + 2 SAY "         Konta (prazno-sva)" GET cIdKonto PICT "@S30@!" VALID {|| aUslK := Parsiraj ( cIdKonto, "IdKonto" ), iif ( aUslK == NIL, .F., .T. ) }
+      @ m_x + 4, m_y + 2 SAY " Razdjel/glava (prazno-svi)" GET cIdRj PICT "@S30@!" VALID {|| aUslRj := Parsiraj ( cIdRj, "IdRj" ), iif ( aUslRj == NIL, .F., .T. ) }
+      @ m_x + 5, m_y + 2 SAY "Funkc. klasif  (prazno-sve)" GET cFunk PICT "@S30@!" VALID {|| aUslFunk := Parsiraj ( cFunk, "Funk", "C" ), iif ( aUslFunk == NIL, .F., .T. ) }
+      @ m_x + 6, m_y + 2 SAY "                 Pocevsi od" GET dDatOd VALID dDatOd <= dDatDo
+      @ m_x + 7, m_y + 2 SAY "               Zakljucno sa" GET dDatDo VALID dDatOd <= dDatDo
+      @ m_x + 10, m_y + 2 SAY "Procenat u odnosu god. plan" GET nProc PICT "999.99"
+
+      @ m_x + 13, m_y + 2 SAY "          Obuhvaceni period" GET cPeriod PICT "@!"
+      @ m_x + 14, m_y + 2 SAY "Izvjestaj 1" GET cI1 PICT "@!" VALID ci1 $ "DN"
+      @ Row(), Col() + 2 SAY "2:" GET cI2 PICT "@!" VALID ci2 $ "DN"
+      @ Row(), Col() + 2 SAY "3:" GET cI3 PICT "@!" VALID ci3 $ "DN"
+      @ Row(), Col() + 2 SAY "4:" GET cI4 PICT "@!" VALID ci4 $ "DN"
+      @ m_x + 16, m_y + 2 SAY "Subtotali po analitici za izvjestaj 1 ? (D/N)" GET cSTKI1 PICT "@!" VALID cSTKI1 $ "DN"
+      @ m_x + 18, m_Y + 2 SAY "Provjeriti stavke koje nisu definisane u budzetu" GET cProv PICT "@!" VALID cprov $ "DN"
+
+      IF gBuIz == "D"
+         cBuIz := "D"
+         @ m_x + 19, m_Y + 2 SAY "U izvjestaju koristiti korekciju za sortiranje konta? (D/N)" GET cBuIz PICT "@!" VALID cBuIz $ "DN"
+      ENDIF
+
+      @ m_x + 20, m_Y + 2 SAY "Broj redova za zaglavlje na izvjest. (0 - nista): " GET cBRZaZ
+      READ
+      ESC_BCR
+      BoxC()
+
+      UzmiIzIni( KUMPATH + 'fmk.ini', 'BUDZET', 'BrRedZaZagl', cBRZaZ, 'WRITE' )
+
+      IF ( aUslK == NIL .OR. aUslRJ == NIL .OR. aUslFunk == NIL )
+         LOOP
+      ELSE
+         EXIT
+      ENDIF
+
+   ENDDO
+
+   O_BUDZET
+   SET ORDER TO TAG "2"
+
+   O_KONTO
+   O_RJ
+   O_FUNK
+   O_SUBAN
+
+   SELECT SUBAN
+   cFilter := ""
+   IF aUslK <> ".t."
+      cFilter += aUslK
+   ENDIF
+   IF aUslRj <> ".t."
+      cFilter += IF ( !Empty ( cFilter ), ".and.", "" ) + aUslRj  // cidrj
+   ENDIF
+   IF aUslFunk <> ".t."
+      cFilter += IF ( !Empty ( cFilter ), ".and.", "" ) + aUslFunk
+   ENDIF
+   IF !Empty ( dDatOd )
+      cFilter += IF ( !Empty ( cFilter ), ".and.", "" ) + "DatDok>=" + dbf_quote( dDatOd )
+   ENDIF
+   IF !Empty ( dDatDo )
+      cFilter += IF ( !Empty ( cFilter ), ".and.", "" ) + "DatDok<=" + dbf_quote( dDatDo )
+   ENDIF
+
+   IF !Empty ( cFilter )
+      SET FILTER to &cFilter
+   ENDIF
+
+   SELECT budzet
+   PRIVATE cFiltB := ""
+   IF aUslK <> ".t."
+      cFiltB += IF ( !Empty ( cFiltB ), ".and.", "" ) + aUslK
+   ENDIF
+   IF aUslRj <> ".t."
+      cFiltB += IF ( !Empty ( cFiltB ), ".and.", "" ) + aUslRj
+   ENDIF
+   IF aUslFunk <> ".t."
+      cFiltB += IF ( !Empty ( cFiltB ), ".and.", "" ) + aUslFunk
+   ENDIF
+   SET FILTER to &cFiltB
+
+   START PRINT CRET
+   P_INI
+   ?
+   F10CPI
+
+   SELECT budzet
+   IF cBuIz == "D"
+      INDEX ON idrj + BuIz( idkonto ) TO IZBUD
+      SET ORDER TO TAG "IZBUD"
+   ELSE
+      SET ORDER TO TAG "1"  // "1","IdRj+Idkonto"
+   ENDIF
+
+   SELECT suban
+   IF cBuIz == "D"
+      INDEX ON idFirma + BuIz( IdKonto ) + DToS( DatDok ) + idpartner TO IZSUB
+      SET ORDER TO TAG "IZSUB"
+   ELSE
+      SET ORDER TO TAG "5"
+   ENDIF
+
+   nTotal := 0
+   nVanBudzeta := 0
+   nVanB2 := 0
+
+   SEEK cidfirma
+
+   DO WHILE !Eof() .AND. idfirma == cidfirma
+      IF d_p == "1"
+         nTotal += iznosbhd
+      ELSE
+         nTotal -= iznosbhd
+      ENDIF
+      SELECT budzet
+      SEEK suban->idrj
+      IF !Found()
+         IF cprov == "D"
+            MsgBeep( " RJ:" + suban->idrj + "## <ESC> suti" )
+            IF LastKey() == K_ESC
+               cProv := "N"
+            ENDIF
+         ENDIF
+         SELECT suban
+         IF d_p == "1"
+            nVanBudzeta += iznosbhd
+         ELSE
+            nVanBudzeta -= iznosbhd
+         ENDIF
+      ELSE // rj postoji
+         SELECT budzet
+         SEEK suban->( idrj + idkonto )
+         IF !Found() // potrazi one koje se nece pojaviti u izvjestaju 4
+            SKIP -1 // idi na predh stavku budzeta
+            IF idrj <> suban->idrj
+               IF cProv == "D"
+                  MsgBeep( "Nema u planu:" + suban->idrj + "/" + suban->idkonto + "## <ESC> suti" )
+                  IF LastKey() == K_ESC
+                     cProv := "N"
+                  ENDIF
+               ENDIF
+               SELECT suban
+               IF d_p == "1"
+                  nVanB2 += iznosbhd
+               ELSE
+                  nVanB2 -= iznosbhd
+               ENDIF
+            ENDIF
+         ENDIF
+      ENDIF
+      SELECT suban
+      SKIP 1
+   ENDDO
+
+
+   IF cI1 == "D"
+      SELECT suban
+      IF cBuIz == "D"
+         INDEX ON idFirma + BuIz( IdKonto ) + DToS( DatDok ) + idpartner TO IZSUB
+         SET ORDER TO TAG "IZSUB"
+      ELSE
+         SET ORDER TO TAG "5"
+      ENDIF
+
+      // izvjestaj 1
+      GO TOP
+      INI
+      F10CPI
+      B_ON
+
+      Razmak( Val( cBRZaZ ) )
+
+      ?? PadC ( "P R E G L E D   R A S H O D A", 80 )
+      ? PadC ( "PO SKUPINAMA TROSKOVA", 80 )
+      ? PadC ( "ZA PERIOD " + AllTrim ( cPeriod ), 80 )
+      B_OFF
+      ?
+
+      P_COND
+      cLM := Space ( 10 )
+      th1 := cLM + "                                                                                                                   Ucesce"
+      th2 := cLM + "Ekonom.                                                   Plan za                          Izvrsenje     Procenat  u ukup."
+      th3 := cLM + " kod    Skupina troskova                               tekucu godinu    Plan za period     za period     izvrsenja trosk."
+      th4 := cLM + "                                                         (KM)               (KM)            (KM)          (%)      (%)"
+      m := cLM + "------- --------------------------------------------- ---------------- ---------------- ---------------- --------- -------"
+
+      fPrvaStr := .T.
+      nPageNo := 2
+      IB_Zagl1()
+      nSlob := nKorRed1 + 46 -Val( cBrZaZ )
+      nTot1 := nTot2 := nTot3 := 0
+
+      SELECT BUDZET
+      IF cBuIz == "D"
+         INDEX ON BuIz( idkonto ) TO IZBUD2
+         SET ORDER TO TAG "IZBUD2"
+      ELSE
+         SET ORDER TO TAG "2"    // "2", "Idkonto"
+      ENDIF
+
+      aSTKI1 := { 0, 0, 0, "" }
+
+      GO TOP
+      DO WHILE !Eof()
+         cSk := Left ( Idkonto, 2 )
+         nTotSk := 0
+         nTotPlSk := 0
+         DO WHILE !Eof() .AND. Left( Idkonto, 2 ) = cSk
+            cKto := BuIz( IdKonto )
+            cKtoStvarni := IdKonto
+            IF nSlob = 0
+               IB_Zagl1()
+            ENDIF
+
+            // Izracunaj plan za tekucu godinu
+
+            nPlan := 0
+            DO WHILE !Eof() .AND. BuIz( Idkonto ) == cKto
+               nPlan += ( Iznos + RebIznos )
+               SKIP 1
+            ENDDO
+
+            cBudzetNext := BuIz( idkonto ) // sljedeca stavka u budzetu
+            IF Eof()
+               cBudzetNext := "XXX"
+            ENDIF
+
+            nTotPlSk += nPlan
+            nPlanPer := nPlan * nProc / 100
+            SELECT suban
+            SEEK cidfirma + cKtoStvarni
+            fUBudzetu := .T.
+
+            DO WHILE fUbudzetu .OR. !Eof() .AND. cidfirma == idfirma .AND. BuIz( idkonto ) >= cKto .AND. BuIz( idkonto ) < cBudzetNext
+
+               nTotEK := 0
+               cSKonto := BuIz( idkonto )
+               cSKontoStvarni := idkonto
+
+               IF Empty( aSTKI1[ 4 ] )
+                  aSTKI1[ 4 ] := iif( fUBudzetu, cKtoStvarni, cSKontoStvarni )
+               ENDIF
+
+               DO WHILE !Eof() .AND. cidfirma == idfirma .AND. BuIz( IdKonto ) == iif( fUBudzetu, cKto, cSKonto )
+                  IF d_p == "1"
+                     nTotEK += IznosBHD
+                  ELSE
+                     nTotEK -= IznosBHD
+                  ENDIF
+                  SKIP 1
+               ENDDO
+
+               IF nSlob = 0
+                  IB_Zagl1()
+               ENDIF
+
+               ? cLM
+               SELECT konto
+               HSEEK iif( fUBudzetu, cKtoStvarni, cSKontoStvarni )
+               SELECT suban
+               ?? iif( fUBudzetu, cKtoStvarni, cSKontoStvarni ), PadR ( Konto->Naz, 46 )
+               ?? Transform( nPlan,    "9,999,999,999.99" ), Transform( nPlanPer, "9,999,999,999.99" ), Transform( nTotEK,   "9,999,999,999.99" )
+               IF nPlanPer > 0
+                  ?? " " + Transform( nTotEK * 100 / nPlanPer, "99,999.99" )
+               ELSE
+                  ?? Space ( 1 + 9 )
+               ENDIF
+               IF nTotal > 0
+                  ?? " ", Str ( nTotEK * 100 / nTotal, 6, 2 )
+               ENDIF
+
+               IF cSTKI1 == "D"
+                  aSTKI1[ 1 ] += nPlan
+                  aSTKI1[ 2 ] += nPlanPer
+                  aSTKI1[ 3 ] += nTotEk
+                  // ispitati (MS)
+                  IF Eof() .OR. SubStr( idkonto, 6, 2 ) == "0 " .OR. Left( aSTKI1[ 4 ], 5 ) <> Left( idkonto, 5 )
+                     ? cLM
+                     ?? aSTKI1[ 4 ], PadR ( "UKUPNO", 46, "_" )
+                     ?? Transform( aSTKI1[ 1 ], "9,999,999,999.99" ), Transform( aSTKI1[ 2 ], "9,999,999,999.99" ), Transform( aSTKI1[ 3 ], "9,999,999,999.99" )
+                     IF aSTKI1[ 2 ] > 0
+                        ?? " " + Transform( aSTKI1[ 3 ] * 100 / aSTKI1[ 2 ], "99,999.99" )
+                     ELSE
+                        ?? Space ( 1 + 9 )
+                     ENDIF
+                     IF nTotal > 0
+                        ?? " ", Str ( aSTKI1[ 3 ] * 100 / nTotal, 6, 2 )
+                     ENDIF
+                     aSTKI1[ 1 ] := 0
+                     aSTKI1[ 2 ] := 0
+                     aSTKI1[ 3 ] := 0
+                     aSTKI1[ 4 ] := ""
+                     nSlob--
+                  ENDIF
+               ENDIF
+
+               fUBudzetu := .F.
+               nSlob --
+               nTotSk += nTotEK
+               nPlan := 0
+               nPlanPer := 0
+
+            ENDDO // suban
+            SELECT budzet
+         ENDDO  // cSK
+
+         IF nSlob < 3
+            IB_Zagl1 ()
+         ENDIF
+
+         ? m
+         nPlanPer := nTotPlSk * nProc / 100
+         ?
+         B_ON
+         ?? cLM, Space ( 6 ), PadL ( "   UKUPNO SKUPINA TROSKOVA " + cSk + ": ", 45 ), Transform( nTotPlSk, "9,999,999,999.99" ), Transform( nPlanPer, "9,999,999,999.99" ), Transform( nTotSk,   "9,999,999,999.99" )
+         IF nPlanPer > 0
+            ?? " " + Transform( nTotSk * 100 / nPlanPer, "99,999.99" )
+         ELSE
+            ?? Space( 10 )
+         ENDIF
+         IF nTotal > 0
+            ?? " ", Str ( nTotSk * 100 / nTotal, 5, 2 )
+         ENDIF
+         nTot1 += nTotPlSk
+         nTot2 += nPlanPer
+         nTot3 += nTotSk
+
+         B_OFF
+         ? m
+         nSlob -= 3
+      ENDDO // eof
+
+      ?
+      B_ON
+      ?? cLM, Space ( 6 ), PadL ( " UKUPNI TROSKOVI PO SKUPINAMA: ", 45 ), Transform( nTot1, "9,999,999,999.99" ), Transform( nTot2, "9,999,999,999.99" ), Transform( nTot3, "9,999,999,999.99" )
+      IF nTot2 > 0
+         ?? " " + Transform( nTot3 * 100 / nTot2, "99,999.99" )
+      ELSE
+         ?? Space ( 10 )
+      ENDIF
+      IF nTotal > 0
+         ?? " ", Str ( nTot3 * 100 / nTotal, 5, 2 )
+      ENDIF
+      B_OFF
+      ? m
+
+      cLM := Space ( 5 )
+
+      IF !"D" $ ci2 + ci3 + ci4
+         ?
+         ?
+         ?
+         ?
+         ? Space( 80 ) + "Ministar: _________________________________"
+      ENDIF
+
+      FF
+
+   ENDIF // kraj izvjestaja 1
+
+
+   IF ci2 == "D"
+      // izvjestaj 2
+
+      // struktura tro�kova po vrstama
+
+      F10CPI
+      B_ON
+
+      // if !"D" $ ci1   //mjesto za zaglavlje
+      Razmak( Val( cBRZaZ ) )
+      // endif
+
+      ?? PadC ( "STRUKTURA TROSKOVA PO VRSTAMA", 80 )
+      ? PadC ( "ZA PERIOD " + AllTrim ( cPeriod ), 80 )
+      ?
+      B_OFF
+      th1 := cLM + " " + "Vrsta  " + " " + PadR ( "Naziv vrste troska", Len ( KONTO->Naz ) ) + " " + PadC ( "Iznos (" + AllTrim ( ValDomaca() ) + ")", 16 )
+
+      m := cLM + " " + REPL ( "-", 7 ) + " " + REPL ( "-", Len( KONTO->Naz ) ) + " " + REPL ( "-", 16 )
+
+      F12CPI
+      fPrvaStr := .T.
+      nPageNo := 2
+      IB_Zagl2 ()
+
+      nSlob := nKorRed2 + 50 -Val( cBrZaZ )
+      nTotTr := 0
+
+      SELECT suban
+      IF cBuIz == "D"
+         INDEX ON idFirma + BuIz( IdKonto ) + DToS( DatDok ) + idpartner TO IZSUB
+         SET ORDER TO TAG "IZSUB"
+      ELSE
+         SET ORDER TO TAG "5"
+      ENDIF
+
+      SEEK cidfirma
+      DO WHILE !Eof() .AND. idfirma == cidfirma
+         _IdKonto := BuIz( IdKonto )
+         _IdKontoStvarni := IdKonto
+         IF nSlob == 0
+            FF
+            IB_Zagl2 ()
+            nSlob := nKorRed2 + 50 -Val( cBrZaZ )
+         ENDIF
+         SELECT KONTO
+         HSEEK _IdKontoStvarni
+         SELECT suban
+         ? cLM, _IdKontoStvarni, KONTO->Naz
+
+         nTotKonto := 0
+         DO WHILE !Eof() .AND. idfirma == cidfirma .AND. BuIz( IdKonto ) == _IdKonto
+            IF d_p == "1"
+               nTotKonto += IznosBHD
+            ELSE
+               nTotKonto -= IznosBHD
+            ENDIF
+            SKIP 1
+         ENDDO
+         ?? " " + Transform( nTotKonto, "9,999,999,999.99" )
+         nSlob --
+         nTotTr += nTotKonto
+      ENDDO
+
+      ? m
+      ?
+      B_ON
+      ?? cLM, PadL( "UKUPNI TROSKOVI PO VRSTAMA: ", 7 + Len( KONTO->naz ) + 1 )
+      ?? " " + Transform( nTotTr, "9,999,999,999.99" )
+      B_OFF
+      ? m
+
+      IF !"D" $ ci3 + ci4
+         ?
+         ?
+         ?
+         ?
+         ? Space( 80 ) + "Ministar: _________________________________"
+      ENDIF
+
+      FF
+
+   ENDIF // izvjestaj 2
+
+
+   IF ci3 == "D" .OR. cI4 == "D"
+      SELECT suban
+      MsgO( "Kreiram pomocni index ..." )
+      SET FILTER TO
+      INDEX ON idfirma + idrj + BuIz( idkonto ) TO subrj  for &cFilter// privremeni index
+      SET ORDER TO TAG "SUBRJ"
+      MsgC()
+   ENDIF
+
+   IF ci3 == "D"
+      // izvjestaj 3
+
+      // rashodi po potr. jedinicama
+
+      F10CPI
+      B_ON
+
+      // if !"D" $ ci1 + ci2   //mjesto za zaglavlje
+      Razmak( Val( cBRZaZ ) )
+      // endif
+
+      ?? PadC ( "RASHODI PO BUDZETSKIM KORISNICIMA", 80 )
+      ? PadC ( "ZA PERIOD " + AllTrim ( cPeriod ), 80 )
+      ?
+      ? PadC ( "UKUPNI RASHODI PO POTROSACKIM JEDINICAMA", 80 )
+      ?
+      B_OFF
+
+      cLM := Space ( 12 )
+      th1 := cLM + "                                                       Plan za                          Izvrsenje      Procenat"
+      th2 := cLM + "Razdjel Glava  NAZIV BUDZETSKOG KORISNIKA           tekucu godinu     Plan za period    za period      izvrsenja"
+      th3 := cLM + "                                                          (KM)             (KM)             (KM)          (%)"
+      m := cLM + "------- ------ ------------------------------------ ---------------- ---------------- ---------------- ---------"
+
+      P_COND
+      fPrvaStr := .T.
+      nPageNo := 2
+      IB_Zagl3()
+      nSlob := nKorRed3 + 49 -Val( cBrZaZ )
+      nTot1 := nTot2 := nTot3 := 0
+
+      SELECT BUDZET
+      IF cBuIz == "D"
+         INDEX ON idrj + BuIz( idkonto ) TO IZBUD
+         SET ORDER TO TAG "IZBUD"
+      ELSE
+         SET ORDER TO TAG "1"
+      ENDIF
+      // "1","IdRj+Idkonto",KUMPATH+"BUDZET"
+
+      GO TOP
+      DO WHILE !Eof()
+         cRazd := Left ( IdRj, 2 )
+         nTotRazd := 0
+         nTotPlan := 0
+         fPrvi := .T.
+         DO WHILE !Eof() .AND. IdRj = cRazd
+            cIdRj := IdRj
+
+            IF fPrvi
+               IF nSlob = 0
+                  FF
+                  IB_Zagl3 ()
+                  nSlob := nKorRed3 + 49 -Val( cBrZaZ )
+               ENDIF
+               ? cLM
+               B_ON
+               SELECT RJ
+               HSEEK PadR ( cRazd, Len ( RJ->Id ) )
+               cRazdNaz := RJ->Naz
+               ?? PadR ( cRazd, 7 ), Space ( 6 ), cRazdNaz
+               B_OFF
+               nSlob --
+               fPrvi := .F.
+               SELECT budzet
+            ENDIF
+
+            IF nSlob == 0
+               FF
+               IB_Zagl3 ()
+               nSlob := nKorRed3 + 49 -Val( cBrZaZ )
+               ? cLM
+               B_ON
+               ?? PadR ( cRazd, 7 ), Space ( 6 ), cRazdNaz, "(nastavak)"
+               B_OFF
+               nSlob --
+            ENDIF
+            ? cLM + Space ( 8 )  // 7+1
+            SELECT RJ
+            HSEEK cIdRj
+            SELECT budzet
+            ?? cIdRj, RJ->Naz, " "
+
+            nPlan := 0
+            DO WHILE !Eof() .AND. IdRj == cIdRj
+               nPlan += ( Iznos + RebIznos )
+               SKIP 1
+            ENDDO
+            nTotPlan += nPlan
+
+            SELECT suban
+            SEEK cidfirma + cidrj
+            nIzvr := 0
+
+            DO WHILE !Eof() .AND. idfirma == cidfirma .AND. IdRj == cIdRj
+               IF d_p == "1"
+                  nIzvr += IznosBHD
+               ELSE
+                  nIzvr -= IznosBHD
+               ENDIF
+               SKIP 1
+            ENDDO
+
+            SELECT budzet
+            nTotRazd += nIzvr
+
+            nPlanProc := nPlan * nProc / 100
+            ?? Transform ( nPlan, "9,999,999,999.99" ), Transform ( nPlanProc, "9,999,999,999.99" ), Transform ( nIzvr, "9,999,999,999.99" )
+            IF nPlanProc > 0
+               ?? " " + Transform ( nIzvr * 100 / nPlanProc, "99,999.99" )
+            ENDIF
+            nSlob --
+         ENDDO  // cRazd
+         IF nSlob < 2
+            FF
+            IB_Zagl3 ()
+            nSlob := nKorRed3 + 49 -Val( cBrZaZ )
+            ? cLM
+            B_ON
+            ?? PadR ( cRazd, 7 ), Space ( 6 ), cRazdNaz, "(nastavak)"
+            B_OFF
+            nSlob --
+         ENDIF
+         ?
+         B_ON
+         nPlanProc := nTotPlan * nProc / 100
+         ?? cLM, Space ( 7 ), Space ( 6 ), PadL ( "UKUPNO RAZDJEL " + cRazd + ":", Len ( RJ->Naz ) ), Transform ( nTotPlan, "9,999,999,999.99" ), Transform ( nPlanProc, "9,999,999,999.99" ), Transform ( nTotRazd, "9,999,999,999.99" )
+         IF nPlanProc > 0
+            ?? " " + Transform ( nTotRazd * 100 / nPlanProc, "99,999.99" )
+         ENDIF
+         B_OFF
+         nTot1 += nTotPlan
+         nTot2 += nPlanProc
+         nTot3 += nTotRazd
+         ? m
+         nSlob -= 2
+      ENDDO  // eof
+
+      ?
+      B_ON
+      IF nVanBudzeta <> 0
+         ?? cLM, Space ( 7 ), Space ( 6 ), PadL ( "STAVKE VAN PLANA BUDZETA:", Len ( RJ->Naz ) ), Transform ( 0, "9,999,999,999.99" ), Transform ( 0, "9,999,999,999.99" ), Transform ( nVanBudzeta, "9,999,999,999.99" )
+         ?
+      ENDIF
+      ?? cLM, Space ( 7 ), Space ( 6 ), PadL ( "UKUPNO RASHODI PO JEDINICAMA:", Len ( RJ->Naz ) ), Transform ( nTot1, "9,999,999,999.99" ), Transform ( nTot2, "9,999,999,999.99" ), Transform ( nTot3 + nVanBudzeta, "9,999,999,999.99" )
+      IF nTot2 > 0
+         ?? " " + Transform ( ( nTot3 + nVanBudzeta ) * 100 / nTot2, "99,999.99" )
+      ENDIF
+      B_OFF
+      ? m
+
+      IF !"D" $ ci4
+         ?
+         ?
+         ?
+         ?
+         ? Space( 80 ) + "Ministar: _________________________________"
+      ENDIF
+
+
+      // detaljni izvjestaj
+
+      FF
+
+   ENDIF // izvjestaj 3
+
+
+   IF ci4 == "D"
+      // izvjestaj 4
+      F10CPI
+      B_ON
+
+      // if !"D" $ ci1 + ci2 + ci3   //mjesto za zaglavlje
+      Razmak( Val( cBRZaZ ) )
+      // endif
+
+      ?? PadC ( "RASHODI PO BUDZETSKIM KORISNICIMA", 80 )
+      ? PadC ( "ZA PERIOD " + AllTrim ( cPeriod ), 80 )
+      ?
+      ? PadC ( "RASHODI PO POTROSACKIM JEDINICAMA, SKUPINAMA I VRSTAMA TROSKOVA", 80 )
+      ?
+      B_OFF
+      cLM := Space ( 5 )
+      th1 := cLM + "                                                                    Plan za                          Izvrsenje     Procenat"
+      th2 := cLM + "                                                                 tekucu godinu    Plan za period     za period     izvrsenja"
+      th3 := cLM + "NAZIV BUDZETSKOG KORISNIKA, SKUPINA I VRSTA TROSKOVA                 (KM)             (KM)             (KM)           (%)"
+      m := cLM + "--------------------------------------------------------------- ---------------- ---------------- ---------------- ---------"
+      SELECT BUDZET
+      IF cBuIz == "D"
+         INDEX ON idrj + BuIz( idkonto ) TO IZBUD
+         SET ORDER TO TAG "IZBUD"
+      ELSE
+         SET ORDER TO TAG "1"
+      ENDIF
+      // "1","IdRj+Idkonto",KUMPATH+"BUDZET"
+
+      P_COND
+      fPrvaStr := .T.
+      nPageNo := 2
+      IB_Zagl4()
+      nSlob := nKorRed4 + 49 -Val( cBrZaZ )
+      nTot1 := nTot2 := nTot3 := 0
+
+      SELECT budzet
+      GO TOP
+      cRazdjel := ""
+      nTotIRa := 0
+      nTotPlanRa := 0
+      nURazdjelu := 1
+
+      DO WHILE !Eof()
+
+         cIdRj := IdRj
+         SELECT RJ
+         HSEEK cIdRj
+         SELECT budzet
+
+         IF nSlob == 0
+            IB_Zagl4 ()
+         ENDIF
+         ?
+         B_ON
+         ?? cLM + cIdRj, RJ->Naz
+         B_OFF
+         nSlob --
+         cRazdjel := Left( cidrj, 2 )
+         nTotPlanRj := 0
+         nTotIRJ := 0
+         DO WHILE !Eof() .AND. idrj == cidrj
+            cKto := BuIz( idkonto )
+            cKtoStvarni := idkonto
+            nPlan := 0
+            DO WHILE !Eof() .AND. idrj == cidrj .AND. BuIz( Idkonto ) == cKto
+               nPlan += BUDZET->( Iznos + RebIznos )
+               SKIP 1
+            ENDDO
+            IF idrj == cidrj
+               cBudzetNext := BuIz( idkonto ) // sljedeca stavka u budzetu
+            ELSE
+               cBudzetNext := "XXXXX"
+            ENDIF
+            IF Eof()
+               cBudzetNext := "XXXXX"
+            ENDIF
+
+            SELECT konto
+            HSEEK cKtoStvarni
+            IF nSlob == 0
+               IB_Zagl4()
+               ?
+               B_ON
+               ?? cLM + cIdRj, RJ->Naz, "(nastavak)"
+               B_OFF
+               nSlob --
+            ENDIF
+
+            ?
+            B_ON
+            ?? cLM + Space ( 6 ), cKtoStvarni, konto->Naz
+            B_OFF
+            nSlob --
+
+            fUBudzetu := .T.
+            SELECT suban
+            SEEK cidfirma + cidrj + cKtoStvarni
+            nTotek2 := 0
+
+            DO WHILE fUbudzetu .OR. !Eof() .AND. idfirma == cidfirma .AND. idrj == cIdrj .AND. BuIz( idkonto ) >= cKto .AND. BuIz( idkonto ) < cBudzetNext
+               cSkonto := BuIz( IdKonto )
+               cSkontoStvarni := IdKonto
+               SELECT konto
+               SEEK  cSKontoStvarni
+               SELECT suban
+               nTotEk := 0
+               DO WHILE !Eof() .AND. cidfirma == idfirma .AND. idrj == cidrj .AND. BuIz( IdKonto ) == iif( fUBudzetu, cKto, cSKonto )
+                  IF d_p == "1"
+                     nTotEK += IznosBHD
+                  ELSE
+                     nTotEK -= IznosBHD
+                  ENDIF
+                  SKIP 1
+               ENDDO
+               IF nTotEk <> 0
+                  ? cLM + Space ( 6 ), cSkontoStvarni, Left ( KONTO->Naz, 49 )
+                  ?? Space ( 16 ), Space ( 16 ), Transform( nTotEk, "9,999,999,999.99" )
+               ENDIF
+               nTotEK2 += nTotEk
+               nSlob --
+               IF nSlob <= 0
+                  IB_Zagl4()
+                  ?
+                  B_ON
+                  ?? cLM + cIdRj, RJ->Naz, "(nastavak)"
+                  B_OFF
+                  nSlob --
+               ENDIF
+
+               fubudzetu := .F.
+            ENDDO // fubudzetu
+
+            SELECT budzet
+            ?
+            nPlanProc := nPlan * nProc / 100
+            B_ON
+            ?? cLM + PadL ( "UKUPNO SKUPINA TROSKOVA " + AllTrim ( cKtoStvarni ), 13 + Len ( KONTO->Naz ) -7 ), Transform( nPlan, "9,999,999,999.99" ), Transform( nPlanProc, "9,999,999,999.99" ), Transform( nTotEK2, "9,999,999,999.99" )
+            IF nPlanProc > 0
+               ?? " " + Transform( nTotEk2 * 100 / nPlanProc, "99,999.99" )
+            ENDIF
+            B_OFF
+            nSlob --
+
+            nTotPlanRj += nPlan
+            nTotIRJ += nTotEK2
+
+            IF nSlob < 3
+               IB_Zagl4 ()
+               ?
+               B_ON
+               ?? cLM + cIdRj, RJ->Naz, "(nastavak)"
+               B_OFF
+               nSlob --
+            ENDIF
+         ENDDO // cidrj
+         nPlanProc := nTotPlanRj * nProc / 100
+         ? m
+         ?
+         B_ON
+         ?? cLM + PadL ( "UKUPNO BUDZETSKI KORISNIK " + AllTrim ( cIdRj ), 13 + Len ( KONTO->Naz ) -7 ), Transform( nTotPlanRj, "9,999,999,999.99" ), Transform( nPlanProc, "9,999,999,999.99" ), Transform( nTotIRJ, "9,999,999,999.99" )
+         IF nPlanProc > 0
+            ?? " " + Transform( nTotIRJ * 100 / nPlanProc, "99,999.99" )
+         ENDIF
+
+         nTotIRa += nTotIRj
+         nTotPlanRa += nTotPlanRj
+
+         IF Left( idrj, 2 ) <> cRazdjel
+            IF nURazdjelu > 1
+               ?
+               nPlanProcRa := nTotPlanRa * nProc / 100
+               ?? cLM + PadL ( "UKUPNO RAZDJEL " + cRazdjel, 13 + Len ( KONTO->Naz ) -7 ), Transform( nTotPlanRa, "9,999,999,999.99" ), Transform( nPlanProcRa, "9,999,999,999.99" ), Transform( nTotIRa, "9,999,999,999.99" )
+               IF nPlanProcRa > 0
+                  ?? " " + Transform( nTotIRa * 100 / nPlanProcRa, "99,999.99" )
+               ENDIF
+            ENDIF
+            nTotIRa := 0
+            nTotPlanRa := 0
+            nURazdjelu := 1
+         ELSE
+            nURazdjelu++
+         ENDIF
+
+         B_OFF
+         nTot1 += nTotPlanRj
+         nTot2 += nPlanProc
+         nTot3 += nTotIRJ
+         ? m
+         nSlob -= 3
+
+      ENDDO  // eof()
+
+      ? m
+      ?
+      B_ON
+
+      IF nVanBudzeta <> 0
+         ?? cLM + PadL ( "STAVKE VAN PLANA BUDZETA:", 13 + Len ( KONTO->Naz ) -7 ), Transform( 0, "9,999,999,999.99" ), Transform( 0, "9,999,999,999.99" ), Transform( nVanBudzeta + nVanB2, "9,999,999,999.99" )
+         ?
+      ENDIF
+
+      ?? cLM + PadL ( "UKUPNO SVI BUDZETSKI KORISNICI:", 13 + Len ( KONTO->Naz ) -7 ), Transform( nTot1, "9,999,999,999.99" ), Transform( nTot2, "9,999,999,999.99" ), Transform( nTot3 + nVanBudzeta + nVanB2, "9,999,999,999.99" )
+      IF nTot2 > 0
+         ?? " " + Transform( ( nTot3 + nVanBudzeta + nVanB2 ) * 100 / nTot2, "99,999.99" )
+      ENDIF
+      B_OFF
+      ? m
+
+      ?
+      ?
+      ?
+      ?
+      ? Space( 80 ) + "Ministar: _________________________________"
+
+      FF
+
+      // izvjestaj 4
+   ENDIF
+
+
+   ENDPRINT
+   CLOSERET
+
+   RETURN
 
 
 
 /*! \fn IB_Zagl1()
  *  \brief Zaglavlje izvrsenje budzeta 1
  */
- 
-function IB_Zagl1()
 
-IF fPrvaStr
-	fPrvaStr := .F.
-Else
-	FF
-	Razmak(VAL(cBRZaZ))
-	?
-	? Space (9), "Pregled rashoda po vrstama i skupinama troskova", Space (60), "Strana", STR (nPageNo++, 3)
-	?
-EndIF
-? m
-? th1
-? th2
-? th3
-? th4
-? m
-nSlob := nKorRed1+46-VAL(cBrZaZ)
-RETURN
+FUNCTION IB_Zagl1()
+
+   IF fPrvaStr
+      fPrvaStr := .F.
+   ELSE
+      FF
+      Razmak( Val( cBRZaZ ) )
+      ?
+      ? Space ( 9 ), "Pregled rashoda po vrstama i skupinama troskova", Space ( 60 ), "Strana", Str ( nPageNo++, 3 )
+      ?
+   ENDIF
+   ? m
+   ? th1
+   ? th2
+   ? th3
+   ? th4
+   ? m
+   nSlob := nKorRed1 + 46 -Val( cBrZaZ )
+
+   RETURN
 
 
 
 /*! \fn IB_Zagl2()
  *  \brief Zaglavlje izvjestaja izvrsenje budzeta 2
  */
- 
-function IB_Zagl2()
 
-IF fPrvaStr
-	fPrvaStr := .F.
-Else
-	Razmak(VAL(cBRZaZ))
-	? Space (5), "Struktura troskova po vrstama", Space (41), "Strana", STR (nPageNo++, 3)
-	?
-EndIF
-? m
-? th1
-? m
-RETURN
+FUNCTION IB_Zagl2()
+
+   IF fPrvaStr
+      fPrvaStr := .F.
+   ELSE
+      Razmak( Val( cBRZaZ ) )
+      ? Space ( 5 ), "Struktura troskova po vrstama", Space ( 41 ), "Strana", Str ( nPageNo++, 3 )
+      ?
+   ENDIF
+   ? m
+   ? th1
+   ? m
+
+   RETURN
 
 
 
 /*! \fn IB_Zagl3()
  *  \brief Zaglavlje izvjestaja izvrsenje budzeta varijanta 3
  */
- 
-function IB_Zagl3()
 
-IF fPrvaStr
-	fPrvaStr := .F.
-Else
-	Razmak(VAL(cBRZaZ))
-	? Space (11), "Ukupni rashodi po potrosackim jedinicama", Space (61), "Strana", STR (nPageNo++, 3)
-	?
-EndIF
-? m
-? th1
-? th2
-? th3
-? m
-RETURN
+FUNCTION IB_Zagl3()
+
+   IF fPrvaStr
+      fPrvaStr := .F.
+   ELSE
+      Razmak( Val( cBRZaZ ) )
+      ? Space ( 11 ), "Ukupni rashodi po potrosackim jedinicama", Space ( 61 ), "Strana", Str ( nPageNo++, 3 )
+      ?
+   ENDIF
+   ? m
+   ? th1
+   ? th2
+   ? th3
+   ? m
+
+   RETURN
 
 
 
 /*! \fn IB_Zagl4()
  *  \brief Zaglavlje izvjestaja izvrsenje budzeta varijanta 4
  */
- 
-function IB_Zagl4()
 
-IF fPrvaStr
-	fPrvaStr := .F.
-Else
-	FF
-	Razmak(VAL(cBRZaZ))
-	? Space (5), "Rashodi po potrosackim jedinicama, skupinama i vrstama troskova",  Space (48), "Strana", STR (nPageNo++, 3)
-	?
-EndIF
-? m
-? th1
-? th2
-? th3
-? m
-nSlob := nKorRed4+49-VAL(cBrZaZ)
-RETURN
+FUNCTION IB_Zagl4()
+
+   IF fPrvaStr
+      fPrvaStr := .F.
+   ELSE
+      FF
+      Razmak( Val( cBRZaZ ) )
+      ? Space ( 5 ), "Rashodi po potrosackim jedinicama, skupinama i vrstama troskova",  Space ( 48 ), "Strana", Str ( nPageNo++, 3 )
+      ?
+   ENDIF
+   ? m
+   ? th1
+   ? th2
+   ? th3
+   ? m
+   nSlob := nKorRed4 + 49 -Val( cBrZaZ )
+
+   RETURN
 
 
 
 /*! \fn Prihodi()
  *  \brief Prihodi
  */
- 
-function Prihodi()
 
-local fKraj
-local n
-private picBHD:=FormPicL(gPicBHD,15)
-private picDEM:=FormPicL(gPicDEM,12)
-private cIdKonto
-private cIdFirma:=SPACE(LEN(gFirma))
-private cIdRj:=SPACE(50)
-private cFunk:=SPACE(60)
-private dDatOd:=CTOD("")
-private dDatDo:=DATE()
-private aUslK
-private aUslRj
-private aUslFunk
-private cSpecKonta
-private nProc:=0
+FUNCTION Prihodi()
 
-//private cPeriod := PADR ("JANUAR - ", 40)
+   LOCAL fKraj
+   LOCAL n
+   PRIVATE picBHD := FormPicL( gPicBHD, 15 )
+   PRIVATE picDEM := FormPicL( gPicDEM, 12 )
+   PRIVATE cIdKonto
+   PRIVATE cIdFirma := Space( Len( gFirma ) )
+   PRIVATE cIdRj := Space( 50 )
+   PRIVATE cFunk := Space( 60 )
+   PRIVATE dDatOd := CToD( "" )
+   PRIVATE dDatDo := Date()
+   PRIVATE aUslK
+   PRIVATE aUslRj
+   PRIVATE aUslFunk
+   PRIVATE cSpecKonta
+   PRIVATE nProc := 0
 
-cIdKonto := PADR ("7;", 60)
-cSpecKonta := PADR ("", 60)
+   // private cPeriod := PADR ("JANUAR - ", 40)
 
-private cPeriod := PADR ("JANUAR - ", 40)
+   cIdKonto := PadR ( "7;", 60 )
+   cSpecKonta := PadR ( "", 60 )
 
-
-cProv:="D"
-
-O_PARTN
-
-do while .t.
-
-	Box (, 22, 70)  // 19
-	@ m_x,m_y+15 SAY "PREGLED PRIHODA"
-
-	//  procenat ucesca perioda u godisnjem planu
-
-	if gNW=="D"
-		cIdFirma:=gFirma
-		@ m_x+1,m_y+2 SAY "Firma "
-		?? gFirma,"-",gNFirma
-	else
-		@ m_x+1,m_y+2 SAY "Firma: " GET cIdFirma valid {|| P_Firma(@cIdFirma),cidfirma:=left(cidfirma,2),.t.}
-	endif
-	@ m_x+3,m_y+2 SAY "         Konta (prazno-sva)" GET cIdKonto PICT "@S30@!" VALID {|| aUslK := Parsiraj (cIdKonto, "IdKonto", "C"), IIF (aUslK==NIL, .F., .T.)}
-	@ m_x+4,m_y+2 SAY " Razdjel/glava (prazno-svi)" GET cIdRj PICT "@S30@!" VALID {|| aUslRj := Parsiraj (cIdRj, "IdRj"), IIF (aUslRj==NIL, .F., .T.)}
-	@ m_x+5,m_y+2 SAY "Funkc. klasif  (prazno-sve)" GET cFunk PICT "@S30@!" VALID {|| aUslFunk := Parsiraj (cFunk, "Funk", "C"), IIF (aUslFunk==NIL, .F., .T.)}
-	@ m_x+6,m_y+2 SAY "                 Pocevsi od" GET dDatOd VALID dDatOd <= dDatDo
-	@ m_x+7,m_y+2 SAY "               Zakljucno sa" GET dDatDo VALID dDatOd <= dDatDo
-	@ m_x+12,m_y+2 SAY "Procenat u odnosu god. plan" GET nProc PICT "999.99"
-	@ m_x+18,m_y+2 SAY "          Obuhvaceni period" GET cPeriod PICT "@!"
-	
-	@ m_x+22,m_Y+2 SAY "Provjeriti stavke koje nisu definisane u budzetu" GET cProv pict "@!" valid cprov $"DN"
-	READ
-	ESC_BCR
-	BoxC()
-
-	if (aUslK==NIL .or. aUslRJ==NIL .or. aUslFunk==NIL)
-		loop
-	else
-		exit
-	endif
-
-enddo
-
-O_BUDZET
-O_KONTO
-O_SUBAN
+   PRIVATE cPeriod := PadR ( "JANUAR - ", 40 )
 
 
-SELECT SUBAN
-cFilter := ""
-IF aUslK<>".t."
-	cFilter += aUslK
-EndIF
-IF aUslRj<>".t."
-	cFilter += IF (!Empty (cFilter), ".and.", "") + aUslRj  // cidrj
-EndIF
-IF aUslFunk<>".t."
-	cFilter += IF (!Empty (cFilter), ".and.", "") + aUslFunk
-EndIF
-IF !Empty (dDatOd)
-	cFilter += IF (!Empty (cFilter), ".and.", "") + "DatDok>="+dbf_quote(dDatOd)
-EndIF
-IF !Empty (dDatDo)
-	cFilter += IF (!Empty (cFilter), ".and.", "") + "DatDok<="+dbf_quote(dDatDo)
-EndIF
+   cProv := "D"
 
-IF !Empty (cFilter)
-	set Filter to &cFilter
-EndIF
+   O_PARTN
 
-SELECT SUBAN
-set order to tag "1"
-//"1","IdFirma+IdKonto+IdPartner+dtos(DatDok)+BrNal+RBr",KUMPATH+"SUBAN") //subanaliti
-GO TOP
+   DO WHILE .T.
 
-select budzet
-private cFiltB:=""
-IF aUslK<>".t."
-	cFiltB += IF (!Empty (cFiltB), ".and.", "") + aUslK
-EndIF
-IF aUslRj<>".t."
-	cFiltB += IF (!Empty (cFiltB), ".and.", "") + aUslRj
-EndIF
-IF aUslFunk<>".t."
-	cFiltB += IF (!Empty (cFiltB), ".and.", "") + aUslFunk
-EndIF
-set filter to &cFiltB
-SET ORDER TO TAG "2" // IDKONTO
+      Box (, 22, 70 )  // 19
+      @ m_x, m_y + 15 SAY "PREGLED PRIHODA"
 
-EOF CRET
+      // procenat ucesca perioda u godisnjem planu
 
-START PRINT CRET
+      IF gNW == "D"
+         cIdFirma := gFirma
+         @ m_x + 1, m_y + 2 SAY "Firma "
+         ?? gFirma, "-", gNFirma
+      ELSE
+         @ m_x + 1, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| P_Firma( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
+      ENDIF
+      @ m_x + 3, m_y + 2 SAY "         Konta (prazno-sva)" GET cIdKonto PICT "@S30@!" VALID {|| aUslK := Parsiraj ( cIdKonto, "IdKonto", "C" ), iif ( aUslK == NIL, .F., .T. ) }
+      @ m_x + 4, m_y + 2 SAY " Razdjel/glava (prazno-svi)" GET cIdRj PICT "@S30@!" VALID {|| aUslRj := Parsiraj ( cIdRj, "IdRj" ), iif ( aUslRj == NIL, .F., .T. ) }
+      @ m_x + 5, m_y + 2 SAY "Funkc. klasif  (prazno-sve)" GET cFunk PICT "@S30@!" VALID {|| aUslFunk := Parsiraj ( cFunk, "Funk", "C" ), iif ( aUslFunk == NIL, .F., .T. ) }
+      @ m_x + 6, m_y + 2 SAY "                 Pocevsi od" GET dDatOd VALID dDatOd <= dDatDo
+      @ m_x + 7, m_y + 2 SAY "               Zakljucno sa" GET dDatDo VALID dDatOd <= dDatDo
+      @ m_x + 12, m_y + 2 SAY "Procenat u odnosu god. plan" GET nProc PICT "999.99"
+      @ m_x + 18, m_y + 2 SAY "          Obuhvaceni period" GET cPeriod PICT "@!"
 
-SELECT BUDZET
-SET ORDER TO TAG "1"
-SELECT suban
-set order to tag "5"
-GO TOP
-nTotal:=0
-nVanBudzeta:=0
-nVanB2:=0
-seek cidfirma
-//cLast:=IDKONTO
+      @ m_x + 22, m_Y + 2 SAY "Provjeriti stavke koje nisu definisane u budzetu" GET cProv PICT "@!" VALID cprov $ "DN"
+      READ
+      ESC_BCR
+      BoxC()
 
-do while !eof() .and. idfirma==cidfirma
-	if d_p=="2"
-		nTotal+=iznosbhd
-	else
-		nTotal-=iznosbhd
-	endif
-	skip 1
-enddo
+      IF ( aUslK == NIL .OR. aUslRJ == NIL .OR. aUslFunk == NIL )
+         LOOP
+      ELSE
+         EXIT
+      ENDIF
 
-nTotal:=nTotal-nVanBudzeta-nVanB2
+   ENDDO
 
-SELECT BUDZET
-SET ORDER TO TAG "2"
-SELECT SUBAN
-SET ORDER TO TAG "1"
-GO TOP
+   O_BUDZET
+   O_KONTO
+   O_SUBAN
 
-INI
-?
-F10CPI
 
-// ispis izvjestaja
+   SELECT SUBAN
+   cFilter := ""
+   IF aUslK <> ".t."
+      cFilter += aUslK
+   ENDIF
+   IF aUslRj <> ".t."
+      cFilter += IF ( !Empty ( cFilter ), ".and.", "" ) + aUslRj  // cidrj
+   ENDIF
+   IF aUslFunk <> ".t."
+      cFilter += IF ( !Empty ( cFilter ), ".and.", "" ) + aUslFunk
+   ENDIF
+   IF !Empty ( dDatOd )
+      cFilter += IF ( !Empty ( cFilter ), ".and.", "" ) + "DatDok>=" + dbf_quote( dDatOd )
+   ENDIF
+   IF !Empty ( dDatDo )
+      cFilter += IF ( !Empty ( cFilter ), ".and.", "" ) + "DatDok<=" + dbf_quote( dDatDo )
+   ENDIF
 
-F10CPI
-B_ON
-?? PADC ("P R E G L E D   P R I H O D A", 80)
-? PADC ("ZA PERIOD "+AllTrim (cPeriod), 80)
-?
-? PADC ("STRUKTURA PRIHODA PO VRSTAMA", 80)
-B_OFF
-?
+   IF !Empty ( cFilter )
+      SET FILTER to &cFilter
+   ENDIF
 
-cLM := SPACE (10)
+   SELECT SUBAN
+   SET ORDER TO TAG "1"
+   // "1","IdFirma+IdKonto+IdPartner+dtos(DatDok)+BrNal+RBr",KUMPATH+"SUBAN") //subanaliti
+   GO TOP
 
-th1:=cLM+"                                                                                                                      Ucesce "
-th2:=cLM+"                                                          Plan za                          Izvrsenje      Procenat    u ukup."
-th3:=cLM+"Sifra i naziv ekonomske kategorije prihoda             tekucu godinu    Plan za period     za period      izvrsenja   prihod."
-th4:=cLM+"                                                            (KM)             (KM)             (KM)           (%)        (%)  "
-  m:=cLM+"----------------------------------------------------- ---------------- ---------------- ---------------- ------------ -------"
-m1:= StrTran (m, "-", "*")
+   SELECT budzet
+   PRIVATE cFiltB := ""
+   IF aUslK <> ".t."
+      cFiltB += IF ( !Empty ( cFiltB ), ".and.", "" ) + aUslK
+   ENDIF
+   IF aUslRj <> ".t."
+      cFiltB += IF ( !Empty ( cFiltB ), ".and.", "" ) + aUslRj
+   ENDIF
+   IF aUslFunk <> ".t."
+      cFiltB += IF ( !Empty ( cFiltB ), ".and.", "" ) + aUslFunk
+   ENDIF
+   SET FILTER to &cFiltB
+   SET ORDER TO TAG "2" // IDKONTO
 
-P_COND
-fPrvaStr := .T.
-nPageNo := 2
-PR_Zagl()
+   EOF CRET
 
-SELECT KONTO
+   START PRINT CRET
 
-SELECT BUDZET
-go top
+   SELECT BUDZET
+   SET ORDER TO TAG "1"
+   SELECT suban
+   SET ORDER TO TAG "5"
+   GO TOP
+   nTotal := 0
+   nVanBudzeta := 0
+   nVanB2 := 0
+   SEEK cidfirma
+   // cLast:=IDKONTO
 
-cIdRj := SPACE (LEN (BUDZET->IdRj)) // zbog BUDZET-a - prihodi ne idu po RJ
-nLen1 := 53
-nLen2 := LEN (konto->Naz)-5-1
+   DO WHILE !Eof() .AND. idfirma == cidfirma
+      IF d_p == "2"
+         nTotal += iznosbhd
+      ELSE
+         nTotal -= iznosbhd
+      ENDIF
+      SKIP 1
+   ENDDO
 
-nTotPlan:=0
-nTotPr:=0
-nL1:=nL2:=nPlanL1:=nPlanL2:=0
-fneman3:=.f.
+   nTotal := nTotal - nVanBudzeta - nVanB2
 
-do while !eof()
+   SELECT BUDZET
+   SET ORDER TO TAG "2"
+   SELECT SUBAN
+   SET ORDER TO TAG "1"
+   GO TOP
 
-	IF prow() > 63+gPStranica
-		PR_Zagl()
-	EndIF
+   INI
+   ?
+   F10CPI
 
-  
-	cLev1:=idkonto
-	fLev1:=.t.
-	select konto
-	HSEEK clev1
-	select budzet
-	? cLM
-	B_ON
-	?? cLev1, (cLev1Naz:=konto->naz)
-	B_OFF
+   // ispis izvjestaja
 
-	if fond="N1"
-		skip 1
-	endif
+   F10CPI
+   B_ON
+   ?? PadC ( "P R E G L E D   P R I H O D A", 80 )
+   ? PadC ( "ZA PERIOD " + AllTrim ( cPeriod ), 80 )
+   ?
+   ? PadC ( "STRUKTURA PRIHODA PO VRSTAMA", 80 )
+   B_OFF
+   ?
 
-	nPlanL1:=0
-	nL1:=0
-	do while !eof() .and. fLev1
+   cLM := Space ( 10 )
 
-		cLev2:=idkonto
-		fLev2:=.t.
-		select konto
-		HSEEK clev2
-		select budzet
-		? cLM
-		B_ON
-		?? cLev2, (cLev2Naz:=konto->naz)
-		B_OFF
-		if fond="N2" .and. !fneman3
-			skip
-		endif
-		if fond="N2"
-			if !fneman3
-				skip -1
-			endif
-			fneman3:=.t.   // ponovo se desava n2, NEMA N3
-		else
-			fneman3:=.f.
-		endif
-		nPlanL2:=0
-		nL2:=0
-		do while !eof() .and. fLev2
-			cKto := IdKonto
-			IF prow() > 62+gPStranica
-				FF
-				Pr_Zagl()
-			EndIF
-  
-			// Izracunaj plan za tekucu godinu
+   th1 := cLM + "                                                                                                                      Ucesce "
+   th2 := cLM + "                                                          Plan za                          Izvrsenje      Procenat    u ukup."
+   th3 := cLM + "Sifra i naziv ekonomske kategorije prihoda             tekucu godinu    Plan za period     za period      izvrsenja   prihod."
+   th4 := cLM + "                                                            (KM)             (KM)             (KM)           (%)        (%)  "
+   m := cLM + "----------------------------------------------------- ---------------- ---------------- ---------------- ------------ -------"
+   m1 := StrTran ( m, "-", "*" )
 
-			nPlan := 0
-			do While !Eof() .and. Idkonto==cKto
-				nPlan += (Iznos+RebIznos)
-				SKIP 1
-			EndDO
+   P_COND
+   fPrvaStr := .T.
+   nPageNo := 2
+   PR_Zagl()
 
-			nPlanL2 += nPlan
-			cBudzetNext:=idkonto // sljedeca stavka u budzetu
-			if eof()
-				cBudzetNext:="XXX"
-			endif
+   SELECT KONTO
 
-			nPlanPer := nPlan*nProc/100
-			select suban   // IDI NA SUBANALITIKU .........................
-			seek cidfirma+ckto
-			fUBudzetu:=.t.
-			do while fUbudzetu .or. !eof() .and. cidfirma==idfirma .and. idkonto>=cKto .and. idkonto<cBudzetNext
+   SELECT BUDZET
+   GO TOP
 
-				nTotEK := 0
-				cSKonto:=idkonto
-				do While !Eof() .and. cidfirma==idfirma .and. IdKonto==iif(fUBudzetu,cKto,cSKonto)
-					if d_p=="2"
-						nTotEK += IznosBHD
-					else
-						nTotEK -= IznosBHD
-					endif
-					SKIP 1
-				EndDO
+   cIdRj := Space ( Len ( BUDZET->IdRj ) ) // zbog BUDZET-a - prihodi ne idu po RJ
+   nLen1 := 53
+   nLen2 := Len ( konto->Naz ) -5 -1
 
-				? cLM
-				SELECT konto
-				HSEEK iif(fUBudzetu,cKto,cSKonto)
-				select suban
-				?? SPACE(8)
-				?? iif(fUBudzetu,cKto,cSKonto), PADR (Konto->Naz, 38)
-				?? TRANSFORM(nPlan,    "9,999,999,999.99"), TRANSFORM(nPlanPer, "9,999,999,999.99"), TRANSFORM(nTotEK,   "9,999,999,999.99")
-				IF nPlanPer > 0
-					?? " "+TRANSFORM(nTotEK*100/nPlanPer, "99,999.99")
-				Else
-					?? SPACE (1+9)
-				EndIF
-				IF nTotal > 0
-					?? "   ", STR (nTotEK*100/nTotal, 6, 2)
-				EndIF
-				fUBudzetu:=.f.
-				nL2 += nTotEK
-				nPlan:=0
-				nPlanPer:=0
+   nTotPlan := 0
+   nTotPr := 0
+   nL1 := nL2 := nPlanL1 := nPlanL2 := 0
+   fneman3 := .F.
 
-			enddo // suban
-			select budzet
-			if fond="N2" .or. fond="N1"
-				fLev2:=.f.  // prekini level 2
-			endif
+   DO WHILE !Eof()
 
-		enddo // fLev2 prekid
+      IF PRow() > 63 + gPStranica
+         PR_Zagl()
+      ENDIF
 
-		IF prow()>62+gPStranica
-			PR_Zagl()
-			? cLM
-			B_ON
-			?? cLev2, cLev2Naz, "(nastavak)"
-			B_OFF
-		EndIF
 
-		IF prow() > 60+gPStranica
-			PR_Zagl()
-		Else
-			? m
-		EndIF
+      cLev1 := idkonto
+      fLev1 := .T.
+      SELECT konto
+      HSEEK clev1
+      SELECT budzet
+      ? cLM
+      B_ON
+      ?? cLev1, ( cLev1Naz := konto->naz )
+      B_OFF
 
-		? cLM
-		B_ON
-		nPom := nPlanL2*nProc/100
-		?? PADL ("UKUPNO "+cLev2+" "+cLev2Naz, nLen1), TRANSFORM(nPlanL2, "9,999,999,999.99"), TRANSFORM(nPom, "9,999,999,999.99"), TRANSFORM(nL2, "9,999,999,999.99")
-		IF nPom > 0
-			?? " "+TRANSFORM(nL2*100/nPom, "99,999.99")
-		EndIF
-		IF nTotal > 0
-			?? "   ", STR (nL2*100/nTotal, 6, 2)
-		EndIF
-		B_OFF
-		? m
+      IF fond = "N1"
+         SKIP 1
+      ENDIF
 
-		if fond="N1"
-			flev1:=.f.
-		endif
+      nPlanL1 := 0
+      nL1 := 0
+      DO WHILE !Eof() .AND. fLev1
 
-		nPlanL1+=nPlanL2
-		nL1+=nL2
+         cLev2 := idkonto
+         fLev2 := .T.
+         SELECT konto
+         HSEEK clev2
+         SELECT budzet
+         ? cLM
+         B_ON
+         ?? cLev2, ( cLev2Naz := konto->naz )
+         B_OFF
+         IF fond = "N2" .AND. !fneman3
+            SKIP
+         ENDIF
+         IF fond = "N2"
+            IF !fneman3
+               SKIP -1
+            ENDIF
+            fneman3 := .T.   // ponovo se desava n2, NEMA N3
+         ELSE
+            fneman3 := .F.
+         ENDIF
+         nPlanL2 := 0
+         nL2 := 0
+         DO WHILE !Eof() .AND. fLev2
+            cKto := IdKonto
+            IF PRow() > 62 + gPStranica
+               FF
+               Pr_Zagl()
+            ENDIF
 
-	enddo // fLEv1 prekid
+            // Izracunaj plan za tekucu godinu
 
-	IF prow() > 63+gPStranica
-		PR_Zagl()
-		? cLM
-		B_ON
-		?? cLev1, cLev1Naz, "(nastavak)"
-		B_OFF
-	EndIF
+            nPlan := 0
+            DO WHILE !Eof() .AND. Idkonto == cKto
+               nPlan += ( Iznos + RebIznos )
+               SKIP 1
+            ENDDO
 
-	IF prow() > 60+gPStranica
-		PR_Zagl()
-	Else
-		? m1
-	EndIF
+            nPlanL2 += nPlan
+            cBudzetNext := idkonto // sljedeca stavka u budzetu
+            IF Eof()
+               cBudzetNext := "XXX"
+            ENDIF
 
-	? cLM
-	B_ON
+            nPlanPer := nPlan * nProc / 100
+            SELECT suban   // IDI NA SUBANALITIKU .........................
+            SEEK cidfirma + ckto
+            fUBudzetu := .T.
+            DO WHILE fUbudzetu .OR. !Eof() .AND. cidfirma == idfirma .AND. idkonto >= cKto .AND. idkonto < cBudzetNext
 
-	nPom := nPlanL1*nProc/100
-	?? PADL ("UKUPNO "+cLev1+" "+cLev1Naz, nLen1), TRANSFORM(nPlanL1, "9,999,999,999.99"), TRANSFORM(nPom, "9,999,999,999.99"), TRANSFORM(nL1, "9,999,999,999.99")
-	IF nPom > 0
-		?? " "+TRANSFORM(nL1*100/nPom, "99,999.99")
-	EndIF
-	IF nTotal > 0
-		?? "   ", STR (nL1*100/nTotal, 6, 2)
-	EndIF
-	B_OFF
-	? m1
-	nTotPlan+=nPlanL1
-	// nTotPr+=nL2
-	nTotPr+=nL1
+               nTotEK := 0
+               cSKonto := idkonto
+               DO WHILE !Eof() .AND. cidfirma == idfirma .AND. IdKonto == iif( fUBudzetu, cKto, cSKonto )
+                  IF d_p == "2"
+                     nTotEK += IznosBHD
+                  ELSE
+                     nTotEK -= IznosBHD
+                  ENDIF
+                  SKIP 1
+               ENDDO
 
-EndDO
+               ? cLM
+               SELECT konto
+               HSEEK iif( fUBudzetu, cKto, cSKonto )
+               SELECT suban
+               ?? Space( 8 )
+               ?? iif( fUBudzetu, cKto, cSKonto ), PadR ( Konto->Naz, 38 )
+               ?? Transform( nPlan,    "9,999,999,999.99" ), Transform( nPlanPer, "9,999,999,999.99" ), Transform( nTotEK,   "9,999,999,999.99" )
+               IF nPlanPer > 0
+                  ?? " " + Transform( nTotEK * 100 / nPlanPer, "99,999.99" )
+               ELSE
+                  ?? Space ( 1 + 9 )
+               ENDIF
+               IF nTotal > 0
+                  ?? "   ", Str ( nTotEK * 100 / nTotal, 6, 2 )
+               ENDIF
+               fUBudzetu := .F.
+               nL2 += nTotEK
+               nPlan := 0
+               nPlanPer := 0
 
-IF prow() > 60+gPStranica
-	PR_Zagl()
-Else
-	? m1
-EndIF
+            ENDDO // suban
+            SELECT budzet
+            IF fond = "N2" .OR. fond = "N1"
+               fLev2 := .F.  // prekini level 2
+            ENDIF
 
-nPom := nTotPlan*nProc/100
-? cLM
-B_ON
-?? PADL ("U  K  U  P  N  O   P R I H O D I", nLen1), TRANSFORM(nTotPlan, "9,999,999,999.99"), TRANSFORM(nPom, "9,999,999,999.99"), TRANSFORM(nTotPR, "9,999,999,999.99")
+         ENDDO // fLev2 prekid
 
-IF nPom > 0
-	?? " "+TRANSFORM(nTotPR*100/nPom, "99,999.99")
-EndIF
-IF nTotal > 0
-	?? "   ", STR (nTotPR*100/nTotal, 6, 2)
-EndIF
-B_OFF
-? m1
-FF
-ENDPRINT
-return
+         IF PRow() > 62 + gPStranica
+            PR_Zagl()
+            ? cLM
+            B_ON
+            ?? cLev2, cLev2Naz, "(nastavak)"
+            B_OFF
+         ENDIF
+
+         IF PRow() > 60 + gPStranica
+            PR_Zagl()
+         ELSE
+            ? m
+         ENDIF
+
+         ? cLM
+         B_ON
+         nPom := nPlanL2 * nProc / 100
+         ?? PadL ( "UKUPNO " + cLev2 + " " + cLev2Naz, nLen1 ), Transform( nPlanL2, "9,999,999,999.99" ), Transform( nPom, "9,999,999,999.99" ), Transform( nL2, "9,999,999,999.99" )
+         IF nPom > 0
+            ?? " " + Transform( nL2 * 100 / nPom, "99,999.99" )
+         ENDIF
+         IF nTotal > 0
+            ?? "   ", Str ( nL2 * 100 / nTotal, 6, 2 )
+         ENDIF
+         B_OFF
+         ? m
+
+         IF fond = "N1"
+            flev1 := .F.
+         ENDIF
+
+         nPlanL1 += nPlanL2
+         nL1 += nL2
+
+      ENDDO // fLEv1 prekid
+
+      IF PRow() > 63 + gPStranica
+         PR_Zagl()
+         ? cLM
+         B_ON
+         ?? cLev1, cLev1Naz, "(nastavak)"
+         B_OFF
+      ENDIF
+
+      IF PRow() > 60 + gPStranica
+         PR_Zagl()
+      ELSE
+         ? m1
+      ENDIF
+
+      ? cLM
+      B_ON
+
+      nPom := nPlanL1 * nProc / 100
+      ?? PadL ( "UKUPNO " + cLev1 + " " + cLev1Naz, nLen1 ), Transform( nPlanL1, "9,999,999,999.99" ), Transform( nPom, "9,999,999,999.99" ), Transform( nL1, "9,999,999,999.99" )
+      IF nPom > 0
+         ?? " " + Transform( nL1 * 100 / nPom, "99,999.99" )
+      ENDIF
+      IF nTotal > 0
+         ?? "   ", Str ( nL1 * 100 / nTotal, 6, 2 )
+      ENDIF
+      B_OFF
+      ? m1
+      nTotPlan += nPlanL1
+      // nTotPr+=nL2
+      nTotPr += nL1
+
+   ENDDO
+
+   IF PRow() > 60 + gPStranica
+      PR_Zagl()
+   ELSE
+      ? m1
+   ENDIF
+
+   nPom := nTotPlan * nProc / 100
+   ? cLM
+   B_ON
+   ?? PadL ( "U  K  U  P  N  O   P R I H O D I", nLen1 ), Transform( nTotPlan, "9,999,999,999.99" ), Transform( nPom, "9,999,999,999.99" ), Transform( nTotPR, "9,999,999,999.99" )
+
+   IF nPom > 0
+      ?? " " + Transform( nTotPR * 100 / nPom, "99,999.99" )
+   ENDIF
+   IF nTotal > 0
+      ?? "   ", Str ( nTotPR * 100 / nTotal, 6, 2 )
+   ENDIF
+   B_OFF
+   ? m1
+   FF
+   ENDPRINT
+
+   RETURN
 
 
 
 /*! \fn PR_Zagl()
- *  \brief Zaglavlje prihoda 
+ *  \brief Zaglavlje prihoda
  */
- 
-function PR_Zagl()
 
-IF fPrvaStr
-	fPrvaStr := .F.
-Else
-	FF
-	? cLM+"Struktura prihoda po vrstama", Space (59), "Strana", STR (nPageNo++, 3)
-EndIF
-? m
-? th1
-? th2
-? th3
-? th4
-? m
-RETURN
+FUNCTION PR_Zagl()
+
+   IF fPrvaStr
+      fPrvaStr := .F.
+   ELSE
+      FF
+      ? cLM + "Struktura prihoda po vrstama", Space ( 59 ), "Strana", Str ( nPageNo++, 3 )
+   ENDIF
+   ? m
+   ? th1
+   ? th2
+   ? th3
+   ? th4
+   ? m
+
+   RETURN
 
 
 
@@ -1435,16 +1442,16 @@ RETURN
  *  \todo Treba prebaciti u /sclib
  *  \param nBrRed  - broj redova
  */
- 
-static function Razmak(nBrRed)
 
-private i
+STATIC FUNCTION Razmak( nBrRed )
 
-for i:=1 to nBrRed
-	?
-next
+   PRIVATE i
 
-return
+   FOR i := 1 TO nBrRed
+      ?
+   NEXT
+
+   RETURN
 
 
 
@@ -1453,25 +1460,23 @@ return
  *  \brief Sortiraj izuzetke u budzetu
  *  \param cKonto
  */
- 
-function BuIz(cKonto)
 
-// primjer BUIZ: ID=6138931 , NAZ=6138910030
-//                7 cifri,     10 cifri
-local nselect
-if cBuIz=="N"
-	return cKonto
-endif
+FUNCTION BuIz( cKonto )
 
-nSelect:=select()
-select buiz
-seek cKonto
-if found()
-	cKonto:=naz
-endif
+   // primjer BUIZ: ID=6138931 , NAZ=6138910030
+   // 7 cifri,     10 cifri
+   LOCAL nselect
+   IF cBuIz == "N"
+      RETURN cKonto
+   ENDIF
 
-select (nSelect)
-return PADR(cKonto,10)
+   nSelect := Select()
+   SELECT buiz
+   SEEK cKonto
+   IF Found()
+      cKonto := naz
+   ENDIF
 
+   SELECT ( nSelect )
 
-
+   RETURN PadR( cKonto, 10 )

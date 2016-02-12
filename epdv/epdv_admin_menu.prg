@@ -13,8 +13,6 @@
 #include "f18.ch"
 
 
-// -------------------------------------------
-// -------------------------------------------
 FUNCTION epdv_admin_menu()
 
    // {
@@ -38,7 +36,7 @@ FUNCTION epdv_admin_menu()
 STATIC FUNCTION rn_gr( cTblName )
 
    IF Pitanje(, "Izvrsiti renumeriranje ? " + cTblName, "N" ) == "D"
-      IF SigmaSif( "RNGR" )
+      IF spec_funkcije_sifra( "RNGR" )
          rn_g_r_br( cTblName )
       ELSE
          MsgBeep( "Pogresna lozinka, nista od posla ..." )

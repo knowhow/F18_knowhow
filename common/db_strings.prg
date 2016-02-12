@@ -19,7 +19,7 @@ FUNCTION p_strings( cId, dx, dy )
    PRIVATE ImeKol
    PRIVATE Kol
 
-   IF !SigmaSIF( "STRING" )
+   IF !spec_funkcije_sifra( "STRING" )
       MsgBeep( "Opcija nedostupna !!!" )
       RETURN
    ENDIF

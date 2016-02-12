@@ -1073,7 +1073,7 @@ FUNCTION TotBrisRadn()
    LOCAL nRec
    PRIVATE cIdRadn := Space( 6 )
 
-   IF !SigmaSif( "SIGMATB " )
+   IF !spec_funkcije_sifra( "SIGMATB " )
       RETURN
    ENDIF
 

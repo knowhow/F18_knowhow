@@ -141,7 +141,7 @@ FUNCTION gen_all_plu( lSilent )
       lSilent := .F.
    ENDIF
 
-   IF lSilent == .F. .AND. !SigmaSIF( "GENPLU" )
+   IF lSilent == .F. .AND. !spec_funkcije_sifra( "GENPLU" )
       MsgBeep( "Neispravnan unos lozinke !" )
       RETURN .F.
    ENDIF
@@ -276,7 +276,7 @@ FUNCTION auto_plu( reset_plu, silent_mode, dev_params )
    ENDIF
 
    IF reset_plu = .T. .AND. !silent_mode
-      IF !SigmaSif( "RESET" )
+      IF !spec_funkcije_sifra( "RESET" )
          MsgBeep( "Unesena pogrešna šifra !" )
          SELECT ( _t_area )
          RETURN _plu

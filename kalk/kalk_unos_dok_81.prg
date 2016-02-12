@@ -16,7 +16,7 @@ STATIC aPorezi := {}
 
 
 // direktni ulaz u prodavnicu
-FUNCTION Get1_81( atrib )
+FUNCTION kalk_unos_dok_81( atrib )
 
    LOCAL _x := 5
    LOCAL _kord_x := 0
@@ -49,28 +49,28 @@ FUNCTION Get1_81( atrib )
 
    __k_val := "N"
 
-   IF nRbr == 1 .AND. fnovi
+   IF nRbr == 1 .AND. fNovi
       _datfaktp := _datdok
    ENDIF
 
-   IF nRbr == 1 .OR. !fnovi
+   IF nRbr == 1 .OR. !fNovi
 
       ++ _x
-
       _kord_x := m_x + _x
 
-      @ m_x + _x, m_y + 2 SAY "DOBAVLJAC:" GET _IdPartner PICT "@!" VALID {|| Empty( _IdPartner ) .OR. P_Firma( @_IdPartner ), ispisi_naziv_sifre( F_PARTN, _idpartner, _kord_x - 1, 22, 20 ) }
+      @ m_x + _x, m_y + 2 SAY8 "DOBAVLJAČ:" GET _IdPartner PICT "@!" ;
+          VALID {|| Empty( _IdPartner ) .OR. P_Firma( @_IdPartner ), ispisi_naziv_sifre( F_PARTN, _idpartner, _kord_x - 1, 22, 20 ) }
       @ m_x + _x, 50 SAY "Broj fakture:" GET _brfaktp
       @ m_x + _x, Col() + 1 SAY "Datum:" GET _datfaktp
 
       ++ _x
-
       _kord_x := m_x + _x
 
-      @ m_x + _x, m_y + 2 SAY "Konto zaduzuje:" GET _idkonto VALID {|| P_Konto( @_IdKonto ), ispisi_naziv_sifre( F_KONTO, _idkonto, _kord_x, 40, 30 ) } PICT "@!"
+      @ m_x + _x, m_y + 2 SAY8 "Konto zadužuje:" GET _idkonto ;
+        VALID {|| P_Konto( @_IdKonto ), ispisi_naziv_sifre( F_KONTO, _idkonto, _kord_x, 40, 30 ) } PICT "@!"
 
       IF gNW <> "X"
-         @ m_x + _x, m_y + 42 SAY "Zaduzuje: " GET _idzaduz PICT "@!" VALID Empty( _idzaduz ) .OR. P_Firma( @_idzaduz )
+         @ m_x + _x, m_y + 42 SAY8 "Zadužuje: " GET _idzaduz PICT "@!" VALID Empty( _idzaduz ) .OR. P_Firma( @_idzaduz )
       ENDIF
 
       READ
@@ -80,8 +80,7 @@ FUNCTION Get1_81( atrib )
    ELSE
 
       ++ _x
-
-      @ m_x + _x, m_y + 2 SAY "DOBAVLJAC: "
+      @ m_x + _x, m_y + 2 SAY8 "DOBAVLJAČ: "
       ?? _idpartner
       @  m_x + _x, Col() + 1 SAY "Faktura broj: "
       ?? _brfaktp
@@ -102,8 +101,7 @@ FUNCTION Get1_81( atrib )
 
    ENDIF
 
-   ++ _x
-   ++ _x
+   _x += 2
    _kord_x := m_x + _x
 
    IF lKoristitiBK
@@ -139,18 +137,16 @@ FUNCTION Get1_81( atrib )
    DatPosljP()
 
    ++ _x
-
    IF _use_rok
-      @ m_x + _x, m_y + 2 SAY "Datum isteka roka:" GET _rok
+      @ m_x + _x, m_y + 2 SAY8 "Datum isteka roka:" GET _rok
    ENDIF
 
    IF _use_opis
-      @ m_x + _x, m_y + 30 SAY "Opis:" GET _opis PICT "@S40"
+      @ m_x + _x, m_y + 30 SAY8 "Opis:" GET _opis PICT "@S40"
    ENDIF
 
    ++ _x
-
-   @ m_x + _x, m_y + 2 SAY "Kolicina " GET _kolicina PICT PicKol VALID _kolicina <> 0
+   @ m_x + _x, m_y + 2 SAY8 "Količina " GET _kolicina PICT PicKol VALID _kolicina <> 0
 
    IF fNovi
       SELECT koncij
@@ -165,10 +161,7 @@ FUNCTION Get1_81( atrib )
 
    SELECT kalk_pripr
 
-   // FCJ
-
    ++ _x
-
    @ m_x + _x, m_y + 2 SAY "Fakturna cijena:"
 
    IF gDokKVal == "D"
@@ -183,7 +176,6 @@ FUNCTION Get1_81( atrib )
    @ m_x + _x, Col() + 1 SAY "*** <ALT+T> unos ukupne FV"
 
    // KASA-SKONTO ili RABAT
-
    ++ _x
    @ m_x + _x, m_y + 2   SAY "Rabat (%):"
    @ m_x + _x, m_y + _unos_left GET _rabat PICT PicDEM ;

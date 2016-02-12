@@ -515,7 +515,7 @@ local cNijeZaklj := "     0"
 local nNRec
 nArr := SELECT()
 
-if !SigmaSif("ZAKSVE")
+if !spec_funkcije_sifra("ZAKSVE")
 	MsgBeep("Nemate pravo na koristenje ove opcije!")
 	return
 endif

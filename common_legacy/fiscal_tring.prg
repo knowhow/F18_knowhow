@@ -363,10 +363,9 @@ FUNCTION tring_double( dev_param )
 
    xml_subnode( "Zahtjev", .T. )
 
-   // zatvori fajl...
    close_xml()
 
-   RETURN
+   RETURN .T.
 
 
 // ----------------------------------------------
@@ -593,7 +592,7 @@ FUNCTION tring_daily_rpt( dev_param )
    LOCAL _rpt_type := "Z"
 
    IF Pitanje(, "Stampati dnevni izvjestaj", "D" ) == "N"
-      RETURN
+      RETURN .F.
    ENDIF
 
    _param_date := "zadnji_" + _rpt_type + "_izvjestaj_datum"
@@ -759,6 +758,7 @@ FUNCTION tring_read_error( dev_param, fisc_no, trig )
    LOCAL _err_data, _scan, _err_txt
    LOCAL _ok
    LOCAL _o_file
+   LOCAL _fisc_txt
 
    _time := dev_param[ "timeout" ]
 

@@ -251,7 +251,7 @@ STATIC FUNCTION kalk_povrat_prema_kriteriju()
    LOCAL lOk := .T.
    LOCAL lRet := .F.
 
-   IF !SigmaSif()
+   IF !spec_funkcije_sifra()
       my_close_all_dbf()
       RETURN lRet
    ENDIF

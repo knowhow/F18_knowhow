@@ -1,17 +1,16 @@
 /*
- * This file is part of the bring.out FMK, a free and open source
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+ * This file is part of the bring.out knowhow ERP, a free and open source
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
 
-
 #include "f18.ch"
-#include "hbclass.ch"
+
 
 
 FUNCTION TFrmInvItNew( oOwner )
@@ -38,11 +37,11 @@ CREATE CLASS TFrmInvIt
    VAR self
    VAR oOwner
    VAR lNovaStavka
-	
+
    VAR nActionType
    VAR nCh
    VAR lSilent
-	
+
    // form varijable
    VAR cIdRj
    VAR cIdVd
@@ -61,10 +60,10 @@ CREATE CLASS TFrmInvIt
    VAR nPKolicina
    VAR nCijena
    VAR nUkupno
-	
+
    // caclulated values
    VAR nNaStanju
-	
+
    METHOD newItem
    METHOD deleteItem
    METHOD open
@@ -72,7 +71,7 @@ CREATE CLASS TFrmInvIt
    METHOD nextItem
    METHOD loadFromTbl
    METHOD saveToTbl
-	
+
    // when, validacija polja
    METHOD wheIdRoba
    METHOD vldIdRoba
@@ -116,7 +115,7 @@ METHOD open()
       ELSE
          ::getPartner( 5 )
       ENDIF
-	
+
       @ m_x + 9, m_y + 2  SAY Valdomaca() + "/" + VAlPomocna() GET ::cValuta PICT "@!" VALID ::cValuta $ ValDomaca() + "#" + ValPomocna()
 
       READ

@@ -9,10 +9,8 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-
 #include "f18.ch"
-#include "hbclass.ch"
-#include "f18_separator.ch"
+
 
 
 
@@ -43,7 +41,7 @@ CREATE CLASS TFrmInv
 
    EXPORTED:
    VAR self
-	
+
    // is partner field loaded
    VAR lPartnerLoaded
    VAR lTerminate
@@ -69,7 +67,7 @@ CREATE CLASS TFrmInv
    METHOD noveStavke
    METHOD popup
    METHOD sayKomande
-	
+
    METHOD genDok
    METHOD genDokManjak
    METHOD genDokVisak
@@ -166,7 +164,7 @@ METHOD onKeyboard()
    case ::nCh == K_CTRL_P
       ::print()
       RETURN DE_REFRESH
-	
+
    case ::nCh == K_ALT_P
       ::printOPop()
       RETURN DE_REFRESH
@@ -189,11 +187,11 @@ METHOD onKeyboard()
       RETURN DE_REFRESH
 
    case ::nCh == K_ALT_F10
-	
+
    case ::nCh == K_ESC
       RETURN DE_ABORT
    ENDCASE
-	
+
    RETURN DE_CONT
 
 
@@ -476,4 +474,3 @@ METHOD genDokVisak
    ::lTerminate := .T.
 
    RETURN
-

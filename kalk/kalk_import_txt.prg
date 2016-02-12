@@ -2018,7 +2018,7 @@ STATIC FUNCTION ChkTD95( cVezniDok )
  */
 STATIC FUNCTION FillDobSifra()
 
-   IF !SigmaSif( "FILLDOB" )
+   IF !spec_funkcije_sifra( "FILLDOB" )
       MsgBeep( "Nemate ovlastenja za ovu opciju!!!" )
       RETURN
    ENDIF

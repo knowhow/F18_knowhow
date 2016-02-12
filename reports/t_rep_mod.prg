@@ -13,7 +13,6 @@
 #include "hbclass.ch"
 
 
-
 CLASS TReportsMod FROM TAppMod
 
    METHOD NEW
@@ -24,8 +23,8 @@ CLASS TReportsMod FROM TAppMod
 
 END CLASS
 
-// -----------------------------------------------
-// -----------------------------------------------
+
+
 METHOD new( p1, p2, p3, p4, p5, p6, p7, p8, p9 )
 
    ::super:new( p1, p2, p3, p4, p5, p6, p7, p8, p9 )

@@ -11,6 +11,8 @@
 
 #include "f18.ch"
 
+MEMVAR ImeKol, Kol
+
 /*
    P_Roba( @cId )
    P_Roba( @cId, NIL, NIL, "IDP") - tag IDP - proizvodi
@@ -35,7 +37,7 @@ FUNCTION P_Roba( cId, dx, dy, cSeek )
    PushWA()
    O_ROBA_NOT_USED
 
-   AAdd( ImeKol, { PadC( "ID", 10 ),  {|| id }, "id", {|| .T. }, {|| sifra_postoji( wId ) } } )
+   AAdd( ImeKol, { PadC( "ID", 10 ),  {|| field->id }, "id", {|| .T. }, {|| sifra_postoji( wId ) } } )
    AAdd( ImeKol, { PadC( "Naziv", _naz_len ), {|| Left( field->naz, _naz_len ) }, "naz", {|| .T. }, {|| .T. } } )
    AAdd( ImeKol, { PadC( "JMJ", 3 ), {|| field->jmj },       "jmj"    } )
 

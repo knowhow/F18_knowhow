@@ -1,14 +1,13 @@
 /*
- * This file is part of the bring.out FMK, a free and open source
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+ * This file is part of the bring.out knowhow ERP, a free and open source
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
-
 
 #include "f18.ch"
 
@@ -92,15 +91,15 @@ STATIC FUNCTION check_barkod_import()
    GO TOP
 
    DO WHILE !Eof() .AND. field->status = 0
-	
+
       cTmp := field->barkod
-	
+
       nScan := AScan( aErr, {| xVal | xVal[ 1 ] == cTmp } )
-	
+
       IF nScan = 0
          AAdd( aErr, { field->barkod, field->kolicina } )
       ENDIF
-	
+
       SKIP
    ENDDO
 
@@ -163,26 +162,26 @@ FUNCTION export_BTerm_data()
    GO TOP
 
    DO WHILE !Eof()
-	
+
       cBK := PadR( field->barkod, 20 )
 
       IF Empty( cBK )
          SKIP
          LOOP
       ENDIF
-	
+
       SELECT r_export
       GO TOP
       SEEK cBK
-	
+
       IF !Found()
-		
+
          APPEND BLANK
          REPLACE field->barkod WITH roba->barkod
          REPLACE field->naz WITH roba->naz
          REPLACE field->tk WITH 0
          REPLACE field->tc WITH roba->vpc
-	
+
          ++ nCnt
       ENDIF
 

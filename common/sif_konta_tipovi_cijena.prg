@@ -9,8 +9,9 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-
 #include "f18.ch"
+
+
 
 FUNCTION P_KonCij( CId, dx, dy )
 

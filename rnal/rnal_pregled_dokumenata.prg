@@ -609,7 +609,7 @@ STATIC FUNCTION key_handler()
          RETURN DE_CONT
       ENDIF
 
-      IF !SigmaSif( "FIXSTAT" )
+      IF !spec_funkcije_sifra( "FIXSTAT" )
          RETURN DE_CONT
       ENDIF
 

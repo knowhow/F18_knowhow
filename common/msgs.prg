@@ -16,4 +16,13 @@ FUNCTION error_tab( cMsg )
    Beep( 1 )
    @ maxrows(), 18 SAY8  ">> " + cMsg + " <<" COLOR "I"
 
+   RETURN .F.  // ako se koristi u validaciji treba da vrati .F.
+
+
+FUNCTION info_tab( cMsg )
+
+   hb_default( @cMsg, "")
+   
+   @ maxrows()-1, 18 SAY8  "-- " + cMsg + " --" COLOR "N"
+
    RETURN .T.

@@ -12,8 +12,11 @@
 #include "f18.ch"
 
 MEMVAR GetList, m_x, m_y
-MEMVAR nRbr, fNovi
-MEMVAR _DatFaktP, _datDok, _brFaktP
+MEMVAR nRbr, fNovi, fMarza, nStrana
+MEMVAR _IdFirma, _BrDok, _TBankTr, _TPrevoz, _TSpedTr, _TZavTr, _TCarDaz, _SpedTr, _ZavTr, _BankTr, _CarDaz, _MArza, _Prevoz
+MEMVAR _TMarza, _IdKonto, _IdKonto2, _IdTarifa, _IDRoba, _Kolicina, _DatFaktP, _datDok, _brFaktP, _VPC, _NC, _FCJ, _FCJ2, _Rabat
+MEMVAR _MKonto, _MU_I, _Error
+MEMVAR PicDEM, PicKol
 
 FUNCTION kalk_unos_dok_pr()
 
@@ -22,6 +25,8 @@ FUNCTION kalk_unos_dok_pr()
    LOCAL bDokument := {| cIdFirma, cIdVd, cBrDok |   cIdFirma == field->idFirma .AND. ;
       cIdVd == field->IdVd .AND. cBrDok == field->BrDok }
    LOCAL cIdFirma, cIdVd, cBrDok
+   LOCAL nRbr2
+   LOCAL nKolS, nKolZN, nNV, nC1, nC2, dDatNab
 
    SELECT F_SAST
    IF !Used()
@@ -35,13 +40,11 @@ FUNCTION kalk_unos_dok_pr()
       _DatFaktP := _datDok
    ENDIF
 
-   // IF nRbr < 10
-
    @ m_x + 6, m_y + 2 SAY8 "Broj fakture" GET _brFaktP
-   @ m_x + 7, m_y + 2 SAY8 "Mag .got.proizvoda zadužuje" GET _IdKonto ;
+   @ m_x + 7, m_y + 2 SAY8 "Mag. gotovih proizvoda zadužuje " GET _IdKonto ;
       VALID  P_Konto( @_IdKonto, 21, 5 ) PICT "@!" ;
       WHEN {|| nRbr == 1 }
-   @ m_x + 8, m_y + 2 SAY8 "Mag. sirovina razdužuje    " GET _IdKonto2 ;
+   @ m_x + 8, m_y + 2 SAY8 "Mag.      sirovina razdužuje    " GET _IdKonto2 ;
       PICT "@!" VALID P_Konto( @_IdKonto2 ) ;
       WHEN {|| nRbr == 1 }
 
@@ -56,7 +59,8 @@ FUNCTION kalk_unos_dok_pr()
 
    SELECT kalk_pripr
 
-   @ m_x + 13, m_y + 2 SAY8 "Količina  " GET _Kolicina PICT PicKol VALID _Kolicina <> 0
+   @ m_x + 13, m_y + 2 SAY8 "Količina  " GET _Kolicina PICT PicKol ;
+      VALID {|| _Kolicina <> 0 .AND. IIF( InRange( nRbr, 10, 99), error_tab("PR dokument max 9 artikala"), .T. ) }
 
    READ
 
@@ -119,21 +123,17 @@ FUNCTION kalk_unos_dok_pr()
             field->mkonto WITH _idkonto2
 
          PushWa()
-         // kalkulacija nabavne cijene
-         // nKolZN:=kolicina koja je na stanju a porijeklo je od zadnje nabavke
+
          nKolS := 0
-         nKolZN := 0
+         nKolZN := 0  // nKolZN:=kolicina koja je na stanju a porijeklo je od zadnje nabavke
          nC1 := 0
          nC2 := 0
          dDatNab := CToD( "" )
 
-         IF _TBankTr <> "X"
-            // ako je X onda su stavke vec izgenerisane
-            IF !Empty( gMetodaNC )  .AND. !( roba->tip $ "UT" )
-               MsgO( "Racunam stanje na skladistu" )
+               info_tab( "Računam stanje na skladistu" )
                KalkNab( _idfirma, sast->id2, _idkonto2, @nKolS, @nKolZN, @nc1, @nc2, @dDatNab )
-               MsgC()
-            ENDIF
+               info_tab( "" )
+
 
             IF dDatNab > _DatDok
                Beep( 1 )
@@ -150,12 +150,10 @@ FUNCTION kalk_unos_dok_pr()
 
             ENDIF
 
-            PopWa()
+            PopWa() // kalk_pripr
 
             RREPLACE field->nc WITH nc2, field->gkolicina WITH nKolS
 
-
-         ENDIF
          SELECT sast
          SKIP
       ENDDO
@@ -184,8 +182,7 @@ FUNCTION kalk_unos_dok_pr()
    ESC_RETURN K_ESC
 
    AltD()
-   IF nRbr > 99  // sirovine
-      // kalkulacija nabavne cijene
+   IF nRbr < 10  // kalkulacija nabavne cijene za proizvod
       nKolS := 0
       nKolZN := 0
       nC1 := 0
@@ -193,13 +190,12 @@ FUNCTION kalk_unos_dok_pr()
       dDatNab := CToD( "" )
 
       IF !( roba->tip $ "UT" )
-         MsgO( "Računam stanje na skladistu" )
+         info_tab( "Računam stanje na skladistu" )
          KalkNab( _idfirma, _idroba, _idkonto2, @nKolS, @nKolZN, @nc1, @nc2, @dDatNab )
-         MsgC()
+         info_tab()
       ENDIF
       IF dDatNab > _DatDok
-         Beep( 1 )
-         Msg( "Datum nabavke je " + DToC( dDatNab ) + " sirovina " + sast->id2, 4 )
+         error_tab( "Datum nabavke je " + DToC( dDatNab ) + " sirovina " + sast->id2, 4 )
       ENDIF
       IF Round( nKols - _kolicina, 4 ) < 0
          error_tab( "Na stanju je samo :" + Str( nKols, 15, 3 ) )
@@ -207,7 +203,6 @@ FUNCTION kalk_unos_dok_pr()
       ENDIF
    ENDIF
    SELECT kalk_pripr
-
 
    SELECT koncij
    SEEK Trim( _idkonto )
@@ -246,7 +241,7 @@ FUNCTION kalk_unos_dok_pr()
    SET ORDER TO TAG "1"
    GO TOP
 
-   nNV := 0  // ncj proizvod
+   nNV := 0  // nab vrijednosto proizvod
    DO WHILE !Eof()
 
       IF Eval( bDokument, cIdFirma, cIdVd, cBrDok ) .AND. ;   // gledaj samo stavke jednog dokumenta ako ih ima vise u pripremi

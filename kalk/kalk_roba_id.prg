@@ -17,7 +17,7 @@ function RobaIdSredi()
 cSifOld:=space(10)
 cSifNew:=space(10)
 
-if !SigmaSif("SIGMASIF")
+if !spec_funkcije_sifra("spec_funkcije_sifra")
   return
 endif
 

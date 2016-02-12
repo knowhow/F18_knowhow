@@ -290,7 +290,7 @@ FUNCTION gen_nivel_p( cPKonto, dDatDok, cBrKalk, lGledajStanje )
 // prebaci iz zanivel2 u zanivel
 FUNCTION zaniv2_zaniv()
 
-   IF !SigmaSif( "NIVEL" )
+   IF !spec_funkcije_sifra( "NIVEL" )
       MsgBeep( "Ne cackaj!" )
       RETURN
    ENDIF
@@ -344,7 +344,7 @@ FUNCTION set_mpc_2()
    LOCAL nUvecaj := 0
    LOCAL nZaok := 2
 
-   IF !SigmaSif( "SETMPC" )
+   IF !spec_funkcije_sifra( "SETMPC" )
       MsgBeep( "Ne cackaj!" )
       RETURN
    ENDIF
@@ -418,7 +418,7 @@ FUNCTION set_mpc_iz_zanivel()
 
    LOCAL cSetCj := "1"
 
-   IF !SigmaSif( "SETMPC" )
+   IF !spec_funkcije_sifra( "SETMPC" )
       MsgBeep( "Ne cackaj!" )
       RETURN
    ENDIF

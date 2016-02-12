@@ -299,7 +299,7 @@ FUNCTION fprint_delete_plu( dev_params, silent )
 
    IF !silent
 
-      IF !SIGMASIF( "RESET" )
+      IF !spec_funkcije_sifra( "RESET" )
          RETURN
       ENDIF
 

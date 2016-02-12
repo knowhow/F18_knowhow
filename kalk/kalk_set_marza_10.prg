@@ -13,7 +13,7 @@
 #include "f18.ch"
 
 function SetMarza10()
-if !SigmaSif("BERINA")
+if !spec_funkcije_sifra("BERINA")
  return
 endif
 

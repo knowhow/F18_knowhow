@@ -625,7 +625,7 @@ FUNCTION pos_brisi_nepostojece_dokumente()
    LOCAL cIdPos, cIdVd, cBrDok, dDatum
    LOCAL nCount := 0
 
-   IF !SigmaSif( "ADMIN" )
+   IF !spec_funkcije_sifra( "ADMIN" )
       MsgBeep( "Opcija nije dostupna !" )
       RETURN 
    ENDIF

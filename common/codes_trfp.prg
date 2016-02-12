@@ -49,8 +49,7 @@ FUNCTION P_TRFP( cId, dx, dy )
 
 
 
-// -------------------------------------------------------
-// -------------------------------------------------------
+
 STATIC FUNCTION trfp_filter( cShema, cVd )
 
    IF Pitanje(, "Želite li postaviti filter za odredjenu shemu", "N" ) == "D"
@@ -106,7 +105,7 @@ FUNCTION P_TRFP2( cId, dx, dy )
 
    p_sifra( F_TRFP2, 1, 15, 76, "Šeme kontiranja FAKT->FIN", @cId, dx, dy )
 
-   RETURN
+   RETURN .T.
 
 
 FUNCTION TrfpB( Ch )
@@ -115,7 +114,7 @@ FUNCTION TrfpB( Ch )
    LOCAL cTekShema
    LOCAL cIdvd := ""
    LOCAL nRec := 0
-   LOCAL cDirSa := PadR( "C:\SIGMA\SIF0\", 20 )
+   LOCAL cDirSa := PadR( my_home() + "sif0", 20 )
    LOCAL cPobSt := "D"
 
    IF Ch == K_CTRL_F4
@@ -143,13 +142,14 @@ FUNCTION TrfpB( Ch )
          ENDIF
       ENDDO
       RETURN DE_REFRESH
+
    ELSEIF Ch == K_CTRL_F5
 
       cidvd := "  "
       cShema2 := " "
-      IF IsPdv()
-         cShema2 := "E"
-      ENDIF
+
+      cShema2 := "E"
+
 
       IF Pitanje(, "Preuzeti sheme kontiranja?", "D" ) == "D"
 
@@ -220,7 +220,7 @@ FUNCTION TrfpB( Ch )
    ENDIF
 
    RETURN DE_CONT
-// }
+
 
 FUNCTION UndoSheme( lKopi )
 
@@ -241,7 +241,7 @@ FUNCTION UndoSheme( lKopi )
          SELECT TRFP
          PushWA()
          USE
-         FRename( cStari,cPom ); FRename( cTekuci, cStari );  FRename( cPom, cTekuci )
+         FRename( cStari, cPom ); FRename( cTekuci, cStari );  FRename( cPom, cTekuci )
          FRename( cStari2, cPom ); FRename( cTekuci2, cStari2 ); FRename( cPom, cTekuci2 )
          O_TRFP
          PopWA()
@@ -266,7 +266,7 @@ FUNCTION PostTRFP( cDirSa )
    ENDIF
 
    RETURN lVrati
-// }
+
 
 
 FUNCTION v_setform()

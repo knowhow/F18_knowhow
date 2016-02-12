@@ -23,7 +23,7 @@ FUNCTION Blagajna()
    LOCAL _rec
    LOCAL _nCol1
 
-   // lSumiraj := ( IzFMKINI("BLAGAJNA","DBISumirajPoBrojuVeze","N", PRIVPATH)=="D" )
+
    lSumiraj := .F.
 
    O_KONTO

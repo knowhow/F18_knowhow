@@ -45,7 +45,7 @@ FUNCTION os_generacija_pocetnog_stanja()
    ENDIF
 
    // sifra za koristenje...
-   IF !SigmaSif( "OSGEN" )
+   IF !spec_funkcije_sifra( "OSGEN" )
       MsgBeep( "Opcija onemogucena !!!" )
       RETURN
    ENDIF

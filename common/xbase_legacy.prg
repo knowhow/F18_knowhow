@@ -159,6 +159,7 @@ FUNCTION dbdelete2()
 FUNCTION appblank2( fcisti, funl )
 
    LOCAL aStruct, i, nPrevOrd
+   LOCAL cImeP
 
    IF fcisti == nil
       fcisti := .T.
@@ -243,7 +244,7 @@ FUNCTION AppFrom( cFDbf, fOtvori )
    dbUnlock()
    SELECT ( nArr )
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -252,8 +253,8 @@ FUNCTION PrazanDbf()
 
 
 
-/*! \fn reccount2()
- * \note COMIX - CDX verzija
+/*! fn reccount2()
+ * note COMIX - CDX verzija
  */
 FUNCTION reccount2()
 
@@ -293,7 +294,7 @@ FUNCTION zapp( pack )
          __dbPack()
       ENDIF
 
-   recover
+   RECOVER
 
       log_write( "ZAP shared: " + Alias(), 5 )
       PushWA()
@@ -351,7 +352,7 @@ FUNCTION EofFndRet( ef, close )
    RETURN fRet
 
 
-/*! \fn SigmaSif(cSif)
+/*! \fn spec_funkcije_sifra(cSif)
  *  \brief zasticene funkcije sistema
  *
  * za programske funkcije koje samo serviser
@@ -363,7 +364,7 @@ FUNCTION EofFndRet( ef, close )
  * \return .t. kada je lozinka ispravna
 */
 
-FUNCTION SigmaSif( cSif )
+FUNCTION spec_funkcije_sifra( cSif )
 
    LOCAL lGw_Status
 

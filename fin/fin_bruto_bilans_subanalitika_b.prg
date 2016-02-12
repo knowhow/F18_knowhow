@@ -9,8 +9,6 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-
-
 #include "f18.ch"
 
 
@@ -34,7 +32,7 @@ FUNCTION fin_bb_subanalitika_b( params )
    LOCAL nValuta := params[ "valuta" ]
    LOCAL nBBK := 1
    PRIVATE M6, M7, M8, M9, M10
- 
+
    PICD := FormPicL( gPicBHD, 15 )
 
    IF gRJ == "D" .AND. ( "." $ cIdRj )
@@ -153,12 +151,12 @@ FUNCTION fin_bb_subanalitika_b( params )
             cIdKonto := IdKonto
             D1PS := P1PS := D1TP := P1TP := D1KP := P1KP := D1S := P1S := 0
             DO WHILE !Eof() .AND. IdFirma = cIdFirma .AND. cIdKonto == IdKonto
-	
+
                cIdPartner := IdPartner
                D0PS := P0PS := D0TP := P0TP := D0KP := P0KP := D0S := P0S := 0
 
                DO WHILE !Eof() .AND. IdFirma = cIdFirma .AND. cIdKonto == IdKonto .AND. cIdPartner == IdPartner
-	
+
                   IF nValuta == 1
                      IF D_P = "1"
                         D0KP += IznosBHD * nBBK
@@ -210,7 +208,7 @@ FUNCTION fin_bb_subanalitika_b( params )
                nova_strana( params, @nStr, 61 )
 
                IF ( !lNule .AND. Round( D0KP - P0KP, 2 ) == 0 )
-                  
+
                ELSE
 
                   @ PRow() + 1, 0 SAY  ++B  PICTURE '9999'
@@ -254,20 +252,20 @@ FUNCTION fin_bb_subanalitika_b( params )
 
                   @ PRow(), PCol() + 1 SAY D0S PICTURE PicD
                   @ PRow(), PCol() + 1 SAY P0S PICTURE PicD
-	
+
                   D1PS += D0PS;P1PS += P0PS;D1TP += D0TP;P1TP += P0TP;D1KP += D0KP;P1KP += P0KP
 
                   IF lExpRpt .AND. !Empty( cIdPartner )
                      dodaj_stavku_u_tabelu_eksporta( cIdKonto, cIdPartner, partn->naz, D0PS, P0PS, D0KP, P0KP, D0S, P0S )
                   ENDIF
                ENDIF
-	
+
             ENDDO
 
             nova_strana( params, @nStr )
 
             @ PRow() + 1, 2 SAY Replicate( "-", REP1_LEN - 2 )
-            @ PRow() + 1, 2 SAY ++B1 PICTURE '9999' 
+            @ PRow() + 1, 2 SAY ++B1 PICTURE '9999'
             @ PRow(), PCol() + 1 SAY cIdKonto
 
             SELECT KONTO
@@ -291,7 +289,7 @@ FUNCTION fin_bb_subanalitika_b( params )
 
             @ PRow(), PCol() + 1  SAY D1KP PICTURE PicD
             @ PRow(), PCol() + 1  SAY P1KP PICTURE PicD
-	
+
             D1S := D1KP - P1KP
 
             IF D1S >= 0
@@ -310,7 +308,7 @@ FUNCTION fin_bb_subanalitika_b( params )
             @ PRow(), PCol() + 1 SAY D1S PICTURE PicD
             @ PRow(), PCol() + 1 SAY P1S PICTURE PicD
             @ PRow() + 1, 2 SAY Replicate( "-", REP1_LEN - 2 )
-	
+
             SELECT SUBAN
             D2PS += D1PS
             P2PS += P1PS
@@ -319,7 +317,7 @@ FUNCTION fin_bb_subanalitika_b( params )
             D2KP += D1KP
             P2KP += P1KP
 
-            IF lExpRpt 
+            IF lExpRpt
                dodaj_stavku_u_tabelu_eksporta( cIdKonto, "", konto->naz, D1PS, P1PS, D1KP, P1KP, D1S, P1S )
             ENDIF
 
@@ -368,8 +366,8 @@ FUNCTION fin_bb_subanalitika_b( params )
          IF lExpRpt
              dodaj_stavku_u_tabelu_eksporta( cSinKonto, "", konto->naz, D2PS, P2PS, D2KP, P2KP, D2S, P2S )
          ENDIF
-	
-      ENDDO 
+
+      ENDDO
 
       SELECT BBKLAS
       APPEND BLANK
@@ -412,7 +410,7 @@ FUNCTION fin_bb_subanalitika_b( params )
       IF lExpRpt
          dodaj_stavku_u_tabelu_eksporta( cKlKonto, "", konto->naz, D3PS, P3PS, D3KP, P3KP, D3S, P3S )
       ENDIF
-	
+
    ENDDO
 
    nova_strana( params, @nStr )
@@ -631,5 +629,3 @@ FUNCTION fin_bb_txt_header()
    M10 := "--------- --------------- --------------- --------------- --------------- --------------- --------------- --------------- ---------------"
 
    RETURN
-
-

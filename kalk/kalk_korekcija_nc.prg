@@ -20,7 +20,7 @@ FUNCTION KorekNC()
    LOCAL cPom2
    PRIVATE cMagac := "1310   "
 
-   IF !SigmaSif( "SIGMAPRN" )
+   IF !spec_funkcije_sifra( "SIGMAPRN" )
       RETURN
    ENDIF
 

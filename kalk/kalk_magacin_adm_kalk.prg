@@ -22,7 +22,7 @@ FUNCTION KorekNC2()
    PRIVATE cMagac := "1310   "
    PRIVATE dDok := Date()
 
-   IF !SigmaSif( "SIGMAPR2" )
+   IF !spec_funkcije_sifra( "SIGMAPR2" )
       RETURN
    ENDIF
 

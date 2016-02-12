@@ -15,7 +15,6 @@ STATIC __doc_no
 STATIC __oper_id
 
 
-
 FUNCTION m_changes( nDoc_no )
 
    LOCAL opc := {}

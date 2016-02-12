@@ -321,7 +321,7 @@ FUNCTION tremol_reset_plu( dev_params )
    LOCAL _err := 0
    LOCAL _cmd := ""
 
-   IF !SigmaSif( "RPLU" )
+   IF !spec_funkcije_sifra( "RPLU" )
       RETURN 0
    ENDIF
 

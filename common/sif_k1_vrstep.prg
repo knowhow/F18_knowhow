@@ -1,5 +1,6 @@
 #include "f18.ch"
 
+MEMVAR ImeKol, Kol
 
 // k1 - karakteristike
 
@@ -27,11 +28,7 @@ FUNCTION P_K1( cId, dx, dy )
 
 
 
-/*! \fn P_VrsteP(cId,dx,dy)
- *  \brief Otvara sifranik vrsta placanja
- *  \param cId
- *  \param dx
- *  \param dy
+/* fn P_VrsteP(cId,dx,dy)
  */
 
 FUNCTION P_VrsteP( cId, dx, dy )

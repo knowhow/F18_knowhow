@@ -41,7 +41,7 @@ FUNCTION fin_admin_opcije_menu()
 
    Menu_SC( "adm" )
 
-   RETURN
+   RETURN .T.
 
 
 

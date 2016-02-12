@@ -18,7 +18,6 @@ FUNCTION MainMat( cKorisn, cSifra, p3, p4, p5, p6, p7 )
    LOCAL oMat
    LOCAL cModul
 
-   PUBLIC gKonvertPath := "D"
 
    cModul := "MAT"
    PUBLIC goModul
@@ -28,4 +27,4 @@ FUNCTION MainMat( cKorisn, cSifra, p3, p4, p5, p6, p7 )
 
    oMat:run()
 
-   RETURN
+   RETURN .T.

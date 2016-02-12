@@ -11,22 +11,18 @@
 
 #include "f18.ch"
 
-EXTERNAL DESCEND
-EXTERNAL RIGHT
 
+FUNCTION MainFakt( cKorisn, cSifra, p3, p4, p5, p6, p7 )
 
-function MainFakt(cKorisn, cSifra, p3, p4, p5, p6, p7)
-local oFakt
-local cModul
+   LOCAL oFakt
+   LOCAL cModul
 
-PUBLIC gKonvertPath:="D"
+   cModul := "FAKT"
+   PUBLIC goModul
 
-cModul:="FAKT"
-PUBLIC goModul
+   oFakt := TFaktMod():new( NIL, cModul, F18_VER, F18_VER_DATE, cKorisn, cSifra, p3, p4, p5, p6, p7 )
+   goModul := oFakt
 
-oFakt := TFaktMod():new(NIL, cModul, F18_VER, F18_VER_DATE , cKorisn, cSifra, p3,p4,p5,p6,p7)
-goModul:=oFakt
+   oFakt:run()
 
-oFakt:run()
-
-return
+   RETURN .T.

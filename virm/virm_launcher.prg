@@ -17,7 +17,6 @@ FUNCTION MainVirm( cKorisn, cSifra, p3, p4, p5, p6, p7 )
    LOCAL oVirm
    LOCAL cModul
 
-   PUBLIC gKonvertPath := "D"
 
    cModul := "VIRM"
    PUBLIC goModul
@@ -27,4 +26,4 @@ FUNCTION MainVirm( cKorisn, cSifra, p3, p4, p5, p6, p7 )
 
    oVirm:run()
 
-   RETURN
+   RETURN .T.

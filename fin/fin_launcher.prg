@@ -16,7 +16,6 @@ FUNCTION MainFin( cKorisn, cSifra, p3, p4, p5, p6, p7 )
 
    LOCAL oFin
    LOCAL cModul := "FIN"
-   PUBLIC gKonvertPath := "D"
    PUBLIC goModul
 
    oFin := TFinMod():new( NIL, cModul, F18_VER, F18_VER_DATE, cKorisn, cSifra, p3, p4, p5, p6, p7 )

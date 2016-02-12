@@ -79,7 +79,6 @@ FUNCTION set_global_vars_0()
    PUBLIC Blink := "R****/W,W/B,,,W/RB"
    PUBLIC Nevid := "W/W,N/N"
    PUBLIC gVeryBusyInterval
-   PUBLIC gKonvertPath := "N"
    PUBLIC gHostOS
 
 #ifdef __WINDOWS

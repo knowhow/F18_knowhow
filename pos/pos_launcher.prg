@@ -16,7 +16,6 @@ FUNCTION MainPos( cKorisn, cSifra, p3, p4, p5, p6, p7 )
    LOCAL oPos
    LOCAL cModul
 
-   PUBLIC gKonvertPath := "D"
 
    cModul := "TOPS"
    PUBLIC goModul
@@ -26,4 +25,4 @@ FUNCTION MainPos( cKorisn, cSifra, p3, p4, p5, p6, p7 )
 
    oPos:run()
 
-   RETURN
+   RETURN .T.

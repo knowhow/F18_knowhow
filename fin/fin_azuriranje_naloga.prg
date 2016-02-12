@@ -949,9 +949,9 @@ FUNCTION fin_dokument_postoji( id_firma, id_vn, br_nal )
    LOCAL lExist := .F.
    LOCAL cWhere
 
-   cWhere := "idfirma = " + _sql_quote( id_firma )
-   cWhere += " AND idvn = " + _sql_quote( id_vn )
-   cWhere += " AND brnal = " + _sql_quote( br_nal )
+   cWhere := "idfirma = " + sql_quote( id_firma )
+   cWhere += " AND idvn = " + sql_quote( id_vn )
+   cWhere += " AND brnal = " + sql_quote( br_nal )
 
    IF table_count( "fmk.fin_nalog", cWhere ) > 0
       lExist := .T.

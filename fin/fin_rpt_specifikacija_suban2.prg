@@ -341,7 +341,7 @@ TODO: izbaciti
       IF gDUFRJ == "D"
          cFilter := aUsl3
       ELSE
-         cFilter := "IdFirma=" + cm2str( cidfirma )
+         cFilter := "IdFirma=" + dbf_quote( cidfirma )
       ENDIF
 
       IF !Empty( cVN )
@@ -362,7 +362,7 @@ TODO: izbaciti
 
       IF !Empty( dDatOd ) .OR. !Empty( dDatDo )
          cFilter += ( ".and. DATDOK>=" + ;
-            cm2str( dDatOd ) + ".and. DATDOK<=" + cm2str( dDatDo ) )
+            dbf_quote( dDatOd ) + ".and. DATDOK<=" + dbf_quote( dDatDo ) )
       ENDIF
 
       IF fk1 == "D" .AND. Len( ck1 ) <> 0

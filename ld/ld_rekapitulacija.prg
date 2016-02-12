@@ -883,25 +883,25 @@ FUNCTION get_ld_rekap_filter( hParams )
 
    IF lSvi
 
-      cFilt1 := ".t." + iif( Empty( cStrSpr ), "", ".and.IDSTRSPR == " + cm2str( cStrSpr ) ) + ;
+      cFilt1 := ".t." + iif( Empty( cStrSpr ), "", ".and.IDSTRSPR == " + sql_quote( cStrSpr ) ) + ;
          iif( Empty( qqRJ ), "", ".and." + aUsl1 )
 
       IF nMjesec != nMjesecDo
-         cFilt1 := cFilt1 + ".and. mjesec >= " + cm2str( nMjesec ) + ;
-            ".and. mjesec <= " + cm2str( nMjesecDo ) + ".and. godina = " + cm2str( nGodina )
+         cFilt1 := cFilt1 + ".and. mjesec >= " + dbf_quote( nMjesec ) + ;
+            ".and. mjesec <= " + dbf_quote( nMjesecDo ) + ".and. godina = " + dbf_quote( nGodina )
       ENDIF
 
    ELSE
 
-      cFilt1 := ".t." +  iif( Empty( cStrSpr ), "", ".and. IDSTRSPR == " + cm2str( cStrSpr ) )
+      cFilt1 := ".t." +  iif( Empty( cStrSpr ), "", ".and. IDSTRSPR == " + dbf_quote( cStrSpr ) )
       IF nMjesec != nMjesecDo
-         cFilt1 := cFilt1 + ".and. mjesec >= " + cm2str( nMjesec ) + ;
-            ".and. mjesec <= " + cm2str( nMjesecDo ) + ".and. godina = " + cm2str( nGodina )
+         cFilt1 := cFilt1 + ".and. mjesec >= " + dbf_quote( nMjesec ) + ;
+            ".and. mjesec <= " + dbf_quote( nMjesecDo ) + ".and. godina = " + dbf_quote( nGodina )
       ENDIF
 
    ENDIF
 
-   cFilt1 += ".and. obr = " + cm2str( cObracun )
+   cFilt1 += ".and. obr = " + dbf_quote( cObracun )
    cFilt1 := StrTran( cFilt1, ".t..and.", "" )
 
    RETURN cFilt1

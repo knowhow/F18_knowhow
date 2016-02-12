@@ -12,19 +12,18 @@
 #include "f18.ch"
 
 
+FUNCTION MainKalk( cKorisn, cSifra, p3, p4, p5, p6, p7 )
 
-function MainKalk(cKorisn, cSifra, p3, p4, p5, p6, p7)
-local oKalk
-local cModul
+   LOCAL oKalk
+   LOCAL cModul
 
-PUBLIC gKonvertPath:="D"
 
-cModul:="KALK"
-PUBLIC goModul
+   cModul := "KALK"
+   PUBLIC goModul
 
-oKalk := TKalkMod():new(NIL, cModul, F18_VER, F18_VER_DATE , cKorisn, cSifra, p3,p4,p5,p6,p7)
-goModul:=oKalk
+   oKalk := TKalkMod():new( NIL, cModul, F18_VER, F18_VER_DATE, cKorisn, cSifra, p3, p4, p5, p6, p7 )
+   goModul := oKalk
 
-oKalk:run()
+   oKalk:run()
 
-return
+   RETURN

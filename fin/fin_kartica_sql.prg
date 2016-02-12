@@ -233,7 +233,7 @@ STATIC FUNCTION _cre_rpt( rpt_vars, otv_stavke )
       "FROM fmk.fin_suban s " + ;
       "JOIN fmk.partn p ON s.idpartner = p.id " + ;
       "JOIN fmk.konto k ON s.idkonto = k.id " + ;
-      "WHERE idfirma = " + _sql_quote( gfirma )
+      "WHERE idfirma = " + sql_quote( gfirma )
 
    _qry += " AND " + _sql_date_parse( "s.datdok", _datum_od, _datum_do )
 

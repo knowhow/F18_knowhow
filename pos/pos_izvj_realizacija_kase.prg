@@ -347,7 +347,7 @@ if !empty(cGotZir)
 endif
 
 if !Empty(cPartId)
-	cFilter+=".and. idgost==" + Cm2Str(cPartId)
+	cFilter+=".and. idgost==" + dbf_quote(cPartId)
 endif
 
 if !(cFilter==".t.")

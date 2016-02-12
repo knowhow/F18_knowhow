@@ -95,7 +95,7 @@ _usl_konto := Parsiraj( param["konta"], "IdKonto", "C" )
 _usl_artikli := Parsiraj( param["artikli"], "IdRoba", "C" )
 
 // napravi filter...
-_filter := "idfirma == " + cm2str( _firma )
+_filter := "idfirma == " + dbf_quote( _firma )
 
 if _usl_konto != ".t."
     _filter += " .and. " + _usl_konto
@@ -106,7 +106,7 @@ if _usl_artikli != ".t."
 endif
 
 if !empty( _datum )
-    _filter += " .and. DTOS(datdok) <= " + Cm2Str( DTOS( _datum ) )
+    _filter += " .and. DTOS(datdok) <= " + dbf_quote( DTOS( _datum ) )
 endif
 
 set filter to &_filter

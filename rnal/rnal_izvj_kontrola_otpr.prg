@@ -434,8 +434,8 @@ STATIC FUNCTION _main_filter( dDFrom, dDTo, nOper, cStatus )
    SELECT docs
 
    cFilter += "(doc_status == 0 .or. doc_status > 2)"
-   cFilter += " .and. DTOS(doc_date) >= " + cm2str( DToS( dDFrom ) )
-   cFilter += " .and. DTOS(doc_date) <= " + cm2str( DToS( dDTo ) )
+   cFilter += " .and. DTOS(doc_date) >= " + dbf_quote( DToS( dDFrom ) )
+   cFilter += " .and. DTOS(doc_date) <= " + dbf_quote( DToS( dDTo ) )
 
    IF nOper <> 0
       cFilter += ".and. operater_i = " + Str( nOper, 10 )

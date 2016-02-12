@@ -185,16 +185,16 @@ STATIC FUNCTION gen_fin_kuf_item( cSezona )
    SELECT SUBAN
    PRIVATE cFilter := ""
 
-   cFilter :=  cm2str( dDatOd ) + " <= datdok .and. " + cm2str( dDatDo ) + ">= datdok"
+   cFilter :=  dbf_quote( dDatOd ) + " <= datdok .and. " + dbf_quote( dDatDo ) + ">= datdok"
 
    // setuj tip dokumenta
    IF !Empty( cTdSrc )
       IF Len( Trim( cTdSrc ) ) == 1
          // ako se stavi "B " onda se uzimaju svi nalozi koji pocinju
          // sa B
-         cFilter :=  cFilter + ".and. IdVN = " + cm2str( Trim( cTdSrc ) )
+         cFilter :=  cFilter + ".and. IdVN = " + dbf_quote( Trim( cTdSrc ) )
       ELSE
-         cFilter :=  cFilter + ".and. IdVN == " + cm2str( cTdSrc )
+         cFilter :=  cFilter + ".and. IdVN == " + dbf_quote( cTdSrc )
       ENDIF
    ENDIF
 

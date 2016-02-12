@@ -715,8 +715,8 @@ FUNCTION fin_prekart()
 
    SELECT ( F_SUBAN )
 
-   _filter := ".t." + IF( !Empty( _id_firma ), ".and.IDFIRMA==" + cm2str( _id_firma ), "" ) + iif( !Empty( _dat_od ), ".and.DATDOK>=" + cm2str( _dat_do ), "" ) + ;
-      IF( !Empty( _dat_do ), ".and.DATDOK<=" + cm2str( _dat_do ), "" ) + ".and." + _usl_kto + ".and." + _usl_part
+   _filter := ".t." + IF( !Empty( _id_firma ), ".and.IDFIRMA==" + dbf_quote( _id_firma ), "" ) + iif( !Empty( _dat_od ), ".and.DATDOK>=" + dbf_quote( _dat_do ), "" ) + ;
+      IF( !Empty( _dat_do ), ".and.DATDOK<=" + dbf_quote( _dat_do ), "" ) + ".and." + _usl_kto + ".and." + _usl_part
 
    _filter := StrTran( _filter, ".t..and.", "" )
 

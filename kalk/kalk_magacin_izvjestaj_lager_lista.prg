@@ -149,6 +149,7 @@ FUNCTION LLM()
 
    Box(, 21, 80 )
 
+
    DO WHILE .T.
       IF gNW $ "DX"
          @ m_x + 1, m_y + 2 SAY "Firma "
@@ -300,10 +301,10 @@ FUNCTION LLM()
    ENDIF
 
    IF !Empty( dDatOd ) .OR. !Empty( dDatDo )
-      cFilt += ".and. DatDok>=" + cm2str( dDatOd ) + ".and. DatDok<=" + cm2str( dDatDo )
+      cFilt += ".and. DatDok>=" + dbf_quote( dDatOd ) + ".and. DatDok<=" + dbf_quote( dDatDo )
    ENDIF
    IF fSint .AND. lSabKon
-      cFilt += ".and. MKonto=" + cm2str( cSintK )
+      cFilt += ".and. MKonto=" + dbf_quote( cSintK )
       cSintK := ""
    ENDIF
 

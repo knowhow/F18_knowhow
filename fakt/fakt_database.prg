@@ -382,8 +382,8 @@ FUNCTION fakt_postoji_li_rupa_u_brojacu( id_firma, id_tip_dok, priprema_broj )
    ENDIF
 
    _qry := " SELECT MAX( brdok ) FROM fmk.fakt_doks " + ;
-      " WHERE idfirma = " + _sql_quote( id_firma ) + ;
-      " AND idtipdok = " + _sql_quote( _tip_srch )
+      " WHERE idfirma = " + sql_quote( id_firma ) + ;
+      " AND idtipdok = " + sql_quote( _tip_srch )
 
    // ovo je tabela
    _table := _sql_query( _server, _qry )
@@ -433,9 +433,9 @@ FUNCTION fakt_dokument_postoji( cFirma, cTipDok, cBroj )
    LOCAL lExist := .F.
    LOCAL cWhere
 
-   cWhere := " idfirma = " + _sql_quote( cFirma )
-   cWhere += " AND idtipdok = " + _sql_quote( cTipDok )
-   cWhere += " AND brdok = " + _sql_quote( cBroj )
+   cWhere := " idfirma = " + sql_quote( cFirma )
+   cWhere += " AND idtipdok = " + sql_quote( cTipDok )
+   cWhere += " AND brdok = " + sql_quote( cBroj )
 
    IF table_count( "fmk.fakt_doks", cWhere ) > 0
       lExist := .T.

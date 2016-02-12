@@ -24,9 +24,9 @@ FUNCTION st_sv_nal()
    O_PARTN
 
    SELECT suban
-   SET ORDER TO TAG "4"
+   SET ORDER TO TAG "4" // "4", "idFirma+IdVN+BrNal+Rbr"
    GO TOP
-   // "4", "idFirma+IdVN+BrNal+Rbr"
+
 
    Box(, 4, 60 )
 

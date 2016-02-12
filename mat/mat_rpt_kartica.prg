@@ -626,15 +626,15 @@ else
 
 		if !EMPTY( _dat_od ) .and. !EMPTY( _dat_do )
  			_filter += " .and. (DatDok >= " + ;
-				cm2str( _dat_od ) + ;
+				dbf_quote( _dat_od ) + ;
 				" .and. DatDok <= " + ;
-				cm2str( _dat_do ) + ")"
+				dbf_quote( _dat_do ) + ")"
 		endif
 	else
 		
 		if !EMPTY( _dat_do )
 			_filter += " .and. (DatDok <= " + ;
-				cm2str( _dat_do ) + ")"
+				dbf_quote( _dat_do ) + ")"
 	
 		endif
 	endif

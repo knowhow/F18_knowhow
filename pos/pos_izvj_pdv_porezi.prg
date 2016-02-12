@@ -154,7 +154,7 @@ do while .t.
 	endif
 	
 	if !empty(cIdOdj)
-		cFilter+=".and. IdOdj="+cm2str(cIdOdj)
+		cFilter+=".and. IdOdj="+dbf_quote(cIdOdj)
 	endif
 	
 	if !(cFilter==".t.")

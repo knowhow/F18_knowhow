@@ -74,7 +74,7 @@ STATIC FUNCTION set_f_tbl( cFirma, cIdVd, dDatOd, dDatDo, ;
    LOCAL cFilter := ".t."
 
    IF !Empty( cFirma )
-      cFilter += " .and. idfirma == " + cm2str( cFirma )
+      cFilter += " .and. idfirma == " + dbf_quote( cFirma )
    ENDIF
 
    IF !Empty( cIdVd )
@@ -82,11 +82,11 @@ STATIC FUNCTION set_f_tbl( cFirma, cIdVd, dDatOd, dDatDo, ;
    ENDIF
 
    IF !Empty( DToS( dDatOd ) )
-      cFilter += " .and. DTOS(datdok) >= " + cm2str( DToS( dDatOd ) )
+      cFilter += " .and. DTOS(datdok) >= " + dbf_quote( DToS( dDatOd ) )
    ENDIF
 
    IF !Empty( DToS( dDatDo ) )
-      cFilter += " .and. DTOS(datdok) <= " + cm2str( DToS( dDatDo ) )
+      cFilter += " .and. DTOS(datdok) <= " + dbf_quote( DToS( dDatDo ) )
    ENDIF
 
    IF !Empty( cMagKto )
@@ -98,7 +98,7 @@ STATIC FUNCTION set_f_tbl( cFirma, cIdVd, dDatOd, dDatDo, ;
    ENDIF
 
    IF !Empty( cPartner )
-      cFilter += " .and. idpartner == " + cm2str( cPartner )
+      cFilter += " .and. idpartner == " + dbf_quote( cPartner )
    ENDIF
 
    MsgO( "pripremam pregled ... sacekajte trenutak !" )

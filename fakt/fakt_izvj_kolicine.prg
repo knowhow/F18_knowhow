@@ -270,11 +270,11 @@ FUNCTION spec_kol_partn()
    cFilter := "idtipdok == '10' "
 
    IF ( !Empty( dDatOd ) .OR. !Empty( dDatDo ) )
-      cFilter += ".and.  datdok>=" + Cm2Str( dDatOd ) + " .and. datdok<=" + Cm2Str( dDatDo )
+      cFilter += ".and.  datdok>=" + dbf_quote( dDatOd ) + " .and. datdok<=" + dbf_quote( dDatDo )
    ENDIF
 
    IF ( !Empty( cIdFirma ) )
-      cFilter += " .and. IdFirma=" + Cm2Str( cIdFirma )
+      cFilter += " .and. IdFirma=" + dbf_quote( cIdFirma )
    ENDIF
 
    // postavi filter

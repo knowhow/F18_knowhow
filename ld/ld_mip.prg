@@ -25,7 +25,7 @@ FUNCTION mip_sort( cRj, cGod, cMj, cRadnik, cObr )
    PRIVATE cObracun := cObr
 
    IF !Empty( cObr )
-      cFilter += "obr == " + cm2str( cObr )
+      cFilter += "obr == " + dbf_quote( cObr )
    ENDIF
 
    IF !Empty( cRj )

@@ -20,7 +20,8 @@ FUNCTION tekuca_sezona()
    RETURN my_server_params()[ "database" ]
 
 
-FUNCTION start_program_module( oApp, lSezone )
+FUNCTION start_f18_program_module( oApp, lSezone )
+
 
    LOCAL cImeDbf
    LOCAL _i

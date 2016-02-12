@@ -95,7 +95,7 @@ STATIC FUNCTION gr_filter( nE_gr_id, cE_gr_at_desc )
          cFilter += ' .and. '
       ENDIF
 
-      cFilter += 'UPPER(e_gr_at_de) = ' + cm2str( Upper( AllTrim( cE_gr_at_desc ) ) )
+      cFilter += 'UPPER(e_gr_at_de) = ' + dbf_quote( Upper( AllTrim( cE_gr_at_desc ) ) )
    ENDIF
 
    IF !Empty( cFilter )

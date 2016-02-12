@@ -101,7 +101,7 @@ STATIC FUNCTION aop_filter( nAop_id, cAop_desc )
          cFilter += ' .and. '
       ENDIF
 
-      cFilter += 'ALLTRIM(UPPER(aop_att_d)) = ' + cm2str( Upper( AllTrim( cAop_desc ) ) )
+      cFilter += 'ALLTRIM(UPPER(aop_att_d)) = ' + dbf_quote( Upper( AllTrim( cAop_desc ) ) )
    ENDIF
 
    IF !Empty( cFilter )

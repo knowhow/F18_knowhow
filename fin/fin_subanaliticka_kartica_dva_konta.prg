@@ -224,12 +224,12 @@ FUNCTION SubKart2( lOtvSt )
 
    PRIVATE cFilter
 
-   cFilter := ".t." + IF( Empty( dDatOd ), "", ".and.DATDOK>=" + cm2str( dDatOd ) ) + ;
-      iif( Empty( dDatDo ), "", ".and.DATDOK<=" + cm2str( dDatDo ) )
+   cFilter := ".t." + IF( Empty( dDatOd ), "", ".and.DATDOK>=" + dbf_quote( dDatOd ) ) + ;
+      iif( Empty( dDatDo ), "", ".and.DATDOK<=" + dbf_quote( dDatDo ) )
 
    IF ! ( _fin_params[ "fin_k1" ] .AND. _fin_params[ "fin_k2" ] .AND. _fin_params[ "fin_k3" ] .AND.  _fin_params[ "fin_k4" ] )
-      cFilter := cFilter + ".and.k1=" + cm2str( ck1 ) + ".and.k2=" + cm2str( ck2 ) + ;
-         ".and.k3=ck3.and.k4=" + cm2str( ck4 )
+      cFilter := cFilter + ".and.k1=" + dbf_quote( ck1 ) + ".and.k2=" + dbf_quote( ck2 ) + ;
+         ".and.k3=ck3.and.k4=" + dbf_quote( ck4 )
    ENDIF
 
    IF ";" $ qqpartner

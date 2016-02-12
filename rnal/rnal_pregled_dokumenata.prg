@@ -306,19 +306,19 @@ STATIC FUNCTION gen_filter( dDateFrom, dDateTo, dDvrDFrom, dDvrDTo, ;
    ENDIF
 
    IF !Empty( dDateFrom )
-      cFilter += " .and. DTOS(doc_date) >= " + Cm2Str( DToS( dDateFrom ) )
+      cFilter += " .and. DTOS(doc_date) >= " + dbf_quote( DToS( dDateFrom ) )
    ENDIF
 
    IF !Empty( dDateTo )
-      cFilter += " .and. DTOS(doc_date) <= " + Cm2Str( DToS( dDateTo ) )
+      cFilter += " .and. DTOS(doc_date) <= " + dbf_quote( DToS( dDateTo ) )
    ENDIF
 
    IF !Empty( dDvrDFrom )
-      cFilter += " .and. DTOS(doc_dvr_da) >= " + Cm2Str( DToS( dDvrDFrom ) )
+      cFilter += " .and. DTOS(doc_dvr_da) >= " + dbf_quote( DToS( dDvrDFrom ) )
    ENDIF
 
    IF !Empty( dDvrDTo )
-      cFilter += " .and. DTOS(doc_dvr_da) <= " + Cm2Str( DToS( dDvrDTo ) )
+      cFilter += " .and. DTOS(doc_dvr_da) <= " + dbf_quote( DToS( dDvrDTo ) )
    ENDIF
 
    IF nCustomer <> 0
@@ -845,10 +845,10 @@ STATIC FUNCTION _quick_srch_()
       // formiram filter
       xRet := " .and. "
       xRet += " ( "
-      xRet += cm2str( Upper( AllTrim( cDesc ) ) )
+      xRet += dbf_quote( Upper( AllTrim( cDesc ) ) )
       xRet += " $ UPPER(doc_sh_desc) "
       xRet += " .or. "
-      xRet += cm2str( Upper( AllTrim( cDesc ) ) )
+      xRet += dbf_quote( Upper( AllTrim( cDesc ) ) )
       xRet += " $ UPPER(doc_desc) "
       xRet += " ) "
    ENDIF

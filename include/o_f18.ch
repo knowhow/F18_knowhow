@@ -377,7 +377,6 @@
 #xcommand O_KPARAMS   => select (F_KPARAMS)   ; my_use ( "kparams" )  ; set order to tag  "ID"
 #xcommand O_SECUR     => select (F_SECUR)     ; my_use ( "secur" )    ; set order to tag "ID"
 
-
 #xcommand O_LOGK     => select (F_LOGK)    ; my_use  ("logk")          ; set order to tag "NO"
 #xcommand O_LOGKD    => select (F_LOGKD); my_use  ("logd")        ; set order to tag "NO"
 
@@ -394,14 +393,11 @@
 #xcommand O_AMESSAGE   => select(F_AMESSAGE); my_usex ("amessage"); set order to tag "1"
 #xcommand O_TMPMSG  => select(F_TMPMSG); my_use ("tmpmsg"); set order to tag "1"
 
-
 #xcommand O_FIN_PRIPRRP   => select (F_FIN_PRIPR); my_usex("fin_priprrp", "fin_pripr"); set order to tag "1"
-
 
 #xcommand O_KALKSEZ        => select(F_KALK);  my_use  ("kalk")  ; set order to tag "1"
 #xcommand O_ROBASEZ        => select(F_ROBA);  my_use  ("roba")  ; set order to tag "ID"
 #xcommand O_CACHE          => select(F_CACHE);  my_use  ("cache")  ; set order to tag "1"
 #xcommand O_PRIPT          => select(F_PRIPT);  my_usex  ("pript", "kalk_pript")  ; set order to tag "1"
 
-//#xcommand O_KALK_PRIPRRP  => select (F_KALK_PRIPR);   usex (strtran(cDirPriv,, SLASH) + "pripr")  ; set order to tag "1"
 #xcommand O_POBJEKTI       => select(F_POBJEKTI);  my_use  ("pobjekti") ; set order to tag "1"

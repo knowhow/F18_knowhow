@@ -853,7 +853,7 @@ METHOD F18AdminOpts:new_session()
    IF Empty( _db )
       _qry += "WHERE datname LIKE '%_" + AllTrim( Str( _from_sess ) ) + "' "
    ELSE
-      _qry += "WHERE datname = " + _sql_quote( AllTrim( _db ) + "_" + AllTrim( Str( _from_sess ) ) )
+      _qry += "WHERE datname = " + sql_quote( AllTrim( _db ) + "_" + AllTrim( Str( _from_sess ) ) )
    ENDIF
    _qry += "ORDER BY datname;"
 
@@ -986,7 +986,7 @@ METHOD F18AdminOpts:create_new_db( params, pg_srv )
    ELSE
       // provjeri da li ovakva baza vec postoji ?!!!
       _qry := "SELECT COUNT(*) FROM pg_database "
-      _qry += "WHERE datname = " + _sql_quote( _db_name )
+      _qry += "WHERE datname = " + sql_quote( _db_name )
       _res := _sql_query( pg_srv, _qry )
       IF ValType( _res ) <> "L"
          IF _res:GetRow( 1 ):FieldGet( 1 ) > 0
@@ -1046,7 +1046,7 @@ METHOD F18AdminOpts:create_new_db( params, pg_srv )
 
    // komentar ako postoji !
    IF !Empty( _db_comment )
-      _qry := "COMMENT ON DATABASE " + _db_name + " IS " + _sql_quote( hb_StrToUTF8( _db_comment ) ) + ";"
+      _qry := "COMMENT ON DATABASE " + _db_name + " IS " + sql_quote( hb_StrToUTF8( _db_comment ) ) + ";"
       MsgO( "Postavljam opis baze..." )
       _ret := _sql_query( pg_srv, _qry )
       MsgC()

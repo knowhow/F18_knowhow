@@ -121,7 +121,7 @@ FUNCTION FaktFin()
 
    aUsl := Parsiraj( qqDok, "Brdok", "C" )
 
-   PRIVATE cFilter := "DatDok>=" + cm2str( dDatOd ) + ".and.DatDok<=" + cm2str( dDatDo ) + ".and. idtipdok==" + cm2str( cIdFakt ) + ".and. IdFirma==" + cm2str( cIdRjFakt )
+   PRIVATE cFilter := "DatDok>=" + dbf_quote( dDatOd ) + ".and.DatDok<=" + dbf_quote( dDatDo ) + ".and. idtipdok==" + dbf_quote( cIdFakt ) + ".and. IdFirma==" + dbf_quote( cIdRjFakt )
 
    IF aUsl <> ".t."
       cFilter += ".and." + aUsl

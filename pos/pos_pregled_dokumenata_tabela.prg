@@ -145,10 +145,10 @@ FUNCTION pos_prepis_dokumenta()
    SET CURSOR ON
 
    IF !Empty( dDatOd ) .OR. !Empty( dDatDo )
-      cFilter += ".and. Datum>=" + cm2str( dDatOD ) + ".and. Datum<=" + cm2str( dDatDo )
+      cFilter += ".and. Datum>=" + dbf_quote( dDatOD ) + ".and. Datum<=" + dbf_quote( dDatDo )
    ENDIF
    IF !Empty( cVrste )
-      cFilter += ".and. IdVd=" + cm2str( cVrste )
+      cFilter += ".and. IdVd=" + dbf_quote( cVrste )
    ENDIF
    IF !( cFilter == ".t." )
       SET FILTER to &cFilter

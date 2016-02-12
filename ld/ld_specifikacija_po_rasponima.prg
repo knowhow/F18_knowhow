@@ -179,12 +179,12 @@ FUNCTION ld_specifikacija_po_rasponima_primanja()
 
    PRIVATE cFilt1 := ""
 
-   cFilt1 := "GODINA==" + cm2str( cGodina ) + ".and.MJESEC==" + cm2str( cMjesec ) + ;
-      IF( Empty( cIdRJ ), "", ".and.IDRJ==" + cm2str( cIdRJ ) )
+   cFilt1 := "GODINA==" + dbf_quote( cGodina ) + ".and.MJESEC==" + dbf_quote( cMjesec ) + ;
+      IF( Empty( cIdRJ ), "", ".and.IDRJ==" + dbf_quote( cIdRJ ) )
    cFilt1 := StrTran( cFilt1, ".t..and.", "" )
 
    IF lViseObr .AND. !Empty( cObracun )
-      cFilt1 += ( ".and. OBR==" + cm2str( cObracun ) )
+      cFilt1 += ( ".and. OBR==" + dbf_quote( cObracun ) )
    ENDIF
 
    IF cFilt1 == ".t."

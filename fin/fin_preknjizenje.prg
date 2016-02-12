@@ -166,13 +166,13 @@ FUNCTION prefin_unos_naloga()
       SET ORDER TO TAG "1"
    ENDIF
 
-   cFilt1 := "IDFIRMA=" + Cm2Str( cIdFirma ) + ".and." + aUsl1 + ".and." + aUsl2 + IF( gRJ == "D", ".and." + aUsl3, "" ) + ;
-      IF( Empty( dDatOd ), "", ".and.DATDOK>=" + cm2str( dDatOd ) ) + ;
-      IF( Empty( dDatDo ), "", ".and.DATDOK<=" + cm2str( dDatDo ) ) + ;
-      IF( fk1 == "N", "", ".and.k1=" + cm2str( ck1 ) ) + ;
-      IF( fk2 == "N", "", ".and.k2=" + cm2str( ck2 ) ) + ;
+   cFilt1 := "IDFIRMA=" + dbf_quote( cIdFirma ) + ".and." + aUsl1 + ".and." + aUsl2 + IF( gRJ == "D", ".and." + aUsl3, "" ) + ;
+      IF( Empty( dDatOd ), "", ".and.DATDOK>=" + dbf_quote( dDatOd ) ) + ;
+      IF( Empty( dDatDo ), "", ".and.DATDOK<=" + dbf_quote( dDatDo ) ) + ;
+      IF( fk1 == "N", "", ".and.k1=" + dbf_quote( ck1 ) ) + ;
+      IF( fk2 == "N", "", ".and.k2=" + dbf_quote( ck2 ) ) + ;
       IF( fk3 == "N", "", ".and.k3=ck3" ) + ;
-      IF( fk4 == "N", "", ".and.k4=" + cm2str( ck4 ) )
+      IF( fk4 == "N", "", ".and.k4=" + dbf_quote( ck4 ) )
 
    cFilt1 := StrTran( cFilt1, ".t..and.", "" )
 

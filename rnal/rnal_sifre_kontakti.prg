@@ -215,7 +215,7 @@ STATIC FUNCTION cust_filter( nCust_id, cContDesc, cId )
          // setuj filter
          cFilter += _filter_quote( Upper( cContDesc ) ) + " $ ALLTRIM(UPPER(cont_desc))"
       ELSE
-         cFilter += " ALLTRIM(UPPER(cont_desc)) = " + cm2str( Upper( cContDesc ) )
+         cFilter += " ALLTRIM(UPPER(cont_desc)) = " + dbf_quote( Upper( cContDesc ) )
       ENDIF
 
    ENDIF

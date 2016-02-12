@@ -319,7 +319,7 @@ FUNCTION povrat_fakt_po_kriteriju( br_dok, dat_dok, tip_dok, firma )
    _filter += " .and. " + _vars[ "uslov_tipovi" ]
 
    IF !Empty( _vars[ "rj" ] )
-      _filter += " .and. idfirma==" + cm2str( _vars[ "rj" ] )
+      _filter += " .and. idfirma==" + dbf_quote( _vars[ "rj" ] )
    ENDIF
 
    _filter := StrTran( _filter, ".t..and.", "" )
@@ -492,9 +492,9 @@ FUNCTION fakt_napravi_duplikat( id_firma, id_tip_dok, br_dok )
    ENDIF
 
    _qry := "SELECT * FROM fmk.fakt_fakt " + ;
-      " WHERE idfirma = " + _sql_quote( id_firma ) + ;
-      " AND idtipdok = " + _sql_quote( id_tip_dok ) + ;
-      " AND brdok = " + _sql_quote( br_dok ) + ;
+      " WHERE idfirma = " + sql_quote( id_firma ) + ;
+      " AND idtipdok = " + sql_quote( id_tip_dok ) + ;
+      " AND brdok = " + sql_quote( br_dok ) + ;
       " ORDER BY idfirma, idtipdok, brdok, rbr "
 
    _table := _sql_query( _server, _qry )

@@ -223,7 +223,7 @@ STATIC FUNCTION napravi_filter_na_tabeli_ld( cIdRj, cGodina, cMjesec, cObracun, 
          cFilt := IF( Empty( cMjesec ), ".t.", "MJESEC==cMjesec" ) + ".and." + ;
             IF( Empty( cGodina ), ".t.", "GODINA==cGodina" )
          IF !Empty( cObracun )
-            cFilt += ( ".and. OBR==" + cm2str( cObracun ) )
+            cFilt += ( ".and. OBR==" + dbf_quote( cObracun ) )
          ENDIF
          INDEX ON &cSort1 TO "tmpld" FOR &cFilt
          BoxC()
@@ -236,7 +236,7 @@ STATIC FUNCTION napravi_filter_na_tabeli_ld( cIdRj, cGodina, cMjesec, cObracun, 
          cFilt := IF( Empty( cMjesec ), ".t.", "MJESEC==cMjesec" ) + ".and." + ;
             IF( Empty( cGodina ), ".t.", "GODINA==cGodina" )
          IF !Empty( cObracun )
-            cFilt += ( ".and. OBR==" + cm2str( cObracun ) )
+            cFilt += ( ".and. OBR==" + dbf_quote( cObracun ) )
          ENDIF
          INDEX ON &cSort1 TO "tmpld" FOR &cFilt
          BoxC()
@@ -252,7 +252,7 @@ STATIC FUNCTION napravi_filter_na_tabeli_ld( cIdRj, cGodina, cMjesec, cObracun, 
             IF( Empty( cMjesec ), ".t.", "MJESEC==cMjesec" ) + ".and." + ;
             IF( Empty( cGodina ), ".t.", "GODINA==cGodina" )
          IF !Empty( cObracun )
-            cFilt += ( ".and. OBR==" + cm2str( cObracun ) )
+            cFilt += ( ".and. OBR==" + dbf_quote( cObracun ) )
          ENDIF
          INDEX ON &cSort1 TO "tmpld" FOR &cFilt
          BoxC()
@@ -266,7 +266,7 @@ STATIC FUNCTION napravi_filter_na_tabeli_ld( cIdRj, cGodina, cMjesec, cObracun, 
             IF( Empty( cMjesec ), ".t.", "MJESEC==cMjesec" ) + ".and." + ;
             IF( Empty( cGodina ), ".t.", "GODINA==cGodina" )
          IF !Empty( cObracun )
-            cFilt += ( ".and. OBR==" + cm2str( cObracun ) )
+            cFilt += ( ".and. OBR==" + dbf_quote( cObracun ) )
          ENDIF
          INDEX ON &cSort1 TO "tmpld" FOR &cFilt
          BoxC()

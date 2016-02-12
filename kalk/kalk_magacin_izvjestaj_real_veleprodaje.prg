@@ -79,8 +79,8 @@ set order to tag PMAG
 
 private cFilt1:=""
 
-cFilt1 := ".t."+IF(EMPTY(dDat1),"",".and.DATDOK>="+cm2str(dDat1))+;
-                IF(EMPTY(dDat2),"",".and.DATDOK<="+cm2str(dDat2))
+cFilt1 := ".t."+IF(EMPTY(dDat1),"",".and.DATDOK>="+dbf_quote(dDat1))+;
+                IF(EMPTY(dDat2),"",".and.DATDOK<="+dbf_quote(dDat2))
 
 cFilt1:=STRTRAN(cFilt1,".t..and.","")
 

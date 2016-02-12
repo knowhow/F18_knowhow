@@ -256,10 +256,10 @@ FUNCTION pos_iznos_racuna( cIdPos, cIdVD, dDatum, cBrDok )
    cSql += " SUM( ( kolicina * cijena ) - ( kolicina * ncijena ) ) AS total "
    cSql += "FROM fmk.pos_pos "
    cSql += "WHERE "
-   cSql += " idpos = " + _sql_quote( cIdPos )
-   cSql += " AND idvd = " + _sql_quote( cIdVd )
-   cSql += " AND brdok = " + _sql_quote( cBrDok )
-   cSql += " AND datum = " + _sql_quote( dDatum )  
+   cSql += " idpos = " + sql_quote( cIdPos )
+   cSql += " AND idvd = " + sql_quote( cIdVd )
+   cSql += " AND brdok = " + sql_quote( cBrDok )
+   cSql += " AND datum = " + sql_quote( dDatum )  
 
    oData := _sql_query( my_server(), cSql )
 
@@ -282,8 +282,8 @@ FUNCTION pos_stanje_artikla( id_pos, id_roba )
    LOCAL _stanje := 0
 
    _qry := "SELECT SUM( CASE WHEN idvd IN ('16') THEN kolicina WHEN idvd IN ('42') THEN -kolicina WHEN idvd IN ('IN') THEN -(kolicina - kol2) ELSE 0 END ) AS stanje FROM fmk.pos_pos " + ;
-      " WHERE idpos = " + _sql_quote( id_pos ) + ;
-      " AND idroba = " + _sql_quote( id_roba )
+      " WHERE idpos = " + sql_quote( id_pos ) + ;
+      " AND idroba = " + sql_quote( id_roba )
 
    _table := _sql_query( _server, _qry )
 
@@ -500,11 +500,11 @@ FUNCTION pos_racun_sadrzi_artikal( cIdPos, cIdVd, dDatum, cBroj, cIdRoba )
    LOCAL lRet := .F.
    LOCAL cWhere
 
-   cWhere := " idpos " + _sql_quote( cIdPos )
-   cWhere += " AND idvd = " + _sql_quote( cIdVd )
-   cWhere += " AND datum = " + _sql_quote( dDatum )
-   cWhere += " AND brdok = " + _sql_quote( cBroj )
-   cWhere += " AND idroba = " + _sql_quote( cIdRoba )
+   cWhere := " idpos " + sql_quote( cIdPos )
+   cWhere += " AND idvd = " + sql_quote( cIdVd )
+   cWhere += " AND datum = " + sql_quote( dDatum )
+   cWhere += " AND brdok = " + sql_quote( cBroj )
+   cWhere += " AND idroba = " + sql_quote( cIdRoba )
 
    IF table_count( "fmk.pos_pos", cWhere ) > 0
       lRet := .T.

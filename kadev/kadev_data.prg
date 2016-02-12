@@ -206,7 +206,7 @@ METHOD KADEV_DATA_CALC:data_selection()
    _qry += "LEFT JOIN fmk.kadev_rrasp rrsp ON main.idrrasp = rrsp.id "
    _qry += "LEFT JOIN fmk.kadev_rjrmj rjrmj ON pr.idrj = rjrmj.idrj AND pr.idrmj = rjrmj.idrmj "
    _qry += "LEFT JOIN fmk.kbenef ben ON rjrmj.sbenefrst = ben.id "
-   _qry += "WHERE pr.id = " + _sql_quote( ::jmbg )
+   _qry += "WHERE pr.id = " + sql_quote( ::jmbg )
 
    IF _datum_od <> NIL .OR. _datum_do <> NIL
       _qry += " AND ( " + _sql_date_parse( "pr.datumod", _datum_od, _datum_do ) + " ) "

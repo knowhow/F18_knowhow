@@ -243,16 +243,16 @@ FUNCTION fakt_real_kolicina()
    IF ( !Empty( dDatOd ) .OR. !Empty( dDatDo ) )
 
       IF cDDokOtpr == "D"
-         cFilter += ".and.  datdok>=" + Cm2Str( dDatOd ) + " .and. datdok<=" + Cm2Str( dDatDo )
+         cFilter += ".and.  datdok>=" + dbf_quote( dDatOd ) + " .and. datdok<=" + dbf_quote( dDatDo )
       ENDIF
    ENDIF
 
    IF ( !Empty( cIdFirma ) )
-      cFilter += " .and. IdFirma=" + Cm2Str( cIdFirma )
+      cFilter += " .and. IdFirma=" + dbf_quote( cIdFirma )
    ENDIF
 
    IF ( !Empty( qqPartn ) )
-      cFilter += " .and. IdPartner=" + Cm2Str( qqPartn )
+      cFilter += " .and. IdPartner=" + dbf_quote( qqPartn )
    ENDIF
 
    IF ( !Empty( qqIdRoba ) )
@@ -264,7 +264,7 @@ FUNCTION fakt_real_kolicina()
    ENDIF
 
    IF ( !Empty( cRelation ) )
-      cFilter += " .and. idrelac == " + Cm2Str( cRelation )
+      cFilter += " .and. idrelac == " + dbf_quote( cRelation )
    ENDIF
 
    IF ( cFilter = " .t. .and. " )

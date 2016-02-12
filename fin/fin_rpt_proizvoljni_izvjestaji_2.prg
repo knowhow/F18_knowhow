@@ -325,7 +325,7 @@ PRIVATE cSIzraz:=""
 DO WHILE !EOF()
     IF !EMPTY(KUSLOV)
         ++i
-        AADD(aKolS,{"KOL"+ALLTRIM(STR(i)),TRIM(kuslov)+IF(UPPER(k1)=="K","",".and.DATDOK>="+cm2str(dOd)),0,TRIM(sizraz)})
+        AADD(aKolS,{"KOL"+ALLTRIM(STR(i)),TRIM(kuslov)+IF(UPPER(k1)=="K","",".and.DATDOK>="+dbf_quote(dOd)),0,TRIM(sizraz)})
     ENDIF
     IF "KUMSUMA" $ FORMULA
         lKumSuma:=.t.
@@ -345,23 +345,23 @@ O_RJ
 O_FUNK
 select funk
 
-cFilter := "DATDOK<="+cm2str(dDo)
+cFilter := "DATDOK<="+dbf_quote(dDo)
 
 IF gNW=="N" .and. !EMPTY(cIdFirma)
-    cFilter += (".and.IDFIRMA=="+cm2str(cIdFirma))
+    cFilter += (".and.IDFIRMA=="+dbf_quote(cIdFirma))
 ENDIF
 
 IF !lKumSuma .and. !lKljuc
-    cFilter += (".and.DATDOK>="+cm2str(dOd))
+    cFilter += (".and.DATDOK>="+dbf_quote(dOd))
 ENDIF
 IF !EMPTY(cGlava)
-    cFilter += (".and.IDRJ=="+cm2str(cGlava))
+    cFilter += (".and.IDRJ=="+dbf_quote(cGlava))
     cNazRJ := Ocitaj( F_RJ , cGlava , "naz" )
 ELSE
     cNazRJ := "SVE"
 ENDIF
 IF !EMPTY(cFunkc)
-    cFilter += (".and.FUNK=="+cm2str(cFunkc))
+    cFilter += (".and.FUNK=="+dbf_quote(cFunkc))
     cNazFK := Ocitaj( F_FUNK , cFunkc , "naz" )
 ELSE
     cNazFK := "SVI"

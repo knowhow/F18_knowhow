@@ -23,7 +23,7 @@ FUNCTION kadev_broj_promjena( id )
    LOCAL _qry
    LOCAL _res
 
-   _qry := "SELECT COUNT(*) FROM fmk.kadev_promj WHERE id = " + _sql_quote( id )
+   _qry := "SELECT COUNT(*) FROM fmk.kadev_promj WHERE id = " + sql_quote( id )
 
    _res := _sql_query( _server, _qry )
 
@@ -45,7 +45,7 @@ FUNCTION kadev_broj_podataka( id )
    LOCAL _qry
    LOCAL _res
 
-   _qry := "SELECT COUNT(*) FROM fmk.kadev_1 WHERE id = " + _sql_quote( id )
+   _qry := "SELECT COUNT(*) FROM fmk.kadev_1 WHERE id = " + sql_quote( id )
 
    _res := _sql_query( _server, _qry )
 

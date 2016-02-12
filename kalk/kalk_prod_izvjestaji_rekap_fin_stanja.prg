@@ -89,10 +89,10 @@ FUNCTION RFLLP()
    SET ORDER TO TAG "4"
    // "idFirma+Pkonto+idroba+dtos(datdok)+PU_I+IdVD"
 
-   cFilt1 := "Pkonto=" + cm2Str( cIdkonto )
+   cFilt1 := "Pkonto=" + dbf_quote( cIdkonto )
 
    IF !Empty( dDatOd ) .OR. !Empty( dDatdo )
-      cFilt1 += ".and.DATDOK>=" + cm2str( dDatOd ) + ".and.DATDOK<=" + cm2str( dDatDo )
+      cFilt1 += ".and.DATDOK>=" + dbf_quote( dDatOd ) + ".and.DATDOK<=" + dbf_quote( dDatDo )
    ENDIF
 
    IF aUsl2 <> ".t."

@@ -17,8 +17,6 @@ FUNCTION MainLd( cKorisn, cSifra, p3, p4, p5, p6, p7 )
    LOCAL oLd
    LOCAL cModul
 
-   PUBLIC gKonvertPath := "D"
-
    cModul := "LD"
    PUBLIC goModul
 
@@ -27,4 +25,4 @@ FUNCTION MainLd( cKorisn, cSifra, p3, p4, p5, p6, p7 )
 
    oLd:run()
 
-   RETURN
+   RETURN .T.

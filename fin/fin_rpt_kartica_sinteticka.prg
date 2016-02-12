@@ -104,8 +104,8 @@ FUNCTION SinKart()
    SELECT SINT
 
    cFilt1 := ".t." + IF( cBrza == "D", "", ".and." + aUsl1 ) + ;
-      IF( Empty( dDatOd ) .OR. cPredh == "2", "", ".and.DATNAL>=" + cm2str( dDatOd ) ) + ;
-      IF( Empty( dDatDo ), "", ".and.DATNAL<=" + cm2str( dDatDo ) )
+      IF( Empty( dDatOd ) .OR. cPredh == "2", "", ".and.DATNAL>=" + dbf_quote( dDatOd ) ) + ;
+      IF( Empty( dDatDo ), "", ".and.DATNAL<=" + dbf_quote( dDatDo ) )
 
    cFilt1 := StrTran( cFilt1, ".t..and.", "" )
 
@@ -365,8 +365,8 @@ FUNCTION SinKart2()
    SELECT SINT
 
    cFilt1 := aUsl1 + ;
-      IF( Empty( dDatOd ), "", ".and.DATNAL>=" + cm2str( dDatOd ) ) + ;
-      IF( Empty( dDatDo ), "", ".and.DATNAL<=" + cm2str( dDatDo ) )
+      IF( Empty( dDatOd ), "", ".and.DATNAL>=" + dbf_quote( dDatOd ) ) + ;
+      IF( Empty( dDatDo ), "", ".and.DATNAL<=" + dbf_quote( dDatDo ) )
 
    cFilt1 := StrTran( cFilt1, ".t..and.", "" )
 
@@ -643,8 +643,8 @@ FUNCTION AnKart()
    ENDIF
 
    cFilt1 := ".t." + IF( cBrza == "D", "", ".and." + aUsl1 ) + ;
-      IF( Empty( dDatOd ) .OR. cPredh == "2", "", ".and.DATNAL>=" + cm2str( dDatOd ) ) + ;
-      IF( Empty( dDatDo ), "", ".and.DATNAL<=" + cm2str( dDatDo ) )
+      IF( Empty( dDatOd ) .OR. cPredh == "2", "", ".and.DATNAL>=" + dbf_quote( dDatOd ) ) + ;
+      IF( Empty( dDatDo ), "", ".and.DATNAL<=" + dbf_quote( dDatDo ) )
 
    cFilt1 := StrTran( cFilt1, ".t..and.", "" )
 

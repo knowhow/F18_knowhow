@@ -205,7 +205,7 @@ STATIC FUNCTION _cre_rpt( rpt_vars )
       _rj_fond_funk := " sub.idrj, sub.fond, sub.funk, "
    ENDIF
 
-   _where_cond := "WHERE sub.idfirma = " + _sql_quote( gfirma )
+   _where_cond := "WHERE sub.idfirma = " + sql_quote( gfirma )
    _where_cond += " AND " + _sql_date_parse( "sub.datdok", _datum_od, _datum_do )
    IF !Empty( _konto )
       _where_cond += " AND " + _sql_cond_parse( "sub.idkonto", _konto )

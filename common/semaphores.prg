@@ -89,10 +89,10 @@ FUNCTION lock_semaphore( table, status, lUnlockTable )
    ENDDO
 
    // svi useri su lockovani
-   _qry := "UPDATE sem." + table + " SET algorithm=" + _sql_quote( status ) + ", last_trans_user_code=" + _sql_quote( _user ) + "; "
+   _qry := "UPDATE sem." + table + " SET algorithm=" + sql_quote( status ) + ", last_trans_user_code=" + sql_quote( _user ) + "; "
 
    IF ( status == "lock" )
-      _qry += "UPDATE sem." + table + " SET algorithm='locked_by_me' WHERE user_code=" + _sql_quote( _user ) + ";"
+      _qry += "UPDATE sem." + table + " SET algorithm='locked_by_me' WHERE user_code=" + sql_quote( _user ) + ";"
    ENDIF
 
    _ret := _sql_query( _server, _qry )
@@ -139,7 +139,7 @@ FUNCTION get_semaphore_status( table )
       RETURN "free"
    ENDIF
 
-   _qry := "SELECT algorithm FROM sem." + table + " WHERE user_code=" + _sql_quote( _user )
+   _qry := "SELECT algorithm FROM sem." + table + " WHERE user_code=" + sql_quote( _user )
    _ret := _sql_query( _server, _qry )
 
    IF sql_query_bez_zapisa( _ret )
@@ -156,7 +156,7 @@ FUNCTION last_semaphore_version( table )
    LOCAL _ret
    LOCAL _server := pg_server()
 
-   _qry := "SELECT last_trans_version FROM  sem." + table + " WHERE user_code=" + _sql_quote( f18_user() )
+   _qry := "SELECT last_trans_version FROM  sem." + table + " WHERE user_code=" + sql_quote( f18_user() )
    _ret := _sql_query( _server, _qry )
 
    IF sql_query_bez_zapisa( _ret )
@@ -196,7 +196,7 @@ FUNCTION get_semaphore_version( table, last )
    ELSE
       _qry += "version as ver"
    ENDIF
-   _qry += " FROM " + _tbl + " WHERE user_code=" + _sql_quote( _user )
+   _qry += " FROM " + _tbl + " WHERE user_code=" + sql_quote( _user )
 
    _qry += " UNION SELECT -1 ORDER BY ver DESC LIMIT 1"
 
@@ -239,7 +239,7 @@ FUNCTION get_semaphore_version_h( table )
    _tbl := "sem." + Lower( table )
 
    _qry := "SELECT version, last_trans_version AS last_version"
-   _qry += " FROM " + _tbl + " WHERE user_code=" + _sql_quote( _user )
+   _qry += " FROM " + _tbl + " WHERE user_code=" + sql_quote( _user )
    _qry += " UNION SELECT -1, -1 ORDER BY version DESC LIMIT 1"
 
    _tbl_obj := _sql_query( _server, _qry )
@@ -280,10 +280,10 @@ FUNCTION reset_semaphore_version( table )
    insert_semaphore_if_not_exists( table )
 
    log_write( "reset semaphore " + _tbl + " update ", 1 )
-   _qry := "UPDATE " + _tbl + " SET version=-1, last_trans_version=(CASE WHEN last_trans_version IS NULL THEN 0 ELSE last_trans_version END) WHERE user_code =" + _sql_quote( _user )
+   _qry := "UPDATE " + _tbl + " SET version=-1, last_trans_version=(CASE WHEN last_trans_version IS NULL THEN 0 ELSE last_trans_version END) WHERE user_code =" + sql_quote( _user )
    _sql_query( _server, _qry )
 
-   _qry := "SELECT version from " + _tbl + " WHERE user_code =" + _sql_quote( _user )
+   _qry := "SELECT version from " + _tbl + " WHERE user_code =" + sql_quote( _user )
    _ret := _sql_query( _server, _qry )
 
    log_write( "reset semaphore, select version" + Str( _ret:FieldGet( 1 ) ), 7 )
@@ -472,7 +472,7 @@ FUNCTION update_semaphore_version_after_push( table, to_myself )
 
    IF !to_myself
       // setuj moju verziju ako ne zelim sebe refreshirati
-      _qry := "UPDATE " + _tbl + " SET version=" + cVerUser + " WHERE user_code=" + _sql_quote( _user ) + "; "
+      _qry := "UPDATE " + _tbl + " SET version=" + cVerUser + " WHERE user_code=" + sql_quote( _user ) + "; "
    ENDIF
 
    // svim userima setuj last_trans_version
@@ -506,7 +506,7 @@ FUNCTION nuliraj_ids_and_update_my_semaphore_ver( table )
    _qry := "UPDATE " + _tbl + " SET " + ;
       " ids=NULL , dat=NULL," + ;
       " version=last_trans_version" + ;
-      " WHERE user_code =" + _sql_quote( _user )
+      " WHERE user_code =" + sql_quote( _user )
 
    _ret := _sql_query( _server, _qry )
 
@@ -520,10 +520,10 @@ FUNCTION nuliraj_ids_and_update_my_semaphore_ver( table )
    IF ( _result == 0 )
 
       // user po prvi put radi sa tabelom semafora, iniciraj full sync
-      _id_full := "ARRAY[" + _sql_quote( "#F" ) + "]"
+      _id_full := "ARRAY[" + sql_quote( "#F" ) + "]"
 
       _qry := "INSERT INTO " + _tbl + "(user_code, version, last_trans_version, ids) " + ;
-         "VALUES(" + _sql_quote( _user )  + ", " + cVerUser + ", (select max(last_trans_version) from " +  _tbl + "), " + _id_full + ")"
+         "VALUES(" + sql_quote( _user )  + ", " + cVerUser + ", (select max(last_trans_version) from " +  _tbl + "), " + _id_full + ")"
 
       _ret := _sql_query( _server, _qry )
 
@@ -554,11 +554,11 @@ FUNCTION insert_semaphore_if_not_exists( cTable, lIgnoreChk0 )
    ENDIF
 
 
-   nCnt := table_count( cSqlTbl, "user_code=" + _sql_quote( _user ) )
+   nCnt := table_count( cSqlTbl, "user_code=" + sql_quote( _user ) )
 
    IF ( nCnt == 0 )
       _qry := "INSERT INTO " + cSqlTbl + "(user_code, last_trans_version, version, algorithm) " + ;
-         "VALUES(" + _sql_quote( _user )  + ", 0, -1, 'free')"
+         "VALUES(" + sql_quote( _user )  + ", 0, -1, 'free')"
       _ret := _sql_query( _server, _qry )
       RETURN Empty( _ret:ErrorMsg() )
    ENDIF

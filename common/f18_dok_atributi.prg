@@ -273,18 +273,18 @@ METHOD F18_DOK_ATRIB:get_atrib_list_from_server()
       _rbr := ""
    ENDIF
 
-   _where := "idfirma = " + _sql_quote( _idfirma )
+   _where := "idfirma = " + sql_quote( _idfirma )
    _where += " AND "
-   _where += "brdok = " + _sql_quote( _brdok )
+   _where += "brdok = " + sql_quote( _brdok )
    _where += " AND "
-   _where += "idtipdok = " + _sql_quote( _idtipdok )
+   _where += "idtipdok = " + sql_quote( _idtipdok )
 
    IF !Empty( _rbr )
-      _where += " AND rbr = " + _sql_quote( _rbr )
+      _where += " AND rbr = " + sql_quote( _rbr )
    ENDIF
 
    IF !Empty( _atrib )
-      _where += " AND atribut = " + _sql_quote( _atrib )
+      _where += " AND atribut = " + sql_quote( _atrib )
    ENDIF
 
    _table := select_all_records_from_table( ::table_name_server, NIL, { _where }, { "atribut" } )
@@ -516,13 +516,13 @@ METHOD F18_DOK_ATRIB:update_atrib_from_server( params )
    // prvo pobrisi sa servera
    _qry := "UPDATE " + ::table_name_server + " "
    _qry += "SET "
-   _qry += "idfirma = " + _sql_quote( _new_firma )
-   _qry += ", idtipdok = " + _sql_quote( _new_tipdok )
-   _qry += ", brdok = " + _sql_quote( _new_brdok )
+   _qry += "idfirma = " + sql_quote( _new_firma )
+   _qry += ", idtipdok = " + sql_quote( _new_tipdok )
+   _qry += ", brdok = " + sql_quote( _new_brdok )
    _qry += " WHERE "
-   _qry += " idfirma = " + _sql_quote( _old_firma )
-   _qry += " AND idtipdok = " + _sql_quote( _old_tipdok )
-   _qry += " AND brdok = " + _sql_quote( _old_brdok )
+   _qry += " idfirma = " + sql_quote( _old_firma )
+   _qry += " AND idtipdok = " + sql_quote( _old_tipdok )
+   _qry += " AND brdok = " + sql_quote( _old_brdok )
 
    _ret := _sql_query( _server, _qry )
 
@@ -547,9 +547,9 @@ METHOD F18_DOK_ATRIB:delete_atrib_from_server()
 
    _qry := "DELETE FROM " + ::table_name_server
    _qry += " WHERE "
-   _qry += "idfirma = " + _sql_quote( ::dok_hash[ "idfirma" ] )
-   _qry += " AND idtipdok = " + _sql_quote( ::dok_hash[ "idtipdok" ] )
-   _qry += " AND brdok = " + _sql_quote( ::dok_hash[ "brdok" ] )
+   _qry += "idfirma = " + sql_quote( ::dok_hash[ "idfirma" ] )
+   _qry += " AND idtipdok = " + sql_quote( ::dok_hash[ "idtipdok" ] )
+   _qry += " AND brdok = " + sql_quote( ::dok_hash[ "brdok" ] )
 
    _ret := _sql_query( _server, _qry )
 
@@ -608,12 +608,12 @@ METHOD F18_DOK_ATRIB:atrib_dbf_to_server()
       _qry := "INSERT INTO " + ::table_name_server + " "
       _qry += "( idfirma, idtipdok, brdok, rbr, atribut, value ) "
       _qry += "VALUES ("
-      _qry += _sql_quote( ::dok_hash[ "idfirma" ] ) + ", "
-      _qry += _sql_quote( ::dok_hash[ "idtipdok" ] ) + ", "
-      _qry += _sql_quote( ::dok_hash[ "brdok" ] ) + ", "
-      _qry += _sql_quote( field->rbr ) + ", "
-      _qry += _sql_quote( field->atribut ) + ", "
-      _qry += _sql_quote( field->value )
+      _qry += sql_quote( ::dok_hash[ "idfirma" ] ) + ", "
+      _qry += sql_quote( ::dok_hash[ "idtipdok" ] ) + ", "
+      _qry += sql_quote( ::dok_hash[ "brdok" ] ) + ", "
+      _qry += sql_quote( field->rbr ) + ", "
+      _qry += sql_quote( field->atribut ) + ", "
+      _qry += sql_quote( field->value )
       _qry += ")"
 
       _res := _sql_query( _server, _qry )

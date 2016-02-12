@@ -92,7 +92,7 @@ FUNCTION push_ids_to_semaphore( table, aIds, lToMySelf )
    _tbl := "sem." + Lower( table )
 
    // treba dodati id za sve DRUGE korisnike
-   _result := table_count( _tbl, IIF( lToMySelf, NIL, "user_code <> " + _sql_quote( _user ) ) )
+   _result := table_count( _tbl, IIF( lToMySelf, NIL, "user_code <> " + sql_quote( _user ) ) )
 
    IF _result < 1
       // jedan korisnik
@@ -104,7 +104,7 @@ FUNCTION push_ids_to_semaphore( table, aIds, lToMySelf )
 
    FOR nI := 1 TO Len( aIds )
 
-      _sql_ids := "ARRAY[" + _sql_quote( aIds[ nI ] ) + "]"
+      _sql_ids := "ARRAY[" + sql_quote( aIds[ nI ] ) + "]"
 
       // full synchro
       IF aIds[ nI ] == "#F"
@@ -120,7 +120,7 @@ FUNCTION push_ids_to_semaphore( table, aIds, lToMySelf )
 
       _qry += "UPDATE " + _tbl + " " + _set_1 + _sql_ids + " WHERE "
       IF !lToMySelf
-         _qry += "user_code <> " + _sql_quote( _user )
+         _qry += "user_code <> " + sql_quote( _user )
       ELSE
          _qry += "true"
       ENDIF
@@ -131,7 +131,7 @@ FUNCTION push_ids_to_semaphore( table, aIds, lToMySelf )
    // ako id sadrzi vise od 2000 stavki, korisnik je dugo neaktivan, pokreni full sync
    _qry += "UPDATE " + _tbl + " SET ids = ARRAY['#F']  WHERE "
    IF !lToMySelf
-      _qry += "user_code <> " + _sql_quote( _user ) + " AND "
+      _qry += "user_code <> " + sql_quote( _user ) + " AND "
    ENDIF
    _qry += "ids IS NOT NULL AND array_length(ids,1) > 2000"
    _ret := _sql_query( _server, _qry )
@@ -188,11 +188,11 @@ FUNCTION get_ids_from_semaphore( table )
 
    ENDIF
 
-   _qry := "SELECT ids FROM " + _tbl + " WHERE user_code=" + _sql_quote( _user )
+   _qry := "SELECT ids FROM " + _tbl + " WHERE user_code=" + sql_quote( _user )
    _tbl_obj := _sql_query( _server, _qry )
 
    _qry := "UPDATE " + _tbl + " SET  ids=NULL , dat=NULL, version=last_trans_version"
-   _qry += " WHERE user_code =" + _sql_quote( _user )
+   _qry += " WHERE user_code =" + sql_quote( _user )
    _update_obj := _sql_query( _server, _qry, .T. )
 
 
@@ -342,7 +342,7 @@ FUNCTION create_queries_from_ids( table )
             _ids_2[ _algoritam ] := {}
          ENDIF
 
-         _sql_ids[ _algoritam ] += _sql_quote( _id ) + ","
+         _sql_ids[ _algoritam ] += sql_quote( _id ) + ","
          AAdd( _ids_2[ _algoritam ], _id )
 
       ENDIF

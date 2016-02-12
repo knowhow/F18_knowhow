@@ -18,7 +18,6 @@ FUNCTION MainKadev( cKorisn, cSifra, p3, p4, p5, p6, p7 )
    LOCAL oKadev
    LOCAL cModul
 
-   PUBLIC gKonvertPath := "D"
 
    cModul := "KADEV"
    PUBLIC goModul

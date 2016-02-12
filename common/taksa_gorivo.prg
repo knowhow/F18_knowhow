@@ -75,7 +75,7 @@ STATIC FUNCTION artikal_je_gorivo( cIdRoba )
    LOCAL lRet := .F.
    LOCAL cSql, oQuery
 
-   cSql := "SELECT k1 FROM fmk.roba WHERE id = " + _sql_quote( cIdRoba )
+   cSql := "SELECT k1 FROM fmk.roba WHERE id = " + sql_quote( cIdRoba )
    oQuery := _sql_query( my_server(), cSql )
 
    IF query_row( oQuery, "k1" ) == "GORI"
@@ -236,7 +236,7 @@ STATIC FUNCTION dodaj_sifru_takse_u_tarife()
    LOCAL hRec
    LOCAL cTarifa := PADR( "PDVM0", 6 )
 
-   IF table_count( "fmk.tarifa", "id = " + _sql_quote( cTarifa ) ) > 0
+   IF table_count( "fmk.tarifa", "id = " + sql_quote( cTarifa ) ) > 0
       RETURN lOk
    ENDIF
 

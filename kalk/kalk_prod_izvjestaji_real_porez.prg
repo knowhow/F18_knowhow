@@ -99,10 +99,10 @@ endif
 private cFilt1 := ""
 
 if !empty(dDat1) .and. !empty(dDat2)
-    cFilt1 := aUsl1 + ".and.(IDVD$" + cm2str(cVDOK) + ").and.DATDOK>=" + ;
-                cm2str(dDat1) + ".and.DATDOK<=" + cm2str(dDat2)
+    cFilt1 := aUsl1 + ".and.(IDVD$" + dbf_quote(cVDOK) + ").and.DATDOK>=" + ;
+                dbf_quote(dDat1) + ".and.DATDOK<=" + dbf_quote(dDat2)
 else
- 	cFilt1 := aUsl1 + ".and.(IDVD$" + cm2str(cVDOK) + ")"
+ 	cFilt1 := aUsl1 + ".and.(IDVD$" + dbf_quote(cVDOK) + ")"
 endif
 
 if aUsl2 <> ".t."

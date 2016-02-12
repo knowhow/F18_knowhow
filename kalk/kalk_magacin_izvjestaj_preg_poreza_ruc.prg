@@ -58,8 +58,8 @@ set order to tag "6"
 
 private cFilt1:=""
 
-cFilt1 := ".t."+IF(EMPTY(dDat1),"",".and.DATDOK>="+cm2str(dDat1))+;
-                IF(EMPTY(dDat2),"",".and.DATDOK<="+cm2str(dDat2))+;
+cFilt1 := ".t."+IF(EMPTY(dDat1),"",".and.DATDOK>="+dbf_quote(dDat1))+;
+                IF(EMPTY(dDat2),"",".and.DATDOK<="+dbf_quote(dDat2))+;
                 ".and."+aUsl1+".and."+aUsl2+".and."+aUsl3+;
                 ".and.(IDVD $ '14#15#94')"
 

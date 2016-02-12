@@ -78,7 +78,7 @@ FUNCTION fin_bb_subanalitika_b( params )
    SELECT SUBAN
 
    IF gRj == "D" .AND. Len( cIdrj ) <> 0
-      cFilter += iif( Empty( cFilter ), "", ".and." ) + "idrj=" + cm2str( cIdRj )
+      cFilter += iif( Empty( cFilter ), "", ".and." ) + "idrj=" + dbf_quote( cIdRj )
    ENDIF
 
    IF !EMPTY( qqKonto )
@@ -101,7 +101,7 @@ FUNCTION fin_bb_subanalitika_b( params )
       Box(, 2, 30 )
       nSlog := 0
       nUkupno := RECCOUNT2()
-      cFilt := IF( Empty( cFilter ), "IDFIRMA=" + cm2str( cIdFirma ), cFilter + ".and.IDFIRMA=" + cm2str( cIdFirma ) )
+      cFilt := IF( Empty( cFilter ), "IDFIRMA=" + dbf_quote( cIdFirma ), cFilter + ".and.IDFIRMA=" + dbf_quote( cIdFirma ) )
       cSort1 := "IdKonto+IdPartner+dtos(DatDok)+BrNal+RBr"
       INDEX ON &cSort1 TO "SUBTMP" FOR &cFilt Eval( fin_tek_rec_2() ) EVERY 1
       GO TOP

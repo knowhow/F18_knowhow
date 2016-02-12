@@ -84,10 +84,10 @@ FUNCTION pos_dokument_postoji( cIdPos, cIdvd, dDatum, cBroj )
    LOCAL lRet := .F.
    LOCAL cWhere
 
-   cWhere := "idpos = " + _sql_quote( cIdPos )
-   cWhere += " AND idvd = " + _sql_quote( cIdVd )
-   cWhere += " AND datum = " + _sql_quote( dDatum )
-   cWhere += " AND brdok = " + _sql_quote( cBroj )
+   cWhere := "idpos = " + sql_quote( cIdPos )
+   cWhere += " AND idvd = " + sql_quote( cIdVd )
+   cWhere += " AND datum = " + sql_quote( dDatum )
+   cWhere += " AND brdok = " + sql_quote( cBroj )
 
    IF table_count( "fmk.pos_doks", cWhere ) > 0
       lRet := .T.

@@ -85,15 +85,15 @@ endif
 
 O_KALKREP
 
-cFilt1 := "Idfirma="+cm2str(cidfirma)+".and. Pkonto="+cm2str(cIdkonto)+".and. DatDok<="+cm2str(dDatDo)
-//cFilt1:="Pkonto="+cm2str(cIdkonto)
+cFilt1 := "Idfirma="+dbf_quote(cidfirma)+".and. Pkonto="+dbf_quote(cIdkonto)+".and. DatDok<="+dbf_quote(dDatDo)
+//cFilt1:="Pkonto="+dbf_quote(cIdkonto)
 //set order to tag "D"
 //set scopebottom to dDatDo
 
 if !empty(dDatOd)
     //set order to tag "D"
     //set scopetop to  dDatOd
-    cFilt1+=".and. DatDok>="+cm2str(dDatOd)
+    cFilt1+=".and. DatDok>="+dbf_quote(dDatOd)
 endif
 
 if aUsl2 <> ".t."

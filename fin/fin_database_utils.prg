@@ -77,9 +77,9 @@ FUNCTION fin_dok_get_last_rbr( idfirma, idvn, brnal )
    LOCAL _last
 
    _qry := "SELECT MAX(rbr) AS last FROM fmk.fin_suban " + ;
-      " WHERE idfirma = " + _sql_quote( idfirma ) + ;
-      " AND idvn = " + _sql_quote( idvn ) + ;
-      " AND brnal = " + _sql_quote( brnal )
+      " WHERE idfirma = " + sql_quote( idfirma ) + ;
+      " AND idvn = " + sql_quote( idvn ) + ;
+      " AND brnal = " + sql_quote( brnal )
 
    _table := _sql_query( _server, _qry )
 

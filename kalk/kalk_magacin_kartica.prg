@@ -154,7 +154,7 @@ FUNCTION kartica_magacin()
    PRIVATE cFilt := ".t."
 
    IF !Empty( cIdPartner )
-      cFilt += ".and.IdPartner==" + Cm2Str( cIdPartner )
+      cFilt += ".and.IdPartner==" + dbf_quote( cIdPartner )
    ENDIF
 
    IF !Empty( cRNT1 ) .AND. !Empty( cRNalBroj )

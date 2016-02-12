@@ -9,19 +9,13 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-
 #include "f18.ch"
-
-EXTERNAL DESCEND
-EXTERNAL RIGHT
 
 
 FUNCTION MainRnal( cKorisn, cSifra, p3, p4, p5, p6, p7 )
 
    LOCAL oRnal
    LOCAL cModul
-
-   PUBLIC gKonvertPath := "D"
 
    cModul := "RNAL"
    PUBLIC goModul
@@ -31,4 +25,4 @@ FUNCTION MainRnal( cKorisn, cSifra, p3, p4, p5, p6, p7 )
 
    oRnal:run()
 
-   RETURN
+   RETURN .T.

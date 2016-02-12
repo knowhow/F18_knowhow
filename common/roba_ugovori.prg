@@ -66,7 +66,7 @@ STATIC FUNCTION set_f_tbl( cIdUgov )
 
    LOCAL cFilt := ""
 
-   cFilt := "id == " + cm2str( cIdUgov )
+   cFilt := "id == " + dbf_quote( cIdUgov )
    SET FILTER to &cFilt
    GO TOP
 

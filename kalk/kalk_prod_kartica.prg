@@ -535,8 +535,8 @@ FUNCTION NPArtikli()
 
    O_KALK
 
-   cFilt := aUsl1 + " .and. " + aUsl2 + " .and. DATDOK>=" + cm2str( dDat0 ) + ;
-      " .and. DATDOK<=" + cm2str( dDat1 ) + ;
+   cFilt := aUsl1 + " .and. " + aUsl2 + " .and. DATDOK>=" + dbf_quote( dDat0 ) + ;
+      " .and. DATDOK<=" + dbf_quote( dDat1 ) + ;
       ' .and. PU_I=="5"' + ;
       ' .and. !(IDVD $ "12#13#22")'
 

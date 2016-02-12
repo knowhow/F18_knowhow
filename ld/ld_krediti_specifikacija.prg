@@ -46,11 +46,11 @@ STATIC FUNCTION _get_data( params )
    _where += " AND lk.mjesec = " + AllTrim( Str( params[ "mjesec" ] ) )
 
    IF !Empty( params[ "kreditor" ] )
-      _where += " AND lk.idkred = " + _sql_quote( params[ "kreditor" ] )
+      _where += " AND lk.idkred = " + sql_quote( params[ "kreditor" ] )
    ENDIF
 
    IF !Empty( params[ "radnik" ] )
-      _where += " AND lk.idradn = " + _sql_quote( params[ "radnik" ] )
+      _where += " AND lk.idradn = " + sql_quote( params[ "radnik" ] )
    ENDIF
 
    IF !Empty( params[ "osnova" ] )

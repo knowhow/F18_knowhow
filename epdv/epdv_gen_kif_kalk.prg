@@ -173,10 +173,10 @@ STATIC FUNCTION gen_kalk_kif_item( cSezona )
    SELECT KALK
    PRIVATE cFilter := ""
 
-   cFilter :=  cm2str( dDatOd ) + " <= datdok .and. " + cm2str( dDatDo ) + ">= datdok"
+   cFilter :=  dbf_quote( dDatOd ) + " <= datdok .and. " + dbf_quote( dDatDo ) + ">= datdok"
 
    // setuj tip dokumenta
-   cFilter :=  cFilter + ".and. IdVD == " + cm2str( cTdSrc )
+   cFilter :=  cFilter + ".and. IdVD == " + dbf_quote( cTdSrc )
 
    IF !Empty( cTarFilter )
       cFilter += ".and. " + cTarFilter

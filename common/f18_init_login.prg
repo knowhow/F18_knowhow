@@ -606,7 +606,7 @@ METHOD F18Login:get_database_description( database, session )
    _qry := "SELECT description AS opis " + ;
       "FROM pg_shdescription " + ;
       "JOIN pg_database on objoid = pg_database.oid " + ;
-      "WHERE datname = " + _sql_quote( _database_name )
+      "WHERE datname = " + sql_quote( _database_name )
 
    _table := _sql_query( _server, _qry )
 

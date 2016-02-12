@@ -184,8 +184,8 @@ FUNCTION usporedna_lista_fakt_kalk()
    SELECT fakt
 
    PRIVATE cFilt1 := ""
-   cFilt1 := aUsl1 + IF( Empty( dDatOd ), "", ".and.DATDOK>=" + cm2str( dDatOd ) ) + ;
-      IF( Empty( dDatDo ), "", ".and.DATDOK<=" + cm2str( dDatDo ) )
+   cFilt1 := aUsl1 + IF( Empty( dDatOd ), "", ".and.DATDOK>=" + dbf_quote( dDatOd ) ) + ;
+      IF( Empty( dDatDo ), "", ".and.DATDOK<=" + dbf_quote( dDatDo ) )
    cFilt1 := StrTran( cFilt1, ".t..and.", "" )
 
    IF !( cFilt1 == ".t." )
@@ -212,10 +212,10 @@ FUNCTION usporedna_lista_fakt_kalk()
       ENDIF
    ENDIF
 
-   cFilt2 := aUsl1 + IF( Empty( dDatOd ), "", ".and.DATDOK>=" + cm2str( dDatOd ) ) + iif( Empty( dDatDo ), "", ".and.DATDOK<=" + cm2str( dDatDo ) )
+   cFilt2 := aUsl1 + IF( Empty( dDatOd ), "", ".and.DATDOK>=" + dbf_quote( dDatOd ) ) + iif( Empty( dDatDo ), "", ".and.DATDOK<=" + dbf_quote( dDatDo ) )
 
    IF lViseKonta
-      cFilt2 += ".and." + aUsl2 + ".and.IDFIRMA==" + cm2str( cKalkFirma )
+      cFilt2 += ".and." + aUsl2 + ".and.IDFIRMA==" + dbf_quote( cKalkFirma )
       SET ORDER TO TAG "7"
    ENDIF
 

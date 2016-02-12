@@ -202,17 +202,17 @@ SELECT POS
 PRIVATE cFilter := ""
 
 
-cFilter :=  cm2str(dDatOd) + " <= datum .and. " + cm2str(dDatDo) + ">= datum" 
+cFilter :=  dbf_quote(dDatOd) + " <= datum .and. " + dbf_quote(dDatDo) + ">= datum" 
 
 // setuj tip dokumenta
-cFilter :=  cFilter + ".and. IdVD == " + cm2str(cTdSrc)
+cFilter :=  cFilter + ".and. IdVD == " + dbf_quote(cTdSrc)
 
 if !EMPTY(cTarFilter)
 	cFilter += ".and. " + cTarFilter
 endif
 
 if !EMPTY(cPm)
-	cFilter +=  ".and. IdPos == " + cm2str(cPm)
+	cFilter +=  ".and. IdPos == " + dbf_quote(cPm)
 endif
 
 

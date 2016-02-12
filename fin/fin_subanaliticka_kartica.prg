@@ -302,19 +302,19 @@ FUNCTION SubKart( lOtvst )
 
    cFilter := ".t." + iif( !Empty( cIdVN ), ".and." + aUsl3, "" ) + ;
       iif( cBrza == "N", ".and." + aUsl1 + ".and." + aUsl2, "" ) + ;
-      iif( Empty( dDatOd ) .OR. cPredh == "2", "", ".and.DATDOK>=" + cm2str( dDatOd ) ) + ;
-      iif( Empty( dDatDo ), "", ".and.DATDOK<=" + cm2str( dDatDo ) ) + ;
-      iif( fk1 .AND. Len( ck1 ) <> 0, ".and.k1=" + cm2str( ck1 ), "" ) + ;
-      iif( fk2 .AND. Len( ck2 ) <> 0, ".and.k2=" + cm2str( ck2 ), "" ) + ;
+      iif( Empty( dDatOd ) .OR. cPredh == "2", "", ".and.DATDOK>=" + dbf_quote( dDatOd ) ) + ;
+      iif( Empty( dDatDo ), "", ".and.DATDOK<=" + dbf_quote( dDatDo ) ) + ;
+      iif( fk1 .AND. Len( ck1 ) <> 0, ".and.k1=" + dbf_quote( ck1 ), "" ) + ;
+      iif( fk2 .AND. Len( ck2 ) <> 0, ".and.k2=" + dbf_quote( ck2 ), "" ) + ;
       iif( fk3 .AND. Len( ck3 ) <> 0, ".and.k3=ck3", "" ) + ;
-      iif( fk4 .AND. Len( ck4 ) <> 0, ".and.k4=" + cm2str( ck4 ), "" ) + ;
-      iif( gRj == "D" .AND. Len( cIdrj ) <> 0, iif( gDUFRJ == "D", ".and." + aUsl5, ".and.idrj=" + cm2str( cIdRJ ) ), "" ) + ;
-      iif( gTroskovi == "D" .AND. Len( cFunk ) <> 0, ".and.funk=" + cm2str( cFunk ), "" ) + ;
-      iif( gTroskovi == "D" .AND. Len( cFond ) <> 0, ".and.fond=" + cm2str( cFond ), "" ) + ;
+      iif( fk4 .AND. Len( ck4 ) <> 0, ".and.k4=" + dbf_quote( ck4 ), "" ) + ;
+      iif( gRj == "D" .AND. Len( cIdrj ) <> 0, iif( gDUFRJ == "D", ".and." + aUsl5, ".and.idrj=" + dbf_quote( cIdRJ ) ), "" ) + ;
+      iif( gTroskovi == "D" .AND. Len( cFunk ) <> 0, ".and.funk=" + dbf_quote( cFunk ), "" ) + ;
+      iif( gTroskovi == "D" .AND. Len( cFond ) <> 0, ".and.fond=" + dbf_quote( cFond ), "" ) + ;
       iif( gDUFRJ == "D", ".and." + aUsl4, ;
-      iif( Len( cIdFirma ) < 2, ".and. IDFIRMA=" + cm2str( cIdFirma ), "" ) + ;
-      iif( Len( cIdFirma ) < 2 .AND. cBrza == "D", ".and.IDKONTO==" + cm2str( qqKonto ), "" ) + ;
-      iif( Len( cIdFirma ) < 2 .AND. cBrza == "D" .AND. !( RTrim( qqPartner ) == ";" ), ".and.IDPARTNER==" + cm2str( qqPartner ), "" ) )
+      iif( Len( cIdFirma ) < 2, ".and. IDFIRMA=" + dbf_quote( cIdFirma ), "" ) + ;
+      iif( Len( cIdFirma ) < 2 .AND. cBrza == "D", ".and.IDKONTO==" + dbf_quote( qqKonto ), "" ) + ;
+      iif( Len( cIdFirma ) < 2 .AND. cBrza == "D" .AND. !( RTrim( qqPartner ) == ";" ), ".and.IDPARTNER==" + dbf_quote( qqPartner ), "" ) )
 
    IF !Empty( qqBrDok )
       cFilter += ( ".and." + aBV )

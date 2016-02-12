@@ -268,11 +268,11 @@ STATIC FUNCTION _gen_kompen( vars )
    _filter := ".t."
 
    IF !Empty( _dat_od )
-      _filter += " .and. DATDOK >= " + cm2str( _dat_od )
+      _filter += " .and. DATDOK >= " + dbf_quote( _dat_od )
    ENDIF
 
    IF !Empty( _dat_do )
-      _filter += " .and. DATDOK <= " + cm2str( _dat_do )
+      _filter += " .and. DATDOK <= " + dbf_quote( _dat_do )
    ENDIF
 
    msgo( "setujem filter... " )

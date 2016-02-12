@@ -49,7 +49,7 @@ FUNCTION _sql_date_str( var )
    RETURN _out
 
 
-FUNCTION _sql_quote( xVar )
+FUNCTION sql_quote( xVar )
 
    LOCAL cOut
 
@@ -82,7 +82,7 @@ FUNCTION _sql_quote_u( xVar )
       cOut := StrTran( xVar, "'", "''" )
       cOut := "'" + cOut + "'"
    ELSE
-      cOut := _sql_quote( xVar )
+      cOut := sql_quote( xVar )
    ENDIF
 
    RETURN cOut
@@ -115,7 +115,7 @@ FUNCTION sql_where_from_dbf_key_fields( dbf_key_fields, rec, lSqlTable )
          IF lSqlTable
             _ret += _item + "=" + _sql_quote_u( rec[ _key ] )
          ELSE
-            _ret += _item + "=" + _sql_quote( rec[ _key ] )
+            _ret += _item + "=" + sql_quote( rec[ _key ] )
          ENDIF
 
       ELSE
@@ -153,18 +153,18 @@ FUNCTION _sql_date_parse( field_name, date1, date2 )
          _ret := "TRUE"
          // samo prvi je prazan
       ELSEIF DToC( date1 ) == DToC( CToD( "" ) )
-         _ret := field_name + " <= " + _sql_quote( date2 )
+         _ret := field_name + " <= " + sql_quote( date2 )
          // drugi je prazan
       ELSEIF DToC( date2 ) == DToC( CToD( "" ) )
-         _ret := field_name + " >= " + _sql_quote( date1 )
+         _ret := field_name + " >= " + sql_quote( date1 )
          // imamo dva regularna datuma
       ELSE
          // ako su razliciti datumi
          IF DToC( date1 ) <> DToC( date2 )
-            _ret := field_name + " BETWEEN " + _sql_quote( date1 ) + " AND " + _sql_quote( date2 )
+            _ret := field_name + " BETWEEN " + sql_quote( date1 ) + " AND " + sql_quote( date2 )
             // ako su identicni, samo nam jedan treba u LIKE klauzuli
          ELSE
-            _ret := field_name + "::char(20) LIKE " + _sql_quote( _sql_date_str( date1 ) + "%" )
+            _ret := field_name + "::char(20) LIKE " + sql_quote( _sql_date_str( date1 ) + "%" )
          ENDIF
       ENDIF
 
@@ -174,7 +174,7 @@ FUNCTION _sql_date_parse( field_name, date1, date2 )
 
       // samo jedan datumski uslov
    ELSE
-      _ret := field_name + "::char(20) LIKE " + _sql_quote( _sql_date_str( date1 ) + "%" )
+      _ret := field_name + "::char(20) LIKE " + sql_quote( _sql_date_str( date1 ) + "%" )
    ENDIF
 
    RETURN _ret
@@ -202,14 +202,14 @@ FUNCTION _sql_cond_parse( field_name, cond, not )
          IF not
             _ret += " NOT "
          ENDIF
-         _ret += " LIKE " + _sql_quote( AllTrim( _cond ) + "%" )
+         _ret += " LIKE " + sql_quote( AllTrim( _cond ) + "%" )
       ELSE
          IF not
             _ret += " <> "
          ELSE
             _ret += " = "
          ENDIF
-         _ret += _sql_quote( _cond )
+         _ret += sql_quote( _cond )
       ENDIF
 
    NEXT
@@ -263,7 +263,7 @@ FUNCTION _sql_get_value( table_name, field_name, cond )
          IF ValType( cond[ _i, 2 ] ) == "N"
             _where += cond[ _i, 1 ] + " = " + Str( cond[ _i, 2 ] )
          ELSE
-            _where += cond[ _i, 1 ] + " = " + _sql_quote( cond[ _i, 2 ] )
+            _where += cond[ _i, 1 ] + " = " + sql_quote( cond[ _i, 2 ] )
          ENDIF
 
       ENDIF
@@ -368,7 +368,7 @@ FUNCTION _sql_table_struct( table )
 
    _qry := "SELECT column_name, data_type, character_maximum_length, numeric_precision, numeric_scale " + ;
       " FROM information_schema.columns " + ;
-      " WHERE ( table_schema || '.' || table_name ) = " + _sql_quote( table ) + ;
+      " WHERE ( table_schema || '.' || table_name ) = " + sql_quote( table ) + ;
       " ORDER BY ordinal_position;"
 
    _data := _sql_query( _server, _qry )
@@ -477,7 +477,7 @@ STATIC FUNCTION _create_insert_qry_from_hash( table, hash )
       IF ValType( hash[ _key ] ) == "N"
          _qry += Str( hash[ _key ] )
       ELSE
-         _qry += _sql_quote( hash[ _key ] )
+         _qry += sql_quote( hash[ _key ] )
       ENDIF
 
       _qry += ","
@@ -628,7 +628,7 @@ STATIC FUNCTION _create_update_qry_from_hash( table, hash, where_key_fields )
       IF ValType( hash[ _key ] ) == "N"
          _qry += _key + " = " + Str( hash[ _key ] )
       ELSE
-         _qry += _key + " = " + _sql_quote( hash[ _key ] )
+         _qry += _key + " = " + sql_quote( hash[ _key ] )
       ENDIF
 
       _qry += ","
@@ -647,7 +647,7 @@ STATIC FUNCTION _create_update_qry_from_hash( table, hash, where_key_fields )
       IF ValType( hash[ where_key_fields[ _i ] ] ) == "N"
          _qry += where_key_fields[ _i ] + " = " + Str( hash[ where_key_fields[ _i ] ] )
       ELSE
-         _qry += where_key_fields[ _i ] + " = " + _sql_quote( hash[ where_key_fields[ _i ] ] )
+         _qry += where_key_fields[ _i ] + " = " + sql_quote( hash[ where_key_fields[ _i ] ] )
       ENDIF
 
    NEXT
@@ -673,7 +673,7 @@ FUNCTION _set_sql_record_to_hash( table, id )
    IF ValType( id ) == "N"
       _hash := _sql_query_record_to_hash( select_all_records_from_table( table, NIL, { "id = " + AllTrim( Str( id ) ) } ) )
    ELSE
-      _hash := _sql_query_record_to_hash( select_all_records_from_table( table, NIL, { "id = " + _sql_quote( id ) } ) )
+      _hash := _sql_query_record_to_hash( select_all_records_from_table( table, NIL, { "id = " + sql_quote( id ) } ) )
    ENDIF
 
    RETURN _hash

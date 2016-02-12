@@ -60,7 +60,7 @@ FUNCTION P_KontoFin( cId, dx, dy, lBlag )
       // ukini zaostali filter
       SET FILTER TO
       // postavi filter za zadanu vrijednost karakteristike BLOP
-      cFilter := "DaUSifV('KONTO','BLOP',ID," + cm2str( Trim( cId ) ) + ")"
+      cFilter := "DaUSifV('KONTO','BLOP',ID," + dbf_quote( Trim( cId ) ) + ")"
       SET FILTER TO &cFilter
       GO TOP
       cId := Space( Len( cId ) )
@@ -394,7 +394,7 @@ FUNCTION P_TRFP3( cId, dx, dy )
       READ
       Boxc()
       SELECT trfp3
-      cFiltTRFP3 := "shema=" + cm2str( cShema )
+      cFiltTRFP3 := "shema=" + dbf_quote( cShema )
       SET FILTER TO &cFiltTRFP3
       GO TOP
    ELSE

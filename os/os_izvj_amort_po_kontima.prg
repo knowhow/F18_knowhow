@@ -79,15 +79,15 @@ cSort1:="idkonto+idam+id"
 aUslS := ".t."
 IF !EMPTY(cIdRJ)
   aUslS := aUslS + ".and." +;
-           "IDRJ="+cm2str(cIdRJ)
+           "IDRJ="+dbf_quote(cIdRJ)
 ENDIF
 IF !EMPTY(qIdKonto)
   aUslS := aUslS + ".and." +;
-           "IDKONTO="+cm2str(qIdKonto)
+           "IDKONTO="+dbf_quote(qIdKonto)
 ENDIF
 IF !EMPTY(qIdAm)
   aUslS := aUslS + ".and." +;
-           "IDKONTO="+cm2str(qIdAm)
+           "IDKONTO="+dbf_quote(qIdAm)
 ENDIF
 IF !EMPTY(cFiltK1)
   aUslS := aUslS + ".and." +;

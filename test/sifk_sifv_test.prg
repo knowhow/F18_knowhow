@@ -87,7 +87,7 @@ FUNCTION sifk_sifv_test()
    append_sifk( _id_sif, _karakteristika, "C", K1_LEN, "1" )
    append_sifk( _id_sif, _karakteristika_n, "C", KN_LEN, "N" )
 
-   // ,  {"id", "oznaka"} , { |x| "ID=" + _sql_quote(x["id"]) + "and OZNAKA=" + _sql_quote(x["oznaka"]) })
+   // ,  {"id", "oznaka"} , { |x| "ID=" + sql_quote(x["id"]) + "and OZNAKA=" + sql_quote(x["oznaka"]) })
 
 
    SELECT F_SIFK

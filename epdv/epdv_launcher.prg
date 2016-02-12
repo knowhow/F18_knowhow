@@ -16,18 +16,17 @@ EXTERNAL DESCEND
 EXTERNAL RIGHT
 
 
-function MainEpdv(cKorisn, cSifra, p3, p4, p5, p6, p7)
-local oEpdv
-local cModul
+FUNCTION MainEpdv( cKorisn, cSifra, p3, p4, p5, p6, p7 )
 
-PUBLIC gKonvertPath:="D"
+   LOCAL oEpdv
+   LOCAL cModul
 
-cModul:="EPDV"
-PUBLIC goModul
+   cModul := "EPDV"
+   PUBLIC goModul
 
-oEpdv := TEpdvMod():new(NIL, cModul, F18_VER, F18_VER_DATE, cKorisn, cSifra, p3, p4, p5, p6, p7)
-goModul:=oEpdv
+   oEpdv := TEpdvMod():new( NIL, cModul, F18_VER, F18_VER_DATE, cKorisn, cSifra, p3, p4, p5, p6, p7 )
+   goModul := oEpdv
 
-oEpdv:run()
+   oEpdv:run()
 
-return
+   RETURN

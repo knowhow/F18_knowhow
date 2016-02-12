@@ -312,14 +312,14 @@ STATIC FUNCTION _use_sql_trfp( cTable, nWa, cShema, cDok )
    cSql := "SELECT * FROM fmk." + cTable
 
    IF cShema <> NIL
-      cWhere += " shema = " + _sql_quote( cShema )
+      cWhere += " shema = " + sql_quote( cShema )
    ENDIF
 
    IF cDok <> NIL .AND. !Empty( cDok )
       IF !Empty( cWhere )
          cWhere += " AND "
       ENDIF
-      cWhere += " idvd = " + _sql_quote( cDok )
+      cWhere += " idvd = " + sql_quote( cDok )
    ENDIF
 
    IF !Empty( cWhere )
@@ -352,10 +352,10 @@ FUNCTION use_sql_sifk( cDbf, cOznaka )
 
    cSql := "SELECT * from fmk.sifk"
    IF cDbf != NIL
-      cSql += " WHERE id=" + _sql_quote( cDbf )
+      cSql += " WHERE id=" + sql_quote( cDbf )
    ENDIF
    IF cOznaka != NIL
-      cSql += " AND oznaka=" + _sql_quote( cOznaka )
+      cSql += " AND oznaka=" + sql_quote( cOznaka )
    ENDIF
 
    cSQL += " ORDER BY id,oznaka,sort"
@@ -417,7 +417,7 @@ FUNCTION use_sql_sifv( cDbf, cOznaka, xIdSif, xVrijednost )
 
    IF xVrijednost != NIL
       uVrijednost := ( Unicode():New( xVrijednost, lSql ) ):getString()
-      cSql += " AND naz=" + _sql_quote( xVrijednost )
+      cSql += " AND naz=" + sql_quote( xVrijednost )
    ENDIF
 
    cSQL += " ORDER BY id,oznaka,idsif,naz"

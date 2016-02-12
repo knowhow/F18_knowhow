@@ -614,7 +614,7 @@ FUNCTION P_Ugov2( cIdPartner )
    SELECT ( F_RUGOV )
    SET ORDER TO TAG "ID"
 
-   cFilt := "ID = " + cm2str( cIdUg )
+   cFilt := "ID = " + dbf_quote( cIdUg )
    SET FILTER TO
    SET FILTER TO &cFilt
    GO TOP
@@ -804,7 +804,7 @@ FUNCTION EdUgov2()
       cIdUg := ID
       SELECT ( _t_arr )
 
-      PRIVATE cFilt := "ID==" + cm2str( cIdUg )
+      PRIVATE cFilt := "ID==" + dbf_quote( cIdUg )
       SET FILTER TO
       SET FILTER TO &cFilt
       GO TOP
@@ -1162,7 +1162,7 @@ FUNCTION IzfUgovor()
       DFTParUg( .T. )
 
       SELECT ugov
-      PRIVATE cFiltP := "Idpartner==" + cm2str( partn->id )
+      PRIVATE cFiltP := "Idpartner==" + dbf_quote( partn->id )
       SET FILTER to &cFilP
       GO TOP
       IF Eof()

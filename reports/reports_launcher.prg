@@ -17,7 +17,6 @@ FUNCTION MainReports( cKorisn, cSifra, p3, p4, p5, p6, p7 )
    LOCAL oReports
    LOCAL cModul
 
-   PUBLIC gKonvertPath := "D"
 
    cModul := "REPORTS"
    PUBLIC goModul
@@ -27,4 +26,4 @@ FUNCTION MainReports( cKorisn, cSifra, p3, p4, p5, p6, p7 )
 
    oReports:run()
 
-   RETURN
+   RETURN .T.

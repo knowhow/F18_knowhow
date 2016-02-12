@@ -40,35 +40,10 @@ FUNCTION RPar( cImeVar, xArg )
 
    ENDIF
 
-   IF clTip == "C" .AND. gKonvertPath == "D" .AND. ( ":" + SLASH $ xArg )
-      // konvertuj lokacije npr C:/SIGMA -> I:/VAR/DATA1/SIGMA
-      KonvertPath( @xArg )
-   ENDIF
 
    RETURN NIL
 
 
-FUNCTION KonvertPath( cPath )
-
-   LOCAL cPom, nKNum, cPravilo
-
-   nKNum := Val( IzFmkIni( "KonvertPath", "kNum", "0" ) )
-   ? "poslije .. ", nKNum
-   Inkey( 10 )
-
-   FOR i := 1 TO nKNum
-      cPravilo := IzFmkIni( "KonvertPath", "k" + AllTrim( Str( i ) ), "" )
-      cPIz := Token( cPravilo, " ", 1 )
-      cPU := Token( cPravilo, " ", 2 )
-      cPom = StrTran( cPom, cPIz, cPU )
-      IF cPom <> Upper( cPath )
-         // doslo je do promjene
-         cPath := cPom
-         EXIT
-      ENDIF
-   NEXT
-
-   RETURN
 
 
 FUNCTION WPar( cImeVar, xArg, fSQL, cAkcija )

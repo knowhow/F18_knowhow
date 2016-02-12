@@ -108,17 +108,17 @@ FUNCTION pos_lista_racuna( dDat, cBroj, fPrep, fScope, cPrefixFilter, qIdRoba )
    IF gVrstaRS == "S" .OR. KLevel < L_UPRAVN
       AAdd( ImeKol, { "Radnik", {|| IdRadnik } } )
       AAdd( Kol, Len( ImeKol ) )
-      cFilter += ".and. (Idpos=" + cm2str( gIdPos ) + " .or. IdPos='X ')"
+      cFilter += ".and. (Idpos=" + dbf_quote( gIdPos ) + " .or. IdPos='X ')"
    ELSE
-      cFilter += ".and. IdRadnik=" + cm2str( gIdRadnik ) + ".and. Idpos=" + cm2str( gIdPos )
+      cFilter += ".and. IdRadnik=" + dbf_quote( gIdRadnik ) + ".and. Idpos=" + dbf_quote( gIdPos )
    ENDIF
 
    IF dDat <> NIL
-      cFilter += '.and. Datum=' + cm2str( dDat )
+      cFilter += '.and. Datum=' + dbf_quote( dDat )
    ENDIF
 
    IF qIdRoba <> NIL .AND. !Empty( qIdRoba )
-      cFilter += ".and. pos_racun_sadrzi_artikal(IdPos, IdVd, datum, BrDok, " + cm2str( qIdRoba ) + ")"
+      cFilter += ".and. pos_racun_sadrzi_artikal(IdPos, IdVd, datum, BrDok, " + dbf_quote( qIdRoba ) + ")"
    ENDIF
 
    SET FILTER TO &cFilter

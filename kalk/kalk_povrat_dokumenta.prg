@@ -279,7 +279,7 @@ STATIC FUNCTION kalk_povrat_prema_kriteriju()
 
       SELECT kalk
 
-      _filter := "IDFIRMA==" + cm2str( _id_firma ) + ".and." + _usl_br_dok + ".and." + _usl_id_vd + ".and." + _usl_dat_dok
+      _filter := "IDFIRMA==" + dbf_quote( _id_firma ) + ".and." + _usl_br_dok + ".and." + _usl_id_vd + ".and." + _usl_dat_dok
       _filter := StrTran( _filter, ".t..and.", "" )
 
       IF !( _filter == ".t." )

@@ -147,15 +147,15 @@ endif
 private cFilt := ".t."
 
 if !empty(dDatOd) .or. !empty(dDatDo)
-	cFilt += ".and. DatDok>=" + cm2str(dDatOd) + ".and. DatDok<=" + cm2str(dDatDo)
+	cFilt += ".and. DatDok>=" + dbf_quote(dDatOd) + ".and. DatDok<=" + dbf_quote(dDatDo)
 endif
 
 if !empty(qqVD)
-  	cFilt+=".and. idvd=="+cm2str(qqVD)
+  	cFilt+=".and. idvd=="+dbf_quote(qqVD)
 endif
 
 if !empty(cIdPartner)
-  	cFilt+=".and. idpartner=="+cm2str(cIdPartner)
+  	cFilt+=".and. idpartner=="+dbf_quote(cIdPartner)
 endif
 
 if !empty(qqBrDok)

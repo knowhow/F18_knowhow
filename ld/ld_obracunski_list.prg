@@ -49,7 +49,7 @@ FUNCTION ol_sort( cRj, cGod_od, cGod_do, cMj_od, cMj_do, ;
    PRIVATE cObracun := cObr
 
    IF !Empty( cObr )
-      cFilter += "obr == " + cm2str( cObr )
+      cFilter += "obr == " + dbf_quote( cObr )
    ENDIF
 
    IF !Empty( cRj )

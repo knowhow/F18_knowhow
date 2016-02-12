@@ -32,7 +32,7 @@ FUNCTION server_log_write( msg, silent )
    _tbl := "fmk.log"
 
    msg  := ProcName( 2 ) + "(" + AllTrim( Str( ProcLine( 2 ) ) ) + ") : " + msg
-   _qry := "INSERT INTO " + _tbl + "(user_code, msg) VALUES(" +  _sql_quote( _user ) + "," +  _sql_quote( msg ) + ")"
+   _qry := "INSERT INTO " + _tbl + "(user_code, msg) VALUES(" +  sql_quote( _user ) + "," +  sql_quote( msg ) + ")"
    _ret := _sql_query_no_log( _server, _qry, silent )
 
    RETURN .T.

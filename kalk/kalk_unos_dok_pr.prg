@@ -13,10 +13,11 @@
 
 MEMVAR GetList, m_x, m_y
 MEMVAR nRbr, fNovi, fMarza, nStrana
-MEMVAR _IdFirma, _BrDok, _TBankTr, _TPrevoz, _TSpedTr, _TZavTr, _TCarDaz, _SpedTr, _ZavTr, _BankTr, _CarDaz, _MArza, _Prevoz
+MEMVAR _IdFirma, _IdVd, _BrDok, _TBankTr, _TPrevoz, _TSpedTr, _TZavTr, _TCarDaz, _SpedTr, _ZavTr, _BankTr, _CarDaz, _MArza, _Prevoz
 MEMVAR _TMarza, _IdKonto, _IdKonto2, _IdTarifa, _IDRoba, _Kolicina, _DatFaktP, _datDok, _brFaktP, _VPC, _NC, _FCJ, _FCJ2, _Rabat
 MEMVAR _MKonto, _MU_I, _Error
 MEMVAR PicDEM, PicKol
+MEMVAR gPromTar, cRNT1, cRNT2, cRNT3, cRNT4, cRNT5
 
 FUNCTION kalk_unos_dok_pr()
 
@@ -27,6 +28,7 @@ FUNCTION kalk_unos_dok_pr()
    LOCAL cIdFirma, cIdVd, cBrDok
    LOCAL nRbr2
    LOCAL nKolS, nKolZN, nNV, nC1, nC2, dDatNab
+   LOCAL _rec
 
    SELECT F_SAST
    IF !Used()
@@ -41,10 +43,10 @@ FUNCTION kalk_unos_dok_pr()
    ENDIF
 
    @ m_x + 6, m_y + 2 SAY8 "Broj fakture" GET _brFaktP
-   @ m_x + 7, m_y + 2 SAY8 "Mag. gotovih proizvoda zadužuje " GET _IdKonto ;
+   @ m_x + 7, m_y + 2 SAY8 "Magacin gotovih proizvoda zadužuje " GET _IdKonto ;
       VALID  P_Konto( @_IdKonto, 21, 5 ) PICT "@!" ;
       WHEN {|| nRbr == 1 }
-   @ m_x + 8, m_y + 2 SAY8 "Mag.      sirovina razdužuje    " GET _IdKonto2 ;
+   @ m_x + 8, m_y + 2 SAY8 "Magacin sirovina razdužuje         " GET _IdKonto2 ;
       PICT "@!" VALID P_Konto( @_IdKonto2 ) ;
       WHEN {|| nRbr == 1 }
 
@@ -60,28 +62,28 @@ FUNCTION kalk_unos_dok_pr()
    SELECT kalk_pripr
 
    @ m_x + 13, m_y + 2 SAY8 "Količina  " GET _Kolicina PICT PicKol ;
-      VALID {|| _Kolicina <> 0 .AND. IIF( InRange( nRbr, 10, 99), error_tab("PR dokument max 9 artikala"), .T. ) }
+      VALID {|| _Kolicina <> 0 .AND. iif( InRange( nRbr, 10, 99 ), error_tab( "PR dokument max 9 artikala" ), .T. ) }
 
    READ
 
    SELECT kalk_pripr
-   cIdFirma := field->idFirma
-   cIdVd := field->idVd
-   cBrDok := field->brDok
+   cIdFirma := _idFirma
+   cIdVd := _idVd
+   cBrDok := _brDok
 
    PushWa()
    SET FILTER TO
    my_flock()
    GO TOP
-   DO WHILE !EOF()
+   DO WHILE !Eof()
 
       SKIP
       nTrec := RecNo()
       SKIP -1
       IF Val( field->rbr ) > 99 .AND. ;
-       Eval( bDokument, cIdFirma, cIdVd, cBrDok ) .AND. ;
+            Eval( bDokument, cIdFirma, cIdVd, cBrDok ) .AND. ;
             ( InRange( Val( field->rBr ), nRbr * 100 + 1, nRbr * 100 + 99 ) .OR. ; // nRbr = 2, delete 201-299
-              Val( field->rBr ) > 900 )
+         Val( field->rBr ) > 900 )
          my_delete()
       ENDIF
       GO nTrec
@@ -130,30 +132,26 @@ FUNCTION kalk_unos_dok_pr()
          nC2 := 0
          dDatNab := CToD( "" )
 
-               info_tab( "Računam stanje na skladistu" )
-               KalkNab( _idfirma, sast->id2, _idkonto2, @nKolS, @nKolZN, @nc1, @nc2, @dDatNab )
-               info_tab( "" )
+         info_tab( "Računam stanje na skladistu" )
+         KalkNab( _idfirma, sast->id2, _idkonto2, @nKolS, @nKolZN, @nc1, @nc2, @dDatNab )
+         info_tab( "" )
 
+         IF dDatNab > _DatDok
+            error_tab( "Datum nabavke je " + DToC( dDatNab ) + " sirovina " + sast->id2 )
+         ENDIF
 
-            IF dDatNab > _DatDok
-               Beep( 1 )
-               Msg( "Datum nabavke je " + DToC( dDatNab ) + " sirovina " + sast->id2, 4 )
-            ENDIF
+         IF _kolicina >= 0 .OR. Round( _NC, 3 ) == 0 .AND. !( roba->tip $ "UT" )
 
-            IF _kolicina >= 0 .OR. Round( _NC, 3 ) == 0 .AND. !( roba->tip $ "UT" )
+            SELECT roba
+            _rec := dbf_get_rec()
+            _rec[ "nc" ] := _nc
+            update_rec_server_and_dbf( Alias(), _rec, 1, "FULL" ) // nafiluj sifarnik robe sa nc sirovina, robe
+            SELECT kalk_pripr
 
-               SELECT roba
-               _rec := dbf_get_rec()
-               _rec[ "nc" ] := _nc
-               update_rec_server_and_dbf( Alias(), _rec, 1, "FULL" ) // nafiluj sifarnik robe sa nc sirovina, robe
-               SELECT kalk_pripr
+         ENDIF
 
-            ENDIF
-
-            PopWa() // kalk_pripr
-
-            RREPLACE field->nc WITH nc2, field->gkolicina WITH nKolS
-
+         PopWa() // kalk_pripr, sirovine
+         RREPLACE field->nc WITH nC2, field->gKolicina WITH nKolS
          SELECT sast
          SKIP
       ENDDO
@@ -189,11 +187,10 @@ FUNCTION kalk_unos_dok_pr()
       nC2 := 0
       dDatNab := CToD( "" )
 
-      IF !( roba->tip $ "UT" )
-         info_tab( "Računam stanje na skladistu" )
-         KalkNab( _idfirma, _idroba, _idkonto2, @nKolS, @nKolZN, @nc1, @nc2, @dDatNab )
-         info_tab()
-      ENDIF
+      info_tab( "Računam stanje na skladistu" )
+      KalkNab( _idfirma, _idroba, _idkonto2, @nKolS, @nKolZN, @nc1, @nc2, @dDatNab )
+      info_tab()
+
       IF dDatNab > _DatDok
          error_tab( "Datum nabavke je " + DToC( dDatNab ) + " sirovina " + sast->id2, 4 )
       ENDIF
@@ -241,7 +238,7 @@ FUNCTION kalk_unos_dok_pr()
    SET ORDER TO TAG "1"
    GO TOP
 
-   nNV := 0  // nab vrijednosto proizvod
+   nNV := 0  // nab vrijednost proizvod
    DO WHILE !Eof()
 
       IF Eval( bDokument, cIdFirma, cIdVd, cBrDok ) .AND. ;   // gledaj samo stavke jednog dokumenta ako ih ima vise u pripremi
@@ -295,6 +292,7 @@ FUNCTION Get2_PR()
    IF Empty( _TZavTr );  _TZavTr := "%" ; ENDIF
    IF Empty( _TMarza );  _TMarza := "%" ; ENDIF
 
+
    @ m_x + 2, m_y + 2 SAY cRNT1 + cSPom GET _TPrevoz VALID _TPrevoz $ "%AUR" PICTURE "@!"
    @ m_x + 2, m_y + 40 GET _Prevoz PICTURE PicDEM
 
@@ -310,16 +308,16 @@ FUNCTION Get2_PR()
    @ m_x + 6, m_y + 2 SAY cRNT5 + cSPom GET _TZavTr VALID _TZavTr $ "%AUR" PICTURE "@!"
    @ m_x + 6, m_y + 40 GET _ZavTr PICTURE PicDEM VALID {|| NabCj(), .T. }
 
-   @ m_x + 8, m_y + 2 SAY "CIJENA KOST.  "
+   @ m_x + 8, m_y + 2 SAY8 "CIJENA KOŠTANJA  "
    @ m_x + 8, m_y + 50 GET _NC PICTURE PicDEM
 
    IF koncij->naz <> "N1"
 
       PRIVATE fMarza := " "
-      @ m_x + 10, m_y + 2 SAY "Magacin. Marza            :" GET _TMarza VALID _Tmarza $ "%AU" PICTURE "@!"
+      @ m_x + 10, m_y + 2 SAY8 "Magacin. Marza            :" GET _TMarza VALID _Tmarza $ "%AU" PICTURE "@!"
       @ m_x + 10, m_y + 40 GET _Marza PICTURE PicDEM
       @ m_x + 10, Col() + 1 GET fMarza PICT "@!"
-      @ m_x + 12, m_y + 2 SAY "VELEPRODAJNA CJENA  (VPC)   :"
+      @ m_x + 12, m_y + 2 SAY8 "VELEPRODAJNA CJENA  (VPC)   :"
       @ m_x + 12, m_y + 50 GET _VPC PICT PicDEM VALID {|| Marza( fMarza ), .T. }
 
       READ

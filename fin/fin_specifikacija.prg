@@ -992,7 +992,7 @@ FUNCTION fin_spec_po_suban_kontima()
             cRasclan := ""
          ENDIF
          IF PRow() == 0
-            zagl6( cSkVar )
+            fin_specif_zagl6( cSkVar )
          ENDIF
          IF cRascFunkFond == "D"
             aRasclan := {}
@@ -1031,7 +1031,7 @@ FUNCTION fin_spec_po_suban_kontima()
          ENDDO
          IF PRow() > 60 + gPStranica
             FF
-            zagl6( cSkVar )
+            fin_specif_zagl6( cSkVar )
          ENDIF
          IF cNula == "D" .OR. Round( nd - np, 3 ) <> 0 .AND. cTip $ "13" .OR. Round( nd2 - np2, 3 ) <> 0 .AND. cTip $ "23"
             ? cIdKonto, IdPartner( cIdPartner ), ""
@@ -1141,7 +1141,7 @@ FUNCTION fin_spec_po_suban_kontima()
       ENDDO  // sintetika
       IF PRow() > 60 + gPStranica
          FF
-         zagl6( cSkVar )
+         fin_specif_zagl6( cSkVar )
       ENDIF
       IF cSK == "D"
          ? m
@@ -1168,7 +1168,7 @@ FUNCTION fin_spec_po_suban_kontima()
 
    IF PRow() > 60 + gPStranica
       FF
-      zagl6( cSkVar )
+      fin_specif_zagl6( cSkVar )
    ENDIF
 
    ? m
@@ -2607,79 +2607,130 @@ STATIC FUNCTION FSvaki1()
 
 
 
-/* fn Zagl6
+/* fn fin_specif_zagl6
  *  brief Zaglavlje specifikacije
  *  param cSkVar
  */
 
-STATIC FUNCTION Zagl6( cSkVar )
+FUNCTION fin_specif_zagl6( cSkVar )
 
-/*
+   ?
+   B_ON
+   P_COND
 
-?
-B_ON
-P_COND
+   ?? "FIN: SPECIFIKACIJA SUBANALITICKIH KONTA  ZA "
 
-?? "FIN: SPECIFIKACIJA SUBANALITICKIH KONTA  ZA "
+   IF cTip == "1"
+      ?? ValDomaca()
+   ELSEIF cTip == "2"
+      ?? ValPomocna()
+   ELSE
+      ?? AllTrim( ValDomaca() ) + "-" + AllTrim( ValPomocna() )
+   ENDIF
 
-if cTip=="1"
-  ?? ValDomaca()
-elseif cTip=="2"
-  ?? ValPomocna()
-else
-  ?? ALLTRIM(ValDomaca())+"-"+ALLTRIM(ValPomocna())
-endif
+   IF !( Empty( dDatOd ) .AND. Empty( dDatDo ) )
+      ?? "  ZA DOKUMENTE U PERIODU ", dDatOd, "-", dDatDo
+   ENDIF
 
-if !(empty(dDatOd) .and. empty(dDatDo))
-  ?? "  ZA DOKUMENTE U PERIODU ",dDatOd,"-",dDatDo
-endif
-
-?? " NA DAN: "; ?? DATE()
-IF !EMPTY(qqBrDok)
-  ? "Izvjestaj pravljen po uslovu za broj veze/racuna: '"+TRIM(qqBrDok)+"'"
-ENDIF
+   ?? " NA DAN: "; ?? Date()
+   IF !Empty( qqBrDok )
+      ? "Izvjestaj pravljen po uslovu za broj veze/racuna: '" + Trim( qqBrDok ) + "'"
+   ENDIF
 
 
-@ prow(),125 SAY "Str:"+str(++nStr,3)
-B_OFF
+   @ PRow(), 125 SAY "Str:" + Str( ++nStr, 3 )
+   B_OFF
 
-if gNW=="D"
- ? "Firma:",gFirma,gNFirma
-else
- IF EMPTY(cIdFirma)
-  ? "Firma:",gNFirma,"(SVE RJ)"
- ELSE
-  SELECT PARTN; HSEEK cIdFirma
-  ? "Firma:",cidfirma,PADR(partn->naz, 25),partn->naz2
- ENDIF
-endif
+   IF gNW == "D"
+      ? "Firma:", gFirma, gNFirma
+   ELSE
+      IF Empty( cIdFirma )
+         ? "Firma:", gNFirma, "(SVE RJ)"
+      ELSE
+         SELECT PARTN; HSEEK cIdFirma
+         ? "Firma:", cidfirma, PadR( partn->naz, 25 ), partn->naz2
+      ENDIF
+   ENDIF
 
-?
-PrikK1k4()
+   ?
+   PrikK1k4()
 
-select SUBAN
+   SELECT SUBAN
 
-IF cSkVar=="D"
-  F12CPI
-  ? m
-ELSE
-  P_COND
-  ? m
-ENDIF
-if cTip $ "12"
-  IF cSkVar!="D"
-    ? "KONTO  " + PADC("PARTN.", __par_len) + "  NAZIV KONTA / PARTNERA                                          duguje            potrazuje                saldo"
-  ELSE
-    ? "KONTO  " + PADC("PARTN", __par_len) + "  " +  PADR("NAZIV KONTA / PARTNERA",nDOpis)+" "+PADC("duguje",nDIznos)+" "+PADC("potrazuje",nDIznos)+" "+PADC("saldo",nDIznos)
-  ENDIF
-else
-  IF cSkVar!="D"
-    ? "KONTO  " + PADC("PARTN.", __par_len) + "  NAZIV KONTA / PARTNERA                                       saldo "+ValDomaca()+"           saldo "+ALLTRIM(ValPomocna())
-  ELSE
-    ? "KONTO  " + PADC("PARTN.", __par_len) + "  "+PADR("NAZIV KONTA / PARTNERA",nDOpis)+" "+PADC("saldo "+ValDomaca(),nDIznos)+" "+PADC("saldo "+ALLTRIM(ValPomocna()),nDIznos)
-  ENDIF
-endif
-? m
+   IF cSkVar == "D"
+      F12CPI
+      ? m
+   ELSE
+      P_COND
+      ? m
+   ENDIF
+   IF cTip $ "12"
+      IF cSkVar != "D"
+         ? "KONTO  " + PadC( "PARTN.", __par_len ) + "  NAZIV KONTA / PARTNERA                                          duguje            potrazuje                saldo"
+      ELSE
+         ? "KONTO  " + PadC( "PARTN", __par_len ) + "  " +  PadR( "NAZIV KONTA / PARTNERA", nDOpis ) + " " + PadC( "duguje", nDIznos ) + " " + PadC( "potrazuje", nDIznos ) + " " + PadC( "saldo", nDIznos )
+      ENDIF
+   ELSE
+      IF cSkVar != "D"
+         ? "KONTO  " + PadC( "PARTN.", __par_len ) + "  NAZIV KONTA / PARTNERA                                       saldo " + ValDomaca() + "           saldo " + AllTrim( ValPomocna() )
+      ELSE
+         ? "KONTO  " + PadC( "PARTN.", __par_len ) + "  " + PadR( "NAZIV KONTA / PARTNERA", nDOpis ) + " " + PadC( "saldo " + ValDomaca(), nDIznos ) + " " + PadC( "saldo " + AllTrim( ValPomocna() ), nDIznos )
+      ENDIF
+   ENDIF
+   ? m
 
-*/
    RETURN .T.
+
+
+
+
+STATIC FUNCTION fill_ss_tbl( cKonto, cPartner, cNaziv, nFDug, nFPot, nFSaldo, cRj, cRjNaz )
+
+   LOCAL nArr
+
+   nArr := Select()
+
+   O_R_EXP
+   APPEND BLANK
+   REPLACE field->konto WITH cKonto
+   REPLACE field->partner WITH cPartner
+   REPLACE field->naziv WITH cNaziv
+   REPLACE field->duguje WITH nFDug
+   REPLACE field->potrazuje WITH nFPot
+   REPLACE field->saldo WITH nFSaldo
+
+   IF cRj <> nil
+      REPLACE field->rj WITH cRj
+      REPLACE field->rjnaziv WITH cRjNaz
+   ENDIF
+
+   SELECT ( nArr )
+
+   RETURN .T.
+
+
+// vraca matricu sa sub.bb poljima
+STATIC FUNCTION get_ss_fields( cRj, nPartLen )
+
+   IF cRj == nil
+      cRj := "N"
+   ENDIF
+   IF nPartLen == nil
+      nPartLen := 6
+   ENDIF
+
+   aFields := {}
+   AAdd( aFields, { "konto", "C", 7, 0 } )
+   AAdd( aFields, { "partner", "C", nPartLen, 0 } )
+   AAdd( aFields, { "naziv", "C", 40, 0 } )
+
+   IF cRj == "D"
+      AAdd( aFields, { "rj", "C", 10, 0 } )
+      AAdd( aFields, { "rjnaziv", "C", 40, 0 } )
+   ENDIF
+
+   AAdd( aFields, { "duguje", "N", 15, 2 } )
+   AAdd( aFields, { "potrazuje", "N", 15, 2 } )
+   AAdd( aFields, { "saldo", "N", 15, 2 } )
+
+   RETURN aFields

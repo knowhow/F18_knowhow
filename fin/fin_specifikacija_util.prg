@@ -225,3 +225,219 @@ FUNCTION Rocnost()
    ENDIF
 
    RETURN cVrati
+
+
+
+/* TekRec()
+ * Vraca tekuci zapis
+ */
+
+STATIC FUNCTION TekRec()
+
+   @ m_x + 1, m_y + 2 SAY RecNo()
+
+   RETURN NIL
+
+
+
+
+/*! \fn UpitK1K4(mxplus,lK)
+ *  \brief Pita za polja od K1 do K4
+ *  \param mxplus
+ *  \param lK
+ */
+FUNCTION UpitK1K4( mxplus, lK )
+
+   LOCAL _k1, _k2, _k3, _k4
+   LOCAL _params := fin_params()
+
+   _k1 := _params[ "fin_k1" ]
+   _k2 := _params[ "fin_k2" ]
+   _k3 := _params[ "fin_k3" ]
+   _k4 := _params[ "fin_k4" ]
+
+   IF lK == NIL
+      lK := .T.
+   ENDIF
+
+   IF lK
+      IF _k1
+         @ m_x + mxplus, m_y + 2 SAY "K1 (9 svi) :" GET cK1
+      ENDIF
+      IF _k2
+         @ m_x + mxplus, Col() + 2 SAY "K2 (9 svi) :" GET cK2
+      ENDIF
+      IF _k3
+         @ m_x + mxplus + 1, m_y + 2 SAY "K3 (" + cK3 + " svi):" GET cK3
+      ENDIF
+      IF _k4
+         @ m_x + mxplus + 1, Col() + 1 SAY "K4 (99 svi):" GET cK4
+      ENDIF
+   ENDIF
+
+   IF gRj == "D"
+      IF gDUFRJ == "D" .AND. ( ProcName( 1 ) == "fin_spec_po_suban_kontima" .OR. ProcName( 1 ) == "SUBKART" )
+         @ m_x + mxplus + 2, m_y + 2 SAY "RJ:" GET cIdRj PICT "@!S20"
+      ELSE
+         @ m_x + mxplus + 2, m_y + 2 SAY "RJ:" GET cIdRj
+      ENDIF
+   ENDIF
+
+   IF gTroskovi == "D"
+      @ m_x + mxplus + 3, m_y + 2 SAY "Funk    :" GET cFunk
+      @ m_x + mxplus + 4, m_y + 2 SAY "Fond    :" GET cFond
+   ENDIF
+
+   RETURN
+
+
+
+/*! \fn CistiK1K4(lK)
+ *  \brief Cisti polja od K1 do K4
+ *  \param lK
+ */
+
+FUNCTION CistiK1K4( lK )
+
+   IF lK == NIL; lK := .T. ; ENDIF
+   IF lK
+      IF ck1 == "9"; ck1 := ""; ENDIF
+      IF ck2 == "9"; ck2 := ""; ENDIF
+      IF ck3 == REPL( "9", Len( ck3 ) )
+         ck3 := ""
+      ELSE
+         ck3 := k3u256( ck3 )
+      ENDIF
+      IF ck4 == "99"; ck4 := ""; ENDIF
+   ENDIF
+   IF gDUFRJ == "D" .AND. ( ProcName( 1 ) == "fin_spec_po_suban_kontima" .OR. ProcName( 1 ) == "SUBKART" )
+      cIdRj := Trim( cIdRj )
+   ELSE
+      IF cIdRj == "999999"; cidrj := ""; ENDIF
+      IF "." $ cidrj
+         cidrj := Trim( StrTran( cidrj, ".", "" ) )
+         // odsjeci ako je tacka. prakticno "01. " -> sve koje pocinju sa  "01"
+      ENDIF
+   ENDIF
+   IF cFunk == "99999"; cFunk := ""; ENDIF
+   IF "." $ cfunk
+      cfunk := Trim( StrTran( cfunk, ".", "" ) )
+   ENDIF
+   IF cFond == "9999"; cFond := ""; ENDIF
+   IF "." $ cfond
+      cfond := Trim( StrTran( cfond, ".", "" ) )
+   ENDIF
+
+   RETURN
+
+
+
+/*! \fn PrikK1K4(lK)
+ *  \brief Prikazi polja od K1 do K4
+ *  \param lK
+ */
+
+FUNCTION PrikK1K4( lK )
+
+   LOCAL fProso := .F.
+   LOCAL nArr := Select()
+   LOCAL _fakt_params := fakt_params()
+   LOCAL _fin_params := fin_params()
+
+   LOCAL lVrsteP := _fakt_params[ "fakt_vrste_placanja" ]
+
+   IF lK == NIL
+      lK := .T.
+   ENDIF
+
+   IF lVrsteP
+      SELECT ( F_VRSTEP )
+      IF !Used()
+         O_VRSTEP
+      ENDIF
+      SELECT ( nArr )
+   ENDIF
+
+   cM := Replicate( "-", 55 )
+
+   cStr := "Pregled odabranih kriterija :"
+
+   IF gRJ == "D" .AND. Len( cIdRJ ) <> 0
+      cRjNaz := ""
+      nArr := Select()
+      O_RJ
+      SELECT rj
+      HSEEK cIdRj
+
+      IF PadR( rj->id, 6 ) == PadR( cIdRj, 6 )
+         cRjNaz := rj->naz
+      ENDIF
+
+      SELECT ( nArr )
+      IF !fproso
+         ? cM
+         ? cStr
+         fProso := .T.
+      ENDIF
+      ? "Radna jedinica: " + cIdRj + " - " + cRjNaz
+   ENDIF
+   IF lK
+      IF _fin_params[ "fin_k1" ] .AND. !Len( ck1 ) == 0
+         IF !fproso
+            ? cM
+            ? cStr
+            fProso := .T.
+         ENDIF
+         ? "K1 =", ck1
+      ENDIF
+      IF _fin_params[ "fin_k2" ] .AND. !Len( ck2 ) = 0
+         IF !fproso
+            ? cM
+            ? cStr
+            fProso := .T.
+         ENDIF
+         ? "K2 =", ck2
+      ENDIF
+      IF _fin_params[ "fin_k3" ] .AND. !Len( ck3 ) = 0
+         IF !fproso
+            ? cM
+            ? cStr
+            fProso := .T.
+         ENDIF
+         ? "K3 =", k3iz256( ck3 )
+      ENDIF
+      IF _fin_params[ "fin_k4" ] .AND. !Len( ck4 ) = 0
+         IF !fproso
+            ? cM
+            ? cStr
+            fProso := .T.
+         ENDIF
+         ? "K4 =", ck4
+         IF lVrsteP .AND. Len( ck4 ) > 1
+            ?? "-" + Ocitaj( F_VRSTEP, ck4, "naz" )
+         ENDIF
+      ENDIF
+   ENDIF
+   IF gTroskovi == "D" .AND. Len( cFunk ) <> 0
+      IF !fproso
+         ? cM
+         ? cStr
+         fProso := .T.
+      ENDIF
+      ? "Funkcionalna klasif. ='" + cFunk + "'"
+   ENDIF
+   IF gTroskovi == "D" .AND. Len( cFond ) <> 0
+      IF !fproso
+         ? cM
+         ? cStr
+         fProso := .T.
+      ENDIF
+      ? "                Fond ='" + cFond + "'"
+   ENDIF
+
+   IF fproso
+      ? cM
+      ?
+   ENDIF
+
+   RETURN

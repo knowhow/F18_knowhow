@@ -99,10 +99,10 @@ STATIC FUNCTION uslovi_izvjestaja( rpt_vars )
 
    ++ _x
    @ m_x + _x, m_y + 2 SAY "Partner " GET _partner PICT "@!S50"
-	
+
    ++ _x
    ++ _x
- 	
+
    @ m_x + _x, m_y + 2 SAY8 "Izvještaj za domaću/stranu valutu (1/2):" GET _tip_val PICT "9"
 
    ++ _x
@@ -110,14 +110,14 @@ STATIC FUNCTION uslovi_izvjestaja( rpt_vars )
 
    @ m_x + _x, m_y + 2 SAY "Datum dokumenta od:" GET _datum_od
    @ m_x + _x, Col() + 2 SAY "do" GET _datum_do VALID _datum_od <= _datum_do
- 	
+
    ++ _x
    ++ _x
    @ m_x + _x, m_y + 2 SAY "Uslov za vrstu naloga (prazno-sve):" GET _idvn PICT "@!S20"
- 	
+
    ++ _x
    @ m_x + _x, m_y + 2 SAY "Uslov za broj veze (prazno-svi):" GET _brdok PICT "@!S20"
-	
+
    ++ _x
    @ m_x + _x, m_y + 2 SAY8 "Općina (prazno-sve):" GET _opcina PICT "@!S20"
 
@@ -135,9 +135,9 @@ STATIC FUNCTION uslovi_izvjestaja( rpt_vars )
    ++ _x
 
    @ m_x + _x, m_y + 2 SAY "Eksport izvjestaja u dbf (D/N)?" GET _export_dbf PICT "@!" VALID _export_dbf $ "DN"
-	
+
    READ
-		
+
    BoxC()
 
    IF LastKey() == K_ESC
@@ -284,7 +284,7 @@ STATIC FUNCTION export_podataka_u_dbf( table, rpt_vars )
 
       oRow := table:GetRow( _i )
 
-      cKontoId := query_row( oRow, "konto_id" ) 
+      cKontoId := query_row( oRow, "konto_id" )
       cPartnerId := query_row( oRow, "partner_id" )
 
       SELECT r_export
@@ -301,13 +301,13 @@ STATIC FUNCTION export_podataka_u_dbf( table, rpt_vars )
       ENDIF
 
       IF _rasclan
-         _rec[ "rj" ] := query_row( oRow, "idrj" ) 
-         _rec[ "fond" ] := query_row( oRow, "fond" ) 
-         _rec[ "funk" ] := query_row( oRow, "funk") 
+         _rec[ "rj" ] := query_row( oRow, "idrj" )
+         _rec[ "fond" ] := query_row( oRow, "fond" )
+         _rec[ "funk" ] := query_row( oRow, "funk" )
       ENDIF
 
-      _rec[ "duguje" ] := query_row( oRow, "duguje") 
-      _rec[ "potrazuje" ] := query_row( oRow, "potrazuje") 
+      _rec[ "duguje" ] := query_row( oRow, "duguje" )
+      _rec[ "potrazuje" ] := query_row( oRow, "potrazuje" )
       _rec[ "saldo" ] := _rec[ "duguje" ] - _rec[ "potrazuje" ]
 
       IF Round( _rec[ "saldo" ], 2 ) == 0 .AND. !_nule
@@ -394,8 +394,8 @@ STATIC FUNCTION _cre_xml( table, rpt_vars )
 
    _sint_kto := "X"
 
-   table:GoTo(1)
-  
+   table:GoTo( 1 )
+
    DO WHILE !table:Eof()
 
       oItem := table:GetRow()

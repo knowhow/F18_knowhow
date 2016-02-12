@@ -15,6 +15,7 @@ virm/*.prg
 kadev/*.prg
 reports/*.prg
 common/*.prg
+common_legacy/*.prg
 
 libF18_narudzbenica.a
 libF18_string.a
@@ -30,4 +31,3 @@ libF18_string.a
 {win}-L./win32
 {LX_64&linux}-lz
 {!LX_64&linux}-lz
-

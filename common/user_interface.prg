@@ -202,10 +202,6 @@ FUNCTION MsgO( cText, sec, lUtf )
    ENDIF
 
    cPom := Set( _SET_DEVICE )
-   IF gAppSrv
-      ? text
-      RETURN
-   ENDIF
 
    SET DEVICE TO SCREEN
 
@@ -242,7 +238,6 @@ FUNCTION MsgC( msg_x1, msg_y1, msg_x2, msg_y2 )
    LOCAL aMsgPar
    LOCAL nLen
 
-   IF gAppSrv; return; ENDIF
 
    IF Len( aMsgStack ) > 0
       aMsgPar := StackPop( aMsgStack )
@@ -357,9 +352,6 @@ FUNCTION BoxC()
 
    LOCAL aBoxPar[ 11 ], cPom
 
-   IF gAppSrv
-      RETURN
-   ENDIF
 
    cPom := Set( _SET_DEVICE )
    SET DEVICE TO SCREEN

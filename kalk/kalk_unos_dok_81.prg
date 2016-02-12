@@ -16,7 +16,7 @@ STATIC aPorezi := {}
 
 
 // direktni ulaz u prodavnicu
-FUNCTION Get1_81( atrib )
+FUNCTION kalk_unos_dok_81( atrib )
 
    LOCAL _x := 5
    LOCAL _kord_x := 0

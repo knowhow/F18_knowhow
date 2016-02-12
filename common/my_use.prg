@@ -321,7 +321,7 @@ FUNCTION my_use_error( table, alias, oError )
 
    LOCAL _msg, nI, cMsg
 
-   _msg := "ERROR: my_use " + oError:description + ": tbl:" + my_home() + table + " alias:" + alias + " se ne moze otvoriti ?!"
+   _msg := "ERROR: my_use_error " + oError:description + ": tbl:" + my_home() + table + " alias:" + alias + " se ne moze otvoriti ?!"
    LOG_CALL_STACK _msg .F.
    log_write( _msg, 2 )
 

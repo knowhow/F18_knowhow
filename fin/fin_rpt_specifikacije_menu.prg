@@ -40,12 +40,12 @@ STATIC FUNCTION _sql_specif_mnu()
    LOCAL _opc := {}
    LOCAL _opcexe := {}
 
-   AAdd( _opc, "1. specifikacija po subanalitickim kontima          " )
+   AAdd( _opc, "1. specifikacija po subanalitičkim kontima          " )
    AAdd( _opcexe, {|| fin_suban_specifikacija_sql() } )
 
    f18_menu( "spsql", .F., _izbor, _opc, _opcexe )
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -62,15 +62,15 @@ STATIC FUNCTION _txt_specif_mnu()
    AAdd( _opcexe, {|| SpecBrDan() } )
    AAdd( _opc, "3. konta za partnera" )
    AAdd( _opcexe, {|| SpecPop() } )
-   AAdd( _opc, "4. po analitickim kontima" )
+   AAdd( _opc, "4. po analitičkim kontima" )
    AAdd( _opcexe, {|| SpecPoK() } )
-   AAdd( _opc, "5. po subanalitickim kontima" )
+   AAdd( _opc, "5. po subanalitičkim kontima" )
    AAdd( _opcexe, {|| fin_spec_po_suban_kontima() } )
-   AAdd( _opc, "6. za subanaliticki konto / 2" )
+   AAdd( _opc, "6. za subanalitički konto / 2" )
    AAdd( _opcexe, {|| SpecSubPro() } )
-   AAdd( _opc, "7. za subanaliticki konto/konto2" )
+   AAdd( _opc, "7. za subanalitički konto/konto2" )
    AAdd( _opcexe, {|| SpecKK2() } )
-   AAdd( _opc, "8. pregled novih dugovanja/potrazivanja" )
+   AAdd( _opc, "8. pregled novih dugovanja/potraživanja" )
    AAdd( _opcexe, {|| PregNDP() } )
    AAdd( _opc, "9. pregled partnera bez prometa" )
    AAdd( _opcexe, {|| PartVanProm() } )
@@ -82,15 +82,15 @@ STATIC FUNCTION _txt_specif_mnu()
       AAdd( _opcexe, {|| Prihodi() } )
    ENDIF
 
-   AAdd( _opc, "C. otvorene stavke po dospijecu - po racunima (kao kartica)" )
+   AAdd( _opc, "C. otvorene stavke po dospijeću - po racunima (kao kartica)" )
    AAdd( _opcexe, {|| SpecPoDosp( .T. ) } )
-   AAdd( _opc, "D. otvorene stavke po dospijecu - specifikacija partnera" )
+   AAdd( _opc, "D. otvorene stavke po dospijeću - specifikacija partnera" )
    AAdd( _opcexe, {|| SpecPoDosp( .F. ) } )
-   AAdd( _opc, "F. pregled dugovanja partnera po rocnim intervalima " )
+   AAdd( _opc, "F. pregled dugovanja partnera po ročnim intervalima " )
    AAdd( _opcexe, {|| SpecDugPartnera() } )
-   AAdd( _opc, "S. specifikacija troskova po gradilistima " )
+   AAdd( _opc, "S. specifikacija troskova po gradilištima " )
    AAdd( _opcexe, {|| r_spec_tr() } )
 
    f18_menu( "spct", .F., _izbor, _opc, _opcexe )
 
-   RETURN
+   RETURN .T.

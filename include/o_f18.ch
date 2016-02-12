@@ -370,7 +370,7 @@
 #xcommand O_KOLIZ  => select (F_KOLIZ) ; my_use("koliz") ; set order to tag "ID"
 
 // parametri
-#xcommand O_PARAMS    => select (F_PARAMS)    ;  my_use ( "params")   ; set order to tag  "ID"
+#xcommand O_PARAMS    => select (F_PARAMS)    ; my_use ( "params")   ; set order to tag  "ID"
 #xcommand O_GPARAMS   => select (F_GPARAMS)   ; my_use ( "gparams" )  ;   set order to tag  "ID"
 #xcommand O_GPARAMSP  => select (F_GPARAMSP)  ; my_use ( "gparams" )  ; set order to tag  "ID"
 #xcommand O_MPARAMS   => select (F_MPARAMS)   ;  my_use ( "mparams" ) ; set order  to tag  "ID"

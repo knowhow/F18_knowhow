@@ -22,7 +22,6 @@ FUNCTION set_global_vars_0()
    PUBLIC GW_HANDLE := 0
    PUBLIC gModul := ""
    PUBLIC gVerzija := ""
-   PUBLIC gAppSrv := .F.
    PUBLIC gSQL := "N"
    PUBLIC gSQLLogBase := ""
    PUBLIC ZGwPoruka := ""

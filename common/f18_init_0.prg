@@ -24,14 +24,12 @@ FUNCTION start_f18_program_module( oApp, lSezone )
 
    LOCAL cImeDbf
    LOCAL _i
-   PUBLIC gAppSrv
 
 
    set_global_vars_0()
 
    gModul   := oApp:cName
    gVerzija := oApp:cVerzija
-   gAppSrv := .F.
 
    SetNaslov( oApp )
 

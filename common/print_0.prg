@@ -110,9 +110,9 @@ FUNCTION StartPrint( lUFajl, cF, cDocumentName )
 
       SET CONSOLE OFF
    ELSE
-      IF !gAppSrv
-         MsgO( "Priprema izvjestaja..." )
-      ENDIF
+
+      MsgO( "Priprema izvjestaja..." )
+
       SET CONSOLE OFF
 
       cKom := PRIVPATH + cFName
@@ -138,7 +138,7 @@ FUNCTION StartPrint( lUFajl, cF, cDocumentName )
    ELSE
       // radi se o fajlu
       IF DRVPATH $ cKom
-      
+
          BEGIN SEQUENCE
             SET PRINTER to ( ckom )
          recover
@@ -746,9 +746,6 @@ FUNCTION GuSt2( nZnak, cPapir )
          ENDIF
       ENDIF
    ENDIF
-
-
-
 
 FUNCTION Odsj( cStr )
 

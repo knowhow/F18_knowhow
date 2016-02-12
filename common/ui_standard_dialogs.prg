@@ -34,9 +34,6 @@ FUNCTION Pitanje( cId, cPitanje, cOdgDefault, cMogOdg )
    PRIVATE GetList := {}
 
 
-   IF gAppSrv
-      RETURN cOdgDefault
-   ENDIF
 
    cPom := Set( _SET_DEVICE )
    SET DEVICE TO SCREEN
@@ -71,7 +68,7 @@ FUNCTION Pitanje( cId, cPitanje, cOdgDefault, cMogOdg )
    SET CONFIRM ON
 #endif
 
-   SET( _SET_DEVICE, cPom )
+   Set( _SET_DEVICE, cPom )
 
    RETURN cOdgovor
 
@@ -108,10 +105,6 @@ FUNCTION Pitanje2( cId, cPitanje, cOdgDefault )
    LOCAL cPom := Set( _SET_DEVICE )
    PRIVATE GetList := {}
 
-   IF gAppSrv
-      RETURN cOdgDefault
-   ENDIF
-
    SET DEVICE TO SCREEN
    IF nDuz < 54; nDuz := 54; ENDIF
 
@@ -139,7 +132,7 @@ FUNCTION Pitanje2( cId, cPitanje, cOdgDefault )
    SET CONFIRM ON
 #endif
 
-   SET( _SET_DEVICE, cPom )
+   Set( _SET_DEVICE, cPom )
 
    RETURN cOdg
 
@@ -148,16 +141,10 @@ FUNCTION Pitanje2( cId, cPitanje, cOdgDefault )
 
 FUNCTION print_dialog_box( cDirekt )
 
-   IF gAppSrv
-      RETURN cDirekt
-   ENDIF
-
    SET CONFIRM OFF
    SET CURSOR ON
 
-   IF !gAppSrv
-      cDirekt := select_print_mode( @cDirekt )
-   ENDIF
+   cDirekt := select_print_mode( @cDirekt )
 
    SET CONFIRM ON
 
@@ -211,96 +198,5 @@ FUNCTION select_print_mode( cDirekt )
       RETURN "D"
 
    ENDIF
-
-   RETURN .T.
-
-
-FUNCTION GetLozinka( nSiflen )
-
-   LOCAL cKorsif
-
-   cKorsif := ""
-   Box(, 2, 30 )
-   @ m_x + 2, m_y + 2 SAY "Lozinka..... "
-
-   DO WHILE .T.
-
-      nChar := WaitScrSav()
-
-      IF nChar == K_ESC
-         cKorsif := ""
-
-      ELSEIF ( nChar == 0 ) .OR. ( nChar > 128 )
-         LOOP
-
-      ELSEIF ( nChar == K_ENTER )
-         EXIT
-
-      ELSEIF ( nChar == K_BS )
-         cKorSif := Left( ckorsif, Len( cKorsif ) -1 )
-
-      ELSE
-
-
-         IF Len( cKorsif ) >= nSifLen // max 15 znakova
-            Beep( 1 )
-         ENDIF
-
-         IF ( nChar > 1 )
-            cKorsif := cKorSif + Chr( nChar )
-         ENDIF
-
-      ENDIF
-
-      @ m_x + 2, m_y + 15 SAY PadR( Replicate( "*", Len( cKorSif ) ), nSifLen )
-      IF ( nChar == K_ESC )
-         LOOP
-      ENDIF
-
-   ENDDO
-
-   BoxC()
-
-   SET CURSOR ON
-
-   RETURN PadR( cKorSif, nSifLen )
-
-
-
-/*! \fn PozdravMsg(cNaslov,cVer,nk)
- *  \brief Ispisuje ekran sa pozdravnom porukom
- *  \param cNaslov
- *  \param cVer
- *  \param nk
- */
-
-FUNCTION PozdravMsg( cNaslov, cVer, lGreska )
-
-   LOCAL lInvert
-
-   IF gAppSrv
-      RETURN
-   ENDIF
-
-   lInvert := .F.
-
-   Box( "por", 11, 60, lInvert )
-   SET CURSOR OFF
-
-   @ m_x + 2, m_y + 2 SAY PadC( cNaslov, 60 )
-   @ m_x + 3, m_y + 2 SAY PadC( "Ver. " + cVer, 60 )
-   @ m_x + 5, m_y + 2 SAY PadC( "bring.out d.o.o. Sarajevo", 60 )
-   @ m_x + 7, m_y + 2 SAY PadC( "Juraja Najtharta 3, Sarajevo, BiH", 60 )
-   @ m_x + 8, m_y + 2 SAY PadC( "tel: 033/269-291, fax: 033/269-292", 60 )
-   @ m_x + 9, m_y + 2 SAY PadC( "web: http://bring.out.ba", 60 )
-   @ m_x + 10, m_y + 2 SAY PadC( "email: podrska@bring.out.ba", 60 )
-   IF lGreska
-      @ m_x + 11, m_y + 4 SAY8 "Prošli put program nije regularno završen"
-      Beep( 2 )
-   ENDIF
-
-   Inkey( 5 )
-
-   BoxC()
 
    RETURN .T.

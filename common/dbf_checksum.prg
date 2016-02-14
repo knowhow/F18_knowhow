@@ -23,7 +23,7 @@ FUNCTION check_recno_and_fix( cDbfAlias, nCntSql, nCntDbf )
 
    IF nCntSql <> nCntDbf
 
-      cErrMsg := "full synchro ERROR: "
+      cErrMsg := "check_recno_and_fix DIFF: "
       cErrMsg += "broj zapisa DBF tabele " + _a_dbf_rec[ "alias" ] + ": " + AllTrim( Str( nCntDbf, 10, 0) ) + " "
       cErrMsg += "broj zapisa SQL tabele " + _sql_table + ": " + AllTrim( Str( nCntSql, 10 ) )
 

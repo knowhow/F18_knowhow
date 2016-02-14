@@ -45,11 +45,11 @@ FUNCTION cre_sif_partn( ver )
       modstru( { "*" + _table_name, "A IDREFER C 10 0", "A IDOPS C 4 0" } )
    ENDIF
 
-   IF_C_RESET_SEMAPHORE
 
    CREATE_INDEX( "ID", "id", _alias )
    CREATE_INDEX( "NAZ", "NAZ", _alias )
    index_mcode( "", _alias )
+   AFTER_CREATE_INDEX
 
    _alias := "_PARTN"
    _table_name := "_partn"

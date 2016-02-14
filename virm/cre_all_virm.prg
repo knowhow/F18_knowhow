@@ -37,11 +37,11 @@ FUNCTION cre_all_virm_sif( ver )
    _table_name := "vrprim"
 
    IF_NOT_FILE_DBF_CREATE
-   IF_C_RESET_SEMAPHORE
 
    CREATE_INDEX( "ID", "id", _alias )
    CREATE_INDEX( "NAZ", "naz", _alias )
    CREATE_INDEX( "IDKONTO", "idkonto+idpartner", _alias )
+   AFTER_CREATE_INDEX
 
 
    // -------------------
@@ -70,9 +70,10 @@ FUNCTION cre_all_virm_sif( ver )
    _alias := "LDVIRM"
 
    IF_NOT_FILE_DBF_CREATE
-   IF_C_RESET_SEMAPHORE
+
 
    CREATE_INDEX( "ID", "id", _alias )
+   AFTER_CREATE_INDEX
 
 
    // -------------------
@@ -89,9 +90,9 @@ FUNCTION cre_all_virm_sif( ver )
    _alias := "KALVIR"
 
    IF_NOT_FILE_DBF_CREATE
-   IF_C_RESET_SEMAPHORE
 
    CREATE_INDEX( "ID", "id", _alias )
+   AFTER_CREATE_INDEX
 
 
    // -------------------
@@ -111,16 +112,16 @@ FUNCTION cre_all_virm_sif( ver )
    _alias := "JPRIH"
 
    IF_NOT_FILE_DBF_CREATE
-   IF_C_RESET_SEMAPHORE
+
 
    CREATE_INDEX( "Id", "id+IdOps+IdKan+IdN0+Racun", _alias )
    CREATE_INDEX( "Naz", "Naz+IdOps", _alias )
+   AFTER_CREATE_INDEX
 
    RETURN .T.
 
 
-// -------------------------------
-// -------------------------------
+
 FUNCTION cre_all_virm( ver )
 
    LOCAL aDbf
@@ -197,4 +198,4 @@ FUNCTION cre_all_virm( ver )
 
    CREATE_INDEX( "1", "STR(rbr,3)", _alias )
 
-   RETURN
+   RETURN .T.

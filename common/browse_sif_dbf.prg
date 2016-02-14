@@ -53,7 +53,7 @@ FUNCTION PostojiSifra( nDbf, nNtx, nVisina, nSirina, cNaslov, cID, dx, dy,  bBlo
    ENDIF
 
    IF !Used()
-      my_use( nDbf, nil, .F. )
+      my_use( nDbf, nil)
    ENDIF
 
    set_mc_imekol( nDbf )

@@ -46,7 +46,6 @@ FUNCTION cre_all_pos( ver )
    _table_name := "pos_doks"
 
    IF_NOT_FILE_DBF_CREATE
-   IF_C_RESET_SEMAPHORE
 
    CREATE_INDEX ( "1", "IdPos+IdVd+dtos(datum)+BrDok", _alias )
    CREATE_INDEX ( "2", "IdVd+DTOS(Datum)+Smjena", _alias )
@@ -60,6 +59,7 @@ FUNCTION cre_all_pos( ver )
    CREATE_INDEX ( "STO", "IdPos+idvd+STR(STO_BR)+STR(ZAK_BR)+DTOS(datum)+brdok", _alias )
    CREATE_INDEX ( "ZAK", "IdPos+idvd+STR(ZAK_BR)+STR(STO_BR)+DTOS(datum)+brdok", _alias )
    CREATE_INDEX ( "FISC", "STR(fisc_rn,10)+idpos+idvd", _alias )
+   AFTER_CREATE_INDEX
 
    // ------- pos dokspf ------
    aDbf := {}
@@ -77,10 +77,11 @@ FUNCTION cre_all_pos( ver )
    _table_name := "pos_dokspf"
 
    IF_NOT_FILE_DBF_CREATE
-   IF_C_RESET_SEMAPHORE
+
 
    CREATE_INDEX( "1", "idpos+idvd+DToS(datum)+brdok", _alias )
    CREATE_INDEX( "2", "knaz", _alias )
+   AFTER_CREATE_INDEX
 
 
 
@@ -121,7 +122,7 @@ FUNCTION cre_all_pos( ver )
       modstru( { "*" + _table_name, "A RBR C 5 0" } )
    ENDIF
 
-   IF_C_RESET_SEMAPHORE
+
 
    CREATE_INDEX ( "1", "IdPos+IdVd+dtos(datum)+BrDok+IdRoba+IdCijena+Rbr", _alias )
    CREATE_INDEX ( "2", "IdOdj+idroba+DTOS(Datum)", _alias )
@@ -131,6 +132,7 @@ FUNCTION cre_all_pos( ver )
    CREATE_INDEX ( "6", "IdRoba", _alias )
    CREATE_INDEX ( "7", "IdPos+IdVd+BrDok+DTOS(Datum)+IdDio+IdOdj", _alias )
    CREATE_INDEX ( "IDS_SEM", "IdPos+IdVd+dtos(datum)+BrDok+rbr", _alias )
+   AFTER_CREATE_INDEX
 
    // --- promvp - promet po vrstama placanja --
 
@@ -154,9 +156,9 @@ FUNCTION cre_all_pos( ver )
    _table_name := "pos_promvp"
 
    IF_NOT_FILE_DBF_CREATE
-   IF_C_RESET_SEMAPHORE
 
    CREATE_INDEX ( "1", "DATUM", _alias )
+   AFTER_CREATE_INDEX
 
 
    // --------------- strad - statusi radnika -----------
@@ -169,10 +171,10 @@ FUNCTION cre_all_pos( ver )
    _table_name := "pos_strad"
 
    IF_NOT_FILE_DBF_CREATE
-   IF_C_RESET_SEMAPHORE
 
    CREATE_INDEX( "ID", "ID",  _alias )
    CREATE_INDEX( "NAZ", "NAZ", _alias )
+   AFTER_CREATE_INDEX
 
 
    // ------------ osob - osoblje ------------------------
@@ -186,10 +188,10 @@ FUNCTION cre_all_pos( ver )
    _table_name := "pos_osob"
 
    IF_NOT_FILE_DBF_CREATE
-   IF_C_RESET_SEMAPHORE
 
    CREATE_INDEX( "ID", "KorSif", _alias )
    CREATE_INDEX( "NAZ", "ID", _alias )
+   AFTER_CREATE_INDEX
 
 
    // --------- kase ------------------------
@@ -203,9 +205,9 @@ FUNCTION cre_all_pos( ver )
    _table_name := "pos_kase"
 
    IF_NOT_FILE_DBF_CREATE
-   IF_C_RESET_SEMAPHORE
 
    CREATE_INDEX( "ID", "ID", _alias )
+   AFTER_CREATE_INDEX
 
 
 
@@ -219,9 +221,9 @@ FUNCTION cre_all_pos( ver )
    _table_name := "pos_odj"
 
    IF_NOT_FILE_DBF_CREATE
-   IF_C_RESET_SEMAPHORE
 
    CREATE_INDEX( "ID", "ID", _alias )
+   AFTER_CREATE_INDEX
 
 
    // RNGPLA - izmirenje dugovanja po racunima gostiju

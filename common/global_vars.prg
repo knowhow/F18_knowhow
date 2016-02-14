@@ -88,7 +88,6 @@ FUNCTION org_params( set_params )
 
 FUNCTION set_global_vars()
 
-   _kreiraj_params_tabele()
 
    SetSpecifVars()
    SetValuta()

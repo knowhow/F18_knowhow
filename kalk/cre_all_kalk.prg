@@ -54,7 +54,6 @@ STATIC FUNCTION kreiraj_ostale_kalk_tabele( ver )
       modstru( { "*" + _table_name, "A SIFRA C 6 0" } )
    ENDIF
 
-   IF_C_RESET_SEMAPHORE
 
    CREATE_INDEX( "1", "IdFirma+idvd+brdok", _alias )
    CREATE_INDEX( "2", "IdFirma+MKONTO+idzaduz2+idvd+brdok", _alias )
@@ -63,6 +62,7 @@ STATIC FUNCTION kreiraj_ostale_kalk_tabele( ver )
    CREATE_INDEX( "1S", "IdFirma+idvd+SUBSTR(brdok,6)+LEFT(brdok,5)", _alias )
    CREATE_INDEX( "V_BRF", "brfaktp+idvd", _alias )
    CREATE_INDEX( "V_BRF2", "idvd+brfaktp", _alias )
+   AFTER_CREATE_INDEX
 
    // kalk_doks2
 
@@ -81,9 +81,9 @@ STATIC FUNCTION kreiraj_ostale_kalk_tabele( ver )
 
    IF_NOT_FILE_DBF_CREATE
 
-   IF_C_RESET_SEMAPHORE
 
    CREATE_INDEX( "1", "IdFirma+idvd+brdok", _alias )
+   AFTER_CREATE_INDEX
 
    // objekti
    _alias := "OBJEKTI"
@@ -95,11 +95,12 @@ STATIC FUNCTION kreiraj_ostale_kalk_tabele( ver )
    AADD(aDbf, {"IdObj","C", 7,0})
 
    IF_NOT_FILE_DBF_CREATE
-   IF_C_RESET_SEMAPHORE
+   
 
    CREATE_INDEX("ID", "ID", _alias )
    CREATE_INDEX("NAZ", "NAZ", _alias )
    CREATE_INDEX("IdObj", "IdObj", _alias )
+   AFTER_CREATE_INDEX
 
    // pobjekti
 
@@ -259,7 +260,6 @@ STATIC FUNCTION kreiraj_kalk_bazirane_tabele( ver )
       NEXT
    ENDIF
 
-   IF_C_RESET_SEMAPHORE
 
    CREATE_INDEX( "1", "idFirma+IdVD+BrDok+RBr", _alias )
    CREATE_INDEX( "2", "idFirma+idvd+brdok+IDTarifa", _alias )
@@ -276,6 +276,8 @@ STATIC FUNCTION kreiraj_kalk_bazirane_tabele( ver )
    CREATE_INDEX( "PU_I", "pu_i+pkonto+idfirma+idvd+brdok", _alias )
    CREATE_INDEX( "PU_I2", "pu_i+idfirma+idvd+brdok", _alias )
    CREATE_INDEX( "PMAG", "idfirma+mkonto+idpartner+idvd+dtos(datdok)", _alias )
+
+AFTER_CREATE_INDEX
 
    // KALK_PRIPR
 

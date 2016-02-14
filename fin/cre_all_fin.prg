@@ -57,7 +57,6 @@ FUNCTION cre_all_fin( ver )
       modstru( { "*" + _table_name, "A IDRJ C 6 0", "A FUNK C 5 0", "A FOND C 4 0" } )
    ENDIF
 
-   IF_C_RESET_SEMAPHORE
 
    CREATE_INDEX( "1", "IdFirma+IdKonto+IdPartner+dtos(DatDok)+BrNal+RBr", _alias )
    CREATE_INDEX( "2", "IdFirma+IdPartner+IdKonto", _alias )
@@ -69,6 +68,7 @@ FUNCTION cre_all_fin( ver )
    CREATE_INDEX( "8", "Datdok", _alias )
    CREATE_INDEX( "9", "idfirma+idkonto+idrj+idpartner+DTOS(datdok)+brnal+rbr", _alias )
    CREATE_INDEX( "10", "idFirma+IdVN+BrNal+idkonto+DTOS(datdok)", _alias )
+   AFTER_CREATE_INDEX
 
 
 
@@ -126,13 +126,13 @@ FUNCTION cre_all_fin( ver )
    AAdd( aDBf, { "POTDEM", "N",  15,  2 } )
 
    IF_NOT_FILE_DBF_CREATE
-   IF_C_RESET_SEMAPHORE
 
    CREATE_INDEX( "1", "IdFirma+IdKonto+dtos(DatNal)", _alias )
    CREATE_INDEX( "2", "idFirma+IdVN+BrNal+Rbr", _alias )
    CREATE_INDEX( "3", "idFirma+dtos(DatNal)", _alias )
    CREATE_INDEX( "4", "Idkonto", _alias )
    CREATE_INDEX( "5", "DatNal", _alias )
+   AFTER_CREATE_INDEX
 
 
    // ----------------------------------------------------------------------------
@@ -167,11 +167,11 @@ FUNCTION cre_all_fin( ver )
    _table_name := "fin_sint"
 
    IF_NOT_FILE_DBF_CREATE
-   IF_C_RESET_SEMAPHORE
 
    CREATE_INDEX( "1", "IdFirma+IdKonto+dtos(DatNal)", _alias )
    CREATE_INDEX( "2", "idFirma+IdVN+BrNal+Rbr", _alias )
    CREATE_INDEX( "3", "datnal", _alias )
+   AFTER_CREATE_INDEX
 
    // ----------------------------------------------------------------------------
    // PSINT
@@ -204,12 +204,12 @@ FUNCTION cre_all_fin( ver )
    _table_name := "fin_nalog"
 
    IF_NOT_FILE_DBF_CREATE
-   IF_C_RESET_SEMAPHORE
 
    CREATE_INDEX( "1", "IdFirma+IdVn+BrNal", _alias )
    CREATE_INDEX( "2", "IdFirma+str(val(BrNal),8)+idvn", _alias )
    CREATE_INDEX( "3", "dtos(datnal)+IdFirma+idvn+brnal", _alias )
    CREATE_INDEX( "4", "datnal", _alias )
+   AFTER_CREATE_INDEX
 
 
 
@@ -238,11 +238,12 @@ FUNCTION cre_all_fin( ver )
    _table_name := "fin_funk"
 
    IF_NOT_FILE_DBF_CREATE
-   IF_C_RESET_SEMAPHORE
+
 
    CREATE_INDEX( "ID", "id", _alias )
    CREATE_INDEX( "NAZ", "NAZ", _alias )
 
+   AFTER_CREATE_INDEX
 
    // -----------------------------------------------------------
    // FIN_FOND
@@ -256,11 +257,11 @@ FUNCTION cre_all_fin( ver )
    _table_name := "fin_fond"
 
    IF_NOT_FILE_DBF_CREATE
-   IF_C_RESET_SEMAPHORE
+
 
    CREATE_INDEX( "ID", "id", _alias )
    CREATE_INDEX( "NAZ", "NAZ", _alias )
-
+   AFTER_CREATE_INDEX
 
 
    // -----------------------------------------------------------
@@ -279,11 +280,11 @@ FUNCTION cre_all_fin( ver )
    _table_name := "fin_budzet"
 
    IF_NOT_FILE_DBF_CREATE
-   IF_C_RESET_SEMAPHORE
+
 
    CREATE_INDEX( "1", "IdRj+Idkonto", _alias )
    CREATE_INDEX( "2", "Idkonto",      _alias )
-
+   AFTER_CREATE_INDEX
 
 
    // -----------------------------------------------------------
@@ -298,11 +299,11 @@ FUNCTION cre_all_fin( ver )
    AAdd( aDBf, { "Idkonto", "C",   7,  0 } )
 
    IF_NOT_FILE_DBF_CREATE
-   IF_C_RESET_SEMAPHORE
+
 
    CREATE_INDEX( "1", "IdPartija", _alias )
 
-
+   AFTER_CREATE_INDEX
 
    // -----------------------------------------------------------
    // FIN_BUIZ
@@ -316,10 +317,10 @@ FUNCTION cre_all_fin( ver )
    AAdd( aDBf, { "NAZ", "C",  10,  0 } )
 
    IF_NOT_FILE_DBF_CREATE
-   IF_C_RESET_SEMAPHORE
 
    CREATE_INDEX( "ID", "ID", _alias )
    CREATE_INDEX( "NAZ", "NAZ", _alias )
+   AFTER_CREATE_INDEX
 
 
    // -----------------------------------------------------------
@@ -335,10 +336,10 @@ FUNCTION cre_all_fin( ver )
    AAdd( aDBf, { "F_LIMIT", "N",  15,  2 } )
 
    IF_NOT_FILE_DBF_CREATE
-   IF_C_RESET_SEMAPHORE
 
    CREATE_INDEX( "ID", "Id", _alias )
-   CREATE_INDEX( "2","Id+idpartner", _alias )
+   CREATE_INDEX( "2", "Id+idpartner", _alias )
+   AFTER_CREATE_INDEX
 
 
 
@@ -475,4 +476,4 @@ FUNCTION cre_all_fin( ver )
 
    IF_NOT_FILE_DBF_CREATE
 
-   RETURN
+   RETURN .T.

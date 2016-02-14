@@ -9,7 +9,6 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-#command IF_NOT_FILE_DBF_CREATE => dbf_init( _table_name, _alias, aDbf )
+#command IF_NOT_FILE_DBF_CREATE => dbf_init( aDbf, _table_name, _alias )
 
-
-#command IF_C_RESET_SEMAPHORE   => OutErr( "dummy C_RESET", _table_name)
+#command AFTER_CREATE_INDEX   => my_use( _table_name )

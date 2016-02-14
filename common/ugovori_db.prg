@@ -57,7 +57,6 @@ STATIC FUNCTION cre_tbl( table_name, ver )
    ENDIF
 
    IF_NOT_FILE_DBF_CREATE
-   IF_C_RESET_SEMAPHORE
 
    // indexi
    DO CASE
@@ -79,8 +78,9 @@ STATIC FUNCTION cre_tbl( table_name, ver )
       CREATE_INDEX( "ID", "IDPARTNER + ID", "DEST" )
       CREATE_INDEX( "IDDEST", "ID", "DEST" )
    ENDCASE
+   AFTER_CREATE_INDEX
 
-   RETURN
+   RETURN .T.
 
 
 // ---------------------------------------------

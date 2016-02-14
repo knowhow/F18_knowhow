@@ -104,18 +104,20 @@ FUNCTION PopWA( nWANeDiraj )
    RETURN hRet
 
 
-FUNCTION index_tag_num( name )
+FUNCTION index_tag_num( cName )
+
+   LOCAL nI
 
    IF !Used()
       RETURN -1
    ENDIF
 
    IF rddName() != "SQLMIX"
-      RETURN ordNumber( name )
+      RETURN ordNumber( cName )
    ELSE
-      FOR i := 1 TO ordCount()
-         IF ordKey( i ) == name
-            RETURN i
+      FOR nI := 1 TO ordCount()
+         IF ordKey( nI ) == cName
+            RETURN nI
          ENDIF
       NEXT
       RETURN 0

@@ -47,17 +47,15 @@ FUNCTION cre_all_os( ver )
    _alias := "os"
    _table_name := "os_os"
 
-   IF !File( f18_ime_dbf( _alias ) )
-      DBCREATE2( _alias, aDbf )
-      reset_semaphore_version( _table_name )
-      my_use( _alias )
-   ENDIF
+   IF_NOT_FILE_DBF_CREATE
 
    CREATE_INDEX( "1", "id+idam+dtos(datum)", _alias )
    CREATE_INDEX( "2", "idrj+id+dtos(datum)", _alias )
    CREATE_INDEX( "3", "idrj+idkonto+id",  _alias )
    CREATE_INDEX( "4", "idkonto+idrj+id", _alias )
    CREATE_INDEX( "5", "idam+idrj+id", _alias )
+
+   AFTER_CREATE_INDEX
 
 
    // kreiraj tabelu SII
@@ -65,17 +63,14 @@ FUNCTION cre_all_os( ver )
    _alias := "sii"
    _table_name := "sii_sii"
 
-   IF !File( f18_ime_dbf( _alias ) )
-      DBCREATE2( _alias, aDbf )
-      reset_semaphore_version( _table_name )
-      my_use( _alias )
-   ENDIF
+   IF_NOT_FILE_DBF_CREATE
 
    CREATE_INDEX( "1", "id+idam+dtos(datum)", _alias )
    CREATE_INDEX( "2", "idrj+id+dtos(datum)", _alias )
    CREATE_INDEX( "3", "idrj+idkonto+id",  _alias )
    CREATE_INDEX( "4", "idkonto+idrj+id", _alias )
    CREATE_INDEX( "5", "idam+idrj+id", _alias )
+   AFTER_CREATE_INDEX
 
 
    aDbf := {}
@@ -95,13 +90,10 @@ FUNCTION cre_all_os( ver )
    _alias := "promj"
    _table_name := "os_promj"
 
-   IF !File( f18_ime_dbf( _alias ) )
-      DBCREATE2( _alias, aDbf )
-      reset_semaphore_version( _table_name )
-      my_use( _alias )
-   ENDIF
+   IF_NOT_FILE_DBF_CREATE
 
    CREATE_INDEX( "1", "id+tip+dtos(datum)+opis", _alias )
+   AFTER_CREATE_INDEX
 
 
    // kreiraj sii promjene
@@ -109,14 +101,11 @@ FUNCTION cre_all_os( ver )
    _alias := "sii_promj"
    _table_name := "sii_promj"
 
-   IF !File( f18_ime_dbf( _alias ) )
-      DBCREATE2( _alias, aDbf )
-      reset_semaphore_version( _table_name )
-      my_use( _alias )
-   ENDIF
+
+   IF_NOT_FILE_DBF_CREATE
 
    CREATE_INDEX( "1", "id+tip+dtos(datum)+opis", _alias )
-
+   AFTER_CREATE_INDEX
 
    aDbf := {}
    AAdd( aDBf, { 'ID', 'C',   8,  0 } )
@@ -126,13 +115,11 @@ FUNCTION cre_all_os( ver )
    _alias := "amort"
    _table_name := "os_amort"
 
-   IF !File( f18_ime_dbf( _alias ) )
-      DBCREATE2( _alias, aDbf )
-      reset_semaphore_version( _table_name )
-      my_use( _alias )
-   ENDIF
+   IF_NOT_FILE_DBF_CREATE
 
    CREATE_INDEX( "ID", "id", _alias )
+   AFTER_CREATE_INDEX
+
 
    aDbf := {}
    AAdd( aDBf, { 'ID', 'C',   4,  0 } )
@@ -153,13 +140,10 @@ FUNCTION cre_all_os( ver )
    _alias := "reval"
    _table_name := "os_reval"
 
-   IF !File( f18_ime_dbf( _alias ) )
-      DBCREATE2( _alias, aDbf )
-      reset_semaphore_version( _table_name )
-      my_use( _alias )
-   ENDIF
-
+   IF_NOT_FILE_DBF_CREATE
    CREATE_INDEX( "ID", "id", _alias )
+   AFTER_CREATE_INDEX
+
 
    aDBf := {}
    AAdd( aDBf, { 'ID', 'C',   4,  0 } )
@@ -168,15 +152,10 @@ FUNCTION cre_all_os( ver )
    _alias := "k1"
    _table_name := "os_k1"
 
-   IF !File( f18_ime_dbf( _alias ) )
-      DBCREATE2( _alias, aDbf )
-      reset_semaphore_version( _table_name )
-      my_use( _alias )
-   ENDIF
-
+   IF_NOT_FILE_DBF_CREATE
    CREATE_INDEX( "ID", "id", _alias )
    CREATE_INDEX( "NAZ", "NAZ", _alias )
-
+   AFTER_CREATE_INDEX
 
    IF !File( f18_ime_dbf( "invent" ) )
       aDbf := {}

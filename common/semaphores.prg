@@ -351,7 +351,7 @@ FUNCTION fill_dbf_from_server( dbf_table, sql_query, sql_fetch_time, dbf_write_t
    _qry_obj := run_sql_query( sql_query, _retry )
    sql_fetch_time := Seconds() - sql_fetch_time
 
-   log_write( "fill_dbf_from_server(), poceo", 9 )
+   log_write( "fill_dbf_from_server START", 9 )
 
    dbf_write_time := Seconds()
 
@@ -388,7 +388,7 @@ FUNCTION fill_dbf_from_server( dbf_table, sql_query, sql_fetch_time, dbf_write_t
 
       IF lShowInfo
          IF _counter % 500 == 0
-            ?E "synchro '" + dbf_table + "' broj obrađenih zapisa: " + AllTrim( Str( _counter ) )
+            ?E "synchro '" + dbf_table + "' broj obradjenih zapisa: " + AllTrim( Str( _counter ) )
          ENDIF
       ENDIF
 
@@ -400,8 +400,8 @@ FUNCTION fill_dbf_from_server( dbf_table, sql_query, sql_fetch_time, dbf_write_t
       USE
    ENDIF
 
-   log_write( "fill_dbf_from_server(), table: " + dbf_table + ", count: " + AllTrim( Str( _counter ) ), 7 )
-   log_write( "fill_dbf_from_server(), zavrsio", 9 )
+   log_write( "fill_dbf_from_server: " + dbf_table + ", count: " + AllTrim( Str( _counter ) ), 7 )
+   log_write( "fill_dbf_from_server END", 9 )
 
    dbf_write_time := Seconds() - dbf_write_time
 
@@ -602,7 +602,7 @@ FUNCTION is_last_refresh_before( cTable, nSeconds )
 
 
 
-FUNCTION thread_dbf_refresh( cTable )
+PROCEDURE thread_dbf_refresh( cTable )
 
    PRIVATE m_x, m_y, normal
 
@@ -611,15 +611,15 @@ FUNCTION thread_dbf_refresh( cTable )
    Normal := "B/W"
    Invert := "W/B"
 
+?E ">>>>> START: thread_dbf_refresh:", cTable, "<<<<<"
+
    ErrorBlock( {| objError, lShowreport, lQuit | GlobalErrorHandler( objError, lShowReport, lQuit ) } )
-
-
-   ?E "thread_dbf_refresh:", cTable
    dbf_refresh( cTable )
 
+   ?E "<<<<< END: thread_dbf_refresh:", cTable, " >>>>>"
    my_server_close()
 
-   RETURN .T.
+   RETURN
 
 
 FUNCTION dbf_refresh( cTable )
@@ -644,20 +644,25 @@ FUNCTION dbf_refresh( cTable )
       RETURN .F.
    ENDIF
 
-   IF !File( f18_ime_dbf( aDbfRec ) ) // dbf tabele nema
+   IF !File( f18_ime_dbf( aDbfRec ) )
+      ?E  aDbfRec[ 'table' ], "dbf tabele nema"
       RETURN .F.
    ENDIF
 
-   IF in_dbf_refresh( aDbfRec[ 'table' ] ) // tabela je vec u refreshu
+   IF in_dbf_refresh( aDbfRec[ 'table' ] )
+      ?E  aDbfRec[ 'table' ], "tabela je vec u refreshu"
       RETURN .F.
    ENDIF
 
-   IF is_last_refresh_before( aDbfRec[ 'table' ], 5 ) // last refresh of table < 5 sec before
+   IF is_last_refresh_before( aDbfRec[ 'table' ], 7 )
+//#ifdef F18_DEBUG
+//      ?E  aDbfRec[ 'table' ], "last refresh of table < 7 sec before"
+//#endif
       RETURN .F.
    ENDIF
 
 #ifdef F18_DEBUG
-   log_write( "going to refresh: " + aDbfRec[ 'table' ], 5 )
+   log_write( "going to refresh: " + aDbfRec[ 'table' ], 7 )
 #endif
 
    in_dbf_refresh( aDbfRec[ 'table' ], .T. )
@@ -670,7 +675,6 @@ FUNCTION dbf_refresh( cTable )
       hVersions := get_semaphore_version_h( aDbfRec[ 'table' ] )
    ENDIF
 
-   hVersions := get_semaphore_version_h( aDbfRec[ 'table' ] )
    IF ( hVersions[ 'version' ] < hVersions[ 'last_version' ] )
       update_dbf_from_server( aDbfRec[ 'table' ], "IDS" )
    ENDIF

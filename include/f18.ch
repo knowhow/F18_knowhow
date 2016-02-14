@@ -25,7 +25,6 @@
 #require "sddpg"
 #include "dbinfo.ch"
 #include "error.ch"
-#include "error.ch"
 #include "fileio.ch"
 #include "hbclass.ch"
 

@@ -26,7 +26,7 @@ FUNCTION set_sql_search_path()
       MsgBeep( "ERR?! :" + _qry )
       RETURN .F.
    ELSE
-      log_write( "sql() set search path ok", 9 )
+      log_write( "set_sql_search path ok", 9 )
    ENDIF
 
    RETURN _result

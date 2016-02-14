@@ -36,9 +36,14 @@ FUNCTION cre_all_dbfs( ver )
 
    ENDIF
 
-   log_write( "START cre_all_dbfs", 5 )
+   log_write( "START: cre_all_dbfs", 5 )
 
+   cre_params_dbf()
    cre_sif_konto( ver )
+
+   fill_tbl_valute() // upisi default valute ako ne postoje
+   db_cre_ugov( ver ) // kreiranje tabela ugovora
+
    cre_sif_roba( ver )
    cre_sif_partn( ver )
    cre_sif_adrese( ver )
@@ -68,7 +73,6 @@ FUNCTION cre_all_dbfs( ver )
    IF f18_use_module( "os" )
       cre_all_os( ver )
    ENDIF
-
 
    IF f18_use_module( "virm" )
       cre_all_virm_sif( ver )
@@ -100,27 +104,22 @@ FUNCTION cre_all_dbfs( ver )
       set_metric( "f18_first_start", my_user(), 1 )
    ENDIF
 
-   log_write( "END crea_all_dbfs", 5 )
+   log_write( "END: cre_all_dbfs", 5 )
 
    s_lInCreAllDbfs := .F.
 
    RETURN .T.
 
 
+
 FUNCTION in_cre_all_dbfs()
    RETURN s_lInCreAllDbfs
 
 
-FUNCTION CreSystemDb( ver )
-
-   _kreiraj_params_tabele( ver )
-   cre_sif_adrese( ver )
-
-   RETURN .T.
 
 
 
-FUNCTION _kreiraj_params_tabele()
+FUNCTION cre_params_dbf()
 
    LOCAL _table_name, _alias, aDBF
 
@@ -184,9 +183,8 @@ FUNCTION cre_sif_adrese( ver )
    AAdd( aDBf, { 'K9', 'C',  3,   0 } )
 
    IF_NOT_FILE_DBF_CREATE
-   IF_C_RESET_SEMAPHORE
-
    CREATE_INDEX( "ID", "id+naz", _alias )
+   AFTER_CREATE_INDEX
 
    RETURN .T.
 

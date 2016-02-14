@@ -38,10 +38,10 @@ FUNCTION cre_all_ld_sif( ver )
    _table_name := "kred"
 
    IF_NOT_FILE_DBF_CREATE
-   IF_C_RESET_SEMAPHORE
 
    CREATE_INDEX( "ID", "id", _alias )
    CREATE_INDEX( "NAZ", "naz", _alias )
+   AFTER_CREATE_INDEX
 
    _alias := "_KRED"
    _table_name := "_kred"
@@ -77,9 +77,9 @@ FUNCTION cre_all_ld_sif( ver )
    _table_name := "por"
 
    IF_NOT_FILE_DBF_CREATE
-   IF_C_RESET_SEMAPHORE
 
    CREATE_INDEX( "ID", "id", _alias )
+   AFTER_CREATE_INDEX
 
    // -----------------------------------------------------------
    // DOPR.DBF
@@ -100,10 +100,10 @@ FUNCTION cre_all_ld_sif( ver )
    _table_name := "dopr"
 
    IF_NOT_FILE_DBF_CREATE
-   IF_C_RESET_SEMAPHORE
 
    CREATE_INDEX( "ID", "id", _alias )
    CREATE_INDEX( "1", "id+naz+tiprada", _alias )
+   AFTER_CREATE_INDEX
 
 
 
@@ -120,9 +120,9 @@ FUNCTION cre_all_ld_sif( ver )
    _table_name := "strspr"
 
    IF_NOT_FILE_DBF_CREATE
-   IF_C_RESET_SEMAPHORE
 
    CREATE_INDEX( "ID", "id", _alias )
+   AFTER_CREATE_INDEX
 
 
    // --------------------------------------------------------
@@ -138,9 +138,10 @@ FUNCTION cre_all_ld_sif( ver )
    _table_name := "kbenef"
 
    IF_NOT_FILE_DBF_CREATE
-   IF_C_RESET_SEMAPHORE
+
 
    CREATE_INDEX( "ID", "id", _alias )
+   AFTER_CREATE_INDEX
 
 
    // --------------------------------------------------------
@@ -156,9 +157,9 @@ FUNCTION cre_all_ld_sif( ver )
    _table_name := "vposla"
 
    IF_NOT_FILE_DBF_CREATE
-   IF_C_RESET_SEMAPHORE
 
    CREATE_INDEX( "ID", "id", _alias )
+   AFTER_CREATE_INDEX
 
 
    // ---------------------------------------------------------
@@ -181,17 +182,18 @@ FUNCTION cre_all_ld_sif( ver )
    _table_name := "tippr"
 
    IF_NOT_FILE_DBF_CREATE
-   IF_C_RESET_SEMAPHORE
+
 
    CREATE_INDEX( "ID", "id", _alias )
+   AFTER_CREATE_INDEX
 
    _alias := "TIPPR2"
    _table_name := "tippr2"
 
    IF_NOT_FILE_DBF_CREATE
-   IF_C_RESET_SEMAPHORE
 
    CREATE_INDEX( "ID", "id", _alias )
+   AFTER_CREATE_INDEX
 
    RETURN .T.
 
@@ -271,9 +273,10 @@ FUNCTION cre_all_ld( ver )
       modstru( { "*" + _table_name, "A ST_INVALID I 1 0", "A VR_INVALID I 1 0" } )
    ENDIF
 
-   IF_C_RESET_SEMAPHORE
+
    CREATE_INDEX( "1", "id", _alias )
    CREATE_INDEX( "2", "naz", _alias )
+   AFTER_CREATE_INDEX
 
 
    // -------------------------------------
@@ -304,9 +307,10 @@ FUNCTION cre_all_ld( ver )
    _table_name := "ld_rj"
 
    IF_NOT_FILE_DBF_CREATE
-   IF_C_RESET_SEMAPHORE
+
 
    CREATE_INDEX( "ID", "id", _alias )
+   AFTER_CREATE_INDEX
 
 
    // -----------------------------------------------
@@ -325,12 +329,12 @@ FUNCTION cre_all_ld( ver )
    _table_name := "ld_radkr"
 
    IF_NOT_FILE_DBF_CREATE
-   IF_C_RESET_SEMAPHORE
 
    CREATE_INDEX( "1", "str(godina)+str(mjesec)+idradn+idkred+naosnovu", _alias )
    CREATE_INDEX( "2", "idradn+idkred+naosnovu+str(godina)+str(mjesec)", _alias )
    CREATE_INDEX( "3", "idkred+naosnovu+idradn+str(godina)+str(mjesec)", _alias )
    CREATE_INDEX( "4", "str(godina)+str(mjesec)+idradn+naosnovu", _alias )
+   AFTER_CREATE_INDEX
 
    // --------------------------------------------------
    // _RADKR.DBF
@@ -353,12 +357,11 @@ FUNCTION cre_all_ld( ver )
    _table_name := "ld_ld"
 
    IF_NOT_FILE_DBF_CREATE
-   IF_C_RESET_SEMAPHORE
-
 
    FOR EACH cKey IN hIndexes:Keys
       CREATE_INDEX( cKey, hIndexes[ cKey ], _alias )
    NEXT
+   AFTER_CREATE_INDEX
 
 
    // --------------------------------------
@@ -401,9 +404,9 @@ FUNCTION cre_all_ld( ver )
    _table_name := "ld_parobr"
 
    IF_NOT_FILE_DBF_CREATE
-   IF_C_RESET_SEMAPHORE
 
    CREATE_INDEX( "ID", "id + godina + obr", _alias )
+   AFTER_CREATE_INDEX
 
 
    // ---------------------------------------
@@ -428,9 +431,9 @@ FUNCTION cre_all_ld( ver )
    _table_name := "ld_obracuni"
 
    IF_NOT_FILE_DBF_CREATE
-   IF_C_RESET_SEMAPHORE
 
    CREATE_INDEX( "RJ", "rj+STR(godina)+STR(mjesec)+status+obr", _alias )
+   AFTER_CREATE_INDEX
 
 
    // -----------------------------------------------------------
@@ -491,10 +494,10 @@ FUNCTION cre_all_ld( ver )
    _table_name := "ld_pk_radn"
 
    IF_NOT_FILE_DBF_CREATE
-   IF_C_RESET_SEMAPHORE
 
    CREATE_INDEX( "1", "idradn", _alias )
    CREATE_INDEX( "2", "STR(zahtjev)", _alias )
+   AFTER_CREATE_INDEX
 
 
    // ---------------------------------------------------
@@ -530,9 +533,9 @@ FUNCTION cre_all_ld( ver )
    _table_name := "ld_pk_data"
 
    IF_NOT_FILE_DBF_CREATE
-   IF_C_RESET_SEMAPHORE
 
    CREATE_INDEX( "1", "idradn+ident+STR(rbr)", _alias )
+   AFTER_CREATE_INDEX
 
 
 
@@ -549,9 +552,9 @@ FUNCTION cre_all_ld( ver )
    AAdd( aDBf, { 'STATUS', 'C',  2, 0 } )
 
    IF_NOT_FILE_DBF_CREATE
-   IF_C_RESET_SEMAPHORE
 
    CREATE_INDEX( "IDRADN", "idradn", _alias )
+   AFTER_CREATE_INDEX
 
 
    // ------------------------------------------
@@ -580,12 +583,12 @@ FUNCTION cre_all_ld( ver )
    ENDIF
 
    IF_NOT_FILE_DBF_CREATE
-   IF_C_RESET_SEMAPHORE
 
    CREATE_INDEX( "1", "str(godina,4,0)+str(mjesec,2,0)+idradn+idrj+str(dan)+dandio+idtippr", _alias  )
    CREATE_INDEX( "2", "idkonto+str(godina,4,0)+str(mjesec,2,0)+idradn", _alias )
    CREATE_INDEX( "3", "idnorsiht+str(godina,4,0)+str(mjesec,2,0)+idradn", _alias )
    CREATE_INDEX( "4", "idradn+str(godina,4,0)+str(mjesec,2,0)+idkonto", _alias )
+   AFTER_CREATE_INDEX
 
    // HACK: 2i indeks sortime pravi probleme
    // CREATE_INDEX( "2i", "idkonto+SORTIME(idradn)+str(godina)+str(mjesec)", _alias )
@@ -608,10 +611,10 @@ FUNCTION cre_all_ld( ver )
    _table_name := "ld_norsiht"
 
    IF_NOT_FILE_DBF_CREATE
-   IF_C_RESET_SEMAPHORE
 
    CREATE_INDEX( "ID", "id", _alias )
    CREATE_INDEX( "NAZ", "NAZ", _alias )
+   AFTER_CREATE_INDEX
 
    // ---------------------------------------------------------------
    // TPRSIHT   - tipovi primanja koji odradjuju sihtaricu
@@ -630,13 +633,12 @@ FUNCTION cre_all_ld( ver )
    _table_name := "ld_tprsiht"
 
    IF_NOT_FILE_DBF_CREATE
-   IF_C_RESET_SEMAPHORE
 
    CREATE_INDEX( "ID", "id", _alias )
    CREATE_INDEX( "NAZ", "NAZ", _alias )
+   AFTER_CREATE_INDEX
 
    RETURN .T.
-
 
 
 STATIC FUNCTION kreiraj_tabelu_ld__ld( aDbf )
@@ -716,6 +718,7 @@ FUNCTION a_dbf_ld_ld()
    AAdd( aDBf, { 'RADSAT', 'N',  10,  0 } )
 
    RETURN aDbf
+
 
 FUNCTION h_ld_ld_indexes()
 

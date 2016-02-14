@@ -35,10 +35,11 @@ FUNCTION cre_all_mat( ver )
    _table_name := "mat_nalog"
 
    IF_NOT_FILE_DBF_CREATE
-   IF_C_RESET_SEMAPHORE
+
 
    CREATE_INDEX( "1", "IdFirma+IdVn+BrNal", _alias )
    CREATE_INDEX( "2", "datnal", _alias )
+   AFTER_CREATE_INDEX
 
    _alias := "MAT_PNALOG"
    _table_name := "mat_pnalog"
@@ -46,6 +47,7 @@ FUNCTION cre_all_mat( ver )
    IF_NOT_FILE_DBF_CREATE
 
    CREATE_INDEX( "1", "IdFirma", _alias )
+
 
 
    // --------------------------------------------------------
@@ -79,7 +81,7 @@ FUNCTION cre_all_mat( ver )
    _table_name := "mat_suban"
 
    IF_NOT_FILE_DBF_CREATE
-   IF_C_RESET_SEMAPHORE
+
 
    CREATE_INDEX( "1", "IdFirma+IdRoba+dtos(DatDok)", _alias )
    CREATE_INDEX( "2", "IdFirma+IdPartner+IdRoba", _alias )
@@ -90,6 +92,7 @@ FUNCTION cre_all_mat( ver )
    CREATE_INDEX( "9", "DESCEND(DTOS(datdok))+idpartner", _alias )
    CREATE_INDEX( "IDROBA", "idroba", _alias )
    CREATE_INDEX( "IDPARTN", "idpartner", _alias )
+   AFTER_CREATE_INDEX
 
    _alias := "MAT_PSUBAN"
    _table_name := "mat_psuban"
@@ -126,11 +129,11 @@ FUNCTION cre_all_mat( ver )
       modstru( { "*" + _table_name, "C RBR C 3 0 RBR C 4 0" } )
    ENDIF
 
-   IF_C_RESET_SEMAPHORE
 
    CREATE_INDEX( "1", "IdFirma+IdKonto+dtos(DatNal)", _alias )
    CREATE_INDEX( "2", "idFirma+IdVN+BrNal+IdKonto", _alias )
    CREATE_INDEX( "3", "datnal", _alias )
+   AFTER_CREATE_INDEX
 
    _alias := "MAT_PANAL"
    _table_name := "mat_panal"
@@ -168,11 +171,10 @@ FUNCTION cre_all_mat( ver )
       modstru( { "*" + _table_name, "C RBR C 3 0 RBR C 4 0" } )
    ENDIF
 
-   IF_C_RESET_SEMAPHORE
-
    CREATE_INDEX( "1", "IdFirma+IdKonto+dtos(DatNal)", _alias )
    CREATE_INDEX( "2", "idFirma+IdVN+BrNal+IdKonto", _alias )
    CREATE_INDEX( "3", "datnal", _alias )
+   AFTER_CREATE_INDEX
 
    _alias := "MAT_PSINT"
    _table_name := "mat_psint"
@@ -257,8 +259,8 @@ FUNCTION cre_all_mat( ver )
    _table_name := "mat_karkon"
 
    IF_NOT_FILE_DBF_CREATE
-   IF_C_RESET_SEMAPHORE
 
    CREATE_INDEX( "ID", "ID", _alias )
+   AFTER_CREATE_INDEX
 
    RETURN .T.

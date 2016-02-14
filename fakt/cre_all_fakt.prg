@@ -75,8 +75,6 @@ FUNCTION cre_all_fakt( ver )
    ENDIF
 
 
-   IF_C_RESET_SEMAPHORE
-
    CREATE_INDEX( "1", "IdFirma+idtipdok+brdok+rbr+podbr", _alias )
    CREATE_INDEX( "2", "IdFirma+dtos(datDok)+idtipdok+brdok+rbr", _alias )
    CREATE_INDEX( "3", "idroba+dtos(datDok)", _alias )
@@ -84,6 +82,7 @@ FUNCTION cre_all_fakt( ver )
    CREATE_INDEX( "7", "idfirma+idpartner+idroba+dtos(datdok)", _alias )
    CREATE_INDEX( "8", "datdok", _alias )
    CREATE_INDEX( "IDPARTN", "idpartner", _alias )
+   AFTER_CREATE_INDEX
 
    // ----------------------------------------------------------------------------
    // FAKT_PRIPR
@@ -182,7 +181,6 @@ FUNCTION cre_all_fakt( ver )
       modstru( { "*" + _table_name, "D DOK_VEZA C 150 0" } )
    ENDIF
 
-   IF_C_RESET_SEMAPHORE
 
    CREATE_INDEX( "1", "IdFirma+idtipdok+brdok", _alias )
    CREATE_INDEX( "2", "IdFirma+idtipdok+partner", _alias )
@@ -190,6 +188,7 @@ FUNCTION cre_all_fakt( ver )
    CREATE_INDEX( "4", "idtipdok", _alias )
    CREATE_INDEX( "5", "datdok", _alias )
    CREATE_INDEX( "6", "IdFirma+idpartner+idtipdok", _alias )
+   AFTER_CREATE_INDEX
 
    // ---------------------------------
    // FAKT_DOKS2
@@ -211,9 +210,9 @@ FUNCTION cre_all_fakt( ver )
    _table_name := "fakt_doks2"
 
    IF_NOT_FILE_DBF_CREATE
-   IF_C_RESET_SEMAPHORE
 
    CREATE_INDEX( "1", "IdFirma+idtipdok+brdok", _alias )
+   AFTER_CREATE_INDEX
 
 
    // ---------------------------------------------------
@@ -230,10 +229,10 @@ FUNCTION cre_all_fakt( ver )
    _table_name := "fakt_upl"
 
    IF_NOT_FILE_DBF_CREATE
-   IF_C_RESET_SEMAPHORE
 
    CREATE_INDEX( "1", "IDPARTNER+DTOS(DATUPL)", _alias )
    CREATE_INDEX( "2", "IDPARTNER", _alias )
+   AFTER_CREATE_INDEX
 
 
    // ---------------------------------------------------
@@ -248,9 +247,9 @@ FUNCTION cre_all_fakt( ver )
    _table_name := "fakt_ftxt"
 
    IF_NOT_FILE_DBF_CREATE
-   IF_C_RESET_SEMAPHORE
 
    CREATE_INDEX( "ID", "ID", _alias )
+   AFTER_CREATE_INDEX
 
 
    // ------------------------------------------------

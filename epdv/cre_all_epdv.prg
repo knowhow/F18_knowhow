@@ -27,13 +27,13 @@ FUNCTION cre_all_epdv( ver )
    _table_name := "epdv_kuf"
 
    IF_NOT_FILE_DBF_CREATE
-   IF_C_RESET_SEMAPHORE
 
    CREATE_INDEX( "datum", "dtos(datum)+src_br_2", _alias )
    CREATE_INDEX( "l_datum", "lock+dtos(datum)+src_br_2", _alias )
    CREATE_INDEX( "g_r_br", "STR(g_r_br,6,0)+dtos(datum)", _alias )
    CREATE_INDEX( "BR_DOK", "STR(BR_DOK,6,0)+STR(r_br,6,0)", _alias )
    CREATE_INDEX( "BR_DOK2", "STR(BR_DOK,6,0)+dtos(datum)", _alias )
+   AFTER_CREATE_INDEX
 
 
    // daj mi polja za kif
@@ -43,13 +43,13 @@ FUNCTION cre_all_epdv( ver )
    _table_name := "epdv_kif"
 
    IF_NOT_FILE_DBF_CREATE
-   IF_C_RESET_SEMAPHORE
 
    CREATE_INDEX( "datum", "dtos(datum)+src_br_2", _alias )
    CREATE_INDEX( "l_datum", "lock+dtos(datum)+src_br_2", _alias )
    CREATE_INDEX( "g_r_br", "STR(g_r_br,6,0)+dtos(datum)", _alias )
    CREATE_INDEX( "BR_DOK", "STR(BR_DOK,6,0)+STR(r_br,6,0)", _alias )
    CREATE_INDEX( "BR_DOK2", "STR(BR_DOK,6,0)+dtos(datum)", _alias )
+   AFTER_CREATE_INDEX
 
 
    // daj mi polja za pdv
@@ -59,9 +59,10 @@ FUNCTION cre_all_epdv( ver )
    _table_name := "epdv_pdv"
 
    IF_NOT_FILE_DBF_CREATE
-   IF_C_RESET_SEMAPHORE
+
 
    CREATE_INDEX( "period", "DTOS(per_od)+DTOS(per_do)", _alias )
+   AFTER_CREATE_INDEX
 
 
    // P_KIF, P_KUF
@@ -72,11 +73,10 @@ FUNCTION cre_all_epdv( ver )
    _alias := "P_KUF"
    _table_name := "epdv_p_kuf"
 
-   IF_NOT_FILE_DBF_CREATE
-
    CREATE_INDEX( "datum", "dtos(datum)+src_br_2", _alias )
    CREATE_INDEX( "l_datum", "lock+dtos(datum)+src_br_2", _alias )
    CREATE_INDEX( "br_dok", "STR(br_dok,6,0)+STR(r_br,6,0)", _alias )
+   AFTER_CREATE_INDEX
 
 
    // daj mi polja za p_kif
@@ -85,11 +85,11 @@ FUNCTION cre_all_epdv( ver )
    _alias := "P_KIF"
    _table_name := "epdv_p_kif"
 
-   IF_NOT_FILE_DBF_CREATE
 
    CREATE_INDEX( "datum", "dtos(datum)+src_br_2", _alias )
    CREATE_INDEX( "l_datum", "lock+dtos(datum)+src_br_2", _alias )
    CREATE_INDEX( "br_dok", "STR(br_dok,6,0)+STR(r_br,6,0)", _alias )
+   AFTER_CREATE_INDEX
 
 
    // SG_KIF, SG_KUF
@@ -101,11 +101,10 @@ FUNCTION cre_all_epdv( ver )
    _alias := "SG_KUF"
    _table_name := "epdv_sg_kuf"
 
-   IF_NOT_FILE_DBF_CREATE
-   IF_C_RESET_SEMAPHORE
 
    CREATE_INDEX( "id", "id", _alias )
    CREATE_INDEX( "naz", "id", _alias )
+   AFTER_CREATE_INDEX
 
    // daj mi polja za sg_kif
    aDbf := get_sg_fields()
@@ -113,11 +112,9 @@ FUNCTION cre_all_epdv( ver )
    _alias := "SG_KIF"
    _table_name := "epdv_sg_kif"
 
-   IF_NOT_FILE_DBF_CREATE
-   IF_C_RESET_SEMAPHORE
-
    CREATE_INDEX( "id", "id", _alias )
    CREATE_INDEX( "naz", "id", _alias )
+   AFTER_CREATE_INDEX
 
    RETURN .T.
 

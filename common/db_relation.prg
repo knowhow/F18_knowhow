@@ -25,12 +25,13 @@ FUNCTION cre_relation( ver )
    _alias := "RELATION"
 
    IF_NOT_FILE_DBF_CREATE
-   IF_C_RESET_SEMAPHORE
+
 
    CREATE_INDEX( "1", "TFROM+TTO+TFROMID", _alias )
    CREATE_INDEX( "2", "TTO+TFROM+TTOID", _alias )
+   AFTER_CREATE_INDEX
 
-   RETURN
+   RETURN .T.
 
 
 // ------------------------------------------

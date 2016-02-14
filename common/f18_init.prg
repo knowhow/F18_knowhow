@@ -489,7 +489,7 @@ FUNCTION is_in_main_thread()
 
 
 
-FUNCTION thread_create_dbfs()
+PROCEDURE thread_create_dbfs()
 
    LOCAL _ver
 
@@ -518,7 +518,7 @@ FUNCTION thread_create_dbfs()
 
    my_server_close()
 
-   RETURN .T.
+   RETURN
 
 
 

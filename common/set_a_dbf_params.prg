@@ -18,4 +18,4 @@ FUNCTION set_a_dbf_params()
    set_a_dbf_temp( "kparams",   "KPARAMS", F_KPARAMS   )
    set_a_dbf_temp( "secur",   "SECUR", F_SECUR     )
 
-   RETURN
+   RETURN .T.

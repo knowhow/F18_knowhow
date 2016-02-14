@@ -11,72 +11,76 @@
 
 #include "f18.ch"
 
-static _table_name := "f18_test"
+STATIC _table_name := "f18_test"
 
-function create_test_f18_dbf()
-local _dbf_struct := {}
-local _i
+FUNCTION create_test_f18_dbf()
 
-// tabele sa strukturom sifarnika (id je primarni ključ)
-set_a_dbf_sifarnik(_table_name   , "F18_TEST"     , 500      )
+   LOCAL _dbf_struct := {}
+   LOCAL _i
 
-
-
-AADD(_dbf_struct,      { 'ID' ,  'C' ,   2 ,  0 })
-AADD(_dbf_struct,      { 'NAZ' , 'C' ,  10 ,  0 })
-
-// moramo inicijalno napuniti semafor
-reset_semaphore_version(_table_name)
-
-DBCREATE2(_table_name, _dbf_struct)
-
-CREATE_INDEX("ID",  "id", _table_name)
-CREATE_INDEX("NAZ", "naz", _table_name)
-
-my_usex(_table_name)
-
-for _i := 1 to 50
- APPEND BLANK
- replace id with STR(_i, 2)
- replace naz with "naz" + STR(_i, 2)
-next
+   // tabele sa strukturom sifarnika (id je primarni ključ)
+   set_a_dbf_sifarnik( _table_name, "F18_TEST", 500      )
 
 
-return .f.
 
-function modstru_test()
-local _ini_params
-local _current_dbf_ver, _new_dbf_ver
-local _ini_section := "DBF_version"
+   AAdd( _dbf_struct,      { 'ID',  'C',   2,  0 } )
+   AAdd( _dbf_struct,      { 'NAZ', 'C',  10,  0 } )
 
-create_sql_table_f18_test()
-create_semaphore(_table_name)
-create_test_f18_dbf()
+   // moramo inicijalno napuniti semafor
+   reset_semaphore_version( _table_name )
 
-modstru({"*" + _table_name, "C ID C 2 0  ID C 5 0",  "A NAZ2 C 40 0"})
+   DBCREATE2( _table_name, _dbf_struct )
 
-my_use( _table_name, _table_name, .t.)
+   CREATE_INDEX( "ID",  "id", _table_name )
+   CREATE_INDEX( "NAZ", "naz", _table_name )
 
-TEST_LINE( FIELDPOS("NAZ2") > 0 .and. LEN(EVAL(FIELDBLOCK("ID"))) == 5,  .t.)
-use
-return
+   my_usex( _table_name )
+
+   FOR _i := 1 TO 50
+      APPEND BLANK
+      REPLACE id WITH Str( _i, 2 )
+      REPLACE naz WITH "naz" + Str( _i, 2 )
+   NEXT
+
+   RETURN .F.
+
+FUNCTION modstru_test()
+
+   LOCAL _ini_params
+   LOCAL _current_dbf_ver, _new_dbf_ver
+   LOCAL _ini_section := "DBF_version"
+
+   create_sql_table_f18_test()
+   create_semaphore( _table_name )
+   create_test_f18_dbf()
+
+   modstru( { "*" + _table_name, "C ID C 2 0  ID C 5 0",  "A NAZ2 C 40 0" } )
+
+   SELECT 9000
+   my_use( _table_name, _table_name )
+
+   TEST_LINE( FieldPos( "NAZ2" ) > 0 .AND. Len( Eval( FieldBlock( "ID" ) ) ) == 5,  .T. )
+   USE
+
+   RETURN
 
 
 // ------------------------------------
 // ------------------------------------
-function create_sql_table_f18_test()
-local _qry, _ret
+FUNCTION create_sql_table_f18_test()
 
-_qry := "drop table if exists fmk.f18_test;"
-_qry += "create table f18_test ("
-_qry += "id varchar(2), naz varchar(40)"
-_qry += "); "
-_qry += "GRANT ALL ON TABLE fmk.f18_test TO xtrole;"
+   LOCAL _qry, _ret
 
-_ret := run_sql_query(_qry)
+   _qry := "drop table if exists fmk.f18_test;"
+   _qry += "create table f18_test ("
+   _qry += "id varchar(2), naz varchar(40)"
+   _qry += "); "
+   _qry += "GRANT ALL ON TABLE fmk.f18_test TO xtrole;"
 
-if VALTYPE(_ret)  == "O"
-   return .t.
-else
-   return .f.
-endif
+   _ret := run_sql_query( _qry )
+
+   IF ValType( _ret )  == "O"
+      RETURN .T.
+   ELSE
+      RETURN .F.
+   ENDIF

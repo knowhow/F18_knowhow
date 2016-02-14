@@ -157,7 +157,7 @@ FUNCTION GlobalErrorHandler( err_obj, lShowErrorReport, lQuitApp )
 FUNCTION OutBug( ... )
 
    IF is_in_main_thread()
-      OutStd( ..., hb_eol() )
+      QOUT( ... )
    ELSE
       OutErr( ..., hb_eol() )
    ENDIF

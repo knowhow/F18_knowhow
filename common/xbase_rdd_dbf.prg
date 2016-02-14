@@ -26,7 +26,7 @@ FUNCTION f18_ime_dbf( xTableRec )
       _a_dbf_rec := get_a_dbf_rec( FILEBASE( xTableRec, .T. ), .T. )
       EXIT
    OTHERWISE
-      Alert( "f1_ime_dbf arg ?! " + hb_ValToStr( xTableRec ) )
+     ?E  "f18_ime_dbf arg ?! " + hb_ValToStr( xTableRec )
    ENDSWITCH
 
    IF _a_dbf_rec[ "table" ] == "x"
@@ -452,13 +452,14 @@ STATIC FUNCTION zatvori_dbf( value )
 
 FUNCTION dbf_open_temp_and_count( aDbfRec, nCntSql, nCnt, nDel )
 
-   LOCAL cAliasTemp := "temp__" + aDbfRec[ "alias" ]
-   LOCAL cFullDbf := my_home() + aDbfRec[ "table" ]
+   LOCAL cAliasTemp := "TEMP__" + aDbfRec[ "alias" ]
+   LOCAL cFullDbf := f18_ime_dbf( aDbfRec )
    LOCAL cFullIdx
    LOCAL bKeyBlock, cEmptyRec, nDel0, nCnt2
+   LOCAL oError
+   LOCAL nI, cMsg, cLogMsg := ""
 
    cFullIdx := ImeDbfCdx( cFullDbf )
-
 
    BEGIN SEQUENCE WITH {| err| Break( err ) }
       SELECT ( aDbfRec[ "wa" ] + 2000 )
@@ -467,13 +468,12 @@ FUNCTION dbf_open_temp_and_count( aDbfRec, nCntSql, nCnt, nDel )
          dbSetIndex( ImeDbfCdx( cFullDbf ) )
       ENDIF
    RECOVER USING  oError
+      LOG_CALL_STACK cLogMsg
       ?E "dbf_open_temp_and_count use dbf:", cFullDbf, "alias:", cAliasTemp, oError:Description
       QUIT_1
    END SEQUENCE
 
-
    count_deleted( @nCnt, @nDel )
-
 
    IF Abs( nCntSql - nCnt + nDel ) > 0
 
@@ -493,7 +493,7 @@ FUNCTION dbf_open_temp_and_count( aDbfRec, nCntSql, nCnt, nDel )
             aDbfRec[ "table" ] + " nDel:" + AllTrim( Str( nDel ) ) + ;
             " nCnt2= " + AllTrim( Str ( nCnt2 ) ), 1 )
       ELSE
-         log_write( "ERR tbl:" + aDbfRec[ "table" ] + "not defined dbf_key_empty_rec", 1 )
+         log_write( "ERR-dbf_open_temp_and_count: " + aDbfRec[ "table" ] + " not defined dbf_key_empty_rec", 1 )
       ENDIF
 
    ENDIF

@@ -77,12 +77,12 @@ FUNCTION cre_all_kadev( ver )
    _table_name := "kadev_0"
 
    IF_NOT_FILE_DBF_CREATE
-   IF_C_RESET_SEMAPHORE
 
    CREATE_INDEX( "1", "id", _alias )
    CREATE_INDEX( "2", "btoe(prezime+ime)", _alias )
    CREATE_INDEX( "3", "id2", _alias )
    CREATE_INDEX( "4", "idrj+idrmj", _alias )
+   AFTER_CREATE_INDEX
 
 
    // --------------------------------------------------
@@ -117,11 +117,11 @@ FUNCTION cre_all_kadev( ver )
    _table_name := "kadev_1"
 
    IF_NOT_FILE_DBF_CREATE
-   IF_C_RESET_SEMAPHORE
 
    CREATE_INDEX( "1", "id+dtos(datumOd)+idpromj+opis", _alias )
    CREATE_INDEX( "2", "dtos(datumOd)", _alias )
    CREATE_INDEX( "3", "id+idpromj", _alias )
+   AFTER_CREATE_INDEX
 
 
    // ------------------------------------------------------
@@ -143,10 +143,10 @@ FUNCTION cre_all_kadev( ver )
    _table_name := "kadev_promj"
 
    IF_NOT_FILE_DBF_CREATE
-   IF_C_RESET_SEMAPHORE
 
    CREATE_INDEX( "id", "id", _alias )
    CREATE_INDEX( "naz", "naz", _alias )
+   AFTER_CREATE_INDEX
 
 
    // ----------------------------------------------------
@@ -163,10 +163,10 @@ FUNCTION cre_all_kadev( ver )
    _table_name := "kadev_mz"
 
    IF_NOT_FILE_DBF_CREATE
-   IF_C_RESET_SEMAPHORE
 
    CREATE_INDEX( "id", "id", _alias )
    CREATE_INDEX( "naz", "naz", _alias )
+   AFTER_CREATE_INDEX
 
    // -------------------------------------------------------
    // KDV_NERDAN
@@ -181,11 +181,11 @@ FUNCTION cre_all_kadev( ver )
    _table_name := "kadev_nerdan"
 
    IF_NOT_FILE_DBF_CREATE
-   IF_C_RESET_SEMAPHORE
 
    CREATE_INDEX( "id", "id", _alias )
    CREATE_INDEX( "naz", "naz", _alias )
    CREATE_INDEX( "dat", "datum", _alias )
+   AFTER_CREATE_INDEX
 
 
    // ------------------------------------------------
@@ -201,10 +201,11 @@ FUNCTION cre_all_kadev( ver )
    _table_name := "kadev_rmj"
 
    IF_NOT_FILE_DBF_CREATE
-   IF_C_RESET_SEMAPHORE
+
 
    CREATE_INDEX( "id", "id", _alias )
    CREATE_INDEX( "naz", "naz", _alias )
+   AFTER_CREATE_INDEX
 
 
    // ------------------------------------------------
@@ -220,10 +221,10 @@ FUNCTION cre_all_kadev( ver )
    _table_name := "kadev_rj"
 
    IF_NOT_FILE_DBF_CREATE
-   IF_C_RESET_SEMAPHORE
 
    CREATE_INDEX( "id", "id", _alias )
    CREATE_INDEX( "naz", "naz", _alias )
+   AFTER_CREATE_INDEX
 
 
 
@@ -253,9 +254,10 @@ FUNCTION cre_all_kadev( ver )
    _table_name := "kadev_rjrmj"
 
    IF_NOT_FILE_DBF_CREATE
-   IF_C_RESET_SEMAPHORE
+
 
    CREATE_INDEX( "id", "idrj + idrmj + idzanim1 + idstrsprod + idstrsprdo", _alias )
+   AFTER_CREATE_INDEX
 
 
    // ------------------------------------------------
@@ -271,10 +273,11 @@ FUNCTION cre_all_kadev( ver )
    _table_name := "kadev_k1"
 
    IF_NOT_FILE_DBF_CREATE
-   IF_C_RESET_SEMAPHORE
+
 
    CREATE_INDEX( "id", "id", _alias )
    CREATE_INDEX( "naz", "naz", _alias )
+   AFTER_CREATE_INDEX
 
 
    // ------------------------------------------------
@@ -290,10 +293,11 @@ FUNCTION cre_all_kadev( ver )
    _table_name := "kadev_k2"
 
    IF_NOT_FILE_DBF_CREATE
-   IF_C_RESET_SEMAPHORE
+
 
    CREATE_INDEX( "id", "id", _alias )
    CREATE_INDEX( "naz", "naz", _alias )
+   AFTER_CREATE_INDEX
 
 
    // ------------------------------------------------
@@ -309,10 +313,11 @@ FUNCTION cre_all_kadev( ver )
    _table_name := "kadev_zanim"
 
    IF_NOT_FILE_DBF_CREATE
-   IF_C_RESET_SEMAPHORE
+
 
    CREATE_INDEX( "id", "id", _alias )
    CREATE_INDEX( "naz", "naz", _alias )
+   AFTER_CREATE_INDEX
 
 
    // ------------------------------------------------
@@ -329,10 +334,10 @@ FUNCTION cre_all_kadev( ver )
    _table_name := "kadev_rrasp"
 
    IF_NOT_FILE_DBF_CREATE
-   IF_C_RESET_SEMAPHORE
 
    CREATE_INDEX( "id", "id", _alias )
    CREATE_INDEX( "naz", "naz", _alias )
+   AFTER_CREATE_INDEX
 
 
    // ------------------------------------------------
@@ -348,11 +353,11 @@ FUNCTION cre_all_kadev( ver )
    _table_name := "kadev_ves"
 
    IF_NOT_FILE_DBF_CREATE
-   IF_C_RESET_SEMAPHORE
+
 
    CREATE_INDEX( "id", "id", _alias )
    CREATE_INDEX( "naz", "naz", _alias )
-
+   AFTER_CREATE_INDEX
 
    // ------------------------------------------------
    // KDV_CIN ( cin, vosjka )
@@ -367,10 +372,11 @@ FUNCTION cre_all_kadev( ver )
    _table_name := "kadev_cin"
 
    IF_NOT_FILE_DBF_CREATE
-   IF_C_RESET_SEMAPHORE
+
 
    CREATE_INDEX( "id", "id", _alias )
    CREATE_INDEX( "naz", "naz", _alias )
+   AFTER_CREATE_INDEX
 
 
    // ------------------------------------------------
@@ -386,10 +392,11 @@ FUNCTION cre_all_kadev( ver )
    _table_name := "kadev_nac"
 
    IF_NOT_FILE_DBF_CREATE
-   IF_C_RESET_SEMAPHORE
+
 
    CREATE_INDEX( "id", "id", _alias )
    CREATE_INDEX( "naz", "naz", _alias )
+   AFTER_CREATE_INDEX
 
 
    // ---------------------------------------------------------
@@ -407,7 +414,7 @@ FUNCTION cre_all_kadev( ver )
    _table_name := "kadev_obrazdef"
 
    IF_NOT_FILE_DBF_CREATE
-   // IF_C_RESET_SEMAPHORE
+
 
    CREATE_INDEX( "1", "tip+grupa+red_br", _alias )
 
@@ -424,9 +431,10 @@ FUNCTION cre_all_kadev( ver )
    _table_name := "kadev_globusl"
 
    IF_NOT_FILE_DBF_CREATE
-   IF_C_RESET_SEMAPHORE
+
 
    CREATE_INDEX( "1", "Komentar", _alias )
+   AFTER_CREATE_INDEX
 
 
    // ------------------------------------------------------
@@ -441,10 +449,11 @@ FUNCTION cre_all_kadev( ver )
    _table_name := "kadev_uslovi"
 
    IF_NOT_FILE_DBF_CREATE
-   IF_C_RESET_SEMAPHORE
+
 
    CREATE_INDEX( "1", "id", _alias )
    CREATE_INDEX( "2", "naz", _alias )
+   AFTER_CREATE_INDEX
 
 
    // -----------------------------------------------------
@@ -462,10 +471,11 @@ FUNCTION cre_all_kadev( ver )
    _table_name := "kadev_rjes"
 
    IF_NOT_FILE_DBF_CREATE
-   IF_C_RESET_SEMAPHORE
+
 
    CREATE_INDEX( "id", "id", _alias )
    CREATE_INDEX( "naz", "naz", _alias )
+   AFTER_CREATE_INDEX
 
 
    // ---------------------------------------------------------------
@@ -490,11 +500,12 @@ FUNCTION cre_all_kadev( ver )
    _table_name := "kadev_defrjes"
 
    IF_NOT_FILE_DBF_CREATE
-   IF_C_RESET_SEMAPHORE
+
 
    CREATE_INDEX( "1", "idrjes+id", _alias )
    CREATE_INDEX( "2", "idrjes+ipromj+id", _alias )
    CREATE_INDEX( "3", "idrjes+priun+id", _alias )
    CREATE_INDEX( "4", "id", _alias )
+   AFTER_CREATE_INDEX
 
-   RETURN
+   RETURN .T.

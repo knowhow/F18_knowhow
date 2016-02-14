@@ -23,7 +23,6 @@ FUNCTION dbf_init( aDbf, cTableName, cAlias )
       reset_semaphore_version( cTableName )
       hRec := get_a_dbf_rec( cTableName, .T. )
       set_dbf_fields_from_struct( hRec )
-      my_use( cTableName )
    ENDIF
 
-   RETURN .F.
+   RETURN .T.

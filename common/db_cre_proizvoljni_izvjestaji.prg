@@ -34,9 +34,9 @@ FUNCTION proizvoljni_izvjestaji_db_cre()
    _table_name := "fin_izvje"
 
    IF_NOT_FILE_DBF_CREATE
-   IF_C_RESET_SEMAPHORE
 
    CREATE_INDEX( "ID", "id", _alias )
+   AFTER_CREATE_INDEX
 
 
    // KOLIZ.DBF (fin_koliz.dbf)
@@ -61,11 +61,9 @@ FUNCTION proizvoljni_izvjestaji_db_cre()
    _table_name := "fin_koliz"
 
    IF_NOT_FILE_DBF_CREATE
-   IF_C_RESET_SEMAPHORE
-
    CREATE_INDEX( "ID", "id", _alias )
-   CREATE_INDEX( "1","STR(rbr,2)", _alias )
-
+   CREATE_INDEX( "1", "STR(rbr,2)", _alias )
+   AFTER_CREATE_INDEX
 
 
    // ZAGLI.DBF (fin_zagli.dbf)
@@ -80,11 +78,11 @@ FUNCTION proizvoljni_izvjestaji_db_cre()
    _table_name := "fin_zagli"
 
    IF_NOT_FILE_DBF_CREATE
-   IF_C_RESET_SEMAPHORE
+
 
    CREATE_INDEX( "ID", "id", _alias )
    CREATE_INDEX( "1", "STR(x1,3)+STR(y1,3)", _alias )
-
+   AFTER_CREATE_INDEX
 
    // KONIZ.DBF ( fin_koniz.dbf )
 
@@ -108,9 +106,10 @@ FUNCTION proizvoljni_izvjestaji_db_cre()
    _table_name := "fin_koniz"
 
    IF_NOT_FILE_DBF_CREATE
-   IF_C_RESET_SEMAPHORE
+
 
    CREATE_INDEX( "ID", "id", _alias )
    CREATE_INDEX( "1", "izv+STR(ri,4)", _alias )
+   AFTER_CREATE_INDEX
 
-   RETURN
+   RETURN .T.

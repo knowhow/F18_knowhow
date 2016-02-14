@@ -20,7 +20,6 @@ FUNCTION cre_sif_konto( ver )
    LOCAL _alias
    LOCAL aDbf
 
-   // KONTO
    _alias := "KONTO"
    _table_name := "konto"
 
@@ -32,17 +31,12 @@ FUNCTION cre_sif_konto( ver )
    AAdd( aDBf, { "POZBILS", "C",   3,  0 } )
 
    IF_NOT_FILE_DBF_CREATE
-   IF_C_RESET_SEMAPHORE
 
    CREATE_INDEX( "ID", "id", _alias )
    CREATE_INDEX( "NAZ", "naz", _alias )
    index_mcode( my_home(), _alias )
 
-   // upisi default valute ako ne postoje
-   fill_tbl_valute()
-
-   // kreiranje tabela ugovora
-   db_cre_ugov( ver )
+   AFTER_CREATE_INDEX
 
    RETURN .T.
 
@@ -50,12 +44,13 @@ FUNCTION cre_sif_konto( ver )
 
 
 FUNCTION fill_tbl_valute()
-   LOCAL _rec, _tmp, _id
+
+   LOCAL _rec, _tmp, _id, _qry
    LOCAL _table := "fmk.valute"
 
    _tmp := table_count( _table )
 
-   if _tmp == 0
+   IF _tmp == 0
 
       _qry := "INSERT INTO " + _table
       _qry += " ( id, naz, naz2, datum, tip, kurs1, kurs2, kurs3 ) "
@@ -63,7 +58,7 @@ FUNCTION fill_tbl_valute()
       _qry += " '000', "
       _qry += " 'KONVERTIBILNA MARKA', "
       _qry += " 'KM ', "
-      _qry += sql_quote( CTOD( "01.01.04" ) ) + ", "
+      _qry += sql_quote( CToD( "01.01.04" ) ) + ", "
       _qry += " 'D', "
       _qry += " 1, 1, 1 "
       _qry += " ); "
@@ -73,13 +68,13 @@ FUNCTION fill_tbl_valute()
       _qry += " '978', "
       _qry += " 'EURO', "
       _qry += " 'EUR', "
-      _qry += sql_quote( CTOD( "01.01.04" ) ) + ", "
+      _qry += sql_quote( CToD( "01.01.04" ) ) + ", "
       _qry += " 'P', "
       _qry += " 0.51128, 0.51128, 0.51128 "
       _qry += " ); "
 
       _sql_query( my_server(), _qry )
 
-   endif
+   ENDIF
 
    RETURN .T.

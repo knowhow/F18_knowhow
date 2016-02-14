@@ -78,7 +78,7 @@ FUNCTION cre_sif_roba( ver )
       modstru( { "*" + _table_name, "C OPIS C 250 0 OPIS C 500 0" } )
    ENDIF
 
-   IF_C_RESET_SEMAPHORE
+
 
    CREATE_INDEX( "ID", "ID", _alias )
    index_mcode( my_home(), _alias )
@@ -89,7 +89,7 @@ FUNCTION cre_sif_roba( ver )
    CREATE_INDEX( "PLU", "str(fisc_plu, 10)",  _alias )
    CREATE_INDEX( "IDP", { "id+tip", 'tip=="P"' },  _alias )
 
-
+   AFTER_CREATE_INDEX
 
    // -------------------------------------------------
    // _ROBA
@@ -120,12 +120,14 @@ FUNCTION cre_sif_roba( ver )
    AAdd( aDBf, { 'N2', 'N',   20,  5 } )
 
    IF_NOT_FILE_DBF_CREATE
-   IF_C_RESET_SEMAPHORE
+
 
    CREATE_INDEX( "ID", "ID+ID2", _alias )
    CREATE_INDEX( "IDRBR", "ID+STR(R_BR,4,0)+ID2", _alias )
    CREATE_INDEX( "NAZ", "ID2+ID", _alias )
 
+
+   AFTER_CREATE_INDEX
 
    // -------------------------------------------------
    // BARKOD

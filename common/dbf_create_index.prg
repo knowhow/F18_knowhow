@@ -13,25 +13,18 @@
 
 STATIC nSlogova := 0
 
+MEMVAR cTag, cKljucIz, cFilter
+
 FUNCTION create_index( cImeInd, xKljuc, cAlias, lSilent )
 
-   LOCAL _force_erase := .F.
-   LOCAL bErr
-   LOCAL cFulDbf
-   LOCAL nH
-   LOCAL cImeCDXIz
-   LOCAL cImeCDX
+   LOCAL cImeCDX, cImeDbf
    LOCAL nOrder
-   LOCAL nPos
-   LOCAL cImeDbf
-   LOCAL _a_dbf_rec
-   LOCAL _wa
-   LOCAL _dbf
+   LOCAL hRec, hTmpRec
    LOCAL _tag
    LOCAL cKljuc
    LOCAL _unique := .F.
    LOCAL lPostoji
-   LOCAL _err, _msg
+   LOCAL nPom, cOrdKey
 
    PRIVATE cTag
    PRIVATE cKljuciz
@@ -55,14 +48,18 @@ FUNCTION create_index( cImeInd, xKljuc, cAlias, lSilent )
    CLOSE ALL
 
    cAlias := FILEBASE( cAlias )
+   hTmpRec := hb_Hash()
 
-   _a_dbf_rec := get_a_dbf_rec( cAlias, .T. )
-   _wa := _a_dbf_rec[ "wa" ]
+   hRec := get_a_dbf_rec( cAlias, .T. )
 
+   hTmpRec[ 'full_table' ] := f18_ime_dbf( hRec )
+   hTmpRec[ 'table' ] := hRec[ 'table' ]
+   hTmpRec[ 'alias' ] := "CREIND__" + hRec[ "alias" ]
+   hTmpRec[ 'wa' ] := hRec[ 'wa' ] + 5000
 
    FOR EACH _tag in { cTag, "DEL" }
 
-      cImeDbf := f18_ime_dbf( cAlias )
+      cImeDbf := hTmpRec[ 'full_table' ]
       cImeCdx := ImeDbfCdx( cImeDbf )
 
       nPom := RAt( SLASH, cImeInd )
@@ -76,7 +73,6 @@ FUNCTION create_index( cImeInd, xKljuc, cAlias, lSilent )
          cTag := cImeInd
       ENDIF
 
-
       IF _tag == "DEL"
          cTag    := "DEL"
          cKljuc  := "deleted()"
@@ -84,52 +80,14 @@ FUNCTION create_index( cImeInd, xKljuc, cAlias, lSilent )
       ENDIF
 
       lPostoji := .T.
-      SELECT ( _wa )
-      _dbf := f18_ime_dbf( cAlias )
 
-      BEGIN SEQUENCE WITH { |err| Break( err ) }
-
-         dbUseArea( .F., DBFENGINE, _dbf, NIL, .T., .F. )
-
-      RECOVER USING _err
-
-         _msg := "create_index ERR-CI: " + _err:description + ": tbl:" + cAlias + " se ne moze otvoriti ?!"
-         log_write( _msg, 2 )
-         ?E _msg
-
-         // _err:GenCode = 23
-         IF _err:description == "Read error"
-            _force_erase := .T.
-         ENDIF
-
-         // kada imamo pokusaj duplog otvaranja onda je
-         // _err:GenCode = 21
-         // _err:description = "Open error"
-         ferase_dbf( cAlias, _force_erase )
-
-         QUIT_1
-
-      END SEQUENCE
-
-
-      BEGIN SEQUENCE WITH { | err | Break( err ) }
-         IF File( ImeDbfCdx( _dbf ) ) // open index
-            dbSetIndex( ImeDbfCdx( _dbf ) )
-         ENDIF
-      RECOVER USING _err
-
-         FErase( ImeDbfCdx( _dbf ) ) // ostecen index brisati
-      END SEQUENCE
-
-      IF  File( ImeDbfCdx( _dbf, OLD_INDEXEXT ) )
-         FErase( ImeDbfCdx( _dbf, OLD_INDEXEXT ) )
-      ENDIF
+      my_use_temp( hTmpRec, NIL, .F., .F., .T. ) // shared: my_use_temp( hDbfRec, table, new_area, excl, lOpenIndex )
 
 
       IF Used()
          nOrder := index_tag_num( cTag )
          cOrdKey := ordKey( cTag )
-         SELECT ( _wa )
+         SELECT ( hTmpRec[ 'wa' ] )
          USE
       ELSE
          log_write( "create_index: Ne mogu otvoriti " + cImeDbf, 3 )
@@ -140,16 +98,16 @@ FUNCTION create_index( cImeInd, xKljuc, cAlias, lSilent )
          RETURN .F.
       ENDIF
 
-      IF !File( cImeCdx ) .OR. nOrder == 0 .OR. AllTrim( Upper( cOrdKey ) ) <> AllTrim( Upper( cKljuc ) )
+      IF nOrder <= 0 .OR. AllTrim( Upper( cOrdKey ) ) <> AllTrim( Upper( cKljuc ) )
 
-         SELECT( _wa )
-         my_use_temp( cAlias, f18_ime_dbf( cAlias) , .F. , .T. ) // my_use_temp( cAlias, table, new_area, excl )
+         my_use_temp( hTmpRec, NIL, .F., .T., .F. ) // exclusive : my_use_temp( hDbfRec, table, new_area, excl, lOpenIndex )
 
          IF !lSilent
             info_tab( "DBF: " + cImeDbf + ", Kreiram index-tag :" + cImeInd + "#" + ExFileName( cImeCdx ) )
          ENDIF
+         ?E  "DBF: " + cImeDbf + "  index-tag :" + cImeInd + "#" + ExFileName( cImeCdx )
 
-         log_write( "Kreiram indeks za tabelu " + cImeDbf + ", " + cImeInd, 7 )
+         log_write( "indeksiranje " + cImeDbf + " / " + cImeInd, 7 )
 
          nPom := RAt( SLASH, cImeInd )
 
@@ -169,7 +127,7 @@ FUNCTION create_index( cImeInd, xKljuc, cAlias, lSilent )
 
             log_write( "index on " + cKljucIz + " / " + cTag + " / " + cImeCdx + " FILTER: " + iif( cFilter != NIL, cFilter, "-" ) + " / alias=" + cAlias + " / used() = " + hb_ValToStr( Used() ), 5 )
             IF _tag == "DEL"
-               INDEX ON Deleted() TAG "DEL" TO ( cImeCdx ) FOR deleted()
+               INDEX ON Deleted() TAG "DEL" TO ( cImeCdx ) FOR Deleted()
             ELSE
                IF cFilter != NIL
                   IF _unique

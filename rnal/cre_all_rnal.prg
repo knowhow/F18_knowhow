@@ -38,7 +38,6 @@ FUNCTION cre_all_rnal( ver )
       NEXT
    ENDIF
 
-   IF_C_RESET_SEMAPHORE
 
    CREATE_INDEX( "1", "STR(doc_no,10)", _alias )
    CREATE_INDEX( "A", "STR(doc_status,2)+STR(doc_no,10)", _alias )
@@ -46,6 +45,7 @@ FUNCTION cre_all_rnal( ver )
    CREATE_INDEX( "3", "STR(doc_priori,4)+DTOS(doc_dvr_da)+STR(doc_no,10)", _alias )
    CREATE_INDEX( "D1", "DTOS(doc_date)+STR(doc_no,10)", _alias )
    CREATE_INDEX( "D2", "DTOS(doc_dvr_da)+STR(doc_no,10)", _alias )
+   AFTER_CREATE_INDEX
 
    _alias := "_DOCS"
    _table_name := "rnal__docs"
@@ -71,11 +71,12 @@ FUNCTION cre_all_rnal( ver )
    _table_name := "rnal_doc_it"
 
    IF_NOT_FILE_DBF_CREATE
-   IF_C_RESET_SEMAPHORE
+
 
    CREATE_INDEX( "1", "STR(doc_no,10)+STR(doc_it_no,4)+STR(art_id,10)", _alias )
    CREATE_INDEX( "2", "STR(art_id,10)+STR(doc_no,10)+STR(doc_it_no,4)", _alias )
    CREATE_INDEX( "3", "STR(doc_no,10)+STR(art_id,10)", _alias )
+   AFTER_CREATE_INDEX
 
    _alias := "_DOC_IT"
    _table_name := "rnal__doc_it"
@@ -100,11 +101,11 @@ FUNCTION cre_all_rnal( ver )
       NEXT
    ENDIF
 
-   IF_C_RESET_SEMAPHORE
 
    CREATE_INDEX( "1", "STR(doc_no,10)+STR(doc_it_no,4)+STR(it_no,4)", _alias )
    CREATE_INDEX( "2", "art_id+STR(doc_no,10)+STR(doc_it_no,4)", _alias )
    CREATE_INDEX( "3", "STR(doc_no,10)+art_id", _alias )
+   AFTER_CREATE_INDEX
 
    _alias := "_DOC_IT2"
    _table_name := "rnal__doc_it2"
@@ -129,10 +130,10 @@ FUNCTION cre_all_rnal( ver )
       NEXT
    ENDIF
 
-   IF_C_RESET_SEMAPHORE
 
    CREATE_INDEX( "1", "STR(doc_no,10)+STR(doc_it_no,4)+STR(doc_op_no,4)", _alias )
    CREATE_INDEX( "2", "STR(doc_no,10)+STR(doc_it_no,4)+STR(doc_it_el_,10)", _alias )
+   AFTER_CREATE_INDEX
 
    _alias := "_DOC_OPS"
    _table_name := "rnal__doc_ops"
@@ -169,10 +170,10 @@ FUNCTION cre_all_rnal( ver )
    _table_name := "rnal_articles"
 
    IF_NOT_FILE_DBF_CREATE
-   IF_C_RESET_SEMAPHORE
 
    CREATE_INDEX( "1", "STR(art_id,10)", _alias )
    CREATE_INDEX( "2", "PADR(art_desc,100)", _alias )
+   AFTER_CREATE_INDEX
 
 
    aDbf := a_elements()
@@ -180,20 +181,20 @@ FUNCTION cre_all_rnal( ver )
    _table_name := "rnal_elements"
 
    IF_NOT_FILE_DBF_CREATE
-   IF_C_RESET_SEMAPHORE
 
    CREATE_INDEX( "1", "STR(art_id,10)+STR(el_no,4)+STR(el_id,10)", _alias )
    CREATE_INDEX( "2", "STR(el_id,10)", _alias )
+   AFTER_CREATE_INDEX
 
    aDbf := a_e_aops()
    _alias := "E_AOPS"
    _table_name := "rnal_e_aops"
 
    IF_NOT_FILE_DBF_CREATE
-   IF_C_RESET_SEMAPHORE
 
    CREATE_INDEX( "1", "STR(el_id,10)+STR(el_op_id,10)", _alias )
    CREATE_INDEX( "2", "STR(el_op_id,10)", _alias )
+   AFTER_CREATE_INDEX
 
 
    aDbf := a_e_att()
@@ -201,10 +202,10 @@ FUNCTION cre_all_rnal( ver )
    _table_name := "rnal_e_att"
 
    IF_NOT_FILE_DBF_CREATE
-   IF_C_RESET_SEMAPHORE
 
    CREATE_INDEX( "1", "STR(el_id,10)+STR(el_att_id,10)", _alias )
    CREATE_INDEX( "2", "STR(el_att_id,10)", _alias )
+   AFTER_CREATE_INDEX
 
 
    aDbf := a_e_groups()
@@ -212,10 +213,10 @@ FUNCTION cre_all_rnal( ver )
    _table_name := "rnal_e_groups"
 
    IF_NOT_FILE_DBF_CREATE
-   IF_C_RESET_SEMAPHORE
 
    CREATE_INDEX( "1", "STR(e_gr_id,10)", _alias )
    CREATE_INDEX( "2", "PADR(e_gr_desc,20)", _alias )
+   AFTER_CREATE_INDEX
 
 
    aDbf := a_e_gr_att()
@@ -223,10 +224,10 @@ FUNCTION cre_all_rnal( ver )
    _table_name := "rnal_e_gr_att"
 
    IF_NOT_FILE_DBF_CREATE
-   IF_C_RESET_SEMAPHORE
 
    CREATE_INDEX( "1", "STR(e_gr_at_id,10,0)", _alias )
    CREATE_INDEX( "2", "STR(e_gr_id,10,0)+e_gr_at_re+STR(e_gr_at_id,10)", _alias )
+   AFTER_CREATE_INDEX
 
 
    aDbf := a_e_gr_val()
@@ -234,10 +235,10 @@ FUNCTION cre_all_rnal( ver )
    _table_name := "rnal_e_gr_val"
 
    IF_NOT_FILE_DBF_CREATE
-   IF_C_RESET_SEMAPHORE
 
    CREATE_INDEX( "1", "STR(e_gr_vl_id,10,0)", _alias )
    CREATE_INDEX( "2", "STR(e_gr_at_id,10,0)+STR(e_gr_vl_id,10,0)", _alias )
+   AFTER_CREATE_INDEX
 
 
    aDbf := a_customs()
@@ -245,9 +246,9 @@ FUNCTION cre_all_rnal( ver )
    _table_name := "rnal_customs"
 
    IF_NOT_FILE_DBF_CREATE
-   IF_C_RESET_SEMAPHORE
 
    CREATE_INDEX( "1", "STR(cust_id,10)", _alias )
+   AFTER_CREATE_INDEX
 
 
    aDbf := a_contacts()
@@ -255,24 +256,24 @@ FUNCTION cre_all_rnal( ver )
    _table_name := "rnal_contacts"
 
    IF_NOT_FILE_DBF_CREATE
-   IF_C_RESET_SEMAPHORE
 
    CREATE_INDEX( "1", "STR(cont_id,10)", _alias )
    CREATE_INDEX( "2", "STR(cust_id,10)+STR(cont_id,10)", _alias )
    CREATE_INDEX( "3", "STR(cust_id,10)+cont_desc", _alias )
    CREATE_INDEX( "4", "cont_desc", _alias )
+   AFTER_CREATE_INDEX
 
    aDbf := a_objects()
    _alias := "OBJECTS"
    _table_name := "rnal_objects"
 
    IF_NOT_FILE_DBF_CREATE
-   IF_C_RESET_SEMAPHORE
 
    CREATE_INDEX( "1", "STR(obj_id,10)", _alias )
    CREATE_INDEX( "2", "STR(cust_id,10)+STR(obj_id,10)", _alias )
    CREATE_INDEX( "3", "STR(cust_id,10)+obj_desc", _alias )
    CREATE_INDEX( "4", "obj_desc", _alias )
+   AFTER_CREATE_INDEX
 
 
    aDbf := a_aops()
@@ -280,9 +281,9 @@ FUNCTION cre_all_rnal( ver )
    _table_name := "rnal_aops"
 
    IF_NOT_FILE_DBF_CREATE
-   IF_C_RESET_SEMAPHORE
 
    CREATE_INDEX( "1", "STR(aop_id,10)", _alias )
+   AFTER_CREATE_INDEX
 
 
    aDbf := a_aops_att()
@@ -290,10 +291,10 @@ FUNCTION cre_all_rnal( ver )
    _table_name := "rnal_aops_att"
 
    IF_NOT_FILE_DBF_CREATE
-   IF_C_RESET_SEMAPHORE
 
    CREATE_INDEX( "1", "STR(aop_att_id,10)", _alias )
    CREATE_INDEX( "2", "STR(aop_id,10)+STR(aop_att_id,10)", _alias )
+   AFTER_CREATE_INDEX
 
 /*
    aDbf := a_ral()
@@ -301,10 +302,10 @@ FUNCTION cre_all_rnal( ver )
    _table_name := "rnal_ral"
 
    IF_NOT_FILE_DBF_CREATE
-   IF_C_RESET_SEMAPHORE
 
    CREATE_INDEX( "1", "STR(id,5)+STR(gl_tick,2)", _alias )
    CREATE_INDEX( "2", "descr", _alias )
+   AFTER_CREATE_INDEX
 */
 
    cre_relation( ver )

@@ -13,7 +13,6 @@
 
 MEMVAR m_x, m_y
 
-STATIC s_lInSync := .F.
 
 /*
  napuni tablu sa servera
@@ -32,11 +31,6 @@ FUNCTION full_synchro( dbf_table, step_size, cInfo )
    LOCAL _sql_fetch_time, _dbf_write_time
    LOCAL _msg
 
-   IF s_lInSync
-      RETURN .F.
-   ENDIF
-
-   s_lInSync := .T.
 
    IF step_size == NIL
       step_size := 20000
@@ -116,7 +110,6 @@ FUNCTION full_synchro( dbf_table, step_size, cInfo )
 
    info_tab( "END full_synchro tabela: " + dbf_table +  " cnt: " + AllTrim( Str( _count ) ) )
 
-   s_lInSync := .F.
    set_a_dbf_rec_chk0( aDbfRec[ "table" ] )
 
    RETURN .T.

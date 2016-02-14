@@ -14,14 +14,14 @@
 
 FUNCTION GlobalErrorHandler( err_obj, lShowErrorReport, lQuitApp )
 
-   LOCAL _i, _err_code, _cmd
+   LOCAL _i, _cmd
    LOCAL _out_file
    LOCAL _msg, _log_msg := "BUG REPORT: "
    LOCAL lNotify := .F.
    LOCAL bErr
    LOCAL nI, cMsg
 
-   bErr := ErrorBlock( {| oError | Break( oError ) })
+   bErr := ErrorBlock( {| oError | Break( oError ) } )
 
    hb_default( @lQuitApp, .T. )
    hb_default( @lShowErrorReport, .T. )
@@ -32,69 +32,69 @@ FUNCTION GlobalErrorHandler( err_obj, lShowErrorReport, lQuitApp )
       BEEP( 5 )
    ENDIF
 
-   _err_code := err_obj:genCode
-
-
-
    _out_file := my_home_root() + "error.txt"
 
-   PTxtSekvence()
+   IF is_in_main_thread()
 
-   SET CONSOLE OFF
-   SET PRINTER OFF
-   SET DEVICE TO PRINTER
-   SET PRINTER to ( _out_file )
-   SET PRINTER ON
-   P_12CPI
+      PTxtSekvence()
+      SET CONSOLE OFF
+      SET PRINTER OFF
+      SET DEVICE TO PRINTER
+      SET PRINTER to ( _out_file )
+      SET PRINTER ON
+      P_12CPI
 
-   ? Replicate( "=", 84 )
-   ? "F18 bug report (v3.2) :", Date(), Time()
-   ? Replicate( "=", 84 )
+   ENDIF
+
+   OutBug()
+   OutBug( "F18 bug report (v5.0) :", Date(), Time() )
+   OutBug( Replicate( "=", 84 ) )
 
    _msg := "Verzija programa: " + F18_VER + " " + F18_VER_DATE + " " + FMK_LIB_VER
-   ? _msg
+   OutBug( _msg )
 
    _log_msg += _msg
-   ?
+   OutBug()
 
    _msg := "SubSystem/severity    : " + err_obj:SubSystem + " " + to_str( err_obj:severity )
-   ? _msg
+   OutBug( _msg )
    _log_msg += " ; " + _msg
 
    _msg := "GenCod/SubCode/OsCode : " + to_str( err_obj:GenCode ) + " " + to_str( err_obj:SubCode ) + " " + to_str( err_obj:OsCode )
-   ? _msg
+   OutBug( _msg )
    _log_msg += " ; " + _msg
 
    _msg := "Opis                  : " + err_obj:description
-   ? _msg
+   OutBug( _msg )
    _log_msg += " ; " + _msg
 
    _msg := "ImeFajla              : " + err_obj:filename
-   ? _msg
+   OutBug( _msg )
    _log_msg += " ; " + _msg
 
 
    _msg := "Operacija             : " + err_obj:operation
-   ? _msg
+   OutBug( _msg )
    _log_msg += " ; " + _msg
 
    _msg := "Argumenti             : " + to_str( err_obj:args )
-   ? _msg
+   OutBug( _msg )
    _log_msg += " ; " + _msg
 
    _msg := "canRetry/canDefault   : " + to_str( err_obj:canRetry ) + " " + to_str( err_obj:canDefault )
-   ? _msg
+   OutBug( _msg )
    _log_msg += " ; " + _msg
 
-   ?
+   OutBug()
    _msg := "CALL STACK:"
-   ? _msg
+   OutBug( _msg )
    _log_msg += " ; " + _msg
 
-   ? "---", Replicate( "-", 80 )
-   LOG_CALL_STACK _log_msg .T.
-   ? "---", Replicate( "-", 80 )
-   ?
+   OutBug( "---", Replicate( "-", 80 ) )
+   LOG_CALL_STACK _log_msg
+   OutBug( STRTRAN( _log_msg, "//", hb_eol() ) )
+   OutBug( "---", Replicate( "-", 80 ) )
+   OutBug()
 
    IF ! no_sql_mode()
       server_connection_info()
@@ -108,13 +108,13 @@ FUNCTION GlobalErrorHandler( err_obj, lShowErrorReport, lQuitApp )
       _msg := "USED() = false"
    ENDIF
 
-   ? _msg
+   OutBug( _msg )
    _log_msg += " ; " + _msg
 
 
    IF err_obj:cargo <> NIL
 
-      ? "== CARGO", Replicate( "=", 50 )
+      OutBug( "== CARGO", Replicate( "=", 50 ) )
       FOR _i := 1 TO Len( err_obj:cargo )
          IF err_obj:cargo[ _i ] == "var"
             _msg :=  "* var " + to_str( err_obj:cargo[ ++_i ] )  + " : " + to_str( pp( err_obj:cargo[ ++_i ] ) )
@@ -122,24 +122,24 @@ FUNCTION GlobalErrorHandler( err_obj, lShowErrorReport, lQuitApp )
             _log_msg += " ; " + _msg
          ENDIF
       NEXT
-      ? Replicate( "-", 60 )
+      OutBug( Replicate( "-", 60 ) )
 
    ENDIF
 
-   ? "== END OF BUG REPORT =="
-
-   SET DEVICE TO SCREEN
-   SET PRINTER OFF
-   SET PRINTER TO
-   SET CONSOLE ON
+   OutBug( "== END OF BUG REPORT ==" )
 
    my_close_all_dbf()
 
-   log_write( _log_msg, 1 )
-
-   IF lShowErrorReport
-      _cmd := "f18_editor " + _out_file
-      f18_run( _cmd )
+   IF is_in_main_thread()
+      SET DEVICE TO SCREEN
+      SET PRINTER OFF
+      SET PRINTER TO
+      SET CONSOLE ON
+      IF lShowErrorReport
+         _cmd := "f18_editor " + _out_file
+         f18_run( _cmd )
+      ENDIF
+      log_write( _log_msg, 1 )
    ENDIF
 
    send_email( err_obj, lNotify )
@@ -154,33 +154,43 @@ FUNCTION GlobalErrorHandler( err_obj, lShowErrorReport, lQuitApp )
 
 
 
+FUNCTION OutBug( ... )
+
+   IF is_in_main_thread()
+      OutStd( ..., hb_eol() )
+   ELSE
+      OutErr( ..., hb_eol() )
+   ENDIF
+
+   RETURN .T.
+
 STATIC FUNCTION server_info()
 
    LOCAL _key
    LOCAL _server_vars := { "server_version", "TimeZone" }
    LOCAL _sys_info
 
-   ?
-   ? "/---------- BEGIN PostgreSQL vars --------/"
-   ?
+   OutBug()
+   OutBug( "/---------- BEGIN PostgreSQL vars --------/" )
+   OutBug()
    FOR EACH _key in _server_vars
-      ? PadR( _key, 25 ) + ":",  server_show( _key )
+       OutBug( PadR( _key, 25 ) + ":",  server_show( _key ) )
    NEXT
-   ?
+   OutBug()
 
-   ? "/----------  END PostgreSQL vars --------/"
-   ?
+   OutBug("/----------  END PostgreSQL vars --------/")
+   OutBug()
    _sys_info := server_sys_info()
 
    IF _sys_info != NIL
-      ?
-      ? "/-------- BEGIN PostgreSQL sys info --------/"
+      OutBug()
+      OutBug( "/-------- BEGIN PostgreSQL sys info --------/" )
       FOR EACH _key in _sys_info:Keys
-         ? PadR( _key, 25 ) + ":",  _sys_info[ _key ]
+         OutBug( PadR( _key, 25 ) + ":",  _sys_info[ _key ] )
       NEXT
-      ?
-      ? "/-------  END PostgreSQL sys info --------/"
-      ?
+      OutBug()
+      OutBug( "/-------  END PostgreSQL sys info --------/" )
+      OutBug()
    ENDIF
 
    RETURN .T.
@@ -189,12 +199,12 @@ STATIC FUNCTION server_info()
 
 STATIC FUNCTION server_connection_info()
 
-   ?
-   ? "/----- SERVER connection info: ---------- /"
-   ?
-   ? "host/database/port/schema :", my_server_params()[ "host" ] + " / " + my_server_params()[ "database" ] + " / " +  AllTrim( Str( my_server_params()[ "port" ], 0 ) ) + " / " +  my_server_params()[ "schema" ]
-   ? "                     user :", my_server_params()[ "user" ]
-   ?
+   OutBug()
+   OutBug( "/----- SERVER connection info: ---------- /" )
+   OutBug()
+   OutBug( "host/database/port/schema :", my_server_params()[ "host" ] + " / " + my_server_params()[ "database" ] + " / " +  AllTrim( Str( my_server_params()[ "port" ], 0 ) ) + " / " +  my_server_params()[ "schema" ] )
+   OutBug( "                     user :", my_server_params()[ "user" ] )
+   OutBug()
 
    RETURN .T.
 
@@ -211,8 +221,8 @@ STATIC FUNCTION server_db_version_info()
    _f18_required_server_str := get_version_str( _f18_required_server_num )
    _server_db_str := get_version_str( _server_db_num )
 
-   ? "F18 client required server db >=     :", _f18_required_server_str, "/", AllTrim( Str( _f18_required_server_num, 0 ) )
-   ? "Actual knowhow ERP server db version :", _server_db_str, "/", AllTrim( Str( _server_db_num, 0 ) )
+   OutBug( "F18 client required server db >=     :", _f18_required_server_str, "/", AllTrim( Str( _f18_required_server_num, 0 ) ) )
+   OutBug( "Actual knowhow ERP server db version :", _server_db_str, "/", AllTrim( Str( _server_db_num, 0 ) ) )
 
    RETURN .T.
 
@@ -223,17 +233,17 @@ STATIC FUNCTION current_dbf_info()
 
    LOCAL _struct, _i
 
-   ? "Trenutno radno podrucje:", Alias(), ", record:", RecNo(), "/", RecCount()
+   OutBug( "Trenutno radno podrucje:", Alias(), ", record:", RecNo(), "/", RecCount() )
 
    _struct := dbStruct()
 
-   ? Replicate( "-", 60 )
-   ? "Record content:"
-   ? Replicate( "-", 60 )
+   OutBug( Replicate( "-", 60 ) )
+   OutBug( "Record content:" )
+   OutBug( Replicate( "-", 60 ) )
    FOR _i := 1 TO Len( _struct )
-      ? Str( _i, 3 ), PadR( _struct[ _i, 1 ], 15 ), _struct[ _i, 2 ], _struct[ _i, 3 ], _struct[ _i, 4 ], Eval( FieldBlock( _struct[ _i, 1 ] ) )
+      OutBug( Str( _i, 3 ), PadR( _struct[ _i, 1 ], 15 ), _struct[ _i, 2 ], _struct[ _i, 3 ], _struct[ _i, 4 ], Eval( FieldBlock( _struct[ _i, 1 ] ) ) )
    NEXT
-   ? Replicate( "-", 60 )
+   OutBug( Replicate( "-", 60 ) )
 
    RETURN .T.
 

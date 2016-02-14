@@ -280,6 +280,11 @@ FUNCTION seek2( cArg )
 FUNCTION zapp( pack )
 
    LOCAL bErr
+   LOCAL cLogMsg := "", cMsg, nI
+
+   IF !Used()
+      RETURN .F.
+   ENDIF
 
    IF pack == NIL
       pack := .F.
@@ -288,8 +293,10 @@ FUNCTION zapp( pack )
 
    BEGIN SEQUENCE WITH {| err | Break( err ) }
 
-      log_write( "ZAP exclusive: " + Alias(), 5 )
       __dbZap()
+      LOG_CALL_STACK cLogMsg
+      log_write( "ZAP exclusive: " + Alias(), 5 )
+      ?E "zap exclusive ", Alias(), cLogMsg
       IF PACK
          __dbPack()
       ENDIF
@@ -297,17 +304,16 @@ FUNCTION zapp( pack )
    RECOVER
 
       log_write( "ZAP shared: " + Alias(), 5 )
+      LOG_CALL_STACK cLogMsg
+      ?E "zap shared: ", Alias(), cLogMsg
       PushWA()
       DO WHILE .T.
-
-         // neophodno, posto je index po kriteriju deleted() !!
          SET ORDER TO 0
          GO TOP
          DO WHILE !Eof()
             delete_with_rlock()
             SKIP
          ENDDO
-
          EXIT
       ENDDO
       PopWa()
@@ -317,7 +323,7 @@ FUNCTION zapp( pack )
    RETURN NIL
 
 
-FUNCTION nerr( oe )
+FUNCTION nErr( oe )
 
    break oe
 

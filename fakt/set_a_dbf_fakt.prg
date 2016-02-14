@@ -12,8 +12,7 @@
 #include "f18.ch"
 
 
-// -------------------------------------
-// -------------------------------------
+
 FUNCTION set_a_dbf_fakt()
 
    set_a_dbf_fakt_fakt()
@@ -43,7 +42,7 @@ FUNCTION set_a_dbf_fakt()
    set_a_dbf_temp( "barkod",   "BARKOD", F_BARKOD  )
    set_a_dbf_temp( "fakt_upl",   "UPL", F_UPL     )
    set_a_dbf_temp( "fakt_s_pripr",   "FAKT_S_PRIPR", F_FAKT    )
-   set_a_dbf_temp( "_fakt_fakt",   "_FAKT", F__FAKT   )
+   set_a_dbf_temp( "fakt__fakt",   "_FAKT", F__FAKT   )
    set_a_dbf_temp( "fakt_fapripr",    "FAKT_FAPRIPR", F_FAKT_PRIPR )
    set_a_dbf_temp( "fakt_pripr_atrib", "FAKT_ATRIB", F_FAKT_ATRIB )
    set_a_dbf_temp( "labelu", "LABELU", F_LABELU )

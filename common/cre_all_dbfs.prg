@@ -11,6 +11,8 @@
 
 #include "f18.ch"
 
+STATIC s_lInCreAllDbfs
+
 /*
    Kreiraj sve DBFCDX
 */
@@ -20,28 +22,26 @@ FUNCTION cre_all_dbfs( ver )
    LOCAL _first_start := fetch_metric( "f18_first_start", my_user(), 0 )
    LOCAL _local_files, _local_files_count
 
-   // first_start, ako je 0 onda je to prvi ulazak u bazu...
-   IF _first_start = 0
+   s_lInCreAllDbfs := .T.
+
+   IF _first_start = 0 // first_start, ako je 0 onda je to prvi ulazak u bazu...
 
       // napravi dodatnu provjeru radi postojecih instalacija...
       _local_files := Directory( my_home() + "*.dbf" )
       _local_files_count := Len( _local_files )
 
-      // ovdje mozemo poduzeti neka pitanja...
       IF _local_files_count = 0
-         // recimo mozemo birati module za glavni meni itd...
-         f18_set_active_modules()
+         f18_set_active_modules() // odabir modula za glavni meni
       ENDIF
 
    ENDIF
 
    log_write( "START cre_all_dbfs", 5 )
 
-   cre_sifarnici( ver )
+   cre_sif_konto( ver )
    cre_sif_roba( ver )
    cre_sif_partn( ver )
-   _kreiraj_adrese( ver )
-
+   cre_sif_adrese( ver )
 
    proizvoljni_izvjestaji_db_cre( ver )
    cre_fin_mat( ver )
@@ -102,14 +102,19 @@ FUNCTION cre_all_dbfs( ver )
 
    log_write( "END crea_all_dbfs", 5 )
 
+   s_lInCreAllDbfs := .F.
+
    RETURN .T.
 
+
+FUNCTION in_cre_all_dbfs()
+   RETURN s_lInCreAllDbfs
 
 
 FUNCTION CreSystemDb( ver )
 
    _kreiraj_params_tabele( ver )
-   _kreiraj_adrese( ver )
+   cre_sif_adrese( ver )
 
    RETURN .T.
 
@@ -154,7 +159,7 @@ FUNCTION _kreiraj_params_tabele()
 
 
 
-FUNCTION _kreiraj_adrese( ver )
+FUNCTION cre_sif_adrese( ver )
 
    LOCAL _table_name, _alias, _created
 

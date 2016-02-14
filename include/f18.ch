@@ -50,15 +50,12 @@
 #define F18_DEFAULT_LOG_LEVEL_DEBUG 9
 #define F18_DEFAULT_LOG_LEVEL       3
 
-#xcommand LOG_CALL_STACK <cLogStr> <lStdOut>     ;
+#xcommand LOG_CALL_STACK <cLogStr>                 ;
   => FOR nI := 1 TO 30                             ;
     ;  IF !Empty( ProcName( nI ) )                 ;
-    ;   cMsg := Str( nI, 3 ) + " " + ProcName( nI ) + " / " + AllTrim( Str( ProcLine( nI ), 6 ) ) ;
-    ;   IF <lStdOut>               ;
-    ;        QOut( cMsg )          ;
-    ;   END                        ;
+    ;   cMsg := Str( nI, 3 ) + " " + ProcName( nI ) + " / " + AllTrim( Str( ProcLine( nI ), 6 ) ) ;                       ;
     ;   <cLogStr> := <cLogStr> + " // " + cMsg    ;
-    ;  END                                  ;
+    ;  END                                        ;
     ; NEXT
 
 #define FIELD_LEN_KALK_BRDOK  8

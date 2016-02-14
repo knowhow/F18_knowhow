@@ -39,7 +39,7 @@ FUNCTION CreRabDB()
    CREATE_INDEX( "1", "IDRABAT+TIPRABAT+IDROBA", SIFPATH + "rabat.dbf", .T. )
    CREATE_INDEX( "2", "IDRABAT+TIPRABAT+DTOS(DATUM)", SIFPATH + "rabat.dbf", .T. )
 
-   RETURN
+   RETURN .T.
 
 
 /*! \fn GetRabForArticle(cIdRab, cTipRab, cIdRoba, nTekIznos)

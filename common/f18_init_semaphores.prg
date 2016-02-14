@@ -50,12 +50,11 @@ FUNCTION refresh_me_izbaciti( a_dbf_rec, lSilent, lFromMyUse )
 
    _cnt_sql := table_count( a_dbf_rec["table"] )
 
-   // 3) ponovo otvori nakon sinhronizacije
    dbf_open_temp_and_count( a_dbf_rec, _cnt_sql, @_cnt, @_del )
    USE
 
 
-   _msg_1 := "nakon sync: " +  a_dbf_rec[ "alias" ] + " / " + a_dbf_rec[ "table" ]
+   _msg_1 := "legacy nakon sync: " +  a_dbf_rec[ "alias" ] + " / " + a_dbf_rec[ "table" ]
    _msg_2 := "cnt = " + AllTrim( Str( _cnt, 0 ) ) + " / " + AllTrim( Str( _del, 0 ) )
 
    IF ! lSilent

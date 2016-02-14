@@ -35,7 +35,11 @@ FUNCTION fetch_metric( sect, user, default_value )
 
    _table := _sql_query( _server, _temp_qry )
 
-   IF ValType( _table ) != "O"
+   IF sql_error_in_query( _table )
+      RETURN default_value
+   ENDIF
+
+   IF sql_query_bez_zapisa( _table )
       RETURN default_value
    ENDIF
 
@@ -48,10 +52,9 @@ FUNCTION fetch_metric( sect, user, default_value )
    ENDIF
 
 
-
-   // --------------------------------------------------------------
-   // setuj parametre u metric tabelu
-   // --------------------------------------------------------------
+// --------------------------------------------------------------
+// setuj parametre u metric tabelu
+// --------------------------------------------------------------
 
 FUNCTION set_metric( sect, user, value )
 

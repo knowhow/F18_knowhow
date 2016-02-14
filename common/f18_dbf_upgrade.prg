@@ -29,13 +29,13 @@ FUNCTION read_dbf_version_from_config()
    _ret := hb_Hash()
 
    IF !f18_ini_read( __ini_section, @_ini_params, .F. )
-      MsgBeep( "problem sa ini_params " + __ini_section )
+      ?E "problem sa ini_params " + __ini_section
    ENDIF
    _current_dbf_ver := get_version_num( _ini_params[ "major" ], _ini_params[ "minor" ], _ini_params[ "patch" ] )
    _new_dbf_ver     := get_version_num( F18_DBF_VER_MAJOR, F18_DBF_VER_MINOR, F18_DBF_VER_PATCH )
 
-   log_write( "current dbf version:" + Str( _current_dbf_ver ) )
-   log_write( "    F18 dbf version:" + Str( _new_dbf_ver ) )
+   ?E "current dbf version:" + Str( _current_dbf_ver )
+   ?E "    F18 dbf version:" + Str( _new_dbf_ver )
 
    _ret[ "current" ] := _current_dbf_ver
    _ret[ "new" ]     := _new_dbf_ver

@@ -23,7 +23,7 @@ FUNCTION f18_ime_dbf( xTableRec )
       _a_dbf_rec := xTableRec
       EXIT
    CASE "C"
-      _a_dbf_rec := get_a_dbf_rec( FILEBASE( xTableRec, .T. ) )
+      _a_dbf_rec := get_a_dbf_rec( FILEBASE( xTableRec, .T. ), .T. )
       EXIT
    OTHERWISE
       Alert( "f1_ime_dbf arg ?! " + hb_ValToStr( xTableRec ) )
@@ -209,9 +209,7 @@ FUNCTION ferase_cdx( tbl_name )
 
    RETURN .T.
 
-// ------------------------------------------
-// kreira sve potrbne indekse
-// ------------------------------------------
+/* TODO: out
 FUNCTION repair_dbfs()
 
    LOCAL _ver
@@ -221,7 +219,7 @@ FUNCTION repair_dbfs()
    cre_all_dbfs( _ver )
 
    RETURN .T.
-
+*/
 
 
 // ------------------------------------------------------
@@ -303,7 +301,7 @@ FUNCTION reopen_exclusive_and_zap( dbf_table, open_index )
 
    RECOVER USING _err
 
-      log_write( "ERROR " + _err:Description, 3 )
+      log_write( "ERROR-REXCL-ZAP " + _err:Description, 3 )
       reopen_dbf( .F., dbf_table, open_index )
       zapp()
 
@@ -461,16 +459,21 @@ FUNCTION dbf_open_temp_and_count( aDbfRec, nCntSql, nCnt, nDel )
 
    cFullIdx := ImeDbfCdx( cFullDbf )
 
-   SELECT ( aDbfRec[ "wa" ] + 2000 )
-   USE  ( cFullDbf ) Alias ( cAliasTemp )  SHARED
-   IF File( cFullIdx )
-      dbSetIndex( ImeDbfCdx( cFullDbf ) )
-   ENDIF
 
-   SET DELETED OFF
-   SET ORDER TO TAG "DEL"
-   COUNT TO nDel
-   nCnt := RecCount()
+   BEGIN SEQUENCE WITH {| err| Break( err ) }
+      SELECT ( aDbfRec[ "wa" ] + 2000 )
+      USE  ( cFullDbf ) Alias ( cAliasTemp )  SHARED
+      IF File( cFullIdx )
+         dbSetIndex( ImeDbfCdx( cFullDbf ) )
+      ENDIF
+   RECOVER USING  oError
+      ?E "dbf_open_temp_and_count use dbf:", cFullDbf, "alias:", cAliasTemp, oError:Description
+      QUIT_1
+   END SEQUENCE
+
+
+   count_deleted( @nCnt, @nDel )
+
 
    IF Abs( nCntSql - nCnt + nDel ) > 0
 
@@ -484,9 +487,7 @@ FUNCTION dbf_open_temp_and_count( aDbfRec, nCntSql, nCnt, nDel )
 
          nCnt2 := 0
          dbEval( {|| delete_empty_records( bKeyBlock, cEmptyRec, @nCnt2 ) } )
-         SET DELETED OFF
-         SET ORDER TO TAG "DEL"
-         COUNT TO nDel
+         count_deleted( @nCnt, @nDel )
          log_write( "DELETING (nDel0:" + ;
             AllTrim( Str( nDel0 ) ) + ") empty records for dbf: " + ;
             aDbfRec[ "table" ] + " nDel:" + AllTrim( Str( nDel ) ) + ;
@@ -502,6 +503,24 @@ FUNCTION dbf_open_temp_and_count( aDbfRec, nCntSql, nCnt, nDel )
 
    RETURN .T.
 
+
+STATIC FUNCTION count_deleted( nCnt, nDel )
+
+   LOCAL oError
+
+   BEGIN SEQUENCE WITH {| err| Break( err ) }
+      SET DELETED OFF
+      SET ORDER TO TAG "DEL"
+      COUNT TO nDel
+      nCnt := RecCount()
+   RECOVER USING  oError
+      ?E "dbf_open_temp_and_count set order to tag DEL ", oError:Description
+      SET DELETED ON
+      COUNT TO nCnt
+      nDel := 0
+   END SEQUENCE
+
+   RETURN .T.
 
 STATIC FUNCTION delete_empty_records( bKeyBlock, cEmptyRec, nCnt2 )
 

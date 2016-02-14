@@ -32,7 +32,6 @@ FUNCTION full_synchro( dbf_table, step_size, cInfo )
    LOCAL _sql_fetch_time, _dbf_write_time
    LOCAL _msg
 
-
    IF s_lInSync
       RETURN .F.
    ENDIF
@@ -62,9 +61,7 @@ FUNCTION full_synchro( dbf_table, step_size, cInfo )
    reopen_exclusive_and_zap( aDbfRec[ "table" ], .T., .T. )
    USE
 
-   Box(, 10, 70 )
-
-   @ m_x + 1, m_y + 2 SAY8 "full synchro: " + _sql_table + " => " + dbf_table
+   info_tab( "full synchro: " + _sql_table + " => " + dbf_table )
 
    run_sql_query( "BEGIN; SET TRANSACTION ISOLATION LEVEL SERIALIZABLE" )
    _count := table_count( _sql_table, "true" )
@@ -76,11 +73,11 @@ FUNCTION full_synchro( dbf_table, step_size, cInfo )
    IF _sql_fields == NIL
       _msg := "sql_fields za " + _sql_table + " nije setovan ... sinhro nije moguć"
       log_write( "full_synchro: " + _msg, 2 )
-      MsgBeep( _msg )
+      ?E _msg
       RaiseError( _msg )
    ENDIF
 
-   @ m_x + 3, m_y + 2 SAY cInfo + " sql_cnt:" + Alltrim( STR(_count, 10, 0))
+   info_tab( cInfo + " sql_cnt:" + Alltrim( STR(_count, 10, 0)) )
 
    FOR _offset := 0 TO _count STEP step_size
 
@@ -90,17 +87,18 @@ FUNCTION full_synchro( dbf_table, step_size, cInfo )
 
       log_write( "GET FROM SQL full_synchro tabela: " + dbf_table + " " + AllTrim( Str( _offset ) ) + " / qry: " + _qry, 7 )
 
-      @ m_x + 5, m_y + 2 SAY "dbf <- qry (ne zatvarati aplikaciju u toku ovog procesa)"
+      //@ m_x + 5, m_y + 2 SAY "dbf <- qry (ne zatvarati aplikaciju u toku ovog procesa)"
 
       fill_dbf_from_server( dbf_table, _qry, @_sql_fetch_time, @_dbf_write_time, .T. )
 
-      @ m_x + 9, m_y + 15 SAY "sql fetch time: " + AllTrim( Str( _sql_fetch_time ) ) + " dbf write time: " + AllTrim( Str( _dbf_write_time ) )
+      info_tab( "sql fetch time: " + AllTrim( Str( _sql_fetch_time ) ) + " dbf write time: " + AllTrim( Str( _dbf_write_time ) ) )
 
-      @ m_x + 10, m_y + 2 SAY _offset + step_size
-      @ Row(), Col() + 2 SAY "/"
-      @ Row(), Col() + 2 SAY _count
+      //@ m_x + 10, m_y + 2 SAY _offset + step_size
+      //@ Row(), Col() + 2 SAY "/"
+      //@ Row(), Col() + 2 SAY _count
+      info_tab( "STEP full_synchro tabela: " + dbf_table + " " + AllTrim( Str( _offset + step_size ) ) + " / " + AllTrim( Str( _count ) ) )
 
-      log_write( "STEP full_synchro tabela: " + dbf_table + " " + AllTrim( Str( _offset + step_size ) ) + " / " + AllTrim( Str( _count ) ), 7 )
+      //log_write( "STEP full_synchro tabela: " + dbf_table + " " + AllTrim( Str( _offset + step_size ) ) + " / " + AllTrim( Str( _count ) ), 7 )
 
    NEXT
 
@@ -116,9 +114,7 @@ FUNCTION full_synchro( dbf_table, step_size, cInfo )
       log_write( "sql count nakon END transaction): " + dbf_table + "/ sql count: " + AllTrim( Str( _count ) ), 7 )
    ENDIF
 
-   BoxC()
-
-   log_write( "END full_synchro tabela: " + dbf_table +  " cnt: " + AllTrim( Str( _count ) ), 3 )
+   info_tab( "END full_synchro tabela: " + dbf_table +  " cnt: " + AllTrim( Str( _count ) ) )
 
    s_lInSync := .F.
    set_a_dbf_rec_chk0( aDbfRec[ "table" ] )

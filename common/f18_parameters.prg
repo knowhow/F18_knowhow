@@ -78,7 +78,6 @@ FUNCTION f18_app_parameters( just_set )
       CLEAR SCREEN
 
       ?
-
       _pos_x := 2
       _pos_y := 3
 
@@ -101,17 +100,14 @@ FUNCTION f18_app_parameters( just_set )
 
       ++ _x
       ++ _x
-
       @ _pos_x + _x, _pos_y SAY "Maticni podaci korisnika ***" COLOR "I"
 
       ++ _x
       ++ _x
-
       @ _pos_x + _x, _pos_y SAY PadL( "Puno ime i prezime:", _left ) GET _proper_name PICT "@S30"
 
       ++ _x
       ++ _x
-
       @ _pos_x + _x, _pos_y SAY "Email parametri ***" COLOR "I"
 
       ++ _x
@@ -125,33 +121,28 @@ FUNCTION f18_app_parameters( just_set )
       @ _pos_x + _x, _pos_y SAY PadL( "moja email adresa:", _left ) GET _email_from PICT "@S40"
       ++ _x
       @ _pos_x + _x, _pos_y SAY PadL( "slati postu na adrese:", _left ) GET _email_to PICT "@S70"
+
       ++ _x
       @ _pos_x + _x, _pos_y SAY PadL( "cc adrese:", _left ) GET _email_cc PICT "@S70"
 
       ++ _x
       ++ _x
-
       @ _pos_x + _x, _pos_y SAY "Parametri log-a ***" COLOR "I"
 
       ++ _x
-
       @ _pos_x + _x, _pos_y SAY "Brisi stavke log tabele starije od broja dana (def. 30):" GET _log_delete_interval PICT "9999"
 
       ++ _x
       ++ _x
-
       @ _pos_x + _x, _pos_y SAY "Backup parametri ***" COLOR "I"
 
       ++ _x
-
       @ _pos_x + _x, _pos_y SAY "Automatski backup podataka preduzeca (interval dana 0 - ne radi nista):" GET _backup_company PICT "999"
 
       ++ _x
-
       @ _pos_x + _x, _pos_y SAY "Automatski backup podataka servera (interval 0 - ne radi nista):" GET _backup_server PICT "999"
 
       ++ _x
-
       @ _pos_x + _x, _pos_y SAY "Remote backup lokacija:" GET _backup_removable PICT "@S60"
 
 #ifdef __PLATFORM__WINDOWS
@@ -163,11 +154,9 @@ FUNCTION f18_app_parameters( just_set )
 
       ++ _x
       ++ _x
-
       @ _pos_x + _x, _pos_y SAY "Ostali parametri ***" COLOR "I"
 
       ++ _x
-
       @ _pos_x + _x, _pos_y SAY "Duzina stranice za izvjestaje ( def: 60 ):" GET _rpt_page_len PICT "999"
 
       ++ _x
@@ -218,7 +207,7 @@ FUNCTION f18_app_parameters( just_set )
 
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -230,6 +219,7 @@ FUNCTION f18_app_parameters( just_set )
    Params:
       module_name - naziv modula 'kalk', 'fin'
 */
+
 FUNCTION f18_use_module( module_name )
 
    LOCAL _ret := .F.

@@ -351,7 +351,6 @@ FUNCTION BoxC()
 
    LOCAL aBoxPar[ 11 ], cPom
 
-
    cPom := Set( _SET_DEVICE )
    SET DEVICE TO SCREEN
 

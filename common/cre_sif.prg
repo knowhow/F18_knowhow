@@ -11,10 +11,9 @@
 
 #include "f18.ch"
 
-// -----------------------------------
-// kreiranje tabela - svi moduli
-// -----------------------------------
-FUNCTION cre_sifarnici( ver )
+
+
+FUNCTION cre_sif_konto( ver )
 
    LOCAL _created
    LOCAL _table_name

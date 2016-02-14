@@ -16,7 +16,7 @@ STATIC s_threadDbfsID
 
 
 STATIC s_psqlServer := NIL
-STATIC s_psqlServerDbfThread := NIL
+THREAD STATIC s_psqlServerDbfThread := NIL
 STATIC s_psqlServer_params := NIL
 
 // logiranje na server
@@ -81,7 +81,7 @@ FUNCTION f18_init_app( arg_v )
    set_global_vars_0()
    PtxtSekvence()
 
-   ErrorBlock( {| objError, lShowreport, lQuit | GlobalErrorHandler( objError, lShowReport, lQuit ) } )
+   f18_error_block()
 
    AltD()
    set_screen_dimensions()
@@ -98,10 +98,16 @@ FUNCTION f18_init_app( arg_v )
    RETURN .T.
 
 
+FUNCTION f18_error_block()
+
+   ErrorBlock( {| objError, lShowreport, lQuit | GlobalErrorHandler( objError, lShowReport, lQuit ) } )
+
+   RETURN .T.
 
 // -----------------------------------------------------
 // inicijalne opcije kod pokretanja firme
 // -----------------------------------------------------
+
 FUNCTION f18_init_app_opts()
 
    // ovdje treba napraviti meni listu sa opcijama
@@ -172,7 +178,6 @@ FUNCTION f18_init_app_login( force_connect, arg_v )
             f18_app_parameters( .T. )
             set_hot_keys()
             get_log_level_from_params()
-            add_idle_handlers()
             module_menu( arg_v )
 
          ENDIF
@@ -215,7 +220,7 @@ FUNCTION add_idle_handlers()
    hb_idleAdd( {||  hb_DispOutAt( maxrows(),  maxcols() - 8 - 8 - 1, "< CALC >" ), ;
       iif( !in_calc() .AND. MINRECT( maxrows(), maxcols() - 8 - 8 - 1, maxrows(), maxcols() - 8 - 1 ), Calc(), NIL ) } )
 
-   hb_idleAdd( {|| dbf_refresh() } )
+   hb_idleAdd( {|| IIF( in_cre_all_dbfs(), .T., dbf_refresh() ) } )
 
    RETURN .T.
 
@@ -447,7 +452,7 @@ FUNCTION post_login( gVars )
 
    hb_gtInfo( HB_GTI_WINTITLE, "[ " + my_server_params()[ "user" ] + " ][ " + my_server_params()[ "database" ] + " ]" )
 
-   s_threadDbfsID := hb_threadStart( @thread_create_dbfs() )
+   thread_dbfs( hb_threadStart( @thread_create_dbfs() ) )
 
    check_server_db_version()
    server_log_enable()
@@ -459,9 +464,17 @@ FUNCTION post_login( gVars )
 
    run_on_startup()
 
+   add_idle_handlers()
+
    RETURN .T.
 
-FUNCTION thread_dbfs()
+
+FUNCTION thread_dbfs( pThreadID )
+
+   IF pThreadID != nil
+      ?E "thread_dbfs id", pThreadID
+      s_threadDbfsID := pThreadID
+   ENDIF
 
    RETURN s_threadDbfsID
 
@@ -469,6 +482,11 @@ FUNCTION thread_dbfs()
 FUNCTION main_thread()
 
    RETURN s_mainThreadID
+
+FUNCTION is_in_main_thread()
+
+   RETURN hb_threadSelf() == main_thread()
+
 
 
 FUNCTION thread_create_dbfs()
@@ -482,7 +500,11 @@ FUNCTION thread_create_dbfs()
    Normal := "B/W"
    Invert := "W/B"
 
+   ErrorBlock( {| objError, lShowreport, lQuit | GlobalErrorHandler( objError, lShowReport, lQuit ) } )
+
    _ver := read_dbf_version_from_config()
+
+   my_server()
 
    set_a_dbfs()
    cre_all_dbfs( _ver )
@@ -493,6 +515,8 @@ FUNCTION thread_create_dbfs()
    set_a_dbfs_key_fields()
 
    write_dbf_version_to_config()
+
+   my_server_close()
 
    RETURN .T.
 
@@ -772,28 +796,35 @@ STATIC FUNCTION _login_screen( server_params )
 
 FUNCTION pg_server( server )
 
-   LOCAL hParams, oError
+   LOCAL oError
 
-   IF hb_threadSelf() != main_thread()
-      //altd()
-      //?C pp( s_psqlServer_params )
+   // LOCAL nI, cMsg, cLogMsg := ""
+
+
+   IF !is_in_main_thread()
 
       IF s_psqlServerDbfThread  == NIL
 
-        BEGIN SEQUENCE WITH {| err | Break( err ) }
+         // LOG_CALL_STACK cLogMsg
+         BEGIN SEQUENCE WITH {| err | Break( err ) }
 
-         s_psqlServerDbfThread := TPQServer():New( s_psqlServer_params[ "host" ], ;
-            s_psqlServer_params[ "database" ], ;
-            s_psqlServer_params[ "user" ], ;
-            s_psqlServer_params[ "password" ], ;
-            s_psqlServer_params[ "port" ], ;
-            s_psqlServer_params[ "schema" ] )
-        RECOVER USING oError
-            ?C oError:description
+            s_psqlServerDbfThread := TPQServer():New( s_psqlServer_params[ "host" ], ;
+               s_psqlServer_params[ "database" ], ;
+               s_psqlServer_params[ "user" ], ;
+               s_psqlServer_params[ "password" ], ;
+               s_psqlServer_params[ "port" ], ;
+               s_psqlServer_params[ "schema" ] )
+
+            // ?E "thread psql login OK ", cLogMsg
+         RECOVER USING oError
+
+            ?E "thread psql login error:", oError:description
             QUIT_1
-        END SEQUENCE
+         END SEQUENCE
+
       ENDIF
       RETURN s_psqlServerDbfThread
+
    ENDIF
 
    IF server <> NIL
@@ -802,12 +833,25 @@ FUNCTION pg_server( server )
 
    RETURN s_psqlServer
 
-FUNCTION my_server( server )
-   RETURN pg_server( server )
 
-// ----------------------------
-// set_get server_params
-// -------------------------------
+FUNCTION my_server( oServer )
+
+   RETURN pg_server( oServer )
+
+
+FUNCTION my_server_close()
+
+   my_server():close()
+   IF !is_in_main_thread()
+      s_psqlServerDbfThread := NIL
+   ENDIF
+
+   RETURN .T.
+
+/*
+ set_get server_params
+*/
+
 FUNCTION my_server_params( params )
 
    LOCAL  _key
@@ -873,6 +917,7 @@ FUNCTION my_server_login( params, conn_type )
 
    RETURN .T.
 
+
 FUNCTION my_server_logout()
 
    IF ValType( s_psqlServer ) == "O"
@@ -931,6 +976,8 @@ FUNCTION _path_quote( path )
    ENDIF
 
    RETURN PATH
+
+
 
 FUNCTION my_home_root( home_root )
 
@@ -1113,8 +1160,10 @@ FUNCTION log_write( msg, level, silent )
 
    RETURN .T.
 
+
 FUNCTION server_log()
    RETURN s_psqlServer_log
+
 
 FUNCTION server_log_disable()
 

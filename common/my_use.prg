@@ -68,10 +68,10 @@ FUNCTION my_use_temp( alias, table, new_area, excl )
          SELECT ( _a_dbf_rec[ "wa" ] )
       ENDIF
 
-   RECOVER
-      log_write( "ERROR: " + _tmp + " nema a_dbf_rec !", 2 )
+   RECOVER USING oError
+      log_write( "ERROR-78: get_a_dbf_rec " + _tmp + " " + oError:Description , 2 )
+      RETURN .F.
    END SEQUENCE
-
 
    IF Used()
       USE
@@ -98,7 +98,7 @@ FUNCTION my_use_temp( alias, table, new_area, excl )
    ENDDO
 
    IF nCnt < 100
-      RaiseError( "ERROR: my_use " + table + " neusjesno !" )
+      RaiseError( "ERROR-TMP: my_use_tmp " + table + " neusjesno !" )
    ENDIF
 
    RETURN .T.
@@ -133,7 +133,7 @@ FUNCTION my_use( alias, table, new_area, _rdd, semaphore_param, excl, select_wa 
 
 #ifdef F18_DEBUG
    MsgBeep( "my_use legacy sekvenca - out " )
-   LOG_CALL_STACK cStack .F.
+   LOG_CALL_STACK cStack
    Alert( cStack )
 #endif
    AltD() // legacy stop
@@ -194,7 +194,7 @@ FUNCTION my_use( alias, table, new_area, _rdd, semaphore_param, excl, select_wa 
 
       IF ( _rdd != "SEMAPHORE" )
 
-         dbf_semaphore_synchro( table, @lOdradioFullSynchro )
+         dbf_semaphore_synchro_izbaciti( table, @lOdradioFullSynchro )
 
          IF lOdradioFullSynchro
             set_a_dbf_rec_chk0( _a_dbf_rec[ "table" ] )
@@ -267,7 +267,10 @@ FUNCTION my_use_simple( cAlias, cTable )
       cAlias :=  aDbfRec[ 'alias' ]
    ENDIF
 
-   dbf_refresh( aDbfRec[ 'table' ] )
+   // hb_threadJoin( thread_dbfs() ) // ako nije gotova sacekaj da zavrsi
+   thread_dbfs( hb_threadStart( @thread_dbf_refresh(), aDbfRec[ 'table' ] ) )
+
+   //dbf_refresh( aDbfRec[ 'table' ] )
 
    cFullDbf := my_home() + aDbfRec[ 'table' ]
    cFullIdx := ImeDbfCdx( cFullDbf )
@@ -322,14 +325,14 @@ FUNCTION my_use_error( table, alias, oError )
    LOCAL _msg, nI, cMsg
 
    _msg := "ERROR: my_use_error " + oError:description + ": tbl:" + my_home() + table + " alias:" + alias + " se ne moze otvoriti ?!"
-   LOG_CALL_STACK _msg .F.
+   LOG_CALL_STACK _msg
    log_write( _msg, 2 )
 
    IF oError:description == "Read error" .OR. oError:description == "Corruption detected"
 
       // Read error se dobije u slucaju ostecenog dbf-a
       IF ferase_dbf( alias, .T. )
-         repair_dbfs()
+         //repair_dbfs()
       ENDIF
 
    ENDIF
@@ -337,8 +340,10 @@ FUNCTION my_use_error( table, alias, oError )
    RETURN .T.
 
 
+/* TODO: izbaciti sa starom my_use
+*/
 
-FUNCTION dbf_semaphore_synchro( table, lFullSynchro )
+FUNCTION dbf_semaphore_synchro_izbaciti( table, lFullSynchro )
 
    LOCAL lRet := .T.
    LOCAL hVersion

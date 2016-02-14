@@ -1,3 +1,4 @@
+
 /*
  * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
@@ -9,7 +10,20 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-#command IF_NOT_FILE_DBF_CREATE => dbf_init( _table_name, _alias, aDbf )
+#include "f18.ch"
 
+FUNCTION dbf_init( aDbf, cTableName, cAlias )
 
-#command IF_C_RESET_SEMAPHORE   => OutErr( "dummy C_RESET", _table_name)
+   LOCAL hRec
+
+   insert_semaphore_if_not_exists( cTableName, .T. )
+
+   IF !File( f18_ime_dbf( cAlias ) )
+      DBCREATE2( cAlias, aDbf )
+      reset_semaphore_version( cTableName )
+      hRec := get_a_dbf_rec( cTableName, .T. )
+      set_dbf_fields_from_struct( hRec )
+      my_use( cTableName )
+   ENDIF
+
+   RETURN .F.

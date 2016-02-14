@@ -181,7 +181,9 @@ FUNCTION get_a_dbf_rec( tbl, _only_basic_params )
    ENDIF
 
    IF ValType( __f18_dbfs ) <> "H"
-      Alert( RECI_GDJE_SAM + " " + tbl + "__f18_dbfs nije inicijalizirana" )
+      _msg := ""
+      LOG_CALL_STACK _msg
+      ?E  "get_a_dbf_rec: " + tbl + " __f18_dbfs nije inicijalizirana " + _msg
    ENDIF
 
    IF hb_HHasKey( __f18_dbfs, tbl )
@@ -211,8 +213,8 @@ FUNCTION get_a_dbf_rec( tbl, _only_basic_params )
       _rec[ "table" ] := tbl
       _rec[ "alias" ] := tbl
       _rec[ "sql" ] := .F.
-      LOG_CALL_STACK _msg .F.
-      log_write( _msg, 1 )
+      LOG_CALL_STACK _msg
+      ?E _msg
       RETURN _rec
 
    ENDIF
@@ -378,7 +380,6 @@ FUNCTION set_dbf_fields_from_struct( rec )
    ENDIF
 
    PushWA()
-
    SELECT ( rec[ "wa" ] )
 
    IF !Used() .AND. !lSql
@@ -395,7 +396,7 @@ FUNCTION set_dbf_fields_from_struct( rec )
          rec[ "dbf_fields_len" ] := NIL
 
          cLogMsg := "ERR-DBF: " + _err:description + ": tbl:" + my_home() + rec[ "table" ] + " alias:" + rec[ "alias" ] + " se ne moze otvoriti ?!"
-         LOG_CALL_STACK cLogMsg .F.
+         LOG_CALL_STACK cLogMsg
 
          log_write( cLogMsg, 5 )
          RETURN .F.

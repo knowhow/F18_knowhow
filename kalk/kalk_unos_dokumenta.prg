@@ -1317,7 +1317,7 @@ FUNCTION kalk_unos_1( fNovi, atrib )
 
    SELECT kalk_pripr
    SET FILTER TO
-   
+
    IF _idvd == "10"
 
       RETURN Get1_10PDV()
@@ -2363,8 +2363,8 @@ FUNCTION kalk_stampa_dokumenta()
          ENDIF
 
          IF ( cSeek == 'IZDOKS' )
-            // stampaj sve odjednom !!!
-            IF ( PRow() > 42 )
+
+            IF ( PRow() > 42 ) // stampati sve odjednom
                ++nStr
                FF
             ENDIF
@@ -2377,33 +2377,10 @@ FUNCTION kalk_stampa_dokumenta()
 
          Preduzece()
 
-         IF ( cidvd == "10" .OR. cidvd == "70" ) .AND. !IsPDV()
-            IF ( gVarEv == "2" )
-               StKalk10_sk()
-            ELSEIF ( gMagacin == "1" )
-               // samo po nabavnim
-               StKalk10_1()
-            ELSE
-               IF ( c10Var == "1" )
-                  StKalk10_2()
-               ELSEIF ( c10Var == "2" )
-                  StKalk10_3()
-               ELSE
-                  StKalk10_4()
-               ENDIF
-            ENDIF
-         ELSEIF cIdVD == "10" .AND. IsPDV()
-            IF ( gMagacin == "1" )
-               // samo po nabavnim
-               StKalk10_1()
-            ELSE
-               // PDV ulazna kalkulacija
-               StKalk10_PDV()
-            ENDIF
-         ELSEIF cidvd $ "15"
-            IF !IsPDV()
-               StKalk15()
-            ENDIF
+         IF cIdVD == "10"
+            StKalk10_PDV()
+
+
          ELSEIF ( cidvd $ "11#12#13" )
             IF ( c10Var == "3" )
                StKalk11_3()
@@ -2415,25 +2392,13 @@ FUNCTION kalk_stampa_dokumenta()
                ENDIF
             ENDIF
          ELSEIF ( cidvd $ "14#94#74#KO" )
-            IF ( c10Var == "3" )
-               Stkalk14_3()
-            ELSE
-               StKalk14PDV()
-            ENDIF
-         ELSEIF ( cidvd $ "16#95#96#97" ) .AND. IsPDV()
-            IF gPDVMagNab == "D"
-               StKalk95_1()
-            ELSE
-               StKalk95_PDV()
-            ENDIF
-         ELSEIF ( cidvd $ "95#96#97#16" ) .AND. !IsPDV()
-            IF ( gVarEv == "2" )
-               Stkalk95_sk()
-            ELSEIF ( gMagacin == "1" )
-               Stkalk95_1()
-            ELSE
-               Stkalk95()
-            ENDIF
+            StKalk14PDV()
+
+         ELSEIF ( cIdvd $ "16#95#96#97" )
+
+            StKalk95_PDV()
+
+
          ELSEIF ( cidvd $ "41#42#43#47#49" )
             StKalk41()
          ELSEIF ( cIdvd == "18" )
@@ -2561,7 +2526,7 @@ FUNCTION kalk_stampa_dokumenta()
       IF ( cIdVd $ "11#12" )
          StKalk11_2( .T. )
       ELSEIF ( cIdVd == "10" )
-         StKalk10_3( .T. )
+         StKalk10_PDV()
       ELSEIF ( cIdVd == "81" )
          StKalk81( .T. )
       ENDIF

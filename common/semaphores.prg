@@ -611,12 +611,15 @@ PROCEDURE thread_dbf_refresh( cTable )
    Normal := "B/W"
    Invert := "W/B"
 
-?E ">>>>> START: thread_dbf_refresh:", cTable, "<<<<<"
-
+#ifdef F18_DEBUG
+   ?E ">>>>> START: thread_dbf_refresh:", cTable, "<<<<<"
+#endif
    ErrorBlock( {| objError, lShowreport, lQuit | GlobalErrorHandler( objError, lShowReport, lQuit ) } )
    dbf_refresh( cTable )
 
+#ifdef F18_DEBUG
    ?E "<<<<< END: thread_dbf_refresh:", cTable, " >>>>>"
+#endif
    my_server_close()
 
    RETURN
@@ -655,9 +658,9 @@ FUNCTION dbf_refresh( cTable )
    ENDIF
 
    IF is_last_refresh_before( aDbfRec[ 'table' ], 7 )
-//#ifdef F18_DEBUG
-//      ?E  aDbfRec[ 'table' ], "last refresh of table < 7 sec before"
-//#endif
+      // #ifdef F18_DEBUG
+      // ?E  aDbfRec[ 'table' ], "last refresh of table < 7 sec before"
+      // #endif
       RETURN .F.
    ENDIF
 

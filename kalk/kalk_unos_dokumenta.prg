@@ -15,10 +15,11 @@ MEMVAR PicDEM, PicProc, PicCDem, PicKol, gPicCDEM, gPicDEM, gPICPROC, gPICKol
 MEMVAR ImeKol, Kol
 MEMVAR picv
 MEMVAR m_x, m_y
-MEMVAR lAsistRadi
+MEMVAR lAsistRadi, lAutoObr, lAsist, lAAzur, lAAsist
 MEMVAR Ch
-MEMVAR opc
+MEMVAR opc, Izbor, h
 MEMVAR _idfirma, _idvd, _brdok
+MEMVAR cSection, cHistory, aHistory
 
 STATIC cENTER := Chr( K_ENTER ) + Chr( K_ENTER ) + Chr( K_ENTER )
 STATIC __box_x
@@ -1023,13 +1024,14 @@ FUNCTION MeniF10()
             ENDIF
          ENDIF
 
-      CASE izbor == 10 .AND. cIdVDTek == "19"
+      CASE Izbor == 10 .AND. cIdVDTek == "19"
+
          o_kalk_edit()
          SELECT kalk_pripr
          GO TOP
-         cidfirma := idfirma
-         cidvd := idvd
-         cbrdok := brdok
+         cIdfirma := field->idfirma
+         cIdvd := field->idvd
+         cBrdok := field->brdok
          Obraz19()
          SELECT kalk_pripr
          GO TOP

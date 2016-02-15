@@ -554,13 +554,18 @@ STATIC FUNCTION _auto_set_trosk( lNewItem )
 FUNCTION V_kol10()
 
    IF _kolicina < 0  // storno
-      nKolS := 0;nKolZN := 0;nc1 := nc2 := 0; dDatNab := CToD( "" )
+      nKolS := 0
+      nKolZN := 0
+      nc1 := nc2 := 0
+      dDatNab := CToD( "" )
+
       IF !Empty( gMetodaNC )
          MsgO( "Računam stanje na skladištu" )
          KalkNab( _idfirma, _idroba, _mkonto, @nKolS, @nKolZN, @nc1, @nc2, @dDatNab )
          MsgC()
          @ m_x + 12, m_y + 30   SAY "Ukupno na stanju "; @ m_x + 12, Col() + 2 SAY nkols PICT pickol
       ENDIF
+
       IF dDatNab > _DatDok; Beep( 1 );Msg( "Datum nabavke je " + DToC( dDatNab ), 4 );ENDIF
       IF _idvd == "16"  // storno prijema
          IF gMetodaNC $ "13"; _nc := nc1; ELSEIF gMetodaNC == "2"; _nc := nc2; ENDIF
@@ -568,7 +573,7 @@ FUNCTION V_kol10()
       IF nkols < Abs( _kolicina )
          _ERROR := "1"
          Beep( 2 )
-         error_tab( "Na stanju je samo količina:" + Str( nKols, 12, 3 ) )
+         error_tab( _idfirma + "-" + _idvd + "-" + _brdok, "Na stanju je samo količina:" + Str( nKols, 12, 3 ) )
       ENDIF
       SELECT kalk_pripr
    ENDIF

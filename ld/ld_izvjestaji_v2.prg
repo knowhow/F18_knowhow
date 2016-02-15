@@ -44,7 +44,7 @@ FUNCTION ld_pregled_primanja_za_period()
    Box(, 6, 75 )
    cMjesecOd := cMjesecDo := gMjesec
    @ m_x + 1, m_y + 2 SAY "Radna jedinica (prazno-sve): "  GET cIdRJ
-   @ m_x + 2, m_y + 2 SAY "Mjesec od: "  GET  cmjesecOd  PICT "99"
+   @ m_x + 2, m_y + 2 SAY "Mjesec od: "  GET  cMjesecOd  PICT "99"
    @ m_x + 2, Col() + 2 SAY "do" GET cMjesecDO  PICT "99"
    IF lViseObr
       @ m_x + 2, Col() + 2 SAY "Obracun:" GET cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
@@ -104,7 +104,7 @@ FUNCTION ld_pregled_primanja_za_period()
    nT1 := nT2 := nT3 := nT4 := 0
    nC1 := 10
 
-   DO WHILE !Eof() .AND.  cgodina == godina
+   DO WHILE !Eof() .AND.  cGodina == godina
       IF PRow() > RPT_PAGE_LEN; FF; Eval( bZagl ); ENDIF
 
 
@@ -117,12 +117,12 @@ FUNCTION ld_pregled_primanja_za_period()
       IF fracunaj
          nKolona := 0
       ENDIF
-      DO WHILE  !Eof() .AND. cgodina == godina .AND. idradn == cidradn
+      DO WHILE  !Eof() .AND. cGodina == godina .AND. idradn == cidradn
          Scatter()
          IF !Empty( cidrj ) .AND. _idrj <> cidrj
             skip; LOOP
          ENDIF
-         IF cmjesecod > _mjesec .OR. cmjesecdo < _mjesec
+         IF cMjesecod > _mjesec .OR. cMjesecdo < _mjesec
             skip; LOOP
          ENDIF
          wi&cTip += _i&cTip
@@ -209,7 +209,7 @@ FUNCTION ZSRO()
    ELSE
       ? "RJ:", cidrj, ld_rj->naz
    ENDIF
-   ?? "  Mjesec:", Str( cmjesec, 2 ) + IspisObr()
+   ?? "  Mjesec:", Str( cMjesec, 2 ) + IspisObr()
    ?? "    Godina:", Str( cGodina, 5 )
    DevPos( PRow(), 74 )
    ?? "Str.", Str( ++nStrana, 3 )

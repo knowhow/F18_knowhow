@@ -277,7 +277,7 @@ FUNCTION set_screen_dimensions()
 
    IF _pix_width == NIL
 
-      maxrows( 40 )
+      maxrows( 40 - INFO_PANEL_ROWS)
       maxcols( 150 )
 
       IF SetMode( MaxRow(), MaxCol() )
@@ -297,7 +297,7 @@ FUNCTION set_screen_dimensions()
 
       font_size( 24 )
       font_width( 12 )
-      maxrows( 35 )
+      maxrows( 35 - INFO_PANEL_ROWS)
       maxcols( 119 )
 
       log_write( _msg + "1" )
@@ -309,14 +309,14 @@ FUNCTION set_screen_dimensions()
       font_name( "ubuntu mono" )
       font_size( 24 )
       font_width( 12 )
-      maxrows( 35 )
+      maxrows( 35 - INFO_PANEL_ROWS )
       maxcols( 110 )
       log_write( _msg + "2longMac" )
 #else
 
       font_size( 24 )
       font_width( 12 )
-      maxrows( 35 )
+      maxrows( 35 - INFO_PANEL_ROWS )
       maxcols( 105 )
       log_write( _msg + "2long" )
 #endif
@@ -335,7 +335,7 @@ FUNCTION set_screen_dimensions()
 
       font_size( 20 )
       font_width( 10 )
-      maxrows( 35 )
+      maxrows( 35 - INFO_PANEL_ROWS )
       maxcols( 100 )
 
       log_write( _msg + "3" )
@@ -345,7 +345,7 @@ FUNCTION set_screen_dimensions()
       font_size( 16 )
       font_width( 8 )
 
-      maxrows( 35 )
+      maxrows( 35 - INFO_PANEL_ROWS)
       maxcols( 100 )
 
       log_write( _msg + "4" )

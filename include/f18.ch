@@ -49,6 +49,10 @@
 #define F18_DEFAULT_LOG_LEVEL_DEBUG 9
 #define F18_DEFAULT_LOG_LEVEL       3
 
+#define INFO_PANEL_ROWS             2
+#define INFO_MESSAGES_LENGTH       20
+#define ERROR_MESSAGES_LENGTH      20
+
 #xcommand LOG_CALL_STACK <cLogStr>                 ;
   => FOR nI := 1 TO 30                             ;
     ;  IF !Empty( ProcName( nI ) )                 ;
@@ -194,12 +198,14 @@
                       ;endif
 
 #command ESC_RETURN <x> => if lastkey()=K_ESC;
+                           ; altd()          ;
                            ;return <x>       ;
-                           ;endif
+                           ;end
 
 #command ESC_RETURN    => if lastkey()=K_ESC;
-                           ;return        ;
-                           ;endif
+                           ; altd()         ;
+                           ;return          ;
+                           ;end
 
 #command HSEEK <xpr>     => dbSeek(<xpr> ,.f.)
 

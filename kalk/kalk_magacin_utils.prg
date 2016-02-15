@@ -43,7 +43,7 @@ FUNCTION KalkNabP( cIdFirma, cIdroba, cIdkonto, nKolicina, nKolZN, nNC, nSNC, dD
 
    IF cIdfirma + cIdkonto + cIdroba == field->idfirma + field->pkonto + field->idroba .AND. _datdok < field->datdok
 
-       error_tab( " Postoji dokument " + idfirma + "-" + idvd + "-" + brdok + " na datum: " + DToC( datdok ) )
+       error_tab( cIdfirma + "-" + cIdvd + "-" + cBrdok, " Postoji dokument " + field->idfirma + "-" + field->idvd + "-" + field->brdok + " na datum: " + DToC( field->datdok ) )
       _ERROR := "1"
    ENDIF
 
@@ -776,7 +776,7 @@ FUNCTION V_KolMag()
    IF nKolS < _Kolicina
       Beep( 4 )
       CLEAR TYPEAHEAD
-      error_tab( "Ukupno na stanju je samo" + Str( nKolS, 10, 4 ) + " robe !!", 6 )
+      error_tab( _idfirma + "-" + _idvd + "-" + _brdok, "Ukupno na stanju je samo" + Str( nKolS, 10, 4 ) + " robe !", 6 )
       _ERROR := "1"
    ENDIF
 
@@ -860,14 +860,17 @@ FUNCTION V_RabatV()
 
 
 
+/*
+  Racuna nabavnu cijenu i stanje robe u magacinu
+   KalkNab(cIdFirma, cIdRoba, cIdKonto, 4-nKolicina, 5-nKolZN, 6-nNC, 7-nSNC, 8-dDatNab)
 
-// KalkNab(cIdFirma,cIdRoba,cIdKonto,nKolicina,nKolZN,nNC,nSNC,dDatNab)
-// param nNC - zadnja nabavna cijena
-// param nSNC - srednja nabavna cijena
-// param nKolZN - kolicina koja je na stanju od zadnje nabavke
-// param dDatNab - datum nabavke
-// Racuna nabavnu cijenu i stanje robe u magacinu
+  4) kolicina na stanju
+  5) nKolZN - kolicina koja je na stanju od zadnje nabavke
+  6) nNC - zadnja nabavna cijena
+  7) nSNC - srednja nabavna cijena
+  8) param dDatNab - datum nabavke
 
+*/
 
 FUNCTION KalkNab( cIdFirma, cIdRoba, cIdKonto, nKolicina, nKolZN, nNC, nSNc, dDatNab )
 
@@ -904,7 +907,7 @@ FUNCTION KalkNab( cIdFirma, cIdRoba, cIdKonto, nKolicina, nKolZN, nNC, nSNc, dDa
 
    SKIP -1
    IF ( ( cIdFirma + cIdKonto + cIdRoba ) == ( field->idfirma + field->mkonto + field->idroba ) ) .AND. _datdok < field->datdok
-      error_tab( "Postoji dokument " + field->idfirma + "-" + field->idvd + "-" + field->brdok + " na datum: " + DToC( field->datdok ), 4 )
+      error_tab( cIdfirma + "-" + cIdvd + "-" + cBrDok, "Postoji dokument " + field->idfirma + "-" + field->idvd + "-" + field->brdok + " na datum: " + DToC( field->datdok ), 4 )
       _ERROR := "1"
    ENDIF
 

@@ -26,7 +26,7 @@ STATIC FUNCTION o_tables()
    O_POR
    O_LD
 
-   RETURN
+   RETURN .T.
 
 // ---------------------------------------------------------
 // sortiranje tabele LD
@@ -40,13 +40,13 @@ STATIC FUNCTION ld_sort( cRj, cGodina, cMjesec, cObr )
    IF !Empty( cObr )
       cFilter += "ld->obr == " + dbf_quote( cObr )
    ENDIF
-	
+
    IF !Empty( cRj )
 
       IF !Empty( cFilter )
          cFilter += " .and. "
       ENDIF
-	
+
       cFilter += Parsiraj( cRj, "IDRJ" )
    ENDIF
 
@@ -59,7 +59,7 @@ STATIC FUNCTION ld_sort( cRj, cGodina, cMjesec, cObr )
    GO TOP
    SEEK Str( cGodina, 4 ) + Str( cMjesec, 2 )
 
-   RETURN
+   RETURN .T.
 
 
 // ---------------------------------------------
@@ -171,9 +171,9 @@ FUNCTION ld_asd_aug_obrazac()
    @ m_x + 12, m_y + 2 SAY "Varijanta stampe (txt/drb):" GET cVarPrn PICT "@!" VALID cVarPrn $ "12"
 
    READ
-	
+
    clvbox()
-	
+
    ESC_BCR
 
    BoxC()
@@ -266,9 +266,9 @@ STATIC FUNCTION ak_print( dDatIspl, cPeriod, cTipRada )
    DO WHILE !Eof()
 
       ? jmb
-	
+
       @ PRow(), PCol() + 1 SAY PadR( naziv, 30 )
-	
+
       IF cTipRada == "1"
          @ PRow(), nPoc := PCol() + 1 SAY Str( prihod, 12, 2 )
          @ PRow(), PCol() + 1 SAY Str( rashod, 12, 2 )
@@ -288,11 +288,11 @@ STATIC FUNCTION ak_print( dDatIspl, cPeriod, cTipRada )
 
       IF ( nPageNo = 1 .AND. PRow() > 38 ) .OR. ;
             ( nPageNo <> 1 .AND. PRow() > 40 )
-		
+
          ? cLine
 
          ? "UKUPNO ZA SVE STRANICE:"
-		
+
          IF cTipRada == "1"
             @ PRow(), nPoc SAY Str( nUPrihod, 12, 2 )
             @ PRow(), PCol() + 1 SAY Str( nUrashod, 12, 2 )
@@ -300,7 +300,7 @@ STATIC FUNCTION ak_print( dDatIspl, cPeriod, cTipRada )
          ELSE
             @ PRow(), nPoc SAY Str( nUdohodak, 12, 2 )
          ENDIF
-		
+
          IF cTipRada $ "1#2"
             @ PRow(), PCol() + 1 SAY Str( nUDopZdr, 12, 2 )
             @ PRow(), PCol() + 1 SAY Str( nUOsnPor, 12, 2 )
@@ -311,17 +311,17 @@ STATIC FUNCTION ak_print( dDatIspl, cPeriod, cTipRada )
          ENDIF
 
          ? cLine
-		
+
          IF nPageNo = 1
             ak_potpis()
          ENDIF
 
          FF
-	
+
          ak_zaglavlje( ++nPageNo, cTipRada, dDatIspl, cPeriod )
          P_COND
          ak_t_header( cTipRada )
-	
+
       ENDIF
 
       SKIP
@@ -332,13 +332,13 @@ STATIC FUNCTION ak_print( dDatIspl, cPeriod, cTipRada )
    ? "UKUPNO:"
 
    IF cTipRada == "1"
-	
+
       @ PRow(), nPoc SAY Str( nUPrihod, 12, 2 )
       @ PRow(), PCol() + 1 SAY Str( nUrashod, 12, 2 )
       @ PRow(), PCol() + 1 SAY Str( nUdohodak, 12, 2 )
 
    ELSE
-	
+
       @ PRow(), nPoc SAY Str( nUdohodak, 12, 2 )
 
    ENDIF
@@ -505,7 +505,7 @@ STATIC FUNCTION ak_t_header( cVRada )
    NEXT
 
    FOR i := 1 TO Len( aTxt )
-	
+
       // koliko je sirok tekst ?
       nTxtLen := Len( aLines[ i, 1 ] )
 
@@ -609,7 +609,7 @@ STATIC FUNCTION fill_data( cRj, cGodina, cMjesec, ;
 
       SELECT radn
       SEEK cT_radnik
-	
+
       lInRS := radnik_iz_rs( radn->idopsst, radn->idopsrad ) .AND. cT_tipRada $ "A#U"
 
       // uzmi samo odgovarajuce tipove rada
@@ -618,7 +618,7 @@ STATIC FUNCTION fill_data( cRj, cGodina, cMjesec, ;
          SKIP
          LOOP
       ENDIF
-	
+
       IF ( cVRada == "2" .AND. !( cT_tiprada $ "P" ) )
          SELECT ld
          SKIP
@@ -657,31 +657,31 @@ STATIC FUNCTION fill_data( cRj, cGodina, cMjesec, ;
 
          // uvijek provjeri tip rada
          cT_tiprada := g_tip_rada( field->idradn, field->idrj )
-		
+
          lInRS := radnik_iz_rs( radn->idopsst, radn->idopsrad ) .AND. cT_tipRada $ "A#U"
-	
+
          // samo pozicionira bazu PAROBR na odgovarajuci zapis
          ParObr( cMjesec, cGodina, IF( lViseObr, ld->obr, ), ld->idrj )
-	
+
          // uzmi samo odgovarajuce tipove rada
          IF ( cVRada == "1" .AND. !( cT_tiprada $ "A#U" ) )
             SKIP
             LOOP
          ENDIF
-	
+
          IF ( cVRada == "2" .AND. !( cT_tiprada $ "P" ) )
             SKIP
             LOOP
          ENDIF
 
          nNeto := field->uneto
-		
+
          cTrosk := radn->trosk
-		
+
          nKLO := radn->klo
-		
+
          nL_odb := field->ulicodb
-		
+
          nTrosk := 0
 
          IF cT_tiprada == "A"
@@ -701,7 +701,7 @@ STATIC FUNCTION fill_data( cRj, cGodina, cMjesec, ;
 
          // prihod
          nPrihod := bruto_osn( nNeto, cT_tiprada, nL_odb, nil, cTrosk )
-		
+
          // rashod
          nRashod := nPrihod * ( nTrosk / 100 )
 
@@ -710,26 +710,26 @@ STATIC FUNCTION fill_data( cRj, cGodina, cMjesec, ;
 
          // ukupno dopr iz
          nDoprIz := u_dopr_iz( nDohodak, cT_tiprada )
-		
-	
+
+
          // osnovica za porez
          nPorOsn := ( nDohodak - nDoprIz ) - nL_odb
 
          // porez je ?
          nPorez := izr_porez( nPorOsn, "B" )
-	
+
          IF lInRS == .T.
             nDoprIz := 0
             nPorOsn := 0
             nPorez := 0
          ENDIF
-	
+
          SELECT ld
-		
+
          // ocitaj doprinose, njihove iznose
          nDopr1X := get_dopr( cDopr1X, cT_tipRada )
          nDopr2X := get_dopr( cDopr2X, cT_tipRada )
-		
+
          // izracunaj doprinose
          nIDopr1X := round2( nDohodak * nDopr1X / 100, gZaok2 )
          nIDopr2X := round2( nDohodak * nDopr2X / 100, gZaok2 )
@@ -751,7 +751,7 @@ STATIC FUNCTION fill_data( cRj, cGodina, cMjesec, ;
             nPorOsn, ;
             nPorez, ;
             nIDopr2X )
-				
+
          SELECT ld
          SKIP
 

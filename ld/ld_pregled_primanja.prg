@@ -46,7 +46,7 @@ FUNCTION ld_pregled_primanja()
 
    Box(, 7, 45 )
    @ m_x + 1, m_y + 2 SAY "Radna jedinica (prazno sve): "  GET cIdRJ
-   @ m_x + 2, m_y + 2 SAY "Mjesec: "  GET  cmjesec  PICT "99"
+   @ m_x + 2, m_y + 2 SAY "Mjesec: "  GET  cMjesec  PICT "99"
    IF lViseObr
       @ m_x + 2, Col() + 2 SAY "Obracun: " GET cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
    ENDIF
@@ -130,7 +130,7 @@ FUNCTION ld_pregled_primanja()
    ELSE
       IF cVarSort == "1"
          SET ORDER TO tag ( TagVO( "1" ) )
-         HSEEK Str( cGodina, 4 ) + cidrj + Str( cmjesec, 2 ) + cObracun
+         HSEEK Str( cGodina, 4 ) + cidrj + Str( cMjesec, 2 ) + cObracun
       ELSE
          Box(, 2, 30 )
          nSlog := 0
@@ -175,7 +175,7 @@ FUNCTION ld_pregled_primanja()
    nT1 := nT2 := nT3 := nT4 := 0
    nC1 := 10
 
-   DO WHILE !Eof() .AND.  cgodina == godina .AND. idrj = cidrj .AND. cmjesec = mjesec .AND. ;
+   DO WHILE !Eof() .AND.  cGodina == godina .AND. idrj = cidrj .AND. cMjesec = mjesec .AND. ;
          !( lViseObr .AND. !Empty( cObracun ) .AND. obr <> cObracun )
 
       IF lViseObr .AND. Empty( cObracun )
@@ -188,9 +188,9 @@ FUNCTION ld_pregled_primanja()
          // provjerimo da li otplacuje zadanom kreditoru
          // --------------------------------------------
          SELECT RADKR
-         SEEK Str( cgodina, 4 ) + Str( cmjesec, 2 ) + LD->idradn + cSifKred
+         SEEK Str( cGodina, 4 ) + Str( cMjesec, 2 ) + LD->idradn + cSifKred
          lImaJos := .F.
-         DO WHILE !Eof() .AND. Str( cgodina, 4 ) + Str( cmjesec, 2 ) + LD->idradn + cSifKred == Str( godina, 4 ) + Str( mjesec, 2 ) + idradn + idkred
+         DO WHILE !Eof() .AND. Str( cGodina, 4 ) + Str( cMjesec, 2 ) + LD->idradn + cSifKred == Str( godina, 4 ) + Str( mjesec, 2 ) + idradn + idkred
             IF placeno > 0
                lImaJos := .T.
                EXIT
@@ -237,7 +237,7 @@ FUNCTION ld_pregled_primanja()
          IF lKredit .AND. !Empty( cSifKred )
             lImaJos := .F.
             SELECT RADKR; SKIP 1
-            DO WHILE !Eof() .AND. Str( cgodina, 4 ) + Str( cmjesec, 2 ) + LD->idradn + cSifKred == Str( godina, 4 ) + Str( mjesec, 2 ) + idradn + idkred
+            DO WHILE !Eof() .AND. Str( cGodina, 4 ) + Str( cMjesec, 2 ) + LD->idradn + cSifKred == Str( godina, 4 ) + Str( mjesec, 2 ) + idradn + idkred
                IF placeno > 0
                   lImaJos := .T.
                   EXIT
@@ -291,7 +291,7 @@ FUNCTION ZPregPrim()
       ? Lokal( "RJ:" ), cidrj, ld_rj->naz
    ENDIF
 
-   ?? Space( 2 ) + Lokal( "Mjesec:" ), Str( cmjesec, 2 ) + IspisObr()
+   ?? Space( 2 ) + Lokal( "Mjesec:" ), Str( cMjesec, 2 ) + IspisObr()
    ?? Space( 4 ) + Lokal( "Godina:" ), Str( cGodina, 5 )
    DevPos( PRow(), 74 )
    ?? Lokal( "Str." ), Str( ++nStrana, 3 )

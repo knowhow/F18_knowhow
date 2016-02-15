@@ -77,7 +77,6 @@ FUNCTION kalk_azuriranje_dokumenta( lAuto )
 
       o_kalk_za_azuriranje()
 
-      AltD()
       IF !kalk_azur_dbf( lAuto, lViseDok, aOstaju, aRezim, lBrStDoks )
          MsgBeep( "Neuspješno ažuriranje KALK dokumenta u DBF tabele !" )
          RETURN .F.
@@ -551,7 +550,7 @@ STATIC FUNCTION kalk_provjera_integriteta( aDoks, lViseDok )
 
          IF gMetodaNC <> " " .AND. field->error == "1"
             Beep( 2 )
-            MSG( "Utvrđena greška pri obradi dokumenta, rbr: " + rbr, 6 )
+            MSG( "Utvrđena greška pri obradi dokumenta, rbr: " + field->rbr, 6 )
             my_close_all_dbf()
             RETURN .F.
          ENDIF
@@ -596,7 +595,7 @@ STATIC FUNCTION kalk_provjera_integriteta( aDoks, lViseDok )
       SEEK cIdFirma + cIdVD + cBrDok
 
       IF Found()
-         error_tab( "Već postoji dokument pod brojem " + cIdFirma + "-" + cIdvd + "-" + AllTrim( cBrDok ) )
+         error_tab( cIdfirma + "-" + cIdvd + "-" + cBrdok, "Već postoji dokument pod brojem " + cIdFirma + "-" + cIdvd + "-" + AllTrim( cBrDok ) )
          IF !lViseDok
             my_close_all_dbf()
             RETURN .F.
@@ -657,16 +656,16 @@ STATIC FUNCTION kalk_provjeri_duple_dokumente( aRezim )
 
          // TODO: cleanup sumnjive stavke
          IF field->ERROR == "1"
-            error_tab( "Program je kontrolisuci redom stavke utvrdio da je stavka#" + ;
-               "br." + rbr + " sumnjiva! Ukoliko bez obzira na to zelite da izvrsite#" + ;
+            error_tab( field->idfirma + "-" + field->idvd + "-" + field->brdok, ;
+               " /  Rbr." + field->rbr + " sumnjiva! Ukoliko bez obzira na to zelite da izvrsite#" + ;
                "azuriranje ovog dokumenta, na sljedece pitanje odgovorite#" + ;
                "sa 'D'." )
-            // IF Pitanje(, "Zelite li dokument azurirati bez obzira na upozorenje? (D/N)", "N" ) == "D"
-            aRezim := {}
-            AAdd( aRezim, gCijene )
-            AAdd( aRezim, gMetodaNC )
-            gCijene   := "1"
-            // ENDIF
+            IF Pitanje(, "Želite li dokument ažurirati bez obzira na sumnjive stavke? (D/N)", "N" ) == "D"
+               aRezim := {}
+               AAdd( aRezim, gCijene )
+               AAdd( aRezim, gMetodaNC )
+               gCijene   := "1"
+            ENDIF
             EXIT
          ENDIF
          SKIP 1

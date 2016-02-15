@@ -59,7 +59,7 @@ FUNCTION pregled_plata()
    @ m_x + 4, m_y + 2 SAY8 "Koeficijent benef.radnog staža (prazno-svi): "  GET  cKBenef VALID Empty( cKBenef ) .OR. P_KBenef( @cKBenef )
    @ m_x + 5, m_y + 2 SAY8 "Vrsta posla (prazno-svi): "  GET  cVPosla
    @ m_x + 7, m_y + 2 SAY8 "Šifra primanja minuli: "  GET  cIdMinuli PICT "@!"
-   @ m_x + 8, m_y + 2 SAY8 Lokal( "Sortirati po(1-sifri,2-prezime+ime)" )  GET cVarSort VALID cVarSort $ "12"  PICT "9"
+   @ m_x + 8, m_y + 2 SAY8 "Sortirati po (1-šifri, 2-prezime+ime)"  GET cVarSort VALID cVarSort $ "12"  PICT "9"
    @ m_x + 9, m_y + 2 SAY "Prikaz bruto iznosa ?" GET cPrBruto ;
       VALID cPrBruto $ "DN" PICT "@!"
    @ m_x + 11, m_y + 2 SAY8 "Kontrola (br.-dopr.-porez)+(prim.van neta)-(odbici)=(za isplatu)? (D/N)" GET cKontrola VALID cKontrola $ "DN" PICT "@!"
@@ -97,8 +97,8 @@ FUNCTION pregled_plata()
 
    // 1 - "str(godina)+idrj+str(mjesec)+idradn"
    // 2 - "str(godina)+str(mjesec)+idradn"
-
-   IF Empty( cidrj )
+altd()
+   IF Empty( cIdrj )
       cidrj := ""
       IF cVarSort == "1"
          SET ORDER TO tag ( TagVO( "2" ) )
@@ -106,7 +106,7 @@ FUNCTION pregled_plata()
       ELSE
          Box(, 2, 30 )
          nSlog := 0
-         cSort1 := "SortPrez(IDRADN)"
+         cSort1 := "SortPrez(IDRADN,.T.)"
          cFilt := IF( Empty( cMjesec ), ".t.", "MJESEC==" + _filter_quote( cMjesec ) ) + ".and." + ;
             IF( Empty( cGodina ), ".t.", "GODINA==" + _filter_quote( cGodina ) )
          IF lViseObr .AND. !Empty( cObracun )
@@ -119,16 +119,16 @@ FUNCTION pregled_plata()
    ELSE
       IF cVarSort == "1"
          SET ORDER TO tag ( TagVO( "1" ) )
-         HSEEK Str( cGodina, 4 ) + cidrj + Str( cmjesec, 2 ) + if( lViseObr .AND. !Empty( cObracun ), cObracun, "" )
+         HSEEK Str( cGodina, 4 ) + cidrj + Str( cMjesec, 2 ) + if( lViseObr .AND. !Empty( cObracun ), cObracun, "" )
       ELSE
          Box(, 2, 30 )
          nSlog := 0
-         cSort1 := "SortPrez(IDRADN)"
+         cSort1 := "SortPrez(IDRADN,.T.)"
          cFilt := "IDRJ==" + _filter_quote( cIdRj ) + ".and." + ;
             iif( Empty( cMjesec ), ".t.", "MJESEC==" + _filter_quote( cMjesec ) ) + ".and." + ;
             iif( Empty( cGodina ), ".t.", "GODINA==" + _filter_quote( cGodina ) )
          IF lViseObr .AND. !Empty( cObracun )
-            cFilt += ".and.OBR=" + _filter_quote( cObracun )
+            cFilt += ".and.OBR==" + _filter_quote( cObracun )
          ENDIF
          INDEX ON &cSort1 TO "tmpld" FOR &cFilt
          BoxC()
@@ -183,7 +183,7 @@ FUNCTION pregled_plata()
    nUNetNr := 0
    nUNeto := 0
 
-   DO WHILE !Eof() .AND.  cgodina == godina .AND. idrj = cidrj .AND. cmjesec = mjesec .AND. !( lViseObr .AND. !Empty( cObracun ) .AND. obr <> cObracun )
+   DO WHILE !Eof() .AND.  cGodina == godina .AND. idrj = cidrj .AND. cMjesec = mjesec .AND. !( lViseObr .AND. !Empty( cObracun ) .AND. obr <> cObracun )
 
       ParObr( ld->mjesec, ld->godina, IF( lViseObr, cObracun, ), ld->idrj )
 

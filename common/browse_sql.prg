@@ -296,7 +296,7 @@ STATIC FUNCTION ForceStable()
    DO WHILE ! TB:stabilize()
    ENDDO
 
-   RETURN
+   RETURN .T.
 
 
 STATIC FUNCTION InsToggle()
@@ -324,6 +324,14 @@ STATIC FUNCTION standardne_browse_komande( TB, Ch, nRez, nPored, aPoredak )
    LOCAL _rec, _saved
 
    DO CASE
+
+   CASE Ch == Asc( "i" ) .OR. Ch == Asc( "I" )
+      show_infos()
+      RETURN DE_CONT
+
+   CASE Ch == Asc( "e" ) .OR. Ch == Asc( "E" )
+      show_errors()
+      RETURN DE_CONT
 
    CASE Ch == K_SH_F1
       calc()

@@ -403,7 +403,7 @@ STATIC FUNCTION VKol( x_kord )
 
       IF nKols < Abs( _kolicina )
          _ERROR := "1"
-         error_tab( "Na stanju je samo kolicina:" + Str( nKols, 12, 3 ) )
+         error_tab( _idfirma + "-" + _idvd + "-" + _brdok, "Na stanju je samo kolicina:" + Str( nKols, 12, 3 ) )
       ENDIF
 
       SELECT kalk_pripr

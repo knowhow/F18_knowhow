@@ -190,7 +190,7 @@ FUNCTION DatPosljK()
    SEEK _idfirma + _mkonto + _idroba + Chr( 254 )
    SKIP -1
    IF _idfirma + _idkonto + _idroba == idfirma + mkonto + idroba .AND. _datdok < datdok
-      error_tab( "Zadnji dokument za ovaj artikal rađen je: " + DToC( datdok ) )
+      error_tab( _idfirma + "-" + _idvd + "-" + _brdok, "Zadnji dokument za ovaj artikal rađen je: " + DToC( datdok ) )
       _ERROR := "1"
    ENDIF
    SELECT kalk_pripr
@@ -217,7 +217,7 @@ FUNCTION DatPosljP()
       SEEK _idfirma + _idkonto + _idroba + Chr( 254 )
       SKIP -1
       IF _idfirma + _idkonto + _idroba == idfirma + pkonto + idroba .AND. _datdok < datdok
-         error_tab( "Zadnji dokument za ovaj artikal rađen je: " + DToC( datdok ) )
+         error_tab( _idfirma + "-" + _idvd + "-" + _brdok, "Zadnji dokument za ovaj artikal rađen je: " + DToC( datdok ) )
          _ERROR := "1"
       ENDIF
    ENDIF

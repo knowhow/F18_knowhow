@@ -1,16 +1,16 @@
 /*
- * This file is part of the bring.out FMK, a free and open source
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+ * This file is part of the bring.out knowhow ERP, a free and open source
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
 
-
 #include "f18.ch"
+
 
 
 FUNCTION st_kalk_dokument_pr()
@@ -108,7 +108,6 @@ FUNCTION st_kalk_dokument_pr()
          ENDIF
 
 
-
          IF Val( field->rbr ) > 100 .AND. cProizvod != Eval( bProizvod )
 
             cProizvod := Eval( bProizvod )
@@ -126,16 +125,20 @@ FUNCTION st_kalk_dokument_pr()
          ELSE
             @  PRow(), PCol() + 1 SAY  Space( 7 )
          ENDIF
-         @ PRow(), 11 SAY  "";?? Trim( Left( ROBA->naz, 40 ) ), "(", ROBA->jmj, ")"
-         @ PRow() + 1, 11 SAY IdRoba
+         @ PRow(), 11 SAY  "" ; ?? Trim( Left( ROBA->naz, 40 ) ), "(", ROBA->jmj, ")"
+
+         @ PRow() + 1, 11 SAY field->IdRoba
          @ PRow(), PCol() + 1 SAY field->Kolicina             PICTURE PicKol
          nCol1 := PCol() + 1
 
-         IF Val( rbr ) > 10
+         IF Val( field->rbr ) > 10
             @ PRow(), PCol() + 1 SAY field->nc                   PICTURE PicCDEM
+            IF field->error == "1"
+               ?? SPACE(20), "<ERR>"
+            ENDIF
          ENDIF
 
-         IF Val( rbr ) < 10
+         IF Val( field->rbr ) < 10
             @ PRow(), PCol() + 1 SAY field->fcj                   PICTURE PicCDEM
             @ PRow(), PCol() + 1 SAY nPrevoz / field->FCJ2 * 100      PICTURE PicProc
             @ PRow(), PCol() + 1 SAY nBankTr / field->FCJ2 * 100      PICTURE PicProc

@@ -47,7 +47,7 @@ FUNCTION ld_specifikacija_neto_primanja_po_opcinama()
 
    Box(, 8, 50 )
    @ m_x + 1, m_y + 2 SAY "Radna jedinica (prazno-sve): "  GET cIdRJ
-   @ m_x + 2, m_y + 2 SAY "Mjesec: "  GET  cmjesec  PICT "99"
+   @ m_x + 2, m_y + 2 SAY "Mjesec: "  GET  cMjesec  PICT "99"
    @ m_x + 2, Col() + 2 SAY8 "Obračun: " GET cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
    @ m_x + 3, m_y + 2 SAY "Godina: "  GET  cGodina  PICT "9999"
    @ m_x + 4, m_y + 2 SAY8 "Koeficijent benef.radnog staža (prazno-svi): "  GET  cKBenef VALID Empty( cKBenef ) .OR. P_KBenef( @cKBenef )
@@ -290,7 +290,7 @@ STATIC FUNCTION zaglavlje_izvjestaja( cVPosla, cKBenef )
       ? "RJ:", cidrj, ld_rj->naz
    ENDIF
 
-   ?? "  Mjesec:", Str( cmjesec, 2 ) + IspisObr()
+   ?? "  Mjesec:", Str( cMjesec, 2 ) + IspisObr()
    ?? "    Godina:", Str( cGodina, 5 )
 
    DevPos( PRow(), 74 )

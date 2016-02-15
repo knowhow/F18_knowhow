@@ -879,7 +879,6 @@ FUNCTION get_ld_rekap_filter( hParams )
    LOCAL nMjesec := hParams[ 'mjesec' ]
    LOCAL nMjesecDo := hParams[ 'mjesec_do' ]
 
-   AltD()
 
    IF lSvi
 

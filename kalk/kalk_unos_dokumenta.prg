@@ -54,6 +54,7 @@ FUNCTION kalk_unos_stavki_dokumenta( lAObrada )
    LOCAL nI
    LOCAL _opt_row, _opt_d
    LOCAL _sep := BROWSE_COL_SEP
+   LOCAL cPicKol := "999999.999"
 
    O_PARAMS
 
@@ -98,7 +99,7 @@ FUNCTION kalk_unos_stavki_dokumenta( lAObrada )
       AAdd( ImeKol, { "Barkod", {|| roba_ocitaj_barkod( field->idroba ) }, "IdRoba" } )
    ENDIF
 
-   AAdd( ImeKol, { "Kolicina", {|| Transform( field->Kolicina, picv ) }, "kolicina"    } )
+   AAdd( ImeKol, { _u( "Količina" ), {|| Transform( field->Kolicina, cPicKol ) }, "kolicina"    } )
    AAdd( ImeKol, { "IdTarifa", {|| field->idtarifa                 }, "idtarifa"    } )
    AAdd( ImeKol, { "F.Cj.", {|| Transform( field->FCJ, picv )      }, "fcj"         } )
    AAdd( ImeKol, { "F.Cj2.", {|| Transform( field->FCJ2, picv )     }, "fcj2"        } )
@@ -121,31 +122,28 @@ FUNCTION kalk_unos_stavki_dokumenta( lAObrada )
    Box(, nMaxRow, nMaxCol )
 
    _opt_d := ( nMaxCol / 4 )
-
-   _opt_row := PadR( "<c+N> Nova stavka", _opt_d ) + _sep
-   _opt_row += PadR( "<ENT> Ispravka", _opt_d ) + _sep
-   _opt_row += PadR( "<c+T> Briši stavku", _opt_d ) + _sep
-   _opt_row += "<K> Kalk.cijena"
+   _opt_row :=  _upadr( "<c+N> Nova stavka", _opt_d ) + _sep
+   _opt_row +=  _upadr( "<ENT> Ispravka", _opt_d ) + _sep
+   _opt_row +=  _upadr( "<c+T> Briši stavku", _opt_d ) + _sep
+   _opt_row +=  _upadr( "<K> Kalk.cijena",  _opt_d ) + _sep
 
    @ m_x + nMaxRow - 3, m_y + 2 SAY8 _opt_row
-
-   _opt_row := PadR( "<c+A> Ispravka", _opt_d ) + _sep
-   _opt_row += PadR( "<c+P> Štampa dok.", _opt_d ) + _sep
-   _opt_row += PadR( "<a+A> Ažuriranje", _opt_d ) + _sep
-   _opt_row += "<Q> Etikete"
+   _opt_row :=  _upadr( "<c+A> Ispravka", _opt_d ) + _sep
+   _opt_row +=  _upadr( "<c+P> Štampa dok.", _opt_d ) + _sep
+   _opt_row +=  _upadr( "<a+A> Ažuriranje", _opt_d ) + _sep
+   _opt_row +=  _upadr( "<Q> Etikete", _opt_d )  + _sep
 
    @ m_x + nMaxRow - 2, m_y + 2 SAY8 _opt_row
-
-   _opt_row := PadR( "<a+K> Kontiranje", _opt_d ) + _sep
-   _opt_row += PadR( "<c+F9> Briši sve", _opt_d ) + _sep
-   _opt_row += PadR( "<a+P> Štampa pripreme", _opt_d ) + _sep
+   _opt_row := _upadr( "<a+K> Kontiranje", _opt_d ) + _sep
+   _opt_row += _upadr( "<c+F9> Briši sve", _opt_d ) + _sep
+   _opt_row += _upadr( "<a+P> Štampa pripreme", _opt_d ) + _sep
+   _opt_row += _upadr( "<E> greške, <I> info", _opt_d ) + _sep
 
    @ m_x + nMaxRow - 1, m_y + 2 SAY8 _opt_row
-
-   _opt_row := PadR( "<c+F8> Rasp.troškova", _opt_d ) + _sep
-   _opt_row += PadR( "<A> Asistent", _opt_d ) + _sep
-   _opt_row += PadR( "<F10> Dodatne opc.", _opt_d ) + _sep
-   _opt_row += "<F11> Dodatne opc./2"
+   _opt_row := _upadr( "<c+F8> Rasp.troškova", _opt_d ) + _sep
+   _opt_row += _upadr( "<A> Asistent", _opt_d ) + _sep
+   _opt_row += _upadr( "<F10> Dodatne opc.", _opt_d ) + _sep
+   _opt_row += _upadr( "<F11> Dodatne opc./2", _opt_d ) + _sep
 
    @ m_x + nMaxRow, m_y + 2 SAY8 _opt_row
 
@@ -163,6 +161,10 @@ FUNCTION kalk_unos_stavki_dokumenta( lAObrada )
 
    RETURN .T.
 
+
+FUNCTION _upadr( cUtf, nNum )
+
+   RETURN hb_StrToUTF8( PADR( hb_Utf8ToStr( cUtf ), nNum ) )
 
 
 
@@ -1330,7 +1332,10 @@ FUNCTION kalk_unos_1( fNovi, atrib )
    ENDIF
 
    SELECT kalk_pripr
-   SET FILTER TO
+
+   IF _idvd != "PR"
+      SET FILTER TO
+   ENDIF
 
    IF _idvd == "10"
 

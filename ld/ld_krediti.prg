@@ -758,7 +758,7 @@ FUNCTION ld_lista_kredita()
          DO WHILE !Eof() .AND. idkred = cidkred .AND. cosn == naosnovu .AND. idradn == cidradn
             nKoef := 1
 
-            IF cRateDN <> "J" .OR. ( godina == cgodina .AND. mjesec == cmjesec )
+            IF cRateDN <> "J" .OR. ( godina == cGodina .AND. mjesec == cMjesec )
                ++nR
                nIzn += iznos * nKoef
                nIznP += placeno
@@ -775,7 +775,7 @@ FUNCTION ld_lista_kredita()
                nCol1 := PCol() + 1
                @ PRow(), PCol() + 1 SAY iznos * nKoef PICT gpici
             ELSEIF cRateDN == "J"
-               IF godina == cgodina .AND. mjesec == cmjesec
+               IF godina == cGodina .AND. mjesec == cMjesec
                   ?? "", Str( mjesec ) + "/" + Str( godina )
                   nCol1 := PCol() + 1
                   @ PRow(), PCol() + 1 SAY iznos * nKoef PICT gpici

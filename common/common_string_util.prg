@@ -730,20 +730,19 @@ STATIC FUNCTION novi_znak_extended( cChar )
    ENDIF
 
 
-   // ------------------
-   // ------------------
-
 FUNCTION _to_utf8( str )
    RETURN hb_StrToUTF8( str )
 
-// ------------------
-// ------------------
+
+
 FUNCTION _to_str( str )
    RETURN hb_UTF8ToStr( str )
 
 
-// -------------------------------------------
-// -------------------------------------------
+FUNCTION _u( cStr )
+      RETURN hb_UTF8ToStr( cStr )
+
+
 FUNCTION num_to_str( num, len, dec )
 
    LOCAL _txt := Str( num, len, dec )

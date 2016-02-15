@@ -313,16 +313,16 @@ FUNCTION UzmiSiht()
    ENDIF
 
    SELECT radsiht
-   SEEK Str( _godina, 4 ) + Str( cmjesec, 2 ) + cZadnjiRadnik + cIdRj
+   SEEK Str( _godina, 4 ) + Str( cMjesec, 2 ) + cZadnjiRadnik + cIdRj
    IF Found() // ovaj je radnik fakat radjen
-      SEEK Str( _godina, 4 ) + Str( cmjesec, 2 ) + cidradn + cIdRj
+      SEEK Str( _godina, 4 ) + Str( cMjesec, 2 ) + cidradn + cIdRj
       IF !Found()
          // ako je ovaj radnik vec radjen ne pitaj nista za preuzimanje
          IF pitanje(, 'Zelite li preuzeti sihtaricu od radnika ' + cZadnjiRadnik + ' D/N', 'D' ) == 'D'
             SELECT radsiht
-            SEEK Str( _godina, 4 ) + Str( cmjesec, 2 ) + cZadnjiRadnik + cIdRj
+            SEEK Str( _godina, 4 ) + Str( cMjesec, 2 ) + cZadnjiRadnik + cIdRj
             PRIVATE nTSrec := 0
-            DO WHILE !Eof() .AND. ( Str( godina, 4 ) + Str( mjesec, 2 ) + idradn + IdRj ) == ( Str( _godina, 4 ) + Str( cmjesec, 2 ) + cZadnjiRadnik + cIdRj )
+            DO WHILE !Eof() .AND. ( Str( godina, 4 ) + Str( mjesec, 2 ) + idradn + IdRj ) == ( Str( _godina, 4 ) + Str( cMjesec, 2 ) + cZadnjiRadnik + cIdRj )
                SKIP
                nTSrec := RecNo()
                SKIP -1
@@ -342,7 +342,7 @@ FUNCTION UzmiSiht()
    SELECT params
    PRIVATE cSection := "S"
    SELECT radsiht
-   SEEK Str( _godina, 4 ) + Str( cmjesec, 2 ) + cIdRadn + cIdRj
+   SEEK Str( _godina, 4 ) + Str( cMjesec, 2 ) + cIdRadn + cIdRj
    IF Found()  // nesto je bilo u sihtarici
       SELECT params
       cZadnjiRadnik := cIdRadn

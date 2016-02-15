@@ -209,7 +209,7 @@ FUNCTION bruto_osn( nIzn, cTipRada, nLOdb, nSKoef, cTrosk )
    DO CASE
       // nesamostalni rad
    CASE Empty( cTipRada )
-      nBrt := ROUND2( nIzn * parobr->k5,gZaok2 )
+      nBrt := ROUND2( nIzn * parobr->k5, gZaok2 )
 
       // neto placa (neto + porez )
    CASE cTipRada == "N"
@@ -222,12 +222,12 @@ FUNCTION bruto_osn( nIzn, cTipRada, nLOdb, nSKoef, cTrosk )
          nBrt := ROUND2( nIzn * parobr->k6, gZaok2 )
       ELSE
          nBrt := ROUND2( ( ( nIzn - nLOdb ) / 0.9 + nLOdb ) ;
-            / 0.69,gZaok2 )
+            / 0.69, gZaok2 )
       ENDIF
 
       // samostalni poslodavci
    CASE cTipRada == "S"
-      nBrt := ROUND2( nIzn * nSKoef,gZaok2 )
+      nBrt := ROUND2( nIzn * nSKoef, gZaok2 )
 
       // predsjednicki clanovi
    CASE cTipRada == "P"
@@ -632,7 +632,7 @@ FUNCTION ld_obracun_napravljen_vise_puta()
 FUNCTION ld_gen_virm()
 
    IF !f18_use_module( "virm" )
-       RETURN
+      RETURN
    ENDIF
 
    O_VIRM_PRIPR
@@ -663,10 +663,13 @@ FUNCTION ld_formatiraj_mjesec( nMjesec )
 
 
 
-FUNCTION SortPrez( cId )
+FUNCTION SortPrez( cId, lSql )
 
    LOCAL cVrati := ""
+   LOCAL lUtf := .F.
    LOCAL nArr := Select()
+
+   hb_default( @lSql, .F. )
 
    SELECT F_RADN
    IF !Used()
@@ -674,8 +677,21 @@ FUNCTION SortPrez( cId )
    ENDIF
 
    HSEEK cId
-   cVrati := naz + ime + imerod + id
+   IF lSql
+      cVrati := STRTRAN( field->naz + field->ime + field->imerod + field->id, _u( "Č" ), "CH" )
+      cVrati := STRTRAN( cVrati, _u( "č" ), "ch" )
+      cVrati := STRTRAN( cVrati, _u( "Ć" ), "CC" )
+      cVrati := STRTRAN( cVrati, _u( "ć" ), "cc" )
+      cVrati := STRTRAN( cVrati, _u( "Š" ), "SH" )
+      cVrati := STRTRAN( cVrati, _u( "š" ), "sh" )
+      cVrati := STRTRAN( cVrati, _u( "Ž" ), "ZZ" )
+      cVrati := STRTRAN( cVrati, _u( "ž" ), "zz" )
+      cVrati := STRTRAN( cVrati, _u( "Đ" ), "DJ" )
+      cVrati := STRTRAN( cVrati, _u( "đ" ), "dj" )      
 
+   ELSE
+      cVrati := field->naz + field->ime + field->imerod + field->id
+   ENDIF
    SELECT ( nArr )
 
    RETURN cVrati

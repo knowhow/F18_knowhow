@@ -188,7 +188,7 @@ FUNCTION ObjDBedit( cImeBoxa, xw, yw, bUserF, cMessTop, cMessBot, lInvert, aMess
          TB:PageDown()
 
       OTHERWISE
-         browse_standardne_komande( Tb, Ch, @nRez, nPored, aPoredak )
+         standardne_browse_komande_dbf( Tb, Ch, @nRez, nPored, aPoredak )
 
       ENDCASE
 
@@ -258,7 +258,7 @@ FUNCTION create_tbrowsedb( params, lIzOBJDB )
    @ m_x + 1, m_y + params[ "yw" ] - 6    SAY Str( my_reccount(), 5 )
 
 
-   TB := TBrowseDB( m_x + 2 + IIF( _rows_prazno > 4, 1, _rows_prazno ), m_y + 1, ( m_x + _rows ) - _rows_poruke, m_y + _width )
+   TB := TBrowseDB( m_x + 2 + iif( _rows_prazno > 4, 1, _rows_prazno ), m_y + 1, ( m_x + _rows ) - _rows_poruke, m_y + _width )
 
    IF TBSkipBlock <> NIL
       Tb:skipBlock := TBSkipBlock
@@ -315,7 +315,7 @@ STATIC FUNCTION InsToggle()
    RETURN .T.
 
 
-FUNCTION browse_standardne_komande( TB, Ch, nRez, nPored, aPoredak )
+FUNCTION standardne_browse_komande_dbf( TB, Ch, nRez, nPored, aPoredak )
 
    LOCAL _tr := hb_UTF8ToStr( "Traži:" ), _zam := "Zamijeni sa:"
    LOCAL _last_srch := "N"
@@ -327,8 +327,15 @@ FUNCTION browse_standardne_komande( TB, Ch, nRez, nPored, aPoredak )
    LOCAL _sect, _pict
    LOCAL _rec, _saved
 
-
    DO CASE
+
+   CASE Ch == Asc( "i" ) .OR. Ch == Asc( "I" )
+      show_infos()
+      RETURN DE_CONT
+
+   CASE Ch == Asc( "e" ) .OR. Ch == Asc( "E" )
+      show_errors()
+      RETURN DE_CONT
 
    CASE Ch == K_SH_F1
       calc()
@@ -530,7 +537,7 @@ FUNCTION zamjeni_numericka_polja_u_tabeli( cKolona, cTrazi, cUslov )
       RETURN lRet
    ENDIF
 
-   cAlias := LOWER( Alias() )
+   cAlias := Lower( Alias() )
 
    IF lImaSemafor
       sql_table_update( nil, "BEGIN" )

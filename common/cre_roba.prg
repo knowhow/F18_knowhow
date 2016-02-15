@@ -13,6 +13,7 @@
 
 FUNCTION cre_sif_roba( ver )
 
+   LOCAL aDbf
    LOCAL _table_name, _alias
    LOCAL _created
 
@@ -77,7 +78,6 @@ FUNCTION cre_sif_roba( ver )
    IF ver[ "current" ] > 0 .AND. ver[ "current" ] < 00809
       modstru( { "*" + _table_name, "C OPIS C 250 0 OPIS C 500 0" } )
    ENDIF
-
 
 
    CREATE_INDEX( "ID", "ID", _alias )

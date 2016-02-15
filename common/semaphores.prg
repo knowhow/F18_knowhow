@@ -631,7 +631,7 @@ FUNCTION dbf_refresh( cTable )
    LOCAL hVersions
 
    IF  cTable == nil
-      IF !Used() .OR. ( rddName() ==  "SQLMIX" )
+      IF !Used() .OR. ( rddName() $  "SQLMIX#ARRAYRDD" )
          RETURN .F.
       ENDIF
       cTable := Alias()

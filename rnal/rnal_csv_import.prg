@@ -34,8 +34,7 @@ ENDCLASS
 
 
 
-// -----------------------------------------------------
-// -----------------------------------------------------
+
 METHOD RnalCsvImport:New( _doc_no )
 
    ::params := NIL
@@ -45,8 +44,7 @@ METHOD RnalCsvImport:New( _doc_no )
 
 
 
-// ----------------------------------------------------
-// ----------------------------------------------------
+
 METHOD RnalCsvImport:import()
 
    LOCAL _ok := .F.
@@ -71,7 +69,7 @@ METHOD RnalCsvImport:import()
    AAdd( _struct, { "UM2",   "C", 15, 0 } )
    AAdd( _struct, { "MARKER", "C", 1, 0 } )
 
-   // otvori mi CSV fajl
+   // otvori CSV fajl
    oCsv := CsvReader():new()
    oCsv:struct := _struct
    oCsv:csvname := ::params[ "import_path" ] + ::params[ "csv_file" ]
@@ -170,16 +168,11 @@ METHOD RnalCsvImport:import()
 
 
 
-// ---------------------------------------------------
-// ---------------------------------------------------
 METHOD RnalCsvImport:get_article()
    RETURN get_items_article()
 
 
 
-
-// ---------------------------------------------------
-// ---------------------------------------------------
 METHOD RnalCsvImport:get_shape_type( shape )
 
    LOCAL _type := " "
@@ -194,8 +187,7 @@ METHOD RnalCsvImport:get_shape_type( shape )
 
 
 
-// ---------------------------------------------------
-// ---------------------------------------------------
+
 METHOD RnalCsvImport:csv_browse()
 
    LOCAL _box_x := MAXROWS() - 10
@@ -205,6 +197,7 @@ METHOD RnalCsvImport:csv_browse()
    LOCAL _header := "Pregled importovanih podataka CSV fajla..."
    LOCAL _x := m_x
    LOCAL _y := m_y
+   LOCAL _i
    PRIVATE ImeKol := {}
    PRIVATE Kol := {}
    PRIVATE GetList := {}
@@ -245,8 +238,7 @@ METHOD RnalCsvImport:csv_browse()
    RETURN _ret
 
 
-// ---------------------------------------------------
-// ---------------------------------------------------
+
 METHOD RnalCsvImport:csv_browse_key_handler()
 
    DO CASE
@@ -265,8 +257,7 @@ METHOD RnalCsvImport:csv_browse_key_handler()
 
 
 
-// ----------------------------------------------------
-// ----------------------------------------------------
+
 METHOD RnalCsvImport:get_vars()
 
    LOCAL _ok := .F.
@@ -283,12 +274,10 @@ METHOD RnalCsvImport:get_vars()
 
    ++ _x
    ++ _x
-
    @ m_x + _x, m_y + 2 SAY "Lokacija fajla:" GET _import_path PICT "@S35"
 
    ++ _x
    ++ _x
-
    @ m_x + _x, m_y + 2 SAY "Izvrsiti import fajla (D/N) ?" GET _imp_ok VALID _imp_ok $ "DN" PICT "@!"
 
    READ

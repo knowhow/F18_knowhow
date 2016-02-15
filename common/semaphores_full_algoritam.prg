@@ -55,7 +55,7 @@ FUNCTION full_synchro( dbf_table, step_size, cInfo )
    reopen_exclusive_and_zap( aDbfRec[ "table" ], .T., .T. )
    USE
 
-   info_tab( "full synchro: " + _sql_table + " => " + dbf_table )
+   info_tab( "x", "full synchro: " + _sql_table + " => " + dbf_table )
 
    run_sql_query( "BEGIN; SET TRANSACTION ISOLATION LEVEL SERIALIZABLE" )
    _count := table_count( _sql_table, "true" )
@@ -71,7 +71,7 @@ FUNCTION full_synchro( dbf_table, step_size, cInfo )
       RaiseError( _msg )
    ENDIF
 
-   info_tab( cInfo + " sql_cnt:" + Alltrim( STR(_count, 10, 0)) )
+   info_tab( "x", cInfo + " sql_cnt:" + Alltrim( STR(_count, 10, 0)) )
 
    FOR _offset := 0 TO _count STEP step_size
 
@@ -85,12 +85,12 @@ FUNCTION full_synchro( dbf_table, step_size, cInfo )
 
       fill_dbf_from_server( dbf_table, _qry, @_sql_fetch_time, @_dbf_write_time, .T. )
 
-      info_tab( "sql fetch time: " + AllTrim( Str( _sql_fetch_time ) ) + " dbf write time: " + AllTrim( Str( _dbf_write_time ) ) )
+      info_tab( "x", "sql fetch time: " + AllTrim( Str( _sql_fetch_time ) ) + " dbf write time: " + AllTrim( Str( _dbf_write_time ) ) )
 
       //@ m_x + 10, m_y + 2 SAY _offset + step_size
       //@ Row(), Col() + 2 SAY "/"
       //@ Row(), Col() + 2 SAY _count
-      info_tab( "STEP full_synchro tabela: " + dbf_table + " " + AllTrim( Str( _offset + step_size ) ) + " / " + AllTrim( Str( _count ) ) )
+      info_tab( "x", "STEP full_synchro tabela: " + dbf_table + " " + AllTrim( Str( _offset + step_size ) ) + " / " + AllTrim( Str( _count ) ) )
 
       //log_write( "STEP full_synchro tabela: " + dbf_table + " " + AllTrim( Str( _offset + step_size ) ) + " / " + AllTrim( Str( _count ) ), 7 )
 
@@ -108,7 +108,7 @@ FUNCTION full_synchro( dbf_table, step_size, cInfo )
       log_write( "sql count nakon END transaction): " + dbf_table + "/ sql count: " + AllTrim( Str( _count ) ), 7 )
    ENDIF
 
-   info_tab( "END full_synchro tabela: " + dbf_table +  " cnt: " + AllTrim( Str( _count ) ) )
+   info_tab( "x", "END full_synchro tabela: " + dbf_table +  " cnt: " + AllTrim( Str( _count ) ) )
 
    set_a_dbf_rec_chk0( aDbfRec[ "table" ] )
 

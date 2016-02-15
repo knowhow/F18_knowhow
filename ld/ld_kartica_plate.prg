@@ -110,32 +110,32 @@ FUNCTION ld_kartica_plate( cIdRj, cMjesec, cGodina, cIdRadn, cObrac )
    IF Empty( cIdRadn ) .AND. cVarSort == "2"
       IF Empty( cIdRj )
          IF lViseObr .AND. !Empty( cObracun )
-            INDEX ON Str( godina ) + Str( mjesec ) + obr + SortPrez( idradn ) + idrj TO "tmpld"
-            SEEK Str( cGodina, 4 ) + Str( cmjesec, 2 ) + cObracun + cIdRadn
+            INDEX ON Str( field->godina ) + Str( field->mjesec ) + field->obr + SortPrez( field->idradn ) + field->idrj TO "tmpld"
+            SEEK Str( cGodina, 4 ) + Str( cMjesec, 2 ) + cObracun + cIdRadn
          ELSE
-            INDEX ON Str( godina ) + Str( mjesec ) + SortPrez( idradn ) + idrj TO "tmpld"
-            SEEK Str( cGodina, 4 ) + Str( cmjesec, 2 ) + cIdRadn
+            INDEX ON Str( field->godina ) + Str( field->mjesec ) + SortPrez( field->idradn ) + idrj TO "tmpld"
+            SEEK Str( cGodina, 4 ) + Str( cMjesec, 2 ) + cIdRadn
          ENDIF
          cIdrj := ""
       ELSE
          IF lViseObr .AND. !Empty( cObracun )
-            INDEX ON Str( godina ) + idrj + Str( mjesec ) + obr + SortPrez( idradn ) TO "tmpld"
-            SEEK Str( cGodina, 4 ) + cidrj + Str( cmjesec, 2 ) + cObracun + cIdRadn
+            INDEX ON Str( field->godina ) + field->idrj + Str( field->mjesec ) + field->obr + SortPrez( field->idradn ) TO "tmpld"
+            SEEK Str( cGodina, 4 ) + cIdrj + Str( cMjesec, 2 ) + cObracun + cIdRadn
          ELSE
-            INDEX ON Str( godina ) + idrj + Str( mjesec ) + SortPrez( idradn ) TO "tmpld"
-            SEEK Str( cGodina, 4 ) + cidrj + Str( cmjesec, 2 ) + cIdRadn
+            INDEX ON Str( field->godina ) + field->idrj + Str( field->mjesec ) + SortPrez( field->idradn ) TO "tmpld"
+            SEEK Str( cGodina, 4 ) + cIdrj + Str( cMjesec, 2 ) + cIdRadn
          ENDIF
       ENDIF
    ELSE
       IF Empty( cidrj )
          SET ORDER TO tag ( TagVO( "2" ) )
-         SEEK Str( cGodina, 4 ) + Str( cmjesec, 2 ) + IF( lViseObr .AND. !Empty( cObracun ), cObracun, "" ) + cIdRadn
+         SEEK Str( cGodina, 4 ) + Str( cMjesec, 2 ) + IF( lViseObr .AND. !Empty( cObracun ), cObracun, "" ) + cIdRadn
          cIdrj := ""
       ELSE
          IF PCount() < 4
             SET ORDER TO TAG ( TagVO( "1" ) )
          ENDIF
-         SEEK Str( cGodina, 4 ) + cidrj + Str( cmjesec, 2 ) + IF( lViseObr .AND. !Empty( cObracun ), cObracun, "" ) + cIdRadn
+         SEEK Str( cGodina, 4 ) + cidrj + Str( cMjesec, 2 ) + IIF( lViseObr .AND. !Empty( cObracun ), cObracun, "" ) + cIdRadn
       ENDIF
    ENDIF
 
@@ -158,7 +158,7 @@ FUNCTION ld_kartica_plate( cIdRj, cMjesec, cGodina, cIdRadn, cObrac )
    ?
    P_12CPI
 
-   ParObr( cmjesec, cGodina, IF( lViseObr, cObracun, ), cIdRj )
+   ParObr( cMjesec, cGodina, IIF( lViseObr, cObracun, ), cIdRj )
 
    PRIVATE lNKNS
    lNKNS := ( cNKNS == "D" )
@@ -176,7 +176,7 @@ FUNCTION ld_kartica_plate( cIdRj, cMjesec, cGodina, cIdRadn, cObrac )
    cPrikDopr := IzFmkIni( "LD", "DoprNaKartPl", "D", KUMPATH )
    lPrikSveDopr := ( cPrikDopr == "D" )
 
-   DO WHILE !Eof() .AND. cgodina == godina .AND. idrj = cidrj .AND. cmjesec = mjesec .AND. idradn = cIdRadn .AND. !( lViseObr .AND. !Empty( cObracun ) .AND. obr <> cObracun )
+   DO WHILE !Eof() .AND. cGodina == godina .AND. idrj = cidrj .AND. cMjesec = mjesec .AND. idradn = cIdRadn .AND. !( lViseObr .AND. !Empty( cObracun ) .AND. obr <> cObracun )
 
       aNeta := {}
 

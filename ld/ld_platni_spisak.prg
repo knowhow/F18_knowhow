@@ -53,13 +53,13 @@ FUNCTION ld_platni_spisak()
    Box(, 13, 60 )
 
    @ m_x + 1, m_y + 2 SAY "Radna jedinica (prazno-sve): "  GET cIdRJ
-   @ m_x + 2, m_y + 2 SAY "Mjesec: "  GET  cmjesec  PICT "99"
+   @ m_x + 2, m_y + 2 SAY "Mjesec: "  GET  cMjesec  PICT "99"
    @ m_x + 2, Col() + 2 SAY "Obracun: "  GET  cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
    @ m_x + 3, m_y + 2 SAY "Godina: "  GET  cGodina  PICT "9999"
    @ m_x + 4, m_y + 2 SAY "Prored:"   GET  cProred  PICT "@!"  VALID cProred $ "DN"
    @ m_x + 5, m_y + 2 SAY "Prikaz iznosa:" GET cPrikIzn PICT "@!" VALID cPrikizn $ "DN"
    @ m_x + 6, m_y + 2 SAY "Prikaz u procentu %:" GET nprocenat PICT "999.99"
-   @ m_x + 7, m_y + 2 SAY "Sortirati po(1-sifri,2-prezime+ime)"  GET cVarSort VALID cVarSort $ "12"  PICT "9"
+   @ m_x + 7, m_y + 2 SAY "Sortirati po (1-sifri,2-prezime+ime)"  GET cVarSort VALID cVarSort $ "12"  PICT "9"
    @ m_x + 8, m_y + 2 SAY "Naslov izvjestaja"  GET cNaslov PICT "@S30"
    @ m_x + 9, m_y + 2 SAY "Naslov za topl.obrok"  GET cNaslovTO PICT "@S30"
    @ m_x + 10, m_y + 2 SAY "Iznos (samo za topli obrok)"  GET nIznosTO PICT gPicI
@@ -110,14 +110,14 @@ FUNCTION ld_platni_spisak()
       cIdRj := ""
       IF cVarSort == "1"
          SET ORDER TO tag ( TagVO( "2" ) )
-         HSEEK Str( cGodina, 4 ) + Str( cmjesec, 2 ) + cObracun
+         HSEEK Str( cGodina, 4, 0 ) + Str( cMjesec, 2, 0 ) + cObracun
       ELSE
          Box(, 2, 30 )
          nSlog := 0
          cSort1 := "SortPrez(IDRADN)"
-         cFilt := IF( Empty( cMjesec ), ".t.", "MJESEC==" + _filter_quote( cMjesec ) ) + ".and." + ;
+         cFilt := IIF( Empty( cMjesec ), ".t.", "MJESEC==" + _filter_quote( cMjesec ) ) + ".and." + ;
             IF( Empty( cGodina ), ".t.", "GODINA==" + _filter_quote( cGodina ) )
-         cFilt += ".and. obr=" + _filter_quote( cObracun )
+         cFilt += ".and. obr==" + _filter_quote( cObracun )
          INDEX ON &cSort1 TO "tmpld" FOR &cFilt
          BoxC()
          GO TOP
@@ -126,7 +126,7 @@ FUNCTION ld_platni_spisak()
 
       IF cVarSort == "1"
          SET ORDER TO tag ( TagVO( "1" ) )
-         HSEEK Str( cGodina, 4 ) + cidrj + Str( cmjesec, 2 ) + cObracun
+         HSEEK Str( cGodina, 4 ) + cidrj + Str( cMjesec, 2 ) + cObracun
       ELSE
          Box(, 2, 30 )
          nSlog := 0
@@ -167,7 +167,7 @@ FUNCTION ld_platni_spisak()
       nT1 := nT2 := nT3 := nT4 := 0
       nRbr := 0
 
-      DO WHILE !Eof() .AND.  cgodina == godina .AND. idrj = cidrj .AND. cmjesec = mjesec .AND. !( lViseObr .AND. !Empty( cObracun ) .AND. obr <> cObracun )
+      DO WHILE !Eof() .AND.  cGodina == godina .AND. idrj = cidrj .AND. cMjesec = mjesec .AND. !( lViseObr .AND. !Empty( cObracun ) .AND. obr <> cObracun )
 
          IF lViseObr .AND. Empty( cObracun )
             ScatterS( godina, mjesec, idrj, idradn )
@@ -283,7 +283,7 @@ FUNCTION ZPlatSp()
       ? Lokal( "RJ:" ), cIdRj, ld_rj->naz
    ENDIF
 
-   ?? Space( 2 ) + Lokal( "Mjesec:" ), Str( cmjesec, 2 ) + IspisObr()
+   ?? Space( 2 ) + Lokal( "Mjesec:" ), Str( cMjesec, 2 ) + IspisObr()
    ?? Space( 4 ) + Lokal( "Godina:" ), Str( cGodina, 5 )
    DevPos( PRow(), 74 )
    ?? Lokal( "Str." ), Str( ++nStrana, 3 )
@@ -354,7 +354,7 @@ FUNCTION ld_platni_spisak_tekuci_racun( cVarijanta )
    Box(, 11, 50 )
 
    @ m_x + 1, m_y + 2 SAY "Radna jedinica (prazno-sve): "  GET cIdRJ
-   @ m_x + 2, m_y + 2 SAY "Mjesec: "  GET  cmjesec  PICT "99"
+   @ m_x + 2, m_y + 2 SAY "Mjesec: "  GET  cMjesec  PICT "99"
    @ m_x + 2, Col() + 2 SAY "Obracun: "  GET  cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
    @ m_x + 3, m_y + 2 SAY "Godina: "  GET  cGodina  PICT "9999"
    @ m_x + 4, m_y + 2 SAY "Prored:"   GET  cProred  PICT "@!"  VALID cProred $ "DN"
@@ -398,7 +398,7 @@ FUNCTION ld_platni_spisak_tekuci_racun( cVarijanta )
 
       IF cVarSort == "1"
          SET ORDER TO tag ( TagVO( "2" ) )
-         HSEEK Str( cGodina, 4 ) + Str( cmjesec, 2 ) + cObracun
+         HSEEK Str( cGodina, 4 ) + Str( cMjesec, 2 ) + cObracun
       ELSE
          Box(, 2, 30 )
          nSlog := 0
@@ -416,7 +416,7 @@ FUNCTION ld_platni_spisak_tekuci_racun( cVarijanta )
 
       IF cVarSort == "1"
          SET ORDER TO tag ( TagVO( "1" ) )
-         HSEEK Str( cGodina, 4 ) + cidrj + Str( cmjesec, 2 ) + cObracun
+         HSEEK Str( cGodina, 4 ) + cidrj + Str( cMjesec, 2 ) + cObracun
       ELSE
          Box(, 2, 30 )
          nSlog := 0
@@ -633,7 +633,7 @@ FUNCTION ZPlatSpTR()
       ? Lokal( "RJ:" ), cIdRj, ld_rj->naz
    ENDIF
 
-   ?? Space( 2 ) + Lokal( "Mjesec:" ), Str( cmjesec, 2 ) + IspisObr()
+   ?? Space( 2 ) + Lokal( "Mjesec:" ), Str( cMjesec, 2 ) + IspisObr()
    ?? Space( 4 ) + Lokal( "Godina:" ), Str( cGodina, 5 )
 
    DevPos( PRow(), 74 )
@@ -708,7 +708,7 @@ FUNCTION ld_pregled_isplate_za_tekuci_racun( cVarijanta )
 
    Box(, 10, 50 )
    @ m_x + 1, m_y + 2 SAY "Radna jedinica (prazno-sve): "  GET cIdRJ
-   @ m_x + 2, m_y + 2 SAY "Mjesec: "  GET  cmjesec  PICT "99"
+   @ m_x + 2, m_y + 2 SAY "Mjesec: "  GET  cMjesec  PICT "99"
    @ m_x + 2, Col() + 2 SAY "Obracun: "  GET  cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
    @ m_x + 3, m_y + 2 SAY "Godina: "  GET  cGodina  PICT "9999"
    @ m_x + 4, m_y + 2 SAY "Prored:"   GET  cProred  PICT "@!"  VALID cProred $ "DN"
@@ -928,7 +928,7 @@ FUNCTION ZIsplataTR()
       ? Lokal( "RJ:" ), cIdRj, ld_rj->naz
    ENDIF
 
-   ?? Space( 2 ) + Lokal( "Mjesec:" ), Str( cmjesec, 2 ) + IspisObr()
+   ?? Space( 2 ) + Lokal( "Mjesec:" ), Str( cMjesec, 2 ) + IspisObr()
    ?? Space( 4 ) + Lokal( "Godina:" ), Str( cGodina, 5 )
    DevPos( PRow(), 74 )
    ?? Lokal( "Str." ), Str( ++nStrana, 3 )

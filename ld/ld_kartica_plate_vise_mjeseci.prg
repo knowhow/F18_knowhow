@@ -51,8 +51,8 @@ FUNCTION ld_kartica_plate_za_vise_mjeseci()
 
    Box(, 6, 77 )
    @ m_x + 1, m_y + 2 SAY "Radna jedinica (prazno-sve rj): "  GET cIdRJ VALID Empty( cidrj ) .OR. P_LD_RJ( @cidrj )
-   @ m_x + 2, m_y + 2 SAY "od mjeseca: "  GET  cmjesec  PICT "99"
-   @ m_x + 2, Col() + 2 SAY "do"  GET  cmjesec2  PICT "99"
+   @ m_x + 2, m_y + 2 SAY "od mjeseca: "  GET  cMjesec  PICT "99"
+   @ m_x + 2, Col() + 2 SAY "do"  GET  cMjesec2  PICT "99"
    @ m_x + 2, Col() + 2 SAY8 "Obračun:" GET cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
    @ m_x + 3, m_y + 2 SAY "Godina: "  GET  cGodina  PICT "9999"
    @ m_x + 4, m_y + 2 SAY "Radnik (prazno-svi radnici):" GET cIdRadn  VALID Empty( cIdRadn ) .OR. P_Radn( @cIdRadn )
@@ -104,7 +104,7 @@ FUNCTION ld_kartica_plate_za_vise_mjeseci()
 
    SELECT ld
    nT1 := nT2 := nT3 := nT4 := 0
-   DO WHILE !Eof() .AND.  cgodina == godina .AND. idrj = cidrj .AND. idradn = cIdRadn
+   DO WHILE !Eof() .AND.  cGodina == godina .AND. idrj = cidrj .AND. idradn = cIdRadn
 
       xIdRadn := idradn
       IF cRazdvoji == "N"
@@ -123,13 +123,13 @@ FUNCTION ld_kartica_plate_za_vise_mjeseci()
          SELECT ld_rj; HSEEK ld->idrj; SELECT ld
          Eval( bZagl )
       ENDIF
-      DO WHILE !Eof() .AND.  cgodina == godina .AND. idrj = cidrj .AND. idradn == xIdRadn
+      DO WHILE !Eof() .AND.  cGodina == godina .AND. idrj = cidrj .AND. idradn == xIdRadn
 
          m := "----------------------- --------  ----------------   ------------------"
 
          SELECT radn; HSEEK xidradn; SELECT ld
 
-         IF ( mjesec < cmjesec .OR. mjesec > cmjesec2 )
+         IF ( mjesec < cMjesec .OR. mjesec > cMjesec2 )
             skip; LOOP
          ENDIF
          Scatter()

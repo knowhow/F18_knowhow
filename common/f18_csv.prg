@@ -41,8 +41,7 @@ METHOD CsvReader:New()
    RETURN self
 
 
-// -----------------------------------------------------
-// -----------------------------------------------------
+
 METHOD CsvReader:close()
 
    SELECT ( ::wa )
@@ -51,8 +50,7 @@ METHOD CsvReader:close()
    RETURN SELF
 
 
-// ------------------------------------------------------
-// ------------------------------------------------------
+
 METHOD CsvReader:read()
 
    LOCAL _ok := .F.
@@ -80,17 +78,15 @@ METHOD CsvReader:read()
    RETURN _ok
 
 
-// ------------------------------------------------------
-// ------------------------------------------------------
+
 METHOD CsvReader:create_mem_dbf()
 
    dbCreate( ::memname, ::struct, "ARRAYRDD" )
 
-   RETURN
+   RETURN .T.
 
 
-// ------------------------------------------------------
-// ------------------------------------------------------
+
 METHOD CsvReader:open_csv_as_local_dbf()
 
    SELECT ( ::wa )
@@ -100,4 +96,4 @@ METHOD CsvReader:open_csv_as_local_dbf()
    GO TOP
    SKIP 1
 
-   RETURN
+   RETURN .T.

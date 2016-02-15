@@ -68,7 +68,7 @@ FUNCTION ld_specifikacija_po_rasponima_primanja()
    Box(, 19, 77 )
 
    @ m_x + 1, m_y + 2 SAY "Radna jedinica (prazno sve): "  GET cIdRJ
-   @ m_x + 2, m_y + 2 SAY "Mjesec: "  GET  cmjesec  PICT "99"
+   @ m_x + 2, m_y + 2 SAY "Mjesec: "  GET  cMjesec  PICT "99"
    @ m_x + 2, Col() + 2 SAY8 "Obračun:" GET cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
    @ m_x + 3, m_y + 2 SAY "Godina: "  GET  cGodina  PICT "9999"
 
@@ -209,7 +209,7 @@ FUNCTION ld_specifikacija_po_rasponima_primanja()
    ELSE
       ?? "RJ:", cIdRj + " - " + Ocitaj( F_LD_RJ, cIdRj, "naz" )
    ENDIF
-   ?? "  Mjesec:", Str( cmjesec, 2 ) + IspisObr()
+   ?? "  Mjesec:", Str( cMjesec, 2 ) + IspisObr()
    ?? "    Godina:", Str( cGodina, 5 )
 
    StampaTabele( aKol, {|| NIL },, gTabela,, ;

@@ -1,15 +1,24 @@
 /*
- * This file is part of the bring.out FMK, a free and open source
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+ * This file is part of the bring.out knowhow ERP, a free and open source
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
 
 #include "f18.ch"
+
+MEMVAR PicDEM, PicProc, PicCDem, PicKol, gPicCDEM, gPicDEM, gPICPROC, gPICKol
+MEMVAR ImeKol, Kol
+MEMVAR picv
+MEMVAR m_x, m_y
+MEMVAR lAsistRadi
+MEMVAR Ch
+MEMVAR opc
+MEMVAR _idfirma, _idvd, _brdok
 
 STATIC cENTER := Chr( K_ENTER ) + Chr( K_ENTER ) + Chr( K_ENTER )
 STATIC __box_x
@@ -23,6 +32,8 @@ FUNCTION kalk_unos_dokumenta()
    PRIVATE PicDEM := gPICDEM
    PRIVATE Pickol := gPICKOL
    PRIVATE lAsistRadi := .F.
+
+   // TODO: asistent iskljuciti u KALK PR
 
    __box_x := MAXROWS() - 8
    __box_y := MAXCOLS() - 6
@@ -39,6 +50,7 @@ FUNCTION kalk_unos_stavki_dokumenta( lAObrada )
 
    LOCAL nMaxCol := MAXCOLS() - 3
    LOCAL nMaxRow := MAXROWS() - 4
+   LOCAL nI
    LOCAL _opt_row, _opt_d
    LOCAL _sep := BROWSE_COL_SEP
 
@@ -71,38 +83,38 @@ FUNCTION kalk_unos_stavki_dokumenta( lAObrada )
    PRIVATE ImeKol := {}
    PRIVATE Kol := {}
 
-   AAdd( ImeKol, { "F.", {|| dbSelectArea( F_KALK_PRIPR ), idfirma   }, "idfirma"   } )
-   AAdd( ImeKol, { "VD", {|| IdVD                     }, "IdVD"        } )
-   AAdd( ImeKol, { "BrDok", {|| BrDok                    }, "BrDok"       } )
-   AAdd( ImeKol, { "R.Br", {|| Rbr                      }, "Rbr"         } )
-   AAdd( ImeKol, { "Dat.Kalk", {|| DatDok                   }, "DatDok"      } )
-   AAdd( ImeKol, { "Dat.Fakt", {|| DatFaktP                 }, "DatFaktP"    } )
-   AAdd( ImeKol, { "K.zad. ", {|| IdKonto                  }, "IdKonto"     } )
-   AAdd( ImeKol, { "K.razd.", {|| IdKonto2                 }, "IdKonto2"    } )
-   AAdd( ImeKol, { "IdRoba", {|| IdRoba                   }, "IdRoba"      } )
+   AAdd( ImeKol, { "F.", {|| dbSelectArea( F_KALK_PRIPR ), field->idfirma   }, "idfirma"   } )
+   AAdd( ImeKol, { "VD", {|| field->IdVD                     }, "IdVD"        } )
+   AAdd( ImeKol, { "BrDok", {|| field->BrDok                 }, "BrDok"       } )
+   AAdd( ImeKol, { "R.Br", {|| field->Rbr                    }, "Rbr"         } )
+   AAdd( ImeKol, { "Dat.Kalk", {|| field->DatDok             }, "DatDok"      } )
+   AAdd( ImeKol, { "Dat.Fakt", {|| field->DatFaktP           }, "DatFaktP"    } )
+   AAdd( ImeKol, { "K.zad. ", {|| field->IdKonto             }, "IdKonto"     } )
+   AAdd( ImeKol, { "K.razd.", {|| field->IdKonto2            }, "IdKonto2"    } )
+   AAdd( ImeKol, { "IdRoba", {|| field->IdRoba                }, "IdRoba"      } )
 
    IF lKoristitiBK
-      AAdd( ImeKol, { "Barkod", {|| roba_ocitaj_barkod( idroba ) }, "IdRoba" } )
+      AAdd( ImeKol, { "Barkod", {|| roba_ocitaj_barkod( field->idroba ) }, "IdRoba" } )
    ENDIF
 
-   AAdd( ImeKol, { "Kolicina", {|| Transform( Kolicina, picv ) }, "kolicina"    } )
-   AAdd( ImeKol, { "IdTarifa", {|| idtarifa                 }, "idtarifa"    } )
-   AAdd( ImeKol, { "F.Cj.", {|| Transform( FCJ, picv )      }, "fcj"         } )
-   AAdd( ImeKol, { "F.Cj2.", {|| Transform( FCJ2, picv )     }, "fcj2"        } )
-   AAdd( ImeKol, { "Nab.Cj.", {|| Transform( NC, picv )       }, "nc"          } )
-   AAdd( ImeKol, { "VPC", {|| Transform( VPC, picv )      }, "vpc"         } )
-   AAdd( ImeKol, { "VPCj.sa P.", {|| Transform( VPCsaP, picv )   }, "vpcsap"      } )
-   AAdd( ImeKol, { "MPC", {|| Transform( MPC, picv )      }, "mpc"         } )
-   AAdd( ImeKol, { "MPC sa PP", {|| Transform( MPCSaPP, picv )  }, "mpcsapp"     } )
-   AAdd( ImeKol, { "RN", {|| idzaduz2                 }, "idzaduz2"    } )
-   AAdd( ImeKol, { "Br.Fakt", {|| brfaktp                  }, "brfaktp"     } )
-   AAdd( ImeKol, { "Partner", {|| idpartner                }, "idpartner"   } )
-   AAdd( ImeKol, { "Marza", {|| tmarza                   }, "tmarza"   } )
-   AAdd( ImeKol, { "Marza 2", {|| tmarza2                  }, "tmarza2"   } )
-   AAdd( ImeKol, { "E", {|| error                    }, "error"       } )
+   AAdd( ImeKol, { "Kolicina", {|| Transform( field->Kolicina, picv ) }, "kolicina"    } )
+   AAdd( ImeKol, { "IdTarifa", {|| field->idtarifa                 }, "idtarifa"    } )
+   AAdd( ImeKol, { "F.Cj.", {|| Transform( field->FCJ, picv )      }, "fcj"         } )
+   AAdd( ImeKol, { "F.Cj2.", {|| Transform( field->FCJ2, picv )     }, "fcj2"        } )
+   AAdd( ImeKol, { "Nab.Cj.", {|| Transform( field->NC, picv )       }, "nc"          } )
+   AAdd( ImeKol, { "VPC", {|| Transform( field->VPC, picv )      }, "vpc"         } )
+   AAdd( ImeKol, { "VPCj.sa P.", {|| Transform( field->VPCsaP, picv )   }, "vpcsap"      } )
+   AAdd( ImeKol, { "MPC", {|| Transform( field->MPC, picv )      }, "mpc"         } )
+   AAdd( ImeKol, { "MPC sa PP", {|| Transform( field->MPCSaPP, picv )  }, "mpcsapp"     } )
+   AAdd( ImeKol, { "RN", {|| field->idzaduz2                 }, "idzaduz2"    } )
+   AAdd( ImeKol, { "Br.Fakt", {|| field->brfaktp                  }, "brfaktp"     } )
+   AAdd( ImeKol, { "Partner", {|| field->idpartner                }, "idpartner"   } )
+   AAdd( ImeKol, { "Marza", {|| field->tmarza                   }, "tmarza"   } )
+   AAdd( ImeKol, { "Marza 2", {|| field->tmarza2                  }, "tmarza2"   } )
+   AAdd( ImeKol, { "E", {|| field->error                    }, "error"       } )
 
-   FOR i := 1 TO Len( ImeKol )
-      AAdd( Kol, i )
+   FOR nI := 1 TO Len( ImeKol )
+      AAdd( Kol, nI )
    NEXT
 
    Box(, nMaxRow, nMaxCol )
@@ -148,7 +160,7 @@ FUNCTION kalk_unos_stavki_dokumenta( lAObrada )
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -172,14 +184,14 @@ FUNCTION o_kalk_edit()
    SET ORDER TO TAG "1"
    GO TOP
 
-   RETURN
+   RETURN .T.
 
 
 STATIC FUNCTION printaj_duple_stavke_iz_pripreme()
 
    LOCAL _data := {}
    LOCAL _dup := {}
-   LOCAL _scan
+   LOCAL _scan, _i
 
    O_ROBA
    O_KALK_PRIPR
@@ -229,7 +241,7 @@ STATIC FUNCTION printaj_duple_stavke_iz_pripreme()
 
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 STATIC FUNCTION kalk_24_rekapitulacija()
@@ -1220,7 +1232,7 @@ FUNCTION ProtStErase()
 FUNCTION SetNcTo0()
 
    IF Pitanje(, "Setovati NC na 0 (D/N)?", "N" ) == "N"
-      RETURN
+      RETURN .F.
    ENDIF
 
    O_KALK_PRIPR
@@ -1236,7 +1248,7 @@ FUNCTION SetNcTo0()
    my_unlock()
    GO TOP
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -1295,7 +1307,7 @@ FUNCTION kalk_edit_priprema( fNovi, atrib )
       RETURN 0
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -1882,8 +1894,8 @@ FUNCTION RaspTrosk( fSilent )
 
 
 
-/*! \fn Savjetnik()
- *  \brief Zamisljeno da se koristi kao pomoc u rjesavanju problema pri unosu dokumenta. Nije razradjeno.
+/*! fn Savjetnik()
+ *  brief Zamisljeno da se koristi kao pomoc u rjesavanju problema pri unosu dokumenta. Nije razradjeno.
  */
 
 FUNCTION Savjetnik()

@@ -20,7 +20,7 @@ STATIC aInfos := {}
 
 STATIC aStruct := { ;
       { "TIME", "C", 8, 0 }, ;
-      { "DOC", "C", 14, 0 }, ;
+      { "DOC", "C", 18, 0 }, ;
       { "MESSAGE", "C", 50, 0 } ;
       }
 

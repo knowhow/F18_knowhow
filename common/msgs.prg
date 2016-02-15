@@ -20,8 +20,8 @@ STATIC aInfos := {}
 
 STATIC aStruct := { ;
       { "TIME", "C", 8, 0 }, ;
-      { "DOC", "C", 12, 0 }, ;
-      { "MESSAGE", "C", 100, 0 } ;
+      { "DOC", "C", 14, 0 }, ;
+      { "MESSAGE", "C", 50, 0 } ;
       }
 
 FUNCTION empty_info_tab()

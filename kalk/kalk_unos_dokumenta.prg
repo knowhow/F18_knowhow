@@ -2378,7 +2378,7 @@ FUNCTION kalk_stampa_dokumenta()
          Preduzece()
 
          IF cIdVD == "10"
-            StKalk10_PDV()
+            kalk_stampa_dok_10()
 
 
          ELSEIF ( cidvd $ "11#12#13" )
@@ -2526,7 +2526,7 @@ FUNCTION kalk_stampa_dokumenta()
       IF ( cIdVd $ "11#12" )
          StKalk11_2( .T. )
       ELSEIF ( cIdVd == "10" )
-         StKalk10_PDV()
+         kalk_stampa_dok_10()
       ELSEIF ( cIdVd == "81" )
          StKalk81( .T. )
       ENDIF

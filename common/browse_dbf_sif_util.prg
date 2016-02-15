@@ -11,11 +11,17 @@
 
 #include "f18.ch"
 
+MEMVAR ImeKol
 MEMVAR Ch, fPoNaz, fID_J
 
 STATIC __PSIF_NIVO__ := 0
 STATIC __A_SIFV__ := { { NIL, NIL, NIL }, { NIL, NIL, NIL }, { NIL, NIL, NIL }, { NIL, NIL, NIL } }
 
+
+/*
+    ImeKol{   {"ID" ... }, { "Naz" ...} }
+    p_sifra( F_TIPDOK, cIdVD, -2 ) => vrijednost polja "Naz" za ID == cIdVd
+*/
 
 FUNCTION p_sifra( nDbf, xIndex, nVisina, nSirina, cNaslov, cID, dx, dy,  bBlok, aPoredak, bPodvuci, aZabrane, lInvert, aZabIsp )
 
@@ -57,14 +63,16 @@ FUNCTION p_sifra( nDbf, xIndex, nVisina, nSirina, cNaslov, cID, dx, dy,  bBlok, 
    sif_set_order( xIndex, cOrderTag, @fID_j )
    sif_sql_seek( @cId, @cIdBK, @cUslovSrch, @cNazSrch, fId_j, cOrderTag )
 
-   IF dx <> NIL .AND. dx < 0
+
+   IF VALTYPE( dx ) == "N" .AND. dx < 0
+
       IF !Found()
          GO BOTTOM
          SKIP
-         cRet := &( FieldName( -dx ) )
+         cRet := EVAL( ImeKol[ -dx, 2 ] )
          SKIP -1
       ELSE
-         cRet := &( FieldName( -dx ) )
+         cRet := EVAL( ImeKol[ -dx, 2 ] )
       ENDIF
 
       PopSifV()

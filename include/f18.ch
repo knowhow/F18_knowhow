@@ -50,8 +50,8 @@
 #define F18_DEFAULT_LOG_LEVEL       3
 
 #define INFO_PANEL_ROWS             2
-#define INFO_MESSAGES_LENGTH       20
-#define ERROR_MESSAGES_LENGTH      20
+#define INFO_MESSAGES_LENGTH       40
+#define ERROR_MESSAGES_LENGTH      40
 
 #xcommand LOG_CALL_STACK <cLogStr>                 ;
   => FOR nI := 1 TO 30                             ;

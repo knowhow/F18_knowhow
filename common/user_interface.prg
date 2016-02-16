@@ -12,9 +12,9 @@
 #include "f18.ch"
 
 
-STATIC aBoxStack := {}
-STATIC aPrStek := {}
-STATIC aMsgStack := {}
+THREAD STATIC aBoxStack := {}
+THREAD STATIC aPrStek := {}
+THREAD STATIC aMsgStack := {}
 
 FUNCTION init_gui( clear )
 

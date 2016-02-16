@@ -33,7 +33,7 @@ STATIC PROCEDURE alias_dbf_refresh()
 
    cAlias := Alias()
 
-   IF !Empty( cAlias )
+   IF !Empty( cAlias ) .AND. ( rddName() == DBFENGINE )
 #ifdef F18_DEBUG
       ?E "alias_dbf_refresh", cAlias
 #endif

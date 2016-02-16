@@ -12,8 +12,7 @@
 #include "f18.ch"
 
 
-// ------------------------------------------------------
-// ------------------------------------------------------
+
 FUNCTION BrowseKey( y1, x1, y2, x2, ImeKol, bfunk, uslov, traz, brkol, dx, dy, bPodvuci )
 
    STATIC poziv := 0

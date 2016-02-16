@@ -240,7 +240,7 @@ FUNCTION reopen_exclusive( dbf_table, open_index )
 
 FUNCTION reopen_dbf( excl, dbf_table, open_index )
 
-   LOCAL _a_dbf_rec
+   LOCAL _a_dbf_rec, _err
    LOCAL _dbf
    LOCAL lRet
    LOCAL cMsg
@@ -261,7 +261,7 @@ FUNCTION reopen_dbf( excl, dbf_table, open_index )
 
    BEGIN SEQUENCE WITH {| err| Break( err ) }
 
-      dbUseArea( .F., DBFENGINE, _dbf, _a_dbf_rec[ "alias" ], iif( excl, .F., .T. ), .F. )
+      dbUseArea( .F., DBFENGINE, _dbf, _a_dbf_rec[ "alias" ], IIF( excl, .F., .T. ), .F. )
 
       IF open_index
          IF File( ImeDbfCdx( _dbf ) )

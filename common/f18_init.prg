@@ -455,8 +455,7 @@ FUNCTION post_login( gVars )
 
    set_init_fiscal_params()
 
-   // brisanje loga nakon logiranja...
-   f18_log_delete()
+   f18_log_delete() // brisanje loga nakon logiranja...
    run_on_startup()
 
 
@@ -466,7 +465,9 @@ FUNCTION post_login( gVars )
 FUNCTION thread_dbfs( pThreadID )
 
    IF pThreadID != nil
+#ifdef F18_DEBUG
       ?E "thread_dbfs id", pThreadID
+#endif
       s_threadDbfsID := pThreadID
    ENDIF
 
@@ -506,9 +507,7 @@ PROCEDURE thread_create_dbfs()
 
    kreiraj_pa_napuni_partn_idbr_pdvb ()
 
-   // inicijaliziraj "dbf_key_fields" u __f18_dbf hash matrici
-   set_a_dbfs_key_fields()
-
+   set_a_dbfs_key_fields() // inicijaliziraj "dbf_key_fields" u __f18_dbf hash matrici
    write_dbf_version_to_config()
 
    my_server_close()

@@ -374,7 +374,7 @@ METHOD F18_DOK_ATRIB:atrib_hash_to_dbf( hash )
       ::set_atrib( _key, hash[ _key ] )
    NEXT
 
-   RETURN
+   RETURN .T.
 
 
 

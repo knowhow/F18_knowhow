@@ -97,7 +97,6 @@ FUNCTION pregled_plata()
 
    // 1 - "str(godina)+idrj+str(mjesec)+idradn"
    // 2 - "str(godina)+str(mjesec)+idradn"
-altd()
    IF Empty( cIdrj )
       cidrj := ""
       IF cVarSort == "1"

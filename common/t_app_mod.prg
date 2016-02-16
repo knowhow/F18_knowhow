@@ -133,9 +133,10 @@ METHOD run()
       ::lStarted := .F.
    ENDIF
 
+   add_idle_handlers()
    start_f18_program_module( self, .T. )
 
-   // da se zna da je objekat jednom vec startovan
+
    ::lStarted := .T.
 
    if ::lTerminate
@@ -143,7 +144,9 @@ METHOD run()
       RETURN .F.
    ENDIF
 
-   ::MMenu()
+   ::MMenu() // osnovni meni programskog modula
+
+   remove_idle_handlers()
 
    RETURN .T.
 
@@ -234,7 +237,7 @@ METHOD quit( lVratiseURP )
       QUIT
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -388,15 +391,12 @@ STATIC FUNCTION pdf_box()
    @ m_x + nX, m_y + 2 SAY "Podesavanje parametara PDF stampe *******"
 
    nX += 2
-
    @ m_x + nX, m_y + 2 SAY "PDF preglednik:" GET gPDFViewer VALID _g_pdf_viewer( @gPDFViewer ) PICT "@S56"
 
    nX += 1
-
    @ m_x + nX, m_y + 2 SAY "Printanje PDF-a bez poziva preglednika (D/N)?" GET gPDFPAuto VALID gPDFPAuto $ "DN" PICT "@!"
 
    nX += 2
-
    @ m_x + nX, m_y + 2 SAY "Default printer:" GET gDefPrinter PICT "@S55"
 
 
@@ -453,7 +453,7 @@ STATIC FUNCTION wr_to_yml( cFName )
 STATIC FUNCTION _g_pdf_viewer( cViewer )
 
    LOCAL cViewName := "acrord32.exe"
-   LOCAL cViewPath := "c:\progra~1\adobe\"
+   LOCAL cViewPath := "c:" + SLASH + "progra~1" + SLASH + "adobe" + SLASH
    LOCAL aPath := Directory( cViewPath + "*.*", "D" )
    LOCAL cPom
 
@@ -506,4 +506,4 @@ METHOD setTGVars()
 
    ::oDesktop := TDesktopNew()
 
-   RETURN
+   RETURN .T.

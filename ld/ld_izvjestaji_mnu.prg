@@ -125,7 +125,7 @@ STATIC FUNCTION izvjestaji_pregledi()
 
    f18_menu( "preg", .F., _izbor, _opc, _opcexe )
 
-   RETURN
+   RETURN .T.
 
 
 

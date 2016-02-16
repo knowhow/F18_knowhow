@@ -892,7 +892,7 @@ FUNCTION get_ld_rekap_filter( hParams )
 
    ELSE
 
-      cFilt1 := ".t." +  iif( Empty( cStrSpr ), "", ".and. IDSTRSPR == " + dbf_quote( cStrSpr ) )
+      cFilt1 := ".t." +  iif( Empty( cStrSpr ), "", ".and. IDSTRSPR == " + sql_quote( cStrSpr ) )
       IF nMjesec != nMjesecDo
          cFilt1 := cFilt1 + ".and. mjesec >= " + dbf_quote( nMjesec ) + ;
             ".and. mjesec <= " + dbf_quote( nMjesecDo ) + ".and. godina = " + dbf_quote( nGodina )

@@ -403,7 +403,6 @@ FUNCTION pakuj_dbf( a_dbf_rec, lSilent )
 
 
 
-
 FUNCTION full_table_synchro()
 
    LOCAL _sifra := Space( 6 ), _full_table_name, _alias := PadR( "PAROBR", 30 )

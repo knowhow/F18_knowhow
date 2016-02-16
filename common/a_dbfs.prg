@@ -207,7 +207,6 @@ FUNCTION get_a_dbf_rec( tbl, _only_basic_params )
    ENDIF
 
    IF _dbf_tbl == "x"
-      altd()
       _msg := "ERROR: x dbf alias " + tbl + " ne postoji u a_dbf_rec ?!"
       _rec := hb_Hash()
       _rec[ "temp" ] := .T.

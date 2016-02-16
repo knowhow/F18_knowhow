@@ -324,17 +324,12 @@ METHOD F18Login:company_db_relogin( server_param, database, session )
       CLOSE ALL
 
       set_global_vars_0()
-
       init_gui( .F. )
-
       set_global_vars()
-
       post_login( .F. )
 
       f18_app_parameters( .T. )
-
       set_hot_keys()
-
       say_database_info()
 
    ENDIF
@@ -377,7 +372,6 @@ METHOD F18Login:main_db_login_form()
       _port := 5432
    ENDIF
 
-   // ovdje nije fmk
    IF _schema == NIL
       _schema := "fmk"
    ENDIF
@@ -439,8 +433,8 @@ METHOD F18Login:main_db_login_form()
    ::main_db_params[ "session" ] := ""
    ::main_db_params[ "database" ] := "postgres"
 
-   // omogucice da se korisnici user=password jednostavno logiraju
-   IF Empty( _pwd )
+
+   IF Empty( _pwd ) //  korisnici user=password se jednostavno logiraju
       ::main_db_params[ "password" ] := ::main_db_params[ "username" ]
    ELSE
       ::main_db_params[ "password" ] := AllTrim( _pwd )

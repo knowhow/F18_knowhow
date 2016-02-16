@@ -141,8 +141,6 @@ FUNCTION f18_init_app_login( force_connect, arg_v )
       force_connect := .T.
    ENDIF
 
-   // nova login metoda - u izradi !!!!
-
    _get_server_params_from_config()
 
    oLogin := F18Login():New()
@@ -185,8 +183,8 @@ FUNCTION f18_init_app_login( force_connect, arg_v )
       ENDDO
 
    ELSE
-      // neko je rekao ESC
-      QUIT
+
+      QUIT // neko je rekao ESC
    ENDIF
 
    RETURN .T.
@@ -214,15 +212,6 @@ STATIC FUNCTION show_sacekaj()
    RETURN .T.
 
 
-FUNCTION add_idle_handlers()
-
-   hb_idleAdd( {||  hb_DispOutAt( maxrows(),  maxcols() - 8, Time() ) } )
-   hb_idleAdd( {||  hb_DispOutAt( maxrows(),  maxcols() - 8 - 8 - 1, "< CALC >" ), ;
-      iif( !in_calc() .AND. MINRECT( maxrows(), maxcols() - 8 - 8 - 1, maxrows(), maxcols() - 8 - 1 ), Calc(), NIL ) } )
-
-   hb_idleAdd( {|| IIF( in_cre_all_dbfs(), .T., dbf_refresh() ) } )
-
-   RETURN .T.
 
 
 // prelazak iz sezone u sezonu
@@ -373,6 +362,7 @@ FUNCTION set_screen_dimensions()
 
 #ifdef TEST
 
+
 FUNCTION _get_server_params_from_config()
 
    s_psqlServer_params := hb_Hash()
@@ -384,7 +374,7 @@ FUNCTION _get_server_params_from_config()
    s_psqlServer_params[ "password" ] := s_psqlServer_params[ "user" ]
    s_psqlServer_params[ "postgres" ] := "postgres"
 
-   RETURN
+   RETURN .T.
 
 #else
 
@@ -461,10 +451,8 @@ FUNCTION post_login( gVars )
 
    // brisanje loga nakon logiranja...
    f18_log_delete()
-
    run_on_startup()
 
-   add_idle_handlers()
 
    RETURN .T.
 
@@ -582,9 +570,10 @@ STATIC FUNCTION _get_screen_resolution_from_config()
 
    RETURN .T.
 
-// ---------------------------------------
-// vraca maksimalni broj redova
-// ---------------------------------------
+/*
+ vraca maksimalni broj redova, kolona
+*/
+
 FUNCTION maxrows( x )
 
    IF ValType( x ) == "N"
@@ -593,9 +582,7 @@ FUNCTION maxrows( x )
 
    RETURN __max_rows
 
-// -----------------------------------
-// vraca maksimalni broj kolona
-// ----------------------------------
+
 FUNCTION maxcols( x )
 
    IF ValType( x ) == "N"
@@ -733,7 +720,6 @@ STATIC FUNCTION _login_screen( server_params )
    @ 5, 5, 18, 77 BOX B_DOUBLE_SINGLE
 
    ++ nX
-
    @ nX, nLeft SAY PadC( "***** Unestite podatke za pristup *****", 60 )
 
    nX += 2
@@ -773,8 +759,8 @@ STATIC FUNCTION _login_screen( server_params )
    cHostName := AllTrim( cHostname )
    cUser     := AllTrim( cUser )
 
-   // omogucice da se korisnici user=password jednostavno logiraju
-   IF Empty( cPassword )
+
+   IF Empty( cPassword )  // korisnici user=password se jednostavno logiraju
       cPassword := cUser
    ELSE
       cPassword := AllTrim( cPassword )

@@ -604,7 +604,7 @@ FUNCTION is_last_refresh_before( cTable, nSeconds )
 
 PROCEDURE thread_dbf_refresh( cTable )
 
-   PRIVATE m_x, m_y, normal
+   PRIVATE m_x, m_y, normal, invert
 
    m_x := 0
    m_y := 0
@@ -648,26 +648,29 @@ FUNCTION dbf_refresh( cTable )
    ENDIF
 
    IF !File( f18_ime_dbf( aDbfRec ) )
+#ifdef F18_DEBUG
       ?E  aDbfRec[ 'table' ], "dbf tabele nema"
+#endif
       RETURN .F.
    ENDIF
 
    IF in_dbf_refresh( aDbfRec[ 'table' ] )
+#ifdef F18_DEBUG
       ?E  aDbfRec[ 'table' ], "tabela je vec u refreshu"
+#endif
       RETURN .F.
    ENDIF
 
    IF is_last_refresh_before( aDbfRec[ 'table' ], 7 )
-      // #ifdef F18_DEBUG
-      // ?E  aDbfRec[ 'table' ], "last refresh of table < 7 sec before"
-      // #endif
+#ifdef F18_DEBUG
+      ?E  aDbfRec[ 'table' ], "last refresh of table < 7 sec before"
+#endif
       RETURN .F.
    ENDIF
 
 #ifdef F18_DEBUG
    log_write( "going to refresh: " + aDbfRec[ 'table' ], 7 )
 #endif
-
    in_dbf_refresh( aDbfRec[ 'table' ], .T. )
 
    PushWA()

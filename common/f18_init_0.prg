@@ -26,22 +26,17 @@ FUNCTION start_f18_program_module( oApp, lSezone )
    LOCAL cImeDbf
    LOCAL _i
 
-
    set_global_vars_0()
-
    gModul   := oApp:cName
    gVerzija := oApp:cVerzija
 
 
    SetNaslov( oApp )
-
    CreGParam()
 
    set_global_vars_0_prije_prijave()
 
-   // inicijalizacija, prijava
-   InitE( oApp )
-
+   InitE( oApp ) // inicijalizacija, prijava
    set_global_vars_0_nakon_prijave()
 
    IF oApp:lTerminate
@@ -53,9 +48,8 @@ FUNCTION start_f18_program_module( oApp, lSezone )
    gReadOnly := .F.
 
    SET EXCLUSIVE OFF
+   oApp:setGVars() // Setuj globalne varijable varijable modula
 
-   // Setuj globalne varijable varijable modula
-   oApp:setGVars()
 
    RETURN .T.
 

@@ -348,6 +348,7 @@ STATIC FUNCTION fin_provjera_prije_azuriranja_naloga( auto, lista_naloga )
       RETURN _ok
    ENDIF
 
+altd()
    IF !fin_p_tabele_provjera( lista_naloga )
 
       IF !_vise_naloga

@@ -36,7 +36,8 @@ FUNCTION check_recno_and_fix( cDbfAlias, nCntSql, nCntDbf )
       log_write( cErrMsg, 3 )
 
       IF nCntDbf > 0
-         notify_podrska( cErrMsg )
+         // notify_podrska( cErrMsg )
+         error_tab( "check_recno_diff", cErrMsg )
       ENDIF
 
       full_synchro( _a_dbf_rec[ "table" ], 50000, "dbf_cnt_before: " + AllTrim( Str( nCntDbf, 10, 0) ) )

@@ -19,28 +19,33 @@ FUNCTION add_idle_handlers()
    AAdd( aIdleHandlers, hb_idleAdd( {||  hb_DispOutAt( maxrows(),  maxcols() - 8 - 8 - 1, "< CALC >" ), ;
       iif( !in_calc() .AND. MINRECT( maxrows(), maxcols() - 8 - 8 - 1, maxrows(), maxcols() - 8 - 1 ), Calc(), NIL ) } ) )
 
-   //AAdd( aIdleHandlers, hb_idleAdd( {|| alias_dbf_refresh() } ) )
+   AAdd( aIdleHandlers, hb_idleAdd( {|| alias_dbf_refresh() } ) )
 
    RETURN .T.
 
 STATIC PROCEDURE alias_dbf_refresh()
 
-/*
+   LOCAL cAlias
+
    IF in_cre_all_dbfs()
       RETURN
    ENDIF
 
-   IF !Empty( Alias() )
-      thread_dbf_refresh( Alias() )
+   cAlias := Alias()
+
+   IF !Empty( cAlias )
+#ifdef F18_DEBUG
+      ?E "alias_dbf_refresh", cAlias
+#endif
+      thread_dbfs( hb_threadStart(  @thread_dbf_refresh(), cAlias ) )
+
    ENDIF
-*/
 
    RETURN
 
 
 FUNCTION remove_idle_handlers()
 
-   AltD()
    AEval( aIdleHandlers, {| pHandlerID | hb_idleDel( pHandlerID ) } )
    aIdleHandlers := {}
 

@@ -57,7 +57,6 @@ STATIC FUNCTION uslovi_pregleda_loga( params )
    @ m_x + _x, Col() + 1 SAY "do" GET _datum_do
 
    ++ _x
-
    @ m_x + _x, m_y + 2 SAY "Korisnik (prazno svi):" GET _user PICT "@S40"
 
    ++ _x
@@ -68,7 +67,6 @@ STATIC FUNCTION uslovi_pregleda_loga( params )
    @ m_x + _x, m_y + 2 SAY8 "  sadrži:" GET _conds_true PICT "@S40"
 
    ++ _x
-
    @ m_x + _x, m_y + 2 SAY8 "nesadrži:" GET _conds_false PICT "@S40"
 
    ++ _x
@@ -156,9 +154,8 @@ STATIC FUNCTION _log_get_data( params )
       _qry += " LIMIT " + AllTrim( Str( _limit ) )
    ENDIF
 
-   MsgO( "Vršim upit prema serveru..." )
+   info_tab( "log_get_data", "qry:" + _qry )
    _data := _sql_query( _server, _qry )
-   MsgC()
 
    IF !is_var_objekat_tpquery( _data )
       RETURN NIL
@@ -180,10 +177,10 @@ STATIC FUNCTION _print_log_data( data, params, print_to_file )
       IF !print_to_file
          MsgBeep( "Za zadati uslov ne postoje podaci u log-u !" )
       ENDIF
-      RETURN
+      RETURN .F.
    ENDIF
 
-   IF print_to_file
+   IF !is_in_main_thread() .OR. print_to_file
       f18_start_print( _log_path + _log_file, "D" )
    ELSE
       START PRINT CRET
@@ -225,7 +222,7 @@ STATIC FUNCTION _print_log_data( data, params, print_to_file )
 
    ENDDO
 
-   IF print_to_file
+   IF !is_in_main_thread() .OR. print_to_file
       f18_end_print( _log_path + _log_file, "D" )
    ELSE
       FF

@@ -444,6 +444,12 @@ FUNCTION post_login( gVars )
 
    thread_dbfs( hb_threadStart( @thread_create_dbfs() ) )
 
+// hb_bitOr( HB_THREAD_INHERIT_PUBLIC, HB_THREAD_MEMVARS_COPY ),
+
+// HB_THREAD_INHERIT_PUBLIC,
+ // HB_THREAD_MEMVARS_COPY
+
+
    check_server_db_version()
    server_log_enable()
 
@@ -470,6 +476,7 @@ FUNCTION thread_dbfs( pThreadID )
 FUNCTION main_thread()
 
    RETURN s_mainThreadID
+
 
 FUNCTION is_in_main_thread()
 
@@ -783,15 +790,13 @@ STATIC FUNCTION _login_screen( server_params )
 FUNCTION pg_server( server )
 
    LOCAL oError
-
-   // LOCAL nI, cMsg, cLogMsg := ""
+   LOCAL nI, cMsg, cLogMsg := ""
 
 
    IF !is_in_main_thread()
 
       IF s_psqlServerDbfThread  == NIL
 
-         // LOG_CALL_STACK cLogMsg
          BEGIN SEQUENCE WITH {| err | Break( err ) }
 
             s_psqlServerDbfThread := TPQServer():New( s_psqlServer_params[ "host" ], ;
@@ -801,10 +806,10 @@ FUNCTION pg_server( server )
                s_psqlServer_params[ "port" ], ;
                s_psqlServer_params[ "schema" ] )
 
-            // ?E "thread psql login OK ", cLogMsg
          RECOVER USING oError
 
-            ?E "thread psql login error:", oError:description
+            LOG_CALL_STACK cLogMsg
+            ?E "thread psql login error:", cLogMsg, oError:description
             QUIT_1
          END SEQUENCE
 

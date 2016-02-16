@@ -100,7 +100,7 @@ FUNCTION f18_email_send( mail_params, attach )
 
    ELSE
 
-      Alert( "Email pristup ne radi !!!" )
+      error_tab( "email", "Email pristup ne radi !" )
       _ret := .F.
 
    ENDIF

@@ -14,6 +14,9 @@
 
 FUNCTION f18_start_print( f_name, print_opt, document_name )
 
+LOCAL cMsg, nI, cLogMsg := ""
+
+
    IF print_opt == NIL
       print_opt := "V"
    ENDIF
@@ -40,8 +43,12 @@ FUNCTION f18_start_print( f_name, print_opt, document_name )
 
    PRIVATE GetList := {}
 
-   MsgO( "Priprema izvještaja..." )
+   LOG_CALL_STACK cLogMsg
+   Alert ( cLogMsg )
 
+   MsgO( "Priprema izvještaja... /2" )
+
+   LOG_CALL_STACK cLogMsg
    SetPRC( 0, 0 )
    SET CONSOLE OFF
 

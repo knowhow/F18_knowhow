@@ -74,16 +74,18 @@ FUNCTION my_use_temp( xArg1, cFullDbf, lNewArea, lExcl, lOpenIndex )
       USE
    ENDIF
 
-   IF !lNewArea
-      SELECT ( nWa )
-   ENDIF
-   IF Used()
-      USE
-   ENDIF
+
 
    nCnt := 0
    DO WHILE nCnt < 3
       BEGIN SEQUENCE WITH {| err | Break( err ) }
+
+         IF !lNewArea
+            SELECT ( nWa )
+         ENDIF
+         IF Used()
+            USE
+         ENDIF
 
          dbUseArea( lNewArea, DBFENGINE, cFullDbf, cAlias, !lExcl, .F. )
          IF lOpenIndex .AND. File( ImeDbfCdx( cFullDbf ) )
@@ -131,9 +133,12 @@ FUNCTION my_use( cAlias, cTable, lRefresh )
       cAlias :=  aDbfRec[ 'alias' ]
    ENDIF
 
-   IF lRefresh
-      thread_dbfs( hb_threadStart( @thread_dbf_refresh(), aDbfRec[ 'table' ] ) )
+
+   IF lRefresh .AND. !skip_semaphore_sync( aDbfRec[ 'table' ] )
+      thread_dbfs( hb_threadStart(  @thread_dbf_refresh(), aDbfRec[ 'table' ] ) )
    ENDIF
+
+   // hb_bitOr( HB_THREAD_INHERIT_PUBLIC, HB_THREAD_MEMVARS_COPY ),
 
    cFullDbf := my_home() + aDbfRec[ 'table' ]
    cFullIdx := ImeDbfCdx( cFullDbf )

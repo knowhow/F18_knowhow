@@ -33,7 +33,7 @@ FUNCTION lock_semaphore( table, status, lUnlockTable )
    LOCAL _user_locked
    LOCAL cSemaphoreStatus
 
-   IF skip_semaphore( table )
+   IF skip_semaphore_sync( table )
       RETURN .T.
    ENDIF
 
@@ -135,7 +135,7 @@ FUNCTION get_semaphore_status( table )
    LOCAL _server := pg_server()
    LOCAL _user   := f18_user()
 
-   IF skip_semaphore( table )
+   IF skip_semaphore_sync( table )
       RETURN "free"
    ENDIF
 
@@ -227,7 +227,7 @@ FUNCTION get_semaphore_version_h( table )
    LOCAL _ret := hb_Hash()
    LOCAL _msg
 
-   IF skip_semaphore( table )
+   IF skip_semaphore_sync( table )
       _ret[ "version" ] := 1
       _ret[ "last_version" ] := 1
       RETURN _ret
@@ -271,7 +271,7 @@ FUNCTION reset_semaphore_version( table )
    LOCAL _user := f18_user()
    LOCAL _server := pg_server()
 
-   IF skip_semaphore( table )
+   IF skip_semaphore_sync( table )
       RETURN .T.
    ENDIF
 
@@ -447,7 +447,7 @@ FUNCTION update_semaphore_version_after_push( table, to_myself )
       to_myself := .F.
    ENDIF
 
-   IF skip_semaphore( table )
+   IF skip_semaphore_sync( table )
       RETURN .F.
    ENDIF
 
@@ -541,7 +541,7 @@ FUNCTION insert_semaphore_if_not_exists( cTable, lIgnoreChk0 )
    LOCAL _ret
    LOCAL cSqlTbl
 
-   IF skip_semaphore( cTable )
+   IF skip_semaphore_sync( cTable )
       RETURN .F.
    ENDIF
 
@@ -643,7 +643,16 @@ FUNCTION dbf_refresh( cTable )
 
    aDbfRec := get_a_dbf_rec( cTable, .T. )
 
-   IF skip_semaphore( aDbfRec[ 'table' ] ) // tabela nije sem-shared
+
+   IF in_dbf_refresh( aDbfRec[ 'table' ] )
+#ifdef F18_DEBUG
+      ?E  aDbfRec[ 'table' ], "in_dbf_refresh"
+#endif
+      RETURN .F.
+   ENDIF
+
+
+   IF skip_semaphore_sync( aDbfRec[ 'table' ] ) // tabela nije sem-shared
       RETURN .F.
    ENDIF
 
@@ -654,7 +663,6 @@ FUNCTION dbf_refresh( cTable )
       RETURN .F.
    ENDIF
 
-
    IF is_last_refresh_before( aDbfRec[ 'table' ], 7 )
 #ifdef F18_DEBUG
       ?E  aDbfRec[ 'table' ], "last refresh of table < 7 sec before"
@@ -662,10 +670,11 @@ FUNCTION dbf_refresh( cTable )
       RETURN .F.
    ENDIF
 
+   in_dbf_refresh( aDbfRec[ 'table' ], .T. )
+
 #ifdef F18_DEBUG
    log_write( "going to refresh: " + aDbfRec[ 'table' ], 7 )
 #endif
-   in_dbf_refresh( aDbfRec[ 'table' ], .T. )
 
    PushWA()
 
@@ -687,6 +696,7 @@ FUNCTION dbf_refresh( cTable )
    in_dbf_refresh( aDbfRec[ 'table' ], .F. )
 
    RETURN .T.
+
 
 
 
@@ -735,13 +745,13 @@ STATIC FUNCTION dbf_refresh_0( aDbfRec )
    RETURN .T.
 
 
-STATIC FUNCTION skip_semaphore( table )
+FUNCTION skip_semaphore_sync( table )
 
    LOCAL hRec
 
    table := Lower( table )
 
-   IF Left( table, 6 ) == "sync__"
+   IF Left( table, 6 ) == "SYNC__"
       RETURN .T.
    ENDIF
 

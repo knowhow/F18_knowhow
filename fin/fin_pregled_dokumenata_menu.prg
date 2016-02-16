@@ -13,24 +13,22 @@
 
 FUNCTION MnuPregledDokumenata()
 
-   PRIVATE opc := {}
-   PRIVATE opcexe := {}
-   PRIVATE Izbor := 1
+   LOCAL aOpc := {}
+   LOCAL aOpcexe := {}
+   LOCAL nIzbor := 1
 
-   AAdd( opc, "1. kontrola zbira datoteka                     " )
-   AAdd( opcexe, {|| fin_kontrola_zbira() } )
+   AAdd( aOpc, "1. kontrola zbira datoteka                     " )
+   AAdd( aOpcexe, {|| fin_kontrola_zbira() } )
 
-   AAdd( opc, "2. štampanje ažuriranog dokumenta" )
+   AAdd( aOpc, "2. štampanje ažuriranog dokumenta" )
+   AAdd( aOpcexe, {|| fin_stampa_azur_naloga_menu() } )
 
-      AAdd( opcexe, {|| fin_stampa_azur_naloga_menu() } )
+   AAdd( aOpc, "3. stampa liste dokumenata" )
+   AAdd( aOpcexe, {|| fin_stampa_liste_naloga() } )
 
+   AAdd( aOpc, "4. kontrola zbira datoteka za period" )
+   AAdd( aOpcexe, {|| fin_kontrola_zbira( .T. ) } )
 
-   AAdd( opc, "3. stampa liste dokumenata" )
-   AAdd( opcexe, {|| fin_stampa_liste_naloga() } )
-
-   AAdd( opc, "4. kontrola zbira datoteka za period" )
-   AAdd( opcexe, {|| fin_kontrola_zbira( .T. ) } )
-
-   Menu_SC( "pgl" )
+   f18_menu( "pgl", .F., @nIzbor, aOpc, aOpcExe )
 
    RETURN .T.

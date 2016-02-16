@@ -35,7 +35,7 @@ FUNCTION GlobalErrorHandler( err_obj, lShowErrorReport, lQuitApp )
    _out_file := my_home_root() + "error.txt"
 
    IF is_in_main_thread()
-
+  altd()
       PTxtSekvence()
       SET CONSOLE OFF
       SET PRINTER OFF
@@ -317,11 +317,10 @@ STATIC FUNCTION send_email( err_obj, lNotify )
 
    _attach := { _attachment }
 
-   MsgO( "Šaljem izvještaj greške podršci bring.out ..." )
+   info_tab( "err-sync", "Šaljem izvještaj greške podršci bring.out ..." )
 
    f18_email_send( _mail_params, _attach )
 
-   MsgC()
 
    FErase( _attachment )
 

@@ -21,8 +21,10 @@
 
 #include "hbclass.ch"
 #include "fileio.ch"
-#require "rddsql"
-#require "sddpg"
+
+#require "rddsql.ch"
+#require "sddpg.ch"
+
 #include "dbinfo.ch"
 #include "error.ch"
 #include "fileio.ch"

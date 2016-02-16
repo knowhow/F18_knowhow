@@ -12,10 +12,10 @@
 
 #include "f18.ch"
 
-
 FUNCTION use_sql_sif( table, l_make_index )
 
    LOCAL oConn
+   LOCAL nI, cMsg, cLogMsg := ""
 
    IF Used()
       USE
@@ -30,6 +30,8 @@ FUNCTION use_sql_sif( table, l_make_index )
    rddSetDefault( "SQLMIX" )
 
    IF rddInfo( RDDI_CONNECT, { "POSTGRESQL", oConn } ) == 0
+      LOG_CALL_STACK cLogMsg
+      ?E "Unable connect to the PSQLserver", cLogMsg
       ? "Unable connect to the server"
       RETURN .F.
    ENDIF
@@ -52,6 +54,7 @@ FUNCTION use_sql_sif( table, l_make_index )
 FUNCTION use_sql( table, sql_query, cAlias )
 
    LOCAL oConn
+   LOCAL nI, cMsg, cLogMsg := ""
 
    IF Used()
       USE
@@ -62,7 +65,8 @@ FUNCTION use_sql( table, sql_query, cAlias )
    rddSetDefault( "SQLMIX" )
 
    IF rddInfo( RDDI_CONNECT, { "POSTGRESQL", oConn } ) == 0
-      ? "Unable connect to the server"
+      LOG_CALL_STACK cLogMsg
+      ?E "Unable connect to the PSQLserver", cLogMsg
       RETURN .F.
    ENDIF
 

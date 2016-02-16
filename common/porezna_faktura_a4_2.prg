@@ -1,14 +1,13 @@
 /*
- * This file is part of the bring.out FMK, a free and open source
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+ * This file is part of the bring.out knowhow ERP, a free and open source
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
-
 
 #include "f18.ch"
 
@@ -70,31 +69,31 @@ FUNCTION st_pf_a4_2( lStartPrint )
    aArtNaz := {}
 
    DO WHILE !Eof()
-	
+
       IF PRow() > nDodRedova + 48 - nSlTxtRow
          ++nStr
          NStr( cLine, nStr, cRazmak, .T. )
       endif
-	
+
       aArtNaz := SjeciStr( rn->robanaz, 40 )
-	
+
       // PRVI RED
-	
+
       IF Empty( rn->podbr )
          ? cRazmak + PadL( rn->rbr + ")", 6 ) + Space( 1 )
       ELSE
          ? cRazmak + PadL( rn->rbr + "." + AllTrim( rn->podbr ), 6 ) + Space( 1 )
       ENDIF
-	
+
       ?? PadR( rn->idroba, 10 ) + Space( 1 )
       ?? PadR( aArtNaz[ 1 ], 40 ) + Space( 1 )
       ?? Transform( rn->kolicina, PicKol ) + Space( 1 )
       ?? rn->jmj + Space( 1 )
-	
+
       IF !lSamoKol
          ?? Transform( rn->cjenbpdv, PicCDem ) + Space( 1 )
          ?? Transform( rn->cjen2bpdv, PicCDem ) + Space( 1 )
-		
+
          IF cPDVSvStavka == "D"
             ?? Transform( rn->vpdv, PicCDem ) + Space( 1 )
          ELSE
@@ -103,16 +102,16 @@ FUNCTION st_pf_a4_2( lStartPrint )
 
          ?? Transform( rn->cjen2bpdv * rn->kolicina,  PicDem )
       ENDIF
-	
+
       cArtNaz2Red := Space( 40 )
-	
+
       IF Len( aArtNaz ) > 1
          cArtNaz2Red := aArtNaz[ 2 ]
       ENDIF
-	
+
       // DRUGI RED
       ? cRazmak + Space( 18 ) + PadR( cArtNaz2Red, 40 )
-	
+
       IF !lSamoKol
          nPopust := rn->popust
          IF rn->( FieldPos( "poptp" ) ) <> 0
@@ -120,21 +119,21 @@ FUNCTION st_pf_a4_2( lStartPrint )
                nPopust := rn->poptp
             ENDIF
          ENDIF
-					
+
          ?? Space( 22 ) + Transform( nPopust, "99.99%" ) + Space( 1 )
-		
+
          IF cPDVSvStavka == "D"
             ?? Transform( rn->cjen2pdv, PicCDem ) + Space( 1 )
          ENDIF
-		
+
          ?? PadL( Transform( rn->ppdv, "999.99%" ), 11 )
 
          ?? Space( Len( PicDem ) + 2 )
-		
+
          ?? Transform( rn->ukupno, PicDem )
 
       ENDIF
-	
+
       SKIP
    ENDDO
 
@@ -150,7 +149,7 @@ FUNCTION st_pf_a4_2( lStartPrint )
       IF Round( drn->zaokr, 2 ) <> 0
          ? cRazmak + PadL( "Zaokruzenje (+/-):", 95 ), PadL( Transform( Abs( drn->zaokr ), PicDem ), 26 )
       ENDIF
-	
+
       ? cLine
       ? cRazmak + PadL( "S V E U K U P N O   S A   P D V (" + cValuta + ") :", 95 ), PadL( Transform( drn->ukupno, PicDem ), 26 )
 
@@ -161,7 +160,7 @@ FUNCTION st_pf_a4_2( lStartPrint )
             ? cRazmak + PadL( "S V E U K U P N O   S A   P D V -  P O P U S T  N A   T. P. (" + cValuta + ") : ZA PLATITI :", 95 ), PadL( Transform( drn->ukupno - drn->ukpoptp, PicDem ), 26 )
          ENDIF
       ENDIF
-	
+
       cSlovima := get_dtxt_opis( "D04" )
       ? cRazmak + "slovima: " + cSlovima
       ? cLine

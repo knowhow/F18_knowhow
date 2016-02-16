@@ -16,10 +16,8 @@
 
 FUNCTION GetSqlSite()
 
-   // {
    IF gSQL == "D"
       RETURN gSQLSite
    ELSE
       RETURN 0
    ENDIF
-   // }

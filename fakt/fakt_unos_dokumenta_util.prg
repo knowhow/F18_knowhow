@@ -439,8 +439,6 @@ FUNCTION V_Roba( lPrikTar )
       ENDIF
    ENDIF
 
-   fix_sifradob( @_idroba, 5, "0" )
-
    P_Roba( @_Idroba, nil, nil, gArtCDX )
 
    SELECT roba

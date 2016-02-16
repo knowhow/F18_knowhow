@@ -824,14 +824,6 @@ STATIC FUNCTION MyInKeySc()
 
    nKey := Inkey()
 
-   IF ( gSQL == "D" )
-      DO WHILE .T.
-         GwStaMai( @nBroji2 )
-         IF !( GW_STATUS == "NA_CEKI_K_SQL" )
-            EXIT
-         ENDIF
-      ENDDO
-   ENDIF
 
    RETURN ( nKey )
 

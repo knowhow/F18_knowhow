@@ -11,7 +11,7 @@
 
 #include "f18.ch"
 
-STATIC nSlogova := 0
+THREAD STATIC nSlogova := 0
 
 MEMVAR cTag, cKljucIz, cFilter
 

@@ -36,15 +36,4 @@ FUNCTION CekaHandler( nBroji2 )
 
    LOCAL cRez := ""
 
-   IF gSQL == "N"
-      RETURN NIL
-   ENDIF
-
-   DO WHILE .T.
-      cRez := GwStaMai( @nBroji2 )
-      IF !( GW_STATUS == "NA_CEKI_K_SQL" )
-         EXIT
-      ENDIF
-   ENDDO
-
-   RETURN cRez
+   RETURN NIL

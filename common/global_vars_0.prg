@@ -12,9 +12,7 @@
 #include "f18.ch"
 
 
-// --------------------------------------------
-// postavi globalne varijable
-// --------------------------------------------
+
 FUNCTION set_global_vars_0()
 
    PUBLIC ZGwPoruka := ""
@@ -90,7 +88,6 @@ FUNCTION set_global_vars_0()
    PUBLIC cBokvira
    PUBLIC cBnaslova
    PUBLIC cBshema := "B1"
-   PUBLIC gCekaScreenSaver := 5
    // ne koristi lokale
    PUBLIC gLokal := "0"
    // pdf stampa

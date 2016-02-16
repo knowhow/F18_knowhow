@@ -14,8 +14,8 @@
 MEMVAR ImeKol
 MEMVAR Ch, fPoNaz, fID_J
 
-STATIC __PSIF_NIVO__ := 0
-STATIC __A_SIFV__ := { { NIL, NIL, NIL }, { NIL, NIL, NIL }, { NIL, NIL, NIL }, { NIL, NIL, NIL } }
+THREAD STATIC __PSIF_NIVO__ := 0
+THREAD STATIC __A_SIFV__ := { { NIL, NIL, NIL }, { NIL, NIL, NIL }, { NIL, NIL, NIL }, { NIL, NIL, NIL } }
 
 
 /*

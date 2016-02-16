@@ -23,7 +23,7 @@ FUNCTION GetLozinka( nSiflen )
 
    DO WHILE .T.
 
-      nChar := WaitScrSav()
+      nChar := Inkey(0)
 
       IF nChar == K_ESC
          cKorsif := ""

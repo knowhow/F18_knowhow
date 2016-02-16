@@ -15,6 +15,7 @@
 
 FUNCTION P_TRFP( cId, dx, dy )
 
+   LOCAL xRet
    LOCAL cShema := Space( 1 )
    LOCAL cKavd := Space( 2 )
    PRIVATE imekol, kol
@@ -43,9 +44,9 @@ FUNCTION P_TRFP( cId, dx, dy )
    SET ORDER TO TAG "ID"
    GO TOP
 
-   p_sifra( F_TRFP, 1, 15, 76, "Šeme kontiranja KALK->FIN", @cId, dx, dy, {| Ch| TRfpb( Ch ) } )
+   xRet := p_sifra( F_TRFP, 1, 15, 76, "Šeme kontiranja KALK->FIN", @cId, dx, dy, {| Ch| TRfpb( Ch ) } )
 
-   RETURN
+   RETURN xRet
 
 
 

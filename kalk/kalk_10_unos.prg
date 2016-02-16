@@ -103,8 +103,7 @@ FUNCTION Get1_10PDV()
          PICT "@!" ;
          VALID {|| ;
          _idroba := iif( Len( Trim( _idroba ) ) < 10, Left( _idroba, 10 ), _idroba ), ;
-         fix_sifradob( @_idroba, 5, "0" ), ;
-         P_Roba( @_IdRoba, nil, nil, gArtCDX ), ;
+      P_Roba( @_IdRoba, nil, nil, gArtCDX ), ;
          ispisi_naziv_sifre( F_ROBA, _idroba, _kord_x, 25, 40 ), ;
          _IdTarifa := iif( fnovi, ROBA->idtarifa, _IdTarifa ), zadnji_ulazi_info( _idpartner, _idroba, "M" ), ;
          .T. }
@@ -581,7 +580,7 @@ FUNCTION V_kol10()
          _ERROR := "1"
          Beep( 2 )
          error_tab( _idfirma + "-" + _idvd + "-" + _brdok, ;
-           _idroba + " kol na stanju:" + AllTrim( Str( nKols, 12, 3 ) ) + " treba: " + AllTrim( Str( _kolicina, 12, 3 ) ) )
+            _idroba + " kol na stanju:" + AllTrim( Str( nKols, 12, 3 ) ) + " treba: " + AllTrim( Str( _kolicina, 12, 3 ) ) )
       ENDIF
       SELECT kalk_pripr
    ENDIF

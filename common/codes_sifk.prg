@@ -27,7 +27,8 @@ FUNCTION SifkFill( cSifk, cSifv, cSifrarnik, cIDSif )
 
       DO WHILE !Eof() .AND. ID = PadR( cSifrarnik, 8 )
          Scatter()
-         SELECT _Sifk; APPEND BLANK
+         SELECT _Sifk
+         APPEND BLANK
          Gather()
          SELECT sifK
          SKIP

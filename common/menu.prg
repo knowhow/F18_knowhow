@@ -314,7 +314,7 @@ FUNCTION AChoice2( x1, y1, x2, y2, Items, f1, cFunc, nItemNo )
          EXIT
       ENDIF
 
-      nChar := WaitScrSav()
+      nChar := Inkey(0)
       IF VALTYPE( goModul) == "O"
          goModul:GProc( nChar )
       ENDIF
@@ -438,7 +438,7 @@ FUNCTION AChoice3( x1, y1, x2, y2, Items, f1, cFunc, nItemNo )
          exit
       ENDIF
 
-      nChar := WaitScrSav()
+      nChar := Inkey(0)
 
       IF VALTYPE( goModul) == "O"
          goModul:GProc( nChar )

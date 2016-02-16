@@ -111,38 +111,6 @@ FUNCTION DiskPrazan( cDisk )
    RETURN .T.
 
 
-// string FmkIni_ExePath_POS_PitanjeUgasiti;
-
-/*! \ingroup ini
- *  \var *string FmkIni_ExePath_POS_PitanjeUgasiti
- *  \param "0" - ne pitaj (dobro za racunar koji se ne koristi SAMO kao PC Kasa
- *  \param "-" - pitaj
- */
-
-FUNCTION UgasitiR()
-
-   LOCAL cPitanje
-
-   IF ( gSQL == "D" )
-      cPitanje := IzFmkIni( "POS", "PitanjeUgasiti", "-" )
-      IF cPitanje == "-"
-         cPitanje := " "
-      ENDIF
-
-      IF ( cPitanje == "0" )
-         goModul:quit()
-      ELSEIF Pitanje(, "Želite li ugasiti racunar D/N ?", cPitanje ) == "D"
-         IF Gw( "OMSG SHUTDOWN" ) == "OK"
-            goModul:quit()
-         ENDIF
-      ENDIF
-   ENDIF
-
-   IF gModul <> "TOPS"
-      goModul:quit()
-   ENDIF
-
-   RETURN
 
 
 

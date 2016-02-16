@@ -575,7 +575,7 @@ STATIC FUNCTION ObjDbGet()
 
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 

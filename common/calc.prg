@@ -11,7 +11,7 @@
 
 #include "f18.ch"
 
-STATIC s_lInCalculator := .F.
+THREAD STATIC s_lInCalculator := .F.
 
 
 FUNCTION in_calc()

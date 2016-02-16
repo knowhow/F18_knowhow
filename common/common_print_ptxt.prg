@@ -33,10 +33,10 @@ FUNCTION PtxtSekvence()
    gRPL_Gusto := ""
    gPPTK := " "
 
-   RETURN
+   RETURN .T.
 
-// -------------------------
-// -------------------------
+
+
 FUNCTION Ptxt( cImeF )
 
    LOCAL cPtxtSw := ""

@@ -189,8 +189,8 @@ FUNCTION DatPosljK()
    SET ORDER TO TAG "3"
    SEEK _idfirma + _mkonto + _idroba + Chr( 254 )
    SKIP -1
-   IF _idfirma + _idkonto + _idroba == idfirma + mkonto + idroba .AND. _datdok < datdok
-      error_tab( _idfirma + "-" + _idvd + "-" + _brdok, "Zadnji dokument za ovaj artikal rađen je: " + DToC( datdok ) )
+   IF _idfirma + _idkonto + _idroba == field->idfirma + field->mkonto + field->idroba .AND. _datdok < field->datdok
+      error_tab( _idfirma + "-" + _idvd + "-" + _brdok, _mkonto + " / " + _idroba + " zadnji dokument: " + DToC( field->datdok ) )
       _ERROR := "1"
    ENDIF
    SELECT kalk_pripr
@@ -198,8 +198,8 @@ FUNCTION DatPosljK()
    RETURN .T.
 
 
-/* fn DatPosljP()
- *  brief Ispituje da li je datum zadnje promjene na zadanoj prodavnici i za zadani artikal noviji od one koja se unosi
+/*
+ *  Ispituje da li je datum zadnje promjene na zadanoj prodavnici i za zadani artikal noviji od one koja se unosi
  */
 
 FUNCTION DatPosljP()
@@ -216,14 +216,14 @@ FUNCTION DatPosljP()
    ELSE
       SEEK _idfirma + _idkonto + _idroba + Chr( 254 )
       SKIP -1
-      IF _idfirma + _idkonto + _idroba == idfirma + pkonto + idroba .AND. _datdok < datdok
-         error_tab( _idfirma + "-" + _idvd + "-" + _brdok, "Zadnji dokument za ovaj artikal rađen je: " + DToC( datdok ) )
+      IF _idfirma + _idkonto + _idroba == field->idfirma + field->pkonto + field->idroba .AND. _datdok < field->datdok
+         error_tab( _idfirma + "-" + _idvd + "-" + _brdok, _idkonto + " / " + _idroba + " zadnji dokument: " + DToC( field->datdok ) )
          _ERROR := "1"
       ENDIF
    ENDIF
    SELECT kalk_pripr
 
-   RETURN
+   RETURN .T.
 
 
 

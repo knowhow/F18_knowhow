@@ -561,19 +561,27 @@ FUNCTION V_kol10()
 
       IF !Empty( gMetodaNC )
          MsgO( "Računam stanje na skladištu" )
-         KalkNab( _idfirma, _idroba, _mkonto, @nKolS, @nKolZN, @nc1, @nc2, @dDatNab )
+         KalkNab( _idfirma, _idroba, _mkonto, @nKolS, @nKolZN, @nC1, @nC2, @dDatNab )
          MsgC()
-         @ m_x + 12, m_y + 30   SAY "Ukupno na stanju "; @ m_x + 12, Col() + 2 SAY nkols PICT pickol
+         @ m_x + 12, m_y + 30   SAY "Ukupno na stanju "; @ m_x + 12, Col() + 2 SAY nKols PICT pickol
       ENDIF
 
-      IF dDatNab > _DatDok; Beep( 1 );Msg( "Datum nabavke je " + DToC( dDatNab ), 4 );ENDIF
-      IF _idvd == "16"  // storno prijema
-         IF gMetodaNC $ "13"; _nc := nc1; ELSEIF gMetodaNC == "2"; _nc := nc2; ENDIF
+      IF dDatNab > _DatDok
+         Beep( 1 )
+         Msg( "Datum nabavke je " + DToC( dDatNab ), 4 )
       ENDIF
-      IF nkols < Abs( _kolicina )
+      IF _idvd == "16"  // storno prijema
+         IF gMetodaNC $ "13"
+            _nc := nC1
+         ELSEIF gMetodaNC == "2"
+            _nc := nc2
+         ENDIF
+      ENDIF
+      IF nKols < Abs( _kolicina )
          _ERROR := "1"
          Beep( 2 )
-         error_tab( _idfirma + "-" + _idvd + "-" + _brdok, "Na stanju je samo količina:" + Str( nKols, 12, 3 ) )
+         error_tab( _idfirma + "-" + _idvd + "-" + _brdok, ;
+           _idroba + " kol na stanju:" + AllTrim( Str( nKols, 12, 3 ) ) + " treba: " + AllTrim( Str( _kolicina, 12, 3 ) ) )
       ENDIF
       SELECT kalk_pripr
    ENDIF

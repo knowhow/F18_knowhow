@@ -386,7 +386,7 @@ STATIC FUNCTION VKol( x_kord )
 
       IF !Empty( gMetodaNC )
          MsgO( "Racunam stanje u prodavnici" )
-         KalkNabP( _idfirma, _idroba, _idkonto, @nKolS, @nKolZN, @nc1, @nc2, @dDatNab )
+         KalkNabP( _idfirma, _idroba, _idkonto, @nKolS, @nKolZN, @nC1, @nC2, @dDatNab )
          MsgC()
          @ x_kord, m_y + 30 SAY "Ukupno na stanju "
          @ x_kord, Col() + 2 SAY nKols PICT pickol
@@ -403,7 +403,8 @@ STATIC FUNCTION VKol( x_kord )
 
       IF nKols < Abs( _kolicina )
          _ERROR := "1"
-         error_tab( _idfirma + "-" + _idvd + "-" + _brdok, "Na stanju je samo kolicina:" + Str( nKols, 12, 3 ) )
+         error_tab( _idfirma + "-" + _idvd + "-" + _brdok, _idkonto + " / " + _idroba + " kolicina:" +;
+             Alltrim(Str( nKols, 12, 3 )) +  " treba: " + Alltrim(Str( _kolicina, 12, 3 )))
       ENDIF
 
       SELECT kalk_pripr

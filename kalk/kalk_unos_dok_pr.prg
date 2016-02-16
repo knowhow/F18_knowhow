@@ -322,9 +322,8 @@ FUNCTION proizvod_proracunaj_nc_za( nRbr, cIdFirma, cIdVd, cBrDok, bDokument, bP
          nNV += field->NC * field->kolicina
          IF field->gKolicina < field->kolicina
             error_tab( cIdfirma + "-" + cIdvd + "-" + cBrDok, ;
-                "Na stanju " + field->idkonto2 + " se nalazi samo " + AllTrim( Str( field->gKolicina, 10, 3 )) +;
-                " sirovine " + field->idroba +;
-                " potrebna kol: " + Alltrim( Str( field->kolicina, 10, 3) ) )
+                Alltrim( field->idkonto2 ) + " / " + field->idRoba + " stanje: " + AllTrim( Str( field->gKolicina, 10, 3 )) +;
+                " treba: " + Alltrim( Str( field->kolicina, 10, 3) ) )
             RREPLACE field->error with "1"
          ENDIF
       ENDIF

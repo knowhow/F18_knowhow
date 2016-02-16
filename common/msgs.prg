@@ -18,11 +18,6 @@ MEMVAR Invert, Normal
 STATIC aErrors := {}
 STATIC aInfos := {}
 
-STATIC aStruct := { ;
-      { "TIME", "C", 8, 0 }, ;
-      { "DOC", "C", 18, 0 }, ;
-      { "MESSAGE", "C", 50, 0 } ;
-      }
 
 FUNCTION empty_info_tab()
 
@@ -75,7 +70,7 @@ FUNCTION show_infos()
 
    PushWA()
 
-   dbCreate( "a_infos.dbf", aStruct, "ARRAYRDD", .T., "a_infos" ) // Create it and leave opened
+   dbCreate( "a_infos.dbf", a_struct(), "ARRAYRDD", .T., "a_infos" ) // Create it and leave opened
    AEval( aInfos, {| item |  dbAppend(), field->time := item[ 1 ], field->doc := item[ 2 ], field->message := _u( item[ 3 ] ) } )
    SAVE SCREEN TO cScr
    dbEdit()
@@ -92,7 +87,7 @@ FUNCTION show_errors()
 
    PushWa()
 
-   dbCreate( "a_errors.dbf", aStruct, "ARRAYRDD", .T., "a_errors" )
+   dbCreate( "a_errors.dbf", a_struct(), "ARRAYRDD", .T., "a_errors" )
    AEval( aErrors, {| item |  dbAppend(), field->time := item[ 1 ], field->doc := item[ 2 ], field->message := _u( item[ 3 ] ) } )
    SAVE SCREEN TO cScr
    dbEdit()
@@ -102,3 +97,13 @@ FUNCTION show_errors()
    PopWa()
 
    RETURN .T.
+
+
+
+STATIC FUNCTION a_struct()
+
+   RETURN { ;
+      { "TIME", "C", 8, 0 }, ;
+      { "DOC", "C", 18, 0 }, ;
+      { "MESSAGE", "C", maxcols() - 3 - 9 - 19, 0 } ;
+      }

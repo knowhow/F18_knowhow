@@ -43,7 +43,7 @@ FUNCTION KalkNabP( cIdFirma, cIdroba, cIdkonto, nKolicina, nKolZN, nNC, nSNC, dD
 
    IF cIdfirma + cIdkonto + cIdroba == field->idfirma + field->pkonto + field->idroba .AND. _datdok < field->datdok
 
-       error_tab( cIdfirma + "-" + cIdvd + "-" + cBrdok, " Postoji dokument " + field->idfirma + "-" + field->idvd + "-" + field->brdok + " na datum: " + DToC( field->datdok ) )
+       error_tab( cIdfirma + "-" + cIdvd + "-" + cBrdok, " vec postoji dokument " + field->idfirma + "-" + field->idvd + "-" + field->brdok + " na datum: " + DToC( field->datdok ) )
       _ERROR := "1"
    ENDIF
 
@@ -766,8 +766,7 @@ FUNCTION V_KolMag()
 
    ENDIF
 
-   // usluge
-   IF roba->tip $ "UTY"; RETURN .T. ; ENDIF
+   IF roba->tip $ "UTY"; RETURN .T. ; ENDIF // usluge
 
    IF Empty( gMetodaNC ) .OR. _TBankTR == "X"
       RETURN .T.
@@ -776,7 +775,8 @@ FUNCTION V_KolMag()
    IF nKolS < _Kolicina
       Beep( 4 )
       CLEAR TYPEAHEAD
-      error_tab( _idfirma + "-" + _idvd + "-" + _brdok, "Ukupno na stanju je samo" + Str( nKolS, 10, 4 ) + " robe !", 6 )
+      error_tab( _idfirma + "-" + _idvd + "-" + _brdok, ;
+         _mkonto + " / " + _idroba + "na stanju: " + Alltrim(Str( nKolS, 10, 4 )) + " treba " +  Alltrim(Str( _kolicina, 10, 4 )))
       _ERROR := "1"
    ENDIF
 

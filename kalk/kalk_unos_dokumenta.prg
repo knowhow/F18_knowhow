@@ -383,9 +383,6 @@ FUNCTION kalk_pripr_key_handler()
 
          log_write( "F18_DOK_OPER: kalk, brisanje stavke u pripremi: " + _log_info + " stavka br: " + cStavka, 2 )
 
-         _t_rec := RecNo()
-
-         GO ( _t_rec )
 
          RETURN DE_REFRESH
 
@@ -396,10 +393,12 @@ FUNCTION kalk_pripr_key_handler()
    CASE IsDigit( Chr( Ch ) )
       Msg( "Ako želite započeti unos novog dokumenta: <Ctrl-N>" )
       RETURN DE_CONT
+
    CASE Ch == K_ENTER
       RETURN EditStavka()
-   CASE Ch == K_CTRL_A .OR. lAsistRadi
-      RETURN EditAll()
+
+   CASE kalk_pripr->idvd != "PR" .AND. ( Ch == K_CTRL_A .OR. lAsistRadi )
+      RETURN kalk_edit_sve_stavke()
 
    CASE Ch == K_CTRL_N
       fNovi := .T.
@@ -772,7 +771,7 @@ FUNCTION kalk_unos_nova_stavka()
 
 
 
-FUNCTION EditAll()
+FUNCTION kalk_edit_sve_stavke()
 
    LOCAL _atributi := hb_Hash()
    LOCAL _dok
@@ -820,7 +819,7 @@ FUNCTION EditAll()
       IF lAsistRadi
          CLEAR TYPEAHEAD
          cSekv := ""
-         FOR nkekk := 1 TO 17
+         FOR nKekk := 1 TO 17
             cSekv += cEnter
          NEXT
          KEYBOARD cSekv
@@ -938,7 +937,7 @@ FUNCTION kalk_unos_asistent()
    PushWa()
    IF Select( "kalk_prir" ) > 0
       IF kalk_pripr->idVd == "PR"
-         RETURN .F.
+         RETURN DE_CONT
       ENDIF
    ENDIF
    PopWa()

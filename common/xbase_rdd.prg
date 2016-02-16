@@ -24,7 +24,7 @@ STATIC __dbf_pack_v2 := 10
    DBCDX, SQLMIX
 */
 
-STATIC aWaStack := {}
+THREAD STATIC aWaStack := {}
 
 FUNCTION PushWA()
 

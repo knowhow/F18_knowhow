@@ -73,11 +73,11 @@ STATIC FUNCTION _del_nal_xx()
    SEEK "XX"
 
    DO WHILE !Eof() .AND. field->idfirma == "XX"
-	
+
       IF field->rbr == "000"
          my_delete()
       ENDIF
-	
+
       SKIP
    ENDDO
 
@@ -186,6 +186,7 @@ FUNCTION konsultos( xEdit )
 
    @ m_x, m_y + 25 SAY "KONSULTOVANJE OTVORENIH STAVKI"
 
+altd()
    // kreiraj tabelu ostav
    _cre_ostav()
 
@@ -231,13 +232,13 @@ FUNCTION konsultos( xEdit )
    nUPot := 0
 
    fPrviprolaz := .T.
-	
+
    DO WHILE !Eof() .AND. field->idfirma == cIdFirma .AND. cIdKonto == field->idkonto .AND. cIdPartner == field->idpartner
 
       cBrDok := field->brdok
       cOtvSt := field->otvst
       dDatDok := Max( field->datval, field->datdok )
-      	
+
       nDug2 := 0
       nPot2 := 0
       nDug := 0
@@ -262,24 +263,24 @@ FUNCTION konsultos( xEdit )
             aFaktura[ 1 ] := field->DATDOK
             aFaktura[ 2 ] := field->DATVAL
          ENDIF
-	
+
          IF aFaktura[ 3 ] < field->DatDok
             // datum zadnje promjene
             aFaktura[ 3 ] := field->DatDok
          ENDIF
 
          SKIP
-      	
+
       ENDDO
 
       IF Round( nDug - nPot, 2 ) <> 0
-        	
+
          SELECT ostav
-        
-         my_flock() 
+
+         my_flock()
 
          APPEND BLANK
-          	
+
          REPLACE field->iznosbhd with ( nDug - nPot )
          REPLACE field->datdok WITH aFaktura[ 1 ]
          REPLACE field->datval WITH aFaktura[ 2 ]
@@ -296,9 +297,9 @@ FUNCTION konsultos( xEdit )
 	 my_unlock()
 
          SELECT suban
-	
+
       ENDIF
-	
+
    ENDDO
 
    ImeKol := {}
@@ -344,9 +345,9 @@ FUNCTION konsultos( xEdit )
    nNaz := Kurs( _datdok )
 
    fM3 := .F.
-	
+
    GO TOP
-	
+
    DO WHILE !Eof()
       IF field->m2 = "3"
          fm3 := .T.
@@ -366,14 +367,14 @@ FUNCTION konsultos( xEdit )
 
       DO WHILE !Eof()
 
-         IF field->m2 == "3" 
-            
-            my_rlock()		
+         IF field->m2 == "3"
+
+            my_rlock()
             REPLACE field->m2 WITH ""
             my_unlock()
-      				
+
             SELECT ( F_FIN_PRIPR )
-      				
+
             IF fgenerisano
                APPEND BLANK
             ELSE
@@ -386,14 +387,14 @@ FUNCTION konsultos( xEdit )
                ELSE
                   APPEND BLANK
                ENDIF
-        				
+
                // prvi put
                fGenerisano := .T.
 
             ENDIF
-      				
+
             Scatter( "w" )
-      				
+
             widfirma  := cidfirma
             widvn     := _idvn
             wbrnal    := _brnal
@@ -423,20 +424,20 @@ FUNCTION konsultos( xEdit )
             nRbr ++
             wd_p      := _D_p
             wIznosBhd := ostav->uplaceno
-      				
+
             IF ostav->uplaceno <> ostav->iznosbhd
                wOpis := Trim( cOpis ) + ", DIO"
             ENDIF
 
             wBrDok    := ostav->brdok
             wiznosdem := if( Round( nNaz, 4 ) == 0, 0, wiznosbhd / nNaz )
-      			
+
             my_rlock()
             Gather( "w" )
             my_unlock()
 
             SELECT ( F_OSTAV )
-    			
+
          ENDIF
 
          SKIP 1
@@ -448,7 +449,7 @@ FUNCTION konsultos( xEdit )
    BoxC()
 
    IF fGenerisano
-  		
+
       -- nRbr
 
       SELECT ( F_FIN_PRIPR )
@@ -468,9 +469,9 @@ FUNCTION konsultos( xEdit )
       _k3 := K3Iz256( _k3 )
 
       ShowGets()
-	
+
    ENDIF
-	
+
    SELECT ( F_OSTAV )
    USE
 
@@ -522,16 +523,16 @@ STATIC FUNCTION EdKonsROS()
             SEEK _idfirma + _idkonto + _idpartner + obrdok
 
             DO WHILE !Eof() .AND. _idfirma + _idkonto + _idpartner + obrdok == idfirma + idkonto + idpartner + brdok
-             		
+
                SKIP
                nTrec := RecNo()
                SKIP -1
-					
+
                _rec := dbf_get_rec()
                _rec[ "brdok" ] := cBrDok
-					
+
                update_rec_server_and_dbf( "fin_suban", _rec, 1, "FULL" )
-					
+
                GO nTRec
 
             ENDDO
@@ -554,7 +555,7 @@ STATIC FUNCTION EdKonsROS()
          nRet := DE_REFRESH
 
       ENDIF
-  	
+
    CASE Ch == K_CTRL_T
 
       IF Pitanje(, "Izbrisati stavku ?", "N" ) == "D"
@@ -576,7 +577,7 @@ STATIC FUNCTION EdKonsROS()
       @ m_x + 1, m_y + 2 SAY "Uplaceno po ovom dokumentu:" GET _uplaceno PICT "999999999.99"
       READ
       Boxc()
-     	
+
       IF LastKey() <> K_ESC
          IF _uplaceno <> 0
             RREPLACE m2 WITH "3", uplaceno WITH _uplaceno

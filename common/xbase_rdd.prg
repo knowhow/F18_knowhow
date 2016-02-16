@@ -130,11 +130,18 @@ FUNCTION index_tag_num( cName )
 
 FUNCTION my_flock()
 
+   LOCAL lRet
+
    IF Used() .AND.  ( rddName() != "SQLMIX" )
-      RETURN FLock()
-   ELSE
-      RETURN .T.
+      lRet := FLock()
+      IF !lRet
+         ?E "FLOCK neuspjesno: " + ALIAS()
+      ENDIF
+      RETURN lRet
    ENDIF
+
+   RETURN .T.
+
 
 FUNCTION my_rlock()
 

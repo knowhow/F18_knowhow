@@ -654,12 +654,6 @@ FUNCTION dbf_refresh( cTable )
       RETURN .F.
    ENDIF
 
-   IF in_dbf_refresh( aDbfRec[ 'table' ] )
-#ifdef F18_DEBUG
-      ?E  aDbfRec[ 'table' ], "tabela je vec u refreshu"
-#endif
-      RETURN .F.
-   ENDIF
 
    IF is_last_refresh_before( aDbfRec[ 'table' ], 7 )
 #ifdef F18_DEBUG
@@ -687,10 +681,10 @@ FUNCTION dbf_refresh( cTable )
 
    dbf_refresh_0( aDbfRec )
 
-   in_dbf_refresh( aDbfRec[ 'table' ], .F. )
-
    PopWa()
    set_last_refresh( aDbfRec[ 'table' ] )
+
+   in_dbf_refresh( aDbfRec[ 'table' ], .F. )
 
    RETURN .T.
 

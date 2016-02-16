@@ -59,6 +59,7 @@ FUNCTION my_use_temp( xArg1, cFullDbf, lNewArea, lExcl, lOpenIndex )
       IF cFullDbf == nil
          cFullDbf := my_home() + aDbfRec[ "table" ]
       ENDIF
+      EXIT
 
    OTHERWISE
       cAlias := "TMP"

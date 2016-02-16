@@ -175,6 +175,7 @@ FUNCTION fin_open_lock_panal( lZap )
    O_TNAL
 
    IF !lock_fin_priprema( lZap )
+      Alert( "lock fin priprema error ?" )
       RETURN .F.
    ENDIF
 

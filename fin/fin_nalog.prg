@@ -64,7 +64,7 @@ FUNCTION fin_nalog_azurirani()
 
    START PRINT CRET
 
-   fin_nalog( "2", NIL, dDatNal )
+   fin_nalog_stampa( "2", NIL, dDatNal )
    my_close_all_dbf()
 
    ENDPRINT
@@ -190,7 +190,7 @@ FUNCTION fin_gen_psuban_stampa_nalozi( lAuto, dDatNal )
          f18_start_print( NIL, @_print_opt )
       ENDIF
 
-      fin_nalog( "1", lAuto, dDatNal, @oNalog )
+      fin_nalog_stampa( "1", lAuto, dDatNal, @oNalog )
       oNalozi:addNalog( oNalog )
 
       IF !lAuto
@@ -233,7 +233,7 @@ FUNCTION fin_gen_psuban_stampa_nalozi( lAuto, dDatNal )
    - ako smo na fin_pripr onda puni psuban sa sadržajem fin_pripr
 */
 
-FUNCTION fin_nalog( cInd, lAuto, dDatNal, oNalog )
+FUNCTION fin_nalog_stampa( cInd, lAuto, dDatNal, oNalog )
 
    LOCAL nArr := Select()
    LOCAL aRez := {}
@@ -241,6 +241,7 @@ FUNCTION fin_nalog( cInd, lAuto, dDatNal, oNalog )
    LOCAL _vrste_placanja
    LOCAL _fin_params := fin_params()
 
+altd()
    IF lAuto = NIL
       lAuto := .F.
    ENDIF

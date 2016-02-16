@@ -317,11 +317,11 @@ FUNCTION DnevnikNaloga()
       ENDIF
 
       cMjGod := Str( Month( dDatNal ), 2 ) + Str( Year( dDatNal ), 4 )
-      
+
       SELECT SUBAN
       HSEEK cIdFirma + cIdVN + cBrNal
 
-      fin_nalog( "3", NIL, dDatNal )
+      fin_nalog_stampa( "3", NIL, dDatNal )
 
       SELECT NALOG
 

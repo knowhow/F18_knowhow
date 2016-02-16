@@ -687,7 +687,8 @@ FUNCTION SortPrez( cId, lSql )
       cVrati := STRTRAN( cVrati, _u( "Ž" ), "ZZ" )
       cVrati := STRTRAN( cVrati, _u( "ž" ), "zz" )
       cVrati := STRTRAN( cVrati, _u( "Đ" ), "DJ" )
-      cVrati := STRTRAN( cVrati, _u( "đ" ), "dj" )      
+      cVrati := STRTRAN( cVrati, _u( "đ" ), "dj" )
+      cVrati := PADR( cVrati, 100)
 
    ELSE
       cVrati := field->naz + field->ime + field->imerod + field->id

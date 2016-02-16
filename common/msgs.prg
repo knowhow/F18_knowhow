@@ -105,5 +105,5 @@ STATIC FUNCTION a_struct()
    RETURN { ;
       { "TIME", "C", 8, 0 }, ;
       { "DOC", "C", 18, 0 }, ;
-      { "MESSAGE", "C", maxcols() - 3 - 9 - 19, 0 } ;
+      { "MESSAGE", "C", maxcols() - 4 - 9 - 19, 0 } ;
       }

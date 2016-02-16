@@ -108,7 +108,7 @@ FUNCTION my_use_temp( xArg1, cFullDbf, lNewArea, lExcl, lOpenIndex )
 
 
 
-FUNCTION my_use( cAlias, cTable )
+FUNCTION my_use( cAlias, cTable, lRefresh )
 
    LOCAL nCnt, oError, lUspjesno, cFullDbf, cFullIdx
    LOCAL aDbfRec
@@ -116,10 +116,12 @@ FUNCTION my_use( cAlias, cTable )
    LOCAL cRdd := DBFENGINE
    LOCAL nI, cMsg, cLogMsg := ""
 
-   IF PCount() > 2
+   IF PCount() > 3
       LOG_CALL_STACK cLogMsg
-      log_write( "my_use ERROR params>2: " + cLogMsg, 1 )
+      log_write( "my_use ERROR params>3: " + cLogMsg, 1 )
    ENDIF
+
+   hb_default( @lRefresh, .T. )
 
    IF cTable != NIL
       aDbfRec := get_a_dbf_rec( cTable, .T. ) // my_use( kalk_pripr, kalk_kalk )
@@ -128,7 +130,9 @@ FUNCTION my_use( cAlias, cTable )
       cAlias :=  aDbfRec[ 'alias' ]
    ENDIF
 
-   thread_dbfs( hb_threadStart( @thread_dbf_refresh(), aDbfRec[ 'table' ] ) )
+   IF lRefresh
+      thread_dbfs( hb_threadStart( @thread_dbf_refresh(), aDbfRec[ 'table' ] ) )
+   ENDIF
 
    cFullDbf := my_home() + aDbfRec[ 'table' ]
    cFullIdx := ImeDbfCdx( cFullDbf )

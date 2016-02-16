@@ -11,7 +11,7 @@
 
 #include "f18.ch"
 
- 
+
 FUNCTION fin_gen_panal_psint( cIdFirma, cIdVn, cBrNal, dDatNal )
 
    LOCAL fNasao, nStr, nD1, nD2, nP1, nP2
@@ -161,7 +161,7 @@ FUNCTION fin_open_psuban()
    RETURN .T.
 
 /*
-    otvori psuban, panal, psint i ostale potrebne tabele 
+    otvori psuban, panal, psint i ostale potrebne tabele
 */
 FUNCTION fin_open_lock_panal( lZap )
 
@@ -197,11 +197,12 @@ STATIC FUNCTION lock_fin_priprema( lZap )
    LOCAL nCnt
    LOCAL lLock := .T.
 
+altd()
+
    nCnt := 0
    DO WHILE .T.
 
       ++nCnt
-
       IF nCnt > 5
          MsgBeep( "Neko već koristi tabele za pripreme finansijskog naloga !" )
          RETURN .F.
@@ -234,7 +235,6 @@ STATIC FUNCTION lock_fin_priprema( lZap )
          LOOP
       ENDIF
 
-
       SELECT PSUBAN
       lLock := lLock .AND. my_flock()
       IF !lLock
@@ -247,8 +247,6 @@ STATIC FUNCTION lock_fin_priprema( lZap )
    ENDDO
 
    RETURN .T.
-
-
 
 
 /*
@@ -278,7 +276,7 @@ FUNCTION fin_gen_psuban_stavke_kalk()
    ENDIF
 
    DO WHILE !Eof()
-	
+
       cIdFirma := IdFirma
       cIdVN := IdVN
       cBrNal := BrNal
@@ -380,13 +378,13 @@ FUNCTION fin_gen_sint_stavke_kalk( lAuto )
          SELECT PANAL
          // analitika
          SEEK cIdFirma + cIdVn + cBrNal + cIdKonto
-	
+
          fNasao := .F.
 
          DO WHILE !Eof() .AND. cIdFirma == IdFirma ;
                .AND. cIdVN == IdVN .AND. cBrNal == BrNal ;
                .AND. IdKonto == cIdKonto
-		
+
             IF gDatNal == "N"
                IF Month( psuban->datdok ) == Month( datnal )
                   fNasao := .T.
@@ -459,7 +457,7 @@ FUNCTION fin_gen_sint_stavke_kalk( lAuto )
 
          SELECT PSUBAN
          SKIP
-	
+
       ENDDO
       // nalog
 

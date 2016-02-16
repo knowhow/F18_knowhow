@@ -35,6 +35,7 @@ FUNCTION fin_azuriranje_naloga( automatic )
       RETURN lRet
    ENDIF
 
+altd()
    aNalozi := fin_nalozi_iz_pripreme_u_matricu()
 
    IF Len( aNalozi ) > 1

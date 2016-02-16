@@ -18,7 +18,7 @@ FUNCTION fin_stampa_azur_naloga_menu()
 
    LOCAL _izbor := 1
    LOCAL _opc := {}
-   LOCAL _opcexe := {} 
+   LOCAL _opcexe := {}
 
    AADD( _opc, "1. subanalitika                 ")
    AADD( _opcexe, {|| fin_nalog_azurirani() } )
@@ -27,9 +27,4 @@ FUNCTION fin_stampa_azur_naloga_menu()
 
    f18_menu( "fst", .f., _izbor, _opc, _opcexe  )
 
-   RETURN
-
-
-
-
-
+   RETURN .T.

@@ -92,11 +92,11 @@
 #xcommand O_ERRORS  => SELECT (F_ERRORS)    ; my_usex ("errors")   ; set order to tag "1"
 
 // modul FIN
-#xcommand O_FIN_PRIPR    => select (F_FIN_PRIPR);  my_use ("fin_pripr") ; set order to tag "1"
-#xcommand O_PNALOG       => select (F_PNALOG);     my_use ("pnalog")    ; set order to tag "1"
-#xcommand O_PSUBAN       => select (F_PSUBAN);     my_use ("psuban")    ; set order to tag "1"
-#xcommand O_PANAL        => select (F_PANAL);      my_use ("panal")     ; set order to tag "1"
-#xcommand O_PSINT        => select (F_PSINT);      my_use ("psint")     ; set order to tag "1"
+#xcommand O_FIN_PRIPR    => select (F_FIN_PRIPR);  my_use ("fin_pripr", NIL, .F.) ; set order to tag "1"
+#xcommand O_PNALOG       => select (F_PNALOG);     my_use ("pnalog", NIL, .F.)    ; set order to tag "1"
+#xcommand O_PSUBAN       => select (F_PSUBAN);     my_use ("psuban", NIL, .F.)    ; set order to tag "1"
+#xcommand O_PANAL        => select (F_PANAL);      my_use ("panal", NIL, .F.)     ; set order to tag "1"
+#xcommand O_PSINT        => select (F_PSINT);      my_use ("psint", NIL, .F.)     ; set order to tag "1"
 
 #xcommand O_KAM_PRIPR    => select (F_KAMPRIPR);  my_use ("kam_pripr") ; set order to tag "1"
 #xcommand O_KAM_KAMAT    => select (F_KAMAT);  my_use ("kam_kamat") ; set order to tag "1"
@@ -136,7 +136,7 @@
 
 
 // modul KALK
-#xcommand O_KALK_PRIPR    => select(F_KALK_PRIPR); my_use ( "kalk_pripr") ; set order to tag "1"
+#xcommand O_KALK_PRIPR    => select(F_KALK_PRIPR); my_use ( "kalk_pripr", NIL, .F.) ; set order to tag "1"
 #xcommand O_KALK_S_PRIPR  => select(F_KALK_PRIPR); my_usex ( "kalk_pripr") ; set order to tag "1"
 #xcommand O_KALK_PRIPR2   => select(F_KALK_PRIPR2); my_use ("kalk_pripr2") ; set order to tag "1"
 #xcommand O_KALK_PRIPR9   => select(F_KALK_PRIPR9); my_use ("kalk_pripr9") ; set order to tag "1"
@@ -171,7 +171,7 @@
 #xcommand O_FAKT_DOKS2     => select(F_FAKT_DOKS2) ; my_use ( "fakt_doks2" )  ; set order to tag "1"
 
 // fakt pripr
-#xcommand O_FAKT_PRIPR     => select (F_FAKT_PRIPR)     ; my_use ("fakt_pripr")   ; set order to tag "1"
+#xcommand O_FAKT_PRIPR     => select (F_FAKT_PRIPR)     ; my_use ("fakt_pripr", NIL, .F.)   ; set order to tag "1"
 #xcommand O_FAKT_PRIPRRP   => select (F_FAKT_PRIPR)     ; my_use ("fakt_pripr")   ; set order to tag  "1"
 #xcommand O_FAKT_S_PRIPR   => select (F_FAKT_PRIPR)     ; my_use ("fakt_pripr")   ; set order to "1"
 

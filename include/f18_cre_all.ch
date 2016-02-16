@@ -11,4 +11,4 @@
 
 #command IF_NOT_FILE_DBF_CREATE => dbf_init( aDbf, _table_name, _alias )
 
-#command AFTER_CREATE_INDEX   => my_use( _table_name )
+#command AFTER_CREATE_INDEX   => my_use( _table_name ) ; use

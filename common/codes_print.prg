@@ -391,7 +391,7 @@ FUNCTION IzborP2( Kol, cImef )
    SET KEY K_F5
    BoxC()
    IF LastKey() == K_ESC
-      RETURN
+      RETURN .F.
    END IF
 
    cKolona := ""
@@ -401,7 +401,7 @@ FUNCTION IzborP2( Kol, cImef )
    SAVE  ALL LIKE cKolona to &cImeF
    ACopy( Kl, Kol )
 
-   RETURN
+   RETURN .T.
 // }
 
 /*
@@ -516,6 +516,9 @@ FUNCTION StampaTabele( aKol, bZaRed, nOdvoji, nCrtice, bUslov, lA4papir, cNaslov
    LOCAL nPRed := 0, aPRed := {}, l := 0, nBrojacSlogova := 0
    LOCAL xPodvuci := "", cPodvuci := " "
    LOCAL lFor := .F., k := 0
+
+   altd()
+   
    PRIVATE glNeSkipuj := .F.
 
    IF "U" $ Type( "gaDodStavke" ); gaDodStavke := {}; ENDIF
@@ -523,6 +526,7 @@ FUNCTION StampaTabele( aKol, bZaRed, nOdvoji, nCrtice, bUslov, lA4papir, cNaslov
    IF "U" $ Type( "gnRedova" ); gnRedova := 64; ENDIF
    IF "U" $ Type( "gbFIznos" ); gbFIznos := nil; ENDIF
    IF !( "U" $ Type( "gPStranica" ) ); gnRedova := 64 + gPStranica; ENDIF
+
    IF bSubTot == nil; bSubTot := {|| { .F., } }; xTot := { .F., }; ENDIF
    IF lLinija == nil; lLinija := .F. ; ENDIF
    IF lOstr == nil; lOstr := .T. ; ENDIF
@@ -545,8 +549,8 @@ FUNCTION StampaTabele( aKol, bZaRed, nOdvoji, nCrtice, bUslov, lA4papir, cNaslov
    IF nCrtice == 9; nStr := -1; lOstr := .F. ; ENDIF
    IF nSlogova != nil; Postotak( 1, nSlogova, cTabBr,,, .F. ); ENDIF
 
-   AEval( aKol, {| x| xPom := x[ 8 ], xPom1 := x[ 5 ], xPom2 := x[ 3 ], IF( AScan( aPom, {| y| y[ 1 ] == xPom } ) == 0, Eval( {|| nDReda += xPom1, AAdd( aPom, { xPom, xPom1, xPom2 } ) } ), ), ;
-      IF( x[ 3 ], lPrenos := .T., ), IF( x[ 8 ] > nKol, nKol := x[ 8 ], ), IF( x[ 7 ] > nRed, nRed := x[ 7 ], ), IF( x[ 4 ] == "P", lPRed := .T., ) } )
+   AEval( aKol, {| x| xPom := x[ 8 ], xPom1 := x[ 5 ], xPom2 := x[ 3 ], IIF( AScan( aPom, {| y| y[ 1 ] == xPom } ) == 0, Eval( {|| nDReda += xPom1, AAdd( aPom, { xPom, xPom1, xPom2 } ) } ), ), ;
+      IF( x[ 3 ], lPrenos := .T., ), IF( x[ 8 ] > nKol, nKol := x[ 8 ], ), IIF( x[ 7 ] > nRed, nRed := x[ 7 ], ), IF( x[ 4 ] == "P", lPRed := .T., ) } )
    ASort( aPom,,, {| x, y| x[ 1 ] < y[ 1 ] } )
 
    FOR i := 1 TO nRed
@@ -592,11 +596,11 @@ FUNCTION StampaTabele( aKol, bZaRed, nOdvoji, nCrtice, bUslov, lA4papir, cNaslov
    ASort( aPrZag ); ASort( aPrSum ); ASort( aPrStav )
    nDReda += nKol + 1 + nOdvoji
    nMDReda := IF( lA4papir == "POS", 40, MDDReda( nDReda, lA4papir ) )
-   cLM := IF( nMDReda - nDReda >= 0, Space( nOdvoji + Int( ( nMDReda - nDReda ) / 2 ) ), "" )
-   cLM2 := IF( nMDReda - nDReda >= 0 .AND. !lCTab, Space( nOdvoji ), cLM )
+   cLM := IIF( nMDReda - nDReda >= 0, Space( nOdvoji + Int( ( nMDReda - nDReda ) / 2 ) ), "" )
+   cLM2 := IIF( nMDReda - nDReda >= 0 .AND. !lCTab, Space( nOdvoji ), cLM )
    GuSt2( nDReda, lA4papir )
 
-   IF nStr >= 0 .AND. ( PRow() > ( gnRedova + IF( gPrinter = "R", 2, 0 ) -7 -Len( aPrStav ) -Len( aPrZag ) ) .OR. PRow() > ( gnRedova + IF( gPrinter = "R", 2, 0 ) -11 -Len( aPrStav ) -Len( aPrZag ) ) .AND. cNaslov != nil )
+   IF nStr >= 0 .AND. ( PRow() > ( gnRedova + IIF( gPrinter = "R", 2, 0 ) - 7 -Len( aPrStav ) -Len( aPrZag ) ) .OR. PRow() > ( gnRedova + IF( gPrinter = "R", 2, 0 ) -11 -Len( aPrStav ) -Len( aPrZag ) ) .AND. cNaslov != nil )
       IF gPrinter != "R"
          DO WHILE PRow() < gnRedova - 2; QOut(); ENDDO
          xPom := Str( nStr, 3 ) + ". strana"
@@ -939,7 +943,7 @@ FUNCTION StampaTabele( aKol, bZaRed, nOdvoji, nCrtice, bUslov, lA4papir, cNaslov
    ENDIF
 
    RETURN nSuma
-// }
+
 
 
 FUNCTION MDDReda( nZnak, lA4papir )
@@ -982,7 +986,7 @@ STATIC FUNCTION sredi_crtice( arr, tip )
 
 #endif
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -995,7 +999,7 @@ FUNCTION PrekSaEsc()
 
 FUNCTION NaSljedStranu( lMozeL, lPrenos, cLM2, cOk, aPom, nKol, nStr, cLM, nDReda, nOdvoji, aPrSum, aKol, nSuma, cTek3, bZagl, cNaslov, aPrZag, cTek1, xTot )
 
-   // {
+
    LOCAL i, xPom, j, cPom
    lMozeL := .F.
    IF !lPrenos
@@ -1057,7 +1061,7 @@ FUNCTION NaSljedStranu( lMozeL, lPrenos, cLM2, cOk, aPom, nKol, nStr, cLM, nDRed
    ++nStr
 
    RETURN
-// }
+
 
 STATIC FUNCTION StStavku( aKol, xPom, i, nKol, cOk )
 
@@ -1086,11 +1090,11 @@ STATIC FUNCTION StStavku( aKol, xPom, i, nKol, cOk )
    QQOut( IF( i < nKol, cOk[ 5 ], cOk[ 12 ] ) )
 
    RETURN
-// }
+
 
 FUNCTION DajRed( tekst, kljuc )
 
-   // {
+
    LOCAL cVrati := "", nPom := 0, nPoc := 0
    nPom := At( kljuc, tekst )
    nPoc := RAt( NRED, Left( tekst, nPom ) )
@@ -1100,7 +1104,7 @@ FUNCTION DajRed( tekst, kljuc )
    cVrati := SubStr( tekst, nPoc, nKraj - nPoc + 1 )
 
    RETURN cVrati
-// }
+
 
 FUNCTION WhileEvent( nValue, nCnt )
-   RETURN
+   RETURN .T.

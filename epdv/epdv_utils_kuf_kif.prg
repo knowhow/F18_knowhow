@@ -43,7 +43,7 @@ FUNCTION epdv_otvori_kuf_tabele( lPriprema )
       ENDIF
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 FUNCTION epdv_otvori_kif_tabele( lPriprema )
@@ -89,7 +89,7 @@ FUNCTION next_r_br( cTblName )
       SELECT p_kuf
    CASE cTblName == "P_KIF"
       SELECT p_kif
-	
+
    ENDCASE
 
    SET ORDER TO TAG "BR_DOK"
@@ -110,7 +110,7 @@ FUNCTION next_g_r_br( cTblName )
       SELECT kuf
    CASE cTblName == "KIF"
       SELECT kif
-	
+
    ENDCASE
 
    SET ORDER TO TAG "G_R_BR"
@@ -134,7 +134,7 @@ FUNCTION next_br_dok( cTblName )
       SELECT kuf
    CASE cTblName == "KIF"
       SELECT kif
-	
+
    ENDCASE
 
    SET ORDER TO TAG "BR_DOK"
@@ -191,7 +191,7 @@ FUNCTION rn_g_r_br( cTblName )
       update_rec_server_and_dbf( _table, _rec, 1, "CONT" )
 
       nRbr ++
-	
+
       SKIP
 
    ENDDO

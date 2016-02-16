@@ -560,24 +560,33 @@ FUNCTION Postotak( nIndik, nUkupno, cTekst, cBNasl, cBOkv, lZvuk )
 
    IF lZvuk == NIL; lZvuk := .T. ; ENDIF
    SET DEVICE TO SCREEN
+
    DO CASE
    CASE nIndik == 1
+
       cOkv := iif( cBOkv == NIL, "W+/N", cBOkv )
       cNas := iif( cBNasl == NIL, "GR+/N", cBNasl )
       nCilj := nUkupno
       cKraj := cTekst + " zavrseno."
-      Prozor1( 10, 13, 14, 66, cTekst + " u toku...", cNas,, cOkv, "B/W", 0 )
-      @ 12, 15 SAY Replicate( "°", 50 ) COLOR "B/W"
+      Prozor1( 10, 13, 14, 66, cTekst + " u toku...", cNas, , cOkv, "B/W", 0 )
+      @ 12, 15 SAY Replicate( "X", 50 ) COLOR "B/W"
       IF lZvuk
          Tone( 1900, 0 )
       ENDIF
+
    CASE nIndik == 2
+
       nKara = Int( 50 * nUkupno / nCilj )
-      @ 12, 15 SAY Replicate( "²", nKara ) COLOR "B/BG"
+      @ 12, 15 SAY Replicate( "|", nKara ) COLOR "B/BG"
       @ 13, 37 SAY Str( 2 * nKara, 3 ) + " %" COLOR "B/W"
+
    CASE nIndik <= 0
+
       @ 10, ( MAXCOLS() - 2 - Len( cKraj ) ) / 2 SAY " " + cKraj + " " COLOR cNas
-      IF lZvuk; Tone( 2000, 0 ); ENDIF
+      IF lZvuk
+         Tone( 2000, 0 )
+      ENDIF
+
       IF nIndik == 0
          @ 14, 28 SAY "<pritisnite neku tipku>" COLOR iif( Int( Seconds() * 1.5 ) % 2 == 0, "W/", "W+/" ) + Right( cOkv, 1 )
          Inkey( 0 )
@@ -587,7 +596,7 @@ FUNCTION Postotak( nIndik, nUkupno, cTekst, cBNasl, cBOkv, lZvuk )
    ENDCASE
    SET( _SET_DEVICE, cPom )
 
-   RETURN
+   RETURN .T.
 
 
 

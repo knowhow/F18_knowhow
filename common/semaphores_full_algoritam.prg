@@ -105,10 +105,10 @@ FUNCTION full_synchro( dbf_table, step_size, cInfo )
 
    IF log_level() > 6
       _count := table_count( _sql_table, "true" )
-      log_write( "sql count nakon END transaction): " + dbf_table + "/ sql count: " + AllTrim( Str( _count ) ), 7 )
+      log_write( "sql cnt END transaction): " + dbf_table + "/ sql count: " + AllTrim( Str( _count ) ), 7 )
    ENDIF
 
-   info_tab( "x", "END full_synchro tabela: " + dbf_table +  " cnt: " + AllTrim( Str( _count ) ) )
+   info_tab( "x", "END full_synchro: " + dbf_table +  " cnt: " + AllTrim( Str( _count ) ) )
 
    set_a_dbf_rec_chk0( aDbfRec[ "table" ] )
 

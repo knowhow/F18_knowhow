@@ -11,7 +11,7 @@
 
 #include "f18.ch"
 
-STATIC aMenuStack:={}    
+THREAD STATIC aMenuStack:={} // thread safe
 
 
 FUNCTION f18_menu( cIzp, main_menu, izbor, opc, opcexe )
@@ -204,13 +204,13 @@ FUNCTION MENU( MenuId, Items, ItemNo, Inv, cHelpT, nPovratak, aFixKoo, nMaxVR )
 
    Ch := LastKey()
 
-   // Ako je ESC meni treba odmah izbrisati (ItemNo=0),
-   // skini meni sa steka
-   IF Ch == K_ESC .OR. nTItemNo == 0 .OR. nTItemNo == nPovratak
+
+   IF Ch == K_ESC .OR. nTItemNo == 0 .OR. nTItemNo == nPovratak  // Ako je ESC meni treba odmah izbrisati (ItemNo=0),  skini meni sa steka
       @ m_x, m_y CLEAR TO m_x + N + 2 -IF( lFK, 1, 0 ), m_y + Length + 4 - iif( lFK, 1, 0 )
       aMenu := StackPop( aMenuStack )
       RestScreen( m_x, m_y, m_x + N + 2 -iif( lFK, 1, 0 ), m_y + Length + 4 - iif( lFK, 1, 0 ), aMenu[ 4 ] )
    END IF
+
 
    SetColor( OldC )
    SET( _SET_DEVICE, cPom )
@@ -225,11 +225,11 @@ FUNCTION Menu2( x1, y1, aNiz, nIzb )
 
    xM := Len( aNiz )
    AEval( aNiz, {| x| IF( Len( x ) > yM, yM := Len( x ), ) } )
- 
+
    Prozor1( x1, y1, x1 + xM + 1, y1 + yM + 1,,,,,, 0 )
-  
+
       nIzb := ACHOICE2( x1 + 1, y1 + 1, x1 + xM, y1 + yM, aNiz,, "KorMenu2", nIzb )
- 
+
     Prozor0()
 
    RETURN nIzb
@@ -315,6 +315,10 @@ FUNCTION AChoice2( x1, y1, x2, y2, Items, f1, cFunc, nItemNo )
       ENDIF
 
       nChar := WaitScrSav()
+      IF VALTYPE( goModul) == "O"
+         goModul:GProc( nChar )
+      ENDIF
+
       nOldItemNo := nItemNo
       DO CASE
       CASE nChar == K_ESC
@@ -333,8 +337,8 @@ FUNCTION AChoice2( x1, y1, x2, y2, Items, f1, cFunc, nItemNo )
 
       CASE IsAlpha( Chr( nChar ) ) .OR. IsDigit( Chr( nChar ) )
          FOR ii := 1 TO nLen
-            // cifra
-            IF IsDigit( Chr( nChar ) )
+
+            IF IsDigit( Chr( nChar ) ) // cifra
                IF Chr( nChar ) $ Left( Items[ ii ], 3 )
                   // provjera postojanja
                   nItemNo := ii
@@ -363,9 +367,6 @@ FUNCTION AChoice2( x1, y1, x2, y2, Items, f1, cFunc, nItemNo )
          EXIT
       OTHERWISE
 
-         IF ValType( goModul ) == "O"
-            goModul:GProc( nChar )
-         ENDIF
 
       ENDCASE
 
@@ -413,7 +414,7 @@ FUNCTION AChoice3( x1, y1, x2, y2, Items, f1, cFunc, nItemNo )
 
    @ x1, y1 CLEAR TO x2 - 1, y2
 
-   DO WHILE .T. // ovu liniju sam premjestio odozdo radi korektnog ispisa
+   DO WHILE .T.
 
       IF nVisina < nLen
          @   x2, y1 + Int( ( y2 - y1 ) / 2 ) SAY iif( nGornja == 1, " ^ ", iif( nItemNo == nLen, " v ", " v " ) )
@@ -433,9 +434,15 @@ FUNCTION AChoice3( x1, y1, x2, y2, Items, f1, cFunc, nItemNo )
       SetColor( Invert )
       SetColor( cOldColor )
 
-      IF fExit; exit; ENDIF
+      IF fExit
+         exit
+      ENDIF
 
       nChar := WaitScrSav()
+
+      IF VALTYPE( goModul) == "O"
+         goModul:GProc( nChar )
+      ENDIF
 
       nOldItemNo := nItemNo
       DO CASE
@@ -456,7 +463,7 @@ FUNCTION AChoice3( x1, y1, x2, y2, Items, f1, cFunc, nItemNo )
          FOR ii := 1 TO nLen
             IF IsDigit( Chr( nChar ) ) // cifra
                IF Chr( nChar ) $ Left( Items[ ii ], 3 ) // provjera postojanja
-                  nItemNo := ii          // broja u stavki samo u prva 3 karaktera
+                  nItemNo := ii    // broja u stavki samo u prva 3 karaktera
                   fexit := .T.
                ENDIF
             ELSE // veliko slovo se trazi po citavom stringu - promijenjeno
@@ -476,9 +483,9 @@ FUNCTION AChoice3( x1, y1, x2, y2, Items, f1, cFunc, nItemNo )
       CASE nChar == K_CTRL_T
          nCtrlKeyVal := 30000
          EXIT
-      OTHERWISE
-         goModul:GProc( nChar )
+
       ENDCASE
+
       IF nItemNo > nLen; nItemNo--; ENDIF
       IF nItemNo < 1; nItemNo++; ENDIF
       nGornja := iif( nItemNo > nVisina, nItemNo - nVisina + 1, 1 )
@@ -487,5 +494,3 @@ FUNCTION AChoice3( x1, y1, x2, y2, Items, f1, cFunc, nItemNo )
    SetColor( cOldColor )
 
    RETURN nItemNo + nCtrlKeyVal
-
-

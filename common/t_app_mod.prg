@@ -151,17 +151,20 @@ METHOD run()
    RETURN .T.
 
 
-
-// -----------------------------------------
-// *void TAppMod::gProc(char Ch)
-// -----------------------------------------
-
 METHOD gProc( Ch )
 
    LOCAL lPushWa
-   LOCAL i
+   LOCAL nI
 
    DO CASE
+
+   CASE Ch == Asc( "i" ) .OR. Ch == Asc( "I" )
+      show_infos()
+      RETURN DE_CONT
+
+   CASE Ch == Asc( "e" ) .OR. Ch == Asc( "E" )
+      show_errors()
+      RETURN DE_CONT
 
    CASE ( Ch == K_SH_F1 )
       Calc()
@@ -180,9 +183,9 @@ METHOD gProc( Ch )
 
    OTHERWISE
       IF !( "U" $ Type( "gaKeys" ) )
-         FOR i := 1 TO Len( gaKeys )
-            IF ( Ch == gaKeys[ i, 1 ] )
-               Eval( gaKeys[ i, 2 ] )
+         FOR nI := 1 TO Len( gaKeys )
+            IF ( Ch == gaKeys[ nI, 1 ] )
+               Eval( gaKeys[ nI, 2 ] )
             ENDIF
          NEXT
       ENDIF

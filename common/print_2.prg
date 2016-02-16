@@ -22,7 +22,6 @@ LOCAL cMsg, nI, cLogMsg := ""
    ENDIF
 
    set_print_f_name( @f_name )
-
    read_printer_params()
 
    PtxtSekvence()
@@ -43,10 +42,12 @@ LOCAL cMsg, nI, cLogMsg := ""
 
    PRIVATE GetList := {}
 
+#ifdef F18_DEBUG_PRINT
    LOG_CALL_STACK cLogMsg
    Alert ( cLogMsg )
+#endif
 
-   MsgO( "Priprema izvještaja... /2" )
+   MsgO( "Priprema izvještaja... (2)" )
 
    LOG_CALL_STACK cLogMsg
    SetPRC( 0, 0 )

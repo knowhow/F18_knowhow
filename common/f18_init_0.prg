@@ -28,6 +28,7 @@ FUNCTION start_f18_program_module( oApp, lSezone )
 
    set_global_vars_0()
    gModul   := oApp:cName
+   goModul  := oApp
    gVerzija := oApp:cVerzija
 
 
@@ -261,7 +262,7 @@ STATIC FUNCTION PrijRunInstall( m_sif, cKom )
    ENDIF
    RunInstall( cKom )
 
-   RETURN
+   RETURN .T.
 
 
 FUNCTION RunInstall( cKom )

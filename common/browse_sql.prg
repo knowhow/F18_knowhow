@@ -325,16 +325,6 @@ STATIC FUNCTION standardne_browse_komande( TB, Ch, nRez, nPored, aPoredak )
 
    DO CASE
 
-   CASE Ch == Asc( "i" ) .OR. Ch == Asc( "I" )
-      show_infos()
-      RETURN DE_CONT
-
-   CASE Ch == Asc( "e" ) .OR. Ch == Asc( "E" )
-      show_errors()
-      RETURN DE_CONT
-
-   CASE Ch == K_SH_F1
-      calc()
 
    CASE Ch == K_CTRL_F
 
@@ -501,6 +491,9 @@ STATIC FUNCTION standardne_browse_komande( TB, Ch, nRez, nPored, aPoredak )
       ELSE
          nRez := DE_CONT
       ENDIF
+
+   OTHERWISE
+      goModul:gProc( Ch )
 
    ENDCASE
 

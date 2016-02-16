@@ -38,7 +38,7 @@ FUNCTION info_tab( cDoc, cMsg )
 
    hb_default( @cMsg, "" )
 
-   @ maxrows() -1, 18 SAY8  "> " + PadC( cMsg, maxcols() - 28 ) + " <" COLOR Normal
+   @ maxrows() - 1, 18 SAY8  "> " + PadC( cMsg, maxcols() - 28 ) + " <" COLOR INFO_PANEL_COLOR
 
    IF Len( aInfos ) > INFO_MESSAGES_LENGTH
       ADel( aInfos, 1 )
@@ -53,7 +53,7 @@ FUNCTION info_tab( cDoc, cMsg )
 FUNCTION error_tab( cDoc, cMsg )
 
    Beep( 2 )
-   @ maxrows(), 4 SAY8  ">> " + PadC( cMsg, maxcols() - 10 ) + " <<" COLOR Invert
+   @ maxrows(), 4 SAY8  ">> " + PadC( cMsg, maxcols() - 10 ) + " <<" COLOR ERROR_PANEL_COLOR
 
    IF Len( aErrors ) > ERROR_MESSAGES_LENGTH
       ADel( aErrors, 1 )

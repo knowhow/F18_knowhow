@@ -16,7 +16,7 @@ STATIC s_threadDbfsID
 
 
 STATIC s_psqlServer := NIL
-THREAD STATIC s_psqlServerDbfThread := NIL
+THREAD STATIC s_psqlServerDbfThread := NIL // svaka thread konekcija zasebna
 STATIC s_psqlServer_params := NIL
 
 // logiranje na server

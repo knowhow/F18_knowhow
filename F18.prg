@@ -129,7 +129,7 @@ FUNCTION module_menu( arg_v )
       // setuj odabir
       set_menu_choices( @menuop, @menuexec, arg_v[ "p3" ], arg_v[ "p4" ], arg_v[ "p5" ], arg_v[ "p6" ], arg_v[ "p7" ] )
 
-      // ubacio sam ACHOICE2 radi meni funkcija stadnardnih...
+
       mnu_choice := ACHOICE2( mnu_top, mnu_left, mnu_bottom, mnu_right, menuop, .T., "MenuFunc", 1 )
 
       DO CASE
@@ -151,7 +151,7 @@ FUNCTION module_menu( arg_v )
 
    ENDDO
 
-   RETURN
+   RETURN .T.
 
 // -----------------------------------------------------------------------------
 // setuje matricu sa odabirom za meni

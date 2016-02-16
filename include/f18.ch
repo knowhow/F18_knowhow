@@ -52,6 +52,9 @@
 #define F18_DEFAULT_LOG_LEVEL       3
 
 #define INFO_PANEL_ROWS             2
+#define INFO_PANEL_COLOR           "GR+/B,R/N+,,,N/W"
+#define ERROR_PANEL_COLOR          "N/W,R/N+,,,R/B+"
+
 #define INFO_MESSAGES_LENGTH       40
 #define ERROR_MESSAGES_LENGTH      40
 

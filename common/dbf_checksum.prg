@@ -24,13 +24,13 @@ FUNCTION check_recno_and_fix( cDbfAlias, nCntSql, nCntDbf )
    IF nCntSql <> nCntDbf
 
       cErrMsg := "check_recno_and_fix DIFF: "
-      cErrMsg += "broj zapisa DBF tabele " + _a_dbf_rec[ "alias" ] + ": " + AllTrim( Str( nCntDbf, 10, 0) ) + " "
-      cErrMsg += "broj zapisa SQL tabele " + _sql_table + ": " + AllTrim( Str( nCntSql, 10 ) )
+      cErrMsg += "alias: " + _a_dbf_rec[ "alias" ] + " cnt_dbf: " + AllTrim( Str( nCntDbf, 10, 0 ) ) + " "
+      cErrMsg += "sql_tbl: " + _sql_table + " cnt_sql: " + AllTrim( Str( nCntSql, 10 ) )
 
 #ifdef F18_DEBUG
-      IF ABS(nCntDbf - nCntSql) == 1
-          Alert( "jedan zapis razlike ?!")
-          altd()
+      IF Abs( nCntDbf - nCntSql ) == 1
+         Alert( "jedan zapis razlike ?!" )
+         AltD()
       ENDIF
 #endif
       log_write( cErrMsg, 3 )
@@ -40,7 +40,7 @@ FUNCTION check_recno_and_fix( cDbfAlias, nCntSql, nCntDbf )
          error_tab( "check_recno_diff", cErrMsg )
       ENDIF
 
-      full_synchro( _a_dbf_rec[ "table" ], 50000, "dbf_cnt_before: " + AllTrim( Str( nCntDbf, 10, 0) ) )
+      full_synchro( _a_dbf_rec[ "table" ], 50000, "dbf_cnt_before: " + AllTrim( Str( nCntDbf, 10, 0 ) ) )
 
    ENDIF
 

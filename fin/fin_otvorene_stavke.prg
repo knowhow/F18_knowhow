@@ -606,7 +606,7 @@ STATIC FUNCTION _o_ruc_zat( lOsuban )
       O_SUBAN
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 

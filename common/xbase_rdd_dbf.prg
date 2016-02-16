@@ -272,8 +272,9 @@ FUNCTION reopen_dbf( excl, dbf_table, open_index )
 
    RECOVER USING _err
 
-      cMsg := "ERROR reopen_dbf: " + _err:description + ": tbl:" + _dbf + " excl:" + ToStr( excl )
-      log_write( cMsg, 2 )
+      cMsg := "tbl:" + _a_dbf_rec[ "table" ] + " : " + _err:description +  " excl:" + ToStr( excl )
+      error_tab( "reopen_dbf", cMsg )
+      log_write( "ERR-reopen_dbf " + cMsg, 2 )
       lRet := .F.
 
    END SEQUENCE

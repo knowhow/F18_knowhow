@@ -652,6 +652,8 @@ STATIC FUNCTION edit_sql_sif_item( Ch, cOrderTag, aZabIsp, lNovi )
 
    ENDDO
 
+altd()
+
    IF Ch == K_CTRL_N .OR. Ch == K_F2
       ordSetFocus( cOrderTag )
    ENDIF

@@ -77,6 +77,11 @@ FUNCTION push_ids_to_semaphore( table, aIds, lToMySelf )
    LOCAL _set_1, _set_2
    LOCAL _server := my_server()
 
+
+   IF skip_semaphore_sync( table )
+      RETURN .T.
+   ENDIF
+
    IF Len( aIds ) < 1
       RETURN .F.
    ENDIF
@@ -163,6 +168,10 @@ FUNCTION get_ids_from_semaphore( table )
    LOCAL _tok, _versions, _tmp
    LOCAL _log_level := log_level()
    LOCAL lAllreadyInTransaction := .F.
+
+   IF skip_semaphore_sync( table )
+      RETURN .T.
+   ENDIF
 
    IF _server:TransactionStatus() > 0
       lAllreadyInTransaction := .T.
@@ -281,6 +290,10 @@ FUNCTION create_queries_from_ids( table )
    LOCAL _algoritam, _alg
    LOCAL _sql_tbl
 
+   IF skip_semaphore_sync( table )
+      RETURN .T.
+   ENDIF
+
    aDbfRec := get_a_dbf_rec( table )
 
    _sql_fields := sql_fields( aDbfRec[ "dbf_fields" ] )
@@ -386,9 +399,15 @@ FUNCTION delete_ids_in_dbf( dbf_table, ids, nAlgoritam )
    LOCAL _key_block
    LOCAL cSyncAlias, cFullDbf, cFullIdx
 
+
    log_write( "delete_ids_in_dbf START", 9 )
 
    aDbfRec := get_a_dbf_rec( dbf_table )
+
+   IF skip_semaphore_sync( aDbfRec[ "table" ] )
+      RETURN .T.
+   ENDIF
+   
    _alg := aDbfRec[ "algoritam" ]
    _dbf_tag := _alg[ nAlgoritam ][ "dbf_tag" ]
    _key_block := _alg[ nAlgoritam ][ "dbf_key_block" ]

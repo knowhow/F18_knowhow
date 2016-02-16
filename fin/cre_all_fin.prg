@@ -300,7 +300,6 @@ FUNCTION cre_all_fin( ver )
 
    IF_NOT_FILE_DBF_CREATE
 
-
    CREATE_INDEX( "1", "IdPartija", _alias )
 
    AFTER_CREATE_INDEX
@@ -317,7 +316,6 @@ FUNCTION cre_all_fin( ver )
    AAdd( aDBf, { "NAZ", "C",  10,  0 } )
 
    IF_NOT_FILE_DBF_CREATE
-
    CREATE_INDEX( "ID", "ID", _alias )
    CREATE_INDEX( "NAZ", "NAZ", _alias )
    AFTER_CREATE_INDEX

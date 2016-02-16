@@ -14,7 +14,7 @@
 
 FUNCTION P_Ops( cId, dx, dy )
 
-   LOCAL _i, hWorkArea, lRet
+   LOCAL _i, hWorkArea, xRet
    PRIVATE ImeKol
    PRIVATE Kol
 
@@ -42,7 +42,7 @@ FUNCTION P_Ops( cId, dx, dy )
       AAdd( Kol, _i )
    NEXT
 
-   lRet := p_sifra( F_OPS, 1, MAXROWS() - 15, MAXCOLS() - 10, "MP: Lista općina", @cId, dx, dy )
+   xRet := p_sifra( F_OPS, 1, MAXROWS() - 15, MAXCOLS() - 10, "MP: Lista općina", @cId, dx, dy )
 
    hWorkArea := PopWA()
 
@@ -51,7 +51,7 @@ FUNCTION P_Ops( cId, dx, dy )
       cId := hb_UTF8ToStr( cId )
    ENDIF
 
-   RETURN lRet
+   RETURN xRet
 
 
 

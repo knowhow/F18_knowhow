@@ -19,19 +19,7 @@ STATIC __txt2
 STATIC __txt3
 
 
-// ---------------------------------
-// tabele potrebne za report
-// ---------------------------------
-STATIC FUNCTION _o_tables()
 
-   O_SIFK
-   O_SIFV
-   O_ROBA
-   O_KONCIJ
-   O_KONTO
-   O_PARTN
-
-   RETURN
 
 
 // ----------------------------------------------------
@@ -636,7 +624,7 @@ FUNCTION LLM()
          nVPCIzSif := ROBA->VPC
 
          IF lSvodi
-            nKJMJ  := SJMJ( 1,cIdRoba, @cJMJ )
+            nKJMJ  := SJMJ( 1, cIdRoba, @cJMJ )
             cJMJ := PadR( cJMJ, Len( ROBA->JMJ ) )
          ELSE
             nKJMJ  := 1
@@ -654,75 +642,75 @@ FUNCTION LLM()
          IF fPocStanje
 
             SELECT kalk_pripr
-              IF Round( nUlaz - nIzlaz, 4 ) <> 0 .AND. cSrKolNula $ "01"
+            IF Round( nUlaz - nIzlaz, 4 ) <> 0 .AND. cSrKolNula $ "01"
 
+               APPEND BLANK
+
+               REPLACE idfirma WITH cidfirma, idroba WITH cIdRoba, ;
+                  idkonto WITH cIdKonto, ;
+                  datdok WITH dDatDo + 1, ;
+                  idtarifa WITH roba->idtarifa, ;
+                  datfaktp WITH dDatDo + 1, ;
+                  kolicina WITH nUlaz - nIzlaz, ;
+                  idvd WITH "16", ;
+                  brdok WITH cBRPST
+
+               REPLACE nc WITH ( nNVU - nNVI ) / ( nUlaz - nIzlaz )
+               REPLACE vpc WITH ( nVPVU - nVPVI ) / ( nUlaz - nIzlaz )
+
+               IF IsMagPNab()
+                  REPLACE vpc WITH nc
+               ENDIF
+
+            ELSEIF cSrKolNula $ "12" .AND. Round( nUlaz - nIzlaz, 4 ) = 0
+
+               // kontrolna opcija
+               // kolicina 0, nabavna cijena <> 0
+               IF ( nNVU - nNVI ) <> 0
+
+                  // 1 stavka (minus)
                   APPEND BLANK
 
-                  REPLACE idfirma WITH cidfirma, idroba WITH cIdRoba, ;
-                     idkonto WITH cIdKonto, ;
-                     datdok WITH dDatDo + 1, ;
-                     idtarifa WITH roba->idtarifa, ;
-                     datfaktp WITH dDatDo + 1, ;
-                     kolicina WITH nUlaz - nIzlaz, ;
-                     idvd WITH "16", ;
-                     brdok WITH cBRPST
-
-                  REPLACE nc WITH ( nNVU - nNVI ) / ( nUlaz - nIzlaz )
-                  REPLACE vpc WITH ( nVPVU - nVPVI ) / ( nUlaz - nIzlaz )
+                  REPLACE idfirma WITH cidfirma
+                  REPLACE idroba WITH cIdRoba
+                  REPLACE idkonto WITH cIdKonto
+                  REPLACE datdok WITH dDatDo + 1
+                  REPLACE idtarifa WITH roba->idtarifa
+                  REPLACE datfaktp WITH dDatDo + 1
+                  REPLACE kolicina WITH -1
+                  REPLACE idvd WITH "16"
+                  REPLACE brdok WITH cBRPST
+                  REPLACE brfaktp WITH "#KOREK"
+                  REPLACE nc WITH 0
+                  REPLACE vpc WITH 0
 
                   IF IsMagPNab()
                      REPLACE vpc WITH nc
                   ENDIF
 
-               ELSEIF cSrKolNula $ "12" .AND. Round( nUlaz - nIzlaz, 4 ) = 0
+                  // 2 stavka (plus i nv)
+                  APPEND BLANK
 
-                  // kontrolna opcija
-                  // kolicina 0, nabavna cijena <> 0
-                  IF ( nNVU - nNVI ) <> 0
+                  REPLACE idfirma WITH cidfirma
+                  REPLACE idroba WITH cIdRoba
+                  REPLACE idkonto WITH cIdKonto
+                  REPLACE datdok WITH dDatDo + 1
+                  REPLACE idtarifa WITH roba->idtarifa
+                  REPLACE datfaktp WITH dDatDo + 1
+                  REPLACE kolicina WITH 1
+                  REPLACE idvd WITH "16"
+                  REPLACE brdok WITH cBRPST
+                  REPLACE brfaktp WITH "#KOREK"
+                  REPLACE nc WITH ( nNVU - nNVI )
+                  REPLACE vpc WITH 0
 
-                     // 1 stavka (minus)
-                     APPEND BLANK
-
-                     REPLACE idfirma WITH cidfirma
-                     REPLACE idroba WITH cIdRoba
-                     REPLACE idkonto WITH cIdKonto
-                     REPLACE datdok WITH dDatDo + 1
-                     REPLACE idtarifa WITH roba->idtarifa
-                     REPLACE datfaktp WITH dDatDo + 1
-                     REPLACE kolicina WITH -1
-                     REPLACE idvd WITH "16"
-                     REPLACE brdok WITH cBRPST
-                     REPLACE brfaktp WITH "#KOREK"
-                     REPLACE nc WITH 0
-                     REPLACE vpc WITH 0
-
-                     IF IsMagPNab()
-                        REPLACE vpc WITH nc
-                     ENDIF
-
-                     // 2 stavka (plus i nv)
-                     APPEND BLANK
-
-                     REPLACE idfirma WITH cidfirma
-                     REPLACE idroba WITH cIdRoba
-                     REPLACE idkonto WITH cIdKonto
-                     REPLACE datdok WITH dDatDo + 1
-                     REPLACE idtarifa WITH roba->idtarifa
-                     REPLACE datfaktp WITH dDatDo + 1
-                     REPLACE kolicina WITH 1
-                     REPLACE idvd WITH "16"
-                     REPLACE brdok WITH cBRPST
-                     REPLACE brfaktp WITH "#KOREK"
-                     REPLACE nc WITH ( nNVU - nNVI )
-                     REPLACE vpc WITH 0
-
-                     IF IsMagPNab()
-                        REPLACE vpc WITH nc
-                     ENDIF
-
+                  IF IsMagPNab()
+                     REPLACE vpc WITH nc
                   ENDIF
 
                ENDIF
+
+            ENDIF
 
             SELECT kalk
 
@@ -1104,7 +1092,6 @@ STATIC FUNCTION g_exp_fields()
 STATIC FUNCTION fill_exp_tbl( nVar, cIdRoba, cSifDob, cNazRoba, cTarifa, ;
       cJmj, nUlaz, nIzlaz, nSaldo, nNVDug, nNVPot, nNV, nNC, ;
       nPVDug, nPVPot, nPV, nPC, nPVrdug, nPVrpot, dL_ulaz, dL_izlaz )
-
 
    PushWa()
 
@@ -1747,3 +1734,18 @@ STATIC FUNCTION _gen_xml( params )
    ENDIF
 
    RETURN _ok
+
+
+// ---------------------------------
+// tabele potrebne za report
+// ---------------------------------
+STATIC FUNCTION _o_tables()
+
+   O_SIFK
+   O_SIFV
+   O_ROBA
+   O_KONCIJ
+   O_KONTO
+   O_PARTN
+
+   RETURN .T.

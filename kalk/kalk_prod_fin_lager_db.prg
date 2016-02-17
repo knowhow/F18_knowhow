@@ -14,22 +14,6 @@
 
 
 
-STATIC FUNCTION _o_tbl()
-
-   O_KALK_DOKS
-   O_KALK
-   O_SIFK
-   O_SIFV
-   O_TDOK
-   O_ROBA
-   O_TARIFA
-   O_KONCIJ
-   O_KONTO
-   O_PARTN
-
-   RETURN
-
-
 // -----------------------------------------------
 // pomocna tabela finansijskog stanja prodavnice
 //
@@ -451,5 +435,23 @@ STATIC FUNCTION _add_to_exp( id_firma, id_tip_dok, broj_dok, d_opis, datum_dok, 
    dbf_update_rec( _rec )
 
    SELECT ( _t_area )
+
+   RETURN .T.
+
+
+
+
+STATIC FUNCTION _o_tbl()
+
+   O_KALK_DOKS
+   O_KALK
+   O_SIFK
+   O_SIFV
+   O_TDOK
+   O_ROBA
+   O_TARIFA
+   O_KONCIJ
+   O_KONTO
+   O_PARTN
 
    RETURN

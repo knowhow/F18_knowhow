@@ -19,8 +19,10 @@ FUNCTION MAdminKALK()
    LOCAL _opcexe := {}
    LOCAL _izbor := 1
 
+/*
    AAdd( _opc, "1. sređivanje kartica                                            " )
    AAdd( _opcexe, {|| MenuSK() } )
+*/
    AAdd( _opc, "5. kopiraj set cijena iz/u" )
    AAdd( _opcexe, {|| kopiraj_set_cijena() } )
 
@@ -35,20 +37,24 @@ FUNCTION MAdminKALK()
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
 
-
+/* TODO: izbaciti ?
 FUNCTION MenuSK()
 
    PRIVATE Opc := {}
    PRIVATE opcexe := {}
 
+
+
    AAdd( Opc, "1. korekcija prodajne cijene - nivelacija (VPC iz sifr.robe)    " )
    AAdd( opcexe, {|| KorekPC() } )
+
    AAdd( Opc, "2. ispravka sifre artikla u dokumentima i sifrarniku" )
    AAdd( opcexe, {|| RobaIdSredi() } )
    AAdd( Opc, "3. korekcija nc storniranjem grešaka tipa NC=0   " )
+
    AAdd( opcexe, {|| KorekNC() } )
    AAdd( Opc, "4. korekcija nc pomoću dok.95 (NC iz sifr.robe)" )
    AAdd( opcexe, {|| KorekNC2() } )
@@ -65,3 +71,4 @@ FUNCTION MenuSK()
    my_close_all_dbf()
 
    RETURN
+*/

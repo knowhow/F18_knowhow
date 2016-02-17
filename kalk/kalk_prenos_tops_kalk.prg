@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -18,620 +18,632 @@
 // -----------------------------------------------------------
 // otvaranje fajlova potrebnih kod importa podataka
 // -----------------------------------------------------------
-static function _o_imp_tables()
+STATIC FUNCTION _o_imp_tables()
 
-select ( F_ROBA )
-if !used()
-	O_ROBA
-endif
+   SELECT ( F_ROBA )
+   IF !Used()
+      O_ROBA
+   ENDIF
 
-select ( F_TARIFA )
-if !used()
-	O_TARIFA
-endif
+   SELECT ( F_TARIFA )
+   IF !Used()
+      O_TARIFA
+   ENDIF
 
-select ( F_KALK_PRIPR )
-if !used()
-	O_KALK_PRIPR
-endif
+   SELECT ( F_KALK_PRIPR )
+   IF !Used()
+      O_KALK_PRIPR
+   ENDIF
 
-select ( F_KALK_DOKS )
-if !used()
-	O_KALK_DOKS
-endif
+   SELECT ( F_KALK_DOKS )
+   IF !Used()
+      O_KALK_DOKS
+   ENDIF
 
-select ( F_KALK )
-if !used()
-	O_KALK
-endif
+   SELECT ( F_KALK )
+   IF !Used()
+      O_KALK
+   ENDIF
 
-select ( F_KONCIJ )
-if !used()
-	O_KONCIJ
-endif
+   SELECT ( F_KONCIJ )
+   IF !Used()
+      O_KONCIJ
+   ENDIF
 
-return
+   RETURN
 
 
 // --------------------------------------------------------
 // upit za konto
 // --------------------------------------------------------
-static function _box_konto()
-local _konto := PADR( "1320", 7 )
-local _t_area := SELECT()
+STATIC FUNCTION _box_konto()
 
-O_KONTO	
-select konto
+   LOCAL _konto := PadR( "1320", 7 )
+   LOCAL _t_area := Select()
 
-Box(, 3, 60 )
-	@ m_x+2, m_y+2 SAY "Magacinski konto:" GET _konto VALID P_Konto( @_konto )
-  	read
-BoxC()
+   O_KONTO
+   SELECT konto
 
-select ( _t_area )
-return _konto
+   Box(, 3, 60 )
+   @ m_x + 2, m_y + 2 SAY "Magacinski konto:" GET _konto VALID P_Konto( @_konto )
+   READ
+   BoxC()
+
+   SELECT ( _t_area )
+
+   RETURN _konto
 
 
 
 // --------------------------------------------------------
 // upit za tip prenosa
 // --------------------------------------------------------
-static function _get_razd_type()
-local _type := "1"
-private GetList := {}
+STATIC FUNCTION _get_razd_type()
 
-Box(, 5, 60 )
-	@ m_x + 1, m_y + 2 SAY "Tip razduzenja ***"
-	@ m_x + 3, m_y + 2 SAY "  [1] dok. 42"
-	@ m_x + 4, m_y + 2 SAY "  [2] dok. 11"
-    @ m_x + 6, m_y + 2 SAY "          odabir:" GET _type VALID _type $ "12"
-  	read
-BoxC()
+   LOCAL _type := "1"
+   PRIVATE GetList := {}
 
-return _type
+   Box(, 5, 60 )
+   @ m_x + 1, m_y + 2 SAY "Tip razduzenja ***"
+   @ m_x + 3, m_y + 2 SAY "  [1] dok. 42"
+   @ m_x + 4, m_y + 2 SAY "  [2] dok. 11"
+   @ m_x + 6, m_y + 2 SAY "          odabir:" GET _type VALID _type $ "12"
+   READ
+   BoxC()
+
+   RETURN _type
 
 
 
 // ----------------------------------------------------------------
 // nacin zamjene barkod-ova prilikom importa
 // ----------------------------------------------------------------
-static function _bk_replace()
-local _ret := 0
-local _x := 1
+STATIC FUNCTION _bk_replace()
 
-Box(, 7, 60 )
+   LOCAL _ret := 0
+   LOCAL _x := 1
 
-	@ m_x + _x, m_y + 2 SAY "Zamjena barkod-ova"
-	
-	++ _x
-	++ _x
+   Box(, 7, 60 )
 
-	@ m_x + _x, m_y + 2 SAY "0 - bez zamjene"
+   @ m_x + _x, m_y + 2 SAY "Zamjena barkod-ova"
 
-	++ _x
+   ++ _x
+   ++ _x
 
-	@ m_x + _x, m_y + 2 SAY "1 - ubaci samo nove"
-	
-	++ _x
+   @ m_x + _x, m_y + 2 SAY "0 - bez zamjene"
 
-	@ m_x + _x, m_y + 2 SAY "2 - zamjeni sve"
+   ++ _x
 
-	++ _x
-	++ _x
+   @ m_x + _x, m_y + 2 SAY "1 - ubaci samo nove"
 
-	@ m_x + _x, m_y + 2 SAY SPACE(15) + "=> odabir" GET _ret PICT "9"
-	
-	read
-	
-BoxC()
+   ++ _x
 
-return _ret
+   @ m_x + _x, m_y + 2 SAY "2 - zamjeni sve"
+
+   ++ _x
+   ++ _x
+
+   @ m_x + _x, m_y + 2 SAY Space( 15 ) + "=> odabir" GET _ret PICT "9"
+
+   READ
+
+   BoxC()
+
+   RETURN _ret
 
 
 // parametri auto prenosa
-static function _get_prenos_params( params )
-local _ok := .f.
-local _d_od := DATE()
-local _d_do := DATE()
-local _x := 1
-local _id_pm := PADR( fetch_metric( "IDPos", NIL, "1 " ), 2 )
-local _mag_konto := PADR( "1320", 7 )
-local _type := "1"
-private GetList := {}
+STATIC FUNCTION _get_prenos_params( params )
 
-Box(, 8, 70 )
+   LOCAL _ok := .F.
+   LOCAL _d_od := Date()
+   LOCAL _d_do := Date()
+   LOCAL _x := 1
+   LOCAL _id_pm := PadR( fetch_metric( "IDPos", NIL, "1 " ), 2 )
+   LOCAL _mag_konto := PadR( "1320", 7 )
+   LOCAL _type := "1"
+   PRIVATE GetList := {}
 
-    @ m_x + _x, m_y + 2 SAY "*** Automatsko razduzenje prodavnice ***" COLOR "I"
-    ++ _x
-    ++ _x
+   Box(, 8, 70 )
 
-    @ m_x + _x, m_y + 2 SAY "Za datum od:" GET _d_od
-    @ m_x + _x, col() + 1 SAY "do:" GET _d_do
+   @ m_x + _x, m_y + 2 SAY "*** Automatsko razduzenje prodavnice ***" COLOR "I"
+   ++ _x
+   ++ _x
 
-    ++ _x
-    
-    @ m_x + _x, m_y + 2 SAY "Prodajno mjesto:" GET _id_pm VALID !EMPTY( _id_pm )
+   @ m_x + _x, m_y + 2 SAY "Za datum od:" GET _d_od
+   @ m_x + _x, Col() + 1 SAY "do:" GET _d_do
 
-    ++ _x
-    ++ _x
+   ++ _x
 
-    @ m_x + _x, m_y + 2 SAY "Formiraj: [1] kalk.42, [2] kalk.11" GET _type VALID _type $ "12"
-    
-    ++ _x
-    @ m_x + _x, m_y + 2 SAY "Kod 11-ke konto magacina:" GET _mag_konto
+   @ m_x + _x, m_y + 2 SAY "Prodajno mjesto:" GET _id_pm VALID !Empty( _id_pm )
 
-    read
+   ++ _x
+   ++ _x
 
-BoxC()
+   @ m_x + _x, m_y + 2 SAY "Formiraj: [1] kalk.42, [2] kalk.11" GET _type VALID _type $ "12"
 
-if LastKey() == K_ESC
-    return _ok
-endif
+   ++ _x
+   @ m_x + _x, m_y + 2 SAY "Kod 11-ke konto magacina:" GET _mag_konto
 
-_ok := .t.
-params := hb_hash()
-params["datum_od"] := _d_od
-params["datum_do"] := _d_do
-params["id_pm"] := _id_pm
-params["tip_prenosa"] := _type
-params["barkod_zamjena"] := 0
-params["konto_magacin"] := _mag_konto
+   READ
 
-gIdPos := _id_pm
+   BoxC()
 
-return _ok
+   IF LastKey() == K_ESC
+      RETURN _ok
+   ENDIF
+
+   _ok := .T.
+   params := hb_Hash()
+   params[ "datum_od" ] := _d_od
+   params[ "datum_do" ] := _d_do
+   params[ "id_pm" ] := _id_pm
+   params[ "tip_prenosa" ] := _type
+   params[ "barkod_zamjena" ] := 0
+   params[ "konto_magacin" ] := _mag_konto
+
+   gIdPos := _id_pm
+
+   RETURN _ok
 
 
 
 // -----------------------------------------------------------
 // automatsko preuzimanje fajla iz modula TOPS
 // -----------------------------------------------------------
-function kalk_preuzmi_tops_dokumente_auto()
-local _file := my_home() + "tk_auto.dbf"
-local _tip_prenosa 
-local _datum_od, _datum_do
-local _id_vd_pos := "42"
-local _id_pm
-local _barkod_zamjena 
-local _params
-local _mag_konto
+FUNCTION kalk_preuzmi_tops_dokumente_auto()
 
-// incijalizacija radi TOPS funkcija
-private gIdPos
+   LOCAL _file := my_home() + "tk_auto.dbf"
+   LOCAL _tip_prenosa
+   LOCAL _datum_od, _datum_do
+   LOCAL _id_vd_pos := "42"
+   LOCAL _id_pm
+   LOCAL _barkod_zamjena
+   LOCAL _params
+   LOCAL _mag_konto
 
-// parametri prenosa...
-if !_get_prenos_params( @_params )
-    return 
-endif
+   // incijalizacija radi TOPS funkcija
+   PRIVATE gIdPos
 
-_datum_od := _params["datum_od"]
-_datum_do := _params["datum_do"]
-_id_pm := _params["id_pm"]
-_tip_prenosa := _params["tip_prenosa"]
-_barkod_zamjena := _params["barkod_zamjena"]
-_mag_konto := _params["konto_magacin"]
+   // parametri prenosa...
+   IF !_get_prenos_params( @_params )
+      RETURN
+   ENDIF
 
-MsgO( "Formiranje fajla prenosa u toku... " )
+   _datum_od := _params[ "datum_od" ]
+   _datum_do := _params[ "datum_do" ]
+   _id_pm := _params[ "id_pm" ]
+   _tip_prenosa := _params[ "tip_prenosa" ]
+   _barkod_zamjena := _params[ "barkod_zamjena" ]
+   _mag_konto := _params[ "konto_magacin" ]
 
-// obrisi neki postojeci...
-FileDelete( _file )
-FileDelete( STRTRAN( _file, ".dbf", ".txt" ) )
+   MsgO( "Formiranje fajla prenosa u toku... " )
 
-// 1)  napraviti prenos u POS-u...
-pos_prenos_pos_kalk( _datum_od, _datum_do, _id_vd_pos, _id_pm )
+   // obrisi neki postojeci...
+   FileDelete( _file )
+   FileDelete( StrTran( _file, ".dbf", ".txt" ) )
 
-// 2) kopiraj fajl u potrebni...
-FileCopy( my_home() + "pom.dbf", _file )
+   // 1)  napraviti prenos u POS-u...
+   pos_prenos_pos_kalk( _datum_od, _datum_do, _id_vd_pos, _id_pm )
 
-if !FILE( _file )
-    MsgC()
-    MsgBeep( "Neki problem !!?????" )
-    return
-endif
+   // 2) kopiraj fajl u potrebni...
+   FileCopy( my_home() + "pom.dbf", _file )
 
-// 3) pa zatim isti preuzmi iz POS-a
-kalk_preuzmi_tops_dokumente( _file, _tip_prenosa, _barkod_zamjena, _mag_konto )
+   IF !File( _file )
+      MsgC()
+      MsgBeep( "Neki problem !!?????" )
+      RETURN
+   ENDIF
 
-MsgC()
+   // 3) pa zatim isti preuzmi iz POS-a
+   kalk_preuzmi_tops_dokumente( _file, _tip_prenosa, _barkod_zamjena, _mag_konto )
 
-// 4) nakon preuzimanja pobrisi fajl razmjene
-FileDelete( _file )
-FileDelete( STRTRAN( _file, ".dbf", ".txt" ) )
+   MsgC()
 
-O_KALK_PRIPR
-if RECCOUNT() <> 0
-    MsgBeep( "Prenos dokumenata uspjesan, nalazi se u pripremi !" )
-endif
+   // 4) nakon preuzimanja pobrisi fajl razmjene
+   FileDelete( _file )
+   FileDelete( StrTran( _file, ".dbf", ".txt" ) )
 
-my_close_all_dbf()
+   O_KALK_PRIPR
+   IF RecCount() <> 0
+      MsgBeep( "Prenos dokumenata uspjesan, nalazi se u pripremi !" )
+   ENDIF
 
-return
+   my_close_all_dbf()
+
+   RETURN
 
 
 
 // ------------------------------------------------------------
 // preuzimanje podataka iz POS-a
 // ------------------------------------------------------------
-function kalk_preuzmi_tops_dokumente( sync_file, auto_razd, ch_barkod, mag_konto )
-local _auto_razduzenje := "N"
-local _br_kalk, _idvd_pos
-local _id_konto2 := ""
-local _bk_replace
-local _br_dok, _id_konto, _r_br
-local _bk_tmp
-local _app_rec
-local _imp_file := ""
-local _roba_data := {}
-local _count := 0
-local _razd_type := "1"
+FUNCTION kalk_preuzmi_tops_dokumente( sync_file, auto_razd, ch_barkod, mag_konto )
 
-// opcija za automatko svodjeje prodavnice na 0
-// ---------------------------------------------
-// prenese se tops promet u dokument 11
-// pa se prenese tops promet u dokument 42
-if auto_razd <> NIL
-    _auto_razduzenje := "D"
-else
-    _auto_razduzenje := fetch_metric( "kalk_tops_prenos_auto_razduzenje", my_user(), _auto_razduzenje )
-endif
+   LOCAL _auto_razduzenje := "N"
+   LOCAL _br_kalk, _idvd_pos
+   LOCAL _id_konto2 := ""
+   LOCAL _bk_replace
+   LOCAL _br_dok, _id_konto, _r_br
+   LOCAL _bk_tmp
+   LOCAL _app_rec
+   LOCAL _imp_file := ""
+   LOCAL _roba_data := {}
+   LOCAL _count := 0
+   LOCAL _razd_type := "1"
 
-// otvori tabele bitne za import podataka
-_o_imp_tables()
+   // opcija za automatko svodjeje prodavnice na 0
+   // ---------------------------------------------
+   // prenese se tops promet u dokument 11
+   // pa se prenese tops promet u dokument 42
+   IF auto_razd <> NIL
+      _auto_razduzenje := "D"
+   ELSE
+      _auto_razduzenje := fetch_metric( "kalk_tops_prenos_auto_razduzenje", my_user(), _auto_razduzenje )
+   ENDIF
 
-if sync_file <> NIL
-    // zadano je parametrom
-    _imp_file := sync_file
-else
-    // daj mi fajl za import
-    if !get_import_file( @_imp_file )
-	    my_close_all_dbf()
-	    return
-    endif
-endif
+   // otvori tabele bitne za import podataka
+   _o_imp_tables()
 
-// otvori temp tabelu
-select ( F_TMP_TOPSKA )
-my_use_temp( "TOPSKA", _imp_file )
+   IF sync_file <> NIL
+      // zadano je parametrom
+      _imp_file := sync_file
+   ELSE
+      // daj mi fajl za import
+      IF !get_import_file( @_imp_file )
+         my_close_all_dbf()
+         RETURN
+      ENDIF
+   ENDIF
 
-go bottom
+   // otvori temp tabelu
+   SELECT ( F_TMP_TOPSKA )
+   my_use_temp( "TOPSKA", _imp_file )
 
-// daj mi broj kalkulacije
-_br_kalk := LEFT( STRTRAN( DTOC( field->datum ), ".", "" ), 4 ) + "/" + ALLTRIM( field->idpos )
-_idvd_pos := field->idvd
+   GO BOTTOM
 
-// provjeri da li postoji podesenje za ovaj fajl importa
-select koncij
-locate for idprodmjes == topska->idpos
+   // daj mi broj kalkulacije
+   _br_kalk := Left( StrTran( DToC( field->datum ), ".", "" ), 4 ) + "/" + AllTrim( field->idpos )
+   _idvd_pos := field->idvd
 
-if !FOUND()
-	MsgBeep("U sifrarniku KONTA-TIPOVI CIJENA nije postavljeno#nigdje prodajno mjesto :" + field->idprodmjes + "#Prenos nije izvrsen.")
-  	my_close_all_dbf()
-	return
-endif
+   // provjeri da li postoji podesenje za ovaj fajl importa
+   SELECT koncij
+   LOCATE FOR idprodmjes == topska->idpos
 
-select kalk
+   IF !Found()
+      MsgBeep( "U sifrarniku KONTA-TIPOVI CIJENA nije postavljeno#nigdje prodajno mjesto :" + field->idprodmjes + "#Prenos nije izvrsen." )
+      my_close_all_dbf()
+      RETURN
+   ENDIF
 
-if ( _idvd_pos == "42" .and. _auto_razduzenje == "D" )
+   SELECT kalk
 
-	seek gFirma + "11" + "X"
-  	skip -1
-  	
-	if field->idvd <> "11"
-    	_br_kalk := SPACE( 8 )
-  	else
-    	_br_kalk := field->brdok
-  	endif
+   IF ( _idvd_pos == "42" .AND. _auto_razduzenje == "D" )
 
-  	_br_kalk := UBrojDok( VAL( LEFT ( _br_kalk, 5 ) ) + 1, 5, RIGHT( _br_kalk, 3 ) )
+      SEEK gFirma + "11" + "X"
+      SKIP -1
 
-else
+      IF field->idvd <> "11"
+         _br_kalk := Space( 8 )
+      ELSE
+         _br_kalk := field->brdok
+      ENDIF
 
-	seek gfirma + _idvd_pos + _br_kalk
+      _br_kalk := UBrojDok( Val( Left ( _br_kalk, 5 ) ) + 1, 5, Right( _br_kalk, 3 ) )
 
-  	if FOUND()
-		Msg("Vec postoji dokument pod brojem " + gFirma + "-" + _idvd_pos + "-" + _br_kalk + "#Prenos nece biti izvrsen" )
-		my_close_all_dbf()
-		return
-	endif
+   ELSE
 
-endif
+      SEEK gfirma + _idvd_pos + _br_kalk
 
-select topska
-go top
+      IF Found()
+         Msg( "Vec postoji dokument pod brojem " + gFirma + "-" + _idvd_pos + "-" + _br_kalk + "#Prenos nece biti izvrsen" )
+         my_close_all_dbf()
+         RETURN
+      ENDIF
 
-// nacin zamjene barkod-ova
-// 0 - ne mjenjaj
-// 1 - ubaci samo nove
-// 2 - zamjeni sve
+   ENDIF
 
-if ch_barkod <> NIL
-    _bk_replace := ch_barkod
-else
-    _bk_replace := _bk_replace()
-endif
+   SELECT topska
+   GO TOP
 
-// konto magacina za razduzenje
-if ( _idvd_pos == "42" .and. _auto_razduzenje == "D" ) .or. ( _idvd_pos == "12" )
-    if mag_konto <> NIL
-        _id_konto2 := mag_konto
-    else
-	    _id_konto2 := _box_konto()
-    endif
-endif
+   // nacin zamjene barkod-ova
+   // 0 - ne mjenjaj
+   // 1 - ubaci samo nove
+   // 2 - zamjeni sve
 
-// konacno idemo na import
+   IF ch_barkod <> NIL
+      _bk_replace := ch_barkod
+   ELSE
+      _bk_replace := _bk_replace()
+   ENDIF
 
-if _auto_razduzenje == "D"
-    // razduziti kao 11 ili kao 42
-    _razd_type := auto_razd
-endif
+   // konto magacina za razduzenje
+   IF ( _idvd_pos == "42" .AND. _auto_razduzenje == "D" ) .OR. ( _idvd_pos == "12" )
+      IF mag_konto <> NIL
+         _id_konto2 := mag_konto
+      ELSE
+         _id_konto2 := _box_konto()
+      ENDIF
+   ENDIF
 
-_r_br := "0"
+   // konacno idemo na import
 
-MsgO( "Prenos stavki POS -> KALK priprema ... sacekajte !" )
+   IF _auto_razduzenje == "D"
+      // razduziti kao 11 ili kao 42
+      _razd_type := auto_razd
+   ENDIF
 
-do while !EOF()
-	
-	_br_dok := _br_kalk
-    _id_konto := koncij->id
+   _r_br := "0"
 
-    _n_rbr := RbrUNum( _r_br ) + 1
-    _r_br := RedniBroj( _n_rbr )
-    
-    // provjeri da li roba postoji u sifraniku
-    // ako ne postoji, dodaj...
-    // dodaj u kontrolnu matricu ove informacije
+   MsgO( "Prenos stavki POS -> KALK priprema ... sacekajte !" )
 
-    kalk_import_roba( @_roba_data, ALLTRIM( koncij->naz ) )
-    	
-	if ( _idvd_pos == "42" .or. _idvd_pos == "12" )
+   DO WHILE !Eof()
 
-		if _auto_razduzenje == "D" .and. _razd_type == "2"
-            // formiraj stavku 11	
-		    import_row_11( _br_dok, _id_konto, _id_konto2, _r_br )
-        else
-		    // formiraj stavku 42
-		    import_row_42( _br_dok, _id_konto, _id_konto2, _r_br )
-        endif
+      _br_dok := _br_kalk
+      _id_konto := koncij->id
 
-	elseif ( _idvd_pos == "IN" )
+      _n_rbr := RbrUNum( _r_br ) + 1
+      _r_br := RedniBroj( _n_rbr )
 
-        // inventura
-        import_row_ip( _br_dok, _id_konto, _id_konto2, _r_br )
+      // provjeri da li roba postoji u sifraniku
+      // ako ne postoji, dodaj...
+      // dodaj u kontrolnu matricu ove informacije
 
-    endif
-  	
-	// zamjena barkod-a ako postoji
-	if _bk_replace > 0
+      kalk_import_roba( @_roba_data, AllTrim( koncij->naz ) )
 
-		select roba
-	   	set order to tag "ID"
-	    seek topska->idroba
-	    	
-		if Found()
+      IF ( _idvd_pos == "42" .OR. _idvd_pos == "12" )
 
-			_bk_tmp := roba->barkod
+         IF _auto_razduzenje == "D" .AND. _razd_type == "2"
+            // formiraj stavku 11
+            import_row_11( _br_dok, _id_konto, _id_konto2, _r_br )
+         ELSE
+            // formiraj stavku 42
+            import_row_42( _br_dok, _id_konto, _id_konto2, _r_br )
+         ENDIF
 
-			if _bk_replace == 2 .or. ( _bk_replace == 1 .and. !EMPTY( topska->barkod ) .and. topska->barkod <> _bk_tmp )
-				
-				_app_rec := dbf_get_rec()
-				_app_rec["barkod"] := topska->barkod
+      ELSEIF ( _idvd_pos == "IN" )
 
-				update_rec_server_and_dbf( "roba", _app_rec, 1, "FULL" )
-		
-			endif
+         // inventura
+         import_row_ip( _br_dok, _id_konto, _id_konto2, _r_br )
 
-	    endif
+      ENDIF
 
-	endif
-	
-    ++ _count
+      // zamjena barkod-a ako postoji
+      IF _bk_replace > 0
 
-	select topska
-  	skip
+         SELECT roba
+         SET ORDER TO TAG "ID"
+         SEEK topska->idroba
 
-enddo
+         IF Found()
 
-MsgC()
+            _bk_tmp := roba->barkod
 
-my_close_all_dbf()
+            IF _bk_replace == 2 .OR. ( _bk_replace == 1 .AND. !Empty( topska->barkod ) .AND. topska->barkod <> _bk_tmp )
 
-// prikazi report...
-_show_report_roba( _roba_data )
+               _app_rec := dbf_get_rec()
+               _app_rec[ "barkod" ] := topska->barkod
 
-if ( gMultiPM == "D" .and. _count > 0 .and. _auto_razduzenje == "N" )
-	// pobrisi fajlove...
-	if FERASE( _imp_file ) == -1
-        MsgBeep( "Problem sa brisanjem fajla !" )
-    endif
-	FERASE( STRTRAN( _imp_file , ".dbf", ".txt" ) )
-endif
+               update_rec_server_and_dbf( "roba", _app_rec, 1, "FULL" )
 
-return
+            ENDIF
+
+         ENDIF
+
+      ENDIF
+
+      ++ _count
+
+      SELECT topska
+      SKIP
+
+   ENDDO
+
+   MsgC()
+
+   my_close_all_dbf()
+
+   // prikazi report...
+   _show_report_roba( _roba_data )
+
+   IF ( gMultiPM == "D" .AND. _count > 0 .AND. _auto_razduzenje == "N" )
+      // pobrisi fajlove...
+      IF FErase( _imp_file ) == -1
+         MsgBeep( "Problem sa brisanjem fajla !" )
+      ENDIF
+      FErase( StrTran( _imp_file, ".dbf", ".txt" ) )
+   ENDIF
+
+   RETURN
 
 
-static function _show_report_roba( data )
-local _i
-local _razlika := 0
+STATIC FUNCTION _show_report_roba( data )
 
-START PRINT CRET
-?
-P_COND2
+   LOCAL _i
+   LOCAL _razlika := 0
 
-? "Razlike u cijenama:"
-? "-------------------"
-? PADR("R.br", 5), PADR( "ID", 10), PADR( "naziv", 40 ), PADR("POS cijena", 12 ), PADR( "KALK cijena", 12 )
-? REPLICATE( "-", 80 )
+   START PRINT CRET
+   ?
+   P_COND2
 
-for _i := 1 to LEN( data )
+   ? "Razlike u cijenama:"
+   ? "-------------------"
+   ? PadR( "R.br", 5 ), PadR( "ID", 10 ), PadR( "naziv", 40 ), PadR( "POS cijena", 12 ), PadR( "KALK cijena", 12 )
+   ? Replicate( "-", 80 )
 
-    ? PADR( ALLTRIM( STR( _i, 4 )) + ".", 5 ), ;
-        data[_i, 1], ;
-        PADR( data[ _i, 2 ], 40 ), ;
-        STR( data[ _i, 3 ], 12, 2 ), ;
-        STR( data[ _i, 4 ], 12, 2 )
+   FOR _i := 1 TO Len( data )
 
-    _razlika += data[ _i, 3 ] - data[ _i, 4 ]
+      ? PadR( AllTrim( Str( _i, 4 ) ) + ".", 5 ), ;
+         DATA[ _i, 1 ], ;
+         PadR( DATA[ _i, 2 ], 40 ), ;
+         Str( DATA[ _i, 3 ], 12, 2 ), ;
+         Str( DATA[ _i, 4 ], 12, 2 )
 
-next
+      _razlika += DATA[ _i, 3 ] - DATA[ _i, 4 ]
 
-? REPLICATE( "-", 80 )
-? "Ukupno razlika:", ALLTRIM(STR( _razlika, 12, 2 ))
+   NEXT
 
-FF
-ENDPRINT
+   ? Replicate( "-", 80 )
+   ? "Ukupno razlika:", AllTrim( Str( _razlika, 12, 2 ) )
 
-return
+   FF
+   ENDPRINT
+
+   RETURN
 
 // --------------------------------------------
 // import robe u sifrarnik robe
 // --------------------------------------------
-static function kalk_import_roba( a_roba, tip_cijene, update_roba )
-local _t_area := SELECT()
-local _rec, _mpc_naz
+STATIC FUNCTION kalk_import_roba( a_roba, tip_cijene, update_roba )
 
-// ako nema ovog polja, nista ne radi !
-if topska->(FIELDPOS("robanaz")) == 0
-    return
-endif
+   LOCAL _t_area := Select()
+   LOCAL _rec, _mpc_naz
 
-if update_roba == NIL
-    update_roba := .f.
-endif
+   // ako nema ovog polja, nista ne radi !
+   IF topska->( FieldPos( "robanaz" ) ) == 0
+      RETURN
+   ENDIF
 
-select roba
-HSEEK topska->idroba
+   IF update_roba == NIL
+      update_roba := .F.
+   ENDIF
 
-if !FOUND()
+   SELECT roba
+   HSEEK topska->idroba
 
-    append blank
-    _rec := dbf_get_rec()
+   IF !Found()
 
-    _rec["id"] := topska->idroba
-    _rec["naz"] := topska->robanaz
-    _rec["idtarifa"] := topska->idtarifa
-    _rec["barkod"] := topska->barkod
+      APPEND BLANK
+      _rec := dbf_get_rec()
 
-    if topska->(FIELDPOS("jmj")) <> 0
-        _rec["jmj"] := topska->jmj
-    endif
-    
-    if ALLTRIM( tip_cijene ) == "M1" .or. EMPTY( tip_cijene )
-        _rec["mpc"] := topska->mpc
-    else
-        // M3 -> mpc3
-        _mpc_naz := STRTRAN( tip_cijene, "M", "mpc" )
-        _rec[ _mpc_naz ] := topska->mpc
-    endif
+      _rec[ "id" ] := topska->idroba
+      _rec[ "naz" ] := topska->robanaz
+      _rec[ "idtarifa" ] := topska->idtarifa
+      _rec[ "barkod" ] := topska->barkod
 
-    update_rec_server_and_dbf( "roba", _rec, 1, "FULL" )
+      IF topska->( FieldPos( "jmj" ) ) <> 0
+         _rec[ "jmj" ] := topska->jmj
+      ENDIF
 
-    // dodaj u kontrolnu matricu
-    AADD( a_roba, { topska->idroba, topska->robanaz, topska->mpc, 0 } )
+      IF AllTrim( tip_cijene ) == "M1" .OR. Empty( tip_cijene )
+         _rec[ "mpc" ] := topska->mpc
+      ELSE
+         // M3 -> mpc3
+         _mpc_naz := StrTran( tip_cijene, "M", "mpc" )
+         _rec[ _mpc_naz ] := topska->mpc
+      ENDIF
 
-else
-    
-    _rec := dbf_get_rec()
+      update_rec_server_and_dbf( "roba", _rec, 1, "FULL" )
 
-    if ALLTRIM( tip_cijene ) == "M1" .or. EMPTY( tip_cijene )
-        _mpc_naz := "mpc"
-    else
-        // M3 -> mpc3
-        _mpc_naz := STRTRAN( tip_cijene, "M", "mpc" )
-    endif
-        
-    if ROUND( _rec[ _mpc_naz ], 2 ) <> ROUND( topska->mpc, 2 )
+      // dodaj u kontrolnu matricu
+      AAdd( a_roba, { topska->idroba, topska->robanaz, topska->mpc, 0 } )
 
-        AADD( a_roba, { topska->idroba, topska->robanaz, topska->mpc, _rec[ _mpc_naz ] } )
-        
-        _rec[ _mpc_naz ] := topska->mpc
+   ELSE
 
-        if update_roba
+      _rec := dbf_get_rec()
+
+      IF AllTrim( tip_cijene ) == "M1" .OR. Empty( tip_cijene )
+         _mpc_naz := "mpc"
+      ELSE
+         // M3 -> mpc3
+         _mpc_naz := StrTran( tip_cijene, "M", "mpc" )
+      ENDIF
+
+      IF Round( _rec[ _mpc_naz ], 2 ) <> Round( topska->mpc, 2 )
+
+         AAdd( a_roba, { topska->idroba, topska->robanaz, topska->mpc, _rec[ _mpc_naz ] } )
+
+         _rec[ _mpc_naz ] := topska->mpc
+
+         IF update_roba
             update_rec_server_and_dbf( "roba", _rec, 1, "FULL" )
-        endif
+         ENDIF
 
-    endif
+      ENDIF
 
-endif
+   ENDIF
 
-select ( _t_area )
-return 
+   SELECT ( _t_area )
+
+   RETURN
 
 
 // ---------------------------------------------------------
 // formiraj stavku inventure prodavnice
 // ---------------------------------------------------------
-static function import_row_ip( broj_dok, id_konto, id_konto2, r_br )
-local _tip_dok := "IP"		
-local _t_area := SELECT()
-local _kolicina := 0
-local _nc := 0
-local _fc := 0
-local _mpcsapp := 0
-local _marzap := 50
+STATIC FUNCTION import_row_ip( broj_dok, id_konto, id_konto2, r_br )
 
-if ( topska->kol2 == 0 )
-	return
-endif
+   LOCAL _tip_dok := "IP"
+   LOCAL _t_area := Select()
+   LOCAL _kolicina := 0
+   LOCAL _nc := 0
+   LOCAL _fc := 0
+   LOCAL _mpcsapp := 0
+   LOCAL _marzap := 50
 
-// sracunaj za ovu stavku stanje inventurno u kalk-u
-kalk_ip_roba( id_konto, topska->idroba, topska->datum, @_kolicina, @_nc, @_fc, @_mpcsapp )
+   IF ( topska->kol2 == 0 )
+      RETURN
+   ENDIF
 
-if _kolicina == 0
+   // sracunaj za ovu stavku stanje inventurno u kalk-u
+   kalk_ip_roba( id_konto, topska->idroba, topska->datum, @_kolicina, @_nc, @_fc, @_mpcsapp )
 
-    // nema ga na stanju... 
-    // morat cemo preci na rucni rad racunice
+   IF _kolicina == 0
 
-    _mpcsapp := topska->mpc
-    _nc := ROUND( _mpcsapp * ( _marzap / 100 ), 2 )
+      // nema ga na stanju...
+      // morat cemo preci na rucni rad racunice
 
-endif
+      _mpcsapp := topska->mpc
+      _nc := Round( _mpcsapp * ( _marzap / 100 ), 2 )
 
-// uvijek uzmi iz topska ovu cijenu pri prenosu
-_mpcsapp := topska->mpc
+   ENDIF
 
-select kalk_pripr
+   // uvijek uzmi iz topska ovu cijenu pri prenosu
+   _mpcsapp := topska->mpc
 
-my_flock()
+   SELECT kalk_pripr
 
-locate for field->idroba == topska->idroba
+   my_flock()
 
-if !FOUND()
-    
-    append blank
-			
-    replace field->idfirma with gFirma
-    replace field->idvd with _tip_dok
-    replace field->brdok with broj_dok         
-    replace field->datdok with topska->datum  
-    replace field->datfaktp with topska->datum  
-    replace field->kolicina with topska->kol2
-    replace field->gkolicina with _kolicina
-    replace field->gkolicin2 with ( gkolicina - kolicina )
-    replace field->idkonto with id_konto        
-    replace field->idkonto2 with id_konto
-    replace field->pkonto with id_konto       
-    replace field->idroba with topska->idroba  
-    replace field->rbr with r_br           
-    replace field->idtarifa with topska->idtarifa
-    replace field->mpcsapp with _mpcsapp
-    replace field->nc with _nc
-    replace field->fcj with _fc
-    replace field->pu_i with "I"
-    replace field->error with "0"
+   LOCATE FOR field->idroba == topska->idroba
 
-else
+   IF !Found()
 
-    // samo appenduj kolicinu
-    replace field->kolicina with field->kolicina + topska->kol2
-    replace field->gkolicin2 with ( gkolicina - kolicina )
- 
-endif
+      APPEND BLANK
 
-my_unlock()
+      REPLACE field->idfirma WITH gFirma
+      REPLACE field->idvd WITH _tip_dok
+      REPLACE field->brdok WITH broj_dok
+      REPLACE field->datdok WITH topska->datum
+      REPLACE field->datfaktp WITH topska->datum
+      REPLACE field->kolicina WITH topska->kol2
+      REPLACE field->gkolicina WITH _kolicina
+      REPLACE field->gkolicin2 with ( gkolicina - kolicina )
+      REPLACE field->idkonto WITH id_konto
+      REPLACE field->idkonto2 WITH id_konto
+      REPLACE field->pkonto WITH id_konto
+      REPLACE field->idroba WITH topska->idroba
+      REPLACE field->rbr WITH r_br
+      REPLACE field->idtarifa WITH topska->idtarifa
+      REPLACE field->mpcsapp WITH _mpcsapp
+      REPLACE field->nc WITH _nc
+      REPLACE field->fcj WITH _fc
+      REPLACE field->pu_i WITH "I"
+      REPLACE field->error WITH "0"
 
-select ( _t_area )
-return
+   ELSE
+
+      // samo appenduj kolicinu
+      REPLACE field->kolicina WITH field->kolicina + topska->kol2
+      REPLACE field->gkolicin2 with ( gkolicina - kolicina )
+
+   ENDIF
+
+   my_unlock()
+
+   SELECT ( _t_area )
+
+   RETURN
 
 
 
@@ -639,90 +651,93 @@ return
 // ---------------------------------------------------------
 // formiraj stavku razduzenja magacina
 // ---------------------------------------------------------
-static function import_row_11( broj_dok, id_konto, id_konto2, r_br )
-local _tip_dok := "11"		
-local _t_area := SELECT()
+STATIC FUNCTION import_row_11( broj_dok, id_konto, id_konto2, r_br )
 
-if ( topska->kolicina == 0 )
-	return
-endif
+   LOCAL _tip_dok := "11"
+   LOCAL _t_area := Select()
 
-select kalk_pripr
+   IF ( topska->kolicina == 0 )
+      RETURN
+   ENDIF
 
-my_flock()
+   SELECT kalk_pripr
 
-append blank
-			
-replace field->idfirma with gFirma
-replace field->idvd with _tip_dok
-replace field->brdok with broj_dok         
-replace field->datdok with topska->datum  
-replace field->datfaktp with topska->datum   
-replace field->kolicina with topska->kolicina
-replace field->idkonto with id_konto        
-replace field->idkonto2 with id_konto2       
-replace field->idroba with topska->idroba  
-replace field->rbr with r_br           
-replace field->tmarza2 with "%"            
-replace field->idtarifa with topska->idtarifa
-replace field->mpcsapp with topska->( mpc - stmpc )
-replace field->tprevoz with "R"
+   my_flock()
 
-my_unlock()
+   APPEND BLANK
 
-select ( _t_area )
+   REPLACE field->idfirma WITH gFirma
+   REPLACE field->idvd WITH _tip_dok
+   REPLACE field->brdok WITH broj_dok
+   REPLACE field->datdok WITH topska->datum
+   REPLACE field->datfaktp WITH topska->datum
+   REPLACE field->kolicina WITH topska->kolicina
+   REPLACE field->idkonto WITH id_konto
+   REPLACE field->idkonto2 WITH id_konto2
+   REPLACE field->idroba WITH topska->idroba
+   REPLACE field->rbr WITH r_br
+   REPLACE field->tmarza2 WITH "%"
+   REPLACE field->idtarifa WITH topska->idtarifa
+   REPLACE field->mpcsapp WITH topska->( mpc - stmpc )
+   REPLACE field->tprevoz WITH "R"
 
-return
+   my_unlock()
+
+   SELECT ( _t_area )
+
+   RETURN
 
 
 // ---------------------------------------------------------
 // formiraj stavku razduzenja prodavnice
 // ---------------------------------------------------------
-static function import_row_42( broj_dok, id_konto, id_konto2, r_br )
-local _t_area := SELECT()
-local _opp
+STATIC FUNCTION import_row_42( broj_dok, id_konto, id_konto2, r_br )
 
-if ( topska->kolicina == 0 )
-	return
-endif
+   LOCAL _t_area := Select()
+   LOCAL _opp
 
-select tarifa
-HSEEK topska->idtarifa
-_opp := tarifa->opp
+   IF ( topska->kolicina == 0 )
+      RETURN
+   ENDIF
 
-select kalk_pripr
+   SELECT tarifa
+   HSEEK topska->idtarifa
+   _opp := tarifa->opp
 
-my_flock()
+   SELECT kalk_pripr
 
-append blank
-			
-replace field->idfirma with gFirma
-replace field->idvd with topska->idvd
-replace field->brdok with broj_dok         
-replace field->datdok with topska->datum  
-replace field->datfaktp with topska->datum   
-replace field->kolicina with topska->kolicina
-replace field->idkonto with id_konto        
-replace field->idroba with topska->idroba  
-replace field->rbr with r_br           
-replace field->tmarza2 with "%"            
-replace field->idtarifa with topska->idtarifa
-replace field->mpcsapp with topska->mpc
+   my_flock()
 
-if ROUND( topska->stmpc, 2 ) <> 0
-    if _opp > 0 
-        // izbijamo PDV iz ove stavke ako je tarifa PDV17
-        replace field->rabatv with ( topska->stmpc / ( 1 + ( _opp / 100 ) ) )
-    else
-        // tarifa nije PDV17
-        replace field->rabatv with topska->stmpc
-    endif
-endif
+   APPEND BLANK
 
-my_unlock()
+   REPLACE field->idfirma WITH gFirma
+   REPLACE field->idvd WITH topska->idvd
+   REPLACE field->brdok WITH broj_dok
+   REPLACE field->datdok WITH topska->datum
+   REPLACE field->datfaktp WITH topska->datum
+   REPLACE field->kolicina WITH topska->kolicina
+   REPLACE field->idkonto WITH id_konto
+   REPLACE field->idroba WITH topska->idroba
+   REPLACE field->rbr WITH r_br
+   REPLACE field->tmarza2 WITH "%"
+   REPLACE field->idtarifa WITH topska->idtarifa
+   REPLACE field->mpcsapp WITH topska->mpc
 
-select ( _t_area )
-return
+   IF Round( topska->stmpc, 2 ) <> 0
+      IF _opp > 0
+         // izbijamo PDV iz ove stavke ako je tarifa PDV17
+         REPLACE field->rabatv with ( topska->stmpc / ( 1 + ( _opp / 100 ) ) )
+      ELSE
+         // tarifa nije PDV17
+         REPLACE field->rabatv WITH topska->stmpc
+      ENDIF
+   ENDIF
+
+   my_unlock()
+
+   SELECT ( _t_area )
+
+   RETURN
 
 
 
@@ -730,143 +745,141 @@ return
 // ----------------------------------------------------------
 // daj mi sva prodajna mjesta iz koncija
 // ----------------------------------------------------------
-static function _prodajna_mjesta_iz_koncij()
-local _a_pm := {}
-local _scan
+STATIC FUNCTION _prodajna_mjesta_iz_koncij()
 
-select koncij
-go top
+   LOCAL _a_pm := {}
+   LOCAL _scan
 
-do while !EOF()
-	// ako nije prazno
-	// ako je maloprodaja
-	if !EMPTY( field->idprodmjes ) .and. LEFT( field->naz, 1 ) == "M"
-		_scan := ASCAN( _a_pm, {|x| ALLTRIM(x) == ALLTRIM( field->idprodmjes ) })
-		if _scan == 0
-			AADD( _a_pm, ALLTRIM( field->idprodmjes ) )
-		endif
-	endif
-	skip
-enddo
+   SELECT koncij
+   GO TOP
 
-return _a_pm
+   DO WHILE !Eof()
+      // ako nije prazno
+      // ako je maloprodaja
+      IF !Empty( field->idprodmjes ) .AND. Left( field->naz, 1 ) == "M"
+         _scan := AScan( _a_pm, {| x| AllTrim( x ) == AllTrim( field->idprodmjes ) } )
+         IF _scan == 0
+            AAdd( _a_pm, AllTrim( field->idprodmjes ) )
+         ENDIF
+      ENDIF
+      SKIP
+   ENDDO
+
+   RETURN _a_pm
 
 
 // ----------------------------------------------------------
 // selekcija fajla za import podataka
 // ----------------------------------------------------------
-static function get_import_file( import_file )
-local _opc := {}
-local _pos_kum_path
-local _prod_mjesta
-local _ret := .t.
-local _i, _imp_files, _opt, _h, _n
-local _imp_patt := "t*.dbf"
-local _prenesi, _izbor, _a_tmp1, _a_tmp2
+STATIC FUNCTION get_import_file( import_file )
 
-if gMultiPM == "D"
+   LOCAL _opc := {}
+   LOCAL _pos_kum_path
+   LOCAL _prod_mjesta
+   LOCAL _ret := .T.
+   LOCAL _i, _imp_files, _opt, _h, _n
+   LOCAL _imp_patt := "t*.dbf"
+   LOCAL _prenesi, _izbor, _a_tmp1, _a_tmp2
 
-	// daj mi sva prodajna mjesta iz tabele koncij
-	_prod_mjesta := _prodajna_mjesta_iz_koncij()
-	
-	if LEN( _prod_mjesta ) == 0
-		// imamo problem, nema prodajnih mjesta
-		MsgBeep( "U tabeli koncij nisu definisana prodajna mjesta !!!" )
-		_ret := .f.
-		return _ret
-	endif
-    
-	for _i := 1 to LEN( _prod_mjesta )
+   IF gMultiPM == "D"
 
-			// putanja koju cu koristiti	
-			_pos_kum_path := ALLTRIM( gTopsDest ) + ALLTRIM( _prod_mjesta[ _i ] ) + SLASH
-			
-			// brisi sve fajlove starije od 28 dana
-			BrisiSFajlove( _pos_kum_path )
-			
-			// daj mi fajlove u matricu po pattern-u
-   			_imp_files := DIRECTORY( _pos_kum_path + _imp_patt )
+      // daj mi sva prodajna mjesta iz tabele koncij
+      _prod_mjesta := _prodajna_mjesta_iz_koncij()
 
-			ASORT( _imp_files,,, {|x,y| DTOS(x[3]) + x[4] > DTOS(y[3]) + y[4] })
-			
-			// dodaj u matricu za odabir
-			AEVAL( _imp_files, { |elem| AADD( _opc, PADR( ALLTRIM( _prod_mjesta[ _i ] ) + ;
-										SLASH + TRIM(elem[1]), 20) + " " + ;
-										UChkPostoji() + " " + DTOC(elem[3]) + " " + elem[4] ;
- 								) }, 1, D_MAX_FILES )  
+      IF Len( _prod_mjesta ) == 0
+         // imamo problem, nema prodajnih mjesta
+         MsgBeep( "U tabeli koncij nisu definisana prodajna mjesta !!!" )
+         _ret := .F.
+         RETURN _ret
+      ENDIF
 
+      FOR _i := 1 TO Len( _prod_mjesta )
 
-	next
+         // putanja koju cu koristiti
+         _pos_kum_path := AllTrim( gTopsDest ) + AllTrim( _prod_mjesta[ _i ] ) + SLASH
 
-	// R/X + datum + vrijeme
- 	ASORT( _opc ,,,{|x,y| RIGHT(x, 19) > RIGHT(y, 19) })  
- 	
-	_h := ARRAY( LEN( _opc ) )
- 	
-	for _n := 1 to LEN( _h )
-   		_h[ _n ] := ""
- 	next
+         // brisi sve fajlove starije od 28 dana
+         BrisiSFajlove( _pos_kum_path )
 
-	// ima li stavki za preuzimanje ? 	
-	if LEN( _opc ) == 0
+         // daj mi fajlove u matricu po pattern-u
+         _imp_files := Directory( _pos_kum_path + _imp_patt )
 
-   		MsgBeep( "U direktoriju za prenos nema podataka" )
-		_ret := .f.
-		return _ret
+         ASort( _imp_files,,, {| x, y| DToS( x[ 3 ] ) + x[ 4 ] > DToS( y[ 3 ] ) + y[ 4 ] } )
 
- 	endif
-
-else
-	MsgBeep( "Pripremi disketu za prenos ....#te pritisni nesto za nastavak" )
-endif
-
-if gMultiPM == "D"
-
-	_izbor := 1
-  	_prenesi := .f.
-
-	do while .t.
-
-   		_izbor := Menu( "izdat", _opc, _izbor, .f. )
-
-		if _izbor == 0
-     		exit
-   		else
-			
-            import_file := ALLTRIM( gTopsDest ) + ALLTRIM( LEFT( _opc[ _izbor ], 20 ) )
-     			
-			if Pitanje(, "Zelite li izvrsiti prenos ?", "D" ) == "D"
-         		_prenesi := .t.
-         		_izbor := 0
-     		else
-         		loop
-     		endif
-   		endif
-  	enddo
-	
-  	if !_prenesi
-		_ret := .f.
-        return _ret
-  	endif
-
-else
-
-	// CRC gledamo ako nije modemska veza
- 	import_file := ALLTRIM( gTopsDest ) + "topska.dbf"
-
- 	_a_tmp1 := IscitajCRC( ALLTRIM( gTopsDest ) + "crctk.crc" )
- 	_a_tmp2 := IntegDBF( import_file )
-
-	IF !( _a_tmp1[1] == _a_tmp2[1] .and. _a_tmp1[2] == _a_tmp2[2] ) 
-   		Msg("CRCTK.CRC se ne slaze. Greska na disketi !",4)
-		_ret := .f.
-		return _ret
- 	ENDIF
-
-endif
-
-return _ret
+         // dodaj u matricu za odabir
+         AEval( _imp_files, {|elem| AAdd( _opc, PadR( AllTrim( _prod_mjesta[ _i ] ) + ;
+            SLASH + Trim( elem[ 1 ] ), 20 ) + " " + ;
+            UChkPostoji() + " " + DToC( elem[ 3 ] ) + " " + elem[ 4 ] ;
+            ) }, 1, D_MAX_FILES )
 
 
+      NEXT
 
+      // R/X + datum + vrijeme
+      ASort( _opc,,, {| x, y| Right( x, 19 ) > Right( y, 19 ) } )
 
+      _h := Array( Len( _opc ) )
+
+      FOR _n := 1 TO Len( _h )
+         _h[ _n ] := ""
+      NEXT
+
+      // ima li stavki za preuzimanje ?
+      IF Len( _opc ) == 0
+
+         MsgBeep( "U direktoriju za prenos nema podataka" )
+         _ret := .F.
+         RETURN _ret
+
+      ENDIF
+
+   ELSE
+      MsgBeep( "Pripremi disketu za prenos ....#te pritisni nesto za nastavak" )
+   ENDIF
+
+   IF gMultiPM == "D"
+
+      _izbor := 1
+      _prenesi := .F.
+
+      DO WHILE .T.
+
+         _izbor := Menu( "izdat", _opc, _izbor, .F. )
+
+         IF _izbor == 0
+            EXIT
+         ELSE
+
+            import_file := AllTrim( gTopsDest ) + AllTrim( Left( _opc[ _izbor ], 20 ) )
+
+            IF Pitanje(, "Zelite li izvrsiti prenos ?", "D" ) == "D"
+               _prenesi := .T.
+               _izbor := 0
+            ELSE
+               LOOP
+            ENDIF
+         ENDIF
+      ENDDO
+
+      IF !_prenesi
+         _ret := .F.
+         RETURN _ret
+      ENDIF
+
+   ELSE
+
+      // CRC gledamo ako nije modemska veza
+      import_file := AllTrim( gTopsDest ) + "topska.dbf"
+
+      _a_tmp1 := IscitajCRC( AllTrim( gTopsDest ) + "crctk.crc" )
+      _a_tmp2 := IntegDBF( import_file )
+
+      IF !( _a_tmp1[ 1 ] == _a_tmp2[ 1 ] .AND. _a_tmp1[ 2 ] == _a_tmp2[ 2 ] )
+         Msg( "CRCTK.CRC se ne slaze. Greska na disketi !", 4 )
+         _ret := .F.
+         RETURN _ret
+      ENDIF
+
+   ENDIF
+
+   RETURN _ret

@@ -1,223 +1,220 @@
 /*
- * This file is part of the bring.out knowhow ERP, a free and open source 
+ * This file is part of the bring.out knowhow ERP, a free and open source
  * ERP software suite,
  * Copyright (c) 1994-2011 by bring.out d.o.o Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including knowhow ERP specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
 
 #include "f18.ch"
 
-function RekTarife( lVisak )
+FUNCTION RekTarife( lVisak )
 
-if IsPDV()
-	RekTarPDV()
-else
-	RekTarPPP( lVisak )
-endif
+   RekTarPDV()
 
-return
+   RETURN
 
 
 // PDV obracun
-function RekTarPDV()
-local _pict := "99999999999.99"
-local nKolona
-local aPKonta
-local nIznPRuc
-private aPorezi
+FUNCTION RekTarPDV()
 
-IF prow() > ( RPT_PAGE_LEN  + gPStranica )
-	FF
-	@ prow(),123 SAY "Str:"+str(++nStr,3)
-endif
+   LOCAL _pict := "99999999999.99"
+   LOCAL nKolona
+   LOCAL aPKonta
+   LOCAL nIznPRuc
+   PRIVATE aPorezi
 
-nRec := recno()
+   IF PRow() > ( RPT_PAGE_LEN  + gPStranica )
+      FF
+      @ PRow(), 123 SAY "Str:" + Str( ++nStr, 3 )
+   ENDIF
 
-select kalk_pripr
-set order to tag "2"
-seek cIdFirma + cIdVd + cBrDok
+   nRec := RecNo()
 
-m := "------ ----------"
+   SELECT kalk_pripr
+   SET ORDER TO TAG "2"
+   SEEK cIdFirma + cIdVd + cBrDok
 
-nKolona := 3
+   m := "------ ----------"
 
-if glUgost
-	nKolona += 2
-endif
+   nKolona := 3
 
-for i := 1 to nKolona
-    m += " --------------" 
-next
+   IF glUgost
+      nKolona += 2
+   ENDIF
 
-? m
+   FOR i := 1 TO nKolona
+      m += " --------------"
+   NEXT
 
-if !glUgost
-    ?  "* Tar.*  PDV%    *      MPV     *      PDV     *     MPV     *"
-    ?  "*     *          *    bez PDV   *     iznos    *    sa PDV   *"
-else
-    ?  "* Tar.*   PDV    *    Por potr   *     MPV     *      PDV     *    Porez     *     MPV     *"
-    ?  "*     *   (%)    *      (%)      *   bez PDV   *     iznos    *    na potr.  *    sa PDV   *"
-endif
+   ? m
 
-? m
+   IF !glUgost
+      ?  "* Tar.*  PDV%    *      MPV     *      PDV     *     MPV     *"
+      ?  "*     *          *    bez PDV   *     iznos    *    sa PDV   *"
+   ELSE
+      ?  "* Tar.*   PDV    *    Por potr   *     MPV     *      PDV     *    Porez     *     MPV     *"
+      ?  "*     *   (%)    *      (%)      *   bez PDV   *     iznos    *    na potr.  *    sa PDV   *"
+   ENDIF
 
-aPKonta := PKontoCnt( cIdFirma + cIdvd + cBrDok )
-nCntKonto := LEN( aPKonta )
+   ? m
 
-aPorezi := {}
+   aPKonta := PKontoCnt( cIdFirma + cIdvd + cBrDok )
+   nCntKonto := Len( aPKonta )
 
-for i := 1 to nCntKonto
+   aPorezi := {}
 
-	seek cIdFirma + cIdVd + cBrdok
+   FOR i := 1 TO nCntKonto
 
-	nTot1:=0
-	nTot2:=0
-	nTot2b:=0
-	nTot3:=0
-	nTot4:=0
-	nTot5:=0
-	nTot6:=0
-	nTot7:=0
+      SEEK cIdFirma + cIdVd + cBrdok
 
-	do while !EOF() .and. cIdFirma + cIdVd + cBrDok == field->idfirma + field->idvd + field->brdok
-  		
-        if aPKonta[i] <> field->pkonto
-    	    skip
-    		loop
-  		endif
+      nTot1 := 0
+      nTot2 := 0
+      nTot2b := 0
+      nTot3 := 0
+      nTot4 := 0
+      nTot5 := 0
+      nTot6 := 0
+      nTot7 := 0
 
-  		cIdtarifa := field->idtarifa
+      DO WHILE !Eof() .AND. cIdFirma + cIdVd + cBrDok == field->idfirma + field->idvd + field->brdok
 
-  		// mpv
-		nU1 := 0
-		// pdv
-		nU2 := 0
+         IF aPKonta[ i ] <> field->pkonto
+            SKIP
+            LOOP
+         ENDIF
 
-		if glUgost
-		    // porez na potrosnju
-		    nU2b := 0
-		endif
-		
-		// mpv sa porezom
-		nU3 := 0
-		
-	  	select tarifa
-		HSEEK cIdtarifa
+         cIdtarifa := field->idtarifa
 
-	  	select kalk_pripr
+         // mpv
+         nU1 := 0
+         // pdv
+         nU2 := 0
 
-  		do while !EOF() .and. cIdfirma + cIdvd + cBrDok == field->idfirma + field->idvd + field->brdok ;
-                        .and. field->idtarifa == cIdTarifa
+         IF glUgost
+            // porez na potrosnju
+            nU2b := 0
+         ENDIF
 
-	        if aPKonta[i] <> field->pkonto
-      			skip
-      			loop
-	    	endif
-    	
-			select roba
-			HSEEK kalk_pripr->idroba
-	
-			Tarifa( kalk_pripr->pkonto, kalk_pripr->idroba, @aPorezi, cIdTarifa )
-			select kalk_pripr
-		
-			nMpc := DokMpc( field->idvd, aPorezi )
+         // mpv sa porezom
+         nU3 := 0
 
-			if field->idvd == "19"
+         SELECT tarifa
+         HSEEK cIdtarifa
 
-    			// nova cijena
-    			nMpcsaPdv1:=field->mpcSaPP+field->fcj
-    			nMpc1:=MpcBezPor(nMpcsaPdv1,aPorezi,,field->nc)
-    			aIPor1:=RacPorezeMP(aPorezi, nMpc1, nMpcsaPdv1, field->nc)
-    
-    			// stara cijena
-    			nMpcsaPdv2:=field->fcj
-    			nMpc2:=MpcBezPor(nMpcsaPdv2,aPorezi,,field->nc)
-    			aIPor2:=RacPorezeMP(aPorezi,nMpc2,nMpcsaPdv2,field->nc)
-				aIPor:={0,0,0}
-				aIPor[1]:=aIPor1[1]-aIPor2[1]
+         SELECT kalk_pripr
 
-			else
+         DO WHILE !Eof() .AND. cIdfirma + cIdvd + cBrDok == field->idfirma + field->idvd + field->brdok ;
+               .AND. field->idtarifa == cIdTarifa
 
-				aIPor := RacPorezeMP( aPorezi, nMpc, field->mpcsapp, field->nc )
+            IF aPKonta[ i ] <> field->pkonto
+               SKIP
+               LOOP
+            ENDIF
 
-			endif
+            SELECT roba
+            HSEEK kalk_pripr->idroba
 
-			nKolicina := DokKolicina( field->idvd )
-			nU1 += nMpc * nKolicina
-			nU2 += aIPor[1] * nKolicina
+            Tarifa( kalk_pripr->pkonto, kalk_pripr->idroba, @aPorezi, cIdTarifa )
+            SELECT kalk_pripr
 
-			if glUgost
-			    nU2b += aIPor[3] * nKolicina
-			endif
-    			
+            nMpc := DokMpc( field->idvd, aPorezi )
+
+            IF field->idvd == "19"
+
+               // nova cijena
+               nMpcsaPdv1 := field->mpcSaPP + field->fcj
+               nMpc1 := MpcBezPor( nMpcsaPdv1, aPorezi,, field->nc )
+               aIPor1 := RacPorezeMP( aPorezi, nMpc1, nMpcsaPdv1, field->nc )
+
+               // stara cijena
+               nMpcsaPdv2 := field->fcj
+               nMpc2 := MpcBezPor( nMpcsaPdv2, aPorezi,, field->nc )
+               aIPor2 := RacPorezeMP( aPorezi, nMpc2, nMpcsaPdv2, field->nc )
+               aIPor := { 0, 0, 0 }
+               aIPor[ 1 ] := aIPor1[ 1 ] -aIPor2[ 1 ]
+
+            ELSE
+
+               aIPor := RacPorezeMP( aPorezi, nMpc, field->mpcsapp, field->nc )
+
+            ENDIF
+
+            nKolicina := DokKolicina( field->idvd )
+            nU1 += nMpc * nKolicina
+            nU2 += aIPor[ 1 ] * nKolicina
+
+            IF glUgost
+               nU2b += aIPor[ 3 ] * nKolicina
+            ENDIF
+
             nU3 += field->mpcsapp * nKolicina
 
-			// ukupna bruto marza
-			nTot6 += (nMpc - kalk_pripr->nc ) * nKolicina
+            // ukupna bruto marza
+            nTot6 += ( nMpc - kalk_pripr->nc ) * nKolicina
 
-    		skip 1
+            SKIP 1
 
-	  	enddo
+         ENDDO
 
-		nTot1 += nU1
-		nTot2 += nU2
+         nTot1 += nU1
+         nTot2 += nU2
 
-		if glUgost
-		    nTot2b += nU2b
-		endif
-		
-        nTot3 += nU3
-  
-		? cIdTarifa
-  
-		@ prow(), pcol() + 1 SAY aPorezi[POR_PPP] pict picproc
+         IF glUgost
+            nTot2b += nU2b
+         ENDIF
 
-		if glUgost
-		    @ prow(), pcol() + 1 SAY aPorezi[POR_PP] pict picproc
-		endif
-  
-		nCol1 := pcol()+1
+         nTot3 += nU3
 
-		@ prow(),pcol()+1   SAY nU1 pict _pict
-		@ prow(),pcol()+1   SAY nU2 pict _pict
+         ? cIdTarifa
 
-		if glUgost
-		  @ prow(),pcol()+1   SAY nU2b pict _pict
-		endif
+         @ PRow(), PCol() + 1 SAY aPorezi[ POR_PPP ] PICT picproc
 
-		@ prow(),pcol()+1   SAY nU3 pict _pict
+         IF glUgost
+            @ PRow(), PCol() + 1 SAY aPorezi[ POR_PP ] PICT picproc
+         ENDIF
 
-	enddo
+         nCol1 := PCol() + 1
 
-	if prow() > ( RPT_PAGE_LEN + gPStranica )
-		FF
-		@ prow(),123 SAY "Str:"+str(++nStr,3)
-	endif
-	
-	? m
-	? "UKUPNO " + aPKonta[i]
+         @ PRow(), PCol() + 1   SAY nU1 PICT _pict
+         @ PRow(), PCol() + 1   SAY nU2 PICT _pict
 
-	@ prow(), nCol1 SAY nTot1 pict _pict
-	@ prow(), pcol() + 1 SAY nTot2 pict _pict
+         IF glUgost
+            @ PRow(), PCol() + 1   SAY nU2b PICT _pict
+         ENDIF
 
-	if glUgost
-	   @ prow(), pcol() + 1 SAY nTot2b pict _pict
-	endif
+         @ PRow(), PCol() + 1   SAY nU3 PICT _pict
 
-	@ prow(), pcol() + 1 SAY nTot3 pict _pict
+      ENDDO
 
-	? m
+      IF PRow() > ( RPT_PAGE_LEN + gPStranica )
+         FF
+         @ PRow(), 123 SAY "Str:" + Str( ++nStr, 3 )
+      ENDIF
 
-next
+      ? m
+      ? "UKUPNO " + aPKonta[ i ]
 
-set order to tag "1"
-go nRec
+      @ PRow(), nCol1 SAY nTot1 PICT _pict
+      @ PRow(), PCol() + 1 SAY nTot2 PICT _pict
 
-return
+      IF glUgost
+         @ PRow(), PCol() + 1 SAY nTot2b PICT _pict
+      ENDIF
+
+      @ PRow(), PCol() + 1 SAY nTot3 PICT _pict
+
+      ? m
+
+   NEXT
+
+   SET ORDER TO TAG "1"
+   GO nRec
+
+   RETURN
 
 
 
@@ -226,53 +223,54 @@ return
  *  \param cSeek - firma + tip dok + broj dok
  */
 
-function PKontoCnt(cSeek)
-*{
-local nPos, aPKonta
-aPKonta:={}
-// baza: kalk_pripr, order: 2
-seek cSeek
-do while !eof() .and. (IdFirma+Idvd+BrDok)=cSeek
-  nPos:= ASCAN(aPKonta, PKonto)
-  if nPos<1
-    AADD(aPKonta, PKonto)
-  endif
-  skip
-enddo
+FUNCTION PKontoCnt( cSeek )
 
-return aPKonta
+   // {
+   LOCAL nPos, aPKonta
+   aPKonta := {}
+   // baza: kalk_pripr, order: 2
+   SEEK cSeek
+   DO WHILE !Eof() .AND. ( IdFirma + Idvd + BrDok ) = cSeek
+      nPos := AScan( aPKonta, PKonto )
+      IF nPos < 1
+         AAdd( aPKonta, PKonto )
+      ENDIF
+      SKIP
+   ENDDO
 
-
-function DokKolicina(cIdVd)
-local nKol
-
-if cIdVd == "IP"
-
-    // kolicina = popisana kolicina
-	// gkolicina = knjizna kolicina
-
-	//nKol := ( field->kolicina - field->gkolicina )
-    nKol := field->kolicina
-	// stajalo je nKol := gKolicin2 ali mi je rekapitulacija davala pogresnu
-	// stvar
-
-else
-	nKol := field->kolicina
-endif
-
-return nKol
+   RETURN aPKonta
 
 
+FUNCTION DokKolicina( cIdVd )
 
-function DokMpc( cIdVd, aPorezi )
-local nMpc
+   LOCAL nKol
 
-if cIdVd == "IP"
-	nMpc := MpcBezPor( field->mpcsapp, aPorezi, , field->nc )
-else
-	nMpc := field->mpc
-endif
+   IF cIdVd == "IP"
 
-return nMpc
+      // kolicina = popisana kolicina
+      // gkolicina = knjizna kolicina
+
+      // nKol := ( field->kolicina - field->gkolicina )
+      nKol := field->kolicina
+      // stajalo je nKol := gKolicin2 ali mi je rekapitulacija davala pogresnu
+      // stvar
+
+   ELSE
+      nKol := field->kolicina
+   ENDIF
+
+   RETURN nKol
 
 
+
+FUNCTION DokMpc( cIdVd, aPorezi )
+
+   LOCAL nMpc
+
+   IF cIdVd == "IP"
+      nMpc := MpcBezPor( field->mpcsapp, aPorezi, , field->nc )
+   ELSE
+      nMpc := field->mpc
+   ENDIF
+
+   RETURN nMpc

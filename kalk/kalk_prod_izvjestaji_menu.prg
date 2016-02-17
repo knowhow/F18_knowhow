@@ -30,8 +30,6 @@ FUNCTION kalk_izvjestaji_prodavnice_menu()
    AAdd( _opcexe, {|| asortiman_dobavljac_mp() } )
    AAdd( _Opc,  "---------------------------------" )
    AAdd( _opcexe, NIL )
-   AAdd( _Opc,  "P. porezi" )
-   AAdd( _opcexe, {|| PoreziProd() } )
    AAdd( _Opc,  "---------------------------------" )
    AAdd( _opcexe, NIL )
    AAdd( _Opc,  "V. pregled za više objekata" )
@@ -42,24 +40,7 @@ FUNCTION kalk_izvjestaji_prodavnice_menu()
    RETURN NIL
 
 
-/*
-   porezi - prodavnica
-*/
 
-FUNCTION PoreziProd()
-
-   LOCAL _opc := {}
-   LOCAL _opcexe := {}
-   LOCAL _izbor := 1
-
-   AAdd( _Opc, "1. ukalkulisani porezi           " )
-   AAdd( _opcexe, {|| RekKPor() } )
-   AAdd( _Opc, "2. realizovani porezi" )
-   AAdd( _opcexe, {|| RekRPor() } )
-
-   f18_menu( "porp", .F., _izbor, _opc, _opcexe )
-
-   RETURN NIL
 
 
 /*

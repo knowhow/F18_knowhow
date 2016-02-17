@@ -17,7 +17,7 @@ FUNCTION ProizvKalk()
 
    proizvoljni_izvjestaji()
 
-   RETURN
+   RETURN .T.
 
 
 FUNCTION OtBazPIKalk()
@@ -127,7 +127,7 @@ FUNCTION GenProIzvKalk()
    ENDIF
    IF FErase( PRIVPATH + "POM.CDX" ) == -1
       MsgBeep( "Ne mogu izbrisati POM.CDX!" )
-      
+
    ENDIF
 
    aDbf := {}

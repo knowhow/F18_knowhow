@@ -1,171 +1,171 @@
 /*
- * This file is part of the bring.out FMK, a free and open source
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+ * This file is part of the bring.out knowhow ERP, a free and open source
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
 
-
 #include "f18.ch"
+
 
 // ------------------------------------------------
 // stampa kalkulacije tipa "IM"
 // ------------------------------------------------
-function StKalkIM()
-local nCol1:=0
-local nCol2:=0
-local nPom:=0
+FUNCTION StKalkIM()
 
-private nPrevoz
-private nCarDaz
-private nZavTr
-private nBankTr
-private nSpedTr
-private nMarza
-private nMarza2
+   LOCAL nCol1 := 0
+   LOCAL nCol2 := 0
+   LOCAL nPom := 0
 
-// iznosi troskova i marzi koji se izracunavaju u KTroskovi()
+   PRIVATE nPrevoz
+   PRIVATE nCarDaz
+   PRIVATE nZavTr
+   PRIVATE nBankTr
+   PRIVATE nSpedTr
+   PRIVATE nMarza
+   PRIVATE nMarza2
 
-nStr:=0
-cIdPartner:=IdPartner
-cBrFaktP:=BrFaktP
-dDatFaktP:=DatFaktP
-cIdKonto:=IdKonto
-cIdKonto2:=IdKonto2
+   // iznosi troskova i marzi koji se izracunavaju u KTroskovi()
 
-cSamoObrazac := Pitanje(,"Prikaz samo obrasca inventure? (D/N)")
+   nStr := 0
+   cIdPartner := IdPartner
+   cBrFaktP := BrFaktP
+   dDatFaktP := DatFaktP
+   cIdKonto := IdKonto
+   cIdKonto2 := IdKonto2
 
-cPrikazCijene:="D"
+   cSamoObrazac := Pitanje(, "Prikaz samo obrasca inventure? (D/N)" )
 
-if cSamoObrazac == "D"
-	cPrikazCijene:=Pitanje(,"Prikazati cijenu na obrascu? (D/N)")
-endif
+   cPrikazCijene := "D"
 
-cCijenaTip:=Pitanje(,"Na obrascu prikazati VPC (D) ili NC (N)?", "N")
+   IF cSamoObrazac == "D"
+      cPrikazCijene := Pitanje(, "Prikazati cijenu na obrascu? (D/N)" )
+   ENDIF
 
-P_10CPI
-SELECT konto
-HSEEK cIdkonto
-SELECT kalk_pripr
-?? "INVENTURA MAGACIN ",cidkonto,"-",konto->naz
-P_COND2
-?
-? "DOKUMENT BR. :",cIdFirma+"-"+cIdVD+"-"+cBrDok, SPACE(2),"Datum:",DatDok
-?
-@ prow(),125 SAY "Str:"+str(++nStr,3)
+   cCijenaTip := Pitanje(, "Na obrascu prikazati VPC (D) ili NC (N)?", "N" )
 
-
-select kalk_pripr
-m:="--- --------------------------------------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- -----------"
-? m
-?  "*R * ROBA                                  *  Popisana*  Knjizna *  Knjizna * Popisana *  Razlika *  Cijena  *   VISAK  *  MANJAK  *"
-?  "*BR* TARIFA                                *  Kolicina*  Kolicina*vrijednost*vrijednost*  (kol)   *          *          *          *"
-? m
-
-nTot4:=0
-nTot5:=0
-nTot6:=0
-nTot7:=0
-nTot8:=0
-nTot9:=0
-nTota:=0
-nTotb:=0
-nTotc:=0
-nTotd:=0
-nTotKol:=0
-nTotGKol:=0
-
-private cIdd:=idPartner+brFaktP+idKonto+idKonto2
-
-do while !eof() .and. cIdFirma==IdFirma .and.  cBrDok==BrDok .and. cIdVD==IdVd
-
-    KTroskovi()
-    RptSeekRT()
-    DokNovaStrana(125, @nStr, 3)
-    SKol:=Kolicina
-
-    if cCijenaTIP=="N"
-    	nCijena:=field->nc
-    else
-    	nCijena:=field->vpc
-    endif
-
-    @ prow()+1,0 SAY  Rbr PICTURE "XXX"
-    @ prow(),4 SAY  ""
-    ?? idroba, trim(LEFT(ROBA->naz,40)),"(",ROBA->jmj,")"
-
-	if lKoristitiBK .and. !EMPTY( roba->barkod )
-		?? ", BK: " + ROBA->barkod
-	endif
-
-    @ prow()+1,4 SAY IdTarifa+space(4)
-    if cSamoObrazac == "D"
-      @ prow(),pcol()+30 SAY Kolicina  PICTURE replicate("_",len(PicKol))
-      @ prow(),pcol()+1 SAY GKolicina  PICTURE replicate(" ",len(PicKol))
-    else
-      @ prow(),pcol()+30 SAY Kolicina  PICTURE PicKol
-      @ prow(),pcol()+1 SAY GKolicina  PICTURE PicKol
-    endif
-    nC1:=pcol()+1
-
-    if cSamoObrazac == "D"
-     @ prow(),pcol()+1 SAY gkolicina*nCijena  PICTURE replicate(" ",len(PicDEM))
-     @ prow(),pcol()+1 SAY kolicina*nCijena   PICTURE replicate("_",len(PicDEM))
-     @ prow(),pcol()+1 SAY Kolicina-GKolicina  PICTURE replicate(" ",len(PicKol))
-    else
-     @ prow(),pcol()+1 SAY gkolicina*nCijena PICTURE Picdem // knjizna vrijednost
-     @ prow(),pcol()+1 SAY kolicina*nCijena  PICTURE Picdem // popisana vrijednost
-     @ prow(),pcol()+1 SAY Kolicina-GKolicina  PICTURE PicKol // visak-manjak
-    endif
-    if (cPrikazCijene=="D")
-    	@ prow(),pcol()+1 SAY nCijena  PICTURE PicCDEM // veleprodajna cij
-    else
-    	@ prow(),pcol()+1 SAY nCijena  PICTURE replicate(" ", LEN(PicDEM))
-    endif
-
-    nTotb+=gkolicina*nCijena
-    nTotc+=kolicina*nCijena
-
-		nU4 := nCijena*(Kolicina-gKolicina)
-    nTot4 += nU4
-
-		nTotKol += kolicina
-    nTotGKol += gkolicina
-
-    if cSamoObrazac == "D"
-	      @ prow(),pcol()+1 SAY nU4  pict replicate(" ",len(PicDEM))
-    else
-	      @ prow(),pcol()+1 SAY nU4 pict IF(nU4>0,picdem,replicate(" ",len(PicDEM)))
-	      @ prow(),pcol()+1 SAY IF(nU4<0,-nU4,nU4) pict IF(nU4<0,picdem,replicate(" ",len(PicDEM)))
-    endif
-
-    skip
-
-enddo
-
-DokNovaStrana(125, @nStr, 5)
-
-if cSamoObrazac == "D"
-	PrnClanoviKomisije()
-  	return
-endif
-
-? m
-@ prow()+1,0 SAY "Ukupno:"
-@ prow(),(pcol()*6)+2 SAY nTotKol pict gPicKol
-@ prow(),pcol()+1 SAY nTotGKol pict gPicKol
-@ prow(),pcol()+1 SAY nTotb pict gPicDem
-@ prow(),pcol()+1 SAY nTotc pict gPicDem
-@ prow(),pcol()+1 SAY 0 pict gPicDem
-@ prow(),pcol()+1 SAY 0 pict gPicDem
-@ prow(),pcol()+1 SAY nTot4 pict IF(nTot4>0, gPicDem, REPLICATE(" ", LEN(PicDEM)))
-@ prow(),pcol()+1 SAY IF(nTot4<0,-nTot4,nTot4)  pict IF(nTot4<0,gPicDem,replicate(" ",len(gPicDem)))
-
-? m
+   P_10CPI
+   SELECT konto
+   HSEEK cIdkonto
+   SELECT kalk_pripr
+   ?? "INVENTURA MAGACIN ", cidkonto, "-", konto->naz
+   P_COND2
+   ?
+   ? "DOKUMENT BR. :", cIdFirma + "-" + cIdVD + "-" + cBrDok, Space( 2 ), "Datum:", DatDok
+   ?
+   @ PRow(), 125 SAY "Str:" + Str( ++nStr, 3 )
 
 
-return
+   SELECT kalk_pripr
+   m := "--- --------------------------------------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- -----------"
+   ? m
+   ?  "*R * ROBA                                  *  Popisana*  Knjizna *  Knjizna * Popisana *  Razlika *  Cijena  *   VISAK  *  MANJAK  *"
+   ?  "*BR* TARIFA                                *  Kolicina*  Kolicina*vrijednost*vrijednost*  (kol)   *          *          *          *"
+   ? m
+
+   nTot4 := 0
+   nTot5 := 0
+   nTot6 := 0
+   nTot7 := 0
+   nTot8 := 0
+   nTot9 := 0
+   nTota := 0
+   nTotb := 0
+   nTotc := 0
+   nTotd := 0
+   nTotKol := 0
+   nTotGKol := 0
+
+   PRIVATE cIdd := idPartner + brFaktP + idKonto + idKonto2
+
+   DO WHILE !Eof() .AND. cIdFirma == IdFirma .AND.  cBrDok == BrDok .AND. cIdVD == IdVd
+
+      KTroskovi()
+      RptSeekRT()
+      DokNovaStrana( 125, @nStr, 3 )
+      SKol := Kolicina
+
+      IF cCijenaTIP == "N"
+         nCijena := field->nc
+      ELSE
+         nCijena := field->vpc
+      ENDIF
+
+      @ PRow() + 1, 0 SAY  Rbr PICTURE "XXX"
+      @ PRow(), 4 SAY  ""
+      ?? idroba, Trim( Left( ROBA->naz, 40 ) ), "(", ROBA->jmj, ")"
+
+      IF lKoristitiBK .AND. !Empty( roba->barkod )
+         ?? ", BK: " + ROBA->barkod
+      ENDIF
+
+      @ PRow() + 1, 4 SAY IdTarifa + Space( 4 )
+      IF cSamoObrazac == "D"
+         @ PRow(), PCol() + 30 SAY Kolicina  PICTURE Replicate( "_", Len( PicKol ) )
+         @ PRow(), PCol() + 1 SAY GKolicina  PICTURE Replicate( " ", Len( PicKol ) )
+      ELSE
+         @ PRow(), PCol() + 30 SAY Kolicina  PICTURE PicKol
+         @ PRow(), PCol() + 1 SAY GKolicina  PICTURE PicKol
+      ENDIF
+      nC1 := PCol() + 1
+
+      IF cSamoObrazac == "D"
+         @ PRow(), PCol() + 1 SAY gkolicina * nCijena  PICTURE Replicate( " ", Len( PicDEM ) )
+         @ PRow(), PCol() + 1 SAY kolicina * nCijena   PICTURE Replicate( "_", Len( PicDEM ) )
+         @ PRow(), PCol() + 1 SAY Kolicina - GKolicina  PICTURE Replicate( " ", Len( PicKol ) )
+      ELSE
+         @ PRow(), PCol() + 1 SAY gkolicina * nCijena PICTURE Picdem // knjizna vrijednost
+         @ PRow(), PCol() + 1 SAY kolicina * nCijena  PICTURE Picdem // popisana vrijednost
+         @ PRow(), PCol() + 1 SAY Kolicina - GKolicina  PICTURE PicKol // visak-manjak
+      ENDIF
+      IF ( cPrikazCijene == "D" )
+         @ PRow(), PCol() + 1 SAY nCijena  PICTURE PicCDEM // veleprodajna cij
+      ELSE
+         @ PRow(), PCol() + 1 SAY nCijena  PICTURE Replicate( " ", Len( PicDEM ) )
+      ENDIF
+
+      nTotb += gkolicina * nCijena
+      nTotc += kolicina * nCijena
+
+      nU4 := nCijena * ( Kolicina - gKolicina )
+      nTot4 += nU4
+
+      nTotKol += kolicina
+      nTotGKol += gkolicina
+
+      IF cSamoObrazac == "D"
+         @ PRow(), PCol() + 1 SAY nU4  PICT Replicate( " ", Len( PicDEM ) )
+      ELSE
+         @ PRow(), PCol() + 1 SAY nU4 PICT IF( nU4 > 0, picdem, Replicate( " ", Len( PicDEM ) ) )
+         @ PRow(), PCol() + 1 SAY IF( nU4 < 0, -nU4, nU4 ) PICT IF( nU4 < 0, picdem, Replicate( " ", Len( PicDEM ) ) )
+      ENDIF
+
+      SKIP
+
+   ENDDO
+
+   DokNovaStrana( 125, @nStr, 5 )
+
+   IF cSamoObrazac == "D"
+      PrnClanoviKomisije()
+      RETURN
+   ENDIF
+
+   ? m
+   @ PRow() + 1, 0 SAY "Ukupno:"
+   @ PRow(), ( PCol() * 6 ) + 2 SAY nTotKol PICT gPicKol
+   @ PRow(), PCol() + 1 SAY nTotGKol PICT gPicKol
+   @ PRow(), PCol() + 1 SAY nTotb PICT gPicDem
+   @ PRow(), PCol() + 1 SAY nTotc PICT gPicDem
+   @ PRow(), PCol() + 1 SAY 0 PICT gPicDem
+   @ PRow(), PCol() + 1 SAY 0 PICT gPicDem
+   @ PRow(), PCol() + 1 SAY nTot4 PICT IF( nTot4 > 0, gPicDem, Replicate( " ", Len( PicDEM ) ) )
+   @ PRow(), PCol() + 1 SAY IF( nTot4 < 0, -nTot4, nTot4 )  PICT IF( nTot4 < 0, gPicDem, Replicate( " ", Len( gPicDem ) ) )
+
+   ? m
+
+   RETURN

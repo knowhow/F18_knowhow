@@ -60,7 +60,7 @@ METHOD mMenuStandard
    AAdd( opc,   "1. unos/ispravka dokumenata                " )
    AAdd( opcexe, {|| kalk_unos_dokumenta() } )
    AAdd( opc,   "2. izvještaji" )
-   AAdd( opcexe, {|| MIzvjestaji() } )
+   AAdd( opcexe, {|| kalk_meni_mag_izvjestaji() } )
    AAdd( opc,   "3. pregled dokumenata" )
    AAdd( opcexe, {|| kalk_pregled_dokumenata() } )
    AAdd( opc,   "4. generacija dokumenata" )

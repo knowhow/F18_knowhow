@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -12,184 +12,185 @@
 
 #include "f18.ch"
 
-*array
-static aPorezi:={}
-*;
+// array
+STATIC aPorezi := {}
+// ;
 
 
-function GetPreknj()
-*{
-local aProd // matrica sa prodavnicama
-local cProdKto // prodavnicki konto
-local nUvecaj // uvecaj broj kalkulacije za
-local cBrKalk // broj kalkulacije
-local cPKonto
-local nCnt
-local cAkciznaRoba := "N"
-local cZasticeneCijene := "N"
-Box(,7, 65)
-	O_KONTO
-	O_TARIFA
-	cProdKto := SPACE(7)
-	dDateOd := CToD("")
-	dDateDo := DATE()
-	cPTarifa := PADR("PDV17", 6)
-	
-	@ 1+m_x, 2+m_y SAY "Preknjizenje prodavnickih konta"
-	@ 3+m_x, 2+m_y SAY "Datum od" GET dDateOd 
-	@ 3+m_x, col()+m_y SAY "datum do" GET dDateDo 
-	@ 4+m_x, 2+m_y SAY "Prodavnicki konto (prazno-svi):" GET cProdKto VALID Empty(cProdKto) .or. P_Konto(@cProdKto)
-	@ 5+m_x, 2+m_y SAY "Preknjizenje na tarifu:" GET cPTarifa VALID P_Tarifa(@cPTarifa)
-	@ 6+m_x, 2+m_y SAY "Akcizna roba D/N " GET cAkciznaRoba VALID cAkciznaRoba $ "DN"  PICT "@!"
-	@ 7+m_x, 2+m_y SAY "Artikli sa zasticenim cijenama " GET cZasticeneCijene VALID cZasticeneCijene $ "DN" PICT "@!"
-	read
-BoxC()
-// prekini operaciju
-if LastKey()==K_ESC
-	return
-endif
+FUNCTION GetPreknj()
 
-if Pitanje(,"Izvrsiti preknjizenje (D/N)?","D")=="N"
-	return
-endif
+   // {
+   LOCAL aProd // matrica sa prodavnicama
+   LOCAL cProdKto // prodavnicki konto
+   LOCAL nUvecaj // uvecaj broj kalkulacije za
+   LOCAL cBrKalk // broj kalkulacije
+   LOCAL cPKonto
+   LOCAL nCnt
+   LOCAL cAkciznaRoba := "N"
+   LOCAL cZasticeneCijene := "N"
+   Box(, 7, 65 )
+   O_KONTO
+   O_TARIFA
+   cProdKto := Space( 7 )
+   dDateOd := CToD( "" )
+   dDateDo := Date()
+   cPTarifa := PadR( "PDV17", 6 )
 
-aProd:={}
-if Empty(ALLTRIM(cProdKto))
-	// napuni matricu sa prodavnckim kontima
-	GetProdKto(@aProd)
-else
-	AADD(aProd, { cProdKto })
-endif
+   @ 1 + m_x, 2 + m_y SAY "Preknjizenje prodavnickih konta"
+   @ 3 + m_x, 2 + m_y SAY "Datum od" GET dDateOd
+   @ 3 + m_x, Col() + m_y SAY "datum do" GET dDateDo
+   @ 4 + m_x, 2 + m_y SAY "Prodavnicki konto (prazno-svi):" GET cProdKto VALID Empty( cProdKto ) .OR. P_Konto( @cProdKto )
+   @ 5 + m_x, 2 + m_y SAY "Preknjizenje na tarifu:" GET cPTarifa VALID P_Tarifa( @cPTarifa )
+   @ 6 + m_x, 2 + m_y SAY "Akcizna roba D/N " GET cAkciznaRoba VALID cAkciznaRoba $ "DN"  PICT "@!"
+   @ 7 + m_x, 2 + m_y SAY "Artikli sa zasticenim cijenama " GET cZasticeneCijene VALID cZasticeneCijene $ "DN" PICT "@!"
+   READ
+   BoxC()
+   // prekini operaciju
+   IF LastKey() == K_ESC
+      RETURN
+   ENDIF
 
-// provjeri velicinu matrice
-if LEN(aProd) == 0
-	MsgBeep("Ne postoje definisane prodavnice u KONCIJ-u!")
-	return
-endif
+   IF Pitanje(, "Izvrsiti preknjizenje (D/N)?", "D" ) == "N"
+      RETURN
+   ENDIF
 
-// kreiraj tabelu PRIPT
-CrePripTDbf()
+   aProd := {}
+   IF Empty( AllTrim( cProdKto ) )
+      // napuni matricu sa prodavnckim kontima
+      GetProdKto( @aProd )
+   ELSE
+      AAdd( aProd, { cProdKto } )
+   ENDIF
 
-// pokreni preknjizenje
-Box(, 2, 65)
-@ 1+m_x, 2+m_y SAY "Vrsim preknjizenje " + ALLTRIM(STR(LEN(aProd)))+ " prodavnice..."
+   // provjeri velicinu matrice
+   IF Len( aProd ) == 0
+      MsgBeep( "Ne postoje definisane prodavnice u KONCIJ-u!" )
+      RETURN
+   ENDIF
 
-O_KALK_DOKS
+   // kreiraj tabelu PRIPT
+   CrePripTDbf()
 
-nUvecaj := 1
-for nCnt:=1 to LEN(aProd)
-	// daj broj kalkulacije
-	cBrKalk:=GetNextKalkDoc(gFirma, "80", nUvecaj)
-	cPKonto:=aProd[nCnt, 1]
-	
-	@ 2+m_x, 2+m_y SAY "Prodavnica: " + ALLTRIM(cPKonto) + "   dokument: "+ gFirma + "-80-" + ALLTRIM(cBrKalk)
-	
-	GenPreknj(cPKonto, cPTarifa, dDateOd, dDateDo, cBrKalk, .f., DATE(), "", (cAkciznaRoba=="D"), (cZasticeneCijene=="D") )
-	++ nUvecaj
-next
+   // pokreni preknjizenje
+   Box(, 2, 65 )
+   @ 1 + m_x, 2 + m_y SAY "Vrsim preknjizenje " + AllTrim( Str( Len( aProd ) ) ) + " prodavnice..."
 
-BoxC()
+   O_KALK_DOKS
 
-MsgBeep("Zavrseno filovanje pomocne tabele pokrecem obradu!")
-// Automatska obrada dokumenata
-// 0 - kreni od 0, .f. - ne pokreci asistenta
-ObradiImport(0, .f., .f.)
+   nUvecaj := 1
+   FOR nCnt := 1 TO Len( aProd )
+      // daj broj kalkulacije
+      cBrKalk := GetNextKalkDoc( gFirma, "80", nUvecaj )
+      cPKonto := aProd[ nCnt, 1 ]
 
+      @ 2 + m_x, 2 + m_y SAY "Prodavnica: " + AllTrim( cPKonto ) + "   dokument: " + gFirma + "-80-" + AllTrim( cBrKalk )
 
-return
-*}
+      GenPreknj( cPKonto, cPTarifa, dDateOd, dDateDo, cBrKalk, .F., Date(), "", ( cAkciznaRoba == "D" ), ( cZasticeneCijene == "D" ) )
+      ++ nUvecaj
+   NEXT
 
+   BoxC()
 
-function GetPstPDV()
-*{
-local aProd // matrica sa prodavnicama
-local cProdKto // prodavnicki konto
-local nUvecaj // uvecaj broj kalkulacije za
-local cBrKalk // broj kalkulacije
-local cPKonto
-local nCnt
-local cPTarifa := "PDV17 "
-local cAkciznaRoba := "N"
-local cZasticeneCijene := "N"
+   MsgBeep( "Zavrseno filovanje pomocne tabele pokrecem obradu!" )
+   // Automatska obrada dokumenata
+   // 0 - kreni od 0, .f. - ne pokreci asistenta
+   ObradiImport( 0, .F., .F. )
 
-if !IsPDV()
-	MsgBeep("Opcija raspoloziva samo za PDV rezim rada !!!")
-	return
-endif
-
-Box(,10, 65)
-	O_KONTO
-	O_TARIFA
-	cProdKto := SPACE(7)
-	dDateOd := CToD("")
-	dDateDo := DATE()
-	dDatPst := DATE()
-	cSetCj := "1"
-	
-	@ 1+m_x, 2+m_y SAY "Generacija pocetnog stanja..."
-	@ 3+m_x, 2+m_y SAY "Datum od" GET dDateOd 
-	@ 3+m_x, col()+m_y SAY "datum do" GET dDateDo 
-	@ 5+m_x, 2+m_y SAY "Datum pocetnog stanja" GET dDatPst 
-	@ 6+m_x, 2+m_y SAY "Prodavnicki konto (prazno-svi):" GET cProdKto VALID Empty(cProdKto) .or. P_Konto(@cProdKto)
-	@ 8+m_x, 2+m_y SAY "Ubaciti set cijena (0-nista/1-mpc/2-mpc2) " GET cSetCj VALID !Empty(cSetCj) .and. cSetCj $ "0123"
-	@ 9+m_x, 2+m_y SAY "Akcizna roba D/N " GET cAkciznaRoba VALID cAkciznaRoba $ "DN"  PICT "@!"
-	@ 10+m_x, 2+m_y SAY "Artikli sa zasticenim cijenama " GET cZasticeneCijene VALID cZasticeneCijene $ "DN" PICT "@!"
-	read
-BoxC()
-// prekini operaciju
-if LastKey()==K_ESC
-	return
-endif
-
-if Pitanje(,"Izvrsiti prenos poc.st. (D/N)?","D")=="N"
-	return
-endif
-
-aProd:={}
-if Empty(ALLTRIM(cProdKto))
-	// napuni matricu sa prodavnckim kontima
-	GetProdKto(@aProd)
-else
-	AADD(aProd, { cProdKto })
-endif
-
-// provjeri velicinu matrice
-if LEN(aProd) == 0
-	MsgBeep("Ne postoje definisane prodavnice u KONCIJ-u!")
-	return
-endif
-
-// kreiraj tabelu PRIPT
-CrePripTDbf()
-
-// pokreni preknjizenje
-Box(, 2, 65)
-@ 1+m_x, 2+m_y SAY "Generisem pocetna stanja " + ALLTRIM(STR(LEN(aProd)))+ " prodavnice..."
-
-O_KALK_DOKS
+   RETURN
+// }
 
 
-nUvecaj := 1
-for nCnt:=1 to LEN(aProd)
-	// daj broj kalkulacije
-	cBrKalk:=GetNextKalkDoc(gFirma, "80", nUvecaj)
-	cPKonto:=aProd[nCnt, 1]
-	
-	@ 2+m_x, 2+m_y SAY "Prodavnica: " + ALLTRIM(cPKonto) + "   dokument: "+ gFirma + "-80-" + ALLTRIM(cBrKalk)
-	// gen poc.st
-	GenPreknj(cPKonto, cPTarifa, dDateOd, dDateDo, cBrKalk, .t., dDatPst, cSetCj, (cAkciznaRoba=="D"), (cZasticeneCijene=="D") )
-	
-	++ nUvecaj
-next
+FUNCTION GetPstPDV()
 
-BoxC()
+   // {
+   LOCAL aProd // matrica sa prodavnicama
+   LOCAL cProdKto // prodavnicki konto
+   LOCAL nUvecaj // uvecaj broj kalkulacije za
+   LOCAL cBrKalk // broj kalkulacije
+   LOCAL cPKonto
+   LOCAL nCnt
+   LOCAL cPTarifa := "PDV17 "
+   LOCAL cAkciznaRoba := "N"
+   LOCAL cZasticeneCijene := "N"
 
-MsgBeep("Zavrseno filovanje pomocne tabele pokrecem obradu!")
-// Automatska obrada dokumenata
-ObradiImport(0, .f., .f.)
+   IF !IsPDV()
+      MsgBeep( "Opcija raspoloziva samo za PDV rezim rada !!!" )
+      RETURN
+   ENDIF
 
-return
-*}
+   Box(, 10, 65 )
+   O_KONTO
+   O_TARIFA
+   cProdKto := Space( 7 )
+   dDateOd := CToD( "" )
+   dDateDo := Date()
+   dDatPst := Date()
+   cSetCj := "1"
+
+   @ 1 + m_x, 2 + m_y SAY "Generacija pocetnog stanja..."
+   @ 3 + m_x, 2 + m_y SAY "Datum od" GET dDateOd
+   @ 3 + m_x, Col() + m_y SAY "datum do" GET dDateDo
+   @ 5 + m_x, 2 + m_y SAY "Datum pocetnog stanja" GET dDatPst
+   @ 6 + m_x, 2 + m_y SAY "Prodavnicki konto (prazno-svi):" GET cProdKto VALID Empty( cProdKto ) .OR. P_Konto( @cProdKto )
+   @ 8 + m_x, 2 + m_y SAY "Ubaciti set cijena (0-nista/1-mpc/2-mpc2) " GET cSetCj VALID !Empty( cSetCj ) .AND. cSetCj $ "0123"
+   @ 9 + m_x, 2 + m_y SAY "Akcizna roba D/N " GET cAkciznaRoba VALID cAkciznaRoba $ "DN"  PICT "@!"
+   @ 10 + m_x, 2 + m_y SAY "Artikli sa zasticenim cijenama " GET cZasticeneCijene VALID cZasticeneCijene $ "DN" PICT "@!"
+   READ
+   BoxC()
+   // prekini operaciju
+   IF LastKey() == K_ESC
+      RETURN
+   ENDIF
+
+   IF Pitanje(, "Izvrsiti prenos poc.st. (D/N)?", "D" ) == "N"
+      RETURN
+   ENDIF
+
+   aProd := {}
+   IF Empty( AllTrim( cProdKto ) )
+      // napuni matricu sa prodavnckim kontima
+      GetProdKto( @aProd )
+   ELSE
+      AAdd( aProd, { cProdKto } )
+   ENDIF
+
+   // provjeri velicinu matrice
+   IF Len( aProd ) == 0
+      MsgBeep( "Ne postoje definisane prodavnice u KONCIJ-u!" )
+      RETURN
+   ENDIF
+
+   // kreiraj tabelu PRIPT
+   CrePripTDbf()
+
+   // pokreni preknjizenje
+   Box(, 2, 65 )
+   @ 1 + m_x, 2 + m_y SAY "Generisem pocetna stanja " + AllTrim( Str( Len( aProd ) ) ) + " prodavnice..."
+
+   O_KALK_DOKS
+
+
+   nUvecaj := 1
+   FOR nCnt := 1 TO Len( aProd )
+      // daj broj kalkulacije
+      cBrKalk := GetNextKalkDoc( gFirma, "80", nUvecaj )
+      cPKonto := aProd[ nCnt, 1 ]
+
+      @ 2 + m_x, 2 + m_y SAY "Prodavnica: " + AllTrim( cPKonto ) + "   dokument: " + gFirma + "-80-" + AllTrim( cBrKalk )
+      // gen poc.st
+      GenPreknj( cPKonto, cPTarifa, dDateOd, dDateDo, cBrKalk, .T., dDatPst, cSetCj, ( cAkciznaRoba == "D" ), ( cZasticeneCijene == "D" ) )
+
+      ++ nUvecaj
+   NEXT
+
+   BoxC()
+
+   MsgBeep( "Zavrseno filovanje pomocne tabele pokrecem obradu!" )
+   // Automatska obrada dokumenata
+   ObradiImport( 0, .F., .F. )
+
+   RETURN
+// }
 
 
 
@@ -198,59 +199,62 @@ return
  *  \brief Vrati matricu sa prodavnicama
  *  \param aProd
  */
-function GetProdKto(aProd)
-*{
-local cTip
-local cKPath
+FUNCTION GetProdKto( aProd )
 
-// KONCIJ polja za provjeru
-// ============
-// ID - konto
-// NAZ - tip M1, M2
-// KUMTOPS - lokacija kumulativa tops
+   // {
+   LOCAL cTip
+   LOCAL cKPath
 
-O_KONCIJ
-select koncij
-go top
-do while !EOF()
-	cTip := ALLTRIM(field->naz)
-	cTip := LEFT(cTip, 1) // daj samo prvi karakter "M" ili "V"
-	cKPath := ALLTRIM(field->KUMTOPS)
-	
-	// ako je cTip M onda dodaj tu prodavnicu
-	if (cTip == "M") .and. !Empty(cKPath)
-		AADD(aProd, { field->id })
-	endif
-	
-	skip
-enddo
+   // KONCIJ polja za provjeru
+   // ============
+   // ID - konto
+   // NAZ - tip M1, M2
+   // KUMTOPS - lokacija kumulativa tops
 
-return
-*}
+   O_KONCIJ
+   SELECT koncij
+   GO TOP
+   DO WHILE !Eof()
+      cTip := AllTrim( field->naz )
+      cTip := Left( cTip, 1 ) // daj samo prvi karakter "M" ili "V"
+      cKPath := AllTrim( field->KUMTOPS )
+
+      // ako je cTip M onda dodaj tu prodavnicu
+      IF ( cTip == "M" ) .AND. !Empty( cKPath )
+         AAdd( aProd, { field->id } )
+      ENDIF
+
+      SKIP
+   ENDDO
+
+   RETURN
+// }
 
 
-function roba_pdv17()
-*{
-if !IsPDV()
-	MsgBeep("Opcija raspoloziva samo za PDV rezim!")
-	return
-endif
+FUNCTION roba_pdv17()
 
-MsgO("Setujem tarifa PDV17...")
-O_ROBA
-SET ORDER TO
-go TOP
-do while !eof()
-   if IsPDV() 
-   	// prelazak na PDV 01.01.2006
-	replace IDTARIFA with "PDV17"
-   endif
-   
-   SKIP
-enddo
-MsgC()
-return
-*}
+   // {
+   IF !IsPDV()
+      MsgBeep( "Opcija raspoloziva samo za PDV rezim!" )
+      RETURN
+   ENDIF
+
+   MsgO( "Setujem tarifa PDV17..." )
+   O_ROBA
+   SET ORDER TO
+   GO TOP
+   DO WHILE !Eof()
+      IF IsPDV()
+         // prelazak na PDV 01.01.2006
+         REPLACE IDTARIFA WITH "PDV17"
+      ENDIF
+
+      SKIP
+   ENDDO
+   MsgC()
+
+   RETURN
+// }
 
 
 /*! \fn GenPreknj(cPKonto, cPrTarifa, dDatOd, dDatDo, cBrKalk, lPst)
@@ -262,444 +266,444 @@ return
  *  \param cBrKalk - broj kalkulacije
  *  \param lPst - pocetno stanje
  */
-function GenPreknj(cPKonto, cPrTarifa, dDatOd, dDatDo, cBrKalk, lPst, dDatPs, cCjSet, lAkciznaRoba, lZasticeneCijene)
-*{
-local cIdFirma
-local nRbr
-local fPocStanje:=.t.
-local n_MpcBP_predhodna
-local nAkcizaPorez
-local nZasticenaCijena
+FUNCTION GenPreknj( cPKonto, cPrTarifa, dDatOd, dDatDo, cBrKalk, lPst, dDatPs, cCjSet, lAkciznaRoba, lZasticeneCijene )
 
-if lPst
-	O_ROBASEZ
-	O_KALKSEZ
-else
-	O_KALK
-endif
+   // {
+   LOCAL cIdFirma
+   LOCAL nRbr
+   LOCAL fPocStanje := .T.
+   LOCAL n_MpcBP_predhodna
+   LOCAL nAkcizaPorez
+   LOCAL nZasticenaCijena
 
-if lAkciznaRoba == NIL
-	lAkciznaRoba := .f.
-endif
-if lZasticeneCijene == NIL
-	lZasticeneCijene := .f.
-endif
+   IF lPst
+      O_ROBASEZ
+      O_KALKSEZ
+   ELSE
+      O_KALK
+   ENDIF
 
-
-O_ROBA
-O_KONTO
-O_KONCIJ
-O_TARIFA
-O_PRIPT // pomocna tabela pript
-
-cIdFirma:=gFirma
-
-if lPst
-	select kalksez
-else
-	select kalk
-endif
-
-set order to tag "4"
-//"4","idFirma+Pkonto+idroba+dtos(datdok)+PU_I+IdVD","KALKS")
-go top
-
-HSEEK cIdfirma+cPKonto
-
-select konto
-HSEEK cPKonto
-if lPst
-	select kalksez
-else
-	select kalk
-endif
-
-nTUlaz:=0
-nTIzlaz:=0
-nTPKol:=0
-nTMPVU:=0
-nTMPVI:=0
-nTNVU:=0
-nTNVI:=0
-nRbr:=0
+   IF lAkciznaRoba == NIL
+      lAkciznaRoba := .F.
+   ENDIF
+   IF lZasticeneCijene == NIL
+      lZasticeneCijene := .F.
+   ENDIF
 
 
-//nemoguca kombinacija
-cIzBrDok := "#X43432032032$#$#"
+   O_ROBA
+   O_KONTO
+   O_KONCIJ
+   O_TARIFA
+   O_PRIPT // pomocna tabela pript
 
-if lPst
-	cBrDok := PADR("POC.ST", 10)
-	// izvuci iz ovog dokumenta
- 	cIzBrDok :=  PADR("PPP-PDV17", 10)
-	
-	if lAkciznaRoba
-		cBrDok := PADR("POC.ST.AK", 10)
-		// izbuci iz ovog dokumenta
-		cIzBrDok := PADR("PPP-PDV.AK", 10)
-	endif
+   cIdFirma := gFirma
 
-	if lZasticeneCijene
-		cBrDok := PADR("POC.ST.AZ", 10)
-		// izbuci iz ovog dokumenta
-		cIzBrDok := PADR("PPP-PDV.AZ", 10)
-	endif
+   IF lPst
+      SELECT kalksez
+   ELSE
+      SELECT kalk
+   ENDIF
 
-else
- 	cBrDok :=  PADR("PPP-PDV17", 10)
-	if lAkciznaRoba
-		cBrDok := PADR("PPP-PDV.AK", 10)
-	endif
+   SET ORDER TO TAG "4"
+   // "4","idFirma+Pkonto+idroba+dtos(datdok)+PU_I+IdVD","KALKS")
+   GO TOP
 
-	if lZasticeneCijene
-		cBrDok := PADR("PPP-PDV.AZ", 10)
-	endif
-endif
+   HSEEK cIdfirma + cPKonto
 
-do while !eof() .and. cIdFirma+cPKonto==idfirma+pkonto .and. IspitajPrekid()
-	cIdRoba:=Idroba
-	
-	if lPst
-		select robasez
-	else
-		select roba
-	endif
-	HSEEK cIdRoba
+   SELECT konto
+   HSEEK cPKonto
+   IF lPst
+      SELECT kalksez
+   ELSE
+      SELECT kalk
+   ENDIF
 
-	if FIELDPOS("ZANIV2") <> 0
-		nAkcizaPorez := zaniv2
-	else
-		nAkcizaPorez := 0
-	endif
-	
-	if FIELDPOS("ZANIVEL") <> 0
-		nZasticenaCijena := zanivel
-	else
-		nZasticenaCijena := 0
-	endif
-
-	if lZasticeneCijene 
-		if (nZasticenaCijena == 0)
-			// ovo nije zasticeni artikal
-			// posto mu nije setovana zasticena cijena
-			//
-			if lPst
-				select kalksez
-			else
-				select kalk
-			endif
-			skip
-			loop
-		endif
-
-	else
-		if (nZasticenaCijena <> 0)
-			// ovo je zasticeni artikal
-			// a mi sada ne zelimo preknjizenje ovih artikala
-			if lPst
-				select kalksez
-			else
-				select kalk
-			endif
-			skip
-			loop
-		endif
-
-	endif
+   nTUlaz := 0
+   nTIzlaz := 0
+   nTPKol := 0
+   nTMPVU := 0
+   nTMPVI := 0
+   nTNVU := 0
+   nTNVI := 0
+   nRbr := 0
 
 
-	if lPst
-		select kalksez
-	else
-		select kalk
-	endif
+   // nemoguca kombinacija
+   cIzBrDok := "#X43432032032$#$#"
+
+   IF lPst
+      cBrDok := PadR( "POC.ST", 10 )
+      // izvuci iz ovog dokumenta
+      cIzBrDok :=  PadR( "PPP-PDV17", 10 )
+
+      IF lAkciznaRoba
+         cBrDok := PadR( "POC.ST.AK", 10 )
+         // izbuci iz ovog dokumenta
+         cIzBrDok := PadR( "PPP-PDV.AK", 10 )
+      ENDIF
+
+      IF lZasticeneCijene
+         cBrDok := PadR( "POC.ST.AZ", 10 )
+         // izbuci iz ovog dokumenta
+         cIzBrDok := PadR( "PPP-PDV.AZ", 10 )
+      ENDIF
+
+   ELSE
+      cBrDok :=  PadR( "PPP-PDV17", 10 )
+      IF lAkciznaRoba
+         cBrDok := PadR( "PPP-PDV.AK", 10 )
+      ENDIF
+
+      IF lZasticeneCijene
+         cBrDok := PadR( "PPP-PDV.AZ", 10 )
+      ENDIF
+   ENDIF
+
+   DO WHILE !Eof() .AND. cIdFirma + cPKonto == idfirma + pkonto .AND. IspitajPrekid()
+      cIdRoba := Idroba
+
+      IF lPst
+         SELECT robasez
+      ELSE
+         SELECT roba
+      ENDIF
+      HSEEK cIdRoba
+
+      IF FieldPos( "ZANIV2" ) <> 0
+         nAkcizaPorez := zaniv2
+      ELSE
+         nAkcizaPorez := 0
+      ENDIF
+
+      IF FieldPos( "ZANIVEL" ) <> 0
+         nZasticenaCijena := zanivel
+      ELSE
+         nZasticenaCijena := 0
+      ENDIF
+
+      IF lZasticeneCijene
+         IF ( nZasticenaCijena == 0 )
+            // ovo nije zasticeni artikal
+            // posto mu nije setovana zasticena cijena
+            //
+            IF lPst
+               SELECT kalksez
+            ELSE
+               SELECT kalk
+            ENDIF
+            SKIP
+            LOOP
+         ENDIF
+
+      ELSE
+         IF ( nZasticenaCijena <> 0 )
+            // ovo je zasticeni artikal
+            // a mi sada ne zelimo preknjizenje ovih artikala
+            IF lPst
+               SELECT kalksez
+            ELSE
+               SELECT kalk
+            ENDIF
+            SKIP
+            LOOP
+         ENDIF
+
+      ENDIF
 
 
-	if lAkciznaRoba
-		if (nAkcizaPorez == 0)
-			// samo akcizna roba
-			skip
-			loop
-		endif
-	else
-		if (nAkcizaPorez <> 0)
-			// necemo akciznu robu
-			skip
-			loop
-		endif
-		
-	endif
+      IF lPst
+         SELECT kalksez
+      ELSE
+         SELECT kalk
+      ENDIF
 
-	nPKol:=0
-	nPNV:=0
-	nPMPV:=0
-	nUlaz:=0
-	nIzlaz:=0
-	nMPVU:=0
-	nMPVI:=0
-	nNVU:=0
-	nNVI:=0
-	nRabat:=0
-	
-	// usluge
-	if lPst
-		if robasez->tip $ "TU"
-			skip
-			loop
-		endif
-	else
-		if roba->tip $ "TU"
-			skip
-			loop
-		endif
-	endif
-		
-	do while !eof() .and. cIdFirma+cPKonto+cIdRoba==idFirma+pkonto+idroba
-  		
-		if  (IdVd == "80") .and. (BrFaktP == cIzBrDok) .and. (kolicina>0)
-			// pozitivna stavka 80-ke
-			pl_mpc := mpc
-			pl_mpcSaPP := mpcSaPP
-			pl_kolicina := kolicina
-			pl_nc := nc
-		endif
-			
-			
-		
-		// provjeri datumski
-		if (field->datdok < dDatOd) .or. (field->datdok > dDatDo)
-      			skip
-      			loop
-    		endif
 
-  		if lPst
-			if robasez->tip $ "TU"
-				skip
-				loop
-			endif
-		else
-			if roba->tip $ "TU"
-  				skip
-				loop
-  			endif
-		endif
-		
-  		if field->datdok >= dDatOd  // nisu predhodni podaci
-  			if field->pu_i=="1"
-    				SumirajKolicinu(kolicina, 0, @nUlaz, 0, .t.)
-    				nMPVU += mpcsapp*kolicina
-    				nNVU += nc*(kolicina)
-				
-  			elseif field->pu_i=="5"
-    				if idvd $ "12#13"
-     					SumirajKolicinu(-kolicina, 0, @nUlaz, 0, .t.)
-     					nMPVU -= mpcsapp*kolicina
-     					nNVU -= nc*kolicina
-    				else
-     					SumirajKolicinu(0, kolicina, 0, @nIzlaz, .t.)
-     					nMPVI += mpcsapp*kolicina
-     					nNVI += nc*kolicina
-    				endif
+      IF lAkciznaRoba
+         IF ( nAkcizaPorez == 0 )
+            // samo akcizna roba
+            SKIP
+            LOOP
+         ENDIF
+      ELSE
+         IF ( nAkcizaPorez <> 0 )
+            // necemo akciznu robu
+            SKIP
+            LOOP
+         ENDIF
 
-  			elseif field->pu_i=="3"   
-			        // nivelacija
-    				nMPVU += mpcsapp*kolicina
-  			elseif field->pu_i=="I"
-    				SumirajKolicinu(0, gkolicin2, 0, @nIzlaz, .t.)
-    				nMPVI += mpcsapp*gkolicin2
-    				nNVI += nc*gkolicin2
-			endif
-  		endif
-		skip
-	enddo
-	
-	if Round(nMPVU-nMPVI+nPMPV,4) <> 0 
-  		select pript
+      ENDIF
 
-		// MPC bez poreza u + stavci
-		n_MpcBP_predhodna := 0
-  		if round(nUlaz-nIzlaz,4)<>0
-     			if !lPst
-				// prva stavka stara tarifa
-				append blank
-				++ nRbr
-     			replace idFirma with cIdfirma
-     			replace brfaktp with cBrDok
-				replace idroba with cIdRoba
-				replace rbr with RedniBroj(nRbr)
-				replace idkonto with cPKonto
-				replace pkonto with cPKonto
-				replace datdok with dDatDo
-				replace pu_i with "1"
-				replace error with "0"
-				replace idTarifa with Tarifa(cPKonto, cIdRoba, @aPorezi)
-				replace datfaktp with dDatDo
-				// promjeni predznak kolicine
-				replace kolicina with -(nUlaz-nIzlaz)
-				replace idvd with "80"
-				replace brdok with cBrKalk
-				replace nc with (nNVU-nNVI+nPNV)/(nUlaz-nIzlaz+nPKol)
-				//replace mpcsapp with nStCijena
-				replace mpcsapp with (nMPVU-nMPVI+nPMPV)/(nUlaz-nIzlaz+nPKol)
-				replace vpc with nc
-				replace TMarza2 with "A"
-				// setuj marzu i mpc
-				Scatter()
-				if WMpc_lv(nil, nil, aPorezi)
-					VMpc_lv(nil, nil, aPorezi)
-					VMpcSaPP_lv(nil, nil, aPorezi, .f.)
-				endif
-				
-				// uzmi cijenu bez poreza za + stavku
-				n_MpcBP_predhodna := _mpc
+      nPKol := 0
+      nPNV := 0
+      nPMPV := 0
+      nUlaz := 0
+      nIzlaz := 0
+      nMPVU := 0
+      nMPVI := 0
+      nNVU := 0
+      nNVI := 0
+      nRabat := 0
 
-				if lAkciznaRoba 
-				   n_MpcBP_predhodna := _mpc - nAkcizaPorez
-				   if (n_MpcBP_predhodna <= 0)
-				   	MsgBeep( ;
-					 "Akcizna roba :  " + cIdRoba + " nelogicno ##- mpc bez akciznog poreza < 0 :# MPC b.p:"+ ;
-					STR( n_MpcBP_predhodna, 6, 2) + "/ AKCIZA:" +;
-					STR( nAkcizaPorez, 6, 2) )
-				   endif
-				   
-				endif
-				
-				Gather()
-				
-			endif
-			
-			// resetuj poreze
-			aPorezi := {}	
-			
-			// kontra stavka PDV tarifa
-			append blank
-			++nRbr
-     			replace idFirma with cIdfirma
+      // usluge
+      IF lPst
+         IF robasez->tip $ "TU"
+            SKIP
+            LOOP
+         ENDIF
+      ELSE
+         IF roba->tip $ "TU"
+            SKIP
+            LOOP
+         ENDIF
+      ENDIF
 
-			
- 			replace brfaktp with cBrDok
-			replace idroba with cIdRoba
-			replace rbr with RedniBroj(nRbr)
-			replace idkonto with cPKonto
-			replace pkonto with cPKonto
-			replace pu_i with "1"
-			replace error with "0"
-			if lPst
-				replace datdok with dDatPst
-			else
-				replace datdok with dDatDo
-			endif
-			
-			replace idTarifa with Tarifa(cPKonto, cIdRoba, @aPorezi, cPrTarifa)
-			
-			if lPst
-				replace datfaktp with dDatPst
-			else
-				replace datfaktp with dDatDo
-			endif
-			
-			replace kolicina with nUlaz-nIzlaz
-			replace idvd with "80"
-			replace brdok with cBrKalk
-			replace nc with (nNVU-nNVI+nPNV)/(nUlaz-nIzlaz+nPKol)
+      DO WHILE !Eof() .AND. cIdFirma + cPKonto + cIdRoba == idFirma + pkonto + idroba
 
-			
-			if !lPst 
-				//replace mpc with n_MpcBP_predhodna := _mpc
-				_mpc := n_MpcBP_predhodna
-				replace mpc with _mpc
+         IF  ( IdVd == "80" ) .AND. ( BrFaktP == cIzBrDok ) .AND. ( kolicina > 0 )
+            // pozitivna stavka 80-ke
+            pl_mpc := mpc
+            pl_mpcSaPP := mpcSaPP
+            pl_kolicina := kolicina
+            pl_nc := nc
+         ENDIF
 
-				if lAkciznaRoba
-					// i nabavna cijena je manja
-					// jer ovaj porez vise nije troskovna
-					// stavka kao sto je bio u rezimu PPP-a
-					replace nc with nc - nAkcizaPorez
-				endif
 
-				// formiraj mpc bez poreza na osnovu
-				// zasticene cijene
-				if lZasticeneCijene
-					replace mpcSapp with nZasticenaCijena, ;
-						mpc with 0
-				endif
-					
-				
-			else
-				// "sasin" algoritam - ispocetka racunaj poc.st
-				if !lAkciznaRoba
-			 		replace mpcsapp with (nMPVU-nMPVI+nPMPV)/(nUlaz-nIzlaz+nPKol)
-				else
-				        // izvuci iz 80-ke u seznoskom podrucju podatke
-					_mpc := pl_mpc
-					_mpcSaPP := pl_mpcSaPP
-					_nc := pl_nc
-					_kolicina := pl_kolicina
-					
-					replace mpcsapp with pl_mpcSaPP,;
-						mpc with pl_mpc,;
-						nc with pl_nc,;
-						kolicina with pl_kolicina
-				
-				endif
-			endif
-			
-			replace vpc with nc
-			replace TMarza2 with "A"
-			// setuj marzu i MPC
-			Scatter()
-			if WMpc_lv(nil, nil, aPorezi)
-				VMpc_lv(nil, nil, aPorezi)
-				VMpcSaPP_lv(nil, nil, aPorezi, .f.)
-			endif
-			
-			if lPst
-				nNMpcSaPDV := _mpcsapp
-			endif
-			
-			Gather()
-			
-			// ubaci novu mpc u sifrarnik robe
-			// ubaci novu tarifu robe
 
-			if lPst
-				select roba
-				HSEEK cIdRoba
+         // provjeri datumski
+         IF ( field->datdok < dDatOd ) .OR. ( field->datdok > dDatDo )
+            SKIP
+            LOOP
+         ENDIF
 
-				if cCjSet == "0"
-					// nista - cijene se ne diraju		
-				endif
-				
-				if cCjSet == "1"
-					replace mpc with nNMpcSaPDV
-				endif
-				
-				if cCjSet == "2"
-					replace mpc2 with nNMpcSaPDV
-				endif
+         IF lPst
+            IF robasez->tip $ "TU"
+               SKIP
+               LOOP
+            ENDIF
+         ELSE
+            IF roba->tip $ "TU"
+               SKIP
+               LOOP
+            ENDIF
+         ENDIF
 
-				if cCjSet == "3"
-					replace mpc3 with nNMpcSaPDV
-				endif
-				
-				replace idtarifa with "PDV17 " 	
-			endif
-			
-		endif
-  		
-		if lPst
-			select kalksez
-		else
-			select kalk
-		endif
-	endif
-	
-	if lPst
-		select kalksez
-	else
-		select kalk
-	endif
-	
-enddo
+         IF field->datdok >= dDatOd  // nisu predhodni podaci
+            IF field->pu_i == "1"
+               SumirajKolicinu( kolicina, 0, @nUlaz, 0, .T. )
+               nMPVU += mpcsapp * kolicina
+               nNVU += nc * ( kolicina )
 
-return
-*}
+            ELSEIF field->pu_i == "5"
+               IF idvd $ "12#13"
+                  SumirajKolicinu( -kolicina, 0, @nUlaz, 0, .T. )
+                  nMPVU -= mpcsapp * kolicina
+                  nNVU -= nc * kolicina
+               ELSE
+                  SumirajKolicinu( 0, kolicina, 0, @nIzlaz, .T. )
+                  nMPVI += mpcsapp * kolicina
+                  nNVI += nc * kolicina
+               ENDIF
 
+            ELSEIF field->pu_i == "3"
+               // nivelacija
+               nMPVU += mpcsapp * kolicina
+            ELSEIF field->pu_i == "I"
+               SumirajKolicinu( 0, gkolicin2, 0, @nIzlaz, .T. )
+               nMPVI += mpcsapp * gkolicin2
+               nNVI += nc * gkolicin2
+            ENDIF
+         ENDIF
+         SKIP
+      ENDDO
+
+      IF Round( nMPVU - nMPVI + nPMPV, 4 ) <> 0
+         SELECT pript
+
+         // MPC bez poreza u + stavci
+         n_MpcBP_predhodna := 0
+         IF Round( nUlaz - nIzlaz, 4 ) <> 0
+            IF !lPst
+               // prva stavka stara tarifa
+               APPEND BLANK
+               ++ nRbr
+               REPLACE idFirma WITH cIdfirma
+               REPLACE brfaktp WITH cBrDok
+               REPLACE idroba WITH cIdRoba
+               REPLACE rbr WITH RedniBroj( nRbr )
+               REPLACE idkonto WITH cPKonto
+               REPLACE pkonto WITH cPKonto
+               REPLACE datdok WITH dDatDo
+               REPLACE pu_i WITH "1"
+               REPLACE error WITH "0"
+               REPLACE idTarifa WITH Tarifa( cPKonto, cIdRoba, @aPorezi )
+               REPLACE datfaktp WITH dDatDo
+               // promjeni predznak kolicine
+               REPLACE kolicina WITH -( nUlaz - nIzlaz )
+               REPLACE idvd WITH "80"
+               REPLACE brdok WITH cBrKalk
+               REPLACE nc WITH ( nNVU - nNVI + nPNV ) / ( nUlaz - nIzlaz + nPKol )
+               // replace mpcsapp with nStCijena
+               REPLACE mpcsapp WITH ( nMPVU - nMPVI + nPMPV ) / ( nUlaz - nIzlaz + nPKol )
+               REPLACE vpc WITH nc
+               REPLACE TMarza2 WITH "A"
+               // setuj marzu i mpc
+               Scatter()
+               IF WMpc_lv( nil, nil, aPorezi )
+                  VMpc_lv( nil, nil, aPorezi )
+                  VMpcSaPP_lv( nil, nil, aPorezi, .F. )
+               ENDIF
+
+               // uzmi cijenu bez poreza za + stavku
+               n_MpcBP_predhodna := _mpc
+
+               IF lAkciznaRoba
+                  n_MpcBP_predhodna := _mpc - nAkcizaPorez
+                  IF ( n_MpcBP_predhodna <= 0 )
+                     MsgBeep( ;
+                        "Akcizna roba :  " + cIdRoba + " nelogicno ##- mpc bez akciznog poreza < 0 :# MPC b.p:" + ;
+                        Str( n_MpcBP_predhodna, 6, 2 ) + "/ AKCIZA:" + ;
+                        Str( nAkcizaPorez, 6, 2 ) )
+                  ENDIF
+
+               ENDIF
+
+               Gather()
+
+            ENDIF
+
+            // resetuj poreze
+            aPorezi := {}
+
+            // kontra stavka PDV tarifa
+            APPEND BLANK
+            ++nRbr
+            REPLACE idFirma WITH cIdfirma
+
+
+            REPLACE brfaktp WITH cBrDok
+            REPLACE idroba WITH cIdRoba
+            REPLACE rbr WITH RedniBroj( nRbr )
+            REPLACE idkonto WITH cPKonto
+            REPLACE pkonto WITH cPKonto
+            REPLACE pu_i WITH "1"
+            REPLACE error WITH "0"
+            IF lPst
+               REPLACE datdok WITH dDatPst
+            ELSE
+               REPLACE datdok WITH dDatDo
+            ENDIF
+
+            REPLACE idTarifa WITH Tarifa( cPKonto, cIdRoba, @aPorezi, cPrTarifa )
+
+            IF lPst
+               REPLACE datfaktp WITH dDatPst
+            ELSE
+               REPLACE datfaktp WITH dDatDo
+            ENDIF
+
+            REPLACE kolicina WITH nUlaz - nIzlaz
+            REPLACE idvd WITH "80"
+            REPLACE brdok WITH cBrKalk
+            REPLACE nc WITH ( nNVU - nNVI + nPNV ) / ( nUlaz - nIzlaz + nPKol )
+
+
+            IF !lPst
+               // replace mpc with n_MpcBP_predhodna := _mpc
+               _mpc := n_MpcBP_predhodna
+               REPLACE mpc WITH _mpc
+
+               IF lAkciznaRoba
+                  // i nabavna cijena je manja
+                  // jer ovaj porez vise nije troskovna
+                  // stavka kao sto je bio u rezimu PPP-a
+                  REPLACE nc WITH nc - nAkcizaPorez
+               ENDIF
+
+               // formiraj mpc bez poreza na osnovu
+               // zasticene cijene
+               IF lZasticeneCijene
+                  REPLACE mpcSapp WITH nZasticenaCijena, ;
+                     mpc WITH 0
+               ENDIF
+
+
+            ELSE
+               // "sasin" algoritam - ispocetka racunaj poc.st
+               IF !lAkciznaRoba
+                  REPLACE mpcsapp WITH ( nMPVU - nMPVI + nPMPV ) / ( nUlaz - nIzlaz + nPKol )
+               ELSE
+                  // izvuci iz 80-ke u seznoskom podrucju podatke
+                  _mpc := pl_mpc
+                  _mpcSaPP := pl_mpcSaPP
+                  _nc := pl_nc
+                  _kolicina := pl_kolicina
+
+                  REPLACE mpcsapp WITH pl_mpcSaPP, ;
+                     mpc WITH pl_mpc, ;
+                     nc WITH pl_nc, ;
+                     kolicina WITH pl_kolicina
+
+               ENDIF
+            ENDIF
+
+            REPLACE vpc WITH nc
+            REPLACE TMarza2 WITH "A"
+            // setuj marzu i MPC
+            Scatter()
+            IF WMpc_lv( nil, nil, aPorezi )
+               VMpc_lv( nil, nil, aPorezi )
+               VMpcSaPP_lv( nil, nil, aPorezi, .F. )
+            ENDIF
+
+            IF lPst
+               nNMpcSaPDV := _mpcsapp
+            ENDIF
+
+            Gather()
+
+            // ubaci novu mpc u sifrarnik robe
+            // ubaci novu tarifu robe
+
+            IF lPst
+               SELECT roba
+               HSEEK cIdRoba
+
+               IF cCjSet == "0"
+                  // nista - cijene se ne diraju
+               ENDIF
+
+               IF cCjSet == "1"
+                  REPLACE mpc WITH nNMpcSaPDV
+               ENDIF
+
+               IF cCjSet == "2"
+                  REPLACE mpc2 WITH nNMpcSaPDV
+               ENDIF
+
+               IF cCjSet == "3"
+                  REPLACE mpc3 WITH nNMpcSaPDV
+               ENDIF
+
+               REPLACE idtarifa WITH "PDV17 "
+            ENDIF
+
+         ENDIF
+
+         IF lPst
+            SELECT kalksez
+         ELSE
+            SELECT kalk
+         ENDIF
+      ENDIF
+
+      IF lPst
+         SELECT kalksez
+      ELSE
+         SELECT kalk
+      ENDIF
+
+   ENDDO
+
+   RETURN
+// }

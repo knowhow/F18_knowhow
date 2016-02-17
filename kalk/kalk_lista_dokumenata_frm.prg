@@ -1,14 +1,13 @@
 /*
- * This file is part of the bring.out FMK, a free and open source
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+ * This file is part of the bring.out knowhow ERP, a free and open source
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
-
 
 #include "f18.ch"
 
@@ -187,7 +186,7 @@ STATIC FUNCTION brow_keyhandler( Ch )
    CASE Ch == K_CTRL_P
       // stampa dokumenta
       RETURN DE_CONT
-		
+
    CASE Upper( Chr( Ch ) ) ==  "P"
       // povrat dokumenta u pripremu
       RETURN DE_CONT
@@ -206,33 +205,33 @@ STATIC FUNCTION usl_browse_kalk_dok( cFirma, cIdVd, dDatOd, dDatDo, ;
    PRIVATE GetList := {}
 
    Box(, 10, 65 )
-	
+
    SET CURSOR ON
-	
+
    @ nX + m_x, 2 + m_y SAY "Firma" GET cFirma
-	
+
    ++ nX
-	
+
    @ nX + m_x, 2 + m_y SAY "Datumski period od" GET dDatOd
-	
+
    @ nX + m_x, Col() + 1 SAY "do" GET dDatDo
 
    nX := nX + 2
-	
+
    @ nX + m_x, 2 + m_y SAY "Vrsta dokumenta (prazno-svi)" GET cIdVd PICT "@S30"
 
    ++ nX
 
    @ nX + m_x, 2 + m_y SAY "Magacinski konto (prazno-svi)" GET cMagKto PICT "@S30"
-	
+
    ++ nX
 
    @ nX + m_x, 2 + m_y SAY "Prodavnicki konto (prazno-svi)" GET cProdKto PICT "@S30"
 
    nX := nX + 2
-	
+
    @ nX + m_x, 2 + m_y SAY "Partner:" GET cPartner VALID Empty( cPartner ) .OR. p_firma( @cPartner )
-	
+
    READ
    BoxC()
 
@@ -456,7 +455,7 @@ STATIC FUNCTION pregled_kartice()
 
    O_KALK_KARTICA
    my_dbf_zap()
-   SET ORDER TO TAG "ID"  
+   SET ORDER TO TAG "ID"
 
    IF !Empty( cMkonto )
 
@@ -564,7 +563,7 @@ STATIC FUNCTION pregled_kartice()
    ENDIF
 
    SELECT kalk_kartica
-   USE 
+   USE
    SELECT kalk
    SET ORDER TO TAG "1"
    GO nTreckalk
@@ -582,7 +581,7 @@ STATIC FUNCTION OznaciMag( fsilent )
    IF Round( kalk_kartica->stanje, 4 ) <> 0
 
       IF idvd <> "18"
-         IF koncij->naz <> "N1" .AND. Round( VPC - kalk_kartica->vpc, 2 ) <> 0  
+         IF koncij->naz <> "N1" .AND. Round( VPC - kalk_kartica->vpc, 2 ) <> 0
             IF !fsilent
                MsgBeep( "vpc stavke <> vpc kumulativno po kartici !" )
             ENDIF

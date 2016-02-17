@@ -72,7 +72,7 @@ FUNCTION m_ctrl_rpt()
 
    f18_menu( "ctrl", .F., _izbor, _opc, _opcexe )
 
-   RETURN
+   RETURN .T.
 
 
 FUNCTION MPoreziMag()
@@ -81,10 +81,7 @@ FUNCTION MPoreziMag()
    LOCAL _opcexe := {}
    LOCAL _izbor := 1
 
-   AAdd( _Opc, "1. realizacija - veleprodaja po tarifama" )
-   AAdd( _opcexe, {|| RekPorMag() } )
-   AAdd( _Opc, "2. porez na promet " )
-   AAdd( _opcexe, {|| RekPorNap() } )
+
    AAdd( _Opc, "3. rekapitulacija po tarifama" )
    AAdd( _opcexe, {|| RekmagTar() } )
 
@@ -92,7 +89,7 @@ FUNCTION MPoreziMag()
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
 
 FUNCTION MRekMag()

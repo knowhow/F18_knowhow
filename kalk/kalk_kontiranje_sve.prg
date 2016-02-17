@@ -1,16 +1,16 @@
 /*
- * This file is part of the bring.out FMK, a free and open source
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+ * This file is part of the bring.out knowhow ERP, a free and open source
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
 
-
 #include "f18.ch"
+
 
 
 
@@ -28,13 +28,13 @@ FUNCTION kont_v_kalk()
 
    // uslovi...
    Box( , 5, 65 )
-	
+
    @ m_x + 1, m_y + 2 SAY "Datum od:" GET dD_f
    @ m_x + 1, Col() + 1 SAY "do:" GET dD_t
 
    @ m_x + 2, m_y + 2 SAY "tipovi dok. (prazno-svi):" GET cId_td ;
       PICT "@S20"
-	
+
    @ m_x + 3, m_y + 2 SAY "mag.konta (prazno-sva):" GET cId_mkto ;
       PICT "@S20"
    @ m_x + 4, m_y + 2 SAY " pr.konta (prazno-sva):" GET cId_pkto ;
@@ -89,7 +89,7 @@ STATIC FUNCTION _kont_doks( dD_f, dD_t, cId_td, cId_mkto, ;
             LOOP
          ENDIF
       ENDIF
-	
+
       // provjeri magacinska konta
       IF !Empty( cId_mkto )
          IF AllTrim( field->mkonto ) $ cId_mkto
@@ -99,7 +99,7 @@ STATIC FUNCTION _kont_doks( dD_f, dD_t, cId_td, cId_mkto, ;
             LOOP
          ENDIF
       ENDIF
-	
+
       // provjeri prodavnicka konta
       IF !Empty( cId_pkto )
          IF AllTrim( field->pkonto ) $ cId_pkto
@@ -117,7 +117,7 @@ STATIC FUNCTION _kont_doks( dD_f, dD_t, cId_td, cId_mkto, ;
 
       // napuni FINMAT
       RekapK( .T., cD_firma, cD_tipd, cD_brdok, .T. )
-	
+
       // uzmi drugi broj naloga
       // _br_nal( cChBrNal, cD_brdok, @cNalog )
 

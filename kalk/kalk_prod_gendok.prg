@@ -34,7 +34,7 @@ FUNCTION GenProd()
 
    f18_menu( "gdpr", nil, _izbor, _opc, _opcexe )
 
-   RETURN
+   RETURN .T.
 
 
 

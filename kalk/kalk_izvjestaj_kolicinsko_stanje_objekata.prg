@@ -1,16 +1,16 @@
 /*
- * This file is part of the bring.out FMK, a free and open source
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+ * This file is part of the bring.out knowhow ERP, a free and open source
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
 
-
 #include "f18.ch"
+
 
 STATIC nCol1 := 0
 STATIC cPicCDem
@@ -90,7 +90,7 @@ FUNCTION kalk_izvj_stanje_po_objektima()
    brisi_tabelu_pobjekti()
 
    napuni_tabelu_pobjekti_iz_objekti()
- 
+
    CreTblRek1( "1" )
 
    otvori_tabele()
@@ -125,7 +125,7 @@ FUNCTION kalk_izvj_stanje_po_objektima()
    fFilovo := .F.
 
    DO WHILE !Eof()
-	
+
       cG1 := rekap1->g1
 
       SELECT pobjekti
@@ -143,22 +143,22 @@ FUNCTION kalk_izvj_stanje_po_objektima()
 
       fFilGr := .F.
       fFilovo := .F.
-	
+
       DO WHILE ( !Eof() .AND. cG1 == field->g1 )
          ++nRecno
 
          ShowKorner( nRecno, 100 )
          cIdroba := rekap1->idRoba
-		
+
          SELECT roba
          HSEEK cIdRoba
          cIdTarifa := roba->idTarifa
 
          SELECT rekap1
-		
+
          nK2 := nK1 := 0
          SetK1K2( cG1, cIdTarifa, cIdRoba, @nK1, @nK2 )
-		
+
          IF ( ( Round( nK2, 3 ) == 0 .AND. Round( nK1, 2 ) == 0 ) )
             SELECT rekap1
             SEEK cG1 + cIdTarifa + cIdroba + Chr( 254 )
@@ -167,14 +167,14 @@ FUNCTION kalk_izvj_stanje_po_objektima()
 
          fFilovo := .T.
          fFilGr := .T.
-		
+
          aStrRoba := SjeciStr( Trim( roba->naz ), ROBAN_LEN )
-		
+
          IF ( PRow() > cStrRedova2 )
             FF
             zaglavlje_izvjestaja( @nStr )
          ENDIF
-		
+
          ++nRBr
          ? Str( nRBr, 4 ) + "." + PadR( cIdRoba, 10 )
          nColR := PCol() + 1
@@ -182,7 +182,7 @@ FUNCTION kalk_izvj_stanje_po_objektima()
          nCol1 := PCol()
 
          ispisi_zalihe( cG1, cIdTarifa, cIdRoba, cObjUsl )
-		
+
          nK1 := 0
          IF ( ( cPrikProd == "D" ) .OR. Len( aStrRoba ) > 1 )
             ?
@@ -194,7 +194,7 @@ FUNCTION kalk_izvj_stanje_po_objektima()
                ispisi_prodaju( cG1, cIdTarifa, cIdRoba, cObjUsl )
             ENDIF
          ENDIF
-		
+
          IF cPodvuci == "D"
             ? cLinija
          ENDIF
@@ -206,7 +206,7 @@ FUNCTION kalk_izvj_stanje_po_objektima()
       IF !fFilGr
          LOOP
       ENDIF
-	
+
       IF ( PRow() > cStrRedova2 )
          FF
          zaglavlje_izvjestaja( @nStr )
@@ -332,26 +332,26 @@ STATIC FUNCTION zaglavlje_izvjestaja( nStr )
    GO TOP
 
    DO WHILE ( !Eof() .AND. objekti->id < "99" )
-	
+
       IF !Empty( cObjUsl ) .AND. !( &cObjUsl )
          SKIP
          LOOP
       ENDIF
 
       ?? " " + PadC( AllTrim( objekti->naz ), KOLICINA_LEN )
-	
+
       SKIP
 
    ENDDO
 
    ? PadC( " ", 4 ) + " " + PadC( " ", 10 ) + " " + PadC( " ", ROBAN_LEN )
-   
+
    ?? " " + PadC( IIF( cPrikProd == "D", "zal/pr", "zaliha" ), KOLICINA_LEN )
 
    SELECT pobjekti
    GO TOP
    DO WHILE ( !Eof() .AND. field->id < "99" )
-	
+
       IF !Empty( cObjUsl ) .AND. !( &cObjUsl )
          SKIP
          LOOP
@@ -411,7 +411,7 @@ STATIC FUNCTION uslovi_izvjestaja( cNObjekat )
       cUslov2 := Parsiraj( qqKonto, "MKonto" )
       cObjUsl := Parsiraj( qqKonto, "IDOBJ" )
       cUslovRoba := Parsiraj( qqRoba, "IdRoba" )
-	
+
       IF ( cUslov1 <> NIL .AND. cUslovRoba <> nil )
          EXIT
       ENDIF
@@ -456,14 +456,14 @@ STATIC FUNCTION ispisi_zalihe( cG1, cIdTarifa, cIdRoba, cDUslov )
    SELECT pobjekti
    GO TOP
    DO WHILE ( !Eof() .AND. pobjekti->id < "99" )
-	
+
       SELECT pobjekti
 
       IF !Empty( cDUslov ) .AND. !( &cDUslov )
          SKIP
          LOOP
       ENDIF
-	
+
       SELECT rekap1
       HSEEK cG1 + cIdTarifa + cIdRoba + pobjekti->idobj
       IF k4pp <> 0
@@ -515,13 +515,13 @@ STATIC FUNCTION ispisi_prodaju( cG1, cIdTarifa, cIdRoba, cDUslov )
    lIzaProc := .T.
    i := 0
    DO WHILE ( !Eof() .AND. pobjekti->id < "99" )
-	
+
       SELECT pobjekti
       IF !Empty( cDUslov ) .AND. !( &cDUslov )
          SKIP
          LOOP
       ENDIF
-	
+
       SELECT rekap1
       HSEEK cG1 + cIdTarifa + cIdRoba + pobjekti->idobj
       IF k4pp <> 0
@@ -530,7 +530,7 @@ STATIC FUNCTION ispisi_prodaju( cG1, cIdTarifa, cIdRoba, cDUslov )
          @ PRow(), PCol() + 1 SAY k1 PICT cPicKol
       ENDIF
       ++i
-	
+
       SELECT pobjekti
       IF ( roba->k2 <> "X" )
 
@@ -609,7 +609,7 @@ FUNCTION napuni_tabelu_pobjekti_iz_objekti()
    MsgO("objekti -> pobjekti")
 
    SELECT objekti
-   GO TOP 
+   GO TOP
 
    DO WHILE !Eof()
       _rec := dbf_get_rec()
@@ -630,7 +630,7 @@ FUNCTION resetuj_vrijednosti_tabele_pobjekti()
 
    LOCAL _rec
 
-   SELECT pobjekti    
+   SELECT pobjekti
    GO TOP
 
    DO WHILE !Eof()
@@ -641,7 +641,7 @@ FUNCTION resetuj_vrijednosti_tabele_pobjekti()
       _rec["produ"] := 0
       _rec["zaltu"] := 0
       _rec["zalu"] := 0
-	
+
       dbf_update_rec( _rec )
 
       SKIP
@@ -649,5 +649,3 @@ FUNCTION resetuj_vrijednosti_tabele_pobjekti()
    ENDDO
 
    RETURN
-
-

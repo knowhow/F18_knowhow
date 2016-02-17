@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -16,44 +16,45 @@
 // -----------------------------------------------------
 // report: specifikacija po sastavnicama
 // -----------------------------------------------------
-function rpt_prspec()
-local cBrFakt
-local cValuta
-local dDatOd
-local dDatDo
-local cRekap
-local cExpDbf
+FUNCTION rpt_prspec()
 
-if _get_vars( @cBrFakt, @cValuta, ;
-		@dDatOd, @dDatDo, @cRekap, @cExpDbf ) == 0
-	return
-endif
+   LOCAL cBrFakt
+   LOCAL cValuta
+   LOCAL dDatOd
+   LOCAL dDatDo
+   LOCAL cRekap
+   LOCAL cExpDbf
 
-if cRekap == "N" .or. Pitanje(,"Generisati stavke izvjestaja (D/N", "D") == "D"
-	_gen_rpt( cBrFakt, cValuta, dDatOd, dDatDo, cRekap )
-endif
+   IF _get_vars( @cBrFakt, @cValuta, ;
+         @dDatOd, @dDatDo, @cRekap, @cExpDbf ) == 0
+      RETURN
+   ENDIF
+
+   IF cRekap == "N" .OR. Pitanje(, "Generisati stavke izvjestaja (D/N", "D" ) == "D"
+      _gen_rpt( cBrFakt, cValuta, dDatOd, dDatDo, cRekap )
+   ENDIF
 
 
-if cExpDbf == "D"
-	
-	if cRekap == "D"
-		MsgBeep( "Moguce exportovati samo specifikacija !")
-		return
-	endif
-	
-	tbl_export()
-	
-	return
+   IF cExpDbf == "D"
 
-endif
+      IF cRekap == "D"
+         MsgBeep( "Moguce exportovati samo specifikacija !" )
+         RETURN
+      ENDIF
 
-if cRekap == "D"
-	_show_rekap( cValuta, cBrFakt )
-	return
-endif
-_show_rpt( cValuta )
+      tbl_export()
 
-return
+      RETURN
+
+   ENDIF
+
+   IF cRekap == "D"
+      _show_rekap( cValuta, cBrFakt )
+      RETURN
+   ENDIF
+   _show_rpt( cValuta )
+
+   RETURN
 
 
 
@@ -61,304 +62,308 @@ return
 // -----------------------------------------------
 // forma sa uslovima izvjestaja
 // -----------------------------------------------
-static function _get_vars( cBrFakt, cValuta, dDOd, dDdo, cRekap, cExpDbf )
-local GetList := {}
+STATIC FUNCTION _get_vars( cBrFakt, cValuta, dDOd, dDdo, cRekap, cExpDbf )
 
-cBrFakt := SPACE(10)
-cValuta := "KM "
-dDOd := DATE()
-dDDo := DATE()
-cRekap := "N"
-cExpDbf := "N"
+   LOCAL GetList := {}
 
-Box(, 8, 60)
-	
-	@ m_x + 1, m_y + 2 SAY "Broj fakture dokumenta 'PR':" GET cBrFakt VALID !EMPTY(cBrFakt)
-	
-	@ m_x + 2, m_y + 2 SAY "Izvjestaj pravi u valuti (KM/EUR):" GET cValuta VALID !EMPTY(cValuta)
-	
-	@ m_x + 3, m_y + 2 SAY "Datum od:" GET dDOd 
-	
-	@ m_x + 4, m_y + 2 SAY "Datum do:" GET dDDo 
-	
-	@ m_x + 6, m_y + 2 SAY "Napravi samo rekapitulaciju po tarifama:" GET cRekap VALID cRekap $ "DN" PICT "@!"
-	
-	@ m_x + 8, m_y + 2 SAY "Exportovati tabelu u dbf ?" GET cExpDbf VALID cExpDbf $ "DN" PICT "@!"
-	
-	read
-BoxC()
+   cBrFakt := Space( 10 )
+   cValuta := "KM "
+   dDOd := Date()
+   dDDo := Date()
+   cRekap := "N"
+   cExpDbf := "N"
 
-if LastKey() == K_ESC
-	return 0
-endif
+   Box(, 8, 60 )
 
-return 1
+   @ m_x + 1, m_y + 2 SAY "Broj fakture dokumenta 'PR':" GET cBrFakt VALID !Empty( cBrFakt )
+
+   @ m_x + 2, m_y + 2 SAY "Izvjestaj pravi u valuti (KM/EUR):" GET cValuta VALID !Empty( cValuta )
+
+   @ m_x + 3, m_y + 2 SAY "Datum od:" GET dDOd
+
+   @ m_x + 4, m_y + 2 SAY "Datum do:" GET dDDo
+
+   @ m_x + 6, m_y + 2 SAY "Napravi samo rekapitulaciju po tarifama:" GET cRekap VALID cRekap $ "DN" PICT "@!"
+
+   @ m_x + 8, m_y + 2 SAY "Exportovati tabelu u dbf ?" GET cExpDbf VALID cExpDbf $ "DN" PICT "@!"
+
+   READ
+   BoxC()
+
+   IF LastKey() == K_ESC
+      RETURN 0
+   ENDIF
+
+   RETURN 1
 
 
 
 // ---------------------------------------------
 // generisi report u pomocnu tabelu
 // ---------------------------------------------
-static function _gen_rpt( cBrFakt, cValuta, dDatOd, dDatDo, cRekap )
-local aFields 
-local nKolPrim
-local nKolSec
-local cJmjPrim
-local cJmjSec
-local cSastId
-local cRobaId
-local _idx
+STATIC FUNCTION _gen_rpt( cBrFakt, cValuta, dDatOd, dDatDo, cRekap )
 
-aFields := _g_fields()
-t_exp_create( aFields )
+   LOCAL aFields
+   LOCAL nKolPrim
+   LOCAL nKolSec
+   LOCAL cJmjPrim
+   LOCAL cJmjSec
+   LOCAL cSastId
+   LOCAL cRobaId
+   LOCAL _idx
 
-_idx := my_home() + "brfakt_pr.idx"
+   aFields := _g_fields()
+   t_exp_create( aFields )
 
-O_R_EXP
-O_KALK
-O_ROBA
-O_SIFK
-O_SIFV
+   _idx := my_home() + "brfakt_pr.idx"
 
-select kalk
+   O_R_EXP
+   O_KALK
+   O_ROBA
+   O_SIFK
+   O_SIFV
 
-go top
+   SELECT kalk
 
-// kreiraj index
-INDEX ON ("brfakt") TO (_idx) FOR (idfirma == gFirma .and. Idv == "PR") 
-dbSetIndex(_idx)
+   GO TOP
 
-go TOP
-do while !EOF() .and. field->brfaktp == cBrFakt
+   // kreiraj index
+   INDEX ON ( "brfakt" ) TO ( _idx ) FOR ( idfirma == gFirma .AND. Idv == "PR" )
+   dbSetIndex( _idx )
 
-	// redni broj > 900 su sastavnice
-	// a sve do toga je proizvod
-	
-	if VAL(field->rbr) >= 900
-	
-		// ovo je sastavnica, uzmi ID
-		cSastId := field->idroba
-		
-		select roba
-		set order to tag "ID"
-		seek cSastId
-		
-		// naziv sastavnice
-		cSastNaz := field->naz
-		// jedinica mjere - primarna (KOM, MET)
-		cJmjPrim := field->jmj 
+   GO TOP
+   DO WHILE !Eof() .AND. field->brfaktp == cBrFakt
 
-		
-		select kalk
-	else
-		
-		// ovo je proizvod, uzmi samo id
-		cRobaId := field->idroba
-		
-		skip
-		loop
-	
-	endif
-	
-	select r_export
-	append blank
+      // redni broj > 900 su sastavnice
+      // a sve do toga je proizvod
 
-	// id proizvoda
-	replace field->idroba with cRobaId
-	
-	// id sastavnice
-	replace field->idsast with cSastId
-	
-	// naziv sastavnice
-	replace field->sastnaz with cSastNaz
-	
-	// carinski tarifni broj
-	// uzmi iz sifk ("ROBA", "TARB")
-	replace field->ctarbr with IzSifkRoba("TARB", cSastId , .f. )
-	
-	// primarna jedinica mjere sastavnice
-	replace field->jmjprim with cJmjPrim
-	
-	// kolicina iz kalk-a, u primarnoj jedinici mjere
-	nKolPrim := kalk->kolicina
-	replace field->kolprim with nKolPrim 
+      IF Val( field->rbr ) >= 900
 
-	// sekundarna jedinica mjere
-	// sracunaj odmah sve za upis u tabelu
-	cJmjSec := ""
-	nKolSec := SJMJ( 1, cSastId, @cJmjSec )
-	replace field->jmjsec with cJmjSec
-	
-	// kolicina u sekundarnoj jmj po 1 komadu
-	replace field->kolseck with nKolSec
+         // ovo je sastavnica, uzmi ID
+         cSastId := field->idroba
 
-	// kolicina u drugoj jedinici mjere
-	replace field->kolsec with ROUND( nKolPrim * nKolSec, 4 )
-	
-	// cijena sastavnice
-	replace field->cijena with kalk->nc
+         SELECT roba
+         SET ORDER TO TAG "ID"
+         SEEK cSastId
 
-		
-	// cijena po komadu kg
-	replace field->izn1 with ROUND( field->cijena / nKolSec, 4 ) 
+         // naziv sastavnice
+         cSastNaz := field->naz
+         // jedinica mjere - primarna (KOM, MET)
+         cJmjPrim := field->jmj
 
-	// ukupno u kg
-	replace field->izn2 with ROUND( field->kolprim * field->cijena, 4 )
 
-	select kalk
-	skip
+         SELECT kalk
+      ELSE
 
-enddo
+         // ovo je proizvod, uzmi samo id
+         cRobaId := field->idroba
 
-FERASE(_idx)
+         SKIP
+         LOOP
 
-my_close_all_dbf()
+      ENDIF
 
-return
+      SELECT r_export
+      APPEND BLANK
+
+      // id proizvoda
+      REPLACE field->idroba WITH cRobaId
+
+      // id sastavnice
+      REPLACE field->idsast WITH cSastId
+
+      // naziv sastavnice
+      REPLACE field->sastnaz WITH cSastNaz
+
+      // carinski tarifni broj
+      // uzmi iz sifk ("ROBA", "TARB")
+      REPLACE field->ctarbr WITH IzSifkRoba( "TARB", cSastId, .F. )
+
+      // primarna jedinica mjere sastavnice
+      REPLACE field->jmjprim WITH cJmjPrim
+
+      // kolicina iz kalk-a, u primarnoj jedinici mjere
+      nKolPrim := kalk->kolicina
+      REPLACE field->kolprim WITH nKolPrim
+
+      // sekundarna jedinica mjere
+      // sracunaj odmah sve za upis u tabelu
+      cJmjSec := ""
+      nKolSec := SJMJ( 1, cSastId, @cJmjSec )
+      REPLACE field->jmjsec WITH cJmjSec
+
+      // kolicina u sekundarnoj jmj po 1 komadu
+      REPLACE field->kolseck WITH nKolSec
+
+      // kolicina u drugoj jedinici mjere
+      REPLACE field->kolsec WITH Round( nKolPrim * nKolSec, 4 )
+
+      // cijena sastavnice
+      REPLACE field->cijena WITH kalk->nc
+
+
+      // cijena po komadu kg
+      REPLACE field->izn1 WITH Round( field->cijena / nKolSec, 4 )
+
+      // ukupno u kg
+      REPLACE field->izn2 WITH Round( field->kolprim * field->cijena, 4 )
+
+      SELECT kalk
+      SKIP
+
+   ENDDO
+
+   FErase( _idx )
+
+   my_close_all_dbf()
+
+   RETURN
 
 
 
 // -------------------------------------
 // vraca polja pomocne tabele
 // -------------------------------------
-static function _g_fields()
-local aFld := {}
+STATIC FUNCTION _g_fields()
 
-AADD( aFld, { "idroba", "C", 10, 0 })
-AADD( aFld, { "idsast", "C", 10, 0 })
-AADD( aFld, { "sastnaz", "C", 40, 0 })
-AADD( aFld, { "ctarbr", "C", 20, 0 })
+   LOCAL aFld := {}
 
-AADD( aFld, { "jmjprim", "C", 3, 0 })
-AADD( aFld, { "jmjsec", "C", 3, 0 })
+   AAdd( aFld, { "idroba", "C", 10, 0 } )
+   AAdd( aFld, { "idsast", "C", 10, 0 } )
+   AAdd( aFld, { "sastnaz", "C", 40, 0 } )
+   AAdd( aFld, { "ctarbr", "C", 20, 0 } )
 
-AADD( aFld, { "kolprim",   "N", 15, 5 })
-AADD( aFld, { "kolsec",   "N", 15, 5 })
-AADD( aFld, { "kolseck", "N", 15, 5 })
-AADD( aFld, { "cijena",  "N", 15, 5 })
-AADD( aFld, { "izn1",   "N", 15, 5 })
-AADD( aFld, { "izn2",   "N", 15, 5 })
+   AAdd( aFld, { "jmjprim", "C", 3, 0 } )
+   AAdd( aFld, { "jmjsec", "C", 3, 0 } )
 
-return aFld
+   AAdd( aFld, { "kolprim",   "N", 15, 5 } )
+   AAdd( aFld, { "kolsec",   "N", 15, 5 } )
+   AAdd( aFld, { "kolseck", "N", 15, 5 } )
+   AAdd( aFld, { "cijena",  "N", 15, 5 } )
+   AAdd( aFld, { "izn1",   "N", 15, 5 } )
+   AAdd( aFld, { "izn2",   "N", 15, 5 } )
+
+   RETURN aFld
 
 
 
 // ---------------------------------------------
 // prikazi report iz tabele
 // ---------------------------------------------
-static function _show_rpt( cValuta )
-local cLine
+STATIC FUNCTION _show_rpt( cValuta )
 
-// kreiraj indexe
-O_R_EXP
-index on r_export->idroba + r_export->idsast tag "1"
+   LOCAL cLine
 
-select r_export
+   // kreiraj indexe
+   O_R_EXP
+   INDEX ON r_export->idroba + r_export->idsast TAG "1"
 
-set order to tag "1"
+   SELECT r_export
 
-go top
+   SET ORDER TO TAG "1"
+
+   GO TOP
 
 
-START PRINT CRET
+   START PRINT CRET
 
-// zaglavlje specifikacije
-_z_spec( @cLine, cValuta )
+   // zaglavlje specifikacije
+   _z_spec( @cLine, cValuta )
 
-cXRoba := "XX"
+   cXRoba := "XX"
 
-nCnt := 0
+   nCnt := 0
 
-nTKPrim := 0
-nTKSec := 0
-nTIznU := 0
+   nTKPrim := 0
+   nTKSec := 0
+   nTIznU := 0
 
-do while !EOF()
-	
-	cRobaId := field->idroba
-	
-	// RBR + ROBA
-	if cRobaId <> cXRoba 
-		? STR(++ nCnt, 3) + "." 
-		@ prow(), pcol() + 1 SAY cRobaId
-	else
-		// ako je ista roba - ne prikazuj je...
-		? SPACE(4) 
-		@ prow(), pcol() + 1 SAY SPACE(10)
-	endif
-	
-	// ID sastavnica
-	@ prow(), pcol()+1 SAY field->idsast
-	
-	// naziv sastavnice
-	@ prow(), pcol()+1 SAY field->sastnaz
-	
-	// carinski tarifni broj
-	@ prow(), pcol()+1 SAY field->ctarbr
-	
-	// kolicina primarna  (komadi ili metri)
-	@ prow(), pcol()+1 SAY STR( field->kolprim, 12, 2 )
+   DO WHILE !Eof()
 
-	nTKPrim += field->kolprim
-	
-	// kolicina sekundarna SIFK (kg po komadu)
-	@ prow(), pcol()+1 SAY STR( field->kolseck, 12, 2 )
+      cRobaId := field->idroba
 
-	// kolicina sekundarna SIFK (ukupno)
-	@ prow(), pcol()+1 SAY STR( field->kolsec, 12, 2 )
+      // RBR + ROBA
+      IF cRobaId <> cXRoba
+         ? Str( ++nCnt, 3 ) + "."
+         @ PRow(), PCol() + 1 SAY cRobaId
+      ELSE
+         // ako je ista roba - ne prikazuj je...
+         ? Space( 4 )
+         @ PRow(), PCol() + 1 SAY Space( 10 )
+      ENDIF
 
-	nTKSec += field->kolsec
+      // ID sastavnica
+      @ PRow(), PCol() + 1 SAY field->idsast
 
-	// cijena po jmj
-	@ prow(), pcol()+1 SAY STR( field->izn1, 12, 2 )
+      // naziv sastavnice
+      @ PRow(), PCol() + 1 SAY field->sastnaz
 
-	// ukupna vrijednost
-	@ prow(), pcol()+1 SAY STR( field->izn2, 12, 2 )
+      // carinski tarifni broj
+      @ PRow(), PCol() + 1 SAY field->ctarbr
 
-	nTIznU += field->izn2
-	
-	if _nstr()
-		FF
-	endif
+      // kolicina primarna  (komadi ili metri)
+      @ PRow(), PCol() + 1 SAY Str( field->kolprim, 12, 2 )
 
-	// setuj pom.varijablu za robu
-	cXRoba := cRobaId
-	
-	skip
-enddo
+      nTKPrim += field->kolprim
 
-if _nstr()
-	FF
-endif
+      // kolicina sekundarna SIFK (kg po komadu)
+      @ PRow(), PCol() + 1 SAY Str( field->kolseck, 12, 2 )
 
-? cLine
+      // kolicina sekundarna SIFK (ukupno)
+      @ PRow(), PCol() + 1 SAY Str( field->kolsec, 12, 2 )
 
-? PADR( "UKUPNO:", 88 )
+      nTKSec += field->kolsec
 
-@ prow(), pcol() + 1 SAY STR( nTKPrim, 12, 2 )
-@ prow(), pcol() + 1 SAY PADR("", 12 )
-@ prow(), pcol() + 1 SAY STR( nTKSec, 12, 2 )
-@ prow(), pcol() + 1 SAY PADR("", 12)
-@ prow(), pcol() + 1 SAY STR( nTIznU, 12, 2)
+      // cijena po jmj
+      @ PRow(), PCol() + 1 SAY Str( field->izn1, 12, 2 )
 
-? cLine
+      // ukupna vrijednost
+      @ PRow(), PCol() + 1 SAY Str( field->izn2, 12, 2 )
 
-FF
-ENDPRINT
+      nTIznU += field->izn2
 
-return
+      IF _nstr()
+         FF
+      ENDIF
+
+      // setuj pom.varijablu za robu
+      cXRoba := cRobaId
+
+      SKIP
+   ENDDO
+
+   IF _nstr()
+      FF
+   ENDIF
+
+   ? cLine
+
+   ? PadR( "UKUPNO:", 88 )
+
+   @ PRow(), PCol() + 1 SAY Str( nTKPrim, 12, 2 )
+   @ PRow(), PCol() + 1 SAY PadR( "", 12 )
+   @ PRow(), PCol() + 1 SAY Str( nTKSec, 12, 2 )
+   @ PRow(), PCol() + 1 SAY PadR( "", 12 )
+   @ PRow(), PCol() + 1 SAY Str( nTIznU, 12, 2 )
+
+   ? cLine
+
+   FF
+   ENDPRINT
+
+   RETURN
 
 
 // ---------------------------------------------
 // provjeri za novu stranicu...
 // ---------------------------------------------
-static function _nstr()
+STATIC FUNCTION _nstr()
 
-if prow() > 65
-	return .t.
-endif
+   IF PRow() > 65
+      RETURN .T.
+   ENDIF
 
-return .f.
+   RETURN .F.
 
 
 
@@ -366,272 +371,270 @@ return .f.
 // ---------------------------------------------
 // zaglavlje specifikacije
 // ---------------------------------------------
-static function _z_spec( cLine, cValuta )
-local cTxt1 := ""
-local cTxt2 := ""
-local cRazmak := SPACE(1)
+STATIC FUNCTION _z_spec( cLine, cValuta )
 
-cLine := ""
+   LOCAL cTxt1 := ""
+   LOCAL cTxt2 := ""
+   LOCAL cRazmak := Space( 1 )
 
-// linija zaglavlja
-cLine += REPLICATE("-", 4)
-cLine += cRazmak
-cLine += REPLICATE("-", 10)
-cLine += cRazmak
-cLine += REPLICATE("-", 10)
-cLine += cRazmak
-cLine += REPLICATE("-", 40)
-cLine += cRazmak
-cLine += REPLICATE("-", 20)
-cLine += cRazmak
-cLine += REPLICATE("-", 12)
-cLine += cRazmak
-cLine += REPLICATE("-", 12)
-cLine += cRazmak
-cLine += REPLICATE("-", 12)
-cLine += cRazmak
-cLine += REPLICATE("-", 12)
-cLine += cRazmak
-cLine += REPLICATE("-", 12)
+   cLine := ""
 
-// tekstualni dio zaglavlja - 1 red
-cTxt1 += PADR( "R.br", 4 )
-cTxt1 += cRazmak
-cTxt1 += PADR( "Proizvod", 10 )
-cTxt1 += cRazmak
-cTxt1 += PADR( "Sifra i naziv sastavnice", 51 )
-cTxt1 += cRazmak
-cTxt1 += PADC( "Carinski", 20 )
-cTxt1 += cRazmak
-cTxt1 += PADC( "Normativ", 12 )
-cTxt1 += cRazmak
-cTxt1 += PADC( "Masa (kg/kom", 12 )
-cTxt1 += cRazmak
-cTxt1 += PADC( "Ukupna masa", 12 )
-cTxt1 += cRazmak
-cTxt1 += PADC( "Cijena", 12 )
-cTxt1 += cRazmak
-cTxt1 += PADC( "Ukupna", 12 )
+   // linija zaglavlja
+   cLine += Replicate( "-", 4 )
+   cLine += cRazmak
+   cLine += Replicate( "-", 10 )
+   cLine += cRazmak
+   cLine += Replicate( "-", 10 )
+   cLine += cRazmak
+   cLine += Replicate( "-", 40 )
+   cLine += cRazmak
+   cLine += Replicate( "-", 20 )
+   cLine += cRazmak
+   cLine += Replicate( "-", 12 )
+   cLine += cRazmak
+   cLine += Replicate( "-", 12 )
+   cLine += cRazmak
+   cLine += Replicate( "-", 12 )
+   cLine += cRazmak
+   cLine += Replicate( "-", 12 )
+   cLine += cRazmak
+   cLine += Replicate( "-", 12 )
 
-// tekstualni dio zaglavlja - 2 red
-cTxt2 += PADR( "", 4 )
-cTxt2 += cRazmak
-cTxt2 += PADR( "", 10 )
-cTxt2 += cRazmak
-cTxt2 += PADR( "", 51 )
-cTxt2 += cRazmak
-cTxt2 += PADC( "tarifni br.", 20 )
-cTxt2 += cRazmak
-cTxt2 += PADC( "(m, kom)", 12 )
-cTxt2 += cRazmak
-cTxt2 += PADC( "kg/met)", 12 )
-cTxt2 += cRazmak
-cTxt2 += PADC( "(kg)", 12 )
-cTxt2 += cRazmak
-cTxt2 += PADC( "(kg)", 12 )
-cTxt2 += cRazmak
-cTxt2 += PADC( "vr. (" + ALLTRIM( cValuta ) + ")" , 12 )
+   // tekstualni dio zaglavlja - 1 red
+   cTxt1 += PadR( "R.br", 4 )
+   cTxt1 += cRazmak
+   cTxt1 += PadR( "Proizvod", 10 )
+   cTxt1 += cRazmak
+   cTxt1 += PadR( "Sifra i naziv sastavnice", 51 )
+   cTxt1 += cRazmak
+   cTxt1 += PadC( "Carinski", 20 )
+   cTxt1 += cRazmak
+   cTxt1 += PadC( "Normativ", 12 )
+   cTxt1 += cRazmak
+   cTxt1 += PadC( "Masa (kg/kom", 12 )
+   cTxt1 += cRazmak
+   cTxt1 += PadC( "Ukupna masa", 12 )
+   cTxt1 += cRazmak
+   cTxt1 += PadC( "Cijena", 12 )
+   cTxt1 += cRazmak
+   cTxt1 += PadC( "Ukupna", 12 )
 
-
-?
-
-P_COND2
-
-B_ON
-
-? "Specifikacija sastavnica i normativima za proizvode po fakturi"
-
-B_OFF
-
-? "na dan:", DTOC(DATE())
-?
-
-? cLine
-? cTxt1
-? cTxt2
-? cLine
+   // tekstualni dio zaglavlja - 2 red
+   cTxt2 += PadR( "", 4 )
+   cTxt2 += cRazmak
+   cTxt2 += PadR( "", 10 )
+   cTxt2 += cRazmak
+   cTxt2 += PadR( "", 51 )
+   cTxt2 += cRazmak
+   cTxt2 += PadC( "tarifni br.", 20 )
+   cTxt2 += cRazmak
+   cTxt2 += PadC( "(m, kom)", 12 )
+   cTxt2 += cRazmak
+   cTxt2 += PadC( "kg/met)", 12 )
+   cTxt2 += cRazmak
+   cTxt2 += PadC( "(kg)", 12 )
+   cTxt2 += cRazmak
+   cTxt2 += PadC( "(kg)", 12 )
+   cTxt2 += cRazmak
+   cTxt2 += PadC( "vr. (" + AllTrim( cValuta ) + ")", 12 )
 
 
-return
+   ?
+
+   P_COND2
+
+   B_ON
+
+   ? "Specifikacija sastavnica i normativima za proizvode po fakturi"
+
+   B_OFF
+
+   ? "na dan:", DToC( Date() )
+   ?
+
+   ? cLine
+   ? cTxt1
+   ? cTxt2
+   ? cLine
+
+   RETURN
 
 
 
 // ---------------------------------------------
 // zaglavlje rekapitulacije
 // ---------------------------------------------
-static function _z_rekap( cLine, cValuta, cFaktBr)
-local cTxt1 := ""
-local cTxt2 := ""
-local cRazmak := SPACE(1)
+STATIC FUNCTION _z_rekap( cLine, cValuta, cFaktBr )
 
-cLine := ""
+   LOCAL cTxt1 := ""
+   LOCAL cTxt2 := ""
+   LOCAL cRazmak := Space( 1 )
 
-// linija zaglavlja
-cLine += REPLICATE("-", 4)
-cLine += cRazmak
-cLine += REPLICATE("-", 20)
-cLine += cRazmak
-cLine += REPLICATE("-", 40)
-cLine += cRazmak
-cLine += REPLICATE("-", 16)
-cLine += cRazmak
-cLine += REPLICATE("-", 12)
-cLine += cRazmak
-cLine += REPLICATE("-", 12)
+   cLine := ""
 
-// tekstualni dio zaglavlja - 1 red
-cTxt1 += PADR( "R.br", 4 )
-cTxt1 += cRazmak
-cTxt1 += PADC( "Carinska", 20 )
-cTxt1 += cRazmak
-cTxt1 += PADC( "Opis", 40 )
-cTxt1 += cRazmak
-cTxt1 += PADC( "Utroseno", 16 )
-cTxt1 += cRazmak
-cTxt1 += PADC( "Tezina", 12 )
-cTxt1 += cRazmak
-cTxt1 += PADC( "Ukupna", 12 )
+   // linija zaglavlja
+   cLine += Replicate( "-", 4 )
+   cLine += cRazmak
+   cLine += Replicate( "-", 20 )
+   cLine += cRazmak
+   cLine += Replicate( "-", 40 )
+   cLine += cRazmak
+   cLine += Replicate( "-", 16 )
+   cLine += cRazmak
+   cLine += Replicate( "-", 12 )
+   cLine += cRazmak
+   cLine += Replicate( "-", 12 )
 
-// tekstualni dio zaglavlja - 2 red
-cTxt2 += PADR( "", 4 )
-cTxt2 += cRazmak
-cTxt2 += PADC( "tarifni br.", 20 )
-cTxt2 += cRazmak
-cTxt2 += PADC( "", 40 )
-cTxt2 += cRazmak
-cTxt2 += PADC( "isporuka", 16 )
-cTxt2 += cRazmak
-cTxt2 += PADC( "(kg)", 12 )
-cTxt2 += cRazmak
-cTxt2 += PADC( "vr. (" + ALLTRIM(cValuta) + ")", 12 )
+   // tekstualni dio zaglavlja - 1 red
+   cTxt1 += PadR( "R.br", 4 )
+   cTxt1 += cRazmak
+   cTxt1 += PadC( "Carinska", 20 )
+   cTxt1 += cRazmak
+   cTxt1 += PadC( "Opis", 40 )
+   cTxt1 += cRazmak
+   cTxt1 += PadC( "Utroseno", 16 )
+   cTxt1 += cRazmak
+   cTxt1 += PadC( "Tezina", 12 )
+   cTxt1 += cRazmak
+   cTxt1 += PadC( "Ukupna", 12 )
 
-?
+   // tekstualni dio zaglavlja - 2 red
+   cTxt2 += PadR( "", 4 )
+   cTxt2 += cRazmak
+   cTxt2 += PadC( "tarifni br.", 20 )
+   cTxt2 += cRazmak
+   cTxt2 += PadC( "", 40 )
+   cTxt2 += cRazmak
+   cTxt2 += PadC( "isporuka", 16 )
+   cTxt2 += cRazmak
+   cTxt2 += PadC( "(kg)", 12 )
+   cTxt2 += cRazmak
+   cTxt2 += PadC( "vr. (" + AllTrim( cValuta ) + ")", 12 )
 
-P_COND
+   ?
 
-B_ON
+   P_COND
 
-? PADC( "REKAPITULACIJA PO TARIFNIM OZNAKAMA", 60)
+   B_ON
 
-B_OFF
+   ? PadC( "REKAPITULACIJA PO TARIFNIM OZNAKAMA", 60 )
 
-?
-? PADC( "prilog fakturi: " + cFaktBr, 60 )
-?
-?
+   B_OFF
 
-? cLine
-? cTxt1
-? cTxt2
-? cLine
+   ?
+   ? PadC( "prilog fakturi: " + cFaktBr, 60 )
+   ?
+   ?
 
+   ? cLine
+   ? cTxt1
+   ? cTxt2
+   ? cLine
 
-return
+   RETURN
 
 
 // ---------------------------------------------------
 // prikazi rekapitulaciju
 // ---------------------------------------------------
-static function _show_rekap( cValuta, cFaktBr )
-local cLine 
-local aTmp
-local i
+STATIC FUNCTION _show_rekap( cValuta, cFaktBr )
 
-O_R_EXP
+   LOCAL cLine
+   LOCAL aTmp
+   LOCAL i
 
-index on r_export->ctarbr tag "2"
+   O_R_EXP
 
-select r_export
-set order to tag "2"
+   INDEX ON r_export->ctarbr TAG "2"
 
-go top
+   SELECT r_export
+   SET ORDER TO TAG "2"
 
-START PRINT CRET
+   GO TOP
 
-// daj zaglavlje rekapitulacije
-_z_rekap( @cLine, cValuta, cFaktBr )
+   START PRINT CRET
 
-nCnt := 0
+   // daj zaglavlje rekapitulacije
+   _z_rekap( @cLine, cValuta, cFaktBr )
 
-nUTKPrim := 0
-nUTKSek := 0
-nUTIznU := 0
+   nCnt := 0
 
-do while !EOF()
+   nUTKPrim := 0
+   nUTKSek := 0
+   nUTIznU := 0
 
-	cCTarBr := field->ctarbr
-	
-	nTKPrim := 0
-	nTKSek := 0
-	nTIznU := 0
-	
-	do while !EOF() .and. field->ctarbr == cCTarBr
- 
-		// ukupno primarna jmj (kom, met)
-		nTKPrim += field->kolprim
-		// oznaka primarne jedinice
-		cJmjPrim := field->jmjprim
-		// ukupno u sekundarnoj jmj (kg)
-		nTKSek += field->kolsec
-		// ukupna vrijednost
-		nTIznU += field->kolprim * field->cijena
-		
-		skip
-	enddo
+   DO WHILE !Eof()
 
-	nUTKPrim += nTKPrim
-	nUTKSek += nTKSek
-	nUTIznU += nTIznU
-	
-	++ nCnt
-	
-	// ispisi ove sume...
-	
-	? STR( nCnt, 3 ) + "."
+      cCTarBr := field->ctarbr
 
-	@ prow(), pcol() + 1 SAY cCTarBr
+      nTKPrim := 0
+      nTKSek := 0
+      nTIznU := 0
 
-	cCTarOpis := IzFmkIni( "CarTarife", ALLTRIM( cCTarBr ), ;
-			"????", KUMPATH )
+      DO WHILE !Eof() .AND. field->ctarbr == cCTarBr
 
-	aTmp := SjeciStr( cCTarOpis, 40 )
+         // ukupno primarna jmj (kom, met)
+         nTKPrim += field->kolprim
+         // oznaka primarne jedinice
+         cJmjPrim := field->jmjprim
+         // ukupno u sekundarnoj jmj (kg)
+         nTKSek += field->kolsec
+         // ukupna vrijednost
+         nTIznU += field->kolprim * field->cijena
 
-	@ prow(), pcol() + 1 SAY PADR( aTmp[1], 40 )
-	
-	@ prow(), pcol() + 1 SAY STR( nTKPrim, 12, 2 )
+         SKIP
+      ENDDO
 
-	@ prow(), pcol() + 1 SAY cJmjPrim
+      nUTKPrim += nTKPrim
+      nUTKSek += nTKSek
+      nUTIznU += nTIznU
 
-	@ prow(), pcol() + 1 SAY STR( nTKSek, 12, 2 )
+      ++ nCnt
 
-	@ prow(), pcol() + 1 SAY STR( nTIznU, 12, 2 )
-	
-	// ostatak opisa tarife stavi u druge redove
-	if LEN( aTmp ) > 1
-	
-		for i := 2 to LEN( aTmp )
-			
-			? SPACE(25)
-			
-			@ prow(), pcol()+1 SAY PADR( aTmp[i], 40 )
-			
-		next
-		
-	endif
-	
-enddo
+      // ispisi ove sume...
 
-? cLine
-? PADR( "UKUPNO:", 83)
-@ prow(), pcol()+1 SAY STR( nUTKSek, 12, 2 )
-@ prow(), pcol()+1 SAY STR( nUTIznU, 12, 2 )
-? cLine
+      ? Str( nCnt, 3 ) + "."
 
+      @ PRow(), PCol() + 1 SAY cCTarBr
 
-FF
-ENDPRINT
+      cCTarOpis := IzFmkIni( "CarTarife", AllTrim( cCTarBr ), ;
+         "????", KUMPATH )
 
-return
+      aTmp := SjeciStr( cCTarOpis, 40 )
+
+      @ PRow(), PCol() + 1 SAY PadR( aTmp[ 1 ], 40 )
+
+      @ PRow(), PCol() + 1 SAY Str( nTKPrim, 12, 2 )
+
+      @ PRow(), PCol() + 1 SAY cJmjPrim
+
+      @ PRow(), PCol() + 1 SAY Str( nTKSek, 12, 2 )
+
+      @ PRow(), PCol() + 1 SAY Str( nTIznU, 12, 2 )
+
+      // ostatak opisa tarife stavi u druge redove
+      IF Len( aTmp ) > 1
+
+         FOR i := 2 TO Len( aTmp )
+
+            ? Space( 25 )
+
+            @ PRow(), PCol() + 1 SAY PadR( aTmp[ i ], 40 )
+
+         NEXT
+
+      ENDIF
+
+   ENDDO
+
+   ? cLine
+   ? PadR( "UKUPNO:", 83 )
+   @ PRow(), PCol() + 1 SAY Str( nUTKSek, 12, 2 )
+   @ PRow(), PCol() + 1 SAY Str( nUTIznU, 12, 2 )
+   ? cLine
 
 
+   FF
+   ENDPRINT
 
+   RETURN

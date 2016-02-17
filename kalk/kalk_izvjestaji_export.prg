@@ -1,16 +1,16 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+/*
+ * This file is part of the bring.out knowhow ERP, a free and open source
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
 
-
 #include "f18.ch"
+
 
 static cij_decimala:=3
 static izn_decimala:=2
@@ -46,9 +46,9 @@ Box(, 14, 70)
 
   @ m_x+1, m_y+2 SAY "Dokument "
   @ m_x+2, m_y+2 SAY gFirma + " - " GET  cIdVd
-  @ m_x+2, col()+2 SAY " - " GET cBrDok 
-  
-  
+  @ m_x+2, col()+2 SAY " - " GET cBrDok
+
+
   @ m_x+4, m_y+2 SAY PADR("-", 30, "-")
   @ m_x+5, m_y+2 SAY "Izvrsiti zaokruzenja ? " GET cZaokruziti PICT "@!" VALID cZaokruziti $ "DN"
   READ
@@ -62,7 +62,7 @@ Box(, 14, 70)
     @ m_x+7, m_y+2 SAY "            kolicina " GET kol_decimala PICT "9"
     READ
   endif
-  
+
   if cIdVd $ "IP#11#12#13#19#80#41#42"
   	cMpcCij := "D"
 	cVpcCij := "N"
@@ -70,15 +70,15 @@ Box(, 14, 70)
   	cMpcCij := "N"
 	cVpcCij := "D"
   endif
-  
+
   @ m_x+8, m_y+2 SAY PADR("-", 30, "-")
   @ m_x+9, m_y+2 SAY "Trebate mpc cijene ? " GET cMpcCij PICT "@!" VALID cMpcCij $ "DN"
   @ m_x+10, m_y+2 SAY "Trebate vpc cijene ? " GET cVpcCij PICT "@!" VALID cVpcCij $ "DN"
-  
+
   @ m_x+11, m_y+2 SAY PADR("-", 30, "-")
   @ m_x+12, m_y+2 SAY "Konverzija slova (0-8) " GET cKonverzija PICT "9"
   @ m_x+13, m_y+2 SAY "Pokreni oo/office97/officexp/office2003 ?" GET cLauncher PICT "@S26" VALID set_launcher(@cLauncher)
-  
+
   READ
 BoxC()
 
@@ -88,7 +88,7 @@ endif
 
 O_KALK
 SET ORDER TO TAG "1"
-seek cIdFirma + cIdVd + cBrDok 
+seek cIdFirma + cIdVd + cBrDok
 
 O_ROBA
 O_KONTO
@@ -113,13 +113,13 @@ cPom = UPPER(ALLTRIM(cLauncher))
 if (cPom == "OO") .or.  (cPom == "OOO") .or.  (cPom == "OPENOFFICE")
 	cLauncher := cLauncher1
 	return .f.
-	
+
 elseif (LEFT(cPom,6) == "OFFICE" )
         // OFFICEXP, OFFICE97, OFFICE2003
 	cLauncher := msoff_start(SUBSTR(cPom, 7))
 	return .f.
-elseif (LEFT(cPom,5) == "EXCEL") 
-        // EXCELXP, EXCEL97 
+elseif (LEFT(cPom,5) == "EXCEL")
+        // EXCELXP, EXCEL97
 	cLauncher := msoff_start(SUBSTR(cPom, 6))
 	return .f.
 endif
@@ -249,7 +249,7 @@ SELECT KALK
 //"1","idFirma+IdVD+BrDok+RBr
 SET ORDER TO TAG "1"
 
-// prvo gledam ppp stavke - negativne stavke 
+// prvo gledam ppp stavke - negativne stavke
 // u drugom krugu gledam pdv - pozitivne stavke
 
 Box(,3, 60)
@@ -284,13 +284,13 @@ SELECT r_export
 
 	SELECT roba
 	SEEK cIdRoba
-	
+
 	SELECT tarifa
 	SEEK cIdTarifa
 
 	cPom1 := KonvznWin(LEFT(roba->naz,40), cKonverzija)
 	cPom2 := KonvznWin(roba->jmj, cKonverzija)
-	
+
 	SELECT r_export
 	replace jmj WITH cPom2, ;
 	        naziv_roba WITH cPom1 ,;
@@ -298,12 +298,12 @@ SELECT r_export
 	        st_tarifa WITH tarifa->opp
 
 	replace cij_nab_d WITH kalk->nc ,;
-		cij_nab WITH roba->nc 
+		cij_nab WITH roba->nc
 
 	if lMpcCij
 		replace cij_mpc_d WITH kalk->mpcsapp, ;
 			cij_mpc_1 WITH roba->mpc, ;
-		        cij_mpc_2 WITH roba->mpc2 
+		        cij_mpc_2 WITH roba->mpc2
 	endif
 
 	if lVpcCij
@@ -316,9 +316,9 @@ SELECT r_export
            replace cij_nov_1 WITH roba->zanivel ,;
 	        cij_nov_2 WITH roba->zaniv2
 	endif
-	
+
 	replace kol WITH kalk->kolicina
-	
+
 	if (cIdVD == "IP") .or. (cIdVd == "IM")
 		replace kol_knjiz WITH kalk->gkolicina
 	endif
@@ -346,8 +346,8 @@ MsgBeep("Tabela " + PRIVPATH + "R_EXPORT.DBF je formirana, i ima:"+ STR(nRbr, 5)
 	"Nakon importa uradite Save as, i odaberite format fajla XLS ! ##" +;
 	"Tako dobijeni xls fajl mozete mijenjati #"+;
 	"prema svojim potrebama ...")
-	
-if Pitanje(, "Odmah pokrenuti spreadsheet aplikaciju ?", "D") == "D"	
+
+if Pitanje(, "Odmah pokrenuti spreadsheet aplikaciju ?", "D") == "D"
  f18_run(cKom)
 endif
 
@@ -375,4 +375,3 @@ else
   // office najnoviji 2005?2006
   return STRTRAN(cPom, "#", "12")
 endif
-

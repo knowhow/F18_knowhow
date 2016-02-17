@@ -337,15 +337,14 @@ FUNCTION fill_dbf_from_server( dbf_table, sql_query, sql_fetch_time, dbf_write_t
    LOCAL _i, _fld
    LOCAL _qry_obj
    LOCAL _retry := 3
-   LOCAL _a_dbf_rec
-   LOCAL _dbf_fields, cSyncalias, cFullDbf, cFullIdx
+   LOCAL aDbfRec, aDbfFields, cSyncalias, cFullDbf, cFullIdx
 
    IF lShowInfo == NIL
       lShowInfo := .F.
    ENDIF
 
-   _a_dbf_rec := get_a_dbf_rec( dbf_table )
-   _dbf_fields := _a_dbf_rec[ "dbf_fields" ]
+   aDbfRec := get_a_dbf_rec( dbf_table )
+   aDbfFields := aDbfRec[ "dbf_fields" ]
 
    sql_fetch_time := Seconds()
    _qry_obj := run_sql_query( sql_query, _retry )
@@ -354,19 +353,19 @@ FUNCTION fill_dbf_from_server( dbf_table, sql_query, sql_fetch_time, dbf_write_t
    log_write( "fill_dbf_from_server START", 9 )
 
    IF log_level() > 5
-      ?E "fill_dbf:", dbf_table, "a_dbf_rec dbf_fields: ", pp( _dbf_fields )
+      ?E "fill_dbf:", dbf_table, "a_dbf_rec dbf_fields: ", pp( aDbfFields )
    ENDIF
 
    dbf_write_time := Seconds()
 
    PushWa()
 
-   cFullDbf := my_home() + _a_dbf_rec[ 'table' ]
+   cFullDbf := my_home() + aDbfRec[ 'table' ]
    cFullIdx := ImeDbfCDX( cFullDbf )
 
-   cSyncAlias := Upper( 'SYNC__' + _a_dbf_rec[ 'table' ] )
+   cSyncAlias := Upper( 'SYNC__' + aDbfRec[ 'table' ] )
    IF Select( cSyncAlias ) == 0
-      SELECT ( _a_dbf_rec[ 'wa' ] + 1000 )
+      SELECT ( aDbfRec[ 'wa' ] + 1000 )
       USE ( cFullDbf ) Alias ( cSyncAlias )  SHARED
       IF File( cFullIdx )
          dbSetIndex( cFullIdx )
@@ -378,14 +377,14 @@ FUNCTION fill_dbf_from_server( dbf_table, sql_query, sql_fetch_time, dbf_write_t
       ++ _counter
       APPEND BLANK
 
-      FOR _i := 1 TO Len( _dbf_fields )
+      FOR _i := 1 TO Len( aDbfFields )
 
-         _fld := FieldBlock( _dbf_fields[ _i ] )
+         _fld := FieldBlock( aDbfFields[ _i ] )
 
          IF ValType( Eval( _fld ) ) $ "CM"
-            Eval( _fld, hb_UTF8ToStr( _qry_obj:FieldGet( _qry_obj:FieldPos( _dbf_fields[ _i ] ) ) ) )
+            Eval( _fld, hb_UTF8ToStr( _qry_obj:FieldGet( _qry_obj:FieldPos( aDbfFields[ _i ] ) ) ) )
          ELSE
-            Eval( _fld, _qry_obj:FieldGet( _qry_obj:FieldPos( _dbf_fields[ _i ] ) ) )
+            Eval( _fld, _qry_obj:FieldGet( _qry_obj:FieldPos( aDbfFields[ _i ] ) ) )
          ENDIF
 
       NEXT

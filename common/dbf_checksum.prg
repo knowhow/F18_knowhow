@@ -29,14 +29,13 @@ FUNCTION check_recno_and_fix( cDbfAlias, nCntSql, nCntDbf )
 
 #ifdef F18_DEBUG
       IF Abs( nCntDbf - nCntSql ) == 1
-         Alert( "jedan zapis razlike ?!" )
-         AltD()
+         error_tab( "check_recno_diff", "1DIFF: " + cDbfAlias + "  jedan zapis razlike?!" )
       ENDIF
 #endif
       log_write( cErrMsg, 3 )
 
       IF nCntDbf > 0
-         // notify_podrska( cErrMsg )
+         // TODO: vratiti ili izbrisati notify_podrska( cErrMsg )
          error_tab( "check_recno_diff", cErrMsg )
       ENDIF
 

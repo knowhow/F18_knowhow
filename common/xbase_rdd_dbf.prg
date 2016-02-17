@@ -285,7 +285,7 @@ FUNCTION reopen_dbf( excl, dbf_table, open_index )
 // ------------------------------------------------------
 // zap, then open shared, open_index - otvori index
 // ------------------------------------------------------
-FUNCTION reopen_exclusive_and_zap( dbf_table, open_index )
+FUNCTION reopen_exclusive_and_zap( cDbfTable, open_index )
 
    LOCAL _err
 
@@ -296,14 +296,15 @@ FUNCTION reopen_exclusive_and_zap( dbf_table, open_index )
 
    BEGIN SEQUENCE WITH {| err | Break( err ) }
 
-      reopen_dbf( .T., dbf_table, open_index )
+      reopen_dbf( .T., cDbfTable, open_index )
       ZAP
-      reopen_dbf( .F., dbf_table, open_index )
+      reopen_dbf( .F., cDbfTable, open_index )
 
    RECOVER USING _err
 
       log_write( "ERROR-REXCL-ZAP " + _err:Description, 3 )
-      reopen_dbf( .F., dbf_table, open_index )
+      error_tab( "reopen_dbf_zap", cDbfTable + " / " + _err:Description )
+      reopen_dbf( .F., cDbfTable, open_index )
       zapp()
 
    END SEQUENCE
@@ -470,6 +471,7 @@ FUNCTION dbf_open_temp_and_count( aDbfRec, nCntSql, nCnt, nDel )
    RECOVER USING  oError
       LOG_CALL_STACK cLogMsg
       ?E "dbf_open_temp_and_count use dbf:", cFullDbf, "alias:", cAliasTemp, oError:Description
+      error_tab( "dbf_open_tmp_cnt", cAliasTemp + " / " + oError:Description )
       QUIT_1
    END SEQUENCE
 

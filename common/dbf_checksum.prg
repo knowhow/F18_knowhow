@@ -23,8 +23,7 @@ FUNCTION check_recno_and_fix( cDbfAlias, nCntSql, nCntDbf )
 
    IF nCntSql <> nCntDbf
 
-      cErrMsg := "check_recno_and_fix DIFF: "
-      cErrMsg += "alias: " + _a_dbf_rec[ "alias" ] + " cnt_dbf: " + AllTrim( Str( nCntDbf, 10, 0 ) ) + " "
+      cErrMsg := "alias: " + _a_dbf_rec[ "alias" ] + " cnt_dbf: " + AllTrim( Str( nCntDbf, 10, 0 ) ) + " "
       cErrMsg += "sql_tbl: " + _sql_table + " cnt_sql: " + AllTrim( Str( nCntSql, 10 ) )
 
 #ifdef F18_DEBUG
@@ -32,12 +31,10 @@ FUNCTION check_recno_and_fix( cDbfAlias, nCntSql, nCntDbf )
          error_tab( "check_recno_diff", "1DIFF: " + cDbfAlias + "  jedan zapis razlike?!" )
       ENDIF
 #endif
-      log_write( cErrMsg, 3 )
+      log_write( "check_recno_and_fix DIFF: " + cErrMsg, 3 )
 
-      IF nCntDbf > 0
-         // TODO: vratiti ili izbrisati notify_podrska( cErrMsg )
-         error_tab( "check_recno_diff", cErrMsg )
-      ENDIF
+      // TODO: vratiti ili izbrisati notify_podrska( cErrMsg )
+      error_tab( "check_recno_diff", cErrMsg )
 
       full_synchro( _a_dbf_rec[ "table" ], 50000, "dbf_cnt_before: " + AllTrim( Str( nCntDbf, 10, 0 ) ) )
 

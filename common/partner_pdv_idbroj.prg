@@ -44,21 +44,16 @@ FUNCTION fill_all_partneri_idbr_pdvb()
    SELECT partn
 
 
-   Box( , 3, 60 )
 
-   @ m_x + 1, m_y + 2 SAY8  "Podešavam identifikacijski i PDV broj za sve partnere"
-
-   @ m_x + 3, m_y + 18 SAY  "/"
-   @ m_x + 3, m_y + 20 SAY  partn->( RecCount() )
+   ?E  "Podešavam identifikacijski i PDV broj za sve partnere  /",  partn->( RecCount() )
 
    DO WHILE !Eof()
       ++nCnt
-      @ m_x + 3, m_y + 2 SAY  nCnt
+      ?E "fill_all_partneri_idbr_pdvb",  nCnt
       update_idbr_pdvb_from_regb()
       SKIP
    ENDDO
 
-   BoxC()
 
    delete_sifk_partner_regb()
 
@@ -131,6 +126,7 @@ FUNCTION update_idbr_pdvb_from_regb()
    PopWa()
 
    RETURN .T.
+
 
 FUNCTION fill_sifk_partn( cIdSifk, cNazSifk, cSort, nLen )
 

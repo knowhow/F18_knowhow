@@ -334,7 +334,7 @@ FUNCTION table_count( table, condition )
 FUNCTION fill_dbf_from_server( dbf_table, sql_query, sql_fetch_time, dbf_write_time, lShowInfo )
 
    LOCAL _counter := 0
-   LOCAL _i, _fld
+   LOCAL _i, _fld, cField
    LOCAL _qry_obj
    LOCAL _retry := 3
    LOCAL aDbfRec, aDbfFields, cSyncalias, cFullDbf, cFullIdx
@@ -383,11 +383,14 @@ FUNCTION fill_dbf_from_server( dbf_table, sql_query, sql_fetch_time, dbf_write_t
 
       FOR _i := 1 TO Len( aDbfFields )
 
+/*
          IF log_level() > 8
-            ?E "fill_dbf:", dbf_table, "a_dbf_rec dbf_fields: ", pp( aDbfFields )
+            ?E "for petlja ", _i, " fill_dbf:", dbf_table, "a_dbf_rec dbf_fields: ", pp( aDbfFields )
          ENDIF
+  */
+         cField := aDbfFields[ _i ]
 
-         _fld := FieldBlock( aDbfFields[ _i ] )
+         _fld := FieldBlock( cField )
 
          IF ValType( Eval( _fld ) ) $ "CM"
             Eval( _fld, hb_UTF8ToStr( _qry_obj:FieldGet( _qry_obj:FieldPos( aDbfFields[ _i ] ) ) ) )
@@ -615,12 +618,14 @@ FUNCTION is_last_refresh_before( cTable, nSeconds )
 
 PROCEDURE thread_dbf_refresh( cTable )
 
+/*
    PRIVATE m_x, m_y, normal, gColorInvert
 
    m_x := 0
    m_y := 0
    Normal := "B/W"
    gColorInvert  := "W/B"
+*/
 
 #ifdef F18_DEBUG
    ?E ">>>>> START: thread_dbf_refresh:", cTable, "<<<<<"

@@ -327,14 +327,13 @@ FUNCTION table_count( table, condition )
 
 
 /*
- napuni dbf tabelu sa podacima sa servera
-  dbf_tabela mora biti otvorena i u tekucoj WA
+ napuni dbf tabelu sa podacima sa servera,   dbf_tabela mora biti otvorena i u tekucoj WA
 */
 
 FUNCTION fill_dbf_from_server( dbf_table, sql_query, sql_fetch_time, dbf_write_time, lShowInfo )
 
    LOCAL _counter := 0
-   LOCAL _i, _fld
+   LOCAL nI, _fld
    LOCAL _qry_obj
    LOCAL _retry := 3
    LOCAL aDbfRec, aDbfFields, cSyncalias, cFullDbf, cFullIdx
@@ -370,6 +369,8 @@ FUNCTION fill_dbf_from_server( dbf_table, sql_query, sql_fetch_time, dbf_write_t
       IF File( cFullIdx )
          dbSetIndex( cFullIdx )
       ENDIF
+   ELSE
+      ?E "syncalias ", cSyncAlias, "vec otvoren ?!"
    ENDIF
 
    DO WHILE !_qry_obj:Eof()
@@ -377,14 +378,18 @@ FUNCTION fill_dbf_from_server( dbf_table, sql_query, sql_fetch_time, dbf_write_t
       ++ _counter
       APPEND BLANK
 
-      FOR _i := 1 TO Len( aDbfFields )
+      IF log_level() > 8
+         ?E "fill_dbf:", dbf_table, "a_dbf_rec dbf_fields: ", pp( aDbfFields )
+      ENDIF
 
-         _fld := FieldBlock( aDbfFields[ _i ] )
+      FOR nI := 1 TO Len( aDbfFields )
+
+         _fld := FieldBlock( aDbfFields[ nI ] )
 
          IF ValType( Eval( _fld ) ) $ "CM"
-            Eval( _fld, hb_UTF8ToStr( _qry_obj:FieldGet( _qry_obj:FieldPos( aDbfFields[ _i ] ) ) ) )
+            Eval( _fld, hb_UTF8ToStr( _qry_obj:FieldGet( _qry_obj:FieldPos( aDbfFields[ nI ] ) ) ) )
          ELSE
-            Eval( _fld, _qry_obj:FieldGet( _qry_obj:FieldPos( aDbfFields[ _i ] ) ) )
+            Eval( _fld, _qry_obj:FieldGet( _qry_obj:FieldPos( aDbfFields[ nI ] ) ) )
          ENDIF
 
       NEXT
@@ -607,12 +612,12 @@ FUNCTION is_last_refresh_before( cTable, nSeconds )
 
 PROCEDURE thread_dbf_refresh( cTable )
 
-   //PRIVATE m_x, m_y, normal, invert
+   // PRIVATE m_x, m_y, normal, invert
 
-   //m_x := 0
-   //m_y := 0
-   //Normal := "B/W"
-   //Invert := "W/B"
+   // m_x := 0
+   // m_y := 0
+   // Normal := "B/W"
+   // Invert := "W/B"
 
 #ifdef F18_DEBUG
    ?E ">>>>> START: thread_dbf_refresh:", cTable, "<<<<<"
@@ -645,6 +650,7 @@ FUNCTION dbf_refresh( cTable )
       ENDIF
    ENDIF
 */
+
    aDbfRec := get_a_dbf_rec( cTable, .T. )
 
 

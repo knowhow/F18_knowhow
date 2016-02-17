@@ -180,7 +180,7 @@ STATIC FUNCTION key_handler( Ch )
 
    CASE ( Ch == K_F3 )
       IF Pitanje(, "Promjena broja ugovora ?", "N" ) == "D"
-         chg_ug_id( id )
+         ugovor_promjeni_id( id )
       ENDIF
       RETURN DE_REFRESH
 
@@ -547,7 +547,7 @@ FUNCTION edit_ugovor( lNovi )
 // ---------------------------------------------
 // promjeni broj ugovora
 // ---------------------------------------------
-STATIC FUNCTION chg_ug_id( cId )
+STATIC FUNCTION ugovor_promjeni_id( cId )
 
    LOCAL nRecno
 
@@ -573,6 +573,7 @@ STATIC FUNCTION chg_ug_id( cId )
 
 
    SELECT rugov
+   my_flock()
    SEEK cIdOld
 
    DO WHILE !Eof() .AND. ( cIdOld == id )
@@ -582,10 +583,11 @@ STATIC FUNCTION chg_ug_id( cId )
       REPLACE id WITH cid
       GO nTrec
    ENDDO
+   my_unlock()
    SELECT ugov
-   REPLACE id WITH cid
+   RREPLACE id WITH cid
 
-   RETURN
+   RETURN .T.
 
 
 // ----------------------------------------

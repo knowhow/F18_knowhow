@@ -294,12 +294,12 @@ FUNCTION sif_dbf_point_or_slash( cId, fPoNaz, nOrdId, cUslovSrch, cNazSrch )
       // SEEK PO NAZ kada se unese DUGACKI DIO
       PRIVATE GetList := {}
 
-      Box(, 1, 60 )
+      Box(, 1, 70 )
 
       cNazSrch := Space( Len( naz ) )
       Beep( 1 )
 
-      @ m_x + 1, m_y + 2 SAY "Unesi naziv:" GET cNazSrch PICT "@!S40"
+      @ m_x + 1, m_y + 2 SAY "Unesi naziv (trazi):" GET cNazSrch PICT "@!S40"
       READ
 
       BoxC()

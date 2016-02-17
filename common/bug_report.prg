@@ -140,9 +140,10 @@ FUNCTION GlobalErrorHandler( err_obj, lShowErrorReport, lQuitApp )
          f18_run( _cmd )
       ENDIF
       log_write( _log_msg, 1 )
+      send_email( err_obj, lNotify )
    ENDIF
 
-   send_email( err_obj, lNotify )
+
 
    IF lQuitApp
       QUIT_1

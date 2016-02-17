@@ -16,7 +16,7 @@ FUNCTION f18_view_log( _params )
 
    LOCAL _data
    LOCAL _print_to_file := .F.
-   LOCAL _log_file
+   LOCAL cLogFile
 
    IF PCount() > 0
       _print_to_file := .T.
@@ -26,10 +26,10 @@ FUNCTION f18_view_log( _params )
       RETURN .F.
    ENDIF
 
-   _data := _log_get_data( _params )
-   _log_file := _print_log_data( _data, _params, _print_to_file )
+   _data := query_log_data( _params )
+   cLogFile := print_log_data( _data, _params, _print_to_file )
 
-   RETURN _log_file
+   RETURN cLogFile
 
 
 
@@ -52,7 +52,6 @@ STATIC FUNCTION uslovi_pregleda_loga( params )
 
    ++ _x
    ++ _x
-
    @ m_x + _x, m_y + 2 SAY "Datum od" GET _datum_od
    @ m_x + _x, Col() + 1 SAY "do" GET _datum_do
 
@@ -111,7 +110,7 @@ STATIC FUNCTION uslovi_pregleda_loga( params )
    RETURN _ok
 
 
-STATIC FUNCTION _log_get_data( params )
+STATIC FUNCTION query_log_data( params )
 
    LOCAL _user := ""
    LOCAL _dat_from := params[ "date_from" ]
@@ -164,7 +163,7 @@ STATIC FUNCTION _log_get_data( params )
    RETURN _data
 
 
-STATIC FUNCTION _print_log_data( data, params, print_to_file )
+STATIC FUNCTION print_log_data( data, params, print_to_file )
 
    LOCAL _row
    LOCAL _user, _txt, _date
@@ -187,7 +186,6 @@ STATIC FUNCTION _print_log_data( data, params, print_to_file )
    ENDIF
 
    ?
-
    P_COND
 
    ? "PREGLED LOG-a"

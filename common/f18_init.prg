@@ -12,7 +12,7 @@
 #include "f18.ch"
 
 STATIC s_mainThreadID
-STATIC s_threadDbfsID
+//STATIC s_threadDbfsID
 
 
 STATIC s_psqlServer := NIL
@@ -468,10 +468,11 @@ FUNCTION thread_dbfs( pThreadID )
 #ifdef F18_DEBUG
       ?E "thread_dbfs id", pThreadID
 #endif
-      s_threadDbfsID := pThreadID
+      //s_threadDbfsID := pThreadID
    ENDIF
 
-   RETURN s_threadDbfsID
+   //RETURN s_threadDbfsID
+   RETURN .T.
 
 
 FUNCTION main_thread()

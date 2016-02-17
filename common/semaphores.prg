@@ -607,17 +607,17 @@ FUNCTION is_last_refresh_before( cTable, nSeconds )
 
 PROCEDURE thread_dbf_refresh( cTable )
 
-   PRIVATE m_x, m_y, normal, invert
+   //PRIVATE m_x, m_y, normal, invert
 
-   m_x := 0
-   m_y := 0
-   Normal := "B/W"
-   Invert := "W/B"
+   //m_x := 0
+   //m_y := 0
+   //Normal := "B/W"
+   //Invert := "W/B"
 
 #ifdef F18_DEBUG
    ?E ">>>>> START: thread_dbf_refresh:", cTable, "<<<<<"
 #endif
-   ErrorBlock( {| objError, lShowreport, lQuit | GlobalErrorHandler( objError, lShowReport, lQuit ) } )
+   ErrorBlock( {| oError, lShowreport, lQuit | GlobalErrorHandler( oError, lShowReport, lQuit ) } )
    dbf_refresh( cTable )
 
 #ifdef F18_DEBUG
@@ -633,6 +633,7 @@ FUNCTION dbf_refresh( cTable )
    LOCAL aDbfRec
    LOCAL hVersions
 
+/*
    IF  cTable == nil
       IF !Used() .OR. ( rddName() $  "SQLMIX#ARRAYRDD" )
          RETURN .F.
@@ -643,7 +644,7 @@ FUNCTION dbf_refresh( cTable )
          RETURN .F.
       ENDIF
    ENDIF
-
+*/
    aDbfRec := get_a_dbf_rec( cTable, .T. )
 
 

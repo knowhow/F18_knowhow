@@ -578,11 +578,9 @@ FUNCTION EditStavka()
          _idkonto2 := "XXX"
 
          IF _idvd == "16"
-            IF IsPDV()
+
                Get1_16bPDV()
-            ELSE
-               Get1_16b()
-            ENDIF
+
          ELSE
             Get1_80b()
          ENDIF
@@ -739,11 +737,9 @@ FUNCTION kalk_unos_nova_stavka()
          Box( "", __box_x, __box_y, .F., "Protustavka" )
 
          IF _idvd == "16"
-            IF IsPDV()
+
                Get1_16bPDV()
-            ELSE
-               Get1_16b()
-            ENDIF
+
          ELSE
             Get1_80b()
          ENDIF
@@ -896,7 +892,7 @@ FUNCTION kalk_edit_sve_stavke()
          _idkonto := cIdkont2
          _idkonto2 := "XXX"
          IF _idvd == "16"
-            Get1_16b()
+            Get1_16PDV()
          ELSE
             Get1_80b()
          ENDIF

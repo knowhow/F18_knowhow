@@ -494,7 +494,7 @@ PROCEDURE thread_create_dbfs()
    m_x := 0
    m_y := 0
    Normal := "B/W"
-   Invert := "W/B"
+   gColorInvert  := "W/B"
 
    ErrorBlock( {| objError, lShowreport, lQuit | GlobalErrorHandler( objError, lShowReport, lQuit ) } )
 

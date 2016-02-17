@@ -26,7 +26,7 @@ FUNCTION init_gui( clear )
    PUBLIC gModul   := "F18"
    PUBLIC gVerzija := F18_VER
 
-   PUBLIC Invert   := .T.
+   PUBLIC gColorInvert    := .T.
    PUBLIC Normal   := "GR+/B,R/N+,,,N/W"
 
    IF clear == NIL
@@ -170,7 +170,7 @@ FUNCTION Msg( uText, sec, xPos )
 
    msg_y1 := ( MAXCOLS() - l - 7 ) / 2
    msg_y2 := MAXCOLS() - msg_y1
-   StackPush( aMsgStack, { iif( SetCursor() == 0, 0, iif( ReadInsert(), 2, 1 ) ), SetColor( Invert ), l, ;
+   StackPush( aMsgStack, { iif( SetCursor() == 0, 0, iif( ReadInsert(), 2, 1 ) ), SetColor( gColorInvert  ), l, ;
       SaveScreen( msg_x1, msg_y1, msg_x2, msg_y2 ) } )
 
    @ msg_x1, msg_y1 CLEAR TO msg_x2, msg_y2
@@ -219,7 +219,7 @@ FUNCTION MsgO( cText, sec, lUtf )
 
 
    StackPush( aMsgStack, ;
-      { iif( SetCursor() == 0, 0, iif( ReadInsert(), 2, 1 ) ), SetColor( Invert ), nLen, ;
+      { iif( SetCursor() == 0, 0, iif( ReadInsert(), 2, 1 ) ), SetColor( gColorInvert  ), nLen, ;
       SaveScreen( msg_x1, msg_y1, msg_x2, msg_y2 ) } )
 
    @ msg_x1, msg_y1 CLEAR TO msg_x2, msg_y2
@@ -256,7 +256,7 @@ FUNCTION MsgC( msg_x1, msg_y1, msg_x2, msg_y2 )
 
 
 /*! \fn Box(BoxId, N, Length, Inv, chMsg, cHelpT)
- *  \brief Otvara prozor BoxID dimenzija (N x Length), invertovan
+ *  \brief Otvara prozor BoxID dimenzija (N x Length), gColorInvert ovan
  *         (Inv=.T. ili ne)
  *
  *  \param chMsg - tip C -> prikaz poruke
@@ -331,7 +331,7 @@ FUNCTION Box( BoxId, N, Length, Inv, chMsg, cHelpT )
       Inv := .F.
    ENDIF
 
-   LocalC := iif ( Inv, Invert, Normal )
+   LocalC := iif ( Inv, gColorInvert , Normal )
 
    SetColor( LocalC )
 
@@ -1053,14 +1053,14 @@ FUNCTION NaslEkran( fBox )
       CLEAR
    ENDIF
 
-   @ 0, 2 SAY '<ESC> Izlaz' COLOR INVERT
-   @ 0, Col() + 2 SAY Date() COLOR INVERT
+   @ 0, 2 SAY '<ESC> Izlaz' COLOR gColorInvert 
+   @ 0, Col() + 2 SAY Date() COLOR gColorInvert 
    @ _max_rows - 1, _max_cols - 16  SAY fmklibver()
 
    DispBox( 2, 0, 4, _max_cols - 1, B_DOUBLE + BOX_CHAR_BACKGROUND_HEAD, NORMAL )
 
    IF fBox
-      DispBox( 5,0, _max_rows - 1, _max_cols - 1, B_DOUBLE + BOX_CHAR_BACKGROUND, INVERT )
+      DispBox( 5,0, _max_rows - 1, _max_cols - 1, B_DOUBLE + BOX_CHAR_BACKGROUND, gColorInvert  )
    ENDIF
 
    @ 3, 1 SAY PadC( gNaslov, _max_cols - 8 ) COLOR NORMAL
@@ -1072,7 +1072,7 @@ FUNCTION NaslEkran( fBox )
 // -------------------------------------------
 FUNCTION StandardBoje()
 
-   PUBLIC  Invert
+   PUBLIC  gColorInvert 
    PUBLIC  Normal
    PUBLIC  Blink
    PUBLIC  Nevid
@@ -1083,13 +1083,13 @@ FUNCTION StandardBoje()
 
    IF ( gFKolor == "D" .AND. IsColor() )
 
-      Invert := "B/W,R/N+,,,R/B+"
+      gColorInvert  := "B/W,R/N+,,,R/B+"
       Normal := "W/B,R/N+,,,N/W"
       Blink := "R" + Replicate( "*", 4 ) + "/W,W/B,,,W/RB"
       Nevid := "W/W,N/N"
    ELSE
 
-      Invert := "N/W,W/N,,,W/N"
+      gColorInvert  := "N/W,W/N,,,W/N"
       Normal := "W/N,N/W,,,N/W"
       Blink := "N" + Replicate( "*", 4 ) + "/W,W/N,,,W/N"
       Nevid := "W/W,N/N"
@@ -1100,7 +1100,7 @@ FUNCTION StandardBoje()
 
 FUNCTION PDVBoje()
 
-   PUBLIC  Invert
+   PUBLIC  gColorInvert 
    PUBLIC  Normal
    PUBLIC  Blink
    PUBLIC  Nevid
@@ -1111,13 +1111,13 @@ FUNCTION PDVBoje()
 
    IF ( gFKolor == "D" .AND. IsColor() )
 
-      Invert := "B/W,R/N+,,,R/B+"
+      gColorInvert  := "B/W,R/N+,,,R/B+"
       Normal := "W/B,R/N+,,,N/W"
       Blink  := "R" + Replicate( "*", 4 ) + "/W,W/B,,,W/RB"
       Nevid  := "W/W,N/N"
    ELSE
 
-      Invert := "N/W,W/N,,,W/N"
+      gColorInvert  := "N/W,W/N,,,W/N"
       Normal := "W/N,N/W,,,N/W"
       Blink := "N" + Replicate( "*", 4 ) + "/W,W/N,,,W/N"
       Nevid := "W/W,N/N"
@@ -1263,10 +1263,10 @@ FUNCTION ToggleINS()
 
    IF ReadInsert( !ReadInsert() )
       SetCursor( 1 )
-      @ 0, MAXCOLS() - 20 SAY '< OVER >' COLOR Invert
+      @ 0, MAXCOLS() - 20 SAY '< OVER >' COLOR gColorInvert 
    ELSE
       SetCursor( 2 )
-      @ 0, MAXCOLS() - 20 SAY  '< INS  >' COLOR Invert
+      @ 0, MAXCOLS() - 20 SAY  '< INS  >' COLOR gColorInvert 
    ENDIF
 
    @ 0, MAXCOLS() - 11 SAY "bring.out" COLOR "GR+/B"
@@ -1279,7 +1279,7 @@ FUNCTION ToggleINS()
 
 FUNCTION say_database_info()
 
-   @ 0, MAXROWS() - 1 SAY PadR( f18_database() + " / " + f18_user(), MAXROWS() + 20 ) COLOR INVERT
+   @ 0, MAXROWS() - 1 SAY PadR( f18_database() + " / " + f18_user(), MAXROWS() + 20 ) COLOR gColorInvert 
    @ 4, 4 SAY ""
 
    RETURN
@@ -1305,7 +1305,7 @@ FUNCTION IzreziPath( cPath, cTekst )
 
 FUNCTION SezonskeBoje()
 
-   PUBLIC  Invert
+   PUBLIC  gColorInvert 
    PUBLIC  Normal
    PUBLIC  Blink
    PUBLIC  Nevid
@@ -1316,12 +1316,12 @@ FUNCTION SezonskeBoje()
 
 
    IF ( gFKolor == "D" .AND. IsColor() )
-      Invert := "N/W,R/N+,,,R/B+"
+      gColorInvert  := "N/W,R/N+,,,R/B+"
       Normal := "GR+/N,R/N+,,,N/W"
       Blink := "R" + Replicate( "*", 4 ) + "/W,W/B,,,W/RB"
       Nevid := "W/W,N/N"
    ELSE
-      Invert := "N/W,W/N,,,W/N"
+      gColorInvert  := "N/W,W/N,,,W/N"
       Normal := "W/N,N/W,,,N/W"
       Blink := "N" + Replicate( "*", 4 ) + "/W,W/N,,,W/N"
       Nevid := "W/W,N/N"

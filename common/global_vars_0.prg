@@ -71,7 +71,7 @@ FUNCTION set_global_vars_0()
    PUBLIC gGlBaza := ""
    PUBLIC gSQL
    PUBLIC gSqlLogBase
-   PUBLIC Invert := "N/W,R/N+,,,R/B+"
+   PUBLIC gColorInvert  := "N/W,R/N+,,,R/B+"
    PUBLIC Normal := "GR+/N,R/N+,,,N/W"
    PUBLIC Blink := "R****/W,W/B,,,W/RB"
    PUBLIC Nevid := "W/W,N/N"

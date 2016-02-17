@@ -13,7 +13,7 @@
 
 REQUEST ARRAYRDD
 
-MEMVAR Invert, Normal
+MEMVAR gColorInvert , Normal
 
 STATIC aErrors := {}
 STATIC aInfos := {}

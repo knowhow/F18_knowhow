@@ -72,7 +72,7 @@ endif
 
 
 Box(,8,50)
-@ m_x,m_y+1 SAY " DEFINISANJE DATUMA"+IIF (gVsmjene=="D"," I SMJENE "," ") COLOR INVERT
+@ m_x,m_y+1 SAY " DEFINISANJE DATUMA"+IIF (gVsmjene=="D"," I SMJENE "," ") COLOR gColorInvert 
 
 do while !(cOK $ "Dd")
 	BoxCLS()

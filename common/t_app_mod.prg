@@ -250,7 +250,7 @@ METHOD gParams()
 
    LOCAL cFMKINI := "N"
    LOCAL cPosebno := "N"
-   LOCAL cOldBoje := SetColor( INVERT )
+   LOCAL cOldBoje := SetColor( gColorInvert  )
    LOCAL cInstall := "N"
    LOCAL lPushWa := .F.
    PRIVATE GetList := {}

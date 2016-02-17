@@ -69,6 +69,6 @@ FUNCTION MarkBrDok( fNovi )
       ENDIF
       SELECT ( nArr )
    ENDIF
-   @  m_x + 2, m_y + 46  SAY _BrDok COLOR INVERT
+   @  m_x + 2, m_y + 46  SAY _BrDok COLOR gColorInvert 
 
    RETURN .T.

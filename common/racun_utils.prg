@@ -25,7 +25,7 @@ FUNCTION ShowIznRac( nIznos )
 
    Box (, 9, 77 )
    cIzn := AllTrim ( Transform ( nIznos, "9999999.99" ) )
-   @ m_x, m_y + 28 SAY "  IZNOS RACUNA JE  " COLOR INVERT
+   @ m_x, m_y + 28 SAY "  IZNOS RACUNA JE  " COLOR gColorInvert 
    NextY := m_y + 76
    FOR nCnt := Len ( cIzn ) TO 1 STEP -1
       Char := SubStr ( cIzn, nCnt, 1 )

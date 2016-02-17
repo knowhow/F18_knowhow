@@ -86,7 +86,7 @@ FUNCTION Menu_SC( cIzp, lMain )
  *  MenuId  - identifikacija menija     C
  *  Items   - niz opcija za izbor       {}
  *  ItemNo  - Broj pocetne pozicije     N
- *  Inv     - da li je meni invertovan  L
+ *  Inv     - da li je meni gColorInvert ovan  L
  *
  *  Broj izabrane opcije, 0 kraj
  *
@@ -127,8 +127,8 @@ FUNCTION MENU( MenuId, Items, ItemNo, Inv, cHelpT, nPovratak, aFixKoo, nMaxVR )
       Inv := .F.
    ENDIF
 
-   LocalC  := iif( Inv, Invert, Normal )
-   LocalIC := iif( Inv, Normal, Invert )
+   LocalC  := iif( Inv, gColorInvert , Normal )
+   LocalIC := iif( Inv, Normal, gColorInvert  )
 
 
    OldC := SetColor( LocalC )
@@ -172,7 +172,7 @@ FUNCTION MENU( MenuId, Items, ItemNo, Inv, cHelpT, nPovratak, aFixKoo, nMaxVR )
 
    ENDIF
 
-   SetColor( Invert )
+   SetColor( gColorInvert  )
    IF ItemNo == 0
       CentrTxt( h[ 1 ], MAXROWS() -1 )
    END IF
@@ -282,7 +282,7 @@ FUNCTION AChoice2( x1, y1, x2, y2, Items, f1, cFunc, nItemNo )
    FOR i := 1 TO nLen
       IF i == nItemNo
          IF Left( cOldColor, 3 ) == Left( Normal, 3 )
-            SetColor( Invert )
+            SetColor( gColorInvert  )
          ELSE
             SetColor( Normal )
          ENDIF
@@ -296,13 +296,13 @@ FUNCTION AChoice2( x1, y1, x2, y2, Items, f1, cFunc, nItemNo )
 
    DO WHILE .T.
 
-      SetColor( Invert )
+      SetColor( gColorInvert  )
       SetColor( cOldColor )
       IF !fFirst
          SetColor( cOldColor )
          @ x1 + nOldItemNo - 1, y1 SAY8 PadR( Items[ nOldItemNo ], nWidth )
          IF Left( cOldColor, 3 ) == Left( Normal, 3 )
-            SetColor( Invert )
+            SetColor( gColorInvert  )
          ELSE
             SetColor( Normal )
          ENDIF
@@ -423,7 +423,7 @@ FUNCTION AChoice3( x1, y1, x2, y2, Items, f1, cFunc, nItemNo )
 
       FOR i := nGornja TO nVisina + nGornja - 1
          IF i == nItemNo
-            IF Left( cOldColor, 3 ) == Left( Normal, 3 );  SetColor( Invert ); else; SetColor( Normal ); ENDIF
+            IF Left( cOldColor, 3 ) == Left( Normal, 3 );  SetColor( gColorInvert  ); else; SetColor( Normal ); ENDIF
          ELSE
             SetColor( cOldColor )
          ENDIF
@@ -431,7 +431,7 @@ FUNCTION AChoice3( x1, y1, x2, y2, Items, f1, cFunc, nItemNo )
       NEXT
 
 
-      SetColor( Invert )
+      SetColor( gColorInvert  )
       SetColor( cOldColor )
 
       IF fExit

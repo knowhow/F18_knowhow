@@ -405,7 +405,7 @@ FUNCTION pos_pregled_stavki_racuna()
    PRIVATE ImeKol
    PRIVATE Kol
 
-   cPrevCol := SetColor( INVERT )
+   cPrevCol := SetColor( gColorInvert  )
 
    SELECT F__PRIPR
 
@@ -451,7 +451,7 @@ FUNCTION pos_pregled_stavki_racuna()
 
    Box(, 15, nMaxCol )
 
-   @ m_x + 1, m_y + 19 SAY8 PadC ( "Pregled " + IIF( gRadniRac == "D", "stalnog ", "" ) + "računa " + Trim( pos_doks->IdPos ) + "-" + LTrim ( pos_doks->BrDok ), 30 ) COLOR INVERT
+   @ m_x + 1, m_y + 19 SAY8 PadC ( "Pregled " + IIF( gRadniRac == "D", "stalnog ", "" ) + "računa " + Trim( pos_doks->IdPos ) + "-" + LTrim ( pos_doks->BrDok ), 30 ) COLOR gColorInvert 
 
    oBrowse := FormBrowse( m_x + 2, m_y + 1, m_x + 15, m_y + nMaxCol, ImeKol, Kol, { BROWSE_PODVUCI_2, BROWSE_PODVUCI, BROWSE_COL_SEP }, 0 )
    ShowBrowse( oBrowse, {}, {} )

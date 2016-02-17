@@ -95,7 +95,7 @@ STATIC FUNCTION kreiraj_ostale_kalk_tabele( ver )
    AADD(aDbf, {"IdObj","C", 7,0})
 
    IF_NOT_FILE_DBF_CREATE
-   
+
 
    CREATE_INDEX("ID", "ID", _alias )
    CREATE_INDEX("NAZ", "NAZ", _alias )
@@ -105,7 +105,7 @@ STATIC FUNCTION kreiraj_ostale_kalk_tabele( ver )
    // pobjekti
 
    _alias := "POBJEKTI"
-   _table := "pobjekti"
+   _table_name := "pobjekti"
 
    aDbf:={}
    AADD(aDbf, {"id","C",2,0})
@@ -124,7 +124,7 @@ STATIC FUNCTION kreiraj_ostale_kalk_tabele( ver )
    CREATE_INDEX( "ID", "id", _alias )
 
    _alias := "KALK_KARTICA"
-   _table := "kalk_kartica"
+   _table_name := "kalk_kartica"
 
    aDbf := {}
    AAdd( aDbf, { "ID", "C", 15, 0 } )

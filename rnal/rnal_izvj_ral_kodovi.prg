@@ -33,7 +33,7 @@ FUNCTION rpt_ral_calc()
    // ispisi report
    _r_ral_calc( dD_From, dD_to, nOper )
 
-   RETURN
+   RETURN .T.
 
 
 // ----------------------------------------------
@@ -211,7 +211,7 @@ STATIC FUNCTION _cre_report( dD_f, dD_t, nOper, cRalLst, cColLst )
 
    BoxC()
 
-   RETURN
+   RETURN .T.
 
 
 // -------------------------------------------------
@@ -240,7 +240,7 @@ STATIC FUNCTION app_to_tmp1( nColor, nTotal )
 
    SELECT ( nTArea )
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -270,7 +270,7 @@ STATIC FUNCTION _main_filter( dDFrom, dDTo, nOper )
    SET FILTER to &cFilter
    GO TOP
 
-   RETURN
+   RETURN .T.
 
 // ------------------------------------------------
 // ispis reporta
@@ -282,7 +282,7 @@ STATIC FUNCTION _r_ral_calc( dD_from, dD_to, nOper )
    SELECT _tmp1
    IF RECCOUNT2() == 0
       MsgBeep( "nema podataka" )
-      RETURN
+      RETURN .F.
    ENDIF
 
    SET ORDER TO TAG "1"
@@ -314,4 +314,4 @@ STATIC FUNCTION _r_ral_calc( dD_from, dD_to, nOper )
    FF
    ENDPRINT
 
-   RETURN
+   RETURN .T.

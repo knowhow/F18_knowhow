@@ -12,91 +12,93 @@
 
 #include "f18.ch"
 
-function OdrediSmjenu(lOdredi)
-local cOK:=" "
-private dDatum:=gDatum
-private cSmjena:=STR(VAL(gSmjena)+1,LEN(gSmjena))
-private d_Pos:=d_Doks:=CTOD("")
-private s_Pos:=s_Doks:=" "
+FUNCTION OdrediSmjenu( lOdredi )
 
-if gVSmjene=="N"
-	cSmjena:="1"
-  	gSmjena:=cSmjena
-	gDatum := dDatum
-  	pos_status_traka()
-  	CLOSERET
-endif
+   LOCAL cOK := " "
+   PRIVATE dDatum := gDatum
+   PRIVATE cSmjena := Str( Val( gSmjena ) + 1, Len( gSmjena ) )
+   PRIVATE d_Pos := d_Doks := CToD( "" )
+   PRIVATE s_Pos := s_Doks := " "
 
-if lOdredi==nil
-	lOdredi:=.t.
-endif
+   IF gVSmjene == "N"
+      cSmjena := "1"
+      gSmjena := cSmjena
+      gDatum := dDatum
+      pos_status_traka()
+      CLOSERET
+   ENDIF
 
-O__POS
-O_POS_DOKS
-set order to tag "2"  // IdVd+DTOS (Datum)+Smjena
-Seek VD_RN + Chr (254)
-if eof() .or. pos_doks->IdVd <> VD_RN
-	SKIP -1
-endif
-// ako je slucajno mijenjan IdPos
-do while !bof() .and. pos_doks->IdVd==VD_RN .and. pos_doks->IdPos <> gIdPos
-	SKIP -1
-enddo
-if pos_doks->IdVd == VD_RN
-	d_Doks := pos_doks->Datum     // posljednji datum i smjena u kojoj
-	s_Doks := pos_doks->Smjena    // je kasa radila, prema DOKS
-endif
+   IF lOdredi == nil
+      lOdredi := .T.
+   ENDIF
 
-SELECT _POS
-set order to tag "2"
-Seek "42"
-if Found()
-	// d_Pos := _POS->Datum
-	do while !eof() .and. _POS->IdVd==VD_RN
-		if _POS->m1<>"Z"
-			// racun nije zakljucen, a samo mi je to interesantno
-			d_Pos := _POS->Datum
-			if _POS->Smjena > s_Pos
-				s_Pos := _POS->Smjena
-			endif
-		endif
-		SKIP
-	enddo
-endif
+   O__POS
+   O_POS_DOKS
+   SET ORDER TO TAG "2"  // IdVd+DTOS (Datum)+Smjena
+   SEEK VD_RN + Chr ( 254 )
+   IF Eof() .OR. pos_doks->IdVd <> VD_RN
+      SKIP -1
+   ENDIF
+   // ako je slucajno mijenjan IdPos
+   DO WHILE !Bof() .AND. pos_doks->IdVd == VD_RN .AND. pos_doks->IdPos <> gIdPos
+      SKIP -1
+   ENDDO
+   IF pos_doks->IdVd == VD_RN
+      d_Doks := pos_doks->Datum     // posljednji datum i smjena u kojoj
+      s_Doks := pos_doks->Smjena    // je kasa radila, prema DOKS
+   ENDIF
 
-if d_Pos > d_Doks
-	// postoji promet u _POS i to nezakljucen
-	dDatum := d_Pos
-	cSmjena := s_Pos
-endif
+   SELECT _POS
+   SET ORDER TO TAG "2"
+   SEEK "42"
+   IF Found()
+      // d_Pos := _POS->Datum
+      DO WHILE !Eof() .AND. _POS->IdVd == VD_RN
+         IF _POS->m1 <> "Z"
+            // racun nije zakljucen, a samo mi je to interesantno
+            d_Pos := _POS->Datum
+            IF _POS->Smjena > s_Pos
+               s_Pos := _POS->Smjena
+            ENDIF
+         ENDIF
+         SKIP
+      ENDDO
+   ENDIF
+
+   IF d_Pos > d_Doks
+      // postoji promet u _POS i to nezakljucen
+      dDatum := d_Pos
+      cSmjena := s_Pos
+   ENDIF
 
 
-Box(,8,50)
-@ m_x,m_y+1 SAY " DEFINISANJE DATUMA"+IIF (gVsmjene=="D"," I SMJENE "," ") COLOR gColorInvert 
+   Box(, 8, 50 )
+   @ m_x, m_y + 1 SAY " DEFINISANJE DATUMA" + iif ( gVsmjene == "D", " I SMJENE ", " " ) COLOR gColorInvert
 
-do while !(cOK $ "Dd")
-	BoxCLS()
-        @ m_x+2,m_y+5 SAY " DATUM:" GET dDatum VALID DatumOK ()
-	@ m_x+4,m_y+5 SAY "SMJENA:" GET cSmjena VALID cSmjena $ "123"
-	set cursor on
-	@ m_x+6,m_y+5 SAY "Unos u redu (D/N)" GET cOK VALID cOK $ "DN" pict "@!"
-	READ
-	if LASTKEY()==K_ESC
-		LOOP
-	endif
-	if ProvKonzBaze(dDatum,cSmjena)
-		EXIT
-	endif
-	cOK := " "
-enddo
-BoxC()
+   DO WHILE !( cOK $ "Dd" )
+      BoxCLS()
+      @ m_x + 2, m_y + 5 SAY " DATUM:" GET dDatum VALID DatumOK ()
+      @ m_x + 4, m_y + 5 SAY "SMJENA:" GET cSmjena VALID cSmjena $ "123"
+      SET CURSOR ON
+      @ m_x + 6, m_y + 5 SAY "Unos u redu (D/N)" GET cOK VALID cOK $ "DN" PICT "@!"
+      READ
+      IF LastKey() == K_ESC
+         LOOP
+      ENDIF
+      IF ProvKonzBaze( dDatum, cSmjena )
+         EXIT
+      ENDIF
+      cOK := " "
+   ENDDO
+   BoxC()
 
-gSmjena:=cSmjena
-gDatum := dDatum
+   gSmjena := cSmjena
+   gDatum := dDatum
 
-pos_status_traka()
-close all
-return
+   pos_status_traka()
+   CLOSE ALL
+
+   RETURN
 
 
 
@@ -104,45 +106,47 @@ return
  *  \brief
  */
 
-static function DatumOK()
-*{
+STATIC FUNCTION DatumOK()
 
-if dDatum>DATE()
-	MsgBeep("Morate unijeti datum jedna ili manji od danasnjeg!")
-	return (.f.)
-endif
+   // {
 
-return (.t.)
+   IF dDatum > Date()
+      MsgBeep( "Morate unijeti datum jedna ili manji od danasnjeg!" )
+      RETURN ( .F. )
+   ENDIF
+
+   RETURN ( .T. )
 
 
 
-static function SmjenaOK()
-*{
-if Empty(s_Pos)
-	// nema prometa u _POS (nezakljucenog)
-	if d_Doks == dDatum .and. cSmjena < s_Doks
-		MsgBeep ("Postoje zakljuceni racuni iz smjene "+cSmjena+"!")
-		if Pitanje(,"Zelite li nastaviti?", "N")=="N"
-			return (.f.)
-		endif
-	endif
-	return (.t.)
-endif
+STATIC FUNCTION SmjenaOK()
 
-if cSmjena>s_Pos
-	MsgBeep ("Postoje NEZAKLJUCENI racuni iz smjene "+cSmjena+"!")
-	if Pitanje(,"Zelite li nastaviti?", "N")=="N"
-		return (.f.)
-	endif
-endif
+   // {
+   IF Empty( s_Pos )
+      // nema prometa u _POS (nezakljucenog)
+      IF d_Doks == dDatum .AND. cSmjena < s_Doks
+         MsgBeep ( "Postoje zakljuceni racuni iz smjene " + cSmjena + "!" )
+         IF Pitanje(, "Zelite li nastaviti?", "N" ) == "N"
+            RETURN ( .F. )
+         ENDIF
+      ENDIF
+      RETURN ( .T. )
+   ENDIF
 
-if cSmjena<s_Pos
-	MsgBeep ("Postoje NEZAKLJUCENI racuni iz starije smjene "+cSmjena+"!")
-	return (.f.)
-endif
+   IF cSmjena > s_Pos
+      MsgBeep ( "Postoje NEZAKLJUCENI racuni iz smjene " + cSmjena + "!" )
+      IF Pitanje(, "Zelite li nastaviti?", "N" ) == "N"
+         RETURN ( .F. )
+      ENDIF
+   ENDIF
 
-return (.t.)
-*}
+   IF cSmjena < s_Pos
+      MsgBeep ( "Postoje NEZAKLJUCENI racuni iz starije smjene " + cSmjena + "!" )
+      RETURN ( .F. )
+   ENDIF
+
+   RETURN ( .T. )
+// }
 
 
 
@@ -153,204 +157,207 @@ return (.t.)
  *  \param cSmjena
  */
 
-function ProvKonzBaze(dDatum, cSmjena)
-*{
-local dPrevDat
-local cPrevSmj
-local aRadnici:={}
-local n
+FUNCTION ProvKonzBaze( dDatum, cSmjena )
 
-if Empty(d_POS)
-	// nema nezakljucenog prometa u _POS
-	? dDatum, d_Doks, cSmjena, s_Doks
-	if (dDatum < d_DOKS) .or. (dDatum==d_DOKS) .and. (cSmjena < s_DOKS)
-		MsgBeep ("Postoji zakljucen promet na#datum "+FormDat1 (d_DOKS)+" u smjeni "+s_DOKS)
-		if Klevel > L_SYSTEM
-			MsgBeep ("Vracate se na unos!!!")
-			return (.f.)
-		else
-			MsgBeep ("Rad nastavlja SISTEM ADMINISTRATOR!!!")
-		endif
-	endif
-	if !(d_DOKS==dDatum .and. s_DOKS==cSmjena)
-		SELECT _POS
-		my_dbf_zap()
-	endif
-	return .t.
-endif
+   // {
+   LOCAL dPrevDat
+   LOCAL cPrevSmj
+   LOCAL aRadnici := {}
+   LOCAL nA
 
-if d_POS==dDatum
-	// ima nezakljucenog prometa
-	if cSmjena < s_Pos
-		MsgBeep ("Postoje NEZAKLJUCENI racuni iz starije smjene "+cSmjena+"!#"+"Vracate se na unos!!!")
-		CLOSE ALL
-		return (.f.)
-	endif
-	if gVsmjene=="D"
-		MsgBeep ("POTREBNO JE UNIJETI RACUNE KOJE STE IZDAVALI#"+"BEZ UNOSA U KASU", 20)
-	endif
-	CLOSE ALL
-	return (.t.)
-endif
+   IF Empty( d_POS )
+      // nema nezakljucenog prometa u _POS
+      ? dDatum, d_Doks, cSmjena, s_Doks
+      IF ( dDatum < d_DOKS ) .OR. ( dDatum == d_DOKS ) .AND. ( cSmjena < s_DOKS )
+         MsgBeep ( "Postoji zakljucen promet na#datum " + FormDat1 ( d_DOKS ) + " u smjeni " + s_DOKS )
+         IF Klevel > L_SYSTEM
+            MsgBeep ( "Vracate se na unos!!!" )
+            RETURN ( .F. )
+         ELSE
+            MsgBeep ( "Rad nastavlja SISTEM ADMINISTRATOR!!!" )
+         ENDIF
+      ENDIF
+      IF !( d_DOKS == dDatum .AND. s_DOKS == cSmjena )
+         SELECT _POS
+         my_dbf_zap()
+      ENDIF
+      RETURN .T.
+   ENDIF
 
-if gVsmjene=="N"
-	select _POS
-	my_dbf_zap()
-	return .t.
-endif
+   IF d_POS == dDatum
+      // ima nezakljucenog prometa
+      IF cSmjena < s_Pos
+         MsgBeep ( "Postoje NEZAKLJUCENI racuni iz starije smjene " + cSmjena + "!#" + "Vracate se na unos!!!" )
+         CLOSE ALL
+         RETURN ( .F. )
+      ENDIF
+      IF gVsmjene == "D"
+         MsgBeep ( "POTREBNO JE UNIJETI RACUNE KOJE STE IZDAVALI#" + "BEZ UNOSA U KASU", 20 )
+      ENDIF
+      CLOSE ALL
+      RETURN ( .T. )
+   ENDIF
 
-if Pitanje(,"Izvrsiti vanredno zakljucenje kase?","N")=="N"
-	MsgBeep ("Vracate se na definisanje datuma i smjene...", 30)
-	return .f.
-endif
+   IF gVsmjene == "N"
+      SELECT _POS
+      my_dbf_zap()
+      RETURN .T.
+   ENDIF
 
-// uzmi datum i smjenu iz _POS
-dPrevDat:=d_POS
-cPrevSmj:=s_POS
+   IF Pitanje(, "Izvrsiti vanredno zakljucenje kase?", "N" ) == "N"
+      MsgBeep ( "Vracate se na definisanje datuma i smjene...", 30 )
+      RETURN .F.
+   ENDIF
 
-// azuriraj nezakljucene
-o_pos_tables()
+   // uzmi datum i smjenu iz _POS
+   dPrevDat := d_POS
+   cPrevSmj := s_POS
 
-cVrijeme  := LEFT (TIME (), 5)
-cIdVrsteP := gGotPlac
+   // azuriraj nezakljucene
+   o_pos_tables()
 
-SELECT _POS
-Set order to tag "1"
-SEEK gIdPos
-do while !eof() .and. _POS->(IdPos+IdVd)==(gIdPos+VD_RN)
-	cRadRac := _POS->BrDok
-	Scatter ()
-	select pos_doks
-	cBrDok := _BrDok := pos_novi_broj_dokumenta( gIdPos, VD_RN )
-	_Vrijeme  := cVrijeme
-	_IdVrsteP := cIdVrsteP
-	_IdOdj    := SPACE (LEN (_IdOdj))
-	_M1       := OBR_NIJE
-	Append Blank
-	Gather()
-	SELECT _POS
-	while !eof() .and. _POS->(IdPos+IdVd+BrDok)==(gIdPos+VD_RN+cRadRac)
-		if _POS->m1=="Z"
-			SKIP
-			LOOP
-		endif
-		nRec := RECNO()
-		Scatter ()
-		_Kolicina := 0
-		do while !eof() .and. _POS->(IdPos+IdVd+BrDok)==(gIdPos+VD_RN+cRadRac).and._POS->(IdRoba+IdCijena)==(_IdRoba+_IdCijena) .and. ;
-  _POS->Cijena==_Cijena
-			if _POS->m1=="Z"
-				SKIP
-				LOOP
-			endif
-			_Kolicina += _POS->Kolicina
-			SKIP
-		enddo
-		_Prebacen := OBR_NIJE
-		SELECT POS
-		_BrDok    := cBrDok
-		_Vrijeme  := cVrijeme
-		_IdVrsteP := cIdVrsteP
-		Append Blank
-		Gather()
-		SELECT _POS
-		GO nRec
-		do While ! Eof() .and. _POS->(IdPos+IdVd+BrDok)==(gIdPos+VD_RN+cRadRac).and._POS->(IdRoba+IdCijena)==(_IdRoba+_IdCijena) .and. ;
-  			_POS->Cijena==_Cijena
-			if _POS->m1=="Z"
-				SKIP
-				LOOP
-			endif
-			REPLACE m1 WITH "Z"
-			SKIP
-		enddo
-	enddo
-enddo
+   cVrijeme  := Left ( Time (), 5 )
+   cIdVrsteP := gGotPlac
 
-SELECT _POS
-SEEK gIdPos+VD_RN
-do while !eof() .and. _POS->(IdPos+IdVd)==(gIdPos+VD_RN)
-	Del_Skip()
-enddo
+   SELECT _POS
+   SET ORDER TO TAG "1"
+   SEEK gIdPos
+   DO WHILE !Eof() .AND. _POS->( IdPos + IdVd ) == ( gIdPos + VD_RN )
+      cRadRac := _POS->BrDok
+      Scatter ()
+      SELECT pos_doks
+      cBrDok := _BrDok := pos_novi_broj_dokumenta( gIdPos, VD_RN )
+      _Vrijeme  := cVrijeme
+      _IdVrsteP := cIdVrsteP
+      _IdOdj    := Space ( Len ( _IdOdj ) )
+      _M1       := OBR_NIJE
+      APPEND BLANK
+      Gather()
+      SELECT _POS
+      WHILE !Eof() .AND. _POS->( IdPos + IdVd + BrDok ) == ( gIdPos + VD_RN + cRadRac )
+         IF _POS->m1 == "Z"
+            SKIP
+            LOOP
+         ENDIF
+         nRec := RecNo()
+         Scatter ()
+         _Kolicina := 0
+         DO WHILE !Eof() .AND. _POS->( IdPos + IdVd + BrDok ) == ( gIdPos + VD_RN + cRadRac ) .AND. _POS->( IdRoba + IdCijena ) == ( _IdRoba + _IdCijena ) .AND. ;
+               _POS->Cijena == _Cijena
+            IF _POS->m1 == "Z"
+               SKIP
+               LOOP
+            ENDIF
+            _Kolicina += _POS->Kolicina
+            SKIP
+         ENDDO
+         _Prebacen := OBR_NIJE
+         SELECT POS
+         _BrDok    := cBrDok
+         _Vrijeme  := cVrijeme
+         _IdVrsteP := cIdVrsteP
+         APPEND BLANK
+         Gather()
+         SELECT _POS
+         GO nRec
+         DO WHILE ! Eof() .AND. _POS->( IdPos + IdVd + BrDok ) == ( gIdPos + VD_RN + cRadRac ) .AND. _POS->( IdRoba + IdCijena ) == ( _IdRoba + _IdCijena ) .AND. ;
+               _POS->Cijena == _Cijena
+            IF _POS->m1 == "Z"
+               SKIP
+               LOOP
+            ENDIF
+            REPLACE m1 WITH "Z"
+            SKIP
+         ENDDO
+      ENDDO
+   ENDDO
 
-// prvo izvadim sve radnike koji su radili u predmetnoj smjeni
-select pos_doks
-set order to tag "2"
-Seek VD_RN+DTOS (dPrevDat)
-do while !eof() .and. pos_doks->IdVd=="42" .and. pos_doks->Datum==dPrevDat
-	n:=ASCAN (aRadnici, pos_doks->IdRadnik)
-	if n==0
-		AADD (aRadnici, pos_doks->IdRadnik)
-	endif
-	SKIP
-enddo
+   SELECT _POS
+   SEEK gIdPos + VD_RN
+   DO WHILE !Eof() .AND. _POS->( IdPos + IdVd ) == ( gIdPos + VD_RN )
+      Del_Skip()
+   ENDDO
 
-// podesim datum i smjenu
-SavegDatum:=gDatum
-SavegSmjena:=gSmjena
-gDatum:=dPrevDat
-gSmjena:=cPrevSmj
-SavegIdRadnik:=gIdRadnik
+   // prvo izvadim sve radnike koji su radili u predmetnoj smjeni
+   SELECT pos_doks
+   SET ORDER TO TAG "2"
+   SEEK VD_RN + DToS ( dPrevDat )
+   DO WHILE !Eof() .AND. pos_doks->IdVd == "42" .AND. pos_doks->Datum == dPrevDat
+      nA := AScan ( aRadnici, pos_doks->IdRadnik )
+      IF nA == 0
+         AAdd ( aRadnici, pos_doks->IdRadnik )
+      ENDIF
+      SKIP
+   ENDDO
 
-// realizacija radnika, pojedinacno, i kase (finansijski)
-for n:=1 to LEN(aRadnici)
-	gIdRadnik:=aRadnici[n]
-	realizacija_radnik(.t., "P", .t.)
-next
-gIdRadnik:=SavegIdRadnik
-realizacija_kase(.t.)
+   // podesim datum i smjenu
+   SavegDatum := gDatum
+   SavegSmjena := gSmjena
+   gDatum := dPrevDat
+   gSmjena := cPrevSmj
+   SavegIdRadnik := gIdRadnik
 
-// vrati datum i smjenu
-gDatum  := SavegDatum
-gSmjena := SavegSmjena
+   // realizacija radnika, pojedinacno, i kase (finansijski)
+   FOR n := 1 TO Len( aRadnici )
+      gIdRadnik := aRadnici[ n ]
+      realizacija_radnik( .T., "P", .T. )
+   NEXT
+   gIdRadnik := SavegIdRadnik
+   realizacija_kase( .T. )
 
-my_close_all_dbf()
+   // vrati datum i smjenu
+   gDatum  := SavegDatum
+   gSmjena := SavegSmjena
 
-return .t.
-*}
+   my_close_all_dbf()
+
+   RETURN .T.
+// }
 
 
 /*! \fn ZakljRadnik()
  *  \brief Zakljucenje radnika
  */
 
-function ZakljRadnik(Ch)
-*{
-local cIdSave
+FUNCTION ZakljRadnik( Ch )
 
-// M->Ch je iz OBJDB
-if Ch<>nil .and. M->Ch==0
-	return (DE_CONT)
-endif
-if LASTKEY()==K_ESC
-	return (DE_ABORT)
-endif
-if UPPER(CHR(LASTKEY())) == "Z"
-	if ROUND (ZAKSM->Otv, 4) <> 0
-    		MsgBeep ("#Zakljucenje radnika nije moguce!#"+"Postoje nezakljuceni racuni!!!#")
-    		return (DE_CONT)
-  	endif
-    	Beep (3)
-  	if !Pitanje(,"Zelite li zakljuciti radnika (D/N)?", " ")=="D"
-    		MsgBeep ("Radnik nije zakljucen!")
-    		return (DE_CONT)
-  	endif
-    	cIdSave := gIdRadnik
-  	gIdRadnik := ZAKSM->IdRadnik
-  	if !realizacija_radnik(.t.,"P",.t.)
-    		// nije uspio stampati pazar radnika, pa ga sad ne mogu ni zakljuciti
-    		MsgBeep("Nije uspjelo stampanje pazara!#Radnik nije zakljucen!")
-    		gIdRadnik := cIdSave
-    		SELECT ZAKSM
-    		return (DE_CONT)
-  	endif
-  	UkloniRadne(ZAKSM->IdRadnik)
-  	gIdRadnik := cIdSave
-  	SELECT ZAKSM
-  	my_delete_with_pack()
-  	return (DE_REFRESH)
-endif
-return (DE_CONT)
+   // {
+   LOCAL cIdSave
+
+   // M->Ch je iz OBJDB
+   IF Ch <> NIL .AND. M->Ch == 0
+      RETURN ( DE_CONT )
+   ENDIF
+   IF LastKey() == K_ESC
+      RETURN ( DE_ABORT )
+   ENDIF
+   IF Upper( Chr( LastKey() ) ) == "Z"
+      IF Round ( ZAKSM->Otv, 4 ) <> 0
+         MsgBeep ( "#Zakljucenje radnika nije moguce!#" + "Postoje nezakljuceni racuni!!!#" )
+         RETURN ( DE_CONT )
+      ENDIF
+      Beep ( 3 )
+      IF !Pitanje(, "Zelite li zakljuciti radnika (D/N)?", " " ) == "D"
+         MsgBeep ( "Radnik nije zakljucen!" )
+         RETURN ( DE_CONT )
+      ENDIF
+      cIdSave := gIdRadnik
+      gIdRadnik := ZAKSM->IdRadnik
+      IF !realizacija_radnik( .T., "P", .T. )
+         // nije uspio stampati pazar radnika, pa ga sad ne mogu ni zakljuciti
+         MsgBeep( "Nije uspjelo stampanje pazara!#Radnik nije zakljucen!" )
+         gIdRadnik := cIdSave
+         SELECT ZAKSM
+         RETURN ( DE_CONT )
+      ENDIF
+      UkloniRadne( ZAKSM->IdRadnik )
+      gIdRadnik := cIdSave
+      SELECT ZAKSM
+      my_delete_with_pack()
+      RETURN ( DE_REFRESH )
+   ENDIF
+
+   RETURN ( DE_CONT )
 
 
 
@@ -358,41 +365,43 @@ return (DE_CONT)
  *  \brief
  */
 
-function NovaSmjGas()
-*{
-local aOpcn[2]
-local nIzb
-local cOK:=" "
+FUNCTION NovaSmjGas()
 
-aOpcn [1] := "Otvori novu smjenu"
-aOpcn [2] := "Gasenje kase      "
+   // {
+   LOCAL aOpcn[ 2 ]
+   LOCAL nIzb
+   LOCAL cOK := " "
 
-do while .t.
-	nIzb:=KudaDalje ("ODABERITE NAREDNU AKCIJU", aOpcn)
-  	if nIzb == 1
-    		if gDatum==Date()
-      			gSmjena := STR (VAL (gSmjena)+1, 1)
-    		else
-      			// radio je staru smjenu, pa nek unese smjenu danasnjeg dana
-      			gDatum := DATE ()
-      			MsgBeep("#Zavrsili ste neregularno okoncanu smjenu!#"+"Unesite smjenu koju radite na danasnji dan!#", 30)
-      			Box(,5,30)
-      			while cOK<>"D"
-        			cOK:=" "
-        			@ m_x+1,m_y+1 SAY " Datum" GET gDatum WHEN .F.
-        			@ m_x+3,m_y+1 SAY "Smjena" GET gSmjena VALID gSmjena $ "123"
-        			@ m_x+5,m_y+1 SAY "Unos u redu (D/N)" GET cOK PICT "@!" VALID cOK $ "DN"
-        			READ
-      			enddo
-      			BoxC()
-    		endif
-    		Exit
-  	elseif nIzb==2
-    		goModul:quit()
-  	endif
-enddo
-pos_status_traka()
-return
+   aOpcn[1 ] := "Otvori novu smjenu"
+   aOpcn[2 ] := "Gasenje kase      "
+
+   DO WHILE .T.
+      nIzb := KudaDalje ( "ODABERITE NAREDNU AKCIJU", aOpcn )
+      IF nIzb == 1
+         IF gDatum == Date()
+            gSmjena := Str ( Val ( gSmjena ) + 1, 1 )
+         ELSE
+            // radio je staru smjenu, pa nek unese smjenu danasnjeg dana
+            gDatum := Date ()
+            MsgBeep( "#Zavrsili ste neregularno okoncanu smjenu!#" + "Unesite smjenu koju radite na danasnji dan!#", 30 )
+            Box(, 5, 30 )
+            WHILE cOK <> "D"
+               cOK := " "
+               @ m_x + 1, m_y + 1 SAY " Datum" GET gDatum WHEN .F.
+               @ m_x + 3, m_y + 1 SAY "Smjena" GET gSmjena VALID gSmjena $ "123"
+               @ m_x + 5, m_y + 1 SAY "Unos u redu (D/N)" GET cOK PICT "@!" VALID cOK $ "DN"
+               READ
+            ENDDO
+            BoxC()
+         ENDIF
+         EXIT
+      ELSEIF nIzb == 2
+         goModul:quit()
+      ENDIF
+   ENDDO
+   pos_status_traka()
+
+   RETURN
 
 
 
@@ -400,46 +409,48 @@ return
  *  \brief Otvaranje smjene
  */
 
-function OtvoriSmjenu()
-*{
-local fImaNezak:=.f.
+FUNCTION OtvoriSmjenu()
 
-if gVSmjene=="N"
-	MsgBeep("Promet kase se ne vodi po smjenama!")
-  	return
-endif
+   // {
+   LOCAL fImaNezak := .F.
 
-// potrazi ima li nezakljucenih radnika i obavjesti
+   IF gVSmjene == "N"
+      MsgBeep( "Promet kase se ne vodi po smjenama!" )
+      RETURN
+   ENDIF
 
-O__POS
-Seek gIdPos+VD_RN
+   // potrazi ima li nezakljucenih radnika i obavjesti
 
-if FOUND()
-	fImaNezak:=.t.
-  	MsgBeep ("Postoje nezakljuceni radnici!!!")
-  	if Pitanje(,"Zelite li nastaviti s otvaranjem smjene!", " ")=="N"
-   		my_close_all_dbf()
-		return
-  	endif
-endif
+   O__POS
+   SEEK gIdPos + VD_RN
 
-if fImaNezak
-	MsgBeep("Kada zakljucite nezakljucene radnike,#"+"Pazar smjene uradite u opciji#"+"IZVJESTAJI / REALIZACIJA / KASE#"+"zadajuci smjenu ciji pazar nije odstampan!")
-else
-	// odstampam ubiljezeni pazar smjene
-  	Close All
-  	if !realizacija_kase(.t.)
-    		MsgBeep ("#Stampanje pazara smjene nije uspjelo!#")
-    		my_close_all_dbf()
-			return 0
-  	endif
-  	if gModul=="HOPS"
-    		// generisi utrosak sirovina za smjenu
-    		GenUtrSir(gDatum,gDatum,gSmjena)
-  	endif
-endif
+   IF Found()
+      fImaNezak := .T.
+      MsgBeep ( "Postoje nezakljuceni radnici!!!" )
+      IF Pitanje(, "Zelite li nastaviti s otvaranjem smjene!", " " ) == "N"
+         my_close_all_dbf()
+         RETURN
+      ENDIF
+   ENDIF
 
-gSmjena:=STR(VAL(gSmjena)+1,LEN(gSmjena))
-MsgBeep("Otvorena je smjena "+gSmjena)
-my_close_all_dbf()
-return
+   IF fImaNezak
+      MsgBeep( "Kada zakljucite nezakljucene radnike,#" + "Pazar smjene uradite u opciji#" + "IZVJESTAJI / REALIZACIJA / KASE#" + "zadajuci smjenu ciji pazar nije odstampan!" )
+   ELSE
+      // odstampam ubiljezeni pazar smjene
+      CLOSE ALL
+      IF !realizacija_kase( .T. )
+         MsgBeep ( "#Stampanje pazara smjene nije uspjelo!#" )
+         my_close_all_dbf()
+         RETURN 0
+      ENDIF
+      IF gModul == "HOPS"
+         // generisi utrosak sirovina za smjenu
+         GenUtrSir( gDatum, gDatum, gSmjena )
+      ENDIF
+   ENDIF
+
+   gSmjena := Str( Val( gSmjena ) + 1, Len( gSmjena ) )
+   MsgBeep( "Otvorena je smjena " + gSmjena )
+   my_close_all_dbf()
+
+   RETURN

@@ -370,7 +370,11 @@ FUNCTION fill_dbf_from_server( dbf_table, sql_query, sql_fetch_time, dbf_write_t
       IF File( cFullIdx )
          dbSetIndex( cFullIdx )
       ENDIF
+
+   ELSE
+      ?E "syncalias ", cSyncAlias, "vec otvoren ?!"
    ENDIF
+
 
    DO WHILE !_qry_obj:Eof()
 
@@ -378,6 +382,10 @@ FUNCTION fill_dbf_from_server( dbf_table, sql_query, sql_fetch_time, dbf_write_t
       APPEND BLANK
 
       FOR _i := 1 TO Len( aDbfFields )
+
+         IF log_level() > 8
+            ?E "fill_dbf:", dbf_table, "a_dbf_rec dbf_fields: ", pp( aDbfFields )
+         ENDIF
 
          _fld := FieldBlock( aDbfFields[ _i ] )
 

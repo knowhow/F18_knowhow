@@ -40,7 +40,7 @@ FUNCTION P_Radn( cId, dx, dy )
 
 
    // filterisanje tabele radnika
-   _radn_filter( .T. )
+   aktivni_radnici_filter( .T. )
 
    ImeKol := {}
    AAdd( ImeKol, { Lokal( PadR( "Id", 6 ) ), {|| field->id }, "id", {|| .T. }, {|| vpsifra( wId, "1" ) } } )
@@ -167,13 +167,12 @@ FUNCTION P_Radn( cId, dx, dy )
 // ------------------------------------------
 // filterisanje tabele radnika
 // ------------------------------------------
-STATIC FUNCTION _radn_filter( lFiltered )
+STATIC FUNCTION aktivni_radnici_filter( lFiltered )
 
    LOCAL cFilter := ""
 
-   PushWa()
 
-   IF radn->( FieldPos( "aktivan" ) ) = 0
+   IF radn->( FieldPos( "aktivan" ) ) == 0
       RETURN .F.
    ENDIF
 
@@ -194,7 +193,6 @@ STATIC FUNCTION _radn_filter( lFiltered )
       GO TOP
    ENDIF
 
-   PopWa()
 
    RETURN .T.
 
@@ -381,11 +379,11 @@ FUNCTION RadBl( Ch )
 
       IF Empty( cTmp )
          MsgBeep( "prikazuju se samo aktivni radnici ..." )
-         _radn_filter( .T. )
+         aktivni_radnici_filter( .T. )
          RETURN DE_REFRESH
       ELSE
          MsgBeep( "vracam filter na sve radnike ...." )
-         _radn_filter( .F. )
+         aktivni_radnici_filter( .F. )
          RETURN DE_REFRESH
       ENDIF
 

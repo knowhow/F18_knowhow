@@ -1,65 +1,66 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+/*
+ * This file is part of the bring.out knowhow ERP, a free and open source
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
 
-
 #include "f18.ch"
 
-function Get1_IM()
-local nFaktVPC
 
-_DatFaktP:=_datdok
+FUNCTION Get1_IM()
 
-@ m_x+8,m_y+2  SAY "Konto koji zaduzuje" GET _IdKonto valid  P_Konto(@_IdKonto,21,5) pict "@!"
-if gNW<>"X"
-    @ m_x+8,m_y+35  SAY "Zaduzuje: "   GET _IdZaduz  pict "@!" valid empty(_idZaduz) .or. P_Firma(@_IdZaduz,21,5)
-endif
-READ
-ESC_RETURN K_ESC
+   LOCAL nFaktVPC
 
-@ m_x+10,m_y+66 SAY "Tarif.br-v"
+   _DatFaktP := _datdok
 
-if lKoristitiBK
-    @ m_x+11,m_y+2 SAY "Artikal  " GET _IdRoba PICT "@!S10" WHEN {|| _idRoba:=PADR(_idRoba,VAL(gDuzSifIni)),.t.} VALID {|| P_Roba(@_IdRoba), Reci(11,23,trim(LEFT(roba->naz,40))+" ("+ROBA->jmj+")",40), _IdTarifa:=iif(fNovi, ROBA->idtarifa, _IdTarifa), .t.}
-else
-    @ m_x+11,m_y+2 SAY "Artikal  " GET _IdRoba PICT "@!" VALID {|| P_Roba(@_IdRoba), Reci(11,23,trim(LEFT(roba->naz,40))+" ("+ROBA->jmj+")",40), _IdTarifa:=iif(fNovi, ROBA->idtarifa, _IdTarifa), .t.}
-endif
-@ m_x+11,m_y+70 GET _IdTarifa when gPromTar=="N" valid P_Tarifa(@_IdTarifa)
+   @ m_x + 8, m_y + 2  SAY "Konto koji zaduzuje" GET _IdKonto VALID  P_Konto( @_IdKonto, 21, 5 ) PICT "@!"
+   IF gNW <> "X"
+      @ m_x + 8, m_y + 35  SAY "Zaduzuje: "   GET _IdZaduz  PICT "@!" VALID Empty( _idZaduz ) .OR. P_Firma( @_IdZaduz, 21, 5 )
+   ENDIF
+   READ
+   ESC_RETURN K_ESC
 
-READ
-ESC_RETURN K_ESC
-if lKoristitiBK
-    _idRoba:=Left(_idRoba, 10)
-endif
+   @ m_x + 10, m_y + 66 SAY "Tarif.br-v"
 
-SELECT tarifa
-HSEEK _IdTarifa
-SELECT kalk_pripr
+   IF lKoristitiBK
+      @ m_x + 11, m_y + 2 SAY "Artikal  " GET _IdRoba PICT "@!S10" WHEN {|| _idRoba := PadR( _idRoba, Val( gDuzSifIni ) ), .T. } VALID {|| P_Roba( @_IdRoba ), Reci( 11, 23, Trim( Left( roba->naz, 40 ) ) + " (" + ROBA->jmj + ")", 40 ), _IdTarifa := iif( fNovi, ROBA->idtarifa, _IdTarifa ), .T. }
+   ELSE
+      @ m_x + 11, m_y + 2 SAY "Artikal  " GET _IdRoba PICT "@!" VALID {|| P_Roba( @_IdRoba ), Reci( 11, 23, Trim( Left( roba->naz, 40 ) ) + " (" + ROBA->jmj + ")", 40 ), _IdTarifa := iif( fNovi, ROBA->idtarifa, _IdTarifa ), .T. }
+   ENDIF
+   @ m_x + 11, m_y + 70 GET _IdTarifa WHEN gPromTar == "N" VALID P_Tarifa( @_IdTarifa )
 
-DuplRoba()
-@ m_x+13,m_y+2   SAY "Knjizna kolicina " GET _GKolicina PICTURE PicKol WHEN {|| IIF(gMetodaNC==" ",.t.,.f.)}
-@ m_x+13,col()+2 SAY "Popisana Kolicina" GET _Kolicina PICTURE PicKol
-@ m_x+15,m_y+2    SAY "CIJENA" GET _vpc pict picdem
+   READ
+   ESC_RETURN K_ESC
+   IF lKoristitiBK
+      _idRoba := Left( _idRoba, 10 )
+   ENDIF
 
-READ
-ESC_RETURN K_ESC
+   SELECT tarifa
+   HSEEK _IdTarifa
+   SELECT kalk_pripr
 
-_MKonto:=_Idkonto
+   DuplRoba()
+   @ m_x + 13, m_y + 2   SAY "Knjizna kolicina " GET _GKolicina PICTURE PicKol WHEN {|| iif( gMetodaNC == " ", .T., .F. ) }
+   @ m_x + 13, Col() + 2 SAY "Popisana Kolicina" GET _Kolicina PICTURE PicKol
+   @ m_x + 15, m_y + 2    SAY "CIJENA" GET _vpc PICT picdem
 
-// inventura
-_MU_I:="I"     
+   READ
+   ESC_RETURN K_ESC
 
-_PKonto:=""
-_PU_I:=""
+   _MKonto := _Idkonto
 
-nStrana:=3
+   // inventura
+   _MU_I := "I"
 
-return LASTKEY()
-*}
+   _PKonto := ""
+   _PU_I := ""
+
+   nStrana := 3
+
+   RETURN LastKey()
+// }

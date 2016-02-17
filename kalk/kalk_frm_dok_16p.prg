@@ -89,7 +89,7 @@ FUNCTION Get1_16PDV()
    SELECT kalk_pripr
    _MKonto := _Idkonto; _MU_I := "1"
 
-   IF gVarEv == "1"          
+   IF gVarEv == "1"
       DatPosljK()
       DuplRoba()
       _GKolicina := 0
@@ -140,7 +140,7 @@ FUNCTION Get1_16PDV()
 
          ENDIF
 
-      ELSE 
+      ELSE
          READ
          _VPC := _nc; marza := 0
       ENDIF
@@ -262,3 +262,30 @@ FUNCTION Get1_16bPDV()
    nStrana := 3
 
    RETURN LastKey()
+
+
+
+
+/*
+  *   Svodjenje kolicine u protustavci da bi se dobila ista vrijednost (kada su cijene u stavci i protustavci razlicite)
+*/
+
+STATIC FUNCTION SvediM( cSvedi )
+
+   IF koncij->naz == "N1"
+      _VPC := _NC
+   ENDIF
+   IF csvedi == "S"
+      IF _vpc <> 0
+         _kolicina := -Round( _oldval / _vpc, 4 )
+      ELSE
+         _kolicina := 99999999
+      ENDIF
+      IF _kolicina <> 0
+         _nc := Abs( _oldvaln / _kolicina )
+      ELSE
+         _nc := 0
+      ENDIF
+   ENDIF
+
+   RETURN .T.

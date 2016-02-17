@@ -1,14 +1,13 @@
 /*
- * This file is part of the bring.out FMK, a free and open source
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+ * This file is part of the bring.out knowhow ERP, a free and open source
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
-
 
 #include "f18.ch"
 
@@ -56,14 +55,14 @@ FUNCTION Get1_18()
    IF !Empty( gmetodaNC ) .AND. _TBankTr <> "X"
       MsgO( "Racunam kolicinu robe na skladistu" )
       IF gKolicFakt == "D"
-         KalkNaF( _idroba, @_kolicina ) 
+         KalkNaF( _idroba, @_kolicina )
       ELSE
          KalkNab( _idfirma, _idroba, _idkonto, @_kolicina, NIL, NIL, NIL, @dDatNab )
       ENDIF
       MsgC()
    ENDIF
    IF dDatNab > _DatDok; Beep( 1 );Msg( "Datum nabavke je " + DToC( dDatNab ), 4 );ENDIF
-      
+
    @ m_x + 12, m_y + 2   SAY "Kolicina " GET _Kolicina PICTURE PicKol VALID _kolicina > 0
 
    IF fnovi .AND. gMagacin == "2" .AND. _TBankTr <> "X"
@@ -134,11 +133,10 @@ FUNCTION Get1_18()
    _gkolicina := _gkolicin2 := _mpc := 0
 
    _MKonto := _Idkonto
-   _MU_I := "3"     
+   _MU_I := "3"
    _PKonto := ""
    _PU_I := ""
 
    nStrana := 3
 
    RETURN LastKey()
-

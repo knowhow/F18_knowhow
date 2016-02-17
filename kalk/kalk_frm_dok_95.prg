@@ -183,11 +183,7 @@ FUNCTION Get1_95()
             ENDIF
             _PNAP := 0
 
-            IF gMagacin == "1" .AND. !IsPDV()
-               // ovu cijenu samo prikazati ako se vodi po nabavnim cijenama
-               _VPCSAPPP := 0
-            ENDIF
-
+          
             IF IsPDV() .AND. gPDVMagNab == "N"
 
                _mpcsapp := roba->mpc

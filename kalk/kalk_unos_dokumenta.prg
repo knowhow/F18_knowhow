@@ -2396,15 +2396,9 @@ FUNCTION kalk_stampa_dokumenta()
 
 
          ELSEIF ( cidvd $ "11#12#13" )
-            IF ( c10Var == "3" )
-               StKalk11_3()
-            ELSE
-               IF ( gmagacin == "1" )
-                  StKalk11_1()
-               ELSE
+
                   StKalk11_2()
-               ENDIF
-            ENDIF
+            
          ELSEIF ( cidvd $ "14#94#74#KO" )
             StKalk14PDV()
 

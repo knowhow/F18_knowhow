@@ -364,7 +364,7 @@ FUNCTION sql_order_from_key_fields( dbf_key_fields )
 // dbf-a
 // rec["dbf_fields"]
 // ----------------------------------------------
-FUNCTION set_dbf_fields_from_struct( rec )
+FUNCTION set_dbf_fields_from_struct( xRec )
 
    LOCAL lTabelaOtvorenaOvdje := .F.
    LOCAL _dbf
@@ -373,30 +373,45 @@ FUNCTION set_dbf_fields_from_struct( rec )
 
    LOCAL lSql
    LOCAL nI, cMsg
+   LOCAL hRec
 
-   lSql := hb_HHasKey( rec, "sql" ) .AND. ValType( rec[ "sql" ] ) == "L"  .AND. rec[ "sql" ]
+   IF ValType( xRec ) == "C"
+#ifdef F18_DEBUG
+      ?E "set_dbf_fields xRec=", xRec
+#endif
+      IF hb_HHasKey( __f18_dbfs, xRec )
+        hRec := __f18_dbfs[ xRec ]
+      ELSE
+        ?E "set_dbf_fields tabela ", xRec, "nije u a_dbf_rec"
+        RETURN .F.
+      ENDIF
+   ELSE
+      hRec := xRec
+   ENDIF
 
-   IF rec[ "temp" ]  // ovi podaci ne trebaju za temp tabele
+   lSql := hb_HHasKey( hRec, "sql" ) .AND. ValType( hRec[ "sql" ] ) == "L"  .AND. hRec[ "sql" ]
+
+   IF hRec[ "temp" ]  // ovi podaci ne trebaju za temp tabele
       RETURN .F.
    ENDIF
 
    PushWA()
-   SELECT ( rec[ "wa" ] )
+   SELECT ( hRec[ "wa" ] )
 
    IF !Used() .AND. !lSql
 
-      _dbf := my_home() + rec[ "table" ]
+      _dbf := my_home() + hRec[ "table" ]
       BEGIN SEQUENCE WITH {| err| err:cargo :=  Break( err ) }
 
-         dbUseArea( .F., DBFENGINE, _dbf, rec[ "alias" ], .T., .F. )
+         dbUseArea( .F., DBFENGINE, _dbf, hRec[ "alias" ], .T., .F. )
 
       RECOVER using _err
 
          // tabele ocigledno nema, tako da se struktura ne moze utvrditi
-         rec[ "dbf_fields" ]     := NIL
-         rec[ "dbf_fields_len" ] := NIL
+         hRec[ "dbf_fields" ]     := NIL
+         hRec[ "dbf_fields_len" ] := NIL
 
-         cLogMsg := "ERR-DBF: " + _err:description + ": tbl:" + my_home() + rec[ "table" ] + " alias:" + rec[ "alias" ] + " se ne moze otvoriti ?!"
+         cLogMsg := "ERR-DBF: " + _err:description + ": tbl:" + my_home() + hRec[ "table" ] + " alias:" + hRec[ "alias" ] + " se ne moze otvoriti ?!"
          LOG_CALL_STACK cLogMsg
 
          log_write( cLogMsg, 5 )
@@ -408,11 +423,11 @@ FUNCTION set_dbf_fields_from_struct( rec )
 
 
    IF !Used() .AND. lSql
-      rec[ "dbf_fields" ]     := NIL
-      rec[ "dbf_fields_len" ] := NIL
+      hRec[ "dbf_fields" ]     := NIL
+      hRec[ "dbf_fields_len" ] := NIL
    ELSE
-      rec[ "dbf_fields" ] := NIL
-      set_rec_from_dbstruct( @rec )
+      hRec[ "dbf_fields" ] := NIL
+      set_rec_from_dbstruct( @hRec )
    ENDIF
 
    IF lTabelaOtvorenaOvdje

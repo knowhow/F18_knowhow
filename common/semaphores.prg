@@ -354,7 +354,7 @@ FUNCTION fill_dbf_from_server( dbf_table, sql_query, sql_fetch_time, dbf_write_t
    log_write( "fill_dbf_from_server START", 9 )
 
    IF log_level() > 5
-      ?E "fill_dbf:", dbf_table, "a_dbf_rec dbf_fiels: ", pp( _dbf_fields )
+      ?E "fill_dbf:", dbf_table, "a_dbf_rec dbf_fields: ", pp( _dbf_fields )
    ENDIF
 
    dbf_write_time := Seconds()

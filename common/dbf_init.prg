@@ -21,8 +21,7 @@ FUNCTION dbf_init( aDbf, cTableName, cAlias )
    IF !File( f18_ime_dbf( cAlias ) )
       DBCREATE2( cAlias, aDbf )
       reset_semaphore_version( cTableName )
-      hRec := get_a_dbf_rec( cTableName, .T. )
-      set_dbf_fields_from_struct( hRec )
+      set_dbf_fields_from_struct( cTableName )
    ENDIF
 
    RETURN .T.

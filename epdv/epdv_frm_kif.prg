@@ -56,7 +56,7 @@ STATIC FUNCTION set_a_kol_kif( aKol, aImeKol )
    AAdd( aImeKol, { PadR( "Tarifa", 6 ), {|| id_tar }, "id_tar", {|| .T. }, {|| .T. } } )
 
    AAdd( aImeKol, { PadR( "Kupac", 19 ), {|| PadR( s_partner( id_part ), 17 ) + ".." }, "opis", {|| .T. }, {|| .T. } } )
-   AAdd( aImeKol, { PadR( "Br.dob - Opis", 17 ), {|| PadR( AllTrim( src_br_2 ) + "-" + opis, 15 ) + ".." }, "", {|| .T. }, {|| .T. } } )
+   AAdd( aImeKol, { PadR( "Broj dobavljaca - opis", 37 ), {|| PadR( AllTrim( src_br_2 ) + "-" + opis, 35 ) + ".." }, "", {|| .T. }, {|| .T. } } )
    AAdd( aImeKol, { "Izn.b.pdv", {|| Transform( i_b_pdv, PIC_IZN() ) }, "i_b_pdv", {|| .T. }, {|| .T. } } )
    AAdd( aImeKol, { "Izn.pdv", {|| Transform( i_pdv, PIC_IZN() ) }, "i_pdv", {|| .T. }, {|| .T. } } )
    AAdd( aImeKol, { "Izn.s.pdv", {|| Transform( i_b_pdv + i_pdv, PIC_IZN() ) }, "", {|| .T. }, {|| .T. } } )
@@ -66,7 +66,7 @@ STATIC FUNCTION set_a_kol_kif( aKol, aImeKol )
       AAdd( aKol, i )
    NEXT
 
-   RETURN
+   RETURN .T.
 
 
 STATIC FUNCTION epdv_kif_edit_item( lNova )

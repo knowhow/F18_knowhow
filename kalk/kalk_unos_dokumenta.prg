@@ -617,11 +617,13 @@ FUNCTION kalk_unos_nova_stavka()
 
    _TMarza := "A"
 
-   IF field->IdVd == "PR"
+   /*
+   IF field->IdVd == "PR"  FIX: back old PR
       SET FILTER TO Val( field->rBr ) < 10
    ELSE
       SET FILTER TO
    ENDIF
+   */
 
    GO BOTTOM
    IF Left( field->idkonto2, 3 ) = "XXX"
@@ -1317,7 +1319,7 @@ FUNCTION kalk_unos_1( fNovi, atrib )
 
    SELECT kalk_pripr
    SET FILTER TO
-   
+
    IF _idvd == "10"
 
       RETURN Get1_10PDV()
@@ -1377,7 +1379,8 @@ FUNCTION kalk_unos_1( fNovi, atrib )
       RETURN GET1_RN()
 
    ELSEIF _idvd == "PR"
-      RETURN kalk_unos_dok_pr()
+
+      RETURN get1_PR() // FIX: back old "PR"
    ELSE
       RETURN K_ESC
    ENDIF
@@ -2460,7 +2463,9 @@ FUNCTION kalk_stampa_dokumenta()
             ENDIF
             StkalkRN()
          ELSEIF ( cidvd == "PR" )
-            st_kalk_dokument_pr()
+            StKalkPR() //  FIX: back old PR  st_kalk_dokument_pr()
+
+
          ENDIF
 
          IF ( cSeek != 'IZDOKS' )

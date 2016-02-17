@@ -26,5 +26,4 @@ FUNCTION VtPorezi()
    PUBLIC _MPP   := 0
    PUBLIC _DLRUC := 0
 
-   RETURN
-
+   RETURN .T.

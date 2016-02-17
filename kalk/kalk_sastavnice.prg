@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -17,350 +17,356 @@
 // --------------------------------
 // lista sastavnica
 // --------------------------------
-function g_sast_list()
-local cMarker
-local cKto
-local lExpDbf := .f.
-local cExpDbf
-local nVar := 2
+FUNCTION g_sast_list()
 
-// uslovi exporta
-if  _get_vars( @cMarker, @cKto, @cExpDbf ) == 0
-	return
-endif
+   LOCAL cMarker
+   LOCAL cKto
+   LOCAL lExpDbf := .F.
+   LOCAL cExpDbf
+   LOCAL nVar := 2
 
-if cExpDbf == "D"
-	lExpDbf := .t.
-endif
+   // uslovi exporta
+   IF  _get_vars( @cMarker, @cKto, @cExpDbf ) == 0
+      RETURN
+   ENDIF
 
-
-// kreiraj kroz export tabelu ovaj pregled....
-aFields := _g_fields()
-t_exp_create( aFields )
-
-O_R_EXP
-
-// kreiraj i privremeni index
-index on r_export->idsast tag "1"
+   IF cExpDbf == "D"
+      lExpDbf := .T.
+   ENDIF
 
 
-// sada kada imas sve uslove, napravi selekciju
-O_ROBA
-O_SAST
+   // kreiraj kroz export tabelu ovaj pregled....
+   aFields := _g_fields()
+   t_exp_create( aFields )
 
-select sast
-set order to tag "IDRBR"
-go top
+   O_R_EXP
 
-
-Box(, 3, 60)
-
-@ m_x + 1, m_y + 2 SAY "sortiram podatke....."
+   // kreiraj i privremeni index
+   INDEX ON r_export->idsast TAG "1"
 
 
-do while !EOF()
+   // sada kada imas sve uslove, napravi selekciju
+   O_ROBA
+   O_SAST
 
-	cRoba := field->id
-
-	select roba
-	go top
-	seek cRoba
-
-	if FOUND() .and. field->id == cRoba 
-		
-		if !EMPTY(cMarker) .and. field->k1 <> cMarker
-			
-			select sast
-			skip
-			loop
-			
-		endif
-		
-	else
-		
-		select sast
-		skip
-		loop
-		
-	endif
-
-	select sast
-	
-	do while !EOF() .and. field->id == cRoba
-
-		fill_exp_tbl( sast->id2, _art_naz(sast->id2), ;
-				sast->kolicina, 0 )
-	
-		@ m_x + 3, m_y + 2 SAY "sastavnica: " + sast->id2
-		
-		skip
-	enddo
-	
-enddo
-
-// sada izracunaj stanja za sve u r_export
-select r_export
-set order to tag "1"
-
-go top
-
-my_flock()
-
-do while !EOF()
-
-	// izracunaj stanje
-	replace field->stanje with g_kalk_stanje( field->idsast, cKto )
-
-	if field->kol > 0 .and. field->stanje <= field->kol
-		replace field->total with field->kol - field->stanje
-	else
-		replace field->total with 0
-	endif
-
-	skip
-
-enddo
-
-my_unlock()
-
-BoxC()
-
-// i sada daj report
-// .....
-
-if EMPTY( cKto )
-	nVar := 1
-endif
+   SELECT sast
+   SET ORDER TO TAG "IDRBR"
+   GO TOP
 
 
-r_sast_list( cMarker, nVar )
+   Box(, 3, 60 )
+
+   @ m_x + 1, m_y + 2 SAY "sortiram podatke....."
 
 
-if lExpDbf == .t.
-	tbl_export()
-endif
+   DO WHILE !Eof()
 
-return
+      cRoba := field->id
+
+      SELECT roba
+      GO TOP
+      SEEK cRoba
+
+      IF Found() .AND. field->id == cRoba
+
+         IF !Empty( cMarker ) .AND. field->k1 <> cMarker
+
+            SELECT sast
+            SKIP
+            LOOP
+
+         ENDIF
+
+      ELSE
+
+         SELECT sast
+         SKIP
+         LOOP
+
+      ENDIF
+
+      SELECT sast
+
+      DO WHILE !Eof() .AND. field->id == cRoba
+
+         fill_exp_tbl( sast->id2, _art_naz( sast->id2 ), ;
+            sast->kolicina, 0 )
+
+         @ m_x + 3, m_y + 2 SAY "sastavnica: " + sast->id2
+
+         SKIP
+      ENDDO
+
+   ENDDO
+
+   // sada izracunaj stanja za sve u r_export
+   SELECT r_export
+   SET ORDER TO TAG "1"
+
+   GO TOP
+
+   my_flock()
+
+   DO WHILE !Eof()
+
+      // izracunaj stanje
+      REPLACE field->stanje WITH g_kalk_stanje( field->idsast, cKto )
+
+      IF field->kol > 0 .AND. field->stanje <= field->kol
+         REPLACE field->TOTAL WITH field->kol - field->stanje
+      ELSE
+         REPLACE field->TOTAL WITH 0
+      ENDIF
+
+      SKIP
+
+   ENDDO
+
+   my_unlock()
+
+   BoxC()
+
+   // i sada daj report
+   // .....
+
+   IF Empty( cKto )
+      nVar := 1
+   ENDIF
+
+
+   r_sast_list( cMarker, nVar )
+
+
+   IF lExpDbf == .T.
+      tbl_export()
+   ENDIF
+
+   RETURN
 
 
 
 // ------------------------------------------
 // report sastavnice
 // ------------------------------------------
-static function r_sast_list( cMarker, nVar )
-local cSpace := SPACE(2)
-local cLine
-local i
+STATIC FUNCTION r_sast_list( cMarker, nVar )
 
-START PRINT CRET
+   LOCAL cSpace := Space( 2 )
+   LOCAL cLine
+   LOCAL i
 
-select r_export
-set order to tag "1"
-go top
+   START PRINT CRET
 
-i := 0
+   SELECT r_export
+   SET ORDER TO TAG "1"
+   GO TOP
 
-?
+   i := 0
 
-P_COND
+   ?
 
-? cSpace + "Specifikacija sastavnica po oznaci"
-? cSpace + "Oznaka: " + cMarker
-?
+   P_COND
 
-cLine := cSpace + REPLICATE("-", 5) + SPACE(1) + REPLICATE("-", 10) + ;
-	SPACE(1) + ;
-	REPLICATE("-", 40) + SPACE(1) + REPLICATE("-", 10) + ;
-	IIF( nVar == 2, SPACE(1) + REPLICATE("-", 10) + SPACE(1) + ;
-	REPLICATE("-", 10) , "" )
+   ? cSpace + "Specifikacija sastavnica po oznaci"
+   ? cSpace + "Oznaka: " + cMarker
+   ?
+
+   cLine := cSpace + Replicate( "-", 5 ) + Space( 1 ) + Replicate( "-", 10 ) + ;
+      Space( 1 ) + ;
+      Replicate( "-", 40 ) + Space( 1 ) + Replicate( "-", 10 ) + ;
+      iif( nVar == 2, Space( 1 ) + Replicate( "-", 10 ) + Space( 1 ) + ;
+      Replicate( "-", 10 ), "" )
 
 
 
-? cLine
+   ? cLine
 
-? cSpace + PADR("R.br", 5), PADR("Sifra", 10), PADR("Naziv", 40), PADR("Kol.po", 10), IF( nVar == 2, PADR("Stanje", 10) + SPACE(1) + PADR("Ukupno", 10), "" )
-? cSpace + PADR("", 5), PADR("", 10), PADR("", 40), PADR("sastav.", 10), IF( nVar == 2, PADR("po kart.", 10) + SPACE(1) + PADR("", 10), "")
-? cSpace + PADR("", 5), PADR("", 10), PADR("", 40), PADC("(1)", 10), IF( nVar == 2, PADC("(2)", 10) + SPACE(1) + PADC("(1-2)", 10) , "")
+   ? cSpace + PadR( "R.br", 5 ), PadR( "Sifra", 10 ), PadR( "Naziv", 40 ), PadR( "Kol.po", 10 ), IF( nVar == 2, PadR( "Stanje", 10 ) + Space( 1 ) + PadR( "Ukupno", 10 ), "" )
+   ? cSpace + PadR( "", 5 ), PadR( "", 10 ), PadR( "", 40 ), PadR( "sastav.", 10 ), IF( nVar == 2, PadR( "po kart.", 10 ) + Space( 1 ) + PadR( "", 10 ), "" )
+   ? cSpace + PadR( "", 5 ), PadR( "", 10 ), PadR( "", 40 ), PadC( "(1)", 10 ), IF( nVar == 2, PadC( "(2)", 10 ) + Space( 1 ) + PadC( "(1-2)", 10 ), "" )
 
-? cLine
+   ? cLine
 
-do while !EOF()
+   DO WHILE !Eof()
 
-	? cSpace + STR( ++i, 4 ) + ")"
-	
-	@ prow(), pcol() + 1 SAY field->idsast
-	@ prow(), pcol() + 1 SAY field->naz
-	@ prow(), pcol() + 1 SAY STR(field->kol, 10, 2)
-	
-	if nVar == 2
-		
-		@ prow(), pcol() + 1 SAY STR(field->stanje, 10, 2)
-		@ prow(), pcol() + 1 SAY STR(field->total, 10, 2)
-		
-	endif
+      ? cSpace + Str( ++i, 4 ) + ")"
 
-	skip
-enddo
+      @ PRow(), PCol() + 1 SAY field->idsast
+      @ PRow(), PCol() + 1 SAY field->naz
+      @ PRow(), PCol() + 1 SAY Str( field->kol, 10, 2 )
 
-? cLine
+      IF nVar == 2
 
-FF
-ENDPRINT
+         @ PRow(), PCol() + 1 SAY Str( field->stanje, 10, 2 )
+         @ PRow(), PCol() + 1 SAY Str( field->total, 10, 2 )
 
-return
+      ENDIF
+
+      SKIP
+   ENDDO
+
+   ? cLine
+
+   FF
+   ENDPRINT
+
+   RETURN
 
 
 
 
 // vraca naziv robe
-static function _art_naz( cId )
-local nTArea := SELECT()
-local cRet
+STATIC FUNCTION _art_naz( cId )
 
-select roba
-seek cId
-cRet := naz
+   LOCAL nTArea := Select()
+   LOCAL cRet
 
-select (nTArea)
-return cRet
+   SELECT roba
+   SEEK cId
+   cRet := naz
+
+   SELECT ( nTArea )
+
+   RETURN cRet
 
 
 // -----------------------------------------------
 // vraca stanje sa lagera za cKto i cIdRoba
 // -----------------------------------------------
-static function g_kalk_stanje( cIdRoba, cKto )
-local nTArea := SELECT()
-local nStanje := 0
+STATIC FUNCTION g_kalk_stanje( cIdRoba, cKto )
 
-if !EMPTY(cKto)
+   LOCAL nTArea := Select()
+   LOCAL nStanje := 0
 
-	O_KALK
-	select kalk
-	set order to tag "3"
-	go top
+   IF !Empty( cKto )
 
-	seek gFirma + cKto + cIdRoba
+      O_KALK
+      SELECT kalk
+      SET ORDER TO TAG "3"
+      GO TOP
 
-	do while !EOF() .and. idfirma+mkonto+idroba == gFirma + cKto + cIdRoba
+      SEEK gFirma + cKto + cIdRoba
 
-		if mu_i == "1" 
-			
-			if idvd $ "12#22#94"
-				nStanje += kolicina-gkolicina-gkolicin2
-			else
-				nStanje += kolicina
-			endif
-			
-		elseif mu_i == "5"
-			
-			nStanje -= kolicina
-		endif
-		
-		skip
-	enddo
+      DO WHILE !Eof() .AND. idfirma + mkonto + idroba == gFirma + cKto + cIdRoba
 
-endif
+         IF mu_i == "1"
 
-select (nTArea)
+            IF idvd $ "12#22#94"
+               nStanje += kolicina - gkolicina - gkolicin2
+            ELSE
+               nStanje += kolicina
+            ENDIF
 
-return nStanje
+         ELSEIF mu_i == "5"
+
+            nStanje -= kolicina
+         ENDIF
+
+         SKIP
+      ENDDO
+
+   ENDIF
+
+   SELECT ( nTArea )
+
+   RETURN nStanje
 
 
 
 // ----------------------------------------------
 // uslovi liste
 // ----------------------------------------------
-static function _get_vars( cMark, cMagKto, cExpDbf )
-local nX := 1
+STATIC FUNCTION _get_vars( cMark, cMagKto, cExpDbf )
 
-cMark := SPACE(4)
-cMagKto := SPACE(7)
-cExpDbf := "D"
+   LOCAL nX := 1
 
-Box(, 10, 60)
+   cMark := Space( 4 )
+   cMagKto := Space( 7 )
+   cExpDbf := "D"
 
-	@ m_x + nX, m_y + 2 SAY "***** Lista sastavnica po oznaci"
-	
-	nX += 3
+   Box(, 10, 60 )
 
-	@ m_x + nX, m_y + 2 SAY "Oznaka koristena u K1 (prazno-sve):" GET cMark 
-	
-	nX += 2
+   @ m_x + nX, m_y + 2 SAY "***** Lista sastavnica po oznaci"
 
-	@ m_x + nX, m_y + 2 SAY "Gledaj stanje sirovina na kontu:" GET cMagKto VALID EMPTY(cMagKto) .or. p_konto( @cMagKto ) 
-	
-  	nX += 2
-	
-	@ m_x + nX, m_y + 2 SAY "Export u dbf?" GET cExpDbf VALID cExpDbf $ "DN" PICT "@!"
-	
-	read
-BoxC()
+   nX += 3
+
+   @ m_x + nX, m_y + 2 SAY "Oznaka koristena u K1 (prazno-sve):" GET cMark
+
+   nX += 2
+
+   @ m_x + nX, m_y + 2 SAY "Gledaj stanje sirovina na kontu:" GET cMagKto VALID Empty( cMagKto ) .OR. p_konto( @cMagKto )
+
+   nX += 2
+
+   @ m_x + nX, m_y + 2 SAY "Export u dbf?" GET cExpDbf VALID cExpDbf $ "DN" PICT "@!"
+
+   READ
+   BoxC()
 
 
-if lastkey() == K_ESC
-	return 0
-endif
+   IF LastKey() == K_ESC
+      RETURN 0
+   ENDIF
 
-return 1
+   RETURN 1
 
 
 // --------------------------------------------
 // specifikacija polja tabele exporta
 // --------------------------------------------
-static function _g_fields()
-local aFields := {}
+STATIC FUNCTION _g_fields()
 
-AADD( aFields, {"IDSAST", "C", 10, 0 } )
-AADD( aFields, {"NAZ", "C", 40, 0 } )
-// kolicina po sastavnicama
-AADD( aFields, {"KOL", "N", 15, 5 } )
-// kolicina u kalk-u
-AADD( aFields, {"STANJE", "N", 15, 5 } )
-// razlika
-AADD( aFields, {"TOTAL", "N", 15, 5 } )
+   LOCAL aFields := {}
 
-return aFields
+   AAdd( aFields, { "IDSAST", "C", 10, 0 } )
+   AAdd( aFields, { "NAZ", "C", 40, 0 } )
+   // kolicina po sastavnicama
+   AAdd( aFields, { "KOL", "N", 15, 5 } )
+   // kolicina u kalk-u
+   AAdd( aFields, { "STANJE", "N", 15, 5 } )
+   // razlika
+   AAdd( aFields, { "TOTAL", "N", 15, 5 } )
+
+   RETURN aFields
 
 
 
 // ---------------------------------------------------------
 // filuj tabelu exporta sa vrijednostima....
 // ---------------------------------------------------------
-static function fill_exp_tbl( cSast, cNaz, nKol, nStanje )
-local nTArea := SELECT()
+STATIC FUNCTION fill_exp_tbl( cSast, cNaz, nKol, nStanje )
 
-O_R_EXP
+   LOCAL nTArea := Select()
 
-select r_export
-set order to tag "1"
+   O_R_EXP
 
-seek cSast
+   SELECT r_export
+   SET ORDER TO TAG "1"
 
-my_flock()
+   SEEK cSast
 
-if !FOUND()
-	
-	append blank
-	replace field->idsast with cSast
-	replace field->naz with cNaz
+   my_flock()
 
-endif
+   IF !Found()
 
-replace field->kol with field->kol + nKol
+      APPEND BLANK
+      REPLACE field->idsast WITH cSast
+      REPLACE field->naz WITH cNaz
 
-// stanje je uvijek isto njega ne sabiri
-replace field->stanje with nStanje
+   ENDIF
 
-if field->kol > 0 .and. field->stanje <= field->kol
-	replace field->total with field->kol - field->stanje
-else
-	replace field->total with 0
-endif
+   REPLACE field->kol WITH field->kol + nKol
 
-my_unlock()
+   // stanje je uvijek isto njega ne sabiri
+   REPLACE field->stanje WITH nStanje
 
-select (nTArea)
-return
+   IF field->kol > 0 .AND. field->stanje <= field->kol
+      REPLACE field->TOTAL WITH field->kol - field->stanje
+   ELSE
+      REPLACE field->TOTAL WITH 0
+   ENDIF
 
+   my_unlock()
 
+   SELECT ( nTArea )
 
+   RETURN

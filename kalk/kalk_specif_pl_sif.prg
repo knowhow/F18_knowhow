@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -13,142 +13,148 @@
 #include "f18.ch"
 
 
-function P_RVrsta(cid,dx,dy)
-local nSelect
-private ImeKol,Kol:={}
+FUNCTION P_RVrsta( cid, dx, dy )
 
-ImeKol:={ { "ID ",  {|| id }, "id"  , {|| .t.}, {|| vpsifra(wId)}      },;
-          { PADC("Naziv",30), {|| left(naz,30)},      "naz"       };
-        }
-FOR i:=1 TO LEN(ImeKol)
-	AADD(Kol,i)
-NEXT
+   LOCAL nSelect
+   PRIVATE ImeKol, Kol := {}
 
-nSelect:=SELECT()
-SELECT (F_RVRSTA)
-if !used()
-	O_RVRSTA
-endif
-SELECT (nSelect)
-return PostojiSifra(F_RVRSTA, 1, 10, 75, "Vrste artikala", @cid, dx, dy)
+   ImeKol := { { "ID ",  {|| id }, "id", {|| .T. }, {|| vpsifra( wId ) }      }, ;
+      { PadC( "Naziv", 30 ), {|| Left( naz, 30 ) },      "naz"       };
+      }
+   FOR i := 1 TO Len( ImeKol )
+      AAdd( Kol, i )
+   NEXT
 
+   nSelect := Select()
+   SELECT ( F_RVRSTA )
+   IF !Used()
+      O_RVRSTA
+   ENDIF
+   SELECT ( nSelect )
 
-function P_PlSezona(cId) 
-cPom:=IzSifKRoba("SEZ",roba->id, .f.)
-if (EMPTY(cId) .and. !EMPTY(cPom) .and. Pitanje(,"Konverzija na osnovu polja SEZONA","D")=="D")
-	cId:=SubStr(cPom,3)
-endif
-
-return .t.
+   RETURN PostojiSifra( F_RVRSTA, 1, 10, 75, "Vrste artikala", @cid, dx, dy )
 
 
-function P_TPurchase(cId) 
-return .t.
+FUNCTION P_PlSezona( cId )
+
+   cPom := IzSifKRoba( "SEZ", roba->id, .F. )
+   IF ( Empty( cId ) .AND. !Empty( cPom ) .AND. Pitanje(, "Konverzija na osnovu polja SEZONA", "D" ) == "D" )
+      cId := SubStr( cPom, 3 )
+   ENDIF
+
+   RETURN .T.
 
 
-
-function P_IdPartner(cId) 
-return .t.
+FUNCTION P_TPurchase( cId )
+   RETURN .T.
 
 
 
-function PlFill_Sezona()
-local cSezonaPf
-local cSezonaPk
-local cSez
-local nI
-
-cSezonaPf:=SPACE(5)
-cSezonaPk:=SPACE(3)
-
-if .f.
-Box(,3,60)
-	@ m_x+1, m_y+2 SAY "Sezona PF-Sa   :" GET cSezonaPf
-	@ m_x+2, m_y+2 SAY "Sezona Pl-Kranj:" GET cSezonaPk
-	read
-BoxC()
-endif
-
-if Pitanje(,"Zelite li izvrsiti konverziju ?", "N")=="D"
-nI:=0
-	O_ROBA
-	O_SIFK
-	O_SIFV
-	select roba
-	go top
-	Box(,3,60)
-	do while !eof()
-	 	cSez := IzSifKRoba( "SEZ", roba->id, .f.)
-		@ m_x+1, m_y+2 SAY roba->id + " " + cSez
-		
-		cSezonaPf = cSez
-		//if EMPTY(roba->sezona) .and. ;
-		//	(cSez == cSezonaPf) 
-			replace sezona with RIGHT(cSezonaPf, 3)
-			nI++
-		//endif
-		SELECT roba
-		SKIP
-	enddo
-	BoxC()
-	MsgBeep("Promjena:" + STR(nI))
-endif
-
-return
+FUNCTION P_IdPartner( cId )
+   RETURN .T.
 
 
 
-function PlFill_Vrsta()
-local cVrstaPf
-local cVrstaPk
-local nI
+FUNCTION PlFill_Sezona()
 
-cVrstaPf:=SPACE(10)
-cVrstaPk:=SPACE(1)
-Box(,3,60)
-	@ m_x+1, m_y+2 SAY "Sifra artikla sadrzi ($):" GET cVrstaPf
-	@ m_x+2, m_y+2 SAY "Vrsta Pl-Kranj:" GET cVrstaPk
-	read
-BoxC()
+   LOCAL cSezonaPf
+   LOCAL cSezonaPk
+   LOCAL cSez
+   LOCAL nI
 
-nI:=0
-if Pitanje(,"Zelite li izvrsiti konverziju ?", "N")=="D"
+   cSezonaPf := Space( 5 )
+   cSezonaPk := Space( 3 )
 
-	O_ROBA
-	O_SIFK
-	O_SIFV
-	select roba
-	go top
-	MsgO("Koverzija ...")
-	do while !eof()
-		if EMPTY(roba->vrsta) .and. ;
-		  (ALLTRIM(cVrstaPf) $ roba->id) 
-			replace vrsta with cVrstaPk
-			nI++
-		endif
-		SELECT roba
-		SKIP
-	enddo
-	MsgC()
-	MsgBeep("Promjena:" + STR(nI))
-endif
+   IF .F.
+      Box(, 3, 60 )
+      @ m_x + 1, m_y + 2 SAY "Sezona PF-Sa   :" GET cSezonaPf
+      @ m_x + 2, m_y + 2 SAY "Sezona Pl-Kranj:" GET cSezonaPk
+      READ
+      BoxC()
+   ENDIF
 
-return
-*}
+   IF Pitanje(, "Zelite li izvrsiti konverziju ?", "N" ) == "D"
+      nI := 0
+      O_ROBA
+      O_SIFK
+      O_SIFV
+      SELECT roba
+      GO TOP
+      Box(, 3, 60 )
+      DO WHILE !Eof()
+         cSez := IzSifKRoba( "SEZ", roba->id, .F. )
+         @ m_x + 1, m_y + 2 SAY roba->id + " " + cSez
 
-function PlFillIdPartner(cIdPartner, cIdRoba)
-*{
-local nArr
-if EMPTY(cIdPartner) .or. EMPTY(cIdRoba)
-	return
-endif
-nArr:=SELECT()
-O_ROBA
-select roba
-HSEEK cIdRoba
-replace field->idpartner with cIdPartner
+         cSezonaPf = cSez
+         // if EMPTY(roba->sezona) .and. ;
+         // (cSez == cSezonaPf)
+         REPLACE sezona WITH Right( cSezonaPf, 3 )
+         nI++
+         // endif
+         SELECT roba
+         SKIP
+      ENDDO
+      BoxC()
+      MsgBeep( "Promjena:" + Str( nI ) )
+   ENDIF
 
-select (nArr)
-return
-*}
+   RETURN
 
+
+
+FUNCTION PlFill_Vrsta()
+
+   LOCAL cVrstaPf
+   LOCAL cVrstaPk
+   LOCAL nI
+
+   cVrstaPf := Space( 10 )
+   cVrstaPk := Space( 1 )
+   Box(, 3, 60 )
+   @ m_x + 1, m_y + 2 SAY "Sifra artikla sadrzi ($):" GET cVrstaPf
+   @ m_x + 2, m_y + 2 SAY "Vrsta Pl-Kranj:" GET cVrstaPk
+   READ
+   BoxC()
+
+   nI := 0
+   IF Pitanje(, "Zelite li izvrsiti konverziju ?", "N" ) == "D"
+
+      O_ROBA
+      O_SIFK
+      O_SIFV
+      SELECT roba
+      GO TOP
+      MsgO( "Koverzija ..." )
+      DO WHILE !Eof()
+         IF Empty( roba->vrsta ) .AND. ;
+               ( AllTrim( cVrstaPf ) $ roba->id )
+            REPLACE vrsta WITH cVrstaPk
+            nI++
+         ENDIF
+         SELECT roba
+         SKIP
+      ENDDO
+      MsgC()
+      MsgBeep( "Promjena:" + Str( nI ) )
+   ENDIF
+
+   RETURN
+// }
+
+FUNCTION PlFillIdPartner( cIdPartner, cIdRoba )
+
+   // {
+   LOCAL nArr
+   IF Empty( cIdPartner ) .OR. Empty( cIdRoba )
+      RETURN
+   ENDIF
+   nArr := Select()
+   O_ROBA
+   SELECT roba
+   HSEEK cIdRoba
+   REPLACE field->idpartner WITH cIdPartner
+
+   SELECT ( nArr )
+
+   RETURN
+// }

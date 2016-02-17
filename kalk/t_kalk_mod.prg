@@ -20,7 +20,7 @@ CLASS TKalkMod FROM TAppMod
    METHOD mMenu
    METHOD mMenuStandard
 
-END CLASS
+ENDCLASS
 
 
 METHOD new( p1, p2, p3, p4, p5, p6, p7, p8, p9 )
@@ -90,7 +90,7 @@ METHOD mMenuStandard
 
    f18_menu( "gkas", .T.,  izbor, opc, opcexe )
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -356,4 +356,4 @@ METHOD setGVars()
    // u svim modulima je "D"
    gNW := "X"
 
-   RETURN
+   RETURN .T.

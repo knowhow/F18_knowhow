@@ -24,7 +24,7 @@
 
 FUNCTION PregProdaje()
 
-   // {
+
    O_PARTN
 
    cPA := "N"

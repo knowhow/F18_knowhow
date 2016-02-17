@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -13,93 +13,94 @@
 #include "f18.ch"
 
 
-function RobaIdSredi()
-cSifOld:=space(10)
-cSifNew:=space(10)
+FUNCTION RobaIdSredi()
 
-if !spec_funkcije_sifra("spec_funkcije_sifra")
-  return
-endif
+   cSifOld := Space( 10 )
+   cSifNew := Space( 10 )
 
-O_ROBA
-O_KALK
-  O_FAKT
-  fSrediF:=.t.
+   IF !spec_funkcije_sifra( "spec_funkcije_sifra" )
+      RETURN
+   ENDIF
 
-Box(,10,60)
+   O_ROBA
+   O_KALK
+   O_FAKT
+   fSrediF := .T.
 
-do while .t.
-	@ m_x+6,m_y+2 SAY "                 "
-	@ m_x+1,m_Y+2 SAY "ISPRAVKA SIFRE ARTIKLA U DOKUMENTIMA"
-	@ m_x+2,m_Y+2 SAY "Stara sifra:" GET cSifOld pict "@!"
-	@ m_x+3,m_Y+2 SAY "Nova  sifra:" GET cSifNew pict "@!" valid !empty(cSifNew)
-	read
-	ESC_BCR
+   Box(, 10, 60 )
 
-	if !(kalk->(flock())) .or. !(fakt->(flock())) .or. !(roba->(flock()))
-		Msg("Ostali korisnici ne smiju raditi u programu")
-		closeret
-	endif
+   DO WHILE .T.
+      @ m_x + 6, m_y + 2 SAY "                 "
+      @ m_x + 1, m_Y + 2 SAY "ISPRAVKA SIFRE ARTIKLA U DOKUMENTIMA"
+      @ m_x + 2, m_Y + 2 SAY "Stara sifra:" GET cSifOld PICT "@!"
+      @ m_x + 3, m_Y + 2 SAY "Nova  sifra:" GET cSifNew PICT "@!" VALID !Empty( cSifNew )
+      READ
+      ESC_BCR
 
-	select kalk
-	locate for idroba==cSifNew
-	
-	if found()
-		BoxC()
-		Msg("Nova sifra se vec nalazi u prometu. prekid !")
-		closeret
-	endif
+      IF !( kalk->( FLock() ) ) .OR. !( fakt->( FLock() ) ) .OR. !( roba->( FLock() ) )
+         Msg( "Ostali korisnici ne smiju raditi u programu" )
+         closeret
+      ENDIF
 
-	locate for idroba==cSifOld
-	nRbr:=0
+      SELECT kalk
+      LOCATE FOR idroba == cSifNew
 
-	do while found()
-		_field->idroba:=cSifNew
-		@ m_X+5,m_y+2 SAY ++nRbr pict "999"
-		continue
-	enddo
+      IF Found()
+         BoxC()
+         Msg( "Nova sifra se vec nalazi u prometu. prekid !" )
+         closeret
+      ENDIF
 
-	if fSrediF
-		select fakt
-		locate for idroba==cSifOld
-		nRbr:=0
-		do while found()
-			@ m_X+5,m_y+2 SAY ++nRbr pict "999"
-			_field->idroba:=cSifNew
-			continue
-		enddo
-	endif
+      LOCATE FOR idroba == cSifOld
+      nRbr := 0
 
-	select roba
-	locate for id==cSifOld
-	nRbr:=0
-	do while found()
-		@ m_X+5,m_y+2 SAY ++nRbr pict "999"
-		_field->id:=cSifNew
-		continue
-	enddo
-	Beep(2)
-	@ m_x+6,m_y+2 SAY "Sifra promijenjena"
-enddo //.t.
+      DO WHILE Found()
+         _field->idroba := cSifNew
+         @ m_X + 5, m_y + 2 SAY ++nRbr PICT "999"
+         CONTINUE
+      ENDDO
 
-BoxC()
-closeret
+      IF fSrediF
+         SELECT fakt
+         LOCATE FOR idroba == cSifOld
+         nRbr := 0
+         DO WHILE Found()
+            @ m_X + 5, m_y + 2 SAY ++nRbr PICT "999"
+            _field->idroba := cSifNew
+            CONTINUE
+         ENDDO
+      ENDIF
 
+      SELECT roba
+      LOCATE FOR id == cSifOld
+      nRbr := 0
+      DO WHILE Found()
+         @ m_X + 5, m_y + 2 SAY ++nRbr PICT "999"
+         _field->id := cSifNew
+         CONTINUE
+      ENDDO
+      Beep( 2 )
+      @ m_x + 6, m_y + 2 SAY "Sifra promijenjena"
+   ENDDO // .t.
 
-function kalk_sljedeci(cIdFirma,cVrsta)
-local cBrKalk
-if gBrojac=="D"
- select kalk
- set order to tag "1"
- seek cIdFirma+cVrsta+"X"
- skip -1
- if idvd<>cVrsta
-   cBrKalk:=space(8)
- else
-   cBrKalk:=brdok
- endif
- cBrKalk:=UBrojDok(val(left(cBrKalk,5))+1,5,right(cBrKalk,3))
-endif
-return cBrKalk
+   BoxC()
+   closeret
 
+FUNCTION kalk_sljedeci( cIdFirma, cVrsta )
 
+   LOCAL cBrKalk
+
+   IF gBrojac == "D"
+      SELECT kalk
+      SET ORDER TO TAG "1"
+      SEEK cIdFirma + cVrsta + "X"
+      SKIP -1
+      IF idvd <> cVrsta
+         cBrKalk := Space( 8 )
+      ELSE
+         cBrKalk := brdok
+      ENDIF
+      cBrKalk := UBrojDok( Val( Left( cBrKalk, 5 ) ) + 1, 5, Right( cBrKalk, 3 ) )
+   ENDIF
+
+   RETURN cBrKalk

@@ -1,6 +1,6 @@
 -oF18
 -static
--request=ARRAYRDD
+#-request=ARRAYRDD
 F18.prg
 fin/*.prg
 fakt/*.prg

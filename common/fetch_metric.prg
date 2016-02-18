@@ -40,7 +40,6 @@ FUNCTION fetch_metric( sect, user, default_value )
    ENDIF
 
 
-
    IF hb_HHasKey( s_hParametri, sect ) .AND. !parametar_dinamican( sect )
       ?E "fetch param cache hit: ", sect
       RETURN s_hParametri[ sect ]
@@ -73,7 +72,7 @@ FUNCTION fetch_metric( sect, user, default_value )
 
 FUNCTION parametar_dinamican( cSection )
 
-   IF "_brojac_" $ cSection
+   IF "_brojac_" $ cSection  // brojaci se moraju uvijek citati sa servera
       RETURN .T.
    ENDIF
    IF "_counter_" $ cSection
@@ -114,10 +113,6 @@ FUNCTION set_metric( sect, user, value )
    IF _table == NIL
       MsgBeep( "problem sa:" + _temp_qry )
       RETURN .F.
-   ENDIF
-
-   IF s_hParametri == nil
-      s_hParametri := hb_Hash()
    ENDIF
 
    s_hParametri[ sect ] := value

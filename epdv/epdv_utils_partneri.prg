@@ -42,8 +42,8 @@ FUNCTION s_partner( cIdPartn )
    cPom += ", " + cMjesto
 
    cPdvBroj := firma_pdv_broj( cIdPartn )
-   
-   IF !EMPTY( cPdvBroj )
+
+   IF !Empty( cPdvBroj )
       cPdvBroj := "PDV: " + cPdvBroj + " / "
    ELSE
       cPdvBroj := ""
@@ -51,7 +51,7 @@ FUNCTION s_partner( cIdPartn )
 
    cIdBroj := firma_id_broj( cIdPartn )
 
-   IF EMPTY( cIdBroj )
+   IF Empty( cIdBroj )
       cIdBroj := "-NEP.ID-"
    ELSE
       cIdBroj := "ID: " + cIdBroj
@@ -126,7 +126,7 @@ FUNCTION my_firma( lRetArray )
       ELSE
          MsgBeep( "Nepopunjeni podaci o matičnoj firmi !" )
       ENDIF
-			
+
    ENDIF
 
    cPom := Trim( cNaziv ) + ", Id.br: " + cIdBroj + " , " + cPtt + " " + AllTrim( cMjesto )
@@ -201,7 +201,7 @@ FUNCTION o_partn()
    USE
    SELECT F_SIFV
    USE
-   
+
    O_SIFK
    O_SIFV
    O_PARTN

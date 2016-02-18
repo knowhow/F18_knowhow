@@ -50,7 +50,7 @@ FUNCTION epdv_parametri()
 
    f18_menu( "epdv_param", .F., _izbor, _opc, _opcexe )
 
-   RETURN
+   RETURN .T.
 
 
 // -------------------------------------
@@ -67,7 +67,7 @@ FUNCTION epdv_set_params()
    // napuni sifk radi unosa partnera - rejon
    epdv_set_sif_partneri()
 
-   RETURN
+   RETURN .T.
 
 
 // --------------------------------------

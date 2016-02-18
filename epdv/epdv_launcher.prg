@@ -11,11 +11,6 @@
 
 #include "f18.ch"
 
-
-EXTERNAL DESCEND
-EXTERNAL RIGHT
-
-
 FUNCTION MainEpdv( cKorisn, cSifra, p3, p4, p5, p6, p7 )
 
    LOCAL oEpdv
@@ -29,4 +24,4 @@ FUNCTION MainEpdv( cKorisn, cSifra, p3, p4, p5, p6, p7 )
 
    oEpdv:run()
 
-   RETURN
+   RETURN .T.

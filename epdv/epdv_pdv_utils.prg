@@ -68,4 +68,4 @@ FUNCTION save_pdv_obracun( dDatOd, dDatDo )
 
    ENDIF
 
-   RETURN
+   RETURN .T.

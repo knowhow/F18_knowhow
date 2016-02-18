@@ -73,31 +73,31 @@ FUNCTION fakt_kif( dD1, dD2, cSezona )
          SKIP
          LOOP
       ENDIF
-	
+
       @ m_x + 1, m_y + 2 SAY "SG_KIF : " + Str( nCount )
-	
+
       IF g_src_modul( src ) == "FAKT"
-		
+
          cTdSrc := td_src
-		
+
          // set id tarifu u kif dokumentu
          cIdTar := s_id_tar
          cIdPart := s_id_part
-		
+
          cKatP := kat_p
          cKatP2 := kat_p_2
-	
+
          cOpis := naz
          cRazbDan := razb_dan
          cSBrDok := s_br_dok
-		
+
          PRIVATE cFormBPdv := form_b_pdv
          PRIVATE cFormPdv := form_pdv
 
-		
+
          PRIVATE cTarFormula := ""
          PRIVATE cTarFilter := ""
-		
+
 
          IF ";" $ id_tar
             // cDokTar je varijabla koja se dole setuje
@@ -113,15 +113,15 @@ FUNCTION fakt_kif( dD1, dD2, cSezona )
             cTarFilter := ""
             cTarFormula := ""
          ENDIF
-		
+
          nZaok := zaok
          nZaok2 := zaok2
-	
+
          // za jednu shema gen stavku formiraj kif
          gen_fakt_kif_item( cSezona )
-		
+
       ENDIF
-	
+
       SELECT sg_kif
       SKIP
 
@@ -182,7 +182,7 @@ STATIC FUNCTION gen_fakt_kif_item( cSezona )
       SELECT p_kif
 
       Scatter()
-	
+
       SELECT fakt
 
       dDMin := datdok
@@ -191,7 +191,7 @@ STATIC FUNCTION gen_fakt_kif_item( cSezona )
       // ove var moraju biti private da bi se mogle macro-om evaluirati
       PRIVATE _uk_b_pdv := 0
       PRIVATE _popust := 0
-	
+
       DO WHILE !Eof() .AND.  ( datdok == dDMax )
 
          SELECT fakt
@@ -215,9 +215,9 @@ STATIC FUNCTION gen_fakt_kif_item( cSezona )
 
          lSkip := .F.
          DO CASE
-	
+
          CASE cKatP == "1"
-	
+
             // samo pdv obveznici
             IF lIno
                lSkip := .T.
@@ -226,9 +226,9 @@ STATIC FUNCTION gen_fakt_kif_item( cSezona )
             IF !lPdvObveznik
                lSkip := .T.
             ENDIF
-		
+
          CASE cKatP == "2"
-	
+
             IF lPdvObveznik
                lSkip := .T.
             ENDIF
@@ -237,7 +237,7 @@ STATIC FUNCTION gen_fakt_kif_item( cSezona )
             IF lIno
                lSkip := .T.
             ENDIF
-		
+
          CASE cKatP == "3"
             // ino
             IF !lIno
@@ -247,46 +247,46 @@ STATIC FUNCTION gen_fakt_kif_item( cSezona )
          ENDCASE
 
          cPartRejon := part_rejon( _id_part )
-	
+
          DO CASE
          CASE cKatP2 == "1"
             // samo federacija
             IF !( ( cPartRejon == " " ) .OR. ( cPartRejon == "1" ) )
                lSkip := .T.
             ENDIF
-				
+
          CASE cKatP2 == "2"
             // nije rs, preskoci
             IF !( cPartRejon == "2" )
                lSkip := .T.
             ENDIF
-			
+
          CASE cKatP2 == "3"
             // nije bd, preskoci
             IF !( cPartRejon == "3" )
                lSkip := .T.
             ENDIF
          ENDCASE
-	
+
          nCount ++
 
          cPom := "FAKT : " + cIdFirma + "-" + cIdTipDok + "-" + cBrDok
          @ m_x + 3, m_y + 2 SAY cPom
-	
+
          cPom := "FAKT cnt : " + Str( nCount, 6 )
          @ m_x + 4, m_y + 2 SAY cPom
-	
+
          cDokTar := ""
-	
+
          SELECT FAKT
-	
+
          dDMinD := datdok
          dDMaxD := datdok
 
          nF_rabat := 0
 
          DO WHILE !Eof() .AND. cBrDok == brdok .AND. cIdTipDok == IdTipDok .AND. cIdFirma == IdFirma
-		
+
             IF lSkip
                SKIP
                LOOP
@@ -312,7 +312,7 @@ STATIC FUNCTION gen_fakt_kif_item( cSezona )
             // pozicioniraj se na artikal u sifranriku robe
             SELECT ROBA
             SEEK fakt->idroba
-		
+
             SELECT FAKT
             PUBLIC cDokTar := roba->idTarifa
 
@@ -338,14 +338,14 @@ STATIC FUNCTION gen_fakt_kif_item( cSezona )
                   cDokTar := "PDV7AV"
                ENDIF
             ENDIF
-		
+
             _id_tar := cDokTar
-			
+
             IF !Empty( cTarFormula )
                // moze sadrzavati varijablu _id_tar
                xDummy := &cTarFormula
             ENDIF
-	
+
             IF cTDSrc == "11"
                nCijena := cijena / ( 1 + g_pdv_stopa( cDokTar ) / 100 )
             ELSE
@@ -362,19 +362,19 @@ STATIC FUNCTION gen_fakt_kif_item( cSezona )
 
             _uk_b_pdv += Round( kolicina * ( nCijena * ( 1 - nF_rabat / 100 ) ), nZaok )
             _popust +=  Round( kolicina * ( nCijena *  nF_rabat / 100 ), nZaok )
-		
+
             SELECT FAKT
             SKIP
          ENDDO
 
          IF ( cRazbDan == "D" )
-		
+
             // razbij po danima
             IF dDMinD <> dDMaxD
                MsgBeep( "U dokumentu " + cIdFirma + "-" + cIdTipDok + "-" + cBrDok + "  se nalaze datumi " + DToC( dDMaxD ) + "-" + DToC( dDMaxD ) + "##" + ;
                   "To nije uredu je se promet razbija po danima !!!" )
             ENDIF
-		
+
          ENDIF
 
          IF cRazbDan <> "D"
@@ -386,7 +386,7 @@ STATIC FUNCTION gen_fakt_kif_item( cSezona )
 
          // datumski interval
       ENDDO
-	
+
       // za datum uzmi ovaj veci
       _datum := dDMax
 
@@ -405,7 +405,7 @@ STATIC FUNCTION gen_fakt_kif_item( cSezona )
          _src_br := cBrDok
          _src_br_2 := cBrDok
       ENDIF
-	
+
       _uk_b_pdv := Round( _uk_b_pdv, nZaok2 )
       _uk_popust := Round( _popust, nZaok2 )
 
@@ -416,18 +416,18 @@ STATIC FUNCTION gen_fakt_kif_item( cSezona )
          // uzmi iz dokumenta
          _id_tar := cDokTar
       ENDIF
-	
+
       PRIVATE _uk_pdv :=  _uk_b_pdv * (  g_pdv_stopa( _id_tar ) / 100 )
-	
+
       IF !Empty( cFormBPDV )
          _i_b_pdv := &cFormBPdv
       ELSE
          // nema formule koristi ukupan iznos bez pdv-a
          _i_b_pdv := _uk_b_pdv
       ENDIF
-	
+
       _i_b_pdv := Round( _i_b_pdv, nZaok )
-	
+
       IF !Empty( cFormPDV )
          _i_pdv := &cFormPdv
       ELSE
@@ -442,9 +442,9 @@ STATIC FUNCTION gen_fakt_kif_item( cSezona )
       APPEND BLANK
 
       Gather()
-	
+
       SELECT fakt
 
    ENDDO
 
-   RETURN
+   RETURN .T.

@@ -13,8 +13,6 @@
 #include "f18.ch"
 
 
-// ------------------------------
-// ------------------------------
 FUNCTION epdv_izvjestaji()
 
    PRIVATE opc := {}

@@ -1,16 +1,16 @@
 /*
- * This file is part of the bring.out FMK, a free and open source
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+ * This file is part of the bring.out knowhow ERP, a free and open source
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
 
-
 #include "f18.ch"
+
 
 FUNCTION azur_kif()
    RETURN azur_ku_ki( "KIF" )
@@ -64,17 +64,17 @@ FUNCTION azur_ku_ki( cTbl )
    ENDIF
 
    IF kuf_kif_azur_sql( cTbl, nNextGRbr, nBrDok )
-	
+
       SELECT ( nPArea )
       GO TOP
 
       DO WHILE !Eof()
-	
+
          set_global_memvars_from_dbf()
-	
+
          _datum_2 := Date()
          _g_r_br := nNextGRbr
-	
+
          _br_dok := nBrDok
          __br_dok := _br_dok
 
@@ -83,7 +83,7 @@ FUNCTION azur_ku_ki( cTbl )
          @ m_x + 2, m_y + 2 SAY PadR( "   " + cTbl + " G.R.BR: " + Transform( nNextGRbr, "99999" ), 40 )
 
          nNextGRbr ++
-	
+
          SELECT ( nKArea )
          APPEND BLANK
 
@@ -240,17 +240,17 @@ FUNCTION pov_ku_ki( cTbl, nBrDok )
    SELECT ( _k_area )
 
    DO WHILE !Eof() .AND. ( br_dok == nBrDok )
-	
+
       ++ _cnt
       @ m_x + 1, m_y + 2 SAY PadR( "P_" + cTbl +  " -> " + cTbl + " :" + Transform( _cnt, "9999" ), 40 )
-	
+
       SELECT ( _k_area )
       _rec := dbf_get_rec()
-	
+
       SELECT ( _p_area )
       APPEND BLANK
       dbf_update_rec( _rec )
-	
+
       SELECT ( _k_area )
       SKIP
    ENDDO
@@ -310,10 +310,10 @@ FUNCTION epdv_renumeracija_rbr( cTbl, lShow )
       IF !Used()
          O_P_KUF
       ENDIF
-	
+
    ELSEIF cTbl == "P_KIF"
       SELECT F_P_KIF
-	
+
       SELECT F_P_KIF
       IF !Used()
          O_P_KIF
@@ -353,10 +353,10 @@ FUNCTION renm_g_rbr( cTbl, lShow )
       IF !Used()
          O_KUF
       ENDIF
-	
+
    ELSEIF cTbl == "P_KIF"
       SELECT F_KIF
-	
+
       SELECT F_KIF
       IF !Used()
          O_KIF
@@ -388,7 +388,7 @@ FUNCTION renm_g_rbr( cTbl, lShow )
       _rec := dbf_get_rec()
       _rec[ "g_r_br" ] := nRbr
       dbf_update_rec( _rec )
-	
+
       ++nRbr
       SKIP
    ENDDO

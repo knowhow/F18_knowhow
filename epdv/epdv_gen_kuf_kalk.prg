@@ -36,12 +36,11 @@ STATIC cKatP
 // 3-bd
 STATIC cKatP2
 
-// razbij po danima
-STATIC cRazbDan
+STATIC cRazbDan // razbij po danima
 
 FUNCTION kalk_kuf( dD1, dD2, cSezona )
 
-   // {
+
    LOCAL nCount
    LOCAL cIdfirma
 
@@ -74,22 +73,22 @@ FUNCTION kalk_kuf( dD1, dD2, cSezona )
          SKIP
          LOOP
       ENDIF
-	
+
       @ m_x + 1, m_y + 2 SAY "SG_KUF : " + Str( nCount )
-	
+
       IF g_src_modul( src ) == "KALK"
-		
+
          cTdSrc := td_src
-		
+
          // set id tarifu u kuf dokumentu
          cIdTar := s_id_tar
          cIdPart := s_id_part
-		
+
          cKatP := kat_p
          cKatP2 := kat_p_2
-	
+
          cOpis := naz
-	
+
          cRazbDan := razb_dan
 
          // setuj broj dokumenta
@@ -98,18 +97,18 @@ FUNCTION kalk_kuf( dD1, dD2, cSezona )
          PRIVATE cFormBPdv := form_b_pdv
          PRIVATE cFormPdv := form_pdv
 
-		
+
          PRIVATE cTarFormula := ""
          PRIVATE cTarFilter := ""
-		
+
          PRIVATE cKtoFormula := ""
          PRIVATE cKtoFilter := ""
-	
+
 
          IF ";" $ id_tar
             cTarFilter := Parsiraj( id_tar, "IdTarifa" )
             cTarFormula := ""
-			
+
          ELSEIF ( "(" $ id_tar ) .AND. ( ")" $ id_tar )
             // zadaje se formula
             cTarFormula := id_tar
@@ -118,11 +117,11 @@ FUNCTION kalk_kuf( dD1, dD2, cSezona )
             cTarFilter := ""
             cTarFormula := ""
          ENDIF
-		
+
          IF ";" $ id_kto
             cKtoFilter := Parsiraj( id_kto, AllTrim( id_kto_naz ) )
             cKtoFormula := ""
-			
+
          ELSEIF ( "(" $ id_kto ) .AND. ( ")" $ id_kto )
             // zadaje se formula
             cKtoFormula := id_kto
@@ -131,15 +130,15 @@ FUNCTION kalk_kuf( dD1, dD2, cSezona )
             cKtoFilter := ""
             cKtoFormula := ""
          ENDIF
-	
+
          nZaok := zaok
          nZaok2 := zaok2
-	
+
          // za jednu shema gen stavku formiraj kuf
          gen_kalk_kuf_item( cSezona )
-		
+
       ENDIF
-	
+
       SELECT sg_kuf
       SKIP
 
@@ -206,12 +205,12 @@ STATIC FUNCTION gen_kalk_kuf_item( cSezona )
 
       SELECT p_kuf
       Scatter()
-	
+
       SELECT KALK
 
       dDMin := datdok
       dDMax := datdok
-	
+
       // ove var moraju biti private da bi se mogle macro-om evaluirati
       PRIVATE _uk_b_pdv := 0
       PRIVATE _popust := 0
@@ -241,12 +240,12 @@ STATIC FUNCTION gen_kalk_kuf_item( cSezona )
 
          lIno := IsIno( _id_part )
          lPdvObveznik := IsPdvObveznik( _id_part )
-	
+
          lSkip := .F.
          DO CASE
-	
+
          CASE cKatP == "1"
-	
+
             // samo pdv obveznici
             IF lIno
                lSkip := .T.
@@ -255,9 +254,9 @@ STATIC FUNCTION gen_kalk_kuf_item( cSezona )
             IF !lPdvObveznik
                lSkip := .T.
             ENDIF
-		
+
          CASE cKatP == "2"
-	
+
             IF lPdvObveznik
                lSkip := .T.
             ENDIF
@@ -266,7 +265,7 @@ STATIC FUNCTION gen_kalk_kuf_item( cSezona )
             IF lIno
                lSkip := .T.
             ENDIF
-		
+
          CASE cKatP == "3"
             // ino
             IF !lIno
@@ -276,50 +275,50 @@ STATIC FUNCTION gen_kalk_kuf_item( cSezona )
          ENDCASE
 
          cPartRejon := part_rejon( _id_part )
-	
+
          DO CASE
-	
+
          CASE cKatP2 == "1"
             // samo federacija
             IF !( ( cPartRejon == " " ) .OR. ( cPartRejon == "1" ) )
                lSkip := .T.
             ENDIF
-				
+
          CASE cKatP2 == "2"
             // nije rs, preskoci
             IF !( cPartRejon == "2" )
                lSkip := .T.
             ENDIF
-			
+
          CASE cKatP2 == "3"
             // nije bd, preskoci
             IF !( cPartRejon == "3" )
                lSkip := .T.
             ENDIF
          ENDCASE
-		
-			
-	
 
-	
-	
+
+
+
+
+
          nCount ++
 
          cPom := "KALK : " + cIdFirma + "-" + cIdTipDok + "-" + cBrDok
          @ m_x + 3, m_y + 2 SAY cPom
-	
+
          cPom := "KALK cnt : " + Str( nCount, 6 )
          @ m_x + 4, m_y + 2 SAY cPom
-	
-	
-	
+
+
+
          // tarifa koja se nalazi unutar dokumenta
          cDokTar := ""
-	
-	
+
+
          dDMinD := datdok
          dDMaxD := datdok
-	
+
          DO WHILE !Eof() .AND. cBrDok == brdok .AND. cIdTipDok == IdVd .AND. cIdFirma == IdFirma
             IF lSkip
                SKIP
@@ -334,7 +333,7 @@ STATIC FUNCTION gen_kalk_kuf_item( cSezona )
             IF dDMaxD < datdok
                dDMaxD := datdok
             ENDIF
-		
+
             // na nivou dat opsega utvrdi min max datum
             IF dDMin > datdok
                dDMinD := datdok
@@ -343,28 +342,28 @@ STATIC FUNCTION gen_kalk_kuf_item( cSezona )
             IF dDMax < datdok
                dDMax := datdok
             ENDIF
-		
+
 
             // pozicioniraj se na artikal u sifranriku robe
             SELECT ROBA
             SEEK kalk->idroba
             SELECT KALK
             cDokTar := roba->idTarifa
-		
+
             _id_tar := kalk->idTarifa
-		
-	
 
 
 
-	
+
+
+
             IF cTDSrc $ "10#81"
                nCijena := kalk->nc
             ENDIF
-			
+
             _uk_b_pdv += Round( kalk->kolicina * nCijena, nZaok )
             zav_tr( @nZ1, @nZ2, @nZ3, @nZ4, @nZ5 )
-		
+
             // mozda nam podaci o zavisnim troskovima trebaju trebaju
             _z_tr_1 += nZ1
             _z_tr_2 += nZ2
@@ -376,14 +375,14 @@ STATIC FUNCTION gen_kalk_kuf_item( cSezona )
             SKIP
          ENDDO
 
-	
+
          IF ( cRazbDan == "D" )
             // razbij po danima
             IF dDMinD <> dDMaxD
                MsgBeep( "U dokumentu " + cIdFirma + "-" + cIdTipDok + "-" + cBrDok + "  se nalaze datumi " + DToC( dDMaxD ) + "-" + DToC( dDMaxD ) + "##" + ;
                   "To nije uredu je se promet razbija po danima !!!" )
             ENDIF
-		
+
          ENDIF
 
          IF cRazbDan <> "D"
@@ -398,22 +397,22 @@ STATIC FUNCTION gen_kalk_kuf_item( cSezona )
 
       // za datum uzmi datum dokumenta ili najveci datum gore pronadjen
       _datum := dDMax
-	
+
       IF lSkip
          // vrati se gore
          SELECT KALK
          LOOP
       ENDIF
-	
-	
+
+
       _uk_b_pdv := Round( _uk_b_pdv, nZaok2 )
-	
+
       _z_tr_1 := Round( _z_tr_1, nZaok2 )
       _z_tr_2 := Round( _z_tr_2, nZaok2 )
       _z_tr_3 := Round( _z_tr_3, nZaok2 )
       _z_tr_4 := Round( _z_tr_4, nZaok2 )
       _z_tr_5 := Round( _z_tr_5, nZaok2 )
-	
+
 
       IF !Empty( cIdTar )
          // uzmi iz sg sifrarnika tarifu kojom treba setovati
@@ -427,14 +426,14 @@ STATIC FUNCTION gen_kalk_kuf_item( cSezona )
          _src_br := cSBrDok
          _src_br_2 := cSBrDok
       ELSE
-	
+
          // broj dokumenta
          _src_br := cBrDok
          _src_br_2 := cBrDok
       ENDIF
-	
+
       PRIVATE _uk_pdv :=  _uk_b_pdv * (  g_pdv_stopa( _id_tar ) / 100 )
-	
+
       IF !Empty( cFormBPDV )
          _i_b_pdv := &cFormBPdv
       ELSE
@@ -442,7 +441,7 @@ STATIC FUNCTION gen_kalk_kuf_item( cSezona )
          _i_b_pdv := _uk_b_pdv
       ENDIF
       _i_b_pdv := Round( _i_b_pdv, nZaok )
-	
+
       IF !Empty( cFormPDV )
          _i_pdv := &cFormPdv
       ELSE
@@ -455,7 +454,7 @@ STATIC FUNCTION gen_kalk_kuf_item( cSezona )
       SELECT P_KUF
       APPEND BLANK
       Gather()
-	
+
 
       SELECT KALK
    ENDDO

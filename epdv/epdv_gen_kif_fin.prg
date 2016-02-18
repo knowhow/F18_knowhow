@@ -1,16 +1,16 @@
 /*
- * This file is part of the bring.out FMK, a free and open source
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+ * This file is part of the bring.out knowhow ERP, a free and open source
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
 
-
 #include "f18.ch"
+
 
 STATIC dDatOd
 STATIC dDatDo
@@ -74,22 +74,22 @@ FUNCTION fin_kif( dD1, dD2, cSezona )
          SKIP
          LOOP
       ENDIF
-	
+
       @ m_x + 1, m_y + 2 SAY "SG_KIF : " + Str( nCount )
-	
+
       IF g_src_modul( src ) == "FIN"
-		
+
          cTdSrc := td_src
-		
+
          // set id tarifu u kif dokumentu
          cIdTar := s_id_tar
          cIdPart := s_id_part
-		
+
          cKatP := kat_p
          cKatP2 := kat_p_2
-	
+
          cOpis := naz
-	
+
          cRazbDan := razb_dan
 
          // setuj broj dokumenta
@@ -98,18 +98,18 @@ FUNCTION fin_kif( dD1, dD2, cSezona )
          PRIVATE cFormBPdv := form_b_pdv
          PRIVATE cFormPdv := form_pdv
 
-		
+
          PRIVATE cTarFormula := ""
          PRIVATE cTarFilter := ""
-		
+
          PRIVATE cKtoFormula := ""
          PRIVATE cKtoFilter := ""
-	
+
 
          IF ";" $ id_tar
             cTarFilter := Parsiraj( id_tar, "IdTarifa" )
             cTarFormula := ""
-			
+
          ELSEIF ( "(" $ id_tar ) .AND. ( ")" $ id_tar )
             // zadaje se formula
             cTarFormula := id_tar
@@ -118,11 +118,11 @@ FUNCTION fin_kif( dD1, dD2, cSezona )
             cTarFilter := ""
             cTarFormula := ""
          ENDIF
-		
+
          IF ";" $ id_kto
             cKtoFilter := Parsiraj( id_kto, AllTrim( id_kto_naz ) )
             cKtoFormula := ""
-			
+
          ELSEIF ( "(" $ id_kto ) .AND. ( ")" $ id_kto )
             // zadaje se formula
             cKtoFormula := id_kto
@@ -131,14 +131,14 @@ FUNCTION fin_kif( dD1, dD2, cSezona )
             cKtoFilter := ""
             cKtoFormula := ""
          ENDIF
-	
+
          nZaok := zaok
          nZaok2 := zaok2
-	
+
          gen_fin_kif_item( cSezona )
-		
+
       ENDIF
-	
+
       SELECT sg_kif
       SKIP
 
@@ -230,12 +230,12 @@ STATIC FUNCTION gen_fin_kif_item( cSezona )
       SELECT p_kif
       Scatter()
       // ----------------------------------------------
-	
+
       SELECT SUBAN
 
       dDMin := datdok
       dDMax := datdok
-	
+
       // ove var moraju biti private da bi se mogle macro-om evaluirati
       PRIVATE _iznos := 0
 
@@ -253,12 +253,12 @@ STATIC FUNCTION gen_fin_kif_item( cSezona )
          _datum := suban->datdok
          _id_part := suban->idpartner
          _opis := cOpis
-	
+
          // ##opis## je djoker - zamjenjuje se sa opisom koji se nalazi u
          // stavci
          cOpisSuban := AllTrim( suban->opis )
          _opis := StrTran( _opis, "##opis##", cOpisSuban )
-	
+
          IF !Empty( cIdPart )
             IF ( AllTrim( Upper( cIdPart ) ) == "#TD#" )
                // trazi dobavljaca
@@ -272,12 +272,12 @@ STATIC FUNCTION gen_fin_kif_item( cSezona )
 
          lIno := IsIno( _id_part )
          lPdvObveznik := IsPdvObveznik( _id_part )
-	
+
          lSkip := .F.
          DO CASE
-	
+
          CASE cKatP == "1"
-	
+
             // samo pdv obveznici
             IF lIno
                lSkip := .T.
@@ -286,9 +286,9 @@ STATIC FUNCTION gen_fin_kif_item( cSezona )
             IF !lPdvObveznik
                lSkip := .T.
             ENDIF
-		
+
          CASE cKatP == "2"
-	
+
             IF lPdvObveznik
                lSkip := .T.
             ENDIF
@@ -297,7 +297,7 @@ STATIC FUNCTION gen_fin_kif_item( cSezona )
             IF lIno
                lSkip := .T.
             ENDIF
-		
+
          CASE cKatP == "3"
             // ino
             IF !lIno
@@ -307,44 +307,44 @@ STATIC FUNCTION gen_fin_kif_item( cSezona )
          ENDCASE
 
          cPartRejon := part_rejon( _id_part )
-	
+
          DO CASE
-	
+
          CASE cKatP2 == "1"
             // samo federacija
             IF !( ( cPartRejon == " " ) .OR. ( cPartRejon == "1" ) )
                lSkip := .T.
             ENDIF
-				
+
          CASE cKatP2 == "2"
             // nije rs, preskoci
             IF !( cPartRejon == "2" )
                lSkip := .T.
             ENDIF
-			
+
          CASE cKatP2 == "3"
             // nije bd, preskoci
             IF !( cPartRejon == "3" )
                lSkip := .T.
             ENDIF
          ENDCASE
-	
+
          nCount ++
 
          cPom := "SUBAN : " + cIdFirma + "-" + cIdTipDok + "-" + cBrDok
          @ m_x + 3, m_y + 2 SAY cPom
-	
+
          cPom := "SUBAN cnt : " + Str( nCount, 6 )
          @ m_x + 4, m_y + 2 SAY cPom
-	
-	
-	
+
+
+
          // tarifa koja se nalazi unutar dokumenta
          cDokTar := ""
-	
+
          dDMinD := datdok
          dDMaxD := datdok
-	
+
          // do while !eof() .and. cBrDok == brnal .and. cIdTipDok == IdVN .and. cIdFirma == IdFirma
 
          // zadaje se formula za tarifu
@@ -356,7 +356,7 @@ STATIC FUNCTION gen_fin_kif_item( cSezona )
                SKIP
                LOOP
             ENDIF
-			
+
          ENDIF
 
          IF lSkip
@@ -372,7 +372,7 @@ STATIC FUNCTION gen_fin_kif_item( cSezona )
          IF dDMaxD < datdok
             dDMaxD := datdok
          ENDIF
-		
+
          // na nivou dat opsega utvrdi min max datum
          IF dDMin > datdok
             dDMinD := datdok
@@ -381,32 +381,32 @@ STATIC FUNCTION gen_fin_kif_item( cSezona )
          IF dDMax < datdok
             dDMax := datdok
          ENDIF
-		
+
 
          IF d_p == "1"
             nIznos := iznosbhd
          ELSE
             nIznos := -iznosbhd
          ENDIF
-		
+
          // broj veze
          cBrDok := brdok
-		
+
          _iznos += nIznos
 
          SELECT SUBAN
          SKIP
-		
+
          // enddo
 
-	
+
          IF ( cRazbDan == "D" )
             // razbij po danima
             IF dDMinD <> dDMaxD
                MsgBeep( "U dokumentu " + cIdFirma + "-" + cIdTipDok + "-" + cBrDok + "  se nalaze datumi " + DToC( dDMaxD ) + "-" + DToC( dDMaxD ) + "##" + ;
                   "To nije uredu je se promet razbija po danima !!!" )
             ENDIF
-		
+
          ENDIF
 
          IF cRazbDan <> "D"
@@ -421,13 +421,13 @@ STATIC FUNCTION gen_fin_kif_item( cSezona )
 
       // za datum uzmi datum dokumenta ili najveci datum gore pronadjen
       _datum := dDMax
-	
+
       IF lSkip .OR. lSkip2
          // vrati se gore
          SELECT SUBAN
          LOOP
       ENDIF
-	
+
       PRIVATE _uk_pdv :=  0
       PushWA()
       // --------------------------------------------------------------
@@ -435,7 +435,7 @@ STATIC FUNCTION gen_fin_kif_item( cSezona )
       GO ( nRecNoSuban )
 
       _iznos := Round( _iznos, nZaok2 )
-	
+
       IF !Empty( cIdTar )
          // uzmi iz sg sifrarnika tarifu kojom treba setovati
          _id_tar := cIdTar
@@ -456,18 +456,18 @@ STATIC FUNCTION gen_fin_kif_item( cSezona )
             _src_br := cBrDok
             _src_br_2 := cBrDok
          ENDIF
-		
+
       CASE !Empty( cSBrDok )
          _src_br := cSBrDok
          _src_br_2 := cSBrDok
       OTHERWISE
-	
+
          // broj dokumenta
          _src_br := cBrDok
          _src_br_2 := cBrDok
       ENDCASE
 
-	
+
       IF !Empty( cFormBPDV )
          _i_b_pdv := &cFormBPdv
       ELSE
@@ -475,7 +475,7 @@ STATIC FUNCTION gen_fin_kif_item( cSezona )
          _i_b_pdv := _iznos / 1.17
       ENDIF
       _i_b_pdv := Round( _i_b_pdv, nZaok )
-	
+
       IF !Empty( cFormPDV )
          _i_pdv := &cFormPdv
       ELSE
@@ -485,12 +485,12 @@ STATIC FUNCTION gen_fin_kif_item( cSezona )
       _i_pdv := Round( _i_pdv, nZaok )
       // ----------------------------------------------------------
       PopWa()
-	
+
       // snimi gornje podatke
       SELECT P_KIF
       APPEND BLANK
       Gather()
-	
+
       SELECT SUBAN
 
    ENDDO

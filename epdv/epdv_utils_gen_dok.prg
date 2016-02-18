@@ -13,16 +13,6 @@
 #include "f18.ch"
 
 
-FUNCTION close_open_kuf_kif_sif()
-
-   O_PARTN
-   O_ROBA
-   O_TARIFA
-   O_SIFK
-   O_SIFV
-
-   RETURN
-
 
 
 // -------------------------------------------
@@ -33,14 +23,13 @@ FUNCTION sez_fill( cSezona )
    LOCAL cRet := ""
 
    IF !Empty( cSezona )
-      cRet := cSezona + "\"
+      cRet := cSezona + SLASH
    ENDIF
 
    RETURN cRet
 
 
-// ----------------------------------
-// ----------------------------------
+
 FUNCTION g_src_modul( cSrc, lShow )
 
    LOCAL cPom := ""
@@ -143,3 +132,15 @@ FUNCTION g_kat_p_2( cKat, lShow )
    ENDIF
 
    RETURN cPom
+
+
+
+FUNCTION close_open_kuf_kif_sif()
+
+   O_PARTN
+   O_ROBA
+   O_TARIFA
+   O_SIFK
+   O_SIFV
+
+   RETURN .T.

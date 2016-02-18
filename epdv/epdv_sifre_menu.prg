@@ -12,8 +12,7 @@
 
 #include "f18.ch"
 
-// ------------------------------
-// ------------------------------
+
 FUNCTION epdv_sifrarnici()
 
    PRIVATE opc := {}

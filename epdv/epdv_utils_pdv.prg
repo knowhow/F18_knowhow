@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -14,145 +14,153 @@
 // -------------------------------
 // nabavke koje su oporezive
 // --------------------------------
-function t_i_opor(cIdTar)
-local lRet
+FUNCTION t_i_opor( cIdTar )
 
-cIdTar := PADR(cIdTar, 6)
+   LOCAL lRet
 
-lRet := .f.
+   cIdTar := PadR( cIdTar, 6 )
 
-// standardne nabavke
-lRet := lRet .or. (cIdTar == PADR("PDV17", 6) )
-// nabavka poljoprivreda - oporezivo
-lRet := lRet .or. (cIdTar == PADR("PDV7PO", 6) )
-// avansne nabavke
-lRet := lRet .or. (cIdTar == PADR("PDV7AV", 6) )
+   lRet := .F.
 
-// neposlovne svrhe
-lRet := lRet .or. (cIdTar == PADR("PDV7NP", 6) )
+   // standardne nabavke
+   lRet := lRet .OR. ( cIdTar == PadR( "PDV17", 6 ) )
+   // nabavka poljoprivreda - oporezivo
+   lRet := lRet .OR. ( cIdTar == PadR( "PDV7PO", 6 ) )
+   // avansne nabavke
+   lRet := lRet .OR. ( cIdTar == PadR( "PDV7AV", 6 ) )
 
-return lRet
+   // neposlovne svrhe
+   lRet := lRet .OR. ( cIdTar == PadR( "PDV7NP", 6 ) )
+
+   RETURN lRet
 
 // -------------------------------
 // nabavke ne prizna je se ulazni porez
 // --------------------------------
-function t_u_n_poup(cIdTar)
-local lRet
+FUNCTION t_u_n_poup( cIdTar )
 
-cIdTar := PADR(cIdTar, 6)
+   LOCAL lRet
 
-lRet := .f.
+   cIdTar := PadR( cIdTar, 6 )
 
-// standardne nabavke
-// nabavka poljoprivreda - oporezivo
-lRet := lRet .or. (cIdTar == PADR("PDV7NP", 6) )
+   lRet := .F.
 
-return lRet
+   // standardne nabavke
+   // nabavka poljoprivreda - oporezivo
+   lRet := lRet .OR. ( cIdTar == PadR( "PDV7NP", 6 ) )
+
+   RETURN lRet
 
 
 // -------------------------------
 // nabavke oporezive,
 // priznat ulazni porez, osim pausalne naknade poljoprivrednicima
 // -------------------------------
-function t_u_poup(cIdTar)
-local lRet
+FUNCTION t_u_poup( cIdTar )
 
-cIdTar := PADR(cIdTar, 6)
+   LOCAL lRet
 
-lRet := .f.
+   cIdTar := PadR( cIdTar, 6 )
 
-// standardne nabavke
-lRet := lRet .or. (cIdTar == PADR("PDV17", 6) )
-// avansne nabavke
-lRet := lRet .or. (cIdTar == PADR("PDV7AV", 6) )
+   lRet := .F.
 
-return lRet
+   // standardne nabavke
+   lRet := lRet .OR. ( cIdTar == PadR( "PDV17", 6 ) )
+   // avansne nabavke
+   lRet := lRet .OR. ( cIdTar == PadR( "PDV7AV", 6 ) )
+
+   RETURN lRet
 
 // -------------------------------
 // nabavke oporezive,
 // pausalne naknade poljoprivrednicima
 // -------------------------------
-function t_u_polj(cIdTar)
-local lRet
+FUNCTION t_u_polj( cIdTar )
 
-cIdTar := PADR(cIdTar, 6)
+   LOCAL lRet
 
-lRet := .f.
+   cIdTar := PadR( cIdTar, 6 )
 
-// nabavka poljoprivreda - oporezivo
-lRet := lRet .or. (cIdTar == PADR("PDV7PO", 6) )
+   lRet := .F.
 
-return lRet
+   // nabavka poljoprivreda - oporezivo
+   lRet := lRet .OR. ( cIdTar == PadR( "PDV7PO", 6 ) )
+
+   RETURN lRet
 
 // -------------------------------
 // nabavke neoporezive,
 // neoporezivi dio nabavke od poljprovrednika
 // -------------------------------
-function t_u_polj_0(cIdTar)
-local lRet
+FUNCTION t_u_polj_0( cIdTar )
 
-cIdTar := PADR(cIdTar, 6)
+   LOCAL lRet
 
-lRet := .f.
+   cIdTar := PadR( cIdTar, 6 )
 
-// nabavka poljoprivreda - oporezivo
-lRet := lRet .or. (cIdTar == PADR("PDV0PO", 6) )
+   lRet := .F.
 
-return lRet
+   // nabavka poljoprivreda - oporezivo
+   lRet := lRet .OR. ( cIdTar == PadR( "PDV0PO", 6 ) )
+
+   RETURN lRet
 
 
 
 // -------------------------------
 // nabavke uvoz
 // --------------------------------
-function t_u_uvoz(cIdTar)
-local lRet
+FUNCTION t_u_uvoz( cIdTar )
 
-cIdTar := PADR(cIdTar, 6)
+   LOCAL lRet
 
-lRet := .f.
-lRet := lRet .or. (cIdTar == PADR("PDV7UV",6) )
+   cIdTar := PadR( cIdTar, 6 )
 
-return lRet
+   lRet := .F.
+   lRet := lRet .OR. ( cIdTar == PadR( "PDV7UV", 6 ) )
+
+   RETURN lRet
 
 // ------------------------------------------
 // nabavke neoporezivo - ne pdv obveznici
 // ------------------------------------------
-function t_u_neop(cIdTar)
-local lRet
+FUNCTION t_u_neop( cIdTar )
 
-cIdTar := PADR(cIdTar, 6)
+   LOCAL lRet
 
-lRet := .f.
-lRet := lRet .or. (cIdTar == PADR("PDV0", 6) )
-lRet := lRet .or. (cIdTar == PADR("PDV0UV", 6) )
-return lRet
+   cIdTar := PadR( cIdTar, 6 )
+
+   lRet := .F.
+   lRet := lRet .OR. ( cIdTar == PadR( "PDV0", 6 ) )
+   lRet := lRet .OR. ( cIdTar == PadR( "PDV0UV", 6 ) )
+
+   RETURN lRet
 
 // -------------------------------
 // isporuke neoporezivo, osim izvoza
 // --------------------------------
-function t_i_neop(cIdTar)
-local lRet
+FUNCTION t_i_neop( cIdTar )
 
-cIdTar := PADR(cIdTar, 6)
+   LOCAL lRet
 
-lRet := .f.
-lRet := lRet .or. (cIdTar == PADR("PDV0",6) )
+   cIdTar := PadR( cIdTar, 6 )
 
-return lRet
+   lRet := .F.
+   lRet := lRet .OR. ( cIdTar == PadR( "PDV0", 6 ) )
+
+   RETURN lRet
 
 
 // -------------------------------
 // isporuke izvoz
 // --------------------------------
-function t_i_izvoz(cIdTar)
-local lRet
+FUNCTION t_i_izvoz( cIdTar )
 
-cIdTar := PADR(cIdTar, 6)
+   LOCAL lRet
 
-lRet := .f.
-lRet := lRet .or. (cIdTar == PADR("PDV0IZ", 6) )
-return lRet
+   cIdTar := PadR( cIdTar, 6 )
 
+   lRet := .F.
+   lRet := lRet .OR. ( cIdTar == PadR( "PDV0IZ", 6 ) )
 
-
+   RETURN lRet

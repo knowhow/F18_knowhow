@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -12,54 +12,56 @@
 
 #include "f18.ch"
 
-function s_tarifa(cIdTar)
-local cPom := ""
+FUNCTION s_tarifa( cIdTar )
 
-PushWA()
+   LOCAL cPom := ""
 
-SELECT (F_TARIFA)
+   PushWA()
 
-if !used()
-	O_TARIFA
-endif
-SET ORDER TO TAG "ID"
+   SELECT ( F_TARIFA )
 
-seek cIdTar
+   IF !Used()
+      O_TARIFA
+   ENDIF
+   SET ORDER TO TAG "ID"
 
-if !found()
-	cPom := "-NEP.TAR- ?!"
-else
-	cPom := ALLTRIM(naz) 
-endif
+   SEEK cIdTar
 
-PopWa()
-return cPom
+   IF !Found()
+      cPom := "-NEP.TAR- ?!"
+   ELSE
+      cPom := AllTrim( naz )
+   ENDIF
+
+   PopWa()
+
+   RETURN cPom
 
 
 // -----------------------------
 // get stopu za tarifu
 // -----------------------------
-function g_pdv_stopa(cIdTar)
-local nStopa
+FUNCTION g_pdv_stopa( cIdTar )
 
-PushWA()
+   LOCAL nStopa
 
-SELECT (F_TARIFA)
+   PushWA()
 
-if !used()
-	O_TARIFA
-endif
-SET ORDER TO TAG "ID"
+   SELECT ( F_TARIFA )
 
-seek PADR(cIdTar, 6)
+   IF !Used()
+      O_TARIFA
+   ENDIF
+   SET ORDER TO TAG "ID"
 
-if !found()
-	nStopa := -999
-else
-	nStopa := tarifa->opp
-endif
+   SEEK PadR( cIdTar, 6 )
 
-PopWa()
-return nStopa
+   IF !Found()
+      nStopa := -999
+   ELSE
+      nStopa := tarifa->opp
+   ENDIF
 
+   PopWa()
 
+   RETURN nStopa

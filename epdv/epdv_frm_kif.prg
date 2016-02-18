@@ -13,14 +13,6 @@
 #include "f18.ch"
 
 
-FUNCTION epdv_edit_kif()
-
-   epdv_otvori_kif_tabele( .T. )
-   epdv_kif_tbl_priprema()
-
-   RETURN .T.
-
-
 
 STATIC FUNCTION epdv_kif_tbl_priprema()
 
@@ -43,7 +35,6 @@ STATIC FUNCTION epdv_kif_tbl_priprema()
    ObjDbedit( "ekif", _row, _col, {|| epdv_kif_key_handler() }, "", "KIF Priprema...", , , , , 3 )
    BoxC()
    closeret
-
 
 STATIC FUNCTION set_a_kol_kif( aKol, aImeKol )
 
@@ -151,8 +142,6 @@ STATIC FUNCTION epdv_kif_edit_item( lNova )
    ELSE
       RETURN .F.
    ENDIF
-
-
 
 STATIC FUNCTION epdv_kif_key_handler()
 
@@ -290,3 +279,13 @@ STATIC FUNCTION epdv_kif_key_handler()
    ENDCASE
 
    RETURN DE_CONT
+
+
+
+
+FUNCTION epdv_edit_kif()
+
+   epdv_otvori_kif_tabele( .T. )
+   epdv_kif_tbl_priprema()
+
+   RETURN .T.

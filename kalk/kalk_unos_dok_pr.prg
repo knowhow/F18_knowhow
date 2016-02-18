@@ -58,7 +58,7 @@ FUNCTION kalk_unos_dok_pr()
          Reci( 12, 24, Trim( Left( roba->naz, 40 ) ) + " (" + ROBA->jmj + ")", 40 ), _IdTarifa := iif( fnovi, ROBA->idtarifa, _IdTarifa ), .T. }
 
       @ m_x + 13, m_y + 2 SAY8 "Količina  " GET _Kolicina PICT PicKol ;
-         VALID {|| _Kolicina <> 0 .AND. IIF( InRange( nRbr, 10, 99 ), error_tab( "PR dokument max 9 artikala" ), .T. ) }
+         VALID {|| _Kolicina <> 0 .AND. IIF( InRange( nRbr, 10, 99 ), error_bar( "PR dokument max 9 artikala" ), .T. ) }
 
    ELSE
 
@@ -93,7 +93,7 @@ FUNCTION kalk_unos_dok_pr()
    LOCATE FOR Eval( bProizvodPripadajuceSirovine ) == nRbr // stavke
 
    IF Found()
-      info_tab( _idFirma, _idvd, _brdok,  "postoje proivodi za rbr" + AllTrim( Str( nRbr ) ) )
+      info_bar( _idFirma, _idvd, _brdok,  "postoje proivodi za rbr" + AllTrim( Str( nRbr ) ) )
       IF Pitanje( , "pobrisati za stavku " + AllTrim( Str( nRbr ) ) + " sirovine?", "N" ) == "D"
          kalk_pripr_pobrisi_sirovine( cIdFirma, cIdVd, cBrDok, nRbr, bDokument )
          kalk_pripr_napuni_sirovine_za( nRbr, _idroba, _kolicina )
@@ -304,12 +304,12 @@ FUNCTION kalk_pripr_napuni_sirovine_za( nRbr, _idroba, _kolicina )
       nC2 := 0
       dDatNab := CToD( "" )
 
-      info_tab( _idkonto2 + "/" + sast->id2, " sirovina stanje na skladistu ..." )
+      info_bar( _idkonto2 + "/" + sast->id2, " sirovina stanje na skladistu ..." )
       KalkNab( _idfirma, sast->id2, _idkonto2, @nKolS, @nKolZN, @nc1, @nc2, @dDatNab )
-      info_tab( "" )
+      info_bar( "" )
 
       IF dDatNab > _DatDok
-         error_tab( "Datum nabavke je " + DToC( dDatNab ) + " sirovina " + sast->id2 )
+         error_bar( "Datum nabavke je " + DToC( dDatNab ) + " sirovina " + sast->id2 )
       ENDIF
 
       IF _kolicina >= 0 .OR. Round( _NC, 3 ) == 0 .AND. !( roba->tip $ "UT" )
@@ -350,7 +350,7 @@ FUNCTION kalk_pripr_pr_nv_proizvod( cIdFirma, cIdVd, cBrDok, nRbr, bDokument, bP
          Eval( bProizvodPripadajuceSirovine ) == nRbr // when field->rbr == 301, 302, 303 ...  EVAL( bProizvod ) = 3
          nNV += field->NC * field->kolicina
          IF field->gkolicina < field->kolicina
-            error_tab(  cIdFirma + "-" + cIdVD + "-" + cBrDok, ;
+            error_bar(  cIdFirma + "-" + cIdVD + "-" + cBrDok, ;
                 field->idkonto2 + "/" + field->idroba + " stanje " + AllTrim( Str( field->gkolicina, 9, 3 ) ) + " potrebno: " + AllTrim( Str( field->kolicina, 10, 3 ) ) )
             _error := "1"
             RREPLACE field->error with "1"
@@ -384,7 +384,7 @@ FUNCTION proizvod_proracunaj_nc_za( nRbr, cIdFirma, cIdVd, cBrDok, bDokument, bP
          Eval( bProizvod ) == nRbr // when field->rbr == 301, 302, 303 ...  EVAL( bProizvod ) = 3
          nNV += field->NC * field->kolicina
          IF field->gKolicina < field->kolicina
-            error_tab( cIdfirma + "-" + cIdvd + "-" + cBrDok, ;
+            error_bar( cIdfirma + "-" + cIdvd + "-" + cBrDok, ;
                AllTrim( field->idkonto2 ) + " / " + field->idRoba + " stanje: " + AllTrim( Str( field->gKolicina, 10, 3 ) ) + ;
                " treba: " + AllTrim( Str( field->kolicina, 10, 3 ) ) )
             RREPLACE field->error WITH "1"

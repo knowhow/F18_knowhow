@@ -318,7 +318,7 @@ STATIC FUNCTION send_email( err_obj, lNotify )
 
    _attach := { _attachment }
 
-   info_tab( "err-sync", "Šaljem izvještaj greške podršci bring.out ..." )
+   info_bar( "err-sync", "Šaljem izvještaj greške podršci bring.out ..." )
 
    f18_email_send( _mail_params, _attach )
 

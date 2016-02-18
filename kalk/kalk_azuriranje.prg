@@ -595,7 +595,7 @@ STATIC FUNCTION kalk_provjera_integriteta( aDoks, lViseDok )
       SEEK cIdFirma + cIdVD + cBrDok
 
       IF Found()
-         error_tab( cIdfirma + "-" + cIdvd + "-" + cBrdok, ;
+         error_bar( cIdfirma + "-" + cIdvd + "-" + cBrdok, ;
          "Postoji dokument na stanju: " + cIdFirma + "-" + cIdvd + "-" + AllTrim( cBrDok ) )
          IF !lViseDok
             my_close_all_dbf()
@@ -657,7 +657,7 @@ STATIC FUNCTION kalk_provjeri_duple_dokumente( aRezim )
 
          // TODO: cleanup sumnjive stavke
          IF field->ERROR == "1"
-            error_tab( field->idfirma + "-" + field->idvd + "-" + field->brdok, " /  Rbr." + field->rbr + " sumnjiva! ")
+            error_bar( field->idfirma + "-" + field->idvd + "-" + field->brdok, " /  Rbr." + field->rbr + " sumnjiva! ")
             IF Pitanje(, "Želite li dokument ažurirati bez obzira na sumnjive stavke? (D/N)", "N" ) == "D"
                aRezim := {}
                AAdd( aRezim, gCijene )

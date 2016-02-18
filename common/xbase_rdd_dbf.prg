@@ -273,7 +273,7 @@ FUNCTION reopen_dbf( excl, dbf_table, open_index )
    RECOVER USING _err
 
       cMsg := "tbl:" + _a_dbf_rec[ "table" ] + " : " + _err:description +  " excl:" + ToStr( excl )
-      error_tab( "reopen_dbf", cMsg )
+      error_bar( "reopen_dbf", cMsg )
       log_write( "ERR-reopen_dbf " + cMsg, 2 )
       lRet := .F.
 
@@ -303,7 +303,7 @@ FUNCTION reopen_exclusive_and_zap( cDbfTable, open_index )
    RECOVER USING _err
 
       log_write( "ERROR-REXCL-ZAP " + _err:Description, 3 )
-      error_tab( "reopen_dbf_zap", cDbfTable + " / " + _err:Description )
+      error_bar( "reopen_dbf_zap", cDbfTable + " / " + _err:Description )
       reopen_dbf( .F., cDbfTable, open_index )
       zapp()
 
@@ -471,7 +471,7 @@ FUNCTION dbf_open_temp_and_count( aDbfRec, nCntSql, nCnt, nDel )
    RECOVER USING  oError
       LOG_CALL_STACK cLogMsg
       ?E "dbf_open_temp_and_count use dbf:", cFullDbf, "alias:", cAliasTemp, oError:Description
-      error_tab( "dbf_open_tmp_cnt", cAliasTemp + " / " + oError:Description )
+      error_bar( "dbf_open_tmp_cnt", cAliasTemp + " / " + oError:Description )
       QUIT_1
    END SEQUENCE
 

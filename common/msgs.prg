@@ -19,14 +19,14 @@ STATIC aErrors := {}
 STATIC aInfos := {}
 
 
-FUNCTION empty_info_tab()
+FUNCTION empty_info_bar()
 
    aErrors := {}
 
    RETURN .T.
 
 
-FUNCTION empty_error_tab()
+FUNCTION empty_error_bar()
 
    aInfos := {}
 
@@ -34,7 +34,7 @@ FUNCTION empty_error_tab()
 
 
 
-FUNCTION info_tab( cDoc, cMsg )
+FUNCTION info_bar( cDoc, cMsg )
 
    hb_default( @cMsg, "" )
 
@@ -50,7 +50,7 @@ FUNCTION info_tab( cDoc, cMsg )
 
 
 
-FUNCTION error_tab( cDoc, cMsg )
+FUNCTION error_bar( cDoc, cMsg )
 
    Beep( 2 )
    @ maxrows(), 4 SAY8  ">> " + PadC( cMsg, maxcols() - 10 ) + " <<" COLOR ERROR_PANEL_COLOR

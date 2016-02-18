@@ -103,7 +103,7 @@ FUNCTION create_index( cImeInd, xKljuc, cAlias, lSilent )
          my_use_temp( hTmpRec, NIL, .F., .T., .F. ) // exclusive : my_use_temp( hDbfRec, table, new_area, excl, lOpenIndex )
 
          IF !lSilent
-            info_tab( "-", "DBF: " + cImeDbf + ", Kreiram index-tag :" + cImeInd + "#" + ExFileName( cImeCdx ) )
+            info_bar( "-", "DBF: " + cImeDbf + ", Kreiram index-tag :" + cImeInd + "#" + ExFileName( cImeCdx ) )
          ENDIF
          ?E  "DBF: " + cImeDbf + "  index-tag :" + cImeInd + "#" + ExFileName( cImeCdx )
 

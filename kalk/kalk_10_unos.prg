@@ -579,7 +579,7 @@ FUNCTION V_kol10()
       IF nKols < Abs( _kolicina )
          _ERROR := "1"
          Beep( 2 )
-         error_tab( _idfirma + "-" + _idvd + "-" + _brdok, ;
+         error_bar( _idfirma + "-" + _idvd + "-" + _brdok, ;
             _idroba + " kol na stanju:" + AllTrim( Str( nKols, 12, 3 ) ) + " treba: " + AllTrim( Str( _kolicina, 12, 3 ) ) )
       ENDIF
       SELECT kalk_pripr

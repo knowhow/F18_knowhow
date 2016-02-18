@@ -403,7 +403,7 @@ STATIC FUNCTION VKol( x_kord )
 
       IF nKols < Abs( _kolicina )
          _ERROR := "1"
-         error_tab( _idfirma + "-" + _idvd + "-" + _brdok, _idkonto + " / " + _idroba + " kolicina:" +;
+         error_bar( _idfirma + "-" + _idvd + "-" + _brdok, _idkonto + " / " + _idroba + " kolicina:" +;
              Alltrim(Str( nKols, 12, 3 )) +  " treba: " + Alltrim(Str( _kolicina, 12, 3 )))
       ENDIF
 

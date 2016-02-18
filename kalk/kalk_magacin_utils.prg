@@ -43,7 +43,7 @@ FUNCTION KalkNabP( cIdFirma, cIdroba, cIdkonto, nKolicina, nKolZN, nNC, nSNC, dD
 
    IF cIdfirma + cIdkonto + cIdroba == field->idfirma + field->pkonto + field->idroba .AND. _datdok < field->datdok
 
-       error_tab( cIdfirma + "-" + cIdvd + "-" + cBrdok, " vec postoji dokument " + field->idfirma + "-" + field->idvd + "-" + field->brdok + " na datum: " + DToC( field->datdok ) )
+       error_bar( cIdfirma + "-" + cIdvd + "-" + cBrdok, " vec postoji dokument " + field->idfirma + "-" + field->idvd + "-" + field->brdok + " na datum: " + DToC( field->datdok ) )
       _ERROR := "1"
    ENDIF
 
@@ -775,7 +775,7 @@ FUNCTION V_KolMag()
    IF nKolS < _Kolicina
       Beep( 4 )
       CLEAR TYPEAHEAD
-      error_tab( _idfirma + "-" + _idvd + "-" + _brdok, ;
+      error_bar( _idfirma + "-" + _idvd + "-" + _brdok, ;
          _mkonto + " / " + _idroba + "na stanju: " + Alltrim(Str( nKolS, 10, 4 )) + " treba " +  Alltrim(Str( _kolicina, 10, 4 )))
       _ERROR := "1"
    ENDIF
@@ -907,7 +907,7 @@ FUNCTION KalkNab( cIdFirma, cIdRoba, cIdKonto, nKolicina, nKolZN, nNC, nSNc, dDa
 
    SKIP -1
    IF ( ( cIdFirma + cIdKonto + cIdRoba ) == ( field->idfirma + field->mkonto + field->idroba ) ) .AND. _datdok < field->datdok
-      error_tab( cIdfirma + "/" + cIdKonto + "/" + cIdRoba, "Postoji dokument " + field->idfirma + "-" + field->idvd + "-" + field->brdok + " na datum: " + DToC( field->datdok ), 4 )
+      error_bar( cIdfirma + "/" + cIdKonto + "/" + cIdRoba, "Postoji dokument " + field->idfirma + "-" + field->idvd + "-" + field->brdok + " na datum: " + DToC( field->datdok ), 4 )
       _ERROR := "1"
    ENDIF
 

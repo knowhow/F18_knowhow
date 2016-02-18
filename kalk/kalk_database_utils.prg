@@ -190,7 +190,7 @@ FUNCTION DatPosljK()
    SEEK _idfirma + _mkonto + _idroba + Chr( 254 )
    SKIP -1
    IF _idfirma + _idkonto + _idroba == field->idfirma + field->mkonto + field->idroba .AND. _datdok < field->datdok
-      error_tab( _idfirma + "-" + _idvd + "-" + _brdok, _mkonto + " / " + _idroba + " zadnji dokument: " + DToC( field->datdok ) )
+      error_bar( _idfirma + "-" + _idvd + "-" + _brdok, _mkonto + " / " + _idroba + " zadnji dokument: " + DToC( field->datdok ) )
       _ERROR := "1"
    ENDIF
    SELECT kalk_pripr
@@ -217,7 +217,7 @@ FUNCTION DatPosljP()
       SEEK _idfirma + _idkonto + _idroba + Chr( 254 )
       SKIP -1
       IF _idfirma + _idkonto + _idroba == field->idfirma + field->pkonto + field->idroba .AND. _datdok < field->datdok
-         error_tab( _idfirma + "-" + _idvd + "-" + _brdok, _idkonto + " / " + _idroba + " zadnji dokument: " + DToC( field->datdok ) )
+         error_bar( _idfirma + "-" + _idvd + "-" + _brdok, _idkonto + " / " + _idroba + " zadnji dokument: " + DToC( field->datdok ) )
          _ERROR := "1"
       ENDIF
    ENDIF

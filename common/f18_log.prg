@@ -153,7 +153,7 @@ STATIC FUNCTION query_log_data( params )
       _qry += " LIMIT " + AllTrim( Str( _limit ) )
    ENDIF
 
-   info_tab( "log_get_data", "qry:" + _qry )
+   info_bar( "log_get_data", "qry:" + _qry )
    _data := _sql_query( _server, _qry )
 
    IF !is_var_objekat_tpquery( _data )

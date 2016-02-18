@@ -20,7 +20,7 @@ MEMVAR ImeKol, Kol
 
 FUNCTION P_Roba( cId, dx, dy, cSeek )
 
-   LOCAL lRet
+   LOCAL xRet
    LOCAL bRoba
    LOCAL lArtGroup := .F.
    LOCAL _naz_len := 40
@@ -133,11 +133,11 @@ FUNCTION P_Roba( cId, dx, dy, cSeek )
       cPomTag := "ID"
    ENDIF
 
-   lRet := PostojiSifra( F_ROBA, ( cPomTag ), 15, MAXCOLS() - 5, "Lista artikala - robe", @cId, dx, dy, bRoba,,,,, { "ID" } )
+   xRet := PostojiSifra( F_ROBA, ( cPomTag ), MAXROWS() - 11, MAXCOLS() - 5, "Lista artikala - robe", @cId, dx, dy, bRoba,,,,, { "ID" } )
 
    PopWa()
 
-   RETURN lRet
+   RETURN xRet
 
 
 // ---------------------------------------------------

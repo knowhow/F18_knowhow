@@ -125,24 +125,24 @@ METHOD F18Backup:Backup_company()
    FErase( ::backup_path + ::backup_filename )
    Sleep( 1 )
 
-   #ifdef __PLATFORM__UNIX
-      _cmd += "export pgusername=admin;export PGPASSWORD=boutpgmin;"
-   #endif
+#ifdef __PLATFORM__UNIX
+   _cmd += "export pgusername=admin;export PGPASSWORD=boutpgmin;"
+#endif
 
-   #ifdef __PLATFORM__WINDOWS
-      _cmd += "set pgusername=admin&set PGPASSWORD=boutpgmin&"
+#ifdef __PLATFORM__WINDOWS
+   _cmd += "set pgusername=admin&set PGPASSWORD=boutpgmin&"
 
-      IF ::ping_time > 0
-         _cmd += "ping -n " + AllTrim( Str( ::ping_time ) ) + " 8.8.8.8&"
-      ENDIF
+   IF ::ping_time > 0
+      _cmd += "ping -n " + AllTrim( Str( ::ping_time ) ) + " 8.8.8.8&"
+   ENDIF
 
-   #endif
+#endif
 
    _backup_file := ::backup_path + ::backup_filename
 
-   #ifdef __PLATFORM__WINDOWS
-      _backup_file := StrTran( _backup_file, "\", "//" )
-   #endif
+#ifdef __PLATFORM__WINDOWS
+   _backup_file := StrTran( _backup_file, "\", "//" )
+#endif
 
    _cmd += "pg_dump"
    _cmd += " -h " + AllTrim( _host )
@@ -172,11 +172,11 @@ METHOD F18Backup:Backup_company()
    ++ _x
    @ _x, _y SAY8 "očekujem rezulat operacije... "
 
-   #ifdef __PLATFORM__WINDOWS
-      f18_run( _cmd )
-   #else
-      hb_run( _cmd )
-   #endif
+#ifdef __PLATFORM__WINDOWS
+   f18_run( _cmd )
+#else
+   hb_run( _cmd )
+#endif
 
    IF File( ::backup_path + ::backup_filename )
       @ _x, Col() + 1 SAY "OK" COLOR _color_ok
@@ -189,7 +189,7 @@ METHOD F18Backup:Backup_company()
 
       log_write( "backup company kreiran uspjesno: " + ::backup_path + ::backup_filename, 6 )
 
-      IF !EMPTY( ::removable_drive )
+      IF !Empty( ::removable_drive )
          ++ _x
          @ _x, _y SAY "Prebacujem backup na udaljenu lokaciju ... "
 
@@ -235,25 +235,25 @@ METHOD F18Backup:Backup_server()
    FErase( ::backup_path + ::backup_filename )
    Sleep( 1 )
 
-   #ifdef __PLATFORM__UNIX
-      _cmd += "export pgusername=admin;export PGPASSWORD=boutpgmin;"
-   #endif
+#ifdef __PLATFORM__UNIX
+   _cmd += "export pgusername=admin;export PGPASSWORD=boutpgmin;"
+#endif
 
-   #ifdef __PLATFORM__WINDOWS
-      _cmd += "set pgusername=admin&set PGPASSWORD=boutpgmin&"
+#ifdef __PLATFORM__WINDOWS
+   _cmd += "set pgusername=admin&set PGPASSWORD=boutpgmin&"
 
-      IF ::ping_time > 0
-         // dodaj ping na komandu za backup radi ENV varijabli
-         _cmd += "ping -n " + AllTrim( Str( ::ping_time ) ) + " 8.8.8.8&"
-      ENDIF
+   IF ::ping_time > 0
+      // dodaj ping na komandu za backup radi ENV varijabli
+      _cmd += "ping -n " + AllTrim( Str( ::ping_time ) ) + " 8.8.8.8&"
+   ENDIF
 
-   #endif
+#endif
 
    _backup_file := ::backup_path + ::backup_filename
 
-   #ifdef __PLATFORM__WINDOWS
-      _backup_file := StrTran( _backup_file, "\", "//" )
-   #endif
+#ifdef __PLATFORM__WINDOWS
+   _backup_file := StrTran( _backup_file, "\", "//" )
+#endif
 
    _cmd += "pg_dumpall"
    _cmd += " -h " + AllTrim( _host )
@@ -279,11 +279,11 @@ METHOD F18Backup:Backup_server()
    ++ _x
    @ _x, _y SAY8 "očekujem rezulat operacije... "
 
-   #ifdef __PLATFORM__WINDOWS
-      f18_run( _cmd )
-   #else
-      hb_run( _cmd )
-   #endif
+#ifdef __PLATFORM__WINDOWS
+   f18_run( _cmd )
+#else
+   hb_run( _cmd )
+#endif
 
    IF File( ::backup_path + ::backup_filename )
       @ _x, Col() + 1 SAY "OK" COLOR _color_ok
@@ -296,7 +296,7 @@ METHOD F18Backup:Backup_server()
 
       log_write( "backup kreiran uspjesno: " + ::backup_path + ::backup_filename, 6 )
 
-      IF !EMPTY( ::removable_drive )
+      IF !Empty( ::removable_drive )
          ++ _x
          @ _x, _y SAY "Prebacujem backup na udaljenu lokaciju ... "
 
@@ -576,15 +576,8 @@ FUNCTION f18_backup_data_thread( type_def )
    LOCAL oBackup
    LOCAL auto_backup := .T.
 
-#ifdef  __PLATFORM__WINDOWS
-   _w := hb_gtCreate( "WVT" )
-#else
-   #ifdef __PLATFORM__DARWIN
-   _w := hb_gtCreate( "QTC" )
-  #else
-   _w := hb_gtCreate( "XWC" )
-  #endif
-#endif
+   _w := hb_gtCreate( f18_gt() )
+
 
    IF type_def == NIL
       auto_backup := .F.

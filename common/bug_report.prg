@@ -36,7 +36,6 @@ FUNCTION GlobalErrorHandler( err_obj, lShowErrorReport, lQuitApp )
 
    IF is_in_main_thread()
   altd()
-      PTxtSekvence()
       SET CONSOLE OFF
       SET PRINTER OFF
       SET DEVICE TO PRINTER

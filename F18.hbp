@@ -22,7 +22,7 @@ libF18_string.a
 
 -inc
 -Iinclude
-
+-n
 {F18_DEBUG}-lmy_hbuddall
 
 {darwin}-L./darwin

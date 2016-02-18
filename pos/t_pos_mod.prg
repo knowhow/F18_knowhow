@@ -15,7 +15,7 @@
 CLASS TPosMod FROM TAppMod
 
    METHOD NEW
-   METHOD setGVars
+   METHOD set_module_gvars
    METHOD setScreen
    METHOD mMenu
 
@@ -132,21 +132,17 @@ FUNCTION pos_main_menu_level( KLevel, Fx, Fy )
 
 
 
-// -------------------------------------------
-// -------------------------------------------
 METHOD setScreen()
 
-   SetNaslov( self )
+   set_naslovni_ekran( self )
    NaslEkran( .T. )
 
    RETURN
 
 
 
-METHOD setGVars()
+METHOD set_module_gvars()
 
-   set_global_vars()
-   set_roba_global_vars()
 
    // gPrevIdPos - predhodna vrijednost gIdPos
    PUBLIC gPrevIdPos := "  "
@@ -493,4 +489,4 @@ METHOD setGVars()
 
    gRobaBlock := {|Ch| pos_roba_block( Ch ) }
 
-   RETURN
+   RETURN .T.

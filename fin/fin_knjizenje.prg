@@ -20,9 +20,7 @@ STATIC __rj_len := 6
 // Koristi se u slucaju da u Db unosimo podatke za odredjenu radnu jedinicu
 // da ne bi svaki puta ukucavali tu Rj ovaj parametar nam je nudi kao tekucu vrijednost.
 
-// ---------------------------------------------
-// Unos fin naloga
-// ---------------------------------------------
+
 FUNCTION fin_unos_naloga()
 
    LOCAL _params := fin_params()
@@ -30,7 +28,9 @@ FUNCTION fin_unos_naloga()
    PRIVATE gnLOst := 0
    PRIVATE gPotpis := "N"
 
+   info_bar( "fin", "read_params")
    fin_read_params()
+   info_bar( "fin", "read_params_end")
 
    cTekucaRj := GetTekucaRJ()
    lBlagAsis := .F.
@@ -43,8 +43,8 @@ FUNCTION fin_unos_naloga()
    RETURN .T.
 
 
-/*! \fn KnjNal()
- *  \brief Otvara pripremu za knjizenje naloga
+/*
+ Otvara pripremu za knjizenje naloga
  */
 
 FUNCTION KnjNal()

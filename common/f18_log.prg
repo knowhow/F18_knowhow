@@ -237,8 +237,10 @@ FUNCTION f18_log_delete()
    LOCAL _last_log_date := fetch_metric( "log_last_delete_date", NIL, CToD( "" ) )
    LOCAL _delete_log_level := fetch_metric( "log_delete_level", NIL, 30 )
 
+   info_bar( "init", "f18_log_delete - start" )
+
    IF _delete_log_level == 0
-      RETURN
+      RETURN .F.
    ENDIF
 
    IF ( _curr_log_date - _delete_log_level ) > _last_log_date
@@ -251,8 +253,9 @@ FUNCTION f18_log_delete()
       ENDIF
 
    ENDIF
+   info_bar( "init", "f18_log_delete - stop" )
 
-   RETURN
+   RETURN .T.
 
 
 STATIC FUNCTION sql_log_delete( params )

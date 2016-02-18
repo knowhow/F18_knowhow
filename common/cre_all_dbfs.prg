@@ -191,13 +191,11 @@ FUNCTION cre_sif_adrese( ver )
 
 
 
-FUNCTION CreGparam( nArea )
+FUNCTION create_gparams()
 
    LOCAL aDbf
 
-   IF ( nArea == nil )
-      nArea := -1
-   ENDIF
+   info_bar( "dbf", "create gparams" )
 
    aDbf := {}
    AAdd( aDbf, { "FH", "C", 1, 0 } )  // istorija
@@ -207,41 +205,20 @@ FUNCTION CreGparam( nArea )
    AAdd( aDbf, { "Tip", "C", 1, 0 } ) // tip varijable
    AAdd( aDbf, { "Fv", "C", 15, 0 }  ) // sadrzaj
 
-   IF ( nArea == -1 .OR. nArea == F_GPARAMS )
 
-      cImeDBf := f18_ime_dbf( "gparams" )
+   cImeDBf := f18_ime_dbf( "gparams" )
 
-      IF !File( cImeDbf )
-         DBCREATE2( cImeDbf, aDbf )
-      ENDIF
-
-      CREATE_INDEX( "ID", "fsec+fh+fvar+rbr", cImeDBF )
+   IF !File( cImeDbf )
+      DBCREATE2( cImeDbf, aDbf )
    ENDIF
+
+   CREATE_INDEX( "ID", "fsec+fh+fvar+rbr", cImeDBF )
+   info_bar( "dbf", "" )
 
    RETURN .T.
 
 
-FUNCTION KonvParams( cImeDBF )
 
-   cImeDBF := f18_ime_dbf( cImeDBF )
-   CLOSE  ALL
-   IF File( cImeDBF ) // ako postoji
-      USE ( cImeDbf )
-      IF FieldPos( "VAR" ) <> 0  // stara varijanta parametara
-         SAVE SCREEN TO cScr
-         cls
-         Modstru( cImeDbf, "C H C 1 0  FH  C 1 0", .T. )
-         Modstru( cImeDbf, "C SEC C 1 0  FSEC C 1 0", .T. )
-         Modstru( cImeDbf, "C VAR C 2 0 FVAR C 2 0", .T. )
-         Modstru( cImeDbf, "C  V C 15 0  FV C 15 0", .T. )
-         Modstru( cImeDbf, "A BRISANO C 1 0", .T. )  // dodaj polje "BRISANO"
-         Inkey( 2 )
-         RESTORE SCREEN FROM cScr
-      ENDIF
-   ENDIF
-   CLOSE ALL
-
-   RETURN .T.
 
 
 FUNCTION dbf_ext_na_kraju( cIme )

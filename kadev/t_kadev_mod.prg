@@ -15,120 +15,126 @@
 
 
 CLASS TKadevMod FROM TAppMod
-	method New
-	method setGVars
-	method mMenu
-	method mMenuStandard
+
+   METHOD NEW
+   METHOD set_module_gvars
+   METHOD mMenu
+   METHOD mMenuStandard
+
 END CLASS
 
 // -----------------------------------------------
 // -----------------------------------------------
-method new(p1, p2, p3, p4, p5, p6, p7, p8, p9)
-::super:new(p1, p2, p3, p4, p5, p6, p7, p8, p9)
-return self
+METHOD new( p1, p2, p3, p4, p5, p6, p7, p8, p9 )
+
+   ::super:new( p1, p2, p3, p4, p5, p6, p7, p8, p9 )
+
+   RETURN self
 
 
 
 
 // -----------------------------------------------
 // -----------------------------------------------
-method mMenu()
-private Izbor
-private lPodBugom
-public gSQL := "N"
+METHOD mMenu()
 
-set_hot_keys()
+   PRIVATE Izbor
+   PRIVATE lPodBugom
+   PUBLIC gSQL := "N"
 
-Izbor:=1
+   set_hot_keys()
 
-@ 1,2 SAY PADC( gTS + ": " + gNFirma, 50, "*" )
-@ 4,5 SAY ""
+   Izbor := 1
 
-::mMenuStandard()
+   @ 1, 2 SAY PadC( gTS + ": " + gNFirma, 50, "*" )
+   @ 4, 5 SAY ""
 
-return nil
+   ::mMenuStandard()
+
+   RETURN NIL
 
 
 
 // ----------------------------------------
 // ----------------------------------------
-method mMenuStandard
-local _opc := {}
-local _opcexe := {}
-local _izbor := 1
+METHOD mMenuStandard
 
-AADD( _opc, "1. podaci                                 ")
-AADD( _opcexe, {|| kadev_data() })
-AADD( _opc, "2. pretrazivanje" )
-AADD( _opcexe, {|| kadev_search() })
-AADD( _opc, "3. rekalkulacija" )
-AADD( _opcexe, {|| kadev_recalc() })
-AADD( _opc, "4. izvjestaji")
-AADD( _opcexe, {|| kadev_rpt_menu() })
-AADD( _opc, "5. obrasci")
-AADD( _opcexe, {|| kadev_form() })
-AADD( _opc, "6. radna karta")
-AADD( _opcexe, {|| kadev_work_card() })
-AADD( _opc, "------------------------------------")
-AADD( _opcexe, {|| nil })
-AADD( _opc, "S. sifrarnici" )
-AADD( _opcexe, {|| kadev_sifre_menu() })
-AADD( _opc, "------------------------------------")
-AADD( _opcexe, {|| nil })
-AADD( _opc, "X. parametri" )
-AADD( _opcexe, {|| kadev_params_menu() } )
+   LOCAL _opc := {}
+   LOCAL _opcexe := {}
+   LOCAL _izbor := 1
 
-f18_menu( "kadev", .t., _izbor, _opc, _opcexe )
+   AAdd( _opc, "1. podaci                                 " )
+   AAdd( _opcexe, {|| kadev_data() } )
+   AAdd( _opc, "2. pretrazivanje" )
+   AAdd( _opcexe, {|| kadev_search() } )
+   AAdd( _opc, "3. rekalkulacija" )
+   AAdd( _opcexe, {|| kadev_recalc() } )
+   AAdd( _opc, "4. izvjestaji" )
+   AAdd( _opcexe, {|| kadev_rpt_menu() } )
+   AAdd( _opc, "5. obrasci" )
+   AAdd( _opcexe, {|| kadev_form() } )
+   AAdd( _opc, "6. radna karta" )
+   AAdd( _opcexe, {|| kadev_work_card() } )
+   AAdd( _opc, "------------------------------------" )
+   AAdd( _opcexe, {|| nil } )
+   AAdd( _opc, "S. sifrarnici" )
+   AAdd( _opcexe, {|| kadev_sifre_menu() } )
+   AAdd( _opc, "------------------------------------" )
+   AAdd( _opcexe, {|| nil } )
+   AAdd( _opc, "X. parametri" )
+   AAdd( _opcexe, {|| kadev_params_menu() } )
 
-return
+   f18_menu( "kadev", .T., _izbor, _opc, _opcexe )
+
+   RETURN
 
 
 // ----------------------------------------
 // ----------------------------------------
-method setGVars()
-kadev_set_global_vars()
-return
+METHOD set_module_gvars()
+
+   kadev_set_global_vars()
+
+   RETURN
 
 
 
+FUNCTION kadev_set_global_vars()
 
-function kadev_set_global_vars()
 
-set_global_vars()
+   PUBLIC glBezVoj := .T.
+   PUBLIC gVojEvid := "N"
+   // bez vojne evidencije
+   PUBLIC gnLMarg := 1
+   // lijeva margina
+   PUBLIC gnTMarg := 1
+   // top-gornja margina teksta
+   PUBLIC gTabela := 1
+   // fino crtanje tabele
+   PUBLIC gA43 := "4"
+   // format papira
+   PUBLIC gnRedova := 64
+   // za ostranicavanje - broj redova po stranici
+   PUBLIC gOstr := "D"
+   // ostranicavanje
+   PUBLIC gPostotak := "D"
+   // prikaz procenta uradjenog posla (znacajno kod
+   // dugih cekanja na izvrsenje opcije)
+   PUBLIC gDodKar1 := "Karakteristika 1"
+   PUBLIC gDodKar2 := "Karakteristika 2"
+   PUBLIC gTrPromjena := "KP"
+   PUBLIC gCentOn := "N"
 
-public glBezVoj := .t.
-public gVojEvid := "N"
-// bez vojne evidencije
-public gnLMarg := 1
-// lijeva margina
-public gnTMarg := 1
-// top-gornja margina teksta
-public gTabela := 1
-// fino crtanje tabele
-public gA43 := "4"
-// format papira
-public gnRedova := 64
-// za ostranicavanje - broj redova po stranici
-public gOstr := "D"
-// ostranicavanje
-public gPostotak := "D"
-// prikaz procenta uradjenog posla (znacajno kod
-// dugih cekanja na izvrsenje opcije)
-public gDodKar1 := "Karakteristika 1"
-public gDodKar2 := "Karakteristika 2"
-public gTrPromjena := "KP"
-public gCentOn := "N"
+   kadev_read_params()
 
-kadev_read_params()
+   IF gVojEvid == "D"
+      glBezVoj := .F.
+   ENDIF
 
-if gVojEvid == "D"
-	glBezVoj := .f.
-endif
+   IF gCentOn == "D"
+      SET CENTURY ON
+   ELSE
+      SET CENTURY OFF
+   ENDIF
 
-if gCentOn == "D"
-	SET CENTURY ON
-else
-  	SET CENTURY OFF
-endif
-
-return
+   RETURN

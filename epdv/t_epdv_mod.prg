@@ -16,7 +16,7 @@
 CLASS TEpdvMod FROM TAppMod
 
    METHOD NEW
-   METHOD setGVars
+   METHOD set_module_gvars
    METHOD mMenu
    METHOD mMenuStandard
 
@@ -80,10 +80,8 @@ METHOD mMenuStandard()
 
 
 
-METHOD setGVars()
+METHOD set_module_gvars()
 
-   set_global_vars()
-   set_roba_global_vars()
 
    PRIVATE cSection := "1"
    PRIVATE cHistory := " "
@@ -110,6 +108,5 @@ METHOD setGVars()
    gTema := "OSN_MENI"
    gGlBaza := "PDV.DBF"
 
-   PUBLIC cZabrana := "Opcija nedostupna za ovaj nivo !!!"
 
-   RETURN
+   RETURN .T.

@@ -16,7 +16,7 @@
 CLASS TReportsMod FROM TAppMod
 
    METHOD NEW
-   METHOD setGVars
+   METHOD set_module_gvars
 
    METHOD mMenu
    METHOD mMenuStandard
@@ -49,8 +49,6 @@ METHOD mMenu()
 
 
 
-// -----------------------------------------------
-// -----------------------------------------------
 METHOD mMenuStandard()
 
    PRIVATE izbor := 1
@@ -69,12 +67,9 @@ METHOD mMenuStandard()
 
 
 
-// ---------------------------------------------
-// ---------------------------------------------
-METHOD setGVars()
 
-   set_global_vars()
-   set_roba_global_vars()
+METHOD set_module_gvars()
+
 
    PUBLIC gModul
    PUBLIC gTema
@@ -84,6 +79,4 @@ METHOD setGVars()
    gTema := "OSN_MENI"
    gGlBaza := ""
 
-   PUBLIC cZabrana := "Opcija nedostupna za ovaj nivo !!!"
-
-   RETURN
+   RETURN .T.

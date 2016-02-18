@@ -34,7 +34,7 @@ FUNCTION mnu_fakt_params()
 
 
    AAdd( opc, "1. postaviti osnovne podatke o firmi           " )
-   AAdd( opcexe, {|| org_params() } )
+   AAdd( opcexe, {|| parametri_organizacije() } )
 
    AAdd( opc, "2. postaviti varijante obrade dokumenata       " )
    AAdd( opcexe, {|| fakt_par_varijante_prikaza() } )

@@ -28,7 +28,7 @@ FUNCTION ld_parametri()
    PRIVATE aHistory := {}
 
    AAdd( _opc, "1. osnovni podaci organizacione jedinice                        " )
-   AAdd( _opcexe, {|| org_params() } )
+   AAdd( _opcexe, {|| parametri_organizacije() } )
    AAdd( _opc, "2. RJ, mjesec, godina...         " )
    AAdd( _opcexe, {|| ld_set_firma() } )
    AAdd( _opc, "3. postavka zaokruzenja, valute, formata prikaza iznosa...  " )

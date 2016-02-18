@@ -12,9 +12,9 @@
 #include "f18.ch"
 
 
-
 FUNCTION set_global_vars_0()
 
+   info_bar( "vars", "set_global_vars_0" )
    PUBLIC ZGwPoruka := ""
    PUBLIC GW_STATUS := "-"
    PUBLIC GW_HANDLE := 0
@@ -123,21 +123,57 @@ FUNCTION set_global_vars_0()
    PUBLIC g_knjiz_help := "N"
    PUBLIC gMjRj := "N"
 
-   // setuje globalne varijable printera
-   init_print_variables()
+   PUBLIC gRj         := "N"
+   PUBLIC gReadOnly   := .F.
+   PUBLIC gSQL        := "N"
+   PUBLIC gOModul     := NIL
+   PUBLIC cDirPriv    := ""
+   PUBLIC cDirRad     := ""
+   PUBLIC cDirSif     := ""
+   PUBLIC glBrojacPoKontima := .T.
 
-   RETURN
+
+   init_print_variables() // setuje globalne varijable printera
+   set_ptxt_sekvence()
+   set_global_vars_roba()
+
+   RETURN .T.
 
 
+FUNCTION set_ptxt_sekvence()
 
-FUNCTION set_global_vars_0_prije_prijave( fSve )
+   gpIni :=  "#%INI__#"
+   gpCOND := "#%KON17#"
+   gpCOND2 := "#%KON20#"
+   gp10CPI := "#%10CPI#"
+   gP12CPI := "#%12CPI#"
+   gPB_ON := "#%BON__#"
+   gPB_OFF := "#%BOFF_#"
+   gPU_ON := "#%UON__#"
+   gPU_OFF := "#%UOFF_#"
+   gPI_ON := "#%ION__#"
+   gPI_OFF := "#%IOFF_#"
+   gPFF   := "#%NSTR_#"
+   gPO_Port := "#%PORTR#"
+   gPO_Land := "#%LANDS#"
+   gPPort := "1"
+   gRPL_Normal := ""
+   gRPL_Gusto := ""
+   gPPTK := " "
+
+   RETURN .T.
+
+
+FUNCTION set_global_vars_1( fSve )
 
    LOCAL cImeDbf
 
+   info_bar( "vars", "set_global_vars_1" )
    IF fsve == nil
       fSve := .T.
    ENDIF
 
+   create_gparams()
    IF fSve
       PUBLIC gSezonDir := ""
       PUBLIC gRadnoPodr := "RADP"
@@ -146,9 +182,6 @@ FUNCTION set_global_vars_0_prije_prijave( fSve )
       PUBLIC KLevel := "9"
       PUBLIC gPTKONV := "0 "
       PUBLIC gPicSif := "V", gcDirekt := "V", gShemaVF := "B5", gSKSif := "D"
-
-      // public gPFont:="Arial"
-
       PUBLIC gKodnaS := "8"
       PUBLIC gWord97 := "N"
       PUBLIC g50f := " "
@@ -187,16 +220,89 @@ FUNCTION set_global_vars_0_prije_prijave( fSve )
 
 
 
-FUNCTION set_global_vars_0_nakon_prijave()
+FUNCTION set_global_vars_2()
+
+   info_bar( "init", "set global_vars_2 - start" )
+
+   SetSpecifVars()
+   SetValuta()
+   init_printer()
+   SetPDVBoje()
+
+   PUBLIC gFirma := "10"
+   PUBLIC gNFirma := PadR( "", 50 )
+   PUBLIC gTS := PadR( "Preduzece", 20 )
+   PUBLIC gBaznaV := "D"
+   PUBLIC gZaokr := 2
+   PUBLIC gTabela := 0
+   PUBLIC gPDV := "D"
+   PUBLIC gMjStr := PadR( "Sarajevo", 30 )
+   PUBLIC gModemVeza := "N"
+   PUBLIC gNW := "D"
+
+
+   PUBLIC gPartnBlock
+   gPartnBlock := nil
+
+   PUBLIC gSecurity := "D"
+   PUBLIC gnDebug := 0
+   PUBLIC gOpSist := "-"
+
 
    gSql := "N"
    gSqlLogBase := ""
-
-   RETURN
-
+   gReadOnly := .F.
 
 
-/*! \fn IniGParam2(lSamoKesiraj)
+   info_bar( "init", "set global_vars_2 - end" )
+
+   RETURN .T.
+
+
+
+FUNCTION set_global_vars_roba()
+
+   PUBLIC gUVarPP
+   PUBLIC gRobaBlock
+   PUBLIC gPicCDem
+   PUBLIC PicDem
+   PUBLIC gPicProc
+   PUBLIC gPicDEM
+   PUBLIC gPickol
+   PUBLIC gFPicCDem
+   PUBLIC gFPicDem
+   PUBLIC gFPicKol
+
+   PUBLIC gDuzSifIni
+
+   PUBLIC glPoreziLegacy
+   PUBLIC glUgost
+   PUBLIC gUgostVarijanta
+
+   // R - Obracun porez na RUC
+   // D - starija varijanta ???
+   // N - obicno robno knjigovodstvo
+
+   glPoreziLegacy := .T.
+   glUgost := .F.
+
+   // RMarza_DLimit - osnovica realizovana marza ili donji limit
+   // MpcSaPor - Maloprodajna cijena sa porezom
+   gUgostVarijanta := "Rmarza_DLimit"
+   gUVarPP := "N"
+   gRobaBlock := NIL
+   gPicCDEM := "999999.999"
+   gPicProc := "999999.99%"
+   gPicDEM := "9999999.99"
+   gPickol := "999999.999"
+   gFPicCDem := "0"
+   gFPicDem := "0"
+   gFPicKol := "0"
+   gDuzSifINI := "10"
+
+   RETURN .T.
+
+/*! IniGParam2(lSamoKesiraj)
  *  \brief Ucitava globalne parametre gPTKonv
  *  Prvo ucitava "p?" koji je D ako zelimo ucitavati globalne parametre iz PRIVDIR
  *  \todo Ocigledno da je ovo funkcija za eliminaciju ...
@@ -250,15 +356,13 @@ FUNCTION IniGParam2()
       USE
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
-// ------------------------------------
-// ------------------------------------
-FUNCTION IniPrinter()
 
-   // procitaj gPrinter, gpini, itd..
-   // postavi shift F2 kao hotkey
+FUNCTION init_printer() // procitaj gPrinter, gpini,  postavi shift F2 kao hotkey
+
+   info_bar( "init", "init printer seqs start" )
 
    IF gModul $ "EPDV"
       gPrinter := "R"
@@ -267,7 +371,7 @@ FUNCTION IniPrinter()
    IF gPrinter == "E"
       set_epson_print_codes()
    ELSE
-      PtxtSekvence()
+      set_ptxt_sekvence()
    ENDIF
 
    IF gPicSif == "8"
@@ -276,7 +380,10 @@ FUNCTION IniPrinter()
       SetKey( K_SH_F2, {|| PPrint() } )
    ENDIF
 
-   RETURN
+   info_bar( "init", "init printer seqs end" )
+
+   RETURN .T.
+
 
 
 // ---------------------------------

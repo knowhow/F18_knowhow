@@ -324,8 +324,12 @@ METHOD F18Login:company_db_relogin( server_param, database, session )
       CLOSE ALL
 
       set_global_vars_0()
+      set_global_vars_roba()
+
       init_gui( .F. )
-      set_global_vars()
+      set_global_vars_2()
+      parametri_organizacije( .F. )
+
       post_login( .F. )
 
       f18_app_parameters( .T. )

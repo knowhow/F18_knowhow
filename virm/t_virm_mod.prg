@@ -19,7 +19,7 @@
 CLASS TVirmMod FROM TAppMod
 
    METHOD NEW
-   METHOD setGVars
+   METHOD set_module_gvars
    METHOD mMenu
    METHOD mMenuStandard
 
@@ -83,20 +83,15 @@ METHOD mMenuStandard
    RETURN
 
 
-// ----------------------------------------
-// ----------------------------------------
-METHOD setGVars()
+METHOD set_module_gvars()
 
    virm_set_global_vars()
 
-   RETURN
-
+   RETURN .T.
 
 
 
 FUNCTION virm_set_global_vars()
-
-   set_global_vars()
 
    PUBLIC gDatum := Date()
    PUBLIC gMjesto := Space( 16 )
@@ -114,4 +109,4 @@ FUNCTION virm_set_global_vars()
    gDatum := fetch_metric( "virm_init_datum_uplate", nil, gDatum )
    gVirmFirma := PadR( fetch_metric( "virm_org_id", nil, "" ), 6 )
 
-   RETURN
+   RETURN .T.

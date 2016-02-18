@@ -69,7 +69,7 @@ FUNCTION StartPrint( lUFajl, cF, cDocumentName )
       ENDIF
 
       IF gPrinter == "R"
-         PtxtSekvence()
+         set_ptxt_sekvence()
       ENDIF
 
       // transformisi cKom varijablu za portove > 4

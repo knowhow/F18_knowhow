@@ -11,6 +11,7 @@
 
 #include "f18.ch"
 
+THREAD STATIC s_hParametri := NIL
 
 FUNCTION fetch_metric( sect, user, default_value )
 
@@ -18,6 +19,7 @@ FUNCTION fetch_metric( sect, user, default_value )
    LOCAL _table
    LOCAL _server := pg_server()
    LOCAL _ret := ""
+   LOCAL xRet
 
    IF default_value == NIL
       default_value := ""
@@ -29,6 +31,15 @@ FUNCTION fetch_metric( sect, user, default_value )
       ELSE
          sect += "/" + user
       ENDIF
+   ENDIF
+
+   IF s_hParametri == nil
+      s_hParametri := hb_Hash()
+   ENDIF
+
+   IF hb_HHasKey( s_hParametri, sect ) .AND. !parametar_dinamican( sect )
+      ?E "fetch param cache hit: ", sect
+      RETURN s_hParametri[ sect ]
    ENDIF
 
    _temp_qry := "SELECT fetchmetrictext(" + sql_quote( sect )  + ")"
@@ -46,11 +57,30 @@ FUNCTION fetch_metric( sect, user, default_value )
    _ret := _table:FieldGet( 1 )
 
    IF _ret == "!!notfound!!"
-      RETURN default_value
+      xRet := default_value
    ELSE
-      RETURN str_to_val( _ret, default_value )
+
+      xRet := str_to_val( _ret, default_value )
+      s_hParametri[ sect ] :=  xRet
    ENDIF
 
+   RETURN xRet
+
+
+FUNCTION parametar_dinamican( cSection )
+
+   IF "_brojac_" $ cSection
+      RETURN .T.
+   ENDIF
+   IF "_counter_" $ cSection
+      RETURN .T.
+   ENDIF
+
+   IF LEFT( cSection, 5) == "fakt/"  // fakt brojaci
+      RETURN .T.
+   ENDIF
+
+   RETURN .F.
 
 // --------------------------------------------------------------
 // setuj parametre u metric tabelu
@@ -82,10 +112,16 @@ FUNCTION set_metric( sect, user, value )
       RETURN .F.
    ENDIF
 
+   IF s_hParametri == nil
+      s_hParametri := hb_Hash()
+   ENDIF
+
+   s_hParametri[ sect ] := value
+
    RETURN _table:FieldGet( _table:FieldPos( "setmetric" ) )
 
-// --------------------------------------------------------------
-// --------------------------------------------------------------------
+
+
 STATIC FUNCTION str_to_val( str_val, default_value )
 
    LOCAL _val_type := ValType( default_value )
@@ -123,6 +159,7 @@ FUNCTION get_set_global_param( param_name, value, def_value )
    ENDIF
 
    RETURN _ret
+
 
 // ----------------------------------------------------------
 // set/get user parametre F18

@@ -22,10 +22,7 @@ FUNCTION Main( p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11 )
    PUBLIC gDebug := 9
 
    cre_arg_v_hash( @_arg_v, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11 )
-
    set_f18_params( p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11 )
-
-
    f18_init_app( _arg_v )
 
    RETURN .T.
@@ -60,12 +57,11 @@ STATIC FUNCTION cre_arg_v_hash( hash )
       hash[ "p" + AllTrim( Str( ++_count ) ) ] := _param
    ENDDO
 
-   RETURN
+   RETURN .T.
 
 
 
-// ----------------------------
-// ----------------------------
+
 FUNCTION module_menu( arg_v )
 
    LOCAL menuop := {}
@@ -159,77 +155,77 @@ FUNCTION module_menu( arg_v )
 STATIC FUNCTION set_menu_choices( menuop, menuexec, p3, p4, p5, p6, p7 )
 
    LOCAL _count := 0
-   LOCAL _brojac
+   LOCAL cMenuBrojac
 
    IF f18_use_module( "fin" )
-      _brojac := PadL( AllTrim( Str( ++_count ) ), 2 )
-      AAdd( menuop, _brojac + ". FIN   # finansijsko poslovanje                 " )
+      cMenuBrojac := PadL( AllTrim( Str( ++_count ) ), 2 )
+      AAdd( menuop, cMenuBrojac + ". FIN   # finansijsko poslovanje                 " )
       AAdd( menuexec, {|| MainFin( my_user(), "dummy", p3, p4, p5, p6, p7 ) } )
    ENDIF
 
    IF f18_use_module( "kalk" )
-      _brojac := PadL( AllTrim( Str( ++_count ) ), 2 )
-      AAdd( menuop, _brojac + ". KALK  # robno-materijalno poslovanje" )
+      cMenuBrojac := PadL( AllTrim( Str( ++_count ) ), 2 )
+      AAdd( menuop, cMenuBrojac + ". KALK  # robno-materijalno poslovanje" )
       AAdd( menuexec, {|| MainKalk( my_user(), "dummy", p3, p4, p5, p6, p7 ) } )
    ENDIF
 
    IF f18_use_module( "fakt" )
-      _brojac := PadL( AllTrim( Str( ++_count ) ), 2 )
-      AAdd( menuop, _brojac + ". FAKT  # fakturisanje" )
+      cMenuBrojac := PadL( AllTrim( Str( ++_count ) ), 2 )
+      AAdd( menuop, cMenuBrojac + ". FAKT  # fakturisanje" )
       AAdd( menuexec, {|| MainFakt( my_user(), "dummy", p3, p4, p5, p6, p7 ) } )
    ENDIF
 
    IF f18_use_module( "epdv" )
-      _brojac := PadL( AllTrim( Str( ++_count ) ), 2 )
-      AAdd( menuop, _brojac + ". ePDV  # elektronska evidencija PDV-a" )
+      cMenuBrojac := PadL( AllTrim( Str( ++_count ) ), 2 )
+      AAdd( menuop, cMenuBrojac + ". ePDV  # elektronska evidencija PDV-a" )
       AAdd( menuexec, {|| MainEpdv( my_user(), "dummy", p3, p4, p5, p6, p7 ) } )
    ENDIF
 
    IF f18_use_module( "ld" )
-      _brojac := PadL( AllTrim( Str( ++_count ) ), 2 )
-      AAdd( menuop, _brojac + ". LD    # obračun plata" )
+      cMenuBrojac := PadL( AllTrim( Str( ++_count ) ), 2 )
+      AAdd( menuop, cMenuBrojac + ". LD    # obračun plata" )
       AAdd( menuexec, {|| MainLd( my_user(), "dummy", p3, p4, p5, p6, p7 ) } )
    ENDIF
 
    IF f18_use_module( "rnal" )
-      _brojac := PadL( AllTrim( Str( ++_count ) ), 2 )
-      AAdd( menuop, _brojac + ". RNAL  # radni nalozi" )
+      cMenuBrojac := PadL( AllTrim( Str( ++_count ) ), 2 )
+      AAdd( menuop, cMenuBrojac + ". RNAL  # radni nalozi" )
       AAdd( menuexec, {|| MainRnal( my_user(), "dummy", p3, p4, p5, p6, p7 ) } )
    ENDIF
 
    IF f18_use_module( "os" )
-      _brojac := PadL( AllTrim( Str( ++_count ) ), 2 )
-      AAdd( menuop, _brojac + ". OS/SII# osnovna sredstva i sitan inventar" )
+      cMenuBrojac := PadL( AllTrim( Str( ++_count ) ), 2 )
+      AAdd( menuop, cMenuBrojac + ". OS/SII# osnovna sredstva i sitan inventar" )
       AAdd( menuexec, {|| MainOs( my_user(), "dummy", p3, p4, p5, p6, p7 ) } )
    ENDIF
 
    IF f18_use_module( "pos" )
-      _brojac := PadL( AllTrim( Str( ++_count ) ), 2 )
-      AAdd( menuop, _brojac + ". POS   # maloprodajna kasa" )
+      cMenuBrojac := PadL( AllTrim( Str( ++_count ) ), 2 )
+      AAdd( menuop, cMenuBrojac + ". POS   # maloprodajna kasa" )
       AAdd( menuexec, {|| MainPos( my_user(), "dummy", p3, p4, p5, p6, p7 ) } )
    ENDIF
 
    IF f18_use_module( "mat" )
-      _brojac := PadL( AllTrim( Str( ++_count ) ), 2 )
-      AAdd( menuop, _brojac + ". MAT   # materijalno" )
+      cMenuBrojac := PadL( AllTrim( Str( ++_count ) ), 2 )
+      AAdd( menuop, cMenuBrojac + ". MAT   # materijalno" )
       AAdd( menuexec, {|| MainMat( my_user(), "dummy", p3, p4, p5, p6, p7 ) } )
    ENDIF
 
    IF f18_use_module( "virm" )
-      _brojac := PadL( AllTrim( Str( ++_count ) ), 2 )
-      AAdd( menuop, _brojac + ". VIRM  # virmani" )
+      cMenuBrojac := PadL( AllTrim( Str( ++_count ) ), 2 )
+      AAdd( menuop, cMenuBrojac + ". VIRM  # virmani" )
       AAdd( menuexec, {|| MainVirm( my_user(), "dummy", p3, p4, p5, p6, p7 ) } )
    ENDIF
 
    IF f18_use_module( "kadev" )
-      _brojac := PadL( AllTrim( Str( ++_count ) ), 2 )
-      AAdd( menuop, _brojac + ". KADEV  # kadrovska evidencija" )
+      cMenuBrojac := PadL( AllTrim( Str( ++_count ) ), 2 )
+      AAdd( menuop, cMenuBrojac + ". KADEV  # kadrovska evidencija" )
       AAdd( menuexec, {|| MainKadev( my_user(), "dummy", p3, p4, p5, p6, p7 ) } )
    ENDIF
 
    IF f18_use_module( "reports" )
-      _brojac := PadL( AllTrim( Str( ++_count ) ), 2 )
-      AAdd( menuop, _brojac + ". REPORTS  # izvještajni modul" )
+      cMenuBrojac := PadL( AllTrim( Str( ++_count ) ), 2 )
+      AAdd( menuop, cMenuBrojac + ". REPORTS  # izvještajni modul" )
       AAdd( menuexec, {|| MainReports( my_user(), "dummy", p3, p4, p5, p6, p7 ) } )
    ENDIF
 

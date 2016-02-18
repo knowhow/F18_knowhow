@@ -14,8 +14,7 @@
 CLASS TFinMod FROM TAppMod
 
    METHOD NEW
-   METHOD dummy
-   METHOD setGVars
+   METHOD set_module_gvars
    METHOD mMenu
    METHOD mMenuStandard
 
@@ -29,11 +28,6 @@ METHOD new( p1, p2, p3, p4, p5, p6, p7, p8, p9 )
 
    RETURN self
 
-
-
-
-METHOD dummy()
-   RETURN .T.
 
 
 METHOD mMenu()
@@ -96,10 +90,8 @@ METHOD mMenuStandard()
 
 
 
-METHOD setGVars()
+METHOD set_module_gvars()
 
-   set_global_vars()
-   set_roba_global_vars()
 
    PRIVATE cSection := "1"
    PRIVATE cHistory := " "
@@ -120,8 +112,8 @@ METHOD setGVars()
    gTema := "OSN_MENI"
    gGlBaza := "SUBAN.DBF"
 
-   PUBLIC cZabrana := "Opcija nedostupna za ovaj nivo !!!"
+
 
    fin_params( .T. )
 
-   RETURN
+   RETURN .T.

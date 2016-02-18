@@ -40,19 +40,20 @@ FUNCTION fiscal_opt_active()
 FUNCTION set_init_fiscal_params()
 
    LOCAL _devices := 10
-   LOCAL _i
+   LOCAL nI
    LOCAL _tmp, _dev_param
    LOCAL _dev_id
 
-   FOR _i := 1 TO _devices
+   info_bar( "init", "fiscal params" )
+   FOR nI := 1 TO _devices
 
-      _dev_id := PadL( AllTrim( Str( _i ) ), 2, "0" )
+      _dev_id := PadL( AllTrim( Str( nI ) ), 2, "0" )
       _dev_param := "fiscal_device_" + _dev_id
       _tmp := fetch_metric( _dev_param + "_id", NIL, 0  )
 
       IF _tmp == 0
 
-         set_metric( _dev_param + "_id", NIL, _i )
+         set_metric( _dev_param + "_id", NIL, nI )
          set_metric( _dev_param + "_active", NIL, "N" )
          set_metric( _dev_param + "_drv", NIL, "FPRINT" )
          set_metric( _dev_param + "_name", NIL, "Fiskalni uredjaj " + _dev_id )
@@ -60,6 +61,7 @@ FUNCTION set_init_fiscal_params()
       ENDIF
 
    NEXT
+   info_bar( "init", "")
 
    RETURN .T.
 

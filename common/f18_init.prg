@@ -12,7 +12,7 @@
 #include "f18.ch"
 
 STATIC s_mainThreadID
-//STATIC s_threadDbfsID
+// STATIC s_threadDbfsID
 
 
 STATIC s_psqlServer := NIL
@@ -68,25 +68,15 @@ FUNCTION f18_init_app( arg_v )
 
    init_harbour()
 
-   PUBLIC gRj         := "N"
-   PUBLIC gReadOnly   := .F.
-   PUBLIC gSQL        := "N"
-   PUBLIC gOModul     := NIL
-   PUBLIC cDirPriv    := ""
-   PUBLIC cDirRad     := ""
-   PUBLIC cDirSif     := ""
-   PUBLIC glBrojacPoKontima := .T.
-
    set_f18_home_root()
    set_global_vars_0()
-   PtxtSekvence()
 
    f18_error_block()
 
    AltD()
    set_screen_dimensions()
 
-   init_gui()
+   //init_gui()
 
    IF no_sql_mode()
       set_f18_home( "f18_test" )
@@ -166,8 +156,8 @@ FUNCTION f18_init_app_login( force_connect, arg_v )
             QUIT
          ENDIF
 
-         // upisi parametre tekuce firme... treba li nam ovo ??????
-         _write_server_params_to_config()
+
+         _write_server_params_to_config() // upisi parametre tekuce firme...
 
          IF oLogin:_company_db_connected
 
@@ -250,6 +240,14 @@ FUNCTION init_harbour()
    Set( _SET_EVENTMASK, INKEY_ALL )
    MSetCursor( .T. )
 
+   // SET MESSAGE TO 24 CENTER
+   SET DATE GERMAN
+   SET SCOREBOARD OFF
+   SET CONFIRM ON
+   SET WRAP ON
+   SET ESCAPE ON
+   SET SOFTSEEK ON
+
    RETURN .T.
 
 
@@ -266,7 +264,7 @@ FUNCTION set_screen_dimensions()
 
    IF _pix_width == NIL
 
-      maxrows( 40 - INFO_BAR_ROWS)
+      maxrows( 40 - INFO_BAR_ROWS )
       maxcols( 150 )
 
       IF SetMode( maxrows() + INFO_BAR_ROWS,  maxcols() )
@@ -286,7 +284,7 @@ FUNCTION set_screen_dimensions()
 
       font_size( 24 )
       font_width( 12 )
-      maxrows( 35 - INFO_BAR_ROWS)
+      maxrows( 35 - INFO_BAR_ROWS )
       maxcols( 119 )
 
       log_write( _msg + "1" )
@@ -334,7 +332,7 @@ FUNCTION set_screen_dimensions()
       font_size( 16 )
       font_width( 8 )
 
-      maxrows( 35 - INFO_BAR_ROWS)
+      maxrows( 35 - INFO_BAR_ROWS )
       maxcols( 100 )
 
       log_write( _msg + "4" )
@@ -357,7 +355,6 @@ FUNCTION set_screen_dimensions()
       log_write( "setovanje ekrana: ne mogu setovati ekran po trazenoj rezoluciji !" )
       QUIT_1
    ENDIF
-
 
    RETURN .T.
 
@@ -443,22 +440,17 @@ FUNCTION post_login( gVars )
 
    hb_gtInfo( HB_GTI_WINTITLE, "[ " + my_server_params()[ "user" ] + " ][ " + my_server_params()[ "database" ] + " ]" )
 
+   info_bar( "init", "thread_create_dbfs - start" )
    thread_dbfs( hb_threadStart( @thread_create_dbfs() ) )
-
-// hb_bitOr( HB_THREAD_INHERIT_PUBLIC, HB_THREAD_MEMVARS_COPY ),
-
-// HB_THREAD_INHERIT_PUBLIC,
- // HB_THREAD_MEMVARS_COPY
-
+   info_bar( "init", "thread_create_dbfs - end" )
 
    check_server_db_version()
    server_log_enable()
 
    set_init_fiscal_params()
 
-   f18_log_delete() // brisanje loga nakon logiranja...
-   run_on_startup()
 
+   run_on_startup()
 
    RETURN .T.
 
@@ -469,10 +461,11 @@ FUNCTION thread_dbfs( pThreadID )
 #ifdef F18_DEBUG
       ?E "thread_dbfs id", pThreadID
 #endif
-      //s_threadDbfsID := pThreadID
+      // s_threadDbfsID := pThreadID
    ENDIF
 
-   //RETURN s_threadDbfsID
+   // RETURN s_threadDbfsID
+
    RETURN .T.
 
 
@@ -513,6 +506,8 @@ PROCEDURE thread_create_dbfs()
 
    set_a_dbfs_key_fields() // inicijaliziraj "dbf_key_fields" u __f18_dbf hash matrici
    write_dbf_version_to_config()
+
+   f18_log_delete() // brisanje loga nakon logiranja...
 
    my_server_close()
 
@@ -794,7 +789,6 @@ FUNCTION pg_server( server )
 
    LOCAL oError
    LOCAL nI, cMsg, cLogMsg := ""
-
 
    IF !is_in_main_thread()
 
@@ -1216,8 +1210,10 @@ FUNCTION view_log()
 
 FUNCTION set_hot_keys()
 
+   info_bar( "init", "setting up hot keys" )
    SetKey( K_SH_F1, {|| Calc() } )
    SetKey( K_SH_F6, {|| f18_old_session() } )
+   info_bar( "init", "setting up hot keys - end" )
 
    RETURN .T.
 
@@ -1227,6 +1223,8 @@ FUNCTION set_hot_keys()
 FUNCTION run_on_startup()
 
    LOCAL _ini, _fakt_doks
+
+   info_bar( "init", "run_on_start" )
 
    _ini := hb_Hash()
    _ini[ "run" ] := ""
@@ -1239,5 +1237,7 @@ FUNCTION run_on_startup()
       _fakt_doks:pretvori_otpremnice_u_racun()
 
    END
+
+   info_bar( "init", "run_on_start_end" )
 
    RETURN .T.

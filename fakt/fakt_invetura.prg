@@ -169,7 +169,7 @@ METHOD onKeyboard()
       ::printOPop()
       RETURN DE_REFRESH
 
-   case ::nCh == K_ALT_A
+   CASE is_key_alt_a( ::nCh )
       my_close_all_dbf()
       azur_fakt()
       close_open_fakt_tabele()

@@ -24,7 +24,7 @@ LOCAL cMsg, nI, cLogMsg := ""
    set_print_f_name( @f_name )
    read_printer_params()
 
-   PtxtSekvence()
+   set_ptxt_sekvence()
 
    IF ( document_name == nil )
       document_name :=  gModul + '_' + DToC( Date() )
@@ -76,11 +76,11 @@ STATIC FUNCTION set_print_codes( print_opt )
    OTHERWISE
 
       gPrinter := "R"
-      PtxtSekvence()
+      set_ptxt_sekvence()
 
    ENDCASE
 
-   RETURN
+   RETURN .T.
 
 
 FUNCTION f18_end_print( f_name, print_opt )

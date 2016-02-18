@@ -23,7 +23,7 @@ FUNCTION mat_parametri()
    LOCAL _opcexe := {}
 
    AAdd( _opc, "1. osnovni podaci organizacione jedinice         " )
-   AAdd( _opcexe, {|| org_params() } )
+   AAdd( _opcexe, {|| parametri_organizacije() } )
    AAdd( _opc, "2. parametri obrade dokumenata" )
    AAdd( _opcexe, {|| _mat_obr_params() } )
 

@@ -15,23 +15,24 @@
 // ----------------------------------------------------
 // setovanje podataka organizacione jedinice
 // ----------------------------------------------------
-FUNCTION org_params( set_params )
+FUNCTION parametri_organizacije( set_params )
 
    LOCAL _x := 1
    LOCAL _left := 20
 
+   info_bar( "init", "parametri organizacije - start" )
    IF ( set_params == nil )
       set_params := .T.
    ENDIF
 
-   gZaokr := fetch_metric( "zaokruzenje", nil, gZaokr )
-   gFirma := fetch_metric( "org_id", nil, gFirma )
-   gNFirma := PadR( fetch_metric( "org_naziv", nil, gNFirma ), 50 )
-   gMjStr := fetch_metric( "org_mjesto", nil, gMjStr )
-   gTS := fetch_metric( "tip_subjekta", nil, gTS )
-   gTabela := fetch_metric( "tip_tabele", nil, gTabela )
-   gBaznaV := fetch_metric( "bazna_valuta", nil, gBaznaV )
-   gPDV := fetch_metric( "pdv_global", nil, gPDV )
+   PUBLIC gZaokr := fetch_metric( "zaokruzenje", nil, gZaokr )
+   PUBLIC gFirma := fetch_metric( "org_id", nil, gFirma )
+   PUBLIC gNFirma := PadR( fetch_metric( "org_naziv", nil, gNFirma ), 50 )
+   PUBLIC gMjStr := fetch_metric( "org_mjesto", nil, gMjStr )
+   PUBLIC gTS := fetch_metric( "tip_subjekta", nil, gTS )
+   PUBLIC gTabela := fetch_metric( "tip_tabele", nil, gTabela )
+   PUBLIC gBaznaV := fetch_metric( "bazna_valuta", nil, gBaznaV )
+   PUBLIC gPDV := fetch_metric( "pdv_global", nil, gPDV )
 
    IF Empty( AllTrim( gNFirma ) )
       gNFirma := PadR( "", 50 )
@@ -51,7 +52,6 @@ FUNCTION org_params( set_params )
       @ m_x + _x, Col() + 2 SAY "naziv:" GET gNFirma PICT "@S35"
 
       ++ _x
-
       @ m_x + _x, m_y + 2 SAY PadL( "Grad:", _left ) GET gMjStr PICT "@S20"
 
       ++ _x
@@ -82,42 +82,10 @@ FUNCTION org_params( set_params )
 
    ENDIF
 
+   info_bar( "init", "parametri organizacije - end" )
+
    RETURN .T.
 
-
-
-FUNCTION set_global_vars()
-
-
-   SetSpecifVars()
-   SetValuta()
-
-   PUBLIC gFirma := "10"
-   PUBLIC gTS := PadR( "Preduzece", 20 )
-   PUBLIC gNFirma := PadR( "", 50 )
-   PUBLIC gBaznaV := "D"
-   PUBLIC gZaokr := 2
-   PUBLIC gTabela := 0
-   PUBLIC gPDV := "D"
-   PUBLIC gMjStr := PadR( "Sarajevo", 30 )
-   PUBLIC gModemVeza := "N"
-   PUBLIC gNW := "D"
-
-   // setuj podatke ako ne postoje
-   org_params( .F. )
-
-   PUBLIC gPartnBlock
-   gPartnBlock := nil
-
-   PUBLIC gSecurity := "D"
-   PUBLIC gnDebug := 0
-   PUBLIC gOpSist := "-"
-
-   PUBLIC cZabrana := "Opcija nedostupna za ovaj nivo !!!"
-
-   SetPDVBoje()
-
-   RETURN
 
 
 FUNCTION SetPDVBoje()
@@ -126,18 +94,11 @@ FUNCTION SetPDVBoje()
       RETURN .F.
    ENDIF
 
-   IF IsPDV()
       PDVBoje()
       goModul:oDesktop:showMainScreen()
       StandardBoje()
-   ELSE
-      StandardBoje()
-      goModul:oDesktop:showMainScreen()
-      StandardBoje()
-   ENDIF
 
    RETURN .T.
-
 
 
 FUNCTION SetValuta()
@@ -149,8 +110,4 @@ FUNCTION SetValuta()
 
 FUNCTION IsPDV()
 
-   IF gPDV == "D"
-      RETURN .T.
-   ENDIF
-
-   RETURN .F.
+   RETURN .T.

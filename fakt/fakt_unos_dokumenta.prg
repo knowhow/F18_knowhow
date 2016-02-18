@@ -292,7 +292,7 @@ STATIC FUNCTION fakt_pripr_keyhandler()
 
       RETURN DE_REFRESH
 
-   CASE Ch == K_ALT_A
+   CASE is_key_alt_a( Ch )
 
       fakt_set_broj_dokumenta()
 

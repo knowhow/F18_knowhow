@@ -34,7 +34,7 @@ AADD(_opcexe,{|| pos_param_firma()})
 AADD(_opc,"6. fiskalni parametri")
 AADD(_opcexe,{|| fiskalni_parametri_za_korisnika()})
 AADD(_opc,"7. podešenja organizacije")
-AADD(_opcexe,{|| org_params()})
+AADD(_opcexe,{|| parametri_organizacije()})
 AADD(_opc,"8. podesenja barkod-a")
 AADD(_opcexe,{|| label_params()})
 

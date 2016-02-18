@@ -75,11 +75,6 @@ METHOD new( oParent, cModul, cVerzija, cPeriod, cKorisn, cSifra, p3, p4, p5, p6,
    RETURN .T.
 
 
-/*! \fn *bool TAppMod::hasParent()
- *  \brief ima li objekat "roditelja"
- */
-
-// bool TAppMod::hasParent()
 
 METHOD hasParent()
 
@@ -87,12 +82,6 @@ METHOD hasParent()
 
 
 
-/*! \fn *TObject TAppMod::setParent(TObject oParent)
- *  \brief postavi roditelja ovog objekta
- *
- *  Roditelj je programski modul (objekat) koji je izvrsio kreiranje ovog objekta. To bi znacilo za oPos to parent oFMK - "master" aplikacijski modul koji poziva pojedinacne programske module (oFIN, oKALK, oFAKT)
- */
-// TObject TAppMod::setParent(TObject oParent)
 
 METHOD setParent( oParent )
 
@@ -101,27 +90,18 @@ METHOD setParent( oParent )
    RETURN .T.
 
 
-/*! \fn *TObject TAppMod::getParent()
- *  \brief Daj mi roditelja ovog objekta
- */
-
-// TObject TAppMod::getParent()
-
 METHOD getParent()
    return ::oParent
 
 
 
-// string TAppMod::setName(string cName)
-
 METHOD setName()
 
-   ::cName := "SCAPP"
+   ::cName := "F18"
 
    RETURN .T.
 
 
-// void TAppMod::run()
 
 METHOD run()
 
@@ -135,7 +115,6 @@ METHOD run()
 
    add_idle_handlers()
    start_f18_program_module( self, .T. )
-
 
    ::lStarted := .T.
 
@@ -486,14 +465,13 @@ STATIC FUNCTION _g_pdf_viewer( cViewer )
    RETURN .T.
 
 
-/*! \fn TAppMod::setTGVars()
- *  \brief Setuje globalne varijable, te setuje incijalne vrijednosti objekata koji pripadaju glavnom app objektu
+/*
+ *  Setuje globalne varijable, te setuje incijalne vrijednosti objekata koji pripadaju glavnom app objektu
  */
-
-// void TAppMod::setTGVars()
 
 METHOD setTGVars()
 
+   info_bar( ::cName, ::cName + " set_tg_vars start " )
    ::cSqlLogBase := IzFmkIni( "Sql", "SqlLogBase", "c:" + SLASH + "sigma" )
    gSqlLogBase := ::cSqlLogBase
 
@@ -507,6 +485,10 @@ METHOD setTGVars()
       ::oDesktop := nil
    ENDIF
 
+   PUBLIC cZabrana := "Opcija nedostupna za ovaj nivo !!!"
+
    ::oDesktop := TDesktopNew()
+
+   info_bar( ::cName, ::cName + " set_tg_vars end" )
 
    RETURN .T.

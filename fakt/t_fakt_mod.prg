@@ -24,7 +24,7 @@ CLASS TFaktMod FROM TAppMod
    VAR lCRoba
    VAR cRoba_Rj
    METHOD NEW
-   METHOD setGVars
+   METHOD set_module_gvars
    METHOD mMenu
    METHOD mMenuStandard
 
@@ -101,7 +101,7 @@ METHOD mMenuStandard
    RETURN .F.
 
 
-METHOD setGVars()
+METHOD set_module_gvars()
 
    LOCAL cSekcija
    LOCAL cVar
@@ -109,8 +109,6 @@ METHOD setGVars()
 
    __default_odt_template()
 
-   set_global_vars()
-   set_roba_global_vars()
 
    ::nDuzinaSifre := 10
    ::cTekVpc := "1"

@@ -12,7 +12,6 @@
 #include "f18.ch"
 
 
-
 FUNCTION tekuci_modul()
    RETURN gModul
 
@@ -22,57 +21,36 @@ FUNCTION tekuca_sezona()
 
 FUNCTION start_f18_program_module( oApp, lSezone )
 
-
    LOCAL cImeDbf
    LOCAL _i
 
-   set_global_vars_0()
+
    gModul   := oApp:cName
    goModul  := oApp
    gVerzija := oApp:cVerzija
 
+   set_naslovni_ekran( oApp )
 
-   SetNaslov( oApp )
-   CreGParam()
-
-   set_global_vars_0_prije_prijave()
-
-   InitE( oApp ) // inicijalizacija, prijava
-   set_global_vars_0_nakon_prijave()
+   set_global_vars_1()
 
    IF oApp:lTerminate
       RETURN .T.
    ENDIF
 
-   IniPrinter()
+   set_global_vars_2()
 
-   gReadOnly := .F.
-
-   SET EXCLUSIVE OFF
-   oApp:setGVars() // Setuj globalne varijable varijable modula
-
+   info_bar( oApp:cName, oApp:cName + " : start_program_module set global vars - start " )
+   oApp:set_module_gvars()
+   info_bar( oApp:cName, oApp:cName + " : start_program_module set global vars - end" )
 
    RETURN .T.
 
 
 
-FUNCTION SetNaslov( oApp )
+FUNCTION set_naslovni_ekran( oApp )
 
    gNaslov := oApp:cName + " F18, " + oApp:cPeriod
 
-   RETURN .T.
-
-
-FUNCTION InitE( oApp )
-
-   IF ( oApp:cKorisn <> NIL .AND. oApp:cSifra == nil )
-
-      ? "Koristenje:  ImePrograma "
-      ? "             ImePrograma ImeKorisnika Sifra"
-      ?
-      QUIT
-
-   ENDIF
 
    AFill( h, "" )
 
@@ -80,20 +58,11 @@ FUNCTION InitE( oApp )
 
    standardboje()
 
-
    SET KEY K_INS TO ToggleINS()
 
 #ifdef __PLATFORM__DARWIN
    SET KEY K_F12 TO ToggleIns()
 #endif
-
-   SET MESSAGE TO 24 CENTER
-   SET DATE GERMAN
-   SET SCOREBOARD OFF
-   SET CONFIRM ON
-   SET WRAP ON
-   SET ESCAPE ON
-   SET SOFTSEEK ON
 
 
    NaslEkran( .T. )
@@ -118,8 +87,6 @@ FUNCTION InitE( oApp )
    say_database_info()
 
    RETURN NIL
-
-
 
 
 

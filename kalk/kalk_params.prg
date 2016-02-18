@@ -22,7 +22,7 @@ FUNCTION kalk_params()
    O_KONTO
 
    AAdd( _opc, "1. osnovni podaci o firmi                                 " )
-   AAdd( _opcexe, {|| org_params() } )
+   AAdd( _opcexe, {|| parametri_organizacije() } )
 
    AAdd( _opc, "2. metoda proracuna NC, mogucnosti ispravke dokumenata " )
    AAdd( _opcexe, {|| kalk_par_metoda_nc( 'D' ) } )

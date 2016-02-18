@@ -15,7 +15,7 @@
 CLASS TLdMod FROM TAppMod
 
    METHOD NEW
-   METHOD setGVars
+   METHOD set_module_gvars
    METHOD mMenu
    METHOD mMenuStandard
 
@@ -84,9 +84,7 @@ METHOD mMenuStandard
 
 
 
-METHOD setGVars()
-
-   set_global_vars()
+METHOD set_module_gvars()
 
    PUBLIC cFormula := ""
    PUBLIC gRJ := "01"

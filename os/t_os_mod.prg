@@ -17,7 +17,7 @@
 CLASS TOsMod FROM TAppMod
 
    METHOD NEW
-   METHOD setGVars
+   METHOD set_module_gvars
    METHOD mMenu
    METHOD mMenuStandard
 
@@ -97,11 +97,9 @@ METHOD mMenuStandard
    RETURN
 
 
-// -------------------------------------------------
-// -------------------------------------------------
-METHOD setGVars()
+METHOD set_module_gvars()
 
-   set_global_vars()
+
 
    // ostali parametri
    PUBLIC gDatObr := Date()

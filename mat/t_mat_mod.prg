@@ -17,7 +17,7 @@
 CLASS TMatMod FROM TAppMod
 
    METHOD NEW
-   METHOD setGVars
+   METHOD set_module_gvars
    METHOD mMenu
    METHOD mMenuStandard
 
@@ -93,12 +93,9 @@ METHOD mMenuStandard()
 
 
 
-// -----------------------------------------------
-// -----------------------------------------------
-METHOD setGVars()
+METHOD set_module_gvars()
 
-   set_global_vars()
-   set_roba_global_vars()
+
 
    PUBLIC gModul
    PUBLIC gTema
@@ -117,8 +114,6 @@ METHOD setGVars()
    PUBLIC gDatNal := "D"
    PUBLIC gKupZad := "D"
    PUBLIC gSekS := "N"
-
-   PUBLIC cZabrana := "Opcija nedostupna za ovaj nivo !!!"
 
    // read server params...
    gDirPor := fetch_metric( "mat_dir_kalk", my_user(), gDirPor  )

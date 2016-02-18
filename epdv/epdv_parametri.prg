@@ -44,7 +44,7 @@ FUNCTION epdv_parametri()
    LOCAL _opcexe := {}
 
    AAdd( _opc, "1. osnovni podaci org.jedinice            " )
-   AAdd( _opcexe, {|| org_params() } )
+   AAdd( _opcexe, {|| parametri_organizacije() } )
    AAdd( _opc, "2. parametri izgleda  " )
    AAdd( _opcexe, {|| ed_g_params() } )
 

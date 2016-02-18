@@ -16,7 +16,7 @@
 CLASS TKalkMod FROM TAppMod
 
    METHOD NEW
-   METHOD setGVars
+   METHOD set_module_gvars
    METHOD mMenu
    METHOD mMenuStandard
 
@@ -38,7 +38,6 @@ METHOD mMenu()
    set_hot_keys()
 
    Izbor := 1
-
    gDuzKonto := 7
 
    gRobaBlock := {| Ch| KalkRobaBlock( Ch ) }
@@ -94,8 +93,7 @@ METHOD mMenuStandard
 
 
 
-
-METHOD setGVars()
+METHOD set_module_gvars()
 
    LOCAL cPPSaMr
    LOCAL cBazniDir
@@ -105,8 +103,7 @@ METHOD setGVars()
    LOCAL cVar, cVal
    LOCAL _tmp
 
-   set_global_vars()
-   set_roba_global_vars()
+   info_bar( ::cName, ::cName + " kalk set gvars start " )
 
    PUBLIC KursLis := "1"
    PUBLIC gMetodaNC := "2"
@@ -115,9 +112,7 @@ METHOD setGVars()
    PUBLIC gKalo := "2"
    PUBLIC gMagacin := "2"
    PUBLIC gPDVMagNab := "N"
-   IF IsPDV()
-      gPDVMagNab := "D"
-   ENDIF
+   PUBLIC gPDVMagNab := "D"
    PUBLIC gMultiPM := "D"
    PUBLIC gRCRP := "C"
    PUBLIC gPotpis := "N"
@@ -219,7 +214,6 @@ METHOD setGVars()
    PUBLIC lPrikPRUC := .F.
    PUBLIC gDuzKonto
 
-
    O_KALK_PRIPR
    gDuzKonto := Len( mkonto )
 
@@ -265,13 +259,9 @@ METHOD setGVars()
    gAFakt := fetch_metric( "kalk_kontiranje_fakt", f18_user(), gAFakt )
    gBrojac := fetch_metric( "kalk_brojac_kalkulacija", nil, gBrojac )
    gMagacin := fetch_metric( "kalk_magacin_po_nc", nil, gMagacin )
-
-   IF IsPDV()
-      gPDVMagNab := fetch_metric( "kalk_magacin_po_nc_pdv", nil, gPDVMagNab )
-   ENDIF
-
+   gPDVMagNab := fetch_metric( "kalk_magacin_po_nc_pdv", nil, gPDVMagNab )
    gCijene := fetch_metric( "kalk_azuriranje_sumnjivih_dokumenata", nil, gCijene )
-   gTS := fetch_metric( "kalk_tip_subjekta", nil, gTS )
+   gTS := fetch_metric( "kalk_tip_subjekta", nil,  gTS)
    gTabela := fetch_metric( "kalk_tip_tabele", nil, gTabela )
    gSetForm := fetch_metric( "kalk_set_formula", nil, gSetForm )
    gGen16 := fetch_metric( "kalk_generisi_16_nakon_96", f18_user(), gGen16 )
@@ -352,8 +342,8 @@ METHOD setGVars()
 
    gRobaBlock := {| Ch| KalkRobaBlock( Ch ) }
 
-   // ne znam zasto, ali ovako je bilo ???
-   // u svim modulima je "D"
-   gNW := "X"
+   gNW := "X" // TODO: pogledati u svim drugim modulima je "D" ?!
+
+   info_bar( ::cName, ::cName + " - kalk set gvars end" )
 
    RETURN .T.

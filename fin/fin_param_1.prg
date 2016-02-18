@@ -25,7 +25,7 @@ FUNCTION mnu_fin_params()
    fin_read_params()
 
    AAdd( _opc, "1. osnovni parametri                        " )
-   AAdd( _opcexe, {|| org_params() } )
+   AAdd( _opcexe, {|| parametri_organizacije() } )
    AAdd( _opc, "2. parametri rada " )
    AAdd( _opcexe, {|| par_obrada() } )
    AAdd( _opc, "3. parametri izgleda " )

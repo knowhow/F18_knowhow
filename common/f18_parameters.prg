@@ -30,6 +30,8 @@ FUNCTION f18_app_parameters( just_set )
    LOCAL _rpt_page_len, _bug_report
    LOCAL _log_level
 
+   info_bar( "init", "f18_app_parameters - start" )
+
    _fin := fetch_metric( "main_menu_fin", my_user(), "D" )
    _kalk := fetch_metric( "main_menu_kalk", my_user(), "D" )
    _fakt := fetch_metric( "main_menu_fakt", my_user(), "D" )
@@ -111,7 +113,6 @@ FUNCTION f18_app_parameters( just_set )
       @ _pos_x + _x, _pos_y SAY "Email parametri ***" COLOR "I"
 
       ++ _x
-
       @ _pos_x + _x, _pos_y SAY PadL( "email server:", _left ) GET _email_server PICT "@S30"
       @ _pos_x + _x, Col() + 1 SAY "port:" GET _email_port PICT "9999"
       ++ _x
@@ -168,7 +169,7 @@ FUNCTION f18_app_parameters( just_set )
       READ
 
       IF LastKey() == K_ESC
-         RETURN
+         RETURN .F.
       ENDIF
 
       set_metric( "main_menu_fin", my_user(), _fin )
@@ -204,6 +205,8 @@ FUNCTION f18_app_parameters( just_set )
 #ifdef __PLATFORM__WINDOWS
       set_metric( "backup_windows_ping_time", my_user(), _backup_ping_time )
 #endif
+
+      info_bar( "init", "f18_app_parameters - end" )
 
    ENDIF
 

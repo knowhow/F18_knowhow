@@ -16,7 +16,7 @@ CLASS TRnalMod FROM TAppMod
 
    VAR oSqlLog
    METHOD NEW
-   METHOD setGVars
+   METHOD set_module_gvars
    METHOD mMenu
    METHOD mStartUp
    METHOD mMenuStandard
@@ -109,10 +109,8 @@ METHOD mMenuStandard()
 
 
 
-METHOD setGVars()
+METHOD set_module_gvars()
 
-   set_global_vars()
-   set_roba_global_vars()
 
    PUBLIC gPicVrijednost := "9999999.99"
    // rnal - specif params section
@@ -192,10 +190,8 @@ METHOD setGVars()
    gTema := "OSN_MENI"
    gGlBaza := "DOCS.DBF"
 
-   PUBLIC cZabrana := "Opcija nedostupna za ovaj nivo !!!"
-
    // rules block i cols
    PUBLIC aRuleSpec := g_rule_cols_rnal()
    PUBLIC bRuleBlock := g_rule_block_rnal()
 
-   RETURN
+   RETURN .T.

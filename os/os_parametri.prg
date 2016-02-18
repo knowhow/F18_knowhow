@@ -67,7 +67,7 @@ local _opc := {}
 local _opcexe := {}
 
 AADD( _opc, "1. osnovni podaci org.jedinice         " )
-AADD( _opcexe, { || org_params() } )
+AADD( _opcexe, { || parametri_organizacije() } )
 AADD( _opc, "2. parametri os/sii" )
 AADD( _opcexe, { || _os_sii_parametri() } )
 

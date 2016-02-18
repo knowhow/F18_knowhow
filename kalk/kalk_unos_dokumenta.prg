@@ -629,11 +629,6 @@ FUNCTION kalk_unos_nova_stavka()
 
    _TMarza := "A"
 
-   IF field->IdVd == "PR"
-      SET FILTER TO Val( field->rBr ) < 10
-   ELSE
-      SET FILTER TO
-   ENDIF
 
    GO BOTTOM
    IF Left( field->idkonto2, 3 ) = "XXX"
@@ -2398,7 +2393,7 @@ FUNCTION kalk_stampa_dokumenta()
          ELSEIF ( cidvd $ "11#12#13" )
 
                   StKalk11_2()
-            
+
          ELSEIF ( cidvd $ "14#94#74#KO" )
             StKalk14PDV()
 

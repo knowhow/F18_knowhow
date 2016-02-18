@@ -27,17 +27,20 @@ FUNCTION kalk_unos_dok_pr()
    LOCAL cIdFirma, cIdVd, cBrDok
    LOCAL nNV
 
+   AltD()
    SELECT F_SAST
    IF !Used()
       O_SAST
    ENDIF
 
-   SELECT kalk_pripr
-   SET FILTER TO Val( field->rBr ) < 10
-
    IF nRbr < 10 .AND. fNovi
       _DatFaktP := _datDok
    ENDIF
+
+   SELECT tarifa
+   HSEEK _IdTarifa
+
+   SELECT kalk_pripr
 
    @ m_x + 6, m_y + 2 SAY8 "Broj fakture :" GET _brFaktP
    @ m_x + 7, m_y + 2 SAY8 "Magacin gotovih proizvoda zadužuje :" GET _IdKonto ;
@@ -48,20 +51,28 @@ FUNCTION kalk_unos_dok_pr()
       WHEN {|| nRbr == 1 }
 
    @ m_x + 11, m_y + 66 SAY "Tarif.br v"
-   @ m_x + 12, m_y + 2 SAY8 "Proizvod    :" GET _IdRoba PICT "@!" ;
-      VALID  {|| P_Roba( @_IdRoba, NIL, NIL, iif( nRbr < 10, "IDP", "ID" ) ), ;
-      Reci( 12, 35, Trim( Left( roba->naz, 40 ) ) + " (" + ROBA->jmj + ")", 40 ), ;
-      _IdTarifa := iif( fnovi, ROBA->idtarifa, _IdTarifa ), .T. }
-   @ m_x + 12, m_y + 80 GET _IdTarifa WHEN gPromTar == "N" VALID P_Tarifa( @_IdTarifa )
 
-   SELECT tarifa
-   HSEEK _IdTarifa
 
-   SELECT kalk_pripr
 
-   @ m_x + 13, m_y + 2 SAY8 "Količina  " GET _Kolicina PICT PicKol ;
-      VALID {|| _Kolicina <> 0 .AND. iif( InRange( nRbr, 10, 99 ), ;
-       error_tab( _idfirma + "-" + _idvd + "-" + _brdok, "PR dokument max 9 artikala" ), .T. ) }
+   IF nRbr < 10
+      @ m_x + 12, m_y + 2 SAY8 "Proizvod    :" GET _IdRoba PICT "@!" ;
+         VALID  {|| P_Roba( @_IdRoba, NIL, NIL, iif( nRbr < 10, "IDP", "ID" ) ), ;
+         Reci( 12, 35, Trim( Left( roba->naz, 40 ) ) + " (" + ROBA->jmj + ")", 40 ), ;
+         _IdTarifa := iif( fnovi, ROBA->idtarifa, _IdTarifa ), .T. }
+      @ m_x + 12, m_y + 80 GET _IdTarifa WHEN gPromTar == "N" VALID P_Tarifa( @_IdTarifa )
+
+
+
+      @ m_x + 13, m_y + 2 SAY8 "Količina  " GET _Kolicina PICT PicKol ;
+         VALID {|| _Kolicina <> 0 .AND. iif( InRange( nRbr, 10, 99 ), ;
+         error_tab( _idfirma + "-" + _idvd + "-" + _brdok, "PR dokument max 9 artikala" ), .T. ) }
+
+   ELSE
+
+      @ m_x + 12, m_y + 2  SAY8 "Sirovina  " GET _IdRoba PICT "@!" valid  {|| P_Roba( @_IdRoba ), Reci( 12, 24, Trim( Left( roba->naz, 40 ) ) + " (" + ROBA->jmj + ")", 40 ), _IdTarifa := iif( fnovi, ROBA->idtarifa, _IdTarifa ), .T. }
+      @ m_x + 13, m_y + 2   SAY8 "Količina  " GET _Kolicina PICTURE PicKol VALID _Kolicina <> 0
+
+   ENDIF
 
    READ
    ESC_RETURN K_ESC
@@ -274,7 +285,7 @@ FUNCTION kreiraj_sirovine_za( nRbr, _idroba, _kolicina )
       info_tab( _idfirma + "-" + _idvd + "-" + _brdok, "stanje: " + _idkonto2 + "/ " + sast->id2 + ;
          + " Kol: " + AllTrim( Str( nKolicina, 10, 3 ) ) + ;
          + " NC: " + AllTrim( Str( nNC, 10, 3 ) ) )
-      //   + " Zadnja.NC: " + AllTrim( Str( nZNC, 10, 3 ) ) )
+      // + " Zadnja.NC: " + AllTrim( Str( nZNC, 10, 3 ) ) )
 
       IF dDatNab > _DatDok
          error_tab( _idfirma + "-" + _idvd + "-" + _brdok, "Datum nabavke je " + DToC( dDatNab ) + " sirovina " + sast->id2 )
@@ -292,8 +303,8 @@ FUNCTION kreiraj_sirovine_za( nRbr, _idroba, _kolicina )
 
       SELECT kalk_pripr
       RREPLACE field->nc WITH nNC, ;
-               field->gKolicina WITH nKolicina, ;  // gKolicina - kolicina na stanju magacina
-               field->error WITH IIF( field->kolicina < nKolicina, "0", "1" )  // error="1" if nema na stanju
+         field->gKolicina WITH nKolicina, ;  // gKolicina - kolicina na stanju magacina
+      field->error WITH iif( field->kolicina < nKolicina, "0", "1" )  // error="1" if nema na stanju
       SELECT sast
       SKIP
    ENDDO
@@ -322,9 +333,9 @@ FUNCTION proizvod_proracunaj_nc_za( nRbr, cIdFirma, cIdVd, cBrDok, bDokument, bP
          nNV += field->NC * field->kolicina
          IF field->gKolicina < field->kolicina
             error_tab( cIdfirma + "-" + cIdvd + "-" + cBrDok, ;
-                Alltrim( field->idkonto2 ) + " / " + field->idRoba + " stanje: " + AllTrim( Str( field->gKolicina, 10, 3 )) +;
-                " treba: " + Alltrim( Str( field->kolicina, 10, 3) ) )
-            RREPLACE field->error with "1"
+               AllTrim( field->idkonto2 ) + " / " + field->idRoba + " stanje: " + AllTrim( Str( field->gKolicina, 10, 3 ) ) + ;
+               " treba: " + AllTrim( Str( field->kolicina, 10, 3 ) ) )
+            RREPLACE field->error WITH "1"
          ENDIF
       ENDIF
       SKIP

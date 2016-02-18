@@ -2532,31 +2532,7 @@ FUNCTION getmjesto( cMjesto )
 
 
 
-
-/*! \fn P_VKSG(cId,dx,dy)
- *  \brief
- *  \param cId
- *  \param dx
- *  \param dy
- */
-
-FUNCTION P_VKSG( cId, dx, dy )
-
-   PRIVATE ImeKol, Kol
-
-   ImeKol := { { "Konto", {|| id    },     "id"       }, ;
-      { "Godina", {|| godina },     "godina"   }, ;
-      { "St.konto", {|| ids   },     "ids"      };
-      }
-   Kol := { 1, 2, 3 }
-
-   RETURN PostojiSifra( F_VKSG, 1, 10, 60, "Veze konta sa prethodnim godinama", @cId, dx, dy )
-
-
-
-
-/*! \fn FFor1()
- *  \brief Funkcija koju koristi StampaTabele()
+/*  Funkcija koju koristi StampaTabele()
  */
 
 STATIC FUNCTION FFor1()

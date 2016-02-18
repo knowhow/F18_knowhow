@@ -71,7 +71,7 @@ FUNCTION full_synchro( dbf_table, step_size, cInfo )
       RaiseError( _msg )
    ENDIF
 
-   info_tab( "x", cInfo + " sql_cnt:" + Alltrim( STR(_count, 10, 0)) )
+   info_tab( "fsync:" + dbf_table, dbf_table  + " : " + cInfo + " sql_cnt:" + Alltrim( STR(_count, 10, 0)) )
 
    FOR _offset := 0 TO _count STEP step_size
 
@@ -81,11 +81,9 @@ FUNCTION full_synchro( dbf_table, step_size, cInfo )
 
       log_write( "GET FROM SQL full_synchro tabela: " + dbf_table + " " + AllTrim( Str( _offset ) ) + " / qry: " + _qry, 7 )
 
-      //@ m_x + 5, m_y + 2 SAY "dbf <- qry (ne zatvarati aplikaciju u toku ovog procesa)"
-
       fill_dbf_from_server( dbf_table, _qry, @_sql_fetch_time, @_dbf_write_time, .T. )
 
-      info_tab( "x", "sql fetch time: " + AllTrim( Str( _sql_fetch_time ) ) + " dbf write time: " + AllTrim( Str( _dbf_write_time ) ) )
+      info_tab( "fsync:" + dbf_table, "sql fetch time: " + AllTrim( Str( _sql_fetch_time ) ) + " dbf write time: " + AllTrim( Str( _dbf_write_time ) ) )
 
       //@ m_x + 10, m_y + 2 SAY _offset + step_size
       //@ Row(), Col() + 2 SAY "/"

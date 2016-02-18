@@ -403,22 +403,6 @@ FUNCTION cre_all_fin( ver )
 
 
 
-   // -----------------------------------------------------------
-   // VKSG
-   // -----------------------------------------------------------
-
-   _alias := "VKSG"
-   _table_name := "vksg"
-
-   aDbf := {}
-   AAdd( aDBf, { "ID", "C",   7,  0 } )
-   AAdd( aDBf, { "GODINA", "C",   4,  0 } )
-   AAdd( aDBf, { "IDS", "C",   7,  0 } )
-
-   IF_NOT_FILE_DBF_CREATE
-
-   CREATE_INDEX( "1", "id+DESCEND(godina)", _alias )
-
 
 
    // -----------------------------------------------------------

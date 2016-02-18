@@ -14,16 +14,16 @@
 #define F_ADRES     10
 #define F_SIFK      11
 #define F_SIFV      12
-#define F_TARIFA    14 
+#define F_TARIFA    14
 #define F_PARTN     15
 #define F_TNAL      16
 #define F_TDOK      17
-#define F_ROBA      18 
+#define F_ROBA      18
 #define F_KONTO     19
 #define F_TRFP      20
 #define F_TRMP      21
 #define F_VALUTE    22
-#define F_KONCIJ    23 
+#define F_KONCIJ    23
 #define F_SAST      24
 #define F_BARKOD    25
 #define F__VALUTE   26
@@ -58,7 +58,6 @@
 #define F_BUIZ     68
 #define F__KONTO   69
 #define F__PARTN   70
-#define F_VKSG     71
 #define F_ULIMIT   72
 #define F_FIDOKS   73
 #define F_FIDOKS2  74
@@ -106,7 +105,7 @@
 #define F_FAKT      113
 #define F_FTXT      114
 #define F__FAKT     115
-#define F_UPL       116 
+#define F_UPL       116
 #define F_DEST      117
 #define F_LABELU    118
 #define F_LABELU2   156
@@ -360,11 +359,11 @@
 #define F_KDV_NERDAN    354
 
 
-#define D_S_TABELE 
+#define D_S_TABELE
 
 
 // ostale definicije
-#define POR_PPP     1 
+#define POR_PPP     1
 #define POR_PPU     2
 #define POR_PP      3
 #define POR_PRUC    4

@@ -121,8 +121,6 @@
 #xcommand O_FOND   => select (F_FOND);    MY_USE  ("fond") ; set order to tag "ID"
 #xcommand O_BUIZ   => select (F_BUIZ);    MY_USE  ("buiz") ; set order to tag "ID"
 #xcommand OX_KONTO    => select (F_KONTO);  my_usex ("konto")  ;  set order to tag "ID"
-#xcommand O_VKSG     => select (F_VKSG);  MY_USE ("vksg");  set order to tag "1"
-#xcommand OX_VKSG     => select (F_VKSG);  my_usex ("vksg")  ;  set order to tag "1"
 #xcommand O_RKONTO    => select (F_KONTO);  my_usex ("konto") ; set order to tag "ID"
 #xcommand OX_PARTN    => select (F_PARTN);  my_usex ("partn") ; set order to tag "ID"
 #xcommand O_RPARTN    => select (F_PARTN);  my_usex ("partn") ; set order to tag "ID"

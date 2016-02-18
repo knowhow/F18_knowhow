@@ -799,21 +799,6 @@ FUNCTION AMFILL( aNiz, nElem )
    RETURN rNiz
 
 
-FUNCTION KonvZnakova( cTekst )
-
-   // jedan par: { 7-bit znak, 852 znak }
-   LOCAL aNiz := {  { "[", "æ" }, { "{", "ç" }, { "}", "" }, { "]", "" }, { "^", "¬" }, ;
-      { "~", "" }, { "`", "§" }, { "@", "¦" }, { "|", "Ð" }, { "\", "Ñ" }  }
-   LOCAL i, j
-   IF "U" $ Type( "g852" ); g852 := "D"; ENDIF
-   IF g852 == "D"
-      i := 1; j := 2
-   ELSE
-      i := 2; j := 1
-   ENDIF
-   AEval( aNiz, {| x| cTekst := StrTran( cTekst, x[ i ], x[ j ] ) } )
-
-   RETURN cTekst
 
 
 FUNCTION Zvuk( nTip )
@@ -830,13 +815,13 @@ FUNCTION Zvuk( nTip )
       Tone( 700, 2 )
    ENDCASE
 
-   RETURN
+   RETURN .T.
 
 
 
 FUNCTION ShemaBoja( cIzbor )
 
-   LOCAL cVrati := cbshema
+   LOCAL cVrati := cBShema
 
    IF IsColor()
       DO CASE
@@ -973,8 +958,8 @@ FUNCTION DuzMaske( cPicture )
 
    RETURN Val( SubStr( cPicture, nPozS + 1 ) )
 
-// ------------------------
-// ------------------------
+
+
 FUNCTION MsgBeep( cMsg )
 
    LOCAL _set
@@ -1012,7 +997,7 @@ INKEY_MOVE          Mouse motion events are allowed
 
    SET( _SET_EVENTMASK, _set )
 
-   RETURN
+   RETURN .T.
 
 FUNCTION UGlavnomMeniju()
 
@@ -1042,8 +1027,8 @@ FUNCTION UGlavnomMeniju()
 #define BOX_CHAR_BACKGROUND Chr( 177 )
 #define BOX_CHAR_BACKGROUND_HEAD " "
 
-// -------------------------------------------
-// -------------------------------------------
+
+
 FUNCTION NaslEkran( fBox )
 
    LOCAL _max_cols := MAXCOLS()
@@ -1053,8 +1038,8 @@ FUNCTION NaslEkran( fBox )
       CLEAR
    ENDIF
 
-   @ 0, 2 SAY '<ESC> Izlaz' COLOR gColorInvert 
-   @ 0, Col() + 2 SAY Date() COLOR gColorInvert 
+   @ 0, 2 SAY '<ESC> Izlaz' COLOR gColorInvert
+   @ 0, Col() + 2 SAY Date() COLOR gColorInvert
    @ _max_rows - 1, _max_cols - 16  SAY fmklibver()
 
    DispBox( 2, 0, 4, _max_cols - 1, B_DOUBLE + BOX_CHAR_BACKGROUND_HEAD, NORMAL )
@@ -1068,11 +1053,10 @@ FUNCTION NaslEkran( fBox )
    RETURN
 
 
-// -------------------------------------------
-// -------------------------------------------
+
 FUNCTION StandardBoje()
 
-   PUBLIC  gColorInvert 
+   PUBLIC  gColorInvert
    PUBLIC  Normal
    PUBLIC  Blink
    PUBLIC  Nevid
@@ -1100,7 +1084,7 @@ FUNCTION StandardBoje()
 
 FUNCTION PDVBoje()
 
-   PUBLIC  gColorInvert 
+   PUBLIC  gColorInvert
    PUBLIC  Normal
    PUBLIC  Blink
    PUBLIC  Nevid
@@ -1128,11 +1112,11 @@ FUNCTION PDVBoje()
 
 
 
-/*! \fn TokUNiz(cTok,cSN,cSE)
- *  \brief Token pretvori u matricu
- *  \param cTok - string tokena
- *  \param cSN - separator nizova
- *  \param cSE - separator elemenata
+/*
+ *  brief Token pretvori u matricu
+ *  param cTok - string tokena
+ *  param cSN - separator nizova
+ *  param cSE - separator elemenata
  */
 
 FUNCTION TokUNiz( cTok, cSN, cSE )
@@ -1156,10 +1140,10 @@ FUNCTION TokUNiz( cTok, cSN, cSE )
    RETURN ( aNiz )
 
 
-/*! \fn TxtUNiz(cTxt,nKol)
- *  \brief Pretvara TXT u niz
- *  \param cTxt   - tekst
- *  \param nKol   - broj kolona
+/*! TxtUNiz(cTxt,nKol)
+ *  Pretvara TXT u niz
+ *  param cTxt   - tekst
+ *  param nKol   - broj kolona
  */
 
 FUNCTION TxtUNiz( cTxt, nKol )
@@ -1200,8 +1184,7 @@ FUNCTION TxtUNiz( cTxt, nKol )
 
 
 
-// ----------------------------------------------
-// ----------------------------------------------
+
 FUNCTION MsgBeep2( cTXT )
 
    @ MAXROWS() -1, 0 SAY PadL( cTXT, MAXCOLS() ) COLOR "R/W"
@@ -1263,10 +1246,10 @@ FUNCTION ToggleINS()
 
    IF ReadInsert( !ReadInsert() )
       SetCursor( 1 )
-      @ 0, MAXCOLS() - 20 SAY '< OVER >' COLOR gColorInvert 
+      @ 0, MAXCOLS() - 20 SAY '< OVER >' COLOR gColorInvert
    ELSE
       SetCursor( 2 )
-      @ 0, MAXCOLS() - 20 SAY  '< INS  >' COLOR gColorInvert 
+      @ 0, MAXCOLS() - 20 SAY  '< INS  >' COLOR gColorInvert
    ENDIF
 
    @ 0, MAXCOLS() - 11 SAY "bring.out" COLOR "GR+/B"
@@ -1279,10 +1262,10 @@ FUNCTION ToggleINS()
 
 FUNCTION say_database_info()
 
-   @ 0, MAXROWS() - 1 SAY PadR( f18_database() + " / " + f18_user(), MAXROWS() + 20 ) COLOR gColorInvert 
+   @ 0, MAXROWS() - 1 SAY PadR( f18_database() + " / " + f18_user(), MAXROWS() + 20 ) COLOR gColorInvert
    @ 4, 4 SAY ""
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -1305,7 +1288,7 @@ FUNCTION IzreziPath( cPath, cTekst )
 
 FUNCTION SezonskeBoje()
 
-   PUBLIC  gColorInvert 
+   PUBLIC  gColorInvert
    PUBLIC  Normal
    PUBLIC  Blink
    PUBLIC  Nevid

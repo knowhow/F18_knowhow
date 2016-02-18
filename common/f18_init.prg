@@ -163,8 +163,6 @@ FUNCTION f18_init_app_login( force_connect, arg_v )
 
             show_sacekaj()
             post_login()
-            f18_app_parameters( .T. )
-            set_hot_keys()
             get_log_level_from_params()
             module_menu( arg_v )
 
@@ -451,6 +449,11 @@ FUNCTION post_login( gVars )
 
 
    run_on_startup()
+
+   set_parametre_f18_aplikacije( .T. )
+   set_hot_keys()
+
+   say_database_info()
 
    RETURN .T.
 

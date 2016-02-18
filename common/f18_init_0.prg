@@ -84,7 +84,6 @@ FUNCTION set_naslovni_ekran( oApp )
       ENDIF
    ENDIF
 
-   say_database_info()
 
    RETURN NIL
 

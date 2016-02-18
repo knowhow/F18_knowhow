@@ -13,7 +13,7 @@
 
 
 // parametri aplikacije
-FUNCTION f18_app_parameters( just_set )
+FUNCTION set_parametre_f18_aplikacije( just_set )
 
    LOCAL _x := 1
    LOCAL _pos_x
@@ -30,7 +30,7 @@ FUNCTION f18_app_parameters( just_set )
    LOCAL _rpt_page_len, _bug_report
    LOCAL _log_level
 
-   info_bar( "init", "f18_app_parameters - start" )
+   info_bar( "init", "set_parametre_f18_aplikacije - start" )
 
    _fin := fetch_metric( "main_menu_fin", my_user(), "D" )
    _kalk := fetch_metric( "main_menu_kalk", my_user(), "D" )
@@ -78,7 +78,6 @@ FUNCTION f18_app_parameters( just_set )
    IF !just_set
 
       CLEAR SCREEN
-
       ?
       _pos_x := 2
       _pos_y := 3
@@ -206,7 +205,7 @@ FUNCTION f18_app_parameters( just_set )
       set_metric( "backup_windows_ping_time", my_user(), _backup_ping_time )
 #endif
 
-      info_bar( "init", "f18_app_parameters - end" )
+      info_bar( "init", "set_parametre_f18_aplikacije - end" )
 
    ENDIF
 

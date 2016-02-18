@@ -18,22 +18,6 @@ STATIC __PIC_DEM := "99999.999"
 STATIC __PIC_IZN := "999999999.99"
 
 
-STATIC FUNCTION _o_tables()
-
-   O_FAKT_DOKS
-   O_TARIFA
-   O_PARTN
-   O_SIFK
-   O_SIFV
-   O_ROBA
-   O_RJ
-   O_FAKT
-   SET ORDER TO TAG "3"
-
-   RETURN
-
-
-
 
 // -------------------------------------------------------
 // izvjestaj stanje robe
@@ -501,4 +485,20 @@ FUNCTION ZaglSRobe()
    ? Space( gnLMarg )
    ?? m
 
-   RETURN
+   RETURN .T.
+
+
+
+STATIC FUNCTION _o_tables()
+
+   O_FAKT_DOKS
+   O_TARIFA
+   O_PARTN
+   O_SIFK
+   O_SIFV
+   O_ROBA
+   O_RJ
+   O_FAKT
+   SET ORDER TO TAG "3"
+
+   RETURN .T.

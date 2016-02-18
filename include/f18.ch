@@ -48,6 +48,9 @@
 #include "f18_request.ch"
 #include "f18_cre_all.ch"
 
+#include "memoedit.ch"
+
+
 #define F18_DEFAULT_LOG_LEVEL_DEBUG 9
 #define F18_DEFAULT_LOG_LEVEL       3
 

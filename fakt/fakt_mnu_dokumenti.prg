@@ -12,8 +12,8 @@
 
 #include "f18.ch"
 
-// ---------------------------------
-// ---------------------------------
+
+
 FUNCTION fakt_pregled_dokumenata()
 
    LOCAL _opc := {}

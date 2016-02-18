@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out knowhow ERP, a free and open source 
+/*
+ * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
  * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -12,110 +12,119 @@
 
 #include "f18.ch"
 
-function KatBr()
-if roba->(fieldpos("KATBR"))<>0
-  if !empty(roba->katbr)
-     return " (" + TRIM(roba->katbr) + ")"
-  endif
-endif
-return ""
+FUNCTION KatBr()
 
- 
-function GetRegion()
-local cRegion:=" "
-local nArr
+   IF roba->( FieldPos( "KATBR" ) ) <> 0
+      IF !Empty( roba->katbr )
+         RETURN " (" + Trim( roba->katbr ) + ")"
+      ENDIF
+   ENDIF
 
-nArr := SELECT()
-SELECT (F_ROBA)
-if !USED()
-  O_ROBA
-endif
+   RETURN ""
 
-if ROBA->(FIELDPOS("IDTARIFA2")<>0)
-   cRegion := Pitanje( , "Porezi za region (1/2/3) ?" , "1" , " 123" )
-endif
-SELECT (nArr)
-return cRegion
+
+FUNCTION GetRegion()
+
+   LOCAL cRegion := " "
+   LOCAL nArr
+
+   nArr := Select()
+   SELECT ( F_ROBA )
+   IF !Used()
+      O_ROBA
+   ENDIF
+
+   IF ROBA->( FieldPos( "IDTARIFA2" ) <> 0 )
+      cRegion := Pitanje( , "Porezi za region (1/2/3) ?", "1", " 123" )
+   ENDIF
+   SELECT ( nArr )
+
+   RETURN cRegion
 
 /*! \fn GetRtmFile(cDefRtm)
  *  \brief Vraca naziv rtm fajla za stampu
  */
-function GetRtmFile(cDefRtm)
-aRtm:={}
-AADD(aRtm, {IzFmkIni("DelphiRb", "Rtm1", "", KUMPATH)})
-AADD(aRtm, {IzFmkIni("DelphiRb", "Rtm2", "", KUMPATH)})
-AADD(aRtm, {IzFmkIni("DelphiRb", "Rtm3", "", KUMPATH)})
+FUNCTION GetRtmFile( cDefRtm )
 
-// ako nema nista u matrici vrati default
-if LEN(aRtm) == 0
-	return cDefRtm
-endif
+   aRtm := {}
+   AAdd( aRtm, { IzFmkIni( "DelphiRb", "Rtm1", "", KUMPATH ) } )
+   AAdd( aRtm, { IzFmkIni( "DelphiRb", "Rtm2", "", KUMPATH ) } )
+   AAdd( aRtm, { IzFmkIni( "DelphiRb", "Rtm3", "", KUMPATH ) } )
 
-private GetList:={}
+   // ako nema nista u matrici vrati default
+   IF Len( aRtm ) == 0
+      RETURN cDefRtm
+   ENDIF
 
-Box(,6, 30)
-	@ 1+m_x, 2+m_y GET aRtm[1, 1]
-	@ 2+m_x, 2+m_y GET aRtm[1, 2]
-	@ 3+m_x, 2+m_y GET aRtm[1, 3]
-	read
-BoxC()
+   PRIVATE GetList := {}
 
-return cRet
+   Box(, 6, 30 )
+   @ 1 + m_x, 2 + m_y GET aRtm[ 1, 1 ]
+   @ 2 + m_x, 2 + m_y GET aRtm[ 1, 2 ]
+   @ 3 + m_x, 2 + m_y GET aRtm[ 1, 3 ]
+   READ
+   BoxC()
 
-
-function pocni_stampu()
-	if !lSSIP99 .and. !StartPrint()
-		my_close_all_dbf()
-		return
-	endif
-return
+   RETURN cRet
 
 
-function zavrsi_stampu()
-	if !lSSIP99
-        my_close_all_dbf() 
-		EndPrint()
-	endif
-return
+FUNCTION pocni_stampu()
+
+   IF !lSSIP99 .AND. !StartPrint()
+      my_close_all_dbf()
+      RETURN
+   ENDIF
+
+   RETURN
+
+
+FUNCTION zavrsi_stampu()
+
+   IF !lSSIP99
+      my_close_all_dbf()
+      EndPrint()
+   ENDIF
+
+   RETURN
 
 
 // --------------------------------------------------------
 // --------------------------------------------------------
-function StampTXT(cIdFirma, cIdTipDok, cBrDok, lJFill)
+FUNCTION StampTXT( cIdFirma, cIdTipDok, cBrDok, lJFill )
 
-private InPicDEM:=PicDEM
-private InPicCDEM:=PicCDEM  
+   PRIVATE InPicDEM := PicDEM
+   PRIVATE InPicCDEM := PicCDEM
 
-if lJFill == nil
-        lJFill := .f.
-endif
+   IF lJFill == nil
+      lJFill := .F.
+   ENDIF
 
-if cIdFirma == nil
-  StDokPDV()
-else
-  StDokPDV(cIdFirma, cIdTipDok, cBrDok, lJFill)
-endif
-    
-return
+   IF cIdFirma == nil
+      StDokPDV()
+   ELSE
+      StDokPDV( cIdFirma, cIdTipDok, cBrDok, lJFill )
+   ENDIF
+
+   RETURN
 
 // ------------------------------------------
 // fakt_zagl_firma()
 // Ispis zaglavlja na izvjestajima
 // ------------------------------------------
-function fakt_zagl_firma()
-?
+FUNCTION fakt_zagl_firma()
 
-P_12CPI
-U_OFF
-B_OFF
-I_OFF
+   ?
 
-?? "Subjekt:"; U_ON; ?? PADC(TRIM(gTS) + " " + TRIM(gNFirma), 39); U_OFF
-?  "Prodajni objekat:"; U_ON; ?? PADC(ALLTRIM(NazProdObj()), 30) ; U_OFF
-?  "(poslovnica-poslovna jedinica)"
-?  "Datum:"; U_ON; ?? PADC(SrediDat(DATDOK),18); U_OFF
-?
-?
-return
+   P_12CPI
+   U_OFF
+   B_OFF
+   I_OFF
 
+   ?? "Subjekt:"; U_ON; ?? PadC( Trim( gTS ) + " " + Trim( gNFirma ), 39 ); U_OFF
+   ?  "Prodajni objekat:"; U_ON; ?? PadC( AllTrim( NazProdObj() ), 30 ) ; U_OFF
+   ?  "(poslovnica-poslovna jedinica)"
+   ?  "Datum:"; U_ON; ?? PadC( SrediDat( DATDOK ), 18 ); U_OFF
+   ?
+   ?
 
+   RETURN

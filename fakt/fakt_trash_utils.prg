@@ -9,7 +9,6 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-
 #include "f18.ch"
 
 // -------------------------------------
@@ -43,10 +42,10 @@ FUNCTION Pripr9View()
 
    PRIVATE PicV := "99999999.9"
    ImeKol := { ;
-      { "F.", {|| IdFirma                  }, "IdFirma"     },;
-      { "VD", {|| IdTipDok                 }, "IdTipDok"    },;
-      { "BrDok", {|| BrDok                    }, "BrDok"       },;
-      { "Dat.dok", {|| DatDok                   }, "DatDok"      },;
+      { "F.", {|| IdFirma                  }, "IdFirma"     }, ;
+      { "VD", {|| IdTipDok                 }, "IdTipDok"    }, ;
+      { "BrDok", {|| BrDok                    }, "BrDok"       }, ;
+      { "Dat.dok", {|| DatDok                   }, "DatDok"      }, ;
       { "Partner", {|| PadR( _get_partner( idpartner ), 50 )  }, "idpartner" } ;
       }
 

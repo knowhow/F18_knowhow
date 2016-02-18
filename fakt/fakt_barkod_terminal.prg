@@ -1,16 +1,16 @@
 /*
- * This file is part of the bring.out FMK, a free and open source
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+ * This file is part of the bring.out knowhow ERP, a free and open source
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
 
-
 #include "f18.ch"
+
 
 // -------------------------------------------------------
 // import dokumenta iz txt fajla sa barkod terminala
@@ -87,10 +87,10 @@ STATIC FUNCTION bterm_to_pripr()
    GO TOP
 
    DO WHILE !Eof()
-	
+
       cTrm_roba := field->idroba
       nTrm_qtty := 0
-	
+
       // saberi iste artikle
       DO WHILE !Eof() .AND. field->idroba == cTrm_roba
          nTrm_qtty += field->kolicina
@@ -175,16 +175,16 @@ STATIC FUNCTION _gForm( aParam )
    LOCAL cMPCSet := " "
 
    Box(, 15, 67 )
-	
+
    @ m_x + nX, m_y + 2 SAY "Generisanje podataka iz barkod terminala:"
 
    ++nX
    ++nX
 
    @ m_x + nX, m_y + 2 SAY "(1) Veleprodaja"
-	
+
    ++nX
-	
+
    @ m_x + nX, m_y + 2 SAY "(2) Maloprodaja" GET cVpMp ;
       VALID cVpMp $ "12"
 
@@ -194,7 +194,7 @@ STATIC FUNCTION _gForm( aParam )
    ++ nX
 
    // datum dokumenta
-	
+
    @ m_x + nX, m_y + 2 SAY "Datum dok.:" GET dDatDok
    @ m_x + nX, Col() + 1 SAY "Datum otpr.:" GET dDatOtpr
    @ m_x + nX, Col() + 1 SAY "Datum isp.:" GET dDatIsp
@@ -203,7 +203,7 @@ STATIC FUNCTION _gForm( aParam )
    ++ nX
 
    // vrsta i broj dokumenta
-	
+
    // koji je tip dokumenta
    cTipDok := _gtdok( cVpMp )
 
@@ -211,7 +211,7 @@ STATIC FUNCTION _gForm( aParam )
    @ m_x + nX, Col() + 1 SAY "-" GET cTipDok ;
       VALID _nBrDok( cFirma, cTipDok, @cBrDok )
    @ m_x + nX, Col() + 1 SAY "-" GET cBrDok
-	
+
    ++nX
    ++nX
 
@@ -228,10 +228,10 @@ STATIC FUNCTION _gForm( aParam )
       @ m_x + nX, m_y + 2 SAY "Koristiti MPC ( /1/2/3...)" ;
          GET cMPCSet ;
          VALID cMPCSet $ " 123456"
-	
+
       ++ nX
       ++ nX
-	
+
    ENDIF
 
    @ m_x + nX, m_y + 2 SAY "Izvrsiti transfer (D/N)?" GET cGen ;

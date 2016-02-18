@@ -10,7 +10,7 @@
  */
 
 #include "f18.ch"
-#include "hbclass.ch"
+
 
 
 
@@ -28,7 +28,7 @@ CLASS TFaktMod FROM TAppMod
    METHOD mMenu
    METHOD mMenuStandard
 
-END CLASS
+ENDCLASS
 
 
 

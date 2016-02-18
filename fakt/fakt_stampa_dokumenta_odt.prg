@@ -1,16 +1,17 @@
 /*
- * This file is part of the bring.out FMK, a free and open source
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+ * This file is part of the bring.out knowhow ERP, a free and open source
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
 
-
 #include "f18.ch"
+
+
 
 STATIC LEN_KOLICINA := 12
 STATIC LEN_CIJENA := 10
@@ -24,24 +25,6 @@ STATIC __default_odt_kol_template := ""
 STATIC _temporary := .F.
 STATIC __auto_odt := ""
 
-
-// ------------------------------------------------------
-// setuje defaultni odt template
-// ------------------------------------------------------
-FUNCTION __default_odt_template()
-
-   __default_odt_vp_template := fetch_metric( "fakt_default_odt_template", my_user(), "" )
-   __default_odt_mp_template := fetch_metric( "fakt_default_odt_mp_template", my_user(), "" )
-   __default_odt_kol_template := fetch_metric( "fakt_default_odt_kol_template", my_user(), "" )
-
-   RETURN
-
-
-FUNCTION __auto_odt_template()
-
-   __auto_odt := fetch_metric( "fakt_odt_template_auto", NIL, "D" )
-
-   RETURN
 
 
 // ------------------------------------------------
@@ -349,7 +332,7 @@ STATIC FUNCTION _grupno_sql_gen( racuni, params )
 
       oRow := _table:GetRow()
 
-      _scan := AScan( racuni, {|val| val[ 1 ] + val[ 2 ] + val[ 3 ] == oRow:FieldGet( 1 ) + oRow:FieldGet( 2 ) + oRow:FieldGet( 3 ) } )
+      _scan := AScan( racuni, {| val| val[ 1 ] + val[ 2 ] + val[ 3 ] == oRow:FieldGet( 1 ) + oRow:FieldGet( 2 ) + oRow:FieldGet( 3 ) } )
 
       IF _scan == 0
          AAdd( racuni, { oRow:FieldGet( 1 ), oRow:FieldGet( 2 ), oRow:FieldGet( 3 ) } )
@@ -806,4 +789,23 @@ STATIC FUNCTION _gen_xml( xml_file, a_racuni, ctrl_data )
 
    close_xml()
 
+   RETURN .T.
+
+
+// ------------------------------------------------------
+// setuje defaultni odt template
+// ------------------------------------------------------
+FUNCTION __default_odt_template()
+
+   __default_odt_vp_template := fetch_metric( "fakt_default_odt_template", my_user(), "" )
+   __default_odt_mp_template := fetch_metric( "fakt_default_odt_mp_template", my_user(), "" )
+   __default_odt_kol_template := fetch_metric( "fakt_default_odt_kol_template", my_user(), "" )
+
    RETURN
+
+
+FUNCTION __auto_odt_template()
+
+   __auto_odt := fetch_metric( "fakt_odt_template_auto", NIL, "D" )
+
+   RETURN .T.

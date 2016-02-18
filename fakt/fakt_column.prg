@@ -24,72 +24,75 @@ CREATE CLASS FaktColumn INHERIT TBColumn
 
 ENDCLASS
 
-METHOD FaktColumn:New(col_name, browse, block)
-local _header, _width
+METHOD FaktColumn:New( col_name, browse, block )
 
-SWITCH col_name
+   LOCAL _header, _width
 
-    CASE "datdok"
+   SWITCH col_name
+
+   CASE "datdok"
       _width := 12
-      _header := PADC("Dat.dok", _width)
+      _header := PadC( "Dat.dok", _width )
       EXIT
 
-    CASE "neto"
+   CASE "neto"
       _width := 18
-      _header := PADC("Neto vr.", _width)
+      _header := PadC( "Neto vr.", _width )
       EXIT
 
-    CASE "broj"
-       _width := 14
-       _header := PADC("Broj dok.", _width)
-       EXIT
+   CASE "broj"
+      _width := 14
+      _header := PadC( "Broj dok.", _width )
+      EXIT
 
-    CASE "mark"
-       _width := 3
-       _header := PADC("M", _width)
-       EXIT
+   CASE "mark"
+      _width := 3
+      _header := PadC( "M", _width )
+      EXIT
 
-    OTHERWISE
-       _header := "?" + col_name + "?"
-       _width  :=  10
+   OTHERWISE
+      _header := "?" + col_name + "?"
+      _width  :=  10
 
-END
+   END
 
-::width := _width
+   ::width := _width
 
-::col_name := col_name
+   ::col_name := col_name
 
-::super:New(_header, block)
-::browse     := browse
-RETURN Self
+   ::super:New( _header, block )
+   ::browse     := browse
+
+   RETURN Self
 
 
 METHOD FaktColumn:Block()
-local _val, _item
 
-_item  := ::browse:tekuci_item
+   LOCAL _val, _item
 
-if _item == NIL
-   _val = ""
-else
-   SWITCH (::col_name)
+   _item  := ::browse:tekuci_item
 
-	   CASE  "datdok"
-		_val := _item:info["datdok"]
-                exit
-	   CASE  "neto"
-		_val := STR(_item:info["neto_vrijednost"], 12, 2)
-                exit
-	   CASE  "broj"
-		_val := _item:broj()
-                exit
-           CASE  "mark"
-                _val := IIF(_item:mark, "*", " ")
-                exit
-   END
-endif
+   IF _item == NIL
+      _val = ""
+   ELSE
+      SWITCH ( ::col_name )
 
-// chr(34) je dupli navodnik
-_val := Chr(34) + StrTran(to_str(_val), Chr(34), Chr(34) + "+Chr(34)+" + Chr(34) ) + Chr(34)
+      CASE  "datdok"
+         _val := _item:info[ "datdok" ]
+         EXIT
+      CASE  "neto"
+         _val := Str( _item:info[ "neto_vrijednost" ], 12, 2 )
+         EXIT
+      CASE  "broj"
+         _val := _item:broj()
+         EXIT
+      CASE  "mark"
+         _val := iif( _item:mark, "*", " " )
+         EXIT
+      END
+   ENDIF
 
-RETURN hb_macroBlock(_val)
+   // chr(34) je dupli navodnik
+   _val := Chr( 34 ) + StrTran( to_str( _val ), Chr( 34 ), Chr( 34 ) + "+Chr(34)+" + Chr( 34 ) ) + Chr( 34 )
+
+   RETURN hb_macroBlock( _val )

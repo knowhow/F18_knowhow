@@ -1,21 +1,20 @@
 /*
- * This file is part of the bring.out FMK, a free and open source
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+ * This file is part of the bring.out knowhow ERP, a free and open source
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
 
-
 #include "f18.ch"
 
-STATIC __import_dbf_path
-STATIC __export_dbf_path
-STATIC __import_zip_name
-STATIC __export_zip_name
+THREAD STATIC __import_dbf_path
+THREAD STATIC __export_dbf_path
+THREAD STATIC __import_zip_name
+THREAD STATIC __export_zip_name
 
 
 FUNCTION fakt_udaljena_razmjena_podataka()
@@ -98,7 +97,7 @@ STATIC FUNCTION _fakt_import()
    @ m_x + 1, m_y + 2 SAY "import path:" GET _imp_path PICT "@S50"
    READ
    BoxC()
-	
+
    IF LastKey() == K_ESC
       RETURN
    endif
@@ -931,7 +930,7 @@ STATIC FUNCTION _vec_postoji_u_prometu( id_firma, id_vd, br_dok )
    LOCAL _t_area := Select()
    LOCAL _ret := .T.
 
-   
+
 
    SELECT fakt_doks
    GO TOP

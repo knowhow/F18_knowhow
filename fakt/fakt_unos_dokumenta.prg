@@ -12,13 +12,13 @@
 #include "f18.ch"
 
 STATIC __fiscal_marker := .F.
-
 STATIC __id_firma
 STATIC __tip_dok
 STATIC __br_dok
 STATIC __r_br
 STATIC __enter_seq := Chr( K_ENTER ) + Chr( K_ENTER ) + Chr( K_ENTER )
 STATIC __redni_broj
+
 
 FUNCTION fakt_unos_dokumenta()
 
@@ -42,10 +42,10 @@ FUNCTION fakt_unos_dokumenta()
    PRIVATE ImeKol := { ;
       { "Red.br",  {|| dbSelectArea( F_FAKT_PRIPR ), Rbr()                   } }, ;
       { "Partner/Roba",  {|| Part1Stavka() + Roba()  } }, ;
-      { _ue("Količina"),  {|| kolicina  } }, ;
+      { _ue( "Količina" ),  {|| kolicina  } }, ;
       { "Cijena",    {|| Cijena    }, "cijena"    }, ;
       { "Rabat",    {|| Transform( Rabat, "999.99" ) }, "Rabat"  }, ;
-      { _ue("Real.Marža"), {|| fakt_unos_prikaz_marza() } }, ;
+      { _ue( "Real.Marža" ), {|| fakt_unos_prikaz_marza() } }, ;
       { "Nab.Cj",   {|| fakt_unos_prikaz_nab_cj() } }, ;
       { "RJ",  {|| idfirma                 }, "idfirma"   }, ;
       { "Serbr",         {|| SerBr                   }, "serbr"     }, ;
@@ -81,8 +81,8 @@ FUNCTION fakt_unos_dokumenta()
 
    _opt_d := ( _y / 4 )
 
-   _opt_row := PadR( _ue("<c+N> Nova stavka"), _opt_d ) + _sep
-   _opt_row += PadR( _ue("<ENT> Ispravka"), _opt_d ) + _sep
+   _opt_row := PadR( _ue( "<c+N> Nova stavka" ), _opt_d ) + _sep
+   _opt_row += PadR( _ue( "<ENT> Ispravka" ), _opt_d ) + _sep
    _opt_row += PadR( _ue( "<c+T> Briši stavku" ), _opt_d ) + _sep
 
    @ m_x + _x - 4, m_y + 2 SAY _opt_row

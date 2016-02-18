@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out knowhow ERP, a free and open source 
+/*
+ * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
  * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -44,7 +44,7 @@ FUNCTION fakt_real_maloprodaje()
    IF reccount2() == 0
       MsgBeep( "Nema podataka za prikaz !" )
       my_close_all_dbf()
-      RETURN
+      RETURN .F.
    ENDIF
 
    START PRINT CRET
@@ -61,8 +61,8 @@ FUNCTION fakt_real_maloprodaje()
 
    fakt_mp_po_operaterima()
    fakt_mp_po_vrstama_placanja()
-   
-   IF _params[ "tip_partnera" ] == "D" 
+
+   IF _params[ "tip_partnera" ] == "D"
       ?
       fakt_mp_po_tipu_partnera()
    ENDIF
@@ -274,10 +274,10 @@ STATIC FUNCTION fakt_gen_rekapitulacija_mp( params )
       DO WHILE !Eof() .AND. field->idfirma == cF_firma ;
             .AND. field->idtipdok == cF_tipdok ;
             .AND. field->brdok == cF_brdok
-		
+
          cRoba_id := field->idroba
          cPart_id := field->idpartner
-	
+
          // fizicka lica
          _tip_partnera := "1"
 
@@ -308,7 +308,7 @@ STATIC FUNCTION fakt_gen_rekapitulacija_mp( params )
          nCjBPDV := 0
          nCj2BPDV := 0
          nVPopust := 0
-	
+
          // procenat pdv-a
          nPPDV := tarifa->opp
 
@@ -316,7 +316,7 @@ STATIC FUNCTION fakt_gen_rekapitulacija_mp( params )
          nKol := field->kolicina
          nRCijen := field->cijena
 
-	
+
          IF Left( field->dindem, 3 ) <> Left( ValBazna(), 3 )
             // preracunaj u EUR
             // omjer EUR / KM
@@ -327,7 +327,7 @@ STATIC FUNCTION fakt_gen_rekapitulacija_mp( params )
 
          // rabat - popust
          nPopust := field->rabat
-	
+
          // ako je 13-ka ili 27-ca
          // cijena bez pdv se utvrdjuje unazad
          IF ( field->idtipdok == "13" .AND. glCij13Mpc ) .OR. ;
@@ -340,19 +340,19 @@ STATIC FUNCTION fakt_gen_rekapitulacija_mp( params )
             nCjBPDV := nRCijen
             nCjPDV := ( nRCijen * ( 1 + nPPDV / 100 ) )
          ENDIF
-	
+
          // izracunaj vrijednost popusta
          IF Round( nPopust, 4 ) <> 0
             // vrijednost popusta
             nVPopust := ( nCjBPDV * ( nPopust / 100 ) )
          ENDIF
-	
+
          // cijena sa popustom bez pdv-a
          nCj2BPDV := ( nCjBPDV - nVPopust )
-		
+
          // izracuna PDV na cijenu sa popustom
          nCj2PDV := ( nCj2BPDV * ( 1 + nPPDV / 100 ) )
-		
+
          // preracunaj VPDV sa popustom
          nVPDV := ( nCj2BPDV * ( nPPDV / 100 ) )
 
@@ -509,7 +509,7 @@ STATIC FUNCTION fakt_mp_po_dokumentima( nT_osnovica, nT_pdv, nT_ukupno, lCalc )
       cPart_naz := field->part_naz
       nOperater := field->operater
       cOper_naz := GetFullUserName( nOperater )
-	
+
       nOsnovica := 0
       nPDV := 0
       nUkupno := 0
@@ -517,7 +517,7 @@ STATIC FUNCTION fakt_mp_po_dokumentima( nT_osnovica, nT_pdv, nT_ukupno, lCalc )
       nUk_fakt := 0
 
       DO WHILE !Eof() .AND. field->idfirma + field->idtipdok + field->brdok == cIdFirma + cIdTipDok + cBrDok
-		
+
          nOsnovica += field->kolicina * field->c_bpdv
          nPDV += field->kolicina * field->pdv
          nS_pdv := field->s_pdv
@@ -543,7 +543,7 @@ STATIC FUNCTION fakt_mp_po_dokumentima( nT_osnovica, nT_pdv, nT_ukupno, lCalc )
 
          // partner
          @ PRow(), PCol() + 1 SAY PadR( AllTrim( cPart_id ) + "-" +  AllTrim( cPart_naz ), 40 )
-	
+
          // osnovica
          @ PRow(), nRow := PCol() + 1 SAY Str( nOsnovica, _NUM, _DEC )  PICT PIC_IZN
 
@@ -552,7 +552,7 @@ STATIC FUNCTION fakt_mp_po_dokumentima( nT_osnovica, nT_pdv, nT_ukupno, lCalc )
 
          // ukupno
          @ PRow(), PCol() + 1 SAY Str( nUkupno, _NUM, _DEC ) PICT PIC_IZN
-		
+
          // operater
          @ PRow(), PCol() + 1 SAY PadR( AllTrim( cOper_naz ), 20 )
 
@@ -565,7 +565,7 @@ STATIC FUNCTION fakt_mp_po_dokumentima( nT_osnovica, nT_pdv, nT_ukupno, lCalc )
    ENDDO
 
    IF lCalc == .F.
-	
+
       // ispisi sada total
       ? cLine
 
@@ -635,7 +635,7 @@ STATIC FUNCTION fakt_mp_po_tipu_partnera( nT_osnovica, nT_pdv, nT_ukupno )
          nUk_fakt := 0
 
          DO WHILE !Eof() .AND. _tip_partnera == field->tip .AND. field->idfirma + field->idtipdok + field->brdok == _id_firma + _tip_dok + _br_dok
-		
+
             nS_pdv := field->s_pdv
             nUk_fakt := field->uk_fakt
 
@@ -666,7 +666,7 @@ STATIC FUNCTION fakt_mp_po_tipu_partnera( nT_osnovica, nT_pdv, nT_ukupno )
 
       // tip partnera
       @ PRow(), PCol() + 1 SAY PadR( _opis, 40 )
-	
+
       // total
       @ PRow(), nRow := PCol() + 1 SAY Str( __osn, _NUM, _DEC ) ;
          PICT PIC_IZN
@@ -740,13 +740,13 @@ STATIC FUNCTION fakt_mp_po_vrstama_placanja( nT_osnovica, nT_pdv, nT_ukupno )
       nUU_fakt := 0
 
       DO WHILE !Eof() .AND. field->vrstap == _vrsta_p
-	
+
          cF_brdok := field->brdok
          cF_tipdok := field->idtipdok
          cF_firma := field->idfirma
 
          DO WHILE !Eof() .AND. field->vrstap == _vrsta_p .AND. cF_firma + cF_tipdok + cF_brdok == field->idfirma +  field->idtipdok + field->brdok
-		
+
             nU_fakt := field->uk_fakt
             nS_pdv := field->s_pdv
             nOsnovica += field->kolicina * field->c_bpdv
@@ -774,7 +774,7 @@ STATIC FUNCTION fakt_mp_po_vrstama_placanja( nT_osnovica, nT_pdv, nT_ukupno )
 
       // operater
       @ PRow(), PCol() + 1 SAY PadR( AllTrim( _vrsta_p ), 40 )
-	
+
       // total
       @ PRow(), nRow := PCol() + 1 SAY Str( nUkupno, _NUM, _DEC ) ;
          PICT PIC_IZN
@@ -849,13 +849,13 @@ STATIC FUNCTION fakt_mp_po_operaterima( nT_osnovica, nT_pdv, nT_ukupno )
       nUU_fakt := 0
 
       DO WHILE !Eof() .AND. field->operater == nOperater
-	
+
          cF_brdok := field->brdok
          cF_tipdok := field->idtipdok
          cF_firma := field->idfirma
 
          DO WHILE !Eof() .AND. field->operater == nOperater .AND. cF_firma + cF_tipdok + cF_brdok == field->idfirma + field->idtipdok + field->brdok
-		
+
             nU_fakt := field->uk_fakt
             nS_pdv := field->s_pdv
             nOsnovica += field->kolicina * field->c_bpdv
@@ -881,7 +881,7 @@ STATIC FUNCTION fakt_mp_po_operaterima( nT_osnovica, nT_pdv, nT_ukupno )
 
       // operater
       @ PRow(), PCol() + 1 SAY PadR( AllTrim( cOper_naz ), 40 )
-	
+
       // total
       @ PRow(), nRow := PCol() + 1 SAY Str( nUkupno, _NUM, _DEC ) ;
          PICT PIC_IZN
@@ -938,7 +938,7 @@ STATIC FUNCTION fakt_mp_po_robama()
       nKolicina := 0
 
       DO WHILE !Eof() .AND. field->roba_id == cRoba_id
-		
+
          nS_pdv := field->s_pdv
          nOsnovica += field->kolicina * field->c_bpdv
          nPDV += field->kolicina * field->pdv

@@ -11,7 +11,8 @@
 
 #include "f18.ch"
 
-function povrat_fakt_dokumenta( rezerv, id_firma, id_tip_dok, br_dok, test )
+
+FUNCTION povrat_fakt_dokumenta( rezerv, id_firma, id_tip_dok, br_dok, test )
 
    LOCAL _vars := hb_Hash()
    LOCAL lBrisatiKumulativ := .T.
@@ -430,7 +431,7 @@ STATIC FUNCTION dokument_se_moze_vratiti_u_pripremu( vars )
    LOCAL _ret := .T.
 
    IF vars[ "idtipdok" ] $ "10#11"
-      IF postoji_fiskalni_racun( vars["idfirma"], vars["idtipdok"], vars["brdok"], fiskalni_uredjaj_model() )
+      IF postoji_fiskalni_racun( vars[ "idfirma" ], vars[ "idtipdok" ], vars[ "brdok" ], fiskalni_uredjaj_model() )
          MsgBeep( "Za ovaj dokument je izdat fiskalni račun.#Opcija povrata je onemogućena !!!" )
          _ret := .F.
          RETURN _ret

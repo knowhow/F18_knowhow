@@ -10,8 +10,8 @@
  */
 
 #include "f18.ch"
-#include "memoedit.ch"
-#include "f18_separator.ch"
+
+
 
 STATIC slChanged := .F.
 
@@ -196,12 +196,12 @@ FUNCTION fakt_setuj_cijenu( tip_cijene )
          _cijena := roba->mpc2
       ELSEIF gMP == "4"
          _cijena := roba->mpc3
-//      ELSEIF gMP == "5"
-//         _cijena := roba->mpc4
-//      ELSEIF gMP == "6"
-//         _cijena := roba->mpc5
-//      ELSEIF gMP == "7"
-//         _cijena := roba->mpc6
+         // ELSEIF gMP == "5"
+         // _cijena := roba->mpc4
+         // ELSEIF gMP == "6"
+         // _cijena := roba->mpc5
+         // ELSEIF gMP == "7"
+         // _cijena := roba->mpc6
       ENDIF
 
    ELSE
@@ -262,10 +262,10 @@ FUNCTION V_Kolicina( tip_vpc )
             IF gVar13 == "2" .AND. _idtipdok == "13"
                _cijena := fakt_mpc_iz_sifrarnika()
             ELSE
-               //IF g13dcij == "6"
-              //    _cijena := MPC6
-               //ELSEIF g13dcij == "5"
-              //    _cijena := MPC5
+               // IF g13dcij == "6"
+               // _cijena := MPC6
+               // ELSEIF g13dcij == "5"
+               // _cijena := MPC5
                IF g13dcij == "4"
                   _cijena := MPC4
                ELSEIF g13dcij == "3"
@@ -277,10 +277,10 @@ FUNCTION V_Kolicina( tip_vpc )
                ENDIF
             ENDIF
          ELSEIF _idtipdok == "13" .AND. ( gVar13 == "2" .OR. glCij13Mpc ) .AND. gVarNum == "2"
-            //IF g13dcij == "6"
-            //   _cijena := MPC6
-            //ELSEIF g13dcij == "5"
-            //   _cijena := MPC5
+            // IF g13dcij == "6"
+            // _cijena := MPC6
+            // ELSEIF g13dcij == "5"
+            // _cijena := MPC5
             IF g13dcij == "4"
                _cijena := MPC4
             ELSEIF g13dcij == "3"
@@ -305,10 +305,10 @@ FUNCTION V_Kolicina( tip_vpc )
                _Cijena := MPC3
             ELSEIF gMP == "5"
                _Cijena := MPC4
-            //ELSEIF gMP == "6"
-            //   _Cijena := MPC5
-            //ELSEIF gMP == "7"
-            //   _Cijena := MPC6
+               // ELSEIF gMP == "6"
+               // _Cijena := MPC5
+               // ELSEIF gMP == "7"
+               // _Cijena := MPC6
             ENDIF
 
          ELSEIF _idtipdok == "25" .AND. _cijena <> 0
@@ -1132,7 +1132,7 @@ FUNCTION IniVars()
       _BrOtp := aMemo[ 6 ]; _DatOtp := CToD( aMemo[ 7 ] ); _BrNar := amemo[ 8 ]; _DatPl := CToD( aMemo[ 9 ] )
    ENDIF
    IF Len ( aMemo ) >= 10
-      _VezOtpr := aMemo[10 ]
+      _VezOtpr := aMemo[ 10 ]
    ENDIF
 
 
@@ -1440,7 +1440,7 @@ FUNCTION IsprUzorTxt( fSilent, bFunc )
       _BrOtp := aMemo[ 6 ]; _DatOtp := CToD( aMemo[ 7 ] ); _BrNar := amemo[ 8 ]; _DatPl := CToD( aMemo[ 9 ] )
    ENDIF
    IF Len ( aMemo ) >= 10 .AND. !Empty( aMemo[ 10 ] )
-      _VezOtpr := aMemo[10 ]
+      _VezOtpr := aMemo[ 10 ]
    ENDIF
 
    IF lDoks2
@@ -1517,7 +1517,7 @@ FUNCTION edit_fakt_doks2()
    cPom := IzFMKINI( "FAKT", "Doks2opis", "dodatnih podataka", KUMPATH )
 
    IF Pitanje( , "Želite li unos/ispravku " + cPom + "? (D/N)", "N" ) == "N"
-      SELECT( nArr )
+      Select( nArr )
       RETURN
    ENDIF
 
@@ -1582,10 +1582,10 @@ FUNCTION c_cijena( nCijena, cTipDok, lNovidok )
          nRCijena := roba->mpc3
       ELSEIF gMP == "5"
          nRCijena := roba->mpc4
-      //ELSEIF gMP == "6"
-      //   nRCijena := roba->mpc5
-      //ELSEIF gMP == "7"
-      //   nRCijena := roba->mpc6
+         // ELSEIF gMP == "6"
+         // nRCijena := roba->mpc5
+         // ELSEIF gMP == "7"
+         // nRCijena := roba->mpc6
       ENDIF
 
    ELSEIF cTipDok $ "10#"
@@ -2042,7 +2042,7 @@ FUNCTION fakt_brisi_stavku_pripreme()
 
       _tek := dbf_get_rec()
 
-      _update_rbr := _tek["rbr"]
+      _update_rbr := _tek[ "rbr" ]
 
       _tek[ "txt" ] := _prva[ "txt" ]
       _tek[ "rbr" ] := _prva[ "rbr" ]
@@ -2065,7 +2065,7 @@ FUNCTION fakt_brisi_stavku_pripreme()
    oAtrib:delete_atrib()
 
    IF _update_rbr <> NIL
-       oAtrib:update_atrib_rbr()
+      oAtrib:update_atrib_rbr()
    ENDIF
 
    PopWa()

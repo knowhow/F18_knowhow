@@ -1,71 +1,15 @@
 /*
- * This file is part of the bring.out FMK, a free and open source
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+ * This file is part of the bring.out knowhow ERP, a free and open source
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
 
-
 #include "f18.ch"
-
-
-// ---------------------------------
-// otvara potrebne tabele
-// ---------------------------------
-STATIC FUNCTION _o_tables()
-
-   O_FAKT
-   O_FAKT_DOKS
-   O_PARTN
-   O_VALUTE
-   O_RJ
-   O_SIFK
-   O_SIFV
-   O_ROBA
-
-   RETURN
-
-
-// --------------------------------------------------
-// vraca matricu sa definicijom polja exp.tabele
-// --------------------------------------------------
-STATIC FUNCTION get_rpt_fields()
-
-   LOCAL aFields := {}
-
-   AAdd( aFields, { "sifra", "C", 7, 0 } )
-   AAdd( aFields, { "naziv", "C", 40, 0 } )
-   AAdd( aFields, { "kolicina", "N", 15, 5 } )
-   AAdd( aFields, { "osnovica", "N", 15, 5 } )
-   AAdd( aFields, { "ukupno", "N", 15, 5 } )
-
-   RETURN aFields
-
-
-// -------------------------------------------
-// filuje export tabelu sa podacima
-// -------------------------------------------
-STATIC FUNCTION fill_exp_tbl( cIdSif, cNazSif, nKol, nOsn, nUk )
-
-   LOCAL nArr
-
-   nArr := Select()
-
-   O_R_EXP
-   APPEND BLANK
-   REPLACE field->sifra WITH cIdSif
-   REPLACE field->naziv WITH cNazSif
-   REPLACE field->kolicina WITH nKol
-   REPLACE field->osnovica WITH nOsn
-   REPLACE field->ukupno WITH nUk
-
-   SELECT ( nArr )
-
-   RETURN
 
 
 
@@ -130,63 +74,63 @@ FUNCTION fakt_real_kolicina()
    nX := 2
 
    DO WHILE .T.
- 		
+
       cIdFirma := PadR( cIdFirma, 2 )
- 		
+
       @ m_x + nX, m_y + 2 SAY "RJ            " GET cIdFirma valid {|| Empty( cIdFirma ) .OR. cIdFirma == gFirma .OR. P_RJ( @cIdFirma ), cIdFirma := Left( cIdFirma, 2 ), .T. }
- 		
+
       ++nX
-		
+
       @ m_x + nX, m_y + 2 SAY "Tip dokumenta " GET qqTipDok PICT "@!S20"
- 		
+
       ++nX
-		
+
       @ m_x + nX, m_y + 2 SAY "Od datuma "  GET dDatOd
- 		
+
       @ m_x + nX, Col() + 1 SAY "do"  GET dDatDo
-		
+
       ++ nX
 
       @ m_x + nX, m_y + 2 SAY "gledati dat. (D)dok. (O)otpr. (V)valute:" GET cDDokOtpr VALID cDDokOtpr $ "DOV" PICT "@!"
 
       nX := nX + 3
-		
+
       @ m_x + nX, m_y + 2 SAY "Uslov po sifri partnera (prazno svi) "  GET qqPartn PICT "@!" valid {|| Empty( qqPartn ) .OR. P_Firma( @qqPartn ) }
- 		
+
       ++nX
-		
+
       @ m_x + nX, m_y + 2 SAY "Uslov po artiklu (prazno svi) "  GET qqIdRoba PICT "@S30"
-   			
+
       ++nX
-			
+
       @ m_x + nX, m_y + 2 SAY "Uslov po opcini (prazno sve) "  GET cOpcina PICT "@S30"
- 		
- 		
+
+
       IF lRelations == .T.
-			
+
          ++ nX
          @ m_x + nX, m_y + 2 SAY "Relacija (prazno sve):" GET cRelation
       ENDIF
-		
+
       IF lGroup
-   			
+
          PRIVATE cPGroup := Space( 3 )
          ++nX
          @ m_x + nX, m_y + 2 SAY "Grupa partnera (prazno sve):" GET cPGroup VALID Empty( cPGroup ) .OR. cPGroup $ "VP #AMB#SIS#OST"
-		
+
       ENDIF
-		
+
       ++nX
 
       @ m_x + nX, m_y + 2 SAY "Svedi na jedinicu mjere ?" GET cSvediJmj VALID cSvediJmj $ "DN" PICT "@!"
 
       nX := nX + 2
-		
+
       @ m_x + nX, m_y + 2 SAY "Export izvjestaja u DBF?" GET cExport VALID cExport $ "DN" PICT "@!"
-		
-		
+
+
       READ
- 		
+
       ESC_BCR
 
       aUslRB := Parsiraj( qqIdRoba, "IDROBA", "C" )
@@ -194,12 +138,12 @@ FUNCTION fakt_real_kolicina()
       aUslOpc := Parsiraj( cOpcina, "IDOPS", "C" )
 
       aUslTD := Parsiraj( qqTipdok, "IdTipdok", "C" )
- 		
+
       IF ( aUslTD <> NIL )
          EXIT
       ENDIF
-		
-		
+
+
    ENDDO
 
    qqTipDok := Trim( qqTipDok )
@@ -213,7 +157,7 @@ FUNCTION fakt_real_kolicina()
    WPar( "d3", cDDokOtpr )
    WPar( "vi", cPrikaz )
    WPar( "td", qqTipDok )
-	
+
    SELECT params
    USE
    BoxC()
@@ -297,15 +241,15 @@ FUNCTION fakt_real_kolicina()
    zagl_sp_prod()
 
    IF cPrikaz == "1"
-	
+
       SET ORDER TO TAG "1"
       SEEK cIdFirma
       nC := 0
       nCol1 := 10
       nTKolicina := 0
-  	
+
       DO WHILE !Eof() .AND. IdFirma = cIdFirma
-    		
+
          IF cDDokOtpr == "O"
             SELECT fakt_doks
             SEEK fakt->idfirma + fakt->idtipdok + fakt->brdok
@@ -316,7 +260,7 @@ FUNCTION fakt_real_kolicina()
             ENDIF
             SELECT fakt
          ENDIF
-    		
+
          IF cDDokOtpr == "V"
             SELECT fakt_doks
             SEEK fakt->idfirma + fakt->idtipdok + fakt->brdok
@@ -330,9 +274,9 @@ FUNCTION fakt_real_kolicina()
 
          nKolicina := 0
          cIdPartner := IdPartner
-    		
+
          DO WHILE !Eof() .AND. IdFirma = cIdFirma .AND. idpartner == cIdpartner
-        		
+
             IF cDDokOtpr == "O"
                SELECT fakt_doks
                SEEK fakt->idfirma + fakt->idtipdok + ;
@@ -345,7 +289,7 @@ FUNCTION fakt_real_kolicina()
                ENDIF
                SELECT fakt
             ENDIF
-    		
+
             IF cDDokOtpr == "V"
                SELECT fakt_doks
                SEEK fakt->idfirma + fakt->idtipdok + ;
@@ -358,7 +302,7 @@ FUNCTION fakt_real_kolicina()
                ENDIF
                SELECT fakt
             ENDIF
-			
+
             SELECT partn
             HSEEK fakt->idPartner
             SELECT fakt
@@ -366,12 +310,12 @@ FUNCTION fakt_real_kolicina()
                SKIP 1
                LOOP
             ENDIF
-      			
+
             nKolicina += kolicina
-      			
-			
+
+
             SKIP 1
-			
+
          ENDDO
 
          IF PRow() > 61
@@ -382,7 +326,7 @@ FUNCTION fakt_real_kolicina()
          SELECT partn
          HSEEK cIdPartner
          SELECT fakt
-    		
+
          IF Round( nKolicina, 4 ) <> 0
             ? Space( gnLMarg )
             ?? Str( ++nC, 4 ) + ".", cIdPartner, partn->naz
@@ -408,17 +352,17 @@ FUNCTION fakt_real_kolicina()
       nCounter := 0
       nMX := 0
       nMY := 0
-	
+
       Box(, 3, 60 )
-	
+
       SET DEVICE TO SCREEN
       @ 1 + m_x, 2 + m_y SAY "formiranje izvjestaja u toku..."
       nMX := 3 + m_x
       nMY := 2 + m_y
       SET DEVICE TO PRINTER
-	
+
       DO WHILE !Eof()
-	
+
          nKolicina := 0
          nKolJmj := 0
          nOsn := 0
@@ -426,7 +370,7 @@ FUNCTION fakt_real_kolicina()
          nUkupno := 0
          nPojUk := 0
          cIdRoba := IdRoba
-		
+
          IF cDDokOtpr == "O"
             SELECT fakt_doks
             SEEK fakt->idfirma + fakt->idtipdok + fakt->brdok
@@ -437,7 +381,7 @@ FUNCTION fakt_real_kolicina()
             ENDIF
             SELECT fakt
          ENDIF
-    		
+
          IF cDDokOtpr == "V"
             SELECT fakt_doks
             SEEK fakt->idfirma + fakt->idtipdok + fakt->brdok
@@ -450,7 +394,7 @@ FUNCTION fakt_real_kolicina()
          ENDIF
 
          DO WHILE !Eof() .AND. idRoba == cIdRoba
-        			
+
             IF cDDokOtpr == "O"
                SELECT fakt_doks
                SEEK fakt->idfirma + fakt->idtipdok + ;
@@ -463,7 +407,7 @@ FUNCTION fakt_real_kolicina()
                ENDIF
                SELECT fakt
             ENDIF
-    		
+
             IF cDDokOtpr == "V"
                SELECT fakt_doks
                SEEK fakt->idfirma + fakt->idtipdok + ;
@@ -476,7 +420,7 @@ FUNCTION fakt_real_kolicina()
                ENDIF
                SELECT fakt
             ENDIF
-			
+
             SELECT partn
             HSEEK fakt->idPartner
             SELECT fakt
@@ -484,7 +428,7 @@ FUNCTION fakt_real_kolicina()
                SKIP 1
                LOOP
             ENDIF
-			
+
             IF lGroup .AND. !Empty( cPGroup )
                cPartn := fakt->idpartner
                SELECT partn
@@ -495,19 +439,19 @@ FUNCTION fakt_real_kolicina()
                   LOOP
                ENDIF
             ENDIF
-     			
+
             nKolicina += kolicina
-			
+
             IF cSvediJmj == "D"
-				
+
                cJmj := ""
                nKolJmj += SJMJ( kolicina, idroba, @cJmj )
-			
+
             ENDIF
-			
+
             // pojedinacna osnova
             nPojOsn := Round( kolicina * Cijena * ( 1 -Rabat / 100 ) * ( 1 + Porez / 100 ), ZAOKRUZENJE )
-			
+
             // ukupni iznos sa PDV
             nPojUk := nPojOsn
 
@@ -516,12 +460,12 @@ FUNCTION fakt_real_kolicina()
             // jer se radi o cijeni sa PDV-om
 
             IF field->idtipdok $ "11#13#23"
-			
+
                nPojOsn := _osnovica( field->idtipdok, ;
                   field->idpartner, nPojOsn )
-			
+
             ENDIF
-			
+
             // ako je rijec o VP dokumentima, treba izracunati
             // ukupno sa PDV
 
@@ -535,26 +479,26 @@ FUNCTION fakt_real_kolicina()
             nUkupno += nPojUk
 
             ++ nCounter
-			
+
             // ispisi progres u box-u
             IF nCounter % 50 == 0
                SET DEVICE TO SCREEN
                @ nMX, nMY SAY "obradjeno " + AllTrim( Str( nCounter ) ) + " zapisa"
                SET DEVICE TO PRINTER
             ENDIF
-      			
+
             SKIP 1
          ENDDO
-		
+
          IF PRow() > 61
             FF
             zagl_sp_prod()
          ENDIF
-    		
+
          SELECT roba
          HSEEK cIdRoba
          SELECT fakt
-    		
+
          IF Round( nKolicina, 4 ) <> 0
             ? Space( gnLMarg )
             ?? Str( ++nC, 4 ) + ".", cIdRoba, Left( roba->naz, 40 )
@@ -564,24 +508,24 @@ FUNCTION fakt_real_kolicina()
                @ PRow(), PCol() + 1 SAY Str( nKolJmj, 12, 2 )
                nTKolJmj += nKolJmj
             ENDIF
-			
+
             @ PRow(), PCol() + 1 SAY Str( nOsn, 12, 2 )
             @ PRow(), PCol() + 1 SAY Str( nUkupno, 12, 2 )
-      			
+
             nTKolicina += nKolicina
             nTOsn += nOsn
             nTUkupno += nUkupno
          ENDIF
-		
+
          IF lExpRpt
             fill_exp_tbl( cIdRoba, Left( roba->naz, 40 ), ;
                nKolicina, nOsn, nUkupno )
          ENDIF
-		
+
       ENDDO
 
       BoxC()
-	
+
    ENDIF
 
    IF PRow() > 59
@@ -696,4 +640,60 @@ STATIC FUNCTION zagl_sp_prod()
    ? Space( gnLMarg )
    ?? cLinija
 
-   RETURN
+   RETURN .T.
+
+
+// ---------------------------------
+// otvara potrebne tabele
+// ---------------------------------
+STATIC FUNCTION _o_tables()
+
+   O_FAKT
+   O_FAKT_DOKS
+   O_PARTN
+   O_VALUTE
+   O_RJ
+   O_SIFK
+   O_SIFV
+   O_ROBA
+
+   RETURN .T.
+
+
+
+// --------------------------------------------------
+// vraca matricu sa definicijom polja exp.tabele
+// --------------------------------------------------
+STATIC FUNCTION get_rpt_fields()
+
+   LOCAL aFields := {}
+
+   AAdd( aFields, { "sifra", "C", 7, 0 } )
+   AAdd( aFields, { "naziv", "C", 40, 0 } )
+   AAdd( aFields, { "kolicina", "N", 15, 5 } )
+   AAdd( aFields, { "osnovica", "N", 15, 5 } )
+   AAdd( aFields, { "ukupno", "N", 15, 5 } )
+
+   RETURN aFields
+
+
+// -------------------------------------------
+// filuje export tabelu sa podacima
+// -------------------------------------------
+STATIC FUNCTION fill_exp_tbl( cIdSif, cNazSif, nKol, nOsn, nUk )
+
+   LOCAL nArr
+
+   nArr := Select()
+
+   O_R_EXP
+   APPEND BLANK
+   REPLACE field->sifra WITH cIdSif
+   REPLACE field->naziv WITH cNazSif
+   REPLACE field->kolicina WITH nKol
+   REPLACE field->osnovica WITH nOsn
+   REPLACE field->ukupno WITH nUk
+
+   SELECT ( nArr )
+
+   RETURN .T.

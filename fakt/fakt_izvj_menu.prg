@@ -43,4 +43,4 @@ FUNCTION fakt_izvjestaji()
 
    f18_menu( "izvj", .F., _izbor, _opc, _opcexe )
 
-   RETURN
+   RETURN .T.

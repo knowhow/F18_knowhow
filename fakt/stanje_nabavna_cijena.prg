@@ -11,6 +11,7 @@
 
 #include "f18.ch"
 
+
 STATIC s_nLastNC := 0
 STATIC s_cIdArtikal := "XX"
 
@@ -25,11 +26,11 @@ FUNCTION get_nabavna_cijena( cIdKonto, cIdArtikal, dDatum )
    ENDIF
 
    IF cIdArtikal == NIL
-      cIdArtikal := SPACE(10)
+      cIdArtikal := Space( 10 )
    ENDIF
 
    IF dDatum == NIL
-      dDatum := STOD("19600101")
+      dDatum := SToD( "19600101" )
    ENDIF
 
    IF s_cIdArtikal == cIdArtikal

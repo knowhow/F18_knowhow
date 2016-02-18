@@ -9,9 +9,8 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-
-
 #include "f18.ch"
+
 
 
 FUNCTION RptInvObrPopisa()
@@ -38,15 +37,15 @@ FUNCTION RptInvObrPopisa()
       SELECT fakt_pripr
 
       DokNovaStrana( 125, @nStr, 1 )
-	
+
       @ PRow() + 1, 0 SAY field->rbr PICTURE "XXX"
       @ PRow(), 4 SAY ""
-	
+
       ?? PadR( field->idRoba + "" + Trim( Left( roba->naz, 40 ) ) + " (" + roba->jmj + ")", 37 )
-	
+
       // popisana kolicina
       ?? Space( 10 ) + Replicate( "_", Len( PicKol ) -1 ) + Space( 2 )
-	
+
       // VP cijena
       ?? Transform( field->cijena, PicCDem )
       SKIP

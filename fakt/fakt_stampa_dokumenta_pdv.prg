@@ -12,9 +12,9 @@
 #include "f18.ch"
 
 
-STATIC __KTO_DUG
-STATIC __KTO_POT
-STATIC __SH_SLD_VAR
+THREAD STATIC __KTO_DUG
+THREAD STATIC __KTO_POT
+THREAD STATIC __SH_SLD_VAR
 
 // ----------------------------------------------------
 // lJFill - samo se pune rn, drn pomocne tabele

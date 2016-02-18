@@ -112,7 +112,7 @@ METHOD open()
    ::sayKomande()
    ObjDbedit( "FInv", 21, 77, {|| ::onKeyBoard() }, "", "Priprema inventure", , , , , 4 )
 
-   RETURN
+   RETURN .T.
 
 
 

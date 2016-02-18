@@ -17,8 +17,8 @@ STATIC __fin_fmk_tables := { { "suban", "fin_suban" }, { "anal", "fin_anal" } }
 STATIC __test_fmk_tables := { { "t_fmk_1", "test_sem_1" }, { "test_fmk_2", "test_sem_2" } }
 #endif
 
-// --------------------------------------
-// --------------------------------------
+
+
 FUNCTION fmk_migrate_root( fmk_root_dir )
 
    IF fmk_root_dir == NIL
@@ -34,8 +34,7 @@ FUNCTION fmk_migrate_root( fmk_root_dir )
    RETURN fmk_root_dir
 
 
-// -----------------------------
-// -----------------------------
+
 FUNCTION fmk_migrate( cur_dir )
 
    LOCAL _files, _file
@@ -60,8 +59,8 @@ FUNCTION fmk_migrate( cur_dir )
       ENDIF
    NEXT
 
-   // -------------------------------------
-   // -------------------------------------
+
+
 
 FUNCTION push_fmk_dbf_to_server( cur_dir, dbf_name )
 

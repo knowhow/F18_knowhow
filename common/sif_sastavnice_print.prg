@@ -742,4 +742,4 @@ FUNCTION _exp_sast_dbf()
    SELECT r_export
    USE
 
-   RETURN
+   RETURN .T.

@@ -33,6 +33,38 @@ FUNCTION p_sast( cId, dx, dy )
       @cId, dx, dy, {| Ch| sast_key_handler( Ch ) } )
 
 
+FUNCTION show_sast()
+
+   LOCAL nTRobaRec
+   PRIVATE cIdTek
+   PRIVATE ImeKol
+   PRIVATE Kol
+
+   // roba->id
+   cIdTek := field->id
+   nTRobaRec := RecNo()
+
+   SELECT sast
+   SET ORDER TO TAG "idrbr"
+   SET FILTER TO field->id == cIdTek
+   GO TOP
+
+   // setuj kolone sastavnice tabele
+   sast_a_kol( @ImeKol, @Kolm )
+
+   PostojiSifra( F_SAST, "IDRBR", MAXROWS() - 18, 80, cIdTek + "-" + Left( roba->naz, 40 ),,,, {| Char| EdSastBlok( Char ) },,,, .F. )
+
+   // ukini filter
+   SET FILTER TO
+
+   SELECT roba
+   SET ORDER TO TAG "idun"
+
+   GO nTrobaRec
+
+   RETURN .T.
+
+
 // ---------------------------------
 // setovanje kolona tabele
 // ---------------------------------
@@ -136,6 +168,7 @@ STATIC FUNCTION ost_opc_sast() // ostale opcije nad sastavnicama
 
    AAdd( _opc, "1. zamjena sirovine u svim sastavnicama                 " )
    AAdd( _opcexe, {|| sast_repl_all() } )
+   
    AAdd( _opc, "2. promjena ucesca pojedine sirovine u svim sastavnicama" )
    AAdd( _opcexe, {|| pr_uces_sast() } )
    AAdd( _opc, "------------------------------------" )

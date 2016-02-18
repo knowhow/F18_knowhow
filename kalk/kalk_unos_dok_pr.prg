@@ -58,7 +58,7 @@ FUNCTION kalk_unos_dok_pr()
          Reci( 12, 24, Trim( Left( roba->naz, 40 ) ) + " (" + ROBA->jmj + ")", 40 ), _IdTarifa := iif( fnovi, ROBA->idtarifa, _IdTarifa ), .T. }
 
       @ m_x + 13, m_y + 2 SAY8 "Količina  " GET _Kolicina PICT PicKol ;
-         VALID {|| _Kolicina <> 0 .AND. IIF( InRange( nRbr, 10, 99 ), error_bar( "PR dokument max 9 artikala" ), .T. ) }
+         VALID {|| _Kolicina <> 0 .AND. iif( InRange( nRbr, 10, 99 ), error_bar( _idFirma + "-" + _idvd + "-" + _brdok, "PR dokument max 9 artikala" ), .T. ) }
 
    ELSE
 
@@ -93,7 +93,7 @@ FUNCTION kalk_unos_dok_pr()
    LOCATE FOR Eval( bProizvodPripadajuceSirovine ) == nRbr // stavke
 
    IF Found()
-      info_bar( _idFirma, _idvd, _brdok,  "postoje proivodi za rbr" + AllTrim( Str( nRbr ) ) )
+      info_bar( _idFirma + "-" + _idvd + "-" + _brdok,  "postoje proivodi za rbr" + AllTrim( Str( nRbr ) ) )
       IF Pitanje( , "pobrisati za stavku " + AllTrim( Str( nRbr ) ) + " sirovine?", "N" ) == "D"
          kalk_pripr_pobrisi_sirovine( cIdFirma, cIdVd, cBrDok, nRbr, bDokument )
          kalk_pripr_napuni_sirovine_za( nRbr, _idroba, _kolicina )
@@ -306,10 +306,10 @@ FUNCTION kalk_pripr_napuni_sirovine_za( nRbr, _idroba, _kolicina )
 
       info_bar( _idkonto2 + "/" + sast->id2, " sirovina stanje na skladistu ..." )
       KalkNab( _idfirma, sast->id2, _idkonto2, @nKolS, @nKolZN, @nc1, @nc2, @dDatNab )
-      info_bar( "" )
+      info_bar( _idkonto2 + "/" + sast->id2, NIL )
 
       IF dDatNab > _DatDok
-         error_bar( "Datum nabavke je " + DToC( dDatNab ) + " sirovina " + sast->id2 )
+         error_bar( _idFirma + "-" + _idvd + "-" + _brdok, "Datum nabavke je " + DToC( dDatNab ) + " sirovina " + sast->id2 )
       ENDIF
 
       IF _kolicina >= 0 .OR. Round( _NC, 3 ) == 0 .AND. !( roba->tip $ "UT" )
@@ -351,9 +351,9 @@ FUNCTION kalk_pripr_pr_nv_proizvod( cIdFirma, cIdVd, cBrDok, nRbr, bDokument, bP
          nNV += field->NC * field->kolicina
          IF field->gkolicina < field->kolicina
             error_bar(  cIdFirma + "-" + cIdVD + "-" + cBrDok, ;
-                field->idkonto2 + "/" + field->idroba + " stanje " + AllTrim( Str( field->gkolicina, 9, 3 ) ) + " potrebno: " + AllTrim( Str( field->kolicina, 10, 3 ) ) )
+               field->idkonto2 + "/" + field->idroba + " stanje " + AllTrim( Str( field->gkolicina, 9, 3 ) ) + " potrebno: " + AllTrim( Str( field->kolicina, 10, 3 ) ) )
             _error := "1"
-            RREPLACE field->error with "1"
+            RREPLACE field->error WITH "1"
          ENDIF
       ENDIF
       SKIP

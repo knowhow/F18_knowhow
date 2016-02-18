@@ -38,9 +38,9 @@ FUNCTION info_bar( cDoc, cMsg )
 
    hb_default( @cMsg, "" )
 
-   @ maxrows() + 1, 18 SAY8  "> " + PadC( cMsg, maxcols() - 28 ) + " <" COLOR INFO_PANEL_COLOR
+   @ maxrows() + 1, 18 SAY8  "> " + PadC( cMsg, maxcols() - 10 ) + " <" COLOR INFO_PANEL_COLOR
 
-   IF Empty( cMsg )
+   IF Empty( cMsg ) .OR. cMsg == "info_bar"
       RETURN .T.
    ENDIF
 
@@ -62,7 +62,7 @@ FUNCTION error_bar( cDoc, cMsg )
 
    @ maxrows() + 2, 4 SAY8  ">> " + PadC( cMsg, maxcols() - 10 ) + " <<" COLOR ERROR_PANEL_COLOR
 
-   IF Empty( cMsg )
+   IF Empty( cMsg ) .OR. cMsg == "error_bar"
       RETURN .T.
    ENDIF
 

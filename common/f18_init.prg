@@ -269,7 +269,7 @@ FUNCTION set_screen_dimensions()
       maxrows( 40 - INFO_BAR_ROWS)
       maxcols( 150 )
 
-      IF SetMode( MaxRow(), MaxCol() )
+      IF SetMode( maxrows() + INFO_BAR_ROWS,  maxcols() )
          log_write( "setovanje ekrana: setovan ekran po rezoluciji" )
       ELSE
          log_write( "setovanje ekrana: ne mogu setovati ekran po trazenoj rezoluciji !" )
@@ -315,7 +315,7 @@ FUNCTION set_screen_dimensions()
 
       font_size( 22 )
       font_width( 11 )
-      maxrows( 35 )
+      maxrows( 35 - INFO_BAR_ROWS )
       maxcols( 115 )
 
       log_write( _msg + "2" )
@@ -357,6 +357,9 @@ FUNCTION set_screen_dimensions()
       log_write( "setovanje ekrana: ne mogu setovati ekran po trazenoj rezoluciji !" )
       QUIT_1
    ENDIF
+
+   info_bar( "init", "info_bar" )
+   error_bar( "init", "error_bar" )
 
    RETURN .T.
 

@@ -67,6 +67,7 @@ FUNCTION f18_init_app( arg_v )
    LOCAL oLogin
 
    init_harbour()
+   init_parameters_cache()
 
    set_f18_home_root()
    set_global_vars_0()
@@ -430,6 +431,7 @@ FUNCTION post_login( gVars )
       gVars := .T.
    ENDIF
 
+   init_parameters_cache()
    server_log_enable()
 
    // ~/.F18/empty38/

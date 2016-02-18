@@ -13,6 +13,12 @@
 
 THREAD STATIC s_hParametri := NIL
 
+FUNCTION init_parameters_cache()
+
+   s_hParametri := hb_Hash()
+
+   RETURN .T.
+
 FUNCTION fetch_metric( sect, user, default_value )
 
    LOCAL _temp_qry
@@ -33,9 +39,7 @@ FUNCTION fetch_metric( sect, user, default_value )
       ENDIF
    ENDIF
 
-   IF s_hParametri == nil
-      s_hParametri := hb_Hash()
-   ENDIF
+
 
    IF hb_HHasKey( s_hParametri, sect ) .AND. !parametar_dinamican( sect )
       ?E "fetch param cache hit: ", sect
@@ -76,7 +80,7 @@ FUNCTION parametar_dinamican( cSection )
       RETURN .T.
    ENDIF
 
-   IF LEFT( cSection, 5) == "fakt/"  // fakt brojaci
+   IF Left( cSection, 5 ) == "fakt/"  // fakt brojaci
       RETURN .T.
    ENDIF
 

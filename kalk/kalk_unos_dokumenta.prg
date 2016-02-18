@@ -397,7 +397,7 @@ FUNCTION kalk_pripr_key_handler()
    CASE Ch == K_ENTER
       RETURN EditStavka()
 
-   CASE kalk_pripr->idvd != "PR" .AND. ( Ch == K_CTRL_A .OR. lAsistRadi )
+   CASE ( Ch == K_CTRL_A .OR. lAsistRadi )
       RETURN kalk_edit_sve_stavke()
 
    CASE Ch == K_CTRL_N
@@ -668,7 +668,7 @@ FUNCTION kalk_unos_nova_stavka()
             ENDIF
          ENDDO
          Scatter()
-         
+
       ENDIF
 
       IF fetch_metric( "kalk_reset_artikla_kod_unosa", my_user(), "N" ) == "D"
@@ -935,14 +935,7 @@ FUNCTION kalk_unos_asistent()
 
    lAutoAsist := .F.
    lAsistRadi := .T.
-
-   PushWa()
-   IF Select( "kalk_prir" ) > 0
-      IF kalk_pripr->idVd == "PR"
-         RETURN DE_CONT
-      ENDIF
-   ENDIF
-   PopWa()
+   
    cSekv := Chr( K_CTRL_A )
    KEYBOARD cSekv
 

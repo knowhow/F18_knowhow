@@ -84,28 +84,29 @@ FUNCTION kalk_unos_dok_pr()
    cIdVd := _idVd
    cBrDok := _brDok
 
-   IF nRbr < 10
-      PushWa()
-      LOCATE FOR Eval( bProizvodPripadajuceSirovine ) == nRbr // stavke
 
-      IF Found()
-         AltD()
-         info_tab( _idFirma, _idvd, _brdok,  "postoje proivodi za rbr" + AllTrim( Str( nRbr ) ) )
-         IF Pitanje( , "pobrisati za stavku " + AllTrim( Str( nRbr ) ) + " sirovine?", "N" ) == "D"
-            kalk_pripr_pobrisi_sirovine( cIdFirma, cIdVd, cBrDok, nRbr, bDokument )
-            kalk_pripr_napuni_sirovine_za( nRbr, _idroba, _kolicina )
-         ENDIF
+   IF nRbr > 10
+      RETURN LastKey()
+   ENDIF
 
-      ELSE
+   PushWa()
+   LOCATE FOR Eval( bProizvodPripadajuceSirovine ) == nRbr // stavke
+
+   IF Found()
+      info_tab( _idFirma, _idvd, _brdok,  "postoje proivodi za rbr" + AllTrim( Str( nRbr ) ) )
+      IF Pitanje( , "pobrisati za stavku " + AllTrim( Str( nRbr ) ) + " sirovine?", "N" ) == "D"
+         kalk_pripr_pobrisi_sirovine( cIdFirma, cIdVd, cBrDok, nRbr, bDokument )
          kalk_pripr_napuni_sirovine_za( nRbr, _idroba, _kolicina )
       ENDIF
 
-      PopWa()
+   ELSE
+      kalk_pripr_napuni_sirovine_za( nRbr, _idroba, _kolicina )
    ENDIF
+
+   PopWa()
 
    SELECT tarifa
    HSEEK _IdTarifa
-
 
    SELECT koncij
    SEEK Trim( _idkonto )
@@ -125,8 +126,8 @@ FUNCTION kalk_unos_dok_pr()
    ENDIF
 
 
-      SELECT kalk_pripr
-      SET ORDER TO TAG "1"
+   SELECT kalk_pripr
+   SET ORDER TO TAG "1"
    IF _tmarza <> "%"  // procente ne diraj
       _Marza := 0
    ENDIF
@@ -146,7 +147,7 @@ FUNCTION kalk_unos_dok_pr()
    READ
    ESC_RETURN K_ESC
 
-   altd()
+   AltD()
 
    _FCJ2 := _FCJ * ( 1 - _Rabat / 100 )
 
@@ -329,6 +330,7 @@ FUNCTION kalk_pripr_napuni_sirovine_za( nRbr, _idroba, _kolicina )
    ENDDO
 
    PopWa()
+
    RETURN .T.
 
 
@@ -347,9 +349,11 @@ FUNCTION kalk_pripr_pr_nv_proizvod( cIdFirma, cIdVd, cBrDok, nRbr, bDokument, bP
       IF Eval( bDokument, cIdFirma, cIdVd, cBrDok ) .AND. ;   // gledaj samo stavke jednog dokumenta ako ih ima vise u pripremi
          Eval( bProizvodPripadajuceSirovine ) == nRbr // when field->rbr == 301, 302, 303 ...  EVAL( bProizvod ) = 3
          nNV += field->NC * field->kolicina
-         IF nRbr == 1 .AND. field->gkolicina < field->kolicina
-            error_tab( "Na stanju " + field->idkonto2 + " se nalazi samo " + Str( field->gkolicina, 9, 2 ) + " sirovine " + field->idroba, 0 )
+         IF field->gkolicina < field->kolicina
+            error_tab(  cIdFirma + "-" + cIdVD + "-" + cBrDok, ;
+                field->idkonto2 + "/" + field->idroba + " stanje " + AllTrim( Str( field->gkolicina, 9, 3 ) ) + " potrebno: " + AllTrim( Str( field->kolicina, 10, 3 ) ) )
             _error := "1"
+            RREPLACE field->error with "1"
          ENDIF
       ENDIF
       SKIP

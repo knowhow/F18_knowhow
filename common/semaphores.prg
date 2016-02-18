@@ -618,14 +618,7 @@ FUNCTION is_last_refresh_before( cTable, nSeconds )
 
 PROCEDURE thread_dbf_refresh( cTable )
 
-/*
-   PRIVATE m_x, m_y, normal, gColorInvert
-
-   m_x := 0
-   m_y := 0
-   Normal := "B/W"
-   gColorInvert  := "W/B"
-*/
+   init_parameters_cache()
 
 #ifdef F18_DEBUG
    ?E ">>>>> START: thread_dbf_refresh:", cTable, "<<<<<"

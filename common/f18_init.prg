@@ -489,14 +489,8 @@ PROCEDURE thread_create_dbfs()
 
    LOCAL _ver
 
-/*
-   PRIVATE m_x, m_y, normal
 
-   m_x := 0
-   m_y := 0
-   Normal := "B/W"
-   gColorInvert  := "W/B"
-*/
+   init_parameters_cache()
 
    ErrorBlock( {| objError, lShowreport, lQuit | GlobalErrorHandler( objError, lShowReport, lQuit ) } )
 

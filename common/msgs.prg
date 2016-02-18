@@ -13,7 +13,7 @@
 
 REQUEST ARRAYRDD
 
-MEMVAR gColorInvert , Normal
+MEMVAR gColorInvert, Normal
 
 STATIC aErrors := {}
 STATIC aInfos := {}
@@ -38,7 +38,11 @@ FUNCTION info_bar( cDoc, cMsg )
 
    hb_default( @cMsg, "" )
 
-   @ maxrows() - 1, 18 SAY8  "> " + PadC( cMsg, maxcols() - 28 ) + " <" COLOR INFO_PANEL_COLOR
+   @ maxrows() + 1, 18 SAY8  "> " + PadC( cMsg, maxcols() - 28 ) + " <" COLOR INFO_PANEL_COLOR
+
+   IF Empty( cMsg )
+      RETURN .T.
+   ENDIF
 
    IF Len( aInfos ) > INFO_MESSAGES_LENGTH
       ADel( aInfos, 1 )
@@ -53,7 +57,14 @@ FUNCTION info_bar( cDoc, cMsg )
 FUNCTION error_bar( cDoc, cMsg )
 
    Beep( 2 )
-   @ maxrows(), 4 SAY8  ">> " + PadC( cMsg, maxcols() - 10 ) + " <<" COLOR ERROR_PANEL_COLOR
+
+   hb_default( @cMsg, "" )
+
+   @ maxrows() + 2, 4 SAY8  ">> " + PadC( cMsg, maxcols() - 10 ) + " <<" COLOR ERROR_PANEL_COLOR
+
+   IF Empty( cMsg )
+      RETURN .T.
+   ENDIF
 
    IF Len( aErrors ) > ERROR_MESSAGES_LENGTH
       ADel( aErrors, 1 )

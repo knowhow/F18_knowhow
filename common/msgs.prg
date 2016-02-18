@@ -38,7 +38,7 @@ FUNCTION info_bar( cDoc, cMsg )
 
    hb_default( @cMsg, "" )
 
-   @ maxrows() + 1, 18 SAY8  "> " + PadC( cMsg, maxcols() - 10 ) + " <" COLOR INFO_PANEL_COLOR
+   @ maxrows() + 1, 4 SAY8  "> " + PadC( cMsg, maxcols() - 10 ) + " <" COLOR INFO_PANEL_COLOR
 
    IF Empty( cMsg ) .OR. cMsg == "info_bar"
       RETURN .T.

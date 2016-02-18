@@ -51,8 +51,6 @@ FUNCTION kalk_unos_dok_pr()
       PICT "@!" VALID P_Konto( @_IdKonto2 ) ;
       WHEN {|| nRbr == 1 }
 
-   @ m_x + 11, m_y + 66 SAY "Tarif.br v"
-   @ m_x + 12, m_y + 70 GET _IdTarifa WHEN gPromTar == "N" VALID P_Tarifa( @_IdTarifa )
 
    IF nRbr < 10
       @ m_x + 12, m_y + 2 SAY8 "Proizvod  " GET _IdRoba PICT "@!" ;
@@ -60,7 +58,7 @@ FUNCTION kalk_unos_dok_pr()
          Reci( 12, 24, Trim( Left( roba->naz, 40 ) ) + " (" + ROBA->jmj + ")", 40 ), _IdTarifa := iif( fnovi, ROBA->idtarifa, _IdTarifa ), .T. }
 
       @ m_x + 13, m_y + 2 SAY8 "Količina  " GET _Kolicina PICT PicKol ;
-         VALID {|| _Kolicina <> 0 .AND. iif( InRange( nRbr, 10, 99 ), error_tab( "PR dokument max 9 artikala" ), .T. ) }
+         VALID {|| _Kolicina <> 0 .AND. IIF( InRange( nRbr, 10, 99 ), error_tab( "PR dokument max 9 artikala" ), .T. ) }
 
    ELSE
 
@@ -75,6 +73,8 @@ FUNCTION kalk_unos_dok_pr()
 
    ENDIF
 
+   @ m_x + 11, m_y + 66 SAY "Tarif.br v"
+   @ m_x + 12, m_y + 70 GET _IdTarifa WHEN gPromTar == "N" VALID P_Tarifa( @_IdTarifa )
 
    READ
    ESC_RETURN K_ESC

@@ -358,8 +358,6 @@ FUNCTION set_screen_dimensions()
       QUIT_1
    ENDIF
 
-   info_bar( "init", "info_bar" )
-   error_bar( "init", "error_bar" )
 
    RETURN .T.
 

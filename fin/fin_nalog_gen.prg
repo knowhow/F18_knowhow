@@ -158,6 +158,7 @@ FUNCTION fin_open_psuban()
    O_PSUBAN
 
    O_FIN_PRIPR
+
    RETURN .T.
 
 /*
@@ -198,7 +199,9 @@ STATIC FUNCTION lock_fin_priprema( lZap )
    LOCAL nCnt
    LOCAL lLock := .T.
 
-altd()
+#ifdef F18_DEBUG_FIN_AZUR
+   AltD() // F18_DEBUG_FIN_AZUR
+#endif
 
    nCnt := 0
    DO WHILE .T.

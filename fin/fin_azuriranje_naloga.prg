@@ -35,7 +35,9 @@ FUNCTION fin_azuriranje_naloga( automatic )
       RETURN lRet
    ENDIF
 
-altd()
+#ifdef F18_DEBUG_FIN_AZUR
+   AltD() // F18_DEBUG_FIN_AZUR
+#endif
    aNalozi := fin_nalozi_iz_pripreme_u_matricu()
 
    IF Len( aNalozi ) > 1
@@ -349,7 +351,10 @@ STATIC FUNCTION fin_provjera_prije_azuriranja_naloga( auto, lista_naloga )
       RETURN _ok
    ENDIF
 
-altd()
+#ifdef F18_DEBUG_FIN_AZUR
+   AltD() // F18_DEBUG_FIN_AZUR
+#endif
+
    IF !fin_p_tabele_provjera( lista_naloga )
 
       IF !_vise_naloga

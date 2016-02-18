@@ -34,9 +34,9 @@ FUNCTION fin_nalog_azurirani()
    SELECT SUBAN
    SET ORDER TO TAG "4"
 
-   cIdVN := SPACE( 2 )
+   cIdVN := Space( 2 )
    cIdFirma := gFirma
-   cBrNal := SPACE( 8 )
+   cBrNal := Space( 8 )
 
    Box( "", 2, 35 )
 
@@ -69,16 +69,15 @@ FUNCTION fin_nalog_azurirani()
 
    ENDPRINT
 
-
    RETURN .T.
 
 
 FUNCTION fin_nalog_priprema()
 
-    my_close_all_dbf()
-    fin_gen_ptabele_stampa_nalozi()
+   my_close_all_dbf()
+   fin_gen_ptabele_stampa_nalozi()
 
-    RETURN NIL
+   RETURN NIL
 
 /*
    Koristi se u KALK za štampu finansijskog naloga
@@ -121,7 +120,7 @@ FUNCTION fin_gen_ptabele_stampa_nalozi( lAuto )
    LOCAL dDatNal := Date()
 
    IF fin_gen_psuban_stampa_nalozi( lAuto, @dDatNal )
-       fin_gen_sint_stavke( lAuto, dDatNal )
+      fin_gen_sint_stavke( lAuto, dDatNal )
    ENDIF
 
    RETURN .T.
@@ -142,7 +141,9 @@ FUNCTION fin_gen_psuban_stampa_nalozi( lAuto, dDatNal )
       lAuto := .F.
    ENDIF
 
-   altd()
+#ifdef F18_DEBUG_FIN_AZUR
+   AltD() // F18_DEBUG_FIN_AZUR
+#endif
 
    fin_open_psuban()
 
@@ -173,7 +174,7 @@ FUNCTION fin_gen_psuban_stampa_nalozi( lAuto, dDatNal )
 
       IF !lAuto
          IF !box_fin_nalog( @cIdFirma, @cIdVn, @cBrNal, @dDatNal )
-             RETURN .F.
+            RETURN .F.
          ENDIF
       ENDIF
 
@@ -197,7 +198,7 @@ FUNCTION fin_gen_psuban_stampa_nalozi( lAuto, dDatNal )
          my_close_all_dbf()
          f18_end_print( NIL, @_print_opt )
 
-         //Alert( "XXX stop 1")
+         // Alert( "XXX stop 1")
          fin_open_psuban()
          PopWa()
       ENDIF
@@ -222,7 +223,7 @@ FUNCTION fin_gen_psuban_stampa_nalozi( lAuto, dDatNal )
    my_close_all_dbf()
 
    IF !oNalozi:valid()
-        oNalozi:showErrors()
+      oNalozi:showErrors()
    ENDIF
 
    RETURN .T.
@@ -242,13 +243,16 @@ FUNCTION fin_nalog_stampa( cInd, lAuto, dDatNal, oNalog )
    LOCAL _vrste_placanja
    LOCAL _fin_params := fin_params()
 
-altd()
+#ifdef F18_DEBUG_FIN_AZUR
+   AltD() // F18_DEBUG_FIN_AZUR
+#endif
+
    IF lAuto = NIL
       lAuto := .F.
    ENDIF
 
    IF dDatNal == NIL
-         dDatNal := DATE()
+      dDatNal := Date()
    ENDIF
 
    _vrste_placanja := .F.
@@ -261,7 +265,7 @@ altd()
    PicBHD := "@Z " + FormPicL( gPicBHD, 15 )
    PicDEM := "@Z " + FormPicL( gPicDEM, 10 )
 
-   M := IIF( cInd == "3", "------ -------------- --- ", "" )
+   M := iif( cInd == "3", "------ -------------- --- ", "" )
    IF _fin_params[ "fin_tip_dokumenta" ]
 
       M +=  + "---- ------- " + REPL( "-", __par_len ) + " ----------------------------"
@@ -274,7 +278,7 @@ altd()
       M += " ----------- -------- -------- --------------- ---------------"
 
    ENDIF
-   M +=  IIF( gVar1 == "1", "-", " ---------- ----------" )
+   M +=  iif( gVar1 == "1", "-", " ---------- ----------" )
 
    IF cInd $ "1#2"
       nUkDugBHD := nUkPotBHD := nUkDugDEM := nUkPotDEM := 0
@@ -294,12 +298,12 @@ altd()
    DO WHILE !Eof() .AND. Eval( b2 )
 
       IF oNalog != NIL
-           oNalog:addStavka( field->datDok )
+         oNalog:addStavka( field->datDok )
       ENDIF
 
       IF !lAuto
 
-         IF PRow() > 61 + IIF( cInd == "3", -7, 0 ) + gPStranica
+         IF PRow() > 61 + iif( cInd == "3", -7, 0 ) + gPStranica
             IF cInd == "3"
                PrenosDNal()
             ELSE
@@ -468,7 +472,7 @@ altd()
                pok := 1
             ENDIF
 
-            @ PRow() + pok, nColDok SAY IIF( i - 1 <= Len( aOpis ), aOpis[ i - 1 ], Space( 20 ) )
+            @ PRow() + pok, nColDok SAY iif( i - 1 <= Len( aOpis ), aOpis[ i - 1 ], Space( 20 ) )
             IF i == 2 .AND. ( !Empty( k1 + k2 + k3 + k4 ) .OR. grj == "D" .OR. gtroskovi == "D" )
                ?? " " + k1 + "-" + k2 + "-" + K3Iz256( k3 ) + "-" + k4
                IF _vrste_placanja
@@ -528,8 +532,8 @@ altd()
 
       IF gPotpis == "D"
          IF PRow() > 58 + gPStranica
-               FF
-               fin_nalog_zaglavlje( dDatNal )
+            FF
+            fin_nalog_zaglavlje( dDatNal )
          ENDIF
          P_NRED
          P_NRED
@@ -712,40 +716,40 @@ FUNCTION fin_nalog_zaglavlje( dDatNal )
 
       cTmp := iif( lDnevnik, "R.BR. *   BROJ   *DAN*", "" ) + "*R. * KONTO *" + PadC( "PART", __par_len )
       cTmp +=  "*" + "    NAZIV PARTNERA ILI      "  + "*   D  O  K  U  M  E  N  T    *         IZNOS U  " + ValDomaca() + "         *"
-      cTmp += IIF( gVar1 == "1", "", "    IZNOS U " + ValPomocna() + "    *" )
+      cTmp += iif( gVar1 == "1", "", "    IZNOS U " + ValPomocna() + "    *" )
       ??U cTmp
       P_NRED
 
-      cTmp := IIF( lDnevnik, "U DNE-*  NALOGA  *   *", "" ) + "             " + PadC( "NER", __par_len ) + " "
+      cTmp := iif( lDnevnik, "U DNE-*  NALOGA  *   *", "" ) + "             " + PadC( "NER", __par_len ) + " "
       cTmp += "                            " + " ----------------------------- ------------------------------- "
-      cTmp += IIF( gVar1 == "1", "", "---------------------" )
+      cTmp += iif( gVar1 == "1", "", "---------------------" )
       ??U cTmp
       P_NRED
 
-      cTmp := IIF( lDnevnik, "VNIKU *          *   *", "" ) + "*BR *       *" + REPL( " ", __par_len ) + "*"
+      cTmp := iif( lDnevnik, "VNIKU *          *   *", "" ) + "*BR *       *" + REPL( " ", __par_len ) + "*"
       cTmp += "    NAZIV KONTA             "  + "* BROJ VEZE * DATUM  * VALUTA *  DUGUJE " + ValDomaca() + "  * POTRAŽUJE " + ValDomaca() + "*"
-      cTmp += IIF( gVar1 == "1", "", " DUG. " + ValPomocna() + "* POT." + ValPomocna() + "*" )
+      cTmp += iif( gVar1 == "1", "", " DUG. " + ValPomocna() + "* POT." + ValPomocna() + "*" )
       ??U cTmp
 
    ELSE
       P_NRED
 
-      cTmp := IIF( lDnevnik, "R.BR. *   BROJ   *DAN*", "" ) + "*R. * KONTO *" + PadC( "PART", __par_len ) + "*"
+      cTmp := iif( lDnevnik, "R.BR. *   BROJ   *DAN*", "" ) + "*R. * KONTO *" + PadC( "PART", __par_len ) + "*"
       cTmp += "    NAZIV PARTNERA ILI      "  + "*           D  O  K  U  M  E  N  T             *         IZNOS U  " + ValDomaca() + "         *"
-      cTmp += IIF( gVar1 == "1", "", "    IZNOS U " + ValPomocna() + "    *" )
+      cTmp += iif( gVar1 == "1", "", "    IZNOS U " + ValPomocna() + "    *" )
       ??U cTmp
       P_NRED
 
-      cTmp := IIF( lDnevnik, "U DNE-*  NALOGA  *   *", "" ) + "             " + PadC( "NER", __par_len ) + " "
+      cTmp := iif( lDnevnik, "U DNE-*  NALOGA  *   *", "" ) + "             " + PadC( "NER", __par_len ) + " "
       cTmp += "                            " + " ---------------------------------------------- ------------------------------- "
-      cTmp += IIF( gVar1 == "1", "", "---------------------" )
+      cTmp += iif( gVar1 == "1", "", "---------------------" )
       ??U cTmp
       P_NRED
 
 
-      cTmp := IIF( lDnevnik, "VNIKU *          *   *", "" ) + "*BR *       *" + REPL( " ", __par_len ) + "*"
+      cTmp := iif( lDnevnik, "VNIKU *          *   *", "" ) + "*BR *       *" + REPL( " ", __par_len ) + "*"
       cTmp += "    NAZIV KONTA             " + "*  TIP I NAZIV   * BROJ VEZE * DATUM  * VALUTA *  DUGUJE " + ValDomaca() + "  * POTRAŽUJE " + ValDomaca() + "*"
-      cTmp +=  IIF( gVar1 == "1", "", " DUG. " + ValPomocna() + "* POT." + ValPomocna() + "*" )
+      cTmp +=  iif( gVar1 == "1", "", " DUG. " + ValPomocna() + "* POT." + ValPomocna() + "*" )
       ??U cTmp
 
    ENDIF
@@ -753,7 +757,7 @@ FUNCTION fin_nalog_zaglavlje( dDatNal )
    P_NRED
    ?? M
 
-   SELECT( nArr )
+   Select( nArr )
 
    RETURN
 

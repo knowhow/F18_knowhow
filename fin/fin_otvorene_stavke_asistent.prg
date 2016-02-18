@@ -186,9 +186,11 @@ FUNCTION konsultos( xEdit )
 
    @ m_x, m_y + 25 SAY "KONSULTOVANJE OTVORENIH STAVKI"
 
-altd()
-   // kreiraj tabelu ostav
-   _cre_ostav()
+#ifdef F18_DEBUG_FIN_AZUR
+   AltD() // F18_DEBUG_FIN_AZUR
+#endif
+
+   _cre_ostav() // kreiraj tabelu ostav
 
    nUkDugBHD := 0
    nUkPotBHD := 0
@@ -294,7 +296,7 @@ altd()
             REPLACE field->iznosbhd WITH -iznosbhd
          ENDIF
 
-	 my_unlock()
+         my_unlock()
 
          SELECT suban
 

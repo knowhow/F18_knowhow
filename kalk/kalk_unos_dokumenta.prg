@@ -164,7 +164,7 @@ FUNCTION kalk_unos_stavki_dokumenta( lAObrada )
 
 FUNCTION _upadr( cUtf, nNum )
 
-   RETURN hb_StrToUTF8( PADR( hb_Utf8ToStr( cUtf ), nNum ) )
+   RETURN hb_StrToUTF8( PadR( hb_UTF8ToStr( cUtf ), nNum ) )
 
 
 
@@ -579,7 +579,7 @@ FUNCTION EditStavka()
 
          IF _idvd == "16"
 
-               Get1_16bPDV()
+            Get1_16bPDV()
 
          ELSE
             Get1_80b()
@@ -659,6 +659,18 @@ FUNCTION kalk_unos_nova_stavka()
          _idkonto2 := cIdkont2
       ENDIF
 
+      IF _idvd == "PR" // locirati se na zadnji proizvod
+         DO WHILE !Bof() .AND. Val( field->rBr ) > 9
+            IF Val( field->rBr ) > 9
+               SKIP -1
+            ELSE
+               EXIT
+            ENDIF
+         ENDDO
+         Scatter()
+         
+      ENDIF
+
       IF fetch_metric( "kalk_reset_artikla_kod_unosa", my_user(), "N" ) == "D"
          _idroba := Space( 10 )
       ENDIF
@@ -732,8 +744,7 @@ FUNCTION kalk_unos_nova_stavka()
          Box( "", __box_x, __box_y, .F., "Protustavka" )
 
          IF _idvd == "16"
-
-               Get1_16bPDV()
+            Get1_16bPDV()
 
          ELSE
             Get1_80b()
@@ -2392,7 +2403,7 @@ FUNCTION kalk_stampa_dokumenta()
 
          ELSEIF ( cidvd $ "11#12#13" )
 
-                  StKalk11_2()
+            StKalk11_2()
 
          ELSEIF ( cidvd $ "14#94#74#KO" )
             StKalk14PDV()

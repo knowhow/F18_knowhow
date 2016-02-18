@@ -21,58 +21,60 @@ MEMVAR gPromTar, cRNT1, cRNT2, cRNT3, cRNT4, cRNT5
 
 FUNCTION kalk_unos_dok_pr()
 
-   LOCAL bProizvod := {|| Round( Val( field->rBr ) / 100, 0 )  }
+   LOCAL bProizvodPripadajuceSirovine := {|| Round( Val( field->rBr ) / 100, 0 )  }
    LOCAL bDokument := {| cIdFirma, cIdVd, cBrDok |   cIdFirma == field->idFirma .AND. ;
       cIdVd == field->IdVd .AND. cBrDok == field->BrDok }
    LOCAL cIdFirma, cIdVd, cBrDok
    LOCAL nNV
 
-   AltD()
    SELECT F_SAST
    IF !Used()
       O_SAST
    ENDIF
 
+   SELECT kalk_pripr
+
+   AltD()
+
+
    IF nRbr < 10 .AND. fNovi
       _DatFaktP := _datDok
    ENDIF
 
-   SELECT tarifa
-   HSEEK _IdTarifa
 
-   SELECT kalk_pripr
-
-   @ m_x + 6, m_y + 2 SAY8 "Broj fakture :" GET _brFaktP
-   @ m_x + 7, m_y + 2 SAY8 "Magacin gotovih proizvoda zadužuje :" GET _IdKonto ;
+   @ m_x + 6, m_y + 2 SAY8 "Broj fakture" GET _brFaktP
+   @ m_x + 7, m_y + 2 SAY8 "Magacin gotovih proizvoda zadužuje " GET _IdKonto ;
       VALID  P_Konto( @_IdKonto, 21, 5 ) PICT "@!" ;
       WHEN {|| nRbr == 1 }
-   @ m_x + 8, m_y + 2 SAY8 "Magacin sirovina razdužuje         :" GET _IdKonto2 ;
+
+   @ m_x + 8, m_y + 2 SAY8 "Magacin sirovina razdužuje         " GET _IdKonto2 ;
       PICT "@!" VALID P_Konto( @_IdKonto2 ) ;
       WHEN {|| nRbr == 1 }
 
    @ m_x + 11, m_y + 66 SAY "Tarif.br v"
-
-
+   @ m_x + 12, m_y + 70 GET _IdTarifa WHEN gPromTar == "N" VALID P_Tarifa( @_IdTarifa )
 
    IF nRbr < 10
-      @ m_x + 12, m_y + 2 SAY8 "Proizvod    :" GET _IdRoba PICT "@!" ;
-         VALID  {|| P_Roba( @_IdRoba, NIL, NIL, iif( nRbr < 10, "IDP", "ID" ) ), ;
-         Reci( 12, 35, Trim( Left( roba->naz, 40 ) ) + " (" + ROBA->jmj + ")", 40 ), ;
-         _IdTarifa := iif( fnovi, ROBA->idtarifa, _IdTarifa ), .T. }
-      @ m_x + 12, m_y + 80 GET _IdTarifa WHEN gPromTar == "N" VALID P_Tarifa( @_IdTarifa )
-
-
+      @ m_x + 12, m_y + 2 SAY8 "Proizvod  " GET _IdRoba PICT "@!" ;
+         VALID  {|| P_Roba( @_IdRoba, NIL, NIL, "IDP" ), ;
+         Reci( 12, 24, Trim( Left( roba->naz, 40 ) ) + " (" + ROBA->jmj + ")", 40 ), _IdTarifa := iif( fnovi, ROBA->idtarifa, _IdTarifa ), .T. }
 
       @ m_x + 13, m_y + 2 SAY8 "Količina  " GET _Kolicina PICT PicKol ;
-         VALID {|| _Kolicina <> 0 .AND. iif( InRange( nRbr, 10, 99 ), ;
-         error_tab( _idfirma + "-" + _idvd + "-" + _brdok, "PR dokument max 9 artikala" ), .T. ) }
+         VALID {|| _Kolicina <> 0 .AND. iif( InRange( nRbr, 10, 99 ), error_tab( "PR dokument max 9 artikala" ), .T. ) }
 
    ELSE
 
       @ m_x + 12, m_y + 2  SAY8 "Sirovina  " GET _IdRoba PICT "@!" valid  {|| P_Roba( @_IdRoba ), Reci( 12, 24, Trim( Left( roba->naz, 40 ) ) + " (" + ROBA->jmj + ")", 40 ), _IdTarifa := iif( fnovi, ROBA->idtarifa, _IdTarifa ), .T. }
       @ m_x + 13, m_y + 2   SAY8 "Količina  " GET _Kolicina PICTURE PicKol VALID _Kolicina <> 0
 
+      @ m_x + 15, m_y + 2   SAY "N.CJ Sirovina:"
+      @ m_x + 15, m_y + 50  GET _NC PICTURE PicDEM VALID _nc >= 0
+
+      _Mkonto := _idkonto2
+      _mu_i := "5"
+
    ENDIF
+
 
    READ
    ESC_RETURN K_ESC
@@ -82,11 +84,28 @@ FUNCTION kalk_unos_dok_pr()
    cIdVd := _idVd
    cBrDok := _brDok
 
-   delete_sirovine_za( nRbr, bDokument, cIdFirma, cIdVd, cBrDok )
-   kreiraj_sirovine_za( nRbr, _idroba, _kolicina )
+   IF nRbr < 10
+      PushWa()
+      LOCATE FOR Eval( bProizvodPripadajuceSirovine ) == nRbr // stavke
 
+      IF Found()
+         AltD()
+         info_tab( _idFirma, _idvd, _brdok,  "postoje proivodi za rbr" + AllTrim( Str( nRbr ) ) )
+         IF Pitanje( , "pobrisati za stavku " + AllTrim( Str( nRbr ) ) + " sirovine?", "N" ) == "D"
+            kalk_pripr_pobrisi_sirovine( cIdFirma, cIdVd, cBrDok, nRbr, bDokument )
+            kalk_pripr_napuni_sirovine_za( nRbr, _idroba, _kolicina )
+         ENDIF
 
-   SELECT kalk_pripr
+      ELSE
+         kalk_pripr_napuni_sirovine_za( nRbr, _idroba, _kolicina )
+      ENDIF
+
+      PopWa()
+   ENDIF
+
+   SELECT tarifa
+   HSEEK _IdTarifa
+
 
    SELECT koncij
    SEEK Trim( _idkonto )
@@ -105,13 +124,15 @@ FUNCTION kalk_unos_dok_pr()
       _CarDaz := 0
    ENDIF
 
-   SELECT kalk_pripr
+
+      SELECT kalk_pripr
+      SET ORDER TO TAG "1"
    IF _tmarza <> "%"  // procente ne diraj
       _Marza := 0
    ENDIF
 
 
-   nNV := proizvod_proracunaj_nc_za( nRbr, cIdFirma, cIdVd, cBrDok, bDokument, bProizvod )
+   nNV := kalk_pripr_pr_nv_proizvod( cIdFirma, cIdVd, cBrDok, nRbr, bDokument, bProizvodPripadajuceSirovine )
 
    IF Round( _kolicina, 4 ) == 0
       _fcj := 0.0
@@ -119,11 +140,13 @@ FUNCTION kalk_unos_dok_pr()
       _fcj := nNV / _kolicina
    ENDIF
 
+   _fcj := nNV / _kolicina
    @ m_x + 15, m_y + 2   SAY "Nabc.CJ Proizvod :"
    @ m_x + 15, m_y + 50  GET _FCJ PICTURE PicDEM VALID _fcj > 0 WHEN V_kol10()
-
    READ
    ESC_RETURN K_ESC
+
+   altd()
 
    _FCJ2 := _FCJ * ( 1 - _Rabat / 100 )
 
@@ -131,9 +154,7 @@ FUNCTION kalk_unos_dok_pr()
 
 
 
-// --------------------------------------------
-// druga stranica unosa dokumenta PR
-// --------------------------------------------
+
 FUNCTION Get2_PR()
 
    LOCAL cSPom := " (%,A,U,R) "
@@ -192,19 +213,19 @@ FUNCTION Get2_PR()
    ENDIF
 
    IF nRbr = 1
-      _MKonto := _Idkonto; _MU_I := "1"
+      _MKonto := _Idkonto
+      _MU_I := "1"
    ENDIF
    nStrana := 3
 
    RETURN LastKey()
 
 
-FUNCTION delete_sirovine_za( nRbr, bDokument, cIdFirma, cIdVd, cBrDok )
 
-   LOCAL nTrec
+FUNCTION kalk_pripr_pobrisi_sirovine( cIdFirma, cIdVd, cBrDok, nRbr, bDokument )
 
-   PushWa()
-   SET FILTER TO
+   LOCAL nTRec
+
    my_flock()
    GO TOP
    DO WHILE !Eof()
@@ -223,31 +244,33 @@ FUNCTION delete_sirovine_za( nRbr, bDokument, cIdFirma, cIdVd, cBrDok )
    ENDDO
    my_unlock()
 
-   PopWa()
-
    RETURN .T.
 
 
 
 
-FUNCTION kreiraj_sirovine_za( nRbr, _idroba, _kolicina )
+FUNCTION kalk_pripr_napuni_sirovine_za( nRbr, _idroba, _kolicina )
 
-   LOCAL nRbr2
-   LOCAL nKolicina, nKolZN, nZNC, nNC, dDatNab, _rec
+   LOCAL nRbr100
+   LOCAL nKolS, nKolZN, nC1, nC2, dDatNab
+   LOCAL _rec
 
-   PushWa()
-   SELECT kalk_pripr
-   SET FILTER TO
-
+   AltD()
    SELECT ROBA
    HSEEK _idroba
-   // IF roba->tip = "P" .AND. nRbr < 10   // radi se o proizvodu
 
-   nRbr2 := nRbr * 100
-   SELECT sast
+   SELECT kalk_pripr
+
+   IF nRbr > 9 .OR. roba->tip != "P"  // ne radi se o proizvodu
+      RETURN .F.
+   ENDIF
+
+   PushWa()
+   nRbr100 := nRbr * 100
+
+   SELECT SAST  // prolazak kroz sastavnicu proizvoda
    HSEEK _idroba
-
-   DO WHILE !Eof() .AND. sast->id == _idroba // prolazak kroz sastavnicu
+   DO WHILE !Eof() .AND. sast->id == _idroba
 
       SELECT roba
       HSEEK sast->id2
@@ -255,7 +278,7 @@ FUNCTION kreiraj_sirovine_za( nRbr, _idroba, _kolicina )
       SELECT kalk_pripr
       APPEND BLANK
       REPLACE field->idfirma WITH _IdFirma, ;
-         field->rbr WITH Str( ++nRbr2, 3 ), ;
+         field->rbr WITH Str( ++nRbr100, 3 ), ;
          field->idvd WITH "PR", ;
          field->brdok WITH _Brdok, ;
          field->datdok WITH _Datdok, ;
@@ -274,44 +297,69 @@ FUNCTION kreiraj_sirovine_za( nRbr, _idroba, _kolicina )
          field->mkonto WITH _idkonto2
 
 
-
+      nKolS := 0
+      nKolZN := 0
+      nC1 := 0
+      nC2 := 0
       dDatNab := CToD( "" )
-      nKolicina := 0  // kolicina na stanju
-      nNC := 0 // srednja nabavna cijena
-      nZNC := 0
 
-      info_tab( _idfirma + "-" + _idvd + "-" + _brdok, "Računam stanje na skladistu magacin sirovina: " + _idkonto2 + " / " + sast->id2 )
-      KalkNab( _idfirma, sast->id2, _idkonto2, @nKolicina, @nKolZN, @nZNC, @nNc, @dDatNab )
-      info_tab( _idfirma + "-" + _idvd + "-" + _brdok, "stanje: " + _idkonto2 + "/ " + sast->id2 + ;
-         + " Kol: " + AllTrim( Str( nKolicina, 10, 3 ) ) + ;
-         + " NC: " + AllTrim( Str( nNC, 10, 3 ) ) )
-      // + " Zadnja.NC: " + AllTrim( Str( nZNC, 10, 3 ) ) )
+      info_tab( _idkonto2 + "/" + sast->id2, " sirovina stanje na skladistu ..." )
+      KalkNab( _idfirma, sast->id2, _idkonto2, @nKolS, @nKolZN, @nc1, @nc2, @dDatNab )
+      info_tab( "" )
 
       IF dDatNab > _DatDok
-         error_tab( _idfirma + "-" + _idvd + "-" + _brdok, "Datum nabavke je " + DToC( dDatNab ) + " sirovina " + sast->id2 )
+         error_tab( "Datum nabavke je " + DToC( dDatNab ) + " sirovina " + sast->id2 )
       ENDIF
 
-      IF nKolicina >= 0 .AND. Round( nNC, 3 ) > 0
+      IF _kolicina >= 0 .OR. Round( _NC, 3 ) == 0 .AND. !( roba->tip $ "UT" )
 
          SELECT roba
          _rec := dbf_get_rec()
-         _rec[ "nc" ] := nNC
-         update_rec_server_and_dbf( "ROBA", _rec, 1, "FULL" ) // nafiluj sifarnik robe sa nc sirovina, robe
-         SELECT kalk_pripr
+         _rec[ "nc" ] := _nc
+         update_rec_server_and_dbf( Alias(), _rec, 1, "FULL" ) // nafiluj sifarnik robe sa nc sirovina, robe
+
 
       ENDIF
 
-      SELECT kalk_pripr
-      RREPLACE field->nc WITH nNC, ;
-         field->gKolicina WITH nKolicina, ;  // gKolicina - kolicina na stanju magacina
-      field->error WITH iif( field->kolicina < nKolicina, "0", "1" )  // error="1" if nema na stanju
+      SELECT kalk_pripr // nc sirovine, gkolicina se puni sa kolicinom na stanju
+      RREPLACE field->nc WITH nC2, field->gKolicina WITH nKolS
+
       SELECT sast
       SKIP
    ENDDO
 
    PopWa()
-
    RETURN .T.
+
+
+
+FUNCTION kalk_pripr_pr_nv_proizvod( cIdFirma, cIdVd, cBrDok, nRbr, bDokument, bProizvodPripadajuceSirovine )
+
+   LOCAL nNV
+
+   PushWa()
+
+   SELECT kalk_pripr
+   GO TOP
+   nNV := 0  // nab vrijednost proizvod
+   DO WHILE !Eof()
+
+      IF Eval( bDokument, cIdFirma, cIdVd, cBrDok ) .AND. ;   // gledaj samo stavke jednog dokumenta ako ih ima vise u pripremi
+         Eval( bProizvodPripadajuceSirovine ) == nRbr // when field->rbr == 301, 302, 303 ...  EVAL( bProizvod ) = 3
+         nNV += field->NC * field->kolicina
+         IF nRbr == 1 .AND. field->gkolicina < field->kolicina
+            error_tab( "Na stanju " + field->idkonto2 + " se nalazi samo " + Str( field->gkolicina, 9, 2 ) + " sirovine " + field->idroba, 0 )
+            _error := "1"
+         ENDIF
+      ENDIF
+      SKIP
+   ENDDO
+
+   PopWa()
+
+   RETURN nNV
+
+
 
 
 FUNCTION proizvod_proracunaj_nc_za( nRbr, cIdFirma, cIdVd, cBrDok, bDokument, bProizvod )

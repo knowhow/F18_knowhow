@@ -11,7 +11,7 @@
 
 #include "f18.ch"
 
-STATIC __LD_FIELDS_COUNT := 60
+THREAD STATIC __LD_FIELDS_COUNT := 60
 
 
 FUNCTION cre_all_ld_sif( ver )

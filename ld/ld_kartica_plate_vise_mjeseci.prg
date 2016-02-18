@@ -12,23 +12,6 @@
 #include "f18.ch"
 
 
-STATIC FUNCTION otvori_tabele()
-
-   tipprn_use()
-
-   O_PAROBR
-   O_LD_RJ
-   O_RADN
-   O_VPOSLA
-   O_RADKR
-   O_KRED
-   O__LD
-   SET ORDER TO TAG "1"
-   O_LD
-
-   RETURN
-
-
 
 FUNCTION ld_kartica_plate_za_vise_mjeseci()
 
@@ -313,7 +296,7 @@ STATIC FUNCTION zaglavlje_izvjestaja()
 
    ?U "OBRAČUN "
 
-   IF EMPTY( cObracun )
+   IF Empty( cObracun )
       ?? "'SVI'"
    ELSE
       ?? "'" + cObracun + "'"
@@ -322,11 +305,28 @@ STATIC FUNCTION zaglavlje_izvjestaja()
    ?? " PLATE ZA PERIOD OD " + Str( cMjesec, 2 ) + " DO " + Str( cMjesec2, 2 )
    ?? " / " + Str( godina, 4 )
    ?? " ZA " + Upper( Trim( gTs ) )
-   ?? " " + ALLTRIM( gNFirma )
-   ? "RJ: " + idrj + " " + ALLTRIM( ld_rj->naz )
+   ?? " " + AllTrim( gNFirma )
+   ? "RJ: " + idrj + " " + AllTrim( ld_rj->naz )
    ? idradn + "-" + RADNIK + " Mat.br: " + radn->matbr + " STR.SPR: " + idstrspr
-   ? "Vrsta posla: " + idvposla + "-" + ALLTRIM( vposla->naz )
-   ?? "   U radnom odnosu od: "  + DTOC( radn->datod )
+   ? "Vrsta posla: " + idvposla + "-" + AllTrim( vposla->naz )
+   ?? "   U radnom odnosu od: "  + DToC( radn->datod )
+
+   RETURN .T.
 
 
-   RETURN
+
+STATIC FUNCTION otvori_tabele()
+
+   tipprn_use()
+
+   O_PAROBR
+   O_LD_RJ
+   O_RADN
+   O_VPOSLA
+   O_RADKR
+   O_KRED
+   O__LD
+   SET ORDER TO TAG "1"
+   O_LD
+
+   RETURN .T.

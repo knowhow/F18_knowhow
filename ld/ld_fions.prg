@@ -12,9 +12,6 @@
 
 #include "f18.ch"
 
-FUNCTION Unos2()
-   RETURN ( nil )
-
 // --------------------------------------------------------
 // Vraca oznaku obracuna ako se radi o vise obracuna
 // --------------------------------------------------------
@@ -38,7 +35,7 @@ FUNCTION BrojObracuna()
 FUNCTION izracunaj_uneto_usati_za_radnika()
 
    LOCAL i, nArr
-   LOCAL hData := hb_hash()
+   LOCAL hData := hb_Hash()
    LOCAL nSati := 0
    LOCAL nNeto := 0
    LOCAL nIznos := 0
@@ -73,12 +70,12 @@ FUNCTION izracunaj_uneto_usati_za_radnika()
 
    NEXT
 
-   hData["uneto"] := nNeto
-   hData["usati"] := nSati
-   hData["uodbici"] := nOdbici
-   hData["iznos"] := nIznos
+   hData[ "uneto" ] := nNeto
+   hData[ "usati" ] := nSati
+   hData[ "uodbici" ] := nOdbici
+   hData[ "iznos" ] := nIznos
 
-   SELECT( nArr )
+   Select( nArr )
 
    RETURN hData
 
@@ -716,8 +713,8 @@ FUNCTION FillBrBod( _brbod )
 
    ENDIF
 
-   IF SELECT( "ld" ) == 0
-      Alert( "fillbrbod Alias ld not ?!")
+   IF Select( "ld" ) == 0
+      Alert( "fillbrbod Alias ld not ?!" )
    ENDIF
 
    RETURN .T.
@@ -976,3 +973,8 @@ FUNCTION PrimLD( cOznaka, cTipPr )
    SELECT ( nArr )
 
    RETURN nRez
+
+
+
+FUNCTION Unos2()
+   RETURN ( nil )

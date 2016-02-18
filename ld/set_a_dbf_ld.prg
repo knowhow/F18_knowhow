@@ -58,7 +58,7 @@ FUNCTION set_a_dbf_ld()
 
 FUNCTION set_a_dbf_ld_ld()
 
-   LOCAL _alg, _tbl
+   LOCAL _alg, _tbl, _item
 
    _tbl := "ld_ld"
 
@@ -98,7 +98,7 @@ FUNCTION set_a_dbf_ld_ld()
 
 FUNCTION set_a_dbf_ld_radn()
 
-   LOCAL _alg, _tbl
+   LOCAL _alg, _tbl, _item
 
    _tbl := "ld_radn"
 
@@ -122,7 +122,7 @@ FUNCTION set_a_dbf_ld_radn()
 
    f18_dbfs_add( _tbl, @_item )
 
-   RETURN
+   RETURN .T.
 
 
 FUNCTION set_a_dbf_ld_parobr()
@@ -151,13 +151,13 @@ FUNCTION set_a_dbf_ld_parobr()
 
    f18_dbfs_add( _tbl, @_item )
 
-   RETURN
+   RETURN .T.
 
 
 
 FUNCTION set_a_dbf_ld_dopr()
 
-   LOCAL _alg, _tbl
+   LOCAL _alg, _tbl, _item
 
    _tbl := "dopr"
 
@@ -181,7 +181,7 @@ FUNCTION set_a_dbf_ld_dopr()
 
    f18_dbfs_add( _tbl, @_item )
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -374,4 +374,4 @@ FUNCTION set_a_dbf_ld_radkr()
 
    f18_dbfs_add( _tbl, @_item )
 
-   RETURN
+   RETURN .T.

@@ -11,8 +11,7 @@
 
 #include "f18.ch"
 
-
-STATIC __var_obr
+THREAD STATIC __var_obr
 
 FUNCTION RekapLd( cId, nGodina, nMjesec, nIzn1, nIzn2, cIdPartner, cOpis, cOpis2, lObavDodaj, cIzdanje )
 

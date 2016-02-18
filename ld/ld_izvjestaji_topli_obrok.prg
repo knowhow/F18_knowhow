@@ -1,18 +1,18 @@
 /*
- * This file is part of the bring.out FMK, a free and open source
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+ * This file is part of the bring.out knowhow ERP, a free and open source
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
 
-
 #include "f18.ch"
 
-STATIC __PAGE_LEN
+
+THREAD STATIC __PAGE_LEN
 
 
 FUNCTION ld_lista_isplate_toplog_obroka()
@@ -88,12 +88,12 @@ STATIC FUNCTION _export_data( nVar1, nVar2, banka )
    GO TOP
 
    DO WHILE !Eof()
-	
+
       cTxt := ""
-	
+
       // tek.racun
       cTxt += FormatSTR( AllTrim( field->r_tr ), 25, .F., "" )
-	
+
       // prezime - ime oca - ime
       cTxt += FormatSTR( AllTrim( field->r_prezime ) + ;
          " (" + ;
@@ -119,7 +119,7 @@ STATIC FUNCTION _export_data( nVar1, nVar2, banka )
       // konverzija znakova...
 
       write2file( nH, to_win1250_encoding( hb_StrToUTF8( cTxt ) ), .T. )
-	
+
       SKIP
 
    ENDDO
@@ -163,37 +163,37 @@ STATIC FUNCTION _get_vars( cRj, cMonthFrom, cMonthTo, cYear, nDays, ;
    cExport := "N"
 
    Box(, nBoxX, nBoxY )
-	
+
    @ m_x + nX, m_y + 2 SAY PadL( "**** uslovi izvjestaja", ( nBoxY - 1 ) ) COLOR cColor
-	
+
    nX += 1
 
    // radna jedinica....
    @ m_x + nX, m_y + 2 SAY "RJ (prazno-sve):" GET cRj VALID Empty( cRj ) .OR. p_ld_rj( @cRj )
-	
+
    nX += 1
-	
+
    @ m_x + nX, m_y + 2 SAY "Mjesec od:" GET cMonthFrom PICT "99" VALID cMonthFrom <= cMonthTo
    @ m_x + nX, Col() + 1 SAY "do:" GET cMonthTo PICT "99"  VALID cMonthTo >= cMonthFrom
 
    nX += 1
 
    @ m_x + nX, m_y + 2 SAY "Godina:" GET cYear PICT "9999" VALID !Empty( cYear )
-	
+
    @ m_x + nX, Col() + 1 SAY "Banka (prazno-sve):" GET cKred VALID Empty( cKred ) .OR. P_Kred( @cKred )
 
    nX += 2
-	
+
    @ m_x + nX, m_y + 2 SAY "Sati primanja koja uticnu na isplatu:" GET cHours PICT "@S30" VALID !Empty( cHours )
 
    nX += 2
 
    @ m_x + nX, m_y + 2 SAY "Koeficijent:" GET nKoef PICT "99999.99"
-	
+
    nX += 1
 
    @ m_x + nX, m_y + 2 SAY "Broj dana sa kojim se dijeli:" GET nDays PICT "99999.99"
-	
+
    nX += 2
 
    @ m_x + nX, m_y + 2 SAY "Iznos akontacije:" GET nAcontAmount PICT "99999.99"
@@ -204,35 +204,35 @@ STATIC FUNCTION _get_vars( cRj, cMonthFrom, cMonthTo, cYear, nDays, ;
    @ m_x + nX, m_y + 2 SAY "Minimalni limit za sate:" GET nMinHrLimit PICT "999999"
 
    nX += 1
-	
+
    @ m_x + nX, m_y + 2 SAY "Maksimalni limit za sate:" GET nHourLimit PICT "999999"
 
    nX += 2
-	
+
    @ m_x + nX, m_y + 2 SAY "Varijanta izvjestaja:" GET nRptVar1 PICT "9" VALID nRptVar1 > 0 .AND. nRptVar1 < 3
-	
+
    nX += 1
-	
+
    @ m_x + nX, m_y + 2 SAY "(1) kompletan obracun" COLOR cColor
 
    nX += 1
-	
+
    @ m_x + nX, m_y + 2 SAY "(2) samo lista sa radnicima za potpis" COLOR cColor
-	
+
    nX += 1
 
    @ m_x + nX, m_y + 2 SAY Space( 3 ) + "Varijanta prikaza:" GET nRptVar2 PICT "9" VALID nRptVar2 > 0 .AND. nRptVar2 < 3 WHEN nRptVar1 == 2
 
    nX += 1
-	
+
    @ m_x + nX, m_y + 2 SAY Space( 3 ) + "(1) isplata akontacije" COLOR cColor
 
    nX += 1
-	
+
    @ m_x + nX, m_y + 2 SAY Space( 3 ) + "(2) isplata razlike" COLOR cColor
-	
+
    nX += 1
-	
+
    @ m_x + nX, m_y + 2 SAY Space( 3 ) + "Export izvjestaja ?" ;
       GET cExport VALID cExport $ "DN" PICT "@!"
 
@@ -307,9 +307,9 @@ STATIC FUNCTION _gen_list( cRj, cMonthFrom, cMonthTo, cYear, nDays, ;
          .AND. field->mjesec <= cMonthTo
 
       cIdRadn := field->idradn
-	
+
       nUSati := 0
-	
+
       SELECT radn
       SET ORDER TO TAG "1"
       GO TOP
@@ -329,34 +329,34 @@ STATIC FUNCTION _gen_list( cRj, cMonthFrom, cMonthTo, cYear, nDays, ;
             .AND. field->idradn == cIdRadn
 
          IF !Empty( cRj ) .AND. field->idrj <> cRj
-			
+
             SKIP
             LOOP
-			
+
          ENDIF
-	
+
          FOR i := 1 TO Len( aHours )
-		
+
             // dodaj na sate
-			
+
             nUSati += &( aHours[ i ] )
-			
+
          NEXT
-		
+
          SKIP
-		
+
       ENDDO
 
       // ako ima sati i nije probijen limit ako postoji limit
       IF Round( nUSati, 2 ) > 0  ;
             .AND. ( nHourLimit == 0 .OR. ;
             ( nHourLimit <> 0 .AND. nUSati <= nHourLimit ) )
-		
+
          SELECT _tmp
          APPEND BLANK
-		
+
          Scatter()
-		
+
          _r_bank := radn->idbanka
          _r_tr := radn->brtekr
          _r_ime := radn->ime
@@ -364,9 +364,9 @@ STATIC FUNCTION _gen_list( cRj, cMonthFrom, cMonthTo, cYear, nDays, ;
          _r_imeoca := radn->imerod
          _r_hours := nUSati
          _r_to := ROUND2( ( nUsati / nDays ) * nKoef, gZaok )
-		
+
          IF Round( nMinHrLimit, 2 ) <> 0
-		
+
             IF nUSati >= nMinHrLimit
                _r_acont := nAcontAmount
             ELSE
@@ -375,15 +375,15 @@ STATIC FUNCTION _gen_list( cRj, cMonthFrom, cMonthTo, cYear, nDays, ;
          ELSE
             _r_acont := nAcontAmount
          ENDIF
-		
+
          _r_total := _r_to - _r_acont
-		
+
          Gather()
 
          ++ nCount
 
          @ m_x + 1, m_y + 2 SAY PadR( PadL( Str( nCount ), 5 ) + " " + AllTrim( radn->naz ) + ", " + AllTrim( Str( nUSati ) ), 60 )
-		
+
       ENDIF
 
       SELECT ld
@@ -431,37 +431,37 @@ STATIC FUNCTION _print_list( cMFrom, cMTo, cYear, nRptVar1, nRptVar2, cKred )
 
       // ako je ispis akontacije i spisak radnika, r_acont == 0, preskoci
       IF Round( r_acont, 2 ) == 0 .AND. nRptVar1 == 2 .AND. nRptVar2 == 1
-		
+
          SKIP
          LOOP
-		
+
       ENDIF
 
       // provjeri za novu stranu
       _new_page()
-	
+
       IF nRptVar1 == 2
-		
+
          ?
-		
+
       ENDIF
 
       IF nRptVar1 == 1 .AND. cBank <> field->r_bank
-		
+
          IF cBank <> "XYX"
-			
+
             // total za banku pojedinacnu
-			
+
             ? cLine
             ? PadR( "Ukupno za banku:", 37 )
-			
+
             ?? nUBSati
             ?? nUBTo
             ?? nUBAcont
             ?? nUBTotal
-		
+
             ? cLine
-			
+
             ? p_potpis()
 
             FF
@@ -470,15 +470,15 @@ STATIC FUNCTION _print_list( cMFrom, cMTo, cYear, nRptVar1, nRptVar2, cKred )
 
             _p_header( cLine, nRptVar1, nRptVar2, ;
                cMFrom, cMTo, cYear )
-		
+
          ENDIF
-		
+
          ? "Banka: " + field->r_bank + " - " + ;
             Ocitaj( F_KRED, field->r_bank, "NAZ" )
          ? Replicate( "-", 50 )
-		
+
          cBank := r_bank
-		
+
          // resetuj varijable
          nUBTo := 0
          nUBAcont := 0
@@ -489,32 +489,32 @@ STATIC FUNCTION _print_list( cMFrom, cMTo, cYear, nRptVar1, nRptVar2, cKred )
 
       // r.br
       ? PadL( Str( ++nRbr, 3 ) + ".", 5 )
-	
+
       ?? " "
-	
+
       // prezime + ime
       ?? PadR( AllTrim( field->r_prezime ) + " (" + AllTrim( field->r_imeoca ) + ") " + AllTrim( field->r_ime ),  30 )
-	
+
       ?? " "
-	
+
       IF nRptVar1 == 1
-	
+
          // usati...
          ?? field->r_hours
-	
+
          nUSati += field->r_hours
          nUBSati += field->r_hours
 
          ?? " "
-	
+
          // to
          ?? field->r_to
-	
+
          nUTo += field->r_to
          nUBTo += field->r_to
 
          ?? " "
-	
+
          // akontacija
          ?? field->r_acont
 
@@ -522,13 +522,13 @@ STATIC FUNCTION _print_list( cMFrom, cMTo, cYear, nRptVar1, nRptVar2, cKred )
          nUBAcont += field->r_acont
 
          ?? " "
-	
+
          // razlika
          ?? field->r_total
 
          nUTotal += field->r_total
          nUBTotal += field->r_total
-		
+
          ?? " "
 
          // ziro racun u banci
@@ -537,9 +537,9 @@ STATIC FUNCTION _print_list( cMFrom, cMTo, cYear, nRptVar1, nRptVar2, cKred )
       ELSE
 
          IF nRptVar2 == 1
-			
+
             // isplata akontacije...
-			
+
             ?? field->r_acont
             ?? " "
             ?? _get_mp()
@@ -548,22 +548,22 @@ STATIC FUNCTION _print_list( cMFrom, cMTo, cYear, nRptVar1, nRptVar2, cKred )
             nUBAcont += field->r_acont
 
          ELSE
-		
+
             // isplata ostatka
             ?? field->r_total
             ?? " "
             ?? _get_mp()
-		
+
             nUTotal += field->r_total
             nUBTotal += field->r_total
 
          ENDIF
-	
+
       ENDIF
 
 
       SKIP
-	
+
    ENDDO
 
    // print total
@@ -590,19 +590,19 @@ STATIC FUNCTION _print_list( cMFrom, cMTo, cYear, nRptVar1, nRptVar2, cKred )
       ?? nUTo
       ?? nUAcont
       ?? nUTotal
-	
+
    ELSEIF nRptVar1 == 2
-	
+
       IF nRptVar2 == 1
-	
+
          ?? nUAcont
-	
+
       ELSE
-	
+
          ?? nUTotal
-	
+
       ENDIF
-	
+
    ENDIF
 
    ? cLine
@@ -648,7 +648,7 @@ STATIC FUNCTION _get_line( cLine, nVar1 )
       cTmp += Replicate( "-", 30 )
 
    ELSE
-	
+
       // iznos
       cTmp += Replicate( "-", 12 )
       cTmp += " "

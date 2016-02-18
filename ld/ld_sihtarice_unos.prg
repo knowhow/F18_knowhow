@@ -14,7 +14,7 @@
 
 FUNCTION UnosSiht()
 
-   LOCAL cidradn, cIdRj, nGodina, nMjesec
+   LOCAL cIdradn, cIdRj, nGodina, nMjesec
 
    IF .T.
       MsgBeep( "http://redmine.bring.out.ba/issues/25986" )

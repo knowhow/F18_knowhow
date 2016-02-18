@@ -1,14 +1,13 @@
 /*
- * This file is part of the bring.out FMK, a free and open source
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+ * This file is part of the bring.out knowhow ERP, a free and open source
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
-
 
 #include "f18.ch"
 
@@ -74,7 +73,7 @@ FUNCTION ShowHiredFromTo( dHiredFrom, dHiredTo, cLM )
       ?? Lokal( "Trenutno angazovan" )
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -263,12 +262,12 @@ FUNCTION ASezona2( cPath, cG, cFajl )
    FOR i := Len( aSez ) TO 1 STEP -1
       cPom := Trim( aSez[ i, 1 ] )
       IF Len( cPom ) <> 6 .OR. Right( cPom, 4 ) <> cG .OR. ;
-            !Empty( cFajl ) .AND. !File( cPath + cPom + "\" + cFajl )
+            !Empty( cFajl ) .AND. !File( cPath + cPom + SLASH + cFajl )
          ADel( aSez, i )
          ASize( aSez, Len( aSez ) -1 )
       ENDIF
    NEXT
-   ASort( aSez,,, {|x, y| x[ 1 ] > y[ 1 ] } )
+   ASort( aSez,,, {| x, y| x[ 1 ] > y[ 1 ] } )
 
    RETURN aSez
 

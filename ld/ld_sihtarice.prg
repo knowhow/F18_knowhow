@@ -1,14 +1,13 @@
 /*
- * This file is part of the bring.out FMK, a free and open source
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+ * This file is part of the bring.out knowhow ERP, a free and open source
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
-
 
 #include "f18.ch"
 
@@ -194,11 +193,11 @@ FUNCTION get_siht( lInfo, nGodina, nMjesec, cIdRadn, cGroup )
    sort_siht( nGodina, nMjesec, cIdRadn, cGroup, nVar )
 
    // HACK: 2i index ld_rasiht ne valja
-   //IF nVar > 0
-      SET ORDER TO TAG "2"
-   //ELSE
-   //  SET ORDER TO TAG "2i"
-   //ENDIF
+   // IF nVar > 0
+   SET ORDER TO TAG "2"
+   // ELSE
+   // SET ORDER TO TAG "2i"
+   // ENDIF
 
    GO TOP
 
@@ -442,10 +441,10 @@ FUNCTION sort_siht( nGodina, nMjesec, cIdRadn, cGroup, nVar )
    GO TOP
 
    // HACK: 2i ld_radsiht ne valja
-   //IF nVar == 1
-   //    SET ORDER TO TAG "2i"
-   //    GO TOP
-   //ENDIF
+   // IF nVar == 1
+   // SET ORDER TO TAG "2i"
+   // GO TOP
+   // ENDIF
 
    RETURN .T.
 

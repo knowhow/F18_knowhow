@@ -1,16 +1,16 @@
 /*
- * This file is part of the bring.out FMK, a free and open source
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+ * This file is part of the bring.out knowhow ERP, a free and open source
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
 
-
 #include "f18.ch"
+
 
 
 FUNCTION ld_kartica_plate_autorski_honorar( cIdRj, cMjesec, cGodina, cIdRadn, cObrac, aNeta )
@@ -41,12 +41,12 @@ FUNCTION ld_kartica_plate_autorski_honorar( cIdRj, cMjesec, cGodina, cIdRadn, cO
    cRTipRada := g_tip_rada( ld->idradn, ld->idrj )
 
    FOR i := 1 TO cLDPolja
-	
+
       cPom := PadL( AllTrim( Str( i ) ), 2, "0" )
-	
+
       SELECT tippr
       SEEK cPom
-	
+
       IF tippr->( FieldPos( "TPR_TIP" ) ) <> 0
          // uzmi osnovice
          IF tippr->tpr_tip == "N"
@@ -69,23 +69,23 @@ FUNCTION ld_kartica_plate_autorski_honorar( cIdRj, cMjesec, cGodina, cIdRadn, cO
             nOsnOstalo += _i&cPom
          ENDIF
       ENDIF
-			
+
    NEXT
 
    SELECT ( F_POR )
-	
+
    IF !Used()
       O_POR
    ENDIF
-	
+
    SELECT ( F_DOPR )
 
    IF !Used()
       O_DOPR
    ENDIF
-	
+
    SELECT ( F_KBENEF )
-	
+
    IF !Used()
       O_KBENEF
    ENDIF
@@ -96,7 +96,7 @@ FUNCTION ld_kartica_plate_autorski_honorar( cIdRj, cMjesec, cGodina, cIdRadn, cO
    nTrosk := 0
 
    nOsnZaBr := nOsnNeto
-	
+
    nBo := bruto_osn( nOsnZaBr, cRTipRada, nLicOdbitak )
 
    IF UBenefOsnovu()
@@ -126,31 +126,31 @@ FUNCTION ld_kartica_plate_autorski_honorar( cIdRj, cMjesec, cGodina, cIdRadn, cO
    ? cLMSK + "3. BRUTO BEZ TROSKOVA :  ", bruto_isp( nOsnZaBr, cRTipRada, nLicOdbitak )
 
    @ PRow(), 60 + Len( cLMSK ) SAY nBo PICT gpici
-	
+
    ? cMainLine
-	
+
    ?
 
    // razrada doprinosa ....
    ? cLmSK + cDoprSpace + Lokal( "Obracun doprinosa:" )
-	
+
    SELECT dopr
    GO TOP
-	
+
    nPom := 0
    nDopr := 0
    nUkDoprIz := 0
    nC1 := 20 + Len( cLMSK )
-	
+
    DO WHILE !Eof()
-	
+
       IF dopr->tiprada <> "A"
          SKIP
          LOOP
       ENDIF
 
       IF dopr->( FieldPos( "DOP_TIP" ) ) <> 0
-			
+
          IF dopr->dop_tip == "N" .OR. dopr->dop_tip == " "
             nOsn := nOsnNeto
          ELSEIF dopr->dop_tip == "2"
@@ -158,29 +158,29 @@ FUNCTION ld_kartica_plate_autorski_honorar( cIdRj, cMjesec, cGodina, cIdRadn, cO
          ELSEIF dopr->dop_tip == "P"
             nOsn := nOsnNeto + nOsnOstalo
          ENDIF
-		
+
       ENDIF
-		
+
       PozicOps( DOPR->poopst )
-	
+
       IF !ImaUOp( "DOPR", DOPR->id ) .OR. !lPrikSveDopr .AND. !DOPR->ID $ cPrikDopr
          SKIP 1
          LOOP
       ENDIF
-		
+
       IF Right( id, 1 ) == "X"
          ? cDoprLine
       ENDIF
-		
+
       ? cLMSK + cDoprSpace + id, "-", naz
       @ PRow(), PCol() + 1 SAY iznos PICT "99.99%"
-		
+
       IF Empty( idkbenef )
          // doprinos udara na neto
          @ PRow(), PCol() + 1 SAY nBo PICT gpici
          nC1 := PCol() + 1
          @ PRow(), PCol() + 1 SAY nPom := Max( dlimit, Round( iznos / 100 * nBO, gZaok2 ) ) PICT gpici
-			
+
          IF dopr->id == "1X"
             nUkDoprIz += nPom
          ENDIF
@@ -194,36 +194,36 @@ FUNCTION ld_kartica_plate_autorski_honorar( cIdRj, cMjesec, cGodina, cIdRadn, cO
             @ PRow(), PCol() + 1 SAY nPom PICT gpici
          ENDIF
       ENDIF
-		
+
       IF Right( id, 1 ) == "X"
-			
+
          ? cDoprLine
          ?
          nDopr += nPom
-		
+
       ENDIF
-		
+
       IF !lSkrivena .AND. PRow() > 57 + gPStranica
          FF
       ENDIF
-		
+
       SKIP 1
-		
+
    ENDDO
 
 
    nOporDoh := nBo - nUkDoprIz
 
    // oporezivi dohodak ......
-	
+
    ? cMainLine
    ?  cLMSK + Lokal( "4. NETO IZNOS NAKNADE ( bruto - dopr.IZ )" )
    @ PRow(), 60 + Len( cLMSK ) SAY nOporDoh PICT gpici
 
    ? cMainLine
-	
+
    nPorOsnovica := ( nOporDoh )
-	
+
    // ako je negativna onda je 0
    IF nPorOsnovica < 0
       nPorOsnovica := 0
@@ -236,36 +236,36 @@ FUNCTION ld_kartica_plate_autorski_honorar( cIdRj, cMjesec, cGodina, cIdRadn, cO
 
    SELECT por
    GO TOP
-	
+
    nPom := 0
    nPor := 0
    nC1 := 30 + Len( cLMSK )
    nPorOl := 0
-	
+
    DO WHILE !Eof()
-	
+
       // vrati algoritam poreza
       cAlgoritam := get_algoritam()
-		
+
       PozicOps( POR->poopst )
-		
+
       IF !ImaUOp( "POR", POR->id )
          SKIP 1
          LOOP
       ENDIF
-		
+
       // sracunaj samo poreze na bruto
       IF por->por_tip <> "B"
          SKIP
          LOOP
       ENDIF
-	
+
       // obracunaj porez
       aPor := obr_por( por->id, nPorOsnovica, 0 )
-		
+
       // ispisi porez
       nPor += isp_por( aPor, cAlgoritam, cLMSK, .T., .T. )
-		
+
       SKIP 1
    ENDDO
 
@@ -273,7 +273,7 @@ FUNCTION ld_kartica_plate_autorski_honorar( cIdRj, cMjesec, cGodina, cIdRadn, cO
 
    // ukupno za isplatu ....
    nZaIsplatu := ( nOporDoh - nPor )
-	
+
    ?
 
    ? cMainLine
@@ -287,14 +287,14 @@ FUNCTION ld_kartica_plate_autorski_honorar( cIdRj, cMjesec, cGodina, cIdRadn, cO
    ENDIF
 
    ?
-	
+
    // if prow()>31
    IF gPotp <> "D"
       IF PCount() == 0
          FF
       ENDIF
    ENDIF
-	
+
 
    // potpis na kartici
    kart_potpis()

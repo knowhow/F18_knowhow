@@ -12,6 +12,8 @@
 
 #include "f18.ch"
 
+
+
 FUNCTION zadnji_dan_mjeseca( nMonth )
 
    LOCAL nDay := 0

@@ -16,19 +16,6 @@ STATIC cLinija
 STATIC nStranica := 0
 
 
-STATIC FUNCTION otvori_tabele()
-
-   tipprn_use()
-
-   O_OPS
-   O_KBENEF
-   O_VPOSLA
-   O_LD_RJ
-   O_RADN
-   O_LD
-
-   RETURN .T.
-
 
 
 FUNCTION ld_specifikacija_neto_primanja_po_opcinama()
@@ -182,8 +169,8 @@ FUNCTION ld_specifikacija_neto_primanja_po_opcinama()
 
 
       IF PRow() > 60 + gpStranica
-          FF
-          Eval( bZagl )
+         FF
+         Eval( bZagl )
       ENDIF
 
       ? cLinija
@@ -295,7 +282,7 @@ STATIC FUNCTION zaglavlje_izvjestaja( cVPosla, cKBenef )
 
    DevPos( PRow(), 74 )
 
-   ?? "Str.", Str( ++ nStranica, 3 )
+   ?? "Str.", Str( ++nStranica, 3 )
 
    IF !Empty( cvposla )
       ? "Vrsta posla:", cvposla, "-", vposla->naz
@@ -310,4 +297,20 @@ STATIC FUNCTION zaglavlje_izvjestaja( cVPosla, cKBenef )
    ? "     *      *                                  *       *           *           *           *"
    ? cLinija
 
-   RETURN
+   RETURN .T.
+
+
+
+
+STATIC FUNCTION otvori_tabele()
+
+   tipprn_use()
+
+   O_OPS
+   O_KBENEF
+   O_VPOSLA
+   O_LD_RJ
+   O_RADN
+   O_LD
+
+   RETURN .T.

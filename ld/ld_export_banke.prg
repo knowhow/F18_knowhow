@@ -10,8 +10,7 @@
  */
 
 #include "f18.ch"
-#include "hbclass.ch"
-#include "common.ch"
+
 
 
 CLASS LDExportTxt
@@ -279,6 +278,7 @@ METHOD LDExportTxt:fill_data_from_ld()
    LOCAL _count, _rec
    LOCAL _dod_polja := ::export_params[ "dodatna_polja" ]
    LOCAL _pro_polja, _a_polja, _i
+   LOCAL _a_kreditor
 
    _pro_polja := ""
 
@@ -367,7 +367,7 @@ METHOD LDExportTxt:fill_data_from_ld()
       RETURN NIL
    ENDIF
 
-   _table:GoTo(1)
+   _table:GoTo( 1 )
    _count := 0
 
    // napunit ce iz sql upita tabelu export

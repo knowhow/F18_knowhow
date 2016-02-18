@@ -24,9 +24,9 @@ FUNCTION kalk_sifrarnik()
    my_close_all_dbf()
 
    AAdd( _opc, "1. opći šifarnici                  " )
-   AAdd( _opcexe, {|| SifFmkSvi() } )
+   AAdd( _opcexe, {|| opci_sifarnici() } )
    AAdd( _opc, "2. robno-materijalno poslovanje" )
-   AAdd( _opcexe, {|| SifFmkRoba() } )
+   AAdd( _opcexe, {|| sif_roba_tarife_koncij_sast() } )
    AAdd( _opc, "3. magacinski i prodajni objekti" )
    AAdd( _opcexe, {|| P_Objekti() } )
 

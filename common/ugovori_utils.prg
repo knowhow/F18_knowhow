@@ -20,9 +20,10 @@ FUNCTION SifUgovori()
    LOCAL _opc := {}
    LOCAL _opcexe := {}
    LOCAL _izbor := 1
+   LOCAL lPrev
 
    AAdd( _opc, "1. ugovori                                    " )
-   AAdd( _opcexe, {|| P_Ugov() } )
+   AAdd( _opcexe, {|| lPrev := gMeniSif, gMeniSif := .T., P_Ugov(), gMeniSif := lPrev } )
    AAdd( _opc, "2. stampa naljepnica iz ugovora " )
    AAdd( _opcexe, {|| kreiraj_adrese_iz_ugovora() } )
    AAdd( _opc, "3. parametri ugovora" )
@@ -34,7 +35,7 @@ FUNCTION SifUgovori()
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
 
 // -------------------------------------------------------

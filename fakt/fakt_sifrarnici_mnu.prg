@@ -19,16 +19,13 @@ FUNCTION fakt_sifrarnik()
    PRIVATE Izbor := 1
 
    AAdd( opc, "1. opći šifarnici              " )
-   AAdd( opcexe, {|| SifFMKSvi() } )
-
+   AAdd( opcexe, {|| opci_sifarnici() } )
 
    AAdd( opc, "2. robno-materijalno poslovanje " )
-   AAdd( opcexe, {|| SifFMKRoba() } )
-
+   AAdd( opcexe, {|| sif_roba_tarife_koncij_sast() } )
 
    AAdd( opc, "3. fakt->txt" )
    AAdd( opcexe, {|| OSifFtxt(), P_FTxt() } )
-
 
    AAdd( opc, "U. ugovori" )
    AAdd( opcexe, {|| o_ugov(), SifUgovori() } )

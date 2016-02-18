@@ -12,7 +12,7 @@
 #include "f18.ch"
 
 
-FUNCTION SifFmkSvi()
+FUNCTION opci_sifarnici()
 
    PRIVATE Opc := {}
    PRIVATE opcexe := {}

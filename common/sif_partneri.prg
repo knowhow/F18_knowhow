@@ -78,8 +78,8 @@ FUNCTION cre_sif_partn( ver )
 FUNCTION p_partneri( cId, dx, dy, lEmptyIdOk )
 
    LOCAL cN2Fin
-   LOCAL i
-   LOCAL lRet
+   LOCAL nI
+   LOCAL xRet
 
    PRIVATE ImeKol
    PRIVATE Kol
@@ -122,22 +122,22 @@ FUNCTION p_partneri( cId, dx, dy, lEmptyIdOk )
    AAdd( ImeKol, { "banka?", {|| " " + _banka + " " }, "_banka", {|| .T. }, {|| _v_dn( w_banka ) }, nil, nil, nil, nil, 30 } )
    AAdd( ImeKol, { "radnik?", {|| " " + _radnik + " " }, "_radnik", {|| .T. }, {|| _v_dn( w_radnik ) }, nil, nil, nil, nil, 40 } )
 
-   FOR i := 1 TO Len( ImeKol )
-      AAdd( Kol, i )
+   FOR nI := 1 TO Len( ImeKol )
+      AAdd( Kol, nI )
    NEXT
 
    SELECT PARTN
    sif_sifk_fill_kol( "PARTN", @ImeKol, @Kol )
 
-   lRet := PostojiSifra( F_PARTN, 1, maxrows() - 15, maxcols() - 15, "Lista Partnera", @cId, dx, dy, {| Ch| k_handler( Ch ) },,,,, { "ID" } )
+   xRet := PostojiSifra( F_PARTN, 1, maxrows() - 15, maxcols() - 15, "Lista Partnera", @cId, dx, dy, {| Ch| partn_k_handler( Ch ) },,,,, { "ID" } )
 
    PopWa()
 
-   RETURN lRet
+   RETURN xRet
 
 
 
-STATIC FUNCTION k_handler( Ch )
+STATIC FUNCTION partn_k_handler( Ch )
 
    LOCAL cSif := PARTN->id, cSif2 := ""
 

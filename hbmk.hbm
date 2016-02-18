@@ -4,6 +4,8 @@
 
 {F18_DEBUG}-DF18_DEBUG
 {F18_DEBUG_FIN_AZUR}-DF18_DEBUG_FIN_AZUR
+{F18_DEBUG_BROWSE_SIF}-DF18_DEBUG_BROWSE_SIF
+
 {F18_DEBUG}-b
 {F18_DEBUG}-trace
 {!F18_DEBUG}-q
@@ -13,5 +15,3 @@ hbmzip.hbc
 hbpgsql.hbc
 xhb.hbc
 hbtip.hbc
-
-

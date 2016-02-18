@@ -29,8 +29,8 @@ FUNCTION V_Rugov( cId )
    PRIVATE ImeKol
    PRIVATE Kol
 
-   _x_pos := MAXROWS() - 15
-   _y_pos := MAXCOLS() - 5
+   _x_pos := MIN( 20, MAXROWS() - 10 )
+   _y_pos := MAXCOLS() - 15
 
    cIdUgov := cId
 
@@ -70,7 +70,7 @@ STATIC FUNCTION set_f_tbl( cIdUgov )
    SET FILTER to &cFilt
    GO TOP
 
-   RETURN
+   RETURN .T.
 
 
 // -------------------------------------
@@ -104,7 +104,7 @@ STATIC FUNCTION set_a_kol( aImeKol, aKol )
       AAdd( aKol, i )
    NEXT
 
-   RETURN
+   RETURN .T.
 
 
 // ------------------------------------------------
@@ -119,22 +119,22 @@ STATIC FUNCTION key_handler( cIdUgov )
    s_box_dest()
 
    DO CASE
-		
+
    CASE Ch == K_CTRL_N
-		
+
       nRet := edit_rugov( .T. )
-	
+
    CASE Ch == K_F2
-		
+
       nRet := edit_rugov( .F. )
 
    CASE Ch == K_CTRL_T
-	
+
       IF Pitanje(, "Izbrisati stavku ?", "N" ) == "D"
          _rec := dbf_get_rec()
          delete_rec_server_and_dbf( Alias(), _rec, 1, "FULL" )
       ENDIF
-     		
+
       nRet := DE_REFRESH
    ENDCASE
 
@@ -201,10 +201,10 @@ FUNCTION edit_rugov( lNovi )
    @ m_x + nX, m_y + 2 SAY PadL( "Roba", nBoxLen ) GET cIdRoba PICT "@!" VALID P_Roba( @cIDRoba )
 
    IF lDest
-	
+
       ++ nX
       @ m_x + nX, m_y + 2 SAY PadL( "Destinacija:", nBoxLen ) GET cDestinacija PICT "@!" valid {|| Empty( cDestinacija ) .OR. p_dest_2( @cDestinacija, __partn ) }
-	
+
    ENDIF
 
    ++ nX
@@ -314,4 +314,3 @@ FUNCTION vrati_opis_ugovora( cIdUgov )
    PopWa()
 
    RETURN cOpis
-

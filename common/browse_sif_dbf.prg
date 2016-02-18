@@ -14,6 +14,7 @@
 THREAD STATIC __PSIF_NIVO__ := 0
 THREAD STATIC __A_SIFV__ := { { NIL, NIL, NIL }, { NIL, NIL, NIL }, { NIL, NIL, NIL }, { NIL, NIL, NIL } }
 
+
 FUNCTION PostojiSifra( nDbf, nNtx, nVisina, nSirina, cNaslov, cID, dx, dy,  bBlok, aPoredak, bPodvuci, aZabrane, lInvert, aZabIsp )
 
    LOCAL cRet, cIdBK
@@ -457,7 +458,6 @@ STATIC FUNCTION sif_komande( nDbf, cNaslov, bBlok, aZabrane, aZabIsp )
 
    Ch := LastKey()
 
-
    aStruct := dbStruct()
    SkratiAZaD ( @aStruct )
    FOR i := 1 TO Len( aStruct )
@@ -495,6 +495,11 @@ STATIC FUNCTION sif_komande( nDbf, cNaslov, bBlok, aZabrane, aZabIsp )
    DO CASE
 
    CASE Ch == K_ENTER
+
+#ifdef F18_DEBUG_BROWSE_SIF
+      altd()
+#endif
+
       IF gMeniSif
          RETURN DE_CONT
       ELSE

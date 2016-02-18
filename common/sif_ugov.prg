@@ -11,10 +11,8 @@
 
 #include "f18.ch"
 
+MEMVAR ImeKol, Kol
 
-// -----------------------------
-// prikaz tabele ugovora
-// -----------------------------
 FUNCTION p_ugov( cId, dx, dy )
 
    LOCAL i
@@ -35,6 +33,8 @@ FUNCTION p_ugov( cId, dx, dy )
    PRIVATE ImeKol
    PRIVATE Kol
 
+   PushWA()
+
    cHeader += "Ugovori: "
    cHeader += "<F3> ispravi id, "
    cHeader += "<F5> stavke ugovora, "
@@ -52,8 +52,12 @@ FUNCTION p_ugov( cId, dx, dy )
    // setuj polje pri otvaranju za sortiranje
    set_fld_id( @cFieldId, cId )
 
-   RETURN PostojiSifra( F_UGOV, cFieldId, MAXROWS() - 10, MAXCOLS() - 3, cHeader, @cId, dx, dy, {| Ch| key_handler( Ch ) } )
+   AltD()
+   xRet := PostojiSifra( F_UGOV, cFieldId, MAXROWS() - 10, MAXCOLS() - 3, cHeader, @cId, dx, dy, {| Ch| ug_key_handler( Ch ) } )
 
+   PopWa()
+
+   RETURN xRet
 
 // ----------------------------------------------
 // setovanje vrijednosti polja ID pri otvaranju
@@ -68,7 +72,7 @@ STATIC FUNCTION set_fld_id( cVal, cId )
       cVal := "NAZ2"
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 // -----------------------------------------
@@ -130,13 +134,13 @@ STATIC FUNCTION set_a_kol( aImeKol, aKol )
       AAdd( aKol, i )
    NEXT
 
-   RETURN
+   RETURN .T.
 
 
 // --------------------------------
 // key handler
 // --------------------------------
-STATIC FUNCTION key_handler( Ch )
+STATIC FUNCTION ug_key_handler( Ch )
 
    LOCAL GetList := {}
    LOCAL nRec := 0
@@ -151,9 +155,9 @@ STATIC FUNCTION key_handler( Ch )
       ENDIF
       RETURN DE_CONT
 
-   CASE Upper( Chr( Ch ) ) == "R"
+   CASE Upper( Chr( Ch ) ) == "R" // setuj datum do kojeg si fakturisao
 
-      // setuj datum do kojeg si fakturisao
+
       IF set_datl_fakt() == 1
          RETURN DE_REFRESH
       ELSE
@@ -187,15 +191,13 @@ STATIC FUNCTION key_handler( Ch )
 
    CASE ( Ch == K_CTRL_N )
 
-      // novi ugovor
-      edit_ugovor( .T. )
+      edit_ugovor( .T. ) // novi ugovor
       RETURN 7
 
    CASE ( Ch == K_F5 )
 
       V_RUgov( ugov->id )
-      RETURN 6
-      // DE_CONT2
+      RETURN 6 // DE_CONT2
 
    CASE ( Ch == K_F6 )
       I_ListaUg()
@@ -205,7 +207,6 @@ STATIC FUNCTION key_handler( Ch )
       nRec := RecNo()
 
       kreiraj_adrese_iz_ugovora()
-
       O_RUGOV
       O_DEST
       O_UGOV
@@ -214,6 +215,7 @@ STATIC FUNCTION key_handler( Ch )
 
    ENDCASE
 
+ altd()
    RETURN DE_CONT
 
 

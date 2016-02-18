@@ -12,32 +12,31 @@
 
 #include "f18.ch"
 
+MEMVAR gMeniSif
 
-FUNCTION SifFmkRoba()
+FUNCTION sif_roba_tarife_koncij_sast()
 
    LOCAL _opc := {}
    LOCAL _opcexe := {}
    LOCAL _izbor := 1
+   LOCAL lPrev := gMeniSif
+
+   gMeniSif := .T.
 
    AAdd( _opc, "1. roba                               " )
    AAdd( _opcexe, {|| P_Roba() } )
 
-
    AAdd( _opc, "2. tarife" )
    AAdd( _opcexe, {|| P_Tarifa() } )
-
 
    AAdd( _opc, "3. konta - tipovi cijena" )
    AAdd( _opcexe, {|| P_Koncij() } )
 
-
    AAdd( _opc, "4. konta - atributi / 2 " )
    AAdd( _opcexe, {|| MsgBeep( F18_SECUR_WARRNING ) } )
 
-
    AAdd( _opc, "5. trfp - sheme kontiranja u fin" )
    AAdd( _opcexe, {|| P_TrFP() } )
-
 
    AAdd( _opc, "6. sastavnice" )
    AAdd( _opcexe, {|| P_Sast() } )
@@ -57,5 +56,7 @@ FUNCTION SifFmkRoba()
    f18_menu( "srob", .F., _izbor, _opc, _opcexe )
 
    my_close_all_dbf()
+
+   gMeniSif := lPrev
 
    RETURN .T.

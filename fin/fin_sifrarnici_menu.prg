@@ -18,7 +18,7 @@ FUNCTION MnuSifrarnik()
    LOCAL _izbor := 1
 
    AAdd( _opc, "1. opšti šifarnici                  " )
-   AAdd( _opcexe, {|| SifFmkSvi() } )
+   AAdd( _opcexe, {|| opci_sifarnici() } )
 
    AAdd( _opc, "2. finansijsko poslovanje " )
    AAdd( _opcexe, {|| _menu_specif() } )

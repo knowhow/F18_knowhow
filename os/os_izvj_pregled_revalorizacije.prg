@@ -15,7 +15,7 @@
 
 FUNCTION os_pregled_revalorizacije()
 
-   LOCAL cIdKonto := qidkonto := Space( 7 ), cidsk := "", ndug := ndug2 := npot := npot2 := ndug3 := npot3 := 0
+   LOCAL cIdKonto := qIdkonto := Space( 7 ), cidsk := "", ndug := ndug2 := npot := npot2 := ndug3 := npot3 := 0
    LOCAL nCol1 := 10
    LOCAL _sr_id
 

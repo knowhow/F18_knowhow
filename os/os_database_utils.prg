@@ -43,7 +43,7 @@ FUNCTION select_os_sii()
       SELECT sii
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 // ----------------------------------------

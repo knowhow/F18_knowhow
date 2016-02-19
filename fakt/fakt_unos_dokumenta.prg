@@ -1263,13 +1263,15 @@ STATIC FUNCTION edit_fakt_priprema( fNovi, items_atrib )
       items_atrib[ "lot" ] := _lot_broj
    ENDIF
 
+#ifdef F18_EXPERIMENT
    IF AllTrim( _rbr ) == "1"
       show_last_racun( _idpartner, _destinacija, _idroba )
    ENDIF
+#endif
 
    RETURN 1
 
-
+#ifdef F18_EXPERIMENT
 STATIC FUNCTION show_last_racun( cIdPartner, cDestinacija, cIdRoba )
 
    cRacun := "00000000"
@@ -1295,6 +1297,7 @@ STATIC FUNCTION show_last_racun( cIdPartner, cDestinacija, cIdRoba )
 
    RETURN .T.
 
+
 FUNCTION fakt_za_destinaciju( cIdPartner, cDestinacija, cIdRoba )
 
    LOCAL cQuery, oRez
@@ -1319,7 +1322,7 @@ FUNCTION fakt_za_destinaciju( cIdPartner, cDestinacija, cIdRoba )
    ENDDO
 
    RETURN cBrDok
-
+#endif
 
 STATIC FUNCTION _trenutno_na_stanju_kalk( id_rj, tip_dok, id_roba )
 

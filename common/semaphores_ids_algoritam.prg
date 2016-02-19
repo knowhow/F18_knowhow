@@ -19,6 +19,7 @@ FUNCTION ids_synchro( dbf_table )
 
    LOCAL nI, hIdsQueries
    LOCAL _zap, aDbfRec
+   LOCAL lRet := .T.
 
    aDbfRec := get_a_dbf_rec( dbf_table, .T. )
    hIdsQueries := create_queries_from_ids( aDbfRec[ 'table' ] )
@@ -53,13 +54,18 @@ FUNCTION ids_synchro( dbf_table )
       IF hIdsQueries[ "ids" ][ nI ] != NIL
          log_write( "ids_synchro ids_queries: [" + Alltrim( STR( nI ) ) + "]=" + pp( hIdsQueries[ "ids" ][ nI ]  ), 9 )
          delete_ids_in_dbf( aDbfRec[ 'table' ], hIdsQueries[ "ids" ][ nI ], nI )
-         fill_dbf_from_server( aDbfRec[ 'table' ], hIdsQueries[ "qry" ][ nI ] )
+         lRet := fill_dbf_from_server( aDbfRec[ 'table' ], hIdsQueries[ "qry" ][ nI ] )
+
+         IF !lRet
+            EXIT
+         ENDIF
+
       ENDIF
    NEXT
 
    log_write( "END ids_synchro", 9 )
 
-   RETURN .T.
+   RETURN lRet
 
 
 // -------------------------------------------------
@@ -407,7 +413,7 @@ FUNCTION delete_ids_in_dbf( dbf_table, ids, nAlgoritam )
    IF skip_semaphore_sync( aDbfRec[ "table" ] )
       RETURN .T.
    ENDIF
-   
+
    _alg := aDbfRec[ "algoritam" ]
    _dbf_tag := _alg[ nAlgoritam ][ "dbf_tag" ]
    _key_block := _alg[ nAlgoritam ][ "dbf_key_block" ]

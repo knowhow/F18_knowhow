@@ -14,6 +14,10 @@
 STATIC s_hInDbfRefresh := NIL
 STATIC s_aLastRefresh := { "x", 0 }
 
+#ifdef F18_SIMULATE_BUG
+STATIC s_nBug1 := 1
+#endif
+
 MEMVAR m_x, m_y
 /*
    moguci statusi:
@@ -334,10 +338,12 @@ FUNCTION table_count( table, condition )
 FUNCTION fill_dbf_from_server( dbf_table, sql_query, sql_fetch_time, dbf_write_time, lShowInfo )
 
    LOCAL _counter := 0
-   LOCAL _i, _fld, cField
-   LOCAL _qry_obj
+   LOCAL _i, bFieldBlock, cField
+   LOCAL oDataSet
    LOCAL _retry := 3
    LOCAL aDbfRec, aDbfFields, cSyncalias, cFullDbf, cFullIdx
+   LOCAL nI, cMsg, cCallMsg := "", oError
+   LOCAL lRet := .T.
 
    IF lShowInfo == NIL
       lShowInfo := .F.
@@ -347,7 +353,7 @@ FUNCTION fill_dbf_from_server( dbf_table, sql_query, sql_fetch_time, dbf_write_t
    aDbfFields := aDbfRec[ "dbf_fields" ]
 
    sql_fetch_time := Seconds()
-   _qry_obj := run_sql_query( sql_query, _retry )
+   oDataSet := run_sql_query( sql_query, _retry )
    sql_fetch_time := Seconds() - sql_fetch_time
 
    log_write( "fill_dbf_from_server START", 9 )
@@ -375,53 +381,82 @@ FUNCTION fill_dbf_from_server( dbf_table, sql_query, sql_fetch_time, dbf_write_t
       ?E "syncalias ", cSyncAlias, "vec otvoren ?!"
    ENDIF
 
+   BEGIN SEQUENCE WITH {| err| Break( err ) }
+      DO WHILE !oDataSet:Eof()
 
-   DO WHILE !_qry_obj:Eof()
+         ++ _counter
+         APPEND BLANK
 
-      ++ _counter
-      APPEND BLANK
-
-      FOR _i := 1 TO Len( aDbfFields )
+         FOR _i := 1 TO Len( aDbfFields )
 
 /*
          IF log_level() > 8
             ?E "for petlja ", _i, " fill_dbf:", dbf_table, "a_dbf_rec dbf_fields: ", pp( aDbfFields )
          ENDIF
   */
-         cField := aDbfFields[ _i ]
 
-         _fld := FieldBlock( cField )
+            cField := aDbfFields[ _i ]  // 19.02.2016 WINDOWS ONLY BUG variable not found  ?!
+#ifdef F18_SIMULATE_BUG
+            IF  _counter == 100 .AND. _i == 1 .AND.  aDbfRec[ "table" ] == 'fin_suban'
+               IF s_nBug1 < 2
+                  cField := "simulate_bug"
+                  s_nBug1++
+                  error_bar( "simul_bug",  "simuliram bug na tabeli " + aDbfRec[ "table" ] )
+               ELSE
+                  info_bar( "simul_bug", "simuliram bug - otklonjen bug " + aDbfRec[ "table" ] )
+               ENDIF
+            ENDIF
+#endif
+            bFieldBlock := FieldBlock( cField )
 
-         IF ValType( Eval( _fld ) ) $ "CM"
-            Eval( _fld, hb_UTF8ToStr( _qry_obj:FieldGet( _qry_obj:FieldPos( aDbfFields[ _i ] ) ) ) )
-         ELSE
-            Eval( _fld, _qry_obj:FieldGet( _qry_obj:FieldPos( aDbfFields[ _i ] ) ) )
+            IF ValType( Eval( bFieldBlock ) ) $ "CM"
+               Eval( bFieldBlock, hb_UTF8ToStr( oDataSet:FieldGet( oDataSet:FieldPos( cField ) ) ) )
+            ELSE
+               Eval( bFieldBlock, oDataSet:FieldGet( oDataSet:FieldPos( cField ) ) )
+            ENDIF
+
+         NEXT
+
+         IF lShowInfo
+            IF _counter % 500 == 0
+               ?E "synchro '" + dbf_table + "' broj obradjenih zapisa: " + AllTrim( Str( _counter ) )
+            ENDIF
          ENDIF
 
-      NEXT
+         oDataSet:Skip()
 
-      IF lShowInfo
-         IF _counter % 500 == 0
-            ?E "synchro '" + dbf_table + "' broj obradjenih zapisa: " + AllTrim( Str( _counter ) )
-         ENDIF
+      ENDDO
+
+   RECOVER USING oError
+
+      LOG_CALL_STACK cCallMsg
+      cCallMsg := "fill_dbf ERROR: " + aDbfRec[ "table" ] + " / " + oError:description + " " + cCallMsg
+      ?E cCallMsg
+      error_bar( "fill_dbf", cCallMsg )
+      unset_a_dbf_rec_chk0( aDbfRec[ "table" ] )
+      IF Select( cSyncAlias ) > 0
+         USE
+         open_exclusive_zap_close( aDbfRec[ "table" ] )
       ENDIF
 
-      _qry_obj:Skip()
+      lRet := .F.
 
-   ENDDO
+   END SEQUENCE
 
    IF Select( cSyncAlias ) > 0
       USE
    ENDIF
 
-   log_write( "fill_dbf_from_server: " + dbf_table + ", count: " + AllTrim( Str( _counter ) ), 7 )
-   log_write( "fill_dbf_from_server END", 9 )
+   IF lRet
+      log_write( "fill_dbf_from_server: " + dbf_table + ", count: " + AllTrim( Str( _counter ) ), 7 )
+   ENDIF
+   log_write( "fill_dbf_from_server END" + iif( lRet, "", "ERR" ), 9 )
 
    dbf_write_time := Seconds() - dbf_write_time
 
    PopWa()
 
-   RETURN .T.
+   RETURN lRet
 
 
 
@@ -652,7 +687,6 @@ FUNCTION dbf_refresh( cTable )
 
    aDbfRec := get_a_dbf_rec( cTable, .T. )
 
-
    IF in_dbf_refresh( aDbfRec[ 'table' ] )
 #ifdef F18_DEBUG
       ?E  aDbfRec[ 'table' ], "in_dbf_refresh"
@@ -713,6 +747,7 @@ STATIC FUNCTION dbf_refresh_0( aDbfRec )
 
    LOCAL cMsg1, cMsg2
    LOCAL nCntSql, nCntDbf, nDeleted
+   LOCAL lRet := .T.
 
    IF is_chk0( aDbfRec[ "table" ] )
       log_write( "chk0 already set: " + aDbfRec[ "table" ], 9 )
@@ -734,7 +769,7 @@ STATIC FUNCTION dbf_refresh_0( aDbfRec )
 
    log_write( cMsg1 + " " + cMsg2, 8 )
 
-   check_recno_and_fix( aDbfRec[ "table" ], nCntSql, nCntDbf - nDeleted )
+   lRet := check_recno_and_fix( aDbfRec[ "table" ], nCntSql, nCntDbf - nDeleted )
 
    cMsg1 := aDbfRec[ "alias" ] + " / " + aDbfRec[ "table" ]
    cMsg2 := "cnt_sql: " + AllTrim( Str( nCntSql, 0 ) ) + " cnt_dbf: " + AllTrim( Str( nCntDbf, 0 ) ) + " del_dbf: " + AllTrim( Str( nDeleted, 0 ) )
@@ -742,14 +777,15 @@ STATIC FUNCTION dbf_refresh_0( aDbfRec )
    ?E cMsg1
    ?E cMsg2
 
-
    log_write( "END refresh_me " +  cMsg1 + " " + cMsg2, 8 )
 
    IF hocu_li_pakovati_dbf( nCntDbf, nDeleted )
       pakuj_dbf( aDbfRec, .T. )
    ENDIF
 
-   set_a_dbf_rec_chk0( aDbfRec[ "table" ] )
+   IF lRet
+      set_a_dbf_rec_chk0( aDbfRec[ "table" ] )
+   ENDIF
 
    RETURN .T.
 

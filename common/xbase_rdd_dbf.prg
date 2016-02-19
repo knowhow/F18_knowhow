@@ -267,7 +267,6 @@ FUNCTION reopen_dbf( excl, dbf_table, open_index )
    BEGIN SEQUENCE WITH {| err| Break( err ) }
 
       dbUseArea( .F., DBFENGINE, _dbf, _a_dbf_rec[ "alias" ], iif( excl, .F., .T. ), .F. )
-
       IF open_index
          IF File( ImeDbfCdx( _dbf ) )
             dbSetIndex( ImeDbfCDX( _dbf ) )
@@ -278,7 +277,7 @@ FUNCTION reopen_dbf( excl, dbf_table, open_index )
    RECOVER USING _err
 
       cMsg := "tbl:" + _a_dbf_rec[ "table" ] + " : " + _err:description +  " excl:" + ToStr( excl )
-      error_bar( "reopen_dbf", cMsg )
+      error_bar( "reopen_dbf" + _a_dbf_rec[ "table" ], cMsg )
       log_write( "ERR-reopen_dbf " + cMsg, 2 )
       lRet := .F.
 
@@ -308,7 +307,7 @@ FUNCTION reopen_exclusive_and_zap( cDbfTable, open_index )
    RECOVER USING _err
 
       log_write( "ERROR-REXCL-ZAP " + _err:Description, 3 )
-      error_bar( "reopen_dbf_zap", cDbfTable + " / " + _err:Description )
+      error_bar( "reopen_dbf_zap:" + cDbfTable, cDbfTable + " / " + _err:Description )
       reopen_dbf( .F., cDbfTable, open_index )
       zapp()
 
@@ -316,6 +315,33 @@ FUNCTION reopen_exclusive_and_zap( cDbfTable, open_index )
 
    RETURN .T.
 
+
+FUNCTION open_exclusive_zap_close( cDbfTable, open_index )
+
+   LOCAL _err
+
+   IF open_index == NIL
+      open_index := .T.
+   ENDIF
+
+
+   BEGIN SEQUENCE WITH {| err | Break( err ) }
+
+      reopen_dbf( .T., cDbfTable, open_index )
+      ZAP
+      USE
+
+   RECOVER USING _err
+
+      log_write( "ERROR-OXCL-ZAP " + _err:Description, 3 )
+      error_bar( "open_zap_close:" + cDbfTable, cDbfTable + " / " + _err:Description )
+      reopen_dbf( .F., cDbfTable, open_index )
+      zapp()
+      USE
+
+   END SEQUENCE
+
+   RETURN .T.
 
 FUNCTION my_dbf_zap( cTabelaOrAlias )
 

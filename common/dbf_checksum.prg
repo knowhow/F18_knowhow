@@ -17,6 +17,7 @@ FUNCTION check_recno_and_fix( cDbfAlias, nCntSql, nCntDbf )
    LOCAL _a_dbf_rec
    LOCAL _sql_table
    LOCAL cErrMsg
+   LOCAL lRet := .T.
 
    _a_dbf_rec :=  get_a_dbf_rec( cDbfAlias )
    _sql_table :=  my_server_params()[ "schema" ] + "." + _a_dbf_rec[ "table" ]
@@ -36,8 +37,8 @@ FUNCTION check_recno_and_fix( cDbfAlias, nCntSql, nCntDbf )
       // TODO: vratiti ili izbrisati notify_podrska( cErrMsg )
       error_bar( "check_recno_diff", cErrMsg )
 
-      full_synchro( _a_dbf_rec[ "table" ], 50000, "dbf_cnt_before: " + AllTrim( Str( nCntDbf, 10, 0 ) ) )
+      lRet := full_synchro( _a_dbf_rec[ "table" ], 50000, "dbf_cnt_before: " + AllTrim( Str( nCntDbf, 10, 0 ) ) )
 
    ENDIF
 
-   RETURN .T.
+   RETURN lRet

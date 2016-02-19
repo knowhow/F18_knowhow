@@ -30,7 +30,7 @@ FUNCTION full_synchro( dbf_table, step_size, cInfo )
    LOCAL _opened
    LOCAL _sql_fetch_time, _dbf_write_time
    LOCAL _msg
-
+   LOCAL lRet := .T.
 
    IF step_size == NIL
       step_size := 20000
@@ -51,9 +51,7 @@ FUNCTION full_synchro( dbf_table, step_size, cInfo )
 
    _sql_order  := aDbfRec[ "sql_order" ]
 
-   // nuliranje tabele
-   reopen_exclusive_and_zap( aDbfRec[ "table" ], .T., .T. )
-   USE
+   open_exclusive_zap_close( aDbfRec[ "table" ] ) // nuliranje tabele
 
    info_bar( "x", "full synchro: " + _sql_table + " => " + dbf_table )
 
@@ -71,7 +69,7 @@ FUNCTION full_synchro( dbf_table, step_size, cInfo )
       RaiseError( _msg )
    ENDIF
 
-   info_bar( "fsync:" + dbf_table, dbf_table  + " : " + cInfo + " sql_cnt:" + Alltrim( STR(_count, 10, 0)) )
+   info_bar( "fsync:" + dbf_table, dbf_table  + " : " + cInfo + " sql_cnt:" + AllTrim( Str( _count, 10, 0 ) ) )
 
    FOR _offset := 0 TO _count STEP step_size
 
@@ -81,16 +79,16 @@ FUNCTION full_synchro( dbf_table, step_size, cInfo )
 
       log_write( "GET FROM SQL full_synchro tabela: " + dbf_table + " " + AllTrim( Str( _offset ) ) + " / qry: " + _qry, 7 )
 
-      fill_dbf_from_server( dbf_table, _qry, @_sql_fetch_time, @_dbf_write_time, .T. )
+      lRet := fill_dbf_from_server( dbf_table, _qry, @_sql_fetch_time, @_dbf_write_time, .T. )
 
-      info_bar( "fsync:" + dbf_table, "sql fetch time: " + AllTrim( Str( _sql_fetch_time ) ) + " dbf write time: " + AllTrim( Str( _dbf_write_time ) ) )
+      IF !lRet
+         run_sql_query( "ROLLBACK" )
+         error_bar( "fsync:" + dbf_table, "ERROR-END full_synchro: " + dbf_table )
+         RETURN lRet
+      ENDIF
 
-      //@ m_x + 10, m_y + 2 SAY _offset + step_size
-      //@ Row(), Col() + 2 SAY "/"
-      //@ Row(), Col() + 2 SAY _count
-      info_bar( "x", "STEP full_synchro tabela: " + dbf_table + " " + AllTrim( Str( _offset + step_size ) ) + " / " + AllTrim( Str( _count ) ) )
-
-      //log_write( "STEP full_synchro tabela: " + dbf_table + " " + AllTrim( Str( _offset + step_size ) ) + " / " + AllTrim( Str( _count ) ), 7 )
+      // info_bar( "fsync:" + dbf_table, "sql fetch time: " + AllTrim( Str( _sql_fetch_time ) ) + " dbf write time: " + AllTrim( Str( _dbf_write_time ) ) )
+      info_bar( "fsync:" + dbf_table, "STEP full_synchro tabela: " + dbf_table + " " + AllTrim( Str( _offset + step_size ) ) + " / " + AllTrim( Str( _count ) ) )
 
    NEXT
 
@@ -110,4 +108,4 @@ FUNCTION full_synchro( dbf_table, step_size, cInfo )
 
    set_a_dbf_rec_chk0( aDbfRec[ "table" ] )
 
-   RETURN .T.
+   RETURN lRet

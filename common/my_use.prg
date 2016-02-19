@@ -138,13 +138,10 @@ FUNCTION my_use( cAlias, cTable, lRefresh )
       thread_dbfs( hb_threadStart(  @thread_dbf_refresh(), aDbfRec[ 'table' ] ) )
    ENDIF
 
-   // hb_bitOr( HB_THREAD_INHERIT_PUBLIC, HB_THREAD_MEMVARS_COPY ),
-
    cFullDbf := my_home() + aDbfRec[ 'table' ]
    cFullIdx := ImeDbfCdx( cFullDbf )
 
    nCnt := 0
-
    lUspjesno := .F.
    DO WHILE ( !lUspjesno ) .AND. ( nCnt < 5 )
 
@@ -163,7 +160,6 @@ FUNCTION my_use( cAlias, cTable, lRefresh )
          IF File(  cFullIdx )
             dbSetIndex( cFullIdx )
          ENDIF
-
 
          lUspjesno := .T.
 

@@ -42,6 +42,7 @@ FUNCTION update_dbf_from_server( table, algoritam )
    LOCAL _ids_queries
    LOCAL _table
    LOCAL _a_dbf_rec
+   LOCAL lRet
 
    _a_dbf_rec  := get_a_dbf_rec( table )
    _dbf_fields := _a_dbf_rec[ "dbf_fields" ]
@@ -66,14 +67,14 @@ FUNCTION update_dbf_from_server( table, algoritam )
 
       log_write( "iniciraj full synchro:" + table, 8 )
       // full synchro ne treba otvorenu tabelu, on je ionako zapuje
-      full_synchro ( table, _step, " ALG_FULL " )
+      lRet := full_synchro ( table, _step, " ALG_FULL " )
 
    ELSE
       log_write( "iniciraj ids synchro:" + table, 8 )
-      ids_synchro  ( table )
+      lRet := ids_synchro  ( table )
    ENDIF
 
    log_write( "update_dbf_from_server table: " + table + " synchro cache: " + Str( Seconds() - _seconds ), 5 )
    log_write( "END update_dbf_from_server", 9 )
 
-   RETURN .T.
+   RETURN lRet

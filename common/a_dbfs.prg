@@ -280,12 +280,17 @@ FUNCTION get_a_dbf_rec( tbl, _only_basic_params )
 
    RETURN _rec
 
-FUNCTION set_a_dbf_rec_chk0( table )
+FUNCTION set_a_dbf_rec_chk0( cTable )
 
-   __f18_dbfs[ table ][ "chk0" ] := .T.
+   __f18_dbfs[ cTable ][ "chk0" ] := .T.
 
    RETURN .T.
 
+FUNCTION unset_a_dbf_rec_chk0( cTable )
+
+   __f18_dbfs[ cTable ][ "chk0" ] := .F.
+
+   RETURN .T.
 
 FUNCTION is_chk0( table )
 

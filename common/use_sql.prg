@@ -76,7 +76,7 @@ FUNCTION use_sql( table, sql_query, cAlias )
       //logiraj( "use_sql: " + oError:description + " sql query:" + sql_query, HB_LOG_ERROR )
       Alert( "use_sql ERR:" + oError:description + " " + sql_query)
       RETURN .F.
-   ENDSEQUENCE
+   END SEQUENCE
 
    rddSetDefault( "DBFCDX" )
 

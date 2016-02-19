@@ -12,9 +12,7 @@
 #include "f18.ch"
 
 
-// ----------------------------------------------------
-// setovanje podataka organizacione jedinice
-// ----------------------------------------------------
+
 FUNCTION parametri_organizacije( set_params )
 
    LOCAL _x := 1
@@ -88,22 +86,9 @@ FUNCTION parametri_organizacije( set_params )
 
 
 
-FUNCTION SetPDVBoje()
-
-   IF ValType( goModul:oDesktop ) != "O"
-      RETURN .F.
-   ENDIF
-
-      PDVBoje()
-      goModul:oDesktop:showMainScreen()
-      StandardBoje()
-
-   RETURN .T.
-
-
 FUNCTION SetValuta()
 
-   PUBLIC gOznVal := "KM"
+
 
    RETURN .T.
 

@@ -64,15 +64,15 @@ FUNCTION p_sifra( nDbf, xIndex, nVisina, nSirina, cNaslov, cID, dx, dy,  bBlok, 
    sif_sql_seek( @cId, @cIdBK, @cUslovSrch, @cNazSrch, fId_j, cOrderTag )
 
 
-   IF VALTYPE( dx ) == "N" .AND. dx < 0
+   IF ValType( dx ) == "N" .AND. dx < 0
 
       IF !Found()
          GO BOTTOM
          SKIP
-         cRet := EVAL( ImeKol[ -dx, 2 ] )
+         cRet := Eval( ImeKol[ - dx, 2 ] )
          SKIP -1
       ELSE
-         cRet := EVAL( ImeKol[ -dx, 2 ] )
+         cRet := Eval( ImeKol[ - dx, 2 ] )
       ENDIF
 
       PopSifV()
@@ -652,8 +652,6 @@ STATIC FUNCTION edit_sql_sif_item( Ch, cOrderTag, aZabIsp, lNovi )
 
    ENDDO
 
-altd()
-
    IF Ch == K_CTRL_N .OR. Ch == K_F2
       ordSetFocus( cOrderTag )
    ENDIF
@@ -1075,7 +1073,6 @@ FUNCTION sifarnik_brisi_stavku()
 
    PushWA()
 
-   altd()
    sql_table_update( nil, "BEGIN" )
    IF !f18_lock_tables( { cAlias }, .T. )
       sql_table_update( nil, "END" )
@@ -1089,7 +1086,7 @@ FUNCTION sifarnik_brisi_stavku()
 
    lOk := delete_rec_server_and_dbf( cAlias, _rec_dbf, 1, "CONT" )
 
-   IF lOk .AND. ALIAS() != "SIFK" .AND. hb_HHasKey( _rec_dbf, "id" )
+   IF lOk .AND. Alias() != "SIFK" .AND. hb_HHasKey( _rec_dbf, "id" )
       O_SIFK
       O_SIFV
       _rec := hb_Hash()

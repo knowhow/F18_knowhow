@@ -131,7 +131,7 @@ METHOD setColors( cIzbor )
 
 METHOD showSezona( cSezona )
 
-   @ 3, MAXCOLS() -10 SAY "Sez: " + cSezona COLOR gColorInvert 
+   @ 3, MAXCOLS() -10 SAY "Sez: " + cSezona COLOR gColorInvert
 
    RETURN .T.
 
@@ -148,11 +148,9 @@ METHOD showMainScreen( lClear )
       CLEAR
    ENDIF
 
-   @ 0, 2 SAY '<ESC> Izlaz' COLOR gColorInvert 
-   @ 0, Col() + 2 SAY danasnji_datum() COLOR gColorInvert 
+   @ 0, 2 SAY '<ESC> Izlaz' COLOR gColorInvert
+   @ 0, Col() + 2 SAY danasnji_datum() COLOR gColorInvert
 
-   // TODO: ukloniti
-   // @ MAXROWS() - 1, MAXCOLS() - 16 SAY fmklibver()
 
    DispBox( 2, 0, 4, MAXCOLS() - 1, B_DOUBLE + ' ', NORMAL )
 
@@ -160,7 +158,7 @@ METHOD showMainScreen( lClear )
       DispBox( 5, 0, MAXROWS() - 1, MAXCOLS() - 1, B_DOUBLE + "±", gColorInvert  )
    ENDIF
 
-   @ _ver_pos, 1 SAY PadC( gNaslov + ' Ver.' + gVerzija, MAXCOLS() - 8 ) COLOR NORMAL
+   @ _ver_pos, 1 SAY PadC( gNaslov + ' Ver.' + F18_VER, MAXCOLS() - 8 ) COLOR NORMAL
 
    f18_ispisi_status_log_levela()
    f18_ispisi_status_podrucja( _ver_pos )

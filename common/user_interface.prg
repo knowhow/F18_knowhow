@@ -16,27 +16,6 @@ THREAD STATIC aBoxStack := {}
 THREAD STATIC aPrStek := {}
 THREAD STATIC aMsgStack := {}
 
-FUNCTION init_gui( clear )
-
-   PUBLIC m_x := 0
-   PUBLIC m_y := 0
-
-   PUBLIC gNaslov  := "F18 " + F18_VER + " " + F18_VER_DATE + "/ lib: " + FMK_LIB_VER
-
-   PUBLIC gModul   := "F18"
-   PUBLIC gVerzija := F18_VER
-
-   PUBLIC gColorInvert    := .T.
-   PUBLIC Normal   := "GR+/B,R/N+,,,N/W"
-
-   IF clear == NIL
-      clear := .T.
-   ENDIF
-
-   NaslEkran( clear )
-
-   RETURN .T.
-
 
 
 FUNCTION Calc_xy( m_x, m_y, N, Length )
@@ -1023,38 +1002,9 @@ FUNCTION UGlavnomMeniju()
 
 
 
-// #define BOX_CHAR_BACKGROUND Chr( 176 )
-#define BOX_CHAR_BACKGROUND Chr( 177 )
-#define BOX_CHAR_BACKGROUND_HEAD " "
 
 
-
-FUNCTION NaslEkran( fBox )
-
-   LOCAL _max_cols := MAXCOLS()
-   LOCAL _max_rows := MAXROWS()
-
-   IF fBox
-      CLEAR
-   ENDIF
-
-   @ 0, 2 SAY '<ESC> Izlaz' COLOR gColorInvert
-   @ 0, Col() + 2 SAY Date() COLOR gColorInvert
-   @ _max_rows - 1, _max_cols - 16  SAY fmklibver()
-
-   DispBox( 2, 0, 4, _max_cols - 1, B_DOUBLE + BOX_CHAR_BACKGROUND_HEAD, NORMAL )
-
-   IF fBox
-      DispBox( 5,0, _max_rows - 1, _max_cols - 1, B_DOUBLE + BOX_CHAR_BACKGROUND, gColorInvert  )
-   ENDIF
-
-   @ 3, 1 SAY PadC( gNaslov, _max_cols - 8 ) COLOR NORMAL
-
-   RETURN
-
-
-
-FUNCTION StandardBoje()
+FUNCTION set_standardne_boje()
 
    PUBLIC  gColorInvert
    PUBLIC  Normal
@@ -1082,7 +1032,8 @@ FUNCTION StandardBoje()
    RETURN NIL
 
 
-FUNCTION PDVBoje()
+/*
+FUNCTION set_boje_2()
 
    PUBLIC  gColorInvert
    PUBLIC  Normal
@@ -1108,7 +1059,7 @@ FUNCTION PDVBoje()
    ENDIF
 
    RETURN NIL
-
+*/
 
 
 
@@ -1234,29 +1185,6 @@ FUNCTION ShowKorner( nS, nStep, nDelta )
 
    RETURN .T.
 
-
-
-FUNCTION ToggleINS()
-
-   LOCAL nx
-   LOCAL ny
-
-   nx := Row()
-   ny := Col()
-
-   IF ReadInsert( !ReadInsert() )
-      SetCursor( 1 )
-      @ 0, MAXCOLS() - 20 SAY '< OVER >' COLOR gColorInvert
-   ELSE
-      SetCursor( 2 )
-      @ 0, MAXCOLS() - 20 SAY  '< INS  >' COLOR gColorInvert
-   ENDIF
-
-   @ 0, MAXCOLS() - 11 SAY "bring.out" COLOR "GR+/B"
-
-   SetPos( nx, ny )
-
-   RETURN .T.
 
 
 

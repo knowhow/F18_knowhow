@@ -86,6 +86,10 @@
 #define D_STAROST_DANA   25
 
 
+// #define BOX_CHAR_BACKGROUND Chr( 176 )
+#define BOX_CHAR_BACKGROUND Chr( 177 )
+#define BOX_CHAR_BACKGROUND_HEAD " "
+
 #define oF_ERROR_MIN          1
 #define oF_CREATE_OBJECT      1
 #define oF_OPEN_FILE          2

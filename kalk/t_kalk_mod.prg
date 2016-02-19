@@ -345,5 +345,6 @@ METHOD set_module_gvars()
    gNW := "X" // TODO: pogledati u svim drugim modulima je "D" ?!
 
    info_bar( ::cName, ::cName + " - kalk set gvars end" )
+   info_bar( "KALK", "params in cache: " + Alltrim( Str( params_in_cache() ) ) )
 
    RETURN .T.

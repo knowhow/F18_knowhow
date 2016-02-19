@@ -13,14 +13,9 @@
 
 MEMVAR m_x, m_y
 
-/*! \fn PozdravMsg(cNaslov,cVer,nk)
- *  \brief Ispisuje ekran sa pozdravnom porukom
- *  \param cNaslov
- *  \param cVer
- *  \param nk
- */
 
-FUNCTION PozdravMsg( cNaslov, cVer, lGreska )
+
+FUNCTION naslovni_ekran_splash_screen( cNaslov, cVer )
 
    LOCAL lInvert
 
@@ -31,16 +26,12 @@ FUNCTION PozdravMsg( cNaslov, cVer, lGreska )
 
    @ m_x + 2, m_y + 2 SAY PadC( cNaslov, 60 )
    @ m_x + 3, m_y + 2 SAY PadC( "Ver. " + cVer, 60 )
-   @ m_x + 5, m_y + 2 SAY PadC( "bring.out d.o.o. Sarajevo", 60 )
+   @ m_x + 5, m_y + 2 SAY PadC( "bring.out d.o.o. Sarajevo (" + F18_DEV_PERIOD + ")", 60 )
    @ m_x + 7, m_y + 2 SAY PadC( "Juraja Najtharta 3, Sarajevo, BiH", 60 )
    @ m_x + 8, m_y + 2 SAY PadC( "tel: 033/269-291, fax: 033/269-292", 60 )
    @ m_x + 9, m_y + 2 SAY PadC( "web: http://bring.out.ba", 60 )
    @ m_x + 10, m_y + 2 SAY PadC( "email: podrska@bring.out.ba", 60 )
-   
-   IF lGreska
-      @ m_x + 11, m_y + 4 SAY8 "Prošli put program nije regularno završen"
-      Beep( 2 )
-   ENDIF
+
 
    Inkey( 5 )
 

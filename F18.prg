@@ -62,7 +62,7 @@ STATIC FUNCTION cre_arg_v_hash( hash )
 
 
 
-FUNCTION module_menu( arg_v )
+FUNCTION program_module_menu( arg_v )
 
    LOCAL menuop := {}
    LOCAL menuexec := {}
@@ -80,6 +80,7 @@ FUNCTION module_menu( arg_v )
    LOCAL _tmp
    LOCAL _color := "BG+/B"
 
+   info_bar( "init", "gen program_module_menu start")
    IF arg_v == NIL
       // napravi NIL parametre
       cre_arg_v_hash( @arg_v )
@@ -90,11 +91,9 @@ FUNCTION module_menu( arg_v )
       ++ _count
 
       CLEAR SCREEN
-
       _db_params := my_server_params()
 
       _x := 1
-
       @ _x, mnu_left + 1 SAY8 "Tekuća baza: " + AllTrim( _db_params[ "database" ] ) + " / db ver: " + _server_db_version + " / nivo logiranja: " + AllTrim( Str( log_level() ) )
 
       ++ _x
@@ -122,9 +121,10 @@ FUNCTION module_menu( arg_v )
       menuop := {}
       menuexec := {}
 
-      // setuj odabir
-      set_menu_choices( @menuop, @menuexec, arg_v[ "p3" ], arg_v[ "p4" ], arg_v[ "p5" ], arg_v[ "p6" ], arg_v[ "p7" ] )
 
+      set_program_module_menu( @menuop, @menuexec, arg_v[ "p3" ], arg_v[ "p4" ], arg_v[ "p5" ], arg_v[ "p6" ], arg_v[ "p7" ] )
+
+      info_bar( "init", "gen program_module_menu end")
 
       mnu_choice := ACHOICE2( mnu_top, mnu_left, mnu_bottom, mnu_right, menuop, .T., "MenuFunc", 1 )
 
@@ -147,12 +147,14 @@ FUNCTION module_menu( arg_v )
 
    ENDDO
 
+   info_bar( _db_params[ "database" ], "program_module_menu end")
+
    RETURN .T.
 
 // -----------------------------------------------------------------------------
 // setuje matricu sa odabirom za meni
 // -----------------------------------------------------------------------------
-STATIC FUNCTION set_menu_choices( menuop, menuexec, p3, p4, p5, p6, p7 )
+STATIC FUNCTION set_program_module_menu( menuop, menuexec, p3, p4, p5, p6, p7 )
 
    LOCAL _count := 0
    LOCAL cMenuBrojac

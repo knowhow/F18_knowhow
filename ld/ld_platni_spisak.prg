@@ -689,9 +689,7 @@ FUNCTION ld_pregled_isplate_za_tekuci_racun( cVarijanta )
    cProred := "N"
    cPrikIzn := "D"
    nZkk := gZaok
-   IF IsMupZeDo()
-      cZaBanku := "N"
-   ENDIF
+
    PRIVATE cIsplata := ""
    PRIVATE cLokacija
    PRIVATE cConstBrojTR
@@ -717,9 +715,7 @@ FUNCTION ld_pregled_isplate_za_tekuci_racun( cVarijanta )
    @ m_x + 7, m_y + 2 SAY "Banka (prazno-sve) :" GET cIdBanka VALID Empty( cIdBanka ) .OR. P_Kred( @cIdBanka )
    @ m_x + 8, m_y + 2 SAY "Sortirati po(1-sifri,2-prezime+ime)"  GET cVarSort VALID cVarSort $ "12"  PICT "9"
 
-   IF ( IsMupZeDo() )
-      @ m_x + 9, m_y + 2 SAY "Snimiti izvjestaj za banku (D/N)?"  GET cZaBanku VALID cZaBanku $ "DN"  PICT "@!"
-   ENDIF
+
 
    READ
 
@@ -730,9 +726,6 @@ FUNCTION ld_pregled_isplate_za_tekuci_racun( cVarijanta )
 
    set_metric( "ld_platni_spisak_sortiranje", my_user(), cVarSort )
 
-   IF ( IsMupZeDo() .AND. cZaBanku == "D" )
-      CreateFileBanka()
-   ENDIF
 
    SELECT ld
    // CREATE_INDEX("LDi1","str(godina)+idrj+str(mjesec)+idradn","LD")
@@ -857,16 +850,7 @@ FUNCTION ld_pregled_isplate_za_tekuci_racun( cVarijanta )
          IF cProred == "D"
             ?
          ENDIF
-         IF IsMupZeDo() .AND. cZaBanku == "D"
-            cUpisiZaBanku := ""
-            cUpisiZaBanku += cConstBrojTR
-            cUpisiZaBanku += cZaBnkIznos
-            cUpisiZaBanku += cZaBnkTekRn
-            cUpisiZaBanku += cZaBnkRadnik
-            Write2File( nH, cUpisiZaBanku, .T. )
-            // reset varijable
-            cUpisiZaBanku := ""
-         ENDIF
+
 
          nT1 += _usati
          nT2 += _uneto
@@ -894,15 +878,11 @@ FUNCTION ld_pregled_isplate_za_tekuci_racun( cVarijanta )
    ENDDO
 
 
-   IF ( IsMupZeDo() .AND. cZaBanku == "D" )
-      CloseFileBanka( nH )
-   ENDIF
-
    ENDPRINT
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
 
 FUNCTION ZIsplataTR()

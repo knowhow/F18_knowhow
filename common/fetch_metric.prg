@@ -13,11 +13,7 @@
 
 THREAD STATIC s_hParametri := NIL
 
-FUNCTION init_parameters_cache()
 
-   s_hParametri := hb_Hash()
-
-   RETURN .T.
 
 FUNCTION fetch_metric( sect, user, default_value )
 
@@ -175,3 +171,23 @@ FUNCTION get_set_user_param( param_name, value, def_value )
    ENDIF
 
    RETURN _ret
+
+
+
+
+FUNCTION init_parameters_cache()
+
+   s_hParametri := hb_Hash()
+
+   RETURN .T.
+
+
+FUNCTION params_in_cache()
+
+   LOCAL cKey, nCnt := 0
+
+   FOR EACH cKey IN s_hParametri:Keys
+      nCnt ++
+   NEXT
+
+   RETURN nCnt

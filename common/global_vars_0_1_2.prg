@@ -19,7 +19,6 @@ FUNCTION set_global_vars_0()
    PUBLIC GW_STATUS := "-"
    PUBLIC GW_HANDLE := 0
    PUBLIC gModul := ""
-   PUBLIC gVerzija := ""
    PUBLIC gSQL := "N"
    PUBLIC gSQLLogBase := ""
    PUBLIC ZGwPoruka := ""
@@ -224,11 +223,9 @@ FUNCTION set_global_vars_2()
 
    info_bar( "init", "set global_vars_2 - start" )
 
-   SetSpecifVars()
-   SetValuta()
    init_printer()
-   SetPDVBoje()
 
+   PUBLIC gOznVal := "KM"
    PUBLIC gFirma := "10"
    PUBLIC gNFirma := PadR( "", 50 )
    PUBLIC gTS := PadR( "Preduzece", 20 )

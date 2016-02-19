@@ -577,4 +577,6 @@ METHOD set_module_gvars()
 
    fiscal_opt_active()
 
-   RETURN
+   info_bar( "FAKT", "params in cache: " + Alltrim( Str( params_in_cache() ) ) )
+
+   RETURN .T.

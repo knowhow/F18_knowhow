@@ -38,7 +38,7 @@ FUNCTION f18_menu( cIzp, main_menu, izbor, opc, opcexe )
             IF cOdgovor == "D"
                EXIT
             ELSEIF cOdgovor == "L"
-               Prijava()
+               // TODO: brisati Prijava()
                Izbor := 1
                @ 4, 5 SAY ""
                LOOP

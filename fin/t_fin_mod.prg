@@ -112,8 +112,7 @@ METHOD set_module_gvars()
    gTema := "OSN_MENI"
    gGlBaza := "SUBAN.DBF"
 
-
-
    fin_params( .T. )
 
+   info_bar( "FIN", "params in cache: " + Alltrim( Str( params_in_cache() ) ) )
    RETURN .T.

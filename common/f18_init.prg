@@ -73,11 +73,9 @@ FUNCTION f18_init_app( arg_v )
    set_global_vars_0()
 
    f18_error_block()
-
-   AltD()
    set_screen_dimensions()
 
-   //init_gui()
+   // set_global_screen_vars()
 
    IF no_sql_mode()
       set_f18_home( "f18_test" )
@@ -164,8 +162,7 @@ FUNCTION f18_init_app_login( force_connect, arg_v )
 
             show_sacekaj()
             post_login()
-            get_log_level_from_params()
-            module_menu( arg_v )
+            program_module_menu( arg_v )
 
          ENDIF
 
@@ -197,6 +194,8 @@ STATIC FUNCTION show_sacekaj()
 
 
    Set( _SET_EVENTMASK, INKEY_ALL )
+
+   naslovni_ekran_splash_screen( "F18", F18_VER )
 
    RETURN .T.
 
@@ -432,6 +431,13 @@ FUNCTION post_login( gVars )
    ENDIF
 
    init_parameters_cache()
+
+   set_global_vars_0()
+   set_global_screen_vars( .F. )
+   set_global_vars_2()
+   parametri_organizacije( .F. )
+   set_vars_za_specificne_slucajeve()
+
    server_log_enable()
 
    // ~/.F18/empty38/
@@ -456,6 +462,8 @@ FUNCTION post_login( gVars )
    set_hot_keys()
 
    say_database_info()
+   get_log_level_from_params()
+   
 
    RETURN .T.
 
@@ -488,7 +496,6 @@ FUNCTION is_in_main_thread()
 PROCEDURE thread_create_dbfs()
 
    LOCAL _ver
-
 
    init_parameters_cache()
 

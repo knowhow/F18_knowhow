@@ -20,8 +20,6 @@ FUNCTION p_refer( cId, dx, dy )
    PRIVATE ImeKol
    PRIVATE Kol
 
-altd()
-
    hWorkArea := PushWA()
 
    IF !hWorkArea[ 'sql' ] .AND. cId != NIL
@@ -43,7 +41,6 @@ altd()
       AAdd( Kol, nI )
    NEXT
 
-altd()
    xRet := p_sifra( F_REFER, 1, MAXROWS() - 15, 60, "Lista referenata", @cId, dx, dy )
 
    hWorkArea := PopWA()

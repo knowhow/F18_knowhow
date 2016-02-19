@@ -528,9 +528,9 @@ METHOD F18Backup:get_last_backup_date()
 // ------------------------------------------------
 FUNCTION f18_backup_data()
 
-   hb_threadStart( @f18_backup_data_thread(), NIL )
+   hb_threadStart( @thread_f18_backup(), NIL )
 
-   RETURN
+   RETURN .T.
 
 // ------------------------------------------------
 // poziv backupa podataka automatski...
@@ -566,15 +566,18 @@ FUNCTION f18_auto_backup_data( backup_type_def, start_now )
 
    // uslov za backup nije zadovoljen...
    IF ( !start_now .AND. ( _curr_date - oBackup:backup_interval ) > oBackup:last_backup ) .OR. start_now
-      hb_threadStart( @f18_backup_data_thread(), backup_type_def )
+      hb_threadStart( @thread_f18_backup(), backup_type_def )
    ENDIF
 
    RETURN
 
-FUNCTION f18_backup_data_thread( type_def )
+PROCEDURE thread_f18_backup( type_def )
 
    LOCAL oBackup
    LOCAL auto_backup := .T.
+
+   init_parameters_cache()
+   set_global_vars_0()
 
    _w := hb_gtCreate( f18_gt() )
 
@@ -586,8 +589,8 @@ FUNCTION f18_backup_data_thread( type_def )
    hb_gtSelect( _w )
    hb_gtReload( _w )
 
-   // globalne varijable, bitne za neke funkcije...
-   set_global_vars_0()
+
+
 
    // podesi boje...
    _set_color()
@@ -598,8 +601,7 @@ FUNCTION f18_backup_data_thread( type_def )
 
       oBackup:get_backup_path()
       oBackup:get_backup_interval()
-      // pokreni backup
-      oBackup:Backup_now( auto_backup )
+      oBackup:Backup_now( auto_backup ) // pokreni backup
 
       QUIT
 

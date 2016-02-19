@@ -134,8 +134,8 @@ FUNCTION pos_main_menu_level( KLevel, Fx, Fy )
 
 METHOD setScreen()
 
-   set_naslovni_ekran( self )
-   NaslEkran( .T. )
+   pripremi_naslovni_ekran( self )
+   crtaj_naslovni_ekran( .T. )
 
    RETURN
 
@@ -254,8 +254,8 @@ METHOD set_module_gvars()
    gIdRadnik := ""
    gStRad := ""
 
-   ToggleIns()
-   ToggleIns()
+   show_insert_over_stanje()
+   show_insert_over_stanje()
 
    SC_Opisi[1 ] := "1"
    SC_Opisi[2 ] := "2"

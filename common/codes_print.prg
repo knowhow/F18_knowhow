@@ -517,8 +517,7 @@ FUNCTION StampaTabele( aKol, bZaRed, nOdvoji, nCrtice, bUslov, lA4papir, cNaslov
    LOCAL xPodvuci := "", cPodvuci := " "
    LOCAL lFor := .F., k := 0
 
-   altd()
-   
+
    PRIVATE glNeSkipuj := .F.
 
    IF "U" $ Type( "gaDodStavke" ); gaDodStavke := {}; ENDIF

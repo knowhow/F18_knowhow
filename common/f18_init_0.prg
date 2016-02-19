@@ -24,12 +24,8 @@ FUNCTION start_f18_program_module( oApp, lSezone )
    LOCAL cImeDbf
    LOCAL _i
 
-
    gModul   := oApp:cName
    goModul  := oApp
-   gVerzija := oApp:cVerzija
-
-   set_naslovni_ekran( oApp )
 
    set_global_vars_1()
 
@@ -37,55 +33,17 @@ FUNCTION start_f18_program_module( oApp, lSezone )
       RETURN .T.
    ENDIF
 
-   set_global_vars_2()
 
    info_bar( oApp:cName, oApp:cName + " : start_program_module set global vars - start " )
    oApp:set_module_gvars()
    info_bar( oApp:cName, oApp:cName + " : start_program_module set global vars - end" )
 
+
+   pripremi_naslovni_ekran( oApp )
+   crtaj_naslovni_ekran( .T. )
+   show_insert_over_stanje()
+
    RETURN .T.
-
-
-
-FUNCTION set_naslovni_ekran( oApp )
-
-   gNaslov := oApp:cName + " F18, " + oApp:cPeriod
-
-
-   AFill( h, "" )
-
-   nOldCursor := iif( ReadInsert(), 2, 1 )
-
-   standardboje()
-
-   SET KEY K_INS TO ToggleINS()
-
-#ifdef __PLATFORM__DARWIN
-   SET KEY K_F12 TO ToggleIns()
-#endif
-
-
-   NaslEkran( .T. )
-   ToggleIns()
-   ToggleIns()
-
-   @ 10, 35 SAY ""
-   // prijava
-
-   IF !oApp:lStarted
-      IF ( oApp:cKorisn <> NIL .AND. oApp:cSifra <> nil )
-         IF oApp:cP3 <> nil
-            Prijava( oApp, .F. )  // bez prijavnog Box-a
-         ELSE
-            Prijava( oApp )
-         ENDIF
-      ELSE
-         Prijava( oApp )
-      ENDIF
-   ENDIF
-
-
-   RETURN NIL
 
 
 
@@ -154,102 +112,3 @@ FUNCTION mparstring( oApp )
    ENDIF
 
    RETURN cPars
-
-
-
-
-
-/*! \fn Prijava(oApp,lScreen)
- *  \brief Prijava korisnika pri ulasku u aplikaciju
- *  \todo Prijava je primjer klasicne kobasica funkcije ! Razbiti je.
- *  \todo prijavu na osnovu scshell.ini izdvojiti kao posebnu funkciju
- */
-
-FUNCTION Prijava( oApp, lScreen )
-
-   LOCAL i
-   LOCAL nRec
-   LOCAL cKontrDbf
-   LOCAL cCD
-
-   LOCAL cPom
-   LOCAL cPom2
-   LOCAL lRegularnoZavrsen
-
-   IF lScreen == nil
-      lScreen := .T.
-   ENDIF
-
-   @ 3, 4 SAY ""
-   IF ( gfKolor == "D" .AND. IsColor() )
-      Normal := "GR+/B,R/N+,,,N/W"
-   ELSE
-      Normal := "W/N,N/W,,,N/W"
-   ENDIF
-
-   IF !oApp:lStarted
-      IF lScreen
-         // korisn->nk napustiti
-         // PozdravMsg(gNaslov, gVerzija, korisn->nk)
-         // lGreska:=.f.
-         PozdravMsg( gNaslov, gVerzija, .F. )
-      ENDIF
-   ENDIF
-
-   IF ( gfKolor == "D" .AND. IsColor() )
-      Normal := "W/B,R/N+,,,N/W"
-   ELSE
-      Normal := "W/N,N/W,,,N/W"
-   ENDIF
-
-   CLOSERET
-
-   RETURN NIL
-
-STATIC FUNCTION PrijRunInstall( m_sif, cKom )
-
-   IF m_sif == "I"
-      cKom := cKom := "I" + gModul + " " + ImeKorisn + " " + CryptSC( sifrakorisn )
-   ENDIF
-   IF m_sif == "IM"
-      cKom += "  /M"
-   ENDIF
-   IF m_sif == "II"
-      cKom += "  /I"
-   ENDIF
-   IF m_sif == "IR"
-      cKom += "  /R"
-   ENDIF
-   IF m_sif == "IP"
-      cKom += "  /P"
-   ENDIF
-   IF m_sif == "IB"
-      cKom += "  /B"
-   ENDIF
-   RunInstall( cKom )
-
-   RETURN .T.
-
-
-FUNCTION RunInstall( cKom )
-
-   LOCAL lIB
-
-   lIB := .F.
-
-   IF ( cKom == nil )
-      cKom := ""
-   ENDIF
-
-   // MsgBeep("cKom="+cKom)
-   IF ( " /B" $ cKom )
-      goModul:cP7 := "/B"
-      lIb := .T.
-   ENDIF
-
-   IF ( lIB )
-      goModul:cP7 := ""
-      lIB := .F.
-   ENDIF
-
-   RETURN .T.

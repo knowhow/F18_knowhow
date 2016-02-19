@@ -256,7 +256,6 @@ STATIC FUNCTION kreiraj_kalk_bazirane_tabele( ver )
    CREATE_INDEX( "3", "dtos(datdok)+mu_i+pu_i", _alias )
 
    // _KALK
-
    _alias := "_KALK"
    _table_name := "_kalk"
 

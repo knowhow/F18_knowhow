@@ -38,7 +38,6 @@ FUNCTION cre_all_ld_sif( ver )
    _table_name := "kred"
 
    IF_NOT_FILE_DBF_CREATE
-
    CREATE_INDEX( "ID", "id", _alias )
    CREATE_INDEX( "NAZ", "naz", _alias )
    AFTER_CREATE_INDEX
@@ -267,13 +266,10 @@ FUNCTION cre_all_ld( ver )
    _table_name := "ld_radn"
 
    IF_NOT_FILE_DBF_CREATE
-
    // 1.0.0
    IF ver[ "current" ] > 0 .AND. ver[ "current" ] < 010002
       modstru( { "*" + _table_name, "A ST_INVALID I 1 0", "A VR_INVALID I 1 0" } )
    ENDIF
-
-
    CREATE_INDEX( "1", "id", _alias )
    CREATE_INDEX( "2", "naz", _alias )
    AFTER_CREATE_INDEX
@@ -302,13 +298,10 @@ FUNCTION cre_all_ld( ver )
    AAdd( aDBf, { 'TIPRADA', 'C',   1,  0 } )
    AAdd( aDBf, { 'OPOR', 'C',   1,  0 } )
 
-
    _alias := "LD_RJ"
    _table_name := "ld_rj"
 
    IF_NOT_FILE_DBF_CREATE
-
-
    CREATE_INDEX( "ID", "id", _alias )
    AFTER_CREATE_INDEX
 
@@ -329,7 +322,6 @@ FUNCTION cre_all_ld( ver )
    _table_name := "ld_radkr"
 
    IF_NOT_FILE_DBF_CREATE
-
    CREATE_INDEX( "1", "str(godina)+str(mjesec)+idradn+idkred+naosnovu", _alias )
    CREATE_INDEX( "2", "idradn+idkred+naosnovu+str(godina)+str(mjesec)", _alias )
    CREATE_INDEX( "3", "idkred+naosnovu+idradn+str(godina)+str(mjesec)", _alias )
@@ -357,7 +349,6 @@ FUNCTION cre_all_ld( ver )
    _table_name := "ld_ld"
 
    IF_NOT_FILE_DBF_CREATE
-
    FOR EACH cKey IN hIndexes:Keys
       CREATE_INDEX( cKey, hIndexes[ cKey ], _alias )
    NEXT

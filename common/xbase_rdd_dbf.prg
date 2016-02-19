@@ -136,8 +136,11 @@ FUNCTION delete_with_rlock()
      .F. => pitaj korisnika da li želi izbrisati tabelu
      .T. => briši bez pitanja
 */
-FUNCTION f18_delete_dbf( tbl_name, lSilent )
-   RETURN ferace_dbf( tbl_name, lSilent )
+
+FUNCTION f18_delete_dbf( tbl_name )
+
+   RETURN ferase_dbf( tbl_name, .T. )
+
 
 FUNCTION ferase_dbf( tbl_name, lSilent )
 

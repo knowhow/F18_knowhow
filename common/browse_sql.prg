@@ -11,6 +11,15 @@
 
 #include "f18.ch"
 
+MEMVAR TB, Ch, GetList, goModul
+MEMVAR m_x, m_y
+MEMVAR bGoreREd, bDoleRed, bDodajRed, fTBNoviRed, TBCanClose, TBAppend, bZaglavlje, TBScatter, nTBLine, nTBLastLine, TBPomjerise
+MEMVAR TBSkipBlock
+
+MEMVAR  ImeKol, Kol
+MEMVAR  azImeKol, azKol  // snimaju stanje ImeKol, Kol
+
+MEMVAR cKolona
 
 /*
    browse_tbl (cImeBoxa,  xw, yw, bUserF,  cMessTop, cMessBot, lInvert, aMessage, nFreeze, bPodvuci, nPrazno, nGPrazno, aPoredak, skipblock)
@@ -37,7 +46,7 @@
  \param - [10] NIL - prikazi u sljedecem redu,  15 - prikazi u koloni my+15  broj kolone pri editu sa <F2>
 */
 
-FUNCTION browse_table_sql( cImeBoxa, xw, yw, bUserF, cMessTop, cMessBot, lInvert, aMessage, nFreeze, bPodvuci, nPrazno, nGPrazno, aPoredak, skipblock )
+FUNCTION my_db_edit_sql( cImeBoxa, xw, yw, bUserF, cMessTop, cMessBot, lInvert, aMessage, nFreeze, bPodvuci, nPrazno, nGPrazno, aPoredak, skipblock )
 
    LOCAL _params := hb_Hash()
    LOCAL nBroji2
@@ -453,7 +462,7 @@ STATIC FUNCTION standardne_browse_komande( TB, Ch, nRez, nPored, aPoredak )
          @ m_x + 1, m_y + 2 SAY "Postavi na:" GET _trazi_val
          @ m_x + 2, m_y + 2 SAY "Uslov za obuhvatanje stavki (prazno-sve):" GET _trazi_usl ;
             PICT "@S20" ;
-            VALID Empty( _trazi_usl ) .OR. EvEr( _trazi_usl, "Greska! Neispravno postavljen uslov!" )
+            VALID Empty( _trazi_usl ) .OR. alt_s_provjeri_tip_uslova( _trazi_usl, "Greska! Neispravno postavljen uslov!" )
 
          READ
 
@@ -583,7 +592,6 @@ STATIC FUNCTION ObjDbGet()
 STATIC FUNCTION EditPolja( nX, nY, xIni, cNazPolja, bWhen, bValid, cBoje )
 
    LOCAL i
-   LOCAL cStaraVr := gTBDir
    LOCAL cPict
    LOCAL bGetSet
    LOCAL nSirina
@@ -701,32 +709,6 @@ STATIC FUNCTION TBPomjeranje( TB, cPomjeranje )
       TB:PanHome()
    ENDIF
 
-
-
-   // ----------------------------------------
-   // ----------------------------------------
-
-STATIC FUNCTION EvEr( cExpr, cMes, cT )
-
-   LOCAL lVrati := .T.
-
-   IF cMes == nil
-      cmes := "Greska!"
-   ENDIF
-
-   IF cT == nil
-      cT := "L"
-   ENDIF
-
-
-   PRIVATE cPom := cExpr
-
-   IF !( Type( cPom ) = cT )
-      lVrati := .F.
-      MsgBeep( cMes )
-   ENDIF
-
-   RETURN lVrati
 
 
 FUNCTION browse_brisi_stavku( lPack )

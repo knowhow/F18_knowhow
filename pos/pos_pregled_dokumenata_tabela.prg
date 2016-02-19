@@ -162,7 +162,7 @@ FUNCTION pos_prepis_dokumenta()
       AAdd( aOpc, "<F2> - promjena vrste placanja" )
    ENDIF
 
-   ObjDBedit( "pos_doks", MAXROWS() - 10, MAXCOLS() - 3, {|| pos_stampa_dokumenta_key_handler( dDatOd, dDatDo ) }, "  STAMPA AZURIRANOG DOKUMENTA  ", "", nil, aOpc )
+   my_db_edit( "pos_doks", MAXROWS() - 10, MAXCOLS() - 3, {|| pos_stampa_dokumenta_key_handler( dDatOd, dDatDo ) }, "  STAMPA AZURIRANOG DOKUMENTA  ", "", nil, aOpc )
 
    CLOSE ALL
 

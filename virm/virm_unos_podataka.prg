@@ -55,7 +55,7 @@ NEXT
 
 @ 12,0 SAY ""
 
-ObjDBedit( "PripVir", MAXROWS()-8, MAXCOLS()-3, {|| _k_handler()},"","Priprema virmana",;
+my_db_edit( "PripVir", MAXROWS()-8, MAXCOLS()-3, {|| _k_handler()},"","Priprema virmana",;
           .f.,{"<c-N>   Nova uplatnica", "<c-T>   Brisi ",;
                "<Enter> Ispravi uplatnicu", "<c-F9>  Brisi sve",;
                "<c-P>   Stampanje",;

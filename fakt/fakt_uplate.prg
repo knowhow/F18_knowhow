@@ -88,7 +88,7 @@ FUNCTION Uplate()
       @ m_x + 4, m_y + 1 SAY REPL( "=", 70 )
 
       SEEK cIdPartner
-      ObjDbEdit( "EvUpl", MAXROWS() -5, MAXCOLS() -10, {|| EdUplata() }, "", "<c-N> nova uplata  <F2> ispravka  <c-T> brisanje  <c-P> stampanje", ;
+      my_db_edit( "EvUpl", MAXROWS() -5, MAXCOLS() -10, {|| EdUplata() }, "", "<c-N> nova uplata  <F2> ispravka  <c-T> brisanje  <c-P> stampanje", ;
          .F., NIL, 1, NIL, 4, 3, NIL, {| nSkip| SkipDBBK( nSkip ) } )
 
    ENDDO

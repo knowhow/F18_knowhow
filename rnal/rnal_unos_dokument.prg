@@ -132,7 +132,7 @@ STATIC FUNCTION _document()
 
       ENDIF
 
-      ObjDBedit( "docum", nX, nY, {| Ch| key_handler( Ch ) }, "", "",,,,, 1 )
+      my_db_edit( "docum", nX, nY, {| Ch| key_handler( Ch ) }, "", "",,,,, 1 )
 
       IF LastKey() == K_ESC
 

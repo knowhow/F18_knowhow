@@ -683,7 +683,7 @@ FUNCTION P_Ugov2( cIdPartner )
       EdUgov2()
    ELSE
       TempIni( 'Fakt_Ugovori_Novi', 'Partner', '_NIL_', "WRITE" )
-      ObjDbedit( "", 20, 72, {|| EdUgov2() }, "", "Stavke ugovora...", , , , , 2, 6 )
+      my_db_edit( "", 20, 72, {|| EdUgov2() }, "", "Stavke ugovora...", , , , , 2, 6 )
    ENDIF
 
    BoxC()

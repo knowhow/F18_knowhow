@@ -84,7 +84,7 @@ FUNCTION mat_unos_naloga()
    @ m_x + __unos_x - 1, m_y + 2 SAY " <c-A>  Ispravka naloga   � <c-P> Stampa naloga    � <a-A> Azuriranje   "
    @ m_x + __unos_x, m_y + 2 SAY " <c-F9> Brisi pripremu    � <F5>  Kontrola zbira   �                    "
 
-   ObjDbedit( "PNal", __unos_x, __unos_y, {|| mat_pripr_key_handler() }, "", "Priprema..", , , , , 3 )
+   my_db_edit( "PNal", __unos_x, __unos_y, {|| mat_pripr_key_handler() }, "", "Priprema..", , , , , 3 )
 
    BoxC()
 

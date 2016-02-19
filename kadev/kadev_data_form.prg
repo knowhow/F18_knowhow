@@ -444,7 +444,7 @@ do while .t.
                  {'DBF-baza',{|| ime_baze}}   ;
                }
             Kol:={1,2,3}
-            ObjDbEdit('usl',10,77,{|| EdGlobUsl()},"<Ctrl-N> Dodaj, <Ctrl-T> Brisi, <F2> Edit, <F4> Dupliciraj ","",.f.)
+            my_db_edit('usl',10,77,{|| EdGlobUsl()},"<Ctrl-N> Dodaj, <Ctrl-T> Brisi, <F2> Edit, <F4> Dupliciraj ","",.f.)
 
         CASE Izb11==2
             select kdv_obrazdef
@@ -456,7 +456,7 @@ do while .t.
                {'Uslov'   ,{|| LEFT(Uslov,70)+".."}} ;
                 }
             Kol:={1,2,3,4,5}
-            ObjDbEdit('usl',10,77,{|| EdObrazDef()},"<Ctrl-N> Dodaj, <Ctrl-T> Brisi, <F2> Edit, <F4> Dupliciraj","",.f.)
+            my_db_edit('usl',10,77,{|| EdObrazDef()},"<Ctrl-N> Dodaj, <Ctrl-T> Brisi, <F2> Edit, <F4> Dupliciraj","",.f.)
 
     ENDCASE
 enddo

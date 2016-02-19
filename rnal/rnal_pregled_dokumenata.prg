@@ -60,7 +60,7 @@ STATIC FUNCTION tbl_list()
 
    SELECT docs
 
-   ObjDbedit( "lstnal", nBoxX, nBoxY, {|| key_handler() }, cHeader, cFooter, , , , , 5 )
+   my_db_edit( "lstnal", nBoxX, nBoxY, {|| key_handler() }, cHeader, cFooter, , , , , 5 )
 
    BoxC()
 

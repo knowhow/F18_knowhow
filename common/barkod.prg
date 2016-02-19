@@ -72,7 +72,7 @@ FUNCTION KaLabelBKod()
    NEXT
 
    Box(, 20, 50 )
-   ObjDbedit( "PLBK", 20, 50, {|| KaEdPrLBK() }, "<SPACE> markiranje             Í<ESC> kraj", "Priprema za labeliranje bar-kodova...", .T., , , , 0 )
+   my_db_edit( "PLBK", 20, 50, {|| KaEdPrLBK() }, "<SPACE> markiranje             Í<ESC> kraj", "Priprema za labeliranje bar-kodova...", .T., , , , 0 )
    BoxC()
 
    nRezerva := 0
@@ -208,7 +208,7 @@ FUNCTION FaLabelBKod()
 
    Kol := {}; FOR i := 1 TO Len( ImeKol ); AAdd( Kol, i ); NEXT
    Box(, 20, 50 )
-   ObjDbedit( "PLBK", 20, 50, {|| KaEdPrLBK() }, "<SPACE> markiranjeÍÍÍÍÍÍÍÍÍÍÍÍÍÍ<ESC> kraj", "Priprema za labeliranje bar-kodova...", .T., , , , 0 )
+   my_db_edit( "PLBK", 20, 50, {|| KaEdPrLBK() }, "<SPACE> markiranjeÍÍÍÍÍÍÍÍÍÍÍÍÍÍ<ESC> kraj", "Priprema za labeliranje bar-kodova...", .T., , , , 0 )
    BoxC()
 
    nRezerva := 0

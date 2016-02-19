@@ -338,7 +338,7 @@ FUNCTION konsultos( xEdit )
    SELECT ostav
    GO TOP
 
-   ObjDbedit( "KOStav", _row, _col, {|| EdKonsRos() }, "", "Otvorene stavke.", , , , {|| field->m2 = '3' }, 3 )
+   my_db_edit( "KOStav", _row, _col, {|| EdKonsRos() }, "", "Otvorene stavke.", , , , {|| field->m2 = '3' }, 3 )
 
    Boxc()
 

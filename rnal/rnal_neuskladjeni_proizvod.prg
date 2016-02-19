@@ -241,7 +241,7 @@ METHOD RNALDamageDocument:configurator_box()
 
    @ m_x + ( _x_pos - 1 ), m_y + 1 SAY _opts
 
-   ObjDbedit( "_tmp1", _x_pos, _y_pos, {|| ::configurator_box_key_handler() }, _head, _foot,,,,, 2 )
+   my_db_edit( "_tmp1", _x_pos, _y_pos, {|| ::configurator_box_key_handler() }, _head, _foot,,,,, 2 )
 
    BoxC()
 

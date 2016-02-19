@@ -713,7 +713,7 @@ FUNCTION brow_cache()
    @ m_x + 19, m_y + 2 SAY " "
    @ m_x + 20, m_y + 2 SAY " "
 
-   ObjDbedit( "CACHE", 20, 77, {|| key_handler() }, "", "pregled cache tabele", , , , , 4 )
+   my_db_edit( "CACHE", 20, 77, {|| key_handler() }, "", "pregled cache tabele", , , , , 4 )
 
    BoxC()
 

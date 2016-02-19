@@ -11,18 +11,25 @@
 
 #include "f18.ch"
 
+MEMVAR TB, Ch, GetList, goModul
+MEMVAR m_x, m_y
+MEMVAR bGoreREd, bDoleRed, bDodajRed, fTBNoviRed, TBCanClose, TBAppend, bZaglavlje, TBScatter, nTBLine, nTBLastLine, TBPomjerise
+MEMVAR TBSkipBlock
 
-/* fn function ObjDBedit(cImeBoxa,  xw, yw, bUserF,  cMessTop, cMessBot, lInvert, aMessage, nFreeze, bPodvuci, nPrazno, nGPrazno, aPoredak, skipblock)
- * brief Glavna funkcija tabelarnog prikaza podataka
+MEMVAR  ImeKol, Kol
+MEMVAR  azImeKol, azKol  // snimaju stanje ImeKol, Kol
+
+MEMVAR cKolona
+MEMVAR cPom77I, cPom77U, aTBGets, GET // koristeno u editpolja
+
+
+/*
  * param cImeBoxa - ime box-a
  * param xw - duzina
  * param yw - sirina
  * param bUserF - kodni blok, user funkcija
  * param cMessTop - poruka na vrhu
  * return NIL
- * note grid - eng -> mreza
- *
- * Funkcija ObjDbedit koristi se za prikaz tabelarnih podataka. Koristi je sifarski sistem, tablela pripreme itd ...
 */
 
 /* var ImeKol
@@ -40,31 +47,28 @@
 */
 
 
-FUNCTION ObjDBedit( cImeBoxa, xw, yw, bUserF, cMessTop, cMessBot, lInvert, aMessage, nFreeze, bPodvuci, nPrazno, nGPrazno, aPoredak, skipblock )
+FUNCTION my_db_edit( cImeBoxa, xw, yw, bUserF, cMessTop, cMessBot, lInvert, ;
+      aMessage, nFreeze, bPodvuci, nPrazno, nGPrazno, aPoredak, skipblock )
 
    LOCAL _params := hb_Hash()
-   LOCAL nBroji2
-   LOCAL cSmj, nRez, i, K, aUF, cPomDB, nTTrec
-   LOCAL cLoc := Space( 40 )
-   LOCAL cStVr, cNovVr, nRec, nOrder, nPored, xcpos, ycpos
+   LOCAL nRez
+   LOCAL nPored, xcpos, ycpos
 
    PRIVATE  bGoreRed := NIL
    PRIVATE  bDoleRed := NIL
    PRIVATE  bDodajRed := NIL
 
-   // trenutno smo u novom redu ?
-   PRIVATE  fTBNoviRed := .F.
 
-   // da li se moze zavrsiti unos podataka ?
-   PRIVATE  TBCanClose := .T.
+   PRIVATE  fTBNoviRed := .F. // trenutno smo u novom redu ?
+   PRIVATE  TBCanClose := .T. // da li se moze zavrsiti unos podataka ?
 
    PRIVATE  TBAppend := "N"
-   PRIVATE  bZaglavlje := NIL
-   // zaglavlje se edituje kada je kursor u prvoj koloni prvog reda
+   PRIVATE  bZaglavlje := NIL // zaglavlje se edituje kada je kursor u prvoj koloni prvog reda
    PRIVATE  TBScatter := "N"  // uzmi samo tekuce polje
    PRIVATE  nTBLine   := 1      // tekuca linija-kod viselinijskog browsa
    PRIVATE  nTBLastLine := 1  // broj linija kod viselinijskog browsa
    PRIVATE  TBPomjerise := "" // ako je ">2" pomjeri se lijevo dva
+
    // ovo se moze setovati u when/valid fjama
 
    PRIVATE  TBSkipBlock := {| nSkip| SkipDB( nSkip, @nTBLine ) }
@@ -223,8 +227,9 @@ FUNCTION ObjDBedit( cImeBoxa, xw, yw, bUserF, cMessTop, cMessBot, lInvert, aMess
 
 FUNCTION create_tbrowsedb( params, lIzOBJDB )
 
-   LOCAL i, j, k
-   LOCAL _rows, _width, _rows_prazno
+   LOCAL i, k
+   LOCAL _rows, _width, _rows_prazno, _rows_poruke
+   LOCAL TCol
 
    IF lIzOBJDB == NIL
       lIzOBJDB := .F.
@@ -319,13 +324,12 @@ FUNCTION standardne_browse_komande_dbf( TB, Ch, nRez, nPored, aPoredak )
 
    LOCAL _tr := hb_UTF8ToStr( "Traži:" ), _zam := "Zamijeni sa:"
    LOCAL _last_srch := "N"
-   LOCAL _has_semaphore := .F.
-   LOCAL cSmj, i, K, aUF
+   LOCAL i, aUF
    LOCAL cLoc := Space( 40 )
-   LOCAL cStVr, cNovVr, nRec, nOrder, xcpos, ycpos
    LOCAL _trazi_val, _zamijeni_val, _trazi_usl
    LOCAL _sect, _pict
-   LOCAL _rec, _saved
+   LOCAL bTekCol
+   LOCAL cSmj
 
    DO CASE
 
@@ -364,7 +368,7 @@ FUNCTION standardne_browse_komande_dbf( TB, Ch, nRez, nPored, aPoredak )
                      EXIT
                   ENDIF
                ENDIF
-               IF cSmj = "+"
+               IF cSmj == "+"
                   Tb:down()
                   Tb:Stabilize()
                ELSE
@@ -463,7 +467,7 @@ FUNCTION standardne_browse_komande_dbf( TB, Ch, nRez, nPored, aPoredak )
                @ m_x + 1, m_y + 2 SAY "Postavi na:" GET _trazi_val
                @ m_x + 2, m_y + 2 SAY "Uslov za obuhvatanje stavki (prazno-sve):" GET _trazi_usl ;
                   PICT "@S20" ;
-                  VALID Empty( _trazi_usl ) .OR. EvEr( _trazi_usl, "Greška! Neispravno postavljen uslov!" )
+                  VALID Empty( _trazi_usl ) .OR. alt_s_provjeri_tip_uslova( _trazi_usl, "Greška! Neispravno postavljen uslov!" )
                READ
 
                BoxC()
@@ -712,7 +716,7 @@ FUNCTION StandTBTipke()
 STATIC FUNCTION ObjDbGet()
 
    LOCAL bIns, lScore, lExit
-   LOCAL col, get, nKey
+   LOCAL col, nKey
    LOCAL xOldKey, xNewKey
 
    ForceStable()
@@ -726,11 +730,10 @@ STATIC FUNCTION ObjDbGet()
    lExit := Set( _SET_EXIT, .T. )
    bIns := SetKey( K_INS )
 
-   // Set insert key to toggle insert mode and cursor shape
-   SetKey( K_INS, {|| InsToggle() } )
 
-   // edit polja
-   col := TB:getColumn( TB:colPos )
+   SetKey( K_INS, {|| InsToggle() } ) // Set insert key to toggle insert mode and cursor shape
+
+   col := TB:getColumn( TB:colPos ) // edit polja
 
    IF Len( ImeKol[ TB:colpos ] ) > 4 // ima validaciju
       EditPolja( Row(), Col(), Eval( col:block ), ImeKol[ TB:ColPos, 3 ], ImeKol[ TB:ColPos, 4 ], ImeKol[ TB:ColPos, 5 ], TB:colorSpec )
@@ -738,36 +741,31 @@ STATIC FUNCTION ObjDbGet()
       EditPolja( Row(), Col(), Eval( col:block ), ImeKol[ TB:ColPos, 3 ], {|| .T. }, {|| .T. }, TB:colorSpec )
    ENDIF
 
-   // Restore state
-   Set( _SET_SCOREBOARD, lScore )
+
+   Set( _SET_SCOREBOARD, lScore ) // Restore state
    Set( _SET_EXIT, lExit )
    SetKey( K_INS, bIns )
 
-   // Get the record's key value (or NIL) after the GET
-   xNewKey := IF( Empty( IndexKey() ), NIL, &( IndexKey() ) )
 
-   // If the key has changed (or if this is a new record)
-   IF ! ( xNewKey == xOldKey )
+   xNewKey := IF( Empty( IndexKey() ), NIL, &( IndexKey() ) ) // Get the record's key value (or NIL) after the GET
 
-      // Do a complete refresh
-      TB:refreshAll()
+   IF ! ( xNewKey == xOldKey ) // If the key has changed (or if this is a new record)
+
+
+      TB:refreshAll() // Do a complete refresh
       ForceStable()
 
-      // Make sure we're still on the right record after stabilizing
-      DO WHILE &( IndexKey() ) > xNewKey .AND. ! TB:hitTop()
+      DO WHILE &( IndexKey() ) > xNewKey .AND. ! TB:hitTop() // Make sure we're still on the right record after stabilizing
          TB:up()
          ForceStable()
       ENDDO
 
    ENDIF
 
-   // Check exit key from get
-   nKey := LastKey()
+   nKey := LastKey() // Check exit key from get
 
-   IF nKey == K_UP .OR. nKey == K_DOWN .OR. ;
-         nKey == K_PGUP .OR. nKey == K_PGDN
+   IF nKey == K_UP .OR. nKey == K_DOWN .OR.  nKey == K_PGUP .OR. nKey == K_PGDN
 
-      // Ugh
       KEYBOARD( Chr( nKey ) )
 
    ENDIF
@@ -776,14 +774,13 @@ STATIC FUNCTION ObjDbGet()
 
 
 
-STATIC FUNCTION EditPolja( nX, nY, xIni, cNazPolja, ;
-      bWhen, bValid, cBoje )
+
+STATIC FUNCTION EditPolja( nX, nY, xIni, cNazPolja, bWhen, bValid )
 
    LOCAL i
-   LOCAL cStaraVr := gTBDir
    LOCAL cPict
-   LOCAL bGetSet
    LOCAL nSirina
+   LOCAL aPom
 
    IF TBScatter == "N"
       cPom77I := cNazpolja
@@ -800,17 +797,14 @@ STATIC FUNCTION EditPolja( nX, nY, xIni, cNazPolja, ;
       ENDIF
    ENDIF
 
-   cpict := NIL
+   cPict := NIL
    IF Len( ImeKol[ TB:Colpos ] ) >= 7  // ima picture
       cPict := ImeKol[ TB:Colpos, 7 ]
    ENDIF
 
 
-   // provjeriti kolika je sirina get-a!!
-
-   aTBGets := {}
-   get := GetNew( nX, nY, MemVarBlock( cPom77U ), ;
-      cPom77U, cPict, "W+/BG,W+/B" )
+   aTBGets := {} // provjeriti kolika je sirina get-a!!
+   get := GetNew( nX, nY, MemVarBlock( cPom77U ), cPom77U, cPict, "W+/BG,W+/B" )
    get:PreBlock := bWhen
    get:PostBlock := bValid
    AAdd( aTBGets, Get )
@@ -824,8 +818,7 @@ STATIC FUNCTION EditPolja( nX, nY, xIni, cNazPolja, ;
       aPom := ImeKol[ TB:Colpos, 8 ]  // matrica
       FOR i := 1 TO Len( aPom )
          nY := nY + nSirina + 1
-         get := GetNew( nX, nY, MemVarBlock( aPom[ i, 1 ] ), ;
-            aPom[ i, 1 ], aPom[ i, 4 ], "W+/BG,W+/B" )
+         get := GetNew( nX, nY, MemVarBlock( aPom[ i, 1 ] ),  aPom[ i, 1 ], aPom[ i, 4 ], "W+/BG,W+/B" )
          nSirina := Len( Transform( &( aPom[ i, 1 ] ), aPom[ i, 4 ] ) )
          get:PreBlock := aPom[ i, 2 ]
          get:PostBlock := aPom[ i, 3 ]
@@ -869,7 +862,7 @@ STATIC FUNCTION EditPolja( nX, nY, xIni, cNazPolja, ;
 
 FUNCTION TBPomjeranje( TB, cPomjeranje )
 
-   LOCAL cPomTB
+   LOCAL cPomTB, i
 
    IF ( cPomjeranje ) = ">"
       cPomTb := SubStr( cPomjeranje, 2, 1 )
@@ -898,9 +891,12 @@ FUNCTION TBPomjeranje( TB, cPomjeranje )
       TB:PanHome()
    ENDIF
 
-FUNCTION EvEr( cExpr, cMes, cT )
+   RETURN .T.
 
-   LOCAL lVrati := .T.
+
+FUNCTION alt_s_provjeri_tip_uslova( cExpr, cMes, cT )
+
+   LOCAL lVrati := .T., cPom
 
    IF cMes == nil
       cmes := "Greska!"
@@ -910,10 +906,9 @@ FUNCTION EvEr( cExpr, cMes, cT )
       cT := "L"
    ENDIF
 
+   cPom := cExpr
 
-   PRIVATE cPom := cExpr
-
-   IF !( Type( cPom ) = cT )
+   IF !( Type( cPom ) == cT )
       lVrati := .F.
       MsgBeep( cMes )
    ENDIF

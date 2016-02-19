@@ -119,7 +119,7 @@ FUNCTION s_articles( cId, lAutoFind, lQuickFind )
 
       @ m_x + nBoxX + 1, m_y + 2 SAY cOptions
 
-      ObjDbedit(, nBoxX, nBoxY, {|| key_handler( Ch ) }, cHeader, cFooter, .T.,,,, 7 )
+      my_db_edit(, nBoxX, nBoxY, {|| key_handler( Ch ) }, cHeader, cFooter, .T.,,,, 7 )
 
       BoxC()
 

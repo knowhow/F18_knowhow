@@ -68,7 +68,7 @@ FUNCTION kalk_pripr9View()
 
    PRIVATE lAutoAsist := .F.
 
-   ObjDbedit( "KALK_PRIPR9", 20, 77, {|| ka_pripr9_key_handler() }, "<P>-povrat dokumenta u pripremu", "Pregled smeca...", , , , , 4 )
+   my_db_edit( "KALK_PRIPR9", 20, 77, {|| ka_pripr9_key_handler() }, "<P>-povrat dokumenta u pripremu", "Pregled smeca...", , , , , 4 )
    BoxC()
 
    RETURN

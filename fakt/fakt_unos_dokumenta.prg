@@ -107,7 +107,7 @@ FUNCTION fakt_unos_dokumenta()
 
    @ m_x + _x - 1, m_y + 2 SAY _opt_row
 
-   ObjDbedit( "PNal", _x, _y, {|| fakt_pripr_keyhandler() }, "", "Priprema...", , , , , 4 )
+   my_db_edit( "PNal", _x, _y, {|| fakt_pripr_keyhandler() }, "", "Priprema...", , , , , 4 )
 
    BoxC()
 

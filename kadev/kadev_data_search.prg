@@ -489,7 +489,7 @@ FUNCTION kadev_search()
       BirajPrelom()
       SELECT ( F_KADEV_0 )
       GO TOP
-      ObjDbEdit( '', 20, 66, {|| EdK_02() }, '<Ctrl-T> Brisanje <Enter> Edit', '<Ctrl-P> Print pregled,<Ctrl-K> Print Karton,<Ctrl-A> Svi kartoni' )
+      my_db_edit( '', 20, 66, {|| EdK_02() }, '<Ctrl-T> Brisanje <Enter> Edit', '<Ctrl-P> Print pregled,<Ctrl-K> Print Karton,<Ctrl-A> Svi kartoni' )
       SELECT kadev_0
       SET RELATION TO
    ENDIF

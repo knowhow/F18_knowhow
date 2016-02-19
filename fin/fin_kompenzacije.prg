@@ -206,7 +206,7 @@ FUNCTION kompenzacija()
          m_y += ( _col / 2 ) + 1
       ENDIF
 
-      ObjDbedit( "komp1", _row - 7, ( _col / 2 ) - 1, {|| key_handler( _vars ) }, "", if( Alias() == "KOMP_DUG", "DUGUJE " + _usl_kto, "POTRAZUJE " + _usl_kto2 ), , , , , 1 )
+      my_db_edit( "komp1", _row - 7, ( _col / 2 ) - 1, {|| key_handler( _vars ) }, "", if( Alias() == "KOMP_DUG", "DUGUJE " + _usl_kto, "POTRAZUJE " + _usl_kto2 ), , , , , 1 )
 
       IF LastKey() == K_ESC
          EXIT

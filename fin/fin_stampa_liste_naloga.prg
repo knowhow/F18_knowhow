@@ -380,7 +380,7 @@ FUNCTION VidiNaloge()
    NEXT
 
    Box(, 20, 45 )
-   ObjDbedit( "Nal", MAXROWS() -10, 50, {|| EdNal() }, "<Enter> - ispravka", "Nalozi...", , , , , )
+   my_db_edit( "Nal", MAXROWS() -10, 50, {|| EdNal() }, "<Enter> - ispravka", "Nalozi...", , , , , )
    BoxC()
 
    CLOSERET

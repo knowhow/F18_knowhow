@@ -42,7 +42,7 @@ FUNCTION box_it2( nDoc_no, nDoc_it_no )
    @ m_x + 16, m_y + 2 SAY "<c+N> nova stavka  <F2> ispravka  <c+T> brisi stavku "
    @ m_x + 17, m_y + 2 SAY "<c+F9> brisi sve "
 
-   ObjDBedit( "it2", 15, 70, {| Ch| it2_handler() }, "Unos dodatni stavki naloga", "",,,,, 1 )
+   my_db_edit( "it2", 15, 70, {| Ch| it2_handler() }, "Unos dodatni stavki naloga", "",,,,, 1 )
 
    BoxC()
 

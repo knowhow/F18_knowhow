@@ -712,7 +712,7 @@ FUNCTION fin_rucno_zatvaranje_otvorenih_stavki()
 
    opcije_browse_pregleda()
 
-   ObjDbEdit( "Ost", MAXROWS() - 10, MAXCOLS() - 10, {|| rucno_zatvaranje_key_handler() }, ;
+   my_db_edit( "Ost", MAXROWS() - 10, MAXCOLS() - 10, {|| rucno_zatvaranje_key_handler() }, ;
       "", "", .F., NIL, 1, {|| otvst == "9" }, 6, 0, NIL, {| nSkip| SkipDBBK( nSkip ) } )
 
    BoxC()
@@ -743,7 +743,6 @@ STATIC FUNCTION rucno_zatvaranje_key_handler( l_osuban )
 
       IF Pitanje(, "Preći u mod direktog unosa podataka u tabelu ? (D/N)", "D" ) == "D"
          log_write( "otovrene stavke, mod direktnog unosa = D", 5 )
-         gTBDir := "D"
          opcije_browse_pregleda()
          DaTBDirektni()
       ENDIF
@@ -902,7 +901,7 @@ STATIC FUNCTION opcije_browse_pregleda()
 
    ?? "Konto:", cIdKonto
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -2109,7 +2108,7 @@ FUNCTION fin_asistent_otv_st()
 
    SEEK Eval( bBkTrazi )
 
-   ObjDbEdit( "Ost", _max_rows, _max_cols, {|| rucno_zatvaranje_key_handler( .T. ) }, "", "", .F., NIL, 1, {|| brdok <> _obrdok }, 6, 0, ;  // zadnji par: nGPrazno
+   my_db_edit( "Ost", _max_rows, _max_cols, {|| rucno_zatvaranje_key_handler( .T. ) }, "", "", .F., NIL, 1, {|| brdok <> _obrdok }, 6, 0, ;  // zadnji par: nGPrazno
    NIL, {| nSkip| SkipDBBK( nSkip ) } )
 
    BoxC()

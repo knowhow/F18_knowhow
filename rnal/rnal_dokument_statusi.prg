@@ -210,7 +210,7 @@ FUNCTION rnal_pregled_statusa_operacija( r_doc_no )
    SELECT _doc_opst
    GO TOP
 
-   ObjDbedit( "nalst", _box_x, _box_y, {|| key_handler( r_doc_no ) }, _header, _footer, , , , , 5 )
+   my_db_edit( "nalst", _box_x, _box_y, {|| key_handler( r_doc_no ) }, _header, _footer, , , , , 5 )
 
    BoxC()
 

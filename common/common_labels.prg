@@ -53,7 +53,7 @@ FUNCTION label_bkod()
 
    Box(, 20, 50 )
 
-   ObjDbedit( "PLBK", 20, 50, {|| key_handler() }, cBoxHead, cBoxFoot, .T., , , , 0 )
+   my_db_edit( "PLBK", 20, 50, {|| key_handler() }, cBoxHead, cBoxFoot, .T., , , , 0 )
 
    BoxC()
 

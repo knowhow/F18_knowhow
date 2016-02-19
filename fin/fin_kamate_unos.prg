@@ -74,7 +74,7 @@ FUNCTION kamate_unos()
    @ m_x + ( _x - 2 ), m_y + 2 SAY " <c-N>  Nove Stavke      ³ <ENT> Ispravi stavku   ³ <c-T> Brisi Stavku"
    @ m_x + ( _x - 1 ), m_y + 2 SAY " <c-A>  Ispravka Dokum.  ³ <c-P> Stampa svi KL    ³ <c-U> Lista uk.dug"
    @ m_x + _x, m_y + 2 SAY " <c-F9> Brisi pripremu   ³ <a-P> Stampa pojedinac.³                   "
-   ObjDbedit( "PNal", _x, _y, {|| _key_handler() }, "", "KAMATE Priprema.....ÍÍÍÍÍ", , , , , 3 )
+   my_db_edit( "PNal", _x, _y, {|| _key_handler() }, "", "KAMATE Priprema.....ÍÍÍÍÍ", , , , , 3 )
    BoxC()
 
    my_close_all_dbf()

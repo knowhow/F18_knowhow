@@ -149,7 +149,7 @@ FUNCTION s_elements( nArt_id, lNew, nArtType, cSchema )
 
       ENDIF
 
-      ObjDbedit( "elem", nX, nY, {| Ch| elem_hand( Ch ) }, "", "",,,,, 1 )
+      my_db_edit( "elem", nX, nY, {| Ch| elem_hand( Ch ) }, "", "",,,,, 1 )
 
       aTmp := {}
       nTmpArea := Select()

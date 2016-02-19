@@ -123,7 +123,7 @@ FUNCTION KnjNal()
 
    @ m_x + _x_row, m_y + 2 SAY8 _opt_row
 
-   ObjDbedit( "PN2", _x_row, _y_row, {|| edit_fin_pripr() }, "", "Priprema...", , , , , _help_columns )
+   my_db_edit( "PN2", _x_row, _y_row, {|| edit_fin_pripr() }, "", "Priprema...", , , , , _help_columns )
 
    BoxC()
 

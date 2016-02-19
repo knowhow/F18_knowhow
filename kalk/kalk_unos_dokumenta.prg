@@ -153,7 +153,7 @@ FUNCTION kalk_unos_stavki_dokumenta( lAObrada )
 
    PRIVATE lAutoAsist := .F.
 
-   ObjDbedit( "PNal", nMaxRow, nMaxCol, {|| kalk_pripr_key_handler( lAutoObr ) }, "<F5>-kartica magacin, <F6>-kartica prodavnica", "Priprema...", , , , , 4 )
+   my_db_edit( "PNal", nMaxRow, nMaxCol, {|| kalk_pripr_key_handler( lAutoObr ) }, "<F5>-kartica magacin, <F6>-kartica prodavnica", "Priprema...", , , , , 4 )
 
    BoxC()
 

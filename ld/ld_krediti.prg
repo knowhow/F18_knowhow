@@ -930,7 +930,7 @@ FUNCTION P_Krediti
    NEXT
 
    Box(, 18, 60 )
-   ObjDbedit( "PKred", 18, 60, {|| ld_lista_kredita_key_handler() }, "Postojece stavke za " + cidradn, "", , , , )
+   my_db_edit( "PKred", 18, 60, {|| ld_lista_kredita_key_handler() }, "Postojece stavke za " + cidradn, "", , , , )
    Boxc()
 
    SET scope TO

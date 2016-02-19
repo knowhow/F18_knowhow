@@ -59,7 +59,7 @@ FUNCTION kadev_data()
    @ m_x + _x - 1, m_y + 2 SAY PadR( " < P > Pregl.promjene", _w1 ) + ;
       BROWSE_COL_SEP + PadR( " < I > info staz ", _w1 )
 
-   ObjDbEdit( 'bpod', _x - 3, _y, {|| data_handler() }, _header, _footer, , , , , 2 )
+   my_db_edit( 'bpod', _x - 3, _y, {|| data_handler() }, _header, _footer, , , , , 2 )
 
    BoxC()
 

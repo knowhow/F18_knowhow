@@ -215,7 +215,7 @@ next
 
 _header := "<c-T> Brisi stavku <ENT> Ispravka <c-A> Ispravka svih stavki <c-N> Nova stavka <c-Z> Brisi"
 
-ObjDbedit( "USKSP", MAXROW() - 4, MAXCOL() - 3, {|| _ed_pop_list_khandler() }, _header, ;
+my_db_edit( "USKSP", MAXROW() - 4, MAXCOL() - 3, {|| _ed_pop_list_khandler() }, _header, ;
     "Pregled popisne liste..." )
 
 my_close_all_dbf()

@@ -231,7 +231,7 @@ if !FOUND() .or. cIdRj==NIL
        		skip -1
       	endif
       	
-	ObjDbedit("",10,76,{|| EdRJRMJ()},;
+	my_db_edit("",10,76,{|| EdRJRMJ()},;
                   "Sistematizacija radnih mjesta","",.t.,;
                 {"<c-N> Novi","<F2>  Ispravka","<ENT> Odabir","<c-T> Brisi",;
                  "<c-P> Print","<c-F> Trazi"},1)

@@ -32,7 +32,7 @@ STATIC FUNCTION epdv_kif_tbl_priprema()
    GO TOP
 
    set_a_kol_kif( @Kol, @ImeKol )
-   ObjDbedit( "ekif", _row, _col, {|| epdv_kif_key_handler() }, "", "KIF Priprema...", , , , , 3 )
+   my_db_edit( "ekif", _row, _col, {|| epdv_kif_key_handler() }, "", "KIF Priprema...", , , , , 3 )
    BoxC()
    closeret
 

@@ -48,7 +48,7 @@ FUNCTION MIP_View()
    @ m_x + 19, m_y + 2 SAY "<SPACE> markiraj stavku za stampu"
    @ m_x + 20, m_y + 2 SAY "               "
 
-   ObjDbedit( "R_EXPORT", 20, 77, {|| EdMIP() }, "", "Pregled tabele za gen.mip obrasca", , , , {|| if( bol_preko == "1", .T., .F. ) }, 4 )
+   my_db_edit( "R_EXPORT", 20, 77, {|| EdMIP() }, "", "Pregled tabele za gen.mip obrasca", , , , {|| if( bol_preko == "1", .T., .F. ) }, 4 )
 
    BoxC()
 

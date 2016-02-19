@@ -50,7 +50,7 @@ FUNCTION V_Rugov( cId )
    __partn := ugov->idpartner
 
 
-   ObjDbedit( "", _x_pos, _y_pos, {|| key_handler( cIdUgov ) }, "", "",,,,, 2 )
+   my_db_edit( "", _x_pos, _y_pos, {|| key_handler( cIdUgov ) }, "", "",,,,, 2 )
 
    // izbacen brkey... bezveze
 

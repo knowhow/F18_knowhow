@@ -98,7 +98,7 @@ FUNCTION p_sifra( nDbf, xIndex, nVisina, nSirina, cNaslov, cID, dx, dy,  bBlok, 
          GO TOP
       ENDIF
 
-      browse_table_sql(, nVisina, nSirina,  {|| ed_sql_sif( nDbf, cNaslov, bBlok, aZabrane, aZabIsp ) }, ToStrU( cNaslov ), "", lInvert, _komande, 1, bPodvuci, , , aPoredak )
+      my_db_edit_sql(, nVisina, nSirina,  {|| ed_sql_sif( nDbf, cNaslov, bBlok, aZabrane, aZabIsp ) }, ToStrU( cNaslov ), "", lInvert, _komande, 1, bPodvuci, , , aPoredak )
 
       IF Type( "id" ) $ "U#UE"
          cID := ( nDbf )->( FieldGet( 1 ) )

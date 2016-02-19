@@ -284,7 +284,7 @@ FUNCTION InventNivel()
 
          SET CURSOR ON
 
-         ObjDBedit( "PripInv", MAXROWS() - 15, MAXCOLS() - 3, {|| EditInvNiv( dDatRada ) }, ;
+         my_db_edit( "PripInv", MAXROWS() - 15, MAXCOLS() - 3, {|| EditInvNiv( dDatRada ) }, ;
             "Broj dokumenta: " + AllTrim( cBrDok ) + " datum: " + DToC( dDatRada ), ;
             "PRIPREMA " + cNazDok + "E", nil, ;
             { "<c-N>   Dodaj stavku", "<Enter> Ispravi stavku", "<a-P>   Popisna lista", "<c-P>   Stampanje", "<c-A> cirk ispravka", "<D> ispravi datum" }, 2, , , )

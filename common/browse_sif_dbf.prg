@@ -96,7 +96,7 @@ FUNCTION PostojiSifra( nDbf, nNtx, nVisina, nSirina, cNaslov, cID, dx, dy,  bBlo
          GO TOP
       ENDIF
 
-      ObjDbedit(, nVisina, nSirina,  {|| sif_komande( nDbf, cNaslov, bBlok, aZabrane, aZabIsp ) }, cNaslov, "", lInvert, _komande, 1, bPodvuci, , , aPoredak )
+      my_db_edit(, nVisina, nSirina,  {|| sif_komande( nDbf, cNaslov, bBlok, aZabrane, aZabIsp ) }, cNaslov, "", lInvert, _komande, 1, bPodvuci, , , aPoredak )
 
       IF Type( "id" ) $ "U#UE"
          cID := ( nDbf )->( FieldGet( 1 ) )

@@ -143,7 +143,7 @@ FUNCTION pos_lista_racuna( dDat, cBroj, fPrep, fScope, cPrefixFilter, qIdRoba )
       bMarkF := NIL
    ENDIF
 
-   ObjDBedit( "racun", MAXROWS() - 10, MAXCOLS() - 3, {|| lista_racuna_key_handler( fMark ) }, iif( gRadniRac == "D", "  STALNI ", "  " ) + "RACUNI  ", "", nil, cFnc,, bMarkF )
+   my_db_edit( "racun", MAXROWS() - 10, MAXCOLS() - 3, {|| lista_racuna_key_handler( fMark ) }, iif( gRadniRac == "D", "  STALNI ", "  " ) + "RACUNI  ", "", nil, cFnc,, bMarkF )
 
    SET FILTER TO
 

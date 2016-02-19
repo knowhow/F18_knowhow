@@ -110,7 +110,7 @@ METHOD open()
    Box(, 21, 77 )
    TekDokument()
    ::sayKomande()
-   ObjDbedit( "FInv", 21, 77, {|| ::onKeyBoard() }, "", "Priprema inventure", , , , , 4 )
+   my_db_edit( "FInv", 21, 77, {|| ::onKeyBoard() }, "", "Priprema inventure", , , , , 4 )
 
    RETURN .T.
 

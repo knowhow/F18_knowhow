@@ -178,7 +178,7 @@ FUNCTION edRadniSati()
    NEXT
 
    Box(, MAXROWS() - 16, MAXCOLS() - 5 )
-   ObjDbedit( "RadSat", MAXROWS() - 16, MAXCOLS() - 5, {|| key_handler() }, "Pregled radnih sati za radnike", "", , , , )
+   my_db_edit( "RadSat", MAXROWS() - 16, MAXCOLS() - 5, {|| key_handler() }, "Pregled radnih sati za radnike", "", , , , )
    Boxc()
 
    PopwA()

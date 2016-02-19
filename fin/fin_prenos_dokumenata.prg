@@ -776,7 +776,7 @@ FUNCTION fin_prekart()
       Box(, 20, 77 )
       @ m_x + 19, m_y + 2 SAY "                         �                        �                   "
       @ m_x + 20, m_y + 2 SAY " <c-T>  Brisi stavku     � <ENTER>  Ispravi konto � <a-A> Azuriraj    "
-      ObjDbedit( "PPK", 20, 77, {|| EPPK() }, "", "Priprema za prebacivanje stavki", , , , , 2 )
+      my_db_edit( "PPK", 20, 77, {|| EPPK() }, "", "Priprema za prebacivanje stavki", , , , , 2 )
       BoxC()
 
       IF RECCOUNT2() > 0

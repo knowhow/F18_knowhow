@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -14,394 +14,395 @@
 
 
 
-function os_pregled_amortizacije()
-local _sr_id, _sr_id_rj, _sr_id_am, _sr_dat_otp, _sr_datum
-local cIdKonto:=qidkonto:=space(7), cidsk:="", ndug:=ndug2:=npot:=npot2:=ndug3:=npot3:=0
-local nCol1:=10
-local _mod_name := "OS"
-local _t_nab, _t_otp, _t_amp
-local _sanacija := .f.
+FUNCTION os_pregled_amortizacije()
 
-if gOsSii == "S"
-    _mod_name := "SII"
-endif
+   LOCAL _sr_id, _sr_id_rj, _sr_id_am, _sr_dat_otp, _sr_datum
+   LOCAL cIdKonto := qidkonto := Space( 7 ), cidsk := "", ndug := ndug2 := npot := npot2 := ndug3 := npot3 := 0
+   LOCAL nCol1 := 10
+   LOCAL _mod_name := "OS"
+   LOCAL _t_nab, _t_otp, _t_amp
+   LOCAL _sanacija := .F.
 
-O_KONTO
-O_RJ
+   IF gOsSii == "S"
+      _mod_name := "SII"
+   ENDIF
 
-o_os_sii_promj()
-o_os_sii()
+   O_KONTO
+   O_RJ
 
-cIdrj:=SPACE(4)
-cPromj:="2"
-cPocinju:="N"
-cKPocinju:="N"
-cFiltSadVr:="0"
-cFiltK1:=SPACE(40)
-cON:=" " // novo!
+   o_os_sii_promj()
+   o_os_sii()
 
-cBrojSobe:=space(6)
-lBrojSobe:=.f.
+   cIdrj := Space( 4 )
+   cPromj := "2"
+   cPocinju := "N"
+   cKPocinju := "N"
+   cFiltSadVr := "0"
+   cFiltK1 := Space( 40 )
+   cON := " " // novo!
 
-cPotpis:="N"
+   cBrojSobe := Space( 6 )
+   lBrojSobe := .F.
 
-Box(,13,77)
- DO WHILE .t.
-  @ m_x + 1, m_y + 2 SAY "Radna jedinica (prazno - svi):" GET cidrj ;
-        VALID {|| EMPTY(cIdRj) .or. P_RJ( @cIdrj ), if( !EMPTY(cIdRj), cIdRj := PADR( cIdRj, 4 ), .t. ), .t. }
- 
-  @ m_x+1,col()+2 SAY "sve koje pocinju " get cpocinju valid cpocinju $ "DN" pict "@!"
-  @ m_x+2,m_y+2 SAY "Konto (prazno - svi):" get qIdKonto pict "@!" valid empty(qidkonto) .or. P_Konto(@qIdKonto)
-  @ m_x+2,col()+2 SAY "sva koja pocinju " get cKpocinju valid cKpocinju $ "DN" pict "@!"
-  @ m_x+4,m_y+2 SAY "Za sredstvo prikazati vrijednost:"
-  @ m_x+5,m_y+2 SAY "1 - bez promjena"
-  @ m_x+6,m_y+2 SAY "2 - osnovni iznos + promjene"
-  @ m_x+7,m_y+2 SAY "3 - samo promjene           " GET cPromj valid cpromj $ "123"
-  @ m_x+8,m_y+2 SAY "Filter po sadasnjoj vr.(0-sve,1-samo koja je imaju,2-samo koja je nemaju):" GET cFiltSadVr valid cFiltSadVr $ "012" pict "9"
-  @ m_x+9,m_y+2 SAY "Filter po grupaciji K1:" GET cFiltK1 pict "@!S20"
-  if os_postoji_polje("brsoba")
-   lBrojSobe:=.t.
-   @ m_x+10,m_y+2 SAY "Broj sobe (prazno sve) " GET cBrojSobe  pict "@!"
-  endif
-  @ m_x+11,m_y+2 SAY "Prikaz svih os ( )      /   neotpisanih (N)     / otpisanih   (O) "
-  @ m_x+12,m_y+2 SAY "/novonabavljenih   (B) / iz proteklih godina (G)" get cON valid con $ "ONBG " pict "@!"
-  @ m_x+13,m_y+2 SAY "Prikazati mjesta za potpis na kraju pregleda? (D/N)" get cPotpis valid cPotpis $ "DN" pict "@!"
-  read; ESC_BCR
-  aUsl1:=Parsiraj(cFiltK1,"K1")
-  if aUsl1<>NIL; exit; endif
- ENDDO
-BoxC()
+   cPotpis := "N"
 
-cIdRj := PADR( cIdRj, 4 )
+   Box(, 13, 77 )
+   DO WHILE .T.
+      @ m_x + 1, m_y + 2 SAY "Radna jedinica (prazno - svi):" GET cidrj ;
+         VALID {|| Empty( cIdRj ) .OR. P_RJ( @cIdrj ), if( !Empty( cIdRj ), cIdRj := PadR( cIdRj, 4 ), .T. ), .T. }
 
-if empty(qidkonto); qidkonto:=""; endif
-IF cKPocinju=="D"
-  qIdKonto:=TRIM(qIdKonto)
-ENDIF
+      @ m_x + 1, Col() + 2 SAY "sve koje pocinju " GET cpocinju VALID cpocinju $ "DN" PICT "@!"
+      @ m_x + 2, m_y + 2 SAY "Konto (prazno - svi):" GET qIdKonto PICT "@!" VALID Empty( qidkonto ) .OR. P_Konto( @qIdKonto )
+      @ m_x + 2, Col() + 2 SAY "sva koja pocinju " GET cKpocinju VALID cKpocinju $ "DN" PICT "@!"
+      @ m_x + 4, m_y + 2 SAY "Za sredstvo prikazati vrijednost:"
+      @ m_x + 5, m_y + 2 SAY "1 - bez promjena"
+      @ m_x + 6, m_y + 2 SAY "2 - osnovni iznos + promjene"
+      @ m_x + 7, m_y + 2 SAY "3 - samo promjene           " GET cPromj VALID cpromj $ "123"
+      @ m_x + 8, m_y + 2 SAY "Filter po sadasnjoj vr.(0-sve,1-samo koja je imaju,2-samo koja je nemaju):" GET cFiltSadVr VALID cFiltSadVr $ "012" PICT "9"
+      @ m_x + 9, m_y + 2 SAY "Filter po grupaciji K1:" GET cFiltK1 PICT "@!S20"
+      IF os_postoji_polje( "brsoba" )
+         lBrojSobe := .T.
+         @ m_x + 10, m_y + 2 SAY "Broj sobe (prazno sve) " GET cBrojSobe  PICT "@!"
+      ENDIF
+      @ m_x + 11, m_y + 2 SAY "Prikaz svih os ( )      /   neotpisanih (N)     / otpisanih   (O) "
+      @ m_x + 12, m_y + 2 SAY "/novonabavljenih   (B) / iz proteklih godina (G)" GET cON VALID con $ "ONBG " PICT "@!"
+      @ m_x + 13, m_y + 2 SAY "Prikazati mjesta za potpis na kraju pregleda? (D/N)" GET cPotpis VALID cPotpis $ "DN" PICT "@!"
+      read; ESC_BCR
+      aUsl1 := Parsiraj( cFiltK1, "K1" )
+      IF aUsl1 <> NIL; exit; ENDIF
+   ENDDO
+   BoxC()
 
-if empty(cIdrj); cidrj:=""; endif
-if cpocinju=="D"
-  cIdRj:=trim(cidrj)
-endif
+   cIdRj := PadR( cIdRj, 4 )
 
-os_rpt_default_valute()
+   IF Empty( qidkonto ); qidkonto := ""; ENDIF
+   IF cKPocinju == "D"
+      qIdKonto := Trim( qIdKonto )
+   ENDIF
 
-START PRINT CRET
+   IF Empty( cIdrj ); cidrj := ""; ENDIF
+   IF cpocinju == "D"
+      cIdRj := Trim( cidrj )
+   ENDIF
 
-private nStr:=0  
-// strana
+   os_rpt_default_valute()
 
-select rj
-HSEEK cIdrj
-select_os_sii()
+   START PRINT CRET
 
-P_10CPI
-? gTS + ":", gnFirma
+   PRIVATE nStr := 0
+   // strana
 
-if !empty( cIdrj )
-    ? "Radna jedinica:", cIdrj, rj->naz
-endif
+   SELECT rj
+   HSEEK cIdrj
+   select_os_sii()
 
-? _mod_name + ": Pregled obracuna amortizacije po kontima "
+   P_10CPI
+   ? gTS + ":", gnFirma
 
-?? "", PrikazVal(), "    Datum:", gDatObr
+   IF !Empty( cIdrj )
+      ? "Radna jedinica:", cIdrj, rj->naz
+   ENDIF
 
-if !EMPTY(cFiltK1)
-    ? "Filter grupacija K1 pravljen po uslovu: '" + TRIM(cFiltK1) + "'"
-endif
+   ? _mod_name + ": Pregled obracuna amortizacije po kontima "
 
-P_COND2
+   ?? "", PrikazVal(), "    Datum:", gDatObr
 
-private m:="----- ---------- ---- -------- ------------------------------ --- ------"+REPL(" "+REPL("-",LEN(gPicI)),5)
+   IF !Empty( cFiltK1 )
+      ? "Filter grupacija K1 pravljen po uslovu: '" + Trim( cFiltK1 ) + "'"
+   ENDIF
 
-cFilter:=".t."
+   P_COND2
 
-if !EMPTY(cFiltK1)
-  cFilter += ".and."+aUsl1
-endif
+   PRIVATE m := "----- ---------- ---- -------- ------------------------------ --- ------" + REPL( " " + REPL( "-", Len( gPicI ) ), 5 )
 
-if cPocinju=="D" .and. !EMPTY(qIdKonto)
-    cFilter += ".and. idkonto=qIdKonto .and. idrj=cIdRj"
-endif
+   cFilter := ".t."
 
-if lBrojSobe .and. !EMPTY(cBrojSobe)
-    cFilter += ".and. brsoba==cBrojSobe"
-endif
+   IF !Empty( cFiltK1 )
+      cFilter += ".and." + aUsl1
+   ENDIF
 
-IF !cFilter==".t."
-    select_os_sii()
-    SET FILTER TO &cFilter
-ENDIF
+   IF cPocinju == "D" .AND. !Empty( qIdKonto )
+      cFilter += ".and. idkonto=qIdKonto .and. idrj=cIdRj"
+   ENDIF
 
-if empty(cidrj) .or. cPocinju=="D"
-    select_os_sii()
-    set order to tag "4" 
-    //"OSi4","idkonto+idrj+id"
-    seek qidkonto
-else
-    select_os_sii()
-    set order to tag "3" 
-    //"OSi3","idrj+idkonto+id"
-    seek cidrj+qidkonto
-endif
+   IF lBrojSobe .AND. !Empty( cBrojSobe )
+      cFilter += ".and. brsoba==cBrojSobe"
+   ENDIF
 
-private nRbr := 0
+   IF !cFilter == ".t."
+      select_os_sii()
+      SET FILTER TO &cFilter
+   ENDIF
 
-nDug:=nPot1:=nPot2:=0
+   IF Empty( cidrj ) .OR. cPocinju == "D"
+      select_os_sii()
+      SET ORDER TO TAG "4"
+      // "OSi4","idkonto+idrj+id"
+      SEEK qidkonto
+   ELSE
+      select_os_sii()
+      SET ORDER TO TAG "3"
+      // "OSi3","idrj+idkonto+id"
+      SEEK cidrj + qidkonto
+   ENDIF
 
-os_zagl_amort()
+   PRIVATE nRbr := 0
 
-n1:=0
-n2:=0
+   nDug := nPot1 := nPot2 := 0
 
-do while !eof() .and. ( field->idrj = cIdrj .or. empty(cidrj))
+   os_zagl_amort()
 
-    cIdSK:=left(idkonto,3)
-    nDug2:=nPot21:=nPot22:=0
-    _t_nab := _t_otp := _t_amp := 0
-    _sanacija := .f.
+   nA1 := 0
+   nA2 := 0
 
-    do while !eof() .and. (idrj=cidrj .or. empty(cidrj))  .and. left(idkonto,3)==cidsk
+   DO WHILE !Eof() .AND. ( field->idrj = cIdrj .OR. Empty( cidrj ) )
 
-        cIdKonto:=idkonto
-        nDug3:=nPot31:=nPot32:=0
-        _t_nab := _t_otp := _t_amp := 0
+      cIdSK := Left( idkonto, 3 )
+      nDug2 := nPot21 := nPot22 := 0
+      _t_nab := _t_otp := _t_amp := 0
+      _sanacija := .F.
 
-        do while !eof() .and. (idrj=cidrj .or. empty(cidrj))  .and. idkonto==cidkonto
+      DO WHILE !Eof() .AND. ( idrj = cidrj .OR. Empty( cidrj ) )  .AND. Left( idkonto, 3 ) == cidsk
 
-            if prow() > RPT_PAGE_LEN
-                FF
-                os_zagl_amort()
-            endif
+         cIdKonto := idkonto
+         nDug3 := nPot31 := nPot32 := 0
+         _t_nab := _t_otp := _t_amp := 0
 
-            if !( (cON=="N" .and. empty(datotp)) .or.;
-               (con=="O" .and. !empty(datotp)) .or.;
-               (con=="B" .and. year(datum)=year(gdatobr)) .or.;
-               (con=="G" .and. year(datum)<year(gdatobr)) .or.;
-                empty(con) )
-                skip 1
-                loop
-            endif
+         DO WHILE !Eof() .AND. ( idrj = cidrj .OR. Empty( cidrj ) )  .AND. idkonto == cidkonto
 
-            fIma:=.t.
-            
-            if cPromj=="3"  
-                // ako zelim samo promjene vidi ima li za sr.
-                // uopste promjena
-                _sr_id := field->id
-                select_promj()
-                HSEEK _sr_id
-                fIma:=.f.
-                do while !eof() .and. field->id == _sr_id .and. field->datum <= gDatObr
-                    fIma:=.t.
-                    skip
-                enddo
-                select_os_sii()
-            endif
+            IF PRow() > RPT_PAGE_LEN
+               FF
+               os_zagl_amort()
+            ENDIF
+
+            IF !( ( cON == "N" .AND. Empty( datotp ) ) .OR. ;
+                  ( con == "O" .AND. !Empty( datotp ) ) .OR. ;
+                  ( con == "B" .AND. Year( datum ) = Year( gdatobr ) ) .OR. ;
+                  ( con == "G" .AND. Year( datum ) < Year( gdatobr ) ) .OR. ;
+                  Empty( con ) )
+               SKIP 1
+               LOOP
+            ENDIF
+
+            fIma := .T.
+
+            IF cPromj == "3"
+               // ako zelim samo promjene vidi ima li za sr.
+               // uopste promjena
+               _sr_id := field->id
+               select_promj()
+               HSEEK _sr_id
+               fIma := .F.
+               DO WHILE !Eof() .AND. field->id == _sr_id .AND. field->datum <= gDatObr
+                  fIma := .T.
+                  SKIP
+               ENDDO
+               select_os_sii()
+            ENDIF
 
             // utvrdjivanje da li sredstvo ima sada�nju vrijednost
             // --------------------------------------------------
 
-            lImaSadVr:=.f.
+            lImaSadVr := .F.
 
-            if cPromj <> "3"
-                if nabvr-otpvr-amp>0
-                    lImaSadVr:=.t.
-                endif
-            endif
+            IF cPromj <> "3"
+               IF nabvr - otpvr - amp > 0
+                  lImaSadVr := .T.
+               ENDIF
+            ENDIF
 
-            if cPromj $ "23"  
-                // prikaz promjena
-                _sr_id := field->id
-                select_promj()
-                HSEEK _sr_id
-                do while !EOF() .and. field->id == _sr_id .and. field->datum <= gDatObr
-                    n1 := 0
-                    n2 := amp
-                    if nabvr - otpvr - amp > 0
-                        lImaSadVr := .t.
-                    endif
-                    skip
-                enddo
-                select_os_sii()
-            endif
+            IF cPromj $ "23"
+               // prikaz promjena
+               _sr_id := field->id
+               select_promj()
+               HSEEK _sr_id
+               DO WHILE !Eof() .AND. field->id == _sr_id .AND. field->datum <= gDatObr
+                  nA1 := 0
+                  nA2 := amp
+                  IF nabvr - otpvr - amp > 0
+                     lImaSadVr := .T.
+                  ENDIF
+                  SKIP
+               ENDDO
+               select_os_sii()
+            ENDIF
 
             // ispis stavki
             // ------------
-            if cFiltSadVr=="1" .and. !(lImaSadVr) .or.;
-              cFiltSadVr=="2" .and. lImaSadVr
-                skip
-                loop
-            else
-                if fIma
-                    ? str(++nrbr,4)+".",id,idrj,datum,naz,jmj,str(kolicina,6,1)
-                    nCol1:=pcol()+1
-                endif
-                if cPromj <> "3"
-                    @ prow(),ncol1    SAY nabvr*nBBK pict gpici
-                    @ prow(),pcol()+1 SAY otpvr*nBBK pict gpici
-                    @ prow(),pcol()+1 SAY amp*nBBK pict gpici
-                    @ prow(),pcol()+1 SAY otpvr*nBBK+amp*nBBK pict gpici
-                    @ prow(),pcol()+1 SAY nabvr*nBBK-otpvr*nBBK-amp*nBBK pict gpici
-                    nDug3+=nabvr
-                    nPot31+=otpvr
-                    nPot32+=amp
-                    _t_nab += nabvr
-                    _t_otp += otpvr
-                    _t_amp += amp
-                endif
-                if cPromj $ "23"  // prikaz promjena
-                    _sr_id := field->id
-                    _sr_id_rj := field->idrj
-                    select_promj()
-                    HSEEK _sr_id
-                    do while !eof() .and. field->id == _sr_id .and. field->datum <= gDatObr
+            IF cFiltSadVr == "1" .AND. !( lImaSadVr ) .OR. ;
+                  cFiltSadVr == "2" .AND. lImaSadVr
+               SKIP
+               LOOP
+            ELSE
+               IF fIma
+                  ? Str( ++nrbr, 4 ) + ".", id, idrj, datum, naz, jmj, Str( kolicina, 6, 1 )
+                  nCol1 := PCol() + 1
+               ENDIF
+               IF cPromj <> "3"
+                  @ PRow(), ncol1    SAY nabvr * nBBK PICT gpici
+                  @ PRow(), PCol() + 1 SAY otpvr * nBBK PICT gpici
+                  @ PRow(), PCol() + 1 SAY amp * nBBK PICT gpici
+                  @ PRow(), PCol() + 1 SAY otpvr * nBBK + amp * nBBK PICT gpici
+                  @ PRow(), PCol() + 1 SAY nabvr * nBBK - otpvr * nBBK - amp * nBBK PICT gpici
+                  nDug3 += nabvr
+                  nPot31 += otpvr
+                  nPot32 += amp
+                  _t_nab += nabvr
+                  _t_otp += otpvr
+                  _t_amp += amp
+               ENDIF
+               IF cPromj $ "23"  // prikaz promjena
+                  _sr_id := field->id
+                  _sr_id_rj := field->idrj
+                  select_promj()
+                  HSEEK _sr_id
+                  DO WHILE !Eof() .AND. field->id == _sr_id .AND. field->datum <= gDatObr
 
-                        ? space(5),space(len(id)),space(len( _sr_id_rj )),datum,opis
+                     ? Space( 5 ), Space( Len( id ) ), Space( Len( _sr_id_rj ) ), datum, opis
 
-                        n1 := 0
-                        n2 := amp
+                     nA1 := 0
+                     nA2 := amp
 
-                        if LEFT( field->opis, 2 ) == "#S"
-                            _sanacija := .t.
-                            _t_amp += amp
-                            _t_otp += otpvr
-                            _t_nab += nabvr
-                        endif
-                        
-                        @ prow(),ncol1    SAY nabvr*nBBK pict gpici
-                        @ prow(),pcol()+1 SAY otpvr*nBBK pict gpici
-                        
-                        if !_sanacija
-                            @ prow(),pcol()+1 SAY amp*nBBK pict gpici
-                            @ prow(),pcol()+1 SAY otpvr*nBBK+amp*nBBK pict gpici
-                            @ prow(),pcol()+1 SAY nabvr*nBBK-amp*nBBK-otpvr*nBBK pict gpici
-                        endif
+                     IF Left( field->opis, 2 ) == "#S"
+                        _sanacija := .T.
+                        _t_amp += amp
+                        _t_otp += otpvr
+                        _t_nab += nabvr
+                     ENDIF
 
-                        nDug3+=nabvr; nPot31+=otpvr
-                        nPot32+=amp
-                        skip
-                    enddo
+                     @ PRow(), ncol1    SAY nabvr * nBBK PICT gpici
+                     @ PRow(), PCol() + 1 SAY otpvr * nBBK PICT gpici
 
-                    select_os_sii()
+                     IF !_sanacija
+                        @ PRow(), PCol() + 1 SAY amp * nBBK PICT gpici
+                        @ PRow(), PCol() + 1 SAY otpvr * nBBK + amp * nBBK PICT gpici
+                        @ PRow(), PCol() + 1 SAY nabvr * nBBK - amp * nBBK - otpvr * nBBK PICT gpici
+                     ENDIF
 
-                endif
+                     nDug3 += nabvr; nPot31 += otpvr
+                     nPot32 += amp
+                     SKIP
+                  ENDDO
 
-            endif
+                  select_os_sii()
 
-            skip
+               ENDIF
 
-            if _sanacija 
-                // ispisati stanje sanacija ako treba....
-                ? SPACE(20) + REPLICATE("-", 88 )
-                ? PADL( "Ukupni obracun sanacija:", nCol1 )
-                @ prow(), nCol1 SAY _t_nab PICT gPicI
-                @ prow(), pcol() + 1 SAY _t_otp PICT gPicI
-                @ prow(), pcol() + 1 SAY _t_amp PICT gPicI
-                ?
-                _sanacija := .f.
-            endif
+            ENDIF
 
-        enddo
+            SKIP
 
-        if prow() > RPT_PAGE_LEN
+            IF _sanacija
+               // ispisati stanje sanacija ako treba....
+               ? Space( 20 ) + Replicate( "-", 88 )
+               ? PadL( "Ukupni obracun sanacija:", nCol1 )
+               @ PRow(), nCol1 SAY _t_nab PICT gPicI
+               @ PRow(), PCol() + 1 SAY _t_otp PICT gPicI
+               @ PRow(), PCol() + 1 SAY _t_amp PICT gPicI
+               ?
+               _sanacija := .F.
+            ENDIF
+
+         ENDDO
+
+         IF PRow() > RPT_PAGE_LEN
             FF
             os_zagl_amort()
-        endif
-        
-        nTArea := SELECT()
-        select konto
-        HSEEK cIdKonto
-        select (nTArea)
-        ? m
-        ? " ukupno ", cIdKonto, PADR( konto->naz, 50 )
-        @ prow(),ncol1    SAY ndug3*nBBK pict gpici
-        @ prow(),pcol()+1 SAY npot31*nBBK pict gpici
-        @ prow(),pcol()+1 SAY npot32*nBBK pict gpici
-        @ prow(),pcol()+1 SAY npot31*nBBK+npot32*nBBK pict gpici
-        @ prow(),pcol()+1 SAY ndug3*nBBK-npot31*nBBK-npot32*nBBK pict gpici
-        ? m
-        nDug2+=nDug3; nPot21+=nPot31; nPot22+=nPot32
-        if !empty(qidkonto) .and. cKPocinju=="N"
-            exit
-        endif
-    enddo
-    if !empty(qidkonto) .and. cKPocinju=="N"
-        exit
-    endif
-    if prow() > RPT_PAGE_LEN; FF; os_zagl_amort(); endif
-    ? m
-    nTArea := SELECT()
-    select konto
-    HSEEK cIdSK
-    select (nTArea)
-    ? " UKUPNO ",cIdSK, PADR( konto->naz, 50 )
-    @ prow(),ncol1    SAY ndug2*nBBK pict gpici
-    @ prow(),pcol()+1 SAY npot21*nBBK pict gpici
-    @ prow(),pcol()+1 SAY npot22*nBBK pict gpici
-    @ prow(),pcol()+1 SAY npot21*nBBK+npot22*nBBK pict gpici
-    @ prow(),pcol()+1 SAY ndug2*nBBK-npot21*nBBK-npot22*nBBK pict gpici
-    ? m
-    nDug+=nDug2; nPot1+=nPot21; nPot2+=nPot22
+         ENDIF
 
-enddo
+         nTArea := Select()
+         SELECT konto
+         HSEEK cIdKonto
+         SELECT ( nTArea )
+         ? m
+         ? " ukupno ", cIdKonto, PadR( konto->naz, 50 )
+         @ PRow(), ncol1    SAY ndug3 * nBBK PICT gpici
+         @ PRow(), PCol() + 1 SAY npot31 * nBBK PICT gpici
+         @ PRow(), PCol() + 1 SAY npot32 * nBBK PICT gpici
+         @ PRow(), PCol() + 1 SAY npot31 * nBBK + npot32 * nBBK PICT gpici
+         @ PRow(), PCol() + 1 SAY ndug3 * nBBK - npot31 * nBBK - npot32 * nBBK PICT gpici
+         ? m
+         nDug2 += nDug3; nPot21 += nPot31; nPot22 += nPot32
+         IF !Empty( qidkonto ) .AND. cKPocinju == "N"
+            EXIT
+         ENDIF
+      ENDDO
+      IF !Empty( qidkonto ) .AND. cKPocinju == "N"
+         EXIT
+      ENDIF
+      IF PRow() > RPT_PAGE_LEN; FF; os_zagl_amort(); ENDIF
+      ? m
+      nTArea := Select()
+      SELECT konto
+      HSEEK cIdSK
+      SELECT ( nTArea )
+      ? " UKUPNO ", cIdSK, PadR( konto->naz, 50 )
+      @ PRow(), ncol1    SAY ndug2 * nBBK PICT gpici
+      @ PRow(), PCol() + 1 SAY npot21 * nBBK PICT gpici
+      @ PRow(), PCol() + 1 SAY npot22 * nBBK PICT gpici
+      @ PRow(), PCol() + 1 SAY npot21 * nBBK + npot22 * nBBK PICT gpici
+      @ PRow(), PCol() + 1 SAY ndug2 * nBBK - npot21 * nBBK - npot22 * nBBK PICT gpici
+      ? m
+      nDug += nDug2; nPot1 += nPot21; nPot2 += nPot22
 
-if empty(qidkonto) .or. cKPocinju=="D"
-    if prow() > RPT_PAGE_LEN
-        FF  
-        os_zagl_amort()
-    endif
-    ?
-    ? m
-    ? " U K U P N O :"
-    @ prow(),ncol1    SAY ndug*nBBK pict gpici
-    @ prow(),pcol()+1 SAY npot1*nBBK pict gpici
-    @ prow(),pcol()+1 SAY npot2*nBBK pict gpici
-    @ prow(),pcol()+1 SAY npot1*nBBK+npot2*nBBK pict gpici
-    @ prow(),pcol()+1 SAY ndug*nBBK-npot1*nBBK-npot2*nBBK pict gpici
-    ? m
-    ?
-    ?
-    if cPotpis=="D"
-	    ? " Zaduzeno lice:"
-	    ? " _______________________"
-	    ? SPACE(95)+"Clanovi komisije:"
-	    ? SPACE(95)+"_____________________"
-	    ? SPACE(95)+"_____________________"
-	    ? SPACE(95)+"_____________________"
-    endif
-endif
+   ENDDO
 
-FF
-ENDPRINT
+   IF Empty( qidkonto ) .OR. cKPocinju == "D"
+      IF PRow() > RPT_PAGE_LEN
+         FF
+         os_zagl_amort()
+      ENDIF
+      ?
+      ? m
+      ? " U K U P N O :"
+      @ PRow(), ncol1    SAY ndug * nBBK PICT gpici
+      @ PRow(), PCol() + 1 SAY npot1 * nBBK PICT gpici
+      @ PRow(), PCol() + 1 SAY npot2 * nBBK PICT gpici
+      @ PRow(), PCol() + 1 SAY npot1 * nBBK + npot2 * nBBK PICT gpici
+      @ PRow(), PCol() + 1 SAY ndug * nBBK - npot1 * nBBK - npot2 * nBBK PICT gpici
+      ? m
+      ?
+      ?
+      IF cPotpis == "D"
+         ? " Zaduzeno lice:"
+         ? " _______________________"
+         ? Space( 95 ) + "Clanovi komisije:"
+         ? Space( 95 ) + "_____________________"
+         ? Space( 95 ) + "_____________________"
+         ? Space( 95 ) + "_____________________"
+      ENDIF
+   ENDIF
 
-my_close_all_dbf()
-return
+   FF
+   ENDPRINT
 
+   my_close_all_dbf()
 
-function os_zagl_amort()
-?
-@ prow(),125 SAY "Str."+str(++nStr,3)
-if lBrojSobe .and. !empty(cBrojSobe)
-  ?
-  ? "Prikaz za sobu br:", cBrojSobe
-  ?
-endif
-if con="N"
-  ? "PRIKAZ NEOTPISANIH SREDSTAVA:"
-elseif con=="B"
-  ? "PRIKAZ NOVONABAVLJENIH SREDSTAVA:"
-elseif con=="G"
-  ? "PRIKAZ SREDSTAVA IZ PROTEKLIH GODINA:"
-elseif con=="O"
-  ? "PRIKAZ OTPISANIH SREDSTAVA:"
-elseif   con==" "
-  ? "PRIKAZ SVIH SREDSTAVA:"
-endif
-? m
-? " Rbr.  Inv.broj   RJ    Datum    Sredstvo                     jmj  kol  "+" "+PADC("NabVr",LEN(gPicI))+" "+PADC("OtpVr",LEN(gPicI))+" "+PADC("Amort.",LEN(gPicI))+" "+PADC("O+Am",LEN(gPicI))+" "+PADC("SadVr",LEN(gPicI))
-? m
-
-return
+   RETURN
 
 
+FUNCTION os_zagl_amort()
+
+   ?
+   @ PRow(), 125 SAY "Str." + Str( ++nStr, 3 )
+   IF lBrojSobe .AND. !Empty( cBrojSobe )
+      ?
+      ? "Prikaz za sobu br:", cBrojSobe
+      ?
+   ENDIF
+   IF con = "N"
+      ? "PRIKAZ NEOTPISANIH SREDSTAVA:"
+   ELSEIF con == "B"
+      ? "PRIKAZ NOVONABAVLJENIH SREDSTAVA:"
+   ELSEIF con == "G"
+      ? "PRIKAZ SREDSTAVA IZ PROTEKLIH GODINA:"
+   ELSEIF con == "O"
+      ? "PRIKAZ OTPISANIH SREDSTAVA:"
+   ELSEIF   con == " "
+      ? "PRIKAZ SVIH SREDSTAVA:"
+   ENDIF
+   ? m
+   ? " Rbr.  Inv.broj   RJ    Datum    Sredstvo                     jmj  kol  " + " " + PadC( "NabVr", Len( gPicI ) ) + " " + PadC( "OtpVr", Len( gPicI ) ) + " " + PadC( "Amort.", Len( gPicI ) ) + " " + PadC( "O+Am", Len( gPicI ) ) + " " + PadC( "SadVr", Len( gPicI ) )
+   ? m
+
+   RETURN

@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -13,452 +13,456 @@
 #include "f18.ch"
 
 
-function os_amortizacija_po_kontima()
+FUNCTION os_amortizacija_po_kontima()
 
-local cIdAmort:=space(8)
-local _sr_id, _sr_id_rj, _sr_id_am, _sr_datum, _sr_dat_otp
-local cIdKonto:=qidkonto:=space(7), cidsk:="", ndug:=ndug2:=npot:=npot2:=ndug3:=npot3:=0
-local nCol1:=10, qIdAm:=SPACE(8)
-local _mod_name := "OS"
+   LOCAL cIdAmort := Space( 8 )
+   LOCAL _sr_id, _sr_id_rj, _sr_id_am, _sr_datum, _sr_dat_otp
+   LOCAL cIdKonto := qidkonto := Space( 7 ), cidsk := "", ndug := ndug2 := npot := npot2 := ndug3 := npot3 := 0
+   LOCAL nCol1 := 10, qIdAm := Space( 8 )
+   LOCAL _mod_name := "OS"
 
-if gOsSii == "S"
-    _mod_name := "SII"
-endif
+   IF gOsSii == "S"
+      _mod_name := "SII"
+   ENDIF
 
-O_AMORT
-O_KONTO
-O_RJ
+   O_AMORT
+   O_KONTO
+   O_RJ
 
-o_os_sii_promj()
-o_os_sii()
+   o_os_sii_promj()
+   o_os_sii()
 
-cIdrj := SPACE(4)
-cPromj:="2"
-cPocinju:="N"
-cFiltSadVr:="0"
-cFiltK1:=SPACE(40)
-cSamoSpec:=IzFMKIni("OS","DefaultSamoSpecZaIzv7","N")
-cON:=" " // novo!
+   cIdrj := Space( 4 )
+   cPromj := "2"
+   cPocinju := "N"
+   cFiltSadVr := "0"
+   cFiltK1 := Space( 40 )
+   cSamoSpec := IzFMKIni( "OS", "DefaultSamoSpecZaIzv7", "N" )
+   cON := " " // novo!
 
-Box(,12,77)
- DO WHILE .t.
-  @ m_x + 1, m_y + 2 SAY "Radna jedinica (prazno - svi):" GET cidrj ;
-        VALID {|| EMPTY(cIdRj) .or. P_RJ( @cIdrj ), if( !EMPTY(cIdRj), cIdRj := PADR( cIdRj, 4 ), .t. ), .t. }
- 
-  @ m_x+ 1,col()+2 SAY "sve koje pocinju " get cpocinju valid cpocinju $ "DN" pict "@!"
-  @ m_x+ 2,m_y+2 SAY "Konto (prazno - svi):" get qIdKonto pict "@!" valid empty(qidkonto) .or. P_Konto(@qIdKonto)
-  @ m_x+ 3,m_y+2 SAY "Grupa amort.stope (prazno - sve):" get qIdAm pict "@!" valid empty(qidAm) .or. P_Amort(@qIdAm)
-  @ m_x+ 4,m_y+2 SAY "Za sredstvo prikazati vrijednost:"
-  @ m_x+ 5,m_y+2 SAY "1 - bez promjena"
-  @ m_x+ 6,m_y+2 SAY "2 - osnovni iznos + promjene"
-  @ m_x+ 7,m_y+2 SAY "3 - samo promjene           " GET cPromj valid cpromj $ "123"
-  @ m_x+ 8,m_y+2 SAY "Filter po sadasnjoj vr.(0-sve,1-samo koja je imaju,2-samo koja je nemaju):" GET cFiltSadVr valid cFiltSadVr $ "012" pict "9"
-  @ m_x+ 9,m_y+2 SAY "Filter po grupaciji K1:" GET cFiltK1 pict "@!S20"
-  @ m_x+10,m_y+2 SAY "Prikaz samo specifikacije (D/N):" GET cSamoSpec VALID cSamoSpec$"DN" pict "@!"
-  @ m_x+11,m_y+2 SAY "Prikaz svih os ( )      /   neotpisanih (N)     / otpisanih   (O) "
-  @ m_x+12,m_y+2 SAY "/novonabavljenih   (B) / iz proteklih godina (G)" get cON valid con $ "ONBG " pict "@!"
-  read; ESC_BCR
-  aUsl1:=Parsiraj(cFiltK1,"K1")
-  if aUsl1<>NIL; exit; endif
- ENDDO
-BoxC()
+   Box(, 12, 77 )
+   DO WHILE .T.
+      @ m_x + 1, m_y + 2 SAY "Radna jedinica (prazno - svi):" GET cidrj ;
+         VALID {|| Empty( cIdRj ) .OR. P_RJ( @cIdrj ), if( !Empty( cIdRj ), cIdRj := PadR( cIdRj, 4 ), .T. ), .T. }
 
-cIdRj := PADR( cIdRj, 4 )
+      @ m_x + 1, Col() + 2 SAY "sve koje pocinju " GET cpocinju VALID cpocinju $ "DN" PICT "@!"
+      @ m_x + 2, m_y + 2 SAY "Konto (prazno - svi):" GET qIdKonto PICT "@!" VALID Empty( qidkonto ) .OR. P_Konto( @qIdKonto )
+      @ m_x + 3, m_y + 2 SAY "Grupa amort.stope (prazno - sve):" GET qIdAm PICT "@!" VALID Empty( qidAm ) .OR. P_Amort( @qIdAm )
+      @ m_x + 4, m_y + 2 SAY "Za sredstvo prikazati vrijednost:"
+      @ m_x + 5, m_y + 2 SAY "1 - bez promjena"
+      @ m_x + 6, m_y + 2 SAY "2 - osnovni iznos + promjene"
+      @ m_x + 7, m_y + 2 SAY "3 - samo promjene           " GET cPromj VALID cpromj $ "123"
+      @ m_x + 8, m_y + 2 SAY "Filter po sadasnjoj vr.(0-sve,1-samo koja je imaju,2-samo koja je nemaju):" GET cFiltSadVr VALID cFiltSadVr $ "012" PICT "9"
+      @ m_x + 9, m_y + 2 SAY "Filter po grupaciji K1:" GET cFiltK1 PICT "@!S20"
+      @ m_x + 10, m_y + 2 SAY "Prikaz samo specifikacije (D/N):" GET cSamoSpec VALID cSamoSpec $ "DN" PICT "@!"
+      @ m_x + 11, m_y + 2 SAY "Prikaz svih os ( )      /   neotpisanih (N)     / otpisanih   (O) "
+      @ m_x + 12, m_y + 2 SAY "/novonabavljenih   (B) / iz proteklih godina (G)" GET cON VALID con $ "ONBG " PICT "@!"
+      read; ESC_BCR
+      aUsl1 := Parsiraj( cFiltK1, "K1" )
+      IF aUsl1 <> NIL; exit; ENDIF
+   ENDDO
+   BoxC()
 
-if empty(qidAm); qidAm:=""; endif
-if empty(qidkonto); qidkonto:=""; endif
-if empty(cIdrj); cidrj:=""; endif
-if cpocinju=="D"
-  cIdRj:=trim(cidrj)
-endif
+   cIdRj := PadR( cIdRj, 4 )
 
-
-select_os_sii()
-cSort1:="idkonto+idam+id"
-
-aUslS := ".t."
-IF !EMPTY(cIdRJ)
-  aUslS := aUslS + ".and." +;
-           "IDRJ="+dbf_quote(cIdRJ)
-ENDIF
-IF !EMPTY(qIdKonto)
-  aUslS := aUslS + ".and." +;
-           "IDKONTO="+dbf_quote(qIdKonto)
-ENDIF
-IF !EMPTY(qIdAm)
-  aUslS := aUslS + ".and." +;
-           "IDKONTO="+dbf_quote(qIdAm)
-ENDIF
-IF !EMPTY(cFiltK1)
-  aUslS := aUslS + ".and." +;
-           aUsl1
-ENDIF
-
-select_os_sii()
-SET ORDER TO
-SET FILTER TO
-GO TOP
-
-IF cPromj=="3" .or. cFiltSadVr!="0"
-  cSort1:="FSVPROMJ()+idkonto+idam+id"
-  INDEX ON &cSort1 TO "TMPOS" FOR &aUslS
-  SET SCOPE TO " "
-ELSE
-  INDEX ON &cSort1 TO "TMPOS" FOR &aUslS
-ENDIF
-GO TOP
-
-IF EOF()
-  MsgBeep("Ne postoje trazeni podaci!")
-  CLOSERET
-ENDIF
-
-os_rpt_default_valute()
-
-START PRINT CRET
-
-P_12CPI
-
-? gTS +":", gnFirma
-
-if !empty(cidrj)
-    select rj
-    HSEEK cIdrj
-    select_os_sii()
-    ? "Radna jedinica:", cIdrj, rj->naz
-endif
-
-? _mod_name + ": Pregled obracuna amortizacije po kontima i amortizacionim grupama "
-?? "", PrikazVal(), "    Datum:", gDatObr
-
-if !EMPTY(cFiltK1)
-    ? "Filter grupacija K1 pravljen po uslovu: '"+TRIM(cFiltK1)+"'"
-endif
-
-if con="N"
-  ? "PRIKAZ NEOTPISANIH SREDSTAVA:"
-elseif con=="B"
-  ? "PRIKAZ NOVONABAVLJENIH SREDSTAVA:"
-elseif con=="G"
-  ? "PRIKAZ SREDSTAVA IZ PROTEKLIH GODINA:"
-elseif con=="O"
-  ? "PRIKAZ OTPISANIH SREDSTAVA:"
-elseif   con==" "
-  ? "PRIKAZ SVIH SREDSTAVA:"
-endif
-
-private nRbr:=0
-aKol:={}
-nKol:=0
-nPI:=LEN(gPicI)
-nPID:=0
-j:=AT(".",gPicI)
-
-IF (j>0)
-    FOR i:=j TO LEN(gPicI)
-            IF SUBSTR(gPicI,i,1)=="9"
-                ++nPID
-            ELSE
-                //EXIT
-            loop
-            ENDIF
-    NEXT
-ENDIF
-
-IF cSamoSpec=="D"
- AADD(aKol, { "OtpVr"    , {|| otpvr*nBBK            }, .f., "N", nPI,nPID, 1, ++nKol } )
- AADD(aKol, { "Amort."   , {|| amp*nBBK              }, .f., "N", nPI,nPID, 1, ++nKol } )
- AADD(aKol, { "O+Am"     , {|| otpvr*nBBK+amp*nBBK        }, .f., "N", nPI,nPID, 1, ++nKol } )
- AADD(aKol, { "SadVr"    , {|| nabvr*nBBK-otpvr*nBBK-amp*nBBK  }, .f., "N", nPI,nPID, 1, ++nKol } )
-ELSE
- AADD(aKol, { "Rbr."     , {|| STR(nRBr,4)+"."  }, .f., "C",   5,   0, 1, ++nKol } )
- AADD(aKol, { "Inv.broj" , {|| id               }, .f., "C",  10,   0, 1, ++nKol } )
- AADD(aKol, { "RJ"       , {|| idrj             }, .f., "C",   4,   0, 1, ++nKol } )
- AADD(aKol, { "Datum"    , {|| datum            }, .f., "D",   8,   0, 1, ++nKol } )
- AADD(aKol, { "Sredstvo" , {|| naz              }, .f., "C",  30,   0, 1, ++nKol } )
- AADD(aKol, { "jmj"      , {|| jmj              }, .f., "C",   3,   0, 1, ++nKol } )
- AADD(aKol, { "kol"      , {|| kolicina         }, .f., "N",   6,   1, 1, ++nKol } )
- AADD(aKol, { "NabVr"    , {|| nabvr*nBBK            }, .t., "N", nPI,nPID, 1, ++nKol } )
- AADD(aKol, { "OtpVr"    , {|| otpvr*nBBK            }, .t., "N", nPI,nPID, 1, ++nKol } )
- AADD(aKol, { "Amort."   , {|| amp*nBBK              }, .t., "N", nPI,nPID, 1, ++nKol } )
- AADD(aKol, { "O+Am"     , {|| otpvr*nBBK+amp*nBBK        }, .t., "N", nPI,nPID, 1, ++nKol } )
- AADD(aKol, { "SadVr"    , {|| nabvr*nBBK-otpvr*nBBK-amp*nBBK  }, .t., "N", nPI,nPID, 1, ++nKol } )
-ENDIF
-
-gnLMarg:=0; gTabela:=1; gOstr:="D"
-
-cIdSK    := LEFT(IDKONTO,3)
-cIdKonto := IDKONTO
-cIdAm    := IDAM
-
-nNab1:=nOtp1:=nAmo1:=0
-nNab2:=nOtp2:=nAmo2:=0
-nNab3:=nOtp3:=nAmo3:=0
-nNab9:=nOtp9:=nAmo9:=0
-
-gaSubTotal:={}
-gaDodStavke:={}
-
-IF cSamoSpec=="D"
-
-  StampaTabele(aKol,,,gTabela,,;
-               ,,;
-               {|| FFor1s()},IF(gOstr=="D",,-1),,,,,)
-
-ELSE
-
-  StampaTabele(aKol,,,gTabela,,;
-               ,,;
-               {|| FFor1()},IF(gOstr=="D",,-1),,,,,)
-
-ENDIF
-
-FF
-ENDPRINT
-my_close_all_dbf()
-return
+   IF Empty( qidAm ); qidAm := ""; ENDIF
+   IF Empty( qidkonto ); qidkonto := ""; ENDIF
+   IF Empty( cIdrj ); cidrj := ""; ENDIF
+   IF cpocinju == "D"
+      cIdRj := Trim( cidrj )
+   ENDIF
 
 
+   select_os_sii()
+   cSort1 := "idkonto+idam+id"
 
-static function FFor1()
-local _sr_id, _sr_id_rj, _sr_datum, _sr_dat_otp, _sr_id_am
-local lVrati:=.t., fIma:=.t., lImaSadVr:=.t.
-local _sr_kol, _sr_naz, _sr_jmj
+   aUslS := ".t."
+   IF !Empty( cIdRJ )
+      aUslS := aUslS + ".and." + ;
+         "IDRJ=" + dbf_quote( cIdRJ )
+   ENDIF
+   IF !Empty( qIdKonto )
+      aUslS := aUslS + ".and." + ;
+         "IDKONTO=" + dbf_quote( qIdKonto )
+   ENDIF
+   IF !Empty( qIdAm )
+      aUslS := aUslS + ".and." + ;
+         "IDKONTO=" + dbf_quote( qIdAm )
+   ENDIF
+   IF !Empty( cFiltK1 )
+      aUslS := aUslS + ".and." + ;
+         aUsl1
+   ENDIF
 
-gaSubTotal  := {}
-gaDodStavke := {}
+   select_os_sii()
+   SET ORDER TO
+   SET FILTER TO
+   GO TOP
 
-if !( (cON=="N" .and. empty(datotp)) .or.;
-        (con=="O" .and. !empty(datotp)) .or.;
-        (con=="B" .and. year(datum)=year(gdatobr)) .or.;
-        (con=="G" .and. year(datum)<year(gdatobr)) .or.;
-         empty(con) )
-    RETURN .f.
-endif
+   IF cPromj == "3" .OR. cFiltSadVr != "0"
+      cSort1 := "FSVPROMJ()+idkonto+idam+id"
+      INDEX ON &cSort1 TO "TMPOS" FOR &aUslS
+      SET SCOPE TO " "
+   ELSE
+      INDEX ON &cSort1 TO "TMPOS" FOR &aUslS
+   ENDIF
+   GO TOP
 
-// priprema za ispis dodatnih stavki
-// ---------------------------------
+   IF Eof()
+      MsgBeep( "Ne postoje trazeni podaci!" )
+      CLOSERET
+   ENDIF
 
-++nRbr
-  
-if cPromj $ "23"  // prikaz promjena
-    
-    _sr_id := field->id
-    _sr_id_rj := field->idrj
-    _sr_naz := field->naz
-    _sr_jmj := field->jmj
-    _sr_datum := field->datum
-    _sr_kol := field->kolicina
+   os_rpt_default_valute()
 
-    select_promj()
-    HSEEK _sr_id
+   START PRINT CRET
 
-    IF cPromj=="2" .and. !eof() .and. field->id == _sr_id .and. field->datum <= gDatObr .or. cPromj=="3"
-        IF cPromj=="3"
-            AADD(gaDodStavke,;
-                { STR(nRBr,4)+"." , _sr_id , _sr_id_rj , _sr_datum ,;
-                    _sr_naz , _sr_jmj , _sr_kol , , , , , })
-            lVrati:=.f.
-        ENDIF
-        do while !eof() .and. field->id == _sr_id .and. field->datum <= gDatObr
-            
-            AADD(gaDodStavke,;
-               {,,, datum, opis,,,nabvr*nBBK,otpvr*nBBK,amp*nBBK,otpvr*nBBK+amp*nBBK,nabvr*nBBK-amp*nBBK-otpvr*nBBK})
-                 nNab3 += nabvr*nBBK;  nOtp3 += otpvr*nBBK;  nAmo3 += amp*nBBK
-                nNab2 += nabvr*nBBK;  nOtp2 += otpvr*nBBK;  nAmo2 += amp*nBBK
-                nNab1 += nabvr*nBBK;  nOtp1 += otpvr*nBBK;  nAmo1 += amp*nBBK
-            skip 1
-        enddo
-    ENDIF
-    select_os_sii()
-endif
+   P_12CPI
 
-cIdSK    := LEFT(IDKONTO,3)
-cIdKonto := IDKONTO
-cIdAm    := IDAM
-cST1:="UK.GRUPA AMORTIZ. '"+cIdAM+"'"
-  
-nTArea := SELECT()
-  
-select konto
-  
-HSEEK cIdKonto
-cST2:="UK.ANALIT.KONTO '"+cIdKonto+"'"+PADR(konto->naz, 30)+"..."
-  
-HSEEK cIdSK
-cST3:="UK.SINT.KONTO '"+cIdSK+"'"+PADR(konto->naz, 30)+"..."
+   ? gTS + ":", gnFirma
 
-select (nTArea)
-  
-IF cPromj!="3"
-    // sinteticki
-    nNab3 += nabvr*nBBK;  nOtp3 += otpvr*nBBK;  nAmo3 += amp*nBBK
-    // analiticki
-    nNab2 += nabvr*nBBK;  nOtp2 += otpvr*nBBK;  nAmo2 += amp*nBBK
-    // po grupi amortizacije
-    nNab1 += nabvr*nBBK;  nOtp1 += otpvr*nBBK;  nAmo1 += amp*nBBK
-ENDIF
+   IF !Empty( cidrj )
+      SELECT rj
+      HSEEK cIdrj
+      select_os_sii()
+      ? "Radna jedinica:", cIdrj, rj->naz
+   ENDIF
 
-SKIP 1
-    
-IF cIdSK!=LEFT(IDKONTO,3) .or. EOF()
-      // stampaj subtot.amort.
-      // stampaj subtot.analit.
-      // stampaj subtot.sint.
-      gaSubTotal:={;
-          {,,,,,,,  nNab1, nOtp1, nAmo1, nOtp1+nAmo1, nNab1-nOtp1-nAmo1 , cST1 },;
-          {,,,,,,,  nNab2, nOtp2, nAmo2, nOtp2+nAmo2, nNab2-nOtp2-nAmo2 , cST2 },;
-          {,,,,,,,  nNab3, nOtp3, nAmo3, nOtp3+nAmo3, nNab3-nOtp3-nAmo3 , cST3 } }
-      nNab1:=nOtp1:=nAmo1:=0
-      nNab2:=nOtp2:=nAmo2:=0
-      nNab3:=nOtp3:=nAmo3:=0
-ELSEIF cIdKonto!=IDKONTO
-      // stampaj subtot.amort.
-      // stampaj subtot.analit.
-      gaSubTotal:={;
-          {,,,,,,,  nNab1, nOtp1, nAmo1, nOtp1+nAmo1, nNab1-nOtp1-nAmo1 , cST1 },;
-          {,,,,,,,  nNab2, nOtp2, nAmo2, nOtp2+nAmo2, nNab2-nOtp2-nAmo2 , cST2 } }
-      nNab1:=nOtp1:=nAmo1:=0
-      nNab2:=nOtp2:=nAmo2:=0
-ELSEIF cIdAm!=IDAM
-      // stampaj subtot.amort.
-      gaSubTotal:={;
-          {,,,,,,,  nNab1, nOtp1, nAmo1, nOtp1+nAmo1, nNab1-nOtp1-nAmo1 , cST1 } }
-      nNab1:=nOtp1:=nAmo1:=0
-ELSE
-      gaSubTotal:={}
-ENDIF
-SKIP -1
-RETURN lVrati
+   ? _mod_name + ": Pregled obracuna amortizacije po kontima i amortizacionim grupama "
+   ?? "", PrikazVal(), "    Datum:", gDatObr
+
+   IF !Empty( cFiltK1 )
+      ? "Filter grupacija K1 pravljen po uslovu: '" + Trim( cFiltK1 ) + "'"
+   ENDIF
+
+   IF con = "N"
+      ? "PRIKAZ NEOTPISANIH SREDSTAVA:"
+   ELSEIF con == "B"
+      ? "PRIKAZ NOVONABAVLJENIH SREDSTAVA:"
+   ELSEIF con == "G"
+      ? "PRIKAZ SREDSTAVA IZ PROTEKLIH GODINA:"
+   ELSEIF con == "O"
+      ? "PRIKAZ OTPISANIH SREDSTAVA:"
+   ELSEIF   con == " "
+      ? "PRIKAZ SVIH SREDSTAVA:"
+   ENDIF
+
+   PRIVATE nRbr := 0
+   aKol := {}
+   nKol := 0
+   nPI := Len( gPicI )
+   nPID := 0
+   j := At( ".", gPicI )
+
+   IF ( j > 0 )
+      FOR i := j TO Len( gPicI )
+         IF SubStr( gPicI, i, 1 ) == "9"
+            ++nPID
+         ELSE
+            // EXIT
+            LOOP
+         ENDIF
+      NEXT
+   ENDIF
+
+   IF cSamoSpec == "D"
+      AAdd( aKol, { "OtpVr", {|| otpvr * nBBK            }, .F., "N", nPI, nPID, 1, ++nKol } )
+      AAdd( aKol, { "Amort.", {|| amp * nBBK              }, .F., "N", nPI, nPID, 1, ++nKol } )
+      AAdd( aKol, { "O+Am", {|| otpvr * nBBK + amp * nBBK        }, .F., "N", nPI, nPID, 1, ++nKol } )
+      AAdd( aKol, { "SadVr", {|| nabvr * nBBK - otpvr * nBBK - amp * nBBK  }, .F., "N", nPI, nPID, 1, ++nKol } )
+   ELSE
+      AAdd( aKol, { "Rbr.", {|| Str( nRBr, 4 ) + "."  }, .F., "C",   5,   0, 1, ++nKol } )
+      AAdd( aKol, { "Inv.broj", {|| id               }, .F., "C",  10,   0, 1, ++nKol } )
+      AAdd( aKol, { "RJ", {|| idrj             }, .F., "C",   4,   0, 1, ++nKol } )
+      AAdd( aKol, { "Datum", {|| datum            }, .F., "D",   8,   0, 1, ++nKol } )
+      AAdd( aKol, { "Sredstvo", {|| naz              }, .F., "C",  30,   0, 1, ++nKol } )
+      AAdd( aKol, { "jmj", {|| jmj              }, .F., "C",   3,   0, 1, ++nKol } )
+      AAdd( aKol, { "kol", {|| kolicina         }, .F., "N",   6,   1, 1, ++nKol } )
+      AAdd( aKol, { "NabVr", {|| nabvr * nBBK            }, .T., "N", nPI, nPID, 1, ++nKol } )
+      AAdd( aKol, { "OtpVr", {|| otpvr * nBBK            }, .T., "N", nPI, nPID, 1, ++nKol } )
+      AAdd( aKol, { "Amort.", {|| amp * nBBK              }, .T., "N", nPI, nPID, 1, ++nKol } )
+      AAdd( aKol, { "O+Am", {|| otpvr * nBBK + amp * nBBK        }, .T., "N", nPI, nPID, 1, ++nKol } )
+      AAdd( aKol, { "SadVr", {|| nabvr * nBBK - otpvr * nBBK - amp * nBBK  }, .T., "N", nPI, nPID, 1, ++nKol } )
+   ENDIF
+
+   gnLMarg := 0; gTabela := 1; gOstr := "D"
+
+   cIdSK    := Left( IDKONTO, 3 )
+   cIdKonto := IDKONTO
+   cIdAm    := IDAM
+
+   nNab1 := nOtp1 := nAmo1 := 0
+   nNab2 := nOtp2 := nAmo2 := 0
+   nNab3 := nOtp3 := nAmo3 := 0
+   nNab9 := nOtp9 := nAmo9 := 0
+
+   gaSubTotal := {}
+   gaDodStavke := {}
+
+   IF cSamoSpec == "D"
+
+      StampaTabele( aKol,,, gTabela,, ;
+         ,, ;
+         {|| FFor1s() }, IF( gOstr == "D",, -1 ),,,,, )
+
+   ELSE
+
+      StampaTabele( aKol,,, gTabela,, ;
+         ,, ;
+         {|| FFor1() }, IF( gOstr == "D",, -1 ),,,,, )
+
+   ENDIF
+
+   FF
+   ENDPRINT
+   my_close_all_dbf()
+
+   RETURN
 
 
 
-static function FFor1s()
-local lVrati:=.t., fIma:=.t., lImaSadVr:=.t.
-local _sr_id, _sr_id_rj, _sr_datum, _sr_dat_otp, _sr_id_am
-local _sr_naz, _sr_kol, _sr_jmj
+STATIC FUNCTION FFor1()
 
-gaSubTotal  := {}
-gaDodStavke := {}
+   LOCAL _sr_id, _sr_id_rj, _sr_datum, _sr_dat_otp, _sr_id_am
+   LOCAL lVrati := .T., fIma := .T., lImaSadVr := .T.
+   LOCAL _sr_kol, _sr_naz, _sr_jmj
 
-if !( (cON=="N" .and. empty(datotp)) .or.;
-        (con=="O" .and. !empty(datotp)) .or.;
-        (con=="B" .and. year(datum)=year(gdatobr)) .or.;
-        (con=="G" .and. year(datum)<year(gdatobr)) .or.;
-         empty(con) )
-    RETURN .f.
-endif
+   gaSubTotal  := {}
+   gaDodStavke := {}
 
-// priprema za ispis dodatnih stavki
-// ---------------------------------
-  
-++nRbr
-  
-if cPromj $ "23"  
-    
-    // prikaz promjena
-    
-    _sr_id := field->id
-    _sr_id_rj := field->idrj
-    _sr_datum := field->datum
-    _sr_naz := field->naz
-    _sr_jmj := field->jmj
-    _sr_kol := field->kolicina
+   IF !( ( cON == "N" .AND. Empty( datotp ) ) .OR. ;
+         ( con == "O" .AND. !Empty( datotp ) ) .OR. ;
+         ( con == "B" .AND. Year( datum ) = Year( gdatobr ) ) .OR. ;
+         ( con == "G" .AND. Year( datum ) < Year( gdatobr ) ) .OR. ;
+         Empty( con ) )
+      RETURN .F.
+   ENDIF
 
-    select_promj()  
-    HSEEK _sr_id
+   // priprema za ispis dodatnih stavki
+   // ---------------------------------
 
-    IF cPromj=="2" .and. !eof() .and. field->id== _sr_id .and. field->datum <= gDatObr .or. cPromj=="3"
+   ++nRbr
 
-        IF cPromj=="3"
-            AADD(gaDodStavke,;
-              { STR(nRBr,4)+"." , _sr_id , _sr_id_rj , _sr_datum ,;
-                _sr_naz , _sr_jmj , _sr_kol , , , , , })
-            lVrati:=.f.
-        ENDIF
+   IF cPromj $ "23"  // prikaz promjena
 
-        do while !eof() .and. field->id == _sr_id .and. field->datum <= gDatObr
-          AADD(gaDodStavke,;
-               {,,,datum,opis,,,nabvr*nBBK,otpvr*nBBK,amp*nBBK,otpvr*nBBK+amp*nBBK,nabvr*nBBK-amp*nBBK-otpvr*nBBK})
-          nNab9 += nabvr*nBBK;  nOtp9 += otpvr*nBBK;  nAmo9 += amp*nBBK
-          nNab3 += nabvr*nBBK;  nOtp3 += otpvr*nBBK;  nAmo3 += amp*nBBK
-          nNab2 += nabvr*nBBK;  nOtp2 += otpvr*nBBK;  nAmo2 += amp*nBBK
-          nNab1 += nabvr*nBBK;  nOtp1 += otpvr*nBBK;  nAmo1 += amp*nBBK
-            skip 1
-        enddo
-    ENDIF
-    select_os_sii()
-endif
+      _sr_id := field->id
+      _sr_id_rj := field->idrj
+      _sr_naz := field->naz
+      _sr_jmj := field->jmj
+      _sr_datum := field->datum
+      _sr_kol := field->kolicina
 
-cIdSK    := LEFT(IDKONTO,3)
-cIdKonto := IDKONTO
-cIdAm    := IDAM
-  
-nTArea := SELECT()
-select konto
-  
-cST1:="                    UK.GRUPA AMORTIZACIJE '"+cIdAM+"'"
-  
-HSEEK cIdKonto
-  
-cST2:="          UK.ANALITICKI KONTO '"+cIdKonto+"'" + PADR(konto->naz, 30) + "..."
+      select_promj()
+      HSEEK _sr_id
 
-HSEEK cIdSK
-  
-cST3:="UK.SINTETICKI KONTO '"+cIdSK+"'" + PADR(konto->naz, 30) + "..."
-cST9:="S V E    U K U P N O"
-  
-select (nTArea)
+      IF cPromj == "2" .AND. !Eof() .AND. field->id == _sr_id .AND. field->datum <= gDatObr .OR. cPromj == "3"
+         IF cPromj == "3"
+            AAdd( gaDodStavke, ;
+               { Str( nRBr, 4 ) + ".", _sr_id, _sr_id_rj, _sr_datum,;
+               _sr_naz, _sr_jmj, _sr_kol, , , , , } )
+            lVrati := .F.
+         ENDIF
+         DO WHILE !Eof() .AND. field->id == _sr_id .AND. field->datum <= gDatObr
 
-IF cPromj!="3"
-    // sveukupno
-     nNab9 += nabvr*nBBK;  nOtp9 += otpvr*nBBK;  nAmo9 += amp*nBBK
-    // sinteticki
-     nNab3 += nabvr*nBBK;  nOtp3 += otpvr*nBBK;  nAmo3 += amp*nBBK
-    // analiticki
-     nNab2 += nabvr*nBBK;  nOtp2 += otpvr*nBBK;  nAmo2 += amp*nBBK
-    // po grupi amortizacije
-     nNab1 += nabvr*nBBK;  nOtp1 += otpvr*nBBK;  nAmo1 += amp*nBBK
-ENDIF
-
-SKIP 1
-    
-IF cIdSK!=LEFT(IDKONTO,3) .or. EOF()
-      // stampaj subtot.amort.
-      // stampaj subtot.analit.
-      // stampaj subtot.sint.
-      gaSubTotal:={;
-          {,  nNab1, nOtp1, nAmo1, nOtp1+nAmo1, nNab1-nOtp1-nAmo1 , cST1 },;
-          {,  nNab2, nOtp2, nAmo2, nOtp2+nAmo2, nNab2-nOtp2-nAmo2 , cST2 },;
-          {,  nNab3, nOtp3, nAmo3, nOtp3+nAmo3, nNab3-nOtp3-nAmo3 , cST3 } }
-      nNab1:=nOtp1:=nAmo1:=0
-      nNab2:=nOtp2:=nAmo2:=0
-      nNab3:=nOtp3:=nAmo3:=0
-      // stampaj sve ukupno
-      IF EOF()
-        AADD(gaSubTotal, {,  nNab9, nOtp9, nAmo9, nOtp9+nAmo9, nNab9-nOtp9-nAmo9 , cST9 } )
+            AAdd( gaDodStavke, ;
+               {,,, datum, opis,,, nabvr * nBBK, otpvr * nBBK, amp * nBBK, otpvr * nBBK + amp * nBBK, nabvr * nBBK - amp * nBBK - otpvr * nBBK } )
+            nNab3 += nabvr * nBBK;  nOtp3 += otpvr * nBBK;  nAmo3 += amp * nBBK
+            nNab2 += nabvr * nBBK;  nOtp2 += otpvr * nBBK;  nAmo2 += amp * nBBK
+            nNab1 += nabvr * nBBK;  nOtp1 += otpvr * nBBK;  nAmo1 += amp * nBBK
+            SKIP 1
+         ENDDO
       ENDIF
-ELSEIF cIdKonto!=IDKONTO
+      select_os_sii()
+   ENDIF
+
+   cIdSK    := Left( IDKONTO, 3 )
+   cIdKonto := IDKONTO
+   cIdAm    := IDAM
+   cST1 := "UK.GRUPA AMORTIZ. '" + cIdAM + "'"
+
+   nTArea := Select()
+
+   SELECT konto
+
+   HSEEK cIdKonto
+   cST2 := "UK.ANALIT.KONTO '" + cIdKonto + "'" + PadR( konto->naz, 30 ) + "..."
+
+   HSEEK cIdSK
+   cST3 := "UK.SINT.KONTO '" + cIdSK + "'" + PadR( konto->naz, 30 ) + "..."
+
+   SELECT ( nTArea )
+
+   IF cPromj != "3"
+      // sinteticki
+      nNab3 += nabvr * nBBK;  nOtp3 += otpvr * nBBK;  nAmo3 += amp * nBBK
+      // analiticki
+      nNab2 += nabvr * nBBK;  nOtp2 += otpvr * nBBK;  nAmo2 += amp * nBBK
+      // po grupi amortizacije
+      nNab1 += nabvr * nBBK;  nOtp1 += otpvr * nBBK;  nAmo1 += amp * nBBK
+   ENDIF
+
+   SKIP 1
+
+   IF cIdSK != Left( IDKONTO, 3 ) .OR. Eof()
       // stampaj subtot.amort.
       // stampaj subtot.analit.
-      gaSubTotal:={;
-          {,  nNab1, nOtp1, nAmo1, nOtp1+nAmo1, nNab1-nOtp1-nAmo1 , cST1 },;
-          {,  nNab2, nOtp2, nAmo2, nOtp2+nAmo2, nNab2-nOtp2-nAmo2 , cST2 } }
-      nNab1:=nOtp1:=nAmo1:=0
-      nNab2:=nOtp2:=nAmo2:=0
-ELSEIF cIdAm!=IDAM
+      // stampaj subtot.sint.
+      gaSubTotal := { ;
+         {,,,,,,,  nNab1, nOtp1, nAmo1, nOtp1 + nAmo1, nNab1 - nOtp1 - nAmo1, cST1 }, ;
+         {,,,,,,,  nNab2, nOtp2, nAmo2, nOtp2 + nAmo2, nNab2 - nOtp2 - nAmo2, cST2 }, ;
+         {,,,,,,,  nNab3, nOtp3, nAmo3, nOtp3 + nAmo3, nNab3 - nOtp3 - nAmo3, cST3 } }
+      nNab1 := nOtp1 := nAmo1 := 0
+      nNab2 := nOtp2 := nAmo2 := 0
+      nNab3 := nOtp3 := nAmo3 := 0
+   ELSEIF cIdKonto != IDKONTO
       // stampaj subtot.amort.
-      gaSubTotal:={;
-          {,  nNab1, nOtp1, nAmo1, nOtp1+nAmo1, nNab1-nOtp1-nAmo1 , cST1 } }
-      nNab1:=nOtp1:=nAmo1:=0
-ELSE
-      gaSubTotal:={}
-ENDIF
-SKIP -1
+      // stampaj subtot.analit.
+      gaSubTotal := { ;
+         {,,,,,,,  nNab1, nOtp1, nAmo1, nOtp1 + nAmo1, nNab1 - nOtp1 - nAmo1, cST1 }, ;
+         {,,,,,,,  nNab2, nOtp2, nAmo2, nOtp2 + nAmo2, nNab2 - nOtp2 - nAmo2, cST2 } }
+      nNab1 := nOtp1 := nAmo1 := 0
+      nNab2 := nOtp2 := nAmo2 := 0
+   ELSEIF cIdAm != IDAM
+      // stampaj subtot.amort.
+      gaSubTotal := { ;
+         {,,,,,,,  nNab1, nOtp1, nAmo1, nOtp1 + nAmo1, nNab1 - nOtp1 - nAmo1, cST1 } }
+      nNab1 := nOtp1 := nAmo1 := 0
+   ELSE
+      gaSubTotal := {}
+   ENDIF
+   SKIP -1
 
-gaDodStavke:={}
+   RETURN lVrati
 
-RETURN .f.
+
+
+STATIC FUNCTION FFor1s()
+
+   LOCAL lVrati := .T., fIma := .T., lImaSadVr := .T.
+   LOCAL _sr_id, _sr_id_rj, _sr_datum, _sr_dat_otp, _sr_id_am
+   LOCAL _sr_naz, _sr_kol, _sr_jmj
+
+   gaSubTotal  := {}
+   gaDodStavke := {}
+
+   IF !( ( cON == "N" .AND. Empty( datotp ) ) .OR. ;
+         ( con == "O" .AND. !Empty( datotp ) ) .OR. ;
+         ( con == "B" .AND. Year( datum ) = Year( gdatobr ) ) .OR. ;
+         ( con == "G" .AND. Year( datum ) < Year( gdatobr ) ) .OR. ;
+         Empty( con ) )
+      RETURN .F.
+   ENDIF
+
+   // priprema za ispis dodatnih stavki
+   // ---------------------------------
+
+   ++nRbr
+
+   IF cPromj $ "23"
+
+      // prikaz promjena
+
+      _sr_id := field->id
+      _sr_id_rj := field->idrj
+      _sr_datum := field->datum
+      _sr_naz := field->naz
+      _sr_jmj := field->jmj
+      _sr_kol := field->kolicina
+
+      select_promj()
+      HSEEK _sr_id
+
+      IF cPromj == "2" .AND. !Eof() .AND. field->id == _sr_id .AND. field->datum <= gDatObr .OR. cPromj == "3"
+
+         IF cPromj == "3"
+            AAdd( gaDodStavke, ;
+               { Str( nRBr, 4 ) + ".", _sr_id, _sr_id_rj, _sr_datum,;
+               _sr_naz, _sr_jmj, _sr_kol, , , , , } )
+            lVrati := .F.
+         ENDIF
+
+         DO WHILE !Eof() .AND. field->id == _sr_id .AND. field->datum <= gDatObr
+            AAdd( gaDodStavke, ;
+               {,,, datum, opis,,, nabvr * nBBK, otpvr * nBBK, amp * nBBK, otpvr * nBBK + amp * nBBK, nabvr * nBBK - amp * nBBK - otpvr * nBBK } )
+            nNab9 += nabvr * nBBK;  nOtp9 += otpvr * nBBK;  nAmo9 += amp * nBBK
+            nNab3 += nabvr * nBBK;  nOtp3 += otpvr * nBBK;  nAmo3 += amp * nBBK
+            nNab2 += nabvr * nBBK;  nOtp2 += otpvr * nBBK;  nAmo2 += amp * nBBK
+            nNab1 += nabvr * nBBK;  nOtp1 += otpvr * nBBK;  nAmo1 += amp * nBBK
+            SKIP 1
+         ENDDO
+      ENDIF
+      select_os_sii()
+   ENDIF
+
+   cIdSK    := Left( IDKONTO, 3 )
+   cIdKonto := IDKONTO
+   cIdAm    := IDAM
+
+   nTArea := Select()
+   SELECT konto
+
+   cST1 := "                    UK.GRUPA AMORTIZACIJE '" + cIdAM + "'"
+
+   HSEEK cIdKonto
+
+   cST2 := "          UK.ANALITICKI KONTO '" + cIdKonto + "'" + PadR( konto->naz, 30 ) + "..."
+
+   HSEEK cIdSK
+
+   cST3 := "UK.SINTETICKI KONTO '" + cIdSK + "'" + PadR( konto->naz, 30 ) + "..."
+   cST9 := "S V E    U K U P N O"
+
+   SELECT ( nTArea )
+
+   IF cPromj != "3"
+      // sveukupno
+      nNab9 += nabvr * nBBK;  nOtp9 += otpvr * nBBK;  nAmo9 += amp * nBBK
+      // sinteticki
+      nNab3 += nabvr * nBBK;  nOtp3 += otpvr * nBBK;  nAmo3 += amp * nBBK
+      // analiticki
+      nNab2 += nabvr * nBBK;  nOtp2 += otpvr * nBBK;  nAmo2 += amp * nBBK
+      // po grupi amortizacije
+      nNab1 += nabvr * nBBK;  nOtp1 += otpvr * nBBK;  nAmo1 += amp * nBBK
+   ENDIF
+
+   SKIP 1
+
+   IF cIdSK != Left( IDKONTO, 3 ) .OR. Eof()
+      // stampaj subtot.amort.
+      // stampaj subtot.analit.
+      // stampaj subtot.sint.
+      gaSubTotal := { ;
+         {,  nNab1, nOtp1, nAmo1, nOtp1 + nAmo1, nNab1 - nOtp1 - nAmo1, cST1 }, ;
+         {,  nNab2, nOtp2, nAmo2, nOtp2 + nAmo2, nNab2 - nOtp2 - nAmo2, cST2 }, ;
+         {,  nNab3, nOtp3, nAmo3, nOtp3 + nAmo3, nNab3 - nOtp3 - nAmo3, cST3 } }
+      nNab1 := nOtp1 := nAmo1 := 0
+      nNab2 := nOtp2 := nAmo2 := 0
+      nNab3 := nOtp3 := nAmo3 := 0
+      // stampaj sve ukupno
+      IF Eof()
+         AAdd( gaSubTotal, {,  nNab9, nOtp9, nAmo9, nOtp9 + nAmo9, nNab9 - nOtp9 - nAmo9, cST9 } )
+      ENDIF
+   ELSEIF cIdKonto != IDKONTO
+      // stampaj subtot.amort.
+      // stampaj subtot.analit.
+      gaSubTotal := { ;
+         {,  nNab1, nOtp1, nAmo1, nOtp1 + nAmo1, nNab1 - nOtp1 - nAmo1, cST1 }, ;
+         {,  nNab2, nOtp2, nAmo2, nOtp2 + nAmo2, nNab2 - nOtp2 - nAmo2, cST2 } }
+      nNab1 := nOtp1 := nAmo1 := 0
+      nNab2 := nOtp2 := nAmo2 := 0
+   ELSEIF cIdAm != IDAM
+      // stampaj subtot.amort.
+      gaSubTotal := { ;
+         {,  nNab1, nOtp1, nAmo1, nOtp1 + nAmo1, nNab1 - nOtp1 - nAmo1, cST1 } }
+      nNab1 := nOtp1 := nAmo1 := 0
+   ELSE
+      gaSubTotal := {}
+   ENDIF
+   SKIP -1
+
+   gaDodStavke := {}
+
+   RETURN .F.
 
 
 
@@ -467,45 +471,45 @@ RETURN .f.
 // cPromj: 1-bez promjena/2-sa promjenama/3-samo promjene
 // cFiltSadVr: 0-sve/1-koja imaju sadasnju vrijednost/2-koja nemaju sad.vrij.
 // --------------------------------------------------------------------------
-function fsvpromj()
-local nArr := SELECT()
-local cVrati := CHR(255)
-local lImaSadVr := .f.
- 
-if cPromj <> "3"   
-    // osnovno sredstvo: ima li sad.vr.
-    if ( field->nabvr - field->otpvr - field->amp ) > 0
-        lImaSadVr := .t.
-    endif
-endif
- 
-if !lImaSadVr .and. cPromj == "2" .or. cPromj=="3" 
-    
-    // promjene:ispitujemo ima li sadasnju vrijednost
-    _sr_id := field->id
+FUNCTION fsvpromj()
 
-    select_promj()
-    SEEK _sr_id
-    
-    IF FOUND()
-        DO WHILE !EOF() .and. field->id == _sr_id .and. field->datum <= gDatObr
+   LOCAL nArr := Select()
+   LOCAL cVrati := Chr( 255 )
+   LOCAL lImaSadVr := .F.
+
+   IF cPromj <> "3"
+      // osnovno sredstvo: ima li sad.vr.
+      IF ( field->nabvr - field->otpvr - field->amp ) > 0
+         lImaSadVr := .T.
+      ENDIF
+   ENDIF
+
+   IF !lImaSadVr .AND. cPromj == "2" .OR. cPromj == "3"
+
+      // promjene:ispitujemo ima li sadasnju vrijednost
+      _sr_id := field->id
+
+      select_promj()
+      SEEK _sr_id
+
+      IF Found()
+         DO WHILE !Eof() .AND. field->id == _sr_id .AND. field->datum <= gDatObr
             IF ( field->nabvr - field->otpvr - field->amp ) > 0
-                lImaSadVr:=.t.
+               lImaSadVr := .T.
             ENDIF
             SKIP 1
-        ENDDO
-    ELSEIF cPromj=="3"
-        SELECT (nArr)
-        RETURN CHR(255)
+         ENDDO
+      ELSEIF cPromj == "3"
+         SELECT ( nArr )
+         RETURN Chr( 255 )
+      ENDIF
    ENDIF
-ENDIF
- 
-IF cFiltSadVr=="1" .and. !(lImaSadVr) .or. cFiltSadVr=="2" .and. lImaSadVr
-    cVrati:=CHR(255)
-ELSE
-    cVrati:=" "
-ENDIF
-SELECT (nArr)
-RETURN cVrati
 
+   IF cFiltSadVr == "1" .AND. !( lImaSadVr ) .OR. cFiltSadVr == "2" .AND. lImaSadVr
+      cVrati := Chr( 255 )
+   ELSE
+      cVrati := " "
+   ENDIF
+   SELECT ( nArr )
 
+   RETURN cVrati

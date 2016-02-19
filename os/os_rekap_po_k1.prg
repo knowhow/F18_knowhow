@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -13,176 +13,177 @@
 #include "f18.ch"
 
 
-function os_rekapitulacija_po_k1()
+FUNCTION os_rekapitulacija_po_k1()
 
-O_K1
-O_RJ
+   O_K1
+   O_RJ
 
-o_os_sii()
+   o_os_sii()
 
-cIdrj := space(4)
-cON := "N"
-cKolP := "N"
-cPocinju := "N"
-cDNOS := "D"
+   cIdrj := Space( 4 )
+   cON := "N"
+   cKolP := "N"
+   cPocinju := "N"
+   cDNOS := "D"
 
-Box(,4,77)
-    @ m_x+1,m_y+2 SAY "Radna jedinica (prazno svi):" get cidrj valid empty(cIdRj) .or. p_rj(@cIdrj)
-    @ m_x+1,col()+2 SAY "sve koje pocinju " get cpocinju valid cpocinju $ "DN" pict "@!"
-    @ m_x+2,m_y+2 SAY "Prikaz svih neotpisanih/otpisanih/samo novonabavljenih (N/O/B) sredstava:" get cON pict "@!" valid con $ "ONB"
-    @ m_x+4,m_y+2 SAY "Prikaz sredstava D/N:" get cDNOs pict "@!" valid cDNOs $ "DN"
-    read
-    ESC_BCR
-BoxC()
+   Box(, 4, 77 )
+   @ m_x + 1, m_y + 2 SAY "Radna jedinica (prazno svi):" GET cidrj VALID Empty( cIdRj ) .OR. p_rj( @cIdrj )
+   @ m_x + 1, Col() + 2 SAY "sve koje pocinju " GET cpocinju VALID cpocinju $ "DN" PICT "@!"
+   @ m_x + 2, m_y + 2 SAY "Prikaz svih neotpisanih/otpisanih/samo novonabavljenih (N/O/B) sredstava:" GET cON PICT "@!" VALID con $ "ONB"
+   @ m_x + 4, m_y + 2 SAY "Prikaz sredstava D/N:" GET cDNOs PICT "@!" VALID cDNOs $ "DN"
+   READ
+   ESC_BCR
+   BoxC()
 
-if cPocinju == "D" .or. empty( cIdrj )
-    cIdRj := trim( cIdrj )
-endif
+   IF cPocinju == "D" .OR. Empty( cIdrj )
+      cIdRj := Trim( cIdrj )
+   ENDIF
 
-m:="----- ---------- ------------------------- -------------"
+   m := "----- ---------- ------------------------- -------------"
 
-select_os_sii()
-set order to tag "2" 
-//idrj+id+dtos(datum)
+   select_os_sii()
+   SET ORDER TO TAG "2"
+   // idrj+id+dtos(datum)
 
-cFilt1 := "idrj=cidrj"
-cSort1 := "k1+idrj"
+   cFilt1 := "idrj=cidrj"
+   cSort1 := "k1+idrj"
 
-Box(,1,30)
-index on &cSort1 to "TMPSP2" for &cFilt1 eval(TekRec()) every 10
-BoxC()
+   Box(, 1, 30 )
+   INDEX on &cSort1 TO "TMPSP2" for &cFilt1 Eval( TekRec() ) every 10
+   BoxC()
 
-START PRINT CRET
+   START PRINT CRET
 
-nCol1 := 48
+   nCol1 := 48
 
-ZglK1()
+   ZglK1()
 
-go top
+   GO TOP
 
-do while !eof()
+   DO WHILE !Eof()
 
-    select_os_sii()
-    nKol:=0
-    cK1 := field->k1
-    do while !eof() .and. cK1 = field->k1
+      select_os_sii()
+      nKol := 0
+      cK1 := field->k1
+      DO WHILE !Eof() .AND. cK1 = field->k1
 
-        select_os_sii()
-        nKolRJ:=0
-        nRbr:=0
-        cTRj:=field->idrj
-        do while !eof() .and. cK1 == field->k1 .and. cTRj == field->idrj
+         select_os_sii()
+         nKolRJ := 0
+         nRbr := 0
+         cTRj := field->idrj
+         DO WHILE !Eof() .AND. cK1 == field->k1 .AND. cTRj == field->idrj
             select_os_sii()
-            if (cON="B" .and. year(gdatobr) <> year(field->datum))  
-                // nije novonabavljeno
-                skip
-                loop
-                // prikazi samo novonabavlj.
-            endif
+            IF ( cON = "B" .AND. Year( gdatobr ) <> Year( field->datum ) )
+               // nije novonabavljeno
+               SKIP
+               LOOP
+               // prikazi samo novonabavlj.
+            ENDIF
 
-            if (!empty(field->datotp) .and. year( field->datotp )= year( gdatobr )) .and. cON $ "NB"
-                // otpisano sredstvo , a zelim prikaz neotpisanih
-                skip
-                loop
-            endif
+            IF ( !Empty( field->datotp ) .AND. Year( field->datotp ) = Year( gdatobr ) ) .AND. cON $ "NB"
+               // otpisano sredstvo , a zelim prikaz neotpisanih
+               SKIP
+               LOOP
+            ENDIF
 
-            if (empty( field->datotp ) .or. year( field->datotp ) < year( gdatobr )) .and. cON=="O"
-                // neotpisano, a zelim prikaz otpisanih
-                skip 
-                loop
-            endif
+            IF ( Empty( field->datotp ) .OR. Year( field->datotp ) < Year( gdatobr ) ) .AND. cON == "O"
+               // neotpisano, a zelim prikaz otpisanih
+               SKIP
+               LOOP
+            ENDIF
 
             nKolRJ += field->kolicina
-            if cDNOS=="D"
-                ? str(++nrbr,4) + ".", field->id, field->naz
-                nCol1 := pcol()+1
-                @ prow(),pcol()+1 SAY field->kolicina pict gpickol
-            endif
+            IF cDNOS == "D"
+               ? Str( ++nrbr, 4 ) + ".", field->id, field->naz
+               nCol1 := PCol() + 1
+               @ PRow(), PCol() + 1 SAY field->kolicina PICT gpickol
+            ENDIF
 
-            skip
+            SKIP
             select_os_sii()
 
-        enddo
-    
-        if prow()>62
-            FF  
+         ENDDO
+
+         IF PRow() > 62
+            FF
             ZglK1()
-        endif
-    
-        ? m
-        ? "UKUPNO ZA RJ", cTRJ,"-", cK1
-        @ prow(),nCol1 SAY nKolRJ   pict gpickol
-        ? m
-        nKol += nKolRJ
-    enddo
+         ENDIF
 
-    if prow()>62
-        FF
-        ZglK1()
-    endif
- 
-    ? strtran(m,"-","=")
-    select k1
-    HSEEK cK1
+         ? m
+         ? "UKUPNO ZA RJ", cTRJ, "-", cK1
+         @ PRow(), nCol1 SAY nKolRJ   PICT gpickol
+         ? m
+         nKol += nKolRJ
+      ENDDO
 
-    select_os_sii()
+      IF PRow() > 62
+         FF
+         ZglK1()
+      ENDIF
 
-    ? "UKUPNO ZA GRUPU", cK1, k1->naz
-    @ prow(),nCol1 SAY nKol pict gpickol
-    ? strtran(m,"-","=")
+      ? StrTran( m, "-", "=" )
+      SELECT k1
+      HSEEK cK1
 
-enddo
+      select_os_sii()
 
-ENDPRINT
+      ? "UKUPNO ZA GRUPU", cK1, k1->naz
+      @ PRow(), nCol1 SAY nKol PICT gpickol
+      ? StrTran( m, "-", "=" )
 
-my_close_all_dbf()
-return
+   ENDDO
 
+   ENDPRINT
 
-static function TekRec()
-@ m_x+1,m_y+2 SAY recno()
-return NIL
+   my_close_all_dbf()
+
+   RETURN
 
 
+STATIC FUNCTION TekRec()
 
-static function ZglK1()
-local _mod_name := "OS"
+   @ m_x + 1, m_y + 2 SAY RecNo()
 
-if gOsSii == "S"
-    _mod_name := "SII"
-endif
-
-?
-
-P_12CPI
-
-?? UPPER(gTS) + ":", gNFirma
-?
-? _mod_name + ": Rekapitulacija po grupama - k1 "
-
-if cON=="N"
-   ?? "sredstava u upotrebi"
-else
-   ?? "sredstava otpisanih u toku godine"
-endif
-
-?? "     Datum:", gDatObr
-
-select rj
-seek cIdRj
-select_os_sii()
-
-? "Radna jedinica:", cIdrj, rj->naz
-
-if cPocinju == "D"
-    ?? "(SVEUKUPNO)"
-endif
-
-? m
-? "Rbr                                           Kolicina"
-? m
-
-return
+   RETURN NIL
 
 
 
+STATIC FUNCTION ZglK1()
+
+   LOCAL _mod_name := "OS"
+
+   IF gOsSii == "S"
+      _mod_name := "SII"
+   ENDIF
+
+   ?
+
+   P_12CPI
+
+   ?? Upper( gTS ) + ":", gNFirma
+   ?
+   ? _mod_name + ": Rekapitulacija po grupama - k1 "
+
+   IF cON == "N"
+      ?? "sredstava u upotrebi"
+   ELSE
+      ?? "sredstava otpisanih u toku godine"
+   ENDIF
+
+   ?? "     Datum:", gDatObr
+
+   SELECT rj
+   SEEK cIdRj
+   select_os_sii()
+
+   ? "Radna jedinica:", cIdrj, rj->naz
+
+   IF cPocinju == "D"
+      ?? "(SVEUKUPNO)"
+   ENDIF
+
+   ? m
+   ? "Rbr                                           Kolicina"
+   ? m
+
+   RETURN .T.

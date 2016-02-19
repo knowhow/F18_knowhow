@@ -26,4 +26,4 @@ FUNCTION MainOs( cKorisn, cSifra, p3, p4, p5, p6, p7 )
 
    oOs:run()
 
-   RETURN
+   RETURN .T.

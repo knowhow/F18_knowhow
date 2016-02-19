@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -15,106 +15,109 @@
 // -----------------------------------------------------
 // provjerava da li postoji polje u tabelama os/sii
 // -----------------------------------------------------
-function os_postoji_polje( naziv_polja )
-local _ret := .f.
+FUNCTION os_postoji_polje( naziv_polja )
 
-if gOsSii == "O"
-    if os->(fieldpos( naziv_polja )) <> 0
-        _ret := .t.
-    endif
-else
-    if sii->(fieldpos( naziv_polja )) <> 0
-        _ret := .t.
-    endif
-endif
+   LOCAL _ret := .F.
 
-return _ret
+   IF gOsSii == "O"
+      IF os->( FieldPos( naziv_polja ) ) <> 0
+         _ret := .T.
+      ENDIF
+   ELSE
+      IF sii->( FieldPos( naziv_polja ) ) <> 0
+         _ret := .T.
+      ENDIF
+   ENDIF
 
-
-// ----------------------------------------
-// selektuje potrebnu tabelu
-// ----------------------------------------
-function select_os_sii()
-
-if gOsSii == "O"
-    select os
-else
-    select sii
-endif
-
-return
+   RETURN _ret
 
 
 // ----------------------------------------
 // selektuje potrebnu tabelu
 // ----------------------------------------
-function select_promj()
+FUNCTION select_os_sii()
 
-if gOsSii == "O"
-    select promj
-else
-    select sii_promj
-endif
+   IF gOsSii == "O"
+      SELECT os
+   ELSE
+      SELECT sii
+   ENDIF
 
-return
+   RETURN
+
+
+// ----------------------------------------
+// selektuje potrebnu tabelu
+// ----------------------------------------
+FUNCTION select_promj()
+
+   IF gOsSii == "O"
+      SELECT promj
+   ELSE
+      SELECT sii_promj
+   ENDIF
+
+   RETURN
 
 // ----------------------------------------
 // otvara potrebnu tabelu
 // ----------------------------------------
-function o_os_sii()
+FUNCTION o_os_sii()
 
-if gOsSii == "O"
-    O_OS
-else
-    O_SII
-endif
+   IF gOsSii == "O"
+      O_OS
+   ELSE
+      O_SII
+   ENDIF
 
-return
+   RETURN
 
 
 // ----------------------------------------
 // otvara potrebnu tabelu
 // ----------------------------------------
-function o_os_sii_promj()
+FUNCTION o_os_sii_promj()
 
-if gOsSii == "O"
-    O_PROMJ
-else
-    O_SII_PROMJ
-endif
+   IF gOsSii == "O"
+      O_PROMJ
+   ELSE
+      O_SII_PROMJ
+   ENDIF
 
-return
+   RETURN
 
 
 // -----------------------------------------
 // vraca naziv tabele na osnovu alias-a
 // -----------------------------------------
-function get_os_table_name( alias )
-local _ret := "os_os"
+FUNCTION get_os_table_name( alias )
 
-if UPPER( alias ) == "OS"
-    _ret := "os_os"
-else
-    _ret := "sii_sii"
-endif
+   LOCAL _ret := "os_os"
 
-return _ret
+   IF Upper( alias ) == "OS"
+      _ret := "os_os"
+   ELSE
+      _ret := "sii_sii"
+   ENDIF
+
+   RETURN _ret
 
 
 
 // -----------------------------------------
 // vraca naziv tabele na osnovu alias-a
 // -----------------------------------------
-function get_promj_table_name( alias )
-local _ret := "os_promj"
+FUNCTION get_promj_table_name( alias )
 
-if UPPER( alias ) == "PROMJ"
-    _ret := "os_promj"
-else
-    _ret := "sii_promj"
-endif
+   LOCAL _ret := "os_promj"
 
-return _ret
+   IF Upper( alias ) == "PROMJ"
+      _ret := "os_promj"
+   ELSE
+      _ret := "sii_promj"
+   ENDIF
+
+   RETURN _ret
 
 
 
@@ -123,67 +126,68 @@ return _ret
 // -----------------------------------------
 // unificiraj invent. brojeve
 // -----------------------------------------
-function Unifid()
-local nTrec, nTSRec
-local nIsti
-local _rec
+FUNCTION Unifid()
 
-o_os_sii()
+   LOCAL nTrec, nTSRec
+   LOCAL nIsti
+   LOCAL _rec
 
-set order to tag "1"
+   o_os_sii()
 
-do while !eof()
+   SET ORDER TO TAG "1"
 
-    cId := field->id
-    nIsti := 0
+   DO WHILE !Eof()
 
-    do while !eof() .and. field->id == cId
-        ++ nIsti
-        skip
-    enddo
+      cId := field->id
+      nIsti := 0
 
-    if nIsti > 1  
-        // ima duplih slogova
-        seek cId 
-        // prvi u redu
-        nProlaz:=0
-        do while !eof() .and. field->id == cId
-            skip
+      DO WHILE !Eof() .AND. field->id == cId
+         ++ nIsti
+         SKIP
+      ENDDO
+
+      IF nIsti > 1
+         // ima duplih slogova
+         SEEK cId
+         // prvi u redu
+         nProlaz := 0
+         DO WHILE !Eof() .AND. field->id == cId
+            SKIP
             ++nProlaz
-            nTrec:=recno()   // sljedeci
-            skip -1
-            nTSRec:=recno()
-            cNovi:=""
-            if len(trim(cid))<=8
-                cNovi:=trim(id)+idrj
-            else
-                cNovi:=trim(id)+chr(48+nProlaz)
-            endif
-            seek cnovi
-            if found()
-                MsgBeep("vec postoji "+cid)
-            else
-                go nTSRec
-                _rec := dbf_get_rec()
-                _rec["id"] := cNovi
-                update_rec_server_and_dbf( ALIAS(), _rec, 1, "FULL" ) 
-            endif
-            go nTrec
-        enddo
-    endif
+            nTrec := RecNo()   // sljedeci
+            SKIP -1
+            nTSRec := RecNo()
+            cNovi := ""
+            IF Len( Trim( cid ) ) <= 8
+               cNovi := Trim( id ) + idrj
+            ELSE
+               cNovi := Trim( id ) + Chr( 48 + nProlaz )
+            ENDIF
+            SEEK cnovi
+            IF Found()
+               MsgBeep( "vec postoji " + cid )
+            ELSE
+               GO nTSRec
+               _rec := dbf_get_rec()
+               _rec[ "id" ] := cNovi
+               update_rec_server_and_dbf( Alias(), _rec, 1, "FULL" )
+            ENDIF
+            GO nTrec
+         ENDDO
+      ENDIF
 
-enddo
-return
+   ENDDO
 
-
-
-function RazdvojiDupleInvBr()
-if spec_funkcije_sifra("UNIF")
-    if pitanje(,"Razdvojiti duple inv.brojeve ?","N")=="D"
-        UnifId()
-    endif
-endif
-return
+   RETURN
 
 
 
+FUNCTION RazdvojiDupleInvBr()
+
+   IF spec_funkcije_sifra( "UNIF" )
+      IF pitanje(, "Razdvojiti duple inv.brojeve ?", "N" ) == "D"
+         UnifId()
+      ENDIF
+   ENDIF
+
+   RETURN

@@ -48,13 +48,11 @@ FUNCTION cre_all_os( ver )
    _table_name := "os_os"
 
    IF_NOT_FILE_DBF_CREATE
-
    CREATE_INDEX( "1", "id+idam+dtos(datum)", _alias )
    CREATE_INDEX( "2", "idrj+id+dtos(datum)", _alias )
    CREATE_INDEX( "3", "idrj+idkonto+id",  _alias )
    CREATE_INDEX( "4", "idkonto+idrj+id", _alias )
    CREATE_INDEX( "5", "idam+idrj+id", _alias )
-
    AFTER_CREATE_INDEX
 
 
@@ -64,7 +62,6 @@ FUNCTION cre_all_os( ver )
    _table_name := "sii_sii"
 
    IF_NOT_FILE_DBF_CREATE
-
    CREATE_INDEX( "1", "id+idam+dtos(datum)", _alias )
    CREATE_INDEX( "2", "idrj+id+dtos(datum)", _alias )
    CREATE_INDEX( "3", "idrj+idkonto+id",  _alias )
@@ -85,25 +82,19 @@ FUNCTION cre_all_os( ver )
    AAdd( aDBf, { 'RevD', 'N',  18,  2 } )
    AAdd( aDBf, { 'RevP', 'N',  18,  2 } )
 
-   // kreiraj os promjene
 
    _alias := "promj"
    _table_name := "os_promj"
 
    IF_NOT_FILE_DBF_CREATE
-
    CREATE_INDEX( "1", "id+tip+dtos(datum)+opis", _alias )
    AFTER_CREATE_INDEX
-
-
-   // kreiraj sii promjene
 
    _alias := "sii_promj"
    _table_name := "sii_promj"
 
 
    IF_NOT_FILE_DBF_CREATE
-
    CREATE_INDEX( "1", "id+tip+dtos(datum)+opis", _alias )
    AFTER_CREATE_INDEX
 
@@ -116,7 +107,6 @@ FUNCTION cre_all_os( ver )
    _table_name := "os_amort"
 
    IF_NOT_FILE_DBF_CREATE
-
    CREATE_INDEX( "ID", "id", _alias )
    AFTER_CREATE_INDEX
 
@@ -166,6 +156,6 @@ FUNCTION cre_all_os( ver )
       DBCREATE2( PRIVPATH + 'INVENT.DBF', aDbf )
 
    ENDIF
-   CREATE_INDEX( "ID", "Id", PRIVPATH + "INVENT" ) // Inventura
+   CREATE_INDEX( "ID", "Id", "INVENT" ) // Inventura
 
    RETURN .T.

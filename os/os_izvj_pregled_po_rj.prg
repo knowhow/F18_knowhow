@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -13,373 +13,377 @@
 #include "f18.ch"
 
 
-function os_pregled_po_rj()
-local lPartner
-local _export_dn := "N"
-local _po_amort := "N"
-local _export := .f.
-local _start_cmd 
+FUNCTION os_pregled_po_rj()
 
-O_RJ
-o_os_sii()
+   LOCAL lPartner
+   LOCAL _export_dn := "N"
+   LOCAL _po_amort := "N"
+   LOCAL _export := .F.
+   LOCAL _start_cmd
 
-cIdrj := SPACE( LEN(field->idrj) )
+   O_RJ
+   o_os_sii()
 
-lPartner := os_fld_partn_exist()
+   cIdrj := Space( Len( field->idrj ) )
 
-cON:="N"
-cKolP:="N"
-cPocinju:="N"
+   lPartner := os_fld_partn_exist()
 
-cBrojSobe:=space(6)
-lBrojSobe:=.f.
-cFiltK1:=SPACE(40)
-cFiltDob:=SPACE(40)
-cOpis:="N"
+   cON := "N"
+   cKolP := "N"
+   cPocinju := "N"
 
-Box(, 12, 77 )
-    DO WHILE .t.
-        @ m_x + 1, m_y + 2 SAY "Radna jedinica:" GET cIdRj VALID {|| P_RJ( @cIdrj ), if ( !EMPTY(cIdRj), cIdRj := PADR( cIdRj, 4), .t. ), .t. }
-        @ m_x+1,col()+2 SAY "sve koje pocinju " get cpocinju valid cpocinju $ "DN" pict "@!"
-        @ m_x+2,m_y+2 SAY "Prikaz svih neotpisanih (N) / otpisanih(O) /"
-        @ m_x+3,m_y+2 SAY "samo novonabavljenih (B)    / iz proteklih godina (G)"   get cON pict "@!" valid con $ "ONBG"
-        @ m_x+4,m_y+2 SAY "Prikazati kolicine na popisnoj listi D/N" GET cKolP valid cKolP $ "DN" pict "@!"
-        @ m_x+5,m_y+2 SAY "Prikazati kolonu 'opis' ? (D/N)" GET cOpis valid cOpis $ "DN" pict "@!"
+   cBrojSobe := Space( 6 )
+   lBrojSobe := .F.
+   cFiltK1 := Space( 40 )
+   cFiltDob := Space( 40 )
+   cOpis := "N"
 
-        if os_postoji_polje("brsoba")
-            lBrojSobe:=.t.
-            @ m_x+6,m_y+2 SAY "Broj sobe (prazno sve) " GET cBrojSobe  pict "@!"
-        endif
+   Box(, 12, 77 )
+   DO WHILE .T.
+      @ m_x + 1, m_y + 2 SAY "Radna jedinica:" GET cIdRj VALID {|| P_RJ( @cIdrj ), if ( !Empty( cIdRj ), cIdRj := PadR( cIdRj, 4 ), .T. ), .T. }
+      @ m_x + 1, Col() + 2 SAY "sve koje pocinju " GET cpocinju VALID cpocinju $ "DN" PICT "@!"
+      @ m_x + 2, m_y + 2 SAY "Prikaz svih neotpisanih (N) / otpisanih(O) /"
+      @ m_x + 3, m_y + 2 SAY "samo novonabavljenih (B)    / iz proteklih godina (G)"   GET cON PICT "@!" VALID con $ "ONBG"
+      @ m_x + 4, m_y + 2 SAY "Prikazati kolicine na popisnoj listi D/N" GET cKolP VALID cKolP $ "DN" PICT "@!"
+      @ m_x + 5, m_y + 2 SAY "Prikazati kolonu 'opis' ? (D/N)" GET cOpis VALID cOpis $ "DN" PICT "@!"
 
-        @ m_x+7,m_y+2 SAY "Filter po grupaciji K1:" GET cFiltK1 pict "@!S20"
-        @ m_x+8,m_y+2 SAY "Filter po dobavljacima:" GET cFiltDob pict "@!S20"
+      IF os_postoji_polje( "brsoba" )
+         lBrojSobe := .T.
+         @ m_x + 6, m_y + 2 SAY "Broj sobe (prazno sve) " GET cBrojSobe  PICT "@!"
+      ENDIF
 
-        @ m_x + 10, m_y + 2 SAY "Pregled po amortizacionim stopama (D/N) ?" GET _po_amort PICT "@!" VALID _po_amort $ "DN"
+      @ m_x + 7, m_y + 2 SAY "Filter po grupaciji K1:" GET cFiltK1 PICT "@!S20"
+      @ m_x + 8, m_y + 2 SAY "Filter po dobavljacima:" GET cFiltDob PICT "@!S20"
 
-        @ m_x + 12, m_y + 2 SAY "Export izvjestaja (D/N) ?" GET _export_dn PICT "@!" VALID _export_dn $ "DN"
+      @ m_x + 10, m_y + 2 SAY "Pregled po amortizacionim stopama (D/N) ?" GET _po_amort PICT "@!" VALID _po_amort $ "DN"
 
-        READ
-        ESC_BCR
+      @ m_x + 12, m_y + 2 SAY "Export izvjestaja (D/N) ?" GET _export_dn PICT "@!" VALID _export_dn $ "DN"
 
-        aUsl1:=Parsiraj(cFiltK1,"K1")
-        aUsl2:=Parsiraj(cFiltDob,"idPartner")
+      READ
+      ESC_BCR
 
-        if aUsl1<>nil .and. aUsl2<>nil
-            exit
-        endif
+      aUsl1 := Parsiraj( cFiltK1, "K1" )
+      aUsl2 := Parsiraj( cFiltDob, "idPartner" )
 
-    ENDDO
-BoxC()
+      IF aUsl1 <> NIL .AND. aUsl2 <> nil
+         EXIT
+      ENDIF
 
-cIdRj := PADR( cIdRj, 4 )
+   ENDDO
+   BoxC()
 
-if _export_dn == "D"
+   cIdRj := PadR( cIdRj, 4 )
 
-    _export := .t.
-	t_exp_create( _g_exp_flds() )
-    
-    // otvori ponovo tabele...    
-    O_RJ
-    o_os_sii()
+   IF _export_dn == "D"
 
-endif
+      _export := .T.
+      t_exp_create( _g_exp_flds() )
 
-if lBrojSobe .and. EMPTY( cBrojSobe )
-    lBrojSobe := ( Pitanje(,"Zelite li da bude prikazan broj sobe? (D/N)","N") == "D" )
-endif
+      // otvori ponovo tabele...
+      O_RJ
+      o_os_sii()
 
-lPoKontima := .f.
-lPoAmortStopama := .f.
-if _po_amort == "D"
-    lPoAmortStopama := .t.
-endif
+   ENDIF
 
-if cPocinju == "D"
-    cIdRj := TRIM( cIdrj )
-endif
+   IF lBrojSobe .AND. Empty( cBrojSobe )
+      lBrojSobe := ( Pitanje(, "Zelite li da bude prikazan broj sobe? (D/N)", "N" ) == "D" )
+   ENDIF
 
-START PRINT CRET
+   lPoKontima := .F.
+   lPoAmortStopama := .F.
+   IF _po_amort == "D"
+      lPoAmortStopama := .T.
+   ENDIF
 
-m := "----- ---------- ----------------------------"+IF(cOpis=="D"," "+REPL("-",LEN(field->opis)),"")+"  ---- ------- -------------"
+   IF cPocinju == "D"
+      cIdRj := Trim( cIdrj )
+   ENDIF
 
-if lPoAmortStopama
+   START PRINT CRET
 
-    select_os_sii()
+   m := "----- ---------- ----------------------------" + IF( cOpis == "D", " " + REPL( "-", Len( field->opis ) ), "" ) + "  ---- ------- -------------"
 
-    if cIdRj == ""
-        set order to tag "5" 
-        // idam+idrj+id
-    else
-        INDEX ON idrj + idam + id TO "TMPOS"
-    endif
+   IF lPoAmortStopama
 
-elseif lBrojSobe .and. EMPTY(cBrojSobe)
+      select_os_sii()
 
-    m:="----- ------ ---------- ----------------------------"+IF(cOpis=="D"," "+REPL("-",LEN(field->opis)),"")+"  ---- ------- -------------"
+      IF cIdRj == ""
+         SET ORDER TO TAG "5"
+         // idam+idrj+id
+      ELSE
+         INDEX ON idrj + idam + id TO "TMPOS"
+      ENDIF
 
-    select_os_sii()
-    set order to tag "2" 
-    //idrj+id+dtos(datum)
-    INDEX ON idrj + brsoba + id + DTOS( datum ) TO "TMPOS"
+   ELSEIF lBrojSobe .AND. Empty( cBrojSobe )
 
-elseif lPoKontima
+      m := "----- ------ ---------- ----------------------------" + IF( cOpis == "D", " " + REPL( "-", Len( field->opis ) ), "" ) + "  ---- ------- -------------"
 
-    select_os_sii()
-    INDEX ON idkonto + id TO "TMPOS"
+      select_os_sii()
+      SET ORDER TO TAG "2"
+      // idrj+id+dtos(datum)
+      INDEX ON idrj + brsoba + id + DToS( datum ) TO "TMPOS"
 
-elseif cIdRj==""
+   ELSEIF lPoKontima
 
-    select_os_sii()
-    set order to tag "1" 
-    // id+idam+dtos(datum)
+      select_os_sii()
+      INDEX ON idkonto + id TO "TMPOS"
 
-else
+   ELSEIF cIdRj == ""
 
-    select_os_sii()
-    set order to tag "2" 
-    //idrj+id+dtos(datum)
+      select_os_sii()
+      SET ORDER TO TAG "1"
+      // id+idam+dtos(datum)
 
-endif
+   ELSE
 
-if !EMPTY(cFiltK1) .or. !EMPTY(cFiltDob)
-    cFilter := aUsl1 + ".and." + aUsl2
-    select_os_sii()
-    set filter to &cFilter
-endif
+      select_os_sii()
+      SET ORDER TO TAG "2"
+      // idrj+id+dtos(datum)
 
-go top
-cIdRj := PADR( cIdRj, LEN( field->idrj ) )
+   ENDIF
 
-ZglPrj()
+   IF !Empty( cFiltK1 ) .OR. !Empty( cFiltDob )
+      cFilter := aUsl1 + ".and." + aUsl2
+      select_os_sii()
+      SET FILTER to &cFilter
+   ENDIF
 
-if !lPoKontima
-    seek cIdrj
-endif
+   GO TOP
+   cIdRj := PadR( cIdRj, Len( field->idrj ) )
 
-private nRbr := 0
-cLastKonto := ""
+   ZglPrj()
 
-do while !eof() .and. ( field->idrj = cIdrj .or. lPoKontima )
+   IF !lPoKontima
+      SEEK cIdrj
+   ENDIF
 
-    if lPoKontima .and. !( field->idrj = cidrj)
-        skip
-        loop
-    endif
+   PRIVATE nRbr := 0
+   cLastKonto := ""
 
-    if (cON="B" .and. year(gdatobr)<>year(field->datum))  
-        // nije novonabavljeno
-        skip 
-        loop                                  
-        // prikazi samo novonabavlj.
-    endif
+   DO WHILE !Eof() .AND. ( field->idrj = cIdrj .OR. lPoKontima )
 
-    if (cON="G" .and. year(gdatobr)=year(field->datum))  
-        // iz protekle godine
-        skip
-        loop                                   
-        // prikazi samo novonabavlj.
-    endif
+      IF lPoKontima .AND. !( field->idrj = cidrj )
+         SKIP
+         LOOP
+      ENDIF
 
-    if (!empty(datotp) .and. year(datotp)<=year(gdatobr)) .and. cON $ "NB"
-        // otpisano sredstvo , a zelim prikaz neotpisanih
-        skip 
-        loop
-    endif
-    
-    if (empty(datotp) .and. year(datotp)<year(gdatobr)) .and. cON=="O"
-        // neotpisano, a zelim prikaz otpisanih
-        skip 
-        loop
-    endif
+      IF ( cON = "B" .AND. Year( gdatobr ) <> Year( field->datum ) )
+         // nije novonabavljeno
+         SKIP
+         LOOP
+         // prikazi samo novonabavlj.
+      ENDIF
 
-    if !empty(cBrojsobe)
-        if cbrojsobe <> field->brsoba
-            skip
-            loop
-        endif
-    endif
+      IF ( cON = "G" .AND. Year( gdatobr ) = Year( field->datum ) )
+         // iz protekle godine
+         SKIP
+         LOOP
+         // prikazi samo novonabavlj.
+      ENDIF
 
-    if lPoKontima .and. ( nRbr = 0 .or. cLastKonto <> idkonto )  
+      IF ( !Empty( datotp ) .AND. Year( datotp ) <= Year( gdatobr ) ) .AND. cON $ "NB"
+         // otpisano sredstvo , a zelim prikaz neotpisanih
+         SKIP
+         LOOP
+      ENDIF
 
-        // prvo sredstvo,
-        // ispisi zaglavlje
+      IF ( Empty( datotp ) .AND. Year( datotp ) < Year( gdatobr ) ) .AND. cON == "O"
+         // neotpisano, a zelim prikaz otpisanih
+         SKIP
+         LOOP
+      ENDIF
 
-        if nrbr>0
+      IF !Empty( cBrojsobe )
+         IF cbrojsobe <> field->brsoba
+            SKIP
+            LOOP
+         ENDIF
+      ENDIF
+
+      IF lPoKontima .AND. ( nRbr = 0 .OR. cLastKonto <> idkonto )
+
+         // prvo sredstvo,
+         // ispisi zaglavlje
+
+         IF nrbr > 0
             ? m
             ?
-        endif
+         ENDIF
 
-        if prow() > RPT_PAGE_LEN
+         IF PRow() > RPT_PAGE_LEN
             FF
             ZglPrj()
-        endif
+         ENDIF
 
-        ?
-        ? "KONTO:",idkonto
-        ? REPL("-",14)
-        nRbr:=0
+         ?
+         ? "KONTO:", idkonto
+         ? REPL( "-", 14 )
+         nRbr := 0
 
-    endif
+      ENDIF
 
-    if prow() > RPT_PAGE_LEN
-        FF
-        ZglPrj()
-    endif
- 
-    if lBrojSobe .and. EMPTY(cBrojSobe)
-        ? str(++nRbr,4)+".", field->brsoba, field->id, field->naz
-    else
-        ? str(++nRbr,4)+".", field->id, field->naz
-    endif
- 
-    IF cOpis=="D"
-        ?? "", field->opis
-    ENDIF
+      IF PRow() > RPT_PAGE_LEN
+         FF
+         ZglPrj()
+      ENDIF
 
-    ?? "", field->jmj
+      IF lBrojSobe .AND. Empty( cBrojSobe )
+         ? Str( ++nRbr, 4 ) + ".", field->brsoba, field->id, field->naz
+      ELSE
+         ? Str( ++nRbr, 4 ) + ".", field->id, field->naz
+      ENDIF
 
-    if cKolP=="D"
-        @  prow(),pcol()+1 SAY field->kolicina pict "9999.99"
-    else
-        @  prow(),pcol()+1 SAY SPACE(7)
-    endif
+      IF cOpis == "D"
+         ?? "", field->opis
+      ENDIF
 
-    cLastKonto := field->idkonto
+      ?? "", field->jmj
 
-    @ prow(),pcol()+1 SAY " ____________"
-    
-    if _export 
-        _a_to_exp( ALLTRIM( STR( nRbr, 4 ) ), field->id, field->naz, field->jmj, field->kolicina, field->datum )
-    endif
+      IF cKolP == "D"
+         @  PRow(), PCol() + 1 SAY field->kolicina PICT "9999.99"
+      ELSE
+         @  PRow(), PCol() + 1 SAY Space( 7 )
+      ENDIF
 
-    skip
+      cLastKonto := field->idkonto
 
-enddo
+      @ PRow(), PCol() + 1 SAY " ____________"
 
-? m
+      IF _export
+         _a_to_exp( AllTrim( Str( nRbr, 4 ) ), field->id, field->naz, field->jmj, field->kolicina, field->datum )
+      ENDIF
 
-if prow() > RPT_PAGE_LEN
-    FF
-    ZglPrj()
-endif
+      SKIP
 
-?
-? "     Zaduzeno lice:                                     Clanovi komisije:"
-?
-? "     _______________                                  1.___________________"
-?
-? "                                                      2.___________________"
-?
-? "                                                      3.___________________"
+   ENDDO
 
-FF
-ENDPRINT
+   ? m
 
-if _export
-	tbl_export()
-endif
+   IF PRow() > RPT_PAGE_LEN
+      FF
+      ZglPrj()
+   ENDIF
 
-my_close_all_dbf()
-return
+   ?
+   ? "     Zaduzeno lice:                                     Clanovi komisije:"
+   ?
+   ? "     _______________                                  1.___________________"
+   ?
+   ? "                                                      2.___________________"
+   ?
+   ? "                                                      3.___________________"
+
+   FF
+   ENDPRINT
+
+   IF _export
+      tbl_export()
+   ENDIF
+
+   my_close_all_dbf()
+
+   RETURN
 
 
 
 // ---------------------------------------------------
 // vraca polja za tabelu exporta...
 // ---------------------------------------------------
-static function _g_exp_flds()
-local _dbf := {}
+STATIC FUNCTION _g_exp_flds()
 
-AADD( _dbf, { "rbr", "C", 4, 0 } )
-AADD( _dbf, { "sredstvo", "C", 10, 0 } )
-AADD( _dbf, { "naziv", "C", 100, 0 } )
-AADD( _dbf, { "jmj", "C", 3, 0 } )
-AADD( _dbf, { "datum", "D", 8, 0 } )
-AADD( _dbf, { "kolicina", "N", 15, 2 } )
+   LOCAL _dbf := {}
 
-return _dbf
+   AAdd( _dbf, { "rbr", "C", 4, 0 } )
+   AAdd( _dbf, { "sredstvo", "C", 10, 0 } )
+   AAdd( _dbf, { "naziv", "C", 100, 0 } )
+   AAdd( _dbf, { "jmj", "C", 3, 0 } )
+   AAdd( _dbf, { "datum", "D", 8, 0 } )
+   AAdd( _dbf, { "kolicina", "N", 15, 2 } )
+
+   RETURN _dbf
 
 
 // -------------------------------------------
 // dodaj u tabelu export-a
 // -------------------------------------------
-static function _a_to_exp( r_br, sredstvo, naziv_sredstva, jmj_sredstva, trenutna_kolicina, datum_nabavke )
-local _t_area := SELECT()
+STATIC FUNCTION _a_to_exp( r_br, sredstvo, naziv_sredstva, jmj_sredstva, trenutna_kolicina, datum_nabavke )
 
-O_R_EXP
-append blank
-replace field->rbr with r_br
-replace field->sredstvo with sredstvo
-replace field->naziv with naziv_sredstva
-replace field->jmj with jmj_sredstva
-replace field->kolicina with trenutna_kolicina
-replace field->datum with datum_nabavke
+   LOCAL _t_area := Select()
 
-select ( _t_area )
-return
+   O_R_EXP
+   APPEND BLANK
+   REPLACE field->rbr WITH r_br
+   REPLACE field->sredstvo WITH sredstvo
+   REPLACE field->naziv WITH naziv_sredstva
+   REPLACE field->jmj WITH jmj_sredstva
+   REPLACE field->kolicina WITH trenutna_kolicina
+   REPLACE field->datum WITH datum_nabavke
 
+   SELECT ( _t_area )
 
-
-function ZglPrj()
-local _mod_name := "OS"
-local nArr := SELECT()
-
-if gOsSii == "S"
-    _mod_name := "SII"
-endif
-
-P_10CPI
-?? UPPER(gTS)+":",gNFirma
-?
-? _mod_name + ": Pregled "
-
-if cON=="N"
-   ?? "sredstava u upotrebi"
-elseif cON=="B"
-   ?? "novonabavljenih sredstava u toku godine"
-else
-   ?? "sredstava otpisanih u toku godine"
-endif
-
-select rj
-seek cidrj
-
-select (nArr)
-
-?? "     Datum:", gDatObr
-
-? "Radna jedinica:", cIdrj, rj->naz
-
-if cpocinju=="D"
-  ?? space(6),"(SVEUKUPNO)"
-endif
-
-if !EMPTY(cFiltK1)
-  ? "Filter grupacija K1 pravljen po uslovu: '"+TRIM(cFiltK1)+"'"
-endif
-
-if !EMPTY(cFiltDob)
-  ? "Filter za dobavljace pravljen po uslovu: '"+TRIM(cFiltDob)+"'"
-endif
-
-if !empty(cBrojSobe)
-  ?
-  ? "Prikaz za sobu br:", cBrojSobe
-  ?
-endif
-
-IF cOpis=="D"
-  P_COND
-ENDIF
-
-? m
-if lBrojSobe .and. EMPTY(cBrojSobe)
- ? " Rbr. Br.sobe Inv.broj        Sredstvo               "+IF(cOpis=="D",PADC("Opis",1+LEN(field->opis)),"")+" jmj  kol  "
-else
- ? " Rbr.  Inv.broj        Sredstvo              "+IF(cOpis=="D",PADC("Opis",1+LEN(field->opis)),"")+"  jmj  kol  "
-endif
-? m
-
-return
+   RETURN
 
 
+
+FUNCTION ZglPrj()
+
+   LOCAL _mod_name := "OS"
+   LOCAL nArr := Select()
+
+   IF gOsSii == "S"
+      _mod_name := "SII"
+   ENDIF
+
+   P_10CPI
+   ?? Upper( gTS ) + ":", gNFirma
+   ?
+   ? _mod_name + ": Pregled "
+
+   IF cON == "N"
+      ?? "sredstava u upotrebi"
+   ELSEIF cON == "B"
+      ?? "novonabavljenih sredstava u toku godine"
+   ELSE
+      ?? "sredstava otpisanih u toku godine"
+   ENDIF
+
+   SELECT rj
+   SEEK cidrj
+
+   SELECT ( nArr )
+
+   ?? "     Datum:", gDatObr
+
+   ? "Radna jedinica:", cIdrj, rj->naz
+
+   IF cpocinju == "D"
+      ?? Space( 6 ), "(SVEUKUPNO)"
+   ENDIF
+
+   IF !Empty( cFiltK1 )
+      ? "Filter grupacija K1 pravljen po uslovu: '" + Trim( cFiltK1 ) + "'"
+   ENDIF
+
+   IF !Empty( cFiltDob )
+      ? "Filter za dobavljace pravljen po uslovu: '" + Trim( cFiltDob ) + "'"
+   ENDIF
+
+   IF !Empty( cBrojSobe )
+      ?
+      ? "Prikaz za sobu br:", cBrojSobe
+      ?
+   ENDIF
+
+   IF cOpis == "D"
+      P_COND
+   ENDIF
+
+   ? m
+   IF lBrojSobe .AND. Empty( cBrojSobe )
+      ? " Rbr. Br.sobe Inv.broj        Sredstvo               " + IF( cOpis == "D", PadC( "Opis", 1 + Len( field->opis ) ), "" ) + " jmj  kol  "
+   ELSE
+      ? " Rbr.  Inv.broj        Sredstvo              " + IF( cOpis == "D", PadC( "Opis", 1 + Len( field->opis ) ), "" ) + "  jmj  kol  "
+   ENDIF
+   ? m
+
+   RETURN

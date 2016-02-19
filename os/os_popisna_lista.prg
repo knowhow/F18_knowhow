@@ -19,18 +19,18 @@ FUNCTION os_popisna_lista()
    _o_tables()
 
    IF !_get_vars( @_pars )
-      RETURN
+      RETURN .F.
    ENDIF
 
    IF !_gen_xml( _pars )
-      RETURN
+      RETURN .F.
    ENDIF
 
    IF generisi_odt_iz_xml( "mat_invent.odt", my_home() + "data.xml" )
       prikazi_odt()
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 STATIC FUNCTION _o_tables()

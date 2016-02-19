@@ -74,33 +74,31 @@ METHOD mMenuStandard
    LOCAL _opc := {}
    LOCAL _opcexe := {}
 
-   AAdd( _opc, "1. unos promjena na postojecem sredstvu                     " )
+   AAdd( _opc, "1. unos promjena na postojećem sredstvu               " )
    AAdd( _opcexe, {|| unos_osnovnih_sredstava() } )
    AAdd( _opc, "2. obračuni" )
    AAdd( _opcexe, {|| os_obracuni() } )
    AAdd( _opc, "3. izvještaji" )
    AAdd( _opcexe, {|| os_izvjestaji() } )
-   AAdd( _opc, "------------------------------------------------------------" )
+   AAdd( _opc, "----------------------------------------------- ------" )
    AAdd( _opcexe, {|| nil } )
    AAdd( _opc, "5. šifarnici" )
    AAdd( _opcexe, {|| os_sifarnici() } )
    AAdd( _opc, "6. parametri" )
    AAdd( _opcexe, {|| os_parametri() } )
-   AAdd( _opc, "------------------------------------------------------------" )
+   AAdd( _opc, "------------------------------------------------------" )
    AAdd( _opcexe, {|| nil } )
-   AAdd( _opc, "8. prenos pocetnog stanja " )
+   AAdd( _opc, "8. prenos početnog stanja " )
    AAdd( _opcexe, {|| os_generacija_pocetnog_stanja() } )
 
    f18_menu( "gos", .F., _izbor, _opc, _opcexe )
 
-   RETURN
+   RETURN .T.
 
 
 METHOD set_module_gvars()
 
 
-
-   // ostali parametri
    PUBLIC gDatObr := Date()
    PUBLIC gRJ := "00"
    PUBLIC gValuta := "KM "
@@ -115,7 +113,7 @@ METHOD set_module_gvars()
    PUBLIC gMetodObr := "1"
    PUBLIC gOsSii := "O"
 
-   // procitaj iz sql/db
+
    gRJ := fetch_metric( "os_radna_jedinica", nil, gRJ )
    gOsSii := fetch_metric( "os_sii_modul", my_user(), gOsSii )
    gDatObr := fetch_metric( "os_datum_obrade", my_user(), gDatObr )
@@ -127,4 +125,4 @@ METHOD set_module_gvars()
    gVarDio := fetch_metric( "os_pocetak_obracuna", nil, gVarDio )
    gDatDio := fetch_metric( "os_pocetak_obracuna_datum", nil, gDatDio )
 
-   RETURN
+   RETURN .T.

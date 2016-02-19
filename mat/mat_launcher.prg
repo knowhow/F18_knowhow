@@ -18,7 +18,6 @@ FUNCTION MainMat( cKorisn, cSifra, p3, p4, p5, p6, p7 )
    LOCAL oMat
    LOCAL cModul
 
-
    cModul := "MAT"
    PUBLIC goModul
 

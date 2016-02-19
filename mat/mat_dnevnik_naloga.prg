@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -13,154 +13,155 @@
 #include "f18.ch"
 
 
-static _pict := "@Z 999999999.99"
+STATIC _pict := "@Z 999999999.99"
 
 
 // --------------------------------------------
 // stampa liste naloga
 // --------------------------------------------
-function mat_dnevnik_naloga()
-local _line
-local _dug
-local _pot
-local _dug2
-local _pot2
-local _rbr
-local _row_pos
+FUNCTION mat_dnevnik_naloga()
 
-O_MAT_NALOG
-SELECT mat_nalog
-set order to tag "1"
-GO TOP
+   LOCAL _line
+   LOCAL _dug
+   LOCAL _pot
+   LOCAL _dug2
+   LOCAL _pot2
+   LOCAL _rbr
+   LOCAL _row_pos
 
-START PRINT CRET
+   O_MAT_NALOG
+   SELECT mat_nalog
+   SET ORDER TO TAG "1"
+   GO TOP
 
-_line := _get_line()
-_rbr := 0
-_row_pos := 0
+   START PRINT CRET
 
-_dug := 0
-_pot := 0
-_dug2 := 0
-_pot2 := 0
+   _line := _get_line()
+   _rbr := 0
+   _row_pos := 0
 
-DO WHILE !EOF()
-   
-    IF prow()==0
-        _zaglavlje( _line )
-    ENDIF
+   _dug := 0
+   _pot := 0
+   _dug2 := 0
+   _pot2 := 0
 
-    DO WHILE !EOF() .AND. prow()<66
-        @ prow() + 1, 0 SAY ++_rbr PICTURE "9999"
-        @ prow(), pcol()+2 SAY field->IdFirma
-        @ prow(), pcol()+2 SAY field->IdVN
-        @ prow(), pcol()+2 SAY field->BrNal
-        @ prow(), pcol()+1 SAY field->DatNal
-        _row_pos := pcol()
-        @ prow(), pcol()+1 SAY field->Dug  picture _pict
-        @ prow(), pcol()+1 SAY field->Pot  picture _pict
-        @ prow(), pcol()+1 SAY field->Dug2 picture _pict
-        @ prow(), pcol()+1 SAY field->Pot2 picture _pict
-      
-        _dug += field->Dug
-        _pot += field->Pot
-        _dug2 += field->Dug2
-        _pot2 += field->Pot2
-        
-        SKIP
-    ENDDO
-    IF prow() > 65
-        FF
-    ENDIF
-ENDDO
+   DO WHILE !Eof()
 
-? _line
-? "UKUPNO:"
-@ prow(), _row_pos + 1 SAY _dug        picture _pict
-@ prow(), pcol() + 1 SAY _pot  picture _pict
-@ prow(), pcol() + 1 SAY _dug2 picture _pict
-@ prow(), pcol() + 1 SAY _pot2 picture _pict
-? _line
+      IF PRow() == 0
+         _zaglavlje( _line )
+      ENDIF
 
-FF
-ENDPRINT
+      DO WHILE !Eof() .AND. PRow() < 66
+         @ PRow() + 1, 0 SAY ++_rbr PICTURE "9999"
+         @ PRow(), PCol() + 2 SAY field->IdFirma
+         @ PRow(), PCol() + 2 SAY field->IdVN
+         @ PRow(), PCol() + 2 SAY field->BrNal
+         @ PRow(), PCol() + 1 SAY field->DatNal
+         _row_pos := PCol()
+         @ PRow(), PCol() + 1 SAY field->Dug  PICTURE _pict
+         @ PRow(), PCol() + 1 SAY field->Pot  PICTURE _pict
+         @ PRow(), PCol() + 1 SAY field->Dug2 PICTURE _pict
+         @ PRow(), PCol() + 1 SAY field->Pot2 PICTURE _pict
 
-my_close_all_dbf()
-return
+         _dug += field->Dug
+         _pot += field->Pot
+         _dug2 += field->Dug2
+         _pot2 += field->Pot2
+
+         SKIP
+      ENDDO
+      IF PRow() > 65
+         FF
+      ENDIF
+   ENDDO
+
+   ? _line
+   ? "UKUPNO:"
+   @ PRow(), _row_pos + 1 SAY _dug        PICTURE _pict
+   @ PRow(), PCol() + 1 SAY _pot  PICTURE _pict
+   @ PRow(), PCol() + 1 SAY _dug2 PICTURE _pict
+   @ PRow(), PCol() + 1 SAY _pot2 PICTURE _pict
+   ? _line
+
+   FF
+   ENDPRINT
+
+   my_close_all_dbf()
+
+   RETURN
 
 
 // -------------------------------------------
 // zaglavlje izvjestaja
 // -------------------------------------------
-static function _zaglavlje( line )
-local _r_line_1
-local _r_line_2
-        
-P_COND
-        
-?? "DNEVNIK NALOGA NA DAN:"
-@ prow(), pcol() + 2 SAY DATE()
-        
-? line
+STATIC FUNCTION _zaglavlje( line )
 
-_r_line_1 := PADR( "*RED", 4 )
-_r_line_2 := PADR( "*BRD", 4 )
+   LOCAL _r_line_1
+   LOCAL _r_line_2
 
-_r_line_1 += PADR( "*FIR", 4 )
-_r_line_2 += PADR( "*MA", 4 )
+   P_COND
 
-_r_line_1 += PADR( "* V", 4 )
-_r_line_2 += PADR( "* N", 4 )
+   ?? "DNEVNIK NALOGA NA DAN:"
+   @ PRow(), PCol() + 2 SAY Date()
 
-_r_line_1 += PADR( "* BR", 6 )
-_r_line_2 += PADR( "* NAL", 6 )
+   ? line
 
-_r_line_1 += PADR( "* DAT", 9 )
-_r_line_2 += PADR( "* NAL", 9 )
+   _r_line_1 := PadR( "*RED", 4 )
+   _r_line_2 := PadR( "*BRD", 4 )
 
-_r_line_1 += PADR( "*   DUGUJE", 13 )
-_r_line_2 += PADR( "*   " + ValDomaca(), 13 )
+   _r_line_1 += PadR( "*FIR", 4 )
+   _r_line_2 += PadR( "*MA", 4 )
 
-_r_line_1 += PADR( "* POTRAZUJE", 13 )
-_r_line_2 += PADR( "*   " + ValDomaca(), 13 )
+   _r_line_1 += PadR( "* V", 4 )
+   _r_line_2 += PadR( "* N", 4 )
 
-_r_line_1 += PADR( "*   DUGUJE", 13 )
-_r_line_2 += PADR( "*   " + ValPomocna(), 13 )
+   _r_line_1 += PadR( "* BR", 6 )
+   _r_line_2 += PadR( "* NAL", 6 )
 
-_r_line_1 += PADR( "* POTRAZUJE", 13 )
-_r_line_2 += PADR( "*   " + ValPomocna(), 13 )
+   _r_line_1 += PadR( "* DAT", 9 )
+   _r_line_2 += PadR( "* NAL", 9 )
 
-? _r_line_1
-? _r_line_2
-       
-? line
- 
-return
+   _r_line_1 += PadR( "*   DUGUJE", 13 )
+   _r_line_2 += PadR( "*   " + ValDomaca(), 13 )
+
+   _r_line_1 += PadR( "* POTRAZUJE", 13 )
+   _r_line_2 += PadR( "*   " + ValDomaca(), 13 )
+
+   _r_line_1 += PadR( "*   DUGUJE", 13 )
+   _r_line_2 += PadR( "*   " + ValPomocna(), 13 )
+
+   _r_line_1 += PadR( "* POTRAZUJE", 13 )
+   _r_line_2 += PadR( "*   " + ValPomocna(), 13 )
+
+   ? _r_line_1
+   ? _r_line_2
+
+   ? line
+
+   RETURN
 
 
 // vraca liniju za report
-static function _get_line()
-local _line := ""
+STATIC FUNCTION _get_line()
 
-_line := REPLICATE( "-", 4 )
-_line += SPACE(1)
-_line += REPLICATE( "-", 3 )
-_line += SPACE(1)
-_line += REPLICATE( "-", 3 )
-_line += SPACE(1)
-_line += REPLICATE( "-", 5 )
-_line += SPACE(1)
-_line += REPLICATE( "-", 8 )
-_line += SPACE(1)
-_line += REPLICATE( "-", 12 )
-_line += SPACE(1)
-_line += REPLICATE( "-", 12 )
-_line += SPACE(1)
-_line += REPLICATE( "-", 12 )
-_line += SPACE(1)
-_line += REPLICATE( "-", 12 )
+   LOCAL _line := ""
 
-return _line
+   _line := Replicate( "-", 4 )
+   _line += Space( 1 )
+   _line += Replicate( "-", 3 )
+   _line += Space( 1 )
+   _line += Replicate( "-", 3 )
+   _line += Space( 1 )
+   _line += Replicate( "-", 5 )
+   _line += Space( 1 )
+   _line += Replicate( "-", 8 )
+   _line += Space( 1 )
+   _line += Replicate( "-", 12 )
+   _line += Space( 1 )
+   _line += Replicate( "-", 12 )
+   _line += Space( 1 )
+   _line += Replicate( "-", 12 )
+   _line += Space( 1 )
+   _line += Replicate( "-", 12 )
 
-
-
+   RETURN _line

@@ -53,14 +53,14 @@ FUNCTION mat_unos_naloga()
    mat_o_edit()
 
    ImeKol := { ;
-      { "F.",         {|| IdFirma }, "idfirma" },;
-      { "VN",         {|| IdVN    }, "idvn" },;
-      { "Br.",        {|| BrNal   }, "brnal" },;
-      { "R.br",       {|| RBr     } },;
-      { IF( gSeks == "D", "Predmet", "Konto" ),      {|| IdKonto },"idkonto" },;
-      { "Partner",    {|| idpartner }, "idpartner" },;
-      { "Artikal",    {|| IdRoba }, "idroba" },;
-      { "U/I",        {|| U_I     }, "U_I" },;
+      { "F.",         {|| IdFirma }, "idfirma" }, ;
+      { "VN",         {|| IdVN    }, "idvn" }, ;
+      { "Br.",        {|| BrNal   }, "brnal" }, ;
+      { "R.br",       {|| RBr     } }, ;
+      { IF( gSeks == "D", "Predmet", "Konto" ),      {|| IdKonto }, "idkonto" }, ;
+      { "Partner",    {|| idpartner }, "idpartner" }, ;
+      { "Artikal",    {|| IdRoba }, "idroba" }, ;
+      { "U/I",        {|| U_I     }, "U_I" }, ;
       { "Kolicina",      {|| Transform( Kolicina, "999999.99" ) } } ;
       }
 
@@ -302,7 +302,7 @@ FUNCTION SredCij()
       SKIP 1
    ENDDO
 
-   SELECT( nArr )
+   Select( nArr )
 
    RETURN ( nFin / nMat )
 
@@ -325,7 +325,7 @@ STATIC FUNCTION V_Roba( fnovi )
    ENDIF
 
    @  m_x + 15, m_y + 25  SAY "Jed.mjere:"
-   @  m_x + 15, m_y + 36  SAY ROBA->jmj COLOR gColorInvert 
+   @  m_x + 15, m_y + 36  SAY ROBA->jmj COLOR gColorInvert
 
    RETURN .T.
 
@@ -465,7 +465,7 @@ FUNCTION mat_pripr_key_handler()
 
          SKIP
          nTR2 := RecNo()
-         skip - 1
+         SKIP - 1
 
          Scatter()
 
@@ -633,7 +633,7 @@ FUNCTION mat_st_nalog()
 
    IF ( gKonto == "D" .AND. Pitanje(, "Stampa analitike", "D" ) == "D" )  .OR. ;
          ( gKonto == "N" .AND. Pitanje(, "Stampa analitike", "N" ) == "D" )
-	
+
       mat_st_sint_nalog( .T. )
 
    ENDIF
@@ -876,7 +876,7 @@ STATIC FUNCTION Zagl11()
    @ PRow(), PCol() + 2 SAY cIdFirma + " - " + cIdVn + " - " + cBrNal
    nArr := Select()
    SELECT TNAL; HSEEK cIdVN; @ PRow(), PCol() + 4 SAY naz
-   SELECT( nArr )
+   Select( nArr )
    @ PRow(), 120 SAY "Str " + Str( ++nStr, 3 )
    ? M
    IF gkonto == "N" .AND. g2Valute == "D"

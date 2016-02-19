@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -14,390 +14,392 @@
 
 
 // otvara potrebne tabele za povrat
-static function _o_tables()
-O_MAT_SUBAN
-O_MAT_ANAL
-O_MAT_SINT
-O_MAT_NALOG
-O_MAT_PRIPR
-O_ROBA
-O_SIFK
-O_SIFV
-return
+STATIC FUNCTION _o_tables()
+
+   O_MAT_SUBAN
+   O_MAT_ANAL
+   O_MAT_SINT
+   O_MAT_NALOG
+   O_MAT_PRIPR
+   O_ROBA
+   O_SIFK
+   O_SIFV
+
+   RETURN
 
 
 // ---------------------------------------------
 // povrat naloga u pripremu
 // ---------------------------------------------
-function mat_povrat_naloga( lStorno )
-local _rec
-local nRec
-local _del_rec, _ok
-local _field_ids, _where_block
+FUNCTION mat_povrat_naloga( lStorno )
 
-if lStorno == NIL 
-    lStorno := .f.
-endif
+   LOCAL _rec
+   LOCAL nRec
+   LOCAL _del_rec, _ok
+   LOCAL _field_ids, _where_block
 
-_o_tables()
+   IF lStorno == NIL
+      lStorno := .F.
+   ENDIF
 
-SELECT MAT_SUBAN
-set order to tag "4"
+   _o_tables()
 
-cIdFirma := gFirma
-cIdFirma2 := gFirma
-cIdVN := cIdVN2  := space(2)
-cBrNal:= cBrNal2 := space(4)
+   SELECT MAT_SUBAN
+   SET ORDER TO TAG "4"
 
-Box("", IIF(lStorno, 3, 1), IIF(lStorno, 65, 35))
+   cIdFirma := gFirma
+   cIdFirma2 := gFirma
+   cIdVN := cIdVN2  := Space( 2 )
+   cBrNal := cBrNal2 := Space( 4 )
 
-    @ m_x + 1, m_y + 2 SAY "Nalog:"
+   Box( "", iif( lStorno, 3, 1 ), iif( lStorno, 65, 35 ) )
 
-    if gNW=="D"
-        @ m_x+1,col()+1 SAY cIdFirma PICT "@!"
-    else
-        @ m_x+1,col()+1 GET cIdFirma PICT "@!"
-    endif
+   @ m_x + 1, m_y + 2 SAY "Nalog:"
 
-    @ m_x + 1, col() + 1 SAY "-" GET cIdVN PICT "@!"
-    @ m_x + 1, col() + 1 SAY "-" GET cBrNal VALID !EMPTY( cBrNal )
+   IF gNW == "D"
+      @ m_x + 1, Col() + 1 SAY cIdFirma PICT "@!"
+   ELSE
+      @ m_x + 1, Col() + 1 GET cIdFirma PICT "@!"
+   ENDIF
 
-    IF lStorno
+   @ m_x + 1, Col() + 1 SAY "-" GET cIdVN PICT "@!"
+   @ m_x + 1, Col() + 1 SAY "-" GET cBrNal VALID !Empty( cBrNal )
 
-        @ m_x+3,m_y+2 SAY "Broj novog naloga (naloga storna):"
+   IF lStorno
 
-        if gNW=="D"
-            @ m_x+3, col()+1 SAY cIdFirma2
-        else
-            @ m_x+3, col()+1 GET cIdFirma2
-    endif
+      @ m_x + 3, m_y + 2 SAY "Broj novog naloga (naloga storna):"
 
-    @ m_x + 3, col() + 1 SAY "-" GET cIdVN2 PICT "@!"
-    @ m_x + 3, col() + 1 SAY "-" GET cBrNal2
+      IF gNW == "D"
+         @ m_x + 3, Col() + 1 SAY cIdFirma2
+      ELSE
+         @ m_x + 3, Col() + 1 GET cIdFirma2
+      ENDIF
 
-    endif
+      @ m_x + 3, Col() + 1 SAY "-" GET cIdVN2 PICT "@!"
+      @ m_x + 3, Col() + 1 SAY "-" GET cBrNal2
 
-    read
-    ESC_BCR
+   ENDIF
 
-BoxC()
+   READ
+   ESC_BCR
+
+   BoxC()
 
 
-if Pitanje(,"Nalog " + cIdFirma + "-" + cIdVN + "-" + cBrNal + IIF(lStorno," stornirati"," povuci u pripremu") + " (D/N) ?","D") == "N"
-    my_close_all_dbf()
-    return
-endif
+   IF Pitanje(, "Nalog " + cIdFirma + "-" + cIdVN + "-" + cBrNal + iif( lStorno, " stornirati", " povuci u pripremu" ) + " (D/N) ?", "D" ) == "N"
+      my_close_all_dbf()
+      RETURN
+   ENDIF
 
-lBrisi := .t.
+   lBrisi := .T.
 
-if !lStorno
-    lBrisi := ( Pitanje(,"Nalog "+cIdFirma+"-"+cIdVN+"-"+cBrNal + " izbrisati iz baze azuriranih dokumenata (D/N) ?","D") == "D" )
-endif
+   IF !lStorno
+      lBrisi := ( Pitanje(, "Nalog " + cIdFirma + "-" + cIdVN + "-" + cBrNal + " izbrisati iz baze azuriranih dokumenata (D/N) ?", "D" ) == "D" )
+   ENDIF
 
-MsgO("Punim pripremu sa mat_suban: " + cIdfirma + cIdvn + cBrNal )
+   MsgO( "Punim pripremu sa mat_suban: " + cIdfirma + cIdvn + cBrNal )
 
-select MAT_SUBAN
-seek cIdfirma + cIdvn + cBrNal
+   SELECT MAT_SUBAN
+   SEEK cIdfirma + cIdvn + cBrNal
 
-do while !eof() .and. cIdFirma==IdFirma .and. cIdVN==IdVN .and. cBrNal==BrNal
+   DO WHILE !Eof() .AND. cIdFirma == IdFirma .AND. cIdVN == IdVN .AND. cBrNal == BrNal
 
-   select mat_pripr
+      SELECT mat_pripr
 
-   select mat_suban
+      SELECT mat_suban
 
-   _rec := dbf_get_rec()
+      _rec := dbf_get_rec()
 
-   select mat_pripr
-   
-   if lStorno
-       _rec["idfirma"]  := cIdFirma2
-       _rec["idvn"]     := cIdVn2
-       _rec["brnal"]    := cBrNal2
-       _rec["iznos"] := -_iznos
-       _rec["iznos2"] := -_iznos2
-   endif
+      SELECT mat_pripr
 
-   APPEND BLANK
+      IF lStorno
+         _rec[ "idfirma" ]  := cIdFirma2
+         _rec[ "idvn" ]     := cIdVn2
+         _rec[ "brnal" ]    := cBrNal2
+         _rec[ "iznos" ] := -_iznos
+         _rec[ "iznos2" ] := -_iznos2
+      ENDIF
 
-   dbf_update_rec( _rec )
+      APPEND BLANK
 
-   select MAT_SUBAN
-   skip
+      dbf_update_rec( _rec )
 
-enddo
+      SELECT MAT_SUBAN
+      SKIP
 
-MsgC()
+   ENDDO
 
-if !lBrisi
-    my_close_all_dbf()
-    return
-endif
+   MsgC()
 
-if !lStorno
-    if !brisi_mat_nalog( cIdFirma, cIdVn, cBrNal )
-        MsgBeep( "Problem sa brisanjem naloga ..." )
-    else
-        log_write( "F18_DOK_OPER: mat, povrat naloga u pripremu: " + cIdFirma + "-" + cIdVn + "-" + cBrNal, 2 )
-    endif
-endif
+   IF !lBrisi
+      my_close_all_dbf()
+      RETURN
+   ENDIF
 
-my_close_all_dbf()
-return
+   IF !lStorno
+      IF !brisi_mat_nalog( cIdFirma, cIdVn, cBrNal )
+         MsgBeep( "Problem sa brisanjem naloga ..." )
+      ELSE
+         log_write( "F18_DOK_OPER: mat, povrat naloga u pripremu: " + cIdFirma + "-" + cIdVn + "-" + cBrNal, 2 )
+      ENDIF
+   ENDIF
+
+   my_close_all_dbf()
+
+   RETURN
 
 
 // ---------------------------------------------------------
 // brisanje mat naloga iz kumulativa
 // ---------------------------------------------------------
-function brisi_mat_nalog( cIdFirma, cIdVn, cBrNal )
-local _del_rec
-local _ok := .t.
+FUNCTION brisi_mat_nalog( cIdFirma, cIdVn, cBrNal )
 
-if !f18_lock_tables({"mat_suban", "mat_sint", "mat_anal", "mat_nalog"})
-    return .f.
-endif
+   LOCAL _del_rec
+   LOCAL _ok := .T.
 
-sql_table_update( nil, "BEGIN" )
+   IF !f18_lock_tables( { "mat_suban", "mat_sint", "mat_anal", "mat_nalog" } )
+      RETURN .F.
+   ENDIF
 
-select mat_suban
-set order to tag "4"
-go top
-seek cIdFirma + cIdVn + cBrNal
+   sql_table_update( nil, "BEGIN" )
 
-if FOUND()
-    _del_rec := dbf_get_rec()
-    delete_rec_server_and_dbf( "mat_suban", _del_rec, 2, "CONT" )
-endif
+   SELECT mat_suban
+   SET ORDER TO TAG "4"
+   GO TOP
+   SEEK cIdFirma + cIdVn + cBrNal
 
-select mat_sint
-set order to tag "2"
-go top
-seek cIdFirma + cIdVn + cBrNal
+   IF Found()
+      _del_rec := dbf_get_rec()
+      delete_rec_server_and_dbf( "mat_suban", _del_rec, 2, "CONT" )
+   ENDIF
 
-if FOUND()
-    _del_rec := dbf_get_rec()
-    delete_rec_server_and_dbf( "mat_sint", _del_rec, 2, "CONT" )
-endif
+   SELECT mat_sint
+   SET ORDER TO TAG "2"
+   GO TOP
+   SEEK cIdFirma + cIdVn + cBrNal
 
-select mat_anal
-set order to tag "2"
-go top
-seek cIdFirma + cIdVn + cBrNal
+   IF Found()
+      _del_rec := dbf_get_rec()
+      delete_rec_server_and_dbf( "mat_sint", _del_rec, 2, "CONT" )
+   ENDIF
 
-if FOUND()
-    _del_rec := dbf_get_rec()
-    delete_rec_server_and_dbf( "mat_anal", _del_rec, 2, "CONT" )
-endif
+   SELECT mat_anal
+   SET ORDER TO TAG "2"
+   GO TOP
+   SEEK cIdFirma + cIdVn + cBrNal
 
-select mat_nalog
-set order to tag "1"
-go top
-seek cIdFirma + cIdVn + cBrNal
+   IF Found()
+      _del_rec := dbf_get_rec()
+      delete_rec_server_and_dbf( "mat_anal", _del_rec, 2, "CONT" )
+   ENDIF
 
-if FOUND()
-    _del_rec := dbf_get_rec()
-    delete_rec_server_and_dbf( "mat_nalog", _del_rec, 1, "CONT" )
-endif
+   SELECT mat_nalog
+   SET ORDER TO TAG "1"
+   GO TOP
+   SEEK cIdFirma + cIdVn + cBrNal
 
-f18_free_tables({"mat_suban", "mat_sint", "mat_anal", "mat_nalog"})
-sql_table_update( nil, "END" )
+   IF Found()
+      _del_rec := dbf_get_rec()
+      delete_rec_server_and_dbf( "mat_nalog", _del_rec, 1, "CONT" )
+   ENDIF
 
-return _ok
+   f18_free_tables( { "mat_suban", "mat_sint", "mat_anal", "mat_nalog" } )
+   sql_table_update( nil, "END" )
+
+   RETURN _ok
 
 
 
 // ----------------------------------------------
 // generacija dokumenta pocetnog stanja
 // ----------------------------------------------
-function mat_prenos_podataka()
-local _nule := "D"
-local _po_partneru := "N"
-local _r_br := 0
+FUNCTION mat_prenos_podataka()
 
-O_MAT_PRIPR
+   LOCAL _nule := "D"
+   LOCAL _po_partneru := "N"
+   LOCAL _r_br := 0
 
-if reccount2()<>0
-    MsgBeep("Tabela pripreme mora biti prazna !!!")
-    my_close_all_dbf()
-    return
-endif
+   O_MAT_PRIPR
 
-my_dbf_zap()
+   IF reccount2() <> 0
+      MsgBeep( "Tabela pripreme mora biti prazna !!!" )
+      my_close_all_dbf()
+      RETURN
+   ENDIF
 
-set order to tag "4"
-GO TOP
+   my_dbf_zap()
 
-Box(,5,60)
-    nMjesta := 3
-    dDatDo := DATE()
-    @ m_x+2, m_y+2 SAY "Datum do kojeg se promet prenosi" GET dDatDo
-    @ m_x+3, m_y+2 SAY "Prenositi stavke sa saldom 0 (D/N)" GET _nule VALID _nule $ "DN" PICT "!@"
-    @ m_x+4, m_y+2 SAY "Prenos raditi po partneru (D/N)" GET _po_partneru VALID _po_partneru $ "DN" PICT "!@"
+   SET ORDER TO TAG "4"
+   GO TOP
 
-    read
-    ESC_BCR
-BoxC()
+   Box(, 5, 60 )
+   nMjesta := 3
+   dDatDo := Date()
+   @ m_x + 2, m_y + 2 SAY "Datum do kojeg se promet prenosi" GET dDatDo
+   @ m_x + 3, m_y + 2 SAY "Prenositi stavke sa saldom 0 (D/N)" GET _nule VALID _nule $ "DN" PICT "!@"
+   @ m_x + 4, m_y + 2 SAY "Prenos raditi po partneru (D/N)" GET _po_partneru VALID _po_partneru $ "DN" PICT "!@"
 
-START PRINT CRET
+   READ
+   ESC_BCR
+   BoxC()
 
-O_MAT_SUBAN
+   START PRINT CRET
 
-// ovo je bio stari indeks, stari prenos bez partnera
-//set order to tag "3"
-// "3" - "IdFirma+IdKonto+IdRoba+dtos(DatDok)"
+   O_MAT_SUBAN
 
-set order to tag "5"
-// "5" - "IdFirma+IdKonto+IdPartner+IdRoba+dtos(DatDok)"
+   // ovo je bio stari indeks, stari prenos bez partnera
+   // set order to tag "3"
+   // "3" - "IdFirma+IdKonto+IdRoba+dtos(DatDok)"
 
-? "Prolazim kroz bazu...."
-select mat_suban
-go top
+   SET ORDER TO TAG "5"
+   // "5" - "IdFirma+IdKonto+IdPartner+IdRoba+dtos(DatDok)"
 
-// idfirma, idkonto, idpartner, idroba, datdok
-do while !eof()
+   ? "Prolazim kroz bazu...."
+   SELECT mat_suban
+   GO TOP
 
-    nRbr := 0
-    cIdFirma := idfirma
-    
-    do while !eof() .and. cIdFirma == IdFirma
-      
-        cIdKonto := IdKonto
-        select mat_suban
-      
-        nDin:=0
-        nDem:=0
-      
-        do while !eof() .and. cIdFirma==IdFirma .and. cIdKonto==IdKonto
-        
+   // idfirma, idkonto, idpartner, idroba, datdok
+   DO WHILE !Eof()
+
+      nRbr := 0
+      cIdFirma := idfirma
+
+      DO WHILE !Eof() .AND. cIdFirma == IdFirma
+
+         cIdKonto := IdKonto
+         SELECT mat_suban
+
+         nDin := 0
+         nDem := 0
+
+         DO WHILE !Eof() .AND. cIdFirma == IdFirma .AND. cIdKonto == IdKonto
+
             cIdPartner := idpartner
 
-            do while !eof() .and. cIdFirma==IdFirma .and. cIdKonto==IdKonto .and. IdPartner==cIdPartner
-    
-                cIdRoba := IdRoba
-        
-                ? "Konto:", cIdKonto, ", partner:", cIdPartner, ", roba:", cIdRoba
-        
-                do while !eof() .and. cIdFirma==IdFirma .and. cIdKonto==IdKonto .and. IdRoba==cIdRoba .and. idpartner == cIdPartner
-        
-                    if _nule == "N" .and. ROUND( mat_suban->kolicina, 2 ) == 0
-                        skip
-                        loop
-                    endif
- 
-                    select mat_pripr
-                    set order to tag "4"
-                    go top
+            DO WHILE !Eof() .AND. cIdFirma == IdFirma .AND. cIdKonto == IdKonto .AND. IdPartner == cIdPartner
 
-                    if _po_partneru == "D"
-                        seek mat_suban->idfirma + mat_suban->idkonto + mat_suban->idpartner + mat_suban->idroba
-                    else
-                        seek mat_suban->idfirma + mat_suban->idkonto + SPACE(6) + mat_suban->idroba
-                    endif
+               cIdRoba := IdRoba
 
-                    if !found()
+               ? "Konto:", cIdKonto, ", partner:", cIdPartner, ", roba:", cIdRoba
 
-                        append blank
-                
-                        replace idfirma with cIdFirma
-                        replace idkonto with cIdkonto
+               DO WHILE !Eof() .AND. cIdFirma == IdFirma .AND. cIdKonto == IdKonto .AND. IdRoba == cIdRoba .AND. idpartner == cIdPartner
 
-                        if _po_partneru == "D"
-                            replace idpartner with cIdPartner
-                        else
-                            replace idpartner with ""
-                        endif
+                  IF _nule == "N" .AND. Round( mat_suban->kolicina, 2 ) == 0
+                     SKIP
+                     LOOP
+                  ENDIF
 
-                        replace idRoba  with cIdRoba
-                        replace datdok with dDatDo + 1
-                        replace datkurs with dDatDo + 1
-                        replace idvn with "00"
-                        replace idtipdok with "00"
-                        replace brnal with "0001"
-                        replace d_p with "1"
-                        replace u_i with "1"
-                        replace rbr with PADL( ALLTRIM( STR( ++ _r_br ) ), 4 )
-                        replace kolicina with ;
-                            iif(mat_suban->U_I=="1", mat_suban->kolicina, ;
-                                -mat_suban->kolicina)
-                        replace iznos with ;
-                            iif(mat_suban->D_P=="1", mat_suban->iznos, ;
-                                -mat_suban->iznos)
-                        replace iznos2 with ;
-                            iif(mat_suban->D_P=="1", mat_suban->iznos2, ;
-                                -mat_suban->iznos2)
-            
-                    else
-           
-                        replace kolicina with ;
-                            kolicina + iif(mat_suban->U_I=="1", ;
-                            mat_suban->kolicina, -mat_suban->kolicina)
-                        
-                        replace iznos with ;
-                            iznos + iif(mat_suban->D_P=="1", ;
-                            mat_suban->iznos,-mat_suban->iznos)
-                        
-                        replace iznos2 with ;
-                            iznos2 + iif(mat_suban->D_P=="1", ;
-                            mat_suban->iznos2,-mat_suban->iznos2)
-         
-                    endif
-         
-                    select mat_suban
-                    skip
-        
-                enddo 
-                //  roba
+                  SELECT mat_pripr
+                  SET ORDER TO TAG "4"
+                  GO TOP
 
-            enddo 
+                  IF _po_partneru == "D"
+                     SEEK mat_suban->idfirma + mat_suban->idkonto + mat_suban->idpartner + mat_suban->idroba
+                  ELSE
+                     SEEK mat_suban->idfirma + mat_suban->idkonto + Space( 6 ) + mat_suban->idroba
+                  ENDIF
+
+                  IF !Found()
+
+                     APPEND BLANK
+
+                     REPLACE idfirma WITH cIdFirma
+                     REPLACE idkonto WITH cIdkonto
+
+                     IF _po_partneru == "D"
+                        REPLACE idpartner WITH cIdPartner
+                     ELSE
+                        REPLACE idpartner WITH ""
+                     ENDIF
+
+                     REPLACE idRoba  WITH cIdRoba
+                     REPLACE datdok WITH dDatDo + 1
+                     REPLACE datkurs WITH dDatDo + 1
+                     REPLACE idvn WITH "00"
+                     REPLACE idtipdok WITH "00"
+                     REPLACE brnal WITH "0001"
+                     REPLACE d_p WITH "1"
+                     REPLACE u_i WITH "1"
+                     REPLACE rbr WITH PadL( AllTrim( Str( ++_r_br ) ), 4 )
+                     REPLACE kolicina with ;
+                        iif( mat_suban->U_I == "1", mat_suban->kolicina, ;
+                        -mat_suban->kolicina )
+                     REPLACE iznos with ;
+                        iif( mat_suban->D_P == "1", mat_suban->iznos, ;
+                        -mat_suban->iznos )
+                     REPLACE iznos2 with ;
+                        iif( mat_suban->D_P == "1", mat_suban->iznos2, ;
+                        -mat_suban->iznos2 )
+
+                  ELSE
+
+                     REPLACE kolicina with ;
+                        kolicina + iif( mat_suban->U_I == "1", ;
+                        mat_suban->kolicina, -mat_suban->kolicina )
+
+                     REPLACE iznos with ;
+                        iznos + iif( mat_suban->D_P == "1", ;
+                        mat_suban->iznos, -mat_suban->iznos )
+
+                     REPLACE iznos2 with ;
+                        iznos2 + iif( mat_suban->D_P == "1", ;
+                        mat_suban->iznos2, -mat_suban->iznos2 )
+
+                  ENDIF
+
+                  SELECT mat_suban
+                  SKIP
+
+               ENDDO
+               // roba
+
+            ENDDO
             // partner
 
-        enddo 
-        // konto
-  
-    enddo 
-    // firma
+         ENDDO
+         // konto
 
-enddo 
-// eof
+      ENDDO
+      // firma
 
-select mat_pripr
-my_flock()
-set order to
-go top
-do while !eof()
-    if round(iznos,2)==0 .and. round(iznos2,2)==0 .and. ;
-        round(kolicina,3) == 0
-            dbdelete2()
-    endif
-    skip
-enddo
-my_unlock()
-my_dbf_pack()
+   ENDDO
+   // eof
 
-set order to tag "1"
-go top
+   SELECT mat_pripr
+   my_flock()
+   SET ORDER TO
+   GO TOP
+   DO WHILE !Eof()
+      IF Round( iznos, 2 ) == 0 .AND. Round( iznos2, 2 ) == 0 .AND. ;
+            Round( kolicina, 3 ) == 0
+         dbdelete2()
+      ENDIF
+      SKIP
+   ENDDO
+   my_unlock()
+   my_dbf_pack()
 
-nTrec := 0
+   SET ORDER TO TAG "1"
+   GO TOP
 
-my_flock()
-do while !eof()
-    cIdFirma := idfirma
-    nRbr := 0
-    do while !eof() .and. cIdFirma==IdFirma
-        skip 
-        nTrec := recno()
-        skip -1
-        replace rbr with str(++nRbr,4)
-        replace cijena with iif(Kolicina<>0,Iznos/Kolicina,0)
-        go nTrec
-    enddo
-enddo
-my_unlock()
+   nTrec := 0
 
-my_close_all_dbf()
-ENDPRINT
+   my_flock()
+   DO WHILE !Eof()
+      cIdFirma := idfirma
+      nRbr := 0
+      DO WHILE !Eof() .AND. cIdFirma == IdFirma
+         SKIP
+         nTrec := RecNo()
+         SKIP -1
+         REPLACE rbr WITH Str( ++nRbr, 4 )
+         REPLACE cijena WITH iif( Kolicina <> 0, Iznos / Kolicina, 0 )
+         GO nTrec
+      ENDDO
+   ENDDO
+   my_unlock()
 
-return
+   my_close_all_dbf()
+   ENDPRINT
 
-
-
-
+   RETURN

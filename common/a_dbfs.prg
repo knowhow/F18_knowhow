@@ -36,25 +36,33 @@ FUNCTION set_a_dbfs()
    set_a_dbf_epdv()
    set_a_dbf_os()
 
-   IF f18_use_module( "pos" )
-      set_a_dbf_pos()
-   ENDIF
-
    IF f18_use_module( "virm" )
       set_a_dbf_virm()
    ENDIF
 
+#ifdef F18_POS
+   IF f18_use_module( "pos" )
+      set_a_dbf_pos()
+   ENDIF
+#endif
+
+#ifdef F18_RNAL
    IF f18_use_module( "rnal" )
       set_a_dbf_rnal()
    ENDIF
+#endif
 
+#ifdef F18_MAT
    IF f18_use_module( "mat" )
       set_a_dbf_mat()
    ENDIF
+#endif
 
+#ifdef F18_KADEV
    IF f18_use_module( "kadev" )
       set_a_dbf_kadev()
    ENDIF
+#endif
 
    RETURN .T.
 
@@ -380,10 +388,10 @@ FUNCTION set_dbf_fields_from_struct( xRec )
       ?E "set_dbf_fields xRec=", xRec
 #endif
       IF hb_HHasKey( __f18_dbfs, xRec )
-        hRec := __f18_dbfs[ xRec ]
+         hRec := __f18_dbfs[ xRec ]
       ELSE
-        ?E "set_dbf_fields tabela ", xRec, "nije u a_dbf_rec"
-        RETURN .F.
+         ?E "set_dbf_fields tabela ", xRec, "nije u a_dbf_rec"
+         RETURN .F.
       ENDIF
    ELSE
       hRec := xRec

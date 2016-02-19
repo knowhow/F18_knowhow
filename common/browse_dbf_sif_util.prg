@@ -215,12 +215,16 @@ STATIC FUNCTION sif_sql_seek( cId, cIdBK, cUslovSrch, cNazSrch, fId_j, cOrderTag
 
    IF Len( cId ) > 10
 
+#ifdef F18_POS
       IF !tezinski_barkod( @cId, @_tezina, .F. )
          barkod( @cId )
       ENDIF
+#else
+      barkod( @cId )
+#endif
 
       ordSetFocus( _order )
-      RETURN
+      RETURN .T.
 
    ENDIF
 

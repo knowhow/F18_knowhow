@@ -154,7 +154,6 @@ FUNCTION Get1_10PDV()
    IF gVarEv == "1"
 
       ++ _x
-
       @ m_x + _x, m_y + 2 SAY "Fakturna cijena:"
 
       IF gDokKVal == "D"
@@ -187,6 +186,7 @@ FUNCTION Get1_10PDV()
    obracun_kalkulacija_tip_10_pdv( _x )
 
    RETURN LastKey()
+
 
 
 FUNCTION Get2_10()

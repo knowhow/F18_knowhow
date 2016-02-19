@@ -54,7 +54,7 @@ FUNCTION PostojiSifra( nDbf, nNtx, nVisina, nSirina, cNaslov, cID, dx, dy,  bBlo
    ENDIF
 
    IF !Used()
-      my_use( nDbf, nil)
+      my_use( nDbf, nil )
    ENDIF
 
    set_mc_imekol( nDbf )
@@ -218,9 +218,13 @@ STATIC FUNCTION sif_seek( cId, cIdBK, cUslovSrch, cNazSrch, fId_j, nOrdId )
 
    IF Len( cId ) > 10
 
+#ifdef F18_POS
       IF !tezinski_barkod( @cId, @_tezina, .F. )
          barkod( @cId )
       ENDIF
+#else
+      barkod( @cId )
+#endif
 
       ordSetFocus( _order )
 
@@ -497,7 +501,7 @@ STATIC FUNCTION sif_komande( nDbf, cNaslov, bBlok, aZabrane, aZabIsp )
    CASE Ch == K_ENTER
 
 #ifdef F18_DEBUG_BROWSE_SIF
-      altd()
+      AltD()
 #endif
 
       IF gMeniSif

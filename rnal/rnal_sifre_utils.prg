@@ -87,15 +87,6 @@ FUNCTION sif_idmc( nFieldId, lOnlyMc, nRpad )
    RETURN PadR( xRet, nRPad )
 
 
-FUNCTION show_it( cItem, nPadR )
-
-   IF nPadR <> nil
-      cItem := PadR( cItem, nPadR )
-   ENDIF
-
-   @ Row(), Col() + 3 SAY cItem
-
-   RETURN .T.
 
 
 

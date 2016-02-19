@@ -87,7 +87,7 @@ FUNCTION pos_unos_racuna()
 
    Box(, _max_rows - 3, _max_cols - 3, , aUnosMsg )
 
-   @ m_x, m_y + 23 SAY8 PadC ( "RAČUN BR: " + AllTrim( cBrojRn ), 40 ) COLOR gColorInvert 
+   @ m_x, m_y + 23 SAY8 PadC ( "RAČUN BR: " + AllTrim( cBrojRn ), 40 ) COLOR gColorInvert
 
    oBrowse := FormBrowse( m_x + 7, m_y + 1, m_x + _max_rows - 12, m_y + _max_cols - 2, ;
       ImeKol, Kol, { BROWSE_PODVUCI_2, BROWSE_PODVUCI, BROWSE_COL_SEP }, 0 )
@@ -184,11 +184,11 @@ FUNCTION pos_unos_racuna()
       @ m_x + 4, m_y + 25 SAY Space ( 11 )
 
       IF LastKey() == K_ESC
-    
+
          IF valid_dodaj_taksu_za_gorivo()
             EXIT
          ELSE
- 
+
             _calc_current_total( @nIznNar, @nPopust )
 
             oBrowse:goBottom()
@@ -244,7 +244,9 @@ FUNCTION pos_unos_racuna()
    SetKey( K_F8, NIL )
    SetKey( K_F9, NIL )
 
+#ifdef F18_POS
    pos_unset_key_handler_ispravka_racuna()
+#endif
 
    BoxC()
 
@@ -526,9 +528,9 @@ FUNCTION pos_ispravi_racun()
 
 STATIC FUNCTION _show_total( iznos, popust, row )
 
-   @ m_x + row + 0, m_y + ( MAXCOLS() - 12 ) SAY iznos PICT "99999.99" COLOR gColorInvert 
-   @ m_x + row + 1, m_y + ( MAXCOLS() - 12 ) SAY popust PICT "99999.99" COLOR gColorInvert 
-   @ m_x + row + 2, m_y + ( MAXCOLS() - 12 ) SAY iznos - popust PICT "99999.99" COLOR gColorInvert 
+   @ m_x + row + 0, m_y + ( MAXCOLS() - 12 ) SAY iznos PICT "99999.99" COLOR gColorInvert
+   @ m_x + row + 1, m_y + ( MAXCOLS() - 12 ) SAY popust PICT "99999.99" COLOR gColorInvert
+   @ m_x + row + 2, m_y + ( MAXCOLS() - 12 ) SAY iznos - popust PICT "99999.99" COLOR gColorInvert
 
    RETURN
 
@@ -606,7 +608,7 @@ FUNCTION pos_ispravi_stavku_racuna()
 
          nIznNar += ( _cijena * _kolicina ) -cijena * kolicina
          nPopust += ( _ncijena * _kolicina )  - ncijena * kolicina
-            
+
          my_rlock()
          Gather()
          my_unlock()

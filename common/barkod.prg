@@ -64,7 +64,7 @@ FUNCTION KaLabelBKod()
       aStampati[ i ] := "D"
    NEXT
 
-   ImeKol := { { "IdRoba", {|| IdRoba } }, { "Kolicina", {|| Transform( Kolicina, picv ) } },{ "Stampati?", {|| IF( aStampati[ RecNo() ] == "D", "-> DA <-", "      NE" ) } } }
+   ImeKol := { { "IdRoba", {|| IdRoba } }, { "Kolicina", {|| Transform( Kolicina, picv ) } }, { "Stampati?", {|| IF( aStampati[ RecNo() ] == "D", "-> DA <-", "      NE" ) } } }
 
    Kol := {}
    FOR i := 1 TO Len( ImeKol )
@@ -180,7 +180,6 @@ FUNCTION KaEdPrLBK()
  */
 FUNCTION FaLabelBKod()
 
-
    LOCAL cIBK, cPrefix, cSPrefix
 
    O_SIFK
@@ -201,8 +200,8 @@ FUNCTION FaLabelBKod()
       aStampati[ i ] := "D"
    NEXT
 
-   ImeKol := { { "IdRoba",      {|| IdRoba  }      },;
-      { "Kolicina",    {|| Transform( Kolicina, Pickol ) }     },;
+   ImeKol := { { "IdRoba",      {|| IdRoba  }      }, ;
+      { "Kolicina",    {|| Transform( Kolicina, Pickol ) }     }, ;
       { "Stampati?",   {|| IF( aStampati[ RecNo() ] == "D", "-> DA <-", "      NE" ) }      } ;
       }
 
@@ -393,18 +392,18 @@ FUNCTION NoviBK_A( cPrefix )
 
 FUNCTION KEAN13( cKod )
 
-   LOCAL n2, n4
-   LOCAL n1 := Val( SubStr( cKod, 2, 1 ) ) + Val( SubStr( cKod, 4, 1 ) ) + Val( SubStr( ckod, 6, 1 ) ) + Val( SubStr ( ckod, 8, 1 ) ) + Val( SubStr( ckod, 10, 1 ) ) + Val( SubStr( ckod, 12, 1 ) )
-   LOCAL n3 := Val( SubStr( cKod, 1, 1 ) ) + Val( SubStr( cKod, 3, 1 ) ) + Val( SubStr( ckod, 5, 1 ) ) + Val( SubStr ( ckod, 7, 1 ) ) + Val( SubStr( ckod, 9, 1 ) ) + Val( SubStr( ckod, 11, 1 ) )
+   LOCAL nB2, nB4
+   LOCAL nB1 := Val( SubStr( cKod, 2, 1 ) ) + Val( SubStr( cKod, 4, 1 ) ) + Val( SubStr( ckod, 6, 1 ) ) + Val( SubStr ( ckod, 8, 1 ) ) + Val( SubStr( ckod, 10, 1 ) ) + Val( SubStr( ckod, 12, 1 ) )
+   LOCAL nB3 := Val( SubStr( cKod, 1, 1 ) ) + Val( SubStr( cKod, 3, 1 ) ) + Val( SubStr( ckod, 5, 1 ) ) + Val( SubStr ( ckod, 7, 1 ) ) + Val( SubStr( ckod, 9, 1 ) ) + Val( SubStr( ckod, 11, 1 ) )
 
-   n2 := n1 * 3
+   nB2 := nB1 * 3
 
-   n4 := n2 + n3
-   n4 := n4 % 10
-   IF n4 = 0
+   nB4 := nB2 + nB3
+   nB4 := nB4 % 10
+   IF nB4 = 0
       RETURN  "0"   // n5
    ELSE
-      RETURN  Str( 10 - n4, 1 )   // n5
+      RETURN  Str( 10 - nB4, 1 )   // n5
    ENDIF
 
 
@@ -443,10 +442,8 @@ FUNCTION barkod( cId )
 
 
 
-// -------------------------------------------------------------------------------------
-// ova funkcija vraca tezinu na osnovu tezinskog barkod-a
-// znaci samo je izracuna
-// -------------------------------------------------------------------------------------
+#ifdef F18_POS
+
 FUNCTION tezinski_barkod_get_tezina( barkod, tezina )
 
    LOCAL _tb := param_tezinski_barkod()
@@ -469,7 +466,7 @@ FUNCTION tezinski_barkod_get_tezina( barkod, tezina )
    // itd...
    _a_prefix := TokToNiz( _tb_prefix, ";" )
 
-   IF AScan( _a_prefix, {|var| var == PadR( barkod, Len( var ) ) } ) == 0
+   IF AScan( _a_prefix, {| var| var == PadR( barkod, Len( var ) ) } ) == 0
       RETURN .F.
    ENDIF
 
@@ -529,7 +526,7 @@ FUNCTION tezinski_barkod( id, tezina, pop_push )
    // itd...
    _a_prefix := TokToNiz( _tb_prefix, ";" )
 
-   IF AScan( _a_prefix, {|var| var == PadR( id, Len( var ) ) } ) <> 0
+   IF AScan( _a_prefix, {| var| var == PadR( id, Len( var ) ) } ) <> 0
       // ovo je ok...
    ELSE
       RETURN _ocitao
@@ -574,3 +571,11 @@ FUNCTION tezinski_barkod( id, tezina, pop_push )
    ENDIF
 
    RETURN _ocitao
+
+
+#else
+
+FUNCTION tezinski_barkod_get_tezina()
+   RETURN .F.
+
+#endif

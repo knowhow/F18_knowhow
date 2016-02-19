@@ -80,7 +80,7 @@ FUNCTION program_module_menu( arg_v )
    LOCAL _tmp
    LOCAL _color := "BG+/B"
 
-   info_bar( "init", "gen program_module_menu start")
+   info_bar( "init", "gen program_module_menu start" )
    IF arg_v == NIL
       // napravi NIL parametre
       cre_arg_v_hash( @arg_v )
@@ -124,7 +124,7 @@ FUNCTION program_module_menu( arg_v )
 
       set_program_module_menu( @menuop, @menuexec, arg_v[ "p3" ], arg_v[ "p4" ], arg_v[ "p5" ], arg_v[ "p6" ], arg_v[ "p7" ] )
 
-      info_bar( "init", "gen program_module_menu end")
+      info_bar( "init", "gen program_module_menu end" )
 
       mnu_choice := ACHOICE2( mnu_top, mnu_left, mnu_bottom, mnu_right, menuop, .T., "MenuFunc", 1 )
 
@@ -147,13 +147,12 @@ FUNCTION program_module_menu( arg_v )
 
    ENDDO
 
-   info_bar( _db_params[ "database" ], "program_module_menu end")
+   info_bar( _db_params[ "database" ], "program_module_menu end" )
 
    RETURN .T.
 
-// -----------------------------------------------------------------------------
-// setuje matricu sa odabirom za meni
-// -----------------------------------------------------------------------------
+
+
 STATIC FUNCTION set_program_module_menu( menuop, menuexec, p3, p4, p5, p6, p7 )
 
    LOCAL _count := 0
@@ -189,28 +188,11 @@ STATIC FUNCTION set_program_module_menu( menuop, menuexec, p3, p4, p5, p6, p7 )
       AAdd( menuexec, {|| MainLd( my_user(), "dummy", p3, p4, p5, p6, p7 ) } )
    ENDIF
 
-   IF f18_use_module( "rnal" )
-      cMenuBrojac := PadL( AllTrim( Str( ++_count ) ), 2 )
-      AAdd( menuop, cMenuBrojac + ". RNAL  # radni nalozi" )
-      AAdd( menuexec, {|| MainRnal( my_user(), "dummy", p3, p4, p5, p6, p7 ) } )
-   ENDIF
 
    IF f18_use_module( "os" )
       cMenuBrojac := PadL( AllTrim( Str( ++_count ) ), 2 )
       AAdd( menuop, cMenuBrojac + ". OS/SII# osnovna sredstva i sitan inventar" )
       AAdd( menuexec, {|| MainOs( my_user(), "dummy", p3, p4, p5, p6, p7 ) } )
-   ENDIF
-
-   IF f18_use_module( "pos" )
-      cMenuBrojac := PadL( AllTrim( Str( ++_count ) ), 2 )
-      AAdd( menuop, cMenuBrojac + ". POS   # maloprodajna kasa" )
-      AAdd( menuexec, {|| MainPos( my_user(), "dummy", p3, p4, p5, p6, p7 ) } )
-   ENDIF
-
-   IF f18_use_module( "mat" )
-      cMenuBrojac := PadL( AllTrim( Str( ++_count ) ), 2 )
-      AAdd( menuop, cMenuBrojac + ". MAT   # materijalno" )
-      AAdd( menuexec, {|| MainMat( my_user(), "dummy", p3, p4, p5, p6, p7 ) } )
    ENDIF
 
    IF f18_use_module( "virm" )
@@ -219,11 +201,38 @@ STATIC FUNCTION set_program_module_menu( menuop, menuexec, p3, p4, p5, p6, p7 )
       AAdd( menuexec, {|| MainVirm( my_user(), "dummy", p3, p4, p5, p6, p7 ) } )
    ENDIF
 
+#ifdef F18_RNAL
+   IF f18_use_module( "rnal" )
+      cMenuBrojac := PadL( AllTrim( Str( ++_count ) ), 2 )
+      AAdd( menuop, cMenuBrojac + ". RNAL  # radni nalozi" )
+      AAdd( menuexec, {|| MainRnal( my_user(), "dummy", p3, p4, p5, p6, p7 ) } )
+   ENDIF
+#endif
+
+#ifdef F18_POS
+   IF f18_use_module( "pos" )
+      cMenuBrojac := PadL( AllTrim( Str( ++_count ) ), 2 )
+      AAdd( menuop, cMenuBrojac + ". POS   # maloprodajna kasa" )
+      AAdd( menuexec, {|| MainPos( my_user(), "dummy", p3, p4, p5, p6, p7 ) } )
+   ENDIF
+#endif
+
+
+#ifdef F18_MAT
+   IF f18_use_module( "mat" )
+      cMenuBrojac := PadL( AllTrim( Str( ++_count ) ), 2 )
+      AAdd( menuop, cMenuBrojac + ". MAT   # materijalno" )
+      AAdd( menuexec, {|| MainMat( my_user(), "dummy", p3, p4, p5, p6, p7 ) } )
+   ENDIF
+#endif
+
+#ifdef F18_KADEV
    IF f18_use_module( "kadev" )
       cMenuBrojac := PadL( AllTrim( Str( ++_count ) ), 2 )
       AAdd( menuop, cMenuBrojac + ". KADEV  # kadrovska evidencija" )
       AAdd( menuexec, {|| MainKadev( my_user(), "dummy", p3, p4, p5, p6, p7 ) } )
    ENDIF
+#endif
 
    IF f18_use_module( "reports" )
       cMenuBrojac := PadL( AllTrim( Str( ++_count ) ), 2 )

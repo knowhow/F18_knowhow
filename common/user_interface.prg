@@ -243,11 +243,11 @@ FUNCTION MsgC( msg_x1, msg_y1, msg_x2, msg_y2 )
  *  \param boxid se ne koristi
  */
 
-FUNCTION Box( BoxId, N, Length, Inv, chMsg, cHelpT )
+FUNCTION Box( BoxId, NA1, Length, Inv, chMsg, cHelpT )
 
    LOCAL x1, y1, x2, y2
    LOCAL LocalC, cPom, cNaslovBoxa
-   LOCAL _m_x, _m_y, _n
+   LOCAL _m_x, _m_y, _nA1
 
 
    cPom := Set( _SET_DEVICE )
@@ -261,9 +261,9 @@ FUNCTION Box( BoxId, N, Length, Inv, chMsg, cHelpT )
 
    _m_x := m_x
    _m_y := m_y
-   _n := N
+   _nA1 := NA1
 
-   Calc_xy( @_m_x, @_m_y, @_n, Length )
+   Calc_xy( @_m_x, @_m_y, @_nA1, Length )
 
 
    // stvori prostor za prikaz
@@ -271,12 +271,12 @@ FUNCTION Box( BoxId, N, Length, Inv, chMsg, cHelpT )
 
       BoxId := OpcTipke( chMsg )
 
-      IF _m_x + _N > MAXROWS() - 3 - BoxId
+      IF _m_x + _NA1 > MAXROWS() - 3 - BoxId
 
-         _m_x := MAXROWS() - 4 - BoxId - _n
+         _m_x := MAXROWS() - 4 - BoxId - _nA1
 
          IF _m_x < 1
-            _n := MAXROWS() - 5 - BoxId
+            _nA1 := MAXROWS() - 5 - BoxId
             _m_x := 1
          ENDIF
 
@@ -290,14 +290,14 @@ FUNCTION Box( BoxId, N, Length, Inv, chMsg, cHelpT )
 
    m_x := _m_x
    m_y := _m_y
-   N := _n
+   NA1 := _nA1
 
    StackPush( aBoxStack, ;
       {  m_x, ;
       m_y, ;
-      N,   ;
+      NA1,   ;
       Length, ;
-      SaveScreen( m_x, m_y, m_x + N + 1, m_Y + Length + 2 ), ;
+      SaveScreen( m_x, m_y, m_x + NA1 + 1, m_Y + Length + 2 ), ;
       iif( ValType( chMsg ) != "A", "", BoxId ), ;
       Row(), ;
       Col(), ;
@@ -314,8 +314,8 @@ FUNCTION Box( BoxId, N, Length, Inv, chMsg, cHelpT )
 
    SetColor( LocalC )
 
-   Scroll( m_x, m_y, m_x + N + 1, m_Y + Length + 2 )
-   @ m_x, m_y TO m_x + N + 1, m_y + Length + 2 DOUBLE
+   Scroll( m_x, m_y, m_x + NA1 + 1, m_Y + Length + 2 )
+   @ m_x, m_y TO m_x + NA1 + 1, m_y + Length + 2 DOUBLE
 
    IF !Empty( cNaslovBoxa )
       @ m_x, m_y + 2 SAY8 cNaslovBoxa COLOR "GR+/B"
@@ -337,12 +337,12 @@ FUNCTION BoxC()
 
    m_x := aBoxPar[ 1 ]
    m_y := aBoxPar[ 2 ]
-   N := aBoxPar[ 3 ]
+   NA1 := aBoxPar[ 3 ]
    Length := aBoxPar[ 4 ]
 
 
-   Scroll( m_x, m_y, m_x + N + 1, m_y + Length + 2 )
-   RestScreen( m_x, m_y, m_x + N + 1, m_y + Length + 2, aBoxPar[ 5 ] )
+   Scroll( m_x, m_y, m_x + NA1 + 1, m_y + Length + 2 )
+   RestScreen( m_x, m_y, m_x + NA1 + 1, m_y + Length + 2, aBoxPar[ 5 ] )
 
    @ AboxPar[ 7 ], aBoxPar[ 8 ] SAY ""
 
@@ -355,21 +355,19 @@ FUNCTION BoxC()
       aBoxPar := StackTop( aBoxStack )
       m_x := aBoxPar[ 1 ]
       m_y := aBoxPar[ 2 ]
-      N := aBoxPar[ 3 ]
+      NA1 := aBoxPar[ 3 ]
       Length := aBoxPar[ 4 ]
    ENDIF
 
    SET( _SET_DEVICE, cPom )
 
-   RETURN
+   RETURN .T.
 
 
-/*! \fn OpcTipke(aNiz)
- *  \brief prikaz opcija u Browse-u
+/*  OpcTipke(aNiz)
+ *  prikaz opcija u Browse-u
  *
- * \code
  *  aNiz:={"<c-N> Novi","<a-A> Ispravka"}
- * \endcode
  *
  */
 
@@ -421,7 +419,7 @@ FUNCTION BoxCLS()
 
    @ aBoxPar[ 1 ] + 1, aBoxPar[ 2 ] + 1 CLEAR TO aBoxPar[ 1 ] + aBoxPar[ 3 ], aBoxPar[ 2 ] + aBoxPar[ 4 ] + 1
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -453,7 +451,7 @@ FUNCTION CentrTxt( tekst, lin )
       @ lin, kol SAY tekst
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -487,7 +485,7 @@ FUNCTION Prozor1( v1, h1, v2, h2, cNaslov, cBojaN, cOkvir, cBojaO, cBojaT, nKurs
 
    SET( _SET_DEVICE, _device )
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -503,7 +501,7 @@ FUNCTION Prozor0()
    @ _a_st[ 1 ], _a_st[ 2 ] SAY ""
    SET( _SET_DEVICE, _device )
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -628,8 +626,8 @@ FUNCTION LomiGa( cTekst, nOrig, nLin, nDuz )
    RETURN cTekst
 
 
-/*! \fn KudaDalje(cTekst, aOpc, cPom)
- *  \brief Meni od maksimalno 15 opcija opisanih u nizu aOpc
+/* KudaDalje(cTekst, aOpc, cPom)
+ *  Meni od maksimalno 15 opcija opisanih u nizu aOpc
  *
  * Naslov menija je
  * cTekst, a cPom je oznaka za "Help"
@@ -753,7 +751,7 @@ FUNCTION AutoSifra( nObl, cSifra )
       PopWA()
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -762,7 +760,7 @@ FUNCTION CistiTipke()
    KEYBOARD Chr( 0 )
    DO WHILE !Inkey() == 0; ENDDO
 
-   RETURN
+   RETURN .T.
 
 
 FUNCTION AMFILL( aNiz, nElem )
@@ -978,6 +976,17 @@ INKEY_MOVE          Mouse motion events are allowed
 
    RETURN .T.
 
+
+   FUNCTION show_it( cItem, nPadR )
+
+      IF nPadR <> nil
+         cItem := PadR( cItem, nPadR )
+      ENDIF
+
+      @ Row(), Col() + 3 SAY cItem
+
+      RETURN .T.
+
 FUNCTION UGlavnomMeniju()
 
    LOCAL i
@@ -1072,17 +1081,17 @@ FUNCTION set_boje_2()
 
 FUNCTION TokUNiz( cTok, cSN, cSE )
 
-   LOCAL aNiz := {}, nN := 0, nE := 0, aPom := {}, i := 0, j := 0, cTE := "", cE := ""
+   LOCAL aNiz := {}, nN := 0, nE := 0, aPom := {}, nI := 0, nJ := 0, cTE := "", cE := ""
 
    IF cSN == NIL ; cSN := ";" ; ENDIF
    IF cSE == NIL ; cSE := "." ; ENDIF
    nN := NumToken( cTok, cSN )
-   FOR i := 1 TO nN
-      cTE := Token( cTok, cSN, i )
+   FOR nI := 1 TO nN
+      cTE := Token( cTok, cSN, nI )
       nE  := NumToken( cTE, cSE )
       aPom := {}
-      FOR j := 1 TO nE
-         cE := Token( cTE, cSE, j )
+      FOR nJ := 1 TO nE
+         cE := Token( cTE, cSE, nJ )
          AAdd( aPom, cE )
       NEXT
       AAdd( aNiz, aPom )
@@ -1091,7 +1100,7 @@ FUNCTION TokUNiz( cTok, cSN, cSE )
    RETURN ( aNiz )
 
 
-/*! TxtUNiz(cTxt,nKol)
+/*
  *  Pretvara TXT u niz
  *  param cTxt   - tekst
  *  param nKol   - broj kolona
@@ -1099,7 +1108,7 @@ FUNCTION TokUNiz( cTok, cSN, cSE )
 
 FUNCTION TxtUNiz( cTxt, nKol )
 
-   LOCAL aVrati := {}, nPoz := 0, lNastavi := .T., cPom := "", aPom := {}, i := 0
+   LOCAL aVrati := {}, nPoz := 0, lNastavi := .T., cPom := "", aPom := {}, nI := 0
 
    cTxt := Trim( cTxt )
    DO WHILE lNastavi
@@ -1108,8 +1117,8 @@ FUNCTION TxtUNiz( cTxt, nKol )
          cPom := Left( cTxt, nPoz - 1 )
          IF nPoz - 1 > nKol
             cPom := Trim( LomiGa( cPom, 1, 5, nKol ) )
-            FOR  i := 1  TO  Int( ( Len( cPom ) -1 ) / nKol ) + 1
-               AAdd( aVrati, SubStr( cPom, ( i - 1 ) * nKol + 1, nKol ) )
+            FOR  nI := 1  TO  Int( ( Len( cPom ) -1 ) / nKol ) + 1
+               AAdd( aVrati, SubStr( cPom, ( nI - 1 ) * nKol + 1, nKol ) )
             NEXT
          ELSE
             AAdd( aVrati, cPom )
@@ -1119,8 +1128,8 @@ FUNCTION TxtUNiz( cTxt, nKol )
          cPom := Trim( cTxt )
          IF Len( cPom ) > nKol
             cPom := Trim( LomiGa( cPom, 1, 5, nKol ) )
-            FOR  i := 1  TO  Int( ( Len( cPom ) -1 ) / nKol ) + 1
-               AAdd( aVrati, SubStr( cPom, ( i - 1 ) * nKol + 1, nKol ) )
+            FOR  nI := 1  TO  Int( ( Len( cPom ) - 1 ) / nKol ) + 1
+               AAdd( aVrati, SubStr( cPom, ( nI - 1 ) * nKol + 1, nKol ) )
             NEXT
          ELSE
             AAdd( aVrati, cPom )
@@ -1141,7 +1150,7 @@ FUNCTION MsgBeep2( cTXT )
    @ MAXROWS() -1, 0 SAY PadL( cTXT, MAXCOLS() ) COLOR "R/W"
    Tone( 900, 0.3 )
 
-   RETURN
+   RETURN .T.
 
 
 FUNCTION Reci( x, y, cT, nP )
@@ -1162,11 +1171,10 @@ FUNCTION Reci( x, y, cT, nP )
 FUNCTION ShowKorner( nS, nStep, nDelta )
 
    STATIC i := 0
-   LOCAL cpom
+   LOCAL cPom
 
-   // nS - tekuca vrijednost
 
-   IF nS == 0
+   IF nS == 0 // nS - tekuca vrijednost
       i := 0
    ELSEIF nS == 1
       i++

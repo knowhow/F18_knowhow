@@ -26,8 +26,9 @@ FUNCTION fakt_unos_dokumenta()
    LOCAL _sep := BROWSE_COL_SEP
    PRIVATE ImeKol, Kol
 
+#ifdef F18_POS
    pos_unset_key_handler_ispravka_racuna()
-
+#endif
    zadnji_fiscal_z_report_info()
 
    close_open_fakt_tabele()

@@ -223,16 +223,16 @@ FUNCTION kalk_preuzmi_tops_dokumente_auto()
    FileDelete( _file )
    FileDelete( StrTran( _file, ".dbf", ".txt" ) )
 
-   // 1)  napraviti prenos u POS-u...
-   pos_prenos_pos_kalk( _datum_od, _datum_do, _id_vd_pos, _id_pm )
+#ifdef POS_PRENOS_POS_KALK
+   pos_prenos_pos_kalk( _datum_od, _datum_do, _id_vd_pos, _id_pm ) // 1)  napraviti prenos u POS-u...
+#endif
 
-   // 2) kopiraj fajl u potrebni...
-   FileCopy( my_home() + "pom.dbf", _file )
+   FileCopy( my_home() + "pom.dbf", _file ) // 2) kopiraj fajl u potrebni...
 
    IF !File( _file )
       MsgC()
-      MsgBeep( "Neki problem !!?????" )
-      RETURN
+      MsgBeep( "Neki problem !?" )
+      RETURN .F.
    ENDIF
 
    // 3) pa zatim isti preuzmi iz POS-a

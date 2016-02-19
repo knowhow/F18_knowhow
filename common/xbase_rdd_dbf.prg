@@ -26,7 +26,7 @@ FUNCTION f18_ime_dbf( xTableRec )
       _a_dbf_rec := get_a_dbf_rec( FILEBASE( xTableRec, .T. ), .T. )
       EXIT
    OTHERWISE
-     ?E  "f18_ime_dbf arg ?! " + hb_ValToStr( xTableRec )
+      ?E  "f18_ime_dbf arg ?! " + hb_ValToStr( xTableRec )
    ENDSWITCH
 
    IF _a_dbf_rec[ "table" ] == "x"
@@ -136,6 +136,8 @@ FUNCTION delete_with_rlock()
      .F. => pitaj korisnika da li želi izbrisati tabelu
      .T. => briši bez pitanja
 */
+FUNCTION f18_delete_dbf( tbl_name, lSilent )
+   RETURN ferace_dbf( tbl_name, lSilent )
 
 FUNCTION ferase_dbf( tbl_name, lSilent )
 
@@ -261,7 +263,7 @@ FUNCTION reopen_dbf( excl, dbf_table, open_index )
 
    BEGIN SEQUENCE WITH {| err| Break( err ) }
 
-      dbUseArea( .F., DBFENGINE, _dbf, _a_dbf_rec[ "alias" ], IIF( excl, .F., .T. ), .F. )
+      dbUseArea( .F., DBFENGINE, _dbf, _a_dbf_rec[ "alias" ], iif( excl, .F., .T. ), .F. )
 
       IF open_index
          IF File( ImeDbfCdx( _dbf ) )

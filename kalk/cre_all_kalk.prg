@@ -58,7 +58,7 @@ STATIC FUNCTION kreiraj_ostale_kalk_tabele( ver )
    CREATE_INDEX( "1", "IdFirma+idvd+brdok", _alias )
    CREATE_INDEX( "2", "IdFirma+MKONTO+idzaduz2+idvd+brdok", _alias )
    CREATE_INDEX( "3", "IdFirma+dtos(datdok)+podbr+idvd+brdok", _alias )
-   CREATE_INDEX( "DAT","datdok", _alias )
+   CREATE_INDEX( "DAT", "datdok", _alias )
    CREATE_INDEX( "1S", "IdFirma+idvd+SUBSTR(brdok,6)+LEFT(brdok,5)", _alias )
    CREATE_INDEX( "V_BRF", "brfaktp+idvd", _alias )
    CREATE_INDEX( "V_BRF2", "idvd+brfaktp", _alias )
@@ -89,17 +89,17 @@ STATIC FUNCTION kreiraj_ostale_kalk_tabele( ver )
    _alias := "OBJEKTI"
    _table_name := "objekti"
 
-   aDbf:={}
-   AADD(aDbf, {"id","C",2,0})
-   AADD(aDbf, {"naz","C",10,0})
-   AADD(aDbf, {"IdObj","C", 7,0})
+   aDbf := {}
+   AAdd( aDbf, { "id", "C", 2, 0 } )
+   AAdd( aDbf, { "naz", "C", 10, 0 } )
+   AAdd( aDbf, { "IdObj", "C", 7, 0 } )
 
    IF_NOT_FILE_DBF_CREATE
 
 
-   CREATE_INDEX("ID", "ID", _alias )
-   CREATE_INDEX("NAZ", "NAZ", _alias )
-   CREATE_INDEX("IdObj", "IdObj", _alias )
+   CREATE_INDEX( "ID", "ID", _alias )
+   CREATE_INDEX( "NAZ", "NAZ", _alias )
+   CREATE_INDEX( "IdObj", "IdObj", _alias )
    AFTER_CREATE_INDEX
 
    // pobjekti
@@ -107,18 +107,18 @@ STATIC FUNCTION kreiraj_ostale_kalk_tabele( ver )
    _alias := "POBJEKTI"
    _table_name := "pobjekti"
 
-   aDbf:={}
-   AADD(aDbf, {"id","C",2,0})
-   AADD(aDbf, {"naz","C",10,0})
-   AADD(aDbf, {"idobj","C", 7,0})
-   AADD(aDbf, {"zalt","N", 18, 5})
-   AADD(aDbf, {"zaltu","N", 18, 5})
-   AADD(aDbf, {"zalu","N", 18, 5})
-   AADD(aDbf, {"zalg","N", 18, 5})
-   AADD(aDbf, {"prodt","N", 18, 5})
-   AADD(aDbf, {"prodtu","N", 18, 5})
-   AADD(aDbf, {"prodg","N", 18, 5})
-   AADD(aDbf, {"produ","N", 18, 5})
+   aDbf := {}
+   AAdd( aDbf, { "id", "C", 2, 0 } )
+   AAdd( aDbf, { "naz", "C", 10, 0 } )
+   AAdd( aDbf, { "idobj", "C", 7, 0 } )
+   AAdd( aDbf, { "zalt", "N", 18, 5 } )
+   AAdd( aDbf, { "zaltu", "N", 18, 5 } )
+   AAdd( aDbf, { "zalu", "N", 18, 5 } )
+   AAdd( aDbf, { "zalg", "N", 18, 5 } )
+   AAdd( aDbf, { "prodt", "N", 18, 5 } )
+   AAdd( aDbf, { "prodtu", "N", 18, 5 } )
+   AAdd( aDbf, { "prodg", "N", 18, 5 } )
+   AAdd( aDbf, { "produ", "N", 18, 5 } )
 
    IF_NOT_FILE_DBF_CREATE
    CREATE_INDEX( "ID", "id", _alias )
@@ -144,63 +144,6 @@ STATIC FUNCTION kreiraj_ostale_kalk_tabele( ver )
    RETURN .T.
 
 
-
-STATIC FUNCTION definicija_kalk_tabele()
-
-   LOCAL aDbf := {}
-
-   AAdd( aDBf, { 'IDFIRMA', 'C',   2,  0 } )
-   AAdd( aDBf, { 'IDROBA', 'C',  10,  0 } )
-   AAdd( aDBf, { 'IDKONTO', 'C',   7,  0 } )
-   AAdd( aDBf, { 'IDKONTO2', 'C',   7,  0 } )
-   AAdd( aDBf, { 'IDZADUZ', 'C',   6,  0 } )
-   AAdd( aDBf, { 'IDZADUZ2', 'C',   6,  0 } )
-   AAdd( aDBf, { 'IDVD', 'C',   2,  0 } )
-   AAdd( aDBf, { 'BRDOK', 'C',   FIELD_LEN_KALK_BRDOK,  0 } )
-   AAdd( aDBf, { 'DATDOK', 'D',   8,  0 } )
-   AAdd( aDBf, { 'BRFAKTP', 'C',  10,  0 } )
-   AAdd( aDBf, { 'DATFAKTP', 'D',   8,  0 } )
-   AAdd( aDBf, { 'IDPARTNER', 'C',   6,  0 } )
-   AAdd( aDBf, { 'RBR', 'C',   FIELD_LEN_KALK_RBR,  0 } )
-   AAdd( aDBf, { 'PODBR', 'C',   2,  0 } )
-   AAdd( aDBf, { 'TPREVOZ', 'C',   1,  0 } )
-   AAdd( aDBf, { 'TPREVOZ2', 'C',   1,  0 } )
-   AAdd( aDBf, { 'TBANKTR', 'C',   1,  0 } )
-   AAdd( aDBf, { 'TSPEDTR', 'C',   1,  0 } )
-   AAdd( aDBf, { 'TCARDAZ', 'C',   1,  0 } )
-   AAdd( aDBf, { 'TZAVTR', 'C',   1,  0 } )
-   AAdd( aDBf, { 'TRABAT', 'C',   1,  0 } )
-   AAdd( aDBf, { 'TMARZA', 'C',   1,  0 } )
-   AAdd( aDBf, { 'TMARZA2', 'C',   1,  0 } )
-   AAdd( aDBf, { 'NC', 'B',  8,  8 } )
-   AAdd( aDBf, { 'MPC', 'B',  8,  8 } )
-   AAdd( aDBf, { 'VPC', 'B',  8,  8 } )
-   AAdd( aDBf, { 'MPCSAPP', 'B',  8,  8 } )
-   AAdd( aDBf, { 'IDTARIFA', 'C',   6,  0 } )
-   AAdd( aDBf, { 'MKONTO', 'C',   7,  0 } )
-   AAdd( aDBf, { 'PKONTO', 'C',   7,  0 } )
-   AAdd( aDBf, { 'MU_I', 'C',   1,  0 } )
-   AAdd( aDBf, { 'PU_I', 'C',   1,  0 } )
-   AAdd( aDBf, { 'ERROR', 'C',   1,  0 } )
-   AAdd( aDBf, { 'KOLICINA', 'B',  8,  8 } )
-   AAdd( aDBf, { 'GKOLICINA', 'B',  8,  8 } )
-   AAdd( aDBf, { 'GKOLICIN2', 'B',  8,  8 } )
-   AAdd( aDBf, { 'FCJ', 'B',  8,  8 } )
-   AAdd( aDBf, { 'FCJ2', 'B',  8,  8 } )
-   AAdd( aDBf, { 'FCJ3', 'B',  8,  8 } )
-   AAdd( aDBf, { 'RABAT', 'B',  8,  8 } )
-   AAdd( aDBf, { 'PREVOZ', 'B',  8,  8 } )
-   AAdd( aDBf, { 'BANKTR', 'B',  8,  8 } )
-   AAdd( aDBf, { 'SPEDTR', 'B',  8,  8 } )
-   AAdd( aDBf, { 'PREVOZ2', 'B',  8,  8 } )
-   AAdd( aDBf, { 'CARDAZ', 'B',  8,  8 } )
-   AAdd( aDBf, { 'ZAVTR', 'B',  8,  8 } )
-   AAdd( aDBf, { 'MARZA', 'B',  8,  8 } )
-   AAdd( aDBf, { 'MARZA2', 'B',  8,  8 } )
-   AAdd( aDBf, { 'RABATV', 'B',  8,  8 } )
-   AAdd( aDBf, { 'VPCSAP', 'B',  8,  8 } )
-
-   RETURN aDbf
 
 
 
@@ -276,8 +219,7 @@ STATIC FUNCTION kreiraj_kalk_bazirane_tabele( ver )
    CREATE_INDEX( "PU_I", "pu_i+pkonto+idfirma+idvd+brdok", _alias )
    CREATE_INDEX( "PU_I2", "pu_i+idfirma+idvd+brdok", _alias )
    CREATE_INDEX( "PMAG", "idfirma+mkonto+idpartner+idvd+dtos(datdok)", _alias )
-
-AFTER_CREATE_INDEX
+   AFTER_CREATE_INDEX
 
    // KALK_PRIPR
 
@@ -323,3 +265,61 @@ AFTER_CREATE_INDEX
    CREATE_INDEX( "1", "idFirma+IdVD+BrDok+RBr", _alias )
 
    RETURN .T.
+
+
+STATIC FUNCTION definicija_kalk_tabele()
+
+   LOCAL aDbf := {}
+
+   AAdd( aDBf, { 'IDFIRMA', 'C',   2,  0 } )
+   AAdd( aDBf, { 'IDROBA', 'C',  10,  0 } )
+   AAdd( aDBf, { 'IDKONTO', 'C',   7,  0 } )
+   AAdd( aDBf, { 'IDKONTO2', 'C',   7,  0 } )
+   AAdd( aDBf, { 'IDZADUZ', 'C',   6,  0 } )
+   AAdd( aDBf, { 'IDZADUZ2', 'C',   6,  0 } )
+   AAdd( aDBf, { 'IDVD', 'C',   2,  0 } )
+   AAdd( aDBf, { 'BRDOK', 'C',   FIELD_LEN_KALK_BRDOK,  0 } )
+   AAdd( aDBf, { 'DATDOK', 'D',   8,  0 } )
+   AAdd( aDBf, { 'BRFAKTP', 'C',  10,  0 } )
+   AAdd( aDBf, { 'DATFAKTP', 'D',   8,  0 } )
+   AAdd( aDBf, { 'IDPARTNER', 'C',   6,  0 } )
+   AAdd( aDBf, { 'RBR', 'C',   FIELD_LEN_KALK_RBR,  0 } )
+   AAdd( aDBf, { 'PODBR', 'C',   2,  0 } )
+   AAdd( aDBf, { 'TPREVOZ', 'C',   1,  0 } )
+   AAdd( aDBf, { 'TPREVOZ2', 'C',   1,  0 } )
+   AAdd( aDBf, { 'TBANKTR', 'C',   1,  0 } )
+   AAdd( aDBf, { 'TSPEDTR', 'C',   1,  0 } )
+   AAdd( aDBf, { 'TCARDAZ', 'C',   1,  0 } )
+   AAdd( aDBf, { 'TZAVTR', 'C',   1,  0 } )
+   AAdd( aDBf, { 'TRABAT', 'C',   1,  0 } )
+   AAdd( aDBf, { 'TMARZA', 'C',   1,  0 } )
+   AAdd( aDBf, { 'TMARZA2', 'C',   1,  0 } )
+   AAdd( aDBf, { 'NC', 'B',  8,  8 } )
+   AAdd( aDBf, { 'MPC', 'B',  8,  8 } )
+   AAdd( aDBf, { 'VPC', 'B',  8,  8 } )
+   AAdd( aDBf, { 'MPCSAPP', 'B',  8,  8 } )
+   AAdd( aDBf, { 'IDTARIFA', 'C',   6,  0 } )
+   AAdd( aDBf, { 'MKONTO', 'C',   7,  0 } )
+   AAdd( aDBf, { 'PKONTO', 'C',   7,  0 } )
+   AAdd( aDBf, { 'MU_I', 'C',   1,  0 } )
+   AAdd( aDBf, { 'PU_I', 'C',   1,  0 } )
+   AAdd( aDBf, { 'ERROR', 'C',   1,  0 } )
+   AAdd( aDBf, { 'KOLICINA', 'B',  8,  8 } )
+   AAdd( aDBf, { 'GKOLICINA', 'B',  8,  8 } )
+   AAdd( aDBf, { 'GKOLICIN2', 'B',  8,  8 } )
+   AAdd( aDBf, { 'FCJ', 'B',  8,  8 } )
+   AAdd( aDBf, { 'FCJ2', 'B',  8,  8 } )
+   AAdd( aDBf, { 'FCJ3', 'B',  8,  8 } )
+   AAdd( aDBf, { 'RABAT', 'B',  8,  8 } )
+   AAdd( aDBf, { 'PREVOZ', 'B',  8,  8 } )
+   AAdd( aDBf, { 'BANKTR', 'B',  8,  8 } )
+   AAdd( aDBf, { 'SPEDTR', 'B',  8,  8 } )
+   AAdd( aDBf, { 'PREVOZ2', 'B',  8,  8 } )
+   AAdd( aDBf, { 'CARDAZ', 'B',  8,  8 } )
+   AAdd( aDBf, { 'ZAVTR', 'B',  8,  8 } )
+   AAdd( aDBf, { 'MARZA', 'B',  8,  8 } )
+   AAdd( aDBf, { 'MARZA2', 'B',  8,  8 } )
+   AAdd( aDBf, { 'RABATV', 'B',  8,  8 } )
+   AAdd( aDBf, { 'VPCSAP', 'B',  8,  8 } )
+
+   RETURN aDbf

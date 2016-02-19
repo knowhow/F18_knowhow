@@ -34,8 +34,8 @@ FUNCTION cre_all_fin( ver )
    AAdd( aDBf, { "DatVal", "D",   8,  0 } )
    AAdd( aDBf, { "OTVST", "C",   1,  0 } )
    AAdd( aDBf, { "D_P", "C",   1,  0 } )
-   AAdd( aDBf, { "IZNOSBHD", "N",  21,  6 } )
-   AAdd( aDBf, { "IZNOSDEM", "N",  19,  6 } )
+   AAdd( aDBf, { "IZNOSBHD", "B",  8,  6 } )
+   AAdd( aDBf, { "IZNOSDEM", "B",  8,  6 } )
    AAdd( aDBf, { "OPIS", "C",  80,  0 } )
    AAdd( aDBf, { "K1", "C",   1,  0 } )
    AAdd( aDBf, { "K2", "C",   1,  0 } )
@@ -49,6 +49,11 @@ FUNCTION cre_all_fin( ver )
 
    _alias := "SUBAN"
    _table_name := "fin_suban"
+
+
+   IF ver[ "current" ] > 0 .AND. ver[ "current" ] < 010004 // 1.0.4 - currency polja iznosi
+      f18_delete_dbf( _table_name )
+   ENDIF
 
    IF_NOT_FILE_DBF_CREATE
 
@@ -79,6 +84,10 @@ FUNCTION cre_all_fin( ver )
    _alias := "PSUBAN"
    _table_name := "fin_psuban"
 
+
+   IF ver[ "current" ] > 0 .AND. ver[ "current" ] < 010004 // 1.0.4 - currency polja iznosi
+      f18_delete_dbf( _table_name )
+   ENDIF
    IF_NOT_FILE_DBF_CREATE
 
    // 0.4.1
@@ -96,6 +105,10 @@ FUNCTION cre_all_fin( ver )
    _alias := "FIN_PRIPR"
    _table_name := "fin_pripr"
 
+
+   IF ver[ "current" ] > 0 .AND. ver[ "current" ] < 010004 // 1.0.4 - currency polja iznosi
+      f18_delete_dbf( _table_name )
+   ENDIF
    IF_NOT_FILE_DBF_CREATE
 
    // 0.4.1
@@ -120,11 +133,15 @@ FUNCTION cre_all_fin( ver )
    AAdd( aDBf, { "BRNAL", "C",   8,  0 } )
    AAdd( aDBf, { "RBR", "C",   3,  0 } )
    AAdd( aDBf, { "DATNAL", "D",   8,  0 } )
-   AAdd( aDBf, { "DUGBHD", "N",  17,  2 } )
-   AAdd( aDBf, { "POTBHD", "N",  17,  2 } )
-   AAdd( aDBf, { "DUGDEM", "N",  15,  2 } )
-   AAdd( aDBf, { "POTDEM", "N",  15,  2 } )
+   AAdd( aDBf, { "DUGBHD", "B",  8,  2 } )
+   AAdd( aDBf, { "POTBHD", "B",  8,  2 } )
+   AAdd( aDBf, { "DUGDEM", "B",  8,  2 } )
+   AAdd( aDBf, { "POTDEM", "B",  8,  2 } )
 
+
+   IF ver[ "current" ] > 0 .AND. ver[ "current" ] < 010004 // 1.0.4 - currency polja iznosi
+      f18_delete_dbf( _table_name )
+   ENDIF
    IF_NOT_FILE_DBF_CREATE
 
    CREATE_INDEX( "1", "IdFirma+IdKonto+dtos(DatNal)", _alias )
@@ -142,6 +159,10 @@ FUNCTION cre_all_fin( ver )
    _alias := "PANAL"
    _table_name := "fin_panal"
 
+
+   IF ver[ "current" ] > 0 .AND. ver[ "current" ] < 010004 // 1.0.4 - currency polja iznosi
+      f18_delete_dbf( _table_name )
+   ENDIF
    IF_NOT_FILE_DBF_CREATE
 
    CREATE_INDEX( "1", "IdFirma+IdVn+BrNal+idkonto", _alias )
@@ -158,14 +179,18 @@ FUNCTION cre_all_fin( ver )
    AAdd( aDBf, { "BRNAL", "C",   8,  0 } )
    AAdd( aDBf, { "RBR", "C",   3,  0 } )
    AAdd( aDBf, { "DATNAL", "D",   8,  0 } )
-   AAdd( aDBf, { "DUGBHD", "N",  17,  2 } )
-   AAdd( aDBf, { "POTBHD", "N",  17,  2 } )
-   AAdd( aDBf, { "DUGDEM", "N",  15,  2 } )
-   AAdd( aDBf, { "POTDEM", "N",  15,  2 } )
+   AAdd( aDBf, { "DUGBHD", "B",  8,  2 } )
+   AAdd( aDBf, { "POTBHD", "B",  8,  2 } )
+   AAdd( aDBf, { "DUGDEM", "B",  8,  2 } )
+   AAdd( aDBf, { "POTDEM", "B",  8,  2 } )
 
    _alias := "SINT"
    _table_name := "fin_sint"
 
+
+   IF ver[ "current" ] > 0 .AND. ver[ "current" ] < 010004 // 1.0.4 - currency polja iznosi
+      f18_delete_dbf( _table_name )
+   ENDIF
    IF_NOT_FILE_DBF_CREATE
 
    CREATE_INDEX( "1", "IdFirma+IdKonto+dtos(DatNal)", _alias )
@@ -180,10 +205,12 @@ FUNCTION cre_all_fin( ver )
    _alias := "PSINT"
    _table_name := "fin_psint"
 
+   IF ver[ "current" ] > 0 .AND. ver[ "current" ] < 010004 // 1.0.4 - currency polja iznosi
+      f18_delete_dbf( _table_name )
+   ENDIF
    IF_NOT_FILE_DBF_CREATE
 
    CREATE_INDEX( "1", "IdFirma+IdVn+BrNal+idkonto", _alias )
-
 
 
    // ----------------------------------------------------------------------------
@@ -195,14 +222,18 @@ FUNCTION cre_all_fin( ver )
    AAdd( aDBf, { "IDVN", "C",   2,  0 } )
    AAdd( aDBf, { "BRNAL", "C",   8,  0 } )
    AAdd( aDBf, { "DATNAL", "D",   8,  0 } )
-   AAdd( aDBf, { "DUGBHD", "N",  17,  2 } )
-   AAdd( aDBf, { "POTBHD", "N",  17,  2 } )
-   AAdd( aDBf, { "DUGDEM", "N",  15,  2 } )
-   AAdd( aDBf, { "POTDEM", "N",  15,  2 } )
+   AAdd( aDBf, { "DUGBHD", "B",   8,  2 } )
+   AAdd( aDBf, { "POTBHD", "B",   8,  2 } )
+   AAdd( aDBf, { "DUGDEM", "B",   8,  2 } )
+   AAdd( aDBf, { "POTDEM", "B",   8,  2 } )
 
    _alias := "NALOG"
    _table_name := "fin_nalog"
 
+
+   IF ver[ "current" ] > 0 .AND. ver[ "current" ] < 010004 // 1.0.4 - currency polja iznosi
+      f18_delete_dbf( _table_name )
+   ENDIF
    IF_NOT_FILE_DBF_CREATE
 
    CREATE_INDEX( "1", "IdFirma+IdVn+BrNal", _alias )
@@ -220,8 +251,11 @@ FUNCTION cre_all_fin( ver )
    _alias := "PNALOG"
    _table_name := "fin_pnalog"
 
-   IF_NOT_FILE_DBF_CREATE
 
+   IF ver[ "current" ] > 0 .AND. ver[ "current" ] < 010004 // 1.0.4 - currency polja iznosi
+      f18_delete_dbf( _table_name )
+   ENDIF
+   IF_NOT_FILE_DBF_CREATE
    CREATE_INDEX( "1", "IdFirma+IdVn+BrNal", _alias )
 
 
@@ -238,11 +272,8 @@ FUNCTION cre_all_fin( ver )
    _table_name := "fin_funk"
 
    IF_NOT_FILE_DBF_CREATE
-
-
    CREATE_INDEX( "ID", "id", _alias )
    CREATE_INDEX( "NAZ", "NAZ", _alias )
-
    AFTER_CREATE_INDEX
 
    // -----------------------------------------------------------
@@ -280,8 +311,6 @@ FUNCTION cre_all_fin( ver )
    _table_name := "fin_budzet"
 
    IF_NOT_FILE_DBF_CREATE
-
-
    CREATE_INDEX( "1", "IdRj+Idkonto", _alias )
    CREATE_INDEX( "2", "Idkonto",      _alias )
    AFTER_CREATE_INDEX
@@ -367,19 +396,21 @@ FUNCTION cre_all_fin( ver )
 
    aDbf := {}
    AAdd( aDBf, { "IDKLASA", "C",   1,  0 } )
-   AAdd( aDBf, { "POCDUG", "N",  17,  2 } )
-   AAdd( aDBf, { "POCPOT", "N",  17,  2 } )
-   AAdd( aDBf, { "TEKPDUG", "N",  17,  2 } )
-   AAdd( aDBf, { "TEKPPOT", "N",  17,  2 } )
-   AAdd( aDBf, { "KUMPDUG", "N",  17,  2 } )
-   AAdd( aDBf, { "KUMPPOT", "N",  17,  2 } )
-   AAdd( aDBf, { "SALPDUG", "N",  17,  2 } )
-   AAdd( aDBf, { "SALPPOT", "N",  17,  2 } )
+   AAdd( aDBf, { "POCDUG", "B",   8,  2 } )
+   AAdd( aDBf, { "POCPOT", "B",   8,  2 } )
+   AAdd( aDBf, { "TEKPDUG", "B",  8,  2 } )
+   AAdd( aDBf, { "TEKPPOT", "B",  8,  2 } )
+   AAdd( aDBf, { "KUMPDUG", "B",  8,  2 } )
+   AAdd( aDBf, { "KUMPPOT", "B",  8,  2 } )
+   AAdd( aDBf, { "SALPDUG", "B",  8,  2 } )
+   AAdd( aDBf, { "SALPPOT", "B",  8,  2 } )
 
+   IF ver[ "current" ] > 0 .AND. ver[ "current" ] < 010004 // 1.0.4 - currency polja iznosi
+      f18_delete_dbf( _table_name )
+   ENDIF
    IF_NOT_FILE_DBF_CREATE
 
    CREATE_INDEX( "1", "IdKlasa", _alias )
-
 
 
    // -----------------------------------------------------------
@@ -393,15 +424,14 @@ FUNCTION cre_all_fin( ver )
    AAdd( aDBf, { "IDFIRMA", "C",   2,  0 } )
    AAdd( aDBf, { "IDKONTO", "C",   7,  0 } )
    AAdd( aDBf, { "IDPARTNER", "C",   6,  0 } )
-   AAdd( aDBf, { "IZNOSBHD", "N",  17,  2 } )
-   AAdd( aDBf, { "IZNOSDEM", "N",  15,  2 } )
+   AAdd( aDBf, { "IZNOSBHD", "B",  8,  2 } )
+   AAdd( aDBf, { "IZNOSDEM", "B",  8,  2 } )
 
+   IF ver[ "current" ] > 0 .AND. ver[ "current" ] < 010004 // 1.0.4 - currency polja iznosi
+      f18_delete_dbf( _table_name )
+   ENDIF
    IF_NOT_FILE_DBF_CREATE
-
    CREATE_INDEX( "1", "IdFirma+IdKonto+IdPartner", _alias )
-
-
-
 
 
 
@@ -418,12 +448,15 @@ FUNCTION cre_all_fin( ver )
    AAdd( aDBf, { "BRDOK", "C",  10,  0 } )
    AAdd( aDBf, { "DATOD", "D",   8,  0 } )
    AAdd( aDBf, { "DATDO", "D",   8,  0 } )
-   AAdd( aDBf, { "OSNOVICA", "N",  18,  2 } )
-   AAdd( aDBf, { "OSNDUG", "N",  18,  2 } )
+   AAdd( aDBf, { "OSNOVICA", "B",  8,  2 } )
+   AAdd( aDBf, { "OSNDUG", "B",    8,  2 } )
    AAdd( aDBf, { "M1", "C",   1,  0 } )
 
-   IF_NOT_FILE_DBF_CREATE
 
+   IF ver[ "current" ] > 0 .AND. ver[ "current" ] < 010004 // 1.0.4 - currency polja iznosi
+      f18_delete_dbf( _table_name )
+   ENDIF
+   IF_NOT_FILE_DBF_CREATE
    CREATE_INDEX( "1", "idpartner+brdok+dtos(datod)", _alias )
 
 
@@ -434,6 +467,9 @@ FUNCTION cre_all_fin( ver )
    _alias := "kam_kamat"
    _table_name := "kam_kamat"
 
+   IF ver[ "current" ] > 0 .AND. ver[ "current" ] < 010004 // 1.0.4 - currency polja iznosi
+      f18_delete_dbf( _table_name )
+   ENDIF
    IF_NOT_FILE_DBF_CREATE
 
    CREATE_INDEX( "1", "idpartner+brdok+dtos(datod)", _alias )
@@ -445,17 +481,24 @@ FUNCTION cre_all_fin( ver )
 
    aDbf := {}
    AAdd( aDbf, { "BRDOK", "C", 50, 0 } )
-   AAdd( aDbf, { "IZNOSBHD", "N", 17, 2 } )
+   AAdd( aDbf, { "IZNOSBHD", "B", 8, 2 } )
    AAdd( aDbf, { "MARKER", "C",  1, 0 } )
 
    _alias := "komp_dug"
    _table_name := "fin_komp_dug"
 
+
+   IF ver[ "current" ] > 0 .AND. ver[ "current" ] < 010004 // 1.0.4 - currency polja iznosi
+      f18_delete_dbf( _table_name )
+   ENDIF
    IF_NOT_FILE_DBF_CREATE
 
    _alias := "komp_pot"
    _table_name := "fin_komp_pot"
 
+   IF ver[ "current" ] > 0 .AND. ver[ "current" ] < 010004 // 1.0.4 - currency polja iznosi
+      f18_delete_dbf( _table_name )
+   ENDIF
    IF_NOT_FILE_DBF_CREATE
 
    RETURN .T.

@@ -586,7 +586,7 @@ FUNCTION Otprema()
       cBrUlaz := brdok
    ENDIF
 
-   IF IzFMKIni( "KALKSI", "EvidentirajOtpis", "N", KUMPATH ) == "D"
+   IF my_get_from_ini( "KALKSI", "EvidentirajOtpis", "N", KUMPATH ) == "D"
       cBrUlaz := StrTran( cBrUlaz, "-X", "  " )
    ENDIF
    cBrUlaz := UBrojDok( Val( Left( cBrUlaz, 5 ) ) + 1, 5, Right( cBrUlaz, 3 ) )

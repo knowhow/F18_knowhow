@@ -20,7 +20,7 @@ FUNCTION FillRadSati( cIdRadnik, nRadniSati )
    // uzmi prethodne sate...
    cSatiPredhodni := GetStatusRSati( cIdRadnik )
 
-   IF Pitanje(, Lokal( "Unos placenih sati (D/N)?" ), "D" ) == "N"
+   IF Pitanje(, _l( "Unos placenih sati (D/N)?" ), "D" ) == "N"
       RETURN Val( cSatiPredhodni )
    ENDIF
 
@@ -28,22 +28,22 @@ FUNCTION FillRadSati( cIdRadnik, nRadniSati )
    cOdgovor := "D"
 
    Box(, 9, 48 )
-   @ m_x + 1, m_y + 2 SAY Lokal( "Radnik:   " ) + AllTrim( cIdRadnik )
-   @ m_x + 2, m_y + 2 SAY Lokal( "Ostalo iz predhodnih obracuna: " ) + AllTrim( cSatiPredhodni ) + " sati"
+   @ m_x + 1, m_y + 2 SAY _l( "Radnik:   " ) + AllTrim( cIdRadnik )
+   @ m_x + 2, m_y + 2 SAY _l( "Ostalo iz predhodnih obracuna: " ) + AllTrim( cSatiPredhodni ) + " sati"
    @ m_x + 3, m_y + 2 SAY "-----------------------------------------------"
-   @ m_x + 4, m_y + 2 SAY Lokal( "Uplaceno sati: " ) GET nPlacenoRSati PICT "99999999"
+   @ m_x + 4, m_y + 2 SAY _l( "Uplaceno sati: " ) GET nPlacenoRSati PICT "99999999"
    READ
    @ m_x + 5, m_y + 2 SAY "-----------------------------------------------"
-   @ m_x + 6, m_y + 2 SAY Lokal( "Radni sati ovaj mjesec  : " ) + AllTrim( Str( nRadniSati ) )
-   @ m_x + 7, m_y + 2 SAY Lokal( "Placeni sati ovaj mjesec: " ) + AllTrim( Str( nPlacenoRSati ) )
-   @ m_x + 8, m_y + 2 SAY Lokal( "Ostalo " ) + AllTrim( Str( nRadniSati - nPlacenoRSati + Val( cSatiPredhodni ) ) ) + Lokal( " sati za sljedeci mjesec !" )
-   @ m_x + 9, m_y + 2 SAY Lokal( "Sacuvati promjene (D/N)? " ) GET cOdgovor VALID cOdgovor $ "DN" PICT "@!"
+   @ m_x + 6, m_y + 2 SAY _l( "Radni sati ovaj mjesec  : " ) + AllTrim( Str( nRadniSati ) )
+   @ m_x + 7, m_y + 2 SAY _l( "Placeni sati ovaj mjesec: " ) + AllTrim( Str( nPlacenoRSati ) )
+   @ m_x + 8, m_y + 2 SAY _l( "Ostalo " ) + AllTrim( Str( nRadniSati - nPlacenoRSati + Val( cSatiPredhodni ) ) ) + _l( " sati za sljedeci mjesec !" )
+   @ m_x + 9, m_y + 2 SAY _l( "Sacuvati promjene (D/N)? " ) GET cOdgovor VALID cOdgovor $ "DN" PICT "@!"
    READ
 
    IF cOdgovor == "D"
       UbaciURadneSate( cIdRadnik, nRadniSati - nPlacenoRSati )
    ELSE
-      MsgBeep( Lokal( "Promjene nisu sacuvane !!!" ) )
+      MsgBeep( _l( "Promjene nisu sacuvane !!!" ) )
    ENDIF
    BoxC()
 

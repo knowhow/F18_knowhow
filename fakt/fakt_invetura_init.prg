@@ -410,7 +410,7 @@ METHOD vldPartner()
       P_Firma( PadR( cSif, 6 ) )
       ::cPartner := PadR( partn->naz, 30 )
 
-      IF IzFmkIni( 'FAKT', 'NaslovPartnTelefon', 'D' ) == "D"
+      IF my_get_from_ini( 'FAKT', 'NaslovPartnTelefon', 'D' ) == "D"
          ::cMjesto := ::cMjesto + ", Tel:" + Trim( partn->telefon )
       ENDIF
 

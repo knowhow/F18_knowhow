@@ -37,7 +37,7 @@ FUNCTION PrenosFin()
    PRIVATE cK1 := cK2 := "9"
    PRIVATE cK3 := cK4 := "99"
 
-   IF IzFMKIni( "FIN", "LimitiPoUgovoru_PoljeK3", "N", SIFPATH ) == "D"
+   IF my_get_from_ini( "FIN", "LimitiPoUgovoru_PoljeK3", "N", SIFPATH ) == "D"
       ck3 := "999"
    ENDIF
 

@@ -988,7 +988,7 @@ Seek2(cIdTarifa)
 nPPP:=tarifa->opp
 nPPU:=tarifa->ppp
 
-if IzFMKINI("POREZI","PPUgostKaoPPU","N")=="D"
+if my_get_from_ini("POREZI","PPUgostKaoPPU","N")=="D"
 	nMpVBP:=nIznosSt/(1+zpp/100+ppp/100)/(1+opp/100)
 	nPPPIznos:=nMPVBP*opp/100
 	nPPIznos:=(nMPVBP+nPPPIznos)*zpp/100

@@ -136,7 +136,7 @@ STATIC FUNCTION InitAPolozi( aPolozi )
    aPolozi := {}
    FOR i := 1 TO 12
       AAdd( aPolozi, { "", 0 } )
-      aPolozi[ i, 1 ] := IzFmkIni( 'POS', 'Polog' + AllTrim( Str( i ) ), "-", KUMPATH )
+      aPolozi[ i, 1 ] := my_get_from_ini( 'POS', 'Polog' + AllTrim( Str( i ) ), "-", KUMPATH )
       IF ( AllTrim( aPolozi[ i, 1 ] ) == "-" )
          ADel( aPolozi, i )
          ASize( aPolozi, i - 1 )

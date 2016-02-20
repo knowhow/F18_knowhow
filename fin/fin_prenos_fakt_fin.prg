@@ -16,8 +16,8 @@ FUNCTION FaktFin()
    O_PARAMS
    PRIVATE cSection := "(", cHistory := " "; aHistory := {}
 
-   lNCPoSast := ( IzFMKINI( "FAKTFIN", "NCPoSastavnici", "N", KUMPATH ) == "D" )
-   cKonSir   := PadR( IzFMKINI( "FAKTFIN", "KontoSirovinaIzSastavnice", "1010", KUMPATH ), 7 )
+   lNCPoSast := ( my_get_from_ini( "FAKTFIN", "NCPoSastavnici", "N", KUMPATH ) == "D" )
+   cKonSir   := PadR( my_get_from_ini( "FAKTFIN", "KontoSirovinaIzSastavnice", "1010", KUMPATH ), 7 )
 
    gFaktKum := ""
    gKalkKum := ""

@@ -313,7 +313,7 @@ STATIC FUNCTION SetTblDok( aDbf )
 // -----------------------------------------------------
 STATIC FUNCTION GetExpPath( cPath )
 
-   cPath := IzFmkIni( "KALK", "ImportPath", "c:" + SLASH + "liste" + SLASH, PRIVPATH )
+   cPath := my_get_from_ini( "KALK", "ImportPath", "c:" + SLASH + "liste" + SLASH, PRIVPATH )
    IF Empty( cPath ) .OR. cPath == nil
       cPath := "c:" + SLASH + "liste" + SLASH
    ENDIF

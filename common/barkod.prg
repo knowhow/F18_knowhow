@@ -30,7 +30,7 @@ FUNCTION roba_ocitaj_barkod( id_roba )
 
 FUNCTION DodajBK( cBK )
 
-   IF Empty( cBK ) .AND. IzFmkIni( "BARKOD", "Auto", "N", SIFPATH ) == "D" .AND. IzFmkIni( "BARKOD", "Svi", "N", SIFPATH ) == "D" .AND. ( Pitanje(, "Formirati Barkod ?", "N" ) == "D" )
+   IF Empty( cBK ) .AND. my_get_from_ini( "BARKOD", "Auto", "N", SIFPATH ) == "D" .AND. my_get_from_ini( "BARKOD", "Svi", "N", SIFPATH ) == "D" .AND. ( Pitanje(, "Formirati Barkod ?", "N" ) == "D" )
       cBK := NoviBK_A()
    ENDIF
 
@@ -87,7 +87,7 @@ FUNCTION KaLabelBKod()
    ESC_BCR
    BoxC()
 
-   cPrefix := IzFmkIni( "Barkod", "Prefix", "", SIFPATH )
+   cPrefix := my_get_from_ini( "Barkod", "Prefix", "", SIFPATH )
    cSPrefix := pitanje(, "Stampati barkodove koji NE pocinju sa +'" + cPrefix + "' ?", "N" )
 
    SELECT BARKOD
@@ -103,11 +103,11 @@ FUNCTION KaLabelBKod()
       ENDIF
       SELECT ROBA
       HSEEK KALK_PRIPR->idroba
-      IF Empty( barkod ) .AND. ( IzFmkIni( "BarKod", "Auto", "N", SIFPATH ) == "D" )
-         PRIVATE cPom := IzFmkIni( "BarKod", "AutoFormula", "ID", SIFPATH )
+      IF Empty( barkod ) .AND. ( my_get_from_ini( "BarKod", "Auto", "N", SIFPATH ) == "D" )
+         PRIVATE cPom := my_get_from_ini( "BarKod", "AutoFormula", "ID", SIFPATH )
          // kada je barkod prazan, onda formiraj sam interni barkod
-         cIBK := IzFmkIni( "BARKOD", "Prefix", "", SIFPATH ) + &cPom
-         IF IzFmkIni( "BARKOD", "EAN", "", SIFPATH ) == "13"
+         cIBK := my_get_from_ini( "BARKOD", "Prefix", "", SIFPATH ) + &cPom
+         IF my_get_from_ini( "BARKOD", "EAN", "", SIFPATH ) == "13"
             cIBK := NoviBK_A()
          ENDIF
          PushWA()
@@ -217,7 +217,7 @@ FUNCTION FaLabelBKod()
    Box(, 4, 75 )
    @ m_x + 0, m_y + 25 SAY " LABELIRANJE BAR KODOVA "
    @ m_x + 2, m_y + 2 SAY "Rezerva (broj komada):" GET nRezerva VALID nRezerva >= 0 PICT "99"
-   IF IzFmkIni( "Barkod", "BrDok", "D", SIFPATH ) == "N"
+   IF my_get_from_ini( "Barkod", "BrDok", "D", SIFPATH ) == "N"
       @ m_x + 3, m_y + 2 SAY "Linija 1  :" GET cLinija1
    ENDIF
    @ m_x + 4, m_y + 2 SAY "Linija 2  :" GET cLinija2
@@ -225,7 +225,7 @@ FUNCTION FaLabelBKod()
    ESC_BCR
    BoxC()
 
-   cPrefix := IzFmkIni( "Barkod", "Prefix", "", SIFPATH )
+   cPrefix := my_get_from_ini( "Barkod", "Prefix", "", SIFPATH )
    cSPrefix := pitanje(, "Stampati barkodove koji NE pocinju sa +'" + cPrefix + "' ?", "N" )
 
    SELECT BARKOD
@@ -239,13 +239,13 @@ FUNCTION FaLabelBKod()
       IF aStampati[ RecNo() ] == "N"; SKIP 1; loop; ENDIF
       SELECT ROBA
       HSEEK fakt_pripr->idroba
-      IF Empty( barkod ) .AND. (  IzFmkIni( "BarKod", "Auto", "N", SIFPATH ) == "D" )
-         PRIVATE cPom := IzFmkIni( "BarKod", "AutoFormula", "ID", SIFPATH )
+      IF Empty( barkod ) .AND. (  my_get_from_ini( "BarKod", "Auto", "N", SIFPATH ) == "D" )
+         PRIVATE cPom := my_get_from_ini( "BarKod", "AutoFormula", "ID", SIFPATH )
          // kada je barkod prazan, onda formiraj sam interni barkod
 
-         cIBK := IzFmkIni( "BARKOD", "Prefix", "", SIFPATH ) + &cPom
+         cIBK := my_get_from_ini( "BARKOD", "Prefix", "", SIFPATH ) + &cPom
 
-         IF IzFmkIni( "BARKOD", "EAN", "", SIFPATH ) == "13"
+         IF my_get_from_ini( "BARKOD", "EAN", "", SIFPATH ) == "13"
             cIBK := NoviBK_A()
          ENDIF
 
@@ -280,7 +280,7 @@ FUNCTION FaLabelBKod()
          APPEND BLANK
          REPLACE ID       WITH  KonvZnWin( fakt_pripr->idroba )
 
-         IF IzFmkIni( "Barkod", "BrDok", "D", SIFPATH ) == "D"
+         IF my_get_from_ini( "Barkod", "BrDok", "D", SIFPATH ) == "D"
             REPLACE L1 WITH KonvZnWin( DToC( fakt_pripr->datdok ) + ", " + Trim( fakt_pripr->( idfirma + "-" + idtipdok + "-" + brdok ) ) )
          ELSE
             REPLACE L1 WITH KonvZnWin( cLinija1 )
@@ -288,7 +288,7 @@ FUNCTION FaLabelBKod()
 
          REPLACE L2 WITH KonvZnWin( cLinija2 ), VPC WITH ROBA->vpc, MPC WITH ROBA->mpc, BARKOD WITH roba->barkod
 
-         IF IzFmkIni( "BarKod", "JMJ", "D", SIFPATH ) == "N"
+         IF my_get_from_ini( "BarKod", "JMJ", "D", SIFPATH ) == "N"
             REPLACE NAZIV WITH  KonvZnWin( Trim( ROBA->naz ) )
          ELSE
             REPLACE NAZIV WITH  KonvZnWin( Trim( ROBA->naz ) + " (" + Trim( ROBA->jmj ) + ")" )
@@ -344,13 +344,13 @@ FUNCTION NoviBK_A( cPrefix )
    nCount := 1
 
    IF cPrefix = NIL
-      cPrefix := IzFmkIni( "Barkod", "Prefix", "", SIFPATH )
+      cPrefix := my_get_from_ini( "Barkod", "Prefix", "", SIFPATH )
    ENDIF
    cPrefix := Trim( cPrefix )
    nDuzPrefix := Len( cPrefix )
 
-   nDuzSekv :=  Val ( IzFmkIni( "Barkod", "DuzSekvenca", "", SIFPATH ) )
-   cEAN := IzFmkIni( "Barkod", "EAN", "", SIFPATH )
+   nDuzSekv :=  Val ( my_get_from_ini( "Barkod", "DuzSekvenca", "", SIFPATH ) )
+   cEAN := my_get_from_ini( "Barkod", "EAN", "", SIFPATH )
 
    cRez := PadL(  AllTrim( Str( 1 ) ), nDuzSekv, "0" )
    IF cEAN = "13"

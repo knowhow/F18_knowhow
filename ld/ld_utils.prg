@@ -101,25 +101,25 @@ FUNCTION MsgTipRada()
    LOCAL x := 1
 
    Box(, 10, 66 )
-   @ m_x + x, m_y + 2 SAY Lokal( "Vazece sifre su: ' ' - zateceni neto (bez promjene ugovora o radu)" )
+   @ m_x + x, m_y + 2 SAY _l( "Vazece sifre su: ' ' - zateceni neto (bez promjene ugovora o radu)" )
    ++x
-   @ m_x + x, m_y + 2 SAY Lokal( "                 'N' - neto placa (neto + porez)" )
+   @ m_x + x, m_y + 2 SAY _l( "                 'N' - neto placa (neto + porez)" )
    ++x
-   @ m_x + x, m_y + 2 SAY Lokal( "                 'I' - neto-neto placa (zagarantovana)" )
+   @ m_x + x, m_y + 2 SAY _l( "                 'I' - neto-neto placa (zagarantovana)" )
    ++x
-   @ m_x + x, m_y + 2 SAY Lokal( "                 -------------------------------------------------" )
+   @ m_x + x, m_y + 2 SAY _l( "                 -------------------------------------------------" )
    ++x
-   @ m_x + x, m_y + 2 SAY Lokal( "                 'S' - samostalni poslodavci" )
+   @ m_x + x, m_y + 2 SAY _l( "                 'S' - samostalni poslodavci" )
    ++x
-   @ m_x + x, m_y + 2 SAY Lokal( "                 'U' - ugovor o djelu" )
+   @ m_x + x, m_y + 2 SAY _l( "                 'U' - ugovor o djelu" )
    ++x
-   @ m_x + x, m_y + 2 SAY Lokal( "                 'A' - autorski honorar" )
+   @ m_x + x, m_y + 2 SAY _l( "                 'A' - autorski honorar" )
    ++x
-   @ m_x + x, m_y + 2 SAY Lokal( "                 'P' - clan.predsj., upr.odbor, itd..." )
+   @ m_x + x, m_y + 2 SAY _l( "                 'P' - clan.predsj., upr.odbor, itd..." )
    ++x
-   @ m_x + x, m_y + 2 SAY Lokal( "                 -------------------------------------------------" )
+   @ m_x + x, m_y + 2 SAY _l( "                 -------------------------------------------------" )
    ++x
-   @ m_x + x, m_y + 2 SAY Lokal( "                 'R' - obracun za rs" )
+   @ m_x + x, m_y + 2 SAY _l( "                 'R' - obracun za rs" )
 
    Inkey( 0 )
    BoxC()
@@ -610,9 +610,9 @@ FUNCTION ld_obracun_napravljen_vise_puta()
 
    START PRINT CRET
 
-   ? Lokal( "Radnici obradjeni vise puta za isti mjesec -" ), cGodina, "/", cMjesec
+   ? _l( "Radnici obradjeni vise puta za isti mjesec -" ), cGodina, "/", cMjesec
    ?
-   ? Lokal( "OBR RADNIK                      RJ     neto        sati" )
+   ? _l( "OBR RADNIK                      RJ     neto        sati" )
    ? "--- ------ -------------------- -- ------------- ----------"
 
    FOR _i := 1 TO Len( _data )

@@ -27,7 +27,7 @@ O_FIN_PRIPR
 
 cKome_Txt:=""
 
-qqKonto:=padr(IzFmkIni("VIRM","UslKonto","5;"),60)
+qqKonto:=padr(my_get_from_ini("VIRM","UslKonto","5;"),60)
 dDatVir:=datdok
 
 cDOpis:=space(36)

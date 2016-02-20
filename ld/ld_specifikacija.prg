@@ -859,7 +859,7 @@ FUNCTION ld_specifikacija_plate()
    // varijanta D - specificno za FEB jer treba da izbazi bol.preko.42
    // dana iz neta za isplatu na specifikaciji, vec je uracunat u netu.
 
-   IF IzFmkIni( 'LD', 'BolPreko42IzbaciIz19', 'N', KUMPATH ) == 'D'
+   IF my_get_from_ini( 'LD', 'BolPreko42IzbaciIz19', 'N', KUMPATH ) == 'D'
       nPom := nUNETO + nPorOlaksice - nObustave
    ELSE
       nPom := nUNETO + nBolPreko + nPorOlaksice - nObustave

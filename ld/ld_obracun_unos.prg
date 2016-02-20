@@ -221,31 +221,31 @@ STATIC FUNCTION ld_unos_obracuna_box( lSaveObracun )
 
    Box( , MAXROWS() -10, MAXCOLS() -10 )
 
-   @ m_x + 1, m_y + 2 SAY Lokal( "Radna jedinica: " )
+   @ m_x + 1, m_y + 2 SAY _l( "Radna jedinica: " )
 
    QQOutC( cIdRJ, "GR+/N" )
 
    IF gUNMjesec == "D"
-      @ m_x + 1, Col() + 2 SAY Lokal( "Mjesec: " )  GET cMjesec PICT "99"
+      @ m_x + 1, Col() + 2 SAY _l( "Mjesec: " )  GET cMjesec PICT "99"
    ELSE
-      @ m_x + 1, Col() + 2 SAY Lokal( "Mjesec: " )
+      @ m_x + 1, Col() + 2 SAY _l( "Mjesec: " )
       QQOutC( Str( cMjesec, 2 ), "GR+/N" )
    ENDIF
 
    IF lViseObr
       IF gUNMjesec == "D"
-         @ m_x + 1, Col() + 2 SAY8 Lokal( "Obračun: " ) GET cObracun WHEN HelpObr( .F., cObracun ) VALID ValObr( .F., cObracun )
+         @ m_x + 1, Col() + 2 SAY8 _l( "Obračun: " ) GET cObracun WHEN HelpObr( .F., cObracun ) VALID ValObr( .F., cObracun )
       ELSE
-         @ m_x + 1, Col() + 2 SAY8 Lokal( "Obračun: " )
+         @ m_x + 1, Col() + 2 SAY8 _l( "Obračun: " )
          QQOutC( cObracun, "GR+/N" )
       ENDIF
    ENDIF
 
-   @ m_x + 1, Col() + 2 SAY Lokal( "Godina: " )
+   @ m_x + 1, Col() + 2 SAY _l( "Godina: " )
 
    QQOutC( Str( cGodina, 4 ), "GR+/N" )
 
-   @ m_x + 2, m_y + 2 SAY Lokal( "Radnik:" ) GET cIdRadn ;
+   @ m_x + 2, m_y + 2 SAY _l( "Radnik:" ) GET cIdRadn ;
       VALID {|| P_Radn( @cIdRadn ), SetPos( m_x + 2, m_y + 17 ), ;
       QQOut( PadR( Trim( radn->naz ) + " (" + Trim( radn->imerod ) + ") " + Trim( radn->ime ), 28 ) ), .T. }
 
@@ -327,14 +327,14 @@ STATIC FUNCTION ld_unos_obracuna_box( lSaveObracun )
    ParObr( cMjesec, cGodina, iif( lViseObr, cObracun, ), cIdRj )
 
    IF gTipObr == "1"
-      @ m_x + 3, m_y + 2   SAY IF( gBodK == "1", Lokal( "Broj bodova" ), Lokal( "Koeficijent" ) ) GET _brbod PICT "99999.99" VALID FillBrBod( _brbod )
+      @ m_x + 3, m_y + 2   SAY IF( gBodK == "1", _l( "Broj bodova" ), _l( "Koeficijent" ) ) GET _brbod PICT "99999.99" VALID FillBrBod( _brbod )
    ELSE
-      @ m_x + 3, m_y + 2   SAY Lokal( "Plan.osnov ld" ) GET _brbod PICT "99999.99" VALID FillBrBod( _brbod )
+      @ m_x + 3, m_y + 2   SAY _l( "Plan.osnov ld" ) GET _brbod PICT "99999.99" VALID FillBrBod( _brbod )
    ENDIF
 
    SELECT ld
 
-   @ m_x + 3, Col() + 2 SAY IF( gBodK == "1", Lokal( "Vrijednost boda" ), Lokal( "Vr.koeficijenta" ) ); @ Row(), Col() + 1 SAY parobr->vrbod  PICT "99999.99999"
+   @ m_x + 3, Col() + 2 SAY IF( gBodK == "1", _l( "Vrijednost boda" ), _l( "Vr.koeficijenta" ) ); @ Row(), Col() + 1 SAY parobr->vrbod  PICT "99999.99999"
 
    IF gMinR == "B"
       cMinRadOpis := "Minuli rad (bod)"
@@ -347,7 +347,7 @@ STATIC FUNCTION ld_unos_obracuna_box( lSaveObracun )
    @ m_x + 3, Col() + 2 SAY cMinRadOpis GET _kminrad PICT cMinRadPict VALID set_koeficijent_minulog_rada( _kminrad )
 
    @ m_x + 4, m_y + 2 SAY8 "Lič.odb:" GET _ulicodb PICT "9999.99"
-   @ m_x + 4, Col() + 1 SAY Lokal( "Vrsta posla koji radnik obavlja" ) GET _IdVPosla valid ( Empty( _idvposla ) .OR. P_VPosla( @_IdVPosla, 4, 55 ) ) .AND. FillVPosla()
+   @ m_x + 4, Col() + 1 SAY _l( "Vrsta posla koji radnik obavlja" ) GET _IdVPosla valid ( Empty( _idvposla ) .OR. P_VPosla( @_IdVPosla, 4, 55 ) ) .AND. FillVPosla()
 
    READ
 

@@ -123,7 +123,7 @@ FUNCTION Pkoverte()
 
    cIniName := my_home() + 'ProIzvj.ini'
 
-   cWinKonv := IzFmkIni( "DelphiRb", "Konverzija", "3" )
+   cWinKonv := my_get_from_ini( "DelphiRb", "Konverzija", "3" )
    DO WHILE !Eof()
       Scatter()
       SELECT koverte

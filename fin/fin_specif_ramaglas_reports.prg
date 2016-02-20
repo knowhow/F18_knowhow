@@ -64,7 +64,7 @@ O_KONTO
 O_SUBAN
 
 // 1) utvrditi ukupne troskove (nUkTros)
-cPom:=IzFmkIni("Troskovi","Uslov",'idKonto="3"',KUMPATH)
+cPom:=my_get_from_ini("Troskovi","Uslov",'idKonto="3"',KUMPATH)
 set filter to &cPom
 go top
 nUkTros:=0

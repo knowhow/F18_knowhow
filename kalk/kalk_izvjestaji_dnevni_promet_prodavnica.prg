@@ -37,7 +37,7 @@ FUNCTION DnevProm()
 
    cLinija := "----- ---------- ---------------------------------------- --- ---------- -------------"
 
-   cFilter := IzFmkIni( "KALK", "UslovPoRobiZaDnevniPromet", "(IDROBA=01)", KUMPATH )
+   cFilter := my_get_from_ini( "KALK", "UslovPoRobiZaDnevniPromet", "(IDROBA=01)", KUMPATH )
 
    IF GetVars( @dDan, @cTops, @cPodvuci, @cFilterDn, @cFilter ) == 0
       RETURN
@@ -114,7 +114,7 @@ FUNCTION PromPeriod()
 
    cLinija := "----- ---------- ---------------------------------------- --- ---------- -------------"
 
-   cFilter := IzFmkIni( "KALK", "UslovPoRobiZaDnevniPromet", "(IDROBA=01)", KUMPATH )
+   cFilter := my_get_from_ini( "KALK", "UslovPoRobiZaDnevniPromet", "(IDROBA=01)", KUMPATH )
 
    IF GetVars( @dDan, @cTops, @cPodvuci, @cFilterDn, @cFilter, @dDatDo, @aUslPKto ) == 0
       RETURN
@@ -381,9 +381,9 @@ STATIC FUNCTION Header( dDan, nStr )
 
    b1 := {|| QOut( "KALK: EVIDENCIJA DNEVNOG PROMETA U MALOPRODAJI NA DAN " + DToC( dDan ), "    Str." + LTrim( Str( nStr ) )  ) }
 
-   b2 := {|| QOut( "ID PM:", IzFMKIni( "ZaglavljeDnevnogPrometa", "IDPM","01    - Planika Flex BiH", EXEPATH )          ) }
+   b2 := {|| QOut( "ID PM:", my_get_from_ini( "ZaglavljeDnevnogPrometa", "IDPM","01    - Planika Flex BiH", EXEPATH )          ) }
 
-   b3 := {|| QOut( "KONTO:", IzFMKIni( "ZaglavljeDnevnogPrometa", "KONTO", "132   - ROBA U PRODAVNICI", EXEPATH )         ) }
+   b3 := {|| QOut( "KONTO:", my_get_from_ini( "ZaglavljeDnevnogPrometa", "KONTO", "132   - ROBA U PRODAVNICI", EXEPATH )         ) }
 
    Eval( b1 )
    Eval( b2 )
@@ -423,7 +423,7 @@ STATIC FUNCTION CopyZaSlanje( dDan )
    CLS
 
    cDirDest := ToUnix( "C:" + SLASH + "SIGMA" + SLASH + "SALJI" + SLASH )
-   cLokS := IzFMKIni( "FMK", "LokacijaZaSlanje", cDirDest, EXEPATH )
+   cLokS := my_get_from_ini( "FMK", "LokacijaZaSlanje", cDirDest, EXEPATH )
    cPom := "copy " + PRIVPATH + "OUTF.TXT " + cLokS + cNf
 
    f18_run( cPom )

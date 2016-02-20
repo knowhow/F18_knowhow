@@ -47,9 +47,9 @@ FUNCTION GetRegion()
 FUNCTION GetRtmFile( cDefRtm )
 
    aRtm := {}
-   AAdd( aRtm, { IzFmkIni( "DelphiRb", "Rtm1", "", KUMPATH ) } )
-   AAdd( aRtm, { IzFmkIni( "DelphiRb", "Rtm2", "", KUMPATH ) } )
-   AAdd( aRtm, { IzFmkIni( "DelphiRb", "Rtm3", "", KUMPATH ) } )
+   AAdd( aRtm, { my_get_from_ini( "DelphiRb", "Rtm1", "", KUMPATH ) } )
+   AAdd( aRtm, { my_get_from_ini( "DelphiRb", "Rtm2", "", KUMPATH ) } )
+   AAdd( aRtm, { my_get_from_ini( "DelphiRb", "Rtm3", "", KUMPATH ) } )
 
    // ako nema nista u matrici vrati default
    IF Len( aRtm ) == 0

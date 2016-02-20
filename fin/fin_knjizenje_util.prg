@@ -57,7 +57,7 @@ FUNCTION K3Iz256( cK3 )
 
    // {
    LOCAL i, c, o, d := 0, aC := { " ", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" }
-   IF IzFMKIni( "FIN", "LimitiPoUgovoru_PoljeK3", "N", SIFPATH ) == "D"
+   IF my_get_from_ini( "FIN", "LimitiPoUgovoru_PoljeK3", "N", SIFPATH ) == "D"
       IF !Empty( cK3 )
          FOR i := Len( cK3 ) TO 1 STEP -1
             d += Asc( SubStr( cK3, i, 1 ) ) * 256 ^ ( Len( cK3 ) -i )
@@ -87,7 +87,7 @@ FUNCTION K3U256( cK3 )
 
    // {
    LOCAL i, c, o, d := 0, aC := { " ", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" }
-   IF !Empty( cK3 ) .AND. IzFMKIni( "FIN", "LimitiPoUgovoru_PoljeK3", "N", SIFPATH ) == "D"
+   IF !Empty( cK3 ) .AND. my_get_from_ini( "FIN", "LimitiPoUgovoru_PoljeK3", "N", SIFPATH ) == "D"
       FOR i := 1 TO Len( cK3 )
          p := AScan( aC, SubStr( cK3, i, 1 ) ) - 1
          d += p * 11 ^ ( Len( cK3 ) -i )

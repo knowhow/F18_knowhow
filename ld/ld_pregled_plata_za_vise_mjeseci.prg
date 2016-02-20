@@ -835,9 +835,9 @@ STATIC FUNCTION pregled_zaglavlje( cRj, cGodina, cMjOd, cMjDo, cRadnik, cOpcina,
    ?
 
    IF Empty( cRj )
-      ? Lokal( "Pregled za sve RJ:" )
+      ? _l( "Pregled za sve RJ:" )
    ELSE
-      ? Lokal( "RJ:" ), cRj
+      ? _l( "RJ:" ), cRj
    ENDIF
 
    IF !Empty( cOpcina )
@@ -848,8 +848,8 @@ STATIC FUNCTION pregled_zaglavlje( cRj, cGodina, cMjOd, cMjDo, cRadnik, cOpcina,
       ?U "Kanton:", AllTrim( cKanton )
    ENDIF
 
-   ?? Space( 2 ) + Lokal( "Mjesec od:" ), Str( cMjOd, 2 ), "do:", Str( cMjDo, 2 )
-   ?? Space( 4 ) + Lokal( "Godina:" ), Str( cGodina, 5 )
+   ?? Space( 2 ) + _l( "Mjesec od:" ), Str( cMjOd, 2 ), "do:", Str( cMjDo, 2 )
+   ?? Space( 4 ) + _l( "Godina:" ), Str( cGodina, 5 )
 
    IF !Empty( cRadnik )
       ? "Radnik: " + cRadnik

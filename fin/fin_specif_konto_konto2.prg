@@ -28,7 +28,7 @@ FUNCTION SpecKK2( lOtvSt )
    IF gNW == "D";cIdFirma := gFirma; ENDIF
    cK1 := cK2 := "9"; cK3 := cK4 := "99"
 
-   IF IzFMKIni( "FIN", "LimitiPoUgovoru_PoljeK3", "N", SIFPATH ) == "D"
+   IF my_get_from_ini( "FIN", "LimitiPoUgovoru_PoljeK3", "N", SIFPATH ) == "D"
       ck3 := "999"
    ENDIF
 

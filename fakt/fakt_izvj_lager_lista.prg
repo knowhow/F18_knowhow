@@ -31,7 +31,7 @@ FUNCTION fakt_lager_lista()
 
 
 
-   lBezUlaza := ( IzFMKINI( "IZVJESTAJI", "BezUlaza", "N", KUMPATH ) == "D" )
+   lBezUlaza := ( my_get_from_ini( "IZVJESTAJI", "BezUlaza", "N", KUMPATH ) == "D" )
 
    IF lPocStanje == NIL
       lPocStanje := .F.
@@ -48,7 +48,7 @@ FUNCTION fakt_lager_lista()
 
    IF lPocStanje
       PRIVATE fId_J := .F.
-      IF IzFmkIni( "SifRoba", "ID_J", "N" ) == "D"
+      IF my_get_from_ini( "SifRoba", "ID_J", "N" ) == "D"
          fId_J := .T.
       ENDIF
    ENDIF

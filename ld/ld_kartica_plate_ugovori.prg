@@ -157,7 +157,7 @@ FUNCTION ld_kartica_plate_ugovori( cIdRj, cMjesec, cGodina, cIdRadn, cObrac, aNe
    ?
 
    // razrada doprinosa ....
-   ? cLmSK + cDoprSpace + Lokal( "Obracun doprinosa:" )
+   ? cLmSK + cDoprSpace + _l( "Obracun doprinosa:" )
 
    SELECT dopr
    GO TOP
@@ -251,7 +251,7 @@ FUNCTION ld_kartica_plate_ugovori( cIdRj, cMjesec, cGodina, cIdRadn, cObrac, aNe
    // oporezivi dohodak ......
 
    ? cMainLine
-   ?  cLMSK + Lokal( "4. NETO IZNOS NAKNADE ( bruto - dopr.IZ )" )
+   ?  cLMSK + _l( "4. NETO IZNOS NAKNADE ( bruto - dopr.IZ )" )
    @ PRow(), 60 + Len( cLMSK ) SAY nOporDoh PICT gpici
 
    ? cMainLine
@@ -266,7 +266,7 @@ FUNCTION ld_kartica_plate_ugovori( cIdRj, cMjesec, cGodina, cIdRadn, cObrac, aNe
    // razrada poreza na platu ....
    // u ovom dijelu idu samo porezi na bruto TIP = "B"
 
-   ? cLMSK + Lokal( "5. AKONTACIJA POREZA NA DOHODAK" )
+   ? cLMSK + _l( "5. AKONTACIJA POREZA NA DOHODAK" )
 
    SELECT por
    GO TOP
@@ -316,7 +316,7 @@ FUNCTION ld_kartica_plate_ugovori( cIdRj, cMjesec, cGodina, cIdRadn, cObrac, aNe
    ?
 
    ? cMainLine
-   ?  cLMSK + Lokal( "UKUPNO ZA ISPLATU ( 4 - 5 + 2 )" )
+   ?  cLMSK + _l( "UKUPNO ZA ISPLATU ( 4 - 5 + 2 )" )
    @ PRow(), 60 + Len( cLMSK ) SAY nZaIsplatu PICT gpici
 
    ? cMainLine

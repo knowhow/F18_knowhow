@@ -25,20 +25,20 @@ STATIC lRamaGlas := .F.
 FUNCTION set_vars_za_specificne_slucajeve()
 
 
-   IF IzFmkIni( "FMK", "Vindija", "N", KUMPATH ) == "D"
+   IF my_get_from_ini( "FMK", "Vindija", "N", KUMPATH ) == "D"
       SetVindija( .T. )
    ELSE
       SetVindija( .F. )
    ENDIF
 
 
-   IF IzFmkIni( "FMK", "Ugovori", "N", KUMPATH ) == "D"
+   IF my_get_from_ini( "FMK", "Ugovori", "N", KUMPATH ) == "D"
       SetUgovori( .T. )
    ELSE
       SetUgovori( .F. )
    ENDIF
 
-   IF IzFmkIni( "FMK", "RamaGlas", "N", KUMPATH ) == "D"
+   IF my_get_from_ini( "FMK", "RamaGlas", "N", KUMPATH ) == "D"
       SetRamaGlas( .T. )
    ELSE
       SetRamaGlas( .F. )

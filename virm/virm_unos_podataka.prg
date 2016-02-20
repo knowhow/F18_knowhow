@@ -345,7 +345,7 @@ select partn
 seek _u_korist
 
 //--- Uslov za ispis adrese u polju primaoca (MUP ZE-DO)
-if IzFmkIni("Primaoc","UnosAdrese","N",KUMPATH)=="D"
+if my_get_from_ini("Primaoc","UnosAdrese","N",KUMPATH)=="D"
     _kome_txt := ALLTRIM( naz ) + ", " + ALLTRIM( mjesto ) + ", " + ALLTRIM( adresa )
 else
     _kome_txt := ALLTRIM( naz ) + ", " + ALLTRIM( mjesto )
@@ -852,7 +852,7 @@ local cVrati := "   "
 local cOR := ""
 local nArr := SELECT()
 
-cOR := IzFmkIni("VIRM","OpcRada","XXXX",KUMPATH)
+cOR := my_get_from_ini("VIRM","OpcRada","XXXX",KUMPATH)
 
 IF EMPTY(cOR)
     RETURN ""

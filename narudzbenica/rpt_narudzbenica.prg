@@ -247,17 +247,17 @@ STATIC FUNCTION st_zagl_data()
 
    cRed1 := RAZMAK()
    cRed1 += PadC( "R.br", LEN_RBR() )
-   cRed1 += " " + PadR( lokal( "Trgovački naziv dobra/usluge (sifra, naziv, jmj)" ), LEN_NAZIV() )
+   cRed1 += " " + PadR( _l( "Trgovački naziv dobra/usluge (sifra, naziv, jmj)" ), LEN_NAZIV() )
 
-   cRed1 += " " + PadC( lokal( "količina" ), LEN_KOLICINA() )
+   cRed1 += " " + PadC( _l( "količina" ), LEN_KOLICINA() )
 
    IF nSw6 > 0
-      cRed1 += " " + PadC( lokal( "C.b.PDV" ), LEN_CIJENA() )
+      cRed1 += " " + PadC( _l( "C.b.PDV" ), LEN_CIJENA() )
       IF lShowPopust
-         cRed1 += " " + PadC( lokal( "Pop.%" ), LEN_PROC2() )
-         cRed1 += " " + PadC( lokal( "C.2.b.PDV" ), LEN_CIJENA() )
+         cRed1 += " " + PadC( _l( "Pop.%" ), LEN_PROC2() )
+         cRed1 += " " + PadC( _l( "C.2.b.PDV" ), LEN_CIJENA() )
       ENDIF
-      cRed1 += " " + PadC( lokal( "Uk.bez.PDV" ), LEN_VRIJEDNOST() )
+      cRed1 += " " + PadC( _l( "Uk.bez.PDV" ), LEN_VRIJEDNOST() )
    ENDIF
 
    ? cRed1
@@ -322,25 +322,25 @@ STATIC FUNCTION print_total( cValuta )
    // provjeri i dodaj stavke vezane za popust
    IF Round( drn->ukpopust, 2 ) <> 0
       ? RAZMAK()
-      ?? PadL( lokal( "Popust (" ) + cValuta + ") :", LEN_UKUPNO() )
+      ?? PadL( _l( "Popust (" ) + cValuta + ") :", LEN_UKUPNO() )
       ?? show_number( drn->ukpopust, PIC_VRIJEDNOST() )
 		
       ? RAZMAK()
-      ?? PadL( lokal( "Uk.bez.PDV-popust (" ) + cValuta + ") :", LEN_UKUPNO() )
+      ?? PadL( _l( "Uk.bez.PDV-popust (" ) + cValuta + ") :", LEN_UKUPNO() )
       ?? show_number( drn->ukbpdvpop, PIC_VRIJEDNOST() )
    ENDIF
 
 
    // obracun PDV-a
    ? RAZMAK()
-   ?? PadL( lokal( "PDV 17% :" ), LEN_UKUPNO() )
+   ?? PadL( _l( "PDV 17% :" ), LEN_UKUPNO() )
    ?? show_number( drn->ukpdv, PIC_VRIJEDNOST() )
 
 
    // zaokruzenje
    IF Round( drn->zaokr, 4 ) <> 0
       ? RAZMAK()
-      ?? PadL( lokal( "Zaokruzenje :" ), LEN_UKUPNO() )
+      ?? PadL( _l( "Zaokruzenje :" ), LEN_UKUPNO() )
       ?? show_number( drn->zaokr, PIC_VRIJEDNOST() )
    ENDIF
 	
@@ -349,7 +349,7 @@ STATIC FUNCTION print_total( cValuta )
    // ipak izleti za dva karaktera rekapitulacija u bold rezimu
    ?? Space( 50 - 2 )
    B_ON
-   ?? PadL( lokal( "** SVEUKUPNO SA PDV  (" ) + cValuta + ") :", LEN_UKUPNO() - 50 )
+   ?? PadL( _l( "** SVEUKUPNO SA PDV  (" ) + cValuta + ") :", LEN_UKUPNO() - 50 )
    ?? Transform( drn->ukupno, PIC_VRIJEDNOST() )
    B_OFF
 
@@ -357,7 +357,7 @@ STATIC FUNCTION print_total( cValuta )
    cSlovima := get_dtxt_opis( "D04" )
    ? RAZMAK()
    B_ON
-   ?? lokal( "slovima: " ) + cSlovima
+   ?? _l( "slovima: " ) + cSlovima
    B_OFF
    ? cLine
 
@@ -441,7 +441,7 @@ STATIC FUNCTION nar_header()
    aDobavljac := SjeciStr( cNaziv2, LEN_COLONA )
 
    B_ON
-   cPom := PadR( lokal( "Naručioc:" ), LEN_COLONA ) + " " + PadR( lokal( "Dobavljač:" ), LEN_COLONA )
+   cPom := PadR( _l( "Naručioc:" ), LEN_COLONA ) + " " + PadR( _l( "Dobavljač:" ), LEN_COLONA )
 
    p_line( cPom, 12, .T. )
 
@@ -500,8 +500,8 @@ STATIC FUNCTION nar_header()
    IF Empty( cPom2 )
       cPom2 := "-"
    ENDIF
-   cPom := PadR( lokal( "ID: " ) + cPom, LEN_COLONA )
-   cPom += " " + PadR( lokal( "ID: " ) + cPom2, LEN_COLONA )
+   cPom := PadR( _l( "ID: " ) + cPom, LEN_COLONA )
+   cPom += " " + PadR( _l( "ID: " ) + cPom2, LEN_COLONA )
    p_line( cPom, 12, .T. )
 
 
@@ -528,7 +528,7 @@ STATIC FUNCTION nar_header()
    IF !Empty( cDestinacija )
       ?
       p_line( Replicate( "-", LEN_KUPAC() - 10 ), 12, .F. )
-      cPom := lokal( "Destinacija: " )  + AllTrim( cDestinacija )
+      cPom := _l( "Destinacija: " )  + AllTrim( cDestinacija )
       p_line( cPom, 12, .F. )
       ?
    ENDIF
@@ -538,14 +538,14 @@ STATIC FUNCTION nar_header()
    ?
    P_10CPI
    // broj dokumenta
-   cPom := lokal( "NARUDŽBENICA br. ___________ od " ) + cDatDok
+   cPom := _l( "NARUDŽBENICA br. ___________ od " ) + cDatDok
    cPom := PadC( cPom, LEN_COLONA * 2 )
    p_line( cPom, 10, .T. )
    B_OFF
    ?
-   cPom := lokal( "Molimo da nam na osnovu ponude/dogovora/ugovora _________________ " )
+   cPom := _l( "Molimo da nam na osnovu ponude/dogovora/ugovora _________________ " )
    p_line( cPom, 12, .F. )
-   cPom := lokal( "isporučite sljedeca dobra/usluge:" )
+   cPom := _l( "isporučite sljedeca dobra/usluge:" )
    p_line( cPom, 12, .F. )
 
    nPRowsDelta := PRow() - nPRowsDelta
@@ -561,24 +561,24 @@ STATIC FUNCTION nar_footer()
    LOCAL cPom
 
    ?
-   cPom := lokal( "USLOVI NABAVKE:" )
+   cPom := _l( "USLOVI NABAVKE:" )
    p_line( cPom, 12, .T. )
    cPom := "----------------"
    p_line( cPom, 12, .T. )
    ?
-   cPom := lokal( "Mjesto isporuke _______________________  Način placanja: gotovina/banka/kompenzacija" )
+   cPom := _l( "Mjesto isporuke _______________________  Način placanja: gotovina/banka/kompenzacija" )
    p_line( cPom, 12, .T. )
    ?
-   cPom := lokal( "Vrijeme isporuke _____________________________________________________________" )
+   cPom := _l( "Vrijeme isporuke _____________________________________________________________" )
    ?
    p_line( cPom, 12, .T. )
    ?
-   cPom := lokal( "Napomena: Molimo popuniti prazna polja, te zaokružiti željene opcije" )
+   cPom := _l( "Napomena: Molimo popuniti prazna polja, te zaokružiti željene opcije" )
    p_line( cPom, 20, .F. )
 
    ?
-   cPom := PadL( lokal( " M.P.          " ), LEN_COLONA ) + " "
-   cPom += PadC( lokal( "Za naručioca:" ), LEN_COLONA )
+   cPom := PadL( _l( " M.P.          " ), LEN_COLONA ) + " "
+   cPom += PadC( _l( "Za naručioca:" ), LEN_COLONA )
    p_line( cPom, 12, .F. )
    ?
    cPom := PadC( " ", LEN_COLONA ) + " "
@@ -598,7 +598,7 @@ STATIC FUNCTION NStr_a4( nStr, lShZagl, cValuta )
 
    P_COND
    ? cLine
-   p_line( lokal( "Prenos na sljedeću stranicu" ), 17, .F. )
+   p_line( _l( "Prenos na sljedeću stranicu" ), 17, .F. )
    ? cLine
 
    FF
@@ -606,7 +606,7 @@ STATIC FUNCTION NStr_a4( nStr, lShZagl, cValuta )
    P_COND
    ? cLine
    IF nStr <> nil
-      p_line( lokal( "       Strana:" ) + Str( nStr, 3 ), 17, .F. )
+      p_line( _l( "       Strana:" ) + Str( nStr, 3 ), 17, .F. )
    ENDIF
 
    // total nije odstampan znaci ima jos podataka

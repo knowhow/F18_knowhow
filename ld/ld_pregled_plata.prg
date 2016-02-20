@@ -50,7 +50,7 @@ FUNCTION pregled_plata()
    cKontrola := "N"
 
    Box(, 14, 75 )
-   @ m_x + 1, m_y + 2 SAY8 Lokal( "Radna jedinica (prazno-sve): " )  GET cIdRJ
+   @ m_x + 1, m_y + 2 SAY8 _l( "Radna jedinica (prazno-sve): " )  GET cIdRJ
    @ m_x + 2, m_y + 2 SAY8 "Mjesec: "  GET  cMjesec  PICT "99"
    IF lViseObr
       @ m_x + 2, Col() + 2 SAY8 "Obračun:" GET cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
@@ -342,7 +342,7 @@ FUNCTION pregled_plata()
    ENDDO
 
    ? m
-   ? Space( 1 ) + Lokal( "UKUPNO:" )
+   ? Space( 1 ) + _l( "UKUPNO:" )
    @ PRow(), nC1 SAY  nT1 PICT gpics
 
    IF gVarPP == "2"

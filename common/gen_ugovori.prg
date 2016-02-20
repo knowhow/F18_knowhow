@@ -122,7 +122,7 @@ FUNCTION gen_ug()
    RPar( "P5", @cSamoAktivni )
    USE
 
-   nDokGen := Val( IzFMkIni( 'Fakt_Ugovori', "Dokumenata_Izgenerisati", '1' ) )
+   nDokGen := Val( my_get_from_ini( 'Fakt_Ugovori', "Dokumenata_Izgenerisati", '1' ) )
 
    IF nDokgen = 0
       nDokGen := 1
@@ -132,13 +132,13 @@ FUNCTION gen_ug()
 
    @ m_X + 1, m_y + 2 SAY "Datum fakture" GET dDAtDok
 
-   IF IzFMkIni( 'Fakt_Ugovori', "N1", 'D' ) == "D"
+   IF my_get_from_ini( 'Fakt_Ugovori', "N1", 'D' ) == "D"
       @ m_X + 2, m_y + 2 SAY "Parametar N1 " GET nn1 PICT "999999.999"
    ENDIF
-   IF IzFMkIni( 'Fakt_Ugovori', "N2", 'D' ) == "D"
+   IF my_get_from_ini( 'Fakt_Ugovori', "N2", 'D' ) == "D"
       @ m_X + 3, m_y + 2 SAY "Parametar N2 " GET nn2 PICT "999999.999"
    ENDIF
-   IF IzFMkIni( 'Fakt_Ugovori', "N3", 'D' ) == "D"
+   IF my_get_from_ini( 'Fakt_Ugovori', "N3", 'D' ) == "D"
       @ m_X + 4, m_y + 2 SAY "Parametar N3 " GET nn3 PICT "999999.999"
    ENDIF
 
@@ -281,7 +281,7 @@ FUNCTION gen_ug()
 
          SELECT fakt_pripr
 
-         IF IzFMKIni( 'FAKT_Ugovori', "SumirajIstuSifru", 'D' ) == "D" .AND. ;
+         IF my_get_from_ini( 'FAKT_Ugovori', "SumirajIstuSifru", 'D' ) == "D" .AND. ;
                IdFirma + idtipdok + brdok + idroba == gFirma + cIDTipDok + PadR( cBrDok, Len( brdok ) ) + RUGOV->idroba
             Scatter()
             _kolicina += RUGOV->kolicina

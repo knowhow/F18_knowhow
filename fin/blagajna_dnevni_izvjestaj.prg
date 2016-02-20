@@ -39,7 +39,7 @@ FUNCTION Blagajna()
 
    IF DABLAGAS
 
-      cKontoBlag := PadR( IzFMKINI( "BLAGAJNA", "Konto", "202000", PRIVPATH ), 7 )
+      cKontoBlag := PadR( my_get_from_ini( "BLAGAJNA", "Konto", "202000", PRIVPATH ), 7 )
 
       SET ORDER TO TAG "2"
       SEEK cidfirma + _idvn + cBrDok + cKontoBlag
@@ -359,7 +359,7 @@ FUNCTION blag_azur()
    PRIVATE pici := FormPicL( "9," + gPicDEM, 12 )
    PRIVATE cLine := ""
 
-   // lSumiraj := ( IzFMKINI("BLAGAJNA","DBISumirajPoBrojuVeze","N",PRIVPATH)=="D" )
+   // lSumiraj := ( my_get_from_ini("BLAGAJNA","DBISumirajPoBrojuVeze","N",PRIVPATH)=="D" )
    lSumiraj := .F.
 
    O_PARTN

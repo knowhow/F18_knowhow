@@ -43,8 +43,8 @@ FUNCTION obr_porez( nPor, nPor2, nPorOps, nPorOps2, nUPorOl, cTipPor )
    IF cUmPD == "D"
       P_12CPI
       ? "----------------------- -------- ----------- ----------- ----------- -----------"
-      ? Lokal( "                                 Obracunska     Porez    Preplaceni     Porez   " )
-      ? Lokal( "     Naziv poreza          %      osnovica   po obracunu    porez     za uplatu " )
+      ? _l( "                                 Obracunska     Porez    Preplaceni     Porez   " )
+      ? _l( "     Naziv poreza          %      osnovica   po obracunu    porez     za uplatu " )
       ? "          (1)             (2)        (3)     (4)=(2)*(3)     (5)     (6)=(4)-(5)"
       ? "----------------------- -------- ----------- ----------- ----------- -----------"
    ENDIF
@@ -78,18 +78,18 @@ FUNCTION obr_porez( nPor, nPor2, nPorOps, nPorOps2, nUPorOl, cTipPor )
       IF !Empty( poopst )
 
          IF poopst == "1"
-            ?? Lokal( " (po opst.stan)" )
+            ?? _l( " (po opst.stan)" )
          ELSEIF poopst == "2"
-            ?? Lokal( " (po opst.stan)" )
+            ?? _l( " (po opst.stan)" )
          ELSEIF poopst == "3"
-            ?? Lokal( " (po kant.stan)" )
+            ?? _l( " (po kant.stan)" )
          ELSEIF poopst == "4"
-            ?? Lokal( " (po kant.rada)" )
+            ?? _l( " (po kant.rada)" )
          ELSEIF poopst == "5"
-            ?? Lokal( " (po ent. stan)" )
+            ?? _l( " (po ent. stan)" )
          ELSEIF poopst == "6"
-            ?? Lokal( " (po ent. rada)" )
-            ?? Lokal( " (po opst.rada)" )
+            ?? _l( " (po ent. rada)" )
+            ?? _l( " (po opst.rada)" )
          ENDIF
 
          nOOP := 0
@@ -255,7 +255,7 @@ FUNCTION obr_porez( nPor, nPor2, nPorOps, nPorOps2, nUPorOl, cTipPor )
 
       IF !Empty( poopst )
 
-         ? Lokal( "Ukupno po ops.:" )
+         ? _l( "Ukupno po ops.:" )
 
          @ PRow(), nC1 SAY nOOP PICT gpici
          @ PRow(), PCol() + 1 SAY nPorOps   PICT gpici
@@ -302,7 +302,7 @@ FUNCTION obr_porez( nPor, nPor2, nPorOps, nPorOps2, nUPorOl, cTipPor )
    ENDDO
 
    ? cLinija
-   ? Lokal( "Ukupno Porez" )
+   ? _l( "Ukupno Porez" )
    @ PRow(), nC1 SAY Space( Len( gpici ) )
    @ PRow(), PCol() + 1 SAY nPor - nUPorOl PICT gpici
 

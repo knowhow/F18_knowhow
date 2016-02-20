@@ -574,9 +574,9 @@ FUNCTION EdK_02()
       IF Pitanje(, "Prikazati promjene unutar spiska ?", "N" ) == "D"
          cdn := "D"
          // dodati kolonu bez
-         IF IzFMKINI( "KADEV", "SkratiPromjeneUSpisku", "N", KUMPATH ) == "D"
-            cPom77PS := IzFMKINI( "PromjeneSkraceno", "Formula", 'idpromj+", "+DTOC(datumod)+"-"+DTOC(datumdo)', KUMPATH )
-            nDuz77PS := Val( IzFMKINI( "PromjeneSkraceno", "Duzina", "27", KUMPATH ) )
+         IF my_get_from_ini( "KADEV", "SkratiPromjeneUSpisku", "N", KUMPATH ) == "D"
+            cPom77PS := my_get_from_ini( "PromjeneSkraceno", "Formula", 'idpromj+", "+DTOC(datumod)+"-"+DTOC(datumdo)', KUMPATH )
+            nDuz77PS := Val( my_get_from_ini( "PromjeneSkraceno", "Duzina", "27", KUMPATH ) )
             AAdd( ImeKol, { "P R O M J E N E",  {|| StProm2() }, .F., "P", nDuz77PS, 0  } )
          ELSE
             AAdd( ImeKol, { "P R O M J E N E",  {|| StProm() }, .F., "P", 70, 0  } )

@@ -37,7 +37,7 @@ FUNCTION KonvZnWin_old( cTekst, cWinKonv )
    AAdd( aNiz, { "\", "�", Chr( 208 ), "DJ", "�" } )
 
    IF cWinKonv = NIL
-      cWinKonv := IzFmkIni( "DelphiRb", "Konverzija", "5" )
+      cWinKonv := my_get_from_ini( "DelphiRb", "Konverzija", "5" )
    ENDIF
 
    i := 1

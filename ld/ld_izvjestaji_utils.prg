@@ -27,7 +27,7 @@ FUNCTION ShowKreditor( cKreditor )
       ? "-" + AllTrim( field->fil ) + "-"
       ? AllTrim( field->adresa ) + ", " + field->ptt + " " + AllTrim( field->mjesto )
    ELSE
-      ? Lokal( "...Nema unesenih podataka...za kreditora..." )
+      ? _l( "...Nema unesenih podataka...za kreditora..." )
    ENDIF
 
    SELECT ( nArr )
@@ -37,7 +37,7 @@ FUNCTION ShowKreditor( cKreditor )
 
 FUNCTION ShowPPDef()
 
-   ? Space( 5 ) + Lokal( "Obracunski radnik:" ) + Space( 35 ) + Lokal( "SEF SLUZBE:" )
+   ? Space( 5 ) + _l( "Obracunski radnik:" ) + Space( 35 ) + _l( "SEF SLUZBE:" )
    ?
    ? Space( 5 ) + "__________________" + Space( 35 ) + "__________________"
 
@@ -46,7 +46,7 @@ FUNCTION ShowPPDef()
 
 FUNCTION ShowPPFakultet()
 
-   ? Space( 5 ) + Lokal( "Likvidator:       " ) + Space( 35 ) + Lokal( "Dekan fakulteta:  " )
+   ? Space( 5 ) + _l( "Likvidator:       " ) + Space( 35 ) + _l( "Dekan fakulteta:  " )
    ?
    ? Space( 5 ) + "__________________" + Space( 35 ) + "__________________"
 
@@ -64,13 +64,13 @@ FUNCTION ShowHiredFromTo( dHiredFrom, dHiredTo, cLM )
    cHiredFrom := DToC( dHiredFrom )
    cHiredTo := DToC( dHiredTo )
 
-   ? cLM + Lokal( "Angazovan od: " ) + cHiredFrom
-   ?? ",  " + Lokal( "Angazovan do: " )
+   ? cLM + _l( "Angazovan od: " ) + cHiredFrom
+   ?? ",  " + _l( "Angazovan do: " )
 
    IF !Empty( DToS( dHiredTo ) )
       ?? cHiredTo
    ELSE
-      ?? Lokal( "Trenutno angazovan" )
+      ?? _l( "Trenutno angazovan" )
    ENDIF
 
    RETURN .T.

@@ -262,7 +262,7 @@ FUNCTION ld_pregled_primanja()
       Eval( bZagl )
    ENDIF
    ? m
-   ? Space( 1 ) + Lokal( "UKUPNO:" )
+   ? Space( 1 ) + _l( "UKUPNO:" )
    IF lKredit .AND. !Empty( cSifKred )
       @ PRow(), nC1 SAY  Space( Len( RADKR->naosnovu ) )
    ELSE
@@ -286,35 +286,35 @@ FUNCTION ZPregPrim()
    ? Upper( gTS ) + ":", gnFirma
    ?
    IF Empty( cidrj )
-      ? Lokal( "Pregled za sve RJ ukupno:" )
+      ? _l( "Pregled za sve RJ ukupno:" )
    ELSE
-      ? Lokal( "RJ:" ), cidrj, ld_rj->naz
+      ? _l( "RJ:" ), cidrj, ld_rj->naz
    ENDIF
 
-   ?? Space( 2 ) + Lokal( "Mjesec:" ), Str( cMjesec, 2 ) + IspisObr()
-   ?? Space( 4 ) + Lokal( "Godina:" ), Str( cGodina, 5 )
+   ?? Space( 2 ) + _l( "Mjesec:" ), Str( cMjesec, 2 ) + IspisObr()
+   ?? Space( 4 ) + _l( "Godina:" ), Str( cGodina, 5 )
    DevPos( PRow(), 74 )
-   ?? Lokal( "Str." ), Str( ++nStrana, 3 )
+   ?? _l( "Str." ), Str( ++nStrana, 3 )
    ?
 #ifdef CPOR
-   ? Lokal( "Pregled" ) + Space( 1 ) + IF( lIsplaceni, Lokal( "isplacenih iznosa" ), Lokal( "neisplacenih iznosa" ) ) + Space( 1 ) + Lokal( "za tip primanja:" ), ctip, tippr->naz
+   ? _l( "Pregled" ) + Space( 1 ) + IF( lIsplaceni, _l( "isplacenih iznosa" ), _l( "neisplacenih iznosa" ) ) + Space( 1 ) + _l( "za tip primanja:" ), ctip, tippr->naz
 #else
-   ? Lokal( "Pregled za tip primanja:" ), cTip, tippr->naz
+   ? _l( "Pregled za tip primanja:" ), cTip, tippr->naz
    IF lKredit
-      ? Lokal( "KREDITOR:" ) + Space( 1 )
+      ? _l( "KREDITOR:" ) + Space( 1 )
       IF !Empty( cSifKred )
          ShowKreditor( cSifKred )
       ELSE
-         ?? Lokal( "SVI POSTOJECI" )
+         ?? _l( "SVI POSTOJECI" )
       ENDIF
    ENDIF
 #endif
    ?
    ? m
    IF lKredit .AND. !Empty( cSifKred )
-      ? " Rbr  " + PadC( "Sifra ", _LR_ ) + "          " + Lokal( "Naziv radnika" ) + "               " + PadC( "Na osnovu", Len( RADKR->naosnovu ) ) + "      " + Lokal( "Iznos" )
+      ? " Rbr  " + PadC( "Sifra ", _LR_ ) + "          " + _l( "Naziv radnika" ) + "               " + PadC( "Na osnovu", Len( RADKR->naosnovu ) ) + "      " + _l( "Iznos" )
    ELSE
-      ? " Rbr  " + PadC( "Sifra ", _LR_ ) + "          " + Lokal( "Naziv radnika" ) + "               " + iif( tippr->fiksan == "P", " %  ", "Sati" ) + "      " + Lokal( "Iznos" )
+      ? " Rbr  " + PadC( "Sifra ", _LR_ ) + "          " + _l( "Naziv radnika" ) + "               " + iif( tippr->fiksan == "P", " %  ", "Sati" ) + "      " + _l( "Iznos" )
    ENDIF
    ? m
 

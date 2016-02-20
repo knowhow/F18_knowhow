@@ -243,7 +243,7 @@ FUNCTION LLM()
 
    lSvodi := .F.
 
-   IF IzFMKIni( "KALK_LLM", "SvodiNaJMJ", "N", KUMPATH ) == "D"
+   IF my_get_from_ini( "KALK_LLM", "SvodiNaJMJ", "N", KUMPATH ) == "D"
       lSvodi := ( Pitanje(, "Svesti kolicine na osnovne jedinice mjere? (D/N)", "N" ) == "D" )
    ENDIF
 

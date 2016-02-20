@@ -460,10 +460,10 @@ STATIC FUNCTION _g_pdf_viewer( cViewer )
 METHOD setTGVars()
 
    info_bar( ::cName, ::cName + " set_tg_vars start " )
-   ::cSqlLogBase := IzFmkIni( "Sql", "SqlLogBase", "c:" + SLASH + "sigma" )
+   ::cSqlLogBase := my_get_from_ini( "Sql", "SqlLogBase", "c:" + SLASH + "sigma" )
    gSqlLogBase := ::cSqlLogBase
 
-   IF IzFmkIni( "Sql", "SqlDirektno", "D" ) == "D"
+   IF my_get_from_ini( "Sql", "SqlDirektno", "D" ) == "D"
       ::lSqlDirektno := .T.
    ELSE
       ::lSqlDirektno := .F.

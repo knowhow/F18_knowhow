@@ -11,6 +11,10 @@
 
 #include "f18.ch"
 
+FUNCTION _l( cString )
+    RETURN cString
+
+    
 // --------------------------------------------------
 // funkcija za formatiranje stringa za filter
 // mjenja staru funkciju dbf_quote()

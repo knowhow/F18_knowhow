@@ -390,14 +390,14 @@ STATIC FUNCTION st_zagl_data()
 
    cRed1 := RAZMAK
    cRed1 += PadC( "R.br", LEN_RBR )
-   cRed1 += " " + PadR( lokal( "Trgovački naziv dobra/usluge (sifra, naziv, jmj)" ), LEN_NAZIV )
-   cRed1 += " " + PadC( lokal( "količina" ), LEN_KOLICINA )
-   cRed1 += " " + PadC( lokal( "C.b.PDV" ), LEN_CIJENA )
+   cRed1 += " " + PadR( _l( "Trgovački naziv dobra/usluge (sifra, naziv, jmj)" ), LEN_NAZIV )
+   cRed1 += " " + PadC( _l( "količina" ), LEN_KOLICINA )
+   cRed1 += " " + PadC( _l( "C.b.PDV" ), LEN_CIJENA )
    IF lShowPopust
-      cRed1 += " " + PadC( lokal( "Pop.%" ), LEN_PROC2 )
-      cRed1 += " " + PadC( lokal( "C.2.b.PDV" ), LEN_CIJENA )
+      cRed1 += " " + PadC( _l( "Pop.%" ), LEN_PROC2 )
+      cRed1 += " " + PadC( _l( "C.2.b.PDV" ), LEN_CIJENA )
    ENDIF
-   cRed1 += " " + PadC( lokal( "Uk.bez.PDV" ), LEN_VRIJEDNOST )
+   cRed1 += " " + PadC( _l( "Uk.bez.PDV" ), LEN_VRIJEDNOST )
 
    ? cRed1
 
@@ -576,12 +576,12 @@ FUNCTION a4_header()
    p_line( cPom, 10, .T. )
 
 
-   p_line( lokal( "Adresa: " ) + cIAdresa + lokal( ", ID broj: " ) + cIIdBroj, 12, .F. )
+   p_line( _l( "Adresa: " ) + cIAdresa + _l( ", ID broj: " ) + cIIdBroj, 12, .F. )
    p_line( cITelef, 12, .F. )
    p_line( cIWeb, 12, .F. )
    p_line( cSLHead, 10, .F. )
 
-   p_line( lokal( "Banke: " ), 12, .F. )
+   p_line( _l( "Banke: " ), 12, .F. )
    FOR i := 1 TO Len( aIBanke )
       IF i == 1
          ?? aIBanke[ i ]
@@ -658,7 +658,7 @@ FUNCTION pf_a4_kupac( cRazmak )
    LOCAL cFiscal
    LOCAL cDatIsp
    LOCAL cDatVal
-   LOCAL cTipDok := lokal( "FAKTURA br. " )
+   LOCAL cTipDok := _l( "FAKTURA br. " )
    LOCAL cBrDok
    LOCAL cBrNar
    LOCAL cBrOtp
@@ -766,37 +766,37 @@ FUNCTION pf_a4_kupac( cRazmak )
 
    DO CASE
    CASE cIdVd == "12" .AND. cInoDomaci == "KOMISION"
-      cPom := lokal( "Komisionar:" )
+      cPom := _l( "Komisionar:" )
       lKomision := .T.
 
    CASE AllTrim( cInoDomaci ) == "INO"
 
       DO CASE
       CASE cIdVd $ "10#11#20#22#29"
-         cPom := lokal( "Ino-Kupac:" )
+         cPom := _l( "Ino-Kupac:" )
       OTHERWISE
-         cPom := lokal( "Partner" )
+         cPom := _l( "Partner" )
       ENDCASE
 
    CASE AllTrim( cInoDomaci ) == "DOMACA"
 
       DO CASE
       CASE cIdVd == "12"
-         cPom := lokal( "Prima:" )
+         cPom := _l( "Prima:" )
       CASE cIdVd $ "10#11#20#29"
-         cPom := lokal( "Kupac:" )
+         cPom := _l( "Kupac:" )
       OTHERWISE
-         cPom := lokal( "Partner:" )
+         cPom := _l( "Partner:" )
       ENDCASE
 
    OTHERWISE
       DO CASE
       CASE cIdVd == "12"
-         cPom := lokal( "Zaduzuje:" )
+         cPom := _l( "Zaduzuje:" )
       CASE cIdVd $ "10#11#20#29"
-         cPom := lokal( "Kupac, oslobodjen PDV, cl. " ) + AllTrim( cInoDomaci )
+         cPom := _l( "Kupac, oslobodjen PDV, cl. " ) + AllTrim( cInoDomaci )
       OTHERWISE
-         cPom := lokal( "Partner" )
+         cPom := _l( "Partner" )
       ENDCASE
 
    endcase
@@ -822,7 +822,7 @@ FUNCTION pf_a4_kupac( cRazmak )
    B_OFF
    IF cDatIsp <> DToC( CToD( "" ) )
       IF !( cIdVd $ "12#00#01" )
-         ?? PadL( lokal( "Datum isporuke: " ) + cDatIsp, LEN_DATUM )
+         ?? PadL( _l( "Datum isporuke: " ) + cDatIsp, LEN_DATUM )
       ENDIF
    ENDIF
 
@@ -834,7 +834,7 @@ FUNCTION pf_a4_kupac( cRazmak )
    B_OFF
    IF cDatVal <> DToC( CToD( "" ) )
       IF !( cIdVd $ "12#00#01#20" )
-         ?? PadL( lokal( "Datum valute: " ) + cDatVal, LEN_DATUM )
+         ?? PadL( _l( "Datum valute: " ) + cDatVal, LEN_DATUM )
       ENDIF
    ENDIF
 
@@ -842,7 +842,7 @@ FUNCTION pf_a4_kupac( cRazmak )
    IF Empty( cPom )
       cPom := "-"
    ENDIF
-   cPom := lokal( "ID broj: " ) + cPom
+   cPom := _l( "ID broj: " ) + cPom
    p_line( Space( 2 ) + PadR( cPom, LEN_KUPAC ), 10, .F. )
 
    IF !EMPTY( cKPdvBroj )
@@ -850,21 +850,21 @@ FUNCTION pf_a4_kupac( cRazmak )
       IF Empty( cPom )
          cPom := "-"
       ENDIF
-      cPom := lokal( "PDV broj: " ) + cPom
+      cPom := _l( "PDV broj: " ) + cPom
       p_line( Space( 2 ) + PadR( cPom, LEN_KUPAC ), 10, .F. )
    ENDIF
 
    cKTelFax := ""
    cPom := AllTrim( get_dtxt_opis( "K13" ) )
    IF !Empty( cPom )
-      cKTelFax := lokal( "tel: " ) + cPom
+      cKTelFax := _l( "tel: " ) + cPom
    ENDIF
    cPom := AllTrim( get_dtxt_opis( "K14" ) )
    IF !Empty( cPom )
       IF !Empty( cKTelFax )
          cKTelFax += ", "
       ENDIF
-      cKTelFax += lokal( "fax: " ) + cPom
+      cKTelFax += _l( "fax: " ) + cPom
    ENDIF
 
    IF !Empty( cKTelFax )
@@ -900,7 +900,7 @@ FUNCTION pf_a4_kupac( cRazmak )
 
       p_line( Replicate( "-", LEN_KUPAC - 10 ), 10, .F. )
 
-      cPom := lokal( "Za: " )  + AllTrim( cDestinacija )
+      cPom := _l( "Za: " )  + AllTrim( cDestinacija )
       aPom := SjeciStr( cPom, 75 )
 
       B_ON
@@ -923,7 +923,7 @@ FUNCTION pf_a4_kupac( cRazmak )
 
    cPom := AllTrim( cTipDok )
    IF lKomision
-      cPom := lokal( "KOMISIONA DOSTAVNICA br. " )
+      cPom := _l( "KOMISIONA DOSTAVNICA br. " )
    ENDIF
 
    IF nShowRj == 1
@@ -947,7 +947,7 @@ FUNCTION pf_a4_kupac( cRazmak )
    cPom := cBrOtp
    lBrOtpr := .F.
    IF !Empty( cPom )
-      cLinijaNarOtp := lokal( "Broj otpremnice: " ) + cPom
+      cLinijaNarOtp := _l( "Broj otpremnice: " ) + cPom
       lBrOtpr := .T.
    ENDIF
 
@@ -956,7 +956,7 @@ FUNCTION pf_a4_kupac( cRazmak )
       IF lBrOtpr
          cLinijaNarOtp += " , "
       ENDIF
-      cLinijaNarOtp += lokal( "Broj ugov./narudzb: " ) + cPom
+      cLinijaNarOtp += _l( "Broj ugov./narudzb: " ) + cPom
    ENDIF
 
    IF !Empty( cLinijaNarOtp )
@@ -1002,7 +1002,7 @@ STATIC FUNCTION NStr_a4( nStr, lShZagl )
 
    P_COND
    ? cLine
-   p_line( lokal( "Prenos na sljedecu stranicu" ), 17, .F. )
+   p_line( _l( "Prenos na sljedecu stranicu" ), 17, .F. )
    ? cLine
 
    IF nPicFRow > 0
@@ -1016,7 +1016,7 @@ STATIC FUNCTION NStr_a4( nStr, lShZagl )
    P_COND
    ? cLine
    IF nStr <> nil
-      p_line( lokal( "       Strana:" ) + Str( nStr, 3 ), 17, .F. )
+      p_line( _l( "       Strana:" ) + Str( nStr, 3 ), 17, .F. )
    ENDIF
 
    // total nije odstampan znaci ima jos podataka
@@ -1042,29 +1042,29 @@ STATIC FUNCTION NStr_a4( nStr, lShZagl )
 STATIC FUNCTION print_total( cValuta, cLine )
 
    ? RAZMAK
-   ?? PadL( lokal( "Ukupno bez PDV (" ) + cValuta + ") :", LEN_UKUPNO )
+   ?? PadL( _l( "Ukupno bez PDV (" ) + cValuta + ") :", LEN_UKUPNO )
    ?? show_number( drn->ukbezpdv, PIC_VRIJEDNOST )
 
    // provjeri i dodaj stavke vezane za popust
    IF Round( drn->ukpopust, 2 ) <> 0
       ? RAZMAK
-      ?? PadL( lokal( "Popust (" ) + cValuta + ") :", LEN_UKUPNO )
+      ?? PadL( _l( "Popust (" ) + cValuta + ") :", LEN_UKUPNO )
       ?? show_number( drn->ukpopust, PIC_VRIJEDNOST )
 
       ? RAZMAK
-      ?? PadL( lokal( "Uk.bez.PDV-popust (" ) + cValuta + ") :", LEN_UKUPNO )
+      ?? PadL( _l( "Uk.bez.PDV-popust (" ) + cValuta + ") :", LEN_UKUPNO )
       ?? show_number( drn->ukbpdvpop, PIC_VRIJEDNOST )
    ENDIF
 
 
    ? RAZMAK
-   ?? PadL( lokal( "PDV 17% :" ), LEN_UKUPNO )
+   ?? PadL( _l( "PDV 17% :" ), LEN_UKUPNO )
    ?? show_number( drn->ukpdv, PIC_VRIJEDNOST )
 
    // zaokruzenje
    IF Round( drn->zaokr, 2 ) <> 0
       ? RAZMAK
-      ?? PadL( lokal( "Zaokruzenje (+/-):" ), LEN_UKUPNO )
+      ?? PadL( _l( "Zaokruzenje (+/-):" ), LEN_UKUPNO )
       ?? show_number( Abs( drn->zaokr ), PIC_VRIJEDNOST )
    ENDIF
 
@@ -1073,7 +1073,7 @@ STATIC FUNCTION print_total( cValuta, cLine )
    // ipak izleti za dva karaktera rekapitulacija u bold rezimu
    ?? Space( 50 - 2 )
    B_ON
-   ?? PadL( lokal( "** SVEUKUPNO SA PDV  (" ) + cValuta + ") :", LEN_UKUPNO - 50 )
+   ?? PadL( _l( "** SVEUKUPNO SA PDV  (" ) + cValuta + ") :", LEN_UKUPNO - 50 )
    ?? show_number( drn->ukupno, PIC_VRIJEDNOST )
    B_OFF
 
@@ -1081,13 +1081,13 @@ STATIC FUNCTION print_total( cValuta, cLine )
    IF drn->( FieldPos( "ukpoptp" ) ) <> 0
       IF Round( drn->ukpoptp, 2 ) <> 0
          ? RAZMAK
-         ?? PadL( lokal( "Popust na teret prodavca (" ) + cValuta + ") :", LEN_UKUPNO )
+         ?? PadL( _l( "Popust na teret prodavca (" ) + cValuta + ") :", LEN_UKUPNO )
          ?? show_number( drn->ukpoptp, PIC_VRIJEDNOST )
 
          ? RAZMAK
          ?? Space( 50 - 2 )
          B_ON
-         ? PadL( lokal( "SVEUKUPNO SA PDV - POPUST NA T.P. (" ) + cValuta + lokal( ") : ZA PLATITI :" ), LEN_UKUPNO - 50 )
+         ? PadL( _l( "SVEUKUPNO SA PDV - POPUST NA T.P. (" ) + cValuta + _l( ") : ZA PLATITI :" ), LEN_UKUPNO - 50 )
          ?? show_number( drn->ukupno - drn->ukpoptp, PIC_VRIJEDNOST )
          B_OFF
       ENDIF
@@ -1096,7 +1096,7 @@ STATIC FUNCTION print_total( cValuta, cLine )
    cSlovima := get_dtxt_opis( "D04" )
    ? RAZMAK
    B_ON
-   ?? lokal( "slovima: " ) + cSlovima
+   ?? _l( "slovima: " ) + cSlovima
    B_OFF
    ? cLine
 

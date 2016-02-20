@@ -384,7 +384,7 @@ FUNCTION Kart412v2()
             nUpl := kolicina * ( mpcsapp - mpc )
             nTotUpl += nUpl
             IF datdok >= ddatod
-               IF IzFMKIni( "VodiSamoTarife", "KarticaV2_KALK41_BezDatumaIBrojaFakture", "N", KUMPATH ) == "D"
+               IF my_get_from_ini( "VodiSamoTarife", "KarticaV2_KALK41_BezDatumaIBrojaFakture", "N", KUMPATH ) == "D"
                   ? datdok, idvd + "-" + brdok, idtarifa, Space( 10 ), Space( 8 ), idpartner
                ELSE
                   ? datdok, idvd + "-" + brdok, idtarifa, brfaktp, datfaktp, idpartner
@@ -420,7 +420,7 @@ FUNCTION Kart412v2()
                AAdd( aStavke, { nOsn, nUpl, 0, nTotUpl - nTotObv, Space( 10 ), Space( 8 ) } )
             ENDIF
             IF datdok >= ddatod
-               IF IzFMKINI( "VodiSamoTarife", "SvakaStavkaNaKarticu", "D", KUMPATH ) == "D"
+               IF my_get_from_ini( "VodiSamoTarife", "SvakaStavkaNaKarticu", "D", KUMPATH ) == "D"
                   FOR i := 1 TO Len( aStavke )
                      ? datdok, idvd + "-" + brdok, idtarifa, aStavke[ i, 5 ], aStavke[ i, 6 ], idpartner
                      nCol1 := PCol() + 1

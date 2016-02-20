@@ -876,8 +876,8 @@ FUNCTION ObracunPorezaUvoz()
    ENDIF
 
    nTP := 5
-   qqT1 := PadR( IzFmkIni( "RasporedTroskova", "UslovPoTarifamaT1", "", KUMPATH ), 40 )
-   qqT2 := PadR( IzFmkIni( "RasporedTroskova", "UslovPoTarifamaT2", "", KUMPATH ), 40 )
+   qqT1 := PadR( my_get_from_ini( "RasporedTroskova", "UslovPoTarifamaT1", "", KUMPATH ), 40 )
+   qqT2 := PadR( my_get_from_ini( "RasporedTroskova", "UslovPoTarifamaT2", "", KUMPATH ), 40 )
 
    Box( "#Obracun poreza pri uvozu", 7, 75 )
    DO WHILE .T.
@@ -1392,7 +1392,7 @@ FUNCTION Generisati11_ku()
    IF ( cIdVD <> "10" )
       RETURN .F.
    ENDIF
-   IF IzFmkIni( "KALK", "AutoGen11", "N", KUMPATH ) == "D" .AND. Pitanje(, "Formirati 11-ku (D/N)?", "D" ) == "D"
+   IF my_get_from_ini( "KALK", "AutoGen11", "N", KUMPATH ) == "D" .AND. Pitanje(, "Formirati 11-ku (D/N)?", "D" ) == "D"
       RETURN .T.
    ELSE
       RETURN .F.

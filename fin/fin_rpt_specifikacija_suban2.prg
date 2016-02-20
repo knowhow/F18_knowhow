@@ -90,7 +90,7 @@ FUNCTION spec_sub()
    PRIVATE fK1 := fk2 := fk3 := fk4 := "N"
    PRIVATE cRasclaniti := "N"
 
-   cN2Fin := IzFMkIni( 'FIN', 'PartnerNaziv2', 'N' )
+   cN2Fin := my_get_from_ini( 'FIN', 'PartnerNaziv2', 'N' )
 
    O_PARTN
    __par_len := Len( partn->id )
@@ -154,7 +154,7 @@ FUNCTION spec_sub()
    PRIVATE cK3 := "99"
    PRIVATE cK4 := "99"
 
-   IF IzFMKIni( "FIN", "LimitiPoUgovoru_PoljeK3", "N", SIFPATH ) == "D"
+   IF my_get_from_ini( "FIN", "LimitiPoUgovoru_PoljeK3", "N", SIFPATH ) == "D"
       cK3 := "999"
    ENDIF
 

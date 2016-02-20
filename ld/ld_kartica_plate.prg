@@ -73,17 +73,17 @@ FUNCTION ld_kartica_plate( cIdRj, cMjesec, cGodina, cIdRadn, cObrac )
       RPar( "NK", @cNKNS )
       cIdRadn := Space( _LR_ )
       Box(, 8, 75 )
-      @ m_x + 1, m_y + 2 SAY Lokal( "Radna jedinica (prazno-sve rj): " )  GET cIdRJ VALID Empty( cidrj ) .OR. P_LD_RJ( @cidrj )
-      @ m_x + 2, m_y + 2 SAY Lokal( "Mjesec: " ) GET cMjesec PICT "99"
+      @ m_x + 1, m_y + 2 SAY _l( "Radna jedinica (prazno-sve rj): " )  GET cIdRJ VALID Empty( cidrj ) .OR. P_LD_RJ( @cidrj )
+      @ m_x + 2, m_y + 2 SAY _l( "Mjesec: " ) GET cMjesec PICT "99"
       IF lViseObr
-         @ m_x + 2, Col() + 2 SAY Lokal( "Obracun: " ) GET cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
+         @ m_x + 2, Col() + 2 SAY _l( "Obracun: " ) GET cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
       ENDIF
-      @ m_x + 3, m_y + 2 SAY Lokal( "Godina: " ) GET cGodina PICT "9999"
-      @ m_x + 4, m_y + 2 SAY Lokal( "Radnik (prazno-svi radnici): " )  GET  cIdRadn  VALID Empty( cIdRadn ) .OR. P_Radn( @cIdRadn )
-      @ m_x + 5, m_y + 2 SAY Lokal( "Varijanta ( /5): " )  GET  cVarijanta VALID cVarijanta $ " 5"
-      @ m_x + 6, m_y + 2 SAY Lokal( "Ako su svi radnici, sortirati po (1-sifri,2-prezime+ime)" )  GET cVarSort VALID cVarSort $ "12"  PICT "9"
-      @ m_x + 7, m_y + 2 SAY Lokal( "Dvije kartice na jedan list ? (D/N)" )  GET c2K1L VALID c2K1L $ "DN"  PICT "@!"
-      @ m_x + 8, m_y + 2 SAY Lokal( "Ispis svake kartice krece od pocetka stranice? (D/N)" )  GET cNKNS VALID cNKNS $ "DN"  PICT "@!"
+      @ m_x + 3, m_y + 2 SAY _l( "Godina: " ) GET cGodina PICT "9999"
+      @ m_x + 4, m_y + 2 SAY _l( "Radnik (prazno-svi radnici): " )  GET  cIdRadn  VALID Empty( cIdRadn ) .OR. P_Radn( @cIdRadn )
+      @ m_x + 5, m_y + 2 SAY _l( "Varijanta ( /5): " )  GET  cVarijanta VALID cVarijanta $ " 5"
+      @ m_x + 6, m_y + 2 SAY _l( "Ako su svi radnici, sortirati po (1-sifri,2-prezime+ime)" )  GET cVarSort VALID cVarSort $ "12"  PICT "9"
+      @ m_x + 7, m_y + 2 SAY _l( "Dvije kartice na jedan list ? (D/N)" )  GET c2K1L VALID c2K1L $ "DN"  PICT "@!"
+      @ m_x + 8, m_y + 2 SAY _l( "Ispis svake kartice krece od pocetka stranice? (D/N)" )  GET cNKNS VALID cNKNS $ "DN"  PICT "@!"
       READ
       clvbox()
       ESC_BCR
@@ -173,7 +173,7 @@ FUNCTION ld_kartica_plate( cIdRj, cMjesec, cGodina, cIdRadn, cObrac )
    // -- U fmk.ini /kumpath se definisu koji dopr. da se prikazuju
    // -- Po defaultu stoji prazno - svi doprinosi
 
-   cPrikDopr := IzFmkIni( "LD", "DoprNaKartPl", "D", KUMPATH )
+   cPrikDopr := my_get_from_ini( "LD", "DoprNaKartPl", "D", KUMPATH )
    lPrikSveDopr := ( cPrikDopr == "D" )
 
    DO WHILE !Eof() .AND. cGodina == godina .AND. idrj = cidrj .AND. cMjesec = mjesec .AND. idradn = cIdRadn .AND. !( lViseObr .AND. !Empty( cObracun ) .AND. obr <> cObracun )
@@ -265,28 +265,28 @@ FUNCTION ZaglKar()
    ? "RJ:", idrj, ld_rj->naz
    ? idradn, "-", RADNIK, "  Mat.br:", radn->matbr
    ShowHiredFromTo( radn->hiredfrom, radn->hiredto, "" )
-   ? Lokal( "Radno mjesto:" ), radn->rmjesto, "  STR.SPR:", IDSTRSPR
-   ? Lokal( "Vrsta posla:" ), idvposla, vposla->naz, "         Radi od:", radn->datod
-   ? IF( gBodK == "1", Lokal( "Broj bodova :" ), Lokal( "Koeficijent :" ) ), Transform( brbod, "99999.99" ), Space( 24 )
+   ? _l( "Radno mjesto:" ), radn->rmjesto, "  STR.SPR:", IDSTRSPR
+   ? _l( "Vrsta posla:" ), idvposla, vposla->naz, "         Radi od:", radn->datod
+   ? IF( gBodK == "1", _l( "Broj bodova :" ), _l( "Koeficijent :" ) ), Transform( brbod, "99999.99" ), Space( 24 )
    IF gMinR == "B"
-         ?? Lokal( "Minuli rad:" ), Transform( kminrad, "9999.99" )
+         ?? _l( "Minuli rad:" ), Transform( kminrad, "9999.99" )
    ELSE
-         ?? Lokal( "K.Min.rada:" ), Transform( kminrad, "99.99%" )
+         ?? _l( "K.Min.rada:" ), Transform( kminrad, "99.99%" )
    ENDIF
-   ? IF( gBodK == "1", Lokal( "Vrijednost boda:" ), Lokal( "Vr.koeficijenta:" ) ), Transform( parobr->vrbod, "99999.99999" )
+   ? IF( gBodK == "1", _l( "Vrijednost boda:" ), _l( "Vr.koeficijenta:" ) ), Transform( parobr->vrbod, "99999.99999" )
 
    IF radn->n1 <> 0 .OR. radn->n2 <> 0
-         ? Lokal( "N1:" ), Transform( radn->n1, "99999999.9999" )
+         ? _l( "N1:" ), Transform( radn->n1, "99999999.9999" )
          ?? Space( 2 ) + ;
-            Lokal( "N2:" ), Transform( radn->n2, "99999999.9999" )
+            _l( "N2:" ), Transform( radn->n2, "99999999.9999" )
    ENDIF
 
    IF __var_obr == "2"
-       ?? Space( 2 ) + Lokal( "Koef.licnog odbitka:" ), AllTrim( Str( g_klo( ld->ulicodb ) ) )
+       ?? Space( 2 ) + _l( "Koef.licnog odbitka:" ), AllTrim( Str( g_klo( ld->ulicodb ) ) )
    ENDIF
 
    IF __radni_sati == "D"
-       ?? Space( 2 ) + Lokal( "Radni sati:   " ) + AllTrim( Str( ld->radsat ) )
+       ?? Space( 2 ) + _l( "Radni sati:   " ) + AllTrim( Str( ld->radsat ) )
    ENDIF
 
    RETURN
@@ -334,7 +334,7 @@ FUNCTION kart_potpis()
 
    IF gPotp == "D"
       ?
-      ? cLMSK + Space( 5 ), Lokal( "   Obracunao:  " ), Space( 30 ), Lokal( "    Potpis:" )
+      ? cLMSK + Space( 5 ), _l( "   Obracunao:  " ), Space( 30 ), _l( "    Potpis:" )
       ? cLMSK + Space( 5 ), "_______________", Space( 30 ), "_______________"
       ?
    ENDIF

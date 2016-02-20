@@ -36,13 +36,13 @@ FUNCTION CjenR()
    cIniName := EXEPATH + 'ProIzvj.ini'
 
    // Iscita var Linija1 iz FMK.INI/KUMPATH u PROIZVJ.INI
-   UzmiIzIni( cIniName, 'Varijable', 'Linija1', IzFmkIni( "Zaglavlje", "Linija1", gNFirma, KUMPATH ), 'WRITE' )
-   UzmiIzIni( cIniName, 'Varijable', 'Linija2', IzFmkIni( "Zaglavlje", "Linija2", "-", KUMPATH ), 'WRITE' )
-   UzmiIzIni( cIniName, 'Varijable', 'Linija3', IzFmkIni( "Zaglavlje", "Linija3", "-", KUMPATH ), 'WRITE' )
-   UzmiIzIni( cIniName, 'Varijable', 'Linija4', IzFmkIni( "Zaglavlje", "Linija4", "-", KUMPATH ), 'WRITE' )
-   UzmiIzIni( cIniName, 'Varijable', 'Linija5', IzFmkIni( "Zaglavlje", "Linija5", "-", KUMPATH ), 'WRITE' )
-   UzmiIzIni( cIniName, 'Varijable', 'CjenBroj', IzFmkIni( "Zaglavlje", "CjenBroj", "-", KUMPATH ), 'WRITE' )
-   cCjenIzbor := IzFmkIni( "Zaglavlje", "CjenIzbor", " ", KUMPATH )
+   UzmiIzIni( cIniName, 'Varijable', 'Linija1', my_get_from_ini( "Zaglavlje", "Linija1", gNFirma, KUMPATH ), 'WRITE' )
+   UzmiIzIni( cIniName, 'Varijable', 'Linija2', my_get_from_ini( "Zaglavlje", "Linija2", "-", KUMPATH ), 'WRITE' )
+   UzmiIzIni( cIniName, 'Varijable', 'Linija3', my_get_from_ini( "Zaglavlje", "Linija3", "-", KUMPATH ), 'WRITE' )
+   UzmiIzIni( cIniName, 'Varijable', 'Linija4', my_get_from_ini( "Zaglavlje", "Linija4", "-", KUMPATH ), 'WRITE' )
+   UzmiIzIni( cIniName, 'Varijable', 'Linija5', my_get_from_ini( "Zaglavlje", "Linija5", "-", KUMPATH ), 'WRITE' )
+   UzmiIzIni( cIniName, 'Varijable', 'CjenBroj', my_get_from_ini( "Zaglavlje", "CjenBroj", "-", KUMPATH ), 'WRITE' )
+   cCjenIzbor := my_get_from_ini( "Zaglavlje", "CjenIzbor", " ", KUMPATH )
 
    DO WHILE !Eof()
       SELECT BARKOD

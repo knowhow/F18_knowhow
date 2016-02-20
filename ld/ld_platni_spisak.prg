@@ -93,11 +93,11 @@ FUNCTION ld_platni_spisak()
 
    IF nIznosTO <> 0
       cNaslov := cNaslovTO
-      qqImaTO := IzFMKIni( "LD", "UslovImaTopliObrok", 'UPPER(RADN->K2)=="D"', KUMPATH )
+      qqImaTO := my_get_from_ini( "LD", "UslovImaTopliObrok", 'UPPER(RADN->K2)=="D"', KUMPATH )
    ENDIF
 
    IF !Empty( cNaslov )
-      cNaslov += ( Space( 1 ) + Lokal( "za mjesec:" ) + Str( cMjesec, 2 ) + ". " + Lokal( "godine:" ) + Str( cGodina, 4 ) + "." )
+      cNaslov += ( Space( 1 ) + _l( "za mjesec:" ) + Str( cMjesec, 2 ) + ". " + _l( "godine:" ) + Str( cGodina, 4 ) + "." )
    ENDIF
 
    SELECT ld
@@ -247,7 +247,7 @@ FUNCTION ld_platni_spisak()
       // endif
 
       ? m
-      ? Space( 1 ) + Lokal( "UKUPNO:" )
+      ? Space( 1 ) + _l( "UKUPNO:" )
 
       IF cPrikIzn == "D"
          @ PRow(), nC1 SAY nT4 PICT gpici
@@ -278,15 +278,15 @@ FUNCTION ZPlatSp()
    ?
 
    IF Empty( cidrj )
-      ? Lokal( "Pregled za sve RJ ukupno:" )
+      ? _l( "Pregled za sve RJ ukupno:" )
    ELSE
-      ? Lokal( "RJ:" ), cIdRj, ld_rj->naz
+      ? _l( "RJ:" ), cIdRj, ld_rj->naz
    ENDIF
 
-   ?? Space( 2 ) + Lokal( "Mjesec:" ), Str( cMjesec, 2 ) + IspisObr()
-   ?? Space( 4 ) + Lokal( "Godina:" ), Str( cGodina, 5 )
+   ?? Space( 2 ) + _l( "Mjesec:" ), Str( cMjesec, 2 ) + IspisObr()
+   ?? Space( 4 ) + _l( "Godina:" ), Str( cGodina, 5 )
    DevPos( PRow(), 74 )
-   ?? Lokal( "Str." ), Str( ++nStrana, 3 )
+   ?? _l( "Str." ), Str( ++nStrana, 3 )
    ?
 
    IF !Empty( cNaslov )
@@ -296,7 +296,7 @@ FUNCTION ZPlatSp()
 
    IF nProcenat <> 100
       ?
-      ? Lokal( "Procenat za isplatu:" )
+      ? _l( "Procenat za isplatu:" )
       IF nDio == 1
          @ PRow(), PCol() + 1 SAY nprocenat PICT "999.99%"
       ELSE
@@ -306,7 +306,7 @@ FUNCTION ZPlatSp()
    ENDIF
 
    ? m
-   ? Lokal( "Rbr   Sifra           Naziv radnika               " ) + iif( cPrikIzn == "D", Lokal( "ZA ISPLATU" ), "          " ) + "         " + Lokal( "Potpis" )
+   ? _l( "Rbr   Sifra           Naziv radnika               " ) + iif( cPrikIzn == "D", _l( "ZA ISPLATU" ), "          " ) + "         " + _l( "Potpis" )
    ? m
 
    RETURN
@@ -581,7 +581,7 @@ FUNCTION ld_platni_spisak_tekuci_racun( cVarijanta )
 
       ? m
 
-      ? Space( 1 ) + Lokal( "UKUPNO:" )
+      ? Space( 1 ) + _l( "UKUPNO:" )
 
       IF cPrikIzn == "D"
          @ PRow(), nC1 SAY nT4 PICT gPici
@@ -622,30 +622,30 @@ FUNCTION ZPlatSpTR()
    P_12CPI
    P_COND
 
-   ? Lokal( "Poslovna BANKA:" ) + Space( 1 ), cIDBanka, "-", kred->naz
+   ? _l( "Poslovna BANKA:" ) + Space( 1 ), cIDBanka, "-", kred->naz
    ?
    ? Upper( gTS ) + ":", gnFirma
    ?
 
    IF Empty( cIdRj )
-      ? Lokal( "Pregled za sve RJ ukupno:" )
+      ? _l( "Pregled za sve RJ ukupno:" )
    ELSE
-      ? Lokal( "RJ:" ), cIdRj, ld_rj->naz
+      ? _l( "RJ:" ), cIdRj, ld_rj->naz
    ENDIF
 
-   ?? Space( 2 ) + Lokal( "Mjesec:" ), Str( cMjesec, 2 ) + IspisObr()
-   ?? Space( 4 ) + Lokal( "Godina:" ), Str( cGodina, 5 )
+   ?? Space( 2 ) + _l( "Mjesec:" ), Str( cMjesec, 2 ) + IspisObr()
+   ?? Space( 4 ) + _l( "Godina:" ), Str( cGodina, 5 )
 
    DevPos( PRow(), 74 )
 
-   ?? Lokal( "Str." ), Str( ++nStrana, 3 )
+   ?? _l( "Str." ), Str( ++nStrana, 3 )
 
    ?
 
    IF nProcenat <> 100
 
       ?
-      ? Lokal( "Procenat za isplatu:" )
+      ? _l( "Procenat za isplatu:" )
 
       IF nDio == 1
          @ PRow(), PCol() + 1 SAY nprocenat PICT "999.99%"
@@ -659,7 +659,7 @@ FUNCTION ZPlatSpTR()
 
    ?
    ? m
-   ? Lokal( "Rbr   Sifra    JMB                 Naziv radnika               " ) + iif( cPrikIzn == "D", Lokal( "ZA ISPLATU" ), "          " ) + iif( cIsplata == "TR", Space( 9 ) + Lokal( "Broj T.Rac" ), Space( 8 ) + Lokal( "Broj St.knj" ) )
+   ? _l( "Rbr   Sifra    JMB                 Naziv radnika               " ) + iif( cPrikIzn == "D", _l( "ZA ISPLATU" ), "          " ) + iif( cIsplata == "TR", Space( 9 ) + _l( "Broj T.Rac" ), Space( 8 ) + _l( "Broj St.knj" ) )
    ? m
 
    RETURN
@@ -865,7 +865,7 @@ FUNCTION ld_pregled_isplate_za_tekuci_racun( cVarijanta )
       // endif
 
       ? m
-      ? Space( 1 ) + Lokal( "UKUPNO:" )
+      ? Space( 1 ) + _l( "UKUPNO:" )
       IF cPrikIzn == "D"
          @ PRow(), nC1 SAY nT4 PICT gpici
       ENDIF
@@ -897,30 +897,30 @@ FUNCTION ZIsplataTR()
    SELECT ld
 
    ?
-   ? Lokal( "Poslovna BANKA:" ) + Space( 1 ), cIDTBanka, "-", kred->naz
+   ? _l( "Poslovna BANKA:" ) + Space( 1 ), cIDTBanka, "-", kred->naz
    ?
    ? Upper( gTS ) + ":", gnFirma
    ?
 
    IF Empty( cidrj )
-      ? Lokal( "Pregled za sve RJ ukupno:" )
+      ? _l( "Pregled za sve RJ ukupno:" )
    ELSE
-      ? Lokal( "RJ:" ), cIdRj, ld_rj->naz
+      ? _l( "RJ:" ), cIdRj, ld_rj->naz
    ENDIF
 
-   ?? Space( 2 ) + Lokal( "Mjesec:" ), Str( cMjesec, 2 ) + IspisObr()
-   ?? Space( 4 ) + Lokal( "Godina:" ), Str( cGodina, 5 )
+   ?? Space( 2 ) + _l( "Mjesec:" ), Str( cMjesec, 2 ) + IspisObr()
+   ?? Space( 4 ) + _l( "Godina:" ), Str( cGodina, 5 )
    DevPos( PRow(), 74 )
-   ?? Lokal( "Str." ), Str( ++nStrana, 3 )
+   ?? _l( "Str." ), Str( ++nStrana, 3 )
    ?
    IF Empty( cIdTipPr )
-      ? Lokal( "PLATNI SPISAK" )
+      ? _l( "PLATNI SPISAK" )
    ELSE
-      ? Lokal( "ISPLATA TIPA PRIMANJA:" ), cIdTipPr, TIPPR->naz
+      ? _l( "ISPLATA TIPA PRIMANJA:" ), cIdTipPr, TIPPR->naz
    ENDIF
    ?
    ? m
-   ? Lokal( "Rbr   Sifra           Naziv radnika               " ) + iif( cPrikIzn == "D", Lokal( "ZA ISPLATU" ), "          " ) + iif( cIsplata == "TR", Space( 9 ) + Lokal( "Broj T.Rac" ), Space( 8 ) + Lokal( "Broj St.knj" ) )
+   ? _l( "Rbr   Sifra           Naziv radnika               " ) + iif( cPrikIzn == "D", _l( "ZA ISPLATU" ), "          " ) + iif( cIsplata == "TR", Space( 9 ) + _l( "Broj T.Rac" ), Space( 8 ) + _l( "Broj St.knj" ) )
    ? m
 
    RETURN

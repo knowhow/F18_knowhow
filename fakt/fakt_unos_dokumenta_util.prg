@@ -1509,12 +1509,12 @@ FUNCTION edit_fakt_doks2()
    LOCAL nArr := Select()
    LOCAL GetList := {}
 
-   cPom := IzFMKINI( "FAKT", "Doks2Edit", "N", KUMPATH )
+   cPom := my_get_from_ini( "FAKT", "Doks2Edit", "N", KUMPATH )
    IF cPom == "N"
       RETURN
    ENDIF
 
-   cPom := IzFMKINI( "FAKT", "Doks2opis", "dodatnih podataka", KUMPATH )
+   cPom := my_get_from_ini( "FAKT", "Doks2opis", "dodatnih podataka", KUMPATH )
 
    IF Pitanje( , "Želite li unos/ispravku " + cPom + "? (D/N)", "N" ) == "N"
       Select( nArr )
@@ -1525,13 +1525,13 @@ FUNCTION edit_fakt_doks2()
    // ---------------------------------------------
    aDodPar := {}
 
-   AAdd( aDodPar, IzFMKINI( "Doks2", "ZK1", "K1", KUMPATH )  )
-   AAdd( aDodPar, IzFMKINI( "Doks2", "ZK2", "K2", KUMPATH )  )
-   AAdd( aDodPar, IzFMKINI( "Doks2", "ZK3", "K3", KUMPATH )  )
-   AAdd( aDodPar, IzFMKINI( "Doks2", "ZK4", "K4", KUMPATH )  )
-   AAdd( aDodPar, IzFMKINI( "Doks2", "ZK5", "K5", KUMPATH )  )
-   AAdd( aDodPar, IzFMKINI( "Doks2", "ZN1", "N1", KUMPATH )  )
-   AAdd( aDodPar, IzFMKINI( "Doks2", "ZN2", "N2", KUMPATH )  )
+   AAdd( aDodPar, my_get_from_ini( "Doks2", "ZK1", "K1", KUMPATH )  )
+   AAdd( aDodPar, my_get_from_ini( "Doks2", "ZK2", "K2", KUMPATH )  )
+   AAdd( aDodPar, my_get_from_ini( "Doks2", "ZK3", "K3", KUMPATH )  )
+   AAdd( aDodPar, my_get_from_ini( "Doks2", "ZK4", "K4", KUMPATH )  )
+   AAdd( aDodPar, my_get_from_ini( "Doks2", "ZK5", "K5", KUMPATH )  )
+   AAdd( aDodPar, my_get_from_ini( "Doks2", "ZN1", "N1", KUMPATH )  )
+   AAdd( aDodPar, my_get_from_ini( "Doks2", "ZN2", "N2", KUMPATH )  )
 
    nd2n1 := Val( d2n1 )
    nd2n2 := Val( d2n2 )
@@ -1819,7 +1819,7 @@ FUNCTION renumeracija_fakt_pripr( veza_otpremnica, datum_max )
    _dest := Space( 150 )
    _m_dveza := Space( 500 )
 
-   IF IzFmkIni( 'FAKT', 'ProsiriPoljeOtpremniceNa50', 'N', KUMPATH ) == 'D'
+   IF my_get_from_ini( 'FAKT', 'ProsiriPoljeOtpremniceNa50', 'N', KUMPATH ) == 'D'
       _BrOtp := Space( 50 )
    ELSE
       _BrOtp := Space( 8 )

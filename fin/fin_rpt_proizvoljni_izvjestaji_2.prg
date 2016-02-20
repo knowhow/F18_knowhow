@@ -1265,7 +1265,7 @@ function KZnbazaWin(cDbf)
 
 local cWinKonv
 
-cWinKonv:=IzFmkIni("DelphiRb","Konverzija","5")
+cWinKonv:=my_get_from_ini("DelphiRb","Konverzija","5")
 
 if cWinKonv>"0" // ima konverzije
 

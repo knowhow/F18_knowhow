@@ -15,10 +15,10 @@
 function virm_prenos_kalk()
 local _firma := PADR( fetch_metric("virm_org_id", nil, "" ), 6 )
 
-gUVarPP:=IzFmkIni("POREZI","PPUgostKaoPPU","T",KUMPATH)
-cPNaBr:=IzFmkIni("KALKVIRM","PozivNaBr"," ", KUMPATH)
+gUVarPP:=my_get_from_ini("POREZI","PPUgostKaoPPU","T",KUMPATH)
+cPNaBr:=my_get_from_ini("KALKVIRM","PozivNaBr"," ", KUMPATH)
 cPnabr:=padr(cPnabr,10)
-cVUPL:=IzFmkIni("KALKVIRM","VrstaUplate"," ", KUMPATH)
+cVUPL:=my_get_from_ini("KALKVIRM","VrstaUplate"," ", KUMPATH)
 cVUPL:=padr(cVUPL,1)
 qqIDVD:="42;"
 dDatOd:=Date()

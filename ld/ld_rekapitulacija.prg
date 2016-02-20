@@ -34,7 +34,7 @@ FUNCTION ld_rekapitulacija( lSvi )
    cMainLine := _gmainline()
    cMainLine := Replicate( "-", 2 ) + cMainLine
 
-   lPorNaRekap := IzFmkIni( "LD", "PoreziNaRekapitulaciji", "N", KUMPATH ) == "D"
+   lPorNaRekap := my_get_from_ini( "LD", "PoreziNaRekapitulaciji", "N", KUMPATH ) == "D"
 
    cIdRadn := Space( _LR_ )
    cIdRj := gRj
@@ -132,10 +132,10 @@ FUNCTION ld_rekapitulacija( lSvi )
    ?
    P_12CPI
 
-   IF IzFMKIni( "LD", "RekapitulacijaGustoPoVisini", "N", KUMPATH ) == "D"
+   IF my_get_from_ini( "LD", "RekapitulacijaGustoPoVisini", "N", KUMPATH ) == "D"
       lGusto := .T.
       gRPL_Gusto()
-      nDSGusto := Val( IzFMKIni( "RekapGustoPoVisini", "DodatnihRedovaNaStranici", "11", KUMPATH ) )
+      nDSGusto := Val( my_get_from_ini( "RekapGustoPoVisini", "DodatnihRedovaNaStranici", "11", KUMPATH ) )
       gPStranica += nDSGusto
    ELSE
       lGusto := .F.
@@ -330,7 +330,7 @@ FUNCTION ld_rekapitulacija( lSvi )
    // ako je stvarna osnova veca od ove BRUTO - DOPRIZ - ODBICI
    // rijec je o radnicima koji nemaju poreza
    IF Round( nTOsnova, 2 ) > Round( nPorOsn, 2 )
-      ?U Lokal( "! razlika osnovice poreza (radi radnika bez poreza):" )
+      ?U _l( "! razlika osnovice poreza (radi radnika bez poreza):" )
       @ PRow(), 60 SAY nPorOsn - nTOsnova PICT gpici
       ?
    ENDIF
@@ -856,9 +856,9 @@ STATIC FUNCTION get_bruto( nIznos )
 
    ? cMainLine
    IF cRTiprada $ "A#U"
-      ? Lokal( "1. BRUTO PLATA (bruto sa troskovima - troskovi):" )
+      ? _l( "1. BRUTO PLATA (bruto sa troskovima - troskovi):" )
    ELSE
-      ? Lokal( "1. BRUTO PLATA UKUPNO:" )
+      ? _l( "1. BRUTO PLATA UKUPNO:" )
    ENDIF
    @ PRow(), 60 SAY nBO PICT gpici
    ? cMainLine

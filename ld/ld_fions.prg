@@ -493,7 +493,7 @@ FUNCTION Prosj1( cTip, cTip2, cF0 )
             ENDIF
          ENDIF
       ELSE
-         MsgBeep( Lokal( "Prosjek je uzet iz šifrarnika radnika - OSN.BOL. !" ) )
+         MsgBeep( _l( "Prosjek je uzet iz šifrarnika radnika - OSN.BOL. !" ) )
          SELECT RADN
          SET ORDER TO TAG "1"
          GO TOP
@@ -701,7 +701,7 @@ FUNCTION FillBrBod( _brbod )
 
    IF ( radn->brbod <> _brbod )
 
-      IF Pitanje(, Lokal( "Staviti u sifrarnik radnika ovu vrijednost D/N?" ), "N" ) == "D"
+      IF Pitanje(, _l( "Staviti u sifrarnik radnika ovu vrijednost D/N?" ), "N" ) == "D"
 
          SELECT radn
          _vars := dbf_get_rec()
@@ -744,7 +744,7 @@ FUNCTION FillVPosla()
    LOCAL _rec
 
    IF radn->idvposla <> _idvposla
-      IF Pitanje( , Lokal( "Staviti u sifrarnik radnika ovu vrijednost D/N?" ), "N" ) == "D"
+      IF Pitanje( , _l( "Staviti u sifrarnik radnika ovu vrijednost D/N?" ), "N" ) == "D"
 
          SELECT radn
          _rec := dbf_get_rec()

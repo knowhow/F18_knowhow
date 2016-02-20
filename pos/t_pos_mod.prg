@@ -429,8 +429,8 @@ METHOD set_module_gvars()
    ENDIF
 
    PUBLIC gSQLKom
-   gSQL := IzFmkIni( "Svi", "SQLLog", "N", KUMPATH )
-   gSQLLogBase := IzFmkIni( "SQL", "SQLLogBase", "c:\sigma", EXEPATH )
+   gSQL := my_get_from_ini( "Svi", "SQLLog", "N", KUMPATH )
+   gSQLLogBase := my_get_from_ini( "SQL", "SQLLogBase", "c:\sigma", EXEPATH )
 
    gSamoProdaja := fetch_metric( "SamoProdaja", nil, gSamoProdaja )
 
@@ -441,7 +441,7 @@ METHOD set_module_gvars()
    PUBLIC gPosModem
 
    PUBLIC glRetroakt
-   glRetroakt := ( IzFmkIni( "POS", "Retroaktivno", "N", KUMPATH ) == "D" )
+   glRetroakt := ( my_get_from_ini( "POS", "Retroaktivno", "N", KUMPATH ) == "D" )
 
    gPosSirovine := "D"
    gPosKalk := "D"

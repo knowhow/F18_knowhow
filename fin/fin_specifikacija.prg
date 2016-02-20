@@ -353,13 +353,13 @@ FUNCTION SpecBrDan()
    // D - uzeti u obzir markere
    // N - izvjestaj saldirati bez obzira na markere, sabirajuci prema broju veze
    cMarkeri := "N"
-   IF IzFmkIni( "FIN", "Ostav_Markeri", "N", KUMPATH ) == "D"
+   IF my_get_from_ini( "FIN", "Ostav_Markeri", "N", KUMPATH ) == "D"
       cMarkeri := "D"
    ENDIF
 
    // uzeti u obzir datum valutiranja
    PRIVATE cObzirDatVal := "D"
-   IF IzFmkIni( "FIN", "Ostav_DatVal", "D", KUMPATH ) == "N"
+   IF my_get_from_ini( "FIN", "Ostav_DatVal", "D", KUMPATH ) == "N"
       cObzirDatVal := "N"
    ENDIF
 
@@ -397,7 +397,7 @@ FUNCTION SpecBrDan()
 
    nStr := 0
 
-   IF IzFMKIni( "FAKT", "VrstePlacanja", "N", SIFPATH ) == "D"
+   IF my_get_from_ini( "FAKT", "VrstePlacanja", "N", SIFPATH ) == "D"
       O_VRSTEP
    ENDIF
 
@@ -681,7 +681,7 @@ FUNCTION fin_spec_po_suban_kontima()
    PRIVATE cRasclaniti := "N"
    PRIVATE cRascFunkFond := "N"
 
-   cN2Fin := IzFMkIni( 'FIN', 'PartnerNaziv2', 'N' )
+   cN2Fin := my_get_from_ini( 'FIN', 'PartnerNaziv2', 'N' )
 
    nC := 50
 
@@ -729,7 +729,7 @@ FUNCTION fin_spec_po_suban_kontima()
    SET CURSOR ON
    PRIVATE cK1 := cK2 := "9"
    PRIVATE cK3 := cK4 := "99"
-   IF IzFMKIni( "FIN", "LimitiPoUgovoru_PoljeK3", "N", SIFPATH ) == "D"
+   IF my_get_from_ini( "FIN", "LimitiPoUgovoru_PoljeK3", "N", SIFPATH ) == "D"
       cK3 := "999"
    ENDIF
    IF gDUFRJ == "D"

@@ -24,8 +24,8 @@ FUNCTION P_Fakt()
    LOCAL cIdFakt97 := "01"
    LOCAL cIdFakt97_2 := "19"
 
-   cOldVar10 := IzFMKIni( "PrenosKALK10_FAKT", "NazivPoljaCijeneKojaSePrenosiIzKALK", "-", KUMPATH )   // nekad bilo FCJ
-   cOldVar16 := IzFMKIni( "PrenosKALK16_FAKT", "NazivPoljaCijeneKojaSePrenosiIzKALK", "-", KUMPATH )   // nekad bilo NC
+   cOldVar10 := my_get_from_ini( "PrenosKALK10_FAKT", "NazivPoljaCijeneKojaSePrenosiIzKALK", "-", KUMPATH )   // nekad bilo FCJ
+   cOldVar16 := my_get_from_ini( "PrenosKALK16_FAKT", "NazivPoljaCijeneKojaSePrenosiIzKALK", "-", KUMPATH )   // nekad bilo NC
 
    O_FAKT
    O_FAKT_PRIPR

@@ -288,7 +288,7 @@ FUNCTION edit_fin_priprema()
    ENDIF
 
    IF _fin_params[ "fin_k3" ]
-      IF IzFMKIni( "FIN", "LimitiPoUgovoru_PoljeK3", "N", SIFPATH ) == "D"
+      IF my_get_from_ini( "FIN", "LimitiPoUgovoru_PoljeK3", "N", SIFPATH ) == "D"
          _k3 := K3Iz256( _k3 )
          @ m_x + 11, Col() + 2 SAY "K3" GET _k3 VALID Empty( _k3 ) .OR. P_ULIMIT( @_k3 ) PICT "999"
       ELSE

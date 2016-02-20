@@ -24,7 +24,7 @@ STATIC FUNCTION GetPm()
 
    cPm := cIdPos
 
-   cPitanje := IzFmkIni( "POS", "PrenosGetPm", "0" )
+   cPitanje := my_get_from_ini( "POS", "PrenosGetPm", "0" )
    IF ( ( gVrstaRs <> "S" ) .AND. ( cPitanje == "0" ) )
       RETURN ""
    ENDIF

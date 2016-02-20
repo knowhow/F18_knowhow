@@ -472,7 +472,7 @@ STATIC FUNCTION OpisSubGr( cId )
 
    // {
    LOCAL cVrati
-   cVrati := "UKUPNO GRUPA '" + cId + "-" + IzFmkIni( "VINDIJA", "NazGr" + cId, "", KUMPATH ) + "'"
+   cVrati := "UKUPNO GRUPA '" + cId + "-" + my_get_from_ini( "VINDIJA", "NazGr" + cId, "", KUMPATH ) + "'"
 
    RETURN cVrati
 // }
@@ -481,7 +481,7 @@ STATIC FUNCTION OpisSubPG( cIdG, cIdPG )
 
    // {
    LOCAL cVrati
-   cVrati := "PODGRUPA '" + cIdPG + "-" + IzFmkIni( "VINDIJA", "NazPG" + cIdG + cIdPG, "", KUMPATH ) + "'"
+   cVrati := "PODGRUPA '" + cIdPG + "-" + my_get_from_ini( "VINDIJA", "NazPG" + cIdG + cIdPG, "", KUMPATH ) + "'"
 
    RETURN cVrati
 // }

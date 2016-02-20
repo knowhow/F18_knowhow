@@ -1073,7 +1073,7 @@ STATIC FUNCTION GRekap22()
          ENDDO
 
          IF ( Year( dDatOd ) == rekap2->godina .AND. Month( dDatOd ) == rekap2->mjesec )
-            IF ( Round( nZalihaF, 4 ) <> 0 .AND. IzFmkIni( "Planika", "ProsZalihaBezPocZalihe", "D", KUMPATH ) == "N" )
+            IF ( Round( nZalihaF, 4 ) <> 0 .AND. my_get_from_ini( "Planika", "ProsZalihaBezPocZalihe", "D", KUMPATH ) == "N" )
                AAdd( AZalihe, { nZalihaF, nZalihaK } )  // poc zaliha
             ENDIF
          ENDIF

@@ -38,7 +38,7 @@ FUNCTION ld_kartica_plate_redovan_rad( cIdRj, cMjesec, cGodina, cIdRadn, cObrac,
    Eval( bZagl )
 
    IF gTipObr == "2" .AND. parobr->k1 <> 0
-      ?? Lokal( "        Bod-sat:" )
+      ?? _l( "        Bod-sat:" )
       @ PRow(), PCol() + 1 SAY parobr->vrbod / parobr->k1 * brbod PICT "99999.99999"
    ENDIF
 
@@ -273,8 +273,8 @@ FUNCTION ld_kartica_plate_redovan_rad( cIdRj, cMjesec, cGodina, cIdRadn, cObrac,
 
    IF __radni_sati == "D"
       ? "NAPOMENA: Ostaje da se plati iz preraspodjele radnog vremena "
-      ?? AllTrim( Str( ( ld->radsat ) - nRRSati ) )  + Lokal( " sati." )
-      ?U "          Ostatak predhodnih obračuna: " + GetStatusRSati( ld->idradn ) + Space( 1 ) + Lokal( "sati" )
+      ?? AllTrim( Str( ( ld->radsat ) - nRRSati ) )  + _l( " sati." )
+      ?U "          Ostatak predhodnih obračuna: " + GetStatusRSati( ld->idradn ) + Space( 1 ) + _l( "sati" )
       ?
    ENDIF
 

@@ -45,7 +45,7 @@ FUNCTION ld_kartica_plate_upravni_odbor( cIdRj, cMjesec, cGodina, cIdRadn, cObra
    cRTipRada := g_tip_rada( ld->idradn, ld->idrj )
 
    ? cTprLine
-   ? cLMSK + Lokal( " Vrsta                  Opis         sati/iznos             ukupno" )
+   ? cLMSK + _l( " Vrsta                  Opis         sati/iznos             ukupno" )
    ? cTprLine
 
    FOR i := 1 TO cLDPolja
@@ -83,9 +83,9 @@ FUNCTION ld_kartica_plate_upravni_odbor( cIdRj, cMjesec, cGodina, cIdRadn, cObra
          cUneto := "N"
 
          ? cTprLine
-         ? cLMSK + Lokal( "Ukupna oporeziva primanja:" )
+         ? cLMSK + _l( "Ukupna oporeziva primanja:" )
          @ PRow(), nC1 + 8  SAY  _USati  PICT gpics
-         ?? Space( 1 ) + Lokal( "sati" )
+         ?? Space( 1 ) + _l( "sati" )
          @ PRow(), 60 + Len( cLMSK ) SAY _UNeto PICT gpici
          ?? "", gValuta
          ? cTprLine
@@ -162,7 +162,7 @@ FUNCTION ld_kartica_plate_upravni_odbor( cIdRj, cMjesec, cGodina, cIdRadn, cObra
    ?
 
    // razrada doprinosa ....
-   ? cLmSK + cDoprSpace + Lokal( "Obracun doprinosa:" )
+   ? cLmSK + cDoprSpace + _l( "Obracun doprinosa:" )
 
    SELECT dopr
    GO TOP
@@ -252,7 +252,7 @@ FUNCTION ld_kartica_plate_upravni_odbor( cIdRj, cMjesec, cGodina, cIdRadn, cObra
    // oporezivi dohodak ......
 
    ? cMainLine
-   ?  cLMSK + Lokal( "2. NETO IZNOS NAKNADE ( bruto - dopr.IZ )" )
+   ?  cLMSK + _l( "2. NETO IZNOS NAKNADE ( bruto - dopr.IZ )" )
    @ PRow(), 60 + Len( cLMSK ) SAY nOporDoh PICT gpici
 
    ? cMainLine
@@ -267,7 +267,7 @@ FUNCTION ld_kartica_plate_upravni_odbor( cIdRj, cMjesec, cGodina, cIdRadn, cObra
    // razrada poreza na platu ....
    // u ovom dijelu idu samo porezi na bruto TIP = "B"
 
-   ? cLMSK + Lokal( "3. AKONTACIJA POREZA NA DOHODAK" )
+   ? cLMSK + _l( "3. AKONTACIJA POREZA NA DOHODAK" )
 
    SELECT por
    GO TOP
@@ -312,7 +312,7 @@ FUNCTION ld_kartica_plate_upravni_odbor( cIdRj, cMjesec, cGodina, cIdRadn, cObra
    ?
 
    ? cMainLine
-   ? cLMSK + Lokal( "UKUPNO ZA ISPLATU ( 4 - 5 )" )
+   ? cLMSK + _l( "UKUPNO ZA ISPLATU ( 4 - 5 )" )
    @ PRow(), 60 + Len( cLMSK ) SAY nZaIsplatu PICT gpici
 
    ? cMainLine

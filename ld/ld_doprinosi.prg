@@ -116,8 +116,8 @@ FUNCTION obr_doprinos( nDopr, nDopr2, cTRada, a_benef )
    IF cUmPD == "D"
 
       ? "----------------------- -------- ----------- ----------- ----------- -----------"
-      ? Lokal( "                                 Obracunska   Doprinos   Preplaceni   Doprinos  " )
-      ? Lokal( "    Naziv doprinosa        %      osnovica   po obracunu  doprinos    za uplatu " )
+      ? _l( "                                 Obracunska   Doprinos   Preplaceni   Doprinos  " )
+      ? _l( "    Naziv doprinosa        %      osnovica   po obracunu  doprinos    za uplatu " )
       ? "          (1)             (2)        (3)     (4)=(2)*(3)     (5)     (6)=(4)-(5)"
       ? "----------------------- -------- ----------- ----------- ----------- -----------"
 
@@ -148,17 +148,17 @@ FUNCTION obr_doprinos( nDopr, nDopr2, cTRada, a_benef )
          IF !Empty( field->poopst )
 
             IF poopst == "1"
-               ?? Lokal( " (po opst.stan)" )
+               ?? _l( " (po opst.stan)" )
             ELSEIF poopst == "2"
-               ?? Lokal( " (po opst.rada)" )
+               ?? _l( " (po opst.rada)" )
             ELSEIF poopst == "3"
-               ?? Lokal( " (po kant.stan)" )
+               ?? _l( " (po kant.stan)" )
             ELSEIF poopst == "4"
-               ?? Lokal( " (po kant.rada)" )
+               ?? _l( " (po kant.rada)" )
             ELSEIF poopst == "5"
-               ?? Lokal( " (po ent. stan)" )
+               ?? _l( " (po ent. stan)" )
             ELSEIF poopst == "6"
-               ?? Lokal( " (po ent. rada)" )
+               ?? _l( " (po ent. rada)" )
             ENDIF
 
             ? StrTran( m, "-", "=" )
@@ -257,7 +257,7 @@ FUNCTION obr_doprinos( nDopr, nDopr2, cTRada, a_benef )
             SELECT dopr
 
             ? cLinija
-            ? "  " + Lokal( "UKUPNO" ) + Space( 1 ), DOPR->ID
+            ? "  " + _l( "UKUPNO" ) + Space( 1 ), DOPR->ID
 
             @ PRow(), nC1 SAY nOOD PICT gpici
             @ PRow(), PCol() + 1 SAY nDoprOps PICT gpici
@@ -372,7 +372,7 @@ FUNCTION obr_doprinos( nDopr, nDopr2, cTRada, a_benef )
    ENDDO
 
    ? cLinija
-   ? "  " + Lokal( "Ukupno Doprinosi" )
+   ? "  " + _l( "Ukupno Doprinosi" )
    @ PRow(), nc1 SAY Space( Len( gpici ) )
    @ PRow(), PCol() + 1 SAY nDopr  PICT gpici
 

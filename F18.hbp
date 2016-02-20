@@ -15,10 +15,9 @@ virm/*.prg
 {F18_KADEV}kadev/*.prg
 reports/*.prg
 common/*.prg
+string/*.prg
+narudzbenica/*.prg
 common_legacy/*.prg
-
-libF18_narudzbenica.a
-libF18_string.a
 
 -inc
 -Iinclude

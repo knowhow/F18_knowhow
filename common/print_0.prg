@@ -49,7 +49,7 @@ FUNCTION StartPrint( lUFajl, cF, cDocumentName )
 
    cTekPrinter := gPrinter
 
-   cOutfTXT := IzFMKIni( 'Printeri', 'DirektnoOUTFTXT', 'N' )
+   cOutfTXT := my_get_from_ini( 'Printeri', 'DirektnoOUTFTXT', 'N' )
 
    IF !( lUFajl )
 

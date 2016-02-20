@@ -162,7 +162,7 @@ FUNCTION ld_kartica_plate_za_vise_mjeseci()
 
       IF cRazdvoji == "N"
          ? m
-         ? Lokal( " Vrsta                  Opis         sati/iznos             ukupno" )
+         ? _l( " Vrsta                  Opis         sati/iznos             ukupno" )
          ? m
          cUneto := "D"
          FOR i := 1 TO cLDPolja
@@ -171,9 +171,9 @@ FUNCTION ld_kartica_plate_za_vise_mjeseci()
             IF tippr->uneto == "N" .AND. cUneto == "D"
                cUneto := "N"
                ? m
-               ? Lokal( "UKUPNO NETO:" )
+               ? _l( "UKUPNO NETO:" )
                @ PRow(), nC1 + 8  SAY  wUSati  PICT gpics
-               ?? Lokal( " sati" )
+               ?? _l( " sati" )
                @ PRow(), 60 SAY wUNeto PICT gpici; ?? "", gValuta
                ? m
             ENDIF
@@ -198,7 +198,7 @@ FUNCTION ld_kartica_plate_za_vise_mjeseci()
             ENDIF
          NEXT
          ? m
-         ?  Lokal( "UKUPNO ZA ISPLATU" )
+         ?  _l( "UKUPNO ZA ISPLATU" )
          @ PRow(), 60 SAY wUIznos PICT gpici; ?? "", gValuta
          ? m
          IF PRow() > 31
@@ -221,7 +221,7 @@ FUNCTION ld_kartica_plate_za_vise_mjeseci()
             SELECT ld_rj; HSEEK _ld->idrj; SELECT _ld
             QOut( "RJ:", idrj, ld_rj->naz )
             ? m
-            ? Lokal( " Vrsta                  Opis         sati/iznos             ukupno" )
+            ? _l( " Vrsta                  Opis         sati/iznos             ukupno" )
             ? m
             //
             Scatter( "w" )
@@ -232,7 +232,7 @@ FUNCTION ld_kartica_plate_za_vise_mjeseci()
                IF tippr->uneto == "N" .AND. cUneto == "D"
                   cUneto := "N"
                   ? m
-                  ? Lokal( "UKUPNO NETO:" )
+                  ? _l( "UKUPNO NETO:" )
                   @ PRow(), nC1 + 8  SAY  wUSati  PICT gpics; ?? " sati"
                   @ PRow(), 60 SAY wUNeto PICT gpici; ?? "", gValuta
                   ? m

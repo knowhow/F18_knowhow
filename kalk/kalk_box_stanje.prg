@@ -125,8 +125,8 @@ local picdem:="9999999.999", nR, nC, nTSta := 0, nTUl := 0, nTIzl := 0,;
  aDodPar := {}
  FOR i:=1 TO 6
    cI := ALLTRIM(STR(i))
-   cPomZ := IzFMKINI( "BoxStanje" , "ZaglavljeStanje" + cI , "" , KUMPATH )
-   cPomF := IzFMKINI( "BoxStanje" , "FormulaStanje" + cI   , "" , KUMPATH )
+   cPomZ := my_get_from_ini( "BoxStanje" , "ZaglavljeStanje" + cI , "" , KUMPATH )
+   cPomF := my_get_from_ini( "BoxStanje" , "FormulaStanje" + cI   , "" , KUMPATH )
    IF !EMPTY( cPomF )
      AADD( aDodPar , { cPomZ , cPomF } )
    ENDIF

@@ -223,7 +223,7 @@ FUNCTION use_sql_pkonto()
 
 
 /*
-   use_sql_lokal() => otvori šifarnik lokalizacije sa prilagođenim poljima
+   use_sql__l() => otvori šifarnik lokalizacije sa prilagođenim poljima
 */
 
 FUNCTION use_sql_lokalizacija()

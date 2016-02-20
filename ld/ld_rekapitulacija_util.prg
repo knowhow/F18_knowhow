@@ -1091,13 +1091,13 @@ FUNCTION zagl_rekapitulacija_plata_svi()
    B_ON
 
    IF nMjesec == nMjesecDo
-      ? Lokal( "Firma:" ), gNFirma, "  " + Lokal( "Mjesec:" ), Str( nMjesec, 2 ) + IspisObr()
-      ?? "    " + Lokal( "Godina:" ), Str( nGodina, 4 )
+      ? _l( "Firma:" ), gNFirma, "  " + _l( "Mjesec:" ), Str( nMjesec, 2 ) + IspisObr()
+      ?? "    " + _l( "Godina:" ), Str( nGodina, 4 )
       B_OFF
-      ? IF( gBodK == "1", Lokal( "Vrijednost boda:" ), Lokal( "Vr.koeficijenta:" ) ), Transform( parobr->vrbod, "99999.99999" )
+      ? IF( gBodK == "1", _l( "Vrijednost boda:" ), _l( "Vr.koeficijenta:" ) ), Transform( parobr->vrbod, "99999.99999" )
    ELSE
-      ? Lokal( "Firma:" ), gNFirma, "  " + Lokal( "Za mjesece od:" ), Str( nMjesec, 2 ), "do", Str( nMjesecDo, 2 ) + IspisObr()
-      ?? "    " + Lokal( "Godina:" ), Str( nGodina, 4 )
+      ? _l( "Firma:" ), gNFirma, "  " + _l( "Za mjesece od:" ), Str( nMjesec, 2 ), "do", Str( nMjesecDo, 2 ) + IspisObr()
+      ?? "    " + _l( "Godina:" ), Str( nGodina, 4 )
       B_OFF
    ENDIF
    ?
@@ -1117,13 +1117,13 @@ FUNCTION ZaglJ()
    ?
    B_ON
    IF nMjesec == nMjesecDo
-      ? Lokal( "RJ:" ), cIdRj, ld_rj->naz, Space( 2 ) + Lokal( "Mjesec:" ), Str( nMjesec, 2 ) + IspisObr()
-      ?? Space( 4 ) + Lokal( "Godina:" ), Str( nGodina, 4 )
+      ? _l( "RJ:" ), cIdRj, ld_rj->naz, Space( 2 ) + _l( "Mjesec:" ), Str( nMjesec, 2 ) + IspisObr()
+      ?? Space( 4 ) + _l( "Godina:" ), Str( nGodina, 4 )
       B_OFF
-      ? if( gBodK == "1", Lokal( "Vrijednost boda:" ), Lokal( "Vr.koeficijenta:" ) ), Transform( parobr->vrbod, "99999.99999" )
+      ? if( gBodK == "1", _l( "Vrijednost boda:" ), _l( "Vr.koeficijenta:" ) ), Transform( parobr->vrbod, "99999.99999" )
    ELSE
-      ? Lokal( "RJ:" ), cidrj, ld_rj->naz, "  " + Lokal( "Za mjesece od:" ), Str( nMjesec, 2 ), "do", Str( nMjesecDo, 2 ) + IspisObr()
-      ?? Space( 4 ) + Lokal( "Godina:" ), Str( nGodina, 4 )
+      ? _l( "RJ:" ), cidrj, ld_rj->naz, "  " + _l( "Za mjesece od:" ), Str( nMjesec, 2 ), "do", Str( nMjesecDo, 2 ) + IspisObr()
+      ?? Space( 4 ) + _l( "Godina:" ), Str( nGodina, 4 )
       B_OFF
    ENDIF
 
@@ -1153,15 +1153,15 @@ FUNCTION IspisTP( lSvi )
          cUneto := "N"
          ? cLinija
          IF !lPorNaRekap
-            ? Lokal( "Ukupno:" )
+            ? _l( "Ukupno:" )
             @ PRow(), nC1 + 8  SAY Str( nUSati, 12, 2 )
-            ?? Space( 1 ) + Lokal( "sati" )
+            ?? Space( 1 ) + _l( "sati" )
             @ PRow(), 60 SAY nUNeto PICT gpici
             ?? "", gValuta
          ELSE
-            ? Lokal( "Ukupno:" )
+            ? _l( "Ukupno:" )
             @ PRow(), nC1 + 5  SAY Str( nUSati, 12, 2 )
-            ?? Space( 1 ) + Lokal( "sati" )
+            ?? Space( 1 ) + _l( "sati" )
             @ PRow(), 42 SAY nUNeto PICT gpici; ?? "", gValuta
             @ PRow(), 60 SAY nUNeto * ( por->iznos / 100 ) PICT gpici
             ?? "", gValuta
@@ -1443,7 +1443,7 @@ FUNCTION IspisKred( lSvi )
 FUNCTION PoTekRacunima()
 
    ? cLinija
-   ? Lokal( "ZA ISPLATU:" )
+   ? _l( "ZA ISPLATU:" )
    ? "-----------"
 
    nMArr := Select()
@@ -1451,7 +1451,7 @@ FUNCTION PoTekRacunima()
    ASort( aUkTr,,, {| x, y| x[ 1 ] < y[ 1 ] } )
    FOR i := 1 TO Len( aUkTR )
       IF Empty( aUkTR[ i, 1 ] )
-         ? PadR( Lokal( "B L A G A J N A" ), Len( aUkTR[ i, 1 ] + KRED->naz ) + 1 )
+         ? PadR( _l( "B L A G A J N A" ), Len( aUkTR[ i, 1 ] + KRED->naz ) + 1 )
       ELSE
          HSEEK aUkTR[ i, 1 ]
          ? aUkTR[ i, 1 ], KRED->naz
@@ -1504,8 +1504,8 @@ FUNCTION ProizvTP()
 FUNCTION PrikKBO()
 
    nBO := 0
-   ? Lokal( "Koef. Bruto osnove (KBO):" ), Transform( parobr->k3, "999.99999%" )
-   ?? Space( 1 ), Lokal( "BRUTO OSNOVA = NETO OSNOVA*KBO =" )
+   ? _l( "Koef. Bruto osnove (KBO):" ), Transform( parobr->k3, "999.99999%" )
+   ?? Space( 1 ), _l( "BRUTO OSNOVA = NETO OSNOVA*KBO =" )
    @ PRow(), PCol() + 1 SAY nBo := round2( parobr->k3 / 100 * nUNetoOsnova, gZaok2 ) PICT gpici
    ?
 

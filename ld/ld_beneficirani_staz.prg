@@ -120,8 +120,8 @@ FUNCTION PrikKBOBenef( a_benef )
 
    nBO := 0
 
-   ? Lokal( "Koef. Bruto osnove benef.(KBO):" ), Transform( parobr->k3,"999.99999%" )
-   ? Space( 3 ), Lokal( "BRUTO OSNOVA = NETO OSNOVA.BENEF * KBO =" )
+   ? _l( "Koef. Bruto osnove benef.(KBO):" ), Transform( parobr->k3,"999.99999%" )
+   ? Space( 3 ), _l( "BRUTO OSNOVA = NETO OSNOVA.BENEF * KBO =" )
    @ PRow(), PCol() + 1 SAY nBo := ROUND2( parobr->k3 / 100 * _ben_osn, gZaok2 ) PICT gpici
    ?
 

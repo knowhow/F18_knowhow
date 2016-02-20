@@ -77,7 +77,7 @@ FUNCTION FLLP()
    BoxC()
 
    // ovo je napusteno ...
-   fSaberikol := ( IzFMKIni( 'Svi', 'SaberiKol', 'N' ) == 'D' )
+   fSaberikol := ( my_get_from_ini( 'Svi', 'SaberiKol', 'N' ) == 'D' )
 
    // sinteticki konto
    IF Len( Trim( cidkonto ) ) == 3

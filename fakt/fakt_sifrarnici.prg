@@ -180,8 +180,8 @@ FUNCTION fakt_box_stanje( aStanje, cIdroba )
    aDodPar := {}
    FOR i := 1 TO 6
       cI := AllTrim( Str( i ) )
-      cPomZ := IzFMKINI( "BoxStanje", "ZaglavljeStanje" + cI, "", KUMPATH )
-      cPomF := IzFMKINI( "BoxStanje", "FormulaStanje" + cI, "", KUMPATH )
+      cPomZ := my_get_from_ini( "BoxStanje", "ZaglavljeStanje" + cI, "", KUMPATH )
+      cPomF := my_get_from_ini( "BoxStanje", "FormulaStanje" + cI, "", KUMPATH )
       IF !Empty( cPomF )
          AAdd( aDodPar, { cPomZ, cPomF } )
       ENDIF

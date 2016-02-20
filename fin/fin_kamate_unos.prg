@@ -718,7 +718,7 @@ STATIC FUNCTION ObracV( cIdPartner, fprint, cVarObrac )
                nIznKam := nKKam * nGlavn
             ELSE
                nKStopa := field->stkam / 100
-               cPom777 := IzFmkIni( "KAM", "FormulaZaProstuKamatu", "nGlavn*nKStopa*nPeriod/nExp", KUMPATH )
+               cPom777 := my_get_from_ini( "KAM", "FormulaZaProstuKamatu", "nGlavn*nKStopa*nPeriod/nExp", KUMPATH )
                nIznKam := &( cPom777 )
             ENDIF
 

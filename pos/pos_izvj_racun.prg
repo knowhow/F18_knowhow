@@ -189,7 +189,7 @@ FUNCTION pos_stampa_racuna( cIdPos, cBrDok, lPrepis, cIdVrsteP, dDatumRn, aVezan
 
       // varijanta starog obracuna poreza
       IF gStariObrPor
-         IF IzFMKINI( "POREZI", "PPUgostKaoPPU", "N" ) == "D"
+         IF my_get_from_ini( "POREZI", "PPUgostKaoPPU", "N" ) == "D"
             nMpVBP := nIznosSt / ( 1 + zpp / 100 + ppp / 100 ) / ( 1 + opp / 100 )
             nPPPIznos := nMPVBP * opp / 100
             nPPIznos := ( nMPVBP + nPPPIznos ) * zpp / 100
@@ -282,7 +282,7 @@ FUNCTION pos_stampa_racuna( cIdPos, cBrDok, lPrepis, cIdVrsteP, dDatumRn, aVezan
          nPPP := nPPU := 0
          nPP := 0
          FOR nCnt := 1 TO Len( aPorezi )
-            IF IzFMKIni( "TOPS", "NaRacunuPrikazatiProcentePoreza", "D", KUMPATH ) == "D"
+            IF my_get_from_ini( "TOPS", "NaRacunuPrikazatiProcentePoreza", "D", KUMPATH ) == "D"
                ? " T" + PadR( aPorezi[ nCnt ][ 1 ], 4 )
                ?? " (PPP " + Str( aPorezi[ nCnt ][ 5 ][ 1 ], 2, 0 ) + "%, PPU " + Str( aPorezi[ nCnt ][ 5 ][ 2 ], 2, 0 ) + IF( !fPP, "%)   ", "%, PP " + Str( aPorezi[ nCnt ][ 5 ][ 3 ], 2, 0 ) + "%)" )
                ? Space( 10 )
@@ -577,7 +577,7 @@ FUNCTION StampaPrep( cIdPos, cDatBrDok, aVezani, fEkran, lViseOdjednom, lOnlyFil
          nPPU := tarifa->ppp
       ENDIF
 
-      IF IzFMKINI( "POREZI", "PPUgostKaoPPU", "N" ) == "D"
+      IF my_get_from_ini( "POREZI", "PPUgostKaoPPU", "N" ) == "D"
          nMpVBP := nIznosSt / ( 1 + zpp / 100 + ppp / 100 ) / ( 1 + opp / 100 )
          nPPPIznos := nMPVBP * opp / 100
          nPPIznos := ( nMPVBP + nPPPIznos ) * zpp / 100
@@ -655,7 +655,7 @@ FUNCTION StampaPrep( cIdPos, cDatBrDok, aVezani, fEkran, lViseOdjednom, lOnlyFil
       nPPP := nPPU := 0
       nPP := 0
       FOR nCnt := 1 TO Len ( aPorezi )
-         IF IzFMKIni( "TOPS", "NaRacunuPrikazatiProcentePoreza", "D", KUMPATH ) == "D"
+         IF my_get_from_ini( "TOPS", "NaRacunuPrikazatiProcentePoreza", "D", KUMPATH ) == "D"
             ? " T" + PadR( aPorezi[ nCnt ][ 1 ], 4 )
             ?? " (PPP " + Str( aPorezi[ nCnt ][ 5 ][ 1 ], 2, 0 ) + "%, PPU " + Str( aPorezi[ nCnt ][ 5 ][ 2 ], 2, 0 ) + IF( !fPP, "%)   ", "%, PP " + Str( aPorezi[ nCnt ][ 5 ][ 3 ], 2, 0 ) + "%)" )
             ? Space( 10 )

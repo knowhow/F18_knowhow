@@ -35,10 +35,10 @@ FUNCTION IzvrsBudz()
    PRIVATE cBuIz := "N"
    PRIVATE cPeriod := PadR( "JANUAR - ", 40 )
 
-   PRIVATE nKorRed1 := Val( IzFmkIni( "FinBudzet", "KorRed1", "0", KUMPATH ) )
-   PRIVATE nKorRed2 := Val( IzFmkIni( "FinBudzet", "KorRed2", "0", KUMPATH ) )
-   PRIVATE nKorRed3 := Val( IzFmkIni( "FinBudzet", "KorRed3", "0", KUMPATH ) )
-   PRIVATE nKorRed4 := Val( IzFmkIni( "FinBudzet", "KorRed4", "0", KUMPATH ) )
+   PRIVATE nKorRed1 := Val( my_get_from_ini( "FinBudzet", "KorRed1", "0", KUMPATH ) )
+   PRIVATE nKorRed2 := Val( my_get_from_ini( "FinBudzet", "KorRed2", "0", KUMPATH ) )
+   PRIVATE nKorRed3 := Val( my_get_from_ini( "FinBudzet", "KorRed3", "0", KUMPATH ) )
+   PRIVATE nKorRed4 := Val( my_get_from_ini( "FinBudzet", "KorRed4", "0", KUMPATH ) )
 
    cIdKonto := PadR( "6;", 60 )
    cSpecKonta := PadR( "", 60 )
@@ -51,7 +51,7 @@ FUNCTION IzvrsBudz()
    cSTKI1 := "N"
    cProv := "D"
 
-   PRIVATE cBRZaZ := PadR( IzFMKIni( 'BUDZET', 'BrRedZaZagl', '0', KUMPATH ), 2 )
+   PRIVATE cBRZaZ := PadR( my_get_from_ini( 'BUDZET', 'BrRedZaZagl', '0', KUMPATH ), 2 )
 
    IF gBuIz == "D"
       O_BUIZ

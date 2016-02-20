@@ -339,7 +339,7 @@ do while !EOF().and.pos_doks->IdVd==cIdVd.and.pos_doks->Datum<=cDat1
 		//nPPU := nIzn * (1 - 100 / (100+TARIFA->PPP))
 		//nPPP := (nIzn - nPPU) * (1 - 100 / (100+TARIFA->OPP))
 		//nOsn := nIzn - nPPU - nPPP
-		if IzFMKINI("POREZI","PPUgostKaoPPU","N")=="D"
+		if my_get_from_ini("POREZI","PPUgostKaoPPU","N")=="D"
 		 	nOsn:=nIzn/(1+tarifa->zpp/100+tarifa->ppp/100)/(1+tarifa->opp/100)
 			nPPP:=nOsn*tarifa->opp/100
 			nPP :=(nOsn+nPPP)*tarifa->zpp/100

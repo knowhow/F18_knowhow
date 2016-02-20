@@ -597,7 +597,7 @@ STATIC FUNCTION _show_rekap( cValuta, cFaktBr )
 
       @ PRow(), PCol() + 1 SAY cCTarBr
 
-      cCTarOpis := IzFmkIni( "CarTarife", AllTrim( cCTarBr ), ;
+      cCTarOpis := my_get_from_ini( "CarTarife", AllTrim( cCTarBr ), ;
          "????", KUMPATH )
 
       aTmp := SjeciStr( cCTarOpis, 40 )

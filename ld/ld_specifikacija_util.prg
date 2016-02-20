@@ -298,11 +298,11 @@ FUNCTION ld_specifikacija_po_mjesecima()
 
    P_12CPI
 
-   ?? Space( gnLMarg ); ?? Lokal( "LD: Izvjestaj na dan" ), Date()
+   ?? Space( gnLMarg ); ?? _l( "LD: Izvjestaj na dan" ), Date()
    ? Space( gnLMarg ); IspisFirme( "" )
-   ? Space( gnLMarg ); ?? Lokal( "RJ:" ) + Space( 1 ); B_ON; ?? IF( Empty( cIdRJ ), "SVE", cIdRJ ); B_OFF
-   ?? Space( 2 ) + Lokal( "GODINA: " ); B_ON; ?? cGodina; B_OFF
-   ? Lokal( "RADNIK: " )
+   ? Space( gnLMarg ); ?? _l( "RJ:" ) + Space( 1 ); B_ON; ?? IF( Empty( cIdRJ ), "SVE", cIdRJ ); B_OFF
+   ?? Space( 2 ) + _l( "GODINA: " ); B_ON; ?? cGodina; B_OFF
+   ? _l( "RADNIK: " )
    IF Empty( cIdRadn )
       ?? "SVI"
    ELSE
@@ -312,22 +312,22 @@ FUNCTION ld_specifikacija_po_mjesecima()
       HSEEK RADN->idopsrad
       SELECT ( F_RADN )
       B_ON; ?? cIdRadn + "-" + Trim( naz ) + ' (' + Trim( imerod ) + ') ' + ime; B_OFF
-      ? Lokal( "Br.knjiz: " ); B_ON; ?? brknjiz; B_OFF
-      ?? Lokal( "  Mat.br: " ); B_ON; ?? matbr; B_OFF
-      ?? Lokal( "  R.mjesto: " ); B_ON; ?? rmjesto; B_OFF
+      ? _l( "Br.knjiz: " ); B_ON; ?? brknjiz; B_OFF
+      ?? _l( "  Mat.br: " ); B_ON; ?? matbr; B_OFF
+      ?? _l( "  R.mjesto: " ); B_ON; ?? rmjesto; B_OFF
 
-      ? Lokal( "Min.rad: " ); B_ON; ?? kminrad; B_OFF
-      ?? Lokal( "  Str.spr: " ); B_ON; ?? STRSPR->naz; B_OFF
-      ?? Lokal( "  Opst.stan: " ); B_ON; ?? cOStan; B_OFF
+      ? _l( "Min.rad: " ); B_ON; ?? kminrad; B_OFF
+      ?? _l( "  Str.spr: " ); B_ON; ?? STRSPR->naz; B_OFF
+      ?? _l( "  Opst.stan: " ); B_ON; ?? cOStan; B_OFF
 
-      ? Lokal( "Opst.rada: " ); B_ON; ?? OPS->naz; B_OFF
-      ?? Lokal( "  Dat.zasn.rad.odnosa: " ); B_ON; ?? datod; B_OFF
-      ?? Lokal( "  Pol: " ); B_ON; ?? pol; B_OFF
+      ? _l( "Opst.rada: " ); B_ON; ?? OPS->naz; B_OFF
+      ?? _l( "  Dat.zasn.rad.odnosa: " ); B_ON; ?? datod; B_OFF
+      ?? _l( "  Pol: " ); B_ON; ?? pol; B_OFF
       SELECT MTEMP
    ENDIF
 
    print_lista_2( aKol, {|| FSvaki3() },, gTabela,, ;
-      , Lokal( "Specifikacija primanja po mjesecima" ), ;
+      , _l( "Specifikacija primanja po mjesecima" ), ;
       {|| FFor3() }, IF( gOstr == "D",, -1 ),,,,,, .F. )
 
    SELECT ld

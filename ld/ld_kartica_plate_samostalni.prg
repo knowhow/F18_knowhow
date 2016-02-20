@@ -160,7 +160,7 @@ FUNCTION ld_kartica_plate_samostalni( cIdRj, cMjesec, cGodina, cIdRadn, cObrac, 
 
       // razrada doprinosa ....
 
-      ? cLmSK + cDoprSpace + Lokal( "Obracun doprinosa:" )
+      ? cLmSK + cDoprSpace + _l( "Obracun doprinosa:" )
 
       SELECT dopr
       GO TOP
@@ -240,7 +240,7 @@ FUNCTION ld_kartica_plate_samostalni( cIdRj, cMjesec, cGodina, cIdRadn, cObrac, 
       ENDDO
 
       ? cMainLine
-      ?  cLMSK + Lokal( "UKUPNO ZA ISPLATU" )
+      ?  cLMSK + _l( "UKUPNO ZA ISPLATU" )
       @ PRow(), 60 + Len( cLMSK ) SAY nOsnZaBr PICT gpici
 
       ? cMainLine

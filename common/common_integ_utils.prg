@@ -24,10 +24,10 @@ FUNCTION GetKalkVars( cFirma, cKonto, cPath )
    // firma je uvijek 50
    cFirma := "50"
    // konto prodavnicki
-   cKonto := IzFmkIni( "TOPS", "TopsKalkKonto", "13270", KUMPATH )
+   cKonto := my_get_from_ini( "TOPS", "TopsKalkKonto", "13270", KUMPATH )
    cKonto := PadR( cKonto, 7 )
    // putanja
-   cPath := IzFmkIni( "TOPS", "KalkKumPath", "i:\sigma", KUMPATH )
+   cPath := my_get_from_ini( "TOPS", "KalkKumPath", "i:\sigma", KUMPATH )
 
    RETURN
 
@@ -266,7 +266,7 @@ FUNCTION RptSendEmail( lAuto )
  */
 FUNCTION GetSendVars( cScript, cPSite, cRptFile )
 
-   cScript := IzFmkIni( "Ruby", "Err2Mail", "c:\sigma\err2mail.rb", EXEPATH )
+   cScript := my_get_from_ini( "Ruby", "Err2Mail", "c:\sigma\err2mail.rb", EXEPATH )
    cPSite := AllTrim( Str( gSqlSite ) )
    cRptFile := PRIVPATH + "outf.txt"
 

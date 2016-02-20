@@ -332,7 +332,7 @@ FUNCTION kalk_pripr_key_handler()
       kalk_azuriranje_dokumenta()
       o_kalk_edit()
 
-      IF kalk_pripr->( RecCount() ) == 0 .AND. IzFMKINI( "Indikatori", "ImaU_KALK", "N", PRIVPATH ) == "D"
+      IF kalk_pripr->( RecCount() ) == 0 .AND. my_get_from_ini( "Indikatori", "ImaU_KALK", "N", PRIVPATH ) == "D"
 
          O__KALK
 
@@ -2371,7 +2371,7 @@ FUNCTION kalk_stampa_dokumenta()
       DO WHILE .T.
          IF ( cidvd == "10" .AND. !( ( gVarEv == "2" ) .OR. ( gmagacin == "1" ) ) .OR. ( cidvd $ "11#12#13" ) ) .AND. ( c10Var == "3" )
             gPSOld := gPStranica
-            gPStranica := Val( IzFmkIni( "KALK", "A3_GPSTRANICA", "-20", EXEPATH ) )
+            gPStranica := Val( my_get_from_ini( "KALK", "A3_GPSTRANICA", "-20", EXEPATH ) )
             P_PO_L
          ENDIF
 

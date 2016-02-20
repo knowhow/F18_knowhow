@@ -37,7 +37,7 @@ FUNCTION os_amortizacija_po_kontima()
    cPocinju := "N"
    cFiltSadVr := "0"
    cFiltK1 := Space( 40 )
-   cSamoSpec := IzFMKIni( "OS", "DefaultSamoSpecZaIzv7", "N" )
+   cSamoSpec := my_get_from_ini( "OS", "DefaultSamoSpecZaIzv7", "N" )
    cON := " " // novo!
 
    Box(, 12, 77 )

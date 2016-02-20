@@ -1633,7 +1633,7 @@ STATIC FUNCTION popup_fakt_unos_dokumenta()
          O_FTXT
          select_fakt_pripr()
          GO TOP
-         lDoks2 := ( IzFMKINI( "FAKT", "Doks2", "N", KUMPATH ) == "D" )
+         lDoks2 := ( my_get_from_ini( "FAKT", "Doks2", "N", KUMPATH ) == "D" )
          IF Val( rbr ) <> 1
             MsgBeep( "U pripremi se ne nalazi dokument" )
          ELSE

@@ -26,7 +26,7 @@ Private nMarza,nMarza2,nPRUC,aPorezi
 nMarza:=nMarza2:=nPRUC:=0
 aPorezi:={}
 
-lVoSaTa := ( IzFmkIni("KALK","VodiSamoTarife","N",PRIVPATH)=="D" )
+lVoSaTa := ( my_get_from_ini("KALK","VodiSamoTarife","N",PRIVPATH)=="D" )
 
 nStr:=0
 cIdPartner:=IdPartner; cBrFaktP:=BrFaktP; dDatFaktP:=DatFaktP

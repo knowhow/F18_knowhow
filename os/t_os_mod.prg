@@ -39,7 +39,7 @@ METHOD mMenu()
    LOCAL _tmp
 
    _tmp := fetch_metric( "os_set_epoch", NIL, 0 )
-   // nPom := VAL( IzFmkIni( "SET", "Epoch", "1945", KUMPATH ) )
+   // nPom := VAL( my_get_from_ini( "SET", "Epoch", "1945", KUMPATH ) )
 
    IF _tmp > 0
       SET EPOCH TO ( _tmp )
@@ -47,7 +47,7 @@ METHOD mMenu()
 
    PUBLIC gSQL := "N"
    PUBLIC gCentOn := fetch_metric( "os_set_century_on", NIL, "N" )
-   // IzFmkIni( "SET", "CenturyOn", "N", KUMPATH )
+   // my_get_from_ini( "SET", "CenturyOn", "N", KUMPATH )
 
    IF gCentOn == "D"
       SET CENTURY ON

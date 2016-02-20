@@ -30,7 +30,7 @@ read
 ESC_RETURN K_ESC
 
 _kolicina := 1
-_idtarifa := PADR( IzFMKINI( "KALK", "T24", "N1" ), LEN( _idtarifa ) )
+_idtarifa := PADR( my_get_from_ini( "KALK", "T24", "N1" ), LEN( _idtarifa ) )
 _tprevoz := _tbanktr := _tspedtr := _tcardaz := _tzavtr := "U"
 
 private nTroskovi := 0

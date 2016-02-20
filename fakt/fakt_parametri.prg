@@ -947,8 +947,8 @@ FUNCTION P_WinFakt()
    cZRac4 := PadR( UzmiIzIni( cIniName, 'Varijable', 'ZRacun4', '--', 'READ' ), 45 )
    cZRac5 := PadR( UzmiIzIni( cIniName, 'Varijable', 'ZRacun5', '--', 'READ' ), 45 )
    cZRac6 := PadR( UzmiIzIni( cIniName, 'Varijable', 'ZRacun6', '--', 'READ' ), 45 )
-   cNazivRtm := PadR( IzFmkIni( 'Fakt', 'NazRTM', '', EXEPATH ), 15 )
-   cNazivFRtm := PadR( IzFmkIni( 'Fakt', 'NazRTMFax', '', EXEPATH ), 15 )
+   cNazivRtm := PadR( my_get_from_ini( 'Fakt', 'NazRTM', '', EXEPATH ), 15 )
+   cNazivFRtm := PadR( my_get_from_ini( 'Fakt', 'NazRTMFax', '', EXEPATH ), 15 )
    cPictLoc := PadR( UzmiIzIni( cIniName, 'Varijable', 'LokSlika', '--', 'READ' ), 30 )
    cDN := "D"
 

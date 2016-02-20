@@ -512,28 +512,28 @@ METHOD set_module_gvars()
 
    cSekcija := "SifRoba"
    cVar := "PitanjeOpis"
-   IzFmkIni ( cSekcija, cVar, IzFMkIni( cSekcija, cVar, 'D' ), SIFPATH )
+   my_get_from_ini ( cSekcija, cVar, my_get_from_ini( cSekcija, cVar, 'D' ), SIFPATH )
    cSekcija := "SifRoba"; cVar := "ID_J"
-   IzFmkIni ( cSekcija, cVar, IzFMkIni( cSekcija, cVar, 'N' ), SIFPATH )
+   my_get_from_ini ( cSekcija, cVar, my_get_from_ini( cSekcija, cVar, 'N' ), SIFPATH )
    cSekcija := "SifRoba"; cVar := "VPC2"
-   IzFmkIni ( cSekcija, cVar, IzFMkIni( cSekcija, cVar, 'D' ), SIFPATH )
+   my_get_from_ini ( cSekcija, cVar, my_get_from_ini( cSekcija, cVar, 'D' ), SIFPATH )
    cSekcija := "SifRoba"; cVar := "MPC2"
-   IzFmkIni ( cSekcija, cVar, IzFMkIni( cSekcija, cVar, 'D' ), SIFPATH )
+   my_get_from_ini ( cSekcija, cVar, my_get_from_ini( cSekcija, cVar, 'D' ), SIFPATH )
    cSekcija := "SifRoba"; cVar := "MPC3"
-   IzFmkIni ( cSekcija, cVar, IzFMkIni( cSekcija, cVar, 'D' ), SIFPATH )
+   my_get_from_ini ( cSekcija, cVar, my_get_from_ini( cSekcija, cVar, 'D' ), SIFPATH )
    cSekcija := "SifRoba"; cVar := "PrikId"
-   IzFmkIni ( cSekcija, cVar, IzFMkIni( cSekcija, cVar, 'ID' ), SIFPATH )
+   my_get_from_ini ( cSekcija, cVar, my_get_from_ini( cSekcija, cVar, 'ID' ), SIFPATH )
    cSekcija := "SifRoba"; cVar := "DuzSifra"
-   IzFmkIni ( cSekcija, cVar, IzFMkIni( cSekcija, cVar, '10' ), SIFPATH )
+   my_get_from_ini ( cSekcija, cVar, my_get_from_ini( cSekcija, cVar, '10' ), SIFPATH )
 
    cSekcija := "BarKod"; cVar := "Auto"
-   IzFmkIni ( cSekcija, cVar, IzFMkIni( cSekcija, cVar, 'N' ), SIFPATH )
+   my_get_from_ini ( cSekcija, cVar, my_get_from_ini( cSekcija, cVar, 'N' ), SIFPATH )
    cSekcija := "BarKod"; cVar := "AutoFormula"
-   IzFmkIni ( cSekcija, cVar, IzFMkIni( cSekcija, cVar, 'ID' ), SIFPATH )
+   my_get_from_ini ( cSekcija, cVar, my_get_from_ini( cSekcija, cVar, 'ID' ), SIFPATH )
    cSekcija := "BarKod"; cVar := "Prefix"
-   IzFmkIni ( cSekcija, cVar, IzFMkIni( cSekcija, cVar, '' ), SIFPATH )
+   my_get_from_ini ( cSekcija, cVar, my_get_from_ini( cSekcija, cVar, '' ), SIFPATH )
    cSekcija := "BarKod"; cVar := "NazRTM"
-   IzFmkIni ( cSekcija, cVar, IzFMkIni( cSekcija, cVar, 'barkod' ), SIFPATH )
+   my_get_from_ini ( cSekcija, cVar, my_get_from_ini( cSekcija, cVar, 'barkod' ), SIFPATH )
 
    PUBLIC glDistrib := .F.
    PUBLIC gPovDob := "0"
@@ -547,23 +547,23 @@ METHOD set_module_gvars()
    gRobaBlock := {| Ch| FaRobaBlock( Ch ) }
    gPartnBlock := NIL
 
-   PUBLIC glCij13Mpc := ( IzFmkIni( "FAKT", "Cijena13MPC", "D", KUMPATH ) == "D" )
+   PUBLIC glCij13Mpc := ( my_get_from_ini( "FAKT", "Cijena13MPC", "D", KUMPATH ) == "D" )
 
    PUBLIC glRadNal := .F.
-   glRadNal := ( IzFmkIni( "FAKT", "RadniNalozi", "N", KUMPATH ) == "D" )
+   glRadNal := ( my_get_from_ini( "FAKT", "RadniNalozi", "N", KUMPATH ) == "D" )
 
    PUBLIC gKonvZnWin
-   gKonvZnWin := IzFmkIni( "DelphiRB", "Konverzija", "3", EXEPATH )
+   gKonvZnWin := my_get_from_ini( "DelphiRB", "Konverzija", "3", EXEPATH )
 
-   ::lOpcine := IzFmkIni( "FAKT", "Opcine", "N", SIFPATH ) == "D"
+   ::lOpcine := my_get_from_ini( "FAKT", "Opcine", "N", SIFPATH ) == "D"
 
-   ::lDoks2 := IzFMKINI( "FAKT", "Doks2", "N", KUMPATH ) == "D"
+   ::lDoks2 := my_get_from_ini( "FAKT", "Doks2", "N", KUMPATH ) == "D"
 
-   ::lId_J := IzFmkIni( "SifRoba", "ID_J", "N", SIFPATH ) == "D"
+   ::lId_J := my_get_from_ini( "SifRoba", "ID_J", "N", SIFPATH ) == "D"
 
-   ::lCRoba := ( IzFmkIni( 'CROBA', 'GledajFakt', 'N', KUMPATH ) == 'D' )
+   ::lCRoba := ( my_get_from_ini( 'CROBA', 'GledajFakt', 'N', KUMPATH ) == 'D' )
 
-   ::cRoba_Rj := IzFmkIni( 'CROBA', 'CROBA_RJ', '10#20', KUMPATH )
+   ::cRoba_Rj := my_get_from_ini( 'CROBA', 'CROBA_RJ', '10#20', KUMPATH )
 
    param_racun_na_email( .T. )
 

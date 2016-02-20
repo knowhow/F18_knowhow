@@ -852,7 +852,7 @@ FUNCTION SubKart( lOtvst )
          nKonD2 += nDugDEM; nKonP2 += nPotDEM
 
          IF _fin_params[ "fin_k1" ] .AND. !Len( ck3 ) = 0 .AND. cBrza == "D" .AND. ;
-               IzFMKIni( "FIN", "LimitiPoUgovoru_PoljeK3", "N", SIFPATH ) == "D"
+               my_get_from_ini( "FIN", "LimitiPoUgovoru_PoljeK3", "N", SIFPATH ) == "D"
             nLimit  := Abs( Ocitaj( F_ULIMIT, k3iz256( ck3 ) + cIdPartner, "f_limit" ) )
             nSLimit := Abs( nDugBHD - nPotBHD )
             ? "------------------------------"

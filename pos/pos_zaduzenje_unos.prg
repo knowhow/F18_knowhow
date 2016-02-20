@@ -222,7 +222,7 @@ FUNCTION Zaduzenje
          IF gDuzSifre <> NIL .AND. gDuzSifre > 0
             cDSFINI := AllTrim( Str( gDuzSifre ) )
          ELSE
-            cDSFINI := IzFMKIni( 'SifRoba', 'DuzSifra', '10' )
+            cDSFINI := my_get_from_ini( 'SifRoba', 'DuzSifra', '10' )
          ENDIF
 
          @ m_x + 2, m_y + 5 SAY " Artikal:" GET _idroba PICT "@!S" + cDSFINI ;

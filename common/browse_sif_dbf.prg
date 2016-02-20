@@ -1169,7 +1169,7 @@ FUNCTION NNSifru()
    LOCAL cLast := Chr( 252 ) + Chr( 253 )
    LOCAL nKor := 0
 
-   IF IzFmkIni( "NovaSifraOpc_F8", "PopunjavaPraznine", "N" ) == "D"
+   IF my_get_from_ini( "NovaSifraOpc_F8", "PopunjavaPraznine", "N" ) == "D"
       lPopuni := .T.
    ENDIF
 
@@ -1444,7 +1444,7 @@ FUNCTION NNSifru2()
    IF Alias() <> "ROBA" .OR.  FieldPos( "K1" ) == 0 .OR. !( ( cImeVar := ReadVar() ) == "WID" ) .OR. !Empty( cK1 := Space( Len( K1 ) ) ) .OR. !VarEdit( { { "Unesite K1", "cK1",, "@!", } }, 10, 23, 14, 56, "Odredjivanje nove sifre artikla", "B5" )
       RETURN ( NIL )
    ENDIF
-   cNumDio := IzFMKINI( "ROBA", "NumDio", "SUBSTR(ID,7,3)", SIFPATH )
+   cNumDio := my_get_from_ini( "ROBA", "NumDio", "SUBSTR(ID,7,3)", SIFPATH )
    cPom2   := &( cImeVar )
    nDuz    := Len( cPom2 )
    cPom2   := RTrim( cPom2 )
@@ -1455,7 +1455,7 @@ FUNCTION NNSifru2()
    IF nOrder = 0
       MsgBeep( "Ako ste u mrezi, svi korisnici moraju napustiti FMK. Zatim pritisnite Enter!" )
       MsgO( "Kreiram tag(index) 'BROBA'" )
-      cSort := IzFMKINI( "ROBA", "Sort", "K1+SUBSTR(ID,7,3)", SIFPATH )
+      cSort := my_get_from_ini( "ROBA", "Sort", "K1+SUBSTR(ID,7,3)", SIFPATH )
       INDEX ON &cSort TAG BROBA
       MsgC()
    ENDIF

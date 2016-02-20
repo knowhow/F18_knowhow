@@ -1011,7 +1011,7 @@ STATIC FUNCTION GetVPr( cProd, cPoslovnica )
       RETURN "XXXXX"
    ENDIF
 
-   cRet := IzFmkIni( "VINDIJA", "VPR" + cProd + "_" + cPoslovnica, "xxxx", KUMPATH )
+   cRet := my_get_from_ini( "VINDIJA", "VPR" + cProd + "_" + cPoslovnica, "xxxx", KUMPATH )
 
    IF cRet == "" .OR. cRet == nil
       cRet := "XXXXX"
@@ -1028,7 +1028,7 @@ STATIC FUNCTION GetVPr( cProd, cPoslovnica )
 // -----------------------------------------------------------
 STATIC FUNCTION GetTdKonto( cTipDok, cTip, cPoslovnica )
 
-   cRet := IzFmkIni( "VINDIJA", "TD" + cTipDok + cTip + cPoslovnica, ;
+   cRet := my_get_from_ini( "VINDIJA", "TD" + cTipDok + cTip + cPoslovnica, ;
       "xxxx", KUMPATH )
 
    // primjer:

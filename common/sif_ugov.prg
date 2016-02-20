@@ -115,16 +115,16 @@ STATIC FUNCTION set_a_kol( aImeKol, aKol )
    AAdd( aImeKol, { "KM/EUR", {|| DINDEM }, "DINDEM" } )
 
    IF ( ugov->( FieldPos( "A1" ) ) <> 0 )
-      IF IzFMkIni( 'Fakt_Ugovori', "A1", 'D' ) == "D"
+      IF my_get_from_ini( 'Fakt_Ugovori', "A1", 'D' ) == "D"
          AAdd( aImeKol, { "A1", {|| A1 }, "A1" } )
       ENDIF
-      IF IzFMkIni( 'Fakt_Ugovori', "A2", 'D' ) == "D"
+      IF my_get_from_ini( 'Fakt_Ugovori', "A2", 'D' ) == "D"
          AAdd( aImeKol, { "A2", {|| A2 }, "A2" } )
       ENDIF
-      IF IzFMkIni( 'Fakt_Ugovori', "B1", 'D' ) == "D"
+      IF my_get_from_ini( 'Fakt_Ugovori', "B1", 'D' ) == "D"
          AAdd( aImeKol, { "B1", {|| B1 }, "B1" } )
       ENDIF
-      IF IzFMkIni( 'Fakt_Ugovori', "B2", 'D' ) == "D"
+      IF my_get_from_ini( 'Fakt_Ugovori', "B2", 'D' ) == "D"
          AAdd( aImeKol, { "B2", {|| B2 }, "B2" } )
       ENDIF
    ENDIF
@@ -629,10 +629,10 @@ FUNCTION P_Ugov2( cIdPartner )
    AAdd( ImeKol, { PadC( "Kol.", Len( pickol ) ), {|| Transform( kolicina, pickol ) }, "KOLICINA", {|| .T. }, {|| .T. }, ">" } )
 
    IF rugov->( FieldPos( "K1" ) ) <> 0
-      IF IzFMkIni( 'Fakt_Ugovori', "K2", 'D' ) == "D"
+      IF my_get_from_ini( 'Fakt_Ugovori', "K2", 'D' ) == "D"
          AAdd ( ImeKol, { "K1",  {|| K1 },    "K1", {|| .T. }, {|| .T. }, ">"  } )
       ENDIF
-      IF IzFMkIni( 'Fakt_Ugovori', "K2", 'D' ) == "D"
+      IF my_get_from_ini( 'Fakt_Ugovori', "K2", 'D' ) == "D"
          AAdd ( ImeKol, { "K2",  {|| K2 },    "K2", {|| .T. }, {|| .T. }, ">"  } )
       ENDIF
    ENDIF
@@ -834,10 +834,10 @@ FUNCTION EdUgov2()
 
 
       IF FieldPos( "K1" ) <> 0
-         IF IzFMkIni( 'Fakt_Ugovori', "K1", 'D' ) == "D"
+         IF my_get_from_ini( 'Fakt_Ugovori', "K1", 'D' ) == "D"
             @ m_x + 6, m_y + 2 SAY "K1            " GET _K1 PICT "@!"
          ENDIF
-         IF IzFMkIni( 'Fakt_Ugovori', "K2", 'D' ) == "D"
+         IF my_get_from_ini( 'Fakt_Ugovori', "K2", 'D' ) == "D"
             @ m_x + 7, m_y + 2 SAY "K2            " GET _K2 PICT "@!"
          ENDIF
       ENDIF
@@ -1125,7 +1125,7 @@ STATIC FUNCTION ZaOdgovarajuci()
 // ----------------------------------------------
 FUNCTION IzfUgovor()
 
-   IF IzFMkIni( 'FIN', 'VidiUgovor', 'N' ) == "D"
+   IF my_get_from_ini( 'FIN', 'VidiUgovor', 'N' ) == "D"
       PushWA()
 
       SELECT ( F_UGOV )

@@ -14,7 +14,6 @@
 
 
 
-
 FUNCTION Ptxt( cImeF )
 
    LOCAL cPtxtSw := ""
@@ -25,7 +24,7 @@ FUNCTION Ptxt( cImeF )
    IF gPtxtSw <> nil
       cPtxtSw := gPtxtSw
    ELSE
-      cPTXTSw := R_IniRead ( 'DOS', 'PTXTSW',  "/P", EXEPATH + 'FMK.INI' )
+      cPTXTSw := "/P"
    ENDIF
 
 #ifdef __PLATFORM__WINDOWS

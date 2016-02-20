@@ -665,8 +665,8 @@ STATIC FUNCTION fill_porfakt_data( dok, params )
       add_drntext( "X12", Str( 0 ) )
    ENDIF
 
-   // fakturu stampaj u ne-compatibility modu
-   gPtxtC50 := .F.
+
+   gPtxtC50 := .F. // fakturu stampaj u ne-compatibility modu
    DO CASE
    CASE nSw5 == 0
       gPtxtSw := "/noline /s /l /p"
@@ -674,8 +674,7 @@ STATIC FUNCTION fill_porfakt_data( dok, params )
       gPtxtSw := "/p"
 
    OTHERWISE
-      // citaj ini fajl
-      gPtxtSw := nil
+      gPtxtSw := nil // citaj ini fajl
    ENDCASE
 
 

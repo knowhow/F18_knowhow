@@ -42,8 +42,6 @@ FUNCTION set_global_vars_0()
    PUBLIC gSezona := "    "
    PUBLIC gShemaVF := "B5"
 
-   // counter - za testiranje
-   PUBLIC gCnt1 := 0
    PUBLIC m_x
    PUBLIC m_y
    PUBLIC h[ 20 ]
@@ -63,7 +61,6 @@ FUNCTION set_global_vars_0()
    PUBLIC gArhDir := ""
    PUBLIC gPFont := "Arial"
    PUBLIC gKodnaS := "8"
-   PUBLIC gWord97 := "N"
    PUBLIC g50f := " "
    PUBLIC StaraBoja := SetColor()
    PUBLIC System := .F.
@@ -74,21 +71,12 @@ FUNCTION set_global_vars_0()
    PUBLIC Normal := "GR+/N,R/N+,,,N/W"
    PUBLIC Blink := "R****/W,W/B,,,W/RB"
    PUBLIC Nevid := "W/W,N/N"
-   PUBLIC gVeryBusyInterval
-   PUBLIC gHostOS
-
-#ifdef __WINDOWS
-   gHostOS := "Linux"
-#else
-   gHostOS := "WindowsXP"
-#endif
 
    PUBLIC cBteksta
    PUBLIC cBokvira
    PUBLIC cBnaslova
    PUBLIC cBshema := "B1"
-   // ne koristi lokale
-   PUBLIC gLokal := "0"
+
    // pdf stampa
    PUBLIC gPDFPrint := "N"
    PUBLIC gPDFPAuto := "D"
@@ -182,7 +170,6 @@ FUNCTION set_global_vars_1( fSve )
       PUBLIC gPTKONV := "0 "
       PUBLIC gPicSif := "V", gcDirekt := "V", gShemaVF := "B5", gSKSif := "D"
       PUBLIC gKodnaS := "8"
-      PUBLIC gWord97 := "N"
       PUBLIC g50f := " "
 
    ENDIF
@@ -201,9 +188,7 @@ FUNCTION set_global_vars_1( fSve )
       Rpar( "Ad", @gArhDir )
       Rpar( "FO", @gPFont )
       Rpar( "KS", @gKodnaS )
-      Rpar( "W7", @gWord97 )
       Rpar( "5f", @g50f )
-      Rpar( "L8", @gLokal )
       Rpar( "pR", @gPDFPrint )
       Rpar( "pV", @gPDFViewer )
       Rpar( "pA", @gPDFPAuto )
@@ -336,9 +321,7 @@ FUNCTION IniGParam2()
       Rpar( "Ad", @gArhDir )
       Rpar( "FO", @gPFont )
       Rpar( "KS", @gKodnaS )
-      Rpar( "W7", @gWord97 )
       Rpar( "5f", @g50f )
-      Rpar( "L8", @gLokal )
       Rpar( "pR", @gPDFPrint )
       Rpar( "pV", @gPDFViewer )
       Rpar( "pA", @gPDFPAuto )

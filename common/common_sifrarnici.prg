@@ -69,13 +69,7 @@ FUNCTION opci_sifarnici()
       AAdd( opcexe, {|| P_fakt_objekti() } )
    ENDIF
 
-   // lokalizacija
-   gLokal := AllTrim( gLokal )
 
-   IF gLokal <> "0"
-      AAdd( opc, "L. lokalizacija" )
-      AAdd( opcexe, {|| P_Lokal() } )
-   ENDIF
 
    open_sif_tables_1()
 

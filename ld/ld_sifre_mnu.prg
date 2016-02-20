@@ -59,12 +59,6 @@ FUNCTION ld_opci_sifrarnici()
       AAdd( _opcexe, {|| P_fakt_objekti() } )
    ENDIF
 
-   gLokal := AllTrim( gLokal )
-
-   IF gLokal <> "0"
-      AAdd( _opc, lokal( "L. lokalizacija" ) )
-      AAdd( _opcexe, {|| P_Lokal() } )
-   ENDIF
 
    f18_menu( "op", .F., _izbor, _opc, _opcexe )
 

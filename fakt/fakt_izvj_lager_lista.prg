@@ -29,8 +29,7 @@ FUNCTION fakt_lager_lista()
    PRIVATE nGrZn := 99
    PRIVATE cLastIdRoba := ""
 
-   // testni counter globalna varijabla
-   gCnt1 := 0
+
 
    lBezUlaza := ( IzFMKINI( "IZVJESTAJI", "BezUlaza", "N", KUMPATH ) == "D" )
 

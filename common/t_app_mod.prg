@@ -272,27 +272,17 @@ METHOD gParams()
    ENDIF
 
    gPtkonv := PadR( gPtkonv, 2 )
-   gLokal := PadR( gLokal, 2 )
-   @ m_x + 3, m_y + 2 SAY "Konverzija znakova BEZ, 7-852, 7-A, 852-7, 852-A"
-   @ m_x + 4, m_y + 2 SAY "                    0  / 1   /  2  / 3   /   4  "  GET gPTKonv PICT "@!" VALID subst( gPtkonv, 2, 1 ) $ " 1"
+
    @ m_x + 6, m_y + 2 SAY "Unos podataka u sifrarnike velika/mala slova/konv.u 852 (V/M/8)"  GET gPicSif VALID gpicsif $ "VM8" PICT "@!"
    @ m_x + 7, m_y + 2 SAY "Stroga kontrola ispravki/brisanja sifara     (D/N)"  GET gSKSif VALID gSKSif $ "DN" PICT "@!"
    @ m_x + 8, m_y + 2 SAY "Direktorij pomocne kopije podataka" GET gArhDir PICT "@S20"
    @ m_x + 9, m_y + 2 SAY "Default odgovor na pitanje 'Izlaz direktno na printer?' (D/N/V/E)" GET gcDirekt VALID gcDirekt $ "DNVER" PICT "@!"
    @ m_x + 10, m_y + 2 SAY "Shema boja za prikaz na ekranu 'V' (B1/B2/.../B7):" GET gShemaVF
-   @ m_x + 11, m_y + 2 SAY "Windows font:" GET gPFont
-   @ m_x + 12, m_y + 2 SAY "Kodna strana:" GET gKodnaS VALID gKodnaS $ "78" PICT "9"
-   @ m_x + 12, Col() + 2 SAY "Word 97  D/N:" GET gWord97 VALID gWord97 $ "DN" PICT "@!"
    @ m_x + 12, Col() + 2 SAY "Zaok 50f (5):" GET g50f    VALID g50f    $ " 5" PICT "9"
    @ m_x + 14, m_y + 2 SAY "Omoguciti kolor-prikaz? (D/N)" GET gFKolor VALID gFKolor $ "DN" PICT "@!"
    @ m_x + 15, Col() + 2 SAY "SQL log ? (D/N)" GET gSql PICT "@!"
 
-   @ m_x + 16, m_y + 2 SAY "PDV rezim rada? (D/N)" GET gPDV PICT "@!" VALID gPDV $ "DN"
-
-   @ m_x + 17, m_y + 2 SAY "Lokalizacija 0/hr/ba/en/sr " GET gLokal ;
-      VALID gLokal $ "0 #hr#ba#sr#en" ;
-
-      @ m_x + 18, m_y + 2 SAY "PDF stampa (N/D/X)?" GET gPDFPrint VALID {|| gPDFPrint $ "DNX" .AND. if( gPDFPrint $ "XD", pdf_box(), .T. ) } PICT "@!"
+   @ m_x + 18, m_y + 2 SAY "PDF stampa (N/D/X)?" GET gPDFPrint VALID {|| gPDFPrint $ "DNX" .AND. if( gPDFPrint $ "XD", pdf_box(), .T. ) } PICT "@!"
 
    @ m_x + 20, m_y + 2 SAY "Ispravka FMK.INI (D/S/P/K/M/N)" GET cFMKINI VALID cFMKINI $ "DNSPKM" PICT "@!"
    @ m_x + 20, m_y + 36 SAY "M - FMKMREZ"
@@ -338,10 +328,8 @@ METHOD gParams()
       Wpar( "Ad", Trim( gArhDir ) )
       Wpar( "FO", Trim( gPFont ) )
       Wpar( "KS", gKodnaS )
-      Wpar( "W7", gWord97 )
       Wpar( "5f", g50f )
       Wpar( "pR", gPDFPrint )
-      WPar( "L8", AllTrim( gLokal ) )
    ENDIF
 
 

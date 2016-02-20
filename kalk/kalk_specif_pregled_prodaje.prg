@@ -250,7 +250,7 @@ FUNCTION PregProdaje()
    ENDIF
 
    aGr := {}
-   StampaTabele( aKol,,, gTabela,,,, IF( lPA, {|| ForPPr() }, {|| ForPPr2() } ), ;
+   print_lista_2( aKol,,, gTabela,,,, IF( lPA, {|| ForPPr() }, {|| ForPPr2() } ), ;
       IF( gOstr == "D",, -1 ),,,,,, .F. )
 
    ?

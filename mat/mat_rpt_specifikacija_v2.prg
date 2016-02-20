@@ -407,7 +407,7 @@ FUNCTION IArtPoPogonima()
       ? "DATUM  : " + SrediDat( Date() )
       ? "POGONI : " + IF( Empty( qqPartner ), "SVI", Trim( qqPartner ) )
 
-      StampaTabele( aKol, {|| FSvaki2s() },, gTabela,, ;
+      print_lista_2( aKol, {|| FSvaki2s() },, gTabela,, ;
          , "Specifikacija svih artikala - pregled za period od " + DToC( dod ) + " do " + DToC( ddo ), ;
          {|| FFor2s() }, IF( gOstr == "D",, -1 ),,,,, )
       FF
@@ -455,7 +455,7 @@ FUNCTION IArtPoPogonima()
       ? "DATUM  : " + SrediDat( Date() )
       ? "ARTIKAL: " + cIdRoba + " - " + ROBA->naz
 
-      StampaTabele( aKol, {|| FSvaki1s() },, gTabela,, ;
+      print_lista_2( aKol, {|| FSvaki1s() },, gTabela,, ;
          , "Specifikacija artikla - pregled po pogonima za period od " + DToC( dod ) + " do " + DToC( ddo ), ;
          {|| FFor1s() }, IF( gOstr == "D",, -1 ),,,,, )
       FF

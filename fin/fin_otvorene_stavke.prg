@@ -2341,7 +2341,7 @@ FUNCTION StAz()
    GO TOP
    START PRINT CRET
 
-   StampaTabele( aKol,,, 0,, ;
+   print_lista_2( aKol,,, 0,, ;
       , "Rezultati asistenta otvorenih stavki za: " + idkonto + "/" + idpartner + " na datum:" + DToC( Date() ) )
 
    ENDPRINT

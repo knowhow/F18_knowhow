@@ -1060,7 +1060,7 @@ FUNCTION I_ListaUg()
    SELECT ROBA
    GO TOP
 
-   StampaTabele( aKol, {|| ZaOdgovarajuci() },, gTabela,,, ;
+   print_lista_2( aKol, {|| ZaOdgovarajuci() },, gTabela,,, ;
       "PREGLED UGOVORA ZA " + cFiltTrz, ;
       {|| OdgovaraLi() }, iif( gOstr == "D",, -1 ),, lLin,,, )
 

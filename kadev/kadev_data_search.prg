@@ -618,7 +618,7 @@ FUNCTION EdK_02()
          SELECT ( nObl )
       ENDIF
 
-      Izlaz( "Pregled evidencije na dan " + DToC( Date() ) + " godine.", "pregled",, .F. )
+      print_lista( "Pregled evidencije na dan " + DToC( Date() ) + " godine.", "pregled",, .F. )
 
       IF cDN == "D"
          ASize( ImeKol, Len( imekol ) -1 )

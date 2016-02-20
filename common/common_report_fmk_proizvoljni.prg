@@ -242,7 +242,7 @@ STATIC FUNCTION P_ZagProIzv( cId, dx, dy, lSamoStampaj )
       QOPodv( "Izvjestaj " + cBrI + "(" + Trim( DoHasha( IZVJE->naz ) ) + ") - definicija zaglavlja izvjestaja" )
       QOPodv( "ZAGLI.DBF, (KUMPATH='" + Trim( KUMPATH ) + "')" )
       ?
-      Izlaz(,,, .F., .T. )
+      print_lista(,,, .F., .T. )
       RETURN
    ENDIF
 
@@ -993,7 +993,7 @@ FUNCTION StTabPI()
 
    PRIVATE uTekSuma := 0
 
-   StampaTabele( aKol, {|| FSvakiPI() },, gTabela,,,, {|| FForPI() }, IF( gOstr == "D",, -1 ),,,,, )
+   print_lista_2( aKol, {|| FSvakiPI() },, gTabela,,,, {|| FForPI() }, IF( gOstr == "D",, -1 ),,,,, )
 
    IF nBrRedStr > -99
       gPO_Port()

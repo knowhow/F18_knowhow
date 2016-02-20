@@ -317,7 +317,7 @@ STATIC FUNCTION stampa_pregleda_naljepnica( index_sort )
 
    START PRINT CRET
 
-   StampaTabele( aKol, NIL, NIL, _table_type, NIL, NIL, "PREGLED BAZE PRIPREMLJENIH NALJEPNICA", , , , , )
+   print_lista_2( aKol, NIL, NIL, _table_type, NIL, NIL, "PREGLED BAZE PRIPREMLJENIH NALJEPNICA", , , , , )
 
    ENDPRINT
 

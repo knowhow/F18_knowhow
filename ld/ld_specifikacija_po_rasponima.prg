@@ -210,7 +210,7 @@ FUNCTION ld_specifikacija_po_rasponima_primanja()
    ?? "  Mjesec:", Str( cMjesec, 2 ) + IspisObr()
    ?? "    Godina:", Str( cGodina, 5 )
 
-   StampaTabele( aKol, {|| NIL },, gTabela,, ;
+   print_lista_2( aKol, {|| NIL },, gTabela,, ;
       , "Specifikacija po rasponima primanja", ;
       {|| filter_specifikacija_raspon() }, IF( gOstr == "D",, -1 ),,,,, )
 

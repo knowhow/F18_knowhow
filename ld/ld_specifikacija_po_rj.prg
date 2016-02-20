@@ -197,7 +197,7 @@ FUNCTION ld_specifikacija_po_rj()
    SELECT LDT22
    GO TOP
 
-   StampaTabele( aKol,,, gTabela,, ;
+   print_lista_2( aKol,,, gTabela,, ;
       , "SPECIFIKACIJA PRIMANJA PO RADNIM JEDINICAMA", ;
       {|| formula_izvjestaja() }, IF( gOstr == "D",, -1 ),,,,, )
 

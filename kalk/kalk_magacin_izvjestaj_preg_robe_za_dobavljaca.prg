@@ -82,7 +82,7 @@ FUNCTION PRobDob()
       ? "PREGLED ROBE OD DOBAVLJACA ZA PERIOD OD", dOD, "DO", dDo
       ? "DOBAVLJAC:", cIdPartner, "-", PARTN->naz
       ?
-      StampaTabele( aKol, {|| FSvakiPRD() },, gTabela,, ;
+      print_lista_2( aKol, {|| FSvakiPRD() },, gTabela,, ;
          ,, ;
          {|| FForPRD1() }, IF( gOstr == "D",, -1 ),,,,, )
       FF
@@ -111,7 +111,7 @@ FUNCTION PRobDob()
       ? "DOBAVLJAC:", cIdPartner, "-", PARTN->naz
       ? "ROBA:", cIdRoba, "-", Left( ROBA->naz, 40 )
       ?
-      StampaTabele( aKol, {|| FSvakiPRD() },, gTabela,, ;
+      print_lista_2( aKol, {|| FSvakiPRD() },, gTabela,, ;
          ,, ;
          {|| FForPRD2() }, IF( gOstr == "D",, -1 ),,,,, )
       FF
@@ -133,11 +133,11 @@ FUNCTION TekRec2()
    RETURN ( nil )
 
 
-// Predvidjeno za dodatnu obradu slogova - koristi je StampaTabele()
+// Predvidjeno za dodatnu obradu slogova - koristi je print_lista_2()
 FUNCTION FSvakiPRD()
    RETURN
 
-// Obrada podataka - koristi je StampaTabele()
+// Obrada podataka - koristi je print_lista_2()
 // return .t. ako se slog prikazuje, .f. - ako se ne prikazuje u tabeli
 FUNCTION FForPRD1()
 
@@ -195,7 +195,7 @@ FUNCTION FForPRD1()
    RETURN ( nUlaz <> 0 .OR. lIzProsleGod )
 
 
-// Obrada podataka - koristi je StampaTabele()
+// Obrada podataka - koristi je print_lista_2()
 // return .t. ako se slog prikazuje, .f. - ako se ne prikazuje u tabeli
 FUNCTION FForPRD2()
 

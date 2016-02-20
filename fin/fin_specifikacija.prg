@@ -2532,7 +2532,7 @@ FUNCTION getmjesto( cMjesto )
 
 
 
-/*  Funkcija koju koristi StampaTabele()
+/*  Funkcija koju koristi print_lista_2()
  */
 
 STATIC FUNCTION FFor1()

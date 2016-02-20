@@ -70,7 +70,7 @@ SET ORDER TO TAG "4"
 SET FILTER TO &aUsl1 .and. &aUslF
 
 
-// priprema matrice aKol za f-ju StampaTabele()
+// priprema matrice aKol za f-ju print_lista_2()
 // --------------------------------------------
 aKol:={}                                       
 nKol:=0
@@ -119,7 +119,7 @@ ELSE
 ENDIF
 ?
 
-StampaTabele(aKol,{|| FSvaki1()},,gTabela,,;
+print_lista_2(aKol,{|| FSvaki1()},,gTabela,,;
      IF(gPrinter=="L","L4",),"Pregled koristenja prava na godisnji odmor za "+cGodina+". godinu",;
                              {|| FFor1()},IF(gOstr=="D",,-1),,,,,)
 
@@ -208,7 +208,7 @@ GO TOP
 SELECT (F_POM)
 SET FILTER TO &aUsl1
 
-// priprema matrice aKol za f-ju StampaTabele()
+// priprema matrice aKol za f-ju print_lista_2()
 // --------------------------------------------
 aKol := {}
 nKol := 0
@@ -240,7 +240,7 @@ ENDIF
 IspisFirme("")
 ?
 
-StampaTabele( aKol,{|| FSvaki2()},,gTabela,,;
+print_lista_2( aKol,{|| FSvaki2()},,gTabela,,;
        IF(gPrinter=="L","L4",),"Pregled radnog staza u firmi",;
                                {|| FFor2()},IF(gOstr=="D",,-1),,,,,)
 

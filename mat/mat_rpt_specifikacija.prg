@@ -125,7 +125,7 @@ FUNCTION PoMjeTros()
    ? "DATUM:", SrediDat( Date() )
    ? "USLOV ZA VRSTU NALOGA:" + IF( Empty( qqIDVN ), "SVI NALOZI", Trim( qqIDVN ) )
 
-   StampaTabele( aKol, {|| FSvaki1() },, gTabela,, ;
+   print_lista_2( aKol, {|| FSvaki1() },, gTabela,, ;
       , "Isporuceni asortiman - pregled po kupcima za period od " + DToC( ddatod ) + " do " + DToC( ddatdo ), ;
       {|| FFor1() }, IF( gOstr == "D",, -1 ),,,,, )
 
@@ -252,7 +252,7 @@ FUNCTION CArDob()
    ? "DATUM:", SrediDat( Date() )
    ? "USLOV ZA VRSTU NALOGA:" + IF( Empty( qqIDVN ), "SVI NALOZI", Trim( qqIDVN ) )
 
-   StampaTabele( aKol, {|| FSvaki1() },, gTabela,, ;
+   print_lista_2( aKol, {|| FSvaki1() },, gTabela,, ;
       , "Pregled cijena za " + qqRoba + "-" + Trim( ROBA->naz ) + " za period od " + DToC( ddatod ) + " do " + DToC( ddatdo ), ;
       {|| FFor2() }, IF( gOstr == "D",, -1 ),,,,,, .F. )
 

@@ -903,7 +903,7 @@ _arr := { ;
         }
 go top
 
-StampaTabele( _arr, , 2, gTabela, {|| .t. }, "4", "REKAPITULACIJA UPLATA", {|| .t. } )
+print_lista_2( _arr, , 2, gTabela, {|| .t. }, "4", "REKAPITULACIJA UPLATA", {|| .t. } )
 
 ENDPRINT
 

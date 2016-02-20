@@ -326,7 +326,7 @@ FUNCTION ld_specifikacija_po_mjesecima()
       SELECT MTEMP
    ENDIF
 
-   StampaTabele( aKol, {|| FSvaki3() },, gTabela,, ;
+   print_lista_2( aKol, {|| FSvaki3() },, gTabela,, ;
       , Lokal( "Specifikacija primanja po mjesecima" ), ;
       {|| FFor3() }, IF( gOstr == "D",, -1 ),,,,,, .F. )
 

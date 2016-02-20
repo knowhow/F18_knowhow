@@ -621,7 +621,7 @@ STATIC FUNCTION show_rpt()
 
    ?? rpt_lm()
    ?? Space( RPT_RI )
-   cPom :=  PadR( "51. PDV obračunat na izlaz (dobra i usluge) ",  RPT_W2 - RPT_BOLD_DELTA ) + Transform( i_pdv_uk, PIC_IZN() )
+   cPom :=  PadR( "51. PDV obračunat na print_lista(dobra i usluge) ",  RPT_W2 - RPT_BOLD_DELTA ) + Transform( i_pdv_uk, PIC_IZN() )
    B_ON
    ??U PadL( cPom, RPT_COL - RPT_RI - RPT_BOLD_DELTA + 1 )
    B_OFF

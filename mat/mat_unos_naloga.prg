@@ -190,7 +190,7 @@ STATIC FUNCTION mat_edit_priprema( fNovi )
    @  m_x + 14, m_y + 2  SAY "Artikal " GET _IdRoba PICT "@!" ;
       VALID  V_Roba( fnovi )
 
-   @  m_x + 16, m_y + 2  SAY "Ulaz/Izlaz (1/2):" GET _U_I VALID  V_UI()
+   @  m_x + 16, m_y + 2  SAY "Ulaz/print_lista(1/2):" GET _U_I VALID  V_UI()
 
    @ m_x + 16, m_y + 32 GET _Kolicina PICTURE PicKol VALID V_Kol( fnovi )
 

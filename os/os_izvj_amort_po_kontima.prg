@@ -201,13 +201,13 @@ FUNCTION os_amortizacija_po_kontima()
 
    IF cSamoSpec == "D"
 
-      StampaTabele( aKol,,, gTabela,, ;
+      print_lista_2( aKol,,, gTabela,, ;
          ,, ;
          {|| FFor1s() }, IF( gOstr == "D",, -1 ),,,,, )
 
    ELSE
 
-      StampaTabele( aKol,,, gTabela,, ;
+      print_lista_2( aKol,,, gTabela,, ;
          ,, ;
          {|| FFor1() }, IF( gOstr == "D",, -1 ),,,,, )
 

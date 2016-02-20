@@ -367,7 +367,7 @@ FUNCTION init_printer() // procitaj gPrinter, gpini,  postavi shift F2 kao hotke
 
 
 // ---------------------------------
-// FMK_LIB_VER - defined in fmk.ch
+// F18_LIB_VER - defined in fmk.ch
 // ---------------------------------
-FUNCTION fmklibver()
-   RETURN FMK_LIB_VER
+FUNCTION f18_lib_ver()
+   RETURN F18_LIB_VER

@@ -45,7 +45,7 @@ FUNCTION crtaj_naslovni_ekran( fBox )
 
    @ 0, 2 SAY '<ESC> Izlaz' COLOR gColorInvert
    @ 0, Col() + 2 SAY Date() COLOR gColorInvert
-   @ _max_rows - 1, _max_cols - 16  SAY fmklibver()
+   @ _max_rows - 1, _max_cols - 16  SAY f18_lib_ver()
 
    DispBox( 2, 0, 4, _max_cols - 1, B_DOUBLE + BOX_CHAR_BACKGROUND_HEAD, NORMAL )
 

@@ -12,9 +12,9 @@
 #include "f18.ch"
 
 
-FUNCTION set_global_vars_0()
+PROCEDURE set_global_vars_0()
 
-   info_bar( "vars", "set_global_vars_0" )
+   info_bar( "init", "set_global_vars_0" )
    PUBLIC ZGwPoruka := ""
    PUBLIC GW_STATUS := "-"
    PUBLIC GW_HANDLE := 0
@@ -46,8 +46,6 @@ FUNCTION set_global_vars_0()
    PUBLIC m_y
    PUBLIC h[ 20 ]
    PUBLIC lInstal := .F.
-   // .t. - korisnik je SYSTEM
-   PUBLIC System
    PUBLIC aRel := {}
    PUBLIC cDirRad
    PUBLIC cDirSif
@@ -65,7 +63,6 @@ FUNCTION set_global_vars_0()
    PUBLIC StaraBoja := SetColor()
    PUBLIC System := .F.
    PUBLIC gGlBaza := ""
-   PUBLIC gSQL
    PUBLIC gSqlLogBase
    PUBLIC gColorInvert  := "N/W,R/N+,,,R/B+"
    PUBLIC Normal := "GR+/N,R/N+,,,N/W"
@@ -112,19 +109,19 @@ FUNCTION set_global_vars_0()
 
    PUBLIC gRj         := "N"
    PUBLIC gReadOnly   := .F.
-   PUBLIC gSQL        := "N"
    PUBLIC gOModul     := NIL
    PUBLIC cDirPriv    := ""
    PUBLIC cDirRad     := ""
    PUBLIC cDirSif     := ""
    PUBLIC glBrojacPoKontima := .T.
 
-
    init_print_variables() // setuje globalne varijable printera
    set_ptxt_sekvence()
    set_global_vars_roba()
 
-   RETURN .T.
+   info_bar( "init", "set_global_vars_0 end" )
+
+   RETURN
 
 
 FUNCTION set_ptxt_sekvence()
@@ -284,59 +281,6 @@ FUNCTION set_global_vars_roba()
 
    RETURN .T.
 
-/*! IniGParam2(lSamoKesiraj)
- *  \brief Ucitava globalne parametre gPTKonv
- *  Prvo ucitava "p?" koji je D ako zelimo ucitavati globalne parametre iz PRIVDIR
- *  \todo Ocigledno da je ovo funkcija za eliminaciju ...
- */
-
-FUNCTION IniGParam2()
-
-   LOCAL cPosebno := "N"
-
-   O_PARAMS
-   PUBLIC gMeniSif := .F.
-   PRIVATE cSection := "1"
-   PRIVATE cHistory := " "
-   PRIVATE aHistory := {}
-   RPar( "p?", @cPosebno )
-
-   SELECT params
-   USE
-
-   IF ( cPosebno == "D" )
-
-      O_GPARAMSP
-      SEEK "1"
-
-
-      Rpar( "pt", @gPTKonv )
-      Rpar( "pS", @gPicSif )
-      Rpar( "SK", @gSKSif )
-      Rpar( "DO", @gcDirekt )
-      Rpar( "FK", @gFKolor )
-      Rpar( "S9", @gSQL )
-      gSQL := my_get_from_ini( "Svi", "SQLLog", "N", KUMPATH )
-      Rpar( "SB", @gShemaVF )
-      Rpar( "Ad", @gArhDir )
-      Rpar( "FO", @gPFont )
-      Rpar( "KS", @gKodnaS )
-      Rpar( "5f", @g50f )
-      Rpar( "pR", @gPDFPrint )
-      Rpar( "pV", @gPDFViewer )
-      Rpar( "pA", @gPDFPAuto )
-      Rpar( "dP", @gDefPrinter )
-      Rpar( "oP", @gOOPath )
-      Rpar( "oW", @gOOWriter )
-      Rpar( "oS", @gOOSpread )
-      Rpar( "oJ", @gJavaPath )
-      Rpar( "jS", @gJavaStart )
-      Rpar( "jR", @gJODRep )
-      SELECT ( F_GPARAMSP )
-      USE
-   ENDIF
-
-   RETURN .T.
 
 
 

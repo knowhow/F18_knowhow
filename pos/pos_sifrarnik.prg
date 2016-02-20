@@ -44,11 +44,11 @@ FUNCTION pos_get_mpc()
    cField := pos_get_mpc_field()
 
    cQry := "SELECT " + cField + " FROM fmk.roba "
-   cQry += "WHERE id = " + sql_quote( roba->id )         
-   
+   cQry += "WHERE id = " + sql_quote( roba->id )
+
    oData := _sql_query( my_server(), cQry )
- 
-   IF !is_var_objekat_tpquery( oData ) 
+
+   IF !is_var_objekat_tpquery( oData )
       MsgBeep( "Problem sa SQL upitom !" )
    ELSE
       IF oData:LastRec() > 0 .AND. VALTYPE( oData:FieldGet(1) ) == "N"
@@ -64,7 +64,7 @@ STATIC FUNCTION pos_get_mpc_field()
 
    LOCAL cField := "mpc"
    LOCAL cSet := AllTrim( gSetMPCijena )
-  
+
    IF cSet <> "1"
        cField := cField + cSet
    ENDIF
@@ -232,7 +232,7 @@ FUNCTION P_MJTRUR( cId, dx, dy )
 
 FUNCTION EdOsob()
 
-   LOCAL System := ( KLevel < L_UPRAVN )
+   LOCAL nSystemLevel := ( KLevel < L_UPRAVN )
    LOCAL nVrati := DE_CONT
    LOCAL _rec
 
@@ -245,7 +245,7 @@ FUNCTION EdOsob()
          nVrati := DE_CONT
       ELSE
 
-         IF System
+         IF nSystemLevel
 
             // setuj varijable globalne
             set_global_memvars_from_dbf()
@@ -277,7 +277,7 @@ FUNCTION EdOsob()
          nVrati := DE_CONT
       ELSE
 
-         IF System
+         IF nSystemLevel
 
             set_global_memvars_from_dbf()
             _korsif := CryptSC( _korsif )
@@ -287,7 +287,7 @@ FUNCTION EdOsob()
                _korsif := CryptSC( _korsif )
                // daj mi iz globalnih varijabli
                _rec := get_dbf_global_memvars()
-					
+
                update_rec_server_and_dbf( Alias(), _rec, 1, "FULL" )
 
                nVrati := DE_REFRESH
@@ -302,7 +302,7 @@ FUNCTION EdOsob()
          MsgBeep( "Nemate ovlastenje za ovu opciju !" )
          nVrati := DE_CONT
       ELSE
-         IF System
+         IF nSystemLevel
             IF Pitanje(, "Izbrisati korisnika " + Trim( naz ) + ":" + CryptSC( korsif ) + " D/N ?", "N" ) == "D"
 
                SELECT osob

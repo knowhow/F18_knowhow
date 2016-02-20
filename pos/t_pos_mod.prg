@@ -429,7 +429,6 @@ METHOD set_module_gvars()
    ENDIF
 
    PUBLIC gSQLKom
-   gSQL := my_get_from_ini( "Svi", "SQLLog", "N", KUMPATH )
    gSQLLogBase := my_get_from_ini( "SQL", "SQLLogBase", "c:\sigma", EXEPATH )
 
    gSamoProdaja := fetch_metric( "SamoProdaja", nil, gSamoProdaja )

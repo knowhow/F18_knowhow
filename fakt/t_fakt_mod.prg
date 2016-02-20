@@ -539,7 +539,6 @@ METHOD set_module_gvars()
    PUBLIC gPovDob := "0"
 
    PUBLIC gUVarPP := "M"
-   gSQL := "N"
 
    PUBLIC gModul := "FAKT"
    gGlBaza := "FAKT.DBF"

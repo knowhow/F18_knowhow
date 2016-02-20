@@ -12,8 +12,6 @@
 #include "f18.ch"
 
 STATIC s_mainThreadID
-// STATIC s_threadDbfsID
-
 
 STATIC s_psqlServer := NIL
 THREAD STATIC s_psqlServerDbfThread := NIL // svaka thread konekcija zasebna
@@ -71,11 +69,9 @@ FUNCTION f18_init_app( arg_v )
 
    set_f18_home_root()
    set_global_vars_0()
-
    f18_error_block()
    set_screen_dimensions()
 
-   // set_global_screen_vars()
 
    IF no_sql_mode()
       set_f18_home( "f18_test" )
@@ -266,9 +262,9 @@ FUNCTION set_screen_dimensions()
       maxcols( 150 )
 
       IF SetMode( maxrows() + INFO_BAR_ROWS,  maxcols() )
-         log_write( "setovanje ekrana: setovan ekran po rezoluciji" )
+         ?E "setovanje ekrana: setovan ekran po rezoluciji"
       ELSE
-         log_write( "setovanje ekrana: ne mogu setovati ekran po trazenoj rezoluciji !" )
+         ?E "setovanje ekrana: ne mogu setovati ekran po trazenoj rezoluciji !"
          QUIT_1
       ENDIF
 
@@ -285,7 +281,7 @@ FUNCTION set_screen_dimensions()
       maxrows( 35 - INFO_BAR_ROWS )
       maxcols( 119 )
 
-      log_write( _msg + "1" )
+      ?E _msg + "1"
 
    CASE _pix_width >= 1280 .AND. _pix_height >= 820
 
@@ -296,14 +292,14 @@ FUNCTION set_screen_dimensions()
       font_width( 12 )
       maxrows( 35 - INFO_BAR_ROWS )
       maxcols( 110 )
-      log_write( _msg + "2longMac" )
+      ?E _msg + "2longMac"
 #else
 
       font_size( 24 )
       font_width( 12 )
       maxrows( 35 - INFO_BAR_ROWS )
       maxcols( 105 )
-      log_write( _msg + "2long" )
+      ?E _msg + "2long"
 #endif
 
 
@@ -313,8 +309,7 @@ FUNCTION set_screen_dimensions()
       font_width( 11 )
       maxrows( 35 - INFO_BAR_ROWS )
       maxcols( 115 )
-
-      log_write( _msg + "2" )
+      ?E _msg + "2"
 
    CASE  _pix_width >= 1024 .AND. _pix_height >= 768
 
@@ -323,7 +318,7 @@ FUNCTION set_screen_dimensions()
       maxrows( 35 - INFO_BAR_ROWS )
       maxcols( 100 )
 
-      log_write( _msg + "3" )
+      ?E _msg + "3"
 
    OTHERWISE
 
@@ -333,7 +328,7 @@ FUNCTION set_screen_dimensions()
       maxrows( 35 - INFO_BAR_ROWS )
       maxcols( 100 )
 
-      log_write( _msg + "4" )
+      ?E "init",  _msg + "4"
 
    ENDCASE
 
@@ -348,9 +343,9 @@ FUNCTION set_screen_dimensions()
    hb_gtInfo( HB_GTI_FONTSIZE, font_size() )
 
    IF SetMode( maxrows() + INFO_BAR_ROWS,  maxcols() )
-      log_write( "setovanje ekrana: setovan ekran po rezoluciji" )
+      ?E "setovanje ekrana: setovan ekran po rezoluciji"
    ELSE
-      log_write( "setovanje ekrana: ne mogu setovati ekran po trazenoj rezoluciji !" )
+      ?E "setovanje ekrana: ne mogu setovati ekran po trazenoj rezoluciji !"
       QUIT_1
    ENDIF
 
@@ -378,7 +373,6 @@ FUNCTION _get_server_params_from_config()
 
    LOCAL _key, _ini_params
 
-   // ucitaj parametre iz inija, ako postoje ...
    _ini_params := hb_Hash()
    _ini_params[ "host" ] := nil
    _ini_params[ "database" ] := nil
@@ -442,11 +436,10 @@ FUNCTION post_login( gVars )
 
    // ~/.F18/empty38/
    set_f18_home( my_server_params()[ "database" ] )
-   log_write( "home baze: " + my_home() )
+   info_bar( "init", "home baze: " + my_home() )
 
    hb_gtInfo( HB_GTI_WINTITLE, "[ " + my_server_params()[ "user" ] + " ][ " + my_server_params()[ "database" ] + " ]" )
 
-   info_bar( "init", "thread_create_dbfs - start" )
    thread_dbfs( hb_threadStart( @thread_create_dbfs() ) )
    info_bar( "init", "thread_create_dbfs - end" )
 
@@ -463,7 +456,7 @@ FUNCTION post_login( gVars )
 
    say_database_info()
    get_log_level_from_params()
-   
+
 
    RETURN .T.
 
@@ -474,10 +467,7 @@ FUNCTION thread_dbfs( pThreadID )
 #ifdef F18_DEBUG
       ?E "thread_dbfs id", pThreadID
 #endif
-      // s_threadDbfsID := pThreadID
    ENDIF
-
-   // RETURN s_threadDbfsID
 
    RETURN .T.
 
@@ -504,7 +494,6 @@ PROCEDURE thread_create_dbfs()
    _ver := read_dbf_version_from_config()
 
    my_server()
-
    set_a_dbfs()
    cre_all_dbfs( _ver )
 
@@ -665,7 +654,7 @@ STATIC FUNCTION f18_form_login( server_params )
       ENDIF
 
       IF my_server_login( server_params )
-         log_write( "form login succesfull: " + server_params[ "host" ] + " / " + server_params[ "database" ] + " / " + server_params[ "user" ] + " / " + Str( my_server_params()[ "port" ] )  + " / " + server_params[ "schema" ] + " / verzija programa: " + F18_VER )
+         info_bar( "init", "form login succesfull: " + server_params[ "host" ] + " / " + server_params[ "database" ] + " / " + server_params[ "user" ] + " / " + Str( my_server_params()[ "port" ] )  + " / " + server_params[ "schema" ] + " / verzija programa: " + F18_VER )
          EXIT
       ELSE
          Beep( 4 )
@@ -875,7 +864,7 @@ FUNCTION my_server_login( params, conn_type )
    FOR EACH _key in params:Keys
       IF params[ _key ] == NIL
          IF conn_type == 1
-            log_write( "error server params key: " + _key )
+            error_bar( "init", "my_server_login error server params key: " + _key )
          ENDIF
          RETURN .F.
       ENDIF
@@ -894,7 +883,7 @@ FUNCTION my_server_login( params, conn_type )
 
       IF conn_type == 1
          set_sql_search_path()
-         log_write( "server connection ok: " + params[ "user" ] + " / " + if ( conn_type == 1, params[ "database" ], "postgres" ) + " / verzija aplikacije: " + F18_VER, 1 )
+         info_bar( "login", "server connection ok: " + params[ "user" ] + " / " + if ( conn_type == 1, params[ "database" ], "postgres" ) + " / verzija aplikacije: " + F18_VER, 1 )
       ENDIF
 
       RETURN .T.
@@ -902,7 +891,7 @@ FUNCTION my_server_login( params, conn_type )
    ELSE
 
       IF conn_type == 1
-         log_write( "error server connection: " + _server:ErrorMsg() )
+         error_bar( "login", "error server connection: " + _server:ErrorMsg() )
       ENDIF
 
       RETURN .F.
@@ -1076,12 +1065,12 @@ FUNCTION no_sql_mode( val )
 
 STATIC FUNCTION f18_no_login_quit()
 
-   log_write( "direct login: " + ;
+   ?E "direct login: " + ;
       my_server_params()[ "host" ] + " / " + ;
       my_server_params()[ "database" ] + " / " + ;
       my_server_params()[ "user" ] + " / " +  ;
       Str( my_server_params()[ "port" ] )  + " / " + ;
-      my_server_params()[ "schema" ] )
+      my_server_params()[ "schema" ]
 
    MsgBeep( "Neuspješna prijava na server." )
 

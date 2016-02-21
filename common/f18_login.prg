@@ -283,7 +283,7 @@ METHOD F18Login:promjena_sezone( server_param, cDatabase, cSezona )
 
    hParams[ "posljednji_put" ] := s_cPredhodnaSezona // posljednji put se radilo u ovoj sezoni
    hParams[ "posljednja_org" ] := "x"
-   f18_ini_config_read( "sezona", @hParams, .T. ) // read global from ~/.f18_config.ini
+   f18_ini_config_read( "sezona", @hParams, .T. ) // promjena, sezone, read global from ~/.f18_config.ini
 
 
    IF goModul != NIL
@@ -515,17 +515,20 @@ METHOD F18Login:odabir_organizacije()
    ENDIF
 
    if ::_company_db_curr_session == NIL
-      // ako nije zadata sezona... odaberi top sezonu
-      // NIL je ako nije zadata...
+      // ako nije zadata sezona odaberi top sezonu, NIL je ako nije zadata
       _session := ::get_database_top_session( ::_company_db_curr_choice )
    ELSE
-      // ako je zadata... uzmi nju
-      _session := AllTrim( ::_company_db_curr_session )
+      _session := AllTrim( ::_company_db_curr_session ) // ako je zadata uzmi nju
    ENDIF
 
    ::main_db_params[ "database" ] := AllTrim( ::_company_db_curr_choice ) + ;
-      iif( !Empty( _session ), "_" + AllTrim( _session ), "" )
+      IIF( !Empty( _session ), "_" + AllTrim( _session ), "" )
    ::main_db_params[ "session" ] := AllTrim( _session )
+
+
+   hParams[ "posljednji_put" ] := ::main_db_params[ "session" ]
+   hParams[ "posljednja_org" ] := StrTran( ::main_db_params[ "database" ], "_" + ::main_db_params[ "session" ], "" )
+   f18_ini_config_write( "sezona", @hParams, .T. ) // nakon odabira organizacije upisi izbor
 
    RETURN .T.
 

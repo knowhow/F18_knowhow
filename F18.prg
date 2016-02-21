@@ -244,16 +244,23 @@ STATIC FUNCTION set_program_module_menu( menuop, menuexec, p3, p4, p5, p6, p7 )
    AAdd( menuop, "---------------------------------------------" )
    AAdd( menuexec, {|| NIL } )
 
-   // ostale opcije...
+
+   AAdd( menuop, " S. promjena sezone" )
+   AAdd( menuexec, {|| f18_promjena_sezone() } )
    AAdd( menuop, " B. backup podataka" )
    AAdd( menuexec, {|| f18_backup_data() } )
+
+  /* TODO: izbaciti
    AAdd( menuop, " F. forsirana sinhronizacija podataka" )
    AAdd( menuexec, {|| F18AdminOpts():New():force_synchro_db() } )
+   */
+
    AAdd( menuop, " P. parametri aplikacije" )
    AAdd( menuexec, {|| set_parametre_f18_aplikacije() } )
    AAdd( menuop, " W. pregled log-a" )
    AAdd( menuexec, {|| f18_view_log() } )
-   AAdd( menuop, " V. vpn podrska" )
+
+   AAdd( menuop, " V. vpn podrška" )
    AAdd( menuexec, {|| vpn_support() } )
 
    RETURN .T.

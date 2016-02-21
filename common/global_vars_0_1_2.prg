@@ -36,7 +36,7 @@ PROCEDURE set_global_vars_0()
    PUBLIC gValU := "000 "
    PUBLIC gKurs := "1"
    PUBLIC gPTKONV := "0 "
-   PUBLIC gPicSif := "V"
+   PUBLIC gSifreSamoVelikaSlova := "V"
    PUBLIC gcDirekt := "V"
    PUBLIC gSKSif := "D"
    PUBLIC gSezona := "    "
@@ -165,7 +165,7 @@ FUNCTION set_global_vars_1( fSve )
       PUBLIC SifraKorisn := ""
       PUBLIC KLevel := "9"
       PUBLIC gPTKONV := "0 "
-      PUBLIC gPicSif := "V", gcDirekt := "V", gShemaVF := "B5", gSKSif := "D"
+      PUBLIC gSifreSamoVelikaSlova := "V", gcDirekt := "V", gShemaVF := "B5", gSKSif := "D"
       PUBLIC gKodnaS := "8"
       PUBLIC g50f := " "
 
@@ -178,7 +178,7 @@ FUNCTION set_global_vars_1( fSve )
 
    IF fsve
       Rpar( "pt", @gPTKonv )
-      Rpar( "pS", @gPicSif )
+      Rpar( "pS", @gSifreSamoVelikaSlova )
       Rpar( "SK", @gSKSif )
       Rpar( "DO", @gcDirekt )
       Rpar( "SB", @gShemaVF )
@@ -298,7 +298,7 @@ FUNCTION init_printer() // procitaj gPrinter, gpini,  postavi shift F2 kao hotke
       set_ptxt_sekvence()
    ENDIF
 
-   IF gPicSif == "8"
+   IF gSifreSamoVelikaSlova == "8"
       SetKey( K_CTRL_F2, {|| PPrint() } )
    ELSE
       SetKey( K_SH_F2, {|| PPrint() } )

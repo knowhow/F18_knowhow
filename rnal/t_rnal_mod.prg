@@ -33,13 +33,9 @@ METHOD new( p1, p2, p3, p4, p5, p6, p7, p8, p9 )
 
 
 
-// -----------------------------------------------
-// -----------------------------------------------
 METHOD mMenu()
 
    my_close_all_dbf()
-
-   set_hot_keys()
 
    O_DOCS
    SELECT docs
@@ -47,8 +43,6 @@ METHOD mMenu()
 
    my_close_all_dbf()
 
-   @ 1, 2 SAY PadC( gNFirma, 50, "*" )
-   @ 4, 5 SAY ""
 
    rnal_set_params()
 

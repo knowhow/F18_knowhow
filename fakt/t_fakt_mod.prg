@@ -44,14 +44,11 @@ METHOD mMenu()
 
    PRIVATE Izbor
 
-   set_hot_keys()
-
    Izbor := 1
 
    fakt_set_params()
    set_sifk_partn_bank()
 
-   @ 1, 2 SAY PadC( gTS + ": " + gNFirma, 50, "*" )
 
    ::mMenuStandard()
 

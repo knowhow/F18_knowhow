@@ -55,8 +55,18 @@ FUNCTION crtaj_naslovni_ekran( fBox )
 
    @ 3, 1 SAY PadC( gNaslov, _max_cols - 8 ) COLOR NORMAL
 
+   podaci_organizacija()
+
+   @ 4, 5 SAY ""
+
    RETURN .T.
 
+
+STATIC FUNCTION podaci_organizacija()
+
+   @ 0, 15 SAY AllTrim( gTS ) + " : " + AllTrim( gNFirma ) + ", baza (" + my_server_params()[ "database" ] + ")"
+
+   RETURN .T.
 
 FUNCTION show_insert_over_stanje()
 

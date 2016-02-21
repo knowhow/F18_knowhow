@@ -57,10 +57,7 @@ METHOD mMenu()
 
    os_set_datum_obrade()
    set_os_info()
-   set_hot_keys()
 
-   @ 1, 2 SAY PadC( gTS + ": " + gNFirma, 50, "*" )
-   @ 4, 5 SAY ""
 
    ::mMenuStandard()
 

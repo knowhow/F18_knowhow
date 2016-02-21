@@ -25,7 +25,7 @@ local _ini_params
 _ini_params := hb_hash()
 _ini_params["id"] := NIL
 
-if !f18_ini_read(F18_CLIENT_ID_INI_SECTION, @_ini_params, .t.)
+if !f18_ini_config_read(F18_CLIENT_ID_INI_SECTION, @_ini_params, .t.)
    MsgBeep("problem ini read")
 endif
 

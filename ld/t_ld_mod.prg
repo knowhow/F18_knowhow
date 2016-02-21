@@ -31,14 +31,9 @@ METHOD mMenu()
 
    PRIVATE Izbor
 
-   set_hot_keys()
-
    Izbor := 1
 
    my_close_all_dbf()
-
-   @ 1, 2 SAY PadC( gTS + ": " + gNFirma, 50, "*" )
-   @ 4, 5 SAY ""
 
    ld_postavi_parametre_obracuna()
 

@@ -33,7 +33,8 @@ CLASS F18AdminOpts
 
    METHOD relogin_as()
 
-   METHOD force_synchro_db()
+   // TODO: izbaciti
+   // METHOD force_synchro_db()
 
    METHOD update_app()
 
@@ -1367,9 +1368,9 @@ METHOD F18AdminOpts:create_new_db_params( params )
 
 
 
-// ----------------------------------------------------------
+/* TODO: izbaciti
 // forsirana sinhronizacija podataka baze
-// ----------------------------------------------------------
+
 METHOD F18AdminOpts:force_synchro_db()
 
    LOCAL _var
@@ -1378,11 +1379,11 @@ METHOD F18AdminOpts:force_synchro_db()
    set_a_dbfs()
    cre_all_dbfs( _ver )
    set_a_dbfs_key_fields()
-   write_dbf_version_to_config()
+   write_dbf_version_to_ini_conf() //out
    check_server_db_version()
 
    RETURN .T.
-
+*/
 
 
 // ----------------------------------------------------------

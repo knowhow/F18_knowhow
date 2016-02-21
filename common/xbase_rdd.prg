@@ -209,7 +209,7 @@ FUNCTION hocu_li_pakovati_dbf( cnt, del )
 /*
   vraca informacije o dbf parametrima
 */
-FUNCTION get_dbf_params_from_config()
+FUNCTION get_dbf_params_from_ini_conf()
 
    LOCAL _var_name
    LOCAL _ini_params := hb_Hash()
@@ -218,9 +218,9 @@ FUNCTION get_dbf_params_from_config()
    _ini_params[ "pack_v1" ] := nil
    _ini_params[ "pack_v2" ] := nil
 
-   IF !f18_ini_read( F18_DBF_INI_SECTION, @_ini_params, .T. )
+   IF !f18_ini_config_read( F18_DBF_INI_SECTION, @_ini_params, .T. )
       MsgBeep( F18_DBF_INI_SECTION + "  problem sa ini read" )
-      RETURN
+      RETURN .F.
    ENDIF
 
    // setuj varijable iz inija
@@ -241,6 +241,7 @@ FUNCTION get_dbf_params_from_config()
 
 
 STATIC FUNCTION dbf_pack_algoritam()
+
    RETURN __dbf_pack_algoritam
 
 

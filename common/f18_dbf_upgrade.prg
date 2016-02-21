@@ -28,7 +28,7 @@ FUNCTION read_dbf_version_from_config()
 
    _ret := hb_Hash()
 
-   IF !f18_ini_read( __ini_section, @_ini_params, .F. )
+   IF !f18_ini_config_read( __ini_section, @_ini_params, .F. )
       ?E "problem sa ini_params " + __ini_section
    ENDIF
    _current_dbf_ver := get_version_num( _ini_params[ "major" ], _ini_params[ "minor" ], _ini_params[ "patch" ] )
@@ -44,9 +44,9 @@ FUNCTION read_dbf_version_from_config()
 
 
 
-FUNCTION write_dbf_version_to_config()
+FUNCTION write_dbf_version_to_ini_conf()
 
-   LOCAL _ini_params
+   LOCAL _ini_params, cMsg, cDbfVer
 
    _ini_params := hb_Hash()
    _ini_params[ "major" ] := "0"
@@ -58,8 +58,14 @@ FUNCTION write_dbf_version_to_config()
    _ini_params[ "minor" ] := F18_DBF_VER_MINOR
    _ini_params[ "patch" ] := F18_DBF_VER_PATCH
 
-   IF !f18_ini_write( __ini_section, @_ini_params, .F. )
-      MsgBeep( "problem write params" + _ini_params )
+   cDbfVer := AllTrim( Str( F18_DBF_VER_MAJOR ) ) + "." + AllTrim( Str( F18_DBF_VER_MINOR ) ) + "." + AllTrim( Str( F18_DBF_VER_PATCH ) )
+
+   IF !f18_ini_config_write( __ini_section, @_ini_params, .F. )
+      cMsg := "ini_dbf: problem write dbf verzija: " + cDbfVer
+      ?E cMsg
+      error_bar( "ini_dbf:" + my_server_params()[ "database" ], cMsg )
+   ELSE
+      info_bar( "ini_dbf:" + my_server_params()[ "database" ], "write dbf verzija: " + cDbfVer )
    ENDIF
 
    RETURN .T.

@@ -31,9 +31,6 @@ METHOD new( p1, p2, p3, p4, p5, p6, p7, p8, p9 )
 
 
 
-
-// -----------------------------------------------
-// -----------------------------------------------
 METHOD mMenu()
 
    LOCAL Fx
@@ -53,7 +50,6 @@ METHOD mMenu()
 
    CLOSE ALL
 
-   set_hot_keys()
 
    DO WHILE ( .T. )
 

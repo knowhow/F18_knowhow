@@ -36,11 +36,6 @@ METHOD mMenu()
 
    my_close_all_dbf()
 
-   set_hot_keys()
-
-   @ 1, 2 SAY PadC( gNFirma, 50, "*" )
-   @ 4, 5 SAY ""
-
    ::mMenuStandard()
 
    RETURN NIL

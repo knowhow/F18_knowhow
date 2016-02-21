@@ -35,14 +35,11 @@ METHOD mMenu()
 
    PRIVATE Izbor
 
-   set_hot_keys()
-
    Izbor := 1
    gDuzKonto := 7
 
    gRobaBlock := {| Ch| KalkRobaBlock( Ch ) }
 
-   @ 1, 2 SAY PadC( gTS + ": " + gNFirma, 50, "*" )
 
    ::mMenuStandard()
 

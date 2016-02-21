@@ -341,7 +341,7 @@ FUNCTION AComp( aArray, bComp, nStart, nStop )
 *  nested or multi-dimensional array, assuming the array has uniform
 *  dimensions.
 */
-FUNCTION Dimensions( aArray )
+FUNCTION array_dimensions( aArray )
 
    LOCAL aDims := {}
 

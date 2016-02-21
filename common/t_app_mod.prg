@@ -149,7 +149,7 @@ METHOD gProc( Ch )
       Calc()
 
    CASE ( Ch == K_SH_F6 )
-      f18_old_session()
+      f18_promjena_sezone()
 
    CASE ( Ch == K_SH_F2 .OR. Ch == K_CTRL_F2 )
       PPrint()
@@ -273,7 +273,7 @@ METHOD gParams()
 
    gPtkonv := PadR( gPtkonv, 2 )
 
-   @ m_x + 6, m_y + 2 SAY "Unos podataka u sifrarnike velika/mala slova/konv.u 852 (V/M/8)"  GET gPicSif VALID gpicsif $ "VM8" PICT "@!"
+   @ m_x + 6, m_y + 2 SAY "Unos podataka u sifrarnike velika/mala slova/konv.u 852 (V/M/8)"  GET gSifreSamoVelikaSlova VALID gSifreSamoVelikaSlova $ "VM8" PICT "@!"
    @ m_x + 7, m_y + 2 SAY "Stroga kontrola ispravki/brisanja sifara     (D/N)"  GET gSKSif VALID gSKSif $ "DN" PICT "@!"
    @ m_x + 8, m_y + 2 SAY "Direktorij pomocne kopije podataka" GET gArhDir PICT "@S20"
    @ m_x + 9, m_y + 2 SAY "Default odgovor na pitanje 'Izlaz direktno na printer?' (D/N/V/E)" GET gcDirekt VALID gcDirekt $ "DNVER" PICT "@!"
@@ -318,7 +318,7 @@ METHOD gParams()
 
    IF LastKey() <> K_ESC
       Wpar( "pt", gPTKonv )
-      Wpar( "pS", gPicSif )
+      Wpar( "pS", gSifreSamoVelikaSlova )
       Wpar( "SK", gSKSif )
       Wpar( "DO", gcDirekt )
       Wpar( "FK", gFKolor )

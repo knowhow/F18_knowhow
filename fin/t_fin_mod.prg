@@ -32,14 +32,9 @@ METHOD new( p1, p2, p3, p4, p5, p6, p7, p8, p9 )
 
 METHOD mMenu()
 
-   set_hot_keys()
-
-   auto_kzb()
+   //auto_kzb()
 
    my_close_all_dbf()
-
-   @ 1, 2 SAY PadC( gTS + ": " + gNFirma, 50, "*" )
-   @ 4, 5 SAY ""
 
    ::mMenuStandard()
 

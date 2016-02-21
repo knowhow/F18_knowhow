@@ -34,11 +34,6 @@ METHOD new( p1, p2, p3, p4, p5, p6, p7, p8, p9 )
 
 METHOD mMenu()
 
-   set_hot_keys()
-
-   @ 1, 2 SAY PadC( gNFirma, 50, "*" )
-   @ 4, 5 SAY ""
-
    ::mMenuStandard()
 
    RETURN NIL

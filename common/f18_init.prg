@@ -78,7 +78,7 @@ FUNCTION f18_init_app( arg_v )
       RETURN .T.
    ENDIF
 
-   f18_init_app_login( NIL, arg_v )
+   f18_login( NIL, arg_v )
 
    RETURN .T.
 
@@ -118,7 +118,7 @@ FUNCTION f18_init_app_opts()
 // -----------------------------------------------------
 // inicijalna login opcija
 // -----------------------------------------------------
-FUNCTION f18_init_app_login( force_connect, arg_v )
+FUNCTION f18_login( force_connect, arg_v )
 
    LOCAL oLogin
 
@@ -142,15 +142,14 @@ FUNCTION f18_init_app_login( force_connect, arg_v )
          oLogin:main_db_login( @s_psqlServer_params, .T. )
       ENDIF
 
-      // upisi parametre za sljedeci put...
-      _write_server_params_to_config()
+
+      _write_server_params_to_config() // upisi parametre za sljedeci put...
 
       DO WHILE .T.
 
          IF !oLogin:company_db_login( @s_psqlServer_params )
             QUIT
          ENDIF
-
 
          _write_server_params_to_config() // upisi parametre tekuce firme...
 
@@ -199,11 +198,11 @@ STATIC FUNCTION show_sacekaj()
 
 
 // prelazak iz sezone u sezonu
-FUNCTION f18_old_session()
+FUNCTION f18_promjena_sezone()
 
    LOCAL oLogin := F18Login():New()
 
-   oLogin:company_db_relogin( @s_psqlServer_params )
+   oLogin:promjena_sezone( @s_psqlServer_params )
 
    RETURN .T.
 
@@ -381,7 +380,7 @@ FUNCTION _get_server_params_from_config()
    _ini_params[ "port" ] := nil
    _ini_params[ "session" ] := nil
 
-   IF !f18_ini_read( F18_SERVER_INI_SECTION + iif( test_mode(), "_test", "" ), @_ini_params, .T. )
+   IF !f18_ini_config_read( F18_SERVER_INI_SECTION + iif( test_mode(), "_test", "" ), @_ini_params, .T. )
       MsgBeep( "problem ini read" )
    ENDIF
 
@@ -411,7 +410,7 @@ FUNCTION _write_server_params_to_config()
       _ini_params[ _key ] := s_psqlServer_params[ _key ]
    NEXT
 
-   IF !f18_ini_write( F18_SERVER_INI_SECTION + iif( test_mode(), "_test", "" ), _ini_params, .T. )
+   IF !f18_ini_config_write( F18_SERVER_INI_SECTION + iif( test_mode(), "_test", "" ), _ini_params, .T. )
       MsgBeep( "problem ini write" )
    ENDIF
 
@@ -500,7 +499,7 @@ PROCEDURE thread_create_dbfs()
    kreiraj_pa_napuni_partn_idbr_pdvb ()
 
    set_a_dbfs_key_fields() // inicijaliziraj "dbf_key_fields" u __f18_dbf hash matrici
-   write_dbf_version_to_config()
+   write_dbf_version_to_ini_conf()
 
    f18_log_delete() // brisanje loga nakon logiranja...
 
@@ -540,7 +539,7 @@ STATIC FUNCTION _get_screen_resolution_from_config()
    _ini_params[ "font_width" ] := nil
    _ini_params[ "font_size" ] := nil
 
-   IF !f18_ini_read( F18_SCREEN_INI_SECTION, @_ini_params, .T. )
+   IF !f18_ini_config_read( F18_SCREEN_INI_SECTION, @_ini_params, .T. )
       MsgBeep( "screen resolution: problem sa ini read" )
       RETURN .F.
    ENDIF
@@ -1207,7 +1206,7 @@ FUNCTION set_hot_keys()
 
    info_bar( "init", "setting up hot keys" )
    SetKey( K_SH_F1, {|| Calc() } )
-   SetKey( K_SH_F6, {|| f18_old_session() } )
+   SetKey( K_SH_F6, {|| f18_promjena_sezone() } )
    info_bar( "init", "setting up hot keys - end" )
 
    RETURN .T.
@@ -1224,7 +1223,7 @@ FUNCTION run_on_startup()
    _ini := hb_Hash()
    _ini[ "run" ] := ""
 
-   f18_ini_read( "run" + iif( test_mode(), "_test", "" ), @_ini, .F. )
+   f18_ini_config_read( "run" + iif( test_mode(), "_test", "" ), @_ini, .F. )
 
    SWITCH ( _ini[ "run" ] )
    CASE "fakt_pretvori_otpremnice_u_racun"

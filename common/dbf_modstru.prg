@@ -49,13 +49,8 @@ FUNCTION modstru( a_commands )
 
    CLOSE ALL
 
-
+   info_bar( "modstru", "DBF modstru start" )
    log_write( "MODSTRU cmd: " + pp( a_commands ), 3 )
-
-   Box(, 6, 65, .F., "DBF modstru" )
-
-   @ m_x + 1, m_y + 2 SAY "DBF modifikacija struktura"
-
 
    _ime_dbf := ""
    _path := my_home()
@@ -81,12 +76,11 @@ FUNCTION modstru( a_commands )
 
             _msg := "START modstru: " + _path + _ime_dbf
             log_write( _msg, 3 )
-            @ m_x + 3, m_y + 2 SAY _msg
+            ?E _msg
 
             USE  ( _path + _ime_dbf ) ALIAS OLDDBF EXCLUSIVE
          ELSE
             _ime_dbf := "*i"
-            BoxC()
             log_write( "MODSTRU, nepostojeca tabela: " +  _full_name, 2 )
             RETURN .F.
          ENDIF
@@ -102,7 +96,6 @@ FUNCTION modstru( a_commands )
             RETURN .F.
          ENDIF
 
-
       ELSE
          _op := Rjec( @_lin )
          IF !chs_op( _op, @_lin, @_curr_stru, @_new_stru, @_brisi_dbf, @_rename_dbf, @_stru_changed )
@@ -115,7 +108,7 @@ FUNCTION modstru( a_commands )
 
    log_write( "END modstru ", 2 )
 
-   BoxC()
+   info_bar( "modstru", "end of modstru" )
    CLOSE ALL
 
    RETURN .T.
@@ -309,8 +302,7 @@ FUNCTION kopi( path, ime_dbf, curr_stru, new_stru, brisi_dbf, rename_dbf, stru_c
 
       SELECT OLDDBF
 
-
-      @ m_x + 5, m_y + 2 SAY RecCount()
+      info_bar( "modstru", "modstru " + Alias() + " " +  Alltrim( Str( RecCount() ) ) )
       SET ORDER TO 0
       GO TOP
 
@@ -359,7 +351,7 @@ FUNCTION kopi( path, ime_dbf, curr_stru, new_stru, brisi_dbf, rename_dbf, stru_c
 
          ++ _cnt
          IF ( _cnt % 5 ) == 0
-            @ m_x + 5, m_y + 15 SAY _cnt
+            ?E ime_dbf, _cnt
          ENDIF
 
          SKIP

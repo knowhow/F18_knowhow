@@ -37,12 +37,8 @@ METHOD mMenu()
    PRIVATE Izbor
    PRIVATE lPodBugom
 
-   set_hot_keys()
-
    Izbor := 1
 
-   @ 1, 2 SAY PadC( gTS + ": " + gNFirma, 50, "*" )
-   @ 4, 5 SAY ""
 
    ::mMenuStandard()
 

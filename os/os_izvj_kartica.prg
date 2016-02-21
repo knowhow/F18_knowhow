@@ -45,7 +45,7 @@ FUNCTION os_kartica_sredstva()
 
    cId := Space( Len( id ) )
 
-   cPicSif := IF( gPicSif = "V", "@!", "" )
+   cPicSif := IF( gSifreSamoVelikaSlova = "V", "@!", "" )
 
    // zadajmo jedno ili sva sredstva
    // ------------------------------

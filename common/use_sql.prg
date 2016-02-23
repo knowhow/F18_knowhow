@@ -407,21 +407,18 @@ FUNCTION use_sql_sifv( cDbf, cOznaka, xIdSif, xVrijednost )
    IF xIdSif == NIL
       IF Empty( cDbf )
          uIdSif := "MLFJUSXX" // nepostojeca sifra
-      ELSE
+      ELSEIF xVrijednost == NIL  // samo ako je i xVrijednost NIL onda definisi uslov idsif
 
          xIdSif := ( cDbf )->id
          uIdSif := ( Unicode():New( xIdSif, lSql ) ):getString()
+         cSql += " AND idsif=" + _sql_quote_u( uIdSif )
       ENDIF
    ELSE
 
       uIdSif := ( Unicode():New( xIdSif, .F. ) ):getString()
-   ENDIF
-
-   IF  EMPTY( uIdSif ) .AND. xVrijednost != NIL
-       // idsif - empty, ne postoji uslov za vrijednosti, ne zadavati idsif uslov
-   ELSE
       cSql += " AND idsif=" + _sql_quote_u( uIdSif )
    ENDIF
+
 
    IF xVrijednost != NIL
       uVrijednost := ( Unicode():New( xVrijednost, lSql ) ):getString()

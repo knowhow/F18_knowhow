@@ -14,15 +14,15 @@
 
 STATIC cLDirekt := "0"
 
-/* Pitanje(cId,cPitanje,cOdgDefault,cMogOdg)
- *  \brief Otvara box sa zadatim pitanjem na koje treba odgovoriti sa D,N,..
- *  \param cId
- *  \param cPitanje       - Pitanje
- *  \param cOdgDefault    - Odgovor koji ce biti ponudjen na boxu
- *  \cMogOdg              - Moguci odgovori
+/*
+ *  brief Otvara box sa zadatim pitanjem na koje treba odgovoriti sa D,N,..
+ *  param cId
+ *  param cPitanje       - Pitanje
+ *  param cOdgDefault    - Odgovor koji ce biti ponudjen na boxu
+ *  cMogOdg              - Moguci odgovori
  */
 
-FUNCTION Pitanje( cId, cPitanje, cOdgDefault, cMogOdg )
+FUNCTION Pitanje( cId, cPitanje, cOdgDefault, cMogOdg, cHeader )
 
    LOCAL cPom
    LOCAL cOdgovor
@@ -30,6 +30,7 @@ FUNCTION Pitanje( cId, cPitanje, cOdgDefault, cMogOdg )
    IF cMogOdg == NIL
       cMogOdg := "YDNL"
    ENDIF
+
 
    PRIVATE GetList := {}
 
@@ -52,9 +53,12 @@ FUNCTION Pitanje( cId, cPitanje, cOdgDefault, cMogOdg )
 
    Box( , 3, Len( cPitanje ) + 6, .F. )
 
+   IF VALTYPE( cId ) == "C"
+     @ m_x + 0, m_y + 2 SAY cId
+   ENDIF
+
    SET CURSOR ON
-   @ m_x + 2, m_y + 3 SAY8 cPitanje GET cOdgovor PICTURE "@!" ;
-      VALID ValidSamo( cOdgovor, cMogOdg )
+   @ m_x + 2, m_y + 3 SAY8 cPitanje GET cOdgovor PICTURE "@!"  VALID ValidSamo( cOdgovor, cMogOdg )
 
    READ
 

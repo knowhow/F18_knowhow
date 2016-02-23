@@ -406,9 +406,9 @@ FUNCTION use_sql_sifv( cDbf, cOznaka, xIdSif, xVrijednost )
 
    IF xIdSif == NIL
       IF Empty( cDbf )
-         // nepostojeca sifra
-         uIdSif := "MLFJUSXX"
+         uIdSif := "MLFJUSXX" // nepostojeca sifra
       ELSE
+
          xIdSif := ( cDbf )->id
          uIdSif := ( Unicode():New( xIdSif, lSql ) ):getString()
       ENDIF
@@ -417,7 +417,11 @@ FUNCTION use_sql_sifv( cDbf, cOznaka, xIdSif, xVrijednost )
       uIdSif := ( Unicode():New( xIdSif, .F. ) ):getString()
    ENDIF
 
-   cSql += " AND idsif=" + _sql_quote_u( uIdSif )
+   IF  EMPTY( uIdSif ) .AND. xVrijednost != NIL
+       // idsif - empty, ne postoji uslov za vrijednosti, ne zadavati idsif uslov
+   ELSE
+      cSql += " AND idsif=" + _sql_quote_u( uIdSif )
+   ENDIF
 
    IF xVrijednost != NIL
       uVrijednost := ( Unicode():New( xVrijednost, lSql ) ):getString()
@@ -450,20 +454,20 @@ FUNCTION use_sql_rules()
 
    cSql := "SELECT * FROM fmk." + _table_name
 
-   SELECT F_FMKRULES
+   SELECT F_RULES
    use_sql( _alias, cSql )
 
-   INDEX ON Str( RULE_ID, 10 )                                       TAG 1 TO ( _table_name )
-   INDEX ON MODUL_NAME + RULE_OBJ + Str( RULE_NO, 10 )                   TAG 2 TO ( _table_name )
+   INDEX ON Str( RULE_ID, 10 )   TAG 1 TO ( _table_name )
+   INDEX ON MODUL_NAME + RULE_OBJ + Str( RULE_NO, 10 )  TAG 2 TO ( _table_name )
    INDEX ON MODUL_NAME + RULE_OBJ + Str( RULE_LEVEL, 2 ) + Str( RULE_NO, 10 ) TAG 3 TO ( _table_name )
-   INDEX ON MODUL_NAME + RULE_OBJ + RULE_C1 + RULE_C2                   TAG 4 TO ( _table_name )
+   INDEX ON MODUL_NAME + RULE_OBJ + RULE_C1 + RULE_C2  TAG 4 TO ( _table_name )
    // kreiranje rules index-a specificnih za rnal
-   INDEX ON MODUL_NAME + RULE_OBJ + RULE_C3 + RULE_C4                   TAG ELCODE TO ( _table_name )
-   INDEX ON MODUL_NAME + RULE_OBJ + RULE_C3 + Str( RULE_NO, 5 )            TAG RNART1 TO ( _table_name )
-   INDEX ON MODUL_NAME + RULE_OBJ + RULE_C5 + Str( RULE_NO, 5 )            TAG ITEM1  TO ( _table_name )
+   INDEX ON MODUL_NAME + RULE_OBJ + RULE_C3 + RULE_C4   TAG ELCODE TO ( _table_name )
+   INDEX ON MODUL_NAME + RULE_OBJ + RULE_C3 + Str( RULE_NO, 5 ) TAG RNART1 TO ( _table_name )
+   INDEX ON MODUL_NAME + RULE_OBJ + RULE_C5 + Str( RULE_NO, 5 ) TAG ITEM1  TO ( _table_name )
    // kreiranje rules index-a specificnih za fin
-   INDEX ON MODUL_NAME + RULE_OBJ + Str( RULE_NO, 5 )                    TAG FINKNJ1 TO ( _table_name )
-   INDEX ON MODUL_NAME + RULE_OBJ + RULE_C3                           TAG ELBA1 TO ( _table_name )
+   INDEX ON MODUL_NAME + RULE_OBJ + Str( RULE_NO, 5 ) TAG FINKNJ1 TO ( _table_name )
+   INDEX ON MODUL_NAME + RULE_OBJ + RULE_C3  TAG OBJC3 TO ( _table_name )
 
    RETURN .T.
 

@@ -19,7 +19,7 @@ CLASS TReportsMod FROM TAppMod
    METHOD set_module_gvars
 
    METHOD mMenu
-   METHOD mMenuStandard
+   METHOD programski_modul_osnovni_meni
 
 END CLASS
 
@@ -43,13 +43,13 @@ METHOD mMenu()
    @ 1, 2 SAY PadC( gNFirma, 50, "*" )
    @ 4, 5 SAY ""
 
-   ::mMenuStandard()
+   ::programski_modul_osnovni_meni()
 
    RETURN NIL
 
 
 
-METHOD mMenuStandard()
+METHOD programski_modul_osnovni_meni()
 
    PRIVATE izbor := 1
    PRIVATE opc := {}

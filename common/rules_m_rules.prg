@@ -12,17 +12,15 @@
 
 #include "f18.ch"
 
-// ---------------------------------------
-// meni pravila
-// ---------------------------------------
-FUNCTION m_fmkrules()
+
+FUNCTION menu_rules()
 
    PRIVATE opc := {}
    PRIVATE opcexe := {}
    PRIVATE izbor := 1
 
    AAdd( opc, "1. RULES (pravila)                " )
-   AAdd( opcexe, {|| p_fmkrules() } )
+   AAdd( opcexe, {|| p_rules() } )
 
    Menu_SC( "rules" )
 

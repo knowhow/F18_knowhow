@@ -16,10 +16,9 @@ CLASS TFinMod FROM TAppMod
    METHOD NEW
    METHOD set_module_gvars
    METHOD mMenu
-   METHOD mMenuStandard
+   METHOD programski_modul_osnovni_meni
 
-
-END CLASS
+ENDCLASS
 
 
 METHOD new( p1, p2, p3, p4, p5, p6, p7, p8, p9 )
@@ -36,12 +35,12 @@ METHOD mMenu()
 
    my_close_all_dbf()
 
-   ::mMenuStandard()
+   ::programski_modul_osnovni_meni()
 
    RETURN NIL
 
 
-METHOD mMenuStandard()
+METHOD programski_modul_osnovni_meni()
 
    LOCAL _izbor := 1
    LOCAL _opc := {}
@@ -81,7 +80,7 @@ METHOD mMenuStandard()
 
    f18_menu( "gfin", .T., _izbor, _opc, _opcexe )
 
-   RETURN
+   RETURN .T.
 
 
 

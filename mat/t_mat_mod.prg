@@ -19,7 +19,7 @@ CLASS TMatMod FROM TAppMod
    METHOD NEW
    METHOD set_module_gvars
    METHOD mMenu
-   METHOD mMenuStandard
+   METHOD programski_modul_osnovni_meni
 
 ENDCLASS
 
@@ -34,7 +34,7 @@ METHOD new( p1, p2, p3, p4, p5, p6, p7, p8, p9 )
 
 METHOD mMenu()
 
-   ::mMenuStandard()
+   ::programski_modul_osnovni_meni()
 
    RETURN NIL
 
@@ -42,7 +42,7 @@ METHOD mMenu()
 
 // -----------------------------------------------
 // -----------------------------------------------
-METHOD mMenuStandard()
+METHOD programski_modul_osnovni_meni()
 
    PRIVATE Izbor := 1
    PRIVATE opc := {}

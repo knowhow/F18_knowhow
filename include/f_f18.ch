@@ -296,7 +296,7 @@
 #define F_USERS  289
 #define F_GROUPS  290
 #define F_RULES  291
-#define F_FMKRULES 292
+#define F_RULES 292
 #define F_LOKAL 293
 #define F_RPT_TMP  294
 #define F_TMP      295

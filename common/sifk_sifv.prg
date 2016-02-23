@@ -26,18 +26,18 @@ FUNCTION copy_to_sifk()
    LOCAL lSql
 
    Box(, 6, 65, .F. )
-	
+
    PRIVATE GetList := {}
    SET CURSOR ON
-	
+
    nTekX := m_x
    nTekY := m_y
-	
+
    @ m_x + 1, m_y + 2 SAY PadL( "Polje iz kojeg kopiramo (polje 1)", 40 ) GET cFldFrom VALID !Empty( cFldFrom ) .AND. val_fld( cFldFrom )
    @ m_x + 2, m_y + 2 SAY PadL( "SifK polje u koje kopiramo (polje 2)", 40 ) GET cFldTo VALID g_sk_flist( @cFldTo )
-	
+
    @ m_x + 4, m_y + 2 SAY "Brisati vrijednost (polje 1) nakon kopiranja ?" GET cEraseFld VALID cEraseFld $ "DN" PICT "@!"
-	
+
    @ m_x + 6, m_y + 2 SAY "*** izvrsiti zamjenu ?" GET cRepl VALID cRepl $ "DN" PICT "@!"
    READ
 
@@ -57,20 +57,20 @@ FUNCTION copy_to_sifk()
    GO TOP
 
    DO WHILE !Eof()
-	
+
       SKIP
       nRec := RecNo()
       SKIP -1
-	
+
       cCpVal := ( Alias() )->&cFldFrom
       IF !Empty( cCpval )
          USifK( Alias(), cFldTo,  Unicode():New( ( Alias() )->id, lSql ), cCpVal )
       ENDIF
-	
+
       IF cEraseFld == "D"
          REPLACE ( Alias() )->&cFldFrom WITH ""
       ENDIF
-	
+
       GO ( nRec )
    ENDDO
 
@@ -95,24 +95,24 @@ FUNCTION repl_sifk_item()
    Box(, 3, 60, .F. )
    PRIVATE GetList := {}
    SET CURSOR ON
-	
+
    nTekX := m_x
    nTekY := m_y
-	
+
    @ m_x + 1, m_y + 2 SAY " SifK polje:" GET cField VALID g_sk_flist( @cField )
    READ
-	
+
    cCurrVal := "wSifk_" + cField
    &cCurrVal := IzSifk( Alias(), cField )
    cOldVal := &cCurrVal
    cNewVal := Space( Len( cOldVal ) )
-	
+
    m_x := nTekX
    m_y := nTekY
-	
+
    @ m_x + 2, m_y + 2 SAY8 "      Traži:"  GET cOldVal
    @ m_x + 3, m_y + 2 SAY8 "Zamijeni sa:" GET cNewVal
-	
+
    READ
    BoxC()
 
@@ -170,12 +170,12 @@ FUNCTION g_sk_flist( cField )
       PRIVATE opc := {}
       PRIVATE opcexe := {}
       PRIVATE GetList := {}
-	
+
       FOR i := 1 TO Len( aFields )
          AAdd( opc, PadR( aFields[ i, 1 ] + " - " + aFields[ i, 2 ], 40 ) )
          AAdd( opcexe, {|| nField := Izbor, Izbor := 0 } )
       NEXT
-	
+
       Izbor := 1
       Menu_SC( "skf" )
    ENDIF
@@ -548,10 +548,10 @@ STATIC FUNCTION get_sifv_naz( val, sifk_rec )
     Povjerava ima li u sifv vrijednost ...
     ImaUSifv("ROBA","BARK","BK0002030300303",@cIdSif)
 
-    @param cDBF ime DBF-a
-    @param cOznaka oznaka BARK , GR1 itd
-    @param cVOznaka oznaka BARK003030301
-    @param cIDSif   ROBA01 - idroba
+    cDBF ime DBF-a
+    cOznaka oznaka BARK , GR1 itd
+    cVOznaka oznaka BARK003030301
+    cIDSif   ROBA01 - idroba
 */
 
 FUNCTION ImaUSifv( cDBF, cOznaka, cVrijednost, cIdSif )
@@ -559,6 +559,7 @@ FUNCTION ImaUSifv( cDBF, cOznaka, cVrijednost, cIdSif )
    LOCAL cJedanod := ""
    LOCAL xRet := ""
    LOCAL nTr1, nTr2, xVal
+   LOCAL lRet := .F.
    PRIVATE cPom := ""
 
    cDBF    := PadR( cDBF, SIFK_LEN_DBF )
@@ -572,11 +573,12 @@ FUNCTION ImaUSifv( cDBF, cOznaka, cVrijednost, cIdSif )
    use_sql_sifv( cDbf, cOznaka, NIL, cVrijednost )
    GO TOP
    IF !Eof()
-      cIdSif := IdSif
+      cIdSif := field->IdSif
+      lRet := .T.
    ENDIF
    PopWa()
 
-   RETURN
+   RETURN lRet
 
 
 FUNCTION update_sifk_na_osnovu_ime_kol_from_global_var( ime_kol, var_prefix, novi, transaction )

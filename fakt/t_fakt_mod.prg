@@ -26,7 +26,7 @@ CLASS TFaktMod FROM TAppMod
    METHOD NEW
    METHOD set_module_gvars
    METHOD mMenu
-   METHOD mMenuStandard
+   METHOD programski_modul_osnovni_meni
 
 ENDCLASS
 
@@ -50,13 +50,13 @@ METHOD mMenu()
    set_sifk_partn_bank()
 
 
-   ::mMenuStandard()
+   ::programski_modul_osnovni_meni()
 
    RETURN NIL
 
 
 
-METHOD mMenuStandard
+METHOD programski_modul_osnovni_meni
 
    LOCAL _opc    := {}
    LOCAL _opcexe := {}

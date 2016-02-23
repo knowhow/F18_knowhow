@@ -19,7 +19,7 @@ CLASS TRnalMod FROM TAppMod
    METHOD set_module_gvars
    METHOD mMenu
    METHOD mStartUp
-   METHOD mMenuStandard
+   METHOD programski_modul_osnovni_meni
 
 ENDCLASS
 
@@ -48,7 +48,7 @@ METHOD mMenu()
 
    ::mStartUp()
 
-   ::mMenuStandard()
+   ::programski_modul_osnovni_meni()
 
    RETURN NIL
 
@@ -64,7 +64,7 @@ METHOD mStartUp()
 
 
 
-METHOD mMenuStandard()
+METHOD programski_modul_osnovni_meni()
 
    PRIVATE Izbor := 1
    PRIVATE opc := {}

@@ -18,58 +18,42 @@ STATIC __LEV_MAX
 // ------------------------------------------------
 // vraca vrijednost za seek polja rule_obj
 // ------------------------------------------------
-FUNCTION g_ruleobj( cSeek )
+FUNCTION get_rule_field_obj( cSeek )
    RETURN PadR( cSeek, 30 )
 
 
-// ------------------------------------------------
-// vraca vrijednost za seek polja modul_name
-// ------------------------------------------------
-FUNCTION g_rulemod( cSeek )
+
+FUNCTION get_rule_field_mod( cSeek )
    RETURN PadR( cSeek, 10 )
 
-// ------------------------------------------------
-// vraca vrijednost za seek polja rule_c1
-// ------------------------------------------------
-FUNCTION g_rule_c1( cSeek )
+
+FUNCTION get_rule_field_c1( cSeek )
    RETURN PadR( cSeek, 1 )
 
-// ------------------------------------------------
-// vraca vrijednost za seek polja rule_c2
-// ------------------------------------------------
-FUNCTION g_rule_c2( cSeek )
+
+FUNCTION get_rule_field_c2( cSeek )
    RETURN PadR( cSeek, 5 )
 
-// ------------------------------------------------
-// vraca vrijednost za seek polja rule_c3
-// ------------------------------------------------
-FUNCTION g_rule_c3( cSeek )
+
+FUNCTION get_rule_field_c3( cSeek )
    RETURN PadR( cSeek, 10 )
 
-// ------------------------------------------------
-// vraca vrijednost za seek polja rule_c4
-// ------------------------------------------------
-FUNCTION g_rule_c4( cSeek )
+
+FUNCTION get_rule_field_c4( cSeek )
    RETURN PadR( cSeek, 10 )
 
-// ------------------------------------------------
-// vraca vrijednost za seek polja rule_c5
-// ------------------------------------------------
-FUNCTION g_rule_c5( cSeek )
+
+FUNCTION get_rule_field_c5( cSeek )
    RETURN PadR( cSeek, 50 )
 
 
-// ------------------------------------------------
-// vraca vrijednost za seek polja rule_c6
-// ------------------------------------------------
-FUNCTION g_rule_c6( cSeek )
+
+FUNCTION get_rule_field_c6( cSeek )
    RETURN PadR( cSeek, 50 )
 
 
-// ------------------------------------------------
-// vraca vrijednost za seek polja rule_c7
-// ------------------------------------------------
-FUNCTION g_rule_c7( cSeek )
+
+FUNCTION get_rule_field_c7( cSeek )
    RETURN PadR( cSeek, 100 )
 
 
@@ -82,7 +66,7 @@ FUNCTION g_rule_c7( cSeek )
 // aSpecKol - specificne kolone // modul defined
 // bRules - rules block for object browse
 // -----------------------------------------------
-FUNCTION p_fmkrules( cId, dx, dy, aSpecKol, bRBlock )
+FUNCTION p_rules( cId, dx, dy, aSpecKol, bRBlock )
 
    LOCAL cModName
    LOCAL nSelect := Select()
@@ -94,7 +78,7 @@ FUNCTION p_fmkrules( cId, dx, dy, aSpecKol, bRBlock )
    __LEV_MIN := 0
    __LEV_MAX := 5
 
-   O_FMKRULES
+   O_RULES
    SET ORDER TO TAG "2"
 
    IF aSpecKol == nil
@@ -116,7 +100,7 @@ FUNCTION p_fmkrules( cId, dx, dy, aSpecKol, bRBlock )
 
    GO TOP
 
-   nRet := PostojiSifra( F_FMKRULES, 1, 16, 70, cHeader, @cId, dx, dy, bRBlock )
+   nRet := p_sifra( F_RULES, 1, 16, 70, cHeader, @cId, dx, dy, bRBlock )
 
    SELECT ( nSelect )
 
@@ -134,7 +118,7 @@ STATIC FUNCTION set_mod_filt()
 
    SET FILTER to &cFilt
 
-   RETURN
+   RETURN .T.
 
 // --------------------------------------------------------
 // setovanje kolona tabele "FMKRULES"
@@ -165,7 +149,7 @@ STATIC FUNCTION set_a_kol( aImeKol, aKol, aSpecKol )
    IF Len( aSpecKol ) == 0
 
       // dodajem po defaultu specificne kolone
-	
+
       // karakterne
       AAdd( aImeKol, { "pr.k1", {|| rule_c1 }, "rule_c1" } )
       AAdd( aImeKol, { "pr.k2", {|| rule_c2 }, "rule_c2" } )
@@ -174,34 +158,34 @@ STATIC FUNCTION set_a_kol( aImeKol, aKol, aSpecKol )
       AAdd( aImeKol, { "pr.k5", {|| rule_c5 }, "rule_c5" } )
       AAdd( aImeKol, { "pr.k6", {|| rule_c6 }, "rule_c6" } )
       AAdd( aImeKol, { "pr.k7", {|| rule_c7 }, "rule_c7" } )
-	
+
       // numericke
       AAdd( aImeKol, { "pr.n1", {|| rule_n1 }, "rule_n1" } )
       AAdd( aImeKol, { "pr.n2", {|| rule_n2 }, "rule_n2" } )
-	
+
       // date
       AAdd( aImeKol, { "pr.d1", {|| rule_d1 }, "rule_d1" } )
       AAdd( aImeKol, { "pr.d2", {|| rule_d2 }, "rule_d2" } )
 
 
    ELSE
-	
+
       // dodajem na osnovu matrice aSpecKol
       FOR nSpec := 1 TO Len( aSpecKol )
-		
+
          AAdd( aImeKol, { aSpecKol[ nSpec, 1 ], aSpecKol[ nSpec, 2 ], ;
             aSpecKol[ nSpec, 3 ], aSpecKol[ nSpec, 4 ], ;
             aSpecKol[ nSpec, 5 ] } )
 
       NEXT
-	
+
    ENDIF
 
    FOR i := 1 TO Len( aImeKol )
       AAdd( aKol, i )
    NEXT
 
-   RETURN
+   RETURN .T.
 
 
 // ----------------------------------------------
@@ -242,15 +226,15 @@ FUNCTION i_rule_no( nNo, cRuleObj )
    LOCAL lRet := .T.
 
    IF ( ( Ch == K_CTRL_N ) .OR. ( Ch == K_F4 ) )
-	
+
       IF ( LastKey() == K_ESC )
          RETURN lRet := .F.
       ENDIF
-	
+
       nNo := _last_no( cRuleObj )
-	
+
       AEval( GetList, {| o| o:display() } )
-	
+
    ENDIF
 
    RETURN lRet
@@ -265,15 +249,15 @@ FUNCTION i_rule_id( nID )
    LOCAL lRet := .T.
 
    IF ( ( Ch == K_CTRL_N ) .OR. ( Ch == K_F4 ) )
-	
+
       IF ( LastKey() == K_ESC )
          RETURN lRet := .F.
       ENDIF
-	
+
       nID := _last_id()
-	
+
       AEval( GetList, {| o| o:display() } )
-	
+
    ENDIF
 
    RETURN lRet
@@ -302,7 +286,7 @@ FUNCTION _last_no( cRuleObj )
          .AND. field->rule_obj == cRuleObj
 
       nNo := field->rule_no
-	
+
       SKIP
    ENDDO
 
@@ -364,7 +348,7 @@ FUNCTION sh_rule_err( cMsg, nLevel )
    FOR i := 1 TO Len( aMsg )
 
       cTxt += aMsg[ i ] + "#"
-	
+
    NEXT
 
    cTxt := _info_level( nLevel ) + cTxt
@@ -388,7 +372,7 @@ STATIC FUNCTION _info_level( nLev )
       cRet := "! UPOZORENJE !##"
    CASE nLev == 5
       cRet := "!!! VAZNO UPOZORENJE !!!##"
-		
+
    ENDCASE
 
    RETURN cRet

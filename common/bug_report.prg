@@ -35,7 +35,11 @@ FUNCTION GlobalErrorHandler( err_obj, lShowErrorReport, lQuitApp )
    _out_file := my_home_root() + "error.txt"
 
    IF is_in_main_thread()
+#ifdef F18_DEBUG
+  Alert( err_obj:Description + " " + err_obj:operation)
   altd()
+#endif
+
       SET CONSOLE OFF
       SET PRINTER OFF
       SET DEVICE TO PRINTER
@@ -139,7 +143,9 @@ FUNCTION GlobalErrorHandler( err_obj, lShowErrorReport, lQuitApp )
          f18_run( _cmd )
       ENDIF
       log_write( _log_msg, 1 )
+#ifndef F18_DEBUG
       send_email( err_obj, lNotify )
+#endif
    ENDIF
 
 

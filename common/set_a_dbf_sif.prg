@@ -35,7 +35,7 @@ FUNCTION set_a_dbf_sif()
    _rec[ "sql" ]            := .T.
    _rec[ "sql_in" ]        := "rpad(rule_id::char(10),10)"
    _rec[ "dbf_key_block" ] := {|| Str( field->rule_id, 10, 0 ) }
-   set_a_sql_sifarnik( "f18_rules", "FMKRULES", F_FMKRULES, _rec  )
+   set_a_sql_sifarnik( "f18_rules", "FMKRULES", F_RULES, _rec  )
 
    set_a_sql_sifarnik( "rj", "RJ", F_RJ         )
    set_a_sql_sifarnik( "lokal", "LOKAL", F_LOKAL  )

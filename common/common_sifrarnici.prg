@@ -64,12 +64,13 @@ FUNCTION opci_sifarnici()
    AAdd( opcexe, {|| P_VrsteP() } )
 
 
+   AAdd( opc, "R. pravila" )
+   AAdd( opcexe, {|| p_rules() } )
+
    IF ( IsRamaGlas() .OR.  gModul == "FAKT" .AND. glRadNal )
-      AAdd( opc, "R. objekti" )
+      AAdd( opc, "O. objekti" )
       AAdd( opcexe, {|| P_fakt_objekti() } )
    ENDIF
-
-
 
    open_sif_tables_1()
 

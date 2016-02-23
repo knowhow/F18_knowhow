@@ -73,7 +73,7 @@
 
 
 // fmk rules
-#xcommand O_FMKRULES  => select (F_FMKRULES); use_sql_rules() ; set order to tag "2"
+#xcommand O_RULES  => select (F_RULES); use_sql_rules() ; set order to tag "2"
 
 // tabele DOK_SRC
 #xcommand O_DOKSRC    => SELECT (F_DOKSRC)  ; my_use ("doksrc")    ; set order to tag "1"
@@ -383,8 +383,6 @@
 #xcommand O_EVENTS  => select (F_EVENTS); my_use ("events") ; set order to tag "ID"
 #xcommand O_USERS  => select (F_USERS); my_use ("users") ; set order to tag "ID"
 #xcommand O_GROUPS  => select (F_GROUPS); my_use ("groups") ; set order to tag "ID"
-#xcommand O_RULES  => select (F_RULES); my_use ("fmkrules") ; set order to tag "ID"
-
 
 // sql messages
 #define F_MSGNEW 234

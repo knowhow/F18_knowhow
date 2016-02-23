@@ -17,7 +17,7 @@ CLASS TLdMod FROM TAppMod
    METHOD NEW
    METHOD set_module_gvars
    METHOD mMenu
-   METHOD mMenuStandard
+   METHOD programski_modul_osnovni_meni
 
 ENDCLASS
 
@@ -37,12 +37,12 @@ METHOD mMenu()
 
    ld_postavi_parametre_obracuna()
 
-   ::mMenuStandard()
+   ::programski_modul_osnovni_meni()
 
    RETURN NIL
 
 
-METHOD mMenuStandard
+METHOD programski_modul_osnovni_meni
 
    PRIVATE Izbor := 1
    PRIVATE opc := {}

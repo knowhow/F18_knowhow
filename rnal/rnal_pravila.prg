@@ -20,7 +20,7 @@ FUNCTION gen_rnal_rules()
 
    LOCAL nTArea := Select()
 
-   O_FMKRULES
+   O_RULES
 
    // element CODE_GEN, staklo
    in_elcode_rule( "G", "<GL_TICK>#<GL_TYPE>", ;
@@ -54,10 +54,10 @@ STATIC FUNCTION in_elcode_rule( cElCond, cRule, cRuleName )
       RETURN
    ENDIF
 
-   cModul := g_rulemod( "RNAL" )
-   cRuleObj := g_ruleobj( "ARTICLES" )
+   cModul := get_rule_field_mod( "RNAL" )
+   cRuleObj := get_rule_field_obj( "ARTICLES" )
    cErrMsg := "-"
-   cRuleC3 := g_rule_c3( "CODE_GEN" )
+   cRuleC3 := get_rule_field_c3( "CODE_GEN" )
    cRuleC4 := g_rule_c4( cElCond )
 
    SELECT fmkrules
@@ -153,12 +153,12 @@ FUNCTION rnal_format_naziva_elementa( cElCond )
    LOCAL cObj
    LOCAL nTArea := Select()
 
-   cModul := g_rulemod( "RNAL" )
-   cObj := g_ruleobj( "ARTICLES" )
-   cRuleType := g_rule_c3( "CODE_GEN" )
+   cModul := get_rule_field_mod( "RNAL" )
+   cObj := get_rule_field_obj( "ARTICLES" )
+   cRuleType := get_rule_field_c3( "CODE_GEN" )
    cElCond := g_rule_c4( cElCond )
 
-   O_FMKRULES
+   O_RULES
    SELECT fmkrules
    SET ORDER TO TAG "ELCODE"
    GO TOP
@@ -196,13 +196,13 @@ FUNCTION rnal_shema_artikla_za_tip( nType )
    LOCAL nTArea := Select()
    LOCAL nTmp
    LOCAL aTmp
-   LOCAL cObj := g_ruleobj( "ARTICLES" )
-   LOCAL cCond := g_rule_c3( "AUTO_ELEM" )
-   LOCAL cMod := g_rulemod( "RNAL" )
+   LOCAL cObj := get_rule_field_obj( "ARTICLES" )
+   LOCAL cCond := get_rule_field_c3( "AUTO_ELEM" )
+   LOCAL cMod := get_rule_field_mod( "RNAL" )
 
    aSchema := {}
 
-   O_FMKRULES
+   O_RULES
    SELECT fmkrules
    SET ORDER TO TAG "ELCODE"
    GO TOP
@@ -278,15 +278,15 @@ STATIC FUNCTION _rule_s_fmk( cField, nTickness, cType, cKind, cQttyType )
    LOCAL cNalog
    LOCAL cReturn := ""
 
-   O_FMKRULES
+   O_RULES
    SELECT fmkrules
    SET ORDER TO TAG "ITEM1"
    GO TOP
 
-   SEEK g_rulemod( cMod ) + g_ruleobj( cObj ) + g_rule_c5( cCond )
+   SEEK get_rule_field_mod( cMod ) + get_rule_field_obj( cObj ) + g_rule_c5( cCond )
 
-   DO WHILE !Eof() .AND. field->modul_name == g_rulemod( cMod ) ;
-         .AND. field->rule_obj == g_ruleobj( cObj ) ;
+   DO WHILE !Eof() .AND. field->modul_name == get_rule_field_mod( cMod ) ;
+         .AND. field->rule_obj == get_rule_field_obj( cObj ) ;
          .AND. field->rule_c5 == g_rule_c5( cCond )
 
       // specificni tip stakla... npr: samo "F"
@@ -411,15 +411,15 @@ STATIC FUNCTION _rule_aop_( xVal,  aArr, lShErr )
    LOCAL cKtoList
    LOCAL cNalog
 
-   O_FMKRULES
+   O_RULES
    SELECT fmkrules
    SET ORDER TO TAG "ITEM1"
    GO TOP
 
-   SEEK g_rulemod( cMod ) + g_ruleobj( cObj ) + g_rule_c5( cCond )
+   SEEK get_rule_field_mod( cMod ) + get_rule_field_obj( cObj ) + g_rule_c5( cCond )
 
-   DO WHILE !Eof() .AND. field->modul_name == g_rulemod( cMod ) ;
-         .AND. field->rule_obj == g_ruleobj( cObj ) ;
+   DO WHILE !Eof() .AND. field->modul_name == get_rule_field_mod( cMod ) ;
+         .AND. field->rule_obj == get_rule_field_obj( cObj ) ;
          .AND. field->rule_c5 == g_rule_c5( cCond )
 
       // pravilo: koja operacija <A_KSR> recimo
@@ -497,15 +497,15 @@ STATIC FUNCTION _rule_item_( cField, xVal,  aArr, lShErr )
    LOCAL cKtoList
    LOCAL cNalog
 
-   O_FMKRULES
+   O_RULES
    SELECT fmkrules
    SET ORDER TO TAG "ITEM1"
    GO TOP
 
-   SEEK g_rulemod( cMod ) + g_ruleobj( cObj ) + g_rule_c5( cCond )
+   SEEK get_rule_field_mod( cMod ) + get_rule_field_obj( cObj ) + g_rule_c5( cCond )
 
-   DO WHILE !Eof() .AND. field->modul_name == g_rulemod( cMod ) ;
-         .AND. field->rule_obj == g_ruleobj( cObj ) ;
+   DO WHILE !Eof() .AND. field->modul_name == get_rule_field_mod( cMod ) ;
+         .AND. field->rule_obj == get_rule_field_obj( cObj ) ;
          .AND. field->rule_c5 == g_rule_c5( cCond )
 
       cArtCond := AllTrim( fmkrules->rule_c7 )
@@ -600,16 +600,16 @@ STATIC FUNCTION _rule_art1( aArr )
    LOCAL cKtoList
    LOCAL cNalog
 
-   O_FMKRULES
+   O_RULES
    SELECT fmkrules
    SET ORDER TO TAG "RNART1"
    GO TOP
 
-   SEEK g_rulemod( cMod ) + g_ruleobj( cObj ) + g_rule_c3( cCond )
+   SEEK get_rule_field_mod( cMod ) + get_rule_field_obj( cObj ) + get_rule_field_c3( cCond )
 
-   DO WHILE !Eof() .AND. field->modul_name == g_rulemod( cMod ) ;
-         .AND. field->rule_obj == g_ruleobj( cObj ) ;
-         .AND. field->rule_c3 == g_rule_c3( cCond )
+   DO WHILE !Eof() .AND. field->modul_name == get_rule_field_mod( cMod ) ;
+         .AND. field->rule_obj == get_rule_field_obj( cObj ) ;
+         .AND. field->rule_c3 == get_rule_field_c3( cCond )
 
       cArtcond := AllTrim( fmkrules->rule_c7 )
 

@@ -36,7 +36,7 @@ FUNCTION fin_admin_opcije_menu()
    AAdd( opc, "------------------------------------------------------" )
    AAdd( opcexe, {|| NIL } )
    AAdd( opc, "R. fmk pravila - rules " )
-   AAdd( opcexe, {|| p_fmkrules(,,, aRuleCols, bRuleBlock ) } )
+   AAdd( opcexe, {|| p_rules(,,, aRuleCols, bRuleBlock ) } )
 
 
    Menu_SC( "adm" )

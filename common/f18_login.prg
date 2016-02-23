@@ -229,11 +229,6 @@ METHOD F18Login:company_db_login( server_param )
             RETURN _logged_in // ovdje naprosto izlazimo, vjerovatno je ESC u pitanju
          ENDIF
 
-/*
-         IF _ret_comp < 0 // neka opcija se koristi...
-            LOOP
-         ENDIF
-*/
          // _rec_comp je > 1
          ::_write_params( @server_param )
          if ::connect( server_param, 1 )
@@ -487,7 +482,6 @@ METHOD F18Login:odabir_organizacije()
 
    ::included_databases_for_user()  // filter baza dostupnih useru, ako postoji !
 
-   AltD()
    hParams[ "posljednji_put" ] := "0000"
    hParams[ "posljednja_org" ] := "x"
    f18_ini_config_read( "sezona", @hParams, .T. ) // read from global ~/.f18_config.ini
@@ -496,7 +490,6 @@ METHOD F18Login:odabir_organizacije()
       ::main_db_params[ "database" ] :=  hParams[ "posljednja_org" ] + "_" + hParams[ "posljednji_put" ]
       ::main_db_params[ "session" ] := hParams[ "posljednji_put" ]
       s_lPrvoPokretanje := .F.
-      AltD()
       RETURN .T.
    ENDIF
 

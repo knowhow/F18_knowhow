@@ -38,8 +38,6 @@ FUNCTION start_f18_program_module( oApp, lSezone )
    oApp:set_module_gvars()
    info_bar( oApp:cName, oApp:cName + " : start_program_module set global vars - end" )
 
-
-altd( )
    pripremi_naslovni_ekran( oApp )
    crtaj_naslovni_ekran( .T. )
    show_insert_over_stanje()

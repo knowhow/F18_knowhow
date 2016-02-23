@@ -21,7 +21,7 @@ FUNCTION m_adm()
    AAdd( _opc, "1. pregled artikala bez definisanih elemenata  " )
    AAdd( _opcexe, {|| rpt_artikli_bez_elemenata() } )
    AAdd( _opc, "2. FMK rules" )
-   AAdd( _opcexe, {|| p_fmkrules( , , , aRuleSpec, bRuleBlock ) } )
+   AAdd( _opcexe, {|| p_rules( , , , aRuleSpec, bRuleBlock ) } )
 
    f18_menu( "adm", .F., _izbor, _opc, _opcexe )
 
@@ -41,7 +41,7 @@ FUNCTION rnal_o_tables( lTemporary )
 
    rnal_o_sif_tables()
 
-   O_FMKRULES
+   O_RULES
 
    O_DOCS
    O_DOC_IT

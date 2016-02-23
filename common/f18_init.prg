@@ -456,7 +456,6 @@ FUNCTION post_login( gVars )
    say_database_info()
    get_log_level_from_params()
 
-
    RETURN .T.
 
 
@@ -1211,25 +1210,46 @@ FUNCTION set_hot_keys()
 
    RETURN .T.
 
-// ---------------------------------------------
-// pokreni odredjenu funkciju odmah na pocetku
-// ---------------------------------------------
+
 FUNCTION run_on_startup()
 
-   LOCAL _ini, _fakt_doks
+   LOCAL _ini, _fakt_doks, cRun, oModul
 
    info_bar( "init", "run_on_start" )
 
    _ini := hb_Hash()
    _ini[ "run" ] := ""
+   _ini[ "modul" ] := "FIN"
 
-   f18_ini_config_read( "run" + iif( test_mode(), "_test", "" ), @_ini, .F. )
+   f18_ini_config_read( "startup" + iif( test_mode(), "_test", "" ), @_ini, .F. )
 
-   SWITCH ( _ini[ "run" ] )
+   cRun := _ini[ "run" ]
+
+   SWITCH _ini[ "modul" ]
+   CASE "FIN"
+      oModul := TFinMod():new( NIL, "FIN", F18_VER, F18_VER_DATE, my_user(), "dummy" )
+      EXIT
+   CASE "KALK"
+      oModul := TKalkMod():new( NIL, "KALK", F18_VER, F18_VER_DATE, my_user(), "dummy" )
+      EXIT
+   CASE "FAKT"
+      oModul := TFaktMod():new( NIL, "FAKT", F18_VER, F18_VER_DATE, my_user(), "dummy" )
+      EXIT
+
+   ENDSWITCH
+
+   goModul := oModul
+   gModul := oModul:cName
+
+   SWITCH ( cRun )
    CASE "fakt_pretvori_otpremnice_u_racun"
       _fakt_doks := FaktDokumenti():New()
       _fakt_doks:pretvori_otpremnice_u_racun()
 
+   OTHERWISE
+      IF !Empty( cRun )
+         &cRun
+      ENDIF
    END
 
    info_bar( "init", "run_on_start_end" )

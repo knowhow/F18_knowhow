@@ -16,11 +16,11 @@ MEMVAR m_x, m_y
 STATIC s_cDelimiter
 STATIC s_nRbr
 STATIC s_aPartArr := {}
-STATIC s_cKtoBanka
+STATIC s_cKtoBanka := "2000   "
 STATIC s_cKtoDobavljac
 STATIC s_cKtoKupac
 STATIC s_cKtoProvizija
-STATIC s_cIdVN := "I1"
+STATIC s_cIdVN := "IB"
 
 
 FUNCTION import_elba( cTxt )
@@ -57,12 +57,12 @@ FUNCTION import_elba( cTxt )
    s_cDelimiter := Chr( 9 ) // delimiter je TAB
    s_cKtoKupac := get_konto_rule_elba_c3( "KTO_KUPAC" ) // kupac konto
    s_cKtoDobavljac := get_konto_rule_elba_c3( "KTO_DOBAV" )
-   s_cKtoBanka := get_konto_rule_elba_c3( "KTO_BANKA" )
+   //s_cKtoBanka := get_konto_rule_elba_c3( "KTO_BANKA" )
    s_cKtoProvizija := get_konto_rule_elba_c3( "KTO_PROVIZ" )
 
-   IF s_cKtoProvizija == "XX" .OR.  s_cKtoKupac == "XX" .OR.  s_cKtoDobavljac == "XX" .OR. ;
-         s_cKtoBanka == "XX"
-      Alert( "podesiti parametre rules/c3: KTO_KUPAC, KTO_DOBAV, KTO_BANKA, KTO_PROVIZIJA " )
+   IF s_cKtoProvizija == "XX" .OR.  s_cKtoKupac == "XX" .OR.  s_cKtoDobavljac == "XX" //.OR. ;
+         //s_cKtoBanka == "XX"
+      Alert( "podesiti parametre rules/c3: KTO_KUPAC, KTO_DOBAV,  KTO_PROVIZIJA " )
       RETURN .F.
    ENDIF
 
@@ -95,11 +95,11 @@ STATIC FUNCTION import_elba_parametri( cFile, cImpView )
    LOCAL cImpOk := "D"
    LOCAL GetList := {}
 
-   cFile := fetch_metric( "import_elba_lokacija_fajla", my_user(), my_home() + "elba.txt" )
+   cFile := fetch_metric( "import_elba_lokacija_fajla", my_user(), my_home() + "bbi.txt" )
    cFile := PadR( cFile, 200 )
    cImpView := "D"
 
-   Box(, 10, 77 )
+   Box(, 12, 77 )
 
    @ m_x + nX, m_y + 2 SAY "Parametri importa" COLOR "BG+/B"
 
@@ -111,6 +111,9 @@ STATIC FUNCTION import_elba_parametri( cFile, cImpView )
    @ m_x + nX, m_y + 2 SAY "Pregled importa (D/N)?" GET cImpView VALID cImpView $ "DN" PICT "@!"
    nX++
    @ m_x + nX, m_y + 2 SAY "Vrsta Naloga ?" GET s_cIdVN
+
+   nX++
+   @ m_x + nX, m_y + 2 SAY "Konto Banka ?" GET s_cKtoBanka
 
    nX += 2
    @ m_x + nX, m_y + 2 SAY "Importovati podatke (D/N)?" GET cImpOk VALID cImpOk $ "DN" PICT "@!"
@@ -263,12 +266,40 @@ STATIC FUNCTION get_elba_stavka_from_txt( aItem )
 
 
 
+
+
+
+
+
+
+
    hRet[ "idfirma" ] := gFirma
    hRet[ "transakcija" ] := aItem[ 1 ]
    hRet[ "datdok" ] := elba_get_datum( aItem[ 2 ] )
 
 
-   IF Len( aItem ) == 10
+   IF  Len( aItem ) == 11 .AND. "BBI DD" $ aItem[ 8 ] // bbi naknade
+
+      // - 2-31.08.2015 3-1112152438185842000003 4-IZ 5-169363885
+      // 0 -  8-BBI DD Sarajevo  9-Naplata mjesecne naknade za vodenje racuna 10-J 11-8.00
+      hRet[ "banka" ] := "0"
+      hRet[ "partner_opis" ] := aItem[ 8 ]
+      hRet[ "opis" ] := aItem[ 9 ]
+      hRet[ "iznos" ] := Val( aItem[ 11 ] )
+
+   ELSEIF  Len( aItem ) == 12 // bbi standardna transakcija
+
+      // + 2-26.08.2015 3-1112152383794710000004 4-IZ 5-169331203
+      // 0 - 8-3383202251226837 9-RASMER PRIVREDNO DRUSTVO ZA TRGOV INU NA VELIKO I MALO EXPORT IMPORT I USLUGE D.O.O. SARAJEVO, KAME
+      // 10-UPL RN
+      // 11-J 12-122.85
+
+      hRet[ "banka" ] := aItem[ 8 ]
+      hRet[ "partner_opis" ] := aItem[ 9 ]
+      hRet[ "opis" ] := aItem[ 10 ]
+      hRet[ "iznos" ] := Val( aItem[ 12 ] )
+
+   ELSEIF Len( aItem ) == 10 // sberbank standardna transakcija
 
       hRet[ "banka" ] := aItem[ 6 ]
       hRet[ "partner_opis" ] := aItem[ 7 ]
@@ -276,7 +307,7 @@ STATIC FUNCTION get_elba_stavka_from_txt( aItem )
       hRet[ "iznos" ] := Val( aItem[ 10 ] )
 
 
-   ELSEIF Len( aItem ) == 9 .AND. "Naplata mjese" $ aItem[ 7 ]
+   ELSEIF Len( aItem ) == 9 .AND. "Naplata mjese" $ aItem[ 7 ]  // sberbank mjesecna naknada
 
       // - 31.01.2015 00:00:00 1130150308098652000003 160331
       // 140  Sberbank BH d.d. Sarajevo Naplata mjesečne naknade za vođenje računa BAM 14.9
@@ -286,7 +317,7 @@ STATIC FUNCTION get_elba_stavka_from_txt( aItem )
       hRet[ "opis" ] := aItem[ 7 ]
       hRet[ "iznos" ] := Val( aItem[ 9 ] )
 
-   ELSEIF Len( aItem ) == 8 .AND. "POVRAT NALOGA" $ aItem[ 6 ]
+   ELSEIF Len( aItem ) == 8 .AND. "POVRAT NALOGA" $ aItem[ 6 ] // sberbank
 
       // + 25.05.2015 00:00:00 1150151454178865000002 500251
       // Sberbank BH d.d. Sarajevo 6-POVRAT NALOGA 5149151429905196-POGR ESNA VRSTA PRIHODA BAM 8-150
@@ -299,7 +330,7 @@ STATIC FUNCTION get_elba_stavka_from_txt( aItem )
 
    ELSE
       Pitanje(, "Zapis neispravan. Zaistaviti obradu ?", " " )
-      Alert( "broj polja != 10: " + pp( aItem ) )
+      Alert( "Format zapisa nerazumljiv : " + pp( aItem ) )
       RETURN .F.
    ENDIF
 
@@ -428,7 +459,7 @@ STATIC FUNCTION put_elba_item_into_pripr( hFinItem, cImpView )
    ++s_nRbr
    cRbr := Str( s_nRbr, 4 )
 
-   hFinItem[ "konto" ] := PadR( get_konto_rule_elba_c3( "KTO_BANKA" ), 7 ) // konto banke, 2001
+   hFinItem[ "konto" ] := s_cKtoBanka
 
 /*
    IF cImpView == "D"

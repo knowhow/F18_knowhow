@@ -363,7 +363,6 @@ FUNCTION IzSifkNaz( cDBF, cOznaka )
 
 FUNCTION IzSifkWV( cDBF, cOznaka, cWhen, cValid )
 
-   LOCAL xRet := ""
 
    PushWA()
 
@@ -469,10 +468,13 @@ STATIC FUNCTION update_sifv_n_relation( sifk_rec, id_sif, vals )
    _sifv_rec[ "oznaka" ] := sifk_rec[ "oznaka" ]
    _sifv_rec[ "idsif" ] := id_sif
 
-   // veza 1->N posebno se tretira !!
+   // veza 1->N posebno se tretira
    SELECT sifv
    brisi_sifv_item( sifk_rec[ "id" ], sifk_rec[ "oznaka" ], id_sif )
 
+   IF ! HB_ISCHAR( vals )
+      ?E "update_sifv_n_relation vals != char"
+   ENDIF
    _numtok := NumToken( vals, "," )
 
    FOR _i := 1 TO _numtok

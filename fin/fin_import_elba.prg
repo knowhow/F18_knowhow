@@ -274,7 +274,7 @@ STATIC FUNCTION get_elba_stavka_from_txt( aItem )
 
       AltD()
       p_firma( @hRet[ "partner" ] ) // otvori sifanik partnera pa ga rucno podesi
-      set_banku_za_partnera( cPartnId, cBank )
+      set_banku_za_partnera( hRet[ "partner" ], hRet[ "banka" ] )
 
    ENDIF
 
@@ -330,7 +330,8 @@ STATIC FUNCTION put_elba_item_into_pripr( hFinItem, cImpView )
    IF cImpView == "D"
 
       @ m_x + 6, m_y + 2 SAY Space( 70 )
-      @ m_x + 6, m_y + 2 SAY PadR( hFinItem[ "partner_opis" ], 45 ) + " -> partner: " GET hFinItem[ "partner" ]
+      @ m_x + 6, m_y + 2 SAY PadR( hFinItem[ "partner_opis" ], 45 ) + " -> partner: " ;
+          GET hFinItem[ "partner" ] valid P_Firma( @hFinItem[ "partner" ] )
 
       @ m_x + 7, m_y + 2 SAY8 "datum knjiženja:" GET hFinItem[ "datdok" ]
       @ m_x + 7, Col() + 2 SAY8 "broj veze:" GET hFinItem[ "brdok" ]
@@ -360,7 +361,7 @@ STATIC FUNCTION put_elba_item_into_pripr( hFinItem, cImpView )
       field->idvn WITH hFinItem[ "idvn" ], ;
       field->brnal WITH hFinItem[ "brnal" ], ;
       field->brdok WITH hFinItem[ "brdok" ], ;
-      field->opis WITH hFinItem[ "opis" ], ;
+      field->opis WITH Trim( hFinItem[ "opis" ] ) + " / " + hFinItem[ "partner_opis" ], ;
       field->rbr WITH cRbr, ;
       field->datdok WITH hFinItem[ "datdok" ], ;
       field->idkonto WITH hFinItem[ "konto" ], ;
@@ -394,11 +395,11 @@ STATIC FUNCTION put_elba_item_into_pripr( hFinItem, cImpView )
       field->idvn WITH hFinItem[ "idvn" ], ;
       field->brnal WITH hFinItem[ "brnal" ], ;
       field->brdok WITH hFinItem[ "brdok" ], ;
-      field->opis WITH hFinItem[ "opis" ], ;
+      field->opis WITH Trim( hFinItem[ "opis" ]) + " / " + hFinItem[ "partner_opis" ], ;
       field->rbr WITH cRbr, ;
       field->datdok WITH hFinItem[ "datdok" ], ;
       field->idkonto WITH hFinItem[ "konto" ], ;
-      field->idpartner WITH hFinItem[ "partner" ], ;
+      field->idpartner WITH "", ;
       field->d_p WITH iif( hFinItem[ "d_p" ] == "1", "2", "1" ), ;
       field->iznosbhd WITH hFinItem[ "iznos" ]
 
@@ -586,37 +587,32 @@ STATIC FUNCTION get_partner_za_isplate_sa_zr( cTxt, cTrRN )
 STATIC FUNCTION set_banku_za_partnera( cPartn, cBank )
 
    LOCAL cRead := ""
-   LOCAL nTArea := Select()
    LOCAL cOldBank
    LOCAL cNewBank
 
-   // nema banke, nista...
    IF Empty( cBank )
-      SELECT ( nTArea )
       RETURN .F.
    ENDIF
 
+   PushWA()
    O_SIFK
    O_SIFV
 
    cNewBank := ""
    cOldBank := AllTrim( IzSifKPartn( "BANK", cPartn ) )  // stara banka
 
-   // dodaj staru banku ako postoji
-   IF !Empty( cOldBank )
+   IF !Empty( cOldBank ) // dodaj staru banku ako postoji
       cNewBank += cOldBank
+      IF Right( cNewBank, 1 ) <> ","  // dodaj i , posto je potrebno
+         cNewBank += ","
+      ENDIF
    ENDIF
 
+   cNewBank += cBank
 
-   IF Right( cNewBank, 1 ) <> ","  // dodaj i , posto je potrebno
-      cNewBank += ","
-   ENDIF
+   USifK( "PARTN", "BANK", cPartn, cNewBank )
 
-   cNewBank += cBank // dodaj konacno novu banku...
-
-   USifK( "PARTN", "BANK", cPartn, Unicode():New( cNewBank, .F. ) )
-
-   SELECT ( nTArea )
+   PopWA()
 
    RETURN .T.
 
@@ -626,7 +622,6 @@ STATIC FUNCTION get_partner_by_banka( cBanka )
 
    LOCAL cIdPartner := ""
 
-   AltD()
    O_PARTN
    IF ImaUSifv( "PARTN", "BANK", cBanka, @cIdPartner )
       RETURN PadR( cIdPartner, 6 )
@@ -651,7 +646,6 @@ STATIC FUNCTION get_partner_by_elba_partner_opis( cDesc )
    aTemp := TokToNiz( cDesc, " " )
 
    IF Len( aTemp ) > 1
-
       cTemp := AllTrim( aTemp[ 1 ] )
 
       IF Len( cTemp ) < 4
@@ -659,7 +653,6 @@ STATIC FUNCTION get_partner_by_elba_partner_opis( cDesc )
       ENDIF
 
    ELSE
-
       cTemp := AllTrim( aTemp[ 1 ] )
 
    ENDIF
@@ -744,13 +737,9 @@ FUNCTION rule_get_partner_na_osnovu_konta( cKonto )
          field->rule_c3 == get_rule_field_c3( cCond )
 
       IF AllTrim( cKonto ) == AllTrim( field->rule_c6 )
-
          cPartn := PadR( field->rule_c5, 6 )
-
          EXIT
-
       ENDIF
-
       SKIP
 
    ENDDO

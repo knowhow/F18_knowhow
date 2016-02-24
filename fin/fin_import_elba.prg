@@ -27,6 +27,7 @@ FUNCTION import_elba( cTxt )
 
    LOCAL nItems
    LOCAL cImpView
+   LOCAL lRet := .T.
 
    IF cTxt == nil
       cTxt := ""
@@ -57,12 +58,24 @@ FUNCTION import_elba( cTxt )
    s_cDelimiter := Chr( 9 ) // delimiter je TAB
    s_cKtoKupac := get_konto_rule_elba_c3( "KTO_KUPAC" ) // kupac konto
    s_cKtoDobavljac := get_konto_rule_elba_c3( "KTO_DOBAV" )
-   //s_cKtoBanka := get_konto_rule_elba_c3( "KTO_BANKA" )
    s_cKtoProvizija := get_konto_rule_elba_c3( "KTO_PROVIZ" )
 
-   IF s_cKtoProvizija == "XX" .OR.  s_cKtoKupac == "XX" .OR.  s_cKtoDobavljac == "XX" //.OR. ;
-         //s_cKtoBanka == "XX"
-      Alert( "podesiti parametre rules/c3: KTO_KUPAC, KTO_DOBAV,  KTO_PROVIZIJA " )
+   IF s_cKtoProvizija == "XX"
+      Alert( "podesiti parametar rules/c3: KTO_PROVIZ" )
+      lRet := .F.
+   ENDIF
+
+   IF s_cKtoKupac == "XX"
+      Alert( "podesiti parametar rules/c3: KTO_KUPAC" )
+      lRet := .F.
+   ENDIF
+
+   IF s_cKtoDobavljac == "XX"
+      Alert( "podesiti parametar rules/c3: KTO_DOBAV" )
+      lRet := .F.
+   ENDIF
+
+   IF !lRet
       RETURN .F.
    ENDIF
 

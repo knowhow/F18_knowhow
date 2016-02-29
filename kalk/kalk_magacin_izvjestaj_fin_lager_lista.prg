@@ -33,7 +33,7 @@ STATIC FUNCTION _o_tbl()
 // -----------------------------------------------
 // finansijska lager lista magacina
 // -----------------------------------------------
-FUNCTION FLLM()
+FUNCTION Flager_lista_magacin()
 
    LOCAL cTipDok, cDokNaz
    LOCAL _t_area, _a_exp
@@ -202,7 +202,7 @@ FUNCTION FLLM()
    ENDIF
 
    PRIVATE nTStrana := 0
-   PRIVATE bZagl := {|| ZaglFLLM() }
+   PRIVATE bZagl := {|| ZaglFlager_lista_magacin() }
 
    Eval( bZagl )
    nTUlaz := nTIzlaz := 0
@@ -407,7 +407,7 @@ FUNCTION FLLM()
 // -----------------------------------------
 // zaglavlje izvjestaja
 // -----------------------------------------
-STATIC FUNCTION ZaglFLLM()
+STATIC FUNCTION ZaglFlager_lista_magacin()
 
    Preduzece()
 

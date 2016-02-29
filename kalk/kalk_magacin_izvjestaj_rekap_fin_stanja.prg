@@ -13,7 +13,7 @@
 #include "f18.ch"
 
 // rekapitulacija finansijskog stanja po magacinima
-FUNCTION RFLLM()
+FUNCTION RFlager_lista_magacin()
 
    LOCAL nKolUlaz
    LOCAL nKolIzlaz
@@ -97,7 +97,7 @@ FUNCTION RFLLM()
    ?
 
    PRIVATE nTStrana := 0
-   PRIVATE bZagl := {|| ZaglRFLLM() }
+   PRIVATE bZagl := {|| ZaglRFlager_lista_magacin() }
 
    Eval( bZagl )
    nTUlaz := nTIzlaz := 0
@@ -228,7 +228,7 @@ FUNCTION RFLLM()
 
 
 // zaglavlje izvjestaja rekap.fin.stanja
-FUNCTION ZaglRFLLM()
+FUNCTION ZaglRFlager_lista_magacin()
 
    Preduzece()
    P_12CPI

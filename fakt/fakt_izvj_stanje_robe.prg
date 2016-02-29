@@ -95,7 +95,7 @@ FUNCTION fakt_stanje_robe()
          @ m_x + xPos + 4, m_y + 2 SAY "K2" GET  cK2 PICT "@!"
       ENDIF
 
-      @ m_x + xPos + 5, m_y + 2 SAY "Prikaz samo kriticnih zaliha (D/N/O) ?" GET cMinK PICT "@!" VALID cMink $ "DNO"
+      @ m_x + xPos + 5, m_y + 2 SAY8 "Prikaz samo kritičnih zaliha (D/N/O) ?" GET cMinK PICT "@!" VALID cMink $ "DNO"
       @ m_x + xPos + 7, m_y + 2 SAY "Napraviti prored (D/N)    "  GET cProred PICT "@!" VALID cProred $ "DN"
 
       READ

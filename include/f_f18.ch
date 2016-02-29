@@ -295,7 +295,6 @@
 #define F_EVENTLOG  288
 #define F_USERS  289
 #define F_GROUPS  290
-#define F_RULES  291
 #define F_RULES 292
 #define F_LOKAL 293
 #define F_RPT_TMP  294

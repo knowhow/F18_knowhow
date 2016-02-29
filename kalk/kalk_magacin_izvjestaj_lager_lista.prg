@@ -1,14 +1,13 @@
 /*
- * This file is part of the bring.out FMK, a free and open source
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+ * This file is part of the bring.out knowhow ERP, a free and open source
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
-
 
 #include "f18.ch"
 
@@ -20,12 +19,10 @@ STATIC __txt3
 
 
 
-
-
 // ----------------------------------------------------
 // izvjestaj - lager lista magacina
 // ----------------------------------------------------
-FUNCTION LLM()
+FUNCTION lager_lista_magacin()
 
    PARAMETERS fPocStanje
    LOCAL fimagresaka := .F.
@@ -94,7 +91,7 @@ FUNCTION LLM()
       O_KALK_PRIPR
       cBrPSt := "00001   "
       Box(, 3, 60 )
-      @ m_x + 1, m_y + 2 SAY "Generacija poc. stanja  - broj dokumenta 16 -" GET cBrPSt
+      @ m_x + 1, m_y + 2 SAY8 "Generacija poč.stanja  - broj dokumenta 16 -" GET cBrPSt
       READ
       ESC_BCR
       BoxC()
@@ -155,29 +152,29 @@ FUNCTION LLM()
 
       @ m_x + 7, Col() + 1 SAY "Prikaz samo do nab.vr. D/N" GET cDoNab  VALID cDoNab $ "DN" PICT "@!"
 
-      IF ( IsPDV() .AND. ( IsMagPNab() .OR. IsMagSNab() ) )
-         @ m_x + 8, m_y + 2 SAY "Pr.stavki kojima je NV 0 D/N" GET cNula  VALID cNula $ "DN" PICT "@!"
-         @ m_x + 9, m_y + 2 SAY "Prikaz 'ERR' ako je NV/Kolicina<>NC " GET cErr PICT "@!" VALID cErr $ "DN"
-         @ m_x + 9, Col() + 1 SAY "VPC iz sifrarnika robe (D/N)?" GET _vpc_iz_sif PICT "@!" VALID _vpc_iz_sif $ "DN"
+      IF ( IsMagPNab() .OR. IsMagSNab() )
+         @ m_x + 8, m_y + 2 SAY8 "Pr.stavki kojima je NV 0 D/N" GET cNula  VALID cNula $ "DN" PICT "@!"
+         @ m_x + 9, m_y + 2 SAY8 "Prikaz 'ERR' ako je NV/Kolicina<>NC " GET cErr PICT "@!" VALID cErr $ "DN"
+         @ m_x + 9, Col() + 1 SAY8 "VPC iz sifrarnika robe (D/N)?" GET _vpc_iz_sif PICT "@!" VALID _vpc_iz_sif $ "DN"
       ELSE
-         @ m_x + 8, m_y + 2 SAY "Prikaz stavki kojima je VPV 0 D/N" GET cNula  VALID cNula $ "DN" PICT "@!"
-         @ m_x + 9, m_y + 2 SAY "Prikaz 'ERR' ako je VPV/Kolicina<>VPC " GET cErr PICT "@!" VALID cErr $ "DN"
+         @ m_x + 8, m_y + 2 SAY8 "Prikaz stavki kojima je VPV 0 D/N" GET cNula  VALID cNula $ "DN" PICT "@!"
+         @ m_x + 9, m_y + 2 SAY8 "Prikaz 'ERR' ako je VPV/Kolicina<>VPC " GET cErr PICT "@!" VALID cErr $ "DN"
       ENDIF
 
-      @ m_x + 10, m_y + 2 SAY "Datum od " GET dDatOd
-      @ m_x + 10, Col() + 2 SAY "do" GET dDatDo
+      @ m_x + 10, m_y + 2 SAY8 "Datum od " GET dDatOd
+      @ m_x + 10, Col() + 2 SAY8 "do" GET dDatDo
 
       @ m_x + 11, m_y + 2 SAY8 "Vrsta štampe TXT/ODT (1/2)" GET _print VALID _print $ "12" PICT "@!"
 
-      @ m_x + 12, m_y + 2 SAY "Postaviti srednju NC u sifrarnik" GET cNCSif PICT "@!" valid ( ( cpnab == "D" .AND. cncsif == "D" ) .OR. cNCSif == "N" )
+      @ m_x + 12, m_y + 2 SAY8 "Postaviti srednju NC u sifrarnik" GET cNCSif PICT "@!" valid ( ( cpnab == "D" .AND. cncsif == "D" ) .OR. cNCSif == "N" )
 
       IF fPocStanje
-         @ m_x + 13, m_y + 2 SAY "Sredi samo stavke kol=0, nv<>0 (0/1/2)" ;
+         @ m_x + 13, m_y + 2 SAY8 "Sredi samo stavke kol=0, nv<>0 (0/1/2)" ;
             GET cSrKolNula VALID cSrKolNula $ "012" ;
             PICT "@!"
       ENDIF
 
-      @ m_x + 14, m_y + 2 SAY "Prikaz samo kritičnih zaliha (D/N/O) ?" GET cMinK PICT "@!" VALID cMink $ "DNO"
+      @ m_x + 14, m_y + 2 SAY8 "Prikaz samo kritičnih zaliha (D/N/O) ?" GET cMinK PICT "@!" VALID cMink $ "DNO"
 
       IF IsVindija()
          cGr := Space( 10 )
@@ -388,7 +385,7 @@ FUNCTION LLM()
    ?
 
    PRIVATE nTStrana := 0
-   PRIVATE bZagl := {|| ZaglLLM() }
+   PRIVATE bZagl := {|| Zagllager_lista_magacin() }
 
    Eval( bZagl )
 
@@ -1275,7 +1272,7 @@ STATIC FUNCTION _set_zagl( cLine, cTxt1, cTxt2, cTxt3, cSredCij )
 // --------------------------------
 // zaglavlje lager liste
 // --------------------------------
-FUNCTION ZaglLLM()
+FUNCTION Zagllager_lista_magacin()
 
    IF IsPDV()
       ZaglPdv()
@@ -1404,7 +1401,7 @@ STATIC FUNCTION ZaglPDV()
 
 FUNCTION PocStMag()
 
-   LLM( .T. )
+   lager_lista_magacin( .T. )
 
    RETURN .T.
 

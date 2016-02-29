@@ -28,9 +28,9 @@ FUNCTION fin_unos_naloga()
    PRIVATE gnLOst := 0
    PRIVATE gPotpis := "N"
 
-   info_bar( "fin", "read_params")
+   info_bar( "fin", "read_params" )
    fin_read_params()
-   info_bar( "fin", "read_params_end")
+   info_bar( "fin", "read_params_end" )
 
    cTekucaRj := GetTekucaRJ()
    lBlagAsis := .F.
@@ -274,10 +274,10 @@ FUNCTION edit_fin_priprema()
    @ m_x + 8, m_y + Col() + 2  SAY "Datum:" GET _DatDok
 
    IF gDatVal == "D"
-      @ m_x + 8, Col() + 2 SAY "Valuta" GET _DatVal
+      @ m_x + 8, Col() + 2 SAY "Valuta: " GET _DatVal
    ENDIF
 
-   @ m_x + 11, m_y + 2 SAY "Opis :" GET _opis WHEN {|| .T. } VALID {|| .T. } PICT "@S50"
+   @ m_x + 11, m_y + 2 SAY "Opis: " GET _opis WHEN {|| .T. } VALID {|| .T. } PICT "@S" + AllTrim( Str( maxcols() - 8 ) )
 
    IF _fin_params[ "fin_k1" ]
       @ m_x + 11, Col() + 2 SAY "K1" GET _k1 PICT "@!"
@@ -1366,22 +1366,18 @@ STATIC FUNCTION _brisi_pripr_uslovi( param )
 
    ++ _x
    ++ _x
-
    @ m_x + _x, m_y + 2 SAY "brisi od rednog broja:" GET _od_broja PICT "9999999"
    @ m_x + _x, Col() + 1 SAY "do:" GET _do_broja PICT "9999999"
 
    ++ _x
    ++ _x
-
    @ m_x + _x, m_y + 2 SAY "               vrste naloga:" GET _vn PICT "@S30"
 
    ++ _x
-
    @ m_x + _x, m_y + 2 SAY "             brojeve naloga:" GET _br_nal PICT "@S30"
 
    ++ _x
    ++ _x
-
    @ m_x + _x, m_y + 2 SAY "stavke koje sadrze partnere:" GET _partn PICT "@S30"
 
    ++ _x

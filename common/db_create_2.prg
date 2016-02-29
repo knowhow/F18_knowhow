@@ -65,7 +65,7 @@ FUNCTION add_f_mcode( aDbf )
 
    AAdd( aDbf, { "MATCH_CODE", "C", 10, 0 } )
 
-   RETURN
+   RETURN .T.
 
 // ------------------------------------
 // kreiranje indexa matchcode
@@ -76,7 +76,7 @@ FUNCTION index_mcode( dummy, alias )
       CREATE_INDEX( "MCODE", "match_code", alias )
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 // --------------------------------------------

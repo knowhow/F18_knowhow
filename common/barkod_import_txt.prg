@@ -1,16 +1,16 @@
 /*
- * This file is part of the bring.out FMK, a free and open source
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+ * This file is part of the bring.out knowhow ERP, a free and open source
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
 
-
 #include "f18.ch"
+
 
 // -------------------------------------------------------
 // Setuj matricu sa poljima tabele dokumenata TERM
@@ -53,7 +53,7 @@ FUNCTION bterm_txt_to_tbl( cTxtFile )
 
    IF !File( my_home() + "temp.dbf" )
       MsgBeep( "Ne mogu kreirati fajl TEMP.DBF!" )
-      RETURN
+      RETURN .F.
    ENDIF
 
    // otvori tabele
@@ -70,7 +70,7 @@ FUNCTION bterm_txt_to_tbl( cTxtFile )
 
    IF _o_file:Error()
       MsgBeep( _o_file:ErrorMsg( "Problem sa otvaranjem fajla: " ) )
-      RETURN
+      RETURN .F.
    ENDIF
 
    // prodji kroz svaku liniju i insertuj zapise u temp.dbf
@@ -125,11 +125,11 @@ FUNCTION bterm_txt_to_tbl( cTxtFile )
 
    MsgBeep( "Import txt => temp - OK" )
 
-   RETURN
+   RETURN .T.
 
 
 // ----------------------------------------------------------------
-// Kreira tabelu PRIVPATH\TEMP.DBF prema definiciji polja iz aDbf
+// Kreira tabelu TEMP.DBF prema definiciji polja iz aDbf
 // ----------------------------------------------------------------
 STATIC FUNCTION cre_temp_tbl( aDbf, lIndex )
 
@@ -159,4 +159,4 @@ STATIC FUNCTION cre_temp_tbl( aDbf, lIndex )
 
    ENDIF
 
-   RETURN
+   RETURN .T.

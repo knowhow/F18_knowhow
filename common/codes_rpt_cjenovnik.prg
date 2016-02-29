@@ -14,6 +14,8 @@
 
 FUNCTION CjenR()
 
+   LOCAL cIniName
+
    PRIVATE cKomLin
 
    IF Pitanje(, "Formiranje cjenovnika ?", "N" ) == "N"
@@ -47,8 +49,8 @@ FUNCTION CjenR()
    DO WHILE !Eof()
       SELECT BARKOD
       APPEND BLANK
-      REPLACE ID       WITH  roba->id,;
-         NAZIV    WITH  Trim( Left( ROBA->naz, 40 ) ) + " (" + Trim( ROBA->jmj ) + ")",;
+      REPLACE ID       WITH  roba->id, ;
+         NAZIV    WITH  Trim( Left( ROBA->naz, 40 ) ) + " (" + Trim( ROBA->jmj ) + ")", ;
          VPC      WITH  ROBA->vpc, ;
          MPC      WITH  ROBA->mpc
       SELECT roba
@@ -146,4 +148,4 @@ FUNCTION rpt_zanivel()
 
    SELECT ( nTArea )
 
-   RETURN
+   RETURN .T.

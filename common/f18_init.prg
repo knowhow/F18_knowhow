@@ -347,6 +347,8 @@ FUNCTION set_screen_dimensions()
    // Alert( hb_ValToStr( hb_gtInfo( HB_GTI_DESKTOPROWS ) ) + " / " + hb_ValToStr( hb_gtInfo( HB_GTI_DESKTOPCOLS ) ) )
    //hb_gtInfo( HB_GTI_ISFULLSCREEN, .T. )
    hb_gtInfo( HB_GTI_ALTENTER, .T. )
+   hb_gtInfo( HB_GTI_RESIZEMODE, HB_GTI_RESIZEMODE_ROWS)
+
 
 
    IF SetMode( maxrows() + INFO_BAR_ROWS,  maxcols() )

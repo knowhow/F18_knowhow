@@ -285,6 +285,8 @@ FUNCTION set_screen_dimensions()
    CASE _pix_width >= 1280 .AND. _pix_height >= 820
 
 #ifdef  __PLATFORM__DARWIN
+
+      font_name( "Ubuntu Mono" )
       font_size( 24 )
       font_width( 12 )
       maxrows( 35 - INFO_BAR_ROWS )
@@ -329,15 +331,19 @@ FUNCTION set_screen_dimensions()
 
    ENDCASE
 
-   _get_screen_resolution_from_config()
+   get_screen_resolution_from_config()
 
-   hb_gtInfo( HB_GTI_FONTNAME, font_name() )
+   ?E " set font_name: ", hb_gtInfo( HB_GTI_FONTNAME, font_name() )
+   ?E " set font_size: ", hb_gtInfo( HB_GTI_FONTSIZE, font_size() )
+   ?E " set font_width: ", hb_gtInfo( HB_GTI_FONTWIDTH, font_width() )
+   ?E " set font_weight: ", hb_gtInfo( HB_GTI_FONTWEIGHT, HB_GTI_FONTW_BOLD )
 
-#ifndef __PLATFORM__DARWIN
-   hb_gtInfo( HB_GTI_FONTWIDTH, font_width() )
-#endif
+   ?E " get font_name: ", hb_gtInfo( HB_GTI_FONTNAME )
+   ?E " get font_size: ", hb_gtInfo( HB_GTI_FONTSIZE )
+   ?E " get font_width: ", hb_gtInfo( HB_GTI_FONTWIDTH )
+   ?E " get font_weight: ", hb_gtInfo( HB_GTI_FONTWEIGHT )
 
-   hb_gtInfo( HB_GTI_FONTSIZE, font_size() )
+DispBegin()
 
    IF SetMode( maxrows() + INFO_BAR_ROWS,  maxcols() )
       ?E "setovanje ekrana: setovan ekran po rezoluciji"
@@ -521,10 +527,9 @@ STATIC FUNCTION get_log_level_from_params()
    RETURN .T.
 
 
-// ------------------------------------------------------------
-// vraca informacije iz inija vezane za screen rezoluciju
-// ------------------------------------------------------------
-STATIC FUNCTION _get_screen_resolution_from_config()
+
+
+STATIC FUNCTION get_screen_resolution_from_config()
 
    LOCAL _var_name
 
@@ -591,30 +596,18 @@ FUNCTION font_name( x )
 
    IF ValType( x ) == "C"
       s_cFontName := x
-   ELSE
-      ?E "font_name:", s_cFontName
    ENDIF
+   ?E " s_font_name:", s_cFontName
 
    RETURN s_cFontName
 
 FUNCTION font_width( x )
 
    IF ValType( x ) == "N"
-
-#ifdef __PLATFORM__DARWIN
-
-      IF  x != 100
-         s_nFontWidth := x
-      ELSE
-         s_nFontWidth := font_size()
-      ENDIF
-#else
       s_nFontWidth := x
-#endif
-
-   ELSE
-      ?E "font_width:", s_nFontWidth
    ENDIF
+
+   ?E " s_font_width:", s_nFontWidth
 
    RETURN s_nFontWidth
 
@@ -623,10 +616,9 @@ FUNCTION font_size( x )
 
    IF ValType( x ) == "N"
       s_nFontSize := x
-   ELSE
-      ?E "font_width:", s_nFontSize
    ENDIF
 
+   ?E " s_font_size:", s_nFontSize
    RETURN s_nFontSize
 
 

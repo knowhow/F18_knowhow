@@ -37,7 +37,7 @@ FUNCTION IniRPT()
 
 FUNCTION R2( cImeDef, cOutf, bFor, nDuzSif )
 
-   //
+
 
    LOCAL fpg, ng
    IF nDuzSif == NIL; nDuzSif := 0; ENDIF

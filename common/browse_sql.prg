@@ -22,28 +22,27 @@ MEMVAR  azImeKol, azKol  // snimaju stanje ImeKol, Kol
 MEMVAR cKolona
 
 /*
-   browse_tbl (cImeBoxa,  xw, yw, bUserF,  cMessTop, cMessBot, lInvert, aMessage, nFreeze, bPodvuci, nPrazno, nGPrazno, aPoredak, skipblock)
- * \brief Glavna funkcija tabelarnog prikaza podataka
- * \param cImeBoxa - ime box-a
- * \param xw - duzina
- * \param yw - sirina
- * \param bUserF - kodni blok, user funkcija
- * \param cMessTop - poruka na vrhu
- * \return NIL
- * \note grid - eng -> mreza
+
+ * brief Glavna funkcija tabelarnog prikaza podataka
+ * param cImeBoxa - ime box-a
+ * param xw - duzina
+ * param yw - sirina
+ * param bUserF - kodni blok, user funkcija
+ * param cMessTop - poruka na vrhu
+ * return NIL
  *
 
- \brief Privatna Varijabla koja se inicijalizira prije "ulaska" u ObjDBedit
- \param - [ 1] Zalavlje kolone
- \param - [ 2] kodni blok za prikaz kolone {|| id}
- \param - [ 3] izraz koji se edituje (string), obradjuje sa & operatorom
- \param - [ 4] kodni blok When
- \param - [ 5] kodni blok Valid
- \param - [ 6] -
- \param - [ 7] picture
- \param - [ 8] - ima jos getova
- \param - [ 9] -
- \param - [10] NIL - prikazi u sljedecem redu,  15 - prikazi u koloni my+15  broj kolone pri editu sa <F2>
+ brief Privatna Varijabla koja se inicijalizira prije "ulaska" u ObjDBedit
+ param - [ 1] Zalavlje kolone
+ param - [ 2] kodni blok za prikaz kolone {|| id}
+ param - [ 3] izraz koji se edituje (string), obradjuje sa & operatorom
+ param - [ 4] kodni blok When
+ param - [ 5] kodni blok Valid
+ param - [ 6] -
+ param - [ 7] picture
+ param - [ 8] - ima jos getova
+ param - [ 9] -
+ param - [10] NIL - prikazi u sljedecem redu,  15 - prikazi u koloni my+15  broj kolone pri editu sa <F2>
 */
 
 FUNCTION my_db_edit_sql( cImeBoxa, xw, yw, bUserF, cMessTop, cMessBot, lInvert, aMessage, nFreeze, bPodvuci, nPrazno, nGPrazno, aPoredak, skipblock )
@@ -58,15 +57,13 @@ FUNCTION my_db_edit_sql( cImeBoxa, xw, yw, bUserF, cMessTop, cMessBot, lInvert, 
    PRIVATE  bDoleRed := NIL
    PRIVATE  bDodajRed := NIL
 
-   // trenutno smo u novom redu ?
-   PRIVATE  fTBNoviRed := .F.
 
-   // da li se moze zavrsiti unos podataka ?
-   PRIVATE  TBCanClose := .T.
+   PRIVATE  fTBNoviRed := .F.  // trenutno smo u novom redu ?
+   PRIVATE  TBCanClose := .T. // da li se moze zavrsiti unos podataka ?
 
    PRIVATE  TBAppend := "N"
-   PRIVATE  bZaglavlje := NIL
-   // zaglavlje se edituje kada je kursor u prvoj koloni prvog reda
+   PRIVATE  bZaglavlje := NIL // zaglavlje se edituje kada je kursor u prvoj koloni prvog reda
+
    PRIVATE  TBScatter := "N"  // uzmi samo tekuce polje
    PRIVATE  nTBLine   := 1      // tekuca linija-kod viselinijskog browsa
    PRIVATE  nTBLastLine := 1  // broj linija kod viselinijskog browsa

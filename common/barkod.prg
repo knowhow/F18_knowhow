@@ -64,7 +64,7 @@ FUNCTION KaLabelBKod()
       aStampati[ i ] := "D"
    NEXT
 
-   ImeKol := { { "IdRoba", {|| IdRoba } }, { "Kolicina", {|| Transform( Kolicina, picv ) } }, { "Stampati?", {|| IF( aStampati[ RecNo() ] == "D", "-> DA <-", "      NE" ) } } }
+   ImeKol := { { "IdRoba", {|| field->IdRoba } }, { "Kolicina", {|| Transform( Kolicina, picv ) } }, { "Stampati?", {|| IF( aStampati[ RecNo() ] == "D", "-> DA <-", "      NE" ) } } }
 
    Kol := {}
    FOR i := 1 TO Len( ImeKol )
@@ -105,8 +105,8 @@ FUNCTION KaLabelBKod()
       HSEEK KALK_PRIPR->idroba
       IF Empty( barkod ) .AND. ( my_get_from_ini( "BarKod", "Auto", "N", SIFPATH ) == "D" )
          PRIVATE cPom := my_get_from_ini( "BarKod", "AutoFormula", "ID", SIFPATH )
-         // kada je barkod prazan, onda formiraj sam interni barkod
-         cIBK := my_get_from_ini( "BARKOD", "Prefix", "", SIFPATH ) + &cPom
+
+         cIBK := my_get_from_ini( "BARKOD", "Prefix", "", SIFPATH ) + &cPom // kada je barkod prazan, onda formiraj sam interni barkod
          IF my_get_from_ini( "BARKOD", "EAN", "", SIFPATH ) == "13"
             cIBK := NoviBK_A()
          ENDIF

@@ -12,13 +12,12 @@
 #include "f18.ch"
 
 
-/*! fn CreRabDB()
+/* fn CreRabDB()
  *  brief Kreira tabelu rabat u SIFPATH
  */
 
 FUNCTION CreRabDB()
 
-   // RABAT.DBF
    aDbf := {}
    AAdd( aDbf, { "IDRABAT", "C", 10, 0 } )
    AAdd( aDbf, { "TIPRABAT", "C", 10, 0 } )
@@ -52,7 +51,6 @@ FUNCTION CreRabDB()
  */
 FUNCTION GetRabForArticle( cIdRab, cTipRab, cIdRoba, nTekIznos )
 
-   // {
    LOCAL nArr
    nArr := Select()
 
@@ -82,7 +80,7 @@ FUNCTION GetRabForArticle( cIdRab, cTipRab, cIdRoba, nTekIznos )
  */
 FUNCTION GetDaysForRabat( cIdRab, cTipRab )
 
-   // {
+
    LOCAL nArr
    nArr := Select()
 
@@ -98,7 +96,7 @@ FUNCTION GetDaysForRabat( cIdRab, cTipRab )
    SELECT ( nArr )
 
    RETURN nRet
-// }
+
 
 
 /*! \fn GetRabIznos(cTekIzn)

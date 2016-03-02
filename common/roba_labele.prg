@@ -1,14 +1,13 @@
 /*
- * This file is part of the bring.out FMK, a free and open source
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+ * This file is part of the bring.out knowhow ERP, a free and open source
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
-
 
 #include "f18.ch"
 
@@ -33,10 +32,10 @@ FUNCTION RLabele()
 
    IF GetVars( @cVarijanta, @cKolicina, @_tkm_no, @_len_naz ) == 0
       my_close_all_dbf()
-      RETURN
+      RETURN .F.
    ENDIF
 
-   CreTblRLabele()
+   cre_rlabele()
 
    IF cVarijanta == "2"
       _template := "rlab2.odt"
@@ -46,9 +45,9 @@ FUNCTION RLabele()
 
    SELECT rlabele
    IF RecCount() == 0
-      MsgBeep( "Nisam generisao nista !!!! greska..." )
+      MsgBeep( "Nije generisano nista! greska..." )
       my_close_all_dbf()
-      RETURN
+      RETURN .F.
    ENDIF
 
    _gen_xml( _xml_file, _tkm_no, _len_naz )
@@ -59,7 +58,7 @@ FUNCTION RLabele()
       prikazi_odt()
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 STATIC FUNCTION GetVars( cVarijanta, cKolicina, tkm_no, len_naz )
@@ -88,22 +87,22 @@ STATIC FUNCTION GetVars( cVarijanta, cKolicina, tkm_no, len_naz )
       GO TOP
 
       cIdVd := kalk_pripr->idVd
-	
+
       PopWa()
-	
+
       IF ( cIdVd == "19" )
          cVarijanta := "2"
       ENDIF
    ENDIF
 
    Box(, 10, 65 )
-	
+
    @ m_x + 1, m_y + 2 SAY "Broj labela zavisi od kolicine artikla (D/N):" ;
       GET cKolicina VALID cKolicina $ "DN" PICT "@!"
 
    @ m_x + 3, m_y + 2 SAY "1 - standardna naljepnica"
    @ m_x + 4, m_y + 2 SAY "2 - sa prikazom stare cijene (prekrizeno)"
-	
+
    @ m_x + 6, m_y + 3 SAY "Odaberi zeljenu varijantu " ;
       GET cVarijanta VALID cVarijanta $ "12"
 
@@ -136,7 +135,7 @@ STATIC FUNCTION GetVars( cVarijanta, cKolicina, tkm_no, len_naz )
 // -------------------------------------------------------------
 // Kreira tabelu rLabele u privatnom direktoriju
 // -------------------------------------------------------------
-STATIC FUNCTION CreTblRLabele()
+STATIC FUNCTION cre_rlabele()
 
    LOCAL aDbf
    LOCAL _tbl
@@ -226,7 +225,7 @@ STATIC FUNCTION KaFillRLabele( cKolicina )
             LOOP
          ENDIF
       ENDIF
-	
+
       nBr_labela := field->kolicina
 
       // ako ne zavisi od kolicine artikla
@@ -238,19 +237,19 @@ STATIC FUNCTION KaFillRLabele( cKolicina )
 
       SELECT roba
       SEEK kalk_pripr->idRoba
-	
+
       SELECT rlabele
       SEEK kalk_pripr->idroba
-	
+
       IF ( cKolicina == "D" .OR. ( cKolicina == "N" .AND. !Found() ) )
-		
+
          FOR i := 1 TO nBr_labela
-		
+
             SELECT rlabele
             APPEND BLANK
-		
+
             Scatter()
-		
+
             _idroba := kalk_pripr->idroba
             _naz := Left( roba->naz, 40 )
             _idtarifa := kalk_pripr->idtarifa
@@ -260,7 +259,7 @@ STATIC FUNCTION KaFillRLabele( cKolicina )
             IF !Empty( roba->barkod )
                _barkod := roba->barkod
             ENDIF
-		
+
             IF ( kalk_pripr->idVd == "19" )
                _cijena := kalk_pripr->mpcsapp + kalk_pripr->fcj
                _scijena := kalk_pripr->fcj
@@ -268,13 +267,13 @@ STATIC FUNCTION KaFillRLabele( cKolicina )
                _cijena := kalk_pripr->mpcsapp
                _scijena := _cijena
             ENDIF
-		
+
             Gather()
-	
+
          NEXT
-	
+
       ENDIF
-	
+
       SELECT kalk_pripr
       SKIP 1
 

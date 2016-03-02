@@ -352,7 +352,7 @@ FUNCTION set_screen_dimensions()
 
 
    IF SetMode( maxrows() + INFO_BAR_ROWS,  maxcols() )
-      ?E "setovanje ekrana: setovan ekran po rezoluciji"
+      ?E "setovanje ekrana: setovan ekran po rezoluciji", maxrows(), maxcols()
    ELSE
 
       // pGt := hb_gtCreate( f18_gt() )

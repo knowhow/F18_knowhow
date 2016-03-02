@@ -345,9 +345,9 @@ FUNCTION set_screen_dimensions()
    ?E " get font_weight: ", hb_gtInfo( HB_GTI_FONTWEIGHT )
 
    // Alert( hb_ValToStr( hb_gtInfo( HB_GTI_DESKTOPROWS ) ) + " / " + hb_ValToStr( hb_gtInfo( HB_GTI_DESKTOPCOLS ) ) )
-   //hb_gtInfo( HB_GTI_ISFULLSCREEN, .T. )
+   // hb_gtInfo( HB_GTI_ISFULLSCREEN, .T. )
    hb_gtInfo( HB_GTI_ALTENTER, .T. )
-   hb_gtInfo( HB_GTI_RESIZEMODE, HB_GTI_RESIZEMODE_ROWS)
+   hb_gtInfo( HB_GTI_RESIZEMODE, HB_GTI_RESIZEMODE_ROWS )
 
 
 
@@ -593,7 +593,10 @@ FUNCTION maxrows( x )
    RETURN __max_rows
 
 */
-   RETURN  hb_gtInfo( HB_GTI_DESKTOPROWS ) - INFO_BAR_ROWS
+
+   // RETURN  hb_gtInfo( HB_GTI_DESKTOPROWS )
+
+   RETURN MaxRow() - INFO_BAR_ROWS
 
 
 
@@ -606,8 +609,9 @@ FUNCTION maxcols( x )
       RETURN __max_cols
   */
 
-   RETURN hb_gtInfo( HB_GTI_DESKTOPCOLS )
+   // RETURN hb_gtInfo( HB_GTI_DESKTOPCOLS )
 
+   RETURN MaxCol()
 
 
 

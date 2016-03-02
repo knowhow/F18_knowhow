@@ -345,7 +345,7 @@ FUNCTION set_screen_dimensions()
    ?E " get font_weight: ", hb_gtInfo( HB_GTI_FONTWEIGHT )
 
    // Alert( hb_ValToStr( hb_gtInfo( HB_GTI_DESKTOPROWS ) ) + " / " + hb_ValToStr( hb_gtInfo( HB_GTI_DESKTOPCOLS ) ) )
-   hb_gtInfo( HB_GTI_ISFULLSCREEN, .T. )
+   //hb_gtInfo( HB_GTI_ISFULLSCREEN, .T. )
    hb_gtInfo( HB_GTI_ALTENTER, .T. )
 
 
@@ -449,7 +449,6 @@ FUNCTION post_login( gVars )
    set_f18_home( my_server_params()[ "database" ] )
    info_bar( "init", "home baze: " + my_home() )
 
-   set_screen_dimensions()
    hb_gtInfo( HB_GTI_WINTITLE, "[ " + my_server_params()[ "user" ] + " ][ " + my_server_params()[ "database" ] + " ]" )
 
    thread_dbfs( hb_threadStart( @thread_create_dbfs() ) )

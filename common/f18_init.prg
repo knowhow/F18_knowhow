@@ -344,12 +344,9 @@ FUNCTION set_screen_dimensions()
    ?E " get font_width: ", hb_gtInfo( HB_GTI_FONTWIDTH )
    ?E " get font_weight: ", hb_gtInfo( HB_GTI_FONTWEIGHT )
 
-
    // Alert( hb_ValToStr( hb_gtInfo( HB_GTI_DESKTOPROWS ) ) + " / " + hb_ValToStr( hb_gtInfo( HB_GTI_DESKTOPCOLS ) ) )
-
    hb_gtInfo( HB_GTI_ISFULLSCREEN, .T. )
    hb_gtInfo( HB_GTI_ALTENTER, .T. )
-
 
 
    IF SetMode( maxrows() + INFO_BAR_ROWS,  maxcols() )
@@ -362,8 +359,6 @@ FUNCTION set_screen_dimensions()
       ?E "setovanje ekrana: ne mogu setovati ekran po trazenoj rezoluciji !"
       RETURN .F.
    ENDIF
-
-   // hb_gtReload( f18_gt() )
 
    RETURN .T.
 
@@ -454,6 +449,7 @@ FUNCTION post_login( gVars )
    set_f18_home( my_server_params()[ "database" ] )
    info_bar( "init", "home baze: " + my_home() )
 
+   set_screen_dimensions()
    hb_gtInfo( HB_GTI_WINTITLE, "[ " + my_server_params()[ "user" ] + " ][ " + my_server_params()[ "database" ] + " ]" )
 
    thread_dbfs( hb_threadStart( @thread_create_dbfs() ) )
@@ -463,7 +459,6 @@ FUNCTION post_login( gVars )
    server_log_enable()
 
    set_init_fiscal_params()
-
 
    run_on_startup()
 

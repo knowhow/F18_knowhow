@@ -16,7 +16,6 @@ virm/*.prg
 reports/*.prg
 common/*.prg
 string/*.prg
-narudzbenica/*.prg
 common_legacy/*.prg
 fiskalizacija/*.prg
 

@@ -279,11 +279,7 @@ STATIC FUNCTION sql_log_delete( params )
    _qry := "DELETE FROM fmk.log "
    _qry += "WHERE " + _where
 
-   MsgO( "Brisanje log-a u toku... sačekajte trenutak !" )
-
    _result := _sql_query( _server, _qry )
-
-   MsgC()
 
    IF ValType( _result ) == "L"
       _ok := .F.

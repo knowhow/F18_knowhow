@@ -346,7 +346,7 @@ FUNCTION set_screen_dimensions()
 
    // Alert( hb_ValToStr( hb_gtInfo( HB_GTI_DESKTOPROWS ) ) + " / " + hb_ValToStr( hb_gtInfo( HB_GTI_DESKTOPCOLS ) ) )
    // hb_gtInfo( HB_GTI_ISFULLSCREEN, .T. )
-   hb_gtInfo( HB_GTI_ALTENTER, .T. )
+
    hb_gtInfo( HB_GTI_RESIZEMODE, HB_GTI_RESIZEMODE_ROWS )
 
 
@@ -361,6 +361,8 @@ FUNCTION set_screen_dimensions()
       ?E "setovanje ekrana: ne mogu setovati ekran po trazenoj rezoluciji !"
       RETURN .F.
    ENDIF
+
+   hb_gtInfo( HB_GTI_ALTENTER, .T. )
 
    RETURN .T.
 
@@ -586,34 +588,31 @@ STATIC FUNCTION get_screen_resolution_from_config()
 
 FUNCTION maxrows( x )
 
-/*
    IF ValType( x ) == "N"
       __max_rows := x
    ENDIF
-   RETURN __max_rows
+   //RETURN __max_rows
 
-*/
-
-   // RETURN  hb_gtInfo( HB_GTI_DESKTOPROWS ) - INFO_BAR_ROWS
+  // RETURN  hb_gtInfo( HB_GTI_DESKTOPROWS ) - INFO_BAR_ROWS
 
   // RETURN MaxRow()
-  RETURN  hb_gtInfo( HB_GTI_VIEWMAXHEIGHT ) - INFO_BAR_ROWS
+  RETURN  max( hb_gtInfo( HB_GTI_VIEWMAXHEIGHT) - INFO_BAR_ROWS, __max_rows)
 
 
 
 FUNCTION maxcols( x )
 
-  /*
+
    IF ValType( x ) == "N"
       __max_cols := x
    ENDIF
-      RETURN __max_cols
-  */
+   //    RETURN __max_cols
+
 
    // RETURN hb_gtInfo( HB_GTI_DESKTOPCOLS )
 
    //RETURN MaxCol()
-   RETURN hb_gtInfo( HB_GTI_VIEWMAXWIDTH )
+   RETURN MAX( hb_gtInfo( HB_GTI_VIEWMAXWIDTH ), __max_cols )
 
 
 

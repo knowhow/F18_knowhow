@@ -591,27 +591,17 @@ FUNCTION maxrows( x )
    IF ValType( x ) == "N"
       __max_rows := x
    ENDIF
-   //RETURN __max_rows
 
-  // RETURN  hb_gtInfo( HB_GTI_DESKTOPROWS ) - INFO_BAR_ROWS
-
-  // RETURN MaxRow()
   RETURN  max( hb_gtInfo( HB_GTI_VIEWMAXHEIGHT) - INFO_BAR_ROWS, __max_rows)
 
 
 
 FUNCTION maxcols( x )
 
-
    IF ValType( x ) == "N"
       __max_cols := x
    ENDIF
-   //    RETURN __max_cols
 
-
-   // RETURN hb_gtInfo( HB_GTI_DESKTOPCOLS )
-
-   //RETURN MaxCol()
    RETURN MAX( hb_gtInfo( HB_GTI_VIEWMAXWIDTH ), __max_cols )
 
 

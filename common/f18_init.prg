@@ -594,9 +594,10 @@ FUNCTION maxrows( x )
 
 */
 
-   // RETURN  hb_gtInfo( HB_GTI_DESKTOPROWS )
+   // RETURN  hb_gtInfo( HB_GTI_DESKTOPROWS ) - INFO_BAR_ROWS
 
-   RETURN MaxRow() - INFO_BAR_ROWS
+  // RETURN MaxRow()
+  RETURN  hb_gtInfo( HB_GTI_VIEWMAXHEIGHT ) - INFO_BAR_ROWS
 
 
 
@@ -611,7 +612,8 @@ FUNCTION maxcols( x )
 
    // RETURN hb_gtInfo( HB_GTI_DESKTOPCOLS )
 
-   RETURN MaxCol()
+   //RETURN MaxCol()
+   RETURN hb_gtInfo( HB_GTI_VIEWMAXWIDTH )
 
 
 

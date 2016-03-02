@@ -336,12 +336,12 @@ FUNCTION set_screen_dimensions()
    ?E " set font_name: ", hb_gtInfo( HB_GTI_FONTNAME, font_name() )
    ?E " set font_size: ", hb_gtInfo( HB_GTI_FONTSIZE, font_size() )
    ?E " set font_width: ", hb_gtInfo( HB_GTI_FONTWIDTH, font_width() )
-   //?E " set font_weight: ", hb_gtInfo( HB_GTI_FONTWEIGHT, HB_GTI_FONTW_BOLD )
+   ?E " set font_weight: ", hb_gtInfo( HB_GTI_FONTWEIGHT, HB_GTI_FONTW_BOLD )
 
    ?E " get font_name: ", hb_gtInfo( HB_GTI_FONTNAME )
    ?E " get font_size: ", hb_gtInfo( HB_GTI_FONTSIZE )
    ?E " get font_width: ", hb_gtInfo( HB_GTI_FONTWIDTH )
-   //?E " get font_weight: ", hb_gtInfo( HB_GTI_FONTWEIGHT )
+   ?E " get font_weight: ", hb_gtInfo( HB_GTI_FONTWEIGHT )
 
    IF SetMode( maxrows() + INFO_BAR_ROWS,  maxcols() )
       ?E "setovanje ekrana: setovan ekran po rezoluciji"

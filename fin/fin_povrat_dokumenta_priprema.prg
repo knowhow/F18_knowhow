@@ -115,7 +115,7 @@ STATIC FUNCTION brisi_fin_nalog_iz_kumulativa( cIdFirma, cIdVn, cBrNal )
    _rec[ "brnal" ] := cBrNal
 
    sql_table_update( nil, "BEGIN" )
-      
+
    IF !f18_lock_tables( { "fin_suban", "fin_nalog", "fin_sint", "fin_anal" }, .T. )
       sql_table_update( nil, "END" )
       MsgBeep( "Ne mogu zaključati tabele !#Operacija povrata poništena." )
@@ -154,8 +154,8 @@ STATIC FUNCTION brisi_fin_nalog_iz_kumulativa( cIdFirma, cIdVn, cBrNal )
 
    IF lOk
       lRet := .T.
-      f18_free_tables( { "fin_suban", "fin_nalog", "fin_sint", "fin_anal" } )
       sql_table_update( nil, "END" )
+      f18_free_tables( { "fin_suban", "fin_nalog", "fin_sint", "fin_anal" } )
       log_write( "F18_DOK_OPER: povrat finansijskog naloga u pripremu: " + cIdFirma + "-" + cIdVn + "-" + cBrNal, 2 )
    ELSE
       sql_table_update( nil, "ROLLBACK" )
@@ -167,7 +167,7 @@ STATIC FUNCTION brisi_fin_nalog_iz_kumulativa( cIdFirma, cIdVn, cBrNal )
 
 
 
-STATIC FUNCTION kopiraj_fin_nalog_u_tabelu_pripreme( cIdFirma, cIdVn, cBrNal, lStorno ) 
+STATIC FUNCTION kopiraj_fin_nalog_u_tabelu_pripreme( cIdFirma, cIdVn, cBrNal, lStorno )
 
    LOCAL _rec
 
@@ -200,5 +200,3 @@ STATIC FUNCTION kopiraj_fin_nalog_u_tabelu_pripreme( cIdFirma, cIdVn, cBrNal, lS
    ENDDO
 
    RETURN
-
-

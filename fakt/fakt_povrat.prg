@@ -145,9 +145,8 @@ FUNCTION povrat_fakt_dokumenta( rezerv, id_firma, id_tip_dok, br_dok, test )
       IF _ok
 
          nRet := 1
-
-         f18_free_tables( { "fakt_fakt", "fakt_doks", "fakt_doks2" } )
          sql_table_update( nil, "END" )
+         f18_free_tables( { "fakt_fakt", "fakt_doks", "fakt_doks2" } )
          log_write( "F18_DOK_OPER: fakt povrat dokumenta u pripremu: " + id_firma + "-" + id_tip_dok + "-" + br_dok, 2 )
 
       ELSE
@@ -413,8 +412,8 @@ FUNCTION povrat_fakt_po_kriteriju( br_dok, dat_dok, tip_dok, firma )
    ENDDO
 
    IF _ok
-      f18_free_tables( { "fakt_doks", "fakt_doks2", "fakt_fakt" } )
       sql_table_update( nil, "END" )
+      f18_free_tables( { "fakt_doks", "fakt_doks2", "fakt_fakt" } )
    ELSE
       sql_table_update( nil, "ROLLBACK" )
       MsgBeep( "Problem sa povratom dokumenta u pripremu.#Poništavam operaciju." )

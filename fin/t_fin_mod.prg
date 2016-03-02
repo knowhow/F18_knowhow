@@ -91,8 +91,8 @@ METHOD set_module_gvars()
    PRIVATE cHistory := " "
    PRIVATE aHistory := {}
 
-   PUBLIC aRuleCols := g_rule_cols_fin()
-   PUBLIC bRuleBlock := g_rule_block_fin()
+   PUBLIC aRuleCols := get_rule_field_cols_fin()
+   PUBLIC bRuleBlock := get_rule_field_block_fin()
 
    ::super:setTGVars()
 

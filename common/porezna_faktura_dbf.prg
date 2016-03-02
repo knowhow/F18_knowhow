@@ -21,14 +21,13 @@ FUNCTION create_porezna_faktura_temp_dbfs()
    LOCAL aRnField := {}
    LOCAL aDRTxtField := {}
 
-
    get_drn_fields( @aDRnField )
    IF !File( f18_ime_dbf( cDRnName ) )
       DbCreate2( cDRnName, aDRnField )
    ELSE
       IF !is_dbf_struktura_polja_identicna( cDRnName, "BRDOK", 8, 0 )
-          ferase_dbf( cDRnName, .T. )
-          DbCreate2( cDRnName, aDRnField )
+         ferase_dbf( cDRnName, .T. )
+         DbCreate2( cDRnName, aDRnField )
       ENDIF
    ENDIF
 
@@ -37,8 +36,8 @@ FUNCTION create_porezna_faktura_temp_dbfs()
       DbCreate2( cRnName, aRnField )
    ELSE
       IF !is_dbf_struktura_polja_identicna( cRnName, "BRDOK", 8, 0 )
-          ferase_dbf( cRnName, .T. )
-          DbCreate2( cRnName, aRnField )
+         ferase_dbf( cRnName, .T. )
+         DbCreate2( cRnName, aRnField )
       ENDIF
    ENDIF
 
@@ -203,11 +202,11 @@ FUNCTION get_drn_datum_isporuke()
       xRet := nil
    ELSE
 
-         IF Empty( datisp )
-            xRet := datdok
-         ELSE
-            xRet := datisp
-         ENDIF
+      IF Empty( datisp )
+         xRet := datdok
+      ELSE
+         xRet := datisp
+      ENDIF
    ENDIF
 
    PopWa()
@@ -401,10 +400,10 @@ FUNCTION AzurKupData( cIdPos )
 
    update_rec_server_and_dbf( _tbl, _rec, 1, "CONT" )
 
-   f18_free_tables( { _tbl } )
    sql_table_update( nil, "END" )
+   f18_free_tables( { _tbl } )
 
-   RETURN
+   RETURN .T.
 
 // pretrazi tabelu kupaca i napuni matricu
 FUNCTION fnd_kup_data( cKupac )

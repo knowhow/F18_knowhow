@@ -185,7 +185,7 @@ METHOD set_module_gvars()
    gGlBaza := "DOCS.DBF"
 
    // rules block i cols
-   PUBLIC aRuleSpec := g_rule_cols_rnal()
-   PUBLIC bRuleBlock := g_rule_block_rnal()
+   PUBLIC aRuleSpec := get_rule_field_cols_rnal()
+   PUBLIC bRuleBlock := get_rule_field_block_rnal()
 
    RETURN .T.

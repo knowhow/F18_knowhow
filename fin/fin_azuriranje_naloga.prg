@@ -121,9 +121,9 @@ FUNCTION fin_azuriranje_naloga( automatic )
 
    MsgC()
 
+   sql_table_update( nil, "END" )
    f18_free_tables( { __tbl_suban, __tbl_anal, __tbl_sint, __tbl_nalog } )
 
-   sql_table_update( nil, "END" )
 
    SELECT fin_pripr
    my_dbf_pack()

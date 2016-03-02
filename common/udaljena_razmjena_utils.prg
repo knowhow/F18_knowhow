@@ -120,8 +120,8 @@ FUNCTION update_table_konto( zamjena_sifre )
 
    IF lOk
       lRet := .T.
-      f18_free_tables( { "konto" } )
       sql_table_update( nil, "END" )
+      f18_free_tables( { "konto" } )
    ELSE
       sql_table_update( nil, "ROLLBACK" )
    ENDIF
@@ -193,8 +193,8 @@ FUNCTION update_table_partn( zamjena_sifre )
 
    IF lOk
       lRet := .T.
-      f18_free_tables( { "partn" } )
       sql_table_update( nil, "END" )
+      f18_free_tables( { "partn" } )
    ELSE
       sql_table_update( nil, "ROLLBACK" )
    ENDIF
@@ -263,8 +263,8 @@ FUNCTION update_table_roba( zamjena_sifre )
 
    IF lOk
       lRet := .T.
-      f18_free_tables( { "roba" } )
       sql_table_update( nil, "END" )
+      f18_free_tables( { "roba" } )
    ELSE
       sql_table_update( nil, "ROLLBACK" )
    ENDIF

@@ -447,8 +447,8 @@ FUNCTION fin_automatsko_zatvaranje_otvorenih_stavki( lAuto, cKto, cPtn )
    ENDDO
 
    IF lOk
-      f18_free_tables( { "fin_suban" } )
       sql_table_update( nil, "END" )
+      f18_free_tables( { "fin_suban" } )
    ELSE
       sql_table_update( nil, "ROLLBACK" )
       MsgBeep( "Greška sa opcijom automatskog zatvaranja stavki !#Operacija poništena." )
@@ -507,8 +507,8 @@ STATIC FUNCTION ponisti_markere_postojecih_stavki( cIdFirma, cIdKonto, cIdPartne
 
    IF lOk
       lRet := .T.
-      f18_free_tables( { "fin_suban" } )
       sql_table_update( nil, "END" )
+      f18_free_tables( { "fin_suban" } )
    ELSE
       sql_table_update( nil, "ROLLBACK" )
    ENDIF
@@ -566,8 +566,8 @@ FUNCTION fin_brisanje_markera_otvorenih_stavki()
 
    IF lOk
       lRet := .T.
-      f18_free_tables( { "fin_suban" } )
       sql_table_update( nil, "END" )
+      f18_free_tables( { "fin_suban" } )
    ELSE
       sql_table_update( nil, "ROLLBACK" )
       MsgBeep( "Greška sa opcijom brisanja markera !#Operacija poništena." )
@@ -2249,8 +2249,8 @@ STATIC FUNCTION dodaj_promjene_iz_osuban_u_suban()
 
    IF lOk
       lRet := .T.
-      f18_free_tables( { "fin_suban" } )
       sql_table_update( nil, "END" )
+      f18_free_tables( { "fin_suban" } )
    ELSE
       sql_table_update( nil, "ROLLBACK" )
    ENDIF
@@ -2301,8 +2301,8 @@ STATIC FUNCTION brisi_otvorene_stavke_iz_tabele_suban()
 
    IF lOk
       lRet := .T.
-      f18_free_tables( { "fin_suban" } )
       sql_table_update( nil, "END" )
+      f18_free_tables( { "fin_suban" } )
    ELSE
       sql_table_update( nil, "ROLLBACK" )
    ENDIF

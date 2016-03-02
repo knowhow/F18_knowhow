@@ -1100,18 +1100,18 @@ STATIC FUNCTION AzurPPK()
 
    Postotak( -1,,,,, .T. )
 
-   f18_free_tables( { "fin_suban", "fin_anal", "fin_sint" } )
    sql_table_update( nil, "END" )
+   f18_free_tables( { "fin_suban", "fin_anal", "fin_sint" } )
 
    SELECT TEMP77
    USE
 
-   RETURN
+   RETURN .T.
 
 
 
-/*! \fn ZadnjiRbr()
- *  \brief Vraca zadnji redni broj
+/*
+ *  brief Vraca zadnji redni broj
  */
 
 FUNCTION ZadnjiRBR()

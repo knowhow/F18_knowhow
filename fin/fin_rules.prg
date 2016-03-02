@@ -12,7 +12,7 @@
 
 #include "f18.ch"
 
-FUNCTION g_rule_cols_fin()
+FUNCTION get_rule_field_cols_fin()
 
    LOCAL aKols := {}
 
@@ -32,7 +32,7 @@ FUNCTION g_rule_cols_fin()
    RETURN aKols
 
 
-FUNCTION g_rule_block_fin()
+FUNCTION get_rule_field_block_fin()
 
    LOCAL bBlock := {|| ed_rule_bl() }
 

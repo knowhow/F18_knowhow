@@ -59,8 +59,8 @@ FUNCTION sast_repl_all() // zamjena sastavnice u svim proizvodima
       ENDDO
 
       IF lOk
-         f18_free_tables( { "sast" } )
          sql_table_update( nil, "END" )
+         f18_free_tables( { "sast" } )
       ELSE
          sql_table_update( nil, "ROLLBACK" )
       ENDIF
@@ -125,8 +125,8 @@ FUNCTION pr_uces_sast() // promjena ucesca
       ENDDO
 
       IF lOk
-         f18_free_tables( { "sast" } )
          sql_table_update( nil, "END" )
+         f18_free_tables( { "sast" } )
       ELSE
          sql_table_update( nil, "ROLLBACK" )
       ENDIF

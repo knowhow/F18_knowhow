@@ -331,6 +331,7 @@ FUNCTION set_screen_dimensions()
 
    ENDCASE
 
+
    get_screen_resolution_from_config()
 
    ?E " set font_name: ", hb_gtInfo( HB_GTI_FONTNAME, font_name() )
@@ -343,12 +344,26 @@ FUNCTION set_screen_dimensions()
    ?E " get font_width: ", hb_gtInfo( HB_GTI_FONTWIDTH )
    ?E " get font_weight: ", hb_gtInfo( HB_GTI_FONTWEIGHT )
 
+
+   // Alert( hb_ValToStr( hb_gtInfo( HB_GTI_DESKTOPROWS ) ) + " / " + hb_ValToStr( hb_gtInfo( HB_GTI_DESKTOPCOLS ) ) )
+
+   hb_gtInfo( HB_GTI_ISFULLSCREEN, .T. )
+   hb_gtInfo( HB_GTI_ALTENTER, .T. )
+
+
+
    IF SetMode( maxrows() + INFO_BAR_ROWS,  maxcols() )
       ?E "setovanje ekrana: setovan ekran po rezoluciji"
    ELSE
+
+      // pGt := hb_gtCreate( f18_gt() )
+      // hb_gtSelect( pGt )
+
       ?E "setovanje ekrana: ne mogu setovati ekran po trazenoj rezoluciji !"
-      QUIT_1
+      RETURN .F.
    ENDIF
+
+   // hb_gtReload( f18_gt() )
 
    RETURN .T.
 
@@ -575,20 +590,30 @@ STATIC FUNCTION get_screen_resolution_from_config()
 
 FUNCTION maxrows( x )
 
+/*
    IF ValType( x ) == "N"
       __max_rows := x
    ENDIF
-
    RETURN __max_rows
+
+*/
+   RETURN  hb_gtInfo( HB_GTI_DESKTOPROWS ) - INFO_BAR_ROWS
+
 
 
 FUNCTION maxcols( x )
 
+  /*
    IF ValType( x ) == "N"
       __max_cols := x
    ENDIF
+      RETURN __max_cols
+  */
 
-   RETURN __max_cols
+   RETURN hb_gtInfo( HB_GTI_DESKTOPCOLS )
+
+
+
 
 FUNCTION font_name( x )
 
@@ -617,6 +642,7 @@ FUNCTION font_size( x )
    ENDIF
 
    ?E " s_font_size:", s_nFontSize
+
    RETURN s_nFontSize
 
 

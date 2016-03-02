@@ -356,8 +356,8 @@ FUNCTION br_ugovor()
 
    IF lOk
       _ret := 1
-      f18_free_tables( { "fakt_ugov", "fakt_rugov" } )
       sql_table_update( nil, "END" )
+      f18_free_tables( { "fakt_ugov", "fakt_rugov" } )
    ELSE
       sql_table_update( nil, "ROLLBACK" )
    ENDIF

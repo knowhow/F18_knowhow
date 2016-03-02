@@ -609,8 +609,8 @@ FUNCTION fakt_ispravka_podataka_azuriranog_dokumenta( id_firma, tip_dok, br_dok 
    SEEK id_firma + tip_dok + br_dok
 
    IF !Found()
-      f18_free_tables( { "fakt_fakt", "fakt_doks" } )
       sql_table_update( nil, "END" )
+      f18_free_tables( { "fakt_fakt", "fakt_doks" } )
       MsgBeep( "Dokument ne postoji, nije ništa zamjenjeno !" )
       RETURN lRet
    ENDIF

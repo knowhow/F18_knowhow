@@ -571,8 +571,8 @@ FUNCTION zamjeni_numericka_polja_u_tabeli( cKolona, cTrazi, cUslov )
    IF lImaSemafor
       IF lOk
          lRet := .T.
-         f18_free_tables( { cAlias } )
          sql_table_update( nil, "END" )
+         f18_free_tables( { cAlias } )
       ELSE
          sql_table_update( nil, "ROLLBACK" )
       ENDIF
@@ -684,8 +684,8 @@ FUNCTION replace_kolona_in_table( cKolona, trazi_val, zamijeni_val, last_search 
    IF _has_semaphore
       IF lOk
          lRet := .T.
-         f18_free_tables( { cAlias } )
          sql_table_update( nil, "END" )
+         f18_free_tables( { cAlias } )
       ELSE
          sql_table_update( nil, "ROLLBACK" )
          MsgBeep( "Greška sa opcijom ALT+R !#Operacija prekinuta." )

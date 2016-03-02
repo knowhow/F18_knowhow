@@ -69,8 +69,8 @@ FUNCTION copy_sast()
          ENDDO
 
          IF lOk
-            f18_free_tables( { "sast" } )
             sql_table_update( nil, "END" )
+            f18_free_tables( { "sast" } )
          ELSE
             sql_table_update( nil, "ROLLBACK" )
          ENDIF
@@ -163,8 +163,8 @@ FUNCTION bris_sast()
    ENDIF
 
    IF lOk
-      f18_free_tables( { "roba", "sast" } )
       sql_table_update( nil, "END" )
+      f18_free_tables( { "roba", "sast" } )
    ELSE
       sql_table_update( nil, "ROLLBACK" )
    ENDIF

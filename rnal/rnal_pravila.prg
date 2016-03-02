@@ -58,7 +58,7 @@ STATIC FUNCTION in_elcode_rule( cElCond, cRule, cRuleName )
    cRuleObj := get_rule_field_obj( "ARTICLES" )
    cErrMsg := "-"
    cRuleC3 := get_rule_field_c3( "CODE_GEN" )
-   cRuleC4 := g_rule_c4( cElCond )
+   cRuleC4 := get_rule_field_c4( cElCond )
 
    SELECT fmkrules
    SET ORDER TO TAG "1"
@@ -103,7 +103,7 @@ STATIC FUNCTION in_elcode_rule( cElCond, cRule, cRuleName )
 // -----------------------------------------------
 // setovanje specificnih rules kolona
 // -----------------------------------------------
-FUNCTION g_rule_cols_rnal()
+FUNCTION get_rule_field_cols_rnal()
 
    LOCAL aCols := {}
 
@@ -121,7 +121,7 @@ FUNCTION g_rule_cols_rnal()
 // ------------------------------------------
 // vraca block za pregled sifrarnika
 // ------------------------------------------
-FUNCTION g_rule_block_rnal()
+FUNCTION get_rule_field_block_rnal()
    RETURN {|| ed_rules() }
 
 
@@ -156,7 +156,7 @@ FUNCTION rnal_format_naziva_elementa( cElCond )
    cModul := get_rule_field_mod( "RNAL" )
    cObj := get_rule_field_obj( "ARTICLES" )
    cRuleType := get_rule_field_c3( "CODE_GEN" )
-   cElCond := g_rule_c4( cElCond )
+   cElCond := get_rule_field_c4( cElCond )
 
    O_RULES
    SELECT fmkrules
@@ -283,11 +283,11 @@ STATIC FUNCTION _rule_s_fmk( cField, nTickness, cType, cKind, cQttyType )
    SET ORDER TO TAG "ITEM1"
    GO TOP
 
-   SEEK get_rule_field_mod( cMod ) + get_rule_field_obj( cObj ) + g_rule_c5( cCond )
+   SEEK get_rule_field_mod( cMod ) + get_rule_field_obj( cObj ) + get_rule_field_c5( cCond )
 
    DO WHILE !Eof() .AND. field->modul_name == get_rule_field_mod( cMod ) ;
          .AND. field->rule_obj == get_rule_field_obj( cObj ) ;
-         .AND. field->rule_c5 == g_rule_c5( cCond )
+         .AND. field->rule_c5 == get_rule_field_c5( cCond )
 
       // specificni tip stakla... npr: samo "F"
       IF !Empty( cType )
@@ -416,11 +416,11 @@ STATIC FUNCTION _rule_aop_( xVal,  aArr, lShErr )
    SET ORDER TO TAG "ITEM1"
    GO TOP
 
-   SEEK get_rule_field_mod( cMod ) + get_rule_field_obj( cObj ) + g_rule_c5( cCond )
+   SEEK get_rule_field_mod( cMod ) + get_rule_field_obj( cObj ) + get_rule_field_c5( cCond )
 
    DO WHILE !Eof() .AND. field->modul_name == get_rule_field_mod( cMod ) ;
          .AND. field->rule_obj == get_rule_field_obj( cObj ) ;
-         .AND. field->rule_c5 == g_rule_c5( cCond )
+         .AND. field->rule_c5 == get_rule_field_c5( cCond )
 
       // pravilo: koja operacija <A_KSR> recimo
       cAopCond := AllTrim( fmkrules->rule_c7 )
@@ -502,11 +502,11 @@ STATIC FUNCTION _rule_item_( cField, xVal,  aArr, lShErr )
    SET ORDER TO TAG "ITEM1"
    GO TOP
 
-   SEEK get_rule_field_mod( cMod ) + get_rule_field_obj( cObj ) + g_rule_c5( cCond )
+   SEEK get_rule_field_mod( cMod ) + get_rule_field_obj( cObj ) + get_rule_field_c5( cCond )
 
    DO WHILE !Eof() .AND. field->modul_name == get_rule_field_mod( cMod ) ;
          .AND. field->rule_obj == get_rule_field_obj( cObj ) ;
-         .AND. field->rule_c5 == g_rule_c5( cCond )
+         .AND. field->rule_c5 == get_rule_field_c5( cCond )
 
       cArtCond := AllTrim( fmkrules->rule_c7 )
       xRCond := AllTrim( fmkrules->rule_c2 )

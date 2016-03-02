@@ -721,8 +721,8 @@ FUNCTION snimi_promjene_sifarnika( lNovi, cTekuciZapis )
    IF lOk
 
       lRet := .T.
-      f18_free_tables( { cAlias } )
       sql_table_update( nil, "END" )
+      f18_free_tables( { cAlias } )
       log_write( "F18_DOK_OPER: dodavanje/ispravka zapisa u šifrarnik " + cAlias, 2 )
 
    ELSE
@@ -780,8 +780,8 @@ FUNCTION snimi_promjene_cirkularne_ispravke_sifarnika()
 
    IF lOk
       lRet := .T.
-      f18_free_tables( { _alias } )
       sql_table_update( nil, "END" )
+      f18_free_tables( { _alias } )
       log_write( "F18_DOK_OPER: cirkularna ispravka šifrarnika " + _alias, 2 )
    ELSE
       sql_table_update( nil, "ROLLBACK" )

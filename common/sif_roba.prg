@@ -662,13 +662,13 @@ FUNCTION roba_setuj_mpc_iz_vpc()
    BoxC()
 
    IF lOk
-      f18_free_tables( { "roba" } )
       sql_table_update( NIL, "END" )
+      f18_free_tables( { "roba" } )
    ELSE
       sql_table_update( NIL, "ROLLBACK" )
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 

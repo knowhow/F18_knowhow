@@ -766,7 +766,8 @@ FUNCTION PozicOps( cSR )
 
    SELECT ( nArr )
 
-   RETURN
+   RETURN .T.
+
 
 FUNCTION ScatterS( cG, cM, cJ, cR, cPrefix )
 

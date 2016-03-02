@@ -18,6 +18,38 @@ STATIC cPokPonovo := "Pokušati ponovo (D/N) ?"
 STATIC nPreuseLevel := 0
 
 
+
+FUNCTION Gather( cZn )
+
+   LOCAL i, aStruct
+   LOCAL _field_b
+   LOCAL _ime_p
+   LOCAL cVar
+
+   IF cZn == nil
+      cZn := "_"
+   ENDIF
+   aStruct := dbStruct()
+
+   FOR i := 1 TO Len( aStruct )
+      _field_b := FieldBlock( _ime_p := aStruct[ i, 1 ] )
+
+      // cImeP - privatna var
+      cVar := cZn + _ime_p
+
+      // rlock()
+      // IF "U" $ TYPE(cVar)
+      // MsgBeep2("Neuskladj.strukt.baza! F-ja: GATHER(), Alias: " + ALIAS() + ", Polje: " + _ime_p)
+      // ELSE
+      Eval( _field_b, Eval( MemVarBlock( cVar ) ) )
+      // ENDIF
+
+      // dbunlock()
+   NEXT
+
+   RETURN NIL
+
+
 /*! \fn Scatter(cZn)
   * \brief vrijednosti field varijabli tekuceg sloga prebacuje u public varijable
   *
@@ -416,31 +448,6 @@ FUNCTION O_POMDB( nArea, cImeDBF )
    cImeCDX := ToUnix( cImeCDX )
 
    usex ( PRIVPATH + cImeDBF )
-
-   RETURN
-
-
-FUNCTION DbfPath( nPath )
-
-   DO CASE
-   CASE nPath == P_PRIVPATH
-      RETURN PRIVPATH
-   CASE nPath == P_KUMPATH
-      RETURN KUMPATH
-   CASE nPath == P_SIFPATH
-      RETURN SIFPATH
-   CASE nPath == P_EXEPATH
-      RETURN EXEPATH
-   CASE nPath == P_MODULPATH
-      RETURN DBFBASEPATH + SLASH + gModul + SLASH
-   CASE nPath == P_TEKPATH
-      RETURN "." + SLASH
-   CASE nPath == P_ROOTPATH
-      RETURN SLASH
-   CASE nPath == P_KUMSQLPATH
-      RETURN KUMPATH + "SQL" + SLASH
-
-   END CASE
 
    RETURN
 

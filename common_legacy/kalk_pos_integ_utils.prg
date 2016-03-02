@@ -39,7 +39,7 @@ FUNCTION GetKalkVars( cFirma, cKonto, cPath )
  */
 FUNCTION IntegTekGod()
 
-   // {
+
    LOCAL dTDate
    LOCAL dPDate
    LOCAL dTYear

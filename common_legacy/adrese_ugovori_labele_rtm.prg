@@ -59,7 +59,7 @@ FUNCTION kreiraj_adrese_iz_ugovora()
 
       IF LastKey() == K_ESC
          BoxC()
-         RETURN
+         RETURN .F.
       ENDIF
 
       _usl_partner := Parsiraj( _partner, "IDPARTNER" )
@@ -81,7 +81,6 @@ FUNCTION kreiraj_adrese_iz_ugovora()
    set_metric( "ugovori_naljepnice_sort", my_user(), _n_sort )
 
    _index_sort := _index_sort + AllTrim( _n_sort )
-
    _create_labelu_dbf()
 
    IF is_dest()
@@ -240,9 +239,9 @@ FUNCTION kreiraj_adrese_iz_ugovora()
    BoxC()
 
    IF _count == 0
-      MsgBeep( "Nema generisanih adresa !!!" )
+      MsgBeep( "Nema generisanih adresa !" )
       SELECT ugov
-      RETURN
+      RETURN .F.
    ENDIF
 
    label_to_lab2( _index_sort )
@@ -258,7 +257,7 @@ FUNCTION kreiraj_adrese_iz_ugovora()
 
    PopWA()
 
-   RETURN
+   RETURN .T.
 
 
 STATIC FUNCTION label_to_lab2( index_sort )

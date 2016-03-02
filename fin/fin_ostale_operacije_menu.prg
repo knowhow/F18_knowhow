@@ -24,7 +24,7 @@ FUNCTION MnuOstOperacije()
    AAdd( _opc, "3. prebacivanje kartica" )
    AAdd( _opcexe, {|| Prebfin_kartica() } )
    AAdd( _opc, "4. otvorene stavke" )
-   AAdd( _opcexe, {|| OStav() } )
+   AAdd( _opcexe, {|| fin_otvorene_stavke() } )
    AAdd( _opc, "5. obrada kamata " )
    AAdd( _opcexe, {|| fin_kamate_menu() } )
 

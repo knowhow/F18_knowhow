@@ -13,7 +13,7 @@
 #include "f18.ch"
 
 
-FUNCTION Ostav()
+FUNCTION fin_otvorene_stavke()
 
    PRIVATE izbor := 1
    PRIVATE opc := {}
@@ -719,7 +719,7 @@ FUNCTION fin_rucno_zatvaranje_otvorenih_stavki()
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
 
 STATIC FUNCTION rucno_zatvaranje_key_handler( l_osuban )

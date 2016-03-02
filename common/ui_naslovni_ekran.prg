@@ -12,7 +12,6 @@
 #include "f18.ch"
 
 
-
 FUNCTION pripremi_naslovni_ekran( oApp )
 
    set_global_screen_vars()

@@ -63,8 +63,8 @@ FUNCTION BrLinFajla( cImeF )
 
    RETURN nVrati
 
-// -------------------------------------
-// -------------------------------------
+
+
 FUNCTION VelFajla( cImeF, cAttr )
 
    LOCAL aPom := Directory( cImeF, cAttr )

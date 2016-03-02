@@ -10,9 +10,5 @@
  */
 
 
-FUNCTION arg0( c )
-   RETURN c
-
-
 FUNCTION setpxlat( c )
    RETURN c

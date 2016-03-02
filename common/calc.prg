@@ -18,9 +18,6 @@ FUNCTION in_calc()
    RETURN s_lInCalculator
 
 
-/* fn Calc()
- *  brief Kalkulator
- */
 FUNCTION Calc()
 
    LOCAL GetList := {}
@@ -187,7 +184,7 @@ FUNCTION round2( nizraz, niznos )
    // za g50F="5" vrçi se zaokru§enje na 0.5
    // =" " odraÐuje obini round()
 
-   LOCAL npom, npom2, nznak
+   LOCAL nPom, nPom2, nZnak
    IF g50f = "5"
 
       npom := Abs( nizraz - Int( nizraz ) )
@@ -309,4 +306,4 @@ STATIC FUNCTION DefKonv()
    PopWA()
    SetKey( K_ALT_V, bKeyOld )
 
-   RETURN
+   RETURN .T.

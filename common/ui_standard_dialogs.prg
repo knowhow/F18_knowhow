@@ -11,8 +11,7 @@
 
 #include "f18.ch"
 
-
-STATIC cLDirekt := "0"
+THREAD STATIC cLDirekt := "0"
 
 /*
  *  brief Otvara box sa zadatim pitanjem na koje treba odgovoriti sa D,N,..

@@ -90,7 +90,7 @@ STATIC FUNCTION _del_nal_xx()
 // -----------------------------------------------------------
 // kreiranje tabele ostav za otvorene stavke
 // -----------------------------------------------------------
-STATIC FUNCTION _cre_ostav()
+STATIC FUNCTION _cre_fin_otvorene_stavke()
 
    LOCAL _dbf
    LOCAL _ret := .T.
@@ -190,7 +190,7 @@ FUNCTION konsultos( xEdit )
    AltD() // F18_DEBUG_FIN_AZUR
 #endif
 
-   _cre_ostav() // kreiraj tabelu ostav
+   _cre_fin_otvorene_stavke() // kreiraj tabelu ostav
 
    nUkDugBHD := 0
    nUkPotBHD := 0

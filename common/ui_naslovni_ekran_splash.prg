@@ -14,7 +14,6 @@
 MEMVAR m_x, m_y
 
 
-
 FUNCTION naslovni_ekran_splash_screen( cNaslov, cVer )
 
    LOCAL lInvert
@@ -31,7 +30,6 @@ FUNCTION naslovni_ekran_splash_screen( cNaslov, cVer )
    @ m_x + 8, m_y + 2 SAY PadC( "tel: 033/269-291, fax: 033/269-292", 60 )
    @ m_x + 9, m_y + 2 SAY PadC( "web: http://bring.out.ba", 60 )
    @ m_x + 10, m_y + 2 SAY PadC( "email: podrska@bring.out.ba", 60 )
-
 
    Inkey( 5 )
 

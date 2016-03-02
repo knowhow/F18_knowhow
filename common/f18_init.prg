@@ -33,21 +33,21 @@ STATIC __max_rows := 35
 STATIC __max_cols := 120
 
 #ifdef  __PLATFORM__WINDOWS
-STATIC __font_name := "Lucida Console"
-STATIC __font_size := 20
-STATIC __font_width := 10
+STATIC s_cFontName := "Lucida Console"
+STATIC s_nFontSize := 20
+STATIC s_nFontWidth := 10
 #else
 
 #ifdef  __PLATFORM__LINUX
-STATIC __font_name := "terminus"
+STATIC s_cFontName := "terminus"
 
-STATIC __font_size  := 20
-STATIC __font_width := 10
+STATIC s_nFontSize  := 20
+STATIC s_nFontWidth := 10
 
 #else
-STATIC __font_name  := "Monaco"
-STATIC __font_size  := 30
-STATIC __font_width := 15
+STATIC s_cFontName  := "Monaco"
+STATIC s_nFontSize  := 30
+STATIC s_nFontWidth := 15
 
 #endif
 
@@ -285,8 +285,6 @@ FUNCTION set_screen_dimensions()
    CASE _pix_width >= 1280 .AND. _pix_height >= 820
 
 #ifdef  __PLATFORM__DARWIN
-      // font_name("Ubuntu Mono")
-      font_name( "ubuntu mono" )
       font_size( 24 )
       font_width( 12 )
       maxrows( 35 - INFO_BAR_ROWS )
@@ -539,7 +537,7 @@ STATIC FUNCTION _get_screen_resolution_from_config()
    _ini_params[ "font_size" ] := nil
 
    IF !f18_ini_config_read( F18_SCREEN_INI_SECTION, @_ini_params, .T. )
-      MsgBeep( "screen resolution: problem sa ini read" )
+      ?E "screen resolution: problem sa ini read"
       RETURN .F.
    ENDIF
 
@@ -553,17 +551,17 @@ STATIC FUNCTION _get_screen_resolution_from_config()
    ENDIF
 
    IF _ini_params[ "font_name" ] != nil
-      __font_name := _ini_params[ "font_name" ]
+      s_cFontName := _ini_params[ "font_name" ]
    ENDIF
 
    _var_name := "font_width"
    IF _ini_params[ _var_name ] != nil
-      __font_width := Val( _ini_params[ _var_name ] )
+      s_nFontWidth := Val( _ini_params[ _var_name ] )
    ENDIF
 
    _var_name := "font_size"
    IF _ini_params[ _var_name ] != nil
-      __font_size := Val( _ini_params[ _var_name ] )
+      s_nFontSize := Val( _ini_params[ _var_name ] )
    ENDIF
 
    RETURN .T.
@@ -592,10 +590,12 @@ FUNCTION maxcols( x )
 FUNCTION font_name( x )
 
    IF ValType( x ) == "C"
-      __font_name := x
+      s_cFontName := x
+   ELSE
+      ?E "font_name:", s_cFontName
    ENDIF
 
-   RETURN __font_name
+   RETURN s_cFontName
 
 FUNCTION font_width( x )
 
@@ -604,26 +604,30 @@ FUNCTION font_width( x )
 #ifdef __PLATFORM__DARWIN
 
       IF  x != 100
-         __font_width := x
+         s_nFontWidth := x
       ELSE
-         __font_width := font_size()
+         s_nFontWidth := font_size()
       ENDIF
 #else
-      __font_width := x
+      s_nFontWidth := x
 #endif
 
+   ELSE
+      ?E "font_width:", s_nFontWidth
    ENDIF
 
-   RETURN __font_width
+   RETURN s_nFontWidth
 
 
 FUNCTION font_size( x )
 
    IF ValType( x ) == "N"
-      __font_size := x
+      s_nFontSize := x
+   ELSE
+      ?E "font_width:", s_nFontSize
    ENDIF
 
-   RETURN __font_size
+   RETURN s_nFontSize
 
 
 FUNCTION log_level( x )

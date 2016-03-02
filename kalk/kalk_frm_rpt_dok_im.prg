@@ -86,7 +86,7 @@ FUNCTION StKalkIM()
 
       KTroskovi()
       RptSeekRT()
-      DokNovaStrana( 125, @nStr, 3 )
+      print_nova_strana( 125, @nStr, 3 )
       SKol := Kolicina
 
       IF cCijenaTIP == "N"
@@ -148,7 +148,7 @@ FUNCTION StKalkIM()
 
    ENDDO
 
-   DokNovaStrana( 125, @nStr, 5 )
+   print_nova_strana( 125, @nStr, 5 )
 
    IF cSamoObrazac == "D"
       PrnClanoviKomisije()

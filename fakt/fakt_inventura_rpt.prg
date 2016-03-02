@@ -44,7 +44,7 @@ FUNCTION RptInv()
       HSEEK fakt_pripr->idRoba
       SELECT fakt_pripr
 
-      DokNovaStrana( 125, @nStr, 1 )
+      print_nova_strana( 125, @nStr, 1 )
 
       @ PRow() + 1, 0 SAY field->rbr PICTURE "XXX"
       @ PRow(), 4 SAY ""
@@ -100,7 +100,7 @@ FUNCTION RptInv()
       SKIP
    ENDDO
 
-   DokNovaStrana( 125, @nStr, 3 )
+   print_nova_strana( 125, @nStr, 3 )
 
    // UKUPNO:
    // nTota - suma knj.vrijednosti
@@ -137,7 +137,7 @@ FUNCTION fakt_zagl_inventura( cLinija )
    ?
    ? "DOKUMENT BR. :", cIdFirma + "-" + cIdTipDok + "-" + cBrDok, Space( 2 ), "Datum:", datDok
    ?
-   DokNovaStrana( 125, @nStr, -1 )
+   print_nova_strana( 125, @nStr, -1 )
    ? cLinija
    ?  "*R * ROBA                                  * Popisana * Knjizna  *  Knjizna  * Popisana  *  Razlika  *  Cijena   *   Visak   *  Manjak  *"
    ?  "*BR*                                       * Kolicina * Kolicina *vrijednost *vrijednost *  (kol)    *    VP     *    VPV    *   VPV    *"

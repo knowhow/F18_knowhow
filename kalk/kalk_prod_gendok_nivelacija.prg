@@ -1141,7 +1141,7 @@ FUNCTION st_pr_cijena( cFirma, cIdTip, cBrDok, cPodvuceno, cProred )
 
       SELECT PRIPT
 
-      DokNovaStrana( 110, @nStr, iif( cProred == "D", 2, 1 ) )
+      print_nova_strana( 110, @nStr, iif( cProred == "D", 2, 1 ) )
 
       ?
 
@@ -1170,7 +1170,7 @@ FUNCTION st_pr_cijena( cFirma, cIdTip, cBrDok, cPodvuceno, cProred )
       SKIP
    ENDDO
 
-   DokNovaStrana( 110, @nStr, 12 )
+   print_nova_strana( 110, @nStr, 12 )
 
    ? m
    ? " UKUPNO "

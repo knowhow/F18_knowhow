@@ -21,7 +21,6 @@ FUNCTION opci_sifarnici()
 
    AAdd( opcexe, {|| P_Firma() } )
 
-
    IF ( tekuci_modul() <> "FIN" )
       AAdd( opc, "2. konta" )
 

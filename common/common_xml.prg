@@ -13,9 +13,6 @@
 
 
 
-// ------------------------------------
-// xml node
-// ------------------------------------
 FUNCTION xml_node( cName, cData, lWrite )
 
    LOCAL cTmp

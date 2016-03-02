@@ -126,7 +126,7 @@ do while !EOF() .and. cIdFirma==IdFirma .and.  cBrDok==BrDok .and. cIdVD==IdVD
         nPor2 := aIPor[2]
     endif
     
-    DokNovaStrana( 123, @nStr, 2 )
+    print_nova_strana( 123, @nStr, 2 )
 
     nTot1+=  (nU1:= FCJ*Kolicina   )
     nTot1b+= (nU1b:= VPC*Kolicina  )
@@ -228,7 +228,7 @@ do while !EOF() .and. cIdFirma==IdFirma .and.  cBrDok==BrDok .and. cIdVD==IdVD
 enddo
 
 
-DokNovaStrana(123, @nStr, 3)
+print_nova_strana(123, @nStr, 3)
 ? m
 @ prow()+1,0        SAY "Ukupno:"
 IF g11bezNC == "D"

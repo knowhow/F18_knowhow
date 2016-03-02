@@ -88,7 +88,7 @@ FUNCTION StKalk41PDV()
 
       VTPorezi()
 
-      DokNovaStrana( 125, @nStr, 2 )
+      print_nova_strana( 125, @nStr, 2 )
 
       // nabavna vrijednost
       nTot3 += ( nU3 := IF( roba->tip = "U", 0, nc ) * field->kolicina )
@@ -219,7 +219,7 @@ FUNCTION StKalk41PDV()
 
    ENDDO
 
-   DokNovaStrana( 125, @nStr, 3 )
+   print_nova_strana( 125, @nStr, 3 )
 
    ? _line
 
@@ -263,7 +263,7 @@ FUNCTION StKalk41PDV()
 
    ? _line
 
-   DokNovaStrana( 125, @nStr, 10 )
+   print_nova_strana( 125, @nStr, 10 )
 
    nRec := RecNo()
 
@@ -488,7 +488,7 @@ FUNCTION PDVRekTar41( cIdFirma, cIdVd, cBrDok, nStr )
 
    ENDDO
 
-   DokNovaStrana( 125, @nStr, 4 )
+   print_nova_strana( 125, @nStr, 4 )
 
    ? _line
 

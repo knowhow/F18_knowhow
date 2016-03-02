@@ -83,7 +83,7 @@ do while !eof() .and. cIdFirma==IdFirma .and.  cBrDok==BrDok .and. cIdVd==IdVd
     nMpc2:=MpcBezPor(nMpcSaPP2,aPorezi,,field->nc)
     aIPor2:=RacPorezeMP(aPorezi,nMpc2,nMpcSaPP2,field->nc)
     
-    DokNovaStrana(125, @nStr, 2)
+    print_nova_strana(125, @nStr, 2)
 
       nTot3+=  (nU3:= MPC*Kolicina )
 
@@ -122,7 +122,7 @@ do while !eof() .and. cIdFirma==IdFirma .and.  cBrDok==BrDok .and. cIdVd==IdVd
 
 enddo
 
-DokNovaStrana(125, @nStr, 3)
+print_nova_strana(125, @nStr, 3)
 
 ? m
 @ prow()+1,0        SAY "Ukupno:"
@@ -224,7 +224,7 @@ do while !eof() .and. cIdFirma==IdFirma .and.  cBrDok==BrDok .and. cIdVD==IdVD
     select kalk_pripr
     
     
-    DokNovaStrana(110, @nStr, IIF(cProred=="D",2,1))
+    print_nova_strana(110, @nStr, IIF(cProred=="D",2,1))
       
       ?
       if cPodvuceno=="D"
@@ -248,7 +248,7 @@ do while !eof() .and. cIdFirma==IdFirma .and.  cBrDok==BrDok .and. cIdVD==IdVD
 enddo
 
 
-DokNovaStrana(110, @nStr, 12)
+print_nova_strana(110, @nStr, 12)
 
 ? m
 ? " UKUPNO "

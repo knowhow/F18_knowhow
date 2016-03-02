@@ -105,7 +105,7 @@ nPRUC:=nPor2
 
     VTPorezi()
 
-    DokNovaStrana(125, @nStr, 2)
+    print_nova_strana(125, @nStr, 2)
 
     nTot3+=  (nU3:= IF(ROBA->tip="U",0,NC)*kolicina )
     nTot4+=  (nU4:= nMarza2*Kolicina )
@@ -178,7 +178,7 @@ nPRUC:=nPor2
 enddo
 
 
-DokNovaStrana(125, @nStr, 3)
+print_nova_strana(125, @nStr, 3)
 ? m
 @ prow()+1,0        SAY "Ukupno:"
 
@@ -203,7 +203,7 @@ endif
 
 // Rekapitulacija tarifa
 
-DokNovaStrana(125, @nStr, 10)
+print_nova_strana(125, @nStr, 10)
 nRec:=recno()
 
 RekTar41(cIdFirma, cIdVd, cBrDok, @nStr)
@@ -312,7 +312,7 @@ do while !eof() .and. cIdfirma+cIdvd+cBrDok==idfirma+idvd+brdok
   @ prow(),pcol()+1   SAY nU5 pict picdem
 enddo
 
-DokNovaStrana(125, @nStr, 4)
+print_nova_strana(125, @nStr, 4)
 ? m
 ? "UKUPNO"
 @ prow(),nCol1+1    SAY nTot1 pict picdem

@@ -13,14 +13,14 @@
 #include "f18.ch"
 
 
-/*! \fn DokNovaStrana(nColumn, nStr, nSlijediRedovaZajedno)
+/*! \fn print_nova_strana(nColumn, nStr, nSlijediRedovaZajedno)
  *  \brief Prelazak na novu stranicu
  *  \param nColumn - kolona na kojoj se stampa "Str: XXX"
  *  \param nStr  - stranica
  *  \param nSlijediRedovaZajedno - koliko nakon ove funkcije redova zelimo odstampati, nakon preloma se treba zajedno odstmpati "nSlijediRedova"; za vrijednost -1 stampa bez obzira na trenutnu poziciju (koristiti za stampu na prvoj strani)
  */
 
-FUNCTION DokNovaStrana( nColumn, nStr, nSlijediRedovaZajedno )
+FUNCTION print_nova_strana( nColumn, nStr, nSlijediRedovaZajedno )
 
    IF ( nSlijediRedovaZajedno == nil )
       nSlijediRedovaZajedno := 1
@@ -36,7 +36,7 @@ FUNCTION DokNovaStrana( nColumn, nStr, nSlijediRedovaZajedno )
 
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 

@@ -107,8 +107,9 @@ FUNCTION StdokPDV( cIdFirma, cIdTipDok, cBrDok, lJFill )
       // stampa 13-ke
       omp_print()
    ELSE
-      IF cIdTipDok == "11" .AND. gMPPrint $ "DXT"
 
+#ifdef F18_POS
+      IF cIdTipDok == "11" .AND. gMPPrint $ "DXT"
          IF gMPPrint == "D" .OR. ( gMpPrint == "X" .AND. Pitanje(, "Stampati na traku (D/N)?", "D" ) == "D" ) .OR. gMPPrint == "T"
 
             // stampa na traku
@@ -136,11 +137,14 @@ FUNCTION StdokPDV( cIdFirma, cIdTipDok, cBrDok, lJFill )
          pf_a4_print( nil, cDocumentName )
       ENDIF
 
-   ENDIF
+#else
+      pf_a4_print( nil, cDocumentName )
+#endif
 
+   ENDIF
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
 
 // ----------------------------------------------------------------------
@@ -674,7 +678,7 @@ STATIC FUNCTION fill_porfakt_data( dok, params )
       gPtxtSw := "/p"
 
    OTHERWISE
-      gPtxtSw := nil // citaj ini fajl
+      gPtxtSw := NIL // citaj ini fajl
    ENDCASE
 
 

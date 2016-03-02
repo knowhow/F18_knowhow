@@ -112,7 +112,7 @@ FUNCTION StKalk95_PDV()
       vise_kalk_dok_u_pripremi( cIdd )
       RptSeekRT()
       KTroskovi()
-      DokNovaStrana( 125, @nStr, 2 )
+      print_nova_strana( 125, @nStr, 2 )
       IF gKalo == "1"
          SKol := Kolicina - GKolicina - GKolicin2
       ELSE
@@ -165,7 +165,7 @@ FUNCTION StKalk95_PDV()
       SKIP
    ENDDO
 
-   DokNovaStrana( 125, @nStr, 5 )
+   print_nova_strana( 125, @nStr, 5 )
    ? m
 
    @ PRow() + 1, 0 SAY "Ukupno:"

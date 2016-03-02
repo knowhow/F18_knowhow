@@ -126,7 +126,7 @@ do while !eof() .and. cIdFirma==IdFirma .and.  cBrDok==BrDok .and. cIdVD==IdVD
     
 	aIPor:=RacPorezeMP(aPorezi,field->mpc,field->mpcSaPP,field->nc)
 
-    DokNovaStrana(125, @nStr, 2)
+    print_nova_strana(125, @nStr, 2)
 
     if gKalo == "1"
         SKol:=Kolicina-GKolicina-GKolicin2
@@ -201,7 +201,7 @@ enddo
  unTotB  += nTotB
 next
 
-DokNovaStrana(125, @nStr, 3)
+print_nova_strana(125, @nStr, 3)
 ? m
 @ prow()+1,0        SAY "Ukupno:"
 if !fBezNC
@@ -215,7 +215,7 @@ else
 endif
 ? m
 
-DokNovaStrana(125, @nStr, 8)
+print_nova_strana(125, @nStr, 8)
 nRec:=recno()
 RekTarife()
 

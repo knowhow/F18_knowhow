@@ -154,7 +154,7 @@ STATIC FUNCTION Header( dDatumOd, dDatumDo, aPolozi, nStr )
    nSirina := ( Len( gPicKol ) + 1 )
    nSirina += ( 6 + Len( aPolozi ) ) * ( Len( gPicDem ) + 1 )
 
-   DokNovaStrana( nSirina - 8, @nStr, -1 )
+   print_nova_strana( nSirina - 8, @nStr, -1 )
    B_ON
    ? PadC( "KALK: PREGLED PROMETA za period " + DToC( dDatumOd ) + "-" + DToC( dDatumDo ), nSirina )
    B_OFF

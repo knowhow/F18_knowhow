@@ -36,7 +36,7 @@ FUNCTION RptInvObrPopisa()
       HSEEK fakt_pripr->idRoba
       SELECT fakt_pripr
 
-      DokNovaStrana( 125, @nStr, 1 )
+      print_nova_strana( 125, @nStr, 1 )
 
       @ PRow() + 1, 0 SAY field->rbr PICTURE "XXX"
       @ PRow(), 4 SAY ""
@@ -51,7 +51,7 @@ FUNCTION RptInvObrPopisa()
       SKIP
    ENDDO
 
-   DokNovaStrana( 125, @nStr, 4 )
+   print_nova_strana( 125, @nStr, 4 )
 
    ? cLin
 
@@ -73,7 +73,7 @@ FUNCTION ZInvp( cLinija )
    ?
    ? "DOKUMENT BR. :", cIdFirma + "-" + cIdTipDok + "-" + cBrDok, Space( 2 ), "Datum:", DatDok
    ?
-   DokNovaStrana( 125, @nStr, -1 )
+   print_nova_strana( 125, @nStr, -1 )
 
    ? cLinija
    ? "*R * ROBA                                        *  Popisana  *   Cijena   *"

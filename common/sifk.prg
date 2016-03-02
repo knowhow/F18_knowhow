@@ -57,72 +57,14 @@ FUNCTION SifkFill( cSifk, cSifv, cSifrarnik, cIDSif )
    PopWa()
 
    RETURN
-// }
 
-/*!
- @function   SifkOsv
- @abstract   Osvjezi tabele SIFK, SIFV iz pomocnih tabela (uobicajeno _SIFK, SIFV)
- @discussion -
- @param cSIFK ime sifk tabele (npr PRIVPATH+"_SIFK")
- @param cSifV ime sifv tabele
- @param cSifrarnik sifrarnik (npr "ROBA")
-*/
 
-FUNCTION SifkOsv( cSifk, cSifv, cSifrarnik, cIDSif )
 
-   // {
-   PushWA()
-
-   USE ( cSifK ) NEW   ALIAS _SIFK
-   USE ( cSifV ) NEW   ALIAS _SIFV
-
-   SELECT sifk; SET ORDER TO TAG "ID2" // id + oznaka
-   SELECT _sifk
-   DO WHILE !Eof()
-      scatter()
-      SELECT sifk
-      SEEK _SIFK->( ID + OZNAKA )
-      IF !Found()
-         APPEND BLANK
-      ENDIF
-      Gather()
-      SELECT _SIFK
-      SKIP
-   ENDDO
-
-   SELECT sifv
-
-   // "ID","id+oznaka+IdSif",SIFPATH+"SIFV"
-   SET ORDER TO TAG "ID"
-
-   SELECT _SIFV
-   DO WHILE !Eof()
-      scatter()
-      SELECT SIFV
-      SEEK _SIFV->( ID + OZNAKA + IDSIF )
-      IF !Found()
-         APPEND BLANK
-      ENDIF
-      Gather()
-      SELECT _SIFV
-      SKIP
-   ENDDO
-
-   SELECT _SIFK
-   USE
-   SELECT _SIFV
-   USE
-
-   PopWa()
-
-   RETURN
-
-/*! \fn DaUSifv(cBaza,cIdKar,cId,cVrKar)
- *  \brief
- *  \param cBaza
- *  \param cIdKar
- *  \param cId
- *  \param cVrKar
+/*
+ *  param cBaza
+ *  param cIdKar
+ *  param cId
+ *  param cVrKar
  */
 FUNCTION DaUSifV( cBaza, cIdKar, cId, cVrKar )
 

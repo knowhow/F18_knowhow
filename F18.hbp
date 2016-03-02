@@ -13,11 +13,12 @@ os/*.prg
 {F18_MAT}mat/*.prg
 virm/*.prg
 {F18_KADEV}kadev/*.prg
-reports/*.prg
 common/*.prg
 string/*.prg
+semafori/*.prg
 common_legacy/*.prg
 fiskalizacija/*.prg
+reports/*.prg
 
 -inc
 -Iinclude

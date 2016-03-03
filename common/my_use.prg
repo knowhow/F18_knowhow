@@ -24,7 +24,7 @@ FUNCTION my_usex( alias, table, new_area )
 
 
 /*
- uopste ne koristi logiku semafora, koristiti za temp tabele
+ ne koristi logiku semafora, koristiti za temp tabele
  kod opcija exporta importa
 */
 
@@ -52,11 +52,12 @@ FUNCTION my_use_temp( xArg1, cFullDbf, lNewArea, lExcl, lOpenIndex )
       nWa := xArg1[ 'wa' ]
       cAlias := xArg1[ 'alias' ]
       EXIT
-   CASE "C"
+   CASE "C" // "r_export"
+   altd()
       cAlias := xArg1
       aDbfRec := get_a_dbf_rec( cAlias, .T. )
       nWa := aDbfRec[ 'wa' ]
-      IF cFullDbf == nil
+      IF cFullDbf == NIL
          cFullDbf := my_home() + aDbfRec[ "table" ]
       ENDIF
       EXIT
@@ -94,7 +95,7 @@ FUNCTION my_use_temp( xArg1, cFullDbf, lNewArea, lExcl, lOpenIndex )
          nCnt := 100
 
       RECOVER USING oError
-
+         ?E "my_use_temp", oError:Description
          my_use_error( cFullDbf, cAlias, oError )
          hb_idleSleep( 1 )
 
@@ -164,7 +165,7 @@ FUNCTION my_use( cAlias, cTable, lRefresh )
          lUspjesno := .T.
 
       RECOVER USING oError
-         my_use_error( aDbfRec[ 'table' ], cAlias, oError )
+         my_use_error( cFullDbf, cAlias, oError )
          hb_idleSleep( 1 )
 
       END SEQUENCE
@@ -184,18 +185,17 @@ FUNCTION my_use( cAlias, cTable, lRefresh )
    desio se error kod pokusaja otvaranja tabele
 */
 
-FUNCTION my_use_error( table, alias, oError )
+FUNCTION my_use_error( cFullDbf, cAlias, oError )
 
    LOCAL _msg, nI, cMsg
 
-   _msg := "ERROR: my_use_error " + oError:description + ": tbl:" + my_home() + table + " alias:" + alias + " se ne moze otvoriti ?!"
+   _msg := "ERROR: my_use_error " + oError:description + ": tbl:" + cFullDbf + " alias:" + cAlias + " se ne moze otvoriti ?!"
    LOG_CALL_STACK _msg
    log_write( _msg, 2 )
 
    IF oError:description == "Read error" .OR. oError:description == "Corruption detected"
 
-      // Read error se dobije u slucaju ostecenog dbf-a
-      IF ferase_dbf( alias, .T. )
+      IF ferase_dbf( cAlias, .T. ) // Read error se dobije u slucaju ostecenog dbf-a
          // repair_dbfs()
       ENDIF
 

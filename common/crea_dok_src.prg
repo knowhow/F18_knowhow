@@ -55,7 +55,7 @@ FUNCTION cre_doksrc( ver )
 
    cre_p_update()
 
-   RETURN
+   RETURN .T.
 
 // ------------------------------------------------------
 // dodaj novi zapis u p_doksrc

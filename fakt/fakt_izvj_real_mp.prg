@@ -12,12 +12,12 @@
 
 #include "f18.ch"
 
-STATIC PIC_IZN := "999999999.99"
-STATIC _NUM := 12
-STATIC _DEC := 2
-STATIC _ZAOK := 2
-STATIC _FNUM := 15
-STATIC _FDEC := 4
+THREAD STATIC PIC_IZN := "999999999.99"
+THREAD STATIC _NUM := 12
+THREAD STATIC _DEC := 2
+THREAD STATIC _ZAOK := 2
+THREAD STATIC _FNUM := 15
+THREAD STATIC _FDEC := 4
 
 
 FUNCTION fakt_real_maloprodaje()
@@ -37,7 +37,7 @@ FUNCTION fakt_real_maloprodaje()
       RETURN .F.
    ENDIF
 
-   _cre_tbl()
+   fakt_realiz_pdv_cre_tbl_export()
    fakt_gen_rekapitulacija_mp( _params )
 
    SELECT r_export
@@ -174,13 +174,13 @@ STATIC FUNCTION fakt_gen_rekapitulacija_mp( params )
    LOCAL nUkupno
    LOCAL _tip_partnera := "1"
    LOCAL _pdv_broj := ""
-   LOCAL _pdv_clan
-   LOCAL _d_do, _d_od, _varijanta, _tip_dok, _operater, _id_firma, _rasclaniti
+   LOCAL lOslobodjenPDV
+   LOCAL _d_do, _d_od, _varijanta, _tip_dok, _operater, _id_firma, lPoTipovimaPartnera
    LOCAL _vrsta_p, _partner, _oper_id
    LOCAL nCjPDV, nCj2PDV, nCjBPDV, nCj2BPDV, nVPopust, nPPDV
+   LOCAL  nKol, nRCijen, nPopust, nVPDV
 
    LOCAL cRoba_id, cPart_id
-
 
    O_FAKT_DOKS
    O_FAKT
@@ -198,7 +198,7 @@ STATIC FUNCTION fakt_gen_rekapitulacija_mp( params )
    _tip_dok := params[ "tip_dok" ]
    _operater := params[ "operater" ]
    _id_firma := params[ "firma" ]
-   _rasclaniti := params[ "tip_partnera" ] == "D"
+   lPoTipovimaPartnera := params[ "tip_partnera" ] == "D"
    _partner := params[ "partner" ]
    _vrsta_p := params[ "vrstap" ]
 
@@ -252,7 +252,7 @@ STATIC FUNCTION fakt_gen_rekapitulacija_mp( params )
       _filter += "datdok <=" + _filter_quote( _d_do )
    ENDIF
 
-   MsgO( "generisem podatke ..." )
+   MsgO( "Generacija podataka ..." )
 
    SELECT fakt_doks
    SET FILTER to &_filter
@@ -277,13 +277,12 @@ STATIC FUNCTION fakt_gen_rekapitulacija_mp( params )
          cRoba_id := field->idroba
          cPart_id := field->idpartner
 
-
          _tip_partnera := "1" // fizicka lica
+         lOslobodjenPDV := is_pdv_oslobodjen( cPart_id )
 
-         IF _rasclaniti
+         IF lPoTipovimaPartnera
 
             _pdv_broj := firma_pdv_broj( cPart_id )
-            _pdv_clan := is_pdv_oslobodjen( cPart_id )
 
             IF !Empty( _pdv_broj )
                _tip_partnera := "2"
@@ -308,10 +307,12 @@ STATIC FUNCTION fakt_gen_rekapitulacija_mp( params )
          nCj2BPDV := 0
          nVPopust := 0
 
-
-         nPPDV := tarifa->opp  // procenat pdv-a
-
-         // kolicina
+         IF lOslobodjenPDV
+            nPPDV := 0
+         ELSE
+            nPPDV := tarifa->opp  // procenat pdv-a
+         ENDIF
+         
          nKol := field->kolicina
          nRCijen := field->cijena
 
@@ -319,31 +320,25 @@ STATIC FUNCTION fakt_gen_rekapitulacija_mp( params )
          IF Left( field->dindem, 3 ) <> Left( ValBazna(), 3 )
             // preracunaj u EUR
             // omjer EUR / KM
-            nRCijen := nRCijen / OmjerVal( ValBazna(), ;
-               field->dindem, field->datdok )
+            nRCijen := nRCijen / OmjerVal( ValBazna(), field->dindem, field->datdok )
             nRCijen := Round( nRCijen, DEC_CIJENA() )
          ENDIF
-
 
          nPopust := field->rabat // rabat - popust
 
          // ako je 13-ka ili 27-ca
          // cijena bez pdv se utvrdjuje unazad
-         IF ( field->idtipdok == "13" .AND. glCij13Mpc ) .OR. ;
-               ( field->idtipdok $ "11#27" .AND. gMP $ "1234567" )
+         IF ( field->idtipdok == "13" .AND. glCij13Mpc ) .OR. ( field->idtipdok $ "11#27" .AND. gMP $ "1234567" )
             // cjena bez pdv-a
             nCjPDV := nRCijen
             nCjBPDV := ( nRCijen / ( 1 + nPPDV / 100 ) )
          ELSE
-            // cjena bez pdv-a
-            nCjBPDV := nRCijen
+            nCjBPDV := nRCijen // cjena bez pdv-a
             nCjPDV := ( nRCijen * ( 1 + nPPDV / 100 ) )
          ENDIF
 
-         // izracunaj vrijednost popusta
          IF Round( nPopust, 4 ) <> 0
-            // vrijednost popusta
-            nVPopust := ( nCjBPDV * ( nPopust / 100 ) )
+            nVPopust := ( nCjBPDV * ( nPopust / 100 ) ) // vrijednost popusta
          ENDIF
 
          nCj2BPDV := ( nCjBPDV - nVPopust ) // cijena sa popustom bez pdv-a
@@ -353,23 +348,23 @@ STATIC FUNCTION fakt_gen_rekapitulacija_mp( params )
          SELECT r_export
          APPEND BLANK
 
-         REPLACE field->tip WITH _tip_partnera,;
-            field->idfirma WITH fakt->idfirma,;
-            field->idtipdok WITH fakt->idtipdok,;
-            field->brdok WITH fakt->brdok,;
-            field->datdok WITH fakt->datdok,;
-            field->operater WITH _oper_id,;
-            field->vrstap WITH  get_naziv_vrsta_placanja( fakt->idtipdok, fakt->idvrstep ),;
-            field->part_id WITH fakt->idpartner,;
-            field->part_naz WITH AllTrim( partn->naz ),;
-            field->roba_id WITH fakt->idroba,;
-            field->roba_naz WITH AllTrim( roba->naz ),;
-            field->kolicina WITH nKol,;
-            field->s_pdv WITH nPPDV,;
-            field->popust WITH nVPopust,;
-            field->c_bpdv WITH nCj2BPdv,;
-            field->pdv WITH nVPDV,;
-            field->c_pdv WITH nCj2PDV,;
+         REPLACE field->tip WITH _tip_partnera, ;
+            field->idfirma WITH fakt->idfirma, ;
+            field->idtipdok WITH fakt->idtipdok, ;
+            field->brdok WITH fakt->brdok, ;
+            field->datdok WITH fakt->datdok, ;
+            field->operater WITH _oper_id, ;
+            field->vrstap WITH  get_naziv_vrsta_placanja( fakt->idtipdok, fakt->idvrstep ), ;
+            field->part_id WITH fakt->idpartner, ;
+            field->part_naz WITH AllTrim( partn->naz ), ;
+            field->roba_id WITH fakt->idroba, ;
+            field->roba_naz WITH AllTrim( roba->naz ), ;
+            field->kolicina WITH nKol, ;
+            field->s_pdv WITH nPPDV, ;
+            field->popust WITH nVPopust, ;
+            field->c_bpdv WITH nCj2BPdv, ;
+            field->pdv WITH nVPDV, ;
+            field->c_pdv WITH nCj2PDV, ;
             field->uk_fakt WITH nUkupno
 
          SELECT fakt
@@ -422,7 +417,7 @@ STATIC FUNCTION get_naziv_vrsta_placanja( tip_dok, vrsta_p )
    RETURN _ret
 
 
-STATIC FUNCTION _cre_tbl()
+STATIC FUNCTION fakt_realiz_pdv_cre_tbl_export()
 
    LOCAL aDbf := {}
 
@@ -446,13 +441,14 @@ STATIC FUNCTION _cre_tbl()
    AAdd( aDbf, { "uk_fakt", "N", _FNUM, _FDEC } )
 
    t_exp_create( aDbf )
-   O_R_EXP
+   SELECT ( F_R_EXP )
+   my_usex ( "r_export" )
 
-   INDEX ON idfirma + idtipdok + brdok TAG "1"
-   INDEX ON roba_id TAG "2"
-   INDEX ON Str( operater, 10 ) + idfirma + idtipdok + brdok TAG "3"
-   INDEX ON tip TAG "4"
-   INDEX ON vrstap TAG "5"
+   INDEX ON field->idfirma + field->idtipdok + field->brdok TAG "1"
+   INDEX ON field->roba_id TAG "2"
+   INDEX ON Str( field->operater, 10 ) + field->idfirma + field->idtipdok + field->brdok TAG "3"
+   INDEX ON field->tip TAG "4"
+   INDEX ON field->vrstap TAG "5"
 
    RETURN .T.
 
@@ -472,6 +468,8 @@ STATIC FUNCTION fakt_mp_po_dokumentima( nT_osnovica, nT_pdv, nT_ukupno, lCalc )
    LOCAL cLine := ""
    LOCAL nOperater
    LOCAL cOper_Naz := ""
+   LOCAL nS_pdv, nUk_fakt
+   LOCAL cIdFirma, cIdTipDok, cBrDok
 
    IF lCalc == nil
       lCalc := .F.
@@ -482,16 +480,13 @@ STATIC FUNCTION fakt_mp_po_dokumentima( nT_osnovica, nT_pdv, nT_ukupno, lCalc )
    nT_ukupno := 0
 
    IF lCalc == .F.
-      // vraca liniju
-      g_l_mpdok( @cLine )
 
-      // zaglavlje pregled po robi
-      s_z_mpdok( cLine )
+      g_l_mpdok( @cLine ) // vraca liniju
+      s_z_mpdok( cLine ) // zaglavlje pregled po robi
    ENDIF
 
    SELECT r_export
-   // po dokumentima
-   SET ORDER TO TAG "1"
+   SET ORDER TO TAG "1" // po dokumentima
    GO TOP
 
    DO WHILE !Eof()
@@ -514,22 +509,19 @@ STATIC FUNCTION fakt_mp_po_dokumentima( nT_osnovica, nT_pdv, nT_ukupno, lCalc )
 
          nOsnovica += field->kolicina * field->c_bpdv
          nPDV += field->kolicina * field->pdv
-         nS_pdv := field->s_pdv
+         nS_pdv := field->s_pdv   // pretpostavka je da unutar jednog dokumenta ima samo jedna stopa?!
          nUk_fakt := field->uk_fakt
 
          SKIP
       ENDDO
 
       // zaokruzi
-      nOsnovica := Round( ( nUk_fakt / ( 1 + ( nS_pdv / 100 ) ) ), ;
-         ZAO_VRIJEDNOST() )
-      nPDV := Round( ( nUk_fakt / ( 1 + ( nS_pdv / 100 ) ) * ;
-         ( nS_pdv / 100 ) ), ZAO_VRIJEDNOST() )
+      nOsnovica := Round( ( nUk_fakt / ( 1 + ( nS_pdv / 100 ) ) ), ZAO_VRIJEDNOST() )
+      nPDV := Round( ( nUk_fakt / ( 1 + ( nS_pdv / 100 ) ) * ( nS_pdv / 100 ) ), ZAO_VRIJEDNOST() )
       nUkupno := Round( nUk_fakt, ZAO_VRIJEDNOST() )
 
       IF lCalc == .F.
          // pa ispisi tu stavku
-
          ? PadL( AllTrim( Str( ++nRbr ) ), 4 ) + "."
 
          // dokument
@@ -560,10 +552,10 @@ STATIC FUNCTION fakt_mp_po_dokumentima( nT_osnovica, nT_pdv, nT_ukupno, lCalc )
 
    IF lCalc == .F.
 
-      // ispisi sada total
+
       ? cLine
 
-      ? "UKUPNO:"
+      ? "UKUPNO:"  // total
       @ PRow(), nRow SAY Str( nT_osnovica, _NUM, _DEC ) PICT PIC_IZN
       @ PRow(), PCol() + 1 SAY Str( nT_pdv, _NUM, _DEC ) PICT PIC_IZN
       @ PRow(), PCol() + 1 SAY Str( nT_ukupno, _NUM, _DEC ) PICT PIC_IZN
@@ -587,29 +579,26 @@ STATIC FUNCTION fakt_mp_po_tipu_partnera( nT_osnovica, nT_pdv, nT_ukupno )
    LOCAL cF_brdok
    LOCAL _tip_partnera, _opis
    LOCAL __osn, __pdv, __total
+   LOCAL _id_firma, _tip_dok, _br_dok
+   LOCAL nS_pdv, nUk_fakt
 
-   // 1 - nepdv
-   // 2 - pdv
-   // 3 - ino
+   // tip partnera: 1 - nepdv, 2 - pdv, 3 - ino
 
    nT_osnovica := 0
    nT_pdv := 0
    nT_ukupno := 0
 
    g_l_mptip( @cLine )
-
    s_z_mptip( cLine )
 
    SELECT r_export
-   // po operaterima
-   SET ORDER TO TAG "4"
+   SET ORDER TO TAG "4" // po operaterima
    GO TOP
 
    DO WHILE !Eof()
 
       _tip_partnera := field->tip
 
-      // iznosi...
       __osn := 0
       __pdv := 0
       __total := 0
@@ -638,10 +627,8 @@ STATIC FUNCTION fakt_mp_po_tipu_partnera( nT_osnovica, nT_pdv, nT_ukupno )
          ENDDO
 
          // zaokruzi
-         nOsnovica := Round( ( nUk_fakt / ( 1 + ( nS_pdv / 100 ) ) ), ;
-            ZAO_VRIJEDNOST() )
-         nPDV := Round( ( nUk_fakt / ( 1 + ( nS_pdv / 100 ) ) * ;
-            ( nS_pdv / 100 ) ), ZAO_VRIJEDNOST() )
+         nOsnovica := Round( ( nUk_fakt / ( 1 + ( nS_pdv / 100 ) ) ),  ZAO_VRIJEDNOST() )
+         nPDV := Round( ( nUk_fakt / ( 1 + ( nS_pdv / 100 ) ) *  ( nS_pdv / 100 ) ), ZAO_VRIJEDNOST() )
          nUkupno := Round( nUk_fakt, ZAO_VRIJEDNOST() )
 
          __osn += nOsnovica
@@ -662,8 +649,7 @@ STATIC FUNCTION fakt_mp_po_tipu_partnera( nT_osnovica, nT_pdv, nT_ukupno )
       @ PRow(), PCol() + 1 SAY PadR( _opis, 40 )
 
       // total
-      @ PRow(), nRow := PCol() + 1 SAY Str( __osn, _NUM, _DEC ) ;
-         PICT PIC_IZN
+      @ PRow(), nRow := PCol() + 1 SAY Str( __osn, _NUM, _DEC ) PICT PIC_IZN
 
       // pdv
       @ PRow(), PCol() + 1 SAY Str( __pdv, _NUM, _DEC ) PICT PIC_IZN
@@ -671,18 +657,15 @@ STATIC FUNCTION fakt_mp_po_tipu_partnera( nT_osnovica, nT_pdv, nT_ukupno )
       // osnovica
       @ PRow(), PCol() + 1 SAY Str( __total, _NUM, _DEC ) PICT PIC_IZN
 
-      // dodaj na total
-
       nT_ukupno += __total
       nT_osnovica += __osn
       nT_pdv += __pdv
 
    ENDDO
 
-   // ispisi sada total
-   ? cLine
 
-   ? "UKUPNO:"
+   ? cLine
+   ? "UKUPNO:" // total
 
    @ PRow(), nRow SAY Str( nT_osnovica, _NUM, _DEC ) PICT PIC_IZN
    @ PRow(), PCol() + 1 SAY Str( nT_pdv, _NUM, _DEC ) PICT PIC_IZN
@@ -706,26 +689,22 @@ STATIC FUNCTION fakt_mp_po_vrstama_placanja( nT_osnovica, nT_pdv, nT_ukupno )
    LOCAL cF_firma
    LOCAL cF_brdok
    LOCAL _vrsta_p, _vrsta_p_naz
+   LOCAL nS_pdv, nU_fakt, nUU_fakt
 
    nT_osnovica := 0
    nT_pdv := 0
    nT_ukupno := 0
 
-   // vraca liniju
    g_l_mpop( @cLine )
-
-   // zaglavlje pregled po robi
-   s_z_mpvrstap( cLine )
+   s_z_mpvrstap( cLine ) // zaglavlje pregled po robi
 
    SELECT r_export
-   // po operaterima
-   SET ORDER TO TAG "5"
+   SET ORDER TO TAG "5" // po operaterima
    GO TOP
 
    DO WHILE !Eof()
 
       _vrsta_p := field->vrstap
-
       nOsnovica := 0
       nPDV := 0
       nUkupno := 0
@@ -754,16 +733,11 @@ STATIC FUNCTION fakt_mp_po_vrstama_placanja( nT_osnovica, nT_pdv, nT_ukupno )
       ENDDO
 
       // zaokruzi
-      nOsnovica := Round( ( nUU_fakt / ( 1 + ( nS_pdv / 100 ) ) ), ;
-         ZAO_VRIJEDNOST() )
-      nPDV := Round( ( nUU_fakt / ( 1 + ( nS_pdv / 100 ) ) * ;
-         ( nS_pdv / 100 ) ), ZAO_VRIJEDNOST() )
+      nOsnovica := Round( ( nUU_fakt / ( 1 + ( nS_pdv / 100 ) ) ), ZAO_VRIJEDNOST() )
+      nPDV := Round( ( nUU_fakt / ( 1 + ( nS_pdv / 100 ) ) * ( nS_pdv / 100 ) ), ZAO_VRIJEDNOST() )
       nUkupno := Round( nUU_fakt, ZAO_VRIJEDNOST() )
 
 
-      // pa ispisi tu stavku
-
-      // rbr
       ? PadL( AllTrim( Str( ++nRbr ) ), 4 ) + "."
 
       // operater
@@ -773,7 +747,6 @@ STATIC FUNCTION fakt_mp_po_vrstama_placanja( nT_osnovica, nT_pdv, nT_ukupno )
       @ PRow(), nRow := PCol() + 1 SAY Str( nUkupno, _NUM, _DEC ) ;
          PICT PIC_IZN
 
-      // dodaj na total
       nT_ukupno += nUkupno
       nT_osnovica += nOsnovica
       nT_pdv += nPDV
@@ -785,7 +758,7 @@ STATIC FUNCTION fakt_mp_po_vrstama_placanja( nT_osnovica, nT_pdv, nT_ukupno )
    @ PRow(), nRow SAY Str( nT_Ukupno, _NUM, _DEC ) PICT PIC_IZN
    ? cLine
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -803,20 +776,17 @@ STATIC FUNCTION fakt_mp_po_operaterima( nT_osnovica, nT_pdv, nT_ukupno )
    LOCAL cF_tipdok
    LOCAL cF_firma
    LOCAL cF_brdok
+   LOCAL nS_pdv, nU_fakt, nUU_fakt
 
    nT_osnovica := 0
    nT_pdv := 0
    nT_ukupno := 0
 
-   // vraca liniju
    g_l_mpop( @cLine )
-
-   // zaglavlje pregled po robi
    s_z_mpop( cLine )
 
    SELECT r_export
-   // po operaterima
-   SET ORDER TO TAG "3"
+   SET ORDER TO TAG "3" // po operaterima
    GO TOP
 
    DO WHILE !Eof()
@@ -824,15 +794,12 @@ STATIC FUNCTION fakt_mp_po_operaterima( nT_osnovica, nT_pdv, nT_ukupno )
       nOperater := field->operater
       cOper_naz := ""
 
-      // ako postoji operater
-      IF nOperater <> 0
 
-         nTArea := Select()
-
+      IF nOperater <> 0 // ako postoji operater
+         PushWa()
          cOper_naz := GetFullUserName( nOperater )
          cOper_naz := "(" + AllTrim( Str( nOperater ) ) + ") " + cOper_naz
-
-         SELECT ( nTArea )
+         PopWa()
       ENDIF
 
       nOsnovica := 0
@@ -863,22 +830,16 @@ STATIC FUNCTION fakt_mp_po_operaterima( nT_osnovica, nT_pdv, nT_ukupno )
       ENDDO
 
       // zaokruzi
-      nOsnovica := Round( ( nUU_fakt / ( 1 + ( nS_pdv / 100 ) ) ), ;
-         ZAO_VRIJEDNOST() )
-      nPDV := Round( ( nUU_fakt / ( 1 + ( nS_pdv / 100 ) ) * ;
-         ( nS_pdv / 100 ) ), ZAO_VRIJEDNOST() )
+      nOsnovica := Round( ( nUU_fakt / ( 1 + ( nS_pdv / 100 ) ) ), ZAO_VRIJEDNOST() )
+      nPDV := Round( ( nUU_fakt / ( 1 + ( nS_pdv / 100 ) ) * ( nS_pdv / 100 ) ), ZAO_VRIJEDNOST() )
       nUkupno := Round( nUU_fakt, ZAO_VRIJEDNOST() )
 
 
-      // pa ispisi tu stavku
       ? PadL( AllTrim( Str( ++nRbr ) ), 4 ) + "."
 
-      // operater
       @ PRow(), PCol() + 1 SAY PadR( AllTrim( cOper_naz ), 40 )
 
-      // total
-      @ PRow(), nRow := PCol() + 1 SAY Str( nUkupno, _NUM, _DEC ) ;
-         PICT PIC_IZN
+      @ PRow(), nRow := PCol() + 1 SAY Str( nUkupno, _NUM, _DEC ) PICT PIC_IZN // total
 
       nT_ukupno += nUkupno
       nT_osnovica += nOsnovica
@@ -891,7 +852,7 @@ STATIC FUNCTION fakt_mp_po_operaterima( nT_osnovica, nT_pdv, nT_ukupno )
    @ PRow(), nRow SAY Str( nT_Ukupno, _NUM, _DEC ) PICT PIC_IZN
    ? cLine
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -909,12 +870,10 @@ STATIC FUNCTION fakt_mp_po_robama()
    LOCAL nT_osnovica := 0
    LOCAL nT_pdv := 0
    LOCAL nT_ukupno := 0
+   LOCAL nS_pdv, cRoba_naz
 
-   // vraca liniju
    g_l_mproba( @cLine )
-
-   // zaglavlje pregled po robi
-   s_z_mproba( cLine )
+   s_z_mproba( cLine ) // zaglavlje pregled po robi
 
    SELECT r_export
    SET ORDER TO TAG "2"
@@ -941,13 +900,10 @@ STATIC FUNCTION fakt_mp_po_robama()
          SKIP
       ENDDO
 
-      // zaokruzi
       nOsnovica := Round( nOsnovica, ZAO_VRIJEDNOST() )
       nPDV := Round( ( nOsnovica * ( nS_pdv / 100 ) ), ZAO_VRIJEDNOST() + _ZAOK )
       nUkupno := Round( nOsnovica + nPDV, ZAO_VRIJEDNOST() )
 
-
-      // pa ispisi tu stavku
       ? PadL( AllTrim( Str( ++nRbr ) ), 4 ) + "."
       @ PRow(), PCol() + 1 SAY PadR( AllTrim( cRoba_id ) + "-" + AllTrim( cRoba_naz ), 50 )
       @ PRow(), nRow := PCol() + 1 SAY Str( nKolicina, 12, 2 )
@@ -956,15 +912,13 @@ STATIC FUNCTION fakt_mp_po_robama()
 
    ENDDO
 
-   // ispisi sada total
    ? cLine
-
-   ? "UKUPNO:"
+   ? "UKUPNO:" // total
    @ PRow(), nRow SAY Str( nT_kolicina, 12, 2 )
 
    ? cLine
 
-   RETURN
+   RETURN .T.
 
 
 // -----------------------------------------
@@ -980,7 +934,7 @@ STATIC FUNCTION g_l_mproba( cLine )
    cLine += Space( 1 )
    cLine += Replicate( "-", 12 )
 
-   RETURN
+   RETURN .T.
 
 
 // -----------------------------------------
@@ -988,7 +942,7 @@ STATIC FUNCTION g_l_mproba( cLine )
 // -----------------------------------------
 STATIC FUNCTION s_z_mproba( cLine )
 
-   cTxt := ""
+   LOCAL cTxt := ""
 
    cTxt += PadR( "r.br", 5 )
    cTxt += Space( 1 )
@@ -1000,7 +954,7 @@ STATIC FUNCTION s_z_mproba( cLine )
    ? cTxt
    ? cLine
 
-   RETURN
+   RETURN .T.
 
 // -----------------------------------------
 // vraca liniju za pregled po robi
@@ -1019,7 +973,7 @@ STATIC FUNCTION g_l_mptip( cLine )
    cLine += Space( 1 )
    cLine += Replicate( "-", 12 )
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -1037,7 +991,7 @@ STATIC FUNCTION g_l_mpop( cLine )
    cLine += Space( 1 )
    cLine += Replicate( "-", 12 )
 
-   RETURN
+   RETURN .T.
 
 
 // -----------------------------------------
@@ -1045,7 +999,7 @@ STATIC FUNCTION g_l_mpop( cLine )
 // -----------------------------------------
 STATIC FUNCTION s_z_mptip( cLine )
 
-   cTxt := ""
+   LOCAL cTxt := ""
 
    cTxt += PadR( "r.br", 5 )
    cTxt += Space( 1 )
@@ -1062,7 +1016,7 @@ STATIC FUNCTION s_z_mptip( cLine )
    ? cTxt
    ? cLine
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -1071,7 +1025,7 @@ STATIC FUNCTION s_z_mptip( cLine )
 // -----------------------------------------
 STATIC FUNCTION s_z_mpvrstap( cLine )
 
-   cTxt := ""
+   LOCAL cTxt := ""
 
    cTxt += PadR( "r.br", 5 )
    cTxt += Space( 1 )
@@ -1085,7 +1039,7 @@ STATIC FUNCTION s_z_mpvrstap( cLine )
    ?U cTxt
    ?U cLine
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -1095,7 +1049,7 @@ STATIC FUNCTION s_z_mpvrstap( cLine )
 // -----------------------------------------
 STATIC FUNCTION s_z_mpop( cLine )
 
-   cTxt := ""
+   LOCAL cTxt := ""
 
    cTxt += PadR( "r.br", 5 )
    cTxt += Space( 1 )
@@ -1108,7 +1062,7 @@ STATIC FUNCTION s_z_mpop( cLine )
    ? cTxt
    ? cLine
 
-   RETURN
+   RETURN .T.
 
 
 // -----------------------------------------
@@ -1132,7 +1086,7 @@ STATIC FUNCTION g_l_mpdok( cLine )
    cLine += Space( 1 )
    cLine += Replicate( "-", 20 )
 
-   RETURN
+   RETURN .T.
 
 
 // -----------------------------------------
@@ -1140,7 +1094,7 @@ STATIC FUNCTION g_l_mpdok( cLine )
 // -----------------------------------------
 STATIC FUNCTION s_z_mpdok( cLine )
 
-   cTxt := ""
+   LOCAL cTxt := ""
 
    cTxt += PadR( "r.br", 5 )
    cTxt += Space( 1 )
@@ -1161,4 +1115,4 @@ STATIC FUNCTION s_z_mpdok( cLine )
    ? cTxt
    ? cLine
 
-   RETURN
+   RETURN .T.

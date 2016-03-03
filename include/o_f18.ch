@@ -68,7 +68,7 @@
 #xcommand O_STRINGS  => select(F_STRINGS)  ;  my_use ("strings")   ; set order to tag "1"
 
 // temp tabela za izvjestaje
-#xcommand O_R_EXP    => select (F_R_EXP)   ; my_usex ("r_export")
+#xcommand O_R_EXP    => select (F_R_EXP)   ; my_usex ( "r_export" )
 #xcommand O_TEMP     => select (F_TEMP)    ; my_usex ("temp")
 
 

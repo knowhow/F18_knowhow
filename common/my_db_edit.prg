@@ -30,10 +30,9 @@ MEMVAR cPom77I, cPom77U, aTBGets, GET // koristeno u editpolja
  * param bUserF - kodni blok, user funkcija
  * param cMessTop - poruka na vrhu
  * return NIL
-*/
 
-/* var ImeKol
- brief Privatna Varijabla koja se inicijalizira prije "ulaska" u ObjDBedit
+
+ ImeKol - Privatna Varijabla koja se inicijalizira prije "ulaska" u my_db_edit
  param - [ 1] Zalavlje kolone
  param - [ 2] kodni blok za prikaz kolone {|| id}
  param - [ 3] izraz koji se edituje (string), obradjuje sa & operatorom
@@ -386,107 +385,115 @@ FUNCTION standardne_browse_komande_dbf( TB, Ch, nRez, nPored, aPoredak )
 
       PRIVATE cKolona
 
-      IF ValType( TB ) == "O" .AND. Len( Imekol[ TB:colPos ] ) > 2
+      IF !tb_editabilna_kolona( TB, ImeKol )
+         RETURN DE_CONT
+      ENDIF
 
-         IF !Empty( ImeKol[ TB:colPos, 3 ] )
 
-            cKolona := ImeKol[ TB:ColPos, 3 ]
 
-            IF ValType( &cKolona ) $ "CD"
+      IF !Empty( ImeKol[ TB:colPos, 3 ] )
 
-               Box(, 3, 60, .F. )
+         cKolona := ImeKol[ TB:ColPos, 3 ]
 
-               PRIVATE GetList := {}
-               SET CURSOR ON
+         IF ValType( &cKolona ) $ "CD"
 
-               @ m_x + 1, m_y + 2 SAY "Uzmi podatke posljednje pretrage ?" GET _last_srch VALID _last_srch $ "DN" PICT "@!"
+            Box(, 3, 60, .F. )
 
-               READ
+            PRIVATE GetList := {}
+            SET CURSOR ON
 
-               _sect := "_brow_fld_find_" + AllTrim( Lower( cKolona ) )
-               _trazi_val := &cKolona
+            @ m_x + 1, m_y + 2 SAY "Uzmi podatke posljednje pretrage ?" GET _last_srch VALID _last_srch $ "DN" PICT "@!"
 
-               IF _last_srch == "D"
-                  _trazi_val := fetch_metric( _sect, "<>", _trazi_val )
-               ENDIF
+            READ
 
-               _zamijeni_val := _trazi_val
-               _sect := "_brow_fld_repl_" + AllTrim( Lower( cKolona ) )
+            _sect := "_brow_fld_find_" + AllTrim( Lower( cKolona ) )
+            _trazi_val := &cKolona
 
-               IF _last_srch == "D"
-                  _zamijeni_val := fetch_metric( _sect, "<>", _zamijeni_val )
-               ENDIF
-
-               _pict := ""
-
-               IF ValType( _trazi_val ) == "C" .AND. Len( _trazi_val ) > 45
-                  _pict := "@S45"
-               ENDIF
-
-               @ m_x + 2, m_y + 2 SAY PadR( _tr, 12 ) GET _trazi_val PICT _pict
-               @ m_x + 3, m_y + 2 SAY PadR( _zam, 12 ) GET _zamijeni_val PICT _pict
-
-               READ
-
-               BoxC()
-
-               IF LastKey() == K_ESC
-                  RETURN DE_CONT
-               ENDIF
-
-               IF replace_kolona_in_table( cKolona, _trazi_val, _zamijeni_val, _last_srch )
-                  TB:RefreshAll()
-               ELSE
-                  RETURN DE_CONT
-               ENDIF
-
+            IF _last_srch == "D"
+               _trazi_val := fetch_metric( _sect, "<>", _trazi_val )
             ENDIF
+
+            _zamijeni_val := _trazi_val
+            _sect := "_brow_fld_repl_" + AllTrim( Lower( cKolona ) )
+
+            IF _last_srch == "D"
+               _zamijeni_val := fetch_metric( _sect, "<>", _zamijeni_val )
+            ENDIF
+
+            _pict := ""
+
+            IF ValType( _trazi_val ) == "C" .AND. Len( _trazi_val ) > 45
+               _pict := "@S45"
+            ENDIF
+
+            @ m_x + 2, m_y + 2 SAY PadR( _tr, 12 ) GET _trazi_val PICT _pict
+            @ m_x + 3, m_y + 2 SAY PadR( _zam, 12 ) GET _zamijeni_val PICT _pict
+
+            READ
+
+            BoxC()
+
+            IF LastKey() == K_ESC
+               RETURN DE_CONT
+            ENDIF
+
+            IF replace_kolona_in_table( cKolona, _trazi_val, _zamijeni_val, _last_srch )
+               TB:RefreshAll()
+            ELSE
+               RETURN DE_CONT
+            ENDIF
+
          ENDIF
       ENDIF
+
 
    CASE Ch == K_ALT_S
 
       PRIVATE cKolona
 
-      IF ValType( TB ) == "O" .AND. Len( Imekol[ TB:colPos ] ) > 2
 
-         IF !Empty( ImeKol[ TB:colPos, 3 ] )
+      IF !tb_editabilna_kolona( TB, ImeKol )
+         RETURN DE_CONT
+      ENDIF
 
-            cKolona := ImeKol[ TB:ColPos, 3 ]
 
-            IF ValType( &cKolona ) == "N"
+      IF !Empty( ImeKol[ TB:colPos, 3 ] )
 
-               Box(, 3, 66, .F. )
+         cKolona := ImeKol[ TB:ColPos, 3 ]
 
-               PRIVATE GetList := {}
-               SET CURSOR ON
+         IF ValType( &cKolona ) == "N"
 
-               _trazi_val := &cKolona
-               _trazi_usl := Space( 80 )
+            Box(, 3, 66, .F. )
 
-               @ m_x + 1, m_y + 2 SAY "Postavi na:" GET _trazi_val
-               @ m_x + 2, m_y + 2 SAY "Uslov za obuhvatanje stavki (prazno-sve):" GET _trazi_usl ;
-                  PICT "@S20" ;
-                  VALID Empty( _trazi_usl ) .OR. alt_s_provjeri_tip_uslova( _trazi_usl, "Greška! Neispravno postavljen uslov!" )
-               READ
+            PRIVATE GetList := {}
+            SET CURSOR ON
 
-               BoxC()
+            _trazi_val := &cKolona
+            _trazi_usl := Space( 80 )
 
-               IF LastKey() == K_ESC
-                  RETURN DE_CONT
-               ENDIF
+            @ m_x + 1, m_y + 2 SAY "Postavi na:" GET _trazi_val
+            @ m_x + 2, m_y + 2 SAY "Uslov za obuhvatanje stavki (prazno-sve):" GET _trazi_usl ;
+               PICT "@S20" ;
+               VALID Empty( _trazi_usl ) .OR. alt_s_provjeri_tip_uslova( _trazi_usl, "Greška! Neispravno postavljen uslov!" )
+            READ
 
-               IF zamjeni_numericka_polja_u_tabeli( cKolona, _trazi_val, _trazi_usl )
-                  TB:RefreshAll()
-               ELSE
-                  RETURN DE_CONT
-               ENDIF
+            BoxC()
 
+            IF LastKey() == K_ESC
+               RETURN DE_CONT
+            ENDIF
+
+            IF zamjeni_numericka_polja_u_tabeli( cKolona, _trazi_val, _trazi_usl )
+               TB:RefreshAll()
+            ELSE
+               RETURN DE_CONT
             ENDIF
 
          ENDIF
 
       ENDIF
+
+
 
    CASE Ch == K_CTRL_U .AND. nPored > 1
 
@@ -914,3 +921,21 @@ FUNCTION alt_s_provjeri_tip_uslova( cExpr, cMes, cT )
    ENDIF
 
    RETURN lVrati
+
+
+
+FUNCTION tb_editabilna_kolona( oTb, aImeKol )
+
+   IF ValType( oTB ) != "O"
+      RETURN .F.
+   ENDIF
+
+   IF TB:colPos < 1
+      RETURN .F.
+   ENDIF
+
+   // aImeKol[ 3] izraz koji se edituje (string), obradjuje sa & operatorom
+   // aImeKol[ 4] kodni blok When
+   // aImeKol[ 5] kodni blok Valid
+
+   RETURN Len( aImekol[ TB:colPos ] ) > 2

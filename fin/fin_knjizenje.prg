@@ -11,15 +11,12 @@
 
 #include "f18.ch"
 
+MEMVAR Ch, KursLis, gnLOst, gPotpis, lBlagAsis, cBlagIDVN
+MEMVAR Kol, ImeKol
 
 STATIC cTekucaRj := ""
 STATIC __par_len
 STATIC __rj_len := 6
-
-// FmkIni_KumPath_TekucaRj - Tekuca radna jedinica
-// Koristi se u slucaju da u Db unosimo podatke za odredjenu radnu jedinicu
-// da ne bi svaki puta ukucavali tu Rj ovaj parametar nam je nudi kao tekucu vrijednost.
-
 
 FUNCTION fin_unos_naloga()
 
@@ -36,7 +33,7 @@ FUNCTION fin_unos_naloga()
    lBlagAsis := .F.
    cBlagIDVN := "66"
 
-   KnjNal()
+   fin_knjizenje_naloga()
 
    my_close_all_dbf()
 
@@ -47,7 +44,7 @@ FUNCTION fin_unos_naloga()
  Otvara pripremu za knjizenje naloga
  */
 
-FUNCTION KnjNal()
+FUNCTION fin_knjizenje_naloga()
 
    LOCAL _sep := BROWSE_COL_SEP
    LOCAL _w := 25
@@ -61,22 +58,22 @@ FUNCTION KnjNal()
    o_fin_edit()
 
    ImeKol := { ;
-      { "F.",            {|| dbSelectArea( F_FIN_PRIPR ), IdFirma }, "IdFirma" }, ;
-      { "VN",            {|| IdVN    }, "IdVN" }, ;
-      { "Br.",           {|| BrNal   }, "BrNal" }, ;
-      { "R.br",          {|| RBr     }, "rbr", {|| wrbr() }, {|| vrbr() } }, ;
-      { "Konto",         {|| IdKonto }, "IdKonto", {|| .T. }, {|| P_Konto( @_IdKonto ), .T. } }, ;
-      { "Partner",       {|| IdPartner }, "IdPartner" }, ;
-      { "Br.veze ",      {|| BrDok   }, "BrDok" }, ;
-      { "Datum",         {|| DatDok  }, "DatDok" }, ;
-      { "D/P",           {|| D_P     }, "D_P" }, ;
-      { "Iznos " + AllTrim( ValDomaca() ), {|| Transform( IznosBHD, FormPicL( gPicBHD, 15 ) ) }, "iznosbhd" }, ;
-      { "Iznos " + AllTrim( ValPomocna() ), {|| Transform( IznosDEM, FormPicL( gPicDEM, 10 ) ) }, "iznosdem" }, ;
-      { "Opis",          {|| PadR( Left( Opis, 37 ) + iif( Len( AllTrim( Opis ) ) > 37, "...", "" ), 40 )  }, "OPIS" }, ;
-      { "K1",            {|| k1      }, "k1" }, ;
-      { "K2",            {|| k2      }, "k2" }, ;
-      { "K3",            {|| K3Iz256( k3 )   }, "k3" }, ;
-      { "K4",            {|| k4      }, "k4" } ;
+      { "F.",            {|| dbSelectArea( F_FIN_PRIPR ), field->IdFirma }, "IdFirma" }, ;
+      { "VN",            {|| field->IdVN    }, "IdVN" }, ;
+      { "Br.",           {|| field->BrNal   }, "BrNal" }, ;
+      { "R.br",          {|| field->RBr     }, "rbr", {|| wrbr() }, {|| vrbr() } }, ;
+      { "Konto",         {|| field->IdKonto }, "IdKonto", {|| .T. }, {|| P_Konto( @_IdKonto ), .T. } }, ;
+      { "Partner",       {|| field->IdPartner }, "IdPartner" }, ;
+      { "Br.veze ",      {|| field->BrDok   }, "BrDok" }, ;
+      { "Datum",         {|| field->DatDok  }, "DatDok" }, ;
+      { "D/P",           {|| field->D_P     }, "D_P" }, ;
+      { "Iznos " + AllTrim( ValDomaca() ), {|| Transform( field->IznosBHD, FormPicL( gPicBHD, 15 ) ) }, "iznosbhd" }, ;
+      { "Iznos " + AllTrim( ValPomocna() ), {|| Transform( field->IznosDEM, FormPicL( gPicDEM, 10 ) ) }, "iznosdem" }, ;
+      { "Opis",          {|| PadR( Left( field->Opis, 37 ) + iif( Len( AllTrim( field->Opis ) ) > 37, "...", "" ), 40 )  }, "OPIS" }, ;
+      { "K1",            {|| field->k1      }, "k1" }, ;
+      { "K2",            {|| field->k2      }, "k2" }, ;
+      { "K3",            {|| K3Iz256( field->k3 )   }, "k3" }, ;
+      { "K4",            {|| field->k4      }, "k4" } ;
       }
 
 
@@ -129,7 +126,7 @@ FUNCTION KnjNal()
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -495,15 +492,14 @@ FUNCTION DinDem( p1, p2, cVar )
    RETURN
 
 
+/*
+ poziva je ObjDbedit u fin_knjizenje_naloga
+ c-T  -  Brisanje stavke,  F5 - kontrola zbira za jedan nalog
+ F6 -  Suma naloga, ENTER-edit stavke, c-A - ispravka naloga
 
-// poziva je ObjDbedit u KnjNal
-// c-T  -  Brisanje stavke,  F5 - kontrola zbira za jedan nalog
-// F6 -  Suma naloga, ENTER-edit stavke, c-A - ispravka naloga
+ setuj datval na osnovu datdok u pripremi
+*/
 
-
-// ---------------------------------------------------
-// setuj datval na osnovu datdok u pripremi
-// ---------------------------------------------------
 STATIC FUNCTION set_datval_datdok()
 
    LOCAL _ret := .F.
@@ -538,8 +534,7 @@ STATIC FUNCTION set_datval_datdok()
 
       IF field->idkonto == _id_konto .AND. Empty( field->datval )
 
-         // bilo je promjena
-         _ret := .T.
+         _ret := .T. // bilo je promjena
 
          _rec := dbf_get_rec()
          _rec[ "datval" ] := field->datdok + _dana
@@ -558,10 +553,9 @@ STATIC FUNCTION set_datval_datdok()
 
 
 
-/*! \fn edit_fin_pripr()
- *  \brief Ostale operacije u ispravki stavke
+/*
+ *  Ostale operacije u ispravki stavke
  */
-
 FUNCTION edit_fin_pripr()
 
    LOCAL nTr2
@@ -577,8 +571,8 @@ FUNCTION edit_fin_pripr()
 
    DO CASE
 
-      // setuj datdok na osnovu datval
-   CASE Ch == K_ALT_F5
+
+   CASE Ch == K_ALT_F5 // setuj datdok na osnovu datval
 
       IF set_datval_datdok()
          RETURN DE_REFRESH
@@ -586,10 +580,10 @@ FUNCTION edit_fin_pripr()
          RETURN DE_CONT
       ENDIF
 
-   CASE Ch == K_F8
+   CASE Ch == K_F8 // brisi stavke u pripremi od - do
 
-      // brisi stavke u pripremi od - do
-      IF br_oddo() = 1
+
+      IF br_oddo() == 1
          RETURN DE_REFRESH
       ELSE
          RETURN DE_CONT

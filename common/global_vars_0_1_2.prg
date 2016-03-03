@@ -60,12 +60,10 @@ PROCEDURE set_global_vars_0()
    PUBLIC gPFont := "Arial"
    PUBLIC gKodnaS := "8"
    PUBLIC g50f := " "
-   PUBLIC StaraBoja := SetColor()
    PUBLIC System := .F.
    PUBLIC gGlBaza := ""
    PUBLIC gSqlLogBase
-   PUBLIC gColorInvert  := "N/W,R/N+,,,R/B+"
-   PUBLIC Normal := "GR+/N,R/N+,,,N/W"
+   
    PUBLIC Blink := "R****/W,W/B,,,W/RB"
    PUBLIC Nevid := "W/W,N/N"
 

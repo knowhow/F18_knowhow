@@ -451,11 +451,9 @@ FUNCTION standardne_browse_komande_dbf( TB, Ch, nRez, nPored, aPoredak )
 
       PRIVATE cKolona
 
-
       IF !tb_editabilna_kolona( TB, ImeKol )
          RETURN DE_CONT
       ENDIF
-
 
       IF !Empty( ImeKol[ TB:colPos, 3 ] )
 

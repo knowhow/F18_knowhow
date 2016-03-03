@@ -42,17 +42,17 @@ FUNCTION crtaj_naslovni_ekran( fBox )
       CLEAR
    ENDIF
 
-   @ 0, 2 SAY '<ESC> Izlaz' COLOR gColorInvert
-   @ 0, Col() + 2 SAY Date() COLOR gColorInvert
+   @ 0, 2 SAY '<ESC> Izlaz' COLOR F18_COLOR_INVERT
+   @ 0, Col() + 2 SAY Date() COLOR F18_COLOR_INVERT
    @ _max_rows - 1, _max_cols - 16  SAY f18_lib_ver()
 
-   DispBox( 2, 0, 4, _max_cols - 1, B_DOUBLE + BOX_CHAR_BACKGROUND_HEAD, NORMAL )
+   DispBox( 2, 0, 4, _max_cols - 1, B_DOUBLE + BOX_CHAR_BACKGROUND_HEAD, F18_COLOR_NORMAL )
 
    IF fBox
-      DispBox( 5, 0, _max_rows - 1, _max_cols - 1, B_DOUBLE + BOX_CHAR_BACKGROUND, gColorInvert  )
+      DispBox( 5, 0, _max_rows - 1, _max_cols - 1, B_DOUBLE + BOX_CHAR_BACKGROUND, F18_COLOR_INVERT  )
    ENDIF
 
-   @ 3, 1 SAY PadC( gNaslov, _max_cols - 8 ) COLOR NORMAL
+   @ 3, 1 SAY PadC( gNaslov, _max_cols - 8 ) COLOR F18_COLOR_NORMAL
 
    podaci_organizacija()
 
@@ -77,10 +77,10 @@ FUNCTION show_insert_over_stanje()
 
    IF ReadInsert( !ReadInsert() )
       SetCursor( 1 )
-      @ 0, MAXCOLS() - 20 SAY '< OVER >' COLOR gColorInvert
+      @ 0, MAXCOLS() - 20 SAY '< OVER >' COLOR F18_COLOR_INVERT
    ELSE
       SetCursor( 2 )
-      @ 0, MAXCOLS() - 20 SAY  '< INS  >' COLOR gColorInvert
+      @ 0, MAXCOLS() - 20 SAY  '< INS  >' COLOR F18_COLOR_INVERT
    ENDIF
 
    @ 0, MAXCOLS() - 11 SAY "bring.out" COLOR "GR+/B"
@@ -96,8 +96,5 @@ FUNCTION set_global_screen_vars()
    PUBLIC m_x := 0
    PUBLIC m_y := 0
 
-
-   PUBLIC gColorInvert    := .T.
-   PUBLIC Normal   := "GR+/B,R/N+,,,N/W"
 
    RETURN .T.

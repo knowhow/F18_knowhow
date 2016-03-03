@@ -325,7 +325,7 @@ STATIC FUNCTION V_Roba( fnovi )
    ENDIF
 
    @  m_x + 15, m_y + 25  SAY "Jed.mjere:"
-   @  m_x + 15, m_y + 36  SAY ROBA->jmj COLOR gColorInvert
+   @  m_x + 15, m_y + 36  SAY ROBA->jmj COLOR F18_COLOR_INVERT
 
    RETURN .T.
 

@@ -174,14 +174,9 @@ METHOD gProc( Ch )
 
 
 
-/*! \fn *void TAppMod::quit(bool lVratiseURP)
- *  \brief izlazak iz aplikacijskog modula
- *  \param lVratiSeURP - default vrijednost .t.; kada je .t. vrati se u radno podrucje; .f. ne mjenjaj radno podrucje
- *
- *  \todo proceduru izlaska revidirati, izbaciti Rad.sys iz upotrebe, kao i korisn.dbf
+/*   izlazak iz aplikacijskog modula
+ *  lVratiSeURP - default vrijednost .t.; kada je .t. vrati se u radno podrucje; .f. ne mjenjaj radno podrucje
  */
-
-// void TAppMod::quit(bool lVratiSeURP)
 
 METHOD quit( lVratiseURP )
 
@@ -193,7 +188,7 @@ METHOD quit( lVratiseURP )
       lVratiseURP := .T.
    ENDIF
 
-   SetColor( StaraBoja )
+   RETURN .T.
 
 
 
@@ -202,20 +197,6 @@ METHOD quit( lVratiseURP )
    CLEAR SCREEN
 
    IF !( ::hasParent() )
-      IF !gReadonly
-         IF Found()
-            SELECT korisn
-            IF RLock()
-               REPLACE field->nk WITH .F.
-            ENDIF
-         ELSE
-            QUIT
-         ENDIF
-         USE
-         MsgO( "Brisem RAD.SYS ..." )
-         ERASE Rad.sys
-         MsgC()
-      ENDIF
       QUIT
    ENDIF
 
@@ -229,7 +210,7 @@ METHOD gParams()
 
    LOCAL cFMKINI := "N"
    LOCAL cPosebno := "N"
-   LOCAL cOldBoje := SetColor( gColorInvert  )
+   LOCAL cOldBoje := SetColor( F18_COLOR_INVERT  )
    LOCAL cInstall := "N"
    LOCAL lPushWa := .F.
    PRIVATE GetList := {}

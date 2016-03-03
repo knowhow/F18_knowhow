@@ -285,7 +285,7 @@ FUNCTION ispisi_iznos_racuna_box( iznos )
 
    cIzn := AllTrim ( Transform ( iznos, "9999999.99" ) )
 
-   @ m_x, m_y + 28 SAY "  IZNOS RACUNA JE  " COLOR gColorInvert 
+   @ m_x, m_y + 28 SAY "  IZNOS RACUNA JE  " COLOR F18_COLOR_INVERT
 
    NextY := m_y + 76
 
@@ -540,7 +540,7 @@ FUNCTION pos_status_traka()
       @ _x, _y + 1 SAY Replicate( "�", MAXCOLS() - 2 )
    ENDIF
 
-   @ _x - 1, _y + 1 SAY PadC ( Razrijedi ( gKorIme ), MAXCOLS() - 2 ) COLOR gColorInvert 
+   @ _x - 1, _y + 1 SAY PadC ( Razrijedi ( gKorIme ), MAXCOLS() - 2 ) COLOR F18_COLOR_INVERT
 
    RETURN
 
@@ -549,10 +549,8 @@ FUNCTION pos_status_traka()
 FUNCTION SetBoje( gVrstaRS )
 
    IF gVrstaRS <> "S"
-      gColorInvert  := "N/W,W/N,,,W/N"
-      Normal := "W/N,N/W,,,N/W"
       Blink  := "N****/W,W/N,,,W/N"
       Nevid  := "W/W,N/N"
    ENDIF
 
-   RETURN
+   RETURN .T.

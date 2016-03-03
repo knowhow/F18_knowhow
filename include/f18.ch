@@ -57,6 +57,10 @@
 #define INFO_BAR_ROWS             3
 #define INFO_PANEL_COLOR           "GR+/B,R/N+,,,N/W"
 #define ERROR_PANEL_COLOR          "N/W,R/N+,,,R/B+"
+#define F18_COLOR_P1               "GR+/N"
+#define F18_COLOR_NORMAL           "W/B,R/N+,,,N/W"
+#define F18_COLOR_NORMAL_BW        "W/N,N/W,,,N/W"
+#define F18_COLOR_INVERT           "N/W,R/N+,,,R/B+"
 
 #define INFO_MESSAGES_LENGTH       40
 #define ERROR_MESSAGES_LENGTH      40

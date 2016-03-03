@@ -149,7 +149,7 @@ FUNCTION Msg( uText, sec, xPos )
 
    msg_y1 := ( MAXCOLS() - l - 7 ) / 2
    msg_y2 := MAXCOLS() - msg_y1
-   StackPush( aMsgStack, { iif( SetCursor() == 0, 0, iif( ReadInsert(), 2, 1 ) ), SetColor( gColorInvert  ), l, ;
+   StackPush( aMsgStack, { iif( SetCursor() == 0, 0, iif( ReadInsert(), 2, 1 ) ), SetColor( F18_COLOR_INVERT  ), l, ;
       SaveScreen( msg_x1, msg_y1, msg_x2, msg_y2 ) } )
 
    @ msg_x1, msg_y1 CLEAR TO msg_x2, msg_y2
@@ -198,7 +198,7 @@ FUNCTION MsgO( cText, sec, lUtf )
 
 
    StackPush( aMsgStack, ;
-      { iif( SetCursor() == 0, 0, iif( ReadInsert(), 2, 1 ) ), SetColor( gColorInvert  ), nLen, ;
+      { iif( SetCursor() == 0, 0, iif( ReadInsert(), 2, 1 ) ), SetColor( F18_COLOR_INVERT  ), nLen, ;
       SaveScreen( msg_x1, msg_y1, msg_x2, msg_y2 ) } )
 
    @ msg_x1, msg_y1 CLEAR TO msg_x2, msg_y2
@@ -235,7 +235,7 @@ FUNCTION MsgC( msg_x1, msg_y1, msg_x2, msg_y2 )
 
 
 /*! \fn Box(BoxId, N, Length, Inv, chMsg, cHelpT)
- *  \brief Otvara prozor BoxID dimenzija (N x Length), gColorInvert ovan
+ *  \brief Otvara prozor BoxID dimenzija (N x Length), F18_COLOR_INVERT ovan
  *         (Inv=.T. ili ne)
  *
  *  \param chMsg - tip C -> prikaz poruke
@@ -310,7 +310,7 @@ FUNCTION Box( BoxId, NA1, Length, Inv, chMsg, cHelpT )
       Inv := .F.
    ENDIF
 
-   LocalC := iif ( Inv, gColorInvert , Normal )
+   LocalC := iif ( Inv, F18_COLOR_INVERT , F18_COLOR_NORMAL )
 
    SetColor( LocalC )
 
@@ -462,7 +462,7 @@ FUNCTION Prozor1( v1, h1, v2, h2, cNaslov, cBojaN, cOkvir, cBojaO, cBojaT, nKurs
    SET DEVICE TO SCREEN
 
    IF cBojaN == NIL
-      cBojaN := "GR+/N"
+      cBojaN := F18_COLOR_P1
    ENDIF
 
    IF cOkvir == NIL
@@ -1015,8 +1015,6 @@ FUNCTION UGlavnomMeniju()
 
 FUNCTION set_standardne_boje()
 
-   PUBLIC  gColorInvert
-   PUBLIC  Normal
    PUBLIC  Blink
    PUBLIC  Nevid
 
@@ -1026,14 +1024,10 @@ FUNCTION set_standardne_boje()
 
    IF ( gFKolor == "D" .AND. IsColor() )
 
-      gColorInvert  := "B/W,R/N+,,,R/B+"
-      Normal := "W/B,R/N+,,,N/W"
       Blink := "R" + Replicate( "*", 4 ) + "/W,W/B,,,W/RB"
       Nevid := "W/W,N/N"
    ELSE
 
-      gColorInvert  := "N/W,W/N,,,W/N"
-      Normal := "W/N,N/W,,,N/W"
       Blink := "N" + Replicate( "*", 4 ) + "/W,W/N,,,W/N"
       Nevid := "W/W,N/N"
    ENDIF
@@ -1041,34 +1035,6 @@ FUNCTION set_standardne_boje()
    RETURN NIL
 
 
-/*
-FUNCTION set_boje_2()
-
-   PUBLIC  gColorInvert
-   PUBLIC  Normal
-   PUBLIC  Blink
-   PUBLIC  Nevid
-
-   IF Type( "gFKolor" ) <> "C"
-      gFKolor := "D"
-   ENDIF
-
-   IF ( gFKolor == "D" .AND. IsColor() )
-
-      gColorInvert  := "B/W,R/N+,,,R/B+"
-      Normal := "W/B,R/N+,,,N/W"
-      Blink  := "R" + Replicate( "*", 4 ) + "/W,W/B,,,W/RB"
-      Nevid  := "W/W,N/N"
-   ELSE
-
-      gColorInvert  := "N/W,W/N,,,W/N"
-      Normal := "W/N,N/W,,,N/W"
-      Blink := "N" + Replicate( "*", 4 ) + "/W,W/N,,,W/N"
-      Nevid := "W/W,N/N"
-   ENDIF
-
-   RETURN NIL
-*/
 
 
 
@@ -1198,7 +1164,7 @@ FUNCTION ShowKorner( nS, nStep, nDelta )
 
 FUNCTION say_database_info()
 
-   @ 0, MAXROWS() - 1 SAY PadR( f18_database() + " / " + f18_user(), MAXROWS() + 20 ) COLOR gColorInvert
+   @ 0, MAXROWS() - 1 SAY PadR( f18_database() + " / " + f18_user(), MAXROWS() + 20 ) COLOR F18_COLOR_INVERT
    @ 4, 4 SAY ""
 
    RETURN .T.
@@ -1224,8 +1190,6 @@ FUNCTION IzreziPath( cPath, cTekst )
 
 FUNCTION SezonskeBoje()
 
-   PUBLIC  gColorInvert
-   PUBLIC  Normal
    PUBLIC  Blink
    PUBLIC  Nevid
 
@@ -1235,13 +1199,9 @@ FUNCTION SezonskeBoje()
 
 
    IF ( gFKolor == "D" .AND. IsColor() )
-      gColorInvert  := "N/W,R/N+,,,R/B+"
-      Normal := "GR+/N,R/N+,,,N/W"
       Blink := "R" + Replicate( "*", 4 ) + "/W,W/B,,,W/RB"
       Nevid := "W/W,N/N"
    ELSE
-      gColorInvert  := "N/W,W/N,,,W/N"
-      Normal := "W/N,N/W,,,N/W"
       Blink := "N" + Replicate( "*", 4 ) + "/W,W/N,,,W/N"
       Nevid := "W/W,N/N"
    ENDIF

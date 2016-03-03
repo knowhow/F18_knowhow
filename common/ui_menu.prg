@@ -86,7 +86,7 @@ FUNCTION Menu_SC( cIzp, lMain )
  *  MenuId  - identifikacija menija     C
  *  Items   - niz opcija za izbor       {}
  *  ItemNo  - Broj pocetne pozicije     N
- *  Inv     - da li je meni gColorInvert ovan  L
+ *  Inv     - da li je meni F18_COLOR_INVERT ovan  L
  *
  *  Broj izabrane opcije, 0 kraj
  *
@@ -127,8 +127,8 @@ FUNCTION MENU( MenuId, Items, ItemNo, Inv, cHelpT, nPovratak, aFixKoo, nMaxVR )
       Inv := .F.
    ENDIF
 
-   LocalC  := iif( Inv, gColorInvert , Normal )
-   LocalIC := iif( Inv, Normal, gColorInvert  )
+   LocalC  := iif( Inv, F18_COLOR_INVERT, F18_COLOR_NORMAL )
+   LocalIC := iif( Inv, F18_COLOR_NORMAL, F18_COLOR_INVERT  )
 
 
    OldC := SetColor( LocalC )
@@ -172,7 +172,7 @@ FUNCTION MENU( MenuId, Items, ItemNo, Inv, cHelpT, nPovratak, aFixKoo, nMaxVR )
 
    ENDIF
 
-   SetColor( gColorInvert  )
+   SetColor( F18_COLOR_INVERT  )
    IF ItemNo == 0
       CentrTxt( h[ 1 ], MAXROWS() -1 )
    END IF
@@ -281,10 +281,10 @@ FUNCTION AChoice2( x1, y1, x2, y2, Items, f1, cFunc, nItemNo )
 
    FOR i := 1 TO nLen
       IF i == nItemNo
-         IF Left( cOldColor, 3 ) == Left( Normal, 3 )
-            SetColor( gColorInvert  )
+         IF Left( cOldColor, 3 ) == Left( F18_COLOR_NORMAL, 3 )
+            SetColor( F18_COLOR_INVERT  )
          ELSE
-            SetColor( Normal )
+            SetColor( F18_COLOR_NORMAL )
          ENDIF
       ELSE
          SetColor( cOldColor )
@@ -296,15 +296,15 @@ FUNCTION AChoice2( x1, y1, x2, y2, Items, f1, cFunc, nItemNo )
 
    DO WHILE .T.
 
-      SetColor( gColorInvert  )
+      SetColor( F18_COLOR_INVERT  )
       SetColor( cOldColor )
       IF !fFirst
          SetColor( cOldColor )
          @ x1 + nOldItemNo - 1, y1 SAY8 PadR( Items[ nOldItemNo ], nWidth )
-         IF Left( cOldColor, 3 ) == Left( Normal, 3 )
-            SetColor( gColorInvert  )
+         IF Left( cOldColor, 3 ) == Left( F18_COLOR_NORMAL, 3 )
+            SetColor( F18_COLOR_INVERT  )
          ELSE
-            SetColor( Normal )
+            SetColor( F18_COLOR_NORMAL )
          ENDIF
          @ x1 + nItemNo - 1, y1 SAY8 PadR( Items[ nItemNo ], nWidth )
       ENDIF
@@ -423,7 +423,11 @@ FUNCTION AChoice3( x1, y1, x2, y2, Items, f1, cFunc, nItemNo )
 
       FOR i := nGornja TO nVisina + nGornja - 1
          IF i == nItemNo
-            IF Left( cOldColor, 3 ) == Left( Normal, 3 );  SetColor( gColorInvert  ); else; SetColor( Normal ); ENDIF
+            IF Left( cOldColor, 3 ) == Left( F18_COLOR_NORMAL, 3 )
+               SetColor( F18_COLOR_INVERT  )
+            else
+               SetColor( F18_COLOR_NORMAL )
+            ENDIF
          ELSE
             SetColor( cOldColor )
          ENDIF
@@ -431,7 +435,7 @@ FUNCTION AChoice3( x1, y1, x2, y2, Items, f1, cFunc, nItemNo )
       NEXT
 
 
-      SetColor( gColorInvert  )
+      SetColor( F18_COLOR_INVERT  )
       SetColor( cOldColor )
 
       IF fExit

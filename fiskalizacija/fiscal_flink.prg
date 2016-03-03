@@ -57,9 +57,9 @@ FUNCTION fc_pos_rn( cFPath, cFName, aData, lStorno, cError )
    _a_to_file( cFPath, cFName, aStruct, aPosData )
 
    IF cError == "D"
-      msgo( "...provjeravam greske..." )
+      MsgO( "...provjeravam greske..." )
       Sleep( 3 )
-      msgc()
+      MsgC()
       // provjeri da li je racun odstampan
       nErr := fc_pos_err( cFPath, cFName, cTmp_date, cTmp_time )
    ENDIF
@@ -162,7 +162,7 @@ STATIC FUNCTION fl_d_tmp()
 
    LOCAL cTmp
 
-   msgo( "brisem tmp fajlove..." )
+   MsgO( "brisem tmp fajlove..." )
 
    cF_path := AllTrim( gFc_path )
    cTmp := "*.inp"
@@ -172,7 +172,7 @@ STATIC FUNCTION fl_d_tmp()
 
    Sleep( 1 )
 
-   msgc()
+   MsgC()
 
    RETURN
 

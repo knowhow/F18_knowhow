@@ -374,7 +374,7 @@ STATIC FUNCTION fill_porfakt_data( dok, params )
 
          // ako je po nekom clanu PDV-a partner oslobodjenj
          // placanja PDV-a
-         cPdvOslobadjanje := PdvOslobadjanje( cIdPartner )
+         cPdvOslobadjanje := pdv_oslobodjen( cIdPartner )
          IF !Empty( cPdvOslobadjanje )
             nPPDV := 0
          ENDIF

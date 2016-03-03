@@ -188,7 +188,7 @@ FUNCTION chk_dok_11()
    SELECT fakt_doks
    GO TOP
 
-   msgo( "Popunjavam veze ..." )
+   MsgO( "Popunjavam veze ..." )
 
    DO WHILE !Eof()
 
@@ -257,7 +257,7 @@ FUNCTION chk_dok_11()
       SKIP
    ENDDO
 
-   msgc()
+   MsgC()
 
    // prekini vezu sa doks
    SELECT ( F_FAKT_DOKS )

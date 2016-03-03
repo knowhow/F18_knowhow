@@ -71,12 +71,12 @@ FUNCTION r_ct_sast()
       // daj kalk tekuci promet
       _g_kalk_tp( cIdFirma, cIdKonto, dD_from, dD_to )
 
-      msgo( "uzimam iz kalk_pripreme stanje i dodajem ga u export" )
+      MsgO( "uzimam iz kalk_pripreme stanje i dodajem ga u export" )
 
       // uzmi iz kalk_pripreme ako postoji nesto generisano
       _pr_2_exp( nVar )
 
-      msgc()
+      MsgC()
 
    ENDIF
 
@@ -393,13 +393,13 @@ STATIC FUNCTION _g_fakt_pr( cIdKonto, dD_From, dD_to, cTDokList, cSezona, ;
 
    cKto := PadR( AllTrim( cKto ), 7 )
 
-   msgo( "generisem pomocnu datoteku razduzenja FAKT...." )
+   MsgO( "generisem pomocnu datoteku razduzenja FAKT...." )
 
    // prenesi fakt->kalk
    prenosNo( dD_from, dD_to, cKto, cTDokList, dD_to, cRobaUsl, ;
       cRobaIncl, cSezona, cSirovina )
 
-   msgc()
+   MsgC()
 
    _pr_2_exp( nVar )
 
@@ -418,12 +418,12 @@ STATIC FUNCTION _g_pos_pr( cIdFirma, cIdKonto, dD_From, dD_to, ;
 
    cKto := PadR( AllTrim( cKto ), 7 )
 
-   msgo( "generisem pomocnu datoteku razduzenja TOPS...." )
+   MsgO( "generisem pomocnu datoteku razduzenja TOPS...." )
    // pokreni opciju tops po normativima
    tops_nor_96( cIdFirma, "42;", "", cKto, "", ;
       dD_to, dD_from, dD_to, cArtfilter, cProdKto, cSezona, cSirovina )
 
-   msgc()
+   MsgC()
 
    _pr_2_exp( nVar )
 
@@ -492,7 +492,7 @@ STATIC FUNCTION _pr_2_exp( nVar )
       SKIP
    ENDDO
 
-   msgc()
+   MsgC()
 
    // pobrisi na kraju kalk_pripremu
    SELECT kalk_pripr

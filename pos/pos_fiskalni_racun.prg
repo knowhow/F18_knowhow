@@ -283,9 +283,9 @@ STATIC FUNCTION pos_to_fprint( id_pos, tip_dok, datum, rn_broj, items, storno )
 
    IF ( _fiscal_no > 0 .AND. _err_level == 0 )
       pos_doks_update_fisc_rn( id_pos, tip_dok, datum, rn_broj, _fiscal_no )
-      msgo( "Kreiran fiskalni račun broj: " + AllTrim( Str( _fiscal_no ) ) )
+      MsgO( "Kreiran fiskalni račun broj: " + AllTrim( Str( _fiscal_no ) ) )
       Sleep( 2 )
-      msgc()
+      MsgC()
    ENDIF
 
    RETURN _err_level

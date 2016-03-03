@@ -209,7 +209,7 @@ STATIC FUNCTION gen_fakt_kif_item( cSezona )
             _id_part := cIdPart
          ENDIF
 
-         lOslPoClanu := IsOslClan( _id_part )
+         lOslPoClanu := is_pdv_oslobodjen( _id_part )
          lIno := IsIno( _id_part )
          lPdvObveznik := IsPdvObveznik( _id_part )
 

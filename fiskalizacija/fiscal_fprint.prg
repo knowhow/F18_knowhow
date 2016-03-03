@@ -491,17 +491,17 @@ FUNCTION fprint_daily_rpt( dev_params )
          ENDIF
       ENDIF
 
-      msgc()
+      MsgC()
       auto_plu( .T., .T., dev_params )
       MsgBeep( "Stanje fiskalnog uređaja je nulirano." )
 
    ENDIF
 
    IF dev_params[ "auto_avans" ] <> 0 .AND. _rpt_type == "Z"
-      msgo( "Automatski unos pologa u fiskalni uređaj... sačekajte." )
+      MsgO( "Automatski unos pologa u fiskalni uređaj... sačekajte." )
       Sleep( 10 )
       fprint_polog( dev_params, dev_params[ "auto_avans" ] )
-      msgc()
+      MsgC()
    ENDIF
 
    RETURN

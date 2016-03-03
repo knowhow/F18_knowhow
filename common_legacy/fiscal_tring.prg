@@ -685,7 +685,7 @@ FUNCTION tring_delete_tmp( dev_param, cPodDir )
       cPodDir := ""
    ENDIF
 
-   msgo( "brisem tmp fajlove..." )
+   MsgO( "brisem tmp fajlove..." )
 
    cF_path := dev_param[ "out_dir" ]
 
@@ -700,7 +700,7 @@ FUNCTION tring_delete_tmp( dev_param, cPodDir )
 
    sleep( 1 )
 
-   msgc()
+   MsgC()
 
    RETURN
 

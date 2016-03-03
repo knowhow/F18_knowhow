@@ -377,7 +377,7 @@ STATIC FUNCTION fakt_izracunaj_total( arr, partner, tip_dok )
       HSEEK _tar
 
       IF tip_dok $ "11#13#23"
-         IF !IsIno( partner ) .AND. !IsOslClan( partner ) .AND. tarifa->opp > 0
+         IF !IsIno( partner ) .AND. !is_pdv_oslobodjen( partner ) .AND. tarifa->opp > 0
             _calc[ "ukupno" ] := _calc[ "ukupno" ] + _iznos
             _calc[ "osnovica" ] := _calc[ "osnovica" ] + ( _iznos / ( 1 + tarifa->opp / 100 ) )
             _calc[ "pdv" ] := _calc[ "pdv" ] + ( ( _iznos / ( 1 + tarifa->opp / 100 ) ) * ( tarifa->opp / 100 ) )
@@ -386,7 +386,7 @@ STATIC FUNCTION fakt_izracunaj_total( arr, partner, tip_dok )
             _calc[ "osnovica" ] := _calc[ "osnovica" ] + _iznos
          ENDIF
       ELSE
-         IF !IsIno( partner ) .AND. !IsOslClan( partner ) .AND. tarifa->opp > 0
+         IF !IsIno( partner ) .AND. !is_pdv_oslobodjen( partner ) .AND. tarifa->opp > 0
             _calc[ "ukupno" ] := _calc[ "ukupno" ] + ( _iznos * ( 1 + tarifa->opp / 100 ) )
             _calc[ "osnovica" ] := _calc[ "osnovica" ] + _iznos
             _calc[ "pdv" ] := _calc[ "pdv" ] + ( _iznos * ( tarifa->opp / 100 ) )
@@ -851,7 +851,7 @@ STATIC FUNCTION fakt_fiscal_podaci_partnera( id_firma, tip_dok, br_dok, storno, 
 
    _partn_id_broj := AllTrim( firma_id_broj( _partn_id ) )
    __vrsta_pl := vrsta_placanja_za_fiskalni_uredjaj( tip_dok, _vrsta_p )
-   lPartnClan := IsOslClan( _partn_id )
+   lPartnClan := is_pdv_oslobodjen( _partn_id )
 
    IF IsIno( _partn_id )
       __partn_ino := .T.

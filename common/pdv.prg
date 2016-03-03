@@ -106,7 +106,7 @@ FUNCTION PdvParIIIF( cIdPartner, nPdvObv, nNoPdv, nIno, nUndefined )
    osnova za oslobadjanje
 */
 
-FUNCTION PdvOslobadjanje( cIdPartner )
+FUNCTION pdv_oslobodjen( cIdPartner )
 
    LOCAL cIdBroj
 
@@ -117,12 +117,12 @@ FUNCTION PdvOslobadjanje( cIdPartner )
  da li je partner oslobodjen po clanu
 */
 
-FUNCTION IsOslClan( cIdPartner )
+FUNCTION is_pdv_oslobodjen( cIdPartner )
 
    LOCAL lRet := .F.
    LOCAL cClan
 
-   cClan := PdvOslobadjanje( cIdPartner )
+   cClan := pdv_oslobodjen( cIdPartner )
 
    IF cClan <> NIL .AND. !Empty( cClan )
       lRet := .T.

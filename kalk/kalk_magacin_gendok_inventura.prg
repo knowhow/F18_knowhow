@@ -155,7 +155,7 @@ FUNCTION kalk_generisi_inventuru_magacina()
 
    IF cSRSort == "D"
 
-      msgo( "sortiram po index-u SIFRADOB ..." )
+      MsgO( "sortiram po index-u SIFRADOB ..." )
 
       SELECT kalk_pripr
 
@@ -175,7 +175,7 @@ FUNCTION kalk_generisi_inventuru_magacina()
          SKIP
       ENDDO
 
-      msgc()
+      MsgC()
 
       SET RELATION TO
 

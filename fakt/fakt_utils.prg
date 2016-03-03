@@ -21,7 +21,7 @@ FUNCTION _uk_sa_pdv( cIdTipDok, cPartner, nIznos )
    IF cIdTipDok $ "11#13#23"
       nRet := nIznos
    ELSE
-      IF !IsIno( cPartner ) .AND. !IsOslClan( cPartner )
+      IF !IsIno( cPartner ) .AND. !is_pdv_oslobodjen( cPartner )
          nRet := ( nIznos * 1.17 )
       ELSE
          nRet := nIznos
@@ -59,7 +59,7 @@ FUNCTION _pdv( cIdTipDok, cPartner, nIznos )
    IF cIdTipDok $ "11#13#23"
       nRet := ( nIznos / 1.17 ) * 0.17
    ELSE
-      IF !IsIno( cPartner ) .AND. !IsOslClan( cPartner )
+      IF !IsIno( cPartner ) .AND. !is_pdv_oslobodjen( cPartner )
          nRet := ( nIznos * 0.17 )
       ELSE
          nRet := 0

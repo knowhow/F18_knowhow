@@ -122,7 +122,7 @@ FUNCTION pos_povrat_rn( cSt_rn, dSt_date )
    SELECT pos
    SEEK gIdPos + "42" + DToS( dSt_date ) + cSt_rn
 
-   msgo( "Povrat dokumenta u pripremu ... " )
+   MsgO( "Povrat dokumenta u pripremu ... " )
 
    DO WHILE !Eof() .AND. field->idpos == gIdPos ;
          .AND. field->brdok == cSt_rn ;

@@ -273,7 +273,7 @@ FUNCTION hcp_delete_tmp( dev_params, del_all )
       del_all := .F.
    ENDIF
 
-   msgo( "brisem tmp fajlove..." )
+   MsgO( "brisem tmp fajlove..." )
 
    // input direktorij...
    _f_path := dev_params[ "out_dir" ] + _inp_dir + SLASH
@@ -294,7 +294,7 @@ FUNCTION hcp_delete_tmp( dev_params, del_all )
 
    Sleep( 1 )
 
-   msgc()
+   MsgC()
 
    RETURN
 
@@ -680,7 +680,7 @@ FUNCTION hcp_z_rpt( dev_params )
    // pobrisi artikle
    IF dev_params[ "plu_type" ] == "D"
 
-      msgo( "resetujem prodaju..." )
+      MsgO( "resetujem prodaju..." )
 
       // reset sold plu
       _cmd := 'CMD="RESET_SOLD_PLU"'
@@ -693,14 +693,14 @@ FUNCTION hcp_z_rpt( dev_params )
       // resetuj PLU brojac u bazi...
       auto_plu( .T., .T., dev_params )
 
-      msgc()
+      MsgC()
 
    ENDIF
 
    // ako se koristi opcija automatskog pologa
    IF dev_params[ "auto_avans" ] > 0
 
-      msgo( "Automatski unos pologa u uredjaj... sacekajte." )
+      MsgO( "Automatski unos pologa u uredjaj... sacekajte." )
 
       // daj malo prostora
       Sleep( 5 )
@@ -708,7 +708,7 @@ FUNCTION hcp_z_rpt( dev_params )
       // unesi polog vrijednosti iz parametra
       _err_level := hcp_polog( dev_params, dev_params[ "auto_avans" ] )
 
-      msgc()
+      MsgC()
 
    ENDIF
 

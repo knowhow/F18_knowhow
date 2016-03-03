@@ -227,7 +227,7 @@ FUNCTION tremol_delete_tmp( dev_param )
    LOCAL _tmp
    LOCAL _f_path
 
-   msgo( "brisem tmp fajlove..." )
+   MsgO( "brisem tmp fajlove..." )
 
    _f_path := dev_param[ "out_dir" ]
    _tmp := "*.*"
@@ -237,7 +237,7 @@ FUNCTION tremol_delete_tmp( dev_param )
 
    Sleep( 1 )
 
-   msgc()
+   MsgC()
 
    RETURN
 
@@ -477,7 +477,7 @@ FUNCTION tremol_z_rpt( dev_param )
    // ako se koristi opcija automatskog pologa
    IF dev_param[ "auto_avans" ] > 0
 
-      msgo( "Automatski unos pologa u uredjaj... sacekajte." )
+      MsgO( "Automatski unos pologa u uredjaj... sacekajte." )
 
       // daj mi malo prostora
       Sleep( 10 )
@@ -485,7 +485,7 @@ FUNCTION tremol_z_rpt( dev_param )
       // pozovi opciju pologa
       _err := tremol_polog( dev_param, .T. )
 
-      msgc()
+      MsgC()
 
    ENDIF
 

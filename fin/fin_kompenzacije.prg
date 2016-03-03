@@ -275,13 +275,13 @@ STATIC FUNCTION _gen_kompen( vars )
       _filter += " .and. DATDOK <= " + dbf_quote( _dat_do )
    ENDIF
 
-   msgo( "setujem filter... " )
+   MsgO( "setujem filter... " )
    IF _filter == ".t."
       SET FILTER TO
    ELSE
       SET FILTER to &( _filter )
    ENDIF
-   msgc()
+   MsgC()
 
    SEEK _id_firma + _usl_kto + _usl_partn
 

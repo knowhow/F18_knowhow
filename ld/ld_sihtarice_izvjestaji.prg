@@ -134,19 +134,19 @@ FUNCTION ld_utrosak_po_sihtaricama()
       cDopr10, cDopr11, cDopr12, cDopr1X, cTipRpt, cObracun, ;
       cDodPr1, cDodPr2, cDodPr3, cDodPr4, cDodPr5 )
 
-   msgc()
+   MsgC()
 
    // podatke iz tabele pohrani u matricu
    // to su obracuni
    aObr := {}
    _obr_2_arr( @aObr )
 
-   msgo( "... generisem izvjestaj ...." )
+   MsgO( "... generisem izvjestaj ...." )
 
    // generisi report
    _gen_rpt( cGod_od, cMj_od, cRadnik, cGroup, aObr )
 
-   msgc()
+   MsgC()
 
    // stampa reporta
    _print_rpt()

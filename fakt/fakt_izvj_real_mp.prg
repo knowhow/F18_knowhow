@@ -90,7 +90,7 @@ FUNCTION fakt_real_maloprodaje()
    FF
    ENDPRINT
 
-   RETURN
+   RETURN .T.
 
 
 STATIC FUNCTION fakt_mp_uzmi_parametre_izvjestaja( params )
@@ -162,7 +162,6 @@ STATIC FUNCTION fakt_mp_uzmi_parametre_izvjestaja( params )
    params[ "partner" ] := _partner
    params[ "vrstap" ] := _vrsta_p
 
-
    RETURN .T.
 
 
@@ -177,7 +176,11 @@ STATIC FUNCTION fakt_gen_rekapitulacija_mp( params )
    LOCAL _pdv_broj := ""
    LOCAL _pdv_clan
    LOCAL _d_do, _d_od, _varijanta, _tip_dok, _operater, _id_firma, _rasclaniti
-   LOCAL _vrsta_p
+   LOCAL _vrsta_p, _partner, _oper_id
+   LOCAL nCjPDV, nCj2PDV, nCjBPDV, nCj2BPDV, nVPopust, nPPDV
+
+   LOCAL cRoba_id, cPart_id
+
 
    O_FAKT_DOKS
    O_FAKT
@@ -205,7 +208,6 @@ STATIC FUNCTION fakt_gen_rekapitulacija_mp( params )
       _filter += Parsiraj( AllTrim( _id_firma ), "idfirma" )
    ENDIF
 
-   // vrsta placanja...
    IF !Empty( _vrsta_p )
       IF !Empty( _filter )
          _filter += ".and."
@@ -213,7 +215,6 @@ STATIC FUNCTION fakt_gen_rekapitulacija_mp( params )
       _filter += "idvrstep = " + _filter_quote( _vrsta_p )
    ENDIF
 
-   // operater
    IF _operater <> 0
       IF !Empty( _filter )
          _filter += ".and."
@@ -221,7 +222,6 @@ STATIC FUNCTION fakt_gen_rekapitulacija_mp( params )
       _filter += "oper_id = " + _filter_quote( _operater )
    ENDIF
 
-   // tipovi dokumenata
    IF !Empty( _tip_dok )
       IF !Empty( _filter )
          _filter += ".and."
@@ -252,7 +252,7 @@ STATIC FUNCTION fakt_gen_rekapitulacija_mp( params )
       _filter += "datdok <=" + _filter_quote( _d_do )
    ENDIF
 
-   msgo( "generisem podatke ..." )
+   MsgO( "generisem podatke ..." )
 
    SELECT fakt_doks
    SET FILTER to &_filter
@@ -264,7 +264,6 @@ STATIC FUNCTION fakt_gen_rekapitulacija_mp( params )
       cF_tipdok := field->idtipdok
       cF_brdok := field->brdok
       nUkupno := field->iznos
-
       _oper_id := field->oper_id
 
       SELECT fakt
@@ -278,13 +277,13 @@ STATIC FUNCTION fakt_gen_rekapitulacija_mp( params )
          cRoba_id := field->idroba
          cPart_id := field->idpartner
 
-         // fizicka lica
-         _tip_partnera := "1"
+
+         _tip_partnera := "1" // fizicka lica
 
          IF _rasclaniti
 
             _pdv_broj := firma_pdv_broj( cPart_id )
-            _pdv_clan := IsOslClan( cPart_id )
+            _pdv_clan := is_pdv_oslobodjen( cPart_id )
 
             IF !Empty( _pdv_broj )
                _tip_partnera := "2"
@@ -309,8 +308,8 @@ STATIC FUNCTION fakt_gen_rekapitulacija_mp( params )
          nCj2BPDV := 0
          nVPopust := 0
 
-         // procenat pdv-a
-         nPPDV := tarifa->opp
+
+         nPPDV := tarifa->opp  // procenat pdv-a
 
          // kolicina
          nKol := field->kolicina
@@ -325,8 +324,8 @@ STATIC FUNCTION fakt_gen_rekapitulacija_mp( params )
             nRCijen := Round( nRCijen, DEC_CIJENA() )
          ENDIF
 
-         // rabat - popust
-         nPopust := field->rabat
+
+         nPopust := field->rabat // rabat - popust
 
          // ako je 13-ka ili 27-ca
          // cijena bez pdv se utvrdjuje unazad
@@ -347,36 +346,31 @@ STATIC FUNCTION fakt_gen_rekapitulacija_mp( params )
             nVPopust := ( nCjBPDV * ( nPopust / 100 ) )
          ENDIF
 
-         // cijena sa popustom bez pdv-a
-         nCj2BPDV := ( nCjBPDV - nVPopust )
-
-         // izracuna PDV na cijenu sa popustom
-         nCj2PDV := ( nCj2BPDV * ( 1 + nPPDV / 100 ) )
-
-         // preracunaj VPDV sa popustom
-         nVPDV := ( nCj2BPDV * ( nPPDV / 100 ) )
+         nCj2BPDV := ( nCjBPDV - nVPopust ) // cijena sa popustom bez pdv-a
+         nCj2PDV := ( nCj2BPDV * ( 1 + nPPDV / 100 ) )// izracuna PDV na cijenu sa popustom
+         nVPDV := ( nCj2BPDV * ( nPPDV / 100 ) ) // preracunaj VPDV sa popustom
 
          SELECT r_export
          APPEND BLANK
 
-         REPLACE field->tip WITH _tip_partnera
-         REPLACE field->idfirma WITH fakt->idfirma
-         REPLACE field->idtipdok WITH fakt->idtipdok
-         REPLACE field->brdok WITH fakt->brdok
-         REPLACE field->datdok WITH fakt->datdok
-         REPLACE field->operater WITH _oper_id
-         REPLACE field->vrstap WITH  get_naziv_vrsta_placanja( fakt->idtipdok, fakt->idvrstep )
-         REPLACE field->part_id WITH fakt->idpartner
-         REPLACE field->part_naz WITH AllTrim( partn->naz )
-         REPLACE field->roba_id WITH fakt->idroba
-         REPLACE field->roba_naz WITH AllTrim( roba->naz )
-         REPLACE field->kolicina WITH nKol
-         REPLACE field->s_pdv WITH nPPDV
-         REPLACE field->popust WITH nVPopust
-         REPLACE field->c_bpdv WITH nCj2BPdv
-         REPLACE field->pdv WITH nVPDV
-         REPLACE field->c_pdv WITH nCj2PDV
-         REPLACE field->uk_fakt WITH nUkupno
+         REPLACE field->tip WITH _tip_partnera,;
+            field->idfirma WITH fakt->idfirma,;
+            field->idtipdok WITH fakt->idtipdok,;
+            field->brdok WITH fakt->brdok,;
+            field->datdok WITH fakt->datdok,;
+            field->operater WITH _oper_id,;
+            field->vrstap WITH  get_naziv_vrsta_placanja( fakt->idtipdok, fakt->idvrstep ),;
+            field->part_id WITH fakt->idpartner,;
+            field->part_naz WITH AllTrim( partn->naz ),;
+            field->roba_id WITH fakt->idroba,;
+            field->roba_naz WITH AllTrim( roba->naz ),;
+            field->kolicina WITH nKol,;
+            field->s_pdv WITH nPPDV,;
+            field->popust WITH nVPopust,;
+            field->c_bpdv WITH nCj2BPdv,;
+            field->pdv WITH nVPDV,;
+            field->c_pdv WITH nCj2PDV,;
+            field->uk_fakt WITH nUkupno
 
          SELECT fakt
          SKIP
@@ -388,9 +382,9 @@ STATIC FUNCTION fakt_gen_rekapitulacija_mp( params )
 
    ENDDO
 
-   msgc()
+   MsgC()
 
-   RETURN
+   RETURN .T.
 
 
 STATIC FUNCTION get_naziv_vrsta_placanja( tip_dok, vrsta_p )
@@ -460,7 +454,7 @@ STATIC FUNCTION _cre_tbl()
    INDEX ON tip TAG "4"
    INDEX ON vrstap TAG "5"
 
-   RETURN
+   RETURN .T.
 
 
 STATIC FUNCTION fakt_mp_set_totali( nT_os, nT_pdv, nT_uk )
@@ -577,7 +571,7 @@ STATIC FUNCTION fakt_mp_po_dokumentima( nT_osnovica, nT_pdv, nT_ukupno, lCalc )
       ? cLine
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 STATIC FUNCTION fakt_mp_po_tipu_partnera( nT_osnovica, nT_pdv, nT_ukupno )
@@ -696,7 +690,7 @@ STATIC FUNCTION fakt_mp_po_tipu_partnera( nT_osnovica, nT_pdv, nT_ukupno )
 
    ? cLine
 
-   RETURN
+   RETURN .T.
 
 
 

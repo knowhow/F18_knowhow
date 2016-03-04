@@ -834,7 +834,7 @@ STATIC FUNCTION _quick_srch_()
 
    @ m_x + nX, m_y + 2 SAY "Unesi kratki opis naloga:" GET cDesc PICT "@S40" VALID !Empty( cDesc )
 
-   @ m_x + nX, Col() SAY ">" COLOR "I"
+   @ m_x + nX, Col() SAY ">" COLOR F18_COLOR_I
 
    READ
    BoxC()

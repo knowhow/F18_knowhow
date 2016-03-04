@@ -53,7 +53,6 @@ FUNCTION my_use_temp( xArg1, cFullDbf, lNewArea, lExcl, lOpenIndex )
       cAlias := xArg1[ 'alias' ]
       EXIT
    CASE "C" // "r_export"
-   altd()
       cAlias := xArg1
       aDbfRec := get_a_dbf_rec( cAlias, .T. )
       nWa := aDbfRec[ 'wa' ]

@@ -40,7 +40,7 @@ FUNCTION IzSifre( silent )
    ENDIF
 
    IF gShSld == "D"
-      g_box_stanje( PadR( _idpartner, 6 ), gFinKtoDug, gFinKtoPot )
+      fin_partner_prikaz_stanja_ekran( PadR( _idpartner, 6 ), gFinKtoDug, gFinKtoPot )
    ENDIF
 
    RETURN  .T.

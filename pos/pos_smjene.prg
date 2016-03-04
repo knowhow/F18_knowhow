@@ -361,57 +361,13 @@ FUNCTION ZakljRadnik( Ch )
 
 
 
-/*! \fn NovaSmjGas()
- *  \brief
- */
-
-FUNCTION NovaSmjGas()
-
-   // {
-   LOCAL aOpcn[ 2 ]
-   LOCAL nIzb
-   LOCAL cOK := " "
-
-   aOpcn[1 ] := "Otvori novu smjenu"
-   aOpcn[2 ] := "Gasenje kase      "
-
-   DO WHILE .T.
-      nIzb := KudaDalje ( "ODABERITE NAREDNU AKCIJU", aOpcn )
-      IF nIzb == 1
-         IF gDatum == Date()
-            gSmjena := Str ( Val ( gSmjena ) + 1, 1 )
-         ELSE
-            // radio je staru smjenu, pa nek unese smjenu danasnjeg dana
-            gDatum := Date ()
-            MsgBeep( "#Zavrsili ste neregularno okoncanu smjenu!#" + "Unesite smjenu koju radite na danasnji dan!#", 30 )
-            Box(, 5, 30 )
-            WHILE cOK <> "D"
-               cOK := " "
-               @ m_x + 1, m_y + 1 SAY " Datum" GET gDatum WHEN .F.
-               @ m_x + 3, m_y + 1 SAY "Smjena" GET gSmjena VALID gSmjena $ "123"
-               @ m_x + 5, m_y + 1 SAY "Unos u redu (D/N)" GET cOK PICT "@!" VALID cOK $ "DN"
-               READ
-            ENDDO
-            BoxC()
-         ENDIF
-         EXIT
-      ELSEIF nIzb == 2
-         goModul:quit()
-      ENDIF
-   ENDDO
-   pos_status_traka()
-
-   RETURN
-
-
-
-/*! \fn OtvoriSmjenu()
- *  \brief Otvaranje smjene
+/*
+ *  brief Otvaranje smjene
  */
 
 FUNCTION OtvoriSmjenu()
 
-   // {
+
    LOCAL fImaNezak := .F.
 
    IF gVSmjene == "N"

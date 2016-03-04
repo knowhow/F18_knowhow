@@ -146,7 +146,7 @@ STATIC FUNCTION _get_prenos_params( params )
 
    Box(, 8, 70 )
 
-   @ m_x + _x, m_y + 2 SAY "*** Automatsko razduzenje prodavnice ***" COLOR "I"
+   @ m_x + _x, m_y + 2 SAY "*** Automatsko razduzenje prodavnice ***" COLOR F18_COLOR_I
    ++ _x
    ++ _x
 

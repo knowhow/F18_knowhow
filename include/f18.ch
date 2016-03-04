@@ -54,13 +54,63 @@
 #define F18_DEFAULT_LOG_LEVEL_DEBUG 9
 #define F18_DEFAULT_LOG_LEVEL       3
 
-#define INFO_BAR_ROWS             3
+#define INFO_BAR_ROWS              3
+
+/*
+Color Table
+         -----------------------------------------------------------------------
+         Color          Letter    Number  Monochrome
+         -----------------------------------------------------------------------
+         Black          N, Space  0       Black
+         Blue           B         1       Underline
+         Green          G         2       White
+         Cyan           BG        3       White
+         Red            R         4       White
+         Magenta        RB        5       White
+         Brown          GR        6       White
+         White          W         7       White
+         Gray           N+        8       Black
+         Bright Blue    B+        9       Bright Underline
+         Bright Green   G+        10      Bright White
+         Bright Cyan    BG+       11      Bright White
+         Bright Red     R+        12      Bright White
+         Bright Magenta RB+       13      Bright White
+         Yellow         GR+       14      Bright White
+         Bright White   W+        15      Bright White
+         Black          U                 Underline
+         Inverse Video  I                 Inverse Video
+         Blank          X                 Blank
+         -----------------------------------------------------------------------
+
+         SET COLOR  TO
+             1) <standard>
+             2) <enhanced>
+             3) <border>
+             4) <background>
+             5) <unselected>
+*/
+
+
 #define INFO_PANEL_COLOR           "GR+/B,R/N+,,,N/W"
 #define ERROR_PANEL_COLOR          "N/W,R/N+,,,R/B+"
 #define F18_COLOR_P1               "GR+/N"
-#define F18_COLOR_NORMAL           "W/B,R/N+,,,N/W"
+//#define F18_COLOR_NORMAL           "W/B,R/N+,,,N/W"
+#define F18_COLOR_NORMAL           "G/N,W/G+,R/W,W/RB,G/W"
 #define F18_COLOR_NORMAL_BW        "W/N,N/W,,,N/W"
 #define F18_COLOR_INVERT           "N/W,R/N+,,,R/B+"
+#define F18_COLOR_BACKUP_OK        "W+/B+"
+#define F18_COLOR_BACKUP_ERROR     "W+/R+"
+#define F18_COLOR_PASSWORD         "BG/BG"
+#define F18_COLOR_I                "I"
+#define F18_COLOR_MSG_BOTTOM       "GR+/B"
+#define F18_COLOR_BROWSE_GET       "W+/BG,W+/B"
+#define F18_COLOR_STATUS           "GR+/B"
+#define F18_COLOR_POSEBAN_STATUS   "W/R+"
+#define F18_COLOR_OKVIR            "W+/N"
+#define F18_COLOR_NASLOV           "GR+/N"
+#define F18_COLOR_TEKST            "GR+/N"
+
+
 
 #define INFO_MESSAGES_LENGTH       40
 #define ERROR_MESSAGES_LENGTH      40

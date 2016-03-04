@@ -179,7 +179,7 @@ STATIC FUNCTION forma_osnovnih_podataka( nBoxX, nBoxY )
    nX += 1
 
    @ m_x + nX, m_y + 2 SAY PadL( "Mjesto isporuke :", nLeft ) GET _doc_ship_p VALID {|| sh_place_pattern( @_doc_ship_p ) } PICT "@S46" WHEN set_opc_box( nBoxX, 50, "mjesto gdje se roba isporucuje", "/RP - rg prod. /T - tvornica nar." )
-   @ m_x + nX, Col() SAY ">" COLOR "I"
+   @ m_x + nX, Col() SAY ">" COLOR F18_COLOR_I
 
    nX += 1
 
@@ -188,7 +188,7 @@ STATIC FUNCTION forma_osnovnih_podataka( nBoxX, nBoxY )
    nX += 1
 
    @ m_x + nX, m_y + 2 SAY PadL( "dodatni opis:", nLeft + 2 ) GET _cont_add_d PICT "@S44" WHEN set_opc_box( nBoxX, 50, "dodatni opis kontakta" )
-   @ m_x + nX, Col() SAY ">" COLOR "I"
+   @ m_x + nX, Col() SAY ">" COLOR F18_COLOR_I
 
    nX += 3
 
@@ -203,17 +203,17 @@ STATIC FUNCTION forma_osnovnih_podataka( nBoxX, nBoxY )
    @ m_x + nX, m_y + 2 SAY PadL( "Placeno (D/N)? (*):", nLeft ) GET _doc_paid VALID _doc_paid $ "DN" PICT "@!" WHEN set_opc_box( nBoxX, 50 )
 
    @ m_x + nX, Col() + 2 SAY "dod.nap.plac:" GET _doc_pay_de PICT "@S29" WHEN set_opc_box( nBoxX, 50, "dodatne napomene vezane za placanje" )
-   @ m_x + nX, Col() SAY ">" COLOR "I"
+   @ m_x + nX, Col() SAY ">" COLOR F18_COLOR_I
 
    nX += 2
 
    @ m_x + nX, m_y + 2 SAY PadL( "Kratki opis (*):", nLeft ) GET _doc_sh_des VALID !Empty( _doc_sh_des ) PICT "@S46" WHEN set_opc_box( nBoxX, 50, "kratki opis naloga (asocijacija)", "npr: ulazna stijena, vrata ..." )
-   @ m_x + nX, Col() SAY ">" COLOR "I"
+   @ m_x + nX, Col() SAY ">" COLOR F18_COLOR_I
 
    nX += 1
 
    @ m_x + nX, m_y + 2 SAY PadL( "Dod.opis naloga:", nLeft ) GET _doc_desc VALID chk_mandatory( _doc_desc, _doc_priori ) PICT "@S46" WHEN set_opc_box( nBoxX, 50, "dodatni opis naloga" )
-   @ m_x + nX, Col() SAY ">" COLOR "I"
+   @ m_x + nX, Col() SAY ">" COLOR F18_COLOR_I
 
    READ
 

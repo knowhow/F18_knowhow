@@ -323,13 +323,13 @@ FUNCTION get_dest_binfo( nX, nY, cPartn, cDest )
 
          cPom := AllTrim( field->naziv ) + ", " + AllTrim( field->naziv2 )
 
-         @ nX, 2 SAY Space( _len ) COLOR "I"
-         @ nX, 2 SAY PadR( cPom, _len ) COLOR "I"
+         @ nX, 2 SAY Space( _len ) COLOR F18_COLOR_I
+         @ nX, 2 SAY PadR( cPom, _len ) COLOR F18_COLOR_I
 
          cPom := AllTrim( field->adresa ) + ", " + AllTrim( field->telefon )
 
-         @ nX + 1, 2 SAY Space( _len ) COLOR "I"
-         @ nX + 1, 2 SAY PadR( cPom, _len ) COLOR "I"
+         @ nX + 1, 2 SAY Space( _len ) COLOR F18_COLOR_I
+         @ nX + 1, 2 SAY PadR( cPom, _len ) COLOR F18_COLOR_I
 
       ENDIF
    ENDIF

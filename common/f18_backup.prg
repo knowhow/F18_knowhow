@@ -114,8 +114,8 @@ METHOD F18Backup:Backup_company()
    LOCAL _x := 7
    LOCAL _y := 2
    LOCAL _i, _backup_file
-   LOCAL _color_ok := "W+/B+"
-   LOCAL _color_err := "W+/R+"
+   LOCAL _color_ok := F18_COLOR_BACKUP_OK
+   LOCAL _color_err := F18_COLOR_BACKUP_ERROR
    LOCAL _line := Replicate( "-", 70 )
 
    ::get_backup_filename()
@@ -182,7 +182,7 @@ METHOD F18Backup:Backup_company()
       @ _x, Col() + 1 SAY "OK" COLOR _color_ok
       _ok := .T.
    ELSE
-      @ _x, Col() + 1 SAY "ERROR !!!" COLOR _color_err
+      @ _x, Col() + 1 SAY "ERROR !" COLOR _color_err
    ENDIF
 
    IF _ok

@@ -98,7 +98,7 @@ FUNCTION get_kup_data()
    nMX := m_x
    nMY := m_y
 
-   @ 1 + m_x, 2 + m_y SAY "Podaci o kupcu:" COLOR "I"
+   @ 1 + m_x, 2 + m_y SAY "Podaci o kupcu:" COLOR F18_COLOR_I
    @ 2 + m_x, 2 + m_y SAY8 "Naziv (pravnog ili fizičkog lica):" GET cKNaziv VALID !Empty( cKNaziv ) .AND. get_arr_kup_data( @cKNaziv, @cKAdres, @cKIdBroj ) PICT "@S20"
    READ
 

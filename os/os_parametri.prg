@@ -55,7 +55,7 @@ FUNCTION set_os_info()
       _mod_name := PadC( "S I T A N    I N V E N T A R", MAXCOLS() )
    ENDIF
 
-   @ MAXROWS() - 2, 1 SAY _mod_name COLOR "I"
+   @ MAXROWS() - 2, 1 SAY _mod_name COLOR F18_COLOR_I
 
    RETURN
 

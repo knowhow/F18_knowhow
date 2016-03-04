@@ -757,7 +757,7 @@ STATIC FUNCTION _login_screen( server_params )
 
    ++ nX
    ++ nX
-   @ nX, nLeft SAY PadL( "LOZINKA:", 15 ) GET cPassword PICT "@S30" COLOR "BG/BG"
+   @ nX, nLeft SAY PadL( "LOZINKA:", 15 ) GET cPassword PICT "@S30" COLOR F18_COLOR_PASSWORD
 
    READ
 

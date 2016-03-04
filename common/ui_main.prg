@@ -384,7 +384,7 @@ FUNCTION OpcTipke( aNiz )
       nBrRed := Int( Len( aNiz ) / nBrKol ) + iif( Mod( Len( aNiz ), nBrKol ) != 0, 1, 0 )
       nOduz := iif( nOmax < 10, 10, iif( nOmax < 16, 16, iif( nOmax < 20, 20, iif( nOmax < 27, 27, 40 ) ) ) )
 
-      Prozor1( MAXROWS() - 3 - nBrRed, 0,  MAXROWS() - 2, MAXCOLS(),,, Space( 9 ), , "W/N" )
+      Prozor1( MAXROWS() - 3 - nBrRed, 0,  MAXROWS() - 2, MAXCOLS(),,, Space( 9 ), , F18_COLOR_TEKST )
 
       FOR i := 1 TO nBrRed * nBrKol
 
@@ -541,12 +541,12 @@ FUNCTION Postotak( nIndik, nUkupno, cTekst, cBNasl, cBOkv, lZvuk )
    DO CASE
    CASE nIndik == 1
 
-      cOkv := iif( cBOkv == NIL, "W+/N", cBOkv )
-      cNas := iif( cBNasl == NIL, "GR+/N", cBNasl )
+      cOkv := iif( cBOkv == NIL, F18_COLOR_OKVIR, cBOkv )
+      cNas := iif( cBNasl == NIL, F18_COLOR_NASLOV, cBNasl )
       nCilj := nUkupno
       cKraj := cTekst + " zavrseno."
-      Prozor1( 10, 13, 14, 66, cTekst + " u toku...", cNas, , cOkv, "B/W", 0 )
-      @ 12, 15 SAY Replicate( "X", 50 ) COLOR "B/W"
+      Prozor1( 10, 13, 14, 66, cTekst + " u toku...", cNas, , cOkv, F18_COLOR_TEKST, 0 )
+      @ 12, 15 SAY Replicate( "X", 50 ) COLOR F18_COLOR_STATUS
       IF lZvuk
          Tone( 1900, 0 )
       ENDIF
@@ -640,7 +640,6 @@ FUNCTION KudaDalje( cTekst, aOpc, cPom )
    LOCAL nVrati := 1, nTipka, i := 0, nOpc := Len( aOpc ), nRedova := 1, p := 0
    LOCAL nXp := 0, aTxt := {}, cPom1, cPom2
 
-   // IF cPom!=NIL; PushHT(cPom); ENDIF
    FOR i := 1 TO nOpc
       cPom1 := PadC( AllTrim( MemoLine( aOpc[ i ], 16, 1 ) ), 16 )
       cPom2 := PadC( AllTrim( MemoLine( aOpc[ i ], 16, 2 ) ), 16 )
@@ -897,7 +896,7 @@ FUNCTION VarEdit( aNiz, x1, y1, x2, y2, cNaslov, cBoje )
    LOCAL cPomUI := Set( _SET_DEVICE )
 
    SET DEVICE TO SCREEN
-   Prozor1( x1, y1, x2, y2, cNaslov, cbnaslova,, cbokvira, cbteksta, 2 )
+   Prozor1( x1, y1, x2, y2, cNaslov, cBNaslova,, cBOkvira, cBTeksta, 2 )
    FOR i := 1 TO Len( aNiz )
       cPom := aNiz[ i, 2 ]
       IF aNiz[ i, 3 ] == NIL .OR. Len( aNiz[ i, 3 ] ) == 0; aNiz[ i, 3 ] := ".t."; ENDIF

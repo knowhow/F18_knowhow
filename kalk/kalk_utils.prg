@@ -22,7 +22,7 @@ FUNCTION kalk_pripr9View()
    PRIVATE dDat2 := Date()
 
    Box(, 10, 60 )
-   @ 1 + m_x, 2 + m_y SAY "Uslovi pregleda smeca:" COLOR "I"
+   @ 1 + m_x, 2 + m_y SAY "Uslovi pregleda smeca:" COLOR F18_COLOR_I
    @ 3 + m_x, 2 + m_y SAY "Firma (prazno-sve)" GET aUslFirma PICT "@S40"
    @ 4 + m_x, 2 + m_y SAY "Vrste dokumenta (prazno-sve)" GET aUslDok PICT "@S20"
    @ 5 + m_x, 2 + m_y SAY "Datum od" GET dDat1

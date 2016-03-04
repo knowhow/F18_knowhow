@@ -309,7 +309,7 @@ FUNCTION InventNivel()
             SELECT PRIPRZ
             my_dbf_zap()
             my_close_all_dbf()
-            RETURN
+            RETURN .T.
 
          ELSEIF i == 3
 
@@ -319,7 +319,7 @@ FUNCTION InventNivel()
                my_dbf_zap()
                pos_reset_broj_dokumenta( gIdPos, cIdVd, cBrDok )
                my_close_all_dbf()
-               RETURN
+               RETURN .T.
 
             ELSE
 
@@ -328,7 +328,7 @@ FUNCTION InventNivel()
                SELECT PRIPRZ
                my_dbf_zap()
                my_close_all_dbf()
-               RETURN
+               RETURN .T.
 
             ENDIF
 
@@ -354,7 +354,7 @@ FUNCTION InventNivel()
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
 
 STATIC FUNCTION check_before_azur( dDatRada )
@@ -586,7 +586,7 @@ FUNCTION edprinv( nInd, datum )
       ENDIF
 
       nLX := m_x + 1
-	
+
       @ nLX, m_y + 3 SAY "      Artikal:" GET _idroba ;
          PICT PICT_POS_ARTIKAL ;
          WHEN {|| _idroba := PadR( _idroba, Val( _duz_sif ) ), .T. } ;
@@ -933,7 +933,7 @@ FUNCTION _postoji_artikal_u_pripremi( id_roba )
 FUNCTION RacKol( cIdOdj, cIdRoba, nKol )
 
    MsgO( "Računam količinu artikla ..." )
- 
+
    SELECT pos
    SET ORDER TO TAG "2"
    nKol := 0

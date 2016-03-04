@@ -61,8 +61,6 @@ FUNCTION fin_azuriranje_naloga( automatic )
       RETURN lRet
    ENDIF
 
-   MsgO( "Azuriranje naloga u toku ... " )
-
    FOR _i := 1 TO Len( aNalozi )
 
       _id_firma := aNalozi[ _i, 1 ]
@@ -104,11 +102,7 @@ FUNCTION fin_azuriranje_naloga( automatic )
       IF !fin_azur_dbf( automatic, _id_firma, _id_vn, _br_nal )
 
          sql_table_update( nil, "ROLLBACK" )
-
-         MsgC()
-
          log_write( "F18_DOK_OPER: greška kod ažuriranja fin naloga: " + _id_firma + "-" + _id_vn + "-" + _br_nal, 2 )
-
          MsgBeep( "Problem sa ažuriranjem naloga u DBF tabele !" )
 
          RETURN lRet
@@ -118,8 +112,6 @@ FUNCTION fin_azuriranje_naloga( automatic )
       log_write( "F18_DOK_OPER: azuriranje fin naloga: " + _id_firma + "-" + _id_vn + "-" + _br_nal, 2 )
 
    NEXT
-
-   MsgC()
 
    sql_table_update( nil, "END" )
    f18_free_tables( { __tbl_suban, __tbl_anal, __tbl_sint, __tbl_nalog } )

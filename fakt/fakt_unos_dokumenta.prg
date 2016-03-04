@@ -1845,7 +1845,7 @@ STATIC FUNCTION _total_dokumenta()
    // prikazi box
    Box(, _x, _y )
 
-   @ m_x + __x, m_y + 2 SAY PadR( "TOTAL DOKUMENTA:", _y - 2 ) COLOR "I"
+   @ m_x + __x, m_y + 2 SAY PadR( "TOTAL DOKUMENTA:", _y - 2 ) COLOR F18_COLOR_I
 
    ++ __x
    ++ __x

@@ -143,7 +143,7 @@ select kalk
 
 Box(, 2, 60 )
 
-@ m_x + 1, m_y + 2 SAY PADR( "Generisanje pomocne tabele u toku...", 58 ) COLOR "I"
+@ m_x + 1, m_y + 2 SAY PADR( "Generisanje pomocne tabele u toku...", 58 ) COLOR F18_COLOR_I
 
 do while !EOF() .and. _id_firma == field->idfirma .and. IspitajPrekid()
 

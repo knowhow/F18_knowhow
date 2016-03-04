@@ -260,7 +260,7 @@ METHOD F18AdminOpts:update_app_form( upd_params )
 
    Box(, 14, 65 )
 
-   @ m_x + _x, m_y + 2 SAY PadR( "## UPDATE F18 APP ##", 64 ) COLOR "I"
+   @ m_x + _x, m_y + 2 SAY PadR( "## UPDATE F18 APP ##", 64 ) COLOR F18_COLOR_I
 
    ++ _x
    ++ _x
@@ -827,7 +827,7 @@ METHOD F18AdminOpts:new_session()
    SET CONFIRM ON
 
    Box(, 7, 60 )
-   @ m_x + 1, m_y + 2 SAY8 "Otvaranje baze za novu sezonu ***" COLOR "I"
+   @ m_x + 1, m_y + 2 SAY8 "Otvaranje baze za novu sezonu ***" COLOR F18_COLOR_I
    @ m_x + 3, m_y + 2 SAY8 "Vrsi se prenos sa godine:" GET _from_sess PICT "9999"
    @ m_x + 3, Col() + 1 SAY8 "na godinu:" GET _to_sess PICT "9999" VALID ( _to_sess > _from_sess .AND. _to_sess - _from_sess == 1 )
    @ m_x + 5, m_y + 2 SAY8 "Baza (prazno-sve):" GET _db PICT "@S30"

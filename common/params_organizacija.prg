@@ -42,7 +42,7 @@ FUNCTION parametri_organizacije( set_params )
 
       Box(, 10, 70 )
 
-      @ m_x + _x, m_y + 2 SAY "Inicijalna podesenja organizacije ***" COLOR "I"
+      @ m_x + _x, m_y + 2 SAY8 "Inicijalna podešenja organizacije ***" COLOR F18_COLOR_I
 
       ++ _x
       ++ _x

@@ -256,7 +256,7 @@ FUNCTION create_tbrowsedb( params, lIzOBJDB )
    ENDIF
 
    @ m_x, m_y + 2                         SAY params[ "msg_top" ] + iif( !lIzOBJDB, REPL( BROWSE_PODVUCI_2,  42 ), "" )
-   @ m_x + params[ "xw" ] + 1,  m_y + 2   SAY params[ "msg_bott" ] COLOR "GR+/B"
+   @ m_x + params[ "xw" ] + 1,  m_y + 2   SAY params[ "msg_bott" ] COLOR F18_COLOR_MSG_BOTTOM
 
    @ m_x + params[ "xw" ] + 1,  Col() + 1 SAY iif( !lIzOBJDB, REPL( BROWSE_PODVUCI_2, 42 ), "" )
    @ m_x + 1, m_y + params[ "yw" ] - 6    SAY Str( my_reccount(), 5 )
@@ -497,7 +497,7 @@ FUNCTION standardne_browse_komande_dbf( TB, Ch, nRez, nPored, aPoredak )
 
       PRIVATE GetList := {}
       nRez := IndexOrd()
-      Prozor1( 12, 20, 17 + nPored, 59, "UTVRĐIVANJE PORETKA", , , "GR+/N", "W/N,B/W, , , B/W", 2 )
+      Prozor1( 12, 20, 17 + nPored, 59, "UTVRĐIVANJE PORETKA", F18_COLOR_NASLOV, F18_COLOR_OKVIR, F18_COLOR_TEKST, 2 )
       FOR i := 1 TO nPored
          @ 13 + i, 23 SAY PadR( "poredak po " + aPoredak[ i ], 33, "ú" ) + Str( i, 1 )
       NEXT
@@ -818,19 +818,18 @@ STATIC FUNCTION EditPolja( nX, nY, xIni, cNazPolja, bWhen, bValid )
       nSirina := Len( Transform( &cPom77U, cPict ) )
    ENDIF
 
-   // @ nX, nY GET &cPom77U VALID EVAL(bValid) WHEN EVAL(bWhen) COLOR "W+/BG,W+/B" pict cPict
-   IF Len( ImeKol[ TB:Colpos ] ) >= 8  // ima joç getova
+   IF Len( ImeKol[ TB:Colpos ] ) >= 8  // ima jednostavno getova
       aPom := ImeKol[ TB:Colpos, 8 ]  // matrica
       FOR i := 1 TO Len( aPom )
          nY := nY + nSirina + 1
-         get := GetNew( nX, nY, MemVarBlock( aPom[ i, 1 ] ),  aPom[ i, 1 ], aPom[ i, 4 ], "W+/BG,W+/B" )
+         get := GetNew( nX, nY, MemVarBlock( aPom[ i, 1 ] ),  aPom[ i, 1 ], aPom[ i, 4 ], F18_COLOR_BROWSE_GET )
          nSirina := Len( Transform( &( aPom[ i, 1 ] ), aPom[ i, 4 ] ) )
          get:PreBlock := aPom[ i, 2 ]
          get:PostBlock := aPom[ i, 3 ]
          AAdd( aTBGets, Get )
       NEXT
 
-      IF nY + nsirina > MAXCOLS() -2
+      IF nY + nSirina > MAXCOLS() -2
 
          FOR i := 1 TO Len( aTBGets )
             aTBGets[ i ]:Col := aTBGets[ i ]:Col   - ( nY + nSirina - 78 )

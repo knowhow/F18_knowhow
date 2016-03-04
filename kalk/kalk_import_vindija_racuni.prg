@@ -1684,7 +1684,7 @@ FUNCTION ObradiImport( nPocniOd, lAsPokreni, lStampaj )
    // SetKey(K_F3,{|| SaveObrada(nPTRec)})
 
    Box(, 10, 70 )
-   @ 1 + m_x, 2 + m_y SAY "Obrada dokumenata iz pomocne tabele:" COLOR "I"
+   @ 1 + m_x, 2 + m_y SAY "Obrada dokumenata iz pomocne tabele:" COLOR F18_COLOR_I
    @ 2 + m_x, 2 + m_y SAY "===================================="
 
    DO WHILE !Eof()

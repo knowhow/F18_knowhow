@@ -202,7 +202,7 @@ STATIC FUNCTION _prikazi_info( ulazi, mag_prod, ul_count )
 
       Box(, 5 + ul_count, 60 )
 
-      @ m_x + 1, m_y + 2 SAY PadR( "*** Pregled rabata", 59 ) COLOR "I"
+      @ m_x + 1, m_y + 2 SAY PadR( "*** Pregled rabata", 59 ) COLOR F18_COLOR_I
       @ m_x + 2, m_y + 2 SAY _head
       @ m_x + 3, m_y + 2 SAY Replicate( "-", 59 )
 

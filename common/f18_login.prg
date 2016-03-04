@@ -435,7 +435,7 @@ METHOD F18Login:main_db_login_form()
 
    ++ _x
    ++ _x
-   @ _x, _left SAY PadL( "LOZINKA:", 15 ) GET _pwd PICT "@S30" // COLOR "BG/BG"
+   @ _x, _left SAY PadL( "LOZINKA:", 15 ) GET _pwd PICT "@S30" COLOR F18_COLOR_PASSWORD
 
    READ
 
@@ -838,7 +838,7 @@ METHOD F18Login:browse_database_array( arr, table_type )
    // opcija 1
    // =========================
 
-   @ 1, 3 SAY hb_UTF8ToStr( "[1] Odabir baze" ) COLOR "I"
+   @ 1, 3 SAY hb_UTF8ToStr( "[1] Odabir baze" ) COLOR F18_COLOR_I
 
    @ 2, 2 SAY hb_UTF8ToStr( " - Strelicama odaberite željenu bazu " )
 
@@ -852,7 +852,7 @@ METHOD F18Login:browse_database_array( arr, table_type )
    // opcija 2
    // =========================
    // ispis opisa
-   @ _pos_bottom + 2, 3 SAY hb_UTF8ToStr( "[2] Ručna konekcija na bazu" ) COLOR "I"
+   @ _pos_bottom + 2, 3 SAY hb_UTF8ToStr( "[2] Ručna konekcija na bazu" ) COLOR F18_COLOR_I
 
    // box za rucni odabir firme
    @ _pos_bottom + 3, 2, _pos_bottom + 10, ( _pos_right / 2 ) - 3 BOX B_DOUBLE_SINGLE
@@ -861,7 +861,7 @@ METHOD F18Login:browse_database_array( arr, table_type )
    // opcija 3
    // =========================
    // ispis opisa
-   @ _pos_bottom + 2, ( _pos_right / 2 ) + 1 SAY hb_UTF8ToStr( "[3] Administrativne opcije" ) COLOR "I"
+   @ _pos_bottom + 2, ( _pos_right / 2 ) + 1 SAY hb_UTF8ToStr( "[3] Administrativne opcije" ) COLOR F18_COLOR_I
 
    // box za administrativne opcije
    @ _pos_bottom + 3,  ( _pos_right / 2 ), _pos_bottom + 10, _pos_right + 2 BOX B_DOUBLE_SINGLE

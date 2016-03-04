@@ -57,7 +57,7 @@ FUNCTION os_generacija_pocetnog_stanja()
 
    Box(, 10, 60 )
 
-   @ _pos_x := m_x + 1, _pos_y := m_y + 2 SAY "... prenos pocetnog stanja u toku" COLOR "I"
+   @ _pos_x := m_x + 1, _pos_y := m_y + 2 SAY "... prenos pocetnog stanja u toku" COLOR F18_COLOR_I
 
    // 1) pobrisati tekucu godinu
    _ok := _os_brisi_tekucu_godinu( @_info )

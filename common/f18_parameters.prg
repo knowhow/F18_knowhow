@@ -82,7 +82,7 @@ FUNCTION set_parametre_f18_aplikacije( just_set )
       _pos_x := 2
       _pos_y := 3
 
-      @ _pos_x, _pos_y SAY "Odabir modula za glavni meni ***" COLOR "I"
+      @ _pos_x, _pos_y SAY "Odabir modula za glavni meni ***" COLOR F18_COLOR_I
 
       @ _pos_x + _x, _pos_y SAY Space( 2 ) + "FIN:" GET _fin PICT "@!"
       @ _pos_x + _x, Col() + 1 SAY "KALK:" GET _kalk PICT "@!"
@@ -101,7 +101,7 @@ FUNCTION set_parametre_f18_aplikacije( just_set )
 
       ++ _x
       ++ _x
-      @ _pos_x + _x, _pos_y SAY "Maticni podaci korisnika ***" COLOR "I"
+      @ _pos_x + _x, _pos_y SAY "Maticni podaci korisnika ***" COLOR F18_COLOR_I
 
       ++ _x
       ++ _x
@@ -109,41 +109,41 @@ FUNCTION set_parametre_f18_aplikacije( just_set )
 
       ++ _x
       ++ _x
-      @ _pos_x + _x, _pos_y SAY "Email parametri ***" COLOR "I"
+      @ _pos_x + _x, _pos_y SAY "Email parametri ***" COLOR F18_COLOR_I
 
       ++ _x
       @ _pos_x + _x, _pos_y SAY PadL( "email server:", _left ) GET _email_server PICT "@S30"
       @ _pos_x + _x, Col() + 1 SAY "port:" GET _email_port PICT "9999"
       ++ _x
       @ _pos_x + _x, _pos_y SAY PadL( "username:", _left ) GET _email_username PICT "@S30"
-      @ _pos_x + _x, Col() + 1 SAY "password:" GET _email_userpass PICT "@S30" COLOR "BG/BG"
+      @ _pos_x + _x, Col() + 1 SAY "password:" GET _email_userpass PICT "@S30" COLOR F18_COLOR_PASSWORD
       ++ _x
       @ _pos_x + _x, _pos_y SAY PadL( "moja email adresa:", _left ) GET _email_from PICT "@S40"
       ++ _x
-      @ _pos_x + _x, _pos_y SAY PadL( "slati postu na adrese:", _left ) GET _email_to PICT "@S70"
+      @ _pos_x + _x, _pos_y SAY8 PadL( "slati poštu na adrese:", _left ) GET _email_to PICT "@S70"
 
       ++ _x
       @ _pos_x + _x, _pos_y SAY PadL( "cc adrese:", _left ) GET _email_cc PICT "@S70"
 
       ++ _x
       ++ _x
-      @ _pos_x + _x, _pos_y SAY "Parametri log-a ***" COLOR "I"
+      @ _pos_x + _x, _pos_y SAY "Parametri log-a ***" COLOR F18_COLOR_I
 
       ++ _x
-      @ _pos_x + _x, _pos_y SAY "Brisi stavke log tabele starije od broja dana (def. 30):" GET _log_delete_interval PICT "9999"
+      @ _pos_x + _x, _pos_y SAY8 "Briši stavke log tabele starije od broja dana (def. 30):" GET _log_delete_interval PICT "9999"
 
       ++ _x
       ++ _x
-      @ _pos_x + _x, _pos_y SAY "Backup parametri ***" COLOR "I"
+      @ _pos_x + _x, _pos_y SAY "Backup parametri ***" COLOR F18_COLOR_I
 
       ++ _x
-      @ _pos_x + _x, _pos_y SAY "Automatski backup podataka preduzeca (interval dana 0 - ne radi nista):" GET _backup_company PICT "999"
+      @ _pos_x + _x, _pos_y SAY8 "Automatski backup podataka organizacije (interval dana 0 - ne radi ništa):" GET _backup_company PICT "999"
 
       ++ _x
-      @ _pos_x + _x, _pos_y SAY "Automatski backup podataka servera (interval 0 - ne radi nista):" GET _backup_server PICT "999"
+      @ _pos_x + _x, _pos_y SAY8 "Automatski backup podataka servera (interval 0 - ne radi ništa):" GET _backup_server PICT "999"
 
       ++ _x
-      @ _pos_x + _x, _pos_y SAY "Remote backup lokacija:" GET _backup_removable PICT "@S60"
+      @ _pos_x + _x, _pos_y SAY "Udaljena backup lokacija:" GET _backup_removable PICT "@S60"
 
 #ifdef __PLATFORM__WINDOWS
 
@@ -154,13 +154,12 @@ FUNCTION set_parametre_f18_aplikacije( just_set )
 
       ++ _x
       ++ _x
-      @ _pos_x + _x, _pos_y SAY "Ostali parametri ***" COLOR "I"
+      @ _pos_x + _x, _pos_y SAY "Ostali parametri ***" COLOR F18_COLOR_I
 
       ++ _x
-      @ _pos_x + _x, _pos_y SAY "Duzina stranice za izvjestaje ( def: 60 ):" GET _rpt_page_len PICT "999"
+      @ _pos_x + _x, _pos_y SAY8 "Dužina stranice za izvještaje ( def: 60 ):" GET _rpt_page_len PICT "999"
 
       ++ _x
-
       @ _pos_x + _x, _pos_y SAY "BUG report na email (D/N/A/0):" GET _bug_report PICT "!@" VALID _bug_report $ "DNA0"
 
       @ _pos_x + _x, Col() + 2 SAY "Nivo logiranja (0..9)" GET _log_level PICT "9" VALID _log_level >= 0 .AND. _log_level < 10
@@ -305,7 +304,7 @@ FUNCTION f18_set_active_modules()
    Box(, 10, 70 )
 
    // 1
-   @ m_x + _x, m_y + 2 SAY "*** Odabir modula za glavni meni ***" COLOR "I"
+   @ m_x + _x, m_y + 2 SAY "*** Odabir modula za glavni meni ***" COLOR F18_COLOR_I
 
    ++ _x
    ++ _x

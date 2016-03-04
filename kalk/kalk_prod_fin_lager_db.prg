@@ -125,7 +125,7 @@ FUNCTION kalk_gen_fin_stanje_prodavnice( vars )
 
    Box(, 2, 60 )
 
-   @ m_x + 1, m_y + 2 SAY8 PadR( "Generisanje pomoćne tabele u toku...", 58 ) COLOR "I"
+   @ m_x + 1, m_y + 2 SAY8 PadR( "Generisanje pomoćne tabele u toku...", 58 ) COLOR F18_COLOR_I
 
    DO WHILE !Eof() .AND. _id_firma == field->idfirma .AND. IspitajPrekid()
 

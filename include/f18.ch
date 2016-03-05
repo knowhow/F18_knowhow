@@ -54,10 +54,9 @@
 #define F18_DEFAULT_LOG_LEVEL_DEBUG 9
 #define F18_DEFAULT_LOG_LEVEL       3
 
-#define INFO_BAR_ROWS              3
+#define INFO_BAR_ROWS               3
 
 /*
-Color Table
          -----------------------------------------------------------------------
          Color          Letter    Number  Monochrome
          -----------------------------------------------------------------------
@@ -91,15 +90,36 @@ Color Table
 */
 
 
-#define INFO_PANEL_COLOR           "GR+/B,R/N+,,,N/W"
+
 #define ERROR_PANEL_COLOR          "N/W,R/N+,,,R/B+"
 #define F18_COLOR_P1               "GR+/N"
-//#define F18_COLOR_NORMAL           "W/B,R/N+,,,N/W"
-#define F18_COLOR_NORMAL           "G/N,W/G+,R/W,W/RB,G/W"
+
+// VAR aColors           INIT { "W+/BG", "N/BG", "R/BG", "N+/BG", "W+/B", "GR+/B", "W/B", "N/W", "R/W", "N/BG", "R/BG" }
+
+// "Border", "Text", "Text High", "Text PPO", "Text Selected", ;
+// "Text High Sel.", "Text PPO Sel.", "Menu", "Menu High", ;
+// "Menu Selected", "Menu High Sel."
+
+//#define F18_COLOR_NORMAL         "W/B,R/N+,,,N/W"
+//#define F18_COLOR_NORMAL           "G/N,N/G,R/W,W/RB,G/W"  //green na crnoj podlozi
+#define F18_COLOR_NORMAL           "N/BG,W+/B,W/R,N/G,N/W"
+//#define F18_COLOR_INVERT           "N/W,R/N+,,,R/B+"
+#define F18_COLOR_INVERT           hb_ColorIndex(F18_COLOR_NORMAL, 4)+","+hb_ColorIndex(F18_COLOR_NORMAL, 3)+","+hb_ColorIndex(F18_COLOR_NORMAL, 2)+","+hb_ColorIndex(F18_COLOR_NORMAL, 1)+","+hb_ColorIndex(F18_COLOR_NORMAL, 0)
+
+
+#define F18_COLOR_ORGANIZACIJA     "GR/N,W/G+,R/W,W/RB,N/GR"  //brown na crnoj podlozi
+
+
+#define F18_COLOR_INFO_PANEL       "N/G"  //crna na green podlozi
+
+
 #define F18_COLOR_NORMAL_BW        "W/N,N/W,,,N/W"
-#define F18_COLOR_INVERT           "N/W,R/N+,,,R/B+"
+
+
+#define F18_COLOR_BACKUP           "N/W"
 #define F18_COLOR_BACKUP_OK        "W+/B+"
 #define F18_COLOR_BACKUP_ERROR     "W+/R+"
+
 #define F18_COLOR_PASSWORD         "BG/BG"
 #define F18_COLOR_I                "I"
 #define F18_COLOR_MSG_BOTTOM       "GR+/B"
@@ -139,9 +159,7 @@ Color Table
 #define CHR254   254
 #define D_STAROST_DANA   25
 
-
-// #define BOX_CHAR_BACKGROUND Chr( 176 )
-#define BOX_CHAR_BACKGROUND Chr( 177 )
+#define BOX_CHAR_BACKGROUND hb_UTF8ToStrBox( "░" )
 #define BOX_CHAR_BACKGROUND_HEAD " "
 
 #define oF_ERROR_MIN          1

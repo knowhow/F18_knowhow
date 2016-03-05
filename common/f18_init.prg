@@ -181,14 +181,12 @@ STATIC FUNCTION show_sacekaj()
 
    CLEAR SCREEN
 
-   _txt := PadC( ". . .  S A Č E K A J T E    T R E N U T A K  . . .", _y )
-   @ _x, 2 SAY8 _txt
+   //_txt := PadC( ". . .  S A Č E K A J T E    T R E N U T A K  . . .", _y )
+   //@ _x, 2 SAY8 _txt
 
-   _txt := PadC( ". . . . . . k o n e k c i j a    n a    b a z u   u   t o k u . . . . . . .", _y )
-   @ _x + 1, 2 SAY8 _txt
+   //_txt := PadC( ". . . . . . k o n e k c i j a    n a    b a z u   u   t o k u . . . . . . .", _y )
+   //@ _x + 1, 2 SAY8 _txt
 
-
-   Set( _SET_EVENTMASK, INKEY_ALL )
 
    naslovni_ekran_splash_screen( "F18", F18_VER )
 
@@ -233,13 +231,15 @@ FUNCTION init_harbour()
    Set( _SET_EVENTMASK, INKEY_ALL )
    MSetCursor( .T. )
 
-   // SET MESSAGE TO 24 CENTER
    SET DATE GERMAN
    SET SCOREBOARD OFF
    SET CONFIRM ON
    SET WRAP ON
    SET ESCAPE ON
    SET SOFTSEEK ON
+
+   altd()
+   SetColor( F18_COLOR_NORMAL )
 
    RETURN .T.
 
@@ -357,12 +357,12 @@ FUNCTION set_screen_dimensions()
 
       // pGt := hb_gtCreate( f18_gt() )
       // hb_gtSelect( pGt )
-
       ?E "setovanje ekrana: ne mogu setovati ekran po trazenoj rezoluciji !"
       RETURN .F.
    ENDIF
 
    hb_gtInfo( HB_GTI_ALTENTER, .T. )
+
 
    RETURN .T.
 
@@ -400,8 +400,7 @@ FUNCTION _get_server_params_from_config()
       MsgBeep( "problem ini read" )
    ENDIF
 
-   // definisi parametre servera
-   s_psqlServer_params := hb_Hash()
+   s_psqlServer_params := hb_Hash() // definisi parametre servera
 
    // preuzmi iz ini-ja
    FOR EACH _key in _ini_params:Keys

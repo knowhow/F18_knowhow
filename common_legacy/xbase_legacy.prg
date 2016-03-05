@@ -285,14 +285,6 @@ FUNCTION PrazanDbf()
 
 
 
-/*! fn reccount2()
- * note COMIX - CDX verzija
- */
-FUNCTION reccount2()
-
-   LOCAL nRec, nPrevOrd
-
-   RETURN RecCount()
 
 
 FUNCTION seek2( cArg )

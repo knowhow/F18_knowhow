@@ -20,7 +20,11 @@ FUNCTION naslovni_ekran_splash_screen( cNaslov, cVer )
 
    lInvert := .F.
 
-   Box( "por", 11, 60, lInvert )
+   Alert( F18_COLOR_INVERT )
+   
+   @ MAXROWS() / 2 - 10, MAXCOLS() / 2 - 30 SAY ""
+
+   Box( , 12, 60, lInvert )
    SET CURSOR OFF
 
    @ m_x + 2, m_y + 2 SAY PadC( cNaslov, 60 )

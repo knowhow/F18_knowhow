@@ -199,7 +199,7 @@ FUNCTION my_db_edit( cImeBoxa, xw, yw, bUserF, cMessTop, cMessBot, lInvert, ;
 
       CASE nRez == DE_REFRESH
          TB:RefreshAll()
-         @ m_x + 1, m_y + yw - 6 SAY Str( RecCount(), 5 )
+         @ m_x + 1, m_y + yw - 6 SAY Str( RecCount2(), 5 )
 
       CASE Ch == K_ESC
 

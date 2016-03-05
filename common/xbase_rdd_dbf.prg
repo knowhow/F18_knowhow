@@ -99,9 +99,19 @@ FUNCTION is_dbf_struktura_polja_identicna( cTable, cPolje, nLen, nWidth )
 
 FUNCTION my_reccount()
 
-   RETURN RecCount()
+   RETURN RecCount2()
 
 
+FUNCTION RecCount2()
+
+   LOCAL nCnt, nDel
+
+   PushWa()
+   count_deleted( @nCnt, @nDel )
+   SET DELETED ON
+   PopWa()
+
+   RETURN nCnt - nDel
 
 FUNCTION my_delete()
 
@@ -537,7 +547,7 @@ FUNCTION dbf_open_temp_and_count( aDbfRec, nCntSql, nCnt, nDel )
    RETURN .T.
 
 
-STATIC FUNCTION count_deleted( nCnt, nDel )
+FUNCTION count_deleted( nCnt, nDel )
 
    LOCAL oError
 

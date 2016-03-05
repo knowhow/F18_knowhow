@@ -210,7 +210,6 @@ METHOD gParams()
 
    LOCAL cFMKINI := "N"
    LOCAL cPosebno := "N"
-   LOCAL cOldBoje := SetColor( F18_COLOR_INVERT  )
    LOCAL cInstall := "N"
    LOCAL lPushWa := .F.
    PRIVATE GetList := {}
@@ -317,13 +316,12 @@ METHOD gParams()
    SELECT gparams
    USE
 
-   SetColor( cOldBoje )
 
    IF lPushWa
       PopWa()
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 // ------------------------------------------------------------
 // prikaz dodatnog box-a za stimanje parametara PDF stampe

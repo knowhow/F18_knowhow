@@ -108,7 +108,7 @@ FUNCTION g_dpprom_part( id_partner, id_konto, id_firma )
 // -------------------------------------------------------
 // ispisuje na ekranu box sa stanjem kupca
 // -------------------------------------------------------
-FUNCTION g_box_stanje( cPartner, cKKup, cKDob )
+FUNCTION fin_partner_prikaz_stanja_ekran( cPartner, cKKup, cKDob )
 
    LOCAL nSKup := 0
    LOCAL nSDob := 0
@@ -143,13 +143,11 @@ FUNCTION g_box_stanje( cPartner, cKKup, cKDob )
    @ m_x + nX, m_y + 2 SAY "-----------------------------------------------"
 
    ++ nX
-
    IF cKKUP <> NIL
       @ m_x + nX, m_y + 2 SAY PadR( "(1) stanje na kontu " + cKKup + ": " + AllTrim( Str( nSKup, 12, 2 ) ) + " KM", 45 ) COLOR IF( nSKup > 100, "W/R+", "W/G+" )
    ENDIF
 
    ++ nX
-
    IF cKDOB <> NIL
       @ m_x + nX, m_y + 2 SAY PadR( "(2) stanje na kontu " + cKDob + ": " + AllTrim( Str( nSDob, 12, 2 ) ) + " KM", 45 ) COLOR "W/GB+"
    ENDIF

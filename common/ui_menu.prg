@@ -152,8 +152,7 @@ FUNCTION MENU( MenuId, Items, ItemNo, Inv, cHelpT, nPovratak, aFixKoo, nMaxVR )
          } )
 
    ELSE
-      // Ako se meni ne zove prvi put, uzmi koordinate sa steka
-      aMenu := StackTop( aMenuStack )
+      aMenu := StackTop( aMenuStack ) // Ako se meni ne zove prvi put, uzmi koordinate sa steka
       m_x := aMenu[ 2 ]
       m_y := aMenu[ 3 ]
 
@@ -181,7 +180,7 @@ FUNCTION MENU( MenuId, Items, ItemNo, Inv, cHelpT, nPovratak, aFixKoo, nMaxVR )
    IF Len( Items ) > nMaxVR
       ItemNo := AChoice3( m_x + 1, m_y + 2, m_x + N + 1, m_y + Length + 1, Items, .T., "MenuFunc", RetItem( ItemNo ), RetItem( ItemNo ) -1 )
    ELSE
-      ItemNo := AChoice2( m_x + 1, m_y + 2, m_x + N + 1, m_y + Length + 1, Items, .T., "MenuFunc", RetItem( ItemNo ), RetItem( ItemNo ) -1 )
+      ItemNo := Achoice2( m_x + 1, m_y + 2, m_x + N + 1, m_y + Length + 1, Items, .T., "MenuFunc", RetItem( ItemNo ), RetItem( ItemNo ) -1 )
    ENDIF
 
    nTItemNo := RetItem( ItemNo )
@@ -228,7 +227,7 @@ FUNCTION Menu2( x1, y1, aNiz, nIzb )
 
    Prozor1( x1, y1, x1 + xM + 1, y1 + yM + 1,,,,,, 0 )
 
-      nIzb := ACHOICE2( x1 + 1, y1 + 1, x1 + xM, y1 + yM, aNiz,, "KorMenu2", nIzb )
+      nIzb := Achoice2( x1 + 1, y1 + 1, x1 + xM, y1 + yM, aNiz,, "KorMenu2", nIzb )
 
     Prozor0()
 
@@ -250,7 +249,7 @@ FUNCTION KorMenu2
 
 
 
-FUNCTION AChoice2( x1, y1, x2, y2, Items, f1, cFunc, nItemNo )
+FUNCTION Achoice2( x1, y1, x2, y2, Items, f1, cFunc, nItemNo )
 
    LOCAL i
    LOCAL ii
@@ -259,7 +258,6 @@ FUNCTION AChoice2( x1, y1, x2, y2, Items, f1, cFunc, nItemNo )
    LOCAL fExit
    LOCAL fFirst
    LOCAL nOldCurs
-   LOCAL cOldColor
    LOCAL nOldItemNo
    LOCAL cSavC
    LOCAL nCtrlKeyVal := 0
@@ -270,8 +268,8 @@ FUNCTION AChoice2( x1, y1, x2, y2, Items, f1, cFunc, nItemNo )
 
    fExit := .F.
 
+
    nOldCurs := iif( SetCursor() == 0, 0, iif( ReadInsert(), 2, 1 ) )
-   cOldColor := SetColor()
    SET CURSOR OFF
 
    nWidth := y2 - y1
@@ -280,33 +278,20 @@ FUNCTION AChoice2( x1, y1, x2, y2, Items, f1, cFunc, nItemNo )
    @ x1, y1 CLEAR TO x2 - 1, y2
 
    FOR i := 1 TO nLen
-      IF i == nItemNo
-         IF Left( cOldColor, 3 ) == Left( F18_COLOR_NORMAL, 3 )
-            SetColor( F18_COLOR_INVERT  )
-         ELSE
-            SetColor( F18_COLOR_NORMAL )
-         ENDIF
-      ELSE
-         SetColor( cOldColor )
-      ENDIF
-      @ x1 + i - 1, y1 SAY8 PadR( Items[ i ], nWidth )
+      @ x1 + i - 1, y1 SAY8 PadR( Items[ i ], nWidth ) ;
+         COLOR IIF(i == nItemNo,  hb_ColorIndex(F18_COLOR_NORMAL, 1),  hb_ColorIndex(F18_COLOR_NORMAL, 0))
    NEXT
 
    fFirst := .T.
 
    DO WHILE .T.
 
-      SetColor( F18_COLOR_INVERT  )
-      SetColor( cOldColor )
       IF !fFirst
-         SetColor( cOldColor )
-         @ x1 + nOldItemNo - 1, y1 SAY8 PadR( Items[ nOldItemNo ], nWidth )
-         IF Left( cOldColor, 3 ) == Left( F18_COLOR_NORMAL, 3 )
-            SetColor( F18_COLOR_INVERT  )
-         ELSE
-            SetColor( F18_COLOR_NORMAL )
-         ENDIF
-         @ x1 + nItemNo - 1, y1 SAY8 PadR( Items[ nItemNo ], nWidth )
+         @ x1 + nOldItemNo - 1, y1 SAY8 PadR( Items[ nOldItemNo ], nWidth ) ;
+          COLOR hb_ColorIndex(F18_COLOR_NORMAL, 0)
+
+         @ x1 + nItemNo - 1, y1 SAY8 PadR( Items[ nItemNo ], nWidth ) ;
+         COLOR hb_ColorIndex(F18_COLOR_NORMAL, 1)
       ENDIF
       fFirst := .F.
 
@@ -340,10 +325,8 @@ FUNCTION AChoice2( x1, y1, x2, y2, Items, f1, cFunc, nItemNo )
 
             IF IsDigit( Chr( nChar ) ) // cifra
                IF Chr( nChar ) $ Left( Items[ ii ], 3 )
-                  // provjera postojanja
-                  nItemNo := ii
-                  // broja u stavki samo
-                  // u prva 3 karaktera
+
+                  nItemNo := ii // provjera postojanja broja u stavki samo u prva 3 karaktera
                   fexit := .T.
                ENDIF
             ELSE
@@ -380,7 +363,6 @@ FUNCTION AChoice2( x1, y1, x2, y2, Items, f1, cFunc, nItemNo )
    ENDDO
 
    SetCursor( iif( nOldCurs == 0, 0, iif( ReadInsert(), 2, 1 ) ) )
-   SetColor( cOldColor )
 
    RETURN nItemNo + nCtrlKeyVal
 

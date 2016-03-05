@@ -101,10 +101,10 @@ FUNCTION print_lista( Zaglavlje, ImeDat, bFor, fIndex, lBezUpita )
                cValid += "#" + Upper( ordName( i ) )
             ENDIF
          NEXT
-         @ m_x + 3, m_y + 3  SAY "Nacin sortiranja (ID/NAZ):" GET nSort VALID   AllTrim( nSort ) $ cValid PICT "@!"
+         @ m_x + 3, m_y + 3  SAY8 "Način sortiranja (ID/NAZ):" GET nSort VALID   AllTrim( nSort ) $ cValid PICT "@!"
       ENDIF
       @ m_x + 4, m_y + 3  SAY "Odvajati redove linijom (D/N) ?" GET gOdvTab VALID gOdvTab $ "DN" PICTURE "@!"
-      @ m_x + 5, m_y + 3  SAY "Razmak izmedju redova   (D/N) ?" GET cRazmak VALID cRazmak $ "DN" PICTURE "@!"
+      @ m_x + 5, m_y + 3  SAY8 "Razmak između redova   (D/N) ?" GET cRazmak VALID cRazmak $ "DN" PICTURE "@!"
       READ
 
    ENDIF
@@ -115,17 +115,16 @@ FUNCTION print_lista( Zaglavlje, ImeDat, bFor, fIndex, lBezUpita )
    ENDIF
 
    IF Len( ImeKol[ 1 ] ) > 2 .AND. !lImaSifK
-      PRIVATE aStruct := dbStruct(), anDuz[ FCount(), 2 ], ctxt2
+      PRIVATE aStruct := dbStruct(), anDuz[ FCount(), 2 ], cTxt2
       FOR i := 1 TO Len( aStruct )
 
-         // treci element jednog reda u matrici imekol
-         k := AScan( ImeKol, {| x| FIELD( i ) == Upper( x[ 3 ] ) } )
+         k := AScan( ImeKol, {| x| FIELD( i ) == Upper( x[ 3 ] ) } ) // treci element jednog reda u matrici imekol
 
          j := IF( k <> 0, Kol[ k ], 0 )
 
          IF j <> 0
             xPom := Eval( ImeKol[ k, 2 ] )
-            anDuz[ j, 1 ] := Max( Len( ImeKol[ k, 1 ] ), Len( IF( ValType( xPom ) == "D", ;
+            anDuz[ j, 1 ] := Max( Len( ImeKol[ k, 1 ] ), Len( IIF( ValType( xPom ) == "D", ;
                DToC( xPom ), IF( ValType( xPom ) == "N", Str( xPom ), xPom ) ) ) )
             IF anDuz[ j, 1 ] > 100
                anDuz[ j, 1 ] := 100
@@ -133,7 +132,7 @@ FUNCTION print_lista( Zaglavlje, ImeDat, bFor, fIndex, lBezUpita )
                   "P", ;
                   anDuz[ j, 1 ], iif( aStruct[ i, 2 ] == "N", aStruct[ i, 4 ], 0 ) }
             ELSE
-               anDuz[ j, 2 ] := { ImeKol[ k, 1 ], ImeKol[ k, 2 ], .F., ValType( Eval( ImeKol[ k, 2 ] ) ), anDuz[ j, 1 ], IF( aStruct[ i, 2 ] == "N", aStruct[ i, 4 ], 0 ) }
+               anDuz[ j, 2 ] := { ImeKol[ k, 1 ], ImeKol[ k, 2 ], .F., ValType( Eval( ImeKol[ k, 2 ] ) ), anDuz[ j, 1 ], IIF( aStruct[ i, 2 ] == "N", aStruct[ i, 4 ], 0 ) }
             ENDIF
          ELSE
             IF aStruct[ i, 2 ] == "M"

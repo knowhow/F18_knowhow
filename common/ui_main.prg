@@ -231,7 +231,7 @@ FUNCTION MsgC( msg_x1, msg_y1, msg_x2, msg_y2 )
       SetColor( aMsgPar[ 2 ] )
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 /*! \fn Box(BoxId, N, Length, Inv, chMsg, cHelpT)
@@ -505,7 +505,7 @@ FUNCTION Prozor0()
 
 
 
-/*! \fn Postotak(nIndik,nUkupno,cTekst,cBNasl,cBOkv,lZvuk)
+/* Postotak(nIndik,nUkupno,cTekst,cBNasl,cBOkv,lZvuk)
 *   \brief Prikaz procenta uradjenog posla
 *
 * Ova fja omogucava prikaz procenta uradjenog posla, sto je efektno

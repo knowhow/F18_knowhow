@@ -63,7 +63,6 @@ FUNCTION p_sifra( nDbf, xIndex, nVisina, nSirina, cNaslov, cID, dx, dy,  bBlok, 
    sif_set_order( xIndex, cOrderTag, @fID_j )
    sif_sql_seek( @cId, @cIdBK, @cUslovSrch, @cNazSrch, fId_j, cOrderTag )
 
-
    IF ValType( dx ) == "N" .AND. dx < 0
 
       IF !Found()
@@ -94,8 +93,7 @@ FUNCTION p_sifra( nDbf, xIndex, nVisina, nSirina, cNaslov, cID, dx, dy,  bBlok, 
       ENDIF
 
       IF cId == NIL
-         // idemo bez parametara
-         GO TOP
+         GO TOP // bez parametara
       ENDIF
 
       my_db_edit_sql(, nVisina, nSirina,  {|| ed_sql_sif( nDbf, cNaslov, bBlok, aZabrane, aZabIsp ) }, ToStrU( cNaslov ), "", lInvert, _komande, 1, bPodvuci, , , aPoredak )

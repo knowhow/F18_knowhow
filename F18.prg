@@ -78,7 +78,9 @@ FUNCTION program_module_menu( arg_v )
    LOCAL _user_roles := f18_user_roles_info()
    LOCAL _server_db_version := get_version_str( server_db_version() )
    LOCAL _tmp
-   LOCAL _color := "BG+/B"
+   //LOCAL cOldColors
+
+   //cOldColors := SetColor( F18_COLOR_ORGANIZACIJA )
 
    info_bar( "init", "gen program_module_menu start" )
    IF arg_v == NIL
@@ -89,16 +91,13 @@ FUNCTION program_module_menu( arg_v )
    DO WHILE .T.
 
       ++ _count
-
       CLEAR SCREEN
       _db_params := my_server_params()
 
       _x := 1
       @ _x, mnu_left + 1 SAY8 "Tekuća baza: " + AllTrim( _db_params[ "database" ] ) + " / db ver: " + _server_db_version + " / nivo logiranja: " + AllTrim( Str( log_level() ) )
-
       ++ _x
       @ _x, mnu_left + 1 SAY "   Korisnik: " + AllTrim( _db_params[ "user" ] ) + "   u grupama " + _user_roles
-
       ++ _x
       @ _x, mnu_left SAY Replicate( "-", 55 )
 
@@ -111,23 +110,22 @@ FUNCTION program_module_menu( arg_v )
             oBackup:unlock()
          ENDIF
 
-         // automatski backup podataka preduzeca
-         f18_auto_backup_data( 1 )
+
+         f18_auto_backup_data( 1 ) // automatski backup podataka preduzeca
          __relogin_opt := .F.
 
       ENDIF
 
-      // resetuj...
+
       menuop := {}
       menuexec := {}
 
-
       set_program_module_menu( @menuop, @menuexec, arg_v[ "p3" ], arg_v[ "p4" ], arg_v[ "p5" ], arg_v[ "p6" ], arg_v[ "p7" ] )
-
       info_bar( "init", "gen program_module_menu end" )
 
-      mnu_choice := ACHOICE2( mnu_top, mnu_left, mnu_bottom, mnu_right, menuop, .T., "MenuFunc", 1 )
+      mnu_choice := Achoice2( mnu_top, mnu_left, mnu_bottom, mnu_right, menuop, .T., "MenuFunc", 1 )
 
+      //SetColor( cOldColors )
       DO CASE
       CASE mnu_choice == 0
 

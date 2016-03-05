@@ -83,7 +83,7 @@ FUNCTION show_insert_over_stanje()
       @ 0, MAXCOLS() - 20 SAY  '< INS  >' COLOR F18_COLOR_INVERT
    ENDIF
 
-   @ 0, MAXCOLS() - 11 SAY "bring.out" COLOR "GR+/B"
+   @ 0, MAXCOLS() - 11 SAY "bring.out" COLOR F18_COLOR_NORMAL
 
    SetPos( nx, ny )
 

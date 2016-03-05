@@ -289,7 +289,7 @@ METHOD F18Backup:Backup_server()
       @ _x, Col() + 1 SAY "OK" COLOR _color_ok
       _ok := .T.
    ELSE
-      @ _x, Col() + 1 SAY "ERROR !!!" COLOR _color_err
+      @ _x, Col() + 1 SAY "ERROR !" COLOR _color_err
    ENDIF
 
    IF _ok
@@ -609,14 +609,12 @@ PROCEDURE thread_f18_backup( type_def )
 
    RETURN
 
-// ------------------------------------------------------
-// setovanje boje ekrana za backup...
-// ------------------------------------------------------
+
 STATIC FUNCTION _set_color()
 
-   LOCAL _color := "N/W"
+   LOCAL _color := F18_COLOR_BACKUP
 
    SetColor( _color )
    CLEAR SCREEN
 
-   RETURN
+   RETURN .T.

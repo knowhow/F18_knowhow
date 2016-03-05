@@ -719,7 +719,7 @@ METHOD F18Login:administrative_options( x_pos, y_pos )
 
    DO WHILE .T.
 
-      _mnu_choice := ACHOICE2( _x, _y + 1, _x + 5, _y + 40, _menuop, .T., "MenuFunc", 1 )
+      _mnu_choice := Achoice2( _x, _y + 1, _x + 5, _y + 40, _menuop, .T., "MenuFunc", 1 )
 
       DO CASE
       CASE _mnu_choice == 0
@@ -821,6 +821,8 @@ METHOD F18Login:browse_database_array( arr, table_type )
       table_type := 0
    ENDIF
 
+   //SetColor( F18_COLOR_ORGANIZACIJA )
+
    _row := 1
 
    IF arr == NIL
@@ -837,14 +839,10 @@ METHOD F18Login:browse_database_array( arr, table_type )
 
    // opcija 1
    // =========================
+   @ 1, 3 SAY _u( "[1] Odabir baze" )
+   @ 2, 2 SAY _u( " - Strelicama odaberite željenu bazu " )
+   @ 3, 2 SAY _u( " - <TAB> ručno zadavanje konekcije  <F10> admin. opcije  <ESC> izlaz" )
 
-   @ 1, 3 SAY hb_UTF8ToStr( "[1] Odabir baze" ) COLOR F18_COLOR_I
-
-   @ 2, 2 SAY hb_UTF8ToStr( " - Strelicama odaberite željenu bazu " )
-
-   @ 3, 2 SAY hb_UTF8ToStr( " - <TAB> ručno zadavanje konekcije  <F10> admin. opcije  <ESC> izlaz" )
-
-   // top, left, bottom, right
 
    // box za selekciju firme....
    @ 4, 2, _pos_bottom + 1, _pos_right + 2 BOX B_DOUBLE_SINGLE
@@ -852,7 +850,7 @@ METHOD F18Login:browse_database_array( arr, table_type )
    // opcija 2
    // =========================
    // ispis opisa
-   @ _pos_bottom + 2, 3 SAY hb_UTF8ToStr( "[2] Ručna konekcija na bazu" ) COLOR F18_COLOR_I
+   @ _pos_bottom + 2, 3 SAY hb_UTF8ToStr( "[2] Ručna konekcija na bazu" )
 
    // box za rucni odabir firme
    @ _pos_bottom + 3, 2, _pos_bottom + 10, ( _pos_right / 2 ) - 3 BOX B_DOUBLE_SINGLE
@@ -861,7 +859,7 @@ METHOD F18Login:browse_database_array( arr, table_type )
    // opcija 3
    // =========================
    // ispis opisa
-   @ _pos_bottom + 2, ( _pos_right / 2 ) + 1 SAY hb_UTF8ToStr( "[3] Administrativne opcije" ) COLOR F18_COLOR_I
+   @ _pos_bottom + 2, ( _pos_right / 2 ) + 1 SAY hb_UTF8ToStr( "[3] Administrativne opcije" )
 
    // box za administrativne opcije
    @ _pos_bottom + 3,  ( _pos_right / 2 ), _pos_bottom + 10, _pos_right + 2 BOX B_DOUBLE_SINGLE
@@ -891,14 +889,12 @@ METHOD F18Login:browse_database_array( arr, table_type )
       _br:addColumn( TBColumnNew( "", _browse_block( arr, _l ) ) )
    NEXT
 
-   // vrijednost uzimamo kao:
-   // EVAL( _br:GetColumn( _br:colpos ):block ) => "cago      "
 
-   // main key handler loop
-   DO WHILE ( _key <> K_ESC ) .AND. ( _key <> K_RETURN )
 
-      // stabilize the browse and wait for a keystroke
-      _br:forcestable()
+   DO WHILE ( _key <> K_ESC ) .AND. ( _key <> K_RETURN ) // main key handler loop
+
+
+      _br:forcestable() // stabilize the browse and wait for a keystroke
 
       ::show_info_bar( AllTrim( Eval( _br:GetColumn( _br:colpos ):block ) ), _pos_bottom + 4 )
 

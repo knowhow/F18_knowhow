@@ -11,7 +11,6 @@
 
 #include "f18.ch"
 
-
 FUNCTION TDesktopNew()
 
    LOCAL oObj
@@ -23,7 +22,7 @@ FUNCTION TDesktopNew()
 
    oObj:cColTitle := "GR+/N"
    oObj:cColBorder := "GR+/N"
-   oObj:cColFont := "W/N  ,R/BG ,,,B/W"
+   oObj:cColFont := "W/N,R/BG ,,,B/W"
 
    RETURN oObj
 
@@ -38,7 +37,6 @@ CREATE CLASS TDesktop
    VAR cColFont
 
 
-   // tekuce koordinate
    VAR nRow
    VAR nCol
    VAR nRowLen
@@ -47,11 +45,11 @@ CREATE CLASS TDesktop
    METHOD getRow
    METHOD getCol
    METHOD showLine
-   METHOD setColors
    METHOD showSezona
    METHOD showMainScreen
 
-END CLASS
+ENDCLASS
+
 
 METHOD getRow()
    return ::nRow
@@ -59,7 +57,6 @@ METHOD getRow()
 
 METHOD getCol()
    return ::nCol
-
 
 
 METHOD showLine( cTekst, cRow )
@@ -78,55 +75,6 @@ METHOD showLine( cTekst, cRow )
 
    RETURN .T.
 
-
-METHOD setColors( cIzbor )
-
-   IF IsColor()
-      DO CASE
-      CASE cIzbor == "B1"
-         ::cColTitle := "GR+/N"
-         ::cColBorder  := "GR+/N"
-         ::cColFont := "W/N  ,R/BG ,,,B/W"
-
-      CASE cIzbor == "B2"
-         ::cColTitle := "N/G"
-         ::cColBorder := "N/G"
-         ::cColFont := "W+/G ,R/BG ,,,B/W"
-
-      CASE cIzbor == "B3"
-         ::cColTitle := "R+/N"
-         ::cColBorder := "R+/N"
-         ::cColFont  := "N/GR ,R/BG ,,,B/W"
-
-      CASE cIzbor == "B4"
-         ::cColTitle := "B/BG"
-         ::cColBorder  := "B/W"
-         ::cColFont  := "B/W  ,R/BG ,,,B/W"
-
-      CASE cIzbor == "B5"
-         ::cColTitle := "B/W"
-         ::cColBorder  := "R/W"
-         ::cColFont  := "GR+/N,R/BG ,,,B/W"
-
-      CASE cIzbor == "B6"
-         ::cColTitle := "B/W"
-         ::cColBorder  := "R/W"
-         ::cColFont  := "W/N,R/BG ,,,B/W"
-      CASE cIzbor == "B7"
-         ::cColTitle := "B/W"
-         ::cColBorder  := "R/W"
-         ::cColFont  := "N/G,R+/N ,,,B/W"
-      OTHERWISE
-      ENDCASE
-
-   ELSE
-      ::cColTitle := "N/W"
-      ::cColBorder  := "N/W"
-      ::cColFont  := "W/N  ,N/W  ,,,N/W"
-   ENDIF
-   ::cColShema := cIzbor
-
-   RETURN cIzbor
 
 
 METHOD showSezona( cSezona )
@@ -154,7 +102,7 @@ METHOD showMainScreen( lClear )
    DispBox( 2, 0, 4, MAXCOLS() - 1, B_DOUBLE + ' ', F18_COLOR_NORMAL )
 
    IF lClear
-      DispBox( 5, 0, MAXROWS() - 1, MAXCOLS() - 1, B_DOUBLE + "±", F18_COLOR_INVERT  )
+      DispBox( 5, 0, MAXROWS() - 1, MAXCOLS() - 1, B_DOUBLE + BOX_CHAR_BACKGROUND, F18_COLOR_INVERT  )
    ENDIF
 
    @ _ver_pos, 1 SAY PadC( gNaslov + ' Ver.' + F18_VER, MAXCOLS() - 8 ) COLOR F18_COLOR_NORMAL

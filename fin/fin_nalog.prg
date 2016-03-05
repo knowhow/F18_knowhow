@@ -197,8 +197,6 @@ FUNCTION fin_gen_psuban_stampa_nalozi( lAuto, dDatNal )
          PushWA()
          my_close_all_dbf()
          f18_end_print( NIL, @_print_opt )
-
-         // Alert( "XXX stop 1")
          fin_open_psuban()
          PopWa()
       ENDIF

@@ -238,7 +238,6 @@ FUNCTION init_harbour()
    SET ESCAPE ON
    SET SOFTSEEK ON
 
-   altd()
    SetColor( F18_COLOR_NORMAL )
 
    RETURN .T.

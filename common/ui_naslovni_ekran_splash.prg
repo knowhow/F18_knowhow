@@ -17,26 +17,44 @@ MEMVAR m_x, m_y
 FUNCTION naslovni_ekran_splash_screen( cNaslov, cVer )
 
    LOCAL lInvert
+   LOCAL nWin
 
    lInvert := .F.
 
-   Alert( F18_COLOR_INVERT )
-   
-   @ MAXROWS() / 2 - 10, MAXCOLS() / 2 - 30 SAY ""
+   //Alert( F18_COLOR_INVERT )
 
-   Box( , 12, 60, lInvert )
+   //@ MAXROWS() / 2 - 10, MAXCOLS() / 2 - 30 SAY ""
+
+   main_window( WOpen( 0, 10, MAXROWS(), MAXCOLS() ) )
+
+
+   WSetShadow( 1 % 8 )
+   nWin := WOpen( 5, 10, 5 + 25, 10 + 70 )
+   WBox()
+   WSelect( nWin )
+   //WBoard( 5, 5, 20, 75 )
+   //WMode( .T., .T., .T., .T. )
+   //WSetShadow( 7 )
+   //SetClearA( 10 * 16 + 14 )
+   //SetClearB( 35 )
+   SetColor( F18_COLOR_INVERT )
+   DispBox( 0, 0, MaxRow(), MaxCol(), Replicate( " ", 9 ) )
+   SetPos( 0, 0 )
+
+   //Box( , 12, 60, lInvert )
    SET CURSOR OFF
 
-   @ m_x + 2, m_y + 2 SAY PadC( cNaslov, 60 )
-   @ m_x + 3, m_y + 2 SAY PadC( "Ver. " + cVer, 60 )
-   @ m_x + 5, m_y + 2 SAY PadC( "bring.out d.o.o. Sarajevo (" + F18_DEV_PERIOD + ")", 60 )
-   @ m_x + 7, m_y + 2 SAY PadC( "Juraja Najtharta 3, Sarajevo, BiH", 60 )
-   @ m_x + 8, m_y + 2 SAY PadC( "tel: 033/269-291, fax: 033/269-292", 60 )
-   @ m_x + 9, m_y + 2 SAY PadC( "web: http://bring.out.ba", 60 )
-   @ m_x + 10, m_y + 2 SAY PadC( "email: podrska@bring.out.ba", 60 )
+   @  2, 2 SAY PadC( cNaslov, 60 )
+   @  3, 2 SAY PadC( "Verzija: " + cVer, 60 )
+   @  5, 2 SAY PadC( "bring.out d.o.o. Sarajevo (" + F18_DEV_PERIOD + ")", 60 )
+   @  7, 2 SAY PadC( "Juraja Najtharta 3, Sarajevo, BiH", 60 )
+   @  8, 2 SAY PadC( "tel: 033/269-291, fax: 033/269-292", 60 )
+   @  9, 2 SAY PadC( "web: http://bring.out.ba", 60 )
+   @ 10, 2 SAY PadC( "email: podrska@bring.out.ba", 60)
 
-   Inkey( 5 )
+  Inkey( 5 )
 
-   BoxC()
+  WSelect( main_window() )
+   //BoxC()
 
    RETURN .T.

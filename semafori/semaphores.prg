@@ -306,8 +306,8 @@ FUNCTION table_count( table, condition )
    LOCAL _server := pg_server()
    LOCAL cMsg
 
-   // provjeri prvo da li postoji uopšte ovaj site zapis
-   _qry := "SELECT COUNT(*) FROM " + table
+
+   _qry := "SELECT COUNT(*) FROM " + table // provjeri prvo da li postoji uopšte ovaj site zapis
 
    IF condition != NIL
       _qry += " WHERE " + condition

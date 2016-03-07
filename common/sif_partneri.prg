@@ -11,6 +11,8 @@
 
 #include "f18.ch"
 
+MEMVAR wIdrefer, wId, wIdops
+
 FUNCTION cre_sif_partn( ver )
 
    LOCAL aDbf := {}
@@ -116,7 +118,7 @@ FUNCTION p_partneri( cId, dx, dy, lEmptyIdOk )
    AAdd ( ImeKol, { PadR( "MobTel", 20 ), {|| mobtel }, "mobtel" } )
    AAdd ( ImeKol, { PadR( ToStrU( "Općina" ), 6 ), {|| idOps }, "idops", {|| .T. }, {|| p_ops( @wIdops ) } } )
 
-   AAdd ( ImeKol, { PadR( "Referent", 10 ), {|| idrefer }, "idrefer", {|| .T. }, {|| p_refer( @widrefer ) } } )
+   AAdd ( ImeKol, { PadR( "Referent", 10 ), {|| field->idrefer }, "idrefer", {|| .T. }, {|| EMPTY(wIdrefer) .OR. p_refer( @wIdrefer ) } } )
    AAdd( ImeKol, { "kup?", {|| _kup }, "_kup", {|| .T. }, {|| _v_dn( w_kup ) } } )
    AAdd( ImeKol, { "dob?", {|| " " + _dob + " " }, "_dob", {|| .T. }, {|| _v_dn( w_dob ) }, nil, nil, nil, nil, 20 } )
    AAdd( ImeKol, { "banka?", {|| " " + _banka + " " }, "_banka", {|| .T. }, {|| _v_dn( w_banka ) }, nil, nil, nil, nil, 30 } )

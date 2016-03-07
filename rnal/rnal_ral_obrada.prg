@@ -83,6 +83,7 @@ FUNCTION get_ral( nTick )
 
    BoxC()
 
+altd()
    SELECT ral
    SEEK Str( nRal, 5, 0) + Str( nTick, 2, 0)
 

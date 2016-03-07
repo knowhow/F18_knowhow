@@ -168,7 +168,6 @@ STATIC FUNCTION _cre_report( dD_f, dD_t, nOper, cRalLst, cColLst )
       ENDIF
 
       SELECT ral
-      GO TOP
       SEEK Str( nRal, 5, 0 ) + Str( nTick, 2, 0 )
 
       IF !Empty( cColLst ) // provjeri uslov po listi boja

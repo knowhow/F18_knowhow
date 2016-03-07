@@ -975,6 +975,10 @@ FUNCTION my_home_root( home_root )
       s_cF18HomeRoot := home_root
    ENDIF
 
+   IF HB_ISNIL( s_cF18HomeRoot )
+      set_f18_home_root()
+   ENDIF
+
    RETURN s_cF18HomeRoot
 
 

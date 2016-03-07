@@ -55,7 +55,7 @@ FUNCTION t_rpt_create()
    // brisi tabele....
    IF d_rpt_dbfs() == 0
       MsgBeep( "Greska: brisanje pomocnih tabela !!!" )
-      RETURN
+      RETURN .F.
    ENDIF
 
    // kreiraj T_DOCIT
@@ -85,30 +85,26 @@ FUNCTION t_rpt_create()
    // kreiraj indexe
    // T_DOCIT
    // ---------------------------
-   CREATE_INDEX( "1", "STR(doc_no,10)+STR(doc_it_no,4)+STR(art_id,10)", PRIVPATH + "T_DOCIT" )
-
-   CREATE_INDEX( "2", "STR(doc_no,10)+STR(doc_gr_no,2)+STR(doc_it_no,4)+STR(art_id,10)", PRIVPATH + "T_DOCIT" )
-
-   CREATE_INDEX( "3", "STR(doc_no,10)+art_sh_des", PRIVPATH + "T_DOCIT" )
-
-   CREATE_INDEX( "4", "STR(art_id,10)", PRIVPATH + "T_DOCIT" )
-
-   CREATE_INDEX( "5", "art_sh_des", PRIVPATH + "T_DOCIT" )
+   CREATE_INDEX( "1", "STR(doc_no,10)+STR(doc_it_no,4)+STR(art_id,10)", "T_DOCIT" )
+   CREATE_INDEX( "2", "STR(doc_no,10)+STR(doc_gr_no,2)+STR(doc_it_no,4)+STR(art_id,10)", "T_DOCIT" )
+   CREATE_INDEX( "3", "STR(doc_no,10)+art_sh_des", "T_DOCIT" )
+   CREATE_INDEX( "4", "STR(art_id,10)", "T_DOCIT" )
+   CREATE_INDEX( "5", "art_sh_des", "T_DOCIT" )
 
    // T_DOCIT2
    // -----------------------------
-   CREATE_INDEX( "1", "STR(doc_no,10)+STR(doc_it_no,4)+STR(it_no,4)+art_id", PRIVPATH + "T_DOCIT2" )
-   CREATE_INDEX( "2", "art_id", PRIVPATH + "T_DOCIT2" )
+   CREATE_INDEX( "1", "STR(doc_no,10)+STR(doc_it_no,4)+STR(it_no,4)+art_id", "T_DOCIT2" )
+   CREATE_INDEX( "2", "art_id", "T_DOCIT2" )
 
    // T_DOCOP
    // -----------------------------
-   CREATE_INDEX( "1", "STR(doc_no,10)+STR(doc_it_no,4)+STR(doc_el_no,4)+STR(doc_op_no,4)", PRIVPATH + "T_DOCOP" )
+   CREATE_INDEX( "1", "STR(doc_no,10)+STR(doc_it_no,4)+STR(doc_el_no,4)+STR(doc_op_no,4)", "T_DOCOP" )
 
    // T_PARS
    // -----------------------------
-   CREATE_INDEX( "id_par", "id_par", PRIVPATH + "T_PARS" )
+   CREATE_INDEX( "id_par", "id_par", "T_PARS" )
 
-   RETURN
+   RETURN .T.
 
 // -----------------------------------------------
 // setovanje polja tabele T_DOCIT

@@ -219,7 +219,7 @@ STATIC FUNCTION brisi_odt_fajlove_iz_home_path()
 
    Sleep( 1 )
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -299,7 +299,7 @@ FUNCTION f18_odt_copy( cOutput_file, cDestination_file )
 
    FileCopy( __output_odt, cDestination_file )
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -322,6 +322,7 @@ FUNCTION prikazi_odt( cOutput_file )
    LOCAL cScreen, nError := 0
    LOCAL cOdgovor
 
+altd()
    IF ( cOutput_file == NIL )
       __output_odt := __current_odt
    ELSE

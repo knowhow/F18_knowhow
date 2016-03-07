@@ -160,7 +160,7 @@ STATIC FUNCTION _cre_report( dD_f, dD_t, nOper, cRalLst, cColLst )
 
       // provjeri uslov po listi
       IF !Empty( cRalLst )
-         IF !( AllTrim( Str( nRal ) ) $ AllTrim( cRalLst ) )
+         IF !( AllTrim( Str( nRal, 5, 0 ) ) $ AllTrim( cRalLst ) )
             SELECT doc_ops
             SKIP
             LOOP
@@ -169,9 +169,9 @@ STATIC FUNCTION _cre_report( dD_f, dD_t, nOper, cRalLst, cColLst )
 
       SELECT ral
       GO TOP
-      SEEK Str( nRal, 5 ) + Str( nTick, 2 )
-      // provjeri uslov po listi boja
-      IF !Empty( cColLst )
+      SEEK Str( nRal, 5, 0 ) + Str( nTick, 2, 0 )
+
+      IF !Empty( cColLst ) // provjeri uslov po listi boja
          IF !( AllTrim( Str( field->col_1 ) ) $ AllTrim( cColLst ) ) .OR. ;
                !( AllTrim( Str( field->col_2 ) ) $ AllTrim( cColLst ) ) .OR. ;
                !( AllTrim( Str( field->col_3 ) ) $ AllTrim( cColLst ) ) .OR. ;

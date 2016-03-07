@@ -86,7 +86,7 @@ FUNCTION get_ral( nTick )
 altd()
    SELECT ral
    GO TOP
-   SEEK Str( nRal, 5 ) + Str( nTick, 2 )
+   SEEK Str( nRal, 5, 0) + Str( nTick, 2, 0)
 
    IF !Found()
       GO TOP
@@ -113,8 +113,8 @@ altd()
    // 4 - debljina, 0 - default
    // 80 - valjak gramaza...
 
-   cRet := "RAL:" + AllTrim( Str( nRal, 5 ) ) + ;
-      "#" + AllTrim( Str( nTick, 2 ) ) + ;
+   cRet := "RAL:" + AllTrim( Str( nRal, 5, 0 ) ) + ;
+      "#" + AllTrim( Str( nTick, 2, 0 ) ) + ;
       "#" + AllTrim( Str( dimenzije_valjaka( nRoller ) ) )
 
    RETURN cRet
@@ -183,10 +183,10 @@ FUNCTION g_ral_value( nRal, nTick, nRoller )
       nRoller := 80
    ENDIF
 
-   IF nTick = 0
-      SEEK Str( nRal, 5 )
+   IF nTick == 0
+      SEEK Str( nRal, 5, 0 )
    ELSE
-      SEEK Str( nRal, 5 ) + Str( nTick, 2 )
+      SEEK Str( nRal, 5, 0 ) + Str( nTick, 2, 0 )
    ENDIF
 
    IF Found()
@@ -292,7 +292,7 @@ FUNCTION rnal_kalkulisi_ral( nRal, nTick, nRoller, nUm2 )
    ENDIF
 
    GO TOP
-   SEEK Str( nRal, 5 ) + Str( nTick, 2 )
+   SEEK Str( nRal, 5, 0 ) + Str( nTick, 2, 0 )
 
    IF Found()
 

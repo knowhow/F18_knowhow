@@ -25,7 +25,7 @@ FUNCTION use_sql_rnal_ral()
    SELECT F_RAL
    use_sql( cTable, cSql, "RAL" )
 
-   INDEX ON "STR(id,5)+STR(gl_tick,2)" TAG "1" TO (cTable)
+   INDEX ON "STR(id,5,0)+STR(gl_tick,2,0)" TAG "1" TO (cTable)
    INDEX ON "descr" TAG "2" TO (cTable)
 
    SET ORDER TO TAG "1"

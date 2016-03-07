@@ -140,7 +140,7 @@ STATIC FUNCTION g_docit_fields( aArr )
    AAdd( aArr, { "it_lab_pos", "C",  20,  0 } )
    AAdd( aArr, { "print", "C",  1,  0 } )
 
-   RETURN
+   RETURN .T.
 
 // setovanje polja tabele T_DOCOP
 STATIC FUNCTION g_docop_fields( aArr )
@@ -158,7 +158,7 @@ STATIC FUNCTION g_docop_fields( aArr )
    AAdd( aArr, { "aop_value", "C", 150,  0 } )
    AAdd( aArr, { "aop_vraw", "C", 150,  0 } )
 
-   RETURN
+   RETURN .T.
 
 
 // setovanje polja tabele T_DOCIT2
@@ -176,7 +176,7 @@ STATIC FUNCTION g_docit2_fields( aArr )
    AAdd( aArr, { "doc_it_pri", "N",  15,  5 } )
    AAdd( aArr, { "descr", "C", 200,  5 } )
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -186,7 +186,7 @@ STATIC FUNCTION g_pars_fields( aArr )
    AAdd( aArr, { "id_par", "C",   3, 0 } )
    AAdd( aArr, { "opis", "C", 200, 0 } )
 
-   RETURN
+   RETURN .T.
 
 
 // dodaj u tabelu T_PARS

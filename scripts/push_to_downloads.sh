@@ -6,5 +6,7 @@
 #scp $SSH_OPTS $1 root@download.bring.out.ba:$WWW_PATH/
 #ssh $SSH_OPTS root@download.bring.out.ba chmod +r $WWW_PATH/*
 
-scp $1 green-1:/data/f18-downloads/downloads.bring.out.ba/www/files/
+GREEN1=docker@192.168.168.107
+
+scp $1 $GREEN1:/data/f18-downloads/downloads.bring.out.ba/www/files/
 

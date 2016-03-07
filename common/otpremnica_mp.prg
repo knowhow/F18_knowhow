@@ -275,7 +275,7 @@ FUNCTION get_omp_vars( nLMargina, nGMargina, nDodRedova, nSlTxtRow, lSamoKol, lZ
 // zaglavlje glavne tabele sa stavkama
 STATIC FUNCTION st_zagl_data()
 
-   // {
+
 
    LOCAL cRed1 := ""
    LOCAL cRed2 := ""
@@ -296,9 +296,9 @@ STATIC FUNCTION st_zagl_data()
    cRed1 += " " + PadC( "C.sa.PDV", LEN_CIJENA() )
    cRed1 += " " + PadC( "Uk.sa.PDV", LEN_VRIJEDNOST() )
 
-   ? cRed1
+   ?U cRed1
 
-   ? cLine
+   ?U cLine
 
    RETURN .T.
 

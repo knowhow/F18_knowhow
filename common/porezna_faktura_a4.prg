@@ -390,20 +390,20 @@ STATIC FUNCTION st_zagl_data()
 
    cRed1 := RAZMAK
    cRed1 += PadC( "R.br", LEN_RBR )
-   cRed1 += " " + PadR( _l( "Trgovački naziv dobra/usluge (sifra, naziv, jmj)" ), LEN_NAZIV )
-   cRed1 += " " + PadC( _l( "količina" ), LEN_KOLICINA )
-   cRed1 += " " + PadC( _l( "C.b.PDV" ), LEN_CIJENA )
+   cRed1 += " " + PadR( "Trgovački naziv dobra/usluge (sifra, naziv, jmj)" , LEN_NAZIV )
+   cRed1 += " " + PadC( "količina", LEN_KOLICINA )
+   cRed1 += " " + PadC( "C.b.PDV" , LEN_CIJENA )
    IF lShowPopust
-      cRed1 += " " + PadC( _l( "Pop.%" ), LEN_PROC2 )
-      cRed1 += " " + PadC( _l( "C.2.b.PDV" ), LEN_CIJENA )
+      cRed1 += " " + PadC( "Pop.%", LEN_PROC2 )
+      cRed1 += " " + PadC( "C.2.b.PDV", LEN_CIJENA )
    ENDIF
-   cRed1 += " " + PadC( _l( "Uk.bez.PDV" ), LEN_VRIJEDNOST )
+   cRed1 += " " + PadC( "Uk.bez.PDV", LEN_VRIJEDNOST )
 
-   ? cRed1
+   ?U cRed1
 
    ? cLine
 
-   RETURN
+   RETURN .T.
 
 
 

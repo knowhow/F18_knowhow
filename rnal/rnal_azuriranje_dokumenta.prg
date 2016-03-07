@@ -58,7 +58,7 @@ FUNCTION rnal_azuriraj_dokument( cDesc )
 
       RETURN 0
 
-   ELSEIF __doc_stat = 10 .AND. lDokumentPostoji
+   ELSEIF __doc_stat == 10 .AND. lDokumentPostoji
 
       MsgBeep( "Nalog " + AllTrim( Str( __doc_no ) ) + " nije moguće ažurirati !#Već postoji ažuriran." )
       resetuj_broj_naloga_na_0_u_pripremi()
@@ -106,8 +106,8 @@ FUNCTION rnal_azuriraj_dokument( cDesc )
    ENDIF
 
    IF _ok
-      // setuj da je nalog opet otvoren
-      set_doc_marker( __doc_no, 0, "CONT" )
+
+      set_doc_marker( __doc_no, 0, "CONT" ) // setuj da je nalog opet otvoren
 
       // ako nije bio u doradi logiraj promjene inicijalne
       IF __doc_stat <> 3

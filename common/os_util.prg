@@ -376,7 +376,6 @@ FUNCTION f18_open_document( document )
 
 #ifdef __PLATFORM__WINDOWS
 
-   // _prefix := "start "
    _prefix := "c:\knowhowERP\util\start.exe "
 
 #else
@@ -390,7 +389,7 @@ FUNCTION f18_open_document( document )
 #ifdef __PLATFORM__LINUX
    _ret := __run_system( _prefix + document + "&" )
 #else
-   _ret := hb_processRun( _prefix + document, NIL, NIL, NIL, .T. )
+   _ret := hb_processRun( _prefix + document, NIL, NIL, NIL )
 #endif
 
    RETURN _ret

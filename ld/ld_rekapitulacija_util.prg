@@ -1249,8 +1249,8 @@ FUNCTION IspisKred( lSvi )
 
          SELECT RADKR
          SET ORDER TO TAG "3"
-         SET FILTER TO Str( nGodina, 4 ) + Str( nMjesec, 2 ) <= Str( godina, 4 ) + Str( mjesec, 2 ) .AND. ;
-            Str( nGodina, 4 ) + Str( nMjesecDo, 2 ) >= Str( godina, 4 ) + Str( mjesec, 2 )
+         SET FILTER TO Str( nGodina, 4, 0 ) + Str( nMjesec, 2, 0 ) <= Str( godina, 4, 0 ) + Str( mjesec, 2, 0 ) .AND. ;
+            Str( nGodina, 4, 0 ) + Str( nMjesecDo, 2, 0 ) >= Str( godina, 4, 0 ) + Str( mjesec, 2, 0 )
          GO TOP
 
          DO WHILE !Eof()
@@ -1263,7 +1263,7 @@ FUNCTION IspisKred( lSvi )
             SELECT RADKR
             nUkKred := 0
 
-            DO WHILE !Eof() .AND. IDKRED == cIdKred
+            DO WHILE !Eof() .AND. field->IDKRED == cIdKred
 
                cNaOsnovu := NAOSNOVU
                cIdRadnKR := IDRADN
@@ -1285,7 +1285,7 @@ FUNCTION IspisKred( lSvi )
                      // rekap za sve rj
                      SELECT ld
                      SET ORDER TO tag ( TagVO( "2" ) )
-                     HSEEK Str( nGodina, 4 ) + Str( mj, 2 ) + cObracun + radkr->idradn
+                     HSEEK Str( nGodina, 4, 0 ) + Str( mj, 2, 0 ) + cObracun + radkr->idradn
 
                      _t_rec := RecNo()
                      DO WHILE !Eof() .AND. godina == nGodina .AND. mjesec == nMjesec .AND. ;
@@ -1358,7 +1358,7 @@ FUNCTION IspisKred( lSvi )
             SELECT radn
             HSEEK radkr->idradn
             SELECT radkr
-    
+
             cOpis2 := RADNIK_PREZ_IME
             SEEK cidkred + cnaosnovu
             PRIVATE nUkKred := 0

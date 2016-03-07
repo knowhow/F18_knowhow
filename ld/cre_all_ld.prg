@@ -715,12 +715,20 @@ FUNCTION h_ld_ld_indexes()
 
    LOCAL hIndexes := hb_Hash()
 
-   hIndexes[ "1" ] := "str(godina,4,0)+idrj+str(mjesec,2,0)+obr+idradn"
-   hIndexes[ "2" ] := "str(godina,4,0)+str(mjesec,2,0)+obr+idradn+idrj"
-   hIndexes[ "3" ] := "str(godina,4,0)+idrj+idradn"
-   hIndexes[ "4" ] := "str(godina,4,0)+idradn+str(mjesec,2,0)+obr"
-   hIndexes[ "1U" ] := "str(godina,4,0)+idrj+str(mjesec,2,0)+idradn"
-   hIndexes[ "2U" ] := "str(godina,4,0)+str(mjesec,2,0)+idradn+idrj"
-   hIndexes[ "RADN" ] := "idradn"
+   hIndexes[ "1" ] := "str(godina,4,0)+idrj+str(mjesec,2,0)+obr+_FUTF_(idradn)"
+   hIndexes[ "2" ] := "str(godina,4,0)+str(mjesec,2,0)+obr+_FUTF_(idradn)+idrj"
+   hIndexes[ "3" ] := "str(godina,4,0)+idrj+_FUTF_(idradn)"
+   hIndexes[ "4" ] := "str(godina,4,0)+_FUTF_(idradn)+str(mjesec,2,0)+obr"
+   hIndexes[ "1U" ] := "str(godina,4,0)+idrj+str(mjesec,2,0)+_FUTF_(idradn)"
+   hIndexes[ "2U" ] := "str(godina,4,0)+str(mjesec,2,0)+_FUTF_(idradn)+idrj"
+   hIndexes[ "RADN" ] := "_FUTF_(idradn)"
 
    RETURN hIndexes
+
+FUNCTION _FUTF_( cIdRadn )
+
+   IF rddName() == "SQLMIX"
+      RETURN _u( field->IdRadn )  // utf2str
+   ENDIF
+
+   RETURN  field->idRadn

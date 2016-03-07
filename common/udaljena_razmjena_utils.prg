@@ -471,7 +471,6 @@ FUNCTION _dir_create( use_path )
 
    LOCAL _ret := .T.
 
-   // _lokacija := _path_quote( my_home() + "export" + SLASH )
 
    IF DirChange( use_path ) != 0
       _cre := MakeDir ( use_path )

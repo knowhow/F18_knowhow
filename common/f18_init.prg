@@ -20,9 +20,9 @@ STATIC s_psqlServer_params := NIL
 // logiranje na server
 STATIC s_psqlServer_log := .F.
 
-STATIC __f18_home := NIL
-STATIC __f18_home_root := NIL
-STATIC __f18_home_backup := NIL
+STATIC s_cF18Home := NIL
+THREAD STATIC s_cF18HomeRoot := NIL
+THREAD STATIC s_cF18HomeBackup := NIL
 
 THREAD STATIC __log_handle := NIL
 
@@ -952,10 +952,10 @@ FUNCTION my_user()
 FUNCTION my_home( home )
 
    IF home != NIL
-      __f18_home := home
+      s_cF18Home := home
    ENDIF
 
-   RETURN __f18_home
+   RETURN s_cF18Home
 
 
 
@@ -972,10 +972,10 @@ FUNCTION _path_quote( path )
 FUNCTION my_home_root( home_root )
 
    IF home_root != NIL
-      __f18_home_root := home_root
+      s_cF18HomeRoot := home_root
    ENDIF
 
-   RETURN __f18_home_root
+   RETURN s_cF18HomeRoot
 
 
 FUNCTION set_f18_home_root()
@@ -1001,10 +1001,10 @@ FUNCTION set_f18_home_root()
 FUNCTION my_home_backup( home_backup )
 
    IF home_backup != NIL
-      __f18_home_backup := home_backup
+      s_cF18HomeBackup := home_backup
    ENDIF
 
-   RETURN __f18_home_backup
+   RETURN s_cF18HomeBackup
 
 
 

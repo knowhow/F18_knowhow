@@ -372,14 +372,12 @@ STATIC FUNCTION I_At( cSearch, lUpper, nStart )
    RETURN IF ( nPos > 0, nPos + nStart - 1, 0 )
 
 
-/*! \fn my_get_from_ini(cSection, cVar, cValue, cLokacija )
- *
- *  \param cSection  - [SECTION]
- *  \param cVar      - Variable
- *  \param cValue    - Default value of Variable
- *  \param cLokacija - Default = EXEPATH, or PRIVPATH, or SIFPATH or KUMPATH (FileName='FMK.INI')
- *  \param lAppend   - True - ako zapisa u ini-ju nema dodaj ga, default false
- * \code
+/* 
+ *  param cSection  - [SECTION]
+ *  param cVar      - Variable
+ *  param cValue    - Default value of Variable
+ *  param cLokacija - Default = EXEPATH, or PRIVPATH, or SIFPATH or KUMPATH (FileName='FMK.INI')
+ *  param lAppend   - True - ako zapisa u ini-ju nema dodaj ga, default false
  * // uzmi vrijednost varijable Debug, sekcija Gateway, iz EXEPATH/FMK.INI
  * cDN:=my_get_from_ini("Gateway","Debug","N",EXEPATH)
  * \endcode

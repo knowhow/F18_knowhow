@@ -561,7 +561,7 @@ FUNCTION f18_auto_backup_data( backup_type_def, start_now )
 
    // nemam sta raditi ako ovaj interval ne postoji !
    IF !start_now .AND. oBackup:backup_interval == 0
-      RETURN
+      RETURN .F.
    ENDIF
 
    // uslov za backup nije zadovoljen...
@@ -569,7 +569,8 @@ FUNCTION f18_auto_backup_data( backup_type_def, start_now )
       hb_threadStart( @thread_f18_backup(), backup_type_def )
    ENDIF
 
-   RETURN
+   RETURN .T.
+
 
 PROCEDURE thread_f18_backup( type_def )
 
@@ -607,7 +608,7 @@ PROCEDURE thread_f18_backup( type_def )
 
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 STATIC FUNCTION _set_color()

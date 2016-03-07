@@ -162,7 +162,7 @@ STATIC FUNCTION brisi_tabele_pripreme()
    SELECT _doc_ops
    my_dbf_zap()
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -179,7 +179,7 @@ STATIC FUNCTION resetuj_broj_naloga_na_0_u_pripremi()
    SELECT _docs
    GO TOP
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -197,7 +197,7 @@ FUNCTION rnal_ukloni_filter_lokalnih_tabela()
    SELECT _doc_ops
    SET FILTER TO
 
-   RETURN
+   RETURN .T.
 
 
 // --------------------------------------------------
@@ -750,7 +750,7 @@ FUNCTION rnal_set_broj_naloga_u_pripremi( nDoc_no, lForce )
    ENDIF
 
    IF ( nDoc_no == 0 .AND. lForce == .F. )
-      RETURN
+      RETURN .F.
    ENDIF
 
    nTArea := Select()
@@ -820,7 +820,7 @@ FUNCTION rnal_set_broj_naloga_u_pripremi( nDoc_no, lForce )
    SELECT ( nTArea )
    GO ( nTRec )
 
-   RETURN
+   RETURN .T.
 
 
 // -----------------------------------------

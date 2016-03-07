@@ -68,6 +68,10 @@ FUNCTION fetch_metric( sect, user, default_value )
 
 FUNCTION parametar_dinamican( cSection )
 
+   IF "_doc_no" $ cSection
+       RETURN .T.
+   ENDIF
+
    IF "_brojac_" $ cSection  // brojaci se moraju uvijek citati sa servera
       RETURN .T.
    ENDIF

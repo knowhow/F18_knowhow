@@ -453,8 +453,8 @@ FUNCTION rnal_novi_broj_dokumenta()
    LOCAL _ret := ""
    LOCAL _t_area := Select()
 
-   // param: rnal_doc_no
-   _param := "rnal_doc_no"
+
+   _param := "rnal_doc_no" // param: rnal_doc_no
 
    _broj := fetch_metric( _param, nil, _broj )
 
@@ -484,9 +484,6 @@ FUNCTION rnal_novi_broj_dokumenta()
 
 
 
-// ------------------------------------------------------------
-// setuj broj dokumenta u pripremi ako treba !
-// ------------------------------------------------------------
 FUNCTION rnal_treba_setovati_broj_naloga( doc_no )
 
    LOCAL _null_brdok
@@ -501,8 +498,8 @@ FUNCTION rnal_treba_setovati_broj_naloga( doc_no )
       RETURN .F.
    ENDIF
 
-   // daj mi novi broj dokumenta
-   doc_no := rnal_novi_broj_dokumenta()
+
+   doc_no := rnal_novi_broj_dokumenta() // novi broj dokumenta
 
    RETURN .T.
 

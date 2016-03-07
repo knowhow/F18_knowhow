@@ -126,7 +126,7 @@ STATIC FUNCTION docit2_kol( aImeKol, aKol )
       AAdd( aKol, i )
    NEXT
 
-   RETURN
+   RETURN .T.
 
 
 // ------------------------------------------

@@ -367,8 +367,7 @@ FUNCTION f18_run( cmd, output, always_ok, async )
 
    RETURN _ret
 
-// -------------------------------------------
-// -------------------------------------------
+
 FUNCTION f18_open_document( document )
 
    LOCAL _ret, _prefix

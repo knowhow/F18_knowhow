@@ -110,11 +110,10 @@ FUNCTION GetUserName( nUser_id )
 
    IF oTable:Eof()
       RETURN "?user?"
-   ELSE
-      RETURN hb_UTF8ToStr( oTable:FieldGet( 1 ) )
    ENDIF
 
-   RETURN
+   RETURN hb_UTF8ToStr( oTable:FieldGet( 1 ) )
+
 
 
 FUNCTION GetFullUserName( nUser_id )

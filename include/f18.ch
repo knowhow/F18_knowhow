@@ -91,7 +91,7 @@
 
 
 
-#define ERROR_PANEL_COLOR          "N/W,R/N+,,,R/B+"
+
 #define F18_COLOR_P1               "GR+/N"
 
 // VAR aColors           INIT { "W+/BG", "N/BG", "R/BG", "N+/BG", "W+/B", "GR+/B", "W/B", "N/W", "R/W", "N/BG", "R/BG" }
@@ -102,15 +102,17 @@
 
 //#define F18_COLOR_NORMAL         "W/B,R/N+,,,N/W"
 //#define F18_COLOR_NORMAL           "G/N,N/G,R/W,W/RB,G/W"  //green na crnoj podlozi
-#define F18_COLOR_NORMAL           "N/BG,W+/B,W/R,N/G,N/W"
+//#define F18_COLOR_NORMAL           "N/BG,W+/B,W/R,N/G,N/W"
+#define F18_COLOR_NORMAL           "W/B,R/W+,W/R,N/G,N/W"
+
 //#define F18_COLOR_INVERT           "N/W,R/N+,,,R/B+"
 #define F18_COLOR_INVERT           hb_ColorIndex(F18_COLOR_NORMAL, 4)+","+hb_ColorIndex(F18_COLOR_NORMAL, 3)+","+hb_ColorIndex(F18_COLOR_NORMAL, 2)+","+hb_ColorIndex(F18_COLOR_NORMAL, 1)+","+hb_ColorIndex(F18_COLOR_NORMAL, 0)
+#define F18_COLOR_INFO_PANEL       hb_ColorIndex(SetColor(), 1)
+#define F18_COLOR_ERROR_PANEL      hb_ColorIndex(SetColor(), 2)
 
 
-#define F18_COLOR_ORGANIZACIJA     "GR/N,W/G+,R/W,W/RB,N/GR"  //brown na crnoj podlozi
+#define F18_COLOR_ORGANIZACIJA     hb_ColorIndex(F18_COLOR_NORMAL, 4)+","+hb_ColorIndex(F18_COLOR_NORMAL, 3)+","+hb_ColorIndex(F18_COLOR_NORMAL, 2)+","+hb_ColorIndex(F18_COLOR_NORMAL, 1)+","+hb_ColorIndex(F18_COLOR_NORMAL, 0)
 
-
-#define F18_COLOR_INFO_PANEL       "N/G"  //crna na green podlozi
 
 
 #define F18_COLOR_NORMAL_BW        "W/N,N/W,,,N/W"
@@ -129,7 +131,6 @@
 #define F18_COLOR_OKVIR            "W+/N"
 #define F18_COLOR_NASLOV           "GR+/N"
 #define F18_COLOR_TEKST            "GR+/N"
-
 
 
 #define INFO_MESSAGES_LENGTH       40

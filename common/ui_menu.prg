@@ -279,7 +279,7 @@ FUNCTION Achoice2( x1, y1, x2, y2, Items, f1, cFunc, nItemNo )
 
    FOR i := 1 TO nLen
       @ x1 + i - 1, y1 SAY8 PadR( Items[ i ], nWidth ) ;
-         COLOR IIF(i == nItemNo,  hb_ColorIndex(F18_COLOR_NORMAL, 1),  hb_ColorIndex(F18_COLOR_NORMAL, 0))
+         COLOR IIF(i == nItemNo,  hb_ColorIndex( SetColor(), 1),  hb_ColorIndex(SetColor(), 0))
    NEXT
 
    fFirst := .T.
@@ -288,10 +288,10 @@ FUNCTION Achoice2( x1, y1, x2, y2, Items, f1, cFunc, nItemNo )
 
       IF !fFirst
          @ x1 + nOldItemNo - 1, y1 SAY8 PadR( Items[ nOldItemNo ], nWidth ) ;
-          COLOR hb_ColorIndex(F18_COLOR_NORMAL, 0)
+          COLOR hb_ColorIndex( SetColor(), 0)
 
          @ x1 + nItemNo - 1, y1 SAY8 PadR( Items[ nItemNo ], nWidth ) ;
-         COLOR hb_ColorIndex(F18_COLOR_NORMAL, 1)
+         COLOR hb_ColorIndex( SetColor(), 1)
       ENDIF
       fFirst := .F.
 

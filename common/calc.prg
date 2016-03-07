@@ -23,12 +23,11 @@ FUNCTION Calc()
    LOCAL GetList := {}
    PRIVATE cIzraz := Space( 40 )
 
-
    IF s_lInCalculator
       RETURN .F.
    ENDIF
 
-altd()
+   AltD()
 
    s_lInCalculator := .T.
 
@@ -38,6 +37,7 @@ altd()
    Box(, 3, 60 )
 
    SET CURSOR ON
+   SET ESCAPE ON
 
    DO WHILE .T.
 
@@ -48,8 +48,7 @@ altd()
 
       READ
 
-      // ako je ukucan "," zamjeni sa tackom "."
-      cIzraz := StrTran( cIzraz, ",", "." )
+      cIzraz := StrTran( cIzraz, ",", "." ) // ako je ukucan "," zamjeni sa tackom "."
 
       @ m_x + 3, m_y + 2 SAY Space( 20 )
       IF Type( cIzraz ) <> "N"
@@ -60,7 +59,6 @@ altd()
             @ m_x + 3, m_y + 2 SAY kbroj( SubStr( cizraz, 2 ) )
          ENDIF
 
-         // cIzraz:=space(40)
       ELSE
          @ m_x + 3, m_y + 2 SAY &cIzraz PICT "99999999.9999"
          cIzraz := PadR( AllTrim( Str( &cizraz, 18, 5 ) ), 40 )
@@ -83,7 +81,6 @@ altd()
       ELSE
          PRIVATE cVar := ReadVar()
          Inkey()
-         // inkey(0)
          IF Type( cVar ) == "C" .OR. ( Type( "fUmemu" ) == "L" .AND. fUMemu )
             KEYBOARD KBroj( SubStr( cIzraz, 2 ) )
          ENDIF
@@ -100,7 +97,7 @@ altd()
       SetKey( K_ALT_K, bKeyOld1 )
       SetKey( K_ALT_V, bKeyOld2 )
       s_lInCalculator := .F.
-      return &cIzraz
+      RETURN &cIzraz
    ENDIF
 
    s_lInCalculator := .F.

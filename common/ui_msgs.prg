@@ -13,7 +13,6 @@
 
 REQUEST ARRAYRDD
 
-
 STATIC aErrors := {}
 STATIC aInfos := {}
 
@@ -37,7 +36,7 @@ FUNCTION info_bar( cDoc, cMsg )
 
    hb_default( @cMsg, "" )
 
-   @ maxrows() + 1, 4 SAY8  "> " + PadC( cMsg, maxcols() - 10 ) + " <" COLOR F18_COLOR_INFO_PANEL
+   @ maxrow() - 1, 1 SAY8  "> " + PadC( cMsg, maxcol() - 5 ) + " <" COLOR F18_COLOR_INFO_PANEL
 
    IF Empty( cMsg ) .OR. cMsg == "info_bar"
       RETURN .T.
@@ -59,7 +58,7 @@ FUNCTION error_bar( cDoc, cMsg )
 
    hb_default( @cMsg, "" )
 
-   @ maxrows() + 2, 4 SAY8  ">> " + PadC( cMsg, maxcols() - 10 ) + " <<" COLOR ERROR_PANEL_COLOR
+   @ maxrow(), 1 SAY8  "> " + PadC( cMsg, maxcol() - 5 ) + " <" COLOR F18_COLOR_ERROR_PANEL
 
    IF Empty( cMsg ) .OR. cMsg == "error_bar"
       RETURN .T.

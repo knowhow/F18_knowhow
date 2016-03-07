@@ -25,11 +25,11 @@ FUNCTION naslovni_ekran_splash_screen( cNaslov, cVer )
 
    //@ MAXROWS() / 2 - 10, MAXCOLS() / 2 - 30 SAY ""
 
-   main_window( WOpen( 0, 10, MAXROWS(), MAXCOLS() ) )
+   main_window( WOpen( 0, 0, MAXROW(), MAXCOL() ) )
 
 
    WSetShadow( 1 % 8 )
-   nWin := WOpen( 5, 10, 5 + 25, 10 + 70 )
+   nWin := WOpen( 5, 10, 5 + 20, 10 + 70 )
    WBox()
    WSelect( nWin )
    //WBoard( 5, 5, 20, 75 )
@@ -55,6 +55,10 @@ FUNCTION naslovni_ekran_splash_screen( cNaslov, cVer )
   Inkey( 5 )
 
   WSelect( main_window() )
+
+#ifdef F18_DEBUG
+   Alert( "maxrow: " + hb_valToStr(MaxRow()) + " maxcol: " + hb_valToStr(MaxCol()) )
+#endif
    //BoxC()
 
    RETURN .T.

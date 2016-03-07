@@ -432,7 +432,7 @@ FUNCTION IzvrsBudz()
    IF ci2 == "D"
       // izvjestaj 2
 
-      // struktura tro�kova po vrstama
+      // struktura troskova po vrstama
 
       F10CPI
       B_ON

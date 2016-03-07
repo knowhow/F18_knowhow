@@ -78,9 +78,9 @@ FUNCTION program_module_menu( arg_v )
    LOCAL _user_roles := f18_user_roles_info()
    LOCAL _server_db_version := get_version_str( server_db_version() )
    LOCAL _tmp
-   //LOCAL cOldColors
+   LOCAL cOldColors
 
-   //cOldColors := SetColor( F18_COLOR_ORGANIZACIJA )
+   cOldColors := SetColor( F18_COLOR_ORGANIZACIJA )
 
    info_bar( "init", "gen program_module_menu start" )
    IF arg_v == NIL
@@ -125,7 +125,8 @@ FUNCTION program_module_menu( arg_v )
 
       mnu_choice := Achoice2( mnu_top, mnu_left, mnu_bottom, mnu_right, menuop, .T., "MenuFunc", 1 )
 
-      //SetColor( cOldColors )
+      SetColor( cOldColors )
+      
       DO CASE
       CASE mnu_choice == 0
 

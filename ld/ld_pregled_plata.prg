@@ -184,7 +184,7 @@ FUNCTION pregled_plata()
 
    DO WHILE !Eof() .AND.  cGodina == godina .AND. idrj = cidrj .AND. cMjesec = mjesec .AND. !( lViseObr .AND. !Empty( cObracun ) .AND. obr <> cObracun )
 
-      ParObr( ld->mjesec, ld->godina, IF( lViseObr, cObracun, ), ld->idrj )
+      ParObr( ld->mjesec, ld->godina, IIF( lViseObr, cObracun, ), ld->idrj )
 
       IF lViseObr .AND. Empty( cObracun )
          ScatterS( godina, mjesec, idrj, idradn )
@@ -193,19 +193,20 @@ FUNCTION pregled_plata()
       ENDIF
 
       SELECT radn
-      HSEEK _idradn
+      HSEEK _u( _idradn )
+
       SELECT vposla
       HSEEK _idvposla
       SELECT kbenef
       HSEEK vposla->idkbenef
       SELECT ld
 
-      IF !Empty( cvposla ) .AND. cvposla <> Left( _idvposla, 2 )
+      IF !Empty( cVposla ) .AND. cVposla <> Left( _idvposla, 2 )
          SKIP
          LOOP
       ENDIF
 
-      IF !Empty( ckbenef ) .AND. ckbenef <> kbenef->id
+      IF !Empty( cKbenef ) .AND. cKbenef <> kbenef->id
          SKIP
          LOOP
       ENDIF
@@ -243,10 +244,6 @@ FUNCTION pregled_plata()
          ENDIF
       NEXT
 
-      // if prow()>58+gPStranica
-      // FF
-      // Eval(bZagl)
-      // endif
 
       cRTipRada := ""
       nPrKoef := 0
@@ -258,7 +255,7 @@ FUNCTION pregled_plata()
 
       SELECT ld
 
-      cRTipRada := g_tip_rada( ld->idradn, ld->idrj )
+      cRTipRada := g_tip_rada( _u( _idradn ), ld->idrj )
       nPrKoef := radn->sp_koef
       cOpor := radn->opor
       cTrosk := radn->trosk
@@ -284,7 +281,7 @@ FUNCTION pregled_plata()
       nDoprIz := u_dopr_iz( nMBO, cRTipRada )
 
       nPorez := 0
-      IF radn_oporeziv( ld->idradn, ld->idrj ) .AND. cRTipRada <> "S"
+      IF radn_oporeziv( _u( _idradn ), ld->idrj ) .AND. cRTipRada <> "S"
          nPorez := izr_porez( nBrOsn - nDoprIz - nLicOdb, "B" )
       ENDIF
 
@@ -293,7 +290,7 @@ FUNCTION pregled_plata()
 
       SELECT ld
 
-      ? Str( ++nRbr, 4 ) + ".", idradn, RADNIK
+      ? Str( ++nRbr, 4 ) + ".", _u( _idradn ), RADNIK_PREZ_IME
       nC1 := PCol() + 1
 
       @ PRow(), PCol() + 1 SAY _usati PICT gpics

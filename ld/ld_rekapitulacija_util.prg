@@ -1055,7 +1055,7 @@ FUNCTION napr_obracun( lSvi, a_benef )
       PopuniOpsLD()
 
       IF RADN->isplata == "TR"  // isplata na tekuci racun
-         Rekapld( "IS_" + RADN->idbanka, nGodina, nMjesecDo, _UIznos, 0, RADN->idbanka, RADN->brtekr, RADNIK, .T. )
+         Rekapld( "IS_" + RADN->idbanka, nGodina, nMjesecDo, _UIznos, 0, RADN->idbanka, RADN->brtekr, RADNIK_PREZ_IME, .T. )
       ENDIF
 
       SELECT ld
@@ -1272,7 +1272,7 @@ FUNCTION IspisKred( lSvi )
                HSEEK cIdRadnKR
 
                SELECT RADKR
-               cOpis2 := RADNIK
+               cOpis2 := RADNIK_PREZ_IME
                nUkKrRad := 0
 
                DO WHILE !Eof() .AND. IDKRED == cIdKred .AND. cNaOsnovu == NAOSNOVU .AND. cIdRadnKR == IDRADN
@@ -1358,8 +1358,8 @@ FUNCTION IspisKred( lSvi )
             SELECT radn
             HSEEK radkr->idradn
             SELECT radkr
-            // TODO: ovdje je stajalo RADNIK, takvo polje ne postoji
-            cOpis2 := "RADNIK"
+    
+            cOpis2 := RADNIK_PREZ_IME
             SEEK cidkred + cnaosnovu
             PRIVATE nUkKred := 0
 

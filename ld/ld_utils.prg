@@ -48,8 +48,8 @@ FUNCTION tr_list()
 FUNCTION g_tip_rada( cRadn, cRj )
 
    LOCAL cTipRada := " "
-   LOCAL nTArea := Select()
 
+   PushWa()
    SELECT ld_rj
    GO TOP
    SEEK cRJ
@@ -60,13 +60,11 @@ FUNCTION g_tip_rada( cRadn, cRj )
 
    IF Empty( cTipRada )
       SELECT radn
-      GO TOP
       SEEK cRadn
       cTipRada := radn->tiprada
    ENDIF
 
-   SELECT ( nTArea )
-
+   PopWa()
    RETURN cTipRada
 
 

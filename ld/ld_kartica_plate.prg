@@ -263,7 +263,7 @@ FUNCTION ZaglKar()
 
    ?U "OBRAČUN PLATE ZA" + Space( 1 ) + Str( mjesec, 2 ) + "/" + Str( godina, 4 ) + " (obr. " + IspisObr() + ")", " ZA " + Upper( Trim( gTS ) ), gNFirma
    ? "RJ:", idrj, ld_rj->naz
-   ? idradn, "-", RADNIK, "  Mat.br:", radn->matbr
+   ? idradn, "-", RADNIK_PREZ_IME, "  Mat.br:", radn->matbr
    ShowHiredFromTo( radn->hiredfrom, radn->hiredto, "" )
    ? _l( "Radno mjesto:" ), radn->rmjesto, "  STR.SPR:", IDSTRSPR
    ? _l( "Vrsta posla:" ), idvposla, vposla->naz, "         Radi od:", radn->datod

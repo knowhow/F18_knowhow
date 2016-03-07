@@ -205,7 +205,7 @@ FUNCTION ld_pregled_plata_za_period()
    BoxC()
 
    IF LastKey() == K_ESC
-      RETURN
+      RETURN .F.
    ENDIF
 
    SELECT ld
@@ -224,7 +224,7 @@ FUNCTION ld_pregled_plata_za_period()
          cDoprPio, cDoprZdr, cDoprNez, cDoprD4, cDoprD5, cDoprD6, cOpcStan, cKanton )
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 

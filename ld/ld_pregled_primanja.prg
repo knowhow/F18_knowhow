@@ -214,7 +214,7 @@ FUNCTION ld_pregled_primanja()
          ENDIF
 
          IF _i&cTip <> 0 .OR. _s&cTip <> 0
-            ? Str( ++nRbr, 4 ) + ".", idradn, RADNIK
+            ? Str( ++nRbr, 4 ) + ".", idradn, RADNIK_PREZ_IME
             nC1 := PCol() + 1
             IF lKredit .AND. !Empty( cSifKred )
                @ PRow(), PCol() + 1 SAY RADKR->naosnovu

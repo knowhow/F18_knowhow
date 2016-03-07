@@ -150,7 +150,7 @@ FUNCTION ld_specifikacija_neto_primanja_po_opcinama()
             Eval( bZagl )
          ENDIF
 
-         ? Str( ++nRbr, 4 ) + ".", idradn, RADNIK
+         ? Str( ++nRbr, 4 ) + ".", idradn, RADNIK_PREZ_IME
          nC1 := PCol() + 1
          @ PRow(), PCol() + 1 SAY _usati  PICT gpics
          @ PRow(), PCol() + 1 SAY _uneto  PICT gpici

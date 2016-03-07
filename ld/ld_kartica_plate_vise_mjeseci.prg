@@ -307,7 +307,7 @@ STATIC FUNCTION zaglavlje_izvjestaja()
    ?? " ZA " + Upper( Trim( gTs ) )
    ?? " " + AllTrim( gNFirma )
    ? "RJ: " + idrj + " " + AllTrim( ld_rj->naz )
-   ? idradn + "-" + RADNIK + " Mat.br: " + radn->matbr + " STR.SPR: " + idstrspr
+   ? idradn + "-" + RADNIK_PREZ_IME + " Mat.br: " + radn->matbr + " STR.SPR: " + idstrspr
    ? "Vrsta posla: " + idvposla + "-" + AllTrim( vposla->naz )
    ?? "   U radnom odnosu od: "  + DToC( radn->datod )
 

@@ -745,7 +745,7 @@ FUNCTION ld_lista_kredita()
          SELECT radkr
 
          ?
-         ? Str( ++nRbr, 4 ) + ".", cIdRadn, RADNIK
+         ? Str( ++nRbr, 4 ) + ".", cIdRadn, RADNIK_PREZ_IME
 
          IF cRateDN == "D"
             ?? " Osnov:", cOsn, Replicate( "_", 11 )

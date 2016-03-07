@@ -836,7 +836,7 @@ STATIC FUNCTION _ld_calc_totals( lSvi, a_benef )
       PopuniOpsLD()
 
       IF RADN->isplata == "TR"  // isplata na tekuci racun
-         cOpis2 := RADNIK
+         cOpis2 := RADNIK_PREZ_IME
          Rekapld( "IS_" + RADN->idbanka, nGodina, nMjesecDo, _UIznos, 0, RADN->idbanka, RADN->brtekr, cOpis2, .T. )
       ENDIF
 

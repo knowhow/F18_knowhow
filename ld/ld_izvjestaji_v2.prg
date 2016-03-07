@@ -137,7 +137,7 @@ FUNCTION ld_pregled_primanja_za_period()
       ENDDO
 
       IF wi&cTip <> 0 .OR. ws&cTip <> 0
-         ? Str( ++nRbr, 4 ) + ".", cidradn, RADNIK
+         ? Str( ++nRbr, 4 ) + ".", cIdradn, RADNIK_PREZ_IME
          nC1 := PCol() + 1
          IF tippr->fiksan == "P"
             @ PRow(), PCol() + 1 SAY ws&cTip  PICT "999.99"

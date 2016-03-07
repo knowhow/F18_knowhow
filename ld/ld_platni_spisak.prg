@@ -198,7 +198,7 @@ FUNCTION ld_platni_spisak()
          // Eval(bZagl)
          // endif
 
-         ? Str( ++nRbr, 4 ) + ".", idradn, RADNIK
+         ? Str( ++nRbr, 4 ) + ".", idradn, RADNIK_PREZ_IME
 
          nC1 := PCol() + 1
          IF nIznosTO <> 0
@@ -497,7 +497,7 @@ FUNCTION ld_platni_spisak_tekuci_racun( cVarijanta )
          // FF
          // endif
 
-         ? Str( ++nRbr, 4 ) + ".", idradn, radn->matbr, RADNIK
+         ? Str( ++nRbr, 4 ) + ".", idradn, radn->matbr, RADNIK_PREZ_IME
 
          IF cZaBanku == "D"
             cZaBnkRadnik := FormatSTR( AllTrim( RADNZABNK ), 40 )
@@ -831,7 +831,7 @@ FUNCTION ld_pregled_isplate_za_tekuci_racun( cVarijanta )
          // Eval(bZagl)
          // endif
 
-         ? Str( ++nRbr, 4 ) + ".", idradn, RADNIK
+         ? Str( ++nRbr, 4 ) + ".", idradn, RADNIK_PREZ_IME
          cZaBnkRadnik := FormatSTR( RADNZABNK, 40 )
 
          nC1 := PCol() + 1

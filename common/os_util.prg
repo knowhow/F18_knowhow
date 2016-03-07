@@ -389,7 +389,7 @@ FUNCTION f18_open_document( document )
 #ifdef __PLATFORM__LINUX
    _ret := __run_system( _prefix + document + "&" )
 #else
-   _ret := hb_processRun( _prefix + document, NIL, NIL, NIL )
+   _ret := hb_processRun( _prefix + document )
 #endif
 
    RETURN _ret

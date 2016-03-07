@@ -142,8 +142,7 @@ FUNCTION ld_rekapitulacija( lSvi )
       nDSGusto := 0
    ENDIF
 
-   // samo pozicionira bazu PAROBR na odgovarajuci zapis
-   ParObr( nMjesec, nGodina, cObracun, iif( !lSvi, cIdRj, ) )
+   ParObr( nMjesec, nGodina, cObracun, iif( !lSvi, cIdRj, ) )  //  pozicionira bazu PAROBR na odgovarajuci zapis
 
    PRIVATE aRekap[ cLDPolja, 2 ]
 
@@ -209,7 +208,7 @@ FUNCTION ld_rekapitulacija( lSvi )
    ?? cNaslovRekap
    B_OFF
 
-   IF !Empty( cstrspr )
+   IF !Empty( cStrSpr )
       ??U Space( 1 ) + "za radnike stručne spreme" + Space( 1 ), cStrSpr
    ENDIF
 
@@ -346,11 +345,11 @@ FUNCTION ld_rekapitulacija( lSvi )
 
    ? cMainLine
    ? "6. UKUPNA NETO PLATA"
-   @ PRow(), 60 SAY nNetoIspl PICT gpici
+   @ PRow(), 60 SAY nNetoIspl PICT gPici
 
    ? cMainLine
    ?U "7. OSNOVICA ZA OBRAČUN OSTALIH NAKNADA (6)"
-   @ PRow(), 60 SAY nNetoIspl PICT gpici
+   @ PRow(), 60 SAY nNetoIspl PICT gPici
    ? cMainLine
 
    obr_porez( @nPor, @nPor2, @nPorOps, @nPorOps2, @nUPorOl, "R" )
@@ -365,9 +364,9 @@ FUNCTION ld_rekapitulacija( lSvi )
    ? cMainLine
    ? "8. UKUPNO ODBICI/NAKNADE IZ PLATE:"
    ? "             ODBICI:"
-   @ PRow(), 60 SAY nUOdbiciM PICT gpici
+   @ PRow(), 60 SAY nUOdbiciM PICT gPici
    ? "     OSTALE NAKNADE:"
-   @ PRow(), 60 SAY nUOdbiciP PICT gpici
+   @ PRow(), 60 SAY nUOdbiciP PICT gPici
    ? cMainLine
 
    ? cMainLine
@@ -376,7 +375,7 @@ FUNCTION ld_rekapitulacija( lSvi )
    ELSE
       ?U "9. UKUPNO ZA ISPLATU (bruto-dopr-porez+odbici+naknade):"
    ENDIF
-   @ PRow(), 60 SAY nUZaIspl PICT gpici
+   @ PRow(), 60 SAY nUZaIspl PICT gPici
    ? cMainLine
 
    ?
@@ -430,7 +429,7 @@ FUNCTION ld_rekapitulacija( lSvi )
       nUSati := 999999
    ENDIF
 
-   ?U "Prosječni neto/satu je ", AllTrim( Transform( nNetoIspl, gpici ) ), "/", AllTrim( Str( nUSati ) ), "=", AllTrim( Transform( nNetoIspl / nUsati, gpici ) ), "*", AllTrim( Transform( parobr->k1, "999" ) ), "=", AllTrim( Transform( nNetoIspl / nUsati * parobr->k1, gpici ) )
+   ?U "Prosječni neto/satu je ", AllTrim( Transform( nNetoIspl, gPici ) ), "/", AllTrim( Str( nUSati ) ), "=", AllTrim( Transform( nNetoIspl / nUsati, gpici ) ), "*", AllTrim( Transform( parobr->k1, "999" ) ), "=", AllTrim( Transform( nNetoIspl / nUsati * parobr->k1, gpici ) )
 
 
    P_12CPI
@@ -451,6 +450,7 @@ FUNCTION ld_rekapitulacija( lSvi )
 
    ENDPRINT
 
+altd()
    IF f18_use_module( "virm" ) .AND. Pitanje(, "Generisati virmane za ovaj obračun plate ? (D/N)", "N" ) == "D"
       virm_set_global_vars()
       set_metric( "virm_godina", my_user(), nGodina )

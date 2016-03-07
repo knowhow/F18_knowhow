@@ -83,14 +83,11 @@ FUNCTION get_ral( nTick )
 
    BoxC()
 
-altd()
    SELECT ral
-   GO TOP
    SEEK Str( nRal, 5, 0) + Str( nTick, 2, 0)
 
    IF !Found()
-      GO TOP
-      SEEK Str( nRal, 5 )
+      SEEK Str( nRal, 5, 0 )
 
       IF !Found()
          sif_ral( @nRal )

@@ -336,8 +336,9 @@ altd()
    ?E " set font_name: ", hb_gtInfo( HB_GTI_FONTNAME, font_name() )
    ?E " set font_size: ", hb_gtInfo( HB_GTI_FONTSIZE, font_size() )
    ?E " set font_width: ", hb_gtInfo( HB_GTI_FONTWIDTH, font_width() )
+#ifdef __PLATFORM__LINUX
    ?E " set font_weight: ", hb_gtInfo( HB_GTI_FONTWEIGHT, HB_GTI_FONTW_BOLD )
-
+#endif
 
    // Alert( hb_ValToStr( hb_gtInfo( HB_GTI_DESKTOPROWS ) ) + " / " + hb_ValToStr( hb_gtInfo( HB_GTI_DESKTOPCOLS ) ) )
    // hb_gtInfo( HB_GTI_ISFULLSCREEN, .T. )

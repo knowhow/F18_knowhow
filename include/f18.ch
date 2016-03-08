@@ -90,6 +90,7 @@
 */
 
 
+#define D_ZELITE_LI_IZBRISATI_PRIPREMU "Želite li izbrisati pripremu !?"
 
 
 #define F18_COLOR_P1               "GR+/N"

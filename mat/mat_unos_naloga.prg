@@ -554,7 +554,7 @@ FUNCTION mat_pripr_key_handler()
 
    CASE Ch == K_CTRL_F9
 
-      IF Pitanje(, "Zelite li izbrisati pripremu !!????", "N" ) == "D"
+      IF Pitanje(, D_ZELITE_LI_IZBRISATI_PRIPREMU, "N" ) == "D"
          my_dbf_zap()
          mat_brisi_pbaze()
       ENDIF

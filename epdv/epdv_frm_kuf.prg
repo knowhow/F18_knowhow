@@ -215,7 +215,7 @@ STATIC FUNCTION epdv_kuf_key_handler()
 
    CASE ( Ch  == K_CTRL_F9 )
 
-      IF Pitanje( , "Želite li izbrisati pripremu (D/N) ?", "N" ) == "D"
+      IF Pitanje( , D_ZELITE_LI_IZBRISATI_PRIPREMU, "N" ) == "D"
          my_dbf_zap()
          RETURN DE_REFRESH
       ENDIF

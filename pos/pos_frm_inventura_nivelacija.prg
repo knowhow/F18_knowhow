@@ -313,7 +313,7 @@ FUNCTION InventNivel()
 
          ELSEIF i == 3
 
-            IF Pitanje(, "Sigurno želite izbrisati pripremu dokumenta (D/N) ?", "N" ) == "D"
+            IF Pitanje(, D_ZELITE_LI_IZBRISATI_PRIPREMU, "N" ) == "D"
 
                SELECT PRIPRZ
                my_dbf_zap()

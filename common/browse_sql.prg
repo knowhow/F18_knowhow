@@ -731,7 +731,7 @@ FUNCTION browse_brisi_stavku( lPack )
 
 FUNCTION browse_brisi_pripremu()
 
-   IF Pitanje(, "Želite li izbrisati pripremu !!????", "N" ) == "D"
+   IF Pitanje(, D_ZELITE_LI_IZBRISATI_PRIPREMU, "N" ) == "D"
       my_dbf_zap()
       RETURN DE_REFRESH
    ENDIF

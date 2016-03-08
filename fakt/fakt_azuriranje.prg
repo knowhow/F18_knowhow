@@ -649,7 +649,7 @@ FUNCTION fakt_brisanje_pripreme()
    LOCAL _id_firma, _tip_dok, _br_dok
    LOCAL oAtrib
 
-   IF Pitanje(, "Želite li izbrisati pripremu !!????", "N" ) == "D"
+   IF Pitanje(, D_ZELITE_LI_IZBRISATI_PRIPREMU, "N" ) == "D"
 
       SELECT fakt_pripr
       GO TOP

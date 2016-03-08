@@ -23,7 +23,7 @@ FUNCTION set_sql_search_path()
    _result := _server:Query( _qry )
 
    IF sql_error_in_query( _result )
-      MsgBeep( "ERR?! :" + _qry )
+      ?E "ERR?! :" + _qry
       RETURN .F.
    ELSE
       log_write( "set_sql_search path ok", 9 )
@@ -110,7 +110,7 @@ FUNCTION is_var_objekat_tipa( xVar, cClassName )
 
 FUNCTION sql_error_in_query( oQry )
 
-   IF !is_var_objekat_tpquery()
+   IF !is_var_objekat_tpquery( oQry )
        RETURN .T.
    ENDIF
    RETURN  ( oQry:NetErr() ) .AND. !Empty( oQry:ErrorMsg() )

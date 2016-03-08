@@ -181,11 +181,11 @@ STATIC FUNCTION show_sacekaj()
 
    CLEAR SCREEN
 
-   //_txt := PadC( ". . .  S A Č E K A J T E    T R E N U T A K  . . .", _y )
-   //@ _x, 2 SAY8 _txt
+   // _txt := PadC( ". . .  S A Č E K A J T E    T R E N U T A K  . . .", _y )
+   // @ _x, 2 SAY8 _txt
 
-   //_txt := PadC( ". . . . . . k o n e k c i j a    n a    b a z u   u   t o k u . . . . . . .", _y )
-   //@ _x + 1, 2 SAY8 _txt
+   // _txt := PadC( ". . . . . . k o n e k c i j a    n a    b a z u   u   t o k u . . . . . . .", _y )
+   // @ _x + 1, 2 SAY8 _txt
 
 
    naslovni_ekran_splash_screen( "F18", F18_VER )
@@ -253,7 +253,7 @@ FUNCTION set_screen_dimensions()
 
    _msg := "screen res: " + AllTrim( to_str( _pix_width ) ) + " " + AllTrim( to_str( _pix_height ) ) + " varijanta: "
 
-altd()
+   AltD()
    IF _pix_width == NIL
 
       maxrows( 40 - INFO_BAR_ROWS )
@@ -346,23 +346,25 @@ altd()
    hb_gtInfo( HB_GTI_RESIZEMODE, HB_GTI_RESIZEMODE_ROWS )
 
 
-   //IF SetMode( maxrows() + INFO_BAR_ROWS,  maxcols() )
-  //    ?E "setovanje ekrana: setovan ekran po rezoluciji", maxrows(), maxcols()
-   //ELSE
+   IF SetMode( maxrows( hb_gtInfo( HB_GTI_DESKTOPROWS ) - 2 - INFO_BAR_ROWS ) + INFO_BAR_ROWS,  ;
+         maxcols( hb_gtInfo( HB_GTI_DESKTOPCOLS ) - 5 ) )
 
-      // pGt := hb_gtCreate( f18_gt() )
-      // hb_gtSelect( pGt )
+
+      // IF SetMode( maxrows() + INFO_BAR_ROWS,  maxcols() )
+      ?E "setovanje ekrana: setovan ekran po rezoluciji", maxrows(), maxcols()
+   ELSE
+      // linux nece od prve!?
       SetMode( maxrows( hb_gtInfo( HB_GTI_DESKTOPROWS ) - 2 - INFO_BAR_ROWS ) + INFO_BAR_ROWS,  ;
-           maxcols( hb_gtInfo( HB_GTI_DESKTOPCOLS ) - 5) )
+         maxcols( hb_gtInfo( HB_GTI_DESKTOPCOLS ) - 5 ) )
       ?E "setovanje ekrana/2 "
       RETURN .F.
-   //ENDIF
+   ENDIF
 
 
-      ?E " get font_name: ", hb_gtInfo( HB_GTI_FONTNAME )
-      ?E " get font_size: ", hb_gtInfo( HB_GTI_FONTSIZE )
-      ?E " get font_width: ", hb_gtInfo( HB_GTI_FONTWIDTH )
-      ?E " get font_weight: ", hb_gtInfo( HB_GTI_FONTWEIGHT )
+   ?E " get font_name: ", hb_gtInfo( HB_GTI_FONTNAME )
+   ?E " get font_size: ", hb_gtInfo( HB_GTI_FONTSIZE )
+   ?E " get font_width: ", hb_gtInfo( HB_GTI_FONTWIDTH )
+   ?E " get font_weight: ", hb_gtInfo( HB_GTI_FONTWEIGHT )
 
    hb_gtInfo( HB_GTI_ALTENTER, .T. )
 
@@ -595,7 +597,7 @@ FUNCTION maxrows( x )
       __max_rows := x
    ENDIF
 
-  RETURN  max( hb_gtInfo( HB_GTI_VIEWMAXHEIGHT) - INFO_BAR_ROWS, __max_rows)
+   RETURN  Max( hb_gtInfo( HB_GTI_VIEWMAXHEIGHT ) - INFO_BAR_ROWS, __max_rows )
 
 
 
@@ -605,7 +607,7 @@ FUNCTION maxcols( x )
       __max_cols := x
    ENDIF
 
-   RETURN MAX( hb_gtInfo( HB_GTI_VIEWMAXWIDTH ), __max_cols )
+   RETURN Max( hb_gtInfo( HB_GTI_VIEWMAXWIDTH ), __max_cols )
 
 
 

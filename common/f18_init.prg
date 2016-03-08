@@ -338,10 +338,6 @@ altd()
    ?E " set font_width: ", hb_gtInfo( HB_GTI_FONTWIDTH, font_width() )
    ?E " set font_weight: ", hb_gtInfo( HB_GTI_FONTWEIGHT, HB_GTI_FONTW_BOLD )
 
-   ?E " get font_name: ", hb_gtInfo( HB_GTI_FONTNAME )
-   ?E " get font_size: ", hb_gtInfo( HB_GTI_FONTSIZE )
-   ?E " get font_width: ", hb_gtInfo( HB_GTI_FONTWIDTH )
-   ?E " get font_weight: ", hb_gtInfo( HB_GTI_FONTWEIGHT )
 
    // Alert( hb_ValToStr( hb_gtInfo( HB_GTI_DESKTOPROWS ) ) + " / " + hb_ValToStr( hb_gtInfo( HB_GTI_DESKTOPCOLS ) ) )
    // hb_gtInfo( HB_GTI_ISFULLSCREEN, .T. )
@@ -356,10 +352,17 @@ altd()
 
       // pGt := hb_gtCreate( f18_gt() )
       // hb_gtSelect( pGt )
-      SetMode( hb_gtInfo( HB_GTI_DESKTOPROWS ) - 3,  hb_gtInfo( HB_GTI_DESKTOPCOLS ) - 5 )
-      ?E "setovanje ekrana: ne mogu setovati ekran po trazenoj rezoluciji !"
+      SetMode( maxrows( hb_gtInfo( HB_GTI_DESKTOPROWS ) - 2 - INFO_BAR_ROWS ) + INFO_BAR_ROWS,  ;
+           maxcols( hb_gtInfo( HB_GTI_DESKTOPCOLS ) - 5) )
+      ?E "setovanje ekrana/2 "
       RETURN .F.
    ENDIF
+
+
+      ?E " get font_name: ", hb_gtInfo( HB_GTI_FONTNAME )
+      ?E " get font_size: ", hb_gtInfo( HB_GTI_FONTSIZE )
+      ?E " get font_width: ", hb_gtInfo( HB_GTI_FONTWIDTH )
+      ?E " get font_weight: ", hb_gtInfo( HB_GTI_FONTWEIGHT )
 
    hb_gtInfo( HB_GTI_ALTENTER, .T. )
 

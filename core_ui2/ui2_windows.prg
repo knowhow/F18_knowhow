@@ -14,12 +14,12 @@
 STATIC s_nMainWindow
 
 
-FUNCTION main_window()
+FUNCTION open_main_window()
 
    IF s_nMainWindow != NIL
       WClose( s_nMainWindow )
    ENDIF
    s_nMainWindow := WOpen( 0, 0, MaxRow(), MaxCol() )
    WSelect( s_nMainWindow )
-   
+
    RETURN s_nMainWindow

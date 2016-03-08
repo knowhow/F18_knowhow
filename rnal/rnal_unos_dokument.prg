@@ -94,11 +94,7 @@ STATIC FUNCTION _document()
          m_y -= ( __dok_x * 2 )
 
          // prikazi naslov tabele
-         _say_tbl_desc( m_x + 1, ;
-            m_y + 1, ;
-            cCol2, ;
-            "*** osnovni podaci", ;
-            20 )
+         _say_tbl_desc( m_x + 1, m_y + 1, cCol2,  "*** osnovni podaci", 20 )
 
          docs_kol( @ImeKol, @Kol )
 

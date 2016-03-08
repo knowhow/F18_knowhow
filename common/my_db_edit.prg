@@ -57,7 +57,6 @@ FUNCTION my_db_edit( cImeBoxa, xw, yw, bUserF, cMessTop, cMessBot, lInvert, ;
    PRIVATE  bDoleRed := NIL
    PRIVATE  bDodajRed := NIL
 
-
    PRIVATE  fTBNoviRed := .F. // trenutno smo u novom redu ?
    PRIVATE  TBCanClose := .T. // da li se moze zavrsiti unos podataka ?
 
@@ -72,6 +71,12 @@ FUNCTION my_db_edit( cImeBoxa, xw, yw, bUserF, cMessTop, cMessBot, lInvert, ;
 
    PRIVATE  TBSkipBlock := {| nSkip| SkipDB( nSkip, @nTBLine ) }
 
+   IF ! HB_ISNUMERIC( xw )
+       RaiseError( "xw not number" )
+   ENDIF
+   IF ! HB_ISNUMERIC( yw )
+       RaiseError( "yw not number" )
+   ENDIF
 
    IF skipblock <> NIL // ovo je zadavanje skip bloka kroz parametar
       TBSkipBlock := skipblock
@@ -262,7 +267,8 @@ FUNCTION create_tbrowsedb( params, lIzOBJDB )
    @ m_x + 1, m_y + params[ "yw" ] - 6    SAY Str( my_reccount(), 5 )
 
 
-   TB := TBrowseDB( m_x + 2 + iif( _rows_prazno > 4, 1, _rows_prazno ), m_y + 1, ( m_x + _rows ) - _rows_poruke, m_y + _width )
+   TB := TBrowseDB( m_x + 2 + iif( _rows_prazno > 4, 1, _rows_prazno ), m_y + 1,;
+                    ( m_x + _rows ) - _rows_poruke, m_y + _width )
 
    IF TBSkipBlock <> NIL
       Tb:skipBlock := TBSkipBlock

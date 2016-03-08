@@ -309,7 +309,7 @@ FUNCTION f18_run( cmd, hOutput, always_ok, async )
    ENDIF
 
    IF async == NIL
-      async := .F. // najcesce mi zelimo da okinemo eksternu komandu i nastavimo rad
+      async := .F. // najcesce zelimo da okinemo eksternu komandu i nastavimo rad
    ENDIF
 
 
@@ -318,40 +318,44 @@ FUNCTION f18_run( cmd, hOutput, always_ok, async )
 #else
    _ret := hb_processRun( cmd, NIL, @cStdOut, @cStdErr, async )
 #endif
+   ?E cmd, _ret, "stdout:", cStdOut, "stderr:", cStdErr
 
-   IF _ret <> 0
+   IF _ret == 0
+      info_bar( "run1", cmd + " : " + cStdOut + "/" + cStdErr )
+   ELSE
+      error_bar( "run1", cmd + cStdOut + "/" + cStdErr )
 
-#ifdef __PLATFORM__WINDOWS
-      _prefix := "c:\knowhowERP\util\start.exe /m "
-#else
-#ifdef __PLATFORM__DARWIN
-      _prefix := "open "
-#else
-      _prefix := "xdg-open "
-#endif
-#endif
-
-      IF Left( cmd, 4 ) == "java"
-         _prefix := ""
-      ENDIF
+      _prefix := get_run_prefix( cmd )
 
 #ifdef __PLATFORM__LINUX
       IF async
          _ret := __run_system( _prefix + cmd + "&" )
       ELSE
-         _ret := hb_processRun( _prefix + cmd, NIL, @cStdOut, @cStdErr, async )
+         _ret := hb_processRun( _prefix + cmd, NIL, @cStdOut, @cStdErr )
       ENDIF
 #else
       _ret := hb_processRun( _prefix + cmd, NIL, @cStdOut, @cStdErr, async )
-      IF _ret <> 0 // npr. copy komanda trazi system run a ne hbprocess run
-         _ret := __run_system( cmd )
-      ENDIF
 #endif
+      ?E cmd, _ret, "stdout:", cStdOut, "stderr:", cStdErr
 
-      IF _ret <> 0 .AND. !always_ok
-         _msg := "ERR run cmd:"  + cmd
-         log_write( _msg, 2 )
-         MsgBeep( _msg )
+
+      IF _ret == 0
+         info_bar( "run2", _prefix + cmd + " : " + cStdOut + "/" + cStdErr )
+      ELSE
+         error_bar( "run2", _prefix + cmd + " : " + cStdOut + "/" + cStdErr )
+
+         _ret := __run_system( cmd )  // npr. copy komanda trazi system run a ne hbprocess run
+         ?E cmd, _ret, "stdout:", cStdOut, "stderr:", cStdErr
+         IF _ret <> 0 .AND. !always_ok
+
+            error_bar( "run3", cmd + " : " + cStdOut + "/" + cStdErr )
+            _msg := "ERR run cmd: "  + cmd + " : " + cStdOut + "/" + cStdErr
+            log_write( _msg, 2 )
+         ELSE
+            info_bar( "run3", cmd + " : " + cStdOut + "/" + cStdErr )
+
+         ENDIF
+
       ENDIF
 
    ENDIF
@@ -362,6 +366,26 @@ FUNCTION f18_run( cmd, hOutput, always_ok, async )
    ENDIF
 
    RETURN _ret
+
+FUNCTION get_run_prefix( cCmd )
+
+   LOCAL _prefix
+#ifdef __PLATFORM__WINDOWS
+
+   _prefix := "c:\knowhowERP\util\start.exe /m "
+#else
+#ifdef __PLATFORM__DARWIN
+   _prefix := "open "
+#else
+   _prefix := "xdg-open "
+#endif
+#endif
+
+   IF Left( cCmd, 4 ) == "java"
+      _prefix := ""
+   ENDIF
+
+   RETURN _prefix
 
 
 FUNCTION f18_open_document( document )

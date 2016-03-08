@@ -288,14 +288,14 @@ altd()
       font_name( "Ubuntu Mono" )
       font_size( 24 )
       font_width( 12 )
-      maxrows( 35 - INFO_BAR_ROWS )
+      maxrows( 33 - INFO_BAR_ROWS )
       maxcols( 110 )
       ?E _msg + "2longMac"
 #else
 
       font_size( 24 )
       font_width( 12 )
-      maxrows( 35 - INFO_BAR_ROWS )
+      maxrows( 33 - INFO_BAR_ROWS )
       maxcols( 105 )
       ?E _msg + "2long"
 #endif

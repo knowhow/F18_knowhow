@@ -357,7 +357,6 @@ FUNCTION set_screen_dimensions()
       SetMode( maxrows( hb_gtInfo( HB_GTI_DESKTOPROWS ) - 2 - INFO_BAR_ROWS ) + INFO_BAR_ROWS,  ;
          maxcols( hb_gtInfo( HB_GTI_DESKTOPCOLS ) - 5 ) )
       ?E "setovanje ekrana/2 "
-      RETURN .F.
    ENDIF
 
 

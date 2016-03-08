@@ -33,6 +33,7 @@ altd()
 
    nWin := WOpen( nXStart, nYStart, nXStart + 20, nYStart + 70 )
    WBox()
+
    WSelect( nWin )
    //WBoard( 5, 5, 20, 75 )
    //WMode( .T., .T., .T., .T. )
@@ -56,7 +57,9 @@ altd()
 
   Inkey( 5 )
 
-  WSelect( main_window() )
+  WClose( nWin )
+
+  open_main_window()
 
 #ifdef F18_DEBUG
    Alert( "maxrow: " + hb_valToStr(MaxRow()) + " maxcol: " + hb_valToStr(MaxCol()) )

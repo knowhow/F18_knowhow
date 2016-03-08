@@ -20,5 +20,6 @@ FUNCTION main_window()
       WClose( s_nMainWindow )
    ENDIF
    s_nMainWindow := WOpen( 0, 0, MaxRow(), MaxCol() )
-
+   WSelect( s_nMainWindow )
+   
    RETURN s_nMainWindow

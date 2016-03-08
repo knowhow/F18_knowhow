@@ -12,5 +12,7 @@ function usage() {
 F18_TYPE=$1
 F18_VER=$2
 
+git pull
+
 ./build.sh && scripts/build_gz.sh $F18_VER && scripts/push_to_downloads.sh F18_${F18_TYPE}_${F18_VER}.gz 
 

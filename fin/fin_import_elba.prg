@@ -53,7 +53,6 @@ FUNCTION import_elba( cTxt )
    O_FIN_PRIPR
    O_NALOG
 
-   AltD()
 
    s_cDelimiter := Chr( 9 ) // delimiter je TAB
    s_cKtoKupac := get_konto_rule_elba_c3( "KTO_KUPAC" ) // kupac konto
@@ -194,7 +193,6 @@ STATIC FUNCTION process_elba_items( cTxt, cImpView )
    Box( , 22, 90 )
 
    @ m_x + 1, m_y + 2 SAY8 "Vršim import podataka u pripremu ..." COLOR "BG+/B"
-   AltD()
 
    DO WHILE oFile:MoreToRead()
 

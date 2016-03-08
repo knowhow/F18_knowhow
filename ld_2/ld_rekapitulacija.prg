@@ -450,7 +450,7 @@ FUNCTION ld_rekapitulacija_sql( lSvi )
 
    ENDPRINT
 
-altd()
+
    IF f18_use_module( "virm" ) .AND. Pitanje(, "Generisati virmane za ovaj obračun plate ? (D/N)", "N" ) == "D"
       virm_set_global_vars()
       set_metric( "virm_godina", my_user(), nGodina )

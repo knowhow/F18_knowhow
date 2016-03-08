@@ -26,9 +26,7 @@ FUNCTION Calc()
    IF s_lInCalculator
       RETURN .F.
    ENDIF
-
-   AltD()
-
+   
    s_lInCalculator := .T.
 
    bKeyOld1 := SetKey( K_ALT_K, {|| Konv() } )

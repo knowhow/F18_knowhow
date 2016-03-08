@@ -501,7 +501,7 @@ STATIC FUNCTION sif_komande( nDbf, cNaslov, bBlok, aZabrane, aZabIsp )
    CASE Ch == K_ENTER
 
 #ifdef F18_DEBUG_BROWSE_SIF
-      AltD()
+      AltD() // F18_DEBUG_BROWSE_SIF
 #endif
 
       IF gMeniSif

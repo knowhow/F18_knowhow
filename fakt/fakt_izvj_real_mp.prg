@@ -41,7 +41,6 @@ FUNCTION fakt_real_maloprodaje()
    fakt_gen_rekapitulacija_mp( _params )
 
    SELECT r_export
-   altd()
    IF Reccount2() == 0
       MsgBeep( "Nema podataka za prikaz !" )
       my_close_all_dbf()

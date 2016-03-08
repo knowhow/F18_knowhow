@@ -233,18 +233,14 @@ STATIC FUNCTION set_print_f_name( f_name )
          cDir := my_home()
       ENDIF
 
-
-      // hb_vfTempFile( @<cFileName>, [ <cDir> ], [ <cPrefix> ], [ <cExt> ], [ <nAttr> ] )
-      IF ( hFile := hb_vfTempFile( @cTempFile, cDir, "F18_rpt_", ".txt" ) ) != NIL
+      IF ( hFile := hb_vfTempFile( @cTempFile, cDir, "F18_rpt_", ".txt" ) ) != NIL // hb_vfTempFile( @<cFileName>, [ <cDir> ], [ <cPrefix> ], [ <cExt> ], [ <nAttr> ] )
          hb_vfClose( hFile )
          f_name := cTempFile
       ELSE
          f_name := OUTF_FILE
       ENDIF
 
-
    ENDIF
-   AltD()
    s_cF18Txt := f_name
 
    RETURN f_name

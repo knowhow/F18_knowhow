@@ -25,7 +25,6 @@ FUNCTION naslovni_ekran_splash_screen( cNaslov, cVer )
    //Alert( F18_COLOR_INVERT )
 
    //@ MAXROWS() / 2 - 10, MAXCOLS() / 2 - 30 SAY ""
-altd()
 
    //WSetShadow( 1 % 8 )
    nXStart := MAXROW() / 2 - 10

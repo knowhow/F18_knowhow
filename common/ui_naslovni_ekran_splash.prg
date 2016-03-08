@@ -26,15 +26,12 @@ FUNCTION naslovni_ekran_splash_screen( cNaslov, cVer )
 
    //@ MAXROWS() / 2 - 10, MAXCOLS() / 2 - 30 SAY ""
 altd()
-   main_window( WOpen( 0, 0, MAXROW(), MAXCOL() ) ) // kompletan screen
 
    //WSetShadow( 1 % 8 )
    nXStart := MAXROW() / 2 - 10
    nYStart := MAXCOL() / 2 - 30
 
    nWin := WOpen( nXStart, nYStart, nXStart + 20, nYStart + 70 )
-
-   WBox()
    WSelect( nWin )
    //WBoard( 5, 5, 20, 75 )
    //WMode( .T., .T., .T., .T. )

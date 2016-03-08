@@ -91,7 +91,6 @@ FUNCTION program_module_menu( arg_v )
    DO WHILE .T.
 
       cOldColors := SetColor( F18_COLOR_ORGANIZACIJA )
-      set_screen_dimensions()
       ++ _count
       CLEAR SCREEN
       _db_params := my_server_params()

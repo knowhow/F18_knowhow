@@ -253,7 +253,6 @@ FUNCTION set_screen_dimensions()
 
    _msg := "screen res: " + AllTrim( to_str( _pix_width ) ) + " " + AllTrim( to_str( _pix_height ) ) + " varijanta: "
 
-   AltD()
    IF _pix_width == NIL
 
       maxrows( 40 - INFO_BAR_ROWS )
@@ -263,7 +262,7 @@ FUNCTION set_screen_dimensions()
          ?E "setovanje ekrana: setovan ekran po rezoluciji"
       ELSE
          ?E "setovanje ekrana: ne mogu setovati ekran po trazenoj rezoluciji !"
-         QUIT_1
+         //QUIT_1
       ENDIF
 
       RETURN .T.
@@ -330,7 +329,6 @@ FUNCTION set_screen_dimensions()
 
    ENDCASE
 
-
    get_screen_resolution_from_config()
 
    ?E " set font_name: ", hb_gtInfo( HB_GTI_FONTNAME, font_name() )
@@ -349,7 +347,6 @@ FUNCTION set_screen_dimensions()
    IF SetMode( maxrows( hb_gtInfo( HB_GTI_DESKTOPROWS ) - 2 - INFO_BAR_ROWS ) + INFO_BAR_ROWS,  ;
          maxcols( hb_gtInfo( HB_GTI_DESKTOPCOLS ) - 5 ) )
 
-
       // IF SetMode( maxrows() + INFO_BAR_ROWS,  maxcols() )
       ?E "setovanje ekrana: setovan ekran po rezoluciji", maxrows(), maxcols()
    ELSE
@@ -365,7 +362,7 @@ FUNCTION set_screen_dimensions()
    ?E " get font_width: ", hb_gtInfo( HB_GTI_FONTWIDTH )
    ?E " get font_weight: ", hb_gtInfo( HB_GTI_FONTWEIGHT )
 
-   hb_gtInfo( HB_GTI_ALTENTER, .T. )
+   //hb_gtInfo( HB_GTI_ALTENTER, .T. )
 
    open_main_window()
 

@@ -93,11 +93,10 @@ FUNCTION run_sql_query( qry, retry )
    RETURN _qry_obj
 
 
-
-FUNCTION is_var_objekat_tpquery( xVar )
+FUNCTION is_var_objekat_tpqserver( xVar )
    RETURN is_var_objekat_tipa( xVar, "TPQServer" )
 
-FUNCTION is_var_objekat_tpquery( xVar )
+FUNCTION is_var_objekat_tpqquery( xVar )
    RETURN is_var_objekat_tipa( xVar, "TPQquery" )
 
 FUNCTION is_var_objekat_tipa( xVar, cClassName )
@@ -111,7 +110,7 @@ FUNCTION is_var_objekat_tipa( xVar, cClassName )
 
 FUNCTION sql_error_in_query( oQry )
 
-   IF !is_var_objekat_tpquery( oQry )
+   IF !is_var_objekat_tpqquery( oQry )
       RETURN .T.
    ENDIF
 

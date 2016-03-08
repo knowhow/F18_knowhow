@@ -551,17 +551,21 @@ FUNCTION count_deleted( nCnt, nDel )
 
    LOCAL oError
 
-   BEGIN SEQUENCE WITH {| err| Break( err ) }
-      SET DELETED OFF
-      SET ORDER TO TAG "DEL"
-      COUNT TO nDel
-      nCnt := RecCount()
-   RECOVER USING  oError
-      ?E "dbf_open_temp_and_count set order to tag DEL ", oError:Description
+   // BEGIN SEQUENCE WITH {| err| Break( err ) }
+   SET DELETED OFF
+   SET ORDER TO TAG "DEL"
+   IF Empty( ordKey() )
       SET DELETED ON
       COUNT TO nCnt
       nDel := 0
-   END SEQUENCE
+   ELSE
+      COUNT TO nDel
+      nCnt := RecCount()
+   ENDIF
+   // RECOVER USING  oError
+   // ?E "dbf_open_temp_and_count set order to tag DEL ", oError:Description
+
+   // END SEQUENCE
 
    RETURN .T.
 

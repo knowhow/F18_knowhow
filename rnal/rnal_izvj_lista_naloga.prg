@@ -476,4 +476,4 @@ FUNCTION lst_vrok_tek_dan()
       f18_email_send( _mail_params, _attach )
    ENDIF
 
-   RETURN
+   RETURN .T.

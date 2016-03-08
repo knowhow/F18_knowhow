@@ -41,7 +41,8 @@ FUNCTION fakt_real_maloprodaje()
    fakt_gen_rekapitulacija_mp( _params )
 
    SELECT r_export
-   IF reccount2() == 0
+   altd()
+   IF Reccount2() == 0
       MsgBeep( "Nema podataka za prikaz !" )
       my_close_all_dbf()
       RETURN .F.
@@ -312,7 +313,7 @@ STATIC FUNCTION fakt_gen_rekapitulacija_mp( params )
          ELSE
             nPPDV := tarifa->opp  // procenat pdv-a
          ENDIF
-         
+
          nKol := field->kolicina
          nRCijen := field->cijena
 

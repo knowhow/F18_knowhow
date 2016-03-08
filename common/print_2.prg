@@ -11,11 +11,12 @@
 
 #include "f18.ch"
 
+THREAD STATIC s_cF18Txt
+
 
 FUNCTION f18_start_print( f_name, print_opt, document_name )
 
-LOCAL cMsg, nI, cLogMsg := ""
-
+   LOCAL cMsg, nI, cLogMsg := ""
 
    IF print_opt == NIL
       print_opt := "V"
@@ -47,7 +48,7 @@ LOCAL cMsg, nI, cLogMsg := ""
    Alert ( cLogMsg )
 #endif
 
-   MsgO( "Priprema izvještaja... (2)" )
+   MsgO( "Priprema tekst izvještaja ..." )
 
    LOG_CALL_STACK cLogMsg
    SetPRC( 0, 0 )
@@ -93,16 +94,13 @@ FUNCTION f18_end_print( f_name, print_opt )
       print_opt := "V"
    ENDIF
 
-   set_print_f_name( @f_name )
+   f_name := get_print_f_name( f_name )
 
    SET DEVICE TO SCREEN
    SET PRINTER OFF
    SET PRINTER TO
    SET CONSOLE ON
 
-   // #ifdef TEST
-   // RETURN
-   // #endif
 
    Tone( 440, 2 )
    Tone( 440, 2 )
@@ -213,23 +211,41 @@ STATIC FUNCTION direct_print_windows( f_name, port_number )
    RETURN .T.
 
 
+STATIC FUNCTION get_print_f_name( f_name )
+
+   IF f_name == nil
+      RETURN s_cF18Txt
+   ENDIF
+
+   RETURN f_name
+
+
 STATIC FUNCTION set_print_f_name( f_name )
 
-   LOCAL _root
+   LOCAL cDir, hFile, cTempFile
 
    IF f_name == NIL
 
-      f_name := OUTF_FILE
 
       IF my_home() == NIL
-         _root := my_home_root() + f_name
+         cDir := my_home_root()
       ELSE
-         _root := my_home() + f_name
+         cDir := my_home()
       ENDIF
 
-      f_name := _root
+
+      // hb_vfTempFile( @<cFileName>, [ <cDir> ], [ <cPrefix> ], [ <cExt> ], [ <nAttr> ] )
+      IF ( hFile := hb_vfTempFile( @cTempFile, cDir, "F18_rpt_", ".txt" ) ) != NIL
+         hb_vfClose( hFile )
+         f_name := cTempFile
+      ELSE
+         f_name := OUTF_FILE
+      ENDIF
+
 
    ENDIF
+   AltD()
+   s_cF18Txt := f_name
 
    RETURN f_name
 
@@ -247,8 +263,6 @@ FUNCTION GpIni( document_name )
    IF document_name == NIL .OR. gPrinter <> "R"
       document_name := ""
    ENDIF
-
-   Setpxlat()
 
    QQOut( gPini )
 

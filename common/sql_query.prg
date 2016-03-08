@@ -75,8 +75,8 @@ FUNCTION run_sql_query( qry, retry )
 
       IF sql_error_in_query( _qry_obj )
 
-         ? "SQL ERROR: ", qry
-         error_tab( "sql", qry )
+         ?E "SQL ERROR: ", qry
+         error_bar( "sql", qry )
          IF _i == retry
             MsgC()
             RETURN .F.

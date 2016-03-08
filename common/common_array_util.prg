@@ -490,9 +490,8 @@ FUNCTION StackNew()
 */
 FUNCTION StackPush( aStack, exp )
 
-   // Add new element to the stack array and then return the array
-
-   RETURN AAdd( aStack, exp )
+  
+   RETURN AAdd( aStack, exp ) // Add new element to the stack array and then return the array
 
 
 /**

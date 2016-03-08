@@ -297,9 +297,11 @@ HB_FUNC( __RUN_SYSTEM )
 
 
 
-FUNCTION f18_run( cmd, output, always_ok, async )
+FUNCTION f18_run( cmd, hOutput, always_ok, async )
 
-   LOCAL _ret, _stdout, _stderr, _prefix
+   LOCAL _ret
+   LOCAL cStdOut := "", cStdErr := ""
+   LOCAL _prefix
    LOCAL _msg
 
    IF always_ok == NIL
@@ -307,15 +309,14 @@ FUNCTION f18_run( cmd, output, always_ok, async )
    ENDIF
 
    IF async == NIL
-      // najcesce mi zelimo da okinemo exkternu komandu i nastavimo rad
-      async := .F.
+      async := .F. // najcesce mi zelimo da okinemo eksternu komandu i nastavimo rad
    ENDIF
 
 
 #ifdef __PLATFORM__UNIX
    _ret := __run_system( cmd + iif( async, "&", "" ) )
 #else
-   _ret := hb_processRun( cmd, NIL, NIL, NIL, async )
+   _ret := hb_processRun( cmd, NIL, @cStdOut, @cStdErr, async )
 #endif
 
    IF _ret <> 0
@@ -338,19 +339,15 @@ FUNCTION f18_run( cmd, output, always_ok, async )
       IF async
          _ret := __run_system( _prefix + cmd + "&" )
       ELSE
-         _ret := hb_processRun( _prefix + cmd, NIL, NIL, NIL, async )
+         _ret := hb_processRun( _prefix + cmd, NIL, @cStdOut, @cStdErr, async )
       ENDIF
 #else
-      _ret := hb_processRun( _prefix + cmd, NIL, NIL, NIL, async )
-#endif
-
-
-#ifdef __PLATFORM__WINDOWS
-      // copy komanda trazi system run a ne hbprocess run
-      IF _ret <> 0
+      _ret := hb_processRun( _prefix + cmd, NIL, @cStdOut, @cStdErr, async )
+      IF _ret <> 0 // npr. copy komanda trazi system run a ne hbprocess run
          _ret := __run_system( cmd )
       ENDIF
 #endif
+
       IF _ret <> 0 .AND. !always_ok
          _msg := "ERR run cmd:"  + cmd
          log_write( _msg, 2 )
@@ -359,10 +356,9 @@ FUNCTION f18_run( cmd, output, always_ok, async )
 
    ENDIF
 
-   IF ValType( output ) == "H"
-      // hash matrica
-      output[ "stdout" ] := _stdout
-      output[ "stderr" ] := _stderr
+   IF ValType( hOutput ) == "H"
+      hOutput[ "stdout" ] := cStdOut // hash matrica
+      hOutput[ "stderr" ] := cStdErr
    ENDIF
 
    RETURN _ret
@@ -405,3 +401,36 @@ FUNCTION open_folder( folder )
 #endif
 
    RETURN f18_open_document( folder )
+
+
+FUNCTION f18_open_mime_document( cDocument )
+
+   LOCAL _cmd := ""
+
+   IF Pitanje(, "Otvoriti " + AllTrim( cDocument ) + " ?", "D" ) == "N"
+      RETURN 0
+   ENDIF
+
+#ifdef __PLATFORM__UNIX
+
+#ifdef __PLATFORM__DARWIN
+   _cmd += "open " + cDocument
+#else
+   _cmd += "xdg-open " + cDocument + " &"
+#endif
+
+#else __PLATFORM__WINDOWS
+
+   cDocument := '"' + cDocument + '"'
+   _cmd += "c:\knowhowERP\util\start.exe /m " + cDocument
+
+#endif
+
+   _error := f18_run( _cmd )
+
+   IF _error <> 0
+      MsgBeep( "Problem sa otvaranjem dokumenta !#Greška: " + AllTrim( Str( _error ) ) )
+      RETURN _error
+   ENDIF
+
+   RETURN 0

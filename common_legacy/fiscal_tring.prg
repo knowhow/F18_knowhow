@@ -793,7 +793,7 @@ FUNCTION tring_read_error( dev_param, fisc_no, trig )
    BoxC()
 
    IF !File( _f_name )
-      MsgBeep( "Fajl " + _f_name + " ne postoji !!!" )
+      MsgBeep( "Fajl " + _f_name + " ne postoji !" )
       fisc_no := 0
       _err := -9
       RETURN _err

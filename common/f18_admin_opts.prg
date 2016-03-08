@@ -531,7 +531,7 @@ METHOD F18AdminOpts:wget_download( url, filename, location, erase_file, silent, 
       FSeek( _h, 0 )
       FClose( _h )
       IF _length <= 0
-         MsgBeep( "Traženi fajl ne postoji !!!" )
+         MsgBeep( "Traženi fajl ne postoji !" )
          RETURN _ok
       ENDIF
    ENDIF

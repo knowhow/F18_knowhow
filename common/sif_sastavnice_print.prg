@@ -72,7 +72,7 @@ FUNCTION pr_pr_sast() // lista sastavnica sa pretpostavljenim sirovinama
       IF !Found()
 
          AAdd( aError, { 1, cIdRoba, cRobaNaz, ;
-            "ne postoji sastavnica !!!" } )
+            "ne postoji sastavnica !" } )
 
          SELECT roba
          SKIP

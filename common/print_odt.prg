@@ -19,7 +19,7 @@ STATIC __template
 STATIC __template_filename
 STATIC __jod_converter := "jodconverter-cli.jar"
 STATIC __jod_reports := "jodreports-cli.jar"
-STATIC __java_run_cmd := "java -Xmx128m -jar"
+STATIC s_cJavaRunCmd := "java -Xmx128m -jar"
 STATIC __util_path
 STATIC __current_odt
 
@@ -100,17 +100,17 @@ FUNCTION generisi_odt_iz_xml( cTemplate, cXml_file, cOutput_file, lBezPitanja )
       RETURN lRet
    ENDIF
 
-   #ifdef __PLATFORM__WINDOWS
-      _template := '"' + _template + '"'
-      __xml_file := '"' + __xml_file + '"'
-      __output_odt := '"' + __output_odt + '"'
-      _jod_full_path := '"' + _jod_full_path + '"'
-   #endif
+#ifdef __PLATFORM__WINDOWS
+   _template := '"' + _template + '"'
+   __xml_file := '"' + __xml_file + '"'
+   __output_odt := '"' + __output_odt + '"'
+   _jod_full_path := '"' + _jod_full_path + '"'
+#endif
 
    __template := _template
    __template_filename := cTemplate
 
-   _cmd := __java_run_cmd + " " + _jod_full_path + " "
+   _cmd := s_cJavaRunCmd + " " + _jod_full_path + " "
    _cmd += _template + " "
    _cmd += __xml_file + " "
    _cmd += __output_odt
@@ -128,7 +128,6 @@ FUNCTION generisi_odt_iz_xml( cTemplate, cXml_file, cOutput_file, lBezPitanja )
    IF _error <> 0
 
       log_write( "ODT report gen: greška - " + AllTrim( Str( _error ) ), 7 )
-
       cErr := "Došlo je do greške prilikom generisanja reporta ! #" + "Greška: " + AllTrim( Str( _error ) )
 
       MsgBeep( cErr )
@@ -157,14 +156,14 @@ STATIC FUNCTION samo_naziv_fajla( cFajl )
    LOCAL cNaziv := ""
    LOCAL aTmp
 
-   IF EMPTY( cFajl )
+   IF Empty( cFajl )
       RETURN cNaziv
    ENDIF
 
    aTmp := TokToNiz( cFajl, SLASH )
 
-   cNaziv := aTmp[ LEN( aTmp ) ]
-   cNaziv := STRTRAN( cNaziv, '"', '' )
+   cNaziv := aTmp[ Len( aTmp ) ]
+   cNaziv := StrTran( cNaziv, '"', '' )
 
    RETURN cNaziv
 
@@ -210,7 +209,7 @@ STATIC FUNCTION brisi_odt_fajlove_iz_home_path()
    // .~lock.out_0001.odt#
 
    AEval( Directory( _f_path + _tmp ), {| aFile | ;
-      if( ;
+      iif( ;
       File( _f_path + ".~lock." + AllTrim( aFile[ 1 ] ) + "#" ), ;
       .T., ;
       FErase( _f_path + AllTrim( aFile[ 1 ] ) ) ;
@@ -228,11 +227,12 @@ STATIC FUNCTION get_util_path()
 
    LOCAL _path := ""
 
-   #ifdef __PLATFORM__WINDOWS
-      _path := "c:" + SLASH + "knowhowERP" + SLASH + "util" + SLASH
-   #else
-      _path := SLASH + "opt" + SLASH + "knowhowERP" + SLASH + "util" + SLASH
-   #endif
+#ifdef __PLATFORM__WINDOWS
+
+   _path := "c:" + SLASH + "knowhowERP" + SLASH + "util" + SLASH
+#else
+   _path := SLASH + "opt" + SLASH + "knowhowERP" + SLASH + "util" + SLASH
+#endif
 
    RETURN _path
 
@@ -275,7 +275,7 @@ STATIC FUNCTION kopiraj_odt_template_u_home_path( cTemplate )
       IF File( F18_TEMPLATE_LOCATION + cTemplate )
          FileCopy( F18_TEMPLATE_LOCATION + cTemplate, my_home() + cTemplate )
       ELSE
-         MsgBeep( "Fajl " + F18_TEMPLATE_LOCATION + cTemplate + " ne postoji !???" )
+         MsgBeep( "Fajl " + F18_TEMPLATE_LOCATION + cTemplate + " ne postoji !?" )
          RETURN _ret
       ENDIF
    ENDIF
@@ -322,7 +322,6 @@ FUNCTION prikazi_odt( cOutput_file )
    LOCAL cScreen, nError := 0
    LOCAL cOdgovor
 
-altd()
    IF ( cOutput_file == NIL )
       __output_odt := __current_odt
    ELSE
@@ -334,18 +333,18 @@ altd()
       RETURN lOk
    ENDIF
 
-   #ifdef __PLATFORM__WINDOWS
-      __output_odt := '"' + __output_odt + '"'
-   #endif
+#ifdef __PLATFORM__WINDOWS
+   __output_odt := '"' + __output_odt + '"'
+#endif
 
    SAVE SCREEN TO cScreen
    CLEAR SCREEN
 
    ? "Prikaz odt fajla u toku ... fajl: ..." + Right( __current_odt, 20 )
 
-   #ifndef TEST
-       nError := f18_open_document( __output_odt )
-   #endif
+#ifndef TEST
+   nError := f18_open_document( __output_odt )
+#endif
 
    RESTORE SCREEN FROM cScreen
 
@@ -406,12 +405,12 @@ STATIC FUNCTION odt_na_email_podrska( cErrorTxt )
    ENDIF
 
    cSubject := "Uzorak ODT izvještaja, F18 " + F18_VER
-   cSubject += ", " + my_server_params()["database"] + "/" + ALLTRIM( f18_user() )
-   cSubject += ", " + DTOC( DATE() ) + " " + PADR( TIME(), 8 )
+   cSubject += ", " + my_server_params()[ "database" ] + "/" + AllTrim( f18_user() )
+   cSubject += ", " + DToC( Date() ) + " " + PadR( Time(), 8 )
 
    cBody := ""
 
-   IF cErrorTxt <> NIL .AND. !EMPTY( cErrorTxt )
+   IF cErrorTxt <> NIL .AND. !Empty( cErrorTxt )
       cBody += cErrorTxt + ". "
    ENDIF
 
@@ -420,8 +419,8 @@ STATIC FUNCTION odt_na_email_podrska( cErrorTxt )
    cZipFile := odt_email_attachment( lIzlazniOdt )
 
    aAttachment := {}
-   IF !EMPTY( cZipFile )
-      AADD( aAttachment, cZipFile )
+   IF !Empty( cZipFile )
+      AAdd( aAttachment, cZipFile )
    ENDIF
 
    DirChange( my_home() )
@@ -436,7 +435,7 @@ STATIC FUNCTION odt_na_email_podrska( cErrorTxt )
 
    MsgC()
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -447,19 +446,19 @@ STATIC FUNCTION odt_email_attachment( lIzlazniOdt )
    LOCAL cServer := my_server_params()
    LOCAL cZipFile
 
-   cZipFile := ALLTRIM( cServer["database"] )
-   cZipFile += "_" + ALLTRIM( f18_user() )
-   cZipFile += "_" + DTOS( DATE() )
-   cZipFile += "_" + STRTRAN( TIME(), ":", "" )
+   cZipFile := AllTrim( cServer[ "database" ] )
+   cZipFile += "_" + AllTrim( f18_user() )
+   cZipFile += "_" + DToS( Date() )
+   cZipFile += "_" + StrTran( Time(), ":", "" )
    cZipFile += ".zip"
 
    DirChange( my_home() )
 
-   AADD( aFiles, samo_naziv_fajla( __xml_file ) )
-   AADD( aFiles, __template_filename )
+   AAdd( aFiles, samo_naziv_fajla( __xml_file ) )
+   AAdd( aFiles, __template_filename )
 
    IF lIzlazniOdt
-      AADD( aFiles, samo_naziv_fajla( __current_odt ) )
+      AAdd( aFiles, samo_naziv_fajla( __current_odt ) )
    ENDIF
 
    _err := zip_files( cPath, cZipFile, aFiles )
@@ -467,38 +466,6 @@ STATIC FUNCTION odt_email_attachment( lIzlazniOdt )
    RETURN cZipFile
 
 
-
-FUNCTION f18_open_mime_document( cDocument )
-
-   LOCAL _cmd := ""
-
-   IF Pitanje(, "Otvoriti " + AllTrim( cDocument ) + " ?", "D" ) == "N"
-      RETURN 0
-   ENDIF
-
-   #ifdef __PLATFORM__UNIX
-
-      #ifdef __PLATFORM__DARWIN
-         _cmd += "open " + cDocument
-      #else
-         _cmd += "xdg-open " + cDocument + " &"
-      #endif
-
-   #else __PLATFORM__WINDOWS
-
-      cDocument := '"' + cDocument + '"'
-      _cmd += "c:\knowhowERP\util\start.exe /m " + cDocument
-
-   #endif
-
-   _error := f18_run( _cmd )
-
-   IF _error <> 0
-      MsgBeep( "Problem sa otvaranjem dokumenta !#Greška: " + AllTrim( Str( _error ) ) )
-      RETURN _error
-   ENDIF
-
-   RETURN 0
 
 
 
@@ -537,10 +504,10 @@ FUNCTION konvertuj_odt_u_pdf( cInput_file, cOutput_file, lOverwrite_file )
       lOverwrite_file := .T.
    ENDIF
 
-   #ifdef __PLATFORM__WINDOWS
-      __output_odt := '"' + __output_odt + '"'
-      __output_pdf := '"' + __output_pdf + '"'
-   #endif
+#ifdef __PLATFORM__WINDOWS
+   __output_odt := '"' + __output_odt + '"'
+   __output_pdf := '"' + __output_pdf + '"'
+#endif
 
    _ret := naziv_izlaznog_pdf_fajla( @__output_pdf, lOverwrite_file )
 
@@ -559,11 +526,11 @@ FUNCTION konvertuj_odt_u_pdf( cInput_file, cOutput_file, lOverwrite_file )
 
    log_write( "ODT report convert start", 9 )
 
-   #ifdef __PLATFORM__WINDOWS
-      _jod_full_path := '"' + _jod_full_path + '"'
-   #endif
+#ifdef __PLATFORM__WINDOWS
+   _jod_full_path := '"' + _jod_full_path + '"'
+#endif
 
-   _cmd := __java_run_cmd + " " + _jod_full_path + " "
+   _cmd := s_cJavaRunCmd + " " + _jod_full_path + " "
    _cmd += __output_odt + " "
    _cmd += __output_pdf
 

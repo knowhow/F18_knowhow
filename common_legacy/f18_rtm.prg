@@ -182,7 +182,7 @@ STATIC FUNCTION copy_delphirb_exe( mode )
 // kopiraj delphirb u home path
 IF !File( my_home() + _exe )
 IF !File( _util_path + _tmp )
-MsgBeep( "Fajl " + _util_path + _tmp + " ne postoji !????" )
+MsgBeep( "Fajl " + _util_path + _tmp + " ne postoji !?" )
 _ok := .F.
 RETURN _ok
 ELSE
@@ -236,7 +236,7 @@ STATIC FUNCTION copy_rtm_template( template )
    IF _copy
 
       IF !File( F18_TEMPLATE_LOCATION + template + _rtm_ext )
-         MsgBeep( "Fajl " + F18_TEMPLATE_LOCATION + template + _rtm_ext + " ne postoji !????" )
+         MsgBeep( "Fajl " + F18_TEMPLATE_LOCATION + template + _rtm_ext + " ne postoji !" )
          RETURN _ret
       ELSE
          FileCopy( F18_TEMPLATE_LOCATION + template + _rtm_ext, my_home() + template + _rtm_ext )

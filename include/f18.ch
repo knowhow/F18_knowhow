@@ -226,11 +226,7 @@
 #define F18_SCREEN_INI_SECTION "F18_screen"
 #define F18_DBF_INI_SECTION "F18_dbf"
 
-#ifdef __PLATFORM__WINDOWS
-    #define F18_TEMPLATE_LOCATION "c:" + SLASH + "knowhowERP" + SLASH + "template" + SLASH
-#else
-    #define F18_TEMPLATE_LOCATION SLASH + "opt" + SLASH + "knowhowERP" + SLASH + "template" + SLASH
-#endif
+#define F18_TEMPLATE_LOCATION  f18_template_location()
 
 #define F18_SECUR_WARRNING "Opcija nije dostupna za ovaj nivo !#Da bi koristili opciju potrebna podesenja privilegija"
 

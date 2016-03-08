@@ -651,10 +651,10 @@ FUNCTION is_last_refresh_before( cTable, nSeconds )
 
 
 
+
 PROCEDURE thread_dbf_refresh( cTable )
 
-   set_f18_home( my_server_params()[ "database" ] )
-   init_parameters_cache()
+   init_thread()
 
 #ifdef F18_DEBUG
    ?E ">>>>> START: thread_dbf_refresh:", cTable, "<<<<<"

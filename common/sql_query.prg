@@ -75,8 +75,8 @@ FUNCTION run_sql_query( qry, retry )
 
       IF sql_error_in_query( _qry_obj )
 
-         // TODO:  cErrorMsg := "ERROR RUN_SQL_QRY: " + _qry_obj:ErrorMsg() + " QRY:" + qry
-
+         ? "SQL ERROR: ", qry
+         error_tab( "sql", qry )
          IF _i == retry
             MsgC()
             RETURN .F.
@@ -110,7 +110,10 @@ FUNCTION is_var_objekat_tipa( xVar, cClassName )
 
 FUNCTION sql_error_in_query( oQry )
 
-   RETURN ( oQry:NetErr() ) .AND. !Empty( oQry:ErrorMsg() )
+   IF !is_var_objekat_tpquery()
+       RETURN .T.
+   ENDIF
+   RETURN  ( oQry:NetErr() ) .AND. !Empty( oQry:ErrorMsg() )
 
 
 

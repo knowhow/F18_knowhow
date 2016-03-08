@@ -25,11 +25,10 @@ FUNCTION naslovni_ekran_splash_screen( cNaslov, cVer )
 
    //@ MAXROWS() / 2 - 10, MAXCOLS() / 2 - 30 SAY ""
 
-   main_window( WOpen( 0, 0, MAXROW(), MAXCOL() ) )
+   main_window( WOpen( 2, 2, MAXROW()-2, MAXCOL()-2 ) )
 
-
-   WSetShadow( 1 % 8 )
    nWin := WOpen( 5, 10, 5 + 20, 10 + 70 )
+   WSetShadow( 1 % 8 )
    WBox()
    WSelect( nWin )
    //WBoard( 5, 5, 20, 75 )

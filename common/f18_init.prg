@@ -356,6 +356,7 @@ altd()
 
       // pGt := hb_gtCreate( f18_gt() )
       // hb_gtSelect( pGt )
+      SetMode( hb_gtInfo( HB_GTI_DESKTOPROWS ) - 3,  hb_gtInfo( HB_GTI_DESKTOPCOLS ) - 5 )
       ?E "setovanje ekrana: ne mogu setovati ekran po trazenoj rezoluciji !"
       RETURN .F.
    ENDIF

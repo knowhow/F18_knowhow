@@ -32,6 +32,7 @@ altd()
    nYStart := MAXCOL() / 2 - 30
 
    nWin := WOpen( nXStart, nYStart, nXStart + 20, nYStart + 70 )
+   WBox()
    WSelect( nWin )
    //WBoard( 5, 5, 20, 75 )
    //WMode( .T., .T., .T., .T. )

@@ -27,7 +27,7 @@ FUNCTION naslovni_ekran_splash_screen( cNaslov, cVer )
 altd()
    main_window( WOpen( 1, 1, MAXROW()-1, MAXCOL()-1 ) )
 
-   WSetShadow( 1 % 8 )
+   //WSetShadow( 1 % 8 )
    nWin := WOpen( MAXROW() / 2 - 10, MAXCOL() / 2 - 30, MAXROW() / 2 - 10 + 20, MAXCOL() / 2 - 30 + 70 )
 
    WBox()

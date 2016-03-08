@@ -80,7 +80,7 @@ FUNCTION program_module_menu( arg_v )
    LOCAL _tmp
    LOCAL cOldColors
 
-   cOldColors := SetColor( F18_COLOR_ORGANIZACIJA )
+
 
    info_bar( "init", "gen program_module_menu start" )
    IF arg_v == NIL
@@ -90,6 +90,7 @@ FUNCTION program_module_menu( arg_v )
 
    DO WHILE .T.
 
+      cOldColors := SetColor( F18_COLOR_ORGANIZACIJA )
       ++ _count
       CLEAR SCREEN
       _db_params := my_server_params()
@@ -110,12 +111,10 @@ FUNCTION program_module_menu( arg_v )
             oBackup:unlock()
          ENDIF
 
-
          f18_auto_backup_data( 1 ) // automatski backup podataka preduzeca
          __relogin_opt := .F.
 
       ENDIF
-
 
       menuop := {}
       menuexec := {}
@@ -124,9 +123,8 @@ FUNCTION program_module_menu( arg_v )
       info_bar( "init", "gen program_module_menu end" )
 
       mnu_choice := Achoice2( mnu_top, mnu_left, mnu_bottom, mnu_right, menuop, .T., "MenuFunc", 1 )
-
       SetColor( cOldColors )
-      
+
       DO CASE
       CASE mnu_choice == 0
 

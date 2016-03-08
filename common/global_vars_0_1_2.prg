@@ -14,7 +14,7 @@
 
 PROCEDURE set_global_vars_0()
 
-   info_bar( "init", "set_global_vars_0" )
+   ?E "set_global_vars_0"
    PUBLIC ZGwPoruka := ""
    PUBLIC GW_STATUS := "-"
    PUBLIC GW_HANDLE := 0
@@ -63,7 +63,7 @@ PROCEDURE set_global_vars_0()
    PUBLIC System := .F.
    PUBLIC gGlBaza := ""
    PUBLIC gSqlLogBase
-   
+
    PUBLIC Blink := "R****/W,W/B,,,W/RB"
    PUBLIC Nevid := "W/W,N/N"
 
@@ -117,7 +117,7 @@ PROCEDURE set_global_vars_0()
    set_ptxt_sekvence()
    set_global_vars_roba()
 
-   info_bar( "init", "set_global_vars_0 end" )
+   ?E "set_global_vars_0 end"
 
    RETURN
 

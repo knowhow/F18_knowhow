@@ -346,10 +346,9 @@ altd()
    hb_gtInfo( HB_GTI_RESIZEMODE, HB_GTI_RESIZEMODE_ROWS )
 
 
-
-   IF SetMode( maxrows() + INFO_BAR_ROWS,  maxcols() )
-      ?E "setovanje ekrana: setovan ekran po rezoluciji", maxrows(), maxcols()
-   ELSE
+   //IF SetMode( maxrows() + INFO_BAR_ROWS,  maxcols() )
+  //    ?E "setovanje ekrana: setovan ekran po rezoluciji", maxrows(), maxcols()
+   //ELSE
 
       // pGt := hb_gtCreate( f18_gt() )
       // hb_gtSelect( pGt )
@@ -357,7 +356,7 @@ altd()
            maxcols( hb_gtInfo( HB_GTI_DESKTOPCOLS ) - 5) )
       ?E "setovanje ekrana/2 "
       RETURN .F.
-   ENDIF
+   //ENDIF
 
 
       ?E " get font_name: ", hb_gtInfo( HB_GTI_FONTNAME )
@@ -367,6 +366,7 @@ altd()
 
    hb_gtInfo( HB_GTI_ALTENTER, .T. )
 
+   open_main_window()
 
    RETURN .T.
 

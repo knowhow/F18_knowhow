@@ -253,7 +253,7 @@ FUNCTION set_screen_dimensions()
 
    _msg := "screen res: " + AllTrim( to_str( _pix_width ) ) + " " + AllTrim( to_str( _pix_height ) ) + " varijanta: "
 
-
+altd()
    IF _pix_width == NIL
 
       maxrows( 40 - INFO_BAR_ROWS )

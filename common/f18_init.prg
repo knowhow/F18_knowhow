@@ -20,9 +20,11 @@ STATIC s_psqlServer_params := NIL
 // logiranje na server
 STATIC s_psqlServer_log := .F.
 
-STATIC s_cF18Home := NIL
-THREAD STATIC s_cF18HomeRoot := NIL
-THREAD STATIC s_cF18HomeBackup := NIL
+STATIC s_cF18HomeRoot := NIL // za sve threadove identican home_root
+STATIC s_cF18HomeBackup := NIL // svi threadovi ista backup lokacija
+
+THREAD STATIC s_cF18Home := NIL // svaki thread ima svoj my home ovisno o tekucoj bazi
+
 
 THREAD STATIC __log_handle := NIL
 
@@ -503,7 +505,7 @@ PROCEDURE thread_create_dbfs()
 
    LOCAL _ver
 
-   init_parameters_cache()
+   init_thread()
 
    ErrorBlock( {| objError, lShowreport, lQuit | GlobalErrorHandler( objError, lShowReport, lQuit ) } )
 
@@ -954,10 +956,10 @@ FUNCTION my_user()
 
 
 
-FUNCTION my_home( home )
+FUNCTION my_home( cHome )
 
-   IF home != NIL
-      s_cF18Home := home
+   IF cHome != NIL
+      s_cF18Home := cHome
    ENDIF
 
    RETURN s_cF18Home
@@ -1007,10 +1009,10 @@ FUNCTION set_f18_home_root()
    RETURN .T.
 
 
-FUNCTION my_home_backup( home_backup )
+FUNCTION my_home_backup( cF18HomeBackup )
 
-   IF home_backup != NIL
-      s_cF18HomeBackup := home_backup
+   IF cF18HomeBackup != NIL
+      s_cF18HomeBackup := cF18HomeBackup
    ENDIF
 
    RETURN s_cF18HomeBackup

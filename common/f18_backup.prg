@@ -604,7 +604,7 @@ PROCEDURE thread_f18_backup( type_def )
       oBackup:get_backup_interval()
       oBackup:Backup_now( auto_backup ) // pokreni backup
 
-      QUIT
+      QUIT_1
 
    ENDIF
 

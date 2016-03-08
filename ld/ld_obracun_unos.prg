@@ -181,7 +181,7 @@ FUNCTION OObracun()
 
    IF ( IsRamaGlas() )
       MsgBeep( "http://redmine.bring.out.ba/issues/25988" )
-      QUIT
+      QUIT_1
       O_RADSIHT
       O_FAKT_OBJEKTI
    ENDIF

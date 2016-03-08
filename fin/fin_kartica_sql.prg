@@ -271,7 +271,7 @@ STATIC FUNCTION _cre_rpt( rpt_vars, otv_stavke )
 
    MsgC()
 
-   IF !is_var_objekat_tpquery( _table )
+   IF !is_var_objekat_tpqquery( _table )
       RETURN NIL
    ENDIF
 

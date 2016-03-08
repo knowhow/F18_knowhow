@@ -1016,7 +1016,7 @@ STATIC FUNCTION fakt_lager_lista_get_data( params, ps )
 
    _table := _sql_query( _server, _qry )
 
-   IF !is_var_objekat_tpquery( _table )
+   IF !is_var_objekat_tpqquery( _table )
       _table := NIL
    ENDIF
 

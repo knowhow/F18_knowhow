@@ -88,7 +88,7 @@ FUNCTION kalk_mag_lager_lista_sql( params, ps )
 
    _data := _sql_query( _server, _qry )
 
-   IF !is_var_objekat_tpquery( _data ) 
+   IF !is_var_objekat_tpqquery( _data ) 
       _data := NIL
    ELSE
       IF _data:LastRec() == 0

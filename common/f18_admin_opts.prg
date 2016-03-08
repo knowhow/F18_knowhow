@@ -225,7 +225,7 @@ METHOD F18AdminOpts:update_app_run_script( update_file )
 
    hb_run( _url )
 
-   QUIT
+   QUIT_1
 
    RETURN SELF
 

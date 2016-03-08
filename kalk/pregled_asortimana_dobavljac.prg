@@ -191,7 +191,7 @@ STATIC FUNCTION _izdvoji_ulaze( vars )
 
    _table := _sql_query( _server, _qry )
 
-   IF !is_var_objekat_tpquery( _table )
+   IF !is_var_objekat_tpqquery( _table )
       RETURN 0
    ENDIF
 

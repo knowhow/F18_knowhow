@@ -73,7 +73,7 @@ FUNCTION radnik_iz_rs( cOpsst, cOpsrad )
 
    oQry := _sql_query( my_server(), cSql )
 
-   IF is_var_objekat_tpquery( oQry )
+   IF is_var_objekat_tpqquery( oQry )
       IF oQry:FieldGet(1) == "2"
          lRet := .T.
       ENDIF
@@ -92,7 +92,7 @@ FUNCTION ld_iz_koje_opcine_je_radnik( cIdRadn )
 
    oQry := _sql_query( my_server(), cSql )
 
-   IF is_var_objekat_tpquery( oQry )
+   IF is_var_objekat_tpqquery( oQry )
       cOpc := hb_utf8tostr( oQry:FieldGet(1) )
    ENDIF
 

@@ -263,7 +263,7 @@ FUNCTION pos_iznos_racuna( cIdPos, cIdVD, dDatum, cBrDok )
 
    oData := _sql_query( my_server(), cSql )
 
-   IF !is_var_objekat_tpquery( oData )
+   IF !is_var_objekat_tpqquery( oData )
       RETURN nTotal
    ENDIF 
 
@@ -646,7 +646,7 @@ FUNCTION pos_brisi_nepostojece_dokumente()
 
    MsgC()
 
-   IF !is_var_objekat_tpquery( oQry )
+   IF !is_var_objekat_tpqquery( oQry )
       MsgBeep( "Problem sa SQL upitom !" )
       RETURN
    ENDIF 

@@ -48,7 +48,7 @@ FUNCTION pos_get_mpc()
 
    oData := _sql_query( my_server(), cQry )
 
-   IF !is_var_objekat_tpquery( oData )
+   IF !is_var_objekat_tpqquery( oData )
       MsgBeep( "Problem sa SQL upitom !" )
    ELSE
       IF oData:LastRec() > 0 .AND. VALTYPE( oData:FieldGet(1) ) == "N"

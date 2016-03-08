@@ -597,7 +597,7 @@ FUNCTION os_sii_iznos_sanacije( id, datum_od, datum_do )
 
    _data := _sql_query( my_server(), _qry )
 
-   IF !is_var_objekat_tpquery( _data )
+   IF !is_var_objekat_tpqquery( _data )
       RETURN _hash
    ENDIF
 

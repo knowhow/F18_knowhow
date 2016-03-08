@@ -86,7 +86,7 @@ FUNCTION set_f18_params()
 
       CASE cTok == "--help"
          f18_help()
-         QUIT
+         QUIT_1
 
       CASE cTok == "-h"
          cHostName := hb_PValue( _i++ )

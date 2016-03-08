@@ -156,7 +156,7 @@ STATIC FUNCTION query_log_data( params )
    info_bar( "log_get_data", "qry:" + _qry )
    _data := _sql_query( _server, _qry )
 
-   IF !is_var_objekat_tpquery( _data )
+   IF !is_var_objekat_tpqquery( _data )
       RETURN NIL
    ENDIF
 

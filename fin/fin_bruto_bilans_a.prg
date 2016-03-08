@@ -408,7 +408,7 @@ METHOD FinBrutoBilans:get_data()
    _data := _sql_query( _server, _qry )
    MsgC()
 
-   IF !is_var_objekat_tpquery( _data )
+   IF !is_var_objekat_tpqquery( _data )
       MsgBeep( "Ne postoje traženi podaci !!!" )
       RETURN NIL
    ENDIF

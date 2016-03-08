@@ -666,8 +666,8 @@ PROCEDURE thread_dbf_refresh( cTable )
 #ifdef F18_DEBUG
    ?E "<<<<< END: thread_dbf_refresh:", cTable, " >>>>>"
 #endif
-   my_server_close()
-
+   close_thread()
+   
    RETURN
 
 

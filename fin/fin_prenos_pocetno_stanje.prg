@@ -528,7 +528,7 @@ STATIC FUNCTION get_data( param, data_fin, konto_data, partner_data )
       partner_data := NIL
    ENDIF
 
-   IF !is_var_objekat_tpquery( data_fin )
+   IF !is_var_objekat_tpqquery( data_fin )
       data_fin := NIL
    ELSE
       IF data_fin:LastRec() == 0

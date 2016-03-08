@@ -18,3 +18,10 @@ PROCEDURE init_thread()
    init_parameters_cache()
 
    RETURN
+
+
+PROCEDURE close_thread()
+
+   my_server_close()
+
+   RETURN

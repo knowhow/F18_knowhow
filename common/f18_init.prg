@@ -74,7 +74,6 @@ FUNCTION f18_init_app( arg_v )
    f18_error_block()
    set_screen_dimensions()
 
-
    IF no_sql_mode()
       set_f18_home( "f18_test" )
       RETURN .T.
@@ -97,9 +96,6 @@ FUNCTION f18_error_block()
 
 FUNCTION f18_init_app_opts()
 
-   // ovdje treba napraviti meni listu sa opcijama
-   // vpn, rekonfiguracija, itd... neke administraitvne opcije
-   // otvaranje nove firme...
    LOCAL _opt := {}
    LOCAL _optexe := {}
    LOCAL _izbor := 1
@@ -110,16 +106,15 @@ FUNCTION f18_init_app_opts()
    AAdd( _opcexe, {|| NIL } )
    AAdd( _opc, hb_UTF8ToStr( "3. otvaranje nove firme  " ) )
    AAdd( _opcexe, {|| NIL } )
-   // itd...
+
 
    f18_menu( "mn", .F., _izbor, _opc, _opcexe  )
 
    RETURN .T.
 
 
-// -----------------------------------------------------
-// inicijalna login opcija
-// -----------------------------------------------------
+
+
 FUNCTION f18_login( force_connect, arg_v )
 
    LOCAL oLogin
@@ -150,7 +145,7 @@ FUNCTION f18_login( force_connect, arg_v )
       DO WHILE .T.
 
          IF !oLogin:company_db_login( @s_psqlServer_params )
-            QUIT
+            QUIT_1
          ENDIF
 
          _write_server_params_to_config() // upisi parametre tekuce firme...
@@ -167,7 +162,7 @@ FUNCTION f18_login( force_connect, arg_v )
 
    ELSE
 
-      QUIT // neko je rekao ESC
+      QUIT_1 // neko je rekao ESC
    ENDIF
 
    RETURN .T.
@@ -522,7 +517,7 @@ PROCEDURE thread_create_dbfs()
 
    f18_log_delete() // brisanje loga nakon logiranja...
 
-   my_server_close()
+   close_thread()
 
    RETURN
 
@@ -838,7 +833,12 @@ FUNCTION my_server( oServer )
 
 FUNCTION my_server_close()
 
-   my_server():close()
+   LOCAL oServer := my_server()
+
+   IF is_var_objekat_tpqserver( oServer )
+      oServer:close()
+   ENDIF
+
    IF !is_in_main_thread()
       s_psqlServerDbfThread := NIL
    ENDIF

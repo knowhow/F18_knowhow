@@ -24,7 +24,7 @@ FUNCTION naslovni_ekran_splash_screen( cNaslov, cVer )
    //Alert( F18_COLOR_INVERT )
 
    //@ MAXROWS() / 2 - 10, MAXCOLS() / 2 - 30 SAY ""
-
+altd()
    main_window( WOpen( 2, 2, MAXROW()-2, MAXCOL()-2 ) )
 
    nWin := WOpen( 5, 10, 5 + 20, 10 + 70 )

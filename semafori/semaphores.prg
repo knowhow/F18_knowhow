@@ -218,9 +218,10 @@ FUNCTION get_semaphore_version( table, last )
    RETURN _result
 
 
-// -------------------------------------------
-// get_semaphore_version_h( "konto")
-// -------------------------------------------
+/*
+    get_semaphore_version_h( "konto")
+*/
+
 FUNCTION get_semaphore_version_h( table )
 
    LOCAL _tbl_obj

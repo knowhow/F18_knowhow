@@ -1,19 +1,21 @@
 /*
- * This file is part of the bring.out knowhow ERP, a free and open source
- * Enterprise Resource Planning software suite,
- * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
+ * This file is part of the bring.out FMK, a free and open source
+ * accounting software suite,
+ * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
+
 
 #include "f18.ch"
 
 STATIC __var_obr
 
-FUNCTION ld_rekapitulacija_sql( lSvi )
+
+FUNCTION ld_rekapitulacija( lSvi )
 
    LOCAL _a_benef := {}
    PRIVATE nC1 := 20
@@ -23,7 +25,7 @@ FUNCTION ld_rekapitulacija_sql( lSvi )
    PRIVATE nKrug := 1
    PRIVATE nUPorOl := 0
    PRIVATE cFilt1 := ""
-   PRIVATE cNaslovRekap := "LD: Rekapitulacija primanja"
+   PRIVATE cNaslovRekap := Lokal( "LD: Rekapitulacija primanja" )
    PRIVATE aUsl1, aUsl2
    PRIVATE aNetoMj
    PRIVATE cDoprSpace := ""
@@ -38,17 +40,15 @@ FUNCTION ld_rekapitulacija_sql( lSvi )
 
    cIdRadn := Space( _LR_ )
    cIdRj := gRj
-   nMjesec := gMjesec
-   nGodina := gGodina
+   cMjesec := gMjesec
+   cGodina := gGodina
    cObracun := gObracun
-   nMjesecDo := nMjesec
+   cMjesecDo := cMjesec
    nStrana := 0
    aUkTr := {}
    nBO := 0
    cRTipRada := " "
    nKoefLO := 0
-   PRIVATE nStepenInvaliditeta := 0
-   PRIVATE nVrstaInvaliditeta := 0
 
    IF lSvi == NIL
       lSvi := .F.
@@ -66,37 +66,19 @@ FUNCTION ld_rekapitulacija_sql( lSvi )
       qqRJ := Space( 60 )
       BoxRekSvi()
       IF ( LastKey() == K_ESC )
-         RETURN .F.
+         RETURN
       ENDIF
    ELSE
       qqRJ := Space( 2 )
       BoxRekJ()
       IF ( LastKey() == K_ESC )
-         RETURN .F.
+         RETURN
       ENDIF
    ENDIF
 
    SELECT ld
-   USE
 
    cObracun := Trim( cObracun )
-
-   hParams := hb_Hash()
-   hParams[ 'svi' ] := lSvi
-   hParams[ 'str_sprema' ] := cStrSpr
-   hParams[ 'q_rj' ] := qqRj
-
-   hParams[ 'usl1' ] := aUsl1
-   hParams[ 'mjesec' ] := nMjesec
-   hParams[ 'mjesec_do' ] := nMjesecDo
-
-   hParams[ 'obracun' ] := cObracun
-   hParams[ 'godina' ] := nGodina
-
-   cFilt1 := get_ld_rekap_filter( hParams )
-
-   use_sql_ld_ld( nGodina, nMjesec, nMjesecDo, nVrstaInvaliditeta, nStepenInvaliditeta, cFilt1 )
-
 
    IF lSvi
       SET ORDER TO tag ( TagVO( "2" ) )
@@ -104,21 +86,48 @@ FUNCTION ld_rekapitulacija_sql( lSvi )
       SET ORDER TO tag ( TagVO( "1" ) )
    ENDIF
 
-   // IF cFilt1 == ".t."
-   // SET FILTER TO
-   // ELSE
-   // SET FILTER TO &cFilt1
-   // ENDIF
+   IF lSvi
+
+      cFilt1 := ".t." + ;
+         IF( Empty( cStrSpr ), "", ".and.IDSTRSPR == " + dbf_quote( cStrSpr ) ) + ;
+         IF( Empty( qqRJ ), "", ".and." + aUsl1 )
+
+      IF cMjesec != cMjesecDo
+         cFilt1 := cFilt1 + ".and. mjesec >= " + dbf_quote( cMjesec ) + ;
+            ".and. mjesec <= " + dbf_quote( cMjesecDo ) + ".and. godina = " + dbf_quote( cGodina )
+      ENDIF
+
+      GO TOP
+
+   ELSE
+
+      cFilt1 := ".t." + ;
+         IF( Empty( cStrSpr ), "", ".and. IDSTRSPR == " + dbf_quote( cStrSpr ) )
+      IF cMjesec != cMjesecDo
+         cFilt1 := cFilt1 + ".and. mjesec >= " + dbf_quote( cMjesec ) + ;
+            ".and. mjesec <= " + dbf_quote( cMjesecDo ) + ".and. godina = " + dbf_quote( cGodina )
+      ENDIF
+
+   ENDIF
+
+   cFilt1 += ".and. obr = " + dbf_quote( cObracun )
+   cFilt1 := StrTran( cFilt1, ".t..and.", "" )
+
+   IF cFilt1 == ".t."
+      SET FILTER TO
+   ELSE
+      SET FILTER TO &cFilt1
+   ENDIF
 
    IF !lSvi
-      SEEK Str( nGodina, 4, 0 ) + cIdRj + Str( nMjesec, 2, 0 ) + cObracun
+      SEEK Str( cGodina, 4 ) + cIdRj + Str( cMjesec, 2 ) + cObracun
       EOF CRET
    ELSE
-      SEEK Str( nGodina, 4, 0 ) + Str( nMjesec, 2, 0 ) + cObracun
+      SEEK Str( cGodina, 4 ) + Str( cMjesec, 2 ) + cObracun
       EOF CRET
    ENDIF
 
-   PoDoIzSez( nGodina, nMjesecDo )
+   PoDoIzSez( cGodina, cMjesecDo )
 
    CreOpsLD()
    CreRekLD()
@@ -142,7 +151,8 @@ FUNCTION ld_rekapitulacija_sql( lSvi )
       nDSGusto := 0
    ENDIF
 
-   ParObr( nMjesec, nGodina, cObracun, iif( !lSvi, cIdRj, ) )  //  pozicionira bazu PAROBR na odgovarajuci zapis
+   // samo pozicionira bazu PAROBR na odgovarajuci zapis
+   ParObr( cMjesec, cGodina, cObracun, iif( !lSvi, cIdRj, ) )
 
    PRIVATE aRekap[ cLDPolja, 2 ]
 
@@ -183,22 +193,22 @@ FUNCTION ld_rekapitulacija_sql( lSvi )
 
    SELECT ld
 
-   IF nMjesec != nMjesecDo
+   IF cMjesec != cMjesecDo
       IF lSvi
          GO TOP
-         PRIVATE bUslov := {|| field->godina == nGodina .AND. field->mjesec >= nMjesec .AND. field->mjesec <= nMjesecDo .AND. field->obr = cObracun }
+         PRIVATE bUslov := {|| godina == cGodina .AND. mjesec >= cMjesec .AND. mjesec <= cMjesecDo .AND. obr = cObracun }
       ELSE
-         PRIVATE bUslov := {|| field->godina == nGodina .AND. field->idrj == cIdRj .AND. field->mjesec >= nMjesec .AND. field->mjesec <= nMjesecDo .AND. field->obr = cObracun }
+         PRIVATE bUslov := {|| godina == cGodina .AND. idrj == cIdRj .AND. mjesec >= cMjesec .AND. mjesec <= cMjesecDo .AND. obr = cObracun }
       ENDIF
    ELSE
       IF lSvi
-         PRIVATE bUslov := {|| nGodina == field->godina .AND. nMjesec == field->mjesec .AND. field->obr == cObracun }
+         PRIVATE bUslov := {|| cgodina == godina .AND. cmjesec = mjesec .AND. obr = cObracun }
       ELSE
-         PRIVATE bUslov := {|| nGodina == field->godina .AND. cIdrj == field->idrj .AND. nMjesec == field->mjesec .AND. field->obr == cObracun }
+         PRIVATE bUslov := {|| cgodina == godina .AND. cidrj == idrj .AND. cmjesec = mjesec .AND. obr = cObracun }
       ENDIF
    ENDIF
 
-   _ld_calc_totals( lSvi, @_a_benef )
+   _calc_totals( lSvi, @_a_benef )
 
    IF nLjudi == 0
       nLjudi := 9999999
@@ -208,7 +218,7 @@ FUNCTION ld_rekapitulacija_sql( lSvi )
    ?? cNaslovRekap
    B_OFF
 
-   IF !Empty( cStrSpr )
+   IF !Empty( cstrspr )
       ??U Space( 1 ) + "za radnike stručne spreme" + Space( 1 ), cStrSpr
    ENDIF
 
@@ -221,7 +231,7 @@ FUNCTION ld_rekapitulacija_sql( lSvi )
    ENDIF
 
    IF lSvi
-      zagl_rekapitulacija_plata_svi()
+      ZaglSvi()
    ELSE
       ZaglJ()
    ENDIF
@@ -284,7 +294,7 @@ FUNCTION ld_rekapitulacija_sql( lSvi )
 
    cLinija := cDoprLine
 
-   obr_doprinos( nGodina, nMjesec, @nDopr, @nDopr2, cRTipRada, _a_benef )
+   obr_doprinos( cGodina, cMjesec, @nDopr, @nDopr2, cRTipRada, _a_benef)
 
    nTOporDoh := nURadn_bo - nUDoprIz
 
@@ -322,14 +332,14 @@ FUNCTION ld_rekapitulacija_sql( lSvi )
    nPorR := 0
 
    // obracunaj porez na bruto
-   nTOsnova := obr_porez( nGodina, nMjesec, @nPor, @nPor2, @nPorOps, @nPorOps2, @nUPorOl, "B" )
+   nTOsnova := obr_porez( cGodina, cMjesec, @nPor, @nPor2, @nPorOps, @nPorOps2, @nUPorOl, "B" )
 
    nPorB := nPor
 
    // ako je stvarna osnova veca od ove BRUTO - DOPRIZ - ODBICI
    // rijec je o radnicima koji nemaju poreza
    IF Round( nTOsnova, 2 ) > Round( nPorOsn, 2 )
-      ?U _l( "! razlika osnovice poreza (radi radnika bez poreza):" )
+      ?U Lokal( "! razlika osnovice poreza (radi radnika bez poreza):" )
       @ PRow(), 60 SAY nPorOsn - nTOsnova PICT gpici
       ?
    ENDIF
@@ -345,14 +355,14 @@ FUNCTION ld_rekapitulacija_sql( lSvi )
 
    ? cMainLine
    ? "6. UKUPNA NETO PLATA"
-   @ PRow(), 60 SAY nNetoIspl PICT gPici
+   @ PRow(), 60 SAY nNetoIspl PICT gpici
 
    ? cMainLine
    ?U "7. OSNOVICA ZA OBRAČUN OSTALIH NAKNADA (6)"
-   @ PRow(), 60 SAY nNetoIspl PICT gPici
+   @ PRow(), 60 SAY nNetoIspl PICT gpici
    ? cMainLine
 
-   obr_porez( nGodina, nMjesec, @nPor, @nPor2, @nPorOps, @nPorOps2, @nUPorOl, "R" )
+   obr_porez( cGodina, cMjesec, @nPor, @nPor2, @nPorOps, @nPorOps2, @nUPorOl, "R" )
 
    nPorR := nPor
    nPorez1 += nPor
@@ -364,9 +374,9 @@ FUNCTION ld_rekapitulacija_sql( lSvi )
    ? cMainLine
    ? "8. UKUPNO ODBICI/NAKNADE IZ PLATE:"
    ? "             ODBICI:"
-   @ PRow(), 60 SAY nUOdbiciM PICT gPici
+   @ PRow(), 60 SAY nUOdbiciM PICT gpici
    ? "     OSTALE NAKNADE:"
-   @ PRow(), 60 SAY nUOdbiciP PICT gPici
+   @ PRow(), 60 SAY nUOdbiciP PICT gpici
    ? cMainLine
 
    ? cMainLine
@@ -375,7 +385,7 @@ FUNCTION ld_rekapitulacija_sql( lSvi )
    ELSE
       ?U "9. UKUPNO ZA ISPLATU (bruto-dopr-porez+odbici+naknade):"
    ENDIF
-   @ PRow(), 60 SAY nUZaIspl PICT gPici
+   @ PRow(), 60 SAY nUZaIspl PICT gpici
    ? cMainLine
 
    ?
@@ -429,7 +439,7 @@ FUNCTION ld_rekapitulacija_sql( lSvi )
       nUSati := 999999
    ENDIF
 
-   ?U "Prosječni neto/satu je ", AllTrim( Transform( nNetoIspl, gPici ) ), "/", AllTrim( Str( nUSati ) ), "=", AllTrim( Transform( nNetoIspl / nUsati, gpici ) ), "*", AllTrim( Transform( parobr->k1, "999" ) ), "=", AllTrim( Transform( nNetoIspl / nUsati * parobr->k1, gpici ) )
+   ?U "Prosječni neto/satu je ", AllTrim( Transform( nNetoIspl, gpici ) ), "/", AllTrim( Str( nUSati ) ), "=", AllTrim( Transform( nNetoIspl / nUsati, gpici ) ), "*", AllTrim( Transform( parobr->k1, "999" ) ), "=", AllTrim( Transform( nNetoIspl / nUsati * parobr->k1, gpici ) )
 
 
    P_12CPI
@@ -448,19 +458,18 @@ FUNCTION ld_rekapitulacija_sql( lSvi )
 
    my_close_all_dbf()
 
-   ENDPRINT
+   END PRINT
 
-altd()
    IF f18_use_module( "virm" ) .AND. Pitanje(, "Generisati virmane za ovaj obračun plate ? (D/N)", "N" ) == "D"
       virm_set_global_vars()
-      set_metric( "virm_godina", my_user(), nGodina )
-      set_metric( "virm_mjesec", my_user(), nMjesec )
+      set_metric( "virm_godina", my_user(), cGodina )
+      set_metric( "virm_mjesec", my_user(), cMjesec )
       virm_prenos_ld( .T. )
       unos_virmana()
       my_close_all_dbf()
    ENDIF
 
-   RETURN .T.
+   RETURN
 
 
 STATIC FUNCTION nstr()
@@ -472,12 +481,11 @@ STATIC FUNCTION nstr()
    RETURN
 
 
-STATIC FUNCTION _ld_calc_totals( lSvi, a_benef )
+STATIC FUNCTION _calc_totals( lSvi, a_benef )
 
    LOCAL i
    LOCAL cTpr
    LOCAL _benef_st
-   LOCAL cOpis2
 
    nPorol := 0
    nRadn_bo := 0
@@ -495,10 +503,10 @@ STATIC FUNCTION _ld_calc_totals( lSvi, a_benef )
       ENDIF
 
       SELECT radn
-      HSEEK _idradn
+      hseek _idradn
 
       SELECT vposla
-      HSEEK _idvposla
+      hseek _idvposla
 
       ParObr( ld->mjesec, ld->godina, cObracun, ld->idrj )
 
@@ -742,10 +750,10 @@ STATIC FUNCTION _ld_calc_totals( lSvi, a_benef )
       // minimalna neto osnova
       nPorNrOsnova := min_neto( nPorNROsnova, _usati )
 
-      IF cTipRada $ "A#U"
-         // poreska osnova ugovori o djelu cine i troskovi
-         nPorNROsnova += nRTrosk
-      ENDIF
+      if cTipRada $ "A#U"
+          // poreska osnova ugovori o djelu cine i troskovi
+          nPorNROsnova += nRTrosk
+      endif
 
       IF lInRS == .T.
          nPorNROsnova := 0
@@ -813,7 +821,7 @@ STATIC FUNCTION _ld_calc_totals( lSvi, a_benef )
       nUIznos += _UIznos  // ukupno iznos
       nUOdbici += _UOdbici  // ukupno odbici
 
-      IF nMjesec <> nMjesecDo
+      IF cMjesec <> cMjesecDo
 
          nPom := AScan( aNetoMj, {| x| x[ 1 ] == mjesec } )
 
@@ -836,15 +844,14 @@ STATIC FUNCTION _ld_calc_totals( lSvi, a_benef )
       PopuniOpsLD()
 
       IF RADN->isplata == "TR"  // isplata na tekuci racun
-         cOpis2 := RADNIK_PREZ_IME
-         Rekapld( "IS_" + RADN->idbanka, nGodina, nMjesecDo, _UIznos, 0, RADN->idbanka, RADN->brtekr, cOpis2, .T. )
+         Rekapld( "IS_" + RADN->idbanka, cGodina, cMjesecDo,_UIznos, 0, RADN->idbanka, RADN->brtekr, RADNIK, .T. )
       ENDIF
 
       SELECT ld
       SKIP
    ENDDO
 
-   RETURN .T.
+   RETURN
 
 
 // ----------------------------------------------------------
@@ -856,51 +863,11 @@ STATIC FUNCTION get_bruto( nIznos )
 
    ? cMainLine
    IF cRTiprada $ "A#U"
-      ? _l( "1. BRUTO PLATA (bruto sa troskovima - troskovi):" )
+      ? Lokal( "1. BRUTO PLATA (bruto sa troskovima - troskovi):" )
    ELSE
-      ? _l( "1. BRUTO PLATA UKUPNO:" )
+      ? Lokal( "1. BRUTO PLATA UKUPNO:" )
    ENDIF
    @ PRow(), 60 SAY nBO PICT gpici
    ? cMainLine
 
-   RETURN .T.
-
-
-
-FUNCTION get_ld_rekap_filter( hParams )
-
-   LOCAL cFilt1
-   LOCAL lSvi := hParams[ 'svi' ]
-   LOCAL cStrSpr := hParams[ 'str_sprema' ]
-   LOCAL qqRj := hParams[ 'q_rj' ]
-   LOCAL aUsl1 := hParams[ 'usl1' ]
-   LOCAL cObracun := hParams[ 'obracun' ]
-   LOCAL nGodina := hParams[ 'godina' ]
-   LOCAL nMjesec := hParams[ 'mjesec' ]
-   LOCAL nMjesecDo := hParams[ 'mjesec_do' ]
-
-
-   IF lSvi
-
-      cFilt1 := ".t." + iif( Empty( cStrSpr ), "", ".and.IDSTRSPR == " + sql_quote( cStrSpr ) ) + ;
-         iif( Empty( qqRJ ), "", ".and." + aUsl1 )
-
-      IF nMjesec != nMjesecDo
-         cFilt1 := cFilt1 + ".and. mjesec >= " + dbf_quote( nMjesec ) + ;
-            ".and. mjesec <= " + dbf_quote( nMjesecDo ) + ".and. godina = " + dbf_quote( nGodina )
-      ENDIF
-
-   ELSE
-
-      cFilt1 := ".t." +  iif( Empty( cStrSpr ), "", ".and. IDSTRSPR == " + sql_quote( cStrSpr ) )
-      IF nMjesec != nMjesecDo
-         cFilt1 := cFilt1 + ".and. mjesec >= " + dbf_quote( nMjesec ) + ;
-            ".and. mjesec <= " + dbf_quote( nMjesecDo ) + ".and. godina = " + dbf_quote( nGodina )
-      ENDIF
-
-   ENDIF
-
-   cFilt1 += ".and. obr = " + dbf_quote( cObracun )
-   cFilt1 := StrTran( cFilt1, ".t..and.", "" )
-
-   RETURN cFilt1
+   RETURN

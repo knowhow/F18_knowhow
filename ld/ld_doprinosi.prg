@@ -85,7 +85,7 @@ FUNCTION u_dopr_na( nDopOsn, cRTipRada )
 // ------------------------------------------
 // obracunaj i prikazi doprinose
 // ------------------------------------------
-FUNCTION obr_doprinos( nDopr, nDopr2, cTRada, a_benef )
+FUNCTION obr_doprinos( nGodina, nMjesec, nDopr, nDopr2, cTRada, a_benef )
 
    LOCAL nIznos := 0
 

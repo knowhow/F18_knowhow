@@ -92,6 +92,11 @@ FUNCTION virm_prenos_ld( prenos_ld )
 
    _o_tables()
 
+   SELECT virm_pripr
+   IF reccount2() > 0 .AND. Pitanje(, "Izbrisati virmane u pripremi?", "N" ) == "D"
+      my_dbf_zap()
+   ENDIF
+
    // uzmi parametre iz sql/db
    _godina := fetch_metric( "virm_godina", my_user(), Year( Date() ) )
    _mjesec := fetch_metric( "virm_mjesec", my_user(), Month( Date() ) )

@@ -139,6 +139,13 @@ FUNCTION my_use( cAlias, cTable, lRefresh )
    ENDIF
 
    cFullDbf := my_home() + aDbfRec[ 'table' ]
+
+   AltD()
+   IF !File( cFullDbf )
+      ? "nema:", cFullDbf
+      RETURN .F.
+   ENDIF
+
    cFullIdx := ImeDbfCdx( cFullDbf )
 
    nCnt := 0

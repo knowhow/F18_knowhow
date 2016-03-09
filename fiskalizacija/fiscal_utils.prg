@@ -296,9 +296,6 @@ FUNCTION auto_plu( reset_plu, silent_mode, dev_params )
 
 
 // -----------------------------------------------------------------
-// vraca naziv parametra za sql/db
-// parametar moze biti:
-//
 // "auto_plu_dev_1" - auto plu device 1
 // "auto_plu_dev_2" - auto plu device 2
 // -----------------------------------------------------------------

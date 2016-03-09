@@ -109,11 +109,11 @@ FUNCTION fprint_polog( dev_params, nPolog, lShowBox )
 
       IF nPolog = 0
          MsgBeep( "Vrijednost depozita mora biti <> 0 !" )
-         RETURN
+         RETURN .F.
       ENDIF
 
       IF LastKey() == K_ESC
-         RETURN
+         RETURN .F.
       ENDIF
 
    ENDIF
@@ -124,7 +124,7 @@ FUNCTION fprint_polog( dev_params, nPolog, lShowBox )
 
    _a_to_file( dev_params[ "out_dir" ], dev_params[ "out_file" ], aStruct, aPolog )
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -180,7 +180,7 @@ FUNCTION fprint_double( dev_params, rn_params )
       BoxC()
 
       IF LastKey() == K_ESC
-         RETURN
+         RETURN .F.
       ENDIF
 
       // dodaj i sekunde na kraju
@@ -191,12 +191,12 @@ FUNCTION fprint_double( dev_params, rn_params )
 
       IF Empty( rn_params[ "vrijeme" ] )
          MsgBeep( "Opciju nije moguće izvršiti, nije definisano vrijeme !" )
-         RETURN
+         RETURN .F.
       ENDIF
 
       IF rn_params[ "datum" ] == CToD( "" )
          MsgBeep( "Opciju nije moguće izvršiti, nije definisan datum !" )
-         RETURN
+         RETURN .F.
       ENDIF
 
       // imamo parametre racuna...
@@ -224,7 +224,7 @@ FUNCTION fprint_double( dev_params, rn_params )
 
    _a_to_file( dev_params[ "out_dir" ], dev_params[ "out_file" ], aStruct, aDouble )
 
-   RETURN
+   RETURN .T.
 
 
 // -----------------------------------------------
@@ -262,7 +262,7 @@ FUNCTION fprint_komanda_301_zatvori_racun( dev_params )
 
    _a_to_file( dev_params[ "out_dir" ], dev_params[ "out_file" ], aStruct, aVoid )
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -300,7 +300,7 @@ FUNCTION fprint_delete_plu( dev_params, silent )
    IF !silent
 
       IF !spec_funkcije_sifra( "RESET" )
-         RETURN
+         RETURN .F.
       ENDIF
 
       Box(, 1, 50 )
@@ -309,7 +309,7 @@ FUNCTION fprint_delete_plu( dev_params, silent )
       BoxC()
 
       IF LastKey() == K_ESC
-         RETURN
+         RETURN .F.
       ENDIF
 
    ENDIF
@@ -319,7 +319,7 @@ FUNCTION fprint_delete_plu( dev_params, silent )
 
    _a_to_file( dev_params[ "out_dir" ], dev_params[ "out_file" ], aStruct, aDel )
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -340,7 +340,7 @@ FUNCTION fprint_rn_close( dev_params )
 
    _a_to_file( dev_params[ "out_dir" ], dev_params[ "out_file" ], aStruct, aClose )
 
-   RETURN
+   RETURN .T.
 
 
 FUNCTION fprint_manual_cmd( dev_params )
@@ -382,7 +382,7 @@ FUNCTION fprint_manual_cmd( dev_params )
       ENDIF
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -403,7 +403,7 @@ FUNCTION fprint_sold_plu( dev_params )
    BoxC()
 
    IF LastKey() == K_ESC
-      RETURN
+      RETURN .F.
    ENDIF
 
    fprint_delete_answer( dev_params )
@@ -412,7 +412,7 @@ FUNCTION fprint_sold_plu( dev_params )
 
    _a_to_file( dev_params[ "out_dir" ], dev_params[ "out_file" ], aStruct, aPlu )
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -438,7 +438,7 @@ FUNCTION fprint_daily_rpt( dev_params )
    BoxC()
 
    IF LastKey() == K_ESC
-      RETURN
+      RETURN .F.
    ENDIF
 
    set_metric( "fiscal_fprint_daily_type", my_user(), cType )
@@ -458,7 +458,7 @@ FUNCTION fprint_daily_rpt( dev_params )
    ENDIF
 
    IF Pitanje(, "Štampati dnevni izvještaj ?", "D" ) == "N"
-      RETURN
+      RETURN .F.
    ENDIF
 
    fprint_delete_answer( dev_params )
@@ -470,7 +470,7 @@ FUNCTION fprint_daily_rpt( dev_params )
 
    IF nErr <> 0
       MsgBeep( "Greška sa štampom dnevnog izvještaja !" )
-      RETURN
+      RETURN .F.
    ENDIF
 
    set_metric( _param_date, nil, Date() )
@@ -487,7 +487,7 @@ FUNCTION fprint_daily_rpt( dev_params )
          nErr := fprint_read_error( dev_params, 0, NIL, 500 )
          IF nErr <> 0
             MsgBeep( "Greška sa nuliranjem stanja uređaja !" )
-            RETURN
+            RETURN .F.
          ENDIF
       ENDIF
 

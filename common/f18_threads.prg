@@ -17,6 +17,18 @@ STATIC s_nThreadCount := 0
 PROCEDURE init_thread( cInfo )
 
    s_nThreadCount++
+
+   DO WHILE .T.
+      IF s_nThreadCount > 10
+         ?E "thread count>10 sacekati", s_nThreadCount
+         hb_idleSleep( 1.5 )
+
+      ELSE
+         EXIT
+      ENDIF
+      EXIT
+   ENDDO
+
 #ifdef F18_DEBUG
    ?E ">>>>> START: thread", cInfo, "thread count:", s_nThreadCount, "<<<<<"
 #endif

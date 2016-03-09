@@ -55,7 +55,7 @@ FUNCTION rnal_o_tables( lTemporary )
       O__DOC_OPS
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 FUNCTION rnal_o_sif_tables()
@@ -77,7 +77,7 @@ FUNCTION rnal_o_sif_tables()
    O_SIFV
    O_ROBA
 
-   RETURN
+   RETURN .T.
 
 
 

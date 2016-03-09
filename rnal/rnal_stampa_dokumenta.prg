@@ -59,10 +59,11 @@ FUNCTION stampa_nalog_proizvodnje( lTemporary, nDoc_no )
 
 
 
-// -------------------------------------
-// stampa obracunskog lista
-// filovanje prn tabela
-// -------------------------------------
+/*
+  stampa obracunskog lista
+ filovanje prn tabela
+*/
+
 FUNCTION st_obr_list( temp, doc_no, a_docs )
 
    LOCAL _gn := .T.
@@ -74,6 +75,7 @@ FUNCTION st_obr_list( temp, doc_no, a_docs )
    IF gGnUse == "N"
       _gn := .F.
    ENDIF
+
 
    IF a_docs == NIL .OR. Len( a_docs ) == 0
       a_docs := {}
@@ -92,7 +94,10 @@ FUNCTION st_obr_list( temp, doc_no, a_docs )
    t_rpt_create()
    t_rpt_open()
 
+   rnal_o_sif_tables()
    rnal_o_tables( __temp )
+
+   my_use_refresh_stop()
 
    FOR _i := 1 TO Len( a_docs )
 
@@ -112,6 +117,8 @@ FUNCTION st_obr_list( temp, doc_no, a_docs )
       _fill_aops()
 
    NEXT
+
+   my_use_refresh_start()
 
    _count := t_docit->( RecCount2() )
 
@@ -218,7 +225,7 @@ FUNCTION rnal_stampa_naljepnica( lTemporary, nDoc_no )
    t_rpt_create()
    t_rpt_open()
 
-   rnal_o_tables( __temp )
+   rnal_o_tables( lTemporary )
 
    _fill_main()
    _fill_items( lGn, 2 )
@@ -228,7 +235,7 @@ FUNCTION rnal_stampa_naljepnica( lTemporary, nDoc_no )
 
    my_close_all_dbf()
 
-   rnal_o_tables( __temp )
+   rnal_o_tables( lTemporary )
 
    RETURN DE_REFRESH
 
@@ -278,8 +285,8 @@ STATIC FUNCTION _fill_items( lZpoGN, nVar )
       lZPoGN := .F.
    ENDIF
 
-   // iskljucen parametar zaokruzenja
-   IF gGnUse == "N"
+
+   IF gGnUse == "N" // iskljucen parametar zaokruzenja
       lZPoGn := .F.
    ENDIF
 
@@ -317,8 +324,8 @@ STATIC FUNCTION _fill_items( lZpoGN, nVar )
          cPosition := "pozicija: " + cDoc_it_pos + ", "
       ENDIF
 
-      // tip artikla
-      cDoc_it_type := field->doc_it_typ
+
+      cDoc_it_type := field->doc_it_typ // tip artikla
 
       // nadji proizvod
       SELECT articles
@@ -343,7 +350,7 @@ STATIC FUNCTION _fill_items( lZpoGN, nVar )
       nWidth := 0
 
       // u varijanti obracunskog lista uzmi i operacije za ovu stavku
-      IF nVar = 2
+      IF nVar == 2
 
          aOper := {}
          cTmp := ""
@@ -364,7 +371,6 @@ STATIC FUNCTION _fill_items( lZpoGN, nVar )
             ENDIF
 
             cTmp := g_aop_desc( field->aop_id )
-
             nScan := AScan( aOper, {| xVar| xVar[ 1 ] = cTmp } )
 
             IF nScan = 0
@@ -430,7 +436,7 @@ STATIC FUNCTION _fill_items( lZpoGN, nVar )
       nWi2 := field->doc_it_w2
 
       // kod obracunskog lista
-      IF nVar = 2
+      IF nVar == 2
          // prepust...
       ENDIF
 
@@ -545,7 +551,7 @@ STATIC FUNCTION _fill_items( lZpoGN, nVar )
       SKIP
    ENDDO
 
-   RETURN
+   RETURN .T.
 
 
 // ---------------------------------------------------
@@ -1395,7 +1401,7 @@ FUNCTION prn_nal()
    BoxC()
 
    IF LastKey() == K_ESC .OR. nDoc_no = 0
-      RETURN
+      RETURN .F.
    ENDIF
 
    rnal_o_tables()
@@ -1411,7 +1417,7 @@ FUNCTION prn_nal()
 
    stampa_nalog_proizvodnje( .F., nDoc_no )
 
-   RETURN
+   RETURN .T.
 
 
 FUNCTION rekalkulisi_stavke_za_stampu( lPriprema )

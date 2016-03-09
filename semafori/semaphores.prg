@@ -657,7 +657,6 @@ PROCEDURE thread_dbf_refresh( cTable )
 
    init_thread( "dbf_refresh: " + cTable )
 
-
    ErrorBlock( {| objError, lShowreport, lQuit | GlobalErrorHandler( objError, lShowReport, lQuit ) } )
    dbf_refresh( cTable )
 
@@ -671,7 +670,7 @@ FUNCTION dbf_refresh( cTable )
    LOCAL aDbfRec
    LOCAL hVersions
 
-   IF  cTable == nil
+   IF  cTable == NIL
       IF !Used() .OR. ( rddName() $  "SQLMIX#ARRAYRDD" )
          RETURN .F.
       ENDIF
@@ -690,7 +689,6 @@ FUNCTION dbf_refresh( cTable )
 #endif
       RETURN .F.
    ENDIF
-
 
    IF skip_semaphore_sync( aDbfRec[ 'table' ] ) // tabela nije sem-shared
       RETURN .F.

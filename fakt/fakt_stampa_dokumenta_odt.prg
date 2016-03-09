@@ -102,7 +102,7 @@ FUNCTION stdokodt( cIdf, cIdVd, cBrDok )
 
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -348,10 +348,10 @@ STATIC FUNCTION _grupno_sql_gen( racuni, params )
 
 
 
+/*
+stampa dokumenta u odt formatu, grupne fakture
+*/
 
-// ------------------------------------------------
-// stampa dokumenta u odt formatu, grupne fakture
-// ------------------------------------------------
 FUNCTION stdokodt_grupno()
 
    LOCAL _t_path := my_home()
@@ -375,15 +375,15 @@ FUNCTION stdokodt_grupno()
    AAdd( _ctrl_data, { 0, 0, 0, 0, 0, 0, 0, 0, 0 } )
 
    IF !_grupno_params( @_params )
-      RETURN
+      RETURN .F.
    ENDIF
 
    IF !_grupno_sql_gen( @_racuni, _params )
-      RETURN
+      RETURN .F.
    ENDIF
 
    IF Len( _racuni ) == 0
-      MsgBeep( "Nema podataka za export !!!" )
+      MsgBeep( "Nema podataka za export !" )
       RETURN
    ENDIF
 
@@ -402,7 +402,7 @@ FUNCTION stdokodt_grupno()
       ENDIF
 
       IF get_file_list_array( _t_path, _filter, @_template, .T. ) == 0
-         RETURN
+         RETURN .F.
       ENDIF
 
       my_close_all_dbf()
@@ -545,6 +545,8 @@ STATIC FUNCTION _gen_xml( xml_file, a_racuni, ctrl_data )
    xml_head()
 
    xml_subnode( "invoice", .F. )
+
+   my_use_refresh_stop()
 
    FOR _n := 1 TO Len( a_racuni )
 
@@ -784,6 +786,7 @@ STATIC FUNCTION _gen_xml( xml_file, a_racuni, ctrl_data )
       xml_subnode( "invoice_no", .T. )
 
    NEXT
+   my_use_refresh_start()
 
    xml_subnode( "invoice", .T. )
 

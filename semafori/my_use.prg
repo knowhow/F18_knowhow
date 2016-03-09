@@ -11,15 +11,11 @@
 
 #include "f18.ch"
 
+STATIC s_lRefresh := .T.  // my_use radi refresh
 
 
 FUNCTION my_usex( alias, table, new_area )
 
-/*
-   IF PCount() > 3
-      Alert( "my_usex error > 3" )
-   ENDIF
-*/
    RETURN my_use_temp( alias, table, new_area, .T. )
 
 
@@ -124,7 +120,7 @@ FUNCTION my_use( cAlias, cTable, lRefresh )
       log_write( "my_use ERROR params>3: " + cLogMsg, 1 )
    ENDIF
 
-   hb_default( @lRefresh, .T. )
+   hb_default( @lRefresh, s_lRefresh )
 
    IF cTable != NIL
       aDbfRec := get_a_dbf_rec( cTable, .T. ) // my_use( kalk_pripr, kalk_kalk )
@@ -134,8 +130,13 @@ FUNCTION my_use( cAlias, cTable, lRefresh )
    ENDIF
 
 
-   IF lRefresh .AND. !skip_semaphore_sync( aDbfRec[ 'table' ] ) .AND. !in_dbf_refresh( aDbfRec[ 'table' ] )
+   IF lRefresh .AND. !skip_semaphore_sync( aDbfRec[ 'table' ] ) ;
+         .AND. !in_dbf_refresh( aDbfRec[ 'table' ] ) .AND.  !is_last_refresh_before( aDbfRec[ 'table' ], 7 )
       thread_dbfs( hb_threadStart(  @thread_dbf_refresh(), aDbfRec[ 'table' ] ) )
+#ifdef F18_DEBUG
+   ELSE
+      ?E "my_use ne treba sync", aDbfRec[ 'table' ]
+#endif
    ENDIF
 
    cFullDbf := my_home() + aDbfRec[ 'table' ]
@@ -207,3 +208,17 @@ FUNCTION my_use_error( cFullDbf, cAlias, oError )
    ENDIF
 
    RETURN .T.
+
+FUNCTION my_use_refresh( lRefresh )
+
+   IF lRefresh != nil
+      s_lRefresh := lRefresh
+   ENDIF
+
+   RETURN s_lRefresh
+
+FUNCTION my_use_refresh_stop()
+   RETURN my_use_refresh( .F. )
+
+FUNCTION my_use_refresh_start()
+   RETURN my_use_refresh( .T. )

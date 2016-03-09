@@ -193,11 +193,10 @@ STATIC FUNCTION g_pars_fields( aArr )
 FUNCTION add_tpars( cId_par, cOpis )
 
    LOCAL lFound
-   LOCAL nTArea := SELECT()
-
+   LOCAL nTArea := Select()
 
    SELECT F_T_PARS
-   IF !USED()
+   IF !Used()
       O_T_PARS
       SET ORDER TO TAG "ID_PAR"
    ENDIF
@@ -213,7 +212,7 @@ FUNCTION add_tpars( cId_par, cOpis )
 
    RREPLACE id_par WITH cId_par, opis WITH cOpis
 
-   SELECT( nTArea )
+   Select( nTArea )
 
    RETURN .T.
 
@@ -251,14 +250,16 @@ FUNCTION t_rpt_open()
    RETURN .T.
 
 
+/*
+ vrati vrijednost polja opis iz tabele T_PARS po id kljucu
+ */
 
-// vrati vrijednost polja opis iz tabele T_PARS po id kljucu
 FUNCTION g_t_pars_opis( cId_param )
 
    LOCAL xRet
 
    SELECT F_T_PARS
-   IF !USED()
+   IF !Used()
       O_T_PARS
    ENDIF
 

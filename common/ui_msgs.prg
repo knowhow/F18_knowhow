@@ -54,7 +54,19 @@ FUNCTION info_bar( cDoc, cMsg )
 
 FUNCTION error_bar( cDoc, cMsg )
 
-   Beep( 2 )
+   // Beep( 2 )
+   /* TODO:  : Object destructor failure ;
+
+   1 (b)THREAD_DBF_REFRESH / 661
+ 2 TONE / 0
+ 3 BEEP / 433
+ 4 ERROR_BAR / 57
+ 5 FILL_DBF_FROM_SERVER / 436
+ 6 FULL_SYNCHRO / 82
+ 7 UPDATE_DBF_FROM_SERVER / 70
+ 8 DBF_REFRESH / 723
+ 9 THREAD_DBF_REFRESH / 662
+ */
 
    hb_default( @cMsg, "" )
    @ MaxRow(), 1 SAY8  "> " + PadC( Left( cMsg, MaxCol() - 6 ), MaxCol() - 5 ) + " <" COLOR F18_COLOR_ERROR_PANEL

@@ -11,8 +11,15 @@
 
 #include "f18.ch"
 
+STATIC s_nThreadCount := 0
 
-PROCEDURE init_thread()
+
+PROCEDURE init_thread( cInfo )
+
+   s_nThreadCount++
+#ifdef F18_DEBUG
+   ?E ">>>>> START: thread", cInfo, "thread count:", s_nThreadCount, "<<<<<"
+#endif
 
    set_f18_home( my_server_params()[ "database" ] )
    init_parameters_cache()
@@ -20,8 +27,14 @@ PROCEDURE init_thread()
    RETURN
 
 
-PROCEDURE close_thread()
+PROCEDURE close_thread( cInfo )
 
    my_server_close()
+   s_nThreadCount--
+
+
+#ifdef F18_DEBUG
+   ?E "<<<<<< END: thread", cInfo, "thread count:", s_nThreadCount
+#endif
 
    RETURN

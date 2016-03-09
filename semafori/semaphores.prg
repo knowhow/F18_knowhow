@@ -18,7 +18,6 @@ STATIC s_aLastRefresh := { "x", 0 }
 STATIC s_nBug1 := 1
 #endif
 
-MEMVAR m_x, m_y
 /*
    moguci statusi:
         lock
@@ -655,19 +654,14 @@ FUNCTION is_last_refresh_before( cTable, nSeconds )
 
 PROCEDURE thread_dbf_refresh( cTable )
 
-   init_thread()
+   init_thread( "dbf_refresh: " + cTable )
 
-#ifdef F18_DEBUG
-   ?E ">>>>> START: thread_dbf_refresh:", cTable, "<<<<<"
-#endif
+
    ErrorBlock( {| objError, lShowreport, lQuit | GlobalErrorHandler( objError, lShowReport, lQuit ) } )
    dbf_refresh( cTable )
 
-#ifdef F18_DEBUG
-   ?E "<<<<< END: thread_dbf_refresh:", cTable, " >>>>>"
-#endif
-   close_thread()
-   
+   close_thread( "dbf_refresh: " + cTable )
+
    RETURN
 
 

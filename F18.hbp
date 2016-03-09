@@ -15,6 +15,7 @@ virm/*.prg
 {F18_KADEV}kadev/*.prg
 common/*.prg
 core_ui2/*.prg
+core_sql/*.prg
 string/*.prg
 semafori/*.prg
 common_legacy/*.prg

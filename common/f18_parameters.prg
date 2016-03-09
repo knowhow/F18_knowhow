@@ -274,9 +274,8 @@ FUNCTION f18_set_use_module( module_name, lset )
 
 
 
-// ------------------------------------------------------------------------
-// podesenje aktivnih modula kod startanja aplikacije po prvi put
-// ------------------------------------------------------------------------
+/*
+
 FUNCTION f18_set_active_modules()
 
    LOCAL _ok := .F.
@@ -368,3 +367,5 @@ FUNCTION f18_set_active_modules()
    set_metric( "main_menu_reports", my_user(), _reports )
 
    RETURN _ok
+
+*/

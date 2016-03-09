@@ -30,7 +30,7 @@ FUNCTION cre_all_dbfs( ver )
       _local_files := Directory( my_home() + "*.dbf" )
       _local_files_count := Len( _local_files )
 
-      IF _local_files_count = 0
+      IF _local_files_count == 0 .AND. is_in_main_thread()
          f18_set_active_modules() // odabir modula za glavni meni
       ENDIF
 

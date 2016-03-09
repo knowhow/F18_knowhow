@@ -13,9 +13,6 @@
 
 STATIC s_mainThreadID
 
-STATIC s_psqlServer := NIL
-THREAD STATIC s_psqlServerDbfThread := NIL // svaka thread konekcija zasebna
-STATIC s_psqlServer_params := NIL
 
 // logiranje na server
 STATIC s_psqlServer_log := .F.
@@ -115,127 +112,83 @@ FUNCTION f18_init_app_opts()
 
 
 
-FUNCTION f18_login( force_connect, arg_v )
+FUNCTION post_login( gVars )
 
-   LOCAL oLogin
-
-   IF force_connect == NIL
-      force_connect := .T.
+   IF gVars == NIL
+      gVars := .T.
    ENDIF
 
-   _get_server_params_from_config()
+   init_parameters_cache()
 
-   oLogin := F18Login():New()
-   oLogin:main_db_login( @s_psqlServer_params, force_connect )
-   __main_db_params := s_psqlServer_params
+   set_global_vars_0()
+   set_global_screen_vars( .F. )
+   set_global_vars_2()
+   parametri_organizacije( .F. )
+   set_vars_za_specificne_slucajeve()
 
-   IF oLogin:_main_db_connected
+   server_log_enable()
 
-      // 1 konekcija je na postgres i to je ok
-      // ako je vec neka druga...
-      IF oLogin:_login_count > 1
-         // ostvari opet konekciju na main_db postgres
-         oLogin:disconnect()
-         oLogin:main_db_login( @s_psqlServer_params, .T. )
-      ENDIF
+   // ~/.F18/empty38/
+   set_f18_home( my_server_params()[ "database" ] )
+   info_bar( "init", "home baze: " + my_home() )
+
+   hb_gtInfo( HB_GTI_WINTITLE, "[ " + my_server_params()[ "user" ] + " ][ " + my_server_params()[ "database" ] + " ]" )
+
+   thread_dbfs( hb_threadStart( @thread_create_dbfs() ) )
+   info_bar( "init", "thread_create_dbfs - end" )
+
+   check_server_db_version()
+   server_log_enable()
+
+   set_init_fiscal_params()
+
+   run_on_startup()
+
+   set_parametre_f18_aplikacije( .T. )
+   set_hot_keys()
+
+   say_database_info()
+   get_log_level_from_params()
+
+   RETURN .T.
 
 
-      _write_server_params_to_config() // upisi parametre za sljedeci put...
+FUNCTION thread_dbfs( pThreadID )
 
-      DO WHILE .T.
-
-         IF !oLogin:company_db_login( @s_psqlServer_params )
-            QUIT_1
-         ENDIF
-
-         _write_server_params_to_config() // upisi parametre tekuce firme...
-
-         IF oLogin:_company_db_connected
-
-            show_sacekaj()
-            post_login()
-            program_module_menu( arg_v )
-
-         ENDIF
-
-      ENDDO
-
-   ELSE
-
-      QUIT_1 // neko je rekao ESC
+   IF pThreadID != nil
+#ifdef F18_DEBUG
+      ?E "thread_dbfs id", pThreadID
+#endif
    ENDIF
 
    RETURN .T.
 
 
-STATIC FUNCTION show_sacekaj()
+FUNCTION main_thread()
 
-   LOCAL _x, _y
-   LOCAL _txt
-
-   _x := ( MAXROWS() / 2 ) - 12
-   _y := MAXCOLS()
-
-   CLEAR SCREEN
-
-   // _txt := PadC( ". . .  S A Č E K A J T E    T R E N U T A K  . . .", _y )
-   // @ _x, 2 SAY8 _txt
-
-   // _txt := PadC( ". . . . . . k o n e k c i j a    n a    b a z u   u   t o k u . . . . . . .", _y )
-   // @ _x + 1, 2 SAY8 _txt
+   RETURN s_mainThreadID
 
 
-   naslovni_ekran_splash_screen( "F18", F18_VER )
+FUNCTION is_in_main_thread()
 
-   RETURN .T.
+   RETURN hb_threadSelf() == main_thread()
 
 
 
 
-// prelazak iz sezone u sezonu
-FUNCTION f18_promjena_sezone()
-
-   LOCAL oLogin := F18Login():New()
-
-   oLogin:promjena_sezone( @s_psqlServer_params )
-
-   RETURN .T.
 
 
+// -----------------------------------------------------------
+// vraca informaciju o nivou logiranja aplikcije
+// -----------------------------------------------------------
+STATIC FUNCTION get_log_level_from_params()
 
-// -------------------------------
-// init harbour postavke
-// -------------------------------
-FUNCTION init_harbour()
+#ifdef F18_DEBUG
 
-   rddSetDefault( RDDENGINE )
-   Set( _SET_AUTOPEN, .F.  )
-
-   SET CENTURY OFF
-   // epoha je u stvari 1999, 2000 itd
-   SET EPOCH TO 1960
-   SET DATE TO GERMAN
-
-   s_mainThreadID := hb_threadSelf()
-
-   hb_cdpSelect( "SL852" )
-   hb_SetTermCP( "SLISO" )
-
-   SET DELETED ON
-
-   SetCancel( .F. )
-
-   Set( _SET_EVENTMASK, INKEY_ALL )
-   MSetCursor( .T. )
-
-   SET DATE GERMAN
-   SET SCOREBOARD OFF
-   SET CONFIRM ON
-   SET WRAP ON
-   SET ESCAPE ON
-   SET SOFTSEEK ON
-
-   SetColor( F18_COLOR_NORMAL )
+   log_level( fetch_metric( "log_level", NIL, F18_DEFAULT_LOG_LEVEL_DEBUG ) )
+#else
+   log_level( fetch_metric( "log_level", NIL, F18_DEFAULT_LOG_LEVEL ) )
+#endif
 
    RETURN .T.
 
@@ -259,7 +212,7 @@ FUNCTION set_screen_dimensions()
          ?E "setovanje ekrana: setovan ekran po rezoluciji"
       ELSE
          ?E "setovanje ekrana: ne mogu setovati ekran po trazenoj rezoluciji !"
-         //QUIT_1
+         // QUIT_1
       ENDIF
 
       RETURN .T.
@@ -361,183 +314,11 @@ FUNCTION set_screen_dimensions()
    ?E " get font_width: ", hb_gtInfo( HB_GTI_FONTWIDTH )
    ?E " get font_weight: ", hb_gtInfo( HB_GTI_FONTWEIGHT )
 
-   //hb_gtInfo( HB_GTI_ALTENTER, .T. )
+   // hb_gtInfo( HB_GTI_ALTENTER, .T. )
 
    open_main_window()
 
    RETURN .T.
-
-#ifdef TEST
-
-
-FUNCTION _get_server_params_from_config()
-
-   s_psqlServer_params := hb_Hash()
-   s_psqlServer_params[ "port" ] := 5432
-   s_psqlServer_params[ "database" ] := "f18_test"
-   s_psqlServer_params[ "host" ] := "localhost"
-   s_psqlServer_params[ "user" ] := "test1"
-   s_psqlServer_params[ "schema" ] := "fmk"
-   s_psqlServer_params[ "password" ] := s_psqlServer_params[ "user" ]
-   s_psqlServer_params[ "postgres" ] := "postgres"
-
-   RETURN .T.
-
-#else
-
-FUNCTION _get_server_params_from_config()
-
-   LOCAL _key, _ini_params
-
-   _ini_params := hb_Hash()
-   _ini_params[ "host" ] := nil
-   _ini_params[ "database" ] := nil
-   _ini_params[ "user" ] := nil
-   _ini_params[ "schema" ] := nil
-   _ini_params[ "port" ] := nil
-   _ini_params[ "session" ] := nil
-
-   IF !f18_ini_config_read( F18_SERVER_INI_SECTION + iif( test_mode(), "_test", "" ), @_ini_params, .T. )
-      MsgBeep( "problem ini read" )
-   ENDIF
-
-   s_psqlServer_params := hb_Hash() // definisi parametre servera
-
-   // preuzmi iz ini-ja
-   FOR EACH _key in _ini_params:Keys
-      s_psqlServer_params[ _key ] := _ini_params[ _key ]
-   NEXT
-
-   // port je numeric
-   IF ValType( s_psqlServer_params[ "port" ] ) == "C"
-      s_psqlServer_params[ "port" ] := Val( s_psqlServer_params[ "port" ] )
-   ENDIF
-   s_psqlServer_params[ "password" ] := s_psqlServer_params[ "user" ]
-   s_psqlServer_params[ "postgres" ] := "postgres"
-
-   RETURN .T.
-#endif
-
-FUNCTION _write_server_params_to_config()
-
-   LOCAL _key, _ini_params := hb_Hash()
-
-   FOR EACH _key in { "host", "database", "user", "schema", "port", "session" }
-      _ini_params[ _key ] := s_psqlServer_params[ _key ]
-   NEXT
-
-   IF !f18_ini_config_write( F18_SERVER_INI_SECTION + iif( test_mode(), "_test", "" ), _ini_params, .T. )
-      MsgBeep( "problem ini write" )
-   ENDIF
-
-   RETURN .T.
-
-
-FUNCTION post_login( gVars )
-
-   IF gVars == NIL
-      gVars := .T.
-   ENDIF
-
-   init_parameters_cache()
-
-   set_global_vars_0()
-   set_global_screen_vars( .F. )
-   set_global_vars_2()
-   parametri_organizacije( .F. )
-   set_vars_za_specificne_slucajeve()
-
-   server_log_enable()
-
-   // ~/.F18/empty38/
-   set_f18_home( my_server_params()[ "database" ] )
-   info_bar( "init", "home baze: " + my_home() )
-
-   hb_gtInfo( HB_GTI_WINTITLE, "[ " + my_server_params()[ "user" ] + " ][ " + my_server_params()[ "database" ] + " ]" )
-
-   thread_dbfs( hb_threadStart( @thread_create_dbfs() ) )
-   info_bar( "init", "thread_create_dbfs - end" )
-
-   check_server_db_version()
-   server_log_enable()
-
-   set_init_fiscal_params()
-
-   run_on_startup()
-
-   set_parametre_f18_aplikacije( .T. )
-   set_hot_keys()
-
-   say_database_info()
-   get_log_level_from_params()
-
-   RETURN .T.
-
-
-FUNCTION thread_dbfs( pThreadID )
-
-   IF pThreadID != nil
-#ifdef F18_DEBUG
-      ?E "thread_dbfs id", pThreadID
-#endif
-   ENDIF
-
-   RETURN .T.
-
-
-FUNCTION main_thread()
-
-   RETURN s_mainThreadID
-
-
-FUNCTION is_in_main_thread()
-
-   RETURN hb_threadSelf() == main_thread()
-
-
-
-PROCEDURE thread_create_dbfs()
-
-   LOCAL _ver
-
-   init_thread()
-
-   ErrorBlock( {| objError, lShowreport, lQuit | GlobalErrorHandler( objError, lShowReport, lQuit ) } )
-
-   _ver := read_dbf_version_from_config()
-
-   my_server()
-   set_a_dbfs()
-   cre_all_dbfs( _ver )
-
-   kreiraj_pa_napuni_partn_idbr_pdvb ()
-
-   set_a_dbfs_key_fields() // inicijaliziraj "dbf_key_fields" u __f18_dbf hash matrici
-   write_dbf_version_to_ini_conf()
-
-   f18_log_delete() // brisanje loga nakon logiranja...
-
-   close_thread()
-
-   RETURN
-
-
-
-// -----------------------------------------------------------
-// vraca informaciju o nivou logiranja aplikcije
-// -----------------------------------------------------------
-STATIC FUNCTION get_log_level_from_params()
-
-#ifdef F18_DEBUG
-
-   log_level( fetch_metric( "log_level", NIL, F18_DEFAULT_LOG_LEVEL_DEBUG ) )
-#else
-   log_level( fetch_metric( "log_level", NIL, F18_DEFAULT_LOG_LEVEL ) )
-#endif
-
-   RETURN .T.
-
-
 
 
 STATIC FUNCTION get_screen_resolution_from_config()
@@ -646,313 +427,7 @@ FUNCTION log_level( x )
    RETURN __log_level
 
 
-STATIC FUNCTION f18_form_login( server_params )
 
-   LOCAL _ret
-   LOCAL _server
-
-   IF server_params == NIL
-      server_params := s_psqlServer_params
-   ENDIF
-
-   DO WHILE .T.
-
-      IF !_login_screen( @server_params )
-         f18_no_login_quit()
-         RETURN .F.
-      ENDIF
-
-      IF my_server_login( server_params )
-         info_bar( "init", "form login succesfull: " + server_params[ "host" ] + " / " + server_params[ "database" ] + " / " + server_params[ "user" ] + " / " + Str( my_server_params()[ "port" ] )  + " / " + server_params[ "schema" ] + " / verzija programa: " + F18_VER )
-         EXIT
-      ELSE
-         Beep( 4 )
-      ENDIF
-
-   ENDDO
-
-   RETURN .T.
-
-
-STATIC FUNCTION _login_screen( server_params )
-
-   LOCAL cHostname, cDatabase, cUser, cPassword, nPort, cSchema, cSession
-   LOCAL lSuccess := .T.
-   LOCAL nX := 5
-   LOCAL nLeft := 7
-   LOCAL cConfigureServer := "N"
-
-   cHostName := server_params[ "host" ]
-   cDatabase := server_params[ "database" ]
-   cUser := server_params[ "user" ]
-   cSchema := server_params[ "schema" ]
-   nPort := server_params[ "port" ]
-   cSession := server_params[ "session" ]
-   cPassword := ""
-
-   IF ( cHostName == nil ) .OR. ( nPort == nil )
-      cConfigureServer := "D"
-   ENDIF
-
-   IF cSession == NIL
-      cSession := AllTrim( Str( Year( Date() ) ) )
-   ENDIF
-
-   IF cHostName == nil
-      cHostName := "localhost"
-   ENDIF
-
-   IF nPort == nil
-      nPort := 5432
-   ENDIF
-
-   IF cSchema == nil
-      cSchema := "fmk"
-   ENDIF
-
-   IF cDatabase == nil
-      cDatabase := "f18_test"
-   ENDIF
-
-   IF cUser == nil
-      cUser := "test1"
-   ENDIF
-
-   cSchema   := PadR( cSchema, 40 )
-   cDatabase := PadR( cDatabase, 100 )
-   cHostName := PadR( cHostName, 100 )
-   cUser     := PadR( cUser, 100 )
-   cPassword := PadR( cPassword, 100 )
-
-   CLEAR SCREEN
-
-   @ 5, 5, 18, 77 BOX B_DOUBLE_SINGLE
-
-   ++ nX
-   @ nX, nLeft SAY PadC( "***** Unestite podatke za pristup *****", 60 )
-
-   nX += 2
-   @ nX, nLeft SAY PadL( "Konfigurisati server ?:", 21 ) GET cConfigureServer VALID cConfigureServer $ "DN" PICT "@!"
-   ++ nX
-
-   READ
-
-   IF cConfigureServer == "D"
-      ++ nX
-      @ nX, nLeft SAY PadL( "Server:", 8 ) GET cHostname PICT "@S20"
-      @ nX, 37 SAY "Port:" GET nPort PICT "9999"
-      @ nX, 48 SAY "Shema:" GET cSchema PICT "@S15"
-   ELSE
-      ++ nX
-   ENDIF
-
-   ++ nX
-   ++ nX
-   @ nX, nLeft SAY PadL( "Baza:", 15 ) GET cDatabase PICT "@S30"
-   @ nX, 55 SAY "Sezona:" GET cSession
-
-   ++ nX
-   ++ nX
-   @ nX, nLeft SAY PadL( "KORISNIK:", 15 ) GET cUser PICT "@S30"
-
-   ++ nX
-   ++ nX
-   @ nX, nLeft SAY PadL( "LOZINKA:", 15 ) GET cPassword PICT "@S30" COLOR F18_COLOR_PASSWORD
-
-   READ
-
-   IF LastKey() == K_ESC
-      RETURN .F.
-   ENDIF
-
-   cHostName := AllTrim( cHostname )
-   cUser     := AllTrim( cUser )
-
-
-   IF Empty( cPassword )  // korisnici user=password se jednostavno logiraju
-      cPassword := cUser
-   ELSE
-      cPassword := AllTrim( cPassword )
-   ENDIF
-   cDatabase := AllTrim( cDatabase )
-   cSchema   := AllTrim( cSchema )
-
-   server_params[ "host" ]      := cHostName
-   server_params[ "database" ]  := cDatabase
-   server_params[ "user" ]      := cUser
-   server_params[ "schema" ]    := cSchema
-   server_params[ "port" ]      := nPort
-   server_params[ "password" ]  := cPassword
-   server_params[ "session" ]  := cSession
-
-   RETURN lSuccess
-
-
-
-FUNCTION pg_server( server )
-
-   LOCAL oError
-   LOCAL nI, cMsg, cLogMsg := ""
-
-   IF !is_in_main_thread()
-
-      IF s_psqlServerDbfThread  == NIL
-
-         BEGIN SEQUENCE WITH {| err | Break( err ) }
-
-            s_psqlServerDbfThread := TPQServer():New( s_psqlServer_params[ "host" ], ;
-               s_psqlServer_params[ "database" ], ;
-               s_psqlServer_params[ "user" ], ;
-               s_psqlServer_params[ "password" ], ;
-               s_psqlServer_params[ "port" ], ;
-               s_psqlServer_params[ "schema" ] )
-
-         RECOVER USING oError
-
-            LOG_CALL_STACK cLogMsg
-            ?E "thread psql login error:", cLogMsg, oError:description
-            QUIT_1
-         END SEQUENCE
-
-      ENDIF
-      RETURN s_psqlServerDbfThread
-
-   ENDIF
-
-   IF server <> NIL
-      s_psqlServer := server
-   ENDIF
-
-   RETURN s_psqlServer
-
-
-FUNCTION my_server( oServer )
-
-   RETURN pg_server( oServer )
-
-
-FUNCTION my_server_close()
-
-   LOCAL oServer := my_server()
-
-   IF is_var_objekat_tpqserver( oServer )
-      oServer:close()
-   ENDIF
-
-   IF !is_in_main_thread()
-      s_psqlServerDbfThread := NIL
-   ENDIF
-
-   RETURN .T.
-
-/*
- set_get server_params
-*/
-
-FUNCTION my_server_params( params )
-
-   LOCAL  _key
-
-   IF params <> nil
-      FOR EACH _key in params:Keys
-         s_psqlServer_params[ _key ] := params[ _key ]
-      NEXT
-   ENDIF
-
-   RETURN s_psqlServer_params
-
-
-
-FUNCTION my_server_login( params, conn_type )
-
-   LOCAL _key, _server
-
-   IF params == NIL
-      params := s_psqlServer_params
-   ENDIF
-
-   IF conn_type == NIL
-      conn_type := 1
-   ENDIF
-
-   FOR EACH _key in params:Keys
-      IF params[ _key ] == NIL
-         IF conn_type == 1
-            error_bar( "init", "my_server_login error server params key: " + _key )
-         ENDIF
-         RETURN .F.
-      ENDIF
-   NEXT
-
-   _server := TPQServer():New( params[ "host" ], ;
-      iif( conn_type == 1, params[ "database" ], "postgres" ), ;
-      params[ "user" ], ;
-      params[ "password" ], ;
-      params[ "port" ], ;
-      iif( conn_type == 1, params[ "schema" ], "public" ) )
-
-   IF !( _server:NetErr() .AND. !Empty( _server:ErrorMsg() ) )
-
-      my_server( _server )
-
-      IF conn_type == 1
-         set_sql_search_path()
-         info_bar( "login", "server connection ok: " + params[ "user" ] + " / " + if ( conn_type == 1, params[ "database" ], "postgres" ) + " / verzija aplikacije: " + F18_VER, 1 )
-      ENDIF
-
-      RETURN .T.
-
-   ELSE
-
-      IF conn_type == 1
-         error_bar( "login", "error server connection: " + _server:ErrorMsg() )
-      ENDIF
-
-      RETURN .F.
-
-   ENDIF
-
-   RETURN .T.
-
-
-FUNCTION my_server_logout()
-
-   IF ValType( s_psqlServer ) == "O"
-      s_psqlServer:Close()
-   ENDIF
-
-   RETURN s_psqlServer
-
-
-FUNCTION my_server_search_path( path )
-
-   LOCAL _key := "search_path"
-
-   IF path == nil
-      IF !hb_HHasKey( s_psqlServer_params, _key )
-         s_psqlServer_params[ _key ] := "fmk, public, u2"
-      ENDIF
-   ELSE
-      s_psqlServer_params[ _key ] := path
-   ENDIF
-
-   RETURN s_psqlServer_params[ _key ]
-
-
-FUNCTION f18_user()
-   RETURN s_psqlServer_params[ "user" ]
-
-
-FUNCTION f18_database()
-   RETURN s_psqlServer_params[ "database" ]
-
-
-FUNCTION f18_curr_session()
-   RETURN s_psqlServer_params[ "session" ]
-
-
-FUNCTION my_user()
-   RETURN f18_user()
 
 
 
@@ -1081,47 +556,9 @@ FUNCTION no_sql_mode( val )
 
 
 
-STATIC FUNCTION f18_no_login_quit()
-
-   ?E "direct login: " + ;
-      my_server_params()[ "host" ] + " / " + ;
-      my_server_params()[ "database" ] + " / " + ;
-      my_server_params()[ "user" ] + " / " +  ;
-      Str( my_server_params()[ "port" ] )  + " / " + ;
-      my_server_params()[ "schema" ]
-
-   MsgBeep( "Neuspješna prijava na server." )
-
-   log_close()
-
-   QUIT_1
-
-   RETURN .T.
 
 
-FUNCTION relogin()
 
-   LOCAL oBackup := F18Backup():New()
-   LOCAL _ret := .F.
-
-   IF oBackup:locked()
-      MsgBeep( oBackup:backup_in_progress_info() )
-      RETURN _ret
-   ENDIF
-
-   server_log_disable()
-   my_server_logout()
-
-   _get_server_params_from_config()
-
-   IF f18_form_login()
-      post_login()
-   ENDIF
-
-   _write_server_params_to_config()
-   _ret := .T.
-
-   RETURN _ret
 
 
 

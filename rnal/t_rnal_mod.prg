@@ -37,12 +37,16 @@ METHOD mMenu()
 
    my_close_all_dbf()
 
-   O_DOCS
-   SELECT docs
-   USE
+   select (F_DOCS)
+   IF my_use ("docs")
+      set order to tag "1"
+      SELECT docs
+      USE
+   ELSE
+      Alert( "ne postoji rnal_docs")
+   ENDIF
 
    my_close_all_dbf()
-
 
    rnal_set_params()
 

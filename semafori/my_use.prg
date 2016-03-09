@@ -140,9 +140,9 @@ FUNCTION my_use( cAlias, cTable, lRefresh )
 
    cFullDbf := my_home() + aDbfRec[ 'table' ]
 
-   AltD()
-   IF !File( cFullDbf )
-      ? "nema:", cFullDbf
+
+   IF !File( f18_ime_dbf( aDbfRec ) )
+      ?E "nema:", cFullDbf
       RETURN .F.
    ENDIF
 

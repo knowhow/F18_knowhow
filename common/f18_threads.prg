@@ -17,9 +17,9 @@ STATIC s_nThreadCount := 0
 PROCEDURE init_thread( cInfo )
 
    DO WHILE .T.
-      IF s_nThreadCount > 1
-         ?E "thread count>1 (", AllTrim( Str( s_nThreadCount ) ), "), sacekati:", cInfo
-         hb_idleSleep( 0.5 )
+      IF s_nThreadCount > 7
+         ?E "thread count>7 (", AllTrim( Str( s_nThreadCount ) ), "), sacekati:", cInfo
+         hb_idleSleep( 1 )
          LOOP
       ELSE
          EXIT

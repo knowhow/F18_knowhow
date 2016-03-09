@@ -16,10 +16,9 @@ STATIC s_nThreadCount := 0
 
 PROCEDURE init_thread( cInfo )
 
-
    DO WHILE .T.
       IF s_nThreadCount > 7
-         ?E "thread count>7 sacekati:", cInfo, s_nThreadCount
+         ?E "thread count>7 (", AllTrim( Str( s_nThreadCount ) ), "), sacekati:", cInfo
          hb_idleSleep( 1.5 )
          LOOP
       ELSE
@@ -30,7 +29,7 @@ PROCEDURE init_thread( cInfo )
    s_nThreadCount++
 
 #ifdef F18_DEBUG
-   ?E ">>>>> START: thread", cInfo, "thread count:", s_nThreadCount, "<<<<<"
+   ?E ">>>>> START: thread: ", cInfo, " cnt:(", AllTrim( Str( s_nThreadCount ) ), ") <<<<<"
 #endif
 
    set_f18_home( my_server_params()[ "database" ] )

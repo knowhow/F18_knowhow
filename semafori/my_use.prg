@@ -134,7 +134,7 @@ FUNCTION my_use( cAlias, cTable, lRefresh )
    ENDIF
 
 
-   IF lRefresh .AND. !skip_semaphore_sync( aDbfRec[ 'table' ] )
+   IF lRefresh .AND. !skip_semaphore_sync( aDbfRec[ 'table' ] ) .AND. !in_dbf_refresh( aDbfRec[ 'table' ] )
       thread_dbfs( hb_threadStart(  @thread_dbf_refresh(), aDbfRec[ 'table' ] ) )
    ENDIF
 

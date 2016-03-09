@@ -500,8 +500,9 @@ STATIC FUNCTION standardne_browse_komande( TB, Ch, nRez, nPored, aPoredak )
       ENDIF
 
    OTHERWISE
-      goModul:gProc( Ch )
-
+      IF ValType( goModul ) == "O"
+         goModul:gProc( Ch )
+      ENDIF
    ENDCASE
 
    RETURN .T.

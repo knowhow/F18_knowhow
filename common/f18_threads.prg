@@ -19,7 +19,7 @@ PROCEDURE init_thread( cInfo )
    s_nThreadCount++
 
    DO WHILE .T.
-      IF s_nThreadCount > 10
+      IF s_nThreadCount > 7
          ?E "thread count>10 sacekati", s_nThreadCount
          hb_idleSleep( 1.5 )
 

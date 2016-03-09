@@ -430,7 +430,8 @@ FUNCTION fill_dbf_from_server( dbf_table, sql_query, sql_fetch_time, dbf_write_t
    RECOVER USING oError
 
       LOG_CALL_STACK cCallMsg
-      cCallMsg := "fill_dbf ERROR: " + aDbfRec[ "table" ] + " / " + oError:description + " " + cCallMsg
+      cCallMsg := "fill_dbf ERROR: " + aDbfRec[ "table" ] + " / " + oError:description + " " + cCallMsg + ;
+                  " / alias: " + Alias() + " reccount: " + Alltrim( STR( reccount() ))
       ?E cCallMsg
       error_bar( "fill_dbf", cCallMsg )
       unset_a_dbf_rec_chk0( aDbfRec[ "table" ] )

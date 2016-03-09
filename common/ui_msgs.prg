@@ -36,7 +36,7 @@ FUNCTION info_bar( cDoc, cMsg )
 
    hb_default( @cMsg, "" )
 
-   @ maxrow() - 1, 1 SAY8  "> " + PadC( LEFT(cMsg, maxcol() - 6), maxcol() - 5 ) + " <" COLOR F18_COLOR_INFO_PANEL
+   @ MaxRow() - 1, 1 SAY8  "> " + PadC( Left( cMsg, MaxCol() - 6 ), MaxCol() - 5 ) + " <" COLOR F18_COLOR_INFO_PANEL
 
    IF Empty( cMsg ) .OR. cMsg == "info_bar"
       RETURN .T.
@@ -57,7 +57,7 @@ FUNCTION error_bar( cDoc, cMsg )
    Beep( 2 )
 
    hb_default( @cMsg, "" )
-   @ maxrow(), 1 SAY8  "> " + PadC( LEFT(cMsg, maxcol() - 6), maxcol() - 5 ) + " <" COLOR F18_COLOR_ERROR_PANEL
+   @ MaxRow(), 1 SAY8  "> " + PadC( Left( cMsg, MaxCol() - 6 ), MaxCol() - 5 ) + " <" COLOR F18_COLOR_ERROR_PANEL
 
    IF Empty( cMsg ) .OR. cMsg == "error_bar"
       RETURN .T.
@@ -81,7 +81,11 @@ FUNCTION show_infos()
    dbCreate( "a_infos.dbf", a_struct(), "ARRAYRDD", .T., "a_infos" ) // Create it and leave opened
    AEval( aInfos, {| item |  dbAppend(), field->time := item[ 1 ], field->doc := item[ 2 ], field->message := _u( item[ 3 ] ) } )
    SAVE SCREEN TO cScr
-   dbEdit()
+   IF Used()
+      dbEdit()
+   ELSE
+      ?E "array rdd a_infos.dbf error !"
+   ENDIF
    RESTORE SCREEN FROM cScr
    USE
 
@@ -98,7 +102,11 @@ FUNCTION show_errors()
    dbCreate( "a_errors.dbf", a_struct(), "ARRAYRDD", .T., "a_errors" )
    AEval( aErrors, {| item |  dbAppend(), field->time := item[ 1 ], field->doc := item[ 2 ], field->message := _u( item[ 3 ] ) } )
    SAVE SCREEN TO cScr
-   dbEdit()
+   IF Used()
+      dbEdit()
+   ELSE
+      ?E "array rdd a_errors.dbf error !"
+   ENDIF
    RESTORE SCREEN FROM cScr
    USE
 

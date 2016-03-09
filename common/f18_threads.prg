@@ -24,9 +24,9 @@ PROCEDURE init_thread( cInfo )
          hb_idleSleep( 1.5 )
 
       ELSE
-         LOOP
+         EXIT
       ENDIF
-      EXIT
+      LOOP
    ENDDO
 
 #ifdef F18_DEBUG

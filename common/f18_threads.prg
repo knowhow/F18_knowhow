@@ -24,7 +24,7 @@ PROCEDURE init_thread( cInfo )
          hb_idleSleep( 1.5 )
 
       ELSE
-         EXIT
+         LOOP
       ENDIF
       EXIT
    ENDDO

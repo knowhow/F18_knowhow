@@ -207,7 +207,7 @@
 #xcommand O_T_DOCIT => select (F_T_DOCIT); my_use ("t_docit"); set order to tag "1"
 #xcommand O_T_DOCIT2 => select (F_T_DOCIT2); my_use ("t_docit2"); set order to tag "1"
 #xcommand O_T_DOCOP => select (F_T_DOCOP); my_use ("t_docop"); set order to tag "1"
-#xcommand O_T_PARS => select (F_T_PARS); my_use ("t_pars"); set order to tag "id_par"
+#xcommand O_T_PARS => my_use ("t_pars"); set order to tag "id_par"
 #xcommand O__TMP1 => select (F__TMP1); my_use ("_tmp1"); set order to tag "1"
 #xcommand O__TMP2 => select (F__TMP2); my_use ("_tmp2"); set order to tag "1"
 

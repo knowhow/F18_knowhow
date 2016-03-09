@@ -19,7 +19,7 @@ PROCEDURE init_thread( cInfo )
 
    DO WHILE .T.
       IF s_nThreadCount > 7
-         ?E "thread count>7 sacekati", s_nThreadCount
+         ?E "thread count>7 sacekati:", cInfo, s_nThreadCount
          hb_idleSleep( 1.5 )
          LOOP
       ELSE

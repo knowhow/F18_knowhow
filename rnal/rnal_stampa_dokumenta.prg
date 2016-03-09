@@ -188,17 +188,14 @@ FUNCTION st_pripr( lTemporary, nDoc_no, aOlDocs )
       GO TOP
       SEEK docno_str( __doc_no )
 
-      // osnovni podaci naloga
-      _fill_main( cDocs )
 
-      // stavke naloga
-      _fill_items( lGN, 2 )
+      _fill_main( cDocs ) // osnovni podaci naloga
 
-      // dodatne stavke naloga
-      _fill_it2()
+      _fill_items( lGN, 2 ) // stavke naloga
 
-      // operacije
-      _fill_aops()
+      _fill_it2() // dodatne stavke naloga
+
+      _fill_aops() // operacije
 
    NEXT
 
@@ -638,7 +635,7 @@ STATIC FUNCTION _fill_it2()
 
    ENDDO
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -875,7 +872,7 @@ STATIC FUNCTION _fill_main( cDescr )
       add_tpars( "N12", AllTrim( field->doc_time ) )
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 

@@ -31,7 +31,8 @@ FUNCTION say_item_mc( nArea, cTable, nId )
    LOCAL nTArea := Select()
    LOCAL xRet := "-----"
 
-   IF !Used( nArea )
+   SELECT( nArea )
+   IF !Used()
       USE ( nArea )
    ENDIF
    select &cTable

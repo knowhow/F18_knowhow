@@ -50,7 +50,7 @@ FUNCTION set_a_dbf_rnal()
    set_a_dbf_temp( "_tmp1",   "_TMP1", F__TMP1  )
    set_a_dbf_temp( "_tmp2",   "_TMP2", F__TMP2  )
 
-   RETURN
+   RETURN .T.
 
 
 

@@ -54,7 +54,7 @@ FUNCTION t_rpt_create()
 
    // brisi tabele....
    IF d_rpt_dbfs() == 0
-      MsgBeep( "Greska: brisanje pomocnih tabela !!!" )
+      MsgBeep( "Greska: brisanje pomocnih tabela !" )
       RETURN .F.
    ENDIF
 
@@ -193,11 +193,11 @@ STATIC FUNCTION g_pars_fields( aArr )
 FUNCTION add_tpars( cId_par, cOpis )
 
    LOCAL lFound
-   LOCAL nArea
+   LOCAL nTArea := SELECT()
 
-   nArea := Select()
 
-   IF !Used( F_T_PARS )
+   SELECT F_T_PARS
+   IF !USED()
       O_T_PARS
       SET ORDER TO TAG "ID_PAR"
    ENDIF
@@ -213,9 +213,9 @@ FUNCTION add_tpars( cId_par, cOpis )
 
    RREPLACE id_par WITH cId_par, opis WITH cOpis
 
-   SELECT ( nArea )
+   SELECT( nTArea )
 
-   RETURN
+   RETURN .T.
 
 
 // isprazni print tabele
@@ -248,7 +248,7 @@ FUNCTION t_rpt_open()
    O_T_DOCIT
    O_T_DOCIT2
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -257,7 +257,8 @@ FUNCTION g_t_pars_opis( cId_param )
 
    LOCAL xRet
 
-   IF !Used( F_T_PARS )
+   SELECT F_T_PARS
+   IF !USED()
       O_T_PARS
    ENDIF
 

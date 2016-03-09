@@ -11,6 +11,7 @@
 
 #include "f18.ch"
 
+STATIC s_cServerVersion
 
 FUNCTION server_db_version()
 
@@ -18,15 +19,17 @@ FUNCTION server_db_version()
    LOCAL _ret
    LOCAL _server := pg_server()
 
-   _qry := "select max(version) from public.schema_migrations"
-
-   _ret := _sql_query( _server, _qry )
-
-   IF sql_error_in_query( _ret )
-      RETURN -1
+   IF HB_ISNIL( s_cServerVersion )
+      _qry := "select max(version) from public.schema_migrations"
+      _ret := _sql_query( _server, _qry )
+      IF sql_error_in_query( _ret )
+         s_cServerVersion := -1
+      ELSE
+         s_cServerVersion := _ret:FieldGet( 1 )
+      ENDIF
    ENDIF
 
-   RETURN _ret:FieldGet( 1 )
+   RETURN s_cServerVersion
 
 
 

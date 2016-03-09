@@ -19,12 +19,13 @@ STATIC s_lInCreAllDbfs
 
 FUNCTION cre_all_dbfs( ver )
 
-   LOCAL _first_start := fetch_metric( "f18_first_start", my_user(), 0 )
+//   LOCAL _first_start := fetch_metric( "f18_first_start", my_user(), 0 )
    LOCAL _local_files, _local_files_count
 
    s_lInCreAllDbfs := .T.
 
-   IF _first_start = 0 // first_start, ako je 0 onda je to prvi ulazak u bazu...
+/*
+   IF _first_start == 0 // first_start, ako je 0 onda je to prvi ulazak u bazu...
 
       // napravi dodatnu provjeru radi postojecih instalacija...
       _local_files := Directory( my_home() + "*.dbf" )
@@ -35,6 +36,7 @@ FUNCTION cre_all_dbfs( ver )
       ENDIF
 
    ENDIF
+*/
 
    log_write( "START: cre_all_dbfs", 5 )
 
@@ -107,10 +109,12 @@ FUNCTION cre_all_dbfs( ver )
    ENDIF
 #endif
 
-   IF _first_start = 0
+/*
+   IF _first_start == 0
       // setuj da je modul vec aktiviran...
       set_metric( "f18_first_start", my_user(), 1 )
    ENDIF
+*/
 
    log_write( "END: cre_all_dbfs", 5 )
 

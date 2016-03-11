@@ -32,8 +32,7 @@ STATIC __max_rows := 35
 STATIC __max_cols := 120
 
 #ifdef  __PLATFORM__WINDOWS
-//STATIC s_cFontName := "Lucida Console"
-STATIC s_cFontName := "Courier New"
+STATIC s_cFontName := "Lucida Console"
 STATIC s_nFontSize := 20
 STATIC s_nFontWidth := 10
 #else
@@ -242,8 +241,8 @@ FUNCTION set_screen_dimensions()
       ?E _msg + "2longMac"
 #else
 
-      font_size( 24 )
-      font_width( 12 )
+      font_size( 26 )
+      font_width( 13 )
       maxrows( 33 - INFO_BAR_ROWS )
       maxcols( 105 )
       ?E _msg + "2long"
@@ -287,9 +286,9 @@ FUNCTION set_screen_dimensions()
    ?E " set font_width: ", hb_gtInfo( HB_GTI_FONTWIDTH, font_width() )
 #endif
 
-//#ifdef __PLATFORM__LINUX
+#ifdef ( __PLATFORM__LINUX || __PLATFORM__WINDOWS )
    ?E " set font_weight: ", hb_gtInfo( HB_GTI_FONTWEIGHT, HB_GTI_FONTW_BOLD )
-//#endif
+#endif
 
    // Alert( hb_ValToStr( hb_gtInfo( HB_GTI_DESKTOPROWS ) ) + " / " + hb_ValToStr( hb_gtInfo( HB_GTI_DESKTOPCOLS ) ) )
    // hb_gtInfo( HB_GTI_ISFULLSCREEN, .T. )

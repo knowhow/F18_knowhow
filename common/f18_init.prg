@@ -283,21 +283,23 @@ FUNCTION set_screen_dimensions()
    get_screen_resolution_from_config()
 
    ?E " set font_name: ", hb_gtInfo( HB_GTI_FONTNAME, font_name() )
-   altd()
+
+#if defined( __PLATFORM__LINUX )
+   ?E " set font_weight: ", hb_gtInfo( HB_GTI_FONTWEIGHT, HB_GTI_FONTW_BOLD )
+#endif
+
 #if  defined( __PLATFORM__WINDOWS ) .OR. defined( __PLATFORM__LINUX )
    ?E " set font_width: ", hb_gtInfo( HB_GTI_FONTWIDTH, font_width() )
 #endif
    ?E " set font_size: ", hb_gtInfo( HB_GTI_FONTSIZE, font_size() )
 
 
-#if defined( __PLATFORM__LINUX )
-   ?E " set font_weight: ", hb_gtInfo( HB_GTI_FONTWEIGHT, HB_GTI_FONTW_BOLD )
-#endif
+
 
    // Alert( hb_ValToStr( hb_gtInfo( HB_GTI_DESKTOPROWS ) ) + " / " + hb_ValToStr( hb_gtInfo( HB_GTI_DESKTOPCOLS ) ) )
    // hb_gtInfo( HB_GTI_ISFULLSCREEN, .T. )
 
-   //hb_gtInfo( HB_GTI_RESIZEMODE, HB_GTI_RESIZEMODE_ROWS )
+   // hb_gtInfo( HB_GTI_RESIZEMODE, HB_GTI_RESIZEMODE_ROWS )
 
 
    IF SetMode( maxrows( hb_gtInfo( HB_GTI_DESKTOPROWS ) - 2 - INFO_BAR_ROWS ) + INFO_BAR_ROWS,  ;

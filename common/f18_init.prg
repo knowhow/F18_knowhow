@@ -284,7 +284,7 @@ FUNCTION set_screen_dimensions()
    ?E " set font_name: ", hb_gtInfo( HB_GTI_FONTNAME, font_name() )
    ?E " set font_size: ", hb_gtInfo( HB_GTI_FONTSIZE, font_size() )
 //#ifndef __PLATFORM__DARWIN
-//   ?E " set font_width: ", hb_gtInfo( HB_GTI_FONTWIDTH, font_width() )
+   ?E " set font_width: ", hb_gtInfo( HB_GTI_FONTWIDTH, font_width() )
 //#endif
 
 #ifdef __PLATFORM__LINUX

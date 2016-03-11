@@ -229,6 +229,7 @@ FUNCTION set_screen_dimensions()
       maxcols( 119 )
 
       ?E _msg + "1"
+      EXIT
 
    CASE _pix_width >= 1280 .AND. _pix_height >= 820
 
@@ -247,6 +248,7 @@ FUNCTION set_screen_dimensions()
       maxcols( 105 )
       ?E _msg + "2long"
 #endif
+      EXIT
 
 
    CASE _pix_width >= 1280 .AND. _pix_height >= 800
@@ -256,6 +258,7 @@ FUNCTION set_screen_dimensions()
       maxrows( 35 - INFO_BAR_ROWS )
       maxcols( 115 )
       ?E _msg + "2"
+      EXIT
 
    CASE  _pix_width >= 1024 .AND. _pix_height >= 768
 
@@ -265,6 +268,7 @@ FUNCTION set_screen_dimensions()
       maxcols( 100 )
 
       ?E _msg + "3"
+      EXIT
 
    OTHERWISE
 
@@ -277,6 +281,8 @@ FUNCTION set_screen_dimensions()
       ?E "init",  _msg + "4"
 
    ENDCASE
+
+
 
    get_screen_resolution_from_config()
 

@@ -286,7 +286,7 @@ FUNCTION set_screen_dimensions()
    ?E " set font_width: ", hb_gtInfo( HB_GTI_FONTWIDTH, font_width() )
 #endif
 
-#ifdef ( __PLATFORM__LINUX || __PLATFORM__WINDOWS )
+#if defined( __PLATFORM__LINUX )  .OR.  defined( __PLATFORM__WINDOWS )
    ?E " set font_weight: ", hb_gtInfo( HB_GTI_FONTWEIGHT, HB_GTI_FONTW_BOLD )
 #endif
 

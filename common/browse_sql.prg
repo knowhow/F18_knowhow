@@ -526,7 +526,7 @@ STATIC FUNCTION ObjDbGet()
    bIns := SetKey( K_INS )
 
    // Set insert key to toggle insert mode and cursor shape
-   SetKey( K_INS, {|| insert_key_on_off() } )
+   SetKey( K_INS, {|| show_insert_over_stanje() } )
 
    // edit polja
    col := TB:getColumn( TB:colPos )

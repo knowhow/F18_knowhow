@@ -133,7 +133,7 @@ METHOD setScreen()
    pripremi_naslovni_ekran( self )
    crtaj_naslovni_ekran( .T. )
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -250,8 +250,6 @@ METHOD set_module_gvars()
    gIdRadnik := ""
    gStRad := ""
 
-   show_insert_over_stanje()
-   show_insert_over_stanje()
 
    SC_Opisi[1 ] := "1"
    SC_Opisi[2 ] := "2"

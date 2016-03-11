@@ -23,3 +23,17 @@ FUNCTION open_main_window()
    WSelect( s_nMainWindow )
 
    RETURN s_nMainWindow
+
+
+
+FUNCTION insert_key_on_off()
+
+   IF ReadInsert()
+      ReadInsert( .F. )
+      SetCursor( SC_NORMAL )
+   ELSE
+      ReadInsert( .T. )
+      // SetCursor( SC_INSERT )
+   ENDIF
+
+   RETURN .T.

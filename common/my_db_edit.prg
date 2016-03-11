@@ -312,17 +312,7 @@ STATIC FUNCTION ForceStable()
 
    RETURN .T.
 
-STATIC FUNCTION InsToggle()
 
-   IF ReadInsert()
-      ReadInsert( .F. )
-      SetCursor( SC_NORMAL )
-   ELSE
-      ReadInsert( .T. )
-      SetCursor( SC_INSERT )
-   ENDIF
-
-   RETURN .T.
 
 
 FUNCTION standardne_browse_komande_dbf( TB, Ch, nRez, nPored, aPoredak )
@@ -742,7 +732,7 @@ STATIC FUNCTION ObjDbGet()
    bIns := SetKey( K_INS )
 
 
-   SetKey( K_INS, {|| InsToggle() } ) // Set insert key to toggle insert mode and cursor shape
+   SetKey( K_INS, {|| insert_key_on_off() } ) // Set insert key to toggle insert mode and cursor shape
 
    col := TB:getColumn( TB:colPos ) // edit polja
 

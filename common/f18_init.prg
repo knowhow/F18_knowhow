@@ -242,7 +242,7 @@ FUNCTION set_screen_dimensions()
       ?E _msg + "2longMac"
 #else
 
-      font_size( 26 )
+      font_size( 24 )
       font_width( 12 )
       maxrows( 33 - INFO_BAR_ROWS )
       maxcols( 105 )

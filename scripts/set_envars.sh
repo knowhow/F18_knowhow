@@ -1,7 +1,7 @@
 #!/bin/bash
 
 MODULES="main fin kalk fakt os ld virm epdv rnal kadev test common"
-MODULES="$MODULES core_ui2 core_sql  reporting admin brojaci partner konto roba parametri string semaphores dbf_create sql sql_data_access fiskalizacija pdv ui_1990  print"
+MODULES="$MODULES core_ui2 core_sql  reporting  semaphores"
 
 
 #export F18_GT_QTC=1

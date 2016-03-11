@@ -218,8 +218,9 @@ FUNCTION set_screen_dimensions()
       RETURN .T.
    ENDIF
 
-   DO CASE
+   AltD()
 
+   DO CASE
 
    CASE _pix_width >= 1440 .AND. _pix_height >= 900
 
@@ -229,7 +230,6 @@ FUNCTION set_screen_dimensions()
       maxcols( 119 )
 
       ?E _msg + "1"
-      EXIT
 
    CASE _pix_width >= 1280 .AND. _pix_height >= 820
 
@@ -248,8 +248,6 @@ FUNCTION set_screen_dimensions()
       maxcols( 105 )
       ?E _msg + "2long"
 #endif
-      EXIT
-
 
    CASE _pix_width >= 1280 .AND. _pix_height >= 800
 
@@ -258,7 +256,6 @@ FUNCTION set_screen_dimensions()
       maxrows( 35 - INFO_BAR_ROWS )
       maxcols( 115 )
       ?E _msg + "2"
-      EXIT
 
    CASE  _pix_width >= 1024 .AND. _pix_height >= 768
 
@@ -268,7 +265,6 @@ FUNCTION set_screen_dimensions()
       maxcols( 100 )
 
       ?E _msg + "3"
-      EXIT
 
    OTHERWISE
 
@@ -299,7 +295,7 @@ FUNCTION set_screen_dimensions()
    // Alert( hb_ValToStr( hb_gtInfo( HB_GTI_DESKTOPROWS ) ) + " / " + hb_ValToStr( hb_gtInfo( HB_GTI_DESKTOPCOLS ) ) )
    // hb_gtInfo( HB_GTI_ISFULLSCREEN, .T. )
 
-   hb_gtInfo( HB_GTI_RESIZEMODE, HB_GTI_RESIZEMODE_ROWS )
+   //hb_gtInfo( HB_GTI_RESIZEMODE, HB_GTI_RESIZEMODE_ROWS )
 
 
    IF SetMode( maxrows( hb_gtInfo( HB_GTI_DESKTOPROWS ) - 2 - INFO_BAR_ROWS ) + INFO_BAR_ROWS,  ;

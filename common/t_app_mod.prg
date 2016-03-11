@@ -137,6 +137,14 @@ METHOD gProc( Ch )
 
    DO CASE
 
+#ifdef __PLATFORM__DARWIN
+   CASE ( Ch == K_F12 )
+#else
+   CASE ( Ch == K_INS )
+#endif
+      show_insert_over_stanje()
+      RETURN DE_CONT
+
    CASE Ch == Asc( "i" ) .OR. Ch == Asc( "I" )
       show_infos()
       RETURN DE_CONT
@@ -192,13 +200,13 @@ METHOD quit( lVratiseURP )
 
 
 
-   ::lTerminate := .T.
+::lTerminate := .T.
 
-   CLEAR SCREEN
+CLEAR SCREEN
 
-   IF !( ::hasParent() )
-      QUIT
-   ENDIF
+IF !( ::hasParent() )
+QUIT
+ENDIF
 
    RETURN .T.
 

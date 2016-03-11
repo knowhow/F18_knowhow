@@ -243,9 +243,13 @@ PROCEDURE GetApplyKSC( get, key )
 #endif
 
 
+#ifdef __PLATFORM__DARWIN
+   CASE ( key == K_F12)
+#else
    CASE ( key == K_INS )
-      Set( _SET_INSERT, !Set( _SET_INSERT ) )
-      ShowScoreboard()
+#endif
+      show_insert_over_stanje()
+
 
    CASE ( key == K_UNDO )
       get:Undo()
@@ -823,7 +827,6 @@ STATIC FUNCTION MyInKeySc()
    nTimeout := Seconds()
 
    nKey := Inkey()
-
 
    RETURN ( nKey )
 

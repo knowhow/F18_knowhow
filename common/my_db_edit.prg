@@ -714,65 +714,6 @@ FUNCTION StandTBTipke()
    RETURN .F.
 
 
-STATIC FUNCTION ObjDbGet()
-
-   LOCAL bIns, lScore, lExit
-   LOCAL col, nKey
-   LOCAL xOldKey, xNewKey
-
-   ForceStable()
-
-   // Save the current record's key value (or NIL)
-   // (for an explanation, refer to the rambling note below)
-   xOldKey := IF( Empty( IndexKey() ), NIL, &( IndexKey() ) )
-
-   // Save global state
-   lScore := Set( _SET_SCOREBOARD, .F. )
-   lExit := Set( _SET_EXIT, .T. )
-   bIns := SetKey( K_INS )
-
-
-   SetKey( K_INS, {|| show_insert_over_stanje() } ) // Set insert key to toggle insert mode and cursor shape
-
-   col := TB:getColumn( TB:colPos ) // edit polja
-
-   IF Len( ImeKol[ TB:colpos ] ) > 4 // ima validaciju
-      EditPolja( Row(), Col(), Eval( col:block ), ImeKol[ TB:ColPos, 3 ], ImeKol[ TB:ColPos, 4 ], ImeKol[ TB:ColPos, 5 ], TB:colorSpec )
-   ELSEIF Len( ImeKol[ TB:colpos ] ) > 2  // nema validaciju
-      EditPolja( Row(), Col(), Eval( col:block ), ImeKol[ TB:ColPos, 3 ], {|| .T. }, {|| .T. }, TB:colorSpec )
-   ENDIF
-
-
-   Set( _SET_SCOREBOARD, lScore ) // Restore state
-   Set( _SET_EXIT, lExit )
-   SetKey( K_INS, bIns )
-
-
-   xNewKey := IF( Empty( IndexKey() ), NIL, &( IndexKey() ) ) // Get the record's key value (or NIL) after the GET
-
-   IF ! ( xNewKey == xOldKey ) // If the key has changed (or if this is a new record)
-
-
-      TB:refreshAll() // Do a complete refresh
-      ForceStable()
-
-      DO WHILE &( IndexKey() ) > xNewKey .AND. ! TB:hitTop() // Make sure we're still on the right record after stabilizing
-         TB:up()
-         ForceStable()
-      ENDDO
-
-   ENDIF
-
-   nKey := LastKey() // Check exit key from get
-
-   IF nKey == K_UP .OR. nKey == K_DOWN .OR.  nKey == K_PGUP .OR. nKey == K_PGDN
-
-      KEYBOARD( Chr( nKey ) )
-
-   ENDIF
-
-   RETURN .T.
-
 
 
 

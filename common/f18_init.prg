@@ -32,7 +32,8 @@ STATIC __max_rows := 35
 STATIC __max_cols := 120
 
 #ifdef  __PLATFORM__WINDOWS
-STATIC s_cFontName := "Lucida Console"
+//STATIC s_cFontName := "Lucida Console"
+STATIC s_cFontName := "Courier New"
 STATIC s_nFontSize := 20
 STATIC s_nFontWidth := 10
 #else

@@ -242,7 +242,7 @@ FUNCTION set_screen_dimensions()
 #else
 
       font_size( 26 )
-      font_width( 13 )
+      font_width( 12 )
       maxrows( 33 - INFO_BAR_ROWS )
       maxcols( 105 )
       ?E _msg + "2long"
@@ -282,7 +282,7 @@ FUNCTION set_screen_dimensions()
 
    ?E " set font_name: ", hb_gtInfo( HB_GTI_FONTNAME, font_name() )
    ?E " set font_size: ", hb_gtInfo( HB_GTI_FONTSIZE, font_size() )
-#ifndef __PLATFORM__DARWIN
+#if  defined( __PLATFORM__WINDOWS ) .OR. defined( __PLATFORM__LINUX )
    ?E " set font_width: ", hb_gtInfo( HB_GTI_FONTWIDTH, font_width() )
 #endif
 

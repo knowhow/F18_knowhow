@@ -14,7 +14,9 @@
 
 PROCEDURE set_global_vars_0()
 
+#ifdef F18_DEBUG
    ?E "set_global_vars_0"
+#endif
    PUBLIC ZGwPoruka := ""
    PUBLIC GW_STATUS := "-"
    PUBLIC GW_HANDLE := 0
@@ -64,8 +66,6 @@ PROCEDURE set_global_vars_0()
    PUBLIC gGlBaza := ""
    PUBLIC gSqlLogBase
 
-   PUBLIC Blink := "R****/W,W/B,,,W/RB"
-   PUBLIC Nevid := "W/W,N/N"
 
    PUBLIC cBteksta
    PUBLIC cBokvira

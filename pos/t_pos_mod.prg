@@ -463,10 +463,8 @@ METHOD set_module_gvars()
       ENDIF
       CLOSE ALL
    ENDIF
-   // set valuta
-   SetNazDVal()
 
-   SetBoje( gVrstaRS )
+   SetNazDVal() // set valuta
 
    // setuj parametar tezinski_barkod
    param_tezinski_barkod( .T. )

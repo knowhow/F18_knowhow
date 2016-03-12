@@ -542,15 +542,4 @@ FUNCTION pos_status_traka()
 
    @ _x - 1, _y + 1 SAY PadC ( Razrijedi ( gKorIme ), MAXCOLS() - 2 ) COLOR F18_COLOR_INVERT
 
-   RETURN
-
-
-
-FUNCTION SetBoje( gVrstaRS )
-
-   IF gVrstaRS <> "S"
-      Blink  := "N****/W,W/N,,,W/N"
-      Nevid  := "W/W,N/N"
-   ENDIF
-
    RETURN .T.

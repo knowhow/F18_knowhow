@@ -1014,22 +1014,11 @@ FUNCTION UGlavnomMeniju()
 
 FUNCTION set_standardne_boje()
 
-   PUBLIC  Blink
-   PUBLIC  Nevid
 
    IF Type( "gFKolor" ) <> "C"
       gFKolor := "D"
    ENDIF
 
-   IF ( gFKolor == "D" .AND. IsColor() )
-
-      Blink := "R" + Replicate( "*", 4 ) + "/W,W/B,,,W/RB"
-      Nevid := "W/W,N/N"
-   ELSE
-
-      Blink := "N" + Replicate( "*", 4 ) + "/W,W/N,,,W/N"
-      Nevid := "W/W,N/N"
-   ENDIF
 
    RETURN NIL
 
@@ -1189,21 +1178,11 @@ FUNCTION IzreziPath( cPath, cTekst )
 
 FUNCTION SezonskeBoje()
 
-   PUBLIC  Blink
-   PUBLIC  Nevid
 
    IF Type( "gFKolor" ) <> "C"
       gFKolor := "D"
    ENDIF
 
-
-   IF ( gFKolor == "D" .AND. IsColor() )
-      Blink := "R" + Replicate( "*", 4 ) + "/W,W/B,,,W/RB"
-      Nevid := "W/W,N/N"
-   ELSE
-      Blink := "N" + Replicate( "*", 4 ) + "/W,W/N,,,W/N"
-      Nevid := "W/W,N/N"
-   ENDIF
 
    RETURN NIL
 

@@ -33,6 +33,7 @@ FUNCTION start_f18_program_module( oApp, lSezone )
       RETURN .T.
    ENDIF
 
+   init_parameters_cache()
    set_screen_dimensions()
    info_bar( oApp:cName, oApp:cName + " : start_program_module set global vars - start " )
    oApp:set_module_gvars()

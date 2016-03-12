@@ -247,7 +247,7 @@ FUNCTION _sql_get_value( table_name, field_name, cond )
    ENDIF
 
    IF ! ( "." $ table_name )
-      table_name := "fmk." + table_name
+      table_name := F18_PSQL_SCHEMA + "." + table_name
    ENDIF
 
    _qry += "SELECT " + field_name + " FROM " + table_name
@@ -707,7 +707,7 @@ FUNCTION sql_table_empty( alias )
       RETURN .T.
    ENDIF
 
-   RETURN table_count( "fmk." + _a_dbf_rec[ "table" ] ) == 0
+   RETURN table_count( F18_PSQL_SCHEMA_DOT + _a_dbf_rec[ "table" ] ) == 0
 
 
 FUNCTION sql_from_adbf( aDbf, cTable )

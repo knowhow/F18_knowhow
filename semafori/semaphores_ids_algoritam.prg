@@ -305,7 +305,7 @@ FUNCTION create_queries_from_ids( table )
    _sql_fields := sql_fields( aDbfRec[ "dbf_fields" ] )
    _alg := aDbfRec[ "algoritam" ]
 
-   _sql_tbl := "fmk." + table
+   _sql_tbl := F18_PSQL_SCHEMA_DOT + table
 
    FOR nI := 1 TO Len( _alg )
       AAdd( _queries, "SELECT " + _sql_fields + " FROM " + _sql_tbl + " WHERE " )

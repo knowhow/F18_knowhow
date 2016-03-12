@@ -52,7 +52,7 @@ FUNCTION Kurs( datum, val_iz, val_u )
       _where += " AND ( " + _sql_date_parse( "datum", NIL, datum ) + ") "
    ENDIF
 
-   _qry := "SELECT * FROM fmk.valute "
+   _qry := "SELECT * FROM " + F18_PSQL_SCHEMA_DOT + "valute "
    _qry += "WHERE " + _where
    _qry += " ORDER BY id, datum"
 
@@ -90,7 +90,7 @@ FUNCTION Kurs( datum, val_iz, val_u )
       _where += " AND ( " + _sql_date_parse( "datum", NIL, datum ) + ") "
    ENDIF
 
-   _qry := "SELECT * FROM fmk.valute "
+   _qry := "SELECT * FROM " + F18_PSQL_SCHEMA_DOT + "valute "
    _qry += "WHERE " + _where
    _qry += " ORDER BY id, datum"
 
@@ -130,7 +130,7 @@ FUNCTION Kurs( datum, val_iz, val_u )
 FUNCTION ValDomaca()
 
    LOCAL _ret
-   _ret := hb_UTF8ToStr( _sql_get_value( "fmk.valute", "naz2", { { "tip", "D" } } ) )
+   _ret := hb_UTF8ToStr( _sql_get_value( F18_PSQL_SCHEMA + ".valute", "naz2", { { "tip", "D" } } ) )
 
    RETURN _ret
 
@@ -139,7 +139,7 @@ FUNCTION ValDomaca()
 FUNCTION ValPomocna()
 
    LOCAL _ret
-   _ret := hb_UTF8ToStr( _sql_get_value( "fmk.valute", "naz2", { { "tip", "P" } } ) )
+   _ret := hb_UTF8ToStr( _sql_get_value( F18_PSQL_SCHEMA + ".valute", "naz2", { { "tip", "P" } } ) )
 
    RETURN _ret
 

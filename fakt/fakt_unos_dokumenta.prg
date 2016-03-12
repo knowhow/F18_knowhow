@@ -1305,7 +1305,7 @@ FUNCTION fakt_za_destinaciju( cIdPartner, cDestinacija, cIdRoba )
    LOCAL oServer := pg_server()
    LOCAL cBrDok, oRow
 
-   cQuery := "SELECT brdok FROM fmk.fakt_fakt" + ;
+   cQuery := "SELECT brdok FROM " + F18_PSQL_SCHEMA_DOT + "fakt_fakt" + ;
       " WHERE idtipdok='10' AND kolicina>0  AND txt like '%" + cDestinacija + "%' AND idpartner=" + sql_quote( cIdPartner )
 
    oRez := _sql_query( oServer, cQuery )

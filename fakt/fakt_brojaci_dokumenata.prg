@@ -376,7 +376,7 @@ FUNCTION fakt_postoji_li_rupa_u_brojacu( id_firma, id_tip_dok, priprema_broj )
       _tip_srch := id_tip_dok
    ENDIF
 
-   _qry := " SELECT MAX( brdok ) FROM fmk.fakt_doks " + ;
+   _qry := " SELECT MAX( brdok ) FROM " + F18_PSQL_SCHEMA_DOT + "fakt_doks " + ;
       " WHERE idfirma = " + sql_quote( id_firma ) + ;
       " AND idtipdok = " + sql_quote( _tip_srch )
 
@@ -432,12 +432,12 @@ FUNCTION fakt_dokument_postoji( cFirma, cTipDok, cBroj )
    cWhere += " AND idtipdok = " + sql_quote( cTipDok )
    cWhere += " AND brdok = " + sql_quote( cBroj )
 
-   IF table_count( "fmk.fakt_doks", cWhere ) > 0
+   IF table_count( F18_PSQL_SCHEMA_DOT + "fakt_doks", cWhere ) > 0
       lExist := .T.
    ENDIF
 
    IF !lExist
-      IF table_count( "fmk.fakt_fakt", cWhere ) > 0
+      IF table_count( F18_PSQL_SCHEMA_DOT + "fakt_fakt", cWhere ) > 0
          lExist := .T.
       ENDIF
    ENDIF

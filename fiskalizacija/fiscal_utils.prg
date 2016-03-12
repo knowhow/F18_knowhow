@@ -95,7 +95,7 @@ FUNCTION posljednji_plu_artikla()
    LOCAL nPlu := 0
    LOCAL cSql, oQuery
 
-   cSql := "SELECT MAX( fisc_plu ) AS last_plu FROM fmk.roba"
+   cSql := "SELECT MAX( fisc_plu ) AS last_plu FROM " + F18_PSQL_SCHEMA_DOT + "roba"
    oQuery := _sql_query( my_server(), cSql )
 
    nPlu := query_row( oQuery, "last_plu" )

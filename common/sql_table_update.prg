@@ -54,7 +54,7 @@ FUNCTION sql_table_update( table, op, record, where_str, silent )
       _dbf_wa    := _a_dbf_rec[ "wa" ]
       _dbf_alias := _a_dbf_rec[ "alias" ]
       lSqlTable := _a_dbf_rec[ "sql" ]
-      _sql_tbl   := "fmk." + table
+      _sql_tbl   := F18_PSQL_SCHEMA_DOT + table
 
       // uvijek je algoritam 1 nivo recorda
       _alg := _a_dbf_rec[ "algoritam" ][ 1 ]

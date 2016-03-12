@@ -413,7 +413,7 @@ FUNCTION g_roba_hash( id_roba )
 
    LOCAL _hash
 
-   _hash := _set_sql_record_to_hash( "fmk.roba", id_roba )
+   _hash := _set_sql_record_to_hash( F18_PSQL_SCHEMA_DOT + "roba", id_roba )
 
    IF VALTYPE( _hash ) $ "U" .AND. _hash == NIL
        RETURN NIL

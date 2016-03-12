@@ -79,8 +79,8 @@ METHOD RNALDamageDocument:get_damage_data()
       "  lit.int_2, " + ;
       "  dlog.doc_log_da, " + ;
       "  dlog.doc_log_ti " + ;
-      "FROM fmk.rnal_doc_lit lit " + ;
-      "LEFT JOIN fmk.rnal_doc_log dlog ON lit.doc_no = dlog.doc_no " + ;
+      "FROM " + F18_PSQL_SCHEMA_DOT + "rnal_doc_lit lit " + ;
+      "LEFT JOIN " + F18_PSQL_SCHEMA_DOT + " rnal_doc_log dlog ON lit.doc_no = dlog.doc_no " + ;
       "   AND dlog.doc_log_no = lit.doc_log_no " + ;
       "WHERE dlog.doc_log_ty = " + sql_quote( _log_type ) + ;
       "   AND dlog.doc_no = " + AllTrim( Str( ::doc_no ) ) + " " + ;
@@ -166,7 +166,7 @@ METHOD RNALDamageDocument:has_damage_data()
    _where := "WHERE doc_log_ty = " + sql_quote( _log_type ) + ;
       "   AND doc_no = " + AllTrim( Str( ::doc_no ) );
 
-      _res := table_count( "fmk.rnal_doc_log", _where )
+      _res := table_count( F18_PSQL_SCHEMA_DOT + "rnal_doc_log", _where )
 
    RETURN _res
 
@@ -458,7 +458,7 @@ METHOD RNALDamageDocument:get_rnal_header_data()
    LOCAL _qry, _table
    LOCAL _server := pg_server()
 
-   _qry := "SELECT * FROM fmk.rnal_docs " + ;
+   _qry := "SELECT * FROM " + F18_PSQL_SCHEMA_DOT + "rnal_docs " + ;
       " WHERE doc_no = " + docno_str( ::doc_no ) + ;
       " ORDER BY doc_no"
 
@@ -481,7 +481,7 @@ METHOD RNALDamageDocument:get_rnal_items_data()
    LOCAL _items_cond := ::get_damage_items_cond( "doc_it_no" )
    LOCAL _i
 
-   _qry := " SELECT * FROM fmk.rnal_doc_it " + ;
+   _qry := " SELECT * FROM " + F18_PSQL_SCHEMA_DOT + "rnal_doc_it " + ;
       " WHERE doc_no = " + AllTrim( Str( ::doc_no ) ) + _items_cond + ;
       " ORDER BY doc_no, doc_it_no "
 
@@ -503,7 +503,7 @@ METHOD RNALDamageDocument:get_rnal_opers_data()
    LOCAL _server := pg_server()
    LOCAL _items_cond := ::get_damage_items_cond( "doc_it_no" )
 
-   _qry := " SELECT * FROM fmk.rnal_doc_ops " + ;
+   _qry := " SELECT * FROM " + F18_PSQL_SCHEMA_DOT + "rnal_doc_ops " + ;
       " WHERE doc_no = " + AllTrim( Str( ::doc_no ) ) + _items_cond + ;
       " ORDER BY doc_no, doc_it_no, doc_op_no"
 

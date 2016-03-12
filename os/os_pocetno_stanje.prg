@@ -259,8 +259,8 @@ STATIC FUNCTION _os_prebaci_iz_prethodne( info )
    LOCAL _pos_x, _pos_y
 
    // query za OS/PROMJ
-   _qry_os := " SELECT * FROM fmk." + __table_os
-   _qry_promj := " SELECT * FROM fmk." + __table_promj
+   _qry_os := " SELECT * FROM " + F18_PSQL_SCHEMA_DOT + "" + __table_os
+   _qry_promj := " SELECT * FROM " + F18_PSQL_SCHEMA_DOT + "" + __table_promj
 
    // 1) predji u sezonsko podrucje
    // ------------------------------------------------------------

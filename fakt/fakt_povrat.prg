@@ -491,7 +491,7 @@ FUNCTION fakt_napravi_duplikat( id_firma, id_tip_dok, br_dok )
       O_FAKT_PRIPR
    ENDIF
 
-   _qry := "SELECT * FROM fmk.fakt_fakt " + ;
+   _qry := "SELECT * FROM " + F18_PSQL_SCHEMA_DOT + "fakt_fakt " + ;
       " WHERE idfirma = " + sql_quote( id_firma ) + ;
       " AND idtipdok = " + sql_quote( id_tip_dok ) + ;
       " AND brdok = " + sql_quote( br_dok ) + ;
@@ -500,7 +500,7 @@ FUNCTION fakt_napravi_duplikat( id_firma, id_tip_dok, br_dok )
    _table := _sql_query( _server, _qry )
 
    IF _table:LastRec() == 0
-      MsgBeep( "Traženi dokument nisam pronašao !" )
+      MsgBeep( "Traženog dokumenta nema!" )
       RETURN .T.
    ENDIF
 

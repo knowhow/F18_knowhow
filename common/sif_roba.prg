@@ -487,19 +487,17 @@ FUNCTION rpt_dupli_barkod()
    RETURN
 
 
-// -----------------------------------------------
-// sql upit
-// -----------------------------------------------
+
 STATIC FUNCTION __dupli_bk_sql()
 
    LOCAL _qry, _table
    LOCAL _server := pg_server()
 
    _qry := "SELECT id, naz, barkod " + ;
-      "FROM fmk.roba r1 " + ;
+      "FROM " + F18_PSQL_SCHEMA + ".roba r1 " + ;
       "WHERE barkod <> '' AND barkod IN ( " + ;
       "SELECT barkod " + ;
-      "FROM fmk.roba r2 " + ;
+      "FROM " + F18_PSQL_SCHEMA + ".roba r2 " + ;
       "GROUP BY barkod " + ;
       "HAVING COUNT(*) > 1 " + ;
       ") " + ;

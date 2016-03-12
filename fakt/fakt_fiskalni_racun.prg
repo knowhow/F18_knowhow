@@ -266,15 +266,15 @@ STATIC FUNCTION fakt_reklamirani_racun_preduslovi( idfirma, idtipdok, brdok, dev
 
  Opis: ispituje da li je za dokument napravljen fiskalni račun
 
- Usage: postoji_fiskalni_racun( idfirma, idtipdok, brdok, model ) -> SQL upit se šalje prema serveru 
+ Usage: postoji_fiskalni_racun( idfirma, idtipdok, brdok, model ) -> SQL upit se šalje prema serveru
 
-   Parameters: 
-     - idfirma 
+   Parameters:
+     - idfirma
      - idtipdok
      - brdok
      - model - model uređaja, proslijeđuje se rezultat funkcije fiskalni_uredjaj_model()
 
-   Retrun: 
+   Retrun:
     .T. ako postoji fiskalni račun, .F. ako ne
 
 */
@@ -299,10 +299,10 @@ FUNCTION postoji_fiskalni_racun( id_firma, tip_dok, br_dok, model )
       cWhere += " AND ( iznos > 0 AND fisc_rn > 0 ) "
    ENDIF
 
-   IF table_count( "fmk.fakt_doks", cWhere ) > 0
+   IF table_count( F18_PSQL_SCHEMA_DOT + "fakt_doks", cWhere ) > 0
       lRet := .T.
    ENDIF
- 
+
    RETURN lRet
 
 
@@ -726,7 +726,7 @@ STATIC FUNCTION vrsta_placanja_za_fiskalni_uredjaj( tip_dok, vrsta_placanja )
 
 /*
    Opis: da li se vrsta dokumenta može poslati na fiskalni uređaj
-*/ 
+*/
 STATIC FUNCTION dokument_se_moze_fiskalizovati( tip_dok )
 
    IF tip_dok $ "10#11"
@@ -778,7 +778,7 @@ STATIC FUNCTION is_podaci_partnera_kompletirani( sifra, id_broj )
 
 
 STATIC FUNCTION racun_bezgotovinski_bez_partnera_pitanje()
- 
+
    IF Pitanje(, "Račun je bezgotovinski, podaci partnera nisu kompletirani. Želite nastaviti (D/N) ?", "N" ) == "D"
       IF Pitanje(, "Sigurno želite štampati fiskalni račun bez podataka kupca (D/N) ?", "N" ) == "D"
          RETURN .T.
@@ -796,7 +796,7 @@ STATIC FUNCTION racun_bezgotovinski_bez_partnera_pitanje()
    Usage: fakt_fiscal_podaci_partnera( id_firma, tip_dok, br_dok, storno, lRacunBezPartnera )
 
    Parametri:
-      - id_firma - fakt_doks->idfirma 
+      - id_firma - fakt_doks->idfirma
       - tip_dok - fakt_doks->idtipdok
       - br_dok - fakt_doks->brdok
       - storno - .T. račun je storno
@@ -926,10 +926,10 @@ STATIC FUNCTION fakt_to_fprint( id_firma, tip_dok, br_dok, items, head, storno )
    ENDIF
 
    IF _err_level = 2 .AND. storno
-      notify_podrska( "Greška sa izdavanjem reklamiranog računa !" ) 
+      notify_podrska( "Greška sa izdavanjem reklamiranog računa !" )
       IF obrada_greske_na_liniji_55_reklamirani_racun( id_firma, tip_dok, br_dok, __device_params )
          MsgBeep( "Sada možete ponoviti izdavanje reklamiranog računa na fiskalni uređaj." )
-         RETURN 0        
+         RETURN 0
       ENDIF
    ENDIF
 
@@ -963,7 +963,7 @@ STATIC FUNCTION obradi_gresku_izdavanja_fiskalnog_racuna( device_params, error_l
 
    LOCAL cPath := device_params[ "out_dir" ]
    LOCAL cFilename := device_params[ "out_file" ]
-   LOCAL cMsg 
+   LOCAL cMsg
 
    fprint_delete_out( cPath + cFilename )
 
@@ -974,7 +974,7 @@ STATIC FUNCTION obradi_gresku_izdavanja_fiskalnog_racuna( device_params, error_l
 
    MsgBeep( cMsg )
 
-   RETURN 
+   RETURN
 
 
 
@@ -983,7 +983,7 @@ STATIC FUNCTION obradi_gresku_izdavanja_fiskalnog_racuna( device_params, error_l
 */
 STATIC FUNCTION obrada_greske_na_liniji_55_reklamirani_racun( idfirma, idtipdok, brdok, device_params )
 
-   LOCAL lRet := .T. 
+   LOCAL lRet := .T.
    LOCAL nErr
    LOCAL lForsirano := .T.
 

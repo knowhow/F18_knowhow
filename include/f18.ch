@@ -137,6 +137,10 @@
 #define INFO_MESSAGES_LENGTH       40
 #define ERROR_MESSAGES_LENGTH      40
 
+#define F18_PSQL_SCHEMA            "fmk"
+#define F18_PSQL_SCHEMA_DOT        "fmk."
+
+
 #xcommand LOG_CALL_STACK <cLogStr>                 ;
   => FOR nI := 1 TO 30                             ;
     ;  IF !Empty( ProcName( nI ) )                 ;

@@ -19,7 +19,7 @@ FUNCTION use_sql_rnal_ral()
 
    cSql := "SELECT "
    cSql += sql_from_adbf( @aDbf )
-   cSql += " FROM fmk." + cTable + " ORDER BY id"
+   cSql += " FROM " + F18_PSQL_SCHEMA_DOT + "" + cTable + " ORDER BY id"
 
 
    SELECT F_RAL

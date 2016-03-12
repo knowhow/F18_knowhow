@@ -74,8 +74,7 @@ METHOD FaktDokumenti:unlock()
    RETURN .T.
 
 
-// ------------------------------------------------------------
-// ------------------------------------------------------------
+
 METHOD FaktDokumenti:za_partnera( idfirma, idtipdok, idpartner )
 
    LOCAL _qry_str
@@ -86,9 +85,7 @@ METHOD FaktDokumenti:za_partnera( idfirma, idtipdok, idpartner )
    ::p_idtipdok := idtipdok
    ::p_idpartner := idpartner
 
-   _qry_str := "SELECT fakt_doks.idfirma, fakt_doks.idtipdok, fakt_doks.brdok FROM fmk.fakt_doks "
-   // _qry_str += "LEFT JOIN fmk.fakt_fakt "
-   // _qry_str += "ON fakt_fakt.idfirma=fakt_doks.idfirma AND fakt_fakt.idtipdok=fakt_doks.idtipdok AND fakt_fakt.brdok=fakt_doks.brdok "
+   _qry_str := "SELECT fakt_doks.idfirma, fakt_doks.idtipdok, fakt_doks.brdok FROM " + F18_PSQL_SCHEMA_DOT + "fakt_doks "
    _qry_str += "WHERE "
 
    ::_sql_where := "fakt_doks.idfirma=" + sql_quote( ::p_idfirma ) +  " AND fakt_doks.idtipdok=" + sql_quote( ::p_idtipdok ) + " AND fakt_doks.idpartner=" + sql_quote( ::p_idpartner )
@@ -307,8 +304,8 @@ METHOD FaktDokumenti:generisi_fakt_pripr()
    ELSE
       _sql += "kolicina, datdok, txt"
    ENDIF
-   _sql += " FROM fmk.fakt_fakt "
-   _sql += " LEFT JOIN fmk.roba "
+   _sql += " FROM " + F18_PSQL_SCHEMA_DOT + "fakt_fakt "
+   _sql += " LEFT JOIN " + F18_PSQL_SCHEMA_DOT + "roba "
    _sql += " ON fakt_fakt.idroba=roba.id "
    _sql += " WHERE "
    _sql += "idfirma=" + sql_quote( ::p_idfirma ) + " AND  idtipdok=" + sql_quote( ::p_idtipdok )

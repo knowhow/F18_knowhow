@@ -373,8 +373,8 @@ FUNCTION ld_provjeri_dat_isplate_za_mjesec( godina, mjesec, rj )
 
    _qry := "SELECT "
    _qry += "  COUNT(*) "
-   _qry += "FROM fmk.ld_ld ld "
-   _qry += "LEFT JOIN fmk.ld_obracuni obr ON ld.godina = obr.godina AND ld.mjesec = obr.mjesec AND obr.status = 'G' "
+   _qry += "FROM " + F18_PSQL_SCHEMA_DOT + "ld_ld ld "
+   _qry += "LEFT JOIN " + F18_PSQL_SCHEMA_DOT + " ld_obracuni obr ON ld.godina = obr.godina AND ld.mjesec = obr.mjesec AND obr.status = 'G' "
 
    IF rj <> NIL .AND. !Empty( rj )
       _qry += " AND obr.rj = " + sql_quote( rj )

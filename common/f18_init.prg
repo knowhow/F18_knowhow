@@ -59,7 +59,7 @@ STATIC __log_level := F18_DEFAULT_LOG_LEVEL
 #endif
 
 
-FUNCTION f18_init_app( arg_v )
+FUNCTION f18_init_0( arg_v )
 
    LOCAL oLogin
 
@@ -650,18 +650,6 @@ FUNCTION log_handle( handle )
 
    RETURN __log_handle
 
-
-FUNCTION view_log()
-
-   LOCAL _cmd
-
-   _out_file := my_home() + "F18.log.txt"
-
-   FileCopy( F18_LOG_FILE, _out_file )
-   _cmd := "f18_editor " + _out_file
-   f18_run( _cmd )
-
-   RETURN .T.
 
 
 FUNCTION set_hot_keys()

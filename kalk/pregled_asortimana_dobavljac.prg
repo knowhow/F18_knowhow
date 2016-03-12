@@ -178,8 +178,8 @@ STATIC FUNCTION _izdvoji_ulaze( vars )
       "ELSE 0 " + ;
       "END " + ;
       ") as ulaz " + ;
-      "FROM fmk.kalk_kalk kalk " + ;
-      "LEFT JOIN fmk.roba roba ON kalk.idroba = roba.id " + ;
+      "FROM " + F18_PSQL_SCHEMA_DOT + "kalk_kalk kalk " + ;
+      "LEFT JOIN " + F18_PSQL_SCHEMA_DOT + " roba roba ON kalk.idroba = roba.id " + ;
       "WHERE " + ;
       "kalk.idfirma = " + sql_quote( _id_firma ) + ;
       " AND kalk.pkonto = " + sql_quote( _p_konto ) + ;
@@ -277,8 +277,8 @@ STATIC FUNCTION _izdvoji_prodaju( vars )
       "ELSE 0 " + ;
       "END " + ;
       ") as izlaz " + ;
-      "FROM fmk.kalk_kalk kalk " + ;
-      "LEFT JOIN fmk.roba roba ON kalk.idroba = roba.id " + ;
+      "FROM " + F18_PSQL_SCHEMA_DOT + "kalk_kalk kalk " + ;
+      "LEFT JOIN " + F18_PSQL_SCHEMA_DOT + " roba roba ON kalk.idroba = roba.id " + ;
       "WHERE " + ;
       "kalk.idfirma = " + sql_quote( _id_firma ) + ;
       " AND kalk.pkonto = " + sql_quote( _p_konto ) + ;

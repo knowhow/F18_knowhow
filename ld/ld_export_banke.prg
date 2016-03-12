@@ -320,13 +320,13 @@ METHOD LDExportTxt:fill_data_from_ld()
       _qry += " kred.ziro AS bank_part "
    ENDIF
 
-   _qry += " FROM fmk.ld_ld ld "
-   _qry += " LEFT JOIN fmk.ld_radn rd ON ld.idradn = rd.id "
+   _qry += " FROM " + F18_PSQL_SCHEMA_DOT + "ld_ld ld "
+   _qry += " LEFT JOIN " + F18_PSQL_SCHEMA_DOT + " ld_radn rd ON ld.idradn = rd.id "
 
    if ::export_params[ "krediti_export" ]
-      _qry += " LEFT JOIN fmk.ld_radkr kr ON ld.idradn = kr.idradn AND "
+      _qry += " LEFT JOIN " + F18_PSQL_SCHEMA_DOT + " ld_radkr kr ON ld.idradn = kr.idradn AND "
       _qry += "             ld.mjesec = kr.mjesec AND ld.godina = kr.godina "
-      _qry += " LEFT JOIN fmk.kred kred ON kr.idkred = kred.id "
+      _qry += " LEFT JOIN " + F18_PSQL_SCHEMA_DOT + " kred kred ON kr.idkred = kred.id "
    ENDIF
 
    _qry += " WHERE ld.godina = " + AllTrim( Str( ::export_params[ "godina" ] ) )

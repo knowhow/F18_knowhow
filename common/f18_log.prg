@@ -73,7 +73,6 @@ STATIC FUNCTION uslovi_pregleda_loga( params )
    @ m_x + _x, m_y + 2 SAY "Pregledaj samo operacije nad dokumentima (D/N)?" GET _f18_doc_oper VALID _f18_doc_oper $ "DN" PICT "@!"
 
    ++ _x
-
    @ m_x + _x, m_y + 2 SAY "Limit na broj zapisa (0-bez limita)" GET _limit PICT "999999"
 
    READ
@@ -146,7 +145,7 @@ STATIC FUNCTION query_log_data( params )
    ENDIF
 
    _qry := "SELECT id, user_code, l_time, msg "
-   _qry += "FROM fmk.log "
+   _qry += "FROM " + F18_PSQL_SCHEMA_DOT + "log "
    _qry += "WHERE " + _where
    _qry += " ORDER BY l_time DESC "
    IF _limit > 0
@@ -179,7 +178,7 @@ STATIC FUNCTION print_log_data( data, params, print_to_file )
       RETURN .F.
    ENDIF
 
-   IF !is_in_main_thread() .OR. print_to_file
+   IF print_to_file
       f18_start_print( _log_path + _log_file, "D" )
    ELSE
       START PRINT CRET
@@ -220,7 +219,7 @@ STATIC FUNCTION print_log_data( data, params, print_to_file )
 
    ENDDO
 
-   IF !is_in_main_thread() .OR. print_to_file
+   IF print_to_file
       f18_end_print( _log_path + _log_file, "D" )
    ELSE
       FF
@@ -276,7 +275,7 @@ STATIC FUNCTION sql_log_delete( params )
    _where += " AND "
    _where += " msg LIKE " + sql_quote( _dok_oper ) + " ) "
 
-   _qry := "DELETE FROM fmk.log "
+   _qry := "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "log "
    _qry += "WHERE " + _where
 
    _result := _sql_query( _server, _qry )

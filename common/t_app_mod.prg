@@ -198,21 +198,17 @@ METHOD quit( lVratiseURP )
 
    RETURN .T.
 
-
-
 ::lTerminate := .T.
 
 CLEAR SCREEN
 
 IF !( ::hasParent() )
-QUIT
+QUIT_1
 ENDIF
 
    RETURN .T.
 
 
-
-// void TAppMod::gParams()
 
 METHOD gParams()
 
@@ -311,7 +307,6 @@ METHOD gParams()
       Wpar( "DO", gcDirekt )
       Wpar( "FK", gFKolor )
       Wpar( "S9", gSQL )
-      UzmiIzIni( KUMPATH + "fmk.ini", "Svi", "SqlLog", gSql, "WRITE" )
       Wpar( "SB", gShemaVF )
       Wpar( "Ad", Trim( gArhDir ) )
       Wpar( "FO", Trim( gPFont ) )

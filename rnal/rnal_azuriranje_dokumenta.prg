@@ -723,7 +723,7 @@ FUNCTION rnal_dokument_postoji( nDoc_no )
 
    cWhere := "doc_no = " + ALLTRIM( STR( nDoc_no ) )
 
-   IF table_count( "fmk.rnal_docs", cWhere ) > 0
+   IF table_count( F18_PSQL_SCHEMA_DOT + "rnal_docs", cWhere ) > 0
       lExist := .T.
    ENDIF
 

@@ -299,12 +299,12 @@ METHOD FinBrutoBilans:get_data()
    LOCAL _id_rj := ::params[ "id_rj" ]
    LOCAL _iznos_dug := "iznosbhd"
    LOCAL _iznos_pot := "iznosbhd"
-   LOCAL _table := "fmk.fin_suban"
+   LOCAL _table := F18_PSQL_SCHEMA_DOT + "fin_suban"
    LOCAL _date_field := "sub.datdok"
 
    if ::tip == 2
 
-      _table := "fmk.fin_anal"
+      _table := F18_PSQL_SCHEMA_DOT + "fin_anal"
       _date_field := "sub.datnal"
 
       _iznos_dug := "dugbhd"
@@ -312,7 +312,7 @@ METHOD FinBrutoBilans:get_data()
 
    elseif ::tip > 2
 
-      _table := "fmk.fin_sint"
+      _table := F18_PSQL_SCHEMA_DOT + "fin_sint"
       _date_field := "sub.datnal"
 
       _iznos_dug := "dugbhd"
@@ -563,7 +563,7 @@ METHOD FinBrutoBilans:gen_xml()
 
    DO WHILE !Eof()
 
-      __konto := _set_sql_record_to_hash( "fmk.konto", field->idkonto )
+      __konto := _set_sql_record_to_hash( F18_PSQL_SCHEMA_DOT + "konto", field->idkonto )
 
       _klasa := Left( field->idkonto, _kl_len )
 
@@ -582,7 +582,7 @@ METHOD FinBrutoBilans:gen_xml()
       DO WHILE !Eof() .AND. Left( field->idkonto, _kl_len ) == _klasa
 
          _sint := Left( field->idkonto, _sint_len )
-         __konto := _set_sql_record_to_hash( "fmk.konto", _sint )
+         __konto := _set_sql_record_to_hash( F18_PSQL_SCHEMA_DOT + "konto", _sint )
 
          xml_subnode( "sint", .F. )
 
@@ -864,14 +864,14 @@ METHOD FinBrutoBilans:print_txt()
       _t_ps_dug := _t_ps_pot := _t_kum_dug := _t_kum_pot := _t_tek_dug := _t_tek_pot := _t_sld_dug := _t_sld_pot := 0
 
       _klasa := Left( field->idkonto, _kl_len )
-      __klasa := _set_sql_record_to_hash( "fmk.konto", _klasa )
+      __klasa := _set_sql_record_to_hash( F18_PSQL_SCHEMA_DOT + "konto", _klasa )
 
       DO WHILE !Eof() .AND. Left( field->idkonto, _kl_len ) == _klasa
 
          _u_ps_dug := _u_ps_pot := _u_kum_pot := _u_kum_dug := _u_tek_dug := _u_tek_pot := _u_sld_dug := _u_sld_pot := 0
 
          _sint := Left( field->idkonto, _sint_len )
-         __sint := _set_sql_record_to_hash( "fmk.konto", _sint )
+         __sint := _set_sql_record_to_hash( F18_PSQL_SCHEMA_DOT + "konto", _sint )
 
          DO WHILE !Eof() .AND. Left( field->idkonto, _sint_len ) == _sint
 
@@ -890,12 +890,12 @@ METHOD FinBrutoBilans:print_txt()
 
             if ::tip < 4
 
-               __konto := _set_sql_record_to_hash( "fmk.konto", field->idkonto )
+               __konto := _set_sql_record_to_hash( F18_PSQL_SCHEMA_DOT + "konto", field->idkonto )
 
                if ::tip == 1
                   @ PRow(), PCol() + 1 SAY field->idpartner
-                  __partn := _set_sql_record_to_hash( "fmk.partn", field->idpartner )
-                  // ovdje mogu biti šifre koje nemaju partnera a da u sifrarniku nemamo praznog zapisa
+                  __partn := _set_sql_record_to_hash( F18_PSQL_SCHEMA_DOT + "partn", field->idpartner )
+                  // ovdje mogu biti šifre koje nemaju partnera a da u sifarniku nemamo praznog zapisa
                   // znači __partn može biti NIL
                ENDIF
 
@@ -1199,11 +1199,11 @@ METHOD FinBrutoBilans:fill_temp_table()
       oRow := ::data:GetRow()
 
       _id_konto := query_row( oRow, "idkonto" )
-      __konto := _set_sql_record_to_hash( "fmk.konto", _id_konto )
+      __konto := _set_sql_record_to_hash( F18_PSQL_SCHEMA_DOT + "konto", _id_konto )
 
       if ::tip == 1
          _id_partn := query_row( oRow, "idpartner" )
-         __partn := _set_sql_record_to_hash( "fmk.partn", _id_partn )
+         __partn := _set_sql_record_to_hash( F18_PSQL_SCHEMA_DOT + "partn", _id_partn )
       ENDIF
 
       SELECT r_export

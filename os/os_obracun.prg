@@ -589,7 +589,7 @@ FUNCTION os_sii_iznos_sanacije( id, datum_od, datum_do )
    _qry += " datum, "
    _qry += " nabvr, "
    _qry += " otpvr "
-   _qry += "FROM fmk.os_promj "
+   _qry += "FROM " + F18_PSQL_SCHEMA_DOT + "os_promj "
    _qry += "WHERE id = " + sql_quote( id )
    _qry += "  AND opis LIKE '#S%' "
    _qry += "  AND " + _sql_date_parse( "datum", datum_od, datum_do )

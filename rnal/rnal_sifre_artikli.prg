@@ -791,7 +791,7 @@ FUNCTION rnal_ima_li_artikla_u_dokumentima( nArt_id )
 
    cWhere := " art_id = " + AllTrim( Str( nArt_id ) )
 
-   IF table_count( "fmk.rnal_doc_it", cWhere ) > 0
+   IF table_count( F18_PSQL_SCHEMA_DOT + "rnal_doc_it", cWhere ) > 0
       lExist := .T.
    ENDIF
 

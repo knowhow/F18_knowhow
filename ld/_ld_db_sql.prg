@@ -24,8 +24,8 @@ FUNCTION use_sql_ld_ld( nGodina, nMjesec, nMjesecDo, nVrInvalid, nStInvalid, cFi
    cSql += sql_from_adbf( @aDbf, cTable )
 
    cSql += ", ld_radn.vr_invalid, ld_radn.st_invalid "
-   cSql += " FROM fmk." + cTable
-   cSql += " LEFT JOIN fmk.ld_radn ON ld_ld.idradn = ld_radn.id"
+   cSql += " FROM " + F18_PSQL_SCHEMA_DOT + cTable
+   cSql += " LEFT JOIN " + F18_PSQL_SCHEMA_DOT + "ld_radn ON ld_ld.idradn = ld_radn.id"
 
    cSql += " WHERE godina =" + sql_quote( nGodina ) + ;
       " AND mjesec>=" + sql_quote( nMjesec ) + " AND mjesec<=" + sql_quote( nMjesecDo )

@@ -36,7 +36,7 @@ FUNCTION use_sql_sif( table, l_make_index )
       RETURN .F.
    ENDIF
 
-   dbUseArea( .F., "SQLMIX", "SELECT * FROM fmk." + table + " ORDER BY ID",  table )
+   dbUseArea( .F., "SQLMIX", "SELECT * FROM " + F18_PSQL_SCHEMA_DOT + table + " ORDER BY ID",  table )
 
    IF l_make_index
       INDEX ON ID TAG ID TO ( table )
@@ -120,7 +120,7 @@ FUNCTION use_sql_rj()
    cSql += " naz::char(100), "
    cSql += " tip::char(2), "
    cSql += " konto::char(7) "
-   cSql += "FROM fmk.rj ORDER BY id"
+   cSql += "FROM " + F18_PSQL_SCHEMA_DOT  + "rj ORDER BY id"
 
    SELECT F_RJ
    use_sql( cTable, cSql )
@@ -151,7 +151,7 @@ FUNCTION use_sql_valute()
    cSql += "COALESCE(kurs2,0)::numeric(18,8) AS kurs2,"
    cSql += "COALESCE(kurs3,0)::numeric(18,8) AS kurs3,"
    cSql += "tip::char(1) "
-   cSql += " FROM fmk.valute ORDER BY id"
+   cSql += " FROM " + F18_PSQL_SCHEMA_DOT + "valute ORDER BY id"
 
    SELECT F_VALUTE
    use_sql( cTable, cSql )
@@ -184,7 +184,7 @@ FUNCTION use_sql_ks()
    cSql += "  COALESCE(den,0)::numeric(15,6) AS den, "
    cSql += "  tip::char(1), "
    cSql += "  COALESCE(duz,0)::numeric(4,0) AS duz "
-   cSql += "FROM fmk.ks "
+   cSql += "FROM " + F18_PSQL_SCHEMA_DOT + "ks "
    cSQL += "ORDER BY id"
 
 
@@ -209,7 +209,7 @@ FUNCTION use_sql_pkonto()
    LOCAL cSql
    LOCAL cTable := "pkonto"
 
-   cSql := "SELECT * FROM fmk.pkonto ORDER BY id"
+   cSql := "SELECT * FROM " + F18_PSQL_SCHEMA_DOT + "pkonto ORDER BY id"
 
    SELECT F_PKONTO
    use_sql( cTable, cSql )
@@ -231,7 +231,7 @@ FUNCTION use_sql_lokalizacija()
    LOCAL cSql
    LOCAL cTable := "lokal"
 
-   cSql := "SELECT * FROM fmk.lokal ORDER BY id"
+   cSql := "SELECT * FROM " + F18_PSQL_SCHEMA_DOT + "lokal ORDER BY id"
 
    SELECT F_LOKAL
    use_sql( cTable, cSql )
@@ -272,7 +272,7 @@ FUNCTION use_sql_tarifa( l_make_index )
    cSql += "  COALESCE(mpp,0)::numeric(6,2) AS mpp, "
    cSql += "  COALESCE(dlruc,0)::numeric(6,2) AS dlruc, "
    cSql += "  match_code::char(10) "
-   cSql += "FROM fmk.tarifa "
+   cSql += "FROM " + F18_PSQL_SCHEMA_DOT + "tarifa "
    cSQL += "ORDER BY id"
 
    SELECT F_TARIFA
@@ -313,7 +313,7 @@ STATIC FUNCTION _use_sql_trfp( cTable, nWa, cShema, cDok )
    LOCAL cSql
    LOCAL cWhere := ""
 
-   cSql := "SELECT * FROM fmk." + cTable
+   cSql := "SELECT * FROM " + F18_PSQL_SCHEMA_DOT + cTable
 
    IF cShema <> NIL
       cWhere += " shema = " + sql_quote( cShema )
@@ -354,7 +354,7 @@ FUNCTION use_sql_sifk( cDbf, cOznaka )
    LOCAL cSql
    LOCAL cTable := "sifk"
 
-   cSql := "SELECT * from fmk.sifk"
+   cSql := "SELECT * from " + F18_PSQL_SCHEMA_DOT + "sifk"
    IF cDbf != NIL
       cSql += " WHERE id=" + sql_quote( cDbf )
    ENDIF
@@ -401,7 +401,7 @@ FUNCTION use_sql_sifv( cDbf, cOznaka, xIdSif, xVrijednost )
 
    lSql := is_sql_table( cDbf )
 
-   cSql := "SELECT * from fmk.sifv"
+   cSql := "SELECT * from " + F18_PSQL_SCHEMA_DOT + "sifv"
    cSql += " WHERE id=" + _sql_quote_u( cDbf ) + " AND oznaka=" + _sql_quote_u( cOznaka )
 
    IF xIdSif == NIL
@@ -449,7 +449,7 @@ FUNCTION use_sql_rules()
    _alias := "FMKRULES"
    _table_name := "f18_rules"
 
-   cSql := "SELECT * FROM fmk." + _table_name
+   cSql := "SELECT * FROM " + F18_PSQL_SCHEMA_DOT + _table_name
 
    SELECT F_RULES
    use_sql( _alias, cSql )

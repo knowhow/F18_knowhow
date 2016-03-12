@@ -68,7 +68,7 @@ FUNCTION radnik_iz_rs( cOpsst, cOpsrad )
    LOCAL lRet := .F.
    LOCAL cSql, oQry
 
-   cSql := "SELECT reg FROM fmk.ops "
+   cSql := "SELECT reg FROM " + F18_PSQL_SCHEMA_DOT + "ops "
    cSql += "WHERE id = " + sql_quote( cOpsSt )
 
    oQry := _sql_query( my_server(), cSql )
@@ -88,7 +88,7 @@ FUNCTION ld_iz_koje_opcine_je_radnik( cIdRadn )
    LOCAL cOpc := ""
    LOCAL cSql, oQry
 
-   cSql := "SELECT idopsst FROM fmk.ld_radn WHERE id = " + sql_quote( cIdRadn )
+   cSql := "SELECT idopsst FROM " + F18_PSQL_SCHEMA_DOT + "ld_radn WHERE id = " + sql_quote( cIdRadn )
 
    oQry := _sql_query( my_server(), cSql )
 

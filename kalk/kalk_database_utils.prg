@@ -76,7 +76,7 @@ FUNCTION KalkNaF( cidroba, nKols )
    ENDDO
    SELECT kalk_pripr
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -98,12 +98,12 @@ FUNCTION kalk_dokument_postoji( cFirma, cIdVd, cBroj )
    cWhere += " AND idvd = " + sql_quote( cIdVd )
    cWhere += " AND brdok = " + sql_quote( cBroj )
 
-   IF table_count( "fmk.kalk_doks", cWhere ) > 0
+   IF table_count( F18_PSQL_SCHEMA_DOT + "kalk_doks", cWhere ) > 0
       lExist := .T.
    ENDIF
 
    IF !lExist
-      IF table_count( "fmk.kalk_kalk", cWhere ) > 0
+      IF table_count( F18_PSQL_SCHEMA_DOT + "kalk_kalk", cWhere ) > 0
          lExist := .T.
       ENDIF
    ENDIF

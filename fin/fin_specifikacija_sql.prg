@@ -243,9 +243,9 @@ STATIC FUNCTION _cre_rpt( rpt_vars )
       _rj_fond_funk + ;
       " SUM( CASE WHEN sub.d_p = '1' THEN " + _fld_iznos + " ELSE 0 END ) AS duguje, " + ;
       " SUM( CASE WHEN sub.d_p = '2' THEN " + _fld_iznos + " ELSE 0 END ) AS potrazuje " + ;
-      "FROM fmk.fin_suban sub " + ;
-      "LEFT JOIN fmk.partn part ON sub.idpartner = part.id " + ;
-      "LEFT JOIN fmk.konto kto ON sub.idkonto = kto.id "
+      "FROM " + F18_PSQL_SCHEMA_DOT + "fin_suban sub " + ;
+      "LEFT JOIN " + F18_PSQL_SCHEMA_DOT + "partn part ON sub.idpartner = part.id " + ;
+      "LEFT JOIN " + F18_PSQL_SCHEMA_DOT + "konto kto ON sub.idkonto = kto.id "
    _qry += _where_cond
    _qry += _group_cond
    _qry += _order_cond

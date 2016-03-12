@@ -307,7 +307,7 @@ STATIC FUNCTION _grupno_sql_gen( racuni, params )
 
    // glavni upit !
    _qry := "SELECT f.idfirma, f.idtipdok, f.brdok, MAX( f.rbr ) " + ;
-      "FROM fmk.fakt_fakt f "
+      "FROM " + F18_PSQL_SCHEMA_DOT + "fakt_fakt f "
 
    _qry += _where
 

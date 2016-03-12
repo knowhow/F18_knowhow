@@ -109,7 +109,7 @@ STATIC FUNCTION _fakt_get_izlazi( partner, roba )
    LOCAL _data := {}
    LOCAL _i, oRow
 
-   _qry := "SELECT idfirma, idtipdok, brdok, datdok, cijena, rabat FROM fmk.fakt_fakt " + ;
+   _qry := "SELECT idfirma, idtipdok, brdok, datdok, cijena, rabat FROM " + F18_PSQL_SCHEMA_DOT + "fakt_fakt " + ;
       " WHERE idpartner = " + sql_quote( partner ) + ;
       " AND idroba = " + sql_quote( roba ) + ;
       " AND ( idtipdok = " + sql_quote( "10" ) + " OR idtipdok = " + sql_quote( "11" ) + " ) " + ;
@@ -148,7 +148,7 @@ STATIC FUNCTION _kalk_get_ulazi( partner, roba, mag_prod )
       _u_i := "mu_i"
    ENDIF
 
-   _qry := "SELECT idkonto, idvd, brdok, datdok, fcj, rabat FROM fmk.kalk_kalk WHERE idfirma = " + ;
+   _qry := "SELECT idkonto, idvd, brdok, datdok, fcj, rabat FROM " + F18_PSQL_SCHEMA_DOT + "kalk_kalk WHERE idfirma = " + ;
       sql_quote( gfirma ) + ;
       " AND idpartner = " + sql_quote( partner ) + ;
       " AND idroba = " + sql_quote( roba ) + ;

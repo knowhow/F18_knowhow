@@ -503,7 +503,7 @@ STATIC FUNCTION get_data( param, data_fin, konto_data, partner_data )
       "sub.brdok, " + ;
       "sub.otvst, " + ;
       "SUM( CASE WHEN sub.d_p = '1' THEN sub.iznosbhd ELSE -sub.iznosbhd END ) AS saldo " + ;
-      " FROM fmk.fin_suban sub "
+      " FROM " + F18_PSQL_SCHEMA_DOT + "fin_suban sub "
 
    _qry += _where
 
@@ -519,9 +519,9 @@ STATIC FUNCTION get_data( param, data_fin, konto_data, partner_data )
    data_fin := _sql_query( _server, _qry )
 
    IF _copy_sif == "D"
-      _qry_2 := "SELECT * FROM fmk.konto ORDER BY id"
+      _qry_2 := "SELECT * FROM " + F18_PSQL_SCHEMA_DOT + "konto ORDER BY id"
       konto_data := _sql_query( _server, _qry_2 )
-      _qry_3 := "SELECT * FROM fmk.partn ORDER BY id"
+      _qry_3 := "SELECT * FROM " + F18_PSQL_SCHEMA_DOT + "partn ORDER BY id"
       partner_data := _sql_query( _server, _qry_3 )
    ELSE
       konto_data := NIL

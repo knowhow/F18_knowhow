@@ -23,7 +23,7 @@ FUNCTION get_fin_partner_saldo( id_partner, id_konto, id_firma )
    LOCAL _i, oRow
    LOCAL _saldo := 0
 
-   _qry := "SELECT SUM( CASE WHEN d_p = '1' THEN iznosbhd ELSE -iznosbhd END ) AS saldo FROM fmk.fin_suban " + ;
+   _qry := "SELECT SUM( CASE WHEN d_p = '1' THEN iznosbhd ELSE -iznosbhd END ) AS saldo FROM " + F18_PSQL_SCHEMA + ".fin_suban " + ;
       " WHERE idpartner = " + sql_quote( id_partner ) + ;
       " AND idkonto = " + sql_quote( id_konto ) + ;
       " AND idfirma = " + sql_quote( id_firma )
@@ -53,7 +53,7 @@ FUNCTION g_dpupl_part( id_partner, id_konto, id_firma )
    LOCAL _i, oRow
    LOCAL _max := CToD( "" )
 
-   _qry := "SELECT MAX( datdok ) AS uplata FROM fmk.fin_suban " + ;
+   _qry := "SELECT MAX( datdok ) AS uplata FROM " + F18_PSQL_SCHEMA + ".fin_suban " + ;
       " WHERE idpartner = " + sql_quote( id_partner ) + ;
       " AND idkonto = " + sql_quote( id_konto ) + ;
       " AND idfirma = " + sql_quote( id_firma ) + ;
@@ -85,7 +85,7 @@ FUNCTION g_dpprom_part( id_partner, id_konto, id_firma )
    LOCAL _i, oRow
    LOCAL _max := CToD( "" )
 
-   _qry := "SELECT MAX( datdok ) AS uplata FROM fmk.fin_suban " + ;
+   _qry := "SELECT MAX( datdok ) AS uplata FROM " + F18_PSQL_SCHEMA + ".fin_suban " + ;
       " WHERE idpartner = " + sql_quote( id_partner ) + ;
       " AND idkonto = " + sql_quote( id_konto ) + ;
       " AND idfirma = " + sql_quote( id_firma )

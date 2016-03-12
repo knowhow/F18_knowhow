@@ -1236,8 +1236,8 @@ FUNCTION is_sifra_postoji_u_sifarniku( hTekuciRec )
    ENDIF
 
    cTable := hTblRec[ "table" ]
-   IF Left( cTable, 4 ) <> "fmk."
-      cTable := "fmk." + cTable
+   IF Left( cTable, 4 ) <>  F18_PSQL_SCHEMA + "."
+      cTable := F18_PSQL_SCHEMA + "." + cTable
    ENDIF
 
    cWhere := napravi_where_uslov_na_osnovu_hash_matrica( hTblRec, hTekuciRec )

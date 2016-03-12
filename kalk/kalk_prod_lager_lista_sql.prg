@@ -70,7 +70,7 @@ FUNCTION kalk_prod_lager_lista_sql( params, ps )
       "WHEN k.pu_i = '5' AND k.idvd NOT IN ('12', '13') THEN k.kolicina * k.mpcsapp " + ;
       "WHEN k.pu_i = 'I' THEN k.gkolicin2 * k.mpcsapp " + ;
       "END ) AS mpvi " + ;
-      " FROM fmk.kalk_kalk k "
+      " FROM " + F18_PSQL_SCHEMA_DOT + "kalk_kalk k "
 
    _qry += _where
 

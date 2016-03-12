@@ -29,7 +29,7 @@ FUNCTION server_log_write( msg, silent )
       silent := .F.
    ENDIF
 
-   _tbl := "fmk.log"
+   _tbl := F18_PSQL_SCHEMA + ".log"
 
    msg  := ProcName( 2 ) + "(" + AllTrim( Str( ProcLine( 2 ) ) ) + ") : " + msg
    _qry := "INSERT INTO " + _tbl + "(user_code, msg) VALUES(" +  sql_quote( _user ) + "," +  sql_quote( msg ) + ")"

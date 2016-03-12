@@ -1454,7 +1454,7 @@ FUNCTION kadev_radnik_postoji( id_broj )
    LOCAL _srv := my_server()
    LOCAL _qry, _ret
 
-   _qry := "SELECT id FROM fmk.kadev_0 WHERE id = " + sql_quote( id_broj )
+   _qry := "SELECT id FROM " + F18_PSQL_SCHEMA_DOT + "kadev_0 WHERE id = " + sql_quote( id_broj )
 
    _ret := _sql_query( _srv, _qry )
    IF ValType( _ret ) <> "L" .AND. _ret:LastRec() <> 0

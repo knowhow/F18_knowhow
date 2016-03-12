@@ -230,9 +230,9 @@ STATIC FUNCTION _cre_rpt( rpt_vars, otv_stavke )
    _qry := "SELECT s.idkonto, k.naz as konto_naz, s.idpartner, p.naz as partn_naz, s.idvn, s.brnal, s.rbr, s.brdok, s.datdok, s.datval, s.opis, " + ;
       "( CASE WHEN s.d_p = '1' THEN " + _fld_iznos + " ELSE 0 END ) AS duguje, " + ;
       "( CASE WHEN s.d_p = '2' THEN " + _fld_iznos + " ELSE 0 END ) AS potrazuje " + ;
-      "FROM fmk.fin_suban s " + ;
-      "JOIN fmk.partn p ON s.idpartner = p.id " + ;
-      "JOIN fmk.konto k ON s.idkonto = k.id " + ;
+      "FROM " + F18_PSQL_SCHEMA_DOT + "fin_suban s " + ;
+      "JOIN " + F18_PSQL_SCHEMA_DOT + "partn p ON s.idpartner = p.id " + ;
+      "JOIN " + F18_PSQL_SCHEMA_DOT + "konto k ON s.idkonto = k.id " + ;
       "WHERE idfirma = " + sql_quote( gfirma )
 
    _qry += " AND " + _sql_date_parse( "s.datdok", _datum_od, _datum_do )

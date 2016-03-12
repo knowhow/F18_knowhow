@@ -46,7 +46,7 @@ FUNCTION cre_sif_konto( ver )
 FUNCTION fill_tbl_valute()
 
    LOCAL _rec, _tmp, _id, _qry
-   LOCAL _table := "fmk.valute"
+   LOCAL _table := F18_PSQL_SCHEMA_DOT + "valute"
 
    _tmp := table_count( _table )
 

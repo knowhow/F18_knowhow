@@ -145,13 +145,11 @@ METHOD F18_DOK_ATRIB:create_local_atrib_table( force )
 
 
 
-// --------------------------------------------------
-// --------------------------------------------------
 METHOD F18_DOK_ATRIB:set_table_name()
 
    IF !Empty( ::modul )
       ::table_name_local := AllTrim( Lower( ::modul ) ) + "_pripr_atrib"
-      ::table_name_server := "fmk." + AllTrim( Lower( ::modul ) ) + "_" + ;
+      ::table_name_server := F18_PSQL_SCHEMA + "." + AllTrim( Lower( ::modul ) ) + "_" + ;
          AllTrim( Lower( ::modul ) ) + "_atributi"
    ELSE
       MsgBeep( "DATA:modul nije setovano !" )

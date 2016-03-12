@@ -19,10 +19,10 @@ CLASS F18Login
 
    METHOD New()
    METHOD main_db_login()
-   METHOD company_db_login()
+   METHOD login_odabir_organizacije()
    METHOD promjena_sezone()
    METHOD promjena_sezone_box()
-   METHOD browse_database_array()
+   METHOD browse_odabir_organizacije()
    METHOD manual_enter_company_data()
    METHOD administrative_options()
    METHOD database_array()
@@ -35,8 +35,8 @@ CLASS F18Login
    METHOD odabir_organizacije()
    METHOD connect()
    METHOD disconnect()
-   METHOD _read_params()
-   METHOD _write_params()
+   METHOD set_main_db_params()
+   METHOD set_server_params( server_params )
    METHOD included_databases_for_user()
 
    DATA _company_db_connected
@@ -128,7 +128,7 @@ METHOD F18Login:disconnect()
 
 
 
-METHOD F18Login:_read_params( server_param )
+METHOD F18Login:set_main_db_params( server_param )
 
    ::main_db_params := hb_Hash()
    ::main_db_params[ "username" ] := server_param[ "user" ]
@@ -143,7 +143,7 @@ METHOD F18Login:_read_params( server_param )
    RETURN .T.
 
 
-METHOD F18Login:_write_params( server_params )
+METHOD F18Login:set_server_params( server_params )
 
    server_params[ "database" ] := ::main_db_params[ "database" ]
    server_params[ "session" ] := ::main_db_params[ "session" ]
@@ -166,8 +166,7 @@ METHOD F18Login:main_db_login( server_param, force_connect )
       force_connect := .T.
    ENDIF
 
-   // ucitaj parametre iz ini fajla i setuj ::main_db_params
-   ::_read_params( @server_param )
+   ::set_main_db_params( @server_param ) // ucitaj parametre iz ini fajla i setuj ::main_db_params
 
    IF force_connect .AND. ::_main_db_params[ "username" ] <> NIL
       // try to connect
@@ -190,7 +189,7 @@ METHOD F18Login:main_db_login( server_param, force_connect )
             RETURN _logged_in
          ENDIF
 
-         ::_write_params( @server_param )
+         ::set_server_params( @server_param )
 
          // zakaci se !
          if ::connect( server_param, 0 )
@@ -210,7 +209,7 @@ METHOD F18Login:main_db_login( server_param, force_connect )
 
 
 
-METHOD F18Login:company_db_login( server_param )
+METHOD F18Login:login_odabir_organizacije( server_param )
 
    LOCAL _logged_in := .F.
    LOCAL _i
@@ -218,7 +217,7 @@ METHOD F18Login:company_db_login( server_param )
    LOCAL _ret_comp
 
 
-   ::_read_params( @server_param ) // procitaj parametre za preduzece
+   ::set_main_db_params( @server_param ) // procitaj parametre za preduzece
 
    IF !_logged_in
 
@@ -229,8 +228,7 @@ METHOD F18Login:company_db_login( server_param )
             RETURN _logged_in // ovdje naprosto izlazimo, vjerovatno je ESC u pitanju
          ENDIF
 
-         // _rec_comp je > 1
-         ::_write_params( @server_param )
+         ::set_server_params( @server_param ) // _rec_comp je > 1
          if ::connect( server_param, 1 )
             _logged_in := .T.
             EXIT
@@ -391,7 +389,7 @@ METHOD F18Login:main_db_login_form()
    ENDIF
 
    IF _schema == NIL
-      _schema := "fmk"
+      _schema := F18_PSQL_SCHEMA
    ENDIF
 
    IF _user == NIL
@@ -501,15 +499,14 @@ METHOD F18Login:odabir_organizacije()
    ENDIF
 
    _arr := ::get_database_browse_array( _tmp ) // odaberi organizaciju
-   nOrganizacija := ::browse_database_array( _arr ) // browsaj listu organizacija
+   nOrganizacija := ::browse_odabir_organizacije( _arr ) // browsaj listu organizacija
 
    IF nOrganizacija < 1
       RETURN .F.
    ENDIF
 
    if ::_company_db_curr_session == NIL
-      // ako nije zadata sezona odaberi top sezonu, NIL je ako nije zadata
-      _session := ::get_database_top_session( ::_company_db_curr_choice )
+      _session := ::get_database_top_session( ::_company_db_curr_choice ) // ako nije zadata sezona odaberi top sezonu, NIL je ako nije zadata
    ELSE
       _session := AllTrim( ::_company_db_curr_session ) // ako je zadata uzmi nju
    ENDIF
@@ -805,7 +802,7 @@ METHOD F18Login:manual_enter_company_data( x_pos, y_pos )
 // 1 - ENTER
 // -------------------------------------------------------
 
-METHOD F18Login:browse_database_array( arr, table_type )
+METHOD F18Login:browse_odabir_organizacije( arr, table_type )
 
    LOCAL _i
    LOCAL _key
@@ -857,8 +854,6 @@ METHOD F18Login:browse_database_array( arr, table_type )
    @ _pos_bottom + 6, 11 SAY hb_UTF8ToStr( "<<< pritisni TAB >>>" )
 
    // opcija 3
-   // =========================
-   // ispis opisa
    @ _pos_bottom + 2, ( _pos_right / 2 ) + 1 SAY hb_UTF8ToStr( "[3] Administrativne opcije" )
 
    // box za administrativne opcije

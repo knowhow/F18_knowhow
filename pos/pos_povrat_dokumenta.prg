@@ -34,7 +34,7 @@ FUNCTION pos_brisi_dokument( id_pos, id_vd, dat_dok, br_dok )
 
    MsgO( "Brisanje dokumenta iz glavne tabele u toku ..." )
 
-   cDokument := ALLTRIM( id_pos ) + "-" + id_vd + "-" + ALLTRIM( br_dok ) + " " + DTOC( dat_dok ) 
+   cDokument := ALLTRIM( id_pos ) + "-" + id_vd + "-" + ALLTRIM( br_dok ) + " " + DTOC( dat_dok )
 
    SELECT pos
    SET ORDER TO TAG "1"
@@ -89,12 +89,12 @@ FUNCTION pos_dokument_postoji( cIdPos, cIdvd, dDatum, cBroj )
    cWhere += " AND datum = " + sql_quote( dDatum )
    cWhere += " AND brdok = " + sql_quote( cBroj )
 
-   IF table_count( "fmk.pos_doks", cWhere ) > 0
+   IF table_count( F18_PSQL_SCHEMA_DOT + "pos_doks", cWhere ) > 0
       lRet := .T.
    ENDIF
 
    IF !lRet
-      IF table_count( "fmk.pos_pos", cWhere ) > 0
+      IF table_count( F18_PSQL_SCHEMA_DOT + "pos_pos", cWhere ) > 0
          lRet := .T.
       ENDIF
    ENDIF
@@ -110,7 +110,7 @@ FUNCTION pos_povrat_rn( cSt_rn, dSt_date )
    LOCAL nTArea := Select()
    LOCAL _rec
    LOCAL nCount := 0
-   PRIVATE GetList := {} 
+   PRIVATE GetList := {}
 
    IF Empty( cSt_rn )
       SELECT ( nTArea )
@@ -278,6 +278,3 @@ FUNCTION pos_povrat_dokumenta_u_pripremu()
    ENDIF
 
    RETURN
-
-
-

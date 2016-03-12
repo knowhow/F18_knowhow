@@ -992,8 +992,8 @@ STATIC FUNCTION fakt_lager_lista_get_data( params, ps )
       "END ) as izlaz, " + ;
       "r.jmj, " + ;
       "r.vpc " + ;
-      "FROM fmk.fakt_fakt f " + ;
-      "LEFT JOIN fmk.roba r ON f.idroba = r.id "
+      "FROM " + F18_PSQL_SCHEMA_DOT + "fakt_fakt f " + ;
+      "LEFT JOIN " + F18_PSQL_SCHEMA_DOT + "roba r ON f.idroba = r.id "
 
    _qry += " WHERE "
    _qry += _sql_cond_parse( "idfirma", _id_firma )

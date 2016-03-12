@@ -50,7 +50,7 @@ FUNCTION update_dbf_from_server( table, algoritam )
    _sql_order  := _a_dbf_rec[ "sql_order" ]
    _dbf_wa     := _a_dbf_rec[ "wa" ]
    _dbf_alias  := _a_dbf_rec[ "alias" ]
-   _sql_tbl    := "fmk." + table
+   _sql_tbl    := F18_PSQL_SCHEMA_DOT + table
 
    _x := maxrows() - 15
    _y := maxcols() - 20

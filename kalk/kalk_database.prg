@@ -34,7 +34,7 @@ FUNCTION kalk_kol_stanje_artikla_magacin( m_konto, id_roba, datum_do )
       " WHEN mu_i = '5' THEN -kolicina " + ;
       " WHEN mu_i = '8' THEN -kolicina " + ;
       " END ) as stanje_m " + ;
-      " FROM fmk.kalk_kalk " + ;
+      " FROM " + F18_PSQL_SCHEMA_DOT + "kalk_kalk " + ;
       " WHERE " + ;
       " idfirma = " + sql_quote( gFirma ) + ;
       " AND mkonto = " + sql_quote( m_konto ) + ;
@@ -71,7 +71,7 @@ FUNCTION kalk_kol_stanje_artikla_prodavnica( p_konto, id_roba, datum_do )
    _qry := "SELECT SUM( CASE WHEN pu_i = '1' THEN kolicina-gkolicina-gkolicin2 " + ;
       " WHEN pu_i = '5' THEN -kolicina " + ;
       " WHEN pu_i = 'I' THEN -gkolicin2 ELSE 0 END ) as stanje_p " + ;
-      " FROM fmk.kalk_kalk " + ;
+      " FROM " + F18_PSQL_SCHEMA_DOT + "kalk_kalk " + ;
       " WHERE " + ;
       " idfirma = " + sql_quote( gFirma ) + ;
       " AND pkonto = " + sql_quote( p_konto ) + ;

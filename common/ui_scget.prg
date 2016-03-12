@@ -242,7 +242,6 @@ PROCEDURE GetApplyKSC( get, key )
 
 #endif
 
-
 #ifdef __PLATFORM__DARWIN
    CASE ( key == K_F12)
 #else

@@ -70,8 +70,7 @@ METHOD ReportCommon:set_picture_codes( _set, params )
 
 
 
-// -----------------------------------------------------------
-// -----------------------------------------------------------
+
 METHOD ReportCommon:get_company( id_firma )
 
    LOCAL _data, oRow
@@ -85,7 +84,7 @@ METHOD ReportCommon:get_company( id_firma )
       IF id_firma == NIL
          id_firma := gFirma
       ENDIF
-      _data := select_all_records_from_table( "fmk.partn", { "naz", "naz2" }, { "id = " + sql_quote( id_firma ) } )
+      _data := select_all_records_from_table( F18_PSQL_SCHEMA_DOT + "partn", { "naz", "naz2" }, { "id = " + sql_quote( id_firma ) } )
       oRow := _data:GetRow( 1 )
       _comp += id_firma + " " + ;
          hb_UTF8ToStr( AllTrim( oRow:FieldGet( oRow:FieldPos( "naz" ) ) ) ) + " " + ;
@@ -96,8 +95,7 @@ METHOD ReportCommon:get_company( id_firma )
 
 
 
-// -----------------------------------------------------------
-// -----------------------------------------------------------
+
 METHOD ReportCommon:show_company( id_firma )
 
    LOCAL _comp := ::get_company( id_firma )

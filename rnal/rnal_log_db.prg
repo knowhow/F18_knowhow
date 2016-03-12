@@ -36,7 +36,7 @@ FUNCTION use_sql_doc_log( nDoc_no, cDoc_type )
    cSql += "operater_i,"
    cSql += "doc_log_ty::char(3),"
    cSql += "doc_log_de::char(250) "
-   cSql += " FROM fmk.rnal_doc_log "
+   cSql += " FROM " + F18_PSQL_SCHEMA_DOT + "rnal_doc_log "
    cSql += cWhere
    cSql += " ORDER BY doc_no, doc_log_no "
 
@@ -89,7 +89,7 @@ FUNCTION use_sql_doc_lit( nDoc_no, nDoc_log_no )
    cSql += "int_5,"
    cSql += "(CASE WHEN date_1 IS NULL THEN '1960-01-01'::date ELSE date_1 END) AS date_1,"
    cSql += "(CASE WHEN date_2 IS NULL THEN '1960-01-01'::date ELSE date_2 END) AS date_2 "
-   cSql += " FROM fmk.rnal_doc_lit "
+   cSql += " FROM " + F18_PSQL_SCHEMA_DOT + "rnal_doc_lit "
    cSql += cWhere
    cSql += " ORDER BY doc_no, doc_log_no, doc_lit_no "
 
@@ -367,7 +367,7 @@ STATIC FUNCTION zadnji_broj_loga( nDoc_no )
    LOCAL xRes
    LOCAL nLast := 0
 
-   cSql := "SELECT MAX( doc_log_no ) FROM fmk.rnal_doc_log WHERE doc_no = " + ALLTRIM( STR( nDoc_no ) )
+   cSql := "SELECT MAX( doc_log_no ) FROM " + F18_PSQL_SCHEMA_DOT + "rnal_doc_log WHERE doc_no = " + ALLTRIM( STR( nDoc_no ) )
    xRes := _sql_query( my_server(), cSql )
 
    IF is_var_objekat_tpqquery( xRes ) .AND. xRes:FieldGet(1) <> NIL
@@ -426,7 +426,7 @@ STATIC FUNCTION rnal_novi_broj_stavke_loga( nDoc_no, nDoc_log_no )
    LOCAL xRes
    LOCAL nLast := 0
 
-   cSql := "SELECT MAX( doc_lit_no ) FROM fmk.rnal_doc_lit "
+   cSql := "SELECT MAX( doc_lit_no ) FROM " + F18_PSQL_SCHEMA_DOT + "rnal_doc_lit "
    cSql += "WHERE doc_no = " + ALLTRIM( STR( nDoc_no ) )
    cSql += "  AND doc_log_no = " + ALLTRIM( STR( nDoc_log_no ) )
 

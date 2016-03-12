@@ -23,7 +23,7 @@ FUNCTION Main( p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11 )
 
    cre_arg_v_hash( @_arg_v, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11 )
    set_f18_params( p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11 )
-   f18_init_app( _arg_v )
+   f18_init_0( _arg_v )
 
    RETURN .T.
 
@@ -64,8 +64,8 @@ STATIC FUNCTION cre_arg_v_hash( hash )
 
 FUNCTION program_module_menu( arg_v )
 
-   LOCAL menuop := {}
-   LOCAL menuexec := {}
+   LOCAL menuOp := {}
+   LOCAL menuExec := {}
    LOCAL mnu_choice
    LOCAL mnu_left := 2
    LOCAL mnu_top := 5
@@ -81,11 +81,9 @@ FUNCTION program_module_menu( arg_v )
    LOCAL cOldColors
 
 
-
    info_bar( "init", "gen program_module_menu start" )
    IF arg_v == NIL
-      // napravi NIL parametre
-      cre_arg_v_hash( @arg_v )
+      cre_arg_v_hash( @arg_v ) // napravi NIL parametre
    ENDIF
 
    DO WHILE .T.
@@ -102,12 +100,10 @@ FUNCTION program_module_menu( arg_v )
       ++ _x
       @ _x, mnu_left SAY Replicate( "-", 55 )
 
-      // backup okidamo samo na prvom ulasku
-      // ili na opciji relogina
-      IF _count == 1 .OR. __relogin_opt
 
-         // provjera da li je backup locked ?
-         IF oBackup:locked( .F. )
+      IF _count == 1 .OR. __relogin_opt // backup okidamo samo na prvom ulasku ili na opciji relogina
+
+         IF oBackup:locked( .F. ) // provjera da li je backup locked ?
             oBackup:unlock()
          ENDIF
 
@@ -116,8 +112,8 @@ FUNCTION program_module_menu( arg_v )
 
       ENDIF
 
-      menuop := {}
-      menuexec := {}
+      menuOp := {}
+      menuExec := {}
 
       set_program_module_menu( @menuop, @menuexec, arg_v[ "p3" ], arg_v[ "p4" ], arg_v[ "p5" ], arg_v[ "p6" ], arg_v[ "p7" ] )
       info_bar( "init", "gen program_module_menu end" )
@@ -135,8 +131,9 @@ FUNCTION program_module_menu( arg_v )
          ENDIF
 
       CASE mnu_choice > 0
-         IF mnu_choice <= Len( menuexec )
-            Eval( menuexec[ mnu_choice ] )
+         IF mnu_choice <= Len( menuExec )
+         altd()
+            Eval( menuExec[ mnu_choice ] )
          ENDIF
       ENDCASE
 
@@ -213,7 +210,6 @@ STATIC FUNCTION set_program_module_menu( menuop, menuexec, p3, p4, p5, p6, p7 )
       AAdd( menuexec, {|| MainPos( my_user(), "dummy", p3, p4, p5, p6, p7 ) } )
    ENDIF
 #endif
-
 
 #ifdef F18_MAT
    IF f18_use_module( "mat" )

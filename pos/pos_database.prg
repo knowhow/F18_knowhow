@@ -63,7 +63,7 @@ STATIC FUNCTION dodaj_u_sifrarnik_prioriteta( cSifra, cPrioritet, cOpis )
 
    SELECT strad
    APPEND BLANK
-      
+
    _rec := dbf_get_rec()
    _rec[ "id" ] := PadR( cSifra, Len( _rec[ "id" ] ) )
    _rec[ "prioritet" ] := PadR( cPrioritet, Len( _rec[ "prioritet" ] ) )
@@ -83,7 +83,7 @@ STATIC FUNCTION dodaj_u_sifrarnik_radnika( cSifra, cLozinka, cOpis, cStatus )
 
    SELECT OSOB
    APPEND BLANK
-      
+
    _rec := dbf_get_rec()
    _rec[ "id" ] := PadR( cSifra, Len( _rec[ "id" ] ) )
    _rec[ "korsif" ] := PadR( CryptSc( PadR( cLozinka, 6 ) ), 6 )
@@ -117,14 +117,14 @@ STATIC FUNCTION pos_definisi_inicijalne_podatke()
       IF lOk
          lOk := dodaj_u_sifrarnik_prioriteta( "1", "1", "Nivo upr." )
       ENDIF
- 
+
       IF lOk
          lOk := dodaj_u_sifrarnik_prioriteta( "3", "3", "Nivo prod." )
       ENDIF
 
       MsgC()
 
-      IF lOk     
+      IF lOk
          f18_free_tables( { "pos_strad" } )
          sql_table_update( nil, "END" )
       ELSE
@@ -145,14 +145,14 @@ STATIC FUNCTION pos_definisi_inicijalne_podatke()
           RETURN
       ENDIF
 
-      lOk := dodaj_u_sifrarnik_radnika( "0001", "PARSON", "Admin", "0" ) 
+      lOk := dodaj_u_sifrarnik_radnika( "0001", "PARSON", "Admin", "0" )
 
       IF lOk
-         lOk := dodaj_u_sifrarnik_radnika( "0010", "P1", "Prodavac 1", "3" ) 
+         lOk := dodaj_u_sifrarnik_radnika( "0010", "P1", "Prodavac 1", "3" )
       ENDIF
 
       IF lOk
-         lOk := dodaj_u_sifrarnik_radnika( "0011", "P2", "Prodavac 2", "3" ) 
+         lOk := dodaj_u_sifrarnik_radnika( "0011", "P2", "Prodavac 2", "3" )
       ENDIF
 
       MsgC()
@@ -216,7 +216,7 @@ STATIC FUNCTION o_pos_kumulativne_tabele()
    O_POS
    O_POS_DOKS
    O_DOKSPF
- 
+
    RETURN
 
 
@@ -254,20 +254,20 @@ FUNCTION pos_iznos_racuna( cIdPos, cIdVD, dDatum, cBrDok )
 
    cSql := "SELECT "
    cSql += " SUM( ( kolicina * cijena ) - ( kolicina * ncijena ) ) AS total "
-   cSql += "FROM fmk.pos_pos "
+   cSql += "FROM " + F18_PSQL_SCHEMA_DOT + "pos_pos "
    cSql += "WHERE "
    cSql += " idpos = " + sql_quote( cIdPos )
    cSql += " AND idvd = " + sql_quote( cIdVd )
    cSql += " AND brdok = " + sql_quote( cBrDok )
-   cSql += " AND datum = " + sql_quote( dDatum )  
+   cSql += " AND datum = " + sql_quote( dDatum )
 
    oData := _sql_query( my_server(), cSql )
 
    IF !is_var_objekat_tpqquery( oData )
       RETURN nTotal
-   ENDIF 
+   ENDIF
 
-   nTotal := oData:FieldGet(1) 
+   nTotal := oData:FieldGet(1)
 
    RETURN nTotal
 
@@ -281,7 +281,7 @@ FUNCTION pos_stanje_artikla( id_pos, id_roba )
    LOCAL _i, oRow
    LOCAL _stanje := 0
 
-   _qry := "SELECT SUM( CASE WHEN idvd IN ('16') THEN kolicina WHEN idvd IN ('42') THEN -kolicina WHEN idvd IN ('IN') THEN -(kolicina - kol2) ELSE 0 END ) AS stanje FROM fmk.pos_pos " + ;
+   _qry := "SELECT SUM( CASE WHEN idvd IN ('16') THEN kolicina WHEN idvd IN ('42') THEN -kolicina WHEN idvd IN ('IN') THEN -(kolicina - kol2) ELSE 0 END ) AS stanje FROM " + F18_PSQL_SCHEMA_DOT + "pos_pos " + ;
       " WHERE idpos = " + sql_quote( id_pos ) + ;
       " AND idroba = " + sql_quote( id_roba )
 
@@ -506,7 +506,7 @@ FUNCTION pos_racun_sadrzi_artikal( cIdPos, cIdVd, dDatum, cBroj, cIdRoba )
    cWhere += " AND brdok = " + sql_quote( cBroj )
    cWhere += " AND idroba = " + sql_quote( cIdRoba )
 
-   IF table_count( "fmk.pos_pos", cWhere ) > 0
+   IF table_count( F18_PSQL_SCHEMA_DOT + "pos_pos", cWhere ) > 0
       lRet := .T.
    ENDIF
 
@@ -627,12 +627,12 @@ FUNCTION pos_brisi_nepostojece_dokumente()
 
    IF !spec_funkcije_sifra( "ADMIN" )
       MsgBeep( "Opcija nije dostupna !" )
-      RETURN 
+      RETURN
    ENDIF
 
-   cSql := "SELECT p.idpos, p.idvd, p.datum, p.brdok " 
-   cSql += "FROM fmk.pos_pos p "
-   cSql += "WHERE ( SELECT COUNT(*) FROM fmk.pos_doks d "
+   cSql := "SELECT p.idpos, p.idvd, p.datum, p.brdok "
+   cSql += "FROM " + F18_PSQL_SCHEMA_DOT + "pos_pos p "
+   cSql += "WHERE ( SELECT COUNT(*) FROM " + F18_PSQL_SCHEMA_DOT + "pos_doks d "
    cSql += "         WHERE d.idpos = p.idpos "
    cSql += "           AND d.idvd = p.idvd "
    cSql += "           AND d.datum = p.datum "
@@ -649,7 +649,7 @@ FUNCTION pos_brisi_nepostojece_dokumente()
    IF !is_var_objekat_tpqquery( oQry )
       MsgBeep( "Problem sa SQL upitom !" )
       RETURN
-   ENDIF 
+   ENDIF
 
    IF oQry:LastRec() > 0
       IF Pitanje(, "Izbrisati ukupno " + AllTrim( Str( oQry:LastRec() ) ) + " dokumenata (D/N) ?", "N" ) == "N"
@@ -659,7 +659,7 @@ FUNCTION pos_brisi_nepostojece_dokumente()
 
    O_POS_DOKS
    O_POS
-   
+
    oQry:GoTo(1)
 
    Box(, 1, 50 )
@@ -678,7 +678,7 @@ FUNCTION pos_brisi_nepostojece_dokumente()
       IF !pos_brisi_dokument( cIdPos, cIdVd, dDatum, cBrDok )
          BoxC()
          MsgBeep( "Problem sa brisanjem dokumenta !" )
-         RETURN 
+         RETURN
       ENDIF
 
       ++ nCount
@@ -694,5 +694,3 @@ FUNCTION pos_brisi_nepostojece_dokumente()
    ENDIF
 
    RETURN
-
-

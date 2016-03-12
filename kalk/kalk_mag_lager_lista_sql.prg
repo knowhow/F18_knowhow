@@ -67,8 +67,8 @@ FUNCTION kalk_mag_lager_lista_sql( params, ps )
       "WHEN k.mu_i = '1' AND k.idvd IN ('12', '22', '94') THEN -( r.vpc * k.kolicina ) " + ;
       "WHEN k.mu_i = '5' THEN r.vpc * k.kolicina ELSE 0 " + ;
       "END ), " + _zaokr + " ) AS vpvi " + ;
-      " FROM fmk.kalk_kalk k " + ;
-      " RIGHT JOIN fmk.roba r ON r.id = k.idroba "
+      " FROM " + F18_PSQL_SCHEMA_DOT + "kalk_kalk k " + ;
+      " RIGHT JOIN " + F18_PSQL_SCHEMA_DOT + " roba r ON r.id = k.idroba "
 
    _qry += _where
 

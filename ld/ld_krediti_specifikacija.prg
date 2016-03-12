@@ -72,14 +72,14 @@ STATIC FUNCTION _get_data( params )
       " lk.naosnovu, " + ;
       " lk.placeno AS iznos_rate, " + ;
       " ld.idrj AS rj, " + ;
-      " ( SELECT COUNT(iznos) FROM fmk.ld_radkr WHERE idradn = lk.idradn AND idkred = lk.idkred AND naosnovu = lk.naosnovu) AS kredit_rate_ukupno, " + ;
-      " ( SELECT COUNT(placeno) FROM fmk.ld_radkr WHERE idradn = lk.idradn AND idkred = lk.idkred AND naosnovu = lk.naosnovu AND placeno <> 0 ) AS kredit_rate_uplaceno, " + ;
-      " ( SELECT SUM(iznos) FROM fmk.ld_radkr WHERE idradn = lk.idradn AND idkred = lk.idkred AND naosnovu = lk.naosnovu) AS kredit_ukupno, " + ;
-      " ( SELECT SUM(iznos) FROM fmk.ld_radkr WHERE idradn = lk.idradn AND idkred = lk.idkred AND naosnovu = lk.naosnovu AND placeno <> 0) AS kredit_uplaceno " + ;
-      " FROM fmk.ld_radkr lk " + ;
-      " LEFT JOIN fmk.ld_ld ld ON lk.idradn = ld.idradn AND ld.mjesec = " + AllTrim( Str( params[ "mjesec" ] ) ) + " AND ld.godina = " + AllTrim( Str( params[ "godina" ] ) ) + ;
-      " LEFT JOIN fmk.ld_radn rd ON lk.idradn = rd.id " + ;
-      " LEFT JOIN fmk.kred kr ON lk.idkred = kr.id " + ;
+      " ( SELECT COUNT(iznos) FROM " + F18_PSQL_SCHEMA_DOT + "ld_radkr WHERE idradn = lk.idradn AND idkred = lk.idkred AND naosnovu = lk.naosnovu) AS kredit_rate_ukupno, " + ;
+      " ( SELECT COUNT(placeno) FROM " + F18_PSQL_SCHEMA_DOT + "ld_radkr WHERE idradn = lk.idradn AND idkred = lk.idkred AND naosnovu = lk.naosnovu AND placeno <> 0 ) AS kredit_rate_uplaceno, " + ;
+      " ( SELECT SUM(iznos) FROM " + F18_PSQL_SCHEMA_DOT + "ld_radkr WHERE idradn = lk.idradn AND idkred = lk.idkred AND naosnovu = lk.naosnovu) AS kredit_ukupno, " + ;
+      " ( SELECT SUM(iznos) FROM " + F18_PSQL_SCHEMA_DOT + "ld_radkr WHERE idradn = lk.idradn AND idkred = lk.idkred AND naosnovu = lk.naosnovu AND placeno <> 0) AS kredit_uplaceno " + ;
+      " FROM " + F18_PSQL_SCHEMA_DOT + "ld_radkr lk " + ;
+      " LEFT JOIN " + F18_PSQL_SCHEMA_DOT + " ld_ld ld ON lk.idradn = ld.idradn AND ld.mjesec = " + AllTrim( Str( params[ "mjesec" ] ) ) + " AND ld.godina = " + AllTrim( Str( params[ "godina" ] ) ) + ;
+      " LEFT JOIN " + F18_PSQL_SCHEMA_DOT + " ld_radn rd ON lk.idradn = rd.id " + ;
+      " LEFT JOIN " + F18_PSQL_SCHEMA_DOT + " kred kr ON lk.idkred = kr.id " + ;
       " WHERE " + _where + ;
       " ORDER BY " + _order
 

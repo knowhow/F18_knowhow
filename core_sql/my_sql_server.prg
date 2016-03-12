@@ -169,15 +169,15 @@ FUNCTION f18_login( force_connect, arg_v )
       ENDIF
 
 
-      write_server_params_to_ini_conf() // upisi parametre za sljedeci put...
+      write_last_login_params_to_ini_conf() // upisi parametre za sljedeci put...
 
       DO WHILE .T.
 
-         IF !oLogin:company_db_login( @s_psqlServer_params )
+         IF !oLogin:login_odabir_organizacije( @s_psqlServer_params )
             QUIT_1
          ENDIF
 
-         write_server_params_to_ini_conf() // upisi parametre tekuce firme...
+         write_last_login_params_to_ini_conf() // upisi parametre tekuce firme...
 
          IF oLogin:_company_db_connected
 
@@ -256,7 +256,7 @@ STATIC FUNCTION _login_screen( server_params )
    ENDIF
 
    IF cSchema == nil
-      cSchema := "fmk"
+      cSchema := F18_PSQL_SCHEMA
    ENDIF
 
    IF cDatabase == nil
@@ -355,6 +355,7 @@ STATIC FUNCTION f18_no_login_quit()
    RETURN .T.
 
 
+/*
 FUNCTION relogin()
 
    LOCAL oBackup := F18Backup():New()
@@ -374,10 +375,12 @@ FUNCTION relogin()
       post_login()
    ENDIF
 
-   write_server_params_to_ini_conf()
+   write_last_login_params_to_ini_conf()
    _ret := .T.
 
    RETURN _ret
+
+*/
 
 STATIC FUNCTION show_sacekaj()
 
@@ -465,7 +468,7 @@ FUNCTION _get_server_params_from_config()
    s_psqlServer_params[ "database" ] := "f18_test"
    s_psqlServer_params[ "host" ] := "localhost"
    s_psqlServer_params[ "user" ] := "test1"
-   s_psqlServer_params[ "schema" ] := "fmk"
+   s_psqlServer_params[ "schema" ] := F18_PSQL_SCHEMA
    s_psqlServer_params[ "password" ] := s_psqlServer_params[ "user" ]
    s_psqlServer_params[ "postgres" ] := "postgres"
 
@@ -506,7 +509,7 @@ FUNCTION _get_server_params_from_config()
    RETURN .T.
 #endif
 
-FUNCTION write_server_params_to_ini_conf()
+FUNCTION write_last_login_params_to_ini_conf()
 
    LOCAL _key, _ini_params := hb_Hash()
 
@@ -536,7 +539,7 @@ FUNCTION my_server_search_path( path )
 
    IF path == nil
       IF !hb_HHasKey( s_psqlServer_params, _key )
-         s_psqlServer_params[ _key ] := "fmk, public, u2"
+         s_psqlServer_params[ _key ] := F18_PSQL_SCHEMA + ", public"
       ENDIF
    ELSE
       s_psqlServer_params[ _key ] := path

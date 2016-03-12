@@ -585,7 +585,6 @@ FUNCTION nuliraj_ids_and_update_my_semaphore_ver( table )
 FUNCTION insert_semaphore_if_not_exists( cTable, lIgnoreChk0 )
 
    LOCAL nCnt
-   LOCAL _server := pg_server()
    LOCAL _user := f18_user()
    LOCAL _qry
    LOCAL _ret
@@ -609,8 +608,10 @@ FUNCTION insert_semaphore_if_not_exists( cTable, lIgnoreChk0 )
    IF ( nCnt == 0 )
       _qry := "INSERT INTO " + cSqlTbl + "(user_code, last_trans_version, version, algorithm) " + ;
          "VALUES(" + sql_quote( _user )  + ", 0, -1, 'free')"
-      _ret := _sql_query( _server, _qry )
-      RETURN Empty( _ret:ErrorMsg() )
+      _ret := run_sql_query( _qry )
+
+      RETURN !sql_error_in_query( _ret, "INSERT" )
+
    ENDIF
 
    RETURN .T.

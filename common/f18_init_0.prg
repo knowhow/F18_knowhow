@@ -27,17 +27,17 @@ FUNCTION start_f18_program_module( oApp, lSezone )
    gModul   := oApp:cName
    goModul  := oApp
 
-   set_global_vars_1()
+
+   post_login()
 
    IF oApp:lTerminate
       RETURN .T.
    ENDIF
 
-   init_parameters_cache()
-   set_screen_dimensions()
-   info_bar( oApp:cName, oApp:cName + " : start_program_module set global vars - start " )
+
+   //info_bar( oApp:cName, oApp:cName + " : start_program_module set global vars - start " )
    oApp:set_module_gvars()
-   info_bar( oApp:cName, oApp:cName + " : start_program_module set global vars - end" )
+   //info_bar( oApp:cName, oApp:cName + " : start_program_module set global vars - end" )
 
    pripremi_naslovni_ekran( oApp )
    crtaj_naslovni_ekran( .T. )

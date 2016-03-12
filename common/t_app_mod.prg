@@ -455,7 +455,7 @@ METHOD setTGVars()
       ::oDesktop := nil
    ENDIF
 
-   PUBLIC cZabrana := "Opcija nedostupna za ovaj nivo !!!"
+   PUBLIC cZabrana := "Opcija nedostupna za ovaj nivo !"
 
    ::oDesktop := TDesktopNew()
 

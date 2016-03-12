@@ -1343,8 +1343,6 @@ METHOD F18AdminOpts:create_new_db_params( params )
    // formiranje strina naziva baze...
    _db_str := AllTrim( _db_name ) + "_" + AllTrim( _db_year )
 
-   // provjeri string ...
-   // .... nesto ....
 
    // template empty
    IF Empty( _db_template )
@@ -1367,23 +1365,6 @@ METHOD F18AdminOpts:create_new_db_params( params )
    RETURN _ok
 
 
-
-/* TODO: izbaciti
-// forsirana sinhronizacija podataka baze
-
-METHOD F18AdminOpts:force_synchro_db()
-
-   LOCAL _var
-
-   _ver := read_dbf_version_from_config()
-   set_a_dbfs()
-   cre_all_dbfs( _ver )
-   set_a_dbfs_key_fields()
-   write_dbf_version_to_ini_conf() //out
-   check_server_db_version()
-
-   RETURN .T.
-*/
 
 
 // ----------------------------------------------------------

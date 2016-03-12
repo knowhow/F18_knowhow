@@ -14,19 +14,17 @@
 
 FUNCTION set_sql_search_path()
 
-   LOCAL _server := my_server()
    LOCAL _path := my_server_search_path()
 
    LOCAL _qry := "SET search_path TO " + _path + ";"
    LOCAL _result
 
-   _result := _server:Query( _qry )
+   _result := run_sql_query( _qry )
 
-   IF sql_error_in_query( _result )
-      ?E "ERR?! :" + _qry
+   IF sql_error_in_query( _result, "SET" )
       RETURN .F.
    ELSE
-      log_write( "set_sql_search path ok", 9 )
+      ?E "set_sql_search path ok"
    ENDIF
 
    RETURN _result
@@ -43,9 +41,16 @@ FUNCTION run_sql_query( qry, retry )
    LOCAL _i, _qry_obj, lMsg := .F.
    LOCAL _server := my_server()
    LOCAL _msg
+   LOCAL cTip
 
    IF retry == NIL
       retry := 10
+   ENDIF
+
+   IF Left( Upper( qry ), 6 ) == "SELECT"
+      cTip := "SELECT"
+   ELSE
+      cTip := "INSERT" // insert ili update nije bitno
    ENDIF
 
    IF ValType( qry ) != "C"
@@ -73,9 +78,10 @@ FUNCTION run_sql_query( qry, retry )
 
       END SEQUENCE
 
-      IF sql_error_in_query( _qry_obj )
 
-         ?E "SQL ERROR: ", qry
+      IF sql_error_in_query( _qry_obj, cTip )
+
+         ?E "SQL ERROR QUERY: ", qry
          error_bar( "sql", qry )
          IF _i == retry
             MsgC()
@@ -108,13 +114,34 @@ FUNCTION is_var_objekat_tipa( xVar, cClassName )
    RETURN .F.
 
 
-FUNCTION sql_error_in_query( oQry )
 
-   IF !is_var_objekat_tpqquery( oQry )
+FUNCTION sql_error_in_query( oQry, cTip )
+
+   LOCAL cLogMsg := "", cMsg, nI
+
+   hb_default( @cTip, "SELECT" )
+
+   IF cTip == "SELECT" .AND. !is_var_objekat_tpqquery( oQry )
       RETURN .T.
    ENDIF
 
-   RETURN  ( oQry:NetErr() ) .AND. !Empty( oQry:ErrorMsg() )
+   IF cTip $ "SET#INSERT#UPDATE"
+      IF !Empty( my_server():ErrorMsg() )
+         LOG_CALL_STACK cLogMsg
+         ?E my_server():ErrorMsg(), cLogMsg
+         RETURN .T.
+      ELSE
+         RETURN .F. // sve ok
+      ENDIF
+   ENDIF
+
+   IF !Empty( oQry:ErrorMsg() )
+      LOG_CALL_STACK cLogMsg
+      ?E oQry:ErrorMsg(), cLogMsg
+      RETURN .T.
+   ENDIF
+
+   RETURN  ( oQry:NetErr() )
 
 
 

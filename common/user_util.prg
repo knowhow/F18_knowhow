@@ -28,7 +28,7 @@ FUNCTION GetUserID()
       QUIT_1
    ENDIF
 
-   IF sql_error_in_query( oTable )
+   IF sql_error_in_query( oTable, "SELECT" )
       RETURN 0
    ENDIF
 

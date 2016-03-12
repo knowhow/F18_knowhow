@@ -15,6 +15,7 @@
 PROCEDURE set_global_vars_0()
 
 #ifdef F18_DEBUG
+
    ?E "set_global_vars_0"
 #endif
    PUBLIC ZGwPoruka := ""
@@ -72,7 +73,6 @@ PROCEDURE set_global_vars_0()
    PUBLIC cBnaslova
    PUBLIC cBshema := "B1"
 
-   // pdf stampa
    PUBLIC gPDFPrint := "N"
    PUBLIC gPDFPAuto := "D"
    PUBLIC gPDFViewer := Space( 150 )
@@ -113,14 +113,42 @@ PROCEDURE set_global_vars_0()
    PUBLIC cDirSif     := ""
    PUBLIC glBrojacPoKontima := .T.
 
-   init_print_variables() // setuje globalne varijable printera
+   // init_print_variables() // setuje globalne varijable printera
    set_ptxt_sekvence()
    set_global_vars_roba()
 
+#ifdef F18_DEBUG
    ?E "set_global_vars_0 end"
+#endif
 
    RETURN
 
+/* TODO: brisati
+   FUNCTION init_print_variables()
+
+      PUBLIC gPIni := ""
+      PUBLIC gPCond
+      PUBLIC gPCond2
+      PUBLIC gP10CPI
+      PUBLIC gP12CPI
+      PUBLIC gPB_ON
+      PUBLIC gPB_OFF
+      PUBLIC gPI_ON
+      PUBLIC gPI_OFF
+      PUBLIC gPU_ON
+      PUBLIC gPU_OFF
+      PUBLIC gPPort := "1"
+      PUBLIC gPStranica := 0
+      PUBLIC gPPTK
+      PUBLIC gPO_Port
+      PUBLIC gPO_Land
+      PUBLIC gRPL_Normal
+      PUBLIC gRPL_Gusto
+      PUBLIC gPReset := ""
+      PUBLIC gPFF
+
+      RETURN .T.
+*/
 
 FUNCTION set_ptxt_sekvence()
 
@@ -146,50 +174,41 @@ FUNCTION set_ptxt_sekvence()
    RETURN .T.
 
 
-FUNCTION set_global_vars_1( fSve )
+FUNCTION set_global_vars_1()
 
    LOCAL cImeDbf
 
    info_bar( "vars", "set_global_vars_1" )
-   IF fsve == nil
-      fSve := .T.
-   ENDIF
 
    create_gparams()
-   IF fSve
-      PUBLIC gSezonDir := ""
-      PUBLIC gRadnoPodr := "RADP"
-      PUBLIC ImeKorisn := ""
-      PUBLIC SifraKorisn := ""
-      PUBLIC KLevel := "9"
-      PUBLIC gPTKONV := "0 "
-      PUBLIC gSifreSamoVelikaSlova := "V", gcDirekt := "V", gShemaVF := "B5", gSKSif := "D"
-      PUBLIC gKodnaS := "8"
-      PUBLIC g50f := " "
 
-   ENDIF
-
+   PUBLIC gSezonDir := ""
+   PUBLIC gRadnoPodr := "RADP"
+   PUBLIC ImeKorisn := ""
+   PUBLIC SifraKorisn := ""
+   PUBLIC KLevel := "9"
+   PUBLIC gPTKONV := "0 "
+   PUBLIC gSifreSamoVelikaSlova := "V", gcDirekt := "V", gShemaVF := "B5", gSKSif := "D"
+   PUBLIC gKodnaS := "8"
+   PUBLIC g50f := " "
    PUBLIC gFKolor := "D"
 
    O_GPARAMS
    PRIVATE cSection := "1", cHistory := " "; aHistory := {}
 
-   IF fsve
-      Rpar( "pt", @gPTKonv )
-      Rpar( "pS", @gSifreSamoVelikaSlova )
-      Rpar( "SK", @gSKSif )
-      Rpar( "DO", @gcDirekt )
-      Rpar( "SB", @gShemaVF )
-      Rpar( "Ad", @gArhDir )
-      Rpar( "FO", @gPFont )
-      Rpar( "KS", @gKodnaS )
-      Rpar( "5f", @g50f )
-      Rpar( "pR", @gPDFPrint )
-      Rpar( "pV", @gPDFViewer )
-      Rpar( "pA", @gPDFPAuto )
-      Rpar( "dP", @gDefPrinter )
-   ENDIF
-
+   Rpar( "pt", @gPTKonv )
+   Rpar( "pS", @gSifreSamoVelikaSlova )
+   Rpar( "SK", @gSKSif )
+   Rpar( "DO", @gcDirekt )
+   Rpar( "SB", @gShemaVF )
+   Rpar( "Ad", @gArhDir )
+   Rpar( "FO", @gPFont )
+   Rpar( "KS", @gKodnaS )
+   Rpar( "5f", @g50f )
+   Rpar( "pR", @gPDFPrint )
+   Rpar( "pV", @gPDFViewer )
+   Rpar( "pA", @gPDFPAuto )
+   Rpar( "dP", @gDefPrinter )
    Rpar( "FK", @gFKolor )
 
    SELECT ( F_GPARAMS )

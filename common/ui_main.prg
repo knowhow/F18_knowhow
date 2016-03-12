@@ -916,7 +916,7 @@ FUNCTION VarEdit( aNiz, x1, y1, x2, y2, cNaslov, cBoje )
    PRIVATE MGetList := GetList
    READ
    Prozor0()
-   ShemaBoja( cbsstara )
+   ShemaBoja( cBsstara )
    SET( _SET_DEVICE, cPomUI )
 
    RETURN iif( LastKey() != K_ESC, .T., .F. )

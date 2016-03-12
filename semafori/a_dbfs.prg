@@ -11,7 +11,7 @@
 
 #include "f18.ch"
 
-STATIC __f18_dbfs := nil
+STATIC s_hF18Dbfs := nil
 
 
 FUNCTION set_a_dbfs()
@@ -19,7 +19,7 @@ FUNCTION set_a_dbfs()
    LOCAL _dbf_fields, _sql_order
    LOCAL _alg
 
-   __f18_dbfs := hb_Hash()
+   s_hF18Dbfs := hb_Hash()
 
    set_a_dbf_sif()
    set_a_dbf_params()
@@ -73,12 +73,12 @@ FUNCTION set_a_dbfs_key_fields()
 
    LOCAL _key
 
-   FOR EACH _key in __f18_dbfs:Keys
+   FOR EACH _key in s_hF18Dbfs:Keys
 
       // nije zadano - na osnovu strukture dbf-a
       // napraviti dbf_fields
-      IF !hb_HHasKey( __f18_dbfs[ _key ], "dbf_fields" )  .OR.  __f18_dbfs[ _key ][ "dbf_fields" ] == NIL
-         set_dbf_fields_from_struct( @__f18_dbfs[ _key ] )
+      IF !hb_HHasKey( s_hF18Dbfs[ _key ], "dbf_fields" )  .OR.  s_hF18Dbfs[ _key ][ "dbf_fields" ] == NIL
+         set_dbf_fields_from_struct( @s_hF18Dbfs[ _key ] )
       ENDIF
 
    NEXT
@@ -91,14 +91,14 @@ FUNCTION set_a_dbfs_key_fields()
 // ------------------------------------
 FUNCTION f18_dbfs_add( _tbl, _item )
 
-   __f18_dbfs[ _tbl ] := _item
+   s_hF18Dbfs[ _tbl ] := _item
 
    RETURN .T.
 
 
 
 FUNCTION f18_dbfs()
-   RETURN __f18_dbfs
+   RETURN s_hF18Dbfs
 
 
 // ----------------------------------------
@@ -188,25 +188,25 @@ FUNCTION get_a_dbf_rec( tbl, _only_basic_params )
       _only_basic_params = .F.
    ENDIF
 
-   IF ValType( __f18_dbfs ) <> "H"
+   IF ValType( s_hF18Dbfs ) <> "H"
       _msg := ""
       LOG_CALL_STACK _msg
-      ?E  "get_a_dbf_rec: " + tbl + " __f18_dbfs nije inicijalizirana " + _msg
+      ?E  "get_a_dbf_rec: " + tbl + " s_hF18Dbfs nije inicijalizirana " + _msg
    ENDIF
 
-   IF hb_HHasKey( __f18_dbfs, tbl )
+   IF hb_HHasKey( s_hF18Dbfs, tbl )
       _dbf_tbl := tbl
    ELSE
       // probaj preko aliasa
-      FOR EACH _key IN __f18_dbfs:Keys
+      FOR EACH _key IN s_hF18Dbfs:Keys
          IF ValType( tbl ) == "N"
             // zadana je workarea
-            IF __f18_dbfs[ _key ][ "wa" ] == tbl
+            IF s_hF18Dbfs[ _key ][ "wa" ] == tbl
                _dbf_tbl := _key
                EXIT
             ENDIF
          ELSE
-            IF __f18_dbfs[ _key ][ "alias" ] == Upper( tbl )
+            IF s_hF18Dbfs[ _key ][ "alias" ] == Upper( tbl )
                _dbf_tbl := _key
                EXIT
             ENDIF
@@ -228,9 +228,9 @@ FUNCTION get_a_dbf_rec( tbl, _only_basic_params )
 
    ENDIF
 
-   IF hb_HHasKey( __f18_dbfs, _dbf_tbl )
+   IF hb_HHasKey( s_hF18Dbfs, _dbf_tbl )
       // preferirani set parametara
-      _rec := __f18_dbfs[ _dbf_tbl ]
+      _rec := s_hF18Dbfs[ _dbf_tbl ]
    ELSE
       _rec := hb_Hash()
       _rec[ "table" ] := _dbf_tbl
@@ -282,19 +282,19 @@ FUNCTION get_a_dbf_rec( tbl, _only_basic_params )
 
 FUNCTION set_a_dbf_rec_chk0( cTable )
 
-   __f18_dbfs[ cTable ][ "chk0" ] := .T.
+   s_hF18Dbfs[ cTable ][ "chk0" ] := .T.
 
    RETURN .T.
 
 FUNCTION unset_a_dbf_rec_chk0( cTable )
 
-   __f18_dbfs[ cTable ][ "chk0" ] := .F.
+   s_hF18Dbfs[ cTable ][ "chk0" ] := .F.
 
    RETURN .T.
 
 FUNCTION is_chk0( table )
 
-   RETURN __f18_dbfs[ table ][ "chk0" ]
+   RETURN s_hF18Dbfs[ table ][ "chk0" ]
 
 
 
@@ -313,24 +313,24 @@ FUNCTION dbf_alias_has_semaphore( alias )
 
    _dbf_tbl := "x"
 
-   FOR EACH _key IN __f18_dbfs:Keys
+   FOR EACH _key IN s_hF18Dbfs:Keys
       IF ValType( alias ) == "N"
          // zadana je workarea
-         IF __f18_dbfs[ _key ][ "wa" ] == alias
+         IF s_hF18Dbfs[ _key ][ "wa" ] == alias
             _dbf_tbl := _key
             EXIT
          ENDIF
       ELSE
-         IF __f18_dbfs[ _key ][ "alias" ] == Upper( alias )
+         IF s_hF18Dbfs[ _key ][ "alias" ] == Upper( alias )
             _dbf_tbl := _key
             EXIT
          ENDIF
       ENDIF
    NEXT
 
-   IF hb_HHasKey( __f18_dbfs, _dbf_tbl )
+   IF hb_HHasKey( s_hF18Dbfs, _dbf_tbl )
 
-      _rec := __f18_dbfs[ _dbf_tbl ]
+      _rec := s_hF18Dbfs[ _dbf_tbl ]
       IF _rec[ "temp" ] == .F.
          // tabela ima semafor
          _ret := .T.
@@ -392,8 +392,8 @@ FUNCTION set_dbf_fields_from_struct( xRec )
 #ifdef F18_DEBUG
       ?E "set_dbf_fields xRec=", xRec
 #endif
-      IF hb_HHasKey( __f18_dbfs, xRec )
-         hRec := __f18_dbfs[ xRec ]
+      IF hb_HHasKey( s_hF18Dbfs, xRec )
+         hRec := s_hF18Dbfs[ xRec ]
       ELSE
          ?E "set_dbf_fields tabela ", xRec, "nije u a_dbf_rec"
          RETURN .F.
@@ -503,7 +503,7 @@ FUNCTION my_close_all_dbf()
    WHILE nPos > 0
 
       // ako je neki dbf ostao otvoren nPos ce vratiti poziciju tog a_dbf_recorda
-      nPos := hb_HScan( __f18_dbfs, {| key, rec | zatvori_dbf( rec ) == .F.  } )
+      nPos := hb_HScan( s_hF18Dbfs, {| key, rec | zatvori_dbf( rec ) == .F.  } )
       IF nPos > 0
          hb_idleSleep( 0.1 )
       ELSE

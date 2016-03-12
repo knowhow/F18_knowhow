@@ -19,7 +19,6 @@ FUNCTION fetch_metric( sect, user, default_value )
 
    LOCAL _temp_qry
    LOCAL _table
-   LOCAL _server := pg_server()
    LOCAL _ret := ""
    LOCAL xRet
 
@@ -43,9 +42,9 @@ FUNCTION fetch_metric( sect, user, default_value )
 
    _temp_qry := "SELECT " + F18_PSQL_SCHEMA + ".fetchmetrictext(" + sql_quote( sect )  + ")"
 
-   _table := _sql_query( _server, _temp_qry )
+   _table := run_sql_query( _temp_qry )
 
-   IF sql_error_in_query( _table )
+   IF sql_error_in_query( _table, "SELECT" )
       RETURN default_value
    ENDIF
 

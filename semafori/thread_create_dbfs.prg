@@ -22,7 +22,6 @@ PROCEDURE thread_create_dbfs()
    _ver := read_dbf_version_from_config()
 
    my_server()
-   set_a_dbfs()
    cre_all_dbfs( _ver )
    kreiraj_pa_napuni_partn_idbr_pdvb ()
 

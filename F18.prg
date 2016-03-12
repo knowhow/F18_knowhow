@@ -23,7 +23,20 @@ FUNCTION Main( p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11 )
 
    cre_arg_v_hash( @_arg_v, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11 )
    set_f18_params( p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11 )
-   f18_init_0( _arg_v )
+
+   init_harbour()
+   init_parameters_cache()
+   set_f18_home_root()
+   set_global_vars_0()
+   f18_error_block()
+   set_screen_dimensions()
+
+   IF no_sql_mode()
+      set_f18_home( "f18_test" )
+      RETURN .T.
+   ENDIF
+
+   f18_login( NIL, _arg_v )
 
    RETURN .T.
 
@@ -76,12 +89,13 @@ FUNCTION program_module_menu( arg_v )
    LOCAL _count := 0
    LOCAL oBackup := F18Backup():New()
    LOCAL _user_roles := f18_user_roles_info()
-   LOCAL _server_db_version := get_version_str( server_db_version() )
+   LOCAL cServerDbVersion
    LOCAL _tmp
    LOCAL cOldColors
 
-
    info_bar( "init", "gen program_module_menu start" )
+   init_parameters_cache()
+
    IF arg_v == NIL
       cre_arg_v_hash( @arg_v ) // napravi NIL parametre
    ENDIF
@@ -89,12 +103,14 @@ FUNCTION program_module_menu( arg_v )
    DO WHILE .T.
 
       cOldColors := SetColor( F18_COLOR_ORGANIZACIJA )
+      cServerDbVersion := get_version_str( server_db_version( .T. ) )
+
       ++ _count
       CLEAR SCREEN
       _db_params := my_server_params()
 
       _x := 1
-      @ _x, mnu_left + 1 SAY8 "Tekuća baza: " + AllTrim( _db_params[ "database" ] ) + " / db ver: " + _server_db_version + " / nivo logiranja: " + AllTrim( Str( log_level() ) )
+      @ _x, mnu_left + 1 SAY8 "Tekuća baza: " + AllTrim( _db_params[ "database" ] ) + " / db ver: " + cServerDbVersion + " / nivo logiranja: " + AllTrim( Str( log_level() ) )
       ++ _x
       @ _x, mnu_left + 1 SAY "   Korisnik: " + AllTrim( _db_params[ "user" ] ) + "   u grupama " + _user_roles
       ++ _x
@@ -132,7 +148,6 @@ FUNCTION program_module_menu( arg_v )
 
       CASE mnu_choice > 0
          IF mnu_choice <= Len( menuExec )
-         altd()
             Eval( menuExec[ mnu_choice ] )
          ENDIF
       ENDCASE

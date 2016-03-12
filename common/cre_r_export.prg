@@ -21,7 +21,6 @@ FUNCTION t_exp_create( aFieldList )
 
    my_close_all_dbf()
 
-   AltD()
    cImeDBf := f18_ime_dbf( "r_export" )
    cImeCdx := ImeDbfCdx( cImeDbf )
 

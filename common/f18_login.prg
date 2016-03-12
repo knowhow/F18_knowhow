@@ -18,7 +18,7 @@ STATIC s_lPrvoPokretanje // prvo pokretanje aplikacije
 CLASS F18Login
 
    METHOD New()
-   METHOD main_db_login()
+   METHOD main_db_login( server_param, force_connect )
    METHOD login_odabir_organizacije()
    METHOD promjena_sezone()
    METHOD promjena_sezone_box()
@@ -34,18 +34,19 @@ CLASS F18Login
    METHOD main_db_login_form()
    METHOD odabir_organizacije()
    METHOD connect()
-   METHOD disconnect()
+   METHOD disconnect( nConn )
    METHOD set_main_db_params()
    METHOD set_server_params( server_params )
    METHOD included_databases_for_user()
 
-   DATA _company_db_connected
+   DATA lMainDbSpojena
+   DATA oMainDbServer
+   DATA lOrganizacijaSpojena
+
    DATA _company_db_curr_choice
    DATA _company_db_curr_session
-   DATA _main_db_connected
    DATA main_db_params
    DATA company_db_params
-   DATA _login_count
    DATA _include_db_filter
 
 ENDCLASS
@@ -55,7 +56,7 @@ ENDCLASS
 // =======================================
 // oLogin = F18Login():New()
 // oLogin:MainDbLoginForm()
-// if !oLogin:_main_db_connected
+// if !oLogin:lMainDbSpojena
 // ....
 // endif
 
@@ -66,8 +67,9 @@ METHOD F18Login:New()
    ::company_db_params := hb_Hash()
    ::_company_db_curr_choice := ""
    ::_company_db_curr_session := ""
-   ::_login_count := 0
    ::_include_db_filter := ""
+   ::lOrganizacijaSpojena := .F.
+   ::lMainDbSpojena := .F.
    s_cTekucaSezona := AllTrim( Str( Year( Date() ) ) )
    s_cPredhodnaSezona := AllTrim( Str( Year( Date() ) - 1 ) )
    s_lPrvoPokretanje := .T.
@@ -104,9 +106,22 @@ METHOD F18Login:connect( params, conn_type, silent )
       silent := .F.
    ENDIF
 
+   IF conn_type == 0  .AND. ::lMainDbSpojena
+      server_main_db_close()
+   ENDIF
+
+   IF conn_type == 1  .AND. ::lOrganizacijaSpojena
+      my_server_close()
+   ENDIF
+
    _connected := my_server_login( params, conn_type )
 
-   IF !silent .AND. !_connected
+   IF _connected
+      IF conn_type == 0
+         ::lMainDbSpojena := .T.
+      ELSE
+         ::lOrganizacijaSpojena := .T.
+      ENDIF
    ELSE
       ++ ::_login_count
    ENDIF
@@ -115,12 +130,19 @@ METHOD F18Login:connect( params, conn_type, silent )
 
 
 
-
-METHOD F18Login:disconnect()
+METHOD F18Login:disconnect( nConn )
 
    LOCAL _disconn
 
-   _disconn := my_server_logout()
+   IF nConn == nil
+      nConn := 1
+   ENDIF
+
+   IF nConn == 0
+      _disconn := server_main_db_close()
+   ELSE
+      _disconn := my_server_close()
+   ENDIF
 
    RETURN _disconn
 
@@ -169,9 +191,8 @@ METHOD F18Login:main_db_login( server_param, force_connect )
    ::set_main_db_params( @server_param ) // ucitaj parametre iz ini fajla i setuj ::main_db_params
 
    IF force_connect .AND. ::_main_db_params[ "username" ] <> NIL
-      // try to connect
-      // if not, open login form
-      if ::connect( server_param, 0 )
+
+      if ::connect( server_param, 0 ) // try to connect, if not, open login form
          _logged_in := .T.
       ENDIF
 
@@ -179,20 +200,16 @@ METHOD F18Login:main_db_login( server_param, force_connect )
 
    IF !_logged_in
 
-      // imamo pravo na 4 pokusaja !
       FOR _i := 1 TO _max_login
 
-         // login forma...
          IF ! ::main_db_login_form()
-            // ovdje naprosto izlazimo, vjerovatno je ESC u pitanju
-            ::_main_db_connected := _logged_in
+            ::lMainDbSpojena := _logged_in
             RETURN _logged_in
          ENDIF
 
          ::set_server_params( @server_param )
 
-         // zakaci se !
-         if ::connect( server_param, 0 )
+         IF ::connect( server_param, 0 )
             _logged_in := .T.
             EXIT
          ENDIF
@@ -201,43 +218,38 @@ METHOD F18Login:main_db_login( server_param, force_connect )
 
    ENDIF
 
-   ::_main_db_connected := _logged_in
 
-   RETURN _logged_in
+   ::lMainDbSpojena := .T.
 
+   RETURN .T.
 
 
 
 
 METHOD F18Login:login_odabir_organizacije( server_param )
 
-   LOCAL _logged_in := .F.
    LOCAL _i
    LOCAL _max_login := 4
    LOCAL _ret_comp
 
-
    ::set_main_db_params( @server_param ) // procitaj parametre za preduzece
 
-   IF !_logged_in
+   FOR _i := 1 TO _max_login // imamo pravo na 4 pokusaja !
+
+      IF ! ::odabir_organizacije()
+         RETURN .F.
+      ENDIF
+
+      ::set_server_params( @server_param ) // _rec_comp je > 1
+
+      IF ::connect( server_param, 1 )
+         EXIT
+      ENDIF
+
+   NEXT
 
 
-      FOR _i := 1 TO _max_login // imamo pravo na 4 pokusaja !
-
-         IF ! ::odabir_organizacije()
-            RETURN _logged_in // ovdje naprosto izlazimo, vjerovatno je ESC u pitanju
-         ENDIF
-
-         ::set_server_params( @server_param ) // _rec_comp je > 1
-         if ::connect( server_param, 1 )
-            _logged_in := .T.
-            EXIT
-         ENDIF
-
-      NEXT
-   ENDIF
-
-   ::_company_db_connected := _logged_in
+   ::lOrganizacijaSpojena := .T.
 
    RETURN .T.
 
@@ -314,7 +326,6 @@ METHOD F18Login:promjena_sezone( server_param, cDatabase, cSezona )
    ENDIF
 
    // bringout_2016 => bringout_2015
-
    cTrenutnaSezona := Right( cTrenutnaDatabase, 4 )
    cSaveDatabase := server_param[ "database" ]
    server_param[ "database" ] := StrTran( cTrenutnaDatabase, "_" + cTrenutnaSezona, "_" + cNovaSezona )
@@ -512,7 +523,7 @@ METHOD F18Login:odabir_organizacije()
    ENDIF
 
    ::main_db_params[ "database" ] := AllTrim( ::_company_db_curr_choice ) + ;
-      IIF( !Empty( _session ), "_" + AllTrim( _session ), "" )
+      iif( !Empty( _session ), "_" + AllTrim( _session ), "" )
    ::main_db_params[ "session" ] := AllTrim( _session )
 
 
@@ -818,7 +829,7 @@ METHOD F18Login:browse_odabir_organizacije( arr, table_type )
       table_type := 0
    ENDIF
 
-   //SetColor( F18_COLOR_ORGANIZACIJA )
+   // SetColor( F18_COLOR_ORGANIZACIJA )
 
    _row := 1
 

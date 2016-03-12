@@ -59,26 +59,6 @@ STATIC __log_level := F18_DEFAULT_LOG_LEVEL
 #endif
 
 
-FUNCTION f18_init_0( arg_v )
-
-   LOCAL oLogin
-
-   init_harbour()
-   init_parameters_cache()
-
-   set_f18_home_root()
-   set_global_vars_0()
-   f18_error_block()
-   set_screen_dimensions()
-
-   IF no_sql_mode()
-      set_f18_home( "f18_test" )
-      RETURN .T.
-   ENDIF
-
-   f18_login( NIL, arg_v )
-
-   RETURN .T.
 
 
 FUNCTION f18_error_block()
@@ -111,7 +91,6 @@ FUNCTION f18_init_app_opts()
 
 
 
-
 FUNCTION post_login( gVars )
 
    IF gVars == NIL
@@ -119,20 +98,24 @@ FUNCTION post_login( gVars )
    ENDIF
 
    init_parameters_cache()
-
-   set_global_vars_0()
-   set_global_screen_vars( .F. )
-   set_global_vars_2()
-   parametri_organizacije( .F. )
-   set_vars_za_specificne_slucajeve()
-
+   set_sql_search_path()
    server_log_enable()
 
    // ~/.F18/empty38/
    set_f18_home( my_server_params()[ "database" ] )
+
+   set_screen_dimensions()
    info_bar( "init", "home baze: " + my_home() )
 
    hb_gtInfo( HB_GTI_WINTITLE, "[ " + my_server_params()[ "user" ] + " ][ " + my_server_params()[ "database" ] + " ]" )
+
+   set_a_dbfs()
+   set_global_vars_1()
+   set_global_screen_vars( .F. )
+   set_global_vars_2()
+   parametri_organizacije( .F. )
+
+   set_vars_za_specificne_slucajeve()
 
    thread_dbfs( hb_threadStart( @thread_create_dbfs() ) )
    info_bar( "init", "thread_create_dbfs - end" )
@@ -218,7 +201,6 @@ FUNCTION set_screen_dimensions()
       RETURN .T.
    ENDIF
 
-   AltD()
 
    DO CASE
 

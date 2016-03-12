@@ -432,10 +432,10 @@ FUNCTION PromIdCijena()
    VarEdit( { { "Oznaka seta cijena", "gIdCijena", "VAL(gIdCijena)>0.and.VAL(gIdCijena)<=LEN(SC_Opisi)",, } }, ;
       6 + j + 3, 1, 6 + j + 7, 78, "IZBOR SETA CIJENA", "B1" )
    Prozor0()
-   ShemaBoja( cbsstara )
+   ShemaBoja( cBsstara )
    pos_status_traka()
 
-   RETURN
+   RETURN .T.
 
 
 /*! \fn PortZaMT(cIdDio,cIdOdj)

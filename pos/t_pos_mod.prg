@@ -465,18 +465,10 @@ METHOD set_module_gvars()
    ENDIF
 
    SetNazDVal() // set valuta
-
-   // setuj parametar tezinski_barkod
-   param_tezinski_barkod( .T. )
-
-   // maksimalna kolicina kod unosa racuna
-   max_kolicina_kod_unosa( .T. )
-
-   // kalk konto za stanje pos artikla
-   kalk_konto_za_stanje_pos( .T. )
-
-   // koristenje fiskalnih opcija
-   fiscal_opt_active()
+   param_tezinski_barkod( .T. ) // setuj parametar tezinski_barkod
+   max_kolicina_kod_unosa( .T. ) // maksimalna kolicina kod unosa racuna
+   kalk_konto_za_stanje_pos( .T. ) // kalk konto za stanje pos artikla
+   fiscal_opt_active() // koristenje fiskalnih opcija
 
    gRobaBlock := {|Ch| pos_roba_block( Ch ) }
 

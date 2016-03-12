@@ -425,7 +425,7 @@ FUNCTION RPar_Printer()
    RPar( "r-", @gPStranica )
    RPar( "pt", @gPPTK )
 
-   RETURN
+   RETURN .T.
 
 
 FUNCTION WPar_Printer()
@@ -451,34 +451,10 @@ FUNCTION WPar_Printer()
    WPar( "r-", gPStranica )
    WPar( "pt", gPPTK )
 
-   RETURN
+   RETURN .T.
 
 
 
-FUNCTION init_print_variables()
-
-   PUBLIC gPIni := ""
-   PUBLIC gPCond
-   PUBLIC gPCond2
-   PUBLIC gP10CPI
-   PUBLIC gP12CPI
-   PUBLIC gPB_ON
-   PUBLIC gPB_OFF
-   PUBLIC gPI_ON
-   PUBLIC gPI_OFF
-   PUBLIC gPU_ON
-   PUBLIC gPU_OFF
-   PUBLIC gPPort := "1"
-   PUBLIC gPStranica := 0
-   PUBLIC gPPTK
-   PUBLIC gPO_Port
-   PUBLIC gPO_Land
-   PUBLIC gRPL_Normal
-   PUBLIC gRPL_Gusto
-   PUBLIC gPReset := ""
-   PUBLIC gPFF
-
-   RETURN
 
 
 

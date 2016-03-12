@@ -34,9 +34,6 @@ FUNCTION kalk_unos_dok_pr()
 
    SELECT kalk_pripr
 
-   AltD()
-
-
    IF nRbr < 10 .AND. fNovi
       _DatFaktP := _datDok
    ENDIF
@@ -147,7 +144,6 @@ FUNCTION kalk_unos_dok_pr()
    READ
    ESC_RETURN K_ESC
 
-   AltD()
 
    _FCJ2 := _FCJ * ( 1 - _Rabat / 100 )
 
@@ -256,7 +252,6 @@ FUNCTION kalk_pripr_napuni_sirovine_za( nRbr, _idroba, _kolicina )
    LOCAL nKolS, nKolZN, nC1, nC2, dDatNab
    LOCAL _rec
 
-   AltD()
    SELECT ROBA
    HSEEK _idroba
 

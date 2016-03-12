@@ -14,6 +14,8 @@
 MEMVAR GetList
 
 STATIC s_psqlServer := NIL
+STATIC s_pgsqlServerMainDb := NIL
+
 THREAD STATIC s_psqlServerDbfThread := NIL // svaka thread konekcija zasebna
 STATIC s_psqlServer_params := NIL
 
@@ -59,6 +61,34 @@ FUNCTION my_server( oServer )
    RETURN pg_server( oServer )
 
 
+
+
+FUNCTION server_main_db( oServer )
+
+   IF oServer <> NIL
+      s_pgsqlServerMainDb := oServer
+   ENDIF
+
+   RETURN s_pgsqlServerMainDb
+
+
+
+
+FUNCTION server_main_db_close()
+
+   LOCAL oServer := server_main_db()
+
+   IF is_var_objekat_tpqserver( oServer )
+      oServer:close()
+   ENDIF
+
+   RETURN .T.
+
+
+
+
+
+
 FUNCTION my_server_close()
 
    LOCAL oServer := my_server()
@@ -72,6 +102,14 @@ FUNCTION my_server_close()
    ENDIF
 
    RETURN .T.
+
+
+
+FUNCTION my_server_logout()
+
+   RETURN my_server_close()
+
+
 
 /*
  set_get server_params
@@ -119,12 +157,13 @@ FUNCTION my_server_login( params, conn_type )
       params[ "port" ], ;
       iif( conn_type == 1, params[ "schema" ], "public" ) )
 
-   IF  !( _server:NetErr() .AND. !Empty( _server:ErrorMsg() ) )
 
-      my_server( _server )
+   IF  !_server:NetErr() .AND. Empty( _server:ErrorMsg() )
 
-      IF conn_type == 1
-         set_sql_search_path()
+      IF conn_type == 0
+         server_main_db( _server )
+      ELSE
+         my_server( _server ) // konekcija za organizaciju
          info_bar( "login", "server connection ok: " + params[ "user" ] + " / " + iif ( conn_type == 1, params[ "database" ], "postgres" ) + " / verzija aplikacije: " + F18_VER, 1 )
       ENDIF
 
@@ -156,20 +195,9 @@ FUNCTION f18_login( force_connect, arg_v )
 
    oLogin := F18Login():New()
    oLogin:main_db_login( @s_psqlServer_params, force_connect )
-   // __main_db_params := s_psqlServer_params
 
-   IF oLogin:_main_db_connected
+   IF oLogin:lMainDbSpojena
 
-      // 1 konekcija je na postgres i to je ok
-      // ako je vec neka druga...
-      IF oLogin:_login_count > 1
-         // ostvari opet konekciju na main_db postgres
-         oLogin:disconnect()
-         oLogin:main_db_login( @s_psqlServer_params, .T. )
-      ENDIF
-
-
-      write_last_login_params_to_ini_conf() // upisi parametre za sljedeci put...
 
       DO WHILE .T.
 
@@ -179,10 +207,9 @@ FUNCTION f18_login( force_connect, arg_v )
 
          write_last_login_params_to_ini_conf() // upisi parametre tekuce firme...
 
-         IF oLogin:_company_db_connected
+         IF oLogin:lOrganizacijaSpojena
 
             show_sacekaj()
-            post_login()
             program_module_menu( arg_v )
 
          ENDIF
@@ -355,33 +382,6 @@ STATIC FUNCTION f18_no_login_quit()
    RETURN .T.
 
 
-/*
-FUNCTION relogin()
-
-   LOCAL oBackup := F18Backup():New()
-   LOCAL _ret := .F.
-
-   IF oBackup:locked()
-      MsgBeep( oBackup:backup_in_progress_info() )
-      RETURN _ret
-   ENDIF
-
-   server_log_disable()
-   my_server_logout()
-
-   _get_server_params_from_config()
-
-   IF f18_form_login()
-      post_login()
-   ENDIF
-
-   write_last_login_params_to_ini_conf()
-   _ret := .T.
-
-   RETURN _ret
-
-*/
-
 STATIC FUNCTION show_sacekaj()
 
    LOCAL _x, _y
@@ -524,13 +524,6 @@ FUNCTION write_last_login_params_to_ini_conf()
    RETURN .T.
 
 
-FUNCTION my_server_logout()
-
-   IF ValType( s_psqlServer ) == "O"
-      s_psqlServer:Close()
-   ENDIF
-
-   RETURN s_psqlServer
 
 
 FUNCTION my_server_search_path( path )

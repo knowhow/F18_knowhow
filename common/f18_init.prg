@@ -13,9 +13,9 @@
 
 STATIC s_mainThreadID
 
+THREAD STATIC s_lAlreadyRunStartup := .F. // startup funkcija vec pokrenuta
 
-// logiranje na server
-STATIC s_psqlServer_log := .F.
+STATIC s_psqlServer_log := .F. // logiranje na server
 
 STATIC s_cF18HomeRoot := NIL // za sve threadove identican home_root
 STATIC s_cF18HomeBackup := NIL // svi threadovi ista backup lokacija
@@ -91,11 +91,8 @@ FUNCTION f18_init_app_opts()
 
 
 
-FUNCTION post_login( gVars )
+FUNCTION post_login()
 
-   IF gVars == NIL
-      gVars := .T.
-   ENDIF
 
    init_parameters_cache()
    set_sql_search_path()
@@ -104,7 +101,6 @@ FUNCTION post_login( gVars )
    // ~/.F18/empty38/
    set_f18_home( my_server_params()[ "database" ] )
 
-   set_screen_dimensions()
    info_bar( "init", "home baze: " + my_home() )
 
    hb_gtInfo( HB_GTI_WINTITLE, "[ " + my_server_params()[ "user" ] + " ][ " + my_server_params()[ "database" ] + " ]" )
@@ -114,7 +110,6 @@ FUNCTION post_login( gVars )
    set_global_screen_vars( .F. )
    set_global_vars_2()
    parametri_organizacije( .F. )
-
    set_vars_za_specificne_slucajeve()
 
    thread_dbfs( hb_threadStart( @thread_create_dbfs() ) )
@@ -122,7 +117,6 @@ FUNCTION post_login( gVars )
 
    check_server_db_version()
    server_log_enable()
-
    set_init_fiscal_params()
 
    run_on_startup()
@@ -130,7 +124,6 @@ FUNCTION post_login( gVars )
    set_parametre_f18_aplikacije( .T. )
    set_hot_keys()
 
-   say_database_info()
    get_log_level_from_params()
 
    RETURN .T.
@@ -648,7 +641,13 @@ FUNCTION run_on_startup()
 
    LOCAL _ini, _fakt_doks, cRun, oModul
 
-   info_bar( "init", "run_on_start" )
+
+   altd()
+   IF s_lAlreadyRunStartup
+      RETURN .F.
+   ENDIF
+
+   s_lAlreadyRunStartup := .T.
 
    _ini := hb_Hash()
    _ini[ "run" ] := ""
@@ -657,6 +656,12 @@ FUNCTION run_on_startup()
    f18_ini_config_read( "startup" + iif( test_mode(), "_test", "" ), @_ini, .F. )
 
    cRun := _ini[ "run" ]
+
+   IF !Empty( cRun )
+       RETURN .F.
+   ENDIF
+
+   info_bar( "init", "run_on_start" )
 
    SWITCH _ini[ "modul" ]
    CASE "FIN"

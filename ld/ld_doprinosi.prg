@@ -354,9 +354,7 @@ FUNCTION obr_doprinos( nGodina, nMjesec, nDopr, nDopr2, cTRada, a_benef )
 
       IF Right( id, 1 ) == "X"
          ? cLinija
-         IF !lGusto
-            ?
-         ENDIF
+         ?   
          nDopr += nPom
          IF cUmPD == "D"
             nDopr2 += nPom2

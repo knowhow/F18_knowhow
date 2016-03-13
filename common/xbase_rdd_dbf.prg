@@ -446,36 +446,6 @@ FUNCTION pakuj_dbf( a_dbf_rec, lSilent )
 
 
 
-FUNCTION full_table_synchro()
-
-   LOCAL _sifra := Space( 6 ), _full_table_name, _alias := PadR( "PAROBR", 30 )
-
-   Box( , 3, 60 )
-   @ m_x + 1, m_y + 2 SAY " Admin sifra :" GET  _sifra PICT "@!"
-   @ m_x + 2, m_y + 2 SAY "Table alias  :"  GET _alias PICTURE "@S20"
-   READ
-   BoxC()
-
-   IF ( LastKey() == K_ESC ) .OR. ( Upper( AllTrim( _sifra ) ) != "F18AD" )
-      MsgBeep( "nista od ovog posla !" )
-      RETURN .F.
-   ENDIF
-
-   _alias := AllTrim( Upper( _alias ) )
-
-   CLOSE ALL
-   _full_table_name := f18_ime_dbf( _alias )
-
-   IF File( _full_table_name )
-      ferase_dbf( _alias )
-   ELSE
-      MsgBeep( "ove dbf tabele nema: " + _full_table_name )
-   ENDIF
-
-   post_login()
-
-   RETURN .T.
-
 
 STATIC FUNCTION zatvori_dbf( value )
 

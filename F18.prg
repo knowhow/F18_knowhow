@@ -94,7 +94,9 @@ FUNCTION program_module_menu( arg_v )
    LOCAL cOldColors
 
    info_bar( "init", "gen program_module_menu start" )
+   
    init_parameters_cache()
+   set_screen_dimensions()
 
    IF arg_v == NIL
       cre_arg_v_hash( @arg_v ) // napravi NIL parametre

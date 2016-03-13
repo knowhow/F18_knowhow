@@ -28,12 +28,9 @@ FUNCTION start_f18_program_module( oApp, lSezone )
    goModul  := oApp
 
 
-   post_login()
-
    IF oApp:lTerminate
       RETURN .T.
    ENDIF
-
 
    //info_bar( oApp:cName, oApp:cName + " : start_program_module set global vars - start " )
    oApp:set_module_gvars()

@@ -121,9 +121,9 @@ METHOD F18Login:connect( params, conn_type, silent )
          ::lMainDbSpojena := .T.
       ELSE
          ::lOrganizacijaSpojena := .T.
+         altd()
+          post_login()
       ENDIF
-   ELSE
-      ++ ::_login_count
    ENDIF
 
    RETURN _connected
@@ -240,7 +240,7 @@ METHOD F18Login:login_odabir_organizacije( server_param )
          RETURN .F.
       ENDIF
 
-      ::set_server_params( @server_param ) // _rec_comp je > 1
+      ::set_server_params( @server_param )
 
       IF ::connect( server_param, 1 )
          EXIT
@@ -350,7 +350,6 @@ METHOD F18Login:promjena_sezone( server_param, cDatabase, cSezona )
       ENDIF
 
       CLOSE ALL
-      post_login( .F. )
 
 
    ENDIF

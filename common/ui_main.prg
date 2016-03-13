@@ -1149,17 +1149,6 @@ FUNCTION ShowKorner( nS, nStep, nDelta )
 
 
 
-
-FUNCTION say_database_info()
-
-   @ 0, MAXROWS() - 1 SAY PadR( f18_database() + " / " + f18_user(), MAXROWS() + 20 ) COLOR F18_COLOR_INVERT
-   @ 4, 4 SAY ""
-
-   RETURN .T.
-
-
-
-
 FUNCTION IzreziPath( cPath, cTekst )
 
    LOCAL nPom

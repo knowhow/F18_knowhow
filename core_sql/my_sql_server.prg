@@ -405,14 +405,11 @@ STATIC FUNCTION show_sacekaj()
 
 
 
-
-// prelazak iz sezone u sezonu
 FUNCTION f18_promjena_sezone()
 
    LOCAL oLogin := F18Login():New()
 
    oLogin:promjena_sezone( @s_psqlServer_params )
-   post_login()
 
    RETURN .T.
 

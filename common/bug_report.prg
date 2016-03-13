@@ -21,6 +21,39 @@ FUNCTION GlobalErrorHandler( err_obj, lShowErrorReport, lQuitApp )
    LOCAL bErr
    LOCAL nI, cMsg
 
+
+   IF err_obj:GenCode == 45 .AND. err_obj:SubCode == 1302
+   /*
+   Verzija programa: 1.7.770 13.03.2016 8.5.0
+
+   SubSystem/severity    : BASE          2
+   GenCod/SubCode/OsCode :         45       1302          0
+   Opis                  : Object destructor failure
+   ImeFajla              :
+   Operacija             : Reference to freed block
+   Argumenti             : _?_
+   canRetry/canDefault   : .f. .f.
+
+   CALL STACK:
+   --- --------------------------------------------------------------------------------
+   BUG REPORT: Verzija programa: 1.7.770 13.03.2016 8.5.0 ; SubSystem/severity    : BASE          2 ; GenCod/SubCode/OsCode :         45       1302          0 ; Opis                  : Object destructor failure ; ImeFajla              :  ; Operacija             : Reference to freed block ; Argumenti             : _?_ ; canRetry/canDefault   : .f. .f. ; CALL STACK:
+      1 (b)F18_ERROR_BLOCK / 66
+      2 INKEY / 0
+      3 MY_DB_EDIT / 157
+      4 FIN_KNJIZENJE_NALOGA / 123
+      5 FIN_UNOS_NALOGA / 36
+      6 (b)TFINMOD_PROGRAMSKI_MODUL_OSNOVNI_MENI / 51
+      7 F18_MENU / 61
+      8 TFINMOD:PROGRAMSKI_MODUL_OSNOVNI_MENI / 81
+      9 TFINMOD:MMENU / 38
+     10 TFINMOD:RUN / 126
+   */
+     LOG_CALL_STACK _log_msg
+
+      ?E "ERR Object destructor failure/Reference to freed block 45/32", _log_msg
+      RETURN .F.
+   ENDIF
+
    bErr := ErrorBlock( {| oError | Break( oError ) } )
 
    hb_default( @lQuitApp, .T. )
@@ -36,8 +69,8 @@ FUNCTION GlobalErrorHandler( err_obj, lShowErrorReport, lQuitApp )
 
    IF is_in_main_thread()
 #ifdef F18_DEBUG
-  Alert( err_obj:Description + " " + err_obj:operation)
-  altd()
+      Alert( err_obj:Description + " " + err_obj:operation )
+      AltD()
 #endif
 
       SET CONSOLE OFF
@@ -95,7 +128,7 @@ FUNCTION GlobalErrorHandler( err_obj, lShowErrorReport, lQuitApp )
 
    OutBug( "---", Replicate( "-", 80 ) )
    LOG_CALL_STACK _log_msg
-   OutBug( STRTRAN( _log_msg, "//", hb_eol() ) )
+   OutBug( StrTran( _log_msg, "//", hb_eol() ) )
    OutBug( "---", Replicate( "-", 80 ) )
    OutBug()
 
@@ -113,7 +146,6 @@ FUNCTION GlobalErrorHandler( err_obj, lShowErrorReport, lQuitApp )
 
    OutBug( _msg )
    _log_msg += " ; " + _msg
-
 
    IF err_obj:cargo <> NIL
 
@@ -149,7 +181,6 @@ FUNCTION GlobalErrorHandler( err_obj, lShowErrorReport, lQuitApp )
    ENDIF
 
 
-
    IF lQuitApp
       QUIT_1
    ENDIF
@@ -163,7 +194,7 @@ FUNCTION GlobalErrorHandler( err_obj, lShowErrorReport, lQuitApp )
 FUNCTION OutBug( ... )
 
    IF is_in_main_thread()
-      QOUT( ... )
+      QOut( ... )
    ELSE
       OutErr( ..., hb_eol() )
    ENDIF
@@ -180,11 +211,11 @@ STATIC FUNCTION server_info()
    OutBug( "/---------- BEGIN PostgreSQL vars --------/" )
    OutBug()
    FOR EACH _key in _server_vars
-       OutBug( PadR( _key, 25 ) + ":",  server_show( _key ) )
+      OutBug( PadR( _key, 25 ) + ":",  server_show( _key ) )
    NEXT
    OutBug()
 
-   OutBug("/----------  END PostgreSQL vars --------/")
+   OutBug( "/----------  END PostgreSQL vars --------/" )
    OutBug()
    _sys_info := server_sys_info()
 

@@ -208,7 +208,7 @@ FUNCTION ld_pregled_primanja()
 
       DO WHILE .T.
 
-         IF PRow() > RPT_PAGE_LEN + gPStranica
+         IF PRow() > RPT_PAGE_LEN + dodatni_redovi_po_stranici()
             FF
             Eval( bZagl )
          ENDIF
@@ -257,7 +257,7 @@ FUNCTION ld_pregled_primanja()
 
    ENDDO
 
-   IF PRow() > RPT_PAGE_LEN + gPStranica
+   IF PRow() > RPT_PAGE_LEN + dodatni_redovi_po_stranici()
       FF
       Eval( bZagl )
    ENDIF

@@ -125,7 +125,7 @@ FUNCTION StKalk81( fzatops )
          nMarza2 := nMarza2 - nPRUC
       ENDIF
 
-      IF PRow() > ( RPT_PAGE_LEN + gPStranica ) - 4
+      IF PRow() > ( RPT_PAGE_LEN + dodatni_redovi_po_stranici() ) - 4
          FF
          @ PRow(), 125 SAY "Str:" + Str( ++nStr, 3 )
       ENDIF
@@ -252,7 +252,7 @@ FUNCTION StKalk81( fzatops )
       SKIP
    ENDDO
 
-   IF PRow() > ( RPT_PAGE_LEN + gPStranica ) - 3
+   IF PRow() > ( RPT_PAGE_LEN + dodatni_redovi_po_stranici() ) - 3
       FF
       @ PRow(), 125 SAY "Str:" + Str( ++nStr, 3 )
    ENDIF
@@ -416,7 +416,7 @@ FUNCTION StKalk81_2()
          nMarza2 := nMarza2 - nPRUC
       ENDIF
 
-      IF PRow() > ( RPT_PAGE_LEN + gPStranica )
+      IF PRow() > ( RPT_PAGE_LEN + dodatni_redovi_po_stranici() )
          FF
          @ PRow(), 125 SAY "Str:" + Str( ++nStr, 3 )
       ENDIF
@@ -519,7 +519,7 @@ FUNCTION StKalk81_2()
       SKIP
    ENDDO
 
-   IF PRow() > ( RPT_PAGE_LEN + gPStranica )
+   IF PRow() > ( RPT_PAGE_LEN + dodatni_redovi_po_stranici() )
       FF
       @ PRow(), 125 SAY "Str:" + Str( ++nStr, 3 )
    ENDIF
@@ -544,7 +544,7 @@ FUNCTION StKalk81_2()
 
    ? m
 
-   IF PRow() > ( RPT_PAGE_LEN + gPStranica )
+   IF PRow() > ( RPT_PAGE_LEN + dodatni_redovi_po_stranici() )
       FF
       @ PRow(), 125 SAY "Str:" + Str( ++nStr, 3 )
    ENDIF

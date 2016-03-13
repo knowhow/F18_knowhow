@@ -219,7 +219,7 @@ FUNCTION kalk_kartica_prodavnica()
             ENDIF
          ENDIF
 
-         IF ( PRow() - gPStranica ) > 62
+         IF ( PRow() - dodatni_redovi_po_stranici() ) > 62
             FF
             Zagl()
          ENDIF

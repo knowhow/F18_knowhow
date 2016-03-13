@@ -124,7 +124,7 @@ FUNCTION SpecDPK()
                ZaglDPK()
             ENDIF
 
-            IF PRow() > 60 + gPStranica
+            IF PRow() > 60 + dodatni_redovi_po_stranici()
                FF
                ZaglDPK()
             ENDIF
@@ -191,7 +191,7 @@ FUNCTION SpecDPK()
 
       ENDDO // konto
 
-      IF PRow() > 60 + gPStranica; FF; ZaglDPK(); ENDIF
+      IF PRow() > 60 + dodatni_redovi_po_stranici(); FF; ZaglDPK(); ENDIF
       ?  M
       ? "UKUPNO ZA KONTO:"
       @ PRow(), nCol1 SAY ""
@@ -499,7 +499,7 @@ FUNCTION SpecBrDan()
                IF PRow() == 0
                   ZaglSpBrDana()
                ENDIF
-               IF PRow() > 60 + gPStranica
+               IF PRow() > 60 + dodatni_redovi_po_stranici()
                   FF
                   ZaglSpBrDana()
                ENDIF
@@ -536,7 +536,7 @@ FUNCTION SpecBrDan()
          ENDIF
 
          IF PRow() == 0; ZaglSpBrDana(); ENDIF
-         IF PRow() > 60 + gPStranica; FF; ZaglSpBrDana(); ENDIF
+         IF PRow() > 60 + dodatni_redovi_po_stranici(); FF; ZaglSpBrDana(); ENDIF
 
          IF cPojed == "N"
             @ PRow() + 1, 1 SAY ++B PICTURE '9999'
@@ -567,7 +567,7 @@ FUNCTION SpecBrDan()
       ENDIF
 
    ENDDO  // konto
-   IF PRow() > 60 + gPStranica; FF; ZaglSpBrDana(); ENDIF
+   IF PRow() > 60 + dodatni_redovi_po_stranici(); FF; ZaglSpBrDana(); ENDIF
    ? M
    ? "UKUPNO ZA KONTO:"
    @ PRow(), nCol1    SAY KDIN PICTURE picBHD
@@ -1029,7 +1029,7 @@ FUNCTION fin_spec_po_suban_kontima()
                nPotrazujeBHD := 0
             ENDIF
          ENDDO
-         IF PRow() > 60 + gPStranica
+         IF PRow() > 60 + dodatni_redovi_po_stranici()
             FF
             fin_specif_zagl6( cSkVar )
          ENDIF
@@ -1139,7 +1139,7 @@ FUNCTION fin_spec_po_suban_kontima()
          ENDIF
 
       ENDDO  // sintetika
-      IF PRow() > 60 + gPStranica
+      IF PRow() > 60 + dodatni_redovi_po_stranici()
          FF
          fin_specif_zagl6( cSkVar )
       ENDIF
@@ -1166,7 +1166,7 @@ FUNCTION fin_spec_po_suban_kontima()
       nUp2 += nKp2   // ukupno za sve
    ENDDO
 
-   IF PRow() > 60 + gPStranica
+   IF PRow() > 60 + dodatni_redovi_po_stranici()
       FF
       fin_specif_zagl6( cSkVar )
    ENDIF
@@ -1565,7 +1565,7 @@ FUNCTION SpecPoDosp( lKartica )
          ENDIF
       ENDDO // partner
 
-      IF PRow() > 58 + gPStranica
+      IF PRow() > 58 + dodatni_redovi_po_stranici()
          FF
          ZSpecPoDosp( nil, nil, PICPIC )
       ENDIF
@@ -1653,7 +1653,7 @@ FUNCTION SpecPoDosp( lKartica )
          nFaza := RRocnost()
       ENDIF
 
-      IF PRow() > 52 + gPStranica
+      IF PRow() > 52 + dodatni_redovi_po_stranici()
          FF
          ZSpecPoDosp( .T., nil, PICPIC )
          fPrviProlaz := .F.
@@ -1856,7 +1856,7 @@ FUNCTION SpecPoDosp( lKartica )
 
       ENDDO
 
-      IF PRow() > 58 + gPStranica
+      IF PRow() > 58 + dodatni_redovi_po_stranici()
          FF
          ZSpecPoDosp( .T., nil, PICPIC )
       ENDIF

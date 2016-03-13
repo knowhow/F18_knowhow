@@ -194,7 +194,7 @@ FUNCTION PregNDP()
             SELECT suban
          ENDIF
 
-         IF PRow() > 60 + gPStranica
+         IF PRow() > 60 + dodatni_redovi_po_stranici()
             FF
             zagl9()
          ENDIF

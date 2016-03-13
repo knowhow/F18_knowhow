@@ -136,7 +136,7 @@ FUNCTION SinKart()
       cIdkonto := IdKonto
       nDugBHD := nPotBHD := nDugDEM := nPotDEM := 0
 
-      IF PRow() > 55 + gPStranica; FF; SinKZagl(); ENDIF
+      IF PRow() > 55 + dodatni_redovi_po_stranici(); FF; SinKZagl(); ENDIF
 
       ? m
       SELECT KONTO; HSEEK cIdKonto
@@ -170,7 +170,7 @@ FUNCTION SinKart()
             ENDIF
          ENDIF
 
-         IF PRow() > 60 + gPStranica
+         IF PRow() > 60 + dodatni_redovi_po_stranici()
             FF
             SinKZagl()
          ENDIF
@@ -193,7 +193,7 @@ FUNCTION SinKart()
 
       ENDDO
 
-      IF PRow() > 60 + gPStranica
+      IF PRow() > 60 + dodatni_redovi_po_stranici()
          FF
          SinKZagl()
       ENDIF
@@ -217,7 +217,7 @@ FUNCTION SinKart()
          FF; SinKZagl()
       ELSE
          i := 0
-         DO WHILE PRow() <= 55 + gPstranica .AND. gnRazRed > i
+         DO WHILE PRow() <= 55 + dodatni_redovi_po_stranici() .AND. gnRazRed > i
             ?; ++i
          ENDDO
       ENDIF
@@ -225,7 +225,7 @@ FUNCTION SinKart()
    ENDDO // eof()
 
    IF cBrza == "N"
-      IF PRow() > 60 + gPStranica; FF; SinKZagl(); ENDIF
+      IF PRow() > 60 + dodatni_redovi_po_stranici(); FF; SinKZagl(); ENDIF
       ? M
       ? "UKUPNO ZA SVA KONTA:"
       @ PRow(), 31             SAY nSviD           PICTURE PicBHD
@@ -387,7 +387,7 @@ FUNCTION SinKart2()
       cIdkonto := IdKonto
       nDugBHD := nPotBHD := nDugDEM := nPotDEM := 0
 
-      IF PRow() > 55 + gPStranica; FF; ZaglSink2(); ENDIF
+      IF PRow() > 55 + dodatni_redovi_po_stranici(); FF; ZaglSink2(); ENDIF
 
       ? m
       SELECT KONTO; HSEEK cIdKonto
@@ -399,7 +399,7 @@ FUNCTION SinKart2()
 
       nDugBHD := nPotBHD := nDugDEM := nPotDEM := 0
       DO WHILE !Eof() .AND. idfirma == cidfirma .AND. cIdKonto == IdKonto
-         IF PRow() > 60 + gPStranica; FF; ZaglSink2();ENDIF
+         IF PRow() > 60 + dodatni_redovi_po_stranici(); FF; ZaglSink2();ENDIF
          nMonth := Month( DatNal )
          nDBHD := nPBHD := nDDEM := nPDEM := 0
          nPSDBHD := nPSPBHD := nPSDDEM := nPSPDEM := 0
@@ -441,7 +441,7 @@ FUNCTION SinKart2()
          ENDIF
       ENDDO
 
-      IF PRow() > 60 + gPStranica; FF; ZaglSink2(); ENDIF
+      IF PRow() > 60 + dodatni_redovi_po_stranici(); FF; ZaglSink2(); ENDIF
       ? M
       ? "UKUPNO ZA:" + cIdKonto
       @ PRow(), nC1            SAY nDugBHD     PICTURE PicBHD
@@ -461,14 +461,14 @@ FUNCTION SinKart2()
          FF; ZaglSink2()
       ELSE
          i := 0
-         DO WHILE PRow() <= 55 + gPstranica .AND. gnRazRed > i
+         DO WHILE PRow() <= 55 + dodatni_redovi_po_stranici() .AND. gnRazRed > i
             ?; ++i
          ENDDO
       ENDIF
 
    ENDDO // eof()
 
-   IF PRow() > 60 + gPStranica; FF; ZaglSink2(); ENDIF
+   IF PRow() > 60 + dodatni_redovi_po_stranici(); FF; ZaglSink2(); ENDIF
    ? M
    ? "ZA SVA KONTA:"
    @ PRow(), nC1            SAY nSviD           PICTURE PicBHD
@@ -678,7 +678,7 @@ FUNCTION AnKart()
       nDugBHD := nPotBHD := nDugDEM := nPotDEM := 0
       cIdkonto := IdKonto
 
-      IF PRow() > 55 + gPStranica; FF; AnalKZagl(); ENDIF
+      IF PRow() > 55 + dodatni_redovi_po_stranici(); FF; AnalKZagl(); ENDIF
       ? m
       SELECT KONTO; HSEEK cIdKonto; SELECT anal
       IF cBrza == "S"
@@ -713,7 +713,7 @@ FUNCTION AnKart()
             ENDIF
          ENDIF
 
-         IF PRow() > 60 + gPStranica; FF; AnalKZagl();ENDIF
+         IF PRow() > 60 + dodatni_redovi_po_stranici(); FF; AnalKZagl();ENDIF
          IF cBrza == "S"
             @ PRow() + 1, 3 SAY IdKonto
             @ PRow(), 11 SAY IdVN
@@ -754,11 +754,11 @@ FUNCTION AnKart()
             nDugDEM += DugDEM; nPotDEM += PotDEM
             @ PRow(), PCol() + 2 SAY nDugDEM - nPotDEM PICTURE PicDEM
          ENDIF
-         OstatakOpisa( cOpis, nCOpis, {|| IF( PRow() > 61 + gPStranica, Eval( {|| gPFF(), AnalKZagl() } ), ) } )
+         OstatakOpisa( cOpis, nCOpis, {|| IF( PRow() > 61 + dodatni_redovi_po_stranici(), Eval( {|| gPFF(), AnalKZagl() } ), ) } )
          SKIP
       ENDDO    // konto
 
-      IF PRow() > 60 + gPStranica; FF; AnalKZagl(); ENDIF
+      IF PRow() > 60 + dodatni_redovi_po_stranici(); FF; AnalKZagl(); ENDIF
       ? M
       IF cBrza == "S"
          ? "UKUPNO ZA KONTA:" + qqKonto
@@ -783,7 +783,7 @@ FUNCTION AnKart()
          FF; AnalKZagl()
       ELSE
          i := 0
-         DO WHILE PRow() <= 55 + gPstranica .AND. gnRazRed > i
+         DO WHILE PRow() <= 55 + dodatni_redovi_po_stranici() .AND. gnRazRed > i
             ?; ++i
          ENDDO
       ENDIF
@@ -791,7 +791,7 @@ FUNCTION AnKart()
    ENDDO // eof()
 
    IF cBrza == "N"
-      IF PRow() > 60 + gPStranica; FF; AnalKZagl(); ENDIF
+      IF PRow() > 60 + dodatni_redovi_po_stranici(); FF; AnalKZagl(); ENDIF
       ? M
       ? "UKUPNO ZA SVA KONTA:"
       @ PRow(), IF( gNW == "N" .AND. cPTD == "D", 30 + 49, 31 ) SAY nSviD  PICTURE PicBHD

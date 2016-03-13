@@ -231,7 +231,7 @@ FUNCTION ld_kartica_plate_samostalni( cIdRj, cMjesec, cGodina, cIdRadn, cObrac, 
 
          ENDIF
 
-         IF !lSkrivena .AND. PRow() > 57 + gPStranica
+         IF !lSkrivena .AND. PRow() > 57 + dodatni_redovi_po_stranici()
             FF
          ENDIF
 
@@ -245,7 +245,7 @@ FUNCTION ld_kartica_plate_samostalni( cIdRj, cMjesec, cGodina, cIdRadn, cObrac, 
 
       ? cMainLine
 
-      IF !lSkrivena .AND. PRow() > 55 + gPStranica
+      IF !lSkrivena .AND. PRow() > 55 + dodatni_redovi_po_stranici()
          FF
       ENDIF
 

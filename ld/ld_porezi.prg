@@ -61,7 +61,7 @@ FUNCTION obr_porez( nGodina, nMjesec, nPor, nPor2, nPorOps, nPorOps2, nUPorOl, c
          ENDIF
       ENDIF
 
-      IF PRow() > ( 64 + gPStranica )
+      IF PRow() > ( 64 + dodatni_redovi_po_stranici() )
          // FF
       ENDIF
 
@@ -239,7 +239,7 @@ FUNCTION obr_porez( nGodina, nMjesec, nPor, nPor2, nPorOps, nPorOps2, nUPorOl, c
                SKIP
             ENDIF
 
-            IF PRow() > ( 64 + gPStranica )
+            IF PRow() > ( 64 + dodatni_redovi_po_stranici() )
                // FF
             ENDIF
 

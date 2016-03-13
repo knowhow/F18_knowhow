@@ -319,7 +319,7 @@ STATIC FUNCTION P_KolProIzv( cId, dx, dy, lSamoStampaj )
       ? ".........................................."
       DO WHILE !Eof()
 
-         IF ( PRow() > 50 + gPStranica )
+         IF ( PRow() > 50 + dodatni_redovi_po_stranici() )
             FF
             P_12CPI
             QOPodv( "Izvjestaj " + cBrI + "(" + Trim( DoHasha( IZVJE->naz ) ) + ") - definicija kolona izvjestaja" )
@@ -443,7 +443,7 @@ STATIC FUNCTION KonIzBlok()
       ?
       ? ".........................................."
       DO WHILE !Eof()
-         IF PRow() > 50 + gPStranica
+         IF PRow() > 50 + dodatni_redovi_po_stranici()
             P_12CPI
             FF
             QOPodv( "Izvjestaj " + cBrI + "(" + Trim( DoHasha( IZVJE->naz ) ) + ") - definicija redova izvjestaja" )
@@ -997,7 +997,7 @@ FUNCTION StTabPI()
 
    IF nBrRedStr > -99
       gPO_Port()
-      gPStranica := nBrRedStr
+      dodatni_redovi_po_stranici() := nBrRedStr
    ENDIF
 
    EndPrint()
@@ -1020,8 +1020,8 @@ FUNCTION StZagPI()
    xKOT := PRow()
    DO WHILE !Eof()
       IF "GPO_LAND()" $ Upper( ZAGLI->izraz )
-         nBrRedStr  := gPStranica
-         gPStranica := nKorZaLands
+         nBrRedStr  := dodatni_redovi_po_stranici()
+         dodatni_redovi_po_stranici() := nKorZaLands
       ENDIF
       cPom77 := ZAGLI->izraz
       @ xKOT + ZAGLI->x1, ZAGLI->y1 SAY ""

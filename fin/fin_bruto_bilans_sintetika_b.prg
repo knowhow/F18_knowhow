@@ -148,7 +148,7 @@ FUNCTION fin_bb_sintetika_b( params )
             SKIP
          ENDDO
 
-         IF PRow() > 63 + gpStranica
+         IF PRow() > 63 + dodatni_redovi_po_stranici()
             FF
             zagl_bb_sint( params, @nStr )
          ENDIF
@@ -277,7 +277,7 @@ FUNCTION fin_bb_sintetika_b( params )
 
    ENDDO
 
-   IF PRow() > 58 + gpStranica
+   IF PRow() > 58 + dodatni_redovi_po_stranici()
        FF
        zagl_bb_sint( params, @nStr )
    ENDIF

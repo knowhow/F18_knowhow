@@ -156,7 +156,7 @@ FUNCTION Kart41_42()
             // ********************* ispis prethodnog stanja ***************
          ENDIF
 
-         IF PRow() -gPStranica > 62; FF; Zagl2();ENDIF
+         IF PRow() -dodatni_redovi_po_stranici() > 62; FF; Zagl2();ENDIF
 
          IF idvd == "41"    // avans
             nAv  := kolicina * MPCsaPP
@@ -376,7 +376,7 @@ FUNCTION Kart412v2()
             // ********************* ispis prethodnog stanja ***************
          ENDIF
 
-         IF PRow() -gPStranica > 62; FF; Zagl3();ENDIF
+         IF PRow() -dodatni_redovi_po_stranici() > 62; FF; Zagl3();ENDIF
 
          IF idvd == "41"    // avans
             nOsn := kolicina * MPCsaPP

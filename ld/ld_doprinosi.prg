@@ -249,7 +249,7 @@ FUNCTION obr_doprinos( nGodina, nMjesec, nDopr, nDopr2, cTRada, a_benef )
 
                SKIP
 
-               IF PRow() > 64 + gPStranica
+               IF PRow() > 64 + dodatni_redovi_po_stranici()
                   // FF
                ENDIF
             ENDDO
@@ -365,7 +365,7 @@ FUNCTION obr_doprinos( nGodina, nMjesec, nDopr, nDopr2, cTRada, a_benef )
 
       SKIP
 
-      IF PRow() > 64 + gPStranica
+      IF PRow() > 64 + dodatni_redovi_po_stranici()
          // FF
       ENDIF
 

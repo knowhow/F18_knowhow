@@ -106,7 +106,7 @@ FUNCTION StKalkIP( fZaTops )
 
       SELECT kalk_pripr
 
-      IF ( PRow() - gPStranica ) > 59
+      IF ( PRow() - dodatni_redovi_po_stranici() ) > 59
          FF
          @ PRow(), 125 SAY "Str:" + Str( ++nStr, 3 )
       ENDIF
@@ -178,7 +178,7 @@ FUNCTION StKalkIP( fZaTops )
    ENDDO
 
 
-   IF PRow() -gPStranica > 58
+   IF PRow() -dodatni_redovi_po_stranici() > 58
       FF
       @ PRow(), 125 SAY "Str:" + Str( ++nStr, 3 )
    ENDIF
@@ -287,7 +287,7 @@ FUNCTION StObrazSL()
       SELECT TARIFA; HSEEK kalk_pripr->IdTarifa
       SELECT kalk_pripr
 
-      IF PRow() -gPStranica > 59
+      IF PRow() -dodatni_redovi_po_stranici() > 59
          FF
          @ PRow(), 125 SAY "Str:" + Str( ++nStr, 3 )
       ENDIF
@@ -318,7 +318,7 @@ FUNCTION StObrazSL()
    ENDDO
 
 
-   IF PRow() - gPStranica > 58
+   IF PRow() - dodatni_redovi_po_stranici() > 58
       FF
       @ PRow(), 125 SAY "Str:" + Str( ++nStr, 3 )
    ENDIF

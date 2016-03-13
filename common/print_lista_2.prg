@@ -76,7 +76,7 @@ FUNCTION print_lista_2( aKol, bZaRed, nOdvoji, nCrtice, bUslov, lA4papir, cNaslo
    IF "U" $ Type( "gaSubTotal" ); gaSubTotal := {}; ENDIF
    IF "U" $ Type( "gnRedova" ); gnRedova := 64; ENDIF
    IF "U" $ Type( "gbFIznos" ); gbFIznos := nil; ENDIF
-   IF !( "U" $ Type( "gPStranica" ) ); gnRedova := 64 + gPStranica; ENDIF
+   IF !( "U" $ Type( "dodatni_redovi_po_stranici()" ) ); gnRedova := 64 + dodatni_redovi_po_stranici(); ENDIF
 
    IF bSubTot == nil; bSubTot := {|| { .F., } }; xTot := { .F., }; ENDIF
    IF lLinija == nil; lLinija := .F. ; ENDIF

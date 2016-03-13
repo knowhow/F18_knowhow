@@ -123,53 +123,27 @@ PROCEDURE set_global_vars_0()
 
    RETURN
 
-/* TODO: brisati
-   FUNCTION init_print_variables()
-
-      PUBLIC gPIni := ""
-      PUBLIC gPCond
-      PUBLIC gPCond2
-      PUBLIC gP10CPI
-      PUBLIC gP12CPI
-      PUBLIC gPB_ON
-      PUBLIC gPB_OFF
-      PUBLIC gPI_ON
-      PUBLIC gPI_OFF
-      PUBLIC gPU_ON
-      PUBLIC gPU_OFF
-      PUBLIC gPPort := "1"
-      PUBLIC gPStranica := 0
-      PUBLIC gPPTK
-      PUBLIC gPO_Port
-      PUBLIC gPO_Land
-      PUBLIC gRPL_Normal
-      PUBLIC gRPL_Gusto
-      PUBLIC gPReset := ""
-      PUBLIC gPFF
-
-      RETURN .T.
-*/
 
 FUNCTION set_ptxt_sekvence()
 
-   gpIni :=  "#%INI__#"
-   gpCOND := "#%KON17#"
-   gpCOND2 := "#%KON20#"
-   gp10CPI := "#%10CPI#"
-   gP12CPI := "#%12CPI#"
-   gPB_ON := "#%BON__#"
-   gPB_OFF := "#%BOFF_#"
-   gPU_ON := "#%UON__#"
-   gPU_OFF := "#%UOFF_#"
-   gPI_ON := "#%ION__#"
-   gPI_OFF := "#%IOFF_#"
-   gPFF   := "#%NSTR_#"
-   gPO_Port := "#%PORTR#"
-   gPO_Land := "#%LANDS#"
-   gPPort := "1"
-   gRPL_Normal := ""
-   gRPL_Gusto := ""
-   gPPTK := " "
+   PUBLIC gpIni :=  "#%INI__#"
+   PUBLIC gpCOND := "#%KON17#"
+   PUBLIC gpCOND2 := "#%KON20#"
+   PUBLIC gp10CPI := "#%10CPI#"
+   PUBLIC gP12CPI := "#%12CPI#"
+   PUBLIC gPB_ON := "#%BON__#"
+   PUBLIC gPB_OFF := "#%BOFF_#"
+   PUBLIC gPU_ON := "#%UON__#"
+   PUBLIC gPU_OFF := "#%UOFF_#"
+   PUBLIC gPI_ON := "#%ION__#"
+   PUBLIC gPI_OFF := "#%IOFF_#"
+   PUBLIC gPFF   := "#%NSTR_#"
+   PUBLIC gPO_Port := "#%PORTR#"
+   PUBLIC gPO_Land := "#%LANDS#"
+   PUBLIC gPPort := "1"
+   PUBLIC gRPL_Normal := ""
+   PUBLIC gRPL_Gusto := ""
+   PUBLIC gPPTK := " "
 
    RETURN .T.
 

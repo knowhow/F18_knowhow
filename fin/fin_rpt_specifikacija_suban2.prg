@@ -613,7 +613,7 @@ TODO: izbaciti
             Header( cSkVar )
          ENDIF
 
-         IF PRow() > 63 + gPStranica
+         IF PRow() > 63 + dodatni_redovi_po_stranici()
             FF
             Header( cSkVar )
          ENDIF
@@ -713,7 +713,7 @@ TODO: izbaciti
 
       ENDDO
 
-      IF PRow() > 61 + gPStranica
+      IF PRow() > 61 + dodatni_redovi_po_stranici()
          FF
          Header( cSkVar )
       ENDIF
@@ -751,7 +751,7 @@ TODO: izbaciti
       nUp2 += nKp2
    ENDDO
 
-   IF PRow() > 61 + gPStranica
+   IF PRow() > 61 + dodatni_redovi_po_stranici()
       FF
       Header( cSkVar )
    ENDIF

@@ -433,7 +433,7 @@ FUNCTION fin_bb_subanalitika_b( params )
       dodaj_stavku_u_tabelu_eksporta( "UKUPNO", "", "", D4PS, P4PS, D4KP, P4KP, D4S, P4S )
    ENDIF
 
-   IF PRow() > 55 + gpStranica
+   IF PRow() > 55 + dodatni_redovi_po_stranici()
       FF
    ELSE
       ?
@@ -455,7 +455,7 @@ FUNCTION fin_bb_subanalitika_b( params )
 
    DO WHILE !Eof()
 
-      IF PRow() > 63 + gpStranica
+      IF PRow() > 63 + dodatni_redovi_po_stranici()
          FF
       ENDIF
       @ PRow() + 1, 4      SAY IdKlasa
@@ -481,7 +481,7 @@ FUNCTION fin_bb_subanalitika_b( params )
 
    ENDDO
 
-   IF PRow() > 59 + gpStranica
+   IF PRow() > 59 + dodatni_redovi_po_stranici()
       FF
    ENDIF
 
@@ -518,7 +518,7 @@ STATIC FUNCTION nova_strana( params, nStr, duz )
       duz := 59
    ENDIF
 
-   IF PRow() > ( duz + gpStranica )
+   IF PRow() > ( duz + dodatni_redovi_po_stranici() )
       FF
       zagl_bb_suban( params, @nStr )
    ENDIF

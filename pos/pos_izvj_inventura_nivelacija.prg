@@ -144,7 +144,7 @@ FUNCTION StampaInv( fLista, lAzurirana )
             .AND.  ( Kolicina <> 0 .OR. Kol2 <> 0 )
 
          IF gVrstaRS == "S"
-            IF PRow() > 63 -gPstranica - iif ( fLista, 2, 1 );  FF; ENDIF
+            IF PRow() > 63 -dodatni_redovi_po_stranici() - iif ( fLista, 2, 1 );  FF; ENDIF
          ENDIF
 
 
@@ -219,7 +219,7 @@ FUNCTION StampaInv( fLista, lAzurirana )
 
    IF !fLista .AND. fInvent
       IF gVrstaRS == "S"
-         IF PRow() > 63 -gPStranica - 5
+         IF PRow() > 63 -dodatni_redovi_po_stranici() - 5
             FF
          ENDIF
       ENDIF
@@ -240,7 +240,7 @@ FUNCTION StampaInv( fLista, lAzurirana )
       nStVr += nPopVr
       nNVr  += nPopVr
       IF gVrstaRS == "S"
-         IF PRow() > 63 -gPStranica - 7
+         IF PRow() > 63 -dodatni_redovi_po_stranici() - 7
             FF
          ENDIF
       ENDIF

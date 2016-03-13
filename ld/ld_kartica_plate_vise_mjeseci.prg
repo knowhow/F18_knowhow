@@ -262,7 +262,7 @@ FUNCTION ld_kartica_plate_za_vise_mjeseci()
             @ PRow(), 60 SAY wUIznos PICT gpici
             ?? "", gValuta
             ? m
-            IF PRow() > 60 + gPstranica
+            IF PRow() > 60 + dodatni_redovi_po_stranici()
                FF
             ELSE
                ?

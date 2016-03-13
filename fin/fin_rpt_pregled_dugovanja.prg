@@ -216,7 +216,7 @@ FUNCTION SpecDugPartnera()
          ENDIF
       ENDDO // partner
 
-      IF PRow() > 58 + gPStranica
+      IF PRow() > 58 + dodatni_redovi_po_stranici()
          FF
          ZaglDuznici()
       ENDIF
@@ -372,7 +372,7 @@ FUNCTION SpecDugPartnera()
             PPljuc( Transform( nSldDem, PICPIC ) )
          ENDIF
 
-         IF PRow() > 52 + gPStranica
+         IF PRow() > 52 + dodatni_redovi_po_stranici()
             FF
             ZaglDuznici()
             fPrviProlaz := .F.
@@ -385,7 +385,7 @@ FUNCTION SpecDugPartnera()
       nTUPot += nUPot
       nTUPot2 += nUPot2
 
-      IF PRow() > 58 + gPStranica
+      IF PRow() > 58 + dodatni_redovi_po_stranici()
          FF
          ZaglDuznici( .T. )
       ENDIF

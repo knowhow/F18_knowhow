@@ -26,7 +26,7 @@ FUNCTION print_nova_strana( nColumn, nStr, nSlijediRedovaZajedno )
       nSlijediRedovaZajedno := 1
    ENDIF
 
-   IF ( nSlijediRedovaZajedno == -1 ) .OR. ( PRow() > ( 59 + gPStranica - nSlijediRedovaZajedno ) )
+   IF ( nSlijediRedovaZajedno == -1 ) .OR. ( PRow() > ( 59 + dodatni_redovi_po_stranici() - nSlijediRedovaZajedno ) )
 
       IF ( nSlijediRedovaZajedno <> -1 )
          FF
@@ -47,7 +47,7 @@ FUNCTION NovaStrana( bZagl, nOdstampatiStrana )
       nOdstampatiStrana := 1
    ENDIF
 
-   IF PRow() > ( ( RPT_PAGE_LEN + gPStranica ) - nOdstampatiStrana )
+   IF PRow() > ( ( RPT_PAGE_LEN + dodatni_redovi_po_stranici() ) - nOdstampatiStrana )
       FF
       IF ( bZagl <> NIL )
          Eval( bZagl )

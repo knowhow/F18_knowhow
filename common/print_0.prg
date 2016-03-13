@@ -479,9 +479,10 @@ FUNCTION EPrint2( xPos )
 // ------------------------------------------
 FUNCTION PPrint()
 
-   LOCAL fused := .F.
+   LOCAL fUsed := .F.
    LOCAL ch
    LOCAL cSekvence := "N"
+   LOCAL nPStranica := dodatni_redovi_po_stranici()
 
    PushWA()
 
@@ -570,7 +571,7 @@ FUNCTION PPrint()
    @ m_x + 17, m_y + 2 SAY "Red.po l./nor" GET gRPL_Normal  PICT "@S40"
    @ m_x + 18, m_y + 2 SAY "Red.po l./gus" GET gRPL_Gusto   PICT "@S40"
    @ m_x + 19, m_y + 2 SAY "Reset (kraj) " GET gPRESET  PICT "@S40"
-   @ m_x + 21, m_y + 2 SAY "Dodatnih redova +/- u odnosu na A4 format " GET gPStranica PICT "999"
+   @ m_x + 21, m_y + 2 SAY "Dodatnih redova +/- u odnosu na A4 format " GET nPStranica PICT "999"
    @ m_x + 23, m_y + 2 SAY "LPT 1/2/3    " GET gPPort   VALID gPPort $ "12356789"
    gPPTK := PadR( gPPTK, 2 )
    @ m_x + 23, Col() + 2 SAY "Konverzija" GET gPPTK PICT "@!" VALID subst( gPPTK, 2, 1 ) $ " 1"
@@ -605,11 +606,10 @@ FUNCTION PPrint()
    ENDIF
    WPar( "PP", gPPort )
 
-   WPar( "r-", gPStranica )
+
    Wpar( "pt", gPPTK )
 
-   // upisi u glavne parametre sql/db
-   set_metric( "print_dodatni_redovi_po_stranici", nil, gPStranica )
+   dodatni_redovi_po_stranici( nPStranica )
 
    SELECT gparams
    USE
@@ -632,7 +632,7 @@ FUNCTION PPrint()
       SetGParams( "1", " ", "pt", "gPTKonv", gPPTK )
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 STATIC FUNCTION UzmiPPr( cProc, nline, cVar )

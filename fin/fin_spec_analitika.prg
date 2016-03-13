@@ -110,7 +110,7 @@ FUNCTION SpecPoK()
             ENDIF
             SKIP
          ENDDO
-         IF PRow() > 60 + gPStranica; FF; zagl5(); ENDIF
+         IF PRow() > 60 + dodatni_redovi_po_stranici(); FF; zagl5(); ENDIF
 
          SELECT KONTO; HSEEK cidkonto; SELECT ANAL
 
@@ -125,7 +125,7 @@ FUNCTION SpecPoK()
 
       ENDDO  // sintetika
 
-      IF PRow() > 60 + gPStranica; FF; zagl5(); ENDIF
+      IF PRow() > 60 + dodatni_redovi_po_stranici(); FF; zagl5(); ENDIF
       IF cSK == "D" .AND. ( nkd != 0 .OR. nkp != 0 )
          ? m
          ?  "SINT.K.", cSin, ":"
@@ -136,7 +136,7 @@ FUNCTION SpecPoK()
       ENDIF
       nUd += nKd; nUp += nKp   // ukupno za sve
    ENDDO
-   IF PRow() > 60 + gPStranica; FF; zagl5(); ENDIF
+   IF PRow() > 60 + dodatni_redovi_po_stranici(); FF; zagl5(); ENDIF
    ? m
    ? " UKUPNO:"
    @ PRow(), nC       SAY nUd PICT pic

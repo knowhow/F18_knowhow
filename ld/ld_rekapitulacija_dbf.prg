@@ -145,7 +145,7 @@ FUNCTION ld_rekapitulacija( lSvi )
       lGusto := .T.
       gRPL_Gusto()
       nDSGusto := Val( my_get_from_ini( "RekapGustoPoVisini", "DodatnihRedovaNaStranici", "11", KUMPATH ) )
-      gPStranica += nDSGusto
+      dodatni_redovi_po_stranici() += nDSGusto
    ELSE
       lGusto := .F.
       nDSGusto := 0
@@ -453,7 +453,7 @@ FUNCTION ld_rekapitulacija( lSvi )
 
    IF lGusto
       gRPL_Normal()
-      gPStranica -= nDSGusto
+      dodatni_redovi_po_stranici() -= nDSGusto
    ENDIF
 
    my_close_all_dbf()
@@ -474,7 +474,7 @@ FUNCTION ld_rekapitulacija( lSvi )
 
 STATIC FUNCTION nstr()
 
-   IF PRow() > 64 + gpStranica
+   IF PRow() > 64 + dodatni_redovi_po_stranici()
       FF
    ENDIF
 

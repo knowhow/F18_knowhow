@@ -1236,7 +1236,7 @@ FUNCTION RekapK()
          cIdKonto2 := IdKonto2
 
          IF cIdVd == "24" .AND. ( PRow() == 0 .OR. PRow() > 55 )
-            IF PRow() -gPStranica > 55
+            IF PRow() -dodatni_redovi_po_stranici() > 55
                FF
             ENDIF
             P_COND

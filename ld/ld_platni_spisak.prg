@@ -193,10 +193,7 @@ FUNCTION ld_platni_spisak()
             ENDIF
          ENDIF
 
-         // if prow()>62+gpStranica
-         // FF
-         // Eval(bZagl)
-         // endif
+
 
          ? Str( ++nRbr, 4 ) + ".", idradn, RADNIK_PREZ_IME
 
@@ -241,10 +238,6 @@ FUNCTION ld_platni_spisak()
          SKIP
       ENDDO
 
-      // if prow()>60+gpStranica
-      // FF
-      // Eval(bZagl)
-      // endif
 
       ? m
       ? Space( 1 ) + _l( "UKUPNO:" )
@@ -492,10 +485,6 @@ FUNCTION ld_platni_spisak_tekuci_racun( cVarijanta )
             LOOP
          ENDIF
 
-         // nova stranica
-         // if prow() > 62 + gPStranica
-         // FF
-         // endif
 
          ? Str( ++nRbr, 4 ) + ".", idradn, radn->matbr, RADNIK_PREZ_IME
 
@@ -574,10 +563,6 @@ FUNCTION ld_platni_spisak_tekuci_racun( cVarijanta )
 
       ENDDO
 
-      // nova stranica
-      // if prow() > 60 + gPStranica
-      // FF
-      // endif
 
       ? m
 
@@ -811,9 +796,7 @@ FUNCTION ld_pregled_isplate_za_tekuci_racun( cVarijanta )
             Scatter()
          ENDIF
 
-         // select radn
-         // HSEEK _idradn
-         // select ld
+
 
          IF Empty( cIdTipPr )
             nIznosTP := _uiznos
@@ -826,10 +809,6 @@ FUNCTION ld_pregled_isplate_za_tekuci_racun( cVarijanta )
             LOOP
          ENDIF
 
-         // if prow()>62+gPStranica
-         // FF
-         // Eval(bZagl)
-         // endif
 
          ? Str( ++nRbr, 4 ) + ".", idradn, RADNIK_PREZ_IME
          cZaBnkRadnik := FormatSTR( RADNZABNK, 40 )
@@ -859,10 +838,6 @@ FUNCTION ld_pregled_isplate_za_tekuci_racun( cVarijanta )
          SKIP
       ENDDO
 
-      // if prow()>60+gPStranica
-      // FF
-      // Eval(bZagl)
-      // endif
 
       ? m
       ? Space( 1 ) + _l( "UKUPNO:" )

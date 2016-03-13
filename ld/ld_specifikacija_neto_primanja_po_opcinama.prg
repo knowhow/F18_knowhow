@@ -145,7 +145,7 @@ FUNCTION ld_specifikacija_neto_primanja_po_opcinama()
             ENDIF
          NEXT
 
-         IF PRow() > RPT_PAGE_LEN + gPStranica
+         IF PRow() > RPT_PAGE_LEN + dodatni_redovi_po_stranici()
             FF
             Eval( bZagl )
          ENDIF
@@ -168,7 +168,7 @@ FUNCTION ld_specifikacija_neto_primanja_po_opcinama()
       ENDDO
 
 
-      IF PRow() > 60 + gpStranica
+      IF PRow() > 60 + dodatni_redovi_po_stranici()
          FF
          Eval( bZagl )
       ENDIF

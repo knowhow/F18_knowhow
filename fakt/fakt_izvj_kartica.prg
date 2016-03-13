@@ -308,7 +308,7 @@ FUNCTION fakt_kartica()
          _cijena2 := roba->mpc
       ENDIF
 
-      IF PRow() -gPStranica > 50; FF; ++nStrana; ENDIF
+      IF PRow() -dodatni_redovi_po_stranici() > 50; FF; ++nStrana; ENDIF
 
       ZaglKart( lPrviProlaz )
       lPrviProlaz := .F.
@@ -402,7 +402,7 @@ FUNCTION fakt_kartica()
 
             IF cKolona != "N"
 
-               IF PRow() -gPStranica > 55; FF; ++nStrana; ZaglKart(); ENDIF
+               IF PRow() -dodatni_redovi_po_stranici() > 55; FF; ++nStrana; ZaglKart(); ENDIF
 
                ? Space( gnLMarg ); ?? Str( ++nRbr, 3 ) + ".   " + idfirma + "-" + idtipdok + "-" + brdok + Left( serbr, 1 ) + "  " + DToC( datdok )
 
@@ -443,7 +443,7 @@ FUNCTION fakt_kartica()
       ENDDO
       // GLAVNA DO-WHILE
 
-      IF PRow() -gPStranica > 55; FF; ++nStrana; ZaglKart(); ENDIF
+      IF PRow() -dodatni_redovi_po_stranici() > 55; FF; ++nStrana; ZaglKart(); ENDIF
 
       ? Space( gnLMarg ); ?? m
       ? Space( gnLMarg ) + "CIJENA:            " + Str( _cijena, 12, 3 )

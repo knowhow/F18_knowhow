@@ -254,7 +254,7 @@ FUNCTION PregProdaje()
       IF( gOstr == "D",, -1 ),,,,,, .F. )
 
    ?
-   IF PRow() > ( RPT_PAGE_LEN + gPStranica - Len( aGr ) )
+   IF PRow() > ( RPT_PAGE_LEN + dodatni_redovi_po_stranici() - Len( aGr ) )
       FF
    ENDIF
    ? "Rekapitulacija po grupama:"

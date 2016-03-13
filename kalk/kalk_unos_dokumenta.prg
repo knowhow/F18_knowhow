@@ -2370,8 +2370,8 @@ FUNCTION kalk_stampa_dokumenta()
 
       DO WHILE .T.
          IF ( cidvd == "10" .AND. !( ( gVarEv == "2" ) .OR. ( gmagacin == "1" ) ) .OR. ( cidvd $ "11#12#13" ) ) .AND. ( c10Var == "3" )
-            gPSOld := gPStranica
-            gPStranica := Val( my_get_from_ini( "KALK", "A3_GPSTRANICA", "-20", EXEPATH ) )
+            gPSOld := dodatni_redovi_po_stranici()
+            dodatni_redovi_po_stranici() := Val( my_get_from_ini( "KALK", "A3_dodatni_redovi_po_stranici()", "-20", EXEPATH ) )
             P_PO_L
          ENDIF
 
@@ -2448,14 +2448,14 @@ FUNCTION kalk_stampa_dokumenta()
          ENDIF
 
          IF ( cidvd == "10" .AND. !( ( gVarEv == "2" ) .OR. ( gmagacin == "1" ) ) .OR. ( cidvd $ "11#12#13" ) ) .AND. ( c10Var == "3" )
-            gPStranica := gPSOld
+            dodatni_redovi_po_stranici() := gPSOld
             P_PO_P
          ENDIF
 
       ENDDO // cSEEK
 
       IF ( gPotpis == "D" )
-         IF ( PRow() > 57 + gPStranica )
+         IF ( PRow() > 57 + dodatni_redovi_po_stranici() )
             FF
             @ PRow(), 125 SAY "Str:" + Str( ++nStr, 3 )
          ENDIF

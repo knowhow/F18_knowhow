@@ -86,7 +86,7 @@ nFin:=0
 SELECT POS
 
 do while !eof().and.POS->(IdPos+IdVd+dtos(datum)+BrDok)==pos_doks->(IdPos+IdVd+dtos(datum)+BrDok)
-	if gVrstaRS=="S".and.prow()>63-gPstranica
+	if gVrstaRS=="S".and.prow()>63-dodatni_redovi_po_stranici()
 		FF
 	endif
 	? cLM
@@ -103,7 +103,7 @@ do while !eof().and.POS->(IdPos+IdVd+dtos(datum)+BrDok)==pos_doks->(IdPos+IdVd+d
 	skip
 enddo
 
-if gVrstaRS=="S".and.prow()>63-gPstranica-7
+if gVrstaRS=="S".and.prow()>63-dodatni_redovi_po_stranici()-7
 	FF
 endif
 

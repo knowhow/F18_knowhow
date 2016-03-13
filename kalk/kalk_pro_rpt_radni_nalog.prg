@@ -70,7 +70,7 @@ FUNCTION StKalkRN()
          SELECT TARIFA; HSEEK kalk_pripr->IdTarifa
          SELECT kalk_pripr
 
-         IF PRow() > ( RPT_PAGE_LEN + gPStranica )
+         IF PRow() > ( RPT_PAGE_LEN + dodatni_redovi_po_stranici() )
             FF
             @ PRow(), 125 SAY "Str:" + Str( ++nStr, 3 )
          ENDIF
@@ -180,7 +180,7 @@ FUNCTION StKalkRN()
 
    ENDDO
 
-   IF PRow() > ( RPT_PAGE_LEN + gPStranica )
+   IF PRow() > ( RPT_PAGE_LEN + dodatni_redovi_po_stranici() )
       FF
       @ PRow(), 125 SAY "Str:" + Str( ++nStr, 3 )
    ENDIF

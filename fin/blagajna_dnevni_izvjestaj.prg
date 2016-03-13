@@ -154,7 +154,7 @@ FUNCTION Blagajna()
    ? "    *      *            *            *                     *              *              *"
    ? m := "    ------- ------------ ------------ --------------------- -------------- ---------------"
    DO WHILE !Eof()
-      IF PRow() > 49 + gPStranica
+      IF PRow() > 49 + dodatni_redovi_po_stranici()
          PZagBlag( nDug, nPot, m, cBrDok, pici, cDinDem, dDatDok )
       ENDIF
 
@@ -196,7 +196,7 @@ FUNCTION Blagajna()
             ENDIF
             SKIP 1
          ENDDO
-         IF PRow() > 49 + gPStranica - nStavki
+         IF PRow() > 49 + dodatni_redovi_po_stranici() - nStavki
             PZagBlag( nDug, nPot, m, cBrDok, pici, cDinDem, dDatDok )
          ENDIF
          ? "    *", Str( ++nRbr, 3 ) + ". *"
@@ -428,7 +428,7 @@ FUNCTION blag_azur()
 
    DO WHILE !Eof() .AND. field->idfirma == cIdFirma .AND. field->idvn == cTipDok .AND. field->brnal == cBrDok
 
-      IF PRow() > 49 + gPStranica
+      IF PRow() > 49 + dodatni_redovi_po_stranici()
          PZagBlag( nDug, nPot, cLine, cBrDok, pici, cDinDem, dDatDok )
       ENDIF
       IF lSumiraj
@@ -466,7 +466,7 @@ FUNCTION blag_azur()
             ENDIF
             SKIP 1
          ENDDO
-         IF PRow() > 49 + gPStranica - nStavki
+         IF PRow() > 49 + dodatni_redovi_po_stranici() - nStavki
             PZagBlag( nDug, nPot, m, cBrDok, pici, cDinDem, dDatDok )
          ENDIF
 

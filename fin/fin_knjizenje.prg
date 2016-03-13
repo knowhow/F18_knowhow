@@ -198,7 +198,7 @@ FUNCTION o_fin_edit()
    SET ORDER TO TAG "1"
    GO TOP
 
-   RETURN
+   RETURN .T.
 
 
 

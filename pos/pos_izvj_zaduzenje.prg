@@ -207,7 +207,7 @@ FUNCTION PrepisZad( cNazDok )
    nFinZad := 0
    SELECT POS
    DO WHILE ! Eof() .AND. POS->( IdPos + IdVd + DToS( datum ) + BrDok ) == pos_doks->( IdPos + IdVd + DToS( datum ) + BrDok )
-      IF gVrstaRS == "S" .AND. PRow() > 63 -gPstranica
+      IF gVrstaRS == "S" .AND. PRow() > 63 -dodatni_redovi_po_stranici()
          FF
       ENDIF
       IF fPred  // predispozicija
@@ -239,7 +239,7 @@ FUNCTION PrepisZad( cNazDok )
       SKIP
    ENDDO
 
-   IF gVrstaRS == "S" .AND. PRow() > 63 -gPstranica - 7
+   IF gVrstaRS == "S" .AND. PRow() > 63 -dodatni_redovi_po_stranici() - 7
       FF
    ENDIF
 

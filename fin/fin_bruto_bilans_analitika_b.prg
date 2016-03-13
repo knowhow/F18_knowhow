@@ -208,14 +208,14 @@ FUNCTION fin_bb_analitika_b( params )
             D2KP = D2KP + D1KP
             P2KP = P2KP + P1KP
 
-            IF PRow() > 65 + gpStranica
+            IF PRow() > 65 + dodatni_redovi_po_stranici()
                 FF
                 zagl_bb_anal( params, @nStr )
             ENDIF
 
          ENDDO 
 
-         IF PRow() > 61 + gpStranica
+         IF PRow() > 61 + dodatni_redovi_po_stranici()
             FF
             zagl_bb_anal( params, @nStr )
          ENDIF
@@ -288,7 +288,7 @@ FUNCTION fin_bb_analitika_b( params )
 
    ENDDO
 
-   IF PRow() > 61 + gpStranica
+   IF PRow() > 61 + dodatni_redovi_po_stranici()
        FF 
        zagl_bb_anal( params, @nStr )
    ENDIF
@@ -307,7 +307,7 @@ FUNCTION fin_bb_analitika_b( params )
    @ PRow(), PCol() + 1 SAY P4S PICTURE PicD
    ?U M5
 
-   IF PRow() > 55 + gpStranica
+   IF PRow() > 55 + dodatni_redovi_po_stranici()
       FF
    ELSE
       ?

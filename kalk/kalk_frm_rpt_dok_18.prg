@@ -92,7 +92,7 @@ do while !eof() .and. cIdFirma==IdFirma .and.  cBrDok==BrDok .and. cIdVD==IdVD
 
  KTroskovi()
 
-if prow() > ( RPT_PAGE_LEN + gPStranica )
+if prow() > ( RPT_PAGE_LEN + dodatni_redovi_po_stranici() )
     FF
     @ prow(),122 SAY "Str:"+str(++nStr,3)
 endif
@@ -125,7 +125,7 @@ skip
 
 enddo
 
-if prow() > ( RPT_PAGE_LEN + gPStranica )
+if prow() > ( RPT_PAGE_LEN + dodatni_redovi_po_stranici() )
     FF
     @ prow(),125 SAY "Str:"+str(++nStr,3)
 endif

@@ -414,6 +414,14 @@ FUNCTION set_dbf_fields_from_struct( xRec )
    IF !Used() .AND. !lSql
 
       _dbf := my_home() + hRec[ "table" ]
+      IF !File( f18_ime_dbf( hRec ) )
+#ifdef F18_DEBUG
+         cLogMsg := "NO-DBF : tbl:" + my_home() + hRec[ "table" ] + " alias:" + hRec[ "alias" ] + " ne postoji"
+         LOG_CALL_STACK cLogMsg
+#endif
+         RETURN .F.
+      ENDIF
+
       BEGIN SEQUENCE WITH {| err| err:cargo :=  Break( err ) }
 
          dbUseArea( .F., DBFENGINE, _dbf, hRec[ "alias" ], .T., .F. )

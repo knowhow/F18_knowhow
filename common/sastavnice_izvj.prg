@@ -108,7 +108,7 @@ FUNCTION ISast()
          SELECT SAST
          HSEEK ROBA->ID
          IF !Found()
-            IF PRow() > 62 + gPStranica
+            IF PRow() > 62 + dodatni_redovi_po_stranici()
                FF
             ENDIF
             ? Str( ++nRBr, 3 ) + ".", ;
@@ -204,7 +204,7 @@ FUNCTION ISast()
                )
          ENDIF
          AAdd( aPom, m )
-         IF PRow() + Len( aPom ) > 62 + gPStranica
+         IF PRow() + Len( aPom ) > 62 + dodatni_redovi_po_stranici()
             FF
          ENDIF
          FOR i := 1 TO Len( aPom )

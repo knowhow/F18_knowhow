@@ -233,7 +233,7 @@ FUNCTION ld_kartica_plate_ugovori( cIdRj, cMjesec, cGodina, cIdRadn, cObrac, aNe
 
       ENDIF
 
-      IF !lSkrivena .AND. PRow() > 57 + gPStranica
+      IF !lSkrivena .AND. PRow() > 57 + dodatni_redovi_po_stranici()
          FF
       ENDIF
 
@@ -321,7 +321,7 @@ FUNCTION ld_kartica_plate_ugovori( cIdRj, cMjesec, cGodina, cIdRadn, cObrac, aNe
 
    ? cMainLine
 
-   IF !lSkrivena .AND. PRow() > 55 + gPStranica
+   IF !lSkrivena .AND. PRow() > 55 + dodatni_redovi_po_stranici()
       FF
    ENDIF
 

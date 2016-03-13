@@ -831,8 +831,8 @@ STATIC FUNCTION ObracV( cIdPartner, fprint, cVarObrac )
 
       P_10CPI
 
-      IF PRow() < 62 + gPStranica
-         FOR i := 1 TO 62 + gPStranica - PRow()
+      IF PRow() < 62 + dodatni_redovi_po_stranici()
+         FOR i := 1 TO 62 + dodatni_redovi_po_stranici() - PRow()
             ?
          NEXT
       ENDIF

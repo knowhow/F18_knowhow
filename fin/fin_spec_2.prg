@@ -189,7 +189,7 @@ DO WHILE !eof()
        SKIP
      enddo
 
-   if prow()>60+gPStranica; FF; fin_specif_zagl6(cSkVar); endif
+   if prow()>60+dodatni_redovi_po_stranici(); FF; fin_specif_zagl6(cSkVar); endif
    ? cidkonto,cIdPartner,""
    if !empty(cIdPartner)
      ?? padr(cNazPARTN,50-DifIdp(cIdPartner))
@@ -215,7 +215,7 @@ DO WHILE !eof()
    nkd2+=nd2; nkp2+=np2  // ukupno  za klasu
  enddo  // csort
 
- if prow()>60+gPStranica; FF; fin_specif_zagl6(cSkVar); endif
+ if prow()>60+dodatni_redovi_po_stranici(); FF; fin_specif_zagl6(cSkVar); endif
   ? m
   if cSort=="1"
    ?  "Ukupno za:",cNaslov,":"
@@ -236,7 +236,7 @@ DO WHILE !eof()
  nUd+=nKd; nUp+=nKp   // ukupno za sve
  nUd2+=nKd2; nUp2+=nKp2   // ukupno za sve
 enddo
-if prow()>60+gPStranica; FF; fin_specif_zagl6(cSkVar); endif
+if prow()>60+dodatni_redovi_po_stranici(); FF; fin_specif_zagl6(cSkVar); endif
 ? m
 ? " UKUPNO:"
 if cTip=="1"

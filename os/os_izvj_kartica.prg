@@ -154,7 +154,7 @@ FUNCTION os_kartica_sredstva()
 
       IF Len( aPom ) > 0
          ASort( aPom,,, {| x, y| x[ 1 ] < y[ 1 ] } )
-         IF Len( aPom ) + 11 + PRow() > 64 + gPStranica
+         IF Len( aPom ) + 11 + PRow() > 64 + dodatni_redovi_po_stranici()
             FF
          ENDIF
          ?

@@ -1139,7 +1139,7 @@ STATIC FUNCTION IspisTP( lSvi )
    cUNeto := "D"
 
    FOR i := 1 TO cLDPolja
-      IF PRow() > 55 + gPStranica
+      IF PRow() > 55 + dodatni_redovi_po_stranici()
          FF
       ENDIF
       cPom := PadL( AllTrim( Str( i ) ), 2, "0" )
@@ -1331,7 +1331,7 @@ STATIC FUNCTION IspisKred( lSvi )
 
             IF nUkKred <> 0
                // ispisati kreditora
-               IF PRow() > 55 + gPStranica
+               IF PRow() > 55 + dodatni_redovi_po_stranici()
                   FF
                ENDIF
 
@@ -1411,7 +1411,7 @@ STATIC FUNCTION IspisKred( lSvi )
 
             IF nukkred <> 0
 
-               IF PRow() > 55 + gPStranica
+               IF PRow() > 55 + dodatni_redovi_po_stranici()
                   FF
                ENDIF
 
@@ -1474,7 +1474,7 @@ STATIC FUNCTION ProizvTP()
    SEEK "9"
 
    DO WHILE !Eof() .AND. Left( id, 1 ) = "9"
-      IF PRow() > 55 + gPStranica
+      IF PRow() > 55 + dodatni_redovi_po_stranici()
          FF
       ENDIF
       ? tippr->id + "-" + tippr->naz

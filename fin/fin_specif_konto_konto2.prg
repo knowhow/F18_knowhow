@@ -195,7 +195,7 @@ FUNCTION SpecKK2( lOtvSt )
       ENDIF
 
       IF fUslov
-         IF PRow() > 56 + gPStranica
+         IF PRow() > 56 + dodatni_redovi_po_stranici()
             FF
             Zagl7()
          ENDIF

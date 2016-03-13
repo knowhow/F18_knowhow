@@ -99,7 +99,7 @@ FUNCTION PrPromRn()
    GO TOP
    DO WHILE !Eof()
 
-      IF PRow() > 60 + gPstranica
+      IF PRow() > 60 + dodatni_redovi_po_stranici()
          FF
          ZagPPR( "U" )
       ENDIF
@@ -124,7 +124,7 @@ FUNCTION PrPromRn()
 
    ?
 
-   IF PRow() > 60 + gPstranica
+   IF PRow() > 60 + dodatni_redovi_po_stranici()
       FF
       ZagPPR( "I" )
    ELSE
@@ -137,7 +137,7 @@ FUNCTION PrPromRn()
    GO TOP
    DO WHILE !Eof()
 
-      IF PRow() > 60 + gPstranica
+      IF PRow() > 60 + dodatni_redovi_po_stranici()
          FF
          ZagPPR( "I" )
       ENDIF

@@ -363,7 +363,7 @@ do while !EOF() .and. field->idfirma == cIdFirma
 
 	nP_saldo := ( nP_dug - nP_pot ) 
 
-	if prow() > 61 + gpStranica
+	if prow() > 61 + dodatni_redovi_po_stranici()
 		FF
 	endif
 
@@ -557,7 +557,7 @@ do while !EOF() .and. field->idfirma == cIdFirma
 
 	nK_saldo := ( nK_dug - nK_pot ) 
 
-	if prow() > 61 + gpStranica
+	if prow() > 61 + dodatni_redovi_po_stranici()
 		FF
 	endif
 

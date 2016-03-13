@@ -245,7 +245,7 @@ FUNCTION kalk_mag_promet_grupe_partnera()
       IF Round( nVPVI, 4 ) <> 0 .OR. ;
             Round( nNVU, 4 ) <> 0  // ne prikazuj stavke 0
          aNaz := Sjecistr( roba->naz, 20 )
-         IF PRow() > 61 + gPStranica; FF; Eval( bZagl ); ENDIF
+         IF PRow() > 61 + dodatni_redovi_po_stranici(); FF; Eval( bZagl ); ENDIF
 
          ? Str( ++nrbr, 4 ) + ".", cidroba
          nCr := PCol() + 1

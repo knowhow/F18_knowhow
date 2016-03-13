@@ -312,7 +312,7 @@ FUNCTION Flager_lista_magacin()
          LOOP
       ENDIF
 
-      IF PRow() > ( RPT_PAGE_LEN + gPStranica )
+      IF PRow() > ( RPT_PAGE_LEN + dodatni_redovi_po_stranici() )
          FF
          Eval( bZagl )
       ENDIF

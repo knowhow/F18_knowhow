@@ -572,15 +572,15 @@ STATIC FUNCTION ld_unos_obracuna_footer( lSaveObracun )
    ENDDO
 
    IF LastKey() == K_ESC
-      MsgBeep( "Obracun nije pohranjen !!!" )
+      MsgBeep( "Obračun NIJE pohranjen !" )
       lSaveObracun := .F.
    ELSE
-      MsgBeep( "Obracun je pohranjen !!!" )
+      MsgBeep( "Obračun je pohranjen !" )
       lSaveObracun := .T.
    ENDIF
 
 
-   RETURN
+   RETURN .T.
 
 
 

@@ -281,7 +281,7 @@ FUNCTION spec_an()
             Header()
          ENDIF
 
-         IF PRow() > 63 + gPStranica
+         IF PRow() > 63 + dodatni_redovi_po_stranici()
             FF
             Header()
 
@@ -307,7 +307,7 @@ FUNCTION spec_an()
 
       ENDDO
 
-      IF PRow() > 61 + gPStranica
+      IF PRow() > 61 + dodatni_redovi_po_stranici()
          FF
          Header()
       ENDIF
@@ -333,7 +333,7 @@ FUNCTION spec_an()
 
    ENDDO
 
-   IF PRow() > 61 + gPStranica
+   IF PRow() > 61 + dodatni_redovi_po_stranici()
       FF
       Header()
    ENDIF

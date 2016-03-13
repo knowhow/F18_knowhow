@@ -27,7 +27,7 @@ FUNCTION RekTarPDV()
    LOCAL nIznPRuc
    PRIVATE aPorezi
 
-   IF PRow() > ( RPT_PAGE_LEN  + gPStranica )
+   IF PRow() > ( RPT_PAGE_LEN  + dodatni_redovi_po_stranici() )
       FF
       @ PRow(), 123 SAY "Str:" + Str( ++nStr, 3 )
    ENDIF
@@ -190,7 +190,7 @@ FUNCTION RekTarPDV()
 
       ENDDO
 
-      IF PRow() > ( RPT_PAGE_LEN + gPStranica )
+      IF PRow() > ( RPT_PAGE_LEN + dodatni_redovi_po_stranici() )
          FF
          @ PRow(), 123 SAY "Str:" + Str( ++nStr, 3 )
       ENDIF

@@ -301,7 +301,7 @@ FUNCTION fin_nalog_stampa( cInd, lAuto, dDatNal, oNalog )
 
       IF !lAuto
 
-         IF PRow() > 61 + iif( cInd == "3", -7, 0 ) + gPStranica
+         IF PRow() > 61 + iif( cInd == "3", -7, 0 ) + dodatni_redovi_po_stranici()
             IF cInd == "3"
                PrenosDNal()
             ELSE
@@ -505,7 +505,7 @@ FUNCTION fin_nalog_stampa( cInd, lAuto, dDatNal, oNalog )
 
    IF cInd $ "1#2" .AND. !lAuto
 
-      IF PRow() > 58 + gPStranica
+      IF PRow() > 58 + dodatni_redovi_po_stranici()
          FF
          fin_nalog_zaglavlje( dDatNal )
       ENDIF
@@ -529,7 +529,7 @@ FUNCTION fin_nalog_stampa( cInd, lAuto, dDatNal, oNalog )
       nUkDugBHD := nUKPotBHD := nUkDugDEM := nUKPotDEM := 0
 
       IF gPotpis == "D"
-         IF PRow() > 58 + gPStranica
+         IF PRow() > 58 + dodatni_redovi_po_stranici()
             FF
             fin_nalog_zaglavlje( dDatNal )
          ENDIF
@@ -544,7 +544,7 @@ FUNCTION fin_nalog_stampa( cInd, lAuto, dDatNal, oNalog )
       FF
 
    ELSEIF cInd == "3"
-      IF PRow() > 54 + gPStranica
+      IF PRow() > 54 + dodatni_redovi_po_stranici()
          PrenosDNal()
       ENDIF
    ENDIF

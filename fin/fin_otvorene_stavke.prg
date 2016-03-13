@@ -1164,7 +1164,7 @@ FUNCTION StKart( fSolo, fTiho, bFilter )
                SELECT SUBAN
             ELSE
                IF !fTiho
-                  IF PRow() > 52 + gPStranica
+                  IF PRow() > 52 + dodatni_redovi_po_stranici()
                      FF
                      ZagKStSif( .T., lEx )
                      fPrviProlaz := .F.
@@ -1213,7 +1213,7 @@ FUNCTION StKart( fSolo, fTiho, bFilter )
 
       IF !fTiho
 
-         IF PRow() > 58 + gPStranica
+         IF PRow() > 58 + dodatni_redovi_po_stranici()
             FF
             ZagKStSif( .T., lEx )
          ENDIF
@@ -1263,7 +1263,7 @@ FUNCTION StKart( fSolo, fTiho, bFilter )
          cIdPartner := IDPARTNER
          nUDug := nUPot := nUDug2 := nUPot2 := 0
          DO WHILE !Eof() .AND. cIdPartner == IdPartner
-            IF PRow() > 52 + gPStranica; FF; ZagKStSif( .T., lEx ); fPrviProlaz := .F. ; ENDIF
+            IF PRow() > 52 + dodatni_redovi_po_stranici(); FF; ZagKStSif( .T., lEx ); fPrviProlaz := .F. ; ENDIF
             IF fPrviProlaz
                ZagkStSif(, lEx )
                fPrviProlaz := .F.
@@ -1285,7 +1285,7 @@ FUNCTION StKart( fSolo, fTiho, bFilter )
             nUDug2 += Dug2; nUPot2 += Pot2
             SKIP 1
          ENDDO
-         IF PRow() > 58 + gPStranica; FF; ZagKStSif( .T., lEx ); ENDIF
+         IF PRow() > 58 + dodatni_redovi_po_stranici(); FF; ZagKStSif( .T., lEx ); ENDIF
          SELECT POM
          IF !fPrviProlaz  // bilo je stavki
             ? M

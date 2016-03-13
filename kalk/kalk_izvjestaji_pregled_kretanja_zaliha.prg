@@ -196,7 +196,7 @@ FUNCTION PreglKret()
 
             aStrRoba := SjeciStr( Trim( roba->naz ) + " (MPC:" + AllTrim( Str( nmpc, 7, 2 ) ) + ")", 27 )
 
-            IF ( PRow() > PREDOVA2 + gPStranica - 3 )
+            IF ( PRow() > PREDOVA2 + dodatni_redovi_po_stranici() - 3 )
                FF
                ZagPKret()
             ENDIF
@@ -371,7 +371,7 @@ FUNCTION PreglKret()
 
          // pocetak Ukupno tarifa ****************************
          IF cRekPoRobama == "D"
-            IF ( PRow() > PREDOVA2 + gPStranica - 3 )
+            IF ( PRow() > PREDOVA2 + dodatni_redovi_po_stranici() - 3 )
                FF
                ZagPKret()
             ENDIF
@@ -455,7 +455,7 @@ FUNCTION PreglKret()
 
       IF ( cRekPoRobama == "D" )
 
-         IF ( PRow() > PREDOVA2 + gPStranica - 2 )
+         IF ( PRow() > PREDOVA2 + dodatni_redovi_po_stranici() - 2 )
             FF
             ZagPKret()
          ENDIF
@@ -538,7 +538,7 @@ FUNCTION PreglKret()
 
 
    IF ( cRekPoRobama == "D" )
-      IF ( PRow() > PREDOVA2 + gPStranica - 3 )
+      IF ( PRow() > PREDOVA2 + dodatni_redovi_po_stranici() - 3 )
          FF
          ZagPKret()
       ENDIF
@@ -910,7 +910,7 @@ FUNCTION RekPoDob( cRekPoRobama, cLinija, nCol1, nUkObj, aUTar )
    cLinija2 := StrTran( cLinija, "-", "=" )
    FOR i := 1 TO Len( aUTar )
 
-      IF ( PRow() > PREDOVA2 + gPStranica - 3 )
+      IF ( PRow() > PREDOVA2 + dodatni_redovi_po_stranici() - 3 )
          FF
          ZagPKret( "2" )
       ENDIF
@@ -983,7 +983,7 @@ FUNCTION RekPoGrup( cRekPoGrupama, cRekPoDobavljacima, aUGArt )
 
    FOR i := 1 TO Len( aUGArt )
 
-      IF ( PRow() > PREDOVA2 + gPStranica - 3 )
+      IF ( PRow() > PREDOVA2 + dodatni_redovi_po_stranici() - 3 )
          FF
          ZagPKret( "3" )
       ENDIF

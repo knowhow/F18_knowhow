@@ -111,7 +111,7 @@ FUNCTION SpecOstPop()
          SELECT SUBAN
          nDugBHD := nPotBHD := 0; nDugDEM := nPotDEM := 0
 
-         IF PRow() > 60 + gPStranica; FF; ENDIF
+         IF PRow() > 60 + dodatni_redovi_po_stranici(); FF; ENDIF
       ENDDO   // partner
 
       ? M

@@ -238,7 +238,7 @@ FUNCTION ld_kartica_plate_upravni_odbor( cIdRj, cMjesec, cGodina, cIdRadn, cObra
 
       ENDIF
 
-      IF !lSkrivena .AND. PRow() > 57 + gPStranica
+      IF !lSkrivena .AND. PRow() > 57 + dodatni_redovi_po_stranici()
          FF
       ENDIF
 
@@ -317,7 +317,7 @@ FUNCTION ld_kartica_plate_upravni_odbor( cIdRj, cMjesec, cGodina, cIdRadn, cObra
 
    ? cMainLine
 
-   IF !lSkrivena .AND. PRow() > 55 + gPStranica
+   IF !lSkrivena .AND. PRow() > 55 + dodatni_redovi_po_stranici()
       FF
    ENDIF
 

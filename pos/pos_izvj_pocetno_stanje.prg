@@ -76,7 +76,7 @@ Sifra    Naziv              JMJ Kolicina
   nFin := 0
   SELECT POS
   While ! Eof() .and. POS->(IdPos+IdVd+dtos(datum)+BrDok)==DOKS->(IdPos+IdVd+dtos(datum)+BrDok)
-    IF gVrstaRS == "S" .and. Prow() > 63-gPstranica
+    IF gVrstaRS == "S" .and. Prow() > 63-dodatni_redovi_po_stranici()
       FF
     EndIF
     ? cLM
@@ -96,7 +96,7 @@ Sifra    Naziv              JMJ Kolicina
     nFin += POS->(Kolicina * Cijena)
     SKIP
   ENDDO
-  IF gVrstaRS == "S" .and. Prow() > 63-gPstranica - 7
+  IF gVrstaRS == "S" .and. Prow() > 63-dodatni_redovi_po_stranici() - 7
     FF
   EndIF
   ? m

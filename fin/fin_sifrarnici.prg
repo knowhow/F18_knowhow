@@ -165,7 +165,7 @@ FUNCTION KontoBlok( Ch )
       ?? PadR( cId, 15 -PCol(), "." )
       ?? naz
       SKIP 1
-      IF cOdvKlas == "D" .AND. Left( cId, 1 ) != Left( id, 1 ) .OR. cOstran == "D" .AND. PRow() > 60 + gPStranica
+      IF cOdvKlas == "D" .AND. Left( cId, 1 ) != Left( id, 1 ) .OR. cOstran == "D" .AND. PRow() > 60 + dodatni_redovi_po_stranici()
          FF
          LOOP
       ENDIF

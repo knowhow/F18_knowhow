@@ -22,7 +22,7 @@ FUNCTION ld_postavi_parametre_obracuna()
 
    O_LD_RJ
 
-   Box(, 6 + IF( _v_obr_unos, 1, 0 ), 50 )
+   Box(, 6 + IIF( _v_obr_unos, 1, 0 ), 50 )
 
    SET CURSOR ON
 
@@ -59,7 +59,5 @@ FUNCTION ld_postavi_parametre_obracuna()
       set_metric( "ld_varijanta_obracuna", NIL, gVarObracun )
 
    ENDIF
-   
+
    RETURN
-
-

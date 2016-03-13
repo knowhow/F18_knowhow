@@ -236,7 +236,7 @@ FUNCTION zagl_sinteticki_nalog( dDatNal )
 
 STATIC FUNCTION nova_strana( dDatNal )
 
-   IF PRow() > ( 61 + gPStranica )
+   IF PRow() > ( 61 + dodatni_redovi_po_stranici() )
        FF
        zagl_sinteticki_nalog( dDatnal )
    ENDIF

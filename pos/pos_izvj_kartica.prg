@@ -232,7 +232,7 @@ FUNCTION pos_kartica_artikla()
             nCijena1 := pos_get_mpc()
 
             IF fSt
-               IF gVrstaRS == "S" .AND. PRow() > 63 -gPstranica - 3
+               IF gVrstaRS == "S" .AND. PRow() > 63 -dodatni_redovi_po_stranici() - 3
                   FF
                ENDIF
                ? m
@@ -279,7 +279,7 @@ FUNCTION pos_kartica_artikla()
             IF fSt
                SELECT ( cRSdbf )
                HSEEK cIdRoba
-               IF gVrstaRS == "S" .AND. PRow() > 63 -gPstranica - 3
+               IF gVrstaRS == "S" .AND. PRow() > 63 -dodatni_redovi_po_stranici() - 3
                   FF
                ENDIF
                ? m
@@ -344,7 +344,7 @@ FUNCTION pos_kartica_artikla()
                   nStanje -= nKol
                ENDIF
 
-               IF gVrstaRS == "S" .AND. PRow() > 63 -gPstranica - 3
+               IF gVrstaRS == "S" .AND. PRow() > 63 -dodatni_redovi_po_stranici() - 3
                   FF
                ENDIF
 	

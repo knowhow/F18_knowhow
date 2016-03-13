@@ -446,7 +446,7 @@ FUNCTION SubKart( lOtvst )
             ENDIF
          ENDIF
 
-         IF PRow() > 55 + gPStranica
+         IF PRow() > 55 + dodatni_redovi_po_stranici()
             FF
             ZaglSif( .T. )
          ENDIF
@@ -491,7 +491,7 @@ FUNCTION SubKart( lOtvst )
 
          DO WHILE !Eof() .AND. cIdKonto == IdKonto .AND. ( cIdPartner == IdPartner .OR. ( cBrza == "D" .AND. RTrim( qqPartner ) == ";" ) ) .AND. Rasclan() .AND. iif( gDUFRJ != "D", IdFirma == cIdFirma, .T. )
 			
-            IF PRow() > 62 + gPStranica
+            IF PRow() > 62 + dodatni_redovi_po_stranici()
                FF
                ZaglSif( .T. )
                ? m
@@ -746,7 +746,7 @@ FUNCTION SubKart( lOtvst )
                   @ PRow(), PCol() + 1 SAY nDugDEM - nPotDEM PICT picbhd
                ENDIF
 
-               OstatakOpisa( @cOpis, nCOpis, {|| iif( PRow() > 60 + gPStranica, Eval( {|| gPFF(), ZaglSif( .T. ) } ), ) }, nSirOp )
+               OstatakOpisa( @cOpis, nCOpis, {|| iif( PRow() > 60 + dodatni_redovi_po_stranici(), Eval( {|| gPFF(), ZaglSif( .T. ) } ), ) }, nSirOp )
 
                IF ck14 == "3"
                   @ PRow() + 1, nc7 SAY k1 + "-" + k2 + "-" + K3Iz256( k3 ) + k4
@@ -760,7 +760,7 @@ FUNCTION SubKart( lOtvst )
                ENDIF
             ENDIF
 
-            OstatakOpisa( @cOpis, nCOpis, {|| iif( PRow() > 60 + gPStranica, Eval( {|| gPFF(), ZaglSif( .T. ) } ), ) }, nSirOp )
+            OstatakOpisa( @cOpis, nCOpis, {|| iif( PRow() > 60 + dodatni_redovi_po_stranici(), Eval( {|| gPFF(), ZaglSif( .T. ) } ), ) }, nSirOp )
 
             IF cExpDbf == "D"
 				
@@ -779,7 +779,7 @@ FUNCTION SubKart( lOtvst )
             SKIP 1
          ENDDO
 
-         IF PRow() > 56 + gPStranica
+         IF PRow() > 56 + dodatni_redovi_po_stranici()
             FF
             ZaglSif( .T. )
          ENDIF
@@ -867,7 +867,7 @@ FUNCTION SubKart( lOtvst )
             ZaglSif( .T. )
          ELSE
             i := 0
-            DO WHILE PRow() <= 55 + gPstranica .AND. gnRazRed > i
+            DO WHILE PRow() <= 55 + dodatni_redovi_po_stranici() .AND. gnRazRed > i
                ?
                ++i
             ENDDO
@@ -876,7 +876,7 @@ FUNCTION SubKart( lOtvst )
       ENDDO // konto
 
       IF cBrza == "N"
-         IF PRow() > 56 + gPStranica; FF; ZaglSif( .T. ); ENDIF
+         IF PRow() > 56 + dodatni_redovi_po_stranici(); FF; ZaglSif( .T. ); ENDIF
          ? M
          ? "UKUPNO ZA KONTO:" + cIdKonto
          IF cDinDem == "1"
@@ -918,7 +918,7 @@ FUNCTION SubKart( lOtvst )
       ELSE
 
          i := 0
-         DO WHILE ( PRow() <= 55 + gPstranica ) .AND. ( gnRazRed > i )
+         DO WHILE ( PRow() <= 55 + dodatni_redovi_po_stranici() ) .AND. ( gnRazRed > i )
             ?
             ++i
          ENDDO
@@ -930,7 +930,7 @@ FUNCTION SubKart( lOtvst )
 
    IF cBrza == "N"
 
-      IF PRow() > 56 + gPStranica
+      IF PRow() > 56 + dodatni_redovi_po_stranici()
          FF
          ZaglSif( .T. )
       ENDIF

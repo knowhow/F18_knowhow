@@ -249,7 +249,7 @@ FUNCTION RFLLP()
          LOOP
       ENDIF
 
-      IF PRow() > ( RPT_PAGE_LEN + gPStranica )
+      IF PRow() > ( RPT_PAGE_LEN + dodatni_redovi_po_stranici() )
          FF
          Eval( bZagl )
       ENDIF
@@ -321,7 +321,7 @@ FUNCTION RFLLP()
    nT1 := nT4 := nT5 := nT6 := nT7 := nT5a := 0
 
    FOR i := 1 TO Len( aRTar )
-      IF PRow() > ( RPT_PAGE_LEN + gPStranica )
+      IF PRow() > ( RPT_PAGE_LEN + dodatni_redovi_po_stranici() )
          FF
       ENDIF
       @ PRow() + 1, 0        SAY Space( 6 ) + aRTar[ i, 1 ]
@@ -343,7 +343,7 @@ FUNCTION RFLLP()
       nT7 += aRTar[ i, 10 ]
    NEXT
 
-   IF PRow() > ( RPT_PAGE_LEN + gPStranica )
+   IF PRow() > ( RPT_PAGE_LEN + dodatni_redovi_po_stranici() )
       FF
    ENDIF
    ? cRTLine

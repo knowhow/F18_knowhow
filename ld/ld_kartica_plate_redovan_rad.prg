@@ -243,7 +243,7 @@ FUNCTION ld_kartica_plate_redovan_rad( cIdRj, cMjesec, cGodina, cIdRadn, cObrac,
 
                P_12CPI
 
-               IF !lSkrivena .AND. PRow() > 55 + gPStranica
+               IF !lSkrivena .AND. PRow() > 55 + dodatni_redovi_po_stranici()
                   FF
                ENDIF
 
@@ -438,7 +438,7 @@ FUNCTION ld_kartica_plate_redovan_rad( cIdRj, cMjesec, cGodina, cIdRadn, cObrac,
 
          ENDIF
 
-         IF !lSkrivena .AND. PRow() > 64 + gPStranica
+         IF !lSkrivena .AND. PRow() > 64 + dodatni_redovi_po_stranici()
             FF
          ENDIF
 
@@ -551,7 +551,7 @@ FUNCTION ld_kartica_plate_redovan_rad( cIdRj, cMjesec, cGodina, cIdRadn, cObrac,
 
       ? cMainLine
 
-      IF !lSkrivena .AND. PRow() > 64 + gPStranica
+      IF !lSkrivena .AND. PRow() > 64 + dodatni_redovi_po_stranici()
          FF
       ENDIF
 

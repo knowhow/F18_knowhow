@@ -142,8 +142,14 @@ FUNCTION my_use( cAlias, cTable, lRefresh )
    cFullDbf := my_home() + aDbfRec[ 'table' ]
 
    IF !File( f18_ime_dbf( aDbfRec ) )
-      ?E "nema:", cFullDbf
-      RETURN .F.
+      hb_idleSleep( 1.5 )
+      IF  !File( f18_ime_dbf( aDbfRec ) )
+         hb_idleSleep( 1.5 )
+         IF  !File( f18_ime_dbf( aDbfRec ) )
+            ?E "nema:", cFullDbf
+            RETURN .F.
+         ENDIF
+      ENDIF
    ENDIF
 
    cFullIdx := ImeDbfCdx( cFullDbf )

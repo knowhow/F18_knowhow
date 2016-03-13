@@ -203,7 +203,7 @@ FUNCTION ld_kartica_plate_autorski_honorar( cIdRj, cMjesec, cGodina, cIdRadn, cO
 
       ENDIF
 
-      IF !lSkrivena .AND. PRow() > 57 + gPStranica
+      IF !lSkrivena .AND. PRow() > 57 + dodatni_redovi_po_stranici()
          FF
       ENDIF
 
@@ -282,7 +282,7 @@ FUNCTION ld_kartica_plate_autorski_honorar( cIdRj, cMjesec, cGodina, cIdRadn, cO
 
    ? cMainLine
 
-   IF !lSkrivena .AND. PRow() > 55 + gPStranica
+   IF !lSkrivena .AND. PRow() > 55 + dodatni_redovi_po_stranici()
       FF
    ENDIF
 

@@ -268,7 +268,7 @@ STATIC FUNCTION ios_specifikacija( params )
             _spec_zaglavlje( _id_firma, _id_partner, _line )
          ENDIF
 
-         IF PRow() > 61 + gPStranica
+         IF PRow() > 61 + dodatni_redovi_po_stranici()
             FF
             _spec_zaglavlje( _id_firma, _id_partner, _line )
          ENDIF
@@ -324,7 +324,7 @@ STATIC FUNCTION ios_specifikacija( params )
 
    ENDDO
 
-   IF PRow() > 61 + gPStranica
+   IF PRow() > 61 + dodatni_redovi_po_stranici()
       FF
       _spec_zaglavlje( _id_firma, _id_partner, _line )
    ENDIF
@@ -1270,7 +1270,7 @@ STATIC FUNCTION print_ios_txt( params )
 
             IF _kao_kartica == "D"
 
-               IF PRow() > 61 + gPStranica
+               IF PRow() > 61 + dodatni_redovi_po_stranici()
                   FF
                ENDIF
 
@@ -1333,7 +1333,7 @@ STATIC FUNCTION print_ios_txt( params )
 
          IF _kao_kartica == "N"
 
-            IF PRow() > 61 + gPStranica
+            IF PRow() > 61 + dodatni_redovi_po_stranici()
                FF
             ENDIF
 
@@ -1419,7 +1419,7 @@ STATIC FUNCTION print_ios_txt( params )
 
    ENDDO
 
-   IF PRow() > 61 + gPStranica
+   IF PRow() > 61 + dodatni_redovi_po_stranici()
       FF
    ENDIF
 
@@ -1484,7 +1484,7 @@ STATIC FUNCTION print_ios_txt( params )
 
    ?
 
-   IF PRow() > 61 + gPStranica
+   IF PRow() > 61 + dodatni_redovi_po_stranici()
       FF
    ENDIF
 
@@ -1503,7 +1503,7 @@ STATIC FUNCTION print_ios_txt( params )
    @ PRow(), 10 SAY "__________________"
    @ PRow(), 50 SAY "______________________"
 
-   IF PRow() > 58 + gPStranica
+   IF PRow() > 58 + dodatni_redovi_po_stranici()
       FF
    ENDIF
 
@@ -1519,7 +1519,7 @@ STATIC FUNCTION print_ios_txt( params )
    @ PRow(), 10 SAY Trim( gMjStr ) + ", " + DToC( Date() )
    @ PRow(), 52 SAY "( MJESTO I DATUM )"
 
-   IF PRow() > 52 + gPStranica
+   IF PRow() > 52 + dodatni_redovi_po_stranici()
       FF
    ENDIF
 

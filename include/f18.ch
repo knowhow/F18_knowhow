@@ -241,7 +241,7 @@
 #define OUT_ODT_FILE "out.odt"
 #define DATA_XML_FILE "data.xml"
 
-#command QUIT_1                    => ErrorLevel(1); Altd(); my_server_close() ; __Quit()
+#command QUIT_1                    => ErrorLevel(1); my_server_close() ; __Quit()
 
 #command @ <row>, <col> SAY8 <exp> [PICTURE <pic>] [COLOR <clr>] => ;
          DevPos( <row>, <col> ) ; DevOutPict( hb_utf8toStr( <exp> ), <pic> [, <clr>] )

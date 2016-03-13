@@ -1207,7 +1207,7 @@ FUNCTION Prihodi()
 
    DO WHILE !Eof()
 
-      IF PRow() > 63 + gPStranica
+      IF PRow() > 63 + dodatni_redovi_po_stranici()
          PR_Zagl()
       ENDIF
 
@@ -1254,7 +1254,7 @@ FUNCTION Prihodi()
          nL2 := 0
          DO WHILE !Eof() .AND. fLev2
             cKto := IdKonto
-            IF PRow() > 62 + gPStranica
+            IF PRow() > 62 + dodatni_redovi_po_stranici()
                FF
                Pr_Zagl()
             ENDIF
@@ -1318,7 +1318,7 @@ FUNCTION Prihodi()
 
          ENDDO // fLev2 prekid
 
-         IF PRow() > 62 + gPStranica
+         IF PRow() > 62 + dodatni_redovi_po_stranici()
             PR_Zagl()
             ? cLM
             B_ON
@@ -1326,7 +1326,7 @@ FUNCTION Prihodi()
             B_OFF
          ENDIF
 
-         IF PRow() > 60 + gPStranica
+         IF PRow() > 60 + dodatni_redovi_po_stranici()
             PR_Zagl()
          ELSE
             ? m
@@ -1354,7 +1354,7 @@ FUNCTION Prihodi()
 
       ENDDO // fLEv1 prekid
 
-      IF PRow() > 63 + gPStranica
+      IF PRow() > 63 + dodatni_redovi_po_stranici()
          PR_Zagl()
          ? cLM
          B_ON
@@ -1362,7 +1362,7 @@ FUNCTION Prihodi()
          B_OFF
       ENDIF
 
-      IF PRow() > 60 + gPStranica
+      IF PRow() > 60 + dodatni_redovi_po_stranici()
          PR_Zagl()
       ELSE
          ? m1
@@ -1387,7 +1387,7 @@ FUNCTION Prihodi()
 
    ENDDO
 
-   IF PRow() > 60 + gPStranica
+   IF PRow() > 60 + dodatni_redovi_po_stranici()
       PR_Zagl()
    ELSE
       ? m1

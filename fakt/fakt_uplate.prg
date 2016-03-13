@@ -425,7 +425,7 @@ FUNCTION SaldaKupaca( lPocStanje )
       nUkUplata := UkUplata( .F. )
 
       IF ( nUkZaduz <> 0 .OR. nUkUplata <> 0 )
-         IF ( PRow() > 61 + gPStranica )
+         IF ( PRow() > 61 + dodatni_redovi_po_stranici() )
             ? m2
             ?
             ? " " + PadC( AllTrim( Str( nStrana ) ) + ". strana", 78 )

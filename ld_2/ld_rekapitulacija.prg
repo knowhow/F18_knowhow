@@ -132,16 +132,6 @@ FUNCTION ld_rekapitulacija_sql( lSvi )
    ?
    P_12CPI
 
-   IF my_get_from_ini( "LD", "RekapitulacijaGustoPoVisini", "N", KUMPATH ) == "D"
-      lGusto := .T.
-      gRPL_Gusto()
-      nDSGusto := Val( my_get_from_ini( "RekapGustoPoVisini", "DodatnihRedovaNaStranici", "11", KUMPATH ) )
-      dodatni_redovi_po_stranici() += nDSGusto
-   ELSE
-      lGusto := .F.
-      nDSGusto := 0
-   ENDIF
-
    ParObr( nMjesec, nGodina, cObracun, iif( !lSvi, cIdRj, ) )  //  pozicionira bazu PAROBR na odgovarajuci zapis
 
    PRIVATE aRekap[ cLDPolja, 2 ]
@@ -245,9 +235,8 @@ FUNCTION ld_rekapitulacija_sql( lSvi )
 
    ? cTpLine
 
-   IF !lGusto
-      ?
-   ENDIF
+
+   ?
 
    ProizvTP()
 
@@ -441,10 +430,6 @@ FUNCTION ld_rekapitulacija_sql( lSvi )
    ?
    FF
 
-   IF lGusto
-      gRPL_Normal()
-      dodatni_redovi_po_stranici() -= nDSGusto
-   ENDIF
 
    my_close_all_dbf()
 

@@ -935,7 +935,7 @@ FUNCTION kalk_unos_asistent()
 
    lAutoAsist := .F.
    lAsistRadi := .T.
-   
+
    cSekv := Chr( K_CTRL_A )
    KEYBOARD cSekv
 
@@ -2369,11 +2369,7 @@ FUNCTION kalk_stampa_dokumenta()
       ?
 
       DO WHILE .T.
-         IF ( cidvd == "10" .AND. !( ( gVarEv == "2" ) .OR. ( gmagacin == "1" ) ) .OR. ( cidvd $ "11#12#13" ) ) .AND. ( c10Var == "3" )
-            gPSOld := dodatni_redovi_po_stranici()
-            dodatni_redovi_po_stranici() := Val( my_get_from_ini( "KALK", "A3_dodatni_redovi_po_stranici()", "-20", EXEPATH ) )
-            P_PO_L
-         ENDIF
+
 
          IF ( cSeek == 'IZDOKS' )
 
@@ -2447,10 +2443,6 @@ FUNCTION kalk_stampa_dokumenta()
             ?
          ENDIF
 
-         IF ( cidvd == "10" .AND. !( ( gVarEv == "2" ) .OR. ( gmagacin == "1" ) ) .OR. ( cidvd $ "11#12#13" ) ) .AND. ( c10Var == "3" )
-            dodatni_redovi_po_stranici() := gPSOld
-            P_PO_P
-         ENDIF
 
       ENDDO // cSEEK
 

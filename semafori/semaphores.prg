@@ -350,7 +350,7 @@ FUNCTION fill_dbf_from_server( dbf_table, sql_query, sql_fetch_time, dbf_write_t
    ENDIF
 
    aDbfRec := get_a_dbf_rec( dbf_table )
-   aDbfFields := aDbfRec[ "dbf_fields" ]
+   aDbfFields := AClone( aDbfRec[ "dbf_fields" ] )
 
    sql_fetch_time := Seconds()
    oDataSet := run_sql_query( sql_query, _retry )

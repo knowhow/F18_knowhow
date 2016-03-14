@@ -350,7 +350,7 @@ FUNCTION fill_dbf_from_server( dbf_table, sql_query, sql_fetch_time, dbf_write_t
    ENDIF
 
    aDbfRec := get_a_dbf_rec( dbf_table )
-   aDbfFields := AClone( aDbfRec[ "dbf_fields" ] )
+   aDbfFields := aDbfRec[ "dbf_fields" ]
 
    sql_fetch_time := Seconds()
    oDataSet := run_sql_query( sql_query, _retry )
@@ -395,7 +395,7 @@ FUNCTION fill_dbf_from_server( dbf_table, sql_query, sql_fetch_time, dbf_write_t
          ENDIF
   */
 
-            cField := aDbfFields[ _i ]  // 19.02.2016 WINDOWS ONLY BUG variable not found  ?!
+            cField := aDbfFields[ _i ]
 #ifdef F18_SIMULATE_BUG
             IF  _counter == 100 .AND. _i == 1 .AND.  aDbfRec[ "table" ] == 'fin_suban'
                IF s_nBug1 < 2

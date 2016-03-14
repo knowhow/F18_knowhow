@@ -428,7 +428,8 @@ FUNCTION init_harbour()
    SET EPOCH TO 1960
    SET DATE TO GERMAN
 
-   s_mainThreadID := hb_threadSelf()
+
+   f18_init_threads()
 
    hb_cdpSelect( "SL852" )
    hb_SetTermCP( "SLISO" )

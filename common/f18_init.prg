@@ -11,7 +11,6 @@
 
 #include "f18.ch"
 
-STATIC s_mainThreadID
 
 THREAD STATIC s_lAlreadyRunStartup := .F. // startup funkcija vec pokrenuta
 
@@ -140,14 +139,6 @@ FUNCTION thread_dbfs( pThreadID )
    RETURN .T.
 
 
-FUNCTION main_thread()
-
-   RETURN s_mainThreadID
-
-
-FUNCTION is_in_main_thread()
-
-   RETURN hb_threadSelf() == main_thread()
 
 
 

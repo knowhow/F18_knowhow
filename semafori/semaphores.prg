@@ -620,7 +620,7 @@ FUNCTION insert_semaphore_if_not_exists( cTable, lIgnoreChk0 )
 
 FUNCTION in_dbf_refresh( cTable, lRefresh )
 
-   IF s_hInDbfRefresh == nil
+   IF s_hInDbfRefresh == NIL
       IF s_hMutex == NIL
          s_hMutex := hb_mutexCreate()
       ENDIF
@@ -629,17 +629,15 @@ FUNCTION in_dbf_refresh( cTable, lRefresh )
       hb_mutexUnlock( s_hMutex )
    ENDIF
 
+   hb_mutexLock( s_hMutex )
    IF ! hb_HHasKey( s_hInDbfRefresh, cTable )
-      hb_mutexLock( s_hMutex )
       s_hInDbfRefresh[ cTable ]  := .F.
-      hb_mutexUnLock( s_hMutex )
    ENDIF
 
    IF lRefresh != NIL
-      hb_mutexLock( s_hMutex )
       s_hInDbfRefresh[ cTable ] := lRefresh
-      hb_mutexUnLock( s_hMutex )
    ENDIF
+   hb_mutexUnLock( s_hMutex )
 
    RETURN s_hInDbfRefresh[ cTable ]
 

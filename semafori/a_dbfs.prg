@@ -12,12 +12,14 @@
 #include "f18.ch"
 
 STATIC s_hF18Dbfs := nil
-
+STATIC s_hMutex
 
 FUNCTION set_a_dbfs()
 
    LOCAL _dbf_fields, _sql_order
    LOCAL _alg
+
+   s_hMutex := hb_mutexCreate()
 
    s_hF18Dbfs := hb_Hash()
 
@@ -64,6 +66,7 @@ FUNCTION set_a_dbfs()
    ENDIF
 #endif
 
+
    RETURN .T.
 
 // ------------------------------------------------
@@ -73,15 +76,16 @@ FUNCTION set_a_dbfs_key_fields()
 
    LOCAL _key
 
+   hb_mutexLock( s_hMutex )
    FOR EACH _key in s_hF18Dbfs:Keys
 
-      // nije zadano - na osnovu strukture dbf-a
-      // napraviti dbf_fields
+      // nije zadano - na osnovu strukture dbf-a napraviti dbf_fields
       IF !hb_HHasKey( s_hF18Dbfs[ _key ], "dbf_fields" )  .OR.  s_hF18Dbfs[ _key ][ "dbf_fields" ] == NIL
          set_dbf_fields_from_struct( @s_hF18Dbfs[ _key ] )
       ENDIF
 
    NEXT
+   hb_mutexUnlock( s_hMutex )
 
    RETURN .T.
 
@@ -91,7 +95,9 @@ FUNCTION set_a_dbfs_key_fields()
 // ------------------------------------
 FUNCTION f18_dbfs_add( _tbl, _item )
 
+   hb_mutexLock( s_hMutex )
    s_hF18Dbfs[ _tbl ] := _item
+   hb_mutexUnLock( s_hMutex )
 
    RETURN .T.
 
@@ -229,8 +235,7 @@ FUNCTION get_a_dbf_rec( tbl, _only_basic_params )
    ENDIF
 
    IF hb_HHasKey( s_hF18Dbfs, _dbf_tbl )
-      // preferirani set parametara
-      _rec := s_hF18Dbfs[ _dbf_tbl ]
+      _rec := s_hF18Dbfs[ _dbf_tbl ] // preferirani set parametara
    ELSE
       _rec := hb_Hash()
       _rec[ "table" ] := _dbf_tbl
@@ -248,8 +253,7 @@ FUNCTION get_a_dbf_rec( tbl, _only_basic_params )
       QUIT_1
    ENDIF
 
-   // ako nema definisane blackliste, setuj je ali kao NIL
-   IF !hb_HHasKey( _rec, "blacklisted" )
+   IF !hb_HHasKey( _rec, "blacklisted" ) // ako nema definisane blackliste, setuj je ali kao NIL
       _rec[ "blacklisted" ] := NIL
    ENDIF
 
@@ -282,13 +286,17 @@ FUNCTION get_a_dbf_rec( tbl, _only_basic_params )
 
 FUNCTION set_a_dbf_rec_chk0( cTable )
 
+   hb_mutexLock( s_hMutex )
    s_hF18Dbfs[ cTable ][ "chk0" ] := .T.
+   hb_mutexUnLock( s_hMutex )
 
    RETURN .T.
 
 FUNCTION unset_a_dbf_rec_chk0( cTable )
 
+   hb_mutexLock( s_hMutex )
    s_hF18Dbfs[ cTable ][ "chk0" ] := .F.
+   hb_mutexUnLock( s_hMutex )
 
    RETURN .T.
 

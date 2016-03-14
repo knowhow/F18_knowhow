@@ -12,7 +12,7 @@
 #include "f18.ch"
 
 STATIC s_hInDbfRefresh := NIL
-STATIC s_hMutex
+STATIC s_mtxMutex
 STATIC s_aLastRefresh := { "x", 0 }
 
 #ifdef F18_SIMULATE_BUG
@@ -307,7 +307,6 @@ FUNCTION table_count( table, condition )
    LOCAL _server := pg_server()
    LOCAL cMsg
 
-
    _qry := "SELECT COUNT(*) FROM " + table // provjeri prvo da li postoji uopšte ovaj site zapis
 
    IF condition != NIL
@@ -419,7 +418,7 @@ FUNCTION fill_dbf_from_server( dbf_table, sql_query, sql_fetch_time, dbf_write_t
 
          IF lShowInfo
             IF _counter % 500 == 0
-               ?E "synchro '" + dbf_table + "' broj obradjenih zapisa: " + AllTrim( Str( _counter ) )
+               ?E my_server_params()[ "database" ], "synchro '" + dbf_table + "' broj obradjenih zapisa: " + AllTrim( Str( _counter ) )
             ENDIF
          ENDIF
 
@@ -431,7 +430,7 @@ FUNCTION fill_dbf_from_server( dbf_table, sql_query, sql_fetch_time, dbf_write_t
 
       LOG_CALL_STACK cCallMsg
       cCallMsg := "fill_dbf ERROR: " + aDbfRec[ "table" ] + " / " + oError:description + " " + oError:operation + " " + cCallMsg + ;
-                  " / alias: " + Alias() + " reccount: " + Alltrim( STR( reccount() ))
+         " / alias: " + Alias() + " reccount: " + AllTrim( Str( RecCount() ) )
       ?E cCallMsg
       error_bar( "fill_dbf", cCallMsg )
       unset_a_dbf_rec_chk0( aDbfRec[ "table" ] )
@@ -619,35 +618,41 @@ FUNCTION insert_semaphore_if_not_exists( cTable, lIgnoreChk0 )
 FUNCTION in_dbf_refresh( cTable, lRefresh )
 
    IF s_hInDbfRefresh == NIL
-      IF s_hMutex == NIL
-         s_hMutex := hb_mutexCreate()
+      IF s_mtxMutex == NIL
+         s_mtxMutex := hb_mutexCreate()
       ENDIF
-      hb_mutexLock( s_hMutex )
+      hb_mutexLock( s_mtxMutex )
       s_hInDbfRefresh := hb_Hash()
-      hb_mutexUnlock( s_hMutex )
+      hb_mutexUnlock( s_mtxMutex )
    ENDIF
 
-   hb_mutexLock( s_hMutex )
-   IF ! hb_HHasKey( s_hInDbfRefresh, cTable )
-      s_hInDbfRefresh[ cTable ]  := .F.
+   IF !hb_HHasKey( s_hInDbfRefresh, my_server_params()[ "database" ] )
+      hb_mutexLock( s_mtxMutex )
+      s_hInDbfRefresh[ my_server_params()[ "database" ] ] := hb_Hash()
+      hb_mutexUnlock( s_mtxMutex )
+   ENDIF
+
+   hb_mutexLock( s_mtxMutex )
+   IF ! hb_HHasKey( s_hInDbfRefresh[ my_server_params()[ "database" ] ], cTable )
+      s_hInDbfRefresh[ my_server_params()[ "database" ] ][ cTable ]  := .F.
    ENDIF
 
    IF lRefresh != NIL
-      s_hInDbfRefresh[ cTable ] := lRefresh
+      s_hInDbfRefresh[ my_server_params()[ "database" ] ][ cTable ] := lRefresh
    ENDIF
-   hb_mutexUnLock( s_hMutex )
+   hb_mutexUnlock( s_mtxMutex )
 
-   RETURN s_hInDbfRefresh[ cTable ]
+   RETURN s_hInDbfRefresh[ my_server_params()[ "database" ] ][ cTable ]
 
 
 FUNCTION set_last_refresh( cTable )
 
-   hb_mutexLock( s_hMutex )
+   hb_mutexLock( s_mtxMutex )
    IF cTable <> NIL
       s_aLastRefresh[ 1 ] := cTable
       s_aLastRefresh[ 2 ] := Seconds()
    ENDIF
-   hb_mutexLock( s_hMutex )
+   hb_mutexLock( s_mtxMutex )
 
    RETURN s_aLastRefresh
 

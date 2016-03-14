@@ -56,6 +56,8 @@ PROCEDURE init_thread( cInfo )
    ?E ">>>>> START: thread: ", cInfo, " cnt:(", AllTrim( Str( s_nThreadCount ) ), ") <<<<<"
 #endif
 
+   my_server()
+
    set_f18_home( my_server_params()[ "database" ] )
    init_parameters_cache()
 

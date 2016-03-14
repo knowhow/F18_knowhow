@@ -12,7 +12,7 @@
 #include "f18.ch"
 
 STATIC s_hF18Dbfs := nil
-
+STATIC s_mtxMutex
 
 FUNCTION set_a_dbfs()
 
@@ -20,11 +20,18 @@ FUNCTION set_a_dbfs()
    LOCAL _alg
 
    IF s_hF18Dbfs == NIL
+      IF s_mtxMutex == NIL
+         s_mtxMutex := hb_mutexCreate()
+      ENDIF
+      hb_mutexLock( s_mtxMutex )
       s_hF18Dbfs  := hb_Hash()
+      hb_mutexUnlock( s_mtxMutex )
    ENDIF
 
    IF ! hb_HHasKey( s_hF18Dbfs, my_server_params()[ "database" ] )
+      hb_mutexLock( s_mtxMutex )
       s_hF18Dbfs[ my_server_params()[ "database" ] ] := hb_Hash()
+      hb_mutexUnlock( s_mtxMutex )
    ENDIF
 
    set_a_dbf_sif()
@@ -96,7 +103,9 @@ FUNCTION set_a_dbfs_key_fields()
 // ------------------------------------
 FUNCTION f18_dbfs_add( cTable, _item )
 
+   hb_mutexLock( s_mtxMutex )
    s_hF18Dbfs[ my_server_params()[ "database" ] ][ cTable ] := _item
+   hb_mutexUnlock( s_mtxMutex )
 
    RETURN .T.
 
@@ -289,14 +298,18 @@ FUNCTION get_a_dbf_rec( cTable, _only_basic_params )
 
 FUNCTION set_a_dbf_rec_chk0( cTable )
 
+   hb_mutexLock( s_mtxMutex )
    s_hF18Dbfs[ my_server_params()[ "database" ] ][ cTable ][ "chk0" ] := .T.
+   hb_mutexUnlock( s_mtxMutex )
 
    RETURN .T.
 
 
 FUNCTION unset_a_dbf_rec_chk0( cTable )
 
+   hb_mutexLock( s_mtxMutex )
    s_hF18Dbfs[ my_server_params()[ "database" ] ][ cTable ][ "chk0" ] := .F.
+   hb_mutexUnlock( s_mtxMutex )
 
    RETURN .T.
 
@@ -477,6 +490,8 @@ FUNCTION set_rec_from_dbstruct( rec )
       RETURN NIL // dbf_fields, dbf_fields_len su vec popunjena
    ENDIF
 
+   hb_mutexLock( s_mtxMutex )
+
    _struct := dbStruct()
 
    _fields_len := hb_Hash()
@@ -503,6 +518,8 @@ FUNCTION set_rec_from_dbstruct( rec )
 
    rec[ "dbf_fields" ]     := _fields
    rec[ "dbf_fields_len" ] := _fields_len
+
+   hb_mutexUnLock( s_mtxMutex )
 
    RETURN NIL
 

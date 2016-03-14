@@ -17,7 +17,9 @@ STATIC s_psqlServer := NIL
 STATIC s_pgsqlServerMainDb := NIL
 
 THREAD STATIC s_psqlServerDbfThread := NIL // svaka thread konekcija zasebna
+
 STATIC s_psqlServer_params := NIL
+THREAD STATIC s_psqlServer_params_thread := NIL  // svaka thread konekcija ce zapamtiti svoje parametre
 
 FUNCTION pg_server( server )
 
@@ -29,13 +31,13 @@ FUNCTION pg_server( server )
       IF s_psqlServerDbfThread  == NIL
 
          BEGIN SEQUENCE WITH {| err | Break( err ) }
-
+            s_psqlServer_params_thread := hb_HClone( s_psqlServer_params )
             s_psqlServerDbfThread := TPQServer():New( s_psqlServer_params[ "host" ], ;
-               s_psqlServer_params[ "database" ], ;
-               s_psqlServer_params[ "user" ], ;
-               s_psqlServer_params[ "password" ], ;
-               s_psqlServer_params[ "port" ], ;
-               s_psqlServer_params[ "schema" ] )
+               s_psqlServer_params_thread[ "database" ], ;
+               s_psqlServer_params_thread[ "user" ], ;
+               s_psqlServer_params_thread[ "password" ], ;
+               s_psqlServer_params_thread[ "port" ], ;
+               s_psqlServer_params_thread[ "schema" ] )
 
          RECOVER USING oError
 
@@ -118,6 +120,10 @@ FUNCTION my_server_logout()
 FUNCTION my_server_params( params )
 
    LOCAL  _key
+
+   IF !is_in_main_thread()
+      RETURN s_psqlServer_params_thread // svaki thread treba zapamtiti svoje parametre
+   ENDIF
 
    IF params <> nil
       FOR EACH _key in params:Keys

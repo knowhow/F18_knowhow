@@ -183,7 +183,7 @@ FUNCTION obr_doprinos( nGodina, nMjesec, nDopr, nDopr2, cTRada, a_benef )
                   LOOP
                ENDIF
 
-               ? "  " + field->idops, ops->naz
+               ?U "  " + field->idops, ops->naz
 
                IF dopr->( FieldPos( "DOP_TIP" ) ) <> 0
                   IF dopr->dop_tip == "N" .OR.  dopr->dop_tip == " "

@@ -131,7 +131,7 @@ FUNCTION obr_porez( nGodina, nMjesec, nPor, nPor2, nPorOps, nPorOps2, nUPorOl, c
 
             IF cAlgoritam == "S"
 
-               ? idops, ops->naz
+               ?U idops, ops->naz
 
                nPom := 0
 
@@ -191,7 +191,7 @@ FUNCTION obr_porez( nGodina, nMjesec, nPor, nPor2, nPorOps, nPorOps2, nUPorOl, c
 
             ELSE
 
-               ? idops, ops->naz
+               ?U idops, ops->naz
 
                // ovo je osnovica za porez
                nTmpPor := iznos

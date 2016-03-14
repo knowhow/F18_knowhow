@@ -320,7 +320,7 @@ FUNCTION ld_specifikacija_po_mjesecima()
       ?? _l( "  Str.spr: " ); B_ON; ?? STRSPR->naz; B_OFF
       ?? _l( "  Opst.stan: " ); B_ON; ?? cOStan; B_OFF
 
-      ? _l( "Opst.rada: " ); B_ON; ?? OPS->naz; B_OFF
+      ? _l( "Opst.rada: " ); B_ON; ??U OPS->naz; B_OFF
       ?? _l( "  Dat.zasn.rad.odnosa: " ); B_ON; ?? datod; B_OFF
       ?? _l( "  Pol: " ); B_ON; ?? pol; B_OFF
       SELECT MTEMP

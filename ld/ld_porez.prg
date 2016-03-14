@@ -91,7 +91,6 @@ FUNCTION obr_por( cId, nOsnNeto, nOsnOstalo )
    SELECT por
 
    IF cAlg == "S"
-
       // stepenasti obracun
       aPortek := _get_portek( 2 )
       aPor := obr_por_st( aPorTek, nIznos )

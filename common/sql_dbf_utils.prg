@@ -728,11 +728,8 @@ FUNCTION sql_from_adbf( aDbf, cTable )
       DO CASE
       CASE aDbf[ i, 2 ] == "C"
          // naz2::char(4)
-         IF F18_DBF_ENCODING == "LATIN2"
-            cRet += "convert(" + cField + ", 'UTF8', 'LATIN2')::char(" + AllTrim( Str( aDbf[ i, 3 ] ) ) + ")"
-         ELSE
-            cRet += cField + "::char(" + AllTrim( Str( aDbf[ i, 3 ] ) ) + ")"
-         ENDIF
+         cRet += cField + "::char(" + AllTrim( Str( aDbf[ i, 3 ] ) ) + ")"
+
       CASE aDbf[ i, 2 ] == "N"
          // COALESCE(kurs1,0)::numeric(18,8) AS kurs1
          cRet += "COALESCE(" + cField + ",0)::numeric(" + ;

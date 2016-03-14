@@ -18,7 +18,7 @@ FUNCTION use_sql_ld_ld( nGodina, nMjesec, nMjesecDo, nVrInvalid, nStInvalid, cFi
    LOCAL cTable := "ld_ld"
    LOCAL hIndexes, cKey
 
-   hb_default( @cFilter, ".t.")
+   hb_default( @cFilter, ".t." )
 
    cSql := "SELECT "
    cSql += sql_from_adbf( @aDbf, cTable )
@@ -31,20 +31,24 @@ FUNCTION use_sql_ld_ld( nGodina, nMjesec, nMjesecDo, nVrInvalid, nStInvalid, cFi
       " AND mjesec>=" + sql_quote( nMjesec ) + " AND mjesec<=" + sql_quote( nMjesecDo )
 
    IF nVrInvalid > 0
-     cSql += "AND vr_invalid = " + sql_quote( nVrInvalid )
+      cSql += "AND vr_invalid = " + sql_quote( nVrInvalid )
    ENDIF
 
    IF nStInvalid > 0
-     cSql += "AND st_invalid >= " + sql_quote( nStInvalid )
+      cSql += "AND st_invalid >= " + sql_quote( nStInvalid )
    ENDIF
 
    SELECT F_LD
    use_sql( cTable, cSql, "LD" )
 
+   IF F18_DBF_ENCODING  != "UTF8"
+      dbEval( {|| field->idRadn := hb_UTF8ToStr( field->idradn ) } )
+   ENDIF
+
    hIndexes := h_ld_ld_indexes()
 
    FOR EACH cKey IN hIndexes:Keys
-      INDEX ON  &(hIndexes[ cKey ])  TAG ( cKey ) TO ( cTable ) FOR &cFilter
+      INDEX ON  &( hIndexes[ cKey ] )  TAG ( cKey ) TO ( cTable ) FOR &cFilter
    NEXT
    SET ORDER TO TAG "1"
 

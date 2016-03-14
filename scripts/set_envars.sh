@@ -1,7 +1,7 @@
 #!/bin/bash
 
 MODULES="main fin kalk fakt os ld virm epdv rnal kadev test common"
-MODULES="$MODULES core_ui2 core_sql  reporting  semaphores"
+MODULES="$MODULES core_ui2 core_sql  reporting  semafori"
 
 
 #export F18_GT_QTC=1

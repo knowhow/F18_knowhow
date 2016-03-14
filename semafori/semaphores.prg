@@ -602,7 +602,6 @@ FUNCTION insert_semaphore_if_not_exists( cTable, lIgnoreChk0 )
       RETURN .F.
    ENDIF
 
-
    nCnt := table_count( cSqlTbl, "user_code=" + sql_quote( _user ) )
 
    IF ( nCnt == 0 )

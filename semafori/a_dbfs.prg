@@ -12,18 +12,20 @@
 #include "f18.ch"
 
 STATIC s_hF18Dbfs := nil
-STATIC s_hMutex
+
 
 FUNCTION set_a_dbfs()
 
    LOCAL _dbf_fields, _sql_order
    LOCAL _alg
 
-   s_hMutex := hb_mutexCreate()
+   IF s_hF18Dbfs == NIL
+      s_hF18Dbfs  := hb_Hash()
+   ENDIF
 
-   hb_mutexLock( s_hMutex )
-   s_hF18Dbfs := hb_Hash()
-   hb_mutexUnlock( s_hMutex )
+   IF ! hb_HHasKey( s_hF18Dbfs, my_server_params()[ "database" ] )
+      s_hF18Dbfs[ my_server_params()[ "database" ] ] := hb_Hash()
+   ENDIF
 
    set_a_dbf_sif()
    set_a_dbf_params()
@@ -77,16 +79,14 @@ FUNCTION set_a_dbfs_key_fields()
 
    LOCAL _key
 
-   hb_mutexLock( s_hMutex )
-   FOR EACH _key in s_hF18Dbfs:Keys
+   FOR EACH _key in s_hF18Dbfs[ my_server_params()[ "database" ] ]:Keys
 
       // nije zadano - na osnovu strukture dbf-a napraviti dbf_fields
-      IF !hb_HHasKey( s_hF18Dbfs[ _key ], "dbf_fields" )  .OR.  s_hF18Dbfs[ _key ][ "dbf_fields" ] == NIL
-         set_dbf_fields_from_struct( @s_hF18Dbfs[ _key ] )
+      IF !hb_HHasKey( s_hF18Dbfs[ my_server_params()[ "database" ] ][ _key ], "dbf_fields" )  .OR.  s_hF18Dbfs[ my_server_params()[ "database" ] ][ _key ][ "dbf_fields" ] == NIL
+         set_dbf_fields_from_struct( @s_hF18Dbfs[ my_server_params()[ "database" ] ][ _key ] )
       ENDIF
 
    NEXT
-   hb_mutexUnlock( s_hMutex )
 
    RETURN .T.
 
@@ -94,18 +94,16 @@ FUNCTION set_a_dbfs_key_fields()
 // ------------------------------------
 // dodaj stavku u f18_dbfs
 // ------------------------------------
-FUNCTION f18_dbfs_add( _tbl, _item )
+FUNCTION f18_dbfs_add( cTable, _item )
 
-   hb_mutexLock( s_hMutex )
-   s_hF18Dbfs[ _tbl ] := _item
-   hb_mutexUnlock( s_hMutex )
+   s_hF18Dbfs[ my_server_params()[ "database" ] ][ cTable ] := _item
 
    RETURN .T.
 
 
 
 FUNCTION f18_dbfs()
-   RETURN s_hF18Dbfs
+   RETURN s_hF18Dbfs[ my_server_params()[ "database" ] ]
 
 
 // ----------------------------------------
@@ -184,52 +182,51 @@ FUNCTION set_a_dbf_sifarnik( dbf_table, alias, wa, rec, lSql )
 //
 // _only_basic_params - samo table, alias, wa
 // -------------------------------------------------------
-FUNCTION get_a_dbf_rec( tbl, _only_basic_params )
+FUNCTION get_a_dbf_rec( cTable, _only_basic_params )
 
-   LOCAL _msg, _rec, _keys, _dbf_tbl, _key
+   LOCAL _msg, _rec, _keys, cDbfTable, _key
    LOCAL nI, cMsg
 
-   _dbf_tbl := "x"
+   cDbfTable := "x"
 
    IF _only_basic_params == NIL
       _only_basic_params = .F.
    ENDIF
 
-   IF ValType( s_hF18Dbfs ) <> "H"
+   IF ValType( s_hF18Dbfs[ my_server_params()[ "database" ] ] ) <> "H"
       _msg := ""
       LOG_CALL_STACK _msg
-      ?E  "get_a_dbf_rec: " + tbl + " s_hF18Dbfs nije inicijalizirana " + _msg
+      ?E  "get_a_dbf_rec: " + cTable + " s_hF18Dbfs nije inicijalizirana " + _msg
    ENDIF
 
-   IF hb_HHasKey( s_hF18Dbfs, tbl )
-      _dbf_tbl := tbl
+   IF hb_HHasKey( s_hF18Dbfs[ my_server_params()[ "database" ] ], cTable )
+      cDbfTable := cTable
    ELSE
       // probaj preko aliasa
-      FOR EACH _key IN s_hF18Dbfs:Keys
-         IF ValType( tbl ) == "N"
+      FOR EACH _key IN s_hF18Dbfs[ my_server_params()[ "database" ] ]:Keys
+         IF ValType( cTable ) == "N"
             // zadana je workarea
-            IF s_hF18Dbfs[ _key ][ "wa" ] == tbl
-               _dbf_tbl := _key
+            IF s_hF18Dbfs[ my_server_params()[ "database" ] ][ _key ][ "wa" ] == cTable
+               cDbfTable := _key
                EXIT
             ENDIF
          ELSE
-            IF s_hF18Dbfs[ _key ][ "alias" ] == Upper( tbl )
-               _dbf_tbl := _key
+            IF s_hF18Dbfs[ my_server_params()[ "database" ] ][ _key ][ "alias" ] == Upper( cTable )
+               cDbfTable := _key
                EXIT
             ENDIF
          ENDIF
       NEXT
    ENDIF
 
-   hb_mutexLock( s_hMutex )
 
-   IF _dbf_tbl == "x"
-      _msg := "ERROR: x dbf alias " + tbl + " ne postoji u a_dbf_rec ?!"
+   IF cDbfTable == "x"
+      _msg := "ERROR: x dbf alias " + cTable + " ne postoji u a_dbf_rec ?!"
 
       _rec := hb_Hash()
       _rec[ "temp" ] := .T.
-      _rec[ "table" ] := tbl
-      _rec[ "alias" ] := tbl
+      _rec[ "table" ] := cTable
+      _rec[ "alias" ] := cTable
       _rec[ "sql" ] := .F.
       _rec[ "wa" ] := 6000
 
@@ -239,11 +236,11 @@ FUNCTION get_a_dbf_rec( tbl, _only_basic_params )
 
    ENDIF
 
-   IF hb_HHasKey( s_hF18Dbfs, _dbf_tbl )
-      _rec := s_hF18Dbfs[ _dbf_tbl ] // preferirani set parametara
+   IF hb_HHasKey( s_hF18Dbfs[ my_server_params()[ "database" ] ], cDbfTable )
+      _rec := s_hF18Dbfs[ my_server_params()[ "database" ] ][ cDbfTable ] // preferirani set parametara
    ELSE
       _rec := hb_Hash()
-      _rec[ "table" ] := _dbf_tbl
+      _rec[ "table" ] := cDbfTable
       _rec[ "alias" ] := Alias()
       _rec[ "wa" ] := Select()
       _rec[ "temp" ] := .T.
@@ -251,7 +248,7 @@ FUNCTION get_a_dbf_rec( tbl, _only_basic_params )
    ENDIF
 
    IF !hb_HHasKey( _rec, "table" ) .OR. _rec[ "table" ] == NIL
-      _msg := RECI_GDJE_SAM + " set_a_dbf nije definisan za table= " + tbl
+      _msg := RECI_GDJE_SAM + " set_a_dbf nije definisan za table= " + cTable
       Alert( _msg )
       log_write( _msg, 2 )
       RaiseError( _msg )
@@ -269,7 +266,6 @@ FUNCTION get_a_dbf_rec( tbl, _only_basic_params )
    IF !hb_HHasKey( _rec, "chk0" )
       _rec[ "chk0" ] := .F.
    ENDIF
-   hb_mutexUnlock( s_hMutex )
 
    IF _only_basic_params
       RETURN _rec
@@ -293,30 +289,20 @@ FUNCTION get_a_dbf_rec( tbl, _only_basic_params )
 
 FUNCTION set_a_dbf_rec_chk0( cTable )
 
-   IF hb_mutexLock( s_hMutex )
-      s_hF18Dbfs[ cTable ][ "chk0" ] := .T.
-      hb_mutexUnlock( s_hMutex )
-   ELSE
-      ?E "mutex lock neuspjesan chk0"
-   ENDIF
+   s_hF18Dbfs[ my_server_params()[ "database" ] ][ cTable ][ "chk0" ] := .T.
 
    RETURN .T.
 
 
 FUNCTION unset_a_dbf_rec_chk0( cTable )
 
-   IF hb_mutexLock( s_hMutex )
-      s_hF18Dbfs[ cTable ][ "chk0" ] := .F.
-      hb_mutexUnlock( s_hMutex )
-   ELSE
-      ?E "mutex lock neuspjesan unset chk0"
-   ENDIF
+   s_hF18Dbfs[ my_server_params()[ "database" ] ][ cTable ][ "chk0" ] := .F.
 
    RETURN .T.
 
 FUNCTION is_chk0( table )
 
-   RETURN s_hF18Dbfs[ table ][ "chk0" ]
+   RETURN s_hF18Dbfs[ my_server_params()[ "database" ] ][ table ][ "chk0" ]
 
 
 
@@ -326,33 +312,33 @@ FUNCTION is_chk0( table )
 FUNCTION dbf_alias_has_semaphore( alias )
 
    LOCAL _ret := .F.
-   LOCAL _msg, _rec, _keys, _dbf_tbl, _key
+   LOCAL _msg, _rec, _keys, cDbfTable, _key
 
    // ako nema parametra uzmi tekuci alias na kome se nalazimo
    IF ( alias == NIL )
       alias := Alias()
    ENDIF
 
-   _dbf_tbl := "x"
+   cDbfTable := "x"
 
-   FOR EACH _key IN s_hF18Dbfs:Keys
+   FOR EACH _key IN s_hF18Dbfs[ my_server_params()[ "database" ] ]:Keys
       IF ValType( alias ) == "N"
          // zadana je workarea
-         IF s_hF18Dbfs[ _key ][ "wa" ] == alias
-            _dbf_tbl := _key
+         IF s_hF18Dbfs[ my_server_params()[ "database" ] ][ _key ][ "wa" ] == alias
+            cDbfTable := _key
             EXIT
          ENDIF
       ELSE
-         IF s_hF18Dbfs[ _key ][ "alias" ] == Upper( alias )
-            _dbf_tbl := _key
+         IF s_hF18Dbfs[ my_server_params()[ "database" ] ][ _key ][ "alias" ] == Upper( alias )
+            cDbfTable := _key
             EXIT
          ENDIF
       ENDIF
    NEXT
 
-   IF hb_HHasKey( s_hF18Dbfs, _dbf_tbl )
+   IF hb_HHasKey( s_hF18Dbfs[ my_server_params()[ "database" ] ], cDbfTable )
 
-      _rec := s_hF18Dbfs[ _dbf_tbl ]
+      _rec := s_hF18Dbfs[ my_server_params()[ "database" ] ][ cDbfTable ]
       IF _rec[ "temp" ] == .F.
          _ret := .T. // tabela ima semafor
       ENDIF
@@ -413,8 +399,8 @@ FUNCTION set_dbf_fields_from_struct( xRec )
 #ifdef F18_DEBUG
       ?E "set_dbf_fields xRec=", xRec
 #endif
-      IF hb_HHasKey( s_hF18Dbfs, xRec )
-         hRec := s_hF18Dbfs[ xRec ]
+      IF hb_HHasKey( s_hF18Dbfs[ my_server_params()[ "database" ] ], xRec )
+         hRec := s_hF18Dbfs[ my_server_params()[ "database" ] ][ xRec ]
       ELSE
          ?E "set_dbf_fields tabela ", xRec, "nije u a_dbf_rec"
          RETURN .F.
@@ -531,7 +517,7 @@ FUNCTION my_close_all_dbf()
    WHILE nPos > 0
 
       // ako je neki dbf ostao otvoren nPos ce vratiti poziciju tog a_dbf_recorda
-      nPos := hb_HScan( s_hF18Dbfs, {| key, rec | zatvori_dbf( rec ) == .F.  } )
+      nPos := hb_HScan( s_hF18Dbfs[ my_server_params()[ "database" ] ], {| key, rec | zatvori_dbf( rec ) == .F.  } )
       IF nPos > 0
          hb_idleSleep( 0.1 )
       ELSE

@@ -45,10 +45,12 @@ PROCEDURE init_thread( cInfo )
       ENDIF
    ENDDO
 
-   hb_mutexLock( s_hMutex )
-   s_nThreadCount++
-   hb_mutexUnlock( s_hMutex )
-
+   IF hb_mutexLock( s_hMutex )
+     s_nThreadCount++
+     hb_mutexUnlock( s_hMutex )
+   ELSE
+     ?E "mutex err lock nThreadCount"
+   ENDIF
 
 #ifdef F18_DEBUG
    ?E ">>>>> START: thread: ", cInfo, " cnt:(", AllTrim( Str( s_nThreadCount ) ), ") <<<<<"

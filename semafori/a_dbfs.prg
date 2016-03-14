@@ -221,14 +221,18 @@ FUNCTION get_a_dbf_rec( tbl, _only_basic_params )
       NEXT
    ENDIF
 
+   hb_mutexLock( s_hMutex )
+
    IF _dbf_tbl == "x"
       _msg := "ERROR: x dbf alias " + tbl + " ne postoji u a_dbf_rec ?!"
+
       _rec := hb_Hash()
       _rec[ "temp" ] := .T.
       _rec[ "table" ] := tbl
       _rec[ "alias" ] := tbl
       _rec[ "sql" ] := .F.
       _rec[ "wa" ] := 6000
+
       LOG_CALL_STACK _msg
       ?E _msg
       RETURN _rec
@@ -265,6 +269,7 @@ FUNCTION get_a_dbf_rec( tbl, _only_basic_params )
    IF !hb_HHasKey( _rec, "chk0" )
       _rec[ "chk0" ] := .F.
    ENDIF
+   hb_mutexUnLock( s_hMutex )
 
    IF _only_basic_params
       RETURN _rec
@@ -285,6 +290,7 @@ FUNCTION get_a_dbf_rec( tbl, _only_basic_params )
 
    RETURN _rec
 
+
 FUNCTION set_a_dbf_rec_chk0( cTable )
 
    hb_mutexLock( s_hMutex )
@@ -292,6 +298,7 @@ FUNCTION set_a_dbf_rec_chk0( cTable )
    hb_mutexUnlock( s_hMutex )
 
    RETURN .T.
+
 
 FUNCTION unset_a_dbf_rec_chk0( cTable )
 

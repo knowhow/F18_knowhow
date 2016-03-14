@@ -34,8 +34,6 @@ FUNCTION ld_rekapitulacija_sql( lSvi )
    cMainLine := _gmainline()
    cMainLine := Replicate( "-", 2 ) + cMainLine
 
-   lPorNaRekap := my_get_from_ini( "LD", "PoreziNaRekapitulaciji", "N", KUMPATH ) == "D"
-
    cIdRadn := Space( _LR_ )
    cIdRj := gRj
    nMjesec := gMjesec
@@ -54,6 +52,7 @@ FUNCTION ld_rekapitulacija_sql( lSvi )
       lSvi := .F.
    ENDIF
 
+
    ORekap()
 
    cIdRadn := Space( 6 )
@@ -64,13 +63,13 @@ FUNCTION ld_rekapitulacija_sql( lSvi )
 
    IF lSvi
       qqRJ := Space( 60 )
-      BoxRekSvi()
+      ld_rekap_get_svi()
       IF ( LastKey() == K_ESC )
          RETURN .F.
       ENDIF
    ELSE
       qqRJ := Space( 2 )
-      BoxRekJ()
+      ld_rekap_get_rj()
       IF ( LastKey() == K_ESC )
          RETURN .F.
       ENDIF
@@ -104,11 +103,6 @@ FUNCTION ld_rekapitulacija_sql( lSvi )
       SET ORDER TO tag ( TagVO( "1" ) )
    ENDIF
 
-   // IF cFilt1 == ".t."
-   // SET FILTER TO
-   // ELSE
-   // SET FILTER TO &cFilt1
-   // ENDIF
 
    IF !lSvi
       SEEK Str( nGodina, 4, 0 ) + cIdRj + Str( nMjesec, 2, 0 ) + cObracun
@@ -213,7 +207,7 @@ FUNCTION ld_rekapitulacija_sql( lSvi )
    IF lSvi
       zagl_rekapitulacija_plata_svi()
    ELSE
-      ZaglJ()
+      zagl_rekapitulacija_plata_rj()
    ENDIF
 
    ? cTpLine
@@ -225,9 +219,7 @@ FUNCTION ld_rekapitulacija_sql( lSvi )
    ? cTpLine
 
    nPosY := 60
-   IF lPorNaRekap
-      nPosY := 42
-   ENDIF
+
 
    ? "Ukupno (primanja sa obustavama):"
    @ PRow(), nPosY SAY nUNeto + nUOdbiciP + nUOdbici PICT gpici
@@ -237,7 +229,6 @@ FUNCTION ld_rekapitulacija_sql( lSvi )
 
 
    ?
-
    ProizvTP()
 
    IF cRTipRada $ "A#U"
@@ -448,7 +439,7 @@ FUNCTION ld_rekapitulacija_sql( lSvi )
    RETURN .T.
 
 
-STATIC FUNCTION nstr()
+STATIC FUNCTION nStr()
 
    IF PRow() > 64 + dodatni_redovi_po_stranici()
       FF
@@ -822,7 +813,7 @@ STATIC FUNCTION _ld_calc_totals( lSvi, a_benef )
 
       IF RADN->isplata == "TR"  // isplata na tekuci racun
          cOpis2 := RADNIK_PREZ_IME
-         Rekapld( "IS_" + RADN->idbanka, nGodina, nMjesecDo, _UIznos, 0, RADN->idbanka, RADN->brtekr, cOpis2, .T. )
+         RekapLD( "IS_" + RADN->idbanka, nGodina, nMjesecDo, _UIznos, 0, RADN->idbanka, RADN->brtekr, cOpis2, .T. )
       ENDIF
 
       SELECT ld

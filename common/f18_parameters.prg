@@ -29,6 +29,7 @@ FUNCTION set_parametre_f18_aplikacije( just_set )
    LOCAL _backup_removable, _backup_ping_time
    LOCAL _rpt_page_len, _bug_report
    LOCAL _log_level
+   LOCAL cLdRekapDbf
 
    info_bar( "init", "set_parametre_f18_aplikacije - start" )
 
@@ -71,6 +72,8 @@ FUNCTION set_parametre_f18_aplikacije( just_set )
    _bug_report := fetch_metric( "bug_report_email", my_user(), "A" )
    _log_level := fetch_metric( "log_level", NIL, 3 )
 
+   cLdRekapDbf := fetch_metric( "legacy_ld_rekap_dbf", NIL, "N" )
+
    IF just_set == nil
       just_set := .F.
    ENDIF
@@ -99,16 +102,13 @@ FUNCTION set_parametre_f18_aplikacije( just_set )
       @ _pos_x + _x, Col() + 1 SAY "KADEV:" GET _kadev PICT "@!"
       @ _pos_x + _x, Col() + 1 SAY "REPORTS:" GET _reports PICT "@!"
 
-      ++ _x
-      ++ _x
+      _x += 2
       @ _pos_x + _x, _pos_y SAY "Maticni podaci korisnika ***" COLOR F18_COLOR_I
 
-      ++ _x
-      ++ _x
+      _x += 2
       @ _pos_x + _x, _pos_y SAY PadL( "Puno ime i prezime:", _left ) GET _proper_name PICT "@S30"
 
-      ++ _x
-      ++ _x
+      _x += 2
       @ _pos_x + _x, _pos_y SAY "Email parametri ***" COLOR F18_COLOR_I
 
       ++ _x
@@ -125,17 +125,15 @@ FUNCTION set_parametre_f18_aplikacije( just_set )
       ++ _x
       @ _pos_x + _x, _pos_y SAY PadL( "cc adrese:", _left ) GET _email_cc PICT "@S70"
 
-      ++ _x
-      ++ _x
+      _x += 2
       @ _pos_x + _x, _pos_y SAY "Parametri log-a ***" COLOR F18_COLOR_I
 
       ++ _x
       @ _pos_x + _x, _pos_y SAY8 "Briši stavke log tabele starije od broja dana (def. 30):" GET _log_delete_interval PICT "9999"
 
-      ++ _x
-      ++ _x
-      @ _pos_x + _x, _pos_y SAY "Backup parametri ***" COLOR F18_COLOR_I
 
+      _x += 2
+      @ _pos_x + _x, _pos_y SAY "Backup parametri ***" COLOR F18_COLOR_I
       ++ _x
       @ _pos_x + _x, _pos_y SAY8 "Automatski backup podataka organizacije (interval dana 0 - ne radi ništa):" GET _backup_company PICT "999"
 
@@ -146,16 +144,12 @@ FUNCTION set_parametre_f18_aplikacije( just_set )
       @ _pos_x + _x, _pos_y SAY "Udaljena backup lokacija:" GET _backup_removable PICT "@S60"
 
 #ifdef __PLATFORM__WINDOWS
-
       ++ _x
       @ _pos_x + _x, _pos_y SAY "Ping time kod backup komande:" GET _backup_ping_time PICT "99"
-
 #endif
 
-      ++ _x
-      ++ _x
+      _x += 2
       @ _pos_x + _x, _pos_y SAY "Ostali parametri ***" COLOR F18_COLOR_I
-
       ++ _x
       @ _pos_x + _x, _pos_y SAY8 "Dužina stranice za izvještaje ( def: 60 ):" GET _rpt_page_len PICT "999"
 
@@ -163,6 +157,11 @@ FUNCTION set_parametre_f18_aplikacije( just_set )
       @ _pos_x + _x, _pos_y SAY "BUG report na email (D/N/A/0):" GET _bug_report PICT "!@" VALID _bug_report $ "DNA0"
 
       @ _pos_x + _x, Col() + 2 SAY "Nivo logiranja (0..9)" GET _log_level PICT "9" VALID _log_level >= 0 .AND. _log_level < 10
+
+      _x += 2
+      @ _pos_x + _x, _pos_y SAY "Kompatibilnost ***" COLOR F18_COLOR_I
+      ++ _x
+      @ _pos_x + _x, _pos_y SAY "LD rekap dbf:" GET cLdRekapDbf PICT "!@" VALID cLdRekapDbf $ "DN"
 
       READ
 
@@ -203,6 +202,8 @@ FUNCTION set_parametre_f18_aplikacije( just_set )
 #ifdef __PLATFORM__WINDOWS
       set_metric( "backup_windows_ping_time", my_user(), _backup_ping_time )
 #endif
+
+      set_metric( "legacy_ld_rekap_dbf", NIL, cLdRekapDbf )
 
       info_bar( "init", "set_parametre_f18_aplikacije - end" )
 
@@ -369,3 +370,8 @@ FUNCTION f18_set_active_modules()
    RETURN _ok
 
 */
+
+
+FUNCTION is_legacy_ld_rekap_dbf()
+
+   RETURN fetch_metric( "legacy_ld_rekap_dbf", NIL, "N" ) == "D"

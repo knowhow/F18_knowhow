@@ -82,9 +82,8 @@ FUNCTION u_dopr_na( nDopOsn, cRTipRada )
    RETURN nU_dop_na
 
 
-// ------------------------------------------
-// obracunaj i prikazi doprinose
-// ------------------------------------------
+
+
 FUNCTION obr_doprinos( nGodina, nMjesec, nDopr, nDopr2, cTRada, a_benef )
 
    LOCAL nIznos := 0
@@ -163,21 +162,20 @@ FUNCTION obr_doprinos( nGodina, nMjesec, nDopr, nDopr2, cTRada, a_benef )
 
             ? StrTran( m, "-", "=" )
 
-            nOOD := 0
-            // ukup.osnovica za obr.doprinosa za po opstinama
+            nOOD := 0 // ukup.osnovica za obr.doprinosa za po opstinama
 
-            nPOLjudi := 0
-            // ukup.ljudi za po opstinama
+            nPOLjudi := 0 // ukup.ljudi za po opstinama
 
             nDoprOps := 0
             nDoprOps2 := 0
 
             SELECT opsld
-            SEEK Space( 2 ) + dopr->poopst
+            SEEK Space( 2 ) + dopr->poOpst
 
-            DO WHILE !Eof() .AND. id == dopr->poopst .AND. porid == Space( 2 )
+            DO WHILE !Eof() .AND. field->id == dopr->poopst .AND. field->porid == Space( 2 )
+
                SELECT ops
-               HSEEK opsld->idops
+               HSEEK _u( opsld->idops )
                SELECT opsld
 
                IF !ImaUOp( "DOPR", DOPR->id )
@@ -185,11 +183,10 @@ FUNCTION obr_doprinos( nGodina, nMjesec, nDopr, nDopr2, cTRada, a_benef )
                   LOOP
                ENDIF
 
-               ? "  " + idops, ops->naz
+               ? "  " + field->idops, ops->naz
 
                IF dopr->( FieldPos( "DOP_TIP" ) ) <> 0
-                  IF dopr->dop_tip == "N" .OR. ;
-                        dopr->dop_tip == " "
+                  IF dopr->dop_tip == "N" .OR.  dopr->dop_tip == " "
                      nIznos := iznos
                   ELSEIF dopr->dop_tip == "2"
                      nIznos := izn_ost
@@ -227,12 +224,12 @@ FUNCTION obr_doprinos( nGodina, nMjesec, nDopr, nDopr2, cTRada, a_benef )
                   ENDIF
                ENDIF
 
-               @ PRow(), PCol() + 1 SAY nPom PICTURE gpici
+               @ PRow(), PCol() + 1 SAY nPom PICTURE gPici
 
                IF cUmPD == "D"
 
-                  @ PRow(), PCol() + 1 SAY  nPom2 PICTURE gpici
-                  @ PRow(), PCol() + 1 SAY  nPom - nPom2 PICTURE gpici
+                  @ PRow(), PCol() + 1 SAY  nPom2 PICTURE gPici
+                  @ PRow(), PCol() + 1 SAY  nPom - nPom2 PICTURE gPici
 
                   Rekapld( "DOPR" + dopr->id + idops, nGodina, nMjesec, nPom - nPom2, 0, idops, NLjudi() )
                   nDoprOps2 += nPom2
@@ -249,15 +246,12 @@ FUNCTION obr_doprinos( nGodina, nMjesec, nDopr, nDopr2, cTRada, a_benef )
 
                SKIP
 
-               IF PRow() > 64 + dodatni_redovi_po_stranici()
-                  // FF
-               ENDIF
             ENDDO
 
             SELECT dopr
 
             ? cLinija
-            ? "  " + _l( "UKUPNO" ) + Space( 1 ), DOPR->ID
+            ? "  " + "UKUPNO" + Space( 1 ), DOPR->ID
 
             @ PRow(), nC1 SAY nOOD PICT gpici
             @ PRow(), PCol() + 1 SAY nDoprOps PICT gpici
@@ -286,11 +280,9 @@ FUNCTION obr_doprinos( nGodina, nMjesec, nDopr, nDopr2, cTRada, a_benef )
             nPom := nDoprOps
 
          ELSE
-            // doprinosi nisu po opstinama
 
-            IF dopr->( FieldPos( "DOP_TIP" ) ) <> 0
-               IF dopr->dop_tip == "N" .OR. ;
-                     dopr->dop_tip == " "
+            IF dopr->( FieldPos( "DOP_TIP" ) ) <> 0  // doprinosi nisu po opstinama
+               IF dopr->dop_tip == "N" .OR. dopr->dop_tip == " "
                   nTmpOsn := nUNetoOsnova
                ELSEIF dopr->dop_tip == "2"
                   nTmpOsn := nDoprOsnOst
@@ -306,7 +298,6 @@ FUNCTION obr_doprinos( nGodina, nMjesec, nDopr, nDopr2, cTRada, a_benef )
                nBo := nUMRadn_bo
 
             ELSE
-
                nBO := bruto_osn( nTmpOsn, cRTipRada, nKoefLO )
             ENDIF
 
@@ -354,7 +345,7 @@ FUNCTION obr_doprinos( nGodina, nMjesec, nDopr, nDopr2, cTRada, a_benef )
 
       IF Right( id, 1 ) == "X"
          ? cLinija
-         ?   
+         ?
          nDopr += nPom
          IF cUmPD == "D"
             nDopr2 += nPom2
@@ -363,9 +354,6 @@ FUNCTION obr_doprinos( nGodina, nMjesec, nDopr, nDopr2, cTRada, a_benef )
 
       SKIP
 
-      IF PRow() > 64 + dodatni_redovi_po_stranici()
-         // FF
-      ENDIF
 
    ENDDO
 
@@ -381,4 +369,4 @@ FUNCTION obr_doprinos( nGodina, nMjesec, nDopr, nDopr2, cTRada, a_benef )
 
    ? cLinija
 
-   RETURN
+   RETURN .T.

@@ -21,7 +21,9 @@ FUNCTION set_a_dbfs()
 
    s_hMutex := hb_mutexCreate()
 
+   hb_mutexLock( s_hMutex )
    s_hF18Dbfs := hb_Hash()
+   hb_mutexUnlock( s_hMutex )
 
    set_a_dbf_sif()
    set_a_dbf_params()
@@ -66,7 +68,6 @@ FUNCTION set_a_dbfs()
    ENDIF
 #endif
 
-
    RETURN .T.
 
 // ------------------------------------------------
@@ -97,7 +98,7 @@ FUNCTION f18_dbfs_add( _tbl, _item )
 
    hb_mutexLock( s_hMutex )
    s_hF18Dbfs[ _tbl ] := _item
-   hb_mutexUnLock( s_hMutex )
+   hb_mutexUnlock( s_hMutex )
 
    RETURN .T.
 
@@ -288,7 +289,7 @@ FUNCTION set_a_dbf_rec_chk0( cTable )
 
    hb_mutexLock( s_hMutex )
    s_hF18Dbfs[ cTable ][ "chk0" ] := .T.
-   hb_mutexUnLock( s_hMutex )
+   hb_mutexUnlock( s_hMutex )
 
    RETURN .T.
 
@@ -296,7 +297,7 @@ FUNCTION unset_a_dbf_rec_chk0( cTable )
 
    hb_mutexLock( s_hMutex )
    s_hF18Dbfs[ cTable ][ "chk0" ] := .F.
-   hb_mutexUnLock( s_hMutex )
+   hb_mutexUnlock( s_hMutex )
 
    RETURN .T.
 
@@ -340,8 +341,7 @@ FUNCTION dbf_alias_has_semaphore( alias )
 
       _rec := s_hF18Dbfs[ _dbf_tbl ]
       IF _rec[ "temp" ] == .F.
-         // tabela ima semafor
-         _ret := .T.
+         _ret := .T. // tabela ima semafor
       ENDIF
 
    ENDIF
@@ -475,8 +475,7 @@ FUNCTION set_rec_from_dbstruct( rec )
    LOCAL _fields := {}, _fields_len
 
    IF rec[ "dbf_fields" ] != NIL
-      // dbf_fields, dbf_fields_len su vec popunjena
-      RETURN NIL
+      RETURN NIL // dbf_fields, dbf_fields_len su vec popunjena
    ENDIF
 
    _struct := dbStruct()

@@ -339,7 +339,7 @@ FUNCTION table_count( table, condition )
 FUNCTION fill_dbf_from_server( dbf_table, sql_query, sql_fetch_time, dbf_write_time, lShowInfo )
 
    LOCAL _counter := 0
-   LOCAL _i, bFieldBlock, cField
+   LOCAL _i, cField
    LOCAL oDataSet
    LOCAL _retry := 3
    LOCAL aDbfRec, aDbfFields, cSyncalias, cFullDbf, cFullIdx
@@ -408,12 +408,11 @@ FUNCTION fill_dbf_from_server( dbf_table, sql_query, sql_fetch_time, dbf_write_t
                ENDIF
             ENDIF
 #endif
-            bFieldBlock := FieldBlock( cField )
 
-            IF ValType( Eval( bFieldBlock ) ) $ "CM"
-               Eval( bFieldBlock, hb_UTF8ToStr( oDataSet:FieldGet( oDataSet:FieldPos( cField ) ) ) )
+            IF ValType( Eval( FieldBlock( cField ) ) ) $ "CM"
+               Eval( FieldBlock( cField ), hb_UTF8ToStr( oDataSet:FieldGet( oDataSet:FieldPos( cField ) ) ) )
             ELSE
-               Eval( bFieldBlock, oDataSet:FieldGet( oDataSet:FieldPos( cField ) ) )
+               Eval( FieldBlock( cField ), oDataSet:FieldGet( oDataSet:FieldPos( cField ) ) )
             ENDIF
 
          NEXT
@@ -652,7 +651,7 @@ FUNCTION set_last_refresh( cTable )
    hb_mutexLock( s_hMutex )
 
    RETURN s_aLastRefresh
-   
+
 
 FUNCTION is_last_refresh_before( cTable, nSeconds )
 

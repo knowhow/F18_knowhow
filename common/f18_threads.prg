@@ -12,6 +12,25 @@
 #include "f18.ch"
 
 STATIC s_nThreadCount := 0
+STATIC s_hMutex
+STATIC s_mainThreadID
+
+PROCEDURE f18_init_threads()
+
+   s_mainThreadID := hb_threadSelf()
+   s_hMutex := hb_mutexCreate()
+
+   RETURN
+
+
+FUNCTION main_thread()
+
+   RETURN s_mainThreadID
+
+
+FUNCTION is_in_main_thread()
+
+   RETURN hb_threadSelf() == main_thread()
 
 
 PROCEDURE init_thread( cInfo )
@@ -26,7 +45,10 @@ PROCEDURE init_thread( cInfo )
       ENDIF
    ENDDO
 
+   hb_mutexLock( s_hMutex )
    s_nThreadCount++
+   hb_mutexUnlock( s_hMutex )
+
 
 #ifdef F18_DEBUG
    ?E ">>>>> START: thread: ", cInfo, " cnt:(", AllTrim( Str( s_nThreadCount ) ), ") <<<<<"

@@ -48,10 +48,13 @@ FUNCTION GlobalErrorHandler( err_obj, lShowErrorReport, lQuitApp )
       9 TFINMOD:MMENU / 38
      10 TFINMOD:RUN / 126
    */
-     LOG_CALL_STACK _log_msg
+     bErr := ErrorBlock( {| oError | Break( oError ) } )
 
+     LOG_CALL_STACK _log_msg
       ?E "ERR Object destructor failure/Reference to freed block 45/32", _log_msg
-      RETURN .F.
+      
+      ErrorBlock( bErr )
+      RETURN .T.
    ENDIF
 
    bErr := ErrorBlock( {| oError | Break( oError ) } )
@@ -179,7 +182,6 @@ FUNCTION GlobalErrorHandler( err_obj, lShowErrorReport, lQuitApp )
       send_email( err_obj, lNotify )
 #endif
    ENDIF
-
 
    IF lQuitApp
       QUIT_1

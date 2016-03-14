@@ -12,6 +12,7 @@
 #include "f18.ch"
 
 STATIC s_hInDbfRefresh := NIL
+STATIC s_hMutex
 STATIC s_aLastRefresh := { "x", 0 }
 
 #ifdef F18_SIMULATE_BUG
@@ -620,15 +621,24 @@ FUNCTION insert_semaphore_if_not_exists( cTable, lIgnoreChk0 )
 FUNCTION in_dbf_refresh( cTable, lRefresh )
 
    IF s_hInDbfRefresh == nil
+      IF s_hMutex == NIL
+         hb_mutexCreate( s_hMutex )
+      ENDIF
+      hb_mutexLock( s_hMutex )
       s_hInDbfRefresh := hb_Hash()
+      hb_mutexUnlock( s_hMutex )
    ENDIF
 
    IF ! hb_HHasKey( s_hInDbfRefresh, cTable )
+      hb_mutexLock( s_hMutex )
       s_hInDbfRefresh[ cTable ]  := .F.
+      hb_mutexUnLock( s_hMutex )
    ENDIF
 
-   IF lRefresh != nil
+   IF lRefresh != NIL
+      hb_mutexLock( s_hMutex )
       s_hInDbfRefresh[ cTable ] := lRefresh
+      hb_mutexUnLock( s_hMutex )
    ENDIF
 
    RETURN s_hInDbfRefresh[ cTable ]

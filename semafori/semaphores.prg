@@ -622,7 +622,7 @@ FUNCTION in_dbf_refresh( cTable, lRefresh )
 
    IF s_hInDbfRefresh == nil
       IF s_hMutex == NIL
-         hb_mutexCreate( s_hMutex )
+         s_hMutex := hb_mutexCreate()
       ENDIF
       hb_mutexLock( s_hMutex )
       s_hInDbfRefresh := hb_Hash()

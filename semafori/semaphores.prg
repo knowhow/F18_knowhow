@@ -644,12 +644,15 @@ FUNCTION in_dbf_refresh( cTable, lRefresh )
 
 FUNCTION set_last_refresh( cTable )
 
-   IF cTable <> nil
+   hb_mutexLock( s_hMutex )
+   IF cTable <> NIL
       s_aLastRefresh[ 1 ] := cTable
       s_aLastRefresh[ 2 ] := Seconds()
    ENDIF
+   hb_mutexLock( s_hMutex )
 
    RETURN s_aLastRefresh
+   
 
 FUNCTION is_last_refresh_before( cTable, nSeconds )
 

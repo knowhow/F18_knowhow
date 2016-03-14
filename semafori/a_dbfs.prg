@@ -269,7 +269,7 @@ FUNCTION get_a_dbf_rec( tbl, _only_basic_params )
    IF !hb_HHasKey( _rec, "chk0" )
       _rec[ "chk0" ] := .F.
    ENDIF
-   hb_mutexUnLock( s_hMutex )
+   hb_mutexUnlock( s_hMutex )
 
    IF _only_basic_params
       RETURN _rec
@@ -293,18 +293,24 @@ FUNCTION get_a_dbf_rec( tbl, _only_basic_params )
 
 FUNCTION set_a_dbf_rec_chk0( cTable )
 
-   hb_mutexLock( s_hMutex )
-   s_hF18Dbfs[ cTable ][ "chk0" ] := .T.
-   hb_mutexUnlock( s_hMutex )
+   IF hb_mutexLock( s_hMutex )
+      s_hF18Dbfs[ cTable ][ "chk0" ] := .T.
+      hb_mutexUnlock( s_hMutex )
+   ELSE
+      ?E "mutex lock neuspjesan chk0"
+   ENDIF
 
    RETURN .T.
 
 
 FUNCTION unset_a_dbf_rec_chk0( cTable )
 
-   hb_mutexLock( s_hMutex )
-   s_hF18Dbfs[ cTable ][ "chk0" ] := .F.
-   hb_mutexUnlock( s_hMutex )
+   IF hb_mutexLock( s_hMutex )
+      s_hF18Dbfs[ cTable ][ "chk0" ] := .F.
+      hb_mutexUnlock( s_hMutex )
+   ELSE
+      ?E "mutex lock neuspjesan unset chk0"
+   ENDIF
 
    RETURN .T.
 

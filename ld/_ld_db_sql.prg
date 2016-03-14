@@ -21,7 +21,7 @@ FUNCTION use_sql_ld_ld( nGodina, nMjesec, nMjesecDo, nVrInvalid, nStInvalid, cFi
    hb_default( @cFilter, ".t.")
 
    cSql := "SELECT "
-   cSql += sql_from_adbf( @aDbf, cTable, lUtf )
+   cSql += sql_from_adbf( @aDbf, cTable )
 
    cSql += ", ld_radn.vr_invalid, ld_radn.st_invalid "
    cSql += " FROM " + F18_PSQL_SCHEMA_DOT + cTable

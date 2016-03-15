@@ -408,6 +408,7 @@ FUNCTION fill_dbf_from_server( dbf_table, sql_query, sql_fetch_time, dbf_write_t
                ENDIF
             ENDIF
 #endif
+            // TODO: brisati
             //bField := FieldWBlock( cField, aDbfRec[ 'wa' ] + 1000 )
             //xField := Eval( bField )
             xSqlField := oDataSet:FieldGet( oDataSet:FieldPos( cField ) )

@@ -359,7 +359,7 @@ FUNCTION fill_dbf_from_server( dbf_table, sql_query, sql_fetch_time, dbf_write_t
    log_write( "fill_dbf_from_server START", 9 )
 
 #ifdef F18_DEBUG
-      ?E "fill_dbf:", dbf_table, "a_dbf_rec dbf_fields: ", pp( aDbfFields )
+      ?E "fill_dbf:", dbf_table, "sql lastrec:", oDataSet:LastRec(), "a_dbf_rec dbf_fields: ", pp( aDbfFields )
 #endif
 
    dbf_write_time := Seconds()

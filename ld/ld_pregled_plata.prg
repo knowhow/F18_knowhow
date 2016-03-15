@@ -105,7 +105,7 @@ FUNCTION pregled_plata()
       ELSE
          Box(, 2, 30 )
          nSlog := 0
-         cSort1 := "SortPrez(IDRADN,.T.)"
+         cSort1 := "SortPrez(IDRADN)"
          cFilt := IF( Empty( cMjesec ), ".t.", "MJESEC==" + _filter_quote( cMjesec ) ) + ".and." + ;
             IF( Empty( cGodina ), ".t.", "GODINA==" + _filter_quote( cGodina ) )
          IF lViseObr .AND. !Empty( cObracun )
@@ -122,7 +122,7 @@ FUNCTION pregled_plata()
       ELSE
          Box(, 2, 30 )
          nSlog := 0
-         cSort1 := "SortPrez(IDRADN,.T.)"
+         cSort1 := "SortPrez(IDRADN)"
          cFilt := "IDRJ==" + _filter_quote( cIdRj ) + ".and." + ;
             iif( Empty( cMjesec ), ".t.", "MJESEC==" + _filter_quote( cMjesec ) ) + ".and." + ;
             iif( Empty( cGodina ), ".t.", "GODINA==" + _filter_quote( cGodina ) )
@@ -193,7 +193,7 @@ FUNCTION pregled_plata()
       ENDIF
 
       SELECT radn
-      HSEEK _u( _idradn )
+      HSEEK _idradn
 
       SELECT vposla
       HSEEK _idvposla
@@ -255,7 +255,7 @@ FUNCTION pregled_plata()
 
       SELECT ld
 
-      cRTipRada := g_tip_rada( _u( _idradn ), ld->idrj )
+      cRTipRada := g_tip_rada( _idradn, ld->idrj )
       nPrKoef := radn->sp_koef
       cOpor := radn->opor
       cTrosk := radn->trosk
@@ -281,7 +281,7 @@ FUNCTION pregled_plata()
       nDoprIz := u_dopr_iz( nMBO, cRTipRada )
 
       nPorez := 0
-      IF radn_oporeziv( _u( _idradn ), ld->idrj ) .AND. cRTipRada <> "S"
+      IF radn_oporeziv( _idradn, ld->idrj ) .AND. cRTipRada <> "S"
          nPorez := izr_porez( nBrOsn - nDoprIz - nLicOdb, "B" )
       ENDIF
 
@@ -290,7 +290,7 @@ FUNCTION pregled_plata()
 
       SELECT ld
 
-      ? Str( ++nRbr, 4 ) + ".", _u( _idradn ), RADNIK_PREZ_IME
+      ? Str( ++nRbr, 4 ) + ".", _idradn, RADNIK_PREZ_IME
       nC1 := PCol() + 1
 
       @ PRow(), PCol() + 1 SAY _usati PICT gpics

@@ -338,7 +338,7 @@ FUNCTION table_count( table, condition )
 FUNCTION fill_dbf_from_server( dbf_table, sql_query, sql_fetch_time, dbf_write_time, lShowInfo )
 
    LOCAL _counter := 0
-   LOCAL _i, cField
+   LOCAL _i, cField := "x"
    LOCAL oDataSet
    LOCAL _retry := 3
    LOCAL aDbfRec, aDbfFields, cSyncalias, cFullDbf, cFullIdx
@@ -358,9 +358,9 @@ FUNCTION fill_dbf_from_server( dbf_table, sql_query, sql_fetch_time, dbf_write_t
 
    log_write( "fill_dbf_from_server START", 9 )
 
-   IF log_level() > 5
+#ifdef F18_DEBUG
       ?E "fill_dbf:", dbf_table, "a_dbf_rec dbf_fields: ", pp( aDbfFields )
-   ENDIF
+#endif
 
    dbf_write_time := Seconds()
 
@@ -428,8 +428,9 @@ FUNCTION fill_dbf_from_server( dbf_table, sql_query, sql_fetch_time, dbf_write_t
 
    RECOVER USING oError
 
+altd()
       LOG_CALL_STACK cCallMsg
-      cCallMsg := "fill_dbf ERROR: " + aDbfRec[ "table" ] + " / " + oError:description + " " + oError:operation + " " + cCallMsg + ;
+      cCallMsg := "fill_dbf ERROR: " + aDbfRec[ "table" ] + " / " + oError:description + " " + oError:operation + " " + cField + " " + cCallMsg + ;
          " / alias: " + Alias() + " reccount: " + AllTrim( Str( RecCount() ) )
       ?E cCallMsg
       error_bar( "fill_dbf", cCallMsg )

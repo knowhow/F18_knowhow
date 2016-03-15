@@ -42,7 +42,7 @@ PROCEDURE init_thread( cInfo )
             s_nCounter++
             hb_mutexUnlock( s_hMutex )
          ENDIF
-         IF s_nCounter > 30
+         IF s_nCounter > 50
             IF hb_mutexLock( s_hMutex )
                s_nCounter := 0
                hb_mutexUnlock( s_hMutex )

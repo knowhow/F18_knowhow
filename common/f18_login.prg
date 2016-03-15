@@ -538,7 +538,7 @@ METHOD F18Login:odabir_organizacije()
 METHOD F18Login:get_database_sessions( database )
 
    LOCAL _session := ""
-   LOCAL _server := pg_server()
+   LOCAL _server := server_main_db()
    LOCAL _table, oRow, _db, _qry
    LOCAL _arr := {}
 
@@ -579,7 +579,7 @@ METHOD F18Login:get_database_sessions( database )
 METHOD F18Login:get_database_top_session( database )
 
    LOCAL _session := ""
-   LOCAL _server := pg_server()
+   LOCAL _server := server_main_db()
    LOCAL _table, oRow, _db, _qry
 
    _qry := "SELECT MAX( DISTINCT substring( datname, '" + AllTrim( database ) +  "_([0-9]+)') ) AS godina " + ;
@@ -602,7 +602,7 @@ METHOD F18Login:get_database_top_session( database )
 METHOD F18Login:get_database_description( database, cSezona )
 
    LOCAL _descr := ""
-   LOCAL _server := pg_server()
+   LOCAL _server := server_main_db()
    LOCAL _table, oRow, _qry
    LOCAL _database_name := ""
 
@@ -645,7 +645,6 @@ METHOD F18Login:get_database_browse_array( arr )
    LOCAL _len := 20
 
    _count := 0
-   // punimo sada matricu _arr
    FOR _n := 1 TO 30
 
       AAdd( _arr, { "", "", "", "" } )
@@ -664,7 +663,7 @@ METHOD F18Login:get_database_browse_array( arr )
 
 METHOD F18Login:database_array()
 
-   LOCAL _server := pg_server()
+   LOCAL _server := server_main_db()
    LOCAL _table, oRow, _db, _qry
    LOCAL _tmp := {}
    LOCAL _filter_db := "empty#empty_sezona"

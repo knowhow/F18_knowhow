@@ -408,15 +408,16 @@ FUNCTION fill_dbf_from_server( dbf_table, sql_query, sql_fetch_time, dbf_write_t
                ENDIF
             ENDIF
 #endif
-            bField := FieldWBlock( cField, aDbfRec[ 'wa' ] + 1000 )
-            xField := Eval( bField )
+            //bField := FieldWBlock( cField, aDbfRec[ 'wa' ] + 1000 )
+            //xField := Eval( bField )
             xSqlField := oDataSet:FieldGet( oDataSet:FieldPos( cField ) )
 
-            IF ValType( xField ) $ "CM" .AND. F18_DBF_ENCODING == "CP852"
+            IF ValType( field->&cField ) $ "CM" .AND. F18_DBF_ENCODING == "CP852"
                xSqlField := hb_UTF8ToStr( xSqlField )
             ENDIF
 
-            Eval( bField, xSqlField )
+            field->&cField := xSqlField
+            // Eval( bField, xSqlField )
 
          NEXT
 

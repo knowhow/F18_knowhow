@@ -33,8 +33,7 @@ FUNCTION rnal_nalog_za_proizvodnju_odt()
 
    DO WHILE !Eof() .AND. field->doc_no == _doc_no
       _doc_gr := field->doc_gr_no
-      DO WHILE !Eof() .AND. field->doc_no == _doc_no .AND. ;
-            field->doc_gr_no == _doc_gr
+      DO WHILE !Eof() .AND. field->doc_no == _doc_no .AND. field->doc_gr_no == _doc_gr
          skip
       ENDDO
       ++ _cnt

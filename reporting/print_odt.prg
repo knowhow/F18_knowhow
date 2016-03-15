@@ -277,12 +277,20 @@ STATIC FUNCTION kopiraj_odt_template_u_home_path( cTemplate )
    LOCAL _temp_size, _temp_date, _temp_time
    LOCAL _copy := .F.
 
+altd()
    IF !File( my_home() + cTemplate )
       _copy := .T.
    ELSE
 
       _a_source := Directory( my_home() + cTemplate )
-      _a_template := Directory( F18_TEMPLATE_LOCATION + cTemplate )
+      IF LEN( _a_source[ 1 ] ) < 4
+         Alert( "file atributi error: " + my_home() + cTemplate )
+      ENDIF
+      
+      _a_template := Directory( f18_template_location() + cTemplate )
+      IF LEN( _a_template[ 1 ] ) < 4
+         Alert( "file atributi error: " + f18_template_location() + cTemplate )
+      ENDIF
 
       _src_size := AllTrim( Str( _a_source[ 1, 2 ] ) )
       _src_date := DToS( _a_source[ 1, 3 ] )
@@ -292,17 +300,17 @@ STATIC FUNCTION kopiraj_odt_template_u_home_path( cTemplate )
       _temp_date := DToS( _a_template[ 1, 3 ] )
       _temp_time := _a_template[ 1, 4 ]
 
-      IF _temp_date + _temp_time > _src_date + _src_time
+      IF _temp_date + _temp_time > _src_date + _src_time // provjera vremena
          _copy := .T.
       ENDIF
 
    ENDIF
 
    IF _copy
-      IF File( F18_TEMPLATE_LOCATION + cTemplate )
-         FileCopy( F18_TEMPLATE_LOCATION + cTemplate, my_home() + cTemplate )
+      IF File( f18_template_location() + cTemplate )
+         FileCopy( f18_template_location() + cTemplate, my_home() + cTemplate )
       ELSE
-         MsgBeep( "Fajl " + F18_TEMPLATE_LOCATION + cTemplate + " ne postoji !?" )
+         MsgBeep( "Fajl " + f18_template_location() + cTemplate + " ne postoji !?" )
          RETURN _ret
       ENDIF
    ENDIF

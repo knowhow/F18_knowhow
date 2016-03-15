@@ -23,12 +23,11 @@ FUNCTION f18_template_location()
    cLoc := SLASH + "opt" + SLASH + "knowhowERP" + SLASH + "template" + SLASH
 #endif
 
-   IF s_cTemplatesLoc != nil
+   IF s_cTemplatesLoc != NIL
       RETURN s_cTemplatesLoc
    ENDIF
 
    aFileList := hb_vfDirectory( cLoc )
-
    IF Len( aFileList ) > 1
       s_cTemplatesLoc := cLoc
       RETURN cLoc
@@ -36,7 +35,6 @@ FUNCTION f18_template_location()
 
    cLoc := my_home_root() + "template" +  SLASH
    aFileList := hb_vfDirectory( cLoc )
-
    IF Len( aFileList ) > 1
       s_cTemplatesLoc := cLoc
       RETURN cLoc

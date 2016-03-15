@@ -33,18 +33,24 @@ FUNCTION set_sql_search_path()
 
 FUNCTION _sql_query( oServer, cQuery, silent )
 
-   RETURN run_sql_query( cQuery, 10 )
+   RETURN run_sql_query( cQuery, 10, oServer )
 
 
-FUNCTION run_sql_query( qry, retry )
+FUNCTION run_sql_query( qry, retry, oServer )
 
    LOCAL _i, _qry_obj, lMsg := .F.
-   LOCAL _server := my_server()
+   LOCAL _server
    LOCAL _msg
    LOCAL cTip
 
    IF retry == NIL
       retry := 10
+   ENDIF
+
+   IF oServer == NIL
+      _server := my_server()
+   ELSE
+      _server := oServer
    ENDIF
 
    IF Left( Upper( qry ), 6 ) == "SELECT"

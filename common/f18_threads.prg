@@ -14,6 +14,7 @@
 STATIC s_nThreadCount := 0
 STATIC s_hMutex
 STATIC s_mainThreadID
+STATIC s_nCounter := 0
 
 PROCEDURE f18_init_threads()
 
@@ -37,19 +38,29 @@ PROCEDURE init_thread( cInfo )
 
    DO WHILE .T.
       IF s_nThreadCount > 7
-         ?E "thread count>7 (", AllTrim( Str( s_nThreadCount ) ), "), sacekati:", cInfo
-         hb_idleSleep( 1 )
+         IF hb_mutexLock( s_hMutex )
+            s_nCounter++
+            hb_mutexUnlock( s_hMutex )
+         ENDIF
+         IF s_nCounter % 30
+            ?E "thread count>7 (", AllTrim( Str( s_nThreadCount ) ), "), sacekati:", cInfo
+         ENDIF
+         hb_idleSleep( 1.5 )
          LOOP
       ELSE
+         IF hb_mutexLock( s_hMutex )
+            s_nCounter := 0
+            hb_mutexUnlock( s_hMutex )
+         ENDIF
          EXIT
       ENDIF
    ENDDO
 
    IF hb_mutexLock( s_hMutex )
-     s_nThreadCount++
-     hb_mutexUnlock( s_hMutex )
+      s_nThreadCount++
+      hb_mutexUnlock( s_hMutex )
    ELSE
-     ?E "mutex err lock nThreadCount"
+      ?E "mutex err lock nThreadCount"
    ENDIF
 
 #ifdef F18_DEBUG

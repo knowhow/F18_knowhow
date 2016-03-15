@@ -64,7 +64,7 @@ FUNCTION run_sql_query( qry, retry )
    FOR _i := 1 TO retry
 
       IF _i > 1
-         MsgO( "Pokušavam izvršiti SQL upit: " + qry + " pokušaj: " + AllTrim( Str( _i ) ) )
+         error_bar( "sql",  qry + " pokušaj: " + AllTrim( Str( _i ) ) )
          lMsg := .T.
       ENDIF
 
@@ -84,7 +84,6 @@ FUNCTION run_sql_query( qry, retry )
          ?E "SQL ERROR QUERY: ", qry
          error_bar( "sql", qry )
          IF _i == retry
-            MsgC()
             RETURN .F.
          ENDIF
 

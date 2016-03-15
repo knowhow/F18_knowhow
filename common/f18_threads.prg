@@ -43,10 +43,10 @@ PROCEDURE init_thread( cInfo )
             hb_mutexUnlock( s_hMutex )
          ENDIF
          IF s_nCounter > 30
-            ?E "thread count>7 (", AllTrim( Str( s_nThreadCount ) ), "), sacekati:", cInfo
             IF hb_mutexLock( s_hMutex )
                s_nCounter := 0
                hb_mutexUnlock( s_hMutex )
+               ?E "thread count>7 (", AllTrim( Str( s_nThreadCount ) ), "), sacekati:", cInfo
             ENDIF
          ENDIF
          hb_idleSleep( 1.5 )

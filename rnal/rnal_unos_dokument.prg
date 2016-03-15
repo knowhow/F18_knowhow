@@ -1132,12 +1132,12 @@ STATIC FUNCTION _doc_integ( lPrint )
    ENDIF
 
    IF nItems == 0
-      MsgBeep( "Nalog mora da sadrzi najmanje 1 stavku !!!" )
+      MsgBeep( "Nalog mora da sadrzi najmanje 1 stavku !" )
    ENDIF
 
    IF lPrint == .F.
       IF nCustId == 0
-         MsgBeep( "Polje naručioca mora biti popunjeno !!!" )
+         MsgBeep( "Polje naručioca mora biti popunjeno !" )
       ENDIF
       IF nContId == 0
          MsgBeep( "Polje kontakta mora biti popunjeno !!!" )

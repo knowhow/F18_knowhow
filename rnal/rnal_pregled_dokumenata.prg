@@ -107,7 +107,7 @@ STATIC FUNCTION _set_box( nBoxX, nBoxY )
    @ m_x + ( nBoxX - 1 ), m_y + 2 SAY8 cLine1
    @ m_x + ( nBoxX ), m_y + 2 SAY8 cLine2
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -174,14 +174,12 @@ STATIC FUNCTION lst_args( nSort )
    @ m_x + nX, m_y + 2 SAY PadL( "Objekat isporuke:", 25 ) GET cObject VALID {|| Empty( cObject ) .OR. s_objects( @cObject, nCustomer, cObject ), set_var( @nObject, @cObject ), show_it( g_obj_desc( nObject ) ) } WHEN set_opc_box( nBoxX, 60, "objekat isporuke, pretrazi sifrarnik", nil, nil, cHelpClr )
 
    nX += 1
-
    @ m_x + nX, m_y + 2 SAY PadL( "Datum naloga od:", 18 ) GET dDateFrom WHEN set_opc_box( nBoxX, 60 )
    @ m_x + nX, Col() + 1 SAY "do:" GET dDateTo WHEN set_opc_box( nBoxX, 60 )
 
    IF _status == 1
 
       nX += 1
-
       @ m_x + nX, m_y + 2 SAY PadL( "Datum isporuke od:", 18 ) GET dDvrDFrom WHEN set_opc_box( nBoxX, 60 )
       @ m_x + nX, Col() + 1 SAY "do:" GET dDvrDTo WHEN set_opc_box( nBoxX, 60 )
 

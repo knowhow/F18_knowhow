@@ -51,7 +51,7 @@ FUNCTION full_synchro( dbf_table, step_size, cInfo )
 
    _sql_order  := aDbfRec[ "sql_order" ]
 
-   open_exclusive_zap_close( aDbfRec[ "table" ] ) // nuliranje tabele
+   open_exclusive_zap_close( aDbfRec ) // nuliranje tabele
 
    info_bar( "x", "full synchro: " + _sql_table + " => " + dbf_table )
 

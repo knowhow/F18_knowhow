@@ -444,7 +444,7 @@ FUNCTION fill_dbf_from_server( dbf_table, sql_query, sql_fetch_time, dbf_write_t
       unset_a_dbf_rec_chk0( aDbfRec[ "table" ] )
       IF Select( cSyncAlias ) > 0
          USE
-         open_exclusive_zap_close( aDbfRec[ "table" ] )
+         open_exclusive_zap_close( aDbfRec )
       ENDIF
 
       lRet := .F.

@@ -224,50 +224,44 @@ FUNCTION ferase_cdx( tbl_name )
 
    RETURN .T.
 
-/* TODO: out
-FUNCTION repair_dbfs()
-
-   LOCAL _ver
-
-   _ver := read_dbf_version_from_config()
-
-   cre_all_dbfs( _ver )
-
-   RETURN .T.
-*/
-
 
 // ------------------------------------------------------
-// open exclusive, open_index - otvoriti index
+// open exclusive, lOpenIndex - otvoriti index
 // ------------------------------------------------------
 /*
-// FUNCTION reopen_shared( dbf_table, open_index )
+// FUNCTION reopen_shared( dbf_table, lOpenIndex )
 
-   RETURN reopen_dbf( .F., dbf_table, open_index )
+   RETURN reopen_dbf( .F., dbf_table, lOpenIndex )
 */
 
 
-FUNCTION reopen_exclusive( dbf_table, open_index )
+FUNCTION reopen_exclusive( xArg1, lOpenIndex )
 
-   RETURN reopen_dbf( .T., dbf_table, open_index )
+   RETURN reopen_dbf( .T., xArg1, lOpenIndex )
 
 
 
-FUNCTION reopen_dbf( excl, dbf_table, open_index )
+FUNCTION reopen_dbf( excl, xArg1, lOpenIndex )
 
    LOCAL _a_dbf_rec, _err
    LOCAL _dbf
    LOCAL lRet
    LOCAL cMsg
 
-   IF open_index == NIL
-      open_index := .T.
+   IF lOpenIndex == NIL
+      lOpenIndex := .T.
    ENDIF
 
-   _a_dbf_rec  := get_a_dbf_rec( dbf_table, .T. )
+   IF ValType( xArg1 ) == "H"
+      _a_dbf_rec := xArg1
+   ELSE
+      _a_dbf_rec  := get_a_dbf_rec( xArg1, .T. )
+   ENDIF
+
    IF _a_dbf_rec[ "sql" ]
       RETURN .F.
    ENDIF
+
 
    SELECT ( _a_dbf_rec[ "wa" ] )
    USE
@@ -277,7 +271,7 @@ FUNCTION reopen_dbf( excl, dbf_table, open_index )
    BEGIN SEQUENCE WITH {| err| Break( err ) }
 
       dbUseArea( .F., DBFENGINE, _dbf, _a_dbf_rec[ "alias" ], iif( excl, .F., .T. ), .F. )
-      IF open_index
+      IF lOpenIndex
          IF File( ImeDbfCdx( _dbf ) )
             dbSetIndex( ImeDbfCDX( _dbf ) )
          ENDIF
@@ -287,8 +281,8 @@ FUNCTION reopen_dbf( excl, dbf_table, open_index )
    RECOVER USING _err
 
       cMsg := "tbl:" + _a_dbf_rec[ "table" ] + " : " + _err:description +  " excl:" + ToStr( excl )
-      error_bar( "reopen_dbf" + _a_dbf_rec[ "table" ], cMsg )
-      log_write( "ERR-reopen_dbf " + cMsg, 2 )
+      info_bar( "reop_dbf:" + _a_dbf_rec[ "table" ], cMsg )
+      ?E "ERR-reopen_dbf " + cMsg
       lRet := .F.
 
    END SEQUENCE
@@ -297,28 +291,28 @@ FUNCTION reopen_dbf( excl, dbf_table, open_index )
 
 
 // ------------------------------------------------------
-// zap, then open shared, open_index - otvori index
+// zap, then open shared, lOpenIndex - otvori index
 // ------------------------------------------------------
-FUNCTION reopen_exclusive_and_zap( cDbfTable, open_index )
+FUNCTION reopen_exclusive_and_zap( cDbfTable, lOpenIndex )
 
    LOCAL _err
 
-   IF open_index == NIL
-      open_index := .T.
+   IF lOpenIndex == NIL
+      lOpenIndex := .T.
    ENDIF
 
 
    BEGIN SEQUENCE WITH {| err | Break( err ) }
 
-      reopen_dbf( .T., cDbfTable, open_index )
+      reopen_dbf( .T., cDbfTable, lOpenIndex )
       ZAP
-      reopen_dbf( .F., cDbfTable, open_index )
+      reopen_dbf( .F., cDbfTable, lOpenIndex )
 
    RECOVER USING _err
 
-      log_write( "ERROR-REXCL-ZAP " + _err:Description, 3 )
-      error_bar( "reopen_dbf_zap:" + cDbfTable, cDbfTable + " / " + _err:Description )
-      reopen_dbf( .F., cDbfTable, open_index )
+      ?E "ERROR-REXCL-ZAP ", _err:Description
+      info_bar( "reop_dbf_zap:" + cDbfTable, cDbfTable + " / " + _err:Description )
+      reopen_dbf( .F., cDbfTable, lOpenIndex )
       zapp()
 
    END SEQUENCE
@@ -326,30 +320,47 @@ FUNCTION reopen_exclusive_and_zap( cDbfTable, open_index )
    RETURN .T.
 
 
-FUNCTION open_exclusive_zap_close( cDbfTable, open_index )
+FUNCTION open_exclusive_zap_close( xArg1, lOpenIndex )
 
+   LOCAL cDbfTable
    LOCAL _err
 
-   IF open_index == NIL
-      open_index := .T.
+   IF ValType( xArg1 ) == "H"
+      cDbfTable := xArg1[ "table" ]
+   ELSE
+      cDbfTable := xArg1
+   ENDIF
+
+
+   IF lOpenIndex == NIL
+      lOpenIndex := .T.
    ENDIF
 
 
    BEGIN SEQUENCE WITH {| err | Break( err ) }
+      IF ValType( xArg1 ) == "H"
+         reopen_dbf( .T., xArg1, lOpenIndex )
+      ELSE
+         reopen_dbf( .T., cDbfTable, lOpenIndex )
+      ENDIF
 
-      reopen_dbf( .T., cDbfTable, open_index )
       ZAP
       USE
 
    RECOVER USING _err
 
-      log_write( "ERROR-OXCL-ZAP " + _err:Description, 3 )
-      error_bar( "open_zap_close:" + cDbfTable, cDbfTable + " / " + _err:Description )
-      reopen_dbf( .F., cDbfTable, open_index )
+      ?E "ERR-OXCL-ZAP ", cDbfTable, _err:Description
+      info_bar( "op_zap_clo:" + cDbfTable, cDbfTable + " / " + _err:Description )
+      IF ValType( xArg1 ) == "H"
+         reopen_dbf( .T., xArg1, lOpenIndex )
+      ELSE
+         reopen_dbf( .T., cDbfTable, lOpenIndex )
+      ENDIF
       zapp()
       USE
 
    END SEQUENCE
+
 
    RETURN .T.
 
@@ -391,8 +402,7 @@ FUNCTION my_dbf_pack( lOpenUSharedRezimu )
    ENDIF
 
    IF !lRet .OR. lOpenUSharedRezimu
-      // ako je neuspjesan bio reopetn u ekskluzivnom režimu obavezno otvoriti ponovo
-      lRet := reopen_dbf( .F., cAlias, .T. )
+      lRet := reopen_dbf( .F., cAlias, .T. ) // ako je neuspjesan bio reopen u ekskluzivnom režimu obavezno otvoriti ponovo
    ENDIF
 
    IF Alias() <> cAlias
@@ -417,10 +427,7 @@ FUNCTION pakuj_dbf( a_dbf_rec, lSilent )
       SELECT ( a_dbf_rec[ "wa" ] )
       my_use_temp( a_dbf_rec[ "alias" ], my_home() + a_dbf_rec[ "table" ], .F., .T. )
 
-      IF ! lSilent
-         Box( "#Molimo sačekajte...", 7, 75 )
-         @ m_x + 7, m_y + 2 SAY8 "Pakujem tabelu radi brzine, molim sačekajte ..."
-      ENDIF
+      ?E "PACK-TABELA", a_dbf_rec[ "table" ]
 
       PACK
 
@@ -433,9 +440,6 @@ FUNCTION pakuj_dbf( a_dbf_rec, lSilent )
          ENDIF
       ENDDO
 
-      IF ! lSilent
-         BoxC()
-      ENDIF
 
    RECOVER using _err
       log_write( "NOTIFY: PACK neuspjesan dbf: " + a_dbf_rec[ "table" ] + "  " + _err:Description, 3 )
@@ -521,7 +525,6 @@ FUNCTION count_deleted( nCnt, nDel )
 
    LOCAL oError
 
-   // BEGIN SEQUENCE WITH {| err| Break( err ) }
    SET DELETED OFF
    SET ORDER TO TAG "DEL"
    IF Empty( ordKey() )
@@ -532,12 +535,9 @@ FUNCTION count_deleted( nCnt, nDel )
       COUNT TO nDel
       nCnt := RecCount()
    ENDIF
-   // RECOVER USING  oError
-   // ?E "dbf_open_temp_and_count set order to tag DEL ", oError:Description
-
-   // END SEQUENCE
 
    RETURN .T.
+
 
 STATIC FUNCTION delete_empty_records( bKeyBlock, cEmptyRec, nCnt2 )
 

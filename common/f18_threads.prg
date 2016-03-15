@@ -42,14 +42,14 @@ PROCEDURE init_thread( cInfo )
             s_nCounter++
             hb_mutexUnlock( s_hMutex )
          ENDIF
-         IF s_nCounter > 50
+         IF s_nCounter > 60
             IF hb_mutexLock( s_hMutex )
                s_nCounter := 0
                hb_mutexUnlock( s_hMutex )
                ?E "thread count>7 (", AllTrim( Str( s_nThreadCount ) ), "), sacekati:", cInfo
             ENDIF
          ENDIF
-         hb_idleSleep( 1.5 )
+         hb_idleSleep( 2 )
          LOOP
       ELSE
          EXIT

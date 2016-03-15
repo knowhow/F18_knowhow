@@ -344,6 +344,7 @@ FUNCTION fill_dbf_from_server( dbf_table, sql_query, sql_fetch_time, dbf_write_t
    LOCAL aDbfRec, aDbfFields, cSyncalias, cFullDbf, cFullIdx
    LOCAL nI, cMsg, cCallMsg := "", oError
    LOCAL lRet := .T.
+   LOCAL bField, xField, xSqlField := "xsql"
 
    IF lShowInfo == NIL
       lShowInfo := .F.
@@ -359,7 +360,7 @@ FUNCTION fill_dbf_from_server( dbf_table, sql_query, sql_fetch_time, dbf_write_t
    log_write( "fill_dbf_from_server START", 9 )
 
 #ifdef F18_DEBUG
-      ?E "fill_dbf:", dbf_table, "sql lastrec:", oDataSet:LastRec(), "a_dbf_rec dbf_fields: ", pp( aDbfFields )
+   ?E "fill_dbf:", dbf_table, "sql lastrec:", oDataSet:LastRec(), "a_dbf_rec dbf_fields: ", pp( aDbfFields )
 #endif
 
    dbf_write_time := Seconds()
@@ -407,12 +408,15 @@ FUNCTION fill_dbf_from_server( dbf_table, sql_query, sql_fetch_time, dbf_write_t
                ENDIF
             ENDIF
 #endif
+            bField := FieldWBlock( cField, aDbfRec[ 'wa' ] + 1000 )
+            xField := Eval( bField )
+            xSqlField := oDataSet:FieldGet( oDataSet:FieldPos( cField ) )
 
-            IF ValType( Eval( FieldBlock( cField ) ) ) $ "CM"
-               Eval( FieldBlock( cField ), hb_UTF8ToStr( oDataSet:FieldGet( oDataSet:FieldPos( cField ) ) ) )
-            ELSE
-               Eval( FieldBlock( cField ), oDataSet:FieldGet( oDataSet:FieldPos( cField ) ) )
+            IF ValType( xField ) $ "CM" .AND. F18_DBF_ENCODING == "CP852"
+               xSqlField := hb_UTF8ToStr( xSqlField )
             ENDIF
+
+            Eval( bField, xSqlField )
 
          NEXT
 
@@ -428,9 +432,10 @@ FUNCTION fill_dbf_from_server( dbf_table, sql_query, sql_fetch_time, dbf_write_t
 
    RECOVER USING oError
 
-altd()
+      AltD()
       LOG_CALL_STACK cCallMsg
-      cCallMsg := "fill_dbf ERROR: " + aDbfRec[ "table" ] + " / " + oError:description + " " + oError:operation + " " + cField + " " + cCallMsg + ;
+      cCallMsg := "fill_dbf ERROR: " + aDbfRec[ "table" ] + " / " + ;
+           oError:description + " " + oError:operation + " dbf field: " + cField + "  xSqlValue: " +  hb_valToStr( xSqlField ) + cCallMsg + ;
          " / alias: " + Alias() + " reccount: " + AllTrim( Str( RecCount() ) )
       ?E cCallMsg
       error_bar( "fill_dbf", cCallMsg )

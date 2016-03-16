@@ -112,7 +112,8 @@
 #define F18_COLOR_INVERT           hb_ColorIndex(F18_COLOR_NORMAL, 4)+","+hb_ColorIndex(F18_COLOR_NORMAL, 3)+","+hb_ColorIndex(F18_COLOR_NORMAL, 2)+","+hb_ColorIndex(F18_COLOR_NORMAL, 1)+","+hb_ColorIndex(F18_COLOR_NORMAL, 0)
 #define F18_COLOR_INFO_PANEL       hb_ColorIndex(SetColor(), 0)
 #define F18_COLOR_ERROR_PANEL      hb_ColorIndex(SetColor(), 2)
-#define F18_COLOR_NAGLASI      hb_ColorIndex(SetColor(), 1)
+#define F18_COLOR_NAGLASENO        "GR+/B"
+#define F18_COLOR_NAGLASENO_2      "R/N"
 
 #define F18_COLOR_ORGANIZACIJA     hb_ColorIndex(F18_COLOR_NORMAL, 4)+","+hb_ColorIndex(F18_COLOR_NORMAL, 3)+","+hb_ColorIndex(F18_COLOR_NORMAL, 2)+","+hb_ColorIndex(F18_COLOR_NORMAL, 1)+","+hb_ColorIndex(F18_COLOR_NORMAL, 0)
 

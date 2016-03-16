@@ -12,6 +12,7 @@
 #include "f18.ch"
 
 
+
 FUNCTION pripremi_naslovni_ekran( oApp )
 
    set_global_screen_vars()
@@ -26,9 +27,9 @@ FUNCTION pripremi_naslovni_ekran( oApp )
 
 
 #ifdef __PLATFORM__DARWIN
-   SET KEY K_F12 TO show_insert_over_stanje( .T. )
+   SET KEY K_F12 TO  swap_insert_over_stanje()
 #else
-   SET KEY K_INS TO show_insert_over_stanje( .T. )
+   SET KEY K_INS TO  swap_insert_over_stanje()
 #endif
 
    RETURN NIL
@@ -50,13 +51,13 @@ FUNCTION crtaj_naslovni_ekran( lClear )
 
    DispBox( 2, 0, 4, _max_cols - 1, B_DOUBLE + BOX_CHAR_BACKGROUND_HEAD, F18_COLOR_NORMAL )
 
-   IF fBox
+   IF lClear
       DispBox( 5, 0, _max_rows - 1, _max_cols - 1, B_DOUBLE + BOX_CHAR_BACKGROUND, F18_COLOR_INVERT  )
    ENDIF
 
    @ 3, 1 SAY PadC( gNaslov, _max_cols - 8 ) COLOR F18_COLOR_NORMAL
 
-   show podaci_organizacija()
+   show_podaci_organizacija()
 
    @ 4, 5 SAY ""
    show_insert_over_stanje()
@@ -67,13 +68,17 @@ FUNCTION crtaj_naslovni_ekran( lClear )
    RETURN .T.
 
 
-STATIC FUNCTION show podaci_organizacija()
+STATIC FUNCTION show_podaci_organizacija()
 
-   @ 0, 15 SAY AllTrim( gTS ) + " : "
+   @ 0, 15 SAY AllTrim( gTS ) + " :"
    @ Row(), Col() + 2  SAY AllTrim( gNFirma ) + ", baza (" + my_server_params()[ "database" ] + ")" ;
-       COLOR F18_COLOR_NAGLASENO
+      COLOR IIF( in_tekuca_godina(), F18_COLOR_NAGLASENO, F18_COLOR_NAGLASENO_2 )
 
    RETURN .T.
+
+
+FUNCTION swap_insert_over_stanje()
+   RETURN show_insert_over_stanje( .T. )
 
 FUNCTION show_insert_over_stanje( lSWap )
 

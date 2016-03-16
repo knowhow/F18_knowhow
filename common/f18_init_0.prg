@@ -16,7 +16,11 @@ FUNCTION tekuci_modul()
    RETURN gModul
 
 FUNCTION tekuca_sezona()
-   RETURN my_server_params()[ "database" ]
+   RETURN RIGHT( my_server_params()[ "database" ], 4 )
+
+FUNCTION in_tekuca_godina()
+   altd()
+   RETURN VAL( tekuca_sezona() ) == YEAR( Date() )
 
 
 FUNCTION start_f18_program_module( oApp, lSezone )
@@ -38,7 +42,7 @@ FUNCTION start_f18_program_module( oApp, lSezone )
 
    pripremi_naslovni_ekran( oApp )
    crtaj_naslovni_ekran( .T. )
-   show_insert_over_stanje()
+
 
    RETURN .T.
 

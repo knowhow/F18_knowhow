@@ -142,7 +142,7 @@ METHOD gProc( Ch )
 #else
    CASE ( Ch == K_INS )
 #endif
-      show_insert_over_stanje()
+      show_insert_over_stanje( .T. )
       RETURN DE_CONT
 
    CASE Ch == Asc( "i" ) .OR. Ch == Asc( "I" )

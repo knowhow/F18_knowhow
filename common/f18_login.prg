@@ -361,6 +361,7 @@ METHOD F18Login:promjena_sezone( server_param, cDatabase, cSezona )
 
    f18_ini_config_write( "sezona", @hParams, .T. )
 
+
    RETURN _ok
 
 

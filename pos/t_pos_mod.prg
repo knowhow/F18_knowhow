@@ -124,7 +124,7 @@ FUNCTION pos_main_menu_level( KLevel, Fx, Fy )
 
    ENDCASE
 
-   RETURN
+   RETURN .T.
 
 
 

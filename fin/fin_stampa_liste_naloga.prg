@@ -213,11 +213,9 @@ FUNCTION fin_stampa_liste_naloga()
    FF
    ENDPRINT
 
-   RETURN
+   RETURN .T.
 
-// --------------------------------------------------
-// izvjestaj "Dnevnik naloga"
-// --------------------------------------------------
+
 FUNCTION DnevnikNaloga()
 
    LOCAL cMjGod := ""
@@ -228,7 +226,7 @@ FUNCTION DnevnikNaloga()
    PRIVATE fK4 := fetch_metric( "dnevnik_naloga_fk4", my_user(), "N" )
    PRIVATE gnLOst := fetch_metric( "dnevnik_naloga_otv_stavke", my_user(), 0 )
    PRIVATE gPotpis := fetch_metric( "dnevnik_naloga_potpis", my_user(), "N" )
-   PRIVATE nColIzn := 20
+
 
    dOd := CToD( "01.01." + Str( Year( Date() ), 4 ) )
    dDo := Date()

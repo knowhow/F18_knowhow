@@ -35,12 +35,12 @@ FUNCTION pripremi_naslovni_ekran( oApp )
 
 
 
-FUNCTION crtaj_naslovni_ekran( fBox )
+FUNCTION crtaj_naslovni_ekran( lClear )
 
    LOCAL _max_cols := MAXCOLS()
    LOCAL _max_rows := MAXROWS()
 
-   IF fBox
+   IF lClear
       CLEAR
    ENDIF
 
@@ -56,18 +56,22 @@ FUNCTION crtaj_naslovni_ekran( fBox )
 
    @ 3, 1 SAY PadC( gNaslov, _max_cols - 8 ) COLOR F18_COLOR_NORMAL
 
-   podaci_organizacija()
+   show podaci_organizacija()
 
    @ 4, 5 SAY ""
-
    show_insert_over_stanje()
+
+
+   @ 0, MAXCOLS() - 11 SAY "bring.out" COLOR F18_COLOR_NORMAL
 
    RETURN .T.
 
 
-STATIC FUNCTION podaci_organizacija()
+STATIC FUNCTION show podaci_organizacija()
 
-   @ 0, 15 SAY AllTrim( gTS ) + " : " + AllTrim( gNFirma ) + ", baza (" + my_server_params()[ "database" ] + ")"
+   @ 0, 15 SAY AllTrim( gTS ) + " : "
+   @ Row(), Col() + 2  SAY AllTrim( gNFirma ) + ", baza (" + my_server_params()[ "database" ] + ")" ;
+       COLOR F18_COLOR_NAGLASENO
 
    RETURN .T.
 
@@ -96,8 +100,6 @@ FUNCTION show_insert_over_stanje( lSWap )
 
    @ 0, MAXCOLS() - 20 SAY  cState COLOR F18_COLOR_INVERT
 
-
-   @ 0, MAXCOLS() - 11 SAY "bring.out" COLOR F18_COLOR_NORMAL
 
    SetPos( nX, nY )
 

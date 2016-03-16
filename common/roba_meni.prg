@@ -46,9 +46,6 @@ FUNCTION sif_roba_tarife_koncij_sast()
    AAdd( _opcexe, {|| P_SifK() } )
 
 
-   AAdd( _opc, "9. strings - karakteristike " )
-   AAdd( _opcexe, {|| p_strings() } )
-
 
    my_close_all_dbf()
    OFmkRoba()

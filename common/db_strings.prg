@@ -21,7 +21,7 @@ FUNCTION p_strings( cId, dx, dy )
 
    IF !spec_funkcije_sifra( "STRING" )
       MsgBeep( "Opcija nedostupna !!!" )
-      RETURN
+      RETURN .F.
    ENDIF
 
    O_STRINGS

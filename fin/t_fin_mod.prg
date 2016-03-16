@@ -98,13 +98,8 @@ METHOD set_module_gvars()
 
    fin_read_params()
 
-   PUBLIC gModul
-   PUBLIC gTema
-   PUBLIC gGlBaza
 
    gModul := "FIN"
-   gTema := "OSN_MENI"
-   gGlBaza := "SUBAN.DBF"
 
    fin_params( .T. )
 

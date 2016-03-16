@@ -537,8 +537,7 @@ METHOD set_module_gvars()
 
    PUBLIC gUVarPP := "M"
 
-   PUBLIC gModul := "FAKT"
-   gGlBaza := "FAKT.DBF"
+   gModul := "FAKT"
 
    gRobaBlock := {| Ch| FaRobaBlock( Ch ) }
    gPartnBlock := NIL

@@ -58,20 +58,14 @@ FUNCTION epdv_parametri()
 // ------------------------------------
 FUNCTION epdv_set_params()
 
-   // procitaj globalne - kparams
-   read_epdv_gl_params()
-
-   // napuni sifrarnik tarifa
-   epdv_set_sif_tarifa()
-
-   // napuni sifk radi unosa partnera - rejon
-   epdv_set_sif_partneri()
+   read_epdv_gl_params()  // procitaj globalne - kparams
+   epdv_set_sif_tarifa() // napuni sifarnik tarifa
+   epdv_set_sif_partneri() // napuni sifk radi unosa partnera - rejon
 
    RETURN .T.
 
 
-// --------------------------------------
-// --------------------------------------
+
 FUNCTION ed_g_params()
 
    gPIC_IZN := PadR( gPIC_IZN, 20 )
@@ -138,7 +132,7 @@ FUNCTION ed_g_params()
    gPIC_CIJ := AllTrim( gPIC_CIJ )
 
    IF LastKey() <> K_ESC
-      write_g_params()
+      epdv_write_gparams()
    ENDIF
 
    RETURN
@@ -172,9 +166,8 @@ FUNCTION read_epdv_gl_params()
    RETURN
 
 
-// ---------------------------
-// ---------------------------
-FUNCTION write_g_params()
+
+FUNCTION epdv_write_gparams()
 
    set_metric( "epdv_zaokruzenje_iznosa", nil, gZAO_IZN )
    set_metric( "epdv_zaokruzenje_cijene", nil, gZAO_CIJ )
@@ -190,7 +183,7 @@ FUNCTION write_g_params()
    set_metric( "epdv_konto_ulazni_pdv", nil, gkt_updv )
    set_metric( "epdv_konto_izlazni_pdv", nil, gkt_ipdv )
 
-   RETURN
+   RETURN .T.
 
 
 // ---------------------------------------------------------------

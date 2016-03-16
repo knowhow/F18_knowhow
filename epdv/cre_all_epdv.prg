@@ -50,7 +50,6 @@ FUNCTION cre_all_epdv( ver )
    AFTER_CREATE_INDEX
 
 
-   // daj mi polja za pdv
    aDbf := get_pdv_fields()
 
    _alias := "PDV"
@@ -75,7 +74,6 @@ FUNCTION cre_all_epdv( ver )
 
 
 
-   //  polja za p_kif
    aDbf := get_kif_fields()
 
    _alias := "P_KIF"
@@ -91,9 +89,7 @@ FUNCTION cre_all_epdv( ver )
    // SG_KIF, SG_KUF
    // --------------------------------------
 
-   //  polja za sg_kuf
-   aDbf := get_sg_fields()
-
+   aDbf := get_sg_fields() //  polja za sg_kuf
    _alias := "SG_KUF"
    _table_name := "epdv_sg_kuf"
 
@@ -102,9 +98,8 @@ FUNCTION cre_all_epdv( ver )
    CREATE_INDEX( "naz", "id", _alias )
    AFTER_CREATE_INDEX
 
-   // daj mi polja za sg_kif
-   aDbf := get_sg_fields()
 
+   aDbf := get_sg_fields()
    _alias := "SG_KIF"
    _table_name := "epdv_sg_kif"
 

@@ -228,7 +228,6 @@ METHOD set_module_gvars()
 
    cOdradjeno := "D"
 
-   gGlBaza := "KALK.DBF"
 
    c10T1 := fetch_metric( "kalk_dokument_10_trosak_1", nil, c10T1 )
    c10T2 := fetch_metric( "kalk_dokument_10_trosak_2", nil, c10T2 )

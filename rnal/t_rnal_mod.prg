@@ -180,13 +180,9 @@ METHOD set_module_gvars()
 
    ::super:setTGVars()
 
-   PUBLIC gModul
-   PUBLIC gTema
-   PUBLIC gGlBaza
 
    gModul := "RNAL"
-   gTema := "OSN_MENI"
-   gGlBaza := "DOCS.DBF"
+
 
    // rules block i cols
    PUBLIC aRuleSpec := get_rule_field_cols_rnal()

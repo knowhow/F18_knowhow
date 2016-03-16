@@ -95,13 +95,8 @@ METHOD set_module_gvars()
    SELECT ( F_PARAMS )
    USE
 
-   PUBLIC gModul
-   PUBLIC gTema
-   PUBLIC gGlBaza
 
    gModul := "EPDV"
-   gTema := "OSN_MENI"
-   gGlBaza := "PDV.DBF"
 
 
    RETURN .T.

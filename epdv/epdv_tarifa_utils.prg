@@ -84,4 +84,4 @@ STATIC FUNCTION _append_tarifa( tar_id, naziv, iznos )
 
    ENDIF
 
-   RETURN
+   RETURN .T.

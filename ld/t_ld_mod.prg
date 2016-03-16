@@ -139,6 +139,5 @@ METHOD set_module_gvars()
 
    LDPoljaINI()
 
-   gGlBaza := "LD.DBF"
 
    RETURN .T.

@@ -87,11 +87,6 @@ METHOD programski_modul_osnovni_meni()
 METHOD set_module_gvars()
 
 
-
-   PUBLIC gModul
-   PUBLIC gTema
-   PUBLIC gGlBaza
-
    PUBLIC gDirPor := ""
    PUBLIC gNalPr := "41#42"
    PUBLIC gCijena := "2"
@@ -121,7 +116,5 @@ METHOD set_module_gvars()
    gPotpis := fetch_metric( "mat_rpt_potpis", my_user(), gPotpis )
 
    gModul := "MAT"
-   gTema := "OSN_MENI"
-   gGlBaza := "SUBAN.DBF"
 
-   RETURN
+   RETURN .T.

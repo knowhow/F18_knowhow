@@ -106,7 +106,6 @@ METHOD set_module_gvars()
    PUBLIC gDrugaVal := "N"
    PUBLIC gVarDio := "N"
    PUBLIC gDatDio := CToD( "01.01.1999" )
-   PUBLIC gGlBaza := "OS.DBF"
    PUBLIC gMetodObr := "1"
    PUBLIC gOsSii := "O"
 

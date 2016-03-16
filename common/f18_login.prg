@@ -20,7 +20,7 @@ CLASS F18Login
    METHOD New()
    METHOD main_db_login( server_param, force_connect )
    METHOD login_odabir_organizacije()
-   METHOD promjena_sezone()
+   METHOD promjena_sezone( server_param, cDatabase, cSezona )
    METHOD promjena_sezone_box()
    METHOD browse_odabir_organizacije()
    METHOD manual_enter_company_data()
@@ -100,7 +100,7 @@ METHOD F18Login:included_databases_for_user()
 
 METHOD F18Login:connect( params, conn_type, silent )
 
-   LOCAL _connected
+   LOCAL lConnected
 
    IF silent == NIL
       silent := .F.
@@ -114,9 +114,9 @@ METHOD F18Login:connect( params, conn_type, silent )
       my_server_close()
    ENDIF
 
-   _connected := my_server_login( params, conn_type )
+   lConnected := my_server_login( params, conn_type )
 
-   IF _connected
+   IF lConnected
       IF conn_type == 0
          ::lMainDbSpojena := .T.
       ELSE
@@ -126,25 +126,25 @@ METHOD F18Login:connect( params, conn_type, silent )
       ENDIF
    ENDIF
 
-   RETURN _connected
+   RETURN lConnected
 
 
 
 METHOD F18Login:disconnect( nConn )
 
-   LOCAL _disconn
+   LOCAL lDisconnected
 
    IF nConn == nil
       nConn := 1
    ENDIF
 
    IF nConn == 0
-      _disconn := server_main_db_close()
+      lDisconnected := server_main_db_close()
    ELSE
-      _disconn := my_server_close()
+      lDisconnected := my_server_close()
    ENDIF
 
-   RETURN _disconn
+   RETURN lDisconnected
 
 
 
@@ -326,8 +326,8 @@ METHOD F18Login:promjena_sezone( server_param, cDatabase, cSezona )
       RETURN .F.
    ENDIF
 
-   // bringout_2016 => bringout_2015
-   cTrenutnaSezona := Right( cTrenutnaDatabase, 4 )
+
+   cTrenutnaSezona := Right( cTrenutnaDatabase, 4 ) // bringout_2016 => bringout_2015
    cSaveDatabase := server_param[ "database" ]
    server_param[ "database" ] := StrTran( cTrenutnaDatabase, "_" + cTrenutnaSezona, "_" + cNovaSezona )
 

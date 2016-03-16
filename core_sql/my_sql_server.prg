@@ -493,12 +493,12 @@ FUNCTION _get_server_params_from_config()
    _ini_params[ "session" ] := nil
 
    IF !f18_ini_config_read( F18_SERVER_INI_SECTION + iif( test_mode(), "_test", "" ), @_ini_params, .T. )
-      MsgBeep( "problem ini read" )
+      err_bar( "ini", "problem f18 ini read" )
    ENDIF
 
    s_psqlServer_params := hb_Hash() // definisi parametre servera
 
-   // preuzmi iz ini-ja
+
    FOR EACH _key in _ini_params:Keys
       s_psqlServer_params[ _key ] := _ini_params[ _key ]
    NEXT

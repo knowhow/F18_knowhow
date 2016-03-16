@@ -94,7 +94,7 @@ FUNCTION program_module_menu( arg_v )
    LOCAL cOldColors
 
    info_bar( "init", "gen program_module_menu start" )
-   
+
    init_parameters_cache()
    set_screen_dimensions()
 
@@ -260,10 +260,6 @@ STATIC FUNCTION set_program_module_menu( menuop, menuexec, p3, p4, p5, p6, p7 )
    AAdd( menuop, " B. backup podataka" )
    AAdd( menuexec, {|| f18_backup_data() } )
 
-  /* TODO: izbaciti
-   AAdd( menuop, " F. forsirana sinhronizacija podataka" )
-   AAdd( menuexec, {|| F18AdminOpts():New():force_synchro_db() } )
-   */
 
    AAdd( menuop, " P. parametri aplikacije" )
    AAdd( menuexec, {|| set_parametre_f18_aplikacije() } )

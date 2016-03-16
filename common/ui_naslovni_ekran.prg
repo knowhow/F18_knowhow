@@ -26,9 +26,9 @@ FUNCTION pripremi_naslovni_ekran( oApp )
 
 
 #ifdef __PLATFORM__DARWIN
-   SET KEY K_F12 TO show_insert_over_stanje()
+   SET KEY K_F12 TO show_insert_over_stanje( .T. )
 #else
-   SET KEY K_INS TO show_insert_over_stanje()
+   SET KEY K_INS TO show_insert_over_stanje( .T. )
 #endif
 
    RETURN NIL
@@ -71,21 +71,31 @@ STATIC FUNCTION podaci_organizacija()
 
    RETURN .T.
 
-FUNCTION show_insert_over_stanje()
+FUNCTION show_insert_over_stanje( lSWap )
 
    LOCAL nX
    LOCAL nY
+   LOCAL lNewState := ReadInsert()
+   LOCAL cState
 
+   hb_default( @lSwap, .F. )
    nX := Row()
    nY := Col()
 
-   IF ReadInsert( !ReadInsert() )
-      //SetCursor( 1 )
-      @ 0, MAXCOLS() - 20 SAY '< OVER >' COLOR F18_COLOR_INVERT
-   ELSE
-      //SetCursor( 2 )
-      @ 0, MAXCOLS() - 20 SAY  '< INS  >' COLOR F18_COLOR_INVERT
+   IF lSwap
+      lNewState := !ReadInsert()
+      ReadInsert( lNewState )
    ENDIF
+
+   IF ReadInsert()
+      cState := '< INS  >'
+   ELSE
+      cState := '< OVER >'
+   ENDIF
+
+
+   @ 0, MAXCOLS() - 20 SAY  cState COLOR F18_COLOR_INVERT
+
 
    @ 0, MAXCOLS() - 11 SAY "bring.out" COLOR F18_COLOR_NORMAL
 

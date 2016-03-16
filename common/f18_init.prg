@@ -124,7 +124,7 @@ FUNCTION post_login()
    set_hot_keys()
 
    get_log_level_from_params()
-   crtaj_naslovni_ekran( lClear )
+   crtaj_naslovni_ekran( .F. )
 
    RETURN .T.
 

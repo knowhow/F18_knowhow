@@ -27,6 +27,10 @@ FUNCTION kalk_unos_dok_pr()
    LOCAL cIdFirma, cIdVd, cBrDok
    LOCAL nNV
 
+   IF is_legacy_kalk_pr()
+      RETURN leg_Get1_PR()
+   ENDIF
+
    SELECT F_SAST
    IF !Used()
       O_SAST
@@ -155,6 +159,10 @@ FUNCTION kalk_unos_dok_pr()
 FUNCTION Get2_PR()
 
    LOCAL cSPom := " (%,A,U,R) "
+
+   IF is_legacy_kalk_pr()
+      RETURN leg_Get2_PR()
+   ENDIF
 
    IF nRbr > 9
       RETURN K_ENTER

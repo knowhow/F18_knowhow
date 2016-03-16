@@ -1311,9 +1311,8 @@ FUNCTION kalk_edit_priprema( fNovi, atrib )
 
 
 
-/* fn Get1()
- *  param fnovi
- *  brief Prva strana/prozor maske unosa/ispravke stavke dokumenta
+/*
+ *  Prva strana/prozor maske unosa/ispravke stavke dokumenta
  */
 
 FUNCTION kalk_unos_1( fNovi, atrib )
@@ -1432,25 +1431,20 @@ FUNCTION ispisi_naziv_sifre( area, id, x, y, len )
 
 
 
-/*! fn Get2()
+/* Get2()
  *  param fnovi
- *  \brief Druga strana/prozor maske unosa/ispravke stavke dokumenta
+ *  Druga strana/prozor maske unosa/ispravke stavke dokumenta
  */
 
 FUNCTION kalk_unos_2( fNovi )
 
-   IF _idvd $ "10"
-      IF !IsPDV()
-         RETURN Get2_10()
-      ENDIF
-   ELSEIF _idvd == "RN"
+   IF _idvd == "RN"
       RETURN Get2_RN()
    ELSEIF _idvd == "PR"
       RETURN Get2_PR()
    ENDIF
 
    RETURN K_ESC
-
 
 
 

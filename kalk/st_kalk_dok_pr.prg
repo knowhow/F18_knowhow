@@ -19,6 +19,10 @@ FUNCTION st_kalk_dokument_pr()
    LOCAL nCol1 := nCol2 := 0, nProc, nPom := 0
    LOCAL bProizvod
 
+   IF is_legacy_kalk_pr()
+      RETURN leg_StKalkPR()
+   ENDIF
+   
    PRIVATE nPrevoz, nCarDaz, nZavTr, nBankTr, nSpedTr, nMarza, nMarza2
 
    nStr := 0

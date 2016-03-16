@@ -16,8 +16,6 @@ STATIC cLinija
 STATIC nStranica := 0
 
 
-
-
 FUNCTION ld_specifikacija_neto_primanja_po_opcinama()
 
    LOCAL nC1 := 20

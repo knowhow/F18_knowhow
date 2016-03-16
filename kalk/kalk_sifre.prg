@@ -38,13 +38,6 @@ FUNCTION kalk_sifrarnik()
 
 
 
-FUNCTION kalk_serv_functions()
-
-   Msg( "Nije u upotrebi" )
-   closeret
-
-   RETURN
-
 
 FUNCTION KalkRobaBlock( Ch )
 
@@ -156,4 +149,3 @@ FUNCTION P_Objekti()
    p_sifra( F_OBJEKTI, 1, MAXROWS() -15, MAXCOLS() -20, "Objekti" )
 
    RETURN
-

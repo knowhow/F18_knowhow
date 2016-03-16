@@ -12,7 +12,6 @@
 #include "f18.ch"
 
 
-
 FUNCTION xml_node( cName, cData, lWrite )
 
    LOCAL cTmp

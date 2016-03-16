@@ -186,7 +186,7 @@ STATIC FUNCTION sif_sql_seek( cId, cIdBK, cUslovSrch, cNazSrch, fId_j, cOrderTag
    LOCAL _tezina := 0
 
    IF cId == NIL
-      RETURN
+      RETURN .F.
    ENDIF
 
    IF ValType( cId ) == "N"
@@ -480,7 +480,7 @@ STATIC FUNCTION ed_sql_sif( nDbf, cNaslov, bBlok, aZabrane, aZabIsp )
 
    ENDCASE
 
-   RETURN
+   RETURN DE_CONT
 
 
 
@@ -1006,10 +1006,10 @@ STATIC FUNCTION set_sif_vars()
 FUNCTION sifarnik_set_roba_defaults()
 
    IF Alias() <> "ROBA"
-      RETURN
+      RETURN .F.
    ENDIF
 
-   widtarifa := PadR( "PDV17", 6 )
+   wIdtarifa := PadR( "PDV17", 6 )
 
    RETURN .T.
 

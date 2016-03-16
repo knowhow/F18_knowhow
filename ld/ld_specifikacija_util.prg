@@ -95,7 +95,6 @@ STATIC FUNCTION _create_mtemp()
       ENDIF
    NEXT
 
-   // kreiraj tabelu
    dbCreate( my_home() + _table + ".dbf", _struct )
 
    IF !File( my_home() + _table + ".dbf" )

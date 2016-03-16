@@ -225,7 +225,7 @@ FUNCTION RptInteg( lFilter, lAutoSent )
  */
 FUNCTION RptSendEmail( lAuto )
 
-   // {
+
    LOCAL cScript
    LOCAL cPSite
    LOCAL cRptFile
@@ -239,7 +239,7 @@ FUNCTION RptSendEmail( lAuto )
    ENDIF
 
    // setuj varijable
-   GetSendVars( @cScript, @cPSite, @cRptFile )
+   //GetSendVars( @cScript, @cPSite, @cRptFile )
    // komanda je sljedeca
    cKom := cScript + " " + cPSite + " " + cRptFile
 
@@ -256,7 +256,7 @@ FUNCTION RptSendEmail( lAuto )
    RESTORE SCREEN FROM cRbScr
 
    RETURN
-// }
+
 
 
 /*! \fn GetSendVars(cScript)
@@ -267,10 +267,10 @@ FUNCTION RptSendEmail( lAuto )
 FUNCTION GetSendVars( cScript, cPSite, cRptFile )
 
    cScript := my_get_from_ini( "Ruby", "Err2Mail", "c:\sigma\err2mail.rb", EXEPATH )
-   cPSite := AllTrim( Str( gSqlSite ) )
+   cPSite := ""
    cRptFile := PRIVPATH + "outf.txt"
 
-   RETURN
+   RETURN .T.
 
 
 

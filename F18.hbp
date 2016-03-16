@@ -17,6 +17,7 @@ virm/*.prg
 common/*.prg
 core_ui2/*.prg
 core_sql/*.prg
+core_dbf/*.prg
 string/*.prg
 semafori/*.prg
 common_legacy/*.prg

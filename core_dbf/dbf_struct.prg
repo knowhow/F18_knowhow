@@ -11,12 +11,7 @@
 
 #include "f18.ch"
 
-/*! \fn SkratiAZaD(aStruct)
- *  \brief skrati matricu za polje D
-
- *  \code
- *  SkratiAZaD(@aStruct)
- *  \endcode
+/*  skrati matricu za polje D
 */
 FUNCTION SkratiAZaD( struct )
 

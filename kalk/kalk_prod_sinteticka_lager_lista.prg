@@ -1,19 +1,18 @@
 /*
- * This file is part of the bring.out FMK, a free and open source
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+ * This file is part of the bring.out knowhow ERP, a free and open source
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
 
-
 #include "f18.ch"
 
-// sinteticka lager lista prodavnice
-FUNCTION LLPS()
+
+FUNCTION sint_lager_lista_prodavnice()
 
    PicCDem := Replicate( "9", Val( gFPicCDem ) ) + gPicCDem
    PicDem := Replicate( "9", Val( gFPicDem ) ) + gPicDem
@@ -120,7 +119,7 @@ FUNCTION LLPS()
    SELECT kalk
 
    PRIVATE nTStrana := 0
-   PRIVATE bZagl := {|| ZaglLLPS( .T. ) }
+   PRIVATE bZagl := {|| Zaglsint_lager_lista_prodavnice( .T. ) }
 
    nTUlaz := nTIzlaz := 0
    nTMPVU := nTMPVI := nTNVU := nTNVI := 0
@@ -160,7 +159,7 @@ FUNCTION LLPS()
          SKIP
          LOOP
       ENDIF
-	
+
       IF !Empty( cGrupacija )
          IF cGrupacija <> roba->k1
             SKIP
@@ -175,7 +174,7 @@ FUNCTION LLPS()
                LOOP
             ENDIF
          ENDIF
-		
+
          IF lSMark .AND. SkLoNMark( "ROBA", cIdroba )
             SKIP
             LOOP
@@ -185,7 +184,7 @@ FUNCTION LLPS()
             SKIP
             LOOP
          ENDIF
-  		
+
          IF cTU == "N" .AND. roba->tip $ "TU"
             SKIP
             LOOP
@@ -197,7 +196,7 @@ FUNCTION LLPS()
                LOOP
             ENDIF
          ENDIF
-  		
+
          IF pu_i == "1"
             SumirajKolicinu( field->kolicina, 0, @nUlaz, 0 )
             nCol1 := PCol() + 1
@@ -316,7 +315,7 @@ FUNCTION LLPS()
 
 
 // zaglavlje sint.lager lista
-FUNCTION ZaglLLPS( lSint )
+FUNCTION Zaglsint_lager_lista_prodavnice( lSint )
 
    IF lSint == NIL
       lSint := .F.
@@ -346,4 +345,4 @@ FUNCTION ZaglLLPS( lSint )
    ? cText2
    ? cLine
 
-   RETURN
+   RETURN .T.

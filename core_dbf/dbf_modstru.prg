@@ -11,9 +11,7 @@
 #include "f18.ch"
 
 
-/*! \fn ModStru(ime_dbf, path, string_par)
- *  \brief procedura modifikacija struktura
- * string_par - .t. ako saljem string umjesto imena fajla
+/*  modifikacija struktura
  */
 
 FUNCTION modstru_form_file( chs_file )

@@ -13,7 +13,7 @@
 #include "f18.ch"
 
 // rekapitulacija finansijskog stanja po objektima
-FUNCTION RFLLP()
+FUNCTION Rfinansijsko_stanje_prodavnica()
 
    LOCAL nKolUlaz
    LOCAL nKolIzlaz
@@ -136,7 +136,7 @@ FUNCTION RFLLP()
    ?
 
    PRIVATE nTStrana := 0
-   PRIVATE bZagl := {|| ZaglRFLLP() }
+   PRIVATE bZagl := {|| ZaglRfinansijsko_stanje_prodavnica() }
 
    Eval( bZagl )
    nTUlaz := nTIzlaz := 0
@@ -160,7 +160,7 @@ FUNCTION RFLLP()
       DO WHILE !Eof() .AND. cIdFirma + cBroj == idFirma + pkonto .AND. IspitajPrekid()
          SELECT roba
          HSEEK kalk->idroba
- 		
+
          SELECT kalk
          IF cTU == "2" .AND.  roba->tip $ "UT"
             // prikaz dokumenata IP, a ne robe tipa "T"
@@ -244,7 +244,7 @@ FUNCTION RFLLP()
          ENDIF
          SKIP
       ENDDO
-	
+
       IF Round( nNVU - nNVI, 4 ) == 0 .AND. Round( nMPVU - nMPVI, 4 ) == 0
          LOOP
       ENDIF
@@ -253,7 +253,7 @@ FUNCTION RFLLP()
          FF
          Eval( bZagl )
       ENDIF
-	
+
       ? Str( ++nRbr, 4 ) + ".", PadR( cBroj, 11 )
       nCol1 := PCol() + 1
 
@@ -368,7 +368,7 @@ FUNCTION RFLLP()
 
 
 // zaglavlje izvjestaja
-FUNCTION ZaglRFLLP()
+FUNCTION ZaglRfinansijsko_stanje_prodavnica()
 
    Preduzece()
    P_12CPI

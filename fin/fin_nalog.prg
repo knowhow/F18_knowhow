@@ -11,6 +11,8 @@
 
 #include "f18.ch"
 
+STATIC s_nColIzn := 20
+
 MEMVAR M // linija - crtice koja se štampaju na izvještaju
 
 /*
@@ -239,6 +241,7 @@ FUNCTION fin_nalog_stampa( cInd, lAuto, dDatNal, oNalog )
    LOCAL aOpis := {}
    LOCAL _vrste_placanja
    LOCAL _fin_params := fin_params()
+   LOCAL nColI
 
 #ifdef F18_DEBUG_FIN_AZUR
    AltD() // F18_DEBUG_FIN_AZUR
@@ -404,7 +407,7 @@ FUNCTION fin_nalog_stampa( cInd, lAuto, dDatNal, oNalog )
          ELSE
             @ PRow(), PCol() + 1 SAY Space( 8 )
          ENDIF
-         nColIzn := PCol() + 1
+         s_nColIzn := PCol() + 1
 
       ENDIF
 
@@ -513,7 +516,7 @@ FUNCTION fin_nalog_stampa( cInd, lAuto, dDatNal, oNalog )
       P_NRED
 
       ?? "Z B I R   N A L O G A:"
-      @ PRow(), nColIzn  SAY nUkDugBHD PICTURE picBHD
+      @ PRow(), s_nColIzn  SAY nUkDugBHD PICTURE picBHD
       @ PRow(), PCol() + 1 SAY nUkPotBHD PICTURE picBHD
 
       IF gVar1 != "1"
@@ -765,7 +768,7 @@ FUNCTION PrenosDNal()
 
    ? m
    ? PadR( "UKUPNO NA STRANI " + AllTrim( Str( nStr ) ), 30 ) + ":"
-   @ PRow(), nColIzn  SAY nTSDugBHD PICTURE picBHD
+   @ PRow(), s_nColIzn  SAY nTSDugBHD PICTURE picBHD
    @ PRow(), PCol() + 1 SAY nTSPotBHD PICTURE picBHD
    IF gVar1 != "1"
       @ PRow(), PCol() + 1 SAY nTSDugDEM PICTURE picDEM
@@ -773,7 +776,7 @@ FUNCTION PrenosDNal()
    ENDIF
    ? m
    ? PadR( "DONOS SA PRETHODNE STRANE", 30 ) + ":"
-   @ PRow(), nColIzn  SAY nUkDugBHD - nTSDugBHD PICTURE picBHD
+   @ PRow(), s_nColIzn  SAY nUkDugBHD - nTSDugBHD PICTURE picBHD
    @ PRow(), PCol() + 1 SAY nUkPotBHD - nTSPotBHD PICTURE picBHD
    IF gVar1 != "1"
       @ PRow(), PCol() + 1 SAY nUkDugDEM - nTSDugDEM PICTURE picDEM
@@ -781,7 +784,7 @@ FUNCTION PrenosDNal()
    ENDIF
    ? m
    ? PadR( "PRENOS NA NAREDNU STRANU", 30 ) + ":"
-   @ PRow(), nColIzn  SAY nUkDugBHD PICTURE picBHD
+   @ PRow(), s_nColIzn  SAY nUkDugBHD PICTURE picBHD
    @ PRow(), PCol() + 1 SAY nUkPotBHD PICTURE picBHD
    IF gVar1 != "1"
       @ PRow(), PCol() + 1 SAY nUkDugDEM PICTURE picDEM
@@ -791,4 +794,4 @@ FUNCTION PrenosDNal()
    FF
    nTSDugBHD := nTSPotBHD := nTSDugDEM := nTSPotDEM := 0   // tekuca strana
 
-   RETURN
+   RETURN .T.

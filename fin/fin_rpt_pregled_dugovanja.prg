@@ -11,7 +11,6 @@
 
 #include "f18.ch"
 
-STATIC __par_len
 
 // ------------------------------------------------------
 // specifikacija dugovanja partnera po r.intervalima
@@ -43,11 +42,10 @@ FUNCTION SpecDugPartnera()
    O_PARTN
    O_KONTO
 
-   __par_len := Len( partn->id )
 
    cIdFirma := gFirma
    cIdkonto := Space( 7 )
-   cIdPartner := PadR( "", __par_len )
+   cIdPartner := PadR( "", FIELD_PARTNER_ID_LENGTH )
    dNaDan := Date()
    cOpcine := Space( 20 )
    cSaRokom := "D"
@@ -111,7 +109,7 @@ FUNCTION SpecDugPartnera()
       Boxc()
    ENDIF
 
-   fin_create_pom_table(, __par_len )  // kreiraj pomocnu bazu
+   fin_create_pom_table(, FIELD_PARTNER_ID_LENGTH )  // kreiraj pomocnu bazu
 
    gaZagFix := { 4, 5 }
 
@@ -392,7 +390,7 @@ FUNCTION SpecDugPartnera()
 
    ENDDO
 
-   ? "�" + REPL( "�", __par_len ) + "���������������������������������������������������������������������������������������������������������������������������Ĵ"
+   ? "�" + REPL( "�", FIELD_PARTNER_ID_LENGTH ) + "���������������������������������������������������������������������������������������������������������������������������Ĵ"
 
    Pljuc( PadR( "UKUPNO", Len( POM->IDPARTNER + PadR( PARTN->naz, 25 ) ) + 1 ) )
 
@@ -412,7 +410,7 @@ FUNCTION SpecDugPartnera()
       PPljuc( Transform( nTUDug2 - nTUPot2, PICPIC ) )
    ENDIF
 
-   ? "�" + REPL( "�", __par_len ) + "�����������������������������������������������������������������������������������������������������������������������������"
+   ? "�" + REPL( "�", FIELD_PARTNER_ID_LENGTH ) + "�����������������������������������������������������������������������������������������������������������������������������"
 
    FF
    ENDPRINT
@@ -467,11 +465,11 @@ FUNCTION ZaglDuznici( fStrana, lSvi )
    HSEEK cIdKonto
 
    ? "KONTO  :", cIdKonto, naz
-   ? "�" + REPL( "�", __par_len ) + "���������������������������������������������������������������������������������������������������������������������������Ŀ"
-   ? "�" + REPL( " ", __par_len ) + "�                         �                     V  A  N      V  A  L  U  T  E                                 �             �"
-   ? "�" + PadR( "SIFRA", __par_len ) + "�     NAZIV  PARTNERA     �����������������������������������������������������������������������������������Ĵ  UKUPNO     �"
-   ? "�" + PadR( "PARTN.", __par_len ) + "�                         �DO" + Str( nDoDana1, 3 ) + " D.     �DO" + Str( nDoDana2, 3 ) + " D.     �DO" + Str( nDoDana3, 3 ) + " D.     �DO" + Str( nDoDana4, 3 ) + " D.     �PR." + Str( nDoDana4, 2 ) + " D.     � UKUPNO      �             �"
-   ? "�" + REPL( "�", __par_len ) + "���������������������������������������������������������������������������������������������������������������������������Ĵ"
+   ? "�" + REPL( "�", FIELD_PARTNER_ID_LENGTH ) + "���������������������������������������������������������������������������������������������������������������������������Ŀ"
+   ? "�" + REPL( " ", FIELD_PARTNER_ID_LENGTH ) + "�                         �                     V  A  N      V  A  L  U  T  E                                 �             �"
+   ? "�" + PadR( "SIFRA", FIELD_PARTNER_ID_LENGTH ) + "�     NAZIV  PARTNERA     �����������������������������������������������������������������������������������Ĵ  UKUPNO     �"
+   ? "�" + PadR( "PARTN.", FIELD_PARTNER_ID_LENGTH ) + "�                         �DO" + Str( nDoDana1, 3 ) + " D.     �DO" + Str( nDoDana2, 3 ) + " D.     �DO" + Str( nDoDana3, 3 ) + " D.     �DO" + Str( nDoDana4, 3 ) + " D.     �PR." + Str( nDoDana4, 2 ) + " D.     � UKUPNO      �             �"
+   ? "�" + REPL( "�", FIELD_PARTNER_ID_LENGTH ) + "���������������������������������������������������������������������������������������������������������������������������Ĵ"
 
    SELECT ( nArr )
 

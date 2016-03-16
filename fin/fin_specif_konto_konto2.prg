@@ -1,6 +1,6 @@
 #include "f18.ch"
 
-/*! \fn SpecKK2(lOtvSt)
+/*! SpecKK2(lOtvSt)
  *  \brief Specifikacija konto/konto2 partner
  *  \param lOtvSt
  */
@@ -18,7 +18,6 @@ FUNCTION SpecKK2( lOtvSt )
    O_KONTO
    O_PARTN
 
-   __par_len := Len( partn->id )
 
    cDinDem := "1"
    dDatOd := dDatDo := CToD( "" )
@@ -76,9 +75,9 @@ FUNCTION SpecKK2( lOtvSt )
    BoxC()
 
    IF cPG == "N"
-      PRIVATE m := Replicate( "-", __par_len ) + " ------------------------- ---------------- ---------------- ----------------"
+      PRIVATE m := Replicate( "-", FIELD_PARTNER_ID_LENGTH ) + " ------------------------- ---------------- ---------------- ----------------"
    ELSE
-      PRIVATE m := Replicate( "-", __par_len ) + " ------------------------- ---------------- ---------------- ---------------- ----------------"
+      PRIVATE m := Replicate( "-", FIELD_PARTNER_ID_LENGTH ) + " ------------------------- ---------------- ---------------- ---------------- ----------------"
    ENDIF
 
    O_SUBAN
@@ -283,9 +282,9 @@ STATIC FUNCTION Zagl7()
 
    ? m
    IF cPG = "D"
-      ? PadR( "PARTN.", __par_len ) + " PARTNER                       MJESTO           saldo1         saldo2           saldo"
+      ? PadR( "PARTN.", FIELD_PARTNER_ID_LENGTH ) + " PARTNER                       MJESTO           saldo1         saldo2           saldo"
    ELSE
-      ? PadR( "PARTN.", __par_len ) + "  PARTNER                       saldo1           saldo2           saldo"
+      ? PadR( "PARTN.", FIELD_PARTNER_ID_LENGTH ) + "  PARTNER                       saldo1           saldo2           saldo"
    ENDIF
    ? m
 

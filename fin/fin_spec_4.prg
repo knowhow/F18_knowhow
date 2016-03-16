@@ -17,7 +17,6 @@ FUNCTION SpecOstPop()
 
    O_PARTN
 
-   __par_len := Len( partn->id )
 
    Box( "SSK", 6, 60, .F. )
 

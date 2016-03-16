@@ -11,8 +11,6 @@
 
 #include "f18.ch"
 
-STATIC __par_len
-
 
 // ----------------------------------------------
 // pregled promjena na racunu
@@ -71,10 +69,7 @@ FUNCTION PrPromRn()
    O_PARTN
    O_SUBAN
 
-   __par_len := Len( partn->id )
 
-   // SET ORDER TO TAG "5"
-   // idFirma+IdKonto+dtos(DatDok)+idpartner
 
    cFilter := aUsl1
    IF !Empty( dOd ); cFilter += ( ".and. DATDOK>=" + dbf_quote( dOd ) ); ENDIF
@@ -87,8 +82,8 @@ FUNCTION PrPromRn()
    nDug := 0
    nPot := 0
 
-   m := "------ -------- " + REPL( "-", __par_len ) + " " + REPL( "-", 40 ) + " " + REPL( "-", 16 )
-   z := "R.BR. * DATUM  *" + PadC( "PARTN.", __par_len ) + "*" + PadC( "NAZIV PARTNERA ILI OPIS PROMJENE", 40 ) + "*" + PadC( "UPLATA KM", 16 )
+   m := "------ -------- " + REPL( "-", FIELD_PARTNER_ID_LENGTH ) + " " + REPL( "-", 40 ) + " " + REPL( "-", 16 )
+   z := "R.BR. * DATUM  *" + PadC( "PARTN.", FIELD_PARTNER_ID_LENGTH ) + "*" + PadC( "NAZIV PARTNERA ILI OPIS PROMJENE", 40 ) + "*" + PadC( "UPLATA KM", 16 )
 
    START PRINT CRET
    nStranica := 0

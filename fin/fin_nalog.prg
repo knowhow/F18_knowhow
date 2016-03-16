@@ -147,7 +147,6 @@ FUNCTION fin_gen_psuban_stampa_nalozi( lAuto, dDatNal )
 
    fin_open_psuban()
 
-   __par_len := Len( partn->id )
 
    SELECT PSUBAN
    my_dbf_zap()
@@ -256,7 +255,6 @@ FUNCTION fin_nalog_stampa( cInd, lAuto, dDatNal, oNalog )
    _vrste_placanja := .F.
 
    O_PARTN
-   __par_len := Len( partn->id )
    SELECT ( nArr )
 
 
@@ -266,13 +264,13 @@ FUNCTION fin_nalog_stampa( cInd, lAuto, dDatNal, oNalog )
    M := iif( cInd == "3", "------ -------------- --- ", "" )
    IF _fin_params[ "fin_tip_dokumenta" ]
 
-      M +=  + "---- ------- " + REPL( "-", __par_len ) + " ----------------------------"
+      M +=  + "---- ------- " + REPL( "-", FIELD_PARTNER_ID_LENGTH ) + " ----------------------------"
       M +=  " -- ------------- ----------- -------- -------- --------------- ---------------"
 
    ELSE
 
       M +=  "---- ------- "
-      M += REPL( "-", __par_len ) + " ----------------------------"
+      M += REPL( "-", FIELD_PARTNER_ID_LENGTH ) + " ----------------------------"
       M += " ----------- -------- -------- --------------- ---------------"
 
    ENDIF
@@ -661,7 +659,6 @@ FUNCTION fin_nalog_zaglavlje( dDatNal )
       lDnevnik := .T.
    ENDIF
 
-   __par_len := Len( partn->id )
 
    ?
    IF _fin_params[ "fin_tip_dokumenta" ] .AND. gVar1 == "0"
@@ -712,19 +709,19 @@ FUNCTION fin_nalog_zaglavlje( dDatNal )
    IF !_fin_params[ "fin_tip_dokumenta" ]
       P_NRED
 
-      cTmp := iif( lDnevnik, "R.BR. *   BROJ   *DAN*", "" ) + "*R. * KONTO *" + PadC( "PART", __par_len )
+      cTmp := iif( lDnevnik, "R.BR. *   BROJ   *DAN*", "" ) + "*R. * KONTO *" + PadC( "PART", FIELD_PARTNER_ID_LENGTH )
       cTmp +=  "*" + "    NAZIV PARTNERA ILI      "  + "*   D  O  K  U  M  E  N  T    *         IZNOS U  " + ValDomaca() + "         *"
       cTmp += iif( gVar1 == "1", "", "    IZNOS U " + ValPomocna() + "    *" )
       ??U cTmp
       P_NRED
 
-      cTmp := iif( lDnevnik, "U DNE-*  NALOGA  *   *", "" ) + "             " + PadC( "NER", __par_len ) + " "
+      cTmp := iif( lDnevnik, "U DNE-*  NALOGA  *   *", "" ) + "             " + PadC( "NER", FIELD_PARTNER_ID_LENGTH ) + " "
       cTmp += "                            " + " ----------------------------- ------------------------------- "
       cTmp += iif( gVar1 == "1", "", "---------------------" )
       ??U cTmp
       P_NRED
 
-      cTmp := iif( lDnevnik, "VNIKU *          *   *", "" ) + "*BR *       *" + REPL( " ", __par_len ) + "*"
+      cTmp := iif( lDnevnik, "VNIKU *          *   *", "" ) + "*BR *       *" + REPL( " ", FIELD_PARTNER_ID_LENGTH ) + "*"
       cTmp += "    NAZIV KONTA             "  + "* BROJ VEZE * DATUM  * VALUTA *  DUGUJE " + ValDomaca() + "  * POTRAŽUJE " + ValDomaca() + "*"
       cTmp += iif( gVar1 == "1", "", " DUG. " + ValPomocna() + "* POT." + ValPomocna() + "*" )
       ??U cTmp
@@ -732,20 +729,20 @@ FUNCTION fin_nalog_zaglavlje( dDatNal )
    ELSE
       P_NRED
 
-      cTmp := iif( lDnevnik, "R.BR. *   BROJ   *DAN*", "" ) + "*R. * KONTO *" + PadC( "PART", __par_len ) + "*"
+      cTmp := iif( lDnevnik, "R.BR. *   BROJ   *DAN*", "" ) + "*R. * KONTO *" + PadC( "PART", FIELD_PARTNER_ID_LENGTH ) + "*"
       cTmp += "    NAZIV PARTNERA ILI      "  + "*           D  O  K  U  M  E  N  T             *         IZNOS U  " + ValDomaca() + "         *"
       cTmp += iif( gVar1 == "1", "", "    IZNOS U " + ValPomocna() + "    *" )
       ??U cTmp
       P_NRED
 
-      cTmp := iif( lDnevnik, "U DNE-*  NALOGA  *   *", "" ) + "             " + PadC( "NER", __par_len ) + " "
+      cTmp := iif( lDnevnik, "U DNE-*  NALOGA  *   *", "" ) + "             " + PadC( "NER", FIELD_PARTNER_ID_LENGTH ) + " "
       cTmp += "                            " + " ---------------------------------------------- ------------------------------- "
       cTmp += iif( gVar1 == "1", "", "---------------------" )
       ??U cTmp
       P_NRED
 
 
-      cTmp := iif( lDnevnik, "VNIKU *          *   *", "" ) + "*BR *       *" + REPL( " ", __par_len ) + "*"
+      cTmp := iif( lDnevnik, "VNIKU *          *   *", "" ) + "*BR *       *" + REPL( " ", FIELD_PARTNER_ID_LENGTH ) + "*"
       cTmp += "    NAZIV KONTA             " + "*  TIP I NAZIV   * BROJ VEZE * DATUM  * VALUTA *  DUGUJE " + ValDomaca() + "  * POTRAŽUJE " + ValDomaca() + "*"
       cTmp +=  iif( gVar1 == "1", "", " DUG. " + ValPomocna() + "* POT." + ValPomocna() + "*" )
       ??U cTmp

@@ -1,7 +1,7 @@
 #include "f18.ch"
 
-/*! \fn SpecPop()
- *  \brief Specifikacija konta za odredjene partnere
+/* SpecPop()
+ *   Specifikacija konta za odredjene partnere
  */
 FUNCTION SpecPop()
 
@@ -16,7 +16,6 @@ FUNCTION SpecPop()
 
    O_PARTN
 
-   __par_len := Len( partn->id )
 
 
    Box( "SSK", 6, 60, .F. )

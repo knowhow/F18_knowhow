@@ -11,7 +11,6 @@
 
 #include "f18.ch"
 
-STATIC __par_len
 
 
 FUNCTION SpecDPK()
@@ -30,8 +29,6 @@ FUNCTION SpecDPK()
    qqKonto := qqPartner := Space( 100 )
 
    O_PARTN
-
-   __par_len := Len( partn->id )
 
    Box( "skpoi", 10, 70, .F. )
    @ m_x + 1, m_y + 2 SAY "SPECIFIKACIJA PARTNERA NA KONTU"
@@ -73,11 +70,11 @@ FUNCTION SpecDPK()
    cIdFirma := Left( cIdFirma, 2 )
 
    IF cF == "1"
-      M := "----- " + Replicate( "-", __par_len ) + " ------------------------------------ ----------------------- ------------------ ----------------- ----------------- ----------------- ----------------- ----------------- ----------------- -----------------"
+      M := "----- " + Replicate( "-", FIELD_PARTNER_ID_LENGTH ) + " ------------------------------------ ----------------------- ------------------ ----------------- ----------------- ----------------- ----------------- ----------------- ----------------- -----------------"
    ELSEIF cPG == "D"
-      M := "---- " + Replicate( "-", __par_len ) + " ------------------------- ---------------- ----------------- ----------------- ----------------- -----------------"
+      M := "---- " + Replicate( "-", FIELD_PARTNER_ID_LENGTH ) + " ------------------------- ---------------- ----------------- ----------------- ----------------- -----------------"
    ELSE
-      M := "---- " + Replicate( "-", __par_len ) + " ------------------------- ----------------- ----------------- ----------------- -----------------"
+      M := "---- " + Replicate( "-", FIELD_PARTNER_ID_LENGTH ) + " ------------------------- ----------------- ----------------- ----------------- -----------------"
    ENDIF
    O_SUBAN
    SELECT SUBAN
@@ -292,22 +289,22 @@ FUNCTION ZaglDPK()
 
    @ PRow(), PCol() + 2 SAY "KONTO:"; @ PRow(), PCol() + 2 SAY cIdKonto
    IF cF == "1"
-      ? "----- " + Replicate( "-", __par_len ) + " ------------------------------------ ----- ----------------- ----------------------------------------------------------------------- -----------------------------------------------------------------------"
-      ? "*RED.*" + PadC( "�IFRA", __par_len ) + "*     NAZIV POSLOVNOG PARTNERA      * PTT *      MJESTO     *       K  U  M  U  L  A  T  I  V  N  I       P  R  O  M  E  T           *                 S      A      L      D       O                       *"
-      ? "      " + REPL( " ", __par_len ) + "                                                              ----------------------------------------------------------------------- -----------------------------------------------------------------------"
-      ? "*BROJ*" + Replicate( " ", __par_len ) + "*                                   * BROJ*                 *   DUGUJE   " + ValDomaca() + "  *  POTRA�UJE " + ValDomaca() + " *   DUGUJE  " + ValPomocna() + "  *   POTRA�. " + ValPomocna() + "  *    DUGUJE " + ValDomaca() + "  *  POTRA�UJE " + ValDomaca() + " *   DUGUJE  " + ValPomocna() + "  *   POTRA�." + ValPomocna() + "  *"
+      ? "----- " + Replicate( "-", FIELD_PARTNER_ID_LENGTH ) + " ------------------------------------ ----- ----------------- ----------------------------------------------------------------------- -----------------------------------------------------------------------"
+      ? "*RED.*" + PadC( "�IFRA", FIELD_PARTNER_ID_LENGTH ) + "*     NAZIV POSLOVNOG PARTNERA      * PTT *      MJESTO     *       K  U  M  U  L  A  T  I  V  N  I       P  R  O  M  E  T           *                 S      A      L      D       O                       *"
+      ? "      " + REPL( " ", FIELD_PARTNER_ID_LENGTH ) + "                                                              ----------------------------------------------------------------------- -----------------------------------------------------------------------"
+      ? "*BROJ*" + Replicate( " ", FIELD_PARTNER_ID_LENGTH ) + "*                                   * BROJ*                 *   DUGUJE   " + ValDomaca() + "  *  POTRA�UJE " + ValDomaca() + " *   DUGUJE  " + ValPomocna() + "  *   POTRA�. " + ValPomocna() + "  *    DUGUJE " + ValDomaca() + "  *  POTRA�UJE " + ValDomaca() + " *   DUGUJE  " + ValPomocna() + "  *   POTRA�." + ValPomocna() + "  *"
       ? m
    ELSEIF cPG == "D"
-      ? "----- " + Replicate( "-", __par_len ) + " ------------------------ ---------------- ----------------------------------- -----------------------------------"
-      ? "*RED.*" + PadC( "�IFRA", __par_len ) + "*     NAZIV POSLOVNOG    *     MJESTO     *         KUMULATIVNI  PROMET       *               SALDO              *"
+      ? "----- " + Replicate( "-", FIELD_PARTNER_ID_LENGTH ) + " ------------------------ ---------------- ----------------------------------- -----------------------------------"
+      ? "*RED.*" + PadC( "�IFRA", FIELD_PARTNER_ID_LENGTH ) + "*     NAZIV POSLOVNOG    *     MJESTO     *         KUMULATIVNI  PROMET       *               SALDO              *"
       ? "                                                       ----------------------------------- -----------------------------------"
-      ? "*BROJ*" + Replicate( " ", __par_len )  + "*     PARTNERA           *                *    DUGUJE       *   POTRA�UJE     *    DUGUJE       *   POTRA�UJE    *"
+      ? "*BROJ*" + Replicate( " ", FIELD_PARTNER_ID_LENGTH )  + "*     PARTNERA           *                *    DUGUJE       *   POTRA�UJE     *    DUGUJE       *   POTRA�UJE    *"
       ? m
    ELSE
-      ? "----- " + Replicate( "-", __par_len ) + " ------------------------ ----------------------------------- -----------------------------------"
-      ? "*RED.*" + PadC( "SIFRA", __par_len ) + "*      NAZIV POSLOVNOG    *         KUMULATIVNI  PROMET       *               SALDO              *"
-      ? "      " + REPL( " ", __par_len ) + "                        ----------------------------------- -----------------------------------"
-      ? "*BROJ*" + Replicate( " ", __par_len ) + "*      PARTNERA           *    DUGUJE       *   POTRA�UJE     *    DUGUJE       *   POTRA�UJE    *"
+      ? "----- " + Replicate( "-", FIELD_PARTNER_ID_LENGTH ) + " ------------------------ ----------------------------------- -----------------------------------"
+      ? "*RED.*" + PadC( "SIFRA", FIELD_PARTNER_ID_LENGTH ) + "*      NAZIV POSLOVNOG    *         KUMULATIVNI  PROMET       *               SALDO              *"
+      ? "      " + REPL( " ", FIELD_PARTNER_ID_LENGTH ) + "                        ----------------------------------- -----------------------------------"
+      ? "*BROJ*" + Replicate( " ", FIELD_PARTNER_ID_LENGTH ) + "*      PARTNERA           *    DUGUJE       *   POTRA�UJE     *    DUGUJE       *   POTRA�UJE    *"
       ? m
    ENDIF
 
@@ -340,10 +337,9 @@ FUNCTION SpecBrDan()
    cUkupnoPartner := "D"
    cPojed := "D"
    cD_P := "1"
-   __par_len := Len( partn->id )
    qqBrDok := Space( 40 )
 
-   M := "----- " + Replicate( "-", __par_len ) + " ----------------------------------- ------ ---------------- -------- -------- --------- -----------------"
+   M := "----- " + Replicate( "-", FIELD_PARTNER_ID_LENGTH ) + " ----------------------------------- ------ ---------------- -------- -------- --------- -----------------"
    IF gVar1 == "0"
       M += " ----------------"
    ENDIF
@@ -618,26 +614,26 @@ FUNCTION ZaglSpBrDana()
 
    SELECT SUBAN
 
-   ? "----- " + Replicate( "-", __par_len ) + " ----------------------------------- ------ ---------------- -------- -------- -------- "
+   ? "----- " + Replicate( "-", FIELD_PARTNER_ID_LENGTH ) + " ----------------------------------- ------ ---------------- -------- -------- -------- "
    ?? Replicate( "-", 17 )
    IF gVar1 == "0" // dvovalutno
       ?? " " + Replicate( "-", 17 )
    ENDIF
-   ? "*RED *" + PadC( "PART-", __par_len ) + "*      NAZIV POSLOVNOG PARTNERA      PTT     MJESTO         *  BROJ  * DATUM  * K1-K4  *"
+   ? "*RED *" + PadC( "PART-", FIELD_PARTNER_ID_LENGTH ) + "*      NAZIV POSLOVNOG PARTNERA      PTT     MJESTO         *  BROJ  * DATUM  * K1-K4  *"
    IF gVar1 == "0"
       ?? PadC( "NEPLA�ENO", 35 )
    ELSE
       ?? PadC( "NEPLA�ENO", 17 )
    ENDIF
 
-   ? " BR. " + PadC( "NER", __par_len ) + "                                                                                         "
+   ? " BR. " + PadC( "NER", FIELD_PARTNER_ID_LENGTH ) + "                                                                                         "
 
    ?? Replicate( "-", 17 )
    IF gVar1 == "0" // dvovalutno
       ?? " " + Replicate( "-", 17 )
    ENDIF
 
-   ? "*    *" + Replicate( " ", __par_len ) + "*                                                           * RA�UNA *" + iif( cObzirDatVal == "D", " VALUTE ", " RA�UNA " ) + "*        *"
+   ? "*    *" + Replicate( " ", FIELD_PARTNER_ID_LENGTH ) + "*                                                           * RA�UNA *" + iif( cObzirDatVal == "D", " VALUTE ", " RA�UNA " ) + "*        *"
 
    cPom := ""
    IF cD_P = "1"
@@ -721,8 +717,6 @@ FUNCTION fin_spec_po_suban_kontima()
    USE
 
    O_PARTN
-
-   __par_len := Len( partn->id )
 
    cTip := "1"
    Box( "", 20, 65 )
@@ -812,7 +806,7 @@ FUNCTION fin_spec_po_suban_kontima()
    lExpRpt := ( cExpRptDN == "D" )
 
    IF lExpRpt
-      aSSFields := get_ss_fields( gRj, __par_len )
+      aSSFields := get_ss_fields( gRj, FIELD_PARTNER_ID_LENGTH )
       t_exp_create( aSSFields )
    ENDIF
 
@@ -926,23 +920,23 @@ FUNCTION fin_spec_po_suban_kontima()
 
    IF cSkVar == "D"
       nDOpis := 25
-      IF __par_len > 6
+      IF FIELD_PARTNER_ID_LENGTH > 6
          // nDOpis += 2
       ENDIF
       nDIznos := 12
       pic := Right( picbhd, nDIznos )
    ELSE
       nDOpis := 50
-      IF __par_len > 6
+      IF FIELD_PARTNER_ID_LENGTH > 6
          // nDOpis += 2
       ENDIF
       nDIznos := 20
    ENDIF
 
    IF cTip == "3"
-      m := "------- " + Replicate( "-", __par_len ) + " " + REPL( "-", nDOpis ) + " " + REPL( "-", nDIznos ) + " " + REPL( "-", nDIznos )
+      m := "------- " + Replicate( "-", FIELD_PARTNER_ID_LENGTH ) + " " + REPL( "-", nDOpis ) + " " + REPL( "-", nDIznos ) + " " + REPL( "-", nDIznos )
    ELSE
-      m := "------- " + Replicate( "-", __par_len ) + " " + REPL( "-", nDOpis ) + " " + REPL( "-", nDIznos ) + " " + REPL( "-", nDIznos ) + " " + REPL( "-", nDIznos )
+      m := "------- " + Replicate( "-", FIELD_PARTNER_ID_LENGTH ) + " " + REPL( "-", nDOpis ) + " " + REPL( "-", nDIznos ) + " " + REPL( "-", nDIznos ) + " " + REPL( "-", nDIznos )
    ENDIF
 
    nStr := 0
@@ -1200,14 +1194,13 @@ FUNCTION fin_spec_po_suban_kontima()
 
    closeret
 
-   RETURN
+   RETURN .T.
 
 
 
 
 
-/*! \fn PartVanProm()
- *  \brief Partneri van prometa
+/*  Partneri van prometa
  */
 
 FUNCTION PartVanProm()
@@ -1221,8 +1214,7 @@ FUNCTION PartVanProm()
    O_KONTO
    O_PARTN
    O_SUBAN
-   __par_len := Len( partn->id )
-   //
+
    Box (, 11, 60 )
    @ m_x, m_y + 15 SAY "PREGLED PARTNERA BEZ PROMETA"
    IF gNW == "D"
@@ -1259,9 +1251,9 @@ FUNCTION PartVanProm()
    ? Space ( 5 ) + "Za period:", IF ( Empty ( dDatOd ), "", DToC ( dDatOd ) + " " ) + ;
       "do", DToC ( dDatDo )
    ?
-   ? Space ( 5 ) + PadR( "Sifra", __par_len ), PadR( "NAZIV", 25 ), ;
+   ? Space ( 5 ) + PadR( "Sifra", FIELD_PARTNER_ID_LENGTH ), PadR( "NAZIV", 25 ), ;
       PadR ( "MJESTO", Len ( PARTN->Mjesto ) ), PadR ( "ADRESA", Len ( PARTN->Adresa ) )
-   ? Space ( 5 ) + REPL( "-", __par_len ), REPL ( "-", 25 ), ;
+   ? Space ( 5 ) + REPL( "-", FIELD_PARTNER_ID_LENGTH ), REPL ( "-", 25 ), ;
       REPL ( "-", Len ( PARTN->Mjesto ) ), REPL ( "-", Len ( PARTN->Adresa ) )
 
    nBrPartn := 0
@@ -1292,7 +1284,7 @@ FUNCTION PartVanProm()
       SELECT PARTN
       SKIP
    END
-   ? Space ( 5 ) + REPL( "-", __par_len ), REPL ( "-", 25 ), ;
+   ? Space ( 5 ) + REPL( "-", FIELD_PARTNER_ID_LENGTH ), REPL ( "-", 25 ), ;
       REPL ( "-", Len ( PARTN->Mjesto ) ), REPL ( "-", Len ( PARTN->Adresa ) )
    ?
    ? Space ( 5 ) + "Ukupno izlistano", AllTrim ( Str ( nBrPartn ) ), ;
@@ -1355,11 +1347,10 @@ FUNCTION SpecPoDosp( lKartica )
    O_PARTN
    O_KONTO
 
-   __par_len := Len( partn->id )
 
    cIdFirma := gFirma
    cIdkonto := Space( 7 )
-   cIdPartner := PadR( "", __par_len )
+   cIdPartner := PadR( "", FIELD_PARTNER_ID_LENGTH )
    dNaDan := Date()
    cOpcine := Space( 20 )
    cValuta := "1"
@@ -1431,7 +1422,7 @@ FUNCTION SpecPoDosp( lKartica )
    cSvi := cIdpartner
 
    IF lExpRpt == .T.
-      aExpFld := get_ost_fields( cSaRokom, __par_len )
+      aExpFld := get_ost_fields( cSaRokom, FIELD_PARTNER_ID_LENGTH )
       t_exp_create( aExpFld )
    ENDIF
 
@@ -1455,7 +1446,7 @@ FUNCTION SpecPoDosp( lKartica )
       Boxc()
    ENDIF
 
-   fin_create_pom_table( nil, __par_len )
+   fin_create_pom_table( nil, FIELD_PARTNER_ID_LENGTH )
    // kreiraj pomocnu bazu
 
    O_TRFP2
@@ -2135,7 +2126,7 @@ STATIC FUNCTION _get_line1( cTmpL, cSaRokom, cPicForm )
    ENDIF
 
    cTmpL := cStart
-   cTmpL += Replicate( cFill, __par_len )
+   cTmpL += Replicate( cFill, FIELD_PARTNER_ID_LENGTH )
    cTmpL += cMidd
    cTmpL += Replicate( cFill, 25 )
 
@@ -2164,7 +2155,7 @@ STATIC FUNCTION _get_line2( cTmpL, cSaRokom, cPicForm )
    ENDIF
 
    cTmpL := cStart
-   cTmpL += Replicate( cFill, __par_len )
+   cTmpL += Replicate( cFill, FIELD_PARTNER_ID_LENGTH )
    cTmpL += cLine
    cTmpL += Replicate( cFill, 25 )
 
@@ -2305,7 +2296,7 @@ FUNCTION ZSpecPoDosp( fStrana, lSvi, PICPIC )
 
          // prvi red
          cTmp := "�"
-         cTmp += Replicate( "�", __par_len )
+         cTmp += Replicate( "�", FIELD_PARTNER_ID_LENGTH )
          cTmp += "�"
          cTmp += Replicate( "�", 25 )
          cTmp += "�"
@@ -2324,7 +2315,7 @@ FUNCTION ZSpecPoDosp( fStrana, lSvi, PICPIC )
 
          // drugi red
          cTmp := "�"
-         cTmp += Replicate( " ", __par_len )
+         cTmp += Replicate( " ", FIELD_PARTNER_ID_LENGTH )
          cTmp += "�"
          cTmp += Replicate( " ", 25 )
          cTmp += "�"
@@ -2346,7 +2337,7 @@ FUNCTION ZSpecPoDosp( fStrana, lSvi, PICPIC )
 
          // treci red
          cTmp := "�"
-         cTmp += PadC( "SIFRA", __par_len )
+         cTmp += PadC( "SIFRA", FIELD_PARTNER_ID_LENGTH )
          cTmp += "�"
          cTmp += _f_text( "NAZIV  PARTNERA", 25 )
          cTmp += "�"
@@ -2383,7 +2374,7 @@ FUNCTION ZSpecPoDosp( fStrana, lSvi, PICPIC )
          ? cTmp
 
          cTmp := "�"
-         cTmp += PadC( "PARTN.", __par_len )
+         cTmp += PadC( "PARTN.", FIELD_PARTNER_ID_LENGTH )
          cTmp += "�"
          cTmp += _f_text( " ", 25 )
 
@@ -2418,7 +2409,7 @@ FUNCTION ZSpecPoDosp( fStrana, lSvi, PICPIC )
          ? cTmp
 
          cTmp := "�"
-         cTmp += Replicate( "�", __par_len )
+         cTmp += Replicate( "�", FIELD_PARTNER_ID_LENGTH )
          cTmp += "�"
          cTmp += Replicate( "�", 25 )
 
@@ -2435,7 +2426,7 @@ FUNCTION ZSpecPoDosp( fStrana, lSvi, PICPIC )
 
          // 1 red
          cTmp := "�"
-         cTmp += Replicate( "�", __par_len )
+         cTmp += Replicate( "�", FIELD_PARTNER_ID_LENGTH )
          cTmp += "�"
          cTmp += Replicate( "�", 25 )
 
@@ -2452,7 +2443,7 @@ FUNCTION ZSpecPoDosp( fStrana, lSvi, PICPIC )
          // 2 red
 
          cTmp := "�"
-         cTmp += PadC( "SIFRA", __par_len )
+         cTmp += PadC( "SIFRA", FIELD_PARTNER_ID_LENGTH )
          cTmp += "�"
          cTmp += _f_text( " ", 25 )
          cTmp += "�"
@@ -2468,7 +2459,7 @@ FUNCTION ZSpecPoDosp( fStrana, lSvi, PICPIC )
          // 3 red
 
          cTmp := "�"
-         cTmp += PadC( "PARTN.", __par_len )
+         cTmp += PadC( "PARTN.", FIELD_PARTNER_ID_LENGTH )
          cTmp += "�"
          cTmp += _f_text( "NAZIV PARTNERA", 25 )
          cTmp += "�"
@@ -2483,7 +2474,7 @@ FUNCTION ZSpecPoDosp( fStrana, lSvi, PICPIC )
 
          // 4 red
          cTmp := "�"
-         cTmp += REPL( "�", __par_len )
+         cTmp += REPL( "�", FIELD_PARTNER_ID_LENGTH )
          cTmp += "�"
          cTmp += Replicate( "�", 25 )
 
@@ -2642,15 +2633,15 @@ FUNCTION fin_specif_zagl6( cSkVar )
    ENDIF
    IF cTip $ "12"
       IF cSkVar != "D"
-         ? "KONTO  " + PadC( "PARTN.", __par_len ) + "  NAZIV KONTA / PARTNERA                                          duguje            potrazuje                saldo"
+         ? "KONTO  " + PadC( "PARTN.", FIELD_PARTNER_ID_LENGTH ) + "  NAZIV KONTA / PARTNERA                                          duguje            potrazuje                saldo"
       ELSE
-         ? "KONTO  " + PadC( "PARTN", __par_len ) + "  " +  PadR( "NAZIV KONTA / PARTNERA", nDOpis ) + " " + PadC( "duguje", nDIznos ) + " " + PadC( "potrazuje", nDIznos ) + " " + PadC( "saldo", nDIznos )
+         ? "KONTO  " + PadC( "PARTN", FIELD_PARTNER_ID_LENGTH ) + "  " +  PadR( "NAZIV KONTA / PARTNERA", nDOpis ) + " " + PadC( "duguje", nDIznos ) + " " + PadC( "potrazuje", nDIznos ) + " " + PadC( "saldo", nDIznos )
       ENDIF
    ELSE
       IF cSkVar != "D"
-         ? "KONTO  " + PadC( "PARTN.", __par_len ) + "  NAZIV KONTA / PARTNERA                                       saldo " + ValDomaca() + "           saldo " + AllTrim( ValPomocna() )
+         ? "KONTO  " + PadC( "PARTN.", FIELD_PARTNER_ID_LENGTH ) + "  NAZIV KONTA / PARTNERA                                       saldo " + ValDomaca() + "           saldo " + AllTrim( ValPomocna() )
       ELSE
-         ? "KONTO  " + PadC( "PARTN.", __par_len ) + "  " + PadR( "NAZIV KONTA / PARTNERA", nDOpis ) + " " + PadC( "saldo " + ValDomaca(), nDIznos ) + " " + PadC( "saldo " + AllTrim( ValPomocna() ), nDIznos )
+         ? "KONTO  " + PadC( "PARTN.", FIELD_PARTNER_ID_LENGTH ) + "  " + PadR( "NAZIV KONTA / PARTNERA", nDOpis ) + " " + PadC( "saldo " + ValDomaca(), nDIznos ) + " " + PadC( "saldo " + AllTrim( ValPomocna() ), nDIznos )
       ENDIF
    ENDIF
    ? m

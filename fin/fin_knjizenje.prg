@@ -15,7 +15,6 @@ MEMVAR Ch, KursLis, gnLOst, gPotpis, lBlagAsis, cBlagIDVN
 MEMVAR Kol, ImeKol
 
 STATIC cTekucaRj := ""
-STATIC __par_len
 STATIC __rj_len := 6
 
 FUNCTION fin_unos_naloga()

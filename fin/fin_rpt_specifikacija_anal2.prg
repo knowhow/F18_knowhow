@@ -71,7 +71,6 @@ FUNCTION spec_an()
 
    O_PARTN
 
-   __par_len := Len( partn->id )
    dDatOd := dDatDo := CToD( "" )
 
    qqKonto := Space( 100 )

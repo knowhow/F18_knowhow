@@ -12,7 +12,6 @@
 
 #include "f18.ch"
 
-STATIC __par_len := 6
 STATIC __rj_len := 4
 
 
@@ -27,7 +26,7 @@ STATIC FUNCTION cre_tmp( cPath )
 
    AAdd( aFields, { "idfirma", "C", 2, 0 } )
    AAdd( aFields, { "idkonto", "C", 7, 0 } )
-   AAdd( aFields, { "idpartner", "C", __par_len, 0 } )
+   AAdd( aFields, { "idpartner", "C", FIELD_PARTNER_ID_LENGTH, 0 } )
    AAdd( aFields, { "kto_opis", "C", 50, 0 } )
    AAdd( aFields, { "par_opis", "C", 50, 0 } )
    AAdd( aFields, { "par_mjesto", "C", 50, 0 } )
@@ -93,7 +92,6 @@ FUNCTION spec_sub()
    cN2Fin := my_get_from_ini( 'FIN', 'PartnerNaziv2', 'N' )
 
    O_PARTN
-   __par_len := Len( partn->id )
    O_SUBAN
    __rj_len := Len( suban->idrj )
 
@@ -558,23 +556,23 @@ TODO: izbaciti
 
    IF cSkVar == "D"
       nDOpis := 25
-      IF __par_len > 6
+      IF FIELD_PARTNER_ID_LENGTH > 6
          // nDOpis += 2
       ENDIF
       nDIznos := 12
       pic := Right( picbhd, nDIznos )
    ELSE
       nDOpis := 50
-      IF __par_len > 6
+      IF FIELD_PARTNER_ID_LENGTH > 6
          // nDOpis += 2
       ENDIF
       nDIznos := 20
    ENDIF
 
    IF cTip == "3"
-      m := "------- " + Replicate( "-", __par_len ) + " " + REPL( "-", nDOpis ) + " " + REPL( "-", nDIznos ) + " " + REPL( "-", nDIznos )
+      m := "------- " + Replicate( "-", FIELD_PARTNER_ID_LENGTH ) + " " + REPL( "-", nDOpis ) + " " + REPL( "-", nDIznos ) + " " + REPL( "-", nDIznos )
    ELSE
-      m := "------- " + Replicate( "-", __par_len ) + " " + REPL( "-", nDOpis ) + " " + REPL( "-", nDIznos ) + " " + REPL( "-", nDIznos ) + " " + REPL( "-", nDIznos )
+      m := "------- " + Replicate( "-", FIELD_PARTNER_ID_LENGTH ) + " " + REPL( "-", nDOpis ) + " " + REPL( "-", nDIznos ) + " " + REPL( "-", nDIznos ) + " " + REPL( "-", nDIznos )
    ENDIF
 
    nStr := 0
@@ -833,15 +831,15 @@ STATIC FUNCTION Header( cSkVar )
    ENDIF
    IF cTip $ "12"
       IF cSkVar != "D"
-         ? "KONTO   " + PadC( "PARTN.", __par_len ) + " NAZIV KONTA / PARTNERA                                          duguje            potra�uje                saldo"
+         ? "KONTO   " + PadC( "PARTN.", FIELD_PARTNER_ID_LENGTH ) + " NAZIV KONTA / PARTNERA                                          duguje            potra�uje                saldo"
       ELSE
-         ? "KONTO   " + PadC( "PARTN", __par_len ) + " " +  PadR( "NAZIV KONTA / PARTNERA", nDOpis ) + " " + PadC( "duguje", nDIznos ) + " " + PadC( "potra�uje", nDIznos ) + " " + PadC( "saldo", nDIznos )
+         ? "KONTO   " + PadC( "PARTN", FIELD_PARTNER_ID_LENGTH ) + " " +  PadR( "NAZIV KONTA / PARTNERA", nDOpis ) + " " + PadC( "duguje", nDIznos ) + " " + PadC( "potra�uje", nDIznos ) + " " + PadC( "saldo", nDIznos )
       ENDIF
    ELSE
       IF cSkVar != "D"
-         ? "KONTO   " + PadC( "PARTN.", __par_len ) + " NAZIV KONTA / PARTNERA                                       saldo " + ValDomaca() + "           saldo " + AllTrim( ValPomocna() )
+         ? "KONTO   " + PadC( "PARTN.", FIELD_PARTNER_ID_LENGTH ) + " NAZIV KONTA / PARTNERA                                       saldo " + ValDomaca() + "           saldo " + AllTrim( ValPomocna() )
       ELSE
-         ? "KONTO   " + PadC( "PARTN.", __par_len ) + " " + PadR( "NAZIV KONTA / PARTNERA", nDOpis ) + " " + PadC( "saldo " + ValDomaca(), nDIznos ) + " " + PadC( "saldo " + AllTrim( ValPomocna() ), nDIznos )
+         ? "KONTO   " + PadC( "PARTN.", FIELD_PARTNER_ID_LENGTH ) + " " + PadR( "NAZIV KONTA / PARTNERA", nDOpis ) + " " + PadC( "saldo " + ValDomaca(), nDIznos ) + " " + PadC( "saldo " + AllTrim( ValPomocna() ), nDIznos )
       ENDIF
    ENDIF
 

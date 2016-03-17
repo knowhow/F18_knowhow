@@ -463,7 +463,7 @@ FUNCTION lager_lista_prodavnica()
       // ne prikazuj stavke 0
       IF cNula == "D" .OR. Round( nMPVU - nMPVI + nPMPV, 2 ) <> 0
 	
-         IF PRow() > ( RPT_PAGE_LEN + dodatni_redovi_po_stranici() )
+         IF PRow() > page_length()
             FF
             Eval( bZagl )
          ENDIF

@@ -190,7 +190,7 @@ FUNCTION RekTarPDV()
 
       ENDDO
 
-      IF PRow() > ( RPT_PAGE_LEN + dodatni_redovi_po_stranici() )
+      IF PRow() > page_length()
          FF
          @ PRow(), 123 SAY "Str:" + Str( ++nStr, 3 )
       ENDIF

@@ -47,14 +47,14 @@ FUNCTION NovaStrana( bZagl, nOdstampatiStrana )
       nOdstampatiStrana := 1
    ENDIF
 
-   IF PRow() > ( ( RPT_PAGE_LEN + dodatni_redovi_po_stranici() ) - nOdstampatiStrana )
+   IF PRow() > ( page_length() - nOdstampatiStrana )
       FF
       IF ( bZagl <> NIL )
          Eval( bZagl )
       ENDIF
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 

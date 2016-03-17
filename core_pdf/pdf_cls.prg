@@ -1,5 +1,6 @@
 #include "f18.ch"
 #require "hbhpdf"
+
 #include "pdf_cls.ch"
 
 // http://www.harbourdoc.com.br/show.asp?seek=description&key=PDFClass
@@ -322,11 +323,17 @@ METHOD View() CLASS PDFClass
 
 #ifdef __PLATFORM__LINUX
       RUN ( "xdg-open " + ::cFileName )
-#else
+#endif
+
+#ifdef __PLATFORM__DARWIN
+      RUN ( "open " + ::cFileName )
+#endif
+
+#ifdef __PLATFORM__WINDOWS
       RUN ( "cmd /c start " + ::cFileName )
 #endif
 
-RETURN
+RETURN .T.
 
 METHOD MaxRowTest( nRows ) CLASS PDFClass
 

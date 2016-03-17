@@ -48,6 +48,8 @@
 #include "f18_request.ch"
 #include "f18_cre_all.ch"
 
+#include "pdf_cls.ch"
+
 #include "memoedit.ch"
 
 
@@ -440,6 +442,7 @@
 #command END PRINT => f18_end_print(NIL, __print_opt)
 
 #command ENDPRINT => f18_end_print(NIL, __print_opt)
+
 
 #command EOF CRET <x> =>  if EofFndret(.T., .T.)       ;
                           ;return <x>                  ;

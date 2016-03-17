@@ -11,36 +11,51 @@
 
 #include "f18.ch"
 
+MEMVAR GetList
+
 THREAD STATIC s_cF18Txt
 
 STATIC s_nDodatniRedoviPoStranici
 
-FUNCTION f18_start_print( f_name, print_opt, document_name )
+FUNCTION f18_start_print( cFileName, xPrintOpt, document_name )
 
    LOCAL cMsg, nI, cLogMsg := ""
+   LOCAL cOpt
+   LOCAL oPDF
 
-   IF print_opt == NIL
-      print_opt := "V"
+   IF xPrintOpt == NIL
+      cOpt := "V"
    ENDIF
 
-   set_print_f_name( @f_name )
+   cFileName := set_print_file_name( cFileName )
 
-
-   set_ptxt_sekvence()
-
-   IF ( document_name == nil )
+   IF ( document_name == NIL )
       document_name :=  gModul + '_' + DToC( Date() )
    ENDIF
 
-   IF print_opt != "D"
-      print_opt := print_dialog_box( print_opt )
+   IF ValType( xPrintOpt ) == "H"
+      cOpt := xPrintOpt[ "tip" ]
+      IF cOpt == "PDF"
+         hb_cdpSelect( "SLWIN" )
+         oPDF := xPrintOpt[ "opdf" ]
+         oPDF:cFileName := txt_print_file_name()
+         oPDF:cHeader := document_name
+         oPDF:SetType( PDF_TXT )
+         oPDF:Begin()
+      ENDIF
    ENDIF
 
-   IF Empty( print_opt )
+   set_ptxt_sekvence()
+
+   IF !( cOpt == "PDF" .OR. cOpt == "D" )
+      cOpt := print_dialog_box( cOpt )
+   ENDIF
+
+   IF Empty( cOpt )
       RETURN ""
    ENDIF
 
-   set_print_codes( print_opt )
+   set_print_codes( cOpt )
 
    PRIVATE GetList := {}
 
@@ -58,19 +73,21 @@ FUNCTION f18_start_print( f_name, print_opt, document_name )
    SET PRINTER OFF
    SET DEVICE TO PRINTER
 
-   SET PRINTER TO ( f_name )
+   SET PRINTER TO ( cFileName )
    SET PRINTER ON
 
-   GpIni( document_name )
+   IF cOpt != "PDF"
+      GpIni( document_name )
+   ENDIF
 
-   RETURN print_opt
+   RETURN cOpt
 
 
-STATIC FUNCTION set_print_codes( print_opt )
+STATIC FUNCTION set_print_codes( cOpt )
 
    DO CASE
 
-   CASE print_opt $ "E#F#G"
+   CASE cOpt $ "E#F#G"
 
       gPrinter := "E"
       set_epson_print_codes()
@@ -85,23 +102,37 @@ STATIC FUNCTION set_print_codes( print_opt )
    RETURN .T.
 
 
-FUNCTION f18_end_print( f_name, print_opt )
+FUNCTION f18_end_print( cFileName, xPrintOpt )
 
    LOCAL _ret
    LOCAL _cmd := ""
-   LOCAL _port := get_printer_port( print_opt )
+   LOCAL _port
+   LOCAL cOpt
+   LOCAL oPDF
 
-   IF print_opt == NIL
-      print_opt := "V"
+   AltD()
+   IF xPrintOpt == NIL
+      cOpt := "V"
    ENDIF
 
-   f_name := get_print_f_name( f_name )
+   IF ValType( xPrintOpt ) == "C"
+      cOpt := xPrintOpt
+   ENDIF
+
+   IF ValType( xPrintOpt ) == "H"
+      cOpt := xPrintOpt[ "tip" ]
+      IF cOpt == "PDF"
+         oPDF := xPrintOpt[ "opdf" ]
+      ENDIF
+   ENDIF
+
+   _port := get_printer_port( cOpt )
+   cFileName := txt_print_file_name( cFileName )
 
    SET DEVICE TO SCREEN
    SET PRINTER OFF
    SET PRINTER TO
    SET CONSOLE ON
-
 
    Tone( 440, 2 )
    Tone( 440, 2 )
@@ -110,23 +141,35 @@ FUNCTION f18_end_print( f_name, print_opt )
 
    DO CASE
 
-   CASE print_opt == "D"
+   CASE cOpt == "D"
 
-   CASE print_opt == "P"
+   CASE cOpt == "P"
 
-      txt_izvjestaj_podrska_email( f_name )
+      txt_izvjestaj_podrska_email( cFileName )
 
-   CASE print_opt $ "E#F#G"
+   CASE cOpt $ "E#F#G"
 
 #ifdef __PLATFORM__WINDOWS
-      direct_print_windows( f_name, _port )
+      direct_print_windows( cFileName, _port )
 #else
-      direct_print_unix( f_name, _port )
+      direct_print_unix( cFileName, _port )
 #endif
+
+   CASE cOpt == "PDF"
+
+      oPDF:End()
+      oPDF := PDFClass():New()
+      oPDF:SetType( PDF_PORTRAIT )
+      oPDF:cFileName := StrTran( txt_print_file_name(), ".txt", ".pdf" )
+      oPDF:Begin()
+      oPDF:PrnToPdf( txt_print_file_name() )
+      oPDF:End()
+      oPDF:View()
+      hb_cdpSelect( "SL852" )
 
    OTHERWISE
 
-      _cmd := "f18_editor " + f_name
+      _cmd := "f18_editor " + cFileName
       _ret := f18_run( _cmd )
 
       IF _ret <> 0
@@ -140,23 +183,23 @@ FUNCTION f18_end_print( f_name, print_opt )
 
 
 
-STATIC FUNCTION get_printer_port( print_opt )
+STATIC FUNCTION get_printer_port( xPrintOpt )
 
    LOCAL _port := "1"
 
    DO CASE
-   CASE print_opt == "E"
+   CASE xPrintOpt == "E"
       _port := "1"
-   CASE print_opt == "F"
+   CASE xPrintOpt == "F"
       _port := "2"
-   CASE print_opt == "G"
+   CASE xPrintOpt == "G"
       _port := "3"
    ENDCASE
 
    RETURN _port
 
 
-STATIC FUNCTION direct_print_unix( f_name, port_number )
+STATIC FUNCTION direct_print_unix( cFileName, port_number )
 
    LOCAL _cmd
    LOCAL _printer := "epson"
@@ -179,7 +222,7 @@ STATIC FUNCTION direct_print_unix( f_name, port_number )
 
    _cmd := "lpr -P "
    _cmd += _printer_name + " "
-   _cmd += f_name
+   _cmd += cFileName
 
    _err := f18_run( _cmd )
 
@@ -190,7 +233,7 @@ STATIC FUNCTION direct_print_unix( f_name, port_number )
    RETURN .T.
 
 
-STATIC FUNCTION direct_print_windows( f_name, port_number )
+STATIC FUNCTION direct_print_windows( cFileName, port_number )
 
    LOCAL _cmd
    LOCAL _err
@@ -199,9 +242,9 @@ STATIC FUNCTION direct_print_windows( f_name, port_number )
       port_number := "1"
    ENDIF
 
-   f_name := '"' + f_name + '"'
+   cFileName := '"' + cFileName + '"'
 
-   _cmd := "copy " + f_name + " LPT" + port_number
+   _cmd := "copy " + cFileName + " LPT" + port_number
 
    _err := f18_run( _cmd )
 
@@ -212,21 +255,20 @@ STATIC FUNCTION direct_print_windows( f_name, port_number )
    RETURN .T.
 
 
-STATIC FUNCTION get_print_f_name( f_name )
+FUNCTION txt_print_file_name( cFileName )
 
-   IF f_name == nil
+   IF cFileName == nil
       RETURN s_cF18Txt
    ENDIF
 
-   RETURN f_name
+   RETURN cFileName
 
 
-STATIC FUNCTION set_print_f_name( f_name )
+STATIC FUNCTION set_print_file_name( cFileName )
 
    LOCAL cDir, hFile, cTempFile
 
-   IF f_name == NIL
-
+   IF cFileName == NIL
 
       IF my_home() == NIL
          cDir := my_home_root()
@@ -236,29 +278,16 @@ STATIC FUNCTION set_print_f_name( f_name )
 
       IF ( hFile := hb_vfTempFile( @cTempFile, cDir, "F18_rpt_", ".txt" ) ) != NIL // hb_vfTempFile( @<cFileName>, [ <cDir> ], [ <cPrefix> ], [ <cExt> ], [ <nAttr> ] )
          hb_vfClose( hFile )
-         f_name := cTempFile
+         cFileName := cTempFile
       ELSE
-         f_name := OUTF_FILE
+         cFileName := OUTF_FILE
       ENDIF
 
    ENDIF
-   s_cF18Txt := f_name
+   s_cF18Txt := cFileName
 
-   RETURN f_name
+   RETURN cFileName
 
-
-FUNCTION dodatni_redovi_po_stranici( nSet )
-
-   IF nSet != NIL
-      set_metric( "print_dodatni_redovi_po_stranici", nil, nSet )
-      s_nDodatniRedoviPoStranici := nSet
-   ENDIF
-
-   IF HB_ISNIL( s_nDodatniRedoviPoStranici )
-      s_nDodatniRedoviPoStranici := fetch_metric( "print_dodatni_redovi_po_stranici", nil, 0 )
-   ENDIF
-
-   RETURN s_nDodatniRedoviPoStranici
 
 
 
@@ -570,3 +599,23 @@ FUNCTION SetGParams( cs, ch, cid, cvar, cval )
    PopWa()
 
    RETURN .T.
+
+
+FUNCTION dodatni_redovi_po_stranici( nSet )
+
+   IF nSet != NIL
+      set_metric( "print_dodatni_redovi_po_stranici", nil, nSet )
+      s_nDodatniRedoviPoStranici := nSet
+   ENDIF
+
+   IF HB_ISNIL( s_nDodatniRedoviPoStranici )
+      s_nDodatniRedoviPoStranici := fetch_metric( "print_dodatni_redovi_po_stranici", nil, 0 )
+   ENDIF
+
+   RETURN s_nDodatniRedoviPoStranici
+
+
+
+FUNCTION page_length()
+
+   RETURN fetch_metric( "rpt_duzina_stranice", my_user(), 60 ) + dodatni_redovi_po_stranici()

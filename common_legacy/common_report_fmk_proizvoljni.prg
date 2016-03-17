@@ -155,8 +155,7 @@ FUNCTION proizvoljni_izvjestaji()
          ENDIF
       CASE izbor == 8
          MsgBeep( "nije implementirano !!!!" )
-      CASE izbor == 9
-         PromBroj()
+
       CASE izbor == 10
          MsgBeep( "nije implementirano !!!!" )
 
@@ -992,7 +991,6 @@ FUNCTION StTabPI()
 
    IF nBrRedStr > -99
       gPO_Port()
-      //dodatni_redovi_po_stranici() := nBrRedStr
    ENDIF
 
    EndPrint()
@@ -1016,22 +1014,12 @@ FUNCTION StZagPI()
    DO WHILE !Eof()
       IF "GPO_LAND()" $ Upper( ZAGLI->izraz )
          nBrRedStr  := dodatni_redovi_po_stranici()
-         //dodatni_redovi_po_stranici() := nKorZaLands
       ENDIF
       cPom77 := ZAGLI->izraz
       @ xKOT + ZAGLI->x1, ZAGLI->y1 SAY ""
       @ xKOT + ZAGLI->x1, ZAGLI->y1 SAY &cPom77
       SKIP 1
    ENDDO
-
-   RETURN
-
-
-STATIC FUNCTION prombroj()
-
-   LOCAL i, cstbroj, cnbroj
-
-   MsgBeep( "Nije jos implementirano ..." )
 
    RETURN
 
@@ -1086,4 +1074,4 @@ FUNCTION OProizv()
    O_ZAGLI
    O_IZVJE
 
-   RETURN
+   RETURN .T.

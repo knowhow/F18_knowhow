@@ -147,7 +147,7 @@ DO WHILE !EOF() .and. IspitajPrekid()
         skip
      ENDDO // tarifa
 
-     if prow() > ( RPT_PAGE_LEN + dodatni_redovi_po_stranici() )
+     if prow() > page_length()
         FF
      endif
      @ prow()+1,0        SAY space(6)+cIdTarifa
@@ -166,7 +166,7 @@ DO WHILE !EOF() .and. IspitajPrekid()
 
   ENDDO // konto
 
-    if prow() > ( RPT_PAGE_LEN + dodatni_redovi_po_stranici() )
+    if prow() > page_length()
         FF
     endif
   ? cLine

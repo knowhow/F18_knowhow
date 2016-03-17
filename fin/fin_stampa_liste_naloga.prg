@@ -16,6 +16,9 @@ MEMVAR m, m_x, m_y, GetList, __print_opt
 MEMVAR picDem, picBHD
 MEMVAR gPicBHD, gPicDEM
 
+THREAD STATIC s_oPDF
+
+
 FIELD d_p, IDFirma, Idvn, Brnal, DUGBHD, DUGDEM, POTBHD, POTDEM, DatNal, sifra
 
 MEMVAR fK1, fK2, fK3, fK4, gnLOst, gPotpis
@@ -28,6 +31,7 @@ FUNCTION fin_stampa_liste_naloga()
    LOCAL nPos := 15
    LOCAL cInteg, nSort, cIdVN, nBrNalLen
    LOCAL nRBr, nDugBHD, nPotBHD, nDugDEM, nPotDEM
+   LOCAL xPrintOpt
 
    cInteg := "N"
    nSort := 1
@@ -65,7 +69,15 @@ FUNCTION fin_stampa_liste_naloga()
 
    EOF CRET
 
-   START PRINT CRET
+   ALTD()
+
+
+   s_oPDF := PDFClass():New()
+   xPrintOpt := hb_hash()
+   xPrintOpt[ "tip" ] := "PDF"
+   xPrintOpt[ "opdf" ] := s_oPDF
+
+   f18_start_print( NIL, xPrintOpt )
 
    m := "---- --- --- " + Replicate( "-", nBrNalLen + 1 ) + " -------- ---------------- ----------------"
 
@@ -100,7 +112,7 @@ FUNCTION fin_stampa_liste_naloga()
 
          ?? "LISTA FINANSIJSKIH NALOGA NA DAN:", Date()
          ? m
-         ? "*RED*FIR* V *" + PadR( " BR", nBrNalLen + 1 ) + "* DAT    *   DUGUJE       *   POTRAZUJE    *" + IF( fin_dvovalutno(), "   DUGUJE   * POTRAZUJE *", "" )
+         ? "*RED*FIR* V *" + PadR( " BR", nBrNalLen + 1 ) + "* DAT    *   DUGUJE       *   POTRAŽUJE    *" + IIF( fin_dvovalutno(), "   DUGUJE   * POTRAZUJE *", "" )
 
          IF FieldPos( "SIFRA" ) <> 0
             ?? "  OP. *"
@@ -147,6 +159,7 @@ FUNCTION fin_stampa_liste_naloga()
          @ PRow(), PCol() + 1 SAY DugDEM PICTURE picDEM
          @ PRow(), PCol() + 1 SAY PotDEM PICTURE picDEM
       ENDIF
+
       IF FieldPos( "SIFRA" ) <> 0
          @ PRow(), PCol() + 1 SAY iif( Empty( sifra ), Space( 2 ), Left( Crypt( sifra ), 2 ) )
       ENDIF
@@ -228,7 +241,24 @@ FUNCTION fin_stampa_liste_naloga()
 
    ? m
 
-   FF
-   ENDPRINT
+   f18_end_print( NIL, xPrintOpt )
+
+
+   RETURN .T.
+
+
+STATIC FUNCTION NovaStrana( bZagl, nOdstampatiStrana )
+
+   IF ( nOdstampatiStrana == NIL )
+      nOdstampatiStrana := 1
+   ENDIF
+
+   IF PRow() > ( page_length() - nOdstampatiStrana )
+      s_oPDF:AddPage()
+
+      IF ( bZagl <> NIL )
+         Eval( bZagl )
+      ENDIF
+   ENDIF
 
    RETURN .T.

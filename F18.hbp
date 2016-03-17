@@ -18,6 +18,7 @@ common/*.prg
 core_ui2/*.prg
 core_sql/*.prg
 core_dbf/*.prg
+core_pdf/*.prg
 string/*.prg
 semafori/*.prg
 common_legacy/*.prg

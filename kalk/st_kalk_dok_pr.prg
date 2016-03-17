@@ -74,7 +74,7 @@ FUNCTION st_kalk_dokument_pr()
          HSEEK kalk_pripr->IdTarifa
          SELECT kalk_pripr
 
-         IF PRow() > ( RPT_PAGE_LEN + dodatni_redovi_po_stranici() )
+         IF PRow() > page_length()
             FF
             @ PRow(), 125 SAY "Str:" + Str( ++nStr, 3 )
          ENDIF
@@ -190,7 +190,7 @@ FUNCTION st_kalk_dokument_pr()
 
    ENDDO
 
-   IF PRow() > ( RPT_PAGE_LEN + dodatni_redovi_po_stranici() )
+   IF PRow() > page_length()
       FF
       @ PRow(), 125 SAY "Str:" + Str( ++nStr, 3 )
    ENDIF

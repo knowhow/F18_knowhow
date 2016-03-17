@@ -249,7 +249,7 @@ FUNCTION Rfinansijsko_stanje_prodavnica()
          LOOP
       ENDIF
 
-      IF PRow() > ( RPT_PAGE_LEN + dodatni_redovi_po_stranici() )
+      IF PRow() > page_length()
          FF
          Eval( bZagl )
       ENDIF
@@ -321,7 +321,7 @@ FUNCTION Rfinansijsko_stanje_prodavnica()
    nT1 := nT4 := nT5 := nT6 := nT7 := nT5a := 0
 
    FOR i := 1 TO Len( aRTar )
-      IF PRow() > ( RPT_PAGE_LEN + dodatni_redovi_po_stranici() )
+      IF PRow() > page_length()
          FF
       ENDIF
       @ PRow() + 1, 0        SAY Space( 6 ) + aRTar[ i, 1 ]
@@ -343,7 +343,7 @@ FUNCTION Rfinansijsko_stanje_prodavnica()
       nT7 += aRTar[ i, 10 ]
    NEXT
 
-   IF PRow() > ( RPT_PAGE_LEN + dodatni_redovi_po_stranici() )
+   IF PRow() > page_length()
       FF
    ENDIF
    ? cRTLine

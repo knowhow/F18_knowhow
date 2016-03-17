@@ -62,7 +62,7 @@ do while !eof() .and. cIdFirma==IdFirma .and.  cBrDok==BrDok .and. cIdVD==IdVD
     select kalk_pripr
     VtPorezi()
 
-    if prow() > ( RPT_PAGE_LEN + dodatni_redovi_po_stranici() )
+    if prow() > page_length()
         FF
         @ prow(),125 SAY "Str:"+str(++nStr,3)
     endif
@@ -105,7 +105,7 @@ do while !eof() .and. cIdFirma==IdFirma .and.  cBrDok==BrDok .and. cIdVD==IdVD
 
 enddo
 
-if prow() > ( RPT_PAGE_LEN + dodatni_redovi_po_stranici() )
+if prow() > page_length()
     FF
     @ prow(),125 SAY "Str:"+str(++nStr,3)
 endif
@@ -119,7 +119,7 @@ endif
 @ prow(),pcol()+1   SAY  nTot7        picture        PicDEM
 ? m
 
-IF prow() > ( RPT_PAGE_LEN + dodatni_redovi_po_stranici() )
+IF prow() > page_length()
     FF
     @ prow(),125 SAY "Str:"+str(++nStr,3)
 endif
@@ -159,7 +159,7 @@ do while !eof() .and. cidfirma+cidvd+cbrdok==idfirma+idvd+brdok
   @ prow(),pcol()+1   SAY nu3 pict picdem
   @ prow(),pcol()+1   SAY nu4 pict picdem
 enddo
-IF prow() > ( RPT_PAGE_LEN + dodatni_redovi_po_stranici() )
+IF prow() > page_length()
     FF
     @ prow(),125 SAY "Str:"+str(++nStr,3)
 endif

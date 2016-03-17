@@ -280,7 +280,7 @@ FUNCTION finansijsko_stanje_prodavnica()
          LOOP
       ENDIF
 
-      IF PRow() > ( RPT_PAGE_LEN + dodatni_redovi_po_stranici() )
+      IF PRow() > page_length()
          FF
          Eval( bZagl )
       ENDIF

@@ -124,7 +124,7 @@ METHOD F18Login:connect( params, conn_type, silent )
           post_login()
       ENDIF
    ELSE
-      ?E "connection error:", params[ "database" ], params[ "user" ]
+      ?E "connection error:", params[ "host" ], params[ "port" ], params[ "database" ], params[ "user" ]
    ENDIF
 
    RETURN lConnected

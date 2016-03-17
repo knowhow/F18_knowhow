@@ -17,7 +17,7 @@ THREAD STATIC s_cF18Txt
 
 STATIC s_nDodatniRedoviPoStranici
 
-FUNCTION f18_start_print( cFileName, xPrintOpt, document_name )
+FUNCTION f18_start_print( cFileName, xPrintOpt, cDocumentName )
 
    LOCAL cMsg, nI, cLogMsg := ""
    LOCAL cOpt
@@ -29,20 +29,12 @@ FUNCTION f18_start_print( cFileName, xPrintOpt, document_name )
 
    cFileName := set_print_file_name( cFileName )
 
-   IF ( document_name == NIL )
-      document_name :=  gModul + '_' + DToC( Date() )
+   IF ( cDocumentName == NIL )
+      cDocumentName :=  gModul + '_' + DToC( Date() )
    ENDIF
 
    IF ValType( xPrintOpt ) == "H"
       cOpt := xPrintOpt[ "tip" ]
-      IF cOpt == "PDF"
-         hb_cdpSelect( "SLWIN" )
-         oPDF := xPrintOpt[ "opdf" ]
-         oPDF:cFileName := txt_print_file_name()
-         oPDF:cHeader := document_name
-         oPDF:SetType( PDF_TXT )
-         oPDF:Begin()
-      ENDIF
    ENDIF
 
    set_ptxt_sekvence()
@@ -77,7 +69,15 @@ FUNCTION f18_start_print( cFileName, xPrintOpt, document_name )
    SET PRINTER ON
 
    IF cOpt != "PDF"
-      GpIni( document_name )
+      GpIni( cDocumentName )
+   ELSE
+      hb_cdpSelect( "SLWIN" )
+      oPDF := xPrintOpt[ "opdf" ]
+      oPDF:cFileName := txt_print_file_name()
+      oPDF:cHeader := cDocumentName
+      oPDF:SetType( PDF_TXT_PORTRAIT )
+      oPDF:Begin()
+      oPDF:PageHeader()
    ENDIF
 
    RETURN cOpt
@@ -158,12 +158,14 @@ FUNCTION f18_end_print( cFileName, xPrintOpt )
    CASE cOpt == "PDF"
 
       oPDF:End()
+
       oPDF := PDFClass():New()
       oPDF:SetType( PDF_PORTRAIT )
       oPDF:cFileName := StrTran( txt_print_file_name(), ".txt", ".pdf" )
       oPDF:Begin()
       oPDF:PrnToPdf( txt_print_file_name() )
       oPDF:End()
+
       oPDF:View()
       hb_cdpSelect( "SL852" )
 
@@ -291,16 +293,16 @@ STATIC FUNCTION set_print_file_name( cFileName )
 
 
 
-FUNCTION GpIni( document_name )
+FUNCTION GpIni( cDocumentName )
 
-   IF document_name == NIL .OR. gPrinter <> "R"
-      document_name := ""
+   IF cDocumentName == NIL .OR. gPrinter <> "R"
+      cDocumentName := ""
    ENDIF
 
    QQOut( gPini )
 
-   IF !Empty( document_name )
-      QQOut( "#%DOCNA#" + document_name )
+   IF !Empty( cDocumentName )
+      QQOut( "#%DOCNA#" + cDocumentName )
    ENDIF
 
    RETURN .T.

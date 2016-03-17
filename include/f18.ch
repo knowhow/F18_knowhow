@@ -231,7 +231,7 @@
 #define SIFK_LEN_OZNAKA  4
 #define SIFK_LEN_IDSIF   15
 
-//#define RPT_PAGE_LEN 60
+
 #define RPT_PAGE_LEN fetch_metric( "rpt_duzina_stranice", my_user(), 60 )
 
 #define F18_CLIENT_ID_INI_SECTION "client_id"

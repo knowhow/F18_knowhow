@@ -36,7 +36,9 @@ FUNCTION fetch_metric( sect, user, default_value )
 
 
    IF hb_HHasKey( s_hParametri, sect ) .AND. !parametar_dinamican( sect )
+#ifdef F18_DEBUG_PARAMS
       ?E "fetch param cache hit: ", sect
+#endif
       RETURN s_hParametri[ sect ]
    ENDIF
 
@@ -88,9 +90,6 @@ FUNCTION parametar_dinamican( cSection )
 
    RETURN .F.
 
-// --------------------------------------------------------------
-// setuj parametre u metric tabelu
-// --------------------------------------------------------------
 
 FUNCTION set_metric( sect, user, value )
 

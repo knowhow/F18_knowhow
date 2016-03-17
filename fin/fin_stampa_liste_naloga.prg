@@ -16,11 +16,11 @@ MEMVAR m, m_x, m_y, GetList, __print_opt
 MEMVAR picDem, picBHD
 MEMVAR gPicBHD, gPicDEM
 
+#define PRINT_LEFT_SPACE 6
+
 THREAD STATIC s_oPDF
 
-
 FIELD d_p, IDFirma, Idvn, Brnal, DUGBHD, DUGDEM, POTBHD, POTDEM, DatNal, sifra
-
 MEMVAR fK1, fK2, fK3, fK4, gnLOst, gPotpis
 
 
@@ -31,6 +31,7 @@ FUNCTION fin_stampa_liste_naloga()
    LOCAL nPos := 15
    LOCAL cInteg, nSort, cIdVN, nBrNalLen
    LOCAL nRBr, nDugBHD, nPotBHD, nDugDEM, nPotDEM
+   LOCAL bZagl
    LOCAL xPrintOpt
 
    cInteg := "N"
@@ -52,13 +53,10 @@ FUNCTION fin_stampa_liste_naloga()
    IF cinteg == "D"
       O_SUBAN
       SET ORDER TO TAG "4"
-
       O_ANAL
       SET ORDER TO TAG "2"
-
       O_SINT
       SET ORDER TO TAG "2"
-
    ENDIF
 
    SELECT NALOG
@@ -69,17 +67,13 @@ FUNCTION fin_stampa_liste_naloga()
 
    EOF CRET
 
-   ALTD()
-
-
    s_oPDF := PDFClass():New()
-   xPrintOpt := hb_hash()
+   xPrintOpt := hb_Hash()
    xPrintOpt[ "tip" ] := "PDF"
    xPrintOpt[ "opdf" ] := s_oPDF
+   f18_start_print( NIL, xPrintOpt,  "LISTA FINANSIJSKIH NALOGA NA DAN: " + DTOC( Date() ) )
 
-   f18_start_print( NIL, xPrintOpt )
-
-   m := "---- --- --- " + Replicate( "-", nBrNalLen + 1 ) + " -------- ---------------- ----------------"
+   m := SPACE( PRINT_LEFT_SPACE ) + "------- --- --- " + Replicate( "-", nBrNalLen + 1 ) + " -------- ---------------- ----------------"
 
    IF fin_dvovalutno()
       m += " ------------ ------------"
@@ -99,56 +93,22 @@ FUNCTION fin_stampa_liste_naloga()
 
    picBHD := "@Z " + FormPicL( gPicBHD, 16 )
    picDEM := "@Z " + FormPicL( gPicDEM, 12 )
+   bZagl := {||  zagl( nBrNalLen, cInteg ) }
+
+   Eval( bZagl )
 
    DO WHILE !Eof()
 
-      IF PRow() == 0
-         ?
-         IF fin_dvovalutno()
-            P_COND
-         ELSE
-            F10CPI
-         ENDIF
-
-         ?? "LISTA FINANSIJSKIH NALOGA NA DAN:", Date()
-         ? m
-         ? "*RED*FIR* V *" + PadR( " BR", nBrNalLen + 1 ) + "* DAT    *   DUGUJE       *   POTRAŽUJE    *" + IIF( fin_dvovalutno(), "   DUGUJE   * POTRAZUJE *", "" )
-
-         IF FieldPos( "SIFRA" ) <> 0
-            ?? "  OP. *"
-         ENDIF
-
-         IF cInteg == "D"
-            ?? "  1  * 2 * 3 *"
-         ENDIF
-
-         ? "*BRD*MA * N *" + PadR( " NAL", nBrNalLen + 1 ) + "* NAL    *    " + ValDomaca() + "        *      " + ValDomaca() + "      *"
-
-         IF fin_dvovalutno()
-            ?? "    " + ValPomocna() + "    *    " + ValPomocna() + "   *"
-         ENDIF
-
-         IF FieldPos( "SIFRA" ) <> 0
-            ?? "      *"
-         ENDIF
-
-         IF cInteg == "D"
-            ?? "     *   *   *"
-         ENDIF
-
-         IF FieldPos( "SIFRA" ) <> 0
-         ENDIF
-         ? m
-      ENDIF
 
       IF !Empty( cIdVN ) .AND. idvn <> cIDVN
          SKIP
          LOOP
       ENDIF
 
-      NovaStrana()
+      check_nova_strana( bZagl )
 
-      @ PRow() + 1, 0 SAY ++nRBr PICTURE "9999"
+      @ PRow() + 1, 0 SAY SPACE( PRINT_LEFT_SPACE )
+      @ PRow(), PCol() + 0 SAY ++nRBr PICTURE "999999"
       @ PRow(), PCol() + 2 SAY IdFirma
       @ PRow(), PCol() + 2 SAY IdVN
       @ PRow(), PCol() + 2 SAY BrNal
@@ -165,7 +125,8 @@ FUNCTION fin_stampa_liste_naloga()
       ENDIF
       IF cInteg == "D"
 
-         SELECT SUBAN; SEEK NALOG->( IDFirma + Idvn + Brnal )
+         SELECT SUBAN
+         SEEK NALOG->( IDFirma + Idvn + Brnal )
          nDug := 0.00
          nPot := 0.00
          DO WHILE ( IDFirma + Idvn + Brnal ) == NALOG->( IDFirma + Idvn + Brnal )  .AND. !Eof()
@@ -226,10 +187,11 @@ FUNCTION fin_stampa_liste_naloga()
       nPotDEM += PotDEM
       SKIP
    ENDDO
-   NovaStrana()
+
+   check_nova_strana( bZagl )
 
    ? m
-   ? "UKUPNO:"
+   ? SPACE( PRINT_LEFT_SPACE ) + "   UKUPNO:"
 
    @ PRow(), nPos SAY nDugBHD PICTURE picBHD
    @ PRow(), PCol() + 1 SAY nPotBHD PICTURE picBHD
@@ -240,22 +202,53 @@ FUNCTION fin_stampa_liste_naloga()
    ENDIF
 
    ? m
-
    f18_end_print( NIL, xPrintOpt )
-
 
    RETURN .T.
 
 
-STATIC FUNCTION NovaStrana( bZagl, nOdstampatiStrana )
+STATIC FUNCTION zagl( nBrNalLen, cInteg )
 
-   IF ( nOdstampatiStrana == NIL )
-      nOdstampatiStrana := 1
+   ? " "
+   ? SPACE( PRINT_LEFT_SPACE ) + AllTrim( gTS ) + " :", AllTrim( gNFirma ) + ", baza (" + my_server_params()[ "database" ] + ")"
+   ? " "
+   ? m
+   ? SPACE( PRINT_LEFT_SPACE ) + "* R.br *FIR* V *" + PadR( " BR", nBrNalLen + 1 ) + "* DAT    *   DUGUJE       *   POTRAŽUJE   *" + iif( fin_dvovalutno(), "   DUGUJE   * POTRAZUJE *", "" )
+
+   IF FieldPos( "SIFRA" ) <> 0
+      ?? "  OP. *"
    ENDIF
 
-   IF PRow() > ( page_length() - nOdstampatiStrana )
-      s_oPDF:AddPage()
+   IF cInteg == "D"
+      ?? "  1  * 2 * 3 *"
+   ENDIF
 
+   ? SPACE( PRINT_LEFT_SPACE ) + "*      *MA * N *" + PadR( " NAL", nBrNalLen + 1 ) + "* NAL    *    " + ValDomaca() + "        *      " + ValDomaca() + "     *"
+
+   IF fin_dvovalutno()
+      ?? "    " + ValPomocna() + "    *    " + ValPomocna() + "   *"
+   ENDIF
+
+   IF FieldPos( "SIFRA" ) <> 0
+      ?? "      *"
+   ENDIF
+
+   IF cInteg == "D"
+      ?? "     *   *   *"
+   ENDIF
+
+   ? m
+
+   RETURN .T.
+
+
+STATIC FUNCTION check_nova_strana( bZagl, nOdstampatiStrana )
+
+   hb_default( @nOdstampatiStrana, 1 )
+
+   IF PRow() > ( page_length() - nOdstampatiStrana )
+      s_oPDF:DrawText( 67, 0, "" )
+      s_oPDF:PageHeader()
       IF ( bZagl <> NIL )
          Eval( bZagl )
       ENDIF

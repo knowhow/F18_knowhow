@@ -89,7 +89,7 @@ FUNCTION fakt_pregled_liste_dokumenata()
       @ m_x + 3, Col() + 1 SAY "do" GET dDatDo
       @ m_x + 5, m_y + 2 SAY8 "Ime kupca počinje sa (prazno svi)" GET cImeKup PICT "@!"
       @ m_x + 6, m_y + 2 SAY8 "Uslov po šifri kupca (prazno svi)" GET qqPartn PICT "@!" ;
-         VALID {|| aUslSK := Parsiraj( @qqPartn, "IDPARTNER", "C", NIL, F_PARTN ), .T. }
+         VALID {|| aUslovSifraKupca := Parsiraj( qqPartn, "IDPARTNER", "C", NIL, F_PARTN ), .T. }
       @ m_x + 7, m_y + 2 SAY "Broj dokumenta (prazno svi)" GET cBrFakDok PICT "@!"
       @ m_x + 9, m_y + 2 SAY "Tabelarni pregled" GET cTabela VALID cTabela $ "DN" PICT "@!"
 
@@ -119,11 +119,11 @@ FUNCTION fakt_pregled_liste_dokumenata()
       ESC_BCR
 
       aUslBFD := Parsiraj( cBrFakDok, "BRDOK", "C" )
-      aUslSK := Parsiraj( qqPartn, "IDPARTNER", "C" )
+      aUslovSifraKupca := Parsiraj( qqPartn, "IDPARTNER", "C" )
       aUslVrsteP := Parsiraj( qqVrsteP, "IDVRSTEP", "C" )
       aUslOpc := Parsiraj( cOpcina, "flt_fakt_part_opc()", "C" )
 
-      IF ( !lOpcine .OR. aUslOpc <> NIL ) .AND. aUslBFD <> NIL .AND. aUslSK <> NIL .AND. ( !_vrste_pl .OR. aUslVrsteP <> NIL )
+      IF ( !lOpcine .OR. aUslOpc <> NIL ) .AND. aUslBFD <> NIL .AND. aUslovSifraKupca <> NIL .AND. ( !_vrste_pl .OR. aUslVrsteP <> NIL )
          EXIT
       ENDIF
 
@@ -188,7 +188,7 @@ FUNCTION fakt_pregled_liste_dokumenata()
    ENDIF
 
    IF !Empty( qqPartn )
-      cFilter += ".and." + aUslSK
+      cFilter += ".and." + aUslovSifraKupca
    ENDIF
 
    IF !Empty( valute )
@@ -777,7 +777,7 @@ FUNCTION fakt_real_partnera()
       READ
       ESC_BCR
       aUslBFD := Parsiraj( cBrFakDok, "BRDOK", "C" )
-      // aUslSK:=Parsiraj(qqPartn,"IDPARTNER")
+      aUslovSifraKupca:=Parsiraj( qqPartn,"IDPARTNER")
       aUslTD := Parsiraj( qqTipdok, "IdTipdok", "C" )
       IF aUslBFD <> NIL .AND. aUslTD <> NIL
          EXIT
@@ -813,9 +813,9 @@ FUNCTION fakt_real_partnera()
       cFilter += ".and." + aUslBFD
    ENDIF
 
-   // if !empty(qqPartn)
-   // cFilter+=".and."+aUslSK
-   // endif
+   if !empty(qqPartn)
+    cFilter+=".and."+aUslovSifraKupca
+   endif
 
    IF !Empty( qqTipDok )
       cFilter += ".and." + aUslTD
@@ -841,8 +841,7 @@ FUNCTION fakt_real_partnera()
 
    fakt_zagl_real_partnera()
 
-   SET ORDER TO TAG "6"
-   // "6","IdFirma+idpartner+idtipdok",KUMPATH+"DOKS"
+   SET ORDER TO TAG "6" // "6","IdFirma+idpartner+idtipdok",KUMPATH+"DOKS"
    SEEK cIdFirma
 
    nC := 0

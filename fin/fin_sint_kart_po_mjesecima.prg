@@ -19,7 +19,7 @@ FUNCTION fin_sint_kart_po_mjesecima()
    qqKonto := ""
    dDatOd := dDAtDo := CToD( "" )
 
-   IF gVar1 == "0"
+   IF fin_dvovalutno()
       M := "------------- ---------------- ----------------- ----------------- ------------- ------------- -------------"
    ELSE
       M := "------------- ---------------- ----------------- ------------------"
@@ -139,7 +139,7 @@ FUNCTION fin_sint_kart_po_mjesecima()
             nDugBHD += nPSDBHD; nPotBHD += nPSPBHD
             nDugDEM += nPSDDEM; nPotDEM += nPSPDEM
             @ PRow(), PCol() + 2 SAY nDugBHD - nPotBHD PICTURE PicBHD
-            IF gVar1 == "0"
+            IF fin_dvovalutno()
                @ PRow(), PCol() + 2 SAY nPSDDEM PICTURE PicDEM
                @ PRow(), PCol() + 2 SAY nPSPDEM PICTURE picDEM
                @ PRow(), PCol() + 2 SAY nDugDEM - nPotDEM PICTURE PicDEM
@@ -152,7 +152,7 @@ FUNCTION fin_sint_kart_po_mjesecima()
          nDugBHD += nDBHD; nPotBHD += nPBHD
          nDugDEM += nDDEM; nPotDEM += nPDEM
          @ PRow(), PCol() + 2 SAY nDugBHD - nPotBHD PICTURE PicBHD
-         IF gVar1 == "0"
+         IF fin_dvovalutno()
             @ PRow(), PCol() + 2 SAY nDDEM PICTURE PicDEM
             @ PRow(), PCol() + 2 SAY nPDEM PICTURE picDEM
             @ PRow(), PCol() + 2 SAY nDugDEM - nPotDEM PICTURE PicDEM
@@ -165,7 +165,7 @@ FUNCTION fin_sint_kart_po_mjesecima()
       @ PRow(), nC1            SAY nDugBHD     PICTURE PicBHD
       @ PRow(), PCol() + 2  SAY nPotBHD     PICTURE PicBHD
       @ PRow(), PCol() + 2  SAY nDugBHD - nPotBHD PICTURE PicBHD
-      IF gVar1 == "0"
+      IF fin_dvovalutno()
          @ PRow(), PCol() + 2  SAY nDugDEM     PICTURE PicDEM
          @ PRow(), PCol() + 2  SAY nPotDEM     PICTURE PicDEM
          @ PRow(), PCol() + 2  SAY nDugDEM - nPotDEM PICTURE PicDEM
@@ -192,7 +192,7 @@ FUNCTION fin_sint_kart_po_mjesecima()
    @ PRow(), nC1            SAY nSviD           PICTURE PicBHD
    @ PRow(), PCol() + 2  SAY nSviP           PICTURE PicBHD
    @ PRow(), PCol() + 2  SAY nSviD - nSviP     PICTURE PicBHD
-   IF gVar1 == "0"
+   IF fin_dvovalutno()
       @ PRow(), PCol() + 2  SAY nSviD2          PICTURE PicDEM
       @ PRow(), PCol() + 2  SAY nSviP2          PICTURE PicDEM
       @ PRow(), PCol() + 2  SAY nSviD2 - nSviP2   PICTURE PicDEM
@@ -235,9 +235,9 @@ FUNCTION ZaglSink2()
 
    SELECT SINT
 
-   IF gVar1 == "1"; F10CPI; ENDIF
+   IF fin_jednovalutno(); F10CPI; ENDIF
    ?  m
-   IF gVar1 == "0"
+   IF fin_dvovalutno()
       ?  "*  MJESEC    *             I Z N O S     U     " + ValDomaca() + "               *       I Z N O S     U     " + ValPomocna() + "         *"
       ?  "              ---------------------------------------------------- -----------------------------------------"
       ?U  "*            *    DUGUJE      *     POTRAŽUJE   *      SALDO      *   DUGUJE    *  POTRA@UJE  *    SALDO   *"

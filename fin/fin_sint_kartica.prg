@@ -20,7 +20,7 @@ FUNCTION fin_sint_kartica()
    dDatDo := fetch_metric( "fin_kart_datum_do", my_user(), CToD( "" ) )
    cBrza := "D"
 
-   IF gVar1 == "0"
+   IF fin_dvovalutno()
       M := "------- -------- ---- -------- ---------------- ----------------- ----------------- ------------- ------------- -------------"
    ELSE
       M := "------- -------- ---- -------- ---------------- ----------------- ------------------"
@@ -160,7 +160,7 @@ FUNCTION fin_sint_kartica()
                   @ PRow(), 31             SAY nDugBHD     PICTURE PicBHD
                   @ PRow(), PCol() + 2  SAY nPotBHD     PICTURE PicBHD
                   @ PRow(), PCol() + 2  SAY nDugBHD - nPotBHD PICTURE PicBHD
-                  IF gVar1 == "0"
+                  IF fin_dvovalutno()
                      @ PRow(), PCol() + 2  SAY nDugDEM     PICTURE PicDEM
                      @ PRow(), PCol() + 2  SAY nPotDEM     PICTURE PicDEM
                      @ PRow(), PCol() + 2  SAY nDugDEM - nPotDEM PICTURE PicDEM
@@ -184,7 +184,7 @@ FUNCTION fin_sint_kartica()
          nDugBHD += DugBHD; nPotBHD += PotBHD
          nDugDEM += DugDEM; nPotDEM += PotDEM
          @ PRow(), PCol() + 2 SAY nDugBHD - nPotBHD PICTURE PicBHD
-         IF gVar1 == "0"
+         IF fin_dvovalutno()
             @ PRow(), PCol() + 2 SAY DugDEM PICTURE PicDEM
             @ PRow(), PCol() + 2 SAY PotDEM PICTURE picDEM
             @ PRow(), PCol() + 2 SAY nDugDEM - nPotDEM PICTURE PicDEM
@@ -203,7 +203,7 @@ FUNCTION fin_sint_kartica()
       @ PRow(), 31             SAY nDugBHD     PICTURE PicBHD
       @ PRow(), PCol() + 2  SAY nPotBHD     PICTURE PicBHD
       @ PRow(), PCol() + 2  SAY nDugBHD - nPotBHD PICTURE PicBHD
-      IF gVar1 == "0"
+      IF fin_dvovalutno()
          @ PRow(), PCol() + 2  SAY nDugDEM     PICTURE PicDEM
          @ PRow(), PCol() + 2  SAY nPotDEM     PICTURE PicDEM
          @ PRow(), PCol() + 2  SAY nDugDEM - nPotDEM PICTURE PicDEM
@@ -231,7 +231,7 @@ FUNCTION fin_sint_kartica()
       @ PRow(), 31             SAY nSviD           PICTURE PicBHD
       @ PRow(), PCol() + 2  SAY nSviP           PICTURE PicBHD
       @ PRow(), PCol() + 2  SAY nSviD - nSviP     PICTURE PicBHD
-      IF gVar1 == "0"
+      IF fin_dvovalutno()
          @ PRow(), PCol() + 2  SAY nSviD2          PICTURE PicDEM
          @ PRow(), PCol() + 2  SAY nSviP2          PICTURE PicDEM
          @ PRow(), PCol() + 2  SAY nSviD2 - nSviP2   PICTURE PicDEM
@@ -275,11 +275,11 @@ FUNCTION SinKZagl()
    ENDIF
 
    SELECT SINT
-   IF gVar1 == "1"
+   IF fin_jednovalutno()
       F12CPI
    ENDIF
    ?  m
-   IF gVar1 == "0"
+   IF fin_dvovalutno()
       ?  "*VRSTA * BROJ   *REDN* DATUM  *           I  Z  N  O  S     U     " + ValDomaca() + "             *      I  Z  N  O  S     U     " + ValPomocna() + "      *"
       ?  "                               ---------------------------------------------------- -----------------------------------------"
       ?U  "*NALOGA*NALOGA  *BROJ*        *    DUGUJE      *     POTRAŽUJE   *      SALDO      *   DUGUJE    *  POTRAZUJE  *    SALDO   *"

@@ -191,7 +191,7 @@ FUNCTION spec_sub()
       @ m_x + 6, m_y + 2 SAY "Datum dokumenta od" GET dDatOd
       @ m_x + 6, Col() + 2 SAY "do" GET dDatDo
 
-      IF gVar1 == "0"
+      IF fin_dvovalutno()
          @ m_x + 7, m_y + 2 SAY "Obracun za " + ;
             AllTrim( ValDomaca() ) + "/" + ;
             AllTrim( ValPomocna() ) + "/" + ;

@@ -95,7 +95,7 @@ FUNCTION fin_suban_kartica2( lOtvSt )
       @ m_x + 9, m_y + 2 SAY "Datum dokumenta od:" GET dDatod
       @ m_x + 9, Col() + 2 SAY "do" GET dDatDo   VALID dDatOd <= dDatDo
 
-      IF gVar1 == "0"
+      IF fin_dvovalutno()
          @ m_x + 10, m_y + 2 SAY "Kartica za " + AllTrim( ValDomaca() ) + "/" + AllTrim( ValPomocna() ) + "/" + AllTrim( ValDomaca() ) + "-" + AllTrim( ValPomocna() ) + " (1/2/3)"  GET cDinDem VALID cDinDem $ "123"
       ENDIF
 

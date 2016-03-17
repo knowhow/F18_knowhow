@@ -4,256 +4,257 @@
  *  \brief Specifikacija subanalitike po proizvoljnom sortiranju, verzija C52
  */
 
-function SpecSubPro()
-local _fin_params := fin_params()
-local _fakt_params := fakt_params()
+FUNCTION SpecSubPro()
 
-private fK1 := _fin_params["fin_k1"]
-private fK2 := _fin_params["fin_k2"]
-private fK3 := _fin_params["fin_k3"]
-private fK4 := _fin_params["fin_k4"]
+   LOCAL _fin_params := fin_params()
+   LOCAL _fakt_params := fakt_params()
 
-private cSk := "N"
-private cSkVar := "N"
+   PRIVATE fK1 := _fin_params[ "fin_k1" ]
+   PRIVATE fK2 := _fin_params[ "fin_k2" ]
+   PRIVATE fK3 := _fin_params[ "fin_k3" ]
+   PRIVATE fK4 := _fin_params[ "fin_k4" ]
 
-cIdFirma := gFirma
-picBHD := FormPicL("9 "+gPicBHD,20)
+   PRIVATE cSk := "N"
+   PRIVATE cSkVar := "N"
 
-O_KONTO
-O_PARTN
+   cIdFirma := gFirma
+   picBHD := FormPicL( "9 " + gPicBHD, 20 )
 
-dDatOd := dDatDo := CTOD("")
-qqkonto := space(7)
-qqPartner := space(60)
-qqTel := space(60)
-cTip := "1"
-qqBrDok := ""
+   O_KONTO
+   O_PARTN
 
-Box( "", 20, 65 )
+   dDatOd := dDatDo := CToD( "" )
+   qqkonto := Space( 7 )
+   qqPartner := Space( 60 )
+   qqTel := Space( 60 )
+   cTip := "1"
+   qqBrDok := ""
 
-set cursor on
+   Box( "", 20, 65 )
 
-private cSort := "1"
+   SET CURSOR ON
 
-cK1:=cK2:="9"
-cK3:=cK4:="99"
-cIdRj:="999999"
-cFunk:="99999"
-cFond:="9999"
+   PRIVATE cSort := "1"
 
-private nC:=65
+   cK1 := cK2 := "9"
+   cK3 := cK4 := "99"
+   cIdRj := "999999"
+   cFunk := "99999"
+   cFond := "9999"
 
-do while .t.
-    @ m_x+1,m_y+6 SAY "SPECIFIKACIJA SUBANALITIKA - PROIZV.SORT."
-    if gNW=="D"
-        @ m_x+3,m_y+2 SAY "Firma "; ?? gFirma,"-",gNFirma
-    else
-        @ m_x+3,m_y+2 SAY "Firma: " GET cIdFirma valid {|| P_Firma(@cIdFirma),cidfirma:=left(cidfirma,2),.t.}
-    endif
-    @ m_x+4,m_y+2 SAY "Konto   " GET qqkonto  pict "@!" valid P_KontoFin(@qqkonto)
-    @ m_x+5,m_y+2 SAY "Partner " GET qqPartner pict "@!S50"
-    @ m_x+6,m_y+2 SAY "Datum dokumenta od" GET dDatOd
-    @ m_x+6,col()+2 SAY "do" GET dDatDo
-    IF gVar1=="0"
-        @ m_x+7,m_y+2 SAY "Obracun za "+ALLTRIM(ValDomaca())+"/"+ALLTRIM(ValPomocna())+"/"+ALLTRIM(ValDomaca())+"-"+ALLTRIM(ValPomocna())+" (1/2/3):" GET cTip valid ctip $ "123"
-    ENDIF
+   PRIVATE nC := 65
 
-    @ m_x+9,m_y+2 SAY "Kriterij za telefon" get qqTel pict "@!S30"
-    @ m_x+11,m_y+2 SAY "Sortirati po: konto+telefon+partn (1)" get cSort valid csort $ "12"
+   DO WHILE .T.
+      @ m_x + 1, m_y + 6 SAY "SPECIFIKACIJA SUBANALITIKA - PROIZV.SORT."
+      IF gNW == "D"
+         @ m_x + 3, m_y + 2 SAY "Firma "; ?? gFirma, "-", gNFirma
+      ELSE
+         @ m_x + 3, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| P_Firma( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
+      ENDIF
+      @ m_x + 4, m_y + 2 SAY "Konto   " GET qqkonto  PICT "@!" VALID P_KontoFin( @qqkonto )
+      @ m_x + 5, m_y + 2 SAY "Partner " GET qqPartner PICT "@!S50"
+      @ m_x + 6, m_y + 2 SAY "Datum dokumenta od" GET dDatOd
+      @ m_x + 6, Col() + 2 SAY "do" GET dDatDo
+      IF fin_dvovalutno()
+         @ m_x + 7, m_y + 2 SAY "Obracun za " + AllTrim( ValDomaca() ) + "/" + AllTrim( ValPomocna() ) + "/" + AllTrim( ValDomaca() ) + "-" + AllTrim( ValPomocna() ) + " (1/2/3):" GET cTip VALID ctip $ "123"
+      ENDIF
 
-    @ m_x+15,m_y+2 SAY ""
+      @ m_x + 9, m_y + 2 SAY "Kriterij za telefon" GET qqTel PICT "@!S30"
+      @ m_x + 11, m_y + 2 SAY "Sortirati po: konto+telefon+partn (1)" GET cSort VALID csort $ "12"
 
-    if fk1
-        @ m_x+15,m_y+2 SAY "K1 (9 svi) :" GET cK1
-    endif
-    if fk2
-        @ m_x+15,col()+2 SAY "K2 (9 svi) :" GET cK2
-    endif
-    if fk3
-        @ m_x+15,col()+2 SAY "K3 ("+cK3+" svi):" GET cK3
-    endif
-    if fk4
-        @ m_x+15,col()+2 SAY "K4 (99 svi):" GET cK4
-    endif
+      @ m_x + 15, m_y + 2 SAY ""
 
-    READ
-    ESC_BCR
+      IF fk1
+         @ m_x + 15, m_y + 2 SAY "K1 (9 svi) :" GET cK1
+      ENDIF
+      IF fk2
+         @ m_x + 15, Col() + 2 SAY "K2 (9 svi) :" GET cK2
+      ENDIF
+      IF fk3
+         @ m_x + 15, Col() + 2 SAY "K3 (" + cK3 + " svi):" GET cK3
+      ENDIF
+      IF fk4
+         @ m_x + 15, Col() + 2 SAY "K4 (99 svi):" GET cK4
+      ENDIF
 
-    aUsl2 := Parsiraj( qqPartner, "IdPartner" )
-    aUsl5 := Parsiraj( qqTel, "partn->telefon" )
+      READ
+      ESC_BCR
 
-    if aUsl5 <> NIL .and. aUsl2 <> NIL
-        exit
-    endif
+      aUsl2 := Parsiraj( qqPartner, "IdPartner" )
+      aUsl5 := Parsiraj( qqTel, "partn->telefon" )
 
-enddo
+      IF aUsl5 <> NIL .AND. aUsl2 <> NIL
+         EXIT
+      ENDIF
 
-BoxC()
+   ENDDO
 
-cIdFirma := LEFT( cIdFirma, 2 )
+   BoxC()
 
-nTmpArr := 0
-nArr := 0
-cImeTmp := ""
+   cIdFirma := Left( cIdFirma, 2 )
 
-O_SUBAN
-SET RELATION TO suban->idpartner INTO partn
+   nTmpArr := 0
+   nArr := 0
+   cImeTmp := ""
 
-if cK1 == "9"
-    cK1 := ""
-endif
-if cK2 == "9"
-    cK2 := ""
-endif
-if cK3 == REPL("9",LEN(cK3))
-    cK3 := ""
-else
-    cK3 := k3u256(cK3)
-endif
-if cK4 == "99"
-    cK4 := ""
-endif
+   O_SUBAN
+   SET RELATION TO suban->idpartner INTO partn
 
-select SUBAN
-set order to tag "1"
+   IF cK1 == "9"
+      cK1 := ""
+   ENDIF
+   IF cK2 == "9"
+      cK2 := ""
+   ENDIF
+   IF cK3 == REPL( "9", Len( cK3 ) )
+      cK3 := ""
+   ELSE
+      cK3 := k3u256( cK3 )
+   ENDIF
+   IF cK4 == "99"
+      cK4 := ""
+   ENDIF
 
-if cSort == "1"
-    cSort1 := "idfirma + idkonto + partn->telefon + idpartner"
-endif
+   SELECT SUBAN
+   SET ORDER TO TAG "1"
 
-private cFilt1 := "idfirma == " + _filter_quote( cIdFirma ) + " .and. idkonto == '" + qqkonto + "'"
+   IF cSort == "1"
+      cSort1 := "idfirma + idkonto + partn->telefon + idpartner"
+   ENDIF
 
-if !(empty(dDatOd) .and. empty(dDatDo))
-    cFilt1 += iif(empty(cFilt1),"",".and.")+ ;
-            "dDatOd<=DatDok  .and. dDatDo>=DatDok"
-endif
+   PRIVATE cFilt1 := "idfirma == " + _filter_quote( cIdFirma ) + " .and. idkonto == '" + qqkonto + "'"
 
-if ( fk1 .and. fk2 .and. fk3 .and. fk4 )
-    cFilt1+= if( empty(cFilt1), "", ".and." ) + ;
-           "(k1=ck1 .and. k2=ck2 .and. k3=ck3 .and. k4=ck4)"
-endif
+   IF !( Empty( dDatOd ) .AND. Empty( dDatDo ) )
+      cFilt1 += iif( Empty( cFilt1 ), "", ".and." ) + ;
+         "dDatOd<=DatDok  .and. dDatDo>=DatDok"
+   ENDIF
 
-if aUsl2 <> ".t."
-    cFilt1 += ".and.(" + aUsl2 +")"
-endif
-if aUsl5<>".t."
-    cFilt1+= ".and.(" + aUsl5 +")"
-endif
+   IF ( fk1 .AND. fk2 .AND. fk3 .AND. fk4 )
+      cFilt1 += if( Empty( cFilt1 ), "", ".and." ) + ;
+         "(k1=ck1 .and. k2=ck2 .and. k3=ck3 .and. k4=ck4)"
+   ENDIF
 
-Box(,1,30)
+   IF aUsl2 <> ".t."
+      cFilt1 += ".and.(" + aUsl2 + ")"
+   ENDIF
+   IF aUsl5 <> ".t."
+      cFilt1 += ".and.(" + aUsl5 + ")"
+   ENDIF
 
-INDEX ON &cSort1 to "TMPSP2" FOR &cFilt1
+   Box(, 1, 30 )
 
-BoxC()
+   INDEX ON &cSort1 TO "TMPSP2" FOR &cFilt1
 
-Pic:=PicBhd
+   BoxC()
 
-START PRINT CRET
+   Pic := PicBhd
 
-if cTip=="3"
-   m:="------  " + REPLICATE("-", FIELD_PARTNER_ID_LENGTH) + " ------------------------------------------------- --------------------- --------------------"
-else
-   m:="------  " + REPLICATE("-", FIELD_PARTNER_ID_LENGTH) + " ------------------------------------------------- --------------------- -------------------- --------------------"
-endif
-nStr:=0
+   START PRINT CRET
 
-nud:=nup:=0      // DIN
-nud2:=nup2:=0    // DEM
+   IF cTip == "3"
+      m := "------  " + Replicate( "-", FIELD_PARTNER_ID_LENGTH ) + " ------------------------------------------------- --------------------- --------------------"
+   ELSE
+      m := "------  " + Replicate( "-", FIELD_PARTNER_ID_LENGTH ) + " ------------------------------------------------- --------------------- -------------------- --------------------"
+   ENDIF
+   nStr := 0
 
-DO WHILE !eof()
+   nud := nup := 0      // DIN
+   nud2 := nup2 := 0    // DEM
 
- select suban
- nkd:=nkp:=0
- nkd2:=nkp2:=0
- cIdkonto:=idkonto
- if cSort=="1"
-     cBrTel:=partn->telefon
-     bUslov:={|| cbrtel==partn->telefon}
-     cNaslov:=partn->telefon+"-"+partn->mjesto
- endif
+   DO WHILE !Eof()
+
+      SELECT suban
+      nkd := nkp := 0
+      nkd2 := nkp2 := 0
+      cIdkonto := idkonto
+      IF cSort == "1"
+         cBrTel := partn->telefon
+         bUslov := {|| cbrtel == partn->telefon }
+         cNaslov := partn->telefon + "-" + partn->mjesto
+      ENDIF
 
 
- DO WHILE !eof() .and. idfirma==cidfirma .and. idkonto==cidkonto .and. eval(bUslov)
-     nd:=np:=0;nd2:=np2:=0
-     if prow()==0; fin_specif_zagl6(cSkVar); endif
-     cIdPartner:=IdPartner
-     cNazPartn:=PADR(partn->naz, 25)
-     DO WHILE !eof() .and. idfirma==cidfirma .and. idkonto==cidkonto .and. eval(bUslov) .and. IdPartner==cIdPartner
-         if d_P=="1"
-           nd+=iznosbhd; nd2+=iznosdem
-         else
-           np+=iznosbhd; np2+=iznosdem
-         endif
-       select suban
-       SKIP
-     enddo
+      DO WHILE !Eof() .AND. idfirma == cidfirma .AND. idkonto == cidkonto .AND. Eval( bUslov )
+         nd := np := 0;nd2 := np2 := 0
+         IF PRow() == 0; fin_specif_zagl6( cSkVar ); ENDIF
+         cIdPartner := IdPartner
+         cNazPartn := PadR( partn->naz, 25 )
+         DO WHILE !Eof() .AND. idfirma == cidfirma .AND. idkonto == cidkonto .AND. Eval( bUslov ) .AND. IdPartner == cIdPartner
+            IF d_P == "1"
+               nd += iznosbhd; nd2 += iznosdem
+            ELSE
+               np += iznosbhd; np2 += iznosdem
+            ENDIF
+            SELECT suban
+            SKIP
+         ENDDO
 
-   if prow()>60+dodatni_redovi_po_stranici(); FF; fin_specif_zagl6(cSkVar); endif
-   ? cidkonto,cIdPartner,""
-   if !empty(cIdPartner)
-     ?? padr(cNazPARTN,50-DifIdp(cIdPartner))
-   else
-     select KONTO; HSEEK cidkonto; select SUBAN
-     ?? padr(KONTO->naz,50)
-   endif
+         IF PRow() > 60 + dodatni_redovi_po_stranici(); FF; fin_specif_zagl6( cSkVar ); ENDIF
+         ? cidkonto, cIdPartner, ""
+         IF !Empty( cIdPartner )
+            ?? PadR( cNazPARTN, 50 -DifIdp( cIdPartner ) )
+         ELSE
+            SELECT KONTO; HSEEK cidkonto; SELECT SUBAN
+            ?? PadR( KONTO->naz, 50 )
+         ENDIF
 
-   nC:=pcol()+1
-   if cTip=="1"
-    @ prow(),pcol()+1 SAY nd pict pic
-    @ prow(),pcol()+1 SAY np pict pic
-    @ prow(),pcol()+1 SAY nd-np pict pic
-   elseif cTip=="2"
-    @ prow(),pcol()+1 SAY nd2 pict pic
-    @ prow(),pcol()+1 SAY np2 pict pic
-    @ prow(),pcol()+1 SAY nd2-np2 pict pic
-   else
-    @ prow(),pcol()+1 SAY nd-np pict pic
-    @ prow(),pcol()+1 SAY nd2-np2 pict pic
-   endif
-   nkd+=nd; nkp+=np  // ukupno  za klasu
-   nkd2+=nd2; nkp2+=np2  // ukupno  za klasu
- enddo  // csort
+         nC := PCol() + 1
+         IF cTip == "1"
+            @ PRow(), PCol() + 1 SAY nd PICT pic
+            @ PRow(), PCol() + 1 SAY np PICT pic
+            @ PRow(), PCol() + 1 SAY nd - np PICT pic
+         ELSEIF cTip == "2"
+            @ PRow(), PCol() + 1 SAY nd2 PICT pic
+            @ PRow(), PCol() + 1 SAY np2 PICT pic
+            @ PRow(), PCol() + 1 SAY nd2 - np2 PICT pic
+         ELSE
+            @ PRow(), PCol() + 1 SAY nd - np PICT pic
+            @ PRow(), PCol() + 1 SAY nd2 - np2 PICT pic
+         ENDIF
+         nkd += nd; nkp += np  // ukupno  za klasu
+         nkd2 += nd2; nkp2 += np2  // ukupno  za klasu
+            ENDDO  // csort
 
- if prow()>60+dodatni_redovi_po_stranici(); FF; fin_specif_zagl6(cSkVar); endif
-  ? m
-  if cSort=="1"
-   ?  "Ukupno za:",cNaslov,":"
-  endif
-  if cTip=="1"
-   @ prow(),nC       SAY nKd pict pic
-   @ prow(),pcol()+1 SAY nKp pict pic
-   @ prow(),pcol()+1 SAY nKd-nKp pict pic
-  elseif cTip=="2"
-   @ prow(),nC       SAY nKd2 pict pic
-   @ prow(),pcol()+1 SAY nKp2 pict pic
-   @ prow(),pcol()+1 SAY nKd2-nKp2 pict pic
-  else
-   @ prow(),nC       SAY nKd-nKP pict pic
-   @ prow(),pcol()+1 SAY nKd2-nKP2 pict pic
-  endif
-  ? m
- nUd+=nKd; nUp+=nKp   // ukupno za sve
- nUd2+=nKd2; nUp2+=nKp2   // ukupno za sve
-enddo
-if prow()>60+dodatni_redovi_po_stranici(); FF; fin_specif_zagl6(cSkVar); endif
-? m
-? " UKUPNO:"
-if cTip=="1"
-  @ prow(),nC       SAY nUd pict pic
-  @ prow(),pcol()+1 SAY nUp pict pic
-  @ prow(),pcol()+1 SAY nUd-nUp pict pic
-elseif cTip=="2"
-  @ prow(),nC       SAY nUd2 pict pic
-  @ prow(),pcol()+1 SAY nUp2 pict pic
-  @ prow(),pcol()+1 SAY nUd2-nUp2 pict pic
-else
-  @ prow(),nC       SAY nUd-nUP pict pic
-  @ prow(),pcol()+1 SAY nUd2-nUP2 pict pic
-endif
-? m
-FF
-ENDPRINT
+         IF PRow() > 60 + dodatni_redovi_po_stranici(); FF; fin_specif_zagl6( cSkVar ); ENDIF
+         ? m
+         IF cSort == "1"
+            ?  "Ukupno za:", cNaslov, ":"
+         ENDIF
+         IF cTip == "1"
+            @ PRow(), nC       SAY nKd PICT pic
+            @ PRow(), PCol() + 1 SAY nKp PICT pic
+            @ PRow(), PCol() + 1 SAY nKd - nKp PICT pic
+         ELSEIF cTip == "2"
+            @ PRow(), nC       SAY nKd2 PICT pic
+            @ PRow(), PCol() + 1 SAY nKp2 PICT pic
+            @ PRow(), PCol() + 1 SAY nKd2 - nKp2 PICT pic
+         ELSE
+            @ PRow(), nC       SAY nKd - nKP PICT pic
+            @ PRow(), PCol() + 1 SAY nKd2 - nKP2 PICT pic
+         ENDIF
+         ? m
+         nUd += nKd; nUp += nKp   // ukupno za sve
+            nUd2 += nKd2; nUp2 += nKp2   // ukupno za sve
+            enddo
+         IF PRow() > 60 + dodatni_redovi_po_stranici(); FF; fin_specif_zagl6( cSkVar ); ENDIF
+         ? m
+         ? " UKUPNO:"
+         IF cTip == "1"
+            @ PRow(), nC       SAY nUd PICT pic
+            @ PRow(), PCol() + 1 SAY nUp PICT pic
+            @ PRow(), PCol() + 1 SAY nUd - nUp PICT pic
+         ELSEIF cTip == "2"
+            @ PRow(), nC       SAY nUd2 PICT pic
+            @ PRow(), PCol() + 1 SAY nUp2 PICT pic
+            @ PRow(), PCol() + 1 SAY nUd2 - nUp2 PICT pic
+         ELSE
+            @ PRow(), nC       SAY nUd - nUP PICT pic
+            @ PRow(), PCol() + 1 SAY nUd2 - nUP2 PICT pic
+         ENDIF
+         ? m
+         FF
+         ENDPRINT
 
-closeret
+         closeret
 
-return
+         RETURN

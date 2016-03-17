@@ -12,12 +12,16 @@
 
 #include "f18.ch"
 
+MEMVAR m, m_x, m_y, GetList, __print_opt
 
 FUNCTION fin_stampa_liste_naloga()
 
    LOCAL nDug := 0.00
    LOCAL nPot := 0.00
    LOCAL nPos := 15
+   LOCAL cInteg, nSort, cIdVN, nBrNalLen
+   LOCAL nRBr, nDugBHD, nPotBHD, nDugDEM, nPotDEM
+
 
    cInteg := "N"
    nSort := 1
@@ -26,7 +30,7 @@ FUNCTION fin_stampa_liste_naloga()
 
    Box(, 7, 60 )
    @ m_x + 1, m_Y + 2 SAY "Provjeriti integritet podataka"
-   @ m_x + 2, m_Y + 2 SAY "u odnosu na datoteku naloga D/N ?"  GET cInteg  PICT "@!" VALID cinteg $ "DN"
+   @ m_x + 2, m_Y + 2 SAY "u odnosu na datoteku naloga D/N ?"  GET cInteg  PICT "@!" VALID cInteg $ "DN"
    @ m_x + 4, m_Y + 2 SAY "Sortiranje dokumenata po:  1-(firma,vn,brnal) "
    @ m_x + 5, m_Y + 2 SAY "2-(firma,brnal,vn),    3-(datnal,firma,vn,brnal) " GET nSort PICT "9"
    @ m_x + 7, m_Y + 2 SAY "Vrsta naloga (prazno-svi) " GET cIDVN PICT "@!"
@@ -59,7 +63,7 @@ FUNCTION fin_stampa_liste_naloga()
 
    m := "---- --- --- " + Replicate( "-", nBrNalLen + 1 ) + " -------- ---------------- ----------------"
 
-   IF gVar1 == "0"
+   IF fin_dvovalutno()
       m += " ------------ ------------"
    ENDIF
 
@@ -82,7 +86,7 @@ FUNCTION fin_stampa_liste_naloga()
 
       IF PRow() == 0
          ?
-         IF gVar1 == "0"
+         IF fin_dvovalutno()
             P_COND
          ELSE
             F10CPI
@@ -90,7 +94,7 @@ FUNCTION fin_stampa_liste_naloga()
 
          ?? "LISTA FIN. DOKUMENATA (NALOGA) NA DAN:", Date()
          ? m
-         ? "*RED*FIR* V *" + PadR( " BR", nBrNalLen + 1 ) + "* DAT    *   DUGUJE       *   POTRAZUJE    *" + IF( gVar1 == "0", "   DUGUJE   * POTRAZUJE *", "" )
+         ? "*RED*FIR* V *" + PadR( " BR", nBrNalLen + 1 ) + "* DAT    *   DUGUJE       *   POTRAZUJE    *" + IF( fin_dvovalutno(), "   DUGUJE   * POTRAZUJE *", "" )
 
          IF FieldPos( "SIFRA" ) <> 0
             ?? "  OP. *"
@@ -102,7 +106,7 @@ FUNCTION fin_stampa_liste_naloga()
 
          ? "*BRD*MA * N *" + PadR( " NAL", nBrNalLen + 1 ) + "* NAL    *    " + ValDomaca() + "        *      " + ValDomaca() + "      *"
 
-         IF gVar1 == "0"
+         IF fin_dvovalutno()
             ?? "    " + ValPomocna() + "    *    " + ValPomocna() + "   *"
          ENDIF
 
@@ -133,7 +137,7 @@ FUNCTION fin_stampa_liste_naloga()
       @ PRow(), PCol() + 1 SAY DatNal
       @ PRow(), nPos := PCol() + 1 SAY DugBHD PICTURE picBHD
       @ PRow(), PCol() + 1 SAY PotBHD PICTURE picBHD
-      IF gVar1 == "0"
+      IF fin_dvovalutno()
          @ PRow(), PCol() + 1 SAY DugDEM PICTURE picDEM
          @ PRow(), PCol() + 1 SAY PotDEM PICTURE picDEM
       ENDIF
@@ -203,7 +207,7 @@ FUNCTION fin_stampa_liste_naloga()
    @ PRow(), nPos SAY nDugBHD PICTURE picBHD
    @ PRow(), PCol() + 1 SAY nPotBHD PICTURE picBHD
 
-   IF gVar1 == "0"
+   IF fin_dvovalutno()
       @ PRow(), PCol() + 1 SAY nDugDEM PICTURE picDEM
       @ PRow(), PCol() + 1 SAY nPotDEM PICTURE picDEM
    ENDIF
@@ -283,9 +287,9 @@ FUNCTION DnevnikNaloga()
    lJerry := .F.
 
    IF gNW == "N"
-      M := "------ -------------- --- " + "---- ------- " + REPL( "-", FIELD_PARTNER_ID_LENGTH ) + " ----------------------------" + IF( gVar1 == "1" .AND. lJerry, "-- " + REPL( "-", 20 ), "" ) + " -- ------------- ----------- -------- -------- --------------- ---------------" + IF( gVar1 == "1", "-", " ---------- ----------" )
+      M := "------ -------------- --- " + "---- ------- " + REPL( "-", FIELD_PARTNER_ID_LENGTH ) + " ----------------------------" + IF( fin_jednovalutno() .AND. lJerry, "-- " + REPL( "-", 20 ), "" ) + " -- ------------- ----------- -------- -------- --------------- ---------------" + IF( fin_jednovalutno(), "-", " ---------- ----------" )
    ELSE
-      M := "------ -------------- --- " + "---- ------- " + REPL( "-", FIELD_PARTNER_ID_LENGTH ) + " ----------------------------" + IF( gVar1 == "1" .AND. lJerry, "-- " + REPL( "-", 20 ), "" ) + " ----------- -------- -------- --------------- ---------------" + IF( gVar1 == "1", "-", " ---------- ----------" )
+      M := "------ -------------- --- " + "---- ------- " + REPL( "-", FIELD_PARTNER_ID_LENGTH ) + " ----------------------------" + IF( fin_jednovalutno() .AND. lJerry, "-- " + REPL( "-", 20 ), "" ) + " ----------- -------- -------- --------------- ---------------" + IF( fin_jednovalutno(), "-", " ---------- ----------" )
    ENDIF
 
    cMjGod := Str( Month( dDatNal ), 2 ) + Str( Year( dDatNal ), 4 )

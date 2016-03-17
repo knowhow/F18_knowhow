@@ -34,7 +34,7 @@ FUNCTION SpecPoK()
       @ m_x + 4, m_y + 2 SAY "Konto " GET qqKonto  PICT "@!S50"
       @ m_x + 5, m_y + 2 SAY "Datum od" GET dDatOd
       @ m_x + 5, Col() + 2 SAY "do" GET dDatDo
-      IF gVar1 == "0"
+      IF fin_dvovalutno()
          @ m_x + 6, m_y + 2 SAY "Obracun za " + AllTrim( ValDomaca() ) + "/" + AllTrim( ValPomocna() ) + " (1/2):" GET cTip VALID ctip $ "12"
       ENDIF
       @ m_x + 7, m_y + 2 SAY "Prikaz sintetickih konta (D/N):" GET cSK PICT "@!" VALID cSK $ "DN"

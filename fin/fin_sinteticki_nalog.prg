@@ -21,7 +21,7 @@ FUNCTION fin_sinteticki_nalog( kumulativ )
    PicBHD := "@Z " + FormPicL( gPicBHD, 17 )
    PicDEM := "@Z " + FormPicL( gPicDEM, 12 )
 
-   M := "---- -------- ------- --------------------------------------------- ----------------- -----------------" + IF( gVar1 == "1", "-", " ------------ ------------" )
+   M := "---- -------- ------- --------------------------------------------- ----------------- -----------------" + IF( fin_jednovalutno(), "-", " ------------ ------------" )
 
    IF kumulativ  
 
@@ -103,7 +103,7 @@ FUNCTION fin_sinteticki_nalog( kumulativ )
             nCol1 := PCol() + 1
             @ PRow(), nCol1 SAY DugBHD PICTURE PicBHD
             @ PRow(), PCol() + 1 SAY PotBHD PICTURE PicBHD
-            IF gVar1 != "1"
+            IF fin_dvovalutno()
                @ PRow(), PCol() + 1 SAY DugDEM PICTURE PicDEM
                @ PRow(), PCol() + 1 SAY PotDEM PICTURE PicDEM
             ENDIF
@@ -140,7 +140,7 @@ FUNCTION fin_sinteticki_nalog( kumulativ )
       @ PRow(), nCol1 SAY nUkDugBHD PICTURE PicBHD
       @ PRow(), PCol() + 1 SAY nUkPotBHD PICTURE PicBHD
       
-      IF gVar1 != "1"
+      IF fin_dvovalutno()
          @ PRow(), PCol() + 1 SAY nUkDugDEM PICTURE PicDEM
          @ PRow(), PCol() + 1 SAY nUkPotDEM PICTURE PicDEM
       ENDIF
@@ -166,7 +166,7 @@ FUNCTION fin_sinteticki_nalog( kumulativ )
    @ PRow(), nCol1 SAY nUkUkDugBHD PICTURE PicBHD
    @ PRow(), PCol() + 1 SAY nUkUkPotBHD PICTURE PicBHD
 
-   IF gVar1 != "1"
+   IF fin_dvovalutno()
       @ PRow(), PCol() + 1 SAY nUkUkDugDEM PICTURE PicDEM
       @ PRow(), PCol() + 1 SAY nUkUkPotDEM PICTURE PicDEM
    ENDIF
@@ -222,11 +222,11 @@ FUNCTION zagl_sinteticki_nalog( dDatNal )
    P_NRED
    ?? m
    P_NRED
-   ?? "*RED*" + PadC( IF( gDatNal == "D", "", "DATUM" ), 8 ) + "*           NAZIV KONTA                               *            IZNOS U " + ValDomaca() + "           *" + IF( gVar1 == "1", "", "     IZNOS U " + ValPomocna() + "       *" )
+   ?? "*RED*" + PadC( IF( gDatNal == "D", "", "DATUM" ), 8 ) + "*           NAZIV KONTA                               *            IZNOS U " + ValDomaca() + "           *" + IF( fin_jednovalutno(), "", "     IZNOS U " + ValPomocna() + "       *" )
    P_NRED
-   ?? "    *        *                                                      ----------------------------------- " + IF( gVar1 == "1", "", "-------------------------" )
+   ?? "    *        *                                                      ----------------------------------- " + IF( fin_jednovalutno(), "", "-------------------------" )
    P_NRED
-   ?? "*BR *        *                                                     * DUGUJE  " + ValDomaca() + "    * POTRAZUJE  " + ValDomaca() + " *" + IF( gVar1 == "1", "", " DUG. " + ValPomocna() + "  * POT. " + ValPomocna() + " *" )
+   ?? "*BR *        *                                                     * DUGUJE  " + ValDomaca() + "    * POTRAZUJE  " + ValDomaca() + " *" + IF( fin_jednovalutno(), "", " DUG. " + ValPomocna() + "  * POT. " + ValPomocna() + " *" )
    P_NRED
    ?? m
 

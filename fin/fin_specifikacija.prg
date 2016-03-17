@@ -41,14 +41,14 @@ FUNCTION SpecDPK()
    @ m_x + 5, m_y + 2 SAY "Partner" GET qqPartner PICTURE "@!S50"
    @ m_x + 6, m_y + 2 SAY "Duguje/Potrazuje (1/2) ?" GET cDP PICTURE "@!" VALID cDP $ "12"
    @ m_x + 7, m_y + 2 SAY "IZNOS " + ValDomaca() GET nIznos  PICTURE '999999999999.99'
-   IF gVar1 <> "1"
+   IF fin_dvovalutno()
       @ m_x + 8, m_y + 2 SAY "IZNOS " + ValPomocna() GET nIznos2 PICTURE '9999999999.99'
    ENDIF
    @ m_x + 9, m_y + 2 SAY "Format izvjestaja A3/A4 (1/2) :" GET cF VALID cF $ "12"
    @ m_x + 10, m_y + 2 SAY "Prikazi grad partnera (D/N) :" GET cPG PICT "@!" VALID cPG $ "DN"
    READ
    IF cF == "2"
-      IF gVar1 == "0"
+      IF fin_dvovalutno()
          @ m_x + 10, m_y + 40 SAY AllTrim( ValDomaca() ) + "/" + AllTrim( ValPomocna() ) + " (1/2):" GET cDD VALID cDD $ "12"
          READ
       ELSE
@@ -340,7 +340,7 @@ FUNCTION SpecBrDan()
    qqBrDok := Space( 40 )
 
    M := "----- " + Replicate( "-", FIELD_PARTNER_ID_LENGTH ) + " ----------------------------------- ------ ---------------- -------- -------- --------- -----------------"
-   IF gVar1 == "0"
+   IF fin_dvovalutno()
       M += " ----------------"
    ENDIF
 
@@ -516,7 +516,7 @@ FUNCTION SpecBrDan()
                @ PRow(), PCol() + 1 SAY k1 + "-" + k2 + "-" + k3iz256( k3 ) + k4
                nCol1 := PCol() + 1
                @ PRow(), PCol() + 1 SAY nDin PICTURE picBHD
-               IF gVar1 = "0"
+               IF fin_dvovalutno()
                   @ PRow(), PCol() + 1 SAY nDEM PICTURE picDEM
                ENDIF
             ENDIF // cpojed=="D"
@@ -553,7 +553,7 @@ FUNCTION SpecBrDan()
          @ PRow(), PCol() + 1 SAY k1 + "-" + k2 + "-" + k3iz256( k3 ) + k4
          nCol1 := PCol() + 1
          @ PRow(), PCol() + 1 SAY nDinP PICTURE picBHD
-         IF gVar1 = "0"
+         IF fin_dvovalutno()
             @ PRow(), PCol() + 1 SAY nDEMP PICTURE picDEM
          ENDIF
 
@@ -567,7 +567,7 @@ FUNCTION SpecBrDan()
    ? M
    ? "UKUPNO ZA KONTO:"
    @ PRow(), nCol1    SAY KDIN PICTURE picBHD
-   IF gVar1 = "0"
+   IF fin_dvovalutno()
       @ PRow(), PCol() + 1 SAY KDEM PICTURE picDEM
    ENDIF
    ? M
@@ -616,11 +616,11 @@ FUNCTION ZaglSpBrDana()
 
    ? "----- " + Replicate( "-", FIELD_PARTNER_ID_LENGTH ) + " ----------------------------------- ------ ---------------- -------- -------- -------- "
    ?? Replicate( "-", 17 )
-   IF gVar1 == "0" // dvovalutno
+   IF fin_dvovalutno() // dvovalutno
       ?? " " + Replicate( "-", 17 )
    ENDIF
    ? "*RED *" + PadC( "PART-", FIELD_PARTNER_ID_LENGTH ) + "*      NAZIV POSLOVNOG PARTNERA      PTT     MJESTO         *  BROJ  * DATUM  * K1-K4  *"
-   IF gVar1 == "0"
+   IF fin_dvovalutno()
       ?? PadC( "NEPLA�ENO", 35 )
    ELSE
       ?? PadC( "NEPLA�ENO", 17 )
@@ -629,7 +629,7 @@ FUNCTION ZaglSpBrDana()
    ? " BR. " + PadC( "NER", FIELD_PARTNER_ID_LENGTH ) + "                                                                                         "
 
    ?? Replicate( "-", 17 )
-   IF gVar1 == "0" // dvovalutno
+   IF fin_dvovalutno() // dvovalutno
       ?? " " + Replicate( "-", 17 )
    ENDIF
 
@@ -643,7 +643,7 @@ FUNCTION ZaglSpBrDana()
    ENDIF
    cPom += ValDomaca() + "  * "
 
-   IF gVar1 = "0" // dvovalutno
+   IF fin_dvovalutno() // dvovalutno
       IF cD_P = "1"
          cPom += "  DUGUJE "
       ELSE
@@ -751,7 +751,7 @@ FUNCTION fin_spec_po_suban_kontima()
       @ m_x + 5, m_y + 2 SAY "Partner " GET qqPartner PICT "@!S50"
       @ m_x + 6, m_y + 2 SAY "Datum dokumenta od" GET dDatOd
       @ m_x + 6, Col() + 2 SAY "do" GET dDatDo
-      IF gVar1 == "0"
+      IF fin_dvovalutno()
          @ m_x + 7, m_y + 2 SAY "Obracun za " + AllTrim( ValDomaca() ) + "/" + AllTrim( ValPomocna() ) + "/" + AllTrim( ValDomaca() ) + "-" + AllTrim( ValPomocna() ) + " (1/2/3):" GET cTip VALID ctip $ "123"
       ELSE
          cTip := "1"
@@ -1331,7 +1331,7 @@ FUNCTION SpecPoDosp( lKartica )
    picBHD := FormPicL( gPicBHD, 14 )
    picDEM := FormPicL( gPicDEM, 10 )
 
-   IF gVar1 == "0"
+   IF fin_dvovalutno()
       m := "----------- ------------- -------------- -------------- ---------- ---------- ---------- -------------------------"
    ELSE
       m := "----------- ------------- -------------- -------------- -------------------------"
@@ -1664,7 +1664,7 @@ FUNCTION SpecPoDosp( lKartica )
             nCol1 := PCol() + 1
             ?? " "
             ?? Transform( dug, picbhd ), Transform( pot, picbhd ), Transform( dug - pot, picbhd )
-            IF gVar1 == "0"
+            IF fin_dvovalutno()
                ?? " " + Transform( dug2, picdem ), Transform( pot2, picdem ), Transform( dug2 - pot2, picdem )
             ENDIF
          ELSEIF cLastIdPartner != cIdPartner .OR. Len( cLastIdPartner ) < 1
@@ -1723,7 +1723,7 @@ FUNCTION SpecPoDosp( lKartica )
                      @ PRow(), PCol() + 1 SAY anInterUV[ nFaza, 2, 1 ] PICTURE picBHD
                      @ PRow(), PCol() + 1 SAY anInterUV[ nFaza, 1, 1 ] -anInterUV[ nFaza, 2, 1 ] PICTURE picBHD
 
-                     IF gVar1 == "0"
+                     IF fin_dvovalutno()
                         @ PRow(), PCol() + 1 SAY anInterUV[ nFaza, 3, 1 ] PICTURE picdem
                         @ PRow(), PCol() + 1 SAY anInterUV[ nFaza, 4, 1 ] PICTURE picdem
                         @ PRow(), PCol() + 1 SAY anInterUV[ nFaza, 3, 1 ] -anInterUV[ nFaza, 4, 1 ] PICTURE picdem
@@ -1743,7 +1743,7 @@ FUNCTION SpecPoDosp( lKartica )
                   @ PRow(), nCol1 SAY nUkUVD PICTURE picBHD
                   @ PRow(), PCol() + 1 SAY nUkUVP PICTURE picBHD
                   @ PRow(), PCol() + 1 SAY nUkUVD - nUkUVP PICTURE picBHD
-                  IF gVar1 == "0"
+                  IF fin_dvovalutno()
                      @ PRow(), PCol() + 1 SAY nUkUVD2 PICTURE picdem
                      @ PRow(), PCol() + 1 SAY nUkUVP2 PICTURE picdem
                      @ PRow(), PCol() + 1 SAY nUkUVD2 - nUkUVP2 PICTURE picdem
@@ -1761,7 +1761,7 @@ FUNCTION SpecPoDosp( lKartica )
                      @ PRow(), nCol1 SAY anInterVV[ nFaza, 1, 1 ] PICTURE picBHD
                      @ PRow(), PCol() + 1 SAY anInterVV[ nFaza, 2, 1 ] PICTURE picBHD
                      @ PRow(), PCol() + 1 SAY anInterVV[ nFaza, 1, 1 ] -anInterVV[ nFaza, 2, 1 ] PICTURE picBHD
-                     IF gVar1 == "0"
+                     IF fin_dvovalutno()
                         @ PRow(), PCol() + 1 SAY anInterVV[ nFaza, 3, 1 ] PICTURE picdem
                         @ PRow(), PCol() + 1 SAY anInterVV[ nFaza, 4, 1 ] PICTURE picdem
                         @ PRow(), PCol() + 1 SAY 44 PICTURE picdem
@@ -1782,7 +1782,7 @@ FUNCTION SpecPoDosp( lKartica )
                   @ PRow(), nCol1 SAY nUkVVD PICTURE picBHD
                   @ PRow(), PCol() + 1 SAY nUkVVP PICTURE picBHD
                   @ PRow(), PCol() + 1 SAY nUkVVD - nUkVVP PICTURE picBHD
-                  IF gVar1 == "0"
+                  IF fin_dvovalutno()
                      @ PRow(), PCol() + 1 SAY nUkVVD2 PICTURE picdem
                      @ PRow(), PCol() + 1 SAY nUkVVP2 PICTURE picdem
                      @ PRow(), PCol() + 1 SAY nUkVVD2 - nUkVVP2 PICTURE picdem
@@ -1811,7 +1811,7 @@ FUNCTION SpecPoDosp( lKartica )
                   @ PRow(), nCol1 SAY anInterUV[ nFaza, 1, 1 ] PICTURE picBHD
                   @ PRow(), PCol() + 1 SAY anInterUV[ nFaza, 2, 1 ] PICTURE picBHD
                   @ PRow(), PCol() + 1 SAY anInterUV[ nFaza, 1, 1 ] -anInterUV[ nFaza, 2, 1 ] PICTURE picBHD
-                  IF gVar1 == "0"
+                  IF fin_dvovalutno()
                      @ PRow(), PCol() + 1 SAY anInterUV[ nFaza, 3, 1 ] PICTURE picdem
                      @ PRow(), PCol() + 1 SAY anInterUV[ nFaza, 4, 1 ] PICTURE picdem
                      @ PRow(), PCol() + 1 SAY anInterUV[ nFaza, 3, 1 ] -anInterUV[ nFaza, 4, 1 ] PICTURE picdem
@@ -1827,7 +1827,7 @@ FUNCTION SpecPoDosp( lKartica )
                   @ PRow(), nCol1 SAY anInterVV[ nFaza, 1, 1 ] PICTURE picBHD
                   @ PRow(), PCol() + 1 SAY anInterVV[ nFaza, 2, 1 ] PICTURE picBHD
                   @ PRow(), PCol() + 1 SAY anInterVV[ nFaza, 1, 1 ] -anInterVV[ nFaza, 2, 1 ] PICTURE picBHD
-                  IF gVar1 == "0"
+                  IF fin_dvovalutno()
                      @ PRow(), PCol() + 1 SAY anInterVV[ nFaza, 3, 1 ] PICTURE picdem
                      @ PRow(), PCol() + 1 SAY anInterVV[ nFaza, 4, 1 ] PICTURE picdem
                      @ PRow(), PCol() + 1 SAY anInterVV[ nFaza, 3, 1 ] -anInterVV[ nFaza, 4, 1 ] PICTURE picdem
@@ -1860,7 +1860,7 @@ FUNCTION SpecPoDosp( lKartica )
             @ PRow(), nCol1 SAY nUDug PICTURE picBHD
             @ PRow(), PCol() + 1 SAY nUPot PICTURE picBHD
             @ PRow(), PCol() + 1 SAY nUDug - nUPot PICTURE picBHD
-            IF gVar1 == "0"
+            IF fin_dvovalutno()
                @ PRow(), PCol() + 1 SAY nUDug2 PICTURE picdem
                @ PRow(), PCol() + 1 SAY nUPot2 PICTURE picdem
                @ PRow(), PCol() + 1 SAY nUDug2 - nUPot2 PICTURE picdem
@@ -1957,7 +1957,7 @@ FUNCTION SpecPoDosp( lKartica )
             @ PRow(), nCol1 SAY anInterUV[ i, 1, 2 ] PICTURE picBHD
             @ PRow(), PCol() + 1 SAY anInterUV[ i, 2, 2 ] PICTURE picBHD
             @ PRow(), PCol() + 1 SAY anInterUV[ i, 1, 2 ] -anInterUV[ i, 2, 2 ] PICTURE picBHD
-            IF gVar1 == "0"
+            IF fin_dvovalutno()
                @ PRow(), PCol() + 1 SAY anInterUV[ i, 3, 2 ] PICTURE picdem
                @ PRow(), PCol() + 1 SAY anInterUV[ i, 4, 2 ] PICTURE picdem
                @ PRow(), PCol() + 1 SAY anInterUV[ i, 3, 2 ] -anInterUV[ i, 4, 2 ] PICTURE picdem
@@ -1969,7 +1969,7 @@ FUNCTION SpecPoDosp( lKartica )
       @ PRow(), nCol1 SAY nTUkUVD PICTURE picBHD
       @ PRow(), PCol() + 1 SAY nTUkUVP PICTURE picBHD
       @ PRow(), PCol() + 1 SAY nTUkUVD - nTUkUVP PICTURE picBHD
-      IF gVar1 == "0"
+      IF fin_dvovalutno()
          @ PRow(), PCol() + 1 SAY nTUkUVD2 PICTURE picdem
          @ PRow(), PCol() + 1 SAY nTUkUVP2 PICTURE picdem
          @ PRow(), PCol() + 1 SAY nTUkUVD2 - nTUkUVP2 PICTURE picdem
@@ -1981,7 +1981,7 @@ FUNCTION SpecPoDosp( lKartica )
             @ PRow(), nCol1 SAY anInterVV[ i, 1, 2 ] PICTURE picBHD
             @ PRow(), PCol() + 1 SAY anInterVV[ i, 2, 2 ] PICTURE picBHD
             @ PRow(), PCol() + 1 SAY anInterVV[ i, 1, 2 ] -anInterVV[ i, 2, 2 ] PICTURE picBHD
-            IF gVar1 == "0"
+            IF fin_dvovalutno()
                @ PRow(), PCol() + 1 SAY anInterVV[ i, 3, 2 ] PICTURE picdem
                @ PRow(), PCol() + 1 SAY anInterVV[ i, 4, 2 ] PICTURE picdem
                @ PRow(), PCol() + 1 SAY anInterVV[ i, 3, 2 ] -anInterVV[ i, 4, 2 ] PICTURE picdem
@@ -1994,7 +1994,7 @@ FUNCTION SpecPoDosp( lKartica )
       @ PRow(), nCol1 SAY nTUkVVD PICTURE picBHD
       @ PRow(), PCol() + 1 SAY nTUkVVP PICTURE picBHD
       @ PRow(), PCol() + 1 SAY nTUkVVD - nTUkVVP PICTURE picBHD
-      IF gVar1 == "0"
+      IF fin_dvovalutno()
          @ PRow(), PCol() + 1 SAY nTUkVVD2 PICTURE picdem
          @ PRow(), PCol() + 1 SAY nTUkVVP2 PICTURE picdem
          @ PRow(), PCol() + 1 SAY nTUkVVD2 - nTUkVVP2 PICTURE picdem
@@ -2004,7 +2004,7 @@ FUNCTION SpecPoDosp( lKartica )
       @ PRow(), nCol1 SAY nTUDug PICTURE picBHD
       @ PRow(), PCol() + 1 SAY nTUPot PICTURE picBHD
       @ PRow(), PCol() + 1 SAY nTUDug - nTUPot PICTURE picBHD
-      IF gVar1 == "0"
+      IF fin_dvovalutno()
          @ PRow(), PCol() + 1 SAY nTUDug2 PICTURE picdem
          @ PRow(), PCol() + 1 SAY nTUPot2 PICTURE picdem
          @ PRow(), PCol() + 1 SAY nTUDug2 - nTUPot2 PICTURE picdem
@@ -2220,7 +2220,7 @@ FUNCTION ZSpecPoDosp( fStrana, lSvi, PICPIC )
    ENDIF
 
    IF cPoRn == "D"
-      IF gVar1 == "0"
+      IF fin_dvovalutno()
          P_COND2
       ELSE
          P_COND
@@ -2274,7 +2274,7 @@ FUNCTION ZSpecPoDosp( fStrana, lSvi, PICPIC )
 
       ?? "Dat.dok.*Dat.val.* "
 
-      IF gVar1 == "0"
+      IF fin_dvovalutno()
          ?? "  BrDok   *   dug " + ValDomaca() + "  *   pot " + ValDomaca() + "   *  saldo  " + ValDomaca() + " * dug " + ValPomocna() + " * pot " + ValPomocna() + " *saldo " + ValPomocna() + "*      U/VAN VALUTE      *"
       ELSE
          ?? "  BrDok   *   dug " + ValDomaca() + "  *   pot " + ValDomaca() + "   *  saldo  " + ValDomaca() + " *      U/VAN VALUTE      *"

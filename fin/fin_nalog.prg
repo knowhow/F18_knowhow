@@ -277,7 +277,7 @@ FUNCTION fin_nalog_stampa( cInd, lAuto, dDatNal, oNalog )
       M += " ----------- -------- -------- --------------- ---------------"
 
    ENDIF
-   M +=  iif( gVar1 == "1", "-", " ---------- ----------" )
+   M +=  iif( fin_jednovalutno(), "-", " ---------- ----------" )
 
    IF cInd $ "1#2"
       nUkDugBHD := nUkPotBHD := nUkDugDEM := nUkPotDEM := 0
@@ -435,7 +435,7 @@ FUNCTION fin_nalog_stampa( cInd, lAuto, dDatNal, oNalog )
 
       ENDIF
 
-      IF gVar1 != "1"
+      IF fin_dvovalutno()
 
          IF D_P == "1"
             IF !lAuto
@@ -519,7 +519,7 @@ FUNCTION fin_nalog_stampa( cInd, lAuto, dDatNal, oNalog )
       @ PRow(), s_nColIzn  SAY nUkDugBHD PICTURE picBHD
       @ PRow(), PCol() + 1 SAY nUkPotBHD PICTURE picBHD
 
-      IF gVar1 != "1"
+      IF fin_dvovalutno()
          @ PRow(), PCol() + 1 SAY nUkDugDEM PICTURE picDEM
          @ PRow(), PCol() + 1 SAY nUkPotDEM PICTURE picDEM
       ENDIF
@@ -664,7 +664,7 @@ FUNCTION fin_nalog_zaglavlje( dDatNal )
 
 
    ?
-   IF _fin_params[ "fin_tip_dokumenta" ] .AND. gVar1 == "0"
+   IF _fin_params[ "fin_tip_dokumenta" ] .AND. fin_dvovalutno()
       P_COND2
    ELSE
       P_COND
@@ -714,19 +714,19 @@ FUNCTION fin_nalog_zaglavlje( dDatNal )
 
       cTmp := iif( lDnevnik, "R.BR. *   BROJ   *DAN*", "" ) + "*R. * KONTO *" + PadC( "PART", FIELD_PARTNER_ID_LENGTH )
       cTmp +=  "*" + "    NAZIV PARTNERA ILI      "  + "*   D  O  K  U  M  E  N  T    *         IZNOS U  " + ValDomaca() + "         *"
-      cTmp += iif( gVar1 == "1", "", "    IZNOS U " + ValPomocna() + "    *" )
+      cTmp += iif( fin_jednovalutno(), "", "    IZNOS U " + ValPomocna() + "    *" )
       ??U cTmp
       P_NRED
 
       cTmp := iif( lDnevnik, "U DNE-*  NALOGA  *   *", "" ) + "             " + PadC( "NER", FIELD_PARTNER_ID_LENGTH ) + " "
       cTmp += "                            " + " ----------------------------- ------------------------------- "
-      cTmp += iif( gVar1 == "1", "", "---------------------" )
+      cTmp += iif( fin_jednovalutno(), "", "---------------------" )
       ??U cTmp
       P_NRED
 
       cTmp := iif( lDnevnik, "VNIKU *          *   *", "" ) + "*BR *       *" + REPL( " ", FIELD_PARTNER_ID_LENGTH ) + "*"
       cTmp += "    NAZIV KONTA             "  + "* BROJ VEZE * DATUM  * VALUTA *  DUGUJE " + ValDomaca() + "  * POTRAŽUJE " + ValDomaca() + "*"
-      cTmp += iif( gVar1 == "1", "", " DUG. " + ValPomocna() + "* POT." + ValPomocna() + "*" )
+      cTmp += iif( fin_jednovalutno(), "", " DUG. " + ValPomocna() + "* POT." + ValPomocna() + "*" )
       ??U cTmp
 
    ELSE
@@ -734,20 +734,20 @@ FUNCTION fin_nalog_zaglavlje( dDatNal )
 
       cTmp := iif( lDnevnik, "R.BR. *   BROJ   *DAN*", "" ) + "*R. * KONTO *" + PadC( "PART", FIELD_PARTNER_ID_LENGTH ) + "*"
       cTmp += "    NAZIV PARTNERA ILI      "  + "*           D  O  K  U  M  E  N  T             *         IZNOS U  " + ValDomaca() + "         *"
-      cTmp += iif( gVar1 == "1", "", "    IZNOS U " + ValPomocna() + "    *" )
+      cTmp += iif( fin_jednovalutno(), "", "    IZNOS U " + ValPomocna() + "    *" )
       ??U cTmp
       P_NRED
 
       cTmp := iif( lDnevnik, "U DNE-*  NALOGA  *   *", "" ) + "             " + PadC( "NER", FIELD_PARTNER_ID_LENGTH ) + " "
       cTmp += "                            " + " ---------------------------------------------- ------------------------------- "
-      cTmp += iif( gVar1 == "1", "", "---------------------" )
+      cTmp += iif( fin_jednovalutno(), "", "---------------------" )
       ??U cTmp
       P_NRED
 
 
       cTmp := iif( lDnevnik, "VNIKU *          *   *", "" ) + "*BR *       *" + REPL( " ", FIELD_PARTNER_ID_LENGTH ) + "*"
       cTmp += "    NAZIV KONTA             " + "*  TIP I NAZIV   * BROJ VEZE * DATUM  * VALUTA *  DUGUJE " + ValDomaca() + "  * POTRAŽUJE " + ValDomaca() + "*"
-      cTmp +=  iif( gVar1 == "1", "", " DUG. " + ValPomocna() + "* POT." + ValPomocna() + "*" )
+      cTmp +=  iif( fin_jednovalutno(), "", " DUG. " + ValPomocna() + "* POT." + ValPomocna() + "*" )
       ??U cTmp
 
    ENDIF
@@ -770,7 +770,7 @@ FUNCTION PrenosDNal()
    ? PadR( "UKUPNO NA STRANI " + AllTrim( Str( nStr ) ), 30 ) + ":"
    @ PRow(), s_nColIzn  SAY nTSDugBHD PICTURE picBHD
    @ PRow(), PCol() + 1 SAY nTSPotBHD PICTURE picBHD
-   IF gVar1 != "1"
+   IF fin_dvovalutno()
       @ PRow(), PCol() + 1 SAY nTSDugDEM PICTURE picDEM
       @ PRow(), PCol() + 1 SAY nTSPotDEM PICTURE picDEM
    ENDIF
@@ -778,7 +778,7 @@ FUNCTION PrenosDNal()
    ? PadR( "DONOS SA PRETHODNE STRANE", 30 ) + ":"
    @ PRow(), s_nColIzn  SAY nUkDugBHD - nTSDugBHD PICTURE picBHD
    @ PRow(), PCol() + 1 SAY nUkPotBHD - nTSPotBHD PICTURE picBHD
-   IF gVar1 != "1"
+   IF fin_dvovalutno()
       @ PRow(), PCol() + 1 SAY nUkDugDEM - nTSDugDEM PICTURE picDEM
       @ PRow(), PCol() + 1 SAY nUkPotDEM - nTSPotDEM PICTURE picDEM
    ENDIF
@@ -786,7 +786,7 @@ FUNCTION PrenosDNal()
    ? PadR( "PRENOS NA NAREDNU STRANU", 30 ) + ":"
    @ PRow(), s_nColIzn  SAY nUkDugBHD PICTURE picBHD
    @ PRow(), PCol() + 1 SAY nUkPotBHD PICTURE picBHD
-   IF gVar1 != "1"
+   IF fin_dvovalutno()
       @ PRow(), PCol() + 1 SAY nUkDugDEM PICTURE picDEM
       @ PRow(), PCol() + 1 SAY nUkPotDEM PICTURE picDEM
    ENDIF

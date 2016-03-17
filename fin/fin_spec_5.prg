@@ -44,7 +44,7 @@ FUNCTION PregNDP()
    @ m_x + 3, m_y + 2 SAY "Konto:" GET cIdkonto VALID p_kontoFin( @cidkonto )
    @ m_x + 5, m_y + 2 SAY "Period:" GET dDatOd
    @ m_x + 5, Col() + 2 SAY "do" GET dDatDo VALID dDatDo >= dDatOd
-   IF gVar1 == "0"
+   IF fin_dvovalutno()
       @ m_x + 6, m_y + 2 SAY "Prikaz " + AllTrim( ValDomaca() ) + "/" + AllTrim( ValPomocna() ) + " (1/2)"  GET cDinDEM VALID cdindem $ "12"
    ENDIF
    @ m_x + 8, m_y + 2 SAY "Prikaz: (1) stavki kod kojih nije bilo promjena u toku tekuce godine"

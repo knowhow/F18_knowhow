@@ -115,7 +115,7 @@ STATIC FUNCTION _ios_spec_get_line()
    _line += _space
    _line += "----------------"
 
-   IF gVar1 == "0"
+   IF fin_dvovalutno()
       _line += _space
       _line += "------------"
       _line += _space
@@ -303,7 +303,7 @@ STATIC FUNCTION ios_specifikacija( params )
       ENDIF
 
       // strana valuta
-      IF gVar1 == "0"
+      IF fin_dvovalutno()
 
          @ PRow(), PCol() + 1 SAY nDugDEM PICTURE picDEM
          @ PRow(), PCol() + 1 SAY nPotDEM PICTURE picDEM
@@ -338,7 +338,7 @@ STATIC FUNCTION ios_specifikacija( params )
    @ PRow(), PCol() + 1 SAY iif( nS >= 0, nS, 0 ) PICTURE picBHD
    @ PRow(), PCol() + 1 SAY iif( nS <= 0, nS, 0 ) PICTURE picBHD
 
-   IF gVar1 == "0"
+   IF fin_dvovalutno()
 
       @ PRow(), PCol() + 1 SAY nUkDugDEM PICTURE picDEM
       @ PRow(), PCol() + 1 SAY nUkPotDEM PICTURE picDEM
@@ -383,9 +383,9 @@ STATIC FUNCTION _spec_zaglavlje( id_firma, id_partner, line )
 
    ? line
 
-   ? "*RED.* �IFRA*      NAZIV POSLOVNOG PARTNERA      * PTT *      MJESTO     *   KUMULATIVNI PROMET  U  " + ValDomaca() + "  *    S A L D O   U   " + ValDomaca() + "         " + IF( gVar1 == "0", "*  KUMULAT. PROMET U " + ValPomocna() + " *  S A L D O   U   " + ValPomocna() + "  ", "" ) + "*"
-   ? "                                                                          ________________________________ _________________________________" + IF( gVar1 == "0", "*_________________________ ________________________", "" ) + "_"
-   ? "*BROJ*      *                                    * BROJ*                 *    DUGUJE     *   POTRAZUJE    *    DUGUJE      *   POTRAZUJE    " + IF( gVar1 == "0", "*    DUGUJE  * POTRAZUJE  *   DUGUJE   * POTRAZUJE ", "" ) + "*"
+   ? "*RED.* �IFRA*      NAZIV POSLOVNOG PARTNERA      * PTT *      MJESTO     *   KUMULATIVNI PROMET  U  " + ValDomaca() + "  *    S A L D O   U   " + ValDomaca() + "         " + IF( fin_dvovalutno(), "*  KUMULAT. PROMET U " + ValPomocna() + " *  S A L D O   U   " + ValPomocna() + "  ", "" ) + "*"
+   ? "                                                                          ________________________________ _________________________________" + IF( fin_dvovalutno(), "*_________________________ ________________________", "" ) + "_"
+   ? "*BROJ*      *                                    * BROJ*                 *    DUGUJE     *   POTRAZUJE    *    DUGUJE      *   POTRAZUJE    " + IF( fin_dvovalutno(), "*    DUGUJE  * POTRAZUJE  *   DUGUJE   * POTRAZUJE ", "" ) + "*"
    ? line
 
    SELECT suban
@@ -578,7 +578,7 @@ STATIC FUNCTION mnu_ios_print()
    @ m_x + _x, m_y + 2 SAY "Partner     :" GET _id_partner ;
       VALID Empty( _id_partner ) .OR.  P_Firma( @_id_partner ) PICT "@!"
 
-   IF gVar1 == "0"
+   IF fin_dvovalutno()
       ++ _x
       @ m_x + _x, m_y + 2 SAY "Prikaz " + ;
          AllTrim( ValDomaca() ) + "/" + ;

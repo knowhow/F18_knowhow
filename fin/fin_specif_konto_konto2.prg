@@ -54,7 +54,7 @@ FUNCTION SpecKK2( lOtvSt )
       @ m_x + 8, m_y + 2 SAY "Datum dokumenta od:" GET dDatod
       @ m_x + 8, Col() + 2 SAY "do" GET dDatDo   VALID dDatOd <= dDatDo
       @ m_x + 9, m_y + 2 SAY "Prikazi mjesto partnera (D/N)" GET cPG PICT "@!" VALID cPG $ "DN"
-      IF gVar1 == "0"
+      IF fin_dvovalutno()
          @ m_x + 10, m_y + 2 SAY "Prikaz " + AllTrim( ValDomaca() ) + "/" + AllTrim( ValPomocna() ) + " (1/2)" GET cDinDem PICT "@!" VALID cDinDem $ "12"
       ENDIF
       @ m_x + 11, m_y + 2 SAY "Prikaz stavki sa saldom 0 D/N/2/4" GET cNula PICT "@!" VALID cNula  $ "DN24"

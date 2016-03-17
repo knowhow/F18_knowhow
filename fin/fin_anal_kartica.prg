@@ -20,7 +20,7 @@ FUNCTION fin_anal_kartica()
    qqKonto := ""
    cBrza := "D"
    cPTD := "N"
-   IF gVar1 == "0"
+   IF fin_dvovalutno()
       M := "------- -------- ---- -------- ---------------- ----------------- ----------------- ------------- ------------- -------------"
    ELSE
       M := "------- -------- ---- -------- ---------------- ----------------- ------------------"
@@ -176,7 +176,7 @@ FUNCTION fin_anal_kartica()
                   @ PRow(), IF( gNW == "N" .AND. cPTD == "D", 31 + 49, 31 ) SAY nDugBHD     PICTURE PicBHD
                   @ PRow(), PCol() + 2  SAY nPotBHD     PICTURE PicBHD
                   @ PRow(), PCol() + 2  SAY nDugBHD - nPotBHD PICTURE PicBHD
-                  IF gVar1 == "0"
+                  IF fin_dvovalutno()
                      @ PRow(), PCol() + 2  SAY nDugDEM     PICTURE PicDEM
                      @ PRow(), PCol() + 2  SAY nPotDEM     PICTURE PicDEM
                      @ PRow(), PCol() + 2  SAY nDugDEM - nPotDEM PICTURE PicDEM
@@ -221,7 +221,7 @@ FUNCTION fin_anal_kartica()
          @ PRow(), PCol() + 2 SAY PotBHD PICTURE picBHD
          nDugBHD += DugBHD; nPotBHD += PotBHD
          @ PRow(), PCol() + 2 SAY nDugBHD - nPotBHD PICTURE PicBHD
-         IF gVar1 == "0"
+         IF fin_dvovalutno()
             @ PRow(), PCol() + 2 SAY DugDEM PICTURE PicDEM
             @ PRow(), PCol() + 2 SAY PotDEM PICTURE picDEM
             nDugDEM += DugDEM; nPotDEM += PotDEM
@@ -242,7 +242,7 @@ FUNCTION fin_anal_kartica()
       @ PRow(), PCol() + 2  SAY nPotBHD           PICTURE PicBHD
       @ PRow(), PCol() + 2  SAY nDugBHD - nPotBHD   PICTURE PicBHD
 
-      IF gVar1 == "0"
+      IF fin_dvovalutno()
          @ PRow(), PCol() + 2  SAY nDugDEM           PICTURE PicDEM
          @ PRow(), PCol() + 2  SAY nPotDEM           PICTURE PicDEM
          @ PRow(), PCol() + 2  SAY nDugDEM - nPotDEM   PICTURE PicDEM
@@ -271,7 +271,7 @@ FUNCTION fin_anal_kartica()
       @ PRow(), PCol() + 2  SAY nSviP             PICTURE PicBHD
       @ PRow(), PCol() + 2  SAY nSviD - nSviP       PICTURE PicBHD
 
-      IF gVar1 == "0"
+      IF fin_dvovalutno()
          @ PRow(), PCol() + 2  SAY nSviD2            PICTURE PicDEM
          @ PRow(), PCol() + 2  SAY nSviP2            PICTURE PicDEM
          @ PRow(), PCol() + 2  SAY nSviD2 - nSviP2     PICTURE PicDEM
@@ -317,7 +317,7 @@ FUNCTION AnalKZagl()
 
    SELECT ANAL
 
-   IF gVar1 == "0"
+   IF fin_dvovalutno()
       IF gNW == "N" .AND. cPTD == "D"
          P_COND2
       ENDIF

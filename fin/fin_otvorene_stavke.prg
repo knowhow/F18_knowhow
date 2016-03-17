@@ -934,7 +934,7 @@ FUNCTION StKart( fSolo, fTiho, bFilter )
       fSolo := .F.
    ENDIF
 
-   IF gVar1 == "0"
+   IF fin_dvovalutno()
       M := "----------- ------------- -------------- -------------- ---------- ---------- ---------- --"
    ELSE
       M := "----------- ------------- -------------- -------------- --"
@@ -1196,7 +1196,7 @@ FUNCTION StKart( fSolo, fTiho, bFilter )
                   @ PRow(), nCol1 SAY nDug PICTURE picBHD
                   @ PRow(), PCol() + 1  SAY nPot PICTURE picBHD
                   @ PRow(), PCol() + 1  SAY nDug - nPot PICTURE picBHD
-                  IF gVar1 == "0"
+                  IF fin_dvovalutno()
                      @ PRow(), PCol() + 1  SAY nDug2 PICTURE picdem
                      @ PRow(), PCol() + 1  SAY nPot2 PICTURE picdem
                      @ PRow(), PCol() + 1  SAY nDug2 - nPot2 PICTURE picdem
@@ -1225,7 +1225,7 @@ FUNCTION StKart( fSolo, fTiho, bFilter )
             @ PRow(), nCol1 SAY nUDug PICTURE picBHD
             @ PRow(), PCol() + 1 SAY nUPot PICTURE picBHD
             @ PRow(), PCol() + 1 SAY nUDug - nUPot PICTURE picBHD
-            IF gVar1 == "0"
+            IF fin_dvovalutno()
                @ PRow(), PCol() + 1 SAY nUDug2 PICTURE picdem
                @ PRow(), PCol() + 1 SAY nUPot2 PICTURE picdem
                @ PRow(), PCol() + 1 SAY nUDug2 - nUPot2 PICTURE picdem
@@ -1275,7 +1275,7 @@ FUNCTION StKart( fSolo, fTiho, bFilter )
             ?? Transform( dug, picbhd ), ;
                Transform( pot, picbhd ), ;
                Transform( dug - pot, picbhd )
-            IF gVar1 == "0"
+            IF fin_dvovalutno()
                ?? " " + Transform( dug2, picdem ), ;
                   Transform( pot2, picdem ), ;
                   Transform( dug2 - pot2, picdem )
@@ -1293,7 +1293,7 @@ FUNCTION StKart( fSolo, fTiho, bFilter )
             @ PRow(), nCol1 SAY nUDug PICTURE picBHD
             @ PRow(), PCol() + 1 SAY nUPot PICTURE picBHD
             @ PRow(), PCol() + 1 SAY nUDug - nUPot PICTURE picBHD
-            IF gVar1 == "0"
+            IF fin_dvovalutno()
                @ PRow(), PCol() + 1 SAY nUDug2 PICTURE picdem
                @ PRow(), PCol() + 1 SAY nUPot2 PICTURE picdem
                @ PRow(), PCol() + 1 SAY nUDug2 - nUPot2 PICTURE picdem
@@ -1386,7 +1386,7 @@ FUNCTION fin_create_pom_table( fTiho, nParLen )
 FUNCTION ZagKStSif( fStrana, lEx )
 
    ?
-   IF gVar1 == "0"
+   IF fin_dvovalutno()
       IF lEx
          P_COND
       ELSE
@@ -1429,7 +1429,7 @@ FUNCTION ZagKStSif( fStrana, lEx )
    ELSE
       ?? "*"
    ENDIF
-   IF gVar1 == "0"
+   IF fin_dvovalutno()
       ?? "  BrDok   *   dug " + ValDomaca() + "  *   pot " + ValDomaca() + "   *  saldo  " + ValDomaca() + " * dug " + ValPomocna() + " * pot " + ValPomocna() + " *saldo " + ValPomocna() + "*O*"
    ELSE
       ?? "  BrDok   *   dug " + ValDomaca() + "  *   pot " + ValDomaca() + "   *  saldo  " + ValDomaca() + " *O*"
@@ -1455,7 +1455,7 @@ FUNCTION StBrVeze()
    cDokument := Space( 8 )
    picBHD := FormPicL( gPicBHD, 13 )
    picDEM := FormPicL( gPicDEM, 10 )
-   IF gVar1 == "0"
+   IF fin_dvovalutno()
       M := "-------- -------- " + "------- ---- -- ------------- ------------- ------------- ---------- ---------- ---------- --"
    ELSE
       M := "-------- -------- " + "------- ---- -- ------------- ------------- ------------- --"
@@ -1499,7 +1499,7 @@ FUNCTION StBrVeze()
          @ PRow(), PCol() + 1 SAY iznosbhd PICT picbhd
          @ PRow(), PCol() + 1 SAY Space( Len( picbhd ) )
          @ PRow(), PCol() + 1  SAY nDug - nPot PICT picbhd
-         IF gVar1 == "0"
+         IF fin_dvovalutno()
             @ PRow(), PCol() + 1 SAY iznosdem PICT picdem
             @ PRow(), PCol() + 1 SAY Space( Len( picdem ) )
             @ PRow(), PCol() + 1  SAY nDug2 - nPot2 PICT picdem
@@ -1510,7 +1510,7 @@ FUNCTION StBrVeze()
          @ PRow(), PCol() + 1 SAY Space( Len( picbhd ) )
          @ PRow(), PCol() + 1 SAY iznosbhd PICT picbhd
          @ PRow(), PCol() + 1  SAY nDug - nPot  PICT picbhd
-         IF gVar1 == "0"
+         IF fin_dvovalutno()
             @ PRow(), PCol() + 1 SAY Space( Len( picdem ) )
             @ PRow(), PCol() + 1 SAY iznosdem PICT picdem
             @ PRow(), PCol() + 1  SAY nDug2 - nPot2  PICT picdem
@@ -1527,7 +1527,7 @@ FUNCTION StBrVeze()
    @ PRow(), nCol1     SAY nDug PICTURE picBHD
    @ PRow(), PCol() + 1  SAY nPot PICTURE picBHD
    @ PRow(), PCol() + 1  SAY nDug - nPot PICTURE picBHD
-   IF gVar1 == "0"
+   IF fin_dvovalutno()
       @ PRow(), PCol() + 1  SAY nDug2 PICTURE picdem
       @ PRow(), PCol() + 1  SAY nPot2 PICTURE picdem
       @ PRow(), PCol() + 1  SAY nDug2 - nPot2 PICTURE picdem
@@ -1546,7 +1546,7 @@ FUNCTION StBrVeze()
 FUNCTION ZagBRVeze()
 
    ?
-   IF gVar1 == "0"
+   IF fin_dvovalutno()
       P_COND
    ELSE
       F12CPI
@@ -1565,7 +1565,7 @@ FUNCTION ZagBRVeze()
    SELECT suban
    ? "BROJ VEZE :", cBrDok
    ? M
-   IF gVar1 == "0"
+   IF fin_dvovalutno()
       ? "Dat.dok.*Dat.val." + "*NALOG * Rbr*TD*   dug " + ValDomaca() + "   *  pot " + ValDomaca() + "  *   saldo " + ValDomaca() + "*  dug " + ValPomocna() + "* pot " + ValPomocna() + " *saldo " + ValPomocna() + "* O"
    ELSE
       ? "Dat.dok.*Dat.val." + "*NALOG * Rbr*TD*   dug " + ValDomaca() + "   *  pot " + ValDomaca() + "  *   saldo " + ValDomaca() + "* O"

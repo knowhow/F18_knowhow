@@ -154,6 +154,7 @@ STATIC FUNCTION par_obrada()
 STATIC FUNCTION par_izgled()
 
    LOCAL nX := 1
+   LOCAL cJednoValutno := fetch_metric( "fin_izvjestaji_jednovalutno", nil, "1" )
 
    Box(, 15, 70 )
 
@@ -165,7 +166,7 @@ STATIC FUNCTION par_izgled()
    @ m_x + nX, m_y + 2 SAY "Potpis na kraju naloga? (D/N):" GET gPotpis VALID gPotpis $ "DN"  PICT "@!"
 
    ++ nX
-   @ m_x + nX, m_y + 2 SAY8 "Varijanta izvještaja 0-dvovalutno 1-jednovalutno " GET gVar1 VALID gVar1 $ "01"
+   @ m_x + nX, m_y + 2 SAY8 "Varijanta izvještaja 0-dvovalutno 1-jednovalutno " GET cJednoValutno VALID cJednoValutno $ "01"
 
    ++ nX
    @ m_x + nX, m_y + 2 SAY8 "Prikaz iznosa u " + ValPomocna() GET gPicDEM
@@ -189,6 +190,7 @@ STATIC FUNCTION par_izgled()
    BoxC()
 
    IF LastKey() <> K_ESC
+      set_metric( "fin_izvjestaji_jednovalutno", nil, cJednoValutno )
       fin_write_params()
    ENDIF
 
@@ -212,7 +214,7 @@ FUNCTION fin_read_params()
    gBuIz := fetch_metric( "fin_budzet_konta_izuzeci", nil, gBuIz )
    gPicDem := fetch_metric( "fin_picdem", nil, gPicDEM )
    gPicBHD := fetch_metric( "fin_picbhd", nil, gPicBHD )
-   gVar1 := fetch_metric( "fin_izvjestaji_jednovalutno", nil, gVar1 )
+
    gSaKrIz := fetch_metric( "fin_kreiranje_sintetike", nil, gSaKrIz )
    gnRazRed := fetch_metric( "fin_razmak_izmedju_kartica", nil, gnRazRed )
    gVSubOp := fetch_metric( "fin_subanalitika_prikaz_naziv_konto_partner", nil, gVSubOp )
@@ -229,9 +231,14 @@ FUNCTION fin_read_params()
 
    fin_params( .T. )
 
-   gVar1 := PadR( gVar1, 1 )
-
    RETURN .T.
+
+FUNCTION fin_jednovalutno()
+   RETURN fetch_metric( "fin_izvjestaji_jednovalutno", nil, "1" ) == "1"
+
+FUNCTION fin_dvovalutno()
+   RETURN !fin_jednovalutno()
+
 
 
 // -------------------------------
@@ -267,11 +274,10 @@ FUNCTION fin_write_params()
    set_metric( "fin_kosuljice_lijeva_margina", my_user(), gnLMONI )
    set_metric( "fin_pomoc_sa_unosom", my_user(), g_knjiz_help )
 
-   RETURN
+   RETURN .T.
 
 
-// ---------------------------------------
-// ---------------------------------------
+
 FUNCTION fin_params( read )
 
    IF read == NIL

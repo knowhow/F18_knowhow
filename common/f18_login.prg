@@ -121,9 +121,10 @@ METHOD F18Login:connect( params, conn_type, silent )
          ::lMainDbSpojena := .T.
       ELSE
          ::lOrganizacijaSpojena := .T.
-         altd()
           post_login()
       ENDIF
+   ELSE
+      ?E "connection error:", params[ "database" ], params[ "user" ]
    ENDIF
 
    RETURN lConnected
@@ -180,7 +181,7 @@ METHOD F18Login:set_server_params( server_params )
 
 METHOD F18Login:main_db_login( server_param, force_connect )
 
-   LOCAL _max_login := 1
+   LOCAL _max_login := 4
    LOCAL _i
    LOCAL _logged_in := .F.
 
@@ -192,7 +193,7 @@ METHOD F18Login:main_db_login( server_param, force_connect )
 
    IF force_connect .AND. ::_main_db_params[ "username" ] <> NIL
 
-      if ::connect( server_param, 0 ) // try to connect, if not, open login form
+      IF ::connect( server_param, 0 ) // try to connect, if not, open login form
          _logged_in := .T.
       ENDIF
 

@@ -1,15 +1,18 @@
 /*
- * This file is part of the bring.out FMK, a free and open source
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+ * This file is part of the bring.out knowhow ERP, a free and open source
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
 
 #include "f18.ch"
+
+
+MEMVAR Ch
 
 STATIC _status
 STATIC __sort
@@ -24,7 +27,7 @@ FUNCTION rnal_lista_dokumenata( nStatus )
 
    tbl_list()
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -55,7 +58,6 @@ STATIC FUNCTION tbl_list()
    _set_sort()
 
    GO TOP
-
    set_a_kol( @ImeKol, @Kol )
 
    SELECT docs
@@ -79,7 +81,7 @@ STATIC FUNCTION _set_sort()
    SELECT docs
    SET ORDER TO tag &cSort
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -152,7 +154,6 @@ STATIC FUNCTION lst_args( nSort )
    @ m_x + nX, m_y + 1 SAY PadL( "**** uslovi pregleda dokumenata", nBoxY - 2 ) COLOR cColor1
 
    nX += 2
-
    @ m_x + nX, m_y + 2 SAY8 PadL( "Naručioc (prazno-svi):", 25 ) GET cCustomer ;
       VALID {|| Empty( cCustomer ) .OR. ;
       s_customers( @cCustomer, cCustomer ), ;
@@ -161,7 +162,6 @@ STATIC FUNCTION lst_args( nSort )
       WHEN set_opc_box( nBoxX, 60, "naručioc naloga, pretraži šifrarnik", nil, nil, cHelpClr )
 
    nX += 1
-
    @ m_x + nX, m_y + 2 SAY PadL( "Kontakt (prazno-svi):", 25 ) GET cContact ;
       VALID {|| Empty( cContact ) .OR. ;
       s_contacts( @cContact, nCustomer, cContact ), ;
@@ -186,7 +186,6 @@ STATIC FUNCTION lst_args( nSort )
    ENDIF
 
    nX += 2
-
    @ m_x + nX, m_y + 2 SAY "Operater (prazno-svi):" GET nOperater ;
       PICT "9999999999" ;
       VALID {|| nOperater == 0, iif( nOperater == -99, choose_f18_user_from_list( @nOperater ), .T. ), ;
@@ -194,7 +193,6 @@ STATIC FUNCTION lst_args( nSort )
       WHEN set_opc_box( nBoxX, 60, "pretraga po operateru", "-99 : odaberi iz liste", nil, cHelpClr )
 
    nX += 1
-
    @ m_x + nX, m_y + 2 SAY PadL( "Tip naloga:", 10 ) GET nTip ;
       VALID nTip >= 0 .AND. nTip < 3 WHEN set_opc_box( nBoxX, 60, "0 - svi nalozi / 1 - samo regularni / 2 - samo NP", nil, nil, cHelpClr ) ;
       PICT "9"
@@ -207,21 +205,17 @@ STATIC FUNCTION lst_args( nSort )
       WHEN set_opc_box( nBoxX, 60, "način sortiranja pregleda dokumenata", nil, nil, cHelpClr )
 
    nX += 1
-
    @ m_x + nX, m_y + 2 SAY " * (1) broj dokumenta" COLOR cColor1
 
    nX += 1
-
    @ m_x + nX, m_y + 2 SAY " * (2) prioritet + datum dokumenta + broj dokumenta" COLOR cColor1
 
    nX += 1
-
    @ m_x + nX, m_y + 2 SAY " * (3) prioritet + datum isporuke + broj dokumenta" COLOR cColor1
 
    IF _status == 2
 
       nX += 2
-
       @ m_x + nX, m_y + 2 SAY8 "Prikaz poništenih dokumenata (D/N)?" GET cShowRejected VALID cShowRejected $ "DN" PICT "@!" WHEN set_opc_box( nBoxX, 60, "pored zatvorenih naloga", "prikazi i ponistene", nil, cHelpClr )
 
    ENDIF
@@ -345,7 +339,7 @@ STATIC FUNCTION set_f_kol( cFilter )
    SET FILTER to &cFilter
    GO TOP
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -356,6 +350,8 @@ STATIC FUNCTION key_handler()
    LOCAL cDesc
    LOCAL nTRec
    LOCAL cTmpFilter := dbFilter()
+
+   SELECT docs
 
    IF _status == 1
 
@@ -412,13 +408,11 @@ STATIC FUNCTION key_handler()
          SET FILTER TO
 
          st_obr_list( .F., nDoc_no, aDocs )
-
          SELECT docs
 
          set_f_kol( cTmpFilter )
 
          GO ( nTRec )
-
          RETURN DE_REFRESH
       ENDIF
 
@@ -437,7 +431,6 @@ STATIC FUNCTION key_handler()
          rnal_stampa_naljepnica( .F., nDoc_no )
 
          SELECT docs
-
          set_f_kol( cTmpFilter )
 
          GO ( nTRec )
@@ -451,7 +444,6 @@ STATIC FUNCTION key_handler()
    CASE ( Upper( Chr( Ch ) ) == "K" )
 
       SELECT docs
-
       doc_cont_view( docs->doc_no )
 
       SELECT docs
@@ -548,7 +540,6 @@ STATIC FUNCTION key_handler()
       RETURN DE_CONT
 
    CASE ( Upper( Chr( Ch ) ) == "Q" )
-
 
       cFilt := _quick_srch_()
 
@@ -704,7 +695,7 @@ STATIC FUNCTION otpr_edit( cValue )
    m_x := nX
    m_y := nY
 
-   RETURN
+   RETURN .T.
 
 
 STATIC FUNCTION s_ol_status( aArr )
@@ -743,8 +734,7 @@ STATIC FUNCTION s_ol_status( aArr )
       @ maxrows() - 8  + n, 5 SAY aStr[ n ] COLOR "W/G+"
    NEXT
 
-   RETURN
-
+   RETURN .T.
 
 
 

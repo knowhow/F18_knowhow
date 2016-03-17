@@ -424,7 +424,7 @@ FUNCTION fill_dbf_from_server( dbf_table, sql_query, sql_fetch_time, dbf_write_t
 
          IF lShowInfo
             IF _counter % 500 == 0
-               cMsg :=  my_server_params()[ "database" ] + "fsync: " + dbf_table + "' rec_cnt: " + AllTrim( Str( _counter ) )
+               cMsg :=  my_server_params()[ "database" ] + " fsync: " + dbf_table + " rec_cnt: " + AllTrim( Str( _counter ) )
                ?E cMsg
                info_bar( "fill_dbf", cMsg )
             ENDIF

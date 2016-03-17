@@ -106,7 +106,7 @@ FUNCTION kontrola_zbira_naloga()
             _Rbr := Str( Val( _Rbr ) + 1, 4 )
             _IdPartner := ""
             _IznosBHD := Dug - Pot
-            DinDem( NIL, NIL, "_IZNOSBHD" )
+            konverzija_valute( NIL, NIL, "_IZNOSBHD" )
             APPEND BLANK
             my_rlock()
             Gather()
@@ -232,7 +232,7 @@ FUNCTION kontrola_zbira_naloga_kalk( lAuto )
 
             nTArea := Select()
 
-            DinDem( NIL, NIL, "_IZNOSBHD" )
+            konverzija_valute( NIL, NIL, "_IZNOSBHD" )
 
             SELECT ( nTArea )
 

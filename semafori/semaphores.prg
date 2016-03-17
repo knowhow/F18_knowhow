@@ -707,7 +707,7 @@ FUNCTION dbf_refresh( cTable )
    aDbfRec := get_a_dbf_rec( cTable, .T. )
 
    IF in_dbf_refresh( aDbfRec[ 'table' ] )
-#ifdef F18_DEBUG
+#ifdef F18_DEBUG_THREAD
       ?E  aDbfRec[ 'table' ], "in_dbf_refresh"
 #endif
       RETURN .F.
@@ -718,14 +718,14 @@ FUNCTION dbf_refresh( cTable )
    ENDIF
 
    IF !File( f18_ime_dbf( aDbfRec ) )
-#ifdef F18_DEBUG
+#ifdef F18_DEBUG_THREAD
       ?E  aDbfRec[ 'table' ], "dbf tabele nema"
 #endif
       RETURN .F.
    ENDIF
 
    IF is_last_refresh_before( aDbfRec[ 'table' ], 7 )
-#ifdef F18_DEBUG
+#ifdef F18_DEBUG_THREAD
       ?E  aDbfRec[ 'table' ], "last refresh of table < 7 sec before"
 #endif
       RETURN .F.

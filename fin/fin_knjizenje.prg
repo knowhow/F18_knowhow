@@ -206,8 +206,8 @@ FUNCTION edit_fin_priprema()
 
    LOCAL _fakt_params := fakt_params()
    LOCAL _fin_params := fin_params()
-   LOCAL _ostav := NIL
-   LOCAL _iznos_unesen := .F.
+   LOCAL lOstavDUMMY := .F.
+   LOCAL lIznosUnesen := .F.
    PARAMETERS fNovi
 
    IF fNovi .AND. nRbr == 1
@@ -241,22 +241,20 @@ FUNCTION edit_fin_priprema()
 
    IF fNovi .AND. ( _idfirma <> idfirma .OR. _idvn <> idvn )
 
-      // momenat setovanja broja naloga
-      // setujemo sve na 0, ali kada uvedemo globalni brojac
       _brnal := fin_prazan_broj_naloga()
-      // _brnal := nextnal( _idfirma, _idvn )
+
       SELECT  fin_pripr
 
    ENDIF
 
-   SET KEY K_ALT_K TO DinDem()
-   SET KEY K_ALT_O TO KonsultOS()
+   SET KEY K_ALT_K TO konverzija_valute()
+   SET KEY K_ALT_O TO konsult_otvorene_stavke()
 
    @ m_x + 3, m_y + 55 SAY "Broj:" GET _brnal VALID Dupli( _idfirma, _idvn, _brnal ) .AND. !Empty( _brnal )
    @ m_x + 5, m_y + 2 SAY "Redni broj stavke naloga:" GET nRbr PICTURE "9999"
    @ m_x + 7, m_y + 2 SAY "DOKUMENT: "
 
-   // if gNW <> "D"
+
    IF _fin_params[ "fin_tip_dokumenta" ]
       @ m_x + 7, m_y + 14  SAY "Tip:" GET _IdTipDok VALID browse_tdok( @_IdTipDok, 7, 26 )
    ENDIF
@@ -326,13 +324,14 @@ FUNCTION edit_fin_priprema()
 
    @ m_x + 16, m_y + 2  SAY8 "Duguje/Potražuje (1/2):" GET _D_P VALID V_DP() .AND. fin_pravilo_dug_pot() .AND. fin_pravilo_broj_veze()
 
-   @ m_x + 16, m_y + 65 GET _ostav PUSHBUTTON  CAPTION "<Otvorene stavke>" WHEN {|| _iznos_unesen } VALID {|| _iznos_unesen := .F., .T. } ;
-      SIZE X 15 Y 2 STATE {| param| KonsultOs( param ) }
+   @ m_x + 16, m_y + 65 GET lOstavDUMMY PUSHBUTTON  CAPTION "Otvorene stavke"   WHEN {|| lIznosUnesen } ;
+      SIZE X 15 Y 2 STATE {|| konsult_otvorene_stavke() }
 
-   @ m_x + 16, m_y + 46  GET _IznosBHD  PICTURE "999999999999.99" WHEN {|| _iznos_unesen := .T., .T. }
+
+   @ m_x + 16, m_y + 46  GET _IznosBHD  PICTURE "999999999999.99"  WHEN {|| lIznosUnesen := .T., .T. }
 
    @ m_x + 17, m_y + 46  GET _IznosDEM  PICTURE '9999999999.99' ;
-      WHEN {|| DinDEM( , , "_IZNOSBHD" ), .T. }
+      WHEN {|| konverzija_valute( , , "_IZNOSBHD" ), .T. }
 
    READ
 
@@ -395,7 +394,7 @@ FUNCTION CheckMark( cIdKonto, cIdPartner, cNewPartner )
 
 
 
-/*! \fn Partija(cIdKonto)
+/*! Partija(cIdKonto)
  *  \brief
  *  \param cIdKonto - oznaka konta
  */
@@ -464,13 +463,10 @@ FUNCTION fin_konvert_valute( rec, tip )
 
 
 
-/*! \fn DinDem(p1,p2,cVar)
- *  \brief
- *  \param p1
- *  \param p2
- *  \param cVar
+/*  DinDem
+
  */
-FUNCTION DinDem( p1, p2, cVar )
+FUNCTION konverzija_valute( p1, p2, cVar )
 
    LOCAL _kurs
 
@@ -486,10 +482,19 @@ FUNCTION DinDem( p1, p2, cVar )
       ENDIF
    ENDIF
 
-   AEval( GetList, {| o| o:display() } )
 
-   RETURN
+   AEval( GetList, {| oGet | refresh_numeric_get( oGet )  } )
 
+   RETURN .T.
+
+STATIC FUNCTION refresh_numeric_get( oGet )
+
+   // ?E pp( __objgetmsglist( oGet ) )
+   IF  oGet:Type()  != "U" .AND. !( "DUMMY" $ oGet:name())
+      oGet:display()
+   ENDIF
+
+   RETURN .T.
 
 /*
  poziva je ObjDbedit u fin_knjizenje_naloga
@@ -655,7 +660,7 @@ FUNCTION edit_fin_pripr()
       PushWA()
       SELECT fin_pripr
 
-      Box( "anal", MAXROWS() - 4, MAXCOLS() - 5, .F., "Ispravka naloga" )
+      Box( "anal", MAXROWS() - 7, MAXCOLS() - 10, .F., "Ispravka naloga" )
 
       nDug := 0
       nPot := 0
@@ -667,7 +672,7 @@ FUNCTION edit_fin_pripr()
          SKIP -1
          set_global_vars_from_dbf()
          nRbr := Val( _Rbr )
-         @ m_x + 1, m_y + 1 CLEAR TO m_x + 19, m_y + 74
+         @ m_x + 1, m_y + 1 CLEAR TO m_x + MAXROWS() - 8, m_y + MAXCOLS() - 10
          IF edit_fin_priprema( .F. ) == 0
             EXIT
          ELSE
@@ -713,7 +718,9 @@ FUNCTION edit_fin_pripr()
       ENDDO
       GO BOTTOM
 
-      Box( "knjn", MAXROWS() - 4, MAXCOLS() - 3, .F., "Knjizenje naloga - nove stavke" )
+      Box( "knjn", MAXROWS() - 5, MAXCOLS() - 7,  .F. , "Knjizenje naloga - nove stavke" )
+
+      altd()
       DO WHILE .T.
          set_global_vars_from_dbf()
 
@@ -724,7 +731,9 @@ FUNCTION edit_fin_pripr()
          ENDIF
 
          nRbr := Val( _Rbr ) + 1
-         @ m_x + 1, m_y + 1 CLEAR TO m_x + 19, m_y + 76
+
+         @ m_x + 1, m_y + 1 CLEAR TO m_x + MAXROWS() - 5, m_y + MAXCOLS() - 8
+
          IF edit_fin_priprema( .T. ) == 0
             EXIT
          ELSE
@@ -736,10 +745,10 @@ FUNCTION edit_fin_pripr()
          ELSE
             nPot += _IznosBHD
          ENDIF
-         @ m_x + 19, m_y + 1 SAY "ZBIR NALOGA:"
-         @ m_x + 19, m_y + 14 SAY nDug PICTURE '9 999 999 999.99'
-         @ m_x + 19, m_y + 35 SAY nPot PICTURE '9 999 999 999.99'
-         @ m_x + 19, m_y + 56 SAY nDug - nPot PICTURE '9 999 999 999.99'
+         @ m_x + MAXROWS() - 6, m_y + 1 SAY "ZBIR NALOGA:"
+         @ m_x + MAXROWS() - 6, m_y + 14 SAY nDug PICTURE '9 999 999 999.99'
+         @ m_x + MAXROWS() - 6, m_y + 35 SAY nPot PICTURE '9 999 999 999.99'
+         @ m_x + MAXROWS() - 6, m_y + 56 SAY nDug - nPot PICTURE '9 999 999 999.99'
 
          Inkey( 10 )
 

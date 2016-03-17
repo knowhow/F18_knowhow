@@ -132,7 +132,7 @@ FUNCTION post_login()
 FUNCTION thread_dbfs( pThreadID )
 
    IF pThreadID != nil
-#ifdef F18_DEBUG
+#ifdef F18_DEBUG_DEBUG
       ?E "thread_dbfs id", pThreadID
 #endif
    ENDIF

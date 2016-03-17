@@ -31,9 +31,9 @@ FUNCTION ld_parametri()
    AAdd( _opcexe, {|| parametri_organizacije() } )
    AAdd( _opc, "2. RJ, mjesec, godina...         " )
    AAdd( _opcexe, {|| ld_set_firma() } )
-   AAdd( _opc, "3. postavka zaokruzenja, valute, formata prikaza iznosa...  " )
+   AAdd( _opc, "3. postavke zaokruženja, valute, formata prikaza iznosa...  " )
    AAdd( _opcexe, {|| ld_set_forma() } )
-   AAdd( _opc, "4. postavka nacina obracuna " )
+   AAdd( _opc, "4. postavke načina obracuna " )
    AAdd( _opcexe, {|| ld_set_obracun() } )
    AAdd( _opc, "5. postavka formula (uk.prim.,uk.sati,godisnji) i koeficijenata " )
    AAdd( _opcexe, {|| ld_set_formule() } )
@@ -44,13 +44,13 @@ FUNCTION ld_parametri()
 
    f18_menu( "par", .F., _izbor, _opc, _opcexe )
 
-   RETURN
+   RETURN .T.
 
 
 
 FUNCTION ld_get_params()
 
-   // ---------
+
    gGodina := fetch_metric( "ld_godina", my_user(), gGodina )
    gRj := fetch_metric( "ld_rj", my_user(), gRj )
    gMjesec := fetch_metric( "ld_mjesec", my_user(), gMjesec )
@@ -106,7 +106,7 @@ FUNCTION ld_get_params()
    gPotp2 := fetch_metric( "ld_potpis_red_2", NIL, gPotp2 )
    gKarSDop := fetch_metric( "ld_kartica_svi_doprinosi", NIL, gKarSDop )
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -150,7 +150,7 @@ FUNCTION ld_set_firma()
 
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -178,7 +178,7 @@ FUNCTION ld_set_forma()
       set_metric( "ld_zaok_prim", NIL, gZaok )
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -234,7 +234,7 @@ FUNCTION ld_set_formule()
 
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 FUNCTION ld_set_obracun()
@@ -252,40 +252,30 @@ FUNCTION ld_set_obracun()
    @ m_x + nX, m_y + 2 SAY "  ' ' - (prazno) stara varijanta obracuna"
 
    ++nX
-
    @ m_x + nX, m_y + 2 SAY "  '2' - nova varijanta obracuna, zak.pr.2009"
 
    ++ nX
-
    @ m_x + nX, m_y + 2 SAY "Odabir broja obracuna na unosu (D/N) ?" GET _v_obr_unos VALID _v_obr_unos $ "DN" PICT "@!"
 
    ++ nX
-
    @ m_x + nX, m_y + 2 SAY "Tip obracuna (legacy)" GET gTipObr
    @ m_x + nX, Col() + 1 SAY "Mogucnost unosa mjeseca pri obradi D/N:" GET gUnMjesec  PICT "@!" VALID gUnMjesec $ "DN"
    ++nX
-
    @ m_x + nX, m_y + 2 SAY "Koristiti set formula (sifrarnik Tipovi primanja):" GET gSetForm PICT "9"
    ++nX
-
    @ m_x + nX, m_y + 2 SAY "Minuli rad  %/B:" GET gMinR  VALID gMinR $ "%B"   PICT "@!"
    ++nX
-
    @ m_x + nX, m_y + 2 SAY "Pri obracunu napraviti poreske olaksice D/N:" GET gDaPorOl  VALID gDaPorOl $ "DN"   PICT "@!"
    ++nX
-
    @ m_x + nX, m_y + 2 SAY "Ako se prave por.ol.pri obracunu, koja varijanta se koristi:"
    ++nX
 
    @ m_x + nX, m_y + 2 SAY " '1' - POROL = RADN->porol*PAROBR->prosld/100 �Ŀ  "
    ++nX
-
    @ m_x + nX, m_y + 2 SAY " '2' - POROL = RADN->porol, '29' - LD->I29    ����>" GET cVarPorOl WHEN gDaPorOl == "D"   PICT "99"
    ++nX
-
    @ m_x + nX, m_y + 2 SAY "Grupe poslova u specif.uz platu (1-automatski/2-korisnik definise):" GET gVarSpec  VALID gVarSpec $ "12" PICT "9"
    ++nX
-
    @ m_x + nX, m_y + 2 SAY "Obrada sihtarice ?" GET gSihtarica VALID gSihtarica $ "DN" PICT "@!"
    @ m_x + nX, Col() + 1 SAY "Sihtarice po grupama ?" GET gSihtGroup VALID gSihtGroup $ "DN" PICT "@!"
    ++ nX
@@ -324,7 +314,8 @@ FUNCTION ld_set_obracun()
 
    ENDIF
 
-   RETURN
+   RETURN .T.
+
 
 FUNCTION ld_set_prikaz()
 
@@ -381,7 +372,7 @@ FUNCTION LDPoljaINI()
 
    PUBLIC cLDPolja := 60
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -439,4 +430,4 @@ FUNCTION ClVBox()
    NEXT
    gnHelpObr := 0
 
-   RETURN
+   RETURN .T.

@@ -63,7 +63,7 @@ PROCEDURE init_thread( cInfo )
       ?E "mutex err lock nThreadCount"
    ENDIF
 
-#ifdef F18_DEBUG
+#ifdef F18_DEBUG_THREAD
    ?E ">>>>> START: thread: ", cInfo, " cnt:(", AllTrim( Str( s_nThreadCount ) ), ") <<<<<"
 #endif
 
@@ -81,7 +81,7 @@ PROCEDURE close_thread( cInfo )
    s_nThreadCount--
 
 
-#ifdef F18_DEBUG
+#ifdef F18_DEBUG_THREAD
    ?E "<<<<<< END: thread", cInfo, "thread count:", s_nThreadCount
 #endif
 

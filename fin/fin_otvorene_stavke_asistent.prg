@@ -119,10 +119,8 @@ STATIC FUNCTION _cre_fin_otvorene_stavke()
    RETURN _ret
 
 
-// --------------------------------------------------------------------------------------------------
-// sredjivanje otvorenih stavki pri knjizenju, poziv na polju strane valute<a+O>
-// --------------------------------------------------------------------------------------------------
-FUNCTION konsultos( xEdit )
+
+FUNCTION konsult_otvorene_stavke()
 
    LOCAL fgenerisano
    LOCAL nNaz := 1
@@ -177,8 +175,7 @@ FUNCTION konsultos( xEdit )
    O_SUBAN
 
    SELECT suban
-   SET ORDER TO TAG "1"
-   // IdFirma+IdKonto+IdPartner+dtos(DatDok)+BrNal+RBr
+   SET ORDER TO TAG "1" // IdFirma+IdKonto+IdPartner+dtos(DatDok)+BrNal+RBr
 
    GO TOP
 
@@ -278,26 +275,23 @@ FUNCTION konsultos( xEdit )
       IF Round( nDug - nPot, 2 ) <> 0
 
          SELECT ostav
-
          my_flock()
 
          APPEND BLANK
-
-         REPLACE field->iznosbhd with ( nDug - nPot )
-         REPLACE field->datdok WITH aFaktura[ 1 ]
-         REPLACE field->datval WITH aFaktura[ 2 ]
-         REPLACE field->datzpr WITH aFaktura[ 3 ]
-         REPLACE field->brdok WITH cBrDok
+         REPLACE field->iznosbhd with ( nDug - nPot ), ;
+            field->datdok WITH aFaktura[ 1 ], ;
+            field->datval WITH aFaktura[ 2 ], ;
+            field->datzpr WITH aFaktura[ 3 ], ;
+            field->brdok WITH cBrDok
 
          IF ( cDugPot == "2" )
             REPLACE field->d_p WITH "1"
          ELSE
-            REPLACE field->d_p WITH "2"
-            REPLACE field->iznosbhd WITH -iznosbhd
+            REPLACE field->d_p WITH "2", ;
+               field->iznosbhd WITH -iznosbhd
          ENDIF
 
          my_unlock()
-
          SELECT suban
 
       ENDIF
@@ -306,10 +300,10 @@ FUNCTION konsultos( xEdit )
 
    ImeKol := {}
 
-   AAdd( ImeKol, { "Br.Veze",     {|| BrDok }                          } )
-   AAdd( ImeKol, { "Dat.Dok.",   {|| DatDok }                         } )
-   AAdd( ImeKol, { "Dat.Val.",   {|| DatVal }                         } )
-   AAdd( ImeKol, { "Dat.ZPR.",   {|| DatZPR }                         } )
+   AAdd( ImeKol, { "Br.Veze",     {|| BrDok }   } )
+   AAdd( ImeKol, { "Dat.Dok.",   {|| DatDok }  } )
+   AAdd( ImeKol, { "Dat.Val.",   {|| DatVal }  } )
+   AAdd( ImeKol, { "Dat.ZPR.",   {|| DatZPR }   } )
    AAdd( ImeKol, { PadR( "Duguje " + AllTrim( ValDomaca() ), 14 ), {|| Str( ( iif( D_P == "1", iznosbhd, 0 ) ), 14, 2 ) }     } )
    AAdd( ImeKol, { PadR( "Potraz." + AllTrim( ValDomaca() ), 14 ), {|| Str( ( iif( D_P == "2", iznosbhd, 0 ) ), 14, 2 ) }     } )
    AAdd( ImeKol, { PadR( "Uplaceno", 14 ), {|| Str( uplaceno, 14, 2 ) }     } )
@@ -452,7 +446,7 @@ FUNCTION konsultos( xEdit )
 
    IF fGenerisano
 
-      -- nRbr
+      --nRbr
 
       SELECT ( F_FIN_PRIPR )
 
@@ -487,7 +481,7 @@ FUNCTION konsultos( xEdit )
       GO nRec
    ENDIF
 
-   RETURN ( NIL )
+   RETURN .T.
 
 
 // -----------------------------------------------------------------

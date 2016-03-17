@@ -57,9 +57,9 @@ STATIC FUNCTION _txt_specif_mnu()
    LOCAL _izbor := 1
 
    AAdd( _opc, "1. partnera na kontu                                        " )
-   AAdd( _opcexe, {|| SpecDPK() } )
+   AAdd( _opcexe, {|| fin_spec_partnera_na_kontu() } )
    AAdd( _opc, "2. otvorene stavke preko-do odredjenog broja dana za konto" )
-   AAdd( _opcexe, {|| SpecBrDan() } )
+   AAdd( _opcexe, {|| fin_spec_otv_stavke_preko_dana() } )
    AAdd( _opc, "3. konta za partnera" )
    AAdd( _opcexe, {|| SpecPop() } )
    AAdd( _opc, "4. po analitičkim kontima" )
@@ -83,9 +83,9 @@ STATIC FUNCTION _txt_specif_mnu()
    ENDIF
 
    AAdd( _opc, "C. otvorene stavke po dospijeću - po racunima (kao kartica)" )
-   AAdd( _opcexe, {|| SpecPoDosp( .T. ) } )
+   AAdd( _opcexe, {|| fin_spec_otv_stavke_po_dospijecu( .T. ) } )
    AAdd( _opc, "D. otvorene stavke po dospijeću - specifikacija partnera" )
-   AAdd( _opcexe, {|| SpecPoDosp( .F. ) } )
+   AAdd( _opcexe, {|| fin_spec_otv_stavke_po_dospijecu( .F. ) } )
    AAdd( _opc, "F. pregled dugovanja partnera po ročnim intervalima " )
    AAdd( _opcexe, {|| SpecDugPartnera() } )
    AAdd( _opc, "S. specifikacija troskova po gradilištima " )

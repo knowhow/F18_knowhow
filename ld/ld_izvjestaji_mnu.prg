@@ -151,7 +151,6 @@ STATIC FUNCTION izvjestaji_rekapitulacije()
    LOCAL _opcexe := {}
    LOCAL _izbor := 1
 
-altd()
    IF is_legacy_ld_rekap_dbf()
       AAdd( _opc, "1. rekapitulacija plate za radnu jedinicu   " )
       AAdd( _opcexe, {|| ld_rekapitulacija( .F. ) } )

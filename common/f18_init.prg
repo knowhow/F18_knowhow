@@ -634,7 +634,6 @@ FUNCTION run_on_startup()
    LOCAL _ini, _fakt_doks, cRun, oModul
 
 
-   altd()
    IF s_lAlreadyRunStartup
       RETURN .F.
    ENDIF

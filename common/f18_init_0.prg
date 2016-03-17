@@ -19,7 +19,6 @@ FUNCTION tekuca_sezona()
    RETURN RIGHT( my_server_params()[ "database" ], 4 )
 
 FUNCTION in_tekuca_godina()
-   altd()
    RETURN VAL( tekuca_sezona() ) == YEAR( Date() )
 
 

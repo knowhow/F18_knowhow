@@ -232,7 +232,6 @@ METHOD F18Login:login_odabir_organizacije( server_param )
    LOCAL _max_login := 4
    LOCAL _ret_comp
 
-   altd()
    ::set_main_db_params( @server_param ) // procitaj parametre za preduzece
 
    FOR _i := 1 TO _max_login // imamo pravo na 4 pokusaja !

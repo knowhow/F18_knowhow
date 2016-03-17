@@ -720,7 +720,7 @@ FUNCTION edit_fin_pripr()
 
       Box( "knjn", MAXROWS() - 5, MAXCOLS() - 7,  .F. , "Knjizenje naloga - nove stavke" )
 
-      altd()
+  
       DO WHILE .T.
          set_global_vars_from_dbf()
 

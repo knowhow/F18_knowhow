@@ -277,7 +277,6 @@ STATIC FUNCTION kopiraj_odt_template_u_home_path( cTemplate )
    LOCAL _temp_size, _temp_date, _temp_time
    LOCAL _copy := .F.
 
-altd()
    IF !File( my_home() + cTemplate )
       _copy := .T.
    ELSE
@@ -286,7 +285,7 @@ altd()
       IF LEN( _a_source[ 1 ] ) < 4
          Alert( "file atributi error: " + my_home() + cTemplate )
       ENDIF
-      
+
       _a_template := Directory( f18_template_location() + cTemplate )
       IF LEN( _a_template[ 1 ] ) < 4
          Alert( "file atributi error: " + f18_template_location() + cTemplate )

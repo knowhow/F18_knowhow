@@ -10,7 +10,7 @@
 #define F_SQLPAR    8
 
 
-// sifrarnici (wa 10-40)
+// sifarnici (wa 10-40)
 #define F_ADRES     10
 #define F_SIFK      11
 #define F_SIFV      12

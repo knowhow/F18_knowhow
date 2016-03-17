@@ -13,7 +13,7 @@
 #include "f18.ch"
 
 
-FUNCTION epdv_sifrarnici()
+FUNCTION epdv_sifarnici()
 
    PRIVATE opc := {}
    PRIVATE opcexe := {}

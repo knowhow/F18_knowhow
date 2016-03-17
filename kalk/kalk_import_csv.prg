@@ -668,7 +668,7 @@ STATIC FUNCTION CheckBrFakt( aFakt )
    RETURN 1
 
 // ---------------------------------------------------------------
-// Provjera da li postoje sve sifre u sifrarnicima za dokumente
+// Provjera da li postoje sve sifre u sifarnicima za dokumente
 // ---------------------------------------------------------------
 STATIC FUNCTION CheckDok()
 

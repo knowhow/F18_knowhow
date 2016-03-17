@@ -14,17 +14,17 @@
 
  
  
-function pos_sifrarnici()
+function pos_sifarnici()
 if gModul=="HOPS"
-    hops_sifrarnici()
+    hops_sifarnici()
 else
-    tops_sifrarnici()
+    tops_sifarnici()
 endif
 return
 
 
 
-function hops_sifrarnici()
+function hops_sifarnici()
 private opc:={}
 private opcexe:={}
 private Izbor:={}
@@ -33,7 +33,7 @@ o_pos_sifre()
 
 AADD(opc, "1. opci sifrarnik                ")
 AADD(opcexe, {|| SifreHOpc() })
-AADD(opc, "2. pos specificni sifrarnici")
+AADD(opc, "2. pos specificni sifarnici")
 AADD(opcexe, {|| SifreHSpec() })
 
 Izbor:=1
@@ -109,7 +109,7 @@ return
 
 
  
-function tops_sifrarnici()
+function tops_sifarnici()
 private opc:={}
 private opcexe:={}
 private Izbor:={}

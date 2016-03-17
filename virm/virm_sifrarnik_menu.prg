@@ -13,16 +13,16 @@
 #include "f18.ch"
 
 
-function virm_sifrarnici()
+function virm_sifarnici()
 local _opc:={}
 local _opcexe:={}
 local _izbor:=1
 
 OSifVirm()
 
-AADD(_opc, "1. opci sifrarnici          ")
+AADD(_opc, "1. opci sifarnici          ")
 AADD(_opcexe, {|| _sif_opc()})
-AADD(_opc, "2. specificni sifrarnici ")
+AADD(_opc, "2. specificni sifarnici ")
 AADD(_opcexe, {|| _sif_spec()})
 
 f18_menu( "sif", .f. , _izbor, _opc, _opcexe )

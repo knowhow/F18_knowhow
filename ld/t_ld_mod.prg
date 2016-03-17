@@ -59,7 +59,7 @@ METHOD programski_modul_osnovni_meni
    AAdd( opc, "------------------------------------" )
    AAdd( opcexe, nil )
    AAdd( opc, "S. šifarnici plate" )
-   AAdd( opcexe, {|| ld_sifrarnici() } )
+   AAdd( opcexe, {|| ld_sifarnici() } )
    AAdd( opc, "------------------------------------" )
    AAdd( opcexe, nil )
    AAdd( opc, "A. rekapitulacija" )

@@ -21,7 +21,7 @@ FUNCTION set_a_dbf_mat()
    set_a_dbf_mat_sint()
    set_a_dbf_mat_nalog()
 
-   // sifrarnici
+   // sifarnici
    set_a_dbf_sifarnik( "mat_karkon", "KARKON", F_KARKON  )
 
    // temporary

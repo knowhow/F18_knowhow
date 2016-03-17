@@ -68,7 +68,7 @@ METHOD programski_modul_osnovni_meni
    AAdd( _opcexe, {|| kadev_work_card() } )
    AAdd( _opc, "------------------------------------" )
    AAdd( _opcexe, {|| nil } )
-   AAdd( _opc, "S. sifrarnici" )
+   AAdd( _opc, "S. sifarnici" )
    AAdd( _opcexe, {|| kadev_sifre_menu() } )
    AAdd( _opc, "------------------------------------" )
    AAdd( _opcexe, {|| nil } )

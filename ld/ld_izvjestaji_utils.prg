@@ -139,9 +139,9 @@ FUNCTION _gmainline()
 // ---------------------------------------------------------------------
 // Ova procedura ispituje da li je za izracunavanje poreza i doprinosa
 // u izvjestaju potrebno koristiti sifrarnike iz sezone. Ako se ustanovi
-// da ovi sifrarnici postoje u sezoni 'MMGGGG' podrazumijeva se da njih
+// da ovi sifarnici postoje u sezoni 'MMGGGG' podrazumijeva se da njih
 // treba koristiti za izvjestaj. U tom slucaju zatvaraju se postojeci
-// sifrarnici POR i DOPR iz radnog podrucja, a umjesto njih otvaraju se
+// sifarnici POR i DOPR iz radnog podrucja, a umjesto njih otvaraju se
 // sezonski.
 // ---------------------------------------------------------------------
 // cG - izvjestajna godina, cM - izvjestajni mjesec

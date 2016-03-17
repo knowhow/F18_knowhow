@@ -69,8 +69,8 @@
     - kartica plate za period
     - specifikacija neto primanja po općinama stanovanja
   - RNAL, opis artikla u dnu šifrarnika artikala nakon brze pretrage
-  - F18, šifrarnici, ažuriranje unutar jedne transakcije
-  - F18, šifrarnici, provjera postojanja identične šifre kod dodavanja u šifrarnik
+  - F18, šifarnici, ažuriranje unutar jedne transakcije
+  - F18, šifarnici, provjera postojanja identične šifre kod dodavanja u šifrarnik
   - POS, unos zaduženja uvijek javlja "počeli ste pripremu dokumenta..." bugfix
 
 1.7.119  2014-07-15, vsasa

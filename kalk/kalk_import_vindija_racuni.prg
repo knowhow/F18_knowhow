@@ -738,7 +738,7 @@ STATIC FUNCTION CheckBrFakt( aFakt )
 
 
 /*! \fn CheckDok()
- *  \brief Provjera da li postoje sve sifre u sifrarnicima za dokumente
+ *  \brief Provjera da li postoje sve sifre u sifarnicima za dokumente
  */
 STATIC FUNCTION CheckDok()
 

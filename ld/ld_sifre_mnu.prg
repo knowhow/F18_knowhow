@@ -12,7 +12,7 @@
 #include "f18.ch"
 
 
-FUNCTION ld_sifrarnici()
+FUNCTION ld_sifarnici()
 
    LOCAL _opc := {}
    LOCAL _opcexe := {}
@@ -21,9 +21,9 @@ FUNCTION ld_sifrarnici()
    o_ld_sif_tables()
 
    AAdd( _opc, "1. opći šifarnici                     " )
-   AAdd( _opcexe, {|| ld_opci_sifrarnici() } )
-   AAdd( _opc, "2. ostali šifrarnici" )
-   AAdd( _opcexe, {|| ld_specificni_sifrarnici() } )
+   AAdd( _opcexe, {|| ld_opci_sifarnici() } )
+   AAdd( _opc, "2. ostali šifarnici" )
+   AAdd( _opcexe, {|| ld_specificni_sifarnici() } )
 
    f18_menu( "sif", .F., _izbor, _opc, _opcexe )
 
@@ -31,7 +31,7 @@ FUNCTION ld_sifrarnici()
 
 
 
-FUNCTION ld_opci_sifrarnici()
+FUNCTION ld_opci_sifarnici()
 
    LOCAL _opc := {}
    LOCAL _opcexe := {}
@@ -66,7 +66,7 @@ FUNCTION ld_opci_sifrarnici()
 
 
 
-FUNCTION ld_specificni_sifrarnici()
+FUNCTION ld_specificni_sifarnici()
 
    LOCAL _opc := {}
    LOCAL _opcexe := {}

@@ -48,8 +48,7 @@ METHOD mMenu()
    RETURN NIL
 
 
-// ----------------------------------------
-// ----------------------------------------
+
 METHOD programski_modul_osnovni_meni
 
    PRIVATE opc := {}
@@ -57,15 +56,13 @@ METHOD programski_modul_osnovni_meni
 
    AAdd( opc,   "1. priprema virmana                         " )
    AAdd( opcexe, {|| unos_virmana() } )
-   AAdd( opc,   "2. izvjestaji" )
-   AAdd( opcexe, {|| nil } )
-   AAdd( opc,   "3. moduli - razmjena podataka " )
+   AAdd( opc,   "2. moduli - razmjena podataka " )
    AAdd( opcexe, {|| virm_razmjena_podataka() } )
-   AAdd( opc,   "4. export podataka za banku" )
+   AAdd( opc,   "3. export podataka za banku" )
    AAdd( opcexe, {|| virm_export_banke() } )
    AAdd( opc, "------------------------------------" )
    AAdd( opcexe, nil )
-   AAdd( opc,   "S. sifrarnici" )
+   AAdd( opc,   "4. šifrarnici" )
    AAdd( opcexe, {|| virm_sifrarnici() } )
    AAdd( opc, "------------------------------------" )
    AAdd( opcexe, nil )
@@ -76,7 +73,7 @@ METHOD programski_modul_osnovni_meni
 
    Menu_SC( "gvir", .T. )
 
-   RETURN
+   RETURN .T.
 
 
 METHOD set_module_gvars()

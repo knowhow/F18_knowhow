@@ -186,12 +186,12 @@ FUNCTION pr_br_sast()
    LOCAL i
    LOCAL aError := {}
 
-   box(, 3, 65 )
+   Box(, 3, 65 )
    @ m_x + 1, m_y + 2 SAY "min.broj sastavnica:" GET nMin PICT "999"
    @ m_x + 2, m_y + 2 SAY "max.broj sastavnica:" GET nMax PICT "999"
    @ m_x + 3, m_y + 2 SAY "uslov za artikle:" GET cArtikli PICT "@S40"
    READ
-   boxc()
+   BoxC()
 
    IF LastKey() == K_ESC
       RETURN
@@ -308,7 +308,7 @@ FUNCTION pr_ned_sast() // pregled sastavnica koje nedostaju
    LOCAL nScan
    LOCAL aError := {}
 
-   box(, 3, 65 )
+   Box(, 3, 65 )
    @ m_x + 1, m_y + 2 SAY "tr.sirovine:" GET cSirovine PICT "@S40" ;
       VALID !Empty( cSirovine )
    @ m_x + 2, m_y + 2 SAY "[P]ostoji / [N]epostoji" GET cPostoji ;
@@ -317,7 +317,7 @@ FUNCTION pr_ned_sast() // pregled sastavnica koje nedostaju
    @ m_x + 3, m_y + 2 SAY "uslov za artikle:" GET cArtikli PICT "@S40"
 
    READ
-   boxc()
+   BoxC()
 
    IF LastKey() == K_ESC
       RETURN
@@ -449,10 +449,10 @@ FUNCTION pr_dupl_sast()
    LOCAL aError := {}
    LOCAL aDbf := {}
 
-   box(, 1, 65 )
+   Box(, 1, 65 )
    @ m_x + 1, m_y + 2 SAY "uslov za artikle:" GET cArtikli PICT "@S40"
    READ
-   boxc()
+   BoxC()
 
    IF LastKey() == K_ESC
       RETURN
@@ -478,7 +478,7 @@ FUNCTION pr_dupl_sast()
    ENDIF
 
 
-   box(, 1, 50 )
+   Box(, 1, 50 )
 
    // prvo mi daj svu robu u p.tabelu sa sastavnicama
    DO WHILE !Eof()
@@ -609,7 +609,7 @@ FUNCTION pr_dupl_sast()
       SKIP
    ENDDO
 
-   boxc()
+   BoxC()
 
    IF Len( aError ) == 0
       MsgBeep( "sve ok :)" )
@@ -682,7 +682,7 @@ FUNCTION _exp_sast_dbf()
    SET ORDER TO TAG "ID"
    GO TOP
 
-   box(, 1, 50 )
+   Box(, 1, 50 )
    DO WHILE !Eof()
 
       cIdRoba := field->id
@@ -735,7 +735,7 @@ FUNCTION _exp_sast_dbf()
 
    ENDDO
 
-   boxc()
+   BoxC()
 
    MsgBeep( "Podaci se nalaze u " + PRIVPATH + "r_export.dbf tabeli !" )
 

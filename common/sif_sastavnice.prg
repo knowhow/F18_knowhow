@@ -248,7 +248,7 @@ FUNCTION exp_roba_dbf() // export robe u dbf
    SET ORDER TO TAG "ID"
    GO TOP
 
-   box(, 1, 50 )
+   Box(, 1, 50 )
    DO WHILE !Eof()
 
       @ m_x + 1, m_y + 2 SAY "upisujem: " + roba->id
@@ -267,7 +267,7 @@ FUNCTION exp_roba_dbf() // export robe u dbf
       SKIP
    ENDDO
 
-   boxc()
+   BoxC()
 
    MsgBeep( "Podaci se nalaze u " + PRIVPATH + "r_export.dbf tabeli !" )
 

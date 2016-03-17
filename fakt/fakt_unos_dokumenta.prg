@@ -1663,7 +1663,7 @@ STATIC FUNCTION popup_fakt_unos_dokumenta()
          @ m_x + 2, m_y + 2 SAY "Kolicina" GET _kolicina valid {|| _kolicina <> 0 } PICT pickol
          READ
          IF LastKey() == K_ESC
-            boxc()
+            BoxC()
             my_close_all_dbf()
             RETURN DE_CONT
          ENDIF
@@ -1685,7 +1685,7 @@ STATIC FUNCTION popup_fakt_unos_dokumenta()
             SELECT fakt_pripr
          ENDIF
          IF LastKey() = K_ESC
-            boxc()
+            BoxC()
             my_close_all_dbf()
             RETURN DE_CONT
          ENDIF

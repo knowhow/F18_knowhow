@@ -70,7 +70,7 @@ FUNCTION CjenR()
    @ m_x + 3, m_y + 2 SAY "Cjenovnik ( /M/V) : " GET cCjenIzbor VALID cCjenIzbor $ " MV"
    @ m_x + 4, m_y + 2 SAY "M - sa MPC,V - sa VPC,prazno - sve"
    READ
-   boxc()
+   BoxC()
 
    UzmiIzIni( cIniName, 'Varijable', 'CjenBroj', cCjenBroj, 'WRITE' )
    UzmiIzIni( KUMPATH + 'FMK.INI', 'Zaglavlje', 'CjenBroj', cCjenBroj, 'WRITE' )

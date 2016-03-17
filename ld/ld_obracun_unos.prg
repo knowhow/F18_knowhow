@@ -219,7 +219,7 @@ STATIC FUNCTION ld_unos_obracuna_box( lSaveObracun )
 
    lNovi := .F.
 
-   Box( , MAXROWS() -10, MAXCOLS() -10 )
+   Box( , MAXROWS() - 3, MAXCOLS() -10 )
 
    @ m_x + 1, m_y + 2 SAY _l( "Radna jedinica: " )
 

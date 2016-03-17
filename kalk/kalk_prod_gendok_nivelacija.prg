@@ -349,7 +349,7 @@ FUNCTION set_mpc_2()
       RETURN
    ENDIF
 
-   box(, 4, 55 )
+   Box(, 4, 55 )
 
    @ m_x + 1, m_y + 2 SAY "        Setuj MPC (1,2,3):" GET cSetCj ;
       VALID cSetCj $ "12345"
@@ -360,7 +360,7 @@ FUNCTION set_mpc_2()
    @ m_x + 4, m_y + 2 SAY "  novu cijenu zaokruzi na:" GET nZaok ;
       PICT "9"
    READ
-   boxc()
+   BoxC()
 
 
    IF nUvecaj = 0 .OR. Pitanje(, "Setovati cijene", "N" ) == "N"
@@ -426,11 +426,11 @@ FUNCTION set_mpc_iz_zanivel()
    MsgBeep( "Ova opcija se iskljucivo pokrece#nakon obradjenih nivelacija!" )
 
 
-   box(, 1, 55 )
+   Box(, 1, 55 )
    @ m_x + 1, m_y + 2 SAY "Setovati MPC(1, 2, 3, 4) ?" GET cSetCj VALID cSetCj $ "12345"
 
    READ
-   boxc()
+   BoxC()
 
 
    IF Pitanje(, "Setovati nove cijene", "N" ) == "N"

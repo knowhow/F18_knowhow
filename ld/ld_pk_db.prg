@@ -312,7 +312,7 @@ STATIC FUNCTION g_date( dTmp_date, dDate, cGrDate )
    dTmp_date := Date()
    cGrDate := "N"
 
-   box(, 4, 65 )
+   Box(, 4, 65 )
    @ m_x + 1, m_y + 2 SAY "postavi tekuci datum na:" GET dDate
    @ m_x + 2, m_y + 2 SAY "gledati granicni datum ?" GET cGrDate ;
       VALID cGrDate $ "DN" PICT "@!"
@@ -323,7 +323,7 @@ STATIC FUNCTION g_date( dTmp_date, dDate, cGrDate )
       READ
    ENDIF
 
-   boxc()
+   BoxC()
 
    IF LastKey() == K_ESC
       nRet := 0

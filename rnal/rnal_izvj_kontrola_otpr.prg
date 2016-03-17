@@ -164,7 +164,7 @@ FUNCTION chk_dok_11()
 
    PRIVATE GetList := {}
 
-   box(, 2, 60 )
+   Box(, 2, 60 )
 
    @ m_x + 1, m_y + 2 SAY "za datum od" GET dD_from
    @ m_x + 1, Col() + 1 SAY "do" GET dD_to
@@ -173,7 +173,7 @@ FUNCTION chk_dok_11()
       GET cReset VALID cReset $ "DN" PICT "@!"
 
    READ
-   boxc()
+   BoxC()
 
    IF LastKey() == K_ESC
       RETURN

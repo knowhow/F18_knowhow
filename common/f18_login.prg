@@ -180,7 +180,7 @@ METHOD F18Login:set_server_params( server_params )
 
 METHOD F18Login:main_db_login( server_param, force_connect )
 
-   LOCAL _max_login := 4
+   LOCAL _max_login := 1
    LOCAL _i
    LOCAL _logged_in := .F.
 
@@ -217,7 +217,6 @@ METHOD F18Login:main_db_login( server_param, force_connect )
       NEXT
 
    ENDIF
-
 
    ::lMainDbSpojena := .T.
 
@@ -367,12 +366,10 @@ METHOD F18Login:promjena_sezone( server_param, cDatabase, cSezona )
 
 
 
-
-
 METHOD F18Login:main_db_login_form()
 
    LOCAL _ok := .F.
-   LOCAL _user, _pwd, _port, _host
+   LOCAL _user, _pwd, _port, _host, _db, _schema
    LOCAL _server
    LOCAL _x := 5
    LOCAL _left := 7
@@ -381,7 +378,6 @@ METHOD F18Login:main_db_login_form()
 
    _user := ::main_db_params[ "username" ]
    _pwd := ""
-   // ::main_db_params["username"]
    _host := ::main_db_params[ "host" ]
    _port := ::main_db_params[ "port" ]
    _db := ::main_db_params[ "postgres" ]
@@ -421,7 +417,7 @@ METHOD F18Login:main_db_login_form()
    @ 5, 5, 18, 77 BOX B_DOUBLE_SINGLE
 
    ++ _x
-   @ _x, _left SAY PadC( "***** Unestite podatke za pristup *****", 60 )
+   @ _x, _left SAY PadC( "***** Unesite podatke za pristup *****", 60 )
 
    ++ _x
    ++ _x

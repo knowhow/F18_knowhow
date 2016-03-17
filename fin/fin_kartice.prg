@@ -21,32 +21,30 @@ FUNCTION fin_kartice_menu()
    PRIVATE picBHD := FormPicL( gPicBHD, 16 )
 
    AAdd( _opc, "1. subanalitika                           " )
-   AAdd( _opcexe, {|| subKartMnu() } )
+   AAdd( _opcexe, {|| fin_suban_kartica_menu() } )
    AAdd( _opc, "2. analitika" )
-   AAdd( _opcexe, {|| AnKart() } )
+   AAdd( _opcexe, {|| fin_anal_kartica() } )
    AAdd( _opc, "3. sintetika" )
-   AAdd( _opcexe, {|| SinKart() } )
+   AAdd( _opcexe, {|| fin_sint_kartica() } )
    AAdd( _opc, "4. sintetika - po mjesecima" )
-   AAdd( _opcexe, {|| SinKart2() } )
+   AAdd( _opcexe, {|| fin_sint_kart_po_mjesecima() } )
 
    f18_menu( "fin_kart", .F., _izbor, _opc, _opcexe )
 
    RETURN .T.
 
 
-// ------------------------------------------------------------
-// subanaliticka kartica - menu
-// ------------------------------------------------------------
-STATIC FUNCTION subkartmnu()
+
+STATIC FUNCTION fin_suban_kartica_menu()
 
    LOCAL _opc := {}
    LOCAL _opcexe := {}
    LOCAL _izbor := 1
 
    AAdd( _opc, "1. subanalitička kartica (txt) " )
-   AAdd( _opcexe, {|| SubKart() } )
+   AAdd( _opcexe, {|| fin_suban_kartica() } )
    AAdd( _opc, "2. subanalitička kartica (odt)           " )
    AAdd( _opcexe, {|| fin_suban_kartica_sql( NIL ) } )
-   f18_menu( "fin_subkart", .F., _izbor, _opc, _opcexe )
+   f18_menu( "fin_subk", .F., _izbor, _opc, _opcexe )
 
    RETURN .T.

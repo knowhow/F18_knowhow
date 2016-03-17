@@ -11,12 +11,14 @@
 
 #include "f18.ch"
 
+MEMVAR m
+
 // ---------------------------------------------
-// SubKart(lOtvst)
+// fin_suban_kartica(lOtvst)
 // Subanaliticka kartica
 // param lOtvst  - .t. otvorene stavke
 // ---------------------------------------------
-FUNCTION SubKart( lOtvst )
+FUNCTION fin_suban_kartica( lOtvst )
 
    LOCAL cBrza := "D"
    LOCAL nC1 := 37
@@ -178,10 +180,10 @@ FUNCTION SubKart( lOtvst )
       @ Row() + 1, m_y + 2 SAY8 "Općina (prazno-sve):" GET cOpcine
       @ Row() + 1, m_y + 2 SAY "Svaka kartica treba da ima zaglavlje kolona ? (D/N)"  GET c1k1z PICT "@!" VALID c1k1z $ "DN"
       @ Row() + 1, m_y + 2 SAY "Export kartice u dbf ? (D/N)"  GET cExpDbf PICT "@!" VALID cExpDbf $ "DN"
-		
+
       READ
       ESC_BCR
-	
+
       IF !( cK14 $ "123" ) .AND. ( cSazeta == "D" .OR. gNW == "D" )
          cK14 := "3"
       ENDIF
@@ -192,11 +194,11 @@ FUNCTION SubKart( lOtvst )
             nC1 := 63 + iif( _fin_params[ "fin_tip_dokumenta" ], 17, 0 )
          ENDIF
       ENDIF
-	
+
       IF cDinDem == "3"
          cKumul := "1"
       ENDIF
-	
+
       aUsl3 := parsiraj( cIdVN, "IDVN", "C" )
 
       IF gDUFRJ == "D"
@@ -290,7 +292,7 @@ FUNCTION SubKart( lOtvst )
    lVrsteP := .F.
 
    close_open_kartica_tbl()
-   
+
    IF _fakt_params[ "fakt_vrste_placanja" ]
       lVrsteP := .T.
       O_VRSTEP
@@ -433,13 +435,13 @@ FUNCTION SubKart( lOtvst )
          ENDIF
 
          SELECT ( nTarea )
-    		
+
          IF cRasclaniti == "D"
             cRasclan := idrj + funk + fond
          ELSE
             cRasclan := ""
          ENDIF
-    		
+
          IF cBrza == "D"   // "brza" kartica
             IF IdKonto <> qqKonto .OR. IdPartner <> qqPartner .AND. RTrim( qqPartner ) != ";"
                EXIT
@@ -478,19 +480,19 @@ FUNCTION SubKart( lOtvst )
             @ PRow(), PCol() + 1 SAY AllTrim( naz2 )
             @ PRow(), PCol() + 1 SAY ZiroR
          ENDIF
-    		
+
          SELECT SUBAN
-    		
+
          IF c1k1z == "D"
             ZaglSif( .F. )
          ELSE
             ? m
          ENDIF
-    	
+
          fPrviPr := .T.  // prvi prolaz
 
          DO WHILE !Eof() .AND. cIdKonto == IdKonto .AND. ( cIdPartner == IdPartner .OR. ( cBrza == "D" .AND. RTrim( qqPartner ) == ";" ) ) .AND. Rasclan() .AND. iif( gDUFRJ != "D", IdFirma == cIdFirma, .T. )
-			
+
             IF PRow() > 62 + dodatni_redovi_po_stranici()
                FF
                ZaglSif( .T. )
@@ -514,11 +516,11 @@ FUNCTION SubKart( lOtvst )
                SELECT SUBAN
                ? m
             ENDIF
-			
+
             IF cPredh == "2" .AND. fPrviPr
                fPrviPr := .F.
                DO WHILE !Eof() .AND. cIdKonto == IdKonto .AND. ( cIdPartner == IdPartner .OR. ( cBrza == "D" .AND. RTrim( qqPartner ) == ";" ) ) .AND. Rasclan() .AND. dDatOd > DatDok  .AND. iif( gDUFRJ != "D", IdFirma == cIdFirma, .T. )
-                  IF fOtvSt .AND. OtvSt == "9" 
+                  IF fOtvSt .AND. OtvSt == "9"
                      IF d_P == "1"
                         nZDugBHD += iznosbhd
                         nZDugDEM += iznosdem
@@ -537,7 +539,7 @@ FUNCTION SubKart( lOtvst )
                   ENDIF
                   SKIP
                ENDDO  // prethodni promet
-				
+
                ? "PROMET DO "; ?? dDatOd
                IF cSazeta == "D"
                   IF cDinDem == "3"
@@ -560,7 +562,7 @@ FUNCTION SubKart( lOtvst )
                      ENDIF
                   ENDIF
                ENDIF
-             			
+
                nC1 := PCol() + 1
                IF cDinDem == "1"
                   @ PRow(), PCol() + 1 SAY nPDugBHD PICTURE picBHD
@@ -606,9 +608,9 @@ FUNCTION SubKart( lOtvst )
                ENDIF
 
             ENDIF
-			
+
             IF !( fOtvSt .AND. OtvSt == "9" )
-            	
+
                __vr_nal := field->idvn
                __br_nal := field->brnal
                __r_br := field->rbr
@@ -628,12 +630,12 @@ FUNCTION SubKart( lOtvst )
                      @ PRow(), PCol() + 1 SAY PadR( naz, 13 )
                   ENDIF
                ENDIF
-              			
+
                SELECT SUBAN
-              			
+
                @ PRow(), PCol() + 1 SAY PadR( BrDok, 10 )
                @ PRow(), PCol() + 1 SAY datdok
-				
+
                IF ck14 == "1"
                   @ PRow(), PCol() + 1 SAY k1 + "-" + k2 + "-" + K3Iz256( k3 ) + k4
                ELSEIF ck14 == "2"
@@ -675,14 +677,14 @@ FUNCTION SubKart( lOtvst )
                      @ PRow(), PCol() + 1 SAY IznosBHD PICTURE picBHD
                      nPotBHD += IznosBHD
                   ENDIF
-            				
+
                   IF cKumul == "2"   // prikaz kumulativa
                      @ PRow(), PCol() + 1 SAY nDugBHD PICT picbhd
                      @ PRow(), PCol() + 1 SAY nPotBHD PICT picbhd
                   ENDIF
                ENDIF
-          		
-            ELSEIF cDinDem == "2" 
+
+            ELSEIF cDinDem == "2"
 
                IF fOtvSt .AND. OtvSt == "9"
                   IF D_P == "1"
@@ -690,7 +692,7 @@ FUNCTION SubKart( lOtvst )
                   ELSE
                      nZPotDEM += IznosDEM
                   ENDIF
-               ELSE 
+               ELSE
                   IF D_P == "1"
                      @ PRow(), PCol() + 1 SAY IznosDEM PICTURE picbhd
                      @ PRow(), PCol() + 1 SAY 0 PICTURE picbhd
@@ -705,7 +707,7 @@ FUNCTION SubKart( lOtvst )
                      @ PRow(), PCol() + 1 SAY nPotDEM PICT picbhd
                   ENDIF
                ENDIF
-          		
+
             ELSEIF cDinDem == "3"
                IF fOtvSt .AND. OtvSt == "9"
                   IF D_P == "1"
@@ -763,7 +765,7 @@ FUNCTION SubKart( lOtvst )
             OstatakOpisa( @cOpis, nCOpis, {|| iif( PRow() > 60 + dodatni_redovi_po_stranici(), Eval( {|| gPFF(), ZaglSif( .T. ) } ), ) }, nSirOp )
 
             IF cExpDbf == "D"
-				
+
                IF field->d_p == "1"
                   __dug := field->iznosbhd
                   __pot := 0
@@ -911,10 +913,8 @@ FUNCTION SubKart( lOtvst )
       nSviD2 += nKonD2; nSviP2 += nKonP2
 
       IF gnRazRed == 99
-
          FF
          ZaglSif( .T. )
-
       ELSE
 
          i := 0
@@ -926,7 +926,6 @@ FUNCTION SubKart( lOtvst )
       ENDIF
 
    ENDDO
-
 
    IF cBrza == "N"
 
@@ -975,7 +974,7 @@ FUNCTION SubKart( lOtvst )
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
 
 STATIC FUNCTION g_exp_fields()
@@ -1027,7 +1026,7 @@ STATIC FUNCTION _add_to_export( cKonto, cK_naz, cPartn, cP_naz, cVn, cBr, cRbr, 
 
    SELECT ( nTArea )
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -1180,7 +1179,7 @@ FUNCTION ZaglSif( lPocStr )
 
 
 
-/*! Rasclan()
+/* Rasclan()
  *  Rasclanjuje SUBAN->(IdRj+Funk+Fond)
  */
 
@@ -1191,7 +1190,6 @@ FUNCTION Rasclan()
    ELSE
       RETURN .T.
    ENDIF
-
 
 
 
@@ -1211,7 +1209,6 @@ FUNCTION V_Firma( cIdFirma )
 
 
 
-
 /*
    Prelomi(nDugX,nPotX)
  */
@@ -1225,7 +1222,7 @@ FUNCTION Prelomi( nDugX, nPotX )
       nDugX := 0
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 STATIC FUNCTION close_open_kartica_tbl()
 
@@ -1239,4 +1236,4 @@ STATIC FUNCTION close_open_kartica_tbl()
    O_SUBAN
    O_TDOK
 
-   RETURN
+   RETURN .T.

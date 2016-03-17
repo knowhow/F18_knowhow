@@ -276,7 +276,7 @@ FUNCTION UpitK1K4( mxplus, lK )
    ENDIF
 
    IF gRj == "D"
-      IF gDUFRJ == "D" .AND. ( ProcName( 1 ) == "fin_spec_po_suban_kontima" .OR. ProcName( 1 ) == "SUBKART" )
+      IF gDUFRJ == "D" .AND. ( ProcName( 1 ) == UPPER( "fin_spec_po_suban_kontima" ) .OR. ProcName( 1 ) == UPPER("fin_suban_kartica") )
          @ m_x + mxplus + 2, m_y + 2 SAY "RJ:" GET cIdRj PICT "@!S20"
       ELSE
          @ m_x + mxplus + 2, m_y + 2 SAY "RJ:" GET cIdRj
@@ -288,13 +288,12 @@ FUNCTION UpitK1K4( mxplus, lK )
       @ m_x + mxplus + 4, m_y + 2 SAY "Fond    :" GET cFond
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 
-/*! \fn CistiK1K4(lK)
- *  \brief Cisti polja od K1 do K4
- *  \param lK
+/*
+  Cisti polja od K1 do K4
  */
 
 FUNCTION CistiK1K4( lK )
@@ -310,13 +309,12 @@ FUNCTION CistiK1K4( lK )
       ENDIF
       IF ck4 == "99"; ck4 := ""; ENDIF
    ENDIF
-   IF gDUFRJ == "D" .AND. ( ProcName( 1 ) == "fin_spec_po_suban_kontima" .OR. ProcName( 1 ) == "SUBKART" )
+   IF gDUFRJ == "D" .AND. ( ProcName( 1 ) == UPPER( "fin_spec_po_suban_kontima" ) .OR. ProcName( 1 ) == UPPER( "fin_suban_kartica" ) )
       cIdRj := Trim( cIdRj )
    ELSE
       IF cIdRj == "999999"; cidrj := ""; ENDIF
       IF "." $ cidrj
-         cidrj := Trim( StrTran( cidrj, ".", "" ) )
-         // odsjeci ako je tacka. prakticno "01. " -> sve koje pocinju sa  "01"
+         cidrj := Trim( StrTran( cidrj, ".", "" ) )  // odsjeci ako je tacka. prakticno "01. " -> sve koje pocinju sa  "01"
       ENDIF
    ENDIF
    IF cFunk == "99999"; cFunk := ""; ENDIF
@@ -328,7 +326,7 @@ FUNCTION CistiK1K4( lK )
       cfond := Trim( StrTran( cfond, ".", "" ) )
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 

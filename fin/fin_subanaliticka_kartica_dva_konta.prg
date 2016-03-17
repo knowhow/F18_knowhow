@@ -11,11 +11,11 @@
 
 #include "f18.ch"
 
-/* SubKart2(lOtvSt)
+/* fin_suban_kartica2(lOtvSt)
  *  Subanaliticka kartica kod koje se mogu navesti dva konta i vidjeti kroz jednu karticu
  *  lOtvSt
  */
-FUNCTION SubKart2( lOtvSt )
+FUNCTION fin_suban_kartica2( lOtvSt )
 
    LOCAL cBrza := "D"
    LOCAL nSirOp := 20

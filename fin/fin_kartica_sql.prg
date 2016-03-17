@@ -101,13 +101,11 @@ STATIC FUNCTION _get_vars( rpt_vars )
 
    ++ _x
    ++ _x
-
    @ m_x + _x, m_y + 2 SAY "Firma "
    ?? gFirma, "-", AllTrim( gNFirma )
 
    ++ _x
    ++ _x
-
    IF _brza = "D"
 
       _konto := PadR( _konto, 7 )
@@ -131,12 +129,10 @@ STATIC FUNCTION _get_vars( rpt_vars )
 
    ++ _x
    ++ _x
-
    @ m_x + _x, m_y + 2 SAY8 "Kartica za domaću/stranu valutu (1/2):" GET _tip_val PICT "9"
 
    ++ _x
    ++ _x
-
    @ m_x + _x, m_y + 2 SAY "Datum dokumenta od:" GET _datum_od
    @ m_x + _x, Col() + 2 SAY "do" GET _datum_do VALID _datum_od <= _datum_do
 
@@ -152,7 +148,6 @@ STATIC FUNCTION _get_vars( rpt_vars )
 
    ++ _x
    ++ _x
-
    @ m_x + _x, m_y + 2 SAY "Prikaz kartica sa saldom nula (D/N)?" GET _nula VALID _nula $ "DN" PICT "@!"
 
    ++ _x

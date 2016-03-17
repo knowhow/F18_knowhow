@@ -157,11 +157,11 @@ FUNCTION my_server_login( params, conn_type )
    NEXT
 
    _server := TPQServer():New( params[ "host" ], ;
-      iif( conn_type == 1, params[ "database" ], "postgres" ), ;
+      IIF( conn_type == 1, params[ "database" ], "postgres" ), ;
       params[ "user" ], ;
       params[ "password" ], ;
       params[ "port" ], ;
-      iif( conn_type == 1, params[ "schema" ], "public" ) )
+      IIF( conn_type == 1, params[ "schema" ], "public" ) )
 
 
    IF  !_server:NetErr() .AND. Empty( _server:ErrorMsg() )
@@ -280,7 +280,7 @@ STATIC FUNCTION _login_screen( server_params )
       cSession := AllTrim( Str( Year( Date() ) ) )
    ENDIF
 
-   IF cHostName == nil
+   IF cHostName == NIL
       cHostName := "localhost"
    ENDIF
 
@@ -311,7 +311,7 @@ STATIC FUNCTION _login_screen( server_params )
    @ 5, 5, 18, 77 BOX B_DOUBLE_SINGLE
 
    ++ nX
-   @ nX, nLeft SAY PadC( "***** Unestite podatke za pristup *****", 60 )
+   @ nX, nLeft SAY PadC( "***** Unesite podatke za pristup *****", 60 )
 
    nX += 2
    @ nX, nLeft SAY PadL( "Konfigurisati server ?:", 21 ) GET cConfigureServer VALID cConfigureServer $ "DN" PICT "@!"

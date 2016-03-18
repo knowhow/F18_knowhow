@@ -21,7 +21,7 @@ FUNCTION fakt_lista_dokumenata_tabelarni_pregled( lVrsteP, lOpcine, cFilter )
    LOCAL _params := fakt_params()
    LOCAL _model_uredjaja := fiskalni_uredjaj_model()
 
-   IF !SELECT( "fakt_doks" ) > 0
+   IF SELECT( "fakt_doks" ) == 0
       O_FAKT_DOKS
    ENDIF
 

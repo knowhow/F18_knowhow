@@ -16,12 +16,12 @@ MEMVAR m_x, m_y
 
 /*
  napuni tablu sa servera
-  step_size - broj zapisa koji se citaju u jednom query-u
+  nStepSize - broj zapisa koji se citaju u jednom query-u
 */
-FUNCTION full_synchro( dbf_table, step_size, cInfo )
+FUNCTION full_synchro( dbf_table, nStepSize, cInfo )
 
    LOCAL _seconds
-   LOCAL _count
+   LOCAL nCountSql
    LOCAL _offset
    LOCAL _qry
    LOCAL _sql_table, _sql_fields
@@ -32,8 +32,8 @@ FUNCTION full_synchro( dbf_table, step_size, cInfo )
    LOCAL _msg
    LOCAL lRet := .T.
 
-   IF step_size == NIL
-      step_size := 20000
+   IF nStepSize == NIL
+      nStepSize := 20000
    ENDIF
 
    nuliraj_ids_and_update_my_semaphore_ver( dbf_table )
@@ -53,12 +53,11 @@ FUNCTION full_synchro( dbf_table, step_size, cInfo )
 
    open_exclusive_zap_close( aDbfRec ) // nuliranje tabele
 
-   info_bar( "x", "full synchro: " + _sql_table + " => " + dbf_table )
 
    run_sql_query( "BEGIN; SET TRANSACTION ISOLATION LEVEL SERIALIZABLE" )
-   _count := table_count( _sql_table, "true" )
+   nCountSql := table_count( _sql_table, "true" )
 
-   log_write( "START full_synchro table: " + dbf_table + "/ sql count: " + AllTrim( Str( _count ) ), 3 )
+   log_write( "START full_synchro table: " + dbf_table + "/ sql count: " + AllTrim( Str( nCountSql ) ), 3 )
 
    _seconds := Seconds()
 
@@ -69,15 +68,15 @@ FUNCTION full_synchro( dbf_table, step_size, cInfo )
       RaiseError( _msg )
    ENDIF
 
-   info_bar( "fsync:" + dbf_table, dbf_table  + " : " + cInfo + " sql_cnt:" + AllTrim( Str( _count, 10, 0 ) ) )
+   info_bar( "fsync:" + dbf_table, "START: " + dbf_table  + " : " + cInfo + " sql_cnt:" + AllTrim( Str( nCountSql, 10, 0 ) ) )
 
-   FOR _offset := 0 TO _count STEP step_size
+   FOR _offset := 0 TO nCountSql STEP nStepSize
 
       _qry :=  "SELECT " + _sql_fields + " FROM " + _sql_table
       _qry += " ORDER BY " + _sql_order
-      _qry += " LIMIT " + Str( step_size ) + " OFFSET " + Str( _offset )
+      _qry += " LIMIT " + Str( nStepSize ) + " OFFSET " + Str( _offset )
 
-      log_write( "GET FROM SQL full_synchro tabela: " + dbf_table + " " + AllTrim( Str( _offset ) ) + " / qry: " + _qry, 7 )
+      //log_write( "GET FROM SQL full_synchro tabela: " + dbf_table + " " + AllTrim( Str( _offset ) ) + " / qry: " + _qry, 7 )
 
       lRet := fill_dbf_from_server( dbf_table, _qry, @_sql_fetch_time, @_dbf_write_time, .T. )
 
@@ -88,23 +87,23 @@ FUNCTION full_synchro( dbf_table, step_size, cInfo )
       ENDIF
 
       // info_bar( "fsync:" + dbf_table, "sql fetch time: " + AllTrim( Str( _sql_fetch_time ) ) + " dbf write time: " + AllTrim( Str( _dbf_write_time ) ) )
-      info_bar( "fsync:" + dbf_table, "STEP full_synchro tabela: " + dbf_table + " " + AllTrim( Str( _offset + step_size ) ) + " / " + AllTrim( Str( _count ) ) )
+      info_bar( "fsync:" + dbf_table, "STEP full_synchro tabela: " + dbf_table + " " + AllTrim( Str( _offset + nStepSize ) ) + " / " + AllTrim( Str( nCountSql ) ) )
 
    NEXT
 
    IF log_level() > 6
-      _count := table_count( _sql_table, "true" )
-      log_write( "full_synchro sql (END transaction): " + dbf_table + "/ sql count: " + AllTrim( Str( _count ) ), 7 )
+      nCountSql := table_count( _sql_table, "true" )
+      log_write( "full_synchro sql (END transaction): " + dbf_table + "/ sql_tbl_cnt: " + AllTrim( Str( nCountSql ) ), 7 )
    ENDIF
 
    run_sql_query( "COMMIT" )
 
    IF log_level() > 6
-      _count := table_count( _sql_table, "true" )
-      log_write( "sql cnt END transaction): " + dbf_table + "/ sql count: " + AllTrim( Str( _count ) ), 7 )
+      nCountSql := table_count( _sql_table, "true" )
+      log_write( "sql cnt END transaction): " + dbf_table + "/ sql count: " + AllTrim( Str( nCountSql ) ), 7 )
    ENDIF
 
-   info_bar( "x", "END full_synchro: " + dbf_table +  " cnt: " + AllTrim( Str( _count ) ) )
+   info_bar( "fsync", "END full_synchro: " + dbf_table +  " cnt: " + AllTrim( Str( nCountSql ) ) )
 
    set_a_dbf_rec_chk0( aDbfRec[ "table" ] )
 

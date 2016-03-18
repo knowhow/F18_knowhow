@@ -337,7 +337,7 @@ FUNCTION table_count( table, condition )
 
 FUNCTION fill_dbf_from_server( dbf_table, sql_query, sql_fetch_time, dbf_write_time, lShowInfo )
 
-   LOCAL _counter := 0
+   LOCAL nCounterDataset := 0
    LOCAL _i, cField := "x"
    LOCAL oDataSet
    LOCAL _retry := 3
@@ -385,7 +385,7 @@ FUNCTION fill_dbf_from_server( dbf_table, sql_query, sql_fetch_time, dbf_write_t
    BEGIN SEQUENCE WITH {| err| Break( err ) }
       DO WHILE !oDataSet:Eof()
 
-         ++ _counter
+         ++ nCounterDataset
          APPEND BLANK
 
          FOR _i := 1 TO Len( aDbfFields )
@@ -398,7 +398,7 @@ FUNCTION fill_dbf_from_server( dbf_table, sql_query, sql_fetch_time, dbf_write_t
 
             cField := aDbfFields[ _i ]
 #ifdef F18_SIMULATE_BUG
-            IF  _counter == 100 .AND. _i == 1 .AND.  aDbfRec[ "table" ] == 'fin_suban'
+            IF  nCounterDataset == 100 .AND. _i == 1 .AND.  aDbfRec[ "table" ] == 'fin_suban'
                IF s_nBug1 < 2
                   cField := "simulate_bug"
                   s_nBug1++
@@ -423,8 +423,8 @@ FUNCTION fill_dbf_from_server( dbf_table, sql_query, sql_fetch_time, dbf_write_t
          NEXT
 
          IF lShowInfo
-            IF _counter % 500 == 0
-               cMsg :=  my_server_params()[ "database" ] + " fsync: " + dbf_table + " rec_cnt: " + AllTrim( Str( _counter ) )
+            IF nCounterDataset % 1000 == 0
+               cMsg :=  my_server_params()[ "database" ] + " fsync: " + dbf_table + " dataset_cnt: " + AllTrim( Str( nCounterDataset ) )
                ?E cMsg
                info_bar( "fill_dbf", cMsg )
             ENDIF
@@ -457,7 +457,7 @@ FUNCTION fill_dbf_from_server( dbf_table, sql_query, sql_fetch_time, dbf_write_t
    ENDIF
 
    IF lRet
-      log_write( "fill_dbf_from_server: " + dbf_table + ", count: " + AllTrim( Str( _counter ) ), 7 )
+      log_write( "fill_dbf_from_server: " + dbf_table + ", count: " + AllTrim( Str( nCounterDataset ) ), 7 )
    ENDIF
    log_write( "fill_dbf_from_server END" + iif( lRet, "", "ERR" ), 9 )
 

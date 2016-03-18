@@ -460,7 +460,7 @@ FUNCTION provjeri_kolicine_i_cijene_fiskalnog_racuna( items, storno, nLevel, drv
       _kolicina := items[ _i, 6 ]
       _naziv := items[ _i, 4 ]
 
-      IF ( !is_ispravna_kolicina( _kolicina, _naziv ) .OR. !is_ispravna_cijena( _cijena, _naziv ) ) .OR. !is_ispravna_cijena( _plu_cijena, _naziv )
+      IF ( !is_ispravna_kolicina( _naziv, _kolicina ) .OR. !is_ispravna_cijena( _naziv, _cijena ) ) .OR. !is_ispravna_cijena( _naziv, _plu_cijena )
 
          lImaGreska := .T.
 
@@ -536,12 +536,12 @@ STATIC FUNCTION set_min_max_values( drv )
 
 
 STATIC FUNCTION is_ispravna_kolicina( cNaziv, nKolicina )
-   RETURN validator_vrijednosti( cNaziv, nKolicina, __MIN_QT, __MAX_QT, 3 )
+   RETURN validator_vrijednosti( "kol_" + cNaziv, nKolicina, __MIN_QT, __MAX_QT, 3 )
 
 
 
 STATIC FUNCTION is_ispravna_cijena( cNaziv, nCijena )
-   RETURN validator_vrijednosti( cNaziv, nCijena, __MIN_PRICE, __MAX_PRICE, 2 )
+   RETURN validator_vrijednosti( "cij_" + cNaziv, nCijena, __MIN_PRICE, __MAX_PRICE, 2 )
 
 
 

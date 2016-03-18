@@ -532,9 +532,7 @@ STATIC FUNCTION fakt_fiscal_stavke_racuna( id_firma, tip_dok, br_dok, storno, pa
    _rn_total := _data_total[ "ukupno" ]
    _rn_f_total := 0
 
-   DO WHILE !Eof() .AND. field->idfirma == id_firma ;
-         .AND. field->idtipdok == tip_dok ;
-         .AND. field->brdok == br_dok
+   DO WHILE !Eof() .AND. field->idfirma == id_firma .AND. field->idtipdok == tip_dok .AND. field->brdok == br_dok
 
       SELECT roba
       SEEK fakt->idroba
@@ -571,8 +569,8 @@ STATIC FUNCTION fakt_fiscal_stavke_racuna( id_firma, tip_dok, br_dok, storno, pa
       _art_jmj := AllTrim( roba->jmj )
       _art_plu := roba->fisc_plu
 
-      IF __device_params[ "plu_type" ] == "D" .AND. ;
-            ( __device_params[ "vp_sum" ] <> 1 .OR. tip_dok $ "11" .OR. Len( _a_iznosi ) > 1 )
+      IF __device_params[ "plu_type" ] == "D" .AND.  ;
+        ( __device_params[ "vp_sum" ] <> 1 .OR. tip_dok $ "11" .OR. Len( _a_iznosi ) > 1 )
 
          _art_plu := auto_plu( nil, nil,  __device_params )
 

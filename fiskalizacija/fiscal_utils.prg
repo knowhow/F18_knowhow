@@ -430,7 +430,7 @@ FUNCTION fiscal_txt_get_vr_plac( id_plac, drv )
 
 
 
-FUNCTION provjeri_kolicine_i_cijene_fiskalnog_racuna( items, storno, level, drv )
+FUNCTION provjeri_kolicine_i_cijene_fiskalnog_racuna( items, storno, nLevel, drv )
 
    LOCAL _i, _cijena, _plu_cijena, _kolicina, _naziv
    LOCAL _fix := 0
@@ -460,12 +460,11 @@ FUNCTION provjeri_kolicine_i_cijene_fiskalnog_racuna( items, storno, level, drv 
       _kolicina := items[ _i, 6 ]
       _naziv := items[ _i, 4 ]
 
-      IF ( !is_ispravna_kolicina( _kolicina ) .OR. !is_ispravna_cijena( _cijena ) ) ;
-            .OR. !is_ispravna_cijena( _plu_cijena )
+      IF ( !is_ispravna_kolicina( _kolicina, _naziv ) .OR. !is_ispravna_cijena( _cijena, _naziv ) ) .OR. !is_ispravna_cijena( _plu_cijena, _naziv )
 
          lImaGreska := .T.
 
-         IF ( level > 1 .AND. _kolicina > 1 )
+         IF ( nLevel > 1 .AND. _kolicina > 1 )
 
             prepakuj_vrijednosti_na_100_komada( @_kolicina, @_cijena, @_plu_cijena, @_naziv )
 
@@ -475,7 +474,6 @@ FUNCTION provjeri_kolicine_i_cijene_fiskalnog_racuna( items, storno, level, drv 
             items[ _i, 4 ] := _naziv
 
             lImaGreska := .F.
-
             ++ _fix
 
          ENDIF
@@ -488,15 +486,15 @@ FUNCTION provjeri_kolicine_i_cijene_fiskalnog_racuna( items, storno, level, drv 
 
    NEXT
 
-   IF _fix > 0 .AND. level > 1
+   IF _fix > 0 .AND. nLevel > 1
 
       MsgBeep( "Pojedini artikli na računu su prepakovani na 100 kom !" )
 
-   ELSEIF ( _fix > 0 .AND. level == 1 ) .OR. lImaGreska
+   ELSEIF ( _fix > 0 .AND. nLevel == 1 ) .OR. lImaGreska
 
       _ret := -99
 
-      MsgBeep( "Pojedinim artiklima je količina/cijena van dozvoljenog ranga#Prekidam operaciju !" )
+      MsgBeep ( "Pojedinim artiklima je količina/cijena van dozvoljenog ranga#Prekidam operaciju !" )
 
       IF storno
          _ret := 0
@@ -532,36 +530,38 @@ STATIC FUNCTION set_min_max_values( drv )
 
    ENDCASE
 
-   RETURN
+   RETURN .T.
 
 
 
 
-STATIC FUNCTION is_ispravna_kolicina( rn_qtty )
-   RETURN validator_vrijednosti( rn_qtty, __MIN_QT, __MAX_QT, 3 )
+STATIC FUNCTION is_ispravna_kolicina( cNaziv, nKolicina )
+   RETURN validator_vrijednosti( cNaziv, nKolicina, __MIN_QT, __MAX_QT, 3 )
 
 
 
-STATIC FUNCTION is_ispravna_cijena( price )
-   RETURN validator_vrijednosti( price, __MIN_PRICE, __MAX_PRICE, 2 )
+STATIC FUNCTION is_ispravna_cijena( cNaziv, nCijena )
+   RETURN validator_vrijednosti( cNaziv, nCijena, __MIN_PRICE, __MAX_PRICE, 2 )
 
 
 
-STATIC FUNCTION validator_vrijednosti( value, min_value, max_value, dec )
-
-   LOCAL _ok := .F.
+STATIC FUNCTION validator_vrijednosti( cNaziv, value, min_value, max_value, dec )
+   LOCAL cMsg
 
    IF value > max_value .OR. value < min_value
-      RETURN _ok
+      cMsg := cNaziv + " / val: " + Alltrim( STR( value ) ) + " min: " + Alltrim( STR( min_value ) ) + " max: " +  Alltrim( STR( max_value ) )
+      error_bar( "fisk", cMsg )
+      RETURN .F.
    ENDIF
 
    IF dec <> NIL .AND. ( Abs( value ) - Abs( Val( Str( value, 12, dec ) ) ) <> 0 )
-      RETURN _ok
+      cMsg := cNaziv + " / val: " + Alltrim( STR( value ) ) + " dec max: " + Alltrim( STR( dec ) )
+      error_bar( "fisk", cMsg )
+      RETURN .F.
    ENDIF
 
-   _ok := .T.
 
-   RETURN _ok
+   RETURN .T.
 
 
 

@@ -79,7 +79,11 @@ FUNCTION f18_start_print( cFileName, xPrintOpt, cDocumentName )
       oPDF := xPrintOpt[ "opdf" ]
       oPDF:cFileName := txt_print_file_name()
       oPDF:cHeader := cDocumentName
-      oPDF:SetType( PDF_TXT_PORTRAIT )
+      IF xPrintOpt[ "layout" ] == "portrait"
+         oPDF:SetType( PDF_TXT_PORTRAIT )
+      ELSE
+         oPDF:SetType( PDF_TXT_LANDSCAPE )
+      ENDIF
       oPDF:Begin()
       oPDF:PageHeader()
    ENDIF
@@ -164,7 +168,12 @@ FUNCTION f18_end_print( cFileName, xPrintOpt )
       oPDF:End()
 
       oPDF := PDFClass():New()
-      oPDF:SetType( PDF_PORTRAIT )
+      IF xPrintOpt[ "layout" ] == "portrait"
+         oPDF:SetType( PDF_PORTRAIT )
+      ELSE
+         oPDF:SetType( PDF_LANDSCAPE )
+      ENDIF
+
       oPDF:cFileName := StrTran( txt_print_file_name(), ".txt", ".pdf" )
       oPDF:Begin()
       oPDF:PrnToPdf( txt_print_file_name() )

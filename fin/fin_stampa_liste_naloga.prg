@@ -70,6 +70,7 @@ FUNCTION fin_stampa_liste_naloga()
    s_oPDF := PDFClass():New()
    xPrintOpt := hb_Hash()
    xPrintOpt[ "tip" ] := "PDF"
+   xPrintOpt[ "layout" ] := "portrait"
    xPrintOpt[ "opdf" ] := s_oPDF
    f18_start_print( NIL, xPrintOpt,  "LISTA FINANSIJSKIH NALOGA NA DAN: " + DTOC( Date() ) )
 
@@ -105,7 +106,7 @@ FUNCTION fin_stampa_liste_naloga()
          LOOP
       ENDIF
 
-      check_nova_strana( bZagl )
+      check_pdf_nova_strana( s_oPDF, bZagl )
 
       @ PRow() + 1, 0 SAY SPACE( PRINT_LEFT_SPACE )
       @ PRow(), PCol() + 0 SAY ++nRBr PICTURE "999999"
@@ -188,7 +189,7 @@ FUNCTION fin_stampa_liste_naloga()
       SKIP
    ENDDO
 
-   check_nova_strana( bZagl )
+   check_pdf_nova_strana( s_oPDF, bZagl )
 
    ? m
    ? SPACE( PRINT_LEFT_SPACE ) + "   UKUPNO:"
@@ -238,20 +239,5 @@ STATIC FUNCTION zagl( nBrNalLen, cInteg )
    ENDIF
 
    ? m
-
-   RETURN .T.
-
-
-STATIC FUNCTION check_nova_strana( bZagl, nOdstampatiStrana )
-
-   hb_default( @nOdstampatiStrana, 1 )
-
-   IF PRow() > ( page_length() - nOdstampatiStrana )
-      s_oPDF:DrawText( 67, 0, "" )
-      s_oPDF:PageHeader()
-      IF ( bZagl <> NIL )
-         Eval( bZagl )
-      ENDIF
-   ENDIF
 
    RETURN .T.

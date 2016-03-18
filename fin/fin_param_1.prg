@@ -29,7 +29,7 @@ FUNCTION mnu_fin_params()
    AAdd( _opc, "2. parametri rada " )
    AAdd( _opcexe, {|| par_obrada() } )
    AAdd( _opc, "3. parametri izgleda " )
-   AAdd( _opcexe, {|| par_izgled() } )
+   AAdd( _opcexe, {|| fin_parametri_izgleda() } )
 
    f18_menu( "fin_param", .F., _izbor, _opc, _opcexe )
 
@@ -144,14 +144,12 @@ STATIC FUNCTION par_obrada()
 
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 
-// ---------------------------------------
-// parametri izgleda dokumenata itd...
-// ---------------------------------------
-STATIC FUNCTION par_izgled()
+
+STATIC FUNCTION fin_parametri_izgleda()
 
    LOCAL nX := 1
    LOCAL cJednoValutno := fetch_metric( "fin_izvjestaji_jednovalutno", nil, "1" )
@@ -197,9 +195,7 @@ STATIC FUNCTION par_izgled()
    RETURN .T.
 
 
-// ----------------------------------
-// citanje parametara
-// ----------------------------------
+
 FUNCTION fin_read_params()
 
    gDatval := fetch_metric( "fin_evidencija_datum_valute", nil, gDatVal )

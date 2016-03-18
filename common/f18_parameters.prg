@@ -12,7 +12,7 @@
 #include "f18.ch"
 
 
-// parametri aplikacije
+
 FUNCTION set_parametre_f18_aplikacije( just_set )
 
    LOCAL _x := 1
@@ -74,6 +74,7 @@ FUNCTION set_parametre_f18_aplikacije( just_set )
 
    cLdRekapDbf := fetch_metric( "legacy_ld_rekap_dbf", NIL, "N" )
    cLegacyKalkPr := fetch_metric( "legacy_kalk_pr", NIL, "N" )
+   cLegacyPTxt := fetch_metric( "legacy_ptxt", NIL, "D" )
 
    IF just_set == nil
       just_set := .F.
@@ -164,6 +165,7 @@ FUNCTION set_parametre_f18_aplikacije( just_set )
       ++ _x
       @ _pos_x + _x, _pos_y SAY "LD rekap dbf:" GET cLdRekapDbf PICT "!@" VALID cLdRekapDbf $ "DN"
       @ _pos_x + _x, Col() + 2 SAY "KALK PR:" GET cLegacyKalkPr PICT "!@" VALID cLegacyKalkPr $ "DN"
+      @ _pos_x + _x, Col() + 2 SAY "PTXT:" GET cLegacyPTxt PICT "!@" VALID cLegacyPTxt $ "DN"
 
       READ
 
@@ -207,6 +209,7 @@ FUNCTION set_parametre_f18_aplikacije( just_set )
 
       set_metric( "legacy_ld_rekap_dbf", NIL, cLdRekapDbf )
       set_metric( "legacy_kalk_pr", NIL, cLegacyKalkPr )
+      set_metric( "legacy_ptxt", NIL, cLegacyPTxt )
 
       info_bar( "init", "set_parametre_f18_aplikacije - end" )
 
@@ -383,3 +386,11 @@ FUNCTION is_legacy_ld_rekap_dbf()
 FUNCTION is_legacy_kalk_pr()
 
    RETURN fetch_metric( "legacy_kalk_pr", NIL, "N" ) == "D"
+
+
+/*
+    print txt dokument, ne PDF
+*/
+FUNCTION is_legacy_ptxt()
+
+   RETURN fetch_metric( "legacy_ptxt", NIL, "D" ) == "D"

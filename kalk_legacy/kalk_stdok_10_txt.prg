@@ -11,55 +11,74 @@
 
 #include "f18.ch"
 
-STATIC s_oPDF
-
 MEMVAR m
 MEMVAR PicDEM, PicKOL, PicPROC
-MEMVAR cIdFirma, cIdVD, cBrDok, cIdPartner, cBrFaktP, dDatFaktP, cIdKonto, cIdKonto2
 
-
-FIELD IdFirma, BrDok, IdVD, DatDok, idpartner, brfaktp, idkonto, idkonto2
-
-FUNCTION kalk_stampa_dok_10()
+FUNCTION kalk_stampa_dok_10_txt()
 
    LOCAL nCol1 := 0
    LOCAL nCol2 := 0
    LOCAL nPom := 0
-   LOCAL bZagl, xPrintOpt
    LOCAL nTot, nTot1, nTot2, nTot3, nTot4, nTot5, nTot6, nTot7, nTot8, nTot9, nTotA, nTotB, nTotP, nTotM
-   LOCAL cIdd
-
-   IF is_legacy_ptxt()
-      RETURN kalk_stampa_dok_10_txt()
-   ENDIF
 
    PRIVATE nPrevoz, nCarDaz, nZavTr, nBankTr, nSpedTr, nMarza, nMarza2
 
-
+   nStr := 0
    cIdPartner := field->IdPartner
    cBrFaktP := field->BrFaktP
    dDatFaktP := field->DatFaktP
    cIdKonto := field->IdKonto
    cIdKonto2 := field->IdKonto2
 
-   s_oPDF := PDFClass():New()
-   xPrintOpt := hb_Hash()
-   xPrintOpt[ "tip" ] := "PDF"
-   xPrintOpt[ "layout" ] := "landscape"
-   xPrintOpt[ "opdf" ] := s_oPDF
-   f18_start_print( NIL, xPrintOpt,  "KALKULACIJA BR:",  cIdFirma + "-" + cIdVD + "-" + cBrDok + Space( 2 ) + P_TipDok( cIdVD, - 2 ) + Space( 2 ) + "Datum:" + DToC( DatDok ) )
+   P_COND2
 
-   bZagl := {|| zagl() }
+   ?? "KALKULACIJA BR:",  cIdFirma + "-" + cIdVD + "-" + cBrDok, Space( 2 ), P_TipDok( cIdVD, -2 ), Space( 2 ), "Datum:", DatDok
 
+   @ PRow(), 125 SAY "Str:" + Str( ++nStr, 3 )
 
-   Eval( bZagl )
+   SELECT PARTN
+   HSEEK cIdPartner
+
+   ?U  "DOBAVLJAČ:", cIdPartner, "-", PadR( field->naz, 25 ), Space( 5 ), "DOKUMENT Broj:", cBrFaktP, "Datum:", dDatFaktP
+
+   SELECT kalk_pripr
+
+   SELECT KONTO
+   HSEEK cIdKonto
+
+   ?U  "MAGACINSKI KONTO zadužuje :", cIdKonto, "-", field->naz
+
+   m := "--- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ----------"
+
+   IF ( gMpcPomoc == "D" )
+      m += " ---------- ----------"
+   ENDIF
+
+   ? m
+
+   IF gMpcPomoc == "D"
+      // prikazi mpc
+      ? "*R * ROBA     *  FCJ     * NOR.KALO * KASA-    * " + c10T1 + " * " + c10T2 + " * " + c10T3 + " * " + c10T4 + " * " + c10T5 + " *   NC     *  MARZA   * PROD.CIJ.*   PDV%   * PROD.CIJ.*"
+      ? "*BR* TARIFA   *  KOLICINA* PRE.KALO * SKONTO   *          *          *          *          *          *          *          * BEZ.PDV  *   PDV    * SA PDV   *"
+
+      ? "*  *          *   sum    *   sum    *  sum     *   sum    *   sum    *    sum   *   sum    *   sum    *   sum    *   sum    *   sum    *   sum    *    sum   *"
+   ELSE
+      // prikazi samo do neto cijene - bez pdv-a
+      ? "*R * ROBA     *  FCJ     * NOR.KALO * KASA-    * " + c10T1 + " * " + c10T2 + " * " + c10T3 + " * " + c10T4 + " * " + c10T5 + " *   NC     *  MARZA   * PROD.CIJ.*"
+      ? "*BR* TARIFA   *  KOLICINA* PRE.KALO * SKONTO   *          *          *          *          *          *          *          * BEZ.PDV  *"
+
+      ? "*  *          *   sum    *   sum    *  sum     *   sum    *   sum    *    sum   *   sum    *   sum    *   sum    *   sum    *   sum    *"
+
+   ENDIF
+
+   ? m
 
    nTot := nTot1 := nTot2 := nTot3 := nTot4 := nTot5 := nTot6 := nTot7 := nTot8 := nTot9 := nTotA := 0
    nTotB := nTotP := nTotM := 0
 
    SELECT kalk_pripr
 
-   cIdd := idpartner + brfaktp + idkonto + idkonto2
+   PRIVATE cIdd := idpartner + brfaktp + idkonto + idkonto2
 
    DO WHILE !Eof() .AND. cIdFirma == IdFirma .AND.  cBrDok == BrDok .AND. cIdVD == IdVD
       vise_kalk_dok_u_pripremi( cIdd )
@@ -98,9 +117,10 @@ FUNCTION kalk_stampa_dok_10()
          PRIVATE cistaMar := Round( nU9 / ( 1 + tarifa->vpp / 100 ), gZaokr )
          nTotB += Round( cistaMar * tarifa->vpp / 100, gZaokr )  // porez na razliku u cijeni
       ENDIF
-
-      nTotP += ( nUP := nPDV * kolicina ) // total porez
-      nTotM += ( nUM := MPCsaPP * kolicina ) // total mpcsapp
+      // total porez
+      nTotP += ( nUP := nPDV * kolicina )
+      // total mpcsapp
+      nTotM += ( nUM := MPCsaPP * kolicina )
 
       // 1. PRVI RED
       @ PRow() + 1, 0 SAY rbr PICTURE "999"
@@ -172,13 +192,11 @@ FUNCTION kalk_stampa_dok_10()
       SKIP
    ENDDO
 
-
-   check_pdf_nova_strana( s_oPDF, bZagl )
-
+   print_nova_strana( 125, @nStr, 5 )
    ? m
 
    @ PRow() + 1, 0 SAY "Ukupno:"
-   @ PRow(), nCol1     SAY nTot            PICTURE         PICDEM
+   @ PRow(), nCol1     SAY nTot          PICTURE         PICDEM
    @ PRow(), PCol() + 1  SAY nTot1         PICTURE         PICDEM
    @ PRow(), PCol() + 1  SAY nTot2         PICTURE         PICDEM
    @ PRow(), PCol() + 1  SAY nTot3         PICTURE         PICDEM
@@ -197,49 +215,6 @@ FUNCTION kalk_stampa_dok_10()
 
    ? m
    ?U "Magacin se zadužuje po nabavnoj vrijednosti " + AllTrim( Transform( nTot8, picdem ) )
-
-   ? m
-
-   f18_end_print( NIL, xPrintOpt )
-
-   RETURN .T.
-
-
-STATIC FUNCTION zagl()
-
-   SELECT PARTN
-   HSEEK cIdPartner
-
-   ?U  "DOBAVLJAČ:", cIdPartner, "-", PadR( field->naz, 25 ), Space( 5 ), "DOKUMENT Broj:", cBrFaktP, "Datum:", dDatFaktP
-
-   SELECT kalk_pripr
-
-   SELECT KONTO
-   HSEEK cIdKonto
-
-   ?U  "MAGACINSKI KONTO zadužuje :", cIdKonto, "-", field->naz
-
-   m := "--- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ----------"
-
-   IF ( gMpcPomoc == "D" )
-      m += " ---------- ----------"
-   ENDIF
-
-   ? m
-
-   IF gMpcPomoc == "D" // prikazi mpc
-      ? "*R * ROBA     *  FCJ     * NOR.KALO * KASA-    * " + c10T1 + " * " + c10T2 + " * " + c10T3 + " * " + c10T4 + " * " + c10T5 + " *   NC     *  MARZA   * PROD.CIJ.*   PDV%   * PROD.CIJ.*"
-      ? "*BR* TARIFA   *  KOLICINA* PRE.KALO * SKONTO   *          *          *          *          *          *          *          * BEZ.PDV  *   PDV    * SA PDV   *"
-
-      ? "*  *          *   sum    *   sum    *  sum     *   sum    *   sum    *    sum   *   sum    *   sum    *   sum    *   sum    *   sum    *   sum    *    sum   *"
-   ELSE
-      // prikazi samo do neto cijene - bez pdv-a
-      ? "*R * ROBA     *  FCJ     * NOR.KALO * KASA-    * " + c10T1 + " * " + c10T2 + " * " + c10T3 + " * " + c10T4 + " * " + c10T5 + " *   NC     *  MARZA   * PROD.CIJ.*"
-      ? "*BR* TARIFA   *  KOLICINA* PRE.KALO * SKONTO   *          *          *          *          *          *          *          * BEZ.PDV  *"
-
-      ? "*  *          *   sum    *   sum    *  sum     *   sum    *   sum    *    sum   *   sum    *   sum    *   sum    *   sum    *   sum    *"
-
-   ENDIF
 
    ? m
 

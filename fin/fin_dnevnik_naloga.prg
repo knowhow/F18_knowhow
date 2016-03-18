@@ -11,13 +11,16 @@
 
 #include "f18.ch"
 
+MEMVAR M
+MEMVAR nUkDugBHD, nUkPotBHD, nUkDugDEM, nUkPotDEM
 
 FUNCTION DnevnikNaloga()
 
    LOCAL cMjGod := ""
    LOCAL _filter := ""
    LOCAL dOd, dDo
-   LOCAL nUkDugBHD, nUkPotBHD, nUkDugDEM, nUkPotDEM
+
+   PRIVATE nUkDugBHD, nUkPotBHD, nUkDugDEM, nUkPotDEM
 
    PRIVATE fK1 := fetch_metric( "dnevnik_naloga_fk1", my_user(), "N" )
    PRIVATE fK2 := fetch_metric( "dnevnik_naloga_fk2", my_user(), "N" )

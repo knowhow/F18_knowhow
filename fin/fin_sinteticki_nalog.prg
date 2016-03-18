@@ -23,7 +23,7 @@ FUNCTION fin_sinteticki_nalog( kumulativ )
 
    M := "---- -------- ------- --------------------------------------------- ----------------- -----------------" + IF( fin_jednovalutno(), "-", " ------------ ------------" )
 
-   IF kumulativ  
+   IF kumulativ
 
       close_open_panal()
 
@@ -46,7 +46,7 @@ FUNCTION fin_sinteticki_nalog( kumulativ )
 
       SELECT nalog
       SEEK cidfirma + cidvn + cbrnal
-      NFOUND CRET  
+      NFOUND CRET
       dDatNal := datnal
 
       SELECT PANAL
@@ -71,27 +71,27 @@ FUNCTION fin_sinteticki_nalog( kumulativ )
    b3 := {|| cIdSinKon == Left( IdKonto, 3 ) }
    b4 := {|| cIdKonto == IdKonto }
    nDug3 := nPot3 := 0
-   nRbr2 := 0 
+   nRbr2 := 0
    nRbr := 0
    nUkUkDugBHD := nUkUkPotBHD := nUkUkDugDEM := nUkUkPotDEM := 0
 
    zagl_sinteticki_nalog( dDatNal )
 
-   DO WHILE Eval( b1 ) .AND. Eval( b2 )     
+   DO WHILE Eval( b1 ) .AND. Eval( b2 )
 
       nova_strana( dDatNal )
 
       cIdSinKon := Left( IdKonto, 3 )
       nUkDugBHD := nUkPotBHD := nUkDugDEM := nUkPotDEM := 0
 
-      DO WHILE  Eval( b1 ) .AND. Eval( b2 ) .AND. Eval( b3 )  
+      DO WHILE  Eval( b1 ) .AND. Eval( b2 ) .AND. Eval( b3 )
 
          cIdKonto := IdKonto
          nDugBHD := nPotBHD := nDugDEM := nPotDEM := 0
 
          nova_strana( dDatNal )
-         
-         DO WHILE  Eval( b1 ) .AND. Eval( b2 ) .AND. Eval( b4 )  
+
+         DO WHILE  Eval( b1 ) .AND. Eval( b2 ) .AND. Eval( b4 )
             SELECT KONTO
             HSEEK cIdkonto
             SELECT PANAL
@@ -119,10 +119,10 @@ FUNCTION fin_sinteticki_nalog( kumulativ )
          nUkDugDEM += nDugDEM
          nUkPotDEM += nPotDEM
 
-      ENDDO  
+      ENDDO
 
       nova_strana( dDatNal )
-      
+
       P_NRED
       ?? M
       P_NRED
@@ -132,19 +132,19 @@ FUNCTION fin_sinteticki_nalog( kumulativ )
 
       SELECT KONTO
       HSEEK cIdSinKon
-      
+
       @ PRow(), PCol() + 1 SAY Left( Naz, 45 )
-     
+
       SELECT PANAL
-      
+
       @ PRow(), nCol1 SAY nUkDugBHD PICTURE PicBHD
       @ PRow(), PCol() + 1 SAY nUkPotBHD PICTURE PicBHD
-      
+
       IF fin_dvovalutno()
          @ PRow(), PCol() + 1 SAY nUkDugDEM PICTURE PicDEM
          @ PRow(), PCol() + 1 SAY nUkPotDEM PICTURE PicDEM
       ENDIF
-      
+
       P_NRED
       ?? M
 
@@ -215,10 +215,10 @@ FUNCTION zagl_sinteticki_nalog( dDatNal )
    SELECT TNAL
    HSEEK cIdVN
    SELECT PANAL
-   
+
    @ PRow(), PCol() + 4 SAY tnal->naz
    @ PRow(), PCol() + 15 SAY "Str:" + Str( ++nStr, 3 )
-   
+
    P_NRED
    ?? m
    P_NRED
@@ -241,7 +241,7 @@ STATIC FUNCTION nova_strana( dDatNal )
        zagl_sinteticki_nalog( dDatnal )
    ENDIF
 
-   RETURN 
+   RETURN
 
 
 

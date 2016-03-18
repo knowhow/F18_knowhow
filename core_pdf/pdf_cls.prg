@@ -76,16 +76,13 @@ METHOD END() CLASS PDFClass
 
 
    ELSE
-      //IF ::nPdfPage == 0
-      //   ::AddPage()
-      //ENDIF
+
       IF File( ::cFileName )
          FErase( ::cFileName )
       ENDIF
       HPDF_SaveToFile( ::oPdf, ::cFileName )
       HPDF_Free( ::oPdf )
 
-      //::View()
    ENDIF
 
    RETURN NIL
@@ -121,7 +118,7 @@ METHOD SetType( nType ) CLASS PDFClass
 
 METHOD AddPage() CLASS PDFClass
 
-   IF ! (::nType == PDF_TXT_PORTRAIT .OR. ::nType == PDF_TXT_LANDSCAPE )
+   IF ! ( ::nType == PDF_TXT_PORTRAIT .OR. ::nType == PDF_TXT_LANDSCAPE )
       ::oPage := HPDF_AddPage( ::oPdf )
       HPDF_Page_SetSize( ::oPage, HPDF_PAGE_SIZE_A4, iif( ::nType == PDF_PORTRAIT, HPDF_PAGE_PORTRAIT, HPDF_PAGE_LANDSCAPE ) )
       HPDF_Page_SetFontAndSize( ::oPage, HPDF_GetFont( ::oPdf, ::cFontName, ::cCodePage ), ::nFontSize )
@@ -258,11 +255,11 @@ METHOD MaxRow() CLASS PDFClass
    LOCAL nPageHeight, nMaxRow
 
    IF ::nType == PDF_TXT_PORTRAIT
-     RETURN 63
+      RETURN 63
    ENDIF
 
    IF ::nType == PDF_TXT_LANDSCAPE
-     RETURN 34
+      RETURN 34
    ENDIF
 
    nPageHeight := HPDF_Page_GetHeight( ::oPage ) - ( ::nMargin * 2 )
@@ -276,11 +273,11 @@ METHOD MaxCol() CLASS PDFClass
    LOCAL nPageWidth, nMaxCol
 
    IF ::nType == PDF_TXT_PORTRAIT
-     RETURN 102
+      RETURN 102
    ENDIF
 
    IF ::nType == PDF_TXT_LANDSCAPE
-     RETURN 204
+      RETURN 204
    ENDIF
 
    nPageWidth := HPDF_Page_GetWidth( ::oPage ) - ( ::nMargin * 2 )
@@ -334,18 +331,7 @@ METHOD PageHeader() CLASS PDFClass
 
 METHOD View() CLASS PDFClass
 
-#ifdef __PLATFORM__LINUX
-
-   RUN ( "xdg-open " + ::cFileName )
-#endif
-
-#ifdef __PLATFORM__DARWIN
-   RUN ( "open " + ::cFileName )
-#endif
-
-#ifdef __PLATFORM__WINDOWS
-   RUN ( "cmd /c start " + ::cFileName )
-#endif
+   f18_open_document( ::cFileName )
 
    RETURN .T.
 

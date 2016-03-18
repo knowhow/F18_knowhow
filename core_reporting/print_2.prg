@@ -23,10 +23,7 @@ FUNCTION f18_start_print( cFileName, xPrintOpt, cDocumentName )
    LOCAL cOpt
    LOCAL oPDF
 
-   IF xPrintOpt == NIL
-      cOpt := "V"
-   ENDIF
-
+altd()
    cFileName := set_print_file_name( cFileName )
 
    IF ( cDocumentName == NIL )
@@ -35,20 +32,19 @@ FUNCTION f18_start_print( cFileName, xPrintOpt, cDocumentName )
 
    IF ValType( xPrintOpt ) == "H"
       cOpt := xPrintOpt[ "tip" ]
-   ENDIF
-
-   IF ValType( xPrintOpt ) == "C"
+   ELSEIF ValType( xPrintOpt ) == "C"
       cOpt := xPrintOpt
+   ELSE
+      cOpt := "V"
    ENDIF
 
    set_ptxt_sekvence()
 
-   IF !( cOpt == "PDF" .OR. cOpt == "D" )
+   IF !( cOpt == "PDF" .OR. cOpt == "D" ) // pdf i direktna stampa bez dijaloga
       cOpt := print_dialog_box( cOpt )
-   ENDIF
-
-   IF Empty( cOpt )
-      RETURN ""
+      IF Empty( cOpt )
+         RETURN ""
+      ENDIF
    ENDIF
 
    set_print_codes( cOpt )
@@ -118,7 +114,6 @@ FUNCTION f18_end_print( cFileName, xPrintOpt )
    LOCAL cOpt
    LOCAL oPDF
 
-   AltD()
    IF xPrintOpt == NIL
       cOpt := "V"
    ENDIF

@@ -13,12 +13,15 @@
 
 STATIC s_oPDF
 
+#define PRINT_LEFT_SPACE 4
+
 MEMVAR m
 MEMVAR PicDEM, PicKOL, PicPROC
 MEMVAR cIdFirma, cIdVD, cBrDok, cIdPartner, cBrFaktP, dDatFaktP, cIdKonto, cIdKonto2
 
 
-FIELD IdFirma, BrDok, IdVD, DatDok, idpartner, brfaktp, idkonto, idkonto2
+FIELD IdFirma, BrDok, IdVD, IdTarifa, rbr, DatDok, idpartner, brfaktp, idkonto, idkonto2, GKolicina, GKolicin2
+
 
 FUNCTION kalk_stampa_dok_10()
 
@@ -27,6 +30,7 @@ FUNCTION kalk_stampa_dok_10()
    LOCAL nPom := 0
    LOCAL bZagl, xPrintOpt
    LOCAL nTot, nTot1, nTot2, nTot3, nTot4, nTot5, nTot6, nTot7, nTot8, nTot9, nTotA, nTotB, nTotP, nTotM
+   LOCAL nU, nU1, nU2, nU3, nU4, nU5, nU6, nU7, nU8, nU9, nUA, nUP, nUM
    LOCAL cIdd
 
    IF is_legacy_ptxt()
@@ -47,10 +51,11 @@ FUNCTION kalk_stampa_dok_10()
    xPrintOpt[ "tip" ] := "PDF"
    xPrintOpt[ "layout" ] := "landscape"
    xPrintOpt[ "opdf" ] := s_oPDF
-   f18_start_print( NIL, xPrintOpt,  "KALKULACIJA BR:",  cIdFirma + "-" + cIdVD + "-" + cBrDok + Space( 2 ) + P_TipDok( cIdVD, - 2 ) + Space( 2 ) + "Datum:" + DToC( DatDok ) )
+   f18_start_print( NIL, xPrintOpt,  "KALK Br:" + cIdFirma + "-" + cIdVD + "-" + cBrDok + " / " + AllTrim( P_TipDok( cIdVD, - 2 ) ) + " , Datum:" + DToC( DatDok ) )
+
+   PRIVATE m
 
    bZagl := {|| zagl() }
-
 
    Eval( bZagl )
 
@@ -65,7 +70,9 @@ FUNCTION kalk_stampa_dok_10()
       vise_kalk_dok_u_pripremi( cIdd )
       RptSeekRT()
       KTroskovi()
-      print_nova_strana( 125, @nStr, 2 )
+
+      check_pdf_nova_strana( s_oPDF, bZagl )
+
       IF gKalo == "1"
          SKol := field->Kolicina - field->GKolicina - field->GKolicin2
       ELSE
@@ -76,12 +83,8 @@ FUNCTION kalk_stampa_dok_10()
       nPDV := MPCsaPP / ( 1 + ( tarifa->opp / 100 ) ) * ( tarifa->opp / 100 )
 
       nTot +=  ( nU := Round( FCj * Kolicina, gZaokr ) )
-      IF gKalo == "1"
-         nTot1 += ( nU1 := Round( FCj2 * ( GKolicina + GKolicin2 ), gZaokr ) )
-      ELSE
-         // stanex
-         nTot1 += ( nU1 := Round( NC * ( GKolicina + GKolicin2 ), gZaokr ) )
-      ENDIF
+      nTot1 += ( nU1 := Round( FCj2 * ( GKolicina + GKolicin2 ), gZaokr ) )
+
       nTot2 += ( nU2 := Round( -Rabat / 100 * FCJ * Kolicina, gZaokr ) )
       nTot3 += ( nU3 := Round( nPrevoz * SKol, gZaokr ) )
       nTot4 += ( nU4 := Round( nBankTr * SKol, gZaokr ) )
@@ -102,21 +105,19 @@ FUNCTION kalk_stampa_dok_10()
       nTotP += ( nUP := nPDV * kolicina ) // total porez
       nTotM += ( nUM := MPCsaPP * kolicina ) // total mpcsapp
 
-      // 1. PRVI RED
-      @ PRow() + 1, 0 SAY rbr PICTURE "999"
-      @ PRow(), 4 SAY ""
 
-      ?? Trim( Left( ROBA->naz, 40 ) ), "(", ROBA->jmj, ")"
-
+      @ PRow() + 1, 0 SAY Space( PRINT_LEFT_SPACE ) // PRVI RED podaci o artiklu
+      @ PRow(), PCol() SAY field->rBr PICTURE "999"
+      ?? " " + Trim( Left( ROBA->naz, 60 ) ), "(", ROBA->jmj, ")"
       IF roba->( FieldPos( "KATBR" ) ) <> 0
          ?? " KATBR:", roba->katbr
       ENDIF
-
       IF lKoristitiBK .AND. !Empty( roba->barkod )
          ?? ", BK: " + roba->barkod
       ENDIF
 
-      @ PRow() + 1, 4 SAY IdRoba
+      @ PRow() + 1, 0 SAY Space( PRINT_LEFT_SPACE )  // drugi red
+      @ PRow(), PCol() + 4 SAY IdRoba
       nCol1 := PCol() + 1
       @ PRow(), PCol() + 1 SAY FCJ                   PICTURE PicCDEM
       @ PRow(), PCol() + 1 SAY GKolicina             PICTURE PicKol
@@ -135,11 +136,11 @@ FUNCTION kalk_stampa_dok_10()
          @ PRow(), PCol() + 1 SAY MPCsaPP           PICTURE PicCDEM
       ENDIF
 
-      // 2. DRUGI RED
-      @ PRow() + 1, 4 SAY IdTarifa
-      @ PRow(), nCol1    SAY Kolicina             PICTURE PicCDEM
+      @ PRow() + 1, 0 SAY Space( PRINT_LEFT_SPACE )  // treci red
+      @ PRow(), PCol() + 4 SAY IdTarifa
+      @ PRow(), nCol1      SAY Kolicina             PICTURE PicCDEM
       @ PRow(), PCol() + 1 SAY GKolicin2            PICTURE PicKol
-      @ PRow(), PCol() + 1 SAY -Rabat / 100 * FCJ       PICTURE PicCDEM
+      @ PRow(), PCol() + 1 SAY -Rabat / 100 * FCJ   PICTURE PicCDEM
       @ PRow(), PCol() + 1 SAY nPrevoz              PICTURE PicCDEM
       @ PRow(), PCol() + 1 SAY nBankTr              PICTURE PicCDEM
       @ PRow(), PCol() + 1 SAY nSpedTr              PICTURE PicCDEM
@@ -148,12 +149,12 @@ FUNCTION kalk_stampa_dok_10()
       @ PRow(), PCol() + 1 SAY 0                    PICTURE PicDEM
       @ PRow(), PCol() + 1 SAY nMarza               PICTURE PicCDEM
       IF gMpcPomoc == "D"
-         @ PRow(), PCol() + 1 SAY 0          PICTURE PicCDEM
+         @ PRow(), PCol() + 1 SAY 0              PICTURE PicCDEM
          @ PRow(), PCol() + 1 SAY nPDV           PICTURE PicCDEM
       ENDIF
 
-      // 3. TRECI RED
-      @ PRow() + 1, nCol1   SAY nU          PICTURE         PICDEM
+
+      @ PRow() + 1, nCol1   SAY nU          PICTURE         PICDEM  // cetvrti red
       @ PRow(), PCol() + 1  SAY nU1         PICTURE         PICDEM
       @ PRow(), PCol() + 1  SAY nU2         PICTURE         PICDEM
       @ PRow(), PCol() + 1  SAY nU3         PICTURE         PICDEM
@@ -164,6 +165,7 @@ FUNCTION kalk_stampa_dok_10()
       @ PRow(), PCol() + 1  SAY nU8         PICTURE         PICDEM
       @ PRow(), PCol() + 1  SAY nU9         PICTURE         PICDEM
       @ PRow(), PCol() + 1  SAY nUA         PICTURE         PICDEM
+
       IF gMpcPomoc == "D"
          @ PRow(), PCol() + 1  SAY nUP         PICTURE         PICDEM
          @ PRow(), PCol() + 1  SAY nUM         PICTURE         PICDEM
@@ -177,7 +179,8 @@ FUNCTION kalk_stampa_dok_10()
 
    ? m
 
-   @ PRow() + 1, 0 SAY "Ukupno:"
+   @ PRow() + 1, 0 SAY Space( PRINT_LEFT_SPACE )
+   @ PRow(), PCol() SAY "Ukupno:"
    @ PRow(), nCol1     SAY nTot            PICTURE         PICDEM
    @ PRow(), PCol() + 1  SAY nTot1         PICTURE         PICDEM
    @ PRow(), PCol() + 1  SAY nTot2         PICTURE         PICDEM
@@ -195,9 +198,10 @@ FUNCTION kalk_stampa_dok_10()
       @ PRow(), PCol() + 1  SAY nTotM         PICTURE         PICDEM
    ENDIF
 
-   ? m
-   ?U "Magacin se zadužuje po nabavnoj vrijednosti " + AllTrim( Transform( nTot8, picdem ) )
+   check_pdf_nova_strana( s_oPDF, bZagl )
 
+   ? m
+   ? Space( PRINT_LEFT_SPACE ) + "Magacin se zadužuje po nabavnoj vrijednosti " + AllTrim( Transform( nTot8, picdem ) )
    ? m
 
    f18_end_print( NIL, xPrintOpt )
@@ -207,19 +211,19 @@ FUNCTION kalk_stampa_dok_10()
 
 STATIC FUNCTION zagl()
 
+   zagl_organizacija( PRINT_LEFT_SPACE )
+
    SELECT PARTN
    HSEEK cIdPartner
-
-   ?U  "DOBAVLJAČ:", cIdPartner, "-", PadR( field->naz, 25 ), Space( 5 ), "DOKUMENT Broj:", cBrFaktP, "Datum:", dDatFaktP
+   ?  Space( PRINT_LEFT_SPACE ) + "DOBAVLJAČ:", cIdPartner, "-", Trim( field->naz ), Space( 5 ), "Faktura Br:", cBrFaktP, "Datum:", dDatFaktP
 
    SELECT kalk_pripr
 
    SELECT KONTO
    HSEEK cIdKonto
+   ?  Space( PRINT_LEFT_SPACE )  + "MAGACINSKI KONTO zadužuje :", cIdKonto, "-", field->naz
 
-   ?U  "MAGACINSKI KONTO zadužuje :", cIdKonto, "-", field->naz
-
-   m := "--- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ----------"
+   M := Space( PRINT_LEFT_SPACE )  + "--- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ----------"
 
    IF ( gMpcPomoc == "D" )
       m += " ---------- ----------"
@@ -228,16 +232,15 @@ STATIC FUNCTION zagl()
    ? m
 
    IF gMpcPomoc == "D" // prikazi mpc
-      ? "*R * ROBA     *  FCJ     * NOR.KALO * KASA-    * " + c10T1 + " * " + c10T2 + " * " + c10T3 + " * " + c10T4 + " * " + c10T5 + " *   NC     *  MARZA   * PROD.CIJ.*   PDV%   * PROD.CIJ.*"
-      ? "*BR* TARIFA   *  KOLICINA* PRE.KALO * SKONTO   *          *          *          *          *          *          *          * BEZ.PDV  *   PDV    * SA PDV   *"
+      ? Space( PRINT_LEFT_SPACE )  + "*R * ROBA     *  FCJ     * NOR.KALO * KASA-    * " + c10T1 + " * " + c10T2 + " * " + c10T3 + " * " + c10T4 + " * " + c10T5 + " *   NC     *  MARZA   * PROD.CIJ.*   PDV%   * PROD.CIJ.*"
+      ? Space( PRINT_LEFT_SPACE )  + "*BR* TARIFA   *  KOLICINA* PRE.KALO * SKONTO   *          *          *          *          *          *          *          * BEZ.PDV  *   PDV    * SA PDV   *"
 
-      ? "*  *          *   sum    *   sum    *  sum     *   sum    *   sum    *    sum   *   sum    *   sum    *   sum    *   sum    *   sum    *   sum    *    sum   *"
+      ? Space( PRINT_LEFT_SPACE )  + "*  *          *   sum    *   sum    *  sum     *   sum    *   sum    *    sum   *   sum    *   sum    *   sum    *   sum    *   sum    *   sum    *    sum   *"
    ELSE
       // prikazi samo do neto cijene - bez pdv-a
-      ? "*R * ROBA     *  FCJ     * NOR.KALO * KASA-    * " + c10T1 + " * " + c10T2 + " * " + c10T3 + " * " + c10T4 + " * " + c10T5 + " *   NC     *  MARZA   * PROD.CIJ.*"
-      ? "*BR* TARIFA   *  KOLICINA* PRE.KALO * SKONTO   *          *          *          *          *          *          *          * BEZ.PDV  *"
-
-      ? "*  *          *   sum    *   sum    *  sum     *   sum    *   sum    *    sum   *   sum    *   sum    *   sum    *   sum    *   sum    *"
+      ? Space( PRINT_LEFT_SPACE )   + "*R * ROBA     *  FCJ     * NOR.KALO * KASA-    * " + c10T1 + " * " + c10T2 + " * " + c10T3 + " * " + c10T4 + " * " + c10T5 + " *   NC     *  MARZA   * PROD.CIJ.*"
+      ? Space( PRINT_LEFT_SPACE )   + "*BR* TARIFA   *  KOLICINA* PRE.KALO * SKONTO   *          *          *          *          *          *          *          * BEZ.PDV  *"
+      ? Space( PRINT_LEFT_SPACE )  + "*  *          *   sum    *   sum    *  sum     *   sum    *   sum    *    sum   *   sum    *   sum    *   sum    *   sum    *   sum    *"
 
    ENDIF
 

@@ -25,6 +25,8 @@ FUNCTION ld_kartica_plate_redovan_rad( cIdRj, cMjesec, cGodina, cIdRadn, cObrac,
    LOCAL cMainLine
    LOCAL _radni_sati := fetch_metric( "ld_radni_sati", nil, "N" )
    LOCAL _a_benef := {}
+   LOCAL lFoundTippr
+
    PRIVATE cLMSK := ""
 
    __radni_sati := _radni_sati
@@ -68,6 +70,7 @@ FUNCTION ld_kartica_plate_redovan_rad( cIdRj, cMjesec, cGodina, cIdRadn, cObrac,
 
       SELECT tippr
       SEEK cPom
+      lFoundTippr := FOUND()
 
       IF tippr->uneto == "N" .AND. cUneto == "D"
 
@@ -85,7 +88,7 @@ FUNCTION ld_kartica_plate_redovan_rad( cIdRj, cMjesec, cGodina, cIdRadn, cObrac,
 
       ENDIF
 
-      IF tippr->( Found() ) .AND. tippr->aktivan == "D"
+      IF lFoundTipPr .AND. tippr->aktivan == "D"
 
          IF _i&cpom <> 0 .OR. _s&cPom <> 0
 
@@ -190,6 +193,7 @@ FUNCTION ld_kartica_plate_redovan_rad( cIdRj, cMjesec, cGodina, cIdRadn, cObrac,
                   ENDIF
                ENDIF
             ENDIF
+
 
             IF "SUMKREDITA" $ tippr->formula .AND. gReKrKP == "1"
 
@@ -589,4 +593,4 @@ FUNCTION ld_kartica_plate_redovan_rad( cIdRj, cMjesec, cGodina, cIdRadn, cObrac,
       FF
    ENDIF
 
-   RETURN
+   RETURN .T.

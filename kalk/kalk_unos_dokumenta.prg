@@ -2359,8 +2359,10 @@ FUNCTION kalk_stampa_dokumenta()
          PRIVATE nStr := 1
       ENDIF
 
-      START PRINT CRET
-      ?
+      IF !pdf_kalk_dokument( cIdVd )
+         START PRINT CRET
+         ?
+      ENDIF
 
       DO WHILE .T.
 
@@ -2378,7 +2380,9 @@ FUNCTION kalk_stampa_dokumenta()
             HSEEK cIdFirma + cIdVD + cBrDok
          ENDIF
 
-         Preduzece()
+         IF !pdf_kalk_dokument( cIdVd )
+            Preduzece()
+         ENDIF
 
          IF cIdVD == "10"
             kalk_stampa_dok_10()
@@ -2410,13 +2414,13 @@ FUNCTION kalk_stampa_dokumenta()
             ELSE
                StKalk81_2()
             ENDIF
-         ELSEIF ( cidvd == "82" )
+         ELSEIF ( cIdvd == "82" )
             StKalk82()
-         ELSEIF ( cidvd == "IM" )
+         ELSEIF ( cIdvd == "IM" )
             StKalkIm()
-         ELSEIF ( cidvd == "IP" )
+         ELSEIF ( cIdvd == "IP" )
             StKalkIp()
-         ELSEIF ( cidvd == "RN" )
+         ELSEIF ( cIdvd == "RN" )
             IF !fStara
                RaspTrosk( .T. )
             ENDIF
@@ -2440,37 +2444,41 @@ FUNCTION kalk_stampa_dokumenta()
 
       ENDDO // cSEEK
 
-      IF ( gPotpis == "D" )
-         IF ( PRow() > 57 + dodatni_redovi_po_stranici() )
-            FF
-            @ PRow(), 125 SAY "Str:" + Str( ++nStr, 3 )
+      IF !pdf_kalk_dokument( cIdVd )
+         IF ( gPotpis == "D" )
+            IF ( PRow() > 57 + dodatni_redovi_po_stranici() )
+               FF
+               @ PRow(), 125 SAY "Str:" + Str( ++nStr, 3 )
+            ENDIF
+            ?
+            ?
+            P_12CPI
+            @ PRow() + 1, 47 SAY "Obrada AOP  "; ?? Replicate( "_", 20 )
+            @ PRow() + 1, 47 SAY "Komercijala "; ?? Replicate( "_", 20 )
+            @ PRow() + 1, 47 SAY "Likvidatura "; ?? Replicate( "_", 20 )
          ENDIF
+
          ?
          ?
-         P_12CPI
-         @ PRow() + 1, 47 SAY "Obrada AOP  "; ?? Replicate( "_", 20 )
-         @ PRow() + 1, 47 SAY "Komercijala "; ?? Replicate( "_", 20 )
-         @ PRow() + 1, 47 SAY "Likvidatura "; ?? Replicate( "_", 20 )
+
+         FF
       ENDIF
 
-      ?
-      ?
-
-      FF
-
-      // zapamti tabelu, zapis na kojima si stao
       PushWA()
       my_close_all_dbf()
-      ENDPRINT
+
+      IF !pdf_kalk_dokument( cIdVd )
+         ENDPRINT
+      ENDIF
 
       kalk_open_tables( fstara )
       PopWa()
 
-      IF ( cidvd $ "80#11#81#12#13#IP#19" )
+      IF ( cIdvd $ "80#11#81#12#13#IP#19" )
          fTopsD := .T.
       ENDIF
 
-      IF ( cidvd $ "10#11#81" )
+      IF ( cIdvd $ "10#11#81" )
          fFaktD := .T.
       ENDIF
 
@@ -2570,10 +2578,17 @@ FUNCTION kalkulacija_ima_sve_cijene( firma, tip_dok, br_dok )
    RETURN _ok
 
 
+STATIC FUNCTION pdf_kalk_dokument( cIdVd )
+
+   IF is_legacy_ptxt()
+      RETURN .F.
+   ENDIF
+
+   RETURN cIdVd $ "10#"  // implementirano za kalk 10
 
 
-/*! \fn PopustKaoNivelacijaMP()
- *  \brief Umjesto iskazanog popusta odradjuje smanjenje MPC
+/*
+ *  Umjesto iskazanog popusta odradjuje smanjenje MPC
  */
 
 FUNCTION PopustKaoNivelacijaMP()

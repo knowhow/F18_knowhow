@@ -210,9 +210,8 @@ FUNCTION fin_stampa_liste_naloga()
 
 STATIC FUNCTION zagl( nBrNalLen, cInteg )
 
-   ? " "
-   ? SPACE( PRINT_LEFT_SPACE ) + AllTrim( gTS ) + " :", AllTrim( gNFirma ) + ", baza (" + my_server_params()[ "database" ] + ")"
-   ? " "
+   zagl_organizacija( PRINT_LEFT_SPACE )
+
    ? m
    ? SPACE( PRINT_LEFT_SPACE ) + "* R.br *FIR* V *" + PadR( " BR", nBrNalLen + 1 ) + "* DAT    *   DUGUJE       *   POTRAŽUJE   *" + iif( fin_dvovalutno(), "   DUGUJE   * POTRAZUJE *", "" )
 

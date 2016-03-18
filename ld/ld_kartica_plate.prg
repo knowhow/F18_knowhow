@@ -129,7 +129,7 @@ FUNCTION ld_kartica_plate( cIdRj, cMjesec, cGodina, cIdRadn, cObrac )
    ELSE
       IF Empty( cidrj )
          SET ORDER TO tag ( TagVO( "2" ) )
-         SEEK Str( cGodina, 4 ) + Str( cMjesec, 2 ) + IF( lViseObr .AND. !Empty( cObracun ), cObracun, "" ) + cIdRadn
+         SEEK Str( cGodina, 4 ) + Str( cMjesec, 2 ) + IIF( lViseObr .AND. !Empty( cObracun ), cObracun, "" ) + cIdRadn
          cIdrj := ""
       ELSE
          IF PCount() < 4
@@ -289,7 +289,7 @@ FUNCTION ZaglKar()
        ?? Space( 2 ) + _l( "Radni sati:   " ) + AllTrim( Str( ld->radsat ) )
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 FUNCTION kart_redova()

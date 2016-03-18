@@ -168,7 +168,6 @@ FUNCTION select_print_mode( cDirekt )
 
    @ m_x, m_y SAY ""
 
-altd()
 
    IF gcDirekt <> "B"
 

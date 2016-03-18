@@ -18,7 +18,7 @@ FUNCTION add_idle_handlers()
    AAdd( aIdleHandlers, hb_idleAdd( {||  hb_DispOutAt( maxrows(),  maxcols() - 8, Time(), F18_COLOR_INFO_PANEL ) } ) )
    AAdd( aIdleHandlers, hb_idleAdd( {||  hb_DispOutAt( maxrows(),  maxcols() - 8 - 8 - 1, "< CALC >", F18_COLOR_INFO_PANEL ), ;
       iif( !in_calc() .AND. MINRECT( maxrows(), maxcols() - 8 - 8 - 1, maxrows(), maxcols() - 8 - 1 ), Calc(), NIL ) } ) )
-   AAdd( aIdleHandlers, hb_idleAdd( {|| alias_dbf_refresh() } ) )
+   // AAdd( aIdleHandlers, hb_idleAdd( {|| alias_dbf_refresh() } ) )
 
    RETURN .T.
 

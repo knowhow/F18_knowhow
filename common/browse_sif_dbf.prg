@@ -195,7 +195,7 @@ FUNCTION sif_seek( cId, cIdBK, cUslovSrch, cNazSrch, fId_j )
    LOCAL _tezina := 0
 
    IF cId == NIL
-      RETURN .F.
+      RETURN "nil"
    ENDIF
 
    IF ValType( cId ) == "N"

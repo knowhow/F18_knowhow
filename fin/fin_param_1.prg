@@ -241,12 +241,9 @@ FUNCTION fin_dvovalutno()
 
 
 
-// -------------------------------
-// snimanje parametara
-// -------------------------------
 FUNCTION fin_write_params()
 
-   // globalni parametri
+
    set_metric( "fin_evidencija_datum_valute", nil, gDatVal )
    set_metric( "fin_evidencija_datum_naloga", nil, gDatNal )
    set_metric( "fin_evidencija_radne_jedinice", nil, gRj )
@@ -259,7 +256,6 @@ FUNCTION fin_write_params()
    set_metric( "fin_budzet_konta_izuzeci", nil, gBuIz )
    set_metric( "fin_picdem", nil, gPicDEM )
    set_metric( "fin_picbhd", nil, gPicBHD )
-   set_metric( "fin_izvjestaji_jednovalutno", nil, gVar1 )
    set_metric( "fin_kreiranje_sintetike", nil, gSaKrIz )
    set_metric( "fin_razmak_izmedju_kartica", nil, gnRazRed )
    set_metric( "fin_subanalitika_prikaz_naziv_konto_partner", nil, gVSubOp )

@@ -557,9 +557,7 @@ STATIC FUNCTION set_datval_datdok()
 
 
 
-/*
- *  Ostale operacije u ispravki stavke
- */
+
 FUNCTION edit_fin_pripr()
 
    LOCAL nTr2
@@ -567,14 +565,16 @@ FUNCTION edit_fin_pripr()
    LOCAL lLogBrisanje := .F.
    LOCAL _log_info
 
+   IF SELECT( "fin_pripr" ) == 0
+     O_FIN_PRIPR
+   ENDIF
+
    IF ( Ch == K_CTRL_T .OR. Ch == K_ENTER ) .AND. RecCount2() == 0
       RETURN DE_CONT
    ENDIF
 
-   SELECT fin_pripr
 
    DO CASE
-
 
    CASE Ch == K_ALT_F5 // setuj datdok na osnovu datval
 
@@ -600,7 +600,7 @@ FUNCTION edit_fin_pripr()
 
    CASE Ch == K_ALT_T
 
-      IF _brisi_pripr_po_uslovu()
+      IF brisi_fin_pripr_po_uslovu()
          RETURN DE_REFRESH
       ELSE
          RETURN DE_CONT
@@ -720,7 +720,7 @@ FUNCTION edit_fin_pripr()
 
       Box( "knjn", MAXROWS() - 5, MAXCOLS() - 7,  .F. , "Knjizenje naloga - nove stavke" )
 
-  
+
       DO WHILE .T.
          set_global_vars_from_dbf()
 
@@ -1231,7 +1231,7 @@ FUNCTION GetTekucaRJ()
 // --------------------------------------------------------
 // brisanje podataka pripreme po uslovu
 // --------------------------------------------------------
-STATIC FUNCTION _brisi_pripr_po_uslovu()
+STATIC FUNCTION brisi_fin_pripr_po_uslovu()
 
    LOCAL _params
    LOCAL _od_broj, _do_broj, _partn, _konto, _opis, _br_veze, _br_nal, _tip_nal

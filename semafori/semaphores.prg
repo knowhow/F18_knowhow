@@ -423,7 +423,7 @@ FUNCTION fill_dbf_from_server( dbf_table, sql_query, sql_fetch_time, dbf_write_t
          NEXT
 
          IF lShowInfo
-            IF nCounterDataset % 1000 == 0
+            IF nCounterDataset % 2500 == 0
                cMsg :=  my_server_params()[ "database" ] + " fsync: " + dbf_table + " dataset_cnt: " + AllTrim( Str( nCounterDataset ) )
                ?E cMsg
                info_bar( "fill_dbf", cMsg )

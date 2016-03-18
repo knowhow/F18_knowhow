@@ -12,6 +12,7 @@ fi
 unset F18_DEBUG
 unset F18_DEBUG_BROWSE_SIF
 unset F18_DEBUG_FIN_AZUR
+unset F18_DEBUG_THREAD
 
 ./build_lib.sh
 

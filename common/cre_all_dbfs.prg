@@ -20,7 +20,6 @@ STATIC s_lInCreAllDbfs
 FUNCTION cre_all_dbfs( ver )
 
 //   LOCAL _first_start := fetch_metric( "f18_first_start", my_user(), 0 )
-   LOCAL _local_files, _local_files_count
 
    s_lInCreAllDbfs := .T.
 
@@ -125,6 +124,7 @@ FUNCTION cre_all_dbfs( ver )
 
 
 FUNCTION in_cre_all_dbfs()
+
    RETURN s_lInCreAllDbfs
 
 

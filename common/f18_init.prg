@@ -92,7 +92,6 @@ FUNCTION f18_init_app_opts()
 
 FUNCTION post_login()
 
-
    init_parameters_cache()
    set_sql_search_path()
    server_log_enable()
@@ -131,17 +130,19 @@ FUNCTION post_login()
 
 PROCEDURE post_login_cleanup()
 
-  LOCAL aFileList, aFile
+   LOCAL aFileList, cLoc, aFile, cExt
 
-    cLoc := my_home() + "F18_rpt_*.txt" )
-    aFileList := hb_vfDirectory( cLoc )
+   FOR EACH cExt IN { "txt", "pdf" }
+      cLoc := my_home() + "F18_rpt_*." + cExt
+      aFileList := hb_vfDirectory( cLoc )
 
-    FOR EACH aFile IN aFileList
-        altd()
-        FERASE( aFile[ 1 ] )
-    NEXT
+      FOR EACH aFile IN aFileList
+         FErase( aFile[ 1 ] )
+      NEXT
 
-    
+   NEXT
+
+   RETURN
 
 
 FUNCTION thread_dbfs( pThreadID )
@@ -648,7 +649,6 @@ FUNCTION run_on_startup()
 
    LOCAL _ini, _fakt_doks, cRun, oModul
 
-
    IF s_lAlreadyRunStartup
       RETURN .F.
    ENDIF
@@ -664,7 +664,7 @@ FUNCTION run_on_startup()
    cRun := _ini[ "run" ]
 
    IF !Empty( cRun )
-       RETURN .F.
+      RETURN .F.
    ENDIF
 
    info_bar( "init", "run_on_start" )

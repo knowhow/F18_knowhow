@@ -129,6 +129,21 @@ FUNCTION post_login()
    RETURN .T.
 
 
+PROCEDURE post_login_cleanup()
+
+  LOCAL aFileList, aFile
+
+    cLoc := my_home() + "F18_rpt_*.txt" )
+    aFileList := hb_vfDirectory( cLoc )
+
+    FOR EACH aFile IN aFileList
+        altd()
+        FERASE( aFile[ 1 ] )
+    NEXT
+
+    
+
+
 FUNCTION thread_dbfs( pThreadID )
 
    IF pThreadID != nil

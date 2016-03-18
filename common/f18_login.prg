@@ -122,6 +122,7 @@ METHOD F18Login:connect( params, conn_type, silent )
       ELSE
          ::lOrganizacijaSpojena := .T.
           post_login()
+          post_login_cleanup()
       ENDIF
    ELSE
       ?E "connection error:", params[ "host" ], params[ "port" ], params[ "database" ], params[ "user" ]

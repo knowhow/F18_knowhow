@@ -350,11 +350,11 @@ FUNCTION fiscal_txt_get_tarifa( tarifa_id, pdv, drv )
 
    CASE _tmp == "PDVM"
 
-     IF drv == "FPRINT"
-        _tar := "5"
-     ELSEIF drv == "TRING"
-        _tar := "M"
-     ENDIF
+      IF drv == "FPRINT"
+         _tar := "5"
+      ELSEIF drv == "TRING"
+         _tar := "M"
+      ENDIF
 
    CASE pdv == "N"
 
@@ -545,21 +545,21 @@ STATIC FUNCTION is_ispravna_cijena( cNaziv, nCijena )
 
 
 
-STATIC FUNCTION validator_vrijednosti( cNaziv, value, min_value, max_value, dec )
+STATIC FUNCTION validator_vrijednosti( cNaziv, value, nMinValue, nMaxValue, dec )
+
    LOCAL cMsg
 
-   IF value > max_value .OR. value < min_value
-      cMsg := cNaziv + " / val: " + Alltrim( STR( value ) ) + " min: " + Alltrim( STR( min_value ) ) + " max: " +  Alltrim( STR( max_value ) )
+   IF value > nMaxValue .OR. value < nMinValue
+      cMsg := cNaziv + " / val: " + AllTrim( Str( value ) ) + " min: " + AllTrim( Str( nMinValue ) ) + " max: " +  AllTrim( Str( nMaxValue ) )
       error_bar( "fisk", cMsg )
       RETURN .F.
    ENDIF
 
-   IF dec <> NIL .AND. ( Abs( value ) - Abs( Val( Str( value, 12, dec ) ) ) <> 0 )
-      cMsg := cNaziv + " / val: " + Alltrim( STR( value ) ) + " dec max: " + Alltrim( STR( dec ) )
+   IF dec <> NIL .AND. ( Abs( value ) - Abs( Round( value, dec ) ) <> 0 )
+      cMsg := cNaziv + " / val: " + AllTrim( Str( value ) ) + " dec max: " + AllTrim( Str( dec ) )
       error_bar( "fisk", cMsg )
       RETURN .F.
    ENDIF
-
 
    RETURN .T.
 

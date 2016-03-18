@@ -587,7 +587,7 @@ FUNCTION edit_fin_pripr()
    CASE Ch == K_F8 // brisi stavke u pripremi od - do
 
 
-      IF br_oddo() == 1
+      IF fin_brisi_stavke_od_do() == 1
          RETURN DE_REFRESH
       ELSE
          RETURN DE_CONT
@@ -701,14 +701,12 @@ FUNCTION edit_fin_pripr()
 
    CASE Ch == K_CTRL_N
 
-      // nove stavke
       SELECT fin_pripr
       nDug := 0
       nPot := 0
       nPrvi := 0
       GO TOP
-      DO WHILE ! Eof()
-         // kompletan nalog sumiram
+      DO WHILE ! Eof()  // kompletan nalog suma
          IF D_P = '1'
             nDug += IznosBHD
          ELSE
@@ -756,12 +754,7 @@ FUNCTION edit_fin_pripr()
          APPEND BLANK
          dbf_update_rec( get_dbf_global_memvars(), .F. )
 
-         IF lLogUnos
-            cOpis := fin_pripr->idfirma + "-" + ;
-               fin_pripr->idvn + "-" + ;
-               fin_pripr->brnal
 
-         ENDIF
 
       ENDDO
       BoxC()
@@ -770,10 +763,9 @@ FUNCTION edit_fin_pripr()
 
    CASE Ch == K_CTRL_F9
 
-      IF Pitanje(, "Želite li izbrisati pripremu !!????", "N" ) == "D"
+      IF Pitanje(, "Želite li izbrisati pripremu !?", "N" ) == "D"
 
          _log_info := fin_pripr->idfirma + "-" + fin_pripr->idvn + "-" + fin_pripr->brnal
-
          fin_reset_broj_dokumenta( fin_pripr->idfirma, fin_pripr->idvn, fin_pripr->brnal )
 
          my_dbf_zap()
@@ -820,7 +812,6 @@ FUNCTION edit_fin_pripr()
    CASE Ch == K_ALT_B
 
       fin_set_broj_dokumenta()
-
       my_close_all_dbf()
       Blagajna()
 
@@ -864,7 +855,7 @@ FUNCTION edit_fin_pripr()
 // ----------------------------------------
 // brisi stavke iz pripreme od-do
 // ----------------------------------------
-STATIC FUNCTION br_oddo()
+STATIC FUNCTION fin_brisi_stavke_od_do()
 
    LOCAL nRet := 1
    LOCAL GetList := {}

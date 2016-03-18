@@ -134,10 +134,10 @@ PROCEDURE post_login_cleanup()
 
    FOR EACH cExt IN { "txt", "pdf" }
       cLoc := my_home() + "F18_rpt_*." + cExt
+      altd()
       aFileList := hb_vfDirectory( cLoc )
-
       FOR EACH aFile IN aFileList
-         FErase( aFile[ 1 ] )
+         FErase( my_home() + aFile[ 1 ] )
       NEXT
 
    NEXT

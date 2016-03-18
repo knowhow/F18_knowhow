@@ -65,13 +65,15 @@ FUNCTION PushWA()
     PopWa() - pozicioniraj se na WA sa stacka
 
     PopWa( F_KONTO ) - pozicioniraj se na WA sa stack-a,
-                       ALI SAMO AKO NA stacku nije pohranjena F_KONTO WA
+                       ALI SAMO AKO NA stacku NIJE pohranjena F_KONTO WA
+
+
 
 */
+
 FUNCTION PopWA( nWANeDiraj )
 
    LOCAL hRet
-   LOCAL i
 
    IF nWaNeDiraj == NIL
       nWaNeDiraj := -1
@@ -82,7 +84,6 @@ FUNCTION PopWA( nWANeDiraj )
 
    IF hRet[ 'wa' ] <> NIL  .AND. ( hRet[ 'wa' ] != nWaNeDiraj )
 
-      // select
       Select( hRet[ 'wa' ] )
 
       IF Used()
@@ -209,6 +210,7 @@ FUNCTION hocu_li_pakovati_dbf( cnt, del )
 /*
   vraca informacije o dbf parametrima
 */
+
 FUNCTION get_dbf_params_from_ini_conf()
 
    LOCAL _var_name

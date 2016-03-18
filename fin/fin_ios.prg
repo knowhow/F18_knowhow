@@ -177,9 +177,6 @@ STATIC FUNCTION _ios_spec_vars( params )
 
 
 
-// -------------------------------------------------------
-// specifikacija IOS-a
-// -------------------------------------------------------
 STATIC FUNCTION ios_specifikacija( params )
 
    LOCAL _datum_do, _id_firma, _id_konto, _saldo_nula

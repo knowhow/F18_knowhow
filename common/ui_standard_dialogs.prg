@@ -11,6 +11,8 @@
 
 #include "f18.ch"
 
+MEMVAR m_x, m_y
+
 THREAD STATIC cLDirekt := "0"
 
 /*
@@ -29,7 +31,6 @@ FUNCTION Pitanje( cId, cPitanje, cOdgDefault, cMogOdg, cHeader )
    IF cMogOdg == NIL
       cMogOdg := "YDNL"
    ENDIF
-
 
    PRIVATE GetList := {}
 
@@ -93,7 +94,7 @@ STATIC FUNCTION ValidSamo( cOdg, cMogOdg )
 
 
 
-/*! \fn Pitanje2(cId,cPitanje,cOdgDefault)
+/*!  Pitanje2(cId,cPitanje,cOdgDefault)
  *  \brief
  *  \param cId
  *  \param cPitanje       - Pitanje
@@ -167,12 +168,13 @@ FUNCTION select_print_mode( cDirekt )
 
    @ m_x, m_y SAY ""
 
+altd()
+
    IF gcDirekt <> "B"
 
       Box(, 7, nWidth )
 
-      @ m_x + 1, m_y + 2 SAY "   Izlaz direktno na printer:" GET cDirekt ;
-         PICT "@!" VALID cDirekt $ "DEFGRVP"
+      @ m_x + 1, m_y + 2 SAY "   Izlaz direktno na printer:" GET cDirekt  PICT "@!" VALID cDirekt $ "DEFGRVP"
 
       @ m_x + 2, m_y + 2 SAY "----------------------------------"
       @ m_x + 3, m_y + 2 SAY8 "E - direktna štampa na LPT1 (F,G)"

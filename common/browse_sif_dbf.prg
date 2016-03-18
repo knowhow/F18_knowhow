@@ -15,6 +15,7 @@ THREAD STATIC __PSIF_NIVO__ := 0
 THREAD STATIC __A_SIFV__ := { { NIL, NIL, NIL }, { NIL, NIL, NIL }, { NIL, NIL, NIL }, { NIL, NIL, NIL } }
 
 
+
 FUNCTION PostojiSifra( nDbf, nNtx, nVisina, nSirina, cNaslov, cID, dx, dy,  bBlok, aPoredak, bPodvuci, aZabrane, lInvert, aZabIsp )
 
    LOCAL cRet, cIdBK
@@ -24,8 +25,9 @@ FUNCTION PostojiSifra( nDbf, nNtx, nVisina, nSirina, cNaslov, cID, dx, dy,  bBlo
       "<a-R> Zamjena vrij.", "<c-A> Cirk.ispravka" }
    LOCAL cUslovSrch :=  ""
    LOCAL cNazSrch
+   LOCAL nOrderSif
+   LOCAL cSeekRet, lTraziPoNazivu := .F.
 
-   PRIVATE fPoNaz := .F.
    PRIVATE fID_J := .F.
 
    IF aZabIsp == nil
@@ -35,8 +37,6 @@ FUNCTION PostojiSifra( nDbf, nNtx, nVisina, nSirina, cNaslov, cID, dx, dy,  bBlo
    FOR _i := 1 TO Len( aZabIsp )
       aZabIsp[ _i ] := Upper( aZabIsp[ _i ] )
    NEXT
-
-   PRIVATE nOrdId
 
    PushWA()
    PushSifV()
@@ -60,13 +60,17 @@ FUNCTION PostojiSifra( nDbf, nNtx, nVisina, nSirina, cNaslov, cID, dx, dy,  bBlo
    set_mc_imekol( nDbf )
 
    nOrderSif := IndexOrd()
-   nOrdId := index_tag_num( "ID" )
 
-   sif_set_order( nNTX, nOrdId, @fID_j )
 
-   sif_seek( @cId, @cIdBK, @cUslovSrch, @cNazSrch, fId_j, nOrdId )
+   sif_set_order( nNTX, index_tag_num( "ID" ), @fID_j )
+
+   cSeekRet := sif_seek( @cId, @cIdBK, @cUslovSrch, @cNazSrch, fId_j, index_tag_num( "ID" ) )
+   IF cSeekRet == "naz"
+      lTraziPoNazivu := .T.
+   ENDIF
 
    IF dx <> NIL .AND. dx < 0
+
       IF !Found()
          GO BOTTOM
          SKIP  // id na eof, tamo su prazne vrijednosti
@@ -82,9 +86,9 @@ FUNCTION PostojiSifra( nDbf, nNtx, nVisina, nSirina, cNaslov, cID, dx, dy,  bBlo
 
    ENDIF
 
-   IF ( fPonaz .AND. ( cNazSrch == "" .OR. !Trim( cNazSrch ) == Trim( field->naz ) ) ) ;
-         .OR. cId == NIL .OR. ( !Found() .AND. cNaslov <> NIL ) ;
-         .OR. ( cNaslov <> NIL .AND. Left( cNaslov, 1 ) = "#" )
+
+   IF ( lTraziPoNazivu .AND. ( cNazSrch == "" .OR. !Trim( cNazSrch ) == Trim( field->naz ) ) ) ;
+         .OR. cId == NIL .OR. ( !Found() .AND. cNaslov <> NIL ) .OR. ( cNaslov <> NIL .AND. Left( cNaslov, 1 ) = "#" )
 
       lPrviPoziv := .T.
 
@@ -128,8 +132,8 @@ FUNCTION PostojiSifra( nDbf, nNtx, nVisina, nSirina, cNaslov, cID, dx, dy,  bBlo
    SELECT ( nDbf )
 
    ordSetFocus( nOrderSif )
-
    SET FILTER TO
+
    PopSifV()
    PopWa( nDbf )
 
@@ -137,31 +141,31 @@ FUNCTION PostojiSifra( nDbf, nNtx, nVisina, nSirina, cNaslov, cID, dx, dy,  bBlo
 
 
 
+
 STATIC FUNCTION sif_set_order( nNTX, nOrdId, fID_j )
 
    LOCAL nPos
 
-   // POSTAVLJANJE ORDERA...
    DO CASE
    CASE ValType( nNTX ) == "N"
 
       IF nNTX == 1
-         IF nOrdid <> 0
+         IF index_tag_num( "ID" ) != 0
             SET ORDER TO TAG "ID"
          ELSE
             SET ORDER TO TAG "1"
          ENDIF
       ELSE
 
-         IF nOrdid == 0
+         IF index_tag_num( "ID" ) == 0
             SET ORDER TO TAG "2"
          ENDIF
       ENDIF
 
    CASE ValType( nNTX ) == "C" .AND. Right( Upper( Trim( nNTX ) ), 2 ) == "_J"
 
-      // postavi order na ID_J
-      SET ORDER TO tag ( nNTX )
+
+      SET ORDER TO tag ( nNTX ) // postavi order na ID_J
       fID_J := .T.
 
    OTHERWISE
@@ -184,10 +188,63 @@ STATIC FUNCTION sif_set_order( nNTX, nOrdId, fID_j )
 
 
 
-STATIC FUNCTION sif_seek( cId, cIdBK, cUslovSrch, cNazSrch, fId_j, nOrdId )
+FUNCTION sif_seek( cId, cIdBK, cUslovSrch, cNazSrch, fId_j )
 
    LOCAL _bk := ""
    LOCAL _order := IndexOrd()
+   LOCAL _tezina := 0
+
+   IF cId == NIL
+      RETURN .F.
+   ENDIF
+
+   IF ValType( cId ) == "N"
+      SEEK Str( cId )
+      RETURN "num"
+   ENDIF
+
+   IF Right( Trim( cId ), 1 ) == "*"
+      sif_katbr_zvjezdica( @cId, @cIdBK, fId_j )
+      RETURN "katbr"
+   ENDIF
+
+   IF Right( Trim( cId ), 1 ) $ ".$"
+      sifra_na_kraju_ima_tacka_ili_dolar( @cId, @cUslovSrch, @cNazSrch )
+      RETURN "naz"
+   ENDIF
+
+   SEEK cId
+
+   IF Found()
+      cId := &( FieldName( 1 ) )
+      RETURN "id"
+   ENDIF
+
+   IF Len( cId ) > 10
+
+#ifdef F18_POS
+      IF !tezinski_barkod( @cId, @_tezina, .F. )
+         barkod( @cId )
+      ENDIF
+#else
+      barkod( @cId )
+#endif
+
+      ordSetFocus( _order )
+
+      RETURN "barkod"
+
+   ENDIF
+
+   RETURN "id"
+
+
+/*
+
+STATIC FUNCTION sif_seek_sql( cId, cIdBK, cUslovSrch, cNazSrch, fId_j, cOrderTag )
+
+   LOCAL _bk := ""
+   LOCAL _order := ordName()
    LOCAL _tezina := 0
 
    IF cId == NIL
@@ -205,8 +262,7 @@ STATIC FUNCTION sif_seek( cId, cIdBK, cUslovSrch, cNazSrch, fId_j, nOrdId )
    ENDIF
 
    IF Right( Trim( cId ), 1 ) $ ".$"
-      sif_dbf_point_or_slash( @cId, @fPoNaz, @nOrdId, @cUslovSrch, @cNazSrch )
-      RETURN .T.
+      RETURN sifra_na_kraju_ima_tacka_ili_dolar( @cId, @cUslovSrch, @cNazSrch )
    ENDIF
 
    SEEK cId
@@ -227,15 +283,12 @@ STATIC FUNCTION sif_seek( cId, cIdBK, cUslovSrch, cNazSrch, fId_j, nOrdId )
 #endif
 
       ordSetFocus( _order )
-
       RETURN .T.
 
    ENDIF
 
    RETURN .T.
-
-
-
+*/
 
 STATIC FUNCTION sif_katbr_zvjezdica( cId, cIdBK, fId_j )
 
@@ -275,59 +328,6 @@ STATIC FUNCTION sif_katbr_zvjezdica( cId, cIdBK, fId_j )
 
    RETURN .T.
 
-
-
-FUNCTION sif_dbf_point_or_slash( cId, fPoNaz, nOrdId, cUslovSrch, cNazSrch )
-
-   LOCAL _filter
-
-   cId := PadR( cId, 10 )
-
-   IF nOrdid <> 0
-      SET ORDER TO TAG "NAZ"
-   ELSE
-      SET ORDER TO TAG "2"
-   ENDIF
-
-   fPoNaz := .T.
-
-   cNazSrch := ""
-   cUslovSrch := ""
-
-   IF Left( Trim( cId ), 1 ) == "."
-
-      // SEEK PO NAZ kada se unese DUGACKI DIO
-      PRIVATE GetList := {}
-
-      Box(, 1, 70 )
-
-      cNazSrch := Space( Len( naz ) )
-      Beep( 1 )
-
-      @ m_x + 1, m_y + 2 SAY "Unesi naziv (trazi):" GET cNazSrch PICT "@!S40"
-      READ
-
-      BoxC()
-
-      SEEK Trim( cNazSrch )
-
-      cId := field->id
-
-   ELSEIF Right( Trim( cId ), 1 ) == "$"
-
-      // pretraga dijela sifre...
-      _filter := _filter_quote( Left( Upper( cId ), Len( Trim( cId ) ) - 1 ) ) + " $ UPPER(naz)"
-      SET FILTER TO
-      SET FILTER to &( _filter )
-      GO TOP
-
-   ELSE
-
-      SEEK Left( cId, Len( Trim( cId ) ) - 1 )
-
-   ENDIF
-
-   RETURN .T.
 
 
 
@@ -633,7 +633,7 @@ FUNCTION browse_edit_stavka( Ch, nOrder, aZabIsp, lNovi )
 
    IF Ch == K_CTRL_N .OR. Ch == K_F2
 
-      IF nOrdid <> 0
+      IF index_tag_num( "ID" ) != 0
          SET ORDER TO TAG "ID"
       ELSE
          SET ORDER TO TAG "1"
@@ -727,9 +727,9 @@ FUNCTION browse_edit_stavka( Ch, nOrder, aZabIsp, lNovi )
             ENDIF
          ENDDO
 
-         SET KEY K_F8 TO NNSifru()
+         SET KEY K_F8 TO k_f8_nadji_novu_sifru()
          SET KEY K_F9 TO n_num_sif()
-         SET KEY K_F5 TO NNSifru2()
+         SET KEY K_F5 TO k_f5_nadji_novu_sifru()
 
          READ
 
@@ -1059,9 +1059,7 @@ FUNCTION aTacno( aUsl )
    RETURN .T.
 
 
-// -----------------------------------------
-// nadji sifru, v2 funkcije
-// -----------------------------------------
+
 FUNCTION n_num_sif()
 
    LOCAL cFilter := "val(id) <> 0"
@@ -1081,8 +1079,8 @@ FUNCTION n_num_sif()
 
       nDuzSif := Len( cPom )
 
-      // postavi filter na numericke sifre
-      SET FILTER to &cFilter
+
+      SET FILTER to &cFilter // postavi filter na numericke sifre
 
       // kreiraj indeks
       INDEX ON Val( id ) TAG "_VAL"
@@ -1140,7 +1138,7 @@ FUNCTION n_num_sif()
 
       SET FILTER TO
 
-      IF nOrdId <> 0
+      IF index_tag_num( "ID" ) != 0
          SET ORDER TO TAG "ID"
       ELSE
          SET ORDER TO TAG "1"
@@ -1160,7 +1158,7 @@ FUNCTION n_num_sif()
 // nadji novu sifru - radi na pritisak F8 pri unosu
 // nove sifre
 // ----------------------------------------------------
-FUNCTION NNSifru()
+FUNCTION k_f8_nadji_novu_sifru()
 
    LOCAL cPom
    LOCAL nDuzSif := 0
@@ -1186,7 +1184,7 @@ FUNCTION NNSifru()
 
       PushWA()
 
-      IF nOrdId <> 0
+      IF index_tag_num( "ID" ) != 0
          SET ORDER TO TAG "ID"
       ELSE
          SET ORDER TO TAG "1"
@@ -1426,11 +1424,11 @@ FUNCTION P_Sifk( cId, dx, dy )
       AAdd( Kol, i )
    NEXT
 
-   RETURN PostojiSifra( F_SIFK, 1, MAXROWS() -15, MAXCOLS() -15, "sifk - Karakteristike", @cId, dx, dy )
+   RETURN PostojiSifra( F_SIFK, 1, MAXROWS() - 15, MAXCOLS() - 15, "sifk - Karakteristike", @cId, dx, dy )
 
 
 
-FUNCTION NNSifru2()
+FUNCTION k_f5_nadji_novu_sifru()
 
    LOCAL cPom
    LOCAL cPom2

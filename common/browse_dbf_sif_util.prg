@@ -12,7 +12,7 @@
 #include "f18.ch"
 
 MEMVAR ImeKol
-MEMVAR Ch, fPoNaz, fID_J
+MEMVAR Ch, fID_J
 
 THREAD STATIC __PSIF_NIVO__ := 0
 THREAD STATIC __A_SIFV__ := { { NIL, NIL, NIL }, { NIL, NIL, NIL }, { NIL, NIL, NIL }, { NIL, NIL, NIL } }
@@ -33,8 +33,8 @@ FUNCTION p_sifra( nDbf, xIndex, nVisina, nSirina, cNaslov, cID, dx, dy,  bBlok, 
    LOCAL cUslovSrch :=  ""
    LOCAL cNazSrch
    LOCAL cOrderTag
+   LOCAL cSeekRet, lTraziPoNazivu := .F.
 
-   PRIVATE fPoNaz := .F.
    PRIVATE fID_J := .F.
 
    IF aZabIsp == nil
@@ -61,7 +61,11 @@ FUNCTION p_sifra( nDbf, xIndex, nVisina, nSirina, cNaslov, cID, dx, dy,  bBlok, 
    cOrderTag := ordName( 1 )
 
    sif_set_order( xIndex, cOrderTag, @fID_j )
-   sif_sql_seek( @cId, @cIdBK, @cUslovSrch, @cNazSrch, fId_j, cOrderTag )
+   cSeekRet := sif_seek( @cId, @cIdBK, @cUslovSrch, @cNazSrch, fId_j, cOrderTag )
+
+   IF cSeekRet == "naz"
+      lTraziPoNazivu := .T.
+   ENDIF
 
    IF ValType( dx ) == "N" .AND. dx < 0
 
@@ -81,9 +85,8 @@ FUNCTION p_sifra( nDbf, xIndex, nVisina, nSirina, cNaslov, cID, dx, dy,  bBlok, 
 
    ENDIF
 
-   IF ( fPonaz .AND. ( cNazSrch == "" .OR. !Trim( cNazSrch ) == Trim( field->naz ) ) ) ;
-         .OR. cId == NIL ;
-         .OR. ( !Found() .AND. cNaslov <> NIL ) ;
+   IF ( lTraziPoNazivu .AND. ( cNazSrch == "" .OR. !Trim( cNazSrch ) == Trim( field->naz ) ) ) ;
+         .OR. cId == NIL .OR. ( !Found() .AND. cNaslov <> NIL ) ;
          .OR. ( cNaslov <> NIL .AND. Left( cNaslov, 1 ) = "#" )
 
       lPrviPoziv := .T.
@@ -96,7 +99,7 @@ FUNCTION p_sifra( nDbf, xIndex, nVisina, nSirina, cNaslov, cID, dx, dy,  bBlok, 
          GO TOP // bez parametara
       ENDIF
 
-      my_db_edit_sql(, nVisina, nSirina,  {|| ed_sql_sif( nDbf, cNaslov, bBlok, aZabrane, aZabIsp ) }, ToStrU( cNaslov ), "", lInvert, _komande, 1, bPodvuci, , , aPoredak )
+      my_db_edit_sql( NIL, nVisina, nSirina,  {|| ed_sql_sif( nDbf, cNaslov, bBlok, aZabrane, aZabIsp ) }, ToStrU( cNaslov ), "", lInvert, _komande, 1, bPodvuci, , , aPoredak )
 
       IF Type( "id" ) $ "U#UE"
          cID := ( nDbf )->( FieldGet( 1 ) )
@@ -179,55 +182,6 @@ STATIC FUNCTION sif_set_order( xIndex, cOrderTag, fID_j )
 
 
 
-STATIC FUNCTION sif_sql_seek( cId, cIdBK, cUslovSrch, cNazSrch, fId_j, cOrderTag )
-
-   LOCAL _bk := ""
-   LOCAL _order := ordName()
-   LOCAL _tezina := 0
-
-   IF cId == NIL
-      RETURN .F.
-   ENDIF
-
-   IF ValType( cId ) == "N"
-      SEEK Str( cId )
-      RETURN
-   ENDIF
-
-   IF Right( Trim( cId ), 1 ) == "*"
-      sif_katbr_zvjezdica( @cId, @cIdBK, fId_j )
-      RETURN
-   ENDIF
-
-   IF Right( Trim( cId ), 1 ) $ ".$"
-      sif_point_or_slash( @cId, @fPoNaz, @cOrderTag, @cUslovSrch, @cNazSrch )
-      RETURN
-   ENDIF
-
-   SEEK cId
-
-   IF Found()
-      cId := &( FieldName( 1 ) )
-      RETURN
-   ENDIF
-
-   IF Len( cId ) > 10
-
-#ifdef F18_POS
-      IF !tezinski_barkod( @cId, @_tezina, .F. )
-         barkod( @cId )
-      ENDIF
-#else
-      barkod( @cId )
-#endif
-
-      ordSetFocus( _order )
-      RETURN .T.
-
-   ENDIF
-
-   RETURN
-
 
 
 STATIC FUNCTION sif_katbr_zvjezdica( cId, cIdBK, fId_j )
@@ -269,19 +223,20 @@ STATIC FUNCTION sif_katbr_zvjezdica( cId, cIdBK, fId_j )
 
 
 
-FUNCTION sif_point_or_slash( cId, fPoNaz, cOrderTag, cUslovSrch, cNazSrch )
+FUNCTION sifra_na_kraju_ima_tacka_ili_dolar( cId, cUslovSrch, cNazSrch )
 
    LOCAL _filter
 
    cId := PadR( cId, 10 )
 
-   IF !Empty( cOrderTag )
+   AltD()
+
+   IF !Empty( ordKey( "NAZ " ) )
       ordSetFocus( "NAZ" )
    ELSE
       ordSetFocus( "2" )
    ENDIF
 
-   fPoNaz := .T.
 
    cNazSrch := ""
    cUslovSrch := ""
@@ -301,7 +256,6 @@ FUNCTION sif_point_or_slash( cId, fPoNaz, cOrderTag, cUslovSrch, cNazSrch )
       BoxC()
 
       SEEK Trim( cNazSrch )
-
       cId := field->id
 
    ELSEIF Right( Trim( cId ), 1 ) == "$"
@@ -319,6 +273,59 @@ FUNCTION sif_point_or_slash( cId, fPoNaz, cOrderTag, cUslovSrch, cNazSrch )
 
    RETURN .T.
 
+
+   /*
+   FUNCTION sif_dbf_point_or_slash( cId, nOrdId, cUslovSrch, cNazSrch )
+
+      LOCAL _filter
+
+      cId := PadR( cId, 10 )
+
+      IF index_tag_num( "ID" ) != 0
+         SET ORDER TO TAG "NAZ"
+      ELSE
+         SET ORDER TO TAG "2"
+      ENDIF
+
+
+      cNazSrch := ""
+      cUslovSrch := ""
+
+      IF Left( Trim( cId ), 1 ) == "." // SEEK PO NAZ kada se unese DUGACKI DIO
+
+
+         PRIVATE GetList := {}
+
+         Box(, 1, 70 )
+
+         cNazSrch := Space( Len( naz ) )
+         Beep( 1 )
+
+         @ m_x + 1, m_y + 2 SAY "Unesi naziv (trazi):" GET cNazSrch PICT "@!S40"
+         READ
+
+         BoxC()
+
+         SEEK Trim( cNazSrch )
+
+         cId := field->id
+
+      ELSEIF Right( Trim( cId ), 1 ) == "$"
+
+         // pretraga dijela sifre...
+         _filter := _filter_quote( Left( Upper( cId ), Len( Trim( cId ) ) - 1 ) ) + " $ UPPER(naz)"
+         SET FILTER TO
+         SET FILTER to &( _filter )
+         GO TOP
+
+      ELSE
+
+         SEEK Left( cId, Len( Trim( cId ) ) - 1 )
+
+      ENDIF
+
+      RETURN .T.
+   */
 
 
 STATIC FUNCTION ed_sql_sif( nDbf, cNaslov, bBlok, aZabrane, aZabIsp )
@@ -609,9 +616,9 @@ STATIC FUNCTION edit_sql_sif_item( Ch, cOrderTag, aZabIsp, lNovi )
 
          ENDDO
 
-         SET KEY K_F8 TO NNSifru()
+         SET KEY K_F8 TO k_f8_nadji_novu_sifru()
          SET KEY K_F9 TO n_num_sif()
-         SET KEY K_F5 TO NNSifru2()
+         SET KEY K_F5 TO k_f5_nadji_novu_sifru()
 
          READ
 

@@ -16,7 +16,6 @@ STATIC __cust_id
 
 FUNCTION s_contacts( cId, nCust_id, cContDesc, dx, dy )
 
-   LOCAL nTArea
    LOCAL cHeader
    LOCAL cTag := "4"
    PRIVATE ImeKol
@@ -32,7 +31,7 @@ FUNCTION s_contacts( cId, nCust_id, cContDesc, dx, dy )
 
    __cust_id := nCust_id
 
-   nTArea := Select()
+   PushWa()
 
    O_CONTACTS
 
@@ -67,14 +66,13 @@ FUNCTION s_contacts( cId, nCust_id, cContDesc, dx, dy )
 
    cust_filter( nCust_id, cContDesc, @cId )
 
-   cRet := PostojiSifra( F_CONTACTS, cTag, MAXROWS() - 10, MAXCOLS() - 10, cHeader, @cId, dx, dy, ;
-      {|| key_handler( Ch ) } )
+   cRet := PostojiSifra( F_CONTACTS, cTag, MAXROWS() - 10, MAXCOLS() - 10, cHeader, @cId, dx, dy, {|| key_handler( Ch ) } )
 
    IF LastKey() == K_ESC
       cId := 0
    ENDIF
 
-   SELECT ( nTArea )
+   PopWa()
 
    RETURN cRet
 

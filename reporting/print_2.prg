@@ -11,7 +11,7 @@
 
 #include "f18.ch"
 
-MEMVAR GetList
+MEMVAR GetList, gModul
 
 THREAD STATIC s_cF18Txt
 
@@ -35,6 +35,10 @@ FUNCTION f18_start_print( cFileName, xPrintOpt, cDocumentName )
 
    IF ValType( xPrintOpt ) == "H"
       cOpt := xPrintOpt[ "tip" ]
+   ENDIF
+
+   IF ValType( xPrintOpt ) == "C"
+      cOpt := xPrintOpt
    ENDIF
 
    set_ptxt_sekvence()

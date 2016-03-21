@@ -46,7 +46,7 @@ PROCEDURE init_thread( cInfo )
             IF hb_mutexLock( s_hMutex )
                s_nCounter := 0
                hb_mutexUnlock( s_hMutex )
-               ?E "thread count>7 (", AllTrim( Str( s_nThreadCount ) ), "), sacekati:", cInfo
+               ?E Time(), "thread count>7 (", AllTrim( Str( s_nThreadCount ) ), "), sacekati:", cInfo
             ENDIF
          ENDIF
          hb_idleSleep( 2 )
@@ -78,9 +78,11 @@ PROCEDURE init_thread( cInfo )
 PROCEDURE close_thread( cInfo )
 
    my_server_close()
-   s_nThreadCount--
-
-
+   IF hb_mutexLock( s_hMutex )
+      s_nThreadCount--
+      hb_mutexUnlock( s_hMutex )
+   ENDIF
+   
 #ifdef F18_DEBUG_THREAD
    ?E "<<<<<< END: thread", cInfo, "thread count:", s_nThreadCount
 #endif

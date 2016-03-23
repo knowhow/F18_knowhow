@@ -14,17 +14,17 @@
 
 FUNCTION check_recno_and_fix( cDbfAlias, nCntSql, nCntDbf )
 
-   LOCAL _a_dbf_rec
+   LOCAL aDbfRec
    LOCAL _sql_table
    LOCAL cErrMsg
    LOCAL lRet := .T.
 
-   _a_dbf_rec :=  get_a_dbf_rec( cDbfAlias )
-   _sql_table :=  my_server_params()[ "schema" ] + "." + _a_dbf_rec[ "table" ]
+   aDbfRec :=  get_a_dbf_rec( cDbfAlias )
+   _sql_table :=  my_server_params()[ "schema" ] + "." + aDbfRec[ "table" ]
 
    IF nCntSql <> nCntDbf
 
-      cErrMsg := "alias: " + _a_dbf_rec[ "alias" ] + " cnt_dbf: " + AllTrim( Str( nCntDbf, 10, 0 ) ) + " "
+      cErrMsg := "alias: " + aDbfRec[ "alias" ] + " cnt_dbf: " + AllTrim( Str( nCntDbf, 10, 0 ) ) + " "
       cErrMsg += "sql_tbl: " + _sql_table + " cnt_sql: " + AllTrim( Str( nCntSql, 10 ) )
 
 #ifdef F18_DEBUG
@@ -35,9 +35,12 @@ FUNCTION check_recno_and_fix( cDbfAlias, nCntSql, nCntDbf )
       log_write( "check_recno_and_fix DIFF: " + cErrMsg, 3 )
 
       // TODO: vratiti ili izbrisati notify_podrska( cErrMsg )
-      error_bar( "check_recno_diff", cErrMsg )
-
-      lRet := full_synchro( _a_dbf_rec[ "table" ], 50000, "dbf_cnt_before: " + AllTrim( Str( nCntDbf, 10, 0 ) ) )
+      IF nCntDbf > 0
+         error_bar( "check_recno_diff", cErrMsg )
+      ELSE
+         info_bar( "check_recno_diff", cErrMsg )
+      ENDIF
+      lRet := full_synchro( aDbfRec[ "table" ], 50000, "dbf_cnt_before: " + AllTrim( Str( nCntDbf, 10, 0 ) ) )
 
    ENDIF
 

@@ -12,7 +12,7 @@
 #include "f18.ch"
 
 
-FUNCTION tekuci_modul()
+FUNCTION programski_modul()
    RETURN gModul
 
 FUNCTION tekuca_sezona()

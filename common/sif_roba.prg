@@ -88,7 +88,7 @@ FUNCTION P_Roba( cId, dx, dy, cSeek )
 
 
    // AUTOMATSKI TROSKOVI ROBE, samo za KALK
-   IF tekuci_modul() == "KALK" .AND. roba->( FieldPos( "TROSK1" ) ) <> 0
+   IF programski_modul() == "KALK" .AND. roba->( FieldPos( "TROSK1" ) ) <> 0
       AAdd ( ImeKol, { PadR( c10T1, 8 ), {|| trosk1 }, "trosk1", {|| .T. }, {|| .T. } } )
       AAdd ( ImeKol, { PadR( c10T2, 8 ), {|| trosk2 }, "trosk2", ;
          {|| .T. }, {|| .T. }, nil, nil, nil, nil, 30 } )
@@ -98,7 +98,7 @@ FUNCTION P_Roba( cId, dx, dy, cSeek )
       AAdd ( ImeKol, { PadR( c10T5, 8 ), {|| trosk5 }, "trosk5"   } )
    ENDIF
 
-   IF tekuci_modul() == "KALK"
+   IF programski_modul() == "KALK"
       IF roba->( FieldPos( "ZANIVEL" ) ) <> 0
          AAdd ( ImeKol, { PadC( "Nova cijena", 20 ), {|| Transform( zanivel, "999999.999" ) }, "zanivel", NIL, NIL, NIL, gPicCDEM  } )
       ENDIF

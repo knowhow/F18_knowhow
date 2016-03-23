@@ -233,7 +233,7 @@ FUNCTION f18_use_module( module_name )
    LOCAL _ret := .F.
    LOCAL _default := "N"
 
-   IF module_name == "tops"
+   IF module_name == "tops" .or. module_name == "pos"
       module_name := "pos"
    ENDIF
 

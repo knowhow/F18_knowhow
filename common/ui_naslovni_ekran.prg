@@ -152,7 +152,7 @@ FUNCTION f18_ispisi_status_podrucja( position )
 FUNCTION f18_ispisi_status_modula()
 
    LOCAL _module := Lower( goModul:cName )
-   LOCAL _in_use := f18_use_module( IF( _module == "tops", "pos", _module ) )
+   LOCAL _in_use := f18_use_module( IIF( _module == "pos", "pos", _module ) )
    LOCAL _color := F18_COLOR_STATUS
 
    IF !_in_use

@@ -15,7 +15,7 @@ STATIC s_cId_taksa := "TAKGORI-M "
 
 
 STATIC FUNCTION is_modul_pos()
-   IF tekuci_modul() == "POS"
+   IF programski_modul() == "POS"
       RETURN .T.
    ELSE
       RETURN .F.
@@ -24,7 +24,6 @@ STATIC FUNCTION is_modul_pos()
 
 FUNCTION valid_taksa_gorivo( cError, nGorivoKolicina, nTaksaKolicina )
 
-   LOCAL nSelect := SELECT()
    LOCAL lRet := .T.
 
    IF is_modul_pos()
@@ -37,6 +36,7 @@ FUNCTION valid_taksa_gorivo( cError, nGorivoKolicina, nTaksaKolicina )
       RETURN lRet
    ENDIF
 
+   PushWa()
    GO TOP
 
    nGorivoKolicina := 0
@@ -58,7 +58,7 @@ FUNCTION valid_taksa_gorivo( cError, nGorivoKolicina, nTaksaKolicina )
 
    GO TOP
 
-   SELECT ( nSelect )
+   PopWa()
 
    IF nGorivoKolicina <> nTaksaKolicina
       lRet := .F.

@@ -82,7 +82,7 @@ FUNCTION ispitaj_pravilo_konto()
    LOCAL nTArea := Select()
 
    LOCAL cObj := "KNJIZ_KONTO"
-   LOCAL cMod := tekuci_modul()
+   LOCAL cMod := programski_modul()
 
    LOCAL nErrLevel
    LOCAL cKtoList
@@ -169,7 +169,7 @@ FUNCTION ispitaj_pravilo_partner()
    LOCAL nTArea := Select()
 
    LOCAL cObj := "KNJIZ_PARTNER_KONTO"
-   LOCAL cMod := tekuci_modul()
+   LOCAL cMod := programski_modul()
 
    LOCAL nErrLevel
    LOCAL cKtoList
@@ -234,7 +234,7 @@ FUNCTION ispitaj_pravilo_dug_pot()
    LOCAL nTArea := Select()
 
    LOCAL cObj := "KNJIZ_DP_PARTNER_KONTO"
-   LOCAL cMod := tekuci_modul()
+   LOCAL cMod := programski_modul()
 
    LOCAL nErrLevel
    LOCAL cKtoList
@@ -404,7 +404,7 @@ FUNCTION ispitaj_pravilo_broj_veze()
    LOCAL nTArea := Select()
 
    LOCAL cObj := "KNJIZ_BROJ_VEZE"
-   LOCAL cMod := tekuci_modul()
+   LOCAL cMod := programski_modul()
 
    LOCAL nErrLevel
    LOCAL cKtoList

@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -65,7 +65,7 @@ endif
 IF lTekuci
   cIdRadnik := gIdRadnik
   IF gRadniRac == "D"
-    cSmjena   := ""             
+    cSmjena   := ""
     // ako radnik prelazi u narednu smjenu
   Else
     cSmjena := gSmjena
@@ -75,10 +75,7 @@ ELSE
   aNiz := {}
   cIdPos := gIdPos
   IF gVrstaRS <> "K"
-    if gModul=="HOPS"
-      cIdDio := SPACE (LEN (gIdDio))
-      AADD(aNiz,{"Dio objekta (prazno-svi)","cIdDio","empty(cIdDio). or. P_Dio(@cIdDio)","@!",})
-    endif
+
     AADD(aNiz,{"Prodajno mjesto (prazno-sve)","cIdPos","cidpos='X' .or. empty(cIdPos) .or. P_Kase(@cIdPos)","@!",})
   ENDIF
   AADD(aNiz,{"Sifra radnika  (prazno-svi)","cIdRadnik","IF(!EMPTY(cIdRadnik),P_OSOB(@cIdRadnik),.t.)",,})
@@ -150,7 +147,7 @@ if lTekuci
     ?? PADC ("REALIZACIJA RADNIKA PO ROBAMA", 40)
   EndIF
   ? PADC (gPosNaz)
-  IF !Empty (gIdDio)     
+  IF !Empty (gIdDio)
     ? PADC (gDioNaz, 40)
   EndIF
   ?
@@ -254,7 +251,7 @@ IF fPrik $ "PO"
       SELECT VRSTEP
       HSEEK _IdVrsteP
       ? SPACE (5) + PADR (VRSTEP->Naz, 24), STR (nTotVP, 10, 2)
-      
+
       nTotRadn += nTotVP
       nTotRadn2+= nTotVP2
       nTotRadn3+= nTotVP3
@@ -381,7 +378,7 @@ Endif
 return .t.
 
 
-/*! \fn C_RealRadn()
+/*! fn C_RealRadn()
  *  \brief Zatvaranje baza koristenih u izvjestaju realizacije po radnicima
  */
 
@@ -449,7 +446,7 @@ do While ! Eof() .and. IdVd==cIdVd .and. pos_doks->Datum <= dDatDo
     SELECT POM
     GO TOP
     HSEEK _IdRadnik+_IdVrsteP+POS->IdRoba+POS->IdCijena
-    
+
     IF !FOUND()
       APPEND BLANK
       REPLACE IdRadnik WITH _IdRadnik, IdVrsteP WITH _IdVrsteP, IdRoba WITH POS->IdRoba, IdCijena WITH POS->IdCijena, Kolicina WITH POS->KOlicina, Iznos WITH POS->Kolicina*POS->Cijena, iznos3 with nNeplaca
@@ -469,5 +466,3 @@ do While ! Eof() .and. IdVd==cIdVd .and. pos_doks->Datum <= dDatDo
   SKIP
 EndDO
 return
-
-

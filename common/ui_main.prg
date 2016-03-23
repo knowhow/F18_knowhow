@@ -991,7 +991,7 @@ FUNCTION UGlavnomMeniju()
    LOCAL i
    LOCAL fRet := .T.
 
-   IF tekuci_modul() == "LD"
+   IF programski_modul() == "LD"
       RETURN fRet
    ENDIF
 

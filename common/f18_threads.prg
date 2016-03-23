@@ -14,7 +14,6 @@
 STATIC s_nThreadCount := 0
 STATIC s_hMutex
 STATIC s_mainThreadID
-STATIC s_nCounter := 0
 
 PROCEDURE f18_init_threads()
 
@@ -36,32 +35,28 @@ FUNCTION is_in_main_thread()
 
 PROCEDURE init_thread( cInfo )
 
-   DO WHILE .T.
-      IF s_nThreadCount > 7
-         IF hb_mutexLock( s_hMutex )
-            s_nCounter++
-            hb_mutexUnlock( s_hMutex )
-         ENDIF
-         IF s_nCounter > 100
-            IF hb_mutexLock( s_hMutex )
-               s_nCounter := 0
-               hb_mutexUnlock( s_hMutex )
-               ?E Time(), "thread count>7 (", AllTrim( Str( s_nThreadCount ) ), "), sacekati:", cInfo
-            ENDIF
-         ENDIF
-         hb_idleSleep( 2 )
-         LOOP
-      ELSE
-         EXIT
+   LOCAL lSet, nCounter := 0
+
+   DO WHILE s_nThreadCount > 7
+      nCounter++
+      IF nCounter > 100
+         lSet := .F.
+         DO WHILE !lSet
+            s_nCounter := 0
+            ?E Time(), "thread count>7 (", AllTrim( Str( s_nThreadCount ) ), "), sacekati:", cInfo
+         ENDDO
       ENDIF
+      hb_idleSleep( 2 )
    ENDDO
 
-   IF hb_mutexLock( s_hMutex )
-      s_nThreadCount++
-      hb_mutexUnlock( s_hMutex )
-   ELSE
-      ?E "mutex err lock nThreadCount"
-   ENDIF
+   lSet := .F.
+   DO WHILE !lSet
+      IF hb_mutexLock( s_hMutex )
+         lSet := .T.
+         s_nThreadCount++
+         hb_mutexUnlock( s_hMutex )
+      ENDIF
+   ENDDO
 
 #ifdef F18_DEBUG_THREAD
    ?E ">>>>> START: thread: ", cInfo, " cnt:(", AllTrim( Str( s_nThreadCount ) ), ") <<<<<"
@@ -77,12 +72,17 @@ PROCEDURE init_thread( cInfo )
 
 PROCEDURE close_thread( cInfo )
 
+   LOCAL lSet := .F.
+
+   DO WHILE !lSet
+      IF hb_mutexLock( s_hMutex )
+         s_nThreadCount--
+         lSet := .T.
+         hb_mutexUnlock( s_hMutex )
+      ENDIF
+   ENDDO
+
    my_server_close()
-   IF hb_mutexLock( s_hMutex )
-      s_nThreadCount--
-      hb_mutexUnlock( s_hMutex )
-   ENDIF
-   
 #ifdef F18_DEBUG_THREAD
    ?E "<<<<<< END: thread", cInfo, "thread count:", s_nThreadCount
 #endif

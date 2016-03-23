@@ -464,7 +464,7 @@ FUNCTION KorekTar()
    LOCAL cPriprema
 
    IF !spec_funkcije_sifra( "SIGMATAR" )
-      RETURN
+      RETURN .F.
    ENDIF
 
    my_close_all_dbf()
@@ -501,7 +501,7 @@ FUNCTION KorekTar()
       ELSE
          USE ( KUMPATH + "KALK" )
       ENDIF
-   ELSEIF gModul == "TOPS"
+   ELSEIF gModul == "POS"
       USE ( KUMPATH + "POS" )
    ELSE
       CLOSERET

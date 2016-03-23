@@ -19,7 +19,7 @@ CLASS TPosMod FROM TAppMod
    METHOD setScreen
    METHOD mMenu
 
-END CLASS
+ENDCLASS
 
 
 METHOD new( p1, p2, p3, p4, p5, p6, p7, p8, p9 )
@@ -59,7 +59,7 @@ METHOD mMenu()
       KLevel := PosPrijava( Fx, Fy )
 
       IF ( self:lTerminate )
-         RETURN
+         RETURN .F.
       ENDIF
 
       SetPos ( Fx, Fy )
@@ -106,7 +106,7 @@ METHOD mMenu()
 
    CLOSE ALL
 
-   RETURN
+   RETURN .T.
 
 
 FUNCTION pos_main_menu_level( KLevel, Fx, Fy )
@@ -243,7 +243,7 @@ METHOD set_module_gvars()
    PUBLIC gRnInfo := "N"
    PUBLIC aRabat
 
-   self:cName := "TOPS"
+   self:cName := "POS"
    gModul := self:cName
 
    gKorIme := ""
@@ -423,7 +423,7 @@ METHOD set_module_gvars()
    ENDIF
 
    PUBLIC gSQLKom
-   gSQLLogBase := my_get_from_ini( "SQL", "SQLLogBase", "c:\sigma", EXEPATH )
+   gSQLLogBase := my_get_from_ini( "SQL", "SQLLogBase", "c:" + SLASH + "sigma", EXEPATH )
 
    gSamoProdaja := fetch_metric( "SamoProdaja", nil, gSamoProdaja )
 
@@ -433,8 +433,7 @@ METHOD set_module_gvars()
    PUBLIC gSQLSynchro
    PUBLIC gPosModem
 
-   PUBLIC glRetroakt
-   glRetroakt := ( my_get_from_ini( "POS", "Retroaktivno", "N", KUMPATH ) == "D" )
+   PUBLIC glRetroakt := .F.
 
    gPosSirovine := "D"
    gPosKalk := "D"
@@ -445,6 +444,7 @@ METHOD set_module_gvars()
    PUBLIC glPorNaSvStRKas := .F.
 
    IF ( gVrstaRS <> "S" )
+   altd()
       O_KASE
       SET ORDER TO TAG "ID"
       HSEEK gIdPos

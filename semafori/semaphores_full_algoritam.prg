@@ -62,8 +62,10 @@ FUNCTION full_synchro( dbf_table, nStepSize, cInfo )
    _seconds := Seconds()
 
    IF _sql_fields == NIL
+      run_sql_query( "ROLLBACK" )
       _msg := "sql_fields za " + _sql_table + " nije setovan ... sinhro nije moguć"
       log_write( "full_synchro: " + _msg, 2 )
+      unset_a_dbf_rec_chk0( aDbfRec[ "table" ] )
       ?E _msg
       RaiseError( _msg )
    ENDIF
@@ -83,6 +85,7 @@ FUNCTION full_synchro( dbf_table, nStepSize, cInfo )
       IF !lRet
          run_sql_query( "ROLLBACK" )
          error_bar( "fsync:" + dbf_table, "ERROR-END full_synchro: " + dbf_table )
+         unset_a_dbf_rec_chk0( aDbfRec[ "table" ] )
          RETURN lRet
       ENDIF
 
@@ -104,7 +107,6 @@ FUNCTION full_synchro( dbf_table, nStepSize, cInfo )
    ENDIF
 
    info_bar( "fsync", "END full_synchro: " + dbf_table +  " cnt: " + AllTrim( Str( nCountSql ) ) )
-
    set_a_dbf_rec_chk0( aDbfRec[ "table" ] )
 
    RETURN lRet

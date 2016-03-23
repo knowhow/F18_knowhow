@@ -409,8 +409,8 @@ FUNCTION fill_dbf_from_server( dbf_table, sql_query, sql_fetch_time, dbf_write_t
             ENDIF
 #endif
             // TODO: brisati
-            //bField := FieldWBlock( cField, aDbfRec[ 'wa' ] + 1000 )
-            //xField := Eval( bField )
+            // bField := FieldWBlock( cField, aDbfRec[ 'wa' ] + 1000 )
+            // xField := Eval( bField )
             xSqlField := oDataSet:FieldGet( oDataSet:FieldPos( cField ) )
 
             IF ValType( field->&cField ) $ "CM" .AND. F18_DBF_ENCODING == "CP852"
@@ -438,7 +438,7 @@ FUNCTION fill_dbf_from_server( dbf_table, sql_query, sql_fetch_time, dbf_write_t
 
       LOG_CALL_STACK cCallMsg
       cCallMsg := "fill_dbf ERROR: " + aDbfRec[ "table" ] + " / " + ;
-           oError:description + " " + oError:operation + " dbf field: " + cField + "  xSqlValue: " +  hb_valToStr( xSqlField ) + cCallMsg + ;
+         oError:description + " " + oError:operation + " dbf field: " + cField + "  xSqlValue: " +  hb_ValToStr( xSqlField ) + cCallMsg + ;
          " / alias: " + Alias() + " reccount: " + AllTrim( Str( RecCount() ) )
       ?E cCallMsg
       error_bar( "fill_dbf", cCallMsg )
@@ -656,12 +656,13 @@ FUNCTION in_dbf_refresh( cTable, lRefresh )
 
 FUNCTION set_last_refresh( cTable )
 
-   hb_mutexLock( s_mtxMutex )
-   IF cTable <> NIL
-      s_aLastRefresh[ 1 ] := cTable
-      s_aLastRefresh[ 2 ] := Seconds()
+   IF hb_mutexLock( s_mtxMutex )
+      IF cTable <> NIL
+         s_aLastRefresh[ 1 ] := cTable
+         s_aLastRefresh[ 2 ] := Seconds()
+      ENDIF
+      hb_mutexLock( s_mtxMutex )
    ENDIF
-   hb_mutexLock( s_mtxMutex )
 
    RETURN s_aLastRefresh
 
@@ -738,8 +739,9 @@ FUNCTION dbf_refresh( cTable )
    log_write( "going to refresh: " + aDbfRec[ 'table' ], 7 )
 #endif
 
-   PushWA()
+   dbf_refresh_0( aDbfRec )
 
+   PushWA()
    hVersions := get_semaphore_version_h( aDbfRec[ 'table' ] )
    IF ( hVersions[ "version" ] == -1 )
       update_dbf_from_server( aDbfRec[ 'table' ], "FULL" )
@@ -749,10 +751,8 @@ FUNCTION dbf_refresh( cTable )
    IF ( hVersions[ 'version' ] < hVersions[ 'last_version' ] )
       update_dbf_from_server( aDbfRec[ 'table' ], "IDS" )
    ENDIF
-
-   dbf_refresh_0( aDbfRec )
-
    PopWa()
+
    set_last_refresh( aDbfRec[ 'table' ] )
 
    in_dbf_refresh( aDbfRec[ 'table' ], .F. )
@@ -788,25 +788,24 @@ STATIC FUNCTION dbf_refresh_0( aDbfRec )
 
    log_write( cMsg1 + " " + cMsg2, 8 )
 
-   lRet := check_recno_and_fix( aDbfRec[ "table" ], nCntSql, nCntDbf - nDeleted )
+   IF check_recno_and_fix( aDbfRec[ "table" ], nCntSql, nCntDbf - nDeleted )
 
-   cMsg1 := aDbfRec[ "alias" ] + " / " + aDbfRec[ "table" ]
-   cMsg2 := "cnt_sql: " + AllTrim( Str( nCntSql, 0 ) ) + " cnt_dbf: " + AllTrim( Str( nCntDbf, 0 ) ) + " del_dbf: " + AllTrim( Str( nDeleted, 0 ) )
+      cMsg1 := aDbfRec[ "alias" ] + " / " + aDbfRec[ "table" ]
+      cMsg2 := "cnt_sql: " + AllTrim( Str( nCntSql, 0 ) ) + " cnt_dbf: " + AllTrim( Str( nCntDbf, 0 ) ) + " del_dbf: " + AllTrim( Str( nDeleted, 0 ) )
 
-   ?E cMsg1
-   ?E cMsg2
+      ?E cMsg1
+      ?E cMsg2
 
-   log_write( "END refresh_me " +  cMsg1 + " " + cMsg2, 8 )
+      IF hocu_li_pakovati_dbf( nCntDbf, nDeleted )
+         pakuj_dbf( aDbfRec, .T. )
+      ENDIF
 
-   IF hocu_li_pakovati_dbf( nCntDbf, nDeleted )
-      pakuj_dbf( aDbfRec, .T. )
-   ENDIF
-
-   IF lRet
       set_a_dbf_rec_chk0( aDbfRec[ "table" ] )
+      RETURN .T.
+
    ENDIF
 
-   RETURN .T.
+   RETURN .F.
 
 
 FUNCTION skip_semaphore_sync( table )

@@ -282,13 +282,11 @@ FUNCTION pos_stampa_racuna( cIdPos, cBrDok, lPrepis, cIdVrsteP, dDatumRn, aVezan
          nPPP := nPPU := 0
          nPP := 0
          FOR nCnt := 1 TO Len( aPorezi )
-            IF my_get_from_ini( "TOPS", "NaRacunuPrikazatiProcentePoreza", "D", KUMPATH ) == "D"
-               ? " T" + PadR( aPorezi[ nCnt ][ 1 ], 4 )
-               ?? " (PPP " + Str( aPorezi[ nCnt ][ 5 ][ 1 ], 2, 0 ) + "%, PPU " + Str( aPorezi[ nCnt ][ 5 ][ 2 ], 2, 0 ) + IF( !fPP, "%)   ", "%, PP " + Str( aPorezi[ nCnt ][ 5 ][ 3 ], 2, 0 ) + "%)" )
-               ? Space( 10 )
-            ELSE
-               ? " T" + PadR ( aPorezi[ nCnt ][ 1 ], 4 ) + "    "
-            ENDIF
+
+            ? " T" + PadR( aPorezi[ nCnt ][ 1 ], 4 )
+            ?? " (PPP " + Str( aPorezi[ nCnt ][ 5 ][ 1 ], 2, 0 ) + "%, PPU " + Str( aPorezi[ nCnt ][ 5 ][ 2 ], 2, 0 ) + IF( !fPP, "%)   ", "%, PP " + Str( aPorezi[ nCnt ][ 5 ][ 3 ], 2, 0 ) + "%)" )
+            ? Space( 10 )
+
             ?? Str ( aPorezi[ nCnt ][ 2 ], 7, N_ROUNDTO ) + "   " + Str( aPorezi[ nCnt ][ 3 ], 7, N_ROUNDTO ) + "    " + Str( Round( aPorezi[ nCnt ][ 2 ], N_ROUNDTO ) + Round( aPorezi[ nCnt ][ 3 ], N_ROUNDTO ) + Round( aPorezi[ nCnt ][ 4 ], N_ROUNDTO ), 7, N_ROUNDTO )
             IF Round( aPorezi[ nCnt ][ 4 ], 4 ) <> 0
                ? Space( 10 ) + Str ( aPorezi[ nCnt ][ 4 ], 7, N_ROUNDTO )
@@ -375,17 +373,14 @@ FUNCTION RacHeder( cIdPos, cDatBrDok, cSto, fPrepis, aVezani )
       cDat := DToC ( gDatum )
    ENDIF
 
-   IF gModul == "HOPS"
-      cStoStr := "Sto: " + cSto
-   ELSE
-      cStoStr := Space ( 8 )
-   ENDIF
+
+   cStoStr := Space ( 8 )
 
    ? " " + cDat + "." + Space ( 8 ) + cStoStr + Space ( 8 ) + cTime
    ? " " + Replicate ( "-", 38 )
 
    RETURN ( cTime )
-// }
+
 
 /*! \fn RacFuter(cIdRadnik,cSmjena)
  */
@@ -655,13 +650,11 @@ FUNCTION StampaPrep( cIdPos, cDatBrDok, aVezani, fEkran, lViseOdjednom, lOnlyFil
       nPPP := nPPU := 0
       nPP := 0
       FOR nCnt := 1 TO Len ( aPorezi )
-         IF my_get_from_ini( "TOPS", "NaRacunuPrikazatiProcentePoreza", "D", KUMPATH ) == "D"
-            ? " T" + PadR( aPorezi[ nCnt ][ 1 ], 4 )
-            ?? " (PPP " + Str( aPorezi[ nCnt ][ 5 ][ 1 ], 2, 0 ) + "%, PPU " + Str( aPorezi[ nCnt ][ 5 ][ 2 ], 2, 0 ) + IF( !fPP, "%)   ", "%, PP " + Str( aPorezi[ nCnt ][ 5 ][ 3 ], 2, 0 ) + "%)" )
-            ? Space( 10 )
-         ELSE
-            ? " T" + PadR ( aPorezi[ nCnt ][ 1 ], 4 ) + "    "
-         ENDIF
+
+         ? " T" + PadR( aPorezi[ nCnt ][ 1 ], 4 )
+         ?? " (PPP " + Str( aPorezi[ nCnt ][ 5 ][ 1 ], 2, 0 ) + "%, PPU " + Str( aPorezi[ nCnt ][ 5 ][ 2 ], 2, 0 ) + IF( !fPP, "%)   ", "%, PP " + Str( aPorezi[ nCnt ][ 5 ][ 3 ], 2, 0 ) + "%)" )
+         ? Space( 10 )
+
          ?? Str ( aPorezi[ nCnt ][ 2 ], 7, N_ROUNDTO ) + "   " + ;
             Str ( aPorezi[ nCnt ][ 3 ], 7, N_ROUNDTO ) + "    " + ;
             Str ( Round( aPorezi[ nCnt ][ 2 ], N_ROUNDTO ) + ;

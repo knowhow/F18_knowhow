@@ -298,18 +298,30 @@ FUNCTION get_a_dbf_rec( cTable, _only_basic_params )
 
 FUNCTION set_a_dbf_rec_chk0( cTable )
 
-   hb_mutexLock( s_mtxMutex )
-   s_hF18Dbfs[ my_server_params()[ "database" ] ][ cTable ][ "chk0" ] := .T.
-   hb_mutexUnlock( s_mtxMutex )
+   LOCAL lSet := .F.
+
+   DO WHILE !lSet
+      IF hb_mutexLock( s_mtxMutex )
+         s_hF18Dbfs[ my_server_params()[ "database" ] ][ cTable ][ "chk0" ] := .T.
+         lSet := .T.
+         hb_mutexUnlock( s_mtxMutex )
+      ENDIF
+   ENDDO
 
    RETURN .T.
 
 
 FUNCTION unset_a_dbf_rec_chk0( cTable )
 
-   hb_mutexLock( s_mtxMutex )
-   s_hF18Dbfs[ my_server_params()[ "database" ] ][ cTable ][ "chk0" ] := .F.
-   hb_mutexUnlock( s_mtxMutex )
+   LOCAL lSet := .F.
+
+   DO WHILE !lSet
+      IF hb_mutexLock( s_mtxMutex )
+         lSet := .T.
+         s_hF18Dbfs[ my_server_params()[ "database" ] ][ cTable ][ "chk0" ] := .F.
+         hb_mutexUnlock( s_mtxMutex )
+      ENDIF
+   ENDDO
 
    RETURN .T.
 
@@ -519,7 +531,7 @@ FUNCTION set_rec_from_dbstruct( rec )
    rec[ "dbf_fields" ]     := _fields
    rec[ "dbf_fields_len" ] := _fields_len
 
-   hb_mutexUnLock( s_mtxMutex )
+   hb_mutexUnlock( s_mtxMutex )
 
    RETURN NIL
 

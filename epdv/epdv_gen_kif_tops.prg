@@ -79,7 +79,7 @@ FUNCTION tops_kif( dD1, dD2, cSezona )
 
       @ m_x + 1, m_y + 2 SAY "SG_KIF : " + Str( nCount )
 
-      IF g_src_modul( src ) == "TOPS"
+      IF g_src_modul( src ) == "POS"
 
          cTdSrc := td_src
 

@@ -367,7 +367,6 @@ FUNCTION ZakljRadnik( Ch )
 
 FUNCTION OtvoriSmjenu()
 
-
    LOCAL fImaNezak := .F.
 
    IF gVSmjene == "N"
@@ -398,10 +397,6 @@ FUNCTION OtvoriSmjenu()
          MsgBeep ( "#Stampanje pazara smjene nije uspjelo!#" )
          my_close_all_dbf()
          RETURN 0
-      ENDIF
-      IF gModul == "HOPS"
-         // generisi utrosak sirovina za smjenu
-         GenUtrSir( gDatum, gDatum, gSmjena )
       ENDIF
    ENDIF
 

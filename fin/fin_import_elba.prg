@@ -793,7 +793,7 @@ STATIC FUNCTION get_partner_by_elba_partner_opis( cDesc )
 FUNCTION get_konto_rule_elba_c3( cCond, cPartner )
 
    LOCAL cObj := "ELBA_IMPORT"
-   LOCAL cMod := tekuci_modul()
+   LOCAL cMod := programski_modul()
    LOCAL cKonto := "XX"
 
    PushWA()
@@ -840,7 +840,7 @@ FUNCTION get_konto_rule_elba_c3( cCond, cPartner )
 FUNCTION rule_get_partner_na_osnovu_konta( cKonto )
 
    LOCAL cObj := "ELBA_IMPORT"
-   LOCAL cMod := tekuci_modul()
+   LOCAL cMod := programski_modul()
    LOCAL cCond := "KTO_PARTN"
    LOCAL cPartn := ""
 

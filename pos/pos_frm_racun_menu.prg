@@ -73,28 +73,28 @@ STATIC FUNCTION definisanje_stolova( cSto )
    SET CURSOR ON
 
    Box(, 6, 40 )
-      
+
    cStZak := "N"
-      
+
    @ m_x + 2, m_y + 10 SAY "Unesi broj stola:" GET cSto VALID ( !Empty( cSto ) .AND. Val( cSto ) > 0 ) PICT "999"
-      
+
    READ
-      
+
    IF LastKey() == K_ESC
       MsgBeep( "Unos stola obavezan !" )
       RETURN lRet
    ENDIF
-      
+
    nStStanje := g_stanje_stola( Val( cSto ) )
-      
+
    @ m_x + 4, m_y + 2 SAY "Prethodno stanje stola:   " + AllTrim( Str( nStStanje ) ) + " KM"
-      
+
    IF nStStanje > 0
       @ m_x + 6, m_y + 2 SAY8 "Zaključiti prethodno stanje (D/N)?" GET cStZak VALID cStZak $ "DN" PICT "@!"
    ENDIF
-      
+
    READ
-      
+
    BoxC()
 
    IF LastKey() == K_ESC
@@ -164,8 +164,8 @@ STATIC FUNCTION azuriraj_stavke_racuna_i_napravi_fiskalni_racun( params )
    LOCAL lOk := .T.
    LOCAL lRet := .F.
    LOCAL cVrijemeRacuna
-   LOCAL cBrojRacuna 
- 
+   LOCAL cBrojRacuna
+
    o_pos_tables()
 
    IF ( Len( aRabat ) > 0 )
@@ -229,9 +229,9 @@ STATIC FUNCTION stampaj_fiskalni_racun( cIdPos, dDatum, cBrRn, nUplaceno )
    IF nError > 0
       pos_povrat_rn( cBrRn, dDatum )
    ENDIF
-   
+
    lRet := .T.
- 
+
    RETURN lRet
 
 
@@ -274,7 +274,7 @@ STATIC FUNCTION ispisi_iznos_i_kusur_za_kupca( uplaceno, iznos_rn, pos_x, pos_y 
    LOCAL _vratiti := uplaceno - iznos_rn
 
    IF uplaceno <> 0
-      @ pos_x, pos_y + 23 SAY "Iznos RN: " + AllTrim( Str( iznos_rn, 12, 2 ) ) + ;
+      @ pos_x, pos_y + 28 SAY "Iznos RN: " + AllTrim( Str( iznos_rn, 12, 2 ) ) + ;
          " vratiti: " + AllTrim( Str( _vratiti, 12, 2 ) ) ;
          COLOR "BR+/B"
    ENDIF
@@ -426,5 +426,3 @@ FUNCTION StrValuta( cNaz2, dDat )
    ELSE
       RETURN valute->kurs1
    ENDIF
-
-

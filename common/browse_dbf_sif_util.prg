@@ -728,7 +728,7 @@ FUNCTION snimi_promjene_sifarnika( lNovi, cTekuciZapis )
       lRet := .T.
       sql_table_update( nil, "END" )
       f18_free_tables( { cAlias } )
-      log_write( "F18_DOK_OPER: dodavanje/ispravka zapisa u šifrarnik " + cAlias, 2 )
+      log_write( "F18_DOK_OPER: dodavanje/ispravka zapisa u sifarnik " + cAlias, 2 )
 
    ELSE
 

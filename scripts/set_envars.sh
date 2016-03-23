@@ -1,6 +1,6 @@
 #!/bin/bash
 
-MODULES="main fin kalk fakt os ld virm epdv rnal kadev test common"
+MODULES="main fin kalk fakt os ld virm epdv pos rnal kadev test common"
 MODULES="$MODULES core_ui2 core_dbf core_sql core_pdf core_reporting  semafori"
 
 

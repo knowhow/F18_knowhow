@@ -21,13 +21,13 @@ FUNCTION pos_main_menu_prodavac()
 
    AAdd( _opc, "1. priprema racuna                        " )
    AAdd( _opcexe, {|| _pos_prodavac_racun() } )
-	
+
    IF gStolovi == "D"
       AAdd( _opc, "2. zakljucenje - placanje stola " )
       AAdd( _opcexe, {|| g_zak_sto() } )
    ENDIF
 
-   AAdd( _opc, "2. pregled azuriranih racuna  " )
+   AAdd( _opc, "2. pregled ažuriranih racuna  " )
    AAdd( _opcexe, {|| pos_pregled_racuna( .F. ) } )
 
    AAdd( _opc, "-------------------------------------------" )
@@ -41,9 +41,6 @@ FUNCTION pos_main_menu_prodavac()
 
    // AADD(opc,"7. porezna faktura za posljednji racun")
    // AADD(opcexe, {|| f7_pf_traka()})
-
-   AAdd( _opc, "-------------------------------------------" )
-   AAdd( _opcexe, {|| nil } )
 
 
    IF fiscal_opt_active()

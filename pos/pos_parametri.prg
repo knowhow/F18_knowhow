@@ -211,7 +211,7 @@ FUNCTION ParPrBase()
    AAdd ( aNiz, { "Ako se dopusta dupli unos, da li se radnik upozorava(D/N)", "gDupliUpoz", "gDupliUpoz$'DN'", "@!", } )
    AAdd ( aNiz, { "Da li se prati stanje artikla na unosu (D/N/!)", "gPratiStanje", "gPratiStanje$'DN!'", "@!", } )
 
-   IF KLevel == "0"
+   IF pos_admin()
       AAdd ( aNiz, { "Upravnik moze ispravljati cijene", "gSifUpravn", "gSifUpravn$'DN'", "@!", } )
    ENDIF
 

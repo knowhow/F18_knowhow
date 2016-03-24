@@ -288,7 +288,7 @@ seek cIdVd+DTOS(cDat0)              // realizaciju skidam sa racuna
 
 do while !EOF().and.pos_doks->IdVd==cIdVd.and.pos_doks->Datum<=cDat1
 
-	if (Klevel>"0".and.pos_doks->idpos="X").or.(pos_doks->IdPos="X".and.AllTrim(cIdPos)<>"X").or.(!empty(cIdPos).and.cIdPos<>pos_doks->IdPos)
+	if (!pos_admin().and.pos_doks->idpos="X").or.(pos_doks->IdPos="X".and.AllTrim(cIdPos)<>"X").or.(!empty(cIdPos).and.cIdPos<>pos_doks->IdPos)
 		skip
 		loop
 	endif

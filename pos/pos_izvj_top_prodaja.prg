@@ -173,7 +173,7 @@ seek cIdVd+DTOS (dDat0)
   
 do While !EOF() .and. pos_doks->IdVd==cIdVd .and. pos_doks->Datum <= dDat1
     
-    if (Klevel>"0" .and. pos_doks->idpos="X") .or. ;
+    if (!pos_admin() .and. pos_doks->idpos="X") .or. ;
         (pos_doks->IdPos="X" .and. AllTrim(cIdPos)<>"X") .or. ;
         (!Empty(cIdPos) .and. pos_doks->IdPos<>cIdPos)
         skip

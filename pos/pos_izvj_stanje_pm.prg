@@ -220,7 +220,7 @@ FUNCTION pos_stanje_artikala_pm( cD, cS )
             SKIP
             LOOP
          ENDIF
-         IF ( Klevel > "0" .AND. pos->idpos = "X" ) .OR. ( !Empty( cIdPos ) .AND. pos->IdPos <> cIdPos )
+         IF ( !pos_admin() .AND. pos->idpos = "X" ) .OR. ( !Empty( cIdPos ) .AND. pos->IdPos <> cIdPos )
             // (POS->IdPos="X".and.AllTrim(cIdPos)<>"X").or.;// ?MS
             SKIP
             LOOP
@@ -283,7 +283,7 @@ FUNCTION pos_stanje_artikala_pm( cD, cS )
             LOOP
             // otpremnice za robu - zdravo
          ENDIF
-         IF ( Klevel > "0" .AND. pos->idpos = "X" ) .OR. ( !Empty( cIdPos ) .AND. pos->IdPos <> cIdPos )
+         IF ( !pos_admin() .AND. pos->idpos = "X" ) .OR. ( !Empty( cIdPos ) .AND. pos->IdPos <> cIdPos )
             // (POS->IdPos="X".and.AllTrim(cIdPos)<>"X").or.;//?MS
             SKIP
             LOOP

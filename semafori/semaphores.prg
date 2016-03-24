@@ -680,12 +680,14 @@ FUNCTION is_last_refresh_before( cTable, nSeconds )
 
 PROCEDURE thread_dbf_refresh( cTable )
 
-   init_thread( "dbf_refresh: " + cTable )
+   IF init_thread( "dbf_refresh: " + cTable )
 
-   ErrorBlock( {| objError, lShowreport, lQuit | GlobalErrorHandler( objError, lShowReport, lQuit ) } )
-   dbf_refresh( cTable )
+      ErrorBlock( {| objError, lShowreport, lQuit | GlobalErrorHandler( objError, lShowReport, lQuit ) } )
+      dbf_refresh( cTable )
 
-   close_thread( "dbf_refresh: " + cTable )
+      close_thread( "dbf_refresh: " + cTable )
+
+   ENDIF
 
    RETURN
 

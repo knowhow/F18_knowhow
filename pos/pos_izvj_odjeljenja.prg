@@ -311,7 +311,7 @@ FUNCTION DioIzvuci( cIdVd )
    ENDIF
    SEEK cIdVd + DToS ( dDat0 )
    DO WHILE ! Eof() .AND. pos_doks->IdVd == cIdVd .AND. pos_doks->Datum <= dDat1
-      IF ( Klevel > "0" .AND. pos_doks->idpos = "X" ) .OR. ;
+      IF ( !pos_admin() .AND. pos_doks->idpos = "X" ) .OR. ;
             ( pos_doks->IdPos = "X" .AND. AllTrim ( cIdPos ) <> "X" ) .OR. ;
             ( ! Empty ( cIdPos ) .AND. pos_doks->IdPos <> cIdPos ) .OR. ;
             !Empty( cGotZir ) .AND. ( cGotZir == "Z" .AND. pos_doks->placen <> "Z" .OR. cGotZir <> "Z" .AND. pos_doks->placen == "Z" )

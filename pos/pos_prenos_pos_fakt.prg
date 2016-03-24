@@ -284,7 +284,7 @@ FUNCTION Stanje2Fakt()
       nUlaz := nIzlaz := nVrijednost := 0
       SELECT pos
       DO WHILE !Eof() .AND. POS->IdOdj == cIdOdj .AND. POS->IdRoba == cIdRoba
-         IF ( KLevel > "0" .AND. pos->idpos = "X" ) .OR. ( !Empty( cIdPos ) .AND. IdPos <> cIdPos )
+         IF ( !pos_admin() .AND. pos->idpos = "X" ) .OR. ( !Empty( cIdPos ) .AND. IdPos <> cIdPos )
             SKIP
             LOOP
          ENDIF

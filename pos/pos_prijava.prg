@@ -13,66 +13,71 @@
 #include "f18.ch"
 
 
-function PosPrijava(Fx,Fy)
-local nChar
-local cKorSif
-local nSifLen
-local nPom
-local cLevel
-local cBrojac
-local nPrevKorRec
+FUNCTION PosPrijava( Fx, Fy )
 
-close all
+   LOCAL nChar
+   LOCAL cKorSif
+   LOCAL nSifLen
+   LOCAL nPom
+   LOCAL cLevel
+   LOCAL cBrojac
+   LOCAL nPrevKorRec
 
-nSifLen:=6
+   CLOSE ALL
 
-do while .t.
+   nSifLen := 6
 
-    SETPOS (Fx+4, Fy+15)
+   DO WHILE .T.
 
-    cKorSif := UPPER( GetLozinka( nSifLen ) )
+      SetPos ( Fx + 4, Fy + 15 )
 
-	if ( ALLTRIM( cKorSif ) == "ADMIN" )
-		gIdRadnik := "XXXX"
-		gKorIme   := "bring.out servis / ADMIN mode"
-		gSTRAD  := "A"
-		cLevel := L_SYSTEM
-		EXIT
-	endif
+      cKorSif := Upper( pos_get_lozinka( nSifLen ) )
+      IF Empty( cKorSif )
+         MsgBeep( "ERR unijeti lozinku" )
+         LOOP
+      ENDIF
 
-    // obradi specijalne sifre
-    HSpecSifre( cKorSif )
+      IF ( AllTrim( cKorSif ) == "ADMIN" )
+         gIdRadnik := "XXXX"
+         gKorIme   := "bring.out servis / ADMIN mode"
+         gSTRAD  := "A"
+         cLevel := L_SYSTEM
+         EXIT
+      ENDIF
 
-    if ( goModul:lTerminate )
-  	    return
-    endif
+      // obradi specijalne sifre
+      HSpecSifre( cKorSif )
 
-    SET CURSOR OFF
-    SETCOLOR ( F18_COLOR_NORMAL )
+      IF ( goModul:lTerminate )
+         RETURN .F.
+      ENDIF
 
-    if SetUser(cKorSif, nSifLen, @cLevel) == 0
-  	    loop
-    else
-  	    exit
-    endif
+      SET CURSOR OFF
+      SetColor ( F18_COLOR_NORMAL )
 
-ENDDO
+      IF SetUser( cKorSif, nSifLen, @cLevel ) == 0
+         LOOP
+      ELSE
+         EXIT
+      ENDIF
 
-pos_status_traka()
+   ENDDO
 
-CLOSE ALL
+   pos_status_traka()
 
-return (cLevel)
+   CLOSE ALL
+
+   RETURN ( cLevel )
 
 
 
 // obrada specijalnih sifara...
-function HSpecSifre( sifra )
+FUNCTION HSpecSifre( sifra )
 
-if TRIM( UPPER( sifra )) $ "X"
-    goModul:lTerminate := .t.
-elseif TRIM( UPPER( sifra )) = "M"
-    goModul:quit()
-endif
+   IF Trim( Upper( sifra ) ) $ "X"
+      goModul:lTerminate := .T.
+   ELSEIF Trim( Upper( sifra ) ) = "M"
+      goModul:quit()
+   ENDIF
 
-return
+   RETURN

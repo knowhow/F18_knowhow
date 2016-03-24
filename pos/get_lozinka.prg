@@ -13,13 +13,13 @@
 
 MEMVAR m_x, m_y
 
-FUNCTION GetLozinka( nSiflen )
+FUNCTION pos_get_lozinka( nSiflen )
 
    LOCAL cKorsif
 
    cKorsif := ""
    Box(, 2, 30 )
-   @ m_x + 2, m_y + 2 SAY "Lozinka..... "
+   @ m_x + 2, m_y + 2 SAY "POS Lozinka: "
 
    DO WHILE .T.
 
@@ -35,10 +35,9 @@ FUNCTION GetLozinka( nSiflen )
          EXIT
 
       ELSEIF ( nChar == K_BS )
-         cKorSif := Left( ckorsif, Len( cKorsif ) -1 )
+         cKorSif := Left( cKorsif, Len( cKorsif ) - 1 )
 
       ELSE
-
 
          IF Len( cKorsif ) >= nSifLen // max 15 znakova
             Beep( 1 )
@@ -59,6 +58,7 @@ FUNCTION GetLozinka( nSiflen )
 
    BoxC()
 
+ALTD()
    SET CURSOR ON
 
    RETURN PadR( cKorSif, nSifLen )

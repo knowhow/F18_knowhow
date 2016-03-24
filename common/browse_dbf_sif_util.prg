@@ -391,7 +391,7 @@ STATIC FUNCTION ed_sql_sif( nDbf, cNaslov, bBlok, aZabrane, aZabIsp )
    ENDIF
 
    IF AScan( aZabrane, Ch ) <> 0
-      MsgBeep( "Nivo rada:" + klevel + " : Opcija nedostupna !" )
+      MsgBeep( "Nivo rada:" + KLevel + " : Opcija nedostupna !" )
       RETURN DE_CONT
    ENDIF
 

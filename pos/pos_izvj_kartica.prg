@@ -199,19 +199,19 @@ FUNCTION pos_kartica_artikla()
                   SKIP
                   LOOP
                ENDIF
-               IF ( Klevel > "0" .AND. pos->idpos = "X" ) .OR. ( !Empty( cIdPos ) .AND. IdPos <> cIdPos )
+               IF ( !pos_admin() .AND. pos->idpos = "X" ) .OR. ( !Empty( cIdPos ) .AND. IdPos <> cIdPos )
                   SKIP
                   LOOP
                ENDIF
-	
+
                IF ( cZaduzuje == "R" .AND. pos->idvd == "96" ) .OR. ( cZaduzuje == "S" .AND. pos->idvd $ "42#01" )
                   SKIP
                   LOOP
                ENDIF
-	
+
                IF pos->idvd $ DOK_ULAZA
                   nStanje += POS->Kolicina
-		
+
                ELSEIF pos->idvd $ "IN"
 
                   nStanje -= ( POS->Kolicina - POS->Kol2 )
@@ -219,11 +219,11 @@ FUNCTION pos_kartica_artikla()
 
                ELSEIF pos->idvd $ DOK_IZLAZA
                   nStanje -= POS->Kolicina
-		
+
                ELSEIF pos->IdVd == "NI"
                   // ne mijenja kolicinu
                ENDIF
-	
+
                SKIP
             ENDDO
 
@@ -265,7 +265,7 @@ FUNCTION pos_kartica_artikla()
                LOOP
             ENDIF
 
-            IF ( Klevel > "0" .AND. pos->idpos = "X" ) .OR. ( !Empty( cIdPos ) .AND. IdPos <> cIdPos )
+            IF ( !pos_admin() .AND. pos->idpos = "X" ) .OR. ( !Empty( cIdPos ) .AND. IdPos <> cIdPos )
                // (POS->IdPos="X" .and. AllTrim (cIdPos)<>"X") .or. ;  // ?MS
                SKIP
                LOOP
@@ -292,42 +292,42 @@ FUNCTION pos_kartica_artikla()
             IF POS->idvd $ DOK_ULAZA
 
                ? cLM
-	
+
                IF cSiroki == "D"
                   ?? DToC( pos->datum ) + " "
                ENDIF
-	
+
                ?? POS->IdVd + "-" + PadR( AllTrim( POS->BrDok ), nMDBrDok ), ""
-	
+
                ?? Str ( POS->Kolicina, 10, 3 ), Space ( 10 ), ""
                nUlaz += POS->Kolicina
-	
+
                nStanje += POS->Kolicina
                ?? Str ( nStanje, 10, 3 )
-	
+
                IF gVrstaRS == "S"
                   ?? "", Str ( nCijena1 * nStanje, 12, 3 )
                ENDIF
-	
+
             ELSEIF POS->IdVd == "NI"
 
                ? cLM
-	
+
                IF cSiroki == "D"
                   ?? DToC( pos->datum ) + " "
                ENDIF
-	
+
                ?? POS->IdVd + "-" + PadR ( AllTrim( POS->BrDok ), nMDBrDok ), ""
                ?? "S:", Str ( POS->Cijena, 7, 2 ), "N:", Str ( POS->Ncijena, 7, 2 ), ;
                   Str ( nStanje, 10, 3 )
-	
+
                IF gVrstaRS == "S"
                   ?? "", Str ( nCijena1 * nStanje, 12, 3 )
                ENDIF
-	
+
                SKIP
                LOOP
-	
+
             ELSEIF POS->idvd $ "IN" + DOK_IZLAZA
 
                IF pos->idvd $ DOK_IZLAZA
@@ -335,7 +335,7 @@ FUNCTION pos_kartica_artikla()
                ELSEIF POS->IdVd == "IN"
                   nKol := ( POS->Kolicina - POS->Kol2 )
                ENDIF
-	
+
                IF pos->idvd == "IN" .AND. pos->kolicina == 0
                   nIzlaz += nStanje - nKol
                   nStanje -= nStanje - Abs( nKol )
@@ -347,20 +347,20 @@ FUNCTION pos_kartica_artikla()
                IF gVrstaRS == "S" .AND. PRow() > 63 -dodatni_redovi_po_stranici() - 3
                   FF
                ENDIF
-	
+
                ? cLM
-	
+
                IF cSiroki == "D"
                   ?? DToC( pos->datum ) + " "
                ENDIF
-	
+
                ?? POS->IdVd + "-" + PadR( AllTrim( POS->BrDok ), nMDBrDok ), ""
                ?? Space ( 10 ), Str ( nKol, 10, 3 ), Str ( nStanje, 10, 3 )
-	
+
                IF gVrstaRS == "S"
                   ?? "", Str ( nCijena1 * nStanje, 12, 3 )
                ENDIF
-	
+
             ENDIF // izlaz, in
 
             IF cPPar == "D"

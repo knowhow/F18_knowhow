@@ -158,7 +158,6 @@ FUNCTION set_global_vars_1()
    PUBLIC gRadnoPodr := "RADP"
    PUBLIC ImeKorisn := ""
    PUBLIC SifraKorisn := ""
-   PUBLIC KLevel := "9"
    PUBLIC gPTKONV := "0 "
    PUBLIC gSifreSamoVelikaSlova := "V", gcDirekt := "V", gShemaVF := "B5", gSKSif := "D"
    PUBLIC gKodnaS := "8"

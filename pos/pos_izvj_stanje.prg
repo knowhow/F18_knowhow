@@ -194,7 +194,7 @@ FUNCTION pos_stanje_artikala
                LOOP
             ENDIF
 
-            IF ( Klevel > "0" .AND. pos->idpos = "X" ) .OR. ( !Empty( cIdPos ) .AND. IdPos <> cIdPos )
+            IF ( !pos_admin() .AND. pos->idpos = "X" ) .OR. ( !Empty( cIdPos ) .AND. IdPos <> cIdPos )
                // (POS->IdPos="X" .and. AllTrim (cIdPos)<>"X") .or. ;   // ?MS
                SKIP
                LOOP
@@ -239,7 +239,7 @@ FUNCTION pos_stanje_artikala
                SKIP
                LOOP
             ENDIF
-            IF ( Klevel > "0" .AND. pos->idpos = "X" ) .OR. ( !Empty( cIdPos ) .AND. IdPos <> cIdPos )
+            IF ( !pos_admin() .AND. pos->idpos = "X" ) .OR. ( !Empty( cIdPos ) .AND. IdPos <> cIdPos )
                // (POS->IdPos="X" .and. AllTrim (cIdPos)<>"X") .or. ;  // ?MS
                SKIP
                LOOP

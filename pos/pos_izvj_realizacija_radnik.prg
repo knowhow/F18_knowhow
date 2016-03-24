@@ -409,7 +409,7 @@ function RadnIzvuci(cIdVd)
 Seek cIdVd+DTOS (dDatOd)
 do While ! Eof() .and. IdVd==cIdVd .and. pos_doks->Datum <= dDatDo
 
-  IF (Klevel>"0" .and. pos_doks->idpos="X").or.(pos_doks->IdPos="X" .and. AllTrim (cIdPos) <> "X").or.(!Empty(cIdPos) .and. pos_doks->IdPos <> cIdPos).or.(!Empty(cSmjena) .and. pos_doks->Smjena <> cSmjena).or.(!Empty(cIdRadnik) .and. pos_doks->IdRadnik <> cIdRadnik)
+  IF (!pos_admin() .and. pos_doks->idpos="X").or.(pos_doks->IdPos="X" .and. AllTrim (cIdPos) <> "X").or.(!Empty(cIdPos) .and. pos_doks->IdPos <> cIdPos).or.(!Empty(cSmjena) .and. pos_doks->Smjena <> cSmjena).or.(!Empty(cIdRadnik) .and. pos_doks->IdRadnik <> cIdRadnik)
     skip
     loop
   EndIF

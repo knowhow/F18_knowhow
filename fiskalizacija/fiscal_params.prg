@@ -12,19 +12,19 @@
 #include "f18.ch"
 
 
-STATIC __use_fiscal_opt := .F.
+STATIC s_lUseFiskalneFunkcije := .F.
 
 FUNCTION fiscal_opt_active()
 
    LOCAL _opt := fetch_metric( "fiscal_opt_active", my_user(), "N" )
 
    IF _opt == "N"
-      __use_fiscal_opt := .F.
+      s_lUseFiskalneFunkcije := .F.
    ELSE
-      __use_fiscal_opt := .T.
+      s_lUseFiskalneFunkcije := .T.
    ENDIF
 
-   RETURN __use_fiscal_opt
+   RETURN s_lUseFiskalneFunkcije
 
 
 
@@ -71,9 +71,9 @@ FUNCTION set_init_fiscal_params()
 // --------------------------------------------------------------
 // vraca naziv fiskalnog uredjaja
 // ---------------------------------:-----------------------------
-STATIC FUNCTION get_fiscal_device_name( device_id )
+STATIC FUNCTION get_fiscal_device_name( nDeviceId )
 
-   LOCAL _tmp := PadL( AllTrim( Str( device_id ) ), 2, "0" )
+   LOCAL _tmp := PadL( AllTrim( Str( nDeviceId ) ), 2, "0" )
 
    RETURN fetch_metric( "fiscal_device_" + _tmp + "_name", NIL, "" )
 
@@ -163,7 +163,7 @@ STATIC FUNCTION valid_pos_fiskalni_uredjaj( nUredjaj )
 
 FUNCTION globalne_postavke_fiskalni_uredjaj()
 
-   LOCAL _device_id := 1
+   LOCAL nDeviceId := 1
    LOCAL _max_id := 10
    LOCAL _min_id := 1
    LOCAL _x := 1
@@ -173,16 +173,16 @@ FUNCTION globalne_postavke_fiskalni_uredjaj()
    LOCAL _dev_avans, _dev_timeout, _dev_vp_sum, _dev_vp_no_customer
    LOCAL _dev_restart
 
-   IF !__use_fiscal_opt
+   IF !s_lUseFiskalneFunkcije
       MsgBeep( "Fiskalne opcije moraju biti uključene !" )
       RETURN .F.
    ENDIF
 
    Box(, 20, 80 )
 
-   @ m_x + _x, m_y + 2 SAY8 "Uređaj ID:" GET _device_id ;
+   @ m_x + _x, m_y + 2 SAY8 "Uređaj ID:" GET nDeviceId ;
       PICT "99" ;
-      VALID ( _device_id >= _min_id .AND. _device_id <= _max_id )
+      VALID ( nDeviceId >= _min_id .AND. nDeviceId <= _max_id )
 
    READ
 
@@ -194,7 +194,7 @@ FUNCTION globalne_postavke_fiskalni_uredjaj()
    _x += 2
    @ m_x + _x, m_y + 2 SAY8 PadR( "**** Podešenje uređaja", 60 ) COLOR F18_COLOR_I
 
-   _dev_tmp := PadL( AllTrim( Str( _device_id ) ), 2, "0" )
+   _dev_tmp := PadL( AllTrim( Str( nDeviceId ) ), 2, "0" )
    _dev_name := PadR( fetch_metric( "fiscal_device_" + _dev_tmp + "_name", NIL, "" ), 100 )
    _dev_act := fetch_metric( "fiscal_device_" + _dev_tmp + "_active", NIL, "N" )
    _dev_drv := PadR( fetch_metric( "fiscal_device_" + _dev_tmp + "_drv", NIL, "" ), 20 )
@@ -254,7 +254,6 @@ FUNCTION globalne_postavke_fiskalni_uredjaj()
       PICT "@!" VALID _dev_plu $ "DPIB"
 
    ++ _x
-
    @ m_x + _x, m_y + 2 SAY8 "(dinamički) inicijalni PLU kod:" GET _dev_init_plu PICT "999999"
 
    _x += 2
@@ -274,8 +273,7 @@ FUNCTION globalne_postavke_fiskalni_uredjaj()
 
    ++ _x
    @ m_x + _x, m_y + 2 SAY "Restart servisa nakon slanja komande (D/N) ?" GET _dev_restart ;
-      PICT "@!" ;
-      VALID _dev_restart $ "DN"
+      PICT "@!" VALID _dev_restart $ "DN"
 
 
    READ
@@ -307,9 +305,9 @@ FUNCTION globalne_postavke_fiskalni_uredjaj()
 
 FUNCTION korisnik_postavke_fiskalni_uredjaj()
 
-   LOCAL _user_name := my_user()
-   LOCAL _user_id := GetUserId( _user_name )
-   LOCAL _device_id := 1
+   LOCAL _cUserName := my_user()
+   LOCAL _user_id := GetUserId( _cUserName )
+   LOCAL nDeviceId := 1
    LOCAL _max_id := 10
    LOCAL _min_id := 1
    LOCAL _x := 1
@@ -318,17 +316,17 @@ FUNCTION korisnik_postavke_fiskalni_uredjaj()
    LOCAL _op_id, _op_pwd, _print_fiscal
    LOCAL _op_docs
 
-   IF !__use_fiscal_opt
+   IF !s_lUseFiskalneFunkcije
       MsgBeep( "Fiskalne opcije moraju biti uključene !" )
       RETURN .F.
    ENDIF
 
    Box(, 20, 80 )
 
-   @ m_x + _x, m_y + 2 SAY8 PadL( "Uređaj ID:", 15 ) GET _device_id ;
+   @ m_x + _x, m_y + 2 SAY8 PadL( "Uređaj ID:", 15 ) GET nDeviceId ;
       PICT "99" ;
-      VALID {|| ( _device_id >= _min_id .AND. _device_id <= _max_id ), ;
-      show_it( get_fiscal_device_name( _device_id, 30 ) ), .T. }
+      VALID {|| ( nDeviceId >= _min_id .AND. nDeviceId <= _max_id ), ;
+      show_it( get_fiscal_device_name( nDeviceId, 30 ) ), .T. }
 
    ++ _x
 
@@ -343,24 +341,24 @@ FUNCTION korisnik_postavke_fiskalni_uredjaj()
       RETURN .F.
    ENDIF
 
-   _user_name := AllTrim( GetUserName( _user_id ) )
+   _cUserName := AllTrim( GetUserName( _user_id ) )
 
    _x += 2
    @ m_x + _x, m_y + 2 SAY8 PadR( "*** Podešenja rada sa uređajem", 60 ) COLOR F18_COLOR_I
 
    ++ _x
-   _dev_tmp := PadL( AllTrim( Str( _device_id ) ), 2, "0" )
+   _dev_tmp := PadL( AllTrim( Str( nDeviceId ) ), 2, "0" )
    _dev_drv := AllTrim( fetch_metric( "fiscal_device_" + _dev_tmp + "_drv", NIL, "" ) )
 
-   _out_dir := PadR( fetch_metric( "fiscal_device_" + _dev_tmp + "_out_dir", _user_name, out_dir_op_sys( _dev_drv ) ), 300 )
-   _out_file := PadR( fetch_metric( "fiscal_device_" + _dev_tmp + "_out_file", _user_name, out_file_op_sys( _dev_drv ) ), 50 )
-   _out_answer := PadR( fetch_metric( "fiscal_device_" + _dev_tmp + "_out_answer", _user_name, "" ), 50 )
+   _out_dir := PadR( fetch_metric( "fiscal_device_" + _dev_tmp + "_out_dir", _cUserName, out_dir_op_sys( _dev_drv ) ), 300 )
+   _out_file := PadR( fetch_metric( "fiscal_device_" + _dev_tmp + "_out_file", _cUserName, out_file_op_sys( _dev_drv ) ), 50 )
+   _out_answer := PadR( fetch_metric( "fiscal_device_" + _dev_tmp + "_out_answer", _cUserName, "" ), 50 )
 
-   _op_id := PadR( fetch_metric( "fiscal_device_" + _dev_tmp + "_op_id", _user_name, "1" ), 10 )
-   _op_pwd := PadR( fetch_metric( "fiscal_device_" + _dev_tmp + "_op_pwd", _user_name, "000000" ), 10 )
-   _print_a4 := fetch_metric( "fiscal_device_" + _dev_tmp + "_print_a4", _user_name, "N" )
-   _print_fiscal := fetch_metric( "fiscal_device_" + _dev_tmp + "_print_fiscal", _user_name, "D" )
-   _op_docs := PadR( fetch_metric( "fiscal_device_" + _dev_tmp + "_op_docs", _user_name, "" ), 100 )
+   _op_id := PadR( fetch_metric( "fiscal_device_" + _dev_tmp + "_op_id", _cUserName, "1" ), 10 )
+   _op_pwd := PadR( fetch_metric( "fiscal_device_" + _dev_tmp + "_op_pwd", _cUserName, "000000" ), 10 )
+   _print_a4 := fetch_metric( "fiscal_device_" + _dev_tmp + "_print_a4", _cUserName, "N" )
+   _print_fiscal := fetch_metric( "fiscal_device_" + _dev_tmp + "_print_fiscal", _cUserName, "D" )
+   _op_docs := PadR( fetch_metric( "fiscal_device_" + _dev_tmp + "_op_docs", _cUserName, "" ), 100 )
 
    @ m_x + _x, m_y + 2 SAY "Direktorij izlaznih fajlova:" GET _out_dir PICT "@S50" VALID _valid_fiscal_path( _out_dir )
 
@@ -393,14 +391,14 @@ FUNCTION korisnik_postavke_fiskalni_uredjaj()
       RETURN .F.
    ENDIF
 
-   set_metric( "fiscal_device_" + _dev_tmp + "_out_dir", _user_name, AllTrim( _out_dir ) )
-   set_metric( "fiscal_device_" + _dev_tmp + "_out_file", _user_name, AllTrim( _out_file ) )
-   set_metric( "fiscal_device_" + _dev_tmp + "_out_answer", _user_name, AllTrim( _out_answer ) )
-   set_metric( "fiscal_device_" + _dev_tmp + "_op_id", _user_name, AllTrim( _op_id ) )
-   set_metric( "fiscal_device_" + _dev_tmp + "_op_pwd", _user_name, AllTrim( _op_pwd ) )
-   set_metric( "fiscal_device_" + _dev_tmp + "_print_a4", _user_name, _print_a4 )
-   set_metric( "fiscal_device_" + _dev_tmp + "_print_fiscal", _user_name, _print_fiscal )
-   set_metric( "fiscal_device_" + _dev_tmp + "_op_docs", _user_name, AllTrim( _op_docs ) )
+   set_metric( "fiscal_device_" + _dev_tmp + "_out_dir", _cUserName, AllTrim( _out_dir ) )
+   set_metric( "fiscal_device_" + _dev_tmp + "_out_file", _cUserName, AllTrim( _out_file ) )
+   set_metric( "fiscal_device_" + _dev_tmp + "_out_answer", _cUserName, AllTrim( _out_answer ) )
+   set_metric( "fiscal_device_" + _dev_tmp + "_op_id", _cUserName, AllTrim( _op_id ) )
+   set_metric( "fiscal_device_" + _dev_tmp + "_op_pwd", _cUserName, AllTrim( _op_pwd ) )
+   set_metric( "fiscal_device_" + _dev_tmp + "_print_a4", _cUserName, _print_a4 )
+   set_metric( "fiscal_device_" + _dev_tmp + "_print_fiscal", _cUserName, _print_fiscal )
+   set_metric( "fiscal_device_" + _dev_tmp + "_op_docs", _cUserName, AllTrim( _op_docs ) )
 
    RETURN .T.
 
@@ -521,12 +519,12 @@ STATIC FUNCTION _valid_fiscal_path( fiscal_path, create_dir )
 
 FUNCTION odaberi_fiskalni_uredjaj( cIdTipDok, lFromPos, lSilent )
 
-   LOCAL _device_id := 0
+   LOCAL nDeviceId := 0
    LOCAL _dev_arr
    LOCAL _pos_default
    LOCAL  cUser := my_user()
 
-   IF !__use_fiscal_opt
+   IF !s_lUseFiskalneFunkcije
       RETURN NIL
    ENDIF
 
@@ -557,12 +555,12 @@ FUNCTION odaberi_fiskalni_uredjaj( cIdTipDok, lFromPos, lSilent )
    ENDIF
 
    IF Len( _dev_arr ) > 1
-      _device_id := fiskalni_uredjaji_meni( _dev_arr )
+      nDeviceId := fiskalni_uredjaji_meni( _dev_arr )
    ELSE
-      _device_id := _dev_arr[ 1, 1 ]
+      nDeviceId := _dev_arr[ 1, 1 ]
    ENDIF
 
-   RETURN _device_id
+   RETURN nDeviceId
 
 
 
@@ -684,20 +682,22 @@ STATIC FUNCTION fiskalni_uredjaji_meni( arr )
 // --------------------------------------------------------------
 // vraca hash matricu sa postavkama fiskalnog uredjaja
 // --------------------------------------------------------------
-FUNCTION get_fiscal_device_params( device_id, user_name )
+FUNCTION get_fiscal_device_params( nDeviceId, cUserName )
 
    LOCAL _param := hb_Hash()
-   LOCAL _dev_tmp := PadL( AllTrim( Str( device_id ) ), 2, "0" )
+   LOCAL _dev_tmp
    LOCAL _dev_param
-   LOCAL _user_name := my_user()
+   LOCAL _cUserName := my_user()
    LOCAL _out_dir
 
-   IF !__use_fiscal_opt
+   IF !s_lUseFiskalneFunkcije
       RETURN NIL
    ENDIF
 
-   IF user_name <> NIL
-      _user_name := user_name
+   _dev_tmp := PadL( AllTrim( Str( nDeviceId ) ), 2, "0" )
+
+   IF cUserName <> NIL
+      _cUserName := cUserName
    ENDIF
 
    _dev_param := "fiscal_device_" + _dev_tmp
@@ -727,7 +727,7 @@ FUNCTION get_fiscal_device_params( device_id, user_name )
 #ifdef TEST
    _out_dir := "/tmp/"
 #else
-   _out_dir := fetch_metric( "fiscal_device_" + _dev_tmp + "_out_dir", _user_name, "" )
+   _out_dir := fetch_metric( "fiscal_device_" + _dev_tmp + "_out_dir", _cUserName, "" )
 #endif
 
    IF Empty( _out_dir )
@@ -744,14 +744,14 @@ FUNCTION get_fiscal_device_params( device_id, user_name )
    _param[ "print_fiscal" ] := "T"
    _param[ "op_docs" ] := ""
 #else
-   _param[ "out_dir" ] := fetch_metric( "fiscal_device_" + _dev_tmp + "_out_dir", _user_name, "" )
-   _param[ "out_file" ] := fetch_metric( "fiscal_device_" + _dev_tmp + "_out_file", _user_name, "" )
-   _param[ "out_answer" ] := fetch_metric( "fiscal_device_" + _dev_tmp + "_out_answer", _user_name, "" )
-   _param[ "op_id" ] := fetch_metric( "fiscal_device_" + _dev_tmp + "_op_id", _user_name, "" )
-   _param[ "op_pwd" ] := fetch_metric( "fiscal_device_" + _dev_tmp + "_op_pwd", _user_name, "" )
-   _param[ "print_a4" ] := fetch_metric( "fiscal_device_" + _dev_tmp + "_print_a4", _user_name, "N" )
-   _param[ "print_fiscal" ] := fetch_metric( "fiscal_device_" + _dev_tmp + "_print_fiscal", _user_name, "D" )
-   _param[ "op_docs" ] := fetch_metric( "fiscal_device_" + _dev_tmp + "_op_docs", _user_name, "" )
+   _param[ "out_dir" ] := fetch_metric( "fiscal_device_" + _dev_tmp + "_out_dir", _cUserName, "" )
+   _param[ "out_file" ] := fetch_metric( "fiscal_device_" + _dev_tmp + "_out_file", _cUserName, "" )
+   _param[ "out_answer" ] := fetch_metric( "fiscal_device_" + _dev_tmp + "_out_answer", _cUserName, "" )
+   _param[ "op_id" ] := fetch_metric( "fiscal_device_" + _dev_tmp + "_op_id", _cUserName, "" )
+   _param[ "op_pwd" ] := fetch_metric( "fiscal_device_" + _dev_tmp + "_op_pwd", _cUserName, "" )
+   _param[ "print_a4" ] := fetch_metric( "fiscal_device_" + _dev_tmp + "_print_a4", _cUserName, "N" )
+   _param[ "print_fiscal" ] := fetch_metric( "fiscal_device_" + _dev_tmp + "_print_fiscal", _cUserName, "D" )
+   _param[ "op_docs" ] := fetch_metric( "fiscal_device_" + _dev_tmp + "_op_docs", _cUserName, "" )
 #endif
 
    IF !post_check( _param )
@@ -794,10 +794,10 @@ FUNCTION print_fiscal_params()
    LOCAL _dev_arr
    LOCAL _usr_count, _dev_param
    LOCAL _user := my_user()
-   LOCAL _usr_cnt, _user_id, _user_name
+   LOCAL _usr_cnt, _user_id, _cUserName
    LOCAL _dev_cnt, _dev_id, _dev_name, _dev_act
 
-   IF !__use_fiscal_opt
+   IF !s_lUseFiskalneFunkcije
       MsgBeep( "Fiskalne opcije moraju biti ukljucene !!!" )
       RETURN .F.
    ENDIF
@@ -812,9 +812,9 @@ FUNCTION print_fiscal_params()
    FOR _usr_cnt := 1 TO Len( _usr_arr )
 
       _user_id := _usr_arr[ _usr_cnt, 1 ]
-      _user_name := _usr_arr[ _usr_cnt, 2 ]
+      _cUserName := _usr_arr[ _usr_cnt, 2 ]
 
-      _dev_arr := get_fiscal_devices_list( _user_name )
+      _dev_arr := get_fiscal_devices_list( _cUserName )
 
       ?
       ? "Korisnik:", AllTrim( Str( _user_id ) ), "-", GetFullUserName( _user_id )
@@ -829,7 +829,7 @@ FUNCTION print_fiscal_params()
          ? Space( 3 ), "Uredjaj id:", AllTrim( Str( _dev_id ) ), "-", _dev_name
          ? Space( 3 ), Replicate( "-", 70 )
 
-         _dev_param := get_fiscal_device_params( _dev_id, _user_name )
+         _dev_param := get_fiscal_device_params( _dev_id, _cUserName )
 
          IF _dev_param == NIL
             ? Space( 3 ), "nema podesenih parametara !!!"

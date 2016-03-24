@@ -15,21 +15,22 @@ PROCEDURE thread_create_dbfs()
 
    LOCAL _ver
 
-   init_thread()
+   IF init_thread( "create_dbfs" )
 
-   ErrorBlock( {| objError, lShowreport, lQuit | GlobalErrorHandler( objError, lShowReport, lQuit ) } )
+      ErrorBlock( {| objError, lShowreport, lQuit | GlobalErrorHandler( objError, lShowReport, lQuit ) } )
 
-   _ver := read_dbf_version_from_config()
+      _ver := read_dbf_version_from_config()
 
-   my_server()
-   cre_all_dbfs( _ver )
-   kreiraj_pa_napuni_partn_idbr_pdvb ()
+      my_server()
+      cre_all_dbfs( _ver )
+      kreiraj_pa_napuni_partn_idbr_pdvb ()
 
-   set_a_dbfs_key_fields() // inicijaliziraj "dbf_key_fields" u __f18_dbf hash matrici
-   write_dbf_version_to_ini_conf()
+      set_a_dbfs_key_fields() // inicijaliziraj "dbf_key_fields" u __f18_dbf hash matrici
+      write_dbf_version_to_ini_conf()
 
-   f18_log_delete() // brisanje loga nakon logiranja...
+      f18_log_delete() // brisanje loga nakon logiranja...
 
-   close_thread()
+      close_thread( "create_dbfs" )
+   ENDIF
 
    RETURN

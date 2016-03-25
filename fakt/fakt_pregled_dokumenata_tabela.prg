@@ -12,6 +12,9 @@
 
 #include "f18.ch"
 
+MEMVAR ImeKol
+FIELD idfirma, idtipdok, brdok, rezerv, idvrstep, datdok, partner, iznos, rabat
+
 
 FUNCTION fakt_lista_dokumenata_tabelarni_pregled( lVrsteP, lOpcine, cFilter )
 
@@ -21,33 +24,26 @@ FUNCTION fakt_lista_dokumenata_tabelarni_pregled( lVrsteP, lOpcine, cFilter )
    LOCAL _params := fakt_params()
    LOCAL _model_uredjaja := fiskalni_uredjaj_model()
 
-   IF SELECT( "fakt_doks" ) == 0
-      O_FAKT_DOKS
-   ELSE
-      SELECT FAKT_DOKS
-   ENDIF
-
    ImeKol := {}
-
-   AAdd( ImeKol, { " ",            {|| g_fiscal_info( _model_uredjaja ) } } )
-   AAdd( ImeKol, { "RJ",           {|| idfirma }  } )
-   AAdd( ImeKol, { "VD",           {|| idtipdok } } )
-   AAdd( ImeKol, { "Brdok",        {|| brdok + rezerv } } )
-   AAdd( ImeKol, { "VP",           {|| idvrstep } } )
-   AAdd( ImeKol, { "Datum",        {|| Datdok } } )
-   AAdd( ImeKol, { "Partner",  {|| PadR( partner, 45 ) } } )
-   AAdd( ImeKol, { "Ukupno",  {|| iznos + rabat } } )
-   AAdd( ImeKol, { "Rabat",  {|| rabat } } )
-   AAdd( ImeKol, { "Ukupno-Rab ",  {|| iznos } } )
+   AAdd( ImeKol, { " ",            {|| select_fakt_doks(), g_fiscal_info( _model_uredjaja ) } } )
+   AAdd( ImeKol, { "RJ",           {|| fakt_doks->idfirma }  } )
+   AAdd( ImeKol, { "VD",           {|| fakt_doks->idtipdok } } )
+   AAdd( ImeKol, { "Brdok",        {|| fakt_doks->brdok + fakt_doks->rezerv } } )
+   AAdd( ImeKol, { "VP",           {|| fakt_doks->idvrstep } } )
+   AAdd( ImeKol, { "Datum",        {|| fakt_doks->Datdok } } )
+   AAdd( ImeKol, { "Partner",      {|| PadR( fakt_doks->partner, 45 ) } } )
+   AAdd( ImeKol, { "Ukupno",       {|| fakt_doks->iznos + fakt_doks->rabat } } )
+   AAdd( ImeKol, { "Rabat",        {|| fakt_doks->rabat } } )
+   AAdd( ImeKol, { "Ukupno-Rab ",  {|| fakt_doks->iznos } } )
 
    IF lVrsteP
-      AAdd( ImeKol, { "Nacin placanja", {|| idvrstep } } )
+      AAdd( ImeKol, { _u( "Način placanja" ), {|| fakt_doks->idvrstep } } )
    ENDIF
 
    // datum otpremnice datum valute
-   AAdd( ImeKol, { "Datum placanja", {|| datpl } } )
-   AAdd( ImeKol, { "Dat.otpr",       {|| dat_otpr } } )
-   AAdd( ImeKol, { "Dat.val.",       {|| dat_val } } )
+   AAdd( ImeKol, { _u( "Datum plaćanja" ), {|| fakt_doks->datpl } } )
+   AAdd( ImeKol, { "Dat.otpr",       {|| fakt_doks->dat_otpr } } )
+   AAdd( ImeKol, { "Dat.val.",       {|| fakt_doks->dat_val } } )
 
    AAdd( ImeKol, { "Fisk.rn",        {|| PadR( prikazi_brojeve_fiskalnog_racuna( fisc_rn, fisc_st ), 20 ) } } )
    AAdd( ImeKol, { "Fisk.vr",        {|| PadR( DToC( fisc_date ) + " " + AllTrim( fisc_time ), 20 ) } } )
@@ -70,18 +66,18 @@ FUNCTION fakt_lista_dokumenata_tabelarni_pregled( lVrsteP, lOpcine, cFilter )
 
    Box( , _x, _y )
 
-   @ m_x + _x - 4, m_y + 2 SAY8 PadR( " <ENTER> Štampa TXT", _w1 ) + ;
-      BROWSE_COL_SEP + PadR( " < P > Povrat dokumenta", _w1 ) + ;
-      BROWSE_COL_SEP + PadR( " < I > Informacije", _w1 )
-   @ m_x + _x - 3, m_y + 2 SAY8 PadR( " < a+P > Štampa ODT", _w1 ) + ;
-      BROWSE_COL_SEP + PadR( " < S > Storno dokument", _w1 ) + ;
-      BROWSE_COL_SEP + PadR( " < c+V > Setuj vezu fisk.", _w1 )
-   @ m_x + _x - 2, m_y + 2 SAY8 PadR( " < R > Štampa fisk.računa", _w1 ) + ;
-      BROWSE_COL_SEP + PadR( " < F > ponuda->racun", _w1 ) + ;
-      BROWSE_COL_SEP + PadR( " < F5 > Refresh ", _w1 )
-   @ m_x + _x - 1, m_y + 2 SAY PadR( " < W > Dupliciraj", _w1 ) + ;
-      BROWSE_COL_SEP + PadR( " < K > Ispravka podataka", _w1 ) + ;
-      BROWSE_COL_SEP + PadR( " < T > Duplikat fiskalnog rn.", _w1 )
+   @ m_x + _x - 4, m_y + 2 SAY8 PadRU( " <ENTER> Štampa TXT", _w1 ) + ;
+      BROWSE_COL_SEP + PadRU( " < P > Povrat dokumenta", _w1 ) + ;
+      BROWSE_COL_SEP + PadRU( " < I > Informacije", _w1 )
+   @ m_x + _x - 3, m_y + 2 SAY8 PadRU( " < a+P > Štampa ODT", _w1 ) + ;
+      BROWSE_COL_SEP + PadRU( " < S > Storno dokument", _w1 ) + ;
+      BROWSE_COL_SEP + PadRU( " < c+V > Setuj vezu fisk.", _w1 )
+   @ m_x + _x - 2, m_y + 2 SAY8 PadRU( " < R > Štampa fisk.računa", _w1 ) + ;
+      BROWSE_COL_SEP + PadRU( " < F > ponuda->racun", _w1 ) + ;
+      BROWSE_COL_SEP + PadRU( " < F5 > Refresh ", _w1 )
+   @ m_x + _x - 1, m_y + 2 SAY PadRU( " < W > Dupliciraj", _w1 ) + ;
+      BROWSE_COL_SEP + PadRU( " < K > Ispravka podataka", _w1 ) + ;
+      BROWSE_COL_SEP + PadRU( " < T > Duplikat fiskalnog rn.", _w1 )
 
    fUPripremu := .F.
 

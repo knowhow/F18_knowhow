@@ -13,9 +13,6 @@
 
 
 
-// -----------------------------------------------
-// pregled / stampa azuriranih dokumenata
-// -----------------------------------------------
 FUNCTION fakt_pregled_liste_dokumenata()
 
    LOCAL _curr_user := "<>"

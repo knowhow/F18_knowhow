@@ -273,7 +273,6 @@ STATIC FUNCTION fakt_azur_dbf( id_firma, id_tip_dok, br_dok, lSilent )
 
    SELECT fakt_doks
    SET ORDER TO TAG "1"
-   GO TOP
    SEEK id_firma + id_tip_dok + br_dok
 
    IF !Found()
@@ -301,7 +300,6 @@ STATIC FUNCTION fakt_azur_dbf( id_firma, id_tip_dok, br_dok, lSilent )
 
    SELECT fakt_doks2
    SET ORDER TO TAG "1"
-   GO TOP
    SEEK id_firma + id_tip_dok + br_dok
 
    IF !Found()
@@ -677,7 +675,7 @@ FUNCTION fakt_brisanje_pripreme()
 
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 FUNCTION fakt_generisi_storno_dokument( id_firma, id_tip_dok, br_dok )
@@ -715,7 +713,6 @@ FUNCTION fakt_generisi_storno_dokument( id_firma, id_tip_dok, br_dok )
 
    SELECT fakt_doks
    SET ORDER TO TAG "1"
-   GO TOP
    SEEK id_firma + id_tip_dok + br_dok
 
    _fiscal_no := 0

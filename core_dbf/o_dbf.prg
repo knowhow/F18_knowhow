@@ -20,7 +20,7 @@ FUNCTION o_dbf_table( nArea, cTable, cTag )
       IF my_use( cTable )
          lUsed := .T.
          ordSetFocus( cTag )
-         IF Empty( ordKey())
+         IF Empty( ordKey() )
             lUsed := .F.
             ?E "ERR o_pos_table:", cTable, cTag
             USE
@@ -30,5 +30,20 @@ FUNCTION o_dbf_table( nArea, cTable, cTag )
       ENDIF
 
    ENDDO
+
+   RETURN .T.
+
+
+/*
+   select_o_dbf( "fakt_doks", F_FAKT_DOKS, "fakt_doks", "1" )
+*/
+
+FUNCTION select_o_dbf( cAlias, nArea, cTable, cTag )
+
+   IF Select( cAlias ) == 0
+      o_dbf_table( nArea, cTable, cTag )
+   ENDIF
+
+   Select( nArea )
 
    RETURN .T.

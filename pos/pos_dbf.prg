@@ -13,7 +13,6 @@
 
 
 
-
 FUNCTION pos_init_dbfs()
 
    my_close_all_dbf()
@@ -53,44 +52,23 @@ STATIC FUNCTION cre_priprz()
    RETURN .T.
 
 
-FUNCTION o_pos_table( nArea, cTable, cTag )
-
-   LOCAL lUsed := .F.
-
-   SELECT ( nArea )
-   DO WHILE !lUsed
-      IF my_use( cTable )
-         lUsed := .T.
-         ordSetFocus( cTag )
-         IF Empty( ordKey())
-            lUsed := .F.
-            ?E "ERR o_pos_table:", cTable, cTag
-            USE
-         ENDIF
-      ELSE
-         hb_idleSleep( 1.5 )
-      ENDIF
-
-   ENDDO
-
-   RETURN .T.
 
 
 FUNCTION o_pos_doks()
-   RETURN o_pos_table( F_POS_DOKS, "pos_doks", "1" )
+   RETURN o_dbf_table( F_POS_DOKS, "pos_doks", "1" )
 
 FUNCTION o_pos_pos()
-   RETURN o_pos_table( F_POS_POS, "pos_pos", "1" )
+   RETURN o_dbf_table( F_POS_POS, "pos_pos", "1" )
 
 FUNCTION o_pos_osob()
-   RETURN o_pos_table( F_OSOB, "osob", "ID" )
+   RETURN o_dbf_table( F_OSOB, "osob", "ID" )
 
 
 FUNCTION o_pos_strad()
-   RETURN o_pos_table( F_STRAD, "strad", "ID" )
+   RETURN o_dbf_table( F_STRAD, "strad", "ID" )
 
 FUNCTION o_pos_kase()
-   RETURN o_pos_table( F_KASE, "kase", "ID" )
+   RETURN o_dbf_table( F_KASE, "kase", "ID" )
 
 
 

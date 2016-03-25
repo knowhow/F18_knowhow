@@ -165,8 +165,10 @@
 
 
 // modul FAKT
-#xcommand O_FAKT           => select (F_FAKT)      ; my_use ( "fakt" )        ; set order to tag  "1"
-#xcommand O_FAKT_DOKS      => select(F_FAKT_DOKS)  ; my_use ( "fakt_doks" )  ; set order to tag "1"
+#xcommand O_FAKT           => o_fakt()
+#xcommand O_FAKT_DOKS      => o_fakt_doks()
+
+
 #xcommand O_FAKT_DOKS2     => select(F_FAKT_DOKS2) ; my_use ( "fakt_doks2" )  ; set order to tag "1"
 
 // fakt pripr

@@ -13,7 +13,6 @@
 
 MEMVAR m_x, m_y
 
-
 /*
  napuni tablu sa servera
   nStepSize - broj zapisa koji se citaju u jednom query-u
@@ -54,9 +53,6 @@ FUNCTION full_synchro( cDbfTable, nStepSize, cInfo )
 
    open_exclusive_zap_close( aDbfRec ) // nuliranje tabele
 
-IF cDbfTable == "pos_pos"
-altd()
-ENDIF
 
    cTransactionName :=  "full_" + cDbfTable + ":" + cInfo
    run_sql_query( "BEGIN; SET TRANSACTION ISOLATION LEVEL SERIALIZABLE", , , cTransactionName )
@@ -68,14 +64,6 @@ WARNING:  there is already a transaction in progress
 
    nCountSql := table_count( _sql_table, "true" )
 
-/*
-   nCountSql := table_count( _sql_table, "true" ) <<< 314
-
-   ERROR:  current transaction is aborted, commands ignored until end of transaction block
-     //   1 RUN_SQL_QUERY / 88 //   2 _SQL_QUERY / 36 //   3 TABLE_COUNT / 314 //   4 FULL_SYNCHRO / 59 //   5 CHECK_RECNO_AND_FIX / 43 //   6 DBF_REFRESH_0 / 799 //   7 DBF_REFRESH / 750 //   8 F18_LOCK_TABLES / 77 //   9 POS_AZURIRAJ_RACUN / 35 //  10 AZURIRAJ_STAVKE_RACUNA_I_NAPRAVI_FISKALNI_RACUN / 182 //  11 ZAKLJUCI_POS_RACUN / 143 //  12 _POS_PRODAVAC_RACUN / 63 //  13 (b)POS_MAIN_MENU_PRODAVAC / 23 //  14 F18_MENU / 61 //  15 POS_MAIN_MENU_PRODAVAC / 53 //  16 POS_MAIN_MENU_LEVEL / 125 //  17 TPOSMOD:MMENU / 100 //  18 TPOSMOD:RUN / 126 //  19 MAINPOS / 26 //  20 (b)SET_PROGRAM_MODULE_MENU / 227 //  21 PROGRAM_MODULE_MENU / 153 //  22 F18_LOGIN / 219 //  23 MAIN / 39
-   SQL ERROR QUERY:  SELECT COUNT(*) FROM fmk.pos_pos WHERE trueERROR:  current transaction is aborted, commands ignored until end of transaction block
-
-*/
 
    ?E "START full_synchro table: " + cDbfTable + "/ sql count: " + AllTrim( Str( nCountSql ) )
 
@@ -109,7 +97,6 @@ WARNING:  there is already a transaction in progress
          RETURN lRet
       ENDIF
 
-      // info_bar( "fsync:" + cDbfTable, "sql fetch time: " + AllTrim( Str( _sql_fetch_time ) ) + " dbf write time: " + AllTrim( Str( _dbf_write_time ) ) )
       info_bar( "fsync:" + cDbfTable, "STEP full_synchro tabela: " + cDbfTable + " " + AllTrim( Str( _offset + nStepSize ) ) + " / " + AllTrim( Str( nCountSql ) ) )
 
    NEXT

@@ -158,6 +158,9 @@
 #define FIELD_LEN_KALK_RBR      3
 #define FIELD_PARTNER_ID_LENGTH 6
 
+#define FIELD_LEN_POS_BRDOK  6
+#define FIELD_LEN_POS_RBR    5
+
 
 
 #ifndef TEST

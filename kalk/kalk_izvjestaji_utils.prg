@@ -105,7 +105,7 @@ FUNCTION zadnji_izlazi_info( partner, id_roba )
 STATIC FUNCTION _fakt_get_izlazi( partner, roba )
 
    LOCAL _qry, _qry_ret, _table
-   LOCAL _server := pg_server()
+   LOCAL _server := my_server()
    LOCAL _data := {}
    LOCAL _i, oRow
 
@@ -139,7 +139,7 @@ STATIC FUNCTION _fakt_get_izlazi( partner, roba )
 STATIC FUNCTION _kalk_get_ulazi( partner, roba, mag_prod )
 
    LOCAL _qry, _qry_ret, _table
-   LOCAL _server := pg_server()
+   LOCAL _server := my_server()
    LOCAL _data := {}
    LOCAL _i, oRow
    LOCAL _u_i := "pu_i"

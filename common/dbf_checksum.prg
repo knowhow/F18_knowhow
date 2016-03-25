@@ -27,12 +27,10 @@ FUNCTION check_recno_and_fix( cDbfAlias, nCntSql, nCntDbf )
       cErrMsg := "alias: " + aDbfRec[ "alias" ] + " cnt_dbf: " + AllTrim( Str( nCntDbf, 10, 0 ) ) + " "
       cErrMsg += "sql_tbl: " + _sql_table + " cnt_sql: " + AllTrim( Str( nCntSql, 10 ) )
 
-#ifdef F18_DEBUG
-      IF Abs( nCntDbf - nCntSql ) == 1
+
+      IF nCntDbf > 0 .AND. Abs( nCntDbf - nCntSql ) == 1
          error_bar( "check_recno_diff", "1DIFF: " + cDbfAlias + "  jedan zapis razlike?!" )
       ENDIF
-#endif
-      log_write( "check_recno_and_fix DIFF: " + cErrMsg, 3 )
 
       // TODO: vratiti ili izbrisati notify_podrska( cErrMsg )
       IF nCntDbf > 0

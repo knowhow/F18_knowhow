@@ -18,7 +18,7 @@
 FUNCTION get_fin_partner_saldo( id_partner, id_konto, id_firma )
 
    LOCAL _qry, _qry_ret, _table
-   LOCAL _server := pg_server()
+   LOCAL _server := my_server()
    LOCAL _data := {}
    LOCAL _i, oRow
    LOCAL _saldo := 0
@@ -48,7 +48,7 @@ FUNCTION get_fin_partner_saldo( id_partner, id_konto, id_firma )
 FUNCTION g_dpupl_part( id_partner, id_konto, id_firma )
 
    LOCAL _qry, _qry_ret, _table
-   LOCAL _server := pg_server()
+   LOCAL _server := my_server()
    LOCAL _data := {}
    LOCAL _i, oRow
    LOCAL _max := CToD( "" )
@@ -80,7 +80,7 @@ FUNCTION g_dpupl_part( id_partner, id_konto, id_firma )
 FUNCTION g_dpprom_part( id_partner, id_konto, id_firma )
 
    LOCAL _qry, _qry_ret, _table
-   LOCAL _server := pg_server()
+   LOCAL _server := my_server()
    LOCAL _data := {}
    LOCAL _i, oRow
    LOCAL _max := CToD( "" )

@@ -193,7 +193,7 @@ STATIC FUNCTION _cre_rpt( rpt_vars, otv_stavke )
    LOCAL _brza, _konto, _partner, _brdok, _idvn
    LOCAL _datum_od, _datum_do, _tip_valute, _saldo_nula
    LOCAL _qry, _table
-   LOCAL _server := pg_server()
+   LOCAL _server := my_server()
    LOCAL _fld_iznos
    LOCAL _nula_cond := ""
 

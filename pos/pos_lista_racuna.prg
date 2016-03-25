@@ -105,7 +105,7 @@ FUNCTION pos_lista_racuna( dDat, cBroj, fPrep, fScope, cPrefixFilter, qIdRoba )
       SET SCOPEBOTTOM TO "W"
    ENDIF
 
-   IF gVrstaRS == "S" .OR. KLevel < L_UPRAVN
+   IF gVrstaRS == "S" .OR. pos_admin()
       AAdd( ImeKol, { "Radnik", {|| IdRadnik } } )
       AAdd( Kol, Len( ImeKol ) )
       cFilter += ".and. (Idpos=" + dbf_quote( gIdPos ) + " .or. IdPos='X ')"
@@ -251,6 +251,3 @@ STATIC FUNCTION lista_racuna_key_handler()
    ENDIF
 
    RETURN ( DE_CONT )
-
-
-

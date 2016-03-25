@@ -18,7 +18,7 @@ FUNCTION GetUserID()
    LOCAL cTable := "public.usr"
    LOCAL oTable
    LOCAL nResult
-   LOCAL oServer := pg_server()
+   LOCAL oServer := my_server()
    LOCAL cUser   := AllTrim( my_user() )
 
    cTmpQry := "SELECT usr_id FROM " + cTable + " WHERE usr_username = " + sql_quote( cUser )
@@ -41,7 +41,7 @@ FUNCTION GetUserRoles( user_name )
 
    LOCAL _roles
    LOCAL _qry
-   LOCAL _server := pg_server()
+   LOCAL _server := my_server()
 
    IF user_name == NIL
       _user := "CURRENT_USER"
@@ -98,7 +98,7 @@ FUNCTION GetUserName( nUser_id )
    LOCAL cTable := "public.usr"
    LOCAL oTable
    LOCAL cResult
-   LOCAL oServer := pg_server()
+   LOCAL oServer := my_server()
 
    cTmpQry := "SELECT usr_username FROM " + cTable + " WHERE usr_id = " + AllTrim( Str( nUser_id ) )
    oTable := _sql_query( oServer, cTmpQry )
@@ -121,7 +121,7 @@ FUNCTION GetFullUserName( nUser_id )
    LOCAL cTmpQry
    LOCAL cTable := "public.usr"
    LOCAL oTable
-   LOCAL oServer := pg_server()
+   LOCAL oServer := my_server()
 
    cTmpQry := "SELECT usr_propername FROM " + cTable + " WHERE usr_id = " + AllTrim( Str( nUser_id ) )
    oTable := _sql_query( oServer, cTmpQry )
@@ -196,7 +196,7 @@ STATIC FUNCTION izaberi_f18_korisnika( arr )
 FUNCTION get_list_f18_users()
 
    LOCAL _qry, _table
-   LOCAL _server := pg_server()
+   LOCAL _server := my_server()
    LOCAL _list := {}
    LOCAL _row
 

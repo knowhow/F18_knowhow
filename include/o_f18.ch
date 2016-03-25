@@ -303,8 +303,8 @@
 #xcommand O_K1           => select (F_K1)      ; my_use ("k1")     ; set order to tag "ID"
 
 // modul POS
-#xcommand O_POS_DOKS  => SELECT (F_POS_DOKS); my_use ("pos_doks"); set order to tag "1"
-#xcommand O_POS       => SELECT (F_POS); my_use ("pos"); set order to tag "1"
+#xcommand O_POS_DOKS  => o_pos_doks()
+#xcommand O_POS       => o_pos_pos()
 #xcommand O_RNGPLA    => SELECT (F_RNGPLA); my_use ("rngpla"); set order to tag "1"
 #xcommand O_PROMVP    => SELECT (F_PROMVP); my_use ("promvp"); set order to tag "1"
 #xcommand O__POS      => SELECT (F__POS)  ; my_use("_pos")  ; set order to tag "1"
@@ -317,9 +317,9 @@
 #xcommand O_MJTRUR    => SELECT (F_MJTRUR); my_use("mjtrur"); set order to tag "1"
 #xcommand O_ROBAIZ    => SELECT (F_ROBAIZ); my_use("robaiz"); set order to tag "1"
 #xcommand O_RAZDR     => SELECT (F_RAZDR) ; my_use("razdr")
-#xcommand O_STRAD     => SELECT (F_STRAD); my_use("strad"); set order to tag "ID"
-#xcommand O_OSOB      => SELECT (F_OSOB); my_use("osob"); set order to tag "ID"
-#xcommand O_KASE      => SELECT (F_KASE); my_use("kase"); set order to tag "ID"
+#xcommand O_STRAD     => o_pos_strad()
+#xcommand O_OSOB      => o_pos_osob()
+#xcommand O_KASE      => o_pos_kase()
 #xcommand O_ODJ       => SELECT (F_ODJ); my_use("odj"); set order to tag "ID"
 #xcommand O_DIO       => SELECT (F_DIO); my_use("dio"); set order to tag "ID"
 #xcommand O_UREDJ     => SELECT (F_UREDJ); my_use("uredj"); set order to tag "ID"

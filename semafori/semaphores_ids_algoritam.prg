@@ -169,11 +169,12 @@ FUNCTION get_ids_from_semaphore( table )
    LOCAL _tbl_obj, _update_obj
    LOCAL _qry
    LOCAL cIds, _num_arr, _arr, nI
-   LOCAL _server := pg_server()
+   LOCAL _server := my_server()
    LOCAL _user := f18_user()
    LOCAL _tok, _versions, _tmp
    LOCAL _log_level := log_level()
    LOCAL lAllreadyInTransaction := .F.
+   LOCAL cTransactionName
 
    IF skip_semaphore_sync( table )
       RETURN .T.
@@ -186,9 +187,10 @@ FUNCTION get_ids_from_semaphore( table )
    log_write( "START get_ids_from_semaphore", 7 )
 
    _tbl := "sem." + Lower( table )
+   cTransactionName := "ids_" + table
 
    IF !lAllreadyInTransaction
-      run_sql_query( "BEGIN; SET TRANSACTION ISOLATION LEVEL SERIALIZABLE" )
+      run_sql_query( "BEGIN; SET TRANSACTION ISOLATION LEVEL SERIALIZABLE",,, cTransactionName )
    ENDIF
 
    IF _log_level > 6
@@ -214,7 +216,8 @@ FUNCTION get_ids_from_semaphore( table )
    IF ( _tbl_obj == NIL ) .OR. ( _update_obj == NIL ) .OR. ( ValType( _update_obj ) == "L" .AND. _update_obj == .F. )
 
       IF !lAllreadyInTransaction
-         sql_table_update( nil, "ROLLBACK", nil, nil, .T. )
+         run_sql_query( "ROLLBACK",,, cTransactionName )
+
       ENDIF
 
       log_write( "transakcija neuspjesna #29667 ISOLATION LEVEL !", 1, .T. )
@@ -238,7 +241,7 @@ FUNCTION get_ids_from_semaphore( table )
    ENDIF
 
    IF !lAllreadyInTransaction
-      sql_table_update( nil, "END" )
+      run_sql_query( "COMMIT",,, cTransactionName )
    ENDIF
 
    cIds := _tbl_obj:FieldGet( 1 )

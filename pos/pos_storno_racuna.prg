@@ -17,7 +17,7 @@
 FUNCTION pos_vrati_broj_racuna_iz_fiskalnog( fisc_rn, broj_racuna, datum_racuna )
 
    LOCAL _qry, _qry_ret, _table
-   LOCAL _server := pg_server()
+   LOCAL _server := my_server()
    LOCAL _i, oRow
    LOCAL _id_pos := gIdPos
    LOCAL _rn_broj := ""

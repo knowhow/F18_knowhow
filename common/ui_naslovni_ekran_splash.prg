@@ -61,7 +61,7 @@ FUNCTION naslovni_ekran_splash_screen( cNaslov, cVer )
   open_main_window()
 
 #ifdef F18_DEBUG
-   Alert( "maxrow: " + hb_valToStr(MaxRow()) + " maxcol: " + hb_valToStr(MaxCol()) )
+   ?E  "maxrow: " + hb_valToStr(MaxRow()) + " maxcol: " + hb_valToStr(MaxCol())
 #endif
    //BoxC()
 

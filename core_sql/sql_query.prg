@@ -11,6 +11,8 @@
 
 #include "f18.ch"
 
+STATIC s_mtxMutex
+STATIC s_aTransactions := {}
 
 FUNCTION set_sql_search_path()
 
@@ -33,24 +35,47 @@ FUNCTION set_sql_search_path()
 
 FUNCTION _sql_query( oServer, cQuery, silent )
 
-   RETURN run_sql_query( cQuery, 10, oServer )
+   RETURN run_sql_query( cQuery, 2, oServer )
 
 
-FUNCTION run_sql_query( qry, retry, oServer )
+FUNCTION run_sql_query( qry, retry, oServer, cTransactionName )
 
-   LOCAL _i, _qry_obj, lMsg := .F.
+   LOCAL _i, oQuery
    LOCAL _server
    LOCAL _msg
    LOCAL cTip
+   LOCAL nPos
 
    IF retry == NIL
-      retry := 10
+      retry := 2
    ENDIF
 
    IF oServer == NIL
       _server := my_server()
    ELSE
       _server := oServer
+   ENDIF
+
+   IF Left( qry, 5 ) == "BEGIN"
+      IF hb_mutexLock( s_mtxMutex )
+         AAdd( s_aTransactions, { Time(), my_server():pDB, hb_threadSelf(), cTransactionName } )
+         hb_mutexUnlock( s_mtxMutex )
+      ENDIF
+   ENDIF
+
+   IF Left( qry, 6 ) == "COMMIT" .OR. Left( qry, 8 ) == "ROLLBACK"
+      IF hb_mutexLock( s_mtxMutex )
+         nPos := AScan( s_aTransactions, { | aTran | ValType( aTran ) == "A" .AND. aTran[ 2 ] == my_server():pDB .AND.  aTran[ 4 ] == cTransactionName } )
+         //nPos := AScan( s_aTransactions, { | aTran | ValType( aTran ) == "A" .AND.  aTran[ 4 ] == cTransactionName } )
+
+         IF nPos > 0
+            ADel( s_aTransactions, nPos )
+            ASize( s_aTransactions, Len( s_aTransactions ) - 1 )
+         ENDIF
+         hb_mutexUnlock( s_mtxMutex )
+
+      ENDIF
+
    ENDIF
 
    IF Left( Upper( qry ), 6 ) == "SELECT"
@@ -71,12 +96,11 @@ FUNCTION run_sql_query( qry, retry, oServer )
 
       IF _i > 1
          error_bar( "sql",  qry + " pokušaj: " + AllTrim( Str( _i ) ) )
-         lMsg := .T.
       ENDIF
 
       BEGIN SEQUENCE WITH {| err| Break( err ) }
 
-         _qry_obj := _server:Query( qry + ";" )
+         oQuery := _server:Query( qry + ";" )
 
       RECOVER
 
@@ -85,9 +109,12 @@ FUNCTION run_sql_query( qry, retry, oServer )
       END SEQUENCE
 
 
-      IF sql_error_in_query( _qry_obj, cTip )
+      IF sql_error_in_query( oQuery, cTip )
 
          ?E "SQL ERROR QUERY: ", qry
+         ?E "pDb:", my_server():pDb
+         print_transactions()
+         print_threads( qry )
          error_bar( "sql", qry )
          IF _i == retry
             RETURN .F.
@@ -97,12 +124,26 @@ FUNCTION run_sql_query( qry, retry, oServer )
          _i := retry + 1
       ENDIF
 
-      iif( lMsg, MsgC(), NIL )
 
    NEXT
 
-   RETURN _qry_obj
+   RETURN oQuery
 
+
+PROCEDURE print_transactions()
+
+   LOCAL aTransaction
+
+   ?E "SQL transactions:"
+   FOR EACH aTransaction IN s_aTransactions
+      IF ValType( aTransaction ) == "A"
+         ?E aTransaction[ 1 ], "pDB:", aTransaction[ 2 ], "thread id:", aTransaction[ 3 ], aTransaction[ 4 ]
+      ELSE
+         ?E ValType( aTransaction ),  aTransaction
+      ENDIF
+   NEXT
+
+   RETURN
 
 FUNCTION is_var_objekat_tpqserver( xVar )
    RETURN is_var_objekat_tipa( xVar, "TPQServer" )
@@ -173,3 +214,10 @@ FUNCTION sql_query_bez_zapisa( ret )
    END SWITCH
 
    RETURN .F.
+
+
+INIT PROCEDURE init_sql_qry()
+
+   s_mtxMutex := hb_mutexCreate()
+
+   RETURN

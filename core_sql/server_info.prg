@@ -34,7 +34,7 @@ FUNCTION server_sys_info( var )
 
    LOCAL _qry
    LOCAL _ret_sql
-   LOCAL _server := pg_server()
+   LOCAL _server := my_server()
    LOCAL _ret := hb_Hash()
 
    _qry := "select inet_client_addr(), inet_client_port(),  inet_server_addr(), inet_server_port(), user"

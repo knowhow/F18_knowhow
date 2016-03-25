@@ -280,7 +280,7 @@ STATIC FUNCTION _grupno_sql_gen( racuni, params )
 
    LOCAL _ok := .F.
    LOCAL _qry, _table, _where
-   LOCAL _server := pg_server()
+   LOCAL _server := my_server()
    LOCAL oRow
    LOCAL _scan
 

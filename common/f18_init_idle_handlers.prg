@@ -15,7 +15,6 @@ STATIC aIdleHandlers := {}
 
 FUNCTION add_idle_handlers()
 
-   AltD()
    AAdd( aIdleHandlers, hb_idleAdd( {||  hb_DispOutAt( maxrows(),  maxcols() - 8, Time(), F18_COLOR_INFO_PANEL ) } ) )
    AAdd( aIdleHandlers, hb_idleAdd( {||  hb_DispOutAt( maxrows(),  maxcols() - 8 - 8 - 1, "< CALC >", F18_COLOR_INFO_PANEL ), ;
       iif( !in_calc() .AND. MINRECT( maxrows(), maxcols() - 8 - 8 - 1, maxrows(), maxcols() - 8 - 1 ), Calc(), NIL ) } ) )
@@ -33,22 +32,24 @@ STATIC PROCEDURE alias_dbf_refresh()
 
    cAlias := Alias()
 
-   IF !Empty( cAlias ) .AND. ( rddName() == DBFENGINE )
+   IF Empty( cAlias ) .OR. ( rddName() != DBFENGINE )
+      RETURN
+   ENDIF
 
+   aDbfRec := get_a_dbf_rec( cAlias )
 
-      aDbfRec := get_a_dbf_rec( cAlias )
-      IF !skip_semaphore_sync( aDbfRec[ 'table' ] ) ;
-            .AND. !in_dbf_refresh( aDbfRec[ 'table' ] ) .AND.  !is_last_refresh_before( aDbfRec[ 'table' ], 7 )
-         thread_dbfs( hb_threadStart(  @thread_dbf_refresh(), cAlias ) )
+   IF !skip_semaphore_sync( aDbfRec[ 'table' ] ) .AND. ;
+      !in_dbf_refresh( aDbfRec[ 'table' ] ) .AND.  ;
+      !is_last_refresh_before( aDbfRec[ 'table' ], 7 )
+      thread_dbfs( hb_threadStart(  @thread_dbf_refresh(), cAlias ) )
 #ifdef F18_DEBUG_THREAD
-         ?E "alias_dbf_refresh thread start", cAlias
+      ?E "alias_dbf_refresh thread start", cAlias, "main thread:", main_thread()
 #endif
 #ifdef F18_DEBUG_THREAD
-      ELSE
+   ELSE
 
-         ?E "alias_dbf_refresh ne treba", cAlias
+      ?E "alias_dbf_refresh ne treba", cAlias
 #endif
-      ENDIF
    ENDIF
 
    RETURN

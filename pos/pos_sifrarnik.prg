@@ -232,7 +232,7 @@ FUNCTION P_MJTRUR( cId, dx, dy )
 
 FUNCTION EdOsob()
 
-   LOCAL nSystemLevel := ( KLevel < L_UPRAVN )
+   LOCAL lSystemLevel := ( pos_admin() )
    LOCAL nVrati := DE_CONT
    LOCAL _rec
 
@@ -245,7 +245,7 @@ FUNCTION EdOsob()
          nVrati := DE_CONT
       ELSE
 
-         IF nSystemLevel
+         IF lSystemLevel
 
             // setuj varijable globalne
             set_global_memvars_from_dbf()
@@ -277,7 +277,7 @@ FUNCTION EdOsob()
          nVrati := DE_CONT
       ELSE
 
-         IF nSystemLevel
+         IF lSystemLevel
 
             set_global_memvars_from_dbf()
             _korsif := CryptSC( _korsif )
@@ -302,7 +302,7 @@ FUNCTION EdOsob()
          MsgBeep( "Nemate ovlastenje za ovu opciju !" )
          nVrati := DE_CONT
       ELSE
-         IF nSystemLevel
+         IF lSystemLevel
             IF Pitanje(, "Izbrisati korisnika " + Trim( naz ) + ":" + CryptSC( korsif ) + " D/N ?", "N" ) == "D"
 
                SELECT osob
@@ -334,7 +334,7 @@ FUNCTION GetOsob( fNovi )
 
    SET CURSOR ON
 
-   IF fNovi .OR. KLevel == "0"
+   IF fNovi .OR. pos_admin()
       @ m_x + 1, m_y + 2 SAY "Sifra radnika (ID)." GET _id VALID vpsifra( _id )
    ELSE
       @ m_x + 1, m_y + 2 SAY "Sifra radnika (ID). " + _id

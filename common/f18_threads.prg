@@ -35,21 +35,20 @@ FUNCTION is_in_main_thread()
    RETURN hb_threadSelf() == main_thread()
 
 
-FUNCTION init_thread( cInfo )
+FUNCTION open_thread( cInfo )
 
    LOCAL lSet, nCounter := 0
 
    DO WHILE s_nThreadCount > 7
       nCounter++
       IF nCounter > 100
-         lSet := .F.
-         DO WHILE !lSet
-            nCounter := 0
-            ?E Time(), "thread count>7 (", AllTrim( Str( s_nThreadCount ) ), "), sacekati:", cInfo
-            print_threads()
-            RETURN .F.
-         ENDDO
+         ?E Time(), "thread count>7 (", AllTrim( Str( s_nThreadCount ) ), "), sacekati:", cInfo
+         print_threads( "tread_cnt_max" + cInfo )
+         RETURN .F.
       ENDIF
+#ifdef F18_DEBUG_THREAD
+      ?E hb_threadSelf(), "init thread sleep 2"
+#endif
       hb_idleSleep( 2 )
    ENDDO
 
@@ -59,36 +58,23 @@ FUNCTION init_thread( cInfo )
          lSet := .T.
          s_nThreadCount++
          AAdd( s_aThreads, { hb_threadSelf(), cInfo, Time() } )
+#ifdef F18_DEBUG_THREAD
+         print_threads( "open_thread:" + cInfo )
+#endif
          hb_mutexUnlock( s_hMutex )
       ENDIF
    ENDDO
 
 #ifdef F18_DEBUG_THREAD
-   ?E ">>>>> START: thread: ", cInfo, " cnt:(", AllTrim( Str( s_nThreadCount ) ), ") <<<<<"
+   ?E ">>>>> START: thread: ", cInfo, " cnt:(", AllTrim( Str( s_nThreadCount ) ), "in main_thread:", is_in_main_thread(), ") <<<<<"
 #endif
 
    my_server()
-
    set_f18_home( my_server_params()[ "database" ] )
    init_parameters_cache()
 
    RETURN .T.
 
-
-PROCEDURE print_threads()
-
-   LOCAL aThread
-
-   ?E "threads:"
-   FOR EACH aThread IN s_aThreads
-      IF ValType( aThread ) == "A"
-       ?E s_nThreadCount, aThread[ 3 ], aThread[ 1 ], aThread[ 2 ]
-      ELSE
-        ?E s_nThreadCount,  ValType( aThread ),  aThread
-      ENDIF
-   NEXT
-
-   RETURN
 
 
 PROCEDURE close_thread( cInfo )
@@ -99,15 +85,15 @@ PROCEDURE close_thread( cInfo )
    DO WHILE !lSet
       IF hb_mutexLock( s_hMutex )
 #ifdef F18_DEBUG_THREAD
-         print_threads()
+         print_threads( "close_thread:" + cInfo )
 #endif
          s_nThreadCount--
          nPos := AScan( s_aThreads, {| aItem | aItem[ 1 ] == hb_threadSelf() } )
          IF nPos > 0
-             ADel( s_aThreads, nPos )
-             ASize( s_aThreads, LEN( s_aThreads) - 1 )
+            ADel( s_aThreads, nPos )
+            ASize( s_aThreads, Len( s_aThreads ) - 1 )
          ELSE
-             ? "ERR: thread nije u listi:", hb_threadSelf()
+            ? "ERR: thread nije u listi:", hb_threadSelf()
          ENDIF
          lSet := .T.
          hb_mutexUnlock( s_hMutex )
@@ -118,5 +104,23 @@ PROCEDURE close_thread( cInfo )
 #ifdef F18_DEBUG_THREAD
    ?E "<<<<<< END: thread", cInfo, "thread count:", s_nThreadCount
 #endif
+
+   RETURN
+
+
+PROCEDURE print_threads( cInfo )
+
+   LOCAL aThread
+
+   ?E "THREADS:", cInfo
+   ?E REPLICATE( "-", 80 )
+   FOR EACH aThread IN s_aThreads
+      IF ValType( aThread ) == "A"
+         ?E s_nThreadCount, aThread[ 3 ], aThread[ 1 ], aThread[ 2 ]
+      ELSE
+         ?E s_nThreadCount,  ValType( aThread ),  aThread
+      ENDIF
+   NEXT
+   ?E REPLICATE( ".", 80 )
 
    RETURN

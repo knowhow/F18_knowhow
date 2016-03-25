@@ -512,7 +512,7 @@ STATIC FUNCTION get_data( param, data_fin, konto_data, partner_data )
 
 
    switch_to_database( _db_params, _tek_database, _year_sez )
-   _server := pg_server()
+   _server := my_server()
 
    MsgO( "početno stanje - sql query u toku..." )
 
@@ -539,7 +539,7 @@ STATIC FUNCTION get_data( param, data_fin, konto_data, partner_data )
    MsgC()
 
    switch_to_database( _db_params, _tek_database, _year_tek )
-   _server := pg_server()
+   _server := my_server()
 
    RETURN
 

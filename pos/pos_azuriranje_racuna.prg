@@ -21,7 +21,6 @@ FUNCTION pos_azuriraj_racun( cIdPos, cBrojRacuna, cVrijeme, cNacPlac, cIdGost )
    LOCAL lOk := .T.
    LOCAL lRet := .F.
 
-
   o_pos_tables()
 
    IF !racun_se_moze_azurirati( cIdPos, VD_RN, gDatum, cBrojRacuna )
@@ -31,16 +30,21 @@ FUNCTION pos_azuriraj_racun( cIdPos, cBrojRacuna, cVrijeme, cNacPlac, cIdGost )
    SELECT _pos_pripr
    GO TOP
 
-   sql_table_update( nil, "BEGIN" )
+   run_sql_query( "BEGIN",,, "pos_rn_azur" )
    IF !f18_lock_tables( { "pos_pos", "pos_doks" }, .T. )
-      sql_table_update( nil, "END" )
+      run_sql_query( "COMMIT",,, "pos_rn_azur" )
       MsgBeep( "Ne mogu zaključati tabele !#Prekidam operaciju." )
       RETURN lRet
    ENDIF
 
    MsgO( "Ažuriranje stavki računa u toku ..." )
 
-   SELECT pos_doks
+   IF SELECT( "pos_doks" ) == 0
+     o_pos_doks()
+   ELSE
+     SELECT POS_DOKS
+   ENDIF
+
    APPEND BLANK
 
    cDokument := ALLTRIM( cIdPos ) + "-" + VD_RN + "-" + ALLTRIM( cBrojRacuna ) + " " + DTOC( gDatum )
@@ -111,10 +115,10 @@ FUNCTION pos_azuriraj_racun( cIdPos, cBrojRacuna, cVrijeme, cNacPlac, cIdGost )
    IF lOk
       lRet := .T.
       f18_free_tables( { "pos_pos", "pos_doks" } )
-      sql_table_update( nil, "END" )
+      run_sql_query( "COMMIT",,, "pos_rn_azur" )
       log_write( "F18_DOK_OPER, ažuriran računa " + cDokument, 2 )
    ELSE
-      sql_table_update( nil, "ROLLBACK" )
+      run_sql_query( "ROLLBACK",,, "pos_rn_azur" )
       log_write( "F18_DOK_OPER, greška sa ažuriranjem računa " + cDokument, 2 )
    ENDIF
 

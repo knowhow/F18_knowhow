@@ -1302,7 +1302,7 @@ STATIC FUNCTION show_last_racun( cIdPartner, cDestinacija, cIdRoba )
 FUNCTION fakt_za_destinaciju( cIdPartner, cDestinacija, cIdRoba )
 
    LOCAL cQuery, oRez
-   LOCAL oServer := pg_server()
+   LOCAL oServer := my_server()
    LOCAL cBrDok, oRow
 
    cQuery := "SELECT brdok FROM " + F18_PSQL_SCHEMA_DOT + "fakt_fakt" + ;

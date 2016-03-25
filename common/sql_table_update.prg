@@ -20,7 +20,7 @@ FUNCTION sql_table_update( table, op, record, where_str, silent )
    LOCAL _qry
    LOCAL _tbl
    LOCAL _where
-   LOCAL _server := pg_server()
+   LOCAL _server := my_server()
    LOCAL _key
    LOCAL _pos
    LOCAL _dec

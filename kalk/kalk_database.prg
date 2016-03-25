@@ -17,7 +17,7 @@
 FUNCTION kalk_kol_stanje_artikla_magacin( m_konto, id_roba, datum_do )
 
    LOCAL _qry, _qry_ret, _table
-   LOCAL _server := pg_server()
+   LOCAL _server := my_server()
    LOCAL _data := {}
    LOCAL oRow
    LOCAL _stanje
@@ -59,7 +59,7 @@ FUNCTION kalk_kol_stanje_artikla_magacin( m_konto, id_roba, datum_do )
 FUNCTION kalk_kol_stanje_artikla_prodavnica( p_konto, id_roba, datum_do )
 
    LOCAL _qry, _qry_ret, _table
-   LOCAL _server := pg_server()
+   LOCAL _server := my_server()
    LOCAL _data := {}
    LOCAL oRow
    LOCAL _stanje

@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out knowhow ERP, a free and open source 
+/*
+ * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
  * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -158,7 +158,7 @@ FUNCTION pos_prepis_dokumenta()
 
    aOpc := { "<ENTER> Odabir", "<E> eksport" }
 
-   IF klevel <= "1"
+   IF pos_upravnik() .or. pos_admin()
       AAdd( aOpc, "<F2> - promjena vrste placanja" )
    ENDIF
 
@@ -201,7 +201,7 @@ FUNCTION pos_stampa_dokumenta_key_handler( dDat0, dDat1 )
 
    DO CASE
 
-   CASE Ch == K_F2 .AND. kLevel <= "1"
+   CASE Ch == K_F2 .AND. ( pos_admin() .OR. pos_upravnik() )
 
       IF Pitanje(, "Želite li promijeniti vrstu plaćanja (D/N) ?", "N" ) == "D"
 
@@ -451,7 +451,7 @@ FUNCTION pos_pregled_stavki_racuna()
 
    Box(, 15, nMaxCol )
 
-   @ m_x + 1, m_y + 19 SAY8 PadC ( "Pregled " + IIF( gRadniRac == "D", "stalnog ", "" ) + "računa " + Trim( pos_doks->IdPos ) + "-" + LTrim ( pos_doks->BrDok ), 30 ) COLOR F18_COLOR_INVERT 
+   @ m_x + 1, m_y + 19 SAY8 PadC ( "Pregled " + IIF( gRadniRac == "D", "stalnog ", "" ) + "računa " + Trim( pos_doks->IdPos ) + "-" + LTrim ( pos_doks->BrDok ), 30 ) COLOR F18_COLOR_INVERT
 
    oBrowse := FormBrowse( m_x + 2, m_y + 1, m_x + 15, m_y + nMaxCol, ImeKol, Kol, { BROWSE_PODVUCI_2, BROWSE_PODVUCI, BROWSE_COL_SEP }, 0 )
    ShowBrowse( oBrowse, {}, {} )
@@ -487,5 +487,3 @@ STATIC FUNCTION browse_kolone( aImeKol, aKol )
    NEXT
 
    RETURN
-
-

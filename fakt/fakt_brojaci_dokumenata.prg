@@ -358,7 +358,7 @@ FUNCTION fakt_postoji_li_rupa_u_brojacu( id_firma, id_tip_dok, priprema_broj )
 
    LOCAL _ret := 0
    LOCAL _qry, _table
-   LOCAL _server := pg_server()
+   LOCAL _server := my_server()
    LOCAL _max_dok, _par_dok, _param
    LOCAL _params := fakt_params()
    LOCAL _tip_srch, _tmp

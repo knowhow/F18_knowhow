@@ -567,6 +567,8 @@ FUNCTION edit_fin_pripr()
 
    IF SELECT( "fin_pripr" ) == 0
      O_FIN_PRIPR
+   ELSE
+     SELECT FIN_PRIPR
    ENDIF
 
    IF ( Ch == K_CTRL_T .OR. Ch == K_ENTER ) .AND. RecCount2() == 0

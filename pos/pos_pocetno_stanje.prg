@@ -142,7 +142,7 @@ STATIC FUNCTION pocetno_stanje_sql( param )
    LOCAL _year_sez := Year( _date_to )
    LOCAL _year_tek := Year( _date_ps )
    LOCAL _id_pos := PARAM[ "id_pos" ]
-   LOCAL _server := pg_server()
+   LOCAL _server := my_server()
    LOCAL _qry, _table, _row
    LOCAL _count := 0
    LOCAL _rec, _id_roba, _kolicina, _vrijednost
@@ -150,7 +150,7 @@ STATIC FUNCTION pocetno_stanje_sql( param )
    LOCAL lOk := .T.
 
    prebaci_se_u_bazu( _db_params, _tek_database, _year_sez )
-   _server := pg_server()
+   _server := my_server()
 
    _qry := "SELECT " + ;
       "idroba, " + ;
@@ -180,7 +180,7 @@ STATIC FUNCTION pocetno_stanje_sql( param )
    msgC()
 
    prebaci_se_u_bazu( _db_params, _tek_database, _year_tek )
-   _server := pg_server()
+   _server := my_server()
 
    O_POS
    O_POS_DOKS

@@ -1100,7 +1100,7 @@ METHOD F18AdminOpts:relogin_as( user, pwd, database )
 
    my_server_params( _db_params )
    my_server_login( _db_params, _conn )
-   _pg_server := pg_server()
+   _pg_server := my_server()
 
    RETURN _pg_server
 

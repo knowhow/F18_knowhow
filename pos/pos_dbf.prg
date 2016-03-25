@@ -21,7 +21,7 @@ FUNCTION pos_init_dbfs()
    pos_definisi_inicijalne_podatke()
    cre_priprz()
 
-   RETURN
+   RETURN .T.
 
 
 STATIC FUNCTION cre_priprz()
@@ -50,9 +50,47 @@ STATIC FUNCTION cre_priprz()
       CREATE_INDEX ( "1", "IdRoba", cFileName )
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
+FUNCTION o_pos_table( nArea, cTable, cTag )
+
+   LOCAL lUsed := .F.
+
+   SELECT ( nArea )
+   DO WHILE !lUsed
+      IF my_use( cTable )
+         lUsed := .T.
+         ordSetFocus( cTag )
+         IF Empty( ordKey())
+            lUsed := .F.
+            ?E "ERR o_pos_table:", cTable, cTag
+            USE
+         ENDIF
+      ELSE
+         hb_idleSleep( 1.5 )
+      ENDIF
+
+   ENDDO
+
+   RETURN .T.
+
+
+FUNCTION o_pos_doks()
+   RETURN o_pos_table( F_POS_DOKS, "pos_doks", "1" )
+
+FUNCTION o_pos_pos()
+   RETURN o_pos_table( F_POS_POS, "pos_pos", "1" )
+
+FUNCTION o_pos_osob()
+   RETURN o_pos_table( F_OSOB, "osob", "ID" )
+
+
+FUNCTION o_pos_strad()
+   RETURN o_pos_table( F_STRAD, "strad", "ID" )
+
+FUNCTION o_pos_kase()
+   RETURN o_pos_table( F_KASE, "kase", "ID" )
 
 
 
@@ -61,7 +99,12 @@ STATIC FUNCTION dodaj_u_sifrarnik_prioriteta( cSifra, cPrioritet, cOpis )
    LOCAL lOk := .T.
    LOCAL _rec
 
-   SELECT strad
+   IF Select( "STRAD" ) == 0
+      o_pos_strad()
+   ELSE
+      SELECT STRAD
+   ENDIF
+
    APPEND BLANK
 
    _rec := dbf_get_rec()
@@ -81,7 +124,12 @@ STATIC FUNCTION dodaj_u_sifrarnik_radnika( cSifra, cLozinka, cOpis, cStatus )
    LOCAL lOk := .T.
    LOCAL _rec
 
-   SELECT OSOB
+   IF Select( "OSOB" ) == 0
+      o_pos_osob()
+   ELSE
+      SELECT OSOB
+   ENDIF
+
    APPEND BLANK
 
    _rec := dbf_get_rec()
@@ -106,10 +154,10 @@ STATIC FUNCTION pos_definisi_inicijalne_podatke()
 
       MsgO( "Definišem šifre prioriteta ..." )
 
-      sql_table_update( nil, "BEGIN" )
+      // sql_table_update( nil, "BEGIN" )
       IF !f18_lock_tables( { "pos_strad" }, .T. )
-         sql_table_update( nil, "END" )
-         RETURN
+         // sql_table_update( nil, "END" )
+         RETURN .F.
       ENDIF
 
       lOk := dodaj_u_sifrarnik_prioriteta( "0", "0", "Nivo adm." )
@@ -126,9 +174,9 @@ STATIC FUNCTION pos_definisi_inicijalne_podatke()
 
       IF lOk
          f18_free_tables( { "pos_strad" } )
-         sql_table_update( nil, "END" )
+         // sql_table_update( nil, "END" )
       ELSE
-         sql_table_update( nil, "ROLLBACK" )
+         // sql_table_update( nil, "ROLLBACK" )
       ENDIF
 
    ENDIF
@@ -139,10 +187,10 @@ STATIC FUNCTION pos_definisi_inicijalne_podatke()
 
       MsgO( "Definišem šifranik radnika ..." )
 
-      sql_table_update( nil, "BEGIN" )
+      // sql_table_update( nil, "BEGIN" )
       IF !f18_lock_tables( { "pos_osob" }, .T. )
-          sql_table_update( nil, "END" )
-          RETURN
+         // sql_table_update( nil, "END" )
+         RETURN .F.
       ENDIF
 
       lOk := dodaj_u_sifrarnik_radnika( "0001", "PARSON", "Admin", "0" )
@@ -159,16 +207,17 @@ STATIC FUNCTION pos_definisi_inicijalne_podatke()
 
       IF lOk
          f18_free_tables( { "pos_osob" } )
-         sql_table_update( nil, "END" )
+         // sql_table_update( nil, "END" )
       ELSE
-         sql_table_update( nil, "ROLLBACK" )
+         // sql_table_update( nil, "ROLLBACK" )
       ENDIF
 
    ENDIF
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
+
 
 FUNCTION o_pos_tables( lOtvoriKumulativ )
 
@@ -208,7 +257,7 @@ FUNCTION o_pos_tables( lOtvoriKumulativ )
       SELECT _pos_pripr
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 STATIC FUNCTION o_pos_kumulativne_tabele()
@@ -217,7 +266,7 @@ STATIC FUNCTION o_pos_kumulativne_tabele()
    O_POS_DOKS
    O_DOKSPF
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -236,7 +285,7 @@ FUNCTION o_pos_sifre()
    O_SIFK
    O_SIFV
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -267,7 +316,7 @@ FUNCTION pos_iznos_racuna( cIdPos, cIdVD, dDatum, cBrDok )
       RETURN nTotal
    ENDIF
 
-   nTotal := oData:FieldGet(1)
+   nTotal := oData:FieldGet( 1 )
 
    RETURN nTotal
 
@@ -276,7 +325,7 @@ FUNCTION pos_iznos_racuna( cIdPos, cIdVD, dDatum, cBrDok )
 FUNCTION pos_stanje_artikla( id_pos, id_roba )
 
    LOCAL _qry, _qry_ret, _table
-   LOCAL _server := pg_server()
+   LOCAL _server := my_server()
    LOCAL _data := {}
    LOCAL _i, oRow
    LOCAL _stanje := 0
@@ -457,11 +506,11 @@ FUNCTION pos_reset_broj_dokumenta( id_pos, tip_dok, broj_dok )
    _broj := fetch_metric( _param, nil, _broj )
 
    IF Val( AllTrim( broj_dok ) ) == _broj
-      -- _broj
+      --_broj
       set_metric( _param, nil, _broj )
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -476,7 +525,7 @@ FUNCTION Del_Skip()
    my_delete()
    GO nNextRec
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -487,7 +536,7 @@ FUNCTION GoTop2()
       SKIP
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -531,7 +580,7 @@ FUNCTION pos_import_fmk_roba()
    BoxC()
 
    IF LastKey() == K_ESC
-      RETURN
+      RETURN .F.
    ENDIF
 
    set_metric( "pos_import_fmk_roba_path", my_user(), _location )
@@ -551,7 +600,7 @@ FUNCTION pos_import_fmk_roba()
    sql_table_update( nil, "BEGIN" )
    IF !f18_lock_tables( { "roba" }, .T. )
       sql_table_update( nil, "END" )
-      RETURN
+      RETURN .F.
    ENDIF
 
    Box(, 1, 60 )
@@ -660,7 +709,7 @@ FUNCTION pos_brisi_nepostojece_dokumente()
    O_POS_DOKS
    O_POS
 
-   oQry:GoTo(1)
+   oQry:GoTo( 1 )
 
    Box(, 1, 50 )
 
@@ -690,7 +739,7 @@ FUNCTION pos_brisi_nepostojece_dokumente()
    BoxC()
 
    IF nCount > 0
-       MsgBeep( "Izbrisao ukupno " + AllTrim( Str( nCount ) ) + " dokumenta !"  )
+      MsgBeep( "Izbrisao ukupno " + AllTrim( Str( nCount ) ) + " dokumenta !"  )
    ENDIF
 
-   RETURN
+   RETURN .T.

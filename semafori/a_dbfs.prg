@@ -20,9 +20,6 @@ FUNCTION set_a_dbfs()
    LOCAL _alg
 
    IF s_hF18Dbfs == NIL
-      IF s_mtxMutex == NIL
-         s_mtxMutex := hb_mutexCreate()
-      ENDIF
       hb_mutexLock( s_mtxMutex )
       s_hF18Dbfs  := hb_Hash()
       hb_mutexUnlock( s_mtxMutex )
@@ -589,3 +586,11 @@ STATIC FUNCTION zatvori_dbf( value )
    ELSE
       RETURN .T.
    ENDIF
+
+INIT PROCEDURE  init_a_dbfs()
+
+   IF s_mtxMutex == NIL
+      s_mtxMutex := hb_mutexCreate()
+   ENDIF
+
+   RETURN

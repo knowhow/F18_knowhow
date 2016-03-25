@@ -135,7 +135,7 @@ FUNCTION my_use( cAlias, cTable, lRefresh )
       thread_dbfs( hb_threadStart(  @thread_dbf_refresh(), aDbfRec[ 'table' ] ) )
 #ifdef F18_DEBUG_THREAD
    ELSE
-      ?E "my_use ne treba sync", aDbfRec[ 'table' ]
+      ?E "my_use ne treba sync", aDbfRec[ 'table' ], "main thread:", is_in_main_thread()
 #endif
    ENDIF
 
@@ -189,6 +189,10 @@ FUNCTION my_use( cAlias, cTable, lRefresh )
    IF !lUspjesno
       RaiseError( "ERROR: my_use " + aDbfRec[ 'table' ] + " neusjesno !" )
    ENDIF
+
+#ifdef F18_DEBUG_THREAD
+   ?E "my_use end", aDbfRec[ 'table' ], "main thread:", is_in_main_thread()
+#endif
 
    RETURN .T.
 

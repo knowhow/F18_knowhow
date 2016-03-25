@@ -30,7 +30,6 @@ METHOD new( p1, p2, p3, p4, p5, p6, p7, p8, p9 )
 
 
 
-
 METHOD mMenu()
 
    LOCAL Fx
@@ -53,12 +52,15 @@ METHOD mMenu()
 
    DO WHILE ( .T. )
 
+#ifdef F18_DEBUG
+      ?E ">>>>>>>>>>>>>>>>>> pos_prijava while <<<<<<<<<<<<<<<<<<<<<"
+#endif
       m_x := Fx
       m_y := Fy
 
-      KLevel := PosPrijava( Fx, Fy )
+      KLevel := pos_prijava( Fx, Fy )
 
-      IF ( self:lTerminate )
+      IF KLevel == "X"
          RETURN .F.
       ENDIF
 
@@ -89,13 +91,13 @@ METHOD mMenu()
       IF fPRviPut .AND. gVSmjene == "N" // ne vodi vise smjena
          fPrviPut := .F.
       ELSE
-         KLevel := PosPrijava( Fx, Fy )
+         KLevel := pos_prijava( Fx, Fy )
          pos_status_traka()
       ENDIF
 
       SetPos( Fx, Fy )
 
-      pos_main_menu_level( KLevel, Fx, Fy )
+      pos_main_menu_level( Fx, Fy )
 
       IF self:lTerminate
          // zavrsi run!
@@ -109,16 +111,16 @@ METHOD mMenu()
    RETURN .T.
 
 
-FUNCTION pos_main_menu_level( KLevel, Fx, Fy )
+FUNCTION pos_main_menu_level( Fx, Fy )
 
    DO CASE
 
-   CASE ( ( KLevel == L_ADMIN ) .OR. ( KLevel == L_SYSTEM ) )
+   CASE pos_admin()
       pos_main_menu_admin()
-   CASE ( KLevel == L_UPRAVN )
+   CASE pos_upravnik()
       SetPos( Fx, Fy )
       pos_main_menu_upravnik()
-   CASE ( KLevel == L_PRODAVAC )
+   CASE pos_prodavac()
       SetPos( Fx, Fy )
       pos_main_menu_prodavac()
 
@@ -444,7 +446,6 @@ METHOD set_module_gvars()
    PUBLIC glPorNaSvStRKas := .F.
 
    IF ( gVrstaRS <> "S" )
-   altd()
       O_KASE
       SET ORDER TO TAG "ID"
       HSEEK gIdPos

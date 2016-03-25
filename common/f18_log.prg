@@ -119,7 +119,7 @@ STATIC FUNCTION query_log_data( params )
    LOCAL _conds_false := params[ "conds_false" ]
    LOCAL _is_doc_oper := params[ "doc_oper" ] == "D"
    LOCAL _qry, _where
-   LOCAL _server := pg_server()
+   LOCAL _server := my_server()
    LOCAL _data
 
    IF hb_HHasKey( params, "user" )
@@ -261,7 +261,7 @@ STATIC FUNCTION sql_log_delete( params )
 
    LOCAL _ok := .T.
    LOCAL _qry, _where
-   LOCAL _server := pg_server()
+   LOCAL _server := my_server()
    LOCAL _result
    LOCAL _dok_oper := "%F18_DOK_OPER%"
    LOCAL _delete_level := params[ "delete_level" ]

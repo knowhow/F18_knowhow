@@ -77,7 +77,7 @@ FUNCTION kalk_mag_lager_lista_sql( params, ps )
 
    IF ps
       switch_to_database( _db_params, _tek_database, _year_sez )
-      _server := pg_server()
+      _server := my_server()
    ENDIF
 
    IF ps
@@ -100,7 +100,7 @@ FUNCTION kalk_mag_lager_lista_sql( params, ps )
 
    IF ps
       switch_to_database( _db_params, _tek_database, _year_tek )
-      _server := pg_server()
+      _server := my_server()
    ENDIF
 
    RETURN _data

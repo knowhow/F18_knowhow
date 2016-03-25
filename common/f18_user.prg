@@ -24,7 +24,7 @@ FUNCTION f18_set_user_preferences( params )
    LOCAL _active := "D"
    LOCAL _email
    LOCAL _qry, _table
-   LOCAL _server := pg_server()
+   LOCAL _server := my_server()
    LOCAL _show_box := .F.
 
    IF params == NIL

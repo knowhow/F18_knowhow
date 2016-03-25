@@ -497,29 +497,31 @@ FUNCTION NenapPop()
 
 
 
-FUNCTION SetUser( cKorSif, nSifLen, cLevel )
+FUNCTION pos_set_user( cKorSif, nSifLen, cLevel )
 
    O_STRAD
    O_OSOB
 
    cKorSif := CryptSC( PadR( Upper( Trim( cKorSif ) ), nSifLen ) )
    SELECT OSOB
-   Seek2( cKorSif )
+   SEEK cKorSif
 
    IF Found()
-      gIdRadnik := ID     ; gKorIme   := Naz
-      gSTRAD  := AllTrim ( Status )
+      gIdRadnik := field->ID
+      gKorIme   := field->Naz
+      gSTRAD  := AllTrim ( field->Status )
       SELECT STRAD
-      Seek2 ( OSOB->Status )
+      SEEK OSOB->Status
       IF Found ()
-         cLevel := Prioritet
+         cLevel := field->prioritet
       ELSE
-         cLevel := L_PRODAVAC ; gSTRAD := "K"
+         cLevel := L_PRODAVAC
+         gSTRAD := "K"
       ENDIF
       SELECT OSOB
       RETURN 1
    ELSE
-      MsgBeep ( "Unijeta je nepostojeca lozinka !" )
+      MsgBeep ( "Unijeta je nepostojeća lozinka !" )
       SELECT OSOB
       RETURN 0
    ENDIF

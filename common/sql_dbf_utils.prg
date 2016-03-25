@@ -237,7 +237,7 @@ FUNCTION _sql_get_value( table_name, field_name, cond )
    LOCAL _val
    LOCAL _qry := ""
    LOCAL _table
-   LOCAL _server := pg_server()
+   LOCAL _server := my_server()
    LOCAL _where := ""
    LOCAL _data := {}
    LOCAL _i, oRow

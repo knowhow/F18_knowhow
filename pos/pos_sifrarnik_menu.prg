@@ -79,7 +79,7 @@ FUNCTION SifreHSpec()
    AAdd( opc, "8. stampa normativa" )
    AAdd( opcexe, {|| ISast() } )
 
-   IF kLevel < L_UPRAVN
+   IF pos_admin()
       AAdd ( opc, "9. statusi radnika" )
       AAdd( opcexe, {|| P_StRad() } )
       AAdd ( opc, "10. osoblje" )
@@ -116,10 +116,10 @@ FUNCTION tops_sifarnici()
    AAdd( opcexe, {|| P_Kase() } )
    AAdd( opc, "8. sifk" )
    AAdd( opcexe, {|| P_SifK() } )
-   AAdd( opc, "9. uredjaji za stampu" )
+   AAdd( opc, "9. uređi za štampu" )
    AAdd( opcexe, {|| P_Uredj() } )
 
-   IF klevel < L_UPRAVN
+   IF pos_admin()
       AAdd( opc, "A. statusi radnika" )
       AAdd( opcexe, {|| P_StRad() } )
       AAdd( opc, "B. osoblje" )

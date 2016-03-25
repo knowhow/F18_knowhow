@@ -32,7 +32,7 @@ FUNCTION lock_semaphore( table, status, lUnlockTable )
    LOCAL _ret
    LOCAL _i
    LOCAL _err_msg
-   LOCAL _server := pg_server()
+   LOCAL _server := my_server()
    LOCAL _user   := f18_user()
    LOCAL _user_locked
    LOCAL cSemaphoreStatus
@@ -115,7 +115,7 @@ FUNCTION get_semaphore_locked_by_me_status_user( table )
 
    LOCAL _qry
    LOCAL _ret
-   LOCAL _server := pg_server()
+   LOCAL _server := my_server()
 
    _qry := "SELECT user_code FROM sem." + table + " WHERE algorithm = 'locked_by_me'"
    _ret := _sql_query( _server, _qry )
@@ -136,7 +136,7 @@ FUNCTION get_semaphore_status( table )
 
    LOCAL _qry
    LOCAL _ret
-   LOCAL _server := pg_server()
+   LOCAL _server := my_server()
    LOCAL _user   := f18_user()
 
    IF skip_semaphore_sync( table )
@@ -158,7 +158,7 @@ FUNCTION last_semaphore_version( table )
 
    LOCAL _qry
    LOCAL _ret
-   LOCAL _server := pg_server()
+   LOCAL _server := my_server()
 
    _qry := "SELECT last_trans_version FROM  sem." + table + " WHERE user_code=" + sql_quote( f18_user() )
    _ret := _sql_query( _server, _qry )
@@ -181,7 +181,7 @@ FUNCTION get_semaphore_version( table, last )
    LOCAL _result
    LOCAL _qry
    LOCAL _tbl
-   LOCAL _server := pg_server()
+   LOCAL _server := my_server()
    LOCAL _user := f18_user()
    LOCAL _msg
 
@@ -227,7 +227,7 @@ FUNCTION get_semaphore_version_h( table )
    LOCAL _tbl_obj
    LOCAL _qry
    LOCAL _tbl
-   LOCAL _server := pg_server()
+   LOCAL _server := my_server()
    LOCAL _user := f18_user()
    LOCAL _ret := hb_Hash()
    LOCAL _msg
@@ -274,7 +274,7 @@ FUNCTION reset_semaphore_version( table )
    LOCAL _qry
    LOCAL _tbl
    LOCAL _user := f18_user()
-   LOCAL _server := pg_server()
+   LOCAL _server := my_server()
 
    IF skip_semaphore_sync( table )
       RETURN .T.
@@ -296,36 +296,36 @@ FUNCTION reset_semaphore_version( table )
    RETURN _ret:FieldGet( 1 )
 
 
-// ------------------------------
-// broj redova za tabelu
-// --------------------------------
-FUNCTION table_count( table, condition )
 
-   LOCAL _table_obj
+FUNCTION table_count( cTable, condition )
+
+   LOCAL oQuery
    LOCAL _result
    LOCAL _qry
-   LOCAL _server := pg_server()
+   LOCAL _server := my_server()
    LOCAL cMsg
 
-   _qry := "SELECT COUNT(*) FROM " + table // provjeri prvo da li postoji uopšte ovaj site zapis
+   _qry := "SELECT COUNT(*) FROM " + cTable // provjeri prvo da li postoji uopšte ovaj site zapis
 
    IF condition != NIL
       _qry += " WHERE " + condition
    ENDIF
 
-   _table_obj := _sql_query( _server, _qry )
+   oQuery := _sql_query( _server, _qry )
 
-   IF sql_query_bez_zapisa( _table_obj )
-      cMsg := "table_count(), error: " + _qry + " msg: " + _table_obj:ErrorMsg()
-      log_write( cMsg, 1 )
-      Alert( cMsg )
+   IF sql_query_bez_zapisa( oQuery )
+      cMsg := "ERR table_count : " + _qry + " msg: "
+      IF is_var_objekat_tpqquery( oQuery )
+         cMsg += oQuery:ErrorMsg()
+      ENDIF
+      ?E cMsg
+      // Alert( cMsg )
       QUIT_1
    ENDIF
 
-   log_write( "table: " + table + " count = " + AllTrim( Str( _table_obj:FieldGet( 1 ) ) ), 8 )
+   // log_write( "table: " + cTable + " count = " + AllTrim( Str( oQuery:FieldGet( 1 ) ) ), 8 )
 
-
-   _result := _table_obj:FieldGet( 1 )
+   _result := oQuery:FieldGet( 1 )
 
    RETURN _result
 
@@ -553,7 +553,7 @@ FUNCTION nuliraj_ids_and_update_my_semaphore_ver( table )
    LOCAL _tbl
    LOCAL _ret
    LOCAL _user := f18_user()
-   LOCAL _server := pg_server()
+   LOCAL _server := my_server()
    LOCAL _qry
 
    insert_semaphore_if_not_exists( table )
@@ -626,10 +626,11 @@ FUNCTION insert_semaphore_if_not_exists( cTable, lIgnoreChk0 )
 
 FUNCTION in_dbf_refresh( cTable, lRefresh )
 
+#ifdef F18_DEBUG_THREAD
+   ?E "in_dbf_refresh", cTable, lRefresh
+#endif
+
    IF s_hInDbfRefresh == NIL
-      IF s_mtxMutex == NIL
-         s_mtxMutex := hb_mutexCreate()
-      ENDIF
       hb_mutexLock( s_mtxMutex )
       s_hInDbfRefresh := hb_Hash()
       hb_mutexUnlock( s_mtxMutex )
@@ -669,6 +670,10 @@ FUNCTION set_last_refresh( cTable )
 
 FUNCTION is_last_refresh_before( cTable, nSeconds )
 
+#ifdef F18_DEBUG_THREAD
+   ?E "is_last_refresh_before", cTable, nSeconds
+#endif
+
    IF cTable ==  s_aLastRefresh[ 1 ] .AND. ( Seconds() - s_aLastRefresh[ 2 ] )  < nSeconds
       RETURN .T.
    ENDIF
@@ -680,13 +685,12 @@ FUNCTION is_last_refresh_before( cTable, nSeconds )
 
 PROCEDURE thread_dbf_refresh( cTable )
 
-   IF init_thread( "dbf_refresh: " + cTable )
-
+   IF open_thread( "dbf_refresh: " + cTable )
       ErrorBlock( {| objError, lShowreport, lQuit | GlobalErrorHandler( objError, lShowReport, lQuit ) } )
       dbf_refresh( cTable )
-
       close_thread( "dbf_refresh: " + cTable )
-
+   ELSE
+      ?E "init thread dbf_refersh neuspjesan: ", cTable
    ENDIF
 
    RETURN
@@ -750,7 +754,7 @@ FUNCTION dbf_refresh( cTable )
       hVersions := get_semaphore_version_h( aDbfRec[ 'table' ] )
    ENDIF
 
-   IF ( hVersions[ 'version' ] < hVersions[ 'last_version' ] )
+   IF ( hVersions[ "version" ] < hVersions[ 'last_version' ] )
       update_dbf_from_server( aDbfRec[ 'table' ], "IDS" )
    ENDIF
    PopWa()
@@ -771,33 +775,36 @@ STATIC FUNCTION dbf_refresh_0( aDbfRec )
    LOCAL lRet := .T.
 
    IF is_chk0( aDbfRec[ "table" ] )
-      log_write( "chk0 already set: " + aDbfRec[ "table" ], 9 )
+#ifdef F18_DEBUG_SYNC
+      ?E "chk0 already set: " + aDbfRec[ "table" ]
+#endif
       RETURN .F.
    ENDIF
 
    cMsg1 := "START chk0 not set, start dbf_refresh_0: " + aDbfRec[ "alias" ] + " / " + aDbfRec[ "table" ]
+   set_a_dbf_rec_chk0( aDbfRec[ "table" ] )
 
    ?E cMsg1
-   log_write( "stanje dbf " +  cMsg1, 8 )
+   //log_write( "stanje dbf " +  cMsg1, 8 )
 
    nCntSql := table_count( aDbfRec[ "table" ] )
    dbf_open_temp_and_count( aDbfRec, nCntSql, @nCntDbf, @nDeleted )
 
    cMsg1 := "dbf_refresh_0_nakon sync: " +  aDbfRec[ "alias" ] + " / " + aDbfRec[ "table" ]
    cMsg2 := "cnt_sql: " + AllTrim( Str( nCntSql, 0 ) ) + " cnt_dbf: " + AllTrim( Str( nCntDbf, 0 ) ) + " del_dbf: " + AllTrim( Str( nDeleted, 0 ) )
+#ifdef F18_DEBUG_SYNC
    ?E cMsg1
    ?E cMsg2
-
-   log_write( cMsg1 + " " + cMsg2, 8 )
+#endif
 
    IF check_recno_and_fix( aDbfRec[ "table" ], nCntSql, nCntDbf - nDeleted )
 
       cMsg1 := aDbfRec[ "alias" ] + " / " + aDbfRec[ "table" ]
       cMsg2 := "cnt_sql: " + AllTrim( Str( nCntSql, 0 ) ) + " cnt_dbf: " + AllTrim( Str( nCntDbf, 0 ) ) + " del_dbf: " + AllTrim( Str( nDeleted, 0 ) )
-
+#ifdef F18_DEBUG_SYNC
       ?E cMsg1
       ?E cMsg2
-
+#endif
       IF hocu_li_pakovati_dbf( nCntDbf, nDeleted )
          pakuj_dbf( aDbfRec, .T. )
       ENDIF
@@ -805,25 +812,41 @@ STATIC FUNCTION dbf_refresh_0( aDbfRec )
       set_a_dbf_rec_chk0( aDbfRec[ "table" ] )
       RETURN .T.
 
+   ELSE
+      unset_a_dbf_rec_chk0( aDbfRec[ "table" ] )
    ENDIF
 
    RETURN .F.
 
 
-FUNCTION skip_semaphore_sync( table )
+FUNCTION skip_semaphore_sync( cTable )
 
    LOCAL hRec
 
-   table := Lower( table )
+#ifdef F18_DEBUG_THREAD
 
-   IF Left( table, 6 ) == "SYNC__"
+   ?E "skip_semaphore_sync", cTable
+#endif
+
+   cTable := Lower( cTable )
+
+   IF Left( cTable, 6 ) == "SYNC__"
       RETURN .T.
    ENDIF
 
-   hRec := get_a_dbf_rec( table, .T. )
+   hRec := get_a_dbf_rec( cTable, .T. )
 
-   IF hRec[ 'sql' ] .OR. hRec[ 'temp' ]
+   IF hRec[ "sql" ] .OR. hRec[ "temp" ]
       RETURN .T.
    ENDIF
 
    RETURN .F.
+
+
+INIT PROCEDURE init_semaphores()
+
+   IF s_mtxMutex == NIL
+      s_mtxMutex := hb_mutexCreate()
+   ENDIF
+
+   RETURN

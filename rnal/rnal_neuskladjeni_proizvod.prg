@@ -63,7 +63,7 @@ METHOD RNALDamageDocument:get_damage_data()
 
    LOCAL _ok := .F.
    LOCAL _qry, _table
-   LOCAL _server := pg_server()
+   LOCAL _server := my_server()
    LOCAL _log_type := "21"
 
    _qry := "SELECT " + ;
@@ -456,7 +456,7 @@ METHOD RNALDamageDocument:config_tbl_struct()
 METHOD RNALDamageDocument:get_rnal_header_data()
 
    LOCAL _qry, _table
-   LOCAL _server := pg_server()
+   LOCAL _server := my_server()
 
    _qry := "SELECT * FROM " + F18_PSQL_SCHEMA_DOT + "rnal_docs " + ;
       " WHERE doc_no = " + docno_str( ::doc_no ) + ;
@@ -477,7 +477,7 @@ METHOD RNALDamageDocument:get_rnal_header_data()
 METHOD RNALDamageDocument:get_rnal_items_data()
 
    LOCAL _qry, _table
-   LOCAL _server := pg_server()
+   LOCAL _server := my_server()
    LOCAL _items_cond := ::get_damage_items_cond( "doc_it_no" )
    LOCAL _i
 
@@ -500,7 +500,7 @@ METHOD RNALDamageDocument:get_rnal_items_data()
 METHOD RNALDamageDocument:get_rnal_opers_data()
 
    LOCAL _qry, _table
-   LOCAL _server := pg_server()
+   LOCAL _server := my_server()
    LOCAL _items_cond := ::get_damage_items_cond( "doc_it_no" )
 
    _qry := " SELECT * FROM " + F18_PSQL_SCHEMA_DOT + "rnal_doc_ops " + ;

@@ -13,7 +13,7 @@
 
 function fin_test()
 LOCAL _user := f18_user()
-LOCAL _server := pg_server()
+LOCAL _server := my_server()
 
 
 local _i, _rec

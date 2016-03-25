@@ -170,8 +170,8 @@ FUNCTION ProvKonzBaze( dDatum, cSmjena )
       ? dDatum, d_Doks, cSmjena, s_Doks
       IF ( dDatum < d_DOKS ) .OR. ( dDatum == d_DOKS ) .AND. ( cSmjena < s_DOKS )
          MsgBeep ( "Postoji zakljucen promet na#datum " + FormDat1 ( d_DOKS ) + " u smjeni " + s_DOKS )
-         IF Klevel > L_SYSTEM
-            MsgBeep ( "Vracate se na unos!!!" )
+         IF !pos_admin()
+            MsgBeep ( "Vraćate se na unos!" )
             RETURN ( .F. )
          ELSE
             MsgBeep ( "Rad nastavlja SISTEM ADMINISTRATOR!!!" )

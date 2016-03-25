@@ -95,7 +95,7 @@ FUNCTION set_metric( sect, user, value )
 
    LOCAL _table
    LOCAL _temp_qry
-   LOCAL _server := pg_server()
+   LOCAL _server := my_server()
    LOCAL _val
 
    IF user != NIL

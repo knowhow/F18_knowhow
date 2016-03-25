@@ -15,7 +15,7 @@ MEMVAR m_x, m_y
 
 FUNCTION pos_get_lozinka( nSiflen )
 
-   LOCAL cKorsif
+   LOCAL cKorsif, nChar
 
    cKorsif := ""
    Box(, 2, 30 )
@@ -23,7 +23,10 @@ FUNCTION pos_get_lozinka( nSiflen )
 
    DO WHILE .T.
 
-      nChar := Inkey(0)
+      nChar := Inkey( 0 )
+#ifdef F18_DEBUG
+      ?E "pos_get_lozinka", nChar
+#endif
 
       IF nChar == K_ESC
          cKorsif := ""
@@ -58,7 +61,6 @@ FUNCTION pos_get_lozinka( nSiflen )
 
    BoxC()
 
-ALTD()
    SET CURSOR ON
 
    RETURN PadR( cKorSif, nSifLen )

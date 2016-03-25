@@ -510,7 +510,7 @@ FUNCTION dbf_open_temp_and_count( aDbfRec, nCntSql, nCnt, nDel )
             aDbfRec[ "table" ] + " nDel:" + AllTrim( Str( nDel ) ) + ;
             " nCnt2= " + AllTrim( Str ( nCnt2 ) ), 1 )
       ELSE
-         log_write( "ERR-dbf_open_temp_and_count: " + aDbfRec[ "table" ] + " not defined dbf_key_empty_rec", 1 )
+         ?E "WARNING-dbf_open_temp_and_count_NOT_defined_dbf_key_empty_rec: " + aDbfRec[ "table" ]
       ENDIF
 
    ENDIF

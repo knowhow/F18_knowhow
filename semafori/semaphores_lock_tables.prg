@@ -49,11 +49,10 @@ FUNCTION f18_lock_tables( a_tables, lAlreadyInTransakcija )
    hb_default( @lAlreadyInTransakcija, .F. )
 
    IF Len( a_tables ) == NIL
-      PopWA()
       RETURN .F.
    ENDIF
 
-   IF  iif( lAlreadyInTransakcija, .T., sql_table_update( nil, "BEGIN" ) )
+   //IF  iif( lAlreadyInTransakcija, .T., sql_table_update( nil, "BEGIN" ) )
 
       FOR _i := 1 TO Len( a_tables )
          _dbf_rec := get_a_dbf_rec( a_tables[ _i ] )
@@ -65,34 +64,34 @@ FUNCTION f18_lock_tables( a_tables, lAlreadyInTransakcija )
 
       IF _ok
 
-         IF !lAlreadyInTransakcija
-            sql_table_update( nil, "END" )
-         ENDIF
-         log_write( "uspjesno izvrsen lock tabela " + pp( a_tables ), 7 )
+         //IF !lAlreadyInTransakcija
+         //    sql_table_update( nil, "END" )
+         //ENDIF
+         //log_write( "uspjesno izvrsen lock tabela " + pp( a_tables ), 7 )
 
 
          FOR _i := 1 TO Len( a_tables )
             _dbf_rec := get_a_dbf_rec( a_tables[ _i ] )
-            IF !_dbf_rec[ "sql" ]
-               dbf_refresh( _dbf_rec[ "table" ] )
-            ENDIF
+            //IF !_dbf_rec[ "sql" ]
+            //   dbf_refresh( _dbf_rec[ "table" ] )  NE U MAIN THREAD!
+            //ENDIF
          NEXT
 
       ELSE
          log_write( "ERROR: nisam uspio napraviti lock tabela " + pp( a_tables ), 2 )
-         IF !lAlreadyInTransakcija
-            sql_table_update( nil, "ROLLBACK" )
-         ENDIF
+         //IF !lAlreadyInTransakcija
+         //  sql_table_update( nil, "ROLLBACK" )
+         //ENDIF
          _ok := .F.
 
       ENDIF
 
-   ELSE
-
-      _ok := .F.
-      log_write( "ERROR: nisam uspio napraviti lock tabela " + pp( a_tables ), 2 )
-
-   ENDIF
+   // ELSE
+   //
+   //    _ok := .F.
+   //    log_write( "ERROR: nisam uspio napraviti lock tabela " + pp( a_tables ), 2 )
+  //
+   //ENDIF
 
    RETURN _ok
 
@@ -126,7 +125,7 @@ FUNCTION f18_free_tables( a_tables )
    log_write( cMsg, 7 )
 
 #ifdef F18_DEBUG
-   MsgBeep( cMsg )
+   ?E cMsg
 #endif
 
    RETURN _ok

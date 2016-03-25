@@ -124,8 +124,10 @@
 
 
 // modul POS (wa 130-160)
-#define F_POS_DOKS     130
-#define F_POS       131
+#define F_POS_DOKS      130
+#define F_POS           131
+#define F_POS_POS       131
+
 #define F_RNGPLA    132
 #define F__POS      133
 #define F__PRIPR    134

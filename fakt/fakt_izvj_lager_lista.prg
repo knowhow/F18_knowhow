@@ -980,7 +980,7 @@ STATIC FUNCTION fakt_lager_lista_get_data( params, ps )
       my_server_login( _db_params )
    ENDIF
 
-   _server := pg_server()
+   _server := my_server()
 
    _qry := "SELECT " + ;
       "f.idroba, r.naz, " + ;
@@ -1025,7 +1025,7 @@ STATIC FUNCTION fakt_lager_lista_get_data( params, ps )
       _db_params[ "database" ] := Left( _tek_database, Len( _tek_database ) - 4 ) + AllTrim( Str( Year( _date_ps ) ) )
       my_server_params( _db_params )
       my_server_login( _db_params )
-      _server := pg_server()
+      _server := my_server()
    ENDIF
 
    RETURN _table

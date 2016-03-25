@@ -134,7 +134,7 @@ STATIC FUNCTION _izdvoji_ulaze( vars )
    LOCAL _date := ""
    LOCAL _dat_od, _dat_do, _dob, _artikli, _p_konto, _id_firma
    LOCAL _qry_ret, _table
-   LOCAL _server := pg_server()
+   LOCAL _server := my_server()
    LOCAL _data := {}
    LOCAL _i, oRow
    LOCAL _cnt := 0
@@ -235,7 +235,7 @@ STATIC FUNCTION _izdvoji_prodaju( vars )
    LOCAL _date := ""
    LOCAL _dat_od, _dat_do, _dob, _artikli, _p_konto, _id_firma
    LOCAL _qry_ret, _table
-   LOCAL _server := pg_server()
+   LOCAL _server := my_server()
    LOCAL _data := {}
    LOCAL _i, oRow
    LOCAL _cnt := 0

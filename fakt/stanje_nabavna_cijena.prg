@@ -17,7 +17,7 @@ STATIC s_cIdArtikal := "XX"
 
 FUNCTION get_nabavna_cijena( cIdKonto, cIdArtikal, dDatum )
 
-   LOCAL oSrv := pg_server()
+   LOCAL oSrv := my_server()
    LOCAL cQuery, oRet, nRet
    LOCAL nNv_u, nNV_i, nUlaz, nIzlaz
 

@@ -267,7 +267,7 @@ STATIC FUNCTION _os_prebaci_iz_prethodne( info )
    // prebaci se u sezonu
    switch_to_database( _db_params, _tek_database, _year_sez )
    // setuj server
-   _server := pg_server()
+   _server := my_server()
 
 
    @ _pos_x := m_x + 3, _pos_y := m_y + 2 SAY PadR( "2) vrsim sql upit ", 40, "." )
@@ -281,7 +281,7 @@ STATIC FUNCTION _os_prebaci_iz_prethodne( info )
    // 3) vrati se u tekucu bazu...
    // ------------------------------------------------------------
    switch_to_database( _db_params, _tek_database, _year_tek )
-   _server := pg_server()
+   _server := my_server()
 
    IF ValType( _data_os ) == "L"
       MsgBeep( "Problem sa podacima..." )

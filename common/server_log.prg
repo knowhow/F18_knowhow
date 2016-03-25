@@ -23,7 +23,7 @@ FUNCTION server_log_write( msg, silent )
    LOCAL _qry
    LOCAL _tbl
    LOCAL _user := f18_user()
-   LOCAL _server := pg_server()
+   LOCAL _server := my_server()
 
    IF silent == NIL
       silent := .F.

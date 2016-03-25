@@ -19,7 +19,7 @@
 FUNCTION kadev_broj_promjena( id )
 
    LOCAL _ok := .F.
-   LOCAL _server := pg_server()
+   LOCAL _server := my_server()
    LOCAL _qry
    LOCAL _res
 
@@ -41,7 +41,7 @@ FUNCTION kadev_broj_promjena( id )
 // --------------------------------------------------------
 FUNCTION kadev_broj_podataka( id )
 
-   LOCAL _server := pg_server()
+   LOCAL _server := my_server()
    LOCAL _qry
    LOCAL _res
 

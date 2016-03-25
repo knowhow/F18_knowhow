@@ -477,7 +477,7 @@ STATIC FUNCTION uslovi_za_povrat_dokumenta( vars )
 
 FUNCTION fakt_napravi_duplikat( id_firma, id_tip_dok, br_dok )
 
-   LOCAL _server := pg_server()
+   LOCAL _server := my_server()
    LOCAL _qry, _field
    LOCAL _table, oRow
    LOCAL _count := 0

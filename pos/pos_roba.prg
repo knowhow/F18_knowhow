@@ -43,7 +43,7 @@ FUNCTION pos_postoji_roba( cId, dx, dy, barkod )
    IF ValType( GetList ) == "A" .AND. Len( GetList ) > 1
       PrevId := GetList[ 1 ]:original
    ENDIF
-	
+
    AAdd( ImeKol, { "Sifra", {|| id }, "" } )
    AAdd( ImeKol, { PadC( "Naziv", 40 ), {|| PadR( naz, 40 ) }, "" } )
    AAdd( ImeKol, { PadC( "JMJ", 5 ), {|| PadC( jmj, 5 ) }, "" } )
@@ -55,7 +55,7 @@ FUNCTION pos_postoji_roba( cId, dx, dy, barkod )
       AAdd( Kol, _i )
    NEXT
 
-   IF KLEVEL == L_PRODAVAC
+   IF pos_prodavac()
       _zabrane := { K_CTRL_T, K_CTRL_N, K_F4, K_F2, K_CTRL_F9 }
    ELSE
       _zabrane := {}

@@ -491,7 +491,7 @@ FUNCTION rpt_dupli_barkod()
 STATIC FUNCTION __dupli_bk_sql()
 
    LOCAL _qry, _table
-   LOCAL _server := pg_server()
+   LOCAL _server := my_server()
 
    _qry := "SELECT id, naz, barkod " + ;
       "FROM " + F18_PSQL_SCHEMA + ".roba r1 " + ;

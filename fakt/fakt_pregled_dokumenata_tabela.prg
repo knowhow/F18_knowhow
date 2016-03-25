@@ -23,6 +23,8 @@ FUNCTION fakt_lista_dokumenata_tabelarni_pregled( lVrsteP, lOpcine, cFilter )
 
    IF SELECT( "fakt_doks" ) == 0
       O_FAKT_DOKS
+   ELSE
+      SELECT FAKT_DOKS
    ENDIF
 
    ImeKol := {}

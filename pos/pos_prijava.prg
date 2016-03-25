@@ -13,7 +13,7 @@
 #include "f18.ch"
 
 
-FUNCTION PosPrijava( Fx, Fy )
+FUNCTION pos_prijava( Fx, Fy )
 
    LOCAL nChar
    LOCAL cKorSif
@@ -32,6 +32,9 @@ FUNCTION PosPrijava( Fx, Fy )
       SetPos ( Fx + 4, Fy + 15 )
 
       cKorSif := Upper( pos_get_lozinka( nSifLen ) )
+#ifdef F18_DEBUG
+      ?E "pos_prijava", cKorSif
+#endif
       IF Empty( cKorSif )
          MsgBeep( "ERR unijeti lozinku" )
          LOOP
@@ -45,17 +48,17 @@ FUNCTION PosPrijava( Fx, Fy )
          EXIT
       ENDIF
 
-      // obradi specijalne sifre
-      HSpecSifre( cKorSif )
+
+      HSpecSifre( cKorSif ) // obradi specijalne sifre
 
       IF ( goModul:lTerminate )
-         RETURN .F.
+         RETURN "X"
       ENDIF
 
       SET CURSOR OFF
       SetColor ( F18_COLOR_NORMAL )
 
-      IF SetUser( cKorSif, nSifLen, @cLevel ) == 0
+      IF pos_set_user( cKorSif, nSifLen, @cLevel ) == 0
          LOOP
       ELSE
          EXIT
@@ -67,7 +70,7 @@ FUNCTION PosPrijava( Fx, Fy )
 
    CLOSE ALL
 
-   RETURN ( cLevel )
+   RETURN cLevel
 
 
 

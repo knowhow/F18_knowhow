@@ -39,7 +39,7 @@ STATIC FUNCTION _get_data( params )
    LOCAL _qry
    LOCAL _where
    LOCAL _order
-   LOCAL _server := pg_server()
+   LOCAL _server := my_server()
 
    _where := " lk.godina = " + AllTrim( Str( params[ "godina" ] ) )
    _where += " AND lk.mjesec = " + AllTrim( Str( params[ "mjesec" ] ) )

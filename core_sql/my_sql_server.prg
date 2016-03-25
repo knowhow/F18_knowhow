@@ -13,15 +13,14 @@
 
 MEMVAR GetList
 
-STATIC s_psqlServer := NIL
-STATIC s_pgsqlServerMainDb := NIL
+THREAD STATIC s_psqlServer := NIL  // glavni thread
+THREAD STATIC s_pgsqlServerMainDb := NIL
+STATIC s_psqlServer_params := NIL  // parametri trebaju biti dostupni novim threadovima
 
 THREAD STATIC s_psqlServerDbfThread := NIL // svaka thread konekcija zasebna
-
-STATIC s_psqlServer_params := NIL
 THREAD STATIC s_psqlServer_params_thread := NIL  // svaka thread konekcija ce zapamtiti svoje parametre
 
-FUNCTION pg_server( server )
+FUNCTION my_server( oServer )
 
    LOCAL oError
    LOCAL nI, cMsg, cLogMsg := ""
@@ -43,24 +42,22 @@ FUNCTION pg_server( server )
 
             LOG_CALL_STACK cLogMsg
             ?E "thread psql login error:", cLogMsg, oError:description
-            QUIT_1
+            QUIT
          END SEQUENCE
 
       ENDIF
       RETURN s_psqlServerDbfThread
 
+
    ENDIF
 
-   IF server <> NIL
-      s_psqlServer := server
+   IF oServer <> NIL
+      s_psqlServer := oServer
    ENDIF
 
    RETURN s_psqlServer
 
 
-FUNCTION my_server( oServer )
-
-   RETURN pg_server( oServer )
 
 
 
@@ -85,7 +82,6 @@ FUNCTION server_main_db_close()
    ENDIF
 
    RETURN .T.
-
 
 
 

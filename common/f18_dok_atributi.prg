@@ -503,7 +503,7 @@ METHOD F18_DOK_ATRIB:update_atrib_from_server( params )
 
    LOCAL _ok := .T.
    LOCAL _qry
-   LOCAL _server := pg_server()
+   LOCAL _server := my_server()
    LOCAL _old_firma := params[ "old_firma" ]
    LOCAL _old_tipdok := params[ "old_tipdok" ]
    LOCAL _old_brdok := params[ "old_brdok" ]
@@ -539,7 +539,7 @@ METHOD F18_DOK_ATRIB:delete_atrib_from_server()
 
    LOCAL _ok := .T.
    LOCAL _qry
-   LOCAL _server := pg_server()
+   LOCAL _server := my_server()
 
    ::set_table_name()
 
@@ -567,7 +567,7 @@ METHOD F18_DOK_ATRIB:atrib_dbf_to_server()
    LOCAL _ok := .T.
    LOCAL _t_area := Select()
    LOCAL _qry, _table
-   LOCAL _server := pg_server()
+   LOCAL _server := my_server()
    LOCAL _res
 
    ::open_local_table()

@@ -57,6 +57,7 @@ FUNCTION full_synchro( cDbfTable, nStepSize, cInfo )
 IF cDbfTable == "pos_pos"
 altd()
 ENDIF
+
    cTransactionName :=  "full_" + cDbfTable + ":" + cInfo
    run_sql_query( "BEGIN; SET TRANSACTION ISOLATION LEVEL SERIALIZABLE", , , cTransactionName )
 /*

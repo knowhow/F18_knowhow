@@ -248,7 +248,7 @@ STATIC FUNCTION _os_brisi_tekucu_godinu( info )
 STATIC FUNCTION _os_prebaci_iz_prethodne( info )
 
    LOCAL _ok := .F.
-   LOCAL _data_os, _data_promj, _server
+   LOCAL _data_os, _data_promj
    LOCAL _qry_os, _qry_promj, _where
    LOCAL _dat_ps := Date()
    LOCAL _db_params := my_server_params()
@@ -266,26 +266,24 @@ STATIC FUNCTION _os_prebaci_iz_prethodne( info )
    // ------------------------------------------------------------
    // prebaci se u sezonu
    switch_to_database( _db_params, _tek_database, _year_sez )
-   // setuj server
-   _server := my_server()
+
 
 
    @ _pos_x := m_x + 3, _pos_y := m_y + 2 SAY PadR( "2) vrsim sql upit ", 40, "." )
 
    // podaci pocetnog stanja su ovdje....
-   _data_os := _sql_query( _server, _qry_os )
-   _data_promj := _sql_query( _server, _qry_promj )
+   _data_os := run_sql_query( _qry_os )
+   _data_promj := run_sql_query( _qry_promj )
 
    @ _pos_x, _pos_y + 55 SAY "OK"
 
    // 3) vrati se u tekucu bazu...
    // ------------------------------------------------------------
    switch_to_database( _db_params, _tek_database, _year_tek )
-   _server := my_server()
 
-   IF ValType( _data_os ) == "L"
-      MsgBeep( "Problem sa podacima..." )
-      RETURN _ok
+   IF sql_error_in_query ( _data_os )
+      MsgBeep( "SQL ERR OS" )
+      RETURN .F.
    ENDIF
 
    // ubaci sada podatke u OS/PROMJ

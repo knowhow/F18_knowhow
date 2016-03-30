@@ -32,7 +32,6 @@ FUNCTION lock_semaphore( table, status, lUnlockTable )
    LOCAL _ret
    LOCAL _i
    LOCAL _err_msg
-   LOCAL _server := my_server()
    LOCAL _user   := f18_user()
    LOCAL _user_locked
    LOCAL cSemaphoreStatus
@@ -99,7 +98,7 @@ FUNCTION lock_semaphore( table, status, lUnlockTable )
       _qry += "UPDATE sem." + table + " SET algorithm='locked_by_me' WHERE user_code=" + sql_quote( _user ) + ";"
    ENDIF
 
-   _ret := _sql_query( _server, _qry )
+   _ret := run_sql_query( _qry )
 
    log_write( "table: " + table + ", status:" + status + " - END", 7 )
 
@@ -115,10 +114,9 @@ FUNCTION get_semaphore_locked_by_me_status_user( table )
 
    LOCAL _qry
    LOCAL _ret
-   LOCAL _server := my_server()
 
    _qry := "SELECT user_code FROM sem." + table + " WHERE algorithm = 'locked_by_me'"
-   _ret := _sql_query( _server, _qry )
+   _ret := run_sql_query( _qry )
 
    RETURN AllTrim( _ret:FieldGet( 1 ) )
 
@@ -136,7 +134,6 @@ FUNCTION get_semaphore_status( table )
 
    LOCAL _qry
    LOCAL _ret
-   LOCAL _server := my_server()
    LOCAL _user   := f18_user()
 
    IF skip_semaphore_sync( table )
@@ -144,7 +141,7 @@ FUNCTION get_semaphore_status( table )
    ENDIF
 
    _qry := "SELECT algorithm FROM sem." + table + " WHERE user_code=" + sql_quote( _user )
-   _ret := _sql_query( _server, _qry )
+   _ret := run_sql_query( _qry )
 
    IF sql_query_bez_zapisa( _ret )
       RETURN "unknown"
@@ -158,10 +155,9 @@ FUNCTION last_semaphore_version( table )
 
    LOCAL _qry
    LOCAL _ret
-   LOCAL _server := my_server()
 
    _qry := "SELECT last_trans_version FROM  sem." + table + " WHERE user_code=" + sql_quote( f18_user() )
-   _ret := _sql_query( _server, _qry )
+   _ret := run_sql_query( _qry )
 
    IF sql_query_bez_zapisa( _ret )
       RETURN -1
@@ -181,7 +177,6 @@ FUNCTION get_semaphore_version( table, last )
    LOCAL _result
    LOCAL _qry
    LOCAL _tbl
-   LOCAL _server := my_server()
    LOCAL _user := f18_user()
    LOCAL _msg
 
@@ -204,7 +199,7 @@ FUNCTION get_semaphore_version( table, last )
 
    _qry += " UNION SELECT -1 ORDER BY ver DESC LIMIT 1"
 
-   _tbl_obj := _sql_query( _server, _qry )
+   _tbl_obj := run_sql_query( _qry )
 
    IF sql_query_bez_zapisa( _tbl_obj )
       _msg = "problem sa:" + _qry
@@ -227,7 +222,6 @@ FUNCTION get_semaphore_version_h( table )
    LOCAL _tbl_obj
    LOCAL _qry
    LOCAL _tbl
-   LOCAL _server := my_server()
    LOCAL _user := f18_user()
    LOCAL _ret := hb_Hash()
    LOCAL _msg
@@ -238,7 +232,6 @@ FUNCTION get_semaphore_version_h( table )
       RETURN _ret
    ENDIF
 
-
    insert_semaphore_if_not_exists( table )
 
    _tbl := "sem." + Lower( table )
@@ -247,7 +240,7 @@ FUNCTION get_semaphore_version_h( table )
    _qry += " FROM " + _tbl + " WHERE user_code=" + sql_quote( _user )
    _qry += " UNION SELECT -1, -1 ORDER BY version DESC LIMIT 1"
 
-   _tbl_obj := _sql_query( _server, _qry )
+   _tbl_obj := run_sql_query( _qry )
 
    IF sql_query_bez_zapisa( _tbl_obj )
       _msg = "problem sa:" + _qry
@@ -274,7 +267,6 @@ FUNCTION reset_semaphore_version( table )
    LOCAL _qry
    LOCAL _tbl
    LOCAL _user := f18_user()
-   LOCAL _server := my_server()
 
    IF skip_semaphore_sync( table )
       RETURN .T.
@@ -286,10 +278,10 @@ FUNCTION reset_semaphore_version( table )
 
    log_write( "reset semaphore " + _tbl + " update ", 1 )
    _qry := "UPDATE " + _tbl + " SET version=-1, last_trans_version=(CASE WHEN last_trans_version IS NULL THEN 0 ELSE last_trans_version END) WHERE user_code =" + sql_quote( _user )
-   _sql_query( _server, _qry )
+   run_sql_query( _qry )
 
    _qry := "SELECT version from " + _tbl + " WHERE user_code =" + sql_quote( _user )
-   _ret := _sql_query( _server, _qry )
+   _ret := run_sql_query( _qry )
 
    log_write( "reset semaphore, select version" + Str( _ret:FieldGet( 1 ) ), 7 )
 
@@ -302,7 +294,6 @@ FUNCTION table_count( cTable, condition )
    LOCAL oQuery
    LOCAL _result
    LOCAL _qry
-   LOCAL _server := my_server()
    LOCAL cMsg
 
    _qry := "SELECT COUNT(*) FROM " + cTable // provjeri prvo da li postoji uopšte ovaj site zapis
@@ -311,7 +302,7 @@ FUNCTION table_count( cTable, condition )
       _qry += " WHERE " + condition
    ENDIF
 
-   oQuery := _sql_query( _server, _qry )
+   oQuery := run_sql_query( _qry )
 
    IF sql_query_bez_zapisa( oQuery )
       cMsg := "ERR table_count : " + _qry + " msg: "
@@ -496,7 +487,6 @@ FUNCTION update_semaphore_version_after_push( table, to_myself )
    LOCAL _qry
    LOCAL _tbl
    LOCAL _user := f18_user()
-   LOCAL _server := my_server()
    LOCAL _ver_user, _last_ver
    LOCAL _versions
    LOCAL cVerUser
@@ -537,7 +527,7 @@ FUNCTION update_semaphore_version_after_push( table, to_myself )
    _qry += "UPDATE " + _tbl + " SET last_trans_version=" + cVerUser + "; "
    // kod svih usera verzija ne moze biti veca od posljednje
    _qry += "UPDATE " + _tbl + " SET version=" + cVerUser + " WHERE version > " + cVerUser + ";"
-   _sql_query( _server, _qry )
+   run_sql_query( _qry )
 
    log_write( "END: update semaphore version after push user: " + _user + ", tabela: " + _tbl + ", last_ver=" + Str( _ver_user ), 7 )
 
@@ -553,7 +543,6 @@ FUNCTION nuliraj_ids_and_update_my_semaphore_ver( table )
    LOCAL _tbl
    LOCAL _ret
    LOCAL _user := f18_user()
-   LOCAL _server := my_server()
    LOCAL _qry
 
    insert_semaphore_if_not_exists( table )
@@ -566,7 +555,7 @@ FUNCTION nuliraj_ids_and_update_my_semaphore_ver( table )
       " version=last_trans_version" + ;
       " WHERE user_code =" + sql_quote( _user )
 
-   _ret := _sql_query( _server, _qry )
+   _ret := run_sql_query( _qry )
 
    log_write( "END: nuliraj ids-ove - user: " + _user, 7 )
 
@@ -583,7 +572,7 @@ FUNCTION nuliraj_ids_and_update_my_semaphore_ver( table )
       _qry := "INSERT INTO " + _tbl + "(user_code, version, last_trans_version, ids) " + ;
          "VALUES(" + sql_quote( _user )  + ", " + cVerUser + ", (select max(last_trans_version) from " +  _tbl + "), " + _id_full + ")"
 
-      _ret := _sql_query( _server, _qry )
+      _ret := run_sql_query( _qry )
 
       log_write( "Dodajem novu stavku semafora za tabelu: " + _tbl + " user: " + _user + " ver.user: " + cVerUser, 7 )
 

@@ -1302,18 +1302,15 @@ STATIC FUNCTION show_last_racun( cIdPartner, cDestinacija, cIdRoba )
 FUNCTION fakt_za_destinaciju( cIdPartner, cDestinacija, cIdRoba )
 
    LOCAL cQuery, oRez
-   LOCAL oServer := my_server()
    LOCAL cBrDok, oRow
 
    cQuery := "SELECT brdok FROM " + F18_PSQL_SCHEMA_DOT + "fakt_fakt" + ;
       " WHERE idtipdok='10' AND kolicina>0  AND txt like '%" + cDestinacija + "%' AND idpartner=" + sql_quote( cIdPartner )
 
-   oRez := _sql_query( oServer, cQuery )
-
-   IF oRez == NIL
+   oRez := run_sql_query( cQuery )
+   IF sql_error_in_query)( oRez )
       RETURN -1
    ENDIF
-
 
    cBrDok := ""
    DO WHILE !oRez:Eof()

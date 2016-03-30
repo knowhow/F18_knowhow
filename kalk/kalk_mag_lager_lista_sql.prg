@@ -15,7 +15,7 @@
 
 FUNCTION kalk_mag_lager_lista_sql( params, ps )
 
-   LOCAL _data, _server
+   LOCAL _data
    LOCAL _qry, _where
    LOCAL _dat_od, _dat_do, _dat_ps, _m_konto
    LOCAL _art_filter, _dok_filter, _tar_filter, _part_filter
@@ -77,7 +77,6 @@ FUNCTION kalk_mag_lager_lista_sql( params, ps )
 
    IF ps
       switch_to_database( _db_params, _tek_database, _year_sez )
-      _server := my_server()
    ENDIF
 
    IF ps
@@ -86,9 +85,9 @@ FUNCTION kalk_mag_lager_lista_sql( params, ps )
       MsgO( "formiranje podataka u toku...." )
    ENDIF
 
-   _data := _sql_query( _server, _qry )
+   _data := run_sql_query( _qry )
 
-   IF !is_var_objekat_tpqquery( _data ) 
+   IF !is_var_objekat_tpqquery( _data )
       _data := NIL
    ELSE
       IF _data:LastRec() == 0
@@ -100,7 +99,6 @@ FUNCTION kalk_mag_lager_lista_sql( params, ps )
 
    IF ps
       switch_to_database( _db_params, _tek_database, _year_tek )
-      _server := my_server()
    ENDIF
 
    RETURN _data
@@ -143,7 +141,7 @@ FUNCTION kalk_mag_lager_lista_vars( params, ps )
    Box( "# LAGER LISTA MAGACINA" + if( ps, " / POČETNO STANJE", "" ), 15, MAXCOLS() - 5 )
 
    @ m_x + _x, m_y + 2 SAY "Firma "
-		
+
    ?? gFirma, "-", AllTrim( gNFirma )
 
    ++ _x
@@ -333,9 +331,9 @@ STATIC FUNCTION kalk_mag_insert_ps_into_pripr( data, params )
       dbf_update_rec( _rec )
 
       data:Skip()
-	
+
    ENDDO
 
    MsgC()
-		
+
    RETURN _count

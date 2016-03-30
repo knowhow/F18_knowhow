@@ -73,7 +73,7 @@ FUNCTION fill_tbl_valute()
       _qry += " 0.51128, 0.51128, 0.51128 "
       _qry += " ); "
 
-      _sql_query( my_server(), _qry )
+      run_sql_query( _qry )
 
    ENDIF
 

@@ -228,11 +228,11 @@ METHOD FinBrutoBilans:get_vars()
    ++ _x
    @ m_x + _x, m_y + 2 SAY8 "Prikaz kolone tekući promet (D/N) ?" GET _tek_prom VALID _tek_prom $ "DN" PICT "@!"
 
-   @ m_x + _x, col() + 1 SAY8 "Klase unutar izvještaja (D/N) ?" GET _podklase VALID _podklase $ "DN" PICT "@!"
+   @ m_x + _x, Col() + 1 SAY8 "Klase unutar izvještaja (D/N) ?" GET _podklase VALID _podklase $ "DN" PICT "@!"
 
    IF gRJ == "D"
       ++ _x
-      _id_rj := SPACE(6)
+      _id_rj := Space( 6 )
       @ m_x + _x, m_y + 2 SAY8 "Radna jedinica ( 999999-sve ): " GET _id_rj
    ENDIF
 
@@ -269,7 +269,7 @@ METHOD FinBrutoBilans:get_vars()
    ::params[ "datum_od" ] := _dat_od
    ::params[ "datum_do" ] := _dat_do
    ::params[ "valuta" ] := _valuta
-   ::params[ "id_rj" ] := IF( EMPTY( _id_rj ), ALLTRIM( _id_rj ), _id_rj )
+   ::params[ "id_rj" ] := IF( Empty( _id_rj ), AllTrim( _id_rj ), _id_rj )
    ::params[ "export_dbf" ] := ( _export_dbf == "D" )
    ::params[ "saldo_nula" ] := ( _saldo_nula == "D" )
    ::params[ "kolona_tek_prom" ] := ( _tek_prom == "D" )
@@ -291,8 +291,7 @@ METHOD FinBrutoBilans:get_vars()
 
 METHOD FinBrutoBilans:get_data()
 
-   LOCAL _qry, _data
-   LOCAL _server := my_server()
+   LOCAL _qry, _data, _where
    LOCAL _konto := ::params[ "konto" ]
    LOCAL _dat_od := ::params[ "datum_od" ]
    LOCAL _dat_do := ::params[ "datum_do" ]
@@ -405,11 +404,11 @@ METHOD FinBrutoBilans:get_data()
    ENDIF
 
    MsgO( "formiranje sql upita u toku ..." )
-   _data := _sql_query( _server, _qry )
+   _data := run_sql_query( _qry )
    MsgC()
 
-   IF !is_var_objekat_tpqquery( _data )
-      MsgBeep( "Ne postoje traženi podaci !!!" )
+   IF sql_error_in_query( _data )
+      MsgBeep( "SQL ERROR !?" )
       RETURN NIL
    ENDIF
 
@@ -420,8 +419,6 @@ METHOD FinBrutoBilans:get_data()
 
 
 
-// -----------------------------------------------------------------------------
-// -----------------------------------------------------------------------------
 METHOD FinBrutoBilans:set_txt_lines()
 
    LOCAL _arr := {}
@@ -490,8 +487,7 @@ METHOD FinBrutoBilans:set_txt_lines()
 
 
 
-// -----------------------------------------------------
-// -----------------------------------------------------
+
 METHOD FinBrutoBilans:zaglavlje_txt()
 
    Preduzece()
@@ -572,7 +568,7 @@ METHOD FinBrutoBilans:gen_xml()
       xml_node( "id", to_xml_encoding( _klasa ) )
 
       IF __konto == NIL
-         xml_node( "naz", ALLTRIM( field->idkonto ) + to_xml_encoding( hb_utf8tostr( " - Nepostojeći konto !" ) ) )
+         xml_node( "naz", AllTrim( field->idkonto ) + to_xml_encoding( hb_UTF8ToStr( " - Nepostojeći konto !" ) ) )
       ELSE
          xml_node( "naz", to_xml_encoding( AllTrim( __konto[ "naz" ] ) ) )
       ENDIF
@@ -589,7 +585,7 @@ METHOD FinBrutoBilans:gen_xml()
          xml_node( "id", to_xml_encoding( _sint ) )
 
          IF __konto == NIL
-            xml_node( "naz", ALLTRIM( field->idkonto ) + to_xml_encoding( hb_utf8tostr( " - Nepostojeći konto !" ) ) )
+            xml_node( "naz", AllTrim( field->idkonto ) + to_xml_encoding( hb_UTF8ToStr( " - Nepostojeći konto !" ) ) )
          ELSE
             xml_node( "naz", to_xml_encoding( AllTrim( __konto[ "naz" ] ) ) )
          ENDIF
@@ -664,7 +660,7 @@ METHOD FinBrutoBilans:gen_xml()
             _tt_sld_dug += field->sld_dug
             _tt_sld_pot += field->sld_pot
 
-            _scan := AScan( _a_klase, {|var| VAR[ 1 ] == Left( _sint, 1 ) } )
+            _scan := AScan( _a_klase, {| var| VAR[ 1 ] == Left( _sint, 1 ) } )
 
             IF _scan == 0
                AAdd( _a_klase, { Left( _sint, 1 ), ;
@@ -780,7 +776,7 @@ METHOD FinBrutoBilans:print()
       ENDIF
    ENDIF
 
-   IF ::params["varijanta"] == "B"
+   IF ::params[ "varijanta" ] == "B"
       ::print_b_rpt()
       RETURN SELF
    ENDIF
@@ -885,7 +881,7 @@ METHOD FinBrutoBilans:print_txt()
                ::zaglavlje_txt()
             ENDIF
 
-            @ PRow() + 1, 0 SAY ++ _rbr PICT "9999"
+            @ PRow() + 1, 0 SAY+ + _rbr PICT "9999"
             @ PRow(), PCol() + 1 SAY field->idkonto
 
             if ::tip < 4
@@ -914,7 +910,7 @@ METHOD FinBrutoBilans:print_txt()
                   IF __konto <> NIL
                      _opis := __konto[ "naz" ]
                   ELSE
-                     _opis := AllTrim( field->idkonto ) + " - " + hb_Utf8ToStr( "nepostojeći konto - ERR" )
+                     _opis := AllTrim( field->idkonto ) + " - " + hb_UTF8ToStr( "nepostojeći konto - ERR" )
                   ENDIF
                ENDIF
 
@@ -969,7 +965,7 @@ METHOD FinBrutoBilans:print_txt()
             _tt_sld_pot += field->sld_pot
 
             // dodaj u matricu sa klasama, takodjer totale...
-            _scan := AScan( _a_klase, {|var| VAR[ 1 ] == Left( _sint, 1 ) } )
+            _scan := AScan( _a_klase, {| var| VAR[ 1 ] == Left( _sint, 1 ) } )
 
             IF _scan == 0
                // dodaj novu stavku u matricu...
@@ -1012,7 +1008,7 @@ METHOD FinBrutoBilans:print_txt()
             // ispisi sintetiku....
             ? _line
 
-            @ PRow() + 1, 2 SAY ++ _rbr_2 PICT "9999"
+            @ PRow() + 1, 2 SAY+ + _rbr_2 PICT "9999"
             @ PRow(), PCol() + 1 SAY _sint
 
             IF __sint == NIL
@@ -1050,7 +1046,7 @@ METHOD FinBrutoBilans:print_txt()
       // ispisi klasu
       ? _line
 
-      @ PRow() + 1, 2 SAY ++ _rbr_3 PICT "9999"
+      @ PRow() + 1, 2 SAY+ + _rbr_3 PICT "9999"
       @ PRow(), PCol() + 1 SAY _klasa
 
       if ::tip < 3

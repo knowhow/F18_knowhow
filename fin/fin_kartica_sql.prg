@@ -190,10 +190,9 @@ STATIC FUNCTION _get_vars( rpt_vars )
 
 STATIC FUNCTION _cre_rpt( rpt_vars, otv_stavke )
 
-   LOCAL _brza, _konto, _partner, _brdok, _idvn
+   LOCAL _brza, _konto, _partner, _brdok, _idvn, _opcina
    LOCAL _datum_od, _datum_do, _tip_valute, _saldo_nula
    LOCAL _qry, _table
-   LOCAL _server := my_server()
    LOCAL _fld_iznos
    LOCAL _nula_cond := ""
 
@@ -261,12 +260,10 @@ STATIC FUNCTION _cre_rpt( rpt_vars, otv_stavke )
    _qry += " ORDER BY s.idkonto, s.idpartner, s.datdok, s.brnal"
 
    MsgO( "formiranje sql upita u toku ..." )
-
-   _table := _sql_query( _server, _qry )
-
+   _table := run_sql_query( _qry )
    MsgC()
 
-   IF !is_var_objekat_tpqquery( _table )
+   IF sql_error_in_query( _table )
       RETURN NIL
    ENDIF
 

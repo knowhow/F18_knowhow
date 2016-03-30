@@ -280,7 +280,6 @@ STATIC FUNCTION _grupno_sql_gen( racuni, params )
 
    LOCAL _ok := .F.
    LOCAL _qry, _table, _where
-   LOCAL _server := my_server()
    LOCAL oRow
    LOCAL _scan
 
@@ -314,13 +313,8 @@ STATIC FUNCTION _grupno_sql_gen( racuni, params )
    _qry += " GROUP BY f.idfirma, f.idtipdok, f.brdok "
    _qry += " ORDER BY f.idfirma, f.idtipdok, f.brdok "
 
-   MsgO( "formiranje sql upita u toku ..." )
-
-   _table := _sql_query( _server, _qry )
-
-   MsgC()
-
-   IF _table == NIL
+   _table := run_sql_query( _qry )
+   IF sql_error_in_query( _table )
       RETURN NIL
    ENDIF
 

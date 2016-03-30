@@ -71,7 +71,7 @@ FUNCTION radnik_iz_rs( cOpsst, cOpsrad )
    cSql := "SELECT reg FROM " + F18_PSQL_SCHEMA_DOT + "ops "
    cSql += "WHERE id = " + sql_quote( cOpsSt )
 
-   oQry := _sql_query( my_server(), cSql )
+   oQry := run_sql_query( cSql )
 
    IF is_var_objekat_tpqquery( oQry )
       IF oQry:FieldGet(1) == "2"
@@ -90,7 +90,7 @@ FUNCTION ld_iz_koje_opcine_je_radnik( cIdRadn )
 
    cSql := "SELECT idopsst FROM " + F18_PSQL_SCHEMA_DOT + "ld_radn WHERE id = " + sql_quote( cIdRadn )
 
-   oQry := _sql_query( my_server(), cSql )
+   oQry := run_sql_query( cSql )
 
    IF is_var_objekat_tpqquery( oQry )
       cOpc := hb_utf8tostr( oQry:FieldGet(1) )

@@ -37,7 +37,7 @@ FUNCTION asortiman_dobavljac_mp()
 STATIC FUNCTION _cre_tmp()
 
    LOCAL _dbf := {}
-	
+
    AAdd( _dbf, { "IDKONTO", "C", 7, 0 } )
    AAdd( _dbf, { "IDPARTNER", "C", 6, 0 } )
    AAdd( _dbf, { "IDROBA", "C", 10, 0 } )
@@ -54,7 +54,7 @@ STATIC FUNCTION _cre_tmp()
 
    O_R_EXP
    INDEX ON idroba TAG "roba"
-	
+
    RETURN
 
 
@@ -134,7 +134,6 @@ STATIC FUNCTION _izdvoji_ulaze( vars )
    LOCAL _date := ""
    LOCAL _dat_od, _dat_do, _dob, _artikli, _p_konto, _id_firma
    LOCAL _qry_ret, _table
-   LOCAL _server := my_server()
    LOCAL _data := {}
    LOCAL _i, oRow
    LOCAL _cnt := 0
@@ -189,7 +188,7 @@ STATIC FUNCTION _izdvoji_ulaze( vars )
       "GROUP BY kalk.pkonto, kalk.idroba, roba.barkod, roba.naz, roba.idtarifa, roba.jmj " + ;
       "ORDER BY kalk.idroba"
 
-   _table := _sql_query( _server, _qry )
+   _table := run_sql_query( _qry )
 
    IF !is_var_objekat_tpqquery( _table )
       RETURN 0
@@ -235,7 +234,6 @@ STATIC FUNCTION _izdvoji_prodaju( vars )
    LOCAL _date := ""
    LOCAL _dat_od, _dat_do, _dob, _artikli, _p_konto, _id_firma
    LOCAL _qry_ret, _table
-   LOCAL _server := my_server()
    LOCAL _data := {}
    LOCAL _i, oRow
    LOCAL _cnt := 0
@@ -289,7 +287,7 @@ STATIC FUNCTION _izdvoji_prodaju( vars )
 
    MsgO( "Prikupljanje podataka o izlazima robe... sačekajte !" )
 
-   _table := _sql_query( _server, _qry )
+   _table := run_sql_query( _qry )
    _table:GoTo(1)
 
    FOR _i := 1 TO _table:LastRec()

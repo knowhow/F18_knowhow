@@ -17,7 +17,6 @@ STATIC s_cIdArtikal := "XX"
 
 FUNCTION get_nabavna_cijena( cIdKonto, cIdArtikal, dDatum )
 
-   LOCAL oSrv := my_server()
    LOCAL cQuery, oRet, nRet
    LOCAL nNv_u, nNV_i, nUlaz, nIzlaz
 
@@ -44,9 +43,9 @@ FUNCTION get_nabavna_cijena( cIdKonto, cIdArtikal, dDatum )
       sql_quote( cIdArtikal ) + "," + ;
       sql_quote( dDatum ) + ")"
 
-   oRet := _sql_query( oSrv, cQuery )
+   oRet := run_sql_query( cQuery )
 
-   IF ( ValType( oRet ) != "O" ) .OR. oRet:Eof()
+   IF sql_error_in_query( oRet ) .OR. oRet:Eof()
       nRet := -9999
    ELSE
       nNV_u := oRet:FieldGet( 1 )

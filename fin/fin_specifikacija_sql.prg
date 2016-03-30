@@ -177,7 +177,7 @@ STATIC FUNCTION _cre_rpt( rpt_vars )
    LOCAL _rasclan, _nule, _sintetika, _konto, _partner, _brdok, _idvn
    LOCAL _datum_od, _datum_do, _tip_valute
    LOCAL _qry, _table
-   LOCAL _server := my_server()
+   LOCAL _where, _opcina
    LOCAL _fld_iznos
    LOCAL _rj_fond_funk := ""
    LOCAL _where_cond := ""
@@ -251,9 +251,7 @@ STATIC FUNCTION _cre_rpt( rpt_vars )
    _qry += _order_cond
 
    MsgO( "formiranje sql upita u toku ..." )
-
-   _table := _sql_query( _server, _qry )
-
+   _table := run_sql_query( _qry )
    MsgC()
 
    IF !is_var_objekat_tpqquery( _table )

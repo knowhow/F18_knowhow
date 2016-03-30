@@ -51,17 +51,13 @@ FUNCTION datum_server( lSet )
 
 STATIC FUNCTION datum_server_sql()
 
-   LOCAL _date
-   LOCAL _pg_server := my_server()
    LOCAL _qry := "SELECT CURRENT_DATE;"
    LOCAL _res
 
-   _res := _sql_query( _pg_server, _qry )
+   _res := run_sql_query( _qry )
 
-   IF ValType( _res ) <> "L"
-      _date := _res:FieldGet( 1 )
-   ELSE
-      _date := DATE()
+   IF sql_error_in_query( _res )
+      RETURN Date()
    ENDIF
 
-   RETURN _date
+   RETURN  _res:FieldGet( 1 )

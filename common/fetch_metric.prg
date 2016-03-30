@@ -93,9 +93,8 @@ FUNCTION parametar_dinamican( cSection )
 
 FUNCTION set_metric( sect, user, value )
 
-   LOCAL _table
+   LOCAL oQry
    LOCAL _temp_qry
-   LOCAL _server := my_server()
    LOCAL _val
 
    IF user != NIL
@@ -111,15 +110,14 @@ FUNCTION set_metric( sect, user, value )
    SET CENTURY OFF
 
    _temp_qry := "SELECT " + F18_PSQL_SCHEMA + ".setmetric(" + sql_quote( sect ) + "," + sql_quote( _val ) +  ")"
-   _table := _sql_query( _server, _temp_qry )
-   IF _table == NIL
-      MsgBeep( "problem sa:" + _temp_qry )
+   oQry := run_sql_query( _temp_qry )
+   IF sql_error_in_query( oQry, "SELECT" )
       RETURN .F.
    ENDIF
 
    s_hParametri[ sect ] := value
 
-   RETURN _table:FieldGet( _table:FieldPos( "setmetric" ) )
+   RETURN .T.
 
 
 

@@ -226,14 +226,14 @@ METHOD FaktDokumenti:count_markirani()
 
 METHOD FaktDokumenti:change_idtipdok_markirani( new_idtipdok )
 
-   LOCAL _srv := my_server(), _err, _item, _broj, _ok := .T.
+   LOCAL _err, _item, _broj, _ok := .T.
 
    BEGIN SEQUENCE WITH {|err| err:cargo := { ProcName( 1 ), ProcName( 2 ), ProcLine( 1 ), ProcLine( 2 ) }, Break( err ) }
 
-      _sql_query( _srv, "BEGIN; SET TRANSACTION ISOLATION LEVEL SERIALIZABLE" )
+      run_sql_query( "BEGIN; SET TRANSACTION ISOLATION LEVEL SERIALIZABLE" )
 
       IF !::lock
-         _sql_query( _srv, "COMMIT" )
+         run_sql_query( "COMMIT" )
          MsgBeep( "Neuspješno zaključavanje tabela, operacija " + ::p_idtipdok + "=>" + new_idtipdok + " otkazana !" )
          _ok := .F.
          BREAK
@@ -243,7 +243,7 @@ METHOD FaktDokumenti:change_idtipdok_markirani( new_idtipdok )
          IF _item:mark
             _broj := _item:broj
             IF !_item:change_idtipdok( new_idtipdok )
-               _sql_query( _srv, "ROLLBACK" )
+               run_sql_query( "ROLLBACK" )
                _ok := .F.
                BREAK
             ENDIF
@@ -251,7 +251,7 @@ METHOD FaktDokumenti:change_idtipdok_markirani( new_idtipdok )
       NEXT
 
       ::unlock()
-      _sql_query( _srv, "COMMIT" )
+      run_sql_query( "COMMIT" )
       _ok := .T.
 
    RECOVER

@@ -14,9 +14,10 @@
 FUNCTION o_dbf_table( nArea, cTable, cTag )
 
    LOCAL lUsed := .F.
+   LOCAL nCount := 0
 
    SELECT ( nArea )
-   DO WHILE !lUsed
+   DO WHILE !lUsed .OR. nCount > 7
       IF my_use( cTable )
          lUsed := .T.
          ordSetFocus( cTag )
@@ -27,11 +28,12 @@ FUNCTION o_dbf_table( nArea, cTable, cTag )
          ENDIF
       ELSE
          hb_idleSleep( 1.5 )
+         nCount++
       ENDIF
 
    ENDDO
 
-   RETURN .T.
+   RETURN lUsed
 
 
 /*

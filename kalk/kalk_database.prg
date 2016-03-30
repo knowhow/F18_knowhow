@@ -17,7 +17,6 @@
 FUNCTION kalk_kol_stanje_artikla_magacin( m_konto, id_roba, datum_do )
 
    LOCAL _qry, _qry_ret, _table
-   LOCAL _server := my_server()
    LOCAL _data := {}
    LOCAL oRow
    LOCAL _stanje
@@ -41,7 +40,7 @@ FUNCTION kalk_kol_stanje_artikla_magacin( m_konto, id_roba, datum_do )
       " AND idroba = " + sql_quote( id_roba ) + ;
       " AND " + _sql_date_parse( "datdok", CToD( "" ), datum_do )
 
-   _table := _sql_query( _server, _qry )
+   _table := run_sql_query( _qry )
 
    oRow := _table:GetRow( 1 )
 
@@ -59,7 +58,6 @@ FUNCTION kalk_kol_stanje_artikla_magacin( m_konto, id_roba, datum_do )
 FUNCTION kalk_kol_stanje_artikla_prodavnica( p_konto, id_roba, datum_do )
 
    LOCAL _qry, _qry_ret, _table
-   LOCAL _server := my_server()
    LOCAL _data := {}
    LOCAL oRow
    LOCAL _stanje
@@ -78,7 +76,7 @@ FUNCTION kalk_kol_stanje_artikla_prodavnica( p_konto, id_roba, datum_do )
       " AND idroba = " + sql_quote( id_roba ) + ;
       " AND " + _sql_date_parse( "datdok", CToD( "" ), datum_do )
 
-   _table := _sql_query( _server, _qry )
+   _table := run_sql_query( _qry )
 
    oRow := _table:GetRow( 1 )
 

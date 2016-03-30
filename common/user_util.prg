@@ -18,15 +18,10 @@ FUNCTION GetUserID()
    LOCAL cTable := "public.usr"
    LOCAL oTable
    LOCAL nResult
-   LOCAL oServer := my_server()
    LOCAL cUser   := AllTrim( my_user() )
 
    cTmpQry := "SELECT usr_id FROM " + cTable + " WHERE usr_username = " + sql_quote( cUser )
-   oTable := _sql_query( oServer, cTmpQry )
-   IF oTable == NIL
-      log_write( ProcLine( 1 ) + " : "  + cTmpQry )
-      QUIT_1
-   ENDIF
+   oTable := run_sql_query( cTmpQry )
 
    IF sql_error_in_query( oTable, "SELECT" )
       RETURN 0
@@ -41,7 +36,6 @@ FUNCTION GetUserRoles( user_name )
 
    LOCAL _roles
    LOCAL _qry
-   LOCAL _server := my_server()
 
    IF user_name == NIL
       _user := "CURRENT_USER"
@@ -55,9 +49,9 @@ FUNCTION GetUserRoles( user_name )
       "WHERE pg_user.usename = " + _user + " " + ;
       "ORDER BY rolname ;"
 
-   _roles := _sql_query( _server, _qry )
+   _roles := run_sql_query( _qry )
 
-   IF _roles == NIL
+   IF sql_error_in_query( _roles, "SELECT" )
       RETURN NIL
    ENDIF
 
@@ -98,17 +92,11 @@ FUNCTION GetUserName( nUser_id )
    LOCAL cTable := "public.usr"
    LOCAL oTable
    LOCAL cResult
-   LOCAL oServer := my_server()
 
    cTmpQry := "SELECT usr_username FROM " + cTable + " WHERE usr_id = " + AllTrim( Str( nUser_id ) )
-   oTable := _sql_query( oServer, cTmpQry )
+   oTable := run_sql_query( cTmpQry )
 
-   IF oTable == NIL
-      log_write( ProcLine( 1 ) + " : "  + cTmpQry )
-      QUIT_1
-   ENDIF
-
-   IF oTable:Eof()
+   IF sql_error_in_query( oTable, "SELECT" )
       RETURN "?user?"
    ENDIF
 
@@ -121,23 +109,16 @@ FUNCTION GetFullUserName( nUser_id )
    LOCAL cTmpQry
    LOCAL cTable := "public.usr"
    LOCAL oTable
-   LOCAL oServer := my_server()
 
    cTmpQry := "SELECT usr_propername FROM " + cTable + " WHERE usr_id = " + AllTrim( Str( nUser_id ) )
-   oTable := _sql_query( oServer, cTmpQry )
+   oTable := run_sql_query( cTmpQry )
 
-   IF oTable == NIL
-      log_write( ProcLine( 1 ) + " : "  + cTmpQry )
-      QUIT_1
-   ENDIF
-
-   IF oTable:Eof()
+   IF sql_error_in_query( oTable, "SELECT" )
       RETURN "?user?"
-   ELSE
-      RETURN hb_UTF8ToStr( oTable:FieldGet( 1 ) )
    ENDIF
 
-   RETURN
+   RETURN hb_UTF8ToStr( oTable:FieldGet( 1 ) )
+
 
 
 FUNCTION choose_f18_user_from_list( oper_id )
@@ -196,7 +177,6 @@ STATIC FUNCTION izaberi_f18_korisnika( arr )
 FUNCTION get_list_f18_users()
 
    LOCAL _qry, _table
-   LOCAL _server := my_server()
    LOCAL _list := {}
    LOCAL _row
 
@@ -205,9 +185,8 @@ FUNCTION get_list_f18_users()
       "WHERE usr_username NOT IN ( 'postgres', 'admin' ) " + ;
       "ORDER BY usr_username;"
 
-   _table := _sql_query( _server, _qry )
-
-   IF _table == NIL
+   _table := run_sql_query( _qry )
+   IF sql_error_in_query( _table, "SELECT" )
       RETURN NIL
    ENDIF
 

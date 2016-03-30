@@ -288,7 +288,7 @@ FUNCTION pos_iznos_racuna( cIdPos, cIdVD, dDatum, cBrDok )
    cSql += " AND brdok = " + sql_quote( cBrDok )
    cSql += " AND datum = " + sql_quote( dDatum )
 
-   oData := _sql_query( my_server(), cSql )
+   oData := run_sql_query( cSql )
 
    IF !is_var_objekat_tpqquery( oData )
       RETURN nTotal
@@ -303,7 +303,6 @@ FUNCTION pos_iznos_racuna( cIdPos, cIdVD, dDatum, cBrDok )
 FUNCTION pos_stanje_artikla( id_pos, id_roba )
 
    LOCAL _qry, _qry_ret, _table
-   LOCAL _server := my_server()
    LOCAL _data := {}
    LOCAL _i, oRow
    LOCAL _stanje := 0
@@ -312,10 +311,8 @@ FUNCTION pos_stanje_artikla( id_pos, id_roba )
       " WHERE idpos = " + sql_quote( id_pos ) + ;
       " AND idroba = " + sql_quote( id_roba )
 
-   _table := _sql_query( _server, _qry )
-
+   _table := run_sql_query( _qry )
    oRow := _table:GetRow( 1 )
-
    _stanje := oRow:FieldGet( oRow:FieldPos( "stanje" ) )
 
    IF ValType( _stanje ) == "L"
@@ -654,7 +651,7 @@ FUNCTION pos_brisi_nepostojece_dokumente()
 
    IF !spec_funkcije_sifra( "ADMIN" )
       MsgBeep( "Opcija nije dostupna !" )
-      RETURN
+      RETURN .F.
    ENDIF
 
    cSql := "SELECT p.idpos, p.idvd, p.datum, p.brdok "
@@ -668,19 +665,17 @@ FUNCTION pos_brisi_nepostojece_dokumente()
    cSql += "ORDER BY p.idpos, p.idvd, p.datum, p.brdok "
 
    MsgO( "SQL upit u toku, sačekajte trenutak ... " )
-
-   oQry := _sql_query( my_server(), cSql )
-
+   oQry := run_sql_query( cSql )
    MsgC()
 
    IF !is_var_objekat_tpqquery( oQry )
       MsgBeep( "Problem sa SQL upitom !" )
-      RETURN
+      RETURN .F.
    ENDIF
 
    IF oQry:LastRec() > 0
       IF Pitanje(, "Izbrisati ukupno " + AllTrim( Str( oQry:LastRec() ) ) + " dokumenata (D/N) ?", "N" ) == "N"
-         RETURN
+         RETURN .F.
       ENDIF
    ENDIF
 
@@ -705,7 +700,7 @@ FUNCTION pos_brisi_nepostojece_dokumente()
       IF !pos_brisi_dokument( cIdPos, cIdVd, dDatum, cBrDok )
          BoxC()
          MsgBeep( "Problem sa brisanjem dokumenta !" )
-         RETURN
+         RETURN .F.
       ENDIF
 
       ++ nCount

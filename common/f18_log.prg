@@ -153,9 +153,9 @@ STATIC FUNCTION query_log_data( params )
    ENDIF
 
    info_bar( "log_get_data", "qry:" + _qry )
-   _data := _sql_query( _server, _qry )
+   _data := run_sql_query( _qry )
 
-   IF !is_var_objekat_tpqquery( _data )
+   IF sql_error_in_query( _data, "SELECT" )
       RETURN NIL
    ENDIF
 
@@ -261,7 +261,6 @@ STATIC FUNCTION sql_log_delete( params )
 
    LOCAL _ok := .T.
    LOCAL _qry, _where
-   LOCAL _server := my_server()
    LOCAL _result
    LOCAL _dok_oper := "%F18_DOK_OPER%"
    LOCAL _delete_level := params[ "delete_level" ]
@@ -278,10 +277,10 @@ STATIC FUNCTION sql_log_delete( params )
    _qry := "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "log "
    _qry += "WHERE " + _where
 
-   _result := _sql_query( _server, _qry )
+   _result := run_sql_query( _qry )
 
-   IF ValType( _result ) == "L"
-      _ok := .F.
+   IF sql_error_in_query( _result )
+      RETURN .F.
    ENDIF
 
-   RETURN _ok
+   RETURN .T.

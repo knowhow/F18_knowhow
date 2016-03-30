@@ -388,7 +388,7 @@ FUNCTION ld_provjeri_dat_isplate_za_mjesec( godina, mjesec, rj )
    _qry += " AND obr.dat_ispl IS NULL "
    _qry += "GROUP BY ld.godina, ld.mjesec, ld.idrj, obr.dat_ispl  "
 
-   _data := _sql_query( my_server(), _qry )
+   _data := run_sql_query( _qry )
 
    _count := _data:FieldGet( 1 )
 

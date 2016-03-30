@@ -81,7 +81,6 @@ FUNCTION push_ids_to_semaphore( table, aIds, lToMySelf )
    LOCAL _sql_ids
    LOCAL nI
    LOCAL _set_1, _set_2
-   LOCAL _server := my_server()
 
 
    IF skip_semaphore_sync( table )
@@ -145,7 +144,7 @@ FUNCTION push_ids_to_semaphore( table, aIds, lToMySelf )
       _qry += "user_code <> " + sql_quote( _user ) + " AND "
    ENDIF
    _qry += "ids IS NOT NULL AND array_length(ids,1) > 2000"
-   _ret := _sql_query( _server, _qry )
+   _ret := run_sql_query( _qry )
 
    log_write( "END push_ids_to_semaphore", 9 )
 
@@ -169,7 +168,6 @@ FUNCTION get_ids_from_semaphore( table )
    LOCAL _tbl_obj, _update_obj
    LOCAL _qry
    LOCAL cIds, _num_arr, _arr, nI
-   LOCAL _server := my_server()
    LOCAL _user := f18_user()
    LOCAL _tok, _versions, _tmp
    LOCAL _log_level := log_level()
@@ -206,11 +204,11 @@ FUNCTION get_ids_from_semaphore( table )
    ENDIF
 
    _qry := "SELECT ids FROM " + _tbl + " WHERE user_code=" + sql_quote( _user )
-   _tbl_obj := _sql_query( _server, _qry )
+   _tbl_obj := run_sql_query( _qry )
 
    _qry := "UPDATE " + _tbl + " SET  ids=NULL , dat=NULL, version=last_trans_version"
    _qry += " WHERE user_code =" + sql_quote( _user )
-   _update_obj := _sql_query( _server, _qry, .T. )
+   _update_obj := run_sql_query( _qry )
 
 
    IF ( _tbl_obj == NIL ) .OR. ( _update_obj == NIL ) .OR. ( ValType( _update_obj ) == "L" .AND. _update_obj == .F. )

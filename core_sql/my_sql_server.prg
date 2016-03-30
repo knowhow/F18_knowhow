@@ -14,7 +14,7 @@
 MEMVAR GetList
 
 THREAD STATIC s_psqlServer := NIL  // glavni thread
-THREAD STATIC s_pgsqlServerMainDb := NIL
+THREAD STATIC s_pgsqlServerPostgresDb := NIL
 STATIC s_psqlServer_params := NIL  // parametri trebaju biti dostupni novim threadovima
 
 THREAD STATIC s_psqlServerDbfThread := NIL // svaka thread konekcija zasebna
@@ -61,21 +61,20 @@ FUNCTION my_server( oServer )
 
 
 
-
-FUNCTION server_main_db( oServer )
+FUNCTION server_postgres_db( oServer )
 
    IF oServer <> NIL
-      s_pgsqlServerMainDb := oServer
+      s_pgsqlServerPostgresDb := oServer
    ENDIF
 
-   RETURN s_pgsqlServerMainDb
+   RETURN s_pgsqlServerPostgresDb
 
 
 
 
-FUNCTION server_main_db_close()
+FUNCTION server_postgres_db_close()
 
-   LOCAL oServer := server_main_db()
+   LOCAL oServer := server_postgres_db()
 
    IF is_var_objekat_tpqserver( oServer )
       oServer:close()
@@ -87,9 +86,17 @@ FUNCTION server_main_db_close()
 
 
 
-FUNCTION my_server_close()
+FUNCTION my_server_close( nConnType )
 
-   LOCAL oServer := my_server()
+   LOCAL oServer
+
+   hb_default( @nConnType, 1 )
+
+   IF nConnType == 1
+     oServer := my_server()  // db organizacija
+   ELSE
+     oServer := server_postgres_db()
+   ENDIF
 
    IF is_var_objekat_tpqserver( oServer )
       oServer:close()
@@ -103,9 +110,9 @@ FUNCTION my_server_close()
 
 
 
-FUNCTION my_server_logout()
+FUNCTION my_server_logout( nConnType )
 
-   RETURN my_server_close()
+   RETURN my_server_close( nConnType )
 
 
 
@@ -163,7 +170,7 @@ FUNCTION my_server_login( params, conn_type )
    IF  !_server:NetErr() .AND. Empty( _server:ErrorMsg() )
 
       IF conn_type == 0
-         server_main_db( _server )
+         server_postgres_db( _server )
       ELSE
          my_server( _server ) // konekcija za organizaciju
          info_bar( "login", "server connection ok: " + params[ "user" ] + " / " + iif ( conn_type == 1, params[ "database" ], "postgres" ) + " / verzija aplikacije: " + F18_VER, 1 )
@@ -173,10 +180,7 @@ FUNCTION my_server_login( params, conn_type )
 
    ELSE
 
-      IF conn_type == 1
-         error_bar( "login", "error server connection: " + _server:ErrorMsg() )
-      ENDIF
-
+      error_bar( "login", "error server connection: " + _server:ErrorMsg() )
       RETURN .F.
 
    ENDIF
@@ -199,7 +203,6 @@ FUNCTION f18_login( force_connect, arg_v )
    oLogin:main_db_login( @s_psqlServer_params, force_connect )
 
    IF oLogin:lMainDbSpojena
-
 
       DO WHILE .T.
 

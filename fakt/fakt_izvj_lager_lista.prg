@@ -1014,9 +1014,8 @@ STATIC FUNCTION fakt_lager_lista_get_data( params, ps )
    _qry += " GROUP BY f.idroba, r.naz, r.jmj, r.vpc "
    _qry += " ORDER BY f.idroba "
 
-   _table := _sql_query( _server, _qry )
-
-   IF !is_var_objekat_tpqquery( _table )
+   _table := run_sql_query( _qry )
+   IF sql_error_in_query( _table )
       _table := NIL
    ENDIF
 
@@ -1025,7 +1024,6 @@ STATIC FUNCTION fakt_lager_lista_get_data( params, ps )
       _db_params[ "database" ] := Left( _tek_database, Len( _tek_database ) - 4 ) + AllTrim( Str( Year( _date_ps ) ) )
       my_server_params( _db_params )
       my_server_login( _db_params )
-      _server := my_server()
    ENDIF
 
    RETURN _table

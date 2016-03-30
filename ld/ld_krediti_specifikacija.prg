@@ -18,18 +18,18 @@ FUNCTION ld_kred_specifikacija()
    LOCAL _data
 
    IF !_get_vars( @_params )
-      RETURN
+      RETURN .F.
    ENDIF
 
    _data := _get_data( _params )
 
    IF _data:LastRec() == 0
-      RETURN
+      RETURN .F.
    ENDIF
 
    _print_data( _data, _params )
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -39,7 +39,6 @@ STATIC FUNCTION _get_data( params )
    LOCAL _qry
    LOCAL _where
    LOCAL _order
-   LOCAL _server := my_server()
 
    _where := " lk.godina = " + AllTrim( Str( params[ "godina" ] ) )
    _where += " AND lk.mjesec = " + AllTrim( Str( params[ "mjesec" ] ) )
@@ -84,10 +83,10 @@ STATIC FUNCTION _get_data( params )
       " ORDER BY " + _order
 
    MsgO( "formiranje sql upita u toku ..." )
-   _data := _sql_query( _server, _qry )
+   _data := run_sql_query( _qry )
    MsgC()
 
-   IF _data == NIL
+   IF sql_error_in_query( _data )
       RETURN NIL
    ENDIF
 

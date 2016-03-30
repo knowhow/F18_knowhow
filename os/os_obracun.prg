@@ -595,7 +595,7 @@ FUNCTION os_sii_iznos_sanacije( id, datum_od, datum_do )
    _qry += "  AND " + _sql_date_parse( "datum", datum_od, datum_do )
    _qry += "ORDER BY datum "
 
-   _data := _sql_query( my_server(), _qry )
+   _data := run_sql_query( _qry )
 
    IF !is_var_objekat_tpqquery( _data )
       RETURN _hash

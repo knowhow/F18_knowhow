@@ -107,7 +107,7 @@ METHOD F18Login:connect( params, conn_type, silent )
    ENDIF
 
    IF conn_type == 0  .AND. ::lMainDbSpojena
-      server_main_db_close()
+      server_postgres_db_close()
    ENDIF
 
    IF conn_type == 1  .AND. ::lOrganizacijaSpojena
@@ -121,8 +121,12 @@ METHOD F18Login:connect( params, conn_type, silent )
          ::lMainDbSpojena := .T.
       ELSE
          ::lOrganizacijaSpojena := .T.
-          post_login()
-          post_login_cleanup()
+         IF post_login()
+            post_login_cleanup()
+         ELSE
+            my_server_close()
+            RETURN .F.
+         ENDIF
       ENDIF
    ELSE
       ?E "connection error:", params[ "host" ], params[ "port" ], params[ "database" ], params[ "user" ]
@@ -141,7 +145,7 @@ METHOD F18Login:disconnect( nConn )
    ENDIF
 
    IF nConn == 0
-      lDisconnected := server_main_db_close()
+      lDisconnected := server_postgres_db_close()
    ELSE
       lDisconnected := my_server_close()
    ENDIF
@@ -233,22 +237,21 @@ METHOD F18Login:login_odabir_organizacije( server_param )
    LOCAL _max_login := 4
    LOCAL _ret_comp
 
-   ::set_main_db_params( @server_param ) // procitaj parametre za preduzece
+   AltD()
+   ::set_main_db_params( @server_param ) // parametri organizacije
 
-   FOR _i := 1 TO _max_login // imamo pravo na 4 pokusaja !
+   FOR _i := 1 TO _max_login // 4 pokusaja
 
       IF ! ::odabir_organizacije()
          RETURN .F.
       ENDIF
 
       ::set_server_params( @server_param )
-
       IF ::connect( server_param, 1 )
          EXIT
       ENDIF
 
    NEXT
-
 
    ::lOrganizacijaSpojena := .T.
 
@@ -360,7 +363,6 @@ METHOD F18Login:promjena_sezone( server_param, cDatabase, cSezona )
    hParams[ "posljednja_org" ] := StrTran( server_param[ "database" ], "_" + cNovaSezona, "" )
 
    f18_ini_config_write( "sezona", @hParams, .T. )
-
 
    RETURN _ok
 
@@ -537,7 +539,6 @@ METHOD F18Login:odabir_organizacije()
 METHOD F18Login:get_database_sessions( database )
 
    LOCAL _session := ""
-   LOCAL _server := server_main_db()
    LOCAL _table, oRow, _db, _qry
    LOCAL _arr := {}
 
@@ -549,9 +550,8 @@ METHOD F18Login:get_database_sessions( database )
       "FROM pg_database " + ;
       "ORDER BY godina"
 
-   _table := _sql_query( _server, _qry )
-
-   IF _table == NIL
+   _table := _sql_query( server_postgres_db(), _qry )
+   IF sql_error_in_query( _table, "SELECT", server_postgres_db() )
       RETURN NIL
    ENDIF
 
@@ -578,16 +578,14 @@ METHOD F18Login:get_database_sessions( database )
 METHOD F18Login:get_database_top_session( database )
 
    LOCAL _session := ""
-   LOCAL _server := server_main_db()
    LOCAL _table, oRow, _db, _qry
 
    _qry := "SELECT MAX( DISTINCT substring( datname, '" + AllTrim( database ) +  "_([0-9]+)') ) AS godina " + ;
       "FROM pg_database " + ;
       "ORDER BY godina"
 
-   _table := _sql_query( _server, _qry )
-
-   IF _table == NIL
+   _table := _sql_query( server_postgres_db(), _qry )
+   IF sql_error_in_query( _table, "SELECT", server_postgres_db() )
       RETURN NIL
    ENDIF
 
@@ -601,7 +599,6 @@ METHOD F18Login:get_database_top_session( database )
 METHOD F18Login:get_database_description( database, cSezona )
 
    LOCAL _descr := ""
-   LOCAL _server := server_main_db()
    LOCAL _table, oRow, _qry
    LOCAL _database_name := ""
 
@@ -616,9 +613,8 @@ METHOD F18Login:get_database_description( database, cSezona )
       "JOIN pg_database on objoid = pg_database.oid " + ;
       "WHERE datname = " + sql_quote( _database_name )
 
-   _table := _sql_query( _server, _qry )
-
-   IF _table == NIL
+   _table := _sql_query( server_postgres_db(), _qry )
+   IF sql_error_in_query( _table, "SELECT", server_postgres_db() )
       RETURN NIL
    ENDIF
 
@@ -631,8 +627,6 @@ METHOD F18Login:get_database_description( database, cSezona )
    ENDIF
 
    RETURN _descr
-
-
 
 
 
@@ -659,10 +653,8 @@ METHOD F18Login:get_database_browse_array( arr )
 
 
 
-
 METHOD F18Login:database_array()
 
-   LOCAL _server := server_main_db()
    LOCAL _table, oRow, _db, _qry
    LOCAL _tmp := {}
    LOCAL _filter_db := "empty#empty_sezona"
@@ -679,9 +671,8 @@ METHOD F18Login:database_array()
       _where + ;
       " ORDER BY datab "
 
-   _table := _sql_query( _server, _qry )
-
-   IF _table == NIL
+   _table := _sql_query( server_postgres_db(), _qry )
+   IF sql_error_in_query( _table, "SELECT", server_postgres_db() )
       RETURN NIL
    ENDIF
 
@@ -741,7 +732,6 @@ METHOD F18Login:administrative_options( x_pos, y_pos )
 
 
 
-
 STATIC FUNCTION _set_menu_choices( menuop, menuexec )
 
    AAdd( menuop, hb_UTF8ToStr( "1. rekonfiguracija servera        " ) )
@@ -754,13 +744,13 @@ STATIC FUNCTION _set_menu_choices( menuop, menuexec )
    AAdd( menuexec, {|| F18AdminOpts():New():update_db(), .T. } )
 
    AAdd( menuop, hb_UTF8ToStr( "4. nova baza" ) )
-   AAdd( menuexec, {|| F18AdminOpts():New():create_new_db(), .T. } )
+   AAdd( menuexec, {|| F18AdminOpts():New():create_new_pg_db(), .T. } )
 
    AAdd( menuop, hb_UTF8ToStr( "5. brisanje baze" ) )
-   AAdd( menuexec, {|| F18AdminOpts():New():drop_db(), .T. } )
+   AAdd( menuexec, {|| F18AdminOpts():New():drop_pg_db(), .T. } )
 
    AAdd( menuop, hb_UTF8ToStr( "6. otvaranje nove godine" ) )
-   AAdd( menuexec, {|| F18AdminOpts():New():new_session(), .T. } )
+   AAdd( menuexec, {|| F18AdminOpts():New():razdvajanje_sezona(), .T. } )
 
    RETURN .T.
 

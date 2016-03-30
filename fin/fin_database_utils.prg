@@ -72,7 +72,6 @@ FUNCTION fin_dok_get_next_rbr( idfirma, idvn, brnal )
 FUNCTION fin_dok_get_last_rbr( idfirma, idvn, brnal )
 
    LOCAL _qry, _qry_ret, _table
-   LOCAL _server := my_server()
    LOCAL oRow
    LOCAL _last
 
@@ -81,7 +80,7 @@ FUNCTION fin_dok_get_last_rbr( idfirma, idvn, brnal )
       " AND idvn = " + sql_quote( idvn ) + ;
       " AND brnal = " + sql_quote( brnal )
 
-   _table := _sql_query( _server, _qry )
+   _table := run_sql_query( _qry )
 
    oRow := _table:GetRow( 1 )
 

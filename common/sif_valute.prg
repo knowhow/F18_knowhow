@@ -56,7 +56,7 @@ FUNCTION Kurs( datum, val_iz, val_u )
    _qry += "WHERE " + _where
    _qry += " ORDER BY id, datum"
 
-   _data := _sql_query( my_server(), _qry )
+   _data := run_sql_query( _qry )
    _data:GoTo( 1 )
    oRow := _data:GetRow( 1 )
 
@@ -94,7 +94,7 @@ FUNCTION Kurs( datum, val_iz, val_u )
    _qry += "WHERE " + _where
    _qry += " ORDER BY id, datum"
 
-   _data := _sql_query( my_server(), _qry )
+   _data := run_sql_query( _qry )
    _data:GoTo( 1 )
    oRow := _data:GetRow( 1 )
 

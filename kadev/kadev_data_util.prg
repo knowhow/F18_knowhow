@@ -19,13 +19,12 @@
 FUNCTION kadev_broj_promjena( id )
 
    LOCAL _ok := .F.
-   LOCAL _server := my_server()
    LOCAL _qry
    LOCAL _res
 
    _qry := "SELECT COUNT(*) FROM " + F18_PSQL_SCHEMA_DOT + "kadev_promj WHERE id = " + sql_quote( id )
 
-   _res := _sql_query( _server, _qry )
+   _res := run_sql_query( _qry )
 
    IF sql_query_bez_zapisa( _res )
       RETURN 0
@@ -41,13 +40,12 @@ FUNCTION kadev_broj_promjena( id )
 // --------------------------------------------------------
 FUNCTION kadev_broj_podataka( id )
 
-   LOCAL _server := my_server()
    LOCAL _qry
    LOCAL _res
 
    _qry := "SELECT COUNT(*) FROM " + F18_PSQL_SCHEMA_DOT + "kadev_1 WHERE id = " + sql_quote( id )
 
-   _res := _sql_query( _server, _qry )
+   _res := run_sql_query( _qry )
 
    IF sql_query_bez_zapisa( _res )
       RETURN 0

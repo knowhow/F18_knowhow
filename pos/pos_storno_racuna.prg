@@ -17,7 +17,6 @@
 FUNCTION pos_vrati_broj_racuna_iz_fiskalnog( fisc_rn, broj_racuna, datum_racuna )
 
    LOCAL _qry, _qry_ret, _table
-   LOCAL _server := my_server()
    LOCAL _i, oRow
    LOCAL _id_pos := gIdPos
    LOCAL _rn_broj := ""
@@ -34,7 +33,7 @@ FUNCTION pos_vrati_broj_racuna_iz_fiskalnog( fisc_rn, broj_racuna, datum_racuna 
       " GROUP BY pd.datum, pd.brdok, pd.fisc_rn " + ;
       " ORDER BY pd.datum, pd.brdok, pd.fisc_rn "
 
-   _table := _sql_query( _server, _qry )
+   _table := run_sql_query( _qry )
    _table:GoTo( 1 )
 
    IF _table:LastRec() > 1
@@ -323,6 +322,3 @@ STATIC FUNCTION napravi_u_pripremi_storno_dokument( rn_datum, storno_rn, broj_fi
    SELECT ( _t_area )
 
    RETURN
-
-
-

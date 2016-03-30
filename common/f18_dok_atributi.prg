@@ -503,7 +503,6 @@ METHOD F18_DOK_ATRIB:update_atrib_from_server( params )
 
    LOCAL _ok := .T.
    LOCAL _qry
-   LOCAL _server := my_server()
    LOCAL _old_firma := params[ "old_firma" ]
    LOCAL _old_tipdok := params[ "old_tipdok" ]
    LOCAL _old_brdok := params[ "old_brdok" ]
@@ -522,7 +521,7 @@ METHOD F18_DOK_ATRIB:update_atrib_from_server( params )
    _qry += " AND idtipdok = " + sql_quote( _old_tipdok )
    _qry += " AND brdok = " + sql_quote( _old_brdok )
 
-   _ret := _sql_query( _server, _qry )
+   _ret := run_sql_query( _qry )
 
    IF ValType( _ret ) == "L"
       _ok := .F.
@@ -537,9 +536,7 @@ METHOD F18_DOK_ATRIB:update_atrib_from_server( params )
 // ------------------------------------------------------------------------
 METHOD F18_DOK_ATRIB:delete_atrib_from_server()
 
-   LOCAL _ok := .T.
-   LOCAL _qry
-   LOCAL _server := my_server()
+   LOCAL _qry, _ret
 
    ::set_table_name()
 
@@ -549,13 +546,13 @@ METHOD F18_DOK_ATRIB:delete_atrib_from_server()
    _qry += " AND idtipdok = " + sql_quote( ::dok_hash[ "idtipdok" ] )
    _qry += " AND brdok = " + sql_quote( ::dok_hash[ "brdok" ] )
 
-   _ret := _sql_query( _server, _qry )
+   _ret := run_sql_query( _qry )
 
-   IF ValType( _ret ) == "L"
-      _ok := .F.
+   IF sql_error_in_query( _ret )
+      RETURN .F.
    ENDIF
 
-   RETURN _ok
+   RETURN .T.
 
 
 
@@ -614,9 +611,8 @@ METHOD F18_DOK_ATRIB:atrib_dbf_to_server()
       _qry += sql_quote( field->value )
       _qry += ")"
 
-      _res := _sql_query( _server, _qry )
-
-      IF ValType( _res ) == "L"
+      _res := run_sql_query( _qry )
+      IF sql_error_in_query( _res )
          _ok := .F.
          EXIT
       ENDIF

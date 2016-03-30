@@ -146,7 +146,7 @@ STATIC FUNCTION _get_data( param )
    _qry += " ORDER BY idrj "
 
    MsgO( "Formiram podatke izvjestaja ..." )
-   _data := _sql_query( my_server(), _qry )
+   _data := run_sql_query( _qry )
    MsgC()
 
    IF ValType( _data ) == "L"

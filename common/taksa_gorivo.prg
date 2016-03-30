@@ -76,7 +76,7 @@ STATIC FUNCTION artikal_je_gorivo( cIdRoba )
    LOCAL cSql, oQuery
 
    cSql := "SELECT k1 FROM " + F18_PSQL_SCHEMA_DOT + "roba WHERE id = " + sql_quote( cIdRoba )
-   oQuery := _sql_query( my_server(), cSql )
+   oQuery := run_sql_query( cSql )
 
    IF query_row( oQuery, "k1" ) == "GORI"
       lRet := .T.

@@ -63,7 +63,6 @@ METHOD RNALDamageDocument:get_damage_data()
 
    LOCAL _ok := .F.
    LOCAL _qry, _table
-   LOCAL _server := my_server()
    LOCAL _log_type := "21"
 
    _qry := "SELECT " + ;
@@ -87,9 +86,7 @@ METHOD RNALDamageDocument:get_damage_data()
       "ORDER BY lit.doc_no, lit.doc_log_no, lit.doc_lit_no"
 
    MsgO( "formiranje sql upita u toku ..." )
-
-   _table := _sql_query( _server, _qry )
-
+   _table := run_sql_query( _qry )
    MsgC()
 
    IF _table == NIL
@@ -456,15 +453,13 @@ METHOD RNALDamageDocument:config_tbl_struct()
 METHOD RNALDamageDocument:get_rnal_header_data()
 
    LOCAL _qry, _table
-   LOCAL _server := my_server()
 
    _qry := "SELECT * FROM " + F18_PSQL_SCHEMA_DOT + "rnal_docs " + ;
       " WHERE doc_no = " + docno_str( ::doc_no ) + ;
       " ORDER BY doc_no"
 
-   _table := _sql_query( _server, _qry )
-
-   IF _table == NIL
+   _table := run_sql_query( _qry )
+   IF sql_error_in_query( _table )
       RETURN NIL
    ENDIF
 
@@ -477,7 +472,6 @@ METHOD RNALDamageDocument:get_rnal_header_data()
 METHOD RNALDamageDocument:get_rnal_items_data()
 
    LOCAL _qry, _table
-   LOCAL _server := my_server()
    LOCAL _items_cond := ::get_damage_items_cond( "doc_it_no" )
    LOCAL _i
 
@@ -485,9 +479,9 @@ METHOD RNALDamageDocument:get_rnal_items_data()
       " WHERE doc_no = " + AllTrim( Str( ::doc_no ) ) + _items_cond + ;
       " ORDER BY doc_no, doc_it_no "
 
-   _table := _sql_query( _server, _qry )
+   _table := run_sql_query( _qry )
 
-   IF _table == NIL
+   IF sql_error_in_query( _table ) == NIL
       RETURN NIL
    ENDIF
 
@@ -500,16 +494,14 @@ METHOD RNALDamageDocument:get_rnal_items_data()
 METHOD RNALDamageDocument:get_rnal_opers_data()
 
    LOCAL _qry, _table
-   LOCAL _server := my_server()
    LOCAL _items_cond := ::get_damage_items_cond( "doc_it_no" )
 
    _qry := " SELECT * FROM " + F18_PSQL_SCHEMA_DOT + "rnal_doc_ops " + ;
       " WHERE doc_no = " + AllTrim( Str( ::doc_no ) ) + _items_cond + ;
       " ORDER BY doc_no, doc_it_no, doc_op_no"
 
-   _table := _sql_query( _server, _qry )
-
-   IF _table == NIL
+   _table := run_sql_query( _qry )
+   IF sql_error_in_query( _table )
       RETURN NIL
    ENDIF
 

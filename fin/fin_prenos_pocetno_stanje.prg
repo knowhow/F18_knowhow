@@ -512,17 +512,16 @@ STATIC FUNCTION get_data( param, data_fin, konto_data, partner_data )
 
 
    switch_to_database( _db_params, _tek_database, _year_sez )
-   _server := my_server()
 
    MsgO( "početno stanje - sql query u toku..." )
 
-   data_fin := _sql_query( _server, _qry )
+   data_fin := run_sql_query( _qry )
 
    IF _copy_sif == "D"
       _qry_2 := "SELECT * FROM " + F18_PSQL_SCHEMA_DOT + "konto ORDER BY id"
-      konto_data := _sql_query( _server, _qry_2 )
+      konto_data := run_sql_query( _qry_2 )
       _qry_3 := "SELECT * FROM " + F18_PSQL_SCHEMA_DOT + "partn ORDER BY id"
-      partner_data := _sql_query( _server, _qry_3 )
+      partner_data := run_sql_query( _qry_3 )
    ELSE
       konto_data := NIL
       partner_data := NIL
@@ -539,9 +538,8 @@ STATIC FUNCTION get_data( param, data_fin, konto_data, partner_data )
    MsgC()
 
    switch_to_database( _db_params, _tek_database, _year_tek )
-   _server := my_server()
 
-   RETURN
+   RETURN .T.
 
 
 

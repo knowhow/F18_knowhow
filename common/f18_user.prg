@@ -12,9 +12,6 @@
 #include "f18.ch"
 
 
-// -----------------------------------------------------
-// podesenje korisnickih podataka
-// -----------------------------------------------------
 FUNCTION f18_set_user_preferences( params )
 
    LOCAL _user_id := 0
@@ -24,7 +21,6 @@ FUNCTION f18_set_user_preferences( params )
    LOCAL _active := "D"
    LOCAL _email
    LOCAL _qry, _table
-   LOCAL _server := my_server()
    LOCAL _show_box := .F.
 
    IF params == NIL
@@ -67,13 +63,11 @@ FUNCTION f18_set_user_preferences( params )
       BoxC()
 
       IF LastKey() == K_ESC
-         RETURN
+         RETURN .F.
       ENDIF
 
    ENDIF
 
-
-   // setuj parametre na sql serveru....
    _qry := "SELECT setUserPreference(" + sql_quote( _user_name ) + ;
       "," + sql_quote( "propername" ) + "," + sql_quote( _proper_name ) + ");"
 
@@ -83,6 +77,6 @@ FUNCTION f18_set_user_preferences( params )
    _qry += "SELECT setUserPreference(" + sql_quote( _user_name ) + ;
       "," + sql_quote( "active" ) + "," + sql_quote( "t" ) + ");"
 
-   _table := _sql_query( _server, _qry )
+   _table := run_sql_query( _qry )
 
-   RETURN
+   RETURN .T.

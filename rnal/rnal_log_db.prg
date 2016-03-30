@@ -368,7 +368,7 @@ STATIC FUNCTION zadnji_broj_loga( nDoc_no )
    LOCAL nLast := 0
 
    cSql := "SELECT MAX( doc_log_no ) FROM " + F18_PSQL_SCHEMA_DOT + "rnal_doc_log WHERE doc_no = " + ALLTRIM( STR( nDoc_no ) )
-   xRes := _sql_query( my_server(), cSql )
+   xRes := run_sql_query( cSql )
 
    IF is_var_objekat_tpqquery( xRes ) .AND. xRes:FieldGet(1) <> NIL
       nLast := xRes:FieldGet(1)
@@ -430,7 +430,7 @@ STATIC FUNCTION rnal_novi_broj_stavke_loga( nDoc_no, nDoc_log_no )
    cSql += "WHERE doc_no = " + ALLTRIM( STR( nDoc_no ) )
    cSql += "  AND doc_log_no = " + ALLTRIM( STR( nDoc_log_no ) )
 
-   xRes := _sql_query( my_server(), cSql )
+   xRes := run_sql_query( cSql )
 
    IF is_var_objekat_tpqquery( xRes ) .AND. xRes:FieldGet(1) <> NIL
       nLast := xRes:FieldGet(1)

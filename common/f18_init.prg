@@ -107,7 +107,9 @@ FUNCTION post_login()
    set_global_vars_1()
    set_global_screen_vars( .F. )
    set_global_vars_2()
-   parametri_organizacije( .F. )
+   IF !parametri_organizacije( .F. )
+      RETURN .F.
+   ENDIF
    set_vars_za_specificne_slucajeve()
 
    thread_dbfs( hb_threadStart( @thread_create_dbfs() ) )

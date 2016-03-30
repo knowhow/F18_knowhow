@@ -68,24 +68,24 @@ STATIC FUNCTION _get_vars( params )
    Box(, _box_x, _box_y )
 
    SET CURSOR ON
-	
+
    @ m_x + _x, m_y + 2 SAY "Parametri prenosa u novu godinu" COLOR "BG+/B"
-	
+
    _x += 2
-	
+
    @ m_x + _x, m_y + 2 SAY "pos ID" GET _id_pos VALID !Empty( _id_pos )
-	
+
    _x += 2
-	
+
    @ m_x + _x, m_y + 2 SAY "Datum prenosa od:" GET _dat_od VALID !Empty( _dat_od )
    @ m_x + _x, Col() + 1 SAY "do:" GET _dat_do VALID !Empty( _dat_do )
-	
+
    _x += 2
-	
+
    @ m_x + _x, m_y + 2 SAY "Datum dokumenta pocetnog stanja:" GET _dat_ps VALID !Empty( _dat_ps )
-	
+
    READ
-	
+
    BoxC()
 
    IF LastKey() == K_ESC
@@ -142,7 +142,6 @@ STATIC FUNCTION pocetno_stanje_sql( param )
    LOCAL _year_sez := Year( _date_to )
    LOCAL _year_tek := Year( _date_ps )
    LOCAL _id_pos := PARAM[ "id_pos" ]
-   LOCAL _server := my_server()
    LOCAL _qry, _table, _row
    LOCAL _count := 0
    LOCAL _rec, _id_roba, _kolicina, _vrijednost
@@ -150,7 +149,7 @@ STATIC FUNCTION pocetno_stanje_sql( param )
    LOCAL lOk := .T.
 
    prebaci_se_u_bazu( _db_params, _tek_database, _year_sez )
-   _server := my_server()
+
 
    _qry := "SELECT " + ;
       "idroba, " + ;
@@ -172,15 +171,11 @@ STATIC FUNCTION pocetno_stanje_sql( param )
    _qry += " GROUP BY idroba "
    _qry += " ORDER BY idroba "
 
-   msgO( "pocetno stanje sql query u toku..." )
-
-   _table := _sql_query( _server, _qry )
-   _table:Refresh()
-
-   msgC()
+   MsgO( "pocetno stanje sql query u toku..." )
+   _table := run_sql_query( _qry )
+   MsgC()
 
    prebaci_se_u_bazu( _db_params, _tek_database, _year_tek )
-   _server := my_server()
 
    O_POS
    O_POS_DOKS
@@ -192,7 +187,7 @@ STATIC FUNCTION pocetno_stanje_sql( param )
    IF !f18_lock_tables( { "pos_pos", "pos_doks" }, .T. )
       sql_table_update( nil, "END" )
       MsgBeep( "Ne mogu zaključati tabele !#Prekidam operaciju.")
-      RETURN
+      RETURN .F.
    ENDIF
 
    MsgO( "Formiranje dokumenta početnog stanja u toku ..." )
@@ -232,7 +227,7 @@ STATIC FUNCTION pocetno_stanje_sql( param )
          _rec[ "prebacen" ] := "1"
          _rec[ "smjena" ] := "1"
          _rec[ "mu_i" ] := "1"
-		
+
          lOk := update_rec_server_and_dbf( "pos_pos", _rec, 1, "CONT" )
 
       ENDIF
@@ -281,5 +276,3 @@ STATIC FUNCTION pocetno_stanje_sql( param )
    USE
 
    RETURN _count
-
-

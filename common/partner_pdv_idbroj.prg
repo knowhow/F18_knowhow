@@ -235,4 +235,4 @@ FUNCTION delete_sifk_partner_regb()
 
    cQuery := "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "sifk WHERE oznaka='REGB'"
 
-   RETURN _sql_query( my_server(), cQuery )
+   RETURN run_sql_query( cQuery )

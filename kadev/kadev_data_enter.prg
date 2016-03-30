@@ -152,7 +152,7 @@ STATIC FUNCTION kadev_radnik_info_by_params( jmbg )
 
    WHILE Inkey( 0.1 ) != K_ESC
    END
-	
+
    BoxC()
 
    RETURN _ok
@@ -233,7 +233,7 @@ STATIC FUNCTION data_handler()
       IF Ch == K_CTRL_N
          fNovi := .T.
       ENDIF
-	
+
       IF fNovi
          APPEND BLANK
       ENDIF
@@ -265,7 +265,7 @@ STATIC FUNCTION data_handler()
       ENDIF
 
    CASE Ch == K_CTRL_T
-	
+
       IF !( Deleted() .OR. Eof() .OR. Bof() )
          brisi_kadrovski_karton()
          RETURN DE_REFRESH
@@ -315,25 +315,25 @@ STATIC FUNCTION data_handler()
    CASE Ch == Asc( "P" ) .OR. Ch == Asc( "p" )
 
       _t_area := Select()
-  	
+
       Box( "uk0_1", MAXROWS() - 12, MAXCOLS() - 5, .F. )
-  	
+
       @ m_x + ( MAXROWS() - 13 ), m_y + 2 SAY "RADNIK: " + AllTrim( kadev_0->prezime ) + " " + ;
          AllTrim( kadev_0->ime ) + ", ID: " + ;
          AllTrim( kadev_0->id )
-  	
+
       SET CURSOR ON
-  	
+
       set_global_vars_from_dbf()
-  	
+
       // daj mi promjene...
       get_4( NIL, .F. )
 
       _rec := get_dbf_global_memvars()
       update_rec_server_and_dbf( "kadev_0", _rec, 1, "FULL" )
-  	
+
       BoxC()
-  	
+
       SELECT ( _t_area )
 
    CASE Ch == Asc( "R" ) .OR. Ch == Asc( "r" )
@@ -370,7 +370,7 @@ STATIC FUNCTION rjesenje_za_radnika()
 
    // otvori rjesenja...
    P_Rjes()
-  	
+
    IF LastKey() == K_ESC
       SELECT ( _t_area )
       RETURN _ret
@@ -392,12 +392,12 @@ STATIC FUNCTION rjesenje_za_radnika()
          SKIP 1
          LOOP
       ENDIF
-    		
+
       cTempVar := AllTrim( field->id )
       cTempIzraz := AllTrim( field->izraz )
-    	
+
       ID&cTempVar := &cTempIzraz
-    	
+
       IF field->priun == "0"
          AAdd( _niz_0, { RTrim( field->upit ), "ID" + cTempVar, RTrim( field->uvalid ), ;
             RTrim( field->upict ), IF( field->obrada == "D", ".t.", ".f." ) } )
@@ -411,7 +411,7 @@ STATIC FUNCTION rjesenje_za_radnika()
       SKIP 1
 
    ENDDO
-  	
+
    SET ORDER TO TAG "1"
 
    // unos prioritetnih podataka
@@ -430,18 +430,18 @@ STATIC FUNCTION rjesenje_za_radnika()
                AAdd( _tmp, _niz_0[ _i + ( _tek_strana - 1 ) * 20 ] )
             ENDIF
          NEXT
-      	
+
          VarEdit( _tmp, 1, 1, 4 + Len( _tmp ), 79, ;
             AllTrim( kdv_rjes->naz ) + "," + ;
             kadev_0->( Trim( prezime ) + " " + Trim( ime ) ) + ;
             ", STR." + AllTrim( Str( _tek_strana ) ) + "/" + AllTrim( Str( _strana ) ), "B1" )
-      			
+
          IF LastKey() == K_PGUP
             -- _tek_strana
          ELSE
             ++ _tek_strana
          ENDIF
-      		
+
          IF _tek_strana < 1
             _tek_strana := 1
          ENDIF
@@ -461,7 +461,7 @@ STATIC FUNCTION rjesenje_za_radnika()
 
    // ispitivanje unosa i eventualne modifikacije unosa preostalih podataka
    _postoji := 0
-  	
+
    IF kdv_rjes->idpromj == "G1"
 
       // godisnji odmor
@@ -495,9 +495,9 @@ STATIC FUNCTION rjesenje_za_radnika()
          SKIP 1
 
       ENDDO
-    	
+
       PRIVATE preostd := AllTrim( Str( nImaDana - nIskorDana ) )
-    	
+
       PopWA()
 
    ENDIF
@@ -527,7 +527,7 @@ STATIC FUNCTION rjesenje_za_radnika()
             nGetP1 --
          ENDIF
       NEXT
-    	
+
       PRIVATE samo2 := ".t."
 
       // kad vec znam da je ID20 br.dana za 2.dio god.odmora
@@ -541,7 +541,7 @@ STATIC FUNCTION rjesenje_za_radnika()
          ID13 := Int( nGOKrit7 )
          ID14 := Int( nImaDana )
       ENDIF
-    		
+
       ID20 := Int( nImaDana - nIskorDana )
 
    ELSE
@@ -561,27 +561,27 @@ STATIC FUNCTION rjesenje_za_radnika()
                AAdd( _tmp_3, _niz[ _y + ( _tek_strana - 1 ) * 20 ] )
             ENDIF
          NEXT
-      	
+
          VarEdit( _tmp_3, 1, 1, 4 + Len( _tmp_3 ), 79, ;
             AllTrim( kdv_rjes->naz ) + "," + kadev_0->( Trim( prezime ) + " " + Trim( ime ) ) + ;
             ", STR." + AllTrim( Str( _tek_strana ) ) + "/" + AllTrim( Str( _strana ) ), "B1" )
-      		
+
          IF LastKey() == K_PGUP
             -- _tek_strana
          ELSE
             ++ _tek_strana
          ENDIF
-      	
+
          IF _tek_strana < 1
             _tek_strana := 1
          ENDIF
-      	
+
          IF _tek_strana > _strana
             EXIT
          ENDIF
 
       ENDDO
-    	
+
       IF LastKey() == K_ESC
          SELECT ( _t_area )
          RETURN _ret
@@ -635,16 +635,16 @@ FUNCTION rpt_rjes()
          aPom := SljedLin( my_home() + AllTrim( KDV_RJES->fajl ), nPocetak )
          nPocetak := aPom[ 2 ]
          cLin := aPom[ 1 ]
-      	
+
          IF nPreskociRedova > 0
             --nPreskociRedova
             LOOP
          ENDIF
-      	
+
          IF i > 1
             ?
          ENDIF
-      	
+
          DO WHILE .T.
             nPom := At( "#", cLin )
             IF nPom > 0
@@ -652,11 +652,11 @@ FUNCTION rpt_rjes()
                aPom := UzmiVar( SubStr( cPom, 2, 2 ) )
                ?? Left( cLin, nPom - 1 )
                cLin := SubStr( cLin, nPom + 4 )
-          			
+
                IF !Empty( aPom[ 1 ] )
                   PrnKod_ON( aPom[ 1 ] )
                ENDIF
-				
+
                IF aPom[ 1 ] == "K"
                   // ako evaluacija vrsi i stampu npr.
                   cPom := &( aPom[ 2 ] )
@@ -665,7 +665,7 @@ FUNCTION rpt_rjes()
                   cPom := &( aPom[ 2 ] )
                   ?? cPom
                ENDIF
-          			
+
                IF !Empty( aPom[ 1 ] )
                   PrnKod_OFF( aPom[ 1 ] )
                ENDIF
@@ -1014,7 +1014,7 @@ STATIC FUNCTION get_4( strana, brzi_unos )
    ENDIF
 
    IF brzi_unos
-	
+
       ImeKol := { { "Datum ", {|| datumOd } }, ;
          { "Do    ", {|| datumDo } }, ;
          { "Kar.",  {|| IdK }      }, ;
@@ -1028,7 +1028,7 @@ STATIC FUNCTION get_4( strana, brzi_unos )
          { "cAtr1", {|| catr1 }    }, ;
          { "cAtr2", {|| catr2 }    } ;
          }
-  	
+
       @ m_x, m_y + 2 SAY PadC( " TIP PROMJENE: " + gTrPromjena + "-" + ;
          Trim( Ocitaj( F_KADEV_PROMJ, gTrPromjena, "naz" ) ) + " ", 70, "Í" )
 
@@ -1134,14 +1134,14 @@ FUNCTION EdPromj( ch )
       @ m_x + 3, m_y + 2 SAY "Tip promjene  " GET qidpromj;
          VALID P_Promj( @qidpromj, 3, 40 ) PICTURE "@!"
       @ m_x + 4, m_y + 2 SAY "Karakteristika" GET qidk PICT "@!"
-     		
+
       READ
 
       IF qIdPromj == "G1"
          // godisnji odmor
          @ m_x + 6, m_y + 2 SAY "Koristi pravo na godisnji odmor za godinu   :"  GET qnAtr1 PICT "9999"
          @ m_x + 7, m_y + 2 SAY "Broj dana godisnjeg odmora na koji ima pravo:"  GET qnAtr2  PICT "9999"
-       			
+
          IF !( "U" $ Type( "qnAtr3" ) )
             @ m_x + 8, m_y + 2 SAY "Zakonski minimum                         :"  GET qnAtr3  PICTURE "999"
             @ m_x + 9, m_y + 2 SAY "Po osnovu vrste poslova i zadataka       :"  GET qnAtr4  PICTURE "999"
@@ -1208,13 +1208,13 @@ FUNCTION EdPromj( ch )
          qcAtr1 := cStrSpr
          qcAtr2 := cVstrSpr
       ENDIF
-	
+
       @ m_x + 9 + IF( !( "U" $ Type( "qnAtr3" ) ), 7, 0 ), m_y + 2 SAY "Dokument  " GET qDokument PICTURE "@!"
       @ m_x + 10 + IF( !( "U" $ Type( "qnAtr3" ) ), 7, 0 ), m_y + 2 SAY "Opis      " GET qOpis     PICTURE "@!"
       @ m_x + 12 + IF( !( "U" $ Type( "qnAtr3" ) ), 7, 0 ), m_y + 2 SAY "Nadlezan  " GET qNadlezan PICTURE "@!"
-     		
+
       READ
-     		
+
       BoxC()
 
       IF LastKey() <> K_ESC
@@ -1244,7 +1244,7 @@ FUNCTION EdPromj( ch )
             IF P_PROMJ( qIdPromj, -4 ) == "I"
                // intervalna promjena
                _DatVRMJ := qDatumOd
-               		
+
                _rec := dbf_get_rec()
                _rec[ "datumdo" ] := CToD( "" )
                update_rec_server_and_dbf( "kadev_1", _rec, 1, "FULL" )
@@ -1262,20 +1262,20 @@ FUNCTION EdPromj( ch )
             ENDIF
 
          ENDIF
-        		
+
          RETURN DE_REFRESH
-     		
+
       ELSE
          IF Ch == K_CTRL_N
             // brisemo samo append blank u dbf-u, nema nista na serveru
             delete_with_rlock()
             SKIP -1
          ENDIF
-        		
+
          RETURN DE_REFRESH
-     		
+
       ENDIF
-	
+
    CASE Ch == K_CTRL_T
       IF Pitanje( "p08", "Sigurno zelite izbrisati ovu promjenu ???", "N" ) == "D"
          _rec := dbf_get_rec()
@@ -1289,18 +1289,18 @@ FUNCTION EdPromj( ch )
    CASE Ch == K_CTRL_END
       RETURN DE_ABORT
    CASE Ch == K_ALT_K
-     	
+
       IF P_PROMJ( IdPromj, -4 ) = "I" .AND. Empty( DatumDo )
-		
+
          // intervalna promjena
          dPom := Date()
-        	
+
          Box( "bzatv", 3, 40, .F. )
          SET CURSOR ON
          @ m_x + 1, m_y + 1 SAY "Datum zatvaranja:" GET dPom VALID dPom >= DatumOd
          READ
          BoxC()
-        	
+
          IF LastKey() <> K_ESC
             _status := "A"
             // zatvaranje promjene
@@ -1451,12 +1451,11 @@ FUNCTION _dobar_id2( noviId2 )
 FUNCTION kadev_radnik_postoji( id_broj )
 
    LOCAL _ok := .F.
-   LOCAL _srv := my_server()
    LOCAL _qry, _ret
 
    _qry := "SELECT id FROM " + F18_PSQL_SCHEMA_DOT + "kadev_0 WHERE id = " + sql_quote( id_broj )
 
-   _ret := _sql_query( _srv, _qry )
+   _ret := run_sql_query( _qry )
    IF ValType( _ret ) <> "L" .AND. _ret:LastRec() <> 0
       _ok := .T.
    ENDIF

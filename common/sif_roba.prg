@@ -491,7 +491,7 @@ FUNCTION rpt_dupli_barkod()
 STATIC FUNCTION __dupli_bk_sql()
 
    LOCAL _qry, _table
-   LOCAL _server := my_server()
+
 
    _qry := "SELECT id, naz, barkod " + ;
       "FROM " + F18_PSQL_SCHEMA + ".roba r1 " + ;
@@ -503,14 +503,13 @@ STATIC FUNCTION __dupli_bk_sql()
       ") " + ;
       "ORDER BY barkod"
 
-   _table := _sql_query( _server, _qry )
-
-   IF _table == NIL
-      RETURN NIL
+   _table := run_sql_query( _qry )
+   IF sql_error_in_query( _table, "SELECT" )
+       RETURN NIL
    ENDIF
 
-   RETURN _table
 
+   RETURN _table
 
 
 // -----------------------------------------------
@@ -521,7 +520,7 @@ STATIC FUNCTION __dupli_bk_rpt( data )
    LOCAL _i
 
    IF ValType( data ) == "L" .OR. Len( data ) == 0
-      MsgBeep( "Nema podataka za prikaz !!!" )
+      MsgBeep( "Nema podataka za prikaz !" )
       RETURN
    ENDIF
 
@@ -549,7 +548,7 @@ STATIC FUNCTION __dupli_bk_rpt( data )
    FF
    ENDPRINT
 
-   RETURN
+   RETURN .T.
 
 
 // --------------------------------------------------------

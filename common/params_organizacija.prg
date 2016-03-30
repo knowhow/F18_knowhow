@@ -18,6 +18,7 @@ FUNCTION parametri_organizacije( set_params )
    LOCAL _x := 1
    LOCAL _left := 20
 
+   AltD()
    info_bar( "init", "parametri organizacije - start" )
    IF ( set_params == nil )
       set_params := .T.
@@ -67,9 +68,14 @@ FUNCTION parametri_organizacije( set_params )
 
       BoxC()
 
-      // snimi parametre...
+      IF LastKey() == K_ESC
+         RETURN .F.
+      ENDIF
+
       IF LastKey() <> K_ESC
-         set_metric( "org_id", nil, gFirma )
+         IF !set_metric( "org_id", nil, gFirma )
+            RETURN .F.
+         ENDIF
          set_metric( "zaokruzenje", nil, gZaokr )
          set_metric( "tip_subjekta", nil, gTS )
          set_metric( "org_naziv", nil, gNFirma )

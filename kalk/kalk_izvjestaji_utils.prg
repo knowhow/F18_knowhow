@@ -105,7 +105,6 @@ FUNCTION zadnji_izlazi_info( partner, id_roba )
 STATIC FUNCTION _fakt_get_izlazi( partner, roba )
 
    LOCAL _qry, _qry_ret, _table
-   LOCAL _server := my_server()
    LOCAL _data := {}
    LOCAL _i, oRow
 
@@ -115,7 +114,7 @@ STATIC FUNCTION _fakt_get_izlazi( partner, roba )
       " AND ( idtipdok = " + sql_quote( "10" ) + " OR idtipdok = " + sql_quote( "11" ) + " ) " + ;
       " ORDER BY datdok"
 
-   _table := _sql_query( _server, _qry )
+   _table := run_sql_query( _qry )
    _table:GoTo(1)
 
    FOR _i := 1 TO _table:LastRec()
@@ -139,7 +138,6 @@ STATIC FUNCTION _fakt_get_izlazi( partner, roba )
 STATIC FUNCTION _kalk_get_ulazi( partner, roba, mag_prod )
 
    LOCAL _qry, _qry_ret, _table
-   LOCAL _server := my_server()
    LOCAL _data := {}
    LOCAL _i, oRow
    LOCAL _u_i := "pu_i"
@@ -155,7 +153,7 @@ STATIC FUNCTION _kalk_get_ulazi( partner, roba, mag_prod )
       " AND " + _u_i + " = " + sql_quote( "1" ) + ;
       " ORDER BY datdok"
 
-   _table := _sql_query( _server, _qry )
+   _table := run_sql_query( _qry )
    _table:GoTo(1)
 
    FOR _i := 1 TO _table:LastRec()

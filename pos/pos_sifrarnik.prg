@@ -46,7 +46,7 @@ FUNCTION pos_get_mpc()
    cQry := "SELECT " + cField + " FROM " + F18_PSQL_SCHEMA_DOT + "roba "
    cQry += "WHERE id = " + sql_quote( roba->id )
 
-   oData := _sql_query( my_server(), cQry )
+   oData := run_sql_query( cQry )
 
    IF !is_var_objekat_tpqquery( oData )
       MsgBeep( "Problem sa SQL upitom !" )

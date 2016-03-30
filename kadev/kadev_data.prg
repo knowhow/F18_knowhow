@@ -214,7 +214,7 @@ METHOD KADEV_DATA_CALC:data_selection()
 
    _qry += "ORDER BY pr.datumod "
 
-   _data := _sql_query( my_server(), _qry )
+   _data := run_sql_query( _qry )
 
    IF sql_query_bez_zapisa( _data )
       RETURN NIL

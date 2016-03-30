@@ -358,23 +358,20 @@ METHOD LDExportTxt:fill_data_from_ld()
    _qry += " ORDER BY ld.godina, ld.mjesec, ld.obr, rd.naz "
 
    MsgO( "formiranje sql upita u toku ..." )
-
-   _table := _sql_query( _server, _qry )
-
+   _table := run_sql_query( _qry )
    MsgC()
 
-   IF _table == NIL
+   IF sql_error_in_query( _table )
       RETURN NIL
    ENDIF
 
    _table:GoTo( 1 )
    _count := 0
 
-   // napunit ce iz sql upita tabelu export
-   DO WHILE !_table:Eof()
+
+   DO WHILE !_table:Eof() // napuniti tabelu export
 
       ++ _count
-
       oRow := _table:GetRow()
 
       SELECT exp_bank
@@ -429,7 +426,6 @@ METHOD LDExportTxt:fill_data_from_ld()
    _ok := .T.
 
    RETURN _ok
-
 
 
 

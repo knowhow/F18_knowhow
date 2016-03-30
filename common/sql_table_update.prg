@@ -20,7 +20,6 @@ FUNCTION sql_table_update( table, op, record, where_str, silent )
    LOCAL _qry
    LOCAL _tbl
    LOCAL _where
-   LOCAL _server := my_server()
    LOCAL _key
    LOCAL _pos
    LOCAL _dec
@@ -160,14 +159,14 @@ FUNCTION sql_table_update( table, op, record, where_str, silent )
 
    END CASE
 
-   _ret := _sql_query( _server, _qry, silent )
+   _ret := run_sql_query( _qry )
 
    log_write( "sql table update, table: " + IIF( table == NIL, "NIL", table ) + ", op: " + op + ", qry: " + _qry, 8, silent )
    log_write( "sql table update, VALTYPE(_ret): " + ValType( _ret ), 9, silent )
    log_write( "sql table update, zavrsio", 9, silent )
 
-   IF !EMPTY( _ret:ErrorMsg() )
+   IF sql_error_in_query( _ret, "INSERT" )
       RETURN .F.
-   ELSE
-      RETURN .T.
    ENDIF
+
+   RETURN .T.

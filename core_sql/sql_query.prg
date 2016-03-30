@@ -66,7 +66,6 @@ FUNCTION run_sql_query( qry, retry, oServer, cTransactionName )
    IF Left( qry, 6 ) == "COMMIT" .OR. Left( qry, 8 ) == "ROLLBACK"
       IF hb_mutexLock( s_mtxMutex )
          nPos := AScan( s_aTransactions, { | aTran | ValType( aTran ) == "A" .AND. aTran[ 2 ] == my_server():pDB .AND.  aTran[ 4 ] == cTransactionName } )
-         //nPos := AScan( s_aTransactions, { | aTran | ValType( aTran ) == "A" .AND.  aTran[ 4 ] == cTransactionName } )
 
          IF nPos > 0
             ADel( s_aTransactions, nPos )
@@ -109,7 +108,7 @@ FUNCTION run_sql_query( qry, retry, oServer, cTransactionName )
       END SEQUENCE
 
 
-      IF sql_error_in_query( oQuery, cTip )
+      IF sql_error_in_query( oQuery, cTip, oServer )
 
          ?E "SQL ERROR QUERY: ", qry
          ?E "pDb:", my_server():pDb
@@ -117,7 +116,7 @@ FUNCTION run_sql_query( qry, retry, oServer, cTransactionName )
          print_threads( qry )
          error_bar( "sql", qry )
          IF _i == retry
-            RETURN .F.
+            RETURN oQuery
          ENDIF
 
       ELSE
@@ -161,31 +160,34 @@ FUNCTION is_var_objekat_tipa( xVar, cClassName )
 
 
 
-FUNCTION sql_error_in_query( oQry, cTip )
+FUNCTION sql_error_in_query( oQry, cTip, oServer )
 
    LOCAL cLogMsg := "", cMsg, nI
 
    hb_default( @cTip, "SELECT" )
+   hb_default( @oServer, my_server() )
+
+   IF is_var_objekat_tpqquery( oQry ) .AND. !Empty( oQry:ErrorMsg() )
+      LOG_CALL_STACK cLogMsg
+      ?E oQry:ErrorMsg(), cLogMsg
+      error_bar( "sql", oQry:ErrorMsg() )
+      RETURN .T.
+   ENDIF
 
    IF cTip == "SELECT" .AND. !is_var_objekat_tpqquery( oQry )
       RETURN .T.
    ENDIF
 
-   IF cTip $ "SET#INSERT#UPDATE"
-      IF !Empty( my_server():ErrorMsg() )
+   IF cTip $ "SET#INSERT#UPDATE#DELETE#DROP#CREATE#GRANT#"
+      IF is_var_objekat_tpqserver( oServer ) .AND. !Empty( oServer:ErrorMsg() )
          LOG_CALL_STACK cLogMsg
-         ?E my_server():ErrorMsg(), cLogMsg
+         ?E oServer:ErrorMsg(), cLogMsg
          RETURN .T.
       ELSE
          RETURN .F. // sve ok
       ENDIF
    ENDIF
 
-   IF !Empty( oQry:ErrorMsg() )
-      LOG_CALL_STACK cLogMsg
-      ?E oQry:ErrorMsg(), cLogMsg
-      RETURN .T.
-   ENDIF
 
    RETURN  ( oQry:NetErr() )
 

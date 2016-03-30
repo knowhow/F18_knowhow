@@ -477,7 +477,6 @@ STATIC FUNCTION uslovi_za_povrat_dokumenta( vars )
 
 FUNCTION fakt_napravi_duplikat( id_firma, id_tip_dok, br_dok )
 
-   LOCAL _server := my_server()
    LOCAL _qry, _field
    LOCAL _table, oRow
    LOCAL _count := 0
@@ -497,7 +496,7 @@ FUNCTION fakt_napravi_duplikat( id_firma, id_tip_dok, br_dok )
       " AND brdok = " + sql_quote( br_dok ) + ;
       " ORDER BY idfirma, idtipdok, brdok, rbr "
 
-   _table := _sql_query( _server, _qry )
+   _table := run_sql_query( _qry )
 
    IF _table:LastRec() == 0
       MsgBeep( "Traženog dokumenta nema!" )

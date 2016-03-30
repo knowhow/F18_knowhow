@@ -93,9 +93,9 @@ FUNCTION my_server_close( nConnType )
    hb_default( @nConnType, 1 )
 
    IF nConnType == 1
-     oServer := my_server()  // db organizacija
+      oServer := my_server()  // db organizacija
    ELSE
-     oServer := server_postgres_db()
+      oServer := server_postgres_db()
    ENDIF
 
    IF is_var_objekat_tpqserver( oServer )
@@ -160,11 +160,11 @@ FUNCTION my_server_login( params, conn_type )
    NEXT
 
    _server := TPQServer():New( params[ "host" ], ;
-      IIF( conn_type == 1, params[ "database" ], "postgres" ), ;
+      iif( conn_type == 1, params[ "database" ], "postgres" ), ;
       params[ "user" ], ;
       params[ "password" ], ;
       params[ "port" ], ;
-      IIF( conn_type == 1, params[ "schema" ], "public" ) )
+      iif( conn_type == 1, params[ "schema" ], "public" ) )
 
 
    IF  !_server:NetErr() .AND. Empty( _server:ErrorMsg() )
@@ -200,31 +200,32 @@ FUNCTION f18_login( force_connect, arg_v )
    _get_server_params_from_config()
 
    oLogin := F18Login():New()
-   oLogin:main_db_login( @s_psqlServer_params, force_connect )
+   oLogin:postgres_db_login( @s_psqlServer_params, force_connect )
 
-   IF oLogin:lMainDbSpojena
+   AltD()
+   IF !oLogin:lPostgresDbSpojena
+      QUIT_1
+   ENDIF
 
-      DO WHILE .T.
+   DO WHILE .T.
 
-         IF !oLogin:login_odabir_organizacije( @s_psqlServer_params )
-            QUIT_1
+      IF !oLogin:login_odabir_organizacije( @s_psqlServer_params )
+         IF LastKey() == K_ESC
+            info_bar( "info", "<ESC> za izlaz iz aplikacije")
+            inkey( 0 )
+            IF LastKey() == K_ESC // 2 x ESC
+               RETURN .F.
+            ENDIF
          ENDIF
-
+      ELSE
          write_last_login_params_to_ini_conf() // upisi parametre tekuce firme...
-
          IF oLogin:lOrganizacijaSpojena
-
             show_sacekaj()
             program_module_menu( arg_v )
-
          ENDIF
+      ENDIF
 
-      ENDDO
-
-   ELSE
-
-      QUIT_1 // neko je rekao ESC
-   ENDIF
+   ENDDO
 
    RETURN .T.
 

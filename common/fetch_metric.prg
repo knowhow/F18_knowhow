@@ -12,7 +12,7 @@
 #include "f18.ch"
 
 THREAD STATIC s_hParametri := NIL
-
+THREAD STATIC s_lError := .F.
 
 
 FUNCTION fetch_metric( sect, user, default_value )
@@ -47,8 +47,12 @@ FUNCTION fetch_metric( sect, user, default_value )
    _table := run_sql_query( _temp_qry )
 
    IF sql_error_in_query( _table, "SELECT" )
+      s_lError := .T.
       RETURN default_value
+   ELSE
+      s_lError := .F.
    ENDIF
+
 
    IF sql_query_bez_zapisa( _table )
       RETURN default_value
@@ -67,14 +71,18 @@ FUNCTION fetch_metric( sect, user, default_value )
    RETURN xRet
 
 
+FUNCTION fetch_metric_error()
+   RETURN s_lError
+
+
 FUNCTION parametar_dinamican( cSection )
 
    IF "auto_plu_" $ cSection
-       RETURN .T.
+      RETURN .T.
    ENDIF
 
    IF "_doc_no" $ cSection
-       RETURN .T.
+      RETURN .T.
    ENDIF
 
    IF "_brojac_" $ cSection  // brojaci se moraju uvijek citati sa servera

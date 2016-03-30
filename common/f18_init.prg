@@ -108,6 +108,7 @@ FUNCTION post_login()
    set_global_screen_vars( .F. )
    set_global_vars_2()
    IF !parametri_organizacije( .F. )
+      MsgBeep( "post_login error - parametri organizacije !" )
       RETURN .F.
    ENDIF
    set_vars_za_specificne_slucajeve()

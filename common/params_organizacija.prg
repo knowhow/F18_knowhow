@@ -25,6 +25,10 @@ FUNCTION parametri_organizacije( set_params )
    ENDIF
 
    PUBLIC gZaokr := fetch_metric( "zaokruzenje", nil, gZaokr )
+   IF fetch_metric_error()
+      RETURN .F.
+   ENDIF
+   
    PUBLIC gFirma := fetch_metric( "org_id", nil, gFirma )
    PUBLIC gNFirma := PadR( fetch_metric( "org_naziv", nil, gNFirma ), 50 )
    PUBLIC gMjStr := fetch_metric( "org_mjesto", nil, gMjStr )
@@ -44,7 +48,6 @@ FUNCTION parametri_organizacije( set_params )
       Box(, 10, 70 )
 
       @ m_x + _x, m_y + 2 SAY8 "Inicijalna podešenja organizacije ***" COLOR F18_COLOR_I
-
       ++ _x
       ++ _x
       @ m_x + _x, m_y + 2 SAY PadL( "Oznaka firme:", _left ) GET gFirma

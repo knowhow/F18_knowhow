@@ -18,7 +18,7 @@ STATIC s_lPrvoPokretanje // prvo pokretanje aplikacije
 CLASS F18Login
 
    METHOD New()
-   METHOD main_db_login( server_param, force_connect )
+   METHOD postgres_db_login( server_param, force_connect )
    METHOD login_odabir_organizacije()
    METHOD promjena_sezone( server_param, cDatabase, cSezona )
    METHOD promjena_sezone_box()
@@ -31,22 +31,22 @@ CLASS F18Login
    METHOD get_database_sessions()
    METHOD get_database_description()
    METHOD show_info_bar()
-   METHOD main_db_login_form()
+   METHOD postgres_db_login_form()
    METHOD odabir_organizacije()
    METHOD connect()
    METHOD disconnect( nConn )
-   METHOD set_main_db_params()
+   METHOD set_postgres_db_params()
    METHOD set_server_params( server_params )
    METHOD included_databases_for_user()
 
-   DATA lMainDbSpojena
+   DATA lPostgresDbSpojena
    DATA oMainDbServer
    DATA lOrganizacijaSpojena
 
    DATA _company_db_curr_choice
    DATA _company_db_curr_session
-   DATA main_db_params
-   DATA company_db_params
+   DATA postgres_db_params
+   DATA data_db_params
    DATA _include_db_filter
 
 ENDCLASS
@@ -56,20 +56,20 @@ ENDCLASS
 // =======================================
 // oLogin = F18Login():New()
 // oLogin:MainDbLoginForm()
-// if !oLogin:lMainDbSpojena
+// if !oLogin:lPostgresDbSpojena
 // ....
 // endif
 
 
 METHOD F18Login:New()
 
-   ::main_db_params := hb_Hash()
-   ::company_db_params := hb_Hash()
+   ::postgres_db_params := hb_Hash()
+   ::data_db_params := hb_Hash()
    ::_company_db_curr_choice := ""
    ::_company_db_curr_session := ""
    ::_include_db_filter := ""
    ::lOrganizacijaSpojena := .F.
-   ::lMainDbSpojena := .F.
+   ::lPostgresDbSpojena := .F.
    s_cTekucaSezona := AllTrim( Str( Year( Date() ) ) )
    s_cPredhodnaSezona := AllTrim( Str( Year( Date() ) - 1 ) )
    s_lPrvoPokretanje := .T.
@@ -106,7 +106,7 @@ METHOD F18Login:connect( params, conn_type, silent )
       silent := .F.
    ENDIF
 
-   IF conn_type == 0  .AND. ::lMainDbSpojena
+   IF conn_type == 0  .AND. ::lPostgresDbSpojena
       server_postgres_db_close()
    ENDIF
 
@@ -118,7 +118,7 @@ METHOD F18Login:connect( params, conn_type, silent )
 
    IF lConnected
       IF conn_type == 0
-         ::lMainDbSpojena := .T.
+         ::lPostgresDbSpojena := .T.
       ELSE
          ::lOrganizacijaSpojena := .T.
          IF post_login()
@@ -156,35 +156,35 @@ METHOD F18Login:disconnect( nConn )
 
 
 
-METHOD F18Login:set_main_db_params( server_param )
+METHOD F18Login:set_postgres_db_params( server_param )
 
-   ::main_db_params := hb_Hash()
-   ::main_db_params[ "username" ] := server_param[ "user" ]
-   ::main_db_params[ "password" ] := server_param[ "password" ]
-   ::main_db_params[ "host" ] := server_param[ "host" ]
-   ::main_db_params[ "port" ] := server_param[ "port" ]
-   ::main_db_params[ "database" ] := server_param[ "database" ]
-   ::main_db_params[ "schema" ] := server_param[ "schema" ]
-   ::main_db_params[ "session" ] := server_param[ "session" ]
-   ::main_db_params[ "postgres" ] := server_param[ "postgres" ]
+   ::postgres_db_params := hb_Hash()
+   ::postgres_db_params[ "username" ] := server_param[ "user" ]
+   ::postgres_db_params[ "password" ] := server_param[ "password" ]
+   ::postgres_db_params[ "host" ] := server_param[ "host" ]
+   ::postgres_db_params[ "port" ] := server_param[ "port" ]
+   ::postgres_db_params[ "database" ] := server_param[ "database" ]
+   ::postgres_db_params[ "schema" ] := server_param[ "schema" ]
+   ::postgres_db_params[ "session" ] := server_param[ "session" ]
+   ::postgres_db_params[ "postgres" ] := server_param[ "postgres" ]
 
    RETURN .T.
 
 
 METHOD F18Login:set_server_params( server_params )
 
-   server_params[ "database" ] := ::main_db_params[ "database" ]
-   server_params[ "session" ] := ::main_db_params[ "session" ]
-   server_params[ "user" ] := ::main_db_params[ "username" ]
-   server_params[ "password" ] := ::main_db_params[ "password" ]
-   server_params[ "host" ] := ::main_db_params[ "host" ]
-   server_params[ "port" ] := ::main_db_params[ "port" ]
-   server_params[ "schema" ] := ::main_db_params[ "schema" ]
+   server_params[ "database" ] := ::postgres_db_params[ "database" ]
+   server_params[ "session" ] := ::postgres_db_params[ "session" ]
+   server_params[ "user" ] := ::postgres_db_params[ "username" ]
+   server_params[ "password" ] := ::postgres_db_params[ "password" ]
+   server_params[ "host" ] := ::postgres_db_params[ "host" ]
+   server_params[ "port" ] := ::postgres_db_params[ "port" ]
+   server_params[ "schema" ] := ::postgres_db_params[ "schema" ]
 
    RETURN .T.
 
 
-METHOD F18Login:main_db_login( server_param, force_connect )
+METHOD F18Login:postgres_db_login( server_param, force_connect )
 
    LOCAL _max_login := 4
    LOCAL _i
@@ -194,9 +194,9 @@ METHOD F18Login:main_db_login( server_param, force_connect )
       force_connect := .T.
    ENDIF
 
-   ::set_main_db_params( @server_param ) // ucitaj parametre iz ini fajla i setuj ::main_db_params
+   ::set_postgres_db_params( @server_param ) // ucitaj parametre iz ini fajla i setuj ::postgres_db_params
 
-   IF force_connect .AND. ::_main_db_params[ "username" ] <> NIL
+   IF force_connect .AND. ::_postgres_db_params[ "username" ] <> NIL
 
       IF ::connect( server_param, 0 ) // try to connect, if not, open login form
          _logged_in := .T.
@@ -208,8 +208,8 @@ METHOD F18Login:main_db_login( server_param, force_connect )
 
       FOR _i := 1 TO _max_login
 
-         IF ! ::main_db_login_form()
-            ::lMainDbSpojena := _logged_in
+         IF ! ::postgres_db_login_form()
+            ::lPostgresDbSpojena := _logged_in
             RETURN _logged_in
          ENDIF
 
@@ -224,7 +224,7 @@ METHOD F18Login:main_db_login( server_param, force_connect )
 
    ENDIF
 
-   ::lMainDbSpojena := .T.
+   ::lPostgresDbSpojena := .T.
 
    RETURN .T.
 
@@ -234,27 +234,21 @@ METHOD F18Login:main_db_login( server_param, force_connect )
 METHOD F18Login:login_odabir_organizacije( server_param )
 
    LOCAL _i
-   LOCAL _max_login := 4
    LOCAL _ret_comp
 
-   AltD()
-   ::set_main_db_params( @server_param ) // parametri organizacije
+   ::set_postgres_db_params( @server_param ) // parametri organizacije
 
-   FOR _i := 1 TO _max_login // 4 pokusaja
+   IF ! ::odabir_organizacije()
+      RETURN .F.
+   ENDIF
 
-      IF ! ::odabir_organizacije()
-         RETURN .F.
-      ENDIF
+   ::set_server_params( @server_param )
+   IF !::connect( server_param, 1 )
+      RETURN .F.
+   ENDIF
 
-      ::set_server_params( @server_param )
-      IF ::connect( server_param, 1 )
-         EXIT
-      ENDIF
-
-   NEXT
 
    ::lOrganizacijaSpojena := .T.
-
    RETURN .T.
 
 
@@ -369,7 +363,7 @@ METHOD F18Login:promjena_sezone( server_param, cDatabase, cSezona )
 
 
 
-METHOD F18Login:main_db_login_form()
+METHOD F18Login:postgres_db_login_form()
 
    LOCAL _ok := .F.
    LOCAL _user, _pwd, _port, _host, _db, _schema
@@ -379,13 +373,13 @@ METHOD F18Login:main_db_login_form()
    LOCAL _srv_config := "N"
    LOCAL _session
 
-   _user := ::main_db_params[ "username" ]
+   _user := ::postgres_db_params[ "username" ]
    _pwd := ""
-   _host := ::main_db_params[ "host" ]
-   _port := ::main_db_params[ "port" ]
-   _db := ::main_db_params[ "postgres" ]
-   _schema := ::main_db_params[ "schema" ]
-   _session := ::main_db_params[ "session" ]
+   _host := ::postgres_db_params[ "host" ]
+   _port := ::postgres_db_params[ "port" ]
+   _db := ::postgres_db_params[ "postgres" ]
+   _schema := ::postgres_db_params[ "schema" ]
+   _session := ::postgres_db_params[ "session" ]
 
    IF ( _host == NIL ) .OR. ( _port == NIL )
       _srv_config := "D"
@@ -452,19 +446,19 @@ METHOD F18Login:main_db_login_form()
       RETURN _ok
    ENDIF
 
-   ::main_db_params[ "username" ] := AllTrim( _user )
-   ::main_db_params[ "host" ] := AllTrim( _host )
-   ::main_db_params[ "port" ] := _port
-   ::main_db_params[ "schema" ] := _schema
-   ::main_db_params[ "postgres" ] := "postgres"
-   ::main_db_params[ "session" ] := ""
-   ::main_db_params[ "database" ] := "postgres"
+   ::postgres_db_params[ "username" ] := AllTrim( _user )
+   ::postgres_db_params[ "host" ] := AllTrim( _host )
+   ::postgres_db_params[ "port" ] := _port
+   ::postgres_db_params[ "schema" ] := _schema
+   ::postgres_db_params[ "postgres" ] := "postgres"
+   ::postgres_db_params[ "session" ] := ""
+   ::postgres_db_params[ "database" ] := "postgres"
 
 
    IF Empty( _pwd ) // korisnici user=password se jednostavno logiraju
-      ::main_db_params[ "password" ] := ::main_db_params[ "username" ]
+      ::postgres_db_params[ "password" ] := ::postgres_db_params[ "username" ]
    ELSE
-      ::main_db_params[ "password" ] := AllTrim( _pwd )
+      ::postgres_db_params[ "password" ] := AllTrim( _pwd )
    ENDIF
 
    _ok := .T.
@@ -483,7 +477,7 @@ METHOD F18Login:odabir_organizacije()
    LOCAL hParams := hb_Hash()
    LOCAL nOrganizacija
 
-   _db := ::main_db_params[ "database" ]
+   _db := ::postgres_db_params[ "database" ]
    _session := AllTrim( Str( Year( Date() ) ) )
 
    _db := PadR( _db, 30 )
@@ -496,8 +490,8 @@ METHOD F18Login:odabir_organizacije()
    f18_ini_config_read( "sezona", @hParams, .T. ) // read from global ~/.f18_config.ini
 
    IF s_lPrvoPokretanje .AND. hParams[ "posljednja_org" ] != "x" // odmah se prebaciti  posljednju organizaciju/sezonu
-      ::main_db_params[ "database" ] :=  hParams[ "posljednja_org" ] + "_" + hParams[ "posljednji_put" ]
-      ::main_db_params[ "session" ] := hParams[ "posljednji_put" ]
+      ::postgres_db_params[ "database" ] :=  hParams[ "posljednja_org" ] + "_" + hParams[ "posljednji_put" ]
+      ::postgres_db_params[ "session" ] := hParams[ "posljednji_put" ]
       s_lPrvoPokretanje := .F.
       RETURN .T.
    ENDIF
@@ -522,13 +516,13 @@ METHOD F18Login:odabir_organizacije()
       _session := AllTrim( ::_company_db_curr_session ) // ako je zadata uzmi nju
    ENDIF
 
-   ::main_db_params[ "database" ] := AllTrim( ::_company_db_curr_choice ) + ;
+   ::postgres_db_params[ "database" ] := AllTrim( ::_company_db_curr_choice ) + ;
       iif( !Empty( _session ), "_" + AllTrim( _session ), "" )
-   ::main_db_params[ "session" ] := AllTrim( _session )
+   ::postgres_db_params[ "session" ] := AllTrim( _session )
 
 
-   hParams[ "posljednji_put" ] := ::main_db_params[ "session" ]
-   hParams[ "posljednja_org" ] := StrTran( ::main_db_params[ "database" ], "_" + ::main_db_params[ "session" ], "" )
+   hParams[ "posljednji_put" ] := ::postgres_db_params[ "session" ]
+   hParams[ "posljednja_org" ] := StrTran( ::postgres_db_params[ "database" ], "_" + ::postgres_db_params[ "session" ], "" )
    f18_ini_config_write( "sezona", @hParams, .T. ) // nakon odabira organizacije upisi izbor
 
    RETURN .T.

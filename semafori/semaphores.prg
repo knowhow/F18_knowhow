@@ -331,7 +331,6 @@ FUNCTION fill_dbf_from_server( dbf_table, sql_query, sql_fetch_time, dbf_write_t
    LOCAL nCounterDataset := 0
    LOCAL _i, cField := "x"
    LOCAL oDataSet
-   LOCAL _retry := 3
    LOCAL aDbfRec, aDbfFields, cSyncalias, cFullDbf, cFullIdx
    LOCAL nI, cMsg, cCallMsg := "", oError
    LOCAL lRet := .T.
@@ -345,7 +344,7 @@ FUNCTION fill_dbf_from_server( dbf_table, sql_query, sql_fetch_time, dbf_write_t
    aDbfFields := aDbfRec[ "dbf_fields" ]
 
    sql_fetch_time := Seconds()
-   oDataSet := run_sql_query( sql_query, _retry )
+   oDataSet := run_sql_query( sql_query )
    sql_fetch_time := Seconds() - sql_fetch_time
 
    log_write( "fill_dbf_from_server START", 9 )

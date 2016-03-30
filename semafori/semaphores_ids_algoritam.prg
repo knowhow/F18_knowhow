@@ -172,7 +172,7 @@ FUNCTION get_ids_from_semaphore( table )
    LOCAL _tok, _versions, _tmp
    LOCAL _log_level := log_level()
    LOCAL lAllreadyInTransaction := .F.
-   LOCAL cTransactionName
+   LOCAL hParams := hb_hash()
 
    IF skip_semaphore_sync( table )
       RETURN .T.
@@ -185,10 +185,10 @@ FUNCTION get_ids_from_semaphore( table )
    log_write( "START get_ids_from_semaphore", 7 )
 
    _tbl := "sem." + Lower( table )
-   cTransactionName := "ids_" + table
+   hParams[ "tran_name" ] := "ids_" + table
 
    IF !lAllreadyInTransaction
-      run_sql_query( "BEGIN; SET TRANSACTION ISOLATION LEVEL SERIALIZABLE",,, cTransactionName )
+      run_sql_query( "BEGIN; SET TRANSACTION ISOLATION LEVEL SERIALIZABLE", hParams )
    ENDIF
 
    IF _log_level > 6
@@ -214,7 +214,7 @@ FUNCTION get_ids_from_semaphore( table )
    IF ( _tbl_obj == NIL ) .OR. ( _update_obj == NIL ) .OR. ( ValType( _update_obj ) == "L" .AND. _update_obj == .F. )
 
       IF !lAllreadyInTransaction
-         run_sql_query( "ROLLBACK",,, cTransactionName )
+         run_sql_query( "ROLLBACK", hParams )
 
       ENDIF
 
@@ -239,7 +239,7 @@ FUNCTION get_ids_from_semaphore( table )
    ENDIF
 
    IF !lAllreadyInTransaction
-      run_sql_query( "COMMIT",,, cTransactionName )
+      run_sql_query( "COMMIT", hParams )
    ENDIF
 
    cIds := _tbl_obj:FieldGet( 1 )

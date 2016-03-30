@@ -195,7 +195,6 @@ METHOD FaktDokument:refresh_dbfs()
 
 METHOD FaktDokument:change_idtipdok( new_idtipdok )
 
-   LOCAL _srv := my_server()
    LOCAL _sql, _qry
    LOCAL _tmp_tbl := f18_user() + "_tmp_fakt_atributi"
 
@@ -226,13 +225,13 @@ METHOD FaktDokument:change_idtipdok( new_idtipdok )
 
    _sql += "INSERT INTO " + F18_PSQL_SCHEMA_DOT + "fakt_fakt_atributi (SELECT * from " + _tmp_tbl + ")"
 
-   _qry := _sql_query( _srv, _sql )
+   _qry := run_sql_query( _sql )
 
    IF ValType( _qry ) == "O"
       ::refresh_dbfs()
       ::p_idtipdok := new_idtipdok
       ::refresh_dbfs()
       RETURN .T.
-   ELSE
-      RETURN .F.
    ENDIF
+
+   RETURN .F.

@@ -860,7 +860,7 @@ METHOD F18AdminOpts:razdvajanje_sezona()
    _qry += "ORDER BY datname;"
 
 
-   _dbs := _sql_query( server_postgres_db(), _qry )
+   _dbs := postgres_sql_query( _qry )
    _dbs:GoTo( 1 )
 
    // treba da imamo listu baza...
@@ -971,7 +971,7 @@ METHOD F18AdminOpts:create_new_pg_db( params )
 
       _qry := "SELECT COUNT(*) FROM pg_database "
       _qry += "WHERE datname = " + sql_quote( _db_name )
-      oQuery := _sql_query( server_postgres_db(), _qry )
+      oQuery := postgres_sql_query( _qry )
       IF oQuery:GetRow( 1 ):FieldGet( 1 ) > 0
          error_bar( "nova_sezona", "baza " + _db_name + " vec postoji" )
          RETURN .F. // baza vec postoji
@@ -985,7 +985,7 @@ METHOD F18AdminOpts:create_new_pg_db( params )
    _qry += ";"
 
    info_bar( "nova_sezona", "db create: " + _db_name  )
-   oQuery := _sql_query( server_postgres_db(), _qry )
+   oQuery := postgres_sql_query( _qry )
    IF sql_error_in_query( oQuery, "CREATE", server_postgres_db() )
       RETURN .F.
    ENDIF
@@ -995,7 +995,7 @@ METHOD F18AdminOpts:create_new_pg_db( params )
    _qry += "GRANT ALL ON DATABASE " + _db_name + " TO xtrole WITH GRANT OPTION;"
 
    info_bar( "nova_sezona", "grant admin, xtrole: " + _db_name )
-   oQuery := _sql_query( server_postgres_db(), _qry )
+   oQuery := postgres_sql_query( _qry )
    IF sql_error_in_query( oQuery, "GRANT", server_postgres_db() )
       RETURN .F.
    ENDIF
@@ -1017,23 +1017,22 @@ METHOD F18AdminOpts:create_new_pg_db( params )
 
 METHOD F18AdminOpts:relogin_as_admin( cDatabase )
 
-   LOCAL _pg_server
-   LOCAL _db_params := my_server_params()
-   LOCAL _conn := 1
+   LOCAL hSqlParams := my_server_params()
+   LOCAL nConnType := 1
 
    hb_default( @cDatabase, "postgres" )
 
    IF cDatabase == "postgres"
-      _conn := 0
+      nConnType := 0
    ENDIF
 
-   my_server_logout( _conn )
+   my_server_logout( nConnType )
 
-   _db_params[ "user" ] := "admin"
-   _db_params[ "password" ] := "boutpgmin"
-   _db_params[ "database" ] := cDatabase
+   hSqlParams[ "user" ] := "admin"
+   hSqlParams[ "password" ] := "boutpgmin"
+   hSqlParams[ "database" ] := cDatabase
 
-   IF my_server_login( _db_params, _conn )
+   IF my_server_login( hSqlParams, nConnType )
       RETURN .T.
    ENDIF
 
@@ -1042,27 +1041,24 @@ METHOD F18AdminOpts:relogin_as_admin( cDatabase )
 
 METHOD F18AdminOpts:relogin_as( cUser, cPwd, cDatabase )
 
-   LOCAL _pg_server
-   LOCAL _db_params := my_server_params()
-   LOCAL _conn := 1
+
+   LOCAL hSqlParams := my_server_params()
+   LOCAL nConnType := 1
 
    IF cDatabase == "postgres"
-      _conn := 0
+      nConnType := 0
    ENDIF
 
+   my_server_logout( nConnType )
 
-   my_server_logout()
-
-   _db_params[ "user" ] := cUser
-   _db_params[ "password" ] := cPwd
+   hSqlParams[ "user" ] := cUser
+   hSqlParams[ "password" ] := cPwd
 
    IF cDatabase <> NIL
-      _db_params[ "database" ] := cDatabase
+      hSqlParams[ "database" ] := cDatabase
    ENDIF
 
-   my_server_params( _db_params )
-
-   RETURN my_server_login( _db_params, _conn )
+   RETURN my_server_login( hSqlParams, nConnType )
 
 
 METHOD F18AdminOpts:drop_pg_db( db_name )
@@ -1097,6 +1093,7 @@ METHOD F18AdminOpts:drop_pg_db( db_name )
 
    ENDIF
 
+altd()
    IF ! ::relogin_as_admin( "postgres" )
       RETURN .F.
    ENDIF
@@ -1104,11 +1101,11 @@ METHOD F18AdminOpts:drop_pg_db( db_name )
    cQry := "DROP DATABASE IF EXISTS " + db_name + ";"
 
    error_bar( "sql", "DROP db: " + db_name )
-   oQry := run_sql_query( cQry )
+   oQry := postgres_sql_query( cQry )
 
 
    IF sql_error_in_query( oQry, "DROP", server_postgres_db() )
-      error_bar( "drop_db", "drop" + db_name )
+      error_bar( "drop_db", "drop db: " + db_name )
       RETURN .F.
    ENDIF
 

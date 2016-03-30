@@ -18,7 +18,6 @@
 FUNCTION get_fin_partner_saldo( id_partner, id_konto, id_firma )
 
    LOCAL _qry, _qry_ret, _table
-   LOCAL _server := my_server()
    LOCAL _data := {}
    LOCAL _i, oRow
    LOCAL _saldo := 0
@@ -28,8 +27,7 @@ FUNCTION get_fin_partner_saldo( id_partner, id_konto, id_firma )
       " AND idkonto = " + sql_quote( id_konto ) + ;
       " AND idfirma = " + sql_quote( id_firma )
 
-   _table := _sql_query( _server, _qry )
-
+   _table := run_sql_query( _qry )
    oRow := _table:GetRow( 1 )
 
    _saldo := oRow:FieldGet( oRow:FieldPos( "saldo" ) )
@@ -48,7 +46,6 @@ FUNCTION get_fin_partner_saldo( id_partner, id_konto, id_firma )
 FUNCTION g_dpupl_part( id_partner, id_konto, id_firma )
 
    LOCAL _qry, _qry_ret, _table
-   LOCAL _server := my_server()
    LOCAL _data := {}
    LOCAL _i, oRow
    LOCAL _max := CToD( "" )
@@ -59,7 +56,7 @@ FUNCTION g_dpupl_part( id_partner, id_konto, id_firma )
       " AND idfirma = " + sql_quote( id_firma ) + ;
       " AND d_p = '2' "
 
-   _table := _sql_query( _server, _qry )
+   _table := run_sql_query( _qry )
 
    oRow := _table:GetRow( 1 )
 
@@ -80,7 +77,6 @@ FUNCTION g_dpupl_part( id_partner, id_konto, id_firma )
 FUNCTION g_dpprom_part( id_partner, id_konto, id_firma )
 
    LOCAL _qry, _qry_ret, _table
-   LOCAL _server := my_server()
    LOCAL _data := {}
    LOCAL _i, oRow
    LOCAL _max := CToD( "" )
@@ -90,7 +86,7 @@ FUNCTION g_dpprom_part( id_partner, id_konto, id_firma )
       " AND idkonto = " + sql_quote( id_konto ) + ;
       " AND idfirma = " + sql_quote( id_firma )
 
-   _table := _sql_query( _server, _qry )
+   _table := run_sql_query( _qry )
 
    oRow := _table:GetRow( 1 )
 

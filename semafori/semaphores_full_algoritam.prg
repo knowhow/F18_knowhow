@@ -30,7 +30,7 @@ FUNCTION full_synchro( cDbfTable, nStepSize, cInfo )
    LOCAL _sql_fetch_time, _dbf_write_time
    LOCAL _msg
    LOCAL lRet := .T.
-   LOCAL cTransactionName
+   LOCAL hParams := hb_hash()
 
    IF nStepSize == NIL
       nStepSize := 20000
@@ -53,9 +53,10 @@ FUNCTION full_synchro( cDbfTable, nStepSize, cInfo )
 
    open_exclusive_zap_close( aDbfRec ) // nuliranje tabele
 
+   hParams[ "tran_name" ] := "full_" + cDbfTable + ":" + cInfo
 
-   cTransactionName :=  "full_" + cDbfTable + ":" + cInfo
-   run_sql_query( "BEGIN; SET TRANSACTION ISOLATION LEVEL SERIALIZABLE", , , cTransactionName )
+   run_sql_query( "BEGIN; SET TRANSACTION ISOLATION LEVEL SERIALIZABLE", hParams )
+
 /*
    ERROR:  SET TRANSACTION ISOLATION LEVEL must be called before any query
 STATEMENT:  BEGIN; SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
@@ -70,7 +71,7 @@ WARNING:  there is already a transaction in progress
    _seconds := Seconds()
 
    IF _sql_fields == NIL
-      run_sql_query( "ROLLBACK", , , cTransactionName )
+      run_sql_query( "ROLLBACK", hParams )
       _msg := "sql_fields za " + _sql_table + " nije setovan ... sinhro nije moguć"
       ?E "full_synchro: " + _msg
       unset_a_dbf_rec_chk0( aDbfRec[ "table" ] )
@@ -91,7 +92,7 @@ WARNING:  there is already a transaction in progress
       lRet := fill_dbf_from_server( cDbfTable, _qry, @_sql_fetch_time, @_dbf_write_time, .T. )
 
       IF !lRet
-         run_sql_query( "ROLLBACK", , , cTransactionName )
+         run_sql_query( "ROLLBACK", hParams )
          error_bar( "fsync:" + cDbfTable, "ERROR-END full_synchro: " + cDbfTable )
          unset_a_dbf_rec_chk0( aDbfRec[ "table" ] )
          RETURN lRet
@@ -106,7 +107,7 @@ WARNING:  there is already a transaction in progress
    ?E "full_synchro sql (END transaction): ", cDbfTable, "/ sql_tbl_cnt: ", AllTrim( Str( nCountSql ) )
 #endif
 
-   run_sql_query( "COMMIT", , , cTransactionName )
+   run_sql_query( "COMMIT", hParams )
 
    nCountSql := table_count( _sql_table, "true" )
 #ifdef F18_DEBUG_SYNC

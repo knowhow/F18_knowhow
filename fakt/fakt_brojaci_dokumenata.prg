@@ -358,7 +358,6 @@ FUNCTION fakt_postoji_li_rupa_u_brojacu( id_firma, id_tip_dok, priprema_broj )
 
    LOCAL _ret := 0
    LOCAL _qry, _table
-   LOCAL _server := my_server()
    LOCAL _max_dok, _par_dok, _param
    LOCAL _params := fakt_params()
    LOCAL _tip_srch, _tmp
@@ -380,8 +379,8 @@ FUNCTION fakt_postoji_li_rupa_u_brojacu( id_firma, id_tip_dok, priprema_broj )
       " WHERE idfirma = " + sql_quote( id_firma ) + ;
       " AND idtipdok = " + sql_quote( _tip_srch )
 
-   // ovo je tabela
-   _table := _sql_query( _server, _qry )
+
+   _table := run_sql_query( _qry )
    _dok := _table:FieldGet( 1 )
    _tmp := TokToNiz( _dok, "/" )
    _max_dok := Val( AllTrim( _tmp[ 1 ] ) )

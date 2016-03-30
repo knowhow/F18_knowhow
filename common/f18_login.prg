@@ -11,6 +11,8 @@
 
 #include "f18.ch"
 
+MEMVAR GetList
+
 STATIC s_cTekucaSezona
 STATIC s_cPredhodnaSezona
 STATIC s_lPrvoPokretanje // prvo pokretanje aplikacije
@@ -18,9 +20,9 @@ STATIC s_lPrvoPokretanje // prvo pokretanje aplikacije
 CLASS F18Login
 
    METHOD New()
-   METHOD postgres_db_login( server_param, force_connect )
+   METHOD postgres_db_login( hSqlParams, lForceConnect )
    METHOD login_odabir_organizacije()
-   METHOD promjena_sezone( server_param, cDatabase, cSezona )
+   METHOD promjena_sezone( hSqlParams, cDatabase, cSezona )
    METHOD promjena_sezone_box()
    METHOD browse_odabir_organizacije()
    METHOD manual_enter_company_data()
@@ -35,8 +37,8 @@ CLASS F18Login
    METHOD odabir_organizacije()
    METHOD connect()
    METHOD disconnect( nConn )
-   METHOD set_postgres_db_params()
-   METHOD set_server_params( server_params )
+   METHOD set_postgres_db_params( hSqlParams )
+   METHOD set_data_db_params( hSqpParams )
    METHOD included_databases_for_user()
 
    DATA lPostgresDbSpojena
@@ -63,6 +65,8 @@ ENDCLASS
 
 METHOD F18Login:New()
 
+   LOCAL _key, _ini_params
+
    ::postgres_db_params := hb_Hash()
    ::data_db_params := hb_Hash()
    ::_company_db_curr_choice := ""
@@ -73,6 +77,30 @@ METHOD F18Login:New()
    s_cTekucaSezona := AllTrim( Str( Year( Date() ) ) )
    s_cPredhodnaSezona := AllTrim( Str( Year( Date() ) - 1 ) )
    s_lPrvoPokretanje := .T.
+
+
+   _ini_params := hb_Hash()
+   _ini_params[ "host" ] := nil
+   _ini_params[ "database" ] := nil
+   _ini_params[ "user" ] := nil
+   _ini_params[ "schema" ] := nil
+   _ini_params[ "port" ] := nil
+   _ini_params[ "session" ] := nil
+
+   IF !f18_ini_config_read( F18_SERVER_INI_SECTION + iif( test_mode(), "_test", "" ), @_ini_params, .T. )
+      error_bar( "ini", "problem f18 ini read" )
+   ENDIF
+
+   IF ValType( _ini_params[ "port" ] ) == "C" // port je numeric
+      _ini_params[ "port" ] := Val( _ini_params[ "port" ] )
+   ENDIF
+   _ini_params[ "password" ] := _ini_params[ "user" ]
+
+   altd()
+   my_server_params( _ini_params )
+
+   _ini_params[ "database" ] := "postgres"
+   ::set_postgres_db_params( _ini_params )
 
    RETURN SELF
 
@@ -98,7 +126,7 @@ METHOD F18Login:included_databases_for_user()
    RETURN .T.
 
 
-METHOD F18Login:connect( params, conn_type, silent )
+METHOD F18Login:connect( conn_type, silent )
 
    LOCAL lConnected
 
@@ -106,15 +134,16 @@ METHOD F18Login:connect( params, conn_type, silent )
       silent := .F.
    ENDIF
 
-   IF conn_type == 0  .AND. ::lPostgresDbSpojena
+   IF conn_type == 0
       server_postgres_db_close()
+      lConnected := my_server_login( ::postgres_db_params, 0 )
    ENDIF
 
-   IF conn_type == 1  .AND. ::lOrganizacijaSpojena
+   IF conn_type == 1
       my_server_close()
+      lConnected := my_server_login( ::data_db_params, 1 )
    ENDIF
 
-   lConnected := my_server_login( params, conn_type )
 
    IF lConnected
       IF conn_type == 0
@@ -124,12 +153,13 @@ METHOD F18Login:connect( params, conn_type, silent )
          IF post_login()
             post_login_cleanup()
          ELSE
-            my_server_close()
+            my_server_close( 1 )
+            my_server_close( 0 )
             RETURN .F.
          ENDIF
       ENDIF
    ELSE
-      ?E "connection error:", params[ "host" ], params[ "port" ], params[ "database" ], params[ "user" ]
+      ?E "connection error:", hSqlParams[ "host" ], hSqlParams[ "port" ], hSqlParams[ "database" ], hSqlParams[ "user" ]
    ENDIF
 
    RETURN lConnected
@@ -140,7 +170,7 @@ METHOD F18Login:disconnect( nConn )
 
    LOCAL lDisconnected
 
-   IF nConn == nil
+   IF nConn == NIL
       nConn := 1
    ENDIF
 
@@ -156,99 +186,78 @@ METHOD F18Login:disconnect( nConn )
 
 
 
-METHOD F18Login:set_postgres_db_params( server_param )
+METHOD F18Login:set_postgres_db_params( hSqlParams )
 
    ::postgres_db_params := hb_Hash()
-   ::postgres_db_params[ "username" ] := server_param[ "user" ]
-   ::postgres_db_params[ "password" ] := server_param[ "password" ]
-   ::postgres_db_params[ "host" ] := server_param[ "host" ]
-   ::postgres_db_params[ "port" ] := server_param[ "port" ]
-   ::postgres_db_params[ "database" ] := server_param[ "database" ]
-   ::postgres_db_params[ "schema" ] := server_param[ "schema" ]
-   ::postgres_db_params[ "session" ] := server_param[ "session" ]
-   ::postgres_db_params[ "postgres" ] := server_param[ "postgres" ]
+   ::postgres_db_params[ "user" ] := hSqlParams[ "user" ]
+   ::postgres_db_params[ "password" ] := hSqlParams[ "password" ]
+   ::postgres_db_params[ "host" ] := hSqlParams[ "host" ]
+   ::postgres_db_params[ "port" ] := hSqlParams[ "port" ]
+   ::postgres_db_params[ "database" ] := hSqlParams[ "database" ]
+   ::postgres_db_params[ "schema" ] := hSqlParams[ "schema" ]
+   ::postgres_db_params[ "session" ] := hSqlParams[ "session" ]
 
    RETURN .T.
 
 
-METHOD F18Login:set_server_params( server_params )
+METHOD F18Login:set_data_db_params( hSqlParams )
 
-   server_params[ "database" ] := ::postgres_db_params[ "database" ]
-   server_params[ "session" ] := ::postgres_db_params[ "session" ]
-   server_params[ "user" ] := ::postgres_db_params[ "username" ]
-   server_params[ "password" ] := ::postgres_db_params[ "password" ]
-   server_params[ "host" ] := ::postgres_db_params[ "host" ]
-   server_params[ "port" ] := ::postgres_db_params[ "port" ]
-   server_params[ "schema" ] := ::postgres_db_params[ "schema" ]
+   ::data_db_params[ "database" ] := hSqlParams[ "database" ]
+   ::data_db_params[ "session" ] := hSqlParams[ "session" ]
+   ::data_db_params[ "user" ] := hSqlParams[ "user" ]
+   ::data_db_params[ "password" ] := hSqlParams[ "password" ]
+   ::data_db_params[ "host" ] := hSqlParams[ "host" ]
+   ::data_db_params[ "port" ] := hSqlParams[ "port" ]
+   ::data_db_params[ "schema" ] := hSqlParams[ "schema" ]
 
    RETURN .T.
 
 
-METHOD F18Login:postgres_db_login( server_param, force_connect )
+METHOD F18Login:postgres_db_login( lForceConnect )
 
-   LOCAL _max_login := 4
-   LOCAL _i
-   LOCAL _logged_in := .F.
-
-   IF force_connect == NIL
-      force_connect := .T.
+   IF lForceConnect == NIL
+      lForceConnect := .T.
    ENDIF
 
-   ::set_postgres_db_params( @server_param ) // ucitaj parametre iz ini fajla i setuj ::postgres_db_params
-
-   IF force_connect .AND. ::_postgres_db_params[ "username" ] <> NIL
-
-      IF ::connect( server_param, 0 ) // try to connect, if not, open login form
-         _logged_in := .T.
-      ENDIF
-
+   AltD()
+   IF lForceConnect .AND. ::postgres_db_params[ "user" ] <> NIL .AND.  ::connect( 0 ) // try to connect, if not, open login form
+      ::lPostgresDbSpojena := .T.
+      RETURN .T.
    ENDIF
 
-   IF !_logged_in
-
-      FOR _i := 1 TO _max_login
-
-         IF ! ::postgres_db_login_form()
-            ::lPostgresDbSpojena := _logged_in
-            RETURN _logged_in
-         ENDIF
-
-         ::set_server_params( @server_param )
-
-         IF ::connect( server_param, 0 )
-            _logged_in := .T.
-            EXIT
-         ENDIF
-
-      NEXT
-
+   IF ! ::postgres_db_login_form()
+      ::lPostgresDbSpojena := .F.
+      RETURN .F.
    ENDIF
 
-   ::lPostgresDbSpojena := .T.
+   IF ::connect( 0 )
+      ::lPostgresDbSpojena := .T.
+      RETURN .T.
+   ENDIF
 
    RETURN .T.
 
 
 
 
-METHOD F18Login:login_odabir_organizacije( server_param )
+METHOD F18Login:login_odabir_organizacije( hSqlParams )
 
    LOCAL _i
    LOCAL _ret_comp
 
-   ::set_postgres_db_params( @server_param ) // parametri organizacije
+   AltD()
+   ::set_data_db_params( @hSqlParams ) // parametri organizacije
 
    IF ! ::odabir_organizacije()
       RETURN .F.
    ENDIF
 
-   ::set_server_params( @server_param )
-   IF !::connect( server_param, 1 )
+   IF !::connect( 1 )
       RETURN .F.
    ENDIF
 
-
    ::lOrganizacijaSpojena := .T.
+
    RETURN .T.
 
 
@@ -269,7 +278,7 @@ METHOD F18Login:promjena_sezone_box( cSession )
    RETURN lRet
 
 
-METHOD F18Login:promjena_sezone( server_param, cDatabase, cSezona )
+METHOD F18Login:promjena_sezone( hSqlParams, cDatabase, cSezona )
 
    LOCAL _ok := .F.
    LOCAL cTrenutnaDatabase
@@ -283,7 +292,6 @@ METHOD F18Login:promjena_sezone( server_param, cDatabase, cSezona )
 
    hParams := hb_Hash()
 
-
    hParams[ "posljednji_put" ] := s_cPredhodnaSezona // posljednji put se radilo u ovoj sezoni
    hParams[ "posljednja_org" ] := "x"
    f18_ini_config_read( "sezona", @hParams, .T. ) // promjena, sezone, read global from ~/.f18_config.ini
@@ -295,7 +303,7 @@ METHOD F18Login:promjena_sezone( server_param, cDatabase, cSezona )
 
 
    IF cDatabase == NIL
-      cTrenutnaDatabase := server_param[ "database" ]
+      cTrenutnaDatabase := hSqlParams[ "database" ]
    ELSE
       cTrenutnaDatabase := cDatabase
       _show_box := .F.
@@ -325,13 +333,15 @@ METHOD F18Login:promjena_sezone( server_param, cDatabase, cSezona )
 
 
    cTrenutnaSezona := Right( cTrenutnaDatabase, 4 ) // bringout_2016 => bringout_2015
-   cSaveDatabase := server_param[ "database" ]
-   server_param[ "database" ] := StrTran( cTrenutnaDatabase, "_" + cTrenutnaSezona, "_" + cNovaSezona )
+   cSaveDatabase := hSqlParams[ "database" ]
+   hSqlParams[ "database" ] := StrTran( cTrenutnaDatabase, "_" + cTrenutnaSezona, "_" + cNovaSezona )
+   ::data_db_params[ "database" ] := hSqlParams[ "database" ]
 
-   IF ::connect( server_param, 1 )
+   IF ::connect( 1 )
       _ok := .T.
    ELSE
-      server_param[ "database" ] := cSaveDatabase // vrati posljednju ispravnu bazu
+      hSqlParams[ "database" ] := cSaveDatabase // vrati posljednju ispravnu bazu
+      ::data_db_params[ "database" ] := hSqlParams[ "database" ]
       MsgBeep( "Traženo sezonsko područje " + cNovaSezona + " ne postoji !" )
    ENDIF
 
@@ -343,7 +353,7 @@ METHOD F18Login:promjena_sezone( server_param, cDatabase, cSezona )
             f18_set_use_module( _modul_name, .T. )
          ELSE
             MsgBeep( "Vraćamo se u sezonu " + cTrenutnaSezona )
-            ::promjena_sezone( server_param, cTrenutnaDatabase, cTrenutnaSezona )
+            ::promjena_sezone( hSqlParams, cTrenutnaDatabase, cTrenutnaSezona )
          ENDIF
       ENDIF
 
@@ -354,7 +364,7 @@ METHOD F18Login:promjena_sezone( server_param, cDatabase, cSezona )
 
    hParams[ "posljednji_put" ] := cNovaSezona
    // ako je baza bringout_2014, hparams[ posljednja_org ] ce biti bringout
-   hParams[ "posljednja_org" ] := StrTran( server_param[ "database" ], "_" + cNovaSezona, "" )
+   hParams[ "posljednja_org" ] := StrTran( hSqlParams[ "database" ], "_" + cNovaSezona, "" )
 
    f18_ini_config_write( "sezona", @hParams, .T. )
 
@@ -365,19 +375,17 @@ METHOD F18Login:promjena_sezone( server_param, cDatabase, cSezona )
 
 METHOD F18Login:postgres_db_login_form()
 
-   LOCAL _ok := .F.
-   LOCAL _user, _pwd, _port, _host, _db, _schema
+   LOCAL _user, _pwd, _port, _host, _schema
    LOCAL _server
    LOCAL _x := 5
    LOCAL _left := 7
    LOCAL _srv_config := "N"
    LOCAL _session
 
-   _user := ::postgres_db_params[ "username" ]
+   _user := ::postgres_db_params[ "user" ]
    _pwd := ""
    _host := ::postgres_db_params[ "host" ]
    _port := ::postgres_db_params[ "port" ]
-   _db := ::postgres_db_params[ "postgres" ]
    _schema := ::postgres_db_params[ "schema" ]
    _session := ::postgres_db_params[ "session" ]
 
@@ -416,8 +424,7 @@ METHOD F18Login:postgres_db_login_form()
    ++ _x
    @ _x, _left SAY PadC( "***** Unesite podatke za pristup *****", 60 )
 
-   ++ _x
-   ++ _x
+   _x += 2
    @ _x, _left SAY PadL( "Konfigurisati server ?:", 21 ) GET _srv_config ;
       VALID _srv_config $ "DN" PICT "@!"
    ++ _x
@@ -432,56 +439,45 @@ METHOD F18Login:postgres_db_login_form()
       ++ _x
    ENDIF
 
-   ++ _x
-   ++ _x
+   _x += 2
    @ _x, _left SAY PadL( "KORISNIK:", 15 ) GET _user PICT "@S30"
 
-   ++ _x
-   ++ _x
+   _x += 2
    @ _x, _left SAY PadL( "LOZINKA:", 15 ) GET _pwd PICT "@S30" COLOR F18_COLOR_PASSWORD
 
    READ
 
    IF LastKey() == K_ESC
-      RETURN _ok
+      RETURN .F.
    ENDIF
 
-   ::postgres_db_params[ "username" ] := AllTrim( _user )
+   ::postgres_db_params[ "user" ] := AllTrim( _user )
    ::postgres_db_params[ "host" ] := AllTrim( _host )
    ::postgres_db_params[ "port" ] := _port
    ::postgres_db_params[ "schema" ] := _schema
-   ::postgres_db_params[ "postgres" ] := "postgres"
    ::postgres_db_params[ "session" ] := ""
    ::postgres_db_params[ "database" ] := "postgres"
 
 
    IF Empty( _pwd ) // korisnici user=password se jednostavno logiraju
-      ::postgres_db_params[ "password" ] := ::postgres_db_params[ "username" ]
+      ::postgres_db_params[ "password" ] := ::postgres_db_params[ "user" ]
    ELSE
       ::postgres_db_params[ "password" ] := AllTrim( _pwd )
    ENDIF
 
-   _ok := .T.
-
-   RETURN _ok
+   RETURN .T.
 
 
 
 METHOD F18Login:odabir_organizacije()
 
-   LOCAL _db, _session
+   LOCAL _session
    LOCAL _x := 5
    LOCAL _left := 7
    LOCAL _srv_config := "N"
    LOCAL _arr, _tmp
    LOCAL hParams := hb_Hash()
    LOCAL nOrganizacija
-
-   _db := ::postgres_db_params[ "database" ]
-   _session := AllTrim( Str( Year( Date() ) ) )
-
-   _db := PadR( _db, 30 )
-   _session := PadR( _session, 4 )
 
    ::included_databases_for_user()  // filter baza dostupnih useru, ako postoji !
 
@@ -490,16 +486,16 @@ METHOD F18Login:odabir_organizacije()
    f18_ini_config_read( "sezona", @hParams, .T. ) // read from global ~/.f18_config.ini
 
    IF s_lPrvoPokretanje .AND. hParams[ "posljednja_org" ] != "x" // odmah se prebaciti  posljednju organizaciju/sezonu
-      ::postgres_db_params[ "database" ] :=  hParams[ "posljednja_org" ] + "_" + hParams[ "posljednji_put" ]
-      ::postgres_db_params[ "session" ] := hParams[ "posljednji_put" ]
+      ::data_db_params[ "database" ] :=  hParams[ "posljednja_org" ] + "_" + hParams[ "posljednji_put" ]
+      ::data_db_params[ "session" ] := hParams[ "posljednji_put" ]
       s_lPrvoPokretanje := .F.
       RETURN .T.
    ENDIF
 
    _tmp := ::database_array()
 
-   IF Len( _tmp ) == 0
-      MsgBeep( "Na serveru ne postoji definisana niti jedna baza !" )
+   IF HB_ISNIL( _tmp ) .OR. Len( _tmp ) == 0
+      MsgBeep( "Na serveru ne postoji definisana nijedna baza !" )
       RETURN .F.
    ENDIF
 
@@ -510,19 +506,19 @@ METHOD F18Login:odabir_organizacije()
       RETURN .F.
    ENDIF
 
-   if ::_company_db_curr_session == NIL
+   IF ::_company_db_curr_session == NIL
       _session := ::get_database_top_session( ::_company_db_curr_choice ) // ako nije zadata sezona odaberi top sezonu, NIL je ako nije zadata
    ELSE
       _session := AllTrim( ::_company_db_curr_session ) // ako je zadata uzmi nju
    ENDIF
 
-   ::postgres_db_params[ "database" ] := AllTrim( ::_company_db_curr_choice ) + ;
+   ::data_db_params[ "database" ] := AllTrim( ::_company_db_curr_choice ) + ;
       iif( !Empty( _session ), "_" + AllTrim( _session ), "" )
-   ::postgres_db_params[ "session" ] := AllTrim( _session )
+   ::data_db_params[ "session" ] := AllTrim( _session )
 
 
-   hParams[ "posljednji_put" ] := ::postgres_db_params[ "session" ]
-   hParams[ "posljednja_org" ] := StrTran( ::postgres_db_params[ "database" ], "_" + ::postgres_db_params[ "session" ], "" )
+   hParams[ "posljednji_put" ] := ::data_db_params[ "session" ]
+   hParams[ "posljednja_org" ] := StrTran( ::data_db_params[ "database" ], "_" + ::data_db_params[ "session" ], "" )
    f18_ini_config_write( "sezona", @hParams, .T. ) // nakon odabira organizacije upisi izbor
 
    RETURN .T.
@@ -544,7 +540,7 @@ METHOD F18Login:get_database_sessions( database )
       "FROM pg_database " + ;
       "ORDER BY godina"
 
-   _table := _sql_query( server_postgres_db(), _qry )
+   _table := postgres_sql_query( _qry )
    IF sql_error_in_query( _table, "SELECT", server_postgres_db() )
       RETURN NIL
    ENDIF
@@ -578,7 +574,7 @@ METHOD F18Login:get_database_top_session( database )
       "FROM pg_database " + ;
       "ORDER BY godina"
 
-   _table := _sql_query( server_postgres_db(), _qry )
+   _table := postgres_sql_query( _qry )
    IF sql_error_in_query( _table, "SELECT", server_postgres_db() )
       RETURN NIL
    ENDIF
@@ -607,7 +603,7 @@ METHOD F18Login:get_database_description( database, cSezona )
       "JOIN pg_database on objoid = pg_database.oid " + ;
       "WHERE datname = " + sql_quote( _database_name )
 
-   _table := _sql_query( server_postgres_db(), _qry )
+   _table := postgres_sql_query( _qry )
    IF sql_error_in_query( _table, "SELECT", server_postgres_db() )
       RETURN NIL
    ENDIF
@@ -665,7 +661,8 @@ METHOD F18Login:database_array()
       _where + ;
       " ORDER BY datab "
 
-   _table := _sql_query( server_postgres_db(), _qry )
+   AltD()
+   _table := postgres_sql_query( _qry )
    IF sql_error_in_query( _table, "SELECT", server_postgres_db() )
       RETURN NIL
    ENDIF
@@ -695,7 +692,7 @@ METHOD F18Login:administrative_options( x_pos, y_pos )
 
    LOCAL _ok := .F.
    LOCAL _x, _y
-   LOCAL _menuop, _menuexec
+   LOCAL _menuop, _menuexec, _mnu_choice
 
    _x := x_pos
    _y := ( MAXCOLS() / 2 ) - 5
@@ -704,7 +701,6 @@ METHOD F18Login:administrative_options( x_pos, y_pos )
    _menuop := {}
    _menuexec := {}
 
-   // setuj odabir
    _set_menu_choices( @_menuop, @_menuexec )
 
    DO WHILE .T.
@@ -758,14 +754,12 @@ METHOD F18Login:manual_enter_company_data( x_pos, y_pos )
    LOCAL _y := 3
    LOCAL _db := Space( 20 )
    LOCAL _session := AllTrim( Str( Year( Date() ) ) )
-   LOCAL _ok := .F.
 
    _x := x_pos
 
    @ _x, _y + 1 SAY hb_UTF8ToStr( "Pristupiti sljedećoj bazi:" )
 
-   ++ _x
-   ++ _x
+   _x += 2
    @ _x, _y + 3 SAY Space( 30 )
    @ _x, _y + 3 SAY "  Baza:" GET _db VALID !Empty( _db )
 
@@ -775,16 +769,15 @@ METHOD F18Login:manual_enter_company_data( x_pos, y_pos )
    READ
 
    IF LastKey() == K_ESC
-      RETURN _ok
+      RETURN .F.
    ENDIF
 
    IF LastKey() == K_ENTER
-      _ok := .T.
       ::_company_db_curr_choice := AllTrim( _db )
       ::_company_db_curr_session := AllTrim( _session )
    ENDIF
 
-   RETURN _ok
+   RETURN .T.
 
 
 
@@ -796,7 +789,7 @@ METHOD F18Login:manual_enter_company_data( x_pos, y_pos )
 
 METHOD F18Login:browse_odabir_organizacije( arr, table_type )
 
-   LOCAL _i
+   LOCAL _i, _l
    LOCAL _key
    LOCAL _br
    LOCAL _opt := 0
@@ -812,7 +805,7 @@ METHOD F18Login:browse_odabir_organizacije( arr, table_type )
 
    // SetColor( F18_COLOR_ORGANIZACIJA )
 
-   _row := 1
+   PRIVATE _row := 1
 
    IF arr == NIL
       MsgBeep( "Nema podataka za prikaz..." )
@@ -882,12 +875,9 @@ METHOD F18Login:browse_odabir_organizacije( arr, table_type )
 
 
       _br:forcestable() // stabilize the browse and wait for a keystroke
-
       ::show_info_bar( AllTrim( Eval( _br:GetColumn( _br:colpos ):block ) ), _pos_bottom + 4 )
-
       _key := Inkey( 0 )
 
-      // process the directional keys
       IF _br:stable
 
          DO CASE
@@ -957,7 +947,7 @@ METHOD F18Login:show_info_bar( database, x_pos )
 
 STATIC FUNCTION _get_company_count( arr )
 
-   LOCAL _count := 0
+   LOCAL _count := 0, _i, _n
 
    FOR _i := 1 TO Len( arr )
       FOR _n := 1 TO 4
@@ -973,7 +963,7 @@ STATIC FUNCTION _get_company_count( arr )
 
 
 STATIC FUNCTION _browse_block( arr, x )
-   RETURN ( {| p| if( PCount() == 0, arr[ _row, x ], arr[ _row, x ] := p ) } )
+   RETURN ( {| p| iif( PCount() == 0, arr[ _row, x ], arr[ _row, x ] := p ) } )
 
 
 

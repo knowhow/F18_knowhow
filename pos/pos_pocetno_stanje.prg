@@ -125,7 +125,7 @@ STATIC FUNCTION prebaci_se_u_bazu( db_params, database, year )
    // 4) napravi login
    my_server_login( db_params )
 
-   RETURN
+   RETURN .T.
 
 
 

@@ -20,6 +20,11 @@ STATIC s_psqlServer_params := NIL  // parametri trebaju biti dostupni novim thre
 THREAD STATIC s_psqlServerDbfThread := NIL // svaka thread konekcija zasebna
 THREAD STATIC s_psqlServer_params_thread := NIL  // svaka thread konekcija ce zapamtiti svoje parametre
 
+STATIC s_nSQLConnections := 0
+STATIC s_aSQLConnections := {}
+STATIC s_mtxMutex
+
+
 FUNCTION my_server( oServer )
 
    LOCAL oError
@@ -31,12 +36,23 @@ FUNCTION my_server( oServer )
 
          BEGIN SEQUENCE WITH {| err | Break( err ) }
             s_psqlServer_params_thread := hb_HClone( s_psqlServer_params )
+
             s_psqlServerDbfThread := TPQServer():New( s_psqlServer_params[ "host" ], ;
                s_psqlServer_params_thread[ "database" ], ;
                s_psqlServer_params_thread[ "user" ], ;
                s_psqlServer_params_thread[ "password" ], ;
                s_psqlServer_params_thread[ "port" ], ;
                s_psqlServer_params_thread[ "schema" ] )
+
+            IF hb_mutexLock( s_mtxMutex )
+               s_nSQLConnections++
+               AAdd( s_aSQLConnections, s_psqlServerDbfThread )
+               hb_mutexUnlock( s_mtxMutex )
+            ENDIF
+
+#ifdef F18_DEBUG_THREAD
+            ?E Replicate( "%", 50 ), "TPQSERVER THREAD NEW", s_psqlServer_params_thread[ "database" ], s_psqlServerDbfThread:pDb, s_nSQLConnections
+#endif
 
          RECOVER USING oError
 
@@ -74,21 +90,14 @@ FUNCTION server_postgres_db( oServer )
 
 FUNCTION server_postgres_db_close()
 
-   LOCAL oServer := server_postgres_db()
-
-   IF is_var_objekat_tpqserver( oServer )
-      oServer:close()
-   ENDIF
-
-   RETURN .T.
-
+   RETURN my_server_close( 0 )
 
 
 
 
 FUNCTION my_server_close( nConnType )
 
-   LOCAL oServer
+   LOCAL oServer, pDb, nPos
 
    hb_default( @nConnType, 1 )
 
@@ -99,7 +108,21 @@ FUNCTION my_server_close( nConnType )
    ENDIF
 
    IF is_var_objekat_tpqserver( oServer )
+      pDb := oServer:pDb
       oServer:close()
+      IF hb_mutexLock( s_mtxMutex )
+         s_nSQLConnections--
+         nPos := AScan( s_aSQLConnections, {| item|  item:pDb == pDb } )
+         IF nPos > 0
+            ADel( s_aSQLConnections, nPos )
+            ASize( s_aSQLConnections, Len( s_aSQLConnections ) - 1 )
+         ENDIF
+         hb_mutexUnlock( s_mtxMutex )
+      ENDIF
+#ifdef F18_DEBUG_THREAD
+      ?E Replicate( "%", 50 ), "TPQSERVER " + iif( is_in_main_thread(), "", "THREAD " ), "CLOSE", ;
+         iif( nConnType == 0, "POSTGRES DB", "DATA DB" ), pDb, s_nSQLConnections
+#endif
    ENDIF
 
    IF !is_in_main_thread()
@@ -116,11 +139,15 @@ FUNCTION my_server_logout( nConnType )
 
 
 
+FUNCTION num_sql_connections()
+   RETURN Len( s_aSQLConnections )
+
+
 /*
  set_get server_params
 */
 
-FUNCTION my_server_params( params )
+FUNCTION my_server_params( hSqlParams )
 
    LOCAL  _key
 
@@ -128,9 +155,9 @@ FUNCTION my_server_params( params )
       RETURN s_psqlServer_params_thread // svaki thread treba zapamtiti svoje parametre
    ENDIF
 
-   IF params <> nil
-      FOR EACH _key in params:Keys
-         s_psqlServer_params[ _key ] := params[ _key ]
+   IF hSqlParams <> NIL
+      FOR EACH _key in hSqlParams:Keys
+         s_psqlServer_params[ _key ] := hSqlParams[ _key ]
       NEXT
    ENDIF
 
@@ -138,42 +165,49 @@ FUNCTION my_server_params( params )
 
 
 
-FUNCTION my_server_login( params, conn_type )
+FUNCTION my_server_login( hSqlParams, nConnType )
 
    LOCAL _key, _server
 
-   IF params == NIL
-      params := s_psqlServer_params
+   IF hSqlParams == NIL
+      hSqlParams := s_psqlServer_params
    ENDIF
 
-   IF conn_type == NIL
-      conn_type := 1
+   IF nConnType == NIL
+      nConnType := 1
    ENDIF
 
-   FOR EACH _key in params:Keys
-      IF params[ _key ] == NIL
-         IF conn_type == 1
+   FOR EACH _key IN hSqlParams:Keys
+      IF hSqlParams[ _key ] == NIL
+         IF nConnType == 1
             error_bar( "init", "my_server_login error server params key: " + _key )
          ENDIF
          RETURN .F.
       ENDIF
    NEXT
 
-   _server := TPQServer():New( params[ "host" ], ;
-      iif( conn_type == 1, params[ "database" ], "postgres" ), ;
-      params[ "user" ], ;
-      params[ "password" ], ;
-      params[ "port" ], ;
-      iif( conn_type == 1, params[ "schema" ], "public" ) )
-
+   _server := TPQServer():New( hSqlParams[ "host" ], ;
+      iif( nConnType == 1, hSqlParams[ "database" ], "postgres" ), ;
+      hSqlParams[ "user" ], ;
+      hSqlParams[ "password" ], ;
+      hSqlParams[ "port" ], ;
+      iif( nConnType == 1, hSqlParams[ "schema" ], "public" ) )
+   IF hb_mutexLock( s_mtxMutex )
+      s_nSQLConnections++
+      AAdd( s_aSQLConnections, _server )
+      hb_mutexUnlock( s_mtxMutex )
+   ENDIF
+#ifdef F18_DEBUG_THREAD
+   ?E Replicate( "/", 50 ), "TPQSERVER NEW", hSqlParams[ "database" ], _server:pDb, s_nSQLConnections
+#endif
 
    IF  !_server:NetErr() .AND. Empty( _server:ErrorMsg() )
 
-      IF conn_type == 0
+      IF nConnType == 0
          server_postgres_db( _server )
       ELSE
          my_server( _server ) // konekcija za organizaciju
-         info_bar( "login", "server connection ok: " + params[ "user" ] + " / " + iif ( conn_type == 1, params[ "database" ], "postgres" ) + " / verzija aplikacije: " + F18_VER, 1 )
+         info_bar( "login", "server connection ok: " + hSqlParams[ "user" ] + " / " + iif ( nConnType == 1, hSqlParams[ "database" ], "postgres" ) + " / verzija aplikacije: " + F18_VER, 1 )
       ENDIF
 
       RETURN .T.
@@ -197,22 +231,21 @@ FUNCTION f18_login( force_connect, arg_v )
       force_connect := .T.
    ENDIF
 
-   _get_server_params_from_config()
-
    oLogin := F18Login():New()
-   oLogin:postgres_db_login( @s_psqlServer_params, force_connect )
-
-   AltD()
-   IF !oLogin:lPostgresDbSpojena
-      QUIT_1
-   ENDIF
 
    DO WHILE .T.
 
+
+      oLogin:postgres_db_login( force_connect )
+
+      IF !oLogin:lPostgresDbSpojena
+         QUIT_1
+      ENDIF
+      AltD()
       IF !oLogin:login_odabir_organizacije( @s_psqlServer_params )
          IF LastKey() == K_ESC
-            info_bar( "info", "<ESC> za izlaz iz aplikacije")
-            inkey( 0 )
+            info_bar( "info", "<ESC> za izlaz iz aplikacije" )
+            Inkey( 0 )
             IF LastKey() == K_ESC // 2 x ESC
                RETURN .F.
             ENDIF
@@ -222,6 +255,7 @@ FUNCTION f18_login( force_connect, arg_v )
          IF oLogin:lOrganizacijaSpojena
             show_sacekaj()
             program_module_menu( arg_v )
+            oLogin:disconnect( 1 )
          ENDIF
       ENDIF
 
@@ -231,10 +265,10 @@ FUNCTION f18_login( force_connect, arg_v )
 
 
 
-STATIC FUNCTION f18_form_login( server_params )
+STATIC FUNCTION f18_form_login( hSqlParams )
 
-   IF server_params == NIL
-      server_params := s_psqlServer_params
+   IF hSqlParams == NIL
+      hSqlParams := s_psqlServer_params
    ENDIF
 
    DO WHILE .T.
@@ -244,8 +278,8 @@ STATIC FUNCTION f18_form_login( server_params )
          RETURN .F.
       ENDIF
 
-      IF my_server_login( server_params )
-         info_bar( "init", "form login succesfull: " + server_params[ "host" ] + " / " + server_params[ "database" ] + " / " + server_params[ "user" ] + " / " + Str( my_server_params()[ "port" ] )  + " / " + server_params[ "schema" ] + " / verzija programa: " + F18_VER )
+      IF my_server_login( hSqlParams )
+         info_bar( "init", "form login succesfull: " + hSqlParams[ "host" ] + " / " + hSqlParams[ "database" ] + " / " + hSqlParams[ "user" ] + " / " + Str( my_server_params()[ "port" ] )  + " / " + hSqlParams[ "schema" ] + " / verzija programa: " + F18_VER )
          EXIT
       ELSE
          Beep( 4 )
@@ -256,7 +290,7 @@ STATIC FUNCTION f18_form_login( server_params )
    RETURN .T.
 
 
-STATIC FUNCTION _login_screen( server_params )
+STATIC FUNCTION _login_screen( hSqlParams )
 
    LOCAL cHostname, cDatabase, cUser, cPassword, nPort, cSchema, cSession
    LOCAL lSuccess := .T.
@@ -264,12 +298,12 @@ STATIC FUNCTION _login_screen( server_params )
    LOCAL nLeft := 7
    LOCAL cConfigureServer := "N"
 
-   cHostName := server_params[ "host" ]
-   cDatabase := server_params[ "database" ]
-   cUser := server_params[ "user" ]
-   cSchema := server_params[ "schema" ]
-   nPort := server_params[ "port" ]
-   cSession := server_params[ "session" ]
+   cHostName := hSqlParams[ "host" ]
+   cDatabase := hSqlParams[ "database" ]
+   cUser := hSqlParams[ "user" ]
+   cSchema := hSqlParams[ "schema" ]
+   nPort := hSqlParams[ "port" ]
+   cSession := hSqlParams[ "session" ]
    cPassword := ""
 
    IF ( cHostName == nil ) .OR. ( nPort == nil )
@@ -359,13 +393,13 @@ STATIC FUNCTION _login_screen( server_params )
    cDatabase := AllTrim( cDatabase )
    cSchema   := AllTrim( cSchema )
 
-   server_params[ "host" ]      := cHostName
-   server_params[ "database" ]  := cDatabase
-   server_params[ "user" ]      := cUser
-   server_params[ "schema" ]    := cSchema
-   server_params[ "port" ]      := nPort
-   server_params[ "password" ]  := cPassword
-   server_params[ "session" ]  := cSession
+   hSqlParams[ "host" ]      := cHostName
+   hSqlParams[ "database" ]  := cDatabase
+   hSqlParams[ "user" ]      := cUser
+   hSqlParams[ "schema" ]    := cSchema
+   hSqlParams[ "port" ]      := nPort
+   hSqlParams[ "password" ]  := cPassword
+   hSqlParams[ "session" ]  := cSession
 
    RETURN lSuccess
 
@@ -462,57 +496,6 @@ FUNCTION init_harbour()
 
 
 
-#ifdef TEST
-
-
-FUNCTION _get_server_params_from_config()
-
-   s_psqlServer_params := hb_Hash()
-   s_psqlServer_params[ "port" ] := 5432
-   s_psqlServer_params[ "database" ] := "f18_test"
-   s_psqlServer_params[ "host" ] := "localhost"
-   s_psqlServer_params[ "user" ] := "test1"
-   s_psqlServer_params[ "schema" ] := F18_PSQL_SCHEMA
-   s_psqlServer_params[ "password" ] := s_psqlServer_params[ "user" ]
-   s_psqlServer_params[ "postgres" ] := "postgres"
-
-   RETURN .T.
-
-#else
-
-FUNCTION _get_server_params_from_config()
-
-   LOCAL _key, _ini_params
-
-   _ini_params := hb_Hash()
-   _ini_params[ "host" ] := nil
-   _ini_params[ "database" ] := nil
-   _ini_params[ "user" ] := nil
-   _ini_params[ "schema" ] := nil
-   _ini_params[ "port" ] := nil
-   _ini_params[ "session" ] := nil
-
-   IF !f18_ini_config_read( F18_SERVER_INI_SECTION + iif( test_mode(), "_test", "" ), @_ini_params, .T. )
-      error_bar( "ini", "problem f18 ini read" )
-   ENDIF
-
-   s_psqlServer_params := hb_Hash() // definisi parametre servera
-
-
-   FOR EACH _key in _ini_params:Keys
-      s_psqlServer_params[ _key ] := _ini_params[ _key ]
-   NEXT
-
-   // port je numeric
-   IF ValType( s_psqlServer_params[ "port" ] ) == "C"
-      s_psqlServer_params[ "port" ] := Val( s_psqlServer_params[ "port" ] )
-   ENDIF
-   s_psqlServer_params[ "password" ] := s_psqlServer_params[ "user" ]
-   s_psqlServer_params[ "postgres" ] := "postgres"
-
-   RETURN .T.
-#endif
-
 FUNCTION write_last_login_params_to_ini_conf()
 
    LOCAL _key, _ini_params := hb_Hash()
@@ -559,3 +542,12 @@ FUNCTION f18_curr_session()
 
 FUNCTION my_user()
    RETURN f18_user()
+
+
+
+INIT PROCEDURE init_my_sql_server()
+
+   s_mtxMutex := hb_mutexCreate()
+   s_psqlServer_params := hb_Hash()
+
+   RETURN

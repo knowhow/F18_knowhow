@@ -20,6 +20,9 @@ FUNCTION pos_azuriraj_racun( cIdPos, cBrojRacuna, cVrijeme, cNacPlac, cIdGost )
    LOCAL nCount := 0
    LOCAL lOk := .T.
    LOCAL lRet := .F.
+   LOCAL hParams := hb_hash()
+
+   hParams[ "tran_name" ] := "pos_rn_azur"
 
   o_pos_tables()
 
@@ -30,9 +33,9 @@ FUNCTION pos_azuriraj_racun( cIdPos, cBrojRacuna, cVrijeme, cNacPlac, cIdGost )
    SELECT _pos_pripr
    GO TOP
 
-   run_sql_query( "BEGIN",,, "pos_rn_azur" )
+   run_sql_query( "BEGIN", hParams )
    IF !f18_lock_tables( { "pos_pos", "pos_doks" }, .T. )
-      run_sql_query( "COMMIT",,, "pos_rn_azur" )
+      run_sql_query( "COMMIT", hParams )
       MsgBeep( "Ne mogu zaključati tabele !#Prekidam operaciju." )
       RETURN lRet
    ENDIF
@@ -115,10 +118,10 @@ FUNCTION pos_azuriraj_racun( cIdPos, cBrojRacuna, cVrijeme, cNacPlac, cIdGost )
    IF lOk
       lRet := .T.
       f18_free_tables( { "pos_pos", "pos_doks" } )
-      run_sql_query( "COMMIT",,, "pos_rn_azur" )
+      run_sql_query( "COMMIT", hParams )
       log_write( "F18_DOK_OPER, ažuriran računa " + cDokument, 2 )
    ELSE
-      run_sql_query( "ROLLBACK",,, "pos_rn_azur" )
+      run_sql_query( "ROLLBACK", hParams )
       log_write( "F18_DOK_OPER, greška sa ažuriranjem računa " + cDokument, 2 )
    ENDIF
 

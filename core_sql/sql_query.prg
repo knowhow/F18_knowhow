@@ -33,39 +33,69 @@ FUNCTION set_sql_search_path()
 
 
 
-FUNCTION _sql_query( oServer, cQuery, silent )
+FUNCTION _sql_query( oServer, cQuery )
 
-   RETURN run_sql_query( cQuery, 2, oServer )
+   LOCAL hParams := hb_Hash()
+
+   hParams[ "retry" ] := 2
+   hParams[ "server" ] := oServer
+
+   RETURN run_sql_query( cQuery, hParams )
+
+   
+
+FUNCTION postgres_sql_query( cQuery )
+
+   LOCAL hParams := hb_Hash()
+
+   hParams[ "server" ] := server_postgres_db()
+
+   RETURN run_sql_query( cQuery, hParams )
 
 
-FUNCTION run_sql_query( qry, retry, oServer, cTransactionName )
 
-   LOCAL _i, oQuery
-   LOCAL _server
+FUNCTION run_sql_query( cQry, hParams )
+
+   LOCAL nI, oQuery
    LOCAL _msg
    LOCAL cTip
    LOCAL nPos
+   LOCAL nRetry := 2
+   LOCAL oServer := my_server()
+   LOCAL cTransactionName := cQry
 
-   IF retry == NIL
-      retry := 2
+   IF PCount() == 2
+
+      IF ValType( hParams ) != "H"
+         Alert( "run sql query param 2 nije hash !?" )
+         QUIT
+      ENDIF
+
+      IF hb_HHasKey( hParams, "retry" )
+         nRetry := hParams[ "retry" ]
+      ENDIF
+
+      IF hb_HHasKey( hParams, "server" )
+         oServer :=  hParams[ "server" ]
+      ENDIF
+
+      IF hb_HHasKey( hParams, "tran_name" )
+         cTransactionName :=  hParams[ "tran_name" ]
+      ENDIF
+
    ENDIF
 
-   IF oServer == NIL
-      _server := my_server()
-   ELSE
-      _server := oServer
-   ENDIF
 
-   IF Left( qry, 5 ) == "BEGIN"
+   IF Left( cQry, 5 ) == "BEGIN"
       IF hb_mutexLock( s_mtxMutex )
          AAdd( s_aTransactions, { Time(), my_server():pDB, hb_threadSelf(), cTransactionName } )
          hb_mutexUnlock( s_mtxMutex )
       ENDIF
    ENDIF
 
-   IF Left( qry, 6 ) == "COMMIT" .OR. Left( qry, 8 ) == "ROLLBACK"
+   IF Left( cQry, 6 ) == "COMMIT" .OR. Left( cQry, 8 ) == "ROLLBACK"
       IF hb_mutexLock( s_mtxMutex )
-         nPos := AScan( s_aTransactions, { | aTran | ValType( aTran ) == "A" .AND. aTran[ 2 ] == my_server():pDB .AND.  aTran[ 4 ] == cTransactionName } )
+         nPos := AScan( s_aTransactions, {| aTran | ValType( aTran ) == "A" .AND. aTran[ 2 ] == my_server():pDB .AND.  aTran[ 4 ] == cTransactionName } )
 
          IF nPos > 0
             ADel( s_aTransactions, nPos )
@@ -77,29 +107,29 @@ FUNCTION run_sql_query( qry, retry, oServer, cTransactionName )
 
    ENDIF
 
-   IF Left( Upper( qry ), 6 ) == "SELECT"
+   IF Left( Upper( cQry ), 6 ) == "SELECT"
       cTip := "SELECT"
    ELSE
       cTip := "INSERT" // insert ili update nije bitno
    ENDIF
 
-   IF ValType( qry ) != "C"
-      _msg := "qry ne valja VALTYPE(qry) =" + ValType( qry )
+   IF ValType( cQry ) != "C"
+      _msg := "qry ne valja VALTYPE(qry) =" + ValType( cQry )
       log_write( _msg, 2 )
       MsgBeep( _msg )
       quit_1
    ENDIF
 
 
-   FOR _i := 1 TO retry
+   FOR nI := 1 TO nRetry
 
-      IF _i > 1
-         error_bar( "sql",  qry + " pokušaj: " + AllTrim( Str( _i ) ) )
+      IF nI > 1
+         error_bar( "sql",  cQry + " pokušaj: " + AllTrim( Str( nI ) ) )
       ENDIF
 
       BEGIN SEQUENCE WITH {| err| Break( err ) }
 
-         oQuery := _server:Query( qry + ";" )
+         oQuery := oServer:Query( cQry + ";" )
 
       RECOVER
 
@@ -110,17 +140,17 @@ FUNCTION run_sql_query( qry, retry, oServer, cTransactionName )
 
       IF sql_error_in_query( oQuery, cTip, oServer )
 
-         ?E "SQL ERROR QUERY: ", qry
+         ?E "SQL ERROR QUERY: ", cQry
          ?E "pDb:", my_server():pDb
          print_transactions()
-         print_threads( qry )
-         error_bar( "sql", qry )
-         IF _i == retry
+         print_threads( cQry )
+         error_bar( "sql", cQry )
+         IF nI == nRetry
             RETURN oQuery
          ENDIF
 
       ELSE
-         _i := retry + 1
+         nI := nRetry + 1
       ENDIF
 
 
@@ -187,7 +217,6 @@ FUNCTION sql_error_in_query( oQry, cTip, oServer )
          RETURN .F. // sve ok
       ENDIF
    ENDIF
-
 
    RETURN  ( oQry:NetErr() )
 

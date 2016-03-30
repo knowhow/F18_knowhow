@@ -34,13 +34,12 @@ FUNCTION server_sys_info( var )
 
    LOCAL _qry
    LOCAL _ret_sql
-   LOCAL _server := my_server()
    LOCAL _ret := hb_Hash()
 
    _qry := "select inet_client_addr(), inet_client_port(),  inet_server_addr(), inet_server_port(), user"
 
    log_write( _qry, 9 )
-   _ret_sql := _sql_query( _server, _qry )
+   _ret_sql := run_sql_query( _qry )
 
    IF sql_query_bez_zapisa( _ret_sql )
       RETURN NIL

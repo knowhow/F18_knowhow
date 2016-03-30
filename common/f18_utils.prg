@@ -57,7 +57,7 @@ FUNCTION f18_help()
    ? "-t fmk tables path"
    ? ""
 
-   RETURN
+   RETURN .T.
 
 /* --------------------------
  setup ulazne parametre F18

@@ -277,8 +277,6 @@ FUNCTION alter_table_semaphore_v2( table )
       RETURN .F.
    ENDIF
 
-   // -------------------------------------------
-   // -------------------------------------------
 
 FUNCTION is_table_column_exists( table, column )
 
@@ -295,9 +293,6 @@ FUNCTION is_table_column_exists( table, column )
    ENDIF
 
 
-   // --------------------------------
-   // --------------------------------
-
 FUNCTION _thread_2_fn()
 
    LOCAL _table_name := "test_sem_1"
@@ -307,7 +302,6 @@ FUNCTION _thread_2_fn()
    log_write( "--- thread 2: ----" )
 
    ? "... thread_2_fn ..."
-   _get_server_params_from_config()
 
    log_write( pp( my_server_params() ) )
 

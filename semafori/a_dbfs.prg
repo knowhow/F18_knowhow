@@ -191,7 +191,7 @@ FUNCTION set_a_dbf_sifarnik( dbf_table, alias, wa, rec, lSql )
 FUNCTION get_a_dbf_rec( cTable, _only_basic_params )
 
    LOCAL _msg, _rec, _keys, cDbfTable, _key
-   LOCAL nI, cMsg
+   LOCAL nI, cMsg, hServerParams := my_server_params()
 
    cDbfTable := "x"
 
@@ -199,25 +199,26 @@ FUNCTION get_a_dbf_rec( cTable, _only_basic_params )
       _only_basic_params = .F.
    ENDIF
 
-   IF ValType( s_hF18Dbfs[ my_server_params()[ "database" ] ] ) <> "H"
+   IF !hb_HHasKey( hServerParams, "database" ) .OR. ValType( s_hF18Dbfs[ hServerParams[ "database" ] ] ) <> "H"
+      altd()
       _msg := ""
       LOG_CALL_STACK _msg
       ?E  "get_a_dbf_rec: " + cTable + " s_hF18Dbfs nije inicijalizirana " + _msg
    ENDIF
 
-   IF hb_HHasKey( s_hF18Dbfs[ my_server_params()[ "database" ] ], cTable )
+   IF hb_HHasKey( s_hF18Dbfs[ hServerParams[ "database" ] ], cTable )
       cDbfTable := cTable
    ELSE
       // probaj preko aliasa
-      FOR EACH _key IN s_hF18Dbfs[ my_server_params()[ "database" ] ]:Keys
+      FOR EACH _key IN s_hF18Dbfs[ hServerParams[ "database" ] ]:Keys
          IF ValType( cTable ) == "N"
             // zadana je workarea
-            IF s_hF18Dbfs[ my_server_params()[ "database" ] ][ _key ][ "wa" ] == cTable
+            IF s_hF18Dbfs[ hServerParams[ "database" ] ][ _key ][ "wa" ] == cTable
                cDbfTable := _key
                EXIT
             ENDIF
          ELSE
-            IF s_hF18Dbfs[ my_server_params()[ "database" ] ][ _key ][ "alias" ] == Upper( cTable )
+            IF s_hF18Dbfs[ hServerParams[ "database" ] ][ _key ][ "alias" ] == Upper( cTable )
                cDbfTable := _key
                EXIT
             ENDIF
@@ -541,6 +542,7 @@ FUNCTION my_close_all_dbf()
 
    CLOSE ALL
 
+altd()
    IF !hb_HHasKey( hServerParams, "database" )
        RETURN .F.
    ENDIF

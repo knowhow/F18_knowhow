@@ -70,6 +70,13 @@ METHOD F18AdminOpts:New()
    ::update_db_result := {}
    ::create_db_result := {}
 
+   IF ! ::relogin_as_admin( "postgres" )
+      MsgBeep( "relogin psotgresql as admin neuspjesno " )
+      RETURN .F.
+   ENDIF
+
+   pg_terminate_all_data_db_connections()
+
    RETURN self
 
 
@@ -809,6 +816,7 @@ METHOD F18AdminOpts:razdvajanje_sezona()
    LOCAL oRow
 
 #ifndef F18_DEBUG
+
    IF !spec_funkcije_sifra( "ADMIN" )
       MsgBeep( "Opcija zasticena !" )
       RETURN .F.
@@ -954,13 +962,9 @@ METHOD F18AdminOpts:create_new_pg_db( params )
       _db_type := 0
    ENDIF
 
-   pg_terminate_all_data_db_connections()
-
-
    IF ! ::relogin_as_admin( "postgres" )
       RETURN .F.
    ENDIF
-
 
    IF _db_drop
       IF !::drop_pg_db( _db_name )
@@ -1039,7 +1043,6 @@ METHOD F18AdminOpts:relogin_as_admin( cDatabase )
 
 
 METHOD F18AdminOpts:relogin_as( cUser, cPwd, cDatabase )
-
 
    LOCAL hSqlParams := my_server_params()
    LOCAL nConnType := 1

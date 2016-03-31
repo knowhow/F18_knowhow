@@ -471,7 +471,7 @@ FUNCTION f18_promjena_sezone()
 
    LOCAL oLogin := F18Login():New()
 
-   oLogin:promjena_sezone( @s_psqlServer_params )
+   oLogin:promjena_sezone()
 
    RETURN .T.
 

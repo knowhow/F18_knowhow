@@ -98,8 +98,11 @@ METHOD F18Login:New()
 
    my_server_params( _ini_params )
 
+   ::set_data_db_params( _ini_params )
+
    _ini_params[ "database" ] := "postgres"
    ::set_postgres_db_params( _ini_params )
+
 
    RETURN SELF
 
@@ -143,6 +146,7 @@ METHOD F18Login:connect( conn_type, silent )
       my_server_close( 1 )
       hSqlParams := ::data_db_params
       lConnected := my_server_login( ::data_db_params, 1 )
+      my_server_params( ::data_db_params )
    ENDIF
 
 
@@ -277,7 +281,7 @@ METHOD F18Login:promjena_sezone_box( cSession )
    RETURN lRet
 
 
-METHOD F18Login:promjena_sezone( hSqlParams, cDatabase, cSezona )
+METHOD F18Login:promjena_sezone( cDatabase, cSezona )
 
    LOCAL _ok := .F.
    LOCAL cTrenutnaDatabase
@@ -289,8 +293,8 @@ METHOD F18Login:promjena_sezone( hSqlParams, cDatabase, cSezona )
    LOCAL cNovaSezona
    LOCAL cSaveDatabase
 
-   hParams := hb_Hash()
 
+   hParams := hb_Hash()
    hParams[ "posljednji_put" ] := s_cPredhodnaSezona // posljednji put se radilo u ovoj sezoni
    hParams[ "posljednja_org" ] := "x"
    f18_ini_config_read( "sezona", @hParams, .T. ) // promjena, sezone, read global from ~/.f18_config.ini
@@ -302,7 +306,7 @@ METHOD F18Login:promjena_sezone( hSqlParams, cDatabase, cSezona )
 
 
    IF cDatabase == NIL
-      cTrenutnaDatabase := hSqlParams[ "database" ]
+      cTrenutnaDatabase := ::data_db_params[ "database" ]
    ELSE
       cTrenutnaDatabase := cDatabase
       _show_box := .F.
@@ -330,19 +334,23 @@ METHOD F18Login:promjena_sezone( hSqlParams, cDatabase, cSezona )
       RETURN .F.
    ENDIF
 
-
    cTrenutnaSezona := Right( cTrenutnaDatabase, 4 ) // bringout_2016 => bringout_2015
-   cSaveDatabase := hSqlParams[ "database" ]
-   hSqlParams[ "database" ] := StrTran( cTrenutnaDatabase, "_" + cTrenutnaSezona, "_" + cNovaSezona )
-   ::data_db_params[ "database" ] := hSqlParams[ "database" ]
+   cSaveDatabase := ::data_db_params[ "database" ]
+   ::data_db_params[ "database" ] := StrTran( cTrenutnaDatabase, "_" + cTrenutnaSezona, "_" + cNovaSezona )
+   ::data_db_params[ "session" ] := cNovaSezona
 
    IF ::connect( 1 )
       _ok := .T.
    ELSE
-      hSqlParams[ "database" ] := cSaveDatabase // vrati posljednju ispravnu bazu
-      ::data_db_params[ "database" ] := hSqlParams[ "database" ]
       MsgBeep( "Traženo sezonsko područje " + cNovaSezona + " ne postoji !" )
+      ::data_db_params[ "database" ] := cSaveDatabase // vrati posljednju ispravnu bazu
+      ::data_db_params[ "session" ] := cTrenutnaSezona
+      IF !::connect( 1 )
+         MsgBeep( "Ne mogu se spojiti na " +  cSaveDatabase + "?!")
+         QUIT_1
+      ENDIF
    ENDIF
+
 
    IF _ok .AND. _show_box
 
@@ -352,7 +360,7 @@ METHOD F18Login:promjena_sezone( hSqlParams, cDatabase, cSezona )
             f18_set_use_module( _modul_name, .T. )
          ELSE
             MsgBeep( "Vraćamo se u sezonu " + cTrenutnaSezona )
-            ::promjena_sezone( hSqlParams, cTrenutnaDatabase, cTrenutnaSezona )
+            ::promjena_sezone( cTrenutnaDatabase, cTrenutnaSezona )
          ENDIF
       ENDIF
 
@@ -363,7 +371,7 @@ METHOD F18Login:promjena_sezone( hSqlParams, cDatabase, cSezona )
 
    hParams[ "posljednji_put" ] := cNovaSezona
    // ako je baza bringout_2014, hparams[ posljednja_org ] ce biti bringout
-   hParams[ "posljednja_org" ] := StrTran( hSqlParams[ "database" ], "_" + cNovaSezona, "" )
+   hParams[ "posljednja_org" ] := StrTran( ::data_db_params[ "database" ], "_" + cNovaSezona, "" )
 
    f18_ini_config_write( "sezona", @hParams, .T. )
 
@@ -721,9 +729,7 @@ METHOD F18Login:administrative_options( x_pos, y_pos )
 
 STATIC FUNCTION _set_menu_choices( menuop, menuexec )
 
-   pg_terminate_all_data_db_connections()
-   //print_sql_connections()
-
+   // print_sql_connections()
 
    AAdd( menuop, hb_UTF8ToStr( "1. rekonfiguracija servera        " ) )
    AAdd( menuexec, {|| f18_login_loop( .F. ), .T. } )

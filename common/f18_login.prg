@@ -127,7 +127,7 @@ METHOD F18Login:included_databases_for_user()
 
 METHOD F18Login:connect( conn_type, silent )
 
-   LOCAL lConnected
+   LOCAL lConnected, hSqlParams
 
    IF silent == NIL
       silent := .F.
@@ -135,11 +135,13 @@ METHOD F18Login:connect( conn_type, silent )
 
    IF conn_type == 0
       server_postgres_db_close()
+      hSqlParams := ::postgres_db_params
       lConnected := my_server_login( ::postgres_db_params, 0 )
    ENDIF
 
    IF conn_type == 1
       my_server_close( 1 )
+      hSqlParams := ::data_db_params
       lConnected := my_server_login( ::data_db_params, 1 )
    ENDIF
 

@@ -98,11 +98,8 @@ FUNCTION post_login()
 
    // ~/.F18/empty38/
    set_f18_home( my_server_params()[ "database" ] )
-
    info_bar( "init", "home baze: " + my_home() )
-
    hb_gtInfo( HB_GTI_WINTITLE, "[ " + my_server_params()[ "user" ] + " ][ " + my_server_params()[ "database" ] + " ]" )
-
    set_a_dbfs()
    set_global_vars_1()
    set_global_screen_vars( .F. )
@@ -114,9 +111,11 @@ FUNCTION post_login()
    set_vars_za_specificne_slucajeve()
 
    thread_dbfs( hb_threadStart( @thread_create_dbfs() ) )
-   info_bar( "init", "thread_create_dbfs - end" )
 
-   check_server_db_version()
+   IF !check_server_db_version()
+      RETURN .F.
+   ENDIF
+
    server_log_enable()
    set_init_fiscal_params()
 
@@ -513,7 +512,7 @@ FUNCTION set_f18_home( database )
 
    LOCAL _home
 
-   IF database <> nil
+   IF database <> NIL
       _home := hb_DirSepAdd( my_home_root() + database )
       f18_create_dir( _home )
    ENDIF
@@ -542,6 +541,7 @@ FUNCTION no_sql_mode( val )
    IF val != nil
       __no_sql_mode := val
    ENDIF
+
 
    RETURN __no_sql_mode
 

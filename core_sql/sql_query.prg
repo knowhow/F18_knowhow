@@ -42,7 +42,7 @@ FUNCTION _sql_query( oServer, cQuery )
 
    RETURN run_sql_query( cQuery, hParams )
 
-   
+
 
 FUNCTION postgres_sql_query( cQuery )
 
@@ -60,14 +60,16 @@ FUNCTION run_sql_query( cQry, hParams )
    LOCAL _msg
    LOCAL cTip
    LOCAL nPos
-   LOCAL nRetry := 2
+   LOCAL nRetry := 1
    LOCAL oServer := my_server()
    LOCAL cTransactionName := cQry
+   LOCAL lLog := .T.
 
-   IF PCount() == 2
+   IF hParams != NIL
 
       IF ValType( hParams ) != "H"
          Alert( "run sql query param 2 nije hash !?" )
+         AltD()
          QUIT
       ENDIF
 
@@ -83,8 +85,25 @@ FUNCTION run_sql_query( cQry, hParams )
          cTransactionName :=  hParams[ "tran_name" ]
       ENDIF
 
+      IF hb_HHasKey( hParams, "log" )
+         lLog :=  hParams[ "log" ]
+      ENDIF
    ENDIF
 
+
+   IF !is_in_main_thread()
+      IF !is_var_objekat_tpqserver( oServer ) .OR. oServer:pDB == NIL
+         // delegiraj izvrsenje u main thread-u
+         idle_add_for_eval( cQry, {|| run_sql_query( cQry ) } )
+         RETURN idle_get_eval( cQry )
+      ENDIF
+   ENDIF
+
+
+   IF ! is_var_objekat_tpqserver( oServer )
+      ?E "run_sql_query server not defined !"
+      RETURN NIL
+   ENDIF
 
    IF Left( cQry, 5 ) == "BEGIN"
       IF hb_mutexLock( s_mtxMutex )
@@ -115,7 +134,9 @@ FUNCTION run_sql_query( cQry, hParams )
 
    IF ValType( cQry ) != "C"
       _msg := "qry ne valja VALTYPE(qry) =" + ValType( cQry )
-      log_write( _msg, 2 )
+      IF lLog
+         log_write( _msg, 2 )
+      ENDIF
       MsgBeep( _msg )
       quit_1
    ENDIF
@@ -141,7 +162,9 @@ FUNCTION run_sql_query( cQry, hParams )
       IF sql_error_in_query( oQuery, cTip, oServer )
 
          ?E "SQL ERROR QUERY: ", cQry
-         ?E "pDb:", my_server():pDb
+         IF is_var_objekat_tpqserver( my_server() )
+            ?E "pDb:", my_server():pDb
+         ENDIF
          print_transactions()
          print_threads( cQry )
          error_bar( "sql", cQry )
@@ -152,7 +175,6 @@ FUNCTION run_sql_query( cQry, hParams )
       ELSE
          nI := nRetry + 1
       ENDIF
-
 
    NEXT
 
@@ -230,6 +252,8 @@ FUNCTION sql_query_no_records( ret )
 
 FUNCTION sql_query_bez_zapisa( ret )
 
+   LOCAL cMsg, cLogMsg, nI
+
    SWITCH ValType( ret )
    CASE "L"
       RETURN .T.
@@ -240,7 +264,8 @@ FUNCTION sql_query_bez_zapisa( ret )
       ENDIF
       EXIT
    OTHERWISE
-      MsgBeep( "sql_query ? ret valtype: " + ValType( ret ) )
+      cLogMsg := "sql_query ? ret valtype: " + ValType( ret )
+      LOG_CALL_STACK cLogMsg
       QUIT_1
    END SWITCH
 

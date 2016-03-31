@@ -96,7 +96,6 @@ METHOD F18Login:New()
    ENDIF
    _ini_params[ "password" ] := _ini_params[ "user" ]
 
-   altd()
    my_server_params( _ini_params )
 
    _ini_params[ "database" ] := "postgres"
@@ -140,7 +139,7 @@ METHOD F18Login:connect( conn_type, silent )
    ENDIF
 
    IF conn_type == 1
-      my_server_close()
+      my_server_close( 1 )
       lConnected := my_server_login( ::data_db_params, 1 )
    ENDIF
 
@@ -219,7 +218,6 @@ METHOD F18Login:postgres_db_login( lForceConnect )
       lForceConnect := .T.
    ENDIF
 
-   AltD()
    IF lForceConnect .AND. ::postgres_db_params[ "user" ] <> NIL .AND.  ::connect( 0 ) // try to connect, if not, open login form
       ::lPostgresDbSpojena := .T.
       RETURN .T.
@@ -245,7 +243,6 @@ METHOD F18Login:login_odabir_organizacije( hSqlParams )
    LOCAL _i
    LOCAL _ret_comp
 
-   AltD()
    ::set_data_db_params( @hSqlParams ) // parametri organizacije
 
    IF ! ::odabir_organizacije()
@@ -661,7 +658,6 @@ METHOD F18Login:database_array()
       _where + ;
       " ORDER BY datab "
 
-   AltD()
    _table := postgres_sql_query( _qry )
    IF sql_error_in_query( _table, "SELECT", server_postgres_db() )
       RETURN NIL
@@ -690,7 +686,6 @@ METHOD F18Login:database_array()
 
 METHOD F18Login:administrative_options( x_pos, y_pos )
 
-   LOCAL _ok := .F.
    LOCAL _x, _y
    LOCAL _menuop, _menuexec, _mnu_choice
 
@@ -718,14 +713,20 @@ METHOD F18Login:administrative_options( x_pos, y_pos )
 
    ENDDO
 
-   RETURN _ok
+   RETURN .T.
 
 
 
 STATIC FUNCTION _set_menu_choices( menuop, menuexec )
 
+   my_server_close( 1 )
+   my_server_close( 0 )
+   print_sql_connections()
+
+   altd()
+
    AAdd( menuop, hb_UTF8ToStr( "1. rekonfiguracija servera        " ) )
-   AAdd( menuexec, {|| f18_login( .F. ), .T. } )
+   AAdd( menuexec, {|| f18_login_loop( .F. ), .T. } )
 
    AAdd( menuop, hb_UTF8ToStr( "2. update F18" ) )
    AAdd( menuexec, {|| F18AdminOpts():New():update_app(), .T. } )

@@ -537,13 +537,18 @@ FUNCTION set_rec_from_dbstruct( rec )
 FUNCTION my_close_all_dbf()
 
    LOCAL nPos := 100
+   LOCAL hServerParams := my_server_params()
 
    CLOSE ALL
+
+   IF !hb_HHasKey( hServerParams, "database" )
+       RETURN .F.
+   ENDIF
 
    WHILE nPos > 0
 
       // ako je neki dbf ostao otvoren nPos ce vratiti poziciju tog a_dbf_recorda
-      nPos := hb_HScan( s_hF18Dbfs[ my_server_params()[ "database" ] ], {| key, rec | zatvori_dbf( rec ) == .F.  } )
+      nPos := hb_HScan( s_hF18Dbfs[ hServerParams[ "database" ] ], {| key, rec | zatvori_dbf( rec ) == .F.  } )
       IF nPos > 0
          hb_idleSleep( 0.1 )
       ELSE

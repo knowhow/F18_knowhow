@@ -136,7 +136,8 @@ FUNCTION GlobalErrorHandler( err_obj, lShowErrorReport, lQuitApp )
    OutBug( "---", Replicate( "-", 80 ) )
    OutBug()
 
-   IF ! no_sql_mode()
+
+   IF hb_HHasKey( my_server_params(), "host" ) .AND. !no_sql_mode()
       server_connection_info()
       server_db_version_info()
       server_info()
@@ -239,6 +240,12 @@ STATIC FUNCTION server_info()
 
 STATIC FUNCTION server_connection_info()
 
+   LOCAL hParams := my_server_params()
+
+   IF !hb_HHasKey( hParams, "host" )
+       RETURN .F.
+   ENDIF
+
    OutBug()
    OutBug( "/----- SERVER connection info: ---------- /" )
    OutBug()
@@ -314,6 +321,7 @@ STATIC FUNCTION send_email( err_obj, lNotify )
    LOCAL _body, _subject
    LOCAL _attachment
    LOCAL _answ := fetch_metric( "bug_report_email", my_user(), "A" )
+   LOCAL cDatabase
 
    IF lNotify == NIL
       lNotify := .F.
@@ -337,8 +345,14 @@ STATIC FUNCTION send_email( err_obj, lNotify )
       _subject := "BUG F18 "
    ENDIF
 
+   IF hb_HHasKey( my_server_params(), "database" )
+      cDatabase := my_server_params()[ "database" ]
+   ELSE
+      cDatabase := "DBNOTDEFINED"
+   ENDIF
+
    _subject += F18_VER
-   _subject += ", " + my_server_params()[ "database" ] + "/" + AllTrim( f18_user() )
+   _subject += ", " + cDatabase + "/" + AllTrim( f18_user() )
    _subject += ", " + DToC( Date() ) + " " + PadR( Time(), 8 )
 
    IF err_obj != NIL

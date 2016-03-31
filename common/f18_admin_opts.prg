@@ -810,7 +810,6 @@ METHOD F18AdminOpts:razdvajanje_sezona()
    LOCAL aRezultati := {}
    LOCAL oRow
 
-   AltD()
 #ifndef F18_DEBUG
    IF !spec_funkcije_sifra( "ADMIN" )
       MsgBeep( "Opcija zasticena !" )
@@ -1093,7 +1092,6 @@ METHOD F18AdminOpts:drop_pg_db( db_name )
 
    ENDIF
 
-altd()
    IF ! ::relogin_as_admin( "postgres" )
       RETURN .F.
    ENDIF
@@ -1205,7 +1203,6 @@ METHOD F18AdminOpts:delete_db_data_all( db_name, data_type )
 
    info_bar( "nova_sezona", "brisanje podataka " + db_name )
    _ret := run_sql_query( _qry )
-   altd()
    IF sql_error_in_query( _ret, "DELETE" )
       RETURN .F.
    ENDIF

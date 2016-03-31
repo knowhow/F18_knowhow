@@ -23,7 +23,7 @@ FUNCTION server_log_write( msg, silent )
    LOCAL _qry
    LOCAL _tbl
    LOCAL _user := f18_user()
-   LOCAL _server := my_server()
+   LOCAL hParams := hb_hash()
 
    IF silent == NIL
       silent := .F.
@@ -31,25 +31,9 @@ FUNCTION server_log_write( msg, silent )
 
    _tbl := F18_PSQL_SCHEMA + ".log"
 
+   hParams[ "log" ] := .F.
    msg  := ProcName( 2 ) + "(" + AllTrim( Str( ProcLine( 2 ) ) ) + ") : " + msg
    _qry := "INSERT INTO " + _tbl + "(user_code, msg) VALUES(" +  sql_quote( _user ) + "," +  sql_quote( msg ) + ")"
-   _ret := _sql_query_no_log( _server, _qry, silent )
+   _ret := run_sql_query( _qry, hParams )
 
    RETURN .T.
-
-
-
-/*
-  run query bez upisivanja u log
-*/
-STATIC FUNCTION _sql_query_no_log( srv, qry, silent )
-
-   LOCAL _msg, _ret
-
-   IF silent == NIL
-      silent := .F.
-   ENDIF
-
-   _ret := srv:Query( qry )
-
-   RETURN _ret

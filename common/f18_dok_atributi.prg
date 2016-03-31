@@ -564,7 +564,6 @@ METHOD F18_DOK_ATRIB:atrib_dbf_to_server()
    LOCAL _ok := .T.
    LOCAL _t_area := Select()
    LOCAL _qry, _table
-   LOCAL _server := my_server()
    LOCAL _res
 
    ::open_local_table()

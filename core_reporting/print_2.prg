@@ -23,7 +23,6 @@ FUNCTION f18_start_print( cFileName, xPrintOpt, cDocumentName )
    LOCAL cOpt
    LOCAL oPDF
 
-altd()
    cFileName := set_print_file_name( cFileName )
 
    IF ( cDocumentName == NIL )

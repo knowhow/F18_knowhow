@@ -18,7 +18,6 @@ FUNCTION parametri_organizacije( set_params )
    LOCAL _x := 1
    LOCAL _left := 20
 
-   AltD()
    info_bar( "init", "parametri organizacije - start" )
    IF ( set_params == nil )
       set_params := .T.
@@ -28,7 +27,7 @@ FUNCTION parametri_organizacije( set_params )
    IF fetch_metric_error()
       RETURN .F.
    ENDIF
-   
+
    PUBLIC gFirma := fetch_metric( "org_id", nil, gFirma )
    PUBLIC gNFirma := PadR( fetch_metric( "org_naziv", nil, gNFirma ), 50 )
    PUBLIC gMjStr := fetch_metric( "org_mjesto", nil, gMjStr )

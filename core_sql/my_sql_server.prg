@@ -31,40 +31,10 @@ FUNCTION my_server( oServer )
    LOCAL nI, cMsg, cLogMsg := ""
 
    IF !is_in_main_thread()
-
-      IF s_psqlServerDbfThread  == NIL
-
-         BEGIN SEQUENCE WITH {| err | Break( err ) }
-            s_psqlServer_params_thread := hb_HClone( s_psqlServer_params )
-
-            s_psqlServerDbfThread := TPQServer():New( s_psqlServer_params[ "host" ], ;
-               s_psqlServer_params_thread[ "database" ], ;
-               s_psqlServer_params_thread[ "user" ], ;
-               s_psqlServer_params_thread[ "password" ], ;
-               s_psqlServer_params_thread[ "port" ], ;
-               s_psqlServer_params_thread[ "schema" ] )
-
-            IF hb_mutexLock( s_mtxMutex )
-               s_nSQLConnections++
-               AAdd( s_aSQLConnections, s_psqlServerDbfThread )
-               hb_mutexUnlock( s_mtxMutex )
-            ENDIF
-
-#ifdef F18_DEBUG_THREAD
-            ?E Replicate( "%", 50 ), "TPQSERVER THREAD NEW", s_psqlServer_params_thread[ "database" ], s_psqlServerDbfThread:pDb, s_nSQLConnections
-#endif
-
-         RECOVER USING oError
-
-            LOG_CALL_STACK cLogMsg
-            ?E "thread psql login error:", cLogMsg, oError:description
-            QUIT
-         END SEQUENCE
-
+      IF oServer <> NIL
+         s_psqlServerDbfThread := oServer
       ENDIF
       RETURN s_psqlServerDbfThread
-
-
    ENDIF
 
    IF oServer <> NIL
@@ -109,20 +79,31 @@ FUNCTION my_server_close( nConnType )
 
    IF is_var_objekat_tpqserver( oServer )
       pDb := oServer:pDb
-      oServer:close()
+      IF HB_ISNIL( pDb )
+         ?E "TPQSERVER pDb IS NIL", s_nSQLConnections
+         RETURN .F.
+      ENDIF
       IF hb_mutexLock( s_mtxMutex )
          s_nSQLConnections--
-         nPos := AScan( s_aSQLConnections, {| item|  item:pDb == pDb } )
+         nPos := AScan( s_aSQLConnections, {| item|  item[ 1 ] == oServer } )
          IF nPos > 0
+            ?E "CCCCCCCCCCCCCCCCCLOSE TPQSERVER CLOSE CONNECTION port:", s_aSQLConnections[ nPos, 2 ]
             ADel( s_aSQLConnections, nPos )
             ASize( s_aSQLConnections, Len( s_aSQLConnections ) - 1 )
          ENDIF
+
          hb_mutexUnlock( s_mtxMutex )
       ENDIF
+
+      oServer:close()
+      oServer := NIL
+
 #ifdef F18_DEBUG_THREAD
-      ?E Replicate( "%", 50 ), "TPQSERVER " + iif( is_in_main_thread(), "", "THREAD " ), "CLOSE", ;
+      ?E Replicate( iif( is_in_main_thread(), "%", "t" ), 50 ), "TPQSERVER " + iif( is_in_main_thread(), "", "THREAD " ), "CLOSE", ;
          iif( nConnType == 0, "POSTGRES DB", "DATA DB" ), pDb, s_nSQLConnections
 #endif
+   ELSE
+      ?E "ERROR: server is not TPQServer objekat ?!"
    ENDIF
 
    IF !is_in_main_thread()
@@ -142,6 +123,20 @@ FUNCTION my_server_logout( nConnType )
 FUNCTION num_sql_connections()
    RETURN Len( s_aSQLConnections )
 
+PROCEDURE print_sql_connections()
+
+   LOCAL aConnection
+
+   ?E "SQL connections:"
+   FOR EACH aConnection IN s_aSQLConnections
+      IF ValType( aConnection ) == "A"
+         ?E aConnection[ 1 ], aConnection[ 2 ]
+      ELSE
+         ?E ValType( aConnection )
+      ENDIF
+   NEXT
+
+   RETURN
 
 /*
  set_get server_params
@@ -152,6 +147,15 @@ FUNCTION my_server_params( hSqlParams )
    LOCAL  _key
 
    IF !is_in_main_thread()
+      IF hSqlParams <> NIL
+         FOR EACH _key in hSqlParams:Keys
+            s_psqlServer_params_thread[ _key ] := hSqlParams[ _key ]
+         NEXT
+      ELSE
+         IF HB_ISNIL( s_psqlServer_params_thread )
+            s_psqlServer_params_thread := hb_HClone( s_psqlServer_params )
+         ENDIF
+      ENDIF
       RETURN s_psqlServer_params_thread // svaki thread treba zapamtiti svoje parametre
    ENDIF
 
@@ -167,63 +171,75 @@ FUNCTION my_server_params( hSqlParams )
 
 FUNCTION my_server_login( hSqlParams, nConnType )
 
-   LOCAL _key, _server
+   LOCAL oServer
+   LOCAL oQry, hParams
 
    IF hSqlParams == NIL
-      hSqlParams := s_psqlServer_params
+      hSqlParams := my_server_params()
+   ENDIF
+
+   IF !hb_HHasKey( hSqlParams, "host" )
+      Alert( "my server login hSqlParams ERROR" + pp( hSqlParams ) )
+      altd()
+      QUIT
    ENDIF
 
    IF nConnType == NIL
       nConnType := 1
    ENDIF
 
-   FOR EACH _key IN hSqlParams:Keys
-      IF hSqlParams[ _key ] == NIL
-         IF nConnType == 1
-            error_bar( "init", "my_server_login error server params key: " + _key )
-         ENDIF
-         RETURN .F.
-      ENDIF
-   NEXT
 
-   _server := TPQServer():New( hSqlParams[ "host" ], ;
-      iif( nConnType == 1, hSqlParams[ "database" ], "postgres" ), ;
+   IF nConnType == 0
+      hSqlParams[ "database" ] := "postgres"
+      hSqlParams[ "schema" ] := "public"
+   ENDIF
+
+   oServer := TPQServer():New( hSqlParams[ "host" ], ;
+      hSqlParams[ "database" ], ;
       hSqlParams[ "user" ], ;
       hSqlParams[ "password" ], ;
       hSqlParams[ "port" ], ;
-      iif( nConnType == 1, hSqlParams[ "schema" ], "public" ) )
-   IF hb_mutexLock( s_mtxMutex )
-      s_nSQLConnections++
-      AAdd( s_aSQLConnections, _server )
-      hb_mutexUnlock( s_mtxMutex )
-   ENDIF
+      hSqlParams[ "schema" ] )
+
+
 #ifdef F18_DEBUG_THREAD
-   ?E Replicate( "/", 50 ), "TPQSERVER NEW", hSqlParams[ "database" ], _server:pDb, s_nSQLConnections
+   ?E Replicate( iif( is_in_main_thread(), "m", "." ), 60 ), "TPQSERVER NEW", iif( is_in_main_thread(), "", "THREAD" ), hSqlParams[ "database" ], oServer:pDb, s_nSQLConnections
 #endif
 
-   IF  !_server:NetErr() .AND. Empty( _server:ErrorMsg() )
+   IF  !oServer:NetErr() .AND. Empty( oServer:ErrorMsg() )
 
       IF nConnType == 0
-         server_postgres_db( _server )
+         server_postgres_db( oServer )
       ELSE
-         my_server( _server ) // konekcija za organizaciju
+         my_server( oServer ) // konekcija za organizaciju
          info_bar( "login", "server connection ok: " + hSqlParams[ "user" ] + " / " + iif ( nConnType == 1, hSqlParams[ "database" ], "postgres" ) + " / verzija aplikacije: " + F18_VER, 1 )
       ENDIF
+
+      hParams := hb_Hash()
+      hParams[ "server" ] := oServer
+      oQry := run_sql_query( "SELECT inet_client_port()", hParams )
+      ??E " client port", oQry:FieldGet( 1 )
+
+      IF hb_mutexLock( s_mtxMutex )
+         s_nSQLConnections++
+         AAdd( s_aSQLConnections, { oServer,  oQry:FieldGet( 1 ) } )
+         hb_mutexUnlock( s_mtxMutex )
+      ENDIF
+
 
       RETURN .T.
 
    ELSE
 
-      error_bar( "login", "error server connection: " + _server:ErrorMsg() )
+      error_bar( "login", "error server connection: " + oServer:ErrorMsg() )
       RETURN .F.
-
    ENDIF
 
    RETURN .T.
 
 
 
-FUNCTION f18_login( force_connect, arg_v )
+FUNCTION f18_login_loop( force_connect, arg_v )
 
    LOCAL oLogin
 
@@ -235,18 +251,24 @@ FUNCTION f18_login( force_connect, arg_v )
 
    DO WHILE .T.
 
-
       oLogin:postgres_db_login( force_connect )
 
       IF !oLogin:lPostgresDbSpojena
          QUIT_1
       ENDIF
-      AltD()
       IF !oLogin:login_odabir_organizacije( @s_psqlServer_params )
          IF LastKey() == K_ESC
             info_bar( "info", "<ESC> za izlaz iz aplikacije" )
+            AltD()
+            oLogin:disconnect( 0 )
+            oLogin:disconnect( 1 )
+            print_sql_connections()
+
             Inkey( 0 )
             IF LastKey() == K_ESC // 2 x ESC
+
+               ?E "num sql connections:", num_sql_connections()
+               ?E
                RETURN .F.
             ENDIF
          ENDIF
@@ -455,9 +477,7 @@ FUNCTION f18_promjena_sezone()
 
 
 
-// -------------------------------
-// init harbour postavke
-// -------------------------------
+
 FUNCTION init_harbour()
 
    rddSetDefault( RDDENGINE )
@@ -470,6 +490,7 @@ FUNCTION init_harbour()
 
 
    f18_init_threads()
+   hb_idleAdd( {|| idle_eval() } )
 
    hb_cdpSelect( "SL852" )
    hb_SetTermCP( "SLISO" )

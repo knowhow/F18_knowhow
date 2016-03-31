@@ -45,6 +45,11 @@ FUNCTION check_server_db_version()
 
    _server_db_num := server_db_version()
 
+   IF _server_db_num < 0
+      error_bar( "server_db", "server_db_version < 0")
+      RETURN .F.
+   ENDIF
+
    IF ( _f18_required_server_num > _server_db_num )
 
       _f18_required_server_str := get_version_str( _f18_required_server_num )
@@ -52,12 +57,13 @@ FUNCTION check_server_db_version()
 
       _msg := "F18 klijent trazi verziju " + _f18_required_server_str + " server db je verzije: " + _server_db_str
 
-      log_write( _msg, 3 )
+      ?E _msg
       error_bar( "init", "serverdb: " + _server_db_str )
 
       MsgBeep( _msg )
 
       OutMsg( 1, _msg + hb_osNewLine() )
+      RETURN .T.
    ENDIF
 
    RETURN .T.

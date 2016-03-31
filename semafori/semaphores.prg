@@ -689,7 +689,7 @@ FUNCTION dbf_refresh( cTable )
    LOCAL aDbfRec
    LOCAL hVersions
 
-   IF  cTable == NIL
+   IF cTable == NIL
       IF !Used() .OR. ( rddName() $  "SQLMIX#ARRAYRDD" )
          RETURN .F.
       ENDIF

@@ -354,6 +354,10 @@ FUNCTION use_sql_sifk( cDbf, cOznaka )
    LOCAL cSql
    LOCAL cTable := "sifk"
 
+#ifdef F18_DEBUG_THREAD
+   ?E "USE SQL SIFK in main thread:", is_in_main_thread()
+#endif
+
    cSql := "SELECT * from " + F18_PSQL_SCHEMA_DOT + "sifk"
    IF cDbf != NIL
       cSql += " WHERE id=" + sql_quote( cDbf )

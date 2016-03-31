@@ -490,7 +490,7 @@ FUNCTION init_harbour()
 
 
    f18_init_threads()
-   hb_idleAdd( {|| idle_eval() } )
+   //hb_idleAdd( {|| idle_eval() } )
 
    hb_cdpSelect( "SL852" )
    hb_SetTermCP( "SLISO" )

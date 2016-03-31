@@ -48,7 +48,7 @@ FUNCTION postgres_sql_query( cQuery )
 
    LOCAL hParams := hb_Hash()
 
-   hParams[ "server" ] := server_postgres_db()
+   hParams[ "server" ] := sql_postgres_conn()
 
    RETURN run_sql_query( cQuery, hParams )
 
@@ -61,7 +61,7 @@ FUNCTION run_sql_query( cQry, hParams )
    LOCAL cTip
    LOCAL nPos
    LOCAL nRetry := 1
-   LOCAL oServer := my_server()
+   LOCAL oServer := sql_data_conn()
    LOCAL cTransactionName := cQry
    LOCAL lLog := .T.
 
@@ -107,14 +107,14 @@ FUNCTION run_sql_query( cQry, hParams )
 
    IF Left( cQry, 5 ) == "BEGIN"
       IF hb_mutexLock( s_mtxMutex )
-         AAdd( s_aTransactions, { Time(), my_server():pDB, hb_threadSelf(), cTransactionName } )
+         AAdd( s_aTransactions, { Time(), sql_data_conn():pDB, hb_threadSelf(), cTransactionName } )
          hb_mutexUnlock( s_mtxMutex )
       ENDIF
    ENDIF
 
    IF Left( cQry, 6 ) == "COMMIT" .OR. Left( cQry, 8 ) == "ROLLBACK"
       IF hb_mutexLock( s_mtxMutex )
-         nPos := AScan( s_aTransactions, {| aTran | ValType( aTran ) == "A" .AND. aTran[ 2 ] == my_server():pDB .AND.  aTran[ 4 ] == cTransactionName } )
+         nPos := AScan( s_aTransactions, {| aTran | ValType( aTran ) == "A" .AND. aTran[ 2 ] == sql_data_conn():pDB .AND.  aTran[ 4 ] == cTransactionName } )
 
          IF nPos > 0
             ADel( s_aTransactions, nPos )
@@ -162,8 +162,8 @@ FUNCTION run_sql_query( cQry, hParams )
       IF sql_error_in_query( oQuery, cTip, oServer )
 
          ?E "SQL ERROR QUERY: ", cQry
-         IF is_var_objekat_tpqserver( my_server() )
-            ?E "pDb:", my_server():pDb
+         IF is_var_objekat_tpqserver( sql_data_conn() )
+            ?E "pDb:", sql_data_conn():pDb
          ENDIF
          print_transactions()
          print_threads( cQry )
@@ -217,7 +217,7 @@ FUNCTION sql_error_in_query( oQry, cTip, oServer )
    LOCAL cLogMsg := "", cMsg, nI
 
    hb_default( @cTip, "SELECT" )
-   hb_default( @oServer, my_server() )
+   hb_default( @oServer, sql_data_conn() )
 
    IF is_var_objekat_tpqquery( oQry ) .AND. !Empty( oQry:ErrorMsg() )
       LOG_CALL_STACK cLogMsg

@@ -67,7 +67,7 @@ METHOD FaktDokument:New( idfirma, idtipdok, brdok, server )
 
 /*
    if server == NIL
-      ::_server := my_server()
+      ::_server := sql_data_conn()
    else
       ::_server := server
    endif

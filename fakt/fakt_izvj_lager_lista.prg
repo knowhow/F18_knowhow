@@ -980,7 +980,7 @@ STATIC FUNCTION fakt_lager_lista_get_data( params, ps )
       my_server_login( _db_params )
    ENDIF
 
-   _server := my_server()
+   _server := sql_data_conn()
 
    _qry := "SELECT " + ;
       "f.idroba, r.naz, " + ;

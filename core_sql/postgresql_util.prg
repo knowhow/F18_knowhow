@@ -26,4 +26,4 @@ altd()
    oQry := postgres_sql_query( cQuery )
 
 
-   RETURN sql_error_in_query( oQry, "SELECT", server_postgres_db() )
+   RETURN sql_error_in_query( oQry, "SELECT", sql_postgres_conn() )

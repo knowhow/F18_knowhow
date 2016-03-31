@@ -548,7 +548,7 @@ METHOD F18Login:get_database_sessions( database )
       "ORDER BY godina"
 
    _table := postgres_sql_query( _qry )
-   IF sql_error_in_query( _table, "SELECT", server_postgres_db() )
+   IF sql_error_in_query( _table, "SELECT", sql_postgres_conn() )
       RETURN NIL
    ENDIF
 
@@ -582,7 +582,7 @@ METHOD F18Login:get_database_top_session( database )
       "ORDER BY godina"
 
    _table := postgres_sql_query( _qry )
-   IF sql_error_in_query( _table, "SELECT", server_postgres_db() )
+   IF sql_error_in_query( _table, "SELECT", sql_postgres_conn() )
       RETURN NIL
    ENDIF
 
@@ -611,7 +611,7 @@ METHOD F18Login:get_database_description( database, cSezona )
       "WHERE datname = " + sql_quote( _database_name )
 
    _table := postgres_sql_query( _qry )
-   IF sql_error_in_query( _table, "SELECT", server_postgres_db() )
+   IF sql_error_in_query( _table, "SELECT", sql_postgres_conn() )
       RETURN NIL
    ENDIF
 
@@ -669,7 +669,7 @@ METHOD F18Login:database_array()
       " ORDER BY datab "
 
    _table := postgres_sql_query( _qry )
-   IF sql_error_in_query( _table, "SELECT", server_postgres_db() )
+   IF sql_error_in_query( _table, "SELECT", sql_postgres_conn() )
       RETURN NIL
    ENDIF
 

@@ -119,7 +119,7 @@ STATIC FUNCTION query_log_data( params )
    LOCAL _conds_false := params[ "conds_false" ]
    LOCAL _is_doc_oper := params[ "doc_oper" ] == "D"
    LOCAL _qry, _where
-   LOCAL _server := my_server()
+   LOCAL _server := sql_data_conn()
    LOCAL _data
 
    IF hb_HHasKey( params, "user" )

@@ -274,7 +274,7 @@ METHOD LDExportTxt:fill_data_from_ld()
 
    LOCAL _ok := .F.
    LOCAL _qry, _table
-   LOCAL _server := my_server()
+   LOCAL _server := sql_data_conn()
    LOCAL _count, _rec
    LOCAL _dod_polja := ::export_params[ "dodatna_polja" ]
    LOCAL _pro_polja, _a_polja, _i

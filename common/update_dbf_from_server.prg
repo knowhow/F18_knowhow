@@ -22,7 +22,7 @@ FUNCTION update_dbf_from_server( table, algoritam )
    LOCAL _counter
    LOCAL _rec
    LOCAL _qry_obj
-   LOCAL _server := my_server()
+   LOCAL _server := sql_data_conn()
    LOCAL _seconds
    LOCAL _x, _y
    LOCAL _ids

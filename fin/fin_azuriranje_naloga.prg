@@ -18,7 +18,7 @@ STATIC __tbl_sint := "fin_sint"
 
 FUNCTION fin_azuriranje_naloga( automatic )
 
-   LOCAL oServer := my_server()
+   LOCAL oServer := sql_data_conn()
    LOCAL aNalozi, _i
    LOCAL _id_firma, _id_vn, _br_nal
    LOCAL lViseNalogaUPripremi := .F.

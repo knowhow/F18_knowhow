@@ -13,7 +13,7 @@
 
 function fin_test()
 LOCAL _user := f18_user()
-LOCAL _server := my_server()
+LOCAL _server := sql_data_conn()
 
 
 local _i, _rec

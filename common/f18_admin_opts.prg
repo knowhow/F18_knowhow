@@ -989,7 +989,7 @@ METHOD F18AdminOpts:create_new_pg_db( params )
 
    info_bar( "nova_sezona", "db create: " + _db_name  )
    oQuery := postgres_sql_query( _qry )
-   IF sql_error_in_query( oQuery, "CREATE", server_postgres_db() )
+   IF sql_error_in_query( oQuery, "CREATE", sql_postgres_conn() )
       RETURN .F.
    ENDIF
 
@@ -999,7 +999,7 @@ METHOD F18AdminOpts:create_new_pg_db( params )
 
    info_bar( "nova_sezona", "grant admin, xtrole: " + _db_name )
    oQuery := postgres_sql_query( _qry )
-   IF sql_error_in_query( oQuery, "GRANT", server_postgres_db() )
+   IF sql_error_in_query( oQuery, "GRANT", sql_postgres_conn() )
       RETURN .F.
    ENDIF
 
@@ -1105,7 +1105,7 @@ METHOD F18AdminOpts:drop_pg_db( db_name )
    oQry := postgres_sql_query( cQry )
 
 
-   IF sql_error_in_query( oQry, "DROP", server_postgres_db() )
+   IF sql_error_in_query( oQry, "DROP", sql_postgres_conn() )
       error_bar( "drop_db", "drop db: " + db_name )
       RETURN .F.
    ENDIF

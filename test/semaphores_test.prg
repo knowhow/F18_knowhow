@@ -314,7 +314,7 @@ FUNCTION _thread_2_fn()
 
    log_write( ToStr( Time() ) + ": ... thread_2_fn ... lock" )
    lock_semaphore( _table_name, "lock" )
-   // ? "... thread_2_fn ... lock", my_user(), VALTYPE(my_server()), get_semaphore_version(_table_name)
+   // ? "... thread_2_fn ... lock", my_user(), VALTYPE(sql_data_conn()), get_semaphore_version(_table_name)
    // ? "my_home", my_home(), "sempahore status:", get_semaphore_status(_table_name)
 
    hb_idleSleep( 10 )

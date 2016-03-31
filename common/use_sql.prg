@@ -25,7 +25,7 @@ FUNCTION use_sql_sif( table, l_make_index )
       l_make_index = .T.
    ENDIF
 
-   oConn := my_server():pDB
+   oConn := sql_data_conn():pDB
 
    rddSetDefault( "SQLMIX" )
 
@@ -60,7 +60,7 @@ FUNCTION use_sql( table, sql_query, cAlias )
       USE
    ENDIF
 
-   oConn := my_server():pDB
+   oConn := sql_data_conn():pDB
 
    rddSetDefault( "SQLMIX" )
 

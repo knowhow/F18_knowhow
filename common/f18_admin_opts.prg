@@ -272,7 +272,6 @@ METHOD F18AdminOpts:update_app_form( upd_params )
    @ m_x + _x, m_y + 2 SAY PadR( "[INFO]", 10 ) + "/" + PadC( "Trenutna", 20 ) + "/" + PadC( "Dostupna", 20 )
 
    ++ _x
-
    @ m_x + _x, m_y + 2 SAY _line
 
    ++ _x
@@ -293,7 +292,6 @@ METHOD F18AdminOpts:update_app_form( upd_params )
 
    ++ _x
    ++ _x
-
    _pos := _x
 
    @ m_x + _x, m_y + 2 SAY "       Update F18 ?" GET _upd_f PICT "@!" VALID _upd_f $ "DN"
@@ -955,6 +953,8 @@ METHOD F18AdminOpts:create_new_pg_db( params )
       // ovo ce biti prazna baza uvijek...
       _db_type := 0
    ENDIF
+
+   pg_terminate_all_data_db_connections()
 
 
    IF ! ::relogin_as_admin( "postgres" )

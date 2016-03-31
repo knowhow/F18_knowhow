@@ -721,11 +721,9 @@ METHOD F18Login:administrative_options( x_pos, y_pos )
 
 STATIC FUNCTION _set_menu_choices( menuop, menuexec )
 
-   my_server_close( 1 )
-   my_server_close( 0 )
-   print_sql_connections()
+   pg_terminate_all_data_db_connections()
+   //print_sql_connections()
 
-   altd()
 
    AAdd( menuop, hb_UTF8ToStr( "1. rekonfiguracija servera        " ) )
    AAdd( menuexec, {|| f18_login_loop( .F. ), .T. } )

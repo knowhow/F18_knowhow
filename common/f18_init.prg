@@ -92,7 +92,7 @@ FUNCTION f18_init_app_opts()
 
 FUNCTION post_login()
 
-altd()
+
    init_parameters_cache()
    set_sql_search_path()
    server_log_enable()

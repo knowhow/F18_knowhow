@@ -144,6 +144,8 @@ STATIC FUNCTION generisi_specifikaciju_u_pomocnu_tabelu( params )
    LOCAL aGrCount := {}
    LOCAL nGr1
    LOCAL nGr2
+   LOCAL cDoc_div := ""
+
 
    cre_tmp1( definicija_pomocne_tabele() )
    o_tmp1()

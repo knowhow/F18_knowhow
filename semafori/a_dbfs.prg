@@ -200,7 +200,6 @@ FUNCTION get_a_dbf_rec( cTable, _only_basic_params )
    ENDIF
 
    IF !hb_HHasKey( hServerParams, "database" ) .OR. ValType( s_hF18Dbfs[ hServerParams[ "database" ] ] ) <> "H"
-      altd()
       _msg := ""
       LOG_CALL_STACK _msg
       ?E  "get_a_dbf_rec: " + cTable + " s_hF18Dbfs nije inicijalizirana " + _msg
@@ -542,7 +541,6 @@ FUNCTION my_close_all_dbf()
 
    CLOSE ALL
 
-altd()
    IF !hb_HHasKey( hServerParams, "database" )
        RETURN .F.
    ENDIF

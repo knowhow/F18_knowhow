@@ -39,7 +39,6 @@ FUNCTION server_sys_info( var )
 
    _qry := "select inet_client_addr(), inet_client_port(),  inet_server_addr(), inet_server_port(), user"
 
-   log_write( _qry, 9 )
    hParams[ "log" ] := .F.
    _ret_sql := run_sql_query( _qry, hParams )
 

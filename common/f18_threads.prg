@@ -122,6 +122,7 @@ PROCEDURE close_thread( cInfo )
    ?E "<<<<<< END: thread", cInfo, "thread count:", s_nThreadCount
 #endif
    my_server_close()
+   pg_terminate_data_db_connection()
 
    RETURN
 

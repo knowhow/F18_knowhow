@@ -25,7 +25,7 @@ STATIC s_aSQLConnections := {}
 STATIC s_mtxMutex
 
 
-FUNCTION my_server( oServer )
+FUNCTION sql_data_conn( oServer )
 
    LOCAL oError
    LOCAL nI, cMsg, cLogMsg := ""
@@ -47,7 +47,7 @@ FUNCTION my_server( oServer )
 
 
 
-FUNCTION server_postgres_db( oServer )
+FUNCTION sql_postgres_conn( oServer )
 
    IF oServer <> NIL
       s_pgsqlServerPostgresDb := oServer
@@ -72,9 +72,9 @@ FUNCTION my_server_close( nConnType )
    hb_default( @nConnType, 1 )
 
    IF nConnType == 1
-      oServer := my_server()  // db organizacija
+      oServer := sql_data_conn()  // db organizacija
    ELSE
-      oServer := server_postgres_db()
+      oServer := sql_postgres_conn()
    ENDIF
 
    IF is_var_objekat_tpqserver( oServer )
@@ -180,7 +180,6 @@ FUNCTION my_server_login( hSqlParams, nConnType )
 
    IF !hb_HHasKey( hSqlParams, "host" )
       Alert( "my server login hSqlParams ERROR" + pp( hSqlParams ) )
-      altd()
       QUIT
    ENDIF
 
@@ -209,10 +208,10 @@ FUNCTION my_server_login( hSqlParams, nConnType )
    IF  !oServer:NetErr() .AND. Empty( oServer:ErrorMsg() )
 
       IF nConnType == 0
-         server_postgres_db( oServer )
+         sql_postgres_conn( oServer )
       ELSE
-         my_server( oServer ) // konekcija za organizaciju
-         info_bar( "login", "server connection ok: " + hSqlParams[ "user" ] + " / " + iif ( nConnType == 1, hSqlParams[ "database" ], "postgres" ) + " / verzija aplikacije: " + F18_VER, 1 )
+         sql_data_conn( oServer ) // konekcija za organizaciju
+         // info_bar( "login", "server connection ok: " + hSqlParams[ "user" ] + " / " + iif ( nConnType == 1, hSqlParams[ "database" ], "postgres" ) + " / verzija aplikacije: " + F18_VER, 1 )
       ENDIF
 
       hParams := hb_Hash()
@@ -490,7 +489,7 @@ FUNCTION init_harbour()
 
 
    f18_init_threads()
-   //hb_idleAdd( {|| idle_eval() } )
+   //hb_idleAdd( {|| idle_eval() } ) - izaziva erore
 
    hb_cdpSelect( "SL852" )
    hb_SetTermCP( "SLISO" )

@@ -614,33 +614,34 @@ FUNCTION insert_semaphore_if_not_exists( cTable, lIgnoreChk0 )
 
 FUNCTION in_dbf_refresh( cTable, lRefresh )
 
+LOCAL hConnParams := my_server_params()
 #ifdef F18_DEBUG_THREAD
+
    ?E "in_dbf_refresh", cTable, lRefresh
 #endif
 
-   IF s_hInDbfRefresh == NIL
-      hb_mutexLock( s_mtxMutex )
-      s_hInDbfRefresh := hb_Hash()
-      hb_mutexUnlock( s_mtxMutex )
+
+   IF hb_HHasKey( hConnParams, "database" )
+      RETURN .F.
    ENDIF
 
-   IF !hb_HHasKey( s_hInDbfRefresh, my_server_params()[ "database" ] )
+   IF !hb_HHasKey( s_hInDbfRefresh, hConnParams[ "database" ] )
       hb_mutexLock( s_mtxMutex )
       s_hInDbfRefresh[ my_server_params()[ "database" ] ] := hb_Hash()
       hb_mutexUnlock( s_mtxMutex )
    ENDIF
 
    hb_mutexLock( s_mtxMutex )
-   IF ! hb_HHasKey( s_hInDbfRefresh[ my_server_params()[ "database" ] ], cTable )
-      s_hInDbfRefresh[ my_server_params()[ "database" ] ][ cTable ]  := .F.
+   IF ! hb_HHasKey( s_hInDbfRefresh[ hConnParams[ "database" ] ], cTable )
+      s_hInDbfRefresh[ hConnParams[ "database" ] ][ cTable ]  := .F.
    ENDIF
 
    IF lRefresh != NIL
-      s_hInDbfRefresh[ my_server_params()[ "database" ] ][ cTable ] := lRefresh
+      s_hInDbfRefresh[ hConnParams[ "database" ] ][ cTable ] := lRefresh
    ENDIF
    hb_mutexUnlock( s_mtxMutex )
 
-   RETURN s_hInDbfRefresh[ my_server_params()[ "database" ] ][ cTable ]
+   RETURN s_hInDbfRefresh[ hConnParams[ "database" ] ][ cTable ]
 
 
 FUNCTION set_last_refresh( cTable )
@@ -659,6 +660,7 @@ FUNCTION set_last_refresh( cTable )
 FUNCTION is_last_refresh_before( cTable, nSeconds )
 
 #ifdef F18_DEBUG_THREAD
+
    ?E "is_last_refresh_before", cTable, nSeconds
 #endif
 
@@ -773,7 +775,7 @@ STATIC FUNCTION dbf_refresh_0( aDbfRec )
    set_a_dbf_rec_chk0( aDbfRec[ "table" ] )
 
    ?E cMsg1
-   //log_write( "stanje dbf " +  cMsg1, 8 )
+   // log_write( "stanje dbf " +  cMsg1, 8 )
 
    nCntSql := table_count( aDbfRec[ "table" ] )
    dbf_open_temp_and_count( aDbfRec, nCntSql, @nCntDbf, @nDeleted )
@@ -835,6 +837,10 @@ INIT PROCEDURE init_semaphores()
 
    IF s_mtxMutex == NIL
       s_mtxMutex := hb_mutexCreate()
+   ENDIF
+
+   IF s_hInDbfRefresh == NIL
+      s_hInDbfRefresh := hb_Hash()
    ENDIF
 
    RETURN

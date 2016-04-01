@@ -221,16 +221,15 @@
 #xcommand O_CUSTOMS => select(F_CUSTOMS); my_use ("customs"); set order to tag "1"
 #xcommand O_OBJECTS => select(F_OBJECTS); my_use ("objects"); set order to tag "1"
 #xcommand O_CONTACTS => select(F_CONTACTS); my_use ("contacts"); set order to tag "1"
-#xcommand O_E_GR_ATT => select(F_E_GR_ATT); my_use ("e_gr_att"); set order to tag "1"
-#xcommand O_E_GR_VAL => select(F_E_GR_VAL); my_use ("e_gr_val"); set order to tag "1"
 
+#xcommand O_E_GR_ATT => select_o_dbf_e_gr_att()
+#xcommand O_E_GR_VAL => select_o_dbf_e_gr_val()
 #xcommand O_AOPS => select_o_dbf_aops()
 #xcommand O_AOPS_ATT => select_o_dbf_aops_att()
-
 #xcommand O_ARTICLES => select_o_dbf_articles()
 #xcommand O_ELEMENTS => select_o_dbf_elements()
-#xcommand O_E_AOPS => select(F_E_AOPS); my_use ("e_aops"); set order to tag "1"
-#xcommand O_E_ATT => select(F_E_ATT); my_use ("e_att"); set order to tag "1"
+#xcommand O_E_AOPS => select_o_dbf_e_aops()
+#xcommand O_E_ATT => select_o_dbf_e_att()
 #xcommand O_RAL => use_sql_rnal_ral()
 
 // modul EPDV

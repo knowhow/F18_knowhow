@@ -15,6 +15,17 @@
 FUNCTION select_o_dbf_aops()
    RETURN select_o_dbf( "AOPS", F_AOPS, "rnal_aops", "1" )
 
+FUNCTION select_o_dbf_e_aops()
+   RETURN select_o_dbf( "E_AOPS", F_E_AOPS, "rnal_e_aops", "1" )
+
+FUNCTION select_o_dbf_e_att()
+   RETURN select_o_dbf( "E_ATT", F_E_ATT, "rnal_e_att", "1" )
+
+FUNCTION select_o_dbf_e_gr_att()
+   RETURN select_o_dbf( "E_GR_ATT", F_E_GR_ATT, "rnal_e_gr_att", "1" )
+
+FUNCTION select_o_dbf_e_gr_Val()
+   RETURN select_o_dbf( "E_GR_VAL", F_E_GR_VAL, "rnal_e_gr_val", "1" )
 
 FUNCTION select_o_dbf_aops_att()
    RETURN select_o_dbf( "AOPS_ATT", F_AOPS_ATT, "aops_att", "1" )
@@ -25,3 +36,7 @@ FUNCTION select_o_dbf_articles()
 
 FUNCTION select_o_dbf_elements()
    RETURN select_o_dbf( "ELEMENTS", F_ELEMENTS, "elements", "1" )
+
+// select(F_E_GR_ATT); my_use ("e_gr_att"); set order to tag "1"
+
+// select(F_E_GR_VAL); my_use ("e_gr_val"); set order to tag "1"

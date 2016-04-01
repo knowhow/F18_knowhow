@@ -43,17 +43,19 @@ FUNCTION open_thread( cInfo, lOpenSQLConnection )
    hb_default( @lOpenSQLConnection, .T. )
 
    DO WHILE s_nThreadCount > MAX_THREAD_COUNT
-   
+
       ++nCounter
 
 #ifdef F18_DEBUG_THREAD
       ?E Time(), cInfo, "thread count>", MAX_THREAD_COUNT, " (", AllTrim( Str( s_nThreadCount ) ), ")"
       print_threads( "tread_cnt_max" + cInfo )
 #endif
-      IF nCounter > 100
+      IF nCounter > 2000
          RETURN .F.
       ELSE
-         ?E Time(), "max threads limit reached, waiting ... ", cInfo
+         IF nCounter % 200 == 0
+            ?E Time(), "max threads limit reached, waiting ... ", cInfo
+         ENDIF
       ENDIF
 
    ENDDO

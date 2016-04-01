@@ -50,11 +50,12 @@ FUNCTION open_thread( cInfo, lOpenSQLConnection )
       ?E Time(), cInfo, "thread count>", MAX_THREAD_COUNT, " (", AllTrim( Str( s_nThreadCount ) ), ")"
       print_threads( "tread_cnt_max" + cInfo )
 #endif
-      IF nCounter > 2000
+      IF nCounter > 1000
          RETURN .F.
       ELSE
-         IF nCounter % 200 == 0
+         IF nCounter % 100 == 0
             ?E Time(), "max threads limit reached, waiting ... ", cInfo, "/", nCounter
+            hb_idleSleep( 0.2 )
          ENDIF
       ENDIF
 

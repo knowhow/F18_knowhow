@@ -304,7 +304,6 @@ FUNCTION seek2( cArg )
 FUNCTION zapp( pack )
 
    LOCAL bErr
-   LOCAL cLogMsg := "", cMsg, nI
 
    IF !Used()
       RETURN .F.
@@ -318,18 +317,14 @@ FUNCTION zapp( pack )
    BEGIN SEQUENCE WITH {| err | Break( err ) }
 
       __dbZap()
-      LOG_CALL_STACK cLogMsg
-      log_write( "ZAP exclusive: " + Alias(), 5 )
-      ?E "zap exclusive ", Alias(), cLogMsg
+      ?E "ZAP exclusive OK: " + Alias()
       IF PACK
          __dbPack()
       ENDIF
 
    RECOVER
 
-      log_write( "ZAP shared: " + Alias(), 5 )
-      LOG_CALL_STACK cLogMsg
-      ?E "zap shared: ", Alias(), cLogMsg
+      ?E "zap shared: " + Alias()
       PushWA()
       DO WHILE .T.
          SET ORDER TO 0
@@ -344,7 +339,8 @@ FUNCTION zapp( pack )
 
    END SEQUENCE
 
-   RETURN NIL
+   RETURN .T.
+   
 
 
 FUNCTION nErr( oe )

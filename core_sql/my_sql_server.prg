@@ -87,7 +87,9 @@ FUNCTION my_server_close( nConnType )
          s_nSQLConnections--
          nPos := AScan( s_aSQLConnections, {| item|  item[ 1 ] == oServer } )
          IF nPos > 0
+#ifdef F18_DEBUG_SQL
             ?E "CCCCCCCCCCCCCCCCCLOSE TPQSERVER CLOSE CONNECTION port:", s_aSQLConnections[ nPos, 2 ]
+#endif
             ADel( s_aSQLConnections, nPos )
             ASize( s_aSQLConnections, Len( s_aSQLConnections ) - 1 )
          ENDIF
@@ -200,8 +202,7 @@ FUNCTION my_server_login( hSqlParams, nConnType )
       hSqlParams[ "port" ], ;
       hSqlParams[ "schema" ] )
 
-
-#ifdef F18_DEBUG_THREAD
+#ifdef F18_DEBUG_SQL
    ?E Replicate( iif( is_in_main_thread(), "m", "." ), 60 ), "TPQSERVER NEW", iif( is_in_main_thread(), "", "THREAD" ), hSqlParams[ "database" ], oServer:pDb, s_nSQLConnections
 #endif
 
@@ -216,12 +217,12 @@ FUNCTION my_server_login( hSqlParams, nConnType )
 
       hParams := hb_Hash()
       hParams[ "server" ] := oServer
-      oQry := run_sql_query( "SELECT inet_client_port()", hParams )
+      oQry := run_sql_query( "SELECT current_user, inet_client_port()", hParams )
       ??E " client port", oQry:FieldGet( 1 )
 
       IF hb_mutexLock( s_mtxMutex )
          s_nSQLConnections++
-         AAdd( s_aSQLConnections, { oServer,  oQry:FieldGet( 1 ) } )
+         AAdd( s_aSQLConnections, { oServer,  oQry:FieldGet( 1 ), oQry:FieldGet( 2 ) } )
          hb_mutexUnlock( s_mtxMutex )
       ENDIF
 
@@ -258,7 +259,6 @@ FUNCTION f18_login_loop( force_connect, arg_v )
       IF !oLogin:login_odabir_organizacije( @s_psqlServer_params )
          IF LastKey() == K_ESC
             info_bar( "info", "<ESC> za izlaz iz aplikacije" )
-            AltD()
             oLogin:disconnect( 0 )
             oLogin:disconnect( 1 )
             print_sql_connections()
@@ -366,7 +366,7 @@ STATIC FUNCTION _login_screen( hSqlParams )
    @ 5, 5, 18, 77 BOX B_DOUBLE_SINGLE
 
    ++ nX
-   @ nX, nLeft SAY PadC( "***** Unesite podatke za pristup *****", 60 )
+   @ nX, nLeft SAY PadC( "*2*** Unesite podatke za pristup *****", 60 )
 
    nX += 2
    @ nX, nLeft SAY PadL( "Konfigurisati server ?:", 21 ) GET cConfigureServer VALID cConfigureServer $ "DN" PICT "@!"

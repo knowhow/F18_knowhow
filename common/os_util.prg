@@ -395,9 +395,7 @@ FUNCTION f18_open_document( document )
 
 
 #ifdef __PLATFORM__WINDOWS
-
-   _prefix := "c:\knowhowERP\util\start.exe "
-
+   _prefix := "cmd /c "
 #else
 #ifdef __PLATFORM__DARWIN
    _prefix := "open "

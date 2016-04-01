@@ -15,9 +15,9 @@ PROCEDURE thread_create_dbfs()
 
    LOCAL _ver
 
-   IF !open_thread( "create_dbfs" )
-      RETURN
-   ENDIF
+   DO WHILE !open_thread( "create_dbfs" )
+      ?E "ERRO open_thread create_dbfs"
+   ENDDO
 
    ErrorBlock( {| objError, lShowreport, lQuit | GlobalErrorHandler( objError, lShowReport, lQuit ) } )
 

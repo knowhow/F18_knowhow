@@ -20,9 +20,9 @@ STATIC s_lPrvoPokretanje // prvo pokretanje aplikacije
 CLASS F18Login
 
    METHOD New()
-   METHOD postgres_db_login( hSqlParams, lForceConnect )
+   METHOD postgres_db_login( lForceConnect )
    METHOD login_odabir_organizacije()
-   METHOD promjena_sezone( hSqlParams, cDatabase, cSezona )
+   METHOD promjena_sezone( cDatabase, cSezona )
    METHOD promjena_sezone_box()
    METHOD browse_odabir_organizacije()
    METHOD manual_enter_company_data()
@@ -33,7 +33,7 @@ CLASS F18Login
    METHOD get_database_sessions()
    METHOD get_database_description()
    METHOD show_info_bar()
-   METHOD postgres_db_login_form()
+   METHOD server_login_form()
    METHOD odabir_organizacije()
    METHOD connect()
    METHOD disconnect( nConn )
@@ -229,7 +229,7 @@ METHOD F18Login:postgres_db_login( lForceConnect )
       RETURN .T.
    ENDIF
 
-   IF ! ::postgres_db_login_form()
+   IF ! ::server_login_form()
       ::lPostgresDbSpojena := .F.
       RETURN .F.
    ENDIF
@@ -380,7 +380,7 @@ METHOD F18Login:promjena_sezone( cDatabase, cSezona )
 
 
 
-METHOD F18Login:postgres_db_login_form()
+METHOD F18Login:server_login_form()
 
    LOCAL _user, _pwd, _port, _host, _schema
    LOCAL _server
@@ -429,7 +429,7 @@ METHOD F18Login:postgres_db_login_form()
    @ 5, 5, 18, 77 BOX B_DOUBLE_SINGLE
 
    ++ _x
-   @ _x, _left SAY PadC( "***** Unesite podatke za pristup *****", 60 )
+   @ _x, _left SAY PadC( "*1*** Unesite podatke za pristup *****", 60 )
 
    _x += 2
    @ _x, _left SAY PadL( "Konfigurisati server ?:", 21 ) GET _srv_config ;

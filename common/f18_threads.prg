@@ -42,18 +42,11 @@ FUNCTION open_thread( cInfo, lOpenSQLConnection )
 
    hb_default( @lOpenSQLConnection, .T. )
 
-   DO WHILE s_nThreadCount > 7
-      nCounter++
-      IF nCounter > 100
-         ?E Time(), "thread count>7 (", AllTrim( Str( s_nThreadCount ) ), "), sacekati:", cInfo
-         print_threads( "tread_cnt_max" + cInfo )
-         RETURN .F.
-      ENDIF
-#ifdef F18_DEBUG_THREAD
-      ?E hb_threadSelf(), "init thread sleep 2"
-#endif
-      hb_idleSleep( 2 )
-   ENDDO
+   IF s_nThreadCount > 7
+      ?E Time(), cInfo, "thread count>7 (", AllTrim( Str( s_nThreadCount ) ), ")"
+      print_threads( "tread_cnt_max" + cInfo )
+      RETURN .F.
+   ENDIF
 
    lSet := .F.
    DO WHILE !lSet
@@ -121,8 +114,9 @@ PROCEDURE close_thread( cInfo )
 #ifdef F18_DEBUG_THREAD
    ?E "<<<<<< END: thread", cInfo, "thread count:", s_nThreadCount
 #endif
+
    my_server_close()
-   pg_terminate_data_db_connection()
+
 
    RETURN
 
@@ -167,8 +161,8 @@ PROCEDURE idle_eval()
 
       FOR EACH aItem IN s_aEval
          IF aItem[ 1 ] == "X"
-               aItem[ 4 ] := Eval( aItem[ 3 ] )
-               aItem[ 1 ] := "OK"
+            aItem[ 4 ] := Eval( aItem[ 3 ] )
+            aItem[ 1 ] := "OK"
          ENDIF
       NEXT
       hb_mutexUnlock( s_hMutex )

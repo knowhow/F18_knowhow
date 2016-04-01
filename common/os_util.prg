@@ -388,7 +388,7 @@ FUNCTION get_run_prefix( cCmd )
    RETURN _prefix
 
 
-FUNCTION f18_open_document( document )
+FUNCTION f18_open_document( cDocument )
 
    LOCAL _ret, _prefix
    LOCAL _msg
@@ -405,9 +405,9 @@ FUNCTION f18_open_document( document )
 #endif
 
 #ifdef __PLATFORM__LINUX
-   _ret := __run_system( _prefix + document + "&" )
+   _ret := __run_system( _prefix + cDocument + "&" )
 #else
-   _ret := hb_processRun( _prefix + document )
+   _ret := hb_processRun( _prefix + cDocument )
 #endif
 
    RETURN _ret
@@ -444,7 +444,7 @@ FUNCTION f18_open_mime_document( cDocument )
 #else __PLATFORM__WINDOWS
 
    cDocument := '"' + cDocument + '"'
-   _cmd += "c:\knowhowERP\util\start.exe /m " + cDocument
+   _cmd += "cmd /c " + cDocument
 
 #endif
 

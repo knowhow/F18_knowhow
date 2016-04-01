@@ -773,9 +773,9 @@ STATIC FUNCTION dbf_refresh_0( aDbfRec )
 
    cMsg1 := "START chk0 not set, start dbf_refresh_0: " + aDbfRec[ "alias" ] + " / " + aDbfRec[ "table" ]
    set_a_dbf_rec_chk0( aDbfRec[ "table" ] )
-
+#ifdef F18_DEBUG_SYNC
    ?E cMsg1
-   // log_write( "stanje dbf " +  cMsg1, 8 )
+#endif
 
    nCntSql := table_count( aDbfRec[ "table" ] )
    dbf_open_temp_and_count( aDbfRec, nCntSql, @nCntDbf, @nDeleted )

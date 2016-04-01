@@ -153,8 +153,7 @@ STATIC FUNCTION generisi_specifikaciju_u_pomocnu_tabelu( params )
    rnal_o_tables( .F. )
    postavi_filter_na_dokumente( params )
 
-   //my_use_refresh_stop()
-
+   my_use_refresh_stop()
 
    Box(, 1, 50 )
 

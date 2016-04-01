@@ -37,19 +37,19 @@ STATIC PROCEDURE alias_dbf_refresh()
       RETURN
    ENDIF
 
-   aDbfRec := get_a_dbf_rec( cAlias )
+   aDbfRec := get_a_dbf_rec( cAlias, .T. )
 
    IF !skip_semaphore_sync( aDbfRec[ 'table' ] ) .AND. ;
          !in_dbf_refresh( aDbfRec[ 'table' ] ) .AND.  ;
          !is_last_refresh_before( aDbfRec[ 'table' ], 7 )
       thread_dbfs( hb_threadStart(  @thread_dbf_refresh(), cAlias ) )
 #ifdef F18_DEBUG_THREAD
-      ?E "alias_dbf_refresh thread start", cAlias, "main thread:", main_thread()
+      ?E "alias_dbf_refresh thread start", aDbfRec[ 'table' ], "main thread:", main_thread()
 #endif
 #ifdef F18_DEBUG_THREAD
    ELSE
 
-      ?E "alias_dbf_refresh ne treba", cAlias
+      ?E "alias_dbf_refresh ne treba", aDbfRec[ 'table' ]
 #endif
    ENDIF
 

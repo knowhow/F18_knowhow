@@ -351,21 +351,22 @@ FUNCTION delete_all_dbf_and_server( table )
    LOCAL _msg
    LOCAL _rec
 
-   _a_dbf_rec := get_a_dbf_rec( table )
+   _a_dbf_rec := get_a_dbf_rec( table, .T. )
    reopen_exclusive( _a_dbf_rec[ "table" ] )
 
-   lock_semaphore( table, "lock" )
-   sql_table_update( table, "BEGIN" )
+   lock_semaphore( _a_dbf_rec[ "table" ], "lock" )
+   run_sql_query( "BEGIN" )
 
    _rec := hb_Hash()
    _rec[ "id" ] := NIL
 
 
-   IF sql_table_update( table, "del", _rec, "true" )
+   IF sql_table_update( _a_dbf_rec[ "table" ], "del", _rec, "true" )
 
-      push_ids_to_semaphore( table, { "#F" } )
-      sql_table_update( table, "END" )
-      my_dbf_zap( table )
+      push_ids_to_semaphore( _a_dbf_rec[ "table" ], { "#F" } )
+      run_sql_query( "COMMIT" )
+      lock_semaphore( _a_dbf_rec[ "table" ], "free" )
+      my_dbf_zap( _a_dbf_rec[ "table" ] )
 
       RETURN .T.
 
@@ -375,12 +376,10 @@ FUNCTION delete_all_dbf_and_server( table )
       Alert( _msg )
       log_write( _msg, 1 )
 
-      sql_table_update( table, "ROLLBACK" )
+      run_sql_query( "ROLLBACK" )
       RETURN .F.
 
    ENDIF
-
-   lock_semaphore( _tbl_suban, "free" )
 
    RETURN .T.
 

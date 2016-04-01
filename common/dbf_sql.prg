@@ -34,7 +34,7 @@ FUNCTION dbf_update_rec( vars, no_lock )
 
    IF no_lock .OR. my_rlock()
 
-      _a_dbf_rec := get_a_dbf_rec( Alias() )
+      _a_dbf_rec := get_a_dbf_rec( Alias(), .F. )
 
       FOR EACH _key in vars:Keys
 

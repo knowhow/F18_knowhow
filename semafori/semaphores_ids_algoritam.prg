@@ -173,7 +173,7 @@ FUNCTION get_ids_from_semaphore( table )
    LOCAL _log_level := log_level()
    LOCAL lAllreadyInTransaction := .F.
    LOCAL hParams := hb_hash()
-   LOCAL _server := my_server()
+   LOCAL _server := sql_data_conn()
 
    IF skip_semaphore_sync( table )
       RETURN .T.

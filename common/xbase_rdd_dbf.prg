@@ -362,7 +362,10 @@ FUNCTION open_exclusive_zap_close( xArg1, lOpenIndex )
             reopen_dbf( .T., cDbfTable, lOpenIndex )
          ENDIF
          zapp()
-         nRecCount := RecCount2()
+
+         IF Used()
+            nRecCount := RecCount2()
+         ENDIF
 
          USE
 

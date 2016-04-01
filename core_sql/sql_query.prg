@@ -25,11 +25,13 @@ FUNCTION set_sql_search_path()
 
    IF sql_error_in_query( _result, "SET" )
       RETURN .F.
+#ifdef F18_DEBUG_SQL
    ELSE
       ?E "set_sql_search path ok"
+#endif
    ENDIF
 
-   RETURN _result
+   RETURN .T.
 
 
 

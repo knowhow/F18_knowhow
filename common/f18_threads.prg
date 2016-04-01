@@ -42,14 +42,21 @@ FUNCTION open_thread( cInfo, lOpenSQLConnection )
 
    hb_default( @lOpenSQLConnection, .T. )
 
-   IF s_nThreadCount > MAX_THREAD_COUNT
-      ?E Time(), cInfo, "thread count>", MAX_THREAD_COUNT, " (", AllTrim( Str( s_nThreadCount ) ), ")"
-      hb_idleSleep( 1 )
+   DO WHILE s_nThreadCount > MAX_THREAD_COUNT
+   
+      ++nCounter
+
 #ifdef F18_DEBUG_THREAD
+      ?E Time(), cInfo, "thread count>", MAX_THREAD_COUNT, " (", AllTrim( Str( s_nThreadCount ) ), ")"
       print_threads( "tread_cnt_max" + cInfo )
 #endif
-      RETURN .F.
-   ENDIF
+      IF nCounter > 100
+         RETURN .F.
+      ELSE
+         ?E Time(), "max threads limit reached, waiting ... ", cInfo
+      ENDIF
+
+   ENDDO
 
    lSet := .F.
    DO WHILE !lSet

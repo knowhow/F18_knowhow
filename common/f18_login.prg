@@ -244,12 +244,11 @@ METHOD F18Login:postgres_db_login( lForceConnect )
 
 
 
-METHOD F18Login:login_odabir_organizacije( hSqlParams )
+METHOD F18Login:login_odabir_organizacije()
 
    LOCAL _i
    LOCAL _ret_comp
 
-   ::set_data_db_params( @hSqlParams ) // parametri organizacije
 
    IF ! ::odabir_organizacije()
       RETURN .F.

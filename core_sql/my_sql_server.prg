@@ -257,8 +257,12 @@ FUNCTION f18_login_loop( force_connect, arg_v )
       IF !oLogin:lPostgresDbSpojena
          QUIT_1
       ENDIF
-      IF !oLogin:login_odabir_organizacije( @s_psqlServer_params )
+      IF !oLogin:login_odabir_organizacije()
+
          IF LastKey() == K_ESC
+             RETURN .F.
+         ENDIF
+/*          TODO: 2 x ESC ulkoniti
             info_bar( "info", "<ESC> za izlaz iz aplikacije" )
             oLogin:disconnect( 0 )
             oLogin:disconnect( 1 )
@@ -271,7 +275,9 @@ FUNCTION f18_login_loop( force_connect, arg_v )
                ?E
                RETURN .F.
             ENDIF
+
          ENDIF
+*/
       ELSE
          write_last_login_params_to_ini_conf() // upisi parametre tekuce firme...
          IF oLogin:lOrganizacijaSpojena

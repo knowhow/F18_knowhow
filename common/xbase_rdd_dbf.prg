@@ -324,6 +324,8 @@ FUNCTION open_exclusive_zap_close( xArg1, lOpenIndex )
 
    LOCAL cDbfTable
    LOCAL _err
+   LOCAL nRecCount := 999
+   LOCAL nCounter := 0
 
    IF ValType( xArg1 ) == "H"
       cDbfTable := xArg1[ "table" ]
@@ -336,31 +338,44 @@ FUNCTION open_exclusive_zap_close( xArg1, lOpenIndex )
       lOpenIndex := .T.
    ENDIF
 
+   DO WHILE nRecCount != 0
 
-   BEGIN SEQUENCE WITH {| err | Break( err ) }
-      IF ValType( xArg1 ) == "H"
-         reopen_dbf( .T., xArg1, lOpenIndex )
+      BEGIN SEQUENCE WITH {| err | Break( err ) }
+         IF ValType( xArg1 ) == "H"
+            reopen_dbf( .T., xArg1, lOpenIndex )
+         ELSE
+            reopen_dbf( .T., cDbfTable, lOpenIndex )
+         ENDIF
+
+         ZAP
+         nRecCount := RecCount2()
+
+         USE
+
+      RECOVER USING _err
+
+         ?E "ERR-OXCL-ZAP ", cDbfTable, _err:Description
+         info_bar( "op_zap_clo:" + cDbfTable, cDbfTable + " / " + _err:Description )
+         IF ValType( xArg1 ) == "H"
+            reopen_dbf( .T., xArg1, lOpenIndex )
+         ELSE
+            reopen_dbf( .T., cDbfTable, lOpenIndex )
+         ENDIF
+         zapp()
+         nRecCount := RecCount2()
+
+         USE
+
+      END SEQUENCE
+
+      nCounter++
+
+      IF nCounter > 10
+         RETURN .F.
       ELSE
-         reopen_dbf( .T., cDbfTable, lOpenIndex )
+         hb_idleSleep( 1 )
       ENDIF
-
-      ZAP
-      USE
-
-   RECOVER USING _err
-
-      ?E "ERR-OXCL-ZAP ", cDbfTable, _err:Description
-      info_bar( "op_zap_clo:" + cDbfTable, cDbfTable + " / " + _err:Description )
-      IF ValType( xArg1 ) == "H"
-         reopen_dbf( .T., xArg1, lOpenIndex )
-      ELSE
-         reopen_dbf( .T., cDbfTable, lOpenIndex )
-      ENDIF
-      zapp()
-      USE
-
-   END SEQUENCE
-
+   ENDDO
 
    RETURN .T.
 

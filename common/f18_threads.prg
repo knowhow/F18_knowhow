@@ -54,7 +54,7 @@ FUNCTION open_thread( cInfo, lOpenSQLConnection )
          RETURN .F.
       ELSE
          IF nCounter % 200 == 0
-            ?E Time(), "max threads limit reached, waiting ... ", cInfo
+            ?E Time(), "max threads limit reached, waiting ... ", cInfo, "/", nCounter
          ENDIF
       ENDIF
 

@@ -51,7 +51,10 @@ FUNCTION full_synchro( cDbfTable, nStepSize, cInfo )
 
    _sql_order  := aDbfRec[ "sql_order" ]
 
-   open_exclusive_zap_close( aDbfRec ) // nuliranje tabele
+   IF !open_exclusive_zap_close( aDbfRec ) // nuliranje tabele
+      unset_a_dbf_rec_chk0( aDbfRec[ "table" ] )
+      RETURN .F.
+   ENDIF
 
    hParams[ "tran_name" ] := "full_" + cDbfTable + ":" + cInfo
 

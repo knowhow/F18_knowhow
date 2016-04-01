@@ -33,7 +33,12 @@ FUNCTION f18_ime_dbf( xTableRec )
       Alert( "f18_ime_dbf alias :" + ToStr( xTableRec ) )
    ENDIF
 
-   _ret := my_home() + _a_dbf_rec[ "table" ] + "." + DBFEXT
+   IF ValType( _a_dbf_rec[ "table" ] ) != "C" .OR. ValType( my_home() ) != "C"
+      _ret := "xyz"
+      ?E "ERROR_f18_ime_dbf", my_home(), _a_dbf_rec[ "table" ]
+   ELSE
+      _ret := my_home() + _a_dbf_rec[ "table" ] + "." + DBFEXT
+   ENDIF
 
    RETURN _ret
 
@@ -270,7 +275,7 @@ FUNCTION reopen_dbf( lExclusive, xArg1, lOpenIndex )
 
    BEGIN SEQUENCE WITH {| err| Break( err ) }
 
-      dbUseArea( .F., DBFENGINE, _dbf, _a_dbf_rec[ "alias" ], IIF( lExclusive, .F., .T. ), .F. )
+      dbUseArea( .F., DBFENGINE, _dbf, _a_dbf_rec[ "alias" ], iif( lExclusive, .F., .T. ), .F. )
       IF lOpenIndex
          IF File( ImeDbfCdx( _dbf ) )
             dbSetIndex( ImeDbfCDX( _dbf ) )
@@ -311,7 +316,7 @@ FUNCTION reopen_exclusive_and_zap( cDbfTable, lOpenIndex )
    RECOVER USING _err
 
       ?E "ERROR-REXCL-ZAP ", _err:Description
-      //info_bar( "reop_dbf_zap:" + cDbfTable, cDbfTable + " / " + _err:Description )
+      // info_bar( "reop_dbf_zap:" + cDbfTable, cDbfTable + " / " + _err:Description )
       reopen_dbf( .F., cDbfTable, lOpenIndex )
       zapp()
 
@@ -355,7 +360,7 @@ FUNCTION open_exclusive_zap_close( xArg1, lOpenIndex )
       RECOVER USING _err
 
          ?E "ERR-OXCL-ZAP ", cDbfTable, _err:Description, nCounter
-         //info_bar( "op_zap_clo:" + cDbfTable, cDbfTable + " / " + _err:Description )
+         // info_bar( "op_zap_clo:" + cDbfTable, cDbfTable + " / " + _err:Description )
          IF ValType( xArg1 ) == "H"
             reopen_dbf( .F., xArg1, lOpenIndex )
          ELSE

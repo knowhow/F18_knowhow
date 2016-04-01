@@ -420,8 +420,6 @@ FUNCTION log_level( x )
 
 
 
-
-
 FUNCTION my_home( cHome )
 
    IF cHome != NIL

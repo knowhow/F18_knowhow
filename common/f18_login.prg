@@ -133,7 +133,6 @@ METHOD F18Login:connect( conn_type, silent )
 
    LOCAL lConnected, hSqlParams
 
-   AltD()
 
    IF silent == NIL
       silent := .F.
@@ -168,7 +167,6 @@ METHOD F18Login:connect( conn_type, silent )
          ENDIF
       ENDIF
    ELSE
-      altd()
       ?E "connection error:", hSqlParams[ "host" ], hSqlParams[ "port" ], hSqlParams[ "database" ], hSqlParams[ "user" ]
    ENDIF
 

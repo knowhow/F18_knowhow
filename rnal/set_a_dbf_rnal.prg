@@ -419,8 +419,7 @@ FUNCTION set_a_dbf_rnal_e_att()
 
 
 
-// ----------------------------------------------------------
-// ----------------------------------------------------------
+
 FUNCTION set_a_dbf_rnal_e_groups()
 
    LOCAL _item, _alg, _tbl
@@ -449,6 +448,7 @@ FUNCTION set_a_dbf_rnal_e_groups()
    f18_dbfs_add( _tbl, @_item )
 
    RETURN .T.
+
 
 
 FUNCTION set_a_dbf_rnal_e_gr_att()

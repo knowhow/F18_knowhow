@@ -130,9 +130,8 @@ FUNCTION my_use( cAlias, cTable, lRefresh )
    ENDIF
 
 
-   IF lRefresh .AND. !skip_semaphore_sync( aDbfRec[ 'table' ] ) ;
-         .AND. !in_dbf_refresh( aDbfRec[ 'table' ] ) .AND.  !is_last_refresh_before( aDbfRec[ 'table' ], 7 )
-      thread_dbfs( hb_threadStart(  @thread_dbf_refresh(), aDbfRec[ 'table' ] ) )
+   IF lRefresh .AND. we_need_dbf_refresh( aDbfRec[ "table" ] )
+      thread_dbfs( hb_threadStart(  @thread_dbf_refresh(), aDbfRec[ "table" ] ) )
 #ifdef F18_DEBUG_THREAD
    ELSE
       ?E "my_use ne treba sync", aDbfRec[ 'table' ], "main thread:", is_in_main_thread()

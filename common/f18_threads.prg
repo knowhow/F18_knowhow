@@ -42,6 +42,7 @@ FUNCTION open_thread( cInfo, lOpenSQLConnection )
 
    hb_default( @lOpenSQLConnection, .T. )
 
+
    DO WHILE s_nThreadCount > MAX_THREAD_COUNT
 
       ++nCounter

@@ -33,10 +33,8 @@ FUNCTION select_o_dbf_aops_att()
 FUNCTION select_o_dbf_articles()
    RETURN select_o_dbf( "ARTICLES", F_ARTICLES, "articles", "1" )
 
+FUNCTION select_o_dbf_e_groups()
+   RETURN select_o_dbf( "E_GROUPS", F_E_GROUPS, "e_groups", "1" )
 
 FUNCTION select_o_dbf_elements()
    RETURN select_o_dbf( "ELEMENTS", F_ELEMENTS, "elements", "1" )
-
-// select(F_E_GR_ATT); my_use ("e_gr_att"); set order to tag "1"
-
-// select(F_E_GR_VAL); my_use ("e_gr_val"); set order to tag "1"

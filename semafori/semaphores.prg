@@ -614,33 +614,43 @@ FUNCTION insert_semaphore_if_not_exists( cTable, lIgnoreChk0 )
 
 FUNCTION in_dbf_refresh( cTable, lRefresh )
 
-LOCAL hConnParams := my_server_params()
+   LOCAL hConnParams := my_server_params()
+   LOCAL lRet := .F.
 
 #ifdef F18_DEBUG_THREAD
+
    ?E "in_dbf_refresh start", cTable, lRefresh
 #endif
 
-   IF hb_HHasKey( hConnParams, "database" )
+   cTable := get_a_dbf_rec( cTable, .T. )[ "table" ]
+
+   IF !hb_HHasKey( hConnParams, "database" )
       RETURN .F.
    ENDIF
 
    IF !hb_HHasKey( s_hInDbfRefresh, hConnParams[ "database" ] )
-      hb_mutexLock( s_mtxMutex )
-      s_hInDbfRefresh[ my_server_params()[ "database" ] ] := hb_Hash()
+      IF hb_mutexLock( s_mtxMutex )
+         s_hInDbfRefresh[ hConnParams[ "database" ] ] := hb_Hash()
+         hb_mutexUnlock( s_mtxMutex )
+      ELSE
+         RETURN .F.
+      ENDIF
+   ENDIF
+
+   IF hb_mutexLock( s_mtxMutex )
+      IF ! hb_HHasKey( s_hInDbfRefresh[ hConnParams[ "database" ] ], cTable )
+         s_hInDbfRefresh[ hConnParams[ "database" ] ][ cTable ]  := .F.
+      ENDIF
+
+      IF lRefresh != NIL
+         s_hInDbfRefresh[ hConnParams[ "database" ] ][ cTable ] := lRefresh
+      ENDIF
+
+      lRet := s_hInDbfRefresh[ hConnParams[ "database" ] ][ cTable ]
       hb_mutexUnlock( s_mtxMutex )
    ENDIF
 
-   hb_mutexLock( s_mtxMutex )
-   IF ! hb_HHasKey( s_hInDbfRefresh[ hConnParams[ "database" ] ], cTable )
-      s_hInDbfRefresh[ hConnParams[ "database" ] ][ cTable ]  := .F.
-   ENDIF
-
-   IF lRefresh != NIL
-      s_hInDbfRefresh[ hConnParams[ "database" ] ][ cTable ] := lRefresh
-   ENDIF
-   hb_mutexUnlock( s_mtxMutex )
-
-   RETURN s_hInDbfRefresh[ hConnParams[ "database" ] ][ cTable ]
+   RETURN lRet
 
 
 FUNCTION set_last_refresh( cTable )
@@ -659,6 +669,7 @@ FUNCTION set_last_refresh( cTable )
 FUNCTION is_last_refresh_before( cTable, nSeconds )
 
 #ifdef F18_DEBUG_THREAD
+
    ?E "is_last_refresh_before", cTable, nSeconds
 #endif
 
@@ -673,7 +684,8 @@ FUNCTION is_last_refresh_before( cTable, nSeconds )
 
 PROCEDURE thread_dbf_refresh( cTable )
 
-   IF open_thread( "dbf_refresh: " + cTable )
+
+   IF open_thread( "dbf_refresh: " + cTable, .T. )
       ErrorBlock( {| objError, lShowreport, lQuit | GlobalErrorHandler( objError, lShowReport, lQuit ) } )
       dbf_refresh( cTable )
       close_thread( "dbf_refresh: " + cTable )
@@ -684,10 +696,9 @@ PROCEDURE thread_dbf_refresh( cTable )
    RETURN
 
 
-FUNCTION dbf_refresh( cTable )
+FUNCTION we_need_dbf_refresh( cTable )
 
    LOCAL aDbfRec
-   LOCAL hVersions
 
    IF cTable == NIL
       IF !Used() .OR. ( rddName() $  "SQLMIX#ARRAYRDD" )
@@ -701,63 +712,77 @@ FUNCTION dbf_refresh( cTable )
    ENDIF
 
    aDbfRec := get_a_dbf_rec( cTable, .T. )
+   cTable := aDbfRec[ "table" ]
 
-   IF is_last_refresh_before( aDbfRec[ 'table' ], MIN_LAST_REFRESH_SEC )
+   IF is_last_refresh_before( cTable, MIN_LAST_REFRESH_SEC )
 #ifdef F18_DEBUG_THREAD
-      ?E  aDbfRec[ 'table' ], "last refresh of table < ", MIN_LAST_REFRESH_SEC , " sec before"
+      ?E  cTable, "last refresh of table < ", MIN_LAST_REFRESH_SEC, " sec before"
 #endif
       RETURN .F.
    ENDIF
 
-   IF in_dbf_refresh( aDbfRec[ 'table' ] )
+   IF in_dbf_refresh( cTable )
 #ifdef F18_DEBUG_THREAD
-      ?E  aDbfRec[ 'table' ], "in_dbf_refresh"
+      ?E  cTable, "in_dbf_refresh"
 #endif
       RETURN .F.
    ENDIF
 
-   IF skip_semaphore_sync( aDbfRec[ 'table' ] ) // tabela nije sem-shared
+   IF skip_semaphore_sync( cTable ) // tabela nije sem-shared
       RETURN .F.
    ENDIF
 
    IF !File( f18_ime_dbf( aDbfRec ) )
 #ifdef F18_DEBUG_THREAD
-      ?E  aDbfRec[ 'table' ], "dbf tabele nema"
+      ?E  cTable, "dbf tabele nema"
 #endif
       RETURN .F.
    ENDIF
 
-   in_dbf_refresh( aDbfRec[ 'table' ], .T. )
+   RETURN .T.
 
-   ?E "going to refresh: " + aDbfRec[ 'table' ], "/", aDbfRec[ 'alias' ]
 
-   dbf_refresh_0( aDbfRec )
+FUNCTION dbf_refresh( cTable )
+
+   LOCAL aDbfRec
+   LOCAL hVersions
+
+   IF !we_need_dbf_refresh( @cTable )
+      RETURN .F.
+   ENDIF
+
+   in_dbf_refresh( cTable, .T. )
+
+   ?E "going to refresh: " + cTable
+
+   dbf_refresh_0( cTable )
 
    PushWA()
-   hVersions := get_semaphore_version_h( aDbfRec[ 'table' ] )
+   hVersions := get_semaphore_version_h( cTable )
    IF ( hVersions[ "version" ] == -1 )
-      update_dbf_from_server( aDbfRec[ 'table' ], "FULL" )
-      hVersions := get_semaphore_version_h( aDbfRec[ 'table' ] )
+      update_dbf_from_server( cTable, "FULL" )
+      hVersions := get_semaphore_version_h( cTable )
    ENDIF
 
    IF ( hVersions[ "version" ] < hVersions[ 'last_version' ] )
-      update_dbf_from_server( aDbfRec[ 'table' ], "IDS" )
+      update_dbf_from_server( cTable, "IDS" )
    ENDIF
    PopWa()
 
-   set_last_refresh( aDbfRec[ 'table' ] )
-   in_dbf_refresh( aDbfRec[ 'table' ], .F. )
+   set_last_refresh( cTable )
+   in_dbf_refresh( cTable, .F. )
 
    RETURN .T.
 
 
 
 
-STATIC FUNCTION dbf_refresh_0( aDbfRec )
+STATIC FUNCTION dbf_refresh_0( cTable )
 
    LOCAL cMsg1, cMsg2
    LOCAL nCntSql, nCntDbf, nDeleted
    LOCAL lRet := .T.
+   LOCAL aDbfRec := get_a_dbf_rec( cTable )
 
    IF is_chk0( aDbfRec[ "table" ] )
 #ifdef F18_DEBUG_SYNC

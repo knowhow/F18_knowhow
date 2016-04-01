@@ -217,7 +217,7 @@
 #xcommand O_DOC_IT => select (F_DOC_IT); my_use ("doc_it"); set order to tag "1"
 #xcommand O_DOC_IT2 => select (F_DOC_IT2); my_use ("doc_it2"); set order to tag "1"
 #xcommand O_DOC_OPS => select (F_DOC_OPS); my_use ("doc_ops"); set order to tag "1"
-#xcommand O_E_GROUPS => select(F_E_GROUPS); my_use ("e_groups"); set order to tag "1"
+#xcommand O_E_GROUPS => select_o_dbf_e_groups()
 #xcommand O_CUSTOMS => select(F_CUSTOMS); my_use ("customs"); set order to tag "1"
 #xcommand O_OBJECTS => select(F_OBJECTS); my_use ("objects"); set order to tag "1"
 #xcommand O_CONTACTS => select(F_CONTACTS); my_use ("contacts"); set order to tag "1"

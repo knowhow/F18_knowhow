@@ -165,7 +165,7 @@ FUNCTION rpt_kif( nBrDok, cIdTarifa )
    ELSE
       cPom11 := "Broj"
       cPom12 := "dok"
-	
+
       // pa redni broj
       cPom21 := "Red"
       cPom22 := "br."
@@ -184,18 +184,13 @@ FUNCTION rpt_kif( nBrDok, cIdTarifa )
    IF _export == "D"
 
       _file := my_home() + "epdv_r_kif.dbf"
-
-#ifdef __PLATFORM__WINDOWS
-      _file := '"' + _file + '"'
-#endif
-
       f18_open_document( _file )
 
    ELSE
       show_rpt(  .F.,  .F. )
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -254,9 +249,9 @@ STATIC FUNCTION fill_rpt( nBrDok )
    O_R_KIF
 
    IF ( nBrDok == 0 )
-	
+
       nIzArea := F_P_KIF
-	
+
       SELECT ( F_P_KIF )
       IF !Used()
          O_P_KIF
@@ -266,7 +261,7 @@ STATIC FUNCTION fill_rpt( nBrDok )
    ELSE
 
       nIzArea := F_KIF
-	
+
       SELECT ( F_KIF )
       IF !Used()
          O_KIF
@@ -403,7 +398,7 @@ STATIC FUNCTION show_rpt()
       ENDIF
 
       aKupacNaziv := SjeciStr( kup_naz, aZaglLen[5] )
- 
+
       ?
       // 1. broj dokumenta
       ?? Transform( nPom1, Replicate( "9", aZaglLen[ 1 ] ) )
@@ -531,7 +526,7 @@ STATIC FUNCTION zaglavlje_kif()
       ?
       FOR nCol := 1 TO Len( aZaglLen )
          IF Left( aZagl[ i, nCol ], 1 ) = "#"
-	
+
             nMergirano := Val( SubStr( aZagl[ i, nCol ], 2, 1 ) )
             cPom := SubStr( aZagl[ i, nCol ], 3, Len( aZagl[ i, nCol ] ) -2 )
             nMrgWidth := 0
@@ -564,4 +559,3 @@ STATIC FUNCTION kif_linija()
    NEXT
 
    RETURN
-

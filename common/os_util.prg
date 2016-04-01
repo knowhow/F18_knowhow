@@ -404,7 +404,11 @@ FUNCTION f18_open_document( cDocument )
 #endif
 #endif
 
-cDocument := '"' + cDocument + '"'
+
+#ifdef __PLATFORM__WINDOWS
+      cDocument := '"' + cDocument + '"'
+#endif
+
 #ifdef __PLATFORM__LINUX
    _ret := __run_system( _prefix + cDocument + "&" )
 #else

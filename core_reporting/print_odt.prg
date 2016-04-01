@@ -367,9 +367,6 @@ FUNCTION prikazi_odt( cOutput_file )
       RETURN lOk
    ENDIF
 
-#ifdef __PLATFORM__WINDOWS
-   __output_odt := '"' + __output_odt + '"'
-#endif
 
    SAVE SCREEN TO cScreen
    CLEAR SCREEN

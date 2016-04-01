@@ -149,7 +149,7 @@ FUNCTION rpt_kuf( nBrDok, cIdTarifa )
       cPom := "Prikaz kategorije : " + s_tarifa( cTar )
       AAdd( aHeader, cPom )
    ENDIF
-	
+
 
    aZagl := {}
 
@@ -181,18 +181,13 @@ FUNCTION rpt_kuf( nBrDok, cIdTarifa )
    IF _export == "D"
 
       _file := my_home() + "epdv_r_kuf.dbf"
-
-#ifdef __PLATFORM__WINDOWS
-      _file := '"' + _file + '"'
-#endif
-
       f18_open_document( _file )
 
    ELSE
       show_rpt(  .F.,  .F. )
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 STATIC FUNCTION get_r_fields( aArr )
@@ -254,9 +249,9 @@ STATIC FUNCTION fill_rpt( nBrDok )
 
    IF ( nBrDok == 0 )
       // tabela pripreme
-	
+
       nIzArea := F_P_KUF
-	
+
       SELECT ( F_P_KUF )
       IF !Used()
          O_P_KUF
@@ -266,7 +261,7 @@ STATIC FUNCTION fill_rpt( nBrDok )
    ELSE
 
       nIzArea := F_KUF
-	
+
       SELECT ( F_KUF )
       IF !Used()
          O_KUF
@@ -474,7 +469,7 @@ STATIC FUNCTION show_rpt()
       // 9. standardni pdv
       ?? Transform( nPdv,  PIC_IZN() )
       ?? " "
-	
+
       // bez prava na odbitak
       // 10. pdv NP  - neposlovne svrhe
       ?? Transform( nPdv2,  PIC_IZN() )
@@ -573,7 +568,7 @@ STATIC FUNCTION zaglavlje_kuf()
       ?
       FOR nCol := 1 TO Len( aZaglLen )
          IF Left( aZagl[ i, nCol ], 1 ) = "#"
-	
+
             nMergirano := Val( SubStr( aZagl[ i, nCol ], 2, 1 ) )
             cPom := SubStr( aZagl[ i, nCol ], 3, Len( aZagl[ i, nCol ] ) -2 )
             nMrgWidth := 0
@@ -606,4 +601,3 @@ STATIC FUNCTION kuf_linija()
    NEXT
 
    RETURN
-

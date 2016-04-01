@@ -77,7 +77,7 @@ FUNCTION gvim_cmd()
    // pokreni gvim sa opcijama
    r_gvim_cmd( aArgs, aOpts )
 
-   RETURN
+   RETURN .T.
 
 
 // -------------------------------------------------

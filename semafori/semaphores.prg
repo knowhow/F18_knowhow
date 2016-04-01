@@ -727,12 +727,9 @@ FUNCTION dbf_refresh( cTable )
       RETURN .F.
    ENDIF
 
-
    in_dbf_refresh( aDbfRec[ 'table' ], .T. )
 
-#ifdef F18_DEBUG
-   log_write( "going to refresh: " + aDbfRec[ 'table' ], 7 )
-#endif
+   ?E "going to refresh: " + aDbfRec[ 'table' ], "/", aDbfRec[ 'alias' ]
 
    dbf_refresh_0( aDbfRec )
 

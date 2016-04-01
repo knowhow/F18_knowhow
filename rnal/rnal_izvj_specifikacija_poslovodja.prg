@@ -25,7 +25,7 @@ FUNCTION rnal_specifikacija_poslovodja( nVar )
    __nVar := nVar
 
    IF parametri_izvjestaja( @_params ) == 0
-      RETURN
+      RETURN .F.
    ENDIF
 
    generisi_specifikaciju_u_pomocnu_tabelu( _params )
@@ -36,7 +36,7 @@ FUNCTION rnal_specifikacija_poslovodja( nVar )
       printaj_specifikaciju_odt( _params )
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 STATIC FUNCTION parametri_izvjestaja( params )
@@ -153,6 +153,9 @@ STATIC FUNCTION generisi_specifikaciju_u_pomocnu_tabelu( params )
    rnal_o_tables( .F. )
    postavi_filter_na_dokumente( params )
 
+   my_use_refresh_stop()
+
+   
    Box(, 1, 50 )
 
    SELECT docs
@@ -305,8 +308,9 @@ STATIC FUNCTION generisi_specifikaciju_u_pomocnu_tabelu( params )
    ENDDO
 
    BoxC()
+   my_use_refresh_start()
 
-   RETURN
+   RETURN .T.
 
 
 STATIC FUNCTION postavi_filter_na_dokumente( params )
@@ -622,7 +626,7 @@ STATIC FUNCTION naziv_izvjestaja()
 
    ?U cTmp
 
-   RETURN
+   RETURN .T.
 
 
 

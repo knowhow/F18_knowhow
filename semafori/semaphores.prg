@@ -680,7 +680,7 @@ PROCEDURE thread_dbf_refresh( cTable )
       dbf_refresh( cTable )
       close_thread( "dbf_refresh: " + cTable )
    ELSE
-      ?E "init thread dbf_refersh neuspjesan: ", cTable
+      ?E "init thread dbf_refersh neuspjesan: ", cTable,
    ENDIF
 
    RETURN

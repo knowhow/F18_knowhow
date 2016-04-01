@@ -1,0 +1,13 @@
+F18 cheat sheet
+===================
+
+my_use_refresh stop/start
+---------------------------------------
+
+RNAL otvori/zatvori dbf stalno zato treba
+
+my_use_refresh_stop()
+
+//generisanje izvjestaja
+
+my_use_refresh_start()

@@ -17,3 +17,18 @@ my_use_refresh_start()
 sql_data_conn()  - TPQServer konekcija na bazu organizacije ( bringout_2016 )
 
 sql_postgres_conn() - TPQServer konekcija na postgresql bazu
+
+
+
+
+o_dbf_table, select_o_dbf
+-------------------------
+
+FUNCTION o_pos_doks()
+   RETURN o_dbf_table( F_POS_DOKS, "pos_doks", "1" )
+
+select ili otvori ako treba:
+
+   //FUNCTION select_o_dbf( cAlias, nArea, cTable, cTag )
+
+  select_o_dbf( "DOKS", F_POS_DOKS, "pos_doks", "1" )

@@ -1154,7 +1154,6 @@ FUNCTION rnal_matrica_artikla( nArt_id, aAttr )
    // elementi...
    SELECT elements
    SET ORDER TO TAG "1"
-   GO TOP
    SEEK artid_str( nArt_id )
 
    DO WHILE !Eof() .AND. field->art_id == nArt_id
@@ -1225,7 +1224,7 @@ FUNCTION rnal_matrica_artikla( nArt_id, aAttr )
 
    ENDDO
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -1824,7 +1823,7 @@ FUNCTION rpt_artikli_bez_elemenata()
    my_close_all_dbf()
 
    IF Len( _error ) == 0
-      RETURN
+      RETURN .T.
    ENDIF
 
    START PRINT CRET
@@ -1845,4 +1844,4 @@ FUNCTION rpt_artikli_bez_elemenata()
    FF
    ENDPRINT
 
-   RETURN
+   RETURN .T.

@@ -28,6 +28,7 @@ FUNCTION kalk_kartica_prodavnica()
    LOCAL cTxt2
    LOCAL cTxt3
    LOCAL _is_rok, _dok_hash, _item_istek_roka
+   LOCAL cIdR := ""
 
    PRIVATE PicCDEM := Replicate( "9", Val( gFPicCDem ) ) + gPicCDEM
    PRIVATE PicProc := gPicProc
@@ -107,7 +108,7 @@ FUNCTION kalk_kartica_prodavnica()
       IF Empty( cIdRoba )
          IF Pitanje(, "Niste zadali šifru artikla, izlistati sve kartice (D/N) ?", "N" ) == "N"
             my_close_all_dbf()
-            RETURN
+            RETURN .F.
         ENDIF
       ELSE
          cIdr := cIdRoba
@@ -157,7 +158,7 @@ FUNCTION kalk_kartica_prodavnica()
    nMPVP := 0
    fPrviProl := .T.
 
-   DO WHILE !Eof() .AND. field->idfirma + field->pkonto + field->idroba = cIdFirma + cIdKonto + cIdR
+   DO WHILE !Eof() .AND. field->idfirma + field->pkonto + field->idroba == cIdFirma + cIdKonto + cIdR
 
       cIdRoba := idroba
 

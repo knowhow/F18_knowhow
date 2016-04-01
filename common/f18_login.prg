@@ -35,11 +35,13 @@ CLASS F18Login
    METHOD show_info_bar()
    METHOD server_login_form()
    METHOD odabir_organizacije()
-   METHOD connect()
+   METHOD connect( nConnType )
    METHOD disconnect( nConn )
    METHOD set_postgres_db_params( hSqlParams )
    METHOD set_data_db_params( hSqpParams )
    METHOD included_databases_for_user()
+   METHOD write_to_ini_server_params()
+
 
    DATA lPostgresDbSpojena
    DATA oMainDbServer
@@ -131,6 +133,8 @@ METHOD F18Login:connect( conn_type, silent )
 
    LOCAL lConnected, hSqlParams
 
+   AltD()
+
    IF silent == NIL
       silent := .F.
    ENDIF
@@ -156,6 +160,7 @@ METHOD F18Login:connect( conn_type, silent )
          ::lOrganizacijaSpojena := .T.
          IF post_login()
             post_login_cleanup()
+            ::write_to_ini_server_params()
          ELSE
             my_server_close( 1 )
             my_server_close( 0 )
@@ -163,11 +168,27 @@ METHOD F18Login:connect( conn_type, silent )
          ENDIF
       ENDIF
    ELSE
+      altd()
       ?E "connection error:", hSqlParams[ "host" ], hSqlParams[ "port" ], hSqlParams[ "database" ], hSqlParams[ "user" ]
    ENDIF
 
    RETURN lConnected
 
+
+METHOD F18Login:write_to_ini_server_params()
+
+   LOCAL cKey, hIniParams := hb_hash()
+
+   FOR EACH cKey in { "host", "user", "schema", "port", "database", "session" }
+      hIniParams[ cKey ] := ::data_db_params[ cKey ]
+   NEXT
+
+   IF !f18_ini_config_write( F18_SERVER_INI_SECTION + iif( test_mode(), "_test", "" ), hIniParams, .T. )
+      MsgBeep( "problem ini write server params" )
+      RETURN .F.
+   ENDIF
+
+   RETURN .T.
 
 
 METHOD F18Login:disconnect( nConn )
@@ -379,7 +400,6 @@ METHOD F18Login:promjena_sezone( cDatabase, cSezona )
 METHOD F18Login:server_login_form()
 
    LOCAL _user, _pwd, _port, _host, _schema
-   LOCAL _server
    LOCAL _x := 5
    LOCAL _left := 7
    LOCAL _srv_config := "N"
@@ -391,7 +411,7 @@ METHOD F18Login:server_login_form()
    _host := ::postgres_db_params[ "host" ]
    _port := ::postgres_db_params[ "port" ]
    _schema := ::postgres_db_params[ "schema" ]
-   _session := ::postgres_db_params[ "session" ]
+
 
    IF ( _host == NIL ) .OR. ( _port == NIL )
       _srv_config := "D"
@@ -411,10 +431,6 @@ METHOD F18Login:server_login_form()
 
    IF _user == NIL
       _user := "test1"
-   ENDIF
-
-   IF _session == NIL
-      _session := AllTrim( Str( Year( Date() ) ) )
    ENDIF
 
    _host := PadR( _host, 100 )
@@ -459,9 +475,7 @@ METHOD F18Login:server_login_form()
    ::postgres_db_params[ "host" ] := AllTrim( _host )
    ::postgres_db_params[ "port" ] := _port
    ::postgres_db_params[ "schema" ] := _schema
-   ::postgres_db_params[ "session" ] := ""
    ::postgres_db_params[ "database" ] := "postgres"
-
 
    IF Empty( _pwd ) // korisnici user=password se jednostavno logiraju
       ::postgres_db_params[ "password" ] := ::postgres_db_params[ "user" ]
@@ -469,14 +483,9 @@ METHOD F18Login:server_login_form()
       ::postgres_db_params[ "password" ] := AllTrim( _pwd )
    ENDIF
 
+   ::data_db_params := hb_HClone( ::postgres_db_params )
+   ::data_db_params[ "database" ] := "test_2016"
 
-   FOR EACH _key in { "host", "database", "user", "schema", "port", "session" }
-      _ini_params[ _key ] := ::postgres_db_params[ _key ]
-   NEXT
-
-   IF !f18_ini_config_write( F18_SERVER_INI_SECTION + iif( test_mode(), "_test", "" ), _ini_params, .T. )
-      MsgBeep( "problem ini write server params" )
-   ENDIF
 
    RETURN .T.
 
@@ -490,6 +499,7 @@ METHOD F18Login:odabir_organizacije()
    LOCAL _srv_config := "N"
    LOCAL _arr, _tmp
    LOCAL hParams := hb_Hash()
+   LOCAL hIniParams := hb_Hash(), cKey
    LOCAL nOrganizacija
 
    ::included_databases_for_user()  // filter baza dostupnih useru, ako postoji !
@@ -529,10 +539,10 @@ METHOD F18Login:odabir_organizacije()
       iif( !Empty( _session ), "_" + AllTrim( _session ), "" )
    ::data_db_params[ "session" ] := AllTrim( _session )
 
-
    hParams[ "posljednji_put" ] := ::data_db_params[ "session" ]
    hParams[ "posljednja_org" ] := StrTran( ::data_db_params[ "database" ], "_" + ::data_db_params[ "session" ], "" )
    f18_ini_config_write( "sezona", @hParams, .T. ) // nakon odabira organizacije upisi izbor
+
 
    RETURN .T.
 

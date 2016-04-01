@@ -222,7 +222,7 @@ FUNCTION my_server_login( hSqlParams, nConnType )
       hParams[ "server" ] := oServer
       oQry := run_sql_query( "SELECT current_user, inet_client_port()", hParams )
 #ifdef F18_DEBUG_SQL
-      ??E "user:", , oQry:FieldGet( 1 ), " client port", oQry:FieldGet( 2 )
+      ??E "user:", oQry:FieldGet( 1 ), " client port", oQry:FieldGet( 2 )
 #endif
       IF hb_mutexLock( s_mtxMutex )
          s_nSQLConnections++
@@ -243,23 +243,26 @@ FUNCTION my_server_login( hSqlParams, nConnType )
 
 
 
-FUNCTION f18_login_loop( force_connect, arg_v )
+FUNCTION f18_login_loop( lAutoConnect, arg_v )
 
    LOCAL oLogin
 
-   IF force_connect == NIL
-      force_connect := .T.
+   IF lAutoConnect == NIL
+      lAutoConnect := .T.
    ENDIF
 
    oLogin := F18Login():New()
 
    DO WHILE .T.
 
-      oLogin:postgres_db_login( force_connect )
+      oLogin:postgres_db_login( lAutoConnect )
 
       IF !oLogin:lPostgresDbSpojena
          QUIT_1
+      ELSE
+         lAutoConnect := .T.
       ENDIF
+      
       IF !oLogin:login_odabir_organizacije()
 
          IF LastKey() == K_ESC
@@ -282,7 +285,6 @@ FUNCTION f18_login_loop( force_connect, arg_v )
          ENDIF
 */
       ELSE
-         write_last_login_params_to_ini_conf() // upisi parametre tekuce firme...
          IF oLogin:lOrganizacijaSpojena
             show_sacekaj()
             program_module_menu( arg_v )
@@ -367,21 +369,6 @@ FUNCTION init_harbour()
 
 
 
-
-
-FUNCTION write_last_login_params_to_ini_conf()
-
-   LOCAL _key, _ini_params := hb_Hash()
-
-   FOR EACH _key in { "host", "database", "user", "schema", "port", "session" }
-      _ini_params[ _key ] := s_psqlServer_params[ _key ]
-   NEXT
-
-   IF !f18_ini_config_write( F18_SERVER_INI_SECTION + iif( test_mode(), "_test", "" ), _ini_params, .T. )
-      MsgBeep( "problem ini write" )
-   ENDIF
-
-   RETURN .T.
 
 
 

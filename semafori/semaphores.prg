@@ -615,11 +615,10 @@ FUNCTION insert_semaphore_if_not_exists( cTable, lIgnoreChk0 )
 FUNCTION in_dbf_refresh( cTable, lRefresh )
 
 LOCAL hConnParams := my_server_params()
+
 #ifdef F18_DEBUG_THREAD
-
-   ?E "in_dbf_refresh", cTable, lRefresh
+   ?E "in_dbf_refresh start", cTable, lRefresh
 #endif
-
 
    IF hb_HHasKey( hConnParams, "database" )
       RETURN .F.
@@ -660,7 +659,6 @@ FUNCTION set_last_refresh( cTable )
 FUNCTION is_last_refresh_before( cTable, nSeconds )
 
 #ifdef F18_DEBUG_THREAD
-
    ?E "is_last_refresh_before", cTable, nSeconds
 #endif
 

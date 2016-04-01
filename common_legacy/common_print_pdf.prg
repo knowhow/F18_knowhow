@@ -13,15 +13,12 @@
 #include "f18.ch"
 
 
-// ------------------------------
-// poziv PDF-a
-// ------------------------------
 FUNCTION PDFView( cImeF )
 
    LOCAL nFH
    LOCAL cKom
 
-   cKom := "start /MIN fmkpdf -f"
+   cKom := "cmd /c fmkpdf -f"
    cKom += " "
    cKom += cImeF
 
@@ -33,4 +30,4 @@ FUNCTION PDFView( cImeF )
 
    Run( cKom )
 
-   RETURN
+   RETURN .T.

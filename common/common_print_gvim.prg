@@ -45,7 +45,7 @@ FUNCTION add_gvim_args( aArgs, cArg )
 
    AAdd( aArgs, { cArg } )
 
-   RETURN
+   RETURN .T.
 
 
 // -----------------------------------------
@@ -154,9 +154,9 @@ STATIC FUNCTION r_gvim_cmd( aArgs, aOpts )
    SET PRINTER OFF
    SET CONSOLE ON
 
-   Run( 'start ' + cRunGvim )
+   Run( 'cmd /c ' + cRunGvim )
 
-   RETURN
+   RETURN .T.
 
 
 // ---------------------------------------

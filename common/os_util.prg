@@ -372,7 +372,7 @@ FUNCTION get_run_prefix( cCmd )
    LOCAL _prefix
 #ifdef __PLATFORM__WINDOWS
 
-   _prefix := "c:\knowhowERP\util\start.exe /m "
+   _prefix := "cmd /c "
 #else
 #ifdef __PLATFORM__DARWIN
    _prefix := "open "

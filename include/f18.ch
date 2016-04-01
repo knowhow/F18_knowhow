@@ -96,6 +96,9 @@
 
 #define F18_DBF_ENCODING   "CP852"
 
+#define MAX_THREAD_COUNT 7
+#define MIN_LAST_REFRESH_SEC 10
+
 
 #define F18_COLOR_P1               "GR+/N"
 

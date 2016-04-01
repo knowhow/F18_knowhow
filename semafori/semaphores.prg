@@ -678,7 +678,7 @@ PROCEDURE thread_dbf_refresh( cTable )
       dbf_refresh( cTable )
       close_thread( "dbf_refresh: " + cTable )
    ELSE
-      ?E "init thread dbf_refersh neuspjesan: ", cTable,
+      ?E "init thread dbf_refersh neuspjesan: ", cTable
    ENDIF
 
    RETURN
@@ -702,6 +702,13 @@ FUNCTION dbf_refresh( cTable )
 
    aDbfRec := get_a_dbf_rec( cTable, .T. )
 
+   IF is_last_refresh_before( aDbfRec[ 'table' ], MIN_LAST_REFRESH_SEC )
+#ifdef F18_DEBUG_THREAD
+      ?E  aDbfRec[ 'table' ], "last refresh of table < ", MIN_LAST_REFRESH_SEC , " sec before"
+#endif
+      RETURN .F.
+   ENDIF
+
    IF in_dbf_refresh( aDbfRec[ 'table' ] )
 #ifdef F18_DEBUG_THREAD
       ?E  aDbfRec[ 'table' ], "in_dbf_refresh"
@@ -720,12 +727,6 @@ FUNCTION dbf_refresh( cTable )
       RETURN .F.
    ENDIF
 
-   IF is_last_refresh_before( aDbfRec[ 'table' ], 7 )
-#ifdef F18_DEBUG_THREAD
-      ?E  aDbfRec[ 'table' ], "last refresh of table < 7 sec before"
-#endif
-      RETURN .F.
-   ENDIF
 
    in_dbf_refresh( aDbfRec[ 'table' ], .T. )
 
@@ -748,7 +749,6 @@ FUNCTION dbf_refresh( cTable )
    PopWa()
 
    set_last_refresh( aDbfRec[ 'table' ] )
-
    in_dbf_refresh( aDbfRec[ 'table' ], .F. )
 
    RETURN .T.

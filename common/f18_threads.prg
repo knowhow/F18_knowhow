@@ -12,7 +12,7 @@
 #include "f18.ch"
 
 STATIC s_nThreadCount := 0
-STATIC s_hMutex
+STATIC s_mtxMutex
 STATIC s_mainThreadID
 STATIC s_aThreads
 STATIC s_aEval := {}
@@ -20,7 +20,7 @@ STATIC s_aEval := {}
 PROCEDURE f18_init_threads()
 
    s_mainThreadID := hb_threadSelf()
-   s_hMutex := hb_mutexCreate()
+   s_mtxMutex := hb_mutexCreate()
    s_aThreads := {}
 
    RETURN
@@ -42,22 +42,25 @@ FUNCTION open_thread( cInfo, lOpenSQLConnection )
 
    hb_default( @lOpenSQLConnection, .T. )
 
-   IF s_nThreadCount > 7
-      ?E Time(), cInfo, "thread count>7 (", AllTrim( Str( s_nThreadCount ) ), ")"
+   IF s_nThreadCount > MAX_THREAD_COUNT
+      ?E Time(), cInfo, "thread count>", MAX_THREAD_COUNT, " (", AllTrim( Str( s_nThreadCount ) ), ")"
+      hb_idleSleep( 1 )
+#ifdef F18_DEBUG_THREAD
       print_threads( "tread_cnt_max" + cInfo )
+#endif
       RETURN .F.
    ENDIF
 
    lSet := .F.
    DO WHILE !lSet
-      IF hb_mutexLock( s_hMutex )
+      IF hb_mutexLock( s_mtxMutex )
          lSet := .T.
          s_nThreadCount++
          AAdd( s_aThreads, { hb_threadSelf(), cInfo, Time() } )
 #ifdef F18_DEBUG_THREAD
          print_threads( "open_thread:" + cInfo )
 #endif
-         hb_mutexUnlock( s_hMutex )
+         hb_mutexUnlock( s_mtxMutex )
       ENDIF
    ENDDO
 
@@ -94,7 +97,7 @@ PROCEDURE close_thread( cInfo )
    LOCAL nPos, aThread
 
    DO WHILE !lSet
-      IF hb_mutexLock( s_hMutex )
+      IF hb_mutexLock( s_mtxMutex )
 #ifdef F18_DEBUG_THREAD
          print_threads( "close_thread:" + cInfo )
 #endif
@@ -107,7 +110,7 @@ PROCEDURE close_thread( cInfo )
             ? "ERR: thread nije u listi:", hb_threadSelf()
          ENDIF
          lSet := .T.
-         hb_mutexUnlock( s_hMutex )
+         hb_mutexUnlock( s_mtxMutex )
       ENDIF
    ENDDO
 
@@ -117,7 +120,6 @@ PROCEDURE close_thread( cInfo )
 
    my_server_close()
 
-
    RETURN
 
 
@@ -125,16 +127,19 @@ PROCEDURE print_threads( cInfo )
 
    LOCAL aThread
 
-   ?E "THREADS:", cInfo
-   ?E Replicate( "-", 80 )
-   FOR EACH aThread IN s_aThreads
-      IF ValType( aThread ) == "A"
-         ?E s_nThreadCount, aThread[ 3 ], aThread[ 1 ], aThread[ 2 ]
-      ELSE
-         ?E s_nThreadCount,  ValType( aThread ),  aThread
-      ENDIF
-   NEXT
-   ?E Replicate( ".", 80 )
+   IF hb_mutexLock( s_mtxMutex )
+      ?E "THREADS:", cInfo
+      ?E Replicate( "-", 80 )
+      FOR EACH aThread IN s_aThreads
+         IF ValType( aThread ) == "A"
+            ?E s_nThreadCount, aThread[ 3 ], aThread[ 1 ], aThread[ 2 ]
+         ELSE
+            ?E s_nThreadCount,  ValType( aThread ),  aThread
+         ENDIF
+      NEXT
+      ?E Replicate( ".", 80 )
+      hb_mutexUnlock( s_mtxMutex )
+   ENDIF
 
    RETURN
 
@@ -142,9 +147,9 @@ PROCEDURE print_threads( cInfo )
 
 PROCEDURE idle_add_for_eval( cId, bExpression )
 
-   IF hb_mutexLock( s_hMutex )
+   IF hb_mutexLock( s_mtxMutex )
       AAdd( s_aEval, { "X", cId, bExpression, NIL } )
-      hb_mutexUnlock( s_hMutex )
+      hb_mutexUnlock( s_mtxMutex )
    ENDIF
 
    RETURN
@@ -157,7 +162,7 @@ PROCEDURE idle_eval()
 
    LOCAL aItem
 
-   IF hb_mutexLock( s_hMutex )
+   IF hb_mutexLock( s_mtxMutex )
 
       FOR EACH aItem IN s_aEval
          IF aItem[ 1 ] == "X"
@@ -165,7 +170,7 @@ PROCEDURE idle_eval()
             aItem[ 1 ] := "OK"
          ENDIF
       NEXT
-      hb_mutexUnlock( s_hMutex )
+      hb_mutexUnlock( s_mtxMutex )
    ENDIF
 
    RETURN
@@ -188,11 +193,11 @@ FUNCTION idle_get_eval( cId )
       nPos := AScan( s_aEval, {| aItem | aItem[ 2 ] == cId .AND. aItem[ 1 ] == "OK" } )
       IF nPos > 0
 
-         IF hb_mutexLock( s_hMutex )
+         IF hb_mutexLock( s_mtxMutex )
             xRet := s_aEval[ nPos, 4 ]
             ADel( s_aEval, nPos )
             ASize( s_aEval, Len( s_aEval )  - 1 )
-            hb_mutexUnlock( s_hMutex )
+            hb_mutexUnlock( s_mtxMutex )
          ENDIF
 
       ELSE

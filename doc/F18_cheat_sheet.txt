@@ -11,3 +11,9 @@ my_use_refresh_stop()
 //generisanje izvjestaja
 
 my_use_refresh_start()
+
+
+
+sql_data_conn()  - TPQServer konekcija na bazu organizacije ( bringout_2016 )
+
+sql_postgres_conn() - TPQServer konekcija na postgresql bazu

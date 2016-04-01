@@ -129,14 +129,17 @@ PROCEDURE print_sql_connections()
 
    LOCAL aConnection
 
-   ?E "SQL connections:"
-   FOR EACH aConnection IN s_aSQLConnections
-      IF ValType( aConnection ) == "A"
-         ?E aConnection[ 1 ], aConnection[ 2 ]
-      ELSE
-         ?E ValType( aConnection )
-      ENDIF
-   NEXT
+   IF hb_mutexLock( s_mtxMutex )
+      ?E "SQL connections:"
+      FOR EACH aConnection IN s_aSQLConnections
+         IF ValType( aConnection ) == "A"
+            ?E aConnection[ 1 ], aConnection[ 2 ]
+         ELSE
+            ?E ValType( aConnection )
+         ENDIF
+      NEXT
+      hb_mutexUnlock( s_mtxMutex )
+   ENDIF
 
    RETURN
 
@@ -260,7 +263,7 @@ FUNCTION f18_login_loop( force_connect, arg_v )
       IF !oLogin:login_odabir_organizacije()
 
          IF LastKey() == K_ESC
-             RETURN .F.
+            RETURN .F.
          ENDIF
 /*          TODO: 2 x ESC ulkoniti
             info_bar( "info", "<ESC> za izlaz iz aplikacije" )
@@ -339,7 +342,7 @@ FUNCTION init_harbour()
 
 
    f18_init_threads()
-   //hb_idleAdd( {|| idle_eval() } ) - izaziva erore
+   // hb_idleAdd( {|| idle_eval() } ) - izaziva erore
 
    hb_cdpSelect( "SL852" )
    hb_SetTermCP( "SLISO" )

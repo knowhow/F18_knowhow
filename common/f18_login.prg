@@ -103,7 +103,6 @@ METHOD F18Login:New()
    _ini_params[ "database" ] := "postgres"
    ::set_postgres_db_params( _ini_params )
 
-
    RETURN SELF
 
 
@@ -249,7 +248,6 @@ METHOD F18Login:login_odabir_organizacije()
    LOCAL _i
    LOCAL _ret_comp
 
-
    IF ! ::odabir_organizacije()
       RETURN .F.
    ENDIF
@@ -291,7 +289,6 @@ METHOD F18Login:promjena_sezone( cDatabase, cSezona )
    LOCAL cTekucaSezona
    LOCAL cNovaSezona
    LOCAL cSaveDatabase
-
 
    hParams := hb_Hash()
    hParams[ "posljednji_put" ] := s_cPredhodnaSezona // posljednji put se radilo u ovoj sezoni
@@ -345,7 +342,7 @@ METHOD F18Login:promjena_sezone( cDatabase, cSezona )
       ::data_db_params[ "database" ] := cSaveDatabase // vrati posljednju ispravnu bazu
       ::data_db_params[ "session" ] := cTrenutnaSezona
       IF !::connect( 1 )
-         MsgBeep( "Ne mogu se spojiti na " +  cSaveDatabase + "?!")
+         MsgBeep( "Ne mogu se spojiti na " +  cSaveDatabase + "?!" )
          QUIT_1
       ENDIF
    ENDIF
@@ -387,6 +384,7 @@ METHOD F18Login:server_login_form()
    LOCAL _left := 7
    LOCAL _srv_config := "N"
    LOCAL _session
+   LOCAL _key, _ini_params := hb_Hash()
 
    _user := ::postgres_db_params[ "user" ]
    _pwd := ""
@@ -428,7 +426,7 @@ METHOD F18Login:server_login_form()
    @ 5, 5, 18, 77 BOX B_DOUBLE_SINGLE
 
    ++ _x
-   @ _x, _left SAY PadC( "*1*** Unesite podatke za pristup *****", 60 )
+   @ _x, _left SAY PadC( "**** Unesite podatke za pristup *****", 60 )
 
    _x += 2
    @ _x, _left SAY PadL( "Konfigurisati server ?:", 21 ) GET _srv_config ;
@@ -469,6 +467,15 @@ METHOD F18Login:server_login_form()
       ::postgres_db_params[ "password" ] := ::postgres_db_params[ "user" ]
    ELSE
       ::postgres_db_params[ "password" ] := AllTrim( _pwd )
+   ENDIF
+
+
+   FOR EACH _key in { "host", "database", "user", "schema", "port", "session" }
+      _ini_params[ _key ] := ::postgres_db_params[ _key ]
+   NEXT
+
+   IF !f18_ini_config_write( F18_SERVER_INI_SECTION + iif( test_mode(), "_test", "" ), _ini_params, .T. )
+      MsgBeep( "problem ini write server params" )
    ENDIF
 
    RETURN .T.

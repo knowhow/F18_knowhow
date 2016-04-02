@@ -2056,7 +2056,7 @@ FUNCTION fakt_brisi_stavku_pripreme()
    PushWA()
 
    // pobrisi i fakt atribute ove stavke...
-   oAtrib := F18_DOK_ATRIB():new( "fakt", F_FAKT_ATRIB )
+   oAtrib := DokAtributi():new( "fakt", F_FAKT_ATRIB )
    oAtrib:dok_hash[ "idfirma" ] := _id_firma
    oAtrib:dok_hash[ "idtipdok" ] := _id_tip_dok
    oAtrib:dok_hash[ "brdok" ] := _br_dok

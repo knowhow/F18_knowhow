@@ -322,7 +322,7 @@ FUNCTION fakt_set_broj_dokumenta()
    ENDDO
    my_unlock()
 
-   oAtrib := F18_DOK_ATRIB():new( "fakt", F_FAKT_ATRIB )
+   oAtrib := DokAtributi():new( "fakt", F_FAKT_ATRIB )
    oAtrib:open_local_table()
 
    SET ORDER TO TAG "1"

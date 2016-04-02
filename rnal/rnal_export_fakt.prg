@@ -340,7 +340,7 @@ FUNCTION exp_2_fmk( lTemp, nDoc_no, aDocList, lNoGen )
          _items_atrib := hb_Hash()
          _items_atrib[ "opis" ] := cDesc
 
-         oAtrib := F18_DOK_ATRIB():new( "fakt", F_FAKT_ATRIB )
+         oAtrib := DokAtributi():new( "fakt", F_FAKT_ATRIB )
          oAtrib:dok_hash := hb_Hash()
          oAtrib:dok_hash[ "idfirma" ] := field->idfirma
          oAtrib:dok_hash[ "idtipdok" ] := field->idtipdok
@@ -509,7 +509,7 @@ FUNCTION exp_2_fmk( lTemp, nDoc_no, aDocList, lNoGen )
          _items_atrib := hb_Hash()
          _items_atrib[ "opis" ] := cArt_sh
 
-         oAtrib := F18_DOK_ATRIB():new( "fakt" )
+         oAtrib := DokAtributi():new( "fakt" )
          oAtrib:dok_hash := hb_Hash()
          oAtrib:dok_hash[ "idfirma" ] := field->idfirma
          oAtrib:dok_hash[ "idtipdok" ] := field->idtipdok

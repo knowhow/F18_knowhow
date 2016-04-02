@@ -296,10 +296,16 @@ FUNCTION get_a_dbf_rec( cTable, _only_basic_params )
 FUNCTION set_a_dbf_rec_chk0( cTable )
 
    LOCAL lSet := .F.
+   LOCAL hParams := my_server_params()
+
+   IF !hb_HHasKey( hParams, "database" )
+      error_bar( "chk0", "set" + cTable )
+      RETURN .F.
+   ENDIF
 
    DO WHILE !lSet
       IF hb_mutexLock( s_mtxMutex )
-         s_hF18Dbfs[ my_server_params()[ "database" ] ][ cTable ][ "chk0" ] := .T.
+         s_hF18Dbfs[ hParams[ "database" ] ][ cTable ][ "chk0" ] := .T.
          lSet := .T.
          hb_mutexUnlock( s_mtxMutex )
       ENDIF
@@ -311,11 +317,17 @@ FUNCTION set_a_dbf_rec_chk0( cTable )
 FUNCTION unset_a_dbf_rec_chk0( cTable )
 
    LOCAL lSet := .F.
+   LOCAL hParams := my_server_params()
+
+   IF !hb_HHasKey( hParams, "database" )
+      error_bar( "chk0", "unset" + cTable )
+      RETURN .F.
+   ENDIF
 
    DO WHILE !lSet
       IF hb_mutexLock( s_mtxMutex )
          lSet := .T.
-         s_hF18Dbfs[ my_server_params()[ "database" ] ][ cTable ][ "chk0" ] := .F.
+         s_hF18Dbfs[ hParams[ "database" ] ][ cTable ][ "chk0" ] := .F.
          hb_mutexUnlock( s_mtxMutex )
       ENDIF
    ENDDO
@@ -324,13 +336,19 @@ FUNCTION unset_a_dbf_rec_chk0( cTable )
 
 FUNCTION is_chk0( table )
 
-   RETURN s_hF18Dbfs[ my_server_params()[ "database" ] ][ table ][ "chk0" ]
+   LOCAL hParams := my_server_params()
+
+   IF hb_HHasKey( hParams, "database" )
+      RETURN s_hF18Dbfs[ hParams[ "database" ] ][ table ][ "chk0" ]
+   ENDIF
+
+   RETURN .F.
 
 
+   // ---------------------------------------------------
+   // da li alias ima semafor ?
+   // ---------------------------------------------------
 
-// ---------------------------------------------------
-// da li alias ima semafor ?
-// ---------------------------------------------------
 FUNCTION dbf_alias_has_semaphore( alias )
 
    LOCAL _ret := .F.
@@ -542,7 +560,7 @@ FUNCTION my_close_all_dbf()
    CLOSE ALL
 
    IF !hb_HHasKey( hServerParams, "database" )
-       RETURN .F.
+      RETURN .F.
    ENDIF
 
    WHILE nPos > 0

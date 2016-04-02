@@ -533,7 +533,7 @@ FUNCTION EditStavka()
       _dok_hash[ "brdok" ] := field->brdok
       _dok_hash[ "rbr" ] := field->rbr
 
-      oAtrib := F18_DOK_ATRIB():new( "kalk", F_KALK_ATRIB )
+      oAtrib := DokAtributi():new( "kalk", F_KALK_ATRIB )
       oAtrib:dok_hash := _dok_hash
       oAtrib:atrib_hash_to_dbf( _atributi )
 
@@ -716,7 +716,7 @@ FUNCTION kalk_unos_nova_stavka()
       _dok_hash[ "brdok" ] := field->brdok
       _dok_hash[ "rbr" ] := field->rbr
 
-      oAtrib := F18_DOK_ATRIB():new( "kalk", F_KALK_ATRIB )
+      oAtrib := DokAtributi():new( "kalk", F_KALK_ATRIB )
       oAtrib:dok_hash := _dok_hash
       oAtrib:atrib_hash_to_dbf( _atributi )
 
@@ -858,7 +858,7 @@ FUNCTION kalk_edit_sve_stavke()
       Gather()
       my_unlock()
 
-      oAtrib := F18_DOK_ATRIB():new( "kalk", F_KALK_ATRIB )
+      oAtrib := DokAtributi():new( "kalk", F_KALK_ATRIB )
       oAtrib:dok_hash := _dok
       oAtrib:atrib_hash_to_dbf( _atributi )
 
@@ -1582,7 +1582,7 @@ STATIC FUNCTION izmjeni_sve_stavke_dokumenta( old_dok, new_dok )
    ENDDO
    GO TOP
 
-   oAtrib := F18_DOK_ATRIB():new( "kalk", F_KALK_ATRIB )
+   oAtrib := DokAtributi():new( "kalk", F_KALK_ATRIB )
    oAtrib:open_local_table()
 
    GO TOP

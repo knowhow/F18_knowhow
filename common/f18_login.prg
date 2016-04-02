@@ -77,7 +77,7 @@ METHOD F18Login:New()
    ::lOrganizacijaSpojena := .F.
    ::lPostgresDbSpojena := .F.
    s_cTekucaSezona := AllTrim( Str( Year( Date() ) ) )
-   s_cPredhodnaSezona := AllTrim( Str( Year( Date() ) - 1 ) )
+   s_cPredhodnaSezona := AllTrim( Str( Year( Date() ) -1 ) )
    s_lPrvoPokretanje := .T.
 
 
@@ -89,6 +89,7 @@ METHOD F18Login:New()
    _ini_params[ "port" ] := nil
    _ini_params[ "session" ] := nil
 
+altd()
    IF !f18_ini_config_read( F18_SERVER_INI_SECTION + iif( test_mode(), "_test", "" ), @_ini_params, .T. )
       error_bar( "ini", "problem f18 ini read" )
    ENDIF
@@ -133,7 +134,6 @@ METHOD F18Login:connect( conn_type, silent )
 
    LOCAL lConnected, hSqlParams
 
-
    IF silent == NIL
       silent := .F.
    ENDIF
@@ -159,7 +159,9 @@ METHOD F18Login:connect( conn_type, silent )
          ::lOrganizacijaSpojena := .T.
          IF post_login()
             post_login_cleanup()
-            ::write_to_ini_server_params()
+            IF is_in_main_thread()
+               ::write_to_ini_server_params()
+            ENDIF
          ELSE
             my_server_close( 1 )
             my_server_close( 0 )
@@ -175,7 +177,7 @@ METHOD F18Login:connect( conn_type, silent )
 
 METHOD F18Login:write_to_ini_server_params()
 
-   LOCAL cKey, hIniParams := hb_hash()
+   LOCAL cKey, hIniParams := hb_Hash()
 
    FOR EACH cKey in { "host", "user", "schema", "port", "database", "session" }
       hIniParams[ cKey ] := ::data_db_params[ cKey ]
@@ -439,22 +441,22 @@ METHOD F18Login:server_login_form()
 
    @ 5, 5, 18, 77 BOX B_DOUBLE_SINGLE
 
-   ++ _x
+   ++_x
    @ _x, _left SAY PadC( "**** Unesite podatke za pristup *****", 60 )
 
    _x += 2
    @ _x, _left SAY PadL( "Konfigurisati server ?:", 21 ) GET _srv_config ;
       VALID _srv_config $ "DN" PICT "@!"
-   ++ _x
+   ++_x
 
    READ
 
    IF _srv_config == "D"
-      ++ _x
+      ++_x
       @ _x, _left SAY PadL( "Server:", 8 ) GET _host PICT "@S20"
       @ _x, 37 SAY "Port:" GET _port PICT "9999"
    ELSE
-      ++ _x
+      ++_x
    ENDIF
 
    _x += 2
@@ -483,7 +485,6 @@ METHOD F18Login:server_login_form()
 
    ::data_db_params := hb_HClone( ::postgres_db_params )
    ::data_db_params[ "database" ] := "test_2016"
-
 
    RETURN .T.
 
@@ -540,7 +541,6 @@ METHOD F18Login:odabir_organizacije()
    hParams[ "posljednji_put" ] := ::data_db_params[ "session" ]
    hParams[ "posljednja_org" ] := StrTran( ::data_db_params[ "database" ], "_" + ::data_db_params[ "session" ], "" )
    f18_ini_config_write( "sezona", @hParams, .T. ) // nakon odabira organizacije upisi izbor
-
 
    RETURN .T.
 
@@ -654,7 +654,7 @@ METHOD F18Login:get_database_browse_array( arr )
       AAdd( _arr, { "", "", "", "" } )
 
       FOR _x := 1 TO 4
-         ++ _count
+         ++_count
          _arr[ _n, _x ] := IF( _count > Len( arr ), PadR( "", _len ), PadR( arr[ _count, 1 ], _len ) )
       NEXT
 
@@ -714,7 +714,7 @@ METHOD F18Login:administrative_options( x_pos, y_pos )
    LOCAL _menuop, _menuexec, _mnu_choice
 
    _x := x_pos
-   _y := ( MAXCOLS() / 2 ) - 5
+   _y := ( MAXCOLS() / 2 ) -5
 
    // resetuj...
    _menuop := {}
@@ -784,7 +784,7 @@ METHOD F18Login:manual_enter_company_data( x_pos, y_pos )
    @ _x, _y + 3 SAY Space( 30 )
    @ _x, _y + 3 SAY "  Baza:" GET _db VALID !Empty( _db )
 
-   ++ _x
+   ++_x
    @ _x, _y  + 3 SAY "Sezona:" GET _session
 
    READ
@@ -817,7 +817,7 @@ METHOD F18Login:browse_odabir_organizacije( arr, table_type )
    LOCAL _pos_left := 3
    LOCAL _pos_top := 5
    LOCAL _pos_bottom := _pos_top + 12
-   LOCAL _pos_right := MAXCOLS() - 12
+   LOCAL _pos_right := MAXCOLS() -12
    LOCAL _company_count
 
    IF table_type == NIL
@@ -856,7 +856,7 @@ METHOD F18Login:browse_odabir_organizacije( arr, table_type )
    @ _pos_bottom + 2, 3 SAY hb_UTF8ToStr( "[2] Ručna konekcija na bazu" )
 
    // box za rucni odabir firme
-   @ _pos_bottom + 3, 2, _pos_bottom + 10, ( _pos_right / 2 ) - 3 BOX B_DOUBLE_SINGLE
+   @ _pos_bottom + 3, 2, _pos_bottom + 10, ( _pos_right / 2 ) -3 BOX B_DOUBLE_SINGLE
    @ _pos_bottom + 6, 11 SAY hb_UTF8ToStr( "<<< pritisni TAB >>>" )
 
    // opcija 3
@@ -941,7 +941,7 @@ METHOD F18Login:show_info_bar( database, x_pos )
    LOCAL _y := 3
    LOCAL _info := ""
    LOCAL _arr := ::get_database_sessions( database )
-   LOCAL _max_len := MAXCOLS() - 2
+   LOCAL _max_len := MAXCOLS() -2
    LOCAL _descr := ""
 
    IF !_arr == NIL .AND. Len( _arr ) > 0
@@ -959,7 +959,7 @@ METHOD F18Login:show_info_bar( database, x_pos )
    ENDIF
 
    @ _x, _y SAY PadR( "Info: " + _info, _max_len )
-   ++ _x
+   ++_x
    @ _x, _y SAY PadR( "F18 version: " + F18_VER, _max_len )
 
    RETURN .T.
@@ -973,7 +973,7 @@ STATIC FUNCTION _get_company_count( arr )
    FOR _i := 1 TO Len( arr )
       FOR _n := 1 TO 4
          IF !Empty( arr[ _i, _n ] )
-            ++ _count
+            ++_count
          ENDIF
       NEXT
    NEXT

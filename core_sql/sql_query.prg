@@ -62,7 +62,7 @@ FUNCTION run_sql_query( cQry, hParams )
    LOCAL _msg
    LOCAL cTip
    LOCAL nPos
-   LOCAL nRetry := 1
+   LOCAL nRetry := 2
    LOCAL oServer := sql_data_conn()
    LOCAL cTransactionName := cQry
    LOCAL lLog := .T.
@@ -217,9 +217,19 @@ FUNCTION is_var_objekat_tipa( xVar, cClassName )
 FUNCTION sql_error_in_query( oQry, cTip, oServer )
 
    LOCAL cLogMsg := "", cMsg, nI
+   LOCAL cQuery
 
-   hb_default( @cTip, "SELECT" )
    hb_default( @oServer, sql_data_conn() )
+
+   IF cTip == NIL
+      cQuery := oQry:cQuery
+      IF Left( Upper( cQuery ), 6 ) == "SELECT"
+         cTip := "SELECT"
+      ELSE
+         cTip := "UPDATE" // insert ili update nije bitno
+      ENDIF
+   ENDIF
+
 
    IF is_var_objekat_tpqquery( oQry ) .AND. !Empty( oQry:ErrorMsg() )
       LOG_CALL_STACK cLogMsg

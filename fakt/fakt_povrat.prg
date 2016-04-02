@@ -90,7 +90,7 @@ FUNCTION povrat_fakt_dokumenta( rezerv, id_firma, id_tip_dok, br_dok, test )
    _dok_hash[ "idtipdok" ] := id_tip_dok
    _dok_hash[ "brdok" ] := br_dok
 
-   oAtrib := F18_DOK_ATRIB():new( "fakt", F_FAKT_ATRIB )
+   oAtrib := DokAtributi():new( "fakt", F_FAKT_ATRIB )
    oAtrib:dok_hash := _dok_hash
    oAtrib:atrib_server_to_dbf()
 

@@ -139,7 +139,7 @@ STATIC FUNCTION kreiraj_ostale_kalk_tabele( ver )
    CREATE_INDEX( "ID", "id", _alias )
 
 
-   F18_DOK_ATRIB():new( "kalk", F_KALK_ATRIB ):create_local_atrib_table()
+   DokAtributi():new( "kalk", F_KALK_ATRIB ):create_local_atrib_table()
 
    RETURN .T.
 

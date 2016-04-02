@@ -30,14 +30,15 @@ FUNCTION full_synchro( cDbfTable, nStepSize, cInfo )
    LOCAL _sql_fetch_time, _dbf_write_time
    LOCAL _msg
    LOCAL lRet := .T.
-   LOCAL hParams := hb_hash()
+   LOCAL hParams := hb_Hash()
 
    IF nStepSize == NIL
       nStepSize := 20000
    ENDIF
 
-   nuliraj_ids_and_update_my_semaphore_ver( cDbfTable )
-
+   IF !nuliraj_ids_and_update_my_semaphore_ver( cDbfTable )
+      RETURN .F.
+   ENDIF
    // transakcija treba da se ne bi vidjele promjene koje prave drugi
    // ako nemam transakcije onda se moze desiti ovo:
    // 1) odabarem 100 000 zapisa i pocnem ih uzimati po redu (po dokumentima)

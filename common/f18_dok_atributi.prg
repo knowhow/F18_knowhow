@@ -12,7 +12,7 @@
 #include "f18.ch"
 
 
-CLASS F18_DOK_ATRIB
+CLASS DokAtributi
 
    DATA modul
    DATA from_dbf
@@ -23,7 +23,7 @@ CLASS F18_DOK_ATRIB
    METHOD New()
    METHOD get_atrib()
    METHOD set_atrib()
-   METHOD delete_atrib()
+   METHOD delete_atrib_from_dbf()
    METHOD update_atrib_rbr()
    METHOD create_local_atrib_table()
    METHOD fix_atrib()
@@ -53,9 +53,8 @@ ENDCLASS
 
 
 
-// --------------------------------------------------
-// --------------------------------------------------
-METHOD F18_DOK_ATRIB:New( _modul_, _wa_ )
+
+METHOD DokAtributi:New( _modul_, _wa_ )
 
    ::dok_hash := hb_Hash()
 
@@ -72,9 +71,8 @@ METHOD F18_DOK_ATRIB:New( _modul_, _wa_ )
 
 
 
-// --------------------------------------------------
-// --------------------------------------------------
-METHOD F18_DOK_ATRIB:set_dbf_alias()
+
+METHOD DokAtributi:set_dbf_alias()
 
    ::alias := AllTrim( Lower( ::modul ) ) + "_atrib"
 
@@ -83,15 +81,11 @@ METHOD F18_DOK_ATRIB:set_dbf_alias()
 
 
 
-// --------------------------------------------------
-// --------------------------------------------------
-METHOD F18_DOK_ATRIB:open_local_table()
+METHOD DokAtributi:open_local_table()
 
    LOCAL _alias
 
-   // setuj naziv tabele
    ::set_table_name()
-   // setuj alijas
    ::set_dbf_alias()
 
    SELECT ( ::workarea )
@@ -109,7 +103,7 @@ METHOD F18_DOK_ATRIB:open_local_table()
 // ----------------------------------------------------------------
 // kreira se pomocna tabela atributa...
 // ----------------------------------------------------------------
-METHOD F18_DOK_ATRIB:create_local_atrib_table( force )
+METHOD DokAtributi:create_local_atrib_table( force )
 
    LOCAL _dbf := {}
    LOCAL _ind_key := "idfirma + idtipdok + brdok + rbr + atribut"
@@ -145,7 +139,7 @@ METHOD F18_DOK_ATRIB:create_local_atrib_table( force )
 
 
 
-METHOD F18_DOK_ATRIB:set_table_name()
+METHOD DokAtributi:set_table_name()
 
    IF !Empty( ::modul )
       ::table_name_local := AllTrim( Lower( ::modul ) ) + "_pripr_atrib"
@@ -158,10 +152,8 @@ METHOD F18_DOK_ATRIB:set_table_name()
    RETURN SELF
 
 
-// ----------------------------------------------------------------------
-// vraca atribut
-// ----------------------------------------------------------------------
-METHOD F18_DOK_ATRIB:get_atrib( _dok, _atribut )
+
+METHOD DokAtributi:get_atrib( _dok, _atribut )
 
    LOCAL _ret
 
@@ -194,7 +186,7 @@ METHOD F18_DOK_ATRIB:get_atrib( _dok, _atribut )
 // --------------------------------------------------------------------
 // vraca atribut iz pomocne tabele
 // --------------------------------------------------------------------
-METHOD F18_DOK_ATRIB:get_atrib_from_dbf()
+METHOD DokAtributi:get_atrib_from_dbf()
 
    LOCAL _ret := ""
    LOCAL _t_area := Select()
@@ -222,7 +214,7 @@ METHOD F18_DOK_ATRIB:get_atrib_from_dbf()
 // -------------------------------------------------------------------------
 // vraca odredjeni atribut sa servera
 // -------------------------------------------------------------------------
-METHOD F18_DOK_ATRIB:get_atrib_from_server()
+METHOD DokAtributi:get_atrib_from_server()
 
    LOCAL _val := ""
    LOCAL _attr := ::get_atrib_list_from_server()
@@ -244,7 +236,7 @@ METHOD F18_DOK_ATRIB:get_atrib_from_server()
 //
 // vraca se matrica { "rbr", "value", "atribut" }
 // ----------------------------------------------------------------------------
-METHOD F18_DOK_ATRIB:get_atrib_list_from_server()
+METHOD DokAtributi:get_atrib_list_from_server()
 
    LOCAL _a_atrib := {}
    LOCAL _qry, _table, oItem
@@ -310,7 +302,7 @@ METHOD F18_DOK_ATRIB:get_atrib_list_from_server()
 // ---------------------------------------------------------------------------
 // setovanje atributa u pomocnu tabelu
 // ---------------------------------------------------------------------------
-METHOD F18_DOK_ATRIB:set_atrib( atrib_key, value )
+METHOD DokAtributi:set_atrib( atrib_key, value )
 
    LOCAL _ok := .T.
    LOCAL _rec, _t_area
@@ -363,7 +355,7 @@ METHOD F18_DOK_ATRIB:set_atrib( atrib_key, value )
 // --------------------------------------------------------------------------
 // ubaci atribute iz hash matrice u dbf atribute
 // --------------------------------------------------------------------------
-METHOD F18_DOK_ATRIB:atrib_hash_to_dbf( hash )
+METHOD DokAtributi:atrib_hash_to_dbf( hash )
 
    LOCAL _rec, _key
 
@@ -380,7 +372,7 @@ METHOD F18_DOK_ATRIB:atrib_hash_to_dbf( hash )
 // ---------------------------------------------------------
 // zapuje fakt atribute
 // ---------------------------------------------------------
-METHOD F18_DOK_ATRIB:zapp_local_table()
+METHOD DokAtributi:zapp_local_table()
 
    LOCAL _t_area := Select()
 
@@ -391,16 +383,11 @@ METHOD F18_DOK_ATRIB:zapp_local_table()
 
    SELECT ( _t_area )
 
-   RETURN
+   RETURN .T.
 
 
+METHOD DokAtributi:delete_atrib_from_dbf()
 
-// ---------------------------------------------------------------------------
-// brisanje atributa iz lokalnog dbf-a
-// ---------------------------------------------------------------------------
-METHOD F18_DOK_ATRIB:delete_atrib()
-
-   LOCAL _ok := .T.
    LOCAL _t_area := Select()
    LOCAL _idfirma, _idtipdok, _brdok, _rbr, _atribut
 
@@ -427,7 +414,6 @@ METHOD F18_DOK_ATRIB:delete_atrib()
 
    my_flock()
 
-   GO TOP
    SEEK ( _idfirma + _idtipdok + _brdok + _rbr + _atribut )
 
    DO WHILE !Eof() .AND. field->idfirma == _idfirma .AND. field->idtipdok == _idtipdok ;
@@ -440,19 +426,18 @@ METHOD F18_DOK_ATRIB:delete_atrib()
 
    my_unlock()
 
-   my_dbf_pack()
+   //my_dbf_pack()
 
    USE
 
    SELECT ( _t_area )
 
-   RETURN _ok
+   RETURN .T.
 
 
 
-METHOD F18_DOK_ATRIB:update_atrib_rbr()
+METHOD DokAtributi:update_atrib_rbr()
 
-   LOCAL _ok := .T.
    LOCAL _t_area := Select()
    LOCAL _idfirma, _idtipdok, _brdok, _rbr, _atribut, _update_rbr
    LOCAL _rec, _t_rec
@@ -492,16 +477,16 @@ METHOD F18_DOK_ATRIB:update_atrib_rbr()
 
    SELECT ( _t_area )
 
-   RETURN _ok
+   RETURN .T.
 
 
 
 // ------------------------------------------------------------------------
 // update atributa na serveru
 // ------------------------------------------------------------------------
-METHOD F18_DOK_ATRIB:update_atrib_from_server( params )
+METHOD DokAtributi:update_atrib_from_server( params )
 
-   LOCAL _ok := .T.
+   LOCAL _ret
    LOCAL _qry
    LOCAL _old_firma := params[ "old_firma" ]
    LOCAL _old_tipdok := params[ "old_tipdok" ]
@@ -522,19 +507,18 @@ METHOD F18_DOK_ATRIB:update_atrib_from_server( params )
    _qry += " AND brdok = " + sql_quote( _old_brdok )
 
    _ret := run_sql_query( _qry )
-
-   IF ValType( _ret ) == "L"
-      _ok := .F.
+   IF sql_error_in_query( _ret, "UPDATE" )
+      RETURN .F.
    ENDIF
 
-   RETURN _ok
+   RETURN .T.
 
 
 
 // ------------------------------------------------------------------------
 // brisanje atributa sa servera
 // ------------------------------------------------------------------------
-METHOD F18_DOK_ATRIB:delete_atrib_from_server()
+METHOD DokAtributi:delete_atrib_from_server()
 
    LOCAL _qry, _ret
 
@@ -559,7 +543,7 @@ METHOD F18_DOK_ATRIB:delete_atrib_from_server()
 // -------------------------------------------------------------------------
 // pusiranje atributa na server
 // -------------------------------------------------------------------------
-METHOD F18_DOK_ATRIB:atrib_dbf_to_server()
+METHOD DokAtributi:atrib_dbf_to_server()
 
    LOCAL _ok := .T.
    LOCAL _t_area := Select()
@@ -568,17 +552,16 @@ METHOD F18_DOK_ATRIB:atrib_dbf_to_server()
 
    ::open_local_table()
 
-   IF RecCount() == 0
+   IF RecCount2() == 0
       USE
       SELECT ( _t_area )
-      RETURN _ok
+      RETURN .T.
    ENDIF
 
    IF !::delete_atrib_from_server()
       USE
-      _ok := .F.
       SELECT ( _t_area )
-      RETURN _ok
+      RETURN .F.
    ENDIF
 
    SELECT Alias( ::workarea )
@@ -611,7 +594,7 @@ METHOD F18_DOK_ATRIB:atrib_dbf_to_server()
       _qry += ")"
 
       _res := run_sql_query( _qry )
-      IF sql_error_in_query( _res )
+      IF sql_error_in_query( _res, "INSERT" )
          _ok := .F.
          EXIT
       ENDIF
@@ -633,7 +616,7 @@ METHOD F18_DOK_ATRIB:atrib_dbf_to_server()
 // ------------------------------------------------------------------------
 // puni lokalni dbf sa podacima iz matrice
 // ------------------------------------------------------------------------
-METHOD F18_DOK_ATRIB:atrib_server_to_dbf()
+METHOD DokAtributi:atrib_server_to_dbf()
 
    LOCAL _atrib
    LOCAL _i, _rec
@@ -679,7 +662,7 @@ METHOD F18_DOK_ATRIB:atrib_server_to_dbf()
 // - provjeri ima li viska atributa
 // - provjeri ima li duplih atributa
 // -----------------------------------------------------
-METHOD F18_DOK_ATRIB:fix_atrib( area, dok_arr )
+METHOD DokAtributi:fix_atrib( area, dok_arr )
 
    LOCAL _dok_params
    LOCAL _i
@@ -692,20 +675,19 @@ METHOD F18_DOK_ATRIB:fix_atrib( area, dok_arr )
       _dok_params[ "idfirma" ] := dok_arr[ _i, 1 ]
       _dok_params[ "idtipdok" ] := dok_arr[ _i, 2 ]
       _dok_params[ "brdok" ] := dok_arr[ _i, 3 ]
-
       ::atrib_delete_duplicate( _dok_params )
 
    NEXT
 
    ::atrib_delete_rest( area )
 
-   RETURN
+   RETURN .T.
 
 
 // -----------------------------------------------------
 // brisi visak atributa ako postoji
 // -----------------------------------------------------
-METHOD F18_DOK_ATRIB:atrib_delete_rest( area )
+METHOD DokAtributi:atrib_delete_rest( area )
 
    LOCAL _id_firma, _tip_dok, _br_dok
    LOCAL _t_area := Select()
@@ -748,11 +730,10 @@ METHOD F18_DOK_ATRIB:atrib_delete_rest( area )
    my_unlock()
 
    IF _deleted
-      my_dbf_pack()
+      //my_dbf_pack()
    ENDIF
 
    USE
-
    SELECT ( _t_area )
 
    RETURN _ok
@@ -764,13 +745,14 @@ METHOD F18_DOK_ATRIB:atrib_delete_rest( area )
 // -----------------------------------------------------
 // provjera ispravnosti atributa za dokument
 // -----------------------------------------------------
-METHOD F18_DOK_ATRIB:atrib_delete_duplicate( param )
+METHOD DokAtributi:atrib_delete_duplicate( param )
 
    LOCAL _id_firma, _tip_dok, _br_dok, _b1
    LOCAL _t_area := Select()
    LOCAL _ok := .T.
    LOCAL _r_br, _atrib, _r_br_2, _atrib_2, _eof := .F.
    LOCAL _deleted := .F.
+   LOCAL _t_rec
 
    _id_firma := PARAM[ "idfirma" ]
    _tip_dok := PARAM[ "idtipdok" ]
@@ -781,7 +763,6 @@ METHOD F18_DOK_ATRIB:atrib_delete_duplicate( param )
    my_flock()
 
    SET ORDER TO TAG "1"
-   GO TOP
    SEEK _id_firma + _tip_dok + _br_dok
 
    _b1 := {|| field->idfirma == _id_firma .AND. field->idtipdok == _tip_dok .AND. field->brdok == _br_dok }
@@ -816,7 +797,7 @@ METHOD F18_DOK_ATRIB:atrib_delete_duplicate( param )
    my_unlock()
 
    IF _deleted
-      my_dbf_pack( .F. )
+      //my_dbf_pack( .F. )
    ENDIF
 
    USE

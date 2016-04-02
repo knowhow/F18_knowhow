@@ -524,7 +524,7 @@ STATIC FUNCTION fakt_dodaj_ispravi_stavku( novi, item_hash, items_atrib )
    new_hash[ "rbr" ] := fakt_pripr->rbr
 
    // ažuriraj atribute u FAKT_FAKT_ATRIBUTI
-   oAtrib := F18_DOK_ATRIB():new( "fakt", F_FAKT_ATRIB )
+   oAtrib := DokAtributi():new( "fakt", F_FAKT_ATRIB )
    oAtrib:dok_hash := new_hash
 
    IF !novi .AND. ( item_hash[ "rbr" ] <> new_hash[ "rbr" ] )
@@ -678,7 +678,7 @@ STATIC FUNCTION fakt_print_dokument()
       MsgBeep( "Postojeći dokumenti u pripremi vec postoje !" )
    ENDIF
 
-   F18_DOK_ATRIB():New( "fakt", F_FAKT_ATRIB ):fix_atrib( F_FAKT_PRIPR, _a_fakt_doks )
+   DokAtributi():New( "fakt", F_FAKT_ATRIB ):fix_atrib( F_FAKT_PRIPR, _a_fakt_doks )
 
    close_open_fakt_tabele()
 
@@ -1778,7 +1778,7 @@ STATIC FUNCTION izmjeni_sve_stavke_dokumenta( old_dok, new_dok )
    ENDDO
    GO TOP
 
-   oAtrib := F18_DOK_ATRIB():new( "fakt", F_FAKT_ATRIB )
+   oAtrib := DokAtributi():new( "fakt", F_FAKT_ATRIB )
    oAtrib:open_local_table()
 
    GO TOP

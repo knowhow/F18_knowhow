@@ -87,7 +87,7 @@ FUNCTION kalk_azuriranje_dokumenta( lAuto )
       RETURN .F.
    ENDIF
 
-   F18_DOK_ATRIB():new( "kalk", F_KALK_ATRIB ):zapp_local_table()
+   DokAtributi():new( "kalk", F_KALK_ATRIB ):zapp_local_table()
 
    kalk_zavisni_nakon_azuriranja( lGenerisiZavisne, lAuto )
 
@@ -833,7 +833,7 @@ STATIC FUNCTION kalk_azur_sql()
       IF _ok == .T.
 
          @ m_x + 3, m_y + 2 SAY "kalk_atributi -> server "
-         oAtrib := F18_DOK_ATRIB():new( "kalk", F_KALK_ATRIB )
+         oAtrib := DokAtributi():new( "kalk", F_KALK_ATRIB )
          oAtrib:dok_hash[ "idfirma" ] := _record_dok[ "idfirma" ]
          oAtrib:dok_hash[ "idtipdok" ] := _record_dok[ "idvd" ]
          oAtrib:dok_hash[ "brdok" ] := _record_dok[ "brdok" ]

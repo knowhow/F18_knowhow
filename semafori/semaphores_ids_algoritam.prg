@@ -19,16 +19,18 @@ FUNCTION ids_synchro( dbf_table )
 
    LOCAL nI, hIdsQueries
    LOCAL _zap, aDbfRec
-   LOCAL lRet := .T.
+   LOCAL lRet := NIL
+   LOCAL cMsg
+   LOCAL nIdsCnt := 0
 
    aDbfRec := get_a_dbf_rec( dbf_table, .T. )
-   hIdsQueries := create_queries_from_ids( aDbfRec[ 'table' ] )
+   hIdsQueries := create_queries_from_ids( aDbfRec[ "table" ] )
 
    // hIdsQueries["ids"] = {  {"00113333 1", "0011333 2"}, {"00224444"}  }
    // hIdsQueries["qry"] = {  "select .... in ... rpad('0011333  1') ...", "select .. in ... rpad("0022444")" }
 
-   log_write( "START ids_synchro", 9 )
-   log_write( "ids_synchro ids_queries: " + pp( hIdsQueries ), 7 )
+   //log_write( "START ids_synchro", 9 )
+   //log_write( "ids_synchro ids_queries: " + pp( hIdsQueries ), 7 )
 
    DO WHILE .T.
 
@@ -50,10 +52,15 @@ FUNCTION ids_synchro( dbf_table )
 
    FOR nI := 1 TO Len( hIdsQueries[ "ids" ] )
 
-      // ako nema id-ova po algoritmu nI, onda ova varijabla NIL
-      IF hIdsQueries[ "ids" ][ nI ] != NIL
-         log_write( "ids_synchro ids_queries: [" + Alltrim( STR( nI ) ) + "]=" + pp( hIdsQueries[ "ids" ][ nI ]  ), 9 )
-         delete_ids_in_dbf( aDbfRec[ 'table' ], hIdsQueries[ "ids" ][ nI ], nI )
+      IF hIdsQueries[ "ids" ][ nI ] != NIL // ako nema id-ova po algoritmu nI, onda ova varijabla NIL
+
+         nIdsCnt += LEN( hIdsQueries[ "ids" ][ nI ] )
+
+         //log_write( "ids_synchro ids_queries: [" + AllTrim( Str( nI ) ) + "]=" + pp( hIdsQueries[ "ids" ][ nI ]  ), 9 )
+         IF !delete_ids_in_dbf( aDbfRec[ 'table' ], hIdsQueries[ "ids" ][ nI ], nI )
+            RETURN .F.
+         ENDIF
+
          lRet := fill_dbf_from_server( aDbfRec[ 'table' ], hIdsQueries[ "qry" ][ nI ] )
 
          IF !lRet
@@ -63,7 +70,19 @@ FUNCTION ids_synchro( dbf_table )
       ENDIF
    NEXT
 
-   log_write( "END ids_synchro", 9 )
+   IF lRet != NIL
+
+      cMsg := "syn ids: " + aDbfRec[ 'table' ] + " : " + Alltrim( Str( nIdsCnt ) )
+      IF lRet
+         info_bar( "syn_ids", cMsg )
+      ELSE
+         error_bar( "syn_ids", cMsg )
+      ENDIF
+
+   ELSE
+      lRet := .T.
+   ENDIF
+
 
    RETURN lRet
 
@@ -82,7 +101,6 @@ FUNCTION push_ids_to_semaphore( table, aIds, lToMySelf )
    LOCAL nI
    LOCAL _set_1, _set_2
 
-
    IF skip_semaphore_sync( table )
       RETURN .T.
    ENDIF
@@ -96,13 +114,13 @@ FUNCTION push_ids_to_semaphore( table, aIds, lToMySelf )
       lToMySelf := .F.
    ENDIF
 
-   log_write( "START push_ids_to_semaphore", 9 )
-   log_write( "push ids: " + table + " / " + pp( aIds ), 5 )
+   // log_write( "START push_ids_to_semaphore", 9 )
+   // log_write( "push ids: " + table + " / " + pp( aIds ), 5 )
 
    _tbl := "sem." + Lower( table )
 
    // treba dodati id za sve DRUGE korisnike
-   _result := table_count( _tbl, IIF( lToMySelf, NIL, "user_code <> " + sql_quote( _user ) ) )
+   _result := table_count( _tbl, iif( lToMySelf, NIL, "user_code <> " + sql_quote( _user ) ) )
 
    IF _result < 1
       // jedan korisnik
@@ -144,18 +162,22 @@ FUNCTION push_ids_to_semaphore( table, aIds, lToMySelf )
       _qry += "user_code <> " + sql_quote( _user ) + " AND "
    ENDIF
    _qry += "ids IS NOT NULL AND array_length(ids,1) > 2000"
+
    _ret := run_sql_query( _qry )
-
-   log_write( "END push_ids_to_semaphore", 9 )
-
-   // na kraju uradi update verzije semafora, push operacija
-   update_semaphore_version_after_push( table, lToMySelf )
-
-   IF ValType( _ret ) == "O" .AND. Empty( _ret:ErrorMsg() )
-      RETURN .T.
+   IF sql_error_in_query( _ret, "UPDATE" )
+      error_bar( "syn_ids", "UPDATE push_ids: " + table )
+      RETURN .F.
    ENDIF
 
-   RETURN .F.
+   // log_write( "END push_ids_to_semaphore", 9 )
+
+   // na kraju uradi update verzije semafora, push operacija
+   IF !update_semaphore_version_after_push( table, lToMySelf )
+      error_bar( "syn_ids", "push_ids: " + table )
+      RETURN .F.
+   ENDIF
+
+   RETURN .T.
 
 
 /*
@@ -172,7 +194,7 @@ FUNCTION get_ids_from_semaphore( table )
    LOCAL _tok, _versions, _tmp
    LOCAL _log_level := log_level()
    LOCAL lAllreadyInTransaction := .F.
-   LOCAL hParams := hb_hash()
+   LOCAL hParams := hb_Hash()
    LOCAL _server := sql_data_conn()
 
    IF skip_semaphore_sync( table )
@@ -183,7 +205,7 @@ FUNCTION get_ids_from_semaphore( table )
       lAllreadyInTransaction := .T.
    ENDIF
 
-   log_write( "START get_ids_from_semaphore", 7 )
+   // log_write( "START get_ids_from_semaphore", 7 )
 
    _tbl := "sem." + Lower( table )
    hParams[ "tran_name" ] := "ids_" + table
@@ -219,7 +241,7 @@ FUNCTION get_ids_from_semaphore( table )
 
       ENDIF
 
-      log_write( "transakcija neuspjesna #29667 ISOLATION LEVEL !", 1, .T. )
+      error_bar( "sem", "IDS ISOLATION LEVEL" + table )
 
       // retry !
       RETURN get_ids_from_semaphore( table )
@@ -265,7 +287,7 @@ FUNCTION get_ids_from_semaphore( table )
       AAdd( _arr, _tok )
    NEXT
 
-   log_write( "END get_ids_from_semaphore", 7 )
+   // log_write( "END get_ids_from_semaphore", 7 )
 
    RETURN _arr
 
@@ -318,7 +340,7 @@ FUNCTION create_queries_from_ids( table )
    _ids := get_ids_from_semaphore( table )
    // nuliraj_ids_and_update_my_semaphore_ver(table)
 
-   log_write( "create_queries..(), poceo", 9 )
+   // log_write( "create_queries..(), poceo", 9 )
 
    // primjer
    // suban 00-11-2222 rbr 1, rbr 2
@@ -382,9 +404,9 @@ FUNCTION create_queries_from_ids( table )
 
    NEXT
 
-   log_write( "create_queries..(), ret[qry]=" + pp( _queries ), 9 )
-   log_write( "create_queries..(), ret[ids]=" + pp( _ids_2 ), 9 )
-   log_write( "create_queries..(), zavrsio", 9 )
+   // log_write( "create_queries ret[qry]=" + pp( _queries ), 9 )
+   // log_write( "create_queries ret[ids]=" + pp( _ids_2 ), 9 )
+   // log_write( "create_queries zavrsio", 9 )
    _ret[ "qry" ] := _queries
    _ret[ "ids" ] := _ids_2
 
@@ -407,8 +429,7 @@ FUNCTION delete_ids_in_dbf( dbf_table, ids, nAlgoritam )
    LOCAL _key_block
    LOCAL cSyncAlias, cFullDbf, cFullIdx
 
-
-   log_write( "delete_ids_in_dbf START", 9 )
+   //log_write( "delete_ids_in_dbf START", 9 )
 
    aDbfRec := get_a_dbf_rec( dbf_table )
 
@@ -480,8 +501,8 @@ FUNCTION delete_ids_in_dbf( dbf_table, ids, nAlgoritam )
 
    PopWa()
 
-   log_write( "delete_ids_in_dbf table: " + dbf_table + "/ dbf_tag =" + _dbf_tag + " pobrisao iz lokalnog dbf-a zapisa = " + AllTrim( Str( _counter ) ), 5 )
-   log_write( "delete_ids_in_dbf END", 9 )
+   //log_write( "delete_ids_in_dbf table: " + dbf_table + "/ dbf_tag =" + _dbf_tag + " pobrisao iz lokalnog dbf-a zapisa = " + AllTrim( Str( _counter ) ), 5 )
+   //log_write( "delete_ids_in_dbf END", 9 )
 
    RETURN .T.
 

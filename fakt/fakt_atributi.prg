@@ -15,7 +15,7 @@
 
 FUNCTION get_fakt_atribut_opis( dok, from_server )
 
-   LOCAL oAtrib := F18_DOK_ATRIB():new( "fakt", F_FAKT_ATRIB )
+   LOCAL oAtrib := DokAtributi():new( "fakt", F_FAKT_ATRIB )
 
    oAtrib:from_dbf := ( from_server == .F. )
    oAtrib:atrib := "opis"
@@ -25,7 +25,7 @@ FUNCTION get_fakt_atribut_opis( dok, from_server )
 
 FUNCTION get_fakt_atribut_ref( dok, from_server )
 
-   LOCAL oAtrib := F18_DOK_ATRIB():new( "fakt", F_FAKT_ATRIB )
+   LOCAL oAtrib := DokAtributi():new( "fakt", F_FAKT_ATRIB )
 
    oAtrib:from_dbf := ( from_server == .F. )
    oAtrib:atrib := "ref"
@@ -36,7 +36,7 @@ FUNCTION get_fakt_atribut_ref( dok, from_server )
 
 FUNCTION get_fakt_atribut_lot( dok, from_server )
 
-   LOCAL oAtrib := F18_DOK_ATRIB():new( "fakt", F_FAKT_ATRIB )
+   LOCAL oAtrib := DokAtributi():new( "fakt", F_FAKT_ATRIB )
 
    oAtrib:from_dbf := ( from_server == .F. )
    oAtrib:atrib := "lot"

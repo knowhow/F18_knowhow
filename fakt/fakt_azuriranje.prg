@@ -55,7 +55,7 @@ FUNCTION azur_fakt( lSilent )
       ENDIF
    ENDIF
 
-   F18_DOK_ATRIB():new( "fakt", F_FAKT_ATRIB ):fix_atrib( F_FAKT_PRIPR, _a_fakt_doks )
+   DokAtributi():new( "fakt", F_FAKT_ATRIB ):fix_atrib( F_FAKT_PRIPR, _a_fakt_doks )
 
    _ok := .T.
 
@@ -105,7 +105,7 @@ FUNCTION azur_fakt( lSilent )
    SELECT fakt_pripr
    my_dbf_zap()
 
-   F18_DOK_ATRIB():new( "fakt", F_FAKT_ATRIB ):zapp_local_table()
+   DokAtributi():new( "fakt", F_FAKT_ATRIB ):zapp_local_table()
 
    MsgC()
 
@@ -162,10 +162,11 @@ STATIC FUNCTION fakt_azur_sql( id_firma, id_tip_dok, br_dok )
       RETURN .F.
    ENDIF
 
-   sql_table_update( nil, "BEGIN" )
+altd()
+   run_sql_query( "BEGIN" )
 
    IF !f18_lock_tables( { "fakt_fakt", "fakt_doks", "fakt_doks2" }, .T. )
-      sql_table_update( nil, "END" )
+      run_sql_query( "ROLLBACK" )
       MsgBeep( "Ne mogu zaključati tabele.#Prekidam operaciju." )
       RETURN .F.
    ENDIF
@@ -209,9 +210,10 @@ STATIC FUNCTION fakt_azur_sql( id_firma, id_tip_dok, br_dok )
       ENDIF
    ENDIF
 
+altd()
    IF _ok == .T.
       @ m_x + 4, m_y + 2 SAY "fakt_atributi -> server "
-      oAtrib := F18_DOK_ATRIB():new( "fakt", F_FAKT_ATRIB )
+      oAtrib := DokAtributi():New( "fakt", F_FAKT_ATRIB )
       oAtrib:dok_hash[ "idfirma" ] := id_firma
       oAtrib:dok_hash[ "idtipdok" ] := id_tip_dok
       oAtrib:dok_hash[ "brdok" ] := br_dok
@@ -219,7 +221,7 @@ STATIC FUNCTION fakt_azur_sql( id_firma, id_tip_dok, br_dok )
    ENDIF
 
    IF !_ok
-      sql_table_update( nil, "ROLLBACK" )
+      run_sql_query( "ROLLBACK" )
    ELSE
 
       @ m_x + 4, m_y + 2 SAY "push ids to semaphore: " + _tmp_id
@@ -227,7 +229,7 @@ STATIC FUNCTION fakt_azur_sql( id_firma, id_tip_dok, br_dok )
       push_ids_to_semaphore( _tbl_doks, _ids_doks   )
       push_ids_to_semaphore( _tbl_doks2, _ids_doks2  )
 
-      sql_table_update( nil, "END" )
+      run_sql_query( "COMMIT" )
       f18_free_tables( { "fakt_fakt", "fakt_doks", "fakt_doks2" } )
 
 
@@ -656,7 +658,7 @@ FUNCTION fakt_brisanje_pripreme()
       _tip_dok := IdTipDok
       _br_dok := BrDok
 
-      oAtrib := F18_DOK_ATRIB():new( "fakt", F_FAKT_ATRIB )
+      oAtrib := DokAtributi():new( "fakt", F_FAKT_ATRIB )
       oAtrib:dok_hash[ "idfirma" ] := _id_firma
       oAtrib:dok_hash[ "idtipdok" ] := _tip_dok
       oAtrib:dok_hash[ "brdok" ] := _br_dok

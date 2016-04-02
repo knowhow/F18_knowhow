@@ -91,9 +91,8 @@ FUNCTION my_server_close( nConnType )
             ?E "CCCCCCCCCCCCCCCCCLOSE TPQSERVER CLOSE CONNECTION port:", s_aSQLConnections[ nPos, 2 ]
 #endif
             ADel( s_aSQLConnections, nPos )
-            ASize( s_aSQLConnections, Len( s_aSQLConnections ) - 1 )
+            ASize( s_aSQLConnections, Len( s_aSQLConnections ) -1 )
          ENDIF
-
          hb_mutexUnlock( s_mtxMutex )
       ENDIF
 
@@ -104,6 +103,8 @@ FUNCTION my_server_close( nConnType )
       ?E Replicate( iif( is_in_main_thread(), "%", "t" ), 50 ), "TPQSERVER " + iif( is_in_main_thread(), "", "THREAD " ), "CLOSE", ;
          iif( nConnType == 0, "POSTGRES DB", "DATA DB" ), pDb, s_nSQLConnections
 #endif
+
+
    ELSE
       ?E "ERROR: server is not TPQServer objekat ?!"
    ENDIF
@@ -262,7 +263,7 @@ FUNCTION f18_login_loop( lAutoConnect, arg_v )
       ELSE
          lAutoConnect := .T.
       ENDIF
-      
+
       IF !oLogin:login_odabir_organizacije()
 
          IF LastKey() == K_ESC
@@ -303,7 +304,7 @@ STATIC FUNCTION show_sacekaj()
    LOCAL _x, _y
    LOCAL _txt
 
-   _x := ( MAXROWS() / 2 ) - 12
+   _x := ( MAXROWS() / 2 ) -12
    _y := MAXCOLS()
 
    CLEAR SCREEN

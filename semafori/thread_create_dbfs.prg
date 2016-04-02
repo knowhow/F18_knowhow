@@ -28,7 +28,6 @@ PROCEDURE thread_create_dbfs()
    kreiraj_pa_napuni_partn_idbr_pdvb ()
    // idle_add_for_eval( "kreiraj_pa_napuni_partn_idbr_pdvb", {||  kreiraj_pa_napuni_partn_idbr_pdvb () } )
 
-
    set_a_dbfs_key_fields() // inicijaliziraj "dbf_key_fields" u __f18_dbf hash matrici
    write_dbf_version_to_ini_conf()
    f18_log_delete() // brisanje loga nakon logiranja...

@@ -102,7 +102,7 @@ FUNCTION lock_semaphore( table, status, lUnlockTable )
 
    log_write( "table: " + table + ", status:" + status + " - END", 7 )
 
-   IF !Empty( _ret:ErrorMsg() )
+   IF !sql_error_in_query( _ret, "UPDATE" )
       log_write( "qry error: " + _qry + " : " + _ret:ErrorMsg(), 2 )
       RaiseError( _qry )
    ENDIF
@@ -489,6 +489,7 @@ FUNCTION update_semaphore_version_after_push( table, to_myself )
    LOCAL _ver_user, _last_ver
    LOCAL _versions
    LOCAL cVerUser
+   LOCAL oQry
 
    IF to_myself == NIL
       to_myself := .F.
@@ -498,7 +499,7 @@ FUNCTION update_semaphore_version_after_push( table, to_myself )
       RETURN .F.
    ENDIF
 
-   log_write( "START: update semaphore version after push", 7 )
+   // log_write( "START: update semaphore version after push", 7 )
 
    _tbl := "sem." + Lower( table )
    _versions := get_semaphore_version_h( table )
@@ -513,8 +514,9 @@ FUNCTION update_semaphore_version_after_push( table, to_myself )
    ++ _ver_user
    cVerUser := AllTrim( Str( _ver_user ) )
 
-   insert_semaphore_if_not_exists( table )
-
+   IF !insert_semaphore_if_not_exists( table )
+      RETURN .F.
+   ENDIF
    _qry := ""
 
    IF !to_myself
@@ -526,11 +528,15 @@ FUNCTION update_semaphore_version_after_push( table, to_myself )
    _qry += "UPDATE " + _tbl + " SET last_trans_version=" + cVerUser + "; "
    // kod svih usera verzija ne moze biti veca od posljednje
    _qry += "UPDATE " + _tbl + " SET version=" + cVerUser + " WHERE version > " + cVerUser + ";"
-   run_sql_query( _qry )
+   oQry := run_sql_query( _qry )
+   IF sql_error_in_query( oQry, "UPDATE" )
+      error_bar( "syn_ids", "update sem after push " + table)
+      RETURN .F.
+   ENDIF
 
    log_write( "END: update semaphore version after push user: " + _user + ", tabela: " + _tbl + ", last_ver=" + Str( _ver_user ), 7 )
 
-   RETURN _ver_user
+   RETURN .T.
 
 
 
@@ -543,10 +549,13 @@ FUNCTION nuliraj_ids_and_update_my_semaphore_ver( table )
    LOCAL _ret
    LOCAL _user := f18_user()
    LOCAL _qry
+   LOCAL hParams := hb_Hash()
 
-   insert_semaphore_if_not_exists( table )
+   IF !insert_semaphore_if_not_exists( table )
+      RETURN .F.
+   ENDIF
 
-   log_write( "START: nuliraj ids-ove - user: " + _user, 7 )
+   // log_write( "START: nuliraj ids-ove - user: " + _user, 7 )
 
    _tbl := "sem." + Lower( table )
    _qry := "UPDATE " + _tbl + " SET " + ;
@@ -554,11 +563,16 @@ FUNCTION nuliraj_ids_and_update_my_semaphore_ver( table )
       " version=last_trans_version" + ;
       " WHERE user_code =" + sql_quote( _user )
 
-   _ret := run_sql_query( _qry )
+   hParams[ "retry" ] := 3
+   _ret := run_sql_query( _qry, hParams )
 
-   log_write( "END: nuliraj ids-ove - user: " + _user, 7 )
+   // log_write( "END: nuliraj ids-ove - user: " + _user, 7 )
+   IF sql_error_in_query( _ret )
+      error_bar( "syn_ids", "ERR IDS sync nuliranje " + table )
+      RETURN .F.
+   ENDIF
 
-   RETURN _ret
+   RETURN .T.
 
 
 /*
@@ -585,6 +599,7 @@ FUNCTION insert_semaphore_if_not_exists( cTable, lIgnoreChk0 )
    LOCAL _qry
    LOCAL _ret
    LOCAL cSqlTbl
+   LOCAL lRet
 
    IF skip_semaphore_sync( cTable )
       RETURN .F.
@@ -605,7 +620,10 @@ FUNCTION insert_semaphore_if_not_exists( cTable, lIgnoreChk0 )
          "VALUES(" + sql_quote( _user )  + ", 0, -1, 'free')"
       _ret := run_sql_query( _qry )
 
-      RETURN !sql_error_in_query( _ret, "INSERT" )
+      IF sql_error_in_query( _ret, "INSERT" )
+         error_bar( "syn_ids", "ERR insert SEM " + cTable )
+         RETURN .F.
+      ENDIF
 
    ENDIF
 
@@ -684,7 +702,6 @@ FUNCTION is_last_refresh_before( cTable, nSeconds )
 
 PROCEDURE thread_dbf_refresh( cTable )
 
-
    IF open_thread( "dbf_refresh: " + cTable, .T. )
       ErrorBlock( {| objError, lShowreport, lQuit | GlobalErrorHandler( objError, lShowReport, lQuit ) } )
       dbf_refresh( cTable )
@@ -747,6 +764,10 @@ FUNCTION dbf_refresh( cTable )
    LOCAL aDbfRec
    LOCAL hVersions
 
+   // IF cTable == "fin_nalog" .OR. cTable == "NALOG"
+   // altd()
+   // ENDIF
+
    IF !we_need_dbf_refresh( @cTable )
       RETURN .F.
    ENDIF
@@ -782,7 +803,7 @@ STATIC FUNCTION dbf_refresh_0( cTable )
    LOCAL cMsg1, cMsg2
    LOCAL nCntSql, nCntDbf, nDeleted
    LOCAL lRet := .T.
-   LOCAL aDbfRec := get_a_dbf_rec( cTable )
+   LOCAL aDbfRec := get_a_dbf_rec( cTable, .T. )
 
    IF is_chk0( aDbfRec[ "table" ] )
 #ifdef F18_DEBUG_SYNC

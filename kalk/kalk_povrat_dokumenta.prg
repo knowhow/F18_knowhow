@@ -77,7 +77,7 @@ FUNCTION kalk_povrat_dokumenta()
    _dok_hash[ "idtipdok" ] := _id_vd
    _dok_hash[ "brdok" ] := _br_dok
 
-   oAtrib := F18_DOK_ATRIB():new( "kalk", F_KALK_ATRIB )
+   oAtrib := DokAtributi():new( "kalk", F_KALK_ATRIB )
    oAtrib:dok_hash := _dok_hash
    oAtrib:atrib_server_to_dbf()
 
@@ -314,7 +314,7 @@ STATIC FUNCTION kalk_povrat_prema_kriteriju()
             _dok_hash[ "idtipdok" ] := __idvd
             _dok_hash[ "brdok" ] := __brdok
 
-            oAtrib := F18_DOK_ATRIB():new( "kalk", F_KALK_ATRIB )
+            oAtrib := DokAtributi():new( "kalk", F_KALK_ATRIB )
             oAtrib:dok_hash := _dok_hash
             oAtrib:atrib_server_to_dbf()
 
@@ -367,7 +367,7 @@ STATIC FUNCTION kalk_povrat_prema_kriteriju()
          _dok_hash[ "idtipdok" ] := _id_vd
          _dok_hash[ "brdok" ] := _br_dok
 
-         oAtrib := F18_DOK_ATRIB():new( "kalk", F_KALK_ATRIB )
+         oAtrib := DokAtributi():new( "kalk", F_KALK_ATRIB )
          oAtrib:dok_hash := _dok_hash
 
          lOk := oAtrib:delete_atrib_from_server()

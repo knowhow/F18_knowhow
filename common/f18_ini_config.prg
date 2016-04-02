@@ -17,7 +17,8 @@ FUNCTION f18_ini_config_read( sect, ini, global )
    ENDIF
 
    IF !File( ini_file )
-      log_write( "Ne postoji ini fajl " + ini_file )
+      error_bar( "tab", "Ne postoji ini fajl: " + ini_file )
+      RETURN .F.
    ELSE
       ini_read := hb_iniRead( ini_file )
    ENDIF

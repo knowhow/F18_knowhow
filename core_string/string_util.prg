@@ -12,7 +12,7 @@
 #include "f18.ch"
 
 FUNCTION _l( cString )
-    RETURN cString
+   RETURN cString
 
 
 // --------------------------------------------------
@@ -68,17 +68,6 @@ FUNCTION ToStr( xVal )
       RETURN "_?_"
    ENDCASE
 
-   // ----------------------------
-   // view UTF-8 string na ekranu
-   // ----------------------------
-
-FUNCTION ToStrU( val )
-
-   RETURN hb_UTF8ToStr( ToStr( val ) )
-
-
-// --------------------------------
-// --------------------------------
 FUNCTION SjeciStr( cStr, nLen, aRez )
 
    IF aRez == nil
@@ -210,8 +199,7 @@ FUNCTION Crypt2( cStr, cModul )
 
 
 
-// ---------------------------
-// ---------------------------
+
 FUNCTION Razrijedi ( cStr )
 
    LOCAL cRazrStr, nLenM1, nCnt
@@ -291,11 +279,11 @@ FUNCTION ParsMemo( cTxt )
 
 FUNCTION StrLinija( cTxt2 )
 
-   LOCAL nTxt2
+   LOCAL nTxt2, nI
 
    nLTxt2 := 1
-   FOR i := 1 TO Len( cTxt2 )
-      IF SubStr( cTxt2, i, 1 ) = Chr( 13 )
+   FOR nI := 1 TO Len( cTxt2 )
+      IF SubStr( cTxt2, nI, 1 ) = Chr( 13 )
          ++nLTxt2
       ENDIF
    NEXT
@@ -312,18 +300,16 @@ FUNCTION StrLinija( cTxt2 )
 FUNCTION TokToNiz( cTok, cSE )
 
    LOCAL aNiz := {}
-   LOCAL nE := 0
-   LOCAL i := 0
+   LOCAL nI := 0
    LOCAL cE := ""
 
    IF cSE == NIL
       cSE := "."
    ENDIF
 
-   nE := NUMTOKEN( cTok, cSE )
 
-   FOR i := 1 TO nE
-      cE := TOKEN( cTok, cSE, i )
+   FOR nI := 1 TO NUMTOKEN( cTok, cSE )
+      cE := TOKEN( cTok, cSE, nI )
       AAdd( aNiz, cE )
    NEXT
 
@@ -417,14 +403,14 @@ FUNCTION Slovima( nIzn, cDinDem )
 
 
 
-/*! \fn Stotice(nIzn, cRez, fDecimale, fMnozina, cDinDem)
- *  \brief Formatira tekst ako iznos prelazi 100
- *  \param nIzn       - iznos
- *  \param cRez
- *  \param fdecimale
- *  \param fMnozina
- *  \param cDinDem
- *  \return cRez
+/*! fn Stotice(nIzn, cRez, fDecimale, fMnozina, cDinDem)
+ *  brief Formatira tekst ako iznos prelazi 100
+ *  param nIzn       - iznos
+ *  param cRez
+ *  param fdecimale
+ *  param fMnozina
+ *  param cDinDem
+ *  return cRez
  */
 
 STATIC FUNCTION Stotice( nIzn, cRez, fDecimale, fMnozina, cDinDem )
@@ -497,14 +483,15 @@ STATIC FUNCTION Stotice( nIzn, cRez, fDecimale, fMnozina, cDinDem )
    RETURN cRez
 
 
-/*! \fn CreateHashString(aColl)
- *  \brief Kreira hash string na osnovu podataka iz matrice aColl
- *  \brief primjer: aColl[1] = "podatak1"
+/*! fn CreateHashString(aColl)
+ *  brief Kreira hash string na osnovu podataka iz matrice aColl
+ *  brief primjer: aColl[1] = "podatak1"
               aColl[2] = "podatak2"
       CreateHashString(aColl) => "podatak1#podatak2"
- *  \param aColl - matrica sa podacima
- *  \return cHStr - hash string
+ *  param aColl - matrica sa podacima
+ *  return cHStr - hash string
  */
+
 FUNCTION CreateHashString( aColl )
 
    cHStr := ""
@@ -573,7 +560,7 @@ FUNCTION StrToArray( cStr, nLen )
 
 
 
-/*! \fn FlushMemo(aMemo)
+/*!  FlushMemo(aMemo)
  *  \brief Vraca vrijednost memo niza u string
  */
 FUNCTION FlushMemo( aMemo )
@@ -592,8 +579,6 @@ FUNCTION FlushMemo( aMemo )
 
 
 
-// -------------------------------------
-// -------------------------------------
 FUNCTION show_number( nNumber, cPicture, nExtra )
 
    LOCAL nDec
@@ -648,8 +633,8 @@ FUNCTION show_number( nNumber, cPicture, nExtra )
 
    RETURN Replicate( "*", nLen )
 
-// ---------------------------------
-// ---------------------------------
+
+
 STATIC FUNCTION kolko_decimala( nNumber )
 
    LOCAL nDec
@@ -705,8 +690,7 @@ FUNCTION NovaSifra( cSifra )
    RETURN cSifra
 
 
-// -------------------------------------
-// -------------------------------------
+
 STATIC FUNCTION novi_znak_extended( cChar )
 
    IF cChar == "9"
@@ -733,7 +717,6 @@ STATIC FUNCTION novi_znak_extended( cChar )
       RETURN Chr( Asc( cChar ) + 1 )
    ENDIF
 
-
 FUNCTION _to_utf8( str )
    RETURN hb_StrToUTF8( str )
 
@@ -744,12 +727,17 @@ FUNCTION _to_str( str )
 
 
 FUNCTION _u( cStr )
-      RETURN hb_UTF8ToStr( cStr )
+   RETURN hb_UTF8ToStr( cStr )
 
+
+
+FUNCTION ToStrU( val )
+
+   RETURN hb_UTF8ToStr( ToStr( val ) )
 
 FUNCTION _upadr( cUtf, nNum )
 
-         RETURN hb_StrToUTF8( PadR( hb_UTF8ToStr( cUtf ), nNum ) )
+   RETURN hb_StrToUTF8( PadR( hb_UTF8ToStr( cUtf ), nNum ) )
 
 
 FUNCTION num_to_str( num, len, dec )

@@ -215,13 +215,13 @@ STATIC FUNCTION header_footer()
    cHeader += "operater: "
    cHeader += PadR( AllTrim( f18_user() ), 30 )
 
-   @ m_x, m_y + 2 SAY cHeader
+   @ m_x, m_y + 2 SAY8 cHeader
 
    @ m_x + 6, m_y + 1 SAY Replicate( BROWSE_PODVUCI_2, __dok_y + 1 ) COLOR cLineClr
 
    @ m_x + __dok_x - 1, m_y + 1 SAY Replicate( BROWSE_PODVUCI, __dok_y + 1 ) COLOR cLineClr
 
-   @ m_x + __dok_x, m_y + 1 SAY cFooter
+   @ m_x + __dok_x, m_y + 1 SAY8 cFooter
 
    FOR i := 7 to ( __dok_x - 2 )
       @ m_x + i, m_y + ( __dok_x * 2 ) SAY BROWSE_COL_SEP COLOR cLineClr
@@ -229,7 +229,7 @@ STATIC FUNCTION header_footer()
 
    SELECT ( nTArea )
 
-   RETURN
+   RETURN .T.
 
 
 

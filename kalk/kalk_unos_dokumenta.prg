@@ -162,10 +162,6 @@ FUNCTION kalk_unos_stavki_dokumenta( lAObrada )
    RETURN .T.
 
 
-FUNCTION _upadr( cUtf, nNum )
-
-   RETURN hb_StrToUTF8( PadR( hb_UTF8ToStr( cUtf ), nNum ) )
-
 
 
 FUNCTION o_kalk_edit()

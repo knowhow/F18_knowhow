@@ -11,6 +11,8 @@
 
 #include "f18.ch"
 
+MEMVAR m_x, m_y
+
 STATIC __fiscal_marker := .F.
 STATIC __id_firma
 STATIC __tip_dok
@@ -23,6 +25,7 @@ STATIC __redni_broj
 FUNCTION fakt_unos_dokumenta()
 
    LOCAL _i, _x_pos, _y_pos, _x, _y
+   LOCAL _opt_d, _opt_row
    LOCAL _sep := BROWSE_COL_SEP
    PRIVATE ImeKol, Kol
 
@@ -82,33 +85,33 @@ FUNCTION fakt_unos_dokumenta()
 
    _opt_d := ( _y / 4 )
 
-   _opt_row := PadR( _ue( "<c+N> Nova stavka" ), _opt_d ) + _sep
-   _opt_row += PadR( _ue( "<ENT> Ispravka" ), _opt_d ) + _sep
-   _opt_row += PadR( _ue( "<c+T> Briši stavku" ), _opt_d ) + _sep
+   _opt_row := _upadr(  "<c+N> Nova stavka" , _opt_d ) + _sep
+   _opt_row += _upadr( "<ENT> Ispravka" , _opt_d ) + _sep
+   _opt_row += _upadr( "<c+T> Briši stavku" , _opt_d ) + _sep
 
-   @ m_x + _x - 4, m_y + 2 SAY _opt_row
+   @ m_x + _x - 4, m_y + 2 SAY8 _opt_row
 
-   _opt_row := PadR( "<c+A> Ispravka dok.", _opt_d ) + _sep
-   _opt_row += PadR( hb_UTF8ToStr( "<c+P> Štampa (txt)" ), _opt_d ) + _sep
-   _opt_row += PadR( "<A> Asistent", _opt_d ) + _sep
+   _opt_row := _upadr( "<c+A> Ispravka dok.", _opt_d ) + _sep
+   _opt_row += _upadr( "<c+P> Štampa (txt)" , _opt_d ) + _sep
+   _opt_row += _upadr( "<A> Asistent", _opt_d ) + _sep
 
-   @ m_x + _x - 3, m_y + 2 SAY _opt_row
+   @ m_x + _x - 3, m_y + 2 SAY8 _opt_row
 
-   _opt_row := PadR( hb_UTF8ToStr( "<a+A> Ažuriranje" ), _opt_d ) + _sep
-   _opt_row += PadR( hb_UTF8ToStr( "<c+F9> Briši sve" ), _opt_d ) + _sep
-   _opt_row += PadR( "<F5> Kontrola zbira", _opt_d ) + _sep
+   _opt_row := _upadr( "<a+A> Ažuriranje" , _opt_d ) + _sep
+   _opt_row += _upadr( "<c+F9> Briši sve" , _opt_d ) + _sep
+   _opt_row += _upadr( "<F5> Kontrola zbira", _opt_d ) + _sep
    _opt_row += "<T> total dokumenta"
 
-   @ m_x + _x - 2, m_y + 2 SAY _opt_row
+   @ m_x + _x - 2, m_y + 2 SAY8 _opt_row
 
-   _opt_row := PadR( "", _opt_d ) + _sep
-   _opt_row += PadR( "", _opt_d ) + _sep
-   _opt_row += PadR( "<F10> Ostale opcije", _opt_d ) + _sep
+   _opt_row := _upadr( "", _opt_d ) + _sep
+   _opt_row += _upadr( "", _opt_d ) + _sep
+   _opt_row += _upadr( "<F10> Ostale opcije", _opt_d ) + _sep
    _opt_row += "<O> Konverzije"
 
-   @ m_x + _x - 1, m_y + 2 SAY _opt_row
+   @ m_x + _x - 1, m_y + 2 SAY8 _opt_row
 
-   my_db_edit( "PNal", _x, _y, {|| fakt_pripr_keyhandler() }, "", "Priprema...", , , , , 4 )
+   my_db_edit( "PNal", _x, _y, {|| fakt_pripr_keyhandler() }, "", "FAKT Priprema...", , , , , 4 )
 
    BoxC()
 

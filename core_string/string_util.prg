@@ -14,7 +14,7 @@
 FUNCTION _l( cString )
     RETURN cString
 
-    
+
 // --------------------------------------------------
 // funkcija za formatiranje stringa za filter
 // mjenja staru funkciju dbf_quote()
@@ -745,6 +745,11 @@ FUNCTION _to_str( str )
 
 FUNCTION _u( cStr )
       RETURN hb_UTF8ToStr( cStr )
+
+
+FUNCTION _upadr( cUtf, nNum )
+
+         RETURN hb_StrToUTF8( PadR( hb_UTF8ToStr( cUtf ), nNum ) )
 
 
 FUNCTION num_to_str( num, len, dec )

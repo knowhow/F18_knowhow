@@ -20,7 +20,7 @@ core_sql/*.prg
 core_dbf/*.prg
 core_pdf/*.prg
 core_reporting/*.prg
-string/*.prg
+core_string/*.prg
 semafori/*.prg
 common_legacy/*.prg
 fiskalizacija/*.prg

@@ -45,7 +45,7 @@ FUNCTION lock_semaphore( table, status, lUnlockTable )
    ENDIF
 
    // status se moze mijenjati samo ako neko drugi nije lock-ovao tabelu
-   //log_write( "table: " + table + ", status:" + status + " START", 8 )
+   // log_write( "table: " + table + ", status:" + status + " START", 8 )
 
    _i := 0
    DO WHILE .T.
@@ -100,10 +100,10 @@ FUNCTION lock_semaphore( table, status, lUnlockTable )
 
    _ret := run_sql_query( _qry )
 
-   //log_write( "table: " + table + ", status:" + status + " - END", 7 )
+   // log_write( "table: " + table + ", status:" + status + " - END", 7 )
 
    IF sql_error_in_query( _ret, "UPDATE" )
-      //log_write( "qry error: " + _qry + " : " + _ret:ErrorMsg(), 2 )
+      // log_write( "qry error: " + _qry + " : " + _ret:ErrorMsg(), 2 )
       RETURN .F.
    ENDIF
 
@@ -530,11 +530,11 @@ FUNCTION update_semaphore_version_after_push( table, to_myself )
    _qry += "UPDATE " + _tbl + " SET version=" + cVerUser + " WHERE version > " + cVerUser + ";"
    oQry := run_sql_query( _qry )
    IF sql_error_in_query( oQry, "UPDATE" )
-      error_bar( "syn_ids", "update sem after push " + table)
+      error_bar( "syn_ids", "update sem after push " + table )
       RETURN .F.
    ENDIF
 
-   //log_write( "END: update semaphore version after push user: " + _user + ", tabela: " + _tbl + ", last_ver=" + Str( _ver_user ), 7 )
+   // log_write( "END: update semaphore version after push user: " + _user + ", tabela: " + _tbl + ", last_ver=" + Str( _ver_user ), 7 )
 
    RETURN .T.
 
@@ -762,7 +762,6 @@ FUNCTION we_need_dbf_refresh( cTable )
 FUNCTION dbf_refresh( cTable )
 
    LOCAL aDbfRec
-   LOCAL hVersions
 
    // IF cTable == "fin_nalog" .OR. cTable == "NALOG"
    // altd()
@@ -776,7 +775,21 @@ FUNCTION dbf_refresh( cTable )
 
    ?E "going to refresh: " + cTable
 
+   dbf_refresh_ids_or_full( cTable )
    dbf_refresh_0( cTable )
+   dbf_refresh_ids_or_full( cTable )
+
+
+
+   set_last_refresh( cTable )
+   in_dbf_refresh( cTable, .F. )
+
+   RETURN .T.
+
+
+STATIC FUNCTION dbf_refresh_ids_or_full( cTable )
+
+   LOCAL hVersions
 
    PushWA()
    hVersions := get_semaphore_version_h( cTable )
@@ -790,13 +803,7 @@ FUNCTION dbf_refresh( cTable )
    ENDIF
    PopWa()
 
-   set_last_refresh( cTable )
-   in_dbf_refresh( cTable, .F. )
-
    RETURN .T.
-
-
-
 
 STATIC FUNCTION dbf_refresh_0( cTable )
 

@@ -171,8 +171,8 @@ FUNCTION push_ids_to_semaphore( table, aIds, lToMySelf )
 
    // log_write( "END push_ids_to_semaphore", 9 )
 
-   // na kraju uradi update verzije semafora, push operacija
-   IF !update_semaphore_version_after_push( table, lToMySelf )
+
+   IF !update_semaphore_version_after_push( table, lToMySelf ) // na kraju uraditi update verzije semafora, push operacija
       error_bar( "syn_ids", "push_ids: " + table )
       RETURN .F.
    ENDIF

@@ -602,7 +602,7 @@ FUNCTION insert_semaphore_if_not_exists( cTable, lIgnoreChk0 )
    LOCAL lRet
 
    IF skip_semaphore_sync( cTable )
-      RETURN .F.
+      RETURN .T.
    ENDIF
 
    hb_default( @lIgnoreChk0, .F. )
@@ -610,7 +610,7 @@ FUNCTION insert_semaphore_if_not_exists( cTable, lIgnoreChk0 )
    cSqlTbl := "sem." + Lower( cTable )
 
    IF !lIgnoreChk0 .AND. is_chk0( cTable )
-      RETURN .F.
+      RETURN .T.
    ENDIF
 
    nCnt := table_count( cSqlTbl, "user_code=" + sql_quote( _user ) )

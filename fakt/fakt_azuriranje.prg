@@ -104,9 +104,7 @@ FUNCTION azur_fakt( lSilent )
 
    SELECT fakt_pripr
    my_dbf_zap()
-
    DokAtributi():new( "fakt", F_FAKT_ATRIB ):zapp_local_table()
-
    MsgC()
 
    my_close_all_dbf()
@@ -162,7 +160,7 @@ STATIC FUNCTION fakt_azur_sql( id_firma, id_tip_dok, br_dok )
       RETURN .F.
    ENDIF
 
-altd()
+   AltD()
    run_sql_query( "BEGIN" )
 
    IF !f18_lock_tables( { "fakt_fakt", "fakt_doks", "fakt_doks2" }, .T. )
@@ -210,7 +208,7 @@ altd()
       ENDIF
    ENDIF
 
-altd()
+   AltD()
    IF _ok == .T.
       @ m_x + 4, m_y + 2 SAY "fakt_atributi -> server "
       oAtrib := DokAtributi():New( "fakt", F_FAKT_ATRIB )
@@ -664,7 +662,7 @@ FUNCTION fakt_brisanje_pripreme()
       oAtrib:dok_hash[ "brdok" ] := _br_dok
 
       IF gcF9usmece == "D"
-         oAtrib:delete_atrib()
+         oAtrib:delete_atrib_from_dbf()
          azuriraj_smece( .T. )
          log_write( "F18_DOK_OPER: fakt, prenosa dokumenta iz pripreme u smece: " + _id_firma + "-" + _tip_dok + "-" + _br_dok, 2 )
          SELECT fakt_pripr

@@ -2062,7 +2062,7 @@ FUNCTION fakt_brisi_stavku_pripreme()
    oAtrib:dok_hash[ "brdok" ] := _br_dok
    oAtrib:dok_hash[ "rbr" ] := _r_br
    oAtrib:dok_hash[ "update_rbr" ] := _update_rbr
-   oAtrib:delete_atrib()
+   oAtrib:delete_atrib_from_dbf()
 
    IF _update_rbr <> NIL
       oAtrib:update_atrib_rbr()

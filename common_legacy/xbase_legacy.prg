@@ -286,7 +286,6 @@ FUNCTION PrazanDbf()
 
 
 
-
 FUNCTION seek2( cArg )
 
    dbSeek( cArg )
@@ -340,7 +339,7 @@ FUNCTION zapp( pack )
    END SEQUENCE
 
    RETURN .T.
-   
+
 
 
 FUNCTION nErr( oe )

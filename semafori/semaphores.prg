@@ -45,10 +45,10 @@ FUNCTION lock_semaphore( table, status, lUnlockTable )
    ENDIF
 
    // status se moze mijenjati samo ako neko drugi nije lock-ovao tabelu
-   log_write( "table: " + table + ", status:" + status + " START", 8 )
+   //log_write( "table: " + table + ", status:" + status + " START", 8 )
 
    _i := 0
-   WHILE .T.
+   DO WHILE .T.
 
       _i++
 
@@ -100,11 +100,11 @@ FUNCTION lock_semaphore( table, status, lUnlockTable )
 
    _ret := run_sql_query( _qry )
 
-   log_write( "table: " + table + ", status:" + status + " - END", 7 )
+   //log_write( "table: " + table + ", status:" + status + " - END", 7 )
 
-   IF !sql_error_in_query( _ret, "UPDATE" )
-      log_write( "qry error: " + _qry + " : " + _ret:ErrorMsg(), 2 )
-      RaiseError( _qry )
+   IF sql_error_in_query( _ret, "UPDATE" )
+      //log_write( "qry error: " + _qry + " : " + _ret:ErrorMsg(), 2 )
+      RETURN .F.
    ENDIF
 
    RETURN .T.
@@ -567,7 +567,7 @@ FUNCTION nuliraj_ids_and_update_my_semaphore_ver( table )
    _ret := run_sql_query( _qry, hParams )
 
    // log_write( "END: nuliraj ids-ove - user: " + _user, 7 )
-   IF sql_error_in_query( _ret )
+   IF sql_error_in_query( _ret, "UPDATE" )
       error_bar( "syn_ids", "ERR IDS sync nuliranje " + table )
       RETURN .F.
    ENDIF

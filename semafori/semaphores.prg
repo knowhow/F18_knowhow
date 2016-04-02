@@ -496,7 +496,7 @@ FUNCTION update_semaphore_version_after_push( table, to_myself )
    ENDIF
 
    IF skip_semaphore_sync( table )
-      RETURN .F.
+      RETURN .T.
    ENDIF
 
    // log_write( "START: update semaphore version after push", 7 )
@@ -534,7 +534,7 @@ FUNCTION update_semaphore_version_after_push( table, to_myself )
       RETURN .F.
    ENDIF
 
-   log_write( "END: update semaphore version after push user: " + _user + ", tabela: " + _tbl + ", last_ver=" + Str( _ver_user ), 7 )
+   //log_write( "END: update semaphore version after push user: " + _user + ", tabela: " + _tbl + ", last_ver=" + Str( _ver_user ), 7 )
 
    RETURN .T.
 

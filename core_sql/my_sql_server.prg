@@ -288,6 +288,7 @@ FUNCTION f18_login_loop( lAutoConnect, arg_v )
       ELSE
          IF oLogin:lOrganizacijaSpojena
             show_sacekaj()
+            oLogin:disconnect( 0 )
             program_module_menu( arg_v )
             oLogin:disconnect( 1 )
          ENDIF

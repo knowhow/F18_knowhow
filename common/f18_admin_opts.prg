@@ -1098,9 +1098,7 @@ METHOD F18AdminOpts:drop_pg_db( db_name )
 
    cQry := "DROP DATABASE IF EXISTS " + db_name + ";"
 
-   error_bar( "sql", "DROP db: " + db_name )
    oQry := postgres_sql_query( cQry )
-
 
    IF sql_error_in_query( oQry, "DROP", sql_postgres_conn() )
       error_bar( "drop_db", "drop db: " + db_name )

@@ -106,7 +106,7 @@ FUNCTION push_ids_to_semaphore( table, aIds, lToMySelf )
    ENDIF
 
    IF Len( aIds ) < 1
-      RETURN .F.
+      RETURN .T.
    ENDIF
 
    // stavi semafor i samom sebi
@@ -124,7 +124,7 @@ FUNCTION push_ids_to_semaphore( table, aIds, lToMySelf )
 
    IF _result < 1
       // jedan korisnik
-      log_write( "push_ids_to_semaphore: samo je jedan korisnik, nista nije pushirano", 9 )
+      //log_write( "push_ids_to_semaphore: samo je jedan korisnik, nista nije pushirano", 9 )
       RETURN .T.
    ENDIF
 

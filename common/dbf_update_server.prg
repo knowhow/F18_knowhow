@@ -53,7 +53,7 @@ FUNCTION update_rec_server_and_dbf( table, values, algoritam, transaction, lock 
       QUIT_1
    ENDIF
 
-   log_write( "START: update_rec_server_and_dbf " + table, 9 )
+   //log_write( "START: update_rec_server_and_dbf " + table, 9 )
 
    _values_dbf := dbf_get_rec()
 
@@ -61,7 +61,7 @@ FUNCTION update_rec_server_and_dbf( table, values, algoritam, transaction, lock 
    set_table_values_algoritam_vars( @table, @_values_dbf, @algoritam, @transaction, @_a_dbf_rec, @_alg, @_where_str_dbf, @_alg_tag )
 
    IF transaction $ "FULL#BEGIN"
-      sql_table_update( table, "BEGIN" )
+      run_sql_query( "BEGIN" )
    ENDIF
 
    IF lock
@@ -72,7 +72,7 @@ FUNCTION update_rec_server_and_dbf( table, values, algoritam, transaction, lock 
    IF !sql_table_update( table, "del", nil, _where_str )
 
       IF transaction == "FULL"
-         sql_table_update( table, "ROLLBACK" )
+         run_sql_query( "ROLLBACK" )
       ENDIF
 
       _msg := "ERROR: sql delete " + table +  " , ROLLBACK, where: " + _where_str
@@ -103,8 +103,8 @@ FUNCTION update_rec_server_and_dbf( table, values, algoritam, transaction, lock 
          ENDIF
 
          _msg := "ERROR: sql delete " + table +  " , ROLLBACK, where: " + _where_str_dbf
-         log_write( _msg, 1 )
-         Alert( _msg )
+         ?E _msg
+         error_bar( "sql_table", _msg )
 
          IF lock
             lock_semaphore( table, "free" )
@@ -146,12 +146,12 @@ FUNCTION update_rec_server_and_dbf( table, values, algoritam, transaction, lock 
    IF !push_ids_to_semaphore( table, _ids )
 
       IF transaction == "FULL"
-         sql_table_update( table, "ROLLBACK" )
+         run_sql_query( "ROLLBACK" )
       ENDIF
 
-      _msg := "ERR " + RECI_GDJE_SAM0 + "push_ids_to_semaphore " + table + "/ ids=" + _alg_tag + _ids  + " ! ROLLBACK"
-      log_write( _msg, 1 )
-      Alert( _msg )
+      ?E "ERR ", RECI_GDJE_SAM0, + "push_ids_to_semaphore " + table + "/ ids=", _alg_tag , _ids, " ! ROLLBACK"
+      //log_write( _msg, 1 )
+      //Alert( _msg )
 
       _ret := .F.
 
@@ -162,7 +162,7 @@ FUNCTION update_rec_server_and_dbf( table, values, algoritam, transaction, lock 
       IF dbf_update_rec( values )
 
          IF transaction $ "FULL#END"
-            sql_table_update( table, "END" )
+            run_sql_query( "COMMIT" )
          ENDIF
 
          _ret := .T.
@@ -170,7 +170,7 @@ FUNCTION update_rec_server_and_dbf( table, values, algoritam, transaction, lock 
       ELSE
 
          IF transaction == "FULL"
-            sql_table_update( table, "ROLLBACK" )
+            run_sql_query( "ROLLBACK" )
          ENDIF
 
          _msg := "ERR: " + RECI_GDJE_SAM0 + "dbf_update_rec " + table +  " ! ROLLBACK"

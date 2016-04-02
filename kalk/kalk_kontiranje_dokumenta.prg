@@ -737,11 +737,11 @@ STATIC FUNCTION __val_nalog( cNalog )
 
 
 
-/*! \fn Konto(nBroj,cDef,cTekst)
- *  \param nBroj - koju varijablu punimo (1-ckonto1,2-ckonto2,3-ckonto3)
- *  \param cDef - default tj.ponudjeni tekst
- *  \param cTekst - opis podatka koji se unosi
- *  \brief Edit proizvoljnog teksta u varijablu ckonto1,ckonto2 ili ckonto3 ukoliko je izabrana varijabla duzine 0 tj.nije joj vec dodijeljena vrijednost
+/* Konto(nBroj,cDef,cTekst)
+ *   param: nBroj - koju varijablu punimo (1-ckonto1,2-ckonto2,3-ckonto3)
+ *   param: cDef - default tj.ponudjeni tekst
+ *   param: cTekst - opis podatka koji se unosi
+ *     Edit proizvoljnog teksta u varijablu ckonto1,ckonto2 ili ckonto3 ukoliko je izabrana varijabla duzine 0 tj.nije joj vec dodijeljena vrijednost
  *  \return 0
  */
 
@@ -805,11 +805,11 @@ FUNCTION SetKonto( nBroj, lValue, cTrue, cFalse )
 
 
 
-/*! \fn RJ(nBroj,cDef,cTekst)
- *  \param nBroj - koju varijablu punimo (1-cRj1,2-cRj2)
- *  \param cDef - default tj.ponudjeni tekst
- *  \param cTekst - opis podatka koji se unosi
- *  \brief Edit proizvoljnog teksta u varijablu cRj1 ili cRj2 ukoliko je izabrana varijabla duzine 0 tj.nije joj vec dodijeljena vrijednost
+/* RJ(nBroj,cDef,cTekst)
+ *   param: nBroj - koju varijablu punimo (1-cRj1,2-cRj2)
+ *   param: cDef - default tj.ponudjeni tekst
+ *   param: cTekst - opis podatka koji se unosi
+ *     Edit proizvoljnog teksta u varijablu cRj1 ili cRj2 ukoliko je izabrana varijabla duzine 0 tj.nije joj vec dodijeljena vrijednost
  *  \return 0
  */
 
@@ -840,8 +840,8 @@ FUNCTION RJ( nBroj, cDef, cTekst )
 
 
 
-/*! \fn DatVal()
- *  \brief Odredjivanje datuma valute - varijabla dDatVal
+/* DatVal()
+ *     Odredjivanje datuma valute - varijabla dDatVal
  */
 
 FUNCTION DatVal()
@@ -925,13 +925,13 @@ FUNCTION DatVal()
 
 
 
-/*! \fn Partner(nBroj,cDef,cTekst,lFaktura,dp)
- *  \param nBroj - 1 znaci da se sifrom partnera puni varijabla cPartner1
- *  \param cDef - default tj.ponudjeni tekst
- *  \param cTekst - opis podatka koji se unosi u varijablu cPartner1
- *  \param lFaktura - .t. i ako je npr.nBroj==1 filuju se i varijable cBrFakt1 i dDatFakt1 koje cuvaju broj i datum fakture, .f. - ne edituju se ove varijable sto je i default vrijednost
- *  \param dp - duzina sifre partnera, ako se ne navede default vrijednost=6
- *  \brief Edit sifre partnera u varijablu cPartner1...ili...cPartner5 ukoliko je izabrana varijabla duzine 0 tj.nije joj vec dodijeljena vrijednost
+/* Partner(nBroj,cDef,cTekst,lFaktura,dp)
+ *   param: nBroj - 1 znaci da se sifrom partnera puni varijabla cPartner1
+ *   param: cDef - default tj.ponudjeni tekst
+ *   param: cTekst - opis podatka koji se unosi u varijablu cPartner1
+ *   param: lFaktura - .t. i ako je npr.nBroj==1 filuju se i varijable cBrFakt1 i dDatFakt1 koje cuvaju broj i datum fakture, .f. - ne edituju se ove varijable sto je i default vrijednost
+ *   param: dp - duzina sifre partnera, ako se ne navede default vrijednost=6
+ *     Edit sifre partnera u varijablu cPartner1...ili...cPartner5 ukoliko je izabrana varijabla duzine 0 tj.nije joj vec dodijeljena vrijednost
  *  \return 0
  */
 
@@ -1044,8 +1044,8 @@ FUNCTION kalk_set_doks_total_fields( nNv, nVpv, nMpv, nRabat )
 
 
 
-/*! \fn IspitajRezim()
- *  \brief Ako se radi o privremenom rezimu obrade KALK dokumenata setuju se vrijednosti parametara gCijene i gMetodaNC na vrijednosti u dvoclanom nizu aRezim
+/* IspitajRezim()
+ *     Ako se radi o privremenom rezimu obrade KALK dokumenata setuju se vrijednosti parametara gCijene i gMetodaNC na vrijednosti u dvoclanom nizu aRezim
  */
 
 FUNCTION IspitajRezim()
@@ -1061,9 +1061,9 @@ FUNCTION IspitajRezim()
 
 
 
-/*! \fn RekapK()
- *  \param fstara - .f. znaci poziv iz tabele pripreme, .t. radi se o azuriranoj kalkulaciji pa se prvo getuje broj dokumenta (cIdFirma,cIdVD,cBrdok)
- *  \brief Pravi rekapitulaciju kalkulacija a ako je ulazni parametar fstara==.t. poziva se i kontiranje dokumenta
+/* RekapK()
+ *   param: fstara - .f. znaci poziv iz tabele pripreme, .t. radi se o azuriranoj kalkulaciji pa se prvo getuje broj dokumenta (cIdFirma,cIdVD,cBrdok)
+ *     Pravi rekapitulaciju kalkulacija a ako je ulazni parametar fstara==.t. poziva se i kontiranje dokumenta
  */
 
 FUNCTION RekapK()

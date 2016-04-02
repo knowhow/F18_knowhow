@@ -188,9 +188,9 @@ FUNCTION UkZaduz()
    RETURN nVrati
 
 
-/*! \fn UkUplata(lPushWA)
- *  \brief Ukupno uplata
- *  \param lPushWA - .t.-skeniraj pa vrati stanje baze uplata, .f.-ne radi to
+/* UkUplata(lPushWA)
+ *     Ukupno uplata
+ *   param: lPushWA - .t.-skeniraj pa vrati stanje baze uplata, .f.-ne radi to
  */
 
 FUNCTION UkUplata( lPushWA )
@@ -226,9 +226,9 @@ FUNCTION UkUplata( lPushWA )
    RETURN nVrati
 
 
-/*! \fn SkipDBBK(nRequest)
- *  \brief
- *  \param nRequest
+/* SkipDBBK(nRequest)
+ *    
+ *   param: nRequest
  */
 
 STATIC FUNCTION SkipDBBK( nRequest )
@@ -272,8 +272,8 @@ STATIC FUNCTION SkipDBBK( nRequest )
    RETURN ( nCount )
 
 
-/*! \fn StKartKup()
- *  \brief Stanje na kartici kupca
+/* StKartKup()
+ *     Stanje na kartici kupca
  */
 
 STATIC FUNCTION StKartKup()

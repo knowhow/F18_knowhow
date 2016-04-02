@@ -18,8 +18,8 @@ STATIC lRamaGlas := .F.
 
 
 
-/*! \fn set_vars_za_specificne_slucajeve()
- *  \brief Setuje globalne varijable za specificne korisnike
+/* set_vars_za_specificne_slucajeve()
+ *     Setuje globalne varijable za specificne korisnike
  */
 
 FUNCTION set_vars_za_specificne_slucajeve()

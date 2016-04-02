@@ -1613,8 +1613,8 @@ STATIC FUNCTION izmjeni_sve_stavke_dokumenta( old_dok, new_dok )
 
 
 
-/*! \fn VpcSaPpp()
- *  \brief Vrsi se preracunavanje veleprodajnih cijena ako je _VPC=0
+/* VpcSaPpp()
+ *     Vrsi se preracunavanje veleprodajnih cijena ako je _VPC=0
  */
 
 FUNCTION VpcSaPpp()
@@ -1634,8 +1634,8 @@ FUNCTION VpcSaPpp()
 
 
 
-/*! \fn RaspTrosk(fSilent)
- *  \brief Rasporedjivanje troskova koji su predvidjeni za raspored. Takodje se koristi za raspored ukupne nabavne vrijednosti na pojedinacne artikle kod npr. unosa pocetnog stanja prodavnice ili magacina
+/* RaspTrosk(fSilent)
+ *     Rasporedjivanje troskova koji su predvidjeni za raspored. Takodje se koristi za raspored ukupne nabavne vrijednosti na pojedinacne artikle kod npr. unosa pocetnog stanja prodavnice ili magacina
  */
 
 FUNCTION RaspTrosk( fSilent )
@@ -1961,8 +1961,8 @@ FUNCTION Savjetnik()
 
 
 
-/*! \fn OpisStavke(lGreska)
- *  \brief Daje informacije o dokumentu i artiklu radi lociranja problema. Koristi je opcija "savjetnik"
+/* OpisStavke(lGreska)
+ *     Daje informacije o dokumentu i artiklu radi lociranja problema. Koristi je opcija "savjetnik"
  *  \sa Savjetnik()
  */
 
@@ -2034,7 +2034,7 @@ STATIC FUNCTION NazProdObj()
 
 
 /*! fn PlusMinusKol()
- *  \brief Mijenja predznak kolicini u svim stavkama u kalk_pripremi
+ *     Mijenja predznak kolicini u svim stavkama u kalk_pripremi
  */
 
 FUNCTION PlusMinusKol()
@@ -2062,8 +2062,8 @@ FUNCTION PlusMinusKol()
 
 
 
-/*! \fn UzmiTarIzSif()
- *  \brief Filuje tarifu u svim stavkama u kalk_pripremi odgovarajucom sifrom tarife iz sifrarnika robe
+/* UzmiTarIzSif()
+ *     Filuje tarifu u svim stavkama u kalk_pripremi odgovarajucom sifrom tarife iz sifrarnika robe
  */
 
 FUNCTION UzmiTarIzSif()
@@ -2090,8 +2090,8 @@ FUNCTION UzmiTarIzSif()
 
 
 
-/*! \fn DiskMPCSAPP()
- *  \brief Formira diskontnu maloprodajnu cijenu u svim stavkama u kalk_pripremi
+/* DiskMPCSAPP()
+ *     Formira diskontnu maloprodajnu cijenu u svim stavkama u kalk_pripremi
  */
 
 FUNCTION DiskMPCSAPP()
@@ -2128,8 +2128,8 @@ FUNCTION DiskMPCSAPP()
 
 
 
-/*! \fn MPCSAPPuSif()
- *  \brief Maloprodajne cijene svih artikala u kalk_pripremi kopira u sifrarnik robe
+/* MPCSAPPuSif()
+ *     Maloprodajne cijene svih artikala u kalk_pripremi kopira u sifrarnik robe
  */
 
 FUNCTION MPCSAPPuSif()
@@ -2156,8 +2156,8 @@ FUNCTION MPCSAPPuSif()
 
 
 
-/*! \fn MPCSAPPiz80uSif()
- *  \brief Maloprodajne cijene svih artikala iz izabranog azuriranog dokumenta tipa 80 kopira u sifrarnik robe
+/* MPCSAPPiz80uSif()
+ *     Maloprodajne cijene svih artikala iz izabranog azuriranog dokumenta tipa 80 kopira u sifrarnik robe
  */
 
 FUNCTION MPCSAPPiz80uSif()

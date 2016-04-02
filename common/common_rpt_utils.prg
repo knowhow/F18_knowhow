@@ -1,9 +1,9 @@
 #include "f18.ch"
 
 
-/*! \fn FormDat1(dUlazni)
- *  \brief formatira datum sa stoljecem (dUlazni)=> cDat
- *  \param dUlazni - ulazni datum
+/* FormDat1(dUlazni)
+ *     formatira datum sa stoljecem (dUlazni)=> cDat
+ *   param: dUlazni - ulazni datum
  */
 
 FUNCTION FormDat1( dUlazni )

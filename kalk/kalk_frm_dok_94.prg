@@ -191,8 +191,8 @@ FUNCTION Get1_94()
 
 
 
-/*! \fn KM94()
- *  \brief Magacinska kartica kao pomoc pri unosu 94-ke
+/* KM94()
+ *     Magacinska kartica kao pomoc pri unosu 94-ke
  */
 
 // koristi se stkalk14   za stampu kalkulacije

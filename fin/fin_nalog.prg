@@ -760,8 +760,8 @@ FUNCTION fin_nalog_zaglavlje( dDatNal )
    RETURN
 
 
-/*! \fn PrenosDNal()
- *  \brief Ispis prenos na sljedecu stranicu
+/* PrenosDNal()
+ *     Ispis prenos na sljedecu stranicu
  */
 
 FUNCTION PrenosDNal()

@@ -62,8 +62,8 @@ FUNCTION storno_kalk_dokument()
 
 
 
-/*! \fn postoji_kalk_dok(cDok)
- *  \brief Ispituje postojanje zadanog dokumenta medju azuriranim
+/* postoji_kalk_dok(cDok)
+ *     Ispituje postojanje zadanog dokumenta medju azuriranim
  */
 
 FUNCTION postoji_kalk_dok( cDok )

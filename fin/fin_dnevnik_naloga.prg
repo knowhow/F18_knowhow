@@ -140,7 +140,7 @@ FUNCTION DnevnikNaloga()
 
 /* NazMjeseca(nMjesec)
  *   Vraca naziv mjeseca za zadati nMjesec (np. 1 => Januar)
- *  \param nMjesec - oznaka mjeseca - integer
+ *   param: nMjesec - oznaka mjeseca - integer
  */
 
 FUNCTION NazMjeseca( nMjesec )

@@ -102,8 +102,8 @@ STATIC FUNCTION aimp_setup()
    RETURN
 
 
-/*! \fn ImpTxtDok()
- *  \brief Import dokumenta
+/* ImpTxtDok()
+ *     Import dokumenta
  */
 FUNCTION ImpTxtDok()
 
@@ -179,8 +179,8 @@ FUNCTION ImpTxtDok()
 
 
 
-/*! \fn GetImpFilter()
- *  \brief Vraca filter za naziv dokumenta u zavisnosti sta je odabrano VP ili MP
+/* GetImpFilter()
+ *     Vraca filter za naziv dokumenta u zavisnosti sta je odabrano VP ili MP
  */
 STATIC FUNCTION GetImpFilter()
 
@@ -210,8 +210,8 @@ STATIC FUNCTION GetImpFilter()
 
 
 
-/*! \fn MnuObrDok()
- *  \brief Obrada dokumenata iz pomocne tabele
+/* MnuObrDok()
+ *     Obrada dokumenata iz pomocne tabele
  */
 STATIC FUNCTION MnuObrDok()
 
@@ -348,9 +348,9 @@ STATIC FUNCTION ImpTxtRoba()
 
 
 
-/*! \fn SetTblDok(aDbf)
- *  \brief Setuj matricu sa poljima tabele dokumenata RACUN
- *  \param aDbf - matrica
+/* SetTblDok(aDbf)
+ *     Setuj matricu sa poljima tabele dokumenata RACUN
+ *   param: aDbf - matrica
  */
 STATIC FUNCTION SetTblDok( aDbf )
 
@@ -376,9 +376,9 @@ STATIC FUNCTION SetTblDok( aDbf )
 
    RETURN
 
-/*! \fn SetTblPartner(aDbf)
- *  \brief Set polja tabele partner
- *  \param aDbf - matrica sa def.polja
+/* SetTblPartner(aDbf)
+ *     Set polja tabele partner
+ *   param: aDbf - matrica sa def.polja
  */
 STATIC FUNCTION SetTblPartner( aDbf )
 
@@ -419,9 +419,9 @@ STATIC FUNCTION SetTblRoba( aDbf )
 
 
 
-/*! \fn SetRuleDok(aRule)
- *  \brief Setovanje pravila upisa zapisa u temp tabelu
- *  \param aRule - matrica pravila
+/* SetRuleDok(aRule)
+ *     Setovanje pravila upisa zapisa u temp tabelu
+ *   param: aRule - matrica pravila
  */
 STATIC FUNCTION SetRuleDok( aRule )
 
@@ -466,9 +466,9 @@ STATIC FUNCTION SetRuleDok( aRule )
 
 
 
-/*! \fn SetRulePartn(aRule)
- *  \brief Setovanje pravila upisa zapisa u temp tabelu
- *  \param aRule - matrica pravila
+/* SetRulePartn(aRule)
+ *     Setovanje pravila upisa zapisa u temp tabelu
+ *   param: aRule - matrica pravila
  */
 STATIC FUNCTION SetRulePartn( aRule )
 
@@ -529,9 +529,9 @@ STATIC FUNCTION SetRuleRoba( aRule )
 
 
 
-/*! \fn GetExpPath(cPath)
- *  \brief Vraca podesenje putanje do exportovanih fajlova
- *  \param cPath - putanja, zadaje se sa argumentom @ kao priv.varijabla
+/* GetExpPath(cPath)
+ *     Vraca podesenje putanje do exportovanih fajlova
+ *   param: cPath - putanja, zadaje se sa argumentom @ kao priv.varijabla
  */
 STATIC FUNCTION GetExpPath( cPath )
 
@@ -545,11 +545,11 @@ STATIC FUNCTION GetExpPath( cPath )
 
 
 
-/*! \fn Txt2TTbl(aDbf, aRules, cTxtFile)
- *  \brief Kreiranje temp tabele, te prenos zapisa iz text fajla "cTextFile" u tabelu putem aRules pravila
- *  \param aDbf - struktura tabele
- *  \param aRules - pravila upisivanja jednog zapisa u tabelu, princip uzimanja zapisa iz linije text fajla
- *  \param cTxtFile - txt fajl za import
+/* Txt2TTbl(aDbf, aRules, cTxtFile)
+ *     Kreiranje temp tabele, te prenos zapisa iz text fajla "cTextFile" u tabelu putem aRules pravila
+ *   param: aDbf - struktura tabele
+ *   param: aRules - pravila upisivanja jednog zapisa u tabelu, princip uzimanja zapisa iz linije text fajla
+ *   param: cTxtFile - txt fajl za import
  */
 // /
 STATIC FUNCTION Txt2TTbl( aDbf, aRules, cTxtFile )
@@ -623,9 +623,9 @@ STATIC FUNCTION Txt2TTbl( aDbf, aRules, cTxtFile )
 
 
 
-/*! \fn CheckFile(cTxtFile)
- *  \brief Provjerava da li je fajl prazan
- *  \param cTxtFile - txt fajl
+/* CheckFile(cTxtFile)
+ *     Provjerava da li je fajl prazan
+ *   param: cTxtFile - txt fajl
  */
 FUNCTION CheckFile( cTxtFile )
 
@@ -635,7 +635,7 @@ FUNCTION CheckFile( cTxtFile )
 
 
 
-/*! \fn CreTemp(aDbf)
+/* CreTemp(aDbf)
  *  brief Kreira tabelu PRIVPATH/TEMP.DBF prema definiciji polja iz aDbf
  *  param aDbf - def.polja
  */
@@ -696,8 +696,8 @@ FUNCTION CrePriptDbf()
 
 
 
-/*! \fn CheckBrFakt()
- *  \brief Provjeri da li postoji broj fakture u azuriranim dokumentima
+/* CheckBrFakt()
+ *     Provjeri da li postoji broj fakture u azuriranim dokumentima
  */
 STATIC FUNCTION CheckBrFakt( aFakt )
 
@@ -737,8 +737,8 @@ STATIC FUNCTION CheckBrFakt( aFakt )
 
 
 
-/*! \fn CheckDok()
- *  \brief Provjera da li postoje sve sifre u sifarnicima za dokumente
+/* CheckDok()
+ *     Provjera da li postoje sve sifre u sifarnicima za dokumente
  */
 STATIC FUNCTION CheckDok()
 
@@ -909,8 +909,8 @@ STATIC FUNCTION SDobExist()
 
 
 
-/*! \fn ParExist()
- *  \brief Provjera da li postoje sifre partnera u sifraniku FMK
+/* ParExist()
+ *     Provjera da li postoje sifre partnera u sifraniku FMK
  */
 STATIC FUNCTION ParExist( lPartNaz )
 
@@ -943,9 +943,9 @@ STATIC FUNCTION ParExist( lPartNaz )
 
 
 
-/*! \fn GetKTipDok(cFaktTD)
- *  \brief Vraca kalk tip dokumenta na osnovu fakt tip dokumenta
- *  \param cFaktTD - fakt tip dokumenta
+/* GetKTipDok(cFaktTD)
+ *     Vraca kalk tip dokumenta na osnovu fakt tip dokumenta
+ *   param: cFaktTD - fakt tip dokumenta
  */
 STATIC FUNCTION GetKTipDok( cFaktTD, cPm )
 
@@ -1045,9 +1045,9 @@ STATIC FUNCTION GetTdKonto( cTipDok, cTip, cPoslovnica )
 
 
 
-/*! \fn FaktExist()
- *  \brief vraca matricu sa parovima faktura -> pojavljuje se u azur.kalk
- *  \param nRight - npr. bez zadnjih nRight brojeva
+/* FaktExist()
+ *     vraca matricu sa parovima faktura -> pojavljuje se u azur.kalk
+ *   param: nRight - npr. bez zadnjih nRight brojeva
  */
 STATIC FUNCTION FaktExist( nRight )
 
@@ -1425,12 +1425,12 @@ STATIC FUNCTION TTbl2Kalk( aFExist, lFSkip, lNegative, cCtrl_art )
 
 
 
-/*! \fn GetKtKalk(cTipDok, cPm, cTip)
- *  \brief Varaca konto za trazeni tip dokumenta i prodajno mjesto
- *  \param cTipDok - tip dokumenta
- *  \param cPm - prodajno mjesto
- *  \param cTip - tip "Z" zad. i "R" razd.
- *  \param cPoslovnica - poslovnica tuzla ili sarajevo
+/* GetKtKalk(cTipDok, cPm, cTip)
+ *     Varaca konto za trazeni tip dokumenta i prodajno mjesto
+ *   param: cTipDok - tip dokumenta
+ *   param: cPm - prodajno mjesto
+ *   param: cTip - tip "Z" zad. i "R" razd.
+ *   param: cPoslovnica - poslovnica tuzla ili sarajevo
  */
 
 STATIC FUNCTION GetKtKalk( cTipDok, cPm, cTip, cPoslovnica )
@@ -1457,9 +1457,9 @@ STATIC FUNCTION GetKtKalk( cTipDok, cPm, cTip, cPoslovnica )
 
 
 
-/*! \fn TTbl2Partn(lEditOld)
- *  \brief kopira podatke iz pomocne tabele u tabelu PARTN
- *  \param lEditOld - ispraviti stare zapise
+/* TTbl2Partn(lEditOld)
+ *     kopira podatke iz pomocne tabele u tabelu PARTN
+ *   param: lEditOld - ispraviti stare zapise
  */
 STATIC FUNCTION TTbl2Partn( lEditOld )
 
@@ -1593,14 +1593,14 @@ STATIC FUNCTION TTbl2Roba()
 
 
 
-/*! \fn GetKVars(dDatDok, cBrKalk, cTipDok, cIdKonto, cIdKonto2, cRazd)
- *  \brief Setuj parametre prenosa TEMP->kalk_pripr(KALK)
- *  \param dDatDok - datum dokumenta
- *  \param cBrKalk - broj kalkulacije
- *  \param cTipDok - tip dokumenta
- *  \param cIdKonto - id konto zaduzuje
- *  \param cIdKonto2 - konto razduzuje
- *  \param cRazd - razdvajati dokumente po broju fakture (D ili N)
+/* GetKVars(dDatDok, cBrKalk, cTipDok, cIdKonto, cIdKonto2, cRazd)
+ *     Setuj parametre prenosa TEMP->kalk_pripr(KALK)
+ *   param: dDatDok - datum dokumenta
+ *   param: cBrKalk - broj kalkulacije
+ *   param: cTipDok - tip dokumenta
+ *   param: cIdKonto - id konto zaduzuje
+ *   param: cIdKonto2 - konto razduzuje
+ *   param: cRazd - razdvajati dokumente po broju fakture (D ili N)
  */
 STATIC FUNCTION GetKVars( dDatDok, cBrKalk, cTipDok, cIdKonto, cIdKonto2, cRazd )
 
@@ -1631,8 +1631,8 @@ STATIC FUNCTION GetKVars( dDatDok, cBrKalk, cTipDok, cIdKonto, cIdKonto2, cRazd 
 
 
 
-/*! \fn ObradiImport()
- *  \brief Obrada importovanih dokumenata
+/* ObradiImport()
+ *     Obrada importovanih dokumenata
  */
 FUNCTION ObradiImport( nPocniOd, lAsPokreni, lStampaj )
 
@@ -1900,9 +1900,9 @@ STATIC FUNCTION ObradiDokument( cIdVd, lAsPokreni, lStampaj )
    RETURN
 
 
-/*! \fn ChkKkalk_pripr(cIdVd, nRes)
- *  \brief Provjeri da li je kalk_priprema prazna
- *  \param cIdVd - id vrsta dokumenta
+/* ChkKkalk_pripr(cIdVd, nRes)
+ *     Provjeri da li je kalk_priprema prazna
+ *   param: cIdVd - id vrsta dokumenta
  */
 STATIC FUNCTION ChkKkalk_pripr( cIdVd, nRes )
 
@@ -1924,9 +1924,9 @@ STATIC FUNCTION ChkKkalk_pripr( cIdVd, nRes )
 
 
 
-/*! \fn ChkTipDok(cIdVd)
- *  \brief Provjeri kalk_pripremu za tip dokumenta
- *  \param cIdVd - vrsta dokumenta
+/* ChkTipDok(cIdVd)
+ *     Provjeri kalk_pripremu za tip dokumenta
+ *   param: cIdVd - vrsta dokumenta
  */
 STATIC FUNCTION ChkTipDok( cIdVd )
 
@@ -1962,9 +1962,9 @@ STATIC FUNCTION ChkTipDok( cIdVd )
 
 
 
-/*! \fn ChkTD14(cVezniDok)
- *  \brief Provjeri vezne dokumente za tip dokumenta 14
- *  \param cVezniDok - dokument iz kalk_pripreme
+/* ChkTD14(cVezniDok)
+ *     Provjeri vezne dokumente za tip dokumenta 14
+ *   param: cVezniDok - dokument iz kalk_pripreme
  *  \result vraca 1 ako je sve ok, ili 2 ako vezni dokument ne odgovara
  */
 STATIC FUNCTION ChkTD14( cVezniDok )
@@ -1976,8 +1976,8 @@ STATIC FUNCTION ChkTD14( cVezniDok )
    RETURN 2
 
 
-/*! \fn ChkTD41()
- *  \brief Provjeri vezne dokumente za tip dokumenta 41
+/* ChkTD41()
+ *     Provjeri vezne dokumente za tip dokumenta 41
  */
 STATIC FUNCTION ChkTD41( cVezniDok )
 
@@ -1988,8 +1988,8 @@ STATIC FUNCTION ChkTD41( cVezniDok )
    RETURN 2
 
 
-/*! \fn ChkTD11()
- *  \brief Provjeri vezne dokumente za tip dokumenta 11
+/* ChkTD11()
+ *     Provjeri vezne dokumente za tip dokumenta 11
  */
 STATIC FUNCTION ChkTD11( cVezniDok )
 
@@ -2000,8 +2000,8 @@ STATIC FUNCTION ChkTD11( cVezniDok )
    RETURN 2
 
 
-/*! \fn ChkTD95()
- *  \brief Provjeri vezne dokumente za tip dokumenta 95
+/* ChkTD95()
+ *     Provjeri vezne dokumente za tip dokumenta 95
  */
 STATIC FUNCTION ChkTD95( cVezniDok )
 
@@ -2013,8 +2013,8 @@ STATIC FUNCTION ChkTD95( cVezniDok )
 
 
 
-/*! \fn FillDobSifra()
- *  \brief Popunjavanje polja sifradob prema kljucu
+/* FillDobSifra()
+ *     Popunjavanje polja sifradob prema kljucu
  */
 STATIC FUNCTION FillDobSifra()
 

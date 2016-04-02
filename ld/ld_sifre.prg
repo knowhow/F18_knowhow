@@ -198,9 +198,9 @@ STATIC FUNCTION aktivni_radnici_filter( lFiltered )
 
 
 
-/*! \fn P_HiredFrom(dHiredFrom)
- *  \brief
- *  \param dHiredFrom
+/* P_HiredFrom(dHiredFrom)
+ *    
+ *   param: dHiredFrom
  */
 FUNCTION P_HiredFrom( dHiredFrom )
 
@@ -210,9 +210,9 @@ FUNCTION P_HiredFrom( dHiredFrom )
 
    RETURN .T.
 
-/*! \fn P_StreetNum(cStreetNum)
- *  \brief
- *  \param cStreetNum - vrijednost polja streetnum
+/* P_StreetNum(cStreetNum)
+ *    
+ *   param: cStreetNum - vrijednost polja streetnum
  */
 FUNCTION P_StreetNum( cStreetNum )
 

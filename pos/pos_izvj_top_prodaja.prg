@@ -162,8 +162,8 @@ return
 
 
 
-/*! \fn TopNizvuci(cIdVd,dDat0)
- *  \brief Punjenje pomocne baze realizacijom po robama
+/* TopNizvuci(cIdVd,dDat0)
+ *     Punjenje pomocne baze realizacijom po robama
  */
 
 function TopNizvuci(cIdVd,dDat0)

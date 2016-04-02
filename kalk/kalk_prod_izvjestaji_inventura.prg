@@ -234,8 +234,8 @@ FUNCTION StKalkIP( fZaTops )
 
 
 
-/*! \fn StObrazSL()
- *  \brief Stampa forme obrasca sank liste
+/* StObrazSL()
+ *     Stampa forme obrasca sank liste
  */
 
 FUNCTION StObrazSL()

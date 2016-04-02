@@ -188,8 +188,8 @@ FUNCTION RRocnost()
    RETURN nVrati
 
 
-/*! \fn IspisRocnosti()
- *  \brief Ispis rocnosti
+/* IspisRocnosti()
+ *     Ispis rocnosti
  */
 
 FUNCTION IspisRocnosti()
@@ -241,10 +241,10 @@ STATIC FUNCTION TekRec()
 
 
 
-/*! \fn UpitK1K4(mxplus,lK)
- *  \brief Pita za polja od K1 do K4
- *  \param mxplus
- *  \param lK
+/* UpitK1K4(mxplus,lK)
+ *     Pita za polja od K1 do K4
+ *   param: mxplus
+ *   param: lK
  */
 FUNCTION UpitK1K4( mxplus, lK )
 
@@ -330,9 +330,9 @@ FUNCTION CistiK1K4( lK )
 
 
 
-/*! \fn PrikK1K4(lK)
- *  \brief Prikazi polja od K1 do K4
- *  \param lK
+/* PrikK1K4(lK)
+ *     Prikazi polja od K1 do K4
+ *   param: lK
  */
 
 FUNCTION PrikK1K4( lK )

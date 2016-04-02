@@ -271,8 +271,8 @@ CLOSERET
 *}
 
 
-/*! \fn I_RnGostiju()
- *  \brief Stanje racuna gostiju
+/* I_RnGostiju()
+ *     Stanje racuna gostiju
  */
 
 function I_RnGostiju()

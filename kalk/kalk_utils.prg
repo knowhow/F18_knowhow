@@ -74,8 +74,8 @@ FUNCTION kalk_pripr9View()
    RETURN
 
 
-/*! \fn ka_pripr9_key_handler()
- *  \brief Opcije pregleda smeca
+/* ka_pripr9_key_handler()
+ *     Opcije pregleda smeca
  */
 FUNCTION ka_pripr9_key_handler()
 
@@ -99,8 +99,8 @@ FUNCTION ka_pripr9_key_handler()
 // }
 
 
-/*! \fn PovPr9()
- *  \brief povrat dokumenta iz kalk_pripr9
+/* PovPr9()
+ *     povrat dokumenta iz kalk_pripr9
  */
 STATIC FUNCTION PovPr9()
 
@@ -116,8 +116,8 @@ STATIC FUNCTION PovPr9()
 // }
 
 
-/*! \fn ka_pripr9_set_filter(aUslFirma, aUslDok, dDat1, dDat2)
- *  \brief Postavlja filter na tabeli kalk_pripr9
+/* ka_pripr9_set_filter(aUslFirma, aUslDok, dDat1, dDat2)
+ *     Postavlja filter na tabeli kalk_pripr9
  */
 STATIC FUNCTION ka_pripr9_set_filter( aUslFirma, aUslDok, dDat1, dDat2 )
 

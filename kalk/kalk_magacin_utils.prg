@@ -282,8 +282,8 @@ FUNCTION MarzaVP( cIdVd, lNaprijed )
 // }
 
 
-/*! \fn Marza(fmarza)
- *  \brief Proracun veleprodajne marze
+/* Marza(fmarza)
+ *     Proracun veleprodajne marze
  */
 
 FUNCTION Marza( fmarza )
@@ -360,8 +360,8 @@ FUNCTION Marza( fmarza )
 
 
 
-/*! \fn FaktVPC(nVPC,cseek,dDatum)
- *  \brief Fakticka veleprodajna cijena
+/* FaktVPC(nVPC,cseek,dDatum)
+ *     Fakticka veleprodajna cijena
  */
 
 FUNCTION FaktVPC( nVPC, cseek, dDatum )
@@ -415,8 +415,8 @@ FUNCTION FaktVPC( nVPC, cseek, dDatum )
 
 
 
-/*! \fn PratiKMag(cIdFirma,cIdKonto,cIdRoba)
- *  \brief Prati karticu magacina
+/* PratiKMag(cIdFirma,cIdKonto,cIdRoba)
+ *     Prati karticu magacina
  */
 
 FUNCTION PratiKMag( cIdFirma, cIdKonto, cIdRoba )
@@ -466,8 +466,8 @@ FUNCTION PratiKMag( cIdFirma, cIdKonto, cIdRoba )
 
 
 
-/*! \fn ObSetVPC(nNovaVrijednost)
- *  \brief Obavezno setuj VPC
+/* ObSetVPC(nNovaVrijednost)
+ *     Obavezno setuj VPC
  */
 
 FUNCTION ObSetVPC( nNovaVrijednost )
@@ -498,8 +498,8 @@ FUNCTION ObSetVPC( nNovaVrijednost )
 
 
 
-/*! \fn UzmiVPCSif(cMKonto,lKoncij)
- *  \brief Za zadani magacinski konto daje odgovarajucu VPC iz sifrarnika robe
+/* UzmiVPCSif(cMKonto,lKoncij)
+ *     Za zadani magacinski konto daje odgovarajucu VPC iz sifrarnika robe
  */
 
 FUNCTION UzmiVPCSif( cMKonto, lKoncij )
@@ -521,8 +521,8 @@ FUNCTION UzmiVPCSif( cMKonto, lKoncij )
 
 
 
-/*! \fn NabCj()
- *  \brief Proracun nabavne cijene za ulaznu kalkulaciju 10
+/* NabCj()
+ *     Proracun nabavne cijene za ulaznu kalkulaciju 10
  */
 
 FUNCTION NabCj()
@@ -596,10 +596,10 @@ FUNCTION NabCj()
 
 
 
-/*! \fn NabCj2(n1,n2)
- *  \param n1 - ukucana NC
- *  \param n2 - izracunata NC
- *  \brief Ova se f-ja koristi samo za 10-ku bez troskova (gVarijanta="1")
+/* NabCj2(n1,n2)
+ *   param: n1 - ukucana NC
+ *   param: n2 - izracunata NC
+ *     Ova se f-ja koristi samo za 10-ku bez troskova (gVarijanta="1")
  */
 
 FUNCTION NabCj2( n1, n2 )
@@ -622,9 +622,9 @@ FUNCTION NabCj2( n1, n2 )
 
 
 
-/*! \fn SetujVPC(nNovaVrijednost,fUvijek)
- *  \param fUvijek -.f. samo ako je vrijednost u sifrarniku 0, .t. uvijek setuj
- *  \brief Utvrdi varijablu VPC. U sifrarnik staviti novu vrijednost
+/* SetujVPC(nNovaVrijednost,fUvijek)
+ *   param: fUvijek -.f. samo ako je vrijednost u sifrarniku 0, .t. uvijek setuj
+ *     Utvrdi varijablu VPC. U sifrarnik staviti novu vrijednost
  */
 
 FUNCTION SetujVPC( nNovaVrijednost, lUvijek )
@@ -667,8 +667,8 @@ FUNCTION SetujVPC( nNovaVrijednost, lUvijek )
 
 
 
-/*! \fn KoncijVPC()
- *  \brief Daje odgovarajucu VPC iz sifrarnika robe
+/* KoncijVPC()
+ *     Daje odgovarajucu VPC iz sifrarnika robe
  */
 
 FUNCTION KoncijVPC()
@@ -691,8 +691,8 @@ FUNCTION KoncijVPC()
 
 
 
-/*! \fn MMarza()
- *  \brief Preracunava iznos veleprodajne marze
+/* MMarza()
+ *     Preracunava iznos veleprodajne marze
  */
 
 FUNCTION MMarza()
@@ -713,8 +713,8 @@ FUNCTION MMarza()
 
 
 
-/*! \fn PrerRab()
- *  \brief Rabat veleprodaje - 14
+/* PrerRab()
+ *     Rabat veleprodaje - 14
  */
 
 FUNCTION PrerRab()
@@ -784,8 +784,8 @@ FUNCTION V_KolMag()
 
 
 
-/*! \fn V_RabatV()
- *  \brief Ispisuje vrijednost rabata u VP
+/* V_RabatV()
+ *     Ispisuje vrijednost rabata u VP
  */
 
 // Trenutna pozicija u tabeli KONCIJ (na osnovu koncij->naz ispituje cijene)

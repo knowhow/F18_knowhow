@@ -592,8 +592,8 @@ STATIC FUNCTION NadjiPMpc()
 // }
 
 
-/*! \fn Izmj_cPrSort()
- *  \brief Formula za kljucni dio sifre pri grupisanju roba
+/* Izmj_cPrSort()
+ *     Formula za kljucni dio sifre pri grupisanju roba
  *  \ingroup Planika
  */
 
@@ -627,8 +627,8 @@ STATIC FUNCTION PaperFormatHelp()
 
 /*! \ingroup Planika
  *  \fn ZagPKret(cVarijanta)
- *  \brief Zaglavlje izvjestaja pregled kretanja
- *  \param cVarijanta - "1" - Pregl. kret zalika, "2" - rekapitulacija po grupama dobavljaca, "3" - rekapitulacija po grupama artikala
+ *     Zaglavlje izvjestaja pregled kretanja
+ *   param: cVarijanta - "1" - Pregl. kret zalika, "2" - rekapitulacija po grupama dobavljaca, "3" - rekapitulacija po grupama artikala
  *
  */
 

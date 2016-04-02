@@ -1239,9 +1239,9 @@ FUNCTION VpSifra( wId, cTag )
 
 
 
-/*! \fn VpNaziv(wNaziv)
- *  \brief Stroga kontrola naziva sifre pri unosu nove ili ispravci postojece sifre
- *  \param wNaziv - Naziv koji se provjerava
+/* VpNaziv(wNaziv)
+ *     Stroga kontrola naziva sifre pri unosu nove ili ispravci postojece sifre
+ *   param: wNaziv - Naziv koji se provjerava
  */
 
 FUNCTION VpNaziv( wNaziv )

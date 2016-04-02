@@ -420,8 +420,8 @@ FUNCTION prod_fa_ka_prenos_otpr()
 // }
 
 
-/*! \fn FaKaPrenosRacunMP()
- *  \brief Prenos maloprodajnih kalkulacija FAKT->KALK (11->41)
+/* FaKaPrenosRacunMP()
+ *     Prenos maloprodajnih kalkulacija FAKT->KALK (11->41)
  */
 
 FUNCTION FaKaPrenosRacunMP()
@@ -691,8 +691,8 @@ FUNCTION FaKaPrenosRacunMP()
    RETURN
 
 
-/*! \fn FaKaPrenos_01_doprema()
- *  \brief Prenos FAKT->KALK (01->81)
+/* FaKaPrenos_01_doprema()
+ *     Prenos FAKT->KALK (01->81)
  */
 
 FUNCTION FaKaPrenos_01_doprema()
@@ -834,8 +834,8 @@ FUNCTION FaKaPrenos_01_doprema()
 
 
 
-/*! \fn FaKaPrenos_cm_u_prodavnicu()
- *  \brief Otprema u mp->kalk (13->80) prebaci u prodajni objekt
+/* FaKaPrenos_cm_u_prodavnicu()
+ *     Otprema u mp->kalk (13->80) prebaci u prodajni objekt
  */
 
 FUNCTION FaKaPrenos_cm_u_prodavnicu()
@@ -1008,8 +1008,8 @@ FUNCTION FaKaPrenos_cm_u_prodavnicu()
 
 
 
-/*! \fn FaKaPrenos_izlaz_putem_vp()
- *  \brief Izlaz iz MP putem VP, FAKT15->KALK15
+/* FaKaPrenos_izlaz_putem_vp()
+ *     Izlaz iz MP putem VP, FAKT15->KALK15
  */
 
 FUNCTION FaKaPrenos_izlaz_putem_vp()

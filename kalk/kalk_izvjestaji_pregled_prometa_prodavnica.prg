@@ -449,13 +449,13 @@ STATIC FUNCTION ScanPos( dDatumOd, dDatumDo, cTKumP )
 // }
 
 
-/*! \fn AFPos(cIdKonto, cVisaNiza, nCijena, nCijenaBp, nKolicina)
- *  \brief (A)ppend (F)rom Table (Pos)
- *  \param cIdKonto - konto prodavnice
- *  \param cVisaNiza - "1" - niza tarifa ostala obuca; "2" - visa tarifa - djecija obuca
- *  \param nCijena
- *  \param nCijenaBp
- *  \param nKolicina - kolicina pari
+/* AFPos(cIdKonto, cVisaNiza, nCijena, nCijenaBp, nKolicina)
+ *     (A)ppend (F)rom Table (Pos)
+ *   param: cIdKonto - konto prodavnice
+ *   param: cVisaNiza - "1" - niza tarifa ostala obuca; "2" - visa tarifa - djecija obuca
+ *   param: nCijena
+ *   param: nCijenaBp
+ *   param: nKolicina - kolicina pari
  *  \note  Pripadnost tarifi odredjena je sadrzajem polja tbl_tarifa_naz
  *  \sa tbl_tarifa_naz
  *
@@ -530,10 +530,10 @@ STATIC FUNCTION ScanPromVp( dDatumOd, dDatumDo, cTKumPath )
    RETURN 1
 // }
 
-/*! \fn ARFPromVp(cIdKonto, nPolog01, nPolog02, nPolog03, nPolog04, nPolog05, nPolog06, nPolog07, nPolog08, nPolog09, nPolog10, nPolog11, nPolog12)
- *  \brief (A)ppend (R)ow (F)rom Table (PromVp)
- *  \param cIdKonto - prodavnicki konto
- *  \param nPolog01 - polog pazara vrste 01 (.. do nPolog12)
+/* ARFPromVp(cIdKonto, nPolog01, nPolog02, nPolog03, nPolog04, nPolog05, nPolog06, nPolog07, nPolog08, nPolog09, nPolog10, nPolog11, nPolog12)
+ *     (A)ppend (R)ow (F)rom Table (PromVp)
+ *   param: cIdKonto - prodavnicki konto
+ *   param: nPolog01 - polog pazara vrste 01 (.. do nPolog12)
  *
  */
 

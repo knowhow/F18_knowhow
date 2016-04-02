@@ -195,9 +195,9 @@ FUNCTION GetPstPDV()
 
 
 
-/*! \fn GetProdKto(aProd)
- *  \brief Vrati matricu sa prodavnicama
- *  \param aProd
+/* GetProdKto(aProd)
+ *     Vrati matricu sa prodavnicama
+ *   param: aProd
  */
 FUNCTION GetProdKto( aProd )
 
@@ -257,14 +257,14 @@ FUNCTION roba_pdv17()
 // }
 
 
-/*! \fn GenPreknj(cPKonto, cPrTarifa, dDatOd, dDatDo, cBrKalk, lPst)
- *  \brief Opcija generisanja dokumenta preknjizenja
- *  \param cPKonto - prodavnicki konto
- *  \param cPrTarifa - tarifa preknjizenja
- *  \param dDatOd - datum od kojeg se pravi preknjizenje
- *  \param dDatDo - datum do kojeg se pravi preknjizenje
- *  \param cBrKalk - broj kalkulacije
- *  \param lPst - pocetno stanje
+/* GenPreknj(cPKonto, cPrTarifa, dDatOd, dDatDo, cBrKalk, lPst)
+ *     Opcija generisanja dokumenta preknjizenja
+ *   param: cPKonto - prodavnicki konto
+ *   param: cPrTarifa - tarifa preknjizenja
+ *   param: dDatOd - datum od kojeg se pravi preknjizenje
+ *   param: dDatDo - datum do kojeg se pravi preknjizenje
+ *   param: cBrKalk - broj kalkulacije
+ *   param: lPst - pocetno stanje
  */
 FUNCTION GenPreknj( cPKonto, cPrTarifa, dDatOd, dDatDo, cBrKalk, lPst, dDatPs, cCjSet, lAkciznaRoba, lZasticeneCijene )
 

@@ -242,8 +242,8 @@ FUNCTION fin_spec_partnera_na_kontu()
 
 
 
-/*! \fn ZaglDPK()
- *  \brief Zaglavlje specifikacije partnera po kontu
+/* ZaglDPK()
+ *     Zaglavlje specifikacije partnera po kontu
  */
 
 FUNCTION ZaglDPK()

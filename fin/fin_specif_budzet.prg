@@ -919,8 +919,8 @@ FUNCTION IzvrsBudz()
 
 
 
-/*! \fn IB_Zagl1()
- *  \brief Zaglavlje izvrsenje budzeta 1
+/* IB_Zagl1()
+ *     Zaglavlje izvrsenje budzeta 1
  */
 
 FUNCTION IB_Zagl1()
@@ -946,8 +946,8 @@ FUNCTION IB_Zagl1()
 
 
 
-/*! \fn IB_Zagl2()
- *  \brief Zaglavlje izvjestaja izvrsenje budzeta 2
+/* IB_Zagl2()
+ *     Zaglavlje izvjestaja izvrsenje budzeta 2
  */
 
 FUNCTION IB_Zagl2()
@@ -967,8 +967,8 @@ FUNCTION IB_Zagl2()
 
 
 
-/*! \fn IB_Zagl3()
- *  \brief Zaglavlje izvjestaja izvrsenje budzeta varijanta 3
+/* IB_Zagl3()
+ *     Zaglavlje izvjestaja izvrsenje budzeta varijanta 3
  */
 
 FUNCTION IB_Zagl3()
@@ -990,8 +990,8 @@ FUNCTION IB_Zagl3()
 
 
 
-/*! \fn IB_Zagl4()
- *  \brief Zaglavlje izvjestaja izvrsenje budzeta varijanta 4
+/* IB_Zagl4()
+ *     Zaglavlje izvjestaja izvrsenje budzeta varijanta 4
  */
 
 FUNCTION IB_Zagl4()
@@ -1015,8 +1015,8 @@ FUNCTION IB_Zagl4()
 
 
 
-/*! \fn Prihodi()
- *  \brief Prihodi
+/* Prihodi()
+ *     Prihodi
  */
 
 FUNCTION Prihodi()
@@ -1413,8 +1413,8 @@ FUNCTION Prihodi()
 
 
 
-/*! \fn PR_Zagl()
- *  \brief Zaglavlje prihoda
+/* PR_Zagl()
+ *     Zaglavlje prihoda
  */
 
 FUNCTION PR_Zagl()
@@ -1437,10 +1437,10 @@ FUNCTION PR_Zagl()
 
 
 
-/*! \fn Razmak(nBrRed)
- *  \brief Daje nBrRed praznih redova
+/* Razmak(nBrRed)
+ *     Daje nBrRed praznih redova
  *  \todo Treba prebaciti u /sclib
- *  \param nBrRed  - broj redova
+ *   param: nBrRed  - broj redova
  */
 
 STATIC FUNCTION Razmak( nBrRed )
@@ -1456,9 +1456,9 @@ STATIC FUNCTION Razmak( nBrRed )
 
 
 
-/*! \fn BuIz(cKonto)
- *  \brief Sortiraj izuzetke u budzetu
- *  \param cKonto
+/* BuIz(cKonto)
+ *     Sortiraj izuzetke u budzetu
+ *   param: cKonto
  */
 
 FUNCTION BuIz( cKonto )

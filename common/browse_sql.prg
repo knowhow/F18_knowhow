@@ -592,10 +592,10 @@ STATIC FUNCTION EditPolja( nX, nY, xIni, cNazPolja, bWhen, bValid, cBoje )
    RETURN .T.
 
 
-/*! \fn function TBPomjeranje(TB, cPomjeranje)
- *  \brief Opcije pomjeranja tbrowsea u direkt rezimu
- *  \param TB          -  TBrowseObjekt
- *  \param cPomjeranje - ">", ">2", "V0"
+/* function TBPomjeranje(TB, cPomjeranje)
+ *     Opcije pomjeranja tbrowsea u direkt rezimu
+ *   param: TB          -  TBrowseObjekt
+ *   param: cPomjeranje - ">", ">2", "V0"
  */
 
 STATIC FUNCTION TBPomjeranje( TB, cPomjeranje )

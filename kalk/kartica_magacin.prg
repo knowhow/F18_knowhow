@@ -42,8 +42,8 @@ FUNCTION KM2()
    RETURN NIL
 
 
-/*! \fn MarkBrDok(fNovi)
- *  \brief Odredjuje sljedeci broj dokumenta uzimajuci u obzir marker definisan u polju koncij->m1
+/* MarkBrDok(fNovi)
+ *     Odredjuje sljedeci broj dokumenta uzimajuci u obzir marker definisan u polju koncij->m1
  */
 
 FUNCTION MarkBrDok( fNovi )

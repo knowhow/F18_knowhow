@@ -95,9 +95,9 @@ STATIC FUNCTION ValidSamo( cOdg, cMogOdg )
 
 
 /*!  Pitanje2(cId,cPitanje,cOdgDefault)
- *  \brief
- *  \param cId
- *  \param cPitanje       - Pitanje
+ *    
+ *   param: cId
+ *   param: cPitanje       - Pitanje
  *  \cOdgDefault          - Ponudjeni odgovor
  */
 

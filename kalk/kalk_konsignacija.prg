@@ -27,8 +27,8 @@ FUNCTION FaktKonsig()
    RETURN .F.
 
 
-/*! \fn Prenos16()
- *  \brief Racun konsignacije (FAKT 16) -> ulaz od dobavljaca (KALK 10)
+/* Prenos16()
+ *     Racun konsignacije (FAKT 16) -> ulaz od dobavljaca (KALK 10)
  */
 
 FUNCTION Prenos16()

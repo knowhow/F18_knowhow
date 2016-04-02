@@ -245,8 +245,8 @@ STATIC FUNCTION SpecOtSt()
 
 
 
-/*! \fn ZaglSpK()
- *  \brief Zaglavlje specifikacije
+/* ZaglSpK()
+ *     Zaglavlje specifikacije
  */
 
 FUNCTION ZaglSpK()
@@ -905,11 +905,11 @@ STATIC FUNCTION opcije_browse_pregleda()
 
 
 
-/*! \fn StKart(fSolo,fTiho,bFilter)
- *  \brief Otvorene stavke grupisane po brojevima veze
- *  \param fSolo
- *  \param fTiho
- *  \param bFilter - npr. {|| getmjesto(cMjesto)}
+/* StKart(fSolo,fTiho,bFilter)
+ *     Otvorene stavke grupisane po brojevima veze
+ *   param: fSolo
+ *   param: fTiho
+ *   param: bFilter - npr. {|| getmjesto(cMjesto)}
  */
 
 FUNCTION StKart( fSolo, fTiho, bFilter )
@@ -1378,10 +1378,10 @@ FUNCTION fin_create_pom_table( fTiho, nParLen )
 
 
 
-/*! \fn ZagKStSif(fStrana,lEx)
- *  \brief Zaglavlje kartice OS-a
- *  \param fStrana
- *  \param lEx
+/* ZagKStSif(fStrana,lEx)
+ *     Zaglavlje kartice OS-a
+ *   param: fStrana
+ *   param: lEx
  */
 FUNCTION ZagKStSif( fStrana, lEx )
 
@@ -1443,8 +1443,8 @@ FUNCTION ZagKStSif( fStrana, lEx )
 
 
 
-/*! \fn StBrVeze()
- *  \brief Stampa broja veze
+/* StBrVeze()
+ *     Stampa broja veze
  */
 
 FUNCTION StBrVeze()
@@ -1539,8 +1539,8 @@ FUNCTION StBrVeze()
 
 
 
-/*! \fn ZagBRVeze()
- *  \brief Zaglavlje izvjestaja broja veze
+/* ZagBRVeze()
+ *     Zaglavlje izvjestaja broja veze
  */
 
 FUNCTION ZagBRVeze()
@@ -2311,8 +2311,8 @@ STATIC FUNCTION brisi_otvorene_stavke_iz_tabele_suban()
 
 
 
-/*! \fn StAz()
- *  \brief Stampa promjena
+/* StAz()
+ *     Stampa promjena
  */
 
 FUNCTION StAz()
@@ -2351,9 +2351,9 @@ FUNCTION StAz()
 
 
 
-/*! \fn SkipDBBK(nRequest)
- *  \brief
- *  \param nRequest
+/* SkipDBBK(nRequest)
+ *    
+ *   param: nRequest
  */
 
 STATIC FUNCTION SkipDBBK( nRequest )

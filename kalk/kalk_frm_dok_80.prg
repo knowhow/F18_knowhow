@@ -368,8 +368,8 @@ FUNCTION Svedi( cSvedi )
 
 
 
-/*! \fn VKol()
- *  \brief Validacija unesene kolicine u dokumentu tipa 80
+/* VKol()
+ *     Validacija unesene kolicine u dokumentu tipa 80
  */
 
 STATIC FUNCTION VKol( x_kord )

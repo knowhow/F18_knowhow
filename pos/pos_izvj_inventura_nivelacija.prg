@@ -266,7 +266,7 @@ FUNCTION StampaInv( fLista, lAzurirana )
    RETURN
 // }
 
-/*! \fn StampaPLI(cBrDok)
+/* StampaPLI(cBrDok)
  */
 
 FUNCTION StampaPLI( cBrDok )

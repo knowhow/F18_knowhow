@@ -411,8 +411,8 @@ FUNCTION pos_stanje_artikala_pm( cD, cS )
 
 
 
-/*! \fn Podvuci(cVrstaRs)
- *  \brief Podvlaci red u izvjestaju stanje odjeljenja/dijela objekta
+/* Podvuci(cVrstaRs)
+ *     Podvlaci red u izvjestaju stanje odjeljenja/dijela objekta
  */
 
 FUNCTION Podvuci( cVrstaRs )
@@ -423,8 +423,8 @@ FUNCTION Podvuci( cVrstaRs )
    RETURN
 
 
-/*! \fn Zagl(cIdOdj,dDat, cVrstaRs)
- *  \brief Ispis zaglavlja izvjestaja stanje odjeljenja/dijela objekta
+/* Zagl(cIdOdj,dDat, cVrstaRs)
+ *     Ispis zaglavlja izvjestaja stanje odjeljenja/dijela objekta
  */
 
 STATIC FUNCTION Zagl( cIdOdj, dDat, cVrstaRs )

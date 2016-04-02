@@ -221,8 +221,8 @@ FUNCTION Kart41_42()
 
 
 
-/*! \fn Zagl2()
- *  \brief Zaglavlje izvjestaja
+/* Zagl2()
+ *     Zaglavlje izvjestaja
  */
 
 STATIC FUNCTION Zagl2()
@@ -245,9 +245,9 @@ STATIC FUNCTION Zagl2()
 
 
 
-/*! \fn Kart412v2()
- *  \brief Kartica za varijantu "vodi samo tarife" varijanta 2
- *  \param
+/* Kart412v2()
+ *     Kartica za varijantu "vodi samo tarife" varijanta 2
+ *   param:
  */
 
 FUNCTION Kart412v2()
@@ -464,8 +464,8 @@ FUNCTION Kart412v2()
 
 
 
-/*! \fn Zagl3()
- *  \brief Zaglavlje izvjestaja
+/* Zagl3()
+ *     Zaglavlje izvjestaja
  */
 
 STATIC FUNCTION Zagl3()

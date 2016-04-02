@@ -187,8 +187,8 @@ FUNCTION CreTblRek2()
 
 
 
-/*! \fn CrePPProd()
- *  \brief Kreiraj tabelu kalk_ppprod
+/* CrePPProd()
+ *     Kreiraj tabelu kalk_ppprod
  *  \sa tbl_kalk_ppprod
  *
  */

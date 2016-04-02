@@ -1030,9 +1030,9 @@ STATIC FUNCTION _add_to_export( cKonto, cK_naz, cPartn, cP_naz, cVn, cBr, cRbr, 
 
 
 
-/*! \fn Telefon(cTel)
- *  \brief Postavlja uslov za partnera (npr. Telefon('417'))
- *  \param cTel  - Broj telefona
+/* Telefon(cTel)
+ *     Postavlja uslov za partnera (npr. Telefon('417'))
+ *   param: cTel  - Broj telefona
  */
 
 FUNCTION Telefon( cTel )

@@ -14,12 +14,12 @@
 
 
 /*! \file fmk/kalk/prod/dok/1g/rpt_19.prg
- *  \brief Stampa dokumenta tipa 19
+ *     Stampa dokumenta tipa 19
  */
 
 
-/*! \fn StKalk19()
- *  \brief Stampa dokumenta tipa 19
+/* StKalk19()
+ *     Stampa dokumenta tipa 19
  */
 
 function StKalk19()
@@ -157,8 +157,8 @@ return
 *}
 
 
-/*! \fn Obraz19()
- *  \brief Stampa dokumenta tipa 19 - obrazac nivelacije
+/* Obraz19()
+ *     Stampa dokumenta tipa 19 - obrazac nivelacije
  */
 
 function Obraz19()

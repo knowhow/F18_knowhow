@@ -677,9 +677,9 @@ FUNCTION ObrazInv()
    RETURN
 
 
-/*! \fn ZaglObrPC(cKako)
- *  \brief Zaglavlje obrasca inventure za prodavnicu
- *  \param cKako
+/* ZaglObrPC(cKako)
+ *     Zaglavlje obrasca inventure za prodavnicu
+ *   param: cKako
  */
 
 FUNCTION ZaglObrPC( cKako )

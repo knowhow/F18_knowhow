@@ -208,8 +208,8 @@ FUNCTION fin_sint_kart_po_mjesecima()
 
 
 
-/*! \fn ZaglSinK2()
- *  \brief Zaglavlje sinteticke kartice varijante 2
+/* ZaglSinK2()
+ *     Zaglavlje sinteticke kartice varijante 2
  */
 
 FUNCTION ZaglSink2()

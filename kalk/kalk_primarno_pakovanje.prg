@@ -184,8 +184,8 @@ FUNCTION NaPrimPak()
 
 
 
-/*! \fn NaPrPak2()
- *  \brief Svedi artikle na primarno pakovanje v.2
+/* NaPrPak2()
+ *     Svedi artikle na primarno pakovanje v.2
  */
 
 FUNCTION NaPrPak2()

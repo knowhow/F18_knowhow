@@ -41,12 +41,12 @@ FUNCTION CreRabDB()
    RETURN .T.
 
 
-/*! \fn GetRabForArticle(cIdRab, cTipRab, cIdRoba, nTekIznos)
- *  \brief Vraca iznos rabata za dati artikal
- *  \param cIdRab - id rabat
- *  \param nTekIznos - tekuce polje iznosa
- *  \param cTipRab - tip rabata
- *  \param cIdRoba - id roba
+/* GetRabForArticle(cIdRab, cTipRab, cIdRoba, nTekIznos)
+ *     Vraca iznos rabata za dati artikal
+ *   param: cIdRab - id rabat
+ *   param: nTekIznos - tekuce polje iznosa
+ *   param: cTipRab - tip rabata
+ *   param: cIdRoba - id roba
  *  \return nRet - vrijednost rabata
  */
 FUNCTION GetRabForArticle( cIdRab, cTipRab, cIdRoba, nTekIznos )
@@ -72,10 +72,10 @@ FUNCTION GetRabForArticle( cIdRab, cTipRab, cIdRoba, nTekIznos )
 
 
 
-/*! \fn GetDaysForRabat(cIdRab, cTipRab)
- *  \brief Vraca broj dana (rok placanja) za odredjeni tip rabata
- *  \param cIdRab - id rabat
- *  \param cTipRab - tip rabata
+/* GetDaysForRabat(cIdRab, cTipRab)
+ *     Vraca broj dana (rok placanja) za odredjeni tip rabata
+ *   param: cIdRab - id rabat
+ *   param: cTipRab - tip rabata
  *  \return nRet - vrijednost dana
  */
 FUNCTION GetDaysForRabat( cIdRab, cTipRab )
@@ -99,9 +99,9 @@ FUNCTION GetDaysForRabat( cIdRab, cTipRab )
 
 
 
-/*! \fn GetRabIznos(cTekIzn)
- *  \brief Vraca iznos rabata za zadati cTekIznos (vrijednost polja)
- *  \param cTekIzn - tekuce polje koje se uzima
+/* GetRabIznos(cTekIzn)
+ *     Vraca iznos rabata za zadati cTekIznos (vrijednost polja)
+ *   param: cTekIzn - tekuce polje koje se uzima
  */
 FUNCTION GetRabIznos( cTekIzn )
 
@@ -120,11 +120,11 @@ FUNCTION GetRabIznos( cTekIzn )
 // }
 
 
-/*! \fn GetSkontoArticle(cIdRab, cTipRab, cIdRoba)
- *  \brief Vraca iznos skonto za dati artikal
- *  \param cIdRab - id rabat
- *  \param cTipRab - tip rabata
- *  \param cIdRoba - id roba
+/* GetSkontoArticle(cIdRab, cTipRab, cIdRoba)
+ *     Vraca iznos skonto za dati artikal
+ *   param: cIdRab - id rabat
+ *   param: cTipRab - tip rabata
+ *   param: cIdRoba - id roba
  *  \return nRet - vrijednost skonto
  */
 FUNCTION GetSkontoArticle( cIdRab, cTipRab, cIdRoba )

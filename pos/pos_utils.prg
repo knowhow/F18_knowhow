@@ -414,8 +414,8 @@ FUNCTION SkloniIznRac()
 
 
 
-/*! \fn PromIdCijena()
- *  \brief Promjena seta cijena
+/* PromIdCijena()
+ *     Promjena seta cijena
  *  \todo Ovu funkciju treba ugasiti, zajedno sa konceptom vise setova cijena, to treba generalno revidirati jer prakticno niko i ne koristi, a knjigovodstveno je sporno
  */
 
@@ -438,10 +438,10 @@ FUNCTION PromIdCijena()
    RETURN .T.
 
 
-/*! \fn PortZaMT(cIdDio,cIdOdj)
- *  \brief
- *  \param cIdDio
- *  \param cIdOdj
+/* PortZaMT(cIdDio,cIdOdj)
+ *    
+ *   param: cIdDio
+ *   param: cIdOdj
  */
 
 FUNCTION PortZaMT( cIdDio, cIdOdj )

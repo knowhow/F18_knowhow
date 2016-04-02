@@ -290,8 +290,8 @@ FUNCTION fin_anal_kartica()
 
 
 
-/*! \fn AnalKZagl()
- *  \brief Zaglavlje analiticke kartice
+/* AnalKZagl()
+ *     Zaglavlje analiticke kartice
  */
 
 FUNCTION AnalKZagl()

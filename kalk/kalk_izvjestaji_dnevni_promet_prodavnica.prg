@@ -15,8 +15,8 @@
 STATIC cLinija
 
 
-/*! \fn DnevProm()
- *  \brief Izvjestaj dnevnog prometa
+/* DnevProm()
+ *     Izvjestaj dnevnog prometa
  *  \todo Ovaj izvjestaj nije dobro uradjen - formira se matrica, koja ce puci na velikom broju artikala
  */
 FUNCTION DnevProm()
@@ -87,8 +87,8 @@ FUNCTION DnevProm()
 // }
 
 
-/*! \fn PromPeriod()
- *  \brief (Vise)dnevni promet za period
+/* PromPeriod()
+ *     (Vise)dnevni promet za period
  */
 FUNCTION PromPeriod()
 
@@ -163,8 +163,8 @@ FUNCTION PromPeriod()
 // }
 
 
-/*! \fn ScanTops(dDan, aR, dDatDo, cPKto)
- *  \brief Skenira tabele kasa i kupi promet
+/* ScanTops(dDan, aR, dDatDo, cPKto)
+ *     Skenira tabele kasa i kupi promet
  */
 STATIC FUNCTION ScanTops( dDan, aR, dDatDo, cPKto )
 
@@ -273,8 +273,8 @@ STATIC FUNCTION ScanTops( dDan, aR, dDatDo, cPKto )
 // }
 
 
-/*! \fn ScanKalk(dDan, aR, dDatDo, cPKto)
- *  \brief Skenira tabelu kalk i kupi promet prodavnica
+/* ScanKalk(dDan, aR, dDatDo, cPKto)
+ *     Skenira tabelu kalk i kupi promet prodavnica
  */
 STATIC FUNCTION ScanKalk( dDan, aR, dDatDo, cPKto )
 

@@ -159,8 +159,8 @@ FUNCTION cre_tbl_errors()
 
 
 
-/*! \fn ChkDTbl()
- *  \brief
+/* ChkDTbl()
+ *    
  */
 FUNCTION ChkDTbl()
 
@@ -186,8 +186,8 @@ FUNCTION ChkDTbl()
 // }
 
 
-/*! \fn DInt1NextID()
- *  \brief Vrati sljedeci zapis polja ID za tabelu DINTEG1
+/* DInt1NextID()
+ *     Vrati sljedeci zapis polja ID za tabelu DINTEG1
  */
 FUNCTION DInt1NextID()
 
@@ -205,8 +205,8 @@ FUNCTION DInt1NextID()
    RETURN nId
 
 
-/*! \fn DInt2NextID()
- *  \brief Vrati sljedeci zapis polja ID za tabelu DINTEG2
+/* DInt2NextID()
+ *     Vrati sljedeci zapis polja ID za tabelu DINTEG2
  */
 FUNCTION DInt2NextID()
 
@@ -224,8 +224,8 @@ FUNCTION DInt2NextID()
    RETURN nId
 
 
-/*! \fn NextDIntID()
- *  \brief Vraca sljedeci ID broj za polje ID
+/* NextDIntID()
+ *     Vraca sljedeci ID broj za polje ID
  */
 FUNCTION NextDIntID()
 

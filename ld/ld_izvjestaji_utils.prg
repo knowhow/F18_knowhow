@@ -53,10 +53,10 @@ FUNCTION ShowPPFakultet()
    RETURN
 
 
-/*! \fn ShiwHiredFromTo(dHiredFrom, dHiredTo)
- *  \brief Prikaz podataka angazovan od, angazovan do na izvjestajima, ako je dHiredTo prazno onda prikazuje Trenutno angazovan...
- *  \param dHiredFrom - angazovan od datum
- *  \param dHiredTo - angazovan do datum
+/* ShiwHiredFromTo(dHiredFrom, dHiredTo)
+ *     Prikaz podataka angazovan od, angazovan do na izvjestajima, ako je dHiredTo prazno onda prikazuje Trenutno angazovan...
+ *   param: dHiredFrom - angazovan od datum
+ *   param: dHiredTo - angazovan do datum
  */
 FUNCTION ShowHiredFromTo( dHiredFrom, dHiredTo, cLM )
 

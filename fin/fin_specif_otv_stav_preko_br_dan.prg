@@ -273,8 +273,8 @@ FUNCTION fin_spec_otv_stavke_preko_dana()
 
 
 
-/*! \fn ZaglSpBrDana()
- *  \brief Zaglavlje za otvorene stavke preko odredjenog broja dana
+/* ZaglSpBrDana()
+ *     Zaglavlje za otvorene stavke preko odredjenog broja dana
  */
 
 FUNCTION ZaglSpBrDana()

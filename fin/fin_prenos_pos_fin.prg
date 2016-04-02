@@ -13,12 +13,12 @@
 
 #define F_T_PROMVP  245
 
-/*! \fn GetPrVPParams(cProdId, dDatOd, dDatDo, dDatDok, cTipNal, cShema)
- *  \brief Setuj parametre prenosa
- *  \param cProdId - id prodavnice
- *  \param dDatOd - datum prenosa od
- *  \param dDatDo - datum prenosa do
- *  \param dDatDok - datum dokumenta
+/* GetPrVPParams(cProdId, dDatOd, dDatDo, dDatDok, cTipNal, cShema)
+ *     Setuj parametre prenosa
+ *   param: cProdId - id prodavnice
+ *   param: dDatOd - datum prenosa od
+ *   param: dDatDo - datum prenosa do
+ *   param: dDatDok - datum dokumenta
  */
 FUNCTION GetPrVPParams( cProdId, dDatOd, dDatDo, dDatDok, cTipNal, cShema )
 
@@ -50,8 +50,8 @@ FUNCTION GetPrVPParams( cProdId, dDatOd, dDatDo, dDatDok, cTipNal, cShema )
 
 
 
-/*! \fn PromVP2Fin()
- *  \brief Centralna funkcija za prenos PROMVP u FIN
+/* PromVP2Fin()
+ *     Centralna funkcija za prenos PROMVP u FIN
  */
 FUNCTION PromVP2Fin()
 
@@ -143,10 +143,10 @@ FUNCTION PromVP2Fin()
 
 
 
-/*! \fn Azur2Pripr(cBrojNal, dDatNal)
- *  \brief Azuriranje stavke u pripremu
- *  \param cBrojNal - broj naloga
- *  \param dDatNal - datum naloga
+/* Azur2Pripr(cBrojNal, dDatNal)
+ *     Azuriranje stavke u pripremu
+ *   param: cBrojNal - broj naloga
+ *   param: dDatNal - datum naloga
  */
 STATIC FUNCTION Azur2Pripr( cBrojNal, dDatNal )
 
@@ -175,9 +175,9 @@ STATIC FUNCTION Azur2Pripr( cBrojNal, dDatNal )
 
 
 
-/*! \fn NaDan(cField)
- *  \brief Vraca ukupan iznos pologa (cField) za datumski period
- *  \param cField - polje, npr "POLOG01"
+/* NaDan(cField)
+ *     Vraca ukupan iznos pologa (cField) za datumski period
+ *   param: cField - polje, npr "POLOG01"
  */
 FUNCTION NaDan( cField )
 
@@ -210,9 +210,9 @@ FUNCTION NaDan( cField )
 
 
 
-/*! \fn GetVrPlIznos(cField)
- *  \brief Vraca iznos pologa za datumski period
- *  \param cField - polje, npr "POLOG01"
+/* GetVrPlIznos(cField)
+ *     Vraca iznos pologa za datumski period
+ *   param: cField - polje, npr "POLOG01"
  */
 STATIC FUNCTION GetVrPlIznos( cField )
 
@@ -244,8 +244,8 @@ STATIC FUNCTION GetVrPlIznos( cField )
 
 
 
-/*! \fn O_PrVP_DB()
- *  \brief Otvaranje neophodnih tabela
+/* O_PrVP_DB()
+ *     Otvaranje neophodnih tabela
  */
 STATIC FUNCTION O_PrVP_DB()
 
@@ -262,10 +262,10 @@ STATIC FUNCTION O_PrVP_DB()
 
 
 
-/*! \fn GetTopsParams(cTKPath, cProdKonto)
- *  \brief Setuje TOPS kumpath i idkonto
- *  \param cTKPath - kumpath tops
- *  \param cProdKonto - prodavnicki konto
+/* GetTopsParams(cTKPath, cProdKonto)
+ *     Setuje TOPS kumpath i idkonto
+ *   param: cTKPath - kumpath tops
+ *   param: cProdKonto - prodavnicki konto
  */
 STATIC FUNCTION GetTopsParams( cTKPath, cProdKonto )
 

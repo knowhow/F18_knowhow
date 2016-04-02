@@ -244,11 +244,11 @@ STATIC FUNCTION _prikazi_info( ulazi, mag_prod, ul_count )
 
 
 
-/*! \fn PrikaziDobavljaca(cIdRoba, nRazmak, lNeIspisujDob)
- *  \brief Funkcija vraca dobavljaca cIdRobe na osnovu polja roba->dob
- *  \param cIdRoba
- *  \param nRazmak - razmak prije ispisa dobavljaca
- *  \param lNeIspisujDob - ako je .t. ne ispisuje "Dobavljac:"
+/* PrikaziDobavljaca(cIdRoba, nRazmak, lNeIspisujDob)
+ *     Funkcija vraca dobavljaca cIdRobe na osnovu polja roba->dob
+ *   param: cIdRoba
+ *   param: nRazmak - razmak prije ispisa dobavljaca
+ *   param: lNeIspisujDob - ako je .t. ne ispisuje "Dobavljac:"
  *  \return cVrati - string "dobavljac: xxxxxxx"
  */
 

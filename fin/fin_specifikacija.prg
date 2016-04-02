@@ -553,9 +553,9 @@ FUNCTION fin_spec_po_suban_kontima()
 
 
 
-/*! \fn getmjesto(cMjesto)
- *  \brief
- *  \param cMjesto
+/* getmjesto(cMjesto)
+ *    
+ *   param: cMjesto
  */
 
 FUNCTION getmjesto( cMjesto )

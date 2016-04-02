@@ -154,8 +154,8 @@ FUNCTION KaLabelBKod()
    RETURN
 
 
-/*! \fn KaEdPrLBK()
- *  \brief Obrada dogadjaja u browse-u tabele "Priprema za labeliranje bar-kodova"
+/* KaEdPrLBK()
+ *     Obrada dogadjaja u browse-u tabele "Priprema za labeliranje bar-kodova"
  *  \sa KaLabelBKod()
  */
 
@@ -174,8 +174,8 @@ FUNCTION KaEdPrLBK()
    RETURN DE_CONT
 // }
 
-/*! \fn FaLabelBKod()
- *  \brief Priprema za labeliranje barkodova
+/* FaLabelBKod()
+ *     Priprema za labeliranje barkodova
  *  \todo Spojiti
  */
 FUNCTION FaLabelBKod()

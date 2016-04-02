@@ -593,8 +593,8 @@ STATIC FUNCTION Legenda()
 // }
 
 
-/*! \fn ZagOPoMF()
- *  \brief Zaglavlje obrta
+/* ZagOPoMF()
+ *     Zaglavlje obrta
  */
 
 FUNCTION ZagOPoMF()

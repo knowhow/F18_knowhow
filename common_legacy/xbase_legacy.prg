@@ -50,10 +50,10 @@ FUNCTION Gather( cZn )
    RETURN NIL
 
 
-/*! \fn Scatter(cZn)
-  * \brief vrijednosti field varijabli tekuceg sloga prebacuje u public varijable
+/* Scatter(cZn)
+  *    vrijednosti field varijabli tekuceg sloga prebacuje u public varijable
   *
-  * \param cZn - Default = "_"; odredjuje prefixs varijabli koje ce generisati
+  *  param: cZn - Default = "_"; odredjuje prefixs varijabli koje ce generisati
   *
   * \code
   *
@@ -122,8 +122,8 @@ FUNCTION GatherR( cZn )
    RETURN NIL
 
 
-/*! \fn Gather2(cZn)
-*   \brief Gather ne versi rlock-unlock
+/* Gather2(cZn)
+*      Gather ne versi rlock-unlock
 *   \note Gather2 pretpostavlja zakljucan zapis !!
 */
 
@@ -225,10 +225,10 @@ FUNCTION appblank2( fcisti, funl )
    RETURN NIL
 
 
-/*! \fn AppFrom(cFDbf, fOtvori)
-*  \brief apenduje iz cFDbf-a u tekucu tabelu
-*  \param cFDBF - ime dbf-a
-*  \param fOtvori - .t. - otvori DBF, .f. - vec je otvorena
+/* AppFrom(cFDbf, fOtvori)
+*     apenduje iz cFDbf-a u tekucu tabelu
+*   param: cFDBF - ime dbf-a
+*   param: fOtvori - .t. - otvori DBF, .f. - vec je otvorena
 */
 
 FUNCTION AppFrom( cFDbf, fOtvori )
@@ -378,8 +378,8 @@ FUNCTION EofFndRet( ef, close )
    RETURN fRet
 
 
-/*! \fn spec_funkcije_sifra(cSif)
- *  \brief zasticene funkcije sistema
+/* spec_funkcije_sifra(cSif)
+ *     zasticene funkcije sistema
  *
  * za programske funkcije koje samo serviser
  * treba da zna, tj koje obicni korisniku
@@ -420,8 +420,8 @@ FUNCTION spec_funkcije_sifra( cSif )
 
 
 
-/*! \fn O_POMDB(nArea,cImeDBF)
- *  \brief otvori pomocnu tabelu, koja ako se nalazi na CDU npr se kopira u lokalni
+/* O_POMDB(nArea,cImeDBF)
+ *     otvori pomocnu tabelu, koja ako se nalazi na CDU npr se kopira u lokalni
  *   direktorij pa zapuje
  */
 

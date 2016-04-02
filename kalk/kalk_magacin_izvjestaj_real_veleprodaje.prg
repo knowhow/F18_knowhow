@@ -377,8 +377,8 @@ return
 
 
 
-/*! \fn kalk_zagl_real_partnera(fTabela)
- *  \brief Zaglavlje izvjestaja "realizacija veleprodaje po partnerima"
+/* kalk_zagl_real_partnera(fTabela)
+ *     Zaglavlje izvjestaja "realizacija veleprodaje po partnerima"
  */
  
 function kalk_zagl_real_partnera(fTabela)

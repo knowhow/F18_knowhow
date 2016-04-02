@@ -13,8 +13,8 @@
 
 
 
-/*! \fn ShowIznRac(nIznos)
- *  \brief Ispisuje iznos racuna velikim slovima
+/* ShowIznRac(nIznos)
+ *     Ispisuje iznos racuna velikim slovima
  */
 
 FUNCTION ShowIznRac( nIznos )

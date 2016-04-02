@@ -380,8 +380,8 @@ STATIC FUNCTION ZaglZ( dDat0, dDat1, cIdPos, cSmjena, cIdDio, cRadnici, cVrsteP,
 
 
 
-/*! \fn RekVrstePl()
- *  \brief Rekapitulacija realizacije kase po vrstama placanja
+/* RekVrstePl()
+ *     Rekapitulacija realizacije kase po vrstama placanja
  */
 
 FUNCTION RekVrstePl()
@@ -513,8 +513,8 @@ STATIC FUNCTION o_pom_table()
    RETURN
 
 
-/*! \fn RealPoRadn()
- *  \brief Prikaz realizacije po radnicima
+/* RealPoRadn()
+ *     Prikaz realizacije po radnicima
  */
 
 STATIC FUNCTION RealPoRadn()
@@ -761,8 +761,8 @@ STATIC FUNCTION set_zagl()
    RETURN
 
 
-/*! \fn RealPoOdj(fPrik, nTotal2, nTotal3)
- *  \brief Prikaz realizacije po odjeljenjima
+/* RealPoOdj(fPrik, nTotal2, nTotal3)
+ *     Prikaz realizacije po odjeljenjima
  */
 
 STATIC FUNCTION RealPoOdj( fPrik, nTotal2, nTotal3 )

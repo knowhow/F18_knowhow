@@ -135,8 +135,8 @@ FUNCTION Iz12u97()
 
 
 
-/*! \fn InvManj()
- *  \brief Generise dok.95 za manjak i visak ili 95 za manjak, a 16 u smecu za visak
+/* InvManj()
+ *     Generise dok.95 za manjak i visak ili 95 za manjak, a 16 u smecu za visak
  */
 
 FUNCTION InvManj()
@@ -262,8 +262,8 @@ FUNCTION InvManj()
 
 
 
-/*! \fn MNivPoProc()
- *  \brief Nivelacija u magacinu po procentima
+/* MNivPoProc()
+ *     Nivelacija u magacinu po procentima
  */
 
 FUNCTION MNivPoProc()
@@ -400,8 +400,8 @@ FUNCTION MNivPoProc()
 
 
 
-/*! \fn KorekPC()
- *  \brief Korekcija prodajne cijene - pravljenje nivelacije za magacin
+/* KorekPC()
+ *     Korekcija prodajne cijene - pravljenje nivelacije za magacin
  */
 
 FUNCTION KorekPC()
@@ -656,8 +656,8 @@ FUNCTION Otprema()
 
 
 
-/*! \fn Iz96u16()
- *  \brief
+/* Iz96u16()
+ *    
  */
 
 FUNCTION Iz96u16()
@@ -726,8 +726,8 @@ FUNCTION Iz96u16()
 
 
 
-/*! \fn Iz16u14()
- *  \brief Od 16 napravi 14
+/* Iz16u14()
+ *     Od 16 napravi 14
  */
 
 FUNCTION Iz16u14()

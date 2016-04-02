@@ -1541,16 +1541,16 @@ FUNCTION IspisBankeNar( cBanke )
 
 
 
-/*! \fn JeStorno10()
- *  \brief True je distribucija i TipDokumenta=10  i krajnji desni dio broja dokumenta="S"
+/* JeStorno10()
+ *     True je distribucija i TipDokumenta=10  i krajnji desni dio broja dokumenta="S"
  */
 FUNCTION JeStorno10()
    RETURN glDistrib .AND. _idtipdok == "10" .AND. Upper( Right( Trim( _BrDok ), 1 ) ) == "S"
 
 
 
-/*! \fn RabPor10()
- *  \brief
+/* RabPor10()
+ *    
  */
 
 FUNCTION RabPor10()

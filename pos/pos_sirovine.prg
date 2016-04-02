@@ -76,8 +76,8 @@ CLOSERET
 *}
 
 
-/*! \fn RazdPoNorm(dDatOd,dDatDo,cSmjena,fTekuci)
- *  \brief
+/* RazdPoNorm(dDatOd,dDatDo,cSmjena,fTekuci)
+ *    
  */
  
 function RazdPoNorm(dDatOd,dDatDo,cSmjena,fTekuci)

@@ -955,11 +955,11 @@ FUNCTION ld_lista_kredita_key_handler()
 
 
 
-/*! \fn GodMjesec(nGodina,nMjesec,nPomak)
- *  \brief eg. GodMjesec(2002,4,-6) -> {2001,10}
- *  \param nGodina
- *  \param nMjesec
- *  \param nPomak
+/* GodMjesec(nGodina,nMjesec,nPomak)
+ *     eg. GodMjesec(2002,4,-6) -> {2001,10}
+ *   param: nGodina
+ *   param: nMjesec
+ *   param: nPomak
  */
 
 FUNCTION GodMjesec( nGodina, nMjesec, nPomak )
@@ -1014,12 +1014,12 @@ FUNCTION DatADD( dDat, nMjeseci, nGodina )
 
 
 
-/*! \fn DatRazmak(dDatDo,dDatOd,nMjeseci,nDana)
- *  \brief Datumski razmak izrazen u: mjeseci, dana. Poziv: DatRazmak("15.07.2002","05.06.2001",@nMjeseci,@nDana)
- *  \param
- *  \param
- *  \param
- *  \param
+/* DatRazmak(dDatDo,dDatOd,nMjeseci,nDana)
+ *     Datumski razmak izrazen u: mjeseci, dana. Poziv: DatRazmak("15.07.2002","05.06.2001",@nMjeseci,@nDana)
+ *   param:
+ *   param:
+ *   param:
+ *   param:
  */
 FUNCTION DatRazmak( dDatDo, dDatOd, nMjeseci, nDana )
 
@@ -1090,9 +1090,9 @@ FUNCTION DanaUmjesecu( dDatum )
 
 
 
-/*! \fn DatZadUMjesecu(dDatum)
- *  \brief Vraca datum zadnjed u mjesecu
- *  \param dDatum
+/* DatZadUMjesecu(dDatum)
+ *     Vraca datum zadnjed u mjesecu
+ *   param: dDatum
  */
 
 FUNCTION DatZadUMjesecu( dDatum )

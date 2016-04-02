@@ -367,8 +367,8 @@ FUNCTION Achoice2( x1, y1, x2, y2, Items, f1, cFunc, nItemNo )
    RETURN nItemNo + nCtrlKeyVal
 
 
-/*! \fn AChoice3(x1,y1,x2,y2,Items,f1,cFunc,nItemNo)
- *  \brief AChoice za broj stavki > 16
+/* AChoice3(x1,y1,x2,y2,Items,f1,cFunc,nItemNo)
+ *     AChoice za broj stavki > 16
  *  \todo Ugasiti stari Achoice ??, ne trebaju nam dva
  */
 

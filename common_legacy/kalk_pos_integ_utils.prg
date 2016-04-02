@@ -13,11 +13,11 @@
 #include "f18.ch"
 
 
-/*! \fn GetKalkVars(cFirma, cKonto, cPath)
- *  \brief Vraca osnovne var.za rad sa kalk-om
- *  \param cFirma - id firma kalk
- *  \param cKonto - konto prodavnice u kalk-u
- *  \param cPath - putanja do kalk.dbf
+/* GetKalkVars(cFirma, cKonto, cPath)
+ *     Vraca osnovne var.za rad sa kalk-om
+ *   param: cFirma - id firma kalk
+ *   param: cKonto - konto prodavnice u kalk-u
+ *   param: cPath - putanja do kalk.dbf
  */
 FUNCTION GetKalkVars( cFirma, cKonto, cPath )
 
@@ -33,8 +33,8 @@ FUNCTION GetKalkVars( cFirma, cKonto, cPath )
 
 
 
-/*! \fn IntegTekGod()
- *  \brief Vraca tekucu godinu, ako je tek.datum veci od 10.01.TG onda je godina = TG, ako je tek.datum <= 10.01.TG onda je godina (TG - 1)
+/* IntegTekGod()
+ *     Vraca tekucu godinu, ako je tek.datum veci od 10.01.TG onda je godina = TG, ako je tek.datum <= 10.01.TG onda je godina (TG - 1)
  *  \return string cYear
  */
 FUNCTION IntegTekGod()
@@ -58,8 +58,8 @@ FUNCTION IntegTekGod()
    RETURN cYear
 // }
 
-/*! \fn IntegTekDat()
- *  \brief Vraca datum od kada pocinje tekuca godina TOPS, 01.01.TG
+/* IntegTekDat()
+ *     Vraca datum od kada pocinje tekuca godina TOPS, 01.01.TG
  */
 FUNCTION IntegTekDat()
 
@@ -73,8 +73,8 @@ FUNCTION IntegTekDat()
    RETURN SToD( cDate )
 // }
 
-/*! \fn AddToErrors(cType, cIdRoba, cDoks, cOpis)
- *  \brief dodaj zapis u tabelu errors
+/* AddToErrors(cType, cIdRoba, cDoks, cOpis)
+ *     dodaj zapis u tabelu errors
  */
 FUNCTION AddToErrors( cType, cIDroba, cDoks, cOpis )
 
@@ -90,9 +90,9 @@ FUNCTION AddToErrors( cType, cIDroba, cDoks, cOpis )
 // }
 
 
-/*! \fn GetErrorDesc(cType)
- *  \brief Vrati naziv greske po cType
- *  \param cType - tip greske, C, W, N ...
+/* GetErrorDesc(cType)
+ *     Vrati naziv greske po cType
+ *   param: cType - tip greske, C, W, N ...
  */
 FUNCTION GetErrorDesc( cType )
 
@@ -113,10 +113,10 @@ FUNCTION GetErrorDesc( cType )
 // }
 
 
-/*! \fn RptInteg()
- *  \brief report nakon testa integ1
- *  \param lFilter - filter za kriticne greske
- *  \param lAutoSent - automatsko slanje email-a
+/* RptInteg()
+ *     report nakon testa integ1
+ *   param: lFilter - filter za kriticne greske
+ *   param: lAutoSent - automatsko slanje email-a
  */
 FUNCTION RptInteg( lFilter, lAutoSent )
 
@@ -220,8 +220,8 @@ FUNCTION RptInteg( lFilter, lAutoSent )
    RETURN
 // }
 
-/*! \fn RptSendEmail()
- *  \brief Slanje reporta na email
+/* RptSendEmail()
+ *     Slanje reporta na email
  */
 FUNCTION RptSendEmail( lAuto )
 
@@ -259,10 +259,10 @@ FUNCTION RptSendEmail( lAuto )
 
 
 
-/*! \fn GetSendVars(cScript)
- *  \param cScript - ruby skripta
- *  \param cPSite - prodavnicki site
- *  \param cRptFile - report fajl
+/* GetSendVars(cScript)
+ *   param: cScript - ruby skripta
+ *   param: cPSite - prodavnicki site
+ *   param: cRptFile - report fajl
  */
 FUNCTION GetSendVars( cScript, cPSite, cRptFile )
 
@@ -274,8 +274,8 @@ FUNCTION GetSendVars( cScript, cPSite, cRptFile )
 
 
 
-/*! \fn BrisiError()
- *  \brief Brisanje tabele Errors.dbf
+/* BrisiError()
+ *     Brisanje tabele Errors.dbf
  */
 FUNCTION BrisiError()
 
@@ -285,8 +285,8 @@ FUNCTION BrisiError()
 
    RETURN
 
-/*! \fn EmptDInt(nInteg)
- *  \brief Da li je prazna tabela dinteg
+/* EmptDInt(nInteg)
+ *     Da li je prazna tabela dinteg
  */
 FUNCTION EmptDInt( nInteg )
 

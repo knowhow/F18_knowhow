@@ -318,7 +318,7 @@ FUNCTION pos_stampa_racuna( cIdPos, cBrDok, lPrepis, cIdVrsteP, dDatumRn, aVezan
    RETURN ( cTime )
 
 
-/*! \fn RacHeder(cIdPos,cDatBrDok,cSto,fPrepis, aVezani)
+/* RacHeder(cIdPos,cDatBrDok,cSto,fPrepis, aVezani)
  */
 
 FUNCTION RacHeder( cIdPos, cDatBrDok, cSto, fPrepis, aVezani )
@@ -382,7 +382,7 @@ FUNCTION RacHeder( cIdPos, cDatBrDok, cSto, fPrepis, aVezani )
    RETURN ( cTime )
 
 
-/*! \fn RacFuter(cIdRadnik,cSmjena)
+/* RacFuter(cIdRadnik,cSmjena)
  */
 
 FUNCTION RacFuter( cIdRadnik, cSmjena )
@@ -708,8 +708,8 @@ FUNCTION _sh_rn_info( cBrRn )
 
 
 
-/*! \fn StampaRekap(cIdRadnik, cBrojStola)
- *  \brief Stampa rekapitulacije racuna
+/* StampaRekap(cIdRadnik, cBrojStola)
+ *     Stampa rekapitulacije racuna
  */
 
 FUNCTION StampaRekap( cIdRadnik, cBrojStola, dDatumOd, dDatumDo )

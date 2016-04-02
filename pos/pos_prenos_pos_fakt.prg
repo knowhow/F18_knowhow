@@ -43,8 +43,8 @@ STATIC FUNCTION GetPm()
 
 
 
-/*! \fn Real2Fakt()
- *  \brief Prenos realizacije u FAKT
+/* Real2Fakt()
+ *     Prenos realizacije u FAKT
  */
 
 FUNCTION Real2Fakt()
@@ -214,8 +214,8 @@ FUNCTION PripTOPSFAKT( cIdPartnG )
 
 
 
-/*! \fn Stanje2Fakt()
- *  \brief Prenos stanja robe u FAKT
+/* Stanje2Fakt()
+ *     Prenos stanja robe u FAKT
  */
 
 FUNCTION Stanje2Fakt()

@@ -234,13 +234,13 @@ FUNCTION MsgC( msg_x1, msg_y1, msg_x2, msg_y2 )
    RETURN .T.
 
 
-/*! \fn Box(BoxId, N, Length, Inv, chMsg, cHelpT)
- *  \brief Otvara prozor BoxID dimenzija (N x Length), F18_COLOR_INVERT ovan
+/* Box(BoxId, N, Length, Inv, chMsg, cHelpT)
+ *     Otvara prozor BoxID dimenzija (N x Length), F18_COLOR_INVERT ovan
  *         (Inv=.T. ili ne)
  *
- *  \param chMsg - tip C -> prikaz poruke
- *  \param A -> ispisuje opcije pomocu fje OpcTipke
- *  \param boxid se ne koristi
+ *   param: chMsg - tip C -> prikaz poruke
+ *   param: A -> ispisuje opcije pomocu fje OpcTipke
+ *   param: boxid se ne koristi
  */
 
 FUNCTION Box( BoxId, NA1, Length, Inv, chMsg, cHelpT )
@@ -506,7 +506,7 @@ FUNCTION Prozor0()
 
 
 /* Postotak(nIndik,nUkupno,cTekst,cBNasl,cBOkv,lZvuk)
-*   \brief Prikaz procenta uradjenog posla
+*      Prikaz procenta uradjenog posla
 *
 * Ova fja omogucava prikaz procenta uradjenog posla, sto je efektno
 * kod stanja cekanja da program uradi neki posao. Pise se najmanje tri puta
@@ -577,8 +577,8 @@ FUNCTION Postotak( nIndik, nUkupno, cTekst, cBNasl, cBOkv, lZvuk )
 
 
 
-/*! \fn LomiGa(cTekst,nOrig,nLin,nDuz)
- * \brief Formatira tekst u varijabli 'cTekst'
+/* LomiGa(cTekst,nOrig,nLin,nDuz)
+ *    Formatira tekst u varijabli 'cTekst'
  *
  * To se radi prema zeljenom ispisu u 'nLin'
  * redova duzine 'nDuz'. Pri tom uklanja znak "-" koji se javlja pri

@@ -323,10 +323,10 @@ FUNCTION ProcitajRep( cImef )
    RETURN
 
 
-/*! \fn SetRptLineAndText(aLineArgs, nVariant)
- *  \brief vraca liniju po definisanoj matrici
- *  \param aLineArgs - matrica argumenata
- *  \param nVariant - varijanta, 0 - linija, 1 - prvi red izvjestaja, 2 - drugi red izvjestaja
+/* SetRptLineAndText(aLineArgs, nVariant)
+ *     vraca liniju po definisanoj matrici
+ *   param: aLineArgs - matrica argumenata
+ *   param: nVariant - varijanta, 0 - linija, 1 - prvi red izvjestaja, 2 - drugi red izvjestaja
  *  \example: aLineArgs := {2, 5, 5, 3}
  *            ret: -- ----- ----- ---
  */

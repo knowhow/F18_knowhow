@@ -12,14 +12,14 @@
 
 #include "f18.ch"
 
-/*! \fn Kurs(dDat,cValIz,cValU)
- *  \param dDat - datum na koji se trazi omjer
- *  \param cValIz - valuta iz koje se vrsi preracun iznosa
- *  \param cValU  - valuta u koju se preracunava iznos valute cValIz
- *  \param cValIz i cValU se mogu zadati kao sifre valuta ili kao tipovi
- *  \param Npr. tip "P" oznacava pomocnu, a tip "D" domacu valutu
- *  \param Ako nisu zadani, uzima se da je cValIz="P", a cValU="D"
- *  \param Ako je zadano samo neko cValIz<>"P", cValU ce biti "P"
+/* Kurs(dDat,cValIz,cValU)
+ *   param: dDat - datum na koji se trazi omjer
+ *   param: cValIz - valuta iz koje se vrsi preracun iznosa
+ *   param: cValU  - valuta u koju se preracunava iznos valute cValIz
+ *   param: cValIz i cValU se mogu zadati kao sifre valuta ili kao tipovi
+ *   param: Npr. tip "P" oznacava pomocnu, a tip "D" domacu valutu
+ *   param: Ako nisu zadani, uzima se da je cValIz="P", a cValU="D"
+ *   param: Ako je zadano samo neko cValIz<>"P", cValU ce biti "P"
  *
  *  \return f-ja vraca protuvrijednost jedinice valute cValIz u valuti cValU
  */

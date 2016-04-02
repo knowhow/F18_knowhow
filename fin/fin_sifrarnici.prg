@@ -14,12 +14,12 @@
 
 
 
-/*! \fn P_KontoFin(cId,dx,dy,lBlag)
- *  \brief Otvara sifrarnik konta spec. za FIN
- *  \param cId
- *  \param dx
- *  \param dy
- *  \param lBlag
+/* P_KontoFin(cId,dx,dy,lBlag)
+ *     Otvara sifrarnik konta spec. za FIN
+ *   param: cId
+ *   param: dx
+ *   param: dy
+ *   param: lBlag
  */
 FUNCTION P_KontoFin( cId, dx, dy, lBlag )
 
@@ -78,9 +78,9 @@ FUNCTION P_KontoFin( cId, dx, dy, lBlag )
 
 
 
-/*! \fn KontoBlok(Ch)
- *  \brief Obradjuje funkcije nad sifrarnikom konta
- *  \param Ch  - pritisnuti taster
+/* KontoBlok(Ch)
+ *     Obradjuje funkcije nad sifrarnikom konta
+ *   param: Ch  - pritisnuti taster
  */
 
 FUNCTION KontoBlok( Ch )
@@ -186,11 +186,11 @@ FUNCTION KontoBlok( Ch )
 
 
 
-/*! \fn P_PKonto(cId,dx,dy)
- *  \brief Otvara sifrarnik prenosa konta u novu godinu
- *  \param cId
- *  \param dx
- *  \param dy
+/* P_PKonto(cId,dx,dy)
+ *     Otvara sifrarnik prenosa konta u novu godinu
+ *   param: cId
+ *   param: dx
+ *   param: dy
  */
 
 FUNCTION P_PKonto( CId, dx, dy )
@@ -206,9 +206,9 @@ FUNCTION P_PKonto( CId, dx, dy )
 
 
 
-/*! \fn TipPKonto(cTip)
- *  \brief Tip prenosa konta u novu godinu
- *  \param cTip
+/* TipPKonto(cTip)
+ *     Tip prenosa konta u novu godinu
+ *   param: cTip
  */
 
 FUNCTION TipPKonto( cTip )
@@ -230,11 +230,11 @@ FUNCTION TipPKonto( cTip )
    ENDIF
 
 
-/*! \fn P_Funk(cId,dx,dy)
- *  \brief Otvara sifranik funkcionalnih klasifikacija
- *  \param cId
- *  \param dx
- *  \param dy
+/* P_Funk(cId,dx,dy)
+ *     Otvara sifranik funkcionalnih klasifikacija
+ *   param: cId
+ *   param: dx
+ *   param: dy
  */
 
 FUNCTION P_Funk( cId, dx, dy )
@@ -278,11 +278,11 @@ FUNCTION P_KS( cId, dx, dy )
 
 
 
-/*! \fn P_Fond(cId,dx,dy)
- *  \brief Otvara sifrarnik fondova
- *  \param cId
- *  \param dx
- *  \param dy
+/* P_Fond(cId,dx,dy)
+ *     Otvara sifrarnik fondova
+ *   param: cId
+ *   param: dx
+ *   param: dy
  */
 
 FUNCTION P_Fond( cId, dx, dy )
@@ -298,11 +298,11 @@ FUNCTION P_Fond( cId, dx, dy )
 
 
 
-/*! \fn P_BuIz(cId,dx,dy)
- *  \brief Otvara sifrarnik konta-izuzetci
- *  \param cId
- *  \param dx
- *  \param dy
+/* P_BuIz(cId,dx,dy)
+ *     Otvara sifrarnik konta-izuzetci
+ *   param: cId
+ *   param: dx
+ *   param: dy
  */
 
 FUNCTION P_BuIz( cId, dx, dy )
@@ -318,11 +318,11 @@ FUNCTION P_BuIz( cId, dx, dy )
 
 
 
-/*! \fn P_Budzet(cId,dx,dy)
- *  \brief Otvara sifrarnik plana budzeta
- *  \param cId
- *  \param dx
- *  \param dy
+/* P_Budzet(cId,dx,dy)
+ *     Otvara sifrarnik plana budzeta
+ *   param: cId
+ *   param: dx
+ *   param: dy
  */
 
 FUNCTION P_Budzet( cId, dx, dy )
@@ -343,11 +343,11 @@ FUNCTION P_Budzet( cId, dx, dy )
 
 
 
-/*! \fn P_ParEK(cId,dx,dy)
- *  \brief Otvara sifrarnik ekonomskih kategorija
- *  \param cId
- *  \param dx
- *  \param dy
+/* P_ParEK(cId,dx,dy)
+ *     Otvara sifrarnik ekonomskih kategorija
+ *   param: cId
+ *   param: dx
+ *   param: dy
  */
 
 FUNCTION P_ParEK( cId, dx, dy )
@@ -365,11 +365,11 @@ FUNCTION P_ParEK( cId, dx, dy )
 
 
 
-/*! \fn P_TRFP3(cId,dx,dy)
- *  \brief Otvara sifrarnik shema kontiranja obracuna LD
- *  \param cId
- *  \param dx
- *  \param dy
+/* P_TRFP3(cId,dx,dy)
+ *     Otvara sifrarnik shema kontiranja obracuna LD
+ *   param: cId
+ *   param: dx
+ *   param: dy
  */
 
 FUNCTION P_TRFP3( cId, dx, dy )
@@ -410,10 +410,10 @@ SET FILTER TO
 
 
 
-/*! \fn ImaUSuban(cKljuc,cTag)
- *  \brief
- *  \param cKljuc
- *  \param cTag
+/* ImaUSuban(cKljuc,cTag)
+ *    
+ *   param: cKljuc
+ *   param: cTag
  */
 
 FUNCTION ImaUSuban( cKljuc, cTag )
@@ -448,11 +448,11 @@ FUNCTION P_Roba_fin( CId, dx, dy )
    RETURN .T.
 
 
-/*! \fn P_ULimit(cId,dx,dy)
- *  \brief Otvara sifrarnik limita po ugovorima
- *  \param cId
- *  \param dx
- *  \param dy
+/* P_ULimit(cId,dx,dy)
+ *     Otvara sifrarnik limita po ugovorima
+ *   param: cId
+ *   param: dx
+ *   param: dy
  */
 
 FUNCTION P_ULIMIT( cId, dx, dy )

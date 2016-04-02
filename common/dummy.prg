@@ -52,12 +52,12 @@ FUNCTION replsql_dummy()
    RETURN
 
 
-/*! \fn UpisiURF(cTekst,cFajl,lNoviRed,lNoviFajl)
- *  \brief Upisi u report fajl
- *  \param cTekst    - tekst
- *  \param cFajl     - ime fajla
- *  \param lNoviRed  - da li prelaziti u novi red
- *  \param lNoviFajl - da li snimati u novi fajl
+/* UpisiURF(cTekst,cFajl,lNoviRed,lNoviFajl)
+ *     Upisi u report fajl
+ *   param: cTekst    - tekst
+ *   param: cFajl     - ime fajla
+ *   param: lNoviRed  - da li prelaziti u novi red
+ *   param: lNoviFajl - da li snimati u novi fajl
  */
 
 FUNCTION UpisiURF( cTekst, cFajl, lNoviRed, lNoviFajl )
@@ -66,10 +66,10 @@ FUNCTION UpisiURF( cTekst, cFajl, lNoviRed, lNoviFajl )
 
    RETURN
 
-/*! \fn DiffMFV(cZn,cDiff)
- *  \brief differences: memo vs field variable
- *  \param cZn
- *  \param cdiff
+/* DiffMFV(cZn,cDiff)
+ *     differences: memo vs field variable
+ *   param: cZn
+ *   param: cdiff
  */
 
 FUNCTION DiffMFV( cZN, cDiff )

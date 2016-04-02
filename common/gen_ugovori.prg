@@ -31,9 +31,9 @@
 
 /*! \ingroup ini
   * \var *string FmkIni_ExePath_Fakt_Ugovori_N2
-  * \brief Koristi li se za generaciju faktura po ugovorima parametar N2 ?
-  * \param D - da, default vrijednost
-  * \param N - ne
+  *    Koristi li se za generaciju faktura po ugovorima parametar N2 ?
+  *  param: D - da, default vrijednost
+  *  param: N - ne
   */
 // string FmkIni_ExePath_Fakt_Ugovori_N2;
 

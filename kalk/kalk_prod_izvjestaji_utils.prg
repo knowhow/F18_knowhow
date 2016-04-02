@@ -218,9 +218,9 @@ FUNCTION RekTarPDV()
 
 
 
-/*! \fn PKontoCnt(cSeek)
- *  \brief Kreira niz prodavnickih konta koji se nalaze u zadanom dokumentu
- *  \param cSeek - firma + tip dok + broj dok
+/* PKontoCnt(cSeek)
+ *     Kreira niz prodavnickih konta koji se nalaze u zadanom dokumentu
+ *   param: cSeek - firma + tip dok + broj dok
  */
 
 FUNCTION PKontoCnt( cSeek )

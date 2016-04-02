@@ -71,8 +71,8 @@ FUNCTION BrowseRn()
 
 
 
-/*! \fn EdBrn(Ch)
- *  \brief Obrada opcija u browse-u radnih naloga
+/* EdBrn(Ch)
+ *     Obrada opcija u browse-u radnih naloga
  */
 
 FUNCTION EdBrn( Ch )

@@ -11,8 +11,8 @@
 
 #include "f18.ch"
 
-/*! \fn SetDatUPripr()
- *  \brief Postavi datum u pripremi
+/* SetDatUPripr()
+ *     Postavi datum u pripremi
  */
 FUNCTION SetDatUPripr()
 
@@ -48,9 +48,9 @@ FUNCTION SetDatUPripr()
 
    RETURN .T.
 
-/*! \fn K3Iz256(cK3)
- *  \brief
- *  \param cK3
+/* K3Iz256(cK3)
+ *    
+ *   param: cK3
  */
 
 FUNCTION K3Iz256( cK3 )
@@ -78,8 +78,8 @@ FUNCTION K3Iz256( cK3 )
 
 
 
-/*! \fn K3U256(cK3)
- *  \brief
+/* K3U256(cK3)
+ *    
  *  \cK3
  */
 

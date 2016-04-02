@@ -377,8 +377,8 @@ return
 *}
 
 
-/*! \fn KTroskovi()
- *  \brief Proracun iznosa troskova pri unosu u pripremi
+/* KTroskovi()
+ *     Proracun iznosa troskova pri unosu u pripremi
  */
 
 static function KTroskovi()
@@ -481,8 +481,8 @@ return
 
 
 
-/*! \fn PPUMP()
- *  \brief Racuna i daje porez na promet usluga u maloprodaji
+/* PPUMP()
+ *     Racuna i daje porez na promet usluga u maloprodaji
  */
 static function PPUMP()
 *{
@@ -497,8 +497,8 @@ return nVrati
 
 
 
-/*! \fn PPPMP()
- *  \brief Racuna i daje porez na promet proizvoda u maloprodaji
+/* PPPMP()
+ *     Racuna i daje porez na promet proizvoda u maloprodaji
  */
 static function PPPMP()
 *{

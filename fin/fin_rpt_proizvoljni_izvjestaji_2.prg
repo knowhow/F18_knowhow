@@ -916,9 +916,9 @@ return
 
 
 
-/*! \fn PrikaziTI(cSif)
- *  \brief Prikazuje tekuci izvjestaj
- *  \param cSif - sifra
+/* PrikaziTI(cSif)
+ *     Prikazuje tekuci izvjestaj
+ *   param: cSif - sifra
  */
 
 function PrikaziTI(cSif)
@@ -949,8 +949,8 @@ RETURN
 
 
 
-/*! \fn FForPI()
- *  \brief
+/* FForPI()
+ *    
  */
 
 function FForPI()
@@ -973,8 +973,8 @@ RETURN lVrati
 
 
 
-/*! \fn VidiUaKolS()
- *  \brief
+/* VidiUaKolS()
+ *    
  */
 
 function VidiUaKolS()
@@ -1012,10 +1012,10 @@ RETURN IF(!EMPTY(PODVUCI),"PODVUCI"+PODVUCI,NIL)
 
 
 
-/*! \fn PlBudzeta(cTipK,cKonto)
- *  \brief Plan budzeta, specificno za budzetske korisnike
- *  \param cTipK
- *  \param cKonto
+/* PlBudzeta(cTipK,cKonto)
+ *     Plan budzeta, specificno za budzetske korisnike
+ *   param: cTipK
+ *   param: cKonto
  */
 
 function PlBudzeta( cTipK, cKonto )
@@ -1052,10 +1052,10 @@ RETURN nVrati
 
 
 
-/*! \fn RebBudzeta(cTipK,cKonto)
- *  \brief Rebalans budzeta
- *  \param cTipK
- *  \param cKonto
+/* RebBudzeta(cTipK,cKonto)
+ *     Rebalans budzeta
+ *   param: cTipK
+ *   param: cKonto
  */
 
  
@@ -1096,8 +1096,8 @@ RETURN nVrati
 
 
 
-/*! \fn ParSviIzvj()
- *  \brief Parametri za sve izvjestaje
+/* ParSviIzvj()
+ *     Parametri za sve izvjestaje
  */
  
 function ParSviIzvjFin()
@@ -1243,10 +1243,10 @@ return
 
 
 
-/*! \fn UKucice(cSta,nKucica)
- *  \brief
- *  \param cSta
- *  \param nKucica
+/* UKucice(cSta,nKucica)
+ *    
+ *   param: cSta
+ *   param: nKucica
  */
  
 function UKucice(cSta,nKucica)
@@ -1257,8 +1257,8 @@ RETURN ( "I"+CHARMIX(PADL(TRIM(cSta),nKucica,IF(EMPTY(cSta)," ","0")),"I") )
 
 
 
-/*! \fn KZnBazaWin(cDbf)
- *  \brief Konverzija znakova u bazama
+/* KZnBazaWin(cDbf)
+ *     Konverzija znakova u bazama
  */
  
 function KZnbazaWin(cDbf)

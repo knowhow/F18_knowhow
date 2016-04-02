@@ -81,12 +81,12 @@ FUNCTION izracunaj_uneto_usati_za_radnika()
 
 
 
-/*! \fn ParObr(nMjesec, nGodina, cObr, cIdRj)
- *  \brief Parametri obracuna
- *  \param nMjesec - mjesec
- *  \param nGodina - godina
- *  \param cObr - broj obracuna
- *  \param cIdRj - id radna jedinica
+/* ParObr(nMjesec, nGodina, cObr, cIdRj)
+ *     Parametri obracuna
+ *   param: nMjesec - mjesec
+ *   param: nGodina - godina
+ *   param: cObr - broj obracuna
+ *   param: cIdRj - id radna jedinica
  */
 FUNCTION ParOBr( nMjesec, nGodina, cObr, cIdRj )
 
@@ -135,10 +135,10 @@ FUNCTION ParOBr( nMjesec, nGodina, cObr, cIdRj )
 
 
 
-/*! \fn Izracunaj(ixx, fPrikaz)
- *  \brief Izracunavanje formula
- *  \param ixx -
- *  \param fPrikaz - prikazi .t.
+/* Izracunaj(ixx, fPrikaz)
+ *     Izracunavanje formula
+ *   param: ixx -
+ *   param: fPrikaz - prikazi .t.
  */
 FUNCTION Izracunaj( ixx, fPrikaz )
 
@@ -164,10 +164,10 @@ FUNCTION Izracunaj( ixx, fPrikaz )
 
 
 
-/*! \fn Prosj3(cTip, cTip2)
- *  \brief Prosjek 3 mjeseca
- *  \param cTip
- *  \param cTip2
+/* Prosj3(cTip, cTip2)
+ *     Prosjek 3 mjeseca
+ *   param: cTip
+ *   param: cTip2
  */
 FUNCTION Prosj3( cTip, cTip2 )
 
@@ -360,8 +360,8 @@ FUNCTION Prosj3( cTip, cTip2 )
 // }
 
 
-/*! \fn UPrim()
- *  \brief Racuna ukupna primanja
+/* UPrim()
+ *     Racuna ukupna primanja
  */
 FUNCTION UPrim()
 
@@ -375,8 +375,8 @@ FUNCTION UPrim()
    return &c719
 // }
 
-/*! \fn USati()
- *  \brief Racuna ukupne sate
+/* USati()
+ *     Racuna ukupne sate
  */
 FUNCTION USati()
 
@@ -389,8 +389,8 @@ FUNCTION USati()
 
 
 
-/*! \fn URPrim()
- *  \brief Ukupna razna primanja
+/* URPrim()
+ *     Ukupna razna primanja
  */
 FUNCTION URPrim()
 

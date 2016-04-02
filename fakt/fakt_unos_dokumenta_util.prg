@@ -923,13 +923,13 @@ FUNCTION NijeDupla( fNovi )
 
 
 
-/*! \fn Prepak(cIdRoba,cPako,nPak,nKom,nKol,lKolUPak)
- *  \brief Preracunavanje paketa i komada ...
- *  \param cIdRoba  - sifra artikla
- *  \param nPak     - broj paketa/kartona
- *  \param nKom     - broj komada u ostatku (dijelu paketa/kartona)
- *  \param nKol     - ukupan broj komada
- *  \param nKOLuPAK - .t. -> preracunaj pakete (nPak,nKom) .f. -> preracunaj komade (nKol)
+/* Prepak(cIdRoba,cPako,nPak,nKom,nKol,lKolUPak)
+ *     Preracunavanje paketa i komada ...
+ *   param: cIdRoba  - sifra artikla
+ *   param: nPak     - broj paketa/kartona
+ *   param: nKom     - broj komada u ostatku (dijelu paketa/kartona)
+ *   param: nKol     - ukupan broj komada
+ *   param: nKOLuPAK - .t. -> preracunaj pakete (nPak,nKom) .f. -> preracunaj komade (nKol)
  */
 
 FUNCTION Prepak( cIdRoba, cPako, nPak, nKom, nKol, lKolUPak )
@@ -973,8 +973,8 @@ FUNCTION Prepak( cIdRoba, cPako, nPak, nKom, nKol, lKolUPak )
 
 
 
-/*! \fn UGenNar()
- *  \brief U Generalnoj Narudzbi
+/* UGenNar()
+ *     U Generalnoj Narudzbi
  */
 
 FUNCTION UGenNar()
@@ -1102,8 +1102,8 @@ FUNCTION set_cijena( cIdTipDok, cIdRoba, nCijena, nRabat )
 
 
 
-/*! \fn IniVars()
- *  \brief Ini varijable
+/* IniVars()
+ *     Ini varijable
  */
 
 FUNCTION IniVars()
@@ -1137,8 +1137,8 @@ FUNCTION IniVars()
 
 
 
-/*! \fn SetVars()
- *  \brief Setuj varijable
+/* SetVars()
+ *     Setuj varijable
  */
 
 FUNCTION SetVars()
@@ -1236,11 +1236,11 @@ FUNCTION ObracunajPP( cSetPor, dDatDok )
    RETURN
 
 
-/*! \fn TarifaR(cRegion, cIdRoba, aPorezi)
- *  \brief Tarifa na osnovu region + roba
- *  \param cRegion
- *  \param cIdRoba
- *  \param aPorezi
+/* TarifaR(cRegion, cIdRoba, aPorezi)
+ *     Tarifa na osnovu region + roba
+ *   param: cRegion
+ *   param: cIdRoba
+ *   param: aPorezi
  *  \note preradjena funkcija jer Fakt nema cIdKonto
  */
 
@@ -1361,11 +1361,11 @@ FUNCTION Koef( cdindem )
 
 
 
-/*! \fn SljBrDok13(cBrD,nBrM,cKon)
- *  \brief
- *  \param cBrD
- *  \param nBrM
- *  \param cKon
+/* SljBrDok13(cBrD,nBrM,cKon)
+ *    
+ *   param: cBrD
+ *   param: nBrM
+ *   param: cKon
  */
 
 FUNCTION SljBrDok13( cBrD, nBrM, cKon )
@@ -1386,10 +1386,10 @@ FUNCTION SljBrDok13( cBrD, nBrM, cKon )
    RETURN cPom2 + cPom + "/" + PadL( AllTrim( Str( nBrM ) ), 2, "0" )
 
 
-/*! \fn IsprUzorTxt(fSilent,bFunc)
- *  \brief Ispravka teksta ispod fakture
- *  \param fSilent
- *  \param bFunc
+/* IsprUzorTxt(fSilent,bFunc)
+ *     Ispravka teksta ispod fakture
+ *   param: fSilent
+ *   param: bFunc
  */
 
 FUNCTION IsprUzorTxt( fSilent, bFunc )
@@ -1721,9 +1721,9 @@ FUNCTION Rbr()
 
    RETURN PadR( cRet, 6 )
 
-/*! \fn CijeneOK(cStr)
- *  \brief
- *  \param cStr
+/* CijeneOK(cStr)
+ *    
+ *   param: cStr
  */
 
 FUNCTION CijeneOK( cStr )
@@ -1760,10 +1760,10 @@ FUNCTION CijeneOK( cStr )
 
 
 
-/*! \fn renumeracija_fakt_pripr(cVezOtpr,dNajnoviji)
- *  \brief
- *  \param cVezOtpr
- *  \param dNajnoviji - datum posljednje radjene otpremnice
+/* renumeracija_fakt_pripr(cVezOtpr,dNajnoviji)
+ *    
+ *   param: cVezOtpr
+ *   param: dNajnoviji - datum posljednje radjene otpremnice
  */
 
 FUNCTION renumeracija_fakt_pripr( veza_otpremnica, datum_max )

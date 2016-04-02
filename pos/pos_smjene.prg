@@ -102,8 +102,8 @@ FUNCTION OdrediSmjenu( lOdredi )
 
 
 
-/*! \fn DatumOK()
- *  \brief
+/* DatumOK()
+ *    
  */
 
 STATIC FUNCTION DatumOK()
@@ -150,11 +150,11 @@ STATIC FUNCTION SmjenaOK()
 
 
 
-/*! \fn ProvKonzBaze(dDatum,cSmjena)
- *  \brief Provjerava konzistentnost podataka.
- *  \brief Ako su svi racuni zakljuceni ova funkcija ZAPPuje POS.
- *  \param dDatum
- *  \param cSmjena
+/* ProvKonzBaze(dDatum,cSmjena)
+ *     Provjerava konzistentnost podataka.
+ *     Ako su svi racuni zakljuceni ova funkcija ZAPPuje POS.
+ *   param: dDatum
+ *   param: cSmjena
  */
 
 FUNCTION ProvKonzBaze( dDatum, cSmjena )
@@ -315,8 +315,8 @@ FUNCTION ProvKonzBaze( dDatum, cSmjena )
 // }
 
 
-/*! \fn ZakljRadnik()
- *  \brief Zakljucenje radnika
+/* ZakljRadnik()
+ *     Zakljucenje radnika
  */
 
 FUNCTION ZakljRadnik( Ch )

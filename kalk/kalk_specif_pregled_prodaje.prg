@@ -14,12 +14,12 @@
 
 
 /*! \file fmk/kalk/specif/vindija/1g/vindija.prg
- *  \brief Specificnosti za Vindiju
+ *     Specificnosti za Vindiju
  */
 
 
-/*! \fn PregledProdaje()
- *  \brief Pregled prodaje - Vindija
+/* PregledProdaje()
+ *     Pregled prodaje - Vindija
  */
 
 FUNCTION PregProdaje()
@@ -501,10 +501,10 @@ FUNCTION SDiv( nDjelilac, nDijeljenik )
 // }
 
 
-/*! \fn GetPictDem(nLen, nDec)
- *  \brief Vraca velicinu i broj decimala num polja
- *  \param nLen
- *  \param nDec
+/* GetPictDem(nLen, nDec)
+ *     Vraca velicinu i broj decimala num polja
+ *   param: nLen
+ *   param: nDec
  */
 FUNCTION GetPictDem( nLen, nDec )
 

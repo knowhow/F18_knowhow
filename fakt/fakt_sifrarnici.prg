@@ -40,9 +40,9 @@ FUNCTION p_fakt_objekti( cId, dx, dy )
 
 
 
-/*! \fn RobaBlok(Ch)
- *  \brief
- *  \param Ch
+/* RobaBlok(Ch)
+ *    
+ *   param: Ch
  */
 
 FUNCTION FaRobaBlock( Ch )
@@ -101,9 +101,9 @@ FUNCTION FaRobaBlock( Ch )
 
 
 
-/*! \fn FaktStanje(cIdRoba)
- *  \brief Stanje robe fakt-a
- *  \param cIdRoba
+/* FaktStanje(cIdRoba)
+ *     Stanje robe fakt-a
+ *   param: cIdRoba
  */
 
 FUNCTION FaktStanje( cIdRoba )
@@ -161,10 +161,10 @@ FUNCTION FaktStanje( cIdRoba )
 
 
 
-/*! \fn fakt_box_stanje(aStanje,cIdRoba)
- *  \brief
- *  \param aStanje
- *  \param cIdRoba
+/* fakt_box_stanje(aStanje,cIdRoba)
+ *    
+ *   param: aStanje
+ *   param: cIdRoba
  */
 
 FUNCTION fakt_box_stanje( aStanje, cIdroba )
@@ -319,8 +319,8 @@ FUNCTION P_FTxt( cId, dx, dy )
 
 
 
-/*! \fn PrikFTxt()
- *  \brief Prikazuje uzorak teksta
+/* PrikFTxt()
+ *     Prikazuje uzorak teksta
  */
 
 FUNCTION PrikFTxt( top_pos, left_pos, bott_pos, text_length )
@@ -343,8 +343,8 @@ FUNCTION PrikFTxt( top_pos, left_pos, bott_pos, text_length )
    RETURN -1
 
 
-/*! \fn fn ObSif()
- *  \brief
+/* fn ObSif()
+ *    
  */
 
 STATIC FUNCTION ObSif()
@@ -384,10 +384,10 @@ STATIC FUNCTION ObSif()
 
 
 
-/*! \fn ima_u_fakt_kumulativ(cKljuc,cTag)
- *  \brief
- *  \param cKljuc
- *  \param cTag
+/* ima_u_fakt_kumulativ(cKljuc,cTag)
+ *    
+ *   param: cKljuc
+ *   param: cTag
  */
 
 FUNCTION ima_u_fakt_kumulativ( cKljuc, cTag )

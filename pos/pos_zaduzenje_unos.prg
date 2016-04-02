@@ -13,8 +13,8 @@
 #include "f18.ch"
 #include "f18_separator.ch"
 
-/*! \fn Zaduzenje(cIdVd)
- *  \brief Dokument zaduzenja
+/* Zaduzenje(cIdVd)
+ *     Dokument zaduzenja
  *
  *  cIdVD -  16 ulaz
  *           95 otpis
@@ -405,9 +405,9 @@ FUNCTION ZadKolOK( nKol )
 
 
 
-/*! \fn ZadProvDuple(cSif)
- *  \brief Provjera postojanja sifre u zaduzenju
- *  \param cSif
+/* ZadProvDuple(cSif)
+ *     Provjera postojanja sifre u zaduzenju
+ *   param: cSif
  *  \return
  */
 FUNCTION ZadProvDuple( cSif )
@@ -429,8 +429,8 @@ FUNCTION ZadProvDuple( cSif )
 
 
 
-/*! \fn IspraviZaduzenje()
- *  \brief Ispravka zaduzenja od strane korisnika
+/* IspraviZaduzenje()
+ *     Ispravka zaduzenja od strane korisnika
  */
 FUNCTION IspraviZaduzenje()
 
@@ -465,8 +465,8 @@ FUNCTION IspraviZaduzenje()
 
 
 
-/*! \fn BrisStavZaduz()
- *  \brief Brise stavku zaduzenja
+/* BrisStavZaduz()
+ *     Brise stavku zaduzenja
  */
 
 FUNCTION BrisStavZaduz()

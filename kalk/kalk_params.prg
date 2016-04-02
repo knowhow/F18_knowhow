@@ -312,8 +312,8 @@ FUNCTION kalk_par_razno()
 
 
 
-/*! \fn kalk_par_metoda_nc()
- *  \brief Ispravka parametara "METODA NC, ISPRAVKA DOKUMENATA"
+/* kalk_par_metoda_nc()
+ *     Ispravka parametara "METODA NC, ISPRAVKA DOKUMENATA"
  */
 
 FUNCTION kalk_par_metoda_nc()

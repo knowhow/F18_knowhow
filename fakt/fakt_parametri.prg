@@ -124,8 +124,8 @@ FUNCTION fakt_set_params()
    RETURN
 
 
-/*! \fn fakt_par_razno()
- *  \brief Podesenja parametri-razno
+/* fakt_par_razno()
+ *     Podesenja parametri-razno
  */
 FUNCTION fakt_par_razno()
 

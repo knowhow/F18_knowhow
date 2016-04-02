@@ -149,12 +149,12 @@ FUNCTION R_IniRead ( cSection, cEntry, cDefault, cFName, lAppend )
 
 
 
-/*! \fn R_IniWrite ( cSection, cEntry, cString, cFName )
+/* R_IniWrite ( cSection, cEntry, cString, cFName )
  *
- * \param cSection - String that specifies the section to which the string will  be copied. If the section does not exist, it is created. cSection is case-independent
- * \param cEntry - String containing the entry to be associated with the string. If the entry does not exist in the specified section, it is created. If the parameter is NIL, the entire section, including all entries within the section, is deleted.
- * \param cString - String to be written to the file. If this parameter is NIL, the entry specified by the cEntry parameter is deleted.
- * \param cFName  - String that names the initialization file
+ *  param: cSection - String that specifies the section to which the string will  be copied. If the section does not exist, it is created. cSection is case-independent
+ *  param: cEntry - String containing the entry to be associated with the string. If the entry does not exist in the specified section, it is created. If the parameter is NIL, the entire section, including all entries within the section, is deleted.
+ *  param: cString - String to be written to the file. If this parameter is NIL, the entry specified by the cEntry parameter is deleted.
+ *  param: cFName  - String that names the initialization file
  *
  * \sa R_IniWrite
  *
@@ -166,6 +166,7 @@ FUNCTION R_IniWrite( cSection, cEntry, cString, cFName )
    LOCAL nBytes
    LOCAL nPos
    LOCAL nEntry
+   LOCAL lPom
 
    IF ( cFName == NIL ) .OR. ValType ( cFName ) != 'C'
       // Required parameter !
@@ -356,8 +357,8 @@ FUNCTION R_IniWrite( cSection, cEntry, cString, cFName )
 
 
 
-/*! \fn I_At(cSearch, cString, nStart)
- *  \param nStart - pocni pretragu od nStart pozicije
+/* I_At(cSearch, cString, nStart)
+ *   param: nStart - pocni pretragu od nStart pozicije
  */
 STATIC FUNCTION I_At( cSearch, lUpper, nStart )
 

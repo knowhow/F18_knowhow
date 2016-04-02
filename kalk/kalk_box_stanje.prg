@@ -106,8 +106,8 @@ return
 
 
 
-/*! \fn BoxStanje(aStanje,cIdRoba)
- *  \brief Prikaz stanja robe
+/* BoxStanje(aStanje,cIdRoba)
+ *     Prikaz stanja robe
  */
 
 function BoxStanje(aStanje,cIdroba)

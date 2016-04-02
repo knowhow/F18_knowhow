@@ -1,8 +1,8 @@
 #include "f18.ch"
 
 /*! SpecKK2(lOtvSt)
- *  \brief Specifikacija konto/konto2 partner
- *  \param lOtvSt
+ *     Specifikacija konto/konto2 partner
+ *   param: lOtvSt
  */
 
 FUNCTION SpecKK2( lOtvSt )
@@ -252,8 +252,8 @@ FUNCTION SpecKK2( lOtvSt )
 
 
 
-/*! \fn Zagl7()
- *  \brief Zaglavlje specifikacije konto/konto2
+/* Zagl7()
+ *     Zaglavlje specifikacije konto/konto2
  */
 STATIC FUNCTION Zagl7()
 

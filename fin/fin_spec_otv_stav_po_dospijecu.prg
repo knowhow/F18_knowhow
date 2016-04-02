@@ -913,10 +913,10 @@ FUNCTION saldo_nula( cIdPartn )
    RETURN .F.
 
 
-   /*! \fn Zfin_spec_otv_stavke_po_dospijecu(fStrana,lSvi)
-    *  \brief Zaglavlje izvjestaja specifikacije po dospjecu
-    *  \param fStrana
-    *  \param lSvi
+   /* Zfin_spec_otv_stavke_po_dospijecu(fStrana,lSvi)
+    *     Zaglavlje izvjestaja specifikacije po dospjecu
+    *   param: fStrana
+    *   param: lSvi
     */
 
 FUNCTION Zfin_spec_otv_stavke_po_dospijecu( fStrana, lSvi, PICPIC )

@@ -1,7 +1,7 @@
 #include "f18.ch"
 
-/*! \fn SpecOstPop()
- *  \brief Specifikacija otvorenih stavki po kontima za partnera
+/* SpecOstPop()
+ *     Specifikacija otvorenih stavki po kontima za partnera
  */
 FUNCTION SpecOstPop()
 
@@ -141,8 +141,8 @@ FUNCTION SpecOstPop()
 
 
 
-/*! \fn ZglSpOstP()
- *  \brief Zaglavlje specifikacije otvorenih stavki partnera po kontima
+/* ZglSpOstP()
+ *     Zaglavlje specifikacije otvorenih stavki partnera po kontima
  */
 FUNCTION ZglSpOstP()
 

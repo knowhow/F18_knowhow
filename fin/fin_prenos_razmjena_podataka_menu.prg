@@ -12,11 +12,11 @@
 #include "f18.ch"
 
 /*! \file fmk/fin/razdb/1g/mnu_raz.prg
- *  \brief Menij razmjene podataka
+ *     Menij razmjene podataka
  */
 
-/*! \fn MnuRazmjenaPodataka()
- *  \brief Menij razmjene podataka
+/* MnuRazmjenaPodataka()
+ *     Menij razmjene podataka
  */
 FUNCTION MnuRazmjenaPodataka()
 
@@ -41,8 +41,8 @@ FUNCTION MnuRazmjenaPodataka()
 
 
 
-/*! \fn PosFin()
- *  \brief Prenos prometa pologa
+/* PosFin()
+ *     Prenos prometa pologa
  */
 FUNCTION PosFin()
 

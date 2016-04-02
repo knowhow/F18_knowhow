@@ -228,9 +228,9 @@ FUNCTION FaktFin()
 
 
 
-/*! \fn PorezMp(cVar)
- *  \brief Porez u maloprodaji
- *  \param cVar
+/* PorezMp(cVar)
+ *     Porez u maloprodaji
+ *   param: cVar
  */
 
 FUNCTION PorezMp( cVar )
@@ -300,9 +300,9 @@ FUNCTION PorezMp( cVar )
 
 
 
-/*! \fn fin_kontiranje_naloga(dDatNal)
- *  \brief Kontiranje naloga
- *  \param dDatNal  - datum naloga
+/* fin_kontiranje_naloga(dDatNal)
+ *     Kontiranje naloga
+ *   param: dDatNal  - datum naloga
  */
 
 FUNCTION fin_kontiranje_naloga( dDatNal )
@@ -508,11 +508,11 @@ FUNCTION fin_kontiranje_naloga( dDatNal )
 
 
 
-/*! \fn RasKon(cRoba,aSifre,aKonta)
- *  \brief Trazi poziciju cRoba u aSifre i ako nadje vraca element iz aKonta koji je na nadjenoj poziciji
- *  \param cRoba
- *  \param aSifre
- *  \param aKonta
+/* RasKon(cRoba,aSifre,aKonta)
+ *     Trazi poziciju cRoba u aSifre i ako nadje vraca element iz aKonta koji je na nadjenoj poziciji
+ *   param: cRoba
+ *   param: aSifre
+ *   param: aKonta
  */
 
 FUNCTION RasKon( cRoba, aSifre, aKonta )
@@ -526,8 +526,8 @@ FUNCTION RasKon( cRoba, aSifre, aKonta )
 
 
 
-/*! \fn PrStopa(nProc)
- *  \brief  Preracunata stopa
+/* PrStopa(nProc)
+ *      Preracunata stopa
  *  \nProc - Broj
  */
 
@@ -538,11 +538,11 @@ FUNCTION PrStopa( nProc )
 
 
 
-/*! \fn IzKalk(cIdRoba,cKonSir,cSta)
- *  \brief
- *  \param cIdRoba
- *  \param cKonSir
- *  \param cSta
+/* IzKalk(cIdRoba,cKonSir,cSta)
+ *    
+ *   param: cIdRoba
+ *   param: cKonSir
+ *   param: cSta
  */
 
 FUNCTION IzKalk( cIdRoba, cKonSir, cSta )

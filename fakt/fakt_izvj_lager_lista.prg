@@ -638,8 +638,8 @@ FUNCTION fakt_lager_lista()
 
 
 
-/*! \fn Zaglfakt_lager_lista()
- *  \brief Zaglavlje lager liste
+/* Zaglfakt_lager_lista()
+ *     Zaglavlje lager liste
  */
 
 FUNCTION Zaglfakt_lager_lista()

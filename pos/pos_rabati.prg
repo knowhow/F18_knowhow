@@ -13,11 +13,11 @@
 #include "f18.ch"
 
 
-/*! \fn FrmGetRabat(aRabat, nCijena)
- *  \brief Puni matricu aRabat popustima, u zavisnosti od varijante
- *  \param aRabat - matrica rabata: type array
+/* FrmGetRabat(aRabat, nCijena)
+ *     Puni matricu aRabat popustima, u zavisnosti od varijante
+ *   param: aRabat - matrica rabata: type array
  	{idroba, nPopVar1, nPopVar2, nPopVar3, nPopVar4, nPopVar5, nPopVar6}
- *  \param nCijena - cijena artikla
+ *   param: nCijena - cijena artikla
  */
 function FrmGetRabat(aRabat, nCijena)
 *{
@@ -51,10 +51,10 @@ return
 *}
 
 
-/*! \fn GetPopZadavanjemNoveCijene(aRabat, nCijena)
- *  \brief Popust zadavanjem nove cijene
- *  \param aRabat
- *  \param nCijena
+/* GetPopZadavanjemNoveCijene(aRabat, nCijena)
+ *     Popust zadavanjem nove cijene
+ *   param: aRabat
+ *   param: nCijena
  */
 function GetPopZadavanjemNoveCijene(aRabat, nCijena)
 *{
@@ -70,10 +70,10 @@ endif
 return
 *}
 
-/*! \fn GetPopGeneral(aRabat, nCijena)
- *  \brief Generalni popust za sve artikle
- *  \param aRabat
- *  \param nCijena
+/* GetPopGeneral(aRabat, nCijena)
+ *     Generalni popust za sve artikle
+ *   param: aRabat
+ *   param: nCijena
  */
 function GetPopGeneral(aRabat, nCijena)
 *{
@@ -90,10 +90,10 @@ return
 *}
 
 
-/*! \fn GetPopFromN2(aRabat, nCijena)
- *  \brief Popust na osnovu polja "roba->N2", gPopust=99 - gledaj sifrarnik
- *  \param aRabat
- *  \param nCijena
+/* GetPopFromN2(aRabat, nCijena)
+ *     Popust na osnovu polja "roba->N2", gPopust=99 - gledaj sifrarnik
+ *   param: aRabat
+ *   param: nCijena
  */
 function GetPopFromN2(aRabat, nCijena)
 *{
@@ -110,10 +110,10 @@ return
 *}
 
 
-/*! \fn GetPopPrekoOdrIznosa(aRabat, nCijena)
- *  \brief Varijanta popusta preko odredjenog iznosa
- *  \param aRabat
- *  \param nCijena
+/* GetPopPrekoOdrIznosa(aRabat, nCijena)
+ *     Varijanta popusta preko odredjenog iznosa
+ *   param: aRabat
+ *   param: nCijena
  */
 function GetPopPrekoOdrIznosa(aRabat, nCijena)
 *{
@@ -128,10 +128,10 @@ return
 *}
 
 
-/*! \fn GetPopClanovi(aRabat, nCijena)
- *  \brief Popust za clanove
- *  \param aRabat
- *  \param nCijena
+/* GetPopClanovi(aRabat, nCijena)
+ *     Popust za clanove
+ *   param: aRabat
+ *   param: nCijena
  */
 function GetPopClanovi(aRabat, nCijena)
 *{
@@ -145,10 +145,10 @@ endif
 return
 *}
 
-/*! \fn GetPopProcent(aRabat, nCijena)
- *  \brief Popust zadavanjem procenta
- *  \param aRabat
- *  \param nCijena
+/* GetPopProcent(aRabat, nCijena)
+ *     Popust zadavanjem procenta
+ *   param: aRabat
+ *   param: nCijena
  */
 function GetPopProcent(aRabat, nCijena)
 *{
@@ -164,16 +164,16 @@ return
 *}
 
 
-/*! \fn AddToArrRabat(aRabat, cIdRoba, nPopVar1, nPopVar2, nPopVar3, nPopVar4, nPopVar5, nPopVar6)
- *  \brief Puni matricu aRabat{} vrijednostima popusta nPopVarN
- *  \param aRabat - matrica
- *  \param cIdRoba - id artikla
- *  \param nPopVar1 - iznos popusta zadavanja nove cijene
- *  \param nPopVar2 - iznos generalnog popusta
- *  \param nPopVar3 - iznos popusta na osnovu polja N2
- *  \param nPopVar4 - iznos popusta preko odredjenog iznosa
- *  \param nPopVar5 - iznos popusta za clanove
- *  \param nPopVar6 - iznos popusta zadavanjem procenta
+/* AddToArrRabat(aRabat, cIdRoba, nPopVar1, nPopVar2, nPopVar3, nPopVar4, nPopVar5, nPopVar6)
+ *     Puni matricu aRabat{} vrijednostima popusta nPopVarN
+ *   param: aRabat - matrica
+ *   param: cIdRoba - id artikla
+ *   param: nPopVar1 - iznos popusta zadavanja nove cijene
+ *   param: nPopVar2 - iznos generalnog popusta
+ *   param: nPopVar3 - iznos popusta na osnovu polja N2
+ *   param: nPopVar4 - iznos popusta preko odredjenog iznosa
+ *   param: nPopVar5 - iznos popusta za clanove
+ *   param: nPopVar6 - iznos popusta zadavanjem procenta
  */
 function AddToArrRabat(aRabat, cIdRoba, nPopVar1, nPopVar2, nPopVar3, nPopVar4, nPopVar5, nPopVar6)
 *{
@@ -231,9 +231,9 @@ return
 *}
 
 
-/*! \fn RptArrRabat(aRabat)
- *  \brief Stampa matricu aRabat, sluzi samo za testiranje!!!
- *  \param aRabat
+/* RptArrRabat(aRabat)
+ *     Stampa matricu aRabat, sluzi samo za testiranje!!!
+ *   param: aRabat
  */
 function RptArrRabat(aRabat)
 *{
@@ -256,15 +256,15 @@ return
 *}
 
 
-/*! \fn CalcArrRabat(aRabat, lPopVar1, lPopVar2, lPopVar3, lPopVar4, lPopVar5, lPopVar6)
- *  \brief Kalkulise kompletan iznos rabata za sve stavke
- *  \param aRabat - matrica rabata
- *  \param lPopVar1 - .t. racunaj 1 varijantu
- *  \param lPopVar2 - .t. racunaj 2 varijantu
- *  \param lPopVar3 - .t. racunaj 3 varijantu
- *  \param lPopVar4 - .t. racunaj 4 varijantu
- *  \param lPopVar5 - .t. racunaj 5 varijantu
- *  \param lPopVar6 - .t. racunaj 6 varijantu
+/* CalcArrRabat(aRabat, lPopVar1, lPopVar2, lPopVar3, lPopVar4, lPopVar5, lPopVar6)
+ *     Kalkulise kompletan iznos rabata za sve stavke
+ *   param: aRabat - matrica rabata
+ *   param: lPopVar1 - .t. racunaj 1 varijantu
+ *   param: lPopVar2 - .t. racunaj 2 varijantu
+ *   param: lPopVar3 - .t. racunaj 3 varijantu
+ *   param: lPopVar4 - .t. racunaj 4 varijantu
+ *   param: lPopVar5 - .t. racunaj 5 varijantu
+ *   param: lPopVar6 - .t. racunaj 6 varijantu
  */
 function CalcArrRabat(aRabat, lPopVar1, lPopVar2, lPopVar3, lPopVar4, lPopVar5, lPopVar6)
 *{
@@ -296,16 +296,16 @@ return nIznos
 *}
 
 
-/*! \fn CalcRabatForArticle(aRabat, cIdRoba, lPopVar1, lPopVar2, lPopVar3, lPopVar4, lPopVar5, lPopVar6)
- *  \brief Kalkulise rabat za samo jedan artikal
- *  \param aRabat
- *  \param cIdRoba
- *  \param lPopVar1
- *  \param lPopVar2
- *  \param lPopVar3
- *  \param lPopVar4
- *  \param lPopVar5
- *  \param lPopVar6
+/* CalcRabatForArticle(aRabat, cIdRoba, lPopVar1, lPopVar2, lPopVar3, lPopVar4, lPopVar5, lPopVar6)
+ *     Kalkulise rabat za samo jedan artikal
+ *   param: aRabat
+ *   param: cIdRoba
+ *   param: lPopVar1
+ *   param: lPopVar2
+ *   param: lPopVar3
+ *   param: lPopVar4
+ *   param: lPopVar5
+ *   param: lPopVar6
  */
 function CalcRabatForArticle(aRabat, cIdRoba, lPopVar1, lPopVar2, lPopVar3, lPopVar4, lPopVar5, lPopVar6)
 *{
@@ -370,8 +370,8 @@ return _ok
 
 
 
-/*! \fn FrmGetPopProc()
- *  \brief Prikaz forme za unos procenta popusta
+/* FrmGetPopProc()
+ *     Prikaz forme za unos procenta popusta
  */
 function FrmGetPopProc()
 *{
@@ -387,10 +387,10 @@ return nPopProc
 *}
 
 
-/*! \fn ShowRabatOnForm(nx, ny)
- *  \brief Prikazuje iznos rabata na formi unosa
- *  \param nx
- *  \param ny
+/* ShowRabatOnForm(nx, ny)
+ *     Prikazuje iznos rabata na formi unosa
+ *   param: nx
+ *   param: ny
  */
 function ShowRabatOnForm(nx, ny)
 *{
@@ -417,8 +417,8 @@ return
 
 
 
-/*! \fn RecalcRabat()
- *  \brief Rekalkulise vrijednost rabata prije azuriranja i stampanja racuna. Ovo je neophodno radi varijante popusta preko odredjenog iznosa.
+/* RecalcRabat()
+ *     Rekalkulise vrijednost rabata prije azuriranja i stampanja racuna. Ovo je neophodno radi varijante popusta preko odredjenog iznosa.
  */
 function RecalcRabat(cIdVrsteP)
 local nNIznos:=0
@@ -476,9 +476,9 @@ return
 *}
 
 
-/*! \fn Scan_PriprForRabat(aRabat)
- *  \brief Ako ima nezakljucenih racuna u _PRIPR napuni matricu aRabat
- *  \param aRabat - matrica rabata
+/* Scan_PriprForRabat(aRabat)
+ *     Ako ima nezakljucenih racuna u _PRIPR napuni matricu aRabat
+ *   param: aRabat - matrica rabata
  */
 function Scan_PriprForRabat(aRabat)
 *{

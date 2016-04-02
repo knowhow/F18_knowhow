@@ -40,8 +40,8 @@ FUNCTION prenos_fakt_kalk_magacin()
 
 
 
-/*! \fn mag_fa_ka_prenos_10_14()
- *  \brief Prenos FAKT 10 -> KALK 14 (veleprodajni racun)
+/* mag_fa_ka_prenos_10_14()
+ *     Prenos FAKT 10 -> KALK 14 (veleprodajni racun)
  */
 
 FUNCTION mag_fa_ka_prenos_10_14()

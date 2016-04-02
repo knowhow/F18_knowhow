@@ -79,9 +79,9 @@ FUNCTION FSvaki2()
 
 
 
-/*! \fn IspisFirme(cIdRj)
- *  \brief Ispisuje naziv fime
- *  \param cIdRj  - Oznaka radne jedinice
+/* IspisFirme(cIdRj)
+ *     Ispisuje naziv fime
+ *   param: cIdRj  - Oznaka radne jedinice
  */
 
 FUNCTION IspisFirme( cIdRj )

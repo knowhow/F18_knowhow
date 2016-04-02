@@ -64,8 +64,8 @@ FUNCTION GetExePath( cPath )
    RETURN cRet
 
 
-/*! \fn FilePath(cFile)
- *  \brief  Extract the full path name from a filename
+/* FilePath(cFile)
+ *      Extract the full path name from a filename
  *  \return cFilePath
  */
 
@@ -115,12 +115,12 @@ FUNCTION DiskPrazan( cDisk )
 
 
 /*! \file ChangeEXT(cImeF,cExt, cExtNew, fBezAdd)
- * \brief Promjeni ekstenziju
+ *    Promjeni ekstenziju
  *
- * \params cImeF   ime fajla
- * \params cExt    polazna extenzija (obavezno 3 slova)
- * \params cExtNew nova extenzija
- * \params fBezAdd ako je .t. onda ce fajlu koji nema cExt dodati cExtNew
+ *  param:s cImeF   ime fajla
+ *  param:s cExt    polazna extenzija (obavezno 3 slova)
+ *  param:s cExtNew nova extenzija
+ *  param:s fBezAdd ako je .t. onda ce fajlu koji nema cExt dodati cExtNew
  *
  * \code
  *
@@ -181,8 +181,8 @@ FUNCTION IsDirectory( cDir1 )
    RETURN lExists
 
 
-/*! \fn BrisiSFajlove(cDir)
-  * \brief Brisi fajlove starije od 45 dana
+/* BrisiSFajlove(cDir)
+  *    Brisi fajlove starije od 45 dana
   *
   * \code
   *

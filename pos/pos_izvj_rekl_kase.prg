@@ -73,8 +73,8 @@ my_close_all_dbf()
 return .t.
 
 
-/*! \fn FrmRptVars(cIdPos, dDat0, dDat1)
- *  \brief Uzmi varijable potrebne za izvjestaj
+/* FrmRptVars(cIdPos, dDat0, dDat1)
+ *     Uzmi varijable potrebne za izvjestaj
  *  \return 0 - nije uzeo, 1 - uzeo uspjesno
  */
 static function FrmRptVars(cIdPos, dDat0, dDat1)

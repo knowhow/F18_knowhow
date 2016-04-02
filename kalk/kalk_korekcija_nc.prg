@@ -90,8 +90,8 @@ FUNCTION KorekNC()
    // }
 
 
-/*! \fn TraziRbr(cKljuc)
- *  \brief Utvrdjuje posljednji redni broj stavke zadanog dokumenta u kalk_pripremi
+/* TraziRbr(cKljuc)
+ *     Utvrdjuje posljednji redni broj stavke zadanog dokumenta u kalk_pripremi
  */
 
 FUNCTION TraziRbr( cKljuc )
@@ -109,8 +109,8 @@ FUNCTION TraziRbr( cKljuc )
 // }
 
 
-/*! \fn TraziNC(cTrazi,dDat)
- *  \brief Utvrdjuje najcescu NC zadane robe na zadanom kontu do zadanog datuma
+/* TraziNC(cTrazi,dDat)
+ *     Utvrdjuje najcescu NC zadane robe na zadanom kontu do zadanog datuma
  */
 
 FUNCTION TraziNC( cTrazi, dDat )

@@ -66,10 +66,10 @@ FUNCTION _gFList( cFilter, cPath, cImpFile )
    RETURN 1
 
 
-/*! \fn TxtErase(cTxtFile, lErase)
- *  \brief Brisanje fajla cTxtFile
- *  \param cTxtFile - fajl za brisanje
- *  \param lErase - .t. ili .f. - brisati ili ne brisati fajl txt nakon importa
+/* TxtErase(cTxtFile, lErase)
+ *     Brisanje fajla cTxtFile
+ *   param: cTxtFile - fajl za brisanje
+ *   param: lErase - .t. ili .f. - brisati ili ne brisati fajl txt nakon importa
  */
 FUNCTION TxtErase( cTxtFile, lErase )
 
@@ -87,7 +87,7 @@ FUNCTION TxtErase( cTxtFile, lErase )
 
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 // -----------------------------------------------------

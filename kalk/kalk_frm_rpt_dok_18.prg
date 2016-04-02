@@ -23,12 +23,12 @@
 
 
 /*! \file fmk/kalk/mag/dok/1g/rpt_18.prg
- *  \brief Stampa dokumenta tipa 18
+ *     Stampa dokumenta tipa 18
  */
 
 
-/*! \fn StKalk18()
- *  \brief Stampa dokumenta tipa 18
+/* StKalk18()
+ *     Stampa dokumenta tipa 18
  */
 
 function StKalk18()

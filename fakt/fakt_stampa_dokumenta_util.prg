@@ -41,8 +41,8 @@ FUNCTION GetRegion()
 
    RETURN cRegion
 
-/*! \fn GetRtmFile(cDefRtm)
- *  \brief Vraca naziv rtm fajla za stampu
+/* GetRtmFile(cDefRtm)
+ *     Vraca naziv rtm fajla za stampu
  */
 FUNCTION GetRtmFile( cDefRtm )
 

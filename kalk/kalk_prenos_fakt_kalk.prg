@@ -33,12 +33,12 @@ FUNCTION FaktKalk()
 
 
 
-/*! \fn ProvjeriSif(clDok,cImePoljaID,nOblSif,clFor)
- *  \brief Provjera postojanja sifara
- *  \param clDok - "while" uslov za obuhvatanje slogova tekuce baze
- *  \param cImePoljaID - ime polja tekuce baze u kojem su sifre za ispitivanje
- *  \param nOblSif - oblast baze sifrarnika
- *  \param clFor - "for" uslov za obuhvatanje slogova tekuce baze
+/* ProvjeriSif(clDok,cImePoljaID,nOblSif,clFor)
+ *     Provjera postojanja sifara
+ *   param: clDok - "while" uslov za obuhvatanje slogova tekuce baze
+ *   param: cImePoljaID - ime polja tekuce baze u kojem su sifre za ispitivanje
+ *   param: nOblSif - oblast baze sifrarnika
+ *   param: clFor - "for" uslov za obuhvatanje slogova tekuce baze
  */
 
 FUNCTION ProvjeriSif( clDok, cImePoljaID, nOblSif, clFor, lTest )

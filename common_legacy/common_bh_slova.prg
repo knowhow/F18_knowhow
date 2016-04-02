@@ -14,10 +14,10 @@
 FUNCTION KonvZnWin( txt )
    RETURN txt
 
-/*! \fn KonvZnWin(cTekst, cWinKonv)
- *  \brief Konverzija znakova u stringu
- *  \param cTekst - tekst
- *  \param cWinKonv - tip konverzije
+/* KonvZnWin(cTekst, cWinKonv)
+ *     Konverzija znakova u stringu
+ *   param: cTekst - tekst
+ *   param: cWinKonv - tip konverzije
  */
 FUNCTION KonvZnWin_old( cTekst, cWinKonv )
 
@@ -83,8 +83,8 @@ FUNCTION StrKZN( cInput )
    RETURN cInput
 
 
-/*! \fn StrKZN(cInput, cIz, cU)
- *  \brief Vrsi zamjenu cInputa
+/* StrKZN(cInput, cIz, cU)
+ *     Vrsi zamjenu cInputa
  */
 FUNCTION StrKZN_old( cInput, cIz, cU )
 

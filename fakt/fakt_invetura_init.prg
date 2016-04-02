@@ -274,8 +274,8 @@ STATIC FUNCTION AddTxt( cTxt, cStr )
 
    RETURN NIL
 
-/*! \fn TFrmInvIt::vIdRj()
- *  \brief Validacija radne jedinice
+/* TFrmInvIt::vIdRj()
+ *     Validacija radne jedinice
  */
 METHOD vldRj()
 
@@ -310,8 +310,8 @@ METHOD vldBrDok()
       RETURN .F.
    ENDIF
 
-/*! \fn TFrmInvIt::vldIdRoba()
- *  \brief validacija IdRoba
+/* TFrmInvIt::vldIdRoba()
+ *     validacija IdRoba
  */
 
 METHOD vldIdRoba()
@@ -338,8 +338,8 @@ METHOD vldIdRoba()
 // }
 
 
-/*! \fn TFrmInvIt::wheIdRoba()
- *  \brief When (pred ulazak u) IdRoba
+/* TFrmInvIt::wheIdRoba()
+ *     When (pred ulazak u) IdRoba
  */
 METHOD wheIdRoba()
 
@@ -350,8 +350,8 @@ METHOD wheIdRoba()
    RETURN .T.
 
 
-/*! \fn TFrmInvIt::getPartner(int nRow)
- *  \brief Uzmi Podatke partnera
+/* TFrmInvIt::getPartner(int nRow)
+ *     Uzmi Podatke partnera
  */
 METHOD getPartner( nRow )
 
@@ -361,8 +361,8 @@ METHOD getPartner( nRow )
 
    RETURN
 
-/*! \fn TFrmInvIt::sayPartner(int nRow)
- *  \brief Odstampaj podatke o partneru
+/* TFrmInvIt::sayPartner(int nRow)
+ *     Odstampaj podatke o partneru
  */
 
 // void TFrmInvIt::sayPartner(int nRow)
@@ -379,8 +379,8 @@ METHOD sayPartner( nRow )
    RETURN
 // }
 
-/*! \fn TFrmInvIt::whePartner()
- *  \brief When Partner polja
+/* TFrmInvIt::whePartner()
+ *     When Partner polja
  */
 METHOD whePartner()
 
@@ -393,8 +393,8 @@ METHOD whePartner()
    RETURN .T.
 // }
 
-/*! \fn TFrmInvIt::vldPartner()
- *  \brief Validacija nakon unosa Partner polja - vidi je li sifra
+/* TFrmInvIt::vldPartner()
+ *     Validacija nakon unosa Partner polja - vidi je li sifra
  */
 METHOD vldPartner()
 
@@ -423,8 +423,8 @@ METHOD vldPartner()
 // }
 
 
-/*! \fn TFrmInvIt::vldPKolicina()
- *  \brief Validacija Popisane Kolicine
+/* TFrmInvIt::vldPKolicina()
+ *     Validacija Popisane Kolicine
  */
 
 METHOD vldPKolicina()
@@ -439,8 +439,8 @@ METHOD vldPKolicina()
    RETURN .T.
 
 
-/*! \fn TFrmInvIt::vldKKolicina()
- *  \brief Validacija Knjizne Kolicine
+/* TFrmInvIt::vldKKolicina()
+ *     Validacija Knjizne Kolicine
  */
 METHOD vldKKolicina()
 
@@ -454,8 +454,8 @@ METHOD vldKKolicina()
    RETURN .T.
 
 
-/*! \fn TFrmInvIt::wheKKolicina()
- *  \brief Prije ulaska u polje Knjizne Kolicine
+/* TFrmInvIt::wheKKolicina()
+ *     Prije ulaska u polje Knjizne Kolicine
  */
 METHOD wheKKolicina()
 
@@ -463,8 +463,8 @@ METHOD wheKKolicina()
 
    RETURN .T.
 
-/*! \fn TFrmInvIt::showArtikal()
- *  \brief Pokazi podatke o artiklu na formi ItemInventure
+/* TFrmInvIt::showArtikal()
+ *     Pokazi podatke o artiklu na formi ItemInventure
  */
 
 METHOD showArtikal()

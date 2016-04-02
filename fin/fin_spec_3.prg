@@ -139,8 +139,8 @@ FUNCTION SpecPop()
 
 
 
-/*! \fn ZglSpSifK()
- *  \brief Zaglavlje specifikacije po kontima
+/* ZglSpSifK()
+ *     Zaglavlje specifikacije po kontima
  */
 FUNCTION ZglSpSifK()
 

@@ -191,9 +191,9 @@ FUNCTION GetPstPreknj()
 
 
 
-/*! \fn GetMagKto(aMag)
- *  \brief Vrati matricu sa magacinima
- *  \param aMag
+/* GetMagKto(aMag)
+ *     Vrati matricu sa magacinima
+ *   param: aMag
  */
 FUNCTION GetMagKto( aMag )
 
@@ -227,14 +227,14 @@ FUNCTION GetMagKto( aMag )
 // }
 
 
-/*! \fn GenPreknM(cMKonto, cPrTarifa, dDatOd, dDatDo, cBrKalk, lPst)
- *  \brief Opcija generisanja dokumenta preknjizenja
- *  \param cMKonto - magacinski  konto
- *  \param cPrTarifa - tarifa preknjizenja
- *  \param dDatOd - datum od kojeg se pravi preknjizenje
- *  \param dDatDo - datum do kojeg se pravi preknjizenje
- *  \param cBrKalk - broj kalkulacije
- *  \param lPst - pocetno stanje
+/* GenPreknM(cMKonto, cPrTarifa, dDatOd, dDatDo, cBrKalk, lPst)
+ *     Opcija generisanja dokumenta preknjizenja
+ *   param: cMKonto - magacinski  konto
+ *   param: cPrTarifa - tarifa preknjizenja
+ *   param: dDatOd - datum od kojeg se pravi preknjizenje
+ *   param: dDatDo - datum do kojeg se pravi preknjizenje
+ *   param: cBrKalk - broj kalkulacije
+ *   param: lPst - pocetno stanje
  */
 FUNCTION GenPreknM( cMKonto, cPrTarifa, dDatOd, dDatDo, cBrKalk, lPst, dDatPs, cCjSet, lAkciznaRoba )
 

@@ -379,7 +379,7 @@ return .t.
 
 
 /*! fn C_RealRadn()
- *  \brief Zatvaranje baza koristenih u izvjestaju realizacije po radnicima
+ *     Zatvaranje baza koristenih u izvjestaju realizacije po radnicima
  */
 
 function C_RealRadn()
@@ -400,8 +400,8 @@ USE
 return
 
 
-/*! \fn RadnIzvuci(cIdVd)
- *  \brief Punjenje pomocne baze realizacijom po radnicima
+/* RadnIzvuci(cIdVd)
+ *     Punjenje pomocne baze realizacijom po radnicima
  */
 
 function RadnIzvuci(cIdVd)

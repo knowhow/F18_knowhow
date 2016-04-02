@@ -212,8 +212,8 @@ FUNCTION Get1_RN()
 
 
 
-/*! \fn Get2_RN()
- *  \brief Druga strana maske za unos dokumenta tipa RN
+/* Get2_RN()
+ *     Druga strana maske za unos dokumenta tipa RN
  */
 
 FUNCTION Get2_RN()

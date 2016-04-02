@@ -299,8 +299,8 @@ FUNCTION realizacija_odjeljenja()
    // }
 
 
-/*! \fn DioIzvuci(cIdVd)
- *  \brief Punjenje pomocne baze realizacijom dijelova odjeljenja
+/* DioIzvuci(cIdVd)
+ *     Punjenje pomocne baze realizacijom dijelova odjeljenja
  */
 
 FUNCTION DioIzvuci( cIdVd )
@@ -831,8 +831,8 @@ FUNCTION realizacija_dio_objekta
    // }
 
 
-/*! \fn OdjIzvuci(cIdVd)
- *  \brief Punjenje pomocne baze realizacijom odjeljenja
+/* OdjIzvuci(cIdVd)
+ *     Punjenje pomocne baze realizacijom odjeljenja
  */
 
 FUNCTION OdjIzvuci( cIdVd )

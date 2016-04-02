@@ -428,10 +428,10 @@ FUNCTION SpecDugPartnera()
 
 // ///////////////////
 
-/*! \fn ZaglDuznici(fStrana, lSvi)
- *  \brief Zaglavlje izvjestaja duznika
- *  \param fStrana
- *  \param lSvi
+/* ZaglDuznici(fStrana, lSvi)
+ *     Zaglavlje izvjestaja duznika
+ *   param: fStrana
+ *   param: lSvi
  */
 
 FUNCTION ZaglDuznici( fStrana, lSvi )

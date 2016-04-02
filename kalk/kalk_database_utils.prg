@@ -52,8 +52,8 @@ FUNCTION Gen9999()
    RETURN
 
 
-/*! \fn KalkNaF(cidroba,nKols)
- *  \brief Stanje zadanog artikla u FAKT
+/* KalkNaF(cidroba,nKols)
+ *     Stanje zadanog artikla u FAKT
  */
 
 FUNCTION KalkNaF( cidroba, nKols )
@@ -113,8 +113,8 @@ FUNCTION kalk_dokument_postoji( cFirma, cIdVd, cBroj )
 
 
 
-/*! \fn VVT()
- *  \brief Prikaz PPP i proracun marze za visokotarifnu robu
+/* VVT()
+ *     Prikaz PPP i proracun marze za visokotarifnu robu
  */
 
 FUNCTION VVT()
@@ -133,8 +133,8 @@ FUNCTION VVT()
    RETURN .T.
 
 
-/*! \fn DuplRoba()
- *  \brief Obrada slucaja pojavljivanja duplog unosa robe u dokumentu
+/* DuplRoba()
+ *     Obrada slucaja pojavljivanja duplog unosa robe u dokumentu
  */
 
 FUNCTION DuplRoba()
@@ -179,8 +179,8 @@ FUNCTION DuplRoba()
 
 
 
-/*! \fn DatPosljK()
- *  \brief Ispituje da li je datum zadnje promjene na zadanom magacinu i za zadani artikal noviji od one koja se unosi
+/* DatPosljK()
+ *     Ispituje da li je datum zadnje promjene na zadanom magacinu i za zadani artikal noviji od one koja se unosi
  */
 
 FUNCTION DatPosljK()
@@ -227,8 +227,8 @@ FUNCTION DatPosljP()
 
 
 
-/*! \fn SljBroj(cidfirma,cIdvD,nMjesta)
- *  \brief Sljedeci slobodan broj dokumenta za zadanu firmu i vrstu dokumenta
+/* SljBroj(cidfirma,cIdvD,nMjesta)
+ *     Sljedeci slobodan broj dokumenta za zadanu firmu i vrstu dokumenta
  */
 
 FUNCTION SljBroj( cidfirma, cIdvD, nMjesta )
@@ -581,8 +581,8 @@ FUNCTION kalk_set_param_broj_dokumenta()
 
 
 
-/*! \fn MMarza2()
- *  \brief Daje iznos maloprodajne marze
+/* MMarza2()
+ *     Daje iznos maloprodajne marze
  */
 
 FUNCTION MMarza2()
@@ -601,8 +601,8 @@ FUNCTION MMarza2()
 
 
 
-/*! \fn KnjizSt()
- *  \brief Proracun knjiznog stanja za zadanu robu i prodavnicu
+/* KnjizSt()
+ *     Proracun knjiznog stanja za zadanu robu i prodavnicu
  */
 
 FUNCTION KnjizSt()
@@ -809,8 +809,8 @@ FUNCTION KaKaProd( nUlaz, nIzlaz, nMPV, nNV )
 
 
 
-/*! \fn NCuMP(_idfirma,_idroba,_idkonto,nKolicina,dDatDok)
- *  \brief Proracun stanja i nabavne vrijednosti za zadani artikal i prodavnicu
+/* NCuMP(_idfirma,_idroba,_idkonto,nKolicina,dDatDok)
+ *     Proracun stanja i nabavne vrijednosti za zadani artikal i prodavnicu
  */
 
 FUNCTION NCuMP( _idfirma, _idroba, _idkonto, nKolicina, dDatDok )
@@ -837,8 +837,8 @@ FUNCTION NCuMP( _idfirma, _idroba, _idkonto, nKolicina, dDatDok )
 
 
 
-/*! \fn KalkTrUvoz()
- *  \brief Proracun carine i ostalih troskova koji se javljaju pri uvozu
+/* KalkTrUvoz()
+ *     Proracun carine i ostalih troskova koji se javljaju pri uvozu
  *  \todo samo otvorena f-ja
  */
 
@@ -859,8 +859,8 @@ FUNCTION KalkTrUvoz()
    // }
 
 
-/*! \fn ObracunPorezaUvoz()
- *  \brief Proracun poreza pri uvozu
+/* ObracunPorezaUvoz()
+ *     Proracun poreza pri uvozu
  */
 
 FUNCTION ObracunPorezaUvoz()
@@ -936,8 +936,8 @@ FUNCTION ImePoljaTroska( n )
    RETURN aTros[ n ]
 
 
-/*! \fn KTroskovi()
- *  \brief Proracun iznosa troskova pri unosu u kalk_pripremi
+/* KTroskovi()
+ *     Proracun iznosa troskova pri unosu u kalk_pripremi
  */
 
 FUNCTION KTroskovi()
@@ -1069,8 +1069,8 @@ FUNCTION KTroskovi()
 
 
 
-/*! \fn ima_u_kalk_kumulativ(cKljuc,cTag)
- *  \brief Ispituje postojanje zadanog kljuca u zadanom indeksu kumulativa KALK
+/* ima_u_kalk_kumulativ(cKljuc,cTag)
+ *     Ispituje postojanje zadanog kljuca u zadanom indeksu kumulativa KALK
  */
 
 FUNCTION ima_u_kalk_kumulativ( cKljuc, cTag )
@@ -1104,7 +1104,7 @@ FUNCTION ima_u_kalk_kumulativ( cKljuc, cTag )
 
 
 /* \fn UkupnoKolP(nTotalUlaz, nTotalIzlaz)
- * \brief Obracun kolicine za prodavnicu
+ *    Obracun kolicine za prodavnicu
  * \note funkciju staviti unutar petlje koja prolazi kroz kalk
  * \code
  *    nUlazKP:=0
@@ -1157,7 +1157,7 @@ FUNCTION UkupnoKolP( nTotalUlaz, nTotalIzlaz )
    RETURN
 // }
 
-/*! \fn UkupnoKolM(nTotalUlaz, nTotalIzlaz)
+/* UkupnoKolM(nTotalUlaz, nTotalIzlaz)
  *  \sa UkupnoKolP
  */
 
@@ -1220,9 +1220,9 @@ FUNCTION RptSeekRT()
 // }
 
 
-/*! \fn UzmiIzP(cSta)
- *  \brief Uzmi iz parametara
- *  \param cSta - "KOL", "NV", "MPV", MPVBP"...
+/* UzmiIzP(cSta)
+ *     Uzmi iz parametara
+ *   param: cSta - "KOL", "NV", "MPV", MPVBP"...
  */
 FUNCTION UzmiIzP( cSta )
 

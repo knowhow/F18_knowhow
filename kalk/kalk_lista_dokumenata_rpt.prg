@@ -406,8 +406,8 @@ STATIC FUNCTION _get_rpt_line()
 
 
 
-/*! \fn kalk_gen_doks_iz_kalk()
- *  \brief Generisanje tabele DOKS na osnovu tabele KALK
+/* kalk_gen_doks_iz_kalk()
+ *     Generisanje tabele DOKS na osnovu tabele KALK
  */
 
 FUNCTION kalk_gen_doks_iz_kalk()

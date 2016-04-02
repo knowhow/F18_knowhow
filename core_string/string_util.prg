@@ -399,7 +399,7 @@ FUNCTION Slovima( nIzn, cDinDem )
    ENDIF
    Stotice( nIzn, @cRez, .T., .T., cDINDEM )
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -483,7 +483,7 @@ STATIC FUNCTION Stotice( nIzn, cRez, fDecimale, fMnozina, cDinDem )
    RETURN cRez
 
 
-/*! fn CreateHashString(aColl)
+/* CreateHashString(aColl)
  *  brief Kreira hash string na osnovu podataka iz matrice aColl
  *  brief primjer: aColl[1] = "podatak1"
               aColl[2] = "podatak2"
@@ -511,8 +511,8 @@ FUNCTION CreateHashString( aColl )
    RETURN cHStr
 
 
-/*! \fn ReadHashString(cHashString)
- *  \brief Iscitava hash string u matricu
+/* ReadHashString(cHashString)
+ *     Iscitava hash string u matricu
  *  \return aColl - matrica popunjena podacima iz stringa
  */
 FUNCTION ReadHashString( cHashString )
@@ -528,10 +528,10 @@ FUNCTION ReadHashString( cHashString )
 
 
 
-/*! \fn StrToArray(cStr, nLen)
- *  \brief Kreiraj array na osnovu stringa
- *  \param cStr - string
- *  \param nLen - na svakih nLen upisi novu stavku u array
+/*!  StrToArray(cStr, nLen)
+ *     Kreiraj array na osnovu stringa
+ *   param: cStr - string
+ *   param: nLen - na svakih nLen upisi novu stavku u array
  */
 FUNCTION StrToArray( cStr, nLen )
 
@@ -561,7 +561,7 @@ FUNCTION StrToArray( cStr, nLen )
 
 
 /*!  FlushMemo(aMemo)
- *  \brief Vraca vrijednost memo niza u string
+ *     Vraca vrijednost memo niza u string
  */
 FUNCTION FlushMemo( aMemo )
 
@@ -728,7 +728,6 @@ FUNCTION _to_str( str )
 
 FUNCTION _u( cStr )
    RETURN hb_UTF8ToStr( cStr )
-
 
 
 FUNCTION ToStrU( val )

@@ -273,8 +273,8 @@ CLOSERET
 // private: cDat1 - krajnji datum
 //
 
-/*! \fn Porezi(cIdVd,cDat0,aTarife,cNaplaceno)
- *  \brief Pravi matricu sa izracunatim porezima za zadani period
+/* Porezi(cIdVd,cDat0,aTarife,cNaplaceno)
+ *     Pravi matricu sa izracunatim porezima za zadani period
  *  \return aTarife - matrica izracunatih poreza po tarifama
  */
 

@@ -1,7 +1,7 @@
 #include "f18.ch"
 
-/*! \fn PregNDP()
- *  \brief Pregled novih dugovanja i potrazivanja
+/* PregNDP()
+ *     Pregled novih dugovanja i potrazivanja
  */
 FUNCTION PregNDP()
 
@@ -258,9 +258,9 @@ FUNCTION PregNDP()
 
 
 
-/*! \fn Zagl9()
- *  \brief Zaglavlje pregleda novih dugovanja i potrazivanja
- *  \param
+/* Zagl9()
+ *     Zaglavlje pregleda novih dugovanja i potrazivanja
+ *   param:
  */
 FUNCTION Zagl9()
 

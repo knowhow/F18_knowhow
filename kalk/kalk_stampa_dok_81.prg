@@ -306,8 +306,8 @@ FUNCTION StKalk81( fzatops )
 
 
 
-/*! \fn StKalk81_2()
- *  \brief Stampa kalkulacije 81 - direktno zaduzenje prodavnice
+/* StKalk81_2()
+ *     Stampa kalkulacije 81 - direktno zaduzenje prodavnice
  */
 
 FUNCTION StKalk81_2()

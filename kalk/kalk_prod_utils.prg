@@ -79,8 +79,8 @@ FUNCTION MarzaMP( cIdVd, lNaprijed, aPorezi )
 
 
 
-/*! \fn Marza2(fMarza)
- *  \brief Postavi _Marza2, _mpc, _mpcsapp
+/* Marza2(fMarza)
+ *     Postavi _Marza2, _mpc, _mpcsapp
  */
 
 FUNCTION Marza2( fMarza )
@@ -235,8 +235,8 @@ FUNCTION Marza2O( fMarza )
 
 
 
-/*! \fn Marza2R()
- *  \brief Marza2 pri realizaciji prodavnice je MPC-NC
+/* Marza2R()
+ *     Marza2 pri realizaciji prodavnice je MPC-NC
  */
 
 FUNCTION Marza2R()
@@ -281,8 +281,8 @@ FUNCTION Marza2R()
 // }
 
 
-/*! \fn Marza2R()
- *  \brief Marza pri realizaciji prodavnice
+/* Marza2R()
+ *     Marza pri realizaciji prodavnice
  */
 
 FUNCTION MarzaMpR()
@@ -329,8 +329,8 @@ FUNCTION MarzaMpR()
 
 
 
-/*! \fn FaktMPC(nMPC,cseek,dDatum)
- *  \brief Fakticka maloprodajna cijena
+/* FaktMPC(nMPC,cseek,dDatum)
+ *     Fakticka maloprodajna cijena
  */
 
 FUNCTION FaktMPC( nMPC, cseek, dDatum )
@@ -457,8 +457,8 @@ FUNCTION StaviMPCSif( nCijena, lUpit )
 
 
 
-/*! \fn V_KolPro()
- *  \brief
+/* V_KolPro()
+ *    
  */
 
 FUNCTION V_KolPro()
@@ -488,8 +488,8 @@ FUNCTION V_KolPro()
 
 
 
-/*! \fn StanjeProd(cKljuc,ddatdok)
- *  \brief
+/* StanjeProd(cKljuc,ddatdok)
+ *    
  */
 
 FUNCTION StanjeProd( cKljuc, ddatdok )

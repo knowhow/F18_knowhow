@@ -1,7 +1,7 @@
 #include "f18.ch"
 
-/*! \fn SpecSubPro()
- *  \brief Specifikacija subanalitike po proizvoljnom sortiranju, verzija C52
+/* SpecSubPro()
+ *     Specifikacija subanalitike po proizvoljnom sortiranju, verzija C52
  */
 
 FUNCTION SpecSubPro()

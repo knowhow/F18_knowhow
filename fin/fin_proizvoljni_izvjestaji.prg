@@ -164,8 +164,8 @@ FUNCTION PrPromRn()
 
 
 
-/*! \fn RedIspisa()
- *  \brief
+/* RedIspisa()
+ *    
  */
 
 FUNCTION RedIspisa()
@@ -184,9 +184,9 @@ FUNCTION RedIspisa()
 
 
 
-/*! \fn ZagPPR(cI)
- *  \brief Zaglavlje pregleda promjena na racunu
- *  \param cI
+/* ZagPPR(cI)
+ *     Zaglavlje pregleda promjena na racunu
+ *   param: cI
  */
 FUNCTION ZagPPR( cI )
 

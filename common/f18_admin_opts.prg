@@ -75,7 +75,6 @@ METHOD F18AdminOpts:New()
       RETURN .F.
    ENDIF
 
-   pg_terminate_all_data_db_connections()
 
    RETURN self
 
@@ -275,7 +274,6 @@ METHOD F18AdminOpts:update_app_form( upd_params )
    @ m_x + _x, m_y + 2 SAY _line := ( Replicate( "-", 10 ) + " " + Replicate( "-", 20 ) + " " + Replicate( "-", 20 ) )
 
    ++ _x
-
    @ m_x + _x, m_y + 2 SAY PadR( "[INFO]", 10 ) + "/" + PadC( "Trenutna", 20 ) + "/" + PadC( "Dostupna", 20 )
 
    ++ _x
@@ -399,7 +397,7 @@ METHOD F18AdminOpts:update_app_get_versions()
    _tmp := ""
 
    // prodji kroz svaku liniju i procitaj zapise
-   WHILE _o_file:MoreToRead()
+   DO WHILE _o_file:MoreToRead()
       _tmp := hb_StrToUTF8( _o_file:ReadLine() )
       _a_tmp := TokToNiz( _tmp, "=" )
       IF Len( _a_tmp ) > 1
@@ -785,7 +783,6 @@ METHOD F18AdminOpts:update_db_company( company )
       MsgO( "Vršim update baze " + _database )
 
       _ok := hb_run( _cmd )
-
       // ubaci u matricu rezultat...
       AAdd( ::update_db_result, { company, _database, _cmd, _ok } )
 
@@ -822,6 +819,7 @@ METHOD F18AdminOpts:razdvajanje_sezona()
       RETURN .F.
    ENDIF
 #endif
+   pg_terminate_all_data_db_connections()
 
    _from_sess := Year( Date() ) - 1
    _to_sess := Year( Date() )
@@ -894,7 +892,6 @@ METHOD F18AdminOpts:razdvajanje_sezona()
       _params[ "db_drop" ] := _db_delete
       _params[ "db_comment" ] := ""
 
-      AltD()
       IF ! ::create_new_pg_db( _params )
          AAdd( aRezultati, { _db_to, _db_from, "ERR" } )
          error_bar( "nova_sezona", _db_from + " -> " + _db_to )

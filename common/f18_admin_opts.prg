@@ -819,7 +819,7 @@ METHOD F18AdminOpts:razdvajanje_sezona()
       RETURN .F.
    ENDIF
 #endif
-   pg_terminate_all_data_db_connections()
+   //pg_terminate_all_data_db_connections()
 
    _from_sess := Year( Date() ) - 1
    _to_sess := Year( Date() )

@@ -91,23 +91,8 @@ FUNCTION Get1_11()
       SELECT roba
       _MPCSaPP := UzmiMPCSif()
 
-
-      IF ( IsPDVMagNab() .OR. IsMagSNab() )
-         _FCJ := NC
-         _VPC := NC
-      ELSE
-         _FCJ := NC
-         _VPC := UzmiVPCSif( _mkonto )
-
-         SELECT koncij
-         SEEK Trim( _pkonto )
-         SELECT roba
-         IF gcijene == "2"
-            FaktMPC( @_MPCSAPP, _idfirma + _Pkonto + _idroba )
-         ENDIF
-
-      ENDIF
-
+      _FCJ := NC
+      _VPC := NC
 
       SELECT kalk_pripr
       _Marza2 := 0
@@ -135,7 +120,7 @@ FUNCTION Get1_11()
             MsgO( "Racunam stanje na skladistu" )
             KalkNab( _idfirma, _idroba, _idkonto2, @nKolS, @nKolZN, @nc1, @nc2, @dDatNab )
             MsgC()
-       	 ELSE
+         ELSE
             MsgO( "Racunam stanje prodavnice" )
             KalkNabP( _idfirma, _idroba, _idkonto, @nKolS, @nKolZN, @nc1, @nc2, dDatNab )
             MsgC()
@@ -155,26 +140,18 @@ FUNCTION Get1_11()
    SEEK Trim( _idkonto2 )
    SELECT kalk_pripr
 
-   IF IsPDvMagNab() .OR. IsMagSNab()
-      _vpc := _fcj
-      @ m_x + 14, m_y + 2    SAY "NABAVNA CIJENA (NC)       :"
-      IF _kolicina > 0
-         @ m_x + 14, m_y + 50   GET _FCj    PICTURE gPicNC ;
-            VALID {|| V_KolMag(), _vpc := _Fcj, .T. }
-      ELSE 
-         @ m_x + 14, m_y + 50   GET _FCJ    PICTURE PicDEM;
-            VALID {|| V_KolPro(), ;
-            _vpc := _fcj, .T. }
-      ENDIF
+
+   _vpc := _fcj
+   @ m_x + 14, m_y + 2    SAY "NABAVNA CIJENA (NC)       :"
+   IF _kolicina > 0
+      @ m_x + 14, m_y + 50   GET _FCj    PICTURE gPicNC ;
+         VALID {|| V_KolMag(), _vpc := _Fcj, .T. }
    ELSE
-      IF _kolicina > 0
-         @ m_x + 14, m_y + 2    SAY "NC  :"  GET _fcj PICTURE gPicNC VALID V_KolMag()
-      ELSE 
-         @ m_x + 14, m_y + 2    SAY "NC  :"  GET _fcj PICTURE gPicNC VALID V_KolPro()
-      ENDIF
-      @ m_x + 14, Col() + 2  SAY "VPC :"  GET _vpc PICTURE picdem ;
-         when {|| iif( gCijene == "2", .F., .T. ) }
+      @ m_x + 14, m_y + 50   GET _FCJ    PICTURE PicDEM;
+         VALID {|| V_KolPro(), ;
+         _vpc := _fcj, .T. }
    ENDIF
+
 
    // prodavnica
    SELECT koncij

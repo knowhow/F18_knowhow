@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -102,22 +102,22 @@ do while !EOF() .and. cIdFirma==IdFirma .and.  cBrDok==BrDok .and. cIdVD==IdVD
     vise_kalk_dok_u_pripremi(cIdd)
 
     RptSeekRT()
-    
-    Scatter()  
+
+    Scatter()
     // formiraj varijable _....
-   
+
     Marza2()
-    
-    nMarza := _marza   
+
+    nMarza := _marza
     // izracunaj nMarza,nMarza2
-    
+
     VTPorezi()
-        
+
     Tarifa( field->pkonto, field->idRoba, @aPorezi, field->idtarifa )
     aIPor := RacPorezeMP( aPorezi, field->mpc, field->mpcSaPP, field->nc )
 
     nPor1 := aIPor[1]
-    
+
     if lPrikPRUC
         nPRUC := aIPor[2]
         nPor2 := 0
@@ -125,7 +125,7 @@ do while !EOF() .and. cIdFirma==IdFirma .and.  cBrDok==BrDok .and. cIdVD==IdVD
     else
         nPor2 := aIPor[2]
     endif
-    
+
     print_nova_strana( 123, @nStr, 2 )
 
     nTot1+=  (nU1:= FCJ*Kolicina   )
@@ -138,14 +138,14 @@ do while !EOF() .and. cIdFirma==IdFirma .and.  cBrDok==BrDok .and. cIdVD==IdVD
     IF lPrikPRUC
         nTot4c+= ( nU4c := nPRUC*Kolicina )
     ENDIF
-    
+
     nTot5+=  (nU5:= MPC*Kolicina )
     nTot6+=  (nU6:=(nPor1+nPor2)*Kolicina)
     nTot7+=  (nU7:= MPcSaPP*Kolicina )
 
     @ prow()+1,0 SAY  Rbr PICTURE "999"
     @ prow(),4 SAY  ""
-    
+
     ?? trim(LEFT(ROBA->naz,40)),"(",ROBA->jmj,")"
 
     if lKoristitiBK .and. !EMPTY( roba->barkod )
@@ -156,13 +156,13 @@ do while !EOF() .and. cIdFirma==IdFirma .and.  cBrDok==BrDok .and. cIdVD==IdVD
     @ prow(),pcol()+1 SAY Kolicina             PICTURE PicKol
 
     nCol0:=pcol()+1
-    
+
     IF g11bezNC != "D"
         @ prow(),pcol()+1 SAY FCJ                  PICTURE PicCDEM
     ENDIF
 
     @ prow(),pcol()+1 SAY VPC                  PICTURE PicCDEM
-    
+
     IF !lPrikPRUC
         @ prow(),pcol()+1 SAY Prevoz               PICTURE PicCDEM
     ENDIF
@@ -217,7 +217,7 @@ do while !EOF() .and. cIdFirma==IdFirma .and.  cBrDok==BrDok .and. cIdVD==IdVD
     @ prow(),  pcol()+1 SAY  nPor1             picture piccdem
         @ prow(),  pcol()+1 SAY  nU7               picture piccdem
     endif
-    
+
     // red 3 .....
     if round(nc,5) <> 0
         @ prow()+1,nMPos SAY (nMarza2/nc)*100  picture picproc
@@ -262,22 +262,7 @@ nTot5:=nTot6:=nTot7:=0
 RekTarife()
 
 
-if !IsPdvMagNab()
 
-? "RUC:"
-@ prow(),pcol()+1 SAY nTot6 pict picdem
-if cidvd=="11" .and. g11bezNC != "D"
-    @ prow(),pcol()+2 SAY "Od toga storno RUC u VP:"
-    @ prow(),pcol()+1 SAY nMarzaVP pict picdem
-    
-elseif cidvd$"12#13" .and. g11bezNC!="D"
-    @ prow(),pcol()+2 SAY "Od toga prenijeti RUC u VP:"
-    @ prow(),pcol()+1 SAY nMarzaVP pict picdem
-endif
-
-? m
-
-endif
 
 
 
@@ -296,7 +281,7 @@ if IsPDV()
     if koncij->naz=="P2"
             ? "*R * ROBA     * Kolicina "+IF(g11bezNC=="D","","*  NAB.CJ  ")+"* Plan.Cj. *  TROSAK  *"+IF(g11bezNC=="D","","  NAB.CJ  *  MARZA   *")+"  MARZA  * PROD.CJ  *   PDV %  *   PDV    * PROD.CJ  *"
     else
-            ? "*R * ROBA     * Kolicina "+IF(g11bezNC=="D","","*  NAB.CJ  ")+ "*   " + if(gPDVMagNab == "D", " NC","VPC") + "    *  TROSAK  *"+IF(g11bezNC=="D","","  NAB.CJ  *  MARZA   *")+"  MARZA   * PROD.CJ  *   PDV %  *   PDV   * PROD.CJ  *"
+            ? "*R * ROBA     * Kolicina "+IF(g11bezNC=="D","","*  NAB.CJ  ")+ "*   " +  " NC" + "    *  TROSAK  *"+IF(g11bezNC=="D","","  NAB.CJ  *  MARZA   *")+"  MARZA   * PROD.CJ  *   PDV %  *   PDV   * PROD.CJ  *"
     endif
     ? "*BR*          *          "+IF(g11bezNC=="D","","*   U VP   ")+"*          *   U MP   *"+IF(g11bezNC=="D","","   U MP   *   VP     *")+"   MP     * BEZ PDV  *          *         *  SA PDV  *"
     ? "*  *          *          "+IF(g11bezNC=="D","","*          ")+"*          *          *"+IF(g11bezNC=="D","","          *          *")+"          *          *          *         *          *"
@@ -326,6 +311,3 @@ endif
 
 return
 *}
-
-
-

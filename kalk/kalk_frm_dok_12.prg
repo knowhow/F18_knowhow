@@ -82,13 +82,10 @@ FUNCTION Get1_12()
 
       _MPCSaPP := UzmiMPCSif()
 
-      IF koncij->naz == "N2" .OR. ( IsPDV() .AND. gPDVMagNab == "D" )
-         _FCJ := NC
-         _VPC := NC
-      ELSE
-         _FCJ := NC
-         _VPC := UzmiVPCSif( _mkonto )
-      ENDIF
+
+      _FCJ := NC
+      _VPC := NC
+
       SELECT kalk_pripr
       _Marza2 := 0
       _TMarza2 := "A"
@@ -103,8 +100,8 @@ FUNCTION Get1_12()
 
    nKolS := 0;nKolZN := 0;nc1 := nc2 := 0;dDatNab := CToD( "" )
    lGenStavke := .F.
-   IF _TBankTr <> "X" 
-      IF !Empty( gMetodaNC ) 
+   IF _TBankTr <> "X"
+      IF !Empty( gMetodaNC )
          MsgO( "Racunam stanje na skladistu" )
          KalkNabP( _idfirma, _idroba, _idkonto, @nKolS, @nKolZN, @nc1, @nc2, dDatNab )
          MsgC()
@@ -115,15 +112,11 @@ FUNCTION Get1_12()
 
    @ m_x + 12, m_y + 30   SAY "Ukupno na stanju "; @ m_x + 12, Col() + 2 SAY nkols PICT pickol
 
-   IF koncij->naz == "N1" .OR. ( IsPDV() .AND. gPDVMagNab == "D" )
-      @ m_x + 14, m_y + 2    SAY "NABAVNA CIJENA (NC)         :"
-      @ m_x + 14, m_y + 50   GET _FCJ    PICTURE PicDEM;
-         VALID {|| V_KolPro(), ;
-         _vpc := _fcj, .T. }
-   ELSE
-      @ m_x + 14, m_y + 2    SAY "NC  :"  GET _fcj PICTURE picdem VALID V_KolPro()
-      @ m_x + 14, Col() + 4  SAY "VPC :"  GET _vpc PICTURE picdem VALID _vpc > 0
-   ENDIF
+   @ m_x + 14, m_y + 2    SAY "NABAVNA CIJENA (NC)         :"
+   @ m_x + 14, m_y + 50   GET _FCJ    PICTURE PicDEM;
+      VALID {|| V_KolPro(), ;
+      _vpc := _fcj, .T. }
+
 
    _TPrevoz := "R"
 
@@ -152,10 +145,9 @@ FUNCTION Get1_12()
 
    nStrana := 2
 
-   _MKonto := _Idkonto2;_MU_I := "1"     
-   _PKonto := _Idkonto; _PU_I := "5"     
+   _MKonto := _Idkonto2;_MU_I := "1"
+   _PKonto := _Idkonto; _PU_I := "5"
 
    FillIzgStavke( pIzgSt )
 
    RETURN LastKey()
-

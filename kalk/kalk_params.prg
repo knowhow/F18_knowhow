@@ -126,8 +126,6 @@ FUNCTION kalk_par_varijante_prikaza()
 
       nX += 1
 
-      @ m_x + nX, m_y + 2 SAY "PDV, evidencija magacina po NC  D/N " GET gPDVMagNab VALID gPDVMagNab $ "DN"
-
    ENDIF
 
    nX += 1
@@ -168,9 +166,6 @@ FUNCTION kalk_par_varijante_prikaza()
 
       set_metric( "kalk_magacin_po_nc", nil, gMagacin )
 
-      IF IsPDV()
-         set_metric( "kalk_magacin_po_nc_pdv", nil, gPDVMagNab )
-      ENDIF
 
       set_metric( "kalk_kolicina_kalo", nil, gKalo )
       set_metric( "kalk_voditi_kalo", nil, gVodiKalo )

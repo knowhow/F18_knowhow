@@ -95,10 +95,7 @@ FUNCTION Get1_14PDV()
 
    IF gCijene = "2" .AND. fNovi
 
-      // ///// utvrdjivanje fakticke VPC
-      IF gPDVMagNab == "N"
-         faktVPC( @_VPC, _idfirma + _idkonto2 + _idroba )
-      ENDIF
+
       SELECT kalk_pripr
    ENDIF
 
@@ -155,11 +152,7 @@ FUNCTION Get1_14PDV()
 
    _MPC := tarifa->opp
 
-   IF gPDVMagNab == "D"
-      @ m_x + 16, m_y + 2 SAY8 "PDV (%)  " + Transform( _MPC, "99.99" )
-   ELSE
-      @ m_x + 16, m_y + 2 SAY8 "PDV (%)  " GET _MPC PICT "99.99" when {|| iif( roba->tip $ "VKX", _mpc := 0, NIL ), iif( roba->tip $ "VKX", pPDV14( .F. ), .T. ) } VALID pPDV14( .T. )
-   ENDIF
+   @ m_x + 16, m_y + 2 SAY8 "PDV (%)  " + Transform( _MPC, "99.99" )
 
    IF gVarVP == "1"
       _VPCsaPP := 0
@@ -219,7 +212,7 @@ FUNCTION Get1_14PDV()
                tmarza  WITH _tmarza, ;
                mpc     WITH  _MPC, ;
                marza  WITH _vpc / ( 1 + _PORVT ) -kalk_pripr->nc, ;   // mora se uzeti nc iz ove stavke
-               vpcsap WITH _VPC / ( 1 + _PORVT ) * ( 1 -_RABATV / 100 ) + iif( nMarza < 0, 0, nMarza ) * TARIFA->VPP / 100, ;
+            vpcsap WITH _VPC / ( 1 + _PORVT ) * ( 1 -_RABATV / 100 ) + iif( nMarza < 0, 0, nMarza ) * TARIFA->VPP / 100, ;
                mu_i WITH  _mu_i, ;
                pkonto WITH "", ;
                pu_i WITH  "", ;

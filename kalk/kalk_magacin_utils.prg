@@ -1246,13 +1246,3 @@ FUNCTION IsMagSNab()
    ELSE
       RETURN .F.
    ENDIF
-
-   // znaci magacin robe - PDV je po nab cjenama
-
-FUNCTION IsPDVMagNab()
-
-   IF ( IsPDV() .AND. gPDVMagNab == "D" )
-      RETURN .T.
-   ELSE
-      RETURN .F.
-   ENDIF

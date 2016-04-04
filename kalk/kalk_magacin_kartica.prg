@@ -658,7 +658,6 @@ STATIC FUNCTION _set_zagl( cLine, cTxt1, cTxt2, cPVSS, cPicKol, cPicCDem )
    AAdd( aKMag, { nPom, PadC( "Stanje", nPom ), PadC( "(1 - 2)", nPom ) } )
 
 
-
    nPom := Len( PicCDem )
    // NC, NV
    AAdd( aKMag, { nPom, PadC( "NC", nPom ), PadC( "", nPom ) } )

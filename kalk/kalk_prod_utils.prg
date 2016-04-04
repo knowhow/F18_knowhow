@@ -17,13 +17,13 @@ FUNCTION MarzaMP( cIdVd, lNaprijed, aPorezi )
    LOCAL nPrevMP
 
    // za svaki slucaj setujemo ovo ako slucajno u dokumentu nije ispranvo
-   IF ( IsPDVMagNab() .OR. IsMagSNab() ) .AND. cIdVD $ "11#12#13"
+   IF cIdVD $ "11#12#13"
       // inace je _fcj kod ovih dokumenata  = nabavnoj cijeni
       // _nc u ovim dokumentima moze biti uvecana za troskove prevoza
       _VPC := _FCJ
    ENDIF
 
-   IF ( IsPDVMagNab() .OR. IsMagSNab() ) .AND. cIdVD $ "80"
+   IF cIdVD $ "80"
       _vpc := _nc
       _fcj := _nc
    ENDIF
@@ -87,82 +87,73 @@ FUNCTION Marza2( fMarza )
 
    LOCAL nPrevMP, nPPP
 
-   IF IsPdv()
-
-      // za svaki slucaj setujemo ovo ako slucajno u dokumentu nije ispranvo
-      IF IsPDVMagNab() .OR. IsMagSNab() .AND. _IdVD $ "11#12#13"
-         // inace je _fcj kod ovih dokumenata  = nabavnoj cijeni
-         // _nc u ovim dokumentima moze biti uvecana za troskove prevoza
-         _VPC := _FCJ
-      ENDIF
+   // za svaki slucaj setujemo ovo ako slucajno u dokumentu nije ispranvo
+   IF _IdVD $ "11#12#13"
+      // inace je _fcj kod ovih dokumenata  = nabavnoj cijeni
+      // _nc u ovim dokumentima moze biti uvecana za troskove prevoza
+      _VPC := _FCJ
+   ENDIF
 
 
-      IF fMarza == nil
-         fMarza := " "
-      ENDIF
+   IF fMarza == nil
+      fMarza := " "
+   ENDIF
 
-      // za svaki slucaj setujemo ovo ako slucajno u dokumentu nije ispranvo
-      IF IsPDVMagNab() .OR. IsMagSNab()
-         _VPC := _FCJ
-      ENDIF
+   _VPC := _FCJ
 
 
-      // ako je prevoz u MP rasporedjen uzmi ga u obzir
-      IF _TPrevoz == "A"
-         nPrevMP := _Prevoz
-      ELSE
-         nPrevMP := 0
-      ENDIF
+   // ako je prevoz u MP rasporedjen uzmi ga u obzir
+   IF _TPrevoz == "A"
+      nPrevMP := _Prevoz
+   ELSE
+      nPrevMP := 0
+   ENDIF
 
-      IF _FCj == 0
-         _FCj := _mpc
-      ENDIF
+   IF _FCj == 0
+      _FCj := _mpc
+   ENDIF
 
-      IF  _Marza2 == 0 .AND. Empty( fmarza )
-         nMarza2 := _MPC - _VPC - nPrevMP
+   IF  _Marza2 == 0 .AND. Empty( fmarza )
+      nMarza2 := _MPC - _VPC - nPrevMP
 
-         IF _TMarza2 == "%"
-            IF Round( _vpc, 5 ) <> 0
-               _Marza2 := 100 * ( _MPC / ( _VPC + nPrevMP ) - 1 )
-            ELSE
-               _Marza2 := 0
-            ENDIF
-
-         ELSEIF _TMarza2 == "A"
-            _Marza2 := nMarza2
-
-         ELSEIF _TMarza2 == "U"
-            _Marza2 := nMarza2 * ( _Kolicina )
+      IF _TMarza2 == "%"
+         IF Round( _vpc, 5 ) <> 0
+            _Marza2 := 100 * ( _MPC / ( _VPC + nPrevMP ) - 1 )
+         ELSE
+            _Marza2 := 0
          ENDIF
 
-      ELSEIF _MPC == 0 .OR. !Empty( fMarza )
+      ELSEIF _TMarza2 == "A"
+         _Marza2 := nMarza2
 
-         IF _TMarza2 == "%"
-            nMarza2 := _Marza2 / 100 * ( _VPC + nPrevMP )
-         ELSEIF _TMarza2 == "A"
-            nMarza2 := _Marza2
-         ELSEIF _TMarza2 == "U"
-            nMarza2 := _Marza2 / ( _Kolicina )
-         ENDIF
-         _MPC := Round( nMarza2 + _VPC, 2 )
-
-         IF !Empty( fMarza )
-            _MpcSaPP := Round( MpcSaPor( _mpc, aPorezi ), 2 )
-         ENDIF
-
-      ELSE
-         nMarza2 := _MPC - _VPC - nPrevMP
+      ELSEIF _TMarza2 == "U"
+         _Marza2 := nMarza2 * ( _Kolicina )
       ENDIF
 
-      AEval( GetList, {| o| o:display() } )
-      RETURN
+   ELSEIF _MPC == 0 .OR. !Empty( fMarza )
+
+      IF _TMarza2 == "%"
+         nMarza2 := _Marza2 / 100 * ( _VPC + nPrevMP )
+      ELSEIF _TMarza2 == "A"
+         nMarza2 := _Marza2
+      ELSEIF _TMarza2 == "U"
+         nMarza2 := _Marza2 / ( _Kolicina )
+      ENDIF
+      _MPC := Round( nMarza2 + _VPC, 2 )
+
+      IF !Empty( fMarza )
+         _MpcSaPP := Round( MpcSaPor( _mpc, aPorezi ), 2 )
+      ENDIF
 
    ELSE
-
-      // PPP obracun
-      RETURN Marza2O( fMarza )
-
+      nMarza2 := _MPC - _VPC - nPrevMP
    ENDIF
+
+   AEval( GetList, {| o| o:display() } )
+
+   RETURN
+
+
 
 FUNCTION Marza2O( fMarza )
 
@@ -377,10 +368,10 @@ FUNCTION UzmiMPCSif()
       nCV := roba->mpc3
    ELSEIF koncij->naz == "M4" .AND. roba->( FieldPos( "mpc4" ) ) <> 0
       nCV := roba->mpc4
-   //ELSEIF koncij->naz == "M5" .AND. roba->( FieldPos( "mpc5" ) ) <> 0
-   //    nCV := roba->mpc5
-   //ELSEIF koncij->naz == "M6" .AND. roba->( FieldPos( "mpc6" ) ) <> 0
-  //    nCV := roba->mpc6
+      // ELSEIF koncij->naz == "M5" .AND. roba->( FieldPos( "mpc5" ) ) <> 0
+      // nCV := roba->mpc5
+      // ELSEIF koncij->naz == "M6" .AND. roba->( FieldPos( "mpc6" ) ) <> 0
+      // nCV := roba->mpc6
    ELSEIF roba->( FieldPos( "mpc" ) ) <> 0
       nCV := roba->mpc
    ENDIF
@@ -413,10 +404,10 @@ FUNCTION StaviMPCSif( nCijena, lUpit )
       cMpc := "mpc3"
    CASE koncij->naz == "M4"
       cMpc := "mpc4"
-   //CASE koncij->naz == "M5"
-   //    cMpc := "mpc5"
-   //CASE koncij->naz == "M6"
-   //  cMpc := "mpc6"
+      // CASE koncij->naz == "M5"
+      // cMpc := "mpc5"
+      // CASE koncij->naz == "M6"
+      // cMpc := "mpc6"
    OTHERWISE
       cMpc := "mpc"
    ENDCASE
@@ -458,7 +449,7 @@ FUNCTION StaviMPCSif( nCijena, lUpit )
 
 
 /* V_KolPro()
- *    
+ *
  */
 
 FUNCTION V_KolPro()
@@ -489,7 +480,7 @@ FUNCTION V_KolPro()
 
 
 /* StanjeProd(cKljuc,ddatdok)
- *    
+ *
  */
 
 FUNCTION StanjeProd( cKljuc, ddatdok )

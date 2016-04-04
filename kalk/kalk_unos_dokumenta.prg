@@ -2247,7 +2247,7 @@ STATIC FUNCTION kalk_open_tables( azurirana )
       O_KALK_PRIPR
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -2386,12 +2386,12 @@ FUNCTION kalk_stampa_dokumenta()
             kalk_stampa_dok_10()
 
 
-         ELSEIF ( cidvd $ "11#12#13" )
+         ELSEIF ( cIdvd $ "11#12#13" )
 
             StKalk11_2()
 
          ELSEIF ( cidvd $ "14#94#74#KO" )
-            StKalk14PDV()
+            StKalk14()
 
          ELSEIF ( cIdvd $ "16#95#96#97" )
 
@@ -2582,7 +2582,7 @@ STATIC FUNCTION pdf_kalk_dokument( cIdVd )
       RETURN .F.
    ENDIF
 
-   RETURN cIdVd $ "10#"  // implementirano za kalk 10
+   RETURN cIdVd $ "10#14"  // implementirano za kalk 10
 
 
 /*

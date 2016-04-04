@@ -14,6 +14,7 @@ CREATE CLASS PDFClass
    VAR    oPage
    VAR    cFileName         INIT ""
    VAR    nRow              INIT 999
+   VAR    nLeftSpace        INIT 0
    VAR    nCol              INIT 0
    VAR    nAngle            INIT 0
    VAR    cFontName         INIT s_font
@@ -37,6 +38,7 @@ CREATE CLASS PDFClass
    METHOD Cancel()
    METHOD PrnToPdf( cInputFile )
    METHOD SetType( nType )
+   METHOD SetLeftSpace( nLeft )
    METHOD PageHeader()
    METHOD MaxRowTest( nRows )
    METHOD SetInfo( cAuthor, cCreator, cTitle, cSubject )
@@ -73,7 +75,6 @@ METHOD END() CLASS PDFClass
    IF ::nType == PDF_TXT_PORTRAIT .OR. ::nType == PDF_TXT_LANDSCAPE
       SET DEVICE TO SCREEN
       SET PRINTER TO
-
 
    ELSE
 
@@ -116,6 +117,18 @@ METHOD SetType( nType ) CLASS PDFClass
 
    RETURN NIL
 
+
+   METHOD SetLeftSpace( nLeft ) CLASS PDFClass
+
+altd()
+      IF nLeft != NIL
+         ::nLeftSpace := nLeft
+      ENDIF
+
+      RETURN NIL
+
+
+
 METHOD AddPage() CLASS PDFClass
 
    IF ! ( ::nType == PDF_TXT_PORTRAIT .OR. ::nType == PDF_TXT_LANDSCAPE )
@@ -149,7 +162,7 @@ METHOD DrawText( nRow, nCol, xValue, cPicture, nFontSize, cFontName, nAngle, anR
    IF ValType( xValue ) == "C" .AND. !( ::nType == PDF_TXT_PORTRAIT .OR. ::nType == PDF_TXT_LANDSCAPE )
       xValue := hb_UTF8ToStr( xValue )
    ENDIF
-   cTexto    := Transform( xValue, cPicture )
+   cTexto  := Transform( xValue, cPicture )
    ::nCol := nCol + Len( cTexto )
 
    IF ::nType == PDF_TXT_PORTRAIT .OR. ::nType == PDF_TXT_LANDSCAPE
@@ -295,6 +308,7 @@ METHOD PrnToPdf( cInputFile ) CLASS PDFClass
    TokenInit( @cTxtReport, Chr( 12 ) )
    DO WHILE ! TokenEnd()
       cTxtPage := TokenNext( cTxtReport ) + hb_eol()
+      altd()
       IF Len( cTxtPage ) > 5
          IF SubStr( cTxtPage, 1, 1 ) == Chr( 13 )
             cTxtPage := SubStr( cTxtPage, 2 )
@@ -303,8 +317,8 @@ METHOD PrnToPdf( cInputFile ) CLASS PDFClass
          nRow := 0
          DO WHILE At( hb_eol(), cTxtPage ) != 0
             cTxtLine := SubStr( cTxtPage, 1, At( hb_eol(), cTxtPage ) - 1 )
-            cTxtPage := SubStr( cTxtPage, At( hb_eol(), cTxtPage ) + 2 )
-            ::DrawText( nRow++, 0, cTxtLine )
+            cTxtPage := SubStr( cTxtPage, At( hb_eol(), cTxtPage ) + 1 )
+            ::DrawText( nRow++, 0, SPACE( ::nLeftSpace ) + cTxtLine )
          ENDDO
       ENDIF
    ENDDO

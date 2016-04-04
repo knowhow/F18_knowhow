@@ -55,7 +55,7 @@ FUNCTION f18_start_print( cFileName, xPrintOpt, cDocumentName )
    Alert ( cLogMsg )
 #endif
 
-   MsgO( "Priprema " + IIF( cOpt == "PDF", "PDF", "tekst") + " izvještaja ..." )
+   MsgO( "Priprema " + iif( cOpt == "PDF", "PDF", "tekst" ) + " izvještaja ..." )
 
    LOG_CALL_STACK cLogMsg
    SetPRC( 0, 0 )
@@ -166,6 +166,9 @@ FUNCTION f18_end_print( cFileName, xPrintOpt )
          oPDF:SetType( PDF_PORTRAIT )
       ELSE
          oPDF:SetType( PDF_LANDSCAPE )
+      ENDIF
+      IF hb_HHasKey( xPrintOpt, "left_space" )
+         oPDF:SetLeftSpace( xPrintOpt[ "left_space" ] )
       ENDIF
 
       oPDF:cFileName := StrTran( txt_print_file_name(), ".txt", ".pdf" )

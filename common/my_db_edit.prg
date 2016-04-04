@@ -29,6 +29,7 @@ MEMVAR cPom77I, cPom77U, aTBGets, GET // koristeno u editpolja
  * param yw - sirina
  * param bUserF - kodni blok, user funkcija
  * param cMessTop - poruka na vrhu
+ * p10 - bPodvuci
  * return NIL
 
 
@@ -47,7 +48,7 @@ MEMVAR cPom77I, cPom77U, aTBGets, GET // koristeno u editpolja
 
 
 FUNCTION my_db_edit( cImeBoxa, xw, yw, bUserF, cMessTop, cMessBot, lInvert, ;
-      aMessage, nFreeze, bPodvuci, nPrazno, nGPrazno, aPoredak, skipblock )
+      aMessage, nFreeze, bPodvuci, nPrazno, nGPrazno, aPoredak, skipBlock )
 
    LOCAL _params := hb_Hash()
    LOCAL nRez
@@ -267,7 +268,7 @@ FUNCTION create_tbrowsedb( params, lIzOBJDB )
    @ m_x + 1, m_y + params[ "yw" ] - 6    SAY Str( my_reccount(), 5 )
 
 
-   TB := TBrowseDB( m_x + 2 + iif( _rows_prazno > 4, 1, _rows_prazno ), m_y + 1,;
+   TB := TBrowseDB( m_x + 2 + IIF( _rows_prazno > 4, 1, _rows_prazno ), m_y + 1,;
                     ( m_x + _rows ) - _rows_poruke, m_y + _width )
 
    IF TBSkipBlock <> NIL
@@ -281,7 +282,7 @@ FUNCTION create_tbrowsedb( params, lIzOBJDB )
          TCol := TBColumnNew( ImeKol[ i, 1 ], ImeKol[ i, 2 ] )
 
          IF params[ "podvuci_b" ] <> NIL
-            TCol:colorBlock := {|| iif( Eval( params[ "podvuci_b" ] ), { 5, 2 }, { 1, 2 } ) }
+            TCol:colorBlock := { || iif( Eval( params[ "podvuci_b" ], TCol ), { 5, 2 }, { 1, 2 } ) }
          ENDIF
 
          TB:addColumn( TCol )

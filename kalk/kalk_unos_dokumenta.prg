@@ -55,6 +55,7 @@ FUNCTION kalk_unos_stavki_dokumenta( lAObrada )
    LOCAL _opt_row, _opt_d
    LOCAL _sep := BROWSE_COL_SEP
    LOCAL cPicKol := "999999.999"
+   LOCAL bPodvuci := { || IIF( field->ERROR=="1"  , .T. , .F.) }
 
    O_PARAMS
 
@@ -111,9 +112,9 @@ FUNCTION kalk_unos_stavki_dokumenta( lAObrada )
    AAdd( ImeKol, { "RN", {|| field->idzaduz2                 }, "idzaduz2"    } )
    AAdd( ImeKol, { "Br.Fakt", {|| field->brfaktp                  }, "brfaktp"     } )
    AAdd( ImeKol, { "Partner", {|| field->idpartner                }, "idpartner"   } )
-   AAdd( ImeKol, { "Marza", {|| field->tmarza                   }, "tmarza"   } )
+   AAdd( ImeKol, { "Marza", {|| field->tmarza                     }, "tmarza"   } )
    AAdd( ImeKol, { "Marza 2", {|| field->tmarza2                  }, "tmarza2"   } )
-   AAdd( ImeKol, { "E", {|| field->error                    }, "error"       } )
+   AAdd( ImeKol, { "E", {|| field->error                           },  "error"       } )
 
    FOR nI := 1 TO Len( ImeKol )
       AAdd( Kol, nI )
@@ -153,7 +154,8 @@ FUNCTION kalk_unos_stavki_dokumenta( lAObrada )
 
    PRIVATE lAutoAsist := .F.
 
-   my_db_edit( "PNal", nMaxRow, nMaxCol, {|| kalk_pripr_key_handler( lAutoObr ) }, "<F5>-kartica magacin, <F6>-kartica prodavnica", "Priprema...", , , , , 4 )
+
+   my_db_edit( "PNal", nMaxRow, nMaxCol, {|| kalk_pripr_key_handler( lAutoObr ) }, "<F5>-kartica magacin, <F6>-kartica prodavnica", "Priprema...", , , , bPodvuci , 4 )
 
    BoxC()
 

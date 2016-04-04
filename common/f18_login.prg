@@ -89,7 +89,7 @@ METHOD F18Login:New()
    _ini_params[ "port" ] := nil
    _ini_params[ "session" ] := nil
 
-altd()
+
    IF !f18_ini_config_read( F18_SERVER_INI_SECTION + iif( test_mode(), "_test", "" ), @_ini_params, .T. )
       error_bar( "ini", "problem f18 ini read" )
    ENDIF

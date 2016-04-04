@@ -108,8 +108,6 @@ METHOD set_module_gvars()
    PUBLIC gDecKol := 5
    PUBLIC gKalo := "2"
    PUBLIC gMagacin := "2"
-   PUBLIC gPDVMagNab := "N"
-   PUBLIC gPDVMagNab := "D"
    PUBLIC gMultiPM := "D"
    PUBLIC gRCRP := "C"
    PUBLIC gPotpis := "N"

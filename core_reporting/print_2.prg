@@ -55,7 +55,7 @@ FUNCTION f18_start_print( cFileName, xPrintOpt, cDocumentName )
    Alert ( cLogMsg )
 #endif
 
-   MsgO( "Priprema tekst izvještaja ..." )
+   MsgO( "Priprema " + IIF( cOpt == "PDF", "PDF", "tekst") + " izvještaja ..." )
 
    LOG_CALL_STACK cLogMsg
    SetPRC( 0, 0 )

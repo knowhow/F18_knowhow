@@ -103,7 +103,7 @@ FUNCTION Get1_10PDV()
          PICT "@!" ;
          VALID {|| ;
          _idroba := iif( Len( Trim( _idroba ) ) < 10, Left( _idroba, 10 ), _idroba ), ;
-      P_Roba( @_IdRoba, nil, nil, gArtCDX ), ;
+         P_Roba( @_IdRoba, nil, nil, gArtCDX ), ;
          ispisi_naziv_sifre( F_ROBA, _idroba, _kord_x, 25, 40 ), ;
          _IdTarifa := iif( fnovi, ROBA->idtarifa, _IdTarifa ), zadnji_ulazi_info( _idpartner, _idroba, "M" ), ;
          .T. }
@@ -151,31 +151,30 @@ FUNCTION Get1_10PDV()
       _Marza := 0
    ENDIF
 
-   IF gVarEv == "1"
 
-      ++ _x
-      @ m_x + _x, m_y + 2 SAY "Fakturna cijena:"
+   ++ _x
+   @ m_x + _x, m_y + 2 SAY "Fakturna cijena:"
 
-      IF gDokKVal == "D"
-         @ m_x + _x, Col() + 1 SAY "pr.->" GET __k_val VALID _val_konv( __k_val ) PICT "@!"
-      ENDIF
-
-      @ m_x + _x, m_y + _unos_left GET _fcj PICT gPicNC VALID {|| _fcj > 0 .AND. _set_konv( @_fcj, @__k_val ) } WHEN V_kol10()
-
-      ++ _x
-      @ m_x + _x, m_y + 2 SAY "Rabat (%):"
-      @ m_x + _x, m_y + _unos_left GET _Rabat PICT PicDEM WHEN DuplRoba()
-
-      IF gNW <> "X" .OR. gVodiKalo == "D"
-         ++ _x
-         @ m_x + _x, m_y + 2 SAY "Normalni . kalo:"
-         @ m_x + _x, m_y + _unos_left GET _GKolicina PICTURE PicKol
-         ++ _x
-         @ m_x + _x, m_y + 2 SAY "Preko  kalo:    "
-         @ m_x + _x, m_y + _unos_left GET _GKolicin2 PICTURE PicKol
-      ENDIF
-
+   IF gDokKVal == "D"
+      @ m_x + _x, Col() + 1 SAY "pr.->" GET __k_val VALID _val_konv( __k_val ) PICT "@!"
    ENDIF
+
+   @ m_x + _x, m_y + _unos_left GET _fcj PICT gPicNC VALID {|| _fcj > 0 .AND. _set_konv( @_fcj, @__k_val ) } WHEN V_kol10()
+
+   ++ _x
+   @ m_x + _x, m_y + 2 SAY "Rabat (%):"
+   @ m_x + _x, m_y + _unos_left GET _Rabat PICT PicDEM WHEN DuplRoba()
+
+   IF gNW <> "X" .OR. gVodiKalo == "D"
+      ++ _x
+      @ m_x + _x, m_y + 2 SAY "Normalni . kalo:"
+      @ m_x + _x, m_y + _unos_left GET _GKolicina PICTURE PicKol
+      ++ _x
+      @ m_x + _x, m_y + 2 SAY "Preko  kalo:    "
+      @ m_x + _x, m_y + _unos_left GET _GKolicin2 PICTURE PicKol
+   ENDIF
+
+
 
    READ
 
@@ -383,70 +382,61 @@ STATIC FUNCTION obracun_kalkulacija_tip_10_pdv( x_kord )
    @ m_x + _x, m_y + 2 SAY "NABAVNA CJENA:"
    @ m_x + _x, m_y + _unos_left GET _nc PICT gPicNC
 
-   IF !IsMagSNab()
-
-      PRIVATE fMarza := " "
-
-      // MARZA
-      ++ _x
-      @ m_x + _x, m_y + 2    SAY8 "Magacin. Marća            :" GET _TMarza VALID _Tmarza $ "%AU" PICTURE "@!"
-      @ m_x + _x, Col() + 2 GET _Marza PICT PicDEM
-      @ m_x + _x, Col() + 1 GET fMarza PICT "@!" VALID {|| Marza( fMarza ), fMarza := " ", .T. }
-
-      // PRODAJNA CIJENA / PLANSKA CIJENA
-      ++ _x
-      IF koncij->naz == "P2"
-         @ m_x + _x, m_y + 2    SAY "PLANSKA CIJENA  (PLC)       :"
-      ELSE
-         @ m_x + _x, m_y + 2    SAY "PROD.CJENA BEZ PDV   :"
-      ENDIF
-
-      @ m_x + _x, m_y + _unos_left GET _vpc PICT PicDEM VALID {|| MarzaVP( _Idvd, ( fMarza == "F" ) ), .T. }
 
 
-      IF ( gMpcPomoc == "D" )
+   PRIVATE fMarza := " "
 
-         _mpcsapp := roba->mpc
+   ++ _x
+   @ m_x + _x, m_y + 2    SAY8 "Magacin. Marža           :" GET _TMarza VALID _Tmarza $ "%AU" PICTURE "@!"
+   @ m_x + _x, Col() + 2 GET _Marza PICT PicDEM
+   @ m_x + _x, Col() + 1 GET fMarza PICT "@!" VALID {|| Marza( fMarza ), fMarza := " ", .T. }
 
-         ++ _x
-
-         // VPC se izracunava pomocu MPC cijene !!
-         @ m_x + _x, m_y + 2 SAY "PROD.CJENA SA PDV:"
-         @ m_x + _x, m_y + _unos_left GET _mpcsapp PICT PicDEM ;
-            valid {|| _mpcsapp := iif( _mpcsapp = 0, Round( _vpc * ( 1 + TARIFA->opp / 100 ) / ( 1 + TARIFA->PPP / 100 ), 2 ), _mpcsapp ), _mpc := _mpcsapp / ( 1 + TARIFA->opp / 100 ) / ( 1 + TARIFA->PPP / 100 ), ;
-            iif( _mpc <> 0, _vpc := Round( _mpc, 2 ), _vpc ), ShowGets(), .T. }
-
-      ENDIF
-
-      READ
-
-      IF ( gMpcPomoc == "D" )
-
-         IF ( roba->mpc == 0 .OR. roba->mpc <> Round( _mpcsapp, 2 ) ) .AND. Pitanje(, "Staviti MPC u sifrarnik" ) == "D"
-
-            SELECT roba
-            _rec := dbf_get_rec()
-            _rec[ "mpc" ] := _mpcsapp
-
-            update_rec_server_and_dbf( Alias(), _rec, 1, "FULL" )
-
-            SELECT kalk_pripr
-
-         ENDIF
-
-      ENDIF
-
-      SetujVPC( _vpc )
-
+   // PRODAJNA CIJENA / PLANSKA CIJENA
+   ++ _x
+   IF koncij->naz == "P2"
+      @ m_x + _x, m_y + 2    SAY "PLANSKA CIJENA  (PLC)       :"
    ELSE
+      @ m_x + _x, m_y + 2    SAY "PROD.CJENA BEZ PDV   :"
+   ENDIF
 
-      READ
+   @ m_x + _x, m_y + _unos_left GET _vpc PICT PicDEM VALID {|| MarzaVP( _Idvd, ( fMarza == "F" ) ), .T. }
 
-      _Marza := 0
-      _TMarza := "A"
-      _VPC := _NC
+
+   IF ( gMpcPomoc == "D" )
+
+      _mpcsapp := roba->mpc
+
+      ++ _x
+
+      // VPC se izracunava pomocu MPC cijene !!
+      @ m_x + _x, m_y + 2 SAY "PROD.CJENA SA PDV:"
+      @ m_x + _x, m_y + _unos_left GET _mpcsapp PICT PicDEM ;
+         valid {|| _mpcsapp := iif( _mpcsapp = 0, Round( _vpc * ( 1 + TARIFA->opp / 100 ) / ( 1 + TARIFA->PPP / 100 ), 2 ), _mpcsapp ), _mpc := _mpcsapp / ( 1 + TARIFA->opp / 100 ) / ( 1 + TARIFA->PPP / 100 ), ;
+         iif( _mpc <> 0, _vpc := Round( _mpc, 2 ), _vpc ), ShowGets(), .T. }
 
    ENDIF
+
+   READ
+
+   IF ( gMpcPomoc == "D" )
+
+      IF ( roba->mpc == 0 .OR. roba->mpc <> Round( _mpcsapp, 2 ) ) .AND. Pitanje(, "Staviti MPC u sifrarnik" ) == "D"
+
+         SELECT roba
+         _rec := dbf_get_rec()
+         _rec[ "mpc" ] := _mpcsapp
+
+         update_rec_server_and_dbf( Alias(), _rec, 1, "FULL" )
+
+         SELECT kalk_pripr
+
+      ENDIF
+
+   ENDIF
+
+   SetujVPC( _vpc )
+
+
 
    _MKonto := _Idkonto
    _MU_I := "1"
@@ -579,7 +569,7 @@ FUNCTION V_kol10()
       IF nKols < Abs( _kolicina )
          _ERROR := "1"
          Beep( 2 )
-         error_bar( _idfirma + "-" + _idvd + "-" + _brdok, ;
+         error_bar( "k:" + _idfirma + "-" + _idvd + "-" + _brdok, ;
             _idroba + " kol na stanju:" + AllTrim( Str( nKols, 12, 3 ) ) + " treba: " + AllTrim( Str( _kolicina, 12, 3 ) ) )
       ENDIF
       SELECT kalk_pripr

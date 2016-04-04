@@ -89,67 +89,33 @@ FUNCTION Get1_16PDV()
    SELECT kalk_pripr
    _MKonto := _Idkonto; _MU_I := "1"
 
-   IF gVarEv == "1"
-      DatPosljK()
-      DuplRoba()
-      _GKolicina := 0
-      IF fNovi
-         SELECT ROBA; HSEEK _IdRoba
-         IF koncij->naz == "P2"
-            _nc := plc
-            _vpc := plc
-         ELSE
-            _VPC := KoncijVPC()
-            _NC := NC
-         ENDIF
-      ENDIF
-      VTPorezi()
-      SELECT kalk_pripr
-
-      @ m_x + 14, m_y + 2    SAY "NAB.CJ   "  GET _NC  PICTURE gPicNC  WHEN V_kol10()
-
-      PRIVATE _vpcsappp := 0
-
-      IF !IsMagPNab()
-
-         PRIVATE fMarza := " "
-         @ m_x + 16, m_y + 36   SAY "Magacin. Marza   :" GET _TMarza VALID _Tmarza $ "%AU" PICTURE "@!"
-         @ m_x + 16, Col() + 1  GET _Marza PICTURE PicDEM
-         @ m_x + 16, Col() + 1 GET fMarza PICT "@!" valid {|| Marza( fMarza ), fMarza := " ", .T. }
-         @ m_x + 19, m_y + 2    SAY "PROD.CJENA BEZ PDV:"
-         @ m_x + 19, Col() + 2  GET _VPC    PICTURE PicDEM;
-            VALID {|| Marza( fMarza ), .T. }
-         IF !IsMagPNab()
-            _mpcsapp := roba->mpc
-            @ m_x + 20, m_y + 2 SAY "PROD.CJENA SA PDV:"
-            @ m_x + 20, Col() + 2 GET _MPCSaPP  PICTURE PicDEM ;
-               valid {|| _mpcsapp := iif( _mpcsapp = 0, Round( _vpc * ( 1 + TARIFA->opp / 100 ), 2 ), _mpcsapp ), _mpc := _mpcsapp / ( 1 + TARIFA->opp / 100 ), iif( _mpc <> 0, _vpc := Round( _mpc, 2 ), _vpc ), ShowGets(), .T. }
-         ENDIF
-         READ
-
-         IF !IsMagPNab()
-            IF ( roba->mpc == 0 .OR. roba->mpc <> Round( _mpcsapp, 2 ) ) .AND. Pitanje(, "Staviti MPC u sifrarnik" ) == "D"
-               SELECT roba
-               _rec := dbf_get_rec()
-               _rec[ "mpc" ] := _mpcsapp
-               update_rec_server_and_dbf( Alias(), _rec, 1, "FULL" )
-               SELECT kalk_pripr
-            ENDIF
-
-            SetujVPC( _VPC )
-
-         ENDIF
-
+   DatPosljK()
+   DuplRoba()
+   _GKolicina := 0
+   IF fNovi
+      SELECT ROBA
+      HSEEK _IdRoba
+      IF koncij->naz == "P2"
+         _nc := plc
+         _vpc := plc
       ELSE
-         READ
-         _VPC := _nc; marza := 0
+         _VPC := KoncijVPC()
+         _NC := NC
       ENDIF
-
-      IF !IsMagPNab()
-         SetujVpc( _vpc )
-      ENDIF
-
    ENDIF
+   VTPorezi()
+   SELECT kalk_pripr
+
+   @ m_x + 14, m_y + 2    SAY "NAB.CJ   "  GET _NC  PICTURE gPicNC  WHEN V_kol10()
+
+   PRIVATE _vpcsappp := 0
+
+
+   _VPC := _nc
+   marza := 0
+
+
+
 
    nStrana := 2
 
@@ -221,36 +187,25 @@ FUNCTION Get1_16bPDV()
    VTPorezi()
    SELECT kalk_pripr
 
-   IF gVarEv == "1"
 
-      @ m_x + 14, m_y + 2    SAY "NAB.CJ   "  GET _NC  PICTURE  gPicNC  WHEN V_kol10()
 
-      PRIVATE _vpcsappp := 0
+   @ m_x + 14, m_y + 2    SAY "NAB.CJ   "  GET _NC  PICTURE  gPicNC  WHEN V_kol10()
 
-      IF !IsMagPNab()
+   PRIVATE _vpcsappp := 0
 
-         @ m_x + 15, m_y + 2   SAY "PROD. CIJ " GET _VPC    PICTURE PicDEM
 
-      ELSE
-         // vodi se po nc
-         _vpc := _nc
-         marza := 0
-      ENDIF
+   // vodi se po nc
+   _vpc := _nc
+   marza := 0
 
-      cBeze := " "
-      @ m_x + 17, m_y + 2 GET cBeze VALID SvediM( cSvedi )
 
-   ENDIF
+   cBeze := " "
+   @ m_x + 17, m_y + 2 GET cBeze VALID SvediM( cSvedi )
+
+
 
    READ
 
-   IF gVarEv == "1"
-
-      IF !IsMagPNab()
-         SetujVPC( _vpc )
-      ENDIF
-
-   ENDIF
 
    nStrana := 2
    _marza := _vpc - _nc

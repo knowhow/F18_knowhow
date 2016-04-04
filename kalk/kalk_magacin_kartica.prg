@@ -85,28 +85,28 @@ FUNCTION kartica_magacin()
          ELSE
             @ m_x + 3, m_y + 2 SAY "Artikal" GET cIdRoba  PICT "@!" VALID Empty( cIdRoba ) .OR. Right( Trim( cIdRoba ), 1 ) $ ";>" .OR. P_ROBA( @cIdRoba )
          ENDIF
-		
+
          IF !Empty( cRNT1 )
             @ m_x + 4, m_y + 2 SAY "Broj radnog naloga:" GET cRNalBroj PICT "@S20"
          ENDIF
-		
+
          @ m_x + 5, m_y + 2 SAY "Partner (prazno-svi)"  GET cIdPArtner  VALID Empty( cIdPartner ) .OR. P_Firma( @cIdPartner )  PICT "@!"
          @ m_x + 7, m_y + 2 SAY "Datum od " GET dDatOd
          @ m_x + 7, Col() + 2 SAY "do" GET dDatDo
          @ m_x + 8, m_y + 2 SAY "sa prethodnim prometom (D/N)" GET cPredh PICT "@!" VALID cpredh $ "DN"
          @ m_x + 9, m_y + 2 SAY "Prikaz broja fakt/otpremice D/N"  GET cBrFDa  VALID cBrFDa $ "DN" PICT "@!"
          @ m_x + 10, m_y + 2 SAY "Prikaz fakturne cijene kod ulaza (KALK 10) D/N"  GET cPrikFCJ2  VALID cPrikFCJ2 $ "DN" PICT "@!"
-         IF !gVarEv == "2"
-            @ m_x + 11, m_y + 2 SAY "Prikaz vrijednosti samo u saldu ? (D/N)"  GET cPVSS VALID cPVSS $ "DN" PICT "@!"
-         ENDIF
+
+         @ m_x + 11, m_y + 2 SAY "Prikaz vrijednosti samo u saldu ? (D/N)"  GET cPVSS VALID cPVSS $ "DN" PICT "@!"
+
 
          READ
          ESC_BCR
-    		
+
          IF !Empty( cRnT1 ) .AND. !Empty( cRNalBroj )
             PRIVATE aUslRn := Parsiraj( cRNalBroj, "idzaduz2" )
          ENDIF
-		
+
          IF ( Empty( cRNT1 ) .OR. Empty( cRNalBroj ) .OR. aUslRn <> NIL )
             EXIT
          ENDIF
@@ -183,7 +183,7 @@ FUNCTION kartica_magacin()
    __line := cLine
    __txt1 := cTxt1
    __txt2 := cTxt2
-	
+
    PRIVATE nTStrana := 0
 
    zagl_mag_kart()
@@ -193,7 +193,7 @@ FUNCTION kartica_magacin()
       IF field->mkonto <> cIdKonto .OR. field->idfirma <> cIdFirma
          EXIT
       ENDIF
-	
+
       cIdRoba := idroba
       SELECT roba
       HSEEK cIdRoba
@@ -239,64 +239,50 @@ FUNCTION kartica_magacin()
          ENDIF
 
          IF cPredh == "D" .AND. datdok >= dDatod .AND. fPrviProl
-        		
+
             // ispis predhodnog stanja
             fPrviprol := .F.
-        		
+
             ? "Stanje do ", dDatOd
-			
+
             @ PRow(), 35 SAY nulaz        PICT pickol
             @ PRow(), PCol() + 1 SAY nIzlaz       PICT pickol
             @ PRow(), PCol() + 1 SAY nUlaz - nIzlaz PICT pickol
-        		
-            // evidencija po cijenama
-            IF gVarEv == "1"
-               IF Round( nUlaz - nIzlaz, 4 ) <> 0
-                  // NC
-                  @ PRow(), PCol() + 1 SAY nNV / ( nUlaz - nIzlaz )    PICT pickol
-               ELSE
-                  @ PRow(), PCol() + 1 SAY 0          PICT pickol
-               ENDIF
-				
-               IF cPVSS == "N" .AND. IsMagPNab()
-                  // NV dug. NV pot.
-                  @ PRow(), PCol() + 1 SAY tnNVd          PICT picdem
-                  @ PRow(), PCol() + 1 SAY tnNVp          PICT picdem
-               ENDIF
-				
-               // NV
-               @ PRow(), PCol() + 1 SAY nNV PICT picdem
-          			
-               // if !IsMagPNab()
-				
-               // RABAT
-               @ PRow(), PCol() + 1 SAY nRabat PICT pickol
-            			
-               // VPC
-               IF Round( nUlaz - nIzlaz, 4 ) <> 0
-                  @ PRow(), PCol() + 1 SAY nVPV / ( nUlaz - nIzlaz ) PICT piccdem
-               ENDIF
-				
-               IF !IsMagPNab()
-                  // VPV dug. VPV pot.
-                  IF cPVSS == "N"
-                     @ PRow(), PCol() + 1 SAY tnVPVd PICT picdem
-                     @ PRow(), PCol() + 1 SAY tnVPVp PICT picdem
-                  ENDIF
-				
-                  // VPV
-                  @ PRow(), PCol() + 1 SAY nVPV PICT picdem
-          			
-                  // endif
-               ENDIF
+
+
+            IF Round( nUlaz - nIzlaz, 4 ) <> 0
+               // NC
+               @ PRow(), PCol() + 1 SAY nNV / ( nUlaz - nIzlaz )    PICT pickol
+            ELSE
+               @ PRow(), PCol() + 1 SAY 0          PICT pickol
             ENDIF
+
+            IF cPVSS == "N"
+               // NV dug. NV pot.
+               @ PRow(), PCol() + 1 SAY tnNVd          PICT picdem
+               @ PRow(), PCol() + 1 SAY tnNVp          PICT picdem
+            ENDIF
+
+            // NV
+            @ PRow(), PCol() + 1 SAY nNV PICT picdem
+
+
+            // RABAT
+            @ PRow(), PCol() + 1 SAY nRabat PICT pickol
+
+            // VPC
+            IF Round( nUlaz - nIzlaz, 4 ) <> 0
+               @ PRow(), PCol() + 1 SAY nVPV / ( nUlaz - nIzlaz ) PICT piccdem
+            ENDIF
+
+
          ENDIF
-		
+
          IF PRow() -dodatni_redovi_po_stranici() > 62
             FF
             zagl_mag_kart()
          ENDIF
-  		
+
          IF mu_i == "1" .AND. !( idvd $ "12#22#94" )
             nUlaz += kolicina - gkolicina - gkolicin2
             IF datdok >= ddatod
@@ -307,15 +293,14 @@ FUNCTION kartica_magacin()
                @ PRow(), PCol() + 1 SAY 0    PICT pickol
                @ PRow(), PCol() + 1 SAY nUlaz - nIzlaz    PICT pickol
                // NC
-               IF gVarEv == "1"
-                  @ PRow(), PCol() + 1 SAY nc   PICT piccdem
-               ENDIF
+               @ PRow(), PCol() + 1 SAY nc   PICT piccdem
+
             ENDIF
-			
+
             nNVd := nc * ( kolicina - gkolicina - gkolicin2 )
             tnNVd += nNVd
             nNV += nc * ( kolicina - gkolicina - gkolicin2 )
-    			
+
             IF koncij->naz == "P2"
                nVPVd := roba->plc * ( kolicina - gkolicina - gkolicin2 )
                tnVPVd += nVPVd
@@ -327,42 +312,32 @@ FUNCTION kartica_magacin()
             ENDIF
 
             IF datdok >= ddatod
-               IF gVarEv == "1"
-       			
-                  // NV dug. NV pot.
-			
-                  IF cPVSS == "N" .AND. IsMagPNab()
-                     @ PRow(), PCol() + 1 SAY nNVd   PICT picdem
-                     @ PRow(), PCol() + 1 SAY nNVp   PICT picdem
-                  ENDIF
-			
-                  // NV
-                  @ PRow(), PCol() + 1 SAY nNV   PICT picdem
-       			
-                  // RABAT
-                  @ PRow(), PCol() + 1 SAY 0  PICT piccdem
-        		
-                  // VPC
-                  IF koncij->naz == "P2"
-                     @ PRow(), PCol() + 1 SAY roba->plc PICT piccdem
-                  ELSE
-                     @ PRow(), PCol() + 1 SAY vpc PICT piccdem
-                  ENDIF
-			
-                  IF !IsMagPNab()
-                     // VPV dug. VPV pot.
-                     IF cPVSS == "N"
-                        @ PRow(), PCol() + 1 SAY nVpvd PICT picdem
-                        @ PRow(), PCol() + 1 SAY nVpvp PICT picdem
-                     ENDIF
-        		
-                     // VPV
-                     @ PRow(), PCol() + 1 SAY nVpv PICT picdem
-       			
-                  ENDIF
-			
+
+
+               // NV dug. NV pot.
+
+               IF cPVSS == "N"
+                  @ PRow(), PCol() + 1 SAY nNVd   PICT picdem
+                  @ PRow(), PCol() + 1 SAY nNVp   PICT picdem
                ENDIF
-			
+
+               // NV
+               @ PRow(), PCol() + 1 SAY nNV   PICT picdem
+
+               // RABAT
+               @ PRow(), PCol() + 1 SAY 0  PICT piccdem
+
+               // VPC
+               IF koncij->naz == "P2"
+                  @ PRow(), PCol() + 1 SAY roba->plc PICT piccdem
+               ELSE
+                  @ PRow(), PCol() + 1 SAY vpc PICT piccdem
+               ENDIF
+
+
+
+
+
                IF cBrFDa == "D"
                   @ PRow() + 1, nColDok SAY brfaktp
                   IF !Empty( idzaduz2 )
@@ -386,11 +361,10 @@ FUNCTION kartica_magacin()
                @ PRow(), PCol() + 1 SAY 0         PICT pickol
                @ PRow(), PCol() + 1 SAY kolicina  PICT pickol
                @ PRow(), PCol() + 1 SAY nUlaz - nIzlaz    PICT pickol
-      		
+
                // NC
-               IF gVarEv == "1"
-                  @ PRow(), PCol() + 1 SAY nc    PICT piccdem
-               ENDIF
+               @ PRow(), PCol() + 1 SAY nc    PICT piccdem
+
             ENDIF
 
             nNVp := nc * ( kolicina )
@@ -407,45 +381,27 @@ FUNCTION kartica_magacin()
             ENDIF
             nRabat += vpc * rabatv / 100 * kolicina
             IF datdok >= ddatod
-               IF gVarEv == "1"
-                  // NV pot. NV dug.
-                  IF cPVSS == "N" .AND. IsMagPNab()
-                     @ PRow(), PCol() + 1 SAY nNVd PICT picdem
-                     @ PRow(), PCol() + 1 SAY nNVp PICT picdem
-                  ENDIF
-                  // NV
-                  @ PRow(), PCol() + 1 SAY nNV PICT picdem
-                  // if !IsMagPNab()
-			
-                  // VPC
-                  IF koncij->naz == "P2"
-                     @ PRow(), PCol() + 1 SAY vpc * rabatv / 100 * kolicina  PICT piccdem
-                     @ PRow(), PCol() + 1 SAY roba->plc  PICT piccdem
-                  ELSE
-                     @ PRow(), PCol() + 1 SAY vpc * rabatv / 100 * kolicina  PICT piccdem
-                     @ PRow(), PCol() + 1 SAY vpc  PICT piccdem
-                  ENDIF
-			
-                  IF !IsMagPNab()
-                     IF cPVSS == "N"
-                        // VPV dug. VPV pot.
-                        @ PRow(), PCol() + 1 SAY nVpvd PICT picdem
-                        @ PRow(), PCol() + 1 SAY nVpvp PICT picdem
-                     ENDIF
-         		
-                     // VPV
-                     @ PRow(), PCol() + 1 SAY nVpv PICT picdem
-         		
-                     IF idvd == "11"
-                        // PC sa PDV
-                        @ PRow(), PCol() + 1 SAY mpcsapp  PICT piccdem
-                     ENDIF
-			
-                  ENDIF
-			
-                  // endif
-			
+
+               // NV pot. NV dug.
+               IF cPVSS == "N"
+                  @ PRow(), PCol() + 1 SAY nNVd PICT picdem
+                  @ PRow(), PCol() + 1 SAY nNVp PICT picdem
                ENDIF
+               // NV
+               @ PRow(), PCol() + 1 SAY nNV PICT picdem
+
+
+               // VPC
+               IF koncij->naz == "P2"
+                  @ PRow(), PCol() + 1 SAY vpc * rabatv / 100 * kolicina  PICT piccdem
+                  @ PRow(), PCol() + 1 SAY roba->plc  PICT piccdem
+               ELSE
+                  @ PRow(), PCol() + 1 SAY vpc * rabatv / 100 * kolicina  PICT piccdem
+                  @ PRow(), PCol() + 1 SAY vpc  PICT piccdem
+               ENDIF
+
+
+
                IF cBrFDa == "D"
                   @ PRow() + 1, nColDok SAY brfaktp
                   IF !Empty( idzaduz2 )
@@ -463,20 +419,20 @@ FUNCTION kartica_magacin()
                @ PRow(), PCol() + 1 SAY 0          PICT pickol
                @ PRow(), PCol() + 1 SAY -kolicina  PICT pickol
                @ PRow(), PCol() + 1 SAY nUlaz - nIzlaz    PICT pickol
-               IF gVarEv == "1"
-      	
-                  // NC
-                  @ PRow(), PCol() + 1 SAY nc        PICT piccdem
 
-                  // NC pot. NC dug.
-                  IF cPVSS == "N" .AND. IsMagPNab()
-                     @ PRow(), PCol() + 1 SAY nNVd   PICT picdem
-                     @ PRow(), PCol() + 1 SAY nNVp   PICT picdem
-                  ENDIF
-	
-                  // NV
-                  @ PRow(), PCol() + 1 SAY nNV        PICT picdem
+
+               // NC
+               @ PRow(), PCol() + 1 SAY nc        PICT piccdem
+
+               // NC pot. NC dug.
+               IF cPVSS == "N"
+                  @ PRow(), PCol() + 1 SAY nNVd   PICT picdem
+                  @ PRow(), PCol() + 1 SAY nNVp   PICT picdem
                ENDIF
+
+               // NV
+               @ PRow(), PCol() + 1 SAY nNV        PICT picdem
+
             ENDIF
             nNVp := -nc * ( kolicina )
             tnNVp += nNVp
@@ -491,35 +447,17 @@ FUNCTION kartica_magacin()
                nVPV += vpc * ( kolicina )
             ENDIF
             IF datdok >= ddatod
-               IF gVarEv == "1"
-                  // RABAT
-                  @ PRow(), PCol() + 1 SAY 0         PICT piccdem
 
-                  // VPC
-                  IF koncij->naz == "P2"
-                     @ PRow(), PCol() + 1 SAY roba->plc     PICT piccdem
-                  ELSE
-                     @ PRow(), PCol() + 1 SAY vpc       PICT piccdem
-                  ENDIF
-	
-                  IF !IsMagPNab()
-                     IF cPVSS == "N"
-                        // VPV dug. VPV pot.
-                        @ PRow(), PCol() + 1 SAY nVpvd PICT picdem
-                        @ PRow(), PCol() + 1 SAY nVpvp PICT picdem
-                     ENDIF
-	
-                     // VPV
-                     @ PRow(), PCol() + 1 SAY nVpv PICT picdem
-                     IF !( idvd == "94" )
-                        // PC sa PDV
-                        @ PRow(), PCol() + 1 SAY mpcsapp   PICT piccdem
-                     ENDIF
-                  ENDIF
+               // RABAT
+               @ PRow(), PCol() + 1 SAY 0         PICT piccdem
 
-                  // endif
-
+               // VPC
+               IF koncij->naz == "P2"
+                  @ PRow(), PCol() + 1 SAY roba->plc     PICT piccdem
+               ELSE
+                  @ PRow(), PCol() + 1 SAY vpc       PICT piccdem
                ENDIF
+
                IF cBrFDa == "D"
                   @ PRow() + 1, nColDok SAY brfaktp
                   IF !Empty( idzaduz2 )
@@ -542,17 +480,10 @@ FUNCTION kartica_magacin()
                @ PRow(), PCol() + 1 SAY PadR( "NIV   (" + Transform( kolicina, pickol ) + ")", Len( pickol ) * 2 + 1 )
                @ PRow(), PCol() + 1 SAY PadR( " stara VPC:", Len( pickol ) -2 )
                @ PRow(), PCol() + 1 SAY mpcsapp       PICT piccdem  // kod ove kalk to predstavlja staru vpc
-               @ PRow(), PCol() + 1 SAY PadR( "nova VPC:", Len( piccdem ) + IF( cPVSS == "N" .AND. IsMagPNab(), 2 * ( Len( picdem ) + 1 ), 0 ) )
+               @ PRow(), PCol() + 1 SAY PadR( "nova VPC:", Len( piccdem ) + iif( cPVSS == "N", 2 * ( Len( picdem ) + 1 ), 0 ) )
                @ PRow(), PCol() + 1 SAY vpc + mpcsapp PICT piccdem
                @ PRow(), PCol() + 1 SAY vpc         PICT piccdem
 
-               IF !IsMagPNab()
-                  IF cPVSS == "N"
-                     @ PRow(), PCol() + 1 SAY nVpvd PICT picdem
-                     @ PRow(), PCol() + 1 SAY nVpvp PICT picdem
-                  ENDIF
-                  @ PRow(), PCol() + 1 SAY nVpv PICT picdem
-               ENDIF
 
                // endif
                IF cBrFDa == "D"
@@ -575,40 +506,27 @@ FUNCTION kartica_magacin()
                @ PRow(), PCol() + 1 SAY -kolicina  PICT pickol
                @ PRow(), PCol() + 1 SAY -kolicina  PICT pickol
                @ PRow(), PCol() + 1 SAY nUlaz - nIzlaz    PICT pickol
-               IF gVarEv == "1"
-                  @ PRow(), PCol() + 1 SAY nc        PICT piccdem
-               ENDIF
+
+               @ PRow(), PCol() + 1 SAY nc        PICT piccdem
+
             ENDIF // cpredh
 
             nRabat += vpc * rabatv / 100 * kolicina
             IF datdok >= ddatod
-               IF gVarEv == "1"
-                  IF cPVSS == "N" .AND. IsMagPNab()
-                     @ PRow(), PCol() + 1 SAY nNVd   PICT picdem
-                     @ PRow(), PCol() + 1 SAY nNVp   PICT picdem
-                  ENDIF
-                  @ PRow(), PCol() + 1 SAY nnv        PICT picdem
-                  IF koncij->naz == "P2"
-                     @ PRow(), PCol() + 1 SAY vpc * rabatv / 100 * kolicina  PICT piccdem
-                     @ PRow(), PCol() + 1 SAY roba->plc  PICT piccdem
-                  ELSE
-                     @ PRow(), PCol() + 1 SAY vpc * rabatv / 100 * kolicina  PICT piccdem
-                     @ PRow(), PCol() + 1 SAY vpc  PICT piccdem
-                  ENDIF
 
-                  IF !IsMagPNab()
-                     IF cPVSS == "N"
-                        @ PRow(), PCol() + 1 SAY nVpvd PICT picdem
-                        @ PRow(), PCol() + 1 SAY nVpvp PICT picdem
-                     ENDIF
-                     @ PRow(), PCol() + 1 SAY nVpv PICT picdem
-                     IF idvd == "11"
-                        @ PRow(), PCol() + 1 SAY mpcsapp  PICT piccdem
-                     ENDIF
-                  ENDIF
-	
-                  // endif
+               IF cPVSS == "N"
+                  @ PRow(), PCol() + 1 SAY nNVd   PICT picdem
+                  @ PRow(), PCol() + 1 SAY nNVp   PICT picdem
                ENDIF
+               @ PRow(), PCol() + 1 SAY nnv        PICT picdem
+               IF koncij->naz == "P2"
+                  @ PRow(), PCol() + 1 SAY vpc * rabatv / 100 * kolicina  PICT piccdem
+                  @ PRow(), PCol() + 1 SAY roba->plc  PICT piccdem
+               ELSE
+                  @ PRow(), PCol() + 1 SAY vpc * rabatv / 100 * kolicina  PICT piccdem
+                  @ PRow(), PCol() + 1 SAY vpc  PICT piccdem
+               ENDIF
+
                IF cBrFDa == "D"
                   @ PRow() + 1, nColDok SAY brfaktp
                   IF !Empty( idzaduz2 )
@@ -619,9 +537,9 @@ FUNCTION kartica_magacin()
          ENDIF
 
          SKIP
-         
+
       ENDDO
-      
+
 
       ? __line
       ? "Ukupno:"
@@ -629,38 +547,20 @@ FUNCTION kartica_magacin()
       @ PRow(), PCol() + 1 SAY nizlaz       PICT pickol
       @ PRow(), PCol() + 1 SAY nUlaz - nIzlaz PICT pickol
 
-      IF gVarEv == "1"
-         IF Round( nulaz - nizlaz, 4 ) <> 0
-            @ PRow(), PCol() + 1 SAY nNV / ( nulaz - nizlaz )    PICT pickol
-         ELSE
-            @ PRow(), PCol() + 1 SAY 0          PICT pickol
-         ENDIF
-         IF cPVSS == "N" .AND. IsMagPNab()
-            @ PRow(), PCol() + 1 SAY tnNVd          PICT picdem
-            @ PRow(), PCol() + 1 SAY tnNVp          PICT picdem
-         ENDIF
-         @ PRow(), PCol() + 1 SAY nNV          PICT picdem
-         @ PRow(), PCol() + 1 SAY nRabat       PICT pickol
 
-         IF !IsMagPNab()
-
-            IF Round( nulaz - nizlaz, 4 ) <> 0
-               @ PRow(), PCol() + 1 SAY nVPV / ( nulaz - nizlaz ) PICT piccdem
-            ELSEIF Round( nvpv, 3 ) <> 0
-               @ PRow(), PCol() + 1 SAY PadC( "ERR", Len( piccdem ) )
-            ELSE
-               @ PRow(), PCol() + 1 SAY 0            PICT pickol
-            ENDIF
-
-            IF cPVSS == "N"
-               @ PRow(), PCol() + 1 SAY tnVPVd          PICT picdem
-               @ PRow(), PCol() + 1 SAY tnVPVp          PICT picdem
-            ENDIF
-            @ PRow(), PCol() + 1 SAY nVPV         PICT picdem
-
-         ENDIF
-
+      IF Round( nulaz - nizlaz, 4 ) <> 0
+         @ PRow(), PCol() + 1 SAY nNV / ( nulaz - nizlaz )    PICT pickol
+      ELSE
+         @ PRow(), PCol() + 1 SAY 0          PICT pickol
       ENDIF
+      IF cPVSS == "N"
+         @ PRow(), PCol() + 1 SAY tnNVd          PICT picdem
+         @ PRow(), PCol() + 1 SAY tnNVp          PICT picdem
+      ENDIF
+      @ PRow(), PCol() + 1 SAY nNV          PICT picdem
+      @ PRow(), PCol() + 1 SAY nRabat       PICT pickol
+
+
 
       ? __line
       ?
@@ -757,55 +657,41 @@ STATIC FUNCTION _set_zagl( cLine, cTxt1, cTxt2, cPVSS, cPicKol, cPicCDem )
    AAdd( aKMag, { nPom, PadC( "Izlaz", nPom ), PadC( "2", nPom ) } )
    AAdd( aKMag, { nPom, PadC( "Stanje", nPom ), PadC( "(1 - 2)", nPom ) } )
 
-   IF gVarEv <> "2"
 
-      nPom := Len( PicCDem )
-      // NC, NV
-      AAdd( aKMag, { nPom, PadC( "NC", nPom ), PadC( "", nPom ) } )
-	
-      IF cPVSS == "N" .AND. IsMagPNab()
-		
-         nPom := Len( PicDem )
-         // nv.dug
-         AAdd( aKMag, { nPom, PadC( "NV Dug.", nPom ), PadC( "", nPom ) } )
-         // nv.pot
-         AAdd( aKMag, { nPom, PadC( "NV Pot.", nPom ), PadC( "", nPom ) } )
-		
-      ENDIF
-	
-      nPom := Len( PicCDem )
-      // NV
-      AAdd( aKMag, { nPom, PadC( "NV", nPom ), PadC( "", nPom ) } )
-	
-      nPom := Len( PicKol ) - 3
-      // RABAT
-      AAdd( aKMag, { nPom, PadC( "RABAT", nPom ), PadC( "", nPom ) } )
+
+   nPom := Len( PicCDem )
+   // NC, NV
+   AAdd( aKMag, { nPom, PadC( "NC", nPom ), PadC( "", nPom ) } )
+
+   IF cPVSS == "N"
 
       nPom := Len( PicDem )
-      // PC
-      AAdd( aKMag, { nPom, PadC( "PC", nPom ), PadC( "bez PDV", nPom ) } )
-	
-	
-      IF !IsMagPNab()
-		
-         IF cPVSS == "N"
-			
-            AAdd( aKMag, { nPom, PadC( "PV Dug.", nPom ), PadC( "", nPom ) } )
-            AAdd( aKMag, { nPom, PadC( "PV Pot.", nPom ), PadC( "", nPom ) } )
-         ENDIF
-		
-         AAdd( aKMag, { nPom, PadC( "PV", nPom ), PadC( "", nPom ) } )
-         AAdd( aKMag, { nPom, PadC( "PC", nPom ), PadC( "sa PDV", nPom ) } )
-	
-      ENDIF
-	
+      // nv.dug
+      AAdd( aKMag, { nPom, PadC( "NV Dug.", nPom ), PadC( "", nPom ) } )
+      // nv.pot
+      AAdd( aKMag, { nPom, PadC( "NV Pot.", nPom ), PadC( "", nPom ) } )
+
    ENDIF
+
+   nPom := Len( PicCDem )
+   // NV
+   AAdd( aKMag, { nPom, PadC( "NV", nPom ), PadC( "", nPom ) } )
+
+   nPom := Len( PicKol ) - 3
+   // RABAT
+   AAdd( aKMag, { nPom, PadC( "RABAT", nPom ), PadC( "", nPom ) } )
+
+   nPom := Len( PicDem )
+   // PC
+   AAdd( aKMag, { nPom, PadC( "PC", nPom ), PadC( "bez PDV", nPom ) } )
+
+
 
    cLine := SetRptLineAndText( aKMag, 0 )
    cTxt1 := SetRptLineAndText( aKMag, 1, "*" )
    cTxt2 := SetRptLineAndText( aKMag, 2, "*" )
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -825,20 +711,11 @@ STATIC FUNCTION zagl_mag_kart()
 
    SELECT kalk
 
-   IF gVarEv == "2"
-      P_12CPI
-   ELSEIF !IsMagPNab()
-      IF cPVSS == "N"
-         P_COND2
-      ELSE
-         P_COND
-      ENDIF
+
+   IF cPVSS == "N"
+      P_COND2
    ELSE
-      IF cPVSS == "N"
-         P_COND2
-      ELSE
-         P_COND
-      ENDIF
+      P_COND
    ENDIF
 
    ? __line
@@ -847,7 +724,3 @@ STATIC FUNCTION zagl_mag_kart()
    ? __line
 
    RETURN ( nil )
-
-
-
-

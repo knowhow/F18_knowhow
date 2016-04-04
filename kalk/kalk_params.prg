@@ -231,10 +231,9 @@ FUNCTION kalk_par_razno()
    ++ _x
    @ m_x + _x, m_y + 2 SAY "Potpis na kraju naloga D/N     " GET gPotpis VALID gPotpis $ "DN"
    ++ _x
-   @ m_x + _x, m_y + 2 SAY "Novi korisnicki interfejs D/N/X" GET gNW VALID gNW $ "DNX" PICT "@!"
+   @ m_x + _x, m_y + 2 SAY8 "Novi korisnički interfejs D/N/X" GET gNW VALID gNW $ "DNX" PICT "@!"
    ++ _x
-   @ m_x + _x, m_y + 2 SAY "Varijanta evidencije (1-sa cijenama, 2-iskljucivo kolicinski)" GET gVarEv VALID gVarEv $ "12" PICT "9"
-   ++ _x
+ ++ _x
    @ m_x + _x, m_y + 2 SAY "Tip tabele (0/1/2)             " GET gTabela VALID gTabela < 3 PICT "9"
    @ m_x + _x, Col() + 2 SAY "Vise konta na dokumentu (D/N) ?" GET _vise_konta VALID _vise_konta $ "DN" PICT "@!"
    ++ _x
@@ -288,7 +287,6 @@ FUNCTION kalk_par_razno()
       set_metric( "kalk_potpis_na_kraju_naloga", nil, gPotpis )
       set_metric( "kalk_tip_tabele", nil, gTabela )
       set_metric( "kalk_novi_korisnicki_interfejs", nil, gNW )
-      set_metric( "kalk_varijanta_evidencije", nil, gVarEv )
       set_metric( "kalk_zabrana_promjene_tarifa", nil, gPromTar )
       set_metric( "kalk_djoker_f1_kod_kontiranja", nil, gFunKon1 )
       set_metric( "kalk_djoker_f2_kod_kontiranja", nil, gFunKon2 )

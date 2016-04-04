@@ -152,14 +152,10 @@ FUNCTION lager_lista_magacin()
 
       @ m_x + 7, Col() + 1 SAY "Prikaz samo do nab.vr. D/N" GET cDoNab  VALID cDoNab $ "DN" PICT "@!"
 
-      IF ( IsMagPNab() .OR. IsMagSNab() )
-         @ m_x + 8, m_y + 2 SAY8 "Pr.stavki kojima je NV 0 D/N" GET cNula  VALID cNula $ "DN" PICT "@!"
-         @ m_x + 9, m_y + 2 SAY8 "Prikaz 'ERR' ako je NV/Kolicina<>NC " GET cErr PICT "@!" VALID cErr $ "DN"
-         @ m_x + 9, Col() + 1 SAY8 "VPC iz sifrarnika robe (D/N)?" GET _vpc_iz_sif PICT "@!" VALID _vpc_iz_sif $ "DN"
-      ELSE
-         @ m_x + 8, m_y + 2 SAY8 "Prikaz stavki kojima je VPV 0 D/N" GET cNula  VALID cNula $ "DN" PICT "@!"
-         @ m_x + 9, m_y + 2 SAY8 "Prikaz 'ERR' ako je VPV/Kolicina<>VPC " GET cErr PICT "@!" VALID cErr $ "DN"
-      ENDIF
+      @ m_x + 8, m_y + 2 SAY8 "Pr.stavki kojima je NV 0 D/N" GET cNula  VALID cNula $ "DN" PICT "@!"
+      @ m_x + 9, m_y + 2 SAY8 "Prikaz 'ERR' ako je NV/Kolicina<>NC " GET cErr PICT "@!" VALID cErr $ "DN"
+      @ m_x + 9, Col() + 1 SAY8 "VPC iz sifrarnika robe (D/N)?" GET _vpc_iz_sif PICT "@!" VALID _vpc_iz_sif $ "DN"
+
 
       @ m_x + 10, m_y + 2 SAY8 "Datum od " GET dDatOd
       @ m_x + 10, Col() + 2 SAY8 "do" GET dDatDo
@@ -350,18 +346,7 @@ FUNCTION lager_lista_magacin()
    ELSE
       m := "------ ---------- -------------------- --- ---------- ---------- ---------- ---------- ---------- ----------"
 
-      IF gVarEv == "2"
-         m := "----- ---------- -------------------- --- ---------- ---------- ----------"
-      ELSEIF !IsMagPNab()
-         m += " ---------- ----------"
-      ELSE
-         m += " ----------"
-         IF IsPDV()
-            m += " ----------"
-            m += " ----------"
-            m += " ----------"
-         ENDIF
-      ENDIF
+
 
       IF cSredCij == "D"
          m += " ----------"
@@ -375,11 +360,9 @@ FUNCTION lager_lista_magacin()
       cPNab := "D"
    ENDIF
 
-   IF !IsMagPNab() .AND. cPNab == "D"
-      gaZagFix := { 7, 6 }
-   ELSE
-      gaZagFix := { 7, 5 }
-   ENDIF
+
+   gaZagFix := { 7, 5 }
+
 
    start PRINT cret
    ?
@@ -604,8 +587,7 @@ FUNCTION lager_lista_magacin()
          LOOP
       ENDIF
 
-      IF cNula == "D" .OR. iif( IsPDV() .AND. ( IsMagPNab() .OR. IsMagSNab() ), Round( nNVU - nNVI, 4 ) <> 0, ;
-            Round( nVPVU - nVPVI, 4 ) <> 0 )
+      IF cNula == "D" .OR. Round( nNVU - nNVI, 4 ) <> 0
 
          aNaz := Sjecistr( roba->naz, 20 )
          NovaStrana( bZagl )
@@ -655,9 +637,8 @@ FUNCTION lager_lista_magacin()
                REPLACE nc WITH ( nNVU - nNVI ) / ( nUlaz - nIzlaz )
                REPLACE vpc WITH ( nVPVU - nVPVI ) / ( nUlaz - nIzlaz )
 
-               IF IsMagPNab()
-                  REPLACE vpc WITH nc
-               ENDIF
+               REPLACE vpc WITH nc
+
 
             ELSEIF cSrKolNula $ "12" .AND. Round( nUlaz - nIzlaz, 4 ) = 0
 
@@ -681,9 +662,8 @@ FUNCTION lager_lista_magacin()
                   REPLACE nc WITH 0
                   REPLACE vpc WITH 0
 
-                  IF IsMagPNab()
-                     REPLACE vpc WITH nc
-                  ENDIF
+                  REPLACE vpc WITH nc
+
 
                   // 2 stavka (plus i nv)
                   APPEND BLANK
@@ -701,9 +681,8 @@ FUNCTION lager_lista_magacin()
                   REPLACE nc WITH ( nNVU - nNVI )
                   REPLACE vpc WITH 0
 
-                  IF IsMagPNab()
-                     REPLACE vpc WITH nc
-                  ENDIF
+                  REPLACE vpc WITH nc
+
 
                ENDIF
 
@@ -715,87 +694,50 @@ FUNCTION lager_lista_magacin()
 
          nCol1 := PCol() + 1
 
-         // varijanta evidencije sa cijenama
-         IF gVarEv == "1"
 
-            IF IsMagSNab() .OR. IsMagPNab()
 
-               // NV
-               @ PRow(), PCol() + 1 SAY nNVU PICT gpicdem
-               @ PRow(), PCol() + 1 SAY nNVI PICT gpicdem
-               @ PRow(), PCol() + 1 SAY nNVU - nNVI PICT gpicdem
 
-               IF IsPDV() .AND. cDoNab == "N"
+         // NV
+         @ PRow(), PCol() + 1 SAY nNVU PICT gpicdem
+         @ PRow(), PCol() + 1 SAY nNVI PICT gpicdem
+         @ PRow(), PCol() + 1 SAY nNVU - nNVI PICT gpicdem
 
-                  // PV - samo u pdv rezimu
+         IF cDoNab == "N"
 
-                  IF _vpc_iz_sif == "D"
-                     // sa vpc iz sifrarnika robe
-                     @ PRow(), PCol() + 1 SAY nVPVU PICT gpicdem
-                     @ PRow(), PCol() + 1 SAY nRabat PICT gpicdem
-                     @ PRow(), PCol() + 1 SAY nVPVI PICT gpicdem
-                     @ PRow(), PCol() + 1 SAY nVPVU - nVPVI PICT gpicdem
-                  ELSE
-                     // sa vpc iz tabele kalk
-                     @ PRow(), PCol() + 1 SAY nVPVRU PICT gpicdem
-                     @ PRow(), PCol() + 1 SAY nRabat PICT gpicdem
-                     @ PRow(), PCol() + 1 SAY nVPVRI PICT gpicdem
-                     @ PRow(), PCol() + 1 SAY nVPVRU - nVPVRI PICT gpicdem
-                  ENDIF
+            // PV - samo u pdv rezimu
 
-               ENDIF
-
-               // provjeri greske sa NC
-               IF !( koncij->naz = "P" )
-                  IF Round( nUlaz - nIzlaz, 4 ) <> 0
-                     IF cErr == "D" .AND. Round( ( nNVU - nNVI ) / ( nUlaz - nIzlaz ), 4 ) <> Round( roba->nc, 4 )
-                        ?? " ERR"
-                        fImaGreska := .T.
-                     ENDIF
-                  ELSE
-                     IF ( cErr == "D" .OR. fPocstanje ) .AND. ;
-                           Round( ( nNVU - nNVI ), 4 ) <> 0
-                        fImaGresaka := .T.
-                        ?? " ERR"
-                     ENDIF
-                  ENDIF
-               ENDIF
-            ELSE
-
+            IF _vpc_iz_sif == "D"
+               // sa vpc iz sifrarnika robe
                @ PRow(), PCol() + 1 SAY nVPVU PICT gpicdem
                @ PRow(), PCol() + 1 SAY nRabat PICT gpicdem
                @ PRow(), PCol() + 1 SAY nVPVI PICT gpicdem
                @ PRow(), PCol() + 1 SAY nVPVU - nVPVI PICT gpicdem
+            ELSE
+               // sa vpc iz tabele kalk
+               @ PRow(), PCol() + 1 SAY nVPVRU PICT gpicdem
+               @ PRow(), PCol() + 1 SAY nRabat PICT gpicdem
+               @ PRow(), PCol() + 1 SAY nVPVRI PICT gpicdem
+               @ PRow(), PCol() + 1 SAY nVPVRU - nVPVRI PICT gpicdem
+            ENDIF
 
-               IF Round( nUlaz - nIzlaz, 4 ) <> 0
-                  @ PRow(), PCol() + 1 SAY ( nVPVU - nVPVI ) / ( nUlaz - nIzlaz ) PICT gpiccdem
-                  IF !( koncij->naz = "P" )
-                     IF IsPDV() .AND. ( IsMagPNab() .OR. IsMagSNab() )
-                        IF cErr == "D" .AND. Round( ( nNVU - nNVI ) / ( nUlaz - nIzlaz ), 4 ) <> Round( roba->nc, 4 )
-                           ?? " ERR"
-                        ENDIF
-                     ELSE
-                        IF cErr == "D" .AND. Round( ( nVPVU - nVPVI ) / ( nUlaz - nIzlaz ), 4 ) <> Round( KoncijVPC(), 4 )
-                           ?? " ERR"
-                        ENDIF
-                     ENDIF
-                  ENDIF
-               ELSE
-                  @ PRow(), PCol() + 1 SAY 0 PICT gpicdem
-                  IF IsPDV() .AND. ( IsMagPNab() .OR. IsMagSNab() )
-                     IF ( cErr == "D" .OR. fPocstanje ) .AND. Round( ( nNVU - nNVI ), 4 ) <> 0
-                        fImaGresaka := .T.
-                        ?? " ERR"
-                     ENDIF
-                  ELSE
-                     IF ( cErr == "D" .OR. fPocstanje ) .AND. Round( ( nVPVU - nVPVI ), 4 ) <> 0
-                        fImaGresaka := .T.
-                        ?? " ERR"
-                     ENDIF
-                  ENDIF
+         ENDIF
+
+         // provjeri greske sa NC
+         IF !( koncij->naz = "P" )
+            IF Round( nUlaz - nIzlaz, 4 ) <> 0
+               IF cErr == "D" .AND. Round( ( nNVU - nNVI ) / ( nUlaz - nIzlaz ), 4 ) <> Round( roba->nc, 4 )
+                  ?? " ERR"
+                  fImaGreska := .T.
+               ENDIF
+            ELSE
+               IF ( cErr == "D" .OR. fPocstanje ) .AND. ;
+                     Round( ( nNVU - nNVI ), 4 ) <> 0
+                  fImaGresaka := .T.
+                  ?? " ERR"
                ENDIF
             ENDIF
          ENDIF
+
 
          IF cSredCij == "D"
             @ PRow(), PCol() + 1 SAY ( nNVU - nNVI + nVPVU - nVPVI ) / ( nUlaz - nIzlaz ) / 2 PICT "9999999.99"
@@ -807,75 +749,48 @@ FUNCTION lager_lista_magacin()
             @ PRow(), nCR  SAY aNaz[ 2 ]
          ENDIF
 
-         IF gVarEv == "1"
 
-            IF cMink <> "N" .AND. nMink > 0
-               @ PRow(), ncol0    SAY PadR( "min.kolic:", Len( gpickol ) )
-               @ PRow(), PCol() + 1 SAY nKJMJ * nMink  PICT gpickol
-            ELSEIF cPNAB == "D" .AND. !IsMagPNab()
-               @ PRow(), ncol0  SAY Space( Len( gpickol ) )
-               @ PRow(), PCol() + 1 SAY Space( Len( gpickol ) )
-            ENDIF
 
-            IF cPNAB == "D" .AND. !IsMagPNab()
-               IF Round( nulaz - nizlaz, 4 ) <> 0
-                  @ PRow(), PCol() + 1 SAY ( nNVU - nNVI ) / ( nUlaz - nIzlaz ) PICT gpicdem
-                  IF cNCSif == "D"
-                     SELECT roba
-                     REPLACE nc WITH Round( ( nNVU - nNVI ) / ( nUlaz - nIzlaz ), 3 )
-                     SELECT kalk
-                  ENDIF
-               ELSEIF Round( nUlaz, 4 ) <> 0
-                  @ PRow(), PCol() + 1 SAY nNVU / nUlaz PICT gpicdem
-               ENDIF
+         IF cMink <> "N" .AND. nMink > 0
+            @ PRow(), ncol0    SAY PadR( "min.kolic:", Len( gpickol ) )
+            @ PRow(), PCol() + 1 SAY nKJMJ * nMink  PICT gpickol
+         ENDIF
 
-               @ PRow(), nCol1 SAY nNVU PICT gpicdem
-               @ PRow(), PCol() + 1 SAY Space( Len( gpicdem ) )
-               @ PRow(), PCol() + 1 SAY nNVI PICT gpicdem
-               @ PRow(), PCol() + 1 SAY nNVU - nNVI PICT gpicdem
 
-               IF koncij->naz == "P2"
-                  // @ prow(),pcol()+1 SAY roba->plc pict gpiccdem
-               ELSE
-                  @ PRow(), PCol() + 1 SAY KoncijVPC() PICT gpiccdem
-               ENDIF
-            ENDIF // cbpnab
+         // ulaz - prazno
+         @ PRow(), nCol0 SAY Space( Len( gpickol ) )
+         // izlaz - prazno
+         @ PRow(), PCol() + 1 SAY Space( Len( gpickol ) )
+         // stanje - prazno
+         @ PRow(), PCol() + 1 SAY Space( Len( gpickol ) )
+         // nv.dug - prazno
+         @ PRow(), PCol() + 1 SAY Space( Len( gpicdem ) )
+         // nv.pot - prazno
+         @ PRow(), PCol() + 1 SAY Space( Len( gpicdem ) )
+         // prikazi NC
+         IF Round( nUlaz - nIzlaz, 4 ) <> 0
 
-            IF IsMagPNab()
-               // ulaz - prazno
-               @ PRow(), nCol0 SAY Space( Len( gpickol ) )
-               // izlaz - prazno
-               @ PRow(), PCol() + 1 SAY Space( Len( gpickol ) )
-               // stanje - prazno
-               @ PRow(), PCol() + 1 SAY Space( Len( gpickol ) )
-               // nv.dug - prazno
-               @ PRow(), PCol() + 1 SAY Space( Len( gpicdem ) )
-               // nv.pot - prazno
-               @ PRow(), PCol() + 1 SAY Space( Len( gpicdem ) )
-               // prikazi NC
-               IF Round( nUlaz - nIzlaz, 4 ) <> 0
+            @ PRow(), PCol() + 1 SAY ( nNVU - nNVI ) / ( nUlaz - nIzlaz ) PICT gpicdem
 
-                  @ PRow(), PCol() + 1 SAY ( nNVU - nNVI ) / ( nUlaz - nIzlaz ) PICT gpicdem
-
-               ENDIF
-               IF cDoNab == "N"
-                  // pv.dug - prazno
-                  @ PRow(), PCol() + 1 SAY Space( Len( gpicdem ) )
-                  // rabat - prazno
-                  @ PRow(), PCol() + 1 SAY Space( Len( gpicdem ) )
-                  // pv.pot - prazno
-                  @ PRow(), PCol() + 1 SAY Space( Len( gpicdem ) )
-                  // prikazi PC
-                  IF Round( nUlaz - nIzlaz, 4 ) <> 0
-                     @ PRow(), PCol() + 1 SAY nVPCIzSif PICT gpiccdem
-                  ENDIF
-               ENDIF
-            ENDIF
-
-            IF cMink == "O" .AND. nMink <> 0 .AND. ( nUlaz - nIzlaz - nMink ) < 0
-               B_OFF
+         ENDIF
+         IF cDoNab == "N"
+            // pv.dug - prazno
+            @ PRow(), PCol() + 1 SAY Space( Len( gpicdem ) )
+            // rabat - prazno
+            @ PRow(), PCol() + 1 SAY Space( Len( gpicdem ) )
+            // pv.pot - prazno
+            @ PRow(), PCol() + 1 SAY Space( Len( gpicdem ) )
+            // prikazi PC
+            IF Round( nUlaz - nIzlaz, 4 ) <> 0
+               @ PRow(), PCol() + 1 SAY nVPCIzSif PICT gpiccdem
             ENDIF
          ENDIF
+
+
+         IF cMink == "O" .AND. nMink <> 0 .AND. ( nUlaz - nIzlaz - nMink ) < 0
+            B_OFF
+         ENDIF
+
 
          nTULaz += nKJMJ * nUlaz
          nTIzlaz += nKJMJ * nIzlaz
@@ -949,42 +864,30 @@ FUNCTION lager_lista_magacin()
 
    nCol1 := PCol() + 1
 
-   IF gVarEv == "1"
-      IF IsMagSNab() .OR. IsMagPNab()
-         // NV
-         @ PRow(), PCol() + 1 SAY ntNVU PICT pic_format( gpicdem, ntNVU )
-         @ PRow(), PCol() + 1 SAY ntNVI PICT pic_format( gpicdem, ntNVI )
-         @ PRow(), PCol() + 1 SAY ntNV PICT pic_format( gpicdem, ntNV )
 
-         IF IsPDV() .AND. cDoNab == "N"
-            IF _vpc_iz_sif == "D"
-               // PV - samo u pdv rezimu
-               @ PRow(), PCol() + 1 SAY ntVPVU PICT pic_format( gpicdem, ntVPVU )
-               @ PRow(), PCol() + 1 SAY ntRabat PICT pic_format( gpicdem, ntRabat )
-               @ PRow(), PCol() + 1 SAY ntVPVI PICT pic_format( gpicdem, ntVPVI )
-               @ PRow(), PCol() + 1 SAY ntVPVU - NtVPVI PICT pic_format( gpicdem, ( ntVPVU - ntVPVI ) )
-            ELSE
-               // PV - samo u pdv rezimu
-               @ PRow(), PCol() + 1 SAY ntVPVRU PICT pic_format( gpicdem, ntVPVU )
-               @ PRow(), PCol() + 1 SAY ntRabat PICT pic_format( gpicdem, ntRabat )
-               @ PRow(), PCol() + 1 SAY ntVPVRI PICT pic_format( gpicdem, ntVPVI )
-               @ PRow(), PCol() + 1 SAY ntVPVRU - NtVPVRI PICT pic_format( gpicdem, ( ntVPVRU - ntVPVRI ) )
-            ENDIF
-         ENDIF
+   // NV
+   @ PRow(), PCol() + 1 SAY ntNVU PICT pic_format( gpicdem, ntNVU )
+   @ PRow(), PCol() + 1 SAY ntNVI PICT pic_format( gpicdem, ntNVI )
+   @ PRow(), PCol() + 1 SAY ntNV PICT pic_format( gpicdem, ntNV )
 
+   IF IsPDV() .AND. cDoNab == "N"
+      IF _vpc_iz_sif == "D"
+         // PV - samo u pdv rezimu
+         @ PRow(), PCol() + 1 SAY ntVPVU PICT pic_format( gpicdem, ntVPVU )
+         @ PRow(), PCol() + 1 SAY ntRabat PICT pic_format( gpicdem, ntRabat )
+         @ PRow(), PCol() + 1 SAY ntVPVI PICT pic_format( gpicdem, ntVPVI )
+         @ PRow(), PCol() + 1 SAY ntVPVU - NtVPVI PICT pic_format( gpicdem, ( ntVPVU - ntVPVI ) )
       ELSE
-         @ PRow(), PCol() + 1 SAY ntVPVU PICT gpicdem
-         @ PRow(), PCol() + 1 SAY ntRabat PICT gpicdem
-         @ PRow(), PCol() + 1 SAY ntVPVI PICT gpicdem
-         @ PRow(), PCol() + 1 SAY ntVPVU - NtVPVI PICT gpicdem
-      ENDIF
-      IF cPNab == "D" .AND. !IsMagPNab()
-         @ PRow() + 1, nCol1 SAY ntNVU PICT gpicdem
-         @ PRow(), PCol() + 1 SAY Space( Len( gpicdem ) )
-         @ PRow(), PCol() + 1 SAY ntNVI PICT gpicdem
-         @ PRow(), PCol() + 1 SAY ntNVU - ntNVI PICT gpicdem
+         // PV - samo u pdv rezimu
+         @ PRow(), PCol() + 1 SAY ntVPVRU PICT pic_format( gpicdem, ntVPVU )
+         @ PRow(), PCol() + 1 SAY ntRabat PICT pic_format( gpicdem, ntRabat )
+         @ PRow(), PCol() + 1 SAY ntVPVRI PICT pic_format( gpicdem, ntVPVI )
+         @ PRow(), PCol() + 1 SAY ntVPVRU - NtVPVRI PICT pic_format( gpicdem, ( ntVPVRU - ntVPVRI ) )
       ENDIF
    ENDIF
+
+
+
 
    ? __line
 
@@ -1174,82 +1077,43 @@ STATIC FUNCTION _set_zagl( cLine, cTxt1, cTxt2, cTxt3, cSredCij )
    // stanje
    AAdd( aLLM, { nPom, PadC( "STANJE", nPom ), PadC( "", nPom ), PadC( "4 - 5", nPom ) } )
 
-   IF gVarEv <> "2"
 
-      // magacin nije po nabavnim cijenama
-      IF !IsMagPNab()
 
-         IF koncij->naz == "P1"
+   // NV podaci
+   // -------------------------------
+   nPom := Len( gPicCDem )
+   // nv dug.
+   AAdd( aLLM, { nPom, PadC( "NV.Dug.", nPom ), PadC( "", nPom ), PadC( "6", nPom ) } )
+   // nv pot.
+   AAdd( aLLM, { nPom, PadC( "NV.Pot.", nPom ), PadC( "", nPom ), PadC( "7", nPom ) } )
+   // NV
+   AAdd( aLLM, { nPom, PadC( "NV", nPom ), PadC( "NC", nPom ), PadC( "6 - 7", nPom ) } )
 
-            cC1Row1 := "PV Dug."
-            cC2Row1 := "Rabat"
-            cC3Row1 := "PV Pot."
-            cC4Row1 := "PV"
-            cC5Row1 := "Prod.cij."
-
-         ELSEIF koncij->naz == "P2"
-
-            cC1Row1 := "Plan.vr.D"
-            cC2Row1 := "Rabat"
-            cC3Row1 := "Plan.vr.P"
-            cC4Row1 := "Plan.vr"
-            cC5Row1 := "Plan.cij."
-
-         ELSE
-
-            cC1Row1 := "PV Dug."
-            cC2Row1 := "Rabat"
-            cC3Row1 := "PV Pot."
-            cC4Row1 := "PV"
-            cC5Row1 := "Prod.cij"
-
-         ENDIF
+   IF cDoNab == "N"
+      IF IsPDV()
 
          nPom := Len( gPicCDem )
-         // PV Dug.
-         AAdd( aLLM, { nPom, PadC( cC1Row1, nPom ), PadC( "", nPom ), PadC( "6", nPom ) } )
-         AAdd( aLLM, { nPom, PadC( cC2Row1, nPom ), PadC( "", nPom ), PadC( "7", nPom ) } )
-         AAdd( aLLM, { nPom, PadC( cC3Row1, nPom ), PadC( "", nPom ), PadC( "8", nPom ) } )
-         AAdd( aLLM, { nPom, PadC( cC4Row1, nPom ), PadC( "", nPom ), PadC( "9", nPom ) } )
-         AAdd( aLLM, { nPom, PadC( cC5Row1, nPom ), PadC( "", nPom ), PadC( "10", nPom ) } )
-
+         // pv.dug
+         AAdd( aLLM, { nPom, PadC( "PV.Dug.", nPom ), PadC( "", nPom ), PadC( "8", nPom ) } )
+         // rabat
+         AAdd( aLLM, { nPom, PadC( "Rabat", nPom ), PadC( "", nPom ), PadC( "9", nPom ) } )
+         // pv pot.
+         AAdd( aLLM, { nPom, PadC( "PV.Pot.", nPom ), PadC( "", nPom ), PadC( "10", nPom ) } )
+         // PV
+         AAdd( aLLM, { nPom, PadC( "PV", nPom ), PadC( "PC", nPom ), PadC( "8 - 10", nPom ) } )
       ELSE
 
-         // NV podaci
-         // -------------------------------
          nPom := Len( gPicCDem )
-         // nv dug.
-         AAdd( aLLM, { nPom, PadC( "NV.Dug.", nPom ), PadC( "", nPom ), PadC( "6", nPom ) } )
-         // nv pot.
-         AAdd( aLLM, { nPom, PadC( "NV.Pot.", nPom ), PadC( "", nPom ), PadC( "7", nPom ) } )
-         // NV
-         AAdd( aLLM, { nPom, PadC( "NV", nPom ), PadC( "NC", nPom ), PadC( "6 - 7", nPom ) } )
-
-         IF cDoNab == "N"
-            IF IsPDV()
-
-               nPom := Len( gPicCDem )
-               // pv.dug
-               AAdd( aLLM, { nPom, PadC( "PV.Dug.", nPom ), PadC( "", nPom ), PadC( "8", nPom ) } )
-               // rabat
-               AAdd( aLLM, { nPom, PadC( "Rabat", nPom ), PadC( "", nPom ), PadC( "9", nPom ) } )
-               // pv pot.
-               AAdd( aLLM, { nPom, PadC( "PV.Pot.", nPom ), PadC( "", nPom ), PadC( "10", nPom ) } )
-               // PV
-               AAdd( aLLM, { nPom, PadC( "PV", nPom ), PadC( "PC", nPom ), PadC( "8 - 10", nPom ) } )
-            ELSE
-
-               nPom := Len( gPicCDem )
-               // PV
-               AAdd( aLLM, { nPom, PadC( "PV", nPom ), PadC( "", nPom ), PadC( "8", nPom ) } )
-
-            ENDIF
-
-         ENDIF
+         // PV
+         AAdd( aLLM, { nPom, PadC( "PV", nPom ), PadC( "", nPom ), PadC( "8", nPom ) } )
 
       ENDIF
 
    ENDIF
+
+
+
+
 
    IF cSredCij == "D"
 
@@ -1264,7 +1128,7 @@ STATIC FUNCTION _set_zagl( cLine, cTxt1, cTxt2, cTxt3, cSredCij )
    cTxt2 := SetRptLineAndText( aLLM, 2, "*" )
    cTxt3 := SetRptLineAndText( aLLM, 3, "*" )
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -1274,100 +1138,13 @@ STATIC FUNCTION _set_zagl( cLine, cTxt1, cTxt2, cTxt3, cSredCij )
 // --------------------------------
 FUNCTION Zagllager_lista_magacin()
 
-   IF IsPDV()
-      ZaglPdv()
-   ELSE
-      Zagl()
-   ENDIF
-
-   RETURN
-
-
-
-// --------------------------------
-// zaglavlje ne-pdv rezima
-// --------------------------------
-STATIC FUNCTION Zagl()
-
-   Preduzece()
-   IF gVarEv == "2"
-      P_12CPI
-   ELSE
-      P_COND2
-   ENDIF
-   SELECT konto
-   HSEEK cIdKonto
-   SET CENTURY ON
-   ?? "KALK: LAGER LISTA  ZA PERIOD", dDatOd, "-", dDatdo, "  na dan", Date(), Space( 12 ), "Str:", Str( ++nTStrana, 3 )
-
-   SET CENTURY OFF
-
-   ? "Magacin:", cIdkonto, "-", AllTrim( konto->naz )
-   IF !Empty( cRNT1 ) .AND. !Empty( cRNalBroj )
-      ?? ", uslov radni nalog: " + AllTrim( cRNalBroj )
-   ENDIF
-
-   IF cSredCij == "D"
-      cSC1 := "*Sred.cij.*"
-      cSC2 := "*         *"
-   ELSE
-      cSC1 := ""
-      cSC2 := ""
-   ENDIF
-
-   SELECT kalk
-   IF gVarEv == "2"
-      ? __line
-      ? " R.  *  SIFRA   *                    *J. *" + "   ULAZ      IZLAZ   *          " + cSC2
-      ? " BR. * ARTIKLA  *   NAZIV ARTIKLA    *MJ.*" + "                     *  STANJE  " + cSC1
-      ? "     *    1     *        2           * 3 *" + "     4          5    *  4 - 5   " + cSC2
-      ? __line
-
-   ELSEIF !IsMagSNab()
-
-      ? __line
-      IF koncij->naz == "P1"
-         ? " R.  * Artikal  *   Naziv            *jmj*" + "  ulaz       izlaz   * STANJE   *Prod.vr D *   Rabat  *Prod.vr P*  Prod.vr *  Prod.Cj *" + cSC1
-      ELSEIF koncij->naz == "P2"
-         ? " R.  * Artikal  *   Naziv            *jmj*" + "  ulaz       izlaz   * STANJE   *Plan.vr D *   Rabat  *Plan.vr P*  Plan.vr *  Plan.Cj *" + cSC1
-      ELSE
-         ? " R.  * Artikal  *   Naziv            *jmj*" + "  ulaz       izlaz   * STANJE   *  VPV.Dug.*   Rabat  * VPV.Pot *   VPV    *   VPC    *" + cSC1
-      ENDIF
-      ? " br. *          *                    *   *" + "                     *          *          *          *         *          *          *" + cSC2
-      IF cPNab == "D"
-         IF koncij->naz == "P1"
-            ? "     *          *                    *   *" + "                     * Cij.Kost * V.Kost. D*          * V.Kost.P* Vr.Kost. *          *" + cSC2
-         ELSE
-            ? "     *          *                    *   *" + "                     * SR.NAB.C *   NV.Dug.*          *  NV.Pot *    NV    *          *" + cSC2
-         ENDIF
-      ENDIF
-      ? "     *    1     *        2           * 3 *" + "     4          5    *  4 - 5   *     6    *     7    *     8   *   6 - 8  *     9    *" + cSC2
-      ? __line
-   ELSE
-      ? __line
-      ? " R.  * Artikal  *   Naziv            *jmj*" + "  ulaz       izlaz   * STANJE   *  NV.Dug. * NV.Pot.  *    NV    *" + cSC1
-      ? " br. *          *                    *   *" + "                     *          *          *          *    NC    *" + cSC2
-      ? "     *    1     *        2           * 3 *" + "     4          5    *  4 - 5   *     6    *     7    *   6 - 7  *" + cSC2
-      ? __line
-   ENDIF
-
-   RETURN
-
-
-// --------------------------------
-// zaglavlje pdv rezima
-// --------------------------------
-STATIC FUNCTION ZaglPDV()
-
    LOCAL nTArea := Select()
 
    Preduzece()
 
-   IF gVarEv == "2"
-      P_12CPI
-   ELSE
-      P_COND2
-   ENDIF
+
+   P_COND2
+
 
    SELECT konto
    HSEEK cIdKonto

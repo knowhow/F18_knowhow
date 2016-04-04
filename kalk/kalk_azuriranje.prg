@@ -334,9 +334,6 @@ STATIC FUNCTION kalk_generisati_zavisne_dokumente( lAuto )
 
 STATIC FUNCTION kalk_zavisni_dokumenti()
 
-   IF !( IsMagPNab() .OR. IsMagSNab() )
-      Niv_10()
-   ENDIF
 
    Niv_11()
    Otprema()

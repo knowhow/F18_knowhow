@@ -100,109 +100,82 @@ FUNCTION Get1_95()
    HSEEK _IdTarifa  // postavi TARIFA na pravu poziciju
    SELECT kalk_pripr  // napuni tarifu
 
-   @ m_x + 13, m_y + 2   SAY "Kolicina " GET _Kolicina PICTURE PicKol VALID _Kolicina <> 0
+   @ m_x + 13, m_y + 2   SAY8 "Količina " GET _Kolicina PICTURE PicKol VALID _Kolicina <> 0
 
 
-   IF gVarEv == "1"
 
-      _GKolicina := 0
-      IF fNovi
+   _GKolicina := 0
+   IF fNovi
 
-         SELECT ROBA; HSEEK _IdRoba
-         IF koncij->naz == "P2"
-            _VPC := PLC
-         ELSE
-            _VPC := KoncijVPC()
-         ENDIF
-
-         _NC := NC
+      SELECT ROBA; HSEEK _IdRoba
+      IF koncij->naz == "P2"
+         _VPC := PLC
+      ELSE
+         _VPC := KoncijVPC()
       ENDIF
 
-      IF gCijene = "2" .AND. fNovi
-         // ///// utvrdjivanje fakticke VPC
-         faktVPC( @_VPC, _idfirma + _idkonto2 + _idroba )
-         SELECT kalk_pripr
-      ENDIF
-
-
-      nKolS := 0
-      nKolZN := 0
-      nc1 := nc2 := 0
-      dDatNab := CToD( "" )
-
-      lGenStavke := .F.
-
-      IF _TBankTr <> "X"
-
-         IF !Empty( gMetodaNC )  .AND. !( roba->tip $ "UT" )
-
-               MsgO( "Racunam stanje na skladistu" )
-               KalkNab( _idfirma, _idroba, _idkonto2, @nKolS, @nKolZN, @nc1, @nc2, @dDatNab )
-               MsgC()
-
-               @ m_x + 12, m_y + 30   SAY "Ukupno na stanju "; @ m_x + 12, Col() + 2 SAY nKols PICT pickol
-               @ m_x + 13, m_y + 30   SAY "Srednja nc "; @ m_x + 13, Col() + 2 SAY nc2 PICT pickol
-
-         ENDIF
-
-         IF dDatNab > _DatDok; Beep( 1 ); Msg( "Datum nabavke je " + DToC( dDatNab ), 4 ); ENDIF
-
-         IF !( roba->tip $ "UT" )
-
-            IF gMetodaNC $ "13"
-               _nc := nc1
-            ELSEIF gMetodaNC == "2"
-               _nc := nc2
-            ENDIF
-
-            IF gMetodaNc == "2"
-               IF _kolicina > 0
-
-                     SELECT roba
-                     _rec := dbf_get_rec()
-                     _rec[ "nc" ] := _nc
-                     update_rec_server_and_dbf( Alias(), _rec, 1, "FULL" )
-                     SELECT kalk_pripr // nafiluj sifrarnik robe sa nc sirovina, robe
-                  ENDIF
-               ENDIF
-
-           ENDIF
-      ENDIF
-
-      SELECT kalk_pripr
-         @ m_x + 14, m_y + 2  SAY "NAB.CJ   "  GET _NC  PICTURE gPicNC  VALID V_KolMag()
-         PRIVATE _vpcsappp := 0
-         IF !IsMagPNab()
-            IF _vpc = 0
-               _vpc := KoncijVPC()        // MS 19.12.00
-            ENDIF
-            IF IsPDV()
-               @ m_x + 15, m_y + 2   SAY "PROD.CIJ " GET _VPC    PICTURE PicDEM
-            ELSE
-               @ m_x + 15, m_y + 2   SAY "VPC      " GET _VPC    PICTURE PicDEM
-            ENDIF
-            _PNAP := 0
-
-          
-            IF IsPDV() .AND. gPDVMagNab == "N"
-
-               _mpcsapp := roba->mpc
-               // VPC se izracunava pomocu MPC cijene !!
-               @ m_x + 17, m_y + 2 SAY "PROD.CJENA SA PDV:"
-               @ m_x + 17, Col() + 2 GET _MPCSaPP  PICTURE PicDEM ;
-                  valid {|| _mpcsapp := iif( _mpcsapp = 0, Round( _vpc * ( 1 + TARIFA->opp / 100 ), 2 ), _mpcsapp ), _mpc := _mpcsapp / ( 1 + TARIFA->opp / 100 ), iif( _mpc <> 0, _vpc := Round( _mpc, 2 ), _vpc ), ShowGets(), .T. }
-               READ
-            ELSE
-               READ
-            ENDIF
-
-         ELSE // magacin po vpc
-            READ
-            _Marza := 0; _TMarza := "A"; _VPC := _NC
-         ENDIF // magacin po nc
-   ELSE    // ako je gVarEv=="2" tj. bez cijena
-      READ
+      _NC := NC
    ENDIF
+
+   IF gCijene = "2" .AND. fNovi
+      // ///// utvrdjivanje fakticke VPC
+      faktVPC( @_VPC, _idfirma + _idkonto2 + _idroba )
+      SELECT kalk_pripr
+   ENDIF
+
+
+   nKolS := 0
+   nKolZN := 0
+   nc1 := nc2 := 0
+   dDatNab := CToD( "" )
+
+   lGenStavke := .F.
+
+   IF _TBankTr <> "X"
+
+      IF !Empty( gMetodaNC )  .AND. !( roba->tip $ "UT" )
+
+         MsgO( "Racunam stanje na skladistu" )
+         KalkNab( _idfirma, _idroba, _idkonto2, @nKolS, @nKolZN, @nc1, @nc2, @dDatNab )
+         MsgC()
+
+         @ m_x + 12, m_y + 30   SAY "Ukupno na stanju "; @ m_x + 12, Col() + 2 SAY nKols PICT pickol
+         @ m_x + 13, m_y + 30   SAY "Srednja nc "; @ m_x + 13, Col() + 2 SAY nc2 PICT pickol
+
+      ENDIF
+
+      IF dDatNab > _DatDok; Beep( 1 ); Msg( "Datum nabavke je " + DToC( dDatNab ), 4 ); ENDIF
+
+      IF !( roba->tip $ "UT" )
+
+         IF gMetodaNC $ "13"
+            _nc := nc1
+         ELSEIF gMetodaNC == "2"
+            _nc := nc2
+         ENDIF
+
+         IF gMetodaNc == "2"
+            IF _kolicina > 0
+
+               SELECT roba
+               _rec := dbf_get_rec()
+               _rec[ "nc" ] := _nc
+               update_rec_server_and_dbf( Alias(), _rec, 1, "FULL" )
+               SELECT kalk_pripr // nafiluj sifrarnik robe sa nc sirovina, robe
+            ENDIF
+         ENDIF
+
+      ENDIF
+   ENDIF
+
+   SELECT kalk_pripr
+   @ m_x + 14, m_y + 2  SAY "NAB.CJ   "  GET _NC  PICTURE gPicNC  VALID V_KolMag()
+   PRIVATE _vpcsappp := 0
+
+   READ
+   _Marza := 0; _TMarza := "A"; _VPC := _NC
+
+
 
    IF !IsPDV()
       _mpcsapp := 0
@@ -227,25 +200,19 @@ FUNCTION Get1_95()
             LOOP
          ENDIF
          IF brdok == _brdok .AND. idvd == _idvd .AND. Val( Rbr ) == nRbr
-            IF IsMagPNab()
-               nmarza := 0
-               REPLACE vpc WITH kalk_pripr->nc, ;
-                  vpcsap WITH  kalk_pripr->nc, ;
-                  rabatv WITH  0,;
-                  marza WITH  0
-            ELSE
-               nMarza := _VPC * ( 1 -_RabatV / 100 ) -_NC
-               REPLACE vpc WITH _vpc, ;
-                  vpcsap WITH _VPC * ( 1 -_RABATV / 100 ) + iif( nMarza < 0, 0, nMarza ) * TARIFA->VPP / 100, ;
-                  rabatv WITH _rabatv, ;
-                  marza  WITH _vpc - kalk_pripr->nc   // mora se uzeti nc iz ove stavke
-            ENDIF
+
+            nMarza := 0
+            REPLACE vpc WITH kalk_pripr->nc, ;
+               vpcsap WITH  kalk_pripr->nc, ;
+               rabatv WITH  0, ;
+               marza WITH  0
+
             REPLACE  mkonto WITH _mkonto, ;
                tmarza  WITH _tmarza, ;
                mpc     WITH  _MPC, ;
                mu_i WITH  _mu_i, ;
                pkonto WITH _pkonto, ;
-               pu_i WITH  _pu_i,;
+               pu_i WITH  _pu_i, ;
                error WITH "0"
          ENDIF
          SKIP

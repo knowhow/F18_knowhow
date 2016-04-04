@@ -1223,17 +1223,6 @@ FUNCTION p_nc_ctrl( aCtrl )
 
 
 
-FUNCTION IsMagPNab()
-
-   IF ( IsPDV() .AND. gPDVMagNab == "D" )
-      RETURN .T.
-   ELSE
-      RETURN .F.
-   ENDIF
-
-   RETURN
-
-
 // -------------------------------------
 // magacin samo po nabavnim cijenama
 // -------------------------------------

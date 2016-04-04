@@ -249,7 +249,7 @@ STATIC FUNCTION kalk_mag_insert_ps_into_pripr( data, params )
    LOCAL _roba_tip_tu := params[ "roba_tip_tu" ]
    LOCAL _row, _sufix
    LOCAL _ulaz, _izlaz, _nvu, _nvi, _id_roba, _vpvu, _vpvi
-   LOCAL _magacin_po_nabavnoj := IsMagPNab()
+   LOCAL _magacin_po_nabavnoj := .T.
 
    O_KALK_PRIPR
    O_KALK_DOKS

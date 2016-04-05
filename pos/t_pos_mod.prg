@@ -1,16 +1,16 @@
 /*
- * This file is part of the bring.out FMK, a free and open source
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+ * This file is part of the bring.out knowhow ERP, a free and open source
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
 
-
 #include "f18.ch"
+
 
 CLASS TPosMod FROM TAppMod
 
@@ -22,7 +22,7 @@ CLASS TPosMod FROM TAppMod
 ENDCLASS
 
 
-METHOD new( p1, p2, p3, p4, p5, p6, p7, p8, p9 )
+METHOD New( p1, p2, p3, p4, p5, p6, p7, p8, p9 )
 
    ::super:new( p1, p2, p3, p4, p5, p6, p7, p8, p9 )
 
@@ -141,7 +141,6 @@ METHOD setScreen()
 
 METHOD set_module_gvars()
 
-
    // gPrevIdPos - predhodna vrijednost gIdPos
    PUBLIC gPrevIdPos := "  "
    PUBLIC gOcitBarcod := .F.
@@ -253,11 +252,11 @@ METHOD set_module_gvars()
    gStRad := ""
 
 
-   SC_Opisi[1 ] := "1"
-   SC_Opisi[2 ] := "2"
-   SC_Opisi[3 ] := "3"
-   SC_Opisi[4 ] := "4"
-   SC_Opisi[5 ] := "5"
+   SC_Opisi[ 1 ] := "1"
+   SC_Opisi[ 2 ] := "2"
+   SC_Opisi[ 3 ] := "3"
+   SC_Opisi[ 4 ] := "4"
+   SC_Opisi[ 5 ] := "5"
 
    gDatum := Date()
 
@@ -471,6 +470,6 @@ METHOD set_module_gvars()
    kalk_konto_za_stanje_pos( .T. ) // kalk konto za stanje pos artikla
    fiscal_opt_active() // koristenje fiskalnih opcija
 
-   gRobaBlock := {|Ch| pos_roba_block( Ch ) }
+   gRobaBlock := {| Ch| pos_roba_block( Ch ) }
 
    RETURN .T.

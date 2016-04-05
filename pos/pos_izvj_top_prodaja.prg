@@ -1,164 +1,169 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+/*
+ * This file is part of the bring.out knowhow ERP, a free and open source
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
 
-
 #include "f18.ch"
 
 
-static function _o_tables()
-O_ODJ
-O_KASE
-O_SIFK
-O_SIFV
-O_ROBA
-O_POS
-O_POS_DOKS
-return
+
+STATIC FUNCTION _o_tables()
+
+   O_ODJ
+   O_KASE
+   O_SIFK
+   O_SIFV
+   O_ROBA
+   O_POS
+   O_POS_DOKS
+
+   RETURN .T.
 
 
 
-function pos_top_narudzbe()
-local aNiz := {}, cPor, cZaduz, aVrsteP
-PRIVATE cIdPos, cRoba:=SPACE(60), dDat0, dDat1, nTop := 10, cSta := "I"
-dDat0 := dDat1 := DATE ()
+FUNCTION pos_top_narudzbe()
 
-aDbf := {}
-AADD (aDbf, {"IdRoba",   "C", 10, 0})
-AADD (aDbf, {"Kolicina", "N", 15, 3})
-AADD (aDbf, {"Iznos",    "N", 20, 3})
-AADD (aDbf, {"Iznos2",    "N", 20, 3})
-AADD (aDbf, {"Iznos3",    "N", 20, 3})
-NaprPom( aDbf )
+   LOCAL aNiz := {}, cPor, cZaduz, aVrsteP
+   PRIVATE cIdPos, cRoba := Space( 60 ), dDat0, dDat1, nTop := 10, cSta := "I"
 
-select ( F_POM )
-if used()
-	use
-endif
+   dDat0 := dDat1 := Date ()
 
-my_use_temp( "POM", my_home() + "pom", .f., .t. )
+   aDbf := {}
+   AAdd ( aDbf, { "IdRoba",   "C", 10, 0 } )
+   AAdd ( aDbf, { "Kolicina", "N", 15, 3 } )
+   AAdd ( aDbf, { "Iznos",    "N", 20, 3 } )
+   AAdd ( aDbf, { "Iznos2",    "N", 20, 3 } )
+   AAdd ( aDbf, { "Iznos3",    "N", 20, 3 } )
+   NaprPom( aDbf )
 
-index on ( idroba ) tag "1"
-index on ( STR(iznos,20,3) ) tag "2"
-index on ( STR(kolicina,15,3) ) tag "3"
+   SELECT ( F_POM )
+   IF Used()
+      USE
+   ENDIF
 
-set order to tag "1"
+   my_use_temp( "POM", my_home() + "pom", .F., .T. )
 
-_o_tables()
+   INDEX on ( idroba ) TAG "1"
+   INDEX on ( Str( iznos, 20, 3 ) ) TAG "2"
+   INDEX on ( Str( kolicina, 15, 3 ) ) TAG "3"
 
-private cIdPOS := gIdPos
-IF gVrstaRS <> "K"
-  aNiz := { {"Prodajno mjesto","cIdPos","cidpos='X' .or. Empty(cIdPos).or.P_Kase(@cIdPos)",,} }
-ENDIF
-AADD (aNiz, {"Roba (prazno-sve)","cRoba",,"@!S30",})
-AADD (aNiz, {"Pregled po Iznosu/Kolicini/Oboje (I/K/O)","cSta","cSta$'IKO'","@!",})
-AADD (aNiz, {"Izvjestaj se pravi od datuma","dDat0",,,})
-AADD (aNiz, {"                   do datuma","dDat1",,,})
-AADD (aNiz, {"Koliko artikala ispisati?","nTop","nTop > 0",,})
-DO WHILE .t.
-  IF !VarEdit(aNiz, 10,5,19,74,;
-              'USLOVI ZA IZVJESTAJ "NAJPROMETNIJI ARTIKLI"',;
-              "B1")
-    CLOSERET
-  ENDIF
-  aUsl1:=Parsiraj(cRoba,"IdRoba","C")
-  if aUsl1<>NIL.and.dDat0<=dDat1
-    exit
-  elseif aUsl1==NIL
-    Msg("Kriterij za robu nije korektno postavljen!")
-  else
-    Msg("'Datum do' ne smije biti stariji nego 'datum od'!")
-  endif
-ENDDO // .t.
+   SET ORDER TO TAG "1"
 
-nTotal := 0
+   _o_tables()
 
-SELECT POS
-IF !(aUsl1==".t.")
-  set filter to &aUsl1
-ENDIF
+   PRIVATE cIdPOS := gIdPos
+   IF gVrstaRS <> "K"
+      aNiz := { { "Prodajno mjesto", "cIdPos", "cidpos='X' .or. Empty(cIdPos).or.P_Kase(@cIdPos)",, } }
+   ENDIF
+   AAdd ( aNiz, { "Roba (prazno-sve)", "cRoba",, "@!S30", } )
+   AAdd ( aNiz, { "Pregled po Iznosu/Kolicini/Oboje (I/K/O)", "cSta", "cSta$'IKO'", "@!", } )
+   AAdd ( aNiz, { "Izvjestaj se pravi od datuma", "dDat0",,, } )
+   AAdd ( aNiz, { "                   do datuma", "dDat1",,, } )
+   AAdd ( aNiz, { "Koliko artikala ispisati?", "nTop", "nTop > 0",, } )
+   DO WHILE .T.
+      IF !VarEdit( aNiz, 10, 5, 19, 74, ;
+            'USLOVI ZA IZVJESTAJ "NAJPROMETNIJI ARTIKLI"', ;
+            "B1" )
+         CLOSERET
+      ENDIF
+      aUsl1 := Parsiraj( cRoba, "IdRoba", "C" )
+      IF aUsl1 <> NIL .AND. dDat0 <= dDat1
+         EXIT
+      ELSEIF aUsl1 == NIL
+         Msg( "Kriterij za robu nije korektno postavljen!" )
+      ELSE
+         Msg( "'Datum do' ne smije biti stariji nego 'datum od'!" )
+      ENDIF
+   ENDDO // .t.
 
-select pos_doks
-set order to tag "2"        
-// IdVd+DTOS (Datum)+Smjena
+   nTotal := 0
 
-START PRINT CRET
-?
-ZagFirma()
+   SELECT POS
+   IF !( aUsl1 == ".t." )
+      SET FILTER to &aUsl1
+   ENDIF
 
-? PADC ("NAJPROMETNIJI ARTIKLI", 40)
-? padc ("-----------------------", 40)
-? padc ("NA DAN: "+FormDat1 (gDatum), 40)
-?
-? PADC ("Za period od "+FormDat1 (dDat0)+ " do "+FormDat1 (dDat1), 40)
-?
+   SELECT pos_doks
+   SET ORDER TO TAG "2"
+   // IdVd+DTOS (Datum)+Smjena
 
-TopNizvuci (VD_RN, dDat0)
-TopNizvuci (VD_PRR, dDat0)
+   START PRINT CRET
+   ?
+   ZagFirma()
 
-// stampa izvjestaja
-SELECT POM
-IF cSta $ "IO"
-  ?
-  ? PADC ("POREDAK PO IZNOSU", 40)
-  ?
-  ? PADR("ID ROBA", 10), PADR ("Naziv robe", 20), PADC ("Vrijednost",19)
-  ? REPL("-", 10), REPL ("-", 20), REPL ("-", 19)
-  nCnt := 1
-  Set order to tag "2"
-  GO BOTTOM
-  DO WHILE !BOF() .and. nCnt <= nTop
-    select roba
-    HSEEK POM->IdRoba
-    ? roba->Id, LEFT (roba->Naz, 20), STR (POM->Iznos, 19, 2)
-    SELECT POM
-    nCnt ++
-    SKIP -1
-  ENDDO
-ENDIF
+   ? PadC ( "NAJPROMETNIJI ARTIKLI", 40 )
+   ? PadC ( "-----------------------", 40 )
+   ? PadC ( "NA DAN: " + FormDat1 ( gDatum ), 40 )
+   ?
+   ? PadC ( "Za period od " + FormDat1 ( dDat0 ) + " do " + FormDat1 ( dDat1 ), 40 )
+   ?
 
-IF cSta $ "KO"
+   TopNizvuci ( VD_RN, dDat0 )
+   TopNizvuci ( VD_PRR, dDat0 )
 
-    SELECT POM
-    ?
-    ? PADC ("POREDAK PO KOLICINI", 40)
-    ?
-    ? PADR("ID ROBA", 10), PADR ("Naziv robe", 20), PADC ("Kolicina",15)
-    ? REPL("-", 10), REPL ("-", 20), REPL ("-", 15)
-    
-    nCnt := 1
+   // stampa izvjestaja
+   SELECT POM
+   IF cSta $ "IO"
+      ?
+      ? PadC ( "POREDAK PO IZNOSU", 40 )
+      ?
+      ? PadR( "ID ROBA", 10 ), PadR ( "Naziv robe", 20 ), PadC ( "Vrijednost", 19 )
+      ? REPL( "-", 10 ), REPL ( "-", 20 ), REPL ( "-", 19 )
+      nCnt := 1
+      SET ORDER TO TAG "2"
+      GO BOTTOM
+      DO WHILE !Bof() .AND. nCnt <= nTop
+         SELECT roba
+         HSEEK POM->IdRoba
+         ? roba->Id, Left ( roba->Naz, 20 ), Str ( POM->Iznos, 19, 2 )
+         SELECT POM
+         nCnt ++
+         SKIP -1
+      ENDDO
+   ENDIF
 
-    set order to tag "3"
-    GO BOTTOM
+   IF cSta $ "KO"
 
-    DO WHILE !BOF() .and. nCnt <= nTop
-        select roba
-        HSEEK POM->IdRoba
-        ? roba->Id, LEFT (roba->Naz, 20), STR (POM->Kolicina, 15, 3)
-        SELECT POM
-        nCnt ++
-        SKIP -1
-    ENDDO
+      SELECT POM
+      ?
+      ? PadC ( "POREDAK PO KOLICINI", 40 )
+      ?
+      ? PadR( "ID ROBA", 10 ), PadR ( "Naziv robe", 20 ), PadC ( "Kolicina", 15 )
+      ? REPL( "-", 10 ), REPL ( "-", 20 ), REPL ( "-", 15 )
 
-ENDIF
+      nCnt := 1
 
-?
+      SET ORDER TO TAG "3"
+      GO BOTTOM
 
-IF gVrstaRS == "K"
-  PaperFeed ()
-ENDIF
+      DO WHILE !Bof() .AND. nCnt <= nTop
+         SELECT roba
+         HSEEK POM->IdRoba
+         ? roba->Id, Left ( roba->Naz, 20 ), Str ( POM->Kolicina, 15, 3 )
+         SELECT POM
+         nCnt ++
+         SKIP -1
+      ENDDO
 
-ENDPRINT
+   ENDIF
 
-close all
-return
+   ?
+
+   IF gVrstaRS == "K"
+      PaperFeed ()
+   ENDIF
+
+   ENDPRINT
+
+   CLOSE ALL
+
+   RETURN
 
 
 
@@ -166,74 +171,72 @@ return
  *     Punjenje pomocne baze realizacijom po robama
  */
 
-function TopNizvuci(cIdVd,dDat0)
+FUNCTION TopNizvuci( cIdVd, dDat0 )
 
-select pos_doks
-seek cIdVd+DTOS (dDat0)
-  
-do While !EOF() .and. pos_doks->IdVd==cIdVd .and. pos_doks->Datum <= dDat1
-    
-    if (!pos_admin() .and. pos_doks->idpos="X") .or. ;
-        (pos_doks->IdPos="X" .and. AllTrim(cIdPos)<>"X") .or. ;
-        (!Empty(cIdPos) .and. pos_doks->IdPos<>cIdPos)
-        skip
-        loop
-    endif
+   SELECT pos_doks
+   SEEK cIdVd + DToS ( dDat0 )
 
-    SELECT POS
-    seek pos_doks->(IdPos+IdVd+dtos(datum)+BrDok)
-    
-    while !Eof() .and. POS->(IdPos+IdVd+dtos(datum)+BrDok)==pos_doks->(IdPos+IdVd+dtos(datum)+BrDok)
+   DO WHILE !Eof() .AND. pos_doks->IdVd == cIdVd .AND. pos_doks->Datum <= dDat1
 
-        select roba
-		HSEEK pos->idroba
-      	if roba->(FIELDPOS("idodj")) <> 0
-			select odj
-			HSEEK roba->idodj
-		endif
-        nNeplaca:=0
-        if right(odj->naz,5)=="#1#0#"  // proba!!!
-            nNeplaca:=pos->(Kolicina*Cijena)
-        elseif right(odj->naz,6)=="#1#50#"
-            nNeplaca:=pos->(Kolicina*Cijena)/2
-        endif
-      
-        if gPopVar="P"
-            nNeplaca += pos->(kolicina*NCijena)
-        endif
+      IF ( !pos_admin() .AND. pos_doks->idpos = "X" ) .OR. ;
+            ( pos_doks->IdPos = "X" .AND. AllTrim( cIdPos ) <> "X" ) .OR. ;
+            ( !Empty( cIdPos ) .AND. pos_doks->IdPos <> cIdPos )
+         SKIP
+         LOOP
+      ENDIF
 
-      	SELECT POM
-        go top
-		HSEEK POS->IdRoba
-        
-        IF !FOUND ()
+      SELECT POS
+      SEEK pos_doks->( IdPos + IdVd + DToS( datum ) + BrDok )
+
+      WHILE !Eof() .AND. POS->( IdPos + IdVd + DToS( datum ) + BrDok ) == pos_doks->( IdPos + IdVd + DToS( datum ) + BrDok )
+
+         SELECT roba
+         HSEEK pos->idroba
+         IF roba->( FieldPos( "idodj" ) ) <> 0
+            SELECT odj
+            HSEEK roba->idodj
+         ENDIF
+         nNeplaca := 0
+         IF Right( odj->naz, 5 ) == "#1#0#"  // proba!!!
+            nNeplaca := pos->( Kolicina * Cijena )
+         ELSEIF Right( odj->naz, 6 ) == "#1#50#"
+            nNeplaca := pos->( Kolicina * Cijena ) / 2
+         ENDIF
+
+         IF gPopVar = "P"
+            nNeplaca += pos->( kolicina * NCijena )
+         ENDIF
+
+         SELECT POM
+         GO TOP
+         HSEEK POS->IdRoba
+
+         IF !Found ()
             APPEND BLANK
             REPLACE IdRoba   WITH POS->IdRoba, ;
-                Kolicina WITH POS->Kolicina, ;
-                Iznos    WITH POS->Kolicina*POS->Cijena,;
-                iznos3   with nNeplaca
-            if gPopVar=="P"
-                replace iznos2   with pos->ncijena*pos->kolicina
-            endif
-        ELSE
-            REPLACE Kolicina WITH Kolicina+POS->Kolicina, ;
-                Iznos WITH Iznos+POS->Kolicina*POS->Cijena,;
-                iznos3 with iznos3+nNePlaca
-            if gPopVar=="P"
-                replace iznos2   with iznos2 + pos->ncijena*pos->kolicina
-            endif
-        END
+               Kolicina WITH POS->Kolicina, ;
+               Iznos    WITH POS->Kolicina * POS->Cijena, ;
+               iznos3   WITH nNeplaca
+            IF gPopVar == "P"
+               REPLACE iznos2   WITH pos->ncijena * pos->kolicina
+            ENDIF
+         ELSE
+            REPLACE Kolicina WITH Kolicina + POS->Kolicina, ;
+               Iznos WITH Iznos + POS->Kolicina * POS->Cijena, ;
+               iznos3 WITH iznos3 + nNePlaca
+            IF gPopVar == "P"
+               REPLACE iznos2   WITH iznos2 + pos->ncijena * pos->kolicina
+            ENDIF
+         END
 
-        SELECT POS
-        SKIP
+         SELECT POS
+         SKIP
 
-    EndDO
-    select pos_doks
-    SKIP
+      ENDDO
+      SELECT pos_doks
+      SKIP
 
-EndDO
+   ENDDO
 
-return
-*}
-
-
+   RETURN
+// }

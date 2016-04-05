@@ -1,14 +1,13 @@
 /*
- * This file is part of the bring.out FMK, a free and open source
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+ * This file is part of the bring.out knowhow ERP, a free and open source
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
-
 
 #include "f18.ch"
 
@@ -21,7 +20,6 @@ STATIC __DRV_FLINK := "FLINK"
 STATIC __DRV_HCP := "HCP"
 STATIC __DRV_TRING := "TRING"
 STATIC __DRV_CURRENT
-
 
 
 FUNCTION pos_fiskalni_racun( id_pos, datum, rn_broj, dev_params, uplaceni_iznos )
@@ -55,7 +53,7 @@ FUNCTION pos_fiskalni_racun( id_pos, datum, rn_broj, dev_params, uplaceni_iznos 
 
    CASE _dev_drv == "TEST"
       _err_level := 0
-	
+
    CASE _dev_drv == __DRV_FPRINT
       _err_level := pos_to_fprint( id_pos, "42", datum, rn_broj, _items, _storno )
 
@@ -75,9 +73,9 @@ FUNCTION pos_fiskalni_racun( id_pos, datum, rn_broj, dev_params, uplaceni_iznos 
    ENDCASE
 
    IF _err_level > 0
-	
+
       IF _dev_drv == __DRV_TREMOL
-		
+
          _cont := "2"
          _err_level := pos_to_tremol( id_pos, "42", datum, rn_broj, _items, _storno, _cont )
 
@@ -271,7 +269,7 @@ STATIC FUNCTION pos_to_fprint( id_pos, tip_dok, datum, rn_broj, items, storno )
    ENDIF
 
    IF _err_level <> 0
-      
+
       IF pos_da_li_je_racun_fiskalizovan( @_fiscal_no )
          _err_level := 0
       ELSE
@@ -320,17 +318,17 @@ STATIC FUNCTION pos_to_tremol( id_pos, tip_dok, datum, rn_broj, items, storno, c
    IF cont == NIL
       cont := "0"
    ENDIF
-	
+
    // idemo sada na upis rn u fiskalni fajl
    _err_level := tremol_rn( __device_params, items, NIL, storno, cont )
 
    IF cont <> "2"
-	
+
       // naziv fajla
       _f_name := fiscal_out_filename( __device_params[ "out_file" ], rn_broj )
 
       IF tremol_read_out( __device_params, _f_name )
-		
+
          // procitaj poruku greske
          _err_level := tremol_read_error( __device_params, _f_name, @_fiscal_no )
 
@@ -339,11 +337,11 @@ STATIC FUNCTION pos_to_tremol( id_pos, tip_dok, datum, rn_broj, items, storno, c
             pos_doks_update_fisc_rn( id_pos, tip_dok, datum, rn_broj, _fiscal_no )
 
             MsgBeep( "Kreiran fiskalni racun: " + AllTrim( Str( _fiscal_no ) ) )
-			
+
          ENDIF
-	
+
       ENDIF
-	
+
       // obrisi fajl
       // da ne bi ostao kada server proradi ako je greska
       FErase( __device_params[ "out_dir" ] + _f_name )
@@ -370,10 +368,10 @@ STATIC FUNCTION pos_to_hcp( id_pos, tip_dok, datum, rn_broj, items, storno, upla
    _err_level := hcp_rn( __device_params, items, NIL, storno, uplaceni_iznos )
 
    IF _err_level = 0
-	
+
       // vrati broj racuna
       _fiscal_no := hcp_fisc_no( __device_params, storno )
-	
+
       IF _fiscal_no > 0
          pos_doks_update_fisc_rn( id_pos, tip_dok, datum, rn_broj, _fiscal_no )
          MsgBeep( "Kreiran fiskalni racun: " + AllTrim( Str( _fiscal_no ) ) )
@@ -471,7 +469,7 @@ STATIC FUNCTION _fix_naz( cR_naz, cNaziv )
       cNaziv := StrKzn( cNaziv, "8", "E" )
       cNaziv := Lower( cNaziv )
       cNaziv := StrTran( cNaziv, ",", "." )
-	
+
    ENDCASE
 
    RETURN
@@ -479,7 +477,7 @@ STATIC FUNCTION _fix_naz( cR_naz, cNaziv )
 
 /*
    Opis: u slučaju greške sa fajlom odgovora, kada nema broja fiskalnog računa
-         korisnika ispituje da li je račun fiskalizovan te nudi mogućnost ručnog unosa 
+         korisnika ispituje da li je račun fiskalizovan te nudi mogućnost ručnog unosa
          broja fiskalnog računa
 
    Parameters:
@@ -490,10 +488,10 @@ STATIC FUNCTION _fix_naz( cR_naz, cNaziv )
       .F. => račun primarno nije fiskalizovan na uređaj
       fisc_no - varijabla proslijeđena po refernci, sadrži broj fiskalnog računa
                 broj koji je korisnik unjeo na formi
- 
+
 */
 FUNCTION pos_da_li_je_racun_fiskalizovan( fisc_no )
-   
+
    LOCAL lRet := .F.
    LOCAL nX
    LOCAL cStampano := " "
@@ -525,7 +523,7 @@ FUNCTION pos_da_li_je_racun_fiskalizovan( fisc_no )
       ++ nX
       ++ nX
 
-      @ m_x + nX, m_y + 2 SAY8 "Molimo unesite broj računa koji je fiskalni račun ispisao:" GET fisc_no VALID fisc_no > 0 PICT "9999999999" 
+      @ m_x + nX, m_y + 2 SAY8 "Molimo unesite broj računa koji je fiskalni račun ispisao:" GET fisc_no VALID fisc_no > 0 PICT "9999999999"
 
       READ
 
@@ -542,5 +540,3 @@ FUNCTION pos_da_li_je_racun_fiskalizovan( fisc_no )
    ENDDO
 
    RETURN lRet
-
-

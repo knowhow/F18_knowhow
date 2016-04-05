@@ -11,7 +11,7 @@
 
 
 #include "f18.ch"
-#include "f18_separator.ch"
+
 
 
 
@@ -83,7 +83,7 @@ STATIC FUNCTION _o_pos_prepis_tbl()
       O_POS
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 FUNCTION pos_prepis_dokumenta()
@@ -158,7 +158,7 @@ FUNCTION pos_prepis_dokumenta()
 
    aOpc := { "<ENTER> Odabir", "<E> eksport" }
 
-   IF pos_upravnik() .or. pos_admin()
+   IF pos_upravnik() .OR. pos_admin()
       AAdd( aOpc, "<F2> - promjena vrste placanja" )
    ENDIF
 
@@ -166,7 +166,7 @@ FUNCTION pos_prepis_dokumenta()
 
    CLOSE ALL
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -400,7 +400,7 @@ FUNCTION pos_pregled_stavki_racuna()
    LOCAL oBrowse
    LOCAL cPrevCol
    LOCAL _rec
-   LOCAL nMaxCol := MAXCOL() - 2
+   LOCAL nMaxCol := MaxCol() - 2
 
    PRIVATE ImeKol
    PRIVATE Kol
@@ -451,7 +451,7 @@ FUNCTION pos_pregled_stavki_racuna()
 
    Box(, 15, nMaxCol )
 
-   @ m_x + 1, m_y + 19 SAY8 PadC ( "Pregled " + IIF( gRadniRac == "D", "stalnog ", "" ) + "računa " + Trim( pos_doks->IdPos ) + "-" + LTrim ( pos_doks->BrDok ), 30 ) COLOR F18_COLOR_INVERT
+   @ m_x + 1, m_y + 19 SAY8 PadC ( "Pregled " + iif( gRadniRac == "D", "stalnog ", "" ) + "računa " + Trim( pos_doks->IdPos ) + "-" + LTrim ( pos_doks->BrDok ), 30 ) COLOR F18_COLOR_INVERT
 
    oBrowse := FormBrowse( m_x + 2, m_y + 1, m_x + 15, m_y + nMaxCol, ImeKol, Kol, { BROWSE_PODVUCI_2, BROWSE_PODVUCI, BROWSE_COL_SEP }, 0 )
    ShowBrowse( oBrowse, {}, {} )
@@ -475,12 +475,12 @@ STATIC FUNCTION browse_kolone( aImeKol, aKol )
    aImeKol := {}
    aKol := {}
 
-   AADD( aImeKol, { "Sifra", {|| idroba } } )
-   AADD( aImeKol, { "Naziv", {|| Left( robanaz, 30 ) } } )
-   AADD( aImeKol, { "Kolicina", {|| Str( kolicina, 7, 3 ) } } )
-   AADD( aImeKol, { "Cijena", {|| Str( cijena, 7, 2 ) } } )
-   AADD( aImeKol, { "Ukupno", {|| Str( kolicina * cijena, 11, 2 ) } } )
-   AADD( aImeKol, { "Tarifa", {|| idtarifa } } )
+   AAdd( aImeKol, { "Sifra", {|| idroba } } )
+   AAdd( aImeKol, { "Naziv", {|| Left( robanaz, 30 ) } } )
+   AAdd( aImeKol, { "Kolicina", {|| Str( kolicina, 7, 3 ) } } )
+   AAdd( aImeKol, { "Cijena", {|| Str( cijena, 7, 2 ) } } )
+   AAdd( aImeKol, { "Ukupno", {|| Str( kolicina * cijena, 11, 2 ) } } )
+   AAdd( aImeKol, { "Tarifa", {|| idtarifa } } )
 
    FOR i := 1 TO Len( aImeKol )
       AAdd( aKol, i )

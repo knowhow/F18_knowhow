@@ -1,237 +1,236 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+/*
+ * This file is part of the bring.out knowhow ERP, a free and open source
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
 
-
 #include "f18.ch"
 
-static LEN_TRAKA := 40
+
+STATIC LEN_TRAKA := 40
 
 
-function PDVPorPoTar
-parameters cDat0, cDat1, cIdPos, cNaplaceno, cIdOdj
+FUNCTION PDVPorPoTar
 
-local aNiz := {}
-local fSolo
-local aTarife := {}
+   PARAMETERS cDat0, cDat1, cIdPos, cNaplaceno, cIdOdj
 
-private cTarife := SPACE (30)
-private aUsl := ".t."
+   LOCAL aNiz := {}
+   LOCAL fSolo
+   LOCAL aTarife := {}
 
-if cNaplaceno==nil
-	cNaplaceno:="1"
-endif
+   PRIVATE cTarife := Space ( 30 )
+   PRIVATE aUsl := ".t."
 
-if (pcount()==0)
-	fSolo := .t.
-else
-	fSolo := .f.
-endif
+   IF cNaplaceno == nil
+      cNaplaceno := "1"
+   ENDIF
 
-if fSolo
-	private cDat0:=gDatum
-	private cDat1:=gDatum
-	private cIdPos:=SPACE(2)
-	private cNaplaceno:="1"
-endif
+   IF ( PCount() == 0 )
+      fSolo := .T.
+   ELSE
+      fSolo := .F.
+   ENDIF
 
-if (cIdOdj==nil)
-	cIdOdj:=space(2)
-endif
+   IF fSolo
+      PRIVATE cDat0 := gDatum
+      PRIVATE cDat1 := gDatum
+      PRIVATE cIdPos := Space( 2 )
+      PRIVATE cNaplaceno := "1"
+   ENDIF
 
-O_TARIFA
+   IF ( cIdOdj == nil )
+      cIdOdj := Space( 2 )
+   ENDIF
 
-if fSolo
-	O_SIFK
-	O_SIFV
-	O_KASE
-	O_ROBA
-	O_ODJ
-	O_POS_DOKS
-	O_POS
-endif
+   O_TARIFA
 
-if gVrstaRS<>"S"
-	cIdPos:=gIdPos
-endif
+   IF fSolo
+      O_SIFK
+      O_SIFV
+      O_KASE
+      O_ROBA
+      O_ODJ
+      O_POS_DOKS
+      O_POS
+   ENDIF
 
-if fSolo
-	if gVrstaRS<>"K"
-		AADD (aNiz, {"Prod.mjesto (prazno-svi)    ","cIdPos","cIdPos='X' .or. empty(cIdPos).or.P_Kase(cIdPos)","@!",} )
-	endif
-	
-	if gVodiOdj=="D"
-		AADD (aNiz, {"Odjeljenje (prazno-sva)", "cIdOdj", ".t.","@!",})
-	endif
-	
-	AADD (aNiz, {"Tarife (prazno sve)", "cTarife",,"@S10",} )
-	AADD (aNiz, {"Izvjestaj se pravi od datuma","cDat0",,,} )
-	AADD (aNiz, {"                   do datuma","cDat1",,,} )
+   IF gVrstaRS <> "S"
+      cIdPos := gIdPos
+   ENDIF
 
-	do while .t.
-	      if !VarEdit(aNiz, 10,5,17,74,'USLOVI ZA IZVJESTAJ "POREZI PO TARIFAMA"',"B1")
-		CLOSERET
-	      endif
-	      aUsl := Parsiraj(cTarife,"IdTarifa")
-	      if aUsl<>nil.and.cDat0<=cDat1
-		exit
-	      elseif aUsl==nil
-	      	MsgBeep ("Kriterij za tarife nije korektno postavljen!")
-	      else
-	      	Msg("'Datum do' ne smije biti stariji nego 'datum od'!")
-	      endif
-	enddo
+   IF fSolo
+      IF gVrstaRS <> "K"
+         AAdd ( aNiz, { "Prod.mjesto (prazno-svi)    ", "cIdPos", "cIdPos='X' .or. empty(cIdPos).or.P_Kase(cIdPos)", "@!", } )
+      ENDIF
 
-	START PRINT CRET
-	ZagFirma()
+      IF gVodiOdj == "D"
+         AAdd ( aNiz, { "Odjeljenje (prazno-sva)", "cIdOdj", ".t.", "@!", } )
+      ENDIF
 
-endif // fsolo
+      AAdd ( aNiz, { "Tarife (prazno sve)", "cTarife",, "@S10", } )
+      AAdd ( aNiz, { "Izvjestaj se pravi od datuma", "cDat0",,, } )
+      AAdd ( aNiz, { "                   do datuma", "cDat1",,, } )
 
+      DO WHILE .T.
+         IF !VarEdit( aNiz, 10, 5, 17, 74, 'USLOVI ZA IZVJESTAJ "POREZI PO TARIFAMA"', "B1" )
+            CLOSERET
+         ENDIF
+         aUsl := Parsiraj( cTarife, "IdTarifa" )
+         IF aUsl <> NIL .AND. cDat0 <= cDat1
+            EXIT
+         ELSEIF aUsl == nil
+            MsgBeep ( "Kriterij za tarife nije korektno postavljen!" )
+         ELSE
+            Msg( "'Datum do' ne smije biti stariji nego 'datum od'!" )
+         ENDIF
+      ENDDO
 
-do while .t.
+      START PRINT CRET
+      ZagFirma()
 
-	// petlja radi popusta
-	aTarife:={}  // inicijalizuj matricu tarifa
-
-	if fSolo
-		?? gP12cpi
-		
-		if cNaplaceno=="3"
-			? PADC("**** OBRACUN ZA NAPLACENI IZNOS ****", LEN_TRAKA)
-		endif
-		
-		? PADC("POREZI PO TARIFAMA NA DAN "+FormDat1(gDatum), LEN_TRAKA)
-		? PADC("-------------------------------------", LEN_TRAKA)
-		?
-		? "PROD.MJESTO: "
-		
-		if gVrstaRS<>"K"
-			?? cIdPos+"-"
-			if (empty(cIdPos))
-				?? "SVA" 
-			else
-				?? cIdPos+"-"+Alltrim (Ocitaj (F_KASE, cIdPos, "Naz"))
-			endif
-		else
-			?? gPosNaz
-		endif
-		
-		if !empty(cIdOdj)
-			? "  Odjeljenje:", cIdOdj
-		endif
-		
-		? "     Tarife:", Iif (Empty (cTarife), "SVE", cTarife)
-		? "PERIOD: "+FormDat1(cDat0)+" - "+FormDat1(cDat1)
-		?
-		
-	else // fsolo
-		if ( grbReduk < 1 )
-			?
-		endif
-		if cNaplaceno=="3"
-			? PADC("**** OBRACUN ZA NAPLACENI IZNOS ****", LEN_TRAKA)
-		endif
-		? PADC ("REKAPITULACIJA POREZA PO TARIFAMA", LEN_TRAKA)
-		if ( grbReduk < 1 )
-			? PADC ("---------------------------------", LEN_TRAKA)
-		endif
-	endif // fsolo
-
-	SELECT POS
-	SET ORDER TO TAG "1"
-	
-	private cFilter:=".t."
-	
-	if !(aUsl==".t.")
-		cFilter+=".and."+ aUsl
-	endif
-	
-	if !empty(cIdOdj)
-		cFilter+=".and. IdOdj="+dbf_quote(cIdOdj)
-	endif
-	
-	if !(cFilter==".t.")
-		set filter to &cFilter
-	endif
-
-	select pos_doks
-	set order to tag "2"
-
-	m:=REPLICATE("-",12)+" "+REPLICATE("-",12)+" "+REPLICATE("-",12)
-
-	nTotOsn:=0
-	nTotPDV:=0
-
-	// matrica je lok var : aTarife:={}
-	// filuj za poreze, VD_PRR - realizacija iz predhodnih sezona
-	aTarife:=Porezi(VD_RN, cDat0, aTarife, cNaplaceno)
-	aTarife:=Porezi(VD_PRR, cDat0, aTarife, cNaplaceno)
-
-	ASORT (aTarife,,, {|x, y| x[1] < y[1]})
-	
-	? m
-	
-	? "Tarifa (Stopa %)"
-	? PADL ("MPV bez PDV", 12), PADL ("PDV", 12), PADL("MPV sa PDV",12)
-	
-	? m
-
-	for nCnt := 1 to LEN(aTarife)
-		
-		select tarifa
-		HSEEK aTarife[nCnt][1]
-		nPDV:=tarifa->opp
-		select pos_doks
-
-		// ispisi opis i na realizaciji kao na racunu
-		? aTarife[nCnt][1], "(" + STR(nPDV) + "%)"
-		
-		? STR(aTarife[nCnt][2],12,2), STR(aTarife[nCnt][3],12,2),STR( round(aTarife[nCnt][6],2), 12,2)
-
-		nTotOsn+=round(aTarife[nCnt][6],2)-round(aTarife[nCnt][3],2)
-		nTotPDV+=round(aTarife[nCnt][3],2)
-	next
-	
-	? m
-	? "UKUPNO:"
-	? STR (nTotOsn, 12, 2), STR (nTotPDV, 12, 2),STR(nTotOsn+nTotPDV, 12, 2)
-	? m
-	?
-	?
-
-	if !fsolo
-		exit
-	endif
-
-	if cNaplaceno=="1"  // prvi krug u dowhile petlji
-		cNaplaceno:="3"
-	else
-		// vec odradjen drugi krug
-		exit
-	endif
-
-enddo // petlja radi popusta
-
-select pos
-set filter to
-
-if gVrstaRS<>"S"
-	PaperFeed ()
-endif
-
-if fSolo
-	ENDPRINT
-endif
-
-close all
-return
+   ENDIF // fsolo
 
 
+   DO WHILE .T.
 
+      // petlja radi popusta
+      aTarife := {}  // inicijalizuj matricu tarifa
+
+      IF fSolo
+         ?? gP12cpi
+
+         IF cNaplaceno == "3"
+            ? PadC( "**** OBRACUN ZA NAPLACENI IZNOS ****", LEN_TRAKA )
+         ENDIF
+
+         ? PadC( "POREZI PO TARIFAMA NA DAN " + FormDat1( gDatum ), LEN_TRAKA )
+         ? PadC( "-------------------------------------", LEN_TRAKA )
+         ?
+         ? "PROD.MJESTO: "
+
+         IF gVrstaRS <> "K"
+            ?? cIdPos + "-"
+            IF ( Empty( cIdPos ) )
+               ?? "SVA"
+            ELSE
+               ?? cIdPos + "-" + AllTrim ( Ocitaj ( F_KASE, cIdPos, "Naz" ) )
+            ENDIF
+         ELSE
+            ?? gPosNaz
+         ENDIF
+
+         IF !Empty( cIdOdj )
+            ? "  Odjeljenje:", cIdOdj
+         ENDIF
+
+         ? "     Tarife:", iif ( Empty ( cTarife ), "SVE", cTarife )
+         ? "PERIOD: " + FormDat1( cDat0 ) + " - " + FormDat1( cDat1 )
+         ?
+
+      ELSE // fsolo
+         IF ( grbReduk < 1 )
+            ?
+         ENDIF
+         IF cNaplaceno == "3"
+            ? PadC( "**** OBRACUN ZA NAPLACENI IZNOS ****", LEN_TRAKA )
+         ENDIF
+         ? PadC ( "REKAPITULACIJA POREZA PO TARIFAMA", LEN_TRAKA )
+         IF ( grbReduk < 1 )
+            ? PadC ( "---------------------------------", LEN_TRAKA )
+         ENDIF
+      ENDIF // fsolo
+
+      SELECT POS
+      SET ORDER TO TAG "1"
+
+      PRIVATE cFilter := ".t."
+
+      IF !( aUsl == ".t." )
+         cFilter += ".and." + aUsl
+      ENDIF
+
+      IF !Empty( cIdOdj )
+         cFilter += ".and. IdOdj=" + dbf_quote( cIdOdj )
+      ENDIF
+
+      IF !( cFilter == ".t." )
+         SET FILTER to &cFilter
+      ENDIF
+
+      SELECT pos_doks
+      SET ORDER TO TAG "2"
+
+      m := Replicate( "-", 12 ) + " " + Replicate( "-", 12 ) + " " + Replicate( "-", 12 )
+
+      nTotOsn := 0
+      nTotPDV := 0
+
+      // matrica je lok var : aTarife:={}
+      // filuj za poreze, VD_PRR - realizacija iz predhodnih sezona
+      aTarife := Porezi( VD_RN, cDat0, aTarife, cNaplaceno )
+      aTarife := Porezi( VD_PRR, cDat0, aTarife, cNaplaceno )
+
+      ASort ( aTarife,,, {| x, y| x[ 1 ] < y[ 1 ] } )
+
+      ? m
+
+      ? "Tarifa (Stopa %)"
+      ? PadL ( "MPV bez PDV", 12 ), PadL ( "PDV", 12 ), PadL( "MPV sa PDV", 12 )
+
+      ? m
+
+      FOR nCnt := 1 TO Len( aTarife )
+
+         SELECT tarifa
+         HSEEK aTarife[ nCnt ][ 1 ]
+         nPDV := tarifa->opp
+         SELECT pos_doks
+
+         // ispisi opis i na realizaciji kao na racunu
+         ? aTarife[ nCnt ][ 1 ], "(" + Str( nPDV ) + "%)"
+
+         ? Str( aTarife[ nCnt ][ 2 ], 12, 2 ), Str( aTarife[ nCnt ][ 3 ], 12, 2 ), Str( Round( aTarife[ nCnt ][ 6 ], 2 ), 12, 2 )
+
+         nTotOsn += Round( aTarife[ nCnt ][ 6 ], 2 ) -Round( aTarife[ nCnt ][ 3 ], 2 )
+         nTotPDV += Round( aTarife[ nCnt ][ 3 ], 2 )
+      NEXT
+
+      ? m
+      ? "UKUPNO:"
+      ? Str ( nTotOsn, 12, 2 ), Str ( nTotPDV, 12, 2 ), Str( nTotOsn + nTotPDV, 12, 2 )
+      ? m
+      ?
+      ?
+
+      IF !fsolo
+         EXIT
+      ENDIF
+
+      IF cNaplaceno == "1"  // prvi krug u dowhile petlji
+         cNaplaceno := "3"
+      ELSE
+         // vec odradjen drugi krug
+         EXIT
+      ENDIF
+
+   ENDDO // petlja radi popusta
+
+   SELECT pos
+   SET FILTER TO
+
+   IF gVrstaRS <> "S"
+      PaperFeed ()
+   ENDIF
+
+   IF fSolo
+      ENDPRINT
+   ENDIF
+
+   CLOSE ALL
+
+   RETURN

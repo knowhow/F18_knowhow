@@ -1,132 +1,131 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+/*
+ * This file is part of the bring.out knowhow ERP, a free and open source
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
 
-
 #include "f18.ch"
 
-function PrepisKumPr()
-local nSir:=80
-local nRobaSir:=40
-local cLm:=SPACE(5)
-local cPicKol:="999999.999"
+FUNCTION PrepisKumPr()
 
-START PRINT CRET
+   LOCAL nSir := 80
+   LOCAL nRobaSir := 40
+   LOCAL cLm := Space( 5 )
+   LOCAL cPicKol := "999999.999"
 
-if gVrstaRS=="S"
-	P_INI
-	P_10CPI
-else
-	nSir:=40
-	nRobaSir:=18
-	cLM:=""
-	cPicKol:="9999.999"
-endif
+   START PRINT CRET
 
-ZagFirma()
+   IF gVrstaRS == "S"
+      P_INI
+      P_10CPI
+   ELSE
+      nSir := 40
+      nRobaSir := 18
+      cLM := ""
+      cPicKol := "9999.999"
+   ENDIF
 
-if empty(pos_doks->IdPos)
-	? PADC("KUMULATIV PROMETA "+ALLTRIM(pos_doks->BrDok),nSir)
-else
-	? PADC("KUMULATIV PROMETA "+ALLTRIM(pos_doks->IdPos)+"-"+ALLTRIM(pos_doks->BrDok),nSir)
-endif
+   ZagFirma()
 
-?
-? PADC(FormDat1(pos_doks->Datum),nSir)
-?
-SELECT VRSTEP
-HSEEK pos_doks->IdVrsteP
+   IF Empty( pos_doks->IdPos )
+      ? PadC( "KUMULATIV PROMETA " + AllTrim( pos_doks->BrDok ), nSir )
+   ELSE
+      ? PadC( "KUMULATIV PROMETA " + AllTrim( pos_doks->IdPos ) + "-" + AllTrim( pos_doks->BrDok ), nSir )
+   ENDIF
 
-if gVrstaRS=="S"
-	cPom:=VRSTEP->Naz
-else
-	cPom:=LEFT(VRSTEP->Naz,23)
-endif
+   ?
+   ? PadC( FormDat1( pos_doks->Datum ), nSir )
+   ?
+   SELECT VRSTEP
+   HSEEK pos_doks->IdVrsteP
 
-? cLM+"Vrsta placanja:",cPom
+   IF gVrstaRS == "S"
+      cPom := VRSTEP->Naz
+   ELSE
+      cPom := Left( VRSTEP->Naz, 23 )
+   ENDIF
 
-select partn
-HSEEK pos_doks->IdGost
+   ? cLM + "Vrsta placanja:", cPom
 
-if gVrstaRS=="S"
-	cPom:=partn->Naz
-else
-	cPom:=LEFT(partn->Naz,23)
-endif
+   SELECT partn
+   HSEEK pos_doks->IdGost
 
-? cLM+"Gost / partner:",cPom
+   IF gVrstaRS == "S"
+      cPom := partn->Naz
+   ELSE
+      cPom := Left( partn->Naz, 23 )
+   ENDIF
 
-if pos_doks->Placen==PLAC_JEST.or.pos_doks->IdVrsteP==gGotPlac
-	? cLM+"       Placeno:","DA"
-else
-	? cLM+"       Placeno:","NE"
-endif
+   ? cLM + "Gost / partner:", cPom
 
-SELECT POS
-HSEEK pos_doks->(IdPos+IdVd+dtos(datum)+BrDok)
+   IF pos_doks->Placen == PLAC_JEST .OR. pos_doks->IdVrsteP == gGotPlac
+      ? cLM + "       Placeno:", "DA"
+   ELSE
+      ? cLM + "       Placeno:", "NE"
+   ENDIF
 
-? cLM
-if gVrstaRS=="S"
-	?? "Sifra    Naziv                                    JMJ Cijena  Kolicina"
-	m:=cLM+"-------- ---------------------------------------- --- ------- ----------"
-else
-	?? "Sifra    Naziv              JMJ Kolicina"
-	m:=cLM+"-------- ------------------ --- --------"
-endif
-? m
+   SELECT POS
+   HSEEK pos_doks->( IdPos + IdVd + DToS( datum ) + BrDok )
 
-nFin:=0
-SELECT POS
+   ? cLM
+   IF gVrstaRS == "S"
+      ?? "Sifra    Naziv                                    JMJ Cijena  Kolicina"
+      m := cLM + "-------- ---------------------------------------- --- ------- ----------"
+   ELSE
+      ?? "Sifra    Naziv              JMJ Kolicina"
+      m := cLM + "-------- ------------------ --- --------"
+   ENDIF
+   ? m
 
-do while !eof().and.POS->(IdPos+IdVd+dtos(datum)+BrDok)==pos_doks->(IdPos+IdVd+dtos(datum)+BrDok)
-	if gVrstaRS=="S".and.prow()>63-dodatni_redovi_po_stranici()
-		FF
-	endif
-	? cLM
-	?? IdRoba,""
-	SELECT ROBA
-	HSEEK POS->IdRoba
-	?? PADR(ROBA->Naz,nRobaSir),ROBA->Jmj,""
-	SELECT POS
-	if gVrstaRS=="S"
-		?? TRANS(POS->Cijena,"9999.99"),""
-	endif
-	?? TRANS(POS->Kolicina,cPicKol)
-	nFin+=POS->(Kolicina*Cijena)
-	skip
-enddo
+   nFin := 0
+   SELECT POS
 
-if gVrstaRS=="S".and.prow()>63-dodatni_redovi_po_stranici()-7
-	FF
-endif
+   DO WHILE !Eof() .AND. POS->( IdPos + IdVd + DToS( datum ) + BrDok ) == pos_doks->( IdPos + IdVd + DToS( datum ) + BrDok )
+      IF gVrstaRS == "S" .AND. PRow() > 63 -dodatni_redovi_po_stranici()
+         FF
+      ENDIF
+      ? cLM
+      ?? IdRoba, ""
+      SELECT ROBA
+      HSEEK POS->IdRoba
+      ?? PadR( ROBA->Naz, nRobaSir ), ROBA->Jmj, ""
+      SELECT POS
+      IF gVrstaRS == "S"
+         ?? TRANS( POS->Cijena, "9999.99" ), ""
+      ENDIF
+      ?? TRANS( POS->Kolicina, cPicKol )
+      nFin += POS->( Kolicina * Cijena )
+      SKIP
+   ENDDO
 
-? m
-? cLM
+   IF gVrstaRS == "S" .AND. PRow() > 63 -dodatni_redovi_po_stranici() -7
+      FF
+   ENDIF
 
-if gVrstaRS=="S"
-	?? PADL("IZNOS DOKUMENTA ("+TRIM(gDomValuta)+")",13+nRobaSir),TRANS(nFin,"999,999,999,999.99")
-else
-	?? PADL("IZNOS DOKUMENTA ("+TRIM(gDomValuta)+")",10+nRobaSir),TRANS(nFin,"9,999,999.99")
-endif
+   ? m
+   ? cLM
 
-? m
+   IF gVrstaRS == "S"
+      ?? PadL( "IZNOS DOKUMENTA (" + Trim( gDomValuta ) + ")", 13 + nRobaSir ), TRANS( nFin, "999,999,999,999.99" )
+   ELSE
+      ?? PadL( "IZNOS DOKUMENTA (" + Trim( gDomValuta ) + ")", 10 + nRobaSir ), TRANS( nFin, "9,999,999.99" )
+   ENDIF
 
-if gVrstaRS=="S"
-	FF
-else
-	PaperFeed()
-endif
+   ? m
 
-ENDPRINT
-select pos_doks
-return
-*}
+   IF gVrstaRS == "S"
+      FF
+   ELSE
+      PaperFeed()
+   ENDIF
 
+   ENDPRINT
+   SELECT pos_doks
 
+   RETURN
+// }

@@ -12,7 +12,6 @@
 #include "f18.ch"
 
 
-
 FUNCTION pos_init_dbfs()
 
    my_close_all_dbf()

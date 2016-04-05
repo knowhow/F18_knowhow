@@ -1,54 +1,54 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+/*
+ * This file is part of the bring.out knowhow ERP, a free and open source
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
 
-
 #include "f18.ch"
+
 
 
 /* FrmGetRabat(aRabat, nCijena)
  *     Puni matricu aRabat popustima, u zavisnosti od varijante
  *   param: aRabat - matrica rabata: type array
- 	{idroba, nPopVar1, nPopVar2, nPopVar3, nPopVar4, nPopVar5, nPopVar6}
+  {idroba, nPopVar1, nPopVar2, nPopVar3, nPopVar4, nPopVar5, nPopVar6}
  *   param: nCijena - cijena artikla
  */
-function FrmGetRabat(aRabat, nCijena)
-*{
-// prodji kroz svaku varijantu popusta i napuni matricu aRabat{}
+FUNCTION FrmGetRabat( aRabat, nCijena )
 
-// 1. varijanta
-// Popust zadavanjem nove cijene
-GetPopZadavanjemNoveCijene(aRabat, nCijena)
+   // {
+   // prodji kroz svaku varijantu popusta i napuni matricu aRabat{}
 
-// 2. varijanta
-// Generalni popust za sve artikle
-GetPopGeneral(aRabat, nCijena)
+   // 1. varijanta
+   // Popust zadavanjem nove cijene
+   GetPopZadavanjemNoveCijene( aRabat, nCijena )
 
-// 3. varijanta
-// Popust na osnovu polja "roba->N2"
-GetPopFromN2(aRabat, nCijena)
+   // 2. varijanta
+   // Generalni popust za sve artikle
+   GetPopGeneral( aRabat, nCijena )
 
-// 4. varijanta
-// Popust preko odredjenog iznosa
-GetPopPrekoOdrIznosa(aRabat, nCijena)
+   // 3. varijanta
+   // Popust na osnovu polja "roba->N2"
+   GetPopFromN2( aRabat, nCijena )
 
-// 5. varijanta
-// Popust za clanove
-GetPopClanovi(aRabat, nCijena)
+   // 4. varijanta
+   // Popust preko odredjenog iznosa
+   GetPopPrekoOdrIznosa( aRabat, nCijena )
 
-// 6. varijanta
-// Popust zadavanjem procenta
-GetPopProcent(aRabat, nCijena)
+   // 5. varijanta
+   // Popust za clanove
+   GetPopClanovi( aRabat, nCijena )
 
-return
-*}
+   // 6. varijanta
+   // Popust zadavanjem procenta
+   GetPopProcent( aRabat, nCijena )
+
+   RETURN .T.
 
 
 /* GetPopZadavanjemNoveCijene(aRabat, nCijena)
@@ -56,38 +56,40 @@ return
  *   param: aRabat
  *   param: nCijena
  */
-function GetPopZadavanjemNoveCijene(aRabat, nCijena)
-*{
-local nNovaCijena:=0
+FUNCTION GetPopZadavanjemNoveCijene( aRabat, nCijena )
 
-if (gPopZCj=="D" .and. roba->tip<>"T")  
-	// u zavisnosti od set-a cijena koji se koristi
-	// &("roba->cijena" + gIdCijena) == roba->cijena1
-	nNovaCijena:=round( pos_get_mpc() - nCijena, gPopDec)
-	AddToArrRabat(aRabat, roba->id, nNovaCijena)
-endif
+   // {
+   LOCAL nNovaCijena := 0
 
-return
-*}
+   IF ( gPopZCj == "D" .AND. roba->tip <> "T" )
+      // u zavisnosti od set-a cijena koji se koristi
+      // &("roba->cijena" + gIdCijena) == roba->cijena1
+      nNovaCijena := Round( pos_get_mpc() - nCijena, gPopDec )
+      AddToArrRabat( aRabat, roba->id, nNovaCijena )
+   ENDIF
+
+   RETURN
+// }
 
 /* GetPopGeneral(aRabat, nCijena)
  *     Generalni popust za sve artikle
  *   param: aRabat
  *   param: nCijena
  */
-function GetPopGeneral(aRabat, nCijena)
-*{
-local nNovaCijena:=0
+FUNCTION GetPopGeneral( aRabat, nCijena )
 
-if (!EMPTY(gPopust) .and. gPopust<>99 .and. gPopust<>0)
-	if Pitanje(,"Generalni popust " + ALLTRIM(STR(gPopust)) + "% :: uracunati ?" ,"D")=="D"
-		nNovaCijena:=Round(nCijena*(gPopust)/100, gPopDec)
-		AddToArrRabat(aRabat, roba->id, nil, nNovaCijena)
-	endif
-endif
+   // {
+   LOCAL nNovaCijena := 0
 
-return
-*}
+   IF ( !Empty( gPopust ) .AND. gPopust <> 99 .AND. gPopust <> 0 )
+      IF Pitanje(, "Generalni popust " + AllTrim( Str( gPopust ) ) + "% :: uracunati ?","D" ) == "D"
+         nNovaCijena := Round( nCijena * ( gPopust ) / 100, gPopDec )
+         AddToArrRabat( aRabat, roba->id, nil, nNovaCijena )
+      ENDIF
+   ENDIF
+
+   RETURN
+// }
 
 
 /* GetPopFromN2(aRabat, nCijena)
@@ -95,19 +97,20 @@ return
  *   param: aRabat
  *   param: nCijena
  */
-function GetPopFromN2(aRabat, nCijena)
-*{
-local nNovaCijena:=0
+FUNCTION GetPopFromN2( aRabat, nCijena )
 
-if (!EMPTY(gPopust) .and. gPopust==99)
-	if Pitanje(,"Uracunati popust od " + ALLTRIM(STR(roba->n2)) + "% ?" ,"D")=="D"
-		nNovaCijena:=Round(nCijena*(roba->n2)/100, gPopDec)
-		AddToArrRabat(aRabat, roba->id, nil, nil, nNovaCijena)
-	endif
-endif
+   // {
+   LOCAL nNovaCijena := 0
 
-return
-*}
+   IF ( !Empty( gPopust ) .AND. gPopust == 99 )
+      IF Pitanje(, "Uracunati popust od " + AllTrim( Str( roba->n2 ) ) + "% ?","D" ) == "D"
+         nNovaCijena := Round( nCijena * ( roba->n2 ) / 100, gPopDec )
+         AddToArrRabat( aRabat, roba->id, nil, nil, nNovaCijena )
+      ENDIF
+   ENDIF
+
+   RETURN
+// }
 
 
 /* GetPopPrekoOdrIznosa(aRabat, nCijena)
@@ -115,17 +118,18 @@ return
  *   param: aRabat
  *   param: nCijena
  */
-function GetPopPrekoOdrIznosa(aRabat, nCijena)
-*{
-local nNovaCijena:=0
+FUNCTION GetPopPrekoOdrIznosa( aRabat, nCijena )
 
-if VarPopPrekoOdrIzn() .and. ispopprekoodrizn( nCijena )
-	nNovaCijena := Round( nCijena * gPopIznP / 100, gPopDec )
-	AddToArrRabat( aRabat, roba->id, nil, nil, nil, nNovaCijena )
-endif
+   // {
+   LOCAL nNovaCijena := 0
 
-return
-*}
+   IF VarPopPrekoOdrIzn() .AND. ispopprekoodrizn( nCijena )
+      nNovaCijena := Round( nCijena * gPopIznP / 100, gPopDec )
+      AddToArrRabat( aRabat, roba->id, nil, nil, nil, nNovaCijena )
+   ENDIF
+
+   RETURN
+// }
 
 
 /* GetPopClanovi(aRabat, nCijena)
@@ -133,35 +137,37 @@ return
  *   param: aRabat
  *   param: nCijena
  */
-function GetPopClanovi(aRabat, nCijena)
-*{
-local nNovaCijena:=0
+FUNCTION GetPopClanovi( aRabat, nCijena )
 
-if (gUpitNP=="D" .and. gClanPopust)
-	nNovaCijena=Round(nCijena*roba->n1/100, gPopDec)
-	AddToArrRabat(aRabat, roba->id, nil, nil, nil, nil, nNovaCijena)
-endif
+   // {
+   LOCAL nNovaCijena := 0
 
-return
-*}
+   IF ( gUpitNP == "D" .AND. gClanPopust )
+      nNovaCijena = Round( nCijena * roba->n1 / 100, gPopDec )
+      AddToArrRabat( aRabat, roba->id, nil, nil, nil, nil, nNovaCijena )
+   ENDIF
+
+   RETURN
+// }
 
 /* GetPopProcent(aRabat, nCijena)
  *     Popust zadavanjem procenta
  *   param: aRabat
  *   param: nCijena
  */
-function GetPopProcent(aRabat, nCijena)
-*{
-local nNovaCijena:=0
+FUNCTION GetPopProcent( aRabat, nCijena )
 
-if gPopProc=="D"
-	nPopProc:=FrmGetPopProc()
-	nNovaCijena=Round(nCijena*nPopProc/100, gPopDec)
-	AddToArrRabat(aRabat, roba->id, nil, nil, nil, nil, nil, nNovaCijena)
-endif
+   // {
+   LOCAL nNovaCijena := 0
 
-return
-*}
+   IF gPopProc == "D"
+      nPopProc := FrmGetPopProc()
+      nNovaCijena = Round( nCijena * nPopProc / 100, gPopDec )
+      AddToArrRabat( aRabat, roba->id, nil, nil, nil, nil, nil, nNovaCijena )
+   ENDIF
+
+   RETURN
+// }
 
 
 /* AddToArrRabat(aRabat, cIdRoba, nPopVar1, nPopVar2, nPopVar3, nPopVar4, nPopVar5, nPopVar6)
@@ -175,85 +181,87 @@ return
  *   param: nPopVar5 - iznos popusta za clanove
  *   param: nPopVar6 - iznos popusta zadavanjem procenta
  */
-function AddToArrRabat(aRabat, cIdRoba, nPopVar1, nPopVar2, nPopVar3, nPopVar4, nPopVar5, nPopVar6)
-*{
+FUNCTION AddToArrRabat( aRabat, cIdRoba, nPopVar1, nPopVar2, nPopVar3, nPopVar4, nPopVar5, nPopVar6 )
 
-// ako je neki od parametara nPopVar(N)==NIL setuj na 0
-if nPopVar1==NIL
-	nPopVar1:=0
-endif
-if nPopVar2==NIL
-	nPopVar2:=0
-endif
-if nPopVar3==NIL
-	nPopVar3:=0
-endif
-if nPopVar4==NIL
-	nPopVar4:=0
-endif
-if nPopVar5==NIL
-	nPopVar5:=0
-endif
-if nPopVar6==NIL
-	nPopVar6:=0
-endif
+   // {
 
-if (LEN(aRabat) > 0)
-	// posto vec nesto ima u matrici prvo pretrazi...
-	nPosition:=ASCAN(aRabat, {|aValue| aValue[1]==cIdRoba})
-	if nPosition <> 0
-		if aRabat[nPosition, 2] == 0
-			aRabat[nPosition, 2] := nPopVar1
-		endif
-		if aRabat[nPosition, 3] == 0
-			aRabat[nPosition, 3] := nPopVar2
-		endif
-		if aRabat[nPosition, 4] == 0
-			aRabat[nPosition, 4] := nPopVar3
-		endif
-		if aRabat[nPosition, 5] == 0
-			aRabat[nPosition, 5] := nPopVar4	
-		endif
-		if aRabat[nPosition, 6] == 0
-			aRabat[nPosition, 6] := nPopVar5	
-		endif
-		if aRabat[nPosition, 7] == 0
-			aRabat[nPosition, 7] := nPopVar6
-		endif
-	else
-		AADD(aRabat, {cIdRoba, nPopVar1, nPopVar2, nPopVar3, nPopVar4, nPopVar5, nPopVar6})
-	endif
-else
-	AADD(aRabat, {cIdRoba, nPopVar1, nPopVar2, nPopVar3, nPopVar4, nPopVar5, nPopVar6})
-endif
+   // ako je neki od parametara nPopVar(N)==NIL setuj na 0
+   IF nPopVar1 == NIL
+      nPopVar1 := 0
+   ENDIF
+   IF nPopVar2 == NIL
+      nPopVar2 := 0
+   ENDIF
+   IF nPopVar3 == NIL
+      nPopVar3 := 0
+   ENDIF
+   IF nPopVar4 == NIL
+      nPopVar4 := 0
+   ENDIF
+   IF nPopVar5 == NIL
+      nPopVar5 := 0
+   ENDIF
+   IF nPopVar6 == NIL
+      nPopVar6 := 0
+   ENDIF
 
-return
-*}
+   IF ( Len( aRabat ) > 0 )
+      // posto vec nesto ima u matrici prvo pretrazi...
+      nPosition := AScan( aRabat, {| aValue| aValue[ 1 ] == cIdRoba } )
+      IF nPosition <> 0
+         IF aRabat[ nPosition, 2 ] == 0
+            aRabat[ nPosition, 2 ] := nPopVar1
+         ENDIF
+         IF aRabat[ nPosition, 3 ] == 0
+            aRabat[ nPosition, 3 ] := nPopVar2
+         ENDIF
+         IF aRabat[ nPosition, 4 ] == 0
+            aRabat[ nPosition, 4 ] := nPopVar3
+         ENDIF
+         IF aRabat[ nPosition, 5 ] == 0
+            aRabat[ nPosition, 5 ] := nPopVar4
+         ENDIF
+         IF aRabat[ nPosition, 6 ] == 0
+            aRabat[ nPosition, 6 ] := nPopVar5
+         ENDIF
+         IF aRabat[ nPosition, 7 ] == 0
+            aRabat[ nPosition, 7 ] := nPopVar6
+         ENDIF
+      ELSE
+         AAdd( aRabat, { cIdRoba, nPopVar1, nPopVar2, nPopVar3, nPopVar4, nPopVar5, nPopVar6 } )
+      ENDIF
+   ELSE
+      AAdd( aRabat, { cIdRoba, nPopVar1, nPopVar2, nPopVar3, nPopVar4, nPopVar5, nPopVar6 } )
+   ENDIF
+
+   RETURN
+// }
 
 
 /* RptArrRabat(aRabat)
  *     Stampa matricu aRabat, sluzi samo za testiranje!!!
  *   param: aRabat
  */
-function RptArrRabat(aRabat)
-*{
-START PRINT CRET
+FUNCTION RptArrRabat( aRabat )
 
-? "Test :: matrica rabata"
-? "-------------------------------------------------"
-?
+   // {
+   START PRINT CRET
 
-for i:=1 to LEN(aRabat)
-	? aRabat[i, 1], aRabat[i, 2], aRabat[i, 3],;
-	  aRabat[i, 4], aRabat[i, 5], aRabat[i, 6], aRabat[i, 7]	
-next
-?
-?
+   ? "Test :: matrica rabata"
+   ? "-------------------------------------------------"
+   ?
 
-ENDPRINT
+   FOR i := 1 TO Len( aRabat )
+      ? aRabat[ i, 1 ], aRabat[ i, 2 ], aRabat[ i, 3 ], ;
+         aRabat[ i, 4 ], aRabat[ i, 5 ], aRabat[ i, 6 ], aRabat[ i, 7 ]
+   NEXT
+   ?
+   ?
 
-return
-*}
+   ENDPRINT
+
+   RETURN
+// }
 
 
 /* CalcArrRabat(aRabat, lPopVar1, lPopVar2, lPopVar3, lPopVar4, lPopVar5, lPopVar6)
@@ -266,34 +274,35 @@ return
  *   param: lPopVar5 - .t. racunaj 5 varijantu
  *   param: lPopVar6 - .t. racunaj 6 varijantu
  */
-function CalcArrRabat(aRabat, lPopVar1, lPopVar2, lPopVar3, lPopVar4, lPopVar5, lPopVar6)
-*{
-local nIznos:=0
+FUNCTION CalcArrRabat( aRabat, lPopVar1, lPopVar2, lPopVar3, lPopVar4, lPopVar5, lPopVar6 )
+
+   // {
+   LOCAL nIznos := 0
 
 
-for i:=1 to LEN(aRabat)
-	if lPopVar1
-		nIznos += aRabat[i, 2]
-	endif
-	if lPopVar2
-		nIznos += aRabat[i, 3]
-	endif
-	if lPopVar3
-		nIznos += aRabat[i, 4]
-	endif
-	if lPopVar4
-		nIznos += aRabat[i, 5]
-	endif
-	if lPopVar5
-		nIznos += aRabat[i, 6]
-	endif
-	if lPopVar6
-		nIznos += aRabat[i, 7]
-	endif
-next
+   FOR i := 1 TO Len( aRabat )
+      IF lPopVar1
+         nIznos += aRabat[ i, 2 ]
+      ENDIF
+      IF lPopVar2
+         nIznos += aRabat[ i, 3 ]
+      ENDIF
+      IF lPopVar3
+         nIznos += aRabat[ i, 4 ]
+      ENDIF
+      IF lPopVar4
+         nIznos += aRabat[ i, 5 ]
+      ENDIF
+      IF lPopVar5
+         nIznos += aRabat[ i, 6 ]
+      ENDIF
+      IF lPopVar6
+         nIznos += aRabat[ i, 7 ]
+      ENDIF
+   NEXT
 
-return nIznos
-*}
+   RETURN nIznos
+// }
 
 
 /* CalcRabatForArticle(aRabat, cIdRoba, lPopVar1, lPopVar2, lPopVar3, lPopVar4, lPopVar5, lPopVar6)
@@ -307,84 +316,88 @@ return nIznos
  *   param: lPopVar5
  *   param: lPopVar6
  */
-function CalcRabatForArticle(aRabat, cIdRoba, lPopVar1, lPopVar2, lPopVar3, lPopVar4, lPopVar5, lPopVar6)
-*{
-local nIznos:=0
-local nPosition:=0
+FUNCTION CalcRabatForArticle( aRabat, cIdRoba, lPopVar1, lPopVar2, lPopVar3, lPopVar4, lPopVar5, lPopVar6 )
 
-nPosition:=ASCAN(aRabat, {|Value| Value[1]==cIdRoba})
+   // {
+   LOCAL nIznos := 0
+   LOCAL nPosition := 0
 
-if nPosition <> 0
-	if lPopVar1
-		nIznos := aRabat[nPosition, 2]
-	endif
-	if lPopVar2
-		nIznos += aRabat[nPosition, 3]
-	endif
-	if lPopVar3
-		nIznos += aRabat[nPosition, 4]
-	endif
-	if lPopVar4
-		nIznos += aRabat[nPosition, 5]
-	endif
-	if lPopVar5
-		nIznos += aRabat[nPosition, 6]
-	endif
-	if lPopVar6
-		nIznos += aRabat[nPosition, 7]
-	endif
-endif
+   nPosition := AScan( aRabat, {| Value| Value[ 1 ] == cIdRoba } )
 
-return nIznos
+   IF nPosition <> 0
+      IF lPopVar1
+         nIznos := aRabat[ nPosition, 2 ]
+      ENDIF
+      IF lPopVar2
+         nIznos += aRabat[ nPosition, 3 ]
+      ENDIF
+      IF lPopVar3
+         nIznos += aRabat[ nPosition, 4 ]
+      ENDIF
+      IF lPopVar4
+         nIznos += aRabat[ nPosition, 5 ]
+      ENDIF
+      IF lPopVar5
+         nIznos += aRabat[ nPosition, 6 ]
+      ENDIF
+      IF lPopVar6
+         nIznos += aRabat[ nPosition, 7 ]
+      ENDIF
+   ENDIF
+
+   RETURN nIznos
 
 
-// 
+//
 // Provjerava da li je tacnan uslov za popust preko odredjenog iznosa
 //
-function IsPopPrekoOdrIzn(nTotal)
-local lReslut:=.f.
+FUNCTION IsPopPrekoOdrIzn( nTotal )
 
-// iznos moze biti 100 i -100, ako je storno
-if ABS(nTotal) > gPopIzn
-	lResult:=.t.
-else
-	lResult:=.f.
-endif
+   LOCAL lReslut := .F.
 
-return lResult
+   // iznos moze biti 100 i -100, ako je storno
+   IF Abs( nTotal ) > gPopIzn
+      lResult := .T.
+   ELSE
+      lResult := .F.
+   ENDIF
+
+   RETURN lResult
 
 
 
 
 // Provjerava da li se uzima u obzir varijanta popusta preko odredjenog iznosa
-function VarPopPrekoOdrIzn()
-local _ok := .f.
+FUNCTION VarPopPrekoOdrIzn()
 
-if ( gPopIzn > 0 .and. gPopIznP > 0 )
-	_ok := .t.
-else
-	_ok := .f.
-endif
+   LOCAL _ok := .F.
 
-return _ok
+   IF ( gPopIzn > 0 .AND. gPopIznP > 0 )
+      _ok := .T.
+   ELSE
+      _ok := .F.
+   ENDIF
+
+   RETURN _ok
 
 
 
 /* FrmGetPopProc()
  *     Prikaz forme za unos procenta popusta
  */
-function FrmGetPopProc()
-*{
-local GetList:={}
-local nPopProc:=0
+FUNCTION FrmGetPopProc()
 
-Box(,1,23)
-	@ m_x+1, m_y+2 SAY "Popust (%)" GET nPopProc PICT "999.99"
-	read
-BoxC()
+   // {
+   LOCAL GetList := {}
+   LOCAL nPopProc := 0
 
-return nPopProc
-*}
+   Box(, 1, 23 )
+   @ m_x + 1, m_y + 2 SAY "Popust (%)" GET nPopProc PICT "999.99"
+   READ
+   BoxC()
+
+   RETURN nPopProc
+// }
 
 
 /* ShowRabatOnForm(nx, ny)
@@ -392,27 +405,28 @@ return nPopProc
  *   param: nx
  *   param: ny
  */
-function ShowRabatOnForm(nx, ny)
-*{
-local nCijena:=0
-local nPopust:=0
+FUNCTION ShowRabatOnForm( nx, ny )
 
-nCijena := _cijena
-nPopust := CalcRabatForArticle(aRabat, _idRoba, .t., .t., .t., .t., .t., .t.)
-_ncijena := nPopust
+   // {
+   LOCAL nCijena := 0
+   LOCAL nPopust := 0
 
-if (nPopust <> 0)
-	@ nx, ny SAY "Popust :"
-  	@ nx, col()+1 SAY _nCijena pict "99999.999"
-  	@ nx+1, ny SAY  "Cij-Pop:"
-  	@ nx+1, col()+1 SAY _Cijena-_nCijena pict "99999.999"
-else
-  	@ nx, ny SAY space(20)
-  	@ nx+1, ny SAY space(20)
-endif
+   nCijena := _cijena
+   nPopust := CalcRabatForArticle( aRabat, _idRoba, .T., .T., .T., .T., .T., .T. )
+   _ncijena := nPopust
 
-return
-*}
+   IF ( nPopust <> 0 )
+      @ nx, ny SAY "Popust :"
+      @ nx, Col() + 1 SAY _nCijena PICT "99999.999"
+      @ nx + 1, ny SAY  "Cij-Pop:"
+      @ nx + 1, Col() + 1 SAY _Cijena - _nCijena PICT "99999.999"
+   ELSE
+      @ nx, ny SAY Space( 20 )
+      @ nx + 1, ny SAY Space( 20 )
+   ENDIF
+
+   RETURN
+// }
 
 
 
@@ -420,118 +434,119 @@ return
 /* RecalcRabat()
  *     Rekalkulise vrijednost rabata prije azuriranja i stampanja racuna. Ovo je neophodno radi varijante popusta preko odredjenog iznosa.
  */
-function RecalcRabat(cIdVrsteP)
-local nNIznos:=0
-local nIznNar:=0
-local nPopust:=0
+FUNCTION RecalcRabat( cIdVrsteP )
 
-if cIdVrsteP==NIL
-	cIdVrsteP:=""
-endif
+   LOCAL nNIznos := 0
+   LOCAL nIznNar := 0
+   LOCAL nPopust := 0
 
-// prvo vidi koliki je iznos racuna
-select _pos_pripr
-go top
-do while !EOF()
-	_IdVrsteP := cIdVrsteP
-	nIznNar+=cijena*kolicina
-	nPopust+=ncijena*kolicina
-	skip
-enddo
+   IF cIdVrsteP == NIL
+      cIdVrsteP := ""
+   ENDIF
 
-go top
-do while !eof()
-	if VarPopPrekoOdrIzn()
-		if !IsPopPrekoOdrIzn( nIznNar-nPopust ) .or. (IsPopPrekoOdrIzn(nIznNar-nPopust) .and. cIdVrsteP<>"01")
-			if LEN(aRabat)>0
-				nNIznos:=CalcRabatForArticle(aRabat, idroba, .t., .t., .t., .f., .t., .t.)
-			else
-				nNIznos:=0
-			endif
-			Scatter()
-  			_ncijena:=nNIznos
-			Gather()
-		endif
-		skip
-	elseif gClanPopust 
-		if cIdVrsteP <> "02"
-			if LEN(aRabat)>0
-				nNIznos:=CalcRabatForArticle(aRabat, idroba, .t., .t., .t., .t., .f., .t.)
-			else
-				nNIznos:=0
-			endif
-			Scatter()
-			_ncijena:=nNIznos
-			Gather()
-			
-		endif
-		skip
-	else
-		skip
-		loop
-	endif
-enddo
+   // prvo vidi koliki je iznos racuna
+   SELECT _pos_pripr
+   GO TOP
+   DO WHILE !Eof()
+      _IdVrsteP := cIdVrsteP
+      nIznNar += cijena * kolicina
+      nPopust += ncijena * kolicina
+      SKIP
+   ENDDO
 
-return
-*}
+   GO TOP
+   DO WHILE !Eof()
+      IF VarPopPrekoOdrIzn()
+         IF !IsPopPrekoOdrIzn( nIznNar - nPopust ) .OR. ( IsPopPrekoOdrIzn( nIznNar - nPopust ) .AND. cIdVrsteP <> "01" )
+            IF Len( aRabat ) > 0
+               nNIznos := CalcRabatForArticle( aRabat, idroba, .T., .T., .T., .F., .T., .T. )
+            ELSE
+               nNIznos := 0
+            ENDIF
+            Scatter()
+            _ncijena := nNIznos
+            Gather()
+         ENDIF
+         SKIP
+      ELSEIF gClanPopust
+         IF cIdVrsteP <> "02"
+            IF Len( aRabat ) > 0
+               nNIznos := CalcRabatForArticle( aRabat, idroba, .T., .T., .T., .T., .F., .T. )
+            ELSE
+               nNIznos := 0
+            ENDIF
+            Scatter()
+            _ncijena := nNIznos
+            Gather()
+
+         ENDIF
+         SKIP
+      ELSE
+         SKIP
+         LOOP
+      ENDIF
+   ENDDO
+
+   RETURN
+// }
 
 
 /* Scan_PriprForRabat(aRabat)
  *     Ako ima nezakljucenih racuna u _PRIPR napuni matricu aRabat
  *   param: aRabat - matrica rabata
  */
-function Scan_PriprForRabat(aRabat)
-*{
-select _pos_pripr
-if (RecCount() > 0)
-	do while !EOF()
-		FrmGetRabat(aRabat, field->cijena)
-		skip
-	enddo
+FUNCTION Scan_PriprForRabat( aRabat )
 
-endif
+   // {
+   SELECT _pos_pripr
+   IF ( RecCount() > 0 )
+      DO WHILE !Eof()
+         FrmGetRabat( aRabat, field->cijena )
+         SKIP
+      ENDDO
 
-return
+   ENDIF
+
+   RETURN
 
 // -----------------------------------------
 // vraca popust po vrsti placanja
 // -----------------------------------------
-function get_vrpl_popust(cIdVrPlac, nPopust)
-local nTArea := SELECT()
-local cPom
-local nPos
-local cTmp
-local cPopust
-local i
+FUNCTION get_vrpl_popust( cIdVrPlac, nPopust )
 
-select vrstep
-set order to tag "ID"
-seek cIdVrPlac
+   LOCAL nTArea := Select()
+   LOCAL cPom
+   LOCAL nPos
+   LOCAL cTmp
+   LOCAL cPopust
+   LOCAL i
 
-// naz #P#05#
-cPom := ALLTRIM(field->naz)
-nPos := AT("#P#", cPom)
-cPopust := ""
+   SELECT vrstep
+   SET ORDER TO TAG "ID"
+   SEEK cIdVrPlac
 
-if nPos > 0
-	
-	for i:=1 to LEN(cPom)
-		
-		cTmp := SUBSTR(cPom, nPos + 2 + i, 1)
-		
-		if cTmp == "#"
-			exit
-		endif
-		
-		cPopust += cTmp
-	next
-	
-	nPopust := VAL(cPopust)
-	
-endif
+   // naz #P#05#
+   cPom := AllTrim( field->naz )
+   nPos := At( "#P#", cPom )
+   cPopust := ""
 
-select (nTArea)
-return
+   IF nPos > 0
 
+      FOR i := 1 TO Len( cPom )
 
+         cTmp := SubStr( cPom, nPos + 2 + i, 1 )
 
+         IF cTmp == "#"
+            EXIT
+         ENDIF
+
+         cPopust += cTmp
+      NEXT
+
+      nPopust := Val( cPopust )
+
+   ENDIF
+
+   SELECT ( nTArea )
+
+   RETURN

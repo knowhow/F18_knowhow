@@ -1,17 +1,16 @@
 /*
- * This file is part of the bring.out FMK, a free and open source
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+ * This file is part of the bring.out knowhow ERP, a free and open source
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
 
-
 #include "f18.ch"
-#include "f18_separator.ch"
+
 
 /* Zaduzenje(cIdVd)
  *     Dokument zaduzenja
@@ -39,7 +38,7 @@ FUNCTION Zaduzenje
 
    IF gSamoProdaja == "D" .AND. ( cIdVd <> VD_REK )
       MsgBeep( "Ne možete vršiti unos zaduženja !" )
-      RETURN
+      RETURN .F.
    ENDIF
 
    PRIVATE ImeKol := {}
@@ -99,7 +98,7 @@ FUNCTION Zaduzenje
    BoxC()
 
    cRSdbf := "ROBA"
-   bRSblok := {|x, y| pos_postoji_roba( @_idroba, x, y ), pos_set_key_handler_ispravka_zaduzenja() }
+   bRSblok := {| x, y| pos_postoji_roba( @_idroba, x, y ), pos_set_key_handler_ispravka_zaduzenja() }
    cUI_I := R_I
    cUI_U := R_U
 
@@ -174,10 +173,10 @@ FUNCTION Zaduzenje
       Box (, 20, 77,, { "<*> - Ispravka stavke ", "Storno - negativna kolicina" } )
       @ m_x, m_y + 4 SAY8 PadC( "PRIPREMA " + NaslovDok( cIdVd ) + " NA ODJELJENJE " + ;
          AllTrim( ODJ->Naz ) + iif( !Empty( cIdDio ), ;
-         "-" + DIO->Naz, "" ), 70 ) COLOR F18_COLOR_INVERT 
+         "-" + DIO->Naz, "" ), 70 ) COLOR F18_COLOR_INVERT
 
       oBrowse := FormBrowse( m_x + 6, m_y + 1, m_x + 19, m_y + 77, ImeKol, Kol, ;
-                { BROWSE_PODVUCI_2, BROWSE_PODVUCI, BROWSE_COL_SEP }, 0 )
+         { BROWSE_PODVUCI_2, BROWSE_PODVUCI, BROWSE_COL_SEP }, 0 )
       oBrowse:autolite := .F.
 
       pos_set_key_handler_ispravka_zaduzenja()
@@ -380,13 +379,17 @@ FUNCTION StUSif()
 
 
 FUNCTION pos_set_key_handler_ispravka_zaduzenja()
+
    SetKey( Asc( "*" ), {|| IspraviZaduzenje() } )
+
    RETURN .T.
 
 
 
 FUNCTION pos_unset_key_handler_ispravka_zaduzenja()
+
    SetKey( Asc( "*" ), NIL )
+
    RETURN .F.
 
 
@@ -534,4 +537,3 @@ FUNCTION NaslovDok( cIdVd )
    ENDCASE
 
    RETURN
-

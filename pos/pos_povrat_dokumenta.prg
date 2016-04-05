@@ -12,7 +12,6 @@
 #include "f18.ch"
 
 
-
 FUNCTION pos_brisi_dokument( id_pos, id_vd, dat_dok, br_dok )
 
    LOCAL lOk := .T.

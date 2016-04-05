@@ -1,279 +1,277 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+/*
+ * This file is part of the bring.out knowhow ERP, a free and open source
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
 
-
 #include "f18.ch"
 
- 
-function GenUtrSir(dDatOD,dDatDo,cSmjena)
-*{
-local cIdPos
-private fTekuci
 
-if cSmjena==nil
-	cSmjena:=""
-	fTekuci:=.f.
-else
-	// generise se pri zakljucenju/ulasku u izvjestaje
-  	fTekuci:=.t.
-endif
 
-if Pcount()==0
-	// kad radim forsirano generisanje utroska sirovina
-  	Box(,5,60)
-  	dDatOd:=CTOD("")
-  	dDatDo:=gDatum    // DATE()
-  	cSmjena := ""
-  	@ m_x+1,m_y+5 Say "Generisi za period pocevsi od:" GET dDatOd
-  	@ m_x+3,m_y+5 Say "                 zakljucno sa:" GET dDatDo
-  	READ
-  	ESC_BCR
-  	BoxC()
-endif
+FUNCTION GenUtrSir( dDatOD, dDatDo, cSmjena )
 
-MsgO("SACEKAJTE ... GENERISEM UTROSAK SIROVINA ...")
+   LOCAL cIdPos
+   PRIVATE fTekuci
 
-O_PRIPRG
-O_SIFK
-O_SIFV
-O_SAST
-O_ROBA
-O_ODJ
-O_DIO
-O_POS_DOKS
-O_POS
+   IF cSmjena == nil
+      cSmjena := ""
+      fTekuci := .F.
+   ELSE
+      // generise se pri zakljucenju/ulasku u izvjestaje
+      fTekuci := .T.
+   ENDIF
 
-if empty(cSmjena) // za period ponovo izgenerisi
-	select pos_doks
-	set order to tag "2" // IdVd+DTOS (Datum)+Smjena
-  	// prvo pobrisem stare dokumente razduzenja sirovina
-  	Seek "96"+DTOS (dDatOd)
-  	do while !eof() .and. pos_doks->IdVd=="96" .and. pos_doks->Datum<=dDatDo
-    		@ m_x+1 , m_y+15 SAY "B/"+dtoc(datum)+Brdok
-    		SELECT POS
-    		Seek pos_doks->(IdPos+IdVd+dtos(datum)+BrDok)
-    		do while !eof() .and. POS->(IdPos+IdVd+dtos(datum)+BrDok)==pos_doks->(IdPos+IdVd+dtos(datum)+BrDok)
-      			Del_Skip()
-    		enddo
-    		select pos_doks
-    		Del_Skip()
-  	enddo
-endif  // za period ponovo izgenerisi
+   IF PCount() == 0
+      // kad radim forsirano generisanje utroska sirovina
+      Box(, 5, 60 )
+      dDatOd := CToD( "" )
+      dDatDo := gDatum    // DATE()
+      cSmjena := ""
+      @ m_x + 1, m_y + 5 SAY "Generisi za period pocevsi od:" GET dDatOd
+      @ m_x + 3, m_y + 5 SAY "                 zakljucno sa:" GET dDatDo
+      READ
+      ESC_BCR
+      BoxC()
+   ENDIF
 
-RazdPoNorm(dDatOd,dDatDo,cSmjena,fTekuci)
+   MsgO( "SACEKAJTE ... GENERISEM UTROSAK SIROVINA ..." )
 
-MsgC()
+   O_PRIPRG
+   O_SIFK
+   O_SIFV
+   O_SAST
+   O_ROBA
+   O_ODJ
+   O_DIO
+   O_POS_DOKS
+   O_POS
 
-CLOSERET
-*}
+   IF Empty( cSmjena ) // za period ponovo izgenerisi
+      SELECT pos_doks
+      SET ORDER TO TAG "2" // IdVd+DTOS (Datum)+Smjena
+      // prvo pobrisem stare dokumente razduzenja sirovina
+      SEEK "96" + DToS ( dDatOd )
+      DO WHILE !Eof() .AND. pos_doks->IdVd == "96" .AND. pos_doks->Datum <= dDatDo
+         @ m_x + 1, m_y + 15 SAY "B/" + DToC( datum ) + Brdok
+         SELECT POS
+         SEEK pos_doks->( IdPos + IdVd + DToS( datum ) + BrDok )
+         DO WHILE !Eof() .AND. POS->( IdPos + IdVd + DToS( datum ) + BrDok ) == pos_doks->( IdPos + IdVd + DToS( datum ) + BrDok )
+            Del_Skip()
+         ENDDO
+         SELECT pos_doks
+         Del_Skip()
+      ENDDO
+   ENDIF  // za period ponovo izgenerisi
+
+   RazdPoNorm( dDatOd, dDatDo, cSmjena, fTekuci )
+
+   MsgC()
+
+   CLOSERET
+   // }
 
 
 /* RazdPoNorm(dDatOd,dDatDo,cSmjena,fTekuci)
- *    
+ *
  */
- 
-function RazdPoNorm(dDatOd,dDatDo,cSmjena,fTekuci)
-local i:=1
-local cVrsta
-local fNaso
 
-// ispraznim pripremu
-SELECT PRIPRG
-my_dbf_zap()
+FUNCTION RazdPoNorm( dDatOd, dDatDo, cSmjena, fTekuci )
 
-Scatter()
+   LOCAL i := 1
+   LOCAL cVrsta
+   LOCAL fNaso
 
-select pos_doks
-Set order to tag "2"
+   // ispraznim pripremu
+   SELECT PRIPRG
+   my_dbf_zap()
 
-for i:=1 to 2
-	if i==1
- 		cVrsta:="42"
-	else
- 		cVrsta:="01"
-	endif
-	Seek cVrsta+DTOS (dDatOd)
-	do while !eof() .and. pos_doks->IdVd==cVrsta .and. pos_doks->Datum<=dDatDo
-  		if fTekuci .and. (pos_doks->Smjena<>cSmjena .or. pos_doks->M1==OBR_JEST)
-    			Skip
-			Loop
-  		endif
-		SELECT POS
-  		Seek pos_doks->(IdPos+IdVd+dtos(datum)+BrDok)
-  		@ m_x+1 , m_y+15 SAY "G/"+dtoc(datum)+Brdok
-  		do while !eof() .and. POS->(IdPos+IdVd+dtos(datum)+BrDok)==pos_doks->(IdPos+IdVd+dtos(datum)+BrDok)
-    			if POS->M1==OBR_JEST
-      				Skip
-				Loop
-    			endif
-    			Scatter()     // uzmi podatke o promjeni
-    			select sast
-    			Seek _idroba
-    			if FOUND()  // idemo po sastavnici
-      				do while !eof() .and. sast->Id==_idroba
-        				select roba
-					HSEEK sast->Id2
-        				if FOUND ()
-          					_Cijena := roba->mpc
-        				else
-          					_Cijena := 0
-        				endif
-        				SELECT PRIPRG
-        				HSEEK _IdPos+_IdOdj+_IdDio+sast->Id2+DTOS(_Datum)+_Smjena
-        				if !FOUND ()
-          					APPEND BLANK // priprg
-          					_IdVd:="96"
-						_MU_I:=S_I
-          					_BrDok:=SPACE(LEN(_BrDok))
-          					_IdRadnik:=SPACE(LEN(_IdRadnik))
-          					Gather()  // priprg
-          					// priprg
-          					REPLACE IdRoba WITH sast->Id2,Kolicina WITH _Kolicina * sast->Kolicina
-        				else
-          					REPLACE Kolicina WITH Kolicina + _Kolicina*sast->Kolicina
-        				endif
-        				select sast
-					SKIP
-      				enddo
-    			else // u sastavnici nema robe
-      				SELECT PRIPRG 
-				HSEEK _IdPos+_IdOdj+_IdDio+_IdRoba+DTOS(_Datum)+_Smjena
-      				if !FOUND ()
-        				APPEND BLANK
-        				_IdVd:="96"
-					_MU_I:=S_I
-        				_BrDok:=SPACE(LEN(_BrDok))
-        				_IdRadnik:=SPACE(LEN(_IdRadnik))
-        				Gather() // priprg
-      				else
-        				// priprg
-        				REPLACE Kolicina WITH _Kolicina + Kolicina
-      				endif
-    			endif
-    			SELECT POS
-			SKIP
-  		enddo // POS
-  		select pos_doks
-  		SKIP
-	enddo
+   Scatter()
 
-next // i
+   SELECT pos_doks
+   SET ORDER TO TAG "2"
 
-// prebaci dokumente razduzenja u DOKS/POS
+   FOR i := 1 TO 2
+      IF i == 1
+         cVrsta := "42"
+      ELSE
+         cVrsta := "01"
+      ENDIF
+      SEEK cVrsta + DToS ( dDatOd )
+      DO WHILE !Eof() .AND. pos_doks->IdVd == cVrsta .AND. pos_doks->Datum <= dDatDo
+         IF fTekuci .AND. ( pos_doks->Smjena <> cSmjena .OR. pos_doks->M1 == OBR_JEST )
+            SKIP
+            LOOP
+         ENDIF
+         SELECT POS
+         SEEK pos_doks->( IdPos + IdVd + DToS( datum ) + BrDok )
+         @ m_x + 1, m_y + 15 SAY "G/" + DToC( datum ) + Brdok
+         DO WHILE !Eof() .AND. POS->( IdPos + IdVd + DToS( datum ) + BrDok ) == pos_doks->( IdPos + IdVd + DToS( datum ) + BrDok )
+            IF POS->M1 == OBR_JEST
+               SKIP
+               LOOP
+            ENDIF
+            Scatter()     // uzmi podatke o promjeni
+            SELECT sast
+            SEEK _idroba
+            IF Found()  // idemo po sastavnici
+               DO WHILE !Eof() .AND. sast->Id == _idroba
+                  SELECT roba
+                  HSEEK sast->Id2
+                  IF Found ()
+                     _Cijena := roba->mpc
+                  ELSE
+                     _Cijena := 0
+                  ENDIF
+                  SELECT PRIPRG
+                  HSEEK _IdPos + _IdOdj + _IdDio + sast->Id2 + DToS( _Datum ) + _Smjena
+                  IF !Found ()
+                     APPEND BLANK // priprg
+                     _IdVd := "96"
+                     _MU_I := S_I
+                     _BrDok := Space( Len( _BrDok ) )
+                     _IdRadnik := Space( Len( _IdRadnik ) )
+                     Gather()  // priprg
+                     // priprg
+                     REPLACE IdRoba WITH sast->Id2, Kolicina WITH _Kolicina * sast->Kolicina
+                  ELSE
+                     REPLACE Kolicina WITH Kolicina + _Kolicina * sast->Kolicina
+                  ENDIF
+                  SELECT sast
+                  SKIP
+               ENDDO
+            ELSE // u sastavnici nema robe
+               SELECT PRIPRG
+               HSEEK _IdPos + _IdOdj + _IdDio + _IdRoba + DToS( _Datum ) + _Smjena
+               IF !Found ()
+                  APPEND BLANK
+                  _IdVd := "96"
+                  _MU_I := S_I
+                  _BrDok := Space( Len( _BrDok ) )
+                  _IdRadnik := Space( Len( _IdRadnik ) )
+                  Gather() // priprg
+               ELSE
+                  // priprg
+                  REPLACE Kolicina WITH _Kolicina + Kolicina
+               ENDIF
+            ENDIF
+            SELECT POS
+            SKIP
+         ENDDO // POS
+         SELECT pos_doks
+         SKIP
+      ENDDO
 
-select pos_doks
-Set order to tag "2"
-select POS
-set order to tag "1"
-SELECT PRIPRG
-set order to tag "2"
-GO TOP
-while !eof()
-	cIdPos := PRIPRG->IdPos
-  	do while !eof() .and. PRIPRG->IdPos==cIdPos
-    		xDatum := PRIPRG->Datum
-    		do while !Eof() .and. PRIPRG->IdPos==cIdPos .and. PRIPRG->Datum==xDatum
-      			xSmjena := PRIPRG->Smjena
-      			Scatter()
-      			select pos_doks
-      			Seek "96"+DTOS (xDatum)+xSmjena
-      			if !Found()
-        			set order to tag "1"
-        			cBrDok := _BrDok := pos_novi_broj_dokumenta( cIdPos, VD_RZS )
-        			if (gBrojSto=="D")
-					_zakljucen := "Z"
-				endif
-				Set order to tag "2"
-        			Append Blank
-        			Gather()
-      			else
-        			cBrDok := ""
-        			do while !Eof() .and. pos_doks->IdVd=="96" .and. pos_doks->Datum==xDatum.and. pos_doks->Smjena==xSmjena
-          				if pos_doks->IdPos==cIdPos
-            					cBrDok := pos_doks->BrDok
-            					EXIT
-          				endif
-          				SKIP
-        			enddo
-        			if Empty(cBrDok)  
-					// ne postoji RZS za cIdPos
-          				set order to tag "1"
-          				cBrDok := _BrDok := pos_novi_broj_dokumenta( cIdPos, VD_RZS )
-          				if (gBrojSto=="D")
-						_zakljucen := "Z"
-					endif
-					Set order to tag "2"
-          				Append Blank
-          				Gather()
-        			endif
-      			endif
-      			SELECT PRIPRG    // xDatum je priprg->datum
-      			do while !eof() .and. PRIPRG->IdPos==cIdPos .and. PRIPRG->Datum==xDatum.and.PRIPRG->Smjena==xSmjena
-        			Scatter()
-        			_BrDok := cBrDok
-        			_Prebacen := OBR_NIJE
-        			fNaso := .f.
-        			SELECT POS
-        			Seek cIdPos+"96"+dtos(xDatum)+cBrDok+_IdRoba
-        			do while !Eof() .and.POS->(IdPos+IdVd+dtos(datum)+BrDok+IdRoba)==cIdPos+VD_RZS+dtos(xDatum)+cBrDok+_IdRoba
-          				if POS->Cijena==PRIPRG->Cijena .and.POS->IdCijena==PRIPRG->IdCijena .and. pos->idodj==priprg->idodj
-            					fNaso := .t.
-            					Exit
-          				endif
-          				Skip
-        			enddo
-        			if fNaso
-          				// POS
-          				REPLACE Kolicina WITH Kolicina+_Kolicina
-          				REPLSQL Kolicina WITH Kolicina+_Kolicina
-        			else
-          				Append Blank
-          				_BrDok := cBrDok
-          				Gather()
-        			endif
-        			SELECT PRIPRG
-        			SKIP
-      			enddo
-    		enddo
-  	enddo
-enddo
+   NEXT // i
 
-// oznaci da si obradio racune
+   // prebaci dokumente razduzenja u DOKS/POS
 
-for i:=1 to 2
-	if i==1
- 		cVrsta:="42"
-	else
- 		cVrsta:="01"
-	endif
-	select pos_doks
-	Set order to tag "2"
-	Seek cVrsta+DTOS (dDatOd)
-	do while !Eof() .and. pos_doks->IdVd==cVrsta .and. pos_doks->Datum <= dDatDo
-  		if fTekuci .and. (pos_doks->Smjena<>cSmjena .or. pos_doks->M1==OBR_JEST)
-    			Skip
-			Loop
-  		endif
-  		// doks
-  		REPLACE M1 WITH OBR_JEST
-  		REPLSQL M1 WITH OBR_JEST
-  		Skip
-	enddo
-next //i
+   SELECT pos_doks
+   SET ORDER TO TAG "2"
+   SELECT POS
+   SET ORDER TO TAG "1"
+   SELECT PRIPRG
+   SET ORDER TO TAG "2"
+   GO TOP
+   WHILE !Eof()
+      cIdPos := PRIPRG->IdPos
+      DO WHILE !Eof() .AND. PRIPRG->IdPos == cIdPos
+         xDatum := PRIPRG->Datum
+         DO WHILE !Eof() .AND. PRIPRG->IdPos == cIdPos .AND. PRIPRG->Datum == xDatum
+            xSmjena := PRIPRG->Smjena
+            Scatter()
+            SELECT pos_doks
+            SEEK "96" + DToS ( xDatum ) + xSmjena
+            IF !Found()
+               SET ORDER TO TAG "1"
+               cBrDok := _BrDok := pos_novi_broj_dokumenta( cIdPos, VD_RZS )
+               IF ( gBrojSto == "D" )
+                  _zakljucen := "Z"
+               ENDIF
+               SET ORDER TO TAG "2"
+               APPEND BLANK
+               Gather()
+            ELSE
+               cBrDok := ""
+               DO WHILE !Eof() .AND. pos_doks->IdVd == "96" .AND. pos_doks->Datum == xDatum .AND. pos_doks->Smjena == xSmjena
+                  IF pos_doks->IdPos == cIdPos
+                     cBrDok := pos_doks->BrDok
+                     EXIT
+                  ENDIF
+                  SKIP
+               ENDDO
+               IF Empty( cBrDok )
+                  // ne postoji RZS za cIdPos
+                  SET ORDER TO TAG "1"
+                  cBrDok := _BrDok := pos_novi_broj_dokumenta( cIdPos, VD_RZS )
+                  IF ( gBrojSto == "D" )
+                     _zakljucen := "Z"
+                  ENDIF
+                  SET ORDER TO TAG "2"
+                  APPEND BLANK
+                  Gather()
+               ENDIF
+            ENDIF
+            SELECT PRIPRG    // xDatum je priprg->datum
+            DO WHILE !Eof() .AND. PRIPRG->IdPos == cIdPos .AND. PRIPRG->Datum == xDatum .AND. PRIPRG->Smjena == xSmjena
+               Scatter()
+               _BrDok := cBrDok
+               _Prebacen := OBR_NIJE
+               fNaso := .F.
+               SELECT POS
+               SEEK cIdPos + "96" + DToS( xDatum ) + cBrDok + _IdRoba
+               DO WHILE !Eof() .AND. POS->( IdPos + IdVd + DToS( datum ) + BrDok + IdRoba ) == cIdPos + VD_RZS + DToS( xDatum ) + cBrDok + _IdRoba
+                  IF POS->Cijena == PRIPRG->Cijena .AND. POS->IdCijena == PRIPRG->IdCijena .AND. pos->idodj == priprg->idodj
+                     fNaso := .T.
+                     EXIT
+                  ENDIF
+                  SKIP
+               ENDDO
+               IF fNaso
+                  // POS
+                  REPLACE Kolicina WITH Kolicina + _Kolicina
+                  REPLSQL Kolicina WITH Kolicina + _Kolicina
+               ELSE
+                  APPEND BLANK
+                  _BrDok := cBrDok
+                  Gather()
+               ENDIF
+               SELECT PRIPRG
+               SKIP
+            ENDDO
+         ENDDO
+      ENDDO
+   ENDDO
 
-SELECT PRIPRG
+   // oznaci da si obradio racune
 
-my_dbf_zap()
-return
+   FOR i := 1 TO 2
+      IF i == 1
+         cVrsta := "42"
+      ELSE
+         cVrsta := "01"
+      ENDIF
+      SELECT pos_doks
+      SET ORDER TO TAG "2"
+      SEEK cVrsta + DToS ( dDatOd )
+      DO WHILE !Eof() .AND. pos_doks->IdVd == cVrsta .AND. pos_doks->Datum <= dDatDo
+         IF fTekuci .AND. ( pos_doks->Smjena <> cSmjena .OR. pos_doks->M1 == OBR_JEST )
+            SKIP
+            LOOP
+         ENDIF
+         // doks
+         REPLACE M1 WITH OBR_JEST
+         REPLSQL M1 WITH OBR_JEST
+         SKIP
+      ENDDO
+   NEXT // i
 
+   SELECT PRIPRG
 
+   my_dbf_zap()
 
-
+   RETURN

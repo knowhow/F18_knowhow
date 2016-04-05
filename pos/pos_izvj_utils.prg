@@ -1,24 +1,22 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+/*
+ * This file is part of the bring.out knowhow ERP, a free and open source
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
 
-
 #include "f18.ch"
-
 
 
 // ----------------------------------------------------
 // zaglavlje firme treba uzeti iz parametara firme
 // ----------------------------------------------------
-function ZagFirma()
-return
+FUNCTION ZagFirma()
+   RETURN
 
 
 
@@ -26,153 +24,153 @@ return
 // -----------------------------------------------------------
 // izvlaci realizacija kase na dan = dDatum u pom tabelu
 // -----------------------------------------------------------
-function RealNaDan(dDatum)
-local nUkupno
-local lOpened
+FUNCTION RealNaDan( dDatum )
 
-SELECT(F_POS)
-lOpened:=.t.
-if !USED()
-    O_POS
-    lOpened:=.f.
-endif
+   LOCAL nUkupno
+   LOCAL lOpened
 
-//"4", "dtos(datum)", KUMPATH+"POS"
-SET ORDER TO TAG "4"
-seek DTOS(dDatum)
+   Select( F_POS )
+   lOpened := .T.
+   IF !Used()
+      O_POS
+      lOpened := .F.
+   ENDIF
 
-nUkupno:=0
-cPopust:=Pitanje(,"Uzeti u obzir popust","D")
-do while !EOF() .and. dDatum==field->datum
-    if field->idVd=="42"
-        if cPopust=="D"
-            nUkupno+=field->kolicina*(field->cijena-field->ncijena)
-        else
-            nUkupno+=field->kolicina*field->cijena
-        endif
-    endif
-    SKIP
-enddo
+   // "4", "dtos(datum)", KUMPATH+"POS"
+   SET ORDER TO TAG "4"
+   SEEK DToS( dDatum )
 
-if !lOpened
-    USE
-endif
-return nUkupno
+   nUkupno := 0
+   cPopust := Pitanje(, "Uzeti u obzir popust", "D" )
+   DO WHILE !Eof() .AND. dDatum == field->datum
+      IF field->idVd == "42"
+         IF cPopust == "D"
+            nUkupno += field->kolicina * ( field->cijena - field->ncijena )
+         ELSE
+            nUkupno += field->kolicina * field->cijena
+         ENDIF
+      ENDIF
+      SKIP
+   ENDDO
+
+   IF !lOpened
+      USE
+   ENDIF
+
+   RETURN nUkupno
 
 
 
 // ----------------------------------------------------------------------
 // kasa izvuci - funkcija koja izvlaci iznose po tipovima dokumenata
 // ----------------------------------------------------------------------
-function KasaIzvuci(cIdVd, cDobId)
-// cIdVD - Id vrsta dokumenta
-// Opis: priprema pomoce baze POM.DBF za realizaciju
+FUNCTION KasaIzvuci( cIdVd, cDobId )
 
-if ( cDobId == nil )
-    cDobId := ""
-endif
+   // cIdVD - Id vrsta dokumenta
+   // Opis: priprema pomoce baze POM.DBF za realizaciju
 
-MsgO("formiram pomocnu tabelu izvjestaja...")
+   IF ( cDobId == nil )
+      cDobId := ""
+   ENDIF
 
-SEEK cIdVd + DTOS(dDat0)
+   MsgO( "formiram pomocnu tabelu izvjestaja..." )
 
-do while !eof().and.pos_doks->IdVd==cIdVd.and.pos_doks->Datum<=dDat1
+   SEEK cIdVd + DToS( dDat0 )
 
-    if ( !EMPTY(cIdPos) .and. pos_doks->IdPos <> cIdPos ) .or. ( !EMPTY(cSmjena) .and. pos_doks->Smjena <> cSmjena )
+   DO WHILE !Eof() .AND. pos_doks->IdVd == cIdVd .AND. pos_doks->Datum <= dDat1
+
+      IF ( !Empty( cIdPos ) .AND. pos_doks->IdPos <> cIdPos ) .OR. ( !Empty( cSmjena ) .AND. pos_doks->Smjena <> cSmjena )
+         SKIP
+         LOOP
+      ENDIF
+
+      SELECT pos
+      SEEK pos_doks->( IdPos + IdVd + DToS( datum ) + BrDok )
+
+      DO WHILE !Eof() .AND. pos->( IdPos + IdVd + DToS( datum ) + BrDok ) == pos_doks->( IdPos + IdVd + DToS( datum ) + BrDok )
+
+         IF ( !Empty( cIdOdj ) .AND. pos->IdOdj <> cIdOdj ) .OR. ( !Empty( cIdDio ) .AND. pos->IdDio <> cIdDio )
             SKIP
-        loop
-    endif
-    
-    SELECT pos 
-    SEEK pos_doks->(IdPos+IdVd+dtos(datum)+BrDok)
-  
-    do while !eof().and.pos->(IdPos+IdVd+dtos(datum)+BrDok)==pos_doks->(IdPos+IdVd+dtos(datum)+BrDok)
+            LOOP
+         ENDIF
 
-        if (!EMPTY(cIdOdj).and.pos->IdOdj<>cIdOdj).or.(!EMPTY(cIdDio).and.pos->IdDio<>cIdDio)
-            SKIP 
-            loop
-        endif
-            
-        select roba 
-        HSEEK pos->IdRoba
+         SELECT roba
+         HSEEK pos->IdRoba
 
-        if roba->(fieldpos("sifdob"))<>0
-            if !Empty(cDobId)
-                if roba->sifdob <> cDobId
-                    select pos
-                    skip
-                    loop
-                endif
-            endif
-        endif
-        
-        if roba->( FIELDPOS("idodj") ) <> 0
-            SELECT odj 
+         IF roba->( FieldPos( "sifdob" ) ) <> 0
+            IF !Empty( cDobId )
+               IF roba->sifdob <> cDobId
+                  SELECT pos
+                  SKIP
+                  LOOP
+               ENDIF
+            ENDIF
+         ENDIF
+
+         IF roba->( FieldPos( "idodj" ) ) <> 0
+            SELECT odj
             HSEEK roba->IdOdj
-        endif
-        
-        nNeplaca := 0
-            
-        if RIGHT(odj->naz,5)=="#1#0#"  // proba!!!
-            nNeplaca:=pos->(Kolicina*Cijena)
-        elseif RIGHT(odj->naz,6)=="#1#50#"
-            nNeplaca:=pos->(Kolicina*Cijena)/2
-        endif
-            
-        if gPopVar="P" 
-            nNeplaca+=pos->(kolicina*nCijena) 
-        endif
+         ENDIF
 
-        SELECT pom  
-        GO TOP
-        seek pos_doks->IdPos + pos_doks->IdRadnik + pos_doks->IdVrsteP + pos->IdOdj + pos->IdRoba + pos->IdCijena
-        
-        if !found()
+         nNeplaca := 0
+
+         IF Right( odj->naz, 5 ) == "#1#0#"  // proba!!!
+            nNeplaca := pos->( Kolicina * Cijena )
+         ELSEIF Right( odj->naz, 6 ) == "#1#50#"
+            nNeplaca := pos->( Kolicina * Cijena ) / 2
+         ENDIF
+
+         IF gPopVar = "P"
+            nNeplaca += pos->( kolicina * nCijena )
+         ENDIF
+
+         SELECT pom
+         GO TOP
+         SEEK pos_doks->IdPos + pos_doks->IdRadnik + pos_doks->IdVrsteP + pos->IdOdj + pos->IdRoba + pos->IdCijena
+
+         IF !Found()
 
             APPEND BLANK
-            replace IdPos WITH pos_doks->IdPos
-            replace IdRadnik WITH pos_doks->IdRadnik
-            replace IdVrsteP WITH pos_doks->IdVrsteP
-            replace IdOdj WITH pos->IdOdj
-            replace IdRoba WITH pos->IdRoba
-            replace IdCijena WITH pos->IdCijena
-            replace Kolicina WITH pos->Kolicina
-            replace Iznos WITH pos->Kolicina * POS->Cijena
-            replace Iznos3 WITH nNeplaca
-                
-            if gPopVar=="A"
-                REPLACE Iznos2 WITH pos->nCijena
-            endif
+            REPLACE IdPos WITH pos_doks->IdPos
+            REPLACE IdRadnik WITH pos_doks->IdRadnik
+            REPLACE IdVrsteP WITH pos_doks->IdVrsteP
+            REPLACE IdOdj WITH pos->IdOdj
+            REPLACE IdRoba WITH pos->IdRoba
+            REPLACE IdCijena WITH pos->IdCijena
+            REPLACE Kolicina WITH pos->Kolicina
+            REPLACE Iznos WITH pos->Kolicina * POS->Cijena
+            REPLACE Iznos3 WITH nNeplaca
 
-            if roba->(fieldpos("K1")) <> 0
-                REPLACE K2 WITH roba->K2,K1 WITH roba->K1
-            endif
+            IF gPopVar == "A"
+               REPLACE Iznos2 WITH pos->nCijena
+            ENDIF
 
-        else
+            IF roba->( FieldPos( "K1" ) ) <> 0
+               REPLACE K2 WITH roba->K2, K1 WITH roba->K1
+            ENDIF
 
-            replace Kolicina WITH Kolicina + POS->Kolicina
-            replace Iznos WITH Iznos + POS->Kolicina * POS->Cijena
-            replace Iznos3 WITH Iznos3 + nNeplaca
+         ELSE
 
-            if gPopVar=="A"
-                REPLACE Iznos2 WITH Iznos2+pos->nCijena
-            endif
+            REPLACE Kolicina WITH Kolicina + POS->Kolicina
+            REPLACE Iznos WITH Iznos + POS->Kolicina * POS->Cijena
+            REPLACE Iznos3 WITH Iznos3 + nNeplaca
 
-        endif
-            
-        SELECT pos
-        skip
+            IF gPopVar == "A"
+               REPLACE Iznos2 WITH Iznos2 + pos->nCijena
+            ENDIF
 
-    enddo
-    
-    select pos_doks  
-    skip
+         ENDIF
 
-enddo
+         SELECT pos
+         SKIP
 
-MsgC()
+      ENDDO
 
-return
+      SELECT pos_doks
+      SKIP
 
+   ENDDO
 
+   MsgC()
 
+   RETURN

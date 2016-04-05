@@ -1,84 +1,83 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+/*
+ * This file is part of the bring.out knowhow ERP, a free and open source
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
 
-
 #include "f18.ch"
 
 
-function PrometVPl()
-O_KASE
-O_PROMVP
+FUNCTION PrometVPl()
 
-cIdPos:=gIdPos
-dDatOd:=dDatDo:=gDatum
+   O_KASE
+   O_PROMVP
 
-set cursor on
-Box(,3,60)
-  set cursor on
-  @ m_x+1,m_y+2 SAY "Prod.mjesto    :  "  GET  cIdPos  valid empty(cIdPos).or.P_Kase(@cIdPos) pict "@!"
-  @ m_x+2,m_y+2 SAY "Datumski period:" GET dDatOd
-  @ m_x+2,col()+2 SAY "-" GET dDatDo
-  read
-BoxC()
+   cIdPos := gIdPos
+   dDatOd := dDatDo := gDatum
 
-SELECT PROMVP; go top
+   SET CURSOR ON
+   Box(, 3, 60 )
+   SET CURSOR ON
+   @ m_x + 1, m_y + 2 SAY "Prod.mjesto    :  "  GET  cIdPos  VALID Empty( cIdPos ) .OR. P_Kase( @cIdPos ) PICT "@!"
+   @ m_x + 2, m_y + 2 SAY "Datumski period:" GET dDatOd
+   @ m_x + 2, Col() + 2 SAY "-" GET dDatDo
+   READ
+   BoxC()
 
-nIznPKM:=nIznPEURO:=nIznKred:=nIznVirm:=nIznU:=nIznU2:=nIznTrosk:=0
+   SELECT PROMVP; GO TOP
 
-DO WHILE !EOF()
-  if PM==cIdPos .and. Datum>=dDatOd .and. Datum<=dDatDo
-     nIznPKM+=PROMVP->PologKM
-     nIznPEURO+=PROMVP->PologEU
-     nIznKred+=PROMVP->Krediti
-     nIznVirm+=PROMVP->Virmani
-     nIznTrosk+=PROMVP->Trosk
-     nIznU2+=PROMVP->Ukupno2
-     skip
-  else
-    skip
-  endif
-ENDDO
+   nIznPKM := nIznPEURO := nIznKred := nIznVirm := nIznU := nIznU2 := nIznTrosk := 0
 
-cLm:=SPACE(5)
+   DO WHILE !Eof()
+      IF PM == cIdPos .AND. Datum >= dDatOd .AND. Datum <= dDatDo
+         nIznPKM += PROMVP->PologKM
+         nIznPEURO += PROMVP->PologEU
+         nIznKred += PROMVP->Krediti
+         nIznVirm += PROMVP->Virmani
+         nIznTrosk += PROMVP->Trosk
+         nIznU2 += PROMVP->Ukupno2
+         SKIP
+      ELSE
+         SKIP
+      ENDIF
+   ENDDO
 
-// -- stampaj izvjestaj
-START PRINT CRET
+   cLm := Space( 5 )
 
-ZagFirma()
+   // -- stampaj izvjestaj
+   START PRINT CRET
 
-IF gVrstaRS == "S"
-  P_INI  ; P_10CPI
-EndIF
+   ZagFirma()
 
-? "PREGLED PROMETA PO VRSTI PLACANJA NA DAN "+DTOC(gDatum)
-? "-------------------------------------------------"
-?
-if empty(cIdPos)
-? "Prodajno mjesto: SVI"
-else
-? "Prodajno mjesto: " + cIdPos
-endif
-? "PERIOD         : "+DTOC(dDatOd)+" - "+DTOC(dDatDo)
-? "-------------------------------------------"
-?
-? cLm+"Polog KM    : "+STR(nIznPKM)
-? cLm+"Polog EURO  : "+STR(nIznPEURO)
-? cLm+"Krediti     : "+STR(nIznKred)
-? cLm+"Virmani     : "+STR(nIznVirm)
-? cLm+"Troskovi    : "+STR(nIznTrosk)
-? cLm+"------------------------------------"
-? cLm+"UKUPNO      : "+STR(nIznU2)
-? cLm+"------------------------------------"
+   IF gVrstaRS == "S"
+      P_INI  ; P_10CPI
+   ENDIF
 
-ENDPRINT
-CLOSERET
-*}
+   ? "PREGLED PROMETA PO VRSTI PLACANJA NA DAN " + DToC( gDatum )
+   ? "-------------------------------------------------"
+   ?
+   IF Empty( cIdPos )
+      ? "Prodajno mjesto: SVI"
+   ELSE
+      ? "Prodajno mjesto: " + cIdPos
+   ENDIF
+   ? "PERIOD         : " + DToC( dDatOd ) + " - " + DToC( dDatDo )
+   ? "-------------------------------------------"
+   ?
+   ? cLm + "Polog KM    : " + Str( nIznPKM )
+   ? cLm + "Polog EURO  : " + Str( nIznPEURO )
+   ? cLm + "Krediti     : " + Str( nIznKred )
+   ? cLm + "Virmani     : " + Str( nIznVirm )
+   ? cLm + "Troskovi    : " + Str( nIznTrosk )
+   ? cLm + "------------------------------------"
+   ? cLm + "UKUPNO      : " + Str( nIznU2 )
+   ? cLm + "------------------------------------"
 
+   ENDPRINT
+   CLOSERET
+   // }

@@ -1,42 +1,41 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+/*
+ * This file is part of the bring.out knowhow ERP, a free and open source
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
 
-
 #include "f18.ch"
 
-function pos_menu_realizacija()
 
-private opc:={}
-private opcexe:={}
-private Izbor:=1
+FUNCTION pos_menu_realizacija()
 
-AADD(opc,"1. kase             ")
-AADD(opcexe,{|| realizacija_kase(.f.)})
-AADD(opc,"2. odjeljenja")
-AADD(opcexe,{|| realizacija_odjeljenja()})
-AADD(opc,"3. radnici")
-AADD(opcexe,{|| realizacija_radnik(.f.)})
+   PRIVATE opc := {}
+   PRIVATE opcexe := {}
+   PRIVATE Izbor := 1
 
-#IFDEF DEPR
-	AADD(opc,"4. dijelovi objekta ")
-  	AADD(opcexe,{|| realizacija_dio_objekta()})
-#ELSE
-  	AADD(opc,"------ ")
-  	AADD(opcexe,nil)
-#ENDIF
+   AAdd( opc, "1. kase             " )
+   AAdd( opcexe, {|| realizacija_kase( .F. ) } )
+   AAdd( opc, "2. odjeljenja" )
+   AAdd( opcexe, {|| realizacija_odjeljenja() } )
+   AAdd( opc, "3. radnici" )
+   AAdd( opcexe, {|| realizacija_radnik( .F. ) } )
 
-AADD(opc,"5. realizacija po K1")
-AADD(opcexe,{|| realizacija_kase(.f.,,,"2")})
+#ifdef DEPR
+   AAdd( opc, "4. dijelovi objekta " )
+   AAdd( opcexe, {|| realizacija_dio_objekta() } )
+#else
+   AAdd( opc, "------ " )
+   AAdd( opcexe, nil )
+#endif
 
-Menu_SC("real")
+   AAdd( opc, "5. realizacija po K1" )
+   AAdd( opcexe, {|| realizacija_kase( .F.,,, "2" ) } )
 
-return .f.
+   Menu_SC( "real" )
 
+   RETURN .F.

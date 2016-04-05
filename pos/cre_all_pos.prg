@@ -17,6 +17,110 @@ FUNCTION cre_all_pos( ver )
    LOCAL _alias, _table_name
    LOCAL _created
 
+
+   // --------------- strad - statusi radnika -----------
+   aDbf := {}
+   AAdd( aDbf, { "ID",        "C",  2, 0 } )
+   AAdd( aDbf, { "NAZ",       "C", 15, 0 } )
+   AAdd( aDbf, { "PRIORITET", "C",  1, 0 } )
+
+   _alias := "STRAD"
+   _table_name := "pos_strad"
+
+   IF_NOT_FILE_DBF_CREATE
+
+   CREATE_INDEX( "ID", "ID",  _alias )
+   CREATE_INDEX( "NAZ", "NAZ", _alias )
+   AFTER_CREATE_INDEX
+
+
+   // ------------ osob - osoblje ------------------------
+   aDbf := {}
+   AAdd( aDbf, { "ID",        "C",  4, 0 } )
+   AAdd( aDbf, { "KORSIF",    "C",  6, 0 } )
+   AAdd( aDbf, { "NAZ",       "C", 40, 0 } )
+   AAdd( aDbf, { "STATUS",    "C",  2, 0 } )
+
+   _alias := "OSOB"
+   _table_name := "pos_osob"
+
+   IF_NOT_FILE_DBF_CREATE
+
+   CREATE_INDEX( "ID", "KorSif", _alias )
+   CREATE_INDEX( "NAZ", "ID", _alias )
+   AFTER_CREATE_INDEX
+
+
+   // --------- kase ------------------------
+
+   aDbf := {}
+   AAdd( aDbf, { "ID",     "C",  2, 0 } )
+   AAdd( aDbf, { "NAZ",     "C", 15, 0 } )
+   AAdd( aDbf, { "PPATH",   "C", 50, 0 } )
+
+   _alias := "KASE"
+   _table_name := "pos_kase"
+
+   IF_NOT_FILE_DBF_CREATE
+
+   CREATE_INDEX( "ID", "ID", _alias )
+   AFTER_CREATE_INDEX
+
+   // ----------- pos_odj
+
+   aDbf := {}
+   AAdd( aDbf, { "ID",      "C",  2, 0 } )
+   AAdd( aDbf, { "NAZ",      "C", 25, 0 } )
+   AAdd( aDbf, { "ZADUZUJE", "C",  1, 0 } )
+   AAdd( aDbf, { "IDKONTO",  "C",  7, 0 } )
+
+   _alias := "ODJ"
+   _table_name := "pos_odj"
+
+   IF_NOT_FILE_DBF_CREATE
+
+   CREATE_INDEX( "ID", "ID", _alias )
+   AFTER_CREATE_INDEX
+
+   aDbf := {}
+   AAdd ( aDbf, { "ID",      "C",  2, 0 } )
+   AAdd ( aDbf, { "NAZ",      "C", 25, 0 } )
+
+   _alias := "DIO"
+   _table_name := "dio"
+
+   IF_NOT_FILE_DBF_CREATE
+
+   CREATE_INDEX ( "ID", "ID", _alias )
+
+
+   // --------------------- uredj -------
+   aDbf := {}
+   AAdd ( aDbf, { "ID", "C",  2, 0 } )
+   AAdd ( aDbf, { "NAZ", "C", 30, 0 } )
+   AAdd ( aDbf, { "PORT", "C", 10, 0 } )
+
+   _alias := "UREDJ"
+   _table_name := "uredj"
+
+   IF_NOT_FILE_DBF_CREATE
+
+   CREATE_INDEX ( "ID", "ID", _alias )
+   CREATE_INDEX ( "NAZ", "NAZ", _alias )
+
+   aDbf := {}
+   AAdd ( aDbf, { "ID",        "C",  8, 0 } )
+   AAdd ( aDbf, { "ID2",       "C",  8, 0 } )
+   AAdd ( aDbf, { "KM",        "N",  6, 1 } )
+
+   _alias := "MARS"
+   _table_name := "mars"
+
+   IF_NOT_FILE_DBF_CREATE
+   CREATE_INDEX ( "ID", "ID", _alias )
+   CREATE_INDEX ( "2", "ID+ID2", _alias )
+
+
    aDbf := {}
 
    AAdd ( aDbf, { "DATUM",     "D",  8, 0 } )
@@ -161,70 +265,6 @@ FUNCTION cre_all_pos( ver )
    AFTER_CREATE_INDEX
 
 
-   // --------------- strad - statusi radnika -----------
-   aDbf := {}
-   AAdd( aDbf, { "ID",        "C",  2, 0 } )
-   AAdd( aDbf, { "NAZ",       "C", 15, 0 } )
-   AAdd( aDbf, { "PRIORITET", "C",  1, 0 } )
-
-   _alias := "STRAD"
-   _table_name := "pos_strad"
-
-   IF_NOT_FILE_DBF_CREATE
-
-   CREATE_INDEX( "ID", "ID",  _alias )
-   CREATE_INDEX( "NAZ", "NAZ", _alias )
-   AFTER_CREATE_INDEX
-
-
-   // ------------ osob - osoblje ------------------------
-   aDbf := {}
-   AAdd( aDbf, { "ID",        "C",  4, 0 } )
-   AAdd( aDbf, { "KORSIF",    "C",  6, 0 } )
-   AAdd( aDbf, { "NAZ",       "C", 40, 0 } )
-   AAdd( aDbf, { "STATUS",    "C",  2, 0 } )
-
-   _alias := "OSOB"
-   _table_name := "pos_osob"
-
-   IF_NOT_FILE_DBF_CREATE
-
-   CREATE_INDEX( "ID", "KorSif", _alias )
-   CREATE_INDEX( "NAZ", "ID", _alias )
-   AFTER_CREATE_INDEX
-
-
-   // --------- kase ------------------------
-
-   aDbf := {}
-   AAdd( aDbf, { "ID",     "C",  2, 0 } )
-   AAdd( aDbf, { "NAZ",     "C", 15, 0 } )
-   AAdd( aDbf, { "PPATH",   "C", 50, 0 } )
-
-   _alias := "KASE"
-   _table_name := "pos_kase"
-
-   IF_NOT_FILE_DBF_CREATE
-
-   CREATE_INDEX( "ID", "ID", _alias )
-   AFTER_CREATE_INDEX
-
-
-
-   aDbf := {}
-   AAdd( aDbf, { "ID",      "C",  2, 0 } )
-   AAdd( aDbf, { "NAZ",      "C", 25, 0 } )
-   AAdd( aDbf, { "ZADUZUJE", "C",  1, 0 } )
-   AAdd( aDbf, { "IDKONTO",  "C",  7, 0 } )
-
-   _alias := "ODJ"
-   _table_name := "pos_odj"
-
-   IF_NOT_FILE_DBF_CREATE
-
-   CREATE_INDEX( "ID", "ID", _alias )
-   AFTER_CREATE_INDEX
-
 
    // RNGPLA - izmirenje dugovanja po racunima gostiju
    aDbf := { { "IDGOST",   "C",  8, 0 }, ;
@@ -327,45 +367,6 @@ FUNCTION cre_all_pos( ver )
 
    CREATE_INDEX ( "1", "IdRoba", _alias )
 
-
-   aDbf := {}
-   AAdd ( aDbf, { "ID",      "C",  2, 0 } )
-   AAdd ( aDbf, { "NAZ",      "C", 25, 0 } )
-
-   _alias := "DIO"
-   _table_name := "dio"
-
-   IF_NOT_FILE_DBF_CREATE
-
-   CREATE_INDEX ( "ID", "ID", _alias )
-
-
-   aDbf := {}
-   AAdd ( aDbf, { "ID", "C",  2, 0 } )
-   AAdd ( aDbf, { "NAZ", "C", 30, 0 } )
-   AAdd ( aDbf, { "PORT", "C", 10, 0 } )
-
-   _alias := "UREDJ"
-   _table_name := "uredj"
-
-   IF_NOT_FILE_DBF_CREATE
-
-   CREATE_INDEX ( "ID", "ID", _alias )
-   CREATE_INDEX ( "NAZ", "NAZ", _alias )
-
-
-   aDbf := {}
-   AAdd ( aDbf, { "ID",        "C",  8, 0 } )
-   AAdd ( aDbf, { "ID2",       "C",  8, 0 } )
-   AAdd ( aDbf, { "KM",        "N",  6, 1 } )
-
-   _alias := "MARS"
-   _table_name := "mars"
-
-   IF_NOT_FILE_DBF_CREATE
-
-   CREATE_INDEX ( "ID", "ID", _alias )
-   CREATE_INDEX ( "2", "ID+ID2", _alias )
 
 
    // kreiraj tabele dok_src : DOK_SRC

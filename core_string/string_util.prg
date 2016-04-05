@@ -335,7 +335,7 @@ FUNCTION BrDecimala( cFormat )
    RETURN nVrati
 
 
-/* fn Slovima(nIzn,cDinDem)
+/*  Slovima(nIzn,cDinDem)
  *  brief Ispisuje iznos slovima
  *  param nIzn       - iznos
  *  param cDinDem    -
@@ -345,7 +345,7 @@ FUNCTION Slovima( nIzn, cDinDem )
 
    LOCAL nPom
    LOCAL cRez := ""
-   fI := .F.
+   LOCAL lMarker := .F.
 
    IF nIzn < 0
       nIzn := -nIzn
@@ -364,11 +364,11 @@ FUNCTION Slovima( nIzn, cDinDem )
          ENDIF
       ENDIF
       nIzn := nIzn - nPom * 10 ** 9
-      fi := .T.
+      lMarker := .T.
    ENDIF
    IF ( nPom := Int( nIzn / 10 ** 6 ) ) >= 1
-      IF fi; cRez += ""; ENDIF
-      fi := .T.
+      IF lMarker; cRez += ""; ENDIF
+      lMarker := .T.
       IF nPom == 1
          cRez += "milion"
       ELSE
@@ -394,13 +394,13 @@ FUNCTION Slovima( nIzn, cDinDem )
       ENDIF
       nIzn := nIzn - nPom * 10 ** 3
    ENDIF
-   // if fi .and. nIzn>=1; cRez+="i"; endif
-   IF fi .AND. nIzn >= 1
+
+   IF lMarker .AND. nIzn >= 1
       cRez += ""
    ENDIF
    Stotice( nIzn, @cRez, .T., .T., cDINDEM )
 
-   RETURN .T.
+   RETURN cRez
 
 
 

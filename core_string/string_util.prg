@@ -19,7 +19,7 @@ FUNCTION _l( cString )
 // funkcija za formatiranje stringa za filter
 // mjenja staru funkciju dbf_quote()
 // --------------------------------------------------
-FUNCTION _filter_quote( value )
+FUNCTION _lter_quote( value )
 
    LOCAL _var_type := ValType( value )
 
@@ -279,7 +279,7 @@ FUNCTION ParsMemo( cTxt )
 
 FUNCTION StrLinija( cTxt2 )
 
-   LOCAL nTxt2, nI
+   LOCAL nTxt2, nI, nLTxt2
 
    nLTxt2 := 1
    FOR nI := 1 TO Len( cTxt2 )
@@ -376,12 +376,14 @@ FUNCTION Slovima( nIzn, cDinDem )
          cRez += "miliona"
       ENDIF
       nIzn := nIzn - nPom * 10 ** 6
-      f6 := .T.
+
 
    ENDIF
    IF ( nPom := Int( nIzn / 10 ** 3 ) ) >= 1
-      IF fi; cRez += ""; ENDIF
-      fi := .T.
+      IF lMarker
+          cRez += ""
+      ENDIF
+      lMarker := .T.
       IF nPom == 1
          cRez += "hiljadu"
       ELSE

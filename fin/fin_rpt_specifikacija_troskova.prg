@@ -43,7 +43,7 @@ if g_vars( @dD_from, @dD_to, @cGroup, @cKtoListZ, @cKtoList, @cSp_ld ) == 0
 	return
 endif
 
-START PRINT CRET
+start_print_close_ret()
 
 __r_head( dD_from, dD_to )
 
@@ -146,7 +146,7 @@ nTO_rash := ( nLD_ras + nTmpBr + nLD_bruto + nKALK_ras + nFIN_ras )
 ? cLine
 
 FF
-ENDPRINT
+end_print()
 
 return
 

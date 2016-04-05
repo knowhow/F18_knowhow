@@ -103,7 +103,7 @@ FUNCTION fin_bb_sintetika_b( params )
 
    nStr := 0
 
-   START PRINT CRET
+   start_print_close_ret()
 
    B := 1
 
@@ -372,7 +372,7 @@ FUNCTION fin_bb_sintetika_b( params )
 
    FF
 
-   ENDPRINT
+   end_print()
 
    my_close_all_dbf()
 

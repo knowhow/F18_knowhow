@@ -59,7 +59,7 @@ FUNCTION SpecOstPop()
 
 
    nStr := 0
-   START PRINT CRET
+   start_print_close_ret()
 
 
    B := 0
@@ -134,7 +134,7 @@ FUNCTION SpecOstPop()
 
    FF
 
-   ENDPRINT
+   end_print()
    CLOSERET
 
    RETURN

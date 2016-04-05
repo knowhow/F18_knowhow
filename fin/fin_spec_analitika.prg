@@ -88,7 +88,7 @@ FUNCTION SpecPoK()
 
    Pic := PicBhd
 
-   START PRINT CRET
+   start_print_close_ret()
 
    m := "------ --------------------------------------------------------- --------------------- -------------------- --------------------"
    nStr := 0
@@ -143,7 +143,7 @@ FUNCTION SpecPoK()
    @ PRow(), PCol() + 1 SAY nUd - nUp PICT pic
    ? m
    FF
-   ENDPRINT
+   end_print()
    closeret
 
    RETURN

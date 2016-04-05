@@ -127,7 +127,7 @@ FUNCTION SpecKK2( lOtvSt )
    EOF CRET
 
    nStr := 0
-   START PRINT CRET
+   start_print_close_ret()
 
 
 
@@ -245,7 +245,7 @@ FUNCTION SpecKK2( lOtvSt )
    ? m
 
    FF
-   ENDPRINT
+   end_print()
    closeret
 
    RETURN

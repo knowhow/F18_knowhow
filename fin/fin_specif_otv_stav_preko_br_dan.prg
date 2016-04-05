@@ -94,7 +94,7 @@ FUNCTION fin_spec_otv_stavke_preko_dana()
 
    EOF CRET
 
-   START PRINT CRET
+   start_print_close_ret()
 
    cIdKonto := IdKonto
 
@@ -265,7 +265,7 @@ FUNCTION fin_spec_otv_stavke_preko_dana()
 
 
    FF
-   ENDPRINT
+   end_print()
 
    closeret
 

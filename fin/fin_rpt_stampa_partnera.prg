@@ -32,7 +32,7 @@ FUNCTION Rpt_StanjePartnera()
    SET ORDER TO TAG "1"
    GO TOP
 
-   START PRINT CRET
+   start_print_close_ret()
    IF !Empty( cPartner )
       SEEK cPartner
    ENDIF
@@ -104,6 +104,6 @@ FUNCTION Rpt_StanjePartnera()
 
    FF
 
-   ENDPRINT
+   end_print()
 
    RETURN

@@ -277,7 +277,7 @@ STATIC FUNCTION _key_handler()
          SELECT pom
          GO TOP
 
-         START PRINT CRET
+         start_print_close_ret()
 
          ? "PREGLED UKUPNIH DUGOVANJA PO KUPCIMA"
          ? "------------------------------------"
@@ -298,7 +298,7 @@ STATIC FUNCTION _key_handler()
          ? "UKUPNO SVI KUPCI................", ;
             Str( nUd1, 12, 2 ), Str( nUd2, 12, 2 ), Str( nUd3, 12, 2 )
 
-         ENDPRINT
+         end_print()
          USE
       ENDIF
 
@@ -323,13 +323,13 @@ STATIC FUNCTION _key_handler()
       READ
       BoxC()
 
-      START PRINT CRET
+      start_print_close_ret()
 
       IF ObracV( cIdPartner, .F., cVarObrac ) > nKamMala
          ObracV( cIdPartner, nil, cVarObrac )
       ENDIF
 
-      ENDPRINT
+      end_print()
 
       O_KAM_PRIPR
       SELECT kam_pripr
@@ -472,7 +472,7 @@ STATIC FUNCTION fin_kamate_print()
    gKumKam := _kum_kam
    gPdvObr := _pdv_obr
 
-   START PRINT CRET
+   start_print_close_ret()
 
    ?
 
@@ -516,7 +516,7 @@ STATIC FUNCTION fin_kamate_print()
 
    ENDDO
 
-   ENDPRINT
+   end_print()
 
    O_KAM_PRIPR
    SELECT kam_pripr

@@ -128,7 +128,7 @@ FUNCTION Blagajna()
 
    SELECT fin_pripr
 
-   START PRINT CRET
+   start_print_close_ret()
    ?
    F12CPI
    ?? Space( 12 )
@@ -307,7 +307,7 @@ FUNCTION Blagajna()
    @ PRow() + 1, 25 SAY "  ___________________            ______________________"
    @ PRow() + 1, 25 SAY "     Blagajna                           Kontrola       "
    FF
-   ENDPRINT
+   end_print()
    closeret
 
 FUNCTION PZagBlag( nDug, nPot, m, cBrDok, pici, cDinDem, dDatDok )
@@ -412,7 +412,7 @@ FUNCTION blag_azur()
       RETURN
    ENDIF
 
-   start PRINT cret
+   start_print_close_ret()
 
 
    nRbr := 0
@@ -574,7 +574,7 @@ FUNCTION blag_azur()
 
    FF
 
-   ENDPRINT
+   end_print()
 
    closeret
 

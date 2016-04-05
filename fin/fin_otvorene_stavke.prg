@@ -237,7 +237,7 @@ STATIC FUNCTION SpecOtSt()
    nDugBHD := nPotBHD := 0
 
    FF
-   ENDPRINT
+   end_print()
 
    my_close_all_dbf()
 
@@ -1310,7 +1310,7 @@ FUNCTION StKart( fSolo, fTiho, bFilter )
 
    FF
 
-   ENDPRINT
+   end_print()
 
    SELECT ( F_POM ); USE
 
@@ -1535,7 +1535,7 @@ FUNCTION StBrVeze()
    ? m
 
    FF
-   ENDPRINT
+   end_print()
 
 
 
@@ -2339,12 +2339,12 @@ FUNCTION StAz()
    ENDDO
 
    GO TOP
-   START PRINT CRET
+   start_print_close_ret()
 
    print_lista_2( aKol,,, 0,, ;
       , "Rezultati asistenta otvorenih stavki za: " + idkonto + "/" + idpartner + " na datum:" + DToC( Date() ) )
 
-   ENDPRINT
+   end_print()
 
    RETURN .T.
 

@@ -28,7 +28,7 @@ FUNCTION OiNIsplate()
       RETURN ( NIL )
    ENDIF
    IF cBrojOiN == "S"; GO TOP; ENDIF
-   START PRINT CRET
+   start_print_close_ret()
 
    DO WHILE !Eof()
       ?
@@ -114,7 +114,7 @@ FUNCTION OiNIsplate()
          SKIP 1
       ENDIF
    ENDDO
-   ENDPRINT
+   end_print()
    GO ( nRec )
 
    RETURN ( NIL )

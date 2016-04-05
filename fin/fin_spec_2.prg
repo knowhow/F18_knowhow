@@ -149,7 +149,7 @@ FUNCTION SpecSubPro()
 
    Pic := PicBhd
 
-   START PRINT CRET
+   start_print_close_ret()
 
    IF cTip == "3"
       m := "------  " + Replicate( "-", FIELD_PARTNER_ID_LENGTH ) + " ------------------------------------------------- --------------------- --------------------"
@@ -253,7 +253,7 @@ FUNCTION SpecSubPro()
          ENDIF
          ? m
          FF
-         ENDPRINT
+         end_print()
 
          closeret
 

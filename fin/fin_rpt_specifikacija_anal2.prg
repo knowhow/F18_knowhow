@@ -253,7 +253,7 @@ FUNCTION spec_an()
 
    Pic := PicBhd
 
-   START PRINT CRET
+   start_print_close_ret()
 
    m := "------ --------------------------------------------------------- --------------------- -------------------- --------------------"
    nStr := 0
@@ -345,7 +345,7 @@ FUNCTION spec_an()
    ? m
 
    FF
-   ENDPRINT
+   end_print()
 
    closeret
 

@@ -175,7 +175,7 @@ FUNCTION fin_spec_otv_stavke_po_dospijecu( lKartica )
       ENDIF
    ENDIF
 
-   START PRINT CRET
+   start_print_close_ret()
 
    nUkDugBHD := 0
    nUkPotBHD := 0
@@ -806,7 +806,7 @@ FUNCTION fin_spec_otv_stavke_po_dospijecu( lKartica )
 
    FF
 
-   ENDPRINT
+   end_print()
 
    IF lExpRpt == .T.
       tbl_export()

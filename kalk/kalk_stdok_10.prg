@@ -215,13 +215,13 @@ STATIC FUNCTION zagl()
 
    SELECT PARTN
    HSEEK cIdPartner
-   ?  Space( PRINT_LEFT_SPACE ) + "DOBAVLJAČ:", cIdPartner, "-", Trim( field->naz ), Space( 5 ), "Faktura Br:", cBrFaktP, "Datum:", dDatFaktP
+   ?U  Space( PRINT_LEFT_SPACE ) + "DOBAVLJAČ:", cIdPartner, "-", Trim( field->naz ), Space( 5 ), "Faktura Br:", cBrFaktP, "Datum:", dDatFaktP
 
    SELECT kalk_pripr
 
    SELECT KONTO
    HSEEK cIdKonto
-   ?  Space( PRINT_LEFT_SPACE )  + "MAGACINSKI KONTO zadužuje :", cIdKonto, "-", field->naz
+   ?U  Space( PRINT_LEFT_SPACE )  + "MAGACINSKI KONTO zadužuje :", cIdKonto, "-", field->naz
 
    M := Space( PRINT_LEFT_SPACE )  + "--- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ----------"
 
@@ -232,15 +232,14 @@ STATIC FUNCTION zagl()
    ? m
 
    IF gMpcPomoc == "D" // prikazi mpc
-      ? Space( PRINT_LEFT_SPACE )  + "*R * ROBA     *  FCJ     * NOR.KALO * KASA-    * " + c10T1 + " * " + c10T2 + " * " + c10T3 + " * " + c10T4 + " * " + c10T5 + " *   NC     *  MARZA   * PROD.CIJ.*   PDV%   * PROD.CIJ.*"
-      ? Space( PRINT_LEFT_SPACE )  + "*BR* TARIFA   *  KOLICINA* PRE.KALO * SKONTO   *          *          *          *          *          *          *          * BEZ.PDV  *   PDV    * SA PDV   *"
-
-      ? Space( PRINT_LEFT_SPACE )  + "*  *          *   sum    *   sum    *  sum     *   sum    *   sum    *    sum   *   sum    *   sum    *   sum    *   sum    *   sum    *   sum    *    sum   *"
+      ?U Space( PRINT_LEFT_SPACE )  + "*R * ROBA     *  FCJ     * NOR.KALO * KASA-    * " + c10T1 + " * " + c10T2 + " * " + c10T3 + " * " + c10T4 + " * " + c10T5 + " *   NC     *  MARZA   * PROD.CIJ.*   PDV%   * PROD.CIJ.*"
+      ?U Space( PRINT_LEFT_SPACE )  + "*BR* TARIFA   *  KOLIČINA* PRE.KALO * SKONTO   *          *          *          *          *          *          *          * BEZ.PDV  *   PDV    * SA PDV   *"
+      ?U Space( PRINT_LEFT_SPACE )  + "*  *          *   sum    *   sum    *  sum     *   sum    *   sum    *    sum   *   sum    *   sum    *   sum    *   sum    *   sum    *   sum    *    sum   *"
    ELSE
       // prikazi samo do neto cijene - bez pdv-a
-      ? Space( PRINT_LEFT_SPACE )   + "*R * ROBA     *  FCJ     * NOR.KALO * KASA-    * " + c10T1 + " * " + c10T2 + " * " + c10T3 + " * " + c10T4 + " * " + c10T5 + " *   NC     *  MARZA   * PROD.CIJ.*"
-      ? Space( PRINT_LEFT_SPACE )   + "*BR* TARIFA   *  KOLICINA* PRE.KALO * SKONTO   *          *          *          *          *          *          *          * BEZ.PDV  *"
-      ? Space( PRINT_LEFT_SPACE )  + "*  *          *   sum    *   sum    *  sum     *   sum    *   sum    *    sum   *   sum    *   sum    *   sum    *   sum    *   sum    *"
+      ?U Space( PRINT_LEFT_SPACE )  + "*R * ROBA     *  FCJ     * NOR.KALO * KASA-    * " + c10T1 + " * " + c10T2 + " * " + c10T3 + " * " + c10T4 + " * " + c10T5 + " *   NC     *  MARZA   * PROD.CIJ.*"
+      ?U Space( PRINT_LEFT_SPACE )  + "*BR* TARIFA   *  KOLIČINA* PRE.KALO * SKONTO   *          *          *          *          *          *          *          * BEZ.PDV  *"
+      ?U Space( PRINT_LEFT_SPACE )  + "*  *          *   sum    *   sum    *  sum     *   sum    *   sum    *    sum   *   sum    *   sum    *   sum    *   sum    *   sum    *"
 
    ENDIF
 

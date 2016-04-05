@@ -112,7 +112,7 @@ FUNCTION fin_bb_subanalitika_b( params )
 
    nStr := 0
 
-   START PRINT CRET
+   start_print_close_ret()
 
    B := 0
    B1 := 0
@@ -499,7 +499,7 @@ FUNCTION fin_bb_subanalitika_b( params )
    ?U M10
 
    FF
-   ENDPRINT
+   end_print()
 
    my_close_all_dbf()
 

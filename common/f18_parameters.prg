@@ -385,7 +385,7 @@ FUNCTION is_legacy_ld_rekap_dbf()
 
 FUNCTION is_legacy_kalk_pr()
 
-   RETURN fetch_metric( "legacy_kalk_pr", NIL, "N" ) == "D"
+   RETURN fetch_metric( "legacy_kalk_pr", NIL, "D" ) == "D"
 
 
 /*

@@ -96,7 +96,7 @@ FUNCTION fin_bb_grupe_b( params )
 
    nStr := 0
 
-   START PRINT CRET
+   start_print_close_ret()
 
    B := 1
    D1S := D2S := D3S := D4S := P1S := P2S := P3S := P4S := 0
@@ -310,7 +310,7 @@ FUNCTION fin_bb_grupe_b( params )
    ?U M10
 
    FF
-   ENDPRINT
+   end_print()
 
    my_close_all_dbf()
 

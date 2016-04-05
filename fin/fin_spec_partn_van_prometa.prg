@@ -47,7 +47,7 @@ FUNCTION PartVanProm()
    ESC_BCR
    BoxC()
 
-   START PRINT CRET
+   start_print_close_ret()
 
    INI
    ?
@@ -101,7 +101,7 @@ FUNCTION PartVanProm()
    ? Space ( 5 ) + "Ukupno izlistano", AllTrim ( Str ( nBrPartn ) ), ;
       "partnera bez prometa"
    EJECT
-   ENDPRINT
+   end_print()
    CLOSERET
 
    RETURN .T.

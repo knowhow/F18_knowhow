@@ -552,7 +552,7 @@ TODO: izbaciti
 
    Pic := PicBhd
 
-   START PRINT CRET
+   start_print_close_ret()
 
    IF cSkVar == "D"
       nDOpis := 25
@@ -772,7 +772,7 @@ TODO: izbaciti
    ? m
 
    FF
-   ENDPRINT
+   end_print()
 
    closeret
 

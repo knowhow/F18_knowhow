@@ -72,6 +72,7 @@ FUNCTION fin_stampa_liste_naloga()
    xPrintOpt[ "tip" ] := "PDF"
    xPrintOpt[ "layout" ] := "portrait"
    xPrintOpt[ "opdf" ] := s_oPDF
+   xPrintOpt[ "font_size" ] := 9
    f18_start_print( NIL, xPrintOpt,  "LISTA FINANSIJSKIH NALOGA NA DAN: " + DTOC( Date() ) )
 
    m := SPACE( PRINT_LEFT_SPACE ) + "------- --- --- " + Replicate( "-", nBrNalLen + 1 ) + " -------- ---------------- ----------------"
@@ -213,7 +214,7 @@ STATIC FUNCTION zagl( nBrNalLen, cInteg )
    zagl_organizacija( PRINT_LEFT_SPACE )
 
    ? m
-   ? SPACE( PRINT_LEFT_SPACE ) + "* R.br *FIR* V *" + PadR( " BR", nBrNalLen + 1 ) + "* DAT    *   DUGUJE       *   POTRAŽUJE   *" + iif( fin_dvovalutno(), "   DUGUJE   * POTRAZUJE *", "" )
+   ?U SPACE( PRINT_LEFT_SPACE ) + "* R.br *FIR* V *" + PadR( " BR", nBrNalLen + 1 ) + "* DAT    *   DUGUJE       *   POTRAŽUJE   *" + iif( fin_dvovalutno(), "   DUGUJE   * POTRAZUJE *", "" )
 
    IF FieldPos( "SIFRA" ) <> 0
       ?? "  OP. *"

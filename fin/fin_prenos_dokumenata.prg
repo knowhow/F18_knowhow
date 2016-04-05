@@ -184,7 +184,7 @@ FUNCTION PrenosFin()
    my_dbf_zap()
    SET ORDER TO 0
 
-   start PRINT cret
+   start_print_close_ret()
 
    ?
    ? "Prolazim kroz bazu...."
@@ -618,7 +618,7 @@ FUNCTION PrenosFin()
 
    Postotak( 0 )
 
-   ENDPRINT
+   end_print()
 
    my_close_all_dbf()
 

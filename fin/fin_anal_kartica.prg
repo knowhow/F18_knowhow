@@ -137,7 +137,7 @@ FUNCTION fin_anal_kartica()
 
    IF cBrza == "S"; m := "------- " + m; ENDIF
 
-   START PRINT CRET
+   start_print_close_ret()
 
    IF nStr == 0; AnalKZagl(); ENDIF
 
@@ -281,7 +281,7 @@ FUNCTION fin_anal_kartica()
 
    FF
 
-   ENDPRINT
+   end_print()
 
    closeret
 

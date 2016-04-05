@@ -38,6 +38,7 @@ CREATE CLASS PDFClass
    METHOD Cancel()
    METHOD PrnToPdf( cInputFile )
    METHOD SetType( nType )
+   METHOD SetFontSize( nFontSize )
    METHOD SetLeftSpace( nLeft )
    METHOD PageHeader()
    METHOD MaxRowTest( nRows )
@@ -113,19 +114,31 @@ METHOD SetType( nType ) CLASS PDFClass
    IF nType != NIL
       ::nType := nType
    ENDIF
-   ::nFontSize := iif( ::nType == 1, 9, 6 )
+   /*
+   IF ::nType == PDF_PORTRAIT .OR. ::nType == PDF_TXT_PORTRAIT
+      ::nFontSize := 9
+   ELSE
+      ::nFontSize := 6
+   ENDIF
+   */
 
    RETURN NIL
 
+METHOD SetFontSize( nFontSize ) CLASS PDFClass
 
-   METHOD SetLeftSpace( nLeft ) CLASS PDFClass
+   IF nFontSize != NIL
+      ::nFontSize := nFontSize
+   ENDIF
 
-altd()
-      IF nLeft != NIL
-         ::nLeftSpace := nLeft
-      ENDIF
+   RETURN NIL
 
-      RETURN NIL
+METHOD SetLeftSpace( nLeft ) CLASS PDFClass
+
+   IF nLeft != NIL
+      ::nLeftSpace := nLeft
+   ENDIF
+
+   RETURN NIL
 
 
 
@@ -159,9 +172,9 @@ METHOD DrawText( nRow, nCol, xValue, cPicture, nFontSize, cFontName, nAngle, anR
    cPicture  := iif( cPicture == NIL, "", cPicture )
    nAngle    := iif( nAngle == NIL, ::nAngle, nAngle )
 
-   IF ValType( xValue ) == "C" .AND. !( ::nType == PDF_TXT_PORTRAIT .OR. ::nType == PDF_TXT_LANDSCAPE )
-      xValue := hb_UTF8ToStr( xValue )
-   ENDIF
+   // IF ::lUTF8 .AND. ValType( xValue ) == "C" .AND. !( ::nType == PDF_TXT_PORTRAIT .OR. ::nType == PDF_TXT_LANDSCAPE )
+   // xValue := hb_UTF8ToStr( xValue )
+   // ENDIF
    cTexto  := Transform( xValue, cPicture )
    ::nCol := nCol + Len( cTexto )
 
@@ -268,11 +281,29 @@ METHOD MaxRow() CLASS PDFClass
    LOCAL nPageHeight, nMaxRow
 
    IF ::nType == PDF_TXT_PORTRAIT
-      RETURN 63
+      SWITCH ::nFontSize
+      CASE 9
+         RETURN 63
+      CASE 8
+         RETURN 65
+      CASE 7
+         RETURN 80
+      OTHERWISE
+         RETURN 66
+      ENDSWITCH
    ENDIF
 
    IF ::nType == PDF_TXT_LANDSCAPE
-      RETURN 34
+      SWITCH ::nFontSize
+      CASE 9
+         RETURN 35
+      CASE 8
+         RETURN 40
+      CASE 7
+         RETURN 45
+      OTHERWISE
+         RETURN 35
+      ENDSWITCH
    ENDIF
 
    nPageHeight := HPDF_Page_GetHeight( ::oPage ) - ( ::nMargin * 2 )
@@ -286,11 +317,38 @@ METHOD MaxCol() CLASS PDFClass
    LOCAL nPageWidth, nMaxCol
 
    IF ::nType == PDF_TXT_PORTRAIT
-      RETURN 102
+      SWITCH ::nFontSize
+      CASE 9
+         RETURN 102
+      CASE 8
+         RETURN 115
+      CASE 7
+         RETURN 132
+      CASE 6
+         RETURN 145
+      OTHERWISE
+         RETURN 102
+      ENDSWITCH
+
    ENDIF
 
    IF ::nType == PDF_TXT_LANDSCAPE
-      RETURN 204
+
+      SWITCH ::nFontSize
+      CASE 9
+         RETURN 155
+      CASE 8
+         RETURN 170
+      CASE 7
+         RETURN 180
+      CASE 6
+         RETURN 204
+
+      OTHERWISE
+         RETURN 155
+      ENDSWITCH
+
+
    ENDIF
 
    nPageWidth := HPDF_Page_GetWidth( ::oPage ) - ( ::nMargin * 2 )
@@ -308,7 +366,6 @@ METHOD PrnToPdf( cInputFile ) CLASS PDFClass
    TokenInit( @cTxtReport, Chr( 12 ) )
    DO WHILE ! TokenEnd()
       cTxtPage := TokenNext( cTxtReport ) + hb_eol()
-      altd()
       IF Len( cTxtPage ) > 5
          IF SubStr( cTxtPage, 1, 1 ) == Chr( 13 )
             cTxtPage := SubStr( cTxtPage, 2 )
@@ -318,7 +375,7 @@ METHOD PrnToPdf( cInputFile ) CLASS PDFClass
          DO WHILE At( hb_eol(), cTxtPage ) != 0
             cTxtLine := SubStr( cTxtPage, 1, At( hb_eol(), cTxtPage ) - 1 )
             cTxtPage := SubStr( cTxtPage, At( hb_eol(), cTxtPage ) + 1 )
-            ::DrawText( nRow++, 0, SPACE( ::nLeftSpace ) + cTxtLine )
+            ::DrawText( nRow++, 0, Space( ::nLeftSpace ) + cTxtLine )
          ENDDO
       ENDIF
    ENDDO

@@ -13,10 +13,10 @@
 
 MEMVAR gFirma, gPicBHD, picBHD, qqKonto, qqPartner, qqBrDok
 MEMVAR gDUFRJ
-MEMVAR cIdFirma, dDatOd, dDatDo, cFunk, cFond, cNula
+MEMVAR cIdFirma, cIdRj, dDatOd, dDatDo, cFunk, cFond, cNula
 MEMVAR cSkVar, cRasclaniti, cRascFunkFond, cN2Fin
 MEMVAR cFilter
-MEMVAR fK1, fK2, fK3, fK4, cSection, cHistory, aHistory
+MEMVAR fK1, fK2, fK3, fK4, cK1, cK2, cSection, cHistory, aHistory
 
 FIELD idkonto, idpartner, idrj
 
@@ -33,13 +33,14 @@ FUNCTION fin_spec_po_suban_kontima()
    LOCAL cOpcine := Space( 20 )
    LOCAL cVN := Space( 20 )
    LOCAL bZagl :=  {|| zagl_fin_specif( cSkVar ) }
+   LOCAL oPDF, xPrintOpt
 
    LOCAL nC
    PRIVATE cSkVar := "N"
    PRIVATE fK1 := fk2 := fk3 := fk4 := "N"
    PRIVATE cRasclaniti := "N"
    PRIVATE cRascFunkFond := "N"
-   PRIVATE cN2Fin := "N" //cN2Fin := my_get_from_ini( 'FIN', 'PartnerNaziv2', 'N' )
+   PRIVATE cN2Fin := "N" // cN2Fin := my_get_from_ini( 'FIN', 'PartnerNaziv2', 'N' )
 
    nC := 50
 
@@ -85,9 +86,8 @@ FUNCTION fin_spec_po_suban_kontima()
    SET CURSOR ON
    PRIVATE cK1 := cK2 := "9"
    PRIVATE cK3 := cK4 := "99"
-   //IF my_get_from_ini( "FIN", "LimitiPoUgovoru_PoljeK3", "N", SIFPATH ) == "D"
-   //    cK3 := "999"
-   //ENDIF
+
+
    IF gDUFRJ == "D"
       cIdRj := Space( 60 )
    ELSE
@@ -277,7 +277,17 @@ FUNCTION fin_spec_po_suban_kontima()
 
    Pic := PicBhd
 
-   START PRINT CRET
+   IF !is_legacy_ptxt()
+      oPDF := PDFClass():New()
+      xPrintOpt := hb_Hash()
+      xPrintOpt[ "tip" ] := "PDF"
+      xPrintOpt[ "layout" ] := "portrait"
+      xPrintOpt[ "font_size" ] := 7
+      xPrintOpt[ "opdf" ] := oPDF
+      xPrintOpt[ "left_space" ] := 0
+   ENDIF
+
+   start_print_close_ret( xPrintOpt )
 
    IF cSkVar == "D"
       nDOpis := 25
@@ -300,6 +310,9 @@ FUNCTION fin_spec_po_suban_kontima()
    nUp := 0      // DIN
    nUd2 := 0
    nUp2 := 0    // DEM
+
+   Eval( bZagl )
+
    DO WHILE !Eof()
 
       cSin := Left( field->idkonto, 3 )
@@ -340,9 +353,8 @@ FUNCTION fin_spec_po_suban_kontima()
          ELSE
             cRasclan := ""
          ENDIF
-         IF PRow() == 0
-            EVAL( bZagl )
-         ENDIF
+         check_nova_strana( bZagl, oPDF )
+
          IF cRascFunkFond == "D"
             aRasclan := {}
             nDugujeBHD := 0
@@ -378,7 +390,7 @@ FUNCTION fin_spec_po_suban_kontima()
                nPotrazujeBHD := 0
             ENDIF
          ENDDO
-         check_nova_strana( bZagl )
+         check_nova_strana( bZagl, oPDF )
          IF cNula == "D" .OR. Round( nd - np, 3 ) <> 0 .AND. cTip $ "13" .OR. Round( nd2 - np2, 3 ) <> 0 .AND. cTip $ "23"
             ? cIdKonto, IdPartner( cIdPartner ), ""
             IF cRasclaniti == "D"
@@ -485,7 +497,7 @@ FUNCTION fin_spec_po_suban_kontima()
          ENDIF
 
       ENDDO  // sintetika
-      check_nova_strana( bZagl )
+      check_nova_strana( bZagl, oPDF )
       IF cSK == "D"
          ? m
          ?  "SINT.K.", cSin, ":"
@@ -509,7 +521,7 @@ FUNCTION fin_spec_po_suban_kontima()
       nUp2 += nKp2   // ukupno za sve
    ENDDO
 
-   check_nova_strana( bZagl )
+   check_nova_strana( bZagl, oPDF )
 
 
    ? m
@@ -532,8 +544,10 @@ FUNCTION fin_spec_po_suban_kontima()
    ENDIF
 
    ? m
-   FF
-   ENDPRINT
+   IF is_legacy_ptxt()
+      FF
+   ENDIF
+   end_print( xPrintOpt )
 
    IF lExpRpt
       tbl_export()
@@ -628,10 +642,12 @@ STATIC FUNCTION FSvaki1()
 FUNCTION zagl_fin_specif( cSkVar )
 
    ?
-   B_ON
-   P_COND
+   IF is_legacy_ptxt()
+      B_ON
+      P_COND
+   ENDIF
 
-   ?? "FIN: SPECIFIKACIJA SUBANALITICKIH KONTA  ZA "
+   ??U "FIN: SPECIFIKACIJA SUBANALITIČKIH KONTA  ZA "
 
    IF cTip == "1"
       ?? ValDomaca()
@@ -650,9 +666,10 @@ FUNCTION zagl_fin_specif( cSkVar )
       ? "Izvjestaj pravljen po uslovu za broj veze/racuna: '" + Trim( qqBrDok ) + "'"
    ENDIF
 
-
-   @ PRow(), 125 SAY "Str:" + Str( ++nStr, 3 )
-   B_OFF
+   IF is_legacy_ptxt()
+      @ PRow(), 125 SAY "Str:" + Str( ++nStr, 3 )
+      B_OFF
+   ENDIF
 
    IF gNW == "D"
       ? "Firma:", gFirma, gNFirma
@@ -660,8 +677,9 @@ FUNCTION zagl_fin_specif( cSkVar )
       IF Empty( cIdFirma )
          ? "Firma:", gNFirma, "(SVE RJ)"
       ELSE
-         SELECT PARTN; HSEEK cIdFirma
-         ? "Firma:", cidfirma, PadR( partn->naz, 25 ), partn->naz2
+         SELECT PARTN
+         HSEEK cIdFirma
+         ? "Firma:", cIdfirma, PadR( partn->naz, 25 ), partn->naz2
       ENDIF
    ENDIF
 
@@ -670,13 +688,16 @@ FUNCTION zagl_fin_specif( cSkVar )
 
    SELECT SUBAN
 
-   IF cSkVar == "D"
-      F12CPI
-      ? m
-   ELSE
-      P_COND
-      ? m
+   IF is_legacy_ptxt()
+      IF cSkVar == "D"
+         F12CPI
+      ELSE
+         P_COND
+      ENDIF
    ENDIF
+
+   ? m
+
    IF cTip $ "12"
       IF cSkVar != "D"
          ? "KONTO  " + PadC( "PARTN.", FIELD_PARTNER_ID_LENGTH ) + "  NAZIV KONTA / PARTNERA                                          duguje            potrazuje                saldo"

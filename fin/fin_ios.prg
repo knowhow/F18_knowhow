@@ -213,7 +213,7 @@ STATIC FUNCTION ios_specifikacija( params )
    SEEK _id_firma + _id_konto
    EOF CRET
 
-   START PRINT CRET
+   start_print_close_ret()
    ?
 
    _rbr := 0
@@ -350,7 +350,7 @@ STATIC FUNCTION ios_specifikacija( params )
    @ PRow() + 1, 0 SAY _line
 
    FF
-   ENDPRINT
+   end_print()
 
    my_close_all_dbf()
 
@@ -666,7 +666,7 @@ STATIC FUNCTION mnu_ios_print()
    // txt forma
    IF _print_tip == "2"
 
-      START PRINT CRET
+      start_print_close_ret()
 
    ELSE
 
@@ -718,7 +718,7 @@ STATIC FUNCTION mnu_ios_print()
    ENDDO
 
    IF _print_tip == "2"
-      ENDPRINT
+      end_print()
    ELSE
 
       xml_subnode( "ios", .T. )

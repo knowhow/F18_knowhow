@@ -449,7 +449,7 @@ STATIC FUNCTION prikazi_greske_provjere_konta_i_partnera( err )
    _line += Space( 1 )
    _line += Replicate( "-", 30 )
 
-   START PRINT CRET
+   start_print_close_ret()
    ?
 
    ?U "Lista nepostojećih šifara na dokumentu:"
@@ -471,7 +471,7 @@ STATIC FUNCTION prikazi_greske_provjere_konta_i_partnera( err )
    ?U "Prije ažuriranja naloga, u šifrarnike potrebno ubaciti nabrojane šifre !"
 
    FF
-   ENDPRINT
+   end_print()
 
    RETURN
 

@@ -85,7 +85,7 @@ FUNCTION PrPromRn()
    m := "------ -------- " + REPL( "-", FIELD_PARTNER_ID_LENGTH ) + " " + REPL( "-", 40 ) + " " + REPL( "-", 16 )
    z := "R.BR. * DATUM  *" + PadC( "PARTN.", FIELD_PARTNER_ID_LENGTH ) + "*" + PadC( "NAZIV PARTNERA ILI OPIS PROMJENE", 40 ) + "*" + PadC( "UPLATA KM", 16 )
 
-   START PRINT CRET
+   start_print_close_ret()
    nStranica := 0
    ZagPPR( "U" )
 
@@ -156,7 +156,7 @@ FUNCTION PrPromRn()
    ? m
 
    FF
-   ENDPRINT
+   end_print()
 
    CLOSERET
 

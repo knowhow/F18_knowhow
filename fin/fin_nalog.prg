@@ -64,12 +64,12 @@ FUNCTION fin_nalog_azurirani()
    SELECT SUBAN
    SEEK cIdfirma + cIdvn + cBrNal
 
-   START PRINT CRET
+   start_print_close_ret()
 
    fin_nalog_stampa( "2", NIL, dDatNal )
    my_close_all_dbf()
 
-   ENDPRINT
+   end_print()
 
    RETURN .T.
 

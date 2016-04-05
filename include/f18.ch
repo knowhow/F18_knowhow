@@ -321,7 +321,7 @@
                            ; A:=0
 
 
-#command FF               => gPFF()
+#command FF                 => gPFF()
 #command P_FF               => gPFF()
 
 #xcommand P_INI              =>  gpini()
@@ -363,8 +363,8 @@
 
 
 
-#xcommand CLOSERET2      => my_close_all_dbf(); return
-#xcommand CLOSERET       => my_close_all_dbf(); return
+#xcommand CLOSERET2      => RETURN my_close_all_dbf()
+#xcommand CLOSERET       => RETURN my_close_all_dbf()
 
 
 #xcommand ESC_BCR   =>  if LastKey() == K_ESC     ;

@@ -47,7 +47,7 @@ FUNCTION kamate_obracun_pojedinacni( fVise )
    O_KS
    SET ORDER TO TAG "2"
 
-   START PRINT CRET
+   start_print_close_ret()
 
    ?
    P_10CPI
@@ -190,7 +190,7 @@ FUNCTION kamate_obracun_pojedinacni( fVise )
    ?
 
    FF
-   ENDPRINT
+   end_print()
 
    my_close_all_dbf()
 

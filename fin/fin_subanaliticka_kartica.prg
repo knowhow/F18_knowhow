@@ -366,7 +366,7 @@ FUNCTION fin_suban_kartica( lOtvst )
    EOF RET
 
    nStr := 0
-   START PRINT CRET
+   start_print_close_ret()
 
    PrikK1k4()
 
@@ -965,7 +965,7 @@ FUNCTION fin_suban_kartica( lOtvst )
    ENDIF
 
    FF
-   ENDPRINT
+   end_print()
 
    IF cExpDbf == "D"
       my_close_all_dbf()

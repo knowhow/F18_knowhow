@@ -413,7 +413,7 @@ FUNCTION SpecDugPartnera()
    ? "�" + REPL( "�", FIELD_PARTNER_ID_LENGTH ) + "�����������������������������������������������������������������������������������������������������������������������������"
 
    FF
-   ENDPRINT
+   end_print()
 
    SELECT ( F_POM )
    USE

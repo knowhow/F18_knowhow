@@ -140,7 +140,7 @@ FUNCTION KontoBlok( Ch )
 
    SET FILTER TO &aUsl1
 
-   START PRINT CRET
+   start_print_close_ret()
 
    ?
    B_ON
@@ -175,7 +175,7 @@ FUNCTION KontoBlok( Ch )
    ENDDO
 
    FF
-   ENDPRINT
+   end_print()
 
    SET FILTER TO
 

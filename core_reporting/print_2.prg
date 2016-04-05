@@ -79,6 +79,10 @@ FUNCTION f18_start_print( cFileName, xPrintOpt, cDocumentName )
       ELSE
          oPDF:SetType( PDF_TXT_LANDSCAPE )
       ENDIF
+      altd()
+      IF hb_HHasKey( xPrintOpt, "font_size" )
+         oPDF:SetFontSize( xPrintOpt[ "font_size" ] )
+      ENDIF
       oPDF:Begin()
       oPDF:PageHeader()
    ENDIF
@@ -170,7 +174,10 @@ FUNCTION f18_end_print( cFileName, xPrintOpt )
       IF hb_HHasKey( xPrintOpt, "left_space" )
          oPDF:SetLeftSpace( xPrintOpt[ "left_space" ] )
       ENDIF
-
+      altd()
+      IF hb_HHasKey( xPrintOpt, "font_size" )
+         oPDF:SetFontSize( xPrintOpt[ "font_size" ] )
+      ENDIF
       oPDF:cFileName := StrTran( txt_print_file_name(), ".txt", ".pdf" )
       oPDF:Begin()
       oPDF:PrnToPdf( txt_print_file_name() )
@@ -192,7 +199,19 @@ FUNCTION f18_end_print( cFileName, xPrintOpt )
    RETURN .T.
 
 
+FUNCTION start_print_close_ret( xPrintOpt )
 
+   IF Empty( f18_start_print( NIL, xPrintOpt ) )
+      my_close_all_dbf()
+      RETURN .F.
+   ENDIF
+
+   RETURN .T.
+
+
+FUNCTION end_print( xPrintOpt )
+
+   RETURN f18_end_print( NIL, xPrintOpt )
 
 
 STATIC FUNCTION get_printer_port( xPrintOpt )
@@ -417,6 +436,10 @@ FUNCTION gpNR()
 
 FUNCTION gPFF()
 
+   IF !is_legacy_ptxt()
+      ?E "FF ne koristiti u PDF izvjestajima"
+      RETURN .F.
+   ENDIF
    QQOut( hb_eol() + gPFF )
    SetPRC( 0, 0 )
 

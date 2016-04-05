@@ -71,7 +71,7 @@ FUNCTION DnevnikNaloga()
 
    GO TOP
 
-   START PRINT CRET
+   start_print_close_ret()
 
    nUkDugBHD := nUkPotBHD := nUkDugDEM := nUkPotDEM := 0  // sve strane ukupno
 
@@ -130,7 +130,7 @@ FUNCTION DnevnikNaloga()
       PrenosDNal()
    ENDIF
 
-   ENDPRINT
+   end_print()
 
    my_close_all_dbf()
 

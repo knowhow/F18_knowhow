@@ -96,7 +96,7 @@ FUNCTION fin_sint_kart_po_mjesecima()
    EOF RET
 
    nStr := 0
-   START PRINT CRET
+   start_print_close_ret()
 
    IF nStr == 0; ZaglSink2();ENDIF
    nSviD := nSviP := nSviD2 := nSviP2 := 0
@@ -200,7 +200,7 @@ FUNCTION fin_sint_kart_po_mjesecima()
    ? M
 
    FF
-   ENDPRINT
+   end_print()
 
    my_close_all_dbf()
 

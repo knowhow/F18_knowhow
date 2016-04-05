@@ -48,14 +48,14 @@
 #xcommand O__ROBA    => select (F__ROBA)   ;  my_usex("_roba")
 #xcommand O__PARTN   => select (F__PARTN)  ;  my_use  ("_partn")
 
-#xcommand O_RELAC    => SELECT (F_RELAC)   ;  my_use  ("relac")     ; set order to tag "ID"
+#xcommand O_RELAC    => o_relac()
 #xcommand O_VOZILA   => SELECT (F_VOZILA)  ;  my_use  ("vozila")    ; set order to tag "ID"
 
 #xcommand O_RELATION => SELECT (F_RELATION);  my_use ("relation")  ; set order to tag "1"
 #xcommand O_FINMAT   => select (F_FINMAT)  ;  my_use ("finmat")    ; set order to tag "1"
-#xcommand O_ULIMIT   => SELECT (F_ULIMIT)  ;  my_use ("ulimit")     ; set order to tag "ID"
+#xcommand O_ULIMIT   => o_ulimit()
 #xcommand O_TIPBL    => SELECT (F_TIPBL)   ;  my_use ("tipbl")      ; set order to tag "1"
-#xcommand O_VRNAL    => SELECT (F_VRNAL)   ;  my_use ("vrnal")      ; set order to tag "1"
+#xcommand O_VRNAL    => o_vrnal()
 
 // ugovori
 #xcommand O_UGOV     => select(F_UGOV)     ;  my_use  ("ugov")      ; set order to tag "ID"

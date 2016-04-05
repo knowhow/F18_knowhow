@@ -19,7 +19,7 @@ FUNCTION _l( cString )
 // funkcija za formatiranje stringa za filter
 // mjenja staru funkciju dbf_quote()
 // --------------------------------------------------
-FUNCTION _lter_quote( value )
+FUNCTION _filter_quote( value )
 
    LOCAL _var_type := ValType( value )
 
@@ -381,7 +381,7 @@ FUNCTION Slovima( nIzn, cDinDem )
    ENDIF
    IF ( nPom := Int( nIzn / 10 ** 3 ) ) >= 1
       IF lMarker
-          cRez += ""
+         cRez += ""
       ENDIF
       lMarker := .T.
       IF nPom == 1

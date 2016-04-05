@@ -1887,7 +1887,7 @@ FUNCTION RaspTrosk( fSilent )
 
 
 
-/*! fn Savjetnik()
+/* fn Savjetnik()
  *  brief Zamisljeno da se koristi kao pomoc u rjesavanju problema pri unosu dokumenta. Nije razradjeno.
  */
 
@@ -2035,7 +2035,7 @@ STATIC FUNCTION NazProdObj()
 
 
 
-/*! fn PlusMinusKol()
+/* fn PlusMinusKol()
  *     Mijenja predznak kolicini u svim stavkama u kalk_pripremi
  */
 
@@ -2199,7 +2199,7 @@ FUNCTION MPCSAPPiz80uSif()
 
 
 
-/*! fn VPCSifUDok()
+/* fn VPCSifUDok()
  *  brief Filuje VPC u svim stavkama u kalk_pripremi odgovarajucom VPC iz sifrarnika robe
  */
 

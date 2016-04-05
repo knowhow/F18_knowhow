@@ -782,7 +782,7 @@ STATIC FUNCTION CheckDok()
 
 
 
-/*! fn CheckPartn()
+/* fn CheckPartn()
  *  Provjerava i daje listu nepostojecih partnera pri importu liste partnera
  */
 STATIC FUNCTION CheckPartn()
@@ -1116,7 +1116,7 @@ STATIC FUNCTION FaktExist( nRight )
    RETURN aRet
 
 
-/*! fn TTbl2Kalk(aFExist, lFSkip)
+/* fn TTbl2Kalk(aFExist, lFSkip)
  *  brief kopira podatke iz pomocne tabele u tabelu KALK->PRIPT
  *  param aFExist matrica sa postojecim fakturama
  *  param lFSkip preskaci postojece fakture
@@ -1754,7 +1754,7 @@ FUNCTION ObradiImport( nPocniOd, lAsPokreni, lStampaj )
    RETURN
 
 
-/*! fn SaveObrada()
+/* fn SaveObrada()
  *  brief Snima momenat do kojeg je dosao pri obradi dokumenata
  */
 STATIC FUNCTION SaveObrada( nPRec )
@@ -1778,7 +1778,7 @@ STATIC FUNCTION SaveObrada( nPRec )
 
 
 
-/*! fn RestoreObrada()
+/* fn RestoreObrada()
  *  brief Pokrece ponovo obradu od momenta do kojeg je stao
  */
 STATIC FUNCTION RestoreObrada()
@@ -1824,7 +1824,7 @@ STATIC FUNCTION RestoreObrada()
 
 
 
-/*! fn ObradiDokument(cIdVd)
+/* fn ObradiDokument(cIdVd)
  *  brief Obrada jednog dokumenta
  *  param cIdVd - id vrsta dokumenta
  */

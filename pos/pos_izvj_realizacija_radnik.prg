@@ -378,7 +378,7 @@ Endif
 return .t.
 
 
-/*! fn C_RealRadn()
+/* fn C_RealRadn()
  *     Zatvaranje baza koristenih u izvjestaju realizacije po radnicima
  */
 

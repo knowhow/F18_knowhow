@@ -395,7 +395,7 @@ FUNCTION CheckMark( cIdKonto, cIdPartner, cNewPartner )
 
 
 
-/*! Partija(cIdKonto)
+/* Partija(cIdKonto)
  *    
  *   param: cIdKonto - oznaka konta
  */

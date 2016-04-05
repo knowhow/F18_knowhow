@@ -29,7 +29,7 @@
 // string FmkIni_ExePath_Fakt_Ugovori_N1;
 
 
-/*! \ingroup ini
+/* \ingroup ini
   * \var *string FmkIni_ExePath_Fakt_Ugovori_N2
   *    Koristi li se za generaciju faktura po ugovorima parametar N2 ?
   *  param: D - da, default vrijednost

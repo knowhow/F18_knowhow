@@ -13,7 +13,7 @@
 #include "f18.ch"
 
 
-/*! \file fmk/kalk/prod/dok/1g/rpt_19.prg
+/* \file fmk/kalk/prod/dok/1g/rpt_19.prg
  *     Stampa dokumenta tipa 19
  */
 

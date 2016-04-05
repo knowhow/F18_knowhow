@@ -94,7 +94,7 @@ STATIC FUNCTION ValidSamo( cOdg, cMogOdg )
 
 
 
-/*!  Pitanje2(cId,cPitanje,cOdgDefault)
+/*  Pitanje2(cId,cPitanje,cOdgDefault)
  *    
  *   param: cId
  *   param: cPitanje       - Pitanje

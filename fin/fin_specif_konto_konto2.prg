@@ -1,6 +1,6 @@
 #include "f18.ch"
 
-/*! SpecKK2(lOtvSt)
+/* SpecKK2(lOtvSt)
  *     Specifikacija konto/konto2 partner
  *   param: lOtvSt
  */

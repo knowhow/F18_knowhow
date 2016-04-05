@@ -40,7 +40,7 @@ FUNCTION P_Tarifa( cid, dx, dy )
 
 
 
-/*! fn Tarifa(cIdKonto, cIdRoba, aPorezi, cIdTar)
+/* fn Tarifa(cIdKonto, cIdRoba, aPorezi, cIdTar)
  *   Ispitivanje tarife, te punjenje matrice aPorezi
  * param: cIdKonto - Oznaka konta
  * param: cIdRoba - Oznaka robe

@@ -11,7 +11,7 @@
 
 #include "f18.ch"
 
-/*! \file fmk/fin/specif/ramaglas/rpt/1g/rpt_strn.prg
+/* \file fmk/fin/specif/ramaglas/rpt/1g/rpt_strn.prg
  *     Specifikacije troskova radnih naloga - "pogonsko knjigovodstvo"
  */
 

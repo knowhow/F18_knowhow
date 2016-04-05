@@ -13,7 +13,7 @@
 
 
 
-/*! KM2()
+/* KM2()
  *  Magacinska kartica kao pomoc pri unosu 14-ke
  */
 

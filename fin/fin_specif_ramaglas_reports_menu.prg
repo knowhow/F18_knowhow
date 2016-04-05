@@ -11,7 +11,7 @@
 
 #include "f18.ch"
 
-/*! \file fmk/fin/specif/ramaglas/rpt/1g/mnu_rpt.prg
+/* \file fmk/fin/specif/ramaglas/rpt/1g/mnu_rpt.prg
  *     Meni izvjestaja za rama glas - "pogonsko knjigovodstvo"
  */
 

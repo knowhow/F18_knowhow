@@ -11,7 +11,14 @@
 
 #include "f18.ch"
 
+MEMVAR gFirma, gPicBHD, picBHD, qqKonto, qqPartner, qqBrDok
+MEMVAR gDUFRJ
+MEMVAR cIdFirma, dDatOd, dDatDo, cFunk, cFond, cNula
+MEMVAR cSkVar, cRasclaniti, cRascFunkFond, cN2Fin
+MEMVAR cFilter
+MEMVAR fK1, fK2, fK3, fK4, cSection, cHistory, aHistory
 
+FIELD idkonto, idpartner
 
 FUNCTION fin_spec_po_suban_kontima()
 
@@ -25,12 +32,13 @@ FUNCTION fin_spec_po_suban_kontima()
    LOCAL cExpRptDN := "N"
    LOCAL cOpcine := Space( 20 )
    LOCAL cVN := Space( 20 )
+
+   LOCAL nC
    PRIVATE cSkVar := "N"
    PRIVATE fK1 := fk2 := fk3 := fk4 := "N"
    PRIVATE cRasclaniti := "N"
    PRIVATE cRascFunkFond := "N"
-
-   cN2Fin := my_get_from_ini( 'FIN', 'PartnerNaziv2', 'N' )
+   PRIVATE cN2Fin := "N" //cN2Fin := my_get_from_ini( 'FIN', 'PartnerNaziv2', 'N' )
 
    nC := 50
 
@@ -76,9 +84,9 @@ FUNCTION fin_spec_po_suban_kontima()
    SET CURSOR ON
    PRIVATE cK1 := cK2 := "9"
    PRIVATE cK3 := cK4 := "99"
-   IF my_get_from_ini( "FIN", "LimitiPoUgovoru_PoljeK3", "N", SIFPATH ) == "D"
-      cK3 := "999"
-   ENDIF
+   //IF my_get_from_ini( "FIN", "LimitiPoUgovoru_PoljeK3", "N", SIFPATH ) == "D"
+   //    cK3 := "999"
+   //ENDIF
    IF gDUFRJ == "D"
       cIdRj := Space( 60 )
    ELSE
@@ -88,7 +96,7 @@ FUNCTION fin_spec_po_suban_kontima()
    cFond := "9999"
    cNula := "N"
    DO WHILE .T.
-      @ m_x + 1, m_y + 6 SAY "SPECIFIKACIJA SUBANALITICKIH KONTA"
+      @ m_x + 1, m_y + 6 SAY8 "SPECIFIKACIJA SUBANALITIČKIH KONTA"
       IF gDUFRJ == "D"
          cIdFirma := PadR( gFirma + ";", 30 )
          @ m_x + 3, m_y + 2 SAY "Firma: " GET cIdFirma PICT "@!S20"
@@ -110,7 +118,7 @@ FUNCTION fin_spec_po_suban_kontima()
          cTip := "1"
       ENDIF
 
-      @ m_x + 8, m_y + 2 SAY "Prikaz sintetickih konta (D/N) ?" GET cSK  PICT "@!" VALID csk $ "DN"
+      @ m_x + 8, m_y + 2 SAY8 "Prikaz sintetičkih konta (D/N) ?" GET cSK  PICT "@!" VALID csk $ "DN"
       @ m_x + 9, m_y + 2 SAY "Prikaz stavki sa saldom 0 D/N" GET cNula PICT "@!" VALID cNula  $ "DN"
       @ m_x + 10, m_y + 2 SAY "Skracena varijanta (D/N) ?" GET cSkVar PICT "@!" VALID cSkVar $ "DN"
       @ m_x + 11, m_y + 2 SAY "Uslov za broj veze (prazno-svi) " GET qqBrDok PICT "@!S20"
@@ -123,7 +131,7 @@ FUNCTION fin_spec_po_suban_kontima()
          @ m_x + 14, m_y + 2 SAY "Rasclaniti po RJ/FUNK/FOND? (D/N) "  GET cRascFunkFond PICT "@!" VALID cRascFunkFond $ "DN"
       ENDIF
 
-      @ m_x + 15, m_y + 2 SAY "Opcina (prazno-sve):" GET cOpcine
+      @ m_x + 15, m_y + 2 SAY8 "Općina (prazno-sve):" GET cOpcine
 
       UpitK1k4( 16 )
 
@@ -187,8 +195,7 @@ FUNCTION fin_spec_po_suban_kontima()
          SET ORDER TO TAG "SUBSUB"
 
       ELSE
-         // IdFirma+IdKonto+IdPartner+dtos(DatDok)+BrNal+RBr
-         SET ORDER TO TAG "1"
+         SET ORDER TO TAG "1" // IdFirma+IdKonto+IdPartner+dtos(DatDok)+BrNal+RBr
       ENDIF
    ELSE
       IF cRasclaniti == "D"
@@ -273,16 +280,10 @@ FUNCTION fin_spec_po_suban_kontima()
 
    IF cSkVar == "D"
       nDOpis := 25
-      IF FIELD_PARTNER_ID_LENGTH > 6
-         // nDOpis += 2
-      ENDIF
       nDIznos := 12
       pic := Right( picbhd, nDIznos )
    ELSE
       nDOpis := 50
-      IF FIELD_PARTNER_ID_LENGTH > 6
-         // nDOpis += 2
-      ENDIF
       nDIznos := 20
    ENDIF
 
@@ -294,19 +295,19 @@ FUNCTION fin_spec_po_suban_kontima()
 
    nStr := 0
 
-   nud := 0
-   nup := 0      // DIN
-   nud2 := 0
-   nup2 := 0    // DEM
+   nUd := 0
+   nUp := 0      // DIN
+   nUd2 := 0
+   nUp2 := 0    // DEM
    DO WHILE !Eof()
 
-      cSin := Left( idkonto, 3 )
+      cSin := Left( field->idkonto, 3 )
       nKd := 0
       nKp := 0
       nKd2 := 0
       nKp2 := 0
 
-      DO WHILE !Eof() .AND.  cSin == Left( idkonto, 3 )
+      DO WHILE !Eof() .AND.  cSin == Left( fiel->idkonto, 3 )
 
          nTArea := Select()
 
@@ -339,7 +340,7 @@ FUNCTION fin_spec_po_suban_kontima()
             cRasclan := ""
          ENDIF
          IF PRow() == 0
-            fin_specif_zagl6( cSkVar )
+            zagl_fin_specif( cSkVar )
          ENDIF
          IF cRascFunkFond == "D"
             aRasclan := {}
@@ -378,7 +379,7 @@ FUNCTION fin_spec_po_suban_kontima()
          ENDDO
          IF PRow() > 60 + dodatni_redovi_po_stranici()
             FF
-            fin_specif_zagl6( cSkVar )
+            zagl_fin_specif( cSkVar )
          ENDIF
          IF cNula == "D" .OR. Round( nd - np, 3 ) <> 0 .AND. cTip $ "13" .OR. Round( nd2 - np2, 3 ) <> 0 .AND. cTip $ "23"
             ? cIdKonto, IdPartner( cIdPartner ), ""
@@ -488,7 +489,7 @@ FUNCTION fin_spec_po_suban_kontima()
       ENDDO  // sintetika
       IF PRow() > 60 + dodatni_redovi_po_stranici()
          FF
-         fin_specif_zagl6( cSkVar )
+         zagl_fin_specif( cSkVar )
       ENDIF
       IF cSK == "D"
          ? m
@@ -515,7 +516,7 @@ FUNCTION fin_spec_po_suban_kontima()
 
    IF PRow() > 60 + dodatni_redovi_po_stranici()
       FF
-      fin_specif_zagl6( cSkVar )
+      zagl_fin_specif( cSkVar )
    ENDIF
 
    ? m
@@ -554,7 +555,7 @@ FUNCTION fin_spec_po_suban_kontima()
 
 
 /* getmjesto(cMjesto)
- *    
+ *
  *   param: cMjesto
  */
 
@@ -614,7 +615,7 @@ STATIC FUNCTION FFor1()
    RETURN .T.
 
 
-/*! fn FSvaki1()
+/* fn FSvaki1()
  */
 
 STATIC FUNCTION FSvaki1()
@@ -622,7 +623,7 @@ STATIC FUNCTION FSvaki1()
    ++nRbr
    cNPartnera := PadR( Ocitaj( F_PARTN, IDPARTNER, "naz" ), 25 )
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -631,7 +632,7 @@ STATIC FUNCTION FSvaki1()
  *  param cSkVar
  */
 
-FUNCTION fin_specif_zagl6( cSkVar )
+FUNCTION zagl_fin_specif( cSkVar )
 
    ?
    B_ON

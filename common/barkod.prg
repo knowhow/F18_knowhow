@@ -310,7 +310,7 @@ FUNCTION FaLabelBKod()
 
 
 
-/*! fn FaEdPrLBK()
+/* fn FaEdPrLBK()
  *  brief Priprema barkodova
  */
 

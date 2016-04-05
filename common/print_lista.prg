@@ -13,7 +13,7 @@
 #include "f18.ch"
 
 
-/*!  print_lista(Zaglavlje,ImeDat,bFor,fIndex,lBezUpita)
+/*  print_lista(Zaglavlje,ImeDat,bFor,fIndex,lBezUpita)
  *
 
  *OPIS

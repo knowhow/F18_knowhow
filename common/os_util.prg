@@ -114,7 +114,7 @@ FUNCTION DiskPrazan( cDisk )
 
 
 
-/*! \file ChangeEXT(cImeF,cExt, cExtNew, fBezAdd)
+/* \file ChangeEXT(cImeF,cExt, cExtNew, fBezAdd)
  *    Promjeni ekstenziju
  *
  *  param:s cImeF   ime fajla

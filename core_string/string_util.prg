@@ -531,7 +531,7 @@ FUNCTION ReadHashString( cHashString )
 
 
 
-/*!  StrToArray(cStr, nLen)
+/*  StrToArray(cStr, nLen)
  *     Kreiraj array na osnovu stringa
  *   param: cStr - string
  *   param: nLen - na svakih nLen upisi novu stavku u array
@@ -563,7 +563,7 @@ FUNCTION StrToArray( cStr, nLen )
 
 
 
-/*!  FlushMemo(aMemo)
+/*  FlushMemo(aMemo)
  *     Vraca vrijednost memo niza u string
  */
 FUNCTION FlushMemo( aMemo )

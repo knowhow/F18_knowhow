@@ -13,7 +13,7 @@
 #include "f18.ch"
 
 
-/*! CreInt1DB()
+/* CreInt1DB()
  *  Kreiranje tabela dinteg1 i integ1
  */
 FUNCTION CreDIntDB()

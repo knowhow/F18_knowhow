@@ -150,7 +150,7 @@ FUNCTION SpecPoK()
 
 
 
-/*! Zagl5()
+/* Zagl5()
  *  brief Zaglavlje specifikacije po kontima
  */
 

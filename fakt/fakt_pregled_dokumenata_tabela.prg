@@ -66,18 +66,18 @@ FUNCTION fakt_lista_dokumenata_tabelarni_pregled( lVrsteP, lOpcine, cFilter )
 
    Box( , _x, _y )
 
-   @ m_x + _x - 4, m_y + 2 SAY8 PadRU( " <ENTER> Štampa TXT", _w1 ) + ;
-      BROWSE_COL_SEP + PadRU( " < P > Povrat dokumenta", _w1 ) + ;
-      BROWSE_COL_SEP + PadRU( " < I > Informacije", _w1 )
-   @ m_x + _x - 3, m_y + 2 SAY8 PadRU( " < a+P > Štampa ODT", _w1 ) + ;
-      BROWSE_COL_SEP + PadRU( " < S > Storno dokument", _w1 ) + ;
-      BROWSE_COL_SEP + PadRU( " < c+V > Setuj vezu fisk.", _w1 )
-   @ m_x + _x - 2, m_y + 2 SAY8 PadRU( " < R > Štampa fisk.računa", _w1 ) + ;
-      BROWSE_COL_SEP + PadRU( " < F > ponuda->racun", _w1 ) + ;
-      BROWSE_COL_SEP + PadRU( " < F5 > Refresh ", _w1 )
-   @ m_x + _x - 1, m_y + 2 SAY PadRU( " < W > Dupliciraj", _w1 ) + ;
-      BROWSE_COL_SEP + PadRU( " < K > Ispravka podataka", _w1 ) + ;
-      BROWSE_COL_SEP + PadRU( " < T > Duplikat fiskalnog rn.", _w1 )
+   @ m_x + _x - 4, m_y + 2 SAY8 _upadr( " <ENTER> Štampa TXT", _w1 ) + ;
+      BROWSE_COL_SEP + _upadr( " < P > Povrat dokumenta", _w1 ) + ;
+      BROWSE_COL_SEP + _upadr( " < I > Informacije", _w1 )
+   @ m_x + _x - 3, m_y + 2 SAY8 _upadr( " < a+P > Štampa ODT", _w1 ) + ;
+      BROWSE_COL_SEP + _upadr( " < S > Storno dokument", _w1 ) + ;
+      BROWSE_COL_SEP + _upadr( " < c+V > Setuj vezu fisk.", _w1 )
+   @ m_x + _x - 2, m_y + 2 SAY8 _upadr( " < R > Štampa fisk.računa", _w1 ) + ;
+      BROWSE_COL_SEP + _upadr( " < F > ponuda->račun", _w1 ) + ;
+      BROWSE_COL_SEP + _upadr( " < F5 > osvježi ", _w1 )
+   @ m_x + _x - 1, m_y + 2 SAY _upadr( " < W > Dupliciraj", _w1 ) + ;
+      BROWSE_COL_SEP + _upadr( " < K > Ispravka podataka", _w1 ) + ;
+      BROWSE_COL_SEP + _upadr( " < T > Duplikat fiskalnog rn.", _w1 )
 
    fUPripremu := .F.
 

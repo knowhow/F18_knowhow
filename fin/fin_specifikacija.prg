@@ -18,7 +18,7 @@ MEMVAR cSkVar, cRasclaniti, cRascFunkFond, cN2Fin
 MEMVAR cFilter
 MEMVAR fK1, fK2, fK3, fK4, cSection, cHistory, aHistory
 
-FIELD idkonto, idpartner
+FIELD idkonto, idpartner, idrj
 
 FUNCTION fin_spec_po_suban_kontima()
 
@@ -32,6 +32,7 @@ FUNCTION fin_spec_po_suban_kontima()
    LOCAL cExpRptDN := "N"
    LOCAL cOpcine := Space( 20 )
    LOCAL cVN := Space( 20 )
+   LOCAL bZagl :=  {|| zagl_fin_specif( cSkVar ) }
 
    LOCAL nC
    PRIVATE cSkVar := "N"
@@ -340,7 +341,7 @@ FUNCTION fin_spec_po_suban_kontima()
             cRasclan := ""
          ENDIF
          IF PRow() == 0
-            zagl_fin_specif( cSkVar )
+            EVAL( bZagl )
          ENDIF
          IF cRascFunkFond == "D"
             aRasclan := {}
@@ -377,10 +378,7 @@ FUNCTION fin_spec_po_suban_kontima()
                nPotrazujeBHD := 0
             ENDIF
          ENDDO
-         IF PRow() > 60 + dodatni_redovi_po_stranici()
-            FF
-            zagl_fin_specif( cSkVar )
-         ENDIF
+         check_nova_strana( bZagl )
          IF cNula == "D" .OR. Round( nd - np, 3 ) <> 0 .AND. cTip $ "13" .OR. Round( nd2 - np2, 3 ) <> 0 .AND. cTip $ "23"
             ? cIdKonto, IdPartner( cIdPartner ), ""
             IF cRasclaniti == "D"
@@ -487,10 +485,7 @@ FUNCTION fin_spec_po_suban_kontima()
          ENDIF
 
       ENDDO  // sintetika
-      IF PRow() > 60 + dodatni_redovi_po_stranici()
-         FF
-         zagl_fin_specif( cSkVar )
-      ENDIF
+      check_nova_strana( bZagl )
       IF cSK == "D"
          ? m
          ?  "SINT.K.", cSin, ":"
@@ -514,10 +509,8 @@ FUNCTION fin_spec_po_suban_kontima()
       nUp2 += nKp2   // ukupno za sve
    ENDDO
 
-   IF PRow() > 60 + dodatni_redovi_po_stranici()
-      FF
-      zagl_fin_specif( cSkVar )
-   ENDIF
+   check_nova_strana( bZagl )
+
 
    ? m
    ? " UKUPNO:"

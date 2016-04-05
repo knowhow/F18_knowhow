@@ -71,7 +71,7 @@ FUNCTION kalk_stampa_dok_10()
       RptSeekRT()
       KTroskovi()
 
-      check_pdf_nova_strana( s_oPDF, bZagl )
+      check_nova_strana( bZagl, s_oPDF )
 
       IF gKalo == "1"
          SKol := field->Kolicina - field->GKolicina - field->GKolicin2
@@ -175,7 +175,7 @@ FUNCTION kalk_stampa_dok_10()
    ENDDO
 
 
-   check_pdf_nova_strana( s_oPDF, bZagl )
+   check_nova_strana( bZagl, s_oPDF )
 
    ? m
 
@@ -198,7 +198,7 @@ FUNCTION kalk_stampa_dok_10()
       @ PRow(), PCol() + 1  SAY nTotM         PICTURE         PICDEM
    ENDIF
 
-   check_pdf_nova_strana( s_oPDF, bZagl )
+   check_nova_strana( bZagl, s_oPDF )
 
    ? m
    ? Space( PRINT_LEFT_SPACE ) + "Magacin se zadužuje po nabavnoj vrijednosti " + AllTrim( Transform( nTot8, picdem ) )

@@ -21,13 +21,17 @@ FUNCTION zagl_organizacija( nLeft )
 
    RETURN .T.
 
-FUNCTION check_pdf_nova_strana( oPDF, bZagl, nOdstampatiStrana )
 
-   hb_default( @nOdstampatiStrana, 1 )
 
-   IF PRow() > ( page_length() - nOdstampatiStrana )
-      oPDF:DrawText( 67, 0, "" )
-      oPDF:PageHeader()
+FUNCTION check_nova_strana( bZagl, oPDF )
+
+   IF PRow() > page_length()
+      IF ValType( oPDF ) == "O"
+         oPDF:DrawText( 67, 0, "" )
+         oPDF:PageHeader()
+      ELSE
+         FF
+      ENDIF
       IF ( bZagl <> NIL )
          PushWa()
          Eval( bZagl )

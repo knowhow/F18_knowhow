@@ -106,7 +106,7 @@ FUNCTION fin_stampa_liste_naloga()
          LOOP
       ENDIF
 
-      check_pdf_nova_strana( s_oPDF, bZagl )
+      check_nova_strana( bZagl, s_oPDF )
 
       @ PRow() + 1, 0 SAY SPACE( PRINT_LEFT_SPACE )
       @ PRow(), PCol() + 0 SAY ++nRBr PICTURE "999999"
@@ -189,7 +189,7 @@ FUNCTION fin_stampa_liste_naloga()
       SKIP
    ENDDO
 
-   check_pdf_nova_strana( s_oPDF, bZagl )
+   check_nova_strana( bZagl, s_oPDF )
 
    ? m
    ? SPACE( PRINT_LEFT_SPACE ) + "   UKUPNO:"

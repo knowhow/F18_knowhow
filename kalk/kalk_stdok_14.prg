@@ -77,7 +77,7 @@ FUNCTION StKalk14()
       KTroskovi()
 
 
-      check_pdf_nova_strana( oPdf, bZagl )
+      check_nova_strana( bZagl, oPdf )
 
 
       IF kalk_pripr->idvd = "15"
@@ -204,7 +204,7 @@ FUNCTION StKalk14()
 
    ENDDO
 
-   check_pdf_nova_strana( oPdf, bZagl )
+   check_nova_strana( bZagl, oPdf )
 
    ? m
 

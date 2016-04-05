@@ -34,9 +34,9 @@ FUNCTION MMenuUpA()
    PRIVATE opcexe := {}
    PRIVATE Izbor := 1
 
-   AAdd( opc, "1. izvjestaji                        " )
+   AAdd( opc, "1. izvještaji                        " )
    AAdd( opcexe, {|| pos_izvjestaji() } )
-   AAdd( opc, "L. lista azuriranih dokumenata" )
+   AAdd( opc, "L. lista ažuriranih dokumenata" )
    AAdd( opcexe, {|| pos_prepis_dokumenta() } )
 
    AAdd( opc, "R. prenos realizacije u KALK" )
@@ -50,7 +50,7 @@ FUNCTION MMenuUpA()
 
    AAdd( opc, "--------------" )
    AAdd( opcexe, nil )
-   AAdd( opc, "S. sifarnici" )
+   AAdd( opc, "S. šifarnici" )
    AAdd( opcexe, {|| pos_sifarnici() } )
    AAdd( opc, "W. administracija pos-a" )
    AAdd( opcexe, {|| pos_admin_menu() } )

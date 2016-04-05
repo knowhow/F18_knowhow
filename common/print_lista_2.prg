@@ -100,8 +100,8 @@ FUNCTION print_lista_2( aKol, bZaRed, nOdvoji, nCrtice, bUslov, lA4papir, cNaslo
    IF nCrtice == 9; nStr := -1; lOstr := .F. ; ENDIF
    IF nSlogova != nil; Postotak( 1, nSlogova, cTabBr,,, .F. ); ENDIF
 
-   AEval( aKol, {| x| xPom := x[ 8 ], xPom1 := x[ 5 ], xPom2 := x[ 3 ], IIF( AScan( aPom, {| y| y[ 1 ] == xPom } ) == 0, Eval( {|| nDReda += xPom1, AAdd( aPom, { xPom, xPom1, xPom2 } ) } ), ), ;
-      IF( x[ 3 ], lPrenos := .T., ), IF( x[ 8 ] > nKol, nKol := x[ 8 ], ), IIF( x[ 7 ] > nRed, nRed := x[ 7 ], ), IF( x[ 4 ] == "P", lPRed := .T., ) } )
+   AEval( aKol, {| x| xPom := x[ 8 ], xPom1 := x[ 5 ], xPom2 := x[ 3 ], iif( AScan( aPom, {| y| y[ 1 ] == xPom } ) == 0, Eval( {|| nDReda += xPom1, AAdd( aPom, { xPom, xPom1, xPom2 } ) } ), ), ;
+      IF( x[ 3 ], lPrenos := .T., ), IF( x[ 8 ] > nKol, nKol := x[ 8 ], ), iif( x[ 7 ] > nRed, nRed := x[ 7 ], ), IF( x[ 4 ] == "P", lPRed := .T., ) } )
    ASort( aPom,,, {| x, y| x[ 1 ] < y[ 1 ] } )
 
    FOR i := 1 TO nRed
@@ -147,11 +147,11 @@ FUNCTION print_lista_2( aKol, bZaRed, nOdvoji, nCrtice, bUslov, lA4papir, cNaslo
    ASort( aPrZag ); ASort( aPrSum ); ASort( aPrStav )
    nDReda += nKol + 1 + nOdvoji
    nMDReda := IF( lA4papir == "POS", 40, MDDReda( nDReda, lA4papir ) )
-   cLM := IIF( nMDReda - nDReda >= 0, Space( nOdvoji + Int( ( nMDReda - nDReda ) / 2 ) ), "" )
-   cLM2 := IIF( nMDReda - nDReda >= 0 .AND. !lCTab, Space( nOdvoji ), cLM )
+   cLM := iif( nMDReda - nDReda >= 0, Space( nOdvoji + Int( ( nMDReda - nDReda ) / 2 ) ), "" )
+   cLM2 := iif( nMDReda - nDReda >= 0 .AND. !lCTab, Space( nOdvoji ), cLM )
    GuSt2( nDReda, lA4papir )
 
-   IF nStr >= 0 .AND. ( PRow() > ( gnRedova + IIF( gPrinter = "R", 2, 0 ) - 7 -Len( aPrStav ) -Len( aPrZag ) ) .OR. PRow() > ( gnRedova + IF( gPrinter = "R", 2, 0 ) -11 -Len( aPrStav ) -Len( aPrZag ) ) .AND. cNaslov != nil )
+   IF nStr >= 0 .AND. ( PRow() > ( gnRedova + iif( gPrinter = "R", 2, 0 ) - 7 -Len( aPrStav ) -Len( aPrZag ) ) .OR. PRow() > ( gnRedova + IF( gPrinter = "R", 2, 0 ) -11 -Len( aPrStav ) -Len( aPrZag ) ) .AND. cNaslov != nil )
       IF gPrinter != "R"
          DO WHILE PRow() < gnRedova - 2; QOut(); ENDDO
          xPom := Str( nStr, 3 ) + ". strana"
@@ -168,11 +168,9 @@ FUNCTION print_lista_2( aKol, bZaRed, nOdvoji, nCrtice, bUslov, lA4papir, cNaslo
       cOk := { "-", "-", " ", "-", " ", "-", " ", "-", "-", " ", "-", " ", "-", "-", "-", " " }
    ELSEIF nCrtice == 1
 
-#ifdef __PLATFORM__WINDOWS
+
       cOk := { "+", "-", "+", "+", ":", "+", "+", "+", "+", "+", "+", ":", "-", "+", "+", "+" }
-#else
-      cOk := { "�", "�", "�", "�", "�", "�", "�", "�", "�", "�", "�", "�", "�", "�", "�", "�" }
-#endif
+
 
    ELSEIF nCrtice == 9
       // rtf-fajlovi
@@ -550,8 +548,8 @@ FUNCTION PrekSaEsc()
 
 FUNCTION NaSljedStranu( lMozeL, lPrenos, cLM2, cOk, aPom, nKol, nStr, cLM, nDReda, nOdvoji, aPrSum, aKol, nSuma, cTek3, bZagl, cNaslov, aPrZag, cTek1, xTot )
 
-
    LOCAL i, xPom, j, cPom
+
    lMozeL := .F.
    IF !lPrenos
       i := 0; QOut( cLM2 + cOk[ 9 ] )
@@ -645,8 +643,8 @@ STATIC FUNCTION StStavku( aKol, xPom, i, nKol, cOk )
 
 FUNCTION DajRed( tekst, kljuc )
 
-
    LOCAL cVrati := "", nPom := 0, nPoc := 0
+
    nPom := At( kljuc, tekst )
    nPoc := RAt( NRED, Left( tekst, nPom ) )
    nKraj := At(  NRED, SubStr( tekst, nPom ) )

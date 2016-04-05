@@ -110,7 +110,7 @@ FUNCTION print_lista( Zaglavlje, ImeDat, bFor, fIndex, lBezUpita )
    ENDIF
 
    lImaSifK := .F.
-   IF AScan( ImeKol, {|x| Len( x ) > 2 .AND. ValType( x[ 3 ] ) == "C" .AND. "SIFK->" $ x[ 3 ] } ) <> 0
+   IF AScan( ImeKol, {| x| Len( x ) > 2 .AND. ValType( x[ 3 ] ) == "C" .AND. "SIFK->" $ x[ 3 ] } ) <> 0
       lImaSifK := .T.
    ENDIF
 
@@ -124,7 +124,7 @@ FUNCTION print_lista( Zaglavlje, ImeDat, bFor, fIndex, lBezUpita )
 
          IF j <> 0
             xPom := Eval( ImeKol[ k, 2 ] )
-            anDuz[ j, 1 ] := Max( Len( ImeKol[ k, 1 ] ), Len( IIF( ValType( xPom ) == "D", ;
+            anDuz[ j, 1 ] := Max( Len( ImeKol[ k, 1 ] ), Len( iif( ValType( xPom ) == "D", ;
                DToC( xPom ), IF( ValType( xPom ) == "N", Str( xPom ), xPom ) ) ) )
             IF anDuz[ j, 1 ] > 100
                anDuz[ j, 1 ] := 100
@@ -132,7 +132,7 @@ FUNCTION print_lista( Zaglavlje, ImeDat, bFor, fIndex, lBezUpita )
                   "P", ;
                   anDuz[ j, 1 ], iif( aStruct[ i, 2 ] == "N", aStruct[ i, 4 ], 0 ) }
             ELSE
-               anDuz[ j, 2 ] := { ImeKol[ k, 1 ], ImeKol[ k, 2 ], .F., ValType( Eval( ImeKol[ k, 2 ] ) ), anDuz[ j, 1 ], IIF( aStruct[ i, 2 ] == "N", aStruct[ i, 4 ], 0 ) }
+               anDuz[ j, 2 ] := { ImeKol[ k, 1 ], ImeKol[ k, 2 ], .F., ValType( Eval( ImeKol[ k, 2 ] ) ), anDuz[ j, 1 ], iif( aStruct[ i, 2 ] == "N", aStruct[ i, 4 ], 0 ) }
             ENDIF
          ELSE
             IF aStruct[ i, 2 ] == "M"
@@ -282,21 +282,21 @@ FUNCTION ZaRedBlok()
    WhileEvent( RedBr, nil )
 
    IF !Empty( cNazMemo )
-      ctxt2 := UkloniRet( cNazMemo, .F. )
+      cTxt2 := UkloniRet( cNazMemo, .F. )
    ENDIF
 
    RETURN .T.
-// }
+
 
 FUNCTION UkloniRet( xTekst, lPrazno )
 
-   // {
    LOCAL cTekst
+
    IF lPrazno == nil; lPrazno := .F. ; ENDIF
    IF ValType( xTekst ) == "B"
-      cTekst := StrTran( Eval( xTekst ), "�" + Chr( 10 ), "" )
+      cTekst := StrTran( Eval( xTekst ), Chr( 13 ) + Chr( 10 ), "" )
    ELSE
-      cTekst := StrTran( &xTekst, "�" + Chr( 10 ), "" )
+      cTekst := StrTran( &xTekst, Chr( 13 ) + Chr( 10 ), "" )
    ENDIF
    IF lPrazno
       cTekst := StrTran( cTekst, NRED, NRED + Space( 7 ) )
@@ -444,6 +444,7 @@ FUNCTION Nuliraj()
 STATIC FUNCTION TrebaPrelom( nPos, nPosRKol )
 
    LOCAL lVrati := .F., i := 0
+
    FOR i := 1 TO Len( RKol )
       IF RKol[ i, 1 ] == nPos
          IF RKol[ i, 3 ] == "D"; lVrati := .T. ; nPosRKol := i ; ENDIF

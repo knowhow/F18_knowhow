@@ -23,17 +23,17 @@ FUNCTION pos_main_menu_admin()
    PRIVATE opcexe := {}
    PRIVATE Izbor := 1
 
-   AAdd( opc, "1. izvjestaji                       " )
+   AAdd( opc, "1. izvještaji                       " )
    AAdd( opcexe, {|| pos_izvjestaji() } )
-   AAdd( opc, "2. pregled racuna" )
+   AAdd( opc, "2. pregled računa" )
    AAdd( opcexe, {|| pos_pregled_racuna_tabela() } )
-   AAdd( opc, "L. lista azuriranih dokumenata" )
+   AAdd( opc, "L. lista ažuriranih dokumenata" )
    AAdd( opcexe, {|| pos_prepis_dokumenta() } )
    AAdd( opc, "R. robno-materijalno poslovanje" )
    AAdd( opcexe, {|| pos_menu_robmat() } )
    AAdd( opc, "K. prenos realizacije u KALK" )
    AAdd( opcexe, {|| pos_prenos_pos_kalk() } )
-   AAdd( opc, "S. sifarnici                  " )
+   AAdd( opc, "S. šifarnici                  " )
    AAdd( opcexe, {|| pos_sifarnici() } )
    AAdd( opc, "A. administracija pos-a" )
    AAdd( opcexe, {|| pos_admin_menu() } )
@@ -54,7 +54,7 @@ FUNCTION SetPM( nPosSetPM )
    opc[ nPosSetPM ] := Left( opc[ nPosSetPM ], nLen - 2 ) + gIdPos
    pos_status_traka()
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -79,10 +79,10 @@ FUNCTION pos_admin_menu()
    ENDIF
 
    IF ( KLevel < L_UPRAVN )
-	
+
       AAdd( opc, "---------------------------" )
       AAdd( opcexe, nil )
-	
+
       AAdd( opc, "P. prodajno mjesto: " + gIdPos )
       nPosSetPM := Len( opc )
       AAdd( opcexe, {|| SetPm ( nPosSetPM ) } )

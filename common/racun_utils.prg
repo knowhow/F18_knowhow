@@ -25,129 +25,129 @@ FUNCTION ShowIznRac( nIznos )
 
    Box (, 9, 77 )
    cIzn := AllTrim ( Transform ( nIznos, "9999999.99" ) )
-   @ m_x, m_y + 28 SAY "  IZNOS RACUNA JE  " COLOR F18_COLOR_INVERT 
+   @ m_x, m_y + 28 SAY8 "  IZNOS RAČUNA JE  " COLOR F18_COLOR_INVERT
    NextY := m_y + 76
    FOR nCnt := Len ( cIzn ) TO 1 STEP -1
       Char := SubStr ( cIzn, nCnt, 1 )
       DO CASE
       CASE Char = "1"
          NextY -= 6
-         @ m_x + 2, NextY SAY " ��"
-         @ m_x + 3, NextY SAY "  �"
-         @ m_x + 4, NextY SAY "  �"
-         @ m_x + 5, NextY SAY "  �"
-         @ m_x + 6, NextY SAY "  �"
-         @ m_x + 7, NextY SAY "  �"
-         @ m_x + 8, NextY SAY "  �"
-         @ m_x + 9, NextY SAY "�����"
+         @ m_x + 2, NextY SAY8 " ██"
+         @ m_x + 3, NextY SAY8 "  █"
+         @ m_x + 4, NextY SAY8 "  █"
+         @ m_x + 5, NextY SAY8 "  █"
+         @ m_x + 6, NextY SAY8 "  █"
+         @ m_x + 7, NextY SAY8 "  █"
+         @ m_x + 8, NextY SAY8 "  █"
+         @ m_x + 9, NextY SAY8 "█████"
       CASE Char = "2"
          NextY -= 8
-         @ m_x + 2, NextY SAY "�������"
-         @ m_x + 3, NextY SAY "      �"
-         @ m_x + 4, NextY SAY "      �"
-         @ m_x + 5, NextY SAY "�������"
-         @ m_x + 6, NextY SAY "�"
-         @ m_x + 7, NextY SAY "�"
-         @ m_x + 8, NextY SAY "�     �"
-         @ m_x + 9, NextY SAY "�������"
+         @ m_x + 2, NextY SAY8 "███████"
+         @ m_x + 3, NextY SAY8 "      █"
+         @ m_x + 4, NextY SAY8 "      █"
+         @ m_x + 5, NextY SAY8 "███████"
+         @ m_x + 6, NextY SAY8 "█"
+         @ m_x + 7, NextY SAY8 "█"
+         @ m_x + 8, NextY SAY8 "█     █"
+         @ m_x + 9, NextY SAY8 "███████"
       CASE Char = "3"
          NextY -= 8
-         @ m_x + 2, NextY SAY " ������"
-         @ m_x + 3, NextY SAY "      �"
-         @ m_x + 4, NextY SAY "      �"
-         @ m_x + 5, NextY SAY "  ����"
-         @ m_x + 6, NextY SAY "      �"
-         @ m_x + 7, NextY SAY "      �"
-         @ m_x + 8, NextY SAY "      �"
-         @ m_x + 9, NextY SAY "�������"
+         @ m_x + 2, NextY SAY8 " ██████"
+         @ m_x + 3, NextY SAY8 "      █"
+         @ m_x + 4, NextY SAY8 "      █"
+         @ m_x + 5, NextY SAY8 "  ████"
+         @ m_x + 6, NextY SAY8 "      █"
+         @ m_x + 7, NextY SAY8 "      █"
+         @ m_x + 8, NextY SAY8 "      █"
+         @ m_x + 9, NextY SAY8 "███████"
       CASE Char = "4"
          NextY -= 8
-         @ m_x + 2, NextY SAY "�"
-         @ m_x + 3, NextY SAY "�"
-         @ m_x + 4, NextY SAY "�     �"
-         @ m_x + 5, NextY SAY "�     �"
-         @ m_x + 6, NextY SAY "�������"
-         @ m_x + 7, NextY SAY "      �"
-         @ m_x + 8, NextY SAY "      �"
-         @ m_x + 9, NextY SAY "      �"
+         @ m_x + 2, NextY SAY8 "█"
+         @ m_x + 3, NextY SAY8 "█"
+         @ m_x + 4, NextY SAY8 "█     █"
+         @ m_x + 5, NextY SAY8 "█     █"
+         @ m_x + 6, NextY SAY8 "███████"
+         @ m_x + 7, NextY SAY8 "      █"
+         @ m_x + 8, NextY SAY8 "      █"
+         @ m_x + 9, NextY SAY8 "      █"
       CASE Char = "5"
          NextY -= 8
-         @ m_x + 2, NextY SAY "�������"
-         @ m_x + 3, NextY SAY "�"
-         @ m_x + 4, NextY SAY "�"
-         @ m_x + 5, NextY SAY "�������"
-         @ m_x + 6, NextY SAY "      �"
-         @ m_x + 7, NextY SAY "      �"
-         @ m_x + 8, NextY SAY "�     �"
-         @ m_x + 9, NextY SAY "�������"
+         @ m_x + 2, NextY SAY8 "███████"
+         @ m_x + 3, NextY SAY8 "█"
+         @ m_x + 4, NextY SAY8 "█"
+         @ m_x + 5, NextY SAY8 "███████"
+         @ m_x + 6, NextY SAY8 "      █"
+         @ m_x + 7, NextY SAY8 "      █"
+         @ m_x + 8, NextY SAY8 "█     █"
+         @ m_x + 9, NextY SAY8 "███████"
       CASE Char = "6"
          NextY -= 8
-         @ m_x + 2, NextY SAY "�������"
-         @ m_x + 3, NextY SAY "�"
-         @ m_x + 4, NextY SAY "�"
-         @ m_x + 5, NextY SAY "�������"
-         @ m_x + 6, NextY SAY "�     �"
-         @ m_x + 7, NextY SAY "�     �"
-         @ m_x + 8, NextY SAY "�     �"
-         @ m_x + 9, NextY SAY "�������"
+         @ m_x + 2, NextY SAY8 "███████"
+         @ m_x + 3, NextY SAY8 "█"
+         @ m_x + 4, NextY SAY8 "█"
+         @ m_x + 5, NextY SAY8 "███████"
+         @ m_x + 6, NextY SAY8 "█     █"
+         @ m_x + 7, NextY SAY8 "█     █"
+         @ m_x + 8, NextY SAY8 "█     █"
+         @ m_x + 9, NextY SAY8 "███████"
       CASE Char = "7"
          NextY -= 8
-         @ m_x + 2, NextY SAY "�������"
-         @ m_x + 3, NextY SAY "      �"
-         @ m_x + 4, NextY SAY "     �"
-         @ m_x + 5, NextY SAY "    �"
-         @ m_x + 6, NextY SAY "   �"
-         @ m_x + 7, NextY SAY "  �"
-         @ m_x + 8, NextY SAY " �"
-         @ m_x + 9, NextY SAY "�"
+         @ m_x + 2, NextY SAY8 "███████"
+         @ m_x + 3, NextY SAY8 "      █"
+         @ m_x + 4, NextY SAY8 "     █"
+         @ m_x + 5, NextY SAY8 "    █"
+         @ m_x + 6, NextY SAY8 "   █"
+         @ m_x + 7, NextY SAY8 "  █"
+         @ m_x + 8, NextY SAY8 " █"
+         @ m_x + 9, NextY SAY8 "█"
       CASE Char = "8"
          NextY -= 8
-         @ m_x + 2, NextY SAY "�������"
-         @ m_x + 3, NextY SAY "�     �"
-         @ m_x + 4, NextY SAY "�     �"
-         @ m_x + 5, NextY SAY " ����� "
-         @ m_x + 6, NextY SAY "�     �"
-         @ m_x + 7, NextY SAY "�     �"
-         @ m_x + 8, NextY SAY "�     �"
-         @ m_x + 9, NextY SAY "�������"
+         @ m_x + 2, NextY SAY8 "███████"
+         @ m_x + 3, NextY SAY8 "█     █"
+         @ m_x + 4, NextY SAY8 "█     █"
+         @ m_x + 5, NextY SAY8 " █████ "
+         @ m_x + 6, NextY SAY8 "█     █"
+         @ m_x + 7, NextY SAY8 "█     █"
+         @ m_x + 8, NextY SAY8 "█     █"
+         @ m_x + 9, NextY SAY8 "███████"
       CASE Char = "9"
          NextY -= 8
-         @ m_x + 2, NextY SAY "�������"
-         @ m_x + 3, NextY SAY "�     �"
-         @ m_x + 4, NextY SAY "�     �"
-         @ m_x + 5, NextY SAY "�������"
-         @ m_x + 6, NextY SAY "      �"
-         @ m_x + 7, NextY SAY "      �"
-         @ m_x + 8, NextY SAY "�     �"
-         @ m_x + 9, NextY SAY "�������"
+         @ m_x + 2, NextY SAY8 "███████"
+         @ m_x + 3, NextY SAY8 "█     █"
+         @ m_x + 4, NextY SAY8 "█     █"
+         @ m_x + 5, NextY SAY8 "███████"
+         @ m_x + 6, NextY SAY8 "      █"
+         @ m_x + 7, NextY SAY8 "      █"
+         @ m_x + 8, NextY SAY8 "█     █"
+         @ m_x + 9, NextY SAY8 "███████"
       CASE Char = "0"
          NextY -= 8
-         @ m_x + 2, NextY SAY " ����� "
-         @ m_x + 3, NextY SAY "�     �"
-         @ m_x + 4, NextY SAY "�     �"
-         @ m_x + 5, NextY SAY "�     �"
-         @ m_x + 6, NextY SAY "�     �"
-         @ m_x + 7, NextY SAY "�     �"
-         @ m_x + 8, NextY SAY "�     �"
-         @ m_x + 9, NextY SAY " �����"
+         @ m_x + 2, NextY SAY8 " █████ "
+         @ m_x + 3, NextY SAY8 "█     █"
+         @ m_x + 4, NextY SAY8 "█     █"
+         @ m_x + 5, NextY SAY8 "█     █"
+         @ m_x + 6, NextY SAY8 "█     █"
+         @ m_x + 7, NextY SAY8 "█     █"
+         @ m_x + 8, NextY SAY8 "█     █"
+         @ m_x + 9, NextY SAY8 " █████"
       CASE Char = "."
          NextY -= 4
-         @ m_x + 9, NextY SAY "���"
+         @ m_x + 9, NextY SAY8 "███"
       CASE Char = "-"
          NextY -= 6
-         @ m_x + 5, NextY SAY "�����"
+         @ m_x + 5, NextY SAY8 "█████"
       ENDCASE
    NEXT
    SetPos ( nPrevRow, nPrevCol )
 
    RETURN
-// }
+
 
 
 // sekvenca za cjepanje trake
 FUNCTION sjeci_traku( cSekv )
 
-   // {
+
    IF Empty( cSekv )
       RETURN .F.
    ENDIF
@@ -157,7 +157,7 @@ FUNCTION sjeci_traku( cSekv )
    ENDIF
 
    RETURN .T.
-// }
+
 
 
 // otvaranje ladice

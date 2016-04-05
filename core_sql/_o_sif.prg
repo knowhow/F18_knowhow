@@ -64,3 +64,4 @@ FUNCTION o_tarifa()
    SET ORDER TO TAG "ID"
 
    RETURN .T.
+   

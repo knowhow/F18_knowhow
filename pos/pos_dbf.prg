@@ -54,23 +54,6 @@ STATIC FUNCTION cre_priprz()
 
 
 
-FUNCTION o_pos_doks()
-   RETURN o_dbf_table( F_POS_DOKS, "pos_doks", "1" )
-
-FUNCTION o_pos_pos()
-   RETURN o_dbf_table( F_POS_POS, "pos_pos", "1" )
-
-FUNCTION o_pos_osob()
-   RETURN o_dbf_table( F_OSOB, "osob", "ID" )
-
-
-FUNCTION o_pos_strad()
-   RETURN o_dbf_table( F_STRAD, "strad", "ID" )
-
-FUNCTION o_pos_kase()
-   RETURN o_dbf_table( F_KASE, "kase", "ID" )
-
-
 
 STATIC FUNCTION dodaj_u_sifrarnik_prioriteta( cSifra, cPrioritet, cOpis )
 

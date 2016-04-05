@@ -12,25 +12,8 @@
 #include "f18.ch"
 
 
-FUNCTION o_ulimit()
-   RETURN o_dbf_table( F_ULIMIT, "ulimit", "ID" )
+FUNCTION o_kalk_pripr()
 
-
-FUNCTION o_vrnal()
-   RETURN o_dbf_table( F_VRNAL, "vrnal", "1" )
-
-FUNCTION o_relac()
-   RETURN o_dbf_table( F_RELAC, "relac", "ID" )
-
-FUNCTION o_funk()
-   RETURN o_dbf_table( F_FUNK, "funk", "ID" )
-
-FUNCTION o_fond()
-   RETURN o_dbf_table( F_FOND, "fond", "ID" )
-
-
-FUNCTION o_ostav()
-
-   Select( F_OSTAV ); my_usex ( "ostav" ); SET ORDER TO TAG "1"
+   Select( F_KALK_PRIPR ); my_use ( "kalk_pripr", NIL, .F. ) ; SET ORDER TO TAG "1"
 
    RETURN .T.

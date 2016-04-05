@@ -116,8 +116,8 @@
 #xcommand O_BBKLAS    => select (F_BBKLAS);   my_use("bbklas")    ; set order to tag "1"
 #xcommand O_IOS       => select (F_IOS);      my_use("ios")      ; set order to tag "1"
 
-#xcommand O_FUNK   => select (F_FUNK);    MY_USE  ("funk") ; set order to tag "ID"
-#xcommand O_FOND   => select (F_FOND);    MY_USE  ("fond") ; set order to tag "ID"
+#xcommand O_FUNK   => o_funk()
+#xcommand O_FOND   => o_fond()
 #xcommand O_BUIZ   => select (F_BUIZ);    MY_USE  ("buiz") ; set order to tag "ID"
 #xcommand OX_KONTO    => select (F_KONTO);  my_usex ("konto")  ;  set order to tag "ID"
 #xcommand O_RKONTO    => select (F_KONTO);  my_usex ("konto") ; set order to tag "ID"
@@ -130,11 +130,11 @@
 #xcommand O__KONTO => select(F__KONTO); MY_USE  ("_konto")
 #xcommand O__PARTN => select(F__PARTN); MY_USE  ("_partn")
 #xcommand O_PRENHH   => select(F_PRENHH); my_usex ("prenhh"); set order to tag "1"
-#xcommand O_OSTAV   => select(F_OSTAV); my_usex ("ostav"); set order to tag "1"
+#xcommand O_OSTAV   => o_ostav()
 
 
 // modul KALK
-#xcommand O_KALK_PRIPR    => select(F_KALK_PRIPR); my_use ( "kalk_pripr", NIL, .F.) ; set order to tag "1"
+#xcommand O_KALK_PRIPR    => o_kalk_pripr()
 #xcommand O_KALK_S_PRIPR  => select(F_KALK_PRIPR); my_usex ( "kalk_pripr") ; set order to tag "1"
 #xcommand O_KALK_PRIPR2   => select(F_KALK_PRIPR2); my_use ("kalk_pripr2") ; set order to tag "1"
 #xcommand O_KALK_PRIPR9   => select(F_KALK_PRIPR9); my_use ("kalk_pripr9") ; set order to tag "1"

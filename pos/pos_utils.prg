@@ -153,111 +153,113 @@ FUNCTION ispisi_iznos_veliki_brojevi( iznos, row, col )
       _char := SubStr( _iznos, _cnt, 1 )
 
       DO CASE
+      // https://en.wikipedia.org/wiki/Block_Elements
+
       CASE _char = "1"
 
          _next_y -= 5
 
-         @ m_x + row + 0, _Next_Y SAY " ��"
-         @ m_x + row + 1, _Next_Y SAY "  �"
-         @ m_x + row + 2, _Next_Y SAY "  �"
-         @ m_x + row + 3, _Next_Y SAY "  �"
-         @ m_x + row + 4, _Next_Y SAY "����"
+         @ m_x + row + 0, _Next_Y SAY " ██"
+         @ m_x + row + 1, _Next_Y SAY "  █"
+         @ m_x + row + 2, _Next_Y SAY "  █"
+         @ m_x + row + 3, _Next_Y SAY "  █"
+         @ m_x + row + 4, _Next_Y SAY "███"
 
       CASE _char = "2"
 
          _next_y -= 5
 
-         @ m_x + row + 0, _Next_Y SAY "����"
-         @ m_x + row + 1, _Next_Y SAY "   �"
-         @ m_x + row + 2, _Next_Y SAY "����"
-         @ m_x + row + 3, _Next_Y SAY "�"
-         @ m_x + row + 4, _Next_Y SAY "����"
+         @ m_x + row + 0, _Next_Y SAY "████"
+         @ m_x + row + 1, _Next_Y SAY "   █"
+         @ m_x + row + 2, _Next_Y SAY "████"
+         @ m_x + row + 3, _Next_Y SAY "█"
+         @ m_x + row + 4, _Next_Y SAY "████"
 
       CASE _char = "3"
 
          _next_y -= 5
 
-         @ m_x + row + 0, _Next_Y SAY " ���"
-         @ m_x + row + 1, _Next_Y SAY "   �"
-         @ m_x + row + 2, _Next_Y SAY "  ��"
-         @ m_x + row + 3, _Next_Y SAY "   �"
-         @ m_x + row + 4, _Next_Y SAY "����"
+         @ m_x + row + 0, _Next_Y SAY "████"
+         @ m_x + row + 1, _Next_Y SAY "   █"
+         @ m_x + row + 2, _Next_Y SAY " ███"
+         @ m_x + row + 3, _Next_Y SAY "   █"
+         @ m_x + row + 4, _Next_Y SAY "████"
 
       CASE _char = "4"
 
          _next_y -= 5
 
-         @ m_x + row + 0, _Next_Y SAY "�"
-         @ m_x + row + 1, _Next_Y SAY "�  �"
-         @ m_x + row + 2, _Next_Y SAY "����"
-         @ m_x + row + 3, _Next_Y SAY "   �"
-         @ m_x + row + 4, _Next_Y SAY "   �"
+         @ m_x + row + 0, _Next_Y SAY "█"
+         @ m_x + row + 1, _Next_Y SAY "█  █"
+         @ m_x + row + 2, _Next_Y SAY "████"
+         @ m_x + row + 3, _Next_Y SAY "   █"
+         @ m_x + row + 4, _Next_Y SAY "   █"
 
       CASE _char = "5"
 
          _next_y -= 5
 
-         @ m_x + row + 0, _Next_Y SAY "����"
-         @ m_x + row + 1, _Next_Y SAY "�"
-         @ m_x + row + 2, _Next_Y SAY "����"
-         @ m_x + row + 3, _Next_Y SAY "   �"
-         @ m_x + row + 4, _Next_Y SAY "����"
+         @ m_x + row + 0, _Next_Y SAY "████"
+         @ m_x + row + 1, _Next_Y SAY "█"
+         @ m_x + row + 2, _Next_Y SAY "████"
+         @ m_x + row + 3, _Next_Y SAY "   █"
+         @ m_x + row + 4, _Next_Y SAY "████"
 
       CASE _char = "6"
 
          _next_y -= 5
 
-         @ m_x + row + 0, _Next_Y SAY "����"
-         @ m_x + row + 1, _Next_Y SAY "�"
-         @ m_x + row + 2, _Next_Y SAY "����"
-         @ m_x + row + 3, _Next_Y SAY "�  �"
-         @ m_x + row + 4, _Next_Y SAY "����"
+         @ m_x + row + 0, _Next_Y SAY "████"
+         @ m_x + row + 1, _Next_Y SAY "█"
+         @ m_x + row + 2, _Next_Y SAY "████"
+         @ m_x + row + 3, _Next_Y SAY "█  █"
+         @ m_x + row + 4, _Next_Y SAY "████"
 
       CASE _char = "7"
 
          _next_y -= 5
 
-         @ m_x + row + 0, _Next_Y SAY "����"
-         @ m_x + row + 1, _Next_Y SAY "   �"
-         @ m_x + row + 2, _Next_Y SAY "  �"
-         @ m_x + row + 3, _Next_Y SAY " �"
-         @ m_x + row + 4, _Next_Y SAY "�"
+         @ m_x + row + 0, _Next_Y SAY "████"
+         @ m_x + row + 1, _Next_Y SAY "   █"
+         @ m_x + row + 2, _Next_Y SAY "  █"
+         @ m_x + row + 3, _Next_Y SAY " █"
+         @ m_x + row + 4, _Next_Y SAY "█"
 
       CASE _char = "8"
 
          _next_y -= 5
 
-         @ m_x + row + 0, _Next_Y SAY "����"
-         @ m_x + row + 1, _Next_Y SAY "�  �"
-         @ m_x + row + 2, _Next_Y SAY " �� "
-         @ m_x + row + 3, _Next_Y SAY "�  �"
-         @ m_x + row + 4, _Next_Y SAY "����"
+         @ m_x + row + 0, _Next_Y SAY "████"
+         @ m_x + row + 1, _Next_Y SAY "█  █"
+         @ m_x + row + 2, _Next_Y SAY " ██ "
+         @ m_x + row + 3, _Next_Y SAY "█  █"
+         @ m_x + row + 4, _Next_Y SAY "████"
 
       CASE _char = "9"
 
          _next_y -= 5
 
-         @ m_x + row + 0, _Next_Y SAY "����"
-         @ m_x + row + 1, _Next_Y SAY "�  �"
-         @ m_x + row + 2, _Next_Y SAY "����"
-         @ m_x + row + 3, _Next_Y SAY "   �"
-         @ m_x + row + 4, _Next_Y SAY "����"
+         @ m_x + row + 0, _Next_Y SAY "████"
+         @ m_x + row + 1, _Next_Y SAY "█  █"
+         @ m_x + row + 2, _Next_Y SAY "████"
+         @ m_x + row + 3, _Next_Y SAY "   █"
+         @ m_x + row + 4, _Next_Y SAY "████"
 
       CASE _char = "0"
 
          _next_y -= 5
 
-         @ m_x + row + 0, _Next_Y SAY " �� "
-         @ m_x + row + 1, _Next_Y SAY "�  �"
-         @ m_x + row + 2, _Next_Y SAY "�  �"
-         @ m_x + row + 3, _Next_Y SAY "�  �"
-         @ m_x + row + 4, _Next_Y SAY " ��"
+         @ m_x + row + 0, _Next_Y SAY8 " ██ "
+         @ m_x + row + 1, _Next_Y SAY8 "█  █"
+         @ m_x + row + 2, _Next_Y SAY8 "█  █"
+         @ m_x + row + 3, _Next_Y SAY8 "█  █"
+         @ m_x + row + 4, _Next_Y SAY8 " ██"
 
       CASE _char = "."
 
          _next_y -= 2
 
-         @ m_x + row + 4, _Next_Y SAY "�"
+         @ m_x + row + 4, _Next_Y SAY ""
 
       CASE _char = "-"
 
@@ -439,7 +441,7 @@ FUNCTION PromIdCijena()
 
 
 /* PortZaMT(cIdDio,cIdOdj)
- *    
+ *
  *   param: cIdDio
  *   param: cIdOdj
  */

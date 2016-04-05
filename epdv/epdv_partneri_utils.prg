@@ -26,18 +26,18 @@ FUNCTION epdv_set_sif_partneri()
    LOCAL cSeek
    LOCAL cNaz
    LOCAL cId
+   LOCAL _rec
 
-   SELECT ( F_SIFK )
-
-   IF !Used()
-      O_SIFK
+   IF !select_o_sifk()
+      RETURN .F.
    ENDIF
+
 
    SET ORDER TO TAG "ID"
    // id + SORT + naz
 
    cId := PadR( "PARTN", 8 )
-   cNaz := PadR( "1-FED,2-RS 3-DB", Len( naz ) )
+   cNaz := PadR( "1-FED,2-RS 3-DB", Len( field->naz ) )
    cSeek :=  cId + "09" + cNaz
 
    SEEK cSeek
@@ -58,4 +58,4 @@ FUNCTION epdv_set_sif_partneri()
       ENDIF
    ENDIF
 
-   RETURN
+   RETURN .T.

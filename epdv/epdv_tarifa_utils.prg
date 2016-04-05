@@ -15,15 +15,11 @@
 
 FUNCTION epdv_set_sif_tarifa()
 
-   O_TARIFA
+   LOCAL cPom
 
-   sql_table_update( nil, "BEGIN" )
+   o_tarifa()
 
-   SELECT ( F_TARIFA )
-   IF Used()
-      USE
-   ENDIF
-   O_TARIFA
+   run_sql_query( "BEGIN" )
 
    cPom := PadR( "PDV17", 6 )
    _append_tarifa( cPom, "PDV 17%", 17 )
@@ -58,9 +54,9 @@ FUNCTION epdv_set_sif_tarifa()
    cPom := PadR( "PDV0IZ", 6 )
    _append_tarifa( cPom, "IZVOZ, PDV 0%", 0 )
 
-   sql_table_update( nil, "END" )
+   run_sql_query( "COMMIT" )
 
-   RETURN
+   RETURN .T.
 
 
 

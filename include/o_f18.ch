@@ -9,8 +9,8 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-#xcommand O_SIFK     => select(F_SIFK)    ;  use ; use_sql_sifk()
-#xcommand O_SIFV     => select(F_SIFV)    ;  use ; use_sql_sifv()
+#xcommand O_SIFK     => o_sifk()
+#xcommand O_SIFV     => o_sifv()
 
 #xcommand O_ROBA     => select (F_ROBA)    ;  my_use  ("roba")      ; set order to tag "ID"
 #xcommand O_ROBA_NOT_USED  => select (F_ROBA) ;  IF !USED(); my_use("roba" ); ENDIF  ; set order to tag "ID"
@@ -25,7 +25,7 @@
 
 #xcommand O_SAST     => select (F_SAST)    ;  my_use  ("sast")      ; set order to tag "ID"
 
-#xcommand O_TARIFA   => select (F_TARIFA)  ;  use_sql_tarifa()    ; set order to tag "ID"
+#xcommand O_TARIFA   => o_tarifa()
 #xcommand O_TRFP     => select (F_TRFP)    ;  use_sql_trfp()      ; set order to tag "ID"
 #xcommand O_TRFP2    => select (F_TRFP2)   ;  use_sql_trfp2()     ; set order to tag "ID"
 #xcommand O_TRFP3    => select (F_TRFP3)   ;  use_sql_sif  ("trfp3")     ; set order to tag "ID"

@@ -68,7 +68,7 @@ FUNCTION use_sql( table, sql_query, cAlias )
    pConn := sql_data_conn():pDB
 
    IF HB_ISNIL( pConn )
-      error_bar( "PSQL", "SQLMIX pDB NIL?!" + table )
+      error_bar( "SQL", "SQLMIX pDB NIL?!" + table )
       RETURN .F.
    ENDIF
 
@@ -77,15 +77,14 @@ FUNCTION use_sql( table, sql_query, cAlias )
    IF rddInfo( RDDI_CONNECT, { "POSTGRESQL", pConn } ) == 0
       LOG_CALL_STACK cLogMsg
       ?E "Unable connect to the PSQLserver", cLogMsg
-      error_bar( "SQL", "SQLMIX connect " + table)
+      error_bar( "SQL", "SQLMIX connect " + table )
       RETURN .F.
    ENDIF
 
    BEGIN SEQUENCE WITH {| err| Break( err ) }
-      dbUseArea( .F., "SQLMIX", sql_query, IIF( cAlias == NIL, table, cAlias) )
+      dbUseArea( .F., "SQLMIX", sql_query, iif( cAlias == NIL, table, cAlias ) )
    RECOVER USING oError
-      //logiraj( "use_sql: " + oError:description + " sql query:" + sql_query, HB_LOG_ERROR )
-      Alert( "use_sql ERR:" + oError:description + " " + sql_query)
+      error_bar( "SQL", "ERR: use_sql" + oError:description + " " + sql_query )
       RETURN .F.
    END SEQUENCE
 
@@ -104,8 +103,10 @@ FUNCTION use_sql_opstine()
    LOCAL cTable := "ops"
 
    SELECT ( F_OPS )
-   use_sql_sif( cTable )
-
+   IF !use_sql_sif( cTable )
+      RETURN .F.
+   ENDIF
+   
    INDEX ON IDJ TAG IDJ TO ( cTable )
    INDEX ON IDKAN TAG IDKAN TO ( cTable )
    INDEX ON IDN0 TAG IDN0 TO ( cTable )
@@ -134,7 +135,9 @@ FUNCTION use_sql_rj()
    cSql += "FROM " + F18_PSQL_SCHEMA_DOT  + "rj ORDER BY id"
 
    SELECT F_RJ
-   use_sql( cTable, cSql )
+   IF !use_sql( cTable, cSql )
+      RETURN .F.
+   ENDIF
 
    INDEX ON ID TAG ID TO ( cTable )
    INDEX ON NAZ TAG NAZ TO ( cTable )
@@ -165,7 +168,9 @@ FUNCTION use_sql_valute()
    cSql += " FROM " + F18_PSQL_SCHEMA_DOT + "valute ORDER BY id"
 
    SELECT F_VALUTE
-   use_sql( cTable, cSql )
+   IF !use_sql( cTable, cSql )
+      RETURN .F.
+   ENDIF
 
    INDEX ON ID TAG ID TO ( cTable )
    INDEX ON TIP + ID + DToS( DATUM ) TAG NAZ TO ( cTable )
@@ -200,7 +205,9 @@ FUNCTION use_sql_ks()
 
 
    SELECT ( F_KS )
-   use_sql( cTable, cSql )
+   IF !use_sql( cTable, cSql )
+      RETURN .F.
+   ENDIF
 
    INDEX ON ID TAG ID TO ( cTable )
    INDEX ON DToS( DATOD ) TAG "2" TO ( cTable )
@@ -223,7 +230,9 @@ FUNCTION use_sql_pkonto()
    cSql := "SELECT * FROM " + F18_PSQL_SCHEMA_DOT + "pkonto ORDER BY id"
 
    SELECT F_PKONTO
-   use_sql( cTable, cSql )
+   IF !use_sql( cTable, cSql )
+      RETURN .F.
+   ENDIF
 
    INDEX ON ID TAG ID TO ( cTable )
    INDEX ON TIP TAG NAZ TO ( cTable )
@@ -245,7 +254,9 @@ FUNCTION use_sql_lokalizacija()
    cSql := "SELECT * FROM " + F18_PSQL_SCHEMA_DOT + "lokal ORDER BY id"
 
    SELECT F_LOKAL
-   use_sql( cTable, cSql )
+   IF !use_sql( cTable, cSql )
+      RETURN .F.
+   ENDIF
 
    INDEX ON ID + Str( ID_STR, 6 ) + NAZ TAG ID TO ( cTable )
    INDEX ON ID + NAZ TAG IDNAZ TO ( cTable )
@@ -287,7 +298,9 @@ FUNCTION use_sql_tarifa( l_make_index )
    cSQL += "ORDER BY id"
 
    SELECT F_TARIFA
-   use_sql( cTable, cSql )
+   IF !use_sql( cTable, cSql )
+      RETURN .F.
+   ENDIF
 
    IF l_make_index
       INDEX ON ID TAG ID TO ( cTable )
@@ -344,7 +357,9 @@ STATIC FUNCTION _use_sql_trfp( cTable, nWa, cShema, cDok )
    cSql += " ORDER BY idvd, shema, idkonto, id, idtarifa, idvn, naz"
 
    SELECT ( nWa )
-   use_sql( cTable, cSql )
+   IF !use_sql( cTable, cSql )
+      RETURN .F.
+   ENDIF
 
    INDEX ON ( field->idvd + field->shema + field->idkonto + field->id + field->idtarifa + field->idvn + field->naz )  TAG ID TO ( cTable )
 
@@ -366,6 +381,7 @@ FUNCTION use_sql_sifk( cDbf, cOznaka )
    LOCAL cTable := "sifk"
 
 #ifdef F18_DEBUG_THREAD
+
    ?E "USE SQL SIFK in main thread:", is_in_main_thread()
 #endif
 
@@ -379,7 +395,9 @@ FUNCTION use_sql_sifk( cDbf, cOznaka )
 
    cSQL += " ORDER BY id,oznaka,sort"
    SELECT F_SIFK
-   use_sql( cTable, cSql )
+   IF !use_sql( cTable, cSql )
+      RETURN .F.
+   ENDIF
 
 
    IF cDbf == NIL .AND. cOznaka == NIL

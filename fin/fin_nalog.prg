@@ -13,7 +13,7 @@
 
 STATIC s_nColIzn := 20
 
-MEMVAR M // linija - crtice koja se štampaju na izvještaju
+MEMVAR M
 
 /*
    Štampa ažuriranog finansijskog naloga
@@ -205,15 +205,13 @@ FUNCTION fin_gen_psuban_stampa_nalozi( lAuto, dDatNal )
 
       IF AScan( aNalozi, cIdFirma + cIdVN + cBrNal ) == 0
 
-         AAdd( aNalozi, cIdFirma + cIdVN + cBrNal )
-         // lista naloga koji su otisli
+         AAdd( aNalozi, cIdFirma + cIdVN + cBrNal ) // lista naloga koji su otisli
          IF lAuto
             @ m_x + 2, m_y + 2 SAY "Formirana sintetika i analitika za nalog:" + cIdFirma + "-" + cIdVN + "-" + cBrNal
          ENDIF
       ENDIF
 
    ENDDO
-
 
    IF lAuto
       BoxC()
@@ -644,7 +642,7 @@ FUNCTION fin_gen_sint_stavke( lAuto, dDatNal )
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
 
 /*

@@ -343,7 +343,8 @@ FUNCTION BrDecimala( cFormat )
 
 FUNCTION Slovima( nIzn, cDinDem )
 
-   LOCAL npom; cRez := ""
+   LOCAL nPom
+   LOCAL cRez := ""
    fI := .F.
 
    IF nIzn < 0
@@ -403,7 +404,7 @@ FUNCTION Slovima( nIzn, cDinDem )
 
 
 
-/*! fn Stotice(nIzn, cRez, fDecimale, fMnozina, cDinDem)
+/*  Stotice(nIzn, cRez, fDecimale, fMnozina, cDinDem)
  *  brief Formatira tekst ako iznos prelazi 100
  *  param nIzn       - iznos
  *  param cRez

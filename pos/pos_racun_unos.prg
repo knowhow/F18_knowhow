@@ -10,8 +10,7 @@
  */
 
 #include "f18.ch"
-#include "getexit.ch"
-#include "f18_separator.ch"
+
 
 STATIC __max_kolicina := NIL
 STATIC __kalk_konto := NIL

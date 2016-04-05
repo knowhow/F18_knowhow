@@ -96,11 +96,11 @@ FUNCTION MMenuUpS()
 
    // Vrsta kase "S" - server kasa
 
-   AAdd( opc, "1. izvjestaji             " )
+   AAdd( opc, "1. izvještaji             " )
    AAdd( opcexe, {|| pos_izvjestaji() } )
    AAdd( opc, "2. unos dokumenata" )
    AAdd( opcexe, {|| pos_menu_dokumenti() } )
-   AAdd( opc, "S. sifarnici" )
+   AAdd( opc, "S. šifarnici" )
    AAdd( opcexe, {|| pos_sifarnici() } )
 
    Menu_SC( "uprs" )

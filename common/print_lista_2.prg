@@ -46,8 +46,8 @@
  * lOstr    - .f. znaci da ne treba ostranicavati posljednju stranu
  * lLinija  - .t. znaci da ce se stavke odvajati linijom
  * bSubTot  - blok koji vraca {.t.,cSubTxt} kada treba prikazati subtotal
- * nSlogova - broj slogova za obradu    �Ŀ koristi se samo za prikaz
- * cTabBr   - oznaka (naziv) za tabelu  ��� procenta uradjenog posla
+ * nSlogova - broj slogova za obradu  koristi se samo za prikaz
+ * cTabBr   - oznaka (naziv) za tabelu procenta uradjenog posla
  * lCTab    - horiz.centriranje tabele (.t. - da, .f. - ne)    nil->.t.
  * bZagl    - blok dodatnog zaglavlja koje ima prioritet nad zaglavljem
  *           koje se nalazi u ovoj f-ji
@@ -176,7 +176,7 @@ FUNCTION print_lista_2( aKol, bZaRed, nOdvoji, nCrtice, bUslov, lA4papir, cNaslo
       // rtf-fajlovi
       cOk := { " ", " ", " ", " ", "#", " ", " ", " ", " ", " ", " ", "#", " ", " ", " ", " " }
    ELSE
-      cOk := { "�", "�", "�", "�", "�", "�", "�", "�", "�", "�", "�", "�", "�", "�", "�", "�" }
+      cOk := { "+", "-", "+", "+", ":", "+", "+", "+", "+", "+", "+", ":", "-", "+", "+", "+" }
    ENDIF
    // 1    2    3    4    5    6    7    8    9    10   11   12   13   14   15   16
 

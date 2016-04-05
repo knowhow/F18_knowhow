@@ -33,9 +33,9 @@ FUNCTION DaTBDirektni( lIzOBJDB )
       Kol := adKol
    ENDIF
 
-   // @ m_x,m_y+2 SAY aParametri[8]+"�UPOZORENJE: Mod direktnog unosa u tabelu!"
-   @ m_x, m_y + 2 SAY aParametri[ 8 ] + IF( !lIzOBJDB, REPL( "�", 42 ), "" )
-   // @ m_x+aParametri[2]+1,m_y+2 SAY aParametri[7]+"�UPOZORENJE: Mod direktnog unosa u tabelu!"
+   // @ m_x,m_y+2 SAY aParametri[8]+"█UPOZORENJE: Mod direktnog unosa u tabelu!"
+   @ m_x, m_y + 2 SAY aParametri[ 8 ] + IF( !lIzOBJDB, REPL( "#", 42 ), "" )
+   // @ m_x+aParametri[2]+1,m_y+2 SAY aParametri[7]+"█UPOZORENJE: Mod direktnog unosa u tabelu!"
    @ m_x + aParametri[ 2 ] + 1, m_y + 2 SAY aParametri[ 7 ] COLOR "GR+/B"
 
    @ m_x + 1, m_y + aParametri[ 3 ] -6 SAY Str( RecCount2(), 5 )

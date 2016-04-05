@@ -110,7 +110,7 @@ FUNCTION pos_stampa_racuna( cIdPos, cBrDok, lPrepis, cIdVrsteP, dDatumRn, aVezan
    NEXT
    //
 
-   // Ispisi iznos racuna velikim slovima
+
    ispisi_iznos_racuna_box( nIznos - nNeplaca )
 
    STARTPRINTPORT CRET gLocPort, Space( 5 )

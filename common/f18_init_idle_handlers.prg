@@ -18,7 +18,7 @@ FUNCTION add_idle_handlers()
    AAdd( aIdleHandlers, hb_idleAdd( {||  hb_DispOutAt( maxrows(),  maxcols() - 8, Time(), F18_COLOR_INFO_PANEL ) } ) )
    AAdd( aIdleHandlers, hb_idleAdd( {||  hb_DispOutAt( maxrows(),  maxcols() - 8 - 8 - 1, "< CALC >", F18_COLOR_INFO_PANEL ), ;
       iif( !in_calc() .AND. MINRECT( maxrows(), maxcols() - 8 - 8 - 1, maxrows(), maxcols() - 8 - 1 ), Calc(), NIL ) } ) )
-   AAdd( aIdleHandlers, hb_idleAdd( {|| on_idle_dbf_refresh() } ) )
+
 
    RETURN .T.
 
@@ -28,9 +28,13 @@ FUNCTION add_idle_handlers()
     2) dbf refresh tekuce tabele, na osnovu aliasa
 */
 
-STATIC PROCEDURE on_idle_dbf_refresh()
+PROCEDURE on_idle_dbf_refresh()
 
    LOCAL cAlias, aDBfRec
+
+   IF my_database() == "?undefined?"
+      RETURN
+   ENDIF
 
    IF in_cre_all_dbfs()
       RETURN
@@ -47,14 +51,13 @@ STATIC PROCEDURE on_idle_dbf_refresh()
    aDbfRec := get_a_dbf_rec( cAlias, .T. )
 
    IF  we_need_dbf_refresh( aDbfRec[ "table" ] )
-      thread_dbfs( hb_threadStart(  @thread_dbf_refresh(), cAlias ) )
+      thread_dbfs( hb_threadStart(  @thread_dbf_refresh(), aDbfRec[ "table" ] ) )
 #ifdef F18_DEBUG_THREAD
-      ?E "alias_dbf_refresh thread start", aDbfRec[ 'table' ], "main thread:", main_thread()
+      ?E "alias_dbf_refresh thread start", aDbfRec[ "table" ], "main thread:", main_thread()
 #endif
 #ifdef F18_DEBUG_THREAD
    ELSE
-
-      ?E "alias_dbf_refresh ne treba", aDbfRec[ 'table' ]
+      ?E "alias_dbf_refresh ne treba", aDbfRec[ "table" ]
 #endif
 
    ENDIF

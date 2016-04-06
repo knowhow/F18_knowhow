@@ -92,15 +92,16 @@ FUNCTION f18_init_app_opts()
 
 FUNCTION post_login()
 
+   LOCAL cDatabase := my_database()
 
    init_parameters_cache()
    set_sql_search_path()
    server_log_enable()
 
    // ~/.F18/empty38/
-   set_f18_home( my_server_params()[ "database" ] )
+   set_f18_home( cDatabase )
    info_bar( "init", "home baze: " + my_home() )
-   hb_gtInfo( HB_GTI_WINTITLE, "[ " + my_server_params()[ "user" ] + " ][ " + my_server_params()[ "database" ] + " ]" )
+   hb_gtInfo( HB_GTI_WINTITLE, "[ " + my_server_params()[ "user" ] + " ][ " + cDatabase + " ]" )
    set_a_dbfs()
    set_global_vars_1()
    set_global_screen_vars( .F. )
@@ -540,7 +541,6 @@ FUNCTION no_sql_mode( val )
    IF val != nil
       __no_sql_mode := val
    ENDIF
-
 
    RETURN __no_sql_mode
 

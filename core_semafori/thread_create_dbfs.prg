@@ -15,6 +15,10 @@ PROCEDURE thread_create_dbfs()
 
    LOCAL _ver
 
+#ifdef F18_DEBUG_SYNC
+
+   ?E "SSSSTART thread create dbfs"
+#endif
    DO WHILE !open_thread( "create_dbfs" )
       ?E "ERRO open_thread create_dbfs"
    ENDDO
@@ -33,5 +37,9 @@ PROCEDURE thread_create_dbfs()
    f18_log_delete() // brisanje loga nakon logiranja...
 
    close_thread( "create_dbfs" )
+
+#ifdef F18_DEBUG_SYNC
+   ?E "EEEEND thread create dbfs"
+#endif
 
    RETURN

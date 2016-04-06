@@ -11,11 +11,11 @@
 
 #define F18_VER_DEFINED
 
-#define F18_VER       "1.7.908"
-#define F18_VER_DATE  "05.04.2016"
+#define F18_VER       "1.7.950"
+#define F18_VER_DATE  "06.04.2016"
 #define F18_DEV_PERIOD  "1994-2016"
 
-#define F18_LIB_VER   "10.7.0"
+#define F18_LIB_VER   "11.0.0"
 #define F18_TEMPLATE_VER "2.3.0"
 
 #define F18_DBF_VER_MAJOR  1

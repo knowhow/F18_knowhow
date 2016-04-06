@@ -66,6 +66,7 @@ FUNCTION set_a_dbf_rnal_docs()
    _item[ "table" ] := _tbl
    _item[ "wa" ]    := F_DOCS
    _item[ "temp" ]  := .F.
+   _item[ "sif" ] := .F.
 
    _item[ "algoritam" ] := {}
    _alg := hb_Hash()
@@ -96,6 +97,7 @@ FUNCTION set_a_dbf_rnal_doc_it()
    _item[ "table" ] := _tbl
    _item[ "wa" ]    := F_DOC_IT
    _item[ "temp" ]  := .F.
+   _item[ "sif" ] := .F.
 
    _item[ "algoritam" ] := {}
 
@@ -123,8 +125,6 @@ FUNCTION set_a_dbf_rnal_doc_it()
 
 
 
-// ------------------------------------------------------------------------------
-// ------------------------------------------------------------------------------
 FUNCTION set_a_dbf_rnal_doc_it2()
 
    LOCAL _item, _alg, _tbl
@@ -137,6 +137,7 @@ FUNCTION set_a_dbf_rnal_doc_it2()
    _item[ "table" ] := _tbl
    _item[ "wa" ]    := F_DOC_IT2
    _item[ "temp" ]  := .F.
+   _item[ "sif" ] := .F.
 
    _item[ "algoritam" ] := {}
 
@@ -161,8 +162,7 @@ FUNCTION set_a_dbf_rnal_doc_it2()
    RETURN .T.
 
 
-// ------------------------------------------------------------------------------
-// ------------------------------------------------------------------------------
+
 FUNCTION set_a_dbf_rnal_doc_ops()
 
    LOCAL _item, _alg, _tbl
@@ -175,6 +175,7 @@ FUNCTION set_a_dbf_rnal_doc_ops()
    _item[ "table" ] := _tbl
    _item[ "wa" ]    := F_DOC_OPS
    _item[ "temp" ]  := .F.
+   _item[ "sif" ] := .F.
 
    _item[ "algoritam" ] := {}
 
@@ -201,6 +202,7 @@ FUNCTION set_a_dbf_rnal_doc_ops()
    RETURN .T.
 
 
+
 FUNCTION set_a_dbf_rnal_doc_log()
 
    LOCAL _item, _alg, _tbl
@@ -214,6 +216,7 @@ FUNCTION set_a_dbf_rnal_doc_log()
    _item[ "wa" ]    := F_DOC_LOG
    _item[ "temp" ]  := .F.
    _item[ "sql" ]  := .T.
+   _item[ "sif" ] := .F.
 
    _item[ "algoritam" ] := {}
 
@@ -234,8 +237,7 @@ FUNCTION set_a_dbf_rnal_doc_log()
 
 
 
-// ------------------------------------------------------------------------------
-// ------------------------------------------------------------------------------
+
 FUNCTION set_a_dbf_rnal_doc_lit()
 
    LOCAL _item, _alg, _tbl
@@ -249,6 +251,7 @@ FUNCTION set_a_dbf_rnal_doc_lit()
    _item[ "wa" ]    := F_DOC_LIT
    _item[ "temp" ]  := .F.
    _item[ "sql" ]  := .T.
+   _item[ "sif" ] := .F.
 
    _item[ "algoritam" ] := {}
 
@@ -276,8 +279,7 @@ FUNCTION set_a_dbf_rnal_doc_lit()
 
 
 
-// ----------------------------------------------------------
-// ----------------------------------------------------------
+
 FUNCTION set_a_dbf_rnal_articles()
 
    LOCAL _item, _alg, _tbl
@@ -290,6 +292,7 @@ FUNCTION set_a_dbf_rnal_articles()
    _item[ "table" ] := _tbl
    _item[ "wa" ]    := F_ARTICLES
    _item[ "temp" ]  := .F.
+   _item[ "sif" ] := .T.
 
    _item[ "algoritam" ] := {}
 
@@ -322,6 +325,7 @@ FUNCTION set_a_dbf_rnal_elements()
    _item[ "table" ] := _tbl
    _item[ "wa" ]    := F_ELEMENTS
    _item[ "temp" ]  := .F.
+   _item[ "sif" ] := .T.
 
    _item[ "algoritam" ] := {}
 
@@ -366,6 +370,7 @@ FUNCTION set_a_dbf_rnal_e_aops()
    _item[ "table" ] := _tbl
    _item[ "wa" ]    := F_E_AOPS
    _item[ "temp" ]  := .F.
+   _item[ "sif" ] := .T.
 
    _item[ "algoritam" ] := {}
 
@@ -385,8 +390,7 @@ FUNCTION set_a_dbf_rnal_e_aops()
 
 
 
-// ----------------------------------------------------------
-// ----------------------------------------------------------
+
 FUNCTION set_a_dbf_rnal_e_att()
 
    LOCAL _item, _alg, _tbl
@@ -399,6 +403,7 @@ FUNCTION set_a_dbf_rnal_e_att()
    _item[ "table" ] := _tbl
    _item[ "wa" ]    := F_E_ATT
    _item[ "temp" ]  := .F.
+   _item[ "sif" ] := .T.
 
    _item[ "algoritam" ] := {}
 
@@ -432,6 +437,7 @@ FUNCTION set_a_dbf_rnal_e_groups()
    _item[ "table" ] := _tbl
    _item[ "wa" ]    := F_E_GROUPS
    _item[ "temp" ]  := .F.
+   _item[ "sif" ] := .T.
 
    _item[ "algoritam" ] := {}
 
@@ -463,6 +469,7 @@ FUNCTION set_a_dbf_rnal_e_gr_att()
    _item[ "table" ] := _tbl
    _item[ "wa" ]    := F_E_GR_ATT
    _item[ "temp" ]  := .F.
+   _item[ "sif" ] := .T.
 
    _item[ "algoritam" ] := {}
 
@@ -484,8 +491,6 @@ FUNCTION set_a_dbf_rnal_e_gr_att()
 
 
 
-// ----------------------------------------------------------
-// ----------------------------------------------------------
 FUNCTION set_a_dbf_rnal_e_gr_val()
 
    LOCAL _item, _alg, _tbl
@@ -498,6 +503,7 @@ FUNCTION set_a_dbf_rnal_e_gr_val()
    _item[ "table" ] := _tbl
    _item[ "wa" ]    := F_E_GR_VAL
    _item[ "temp" ]  := .F.
+   _item[ "sif" ] := .T.
 
    _item[ "algoritam" ] := {}
 
@@ -519,8 +525,6 @@ FUNCTION set_a_dbf_rnal_e_gr_val()
 
 
 
-// ----------------------------------------------------------
-// ----------------------------------------------------------
 FUNCTION set_a_dbf_rnal_cust()
 
    LOCAL _item, _alg, _tbl
@@ -533,6 +537,7 @@ FUNCTION set_a_dbf_rnal_cust()
    _item[ "table" ] := _tbl
    _item[ "wa" ]    := F_CUSTOMS
    _item[ "temp" ]  := .F.
+   _item[ "sif" ] := .T.
 
    _item[ "algoritam" ] := {}
 
@@ -565,6 +570,7 @@ FUNCTION set_a_dbf_rnal_cont()
    _item[ "table" ] := _tbl
    _item[ "wa" ]    := F_CONTACTS
    _item[ "temp" ]  := .F.
+   _item[ "sif" ] := .T.
 
    _item[ "algoritam" ] := {}
 
@@ -586,8 +592,7 @@ FUNCTION set_a_dbf_rnal_cont()
 
 
 
-// ----------------------------------------------------------
-// ----------------------------------------------------------
+
 FUNCTION set_a_dbf_rnal_objects()
 
    LOCAL _item, _alg, _tbl
@@ -600,6 +605,7 @@ FUNCTION set_a_dbf_rnal_objects()
    _item[ "table" ] := _tbl
    _item[ "wa" ]    := F_OBJECTS
    _item[ "temp" ]  := .F.
+   _item[ "sif" ] := .T.
 
    _item[ "algoritam" ] := {}
 
@@ -631,6 +637,7 @@ FUNCTION set_a_dbf_rnal_aops()
    _item[ "table" ] := _tbl
    _item[ "wa" ]    := F_AOPS
    _item[ "temp" ]  := .F.
+   _item[ "sif" ] := .T.
 
    _item[ "algoritam" ] := {}
 
@@ -663,6 +670,7 @@ FUNCTION set_a_dbf_rnal_aops_att()
    _item[ "table" ] := _tbl
    _item[ "wa" ]    := F_AOPS_ATT
    _item[ "temp" ]  := .F.
+   _item[ "sif" ] := .T.
 
    _item[ "algoritam" ] := {}
 
@@ -694,6 +702,7 @@ FUNCTION set_a_dbf_rnal_ral()
    _item[ "wa" ]    := F_RAL
    _item[ "temp" ]  := .F.
    _item[ "sql" ]   := .T.
+   _item[ "sif" ] := .T.
 
    _item[ "algoritam" ] := {}
 
@@ -723,6 +732,7 @@ FUNCTION set_a_dbf_rnal_relation()
    _item[ "table" ] := _tbl
    _item[ "wa" ]    := F_RELATION
    _item[ "temp" ]  := .F.
+   _item[ "sif" ] := .F.
 
    _item[ "algoritam" ] := {}
    _alg := hb_Hash()

@@ -320,7 +320,6 @@ FUNCTION cre_all_ld( ver )
 
    _alias := "RADKR"
    _table_name := "ld_radkr"
-
    IF_NOT_FILE_DBF_CREATE
    CREATE_INDEX( "1", "str(godina)+str(mjesec)+idradn+idkred+naosnovu", _alias )
    CREATE_INDEX( "2", "idradn+idkred+naosnovu+str(godina)+str(mjesec)", _alias )
@@ -333,7 +332,6 @@ FUNCTION cre_all_ld( ver )
    // --------------------------------------------------
    _alias := "_RADKR"
    _table_name := "_ld_radkr"
-
    IF_NOT_FILE_DBF_CREATE
 
 
@@ -343,7 +341,6 @@ FUNCTION cre_all_ld( ver )
 
    aDbf := a_dbf_ld_ld()
    hIndexes := h_ld_ld_indexes()
-
 
    _alias := "LD"
    _table_name := "ld_ld"
@@ -362,10 +359,8 @@ FUNCTION cre_all_ld( ver )
    _table_name := "ld_ldsm"
 
    IF_NOT_FILE_DBF_CREATE
-
    CREATE_INDEX( "1", "Obr+str(godina)+str(mjesec)+idradn+idrj", _alias )
    CREATE_INDEX( "RADN", "idradn", _alias )
-
    kreiraj_tabelu_ld__ld( aDbf )
 
 
@@ -395,7 +390,6 @@ FUNCTION cre_all_ld( ver )
    _table_name := "ld_parobr"
 
    IF_NOT_FILE_DBF_CREATE
-
    CREATE_INDEX( "ID", "id + godina + obr", _alias )
    AFTER_CREATE_INDEX
 
@@ -422,7 +416,6 @@ FUNCTION cre_all_ld( ver )
    _table_name := "ld_obracuni"
 
    IF_NOT_FILE_DBF_CREATE
-
    CREATE_INDEX( "RJ", "rj+STR(godina)+STR(mjesec)+status+obr", _alias )
    AFTER_CREATE_INDEX
 

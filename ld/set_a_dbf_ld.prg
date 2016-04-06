@@ -26,6 +26,7 @@ FUNCTION set_a_dbf_ld_sif()
 
    RETURN .T.
 
+
 FUNCTION set_a_dbf_ld()
 
    set_a_dbf_ld_ld()
@@ -67,15 +68,15 @@ FUNCTION set_a_dbf_ld_ld()
    _item[ "alias" ] := "LD"
    _item[ "table" ] := _tbl
    _item[ "wa" ]    := F_LD
-
    _item[ "temp" ]  := .F.
-
+   _item[ "sif" ] := .F.
+   _item[ "sql" ] := .F.
    _item[ "algoritam" ] := {}
 
    // algoritam 1 - default
    _alg := hb_Hash()
    _alg[ "dbf_key_block" ]  := {|| Str( field->godina, 4, 0 ) + field->idrj + Str( field->mjesec, 2, 0 ) + field->obr + field->idradn }
-   _alg[ "dbf_key_empty_rec" ] := STR( 0, 4, 0) + SPACE( 2 ) + STR( 0, 2, 0) + " " + SPACE( 6 )
+   _alg[ "dbf_key_empty_rec" ] := Str( 0, 4, 0 ) + Space( 2 ) + Str( 0, 2, 0 ) + " " + Space( 6 )
    _alg[ "dbf_key_fields" ] := { { "godina", 4 }, "idrj", { "mjesec", 2 }, "obr", "idradn" }
    _alg[ "sql_in" ]         := "lpad(godina::char(4), 4) || rpad(idrj, 2) || lpad(mjesec::char(2),2) || rpad(obr,1) || rpad(idradn,6)"
    _alg[ "dbf_tag" ]        := "1"
@@ -107,10 +108,10 @@ FUNCTION set_a_dbf_ld_radn()
    _item[ "alias" ] := "RADN"
    _item[ "table" ] := _tbl
    _item[ "wa" ]    := F_RADN
-
    _item[ "temp" ]  := .F.
-
    _item[ "algoritam" ] := {}
+   _item[ "sql" ] := .F.
+   _item[ "sif" ] := .T.
 
    // algoritam 1 - default
    _alg := hb_Hash()
@@ -127,7 +128,7 @@ FUNCTION set_a_dbf_ld_radn()
 
 FUNCTION set_a_dbf_ld_parobr()
 
-   LOCAL _alg, _tbl
+   LOCAL _alg, _tbl, _item
 
    _tbl := "ld_parobr"
 
@@ -136,8 +137,9 @@ FUNCTION set_a_dbf_ld_parobr()
    _item[ "alias" ] := "PAROBR"
    _item[ "table" ] := _tbl
    _item[ "wa" ]    := F_PAROBR
-
    _item[ "temp" ]  := .F.
+   _item[ "sql" ] := .F.
+   _item[ "sif" ] := .T.
 
    _item[ "algoritam" ] := {}
 
@@ -167,6 +169,9 @@ FUNCTION set_a_dbf_ld_dopr()
    _item[ "table" ] := _tbl
    _item[ "wa" ]    := F_DOPR
    _item[ "temp" ]  := .F.
+   _item[ "sql" ] := .F.
+   _item[ "sif" ] := .T.
+
 
    _item[ "algoritam" ] := {}
 
@@ -197,8 +202,9 @@ FUNCTION set_a_dbf_ld_obracuni()
    _item[ "alias" ] := "OBRACUNI"
    _item[ "table" ] := _tbl
    _item[ "wa" ]    := F_OBRACUNI
-
    _item[ "temp" ]  := .F.
+   _item[ "sql" ] := .F.
+   _item[ "sif" ] := .T.
 
    _item[ "algoritam" ] := {}
 
@@ -226,6 +232,8 @@ FUNCTION set_a_dbf_ld_pk_radn()
    _item[ "alias" ] := "PK_RADN"
    _item[ "table" ] := _tbl
    _item[ "wa" ]    := F_PK_RADN
+   _item[ "sql" ] := .F.
+   _item[ "sif" ] := .F.
 
    _item[ "temp" ]  := .F.
 
@@ -241,13 +249,13 @@ FUNCTION set_a_dbf_ld_pk_radn()
 
    f18_dbfs_add( _tbl, @_item )
 
-   RETURN
+   RETURN .T.
 
 
 
 FUNCTION set_a_dbf_ld_pk_data()
 
-   LOCAL _alg, _tbl
+   LOCAL _alg, _tbl, _item
 
    _tbl := "ld_pk_data"
 
@@ -256,6 +264,8 @@ FUNCTION set_a_dbf_ld_pk_data()
    _item[ "alias" ] := "PK_DATA"
    _item[ "table" ] := _tbl
    _item[ "wa" ]    := F_PK_DATA
+   _item[ "sql" ] := .F.
+   _item[ "sif" ] := .F.
 
    _item[ "temp" ]  := .F.
 
@@ -284,7 +294,7 @@ FUNCTION set_a_dbf_ld_pk_data()
 
 FUNCTION set_a_dbf_ld_radsat()
 
-   LOCAL _alg, _tbl
+   LOCAL _alg, _tbl, _item
 
    _tbl := "ld_radsat"
 
@@ -293,6 +303,8 @@ FUNCTION set_a_dbf_ld_radsat()
    _item[ "alias" ] := "RADSAT"
    _item[ "table" ] := _tbl
    _item[ "wa" ]    := F_RADSAT
+   _item[ "sql" ] := .F.
+   _item[ "sif" ] := .F.
 
    _item[ "temp" ]  := .F.
 
@@ -308,13 +320,13 @@ FUNCTION set_a_dbf_ld_radsat()
 
    f18_dbfs_add( _tbl, @_item )
 
-   RETURN
+   RETURN .T.
 
 
 
 FUNCTION set_a_dbf_ld_radsiht()
 
-   LOCAL _alg, _tbl
+   LOCAL _alg, _tbl, _item
 
    _tbl := "ld_radsiht"
 
@@ -323,8 +335,9 @@ FUNCTION set_a_dbf_ld_radsiht()
    _item[ "alias" ] := "RADSIHT"
    _item[ "table" ] := _tbl
    _item[ "wa" ]    := F_RADSIHT
-
    _item[ "temp" ]  := .F.
+   _item[ "sql" ] := .F.
+   _item[ "sif" ] := .F.
 
    _item[ "algoritam" ] := {}
 
@@ -338,13 +351,13 @@ FUNCTION set_a_dbf_ld_radsiht()
 
    f18_dbfs_add( _tbl, @_item )
 
-   RETURN
+   RETURN .T.
 
 
 
 FUNCTION set_a_dbf_ld_radkr()
 
-   LOCAL _alg, _tbl
+   LOCAL _alg, _tbl, _item
 
    _tbl := "ld_radkr"
 
@@ -355,6 +368,8 @@ FUNCTION set_a_dbf_ld_radkr()
    _item[ "wa" ]    := F_RADKR
    _item[ "temp" ]  := .F.
    _item[ "algoritam" ] := {}
+    _item[ "sql" ] := .F.
+    _item[ "sif" ] := .F.
 
    // algoritam 1
    _alg := hb_Hash()

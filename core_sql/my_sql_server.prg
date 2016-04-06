@@ -120,7 +120,7 @@ FUNCTION my_database()
 
    LOCAL hParams := my_server_params()
 
-   IF hb_HHasKey( hParams, "database" )
+   IF ValType( hParams ) == "H" .AND. hb_HHasKey( hParams, "database" )
       RETURN hParams[ "database" ]
    ENDIF
 
@@ -356,7 +356,7 @@ FUNCTION init_harbour()
 
 
    f18_init_threads()
-   // hb_idleAdd( {|| idle_eval() } ) - izaziva erore
+
 
    hb_cdpSelect( "SL852" )
    hb_SetTermCP( "SLISO" )
@@ -376,6 +376,9 @@ FUNCTION init_harbour()
    SET SOFTSEEK ON
 
    SetColor( F18_COLOR_NORMAL )
+
+   hb_idleAdd( {|| on_idle_dbf_refresh() } )
+   // hb_idleAdd( {|| idle_eval() } ) - izaziva erore
 
    RETURN .T.
 

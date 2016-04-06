@@ -21,7 +21,7 @@ FUNCTION set_a_dbf_kalk()
    set_a_dbf_trfp( "trfp", "TRFP", F_TRFP )
    set_a_dbf_trfp( "trfp2", "TRFP2", F_TRFP2 )
 
-   set_a_dbf_sifarnik( "trfp3", "TRFP3", F_TRFP3      )
+   set_a_sql_sifarnik( "trfp3", "TRFP3", F_TRFP3      )
    set_a_dbf_sifarnik( "objekti", "OBJEKTI", F_OBJEKTI    )
 
    // temp kalk tabele - ne idu na server

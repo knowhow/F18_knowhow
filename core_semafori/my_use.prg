@@ -117,7 +117,7 @@ FUNCTION my_use( cAlias, cTable, lRefresh )
 
    IF PCount() > 3
       LOG_CALL_STACK cLogMsg
-      log_write( "my_use ERROR params>3: " + cLogMsg, 1 )
+      ?E "my_use ERROR params>3: " + cLogMsg
    ENDIF
 
    hb_default( @lRefresh, s_lRefresh )
@@ -130,11 +130,14 @@ FUNCTION my_use( cAlias, cTable, lRefresh )
    ENDIF
 
 
+#ifdef F18_DEBUG_SYNC
+   ?E "MMMMMMM my_use start", aDbfRec[ "table" ], "main thread:", is_in_main_thread(), "lRefresh", lRefresh
+#endif
    IF lRefresh .AND. we_need_dbf_refresh( aDbfRec[ "table" ] )
       thread_dbfs( hb_threadStart(  @thread_dbf_refresh(), aDbfRec[ "table" ] ) )
 #ifdef F18_DEBUG_THREAD
    ELSE
-      ?E "my_use ne treba sync", aDbfRec[ 'table' ], "main thread:", is_in_main_thread()
+      ?E "my_use ne treba sync", aDbfRec[ "table" ], "main thread:", is_in_main_thread()
 #endif
    ENDIF
 

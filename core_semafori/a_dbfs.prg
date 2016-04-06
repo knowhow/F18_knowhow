@@ -18,6 +18,7 @@ FUNCTION set_a_dbfs()
 
    LOCAL _dbf_fields, _sql_order
    LOCAL _alg
+   LOCAL cDatabase := my_database()
 
    IF s_hF18Dbfs == NIL
       hb_mutexLock( s_mtxMutex )
@@ -25,9 +26,9 @@ FUNCTION set_a_dbfs()
       hb_mutexUnlock( s_mtxMutex )
    ENDIF
 
-   IF ! hb_HHasKey( s_hF18Dbfs, my_server_params()[ "database" ] )
+   IF ! hb_HHasKey( s_hF18Dbfs, cDatabase )
       hb_mutexLock( s_mtxMutex )
-      s_hF18Dbfs[ my_server_params()[ "database" ] ] := hb_Hash()
+      s_hF18Dbfs[ cDatabase ] := hb_Hash()
       hb_mutexUnlock( s_mtxMutex )
    ENDIF
 
@@ -40,11 +41,18 @@ FUNCTION set_a_dbfs()
    set_a_dbf_kalk()
    set_a_dbf_fakt()
 
-   set_a_dbf_ld()
-   set_a_dbf_ld_sif()
+   IF f18_use_module( "ld" )
+      set_a_dbf_ld()
+      set_a_dbf_ld_sif()
+   ENDIF
 
-   set_a_dbf_epdv()
-   set_a_dbf_os()
+   IF f18_use_module( "epdv" )
+      set_a_dbf_epdv()
+   ENDIF
+
+   IF f18_use_module( "os" )
+      set_a_dbf_os()
+   ENDIF
 
    IF f18_use_module( "virm" )
       set_a_dbf_virm()
@@ -100,8 +108,10 @@ FUNCTION set_a_dbfs_key_fields()
 // ------------------------------------
 FUNCTION f18_dbfs_add( cTable, _item )
 
+   LOCAL cDatabase := my_database()
+
    hb_mutexLock( s_mtxMutex )
-   s_hF18Dbfs[ my_server_params()[ "database" ] ][ cTable ] := _item
+   s_hF18Dbfs[ cDatabase ][ cTable ] := _item
    hb_mutexUnlock( s_mtxMutex )
 
    RETURN .T.
@@ -109,12 +119,13 @@ FUNCTION f18_dbfs_add( cTable, _item )
 
 
 FUNCTION f18_dbfs()
-   RETURN s_hF18Dbfs[ my_server_params()[ "database" ] ]
+
+   LOCAL cDatabase := my_database()
+
+   RETURN s_hF18Dbfs[ cDatabase ]
 
 
-// ----------------------------------------
-// temp tabele - semafori se ne koriste
-// ----------------------------------------
+
 FUNCTION set_a_dbf_temp( table, alias, wa )
 
    LOCAL _item
@@ -127,6 +138,7 @@ FUNCTION set_a_dbf_temp( table, alias, wa )
 
    _item[ "temp" ]  := .T.
    _item[ "chk0" ]  := .T.
+   _item[ "sql" ] := .F.
 
    f18_dbfs_add( table, @_item )
 
@@ -251,6 +263,7 @@ FUNCTION get_a_dbf_rec( cTable, _only_basic_params )
       _rec[ "wa" ] := Select()
       _rec[ "temp" ] := .T.
       _rec[ "chk0" ] := .F.
+      _rec[ "sql" ] := .F.
       _rec[ "sif" ] := .F.
    ENDIF
 
@@ -301,16 +314,16 @@ FUNCTION get_a_dbf_rec( cTable, _only_basic_params )
 FUNCTION set_a_dbf_rec_chk0( cTable )
 
    LOCAL lSet := .F.
-   LOCAL hParams := my_server_params()
+   LOCAL cDatabase := my_database()
 
-   IF !hb_HHasKey( hParams, "database" )
+   IF cDatabase == "?undefined?"
       error_bar( "chk0", "set" + cTable )
       RETURN .F.
    ENDIF
 
    DO WHILE !lSet
       IF hb_mutexLock( s_mtxMutex )
-         s_hF18Dbfs[ hParams[ "database" ] ][ cTable ][ "chk0" ] := .T.
+         s_hF18Dbfs[ cDatabase ][ cTable ][ "chk0" ] := .T.
          lSet := .T.
          hb_mutexUnlock( s_mtxMutex )
       ENDIF
@@ -408,17 +421,38 @@ FUNCTION dbf_alias_has_semaphore( alias )
 
 FUNCTION imaju_unchecked_sifarnici()
 
-   LOCAL cKey
+   LOCAL cKey, lSql, lSif, lChk0
    LOCAL cDatabase := my_database()
 
-   IF hb_mutexLock( s_mtxMutex )
-      FOR EACH cKey IN s_hF18Dbfs[ cDatabase ]:Keys
-         IF !s_hF18Dbfs[ cDatabase ][ cKey ][ "chk0" ] .AND. s_hF18Dbfs[ cDatabase ][ cKey ][ "sif" ]
-            RETURN .T.
-         ENDIF
-      NEXT
-      hb_mutexUnlock( s_mtxMutex )
-   ENDIF
+   FOR EACH cKey IN s_hF18Dbfs[ cDatabase ]:Keys
+
+      lSql := .F.
+      IF hb_HHasKey( s_hF18Dbfs[ cDatabase ][ cKey ], "sql" )
+         lSql := s_hF18Dbfs[ cDatabase ][ cKey ][ "sql" ]
+      ENDIF
+
+      lSif := .F.
+      IF hb_HHasKey( s_hF18Dbfs[ cDatabase ][ cKey ], "sif" )
+         lSif := s_hF18Dbfs[ cDatabase ][ cKey ][ "sif" ]
+      ENDIF
+
+      lChk0 := .F.
+      IF hb_HHasKey( s_hF18Dbfs[ cDatabase ][ cKey ], "chk0" )
+         lChk0 := s_hF18Dbfs[ cDatabase ][ cKey ][ "chk0" ]
+      ENDIF
+
+      IF !lSQl .AND. !lChk0 .AND. lSif
+#ifdef F18_DEBUG_SYNC
+         ?E "UUUUUUUUUUU unchecked sif", cDatabase, cKey, "chk0", lChk0, "sif", lSif, "sql", lSql
+#endif
+         RETURN .T.
+      ENDIF
+   NEXT
+
+
+#ifdef F18_DEBUG_SYNC
+   ?E "OOO nema unchecked sif"
+#endif
 
    RETURN .F.
 
@@ -597,7 +631,7 @@ FUNCTION my_close_all_dbf()
       RETURN .F.
    ENDIF
 
-   WHILE nPos > 0
+   DO WHILE nPos > 0
 
       // ako je neki dbf ostao otvoren nPos ce vratiti poziciju tog a_dbf_recorda
       nPos := hb_HScan( s_hF18Dbfs[ hServerParams[ "database" ] ], {| key, rec | zatvori_dbf( rec ) == .F.  } )
@@ -640,9 +674,10 @@ STATIC FUNCTION zatvori_dbf( value )
       // ostalo je još otvorenih DBF-ova
       USE
       RETURN .F.
-   ELSE
-      RETURN .T.
    ENDIF
+
+   RETURN .T.
+
 
 INIT PROCEDURE  init_a_dbfs()
 

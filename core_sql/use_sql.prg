@@ -106,7 +106,7 @@ FUNCTION use_sql_opstine()
    IF !use_sql_sif( cTable )
       RETURN .F.
    ENDIF
-   
+
    INDEX ON IDJ TAG IDJ TO ( cTable )
    INDEX ON IDKAN TAG IDKAN TO ( cTable )
    INDEX ON IDN0 TAG IDN0 TO ( cTable )
@@ -485,7 +485,9 @@ FUNCTION use_sql_rules()
    cSql := "SELECT * FROM " + F18_PSQL_SCHEMA_DOT + _table_name
 
    SELECT F_RULES
-   use_sql( _alias, cSql )
+   IF !use_sql( _alias, cSql )
+      RETURN .F.
+   ENDIF
 
    INDEX ON Str( RULE_ID, 10 )   TAG 1 TO ( _table_name )
    INDEX ON MODUL_NAME + RULE_OBJ + Str( RULE_NO, 10 )  TAG 2 TO ( _table_name )
@@ -498,6 +500,8 @@ FUNCTION use_sql_rules()
    // kreiranje rules index-a specificnih za fin
    INDEX ON MODUL_NAME + RULE_OBJ + Str( RULE_NO, 5 ) TAG FINKNJ1 TO ( _table_name )
    INDEX ON MODUL_NAME + RULE_OBJ + RULE_C3  TAG OBJC3 TO ( _table_name )
+
+   RETURN .T.
 
    RETURN .T.
 

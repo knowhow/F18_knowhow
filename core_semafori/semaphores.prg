@@ -762,6 +762,10 @@ FUNCTION we_need_dbf_refresh( cTable )
       RETURN .F.
    ENDIF
 
+#ifdef F18_DEBUG_SYNC
+   ?E "we need dbf_refresh", cTable
+#endif
+
    RETURN .T.
 
 
@@ -867,20 +871,21 @@ FUNCTION skip_semaphore_sync( cTable )
 
    LOCAL hRec
 
-#ifdef F18_DEBUG_THREAD
-
-   ?E "skip_semaphore_sync", cTable
-#endif
-
    cTable := Lower( cTable )
 
    IF Left( cTable, 6 ) == "SYNC__"
+#ifdef F18_DEBUG_SYNC
+      ?E "skip_semaphore_sync", cTable
+#endif
       RETURN .T.
    ENDIF
 
    hRec := get_a_dbf_rec( cTable, .T. )
 
    IF hRec[ "sql" ] .OR. hRec[ "temp" ]
+#ifdef F18_DEBUG_SYNC
+      ?E "skip_semaphore_sync sql or temp tabela:", cTable
+#endif
       RETURN .T.
    ENDIF
 

@@ -336,7 +336,6 @@ FUNCTION cre_all_fin( ver )
    // -----------------------------------------------------------
    // FIN_BUIZ
    // -----------------------------------------------------------
-
    _alias := "BUIZ"
    _table_name := "fin_buiz"
 
@@ -363,7 +362,6 @@ FUNCTION cre_all_fin( ver )
    AAdd( aDBf, { "F_LIMIT", "N",  15,  2 } )
 
    IF_NOT_FILE_DBF_CREATE
-
    CREATE_INDEX( "ID", "Id", _alias )
    CREATE_INDEX( "2", "Id+idpartner", _alias )
    AFTER_CREATE_INDEX

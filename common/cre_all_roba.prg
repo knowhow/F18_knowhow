@@ -17,6 +17,7 @@ FUNCTION cre_sif_roba( ver )
    LOCAL _table_name, _alias
    LOCAL _created
 
+
    aDbf := {}
    AAdd( aDBf, { 'ID', 'C',  10,  0 } )
    AAdd( aDBf, { 'SIFRADOB', 'C',  20,  0 } )
@@ -88,7 +89,6 @@ FUNCTION cre_sif_roba( ver )
    CREATE_INDEX( "ID_VSD", "SIFRADOB",  _alias )
    CREATE_INDEX( "PLU", "str(fisc_plu, 10)",  _alias )
    CREATE_INDEX( "IDP", { "id+tip", 'tip=="P"' },  _alias )
-
    AFTER_CREATE_INDEX
 
    // -------------------------------------------------
@@ -120,13 +120,9 @@ FUNCTION cre_sif_roba( ver )
    AAdd( aDBf, { 'N2', 'N',   20,  5 } )
 
    IF_NOT_FILE_DBF_CREATE
-
-
    CREATE_INDEX( "ID", "ID+ID2", _alias )
    CREATE_INDEX( "IDRBR", "ID+STR(R_BR,4,0)+ID2", _alias )
    CREATE_INDEX( "NAZ", "ID2+ID", _alias )
-
-
    AFTER_CREATE_INDEX
 
    // -------------------------------------------------

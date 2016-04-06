@@ -406,7 +406,7 @@ FUNCTION dbf_alias_has_semaphore( alias )
    RETURN _ret
 
 
-FUNCTION imaju_li_unchecked_sifarnici()
+FUNCTION imaju_unchecked_sifarnici()
 
    LOCAL cKey
    LOCAL cDatabase := my_database()

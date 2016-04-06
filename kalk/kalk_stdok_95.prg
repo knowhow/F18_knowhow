@@ -1,24 +1,18 @@
 /*
- * This file is part of the bring.out FMK, a free and open source
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+ * This file is part of the bring.out knowhow ERP, a free and open source
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
 
-
-#include "kalk.ch"
-
+#include "f18.ch"
 
 
-
-// ----------------------------------------------------------
-// stampa kalkulacije tip-a 95, 96, 97
-// ----------------------------------------------------------
-FUNCTION kalk_stdok_95()
+FUNCTION kalk_stdok_95() // stampa kalkulacije tip-a 95, 96, 97
 
    LOCAL cKto1
    LOCAL cKto2
@@ -104,7 +98,7 @@ FUNCTION kalk_stdok_95()
    m := _get_line()
 
    ? m
-   ? "*Rbr.* Konto * ARTIKAL  (sifra-naziv-jmj)                                 * Kolicina *   NC     *    NV     *"
+   ?U "*Rbr.* Konto * ARTIKAL  (šifra-naziv-jmj)                                 * Količina *   NC     *    NV     *"
    ? m
 
    nTot4 := nTot5 := nTot6 := nTot7 := nTot8 := nTot9 := nTota := nTotb := nTotc := nTotd := 0
@@ -150,10 +144,7 @@ FUNCTION kalk_stdok_95()
 
          KTroskovi()
 
-         IF PRow() > ( _page_len + gPStranica )
-            FF
-            @ PRow(), 125 SAY "Str:" + Str( ++nStr, 5 )
-         ENDIF
+         print_nova_strana( 125, @nStr, 5 )
 
          skol := field->kolicina
 
@@ -187,18 +178,12 @@ FUNCTION kalk_stdok_95()
 
       ? m
 
-      IF PRow() > ( _page_len + gPStranica )
-         FF
-         @ PRow(), 125 SAY "Str:" + Str( ++nStr, 5 )
-      ENDIF
+      print_nova_strana( 125, @nStr, 5 )
 
       @ PRow() + 1, 0 SAY "Ukupno za: "
       ?? AllTrim( cIdpartner ) +  " - " + AllTrim( partn->naz )
 
-      IF PRow() > ( _page_len + gPStranica )
-         FF
-         @ PRow(), 125 SAY "Str:" + Str( ++nStr, 5 )
-      ENDIF
+      print_nova_strana( 125, @nStr, 5 )
 
       ? "Broj fakture:", AllTrim( cBrFaktP ), "/", dDatFaktp
       @ PRow(), nC1 SAY 0 PICT "@Z " + picdem
@@ -208,10 +193,7 @@ FUNCTION kalk_stdok_95()
 
    ENDDO
 
-   IF PRow() > ( _page_len + gPStranica )
-      FF
-      @ PRow(), 125 SAY "Str:" + Str( ++nStr, 5 )
-   ENDIF
+   print_nova_strana( 125, @nStr, 5 )
 
    ? m
 
@@ -221,7 +203,7 @@ FUNCTION kalk_stdok_95()
 
    ? m
 
-   RETURN
+   RETURN .T.
 
 
 

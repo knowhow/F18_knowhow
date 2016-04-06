@@ -758,7 +758,7 @@ FUNCTION we_need_dbf_refresh( cTable )
 
 
    IF !is_sifarnik( cTable ) .AND. imaju_unchecked_sifarnici() // tabela nije sifarnik, a postoje prazni sifarnici
-      add_to_dbf_refresh_queue( cTable )
+      add_to_dbf_refresh_queue( cTable ) // neka saceka
       RETURN .F.
    ENDIF
 

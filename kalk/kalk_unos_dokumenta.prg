@@ -450,9 +450,7 @@ FUNCTION kalk_pripr_key_handler()
    RETURN DE_CONT
 
 
-// ------------------------------------------------------------
-// ispravka stavke
-// ------------------------------------------------------------
+
 FUNCTION EditStavka()
 
    LOCAL _atributi := hb_Hash()

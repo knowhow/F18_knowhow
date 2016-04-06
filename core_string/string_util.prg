@@ -736,6 +736,7 @@ FUNCTION _u( cStr )
 FUNCTION ToStrU( val )
 
    RETURN hb_UTF8ToStr( ToStr( val ) )
+   
 
 FUNCTION _upadr( cUtf, nNum )
 

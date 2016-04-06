@@ -12,6 +12,7 @@
 
 #include "f18.ch"
 
+MEMVAR m_x, m_y
 
 FUNCTION kalk_params()
 
@@ -60,7 +61,7 @@ FUNCTION kalk_params()
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -75,23 +76,18 @@ FUNCTION kalk_par_varijante_prikaza()
    @ m_x + nX, m_y + 2 SAY "14 -Varijanta poreza na RUC u VP 1/2 (1-naprijed,2-nazad)"  GET gVarVP  VALID gVarVP $ "12"
 
    nX += 1
-
    @ m_x + nX, m_y + 2 SAY "14 - Nivelaciju izvrsiti na ukupno stanje/na prodanu kolicinu  1/2 ?" GET gNiv14  VALID gNiv14 $ "12"
 
    nX += 2
-
    @ m_x + nX, m_y + 2 SAY "10 - Varijanta izvjestaja (1/2/3)" GET c10Var  VALID c10Var $ "123"
 
    nX += 1
-
    @ m_x + nX, m_y + 2 SAY "10 - prikaz ukalkulisanog poreza (D/N)" GET  g10Porez  PICT "@!" VALID g10Porez $ "DN"
 
    nX += 1
-
    @ m_x + nX, m_y + 2 SAY "10 - ** kolicina = (1) kol-kalo ; (2) kol" GET gKalo VALID gKalo $ "12"
 
    nX += 1
-
    @ m_x + nX, m_y + 2 SAY "10 - automatsko preuzimanje troskova iz sifrarnika robe ? (0/D/N)" GET gRobaTrosk VALID gRobaTrosk $ "0DN" PICT "@!"
 
    nX += 1
@@ -122,19 +118,14 @@ FUNCTION kalk_par_varijante_prikaza()
 
    @ m_x + nX, m_y + 2 SAY "Program se koristi iskljucivo za vodjenje magacina po NC  Da-1 / Ne-2 " GET gMagacin VALID gMagacin $ "12"
 
-   nX += 1
-
-
-   nX += 1
+   nX += 2
 
    @ m_x + nX, m_y + 2 SAY "Varijanta FAKT13->KALK11 ( 1-mpc iz sifrarnika, 2-mpc iz FAKT13)" GET  gVar13u11  PICT "@!" VALID gVar13u11 $ "12"
 
    nX += 2
-
    @ m_x + nX, m_y + 2 SAY "Varijanta KALK 11 bez prikaza NC i storna RUC-a (D/N)" GET  g11bezNC  PICT "@!" VALID g11bezNC $ "DN"
 
    nX += 1
-
    @ m_x + nX, m_y + 2 SAY "Pri ulaznoj kalkulaciji pomoc sa C.sa PDV (D/N)" GET  gMPCPomoc PICT "@!" VALID gMPCPomoc $ "DN"
 
    nX += 1

@@ -13,9 +13,12 @@
 
 MEMVAR ImeKol, Kol
 
+FIELD id, naz
+MEMVAR wId
+
 FUNCTION P_Konto( cId, dx, dy )
 
-   LOCAL lRet
+   LOCAL lRet, i
 
    PRIVATE ImeKol
    PRIVATE Kol

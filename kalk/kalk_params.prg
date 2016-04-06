@@ -122,11 +122,8 @@ FUNCTION kalk_par_varijante_prikaza()
 
    @ m_x + nX, m_y + 2 SAY "Program se koristi iskljucivo za vodjenje magacina po NC  Da-1 / Ne-2 " GET gMagacin VALID gMagacin $ "12"
 
-   IF IsPDV()
+   nX += 1
 
-      nX += 1
-
-   ENDIF
 
    nX += 1
 
@@ -228,7 +225,7 @@ FUNCTION kalk_par_razno()
    ++ _x
    @ m_x + _x, m_y + 2 SAY8 "Novi korisnički interfejs D/N/X" GET gNW VALID gNW $ "DNX" PICT "@!"
    ++ _x
- ++ _x
+   ++ _x
    @ m_x + _x, m_y + 2 SAY "Tip tabele (0/1/2)             " GET gTabela VALID gTabela < 3 PICT "9"
    @ m_x + _x, Col() + 2 SAY "Vise konta na dokumentu (D/N) ?" GET _vise_konta VALID _vise_konta $ "DN" PICT "@!"
    ++ _x

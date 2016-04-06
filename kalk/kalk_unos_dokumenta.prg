@@ -576,9 +576,7 @@ FUNCTION EditStavka()
          _idkonto2 := "XXX"
 
          IF _idvd == "16"
-
-            Get1_16bPDV()
-
+            kalk_get1_16()
          ELSE
             Get1_80b()
          ENDIF
@@ -896,7 +894,7 @@ FUNCTION kalk_edit_sve_stavke()
          _idkonto := cIdkont2
          _idkonto2 := "XXX"
          IF _idvd == "16"
-            Get1_16PDV()
+            kalk_get1_16()
          ELSE
             Get1_80b()
          ENDIF
@@ -1348,7 +1346,7 @@ FUNCTION kalk_unos_1( fNovi, atrib )
       RETURN GET1_14PDV()
 
    ELSEIF _idvd == "16"
-      RETURN GET1_16PDV()
+      RETURN kalk_get1_16()
 
    ELSEIF _idvd == "18"
       RETURN GET1_18()

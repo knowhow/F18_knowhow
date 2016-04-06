@@ -1116,10 +1116,10 @@ FUNCTION Reci( x, y, cT, nP )
    ENDIF
    IF nP == NIL; nP := 0; ENDIF
    @ m_x + x, m_y + y SAY iif( nP > 0, Space( nP ), "" )
-   @ m_x + x, m_y + y SAY cT
+   @ m_x + x, m_y + y SAY8 cT
    SetPos( px, py )
 
-   RETURN
+   RETURN .T.
 
 
 FUNCTION ShowKorner( nS, nStep, nDelta )

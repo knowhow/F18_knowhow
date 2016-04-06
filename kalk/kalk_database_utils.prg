@@ -139,14 +139,17 @@ FUNCTION VVT()
 
 FUNCTION DuplRoba()
 
+/*
    LOCAL nRREC, fdupli := .F., dkolicina := 0, dfcj := 0
    PRIVATE GetList := {}
+
 
    // pojava robe vise puta unutar kalkulacije!!!
    IF ( ( roba->tip $ "UTY" ) .OR. Empty( gMetodaNC ) .OR. gMagacin == "1" )
       RETURN .T.
    ENDIF
-   SELECT kalk_pripr; SET ORDER TO TAG "3"
+   SELECT kalk_pripr
+   SET ORDER TO TAG "3"
    nRRec := RecNo()
    SEEK _idfirma + _idvd + _brdok + _idroba
    fdupli := .F.
@@ -176,7 +179,8 @@ FUNCTION DuplRoba()
    SET ORDER TO TAG "1"
 
    RETURN .T.
-
+*/
+   RETURN .T.
 
 
 /* DatPosljK()

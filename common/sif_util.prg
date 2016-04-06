@@ -17,11 +17,11 @@ FUNCTION sif_ispisi_naziv( nDbf, dx, dy )
    LOCAL cTmp  := ""
 
    IF ( nDbf )->( FieldPos( "naz" ) ) <> 0
-      cTmp := Trim( ToStrU( ( nDbf )->naz ) )
+      cTmp := Trim( ( nDbf )->naz  )
    ENDIF
 
    IF ( nDbf )->( FieldPos( "naziv" ) ) <> 0
-      cTmp := Trim( ToStrU( ( nDbf )->naziv ) )
+      cTmp := Trim( ( nDbf )->naziv  )
    ENDIF
 
    IF dx <> NIL .AND. dy <> nil
@@ -38,10 +38,9 @@ FUNCTION sif_ispisi_naziv( nDbf, dx, dy )
       CentrTxt( cTmp, dx )
    ENDIF
 
-   RETURN
+   RETURN .T.
 
-// ---------------------------------------------
-// ---------------------------------------------
+
 FUNCTION sif_sifk_fill_kol( cDbf, ImeKol, Kol )
 
    LOCAL _rec, _recs

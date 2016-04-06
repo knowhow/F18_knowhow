@@ -702,7 +702,7 @@ FUNCTION is_last_refresh_before( cTable, nSeconds )
 
 PROCEDURE thread_dbf_refresh( cTable )
 
-   IF open_thread( "dbf_refresh: " + cTable, .T. )
+   IF open_thread( "dbf_refresh: " + cTable, .T., cTable )
       ErrorBlock( {| objError, lShowreport, lQuit | GlobalErrorHandler( objError, lShowReport, lQuit ) } )
       dbf_refresh( cTable )
       close_thread( "dbf_refresh: " + cTable )
@@ -753,6 +753,12 @@ FUNCTION we_need_dbf_refresh( cTable )
 #ifdef F18_DEBUG_THREAD
       ?E  cTable, "dbf tabele nema"
 #endif
+      RETURN .F.
+   ENDIF
+
+
+   IF !is_sifarnik( cTable ) .AND. imaju_unchecked_sifarnici() // tabela nije sifarnik, a postoje prazni sifarnici
+      add_to_dbf_refresh_queue( cTable )
       RETURN .F.
    ENDIF
 

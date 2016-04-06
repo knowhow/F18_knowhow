@@ -116,6 +116,16 @@ FUNCTION my_server_close( nConnType )
    RETURN .T.
 
 
+FUNCTION my_database()
+
+   LOCAL hParams := my_server_params()
+
+   IF hb_HHasKey( hParams, "database" )
+      RETURN hParams[ "database" ]
+   ENDIF
+
+   RETURN "?undefined?"
+
 
 FUNCTION my_server_logout( nConnType )
 

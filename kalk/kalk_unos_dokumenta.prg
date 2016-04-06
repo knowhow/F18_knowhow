@@ -2395,7 +2395,7 @@ FUNCTION kalk_stampa_dokumenta()
 
          ELSEIF ( cIdvd $ "16#95#96#97" )
 
-            StKalk95_PDV()
+            stdok_kalk_95()
 
 
          ELSEIF ( cidvd $ "41#42#43#47#49" )

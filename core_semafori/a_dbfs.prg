@@ -158,6 +158,7 @@ FUNCTION set_a_dbf_sifarnik( dbf_table, alias, wa, rec, lSql )
    _item[ "sql" ]   :=  lSql
    _item[ "chk0" ]   :=  .F.
    _item[ "algoritam" ] := {}
+   _item[ "sif" ] := .T.
 
    _alg := hb_Hash()
 
@@ -173,7 +174,6 @@ FUNCTION set_a_dbf_sifarnik( dbf_table, alias, wa, rec, lSql )
       _alg[ "sql_in" ]        := rec[ "sql_in" ]
       _alg[ "dbf_key_block" ] := rec[ "dbf_key_block" ]
    ENDIF
-
 
    AAdd( _item[ "algoritam" ], _alg )
 
@@ -251,6 +251,7 @@ FUNCTION get_a_dbf_rec( cTable, _only_basic_params )
       _rec[ "wa" ] := Select()
       _rec[ "temp" ] := .T.
       _rec[ "chk0" ] := .F.
+      _rec[ "sif" ] := .F.
    ENDIF
 
    IF !hb_HHasKey( _rec, "table" ) .OR. _rec[ "table" ] == NIL
@@ -271,6 +272,10 @@ FUNCTION get_a_dbf_rec( cTable, _only_basic_params )
 
    IF !hb_HHasKey( _rec, "chk0" )
       _rec[ "chk0" ] := .F.
+   ENDIF
+
+   IF !hb_HHasKey( _rec, "sif" )
+      _rec[ "sif" ] := .F.
    ENDIF
 
    IF _only_basic_params
@@ -317,9 +322,9 @@ FUNCTION set_a_dbf_rec_chk0( cTable )
 FUNCTION unset_a_dbf_rec_chk0( cTable )
 
    LOCAL lSet := .F.
-   LOCAL hParams := my_server_params()
+   LOCAL cDatabase := my_database()
 
-   IF !hb_HHasKey( hParams, "database" )
+   IF cDatabase == "?undefined?"
       error_bar( "chk0", "unset" + cTable )
       RETURN .F.
    ENDIF
@@ -327,58 +332,71 @@ FUNCTION unset_a_dbf_rec_chk0( cTable )
    DO WHILE !lSet
       IF hb_mutexLock( s_mtxMutex )
          lSet := .T.
-         s_hF18Dbfs[ hParams[ "database" ] ][ cTable ][ "chk0" ] := .F.
+         s_hF18Dbfs[ cDatabase ][ cTable ][ "chk0" ] := .F.
          hb_mutexUnlock( s_mtxMutex )
       ENDIF
    ENDDO
 
    RETURN .T.
 
-FUNCTION is_chk0( table )
 
-   LOCAL hParams := my_server_params()
+FUNCTION is_chk0( cTable )
 
-   IF hb_HHasKey( hParams, "database" )
-      RETURN s_hF18Dbfs[ hParams[ "database" ] ][ table ][ "chk0" ]
+   LOCAL cDatabase := my_database()
+
+   IF cDatabase == "?undefined?"
+      RETURN .F.
    ENDIF
 
-   RETURN .F.
+   RETURN s_hF18Dbfs[ cDatabase ][ cTable ][ "chk0" ]
 
 
-   // ---------------------------------------------------
-   // da li alias ima semafor ?
-   // ---------------------------------------------------
+FUNCTION is_sifarnik( cTable )
+
+   LOCAL cDatabase := my_database()
+
+   IF cDatabase == "?undefined?"
+      RETURN .F.
+   ENDIF
+
+   RETURN s_hF18Dbfs[ cDatabase ][ cTable ][ "sif" ]
+
 
 FUNCTION dbf_alias_has_semaphore( alias )
 
    LOCAL _ret := .F.
-   LOCAL _msg, _rec, _keys, cDbfTable, _key
+   LOCAL _rec, cDbfTable, _key
+   LOCAL cDatabase := my_database()
 
    // ako nema parametra uzmi tekuci alias na kome se nalazimo
    IF ( alias == NIL )
       alias := Alias()
    ENDIF
 
+   IF cDatabase == "?undefined?"
+      error_bar( "a_dbfs", "dbf_alias_has_semaphore: " + alias )
+      RETURN .F.
+   ENDIF
+
    cDbfTable := "x"
 
-   FOR EACH _key IN s_hF18Dbfs[ my_server_params()[ "database" ] ]:Keys
+   FOR EACH _key IN s_hF18Dbfs[ cDatabase ]:Keys
       IF ValType( alias ) == "N"
-         // zadana je workarea
-         IF s_hF18Dbfs[ my_server_params()[ "database" ] ][ _key ][ "wa" ] == alias
+         IF s_hF18Dbfs[ cDatabase ][ _key ][ "wa" ] == ALIAS // zadana je workarea
             cDbfTable := _key
             EXIT
          ENDIF
       ELSE
-         IF s_hF18Dbfs[ my_server_params()[ "database" ] ][ _key ][ "alias" ] == Upper( alias )
+         IF s_hF18Dbfs[ cDatabase ][ _key ][ "alias" ] == Upper( alias )
             cDbfTable := _key
             EXIT
          ENDIF
       ENDIF
    NEXT
 
-   IF hb_HHasKey( s_hF18Dbfs[ my_server_params()[ "database" ] ], cDbfTable )
+   IF hb_HHasKey( s_hF18Dbfs[ cDatabase ], cDbfTable )
 
-      _rec := s_hF18Dbfs[ my_server_params()[ "database" ] ][ cDbfTable ]
+      _rec := s_hF18Dbfs[ cDatabase ][ cDbfTable ]
       IF _rec[ "temp" ] == .F.
          _ret := .T. // tabela ima semafor
       ENDIF
@@ -388,10 +406,26 @@ FUNCTION dbf_alias_has_semaphore( alias )
    RETURN _ret
 
 
+FUNCTION imaju_li_unchecked_sifarnici()
+
+   LOCAL cKey
+   LOCAL cDatabase := my_database()
+
+   IF hb_mutexLock( s_mtxMutex )
+      FOR EACH cKey IN s_hF18Dbfs[ cDatabase ]:Keys
+         IF !s_hF18Dbfs[ cDatabase ][ cKey ][ "chk0" ] .AND. s_hF18Dbfs[ cDatabase ][ cKey ][ "sif" ]
+            RETURN .T.
+         ENDIF
+      NEXT
+      hb_mutexUnlock( s_mtxMutex )
+   ENDIF
+
+   RETURN .F.
+
+
 
 // ----------------------------------------------
-// setujem "sql_order" hash na osnovu
-// rec["dbf_fields"]
+// "sql_order" hash na osnovu rec["dbf_fields"]
 // ----------------------------------------------
 FUNCTION sql_order_from_key_fields( dbf_key_fields )
 

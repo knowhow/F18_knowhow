@@ -16,6 +16,7 @@ STATIC s_mtxMutex
 STATIC s_mainThreadID
 STATIC s_aThreads
 STATIC s_aEval := {}
+STATIC s_aQueueDbfRefresh := {}
 
 PROCEDURE f18_init_threads()
 
@@ -36,12 +37,11 @@ FUNCTION is_in_main_thread()
    RETURN hb_threadSelf() == main_thread()
 
 
-FUNCTION open_thread( cInfo, lOpenSQLConnection )
+FUNCTION open_thread( cInfo, lOpenSQLConnection, cTable )
 
-   LOCAL lSet, nCounter := 0
+   LOCAL nCounter := 0
 
    hb_default( @lOpenSQLConnection, .T. )
-
 
    DO WHILE s_nThreadCount > MAX_THREAD_COUNT
 
@@ -52,6 +52,7 @@ FUNCTION open_thread( cInfo, lOpenSQLConnection )
       print_threads( "tread_cnt_max" + cInfo )
 #endif
       IF nCounter > 1000
+         add_to_dbf_refresh_queue( cTable ) // refresh se ne moze trenutno napraviti, staviti u queue
          RETURN .F.
       ELSE
          IF nCounter % 100 == 0
@@ -62,18 +63,7 @@ FUNCTION open_thread( cInfo, lOpenSQLConnection )
 
    ENDDO
 
-   lSet := .F.
-   DO WHILE !lSet
-      IF hb_mutexLock( s_mtxMutex )
-         lSet := .T.
-         s_nThreadCount++
-         AAdd( s_aThreads, { hb_threadSelf(), cInfo, Time() } )
-#ifdef F18_DEBUG_THREAD
-         print_threads( "open_thread:" + cInfo )
-#endif
-         hb_mutexUnlock( s_mtxMutex )
-      ENDIF
-   ENDDO
+   add_thread( cInfo )
 
 #ifdef F18_DEBUG_THREAD
    ?E ">>>>> START: thread: ", cInfo, " cnt:(", AllTrim( Str( s_nThreadCount ) ), ") in main_thread:", is_in_main_thread(), " <<<<<"
@@ -81,13 +71,14 @@ FUNCTION open_thread( cInfo, lOpenSQLConnection )
 
    IF lOpenSQLConnection
       IF !my_server_login()
+         remove_thread( hb_threadSelf(), cInfo )
          error_bar( "thread", "login error: " + cInfo )
          RETURN .F.
       ENDIF
       set_sql_search_path()
       set_f18_home( my_server_params()[ "database" ] )
 
-   ELSE
+   ELSE // hernad 06.04.2016: trenutno nema thread-ova bez svojih konekcija
       idle_add_for_eval( "my_home", {||  my_home() } )
       // idle_add_for_eval( "my_server_params", {||  my_server_params() } )
       my_home( idle_get_eval( "my_home" ) ) // my_home iz glavnog thread-a
@@ -102,10 +93,95 @@ FUNCTION open_thread( cInfo, lOpenSQLConnection )
 
 
 
+
+FUNCTION add_to_dbf_refresh_queue( cTable )
+
+   LOCAL nPos
+
+   IF cTable != NIL .AND. hb_mutexLock( s_mtxMutex )
+      nPos := AScan( s_aQueueDbfRefresh, {| aItem |  ValType( aItem ) == "A" .AND. aItem[ 1 ] == my_database() .AND. aItem[ 2 ] == cTable } )
+      IF nPos == 0
+         AAdd( s_aQueueDbfRefresh, { my_database(), cTable } )
+         RETURN .T.
+      ENDIF
+      hb_mutexUnlock( s_mtxMutex )
+   ENDIF
+
+   RETURN .F.
+
+
+FUNCTION remove_from_dbf_refresh_queue( cDatabase, cTable )
+
+   LOCAL nPos
+
+   IF cTable != NIL .AND. hb_mutexLock( s_mtxMutex )
+      nPos := AScan( s_aQueueDbfRefresh, {| aItem |  ValType( aItem ) == "A" .AND. aItem[ 1 ] == cDatabase .AND. aItem[ 2 ] == cTable } )
+      IF nPos > 0
+         ADel( s_aQueueDbfRefresh, nPos )
+         ASize( s_aQueueDbfRefresh, Len( s_aQueueDbfRefresh ) - 1 )
+         RETURN .T.
+      ENDIF
+      hb_mutexUnlock( s_mtxMutex )
+   ENDIF
+
+   RETURN .F.
+
+
+PROCEDURE process_dbf_refresh_queue()
+
+   LOCAL aItem
+
+   FOR EACH aItem IN s_aQueueDbfRefresh
+      IF ValType( aItem ) == "A"
+         IF aItem[ 1 ] == my_database()
+            IF we_need_dbf_refresh( aItem[ 2 ] )
+               thread_dbfs( hb_threadStart(  @thread_dbf_refresh(), aItem[ 2 ] ) )
+            ENDIF
+         ENDIF
+         remove_from_dbf_refresh_queue( aItem[ 1 ],  aItem[ 2 ] )
+
+      ENDIF
+   NEXT
+
+   RETURN
+
+
 PROCEDURE close_thread( cInfo )
 
+   remove_thread( hb_threadSelf(), cInfo )
+
+#ifdef F18_DEBUG_THREAD
+   ?E "<<<<<< END: thread", cInfo, "thread count:", s_nThreadCount
+#endif
+
+   my_server_close()
+
+   RETURN
+
+
+
+STATIC FUNCTION add_thread( cInfo )
+
    LOCAL lSet := .F.
-   LOCAL nPos, aThread
+
+   DO WHILE !lSet
+      IF hb_mutexLock( s_mtxMutex )
+         lSet := .T.
+         s_nThreadCount++
+         AAdd( s_aThreads, { hb_threadSelf(), cInfo, Time() } )
+#ifdef F18_DEBUG_THREAD
+         print_threads( "open_thread:" + cInfo )
+#endif
+         hb_mutexUnlock( s_mtxMutex )
+      ENDIF
+   ENDDO
+
+   RETURN lSet
+
+
+STATIC FUNCTION remove_thread( pThread, cInfo )
+
+   LOCAL lSet := .F., nPos
 
    DO WHILE !lSet
       IF hb_mutexLock( s_mtxMutex )
@@ -113,7 +189,7 @@ PROCEDURE close_thread( cInfo )
          print_threads( "close_thread:" + cInfo )
 #endif
          s_nThreadCount--
-         nPos := AScan( s_aThreads, {| aItem | aItem[ 1 ] == hb_threadSelf() } )
+         nPos := AScan( s_aThreads, {| aItem | ValType( aItem ) == "A" .AND. aItem[ 1 ] == pThread } )
          IF nPos > 0
             ADel( s_aThreads, nPos )
             ASize( s_aThreads, Len( s_aThreads ) - 1 )
@@ -125,13 +201,7 @@ PROCEDURE close_thread( cInfo )
       ENDIF
    ENDDO
 
-#ifdef F18_DEBUG_THREAD
-   ?E "<<<<<< END: thread", cInfo, "thread count:", s_nThreadCount
-#endif
-
-   my_server_close()
-
-   RETURN
+   RETURN lSet
 
 
 PROCEDURE print_threads( cInfo )

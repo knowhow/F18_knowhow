@@ -57,11 +57,12 @@ FUNCTION set_a_dbf_pos_pos()
    _item[ "alias" ] := "POS"
    _item[ "table" ] := _tbl
    _item[ "wa" ]    := F_POS
-
-   // temporary tabela - nema semafora
    _item[ "temp" ]  := .F.
+   _item[ "sql" ] := .F.
+   _item[ "sif" ] := .F.
 
    _item[ "algoritam" ] := {}
+
 
    // algoritam 1 - default
    // CREATE_INDEX ("IDS_SEM", "IdPos+IdVd+dtos(datum)+BrDok+rbr", _alias )
@@ -104,9 +105,9 @@ FUNCTION set_a_dbf_pos_doks()
    _item[ "alias" ] := "POS_DOKS"
    _item[ "table" ] := _tbl
    _item[ "wa" ]    := F_POS_DOKS
-
-   // temporary tabela - nema semafora
    _item[ "temp" ]  := .F.
+   _item[ "sql" ] := .F.
+   _item[ "sif" ] := .F.
 
    _item[ "algoritam" ] := {}
 
@@ -132,8 +133,6 @@ FUNCTION set_a_dbf_pos_doks()
 
 
 
-// ------------------------------------------------------------------------------
-// ------------------------------------------------------------------------------
 FUNCTION set_a_dbf_pos_promvp()
 
    LOCAL _item, _alg, _tbl
@@ -145,9 +144,9 @@ FUNCTION set_a_dbf_pos_promvp()
    _item[ "alias" ] := "PROMVP"
    _item[ "table" ] := _tbl
    _item[ "wa" ]    := F_PROMVP
-
-   // temporary tabela - nema semafora
    _item[ "temp" ]  := .F.
+   _item[ "sql" ] := .F.
+   _item[ "sif" ] := .F.
 
    _item[ "algoritam" ] := {}
 
@@ -168,8 +167,6 @@ FUNCTION set_a_dbf_pos_promvp()
 
 
 
-// ------------------------------------------------------------------------------
-// ------------------------------------------------------------------------------
 FUNCTION set_a_dbf_pos_dokspf()
 
    LOCAL _item, _alg, _tbl
@@ -181,9 +178,9 @@ FUNCTION set_a_dbf_pos_dokspf()
    _item[ "alias" ] := "DOKSPF"
    _item[ "table" ] := _tbl
    _item[ "wa" ]    := F_DOKSPF
-
-   // temporary tabela - nema semafora
    _item[ "temp" ]  := .F.
+   _item[ "sql" ] := .F.
+   _item[ "sif" ] := .F.
 
    _item[ "algoritam" ] := {}
 

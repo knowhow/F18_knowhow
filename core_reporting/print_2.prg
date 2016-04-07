@@ -79,7 +79,6 @@ FUNCTION f18_start_print( cFileName, xPrintOpt, cDocumentName )
       ELSE
          oPDF:SetType( PDF_TXT_LANDSCAPE )
       ENDIF
-      AltD()
       IF hb_HHasKey( xPrintOpt, "font_size" )
          oPDF:SetFontSize( xPrintOpt[ "font_size" ] )
       ENDIF
@@ -174,7 +173,6 @@ FUNCTION f18_end_print( cFileName, xPrintOpt )
       IF hb_HHasKey( xPrintOpt, "left_space" )
          oPDF:SetLeftSpace( xPrintOpt[ "left_space" ] )
       ENDIF
-      AltD()
       IF hb_HHasKey( xPrintOpt, "font_size" )
          oPDF:SetFontSize( xPrintOpt[ "font_size" ] )
       ENDIF
@@ -370,7 +368,6 @@ FUNCTION gpPicF()
 
 FUNCTION gpCOND()
 
-altd()
    IF !is_legacy_ptxt()
       RETURN .T.
    ENDIF
@@ -380,7 +377,6 @@ altd()
 
 FUNCTION gpCOND2()
 
-altd()
    IF !is_legacy_ptxt()
       RETURN .T.
    ENDIF

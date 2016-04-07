@@ -503,8 +503,13 @@ FUNCTION g_aop_value( cVal )
    CASE aTmp[ 1 ] == "RAL"
 
       aRal := TokToNiz( aTmp[ 2 ], "#" )
-      cRet := g_ral_value( Val( aRal[ 1 ] ), ;
-         Val( aRal[ 2 ] ), Val( aRal[ 3 ] ) )
+      IF ValType( aRal ) != "A" .AND. LEN( aRal ) < 3
+          error_bar( "g_aop", "ERR format RAL:#D1#D2#D3: " + aTmp[ 2] )
+          cRet := "XXX"
+          RETURN cRet
+      ENDIF
+
+      cRet := g_ral_value( Val( aRal[ 1 ] ), Val( aRal[ 2 ] ), Val( aRal[ 3 ] ) )
    ENDCASE
 
    RETURN cRet

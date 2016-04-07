@@ -33,10 +33,10 @@ FUNCTION stampa_nalog_proizvodnje( lTemporary, nDoc_no )
 
    _fill_main()
    _fill_items()
-   _fill_it2()
-   _fill_aops()
+   fill_za_stampu_doc_it2()
+   fill_operacije()
 
-   lFlag := _is_p_rekap()
+   lFlag := is_printati_rekap_repromaterijala()
 
    IF lFlag == .T.
       cFlag := "D"
@@ -113,8 +113,8 @@ FUNCTION st_obr_list( temp, doc_no, a_docs )
 
       _fill_main( _docs )
       _fill_items( _gn, 2 )
-      _fill_it2()
-      _fill_aops()
+      fill_za_stampu_doc_it2()
+      fill_operacije()
 
    NEXT
 
@@ -126,7 +126,7 @@ FUNCTION st_obr_list( temp, doc_no, a_docs )
       rnal_print_odabir_stavki( temp )
    ENDIF
 
-   IF _is_p_rekap()
+   IF is_printati_rekap_repromaterijala()
       _flag := "D"
    ENDIF
 
@@ -200,9 +200,9 @@ FUNCTION st_pripr( lTemporary, nDoc_no, aOlDocs )
 
       _fill_items( lGN, 2 ) // stavke naloga
 
-      _fill_it2() // dodatne stavke naloga
+      fill_za_stampu_doc_it2() // dodatne stavke naloga
 
-      _fill_aops() // operacije
+      fill_operacije() // operacije
 
    NEXT
 
@@ -229,7 +229,7 @@ FUNCTION rnal_stampa_naljepnica( lTemporary, nDoc_no )
 
    _fill_main()
    _fill_items( lGn, 2 )
-   _fill_aops()
+   fill_operacije()
 
    rnal_stampa_naljepnica_odt( lTemporary )
 
@@ -557,7 +557,7 @@ STATIC FUNCTION _fill_items( lZpoGN, nVar )
 // ---------------------------------------------------
 // da li printati rekapitulaciju repromaterijala
 // ---------------------------------------------------
-FUNCTION _is_p_rekap()
+FUNCTION is_printati_rekap_repromaterijala()
 
    LOCAL lRet := .F.
    LOCAL nTArea := Select()
@@ -565,7 +565,7 @@ FUNCTION _is_p_rekap()
    SELECT t_docit2
 
    IF RECCOUNT2() > 0
-      IF Pitanje(, "Stampati rekapitulaciju materijala ?", "D" ) == "D"
+      IF Pitanje(, "Štampati rekapitulaciju materijala ?", "D" ) == "D"
          lRet := .T.
       ENDIF
    ENDIF
@@ -578,7 +578,7 @@ FUNCTION _is_p_rekap()
 // ----------------------------------
 // filuj tabele za stampu DOC_IT2
 // ----------------------------------
-STATIC FUNCTION _fill_it2()
+STATIC FUNCTION fill_za_stampu_doc_it2()
 
    LOCAL nTable := F_DOC_IT2
    LOCAL cArt_id
@@ -645,10 +645,8 @@ STATIC FUNCTION _fill_it2()
 
 
 
-// --------------------------------------------------
-// filovanje operacija
-// --------------------------------------------------
-STATIC FUNCTION _fill_aops()
+
+STATIC FUNCTION fill_operacije()
 
    LOCAL nTable := F_DOC_OPS
    LOCAL nTable2 := F_DOC_IT
@@ -665,6 +663,8 @@ STATIC FUNCTION _fill_aops()
    LOCAL cAop_att_desc
    LOCAL cDoc_op_desc
    LOCAL cAop_Value
+   LOCAL cAop_vraw
+   LOCAL cRecord
 
    IF ( __temp == .T. )
       nTable := F__DOC_OPS
@@ -673,12 +673,10 @@ STATIC FUNCTION _fill_aops()
 
    SELECT ( nTable2 )
    SET ORDER TO TAG "2"
-   GO TOP
 
-   // filuj operacije
-   SELECT ( nTable )
+   SELECT ( nTable )  // filuj operacije
    SET ORDER TO TAG "1"
-   GO TOP
+
    SEEK docno_str( __doc_no )
 
    cRecord := ""
@@ -701,8 +699,7 @@ STATIC FUNCTION _fill_aops()
 
       cRecord := ""
 
-      DO WHILE !Eof() .AND. field->doc_no == __doc_no ;
-            .AND. field->doc_it_no == nDoc_it_no
+      DO WHILE !Eof() .AND. field->doc_no == __doc_no .AND. field->doc_it_no == nDoc_it_no
 
          nAop_id := field->aop_id
          nAop_att_id := field->aop_att_id
@@ -726,17 +723,14 @@ STATIC FUNCTION _fill_aops()
          SKIP
       ENDDO
 
-      // doc_it
-      // uzmi artikal...
-      SELECT ( nTable2 )
+      SELECT ( nTable2 ) // doc_it uzmi artikal
       SET ORDER TO TAG "1"
-      GO TOP
+
       SEEK docno_str( __doc_no ) + docit_str( nDoc_it_no )
 
       nArticle := field->art_id
 
-      // vrati se na operacije
-      SELECT ( nTable )
+      SELECT ( nTable ) // vrati se na operacije
 
       // ako su identicne operacije samo idi dalje....
       IF cRecord == cTmpRecord .AND. nArticle == nTmpArticle
@@ -792,7 +786,6 @@ STATIC FUNCTION _fill_aops()
 
 
          SELECT ( nTable )
-
          SKIP
 
       ENDDO
@@ -802,7 +795,7 @@ STATIC FUNCTION _fill_aops()
 
    ENDDO
 
-   RETURN
+   RETURN .T.
 
 
 

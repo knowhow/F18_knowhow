@@ -51,7 +51,7 @@ CLASS F18Admin
    METHOD create_new_pg_db_params()
 
    METHOD update_app_form()
-   METHOD update_app_dl_scripts()
+   METHOD f18_upd_download()
    METHOD update_app_get_versions()
    METHOD update_app_run_script()
    METHOD update_app_run_app_update()
@@ -75,7 +75,6 @@ METHOD F18Admin:New()
       RETURN .F.
    ENDIF
 
-
    RETURN self
 
 
@@ -94,7 +93,7 @@ METHOD F18Admin:update_app()
    ::update_app_script_file := "f18_upd.bat"
 #endif
 
-   IF !::update_app_dl_scripts()
+   IF !::f18_upd_download()
       MsgBeep( "Problem sa download-om skripti. Provjerite internet koneciju." )
       RETURN SELF
    ENDIF
@@ -127,6 +126,7 @@ METHOD F18Admin:update_app_run_templates_update( params )
    LOCAL _dest := SLASH + "opt" + SLASH + "knowhowERP" + SLASH
 
 #ifdef __PLATFORM__WINDOWS
+
    _dest := "c:" + SLASH + "knowhowERP" + SLASH
 #endif
 
@@ -237,7 +237,6 @@ METHOD F18Admin:update_app_run_script( update_file )
 
 
 
-
 METHOD F18Admin:update_app_form( upd_params )
 
    LOCAL _ok := .F.
@@ -269,7 +268,6 @@ METHOD F18Admin:update_app_form( upd_params )
 
    ++ _x
    ++ _x
-
    @ m_x + _x, m_y + 2 SAY _line := ( Replicate( "-", 10 ) + " " + Replicate( "-", 20 ) + " " + Replicate( "-", 20 ) )
 
    ++ _x
@@ -279,13 +277,11 @@ METHOD F18Admin:update_app_form( upd_params )
    @ m_x + _x, m_y + 2 SAY _line
 
    ++ _x
-
    @ m_x + _x, m_y + 2 SAY PadR( "F18", 10 ) + " " + PadC( F18_VER, 20 )
    @ m_x + _x, Col() SAY " "
    @ m_x + _x, Col() SAY PadC( upd_params[ "f18" ], 20 ) COLOR _col_app
 
    ++ _x
-
    @ m_x + _x, m_y + 2 SAY PadR( "template", 10 ) + " " + PadC( F18_TEMPLATE_VER, 20 )
    @ m_x + _x, Col() SAY " "
    @ m_x + _x, Col() SAY PadC( upd_params[ "templates" ], 20 ) COLOR _col_temp
@@ -303,7 +299,6 @@ METHOD F18Admin:update_app_form( upd_params )
    READ
 
    IF _upd_f == "D"
-
       @ m_x + _x, m_y + 25 SAY "VERZIJA:" GET _f_ver_prim PICT "99" VALID _f_ver_prim > 0
       @ m_x + _x, Col() + 1 SAY "." GET _f_ver_sec PICT "99" VALID _f_ver_sec > 0
       @ m_x + _x, Col() + 1 SAY "." GET _f_ver_third PICT "@S10"
@@ -416,7 +411,7 @@ METHOD F18Admin:update_app_get_versions()
 
 
 
-METHOD F18Admin:update_app_dl_scripts()
+METHOD F18Admin:f18_upd_download()
 
    LOCAL _ok := .F.
    LOCAL _path := my_home_root()
@@ -426,25 +421,20 @@ METHOD F18Admin:update_app_dl_scripts()
    LOCAL _silent := .T.
    LOCAL _always_erase := .T.
 
-   MsgO( "Vrsim download skripti za update ... sacekajte trenutak !" )
+   info_bar( "upd", "download " +  ::update_app_info_file )
 
    _url := "https://raw.github.com/knowhow/F18_knowhow/master/"
    IF !::wget_download( _url, ::update_app_info_file, _path + ::update_app_info_file, _always_erase, _silent )
-      MsgC()
-      RETURN _ok
+      RETURN .F.
    ENDIF
 
+   info_bar( "upd", "download " +  ::update_app_script_file )
    _url := "https://raw.github.com/knowhow/F18_knowhow/master/scripts/"
    IF !::wget_download( _url, ::update_app_script_file, _path + ::update_app_script_file, _always_erase, _silent )
-      MsgC()
-      RETURN _ok
+      RETURN .F.
    ENDIF
 
-   MsgC()
-
-   _ok := .T.
-
-   RETURN _ok
+   RETURN .T.
 
 
 
@@ -505,22 +495,14 @@ METHOD F18Admin:wget_download( url, filename, location, erase_file, silent, only
    _cmd += location
 #endif
 
-   IF !silent
-      MsgO( "Vršim download ... sačekajte !" )
-   ENDIF
-
    hb_run( _cmd )
 
    Sleep( 1 )
 
-   IF !silent
-      MsgC()
-   ENDIF
-
    IF !File( location )
       // nema fajle
-      MsgBeep( "Fajl " + location + " nije download-ovan !!!" )
-      RETURN _ok
+      error_bar( "upd", "Fajl " + location + " nije download-ovan !" )
+      RETURN .F.
    ENDIF
 
    // provjeri velicinu fajla...
@@ -531,14 +513,12 @@ METHOD F18Admin:wget_download( url, filename, location, erase_file, silent, only
       FSeek( _h, 0 )
       FClose( _h )
       IF _length <= 0
-         MsgBeep( "Traženi fajl ne postoji !" )
-         RETURN _ok
+         error_bar( "upd", "Fajl " + location + " download ERROR!" )
+         RETURN .F.
       ENDIF
    ENDIF
 
-   _ok := .T.
-
-   RETURN _ok
+   RETURN .T.
 
 
 
@@ -818,7 +798,7 @@ METHOD F18Admin:razdvajanje_sezona()
       RETURN .F.
    ENDIF
 #endif
-   //pg_terminate_all_data_db_connections()
+   // pg_terminate_all_data_db_connections()
 
    _from_sess := Year( Date() ) - 1
    _to_sess := Year( Date() )

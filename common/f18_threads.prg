@@ -153,32 +153,37 @@ FUNCTION remove_from_dbf_refresh_queue( cDatabase, cTable )
 
 PROCEDURE process_dbf_refresh_queue()
 
-   LOCAL aItem
+   LOCAL aItem, nQLength := 0, nQLength2 := 0, nQLength3 := 0
 
-   IF ( Seconds() - s_nProcessQueueSeconds ) < ( MIN_LAST_REFRESH_SEC * 3 )
-#ifdef F18_DEBUG_SYNC
-      ?E "process_dbf_refresh_queue", Seconds(), s_nProcessQueueSeconds, MIN_LAST_REFRESH_SEC
-#endif
+   IF ( Seconds() - s_nProcessQueueSeconds ) < ( MIN_LAST_REFRESH_SEC )
       RETURN
    ENDIF
 
 
    FOR EACH aItem IN s_aQueueDbfRefresh
       IF ValType( aItem ) == "A"
-         info_bar( "idle", "dbf refresh queue " + aItem[ 1 ] + " " + aItem[ 2 ] )
+         //info_bar( "idle", "dbf refresh queue " + aItem[ 1 ] + " " + aItem[ 2 ] )
          IF aItem[ 1 ] == my_database()
             IF we_need_dbf_refresh( aItem[ 2 ] )
                thread_dbfs( hb_threadStart(  @thread_dbf_refresh(), aItem[ 2 ] ) )
                remove_from_dbf_refresh_queue( aItem[ 1 ],  aItem[ 2 ] )
+               nQLength++
             ENDIF
+         ELSE
+            nQLength2++
          ENDIF
 
       ELSE
          error_bar( "idle", "dbf refresh queue != A?!" )
+         nQLength3++
       ENDIF
    NEXT
+   IF nQLength != 0 .OR. nQLength2 != 0 .OR. nQLength3 != 0
+      info_bar( "idle", "dbf refresh queue " + AllTrim( Str( nQLength ) ) + "/" + AllTrim( Str( nQLength2 ) ) + "/" + AllTrim( Str( nQLength3 ) ) )
+   ENDIF
 
    s_nProcessQueueSeconds := Seconds()
+
    RETURN
 
 
@@ -279,6 +284,22 @@ PROCEDURE print_threads( cInfo )
    RETURN
 
 
+FUNCTION print_dbf_refresh_queue()
+
+   LOCAL aItem, nCount := 0
+
+   ?E "DBF refresh queue:"
+   ?E Replicate( "Q", 50 )
+   FOR EACH aItem IN s_aQueueDbfRefresh
+      IF ValType( aItem ) == "A"
+         ?E ++nCount, aItem[ 1 ], aItem[ 2 ]
+      ELSE
+         ?E "dbf refresh queue item != A?!"
+      ENDIF
+   NEXT
+   ?E Replicate( "q", 60 )
+
+   RETURN .T.
 
 PROCEDURE idle_add_for_eval( cId, bExpression )
 

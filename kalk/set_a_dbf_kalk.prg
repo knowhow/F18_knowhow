@@ -71,9 +71,9 @@ FUNCTION set_a_dbf_kalk_kalk()
    _item[ "alias" ] := "KALK"
    _item[ "table" ] := _tbl
    _item[ "wa" ]    := F_KALK
-
-   // temporary tabela - nema semafora
    _item[ "temp" ]  := .F.
+   _item[ "sif" ] := .F.
+   _item[ "sql" ] := .F.
 
    _item[ "algoritam" ] := {}
 
@@ -114,9 +114,9 @@ FUNCTION set_a_dbf_kalk_doks_doks2( table, alias, wa )
    _item[ "alias" ] := alias
    _item[ "table" ] := _tbl
    _item[ "wa" ]    := wa
-
-   // temporary tabela - nema semafora
    _item[ "temp" ]  := .F.
+   _item[ "sif" ] := .F.
+   _item[ "sql" ] := .F.
 
    _item[ "algoritam" ] := {}
 
@@ -149,10 +149,10 @@ FUNCTION set_a_dbf_trfp( table, alias, wa )
    _item[ "alias" ] := alias
    _item[ "table" ] := _tbl
    _item[ "wa" ]    := wa
-
-   // temporary tabela - nema semafora
    _item[ "temp" ]  := .F.
    _item[ "sql" ] := .T.
+   _item[ "sif" ] := .F.
+   _item[ "chk0" ] := .F.
    _item[ "algoritam" ] := {}
 
    // algoritam 1 - default

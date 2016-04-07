@@ -31,7 +31,7 @@ METHOD new( p1, p2, p3, p4, p5, p6, p7, p8, p9 )
 
 
 
-METHOD mMenu()
+METHOD TKalkMod:mMenu()
 
    PRIVATE Izbor
 
@@ -47,7 +47,7 @@ METHOD mMenu()
 
 
 
-METHOD programski_modul_osnovni_meni
+METHOD TKalkMod:programski_modul_osnovni_meni()
 
    LOCAL opc := {}
    LOCAL opcexe := {}
@@ -90,7 +90,7 @@ METHOD programski_modul_osnovni_meni
 
 
 
-METHOD set_module_gvars()
+METHOD TKalkMod:set_module_gvars()
 
    LOCAL cPPSaMr
    LOCAL cBazniDir

@@ -78,8 +78,6 @@ FUNCTION proizvoljni_izvjestaji_db_cre()
    _table_name := "fin_zagli"
 
    IF_NOT_FILE_DBF_CREATE
-
-
    CREATE_INDEX( "ID", "id", _alias )
    CREATE_INDEX( "1", "STR(x1,3)+STR(y1,3)", _alias )
    AFTER_CREATE_INDEX
@@ -106,8 +104,6 @@ FUNCTION proizvoljni_izvjestaji_db_cre()
    _table_name := "fin_koniz"
 
    IF_NOT_FILE_DBF_CREATE
-
-
    CREATE_INDEX( "ID", "id", _alias )
    CREATE_INDEX( "1", "izv+STR(ri,4)", _alias )
    AFTER_CREATE_INDEX

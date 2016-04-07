@@ -55,7 +55,7 @@ FUNCTION set_a_dbf_fin()
 
 FUNCTION set_a_dbf_fin_suban()
 
-   LOCAL _alg, _tbl
+   LOCAL _alg, _tbl, _item
 
    _tbl := "fin_suban"
 
@@ -64,11 +64,10 @@ FUNCTION set_a_dbf_fin_suban()
    _item[ "alias" ] := "SUBAN"
    _item[ "table" ] := _tbl
    _item[ "wa" ]    := F_SUBAN
-
-   // temporary tabela - nema semafora
    _item[ "temp" ]  := .F.
-
    _item[ "algoritam" ] := {}
+   _item[ "sif" ] := .F.
+   _item[ "sql" ] := .F.
 
    // algoritam 1 - default
    // -------------------------------------------------------------------------------
@@ -109,8 +108,9 @@ FUNCTION set_a_dbf_fin_anal()
    _item[ "alias" ] := "ANAL"
    _item[ "wa" ]    := F_ANAL
    _item[ "table" ] := _tbl
-   // temporary tabela - nema semafora
    _item[ "temp" ]  := .F.
+   _item[ "sif" ] := .F.
+   _item[ "sql" ] := .F.
 
    _item[ "algoritam" ] := {}
 
@@ -140,8 +140,8 @@ FUNCTION set_a_dbf_fin_anal()
 
    RETURN .T.
 
-// ------------------------------------------------------------------------------
-// ------------------------------------------------------------------------------
+
+
 FUNCTION set_a_dbf_fin_sint()
 
    LOCAL _alg, _tbl, _item
@@ -153,10 +153,9 @@ FUNCTION set_a_dbf_fin_sint()
    _item[ "alias" ] := "SINT"
    _item[ "table" ] := _tbl
    _item[ "wa" ]    := F_SINT
-
-   // temporary tabela - nema semafora
    _item[ "temp" ]  := .F.
-
+   _item[ "sif" ] := .F.
+   _item[ "sql" ] := .F.
 
    _item[ "algoritam" ] := {}
 
@@ -191,7 +190,7 @@ FUNCTION set_a_dbf_fin_sint()
 
 FUNCTION set_a_dbf_fin_nalog()
 
-   LOCAL _alg, _tbl
+   LOCAL _alg, _tbl, _item
    LOCAL _itm
 
    _tbl := "fin_nalog"
@@ -202,7 +201,8 @@ FUNCTION set_a_dbf_fin_nalog()
    _item[ "wa" ]    := F_NALOG
    _item[ "table" ] := _tbl
    _item[ "temp" ]  := .F.
-
+   _item[ "sif" ] := .F.
+   _item[ "sql" ] := .F.
 
    _item[ "algoritam" ] := {}
 
@@ -221,11 +221,11 @@ FUNCTION set_a_dbf_fin_nalog()
 
    RETURN .T.
 
-// ------------------------------------------------------------------------------
-// ------------------------------------------------------------------------------
+
+
 FUNCTION set_a_dbf_fin_parek()
 
-   LOCAL _alg, _tbl
+   LOCAL _alg, _tbl, _item
    LOCAL _itm
 
    _tbl := "fin_parek"
@@ -235,10 +235,9 @@ FUNCTION set_a_dbf_fin_parek()
    _item[ "alias" ] := "PAREK"
    _item[ "wa" ]    := F_PAREK
    _item[ "table" ] := _tbl
-
-   // temporary tabela - nema semafora
    _item[ "temp" ]  := .F.
-
+   _item[ "sif" ] := .F.
+   _item[ "sql" ] := .F.
 
    _item[ "algoritam" ] := {}
 
@@ -258,12 +257,9 @@ FUNCTION set_a_dbf_fin_parek()
    RETURN .T.
 
 
-
-// ------------------------------------------------------------------------------
-// ------------------------------------------------------------------------------
 FUNCTION set_a_dbf_fin_koliz()
 
-   LOCAL _alg, _tbl
+   LOCAL _alg, _tbl, _item
    LOCAL _itm
 
    _tbl := "fin_koliz"
@@ -273,9 +269,9 @@ FUNCTION set_a_dbf_fin_koliz()
    _item[ "alias" ] := "KOLIZ"
    _item[ "wa" ]    := F_KOLIZ
    _item[ "table" ] := _tbl
-
-   // temporary tabela - nema semafora
    _item[ "temp" ]  := .F.
+   _item[ "sif" ] := .F.
+   _item[ "sql" ] := .F.
 
    _item[ "algoritam" ] := {}
 
@@ -296,11 +292,10 @@ FUNCTION set_a_dbf_fin_koliz()
 
 
 
-// ------------------------------------------------------------------------------
-// ------------------------------------------------------------------------------
+
 FUNCTION set_a_dbf_fin_koniz()
 
-   LOCAL _alg, _tbl
+   LOCAL _alg, _tbl, _item
    LOCAL _itm
 
    _tbl := "fin_koniz"
@@ -310,9 +305,9 @@ FUNCTION set_a_dbf_fin_koniz()
    _item[ "alias" ] := "KONIZ"
    _item[ "wa" ]    := F_KONIZ
    _item[ "table" ] := _tbl
-
-   // temporary tabela - nema semafora
    _item[ "temp" ]  := .F.
+   _item[ "sif" ] := .F.
+   _item[ "sql" ] := .F.
 
    _item[ "algoritam" ] := {}
 
@@ -333,23 +328,21 @@ FUNCTION set_a_dbf_fin_koniz()
 
 
 
-// ------------------------------------------------------------------------------
-// ------------------------------------------------------------------------------
+
 FUNCTION set_a_dbf_fin_zagli()
 
-   LOCAL _alg, _tbl
+   LOCAL _alg, _tbl, _item
    LOCAL _itm
 
    _tbl := "fin_zagli"
 
    _item := hb_Hash()
-
    _item[ "alias" ] := "ZAGLI"
    _item[ "wa" ]    := F_ZAGLI
    _item[ "table" ] := _tbl
-
-   // temporary tabela - nema semafora
    _item[ "temp" ]  := .F.
+   _item[ "sif" ] := .F.
+   _item[ "sql" ] := .F.
 
    _item[ "algoritam" ] := {}
 
@@ -369,12 +362,9 @@ FUNCTION set_a_dbf_fin_zagli()
    RETURN .T.
 
 
-
-// ------------------------------------------------------------------------------
-// ------------------------------------------------------------------------------
 FUNCTION set_a_dbf_fin_izvje()
 
-   LOCAL _alg, _tbl
+   LOCAL _alg, _tbl, _item
    LOCAL _itm
 
    _tbl := "fin_izvje"
@@ -384,9 +374,9 @@ FUNCTION set_a_dbf_fin_izvje()
    _item[ "alias" ] := "IZVJE"
    _item[ "wa" ]    := F_IZVJE
    _item[ "table" ] := _tbl
-
-   // temporary tabela - nema semafora
    _item[ "temp" ]  := .F.
+   _item[ "sif" ] := .F.
+   _item[ "sql" ] := .F.
 
    _item[ "algoritam" ] := {}
 
@@ -405,11 +395,10 @@ FUNCTION set_a_dbf_fin_izvje()
 
    RETURN .T.
 
-// ------------------------------------------------------------------------------
-// ------------------------------------------------------------------------------
+
 FUNCTION set_a_dbf_fin_budzet()
 
-   LOCAL _alg, _tbl
+   LOCAL _alg, _tbl, _item
    LOCAL _itm
 
    _tbl := "fin_budzet"
@@ -419,9 +408,9 @@ FUNCTION set_a_dbf_fin_budzet()
    _item[ "alias" ] := "BUDZET"
    _item[ "wa" ]    := F_BUDZET
    _item[ "table" ] := _tbl
-
-   // temporary tabela - nema semafora
    _item[ "temp" ]  := .F.
+   _item[ "sif" ] := .F.
+   _item[ "sql" ] := .F.
 
    _item[ "algoritam" ] := {}
 

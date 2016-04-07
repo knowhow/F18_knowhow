@@ -749,19 +749,19 @@ STATIC FUNCTION _set_menu_choices( menuop, menuexec )
    AAdd( menuexec, {|| f18_login_loop( .F. ), .T. } )
 
    AAdd( menuop, hb_UTF8ToStr( "2. update F18" ) )
-   AAdd( menuexec, {|| F18AdminOpts():New():update_app(), .T. } )
+   AAdd( menuexec, {|| F18Admin():New():update_app(), .T. } )
 
    AAdd( menuop, hb_UTF8ToStr( "3. update baze" ) )
-   AAdd( menuexec, {|| F18AdminOpts():New():update_db(), .T. } )
+   AAdd( menuexec, {|| F18Admin():New():update_db(), .T. } )
 
    AAdd( menuop, hb_UTF8ToStr( "4. nova baza" ) )
-   AAdd( menuexec, {|| F18AdminOpts():New():create_new_pg_db(), .T. } )
+   AAdd( menuexec, {|| F18Admin():New():create_new_pg_db(), .T. } )
 
    AAdd( menuop, hb_UTF8ToStr( "5. brisanje baze" ) )
-   AAdd( menuexec, {|| F18AdminOpts():New():drop_pg_db(), .T. } )
+   AAdd( menuexec, {|| F18Admin():New():drop_pg_db(), .T. } )
 
    AAdd( menuop, hb_UTF8ToStr( "6. otvaranje nove godine" ) )
-   AAdd( menuexec, {|| F18AdminOpts():New():razdvajanje_sezona(), .T. } )
+   AAdd( menuexec, {|| F18Admin():New():razdvajanje_sezona(), .T. } )
 
    RETURN .T.
 

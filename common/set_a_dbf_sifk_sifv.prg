@@ -22,7 +22,7 @@ FUNCTION set_a_dbf_sifk_sifv()
 
 FUNCTION set_a_dbf_sifk()
 
-   LOCAL _alg, _tbl
+   LOCAL _alg, _tbl, _item
 
    _tbl := "sifk"
 
@@ -33,6 +33,8 @@ FUNCTION set_a_dbf_sifk()
    _item[ "wa" ]    := F_SIFK
    _item[ "sql" ]   := .T.
    _item[ "temp" ]  := .F.
+   _item[ "sif" ] := .T.
+   _item[ "chk0" ]  := .F.
    _item[ "algoritam" ] := {}
 
    // algoritam 1 - default
@@ -47,12 +49,11 @@ FUNCTION set_a_dbf_sifk()
 
    f18_dbfs_add( _tbl, @_item )
 
-   // ------------------------------------------------------------------------------
-   // ------------------------------------------------------------------------------
+
 
 FUNCTION set_a_dbf_sifv()
 
-   LOCAL _alg, _tbl
+   LOCAL _alg, _tbl, _item
 
    _tbl := "sifv"
 
@@ -62,8 +63,11 @@ FUNCTION set_a_dbf_sifv()
    _item[ "table" ] := _tbl
    _item[ "wa" ]    := F_SIFV
    _item[ "sql" ]   := .T.
+   _item[ "chk0" ]  := .F.
+   _item[ "sif" ] := .F.
    _item[ "temp" ]  := .F.
    _item[ "algoritam" ] := {}
+
 
    // algoritam 1 - default
    // -------------------------------------------------------------------------------
@@ -96,4 +100,4 @@ FUNCTION set_a_dbf_sifv()
 
    f18_dbfs_add( _tbl, @_item )
 
-   RETURN
+   RETURN .T.

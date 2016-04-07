@@ -34,8 +34,7 @@ FUNCTION set_a_dbf_epdv()
    RETURN .T.
 
 
-// ------------------------------------------------------------------------------
-// ------------------------------------------------------------------------------
+
 FUNCTION set_a_dbf_epdv_pdv()
 
    LOCAL _item, _alg, _tbl
@@ -47,9 +46,9 @@ FUNCTION set_a_dbf_epdv_pdv()
    _item[ "alias" ] := "PDV"
    _item[ "table" ] := _tbl
    _item[ "wa" ]    := F_PDV
-
-   // temporary tabela - nema semafora
    _item[ "temp" ]  := .F.
+   _item[ "sql" ]  := .F.
+   _item[ "sif" ]  := .F.
 
    _item[ "algoritam" ] := {}
 
@@ -69,9 +68,6 @@ FUNCTION set_a_dbf_epdv_pdv()
    RETURN .T.
 
 
-
-// ------------------------------------------------------------------------------
-// ------------------------------------------------------------------------------
 FUNCTION set_a_dbf_epdv_kuf_kif( table, alias, wa )
 
    LOCAL _item, _alg, _tbl
@@ -83,9 +79,9 @@ FUNCTION set_a_dbf_epdv_kuf_kif( table, alias, wa )
    _item[ "alias" ] := alias
    _item[ "table" ] := table
    _item[ "wa" ]    := wa
-
-   // temporary tabela - nema semafora
    _item[ "temp" ]  := .F.
+   _item[ "sql" ]  := .F.
+   _item[ "sif" ]  := .F.
 
    _item[ "algoritam" ] := {}
 

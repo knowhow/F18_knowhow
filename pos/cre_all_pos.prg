@@ -122,7 +122,6 @@ FUNCTION cre_all_pos( ver )
 
 
    aDbf := {}
-
    AAdd ( aDbf, { "DATUM",     "D",  8, 0 } )
    AAdd ( aDbf, { "IDPOS",     "C",  2, 0 } )
    AAdd ( aDbf, { "IDVD",      "C",  2, 0 } )
@@ -150,7 +149,6 @@ FUNCTION cre_all_pos( ver )
    _table_name := "pos_doks"
 
    IF_NOT_FILE_DBF_CREATE
-
    CREATE_INDEX ( "1", "IdPos+IdVd+dtos(datum)+BrDok", _alias )
    CREATE_INDEX ( "2", "IdVd+DTOS(Datum)+Smjena", _alias )
    CREATE_INDEX ( "3", "IdGost+Placen+DTOS(Datum)", _alias )
@@ -164,6 +162,7 @@ FUNCTION cre_all_pos( ver )
    CREATE_INDEX ( "ZAK", "IdPos+idvd+STR(ZAK_BR)+STR(STO_BR)+DTOS(datum)+brdok", _alias )
    CREATE_INDEX ( "FISC", "STR(fisc_rn,10)+idpos+idvd", _alias )
    AFTER_CREATE_INDEX
+
 
    // ------- pos dokspf ------
    aDbf := {}
@@ -181,8 +180,6 @@ FUNCTION cre_all_pos( ver )
    _table_name := "pos_dokspf"
 
    IF_NOT_FILE_DBF_CREATE
-
-
    CREATE_INDEX( "1", "idpos+idvd+DToS(datum)+brdok", _alias )
    CREATE_INDEX( "2", "knaz", _alias )
    AFTER_CREATE_INDEX
@@ -218,15 +215,12 @@ FUNCTION cre_all_pos( ver )
 
    _alias := "POS"
    _table_name := "pos_pos"
-
    IF_NOT_FILE_DBF_CREATE
 
    // 0.4.5
    IF ver[ "current" ] > 0 .AND. ver[ "current" ] < 00405
       modstru( { "*" + _table_name, "A RBR C 5 0" } )
    ENDIF
-
-
 
    CREATE_INDEX ( "1", "IdPos+IdVd+dtos(datum)+BrDok+IdRoba+IdCijena+Rbr", _alias )
    CREATE_INDEX ( "2", "IdOdj+idroba+DTOS(Datum)", _alias )
@@ -239,7 +233,6 @@ FUNCTION cre_all_pos( ver )
    AFTER_CREATE_INDEX
 
    // --- promvp - promet po vrstama placanja --
-
    aDbf := {}
    AAdd ( aDbf, { "DATUM",     "D",  8, 0 } )
    AAdd ( aDbf, { "POLOG01",   "N", 10, 2 } )
@@ -260,7 +253,6 @@ FUNCTION cre_all_pos( ver )
    _table_name := "pos_promvp"
 
    IF_NOT_FILE_DBF_CREATE
-
    CREATE_INDEX ( "1", "DATUM", _alias )
    AFTER_CREATE_INDEX
 
@@ -316,14 +308,12 @@ FUNCTION cre_all_pos( ver )
    _table_name := "priprz"
 
    IF_NOT_FILE_DBF_CREATE
-
    CREATE_INDEX ( "1", "IdRoba", _alias )
 
    _alias := "PRIPRG"
    _table_name := "priprg"
 
    IF_NOT_FILE_DBF_CREATE
-
    CREATE_INDEX ( "1", "IdPos+IdOdj+IdDio+IdRoba+DTOS(Datum)+Smjena", _alias )
    CREATE_INDEX ( "2", "IdPos+DTOS (Datum)+Smjena", _alias )
    CREATE_INDEX ( "3", "IdVd+IdPos+IdVrsteP+IdGost+Placen+IdDio+IdOdj+IdRoba", _alias )
@@ -338,7 +328,6 @@ FUNCTION cre_all_pos( ver )
    _table_name := "k2c"
 
    IF_NOT_FILE_DBF_CREATE
-
    CREATE_INDEX ( "1", "STR (KeyCode, 4)", _alias )
    CREATE_INDEX ( "2", "IdRoba", _alias )
 
@@ -352,7 +341,6 @@ FUNCTION cre_all_pos( ver )
    _table_name := "mjtrur"
 
    IF_NOT_FILE_DBF_CREATE
-
    CREATE_INDEX ( "1", "IdDio+IdOdj", _alias )
 
 
@@ -364,9 +352,7 @@ FUNCTION cre_all_pos( ver )
    _table_name := "robaiz"
 
    IF_NOT_FILE_DBF_CREATE
-
    CREATE_INDEX ( "1", "IdRoba", _alias )
-
 
 
    // kreiraj tabele dok_src : DOK_SRC

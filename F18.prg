@@ -93,7 +93,7 @@ FUNCTION program_module_menu( arg_v )
    LOCAL _tmp
    LOCAL cOldColors
 
-   info_bar( "init", "gen program_module_menu start" )
+   //info_bar( "init", "gen program_module_menu start" )
 
    init_parameters_cache()
    set_screen_dimensions()
@@ -158,7 +158,7 @@ FUNCTION program_module_menu( arg_v )
 
    ENDDO
 
-   info_bar( _db_params[ "database" ], "program_module_menu end" )
+   //info_bar( _db_params[ "database" ], "program_module_menu end" )
 
    RETURN .T.
 
@@ -268,6 +268,10 @@ STATIC FUNCTION set_program_module_menu( menuop, menuexec, p3, p4, p5, p6, p7 )
 
    AAdd( menuop, " V. vpn podrška" )
    AAdd( menuexec, {|| vpn_support() } )
+
+
+   AAdd( menuop, " X. diag info" )
+   AAdd( menuexec, {|| diag_info() } )
 
    RETURN .T.
 

@@ -135,10 +135,10 @@ FUNCTION set_a_dbf_temp( table, alias, wa )
    _item[ "alias" ] := alias
    _item[ "table" ] := table
    _item[ "wa" ]    := wa
-
    _item[ "temp" ]  := .T.
    _item[ "chk0" ]  := .T.
    _item[ "sql" ] := .F.
+   _item[ "sif" ]  := .F.
 
    f18_dbfs_add( table, @_item )
 
@@ -169,8 +169,9 @@ FUNCTION set_a_dbf_sifarnik( dbf_table, alias, wa, rec, lSql )
    _item[ "temp" ]  := .F.
    _item[ "sql" ]   :=  lSql
    _item[ "chk0" ]   :=  .F.
-   _item[ "algoritam" ] := {}
    _item[ "sif" ] := .T.
+   _item[ "algoritam" ] := {}
+
 
    _alg := hb_Hash()
 
@@ -203,7 +204,7 @@ FUNCTION set_a_dbf_sifarnik( dbf_table, alias, wa, rec, lSql )
 FUNCTION get_a_dbf_rec( cTable, _only_basic_params )
 
    LOCAL _msg, _rec, _keys, cDbfTable, _key
-   LOCAL nI, cMsg, hServerParams := my_server_params()
+   LOCAL nI, cMsg, cDatabase := my_database(), hServerParams := my_server_params()
 
    cDbfTable := "x"
 
@@ -217,19 +218,19 @@ FUNCTION get_a_dbf_rec( cTable, _only_basic_params )
       ?E  "get_a_dbf_rec: " + cTable + " s_hF18Dbfs nije inicijalizirana " + _msg
    ENDIF
 
-   IF hb_HHasKey( s_hF18Dbfs[ hServerParams[ "database" ] ], cTable )
+   IF hb_HHasKey( s_hF18Dbfs[ cDatabase ], cTable )
       cDbfTable := cTable
    ELSE
       // probaj preko aliasa
-      FOR EACH _key IN s_hF18Dbfs[ hServerParams[ "database" ] ]:Keys
+      FOR EACH _key IN s_hF18Dbfs[ cDatabase ]:Keys
          IF ValType( cTable ) == "N"
             // zadana je workarea
-            IF s_hF18Dbfs[ hServerParams[ "database" ] ][ _key ][ "wa" ] == cTable
+            IF s_hF18Dbfs[ cDatabase ][ _key ][ "wa" ] == cTable
                cDbfTable := _key
                EXIT
             ENDIF
          ELSE
-            IF s_hF18Dbfs[ hServerParams[ "database" ] ][ _key ][ "alias" ] == Upper( cTable )
+            IF s_hF18Dbfs[ cDatabase ][ _key ][ "alias" ] == Upper( cTable )
                cDbfTable := _key
                EXIT
             ENDIF
@@ -246,6 +247,7 @@ FUNCTION get_a_dbf_rec( cTable, _only_basic_params )
       _rec[ "table" ] := cTable
       _rec[ "alias" ] := cTable
       _rec[ "sql" ] := .F.
+      _rec[ "sif" ] := .F.
       _rec[ "wa" ] := 6000
 
       LOG_CALL_STACK _msg
@@ -254,8 +256,8 @@ FUNCTION get_a_dbf_rec( cTable, _only_basic_params )
 
    ENDIF
 
-   IF hb_HHasKey( s_hF18Dbfs[ my_server_params()[ "database" ] ], cDbfTable )
-      _rec := s_hF18Dbfs[ my_server_params()[ "database" ] ][ cDbfTable ] // preferirani set parametara
+   IF hb_HHasKey( s_hF18Dbfs[ cDatabase ], cDbfTable )
+      _rec := s_hF18Dbfs[ cDatabase ][ cDbfTable ] // preferirani set parametara
    ELSE
       _rec := hb_Hash()
       _rec[ "table" ] := cDbfTable
@@ -457,11 +459,37 @@ FUNCTION imaju_unchecked_sifarnici()
    RETURN .F.
 
 
+FUNCTION print_a_dbfs()
 
-// ----------------------------------------------
-// "sql_order" hash na osnovu rec["dbf_fields"]
-// ----------------------------------------------
-FUNCTION sql_order_from_key_fields( dbf_key_fields )
+   LOCAL nCount := 0, cKey
+   LOCAL cDatabase := my_database()
+
+   ?E Replicate( "A", 60 )
+   FOR EACH cKey IN s_hF18Dbfs[ cDatabase ]:Keys
+      ?E ++nCount, s_hF18Dbfs[ cDatabase ][ cKey ][ "table" ]
+      IF hb_HHasKey( s_hF18Dbfs[ cDatabase ][ cKey ], "chk0" )
+         ??E " chk0", s_hF18Dbfs[ cDatabase ][ cKey ][ "chk0" ]
+      ELSE
+         ??E " chk0 undefined"
+      ENDIF
+      IF hb_HHasKey( s_hF18Dbfs[ cDatabase ][ cKey ], "sif" )
+         ??E " sif", s_hF18Dbfs[ cDatabase ][ cKey ][ "sif" ]
+      ELSE
+         ??E " sif undefined!"
+      ENDIF
+      IF !s_hF18Dbfs[ cDatabase ][ cKey ][ "temp" ]
+         ??E " count:", table_count( s_hF18Dbfs[ cDatabase ][ cKey ][ "table" ] )
+      ENDIF
+
+   NEXT
+   ?E Replicate( "a", 70 )
+
+   RETURN .T.
+
+
+
+
+FUNCTION sql_order_from_key_fields( dbf_key_fields ) // "sql_order" hash na osnovu rec["dbf_fields"]
 
    LOCAL _i, _len
    LOCAL _sql_order

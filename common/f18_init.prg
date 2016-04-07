@@ -199,7 +199,6 @@ FUNCTION set_screen_dimensions()
          ?E "setovanje ekrana: setovan ekran po rezoluciji"
       ELSE
          ?E "setovanje ekrana: ne mogu setovati ekran po trazenoj rezoluciji !"
-         // QUIT_1
       ENDIF
 
       RETURN .T.
@@ -610,12 +609,11 @@ FUNCTION server_log_enable()
 FUNCTION log_create()
 
    IF ( __log_handle := FCreate( F18_LOG_FILE ) ) == -1
-      Alert( "Cannot create log file: " + F18_LOG_FILE )
-
-      QUIT_1
+      error_bar( "log", "Cannot create log file: " + F18_LOG_FILE )
+      RETURN .F.
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 FUNCTION log_close()

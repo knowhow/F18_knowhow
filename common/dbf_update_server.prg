@@ -50,7 +50,8 @@ FUNCTION update_rec_server_and_dbf( table, values, algoritam, transaction, lock 
       _msg := "ERR "  + RECI_GDJE_SAM0 + " ALIAS() = " + Alias() + " <> " + _a_dbf_rec[ "alias" ]
       log_write( _msg, 2 )
       Alert( _msg )
-      QUIT_1
+      error_bar( "update", _msg )
+      RETURN .F.
    ENDIF
 
    //log_write( "START: update_rec_server_and_dbf " + table, 9 )
@@ -225,9 +226,8 @@ FUNCTION delete_rec_server_and_dbf( table, values, algoritam, transaction, lock 
    IF Alias() <> _a_dbf_rec[ "alias" ]
       _msg := "ERR "  + RECI_GDJE_SAM0 + " ALIAS() = " + Alias() + " <> " + _a_dbf_rec[ "alias" ]
       log_write( _msg, 1 )
-      Alert( _msg )
+      error_bar( "del_rec", _msg )
       RaiseError( _msg )
-      QUIT_1
    ENDIF
 
    log_write( "delete rec server, poceo", 9 )
@@ -262,10 +262,10 @@ FUNCTION delete_rec_server_and_dbf( table, values, algoritam, transaction, lock 
             ENDIF
 
             _msg := "ERROR: " + RECI_GDJE_SAM0 + " tabela: " + table + " DBF_TAG " + _alg[ "dbf_tag" ]
-            Alert( _msg )
+            error_bar( "del_rec", _msg )
             log_write( _msg, 1 )
             RaiseError( _msg )
-            QUIT_1
+            RETURN .F.
          ELSE
             lIndex := .F.
          ENDIF
@@ -394,6 +394,7 @@ STATIC FUNCTION set_table_values_algoritam_vars( table, values, algoritam, trans
    LOCAL _use_tag := .F.
    LOCAL _alias
    LOCAL lSqlTable, uValue
+   LOCAL _msg
 
    IF table == NIL
       table := Alias()
@@ -439,7 +440,8 @@ STATIC FUNCTION set_table_values_algoritam_vars( table, values, algoritam, trans
             _msg := RECI_GDJE_SAM + "# tabela:" + table + "#bug - nepostojeći kljuc:" + _key +  "#values:" + pp( values )
             log_write( _msg, 1 )
             MsgBeep( _msg )
-            QUIT_1
+            error_bar( "set_t_alg", _msg )
+            RETURN .F.
          ENDIF
 
          IF ValType( values[ _key ] ) == "C"

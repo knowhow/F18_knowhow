@@ -155,7 +155,7 @@ PROCEDURE process_dbf_refresh_queue()
 
    LOCAL aItem, nQLength := 0, nQLength2 := 0, nQLength3 := 0
 
-   IF ( Seconds() - s_nProcessQueueSeconds ) < ( MIN_LAST_REFRESH_SEC )
+   IF ( Seconds() - s_nProcessQueueSeconds ) < ( MIN_LAST_REFRESH_SEC * 2 )
       RETURN
    ENDIF
 

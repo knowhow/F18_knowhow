@@ -9,9 +9,7 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-
 #include "f18.ch"
-
 
 
 
@@ -162,7 +160,7 @@ FUNCTION pos_prepis_dokumenta()
       AAdd( aOpc, "<F2> - promjena vrste placanja" )
    ENDIF
 
-   my_db_edit( "pos_doks", MAXROWS() - 10, MAXCOLS() - 3, {|| pos_stampa_dokumenta_key_handler( dDatOd, dDatDo ) }, "  STAMPA AZURIRANOG DOKUMENTA  ", "", nil, aOpc )
+   my_db_edit( "pos_doks", MAXROWS() - 10, MAXCOLS() - 20, {|| pos_stampa_dokumenta_key_handler( dDatOd, dDatDo ) }, _u( "  ŠTAMPA AŽURIRANOG DOKUMENTA  " ), nil, aOpc )
 
    CLOSE ALL
 
@@ -400,7 +398,9 @@ FUNCTION pos_pregled_stavki_racuna()
    LOCAL oBrowse
    LOCAL cPrevCol
    LOCAL _rec
-   LOCAL nMaxCol := MaxCol() - 2
+   LOCAL nMaxRow := maxrows() - 15
+   LOCAL nMaxCol := maxcols() - 35
+
 
    PRIVATE ImeKol
    PRIVATE Kol
@@ -438,7 +438,6 @@ FUNCTION pos_pregled_stavki_racuna()
       APPEND BLANK
 
       dbf_update_rec( _rec )
-
       SELECT POS
       SKIP
 
@@ -449,22 +448,22 @@ FUNCTION pos_pregled_stavki_racuna()
 
    browse_kolone( @ImeKol, @Kol )
 
-   Box(, 15, nMaxCol )
+   Box(, nMaxRow, nMaxCol )
 
-   @ m_x + 1, m_y + 19 SAY8 PadC ( "Pregled " + iif( gRadniRac == "D", "stalnog ", "" ) + "računa " + Trim( pos_doks->IdPos ) + "-" + LTrim ( pos_doks->BrDok ), 30 ) COLOR F18_COLOR_INVERT
+    @ m_x + 1, m_y + 19 SAY8 PadC ( "Pregled računa " + Trim( pos_doks->IdPos ) + "-" + LTrim ( pos_doks->BrDok ), 30 ) COLOR F18_COLOR_INVERT
 
-   oBrowse := FormBrowse( m_x + 2, m_y + 1, m_x + 15, m_y + nMaxCol, ImeKol, Kol, { BROWSE_PODVUCI_2, BROWSE_PODVUCI, BROWSE_COL_SEP }, 0 )
-   ShowBrowse( oBrowse, {}, {} )
+    oBrowse := FormBrowse( m_x + 2, m_y + 1, m_x + nMaxRow, m_y + nMaxCol, ImeKol, Kol, { BROWSE_PODVUCI_2, BROWSE_PODVUCI, BROWSE_COL_SEP }, 0 )
+    ShowBrowse( oBrowse, {}, {} )
+    SELECT _pos_pripr
+    my_dbf_zap()
 
-   SELECT _pos_pripr
-   my_dbf_zap()
    BoxC()
 
    SetColor ( cPrevCol )
 
    SELECT pos_doks
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -486,4 +485,4 @@ STATIC FUNCTION browse_kolone( aImeKol, aKol )
       AAdd( aKol, i )
    NEXT
 
-   RETURN
+   RETURN .T.

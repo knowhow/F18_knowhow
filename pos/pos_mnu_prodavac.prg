@@ -21,10 +21,8 @@ FUNCTION pos_main_menu_prodavac()
    AAdd( _opc, "1. priprema računa                        " )
    AAdd( _opcexe, {|| _pos_prodavac_racun() } )
 
-
    AAdd( _opc, "2. pregled ažuriranih racuna  " )
    AAdd( _opcexe, {|| pos_pregled_racuna( .F. ) } )
-
 
    AAdd( _opc, "R. trenutna realizacija radnika" )
    AAdd( _opcexe, {|| realizacija_radnik( .T., "P", .F. ) } )
@@ -44,7 +42,8 @@ FUNCTION pos_main_menu_prodavac()
 
    CLOSE ALL
 
-   RETURN
+   RETURN .T.
+
 
 
 STATIC FUNCTION _pos_prodavac_racun()

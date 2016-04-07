@@ -141,7 +141,7 @@ FUNCTION pos_lista_racuna( dDat, cBroj, fPrep, fScope, cPrefixFilter, qIdRoba )
       bMarkF := NIL
    ENDIF
 
-   my_db_edit( "racun", MAXROWS() - 10, MAXCOLS() - 3, {|| lista_racuna_key_handler( fMark ) }, iif( gRadniRac == "D", "  STALNI ", "  " ) + "RACUNI  ", "", nil, cFnc,, bMarkF )
+   my_db_edit( "racun", MAXROWS() - 12, MAXCOLS() - 25, {|| lista_racuna_key_handler( fMark ) }, _u(" POS RAČUNI "), "", nil, cFnc,, bMarkF )
 
    SET FILTER TO
 
@@ -204,8 +204,7 @@ STATIC FUNCTION lista_racuna_key_handler()
 
    IF Upper( Chr( LastKey() ) ) == "S"
 
-      pos_storno_rn( .T., pos_doks->brdok, pos_doks->datum, ;
-         PadR( AllTrim( Str( pos_doks->fisc_rn ) ), 10 ) )
+      pos_storno_rn( .T., pos_doks->brdok, pos_doks->datum, PadR( AllTrim( Str( pos_doks->fisc_rn ) ), 10 ) )
 
       MsgBeep( "Storno račun se nalazi u pripremi !" )
 

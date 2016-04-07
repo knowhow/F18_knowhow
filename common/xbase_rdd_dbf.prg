@@ -498,6 +498,12 @@ FUNCTION dbf_open_temp_and_count( aDbfRec, nCntSql, nCnt, nDel )
    LOCAL oError
    LOCAL nI, cMsg, cLogMsg := ""
 
+   IF !File( cFullDbf )
+       nCnt := -999
+       nDel := -7777
+       RETURN .F.
+   ENDIF
+
    cFullIdx := ImeDbfCdx( cFullDbf )
 
    BEGIN SEQUENCE WITH {| err| Break( err ) }
@@ -510,7 +516,9 @@ FUNCTION dbf_open_temp_and_count( aDbfRec, nCntSql, nCnt, nDel )
       LOG_CALL_STACK cLogMsg
       ?E "dbf_open_temp_and_count use dbf:", cFullDbf, "alias:", cAliasTemp, oError:Description
       error_bar( "dbf_open_tmp_cnt", cAliasTemp + " / " + oError:Description )
-      QUIT_1
+      nCnt := -888
+      nDel := -8888
+      RETURN .F.
    END SEQUENCE
 
    count_deleted( @nCnt, @nDel )

@@ -29,7 +29,8 @@ FUNCTION dbf_update_rec( vars, no_lock )
       _msg := "dbf_update_rec - nema otvoren dbf"
       log_write( _msg, 1 )
       Alert( _msg )
-      QUIT_1
+      //QUIT_1
+      RETURN .F.
    ENDIF
 
    IF no_lock .OR. my_rlock()

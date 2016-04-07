@@ -463,6 +463,7 @@ FUNCTION print_a_dbfs()
 
    LOCAL nCount := 0, cKey
    LOCAL cDatabase := my_database()
+   LOCAL nCnt, nDel, nCntSql
 
    ?E Replicate( "A", 60 )
    FOR EACH cKey IN s_hF18Dbfs[ cDatabase ]:Keys
@@ -478,7 +479,21 @@ FUNCTION print_a_dbfs()
          ??E " sif undefined!"
       ENDIF
       IF !s_hF18Dbfs[ cDatabase ][ cKey ][ "temp" ]
-         ??E " count:", table_count( s_hF18Dbfs[ cDatabase ][ cKey ][ "table" ] )
+         nCntSql := table_count( s_hF18Dbfs[ cDatabase ][ cKey ][ "table" ] )
+         nCnt := 0
+         nDel := 0
+         ??E " count: sql", nCntSql
+         IF !s_hF18Dbfs[ cDatabase ][ cKey ][ "sql" ]
+            IF ! dbf_open_temp_and_count( s_hF18Dbfs[ cDatabase ][ cKey ], @nCntSql, @nCnt, @nDel )
+               ??E " dbf open ERROR ! "
+            ENDIF
+            ??E " dbf cnt/del: ", nCnt, "/", nDel, "dbf cnt-del:", nCnt - nDel
+            IF ( nCntSql - nCnt + nDel ) != 0
+               ?? " ERR DIFF SQL-DBF: ", ( nCntSql - nCnt + nDel )
+            ENDIF
+         ENDIF
+
+
       ENDIF
 
    NEXT

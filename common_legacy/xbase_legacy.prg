@@ -483,7 +483,7 @@ FUNCTION F_Baze( tbl )
 
    IF _area <= 0
       my_close_all_dbf()
-      QUIT_1
+      //QUIT_1
    ENDIF
 
    RETURN _area
@@ -500,7 +500,7 @@ FUNCTION Sel_Bazu( tbl )
       SELECT ( _area )
    ELSE
       my_close_all_dbf()
-      QUIT_1
+      //QUIT_1
    ENDIF
 
    RETURN

@@ -14,6 +14,4 @@
 
 FUNCTION o_kalk_pripr()
 
-   Select( F_KALK_PRIPR ); my_use ( "kalk_pripr", NIL, .F. ) ; SET ORDER TO TAG "1"
-
-   RETURN .T.
+   RETURN o_dbf_table( F_KALK_PRIPR, "kalk_pripr", "1" )

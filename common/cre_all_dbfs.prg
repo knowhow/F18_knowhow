@@ -11,7 +11,7 @@
 
 #include "f18.ch"
 
-STATIC s_lInCreAllDbfs
+STATIC s_lInCreAllDbfs := .F.
 
 /*
    Kreiraj sve DBFCDX

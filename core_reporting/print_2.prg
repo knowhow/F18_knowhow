@@ -79,7 +79,7 @@ FUNCTION f18_start_print( cFileName, xPrintOpt, cDocumentName )
       ELSE
          oPDF:SetType( PDF_TXT_LANDSCAPE )
       ENDIF
-      altd()
+      AltD()
       IF hb_HHasKey( xPrintOpt, "font_size" )
          oPDF:SetFontSize( xPrintOpt[ "font_size" ] )
       ENDIF
@@ -174,7 +174,7 @@ FUNCTION f18_end_print( cFileName, xPrintOpt )
       IF hb_HHasKey( xPrintOpt, "left_space" )
          oPDF:SetLeftSpace( xPrintOpt[ "left_space" ] )
       ENDIF
-      altd()
+      AltD()
       IF hb_HHasKey( xPrintOpt, "font_size" )
          oPDF:SetFontSize( xPrintOpt[ "font_size" ] )
       ENDIF
@@ -328,6 +328,10 @@ FUNCTION GpIni( cDocumentName )
       cDocumentName := ""
    ENDIF
 
+   IF !is_legacy_ptxt()
+      RETURN .T.
+   ENDIF
+
    QQOut( gPini )
 
    IF !Empty( cDocumentName )
@@ -356,6 +360,9 @@ FUNCTION gpPicH( nRows )
 
 FUNCTION gpPicF()
 
+   IF !is_legacy_ptxt()
+      RETURN .T.
+   ENDIF
    QQOut( "#%PIC_F#" )
 
    RETURN ""
@@ -363,30 +370,47 @@ FUNCTION gpPicF()
 
 FUNCTION gpCOND()
 
+altd()
+   IF !is_legacy_ptxt()
+      RETURN .T.
+   ENDIF
    QQOut( gpCOND )
 
    RETURN ""
 
 FUNCTION gpCOND2()
 
+altd()
+   IF !is_legacy_ptxt()
+      RETURN .T.
+   ENDIF
    QQOut( gpCOND2 )
 
    RETURN ""
 
 FUNCTION gp10CPI()
 
+   IF !is_legacy_ptxt()
+      RETURN .T.
+   ENDIF
    QQOut( gP10CPI )
 
    RETURN ""
 
 FUNCTION gp12CPI()
 
+   IF !is_legacy_ptxt()
+      RETURN .T.
+   ENDIF
    QQOut( gP12CPI )
 
    RETURN ""
 
 FUNCTION gpB_ON()
 
+   IF !is_legacy_ptxt()
+      RETURN .T.
+   ENDIF
    QQOut( gPB_ON )
 
    RETURN ""
@@ -394,36 +418,54 @@ FUNCTION gpB_ON()
 
 FUNCTION gpB_OFF()
 
+   IF !is_legacy_ptxt()
+      RETURN .T.
+   ENDIF
    QQOut( gPB_OFF )
 
    RETURN ""
 
 FUNCTION gpU_ON()
 
+   IF !is_legacy_ptxt()
+      RETURN .T.
+   ENDIF
    QQOut( gPU_ON )
 
    RETURN ""
 
 FUNCTION gpU_OFF()
 
+   IF !is_legacy_ptxt()
+      RETURN .T.
+   ENDIF
    QQOut( gPU_OFF )
 
    RETURN ""
 
 FUNCTION gpI_ON()
 
+   IF !is_legacy_ptxt()
+      RETURN .T.
+   ENDIF
    QQOut( gPI_ON )
 
    RETURN ""
 
 FUNCTION gpI_OFF()
 
+   IF !is_legacy_ptxt()
+      RETURN .T.
+   ENDIF
    QQOut( gPI_OFF )
 
    RETURN ""
 
 FUNCTION gpReset()
 
+   IF !is_legacy_ptxt()
+      RETURN .T.
+   ENDIF
    QQOut( gPReset )
 
    RETURN ""
@@ -459,20 +501,27 @@ FUNCTION gpO_Land()
 
 FUNCTION gRPL_Normal()
 
-   Setpxlat()
+   IF !is_legacy_ptxt()
+      RETURN .T.
+   ENDIF
    QQOut( gRPL_Normal )
 
    RETURN ""
 
 FUNCTION gRPL_Gusto()
 
-   Setpxlat()
+   IF !is_legacy_ptxt()
+      RETURN .T.
+   ENDIF
    QQOut( gRPL_Gusto )
 
    RETURN ""
 
 FUNCTION RPar_Printer()
 
+   IF !is_legacy_ptxt()
+      RETURN .T.
+   ENDIF
    RPAR( "01", @gPINI )
    RPAR( "02", @gPCOND )
    RPAR( "03", @gPCOND2 )
@@ -501,6 +550,9 @@ FUNCTION RPar_Printer()
 
 FUNCTION WPar_Printer()
 
+   IF !is_legacy_ptxt()
+      RETURN .T.
+   ENDIF
    WPAR( "01", gPINI )
    WPAR( "02", gPCOND )
    WPAR( "03", gPCOND2 )
@@ -522,8 +574,6 @@ FUNCTION WPar_Printer()
    WPar( "pt", gPPTK )
 
    RETURN .T.
-
-
 
 
 
@@ -596,7 +646,7 @@ FUNCTION All_GetPstr()
    gRPL_Normal := GetPStr( gRPL_Normal )
    gRPL_Gusto  := GetPStr( gRPL_Gusto  )
 
-   RETURN
+   RETURN .T.
 
 
 FUNCTION SetGParams( cs, ch, cid, cvar, cval )

@@ -1141,7 +1141,7 @@ FUNCTION ShowKorner( nS, nStep, nDelta )
    IF i % nStep == 0
       cPom := Set( _SET_DEVICE )
       SET DEVICE TO SCREEN
-      @ MAXROWS() -1, ( MAXCOLS() - 7 - nDelta ) SAY  i PICT "999999"
+      @ MAXROWS() - 1, ( MAXCOLS() - 7 - nDelta ) SAY  i PICT "999999"
       SET( _SET_DEVICE, cPom )
    ENDIF
 

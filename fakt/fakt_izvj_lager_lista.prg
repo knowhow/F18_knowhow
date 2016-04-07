@@ -11,6 +11,7 @@
 
 #include "f18.ch"
 
+MEMVAR dDatOd, dDatDo
 
 FUNCTION fakt_lager_lista()
 
@@ -18,6 +19,18 @@ FUNCTION fakt_lager_lista()
 
    LOCAL nKU, nKI, lSaberiKol
    LOCAL aPorezi := {}, cPoTar := "N"
+   LOCAL oPdf, xPrintOpt, bZagl
+
+   IF !is_legacy_ptxt()
+      oPDF := PDFClass():New()
+      xPrintOpt := hb_Hash()
+      xPrintOpt[ "tip" ] := "PDF"
+      xPrintOpt[ "layout" ] := "portrait"
+      xPrintOpt[ "opdf" ] := oPDF
+      xPrintOpt[ "left_space" ] := 0
+   ENDIF
+
+   bZagl := {|| fakt_zagl_lager_lista() }
 
    PRIVATE nRezerv, nRevers
    PRIVATE nUl, nIzl, nRbr, cRR, nCol1 := 0
@@ -29,9 +42,7 @@ FUNCTION fakt_lager_lista()
    PRIVATE nGrZn := 99
    PRIVATE cLastIdRoba := ""
 
-
-
-   lBezUlaza := ( my_get_from_ini( "IZVJESTAJI", "BezUlaza", "N", KUMPATH ) == "D" )
+   lBezUlaza := .F.
 
    IF lPocStanje == NIL
       lPocStanje := .F.
@@ -100,8 +111,6 @@ FUNCTION fakt_lager_lista()
    RPar( "c8", @qqTipDok )
    RPar( "d1", @dDatOd )
    RPar( "d2", @dDatDo )
-
-
 
    SELECT fakt
 
@@ -217,7 +226,6 @@ FUNCTION fakt_lager_lista()
    qqRoba := Trim( qqRoba )
 
 
-
    WPar( "c1", cIdFirma )
    WPar( "c2", qqRoba )
    WPar( "c7", qqPartn )
@@ -254,16 +262,12 @@ FUNCTION fakt_lager_lista()
       SET FILTER to &cFilt
    ENDIF
 
-
    GO TOP
-
-
    EOF CRET
 
+   f18_start_print( NIL, xPrintOpt,  "FAKT Lager lista " + my_database() + " na dan " + DToC( Date() ) + " za period od " + DToC( dDatOd ) + " - " + DToC( dDatDo ) )
 
-   START PRINT CRET
-
-   Zaglfakt_lager_lista()
+   Eval( bZagl )
 
    _cijena := 0
    _cijena2 := 0
@@ -390,9 +394,7 @@ FUNCTION fakt_lager_lista()
          SKIP
       ENDDO
 
-      IF PRow() > 61 -iif( cProred = "D", 1, 0 )
-         Zaglfakt_lager_lista()
-      ENDIF
+      check_nova_strana( bZagl, oPDF )
 
       IF !Empty( cIdRoba )
          IF !( cSaldo0 == "N" .AND. ( nUl - nIzl ) == 0 )
@@ -532,9 +534,8 @@ FUNCTION fakt_lager_lista()
 
    ENDDO
 
-   IF PRow() > 59
-      Zaglfakt_lager_lista()
-   ENDIF
+
+   check_nova_strana( bZagl, oPDF )
 
    IF !lBezUlaza
       ? Space( gnLMarg )
@@ -587,9 +588,9 @@ FUNCTION fakt_lager_lista()
    ENDIF
 
    IF cPoTar == "D"
-      IF PRow() > 59
-         Zaglfakt_lager_lista()
-      ENDIF
+
+      check_nova_strana( bZagl, oPDF )
+
       ?
       z0 := "Rekapitulacija stanja po tarifama:"
       ? z0
@@ -601,8 +602,7 @@ FUNCTION fakt_lager_lista()
       ASort( aPorezi, {| x, y| x[ 1 ] < y[ 1 ] } )
       nUMPV := nUMPV0 := nUPor1 := nUPor2 := nUPor3 := 0
       FOR i := 1 TO Len( aPorezi )
-         IF PRow() > 59
-            Zaglfakt_lager_lista()
+         IF check_nova_strana( bZagl, oPDF )
             ?
             ? z0
             ? m
@@ -629,20 +629,15 @@ FUNCTION fakt_lager_lista()
       ?
    ENDIF
 
-   FF
-   ENDPRINT
+   f18_end_print( NIL, xPrintOpt )
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
 
 
-/* Zaglfakt_lager_lista()
- *     Zaglavlje lager liste
- */
-
-FUNCTION Zaglfakt_lager_lista()
+FUNCTION fakt_zagl_lager_lista()
 
    LOCAL cPomZK
    LOCAL _rj_tip := ""
@@ -651,16 +646,12 @@ FUNCTION Zaglfakt_lager_lista()
       _rj_tip := rj->tip
    ENDIF
 
-   IF nStr > 0
-      FF
+   IF is_legacy_ptxt()
+      ?
+      P_COND
+      ? Space( 4 ), "   FAKT: Lager lista robe na dan", Date(), "      za period od", DToC( dDatOd ), "-", DToC( dDatDo ), Space( 6 ), "Strana:", Str( ++nStr, 3 )
+      ?
    ENDIF
-
-   ?
-   P_COND
-   SET CENTURY ON
-   ? Space( 4 ), "   FAKT: Lager lista robe na dan", Date(), "      za period od", dDatOd, "-", dDatDo, Space( 6 ), "Strana:", Str( ++nStr, 3 )
-   SET CENTURY OFF
-   ?
 
    IF cUI == "U"
       ? Space( 4 ), "         (prikaz samo ulaza)"
@@ -703,7 +694,6 @@ FUNCTION Zaglfakt_lager_lista()
    ENDIF
 
    ?
-
    IF cRealizacija == "N" .AND. cTipVPC == "2" .AND.  roba->( FieldPos( "vpc2" ) <> 0 )
       ? Space( gnlmarg )
       ?? "U CJENOVNIKU SU PRIKAZANE CIJENE: " + cTipVPC
@@ -741,7 +731,7 @@ FUNCTION Zaglfakt_lager_lista()
 
    ShowKorner( nStr, 1, 16 )
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -939,7 +929,7 @@ FUNCTION fakt_lager_lista_sql( param, ps )
 
    IF param == NIL
       IF fakt_lager_lista_vars( @param ) == 0
-         RETURN
+         RETURN .F.
       ENDIF
    ENDIF
 
@@ -1047,4 +1037,4 @@ FUNCTION fakt_vt_porezi()
       PUBLIC _PORVT := 0
    ENDIF
 
-   RETURN
+   RETURN .T.

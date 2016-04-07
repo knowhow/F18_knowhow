@@ -34,17 +34,20 @@ FUNCTION check_nova_strana( bZagl, oPDF )
    ENDIF
 
    IF PRow() > nMaxRow
+   altd()
       IF ValType( oPDF ) == "O"
          oPDF:DrawText( oPDF:MaxRow() + 1, 0, "" )
          oPDF:PageHeader()
       ELSE
          FF
       ENDIF
+      SetPRC( 0, 0 )
       IF ( bZagl <> NIL )
          PushWa()
          Eval( bZagl )
          PopWa()
       ENDIF
+      RETURN .T.
    ENDIF
 
-   RETURN .T.
+   RETURN .F.

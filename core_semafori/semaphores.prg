@@ -773,17 +773,13 @@ FUNCTION dbf_refresh( cTable )
 
    LOCAL aDbfRec
 
-   // IF cTable == "fin_nalog" .OR. cTable == "NALOG"
-   // altd()
-   // ENDIF
-
    IF !we_need_dbf_refresh( @cTable )
       RETURN .F.
    ENDIF
 
    in_dbf_refresh( cTable, .T. )
 
-   ?E "going to refresh: " + cTable
+   ?E "go-to-sync: ", Time(), cTable
 
    dbf_refresh_ids_or_full( cTable )
    dbf_refresh_0( cTable )

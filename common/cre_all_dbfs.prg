@@ -175,13 +175,14 @@ FUNCTION cre_params_dbf()
 
    CREATE_INDEX( "ID", "fsec+fh+fvar+rbr", _alias, .T. )
 
-   RETURN NIL
+   RETURN .T.
 
 
 
 FUNCTION cre_sif_adrese( ver )
 
    LOCAL _table_name, _alias, _created
+   LOCAL aDbf
 
    _alias := "ADRES"
    _table_name := "adres"
@@ -214,7 +215,7 @@ FUNCTION cre_sif_adrese( ver )
 
 FUNCTION create_gparams()
 
-   LOCAL aDbf
+   LOCAL aDbf, cImeDbf
 
    info_bar( "dbf", "create gparams" )
 

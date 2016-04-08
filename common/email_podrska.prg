@@ -36,4 +36,4 @@ FUNCTION txt_izvjestaj_podrska_email( file_name )
 
    MsgC()
 
-   RETURN
+   RETURN .T.

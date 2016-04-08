@@ -17,7 +17,6 @@ FUNCTION cre_sif_roba( ver )
    LOCAL _table_name, _alias
    LOCAL _created
 
-
    aDbf := {}
    AAdd( aDBf, { 'ID', 'C',  10,  0 } )
    AAdd( aDBf, { 'SIFRADOB', 'C',  20,  0 } )
@@ -166,12 +165,12 @@ FUNCTION cre_sif_roba( ver )
    CREATE_INDEX( "4", "OZNAKA+STR(VEZA_1,10,0)+NAZ", _alias )
    CREATE_INDEX( "5", "OZNAKA+STR(VEZA_1,10,0)+STR(VEZA_2,10,0)", _alias )
 
-   RETURN
+   RETURN .T.
 
 
-
-// vraca matricu sa definicijom polja
 STATIC FUNCTION g_str_fields()
+
+   LOCAL aDbf
 
    // aDbf =>
    // id   veza_1   veza_2   oznaka   aktivan   naz

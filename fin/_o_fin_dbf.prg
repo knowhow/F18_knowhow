@@ -30,7 +30,4 @@ FUNCTION o_fond()
 
 
 FUNCTION o_ostav()
-
-   Select( F_OSTAV ); my_usex ( "ostav" ); SET ORDER TO TAG "1"
-
-   RETURN .T.
+   RETURN o_dbf_table( F_OSTAV, "ostav", "1" )

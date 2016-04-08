@@ -278,7 +278,7 @@ FUNCTION kalk_pripr_key_handler()
    PRIVATE PicDEM := gPicDEM
    PRIVATE Pickol := gPicKol
 
-   SELECT kalk_pripr
+   select_o_kalk_pripr()
 
    DO CASE
 

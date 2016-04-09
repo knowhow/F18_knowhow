@@ -34,13 +34,21 @@ FUNCTION empty_error_bar()
 
 FUNCTION info_bar( cDoc, cMsg )
 
+   LOCAL lPrinter, lConsole
+
    hb_default( @cMsg, "" )
 
+   lPrinter   :=  Set( _SET_PRINTER,  .F. )
+   lConsole := Set( _SET_CONSOLE, .T. )
    @ MaxRow() - 1, 1 SAY8  "> " + PadC( Left( cMsg, MaxCol() - 6 ), MaxCol() - 5 ) + " <" COLOR F18_COLOR_INFO_PANEL
 
    IF Empty( cMsg ) .OR. cMsg == "info_bar"
       RETURN .T.
    ENDIF
+
+   Set( _SET_PRINTER,  lPrinter )
+   Set( _SET_CONSOLE, lConsole )
+
 
    IF Len( aInfos ) > INFO_MESSAGES_LENGTH
       ADel( aInfos, 1 )
@@ -53,6 +61,8 @@ FUNCTION info_bar( cDoc, cMsg )
 
 
 FUNCTION error_bar( cDoc, cMsg )
+
+   LOCAL lPrinter, lConsole
 
    // Beep( 2 )
    /* TODO:  : Object destructor failure ;
@@ -69,7 +79,12 @@ FUNCTION error_bar( cDoc, cMsg )
  */
 
    hb_default( @cMsg, "" )
+
+   lPrinter   :=  Set( _SET_PRINTER,  .F. )
+   lConsole := Set( _SET_CONSOLE, .T. )
    @ MaxRow(), 1 SAY8  "> " + PadC( Left( cMsg, MaxCol() - 6 ), MaxCol() - 5 ) + " <" COLOR F18_COLOR_ERROR_PANEL
+   Set( _SET_PRINTER,  lPrinter )
+   Set( _SET_CONSOLE, lConsole )
 
    IF Empty( cMsg ) .OR. cMsg == "error_bar"
       RETURN .T.
@@ -125,6 +140,7 @@ FUNCTION show_errors()
    PopWa()
 
    RETURN .T.
+
 
 
 

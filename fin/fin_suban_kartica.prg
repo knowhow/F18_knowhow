@@ -13,7 +13,7 @@
 
 MEMVAR m, GetList, m_x, m_y
 MEMVAR gNFirma, gFirma
-MEMVAR cIdFirma, fk1, fk2, fk3, fk4, cK1, cK2, cK3, cK4
+MEMVAR cIdFirma, cIdKonto, fk1, fk2, fk3, fk4, cK1, cK2, cK3, cK4
 MEMVAR qqKonto, qqPartner
 MEMVAR nStr
 MEMVAR gPicBHD, gPicDEM, picDEM, picBHD, fOtvSt
@@ -45,7 +45,7 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
    LOCAL _fakt_params := fakt_params()
    LOCAL cLibreOffice := "N"
    LOCAL nX := 2
-   LOCAL bZagl  :=  {|| zagl_suban_kartica() }
+   LOCAL bZagl  :=  {|| zagl_suban_kartica( cBrza ) }
    LOCAL lKarticaNovaStrana := .F.
    LOCAL nTmp
 
@@ -403,6 +403,8 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
    ENDIF
    start_print_close_ret( xPrintOpt )
 
+   cIdKonto := IdKonto
+
    Eval( bZagl )
 
    DO WHILE !Eof() .AND. iif( gDUFRJ != "D", IdFirma == cIdFirma, .T. )
@@ -476,17 +478,17 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
             ENDIF
          ENDIF
 
-         check_nova_strana( bZagl, oPdf )
+         check_nova_strana( bZagl, oPdf, .F., 6 )
 
          ? m
-         ? "KONTO   "
+         ? "KONTO:  "
          @ PRow(), PCol() + 1 SAY cIdKonto
          SELECT KONTO
          HSEEK cIdKonto
          __k_naz := field->naz
 
          @ PRow(), PCol() + 2 SAY naz
-         ? "Partner "
+         ? "Partner: "
          @ PRow(), PCol() + 1 SAY iif( cBrza == "D" .AND. RTrim( qqPartner ) == ";", ":  SVI", cIdPartner )
          IF cRasclaniti == "D"
             SELECT rj
@@ -518,24 +520,24 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
 
          DO WHILE !Eof() .AND. cIdKonto == IdKonto .AND. ( cIdPartner == IdPartner .OR. ( cBrza == "D" .AND. RTrim( qqPartner ) == ";" ) ) .AND. Rasclan() .AND. iif( gDUFRJ != "D", IdFirma == cIdFirma, .T. )
 
-            IF check_nova_strana( bZagl, oPdf )
+            IF check_nova_strana( bZagl, oPdf, .F., 6, 0 )
 
                ? m
-               ? "KONTO   "
+               ?U "KONTO: "
                @ PRow(), PCol() + 1 SAY cIdKonto
                SELECT KONTO
                HSEEK cIdKonto
                @ PRow(), PCol() + 2 SAY naz
-               ? "Partner "
+               ?U "Partner: "
                @ PRow(), PCol() + 1 SAY iif( cBrza == "D" .AND. RTrim( qqPartner ) == ";", ":  SVI", cIdPartner )
                IF !( cBrza == "D" .AND. RTrim( qqPartner ) == ";" )
                   SELECT PARTN
                   HSEEK cIdPartner
                   @ PRow(), PCol() + 1 SAY AllTrim( naz )
                   @ PRow(), PCol() + 1 SAY AllTrim( naz2 )
-                  @ PRow(), PCol() + 1 SAY ZiroR
+                  @ PRow(), PCol() + 1 SAY Alltrim( ZiroR )
                ENDIF
-               ? "        "
+               ??U "  "
                @ PRow(), PCol() + 1 SAY Left( cRasclan, 6 ) + "/" + SubStr( cRasclan, 7, 5 ) + "/" + SubStr( cRasclan, 12 )
                SELECT SUBAN
                ? m
@@ -802,10 +804,11 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
             SKIP 1
          ENDDO
 
-         check_nova_strana( bZagl, oPdf )
+         check_nova_strana( bZagl, oPdf, .F., 3 )
 
          ? M
-         ? "UKUPNO:" + cIdkonto + IF( cBrza == "D" .AND. RTrim( qqPartner ) == ";", "", "-" + cIdPartner )
+         ? "UKUPNO:" + cIdkonto + iif( cBrza == "D" .AND. RTrim( qqPartner ) == ";", "", " - " + cIdPartner )
+
          IF cRasclaniti == "D"
             @ PRow(), PCol() + 1 SAY Left( cRasclan, 6 ) + "/" + SubStr( cRasclan, 7, 5 ) + "/" + SubStr( cRasclan, 12 ) + " / " + Ocitaj( F_RJ, Left( cRasclan, 6 ), "NAZ" )
          ENDIF
@@ -866,7 +869,7 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
             ENDIF
          ENDIF
 
-         ? m
+         ? M
 
          nKonD += nDugBHD;  nKonP += nPotBHD
          nKonD2 += nDugDEM; nKonP2 += nPotDEM
@@ -882,14 +885,15 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
             ? "------------------------------"
          ENDIF
 
-         check_nova_strana( bZagl, oPdf )
+         check_nova_strana( bZagl, oPdf, .F., 0, 1 )
 
       ENDDO // konto
 
       IF cBrza == "N"
-         check_nova_strana( bZagl, oPdf )
+
+         check_nova_strana( bZagl, oPdf, .F., 3 )
          ? M
-         ? "UKUPNO ZA KONTO:" + cIdKonto
+         ?U "UKUPNO ZA KONTO: " + cIdKonto
          IF cDinDem == "1"
             @ PRow(), nC1            SAY nKonD  PICTURE picBHD
             @ PRow(), PCol() + 1       SAY nKonP  PICTURE picBHD
@@ -917,32 +921,26 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
          ENDIF
          ? M
 
+
+         IF lKarticaNovaStrana
+            check_nova_strana( bZagl, oPDF, .T. )
+         ELSE
+            check_nova_strana( bZagl, oPDF, .F., 0, 1 ) // dodaj 1 prazan red
+         ENDIF
+
+
       ENDIF
 
       nSviD += nKonD; nSviP += nKonP
       nSviD2 += nKonD2; nSviP2 += nKonP2
 
-      IF cBrza == "N"
-         IF lKarticaNovaStrana
-            check_nova_strana( bZagl, oPDF, .T. )
-         ELSE
-            FOR nTmp := 1 TO 3 // tri reda nakon svake kartice
-               IF ! check_nova_strana( bZagl )
-                  ?
-               ELSE
-                  EXIT
-               ENDIF
-            NEXT
-         ENDIF
-      ENDIF
-
    ENDDO
 
    IF cBrza == "N"
 
-      check_nova_strana( bZagl, oPdf )
+      check_nova_strana( bZagl, oPdf, .F., 4 )
       ? M
-      ? "UKUPNO ZA SVA KONTA:"
+      ?U "UKUPNO ZA SVA KONTA:"
       IF cDinDem == "1"
          @ PRow(), nC1       SAY nSviD        PICTURE picBHD
          @ PRow(), PCol() + 1  SAY nSviP        PICTURE picBHD
@@ -969,6 +967,7 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
       ENDIF
       ? M
       ?
+
    ENDIF
 
    end_print( xPrintOpt )
@@ -1055,21 +1054,17 @@ FUNCTION Telefon( cTel )
 
 
 
-FUNCTION zagl_suban_kartica()
+FUNCTION zagl_suban_kartica( cBrza )
 
    LOCAL _fin_params := fin_params()
 
    IF is_legacy_ptxt()
       ?
    ENDIF
-   IF lPocStr == NIL
-      lPocStr := .F.
-   ENDIF
 
    IF c1K1z == NIL
       c1K1z := "N"
    ENDIF
-
 
    Preduzece()
    IF cDinDem == "3"  .OR. cKumul == "2"
@@ -1084,8 +1079,13 @@ FUNCTION zagl_suban_kartica()
    ENDIF
 
    ?? iif( cDinDem == "1", ValDomaca(), iif( cDinDem == "2", ValPomocna(), ValDomaca() + "-" + ValPomocna() ) ), " NA DAN:", Date()
+
+   IF cBrza != "D"
+      ??U " KONTO: ", cIdKonto
+   ENDIF
+
    IF !( Empty( dDatOd ) .AND. Empty( dDatDo ) )
-      ?? "   ZA PERIOD OD", dDatOd, "DO", dDatDo
+      ??U " ZA PERIOD OD", dDatOd, "DO", dDatDo
    ENDIF
    IF !Empty( qqBrDok )
       ?U "Izvještaj pravljen po uslovu za broj veze/računa: '" + Trim( qqBrDok ) + "'"

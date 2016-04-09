@@ -15,6 +15,9 @@
 FUNCTION fin_anal_kartica()
 
    LOCAL nCOpis := 0, cOpis := ""
+   LOCAL bZagl := {|| zagl_anal_kartica() }
+   LOCAL oPdf, xPrintOpt
+   LOCAL lKarticaNovaStrana := .F., nTmp
 
    cIdFirma := gFirma
    qqKonto := ""
@@ -44,7 +47,7 @@ FUNCTION fin_anal_kartica()
    Box( "", 9, 65, .F. )
    DO WHILE .T.
       SET CURSOR ON
-      @ m_x + 1, m_y + 2 SAY "ANALITICKA KARTICA"
+      @ m_x + 1, m_y + 2 SAY8 "ANALITIČKA KARTICA"
       IF gNW == "D"
          @ m_x + 2, m_y + 2 SAY "Firma "; ?? gFirma, "-", gNFirma
       ELSE
@@ -82,7 +85,7 @@ FUNCTION fin_anal_kartica()
    ENDDO
    BoxC()
 
-   IF cIdRj == "999999"; cidrj := ""; ENDIF
+   IF cIdRj == "999999"; cIdrj := ""; ENDIF
    IF gRJ == "D" .AND. gSAKrIz == "D" .AND. "." $ cidrj
       cidrj := Trim( StrTran( cidrj, ".", "" ) )
       // odsjeci ako je tacka. prakticno "01. " -> sve koje pocinju sa  "01"
@@ -94,7 +97,8 @@ FUNCTION fin_anal_kartica()
       WPar( "c4", cPredh )
       WPar( "c8", cPTD )
    ENDIF
-   SELECT params; USE
+   SELECT params
+   USE
 
    IF gNW == "N" .AND. cPTD == "D"
       m := Stuff( m, 30, 0, " -- ------------- ---------- --------------------" )
@@ -135,11 +139,23 @@ FUNCTION fin_anal_kartica()
 
    nStr := 0
 
-   IF cBrza == "S"; m := "------- " + m; ENDIF
+   IF cBrza == "S"
+      m := "------- " + m
+   ENDIF
 
-   start_print_close_ret()
+   IF !is_legacy_ptxt()
+      oPDF := PDFClass():New()
+      xPrintOpt := hb_Hash()
+      xPrintOpt[ "tip" ] := "PDF"
+      xPrintOpt[ "layout" ] := "portrait"
+      xPrintOpt[ "font_size" ] := 7
+      xPrintOpt[ "opdf" ] := oPDF
+      xPrintOpt[ "left_space" ] := 0
+   ENDIF
 
-   IF nStr == 0; AnalKZagl(); ENDIF
+   start_print_close_ret( xPrintOpt )
+
+   Eval( bZagl )
 
    nSviD := nSviP := nSviD2 := nSviP2 := 0
    DO WHILE !Eof() .AND. IdFirma = cIdFirma
@@ -151,13 +167,15 @@ FUNCTION fin_anal_kartica()
       nDugBHD := nPotBHD := nDugDEM := nPotDEM := 0
       cIdkonto := IdKonto
 
-      IF PRow() > 55 + dodatni_redovi_po_stranici(); FF; AnalKZagl(); ENDIF
+
+      check_nova_strana( bZagl, oPdf, .F., 5 )
+
       ? m
       SELECT KONTO; HSEEK cIdKonto; SELECT anal
       IF cBrza == "S"
-         ? "KONTA : ", qqKonto
+         ? "KONTA: ", qqKonto
       ELSE
-         ? "KONTO   ", cIdKonto, AllTrim( konto->naz )
+         ? "KONTO:  ", cIdKonto, AllTrim( konto->naz )
       ENDIF
       ? m
 
@@ -186,7 +204,9 @@ FUNCTION fin_anal_kartica()
             ENDIF
          ENDIF
 
-         IF PRow() > 60 + dodatni_redovi_po_stranici(); FF; AnalKZagl();ENDIF
+
+         check_nova_strana( bZagl, oPdf )
+
          IF cBrza == "S"
             @ PRow() + 1, 3 SAY IdKonto
             @ PRow(), 11 SAY IdVN
@@ -208,7 +228,8 @@ FUNCTION fin_anal_kartica()
                SKIP 1
             ENDDO
             IF lPom
-               SELECT TDOK; HSEEK SUBAN->idtipdok
+               SELECT TDOK
+               HSEEK SUBAN->idtipdok
             ENDIF
             SELECT ANAL
             @ PRow(), 31 + IF( cBrza == "S", 8, 0 ) SAY IF( lPom, SUBAN->idtipdok, "??"      )
@@ -227,18 +248,21 @@ FUNCTION fin_anal_kartica()
             nDugDEM += DugDEM; nPotDEM += PotDEM
             @ PRow(), PCol() + 2 SAY nDugDEM - nPotDEM PICTURE PicDEM
          ENDIF
-         fin_print_ostatak_opisa( cOpis, nCOpis, {|| IF( PRow() > 61 + dodatni_redovi_po_stranici(), Eval( {|| gPFF(), AnalKZagl() } ), ) } )
+         fin_print_ostatak_opisa( cOpis, nCOpis, bZagl )
          SKIP
-      ENDDO    // konto
+      ENDDO
 
-      IF PRow() > 60 + dodatni_redovi_po_stranici(); FF; AnalKZagl(); ENDIF
+      check_nova_strana( bZagl, oPdf, .F., 4 )
+
       ? M
       IF cBrza == "S"
          ? "UKUPNO ZA KONTA:" + qqKonto
       ELSE
          ? "UKUPNO ZA KONTO:" + cIdKonto
       ENDIF
-      @ PRow(), IF( gNW == "N" .AND. cPTD == "D", 30 + 49, 31 ) + IF( cBrza == "S", 8, 0 ) SAY nDugBHD  PICTURE PicBHD
+
+
+      @ PRow(), iif( gNW == "N" .AND. cPTD == "D", 30 + 49, 31 ) + iif( cBrza == "S", 8, 0 ) SAY nDugBHD  PICTURE PicBHD
       @ PRow(), PCol() + 2  SAY nPotBHD           PICTURE PicBHD
       @ PRow(), PCol() + 2  SAY nDugBHD - nPotBHD   PICTURE PicBHD
 
@@ -252,13 +276,19 @@ FUNCTION fin_anal_kartica()
       nSviD += nDugBHD; nSviP += nPotBHD
       nSviD2 += nDugDEM; nSviP2 += nPotDEM
 
-      check_nova_strana( { || AnalKZagl() } )
+
+      IF lKarticaNovaStrana
+         check_nova_strana( bZagl, oPDF, .T. )
+      ELSE
+         check_nova_strana( bZagl, oPDF, .F., 0, 3 )
+      ENDIF
 
 
    ENDDO // eof()
 
    IF cBrza == "N"
-      IF PRow() > 60 + dodatni_redovi_po_stranici(); FF; AnalKZagl(); ENDIF
+
+      check_nova_strana( bZagl, oPdf, .F., 4 )
       ? M
       ? "UKUPNO ZA SVA KONTA:"
       @ PRow(), IF( gNW == "N" .AND. cPTD == "D", 30 + 49, 31 ) SAY nSviD  PICTURE PicBHD
@@ -275,35 +305,23 @@ FUNCTION fin_anal_kartica()
 
    FF
 
-   end_print()
+   end_print( xPrintOpt )
 
    closeret
 
-   RETURN
+FUNCTION zagl_anal_kartica()
 
-
-
-
-/* AnalKZagl()
- *     Zaglavlje analiticke kartice
- */
-
-FUNCTION AnalKZagl()
-
-   ?
    P_COND
-   ?? "FIN.P: ANALITICKA KARTICA  NA DAN: "; ?? Date()
+   ?U "FIN.P: ANALITIČKA KARTICA  NA DAN: "; ?? Date()
    IF !( Empty( dDatOd ) .AND. Empty( dDatDo ) )
       ?? "   ZA PERIOD OD", dDatOd, "DO", dDatDo
    ENDIF
-   @ PRow(), 125 SAY "Str." + Str( ++nStr, 3 )
 
-   IF gNW == "D"
-      ? "Firma:", gFirma, "-", gNFirma
-   ELSE
-      SELECT PARTN; HSEEK cIdFirma
-      ? "Firma:", cIdFirma, AllTrim( partn->naz ), AllTrim( partn->naz2 )
+   IF is_legacy_ptxt()
+      @ PRow(), 125 SAY "Str." + Str( ++nStr, 3 )
    ENDIF
+
+   ?U "Firma:", gFirma, "-", gNFirma
 
    IF gRJ == "D" .AND. gSAKrIz == "D" .AND. Len( cIdRJ ) <> 0
       ? "Radna jedinica ='" + cIdRj + "'"
@@ -315,21 +333,21 @@ FUNCTION AnalKZagl()
       IF gNW == "N" .AND. cPTD == "D"
          P_COND2
       ENDIF
-      ? IF( cBrza == "S", "------- ", "" ) + "------- -------- ---- --------" + IF( gNW == "N" .AND. cPTD == "D", " ------------------------------------------------", "" ) + " ---------------------------------------------------- -----------------------------------------"
-      ? IF( cBrza == "S", "*      *", "" ) + "*VRSTA * BROJ   *REDN* DATUM  " + IF( gNW == "N" .AND. cPTD == "D", "*                D O K U M E N T                 ", "" ) + "*             I Z N O S     U     " + ValDomaca() + "               *        I Z N O S     U     " + ValPomocna() + "        *"
-      ? IF( cBrza == "S", " KONTO  ", "" ) + "                              " + IF( gNW == "N" .AND. cPTD == "D", " ------------------------------------------------", "" ) + " ---------------------------------------------------- -----------------------------------------"
-      ? IF( cBrza == "S", "*      *", "" ) + "*NALOGA*NALOGA  *BROJ*        " + IF( gNW == "N" .AND. cPTD == "D", "*     T I P      * VEZ.BROJ *        OPIS        ", "" ) + "*     DUGUJE     *   POTRAZUJE     *       SALDO     *   DUGUJE   *  POTRAZUJE  *    SALDO    *"
+      ?U iif( cBrza == "S", "------- ", "" ) + "------- -------- ---- --------" + IF( gNW == "N" .AND. cPTD == "D", " ------------------------------------------------", "" ) + " ---------------------------------------------------- -----------------------------------------"
+      ?U iif( cBrza == "S", "*      *", "" ) + "*VRSTA * BROJ   *REDN* DATUM  " + IF( gNW == "N" .AND. cPTD == "D", "*                D O K U M E N T                 ", "" ) + "*             I Z N O S     U     " + ValDomaca() + "               *        I Z N O S     U     " + ValPomocna() + "        *"
+      ?U iif( cBrza == "S", " KONTO  ", "" ) + "                              " + IF( gNW == "N" .AND. cPTD == "D", " ------------------------------------------------", "" ) + " ---------------------------------------------------- -----------------------------------------"
+      ?U iif( cBrza == "S", "*      *", "" ) + "*NALOGA*NALOGA  *BROJ*        " + IF( gNW == "N" .AND. cPTD == "D", "*     T I P      * VEZ.BROJ *        OPIS        ", "" ) + "*     DUGUJE     *   POTRAŽUJE     *       SALDO     *   DUGUJE   *  POTRAZUJE  *    SALDO    *"
    ELSE
       IF gNW == "N" .AND. cPTD == "D"
          P_COND
       ELSE
          F12CPI
       ENDIF
-      ? IF( cBrza == "S", "------- ", "" ) + "------- -------- ---- --------" + IF( gNW == "N" .AND. cPTD == "D", " ------------------------------------------------", "" ) + " -----------------------------------------------------"
-      ? IF( cBrza == "S", "*      *", "" ) + "*VRSTA * BROJ   *REDN* DATUM  " + IF( gNW == "N" .AND. cPTD == "D", "*                D O K U M E N T                 ", "" ) + "*             I Z N O S     U     " + ValDomaca() + "               *"
-      ? IF( cBrza == "S", " KONTO  ", "" ) + "                              " + IF( gNW == "N" .AND. cPTD == "D", " ------------------------------------------------", "" ) + " -----------------------------------------------------"
-      ? IF( cBrza == "S", "*      *", "" ) + "*NALOGA*NALOGA  *BROJ*        " + IF( gNW == "N" .AND. cPTD == "D", "*     T I P      * VEZ.BROJ *        OPIS        ", "" ) + "*     DUGUJE     *   POTRAZUJE     *       SALDO     *"
+      ?U iif( cBrza == "S", "------- ", "" ) + "------- -------- ---- --------" + IF( gNW == "N" .AND. cPTD == "D", " ------------------------------------------------", "" ) + " -----------------------------------------------------"
+      ?U iif( cBrza == "S", "*      *", "" ) + "*VRSTA * BROJ   *REDN* DATUM  " + IF( gNW == "N" .AND. cPTD == "D", "*                D O K U M E N T                 ", "" ) + "*             I Z N O S     U     " + ValDomaca() + "               *"
+      ?U iif( cBrza == "S", " KONTO  ", "" ) + "                              " + IF( gNW == "N" .AND. cPTD == "D", " ------------------------------------------------", "" ) + " -----------------------------------------------------"
+      ?U iif( cBrza == "S", "*      *", "" ) + "*NALOGA*NALOGA  *BROJ*        " + IF( gNW == "N" .AND. cPTD == "D", "*     T I P      * VEZ.BROJ *        OPIS        ", "" ) + "*     DUGUJE     *   POTRAŽUJE     *       SALDO     *"
    ENDIF
    ? M
 
-   RETURN
+   RETURN .T.

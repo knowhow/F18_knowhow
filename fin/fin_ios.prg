@@ -1412,7 +1412,7 @@ STATIC FUNCTION print_ios_txt( params )
 
       ENDIF
 
-      OstatakOpisa( cOpis, _n_opis )
+      fin_print_ostatak_opisa( cOpis, _n_opis )
 
    ENDDO
 

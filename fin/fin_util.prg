@@ -61,7 +61,7 @@ FUNCTION GenPocStanja()
 // ------------------------------------------------------
 // stampa ostatka opisa
 // ------------------------------------------------------
-FUNCTION OstatakOpisa( cO, nCO, bUslov, nSir )
+FUNCTION fin_print_ostatak_opisa( cO, nCO, bUslov, nSir )
 
    IF nSir == NIL
       nSir := 20
@@ -77,7 +77,7 @@ FUNCTION OstatakOpisa( cO, nCO, bUslov, nSir )
       ENDIF
    ENDDO
 
-   RETURN
+   RETURN .T.
 
 
 

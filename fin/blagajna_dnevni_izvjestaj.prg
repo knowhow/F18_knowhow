@@ -214,7 +214,7 @@ FUNCTION Blagajna()
          @ PRow(), PCol() + 1 SAY PadL( Transform( nPomP, pici ), 14 )
          nDug += nPomD
          nPot += nPomP
-         OstatakOpisa( cOpis, nCOpis )
+         fin_print_ostatak_opisa( cOpis, nCOpis )
 
       ELSE
 
@@ -259,7 +259,7 @@ FUNCTION Blagajna()
             ENDIF
 
          ENDIF
-         OstatakOpisa( cOpis, nCOpis )
+         fin_print_ostatak_opisa( cOpis, nCOpis )
          SKIP 1
       ENDIF
    ENDDO
@@ -485,7 +485,7 @@ FUNCTION blag_azur()
          @ PRow(), PCol() + 1 SAY PadL( Transform( nPomP, pici ), 14 )
          nDug += nPomD
          nPot += nPomP
-         OstatakOpisa( cOpis, nCOpis )
+         fin_print_ostatak_opisa( cOpis, nCOpis )
       ELSE
 
          // lSumiraj := .f.
@@ -524,7 +524,7 @@ FUNCTION blag_azur()
                nPot += iznosdem
             ENDIF
          ENDIF
-         OstatakOpisa( cOpis, nCOpis )
+         fin_print_ostatak_opisa( cOpis, nCOpis )
          SKIP 1
       ENDIF
    ENDDO

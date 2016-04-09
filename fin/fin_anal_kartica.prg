@@ -227,7 +227,7 @@ FUNCTION fin_anal_kartica()
             nDugDEM += DugDEM; nPotDEM += PotDEM
             @ PRow(), PCol() + 2 SAY nDugDEM - nPotDEM PICTURE PicDEM
          ENDIF
-         OstatakOpisa( cOpis, nCOpis, {|| IF( PRow() > 61 + dodatni_redovi_po_stranici(), Eval( {|| gPFF(), AnalKZagl() } ), ) } )
+         fin_print_ostatak_opisa( cOpis, nCOpis, {|| IF( PRow() > 61 + dodatni_redovi_po_stranici(), Eval( {|| gPFF(), AnalKZagl() } ), ) } )
          SKIP
       ENDDO    // konto
 

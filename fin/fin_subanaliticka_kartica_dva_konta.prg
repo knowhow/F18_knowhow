@@ -429,12 +429,12 @@ FUNCTION fin_suban_kartica2( lOtvSt )
                @ PRow(), PCol() + 1 SAY nDugDEM - nPotDEM PICT picbhd
             ENDIF
 
-            OstatakOpisa( @cOpis, nCOpis, {|| iif( PRow() > 60 + dodatni_redovi_po_stranici(), Eval( {|| gPFF(), ZaglSif2() } ), ) }, nSirOp )
+            fin_print_ostatak_opisa( @cOpis, nCOpis, {|| iif( PRow() > 60 + dodatni_redovi_po_stranici(), Eval( {|| gPFF(), ZaglSif2() } ), ) }, nSirOp )
             IF ck14 == "3"
                @ PRow() + 1, nc7 SAY k1 + "-" + k2 + "-" + K3Iz256( k3 ) + k4
             ENDIF
          ENDIF
-         OstatakOpisa( @cOpis, nCOpis, {|| iif( PRow() > 60 + dodatni_redovi_po_stranici(), Eval( {|| gPFF(), ZaglSif2() } ), ) }, nSirOp )
+         fin_print_ostatak_opisa( @cOpis, nCOpis, {|| iif( PRow() > 60 + dodatni_redovi_po_stranici(), Eval( {|| gPFF(), ZaglSif2() } ), ) }, nSirOp )
          IF cPoVezi <> "D"
             SKIP
          ENDIF

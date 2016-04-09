@@ -1075,7 +1075,7 @@ FUNCTION zagl_suban_kartica( cBrza )
    IF fOtvSt
       ?U "FIN: KARTICA OTVORENIH STAVKI "
    ELSE
-      ?U "FIN: SUBANALITIČKA KARTICA  ZA "
+      ?U "FIN: SUBANALITIČKA KARTICA ZA "
    ENDIF
 
    ?? iif( cDinDem == "1", ValDomaca(), iif( cDinDem == "2", ValPomocna(), ValDomaca() + "-" + ValPomocna() ) ), " NA DAN:", Date()
@@ -1085,7 +1085,7 @@ FUNCTION zagl_suban_kartica( cBrza )
    ENDIF
 
    IF !( Empty( dDatOd ) .AND. Empty( dDatDo ) )
-      ??U " ZA PERIOD OD", dDatOd, "DO", dDatDo
+      ??U " ZA PERIOD: ", dDatOd, "-", dDatDo
    ENDIF
    IF !Empty( qqBrDok )
       ?U "Izvještaj pravljen po uslovu za broj veze/računa: '" + Trim( qqBrDok ) + "'"
@@ -1094,7 +1094,6 @@ FUNCTION zagl_suban_kartica( cBrza )
    IF is_legacy_ptxt()
       @ PRow(), 125 SAY "Str." + Str( ++nStr, 5 )
    ENDIF
-
 
    SELECT SUBAN
 

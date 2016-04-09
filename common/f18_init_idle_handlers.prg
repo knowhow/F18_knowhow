@@ -12,9 +12,8 @@
 #include "f18.ch"
 
 STATIC aIdleHandlers := {}
-THREAD STATIC s_nIdleSeconds := 0
 STATIC s_mtxMutex
-STATIC s_lInIdleRefresh := .F.
+STATIC s_nInIdleRefresh := 0 // start idle refresh in seconds()
 
 FUNCTION add_idle_handlers()
 
@@ -39,7 +38,7 @@ PROCEDURE on_idle_dbf_refresh()
    ?E Seconds(), "on idle dbf refresh"
 #endif
 
-   IF s_lInIdleRefresh
+   IF s_nInIdleRefresh > 0
       ?E "already in idle dbf refresh"
       RETURN
    ENDIF
@@ -47,12 +46,6 @@ PROCEDURE on_idle_dbf_refresh()
    IF !is_in_main_thread() // samo glavni thread okida idle evente
       RETURN
    ENDIF
-
-   IF ( Seconds() - s_nIdleSeconds ) < MIN_LAST_REFRESH_SEC
-      RETURN
-   ENDIF
-
-   s_nIdleSeconds := Seconds()
 
 
    IF my_database() == "?undefined?"
@@ -64,7 +57,7 @@ PROCEDURE on_idle_dbf_refresh()
    ENDIF
 
    IF hb_mutexLock( s_mtxMutex )
-      s_lInIdleRefresh := .T.
+      s_nInIdleRefresh := Seconds()
       hb_mutexUnlock( s_mtxMutex )
    ENDIF
 
@@ -90,9 +83,8 @@ PROCEDURE on_idle_dbf_refresh()
 
    ENDIF
 
-   s_nIdleSeconds := Seconds()
    IF hb_mutexLock( s_mtxMutex )
-      s_lInIdleRefresh := .F.
+      s_nInIdleRefresh := 0
       hb_mutexUnlock( s_mtxMutex )
    ENDIF
 

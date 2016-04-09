@@ -42,7 +42,7 @@ FUNCTION f18_start_print( cFileName, xPrintOpt, cDocumentName )
    IF !( cOpt == "PDF" .OR. cOpt == "D" ) // pdf i direktna stampa bez dijaloga
       cOpt := print_dialog_box( cOpt )
       IF Empty( cOpt )
-         RETURN ""
+         RETURN .T.
       ENDIF
    ENDIF
 
@@ -327,7 +327,7 @@ FUNCTION GpIni( cDocumentName )
    ENDIF
 
    IF !is_legacy_ptxt()
-      RETURN .T.
+      RETURN .F.
    ENDIF
 
    QQOut( gPini )
@@ -353,45 +353,45 @@ FUNCTION gpPicH( nRows )
       QQOut( "#%PH0" + cPom + "#" )
    ENDIF
 
-   RETURN ""
+   RETURN .T.
 
 
 FUNCTION gpPicF()
 
    IF !is_legacy_ptxt()
-      RETURN .T.
+      RETURN .F.
    ENDIF
    QQOut( "#%PIC_F#" )
 
-   RETURN ""
+   RETURN .T.
 
 
 FUNCTION gpCOND()
 
    IF !is_legacy_ptxt()
-      RETURN .T.
+      RETURN .F.
    ENDIF
    QQOut( gpCOND )
 
-   RETURN ""
+   RETURN .T.
 
 FUNCTION gpCOND2()
 
    IF !is_legacy_ptxt()
-      RETURN .T.
+      RETURN .F.
    ENDIF
    QQOut( gpCOND2 )
 
-   RETURN ""
+   RETURN .T.
 
 FUNCTION gp10CPI()
 
    IF !is_legacy_ptxt()
-      RETURN .T.
+      RETURN .F.
    ENDIF
    QQOut( gP10CPI )
 
-   RETURN ""
+   RETURN .T.
 
 FUNCTION gp12CPI()
 
@@ -400,7 +400,7 @@ FUNCTION gp12CPI()
    ENDIF
    QQOut( gP12CPI )
 
-   RETURN ""
+   RETURN .T.
 
 FUNCTION gpB_ON()
 
@@ -409,7 +409,7 @@ FUNCTION gpB_ON()
    ENDIF
    QQOut( gPB_ON )
 
-   RETURN ""
+   RETURN .T.
 
 
 FUNCTION gpB_OFF()
@@ -419,7 +419,7 @@ FUNCTION gpB_OFF()
    ENDIF
    QQOut( gPB_OFF )
 
-   RETURN ""
+   RETURN .T.
 
 FUNCTION gpU_ON()
 
@@ -428,7 +428,7 @@ FUNCTION gpU_ON()
    ENDIF
    QQOut( gPU_ON )
 
-   RETURN ""
+   RETURN .T.
 
 FUNCTION gpU_OFF()
 
@@ -437,7 +437,7 @@ FUNCTION gpU_OFF()
    ENDIF
    QQOut( gPU_OFF )
 
-   RETURN ""
+   RETURN .T.
 
 FUNCTION gpI_ON()
 
@@ -446,7 +446,7 @@ FUNCTION gpI_ON()
    ENDIF
    QQOut( gPI_ON )
 
-   RETURN ""
+   RETURN .T.
 
 FUNCTION gpI_OFF()
 
@@ -455,7 +455,7 @@ FUNCTION gpI_OFF()
    ENDIF
    QQOut( gPI_OFF )
 
-   RETURN ""
+   RETURN .T.
 
 
 
@@ -463,7 +463,7 @@ FUNCTION gpNR()
 
    QOut()
 
-   RETURN ""
+   RETURN .T.
 
 FUNCTION gPFF()
 
@@ -474,19 +474,19 @@ FUNCTION gPFF()
    QQOut( hb_eol() + gPFF )
    SetPRC( 0, 0 )
 
-   RETURN ""
+   RETURN .T.
 
 FUNCTION gpO_Port()
 
    QQOut( gPO_Port )
 
-   RETURN ""
+   RETURN .T.
 
 FUNCTION gpO_Land()
 
    QQOut( gPO_Land )
 
-   RETURN ""
+   RETURN .T.
 
 FUNCTION gRPL_Normal()
 
@@ -495,7 +495,7 @@ FUNCTION gRPL_Normal()
    ENDIF
    QQOut( gRPL_Normal )
 
-   RETURN ""
+   RETURN .T.
 
 FUNCTION gRPL_Gusto()
 
@@ -504,7 +504,7 @@ FUNCTION gRPL_Gusto()
    ENDIF
    QQOut( gRPL_Gusto )
 
-   RETURN ""
+   RETURN .T.
 
 FUNCTION RPar_Printer()
 

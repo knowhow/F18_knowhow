@@ -47,6 +47,7 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
    LOCAL nX := 2
    LOCAL bZagl  :=  {|| zagl_suban_kartica( .T. ) }
    LOCAL bZagl2 :=  {|| zagl_suban_kartica( .F. ) }
+   LOCAL lKarticaNovaStrana := .F.
 
    LOCAL oPDF, xPrintOpt
 
@@ -883,7 +884,7 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
             ? "------------------------------"
          ENDIF
 
-        
+
          check_nova_strana( bZagl, oPdf )
 
 
@@ -925,8 +926,7 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
       nSviD2 += nKonD2; nSviP2 += nKonP2
 
 
-      check_nova_strana( bZagl, oPDF, .T. )
-
+      check_nova_strana( bZagl, oPDF, lKarticaNovaStrana )
 
    ENDDO
 

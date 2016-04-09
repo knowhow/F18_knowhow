@@ -639,8 +639,9 @@ STATIC FUNCTION FSvaki1()
 
 FUNCTION zagl_fin_specif( cSkVar )
 
+   ?
    IF is_legacy_ptxt()
-      ?
+
       B_ON
       P_COND
    ENDIF

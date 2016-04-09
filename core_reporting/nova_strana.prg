@@ -23,11 +23,11 @@ FUNCTION zagl_organizacija( nLeft )
 
 
 
-FUNCTION check_nova_strana( bZagl, oPDF, lForceBreak )
+FUNCTION check_nova_strana( bZagl, oPDF, lForceBreakPage )
 
    LOCAL nMaxRow
 
-   hb_default( @lForceBreak, .F. )
+   hb_default( @lForceBreakPage, .F. )
 
    IF ValType( oPDF ) == "O"
       nMaxRow := oPDF:MaxRow()
@@ -35,7 +35,7 @@ FUNCTION check_nova_strana( bZagl, oPDF, lForceBreak )
       nMaxRow := page_length()
    ENDIF
 
-   IF lForceBreak .OR. PRow() > nMaxRow
+   IF lForceBreakPage .OR. PRow() > nMaxRow
       IF ValType( oPDF ) == "O"
          oPDF:DrawText( oPDF:MaxRow() + 1, 0, "" )
          oPDF:PageHeader()

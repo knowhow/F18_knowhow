@@ -14,8 +14,9 @@
 MEMVAR m, GetList, m_x, m_y
 MEMVAR gNFirma, gFirma
 MEMVAR cIdFirma, fk1, fk2, fk3, fk4, cK1, cK2, cK3, cK4
+MEMVAR qqKonto, qqPartner
 MEMVAR nStr
-MEMVAR picDEM, picBHD, fOtvSt
+MEMVAR gPicBHD, gPicDEM, picDEM, picBHD, fOtvSt
 
 FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
 
@@ -468,7 +469,7 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
             cRasclan := ""
          ENDIF
 
-         IF cBrza == "D"   // "brza" kartica
+         IF cBrza == "D"
             IF IdKonto <> qqKonto .OR. IdPartner <> qqPartner .AND. RTrim( qqPartner ) != ";"
                EXIT
             ENDIF

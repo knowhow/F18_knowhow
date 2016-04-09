@@ -468,7 +468,7 @@ FUNCTION gpNR()
 FUNCTION gPFF()
 
    IF !is_legacy_ptxt()
-      ?E "FF ne koristiti u PDF izvjestajima"
+      SetPRC( 0, 0 )
       RETURN .F.
    ENDIF
    QQOut( hb_eol() + gPFF )

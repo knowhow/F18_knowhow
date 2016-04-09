@@ -36,14 +36,18 @@ PROCEDURE on_idle_dbf_refresh()
    IF s_nIdleRefresh > 0
 
       IF Seconds() - s_nIdleDisplayCounter > 15
-         ?E "already in idle dbf refresh", Seconds(), s_nIdleRefresh, hb_threadSelf(), is_in_main_thread()
+         ?E "already in idle dbf refresh", Seconds(), s_nIdleRefresh
          s_nIdleDisplayCounter := Seconds()
       ENDIF
       RETURN
 
    ELSE
-      ?E "START in idle dbf refresh", Seconds() s_nIdleRefresh, hb_threadSelf(), is_in_main_thread()
-      s_nIdleDisplayCounter := Seconds()
+
+      s_nIdleRefresh := Seconds()
+      IF Seconds() - s_nIdleDisplayCounter > 15
+        ?E "START in idle dbf refresh", Seconds()
+        s_nIdleDisplayCounter := Seconds()
+      ENDIF
    ENDIF
 
 

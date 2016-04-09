@@ -917,21 +917,27 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
 
          ENDIF
          ? M
+
       ENDIF
 
       nSviD += nKonD; nSviP += nKonP
       nSviD2 += nKonD2; nSviP2 += nKonP2
 
-      IF !lKarticaNovaStrana
-         check_nova_strana( bZagl, oPDF, .T. )
-      ELSE
-         FOR nTmp := 1 TO 3
-            IF ! check_nova_strana( bZagl )
-               ?
-            ENDIF
-         NEXT
-      ENDIF
+      IF cBrza == "N"
+         IF lKarticaNovaStrana
+            check_nova_strana( bZagl, oPDF, .T. )
+         ELSE
 
+            FOR nTmp := 1 TO 3
+               IF ! check_nova_strana( bZagl )
+                  ?
+               ELSE
+                  EXIT
+               ENDIF
+            NEXT
+
+         ENDIF
+      ENDIF
 
    ENDDO
 

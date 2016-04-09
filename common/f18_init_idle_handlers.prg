@@ -12,7 +12,9 @@
 #include "f18.ch"
 
 STATIC aIdleHandlers := {}
-STATIC s_nIdleSeconds := 0
+THREAD STATIC s_nIdleSeconds := 0
+STATIC s_mtxMutex
+STATIC s_lInIdleRefresh := .F.
 
 FUNCTION add_idle_handlers()
 
@@ -33,8 +35,14 @@ PROCEDURE on_idle_dbf_refresh()
    LOCAL cAlias, aDBfRec
 
 #ifdef F18_DEBUG_THREAD
+
    ?E Seconds(), "on idle dbf refresh"
 #endif
+
+   IF s_lInIdleRefresh
+      ?E "already in idle dbf refresh"
+      RETURN
+   ENDIF
 
    IF !is_in_main_thread() // samo glavni thread okida idle evente
       RETURN
@@ -44,12 +52,20 @@ PROCEDURE on_idle_dbf_refresh()
       RETURN
    ENDIF
 
+   s_nIdleSeconds := Seconds()
+
+
    IF my_database() == "?undefined?"
       RETURN
    ENDIF
 
    IF in_cre_all_dbfs()
       RETURN
+   ENDIF
+
+   IF hb_mutexLock( s_mtxMutex )
+      s_lInIdleRefresh := .T.
+      hb_mutexUnlock( s_mtxMutex )
    ENDIF
 
    process_dbf_refresh_queue()
@@ -75,6 +91,10 @@ PROCEDURE on_idle_dbf_refresh()
    ENDIF
 
    s_nIdleSeconds := Seconds()
+   IF hb_mutexLock( s_mtxMutex )
+      s_lInIdleRefresh := .F.
+      hb_mutexUnlock( s_mtxMutex )
+   ENDIF
 
    RETURN
 
@@ -85,3 +105,12 @@ FUNCTION remove_idle_handlers()
    aIdleHandlers := {}
 
    RETURN .T.
+
+
+INIT PROCEDURE idle_init()
+
+   IF s_mtxMutex == NIL
+      s_mtxMutex := hb_mutexCreate()
+   ENDIF
+
+   RETURN

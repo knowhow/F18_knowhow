@@ -773,9 +773,7 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
                   @ PRow(), PCol() + 1 SAY nDugDEM - nPotDEM PICT picbhd
                ENDIF
 
-               fin_print_ostatak_opisa( @cOpis, nCOpis, {|| check_nova_strana( bZagl, oPDF ) }, nSirOp )
-
-               IF ck14 == "3"
+               IF cK14 == "3"
                   @ PRow() + 1, nc7 SAY k1 + "-" + k2 + "-" + K3Iz256( k3 ) + k4
                   IF gRj == "D"
                      @ PRow(), PCol() + 1 SAY "RJ:" + idrj
@@ -885,9 +883,7 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
             ? "------------------------------"
          ENDIF
 
-
          check_nova_strana( bZagl, oPdf )
-
 
       ENDDO // konto
 
@@ -927,13 +923,15 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
       nSviD2 += nKonD2; nSviP2 += nKonP2
 
       IF !lKarticaNovaStrana
+         check_nova_strana( bZagl, oPDF, .T. )
+      ELSE
          FOR nTmp := 1 TO 3
             IF ! check_nova_strana( bZagl )
                ?
             ENDIF
          NEXT
       ENDIF
-      check_nova_strana( bZagl, oPDF, lKarticaNovaStrana )
+
 
    ENDDO
 

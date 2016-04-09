@@ -80,7 +80,7 @@ STATIC FUNCTION _get_vars( rpt_vars )
    LOCAL _tip_val := fetch_metric( "fin_kart_tip_valute", my_user(), 1 )
    LOCAL _export_dbf := fetch_metric( "fin_kart_export_dbf", my_user(), "N" )
    LOCAL _nula := fetch_metric( "fin_kart_saldo_nula", my_user(), "D" )
-   LOCAL _box_name := "SUBANALITICKA KARTICA"
+   LOCAL _box_name := "SUBANALITIČKA KARTICA (LO)"
    LOCAL _box_x := 21
    LOCAL _box_y := 65
    LOCAL _x := 1

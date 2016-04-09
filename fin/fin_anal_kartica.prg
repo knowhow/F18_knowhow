@@ -252,14 +252,8 @@ FUNCTION fin_anal_kartica()
       nSviD += nDugBHD; nSviP += nPotBHD
       nSviD2 += nDugDEM; nSviP2 += nPotDEM
 
-      IF gnRazRed == 99
-         FF; AnalKZagl()
-      ELSE
-         i := 0
-         DO WHILE PRow() <= 55 + dodatni_redovi_po_stranici() .AND. gnRazRed > i
-            ?; ++i
-         ENDDO
-      ENDIF
+      check_nova_strana( { || AnalKZagl() } )
+
 
    ENDDO // eof()
 

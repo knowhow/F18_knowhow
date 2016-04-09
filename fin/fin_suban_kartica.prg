@@ -507,9 +507,9 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
 
          SELECT SUBAN
 
-         IF c1K1z == "D"
-            check_nova_strana( bZagl2, oPdf )
-         ELSE
+         check_nova_strana( bZagl2, oPdf )
+
+         IF c1K1z != "D"
             ? m
          ENDIF
 
@@ -883,15 +883,9 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
             ? "------------------------------"
          ENDIF
 
-         IF gnRazRed == 99
-            check_nova_strana( bZagl, oPdf, .T. )
-         ELSE
-            i := 0
-            DO WHILE PRow() <= 55 + dodatni_redovi_po_stranici() .AND. gnRazRed > i
-               ?
-               ++i
-            ENDDO
-         ENDIF
+        
+         check_nova_strana( bZagl, oPdf )
+
 
       ENDDO // konto
 
@@ -930,17 +924,9 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
       nSviD += nKonD; nSviP += nKonP
       nSviD2 += nKonD2; nSviP2 += nKonP2
 
-      IF gnRazRed == 99
-         check_nova_strana( bZagl, oPDF, .T. )
-      ELSE
 
-         i := 0
-         DO WHILE ( PRow() <= 55 + dodatni_redovi_po_stranici() ) .AND. ( gnRazRed > i )
-            ?
-            ++i
-         ENDDO
+      check_nova_strana( bZagl, oPDF, .T. )
 
-      ENDIF
 
    ENDDO
 

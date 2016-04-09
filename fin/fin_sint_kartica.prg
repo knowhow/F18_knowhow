@@ -213,14 +213,8 @@ FUNCTION fin_sint_kartica()
       nSviD += nDugBHD; nSviP += nPotBHD
       nSviD2 += nDugDEM; nSviP2 += nPotDEM
 
-      IF gnRazRed == 99
-         FF; SinKZagl()
-      ELSE
-         i := 0
-         DO WHILE PRow() <= 55 + dodatni_redovi_po_stranici() .AND. gnRazRed > i
-            ?; ++i
-         ENDDO
-      ENDIF
+      check_nova_strana( {|| SinKZagl() } )
+
 
    ENDDO
 

@@ -87,7 +87,6 @@ PROCEDURE set_global_vars_0()
    PUBLIC gBuIz := "N"
    PUBLIC gRj := "N"
    PUBLIC gTroskovi := "N"
-   PUBLIC gnRazRed := 3
    PUBLIC gVSubOp := "N"
    PUBLIC gnLMONI := 120
    PUBLIC gKtoLimit := "N"

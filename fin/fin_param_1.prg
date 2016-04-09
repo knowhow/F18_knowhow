@@ -178,8 +178,6 @@ STATIC FUNCTION fin_parametri_izgleda()
    ++ nX
    @ m_x + nX, m_y + 2 SAY8 "U subanalitici prikazati nazive i konta i partnera? (D/N)" GET gVSubOp VALID gVSubOp $ "DN" PICTURE "@!"
 
-   ++ nX
-   @ m_x + nX, m_y + 2 SAY "Razmak izmedju kartica - br.redova (99-uvijek nova stranica): " GET gnRazRed PICTURE "99"
 
    ++ nX
    @ m_x + nX, m_y + 2 SAY "Dugi uslov za firmu i RJ u suban.specif.? (D/N)" GET gDUFRJ VALID gDUFRJ $ "DN" PICT "@!"
@@ -212,7 +210,6 @@ FUNCTION fin_read_params()
    gPicBHD := fetch_metric( "fin_picbhd", nil, gPicBHD )
 
    gSaKrIz := fetch_metric( "fin_kreiranje_sintetike", nil, gSaKrIz )
-   gnRazRed := fetch_metric( "fin_razmak_izmedju_kartica", nil, gnRazRed )
    gVSubOp := fetch_metric( "fin_subanalitika_prikaz_naziv_konto_partner", nil, gVSubOp )
    gOAsDuPartn := fetch_metric( "fin_asistent_spoji_duple_uplate", nil, gOAsDuPartn )
    gAzurTimeOut := fetch_metric( "fin_azuriranje_timeout", nil, gAzurTimeOut )
@@ -253,7 +250,6 @@ FUNCTION fin_write_params()
    set_metric( "fin_picdem", nil, gPicDEM )
    set_metric( "fin_picbhd", nil, gPicBHD )
    set_metric( "fin_kreiranje_sintetike", nil, gSaKrIz )
-   set_metric( "fin_razmak_izmedju_kartica", nil, gnRazRed )
    set_metric( "fin_subanalitika_prikaz_naziv_konto_partner", nil, gVSubOp )
    set_metric( "fin_asistent_spoji_duple_uplate", nil, gOAsDuPartn )
    set_metric( "fin_azuriranje_timeout", nil, gAzurTimeOut )

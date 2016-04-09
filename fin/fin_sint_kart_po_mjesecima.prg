@@ -175,14 +175,8 @@ FUNCTION fin_sint_kart_po_mjesecima()
       nSviD += nDugBHD; nSviP += nPotBHD
       nSviD2 += nDugDEM; nSviP2 += nPotDEM
 
-      IF gnRazRed == 99
-         FF; ZaglSink2()
-      ELSE
-         i := 0
-         DO WHILE PRow() <= 55 + dodatni_redovi_po_stranici() .AND. gnRazRed > i
-            ?; ++i
-         ENDDO
-      ENDIF
+      check_nova_strana( {|| ZaglSink2() } )
+
 
    ENDDO // eof()
 

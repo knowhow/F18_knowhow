@@ -35,11 +35,11 @@ PROCEDURE on_idle_dbf_refresh()
 
    IF s_nInIdleRefresh > 0
       IF Round( s_nInIdleRefresh, 0 ) %  10 == 0
-         ?E "already in idle dbf refresh", s_nInIdleRefresh
+         ?E "already in idle dbf refresh", Seconds(), s_nInIdleRefresh, hb_threadSelf(), is_in_main_thread()
       ENDIF
       RETURN
    ELSE
-      ?E "START in idle dbf refresh", hb_threadSelf(), is_in_main_thread()
+      ?E "START in idle dbf refresh", Seconds() s_nInIdleRefresh, hb_threadSelf(), is_in_main_thread()
    ENDIF
 
    IF !is_in_main_thread() // samo glavni thread okida idle evente

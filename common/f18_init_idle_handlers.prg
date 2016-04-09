@@ -46,16 +46,14 @@ PROCEDURE on_idle_dbf_refresh()
       s_nIdleDisplayCounter := Seconds()
    ENDIF
 
-   IF !is_in_main_thread() // samo glavni thread okida idle evente
-      RETURN
-   ENDIF
-
 
    IF my_database() == "?undefined?"
+      s_nIdleRefresh := 0
       RETURN
    ENDIF
 
    IF in_cre_all_dbfs()
+      s_nIdleRefresh := 0
       RETURN
    ENDIF
 
@@ -65,7 +63,7 @@ PROCEDURE on_idle_dbf_refresh()
    cAlias := Alias()
 
    IF Empty( cAlias ) .OR. ( rddName() != DBFENGINE )
-      s_nIdleRefresh := Seconds()
+      s_nIdleRefresh := 0
       RETURN
    ENDIF
 

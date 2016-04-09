@@ -45,8 +45,7 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
    LOCAL _fakt_params := fakt_params()
    LOCAL cLibreOffice := "N"
    LOCAL nX := 2
-   LOCAL bZagl  :=  {|| zagl_suban_kartica( .T. ) }
-   LOCAL bZagl2 :=  {|| zagl_suban_kartica( .F. ) }
+   LOCAL bZagl  :=  {|| zagl_suban_kartica() }
    LOCAL lKarticaNovaStrana := .F.
    LOCAL nTmp
 
@@ -509,7 +508,7 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
 
          SELECT SUBAN
 
-         check_nova_strana( bZagl2, oPdf )
+         check_nova_strana( bZagl, oPdf )
 
          IF c1K1z != "D"
             ? m
@@ -927,15 +926,13 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
          IF lKarticaNovaStrana
             check_nova_strana( bZagl, oPDF, .T. )
          ELSE
-
-            FOR nTmp := 1 TO 3
+            FOR nTmp := 1 TO 3 // tri reda nakon svake kartice
                IF ! check_nova_strana( bZagl )
                   ?
                ELSE
                   EXIT
                ENDIF
             NEXT
-
          ENDIF
       ENDIF
 
@@ -1058,7 +1055,7 @@ FUNCTION Telefon( cTel )
 
 
 
-FUNCTION zagl_suban_kartica( lPocStr )
+FUNCTION zagl_suban_kartica()
 
    LOCAL _fin_params := fin_params()
 
@@ -1073,115 +1070,116 @@ FUNCTION zagl_suban_kartica( lPocStr )
       c1K1z := "N"
    ENDIF
 
-   IF c1K1z <> "D" .OR. lPocStr
-      Preduzece()
-      IF cDinDem == "3"  .OR. cKumul == "2"
-         P_COND2
-      ELSE
-         P_COND
-      ENDIF
-      IF fOtvSt
-         ?U "FIN: KARTICA OTVORENIH STAVKI "
-      ELSE
-         ?U "FIN: SUBANALITIČKA KARTICA  ZA "
-      ENDIF
 
-      ?? iif( cDinDem == "1", ValDomaca(), iif( cDinDem == "2", ValPomocna(), ValDomaca() + "-" + ValPomocna() ) ), " NA DAN:", Date()
-      IF !( Empty( dDatOd ) .AND. Empty( dDatDo ) )
-         ?? "   ZA PERIOD OD", dDatOd, "DO", dDatDo
-      ENDIF
-      IF !Empty( qqBrDok )
-         ?U "Izvještaj pravljen po uslovu za broj veze/računa: '" + Trim( qqBrDok ) + "'"
-      ENDIF
-
-      IF is_legacy_ptxt()
-         @ PRow(), 125 SAY "Str." + Str( ++nStr, 5 )
-      ENDIF
+   Preduzece()
+   IF cDinDem == "3"  .OR. cKumul == "2"
+      P_COND2
+   ELSE
+      P_COND
    ENDIF
+   IF fOtvSt
+      ?U "FIN: KARTICA OTVORENIH STAVKI "
+   ELSE
+      ?U "FIN: SUBANALITIČKA KARTICA  ZA "
+   ENDIF
+
+   ?? iif( cDinDem == "1", ValDomaca(), iif( cDinDem == "2", ValPomocna(), ValDomaca() + "-" + ValPomocna() ) ), " NA DAN:", Date()
+   IF !( Empty( dDatOd ) .AND. Empty( dDatDo ) )
+      ?? "   ZA PERIOD OD", dDatOd, "DO", dDatDo
+   ENDIF
+   IF !Empty( qqBrDok )
+      ?U "Izvještaj pravljen po uslovu za broj veze/računa: '" + Trim( qqBrDok ) + "'"
+   ENDIF
+
+   IF is_legacy_ptxt()
+      @ PRow(), 125 SAY "Str." + Str( ++nStr, 5 )
+   ENDIF
+
 
    SELECT SUBAN
-   IF c1k1z <> "D" .OR. !lPocStr
-      IF cDinDem == "3"
-         IF cSazeta == "D"
-            ?  "----------- --------------------------- ---------------------------- -------------- -------------------------- ------------"
-            ?  "*NALOG     *    D O K U M E N T        *      PROMET  " + ValDomaca() + "          *    SALDO     *       PROMET  " + ValPomocna() + "       *   SALDO   *"
-            ?  "----------- ------------------- -------- -----------------------------     " + ValDomaca() + "     * -------------------------    " + ValPomocna() + "    *"
-            ?  "*V.* BR    *   BROJ   * DATUM  *" + iif( cK14 == "1", " K1-K4 ", " VALUTA" ) + "*     DUG     *      POT     *              *      DUG    *   POT      *           *"
-            ?  "*N.*       *          *        *       *                            *              *             *            *           *"
-         ELSE
-            IF _fin_params[ "fin_tip_dokumenta" ] .AND. cK14 == "4"
-               ? "---------------- ----------------------------------------------------- --------------------------------- -------------- -------------------------- -------------"
-               ? "*  NALOG        *               D  O  K  U  M  E  N  T                *          PROMET  " + ValDomaca() + "           *    SALDO     *       PROMET  " + ValPomocna() + "       *   SALDO    *"
-               ? "---------------- ------------------------------------ ---------------- ----------------------------------      " + ValDomaca() + "    * --------------------------    " + ValPomocna() + "    *"
-               ? "*V.*BR     * R. *     TIP I      *   BROJ   *  DATUM *    OPIS        *     DUG       *       POT       *              *      DUG    *   POT      *            *"
-               ? "*N.*       * Br.*     NAZIV      *          *        *                *               *                 *              *             *            *            *"
-            ELSEIF _fin_params[ "fin_tip_dokumenta" ]
-               ? "---------------- -------------------------------------------------------------- --------------------------------- -------------- -------------------------- -------------"
-               ? "*  NALOG        *                       D  O  K  U  M  E  N  T                 *          PROMET  " + ValDomaca() + "           *    SALDO     *       PROMET  " + ValPomocna() + "       *   SALDO    *"
-               ? "---------------- ------------------------------------ -------- ---------------- ----------------------------------      " + ValDomaca() + "    * --------------------------    " + ValPomocna() + "    *"
-               ? "*V.*BR     * R. *     TIP I      *   BROJ   *  DATUM *" + iif( cK14 == "1", " K1-K4  ", " VALUTA " ) + "*    OPIS        *     DUG       *       POT       *              *      DUG    *   POT      *            *"
-               ? "*N.*       * Br.*     NAZIV      *          *        *        *                *               *                 *              *             *            *            *"
-            ELSE
-               ? "---------------- --------------------------------------------- --------------------------------- -------------- -------------------------- -------------"
-               ? "*  NALOG        *           D O K U M E N T                   *          PROMET  " + ValDomaca() + "           *    SALDO     *       PROMET  " + ValPomocna() + "       *   SALDO    *"
-               ? "---------------- ------------------- -------- ---------------- ----------------------------------      " + ValDomaca() + "    * --------------------------    " + ValPomocna() + "    *"
-               ? "*V.*BR     * R. *   BROJ   *  DATUM *" + iif( cK14 == "1", " K1-K4  ", " VALUTA " ) + "*    OPIS        *     DUG       *       POT       *              *      DUG    *   POT      *            *"
-               ? "*N.*       * Br.*          *        *        *                *               *                 *              *             *            *            *"
-            ENDIF
-         ENDIF
-      ELSEIF cKumul == "1"
-         IF cSazeta == "D"
-            ?U "------------ ---------------------------- --------------------------- ---------------"
-            ?U "* NALOG     *      D O K U M E N T       *       P R O M E T         *    SALDO     *"
-            ?U "------------ ------------------- -------- ---------------------------               *"
-            ?U "*V.*BR  *   BROJ   *  DATUM *" + iif( cK14 == "1", " K1-K4  ", " VALUTA " ) + "*    DUGUJE   *   POTRAŽUJE  *             *"
-            ? "*N.*    *          *        *        *            *              *              *"
-         ELSE
-            IF _fin_params[ "fin_tip_dokumenta" ]
-               ?U  "---------------- ------------------------------------------------------------------ ---------------------------------- ---------------"
-               ?U  "*  NALOG        *                       D  O  K  U  M  E  N  T                     *           P R O M E T            *    SALDO     *"
-               ?U  "---------------- ------------------------------------ -------- -------------------- ----------------------------------               *"
-               ?U  "*V.*BR     * R. *     TIP I      *  BROJ    *  DATUM *" + iif( cK14 == "1", " K1-K4  ", " VALUTA " ) + "*    OPIS            *    DUGUJE     *    POTRAŽUJE     *              *"
-               ?  "*N.*       * Br.*     NAZIV      *          *        *        *                    *               *                  *              *"
-            ELSE
-               ?U  "---------------- ------------------------------------------------- ---------------------------------- ---------------"
-               ?U  "*  NALOG        *            D O K U M E N T                      *           P R O M E T            *    SALDO     *"
-               ?U  "---------------- ------------------- -------- -------------------- ----------------------------------               *"
-               ?U  "*V.*BR     * R. *   BROJ   *  DATUM *" + iif( cK14 == "1", " K1-K4  ", " VALUTA " ) + "*    OPIS            *    DUGUJE     *    POTRAŽUJE     *              *"
-               ?  "*N.*       * Br.*          *        *        *                    *               *                  *              *"
-            ENDIF
-         ENDIF
+
+   IF cDinDem == "3"
+      IF cSazeta == "D"
+         ?  "----------- --------------------------- ---------------------------- -------------- -------------------------- ------------"
+         ?  "*NALOG     *    D O K U M E N T        *      PROMET  " + ValDomaca() + "          *    SALDO     *       PROMET  " + ValPomocna() + "       *   SALDO   *"
+         ?  "----------- ------------------- -------- -----------------------------     " + ValDomaca() + "     * -------------------------    " + ValPomocna() + "    *"
+         ?  "*V.* BR    *   BROJ   * DATUM  *" + iif( cK14 == "1", " K1-K4 ", " VALUTA" ) + "*     DUG     *      POT     *              *      DUG    *   POT      *           *"
+         ?  "*N.*       *          *        *       *                            *              *             *            *           *"
       ELSE
-         IF cSazeta == "D"
-            ?U  "------------ ---------------------------- --------------------------- ----------------------------- ---------------"
-            ?U  "* NALOG     *    D O K U M E N T         *        P R O M E T        *      K U M U L A T I V      *    SALDO     *"
-            ?U  "------------ ------------------- -------- --------------------------- ------------------------------              *"
-            ?U  "*V.*BR      *   BROJ   *  DATUM *" + iif( cK14 == "1", " K1-K4  ", " VALUTA " ) + "*   DUGUJE   *  POTRAŽUJE   *    DUGUJE    *  POTRAŽUJE   *              *"
-            ?  "*N.*        *          *        *        *            *              *              *              *              *"
+         IF _fin_params[ "fin_tip_dokumenta" ] .AND. cK14 == "4"
+            ? "---------------- ----------------------------------------------------- --------------------------------- -------------- -------------------------- -------------"
+            ? "*  NALOG        *               D  O  K  U  M  E  N  T                *          PROMET  " + ValDomaca() + "           *    SALDO     *       PROMET  " + ValPomocna() + "       *   SALDO    *"
+            ? "---------------- ------------------------------------ ---------------- ----------------------------------      " + ValDomaca() + "    * --------------------------    " + ValPomocna() + "    *"
+            ? "*V.*BR     * R. *     TIP I      *   BROJ   *  DATUM *    OPIS        *     DUG       *       POT       *              *      DUG    *   POT      *            *"
+            ? "*N.*       * Br.*     NAZIV      *          *        *                *               *                 *              *             *            *            *"
+         ELSEIF _fin_params[ "fin_tip_dokumenta" ]
+            ? "---------------- -------------------------------------------------------------- --------------------------------- -------------- -------------------------- -------------"
+            ? "*  NALOG        *                       D  O  K  U  M  E  N  T                 *          PROMET  " + ValDomaca() + "           *    SALDO     *       PROMET  " + ValPomocna() + "       *   SALDO    *"
+            ? "---------------- ------------------------------------ -------- ---------------- ----------------------------------      " + ValDomaca() + "    * --------------------------    " + ValPomocna() + "    *"
+            ? "*V.*BR     * R. *     TIP I      *   BROJ   *  DATUM *" + iif( cK14 == "1", " K1-K4  ", " VALUTA " ) + "*    OPIS        *     DUG       *       POT       *              *      DUG    *   POT      *            *"
+            ? "*N.*       * Br.*     NAZIV      *          *        *        *                *               *                 *              *             *            *            *"
          ELSE
-            IF _fin_params[ "fin_tip_dokumenta" ] .AND. cK14 == "4"
-               ?U  "---------------- --------------------------------------------------------- ---------------------------------- ---------------------------------- ---------------"
-               ?U  "*  NALOG        *               D  O  K  U  M  E  N  T                    *           P R O M E T            *           K U M U L A T I V      *    SALDO     *"
-               ?U  "---------------- ------------------------------------ -------------------- ---------------------------------- ----------------------------------               *"
-               ?U  "*V.*BR     * R. *     TIP I      *   BROJ   *  DATUM *    OPIS            *    DUGUJE     *    POTRAŽUJE     *    DUGUJE     *    POTRA¦UJE     *              *"
-               ?U  "*N.*       * Br.*     NAZIV      *          *        *                    *               *                  *               *                  *              *"
-            ELSEIF _fin_params[ "fin_tip_dokumenta" ]
-               ?U  "---------------- ------------------------------------------------------------------ ---------------------------------- ---------------------------------- ---------------"
-               ?U  "*  NALOG        *                       D  O  K  U  M  E  N  T                     *           P R O M E T            *           K U M U L A T I V      *    SALDO     *"
-               ?U  "---------------- ------------------------------------ -------- -------------------- ---------------------------------- ----------------------------------               *"
-               ?U  "*V.*BR     * R. *     TIP I      *   BROJ   *  DATUM *" + iif( cK14 == "1", " K1-K4  ", " VALUTA " ) + "*    OPIS            *    DUGUJE     *    POTRAŽUJE     *    DUGUJE     *    POTRAŽUJE     *              *"
-               ?U  "*N.*       * Br.*     NAZIV      *          *        *        *                    *               *                  *               *                  *              *"
-            ELSE
-               ?U  "---------------- ------------------------------------------------- ---------------------------------- ---------------------------------- ---------------"
-               ?U  "*  NALOG        *            D O K U M E N T                      *           P R O M E T            *           K U M U L A T I V      *    SALDO     *"
-               ?  "---------------- ------------------- -------- -------------------- ---------------------------------- ----------------------------------               *"
-               ?U  "*V.*BR     * R. *   BROJ   *  DATUM *" + iif( cK14 == "1", " K1-K4  ", " VALUTA " ) + "*    OPIS            *    DUGUJE     *    POTRAZUJE     *    DUGUJE     *    POTRAŽUJE     *              *"
-               ?U  "*N.*       * Br.*          *        *        *                    *               *                  *               *                  *              *"
-            ENDIF
+            ? "---------------- --------------------------------------------- --------------------------------- -------------- -------------------------- -------------"
+            ? "*  NALOG        *           D O K U M E N T                   *          PROMET  " + ValDomaca() + "           *    SALDO     *       PROMET  " + ValPomocna() + "       *   SALDO    *"
+            ? "---------------- ------------------- -------- ---------------- ----------------------------------      " + ValDomaca() + "    * --------------------------    " + ValPomocna() + "    *"
+            ? "*V.*BR     * R. *   BROJ   *  DATUM *" + iif( cK14 == "1", " K1-K4  ", " VALUTA " ) + "*    OPIS        *     DUG       *       POT       *              *      DUG    *   POT      *            *"
+            ? "*N.*       * Br.*          *        *        *                *               *                 *              *             *            *            *"
          ENDIF
       ENDIF
-      ? m
+
+   ELSEIF cKumul == "1"
+
+      IF cSazeta == "D"
+         ?U "------------ ---------------------------- --------------------------- ---------------"
+         ?U "* NALOG     *      D O K U M E N T       *       P R O M E T         *    SALDO     *"
+         ?U "------------ ------------------- -------- ---------------------------               *"
+         ?U "*V.*BR  *   BROJ   *  DATUM *" + iif( cK14 == "1", " K1-K4  ", " VALUTA " ) + "*    DUGUJE   *   POTRAŽUJE  *             *"
+         ? "*N.*    *          *        *        *            *              *              *"
+      ELSE
+         IF _fin_params[ "fin_tip_dokumenta" ]
+            ?U  "---------------- ------------------------------------------------------------------ ---------------------------------- ---------------"
+            ?U  "*  NALOG        *                       D  O  K  U  M  E  N  T                     *           P R O M E T            *    SALDO     *"
+            ?U  "---------------- ------------------------------------ -------- -------------------- ----------------------------------               *"
+            ?U  "*V.*BR     * R. *     TIP I      *  BROJ    *  DATUM *" + iif( cK14 == "1", " K1-K4  ", " VALUTA " ) + "*    OPIS            *    DUGUJE     *    POTRAŽUJE     *              *"
+            ?  "*N.*       * Br.*     NAZIV      *          *        *        *                    *               *                  *              *"
+         ELSE
+            ?U  "---------------- ------------------------------------------------- ---------------------------------- ---------------"
+            ?U  "*  NALOG        *            D O K U M E N T                      *           P R O M E T            *    SALDO     *"
+            ?U  "---------------- ------------------- -------- -------------------- ----------------------------------               *"
+            ?U  "*V.*BR     * R. *   BROJ   *  DATUM *" + iif( cK14 == "1", " K1-K4  ", " VALUTA " ) + "*    OPIS            *    DUGUJE     *    POTRAŽUJE     *              *"
+            ?  "*N.*       * Br.*          *        *        *                    *               *                  *              *"
+         ENDIF
+      ENDIF
+   ELSE
+      IF cSazeta == "D"
+         ?U  "------------ ---------------------------- --------------------------- ----------------------------- ---------------"
+         ?U  "* NALOG     *    D O K U M E N T         *        P R O M E T        *      K U M U L A T I V      *    SALDO     *"
+         ?U  "------------ ------------------- -------- --------------------------- ------------------------------              *"
+         ?U  "*V.*BR      *   BROJ   *  DATUM *" + iif( cK14 == "1", " K1-K4  ", " VALUTA " ) + "*   DUGUJE   *  POTRAŽUJE   *    DUGUJE    *  POTRAŽUJE   *              *"
+         ?  "*N.*        *          *        *        *            *              *              *              *              *"
+      ELSE
+         IF _fin_params[ "fin_tip_dokumenta" ] .AND. cK14 == "4"
+            ?U  "---------------- --------------------------------------------------------- ---------------------------------- ---------------------------------- ---------------"
+            ?U  "*  NALOG        *               D  O  K  U  M  E  N  T                    *           P R O M E T            *           K U M U L A T I V      *    SALDO     *"
+            ?U  "---------------- ------------------------------------ -------------------- ---------------------------------- ----------------------------------               *"
+            ?U  "*V.*BR     * R. *     TIP I      *   BROJ   *  DATUM *    OPIS            *    DUGUJE     *    POTRAŽUJE     *    DUGUJE     *    POTRA¦UJE     *              *"
+            ?U  "*N.*       * Br.*     NAZIV      *          *        *                    *               *                  *               *                  *              *"
+         ELSEIF _fin_params[ "fin_tip_dokumenta" ]
+            ?U  "---------------- ------------------------------------------------------------------ ---------------------------------- ---------------------------------- ---------------"
+            ?U  "*  NALOG        *                       D  O  K  U  M  E  N  T                     *           P R O M E T            *           K U M U L A T I V      *    SALDO     *"
+            ?U  "---------------- ------------------------------------ -------- -------------------- ---------------------------------- ----------------------------------               *"
+            ?U  "*V.*BR     * R. *     TIP I      *   BROJ   *  DATUM *" + iif( cK14 == "1", " K1-K4  ", " VALUTA " ) + "*    OPIS            *    DUGUJE     *    POTRAŽUJE     *    DUGUJE     *    POTRAŽUJE     *              *"
+            ?U  "*N.*       * Br.*     NAZIV      *          *        *        *                    *               *                  *               *                  *              *"
+         ELSE
+            ?U  "---------------- ------------------------------------------------- ---------------------------------- ---------------------------------- ---------------"
+            ?U  "*  NALOG        *            D O K U M E N T                      *           P R O M E T            *           K U M U L A T I V      *    SALDO     *"
+            ?  "---------------- ------------------- -------- -------------------- ---------------------------------- ----------------------------------               *"
+            ?U  "*V.*BR     * R. *   BROJ   *  DATUM *" + iif( cK14 == "1", " K1-K4  ", " VALUTA " ) + "*    OPIS            *    DUGUJE     *    POTRAZUJE     *    DUGUJE     *    POTRAŽUJE     *              *"
+            ?U  "*N.*       * Br.*          *        *        *                    *               *                  *               *                  *              *"
+         ENDIF
+      ENDIF
    ENDIF
+   ? m
 
    RETURN .T.
 

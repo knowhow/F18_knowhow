@@ -415,7 +415,6 @@ FUNCTION EPrint2( xPos )
       RETURN
    ENDIF
 
-   RESET
    SET PRINTER TO
    SET PRINTER OFF
    SET CONSOLE ON
@@ -570,7 +569,6 @@ FUNCTION PPrint()
    @ m_x + 16, m_y + 2 SAY "Lendskejp    " GET gPO_Land     PICT "@S40"
    @ m_x + 17, m_y + 2 SAY "Red.po l./nor" GET gRPL_Normal  PICT "@S40"
    @ m_x + 18, m_y + 2 SAY "Red.po l./gus" GET gRPL_Gusto   PICT "@S40"
-   @ m_x + 19, m_y + 2 SAY "Reset (kraj) " GET gPRESET  PICT "@S40"
    @ m_x + 21, m_y + 2 SAY "Dodatnih redova +/- u odnosu na A4 format " GET nPStranica PICT "999"
    @ m_x + 23, m_y + 2 SAY "LPT 1/2/3    " GET gPPort   VALID gPPort $ "12356789"
    gPPTK := PadR( gPPTK, 2 )
@@ -591,7 +589,6 @@ FUNCTION PPrint()
    WPAR( "07", Odsj( @gPB_OFF ) )
    WPAR( "08", Odsj( @gPI_ON ) )
    WPAR( "09", Odsj( @gPI_OFF ) )
-   WPAR( "10", Odsj( @gPRESET ) )
    WPAR( "11", Odsj( @gPFF ) )
    WPAR( "12", Odsj( @gPU_ON ) )
    WPAR( "13", Odsj( @gPU_OFF ) )

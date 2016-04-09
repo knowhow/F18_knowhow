@@ -359,9 +359,6 @@
 #xcommand RPL_G            =>  gRPL_Gusto()
 
 
-#xcommand RESET            =>  gPRESET()
-
-
 
 #xcommand CLOSERET2      => RETURN my_close_all_dbf()
 #xcommand CLOSERET       => RETURN my_close_all_dbf()

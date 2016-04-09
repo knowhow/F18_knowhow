@@ -457,14 +457,7 @@ FUNCTION gpI_OFF()
 
    RETURN ""
 
-FUNCTION gpReset()
 
-   IF !is_legacy_ptxt()
-      RETURN .T.
-   ENDIF
-   QQOut( gPReset )
-
-   RETURN ""
 
 FUNCTION gpNR()
 
@@ -527,7 +520,6 @@ FUNCTION RPar_Printer()
    RPAR( "07", @gPB_OFF )
    RPAR( "08", @gPI_ON )
    RPAR( "09", @gPI_OFF )
-   RPAR( "10", @gPRESET )
    RPAR( "11", @gPFF )
    RPAR( "12", @gPU_ON )
    RPAR( "13", @gPU_OFF )
@@ -558,7 +550,6 @@ FUNCTION WPar_Printer()
    WPAR( "07", gPB_OFF )
    WPAR( "08", gPI_ON )
    WPAR( "09", gPI_OFF )
-   WPAR( "10", gPRESET )
    WPAR( "11", gPFF )
    WPAR( "12", gPU_ON )
    WPAR( "13", gPU_OFF )
@@ -593,7 +584,6 @@ FUNCTION set_epson_print_codes()
    gPO_Land := ""
    gRPL_Normal := "0"
    gRPL_Gusto := "3" + Chr( 24 )
-   gPReset := ""
    gPFF := Chr( 12 )
 
    RETURN .T.
@@ -612,7 +602,6 @@ FUNCTION InigHP()
    PUBLIC gPI_OFF := Chr( 27 ) + "(s0S"
    PUBLIC gPU_ON := Chr( 27 ) + "&d0D"
    PUBLIC gPU_OFF := Chr( 27 ) + "&d@"
-   PUBLIC gPRESET := ""
    PUBLIC gPFF := Chr( 12 )
    PUBLIC gPO_Port := "&l0O"
    PUBLIC gPO_Land := "&l1O"
@@ -635,7 +624,6 @@ FUNCTION All_GetPstr()
    gPI_OFF     := GetPStr( gPI_OFF  )
    gPU_ON      := GetPStr( gPU_ON   )
    gPU_OFF     := GetPStr( gPU_OFF  )
-   gPRESET     := GetPStr( gPRESET )
    gPFF        := GetPStr( gPFF    )
    gPO_Port    := GetPStr( gPO_Port    )
    gPO_Land    := GetPStr( gPO_Land    )

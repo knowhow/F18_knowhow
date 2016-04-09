@@ -1065,7 +1065,6 @@ FUNCTION zagl_suban_kartica( lPocStr )
 
    LOCAL _fin_params := fin_params()
 
-   AltD()
    IF is_legacy_ptxt()
       ?
    ENDIF

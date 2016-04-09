@@ -158,8 +158,8 @@ METHOD F18Login:connect( conn_type, silent )
       ELSE
          ::lOrganizacijaSpojena := .T.
          IF post_login()
-            post_login_cleanup()
             IF is_in_main_thread()
+               post_login_cleanup()
                ::write_to_ini_server_params()
             ENDIF
          ELSE

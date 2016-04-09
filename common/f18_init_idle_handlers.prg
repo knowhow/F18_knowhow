@@ -12,8 +12,8 @@
 #include "f18.ch"
 
 STATIC aIdleHandlers := {}
-STATIC s_mtxMutex
-STATIC s_nInIdleRefresh := 0 // start idle refresh in seconds()
+STATIC s_nIdleRefresh := 0 // start idle refresh in seconds()
+STATIC s_nIdleDisplayCounter := 0 // counter
 
 FUNCTION add_idle_handlers()
 
@@ -33,13 +33,15 @@ PROCEDURE on_idle_dbf_refresh()
 
    LOCAL cAlias, aDBfRec
 
-   IF s_nInIdleRefresh > 0
-      IF Round( s_nInIdleRefresh, 0 ) %  10 == 0
-         ?E "already in idle dbf refresh", Seconds(), s_nInIdleRefresh, hb_threadSelf(), is_in_main_thread()
+   IF s_nIdleRefresh > 0
+      IF  Seconds() - s_nIdleDisplayCounter > 15
+         ?E "already in idle dbf refresh", Seconds(), s_nIdleRefresh, hb_threadSelf(), is_in_main_thread()
+         s_nIdleDisplayCounter := Seconds()
       ENDIF
-      RETURN
+
    ELSE
-      ?E "START in idle dbf refresh", Seconds() s_nInIdleRefresh, hb_threadSelf(), is_in_main_thread()
+      ?E "START in idle dbf refresh", Seconds() s_nIdleRefresh, hb_threadSelf(), is_in_main_thread()
+      s_nIdleDisplayCounter := Seconds()
    ENDIF
 
    IF !is_in_main_thread() // samo glavni thread okida idle evente
@@ -55,10 +57,8 @@ PROCEDURE on_idle_dbf_refresh()
       RETURN
    ENDIF
 
-   IF hb_mutexLock( s_mtxMutex )
-      s_nInIdleRefresh := Seconds()
-      hb_mutexUnlock( s_mtxMutex )
-   ENDIF
+
+   s_nIdleRefresh := Seconds()
 
    process_dbf_refresh_queue()
 
@@ -82,10 +82,7 @@ PROCEDURE on_idle_dbf_refresh()
 
    ENDIF
 
-   IF hb_mutexLock( s_mtxMutex )
-      s_nInIdleRefresh := 0
-      hb_mutexUnlock( s_mtxMutex )
-   ENDIF
+   s_nIdleRefresh := 0
 
    RETURN
 
@@ -100,8 +97,5 @@ FUNCTION remove_idle_handlers()
 
 INIT PROCEDURE idle_init()
 
-   IF s_mtxMutex == NIL
-      s_mtxMutex := hb_mutexCreate()
-   ENDIF
 
    RETURN

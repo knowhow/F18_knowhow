@@ -39,7 +39,7 @@ PROCEDURE on_idle_dbf_refresh()
       ENDIF
       RETURN
    ELSE
-      ?E "START in idle dbf refresh"
+      ?E "START in idle dbf refresh", hb_threadSelf(), is_in_main_thread()
    ENDIF
 
    IF !is_in_main_thread() // samo glavni thread okida idle evente

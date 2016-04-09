@@ -1066,10 +1066,8 @@ FUNCTION zagl_suban_kartica( lPocStr )
 
    LOCAL _fin_params := fin_params()
 
-   IF is_legacy_ptxt()
-      ?
-   ENDIF
 
+   ?
    IF lPocStr == NIL
       lPocStr := .F.
    ENDIF
@@ -1078,7 +1076,7 @@ FUNCTION zagl_suban_kartica( lPocStr )
       c1K1z := "N"
    ENDIF
 
-   IF c1k1z <> "D" .OR. lPocStr
+   IF c1K1z <> "D" .OR. lPocStr
       Preduzece()
       IF cDinDem == "3"  .OR. cKumul == "2"
          P_COND2
@@ -1086,7 +1084,7 @@ FUNCTION zagl_suban_kartica( lPocStr )
          P_COND
       ENDIF
       IF fOtvSt
-         ? "FIN: KARTICA OTVORENIH STAVKI "
+         ?U "FIN: KARTICA OTVORENIH STAVKI "
       ELSE
          ?U "FIN: SUBANALITIČKA KARTICA  ZA "
       ENDIF

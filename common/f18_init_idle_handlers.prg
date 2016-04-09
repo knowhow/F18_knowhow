@@ -34,10 +34,11 @@ PROCEDURE on_idle_dbf_refresh()
    LOCAL cAlias, aDBfRec
 
    IF s_nIdleRefresh > 0
-      IF  Seconds() - s_nIdleDisplayCounter > 15
+      IF Seconds() - s_nIdleDisplayCounter > 15
          ?E "already in idle dbf refresh", Seconds(), s_nIdleRefresh, hb_threadSelf(), is_in_main_thread()
          s_nIdleDisplayCounter := Seconds()
       ENDIF
+      RETURN
 
    ELSE
       ?E "START in idle dbf refresh", Seconds() s_nIdleRefresh, hb_threadSelf(), is_in_main_thread()
@@ -56,7 +57,6 @@ PROCEDURE on_idle_dbf_refresh()
    IF in_cre_all_dbfs()
       RETURN
    ENDIF
-
 
    s_nIdleRefresh := Seconds()
 

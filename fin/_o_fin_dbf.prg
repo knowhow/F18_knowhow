@@ -11,6 +11,19 @@
 
 #include "f18.ch"
 
+FUNCTION o_nalog()
+   RETURN o_dbf_table( F_NALOG, "nalog", "1" )
+
+FUNCTION o_suban()
+   RETURN o_dbf_table( F_SUBAN, "suban", "1" )
+
+FUNCTION o_anal()
+   RETURN o_dbf_table( F_ANAL, "anal", "1" )
+
+FUNCTION o_sint()
+   RETURN o_dbf_table( F_SINT, "sint", "1" )
+
+
 
 FUNCTION o_ulimit()
    RETURN o_dbf_table( F_ULIMIT, "ulimit", "ID" )

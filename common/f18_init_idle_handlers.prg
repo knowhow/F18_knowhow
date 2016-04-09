@@ -12,13 +12,13 @@
 #include "f18.ch"
 
 STATIC aIdleHandlers := {}
+STATIC s_nIdleSeconds := 0
 
 FUNCTION add_idle_handlers()
 
    AAdd( aIdleHandlers, hb_idleAdd( {||  hb_DispOutAt( maxrows(),  maxcols() - 8, Time(), F18_COLOR_INFO_PANEL ) } ) )
    AAdd( aIdleHandlers, hb_idleAdd( {||  hb_DispOutAt( maxrows(),  maxcols() - 8 - 8 - 1, "< CALC >", F18_COLOR_INFO_PANEL ), ;
       iif( !in_calc() .AND. MINRECT( maxrows(), maxcols() - 8 - 8 - 1, maxrows(), maxcols() - 8 - 1 ), Calc(), NIL ) } ) )
-
 
    RETURN .T.
 
@@ -31,6 +31,14 @@ FUNCTION add_idle_handlers()
 PROCEDURE on_idle_dbf_refresh()
 
    LOCAL cAlias, aDBfRec
+
+   IF !is_in_main_thread() // samo glavni thread okida idle evente
+      RETURN
+   ENDIF
+
+   IF ( Seconds() - s_nIdleSeconds ) < MIN_LAST_REFRESH_SEC
+      RETURN
+   ENDIF
 
    IF my_database() == "?undefined?"
       RETURN
@@ -61,6 +69,8 @@ PROCEDURE on_idle_dbf_refresh()
 #endif
 
    ENDIF
+
+   s_nIdleSeconds := Seconds()
 
    RETURN
 

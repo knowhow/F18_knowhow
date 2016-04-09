@@ -32,6 +32,10 @@ PROCEDURE on_idle_dbf_refresh()
 
    LOCAL cAlias, aDBfRec
 
+#ifdef F18_DEBUG_THREAD
+   ?E Seconds(), "on idle dbf refresh"
+#endif
+
    IF !is_in_main_thread() // samo glavni thread okida idle evente
       RETURN
    ENDIF

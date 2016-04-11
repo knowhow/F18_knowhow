@@ -321,7 +321,7 @@ FUNCTION logiraj_podatke_loma_na_staklima( nDoc_no, cDesc, cAction )
    ENDIF
 
    IF lOk
-      f18_free_tables( { "doc_log", "doc_lit" } )
+      f18_unlock_tables( { "doc_log", "doc_lit" } )
       run_sql_query( "COMMIT" )
    ELSE
       run_sql_query( "ROLLBACK" )
@@ -488,7 +488,7 @@ FUNCTION logiraj_zatvaranje_naloga( nDoc_no, cDesc, nDoc_status )
    ENDIF
 
    IF lOk
-       f18_free_tables( { "doc_log", "doc_lit" } )
+       f18_unlock_tables( { "doc_log", "doc_lit" } )
        run_sql_query( "COMMIT" )
    ELSE
        run_sql_query( "ROLLBACK" )

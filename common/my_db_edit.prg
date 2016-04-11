@@ -574,7 +574,7 @@ FUNCTION zamjeni_numericka_polja_u_tabeli( cKolona, cTrazi, cUslov )
       IF lOk
          lRet := .T.
          run_sql_query( "COMMIT" )
-         f18_free_tables( { cAlias } )
+         f18_unlock_tables( { cAlias } )
       ELSE
          run_sql_query( "ROLLBACK" )
       ENDIF
@@ -687,7 +687,7 @@ FUNCTION replace_kolona_in_table( cKolona, trazi_val, zamijeni_val, last_search 
       IF lOk
          lRet := .T.
          run_sql_query( "COMMIT" )
-         f18_free_tables( { cAlias } )
+         f18_unlock_tables( { cAlias } )
       ELSE
          run_sql_query( "ROLLBACK" )
          MsgBeep( "Greška sa opcijom ALT+R !#Operacija prekinuta." )

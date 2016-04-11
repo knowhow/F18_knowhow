@@ -161,7 +161,7 @@ FUNCTION ld_novi_kredit()
       ENDDO
 
       run_sql_query( "COMMIT" )
-      f18_free_tables( { "ld_radkr" } )
+      f18_unlock_tables( { "ld_radkr" } )
 
       log_write( "F18_DOK_OPER: ld unos novog kredita - radnik: " + cIdRadn + " iznos: " + AllTrim( Str( nIznKred ) ), 2 )
 
@@ -300,7 +300,7 @@ FUNCTION ld_krediti_key_handler( Ch )
 
 
          run_sql_query( "COMMIT" )
-         f18_free_tables( { "ld_radkr" } )
+         f18_unlock_tables( { "ld_radkr" } )
 
       ENDIF
 
@@ -452,7 +452,7 @@ FUNCTION ld_krediti_redefinisanje_rata()
       ENDDO
 
       run_sql_query( "COMMIT" )
-      f18_free_tables( { "ld_radkr" } )
+      f18_unlock_tables( { "ld_radkr" } )
 
 
       log_write( "F18_DOK_OPER: ld, redefinisanje kredita za radnika: " + cIdRadn, 2 )
@@ -507,7 +507,7 @@ FUNCTION SumKredita()
    ENDDO
 
    run_sql_query( "COMMIT" )
-   f18_free_tables( { "ld_radkr" } )
+   f18_unlock_tables( { "ld_radkr" } )
 
    IF !fUsed
       SELECT radkr
@@ -1165,7 +1165,7 @@ FUNCTION ld_brisanje_kredita()
    ENDDO
 
    run_sql_query( "COMMIT" )
-   f18_free_tables( { "ld_radkr" } )
+   f18_unlock_tables( { "ld_radkr" } )
 
 
    IF nStavki > 0

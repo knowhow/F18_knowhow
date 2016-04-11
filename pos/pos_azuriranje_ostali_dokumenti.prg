@@ -92,7 +92,7 @@ FUNCTION pos_azuriraj_zaduzenje( cBrDok, cIdVd )
 
    IF lOk
        lRet := .T.
-       f18_free_tables( { "pos_pos", "pos_doks", "roba" } )
+       f18_unlock_tables( { "pos_pos", "pos_doks", "roba" } )
        run_sql_query( "COMMIT" )
        log_write( "F18_DOK_OPER, ažuriran pos dokument " + cDokument, 2 )
    ELSE
@@ -155,7 +155,7 @@ FUNCTION pos_azuriraj_inventura_nivelacija()
    LOCAL cTipDok, cDokument
 
    run_sql_query( "BEGIN" )
-   IF !f18_free_tables( { "pos_pos", "pos_doks" } )
+   IF !f18_unlock_tables( { "pos_pos", "pos_doks" } )
       run_sql_query( "COMMIT" )
       MsgBeep( "Ne mogu zaključati tabele !#Prekidam operaciju." )
       RETURN lRet
@@ -256,7 +256,7 @@ FUNCTION pos_azuriraj_inventura_nivelacija()
 
    IF lOk
        lRet := .T.
-       f18_free_tables( { "pos_pos", "pos_doks" } )
+       f18_unlock_tables( { "pos_pos", "pos_doks" } )
        run_sql_query( "COMMIT" )
        log_write( "F18_DOK_OPER, ažuriran pos dokument: " + cDokument, 2 )
    ELSE

@@ -60,7 +60,7 @@ FUNCTION sast_repl_all() // zamjena sastavnice u svim proizvodima
 
       IF lOk
          run_sql_query( "COMMIT" )
-         f18_free_tables( { "sast" } )
+         f18_unlock_tables( { "sast" } )
       ELSE
          run_sql_query( "ROLLBACK" )
       ENDIF
@@ -126,7 +126,7 @@ FUNCTION pr_uces_sast() // promjena ucesca
 
       IF lOk
          run_sql_query( "COMMIT" )
-         f18_free_tables( { "sast" } )
+         f18_unlock_tables( { "sast" } )
       ELSE
          run_sql_query( "ROLLBACK" )
       ENDIF

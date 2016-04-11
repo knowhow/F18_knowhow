@@ -603,7 +603,7 @@ STATIC FUNCTION ispravi_opis_artikla( nArt_id )
       IF !update_rec_server_and_dbf( "articles", _rec, 1, "CONT" )
          run_sql_query( "ROLLBACK" )
       ELSE
-         f18_free_tables( { "articles" } )
+         f18_unlock_tables( { "articles" } )
          run_sql_query( "COMMIT" )
          nRet := 1
       ENDIF
@@ -851,7 +851,7 @@ STATIC FUNCTION rnal_brisi_artikal( nArt_id, lChkKum, lSilent )
       ENDIF
 
       IF lOk
-         f18_free_tables( { "articles", "elements", "e_att", "e_aops" } )
+         f18_unlock_tables( { "articles", "elements", "e_att", "e_aops" } )
          run_sql_query( "COMMIT" )
       ELSE
          run_sql_query( "ROLLBACK" )
@@ -938,7 +938,7 @@ STATIC FUNCTION rnal_dupliciraj_artikal( nArt_id )
    ENDDO
 
    IF lOk
-      f18_free_tables( { "articles", "elements", "e_att", "e_aops" } )
+      f18_unlock_tables( { "articles", "elements", "e_att", "e_aops" } )
       run_sql_query( "COMMIT" )
    ELSE
       run_sql_query( "ROLLBACK" )

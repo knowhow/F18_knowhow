@@ -333,7 +333,7 @@ STATIC FUNCTION _mat_azur_sql()
 
    ENDIF
 
-   f18_free_tables( { _tbl_suban, _tbl_anal, _tbl_sint, _tbl_nalog } )
+   f18_unlock_tables( { _tbl_suban, _tbl_anal, _tbl_sint, _tbl_nalog } )
 
    RETURN _ok
 

@@ -62,7 +62,7 @@ FUNCTION pos_brisi_dokument( id_pos, id_vd, dat_dok, br_dok )
 
    IF lOk
       lRet := .T.
-      f18_free_tables( { "pos_pos", "pos_doks" } )
+      f18_unlock_tables( { "pos_pos", "pos_doks" } )
       run_sql_query( "COMMIT" )
       log_write( "F18_DOK_OPER, izbrisan pos dokument: " + cDokument, 2 )
    ELSE

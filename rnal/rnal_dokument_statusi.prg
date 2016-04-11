@@ -136,7 +136,7 @@ FUNCTION rnal_azuriraj_statuse( doc_no )
    ENDDO
 
    IF lOk
-      f18_free_tables( { "rnal_doc_ops" } )
+      f18_unlock_tables( { "rnal_doc_ops" } )
       run_sql_query( "COMMIT" )
    ELSE
       run_sql_query( "ROLLBACK" )

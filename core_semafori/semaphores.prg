@@ -575,7 +575,7 @@ FUNCTION nuliraj_ids_and_update_my_semaphore_ver( table )
       " version=last_trans_version" + ;
       " WHERE user_code =" + sql_quote( _user )
 
-   hParams[ "retry" ] := 3
+   hParams[ "retry" ] := 1
    _ret := run_sql_query( _qry, hParams )
 
    // log_write( "END: nuliraj ids-ove - user: " + _user, 7 )

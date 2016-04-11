@@ -308,7 +308,7 @@ FUNCTION RadBl( Ch )
       ENDDO
 
       run_sql_query( "COMMIT" )
-      f18_free_tables( { "ld_radn" } )
+      f18_unlock_tables( { "ld_radn" } )
 
       MsgC()
 
@@ -1155,7 +1155,7 @@ run_sql_query( "BEGIN" )
    ENDDO
 
    run_sql_query( "COMMIT" )
-   f18_free_tables( { "ld_ld", "ld_radn", "ld_radkr" } )
+   f18_unlock_tables( { "ld_ld", "ld_radn", "ld_radkr" } )
 
    SET KEY K_F5 TO
 

@@ -213,7 +213,7 @@ FUNCTION gen_all_plu( lSilent )
 
    IF lOk
       lRet := .T.
-      f18_free_tables( { "roba" } )
+      f18_unlock_tables( { "roba" } )
       run_sql_query( "COMMIT" )
    ELSE
       run_sql_query( "ROLLBACK" )

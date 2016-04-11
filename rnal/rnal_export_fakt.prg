@@ -589,7 +589,7 @@ STATIC FUNCTION _ins_veza( nA_doc_it, nA_docs, cBrfakt, lTemp )
 
       IF !Found()
          IF !lTemp
-            f18_free_tables( { "rnal_docs" } )
+            f18_unlock_tables( { "rnal_docs" } )
             run_sql_query( "COMMIT" )
          ENDIF
          MsgBeep( "Traženi nalog ne postoji u ažuriranim dokumentima !" )
@@ -616,7 +616,7 @@ STATIC FUNCTION _ins_veza( nA_doc_it, nA_docs, cBrfakt, lTemp )
    ENDDO
 
    IF !lTemp
-      f18_free_tables( { "rnal_docs" } )
+      f18_unlock_tables( { "rnal_docs" } )
       run_sql_query( "COMMIT" )
    ENDIF
 

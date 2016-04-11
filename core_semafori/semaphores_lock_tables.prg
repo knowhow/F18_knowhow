@@ -14,7 +14,7 @@
 /*
 
 
-  koristenje f18_lock_tables( arr ), f18_free_tables( arr )
+  koristenje f18_lock_tables( arr ), f18_unlock_tables( arr )
 
   if !f18_lock_tables( {"pos_doks", "pos_pos"} )
      -- prekidamo operaciju
@@ -22,7 +22,7 @@
 
   sql_table_update(nil, "BEGIN")
        update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
-       f18_free_tables( {"pos_doks", "pos_pos"} )
+       f18_unlock_tables( {"pos_doks", "pos_pos"} )
   run_sql_query( "COMMIT" )
 
   ako imamo samo jedan zapis, jednu tabelu, transakcija i lockovanje
@@ -72,11 +72,11 @@ FUNCTION f18_lock_tables( aTables )
 /*
    unlokovanje tabela:
 
-   f18_free_tables( {"pos_pos", "pos_doks"} )
+   f18_unlock_tables( {"pos_pos", "pos_doks"} )
 
 */
 
-FUNCTION f18_free_tables( aTables )
+FUNCTION f18_unlock_tables( aTables )
 
    LOCAL _ok := .T.
    LOCAL _i, _tbl, _dbf_rec

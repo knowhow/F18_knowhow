@@ -357,7 +357,7 @@ FUNCTION br_ugovor()
    IF lOk
       _ret := 1
       run_sql_query( "COMMIT" )
-      f18_free_tables( { "fakt_ugov", "fakt_rugov" } )
+      f18_unlock_tables( { "fakt_ugov", "fakt_rugov" } )
    ELSE
       run_sql_query( "ROLLBACK" )
    ENDIF

@@ -70,7 +70,7 @@ FUNCTION copy_sast()
 
          IF lOk
             run_sql_query( "COMMIT" )
-            f18_free_tables( { "sast" } )
+            f18_unlock_tables( { "sast" } )
          ELSE
             run_sql_query( "ROLLBACK" )
          ENDIF
@@ -164,7 +164,7 @@ FUNCTION bris_sast()
 
    IF lOk
       run_sql_query( "COMMIT" )
-      f18_free_tables( { "roba", "sast" } )
+      f18_unlock_tables( { "roba", "sast" } )
    ELSE
       run_sql_query( "ROLLBACK" )
    ENDIF

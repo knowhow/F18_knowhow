@@ -219,7 +219,7 @@ FUNCTION unos_clan( lNew )
 
       ENDIF
 
-      f18_free_tables( { "ld_pk_data" } )
+      f18_unlock_tables( { "ld_pk_data" } )
       run_sql_query( "COMMIT" )
 
       IF LastKey() == K_ESC

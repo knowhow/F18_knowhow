@@ -121,7 +121,7 @@ FUNCTION update_table_konto( zamjena_sifre )
    IF lOk
       lRet := .T.
       run_sql_query( "COMMIT" )
-      f18_free_tables( { "konto" } )
+      f18_unlock_tables( { "konto" } )
    ELSE
       run_sql_query( "ROLLBACK" )
    ENDIF
@@ -194,7 +194,7 @@ FUNCTION update_table_partn( zamjena_sifre )
    IF lOk
       lRet := .T.
       run_sql_query( "COMMIT" )
-      f18_free_tables( { "partn" } )
+      f18_unlock_tables( { "partn" } )
    ELSE
       run_sql_query( "ROLLBACK" )
    ENDIF
@@ -264,7 +264,7 @@ FUNCTION update_table_roba( zamjena_sifre )
    IF lOk
       lRet := .T.
       run_sql_query( "COMMIT" )
-      f18_free_tables( { "roba" } )
+      f18_unlock_tables( { "roba" } )
    ELSE
       run_sql_query( "ROLLBACK" )
    ENDIF

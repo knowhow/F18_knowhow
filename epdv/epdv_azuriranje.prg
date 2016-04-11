@@ -191,7 +191,7 @@ FUNCTION kuf_kif_azur_sql( tbl, next_g_rbr, next_br_dok )
       run_sql_query( "COMMIT" )
    ENDIF
 
-   f18_free_tables( { _tbl_epdv } )
+   f18_unlock_tables( { _tbl_epdv } )
 
    RETURN lOk
 

@@ -461,7 +461,7 @@ elseif Ch == K_F2
         _rec["id"] := _id
         update_rec_server_and_dbf( "kadev_rjes", _rec, 1, "CONT" )
 
-        f18_free_tables( { "kadev_defrjes", "kadev_rjes" } )
+        f18_unlock_tables( { "kadev_defrjes", "kadev_rjes" } )
         run_sql_query( "COMMIT" )
  
     endif

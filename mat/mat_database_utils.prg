@@ -203,7 +203,7 @@ FUNCTION brisi_mat_nalog( cIdFirma, cIdVn, cBrNal )
       delete_rec_server_and_dbf( "mat_nalog", _del_rec, 1, "CONT" )
    ENDIF
 
-   f18_free_tables( { "mat_suban", "mat_sint", "mat_anal", "mat_nalog" } )
+   f18_unlock_tables( { "mat_suban", "mat_sint", "mat_anal", "mat_nalog" } )
    run_sql_query( "COMMIT" )
 
    RETURN _ok

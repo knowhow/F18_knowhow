@@ -858,7 +858,7 @@ STATIC FUNCTION kalk_azur_sql()
 
       @ m_x + 5, m_y + 2 SAY "update semaphore version"
 
-      f18_free_tables( { _tbl_kalk, _tbl_doks } )
+      f18_unlock_tables( { _tbl_kalk, _tbl_doks } )
       run_sql_query( "COMMIT" )
 
       log_write( "F18_DOK_OPER: ažuriranje kalk dokumenta: " + _log_dok, 2 )

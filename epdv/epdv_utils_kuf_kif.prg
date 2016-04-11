@@ -196,7 +196,7 @@ FUNCTION rn_g_r_br( cTblName )
 
    ENDDO
 
-   f18_free_tables( { _table } )
+   f18_unlock_tables( { _table } )
    run_sql_query( "COMMIT" )
 
    BoxC()

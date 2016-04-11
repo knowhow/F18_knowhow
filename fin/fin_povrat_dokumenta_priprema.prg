@@ -157,8 +157,9 @@ STATIC FUNCTION fin_nalog_brisi_iz_kumulativa( cIdFirma, cIdVn, cBrNal )
 
    IF lOk
       lRet := .T.
+      f18_unlock_tables( { "fin_suban", "fin_nalog", "fin_sint", "fin_anal" } )
       run_sql_query( "COMMIT" )
-      f18_free_tables( { "fin_suban", "fin_nalog", "fin_sint", "fin_anal" } )
+
       log_write( "F18_DOK_OPER: POVRAT_FIN: " + cIdFirma + "-" + cIdVn + "-" + cBrNal, 2 )
    ELSE
       run_sql_query( "ROLLBACK" )

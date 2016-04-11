@@ -133,7 +133,7 @@ STATIC FUNCTION pos_definisi_inicijalne_podatke()
       MsgC()
 
       IF lOk
-         f18_free_tables( { "pos_strad" } )
+         f18_unlock_tables( { "pos_strad" } )
          // run_sql_query( "COMMIT" )
       ELSE
          // run_sql_query( "ROLLBACK" )
@@ -166,7 +166,7 @@ STATIC FUNCTION pos_definisi_inicijalne_podatke()
       MsgC()
 
       IF lOk
-         f18_free_tables( { "pos_osob" } )
+         f18_unlock_tables( { "pos_osob" } )
          // run_sql_query( "COMMIT" )
       ELSE
          // run_sql_query( "ROLLBACK" )
@@ -606,7 +606,7 @@ FUNCTION pos_import_fmk_roba()
    BoxC()
 
    IF lOk
-      f18_free_tables( { "roba" } )
+      f18_unlock_tables( { "roba" } )
       run_sql_query( "COMMIT" )
    ELSE
       run_sql_query( "ROLLBACK" )

@@ -325,7 +325,7 @@ STATIC FUNCTION _insert_into_fin_priprema( data, konto_data, partn_data, param )
       ENDDO
 
       IF lOk
-         f18_free_tables( { "partn", "konto" } )
+         f18_unlock_tables( { "partn", "konto" } )
          run_sql_query( "COMMIT" )
       ELSE
          run_sql_query( "ROLLBACK" )

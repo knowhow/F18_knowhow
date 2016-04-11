@@ -1101,7 +1101,7 @@ STATIC FUNCTION AzurPPK()
    Postotak( -1,,,,, .T. )
 
    run_sql_query( "COMMIT" )
-   f18_free_tables( { "fin_suban", "fin_anal", "fin_sint" } )
+   f18_unlock_tables( { "fin_suban", "fin_anal", "fin_sint" } )
 
    SELECT TEMP77
    USE

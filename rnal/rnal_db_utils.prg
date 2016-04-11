@@ -294,7 +294,7 @@ FUNCTION rnal_promjena_broja_naloga( old_doc )
    ENDIF
 
    IF lOk
-      f18_free_tables( { "docs", "doc_it", "doc_it2", "doc_ops" } )
+      f18_unlock_tables( { "docs", "doc_it", "doc_it2", "doc_ops" } )
       run_sql_query( "COMMIT" )
    ELSE
       run_sql_query( "ROLLBACK" )

@@ -401,7 +401,7 @@ FUNCTION AzurKupData( cIdPos )
    update_rec_server_and_dbf( _tbl, _rec, 1, "CONT" )
 
    run_sql_query( "COMMIT" )
-   f18_free_tables( { _tbl } )
+   f18_unlock_tables( { _tbl } )
 
    RETURN .T.
 

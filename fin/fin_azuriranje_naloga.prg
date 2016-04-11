@@ -106,9 +106,9 @@ FUNCTION fin_azuriranje_naloga( automatic )
 
    NEXT
 
+   f18_unlock_tables( { __tbl_suban, __tbl_anal, __tbl_sint, __tbl_nalog } )
    run_sql_query( "COMMIT" )
-   f18_free_tables( { __tbl_suban, __tbl_anal, __tbl_sint, __tbl_nalog } )
-
+   
 
    SELECT fin_pripr
    my_dbf_pack()

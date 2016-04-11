@@ -119,7 +119,7 @@ FUNCTION kalk_povrat_dokumenta()
 
       IF lOk
          run_sql_query( "COMMIT" )
-         f18_free_tables( { "kalk_doks", "kalk_kalk", "kalk_doks2" } )
+         f18_unlock_tables( { "kalk_doks", "kalk_kalk", "kalk_doks2" } )
 
          log_write( "F18_DOK_OPER: povrat dokumenta u pripremu, kalk: " + _id_firma + "-" + _id_vd + "-" + ALLTRIM( _br_dok ), 2 )
       ELSE
@@ -401,7 +401,7 @@ STATIC FUNCTION kalk_povrat_prema_kriteriju()
 
       IF lOk
          lRet := .T.
-         f18_free_tables( { "kalk_doks", "kalk_kalk", "kalk_doks2" } )
+         f18_unlock_tables( { "kalk_doks", "kalk_kalk", "kalk_doks2" } )
          run_sql_query( "COMMIT" )
       ELSE
          run_sql_query( "ROLLBACK" )

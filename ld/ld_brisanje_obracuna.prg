@@ -130,7 +130,7 @@ FUNCTION BrisiRadnika()
 
 
             run_sql_query( "COMMIT" )
-            f18_free_tables( { "ld_ld" } )
+            f18_unlock_tables( { "ld_ld" } )
 
          ELSE
             MsgBeep( "Neko već koristi datoteku LD !" )

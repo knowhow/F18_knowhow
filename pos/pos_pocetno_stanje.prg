@@ -260,7 +260,7 @@ STATIC FUNCTION pocetno_stanje_sql( param )
    MsgC()
 
    IF lOk
-      f18_free_tables( { "pos_pos", "pos_doks" } )
+      f18_unlock_tables( { "pos_pos", "pos_doks" } )
       run_sql_query( "COMMIT" )
    ELSE
       run_sql_query( "ROLLBACK" )

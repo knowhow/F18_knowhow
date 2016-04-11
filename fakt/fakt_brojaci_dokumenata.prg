@@ -609,7 +609,7 @@ FUNCTION fakt_ispravka_podataka_azuriranog_dokumenta( id_firma, tip_dok, br_dok 
 
    IF !Found()
       run_sql_query( "COMMIT" )
-      f18_free_tables( { "fakt_fakt", "fakt_doks" } )
+      f18_unlock_tables( { "fakt_fakt", "fakt_doks" } )
       MsgBeep( "Dokument ne postoji, nije ništa zamjenjeno !" )
       RETURN lRet
    ENDIF
@@ -687,7 +687,7 @@ FUNCTION fakt_ispravka_podataka_azuriranog_dokumenta( id_firma, tip_dok, br_dok 
    IF lOk
       lRet := .T.
       run_sql_query( "COMMIT" )
-      f18_free_tables( { "fakt_fakt", "fakt_doks" } )
+      f18_unlock_tables( { "fakt_fakt", "fakt_doks" } )
    ELSE
       run_sql_query( "ROLLBACK" )
    ENDIF

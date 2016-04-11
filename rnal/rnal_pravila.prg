@@ -92,7 +92,7 @@ STATIC FUNCTION in_elcode_rule( cElCond, cRule, cRuleName )
    IF !update_rec_server_and_dbf( "f18_rules", _rec, 1, "CONT" )
       run_sql_query( "ROLLBACK" )
    ELSE
-      f18_free_tables( { "f18_rules" } )
+      f18_unlock_tables( { "f18_rules" } )
       run_sql_query( "COMMIT" )
    ENDIF
 

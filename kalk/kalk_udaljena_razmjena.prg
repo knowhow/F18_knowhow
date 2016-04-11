@@ -775,7 +775,7 @@ STATIC FUNCTION __import( vars, a_details )
    ENDDO
 
    IF lOk
-      f18_free_tables( { "kalk_doks", "kalk_kalk" } )
+      f18_unlock_tables( { "kalk_doks", "kalk_kalk" } )
       run_sql_query( "COMMIT" )
    ELSE
       run_sql_query( "ROLLBACK" )

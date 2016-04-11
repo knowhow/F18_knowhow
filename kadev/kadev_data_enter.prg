@@ -1402,7 +1402,7 @@ FUNCTION _dobar_id( noviId )
 
          update_rec_server_and_dbf( "kadev_0", _rec, 1, "CONT" )
 
-         f18_free_tables( { "kadev_1", "kadev_0" } )
+         f18_unlock_tables( { "kadev_1", "kadev_0" } )
          run_sql_query( "COMMIT" )
 
       ELSE
@@ -1501,7 +1501,7 @@ FUNCTION brisi_kadrovski_karton( erase )
 
       SKIP -1
 
-      f18_free_tables( { "kadev_0", "kadev_1" } )
+      f18_unlock_tables( { "kadev_0", "kadev_1" } )
       run_sql_query( "COMMIT" )
 
       MsgC()

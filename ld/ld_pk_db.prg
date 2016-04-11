@@ -77,7 +77,7 @@ FUNCTION pk_delete( cIdRadn )
    ENDIF
 
    run_sql_query( "COMMIT" )
-   f18_free_tables( { "ld_pk_data", "ld_pk_radn" } )
+   f18_unlock_tables( { "ld_pk_data", "ld_pk_radn" } )
 
 
    IF nCnt > 0

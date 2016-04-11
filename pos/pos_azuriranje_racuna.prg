@@ -117,7 +117,7 @@ FUNCTION pos_azuriraj_racun( cIdPos, cBrojRacuna, cVrijeme, cNacPlac, cIdGost )
 
    IF lOk
       lRet := .T.
-      f18_free_tables( { "pos_pos", "pos_doks" } )
+      f18_unlock_tables( { "pos_pos", "pos_doks" } )
       run_sql_query( "COMMIT", hParams )
       log_write( "F18_DOK_OPER, ažuriran računa " + cDokument, 2 )
    ELSE

@@ -69,7 +69,7 @@ METHOD FaktDokumenti:Lock()
 // ----------------------------------------------------------
 METHOD FaktDokumenti:unlock()
 
-   f18_free_tables( ::p_lock_tables )
+   f18_unlock_tables( ::p_lock_tables )
 
    RETURN .T.
 

@@ -120,7 +120,7 @@ FUNCTION rnal_azuriraj_dokument( cDesc )
 
    IF _ok
 
-      f18_free_tables( { "docs", "doc_it", "doc_it2", "doc_ops" } )
+      f18_unlock_tables( { "docs", "doc_it", "doc_it2", "doc_ops" } )
       run_sql_query( "COMMIT" )
 
       log_write( "F18_DOK_OPER: rnal, azuriranje dokumenta broj: " + AllTrim( Str( __doc_no ) ) + ;

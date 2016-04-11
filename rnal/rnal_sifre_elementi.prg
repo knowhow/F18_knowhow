@@ -989,7 +989,7 @@ STATIC FUNCTION nafiluj_atribute_grupe( __gr_id, __el_id )
    ENDDO
 
    IF lOk
-      f18_free_tables( { "e_att" } )
+      f18_unlock_tables( { "e_att" } )
       run_sql_query( "COMMIT" )
    ELSE
       run_sql_query( "ROLLBACK" )

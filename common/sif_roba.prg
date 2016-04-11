@@ -660,7 +660,7 @@ FUNCTION roba_setuj_mpc_iz_vpc()
 
    IF lOk
       run_sql_query( "COMMIT" )
-      f18_free_tables( { "roba" } )
+      f18_unlock_tables( { "roba" } )
    ELSE
       run_sql_query( "ROLLBACK" )
    ENDIF

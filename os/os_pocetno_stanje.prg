@@ -225,7 +225,7 @@ STATIC FUNCTION _os_brisi_tekucu_godinu( info )
 
    ENDDO
 
-   f18_free_tables( { __table_os, __table_promj } )
+   f18_unlock_tables( { __table_os, __table_promj } )
    run_sql_query( "COMMIT" )
 
    @ _pos_x, _pos_y + 55 SAY "OK"
@@ -300,7 +300,7 @@ STATIC FUNCTION _os_prebaci_iz_prethodne( info )
    _insert_into_os( _data_os )
    _insert_into_promj( _data_promj )
 
-   f18_free_tables( { __table_os, __table_promj } )
+   f18_unlock_tables( { __table_os, __table_promj } )
    run_sql_query( "COMMIT" )
 
    @ _pos_x, _pos_y + 55 SAY "OK"
@@ -534,7 +534,7 @@ STATIC FUNCTION _os_generacija_nakon_ps( info )
 
    @ _pos_x, _pos_y + 55 SAY "OK"
 
-   f18_free_tables( { __table_os, __table_promj } )
+   f18_unlock_tables( { __table_os, __table_promj } )
    run_sql_query( "COMMIT" )
 
    my_close_all_dbf()

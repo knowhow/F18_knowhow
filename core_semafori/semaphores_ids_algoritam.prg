@@ -26,6 +26,10 @@ FUNCTION ids_synchro( dbf_table )
    aDbfRec := get_a_dbf_rec( dbf_table, .T. )
    hIdsQueries := create_queries_from_ids( aDbfRec[ "table" ] )
 
+   IF hIdsQueries == NIL
+      RETURN .F.
+   ENDIF
+
    // hIdsQueries["ids"] = {  {"00113333 1", "0011333 2"}, {"00224444"}  }
    // hIdsQueries["qry"] = {  "select .... in ... rpad('0011333  1') ...", "select .. in ... rpad("0022444")" }
 
@@ -44,9 +48,6 @@ FUNCTION ids_synchro( dbf_table )
          // ponovo kreiraj hIdsQueries u slucaju da je bilo jos azuriranja
          hIdsQueries := create_queries_from_ids( aDbfRec[ 'table' ] )
 
-         IF hIdsQueries == nil
-            RETURN .F.
-         ENDIF
 
       ELSE
          EXIT

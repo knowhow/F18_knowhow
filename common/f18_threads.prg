@@ -64,7 +64,7 @@ FUNCTION open_thread( cInfo, lOpenSQLConnection, cTable )
       ENDIF
 
       IF nCounter % 2000 == 0
-         ?E Time(), "max threads limit reached (", s_nThreadCount, " waiting ... ", cInfo, "/", nCounter
+         ?E Time(), "max threads limit reached (", AllTrim( Str( s_nThreadCount ) ), ") waiting ... ", cInfo, "/", nCounter
          hb_idleSleep( 0.5 )
       ENDIF
 
@@ -102,11 +102,12 @@ FUNCTION is_in_dbf_refresh_queue( cTable )
 
    LOCAL nPos
 
-   //IF hb_mutexLock( s_mtxMutex )
-      nPos := AScan( s_aQueueDbfRefresh, {| aItem |  ValType( aItem ) == "A" .AND. aItem[ 1 ] == my_database() .AND. aItem[ 2 ] == cTable } )
-      //hb_mutexUnlock( s_mtxMutex )
-      RETURN  ( nPos > 0 )
-   //ENDIF
+   // IF hb_mutexLock( s_mtxMutex )
+   nPos := AScan( s_aQueueDbfRefresh, {| aItem |  ValType( aItem ) == "A" .AND. aItem[ 1 ] == my_database() .AND. aItem[ 2 ] == cTable } )
+   // hb_mutexUnlock( s_mtxMutex )
+
+   RETURN  ( nPos > 0 )
+// ENDIF
 
    RETURN .F.
 
@@ -174,8 +175,8 @@ PROCEDURE process_dbf_refresh_queue()
          // info_bar( "idle", "dbf refresh queue " + aItem[ 1 ] + " " + aItem[ 2 ] )
          IF aItem[ 1 ] == my_database()
             IF we_need_dbf_refresh( aItem[ 2 ] )
-               thread_dbfs( hb_threadStart(  @thread_dbf_refresh(), aItem[ 2 ] ) )
                remove_from_dbf_refresh_queue( aItem[ 1 ],  aItem[ 2 ] )
+               thread_dbfs( hb_threadStart(  @thread_dbf_refresh(), aItem[ 2 ] ) )
                nQLength++
             ENDIF
          ELSE

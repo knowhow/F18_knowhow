@@ -24,6 +24,7 @@ FUNCTION ids_synchro( dbf_table )
    LOCAL nIdsCnt := 0
 
 #ifdef F18_DEBUG_SYNC
+
    ?E "START IDS synchro", dbf_table
 #endif
 
@@ -221,8 +222,12 @@ FUNCTION get_ids_from_semaphore( table )
 
    _tbl := "sem." + Lower( table )
    hParams[ "tran_name" ] := "ids_" + table
+   hParams[ "retry" ] := 1
 
    IF !lAllreadyInTransaction
+#ifdef F18_DEBUG_SYNC
+      ?E "BEGIN; SET TRANSACTION ISOLATION LEVEL SERIALIZABLE"
+#endif
       run_sql_query( "BEGIN; SET TRANSACTION ISOLATION LEVEL SERIALIZABLE", hParams )
    ENDIF
 

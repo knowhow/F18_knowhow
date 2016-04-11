@@ -175,6 +175,10 @@ FUNCTION push_ids_to_semaphore( table, aIds, lToMySelf )
    ENDIF
    _qry += "ids IS NOT NULL AND array_length(ids,1) > 2000"
 
+#ifdef F18_DEBUG_SYNC
+   ?E "push_ids_to_semaphore", _qry
+#endif
+
    _ret := run_sql_query( _qry )
    IF sql_error_in_query( _ret, "UPDATE" )
       error_bar( "syn_ids", "UPDATE push_ids: " + table )

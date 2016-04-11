@@ -396,7 +396,7 @@ FUNCTION CheckMark( cIdKonto, cIdPartner, cNewPartner )
 
 
 /* Partija(cIdKonto)
- *    
+ *
  *   param: cIdKonto - oznaka konta
  */
 
@@ -839,7 +839,7 @@ FUNCTION edit_fin_pripr()
 
    CASE Upper( Chr( Ch ) ) == "P"
 
-      IF RecCount() != 0
+      IF RecCount2() != 0
          MsgBeep( "Povrat nije nedozvoljen, priprema nije prazna !" )
          RETURN DE_CONT
       ENDIF
@@ -999,7 +999,7 @@ FUNCTION OstaleOpcije()
 
 
 /* PodijeliN()
- *    
+ *
  */
 
 FUNCTION PodijeliN()

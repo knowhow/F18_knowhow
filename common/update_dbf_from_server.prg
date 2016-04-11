@@ -61,20 +61,20 @@ FUNCTION update_dbf_from_server( table, algoritam )
 
    _seconds := Seconds()
 
-   log_write( "START update_dbf_from_server: " + algoritam, 9 )
+   //log_write( "START update_dbf_from_server: " + algoritam, 9 )
 
    IF algoritam == "FULL"
 
-      log_write( "iniciraj full synchro:" + table, 8 )
+      //log_write( "iniciraj full synchro:" + table, 8 )
       // full synchro ne treba otvorenu tabelu, on je ionako zapuje
       lRet := full_synchro ( table, _step, " ALG_FULL " )
 
    ELSE
-      log_write( "iniciraj ids synchro:" + table, 8 )
+      //log_write( "iniciraj ids synchro:" + table, 8 )
       lRet := ids_synchro  ( table )
    ENDIF
 
-   log_write( "update_dbf_from_server table: " + table + " synchro cache: " + Str( Seconds() - _seconds ), 5 )
-   log_write( "END update_dbf_from_server", 9 )
+   //log_write( "update_dbf_from_server table: " + table + " synchro cache: " + Str( Seconds() - _seconds ), 5 )
+   //log_write( "END update_dbf_from_server", 9 )
 
    RETURN lRet

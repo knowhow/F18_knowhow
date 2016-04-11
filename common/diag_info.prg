@@ -20,5 +20,6 @@ FUNCTION diag_info()
    ?E "unchecked_sifarnici: ", imaju_unchecked_sifarnici()
 
    print_a_dbfs()
+   print_transactions()
 
    RETURN .T.

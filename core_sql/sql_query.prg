@@ -63,8 +63,9 @@ FUNCTION run_sql_query( cQry, hParams )
    LOCAL nPos
    LOCAL nRetry := 2
    LOCAL oServer := sql_data_conn()
-   LOCAL cTransactionName := cQry
+   LOCAL cTransactionName := "BEGIN"
    LOCAL lLog := .T.
+
 
    IF hParams != NIL
 
@@ -109,19 +110,23 @@ FUNCTION run_sql_query( cQry, hParams )
    IF Left( cQry, 5 ) == "BEGIN"
       IF hb_mutexLock( s_mtxMutex )
 
-         nPos := AScan( s_aTransactions, { | aItem | Valtype( aItem ) == "A" ;
-             .AND. aItem[ 2 ] == sql_data_conn():pDB .AND. aItem[ 3 ] == hb_threadSelf() .AND. aItem[ 4 ] == cTransactionName } )
+         nPos := AScan( s_aTransactions, {| aItem | ValType( aItem ) == "A" ;
+            .AND. aItem[ 2 ] == sql_data_conn():pDB .AND. aItem[ 3 ] == hb_threadSelf() .AND. aItem[ 4 ] == cTransactionName } )
 
          IF nPos > 0
-             cLogMsg := "SQL transactions ERR: "
-             LOG_CALL_STACK cLogMsg
-             ?E cLogMsg
-             IF is_in_main_thread()
-                altd()
-                Alert( "SQL transactions error !" )
-             ENDIF
-          ENDIF
+            cLogMsg := "SQL transactions ERR: "
+            LOG_CALL_STACK cLogMsg
+            ?E cLogMsg
+            IF is_in_main_thread()
+               AltD()
+               Alert( "SQL transactions error !" )
+            ENDIF
+            hb_mutexUnlock( s_mtxMutex )
+            print_transactions()
+            RETURN NIL
+         ENDIF
 
+         //AltD()
 
          AAdd( s_aTransactions, { Time(), sql_data_conn():pDB, hb_threadSelf(), cTransactionName } )
          hb_mutexUnlock( s_mtxMutex )
@@ -130,7 +135,9 @@ FUNCTION run_sql_query( cQry, hParams )
 
    IF Left( cQry, 6 ) == "COMMIT" .OR. Left( cQry, 8 ) == "ROLLBACK"
       IF hb_mutexLock( s_mtxMutex )
-         nPos := AScan( s_aTransactions, {| aTran | ValType( aTran ) == "A" .AND. aTran[ 2 ] == sql_data_conn():pDB .AND.  aTran[ 4 ] == cTransactionName } )
+         //AltD()
+         nPos := AScan( s_aTransactions, {| aTran | ValType( aTran ) == "A" .AND. ;
+            aTran[ 2 ] == sql_data_conn():pDB .AND. aTran[ 3 ] == hb_threadSelf() .AND. aTran[ 4 ] == cTransactionName } )
 
          IF nPos > 0
             ADel( s_aTransactions, nPos )

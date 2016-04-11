@@ -55,7 +55,6 @@ FUNCTION postgres_sql_query( cQuery )
    RETURN run_sql_query( cQuery, hParams )
 
 
-
 FUNCTION run_sql_query( cQry, hParams )
 
    LOCAL nI, oQuery

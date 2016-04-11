@@ -35,8 +35,9 @@ FUNCTION lock_semaphore( table, status, lUnlockTable )
    LOCAL _user   := f18_user()
    LOCAL _user_locked
    LOCAL cSemaphoreStatus
+   LOCAL nLockSeconds
 
-   IF .T. // skip_semaphore_sync( table )
+   IF skip_semaphore_sync( table )
       RETURN .T.
    ENDIF
 
@@ -47,11 +48,12 @@ FUNCTION lock_semaphore( table, status, lUnlockTable )
    // status se moze mijenjati samo ako neko drugi nije lock-ovao tabelu
    // log_write( "table: " + table + ", status:" + status + " START", 8 )
 
+   nLockSeconds := Seconds()
+
    _i := 0
    DO WHILE .T.
 
       _i++
-
       cSemaphoreStatus := get_semaphore_status( table )
       IF cSemaphoreStatus == "unknown"
          RETURN .F.
@@ -65,14 +67,16 @@ FUNCTION lock_semaphore( table, status, lUnlockTable )
       IF cSemaphoreStatus == "lock"
          _user_locked := get_semaphore_locked_by_me_status_user( table )
          _err_msg := ToStr( Time() ) + " : table locked : " + table + " user: " + _user_locked + " retry : " + Str( _i, 2 ) + "/" + Str( SEMAPHORE_LOCK_RETRY_NUM, 2 )
-         //log_write( _err_msg, 2 )
+         // log_write( _err_msg, 2 )
          ?E _err_msg
-         //hb_idleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
-         //log_write( "call stack 1 " + ProcName( 1 ) + " " + AllTrim( Str( ProcLine( 1 ) ) ), 2 )
-         //log_write( "call stack 2 " + ProcName( 2 ) + " " + AllTrim( Str( ProcLine( 2 ) ) ), 2 )
+
+         hb_idleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
+         // log_write( "call stack 1 " + ProcName( 1 ) + " " + AllTrim( Str( ProcLine( 1 ) ) ), 2 )
+         // log_write( "call stack 2 " + ProcName( 2 ) + " " + AllTrim( Str( ProcLine( 2 ) ) ), 2 )
 
       ELSE
 
+         nLockSeconds := 0
          IF _i > 1
             _err_msg := ToStr( Time() ) + " : tabela otključana : " + table + " retry : " + Str( _i, 2 ) + "/" + Str( SEMAPHORE_LOCK_RETRY_NUM, 2 )
             ?E _err_msg
@@ -81,11 +85,11 @@ FUNCTION lock_semaphore( table, status, lUnlockTable )
 
       ENDIF
 
-      IF ( _i >= SEMAPHORE_LOCK_RETRY_NUM )
+      IF  ( Seconds() - nLockSeconds > SEMAPHORE_LOCK_TIME )  .OR. ( _i >= SEMAPHORE_LOCK_RETRY_NUM )
          _err_msg := "table " + table + " ostala lockovana nakon " + Str( SEMAPHORE_LOCK_RETRY_NUM, 2 ) + " pokusaja ##" + ;
             "nasilno uklanjam lock !"
          ?E _err_msg
-         //log_write( _err_msg, 2 )
+         // log_write( _err_msg, 2 )
          EXIT
 
       ENDIF
@@ -131,17 +135,17 @@ FUNCTION get_semaphore_locked_by_me_status_user( table )
           "unknown" - ne mogu dobiti odgovor od servera, vjerovatno free
 */
 
-FUNCTION get_semaphore_status( table )
+FUNCTION get_semaphore_status( cTable )
 
    LOCAL _qry
    LOCAL _ret
    LOCAL _user   := f18_user()
 
-   IF skip_semaphore_sync( table )
+   IF skip_semaphore_sync( cTable )
       RETURN "free"
    ENDIF
 
-   _qry := "SELECT algorithm FROM sem." + table + " WHERE user_code=" + sql_quote( _user )
+   _qry := "SELECT algorithm FROM sem." + cTable + " WHERE user_code=" + sql_quote( _user )
    _ret := run_sql_query( _qry )
 
    IF sql_query_bez_zapisa( _ret )
@@ -150,6 +154,10 @@ FUNCTION get_semaphore_status( table )
 
    RETURN AllTrim( _ret:FieldGet( 1 ) )
 
+
+FUNCTION is_table_locked( cTable )
+
+   RETURN get_semaphore_status( cTable ) $ "locked#locked_by_me"
 
 
 FUNCTION last_semaphore_version( table )
@@ -245,9 +253,9 @@ FUNCTION get_semaphore_version_h( table )
 
    IF sql_error_in_query( _tbl_obj )
       _msg = "problem sa:" + _qry
-      //log_write( _msg, 2 )
-      //MsgBeep( _msg )
-      //QUIT_1
+      // log_write( _msg, 2 )
+      // MsgBeep( _msg )
+      // QUIT_1
       ?E _msg
    ENDIF
 
@@ -733,6 +741,9 @@ FUNCTION we_need_dbf_refresh( cTable )
    aDbfRec := get_a_dbf_rec( cTable, .T. )
    cTable := aDbfRec[ "table" ]
 
+   IF is_table_locked( cTable )
+      RETURN .F.
+   ENDIF
 
    IF is_last_refresh_before( cTable, MIN_LAST_REFRESH_SEC )
 #ifdef F18_DEBUG_THREAD

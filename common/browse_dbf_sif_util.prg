@@ -739,7 +739,7 @@ FUNCTION snimi_promjene_sifarnika( lNovi, cTekuciZapis )
          delete_with_rlock()
       ENDIF
 
-      log_write( "F18_DOK_OPER: greška kod dodavanja/ispravke zapisa u šifrarnik " + cAlias, 2 )
+      log_write( "F18_DOK_OPER: greska kod dodavanja/ispravke zapisa u sifarnik " + cAlias, 2 )
       MsgBeep( "Greška kod dodavanja/ispravke šifre !#Operacija prekinuta." )
 
    ENDIF

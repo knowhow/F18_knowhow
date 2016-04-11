@@ -231,7 +231,8 @@
     => replsql_dummy()
 
 #define SEMAPHORE_LOCK_RETRY_IDLE_TIME 1
-#define SEMAPHORE_LOCK_RETRY_NUM 10
+#define SEMAPHORE_LOCK_RETRY_NUM 100
+#define SEMAPHORE_LOCK_TIME 30
 
 #define SIFK_LEN_DBF     8
 #define SIFK_LEN_OZNAKA  4

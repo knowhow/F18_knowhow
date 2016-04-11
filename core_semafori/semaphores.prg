@@ -58,7 +58,7 @@ FUNCTION lock_semaphore( table )
          RETURN .T.
       ENDIF
 
-      IF cSemaphoreStatus $ "free"
+      IF cSemaphoreStatus == "free"
            EXIT
       ENDIF
 
@@ -66,22 +66,22 @@ FUNCTION lock_semaphore( table )
          RETURN .F.
       ENDIF
 
-      IF cSemaphoreStatus == "lock"
+      //IF cSemaphoreStatus == "lock"
          _user_locked := get_semaphore_locked_by_me_status_user( table )
          _err_msg := ToStr( Time() ) + " : table locked : " + table + " user: " + _user_locked
          ?E _err_msg
 
          hb_idleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
-         LOOP
-      ENDIF
+         //LOOP
+      //ENDIF
 
    ENDDO
 
    // free, lockovati
    _qry := "UPDATE sem." + table + " SET algorithm='lock', last_trans_user_code=" + sql_quote( _user ) + "; "
    _qry += "UPDATE sem." + table + " SET algorithm='locked_by_me' WHERE user_code=" + sql_quote( _user ) + ";"
-
    _ret := run_sql_query( _qry )
+
    IF sql_error_in_query( _ret, "UPDATE" )
       RETURN .F.
    ENDIF

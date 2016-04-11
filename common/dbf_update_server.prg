@@ -301,7 +301,6 @@ altd()
          IF transaction $ "FULL#END"
             run_sql_query( "COMMIT" )
          ENDIF
-
          _ret := .T.
 
       ELSE

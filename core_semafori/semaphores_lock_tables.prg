@@ -55,7 +55,7 @@ FUNCTION f18_lock_tables( a_tables, lAlreadyInTransakcija )
    //IF  iif( lAlreadyInTransakcija, .T., run_sql_query( "BEGIN" ) )
 
       FOR _i := 1 TO Len( a_tables )
-         _dbf_rec := get_a_dbf_rec( a_tables[ _i ] )
+         _dbf_rec := get_a_dbf_rec( a_tables[ _i ], .T. )
          _tbl := _dbf_rec[ "table" ]
          IF !_dbf_rec[ "sql" ]
             _ok := _ok .AND. lock_semaphore( _tbl )
@@ -70,12 +70,12 @@ FUNCTION f18_lock_tables( a_tables, lAlreadyInTransakcija )
          //log_write( "uspjesno izvrsen lock tabela " + pp( a_tables ), 7 )
 
 
-         FOR _i := 1 TO Len( a_tables )
-            _dbf_rec := get_a_dbf_rec( a_tables[ _i ] )
+         //FOR _i := 1 TO Len( a_tables )
+          //  _dbf_rec := get_a_dbf_rec( a_tables[ _i ] )
             //IF !_dbf_rec[ "sql" ]
             //   dbf_refresh( _dbf_rec[ "table" ] )  NE U MAIN THREAD!
             //ENDIF
-         NEXT
+         //NEXT
 
       ELSE
          ?E "ERROR: neuspjesan lock tabela " + pp( a_tables )
@@ -122,7 +122,7 @@ FUNCTION f18_free_tables( a_tables )
    NEXT
 
    cMsg := "uspjesno izvrseno oslobadjanje tabela " + pp( a_tables )
-   log_write( cMsg, 7 )
+   //log_write( cMsg, 7 )
 
 #ifdef F18_DEBUG
    ?E cMsg

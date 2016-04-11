@@ -119,7 +119,7 @@ STATIC FUNCTION brisi_fin_nalog_iz_kumulativa( cIdFirma, cIdVn, cBrNal )
    IF !f18_lock_tables( { "fin_suban", "fin_nalog", "fin_sint", "fin_anal" }, .T. )
       run_sql_query( "ROLLBACK" )
       MsgBeep( "Ne mogu zaključati tabele !#Operacija povrata poništena." )
-      RETURN lRet
+      RETURN .F.
    ENDIF
 
    Box(, 5, 70 )
@@ -156,10 +156,10 @@ STATIC FUNCTION brisi_fin_nalog_iz_kumulativa( cIdFirma, cIdVn, cBrNal )
       lRet := .T.
       run_sql_query( "COMMIT" )
       f18_free_tables( { "fin_suban", "fin_nalog", "fin_sint", "fin_anal" } )
-      log_write( "F18_DOK_OPER: povrat finansijskog naloga u pripremu: " + cIdFirma + "-" + cIdVn + "-" + cBrNal, 2 )
+      log_write( "F18_DOK_OPER: POVRAT_FIN: " + cIdFirma + "-" + cIdVn + "-" + cBrNal, 2 )
    ELSE
       run_sql_query( "ROLLBACK" )
-      log_write( "F18_DOK_OPER: greška sa povratom finansijskog naloga u pripremu: " + cIdFirma + "-" + cIdVn + "-" + cBrNal, 2 )
+      log_write( "F18_DOK_OPER: ERROR_POVRAT_FIN: " + cIdFirma + "-" + cIdVn + "-" + cBrNal, 2 )
    ENDIF
 
    RETURN lRet

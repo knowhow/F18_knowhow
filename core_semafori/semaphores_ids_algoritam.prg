@@ -209,6 +209,7 @@ FUNCTION get_ids_from_semaphore( table )
    LOCAL hParams := hb_Hash()
    LOCAL _server := sql_data_conn()
    LOCAL cLogMsg := "", cMsg
+   LOCAL nCnt := 0
 
    IF skip_semaphore_sync( table )
       RETURN .T.
@@ -225,86 +226,90 @@ FUNCTION get_ids_from_semaphore( table )
    hParams[ "retry" ] := 1
 
    // IF !lAllreadyInTransaction
+   DO WHILE nCnt < 10
 
-   run_sql_query( "BEGIN; SET TRANSACTION ISOLATION LEVEL SERIALIZABLE", hParams )
-   // ENDIF
+      nCnt ++
+      run_sql_query( "BEGIN; SET TRANSACTION ISOLATION LEVEL SERIALIZABLE", hParams )
+      // ENDIF
 
 
 #ifdef F18_DEBUG_AZUR
-   // uzmi verziju i stanje iz semafora prije pocetka
-   _versions := get_semaphore_version_h( Lower( table ) )
-   _tmp := "prije SELECT, tabela: " + Lower( table )
-   _tmp += " version: " + AllTrim( Str( _versions[ "version" ] ) )
-   _tmp += " last version: " + AllTrim( Str( _versions[ "last_version" ] ) )
+      // uzmi verziju i stanje iz semafora prije pocetka
+      _versions := get_semaphore_version_h( Lower( table ) )
+      _tmp := "prije SELECT, tabela: " + Lower( table )
+      _tmp += " version: " + AllTrim( Str( _versions[ "version" ] ) )
+      _tmp += " last version: " + AllTrim( Str( _versions[ "last_version" ] ) )
 
-   ?E _tmp
+      ?E _tmp
 
 #endif
 
-   _qry := "SELECT ids FROM " + _tbl + " WHERE user_code=" + sql_quote( _user )
-   _tbl_obj := run_sql_query( _qry )
-   IF sql_error_in_query( _tbl_obj, "SELECT" )
-      error_bar( "sem", "IDS SELECT " + table )
-      LOG_CALL_STACK cLogMsg
-      ?E cLogMsg
-      run_sql_query( "ROLLBACK", hParams )
-   ENDIF
+      _qry := "SELECT ids FROM " + _tbl + " WHERE user_code=" + sql_quote( _user )
+      _tbl_obj := run_sql_query( _qry )
+      IF sql_error_in_query( _tbl_obj, "SELECT" )
+         error_bar( "sem", "IDS SELECT " + table )
+         LOG_CALL_STACK cLogMsg
+         ?E cLogMsg
+         run_sql_query( "ROLLBACK", hParams )
+      ENDIF
 
-   _qry := "UPDATE " + _tbl + " SET  ids=NULL, dat=NULL, version=last_trans_version"
-   _qry += " WHERE user_code =" + sql_quote( _user )
-   _update_obj := run_sql_query( _qry )
-   IF sql_error_in_query( _update_obj, "UPDATE" )
+      _qry := "UPDATE " + _tbl + " SET  ids=NULL, dat=NULL, version=last_trans_version"
+      _qry += " WHERE user_code =" + sql_quote( _user )
+      _update_obj := run_sql_query( _qry )
+      IF sql_error_in_query( _update_obj, "UPDATE" )
 
-      run_sql_query( "ROLLBACK", hParams )
-      LOG_CALL_STACK cLogMsg
-      ?E cLogMsg
+         run_sql_query( "ROLLBACK", hParams )
+         LOG_CALL_STACK cLogMsg
+         ?E cLogMsg
 
-      error_bar( "sem", "IDS UPDATE " + table )
-      RETURN NIL
+         error_bar( "sem", "IDS UPDATE " + table )
+         LOOP
 
 
-   ENDIF
+      ENDIF
 
 #ifdef F18_DEBUG
-   // IF _log_level > 6
+      // IF _log_level > 6
 
-   _versions := get_semaphore_version_h( Lower( table ) ) // uzmi verziju i stanje verzija na kraju transakcije
+      _versions := get_semaphore_version_h( Lower( table ) ) // uzmi verziju i stanje verzija na kraju transakcije
 
-   _tmp := "nakon UPDATE, tabela: " + Lower( table )
-   _tmp += " version: " + AllTrim( Str( _versions[ "version" ] ) )
-   _tmp += " last version: " + AllTrim( Str( _versions[ "last_version" ] ) )
+      _tmp := "nakon UPDATE, tabela: " + Lower( table )
+      _tmp += " version: " + AllTrim( Str( _versions[ "version" ] ) )
+      _tmp += " last version: " + AllTrim( Str( _versions[ "last_version" ] ) )
 
-   // log_write( _tmp, 7 )
-   // ENDIF
+      // log_write( _tmp, 7 )
+      // ENDIF
 #endif
 
-   // IF !lAllreadyInTransaction
-   run_sql_query( "COMMIT", hParams )
-   // ENDIF
+      // IF !lAllreadyInTransaction
+      run_sql_query( "COMMIT", hParams )
+      // ENDIF
 
-   cIds := _tbl_obj:FieldGet( 1 )
+      cIds := _tbl_obj:FieldGet( 1 )
 
-   _arr := {}
-   IF cIds == NIL
-      RETURN _arr
-   ENDIF
-
-   cIds := hb_UTF8ToStr( cIds )
-   // {id1,id2,id3}
-   cIds := SubStr( cIds, 2, Len( cIds ) -2 )
-
-   _num_arr := NumToken( cIds, "," )
-
-   FOR nI := 1 TO _num_arr
-      _tok := Token( cIds, ",", nI )
-      IF Left( _tok, 1 ) == '"' .AND. Right( _tok, 1 ) == '"'
-         // odsjeci duple navodnike "..."
-         _tok := SubStr( _tok, 2, Len( _tok ) -2 )
+      _arr := {}
+      IF cIds == NIL
+         RETURN _arr
       ENDIF
-      AAdd( _arr, _tok )
-   NEXT
 
-   // log_write( "END get_ids_from_semaphore", 7 )
+      cIds := hb_UTF8ToStr( cIds )
+      // {id1,id2,id3}
+      cIds := SubStr( cIds, 2, Len( cIds ) -2 )
+
+      _num_arr := NumToken( cIds, "," )
+
+      FOR nI := 1 TO _num_arr
+         _tok := Token( cIds, ",", nI )
+         IF Left( _tok, 1 ) == '"' .AND. Right( _tok, 1 ) == '"'
+            // odsjeci duple navodnike "..."
+            _tok := SubStr( _tok, 2, Len( _tok ) -2 )
+         ENDIF
+         AAdd( _arr, _tok )
+      NEXT
+
+      // log_write( "END get_ids_from_semaphore", 7 )
+      EXIT
+   ENDDO
 
    RETURN _arr
 

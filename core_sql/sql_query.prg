@@ -218,11 +218,10 @@ FUNCTION is_in_main_thread_sql_transaction()
          RETURN .T.
       ENDIF
 
-
-
    ENDIF
 
    RETURN .T.
+
 
 PROCEDURE print_transactions()
 

@@ -26,7 +26,7 @@ STATIC s_nBug1 := 1
         free
 */
 
-FUNCTION lock_semaphore( table, status, lUnlockTable )
+FUNCTION lock_semaphore( table, lUnlockTable )
 
    LOCAL _qry
    LOCAL _ret
@@ -66,7 +66,7 @@ FUNCTION lock_semaphore( table, status, lUnlockTable )
 
       IF cSemaphoreStatus == "lock"
          _user_locked := get_semaphore_locked_by_me_status_user( table )
-         _err_msg := ToStr( Time() ) + " : table locked : " + table + " user: " + _user_locked + " retry : " + Str( _i, 2 ) + "/" + Str( SEMAPHORE_LOCK_RETRY_NUM, 2 )
+         _err_msg := ToStr( Time() ) + " : table locked : " + table + " user: " + _user_locked + " retry : " + AllTrim( Str( _i ) ) + "/" + Str( SEMAPHORE_LOCK_RETRY_NUM, 2 )
          // log_write( _err_msg, 2 )
          ?E _err_msg
 
@@ -113,6 +113,33 @@ FUNCTION lock_semaphore( table, status, lUnlockTable )
    ENDIF
 
    RETURN .T.
+
+
+
+
+   FUNCTION unlock_semaphore( cTable  )
+
+      LOCAL _qry
+      LOCAL _ret
+      LOCAL _i
+      LOCAL _err_msg
+      LOCAL _user   := f18_user()
+      LOCAL _user_locked
+      LOCAL cSemaphoreStatus
+      LOCAL nLockSeconds
+
+      IF skip_semaphore_sync( cTable )
+         RETURN .T.
+      ENDIF
+
+      _qry := "UPDATE sem." + cTable + " SET algorithm='free', last_trans_user_code=" + sql_quote( _user ) + "; "
+      _ret := run_sql_query( _qry )
+
+      IF sql_error_in_query( _ret, "UPDATE" )
+         RETURN .F.
+      ENDIF
+
+      RETURN .T.
 
 
 FUNCTION get_semaphore_locked_by_me_status_user( table )

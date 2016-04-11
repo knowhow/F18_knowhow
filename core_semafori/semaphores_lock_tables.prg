@@ -58,7 +58,7 @@ FUNCTION f18_lock_tables( a_tables, lAlreadyInTransakcija )
          _dbf_rec := get_a_dbf_rec( a_tables[ _i ] )
          _tbl := _dbf_rec[ "table" ]
          IF !_dbf_rec[ "sql" ]
-            _ok := _ok .AND. lock_semaphore( _tbl, "lock" )
+            _ok := _ok .AND. lock_semaphore( _tbl )
          ENDIF
       NEXT
 
@@ -117,7 +117,7 @@ FUNCTION f18_free_tables( a_tables )
       _dbf_rec := get_a_dbf_rec( a_tables[ _i ], .T. )
       _tbl := _dbf_rec[ "table" ]
       IF !_dbf_rec[ "sql" ]
-         lock_semaphore( _tbl, "free" )
+         unlock_semaphore( _tbl )
       ENDIF
    NEXT
 

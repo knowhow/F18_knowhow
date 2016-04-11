@@ -66,7 +66,7 @@ FUNCTION update_rec_server_and_dbf( table, values, algoritam, transaction, lock 
    ENDIF
 
    IF lock
-      lock_semaphore( table, "lock" )
+      lock_semaphore( table )
    ENDIF
 
    // izbrisi sa servera stare vrijednosti za values
@@ -108,7 +108,7 @@ FUNCTION update_rec_server_and_dbf( table, values, algoritam, transaction, lock 
          error_bar( "sql_table", _msg )
 
          IF lock
-            lock_semaphore( table, "free" )
+            unlock_semaphore( table )
          ENDIF
          RETURN .F.
 
@@ -127,7 +127,7 @@ FUNCTION update_rec_server_and_dbf( table, values, algoritam, transaction, lock 
       Alert( _msg )
 
       IF lock
-         lock_semaphore( table, "free" )
+         unlock_semaphore( table )
       ENDIF
       RETURN .F.
 
@@ -185,7 +185,7 @@ FUNCTION update_rec_server_and_dbf( table, values, algoritam, transaction, lock 
    ENDIF
 
    IF lock
-      lock_semaphore( table, "free" )
+      unlock_semaphore( table )
    ENDIF
 
    log_write( "END update_rec_server_and_dbf " + table, 9 )
@@ -237,7 +237,7 @@ FUNCTION delete_rec_server_and_dbf( table, values, algoritam, transaction, lock 
    ENDIF
 
    IF lock
-      lock_semaphore( table, "lock" )
+      lock_semaphore( table )
    ENDIF
 
    IF sql_table_update( table, "del", nil, _where_str )
@@ -255,7 +255,7 @@ FUNCTION delete_rec_server_and_dbf( table, values, algoritam, transaction, lock 
       IF index_tag_num( _alg[ "dbf_tag" ] ) < 1
          IF !_a_dbf_rec[ "sql" ]
 
-            lock_semaphore( table, "free" )
+            unlock_semaphore( table )
 
             IF transaction == "FULL"
                run_sql_query( "ROLLBACK" )
@@ -332,7 +332,7 @@ FUNCTION delete_rec_server_and_dbf( table, values, algoritam, transaction, lock 
    ENDIF
 
    IF lock
-      lock_semaphore( table, "free" )
+      unlock_semaphore( table )
    ENDIF
    log_write( "delete rec server, zavrsio", 9 )
 
@@ -354,7 +354,7 @@ FUNCTION delete_all_dbf_and_server( table )
    _a_dbf_rec := get_a_dbf_rec( table, .T. )
    reopen_exclusive( _a_dbf_rec[ "table" ] )
 
-   lock_semaphore( _a_dbf_rec[ "table" ], "lock" )
+   lock_semaphore( _a_dbf_rec[ "table" ] )
    run_sql_query( "BEGIN" )
 
    _rec := hb_Hash()
@@ -365,7 +365,7 @@ FUNCTION delete_all_dbf_and_server( table )
 
       push_ids_to_semaphore( _a_dbf_rec[ "table" ], { "#F" } )
       run_sql_query( "COMMIT" )
-      lock_semaphore( _a_dbf_rec[ "table" ], "free" )
+      unlock_semaphore( _a_dbf_rec[ "table" ] )
       my_dbf_zap( _a_dbf_rec[ "table" ] )
 
       RETURN .T.

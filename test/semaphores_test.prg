@@ -176,9 +176,9 @@ FUNCTION test_sem_1_from_sql_server( algoritam )
    LOCAL _i
    LOCAL _tbl := "test_sem_1"
 
-   lock_semaphore( _tbl, "lock" )
+   lock_semaphore( _tbl )
    _result := update_dbf_from_server( _tbl, algoritam )
-   lock_semaphore( _tbl, "free" )
+   unlock_semaphore( _tbl, "free" )
 
    RETURN _result
 

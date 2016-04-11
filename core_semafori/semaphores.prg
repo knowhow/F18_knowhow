@@ -707,7 +707,7 @@ PROCEDURE thread_dbf_refresh( cTable )
       dbf_refresh( cTable )
       close_thread( "dbf_refresh: " + cTable )
    ELSE
-      ?E "init thread dbf_refersh neuspjesan: ", cTable
+      ?E "dbf_refresh !open_thread:", cTable
    ENDIF
 
    RETURN
@@ -730,6 +730,10 @@ FUNCTION we_need_dbf_refresh( cTable )
 
    aDbfRec := get_a_dbf_rec( cTable, .T. )
    cTable := aDbfRec[ "table" ]
+
+   IF is_in_dbf_refresh_queue( cTable )
+      RETURN .F.
+   ENDIF
 
    IF is_last_refresh_before( cTable, MIN_LAST_REFRESH_SEC )
 #ifdef F18_DEBUG_THREAD

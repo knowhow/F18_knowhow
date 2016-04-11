@@ -275,6 +275,9 @@ FUNCTION _sql_get_value( table_name, field_name, cond )
    ENDIF
 
    _table := run_sql_query( _qry )
+   IF  sql_error_in_query( _table )
+      RETURN NIL
+   ENDIF
 
    oRow := _table:GetRow( 1 )
    _val := oRow:FieldGet( 1 )

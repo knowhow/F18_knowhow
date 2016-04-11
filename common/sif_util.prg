@@ -24,6 +24,10 @@ FUNCTION sif_ispisi_naziv( nDbf, dx, dy )
       cTmp := Trim( ( nDbf )->naziv  )
    ENDIF
 
+   IF ( nDbf )->( rddName() ) == "SQLMIX" // sql data utf-8
+      cTmp := _u( cTmp )
+   ENDIF
+
    IF dx <> NIL .AND. dy <> nil
 
       IF ( nDbf )->( FieldPos( "naz" ) ) <> 0
@@ -80,9 +84,9 @@ FUNCTION sif_sifk_fill_kol( cDbf, ImeKol, Kol )
       // postavi PICT za brojeve
       IF _rec[ "tip" ] == "N"
          IF f_decimal > 0
-            ImeKol[Len( ImeKol ), 7 ] := Replicate( "9", _rec[ "duzina" ] - _rec[ "f_decimal" ] -1 ) + "." + Replicate( "9", _rec[ "f_decimal" ] )
+            ImeKol[ Len( ImeKol ), 7 ] := Replicate( "9", _rec[ "duzina" ] - _rec[ "f_decimal" ] -1 ) + "." + Replicate( "9", _rec[ "f_decimal" ] )
          ELSE
-            ImeKol[Len( ImeKol ), 7 ] := Replicate( "9", _rec[ "duzina" ] )
+            ImeKol[ Len( ImeKol ), 7 ] := Replicate( "9", _rec[ "duzina" ] )
          ENDIF
       ENDIF
 

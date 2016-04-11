@@ -26,8 +26,8 @@ FUNCTION fin_nalog_azurirani()
 
    fin_read_params()
 
-   O_NALOG
-   O_SUBAN
+   o_nalog()
+   o_suban()
    O_KONTO
    O_PARTN
    O_TNAL
@@ -160,7 +160,6 @@ FUNCTION fin_gen_psuban_stampa_nalozi( lAuto, dDatNal )
 
    EOF CRET .F.
 
-
    IF lAuto
       _print_opt := "D"
       Box(, 3, 75 )
@@ -275,7 +274,7 @@ FUNCTION fin_nalog_stampa( cInd, lAuto, dDatNal, oNalog )
       M += " ----------- -------- -------- --------------- ---------------"
 
    ENDIF
-   M +=  iif( fin_jednovalutno(), "-", " ---------- ----------" )
+   M += iif( fin_jednovalutno(), "-", " ---------- ----------" )
 
    IF cInd $ "1#2"
       nUkDugBHD := nUkPotBHD := nUkDugDEM := nUkPotDEM := 0
@@ -371,8 +370,8 @@ FUNCTION fin_nalog_stampa( cInd, lAuto, dDatNal, oNalog )
 
          SELECT ( nArr )
 
-         // konto partner
-         aRez := SjeciStr( cStr, 28 )
+
+         aRez := SjeciStr( cStr, 28 ) // konto partner
          cStr := opis
          aOpis := SjeciStr( cStr, 20 )
 

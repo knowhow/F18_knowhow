@@ -14,6 +14,7 @@
 MEMVAR M
 MEMVAR nUkDugBHD, nUkPotBHD, nUkDugDEM, nUkPotDEM
 
+
 FUNCTION DnevnikNaloga()
 
    LOCAL cMjGod := ""
@@ -56,6 +57,7 @@ FUNCTION DnevnikNaloga()
 
    SELECT SUBAN
    SET ORDER TO TAG "4"
+
    SELECT NALOG
    SET ORDER TO TAG "3"
 
@@ -108,10 +110,10 @@ FUNCTION DnevnikNaloga()
       dDatNal  := DATNAL
 
       IF cMjGod != Str( Month( dDatNal ), 2 ) + Str( Year( dDatNal ), 4 )
-         // završi stranu
-         PrenosDNal()
-         // stampaj zaglavlje (nova stranica)
-         fin_nalog_zaglavlje( dDatNal )
+
+         PrenosDNal() // završi stranu
+
+         fin_nalog_zaglavlje( dDatNal ) // stampaj zaglavlje (nova stranica)
       ENDIF
 
       cMjGod := Str( Month( dDatNal ), 2 ) + Str( Year( dDatNal ), 4 )

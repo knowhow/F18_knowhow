@@ -11,7 +11,10 @@
 
 #include "f18.ch"
 
+MEMVAR ImeKol, Kol
 MEMVAR wIdrefer, wId, wIdops
+FIELD ziror, id, naz, dziror
+
 
 FUNCTION cre_sif_partn( ver )
 
@@ -77,6 +80,7 @@ FUNCTION cre_sif_partn( ver )
    funkcija vraća .T. kada šifra postoji
 
 */
+
 FUNCTION p_partneri( cId, dx, dy, lEmptyIdOk )
 
    LOCAL cN2Fin
@@ -106,7 +110,7 @@ FUNCTION p_partneri( cId, dx, dy, lEmptyIdOk )
    AAdd( ImeKol, { PadR( "Mjesto", 16 ),  {|| MJESTO },  "mjesto"   } )
    AAdd( ImeKol, { PadR( "Adresa", 24 ),  {|| ADRESA },  "adresa"   } )
 
-   AAdd( ImeKol, { PadR( "Ziro R ", 22 ), {|| ZIROR },   "ziror", {|| .T. }, {|| .T. }  } )
+   AAdd( ImeKol, { _u( "Žiro Račun"), {|| ZIROR },   "ziror", {|| .T. }, {|| .T. }  } )
 
    Kol := {}
 

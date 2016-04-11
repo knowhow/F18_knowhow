@@ -14,637 +14,649 @@
 
 
 
-static function _o_virm_edit()
-O_SIFK
-O_SIFV
-O_JPRIH
-O_BANKE
-O_VRPRIM
-O_PARTN
-O_VIRM_PRIPR
-return
+STATIC FUNCTION _o_virm_edit()
+
+   O_SIFK
+   O_SIFV
+   O_JPRIH
+   O_BANKE
+   O_VRPRIM
+   O_PARTN
+   O_VIRM_PRIPR
+
+   RETURN
 
 
 
-function unos_virmana()
+FUNCTION unos_virmana()
 
-_o_virm_edit()
+   _o_virm_edit()
 
-ImeKol:={}
-Kol:={}
+   ImeKol := {}
+   Kol := {}
 
-AADD(ImeKol, { "R.br.", {|| _st_+str(rbr,3)} } )
-AADD(ImeKol, { "Posaljioc", {|| ko_zr},   "ko_zr" } )
-AADD(ImeKol, { "Primalac"   , {|| kome_zr}, "kome_zr" } )
-AADD(ImeKol, { "Primalac/Primatelj", {|| left(kome_txt,30) } } )
-AADD(ImeKol, { "Iznos"   , {|| Iznos}, "Iznos" } )
-AADD(ImeKol, { "Dat.Upl" , {|| dat_upl}, "dat_upl" } )
-AADD(ImeKol, { "POd"   , {|| POd}, "POd" } )
-AADD(ImeKol, { "PDo"   , {|| PDo}, "PDo" } )
-AADD(ImeKol, { "PNABR" , {|| PNABR}, "PNABR" } )
-AADD(ImeKol, { "Hitno" , {|| Hitno}, "Hitno" } )
-AADD(ImeKol, { "IdJPrih" , {|| IdJprih}, "IdJPrih" } )
-AADD(ImeKol, { "VUPl" , {|| VUPl}, "VUPl" } )
-AADD(ImeKol, { "IdOps" , {|| IdOps}, "IdOps" } )
-AADD(ImeKol, { PADR( "Pos.opis", 30 ) , {|| ko_txt }, "ko_txt" } )
-AADD(ImeKol, { PADR( "Prim.opis", 30 ) , {|| kome_txt }, "kome_txt" } )
+   AAdd( ImeKol, { "R.br.", {|| _st_ + Str( rbr, 3 ) } } )
+   AAdd( ImeKol, { _u( "Pošaljioc" ), {|| ko_zr },   "ko_zr" } )
+   AAdd( ImeKol, { "Primalac", {|| kome_zr }, "kome_zr" } )
+   AAdd( ImeKol, { "Primalac", {|| Left( kome_txt, 30 ) } } )
+   AAdd( ImeKol, { "Iznos", {|| Iznos }, "Iznos" } )
+   AAdd( ImeKol, { "Dat.Upl", {|| dat_upl }, "dat_upl" } )
+   AAdd( ImeKol, { "POd", {|| POd }, "POd" } )
+   AAdd( ImeKol, { "PDo", {|| PDo }, "PDo" } )
+   AAdd( ImeKol, { "PNABR", {|| PNABR }, "PNABR" } )
+   AAdd( ImeKol, { "Hitno", {|| Hitno }, "Hitno" } )
+   AAdd( ImeKol, { "IdJPrih", {|| IdJprih }, "IdJPrih" } )
+   AAdd( ImeKol, { "VUPl", {|| VUPl }, "VUPl" } )
+   AAdd( ImeKol, { "IdOps", {|| IdOps }, "IdOps" } )
+   AAdd( ImeKol, { PadR( "Pos.opis", 30 ), {|| ko_txt }, "ko_txt" } )
+   AAdd( ImeKol, { PadR( "Prim.opis", 30 ), {|| kome_txt }, "kome_txt" } )
 
-FOR i := 1 TO LEN( ImeKol )
-    AADD( Kol, i )
-NEXT
+   FOR i := 1 TO Len( ImeKol )
+      AAdd( Kol, i )
+   NEXT
 
-@ 12,0 SAY ""
+   @ 12, 0 SAY ""
 
-my_db_edit( "PripVir", MAXROWS()-8, MAXCOLS()-3, {|| _k_handler()},"","Priprema virmana",;
-          .f.,{"<c-N>   Nova uplatnica", "<c-T>   Brisi ",;
-               "<Enter> Ispravi uplatnicu", "<c-F9>  Brisi sve",;
-               "<c-P>   Stampanje",;
-               "<a-P>   Rekapitulacija"},2,,,)
+   my_db_edit( "PripVir", MAXROWS() - 10, MAXCOLS() - 12, {|| _k_handler() }, "", "Priprema virmana", ;
+      .F., { "<c-N>   Nova uplatnica", "<c-T>   Brisi ", ;
+      "<Enter> Ispravi uplatnicu", "<c-F9>  Brisi sve", ;
+      "<c-P>   Stampanje", ;
+      "<a-P>   Rekapitulacija" }, 2,,, )
 
-my_close_all_dbf()
-return
+   my_close_all_dbf()
 
-
-static function _k_handler()
-local nRec := RECNO()
-
-if (Ch==K_CTRL_T .or. Ch==K_ENTER) .and. reccount2()==0
-    return DE_CONT
-endif
-
-select virm_pripr
-
-do case
-
-    case Ch == K_ALT_P
-        // rekapitulacija uplata
-        _rekapitulacija_uplata()
-        go (nRec)
-        return DE_CONT
-
-    case Ch == K_ALT_M
-        cDN:=" "
-        Box(,2,70)
-            @ m_x+1,m_y+2 SAY "Zelite sve stavke oznaciti odstampane/neodstampane ( /*) ?" ;
-             get  cDN valid cdn $ " *" pict "@!"
-            read
-        BoxC()
-        select virm_pripr
-        go top
-        do while !eof()
-            replace _ST_ with cDN
-            skip
-        enddo
-        go top
-        return DE_REFRESH
-
-    case CHR(Ch) $ "eE"
-
-        virm_export_banke()
-
-        return DE_CONT
-
-    case Ch == ASC(" ")
-        // ako je _ST_ = " " onda stavku treba odstampati
-        //        _ST_ = "*" onda stavku ne treba stampati
-		my_rlock()
-        if field->_ST_ =  "*"
-            replace _st_ with  " "
-        else
-            replace _st_ with "*"
-        endif
-		my_unlock()
-        return DE_REFRESH
-
-    case Ch == K_CTRL_T
-        return browse_brisi_stavku()
-
-    case Ch == K_CTRL_P
-        stampa_virmana_drb()
-        return DE_REFRESH
-
-    case Ch == K_CTRL_A
-        PushWA()
-        select virm_pripr
-        //go top
-        Box("c_A",20,75,.f.,"Ispravka stavki")
-        nDug:=0; nPot:=0
-        do while !eof()
-           skip; nTR2:=RECNO(); skip-1
-           Scatter()
-           @ m_x+1,m_y+1 CLEAR to m_x+19,m_y+74
-           if _virm_edit_pripr(.f.)==0
-             exit
-           else
-             //BrisiPBaze()
-           endif
-           select virm_pripr
-           my_rlock()
-           Gather()
-           my_unlock()
-           go nTR2
-         enddo
-         PopWA()
-         BoxC()
-         return DE_REFRESH
-
-     case Ch == K_CTRL_N
-
-        // nove stavke
-
-        nDug := 0
-        nPot := 0
-        nPrvi := 0
-
-        go bottom
-
-        Box( "c-N", MAXROWS() - 11, MAXCOLS() - 5, .f., "Unos novih stavki" )
-
-        do while .t.
-
-            Scatter()
-            _rbr := _rbr + 1
-            @ m_x + 1, m_y + 1 CLEAR TO m_x + ( MAXROWS() - 12 ), m_y + ( MAXCOLS() - 5 )
-            if _virm_edit_pripr(.t.)==0
-                exit
-            endif
-            inkey(10)
-            select virm_pripr
-            APPEND BLANK
-            my_rlock()
-            Gather()
-            my_unlock()
-        enddo
-
-        BoxC()
-        return DE_REFRESH
-
-    case Ch == K_ENTER
-
-        Box( "ent", MAXROWS() - 11, MAXCOLS() - 5, .f. )
-        Scatter()
-        if _virm_edit_pripr(.f.)==0
-            BoxC()
-            return DE_CONT
-        else
-            my_rlock()
-            Gather()
-            my_unlock()
-            BoxC()
-            return DE_REFRESH
-        endif
-
-    case Ch = K_CTRL_F9
-        return browse_brisi_pripremu()
-
-endcase
-
-return DE_CONT
+   RETURN
 
 
+STATIC FUNCTION _k_handler()
 
-static function _virm_edit_pripr( fNovi )
-local _firma := PADR( fetch_metric("virm_org_id", nil, "" ), 6 )
+   LOCAL nRec := RecNo()
 
-set cursor on
+   IF ( Ch == K_CTRL_T .OR. Ch == K_ENTER ) .AND. reccount2() == 0
+      RETURN DE_CONT
+   ENDIF
 
-@ m_x + 1, m_y + 2 SAY "Svrha placanja :" GET _svrha_pl pict "@!" valid P_Vrprim(@_svrha_pl)
+   SELECT virm_pripr
 
-read
+   DO CASE
 
-ESC_RETURN 0
+   CASE Ch == K_ALT_P
+      // rekapitulacija uplata
+      _rekapitulacija_uplata()
+      GO ( nRec )
+      RETURN DE_CONT
 
-if fNovi
-    IF EMPTY(gDatum)
-      IF gIDU=="D"
-        _dat_upl:=date()  // gdatum
+   CASE Ch == K_ALT_M
+      cDN := " "
+      Box(, 2, 70 )
+      @ m_x + 1, m_y + 2 SAY "Zelite sve stavke oznaciti odstampane/neodstampane ( /*) ?" ;
+         GET  cDN VALID cdn $ " *" PICT "@!"
+      READ
+      BoxC()
+      SELECT virm_pripr
+      GO TOP
+      DO WHILE !Eof()
+         REPLACE _ST_ WITH cDN
+         SKIP
+      ENDDO
+      GO TOP
+      RETURN DE_REFRESH
+
+   CASE Chr( Ch ) $ "eE"
+
+      virm_export_banke()
+
+      RETURN DE_CONT
+
+   CASE Ch == Asc( " " )
+      // ako je _ST_ = " " onda stavku treba odstampati
+      // _ST_ = "*" onda stavku ne treba stampati
+      my_rlock()
+      IF field->_ST_ =  "*"
+         REPLACE _st_ WITH  " "
       ELSE
-        _dat_upl:=gdatum
+         REPLACE _st_ WITH "*"
       ENDIF
-    ELSE
-      _dat_upl:=gdatum
-    ENDIF
-   _mjesto := gmjesto
-   _svrha_doz := PADR(vrprim->pom_txt,LEN(_svrha_doz))
-endif
+      my_unlock()
+      RETURN DE_REFRESH
 
-@ m_x+2, m_y + col() + 2 SAY "R.br:" GET _Rbr pict "999"
+   CASE Ch == K_CTRL_T
+      RETURN browse_brisi_stavku()
 
-_IdBanka := LEFT( _ko_zr, 3 )
-@ m_x+3,m_y+2 SAY "Posiljaoc (sifra banke):       " GET _IdBanka valid OdBanku( _firma, @_IdBanka )
-read
-ESC_RETURN 0
-_ko_zr := _IdBanka
+   CASE Ch == K_CTRL_P
+      stampa_virmana_drb()
+      RETURN DE_REFRESH
 
-_IdBanka2 := left(_kome_zr,3)
+   CASE Ch == K_CTRL_A
+      PushWA()
+      SELECT virm_pripr
+      // go top
+      Box( "c_A", 20, 75, .F., "Ispravka stavki" )
+      nDug := 0; nPot := 0
+      DO WHILE !Eof()
+         skip; nTR2 := RecNo(); SKIP - 1
+         Scatter()
+         @ m_x + 1, m_y + 1 CLEAR TO m_x + 19, m_y + 74
+         IF _virm_edit_pripr( .F. ) == 0
+            EXIT
+         ELSE
+            // BrisiPBaze()
+         ENDIF
+         SELECT virm_pripr
+         my_rlock()
+         Gather()
+         my_unlock()
+         GO nTR2
+      ENDDO
+      PopWA()
+      BoxC()
+      RETURN DE_REFRESH
 
-select partn
-seek _firma
+   CASE Ch == K_CTRL_N
 
-select virm_pripr
-_ko_txt := trim(partn->naz) + ", " + trim(partn->mjesto)+", "+trim(partn->adresa) + ", " + trim(partn->telefon)
+      // nove stavke
 
-if vrprim->IdPartner == padr("JP", len(vrprim->idpartner))
-   _bpo := gOrgJed // ova varijabla je iskoristena za broj poreskog obv.
-else
-  if vrprim->dobav=="D"
-   // ako su javni prihodi ovo se zna !
-   @ m_x+5,m_y+2 SAY "Primaoc (partner/banka):" GET _u_korist valid P_Firma(@_u_korist)  pict "@!"
-   @ m_x+5,col()+2 GET _IdBanka2 valid {|| OdBanku(_u_korist,@_IdBanka2), SetPrimaoc()}
-  else
-     _kome_txt := vrprim->naz
-     _kome_zr := vrprim->racun
-     @ m_x+5,m_y+2 SAY "Primaoc (partner/banka):" + trim(_kome_txt)
-  endif
+      nDug := 0
+      nPot := 0
+      nPrvi := 0
 
-endif
+      GO BOTTOM
 
+      Box( "c-N", MAXROWS() - 11, MAXCOLS() - 5, .F., "Unos novih stavki" )
 
-// na osnovu _IdBanka , _IdBanka2 odrediti racune !!
+      DO WHILE .T.
 
-@ m_x+8,m_y+2 SAY "Svrha doznake:" GET _svrha_doz  pict "@S30"
+         Scatter()
+         _rbr := _rbr + 1
+         @ m_x + 1, m_y + 1 CLEAR TO m_x + ( MAXROWS() - 12 ), m_y + ( MAXCOLS() - 5 )
+         IF _virm_edit_pripr( .T. ) == 0
+            EXIT
+         ENDIF
+         Inkey( 10 )
+         SELECT virm_pripr
+         APPEND BLANK
+         my_rlock()
+         Gather()
+         my_unlock()
+      ENDDO
 
-@ m_x+10,m_y+2 SAY "Mjesto" GET _mjesto  pict "@S20"
-@ m_x+10,col()+2 SAY "Datum uplate :" GET _dat_upl
+      BoxC()
+      RETURN DE_REFRESH
 
+   CASE Ch == K_ENTER
 
-@ m_x+8,m_y+50 SAY "Iznos" GET _iznos pict "99999999.99"
-@ m_x+8,m_y+col()+1 SAY "Hitno" GET _hitno pict "@!" valid _hitno $ " X"
+      Box( "ent", MAXROWS() - 11, MAXCOLS() - 5, .F. )
+      Scatter()
+      IF _virm_edit_pripr( .F. ) == 0
+         BoxC()
+         RETURN DE_CONT
+      ELSE
+         my_rlock()
+         Gather()
+         my_unlock()
+         BoxC()
+         RETURN DE_REFRESH
+      ENDIF
 
-read
+   CASE Ch = K_CTRL_F9
+      RETURN browse_brisi_pripremu()
 
-ESC_RETURN 0
+   ENDCASE
 
- _IznosSTR :=""
- _IznosSTR:="="+IF( _iznos==0.and.gINulu=="N" , SPACE(6) , ALLTRIM(STRTRAN(STR(_iznos),".",",")) )
-
-
-if vrprim->Idpartner = "JP"
-
-    // javni prihod
-
-    _vupl := "0"
-
-    // setovanje varijabli: _kome_zr , _kome_txt, _budzorg
-    // pretpostavke: kursor VRPRIM-> podesen na tekuce primanje
-    SetJPVar()
-
-    _kome_txt := vrprim->naz
-
-    @ m_x + 5, m_y + 2 SAY "Primaoc (partner/banka):" + trim(_kome_txt)
-
-    if fnovi
-
-        if len(_IdJPrih) < 6
-            MsgBeep("Sifra prihoda mora biti 6 cifara ?")
-            _IdJPrih := PADR( _IdJPrih , 6)
-        endif
-    endif
-
-    @ m_x + 13, m_y + 20 SAY replicate("-",56)
-
-    @ m_x + 14, m_y + 20 SAY "Broj por.obveznika" GET _bpo
-    @ m_x + 14, col() + 2 SAY "V.uplate " GET _VUpl
-
-    @ m_x + 15, m_y + 20 SAY "Vrsta prihoda     " GET _IdJPrih
-    @ m_x + 17, m_y + 20 SAY "      Opcina      " GET _IdOps
-    @ m_x + 15, m_y + 60 SAY "Od:" GET _POd
-    @ m_x + 16, m_y + 60 SAY "Do:" GET _PDo
-    @ m_x + 17, m_y + 55 SAY "Budz.org" GET _BudzOrg
-    @ m_x + 18, m_y + 20 SAY "Poziv na broj:    " GET _PNaBr
-
-  read
-
-  ESC_RETURN 0
-
-else
-
-  @ m_x+13 ,  m_y+20 SAY replicate("",56)
-
-  _BPO := space(len(_BPO))
-  _IdOps := space(len(_IdOps))
-  _IdJPrih:=space(len(_IdJPrih))
-  _BudzOrg := SPACE(LEN(_BudzOrg))
-  _PNabr:= space(len(_PNaBr ))
-  _IdOps:= space(len(_IdOps ))
-  _POd := ctod("")
-  _PDo := ctod("")
-  _VUPL=""
-
-endif
-
-return 1
+   RETURN DE_CONT
 
 
 
-function SetPrimaoc()
+STATIC FUNCTION _virm_edit_pripr( fNovi )
 
-_kome_zr := _idbanka2
+   LOCAL _firma := PadR( fetch_metric( "virm_org_id", nil, "" ), 6 )
 
-select partn
-seek _u_korist
+   SET CURSOR ON
 
-//--- Uslov za ispis adrese u polju primaoca (MUP ZE-DO)
-if my_get_from_ini("Primaoc","UnosAdrese","N",KUMPATH)=="D"
-    _kome_txt := ALLTRIM( naz ) + ", " + ALLTRIM( mjesto ) + ", " + ALLTRIM( adresa )
-else
-    _kome_txt := ALLTRIM( naz ) + ", " + ALLTRIM( mjesto )
-endif
+   @ m_x + 1, m_y + 2 SAY "Svrha placanja :" GET _svrha_pl PICT "@!" VALID P_Vrprim( @_svrha_pl )
 
-select virm_pripr
+   READ
 
-return .t.
+   ESC_RETURN 0
 
-
-
-function UplDob()
-*{
- LOCAL lVrati:=.f.
- SELECT VRPRIM
- GO TOP
- HSEEK _svrha_pl
- IF dobav=="D"; lVrati:=.t.; ENDIF
- SELECT virm_pripr
-RETURN lVrati
-*}
-
-
-
-function IniProm()        // autom.popunjavanje nekih podataka
-*{
- SELECT VRPRIM
- IF dobav=="D"
-   IF EMPTY(_nacpl) .and. EMPTY(_iznos) .and. EMPTY(_svrha_doz)
-     _svrha_doz:=PADR(pom_txt,LEN(_svrha_doz))
-     _nacpl:=nacin_pl
+   IF fNovi
+      IF Empty( gDatum )
+         IF gIDU == "D"
+            _dat_upl := Date()  // gdatum
+         ELSE
+            _dat_upl := gdatum
+         ENDIF
+      ELSE
+         _dat_upl := gdatum
+      ENDIF
+      _mjesto := gmjesto
+      _svrha_doz := PadR( vrprim->pom_txt, Len( _svrha_doz ) )
    ENDIF
-   SELECT PARTN
-   HSEEK _u_korist
 
-   _kome_txt:= trim(naz) + mjesto
-   //_kome_zr := ODBanku(_u_korist,_kome_zr)
+   @ m_x + 2, m_y + Col() + 2 SAY "R.br:" GET _Rbr PICT "999"
 
- ELSE
-   _u_korist:=SPACE(LEN(_u_korist))
-   IF EMPTY(_nacpl).and.EMPTY(_iznos).and.EMPTY(_svrha_doz)
+   _IdBanka := Left( _ko_zr, 3 )
+   @ m_x + 3, m_y + 2 SAY "Posiljaoc (sifra banke):       " GET _IdBanka VALID OdBanku( _firma, @_IdBanka )
+   READ
+   ESC_RETURN 0
+   _ko_zr := _IdBanka
 
-     _svrha_doz:=PADR(pom_txt,LEN(_svrha_doz))
-     _kome_txt:=naz
-     //_nacpl:=nacin_pl
-     //_kome_sj:=SPACE(LEN(_kome_sj))
+   _IdBanka2 := Left( _kome_zr, 3 )
 
-   ENDIF
- ENDIF
- SELECT virm_pripr
-RETURN .t.
-*}
+   SELECT partn
+   SEEK _firma
 
+   SELECT virm_pripr
+   _ko_txt := Trim( partn->naz ) + ", " + Trim( partn->mjesto ) + ", " + Trim( partn->adresa ) + ", " + Trim( partn->telefon )
 
-function ValPl()
-*{
- LOCAL lVrati:=.f.
-
- IF _nacpl$"12"
-   lVrati:=.t.
-   IF EMPTY(_u_korist)
-     _kome_zr:=VRPRIM->racun
+   IF vrprim->IdPartner == PadR( "JP", Len( vrprim->idpartner ) )
+      _bpo := gOrgJed // ova varijabla je iskoristena za broj poreskog obv.
    ELSE
-     _kome_zr:=IF(_nacpl=="1",PARTN->ziror,PARTN->dziror)
-   ENDIF
- ENDIF
+      IF vrprim->dobav == "D"
+         // ako su javni prihodi ovo se zna !
+         @ m_x + 5, m_y + 2 SAY "Primaoc (partner/banka):" GET _u_korist VALID P_Firma( @_u_korist )  PICT "@!"
+         @ m_x + 5, Col() + 2 GET _IdBanka2 valid {|| OdBanku( _u_korist, @_IdBanka2 ), SetPrimaoc() }
+      ELSE
+         _kome_txt := vrprim->naz
+         _kome_zr := vrprim->racun
+         @ m_x + 5, m_y + 2 SAY "Primaoc (partner/banka):" + Trim( _kome_txt )
+      ENDIF
 
-RETURN lVrati
+   ENDIF
+
+
+   // na osnovu _IdBanka , _IdBanka2 odrediti racune !!
+
+   @ m_x + 8, m_y + 2 SAY "Svrha doznake:" GET _svrha_doz  PICT "@S30"
+
+   @ m_x + 10, m_y + 2 SAY "Mjesto" GET _mjesto  PICT "@S20"
+   @ m_x + 10, Col() + 2 SAY "Datum uplate :" GET _dat_upl
+
+
+   @ m_x + 8, m_y + 50 SAY "Iznos" GET _iznos PICT "99999999.99"
+   @ m_x + 8, m_y + Col() + 1 SAY "Hitno" GET _hitno PICT "@!" VALID _hitno $ " X"
+
+   READ
+
+   ESC_RETURN 0
+
+   _IznosSTR := ""
+   _IznosSTR := "=" + IF( _iznos == 0 .AND. gINulu == "N", Space( 6 ), AllTrim( StrTran( Str( _iznos ), ".", "," ) ) )
+
+
+   IF vrprim->Idpartner = "JP"
+
+      // javni prihod
+
+      _vupl := "0"
+
+      // setovanje varijabli: _kome_zr , _kome_txt, _budzorg
+      // pretpostavke: kursor VRPRIM-> podesen na tekuce primanje
+      SetJPVar()
+
+      _kome_txt := vrprim->naz
+
+      @ m_x + 5, m_y + 2 SAY "Primaoc (partner/banka):" + Trim( _kome_txt )
+
+      IF fnovi
+
+         IF Len( _IdJPrih ) < 6
+            MsgBeep( "Sifra prihoda mora biti 6 cifara ?" )
+            _IdJPrih := PadR( _IdJPrih, 6 )
+         ENDIF
+      ENDIF
+
+      @ m_x + 13, m_y + 20 SAY Replicate( "-", 56 )
+
+      @ m_x + 14, m_y + 20 SAY "Broj por.obveznika" GET _bpo
+      @ m_x + 14, Col() + 2 SAY "V.uplate " GET _VUpl
+
+      @ m_x + 15, m_y + 20 SAY "Vrsta prihoda     " GET _IdJPrih
+      @ m_x + 17, m_y + 20 SAY "      Opcina      " GET _IdOps
+      @ m_x + 15, m_y + 60 SAY "Od:" GET _POd
+      @ m_x + 16, m_y + 60 SAY "Do:" GET _PDo
+      @ m_x + 17, m_y + 55 SAY "Budz.org" GET _BudzOrg
+      @ m_x + 18, m_y + 20 SAY "Poziv na broj:    " GET _PNaBr
+
+      READ
+
+      ESC_RETURN 0
+
+   ELSE
+
+      @ m_x + 13,  m_y + 20 SAY Replicate( "", 56 )
+
+      _BPO := Space( Len( _BPO ) )
+      _IdOps := Space( Len( _IdOps ) )
+      _IdJPrih := Space( Len( _IdJPrih ) )
+      _BudzOrg := Space( Len( _BudzOrg ) )
+      _PNabr := Space( Len( _PNaBr ) )
+      _IdOps := Space( Len( _IdOps ) )
+      _POd := CToD( "" )
+      _PDo := CToD( "" )
+      _VUPL = ""
+
+   ENDIF
+
+   RETURN 1
+
+
+
+FUNCTION SetPrimaoc()
+
+   _kome_zr := _idbanka2
+
+   SELECT partn
+   SEEK _u_korist
+
+   // --- Uslov za ispis adrese u polju primaoca (MUP ZE-DO)
+   IF my_get_from_ini( "Primaoc", "UnosAdrese", "N", KUMPATH ) == "D"
+      _kome_txt := AllTrim( naz ) + ", " + AllTrim( mjesto ) + ", " + AllTrim( adresa )
+   ELSE
+      _kome_txt := AllTrim( naz ) + ", " + AllTrim( mjesto )
+   ENDIF
+
+   SELECT virm_pripr
+
+   RETURN .T.
+
+
+
+FUNCTION UplDob()
+
+   // {
+   LOCAL lVrati := .F.
+   SELECT VRPRIM
+   GO TOP
+   HSEEK _svrha_pl
+   IF dobav == "D"; lVrati := .T. ; ENDIF
+   SELECT virm_pripr
+
+   RETURN lVrati
+// }
+
+
+
+FUNCTION IniProm()        // autom.popunjavanje nekih podataka
+
+   // {
+   SELECT VRPRIM
+   IF dobav == "D"
+      IF Empty( _nacpl ) .AND. Empty( _iznos ) .AND. Empty( _svrha_doz )
+         _svrha_doz := PadR( pom_txt, Len( _svrha_doz ) )
+         _nacpl := nacin_pl
+      ENDIF
+      SELECT PARTN
+      HSEEK _u_korist
+
+      _kome_txt := Trim( naz ) + mjesto
+      // _kome_zr := ODBanku(_u_korist,_kome_zr)
+
+   ELSE
+      _u_korist := Space( Len( _u_korist ) )
+      IF Empty( _nacpl ) .AND. Empty( _iznos ) .AND. Empty( _svrha_doz )
+
+         _svrha_doz := PadR( pom_txt, Len( _svrha_doz ) )
+         _kome_txt := naz
+         // _nacpl:=nacin_pl
+         // _kome_sj:=SPACE(LEN(_kome_sj))
+
+      ENDIF
+   ENDIF
+   SELECT virm_pripr
+
+   RETURN .T.
+// }
+
+
+FUNCTION ValPl()
+
+   // {
+   LOCAL lVrati := .F.
+
+   IF _nacpl $ "12"
+      lVrati := .T.
+      IF Empty( _u_korist )
+         _kome_zr := VRPRIM->racun
+      ELSE
+         _kome_zr := IF( _nacpl == "1", PARTN->ziror, PARTN->dziror )
+      ENDIF
+   ENDIF
+
+   RETURN lVrati
 
 
 
 // ------------------------------------------
 // stampa virmana delphirb
 // ------------------------------------------
-function stampa_virmana_drb()
-local _br_virmana := 999
-local _marker := "N"
-local _i
-local _konverzija := fetch_metric( "virm_konverzija_delphirb", nil, "5" )
+FUNCTION stampa_virmana_drb()
+
+   LOCAL _br_virmana := 999
+   LOCAL _marker := "N"
+   LOCAL _i
+   LOCAL _konverzija := fetch_metric( "virm_konverzija_delphirb", nil, "5" )
+
+   BEGIN SEQUENCE
+      O_IZLAZ
+      my_dbf_zap()
+
+   RECOVER
+      MsgBeep( "Vec je aktiviran delphirb ?" )
+      RETURN
+   END SEQUENCE
 
 
-BEGIN SEQUENCE
-    O_IZLAZ
-    my_dbf_zap()
+   Box(, 2, 70 )
+   @ m_x + 1, m_y + 2 SAY "Broj virmana od sljedece pozicije:" GET _br_virmana PICT "999"
+   @ m_x + 2, m_y + 2 SAY "Uzeti u obzir markere            :" GET _marker PICT "@!" VALID _marker $ "DN"
+   READ
+   BoxC()
 
-RECOVER
-    MsgBeep("Vec je aktiviran delphirb ?")
-    return
-END SEQUENCE
+   _i := 1
 
+   SELECT virm_pripr
+   SET ORDER TO TAG "1"
 
-Box(,2,70)
-    @ m_x+1,m_y+2 SAY "Broj virmana od sljedece pozicije:" GET _br_virmana pict "999"
-    @ m_x+2,m_y+2 SAY "Uzeti u obzir markere            :" GET _marker pict "@!" valid _marker $ "DN"
-    read
-BoxC()
+   IF _marker = "D"
+      GO TOP
+   ENDIF
 
-_i := 1
+   my_flock()
 
-select virm_pripr
-set order to tag "1"
+   DO WHILE !Eof()
 
-if _marker = "D"
-    go top
-endif
+      Scatter()
 
-my_flock()
+      IF _marker = "D" .AND. _st_ = "*"
+         SKIP
+         LOOP
+      ELSE
+         REPLACE _st_ WITH "*"
+      ENDIF
 
-do while !eof()
+      SELECT izlaz
+      APPEND BLANK
 
-    Scatter()
+      KonvZnWin( @_ko_txt, _konverzija )
+      KonvZnWin( @_kome_txt, _konverzija )
+      KonvZnWin( @_svrha_doz, _konverzija )
+      KonvZnWin( @_mjesto, _konverzija )
 
-    if _marker = "D" .and. _st_ = "*"
-        skip
-        loop
-    else
-        replace _st_ with "*"
-    endif
+      _ko_zr    = Razrijedi( _ko_zr )       // z.racun posiljaoca
+      _kome_zr  = Razrijedi( _kome_zr )     // z.racun primaoca
+      _bpo      = Razrijedi( _bpo )         // broj poreznog obveznika
+      _idjprih  = Razrijedi( _idjprih )     // javni prihod
+      _idops    = Razrijedi( _idops )       // opstina
+      _pnabr    = Razrijedi( _pnabr )       // poziv na broj
+      _budzorg  = Razrijedi( _budzorg )     // budzetska organizacija
+      _pod      = Razrijedi( DToC( _pod ) )         // porezni period od
+      _pdo      = Razrijedi( DToC( _pdo ) )         // porezni period do
+      _dat_upl  = Razrijedi( DToC( _dat_upl ) )     // datum uplate
 
-    select izlaz
-    append blank
+      Gather()
 
-    KonvZnWin( @_ko_txt, _konverzija )
-    KonvZnWin( @_kome_txt, _konverzija )
-    KonvZnWin( @_svrha_doz, _konverzija )
-    KonvZnWin( @_mjesto, _konverzija )
+      SELECT virm_pripr
+      SKIP
 
-    _ko_zr    = Razrijedi(_ko_zr)       // z.racun posiljaoca
-    _kome_zr  = Razrijedi(_kome_zr)     // z.racun primaoca
-    _bpo      = Razrijedi(_bpo)         // broj poreznog obveznika
-    _idjprih  = Razrijedi(_idjprih)     // javni prihod
-    _idops    = Razrijedi(_idops)       // opstina
-    _pnabr    = Razrijedi(_pnabr)       // poziv na broj
-    _budzorg  = Razrijedi(_budzorg)     // budzetska organizacija
-    _pod      = Razrijedi(DTOC(_pod))         // porezni period od
-    _pdo      = Razrijedi(DTOC(_pdo))         // porezni period do
-    _dat_upl  = Razrijedi(DTOC(_dat_upl))     // datum uplate
+      IF _i >= _br_virmana
+         EXIT
+      ENDIF
+      _i ++
 
-    Gather()
+   ENDDO
 
-    select virm_pripr
-    skip
+   IF Eof()
+      SKIP -1
+   ENDIF
 
-    if _i >= _br_virmana
-        exit
-    endif
-    _i ++
+   my_unlock()
 
-enddo
+   // pokreni stampu delphi rb-a
+   _stampaj_virman()
 
-if eof()
-    skip -1
-endif
-
-my_unlock()
-
-// pokreni stampu delphi rb-a
-_stampaj_virman()
-
-return
+   RETURN .T.
 
 
 // ----------------------------------------------------
 // stampaj virman
 // ----------------------------------------------------
-static function _stampaj_virman()
-local _t_rec
-local _rtm_file := "nalplac"
+STATIC FUNCTION _stampaj_virman()
 
-select virm_pripr
-_t_rec := RECNO()
+   LOCAL _t_rec
+   LOCAL _rtm_file := "nalplac"
 
-use
+   SELECT virm_pripr
+   _t_rec := RecNo()
 
-select izlaz
-use
+   USE
 
-my_close_all_dbf()
+   SELECT izlaz
+   USE
 
-// ovdje treba kod za filovanje datoteke IZLAZ.DBF
-if LastKey() != K_ESC
-    f18_rtm_print( _rtm_file, "izlaz", "1" )
-endif
+   my_close_all_dbf()
 
-_o_virm_edit()
-select virm_pripr
-go ( _t_rec )
+   // ovdje treba kod za filovanje datoteke IZLAZ.DBF
+   IF LastKey() != K_ESC
+      f18_rtm_print( _rtm_file, "izlaz", "1" )
+   ENDIF
 
-return
+   _o_virm_edit()
+   SELECT virm_pripr
+   GO ( _t_rec )
+
+   RETURN
 
 
 
-function OdBanku( cIdPartn , cDefault , fsilent )
-// Odaberi banku
-local n1,n2
-local Izbor, nTIzbor
-private aBanke
-private GetList:={}
+FUNCTION OdBanku( cIdPartn, cDefault, fsilent )
 
-if fsilent = NIL
-    fsilent := .t.
-endif
+   // Odaberi banku
+   LOCAL nX, nY
+   LOCAL Izbor, nTIzbor
+   PRIVATE aBanke
+   PRIVATE GetList := {}
 
-n1 := m_x
-n2 := m_y
+   IF fsilent = NIL
+      fsilent := .T.
+   ENDIF
 
-if cDefault = NIL
-    cDefault := "??FFFX"
-endif
+   nX := m_x
+   nY := m_y
 
-aBanke := array_from_sifv( "PARTN", "BANK", cIdPartn )
+   IF cDefault = NIL
+      cDefault := "??FFFX"
+   ENDIF
 
-PushWA()
+   aBanke := array_from_sifv( "PARTN", "BANK", cIdPartn )
 
-select banke
+   PushWA()
 
-nTIzbor := 1
+   SELECT banke
 
-for i := 1 to LEN( aBanke )
+   nTIzbor := 1
 
-    if LEFT( aBanke[i], LEN( cDefault ) ) = cDefault
-        nTIzbor := i
-        if fSilent
-            cDefault := LEFT( aBanke[ nTIzbor ], 16 )
+   FOR i := 1 TO Len( aBanke )
+
+      IF Left( aBanke[ i ], Len( cDefault ) ) = cDefault
+         nTIzbor := i
+         IF fSilent
+            cDefault := Left( aBanke[ nTIzbor ], 16 )
             PopWA()
-            return .t.
-        endif
-    endif
+            RETURN .T.
+         ENDIF
+      ENDIF
 
-    seek ( LEFT( aBanke[i], 3 ) )
+      SEEK ( Left( aBanke[ i ], 3 ) )
 
-    aBanke[i] := PADR( TRIM( aBanke[i] ) + ":" + PADR( naz, 20 ), 50 )
+      aBanke[ i ] := PadR( Trim( aBanke[ i ] ) + ":" + PadR( naz, 20 ), 50 )
 
-next
+   NEXT
 
-PopWa()
+   PopWa()
 
-select virm_pripr
+   SELECT virm_pripr
 
-izbor := nTIzbor
+   izbor := nTIzbor
 
-if LEN( aBanke ) > 1
-    // ako ima vise banaka...
-    if !fSilent
-        MsgBeep( "Partner " + cIdPartn + " ima racune kod vise banaka, odaberite banku." )
-    endif
+   IF Len( aBanke ) > 1
+      // ako ima vise banaka...
+      IF !fSilent
+         MsgBeep( "Partner " + cIdPartn + " ima racune kod vise banaka, odaberite banku." )
+      ENDIF
 
-    private h[ LEN( aBanke ) ]
+      PRIVATE h[ Len( aBanke ) ]
 
-    AFILL( h, "" )
+      AFill( h, "" )
 
-    do while .t.
+      DO WHILE .T.
 
-        izbor := menu( "ab-1", aBanke, izbor, .f., "1" )
+         izbor := menu( "ab-1", aBanke, izbor, .F., "1" )
 
-        if izbor = 0
-            exit
-        else
+         IF izbor = 0
+            EXIT
+         ELSE
             nTIzbor := izbor
             izbor := 0
-        endif
+         ENDIF
 
-    enddo
+      ENDDO
 
-    izbor := nTIzbor
+      izbor := nTIzbor
 
-    m_x := n1
-    m_y := n2
+      m_x := nX
+      m_y := nY
 
-elseif LEN( aBanke ) == 1
+   ELSEIF Len( aBanke ) == 1
 
-    // ako je jedna banka...
+      // ako je jedna banka...
 
-    cDefault := LEFT( aBanke[izbor], 16 )
-    return .t.
+      cDefault := Left( aBanke[ izbor ], 16 )
+      RETURN .T.
 
-else
+   ELSE
 
-    // potrazi ga u partn->ziror
+      // potrazi ga u partn->ziror
 
-    cDefault := ""
-    select partn
-    HSEEK cIdpartn
+      cDefault := ""
+      SELECT partn
+      HSEEK cIdpartn
 
-    cDefault := partn->ziror
+      cDefault := partn->ziror
 
-    if !EMPTY( cDefault )
-        return .t.
-    else
-        MsgBeep( "Nema unesena nitijedna banka za partnera " + cIdPartn )
-        cDefault := ""
-        return .t.
-    endif
+      IF !Empty( cDefault )
+         RETURN .T.
+      ELSE
+         MsgBeep( "Nema unesena nitijedna banka za partnera " + cIdPartn )
+         cDefault := ""
+         RETURN .T.
+      ENDIF
 
-endif
+   ENDIF
 
-cDefault := LEFT( aBanke[izbor], 16 )
+   cDefault := Left( aBanke[ izbor ], 16 )
 
-return .t.
+   RETURN .T.
 
 
 
@@ -654,95 +666,96 @@ return .t.
 // jprih.dbf-a treba biti pozicioniran
 // na trazeni javni prihod
 // ----------------------------------------------------
-function JPrih( cIdJPrih, cIdOps, cIdKan, cIdEnt )
-local fOk := .f.
+FUNCTION JPrih( cIdJPrih, cIdOps, cIdKan, cIdEnt )
 
-if cIdOps == NIL
-    cIdOps := ""
-endif
+   LOCAL fOk := .F.
 
-if cIdKan == NIL
-    cIdkan := ""
-endif
+   IF cIdOps == NIL
+      cIdOps := ""
+   ENDIF
 
-if cIdEnt == NIL
-    cIdEnt := ""
-endif
+   IF cIdKan == NIL
+      cIdkan := ""
+   ENDIF
 
-PushWA()
+   IF cIdEnt == NIL
+      cIdEnt := ""
+   ENDIF
 
-// 1 - racun 2 - naziv 3 - budzorg
-aRez := { "", "", "" }
+   PushWA()
 
-select jprih
-cPom := cIdJPrih
+   // 1 - racun 2 - naziv 3 - budzorg
+   aRez := { "", "", "" }
 
-for i := LEN( cIdJPrih ) to 1 step -1
+   SELECT jprih
+   cPom := cIdJPrih
 
-    cPom := LEFT( cIdJPrih, i )
-    seek cPom
+   FOR i := Len( cIdJPrih ) TO 1 STEP -1
 
-    if FOUND() .and. LEN(cPom) == LEN(cIdJPrih)
-        // analiticki prihod
-        aRez[2] := naz
-    endif
+      cPom := Left( cIdJPrih, i )
+      SEEK cPom
 
-    if FOUND()
+      IF Found() .AND. Len( cPom ) == Len( cIdJPrih )
+         // analiticki prihod
+         aRez[ 2 ] := naz
+      ENDIF
 
-        do while !EOF() .and. Id == PADR( cPom, LEN(cIdJPrih) )
+      IF Found()
 
-            fOk := .t.
+         DO WHILE !Eof() .AND. Id == PadR( cPom, Len( cIdJPrih ) )
 
-            if EMPTY( racun )
-                // nema racuna trazi dalje
-                fOk := .f.
-                skip
-                loop
-            endif
+            fOk := .T.
 
-            if !EMPTY( cIdOps ) .and. cIdOps != idops
-                if !EMPTY( idops )
-                    fOk := .f.
-                endif
-            endif
+            IF Empty( racun )
+               // nema racuna trazi dalje
+               fOk := .F.
+               SKIP
+               LOOP
+            ENDIF
 
-            if !EMPTY( cIdKan ) .and. cIdKan != idkan
-                if !EMPTY( idkan )
-                    fOk := .f.
-                endif
-            endif
+            IF !Empty( cIdOps ) .AND. cIdOps != idops
+               IF !Empty( idops )
+                  fOk := .F.
+               ENDIF
+            ENDIF
 
-            if !EMPTY( cIdEnt ) .and. cIdEnt != idn0
-                if !EMPTY( idn0 )
-                    fOk := .f.
-                endif
-            endif
+            IF !Empty( cIdKan ) .AND. cIdKan != idkan
+               IF !Empty( idkan )
+                  fOk := .F.
+               ENDIF
+            ENDIF
 
-            if fOk
-                if EMPTY(aRez[2])
-                    // nisam jos nasao naziv
-                    aRez[2] := racun
-                endif
-                aRez[1] := racun
-                aRez[3] := budzorg
-                exit
-            endif
+            IF !Empty( cIdEnt ) .AND. cIdEnt != idn0
+               IF !Empty( idn0 )
+                  fOk := .F.
+               ENDIF
+            ENDIF
 
-            skip
+            IF fOk
+               IF Empty( aRez[ 2 ] )
+                  // nisam jos nasao naziv
+                  aRez[ 2 ] := racun
+               ENDIF
+               aRez[ 1 ] := racun
+               aRez[ 3 ] := budzorg
+               EXIT
+            ENDIF
 
-        enddo
+            SKIP
 
-        if fOk
-            exit
-        endif
+         ENDDO
 
-    endif
+         IF fOk
+            EXIT
+         ENDIF
 
-next
+      ENDIF
 
-PopWa()
+   NEXT
 
-return aRez
+   PopWa()
+
+   RETURN aRez
 
 
 
@@ -754,170 +767,177 @@ return aRez
 // 712221-103
 // 712221-1-103
 
-function SetJPVar()
-local _tmp_1 := ""
-local _tmp_2 := ""
-local aJPrih
+FUNCTION SetJPVar()
 
-_idjprih := TOKEN( vrprim->racun, "-", 1 )
+   LOCAL _tmp_1 := ""
+   LOCAL _tmp_2 := ""
+   LOCAL aJPrih
 
-_tmp_1 := TOKEN( vrprim->racun, "-", 2 )
-// <- moze biti opcina, kanton ili entitet ili nista
+   _idjprih := TOKEN( vrprim->racun, "-", 1 )
 
-_tmp_2 := TOKEN( vrprim->racun, "-", 3 )
-// <- moze se iskoristiti za opcinu
+   _tmp_1 := TOKEN( vrprim->racun, "-", 2 )
+   // <- moze biti opcina, kanton ili entitet ili nista
 
-_tmp_1 := ALLTRIM( _tmp_1 )
-_tmp_2 := ALLTRIM( _tmp_2 )
+   _tmp_2 := TOKEN( vrprim->racun, "-", 3 )
+   // <- moze se iskoristiti za opcinu
 
-if LEN( _tmp_1 ) == 3
+   _tmp_1 := AllTrim( _tmp_1 )
+   _tmp_2 := AllTrim( _tmp_2 )
 
-    _idops := _tmp_1
-    aJPrih := JPrih( _idjprih, _idops, "", "" )
+   IF Len( _tmp_1 ) == 3
 
-    _kome_zr := aJPrih[1]
-    _budzorg:=  aJPrih[3]
+      _idops := _tmp_1
+      aJPrih := JPrih( _idjprih, _idops, "", "" )
 
-elseif LEN( _tmp_1 ) == 2
+      _kome_zr := aJPrih[ 1 ]
+      _budzorg :=  aJPrih[ 3 ]
 
-    // nivo kantona
-    _idops := IF( LEN( _tmp_2 ) == 3, _tmp_2, OpcRada() )
-    aJPrih := JPrih( _idjprih, "", _tmp_1, "" )
-    _kome_zr := aJPrih[1]
-    _budzorg := aJPrih[3]
+   ELSEIF Len( _tmp_1 ) == 2
 
-elseif LEN( _tmp_1 ) == 1
+      // nivo kantona
+      _idops := IF( Len( _tmp_2 ) == 3, _tmp_2, OpcRada() )
+      aJPrih := JPrih( _idjprih, "", _tmp_1, "" )
+      _kome_zr := aJPrih[ 1 ]
+      _budzorg := aJPrih[ 3 ]
 
-    // nivo entiteta
-    _idops := IF( LEN( _tmp_2 ) == 3, _tmp_2, OpcRada() )
-    aJPrih := JPrih( _idjprih, "", "", _tmp_1 )
-    _kome_zr := aJPrih[1]
-    _budzorg := aJPrih[3]
+   ELSEIF Len( _tmp_1 ) == 1
 
-elseif LEN( _tmp_1 ) == 0
+      // nivo entiteta
+      _idops := IF( Len( _tmp_2 ) == 3, _tmp_2, OpcRada() )
+      aJPrih := JPrih( _idjprih, "", "", _tmp_1 )
+      _kome_zr := aJPrih[ 1 ]
+      _budzorg := aJPrih[ 3 ]
 
-    // jedinstveni uplatni racun
-    _idops := SPACE(3)
-    _idjprih := PADR( _idjprih, 6 )
-    // duzina sifre javnog prihoda
-    aJPrih := JPrih( _idjprih, "", "", _tmp_1 )
-    _kome_zr := aJPrih[1]
-    _budzorg:=  aJPrih[3]
+   ELSEIF Len( _tmp_1 ) == 0
 
-endif
+      // jedinstveni uplatni racun
+      _idops := Space( 3 )
+      _idjprih := PadR( _idjprih, 6 )
+      // duzina sifre javnog prihoda
+      aJPrih := JPrih( _idjprih, "", "", _tmp_1 )
+      _kome_zr := aJPrih[ 1 ]
+      _budzorg :=  aJPrih[ 3 ]
 
-return
+   ENDIF
 
-
-
-function fillJprih()
-
-// drugi krug; popuni polja vezana za javne prihode ....
-select vrprim
-set order to tag "ID"
-
-select virm_pripr
-go top
-
-do while !eof()
-
-    select vrprim
-    seek virm_pripr->svrha_pl
-
-    select virm_pripr
-    Scatter()
-
-    if vrprim->idpartner = "JP"
-        // javni prihod
-        SetJPVar()
-    endif
-
-    _iznosstr := ""
-    _iznosstr := "=" + IF( _iznos == 0 .and. gINulu == "N", SPACE(6) , ALLTRIM(STRTRAN(STR(_iznos), ".", "," ) ) )
-
-    my_rlock()
-    Gather()
-    my_unlock()
-
-    skip
-
-enddo
-
-return
+   RETURN
 
 
 
-function OpcRada()
-local cVrati := "   "
-local cOR := ""
-local nArr := SELECT()
+FUNCTION fillJprih()
 
-cOR := my_get_from_ini("VIRM","OpcRada","XXXX",KUMPATH)
+   // drugi krug; popuni polja vezana za javne prihode ....
+   SELECT vrprim
+   SET ORDER TO TAG "ID"
 
-IF EMPTY(cOR)
-    RETURN ""
-ENDIF
+   SELECT virm_pripr
+   GO TOP
 
-SELECT (F_OPS)
+   DO WHILE !Eof()
 
-IF !USED()
-    O_OPS
-    SEEK cOR
-    IF FOUND()
-        cVrati := IDJ
-    ENDIF
-    USE
-ELSE
-    PushWA()
-    SET ORDER TO TAG "ID"
-    SEEK cOR
-    IF FOUND()
-        cVrati := IDJ
-    ENDIF
-    PopWA()
-ENDIF
+      SELECT vrprim
+      SEEK virm_pripr->svrha_pl
 
-SELECT (nArr)
-RETURN cVrati
+      SELECT virm_pripr
+      Scatter()
+
+      IF vrprim->idpartner = "JP"
+         // javni prihod
+         SetJPVar()
+      ENDIF
+
+      _iznosstr := ""
+      _iznosstr := "=" + IF( _iznos == 0 .AND. gINulu == "N", Space( 6 ), AllTrim( StrTran( Str( _iznos ), ".", "," ) ) )
+
+      my_rlock()
+      Gather()
+      my_unlock()
+
+      SKIP
+
+   ENDDO
+
+   RETURN
+
+
+
+FUNCTION OpcRada()
+
+   LOCAL cVrati := "   "
+   LOCAL cOR := ""
+   LOCAL nArr := Select()
+
+   cOR := my_get_from_ini( "VIRM", "OpcRada", "XXXX", KUMPATH )
+
+   IF Empty( cOR )
+      RETURN ""
+   ENDIF
+
+   SELECT ( F_OPS )
+
+   IF !Used()
+      O_OPS
+      SEEK cOR
+      IF Found()
+         cVrati := IDJ
+      ENDIF
+      USE
+   ELSE
+      PushWA()
+      SET ORDER TO TAG "ID"
+      SEEK cOR
+      IF Found()
+         cVrati := IDJ
+      ENDIF
+      PopWA()
+   ENDIF
+
+   SELECT ( nArr )
+
+   RETURN cVrati
 
 
 
 // ----------------------------------------
 // rekapitulacija uplata
 // ----------------------------------------
-static function _rekapitulacija_uplata()
-local _arr := {}
+STATIC FUNCTION _rekapitulacija_uplata()
 
-select virm_pripr
+   LOCAL _arr := {}
 
-PushWA()
+   SELECT virm_pripr
 
-START PRINT RET
-?
-P_COND
+   PushWA()
 
-_arr := { ;
-        { "PRIMALAC", {|| kome_txt }, .f., "C", 55, 0, 1, 1 }, ;
-        { "ZIRO RACUN", {|| kome_zr }, .f., "C", 16, 0, 1, 2 }, ;
-        { "IZNOS      ", {|| iznos }, .t., "N", 15, 2, 1, 3 } ;
-        }
-go top
+   START PRINT RET
+   ?
+   P_COND
 
-print_lista_2( _arr, , 2, gTabela, {|| .t. }, "4", "REKAPITULACIJA UPLATA", {|| .t. } )
+   _arr := { ;
+      { "PRIMALAC", {|| kome_txt }, .F., "C", 55, 0, 1, 1 }, ;
+      { "ŽIRO RACUN", {|| kome_zr }, .F., "C", 16, 0, 1, 2 }, ;
+      { "IZNOS      ", {|| iznos }, .T., "N", 15, 2, 1, 3 } ;
+      }
+   GO TOP
 
-ENDPRINT
+   print_lista_2( _arr, , 2, gTabela, {|| .T. }, "4", "REKAPITULACIJA UPLATA", {|| .T. } )
 
-O_VIRM_PRIPR
+   ENDPRINT
 
-PopWA()
+   O_VIRM_PRIPR
 
-return
+   PopWA()
+
+   RETURN
 
 
-static function FormNum1(nIznos)
-LOCAL cVrati
-cVrati:=TRANSFORM(nIznos,gpici)
-cVrati:=STRTRAN(cVrati,".",":")
-cVrati:=STRTRAN(cVrati,",",".")
-cVrati:=STRTRAN(cVrati,":",",")
-RETURN cVrati
+STATIC FUNCTION FormNum1( nIznos )
+
+   LOCAL cVrati
+
+   cVrati := Transform( nIznos, gpici )
+   cVrati := StrTran( cVrati, ".", ":" )
+   cVrati := StrTran( cVrati, ",", "." )
+   cVrati := StrTran( cVrati, ":", "," )
+
+   RETURN cVrati

@@ -97,18 +97,11 @@ FUNCTION lock_semaphore( table, lUnlockTable )
    ENDDO
 
    // svi useri su lockovani
-   _qry := "UPDATE sem." + table + " SET algorithm=" + sql_quote( status ) + ", last_trans_user_code=" + sql_quote( _user ) + "; "
-
-   IF ( status == "lock" )
-      _qry += "UPDATE sem." + table + " SET algorithm='locked_by_me' WHERE user_code=" + sql_quote( _user ) + ";"
-   ENDIF
+   _qry := "UPDATE sem." + table + " SET algorithm='lock', last_trans_user_code=" + sql_quote( _user ) + "; "
+   _qry += "UPDATE sem." + table + " SET algorithm='locked_by_me' WHERE user_code=" + sql_quote( _user ) + ";"
 
    _ret := run_sql_query( _qry )
-
-   // log_write( "table: " + table + ", status:" + status + " - END", 7 )
-
    IF sql_error_in_query( _ret, "UPDATE" )
-      // log_write( "qry error: " + _qry + " : " + _ret:ErrorMsg(), 2 )
       RETURN .F.
    ENDIF
 
@@ -117,29 +110,29 @@ FUNCTION lock_semaphore( table, lUnlockTable )
 
 
 
-   FUNCTION unlock_semaphore( cTable  )
+FUNCTION unlock_semaphore( cTable  )
 
-      LOCAL _qry
-      LOCAL _ret
-      LOCAL _i
-      LOCAL _err_msg
-      LOCAL _user   := f18_user()
-      LOCAL _user_locked
-      LOCAL cSemaphoreStatus
-      LOCAL nLockSeconds
+   LOCAL _qry
+   LOCAL _ret
+   LOCAL _i
+   LOCAL _err_msg
+   LOCAL _user   := f18_user()
+   LOCAL _user_locked
+   LOCAL cSemaphoreStatus
+   LOCAL nLockSeconds
 
-      IF skip_semaphore_sync( cTable )
-         RETURN .T.
-      ENDIF
-
-      _qry := "UPDATE sem." + cTable + " SET algorithm='free', last_trans_user_code=" + sql_quote( _user ) + "; "
-      _ret := run_sql_query( _qry )
-
-      IF sql_error_in_query( _ret, "UPDATE" )
-         RETURN .F.
-      ENDIF
-
+   IF skip_semaphore_sync( cTable )
       RETURN .T.
+   ENDIF
+
+   _qry := "UPDATE sem." + cTable + " SET algorithm='free', last_trans_user_code=" + sql_quote( _user ) + "; "
+   _ret := run_sql_query( _qry )
+
+   IF sql_error_in_query( _ret, "UPDATE" )
+      RETURN .F.
+   ENDIF
+
+   RETURN .T.
 
 
 FUNCTION get_semaphore_locked_by_me_status_user( table )

@@ -26,11 +26,10 @@ STATIC s_nBug1 := 1
         free
 */
 
-FUNCTION lock_semaphore( table, lUnlockTable )
+FUNCTION lock_semaphore( table )
 
    LOCAL _qry
    LOCAL _ret
-   LOCAL _i
    LOCAL _err_msg
    LOCAL _user   := f18_user()
    LOCAL _user_locked
@@ -41,62 +40,44 @@ FUNCTION lock_semaphore( table, lUnlockTable )
       RETURN .T.
    ENDIF
 
-   IF lUnlockTable == NIL
-      lUnlockTable := .T.
-   ENDIF
 
    // status se moze mijenjati samo ako neko drugi nije lock-ovao tabelu
    // log_write( "table: " + table + ", status:" + status + " START", 8 )
 
    nLockSeconds := Seconds()
 
-   _i := 0
    DO WHILE .T.
 
-      _i++
+
       cSemaphoreStatus := get_semaphore_status( table )
       IF cSemaphoreStatus == "unknown"
          RETURN .F.
       ENDIF
 
-      IF !lUnlockTable .AND. cSemaphoreStatus != "free"
-         // lUnlockTable = .F. - ne raditi nasilni unlock
+      IF cSemaphoreStatus == "locked_by_me"
+         RETURN .T.
+      ENDIF
+
+      IF cSemaphoreStatus $ "free"
+           EXIT
+      ENDIF
+
+      IF  ( Seconds() - nLockSeconds ) > SEMAPHORE_LOCK_TIME
          RETURN .F.
       ENDIF
 
       IF cSemaphoreStatus == "lock"
          _user_locked := get_semaphore_locked_by_me_status_user( table )
-         _err_msg := ToStr( Time() ) + " : table locked : " + table + " user: " + _user_locked + " retry : " + AllTrim( Str( _i ) ) + "/" + Str( SEMAPHORE_LOCK_RETRY_NUM, 2 )
-         // log_write( _err_msg, 2 )
+         _err_msg := ToStr( Time() ) + " : table locked : " + table + " user: " + _user_locked
          ?E _err_msg
 
          hb_idleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
-         // log_write( "call stack 1 " + ProcName( 1 ) + " " + AllTrim( Str( ProcLine( 1 ) ) ), 2 )
-         // log_write( "call stack 2 " + ProcName( 2 ) + " " + AllTrim( Str( ProcLine( 2 ) ) ), 2 )
-
-      ELSE
-
-         nLockSeconds := 0
-         IF _i > 1
-            _err_msg := ToStr( Time() ) + " : tabela otključana : " + table + " retry : " + AllTrim( Str( _i ) ) + "/" + Str( SEMAPHORE_LOCK_RETRY_NUM, 2 )
-            ?E _err_msg
-         ENDIF
-         EXIT
-
-      ENDIF
-
-      IF  ( Seconds() - nLockSeconds > SEMAPHORE_LOCK_TIME )  .OR. ( _i >= SEMAPHORE_LOCK_RETRY_NUM )
-         _err_msg := "table " + table + " ostala lockovana nakon " + AllTrim( Str ( SEMAPHORE_LOCK_RETRY_NUM ) ) + " pokusaja ##" + ;
-            "nasilno uklanjam lock !"
-         ?E _err_msg
-         // log_write( _err_msg, 2 )
-         EXIT
-
+         LOOP
       ENDIF
 
    ENDDO
 
-   // svi useri su lockovani
+   // free, lockovati
    _qry := "UPDATE sem." + table + " SET algorithm='lock', last_trans_user_code=" + sql_quote( _user ) + "; "
    _qry += "UPDATE sem." + table + " SET algorithm='locked_by_me' WHERE user_code=" + sql_quote( _user ) + ";"
 

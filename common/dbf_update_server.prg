@@ -54,7 +54,7 @@ FUNCTION update_rec_server_and_dbf( table, values, algoritam, transaction, lock 
       RETURN .F.
    ENDIF
 
-   //log_write( "START: update_rec_server_and_dbf " + table, 9 )
+   // log_write( "START: update_rec_server_and_dbf " + table, 9 )
 
    _values_dbf := dbf_get_rec()
 
@@ -150,9 +150,9 @@ FUNCTION update_rec_server_and_dbf( table, values, algoritam, transaction, lock 
          run_sql_query( "ROLLBACK" )
       ENDIF
 
-      ?E "ERR ", RECI_GDJE_SAM0, + "push_ids_to_semaphore " + table + "/ ids=", _alg_tag , _ids, " ! ROLLBACK"
-      //log_write( _msg, 1 )
-      //Alert( _msg )
+      ?E "ERR ", RECI_GDJE_SAM0, + "push_ids_to_semaphore " + table + "/ ids=", _alg_tag, _ids, " ! ROLLBACK"
+      // log_write( _msg, 1 )
+      // Alert( _msg )
 
       _ret := .F.
 
@@ -354,7 +354,9 @@ FUNCTION delete_all_dbf_and_server( table )
    _a_dbf_rec := get_a_dbf_rec( table, .T. )
    reopen_exclusive( _a_dbf_rec[ "table" ] )
 
-   lock_semaphore( _a_dbf_rec[ "table" ] )
+   IF !lock_semaphore( _a_dbf_rec[ "table" ] )
+      RETURN .F.
+   ENDIF
    run_sql_query( "BEGIN" )
 
    _rec := hb_Hash()

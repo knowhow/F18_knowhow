@@ -109,7 +109,8 @@ FUNCTION run_sql_query( cQry, hParams )
    IF Left( cQry, 5 ) == "BEGIN"
       IF hb_mutexLock( s_mtxMutex )
 
-         nPos := AScan( s_aTransactions, { | aItem | Valtype( aItem ) == "A" .AND. aItem[ 2 ] == sql_data_conn():pDB .AND. aItem[ 3 ] == cTransactionName } )
+         nPos := AScan( s_aTransactions, { | aItem | Valtype( aItem ) == "A" ;
+             .AND. aItem[ 2 ] == sql_data_conn():pDB .AND. aItem[ 3 ] == hb_threadSelf() .AND. aItem[ 4 ] == cTransactionName } )
 
          IF nPos > 0
              cLogMsg := "SQL transactions ERR: "

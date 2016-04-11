@@ -538,9 +538,9 @@ FUNCTION zamjeni_numericka_polja_u_tabeli( cKolona, cTrazi, cUslov )
    cAlias := Lower( Alias() )
 
    IF lImaSemafor
-      sql_table_update( nil, "BEGIN" )
+      run_sql_query( "BEGIN" )
       IF !f18_lock_tables( {  cAlias }, .T. )
-         sql_table_update( nil, "END" )
+         run_sql_query( "COMMIT" )
          RETURN lRet
       ENDIF
    ENDIF
@@ -573,10 +573,10 @@ FUNCTION zamjeni_numericka_polja_u_tabeli( cKolona, cTrazi, cUslov )
    IF lImaSemafor
       IF lOk
          lRet := .T.
-         sql_table_update( nil, "END" )
+         run_sql_query( "COMMIT" )
          f18_free_tables( { cAlias } )
       ELSE
-         sql_table_update( nil, "ROLLBACK" )
+         run_sql_query( "ROLLBACK" )
       ENDIF
    ELSE
       lRet := .T.
@@ -617,9 +617,9 @@ FUNCTION replace_kolona_in_table( cKolona, trazi_val, zamijeni_val, last_search 
    _has_semaphore := dbf_alias_has_semaphore()
 
    IF _has_semaphore
-      sql_table_update( nil, "BEGIN" )
+      run_sql_query( "BEGIN" )
       IF !f18_lock_tables( { cAlias  }, .T. )
-         sql_table_update( nil, "END" )
+         run_sql_query( "COMMIT" )
          MsgBeep( "Ne mogu zaključati " + cAlias + "!?" )
          RETURN lRet
       ENDIF
@@ -686,10 +686,10 @@ FUNCTION replace_kolona_in_table( cKolona, trazi_val, zamijeni_val, last_search 
    IF _has_semaphore
       IF lOk
          lRet := .T.
-         sql_table_update( nil, "END" )
+         run_sql_query( "COMMIT" )
          f18_free_tables( { cAlias } )
       ELSE
-         sql_table_update( nil, "ROLLBACK" )
+         run_sql_query( "ROLLBACK" )
          MsgBeep( "Greška sa opcijom ALT+R !#Operacija prekinuta." )
       ENDIF
    ELSE

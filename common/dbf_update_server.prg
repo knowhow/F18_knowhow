@@ -100,7 +100,7 @@ FUNCTION update_rec_server_and_dbf( table, values, algoritam, transaction, lock 
       IF !sql_table_update( table, "del", nil, _where_str_dbf )
 
          IF transaction == "FULL"
-            sql_table_update( table, "ROLLBACK" )
+            run_sql_query( "ROLLBACK" )
          ENDIF
 
          _msg := "ERROR: sql delete " + table +  " , ROLLBACK, where: " + _where_str_dbf
@@ -119,7 +119,7 @@ FUNCTION update_rec_server_and_dbf( table, values, algoritam, transaction, lock 
    IF _ret .AND. !sql_table_update( table, "ins", values )
 
       IF transaction == "FULL"
-         sql_table_update( table, "ROLLBACK" )
+         run_sql_query( "ROLLBACK" )
       ENDIF
 
       _msg := RECI_GDJE_SAM + "ERRORY: sql_insert: " + table + " , ROLLBACK values: " + pp( values )
@@ -258,7 +258,7 @@ FUNCTION delete_rec_server_and_dbf( table, values, algoritam, transaction, lock 
             lock_semaphore( table, "free" )
 
             IF transaction == "FULL"
-               sql_table_update( table, "ROLLBACK" )
+               run_sql_query( "ROLLBACK" )
             ENDIF
 
             _msg := "ERROR: " + RECI_GDJE_SAM0 + " tabela: " + table + " DBF_TAG " + _alg[ "dbf_tag" ]
@@ -298,7 +298,7 @@ FUNCTION delete_rec_server_and_dbf( table, values, algoritam, transaction, lock 
          log_write( "table: " + table + ", pobrisano iz lokalnog dbf-a broj zapisa = " + AllTrim( Str( _count ) ), 7 )
 
          IF transaction $ "FULL#END"
-            sql_table_update( table, "END" )
+            run_sql_query( "COMMIT" )
          ENDIF
 
          _ret := .T.
@@ -306,7 +306,7 @@ FUNCTION delete_rec_server_and_dbf( table, values, algoritam, transaction, lock 
       ELSE
 
          IF transaction == "FULL"
-            sql_table_update( table, "ROLLBACK" )
+            run_sql_query( "ROLLBACK" )
          ENDIF
 
          _msg := "delete rec server " + table + " nije lockovana !!! ROLLBACK"
@@ -320,7 +320,7 @@ FUNCTION delete_rec_server_and_dbf( table, values, algoritam, transaction, lock 
    ELSE
 
       IF transaction == "FULL"
-         sql_table_update( table, "ROLLBACK" )
+         run_sql_query( "ROLLBACK" )
       ENDIF
 
       _msg := "delete rec server, " + table + " transakcija neuspjesna ! ROLLBACK"

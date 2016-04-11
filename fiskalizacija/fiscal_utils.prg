@@ -154,9 +154,9 @@ FUNCTION gen_all_plu( lSilent )
       lReset := .F.
    ENDIF
 
-   sql_table_update( nil, "BEGIN" )
+   run_sql_query( "BEGIN" )
    IF !f18_lock_tables( { "roba" }, .T. )
-      sql_table_update( nil, "END" )
+      run_sql_query( "COMMIT" )
       MsgBeep( "Ne mogu zaključati ROBA !#Prekidam operaciju." )
       RETURN lRet
    ENDIF
@@ -214,9 +214,9 @@ FUNCTION gen_all_plu( lSilent )
    IF lOk
       lRet := .T.
       f18_free_tables( { "roba" } )
-      sql_table_update( nil, "END" )
+      run_sql_query( "COMMIT" )
    ELSE
-      sql_table_update( nil, "ROLLBACK" )
+      run_sql_query( "ROLLBACK" )
    ENDIF
 
    IF nCnt > 0

@@ -106,10 +106,10 @@ FUNCTION povrat_fakt_dokumenta( rezerv, id_firma, id_tip_dok, br_dok, test )
 
    IF lBrisatiKumulativ
 
-      sql_table_update( nil, "BEGIN" )
+      run_sql_query( "BEGIN" )
 
       IF !f18_lock_tables( { "fakt_fakt", "fakt_doks", "fakt_doks2" }, .T. )
-         sql_table_update( nil, "END" )
+         run_sql_query( "COMMIT" )
          MsgBeep( "Ne mogu zaključati fakt tablele.#Prekidam operaciju." )
          RETURN nRet
       ENDIF
@@ -145,13 +145,13 @@ FUNCTION povrat_fakt_dokumenta( rezerv, id_firma, id_tip_dok, br_dok, test )
       IF _ok
 
          nRet := 1
-         sql_table_update( nil, "END" )
+         run_sql_query( "COMMIT" )
          f18_free_tables( { "fakt_fakt", "fakt_doks", "fakt_doks2" } )
          log_write( "F18_DOK_OPER: fakt povrat dokumenta u pripremu: " + id_firma + "-" + id_tip_dok + "-" + br_dok, 2 )
 
       ELSE
 
-         sql_table_update( nil, "ROLLBACK" )
+         run_sql_query( "ROLLBACK" )
          log_write( "F18_DOK_OPER: greška kod povrata dokumenta u pripremu: " + id_firma + "-" + id_tip_dok + "-" + br_dok, 2 )
          MsgBeep( "Greška kod povrata dokumenta u pripremu.#Operacija prekinuta." )
 
@@ -332,10 +332,10 @@ FUNCTION povrat_fakt_po_kriteriju( br_dok, dat_dok, tip_dok, firma )
 
    GO TOP
 
-   sql_table_update( nil, "BEGIN" )
+   run_sql_query( "BEGIN" )
 
    IF !f18_lock_tables( { "fakt_doks", "fakt_doks2", "fakt_fakt" }, .T. )
-      sql_table_update( nil, "END" )
+      run_sql_query( "COMMIT" )
       MsgBeep( "Ne mogu zaključati tabele.#Prekidam operaciju." )
       RETURN
    ENDIF
@@ -412,10 +412,10 @@ FUNCTION povrat_fakt_po_kriteriju( br_dok, dat_dok, tip_dok, firma )
    ENDDO
 
    IF _ok
-      sql_table_update( nil, "END" )
+      run_sql_query( "COMMIT" )
       f18_free_tables( { "fakt_doks", "fakt_doks2", "fakt_fakt" } )
    ELSE
-      sql_table_update( nil, "ROLLBACK" )
+      run_sql_query( "ROLLBACK" )
       MsgBeep( "Problem sa povratom dokumenta u pripremu.#Poništavam operaciju." )
    ENDIF
 

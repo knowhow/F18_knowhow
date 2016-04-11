@@ -585,10 +585,10 @@ STATIC FUNCTION __import( vars, a_details )
    LOCAL _detail_rec
    LOCAL lOk := .T.
 
-   sql_table_update( nil, "BEGIN" )
+   run_sql_query( "BEGIN" )
 
    IF !f18_lock_tables( { "fin_nalog", "fin_anal", "fin_sint", "fin_suban" }, .T. )
-      sql_table_update( nil, "END" )
+      run_sql_query( "COMMIT" )
       MsgBeep( "Ne mogu zaključati tabele !#Prekidam operaciju." )
       RETURN _cnt
    ENDIF
@@ -820,9 +820,9 @@ STATIC FUNCTION __import( vars, a_details )
 
    IF lOk
       f18_free_tables( { "fin_nalog", "fin_anal", "fin_sint", "fin_suban" } )
-      sql_table_update( nil, "END" )
+      run_sql_query( "COMMIT" )
    ELSE
-      sql_table_update( nil, "ROLLBACK" )
+      run_sql_query( "ROLLBACK" )
       MsgBeep( "Problem sa importom finansijskih naloga u kumulativne tabele." )
    ENDIF
 

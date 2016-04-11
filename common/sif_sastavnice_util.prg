@@ -37,9 +37,9 @@ FUNCTION copy_sast()
 
       IF ( LastKey() <> K_ESC )
 
-         sql_table_update( nil, "BEGIN" )
+         run_sql_query( "BEGIN" )
          IF !f18_lock_tables( { "sast" }, .T. )
-            sql_table_update( nil, "END" )
+            run_sql_query( "COMMIT" )
             MsgBeep( "lock sast neuspjesno !" )
             RETURN .F.
          ENDIF
@@ -69,10 +69,10 @@ FUNCTION copy_sast()
          ENDDO
 
          IF lOk
-            sql_table_update( nil, "END" )
+            run_sql_query( "COMMIT" )
             f18_free_tables( { "sast" } )
          ELSE
-            sql_table_update( nil, "ROLLBACK" )
+            run_sql_query( "ROLLBACK" )
          ENDIF
 
          SELECT roba
@@ -115,9 +115,9 @@ FUNCTION bris_sast()
       RETURN 7
    ENDIF
 
-   sql_table_update( nil, "BEGIN" )
+   run_sql_query( "BEGIN" )
    IF !f18_lock_tables( { "roba", "sast" }, .T. )
-      sql_table_update( nil, "END" )
+      run_sql_query( "COMMIT" )
       MsgBeep( "lock roba, sast neuspjeno !" )
       RETURN 7
    ENDIF .T.
@@ -163,10 +163,10 @@ FUNCTION bris_sast()
    ENDIF
 
    IF lOk
-      sql_table_update( nil, "END" )
+      run_sql_query( "COMMIT" )
       f18_free_tables( { "roba", "sast" } )
    ELSE
-      sql_table_update( nil, "ROLLBACK" )
+      run_sql_query( "ROLLBACK" )
    ENDIF
 
    RETURN .T.

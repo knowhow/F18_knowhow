@@ -1375,7 +1375,7 @@ FUNCTION _dobar_id( noviId )
             RETURN .T.
          ENDIF
 
-         sql_table_update( nil, "BEGIN" )
+         run_sql_query( "BEGIN" )
 
          SELECT kadev_1
          SET ORDER TO TAG "1"
@@ -1403,7 +1403,7 @@ FUNCTION _dobar_id( noviId )
          update_rec_server_and_dbf( "kadev_0", _rec, 1, "CONT" )
 
          f18_free_tables( { "kadev_1", "kadev_0" } )
-         sql_table_update( nil, "END" )
+         run_sql_query( "COMMIT" )
 
       ELSE
          noviId := kadev_0->id
@@ -1484,7 +1484,7 @@ FUNCTION brisi_kadrovski_karton( erase )
          RETURN
       ENDIF
 
-      sql_table_update( nil, "BEGIN" )
+      run_sql_query( "BEGIN" )
 
       SELECT kadev_1
       SET ORDER TO TAG "1"
@@ -1502,7 +1502,7 @@ FUNCTION brisi_kadrovski_karton( erase )
       SKIP -1
 
       f18_free_tables( { "kadev_0", "kadev_1" } )
-      sql_table_update( nil, "END" )
+      run_sql_query( "COMMIT" )
 
       MsgC()
 

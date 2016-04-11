@@ -114,10 +114,10 @@ STATIC FUNCTION brisi_fin_nalog_iz_kumulativa( cIdFirma, cIdVn, cBrNal )
    _rec[ "idvn" ] := cIdVn
    _rec[ "brnal" ] := cBrNal
 
-   sql_table_update( nil, "BEGIN" )
+   run_sql_query( "BEGIN" )
 
    IF !f18_lock_tables( { "fin_suban", "fin_nalog", "fin_sint", "fin_anal" }, .T. )
-      sql_table_update( nil, "END" )
+      run_sql_query( "COMMIT" )
       MsgBeep( "Ne mogu zaključati tabele !#Operacija povrata poništena." )
       RETURN lRet
    ENDIF
@@ -154,11 +154,11 @@ STATIC FUNCTION brisi_fin_nalog_iz_kumulativa( cIdFirma, cIdVn, cBrNal )
 
    IF lOk
       lRet := .T.
-      sql_table_update( nil, "END" )
+      run_sql_query( "COMMIT" )
       f18_free_tables( { "fin_suban", "fin_nalog", "fin_sint", "fin_anal" } )
       log_write( "F18_DOK_OPER: povrat finansijskog naloga u pripremu: " + cIdFirma + "-" + cIdVn + "-" + cBrNal, 2 )
    ELSE
-      sql_table_update( nil, "ROLLBACK" )
+      run_sql_query( "ROLLBACK" )
       log_write( "F18_DOK_OPER: greška sa povratom finansijskog naloga u pripremu: " + cIdFirma + "-" + cIdVn + "-" + cBrNal, 2 )
    ENDIF
 

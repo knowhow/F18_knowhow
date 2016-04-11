@@ -202,7 +202,7 @@ FUNCTION unos_clan( lNew )
 
 
       f18_lock_tables( { "ld_pk_data" } )
-      sql_table_update( nil, "BEGIN" )
+      run_sql_query( "BEGIN" )
 
       IF LastKey() <> K_ESC
 
@@ -220,7 +220,7 @@ FUNCTION unos_clan( lNew )
       ENDIF
 
       f18_free_tables( { "ld_pk_data" } )
-      sql_table_update( nil, "END" )
+      run_sql_query( "COMMIT" )
 
       IF LastKey() == K_ESC
          EXIT

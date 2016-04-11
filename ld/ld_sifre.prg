@@ -279,7 +279,7 @@ FUNCTION RadBl( Ch )
       SELECT radn
       GO TOP
 
-      sql_table_update( nil, "BEGIN" )
+      run_sql_query( "BEGIN" )
       f18_lock_tables( { "ld_radn" }, .T. )
 
 
@@ -307,7 +307,7 @@ FUNCTION RadBl( Ch )
          SKIP
       ENDDO
 
-      sql_table_update( nil, "END" )
+      run_sql_query( "COMMIT" )
       f18_free_tables( { "ld_radn" } )
 
       MsgC()
@@ -1104,7 +1104,7 @@ FUNCTION TotBrisRadn()
          LOOP
       ENDIF
 
-sql_table_update( nil, "BEGIN" )
+run_sql_query( "BEGIN" )
       f18_lock_tables( { "ld_ld", "ld_radn", "ld_radkr" }, .T. )
 
       // brisem ga iz sifarnika radnika
@@ -1154,7 +1154,7 @@ sql_table_update( nil, "BEGIN" )
 
    ENDDO
 
-   sql_table_update( nil, "END" )
+   run_sql_query( "COMMIT" )
    f18_free_tables( { "ld_ld", "ld_radn", "ld_radkr" } )
 
    SET KEY K_F5 TO

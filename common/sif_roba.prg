@@ -567,9 +567,9 @@ FUNCTION roba_setuj_mpc_iz_vpc()
       RETURN
    ENDIF
 
-   sql_table_update( NIL, "BEGIN" )
+   run_sql_query( "BEGIN" )
    IF !f18_lock_tables( { "roba" }, .T. )
-      sql_table_update( NIL, "END" )
+      run_sql_query( "COMMIT" )
       RETURN
    ENDIF
 
@@ -659,10 +659,10 @@ FUNCTION roba_setuj_mpc_iz_vpc()
    BoxC()
 
    IF lOk
-      sql_table_update( NIL, "END" )
+      run_sql_query( "COMMIT" )
       f18_free_tables( { "roba" } )
    ELSE
-      sql_table_update( NIL, "ROLLBACK" )
+      run_sql_query( "ROLLBACK" )
    ENDIF
 
    RETURN .T.

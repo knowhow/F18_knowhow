@@ -112,7 +112,7 @@ FUNCTION ld_novi_kredit()
       i := 0
       nTekMj := nMjesec - 1
 
-      sql_table_update( nil, "BEGIN" )
+      run_sql_query( "BEGIN" )
       f18_lock_tables( { "ld_radkr" }, .T. )
 
       DO WHILE .T.
@@ -160,7 +160,7 @@ FUNCTION ld_novi_kredit()
 
       ENDDO
 
-      sql_table_update( nil, "END" )
+      run_sql_query( "COMMIT" )
       f18_free_tables( { "ld_radkr" } )
 
       log_write( "F18_DOK_OPER: ld unos novog kredita - radnik: " + cIdRadn + " iznos: " + AllTrim( Str( nIznKred ) ), 2 )
@@ -279,7 +279,7 @@ FUNCTION ld_krediti_key_handler( Ch )
 
          SEEK cIdRadn + cIdKred + cNaOsnovu
 
-         sql_table_update( nil, "BEGIN" )
+         run_sql_query( "BEGIN" )
          f18_lock_tables( { "ld_radkr" }, .T. )
 
 
@@ -299,7 +299,7 @@ FUNCTION ld_krediti_key_handler( Ch )
          ENDDO
 
 
-         sql_table_update( nil, "END" )
+         run_sql_query( "COMMIT" )
          f18_free_tables( { "ld_radkr" } )
 
       ENDIF
@@ -383,7 +383,7 @@ FUNCTION ld_krediti_redefinisanje_rata()
 
       nTotalKr := 0
 
-      sql_table_update( nil, "BEGIN" )
+      run_sql_query( "BEGIN" )
       f18_lock_tables( { "ld_radkr" }, .T. )
 
 
@@ -451,7 +451,7 @@ FUNCTION ld_krediti_redefinisanje_rata()
          ENDIF
       ENDDO
 
-      sql_table_update( nil, "END" )
+      run_sql_query( "COMMIT" )
       f18_free_tables( { "ld_radkr" } )
 
 
@@ -490,7 +490,7 @@ FUNCTION SumKredita()
 
    nIznos := 0
 
-   sql_table_update( nil, "BEGIN" )
+   run_sql_query( "BEGIN" )
    f18_lock_tables( { "ld_radkr" }, .T. )
 
    DO WHILE !Eof() .AND. _godina == godina .AND. _mjesec == mjesec .AND. idradn == _idradn
@@ -506,7 +506,7 @@ FUNCTION SumKredita()
 
    ENDDO
 
-   sql_table_update( nil, "END" )
+   run_sql_query( "COMMIT" )
    f18_free_tables( { "ld_radkr" } )
 
    IF !fUsed
@@ -1147,7 +1147,7 @@ FUNCTION ld_brisanje_kredita()
    SET ORDER TO TAG "2"
    SEEK cIdRadn + cIdKred + cNaOsnovu
 
-   sql_table_update( nil, "BEGIN" )
+   run_sql_query( "BEGIN" )
    f18_lock_tables( { "ld_radkr" }, .T. )
 
 
@@ -1164,7 +1164,7 @@ FUNCTION ld_brisanje_kredita()
       GO ( nRec )
    ENDDO
 
-   sql_table_update( nil, "END" )
+   run_sql_query( "COMMIT" )
    f18_free_tables( { "ld_radkr" } )
 
 

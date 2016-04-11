@@ -180,7 +180,7 @@ FUNCTION rn_g_r_br( cTblName )
    Box( , 2, 35 )
 
    f18_lock_tables( { _table } )
-   sql_table_update( nil, "BEGIN" )
+   run_sql_query( "BEGIN" )
 
    DO WHILE !Eof()
 
@@ -197,7 +197,7 @@ FUNCTION rn_g_r_br( cTblName )
    ENDDO
 
    f18_free_tables( { _table } )
-   sql_table_update( nil, "END" )
+   run_sql_query( "COMMIT" )
 
    BoxC()
 

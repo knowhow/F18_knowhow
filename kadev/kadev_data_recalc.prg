@@ -108,7 +108,7 @@ if !f18_lock_tables( { "kadev_0", "kadev_1" } )
     return
 endif
 
-sql_table_update( NIL, "BEGIN" )
+run_sql_query( "BEGIN" )
 
 select kadev_0
 
@@ -138,7 +138,7 @@ do while !EOF() .and. IF( !EMPTY( _radn_id ), field->id == _radn_id, .t.  )
     
     if !RekalkStatus( dDoDat )
         f18_free_tables( { "kadev_0","kadev_1" } )
-        sql_table_update( NIL, "ROLLBACK" )
+        run_sql_query( "ROLLBACK" )
         PopWa()
         my_close_all_dbf()
         return
@@ -150,7 +150,7 @@ do while !EOF() .and. IF( !EMPTY( _radn_id ), field->id == _radn_id, .t.  )
 enddo
 
 f18_free_tables( { "kadev_0","kadev_1" } )
-sql_table_update( NIL, "END" )
+run_sql_query( "COMMIT" )
 
 if _postotak
     Postotak(0)
@@ -352,7 +352,7 @@ n1:=0
 if !f18_lock_tables( { "kadev_0", "kadev_1" } )
     return
 endif
-sql_table_update( NIL, "BEGIN" )
+run_sql_query( "BEGIN" )
 
 do while !eof() 
 
@@ -368,7 +368,7 @@ do while !eof()
     if !RekalkRSt(dDoDat,lPom)
         // otkljucaj tabele...
         f18_free_tables( { "kadev_0", "kadev_1" } )
-        sql_table_update( NIL, "ROLLBACK" )
+        run_sql_query( "ROLLBACK" )
         my_close_all_dbf()
         return
     endif
@@ -379,7 +379,7 @@ enddo
 
 // otkljucaj tabele...
 f18_free_tables( { "kadev_0", "kadev_1" } )
-sql_table_update( NIL, "END" )
+run_sql_query( "COMMIT" )
  
 IF gPostotak=="D"
   IF lPom

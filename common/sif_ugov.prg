@@ -322,9 +322,9 @@ FUNCTION br_ugovor()
       RETURN _ret
    ENDIF
 
-   sql_table_update( nil, "BEGIN" )
+   run_sql_query( "BEGIN" )
    IF !f18_lock_tables( { "fakt_ugov", "fakt_rugov" }, .T. )
-      sql_table_update( nil, "END" )
+      run_sql_query( "COMMIT" )
       MsgBeep( "Problem sa lokovanjem tabela !" )
       RETURN _ret
    ENDIF
@@ -356,10 +356,10 @@ FUNCTION br_ugovor()
 
    IF lOk
       _ret := 1
-      sql_table_update( nil, "END" )
+      run_sql_query( "COMMIT" )
       f18_free_tables( { "fakt_ugov", "fakt_rugov" } )
    ELSE
-      sql_table_update( nil, "ROLLBACK" )
+      run_sql_query( "ROLLBACK" )
    ENDIF
 
    SELECT ugov

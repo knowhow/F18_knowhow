@@ -83,10 +83,10 @@ FUNCTION kalk_povrat_dokumenta()
 
    IF lBrisiKumulativ
 
-      sql_table_update( nil, "BEGIN" )
+      run_sql_query( "BEGIN" )
 
       IF !f18_lock_tables( { "kalk_doks", "kalk_kalk", "kalk_doks2" }, .T. )
-         sql_table_update( nil, "END" )
+         run_sql_query( "COMMIT" )
          MsgBeep( "Ne mogu zaključati tabele !#Prekidam operaciju povrata." )
          RETURN .F.
       ENDIF
@@ -118,12 +118,12 @@ FUNCTION kalk_povrat_dokumenta()
       MsgC()
 
       IF lOk
-         sql_table_update( nil, "END" )
+         run_sql_query( "COMMIT" )
          f18_free_tables( { "kalk_doks", "kalk_kalk", "kalk_doks2" } )
 
          log_write( "F18_DOK_OPER: povrat dokumenta u pripremu, kalk: " + _id_firma + "-" + _id_vd + "-" + ALLTRIM( _br_dok ), 2 )
       ELSE
-         sql_table_update( nil, "ROLLBACK" )
+         run_sql_query( "ROLLBACK" )
          MsgBeep( "Operacija povrata dokumenta u pripremu neuspješna !" )
       ENDIF
 
@@ -338,10 +338,10 @@ STATIC FUNCTION kalk_povrat_prema_kriteriju()
 
       MsgO( "Brišem tabele sa servera ..." )
 
-      sql_table_update( nil, "BEGIN" )
+      run_sql_query( "BEGIN" )
 
       IF !f18_lock_tables( { "kalk_doks", "kalk_kalk", "kalk_doks2" }, .T. )
-         sql_table_update( nil, "END" )
+         run_sql_query( "COMMIT" )
          MsgBeep( "Ne mogu zaključati tabele !#Prekidam proceduru povrata." )
          RETURN lRet
       ENDIF
@@ -402,9 +402,9 @@ STATIC FUNCTION kalk_povrat_prema_kriteriju()
       IF lOk
          lRet := .T.
          f18_free_tables( { "kalk_doks", "kalk_kalk", "kalk_doks2" } )
-         sql_table_update( nil, "END" )
+         run_sql_query( "COMMIT" )
       ELSE
-         sql_table_update( nil, "ROLLBACK" )
+         run_sql_query( "ROLLBACK" )
          MsgBeep( "Problem sa brisanjem podataka iz KALK server tabela !" )
       ENDIF
 

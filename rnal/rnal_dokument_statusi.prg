@@ -72,10 +72,10 @@ FUNCTION rnal_azuriraj_statuse( doc_no )
    LOCAL _promj_count := 0
    LOCAL lOk := .T.
 
-   sql_table_update( nil, "BEGIN" )
+   run_sql_query( "BEGIN" )
 
    IF !f18_lock_tables( { "rnal_doc_ops" }, .T. )
-      sql_table_update( nil, "END" )
+      run_sql_query( "COMMIT" )
       MsgBeep( "Ne mogu zaključati tabele!#Prekidam operaciju." )
       lOk := .F.
       RETURN lOk
@@ -137,9 +137,9 @@ FUNCTION rnal_azuriraj_statuse( doc_no )
 
    IF lOk
       f18_free_tables( { "rnal_doc_ops" } )
-      sql_table_update( nil, "END" )
+      run_sql_query( "COMMIT" )
    ELSE
-      sql_table_update( nil, "ROLLBACK" )
+      run_sql_query( "ROLLBACK" )
    ENDIF
 
    IF lOk

@@ -281,9 +281,9 @@ STATIC FUNCTION _insert_into_fin_priprema( data, konto_data, partn_data, param )
       SET ORDER TO TAG "1"
       GO TOP
 
-      sql_table_update( NIL, "BEGIN" )
+      run_sql_query( "BEGIN" )
       IF !f18_lock_tables( { "partn", "konto" }, .T. )
-         sql_table_update( NIL, "END" )
+         run_sql_query( "COMMIT" )
          MsgBeep( "Problem sa zaključavanjem tabela !#Prekidam operaciju." )
          RETURN _ret
       ENDIF
@@ -326,9 +326,9 @@ STATIC FUNCTION _insert_into_fin_priprema( data, konto_data, partn_data, param )
 
       IF lOk
          f18_free_tables( { "partn", "konto" } )
-         sql_table_update( NIL, "END" )
+         run_sql_query( "COMMIT" )
       ELSE
-         sql_table_update( NIL, "ROLLBACK" )
+         run_sql_query( "ROLLBACK" )
          MsgBeep( "Problem sa dodavanjem novih šifri na server !" )
       ENDIF
 

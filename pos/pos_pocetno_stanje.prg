@@ -181,9 +181,9 @@ STATIC FUNCTION pocetno_stanje_sql( param )
 
    _n_br_dok := pos_novi_broj_dokumenta( _id_pos, "16", _date_ps )
 
-   sql_table_update( nil, "BEGIN" )
+   run_sql_query( "BEGIN" )
    IF !f18_lock_tables( { "pos_pos", "pos_doks" }, .T. )
-      sql_table_update( nil, "END" )
+      run_sql_query( "COMMIT" )
       MsgBeep( "Ne mogu zaključati tabele !#Prekidam operaciju." )
       RETURN .F.
    ENDIF
@@ -261,9 +261,9 @@ STATIC FUNCTION pocetno_stanje_sql( param )
 
    IF lOk
       f18_free_tables( { "pos_pos", "pos_doks" } )
-      sql_table_update( nil, "END" )
+      run_sql_query( "COMMIT" )
    ELSE
-      sql_table_update( nil, "ROLLBACK" )
+      run_sql_query( "ROLLBACK" )
    ENDIF
 
    SELECT ( F_ROBA )

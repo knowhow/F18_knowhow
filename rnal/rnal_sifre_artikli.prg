@@ -579,10 +579,10 @@ STATIC FUNCTION ispravi_opis_artikla( nArt_id )
    IF ispravka_artikla_box( @cArt_desc, @cArt_full_desc, @cArt_lab_desc, ;
          @cArt_mcode ) == 1
 
-      sql_table_update( nil, "BEGIN" )
+      run_sql_query( "BEGIN" )
 
       IF !f18_lock_tables( { "articles" }, .T. )
-         sql_table_update( nil, "END" )
+         run_sql_query( "COMMIT" )
          MsgBeep( "Ne mogu zaključati tabelu articles !#Prekidam operaciju." )
          RETURN nRet
       ENDIF
@@ -601,10 +601,10 @@ STATIC FUNCTION ispravi_opis_artikla( nArt_id )
       _rec[ "match_code" ] := cArt_mcode
 
       IF !update_rec_server_and_dbf( "articles", _rec, 1, "CONT" )
-         sql_table_update( nil, "ROLLBACK" )
+         run_sql_query( "ROLLBACK" )
       ELSE
          f18_free_tables( { "articles" } )
-         sql_table_update( nil, "END" )
+         run_sql_query( "COMMIT" )
          nRet := 1
       ENDIF
 
@@ -836,10 +836,10 @@ STATIC FUNCTION rnal_brisi_artikal( nArt_id, lChkKum, lSilent )
          RETURN 0
       ENDIF
 
-      sql_table_update( nil, "BEGIN" )
+      run_sql_query( "BEGIN" )
 
       IF !f18_lock_tables( { "articles", "elements", "e_att", "e_aops" }, .T. )
-         sql_table_update( nil, "END" )
+         run_sql_query( "COMMIT" )
          MsgBeep( "Ne mogu zaključati tabele !#Prekidam operaciju." )
          RETURN 0
       ENDIF
@@ -852,9 +852,9 @@ STATIC FUNCTION rnal_brisi_artikal( nArt_id, lChkKum, lSilent )
 
       IF lOk
          f18_free_tables( { "articles", "elements", "e_att", "e_aops" } )
-         sql_table_update( nil, "END" )
+         run_sql_query( "COMMIT" )
       ELSE
-         sql_table_update( nil, "ROLLBACK" )
+         run_sql_query( "ROLLBACK" )
       ENDIF
 
    ENDIF
@@ -883,10 +883,10 @@ STATIC FUNCTION rnal_dupliciraj_artikal( nArt_id )
    SET FILTER TO
    SET RELATION TO
 
-   sql_table_update( nil, "BEGIN" )
+   run_sql_query( "BEGIN" )
 
    IF !f18_lock_tables( { "articles", "elements", "e_att", "e_aops" }, .T. )
-      sql_table_update( nil, "END" )
+      run_sql_query( "COMMIT" )
       MsgBeep( "Ne mogu zaključati tabele !#Prekidam operaciju." )
       RETURN -1
    ENDIF
@@ -939,9 +939,9 @@ STATIC FUNCTION rnal_dupliciraj_artikal( nArt_id )
 
    IF lOk
       f18_free_tables( { "articles", "elements", "e_att", "e_aops" } )
-      sql_table_update( nil, "END" )
+      run_sql_query( "COMMIT" )
    ELSE
-      sql_table_update( nil, "ROLLBACK" )
+      run_sql_query( "ROLLBACK" )
    ENDIF
 
    RETURN nArtNewid

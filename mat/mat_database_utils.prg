@@ -161,7 +161,7 @@ FUNCTION brisi_mat_nalog( cIdFirma, cIdVn, cBrNal )
       RETURN .F.
    ENDIF
 
-   sql_table_update( nil, "BEGIN" )
+   run_sql_query( "BEGIN" )
 
    SELECT mat_suban
    SET ORDER TO TAG "4"
@@ -204,7 +204,7 @@ FUNCTION brisi_mat_nalog( cIdFirma, cIdVn, cBrNal )
    ENDIF
 
    f18_free_tables( { "mat_suban", "mat_sint", "mat_anal", "mat_nalog" } )
-   sql_table_update( nil, "END" )
+   run_sql_query( "COMMIT" )
 
    RETURN _ok
 

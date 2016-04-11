@@ -863,10 +863,10 @@ STATIC FUNCTION AzurPPK()
 
    GO TOP
 
-   sql_table_update( nil, "BEGIN" )
+   run_sql_query( "BEGIN" )
 
    IF !f18_lock_tables( { "fin_suban", "fin_anal", "fin_sint" }, .T. )
-      sql_table_update( nil, "END" )
+      run_sql_query( "COMMIT" )
       RETURN
    ENDIF
 
@@ -1100,7 +1100,7 @@ STATIC FUNCTION AzurPPK()
 
    Postotak( -1,,,,, .T. )
 
-   sql_table_update( nil, "END" )
+   run_sql_query( "COMMIT" )
    f18_free_tables( { "fin_suban", "fin_anal", "fin_sint" } )
 
    SELECT TEMP77

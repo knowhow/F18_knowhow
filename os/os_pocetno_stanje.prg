@@ -182,7 +182,7 @@ STATIC FUNCTION _os_brisi_tekucu_godinu( info )
       RETURN _ok
    ENDIF
 
-   sql_table_update( nil, "BEGIN" )
+   run_sql_query( "BEGIN" )
 
    select_os_sii()
    SET ORDER TO TAG "1"
@@ -226,7 +226,7 @@ STATIC FUNCTION _os_brisi_tekucu_godinu( info )
    ENDDO
 
    f18_free_tables( { __table_os, __table_promj } )
-   sql_table_update( nil, "END" )
+   run_sql_query( "COMMIT" )
 
    @ _pos_x, _pos_y + 55 SAY "OK"
 
@@ -293,7 +293,7 @@ STATIC FUNCTION _os_prebaci_iz_prethodne( info )
       RETURN _ok
    ENDIF
 
-   sql_table_update( nil, "BEGIN" )
+   run_sql_query( "BEGIN" )
 
    @ _pos_x := m_x + 4, _pos_y := m_y + 2 SAY PadR( "3) insert podataka u novoj sezoni ", 40, "." )
 
@@ -301,7 +301,7 @@ STATIC FUNCTION _os_prebaci_iz_prethodne( info )
    _insert_into_promj( _data_promj )
 
    f18_free_tables( { __table_os, __table_promj } )
-   sql_table_update( nil, "END" )
+   run_sql_query( "COMMIT" )
 
    @ _pos_x, _pos_y + 55 SAY "OK"
 
@@ -447,7 +447,7 @@ STATIC FUNCTION _os_generacija_nakon_ps( info )
       RETURN _ok
    ENDIF
 
-   sql_table_update( nil, "BEGIN" )
+   run_sql_query( "BEGIN" )
 
    _otpis_count := 0
 
@@ -535,7 +535,7 @@ STATIC FUNCTION _os_generacija_nakon_ps( info )
    @ _pos_x, _pos_y + 55 SAY "OK"
 
    f18_free_tables( { __table_os, __table_promj } )
-   sql_table_update( nil, "END" )
+   run_sql_query( "COMMIT" )
 
    my_close_all_dbf()
 

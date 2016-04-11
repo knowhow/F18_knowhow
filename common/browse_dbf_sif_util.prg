@@ -698,16 +698,16 @@ FUNCTION snimi_promjene_sifarnika( lNovi, cTekuciZapis )
 
    _rec := get_dbf_global_memvars( "w", NIL, lSqlTable )
 
-   sql_table_update( nil, "BEGIN" )
+   run_sql_query( "BEGIN" )
 
    IF !f18_lock_tables( { cAlias }, .T. )
-      sql_table_update( nil, "END" )
+      run_sql_query( "COMMIT" )
       Msgbeep( "Ne mogu zaključati tabelu " + cAlias + "!#Prekidam operaciju." )
       RETURN lRet
    ENDIF
 
    IF lNovi .AND. is_sifra_postoji_u_sifarniku( _rec )
-      sql_table_update( nil, "END" )
+      run_sql_query( "COMMIT" )
       Msgbeep( "Šifra koju želite dodati već postoji u šifrarniku !" )
       RETURN lRet
    ENDIF
@@ -726,13 +726,13 @@ FUNCTION snimi_promjene_sifarnika( lNovi, cTekuciZapis )
    IF lOk
 
       lRet := .T.
-      sql_table_update( nil, "END" )
+      run_sql_query( "COMMIT" )
       f18_free_tables( { cAlias } )
       log_write( "F18_DOK_OPER: dodavanje/ispravka zapisa u sifarnik " + cAlias, 2 )
 
    ELSE
 
-      sql_table_update( nil, "ROLLBACK" )
+      run_sql_query( "ROLLBACK" )
 
       IF lNovi .AND. lAppended
          // brisi DBF zapis koji smo prvobitno dodali
@@ -771,9 +771,9 @@ FUNCTION snimi_promjene_cirkularne_ispravke_sifarnika()
    _vars := get_dbf_global_memvars( "w", NIL, lSqlTable )
    _alias := Lower( Alias() )
 
-   sql_table_update( nil, "BEGIN" )
+   run_sql_query( "BEGIN" )
    IF !f18_lock_tables( { _alias  }, .T. )
-      sql_table_update( nil, "END" )
+      run_sql_query( "COMMIT" )
       MsgBeep( "Ne mogu zaključati tabelu " + _alias + " !#Prekidam operaciju." )
       RETURN lRet
    ENDIF
@@ -785,11 +785,11 @@ FUNCTION snimi_promjene_cirkularne_ispravke_sifarnika()
 
    IF lOk
       lRet := .T.
-      sql_table_update( nil, "END" )
+      run_sql_query( "COMMIT" )
       f18_free_tables( { _alias } )
       log_write( "F18_DOK_OPER: cirkularna ispravka šifrarnika " + _alias, 2 )
    ELSE
-      sql_table_update( nil, "ROLLBACK" )
+      run_sql_query( "ROLLBACK" )
       log_write( "F18_DOK_OPER: greška sa cirkularnom ispravkom šifrarnika " + _alias, 2 )
       MsgBeep( "Greška sa operacijom cirkularne ispravke !#Operacija prekinuta." )
    ENDIF
@@ -1082,9 +1082,9 @@ FUNCTION sifarnik_brisi_stavku()
 
    PushWA()
 
-   sql_table_update( nil, "BEGIN" )
+   run_sql_query( "BEGIN" )
    IF !f18_lock_tables( { cAlias }, .T. )
-      sql_table_update( nil, "END" )
+      run_sql_query( "COMMIT" )
       MsgBeep( "Ne mogu zaključati tabelu " + cAlias + "!#Prekidam operaciju." )
       RETURN DE_CONT
    ENDIF
@@ -1106,14 +1106,14 @@ FUNCTION sifarnik_brisi_stavku()
    ENDIF
 
    IF lOk
-      sql_table_update( nil, "END" )
+      run_sql_query( "COMMIT" )
 #ifdef F18_DEBUG
       MsgBeep( "table " + cAlias  + " updated and locked" )
 #endif
       f18_free_tables( { cAlias } )
       log_write( "F18_DOK_OPER: brisanje stavke iz šifrarnika, stavka " + pp( hRec ), 2 )
    ELSE
-      sql_table_update( nil, "ROLLBACK" )
+      run_sql_query( "ROLLBACK" )
       log_write( "F18_DOK_OPER: greška sa brisanjem stavke iz šifrarnika", 2 )
       MsgBeep( "Greška sa brisanjem zapisa iz šifrarnika !#Operacija prekinuta." )
    ENDIF

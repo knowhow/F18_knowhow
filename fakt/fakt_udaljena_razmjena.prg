@@ -695,10 +695,10 @@ STATIC FUNCTION __import( vars, a_details )
    LOCAL _detail_rec
    LOCAL lOk := .T.
 
-   sql_table_update( nil, "BEGIN" )
+   run_sql_query( "BEGIN" )
 
    IF !f18_lock_tables( { "fakt_doks", "fakt_doks2", "fakt_fakt" }, .T. )
-      sql_table_update( nil, "END" )
+      run_sql_query( "COMMIT" )
       MsgBeep( "Problem sa zaključavanjem tabela.#Prekidam operaciju." )
       RETURN _cnt
    ENDIF
@@ -898,9 +898,9 @@ STATIC FUNCTION __import( vars, a_details )
 
    IF lOk
       f18_free_tables( { "fakt_doks", "fakt_doks2", "fakt_fakt" } )
-      sql_table_update( nil, "END" )
+      run_sql_query( "COMMIT" )
    ELSE
-      sql_table_update( nil, "ROLLBACK" )
+      run_sql_query( "ROLLBACK" )
       Msgbeep( "Problem sa operacijom inserta dokumenata.#Prekidam operaciju." )
    ENDIF
 

@@ -150,7 +150,7 @@ FUNCTION kuf_kif_azur_sql( tbl, next_g_rbr, next_br_dok )
    lOk := .T.
 
    MsgO( "sql " + _tbl_epdv )
-   sql_table_update( nil, "BEGIN" )
+   run_sql_query( "BEGIN" )
 
    IF lOk = .T.
 
@@ -184,11 +184,11 @@ FUNCTION kuf_kif_azur_sql( tbl, next_g_rbr, next_br_dok )
    ENDIF
 
    IF !lOk
-      sql_table_update( nil, "ROLLBACK" )
+      run_sql_query( "ROLLBACK" )
    ELSE
       AAdd( _ids, _tmp_id )
       push_ids_to_semaphore( _tbl_epdv, _ids )
-      sql_table_update( nil, "END" )
+      run_sql_query( "COMMIT" )
    ENDIF
 
    f18_free_tables( { _tbl_epdv } )

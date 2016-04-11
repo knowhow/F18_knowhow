@@ -438,7 +438,7 @@ elseif Ch == K_F2
             return DE_CONT
         endif 
 
-        sql_table_update( nil, "BEGIN" )
+        run_sql_query( "BEGIN" )
  
         do while !EOF() .and. _old_id == field->idrjes
 
@@ -462,7 +462,7 @@ elseif Ch == K_F2
         update_rec_server_and_dbf( "kadev_rjes", _rec, 1, "CONT" )
 
         f18_free_tables( { "kadev_defrjes", "kadev_rjes" } )
-        sql_table_update( nil, "END" )
+        run_sql_query( "COMMIT" )
  
     endif
     

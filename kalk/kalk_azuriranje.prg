@@ -746,10 +746,10 @@ STATIC FUNCTION kalk_azur_sql()
 
    o_kalk_za_azuriranje()
 
-   sql_table_update( nil, "BEGIN" )
+   run_sql_query( "BEGIN" )
 
    IF !f18_lock_tables( { _tbl_kalk, _tbl_doks }, .T. )
-      sql_table_update( nil, "END" )
+      run_sql_query( "COMMIT" )
       MsgBeep( "Ne mogu zaključati tabele !#Prekidam operaciju." )
       RETURN lRet
    ENDIF
@@ -844,7 +844,7 @@ STATIC FUNCTION kalk_azur_sql()
 
    IF !_ok
 
-      sql_table_update( nil, "ROLLBACK" )
+      run_sql_query( "ROLLBACK" )
 
       _msg := "kalk ažuriranje, trasakcija " + _tmp_id + " neuspješna ?!"
       log_write( _msg, 2 )
@@ -859,7 +859,7 @@ STATIC FUNCTION kalk_azur_sql()
       @ m_x + 5, m_y + 2 SAY "update semaphore version"
 
       f18_free_tables( { _tbl_kalk, _tbl_doks } )
-      sql_table_update( nil, "END" )
+      run_sql_query( "COMMIT" )
 
       log_write( "F18_DOK_OPER: ažuriranje kalk dokumenta: " + _log_dok, 2 )
 

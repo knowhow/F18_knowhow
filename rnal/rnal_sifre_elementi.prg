@@ -945,10 +945,10 @@ STATIC FUNCTION nafiluj_atribute_grupe( __gr_id, __el_id )
    LOCAL lAuto := .T.
    LOCAL lOk := .T.
 
-   sql_table_update( nil, "BEGIN" )
+   run_sql_query( "BEGIN" )
 
    IF !f18_lock_tables( { "e_att" }, .T. )
-      sql_table_update( nil, "END" )
+      run_sql_query( "COMMIT" )
       MsgBeep( "Ne mogu zaključati e_att tabelu !#Prekidam operaciju." )
       RETURN
    ENDIF
@@ -990,9 +990,9 @@ STATIC FUNCTION nafiluj_atribute_grupe( __gr_id, __el_id )
 
    IF lOk
       f18_free_tables( { "e_att" } )
-      sql_table_update( nil, "END" )
+      run_sql_query( "COMMIT" )
    ELSE
-      sql_table_update( nil, "ROLLBACK" )
+      run_sql_query( "ROLLBACK" )
    ENDIF
 
    SELECT ( nTArea )

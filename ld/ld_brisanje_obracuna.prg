@@ -102,7 +102,7 @@ FUNCTION BrisiRadnika()
 
             Postotak( 1, RecCount(), "Ukloni 0 zapise" )
 
-            sql_table_update( nil, "BEGIN" )
+            run_sql_query( "BEGIN" )
 
             f18_lock_tables( { "ld_ld" }, .T. )
             DO WHILE !Eof()
@@ -129,7 +129,7 @@ FUNCTION BrisiRadnika()
             Postotak( 0 )
 
 
-            sql_table_update( nil, "END" )
+            run_sql_query( "COMMIT" )
             f18_free_tables( { "ld_ld" } )
 
          ELSE

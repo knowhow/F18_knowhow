@@ -67,9 +67,9 @@ FUNCTION update_table_konto( zamjena_sifre )
    LOCAL _app_rec
    LOCAL _sif_exist := .T.
 
-   sql_table_update( nil, "BEGIN" )
+   run_sql_query( "BEGIN" )
    IF !f18_lock_tables( { "konto" }, .T. )
-      sql_table_update( nil, "END" )
+      run_sql_query( "COMMIT" )
       RETURN lRet
    ENDIF
 
@@ -120,10 +120,10 @@ FUNCTION update_table_konto( zamjena_sifre )
 
    IF lOk
       lRet := .T.
-      sql_table_update( nil, "END" )
+      run_sql_query( "COMMIT" )
       f18_free_tables( { "konto" } )
    ELSE
-      sql_table_update( nil, "ROLLBACK" )
+      run_sql_query( "ROLLBACK" )
    ENDIF
 
    RETURN lRet
@@ -140,9 +140,9 @@ FUNCTION update_table_partn( zamjena_sifre )
    LOCAL _app_rec
    LOCAL _sif_exist := .T.
 
-   sql_table_update( nil, "BEGIN" )
+   run_sql_query( "BEGIN" )
    IF !f18_lock_tables( { "partn" }, .T. )
-      sql_table_update( nil, "END" )
+      run_sql_query( "COMMIT" )
       RETURN lRet
    ENDIF
 
@@ -193,10 +193,10 @@ FUNCTION update_table_partn( zamjena_sifre )
 
    IF lOk
       lRet := .T.
-      sql_table_update( nil, "END" )
+      run_sql_query( "COMMIT" )
       f18_free_tables( { "partn" } )
    ELSE
-      sql_table_update( nil, "ROLLBACK" )
+      run_sql_query( "ROLLBACK" )
    ENDIF
 
    RETURN lRet
@@ -210,9 +210,9 @@ FUNCTION update_table_roba( zamjena_sifre )
    LOCAL _app_rec
    LOCAL _sif_exist := .T.
 
-   sql_table_update( nil, "BEGIN" )
+   run_sql_query( "BEGIN" )
    IF !f18_lock_tables( { "roba" }, .T. )
-      sql_table_update( nil, "END" )
+      run_sql_query( "COMMIT" )
       RETURN lRet
    ENDIF
 
@@ -263,10 +263,10 @@ FUNCTION update_table_roba( zamjena_sifre )
 
    IF lOk
       lRet := .T.
-      sql_table_update( nil, "END" )
+      run_sql_query( "COMMIT" )
       f18_free_tables( { "roba" } )
    ELSE
-      sql_table_update( nil, "ROLLBACK" )
+      run_sql_query( "ROLLBACK" )
    ENDIF
 
    RETURN lRet

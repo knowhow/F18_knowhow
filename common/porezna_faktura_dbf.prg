@@ -370,7 +370,7 @@ FUNCTION AzurKupData( cIdPos )
       MsgBeep( "Ne mogu lock-ovati dokspf tabelu !!!" )
    ENDIF
 
-   sql_table_update( nil, "BEGIN" )
+   run_sql_query( "BEGIN" )
 
    SELECT drn
    GO TOP
@@ -400,7 +400,7 @@ FUNCTION AzurKupData( cIdPos )
 
    update_rec_server_and_dbf( _tbl, _rec, 1, "CONT" )
 
-   sql_table_update( nil, "END" )
+   run_sql_query( "COMMIT" )
    f18_free_tables( { _tbl } )
 
    RETURN .T.

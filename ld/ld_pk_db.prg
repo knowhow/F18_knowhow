@@ -47,7 +47,7 @@ FUNCTION pk_delete( cIdRadn )
 
    o_pk_tbl()
 
-   sql_table_update( nil, "BEGIN" )
+   run_sql_query( "BEGIN" )
    f18_lock_tables( { "ld_pk_data", "ld_pk_radn" }, .T. )
 
 
@@ -76,7 +76,7 @@ FUNCTION pk_delete( cIdRadn )
       delete_rec_server_and_dbf( "ld_pk_data", _del_rec, 2, "CONT" )
    ENDIF
 
-   sql_table_update( nil, "END" )
+   run_sql_query( "COMMIT" )
    f18_free_tables( { "ld_pk_data", "ld_pk_radn" } )
 
 

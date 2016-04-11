@@ -53,10 +53,10 @@ FUNCTION fin_azuriranje_naloga( automatic )
       RETURN lRet
    ENDIF
 
-   sql_table_update( nil, "BEGIN" )
+   run_sql_query( "BEGIN" )
 
    IF !f18_lock_tables( { __tbl_suban, __tbl_anal, __tbl_sint, __tbl_nalog }, .T. )
-      sql_table_update( nil, "END" )
+      run_sql_query( "COMMIT" )
       MsgBeep( "Ne mogu napraviti zaključavanje tabela !#Poništavam operaciju ažuriranja naloga." )
       RETURN lRet
    ENDIF
@@ -73,7 +73,7 @@ FUNCTION fin_azuriranje_naloga( automatic )
 
          IF !lViseNalogaUPripremi
 
-            sql_table_update( nil, "ROLLBACK" )
+            run_sql_query( "ROLLBACK" )
 
             MsgC()
 
@@ -87,7 +87,7 @@ FUNCTION fin_azuriranje_naloga( automatic )
 
       IF !fin_azur_sql( oServer, _id_firma, _id_vn, _br_nal )
 
-         sql_table_update( nil, "ROLLBACK" )
+         run_sql_query( "ROLLBACK" )
 
          log_write( "F18_DOK_OPER: greška kod ažuriranja fin naloga: " + _id_firma + "-" + _id_vn + "-" + _br_nal, 2 )
 
@@ -101,7 +101,7 @@ FUNCTION fin_azuriranje_naloga( automatic )
 
       IF !fin_azur_dbf( automatic, _id_firma, _id_vn, _br_nal )
 
-         sql_table_update( nil, "ROLLBACK" )
+         run_sql_query( "ROLLBACK" )
          log_write( "F18_DOK_OPER: greška kod ažuriranja fin naloga: " + _id_firma + "-" + _id_vn + "-" + _br_nal, 2 )
          MsgBeep( "Problem sa ažuriranjem naloga u DBF tabele !" )
 
@@ -113,7 +113,7 @@ FUNCTION fin_azuriranje_naloga( automatic )
 
    NEXT
 
-   sql_table_update( nil, "END" )
+   run_sql_query( "COMMIT" )
    f18_free_tables( { __tbl_suban, __tbl_anal, __tbl_sint, __tbl_nalog } )
 
 

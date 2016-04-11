@@ -33,9 +33,9 @@ FUNCTION sast_repl_all() // zamjena sastavnice u svim proizvodima
 
    IF ( LastKey() <> K_ESC )
 
-      sql_table_update( nil, "BEGIN" )
+      run_sql_query( "BEGIN" )
       IF !f18_lock_tables( { "sast" }, .T. )
-         sql_table_update( nil, "END" )
+         run_sql_query( "COMMIT" )
          MsgBeep( "Greska sa lock-om tabele sast !" )
          RETURN .F.
       ENDIF
@@ -59,10 +59,10 @@ FUNCTION sast_repl_all() // zamjena sastavnice u svim proizvodima
       ENDDO
 
       IF lOk
-         sql_table_update( nil, "END" )
+         run_sql_query( "COMMIT" )
          f18_free_tables( { "sast" } )
       ELSE
-         sql_table_update( nil, "ROLLBACK" )
+         run_sql_query( "ROLLBACK" )
       ENDIF
 
       SET ORDER TO TAG "idrbr"
@@ -95,9 +95,9 @@ FUNCTION pr_uces_sast() // promjena ucesca
 
    IF ( LastKey() <> K_ESC )
 
-      sql_table_update( nil, "BEGIN" )
+      run_sql_query( "BEGIN" )
       IF !f18_lock_tables( { "sast" }, .T. )
-         sql_table_update( nil, "END" )
+         run_sql_query( "COMMIT" )
          MsgBeep( "Greska sa lock-om tabele sast !" )
          RETURN
       ENDIF
@@ -125,10 +125,10 @@ FUNCTION pr_uces_sast() // promjena ucesca
       ENDDO
 
       IF lOk
-         sql_table_update( nil, "END" )
+         run_sql_query( "COMMIT" )
          f18_free_tables( { "sast" } )
       ELSE
-         sql_table_update( nil, "ROLLBACK" )
+         run_sql_query( "ROLLBACK" )
       ENDIF
 
       SET ORDER TO TAG "idrbr"

@@ -24,9 +24,9 @@ FUNCTION pos_brisi_dokument( id_pos, id_vd, dat_dok, br_dok )
       RETURN lRet
    ENDIF
 
-   sql_table_update( nil, "BEGIN" )
+   run_sql_query( "BEGIN" )
    IF !f18_lock_tables( { "pos_pos", "pos_doks" }, .T. )
-      sql_table_update( nil, "END" )
+      run_sql_query( "COMMIT" )
       SELECT ( _t_area )
       RETURN _ret
    ENDIF
@@ -63,10 +63,10 @@ FUNCTION pos_brisi_dokument( id_pos, id_vd, dat_dok, br_dok )
    IF lOk
       lRet := .T.
       f18_free_tables( { "pos_pos", "pos_doks" } )
-      sql_table_update( nil, "END" )
+      run_sql_query( "COMMIT" )
       log_write( "F18_DOK_OPER, izbrisan pos dokument: " + cDokument, 2 )
    ELSE
-      sql_table_update( nil, "ROLLBACK" )
+      run_sql_query( "ROLLBACK" )
       log_write( "F18_DOK_OPER, greška sa brisanjem pos dokumenta: " + cDokument, 2 )
    ENDIF
 

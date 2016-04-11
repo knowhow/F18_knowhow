@@ -114,9 +114,9 @@ STATIC FUNCTION pos_definisi_inicijalne_podatke()
 
       MsgO( "Definišem šifre prioriteta ..." )
 
-      // sql_table_update( nil, "BEGIN" )
+      // run_sql_query( "BEGIN" )
       IF !f18_lock_tables( { "pos_strad" }, .T. )
-         // sql_table_update( nil, "END" )
+         // run_sql_query( "COMMIT" )
          RETURN .F.
       ENDIF
 
@@ -134,9 +134,9 @@ STATIC FUNCTION pos_definisi_inicijalne_podatke()
 
       IF lOk
          f18_free_tables( { "pos_strad" } )
-         // sql_table_update( nil, "END" )
+         // run_sql_query( "COMMIT" )
       ELSE
-         // sql_table_update( nil, "ROLLBACK" )
+         // run_sql_query( "ROLLBACK" )
       ENDIF
 
    ENDIF
@@ -147,9 +147,9 @@ STATIC FUNCTION pos_definisi_inicijalne_podatke()
 
       MsgO( "Definišem šifranik radnika ..." )
 
-      // sql_table_update( nil, "BEGIN" )
+      // run_sql_query( "BEGIN" )
       IF !f18_lock_tables( { "pos_osob" }, .T. )
-         // sql_table_update( nil, "END" )
+         // run_sql_query( "COMMIT" )
          RETURN .F.
       ENDIF
 
@@ -167,9 +167,9 @@ STATIC FUNCTION pos_definisi_inicijalne_podatke()
 
       IF lOk
          f18_free_tables( { "pos_osob" } )
-         // sql_table_update( nil, "END" )
+         // run_sql_query( "COMMIT" )
       ELSE
-         // sql_table_update( nil, "ROLLBACK" )
+         // run_sql_query( "ROLLBACK" )
       ENDIF
 
    ENDIF
@@ -554,9 +554,9 @@ FUNCTION pos_import_fmk_roba()
    SET ORDER TO TAG "ID"
    GO TOP
 
-   sql_table_update( nil, "BEGIN" )
+   run_sql_query( "BEGIN" )
    IF !f18_lock_tables( { "roba" }, .T. )
-      sql_table_update( nil, "END" )
+      run_sql_query( "COMMIT" )
       RETURN .F.
    ENDIF
 
@@ -607,9 +607,9 @@ FUNCTION pos_import_fmk_roba()
 
    IF lOk
       f18_free_tables( { "roba" } )
-      sql_table_update( nil, "END" )
+      run_sql_query( "COMMIT" )
    ELSE
-      sql_table_update( nil, "ROLLBACK" )
+      run_sql_query( "ROLLBACK" )
    ENDIF
 
    SELECT ( F_TMP_1 )

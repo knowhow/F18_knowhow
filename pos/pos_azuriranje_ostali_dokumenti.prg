@@ -21,9 +21,9 @@ FUNCTION pos_azuriraj_zaduzenje( cBrDok, cIdVd )
    LOCAL nCount := 0
    LOCAL cDokument := ""
 
-   sql_table_update( nil, "BEGIN" )
+   run_sql_query( "BEGIN" )
    IF !f18_lock_tables( { "pos_pos", "pos_doks", "roba" }, .T. )
-      sql_table_update( nil, "END" )
+      run_sql_query( "COMMIT" )
       MsgBeep( "Ne mogu zaključati tabele !#Prekidam operaciju." )
       RETURN lRet
    ENDIF
@@ -93,10 +93,10 @@ FUNCTION pos_azuriraj_zaduzenje( cBrDok, cIdVd )
    IF lOk
        lRet := .T.
        f18_free_tables( { "pos_pos", "pos_doks", "roba" } )
-       sql_table_update( nil, "END" )
+       run_sql_query( "COMMIT" )
        log_write( "F18_DOK_OPER, ažuriran pos dokument " + cDokument, 2 )
    ELSE
-       sql_table_update( nil, "ROLLBACK" )
+       run_sql_query( "ROLLBACK" )
        log_write( "F18_DOK_OPER, greška sa ažuriranjem pos dokumenta " + cDokument, 2 )
    ENDIF
 
@@ -154,9 +154,9 @@ FUNCTION pos_azuriraj_inventura_nivelacija()
    LOCAL _rec, _t_rec
    LOCAL cTipDok, cDokument
 
-   sql_table_update( nil, "BEGIN" )
+   run_sql_query( "BEGIN" )
    IF !f18_free_tables( { "pos_pos", "pos_doks" } )
-      sql_table_update( nil, "END" )
+      run_sql_query( "COMMIT" )
       MsgBeep( "Ne mogu zaključati tabele !#Prekidam operaciju." )
       RETURN lRet
    ENDIF
@@ -257,10 +257,10 @@ FUNCTION pos_azuriraj_inventura_nivelacija()
    IF lOk
        lRet := .T.
        f18_free_tables( { "pos_pos", "pos_doks" } )
-       sql_table_update( nil, "END" )
+       run_sql_query( "COMMIT" )
        log_write( "F18_DOK_OPER, ažuriran pos dokument: " + cDokument, 2 )
    ELSE
-       sql_table_update( nil, "ROLLBACK" )
+       run_sql_query( "ROLLBACK" )
        log_write( "F18_DOK_OPER, greška sa ažuriranjem pos dokumenta: " + cDokument, 2 )
    ENDIF
 

@@ -271,10 +271,10 @@ FUNCTION rnal_promjena_broja_naloga( old_doc )
       RETURN .F.
    ENDIF
 
-   sql_table_update( nil, "BEGIN" )
+   run_sql_query( "BEGIN" )
 
    IF !f18_lock_tables( { "docs", "doc_it", "doc_it2", "doc_ops" }, .T. )
-      sql_table_update( nil, "END" )
+      run_sql_query( "COMMIT" )
       MsgBeep( "Ne mogu zaključati tabele#Prekid opcije promjene broja naloga." )
       RETURN .F.
    ENDIF
@@ -295,9 +295,9 @@ FUNCTION rnal_promjena_broja_naloga( old_doc )
 
    IF lOk
       f18_free_tables( { "docs", "doc_it", "doc_it2", "doc_ops" } )
-      sql_table_update( nil, "END" )
+      run_sql_query( "COMMIT" )
    ELSE
-      sql_table_update( nil, "ROLLBACK" )
+      run_sql_query( "ROLLBACK" )
    ENDIF
 
    RETURN lOk

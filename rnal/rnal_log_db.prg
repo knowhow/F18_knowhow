@@ -107,7 +107,7 @@ FUNCTION use_sql_doc_lit( nDoc_no, nDoc_log_no )
 
 FUNCTION rnal_log_insert( nDoc_no, nDoc_log_no, cDoc_log_type, cDesc )
 
-   LOCAL nOperId
+   LOCAL nOperId, _rec
    LOCAL nTArea := Select()
    LOCAL lRet
 

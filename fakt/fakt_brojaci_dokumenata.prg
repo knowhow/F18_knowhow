@@ -588,10 +588,10 @@ FUNCTION fakt_ispravka_podataka_azuriranog_dokumenta( id_firma, tip_dok, br_dok 
       RETURN lRet
    ENDIF
 
-   sql_table_update( nil, "BEGIN" )
+   run_sql_query( "BEGIN" )
 
    IF !f18_lock_tables( { "fakt_fakt", "fakt_doks" }, .T. )
-      sql_table_update( nil, "END" )
+      run_sql_query( "COMMIT" )
       MsgBeep( "Ne mogu napraviti zaključavanje tabela.#Prekidam operaciju." )
       SELECT ( _t_area )
       RETURN lRet
@@ -608,7 +608,7 @@ FUNCTION fakt_ispravka_podataka_azuriranog_dokumenta( id_firma, tip_dok, br_dok 
    SEEK id_firma + tip_dok + br_dok
 
    IF !Found()
-      sql_table_update( nil, "END" )
+      run_sql_query( "COMMIT" )
       f18_free_tables( { "fakt_fakt", "fakt_doks" } )
       MsgBeep( "Dokument ne postoji, nije ništa zamjenjeno !" )
       RETURN lRet
@@ -622,7 +622,7 @@ FUNCTION fakt_ispravka_podataka_azuriranog_dokumenta( id_firma, tip_dok, br_dok 
    lOk := update_rec_server_and_dbf( "fakt_doks", _rec, 1, "CONT" )
 
    IF !lOk
-      sql_table_update( nil, "ROLLBACK" )
+      run_sql_query( "ROLLBACK" )
       MsgBeep( "Postoji problem sa zamjenom podataka#Prekidam operaciju." )
       RETURN lRet
    ENDIF
@@ -686,10 +686,10 @@ FUNCTION fakt_ispravka_podataka_azuriranog_dokumenta( id_firma, tip_dok, br_dok 
 
    IF lOk
       lRet := .T.
-      sql_table_update( nil, "END" )
+      run_sql_query( "COMMIT" )
       f18_free_tables( { "fakt_fakt", "fakt_doks" } )
    ELSE
-      sql_table_update( nil, "ROLLBACK" )
+      run_sql_query( "ROLLBACK" )
    ENDIF
 
    SELECT ( _t_area )

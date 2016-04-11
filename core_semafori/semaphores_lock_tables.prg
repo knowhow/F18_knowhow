@@ -23,7 +23,7 @@
   sql_table_update(nil, "BEGIN")
        update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
        f18_free_tables( {"pos_doks", "pos_pos"} )
-  sql_table_update(nil, "END")
+  run_sql_query( "COMMIT" )
 
   ako imamo samo jedan zapis, jednu tabelu, transakcija i lockovanje
   se desavaju unutar funkcije update_rec_server_and_dbf:
@@ -37,7 +37,7 @@
 
   sql_table_update(nil, "BEGIN")
      f18_lock_tables( { "rnal_vako", "rnal_nako" }, .T. }
-  sql_table_update(nil, "END")
+  run_sql_query( "COMMIT" )
 
 */
 
@@ -52,7 +52,7 @@ FUNCTION f18_lock_tables( a_tables, lAlreadyInTransakcija )
       RETURN .F.
    ENDIF
 
-   //IF  iif( lAlreadyInTransakcija, .T., sql_table_update( nil, "BEGIN" ) )
+   //IF  iif( lAlreadyInTransakcija, .T., run_sql_query( "BEGIN" ) )
 
       FOR _i := 1 TO Len( a_tables )
          _dbf_rec := get_a_dbf_rec( a_tables[ _i ] )
@@ -65,7 +65,7 @@ FUNCTION f18_lock_tables( a_tables, lAlreadyInTransakcija )
       IF _ok
 
          //IF !lAlreadyInTransakcija
-         //    sql_table_update( nil, "END" )
+         //    run_sql_query( "COMMIT" )
          //ENDIF
          //log_write( "uspjesno izvrsen lock tabela " + pp( a_tables ), 7 )
 
@@ -80,7 +80,7 @@ FUNCTION f18_lock_tables( a_tables, lAlreadyInTransakcija )
       ELSE
          log_write( "ERROR: nisam uspio napraviti lock tabela " + pp( a_tables ), 2 )
          //IF !lAlreadyInTransakcija
-         //  sql_table_update( nil, "ROLLBACK" )
+         //  run_sql_query( "ROLLBACK" )
          //ENDIF
          _ok := .F.
 

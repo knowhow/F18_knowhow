@@ -67,10 +67,10 @@ FUNCTION rnal_azuriraj_dokument( cDesc )
 
    ENDIF
 
-   sql_table_update( nil, "BEGIN" )
+   run_sql_query( "BEGIN" )
 
    IF !f18_lock_tables( { "docs", "doc_it", "doc_it2", "doc_ops" }, .T. )
-      sql_table_update( nil, "END" )
+      run_sql_query( "COMMIT" )
       MsgBeep( "Ne mogu zaključati tabele !?# Prekid operacije ažuriranja" )
       RETURN 0
    ENDIF
@@ -121,14 +121,14 @@ FUNCTION rnal_azuriraj_dokument( cDesc )
    IF _ok
 
       f18_free_tables( { "docs", "doc_it", "doc_it2", "doc_ops" } )
-      sql_table_update( nil, "END" )
+      run_sql_query( "COMMIT" )
 
       log_write( "F18_DOK_OPER: rnal, azuriranje dokumenta broj: " + AllTrim( Str( __doc_no ) ) + ;
          ", status: " + AllTrim( Str( __doc_stat ) ), 2 )
 
    ELSE
 
-      sql_table_update( nil, "ROLLBACK" )
+      run_sql_query( "ROLLBACK" )
       MsgC()
       doc_erase( __doc_no )
       beep( 3 )

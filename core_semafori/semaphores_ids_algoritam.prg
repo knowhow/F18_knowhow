@@ -366,12 +366,12 @@ FUNCTION create_queries_from_ids( table )
       AAdd( _ids_2, NIL )
    NEXT
 
-   IF lock_semaphore( table )
+   //IF lock_semaphore( table )
       _ids := get_ids_from_semaphore( table )
-      unlock_semaphore( table )
-   ELSE
-      RETURN .F.
-   ENDIF
+   //    unlock_semaphore( table )
+   //ELSE
+   //    RETURN .F.
+   //ENDIF
 
    IF _ids == NIL
       ?E "ERR IDS create_queries_from_ids = NIL?"

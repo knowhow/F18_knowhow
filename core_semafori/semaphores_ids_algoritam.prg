@@ -44,6 +44,10 @@ FUNCTION ids_synchro( dbf_table )
          // ponovo kreiraj hIdsQueries u slucaju da je bilo jos azuriranja
          hIdsQueries := create_queries_from_ids( aDbfRec[ 'table' ] )
 
+         IF hIdsQueries == nil
+            RETURN .F.
+         ENDIF
+
       ELSE
          EXIT
       ENDIF
@@ -244,7 +248,8 @@ FUNCTION get_ids_from_semaphore( table )
 
       error_bar( "sem", "IDS ISOLATION LEVEL " + table )
       // retry !
-      RETURN get_ids_from_semaphore( table )
+      RETURN NIL
+
 
    ENDIF
 
@@ -338,6 +343,10 @@ FUNCTION create_queries_from_ids( table )
    NEXT
 
    _ids := get_ids_from_semaphore( table )
+
+   IF _id == nil
+      RETURN NIL
+   ENDIF
    // nuliraj_ids_and_update_my_semaphore_ver(table)
 
    // log_write( "create_queries..(), poceo", 9 )

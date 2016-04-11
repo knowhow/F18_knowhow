@@ -46,7 +46,6 @@ FUNCTION f18_lock_tables( aTables )
    LOCAL _ok := .T.
    LOCAL _i, _tbl, _dbf_rec
 
-
    IF Len( aTables ) == NIL
       RETURN .T.
    ENDIF
@@ -63,7 +62,6 @@ FUNCTION f18_lock_tables( aTables )
       ENDIF
    NEXT
 
-
    RETURN .T.
 
 
@@ -76,7 +74,6 @@ FUNCTION f18_lock_tables( aTables )
 
 FUNCTION f18_unlock_tables( aTables )
 
-   LOCAL _ok := .T.
    LOCAL _i, _tbl, _dbf_rec
    LOCAL cMsg
 
@@ -88,7 +85,9 @@ FUNCTION f18_unlock_tables( aTables )
       _dbf_rec := get_a_dbf_rec( aTables[ _i ], .T. )
       _tbl := _dbf_rec[ "table" ]
       IF !_dbf_rec[ "sql" ]
-         unlock_semaphore( _tbl )
+         IF !unlock_semaphore( _tbl )
+            RETURN .F.
+         ENDIF
       ENDIF
    NEXT
 
@@ -99,4 +98,4 @@ FUNCTION f18_unlock_tables( aTables )
    ?E cMsg
 #endif
 
-   RETURN _ok
+   RETURN .T.

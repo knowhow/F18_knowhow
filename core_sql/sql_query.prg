@@ -135,10 +135,8 @@ FUNCTION run_sql_query( cQry, hParams )
       ENDIF
    ENDIF
 
-   IF aUnlock != NIL .AND. Left( cQry, 6 ) == "COMMIT"
-      f18_unlock_tables( aUnlock )
-   ENDIF
-   
+
+
    IF Left( cQry, 6 ) == "COMMIT" .OR. Left( cQry, 8 ) == "ROLLBACK"
       IF hb_mutexLock( s_mtxMutex )
          nPos := AScan( s_aTransactions, {| aTran | ValType( aTran ) == "A" .AND. ;
@@ -170,7 +168,14 @@ FUNCTION run_sql_query( cQry, hParams )
    ENDIF
 
 
+   IF aUnlock != NIL .AND. Left( cQry, 6 ) == "COMMIT"
+      IF !f18_unlock_tables( aUnlock )
+         RETURN NIL
+      ENDIF
+   ENDIF
+
    FOR nI := 1 TO nRetry
+
 
       IF nI > 1
          error_bar( "sql",  cQry + " pokušaj: " + AllTrim( Str( nI ) ) )

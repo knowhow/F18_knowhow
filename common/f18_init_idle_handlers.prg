@@ -52,7 +52,10 @@ PROCEDURE on_idle_dbf_refresh()
 
 
    IF is_in_main_thread_sql_transaction()
-      ?E "in sql transaction - dbf refresh otkazati"
+      IF Seconds() - s_nIdleDisplayCounter > 15
+         ?E "in sql transaction - dbf refresh otkazati"
+         s_nIdleDisplayCounter := Seconds()
+      ENDIF
       s_nIdleRefresh := 0
       RETURN
    ENDIF

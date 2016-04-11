@@ -148,7 +148,7 @@ FUNCTION get_semaphore_status( cTable )
    _qry := "SELECT algorithm FROM sem." + cTable + " WHERE user_code=" + sql_quote( _user )
    _ret := run_sql_query( _qry )
 
-   IF sql_query_bez_zapisa( _ret )
+   IF sql_error_in_query( _ret, "SELECT" )
       RETURN "unknown"
    ENDIF
 

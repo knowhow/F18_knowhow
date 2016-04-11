@@ -51,7 +51,7 @@ FUNCTION ids_synchro( dbf_table )
 
       IF _zap <> 0
 
-         ( dbf_table, 50000, " IDS: UZMI_STANJE_SA_SERVERA " )
+         full_synchro( dbf_table, 50000, " IDS: UZMI_STANJE_SA_SERVERA " )
          ADel( _zap, hIdsQueries[ "qry" ] )
          // ponovo kreiraj hIdsQueries u slucaju da je bilo jos azuriranja
          hIdsQueries := create_queries_from_ids( aDbfRec[ 'table' ] )

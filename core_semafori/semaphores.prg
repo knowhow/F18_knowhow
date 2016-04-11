@@ -139,7 +139,7 @@ FUNCTION get_semaphore_status( cTable )
 
    LOCAL _qry
    LOCAL _ret
-   LOCAL _user   := f18_user()
+   LOCAL _user := f18_user()
 
    IF skip_semaphore_sync( cTable )
       RETURN "free"

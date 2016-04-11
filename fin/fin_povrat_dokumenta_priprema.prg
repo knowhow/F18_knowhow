@@ -78,7 +78,7 @@ FUNCTION povrat_fin_naloga( lStorno )
    IF Pitanje(, "Nalog " + cIdFirma + "-" + cIdVN + "-" + cBrNal + ;
          IIF( lStorno," stornirati", " povuci u pripremu" ) + " (D/N) ?", "D" ) == "N"
       my_close_all_dbf()
-      RETURN
+      RETURN .F.
    ENDIF
 
    IF !lStorno
@@ -89,7 +89,7 @@ FUNCTION povrat_fin_naloga( lStorno )
 
    IF !lBrisiKumulativ .OR. lStorno
       my_close_all_dbf()
-      RETURN
+      RETURN .F.
    ENDIF
 
    IF !brisi_fin_nalog_iz_kumulativa( cIdFirma, cIdVn, cBrNal )
@@ -98,7 +98,7 @@ FUNCTION povrat_fin_naloga( lStorno )
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -117,7 +117,7 @@ STATIC FUNCTION brisi_fin_nalog_iz_kumulativa( cIdFirma, cIdVn, cBrNal )
    run_sql_query( "BEGIN" )
 
    IF !f18_lock_tables( { "fin_suban", "fin_nalog", "fin_sint", "fin_anal" }, .T. )
-      run_sql_query( "COMMIT" )
+      run_sql_query( "ROLLBACK" )
       MsgBeep( "Ne mogu zaključati tabele !#Operacija povrata poništena." )
       RETURN lRet
    ENDIF

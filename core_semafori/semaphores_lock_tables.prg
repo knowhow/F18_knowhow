@@ -78,7 +78,7 @@ FUNCTION f18_lock_tables( a_tables, lAlreadyInTransakcija )
          NEXT
 
       ELSE
-         log_write( "ERROR: nisam uspio napraviti lock tabela " + pp( a_tables ), 2 )
+         ?E "ERROR: neuspjesan lock tabela " + pp( a_tables )
          //IF !lAlreadyInTransakcija
          //  run_sql_query( "ROLLBACK" )
          //ENDIF

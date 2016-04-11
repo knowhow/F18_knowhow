@@ -57,7 +57,7 @@ FUNCTION postgres_sql_query( cQuery )
 
 FUNCTION run_sql_query( cQry, hParams )
 
-   LOCAL nI, oQuery
+   LOCAL nI, oQuery, cLogMsg, cMsg
    LOCAL _msg
    LOCAL cTip
    LOCAL nPos
@@ -108,6 +108,20 @@ FUNCTION run_sql_query( cQry, hParams )
 
    IF Left( cQry, 5 ) == "BEGIN"
       IF hb_mutexLock( s_mtxMutex )
+
+         nPos := AScan( s_aTransactions, { | aItem | Valtype( aItem ) == "A" .AND. aItem[ 2 ] == sql_data_conn():pDB .AND. aItem[ 3 ] == cTransactionName } )
+
+         IF nPos > 0
+             cLogMsg := "SQL transactions ERR: "
+             LOG_CALL_STACK cLogMsg
+             ?E cLogMsg
+             IF is_in_main_thread()
+                altd()
+                Alert( "SQL transactions error !" )
+             ENDIF
+          ENDIF
+
+
          AAdd( s_aTransactions, { Time(), sql_data_conn():pDB, hb_threadSelf(), cTransactionName } )
          hb_mutexUnlock( s_mtxMutex )
       ENDIF

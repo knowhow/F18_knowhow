@@ -195,7 +195,7 @@ FUNCTION get_ids_from_semaphore( table )
    LOCAL lAllreadyInTransaction := .F.
    LOCAL hParams := hb_Hash()
    LOCAL _server := sql_data_conn()
-   LOCAL cLogMsg, cMsg
+   LOCAL cLogMsg := "", cMsg
 
    IF skip_semaphore_sync( table )
       RETURN .T.

@@ -56,7 +56,7 @@ FUNCTION fin_azuriranje_naloga( automatic )
    run_sql_query( "BEGIN" )
 
    IF !f18_lock_tables( { __tbl_suban, __tbl_anal, __tbl_sint, __tbl_nalog }, .T. )
-      run_sql_query( "COMMIT" )
+      run_sql_query( "ROLLBACK" )
       MsgBeep( "Ne mogu napraviti zaključavanje tabela !#Poništavam operaciju ažuriranja naloga." )
       RETURN lRet
    ENDIF
@@ -72,11 +72,7 @@ FUNCTION fin_azuriranje_naloga( automatic )
          MsgBeep( "Nalog " + _id_firma + "-" + _id_vn + "-" + AllTrim( _br_nal ) + " već postoji ažuriran !" )
 
          IF !lViseNalogaUPripremi
-
             run_sql_query( "ROLLBACK" )
-
-            MsgC()
-
             RETURN lRet
 
          ELSE
@@ -88,10 +84,7 @@ FUNCTION fin_azuriranje_naloga( automatic )
       IF !fin_azur_sql( oServer, _id_firma, _id_vn, _br_nal )
 
          run_sql_query( "ROLLBACK" )
-
          log_write( "F18_DOK_OPER: greška kod ažuriranja fin naloga: " + _id_firma + "-" + _id_vn + "-" + _br_nal, 2 )
-
-         MsgC()
 
          MsgBeep( "Problem sa ažuriranjem naloga na SQL server !" )
 

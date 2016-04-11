@@ -244,27 +244,22 @@ FUNCTION get_ids_from_semaphore( table )
    _qry := "SELECT ids FROM " + _tbl + " WHERE user_code=" + sql_quote( _user )
    _tbl_obj := run_sql_query( _qry )
    IF sql_error_in_query( _tbl_obj, "SELECT" )
+      error_bar( "sem", "IDS SELECT " + table )
       LOG_CALL_STACK cLogMsg
       ?E cLogMsg
-
+      run_sql_query( "ROLLBACK", hParams )
    ENDIF
 
    _qry := "UPDATE " + _tbl + " SET  ids=NULL, dat=NULL, version=last_trans_version"
    _qry += " WHERE user_code =" + sql_quote( _user )
    _update_obj := run_sql_query( _qry )
+   IF sql_error_in_query( _update_obj, "UPDATE" )
 
-
-   IF sql_error_in_query( _tbl_obj, "SELECT" ) .OR. sql_error_in_query( _update_obj, "UPDATE" )
-
-      // IF !lAllreadyInTransaction
       run_sql_query( "ROLLBACK", hParams )
-      // ENDIF
-
       LOG_CALL_STACK cLogMsg
       ?E cLogMsg
 
-      error_bar( "sem", "IDS ISOLATION LEVEL " + table )
-      // retry !
+      error_bar( "sem", "IDS UPDATE " + table )
       RETURN NIL
 
 

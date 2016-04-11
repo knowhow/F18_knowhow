@@ -50,10 +50,12 @@ PROCEDURE on_idle_dbf_refresh()
       ENDIF
    ENDIF
 
+/*
    IF is_in_main_thread_sql_transaction()
       s_nIdleRefresh := 0
       RETURN
    ENDIF
+*/
 
    IF my_database() == "?undefined?"
       s_nIdleRefresh := 0

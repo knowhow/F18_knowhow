@@ -41,21 +41,21 @@
 
 */
 
-FUNCTION f18_lock_tables( a_tables, lAlreadyInTransakcija )
+FUNCTION f18_lock_tables( aTables, lAlreadyInTransakcija )
 
    LOCAL _ok := .T.
    LOCAL _i, _tbl, _dbf_rec
 
    hb_default( @lAlreadyInTransakcija, .F. )
 
-   IF Len( a_tables ) == NIL
+   IF Len( aTables ) == NIL
       RETURN .F.
    ENDIF
 
    //IF  iif( lAlreadyInTransakcija, .T., run_sql_query( "BEGIN" ) )
 
-      FOR _i := 1 TO Len( a_tables )
-         _dbf_rec := get_a_dbf_rec( a_tables[ _i ], .T. )
+      FOR _i := 1 TO Len( aTables )
+         _dbf_rec := get_a_dbf_rec( aTables[ _i ], .T. )
          _tbl := _dbf_rec[ "table" ]
          IF !_dbf_rec[ "sql" ]
             _ok := _ok .AND. lock_semaphore( _tbl )
@@ -67,18 +67,18 @@ FUNCTION f18_lock_tables( a_tables, lAlreadyInTransakcija )
          //IF !lAlreadyInTransakcija
          //    run_sql_query( "COMMIT" )
          //ENDIF
-         //log_write( "uspjesno izvrsen lock tabela " + pp( a_tables ), 7 )
+         //log_write( "uspjesno izvrsen lock tabela " + pp( aTables ), 7 )
 
 
-         //FOR _i := 1 TO Len( a_tables )
-          //  _dbf_rec := get_a_dbf_rec( a_tables[ _i ] )
+         //FOR _i := 1 TO Len( aTables )
+          //  _dbf_rec := get_a_dbf_rec( aTables[ _i ] )
             //IF !_dbf_rec[ "sql" ]
             //   dbf_refresh( _dbf_rec[ "table" ] )  NE U MAIN THREAD!
             //ENDIF
          //NEXT
 
       ELSE
-         ?E "ERROR: neuspjesan lock tabela " + pp( a_tables )
+         ?E "ERROR: neuspjesan lock tabela " + pp( aTables )
          //IF !lAlreadyInTransakcija
          //  run_sql_query( "ROLLBACK" )
          //ENDIF
@@ -89,7 +89,7 @@ FUNCTION f18_lock_tables( a_tables, lAlreadyInTransakcija )
    // ELSE
    //
    //    _ok := .F.
-   //    log_write( "ERROR: nisam uspio napraviti lock tabela " + pp( a_tables ), 2 )
+   //    log_write( "ERROR: nisam uspio napraviti lock tabela " + pp( aTables ), 2 )
   //
    //ENDIF
 
@@ -103,25 +103,25 @@ FUNCTION f18_lock_tables( a_tables, lAlreadyInTransakcija )
 
 */
 
-FUNCTION f18_free_tables( a_tables )
+FUNCTION f18_free_tables( aTables )
 
    LOCAL _ok := .T.
    LOCAL _i, _tbl, _dbf_rec
    LOCAL cMsg
 
-   IF Len( a_tables ) == NIL
+   IF Len( aTables ) == NIL
       RETURN .F.
    ENDIF
 
-   FOR _i := 1 TO Len( a_tables )
-      _dbf_rec := get_a_dbf_rec( a_tables[ _i ], .T. )
+   FOR _i := 1 TO Len( aTables )
+      _dbf_rec := get_a_dbf_rec( aTables[ _i ], .T. )
       _tbl := _dbf_rec[ "table" ]
       IF !_dbf_rec[ "sql" ]
          unlock_semaphore( _tbl )
       ENDIF
    NEXT
 
-   cMsg := "uspjesno izvrseno oslobadjanje tabela " + pp( a_tables )
+   cMsg := "uspjesno izvrseno oslobadjanje tabela " + pp( aTables )
    //log_write( cMsg, 7 )
 
 #ifdef F18_DEBUG

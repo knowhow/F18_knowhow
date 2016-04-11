@@ -23,10 +23,17 @@ FUNCTION ids_synchro( dbf_table )
    LOCAL cMsg
    LOCAL nIdsCnt := 0
 
+#ifdef F18_DEBUG_SYNC
+   ?E "START IDS synchro", dbf_table
+#endif
+
    aDbfRec := get_a_dbf_rec( dbf_table, .T. )
    hIdsQueries := create_queries_from_ids( aDbfRec[ "table" ] )
 
    IF hIdsQueries == NIL
+#ifdef F18_DEBUG_SYNC
+      ?E "ERR IDS synchro", dbf_table, " hIdsQueries NIL?! "
+#endif
       RETURN .F.
    ENDIF
 
@@ -330,7 +337,7 @@ FUNCTION create_queries_from_ids( table )
       RETURN .T.
    ENDIF
 
-   aDbfRec := get_a_dbf_rec( table )
+   aDbfRec := get_a_dbf_rec( table, .F. )
 
    _sql_fields := sql_fields( aDbfRec[ "dbf_fields" ] )
    _alg := aDbfRec[ "algoritam" ]
@@ -345,7 +352,8 @@ FUNCTION create_queries_from_ids( table )
 
    _ids := get_ids_from_semaphore( table )
 
-   IF _id == nil
+   IF _ids == NIL
+      ?E "ERR IDS create_queries_from_ids = NIL?"
       RETURN NIL
    ENDIF
    // nuliraj_ids_and_update_my_semaphore_ver(table)

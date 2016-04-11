@@ -78,7 +78,7 @@ FUNCTION lock_semaphore( table, status, lUnlockTable )
 
          nLockSeconds := 0
          IF _i > 1
-            _err_msg := ToStr( Time() ) + " : tabela otključana : " + table + " retry : " + Str( _i, 2 ) + "/" + Str( SEMAPHORE_LOCK_RETRY_NUM, 2 )
+            _err_msg := ToStr( Time() ) + " : tabela otključana : " + table + " retry : " + AllTrim( Str( _i ) ) + "/" + Str( SEMAPHORE_LOCK_RETRY_NUM, 2 )
             ?E _err_msg
          ENDIF
          EXIT
@@ -153,6 +153,7 @@ FUNCTION get_semaphore_status( cTable )
    ENDIF
 
    RETURN AllTrim( _ret:FieldGet( 1 ) )
+
 
 
 FUNCTION is_table_locked( cTable )

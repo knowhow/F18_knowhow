@@ -29,8 +29,8 @@ FUNCTION ids_synchro( dbf_table )
    // hIdsQueries["ids"] = {  {"00113333 1", "0011333 2"}, {"00224444"}  }
    // hIdsQueries["qry"] = {  "select .... in ... rpad('0011333  1') ...", "select .. in ... rpad("0022444")" }
 
-   //log_write( "START ids_synchro", 9 )
-   //log_write( "ids_synchro ids_queries: " + pp( hIdsQueries ), 7 )
+   // log_write( "START ids_synchro", 9 )
+   // log_write( "ids_synchro ids_queries: " + pp( hIdsQueries ), 7 )
 
    DO WHILE .T.
 
@@ -54,9 +54,9 @@ FUNCTION ids_synchro( dbf_table )
 
       IF hIdsQueries[ "ids" ][ nI ] != NIL // ako nema id-ova po algoritmu nI, onda ova varijabla NIL
 
-         nIdsCnt += LEN( hIdsQueries[ "ids" ][ nI ] )
+         nIdsCnt += Len( hIdsQueries[ "ids" ][ nI ] )
 
-         //log_write( "ids_synchro ids_queries: [" + AllTrim( Str( nI ) ) + "]=" + pp( hIdsQueries[ "ids" ][ nI ]  ), 9 )
+         // log_write( "ids_synchro ids_queries: [" + AllTrim( Str( nI ) ) + "]=" + pp( hIdsQueries[ "ids" ][ nI ]  ), 9 )
          IF !delete_ids_in_dbf( aDbfRec[ 'table' ], hIdsQueries[ "ids" ][ nI ], nI )
             RETURN .F.
          ENDIF
@@ -72,7 +72,7 @@ FUNCTION ids_synchro( dbf_table )
 
    IF lRet != NIL
 
-      cMsg := "syn ids: " + aDbfRec[ 'table' ] + " : " + Alltrim( Str( nIdsCnt ) )
+      cMsg := "syn ids: " + aDbfRec[ 'table' ] + " : " + AllTrim( Str( nIdsCnt ) )
       IF lRet
          info_bar( "syn_ids", cMsg )
       ELSE
@@ -82,7 +82,6 @@ FUNCTION ids_synchro( dbf_table )
    ELSE
       lRet := .T.
    ENDIF
-
 
    RETURN lRet
 
@@ -124,7 +123,7 @@ FUNCTION push_ids_to_semaphore( table, aIds, lToMySelf )
 
    IF _result < 1
       // jedan korisnik
-      //log_write( "push_ids_to_semaphore: samo je jedan korisnik, nista nije pushirano", 9 )
+      // log_write( "push_ids_to_semaphore: samo je jedan korisnik, nista nije pushirano", 9 )
       RETURN .T.
    ENDIF
 
@@ -196,6 +195,7 @@ FUNCTION get_ids_from_semaphore( table )
    LOCAL lAllreadyInTransaction := .F.
    LOCAL hParams := hb_Hash()
    LOCAL _server := sql_data_conn()
+   LOCAL cLogMsg, cMsg
 
    IF skip_semaphore_sync( table )
       RETURN .T.
@@ -214,17 +214,17 @@ FUNCTION get_ids_from_semaphore( table )
       run_sql_query( "BEGIN; SET TRANSACTION ISOLATION LEVEL SERIALIZABLE", hParams )
    ENDIF
 
-   IF _log_level > 6
 
-      // uzmi verziju i stanje iz semafora prije pocetka
-      _versions := get_semaphore_version_h( Lower( table ) )
-      _tmp := "prije SELECT, tabela: " + Lower( table )
-      _tmp += " version: " + AllTrim( Str( _versions[ "version" ] ) )
-      _tmp += " last version: " + AllTrim( Str( _versions[ "last_version" ] ) )
+#ifdef F18_DEBUG_AZUR
+   // uzmi verziju i stanje iz semafora prije pocetka
+   _versions := get_semaphore_version_h( Lower( table ) )
+   _tmp := "prije SELECT, tabela: " + Lower( table )
+   _tmp += " version: " + AllTrim( Str( _versions[ "version" ] ) )
+   _tmp += " last version: " + AllTrim( Str( _versions[ "last_version" ] ) )
 
-      log_write( _tmp, 7 )
+   ?E _tmp
 
-   ENDIF
+#endif
 
    _qry := "SELECT ids FROM " + _tbl + " WHERE user_code=" + sql_quote( _user )
    _tbl_obj := run_sql_query( _qry )
@@ -240,25 +240,26 @@ FUNCTION get_ids_from_semaphore( table )
          run_sql_query( "ROLLBACK", hParams )
       ENDIF
 
-      error_bar( "sem", "IDS ISOLATION LEVEL" + table )
+      LOG_CALL_STACK cLogMsg
 
+      error_bar( "sem", "IDS ISOLATION LEVEL " + table )
       // retry !
       RETURN get_ids_from_semaphore( table )
 
    ENDIF
 
-   IF _log_level > 6
+#ifdef F18_DEBUG
+   // IF _log_level > 6
 
-      // uzmi verziju i stanje verzija na kraju transakcije
-      _versions := get_semaphore_version_h( Lower( table ) )
+   _versions := get_semaphore_version_h( Lower( table ) ) // uzmi verziju i stanje verzija na kraju transakcije
 
-      _tmp := "nakon UPDATE, tabela: " + Lower( table )
-      _tmp += " version: " + AllTrim( Str( _versions[ "version" ] ) )
-      _tmp += " last version: " + AllTrim( Str( _versions[ "last_version" ] ) )
+   _tmp := "nakon UPDATE, tabela: " + Lower( table )
+   _tmp += " version: " + AllTrim( Str( _versions[ "version" ] ) )
+   _tmp += " last version: " + AllTrim( Str( _versions[ "last_version" ] ) )
 
-      log_write( _tmp, 7 )
-
-   ENDIF
+   // log_write( _tmp, 7 )
+   // ENDIF
+#endif
 
    IF !lAllreadyInTransaction
       run_sql_query( "COMMIT", hParams )
@@ -374,7 +375,9 @@ FUNCTION create_queries_from_ids( table )
          IF _algoritam > Len( _alg )
             _msg := "nasao sam ids " + _id + ". Ovaj algoritam nije podrzan za " + table
             Alert( _msg )
-            log_write( "create_queries..(), " + _msg, 5 )
+#ifdef F18_DEBUG
+            ?E "create_queries " + _msg
+#endif
             RaiseError( _msg )
             QUIT_1
          ENDIF
@@ -428,7 +431,7 @@ FUNCTION delete_ids_in_dbf( dbf_table, ids, nAlgoritam )
    LOCAL _key_block
    LOCAL cSyncAlias, cFullDbf, cFullIdx
 
-   //log_write( "delete_ids_in_dbf START", 9 )
+   // log_write( "delete_ids_in_dbf START", 9 )
 
    aDbfRec := get_a_dbf_rec( dbf_table )
 
@@ -500,8 +503,8 @@ FUNCTION delete_ids_in_dbf( dbf_table, ids, nAlgoritam )
 
    PopWa()
 
-   //log_write( "delete_ids_in_dbf table: " + dbf_table + "/ dbf_tag =" + _dbf_tag + " pobrisao iz lokalnog dbf-a zapisa = " + AllTrim( Str( _counter ) ), 5 )
-   //log_write( "delete_ids_in_dbf END", 9 )
+   // log_write( "delete_ids_in_dbf table: " + dbf_table + "/ dbf_tag =" + _dbf_tag + " pobrisao iz lokalnog dbf-a zapisa = " + AllTrim( Str( _counter ) ), 5 )
+   // log_write( "delete_ids_in_dbf END", 9 )
 
    RETURN .T.
 

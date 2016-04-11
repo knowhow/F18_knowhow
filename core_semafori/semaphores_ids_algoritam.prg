@@ -214,9 +214,9 @@ FUNCTION get_ids_from_semaphore( table )
       RETURN .T.
    ENDIF
 
-   IF _server:TransactionStatus() > 0
-      lAllreadyInTransaction := .T.
-   ENDIF
+   // IF _server:TransactionStatus() > 0
+   // lAllreadyInTransaction := .T.
+   // ENDIF
 
    // log_write( "START get_ids_from_semaphore", 7 )
 
@@ -224,12 +224,10 @@ FUNCTION get_ids_from_semaphore( table )
    hParams[ "tran_name" ] := "ids_" + table
    hParams[ "retry" ] := 1
 
-   IF !lAllreadyInTransaction
-#ifdef F18_DEBUG_SYNC
-      ?E "BEGIN; SET TRANSACTION ISOLATION LEVEL SERIALIZABLE"
-#endif
-      run_sql_query( "BEGIN; SET TRANSACTION ISOLATION LEVEL SERIALIZABLE", hParams )
-   ENDIF
+   // IF !lAllreadyInTransaction
+
+   run_sql_query( "BEGIN; SET TRANSACTION ISOLATION LEVEL SERIALIZABLE", hParams )
+   // ENDIF
 
 
 #ifdef F18_DEBUG_AZUR
@@ -245,6 +243,11 @@ FUNCTION get_ids_from_semaphore( table )
 
    _qry := "SELECT ids FROM " + _tbl + " WHERE user_code=" + sql_quote( _user )
    _tbl_obj := run_sql_query( _qry )
+   IF sql_error_in_query( _tbl_obj, "SELECT" )
+      LOG_CALL_STACK cLogMsg
+      ?E cLogMsg
+
+   ENDIF
 
    _qry := "UPDATE " + _tbl + " SET  ids=NULL, dat=NULL, version=last_trans_version"
    _qry += " WHERE user_code =" + sql_quote( _user )
@@ -253,11 +256,12 @@ FUNCTION get_ids_from_semaphore( table )
 
    IF sql_error_in_query( _tbl_obj, "SELECT" ) .OR. sql_error_in_query( _update_obj, "UPDATE" )
 
-      IF !lAllreadyInTransaction
-         run_sql_query( "ROLLBACK", hParams )
-      ENDIF
+      // IF !lAllreadyInTransaction
+      run_sql_query( "ROLLBACK", hParams )
+      // ENDIF
 
       LOG_CALL_STACK cLogMsg
+      ?E cLogMsg
 
       error_bar( "sem", "IDS ISOLATION LEVEL " + table )
       // retry !
@@ -279,9 +283,9 @@ FUNCTION get_ids_from_semaphore( table )
    // ENDIF
 #endif
 
-   IF !lAllreadyInTransaction
-      run_sql_query( "COMMIT", hParams )
-   ENDIF
+   // IF !lAllreadyInTransaction
+   run_sql_query( "COMMIT", hParams )
+   // ENDIF
 
    cIds := _tbl_obj:FieldGet( 1 )
 

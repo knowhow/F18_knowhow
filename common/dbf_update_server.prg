@@ -211,6 +211,7 @@ FUNCTION delete_rec_server_and_dbf( table, values, algoritam, transaction, lock 
    LOCAL _ret
    LOCAL lIndex := .T.
 
+altd()
    IF lock == NIL
       IF transaction == "FULL"
          lock := .T.
@@ -230,10 +231,10 @@ FUNCTION delete_rec_server_and_dbf( table, values, algoritam, transaction, lock 
       RaiseError( _msg )
    ENDIF
 
-   log_write( "delete rec server, poceo", 9 )
+   //log_write( "delete rec server, poceo", 9 )
 
    IF transaction $ "FULL#BEGIN"
-      sql_table_update( table, "BEGIN" )
+      run_sql_query( "BEGIN" )
    ENDIF
 
    IF lock
@@ -263,7 +264,7 @@ FUNCTION delete_rec_server_and_dbf( table, values, algoritam, transaction, lock 
 
             _msg := "ERROR: " + RECI_GDJE_SAM0 + " tabela: " + table + " DBF_TAG " + _alg[ "dbf_tag" ]
             error_bar( "del_rec", _msg )
-            log_write( _msg, 1 )
+            ?E _msg
             RaiseError( _msg )
             RETURN .F.
          ELSE
@@ -295,7 +296,7 @@ FUNCTION delete_rec_server_and_dbf( table, values, algoritam, transaction, lock 
 
          my_unlock()
 
-         log_write( "table: " + table + ", pobrisano iz lokalnog dbf-a broj zapisa = " + AllTrim( Str( _count ) ), 7 )
+         //log_write( "table: " + table + ", pobrisano iz lokalnog dbf-a broj zapisa = " + AllTrim( Str( _count ) ), 7 )
 
          IF transaction $ "FULL#END"
             run_sql_query( "COMMIT" )
@@ -334,7 +335,7 @@ FUNCTION delete_rec_server_and_dbf( table, values, algoritam, transaction, lock 
    IF lock
       unlock_semaphore( table )
    ENDIF
-   log_write( "delete rec server, zavrsio", 9 )
+   //log_write( "delete rec server, zavrsio", 9 )
 
    RETURN _ret
 

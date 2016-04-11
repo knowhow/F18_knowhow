@@ -284,7 +284,7 @@ FUNCTION sql_error_in_query( oQry, cTip, oServer )
       RETURN .T.
    ENDIF
 
-   IF cTip $ "SET#INSERT#UPDATE#DELETE#DROP#CREATE#GRANT#"
+   IF cTip $ "BEGIN#SET#INSERT#UPDATE#DELETE#DROP#CREATE#GRANT#"
       IF is_var_objekat_tpqserver( oServer ) .AND. !Empty( oServer:ErrorMsg() )
          LOG_CALL_STACK cLogMsg
          ?E oServer:ErrorMsg(), cLogMsg

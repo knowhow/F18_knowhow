@@ -199,7 +199,7 @@ FUNCTION push_ids_to_semaphore( table, aIds, lToMySelf )
 FUNCTION get_ids_from_semaphore( table )
 
    LOCAL _tbl
-   LOCAL _tbl_obj, _update_obj
+   LOCAL _tbl_obj, _update_obj, oQry
    LOCAL _qry
    LOCAL cIds, _num_arr, _arr, nI
    LOCAL _user := f18_user()
@@ -229,8 +229,17 @@ FUNCTION get_ids_from_semaphore( table )
    DO WHILE nCnt < 10
 
       nCnt ++
-      run_sql_query( "BEGIN; SET TRANSACTION ISOLATION LEVEL SERIALIZABLE", hParams )
-      // ENDIF
+#ifdef F18_DEBUG_SYNC
+      ?E "BEGIN SET TRANS ISOLATION LSER", table, nCnt
+#endif
+      oQry := run_sql_query( "BEGIN; SET TRANSACTION ISOLATION LEVEL SERIALIZABLE", hParams )
+      IF sql_error_in_query( oQry, "BEGIN" )
+         run_sql_query( "ROLLBACK", hParams )
+         LOG_CALL_STACK cLogMsg
+         ?E cLogMsg
+         error_bar( "sem", "IDS ROLLBACK BEGIN " + table + " / " + AllTrim( Str( nCnt ) ) )
+         LOOP
+      ENDIF
 
 
 #ifdef F18_DEBUG_AZUR
@@ -248,24 +257,22 @@ FUNCTION get_ids_from_semaphore( table )
       _tbl_obj := run_sql_query( _qry )
       IF sql_error_in_query( _tbl_obj, "SELECT" )
          run_sql_query( "ROLLBACK", hParams )
-         error_bar( "sem", "IDS ROLLBACK SELECT " + table )
          LOG_CALL_STACK cLogMsg
          ?E cLogMsg
+         error_bar( "sem", "IDS ROLLBACK SELECT " + table + " / " + AllTrim( Str( nCnt ) ) )
+         LOOP
+
       ENDIF
 
       _qry := "UPDATE " + _tbl + " SET  ids=NULL, dat=NULL, version=last_trans_version"
       _qry += " WHERE user_code =" + sql_quote( _user )
       _update_obj := run_sql_query( _qry )
       IF sql_error_in_query( _update_obj, "UPDATE" )
-
          run_sql_query( "ROLLBACK", hParams )
          LOG_CALL_STACK cLogMsg
          ?E cLogMsg
-
-         error_bar( "sem", "IDS ROLLBACK UPDATE " + table )
+         error_bar( "sem", "IDS ROLLBACK UPDATE " + table + " / " + AllTrim( Str( nCnt ) ) )
          LOOP
-
-
       ENDIF
 
 #ifdef F18_DEBUG
@@ -359,7 +366,12 @@ FUNCTION create_queries_from_ids( table )
       AAdd( _ids_2, NIL )
    NEXT
 
-   _ids := get_ids_from_semaphore( table )
+   IF lock_semaphore( table )
+      _ids := get_ids_from_semaphore( table )
+      unlock_semaphore( table )
+   ELSE
+      RETURN .F.
+   ENDIF
 
    IF _ids == NIL
       ?E "ERR IDS create_queries_from_ids = NIL?"

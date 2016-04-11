@@ -24,7 +24,7 @@ FUNCTION fin_azuriranje_naloga( automatic )
    LOCAL lViseNalogaUPripremi := .F.
    LOCAL lRet := .F.
    LOCAL lOk := .T.
-   LOCAL hParams := hb_hash()
+   LOCAL hParams := hb_Hash()
 
    IF ( automatic == NIL )
       automatic := .F.
@@ -54,15 +54,17 @@ FUNCTION fin_azuriranje_naloga( automatic )
       RETURN lRet
    ENDIF
 
-   run_sql_query( "BEGIN" )
 
-   IF !f18_lock_tables( { __tbl_suban, __tbl_anal, __tbl_sint, __tbl_nalog }, .T. )
-      run_sql_query( "ROLLBACK" )
-      MsgBeep( "Ne mogu napraviti zaključavanje tabela !#Poništavam operaciju ažuriranja naloga." )
-      RETURN lRet
-   ENDIF
 
    FOR _i := 1 TO Len( aNalozi )
+
+      run_sql_query( "BEGIN" )
+
+      IF !f18_lock_tables( { __tbl_suban, __tbl_anal, __tbl_sint, __tbl_nalog }, .T. )
+         run_sql_query( "ROLLBACK" )
+         MsgBeep( "Ne mogu napraviti zaključavanje tabela !#Poništavam operaciju ažuriranja naloga." )
+         RETURN lRet
+      ENDIF
 
       _id_firma := aNalozi[ _i, 1 ]
       _id_vn := aNalozi[ _i, 2 ]
@@ -103,12 +105,12 @@ FUNCTION fin_azuriranje_naloga( automatic )
 
       ENDIF
 
+      hParams[ "unlock" ] := { __tbl_suban, __tbl_anal, __tbl_sint, __tbl_nalog }
+      run_sql_query( "COMMIT", hParams )
+
       log_write( "F18_DOK_OPER: azuriranje fin naloga: " + _id_firma + "-" + _id_vn + "-" + _br_nal, 2 )
 
    NEXT
-
-   hParams[ "unlock" ] := { __tbl_suban, __tbl_anal, __tbl_sint, __tbl_nalog }
-   run_sql_query( "COMMIT", hParams )
 
 
    SELECT fin_pripr
@@ -307,10 +309,10 @@ FUNCTION fin_azur_sql( oServer, id_firma, id_vn, br_nal )
    ENDIF
 
    IF _ok
-      push_ids_to_semaphore( __tbl_suban, _ids_suban )
-      push_ids_to_semaphore( __tbl_sint, _ids_sint  )
-      push_ids_to_semaphore( __tbl_anal, _ids_anal  )
-      push_ids_to_semaphore( __tbl_nalog, _ids_nalog )
+      _ok := push_ids_to_semaphore( __tbl_suban, _ids_suban ) .AND. ;
+         push_ids_to_semaphore( __tbl_sint, _ids_sint  ) .AND. ;
+         push_ids_to_semaphore( __tbl_anal, _ids_anal  ) .AND. ;
+         push_ids_to_semaphore( __tbl_nalog, _ids_nalog )
    ENDIF
 
    BoxC()

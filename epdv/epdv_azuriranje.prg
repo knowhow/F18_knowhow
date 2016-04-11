@@ -188,10 +188,11 @@ FUNCTION kuf_kif_azur_sql( tbl, next_g_rbr, next_br_dok )
    ELSE
       AAdd( _ids, _tmp_id )
       push_ids_to_semaphore( _tbl_epdv, _ids )
+      f18_unlock_tables( { _tbl_epdv } )
       run_sql_query( "COMMIT" )
    ENDIF
 
-   f18_unlock_tables( { _tbl_epdv } )
+
 
    RETURN lOk
 

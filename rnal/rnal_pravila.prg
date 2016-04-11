@@ -96,7 +96,7 @@ STATIC FUNCTION in_elcode_rule( cElCond, cRule, cRuleName )
       run_sql_query( "COMMIT" )
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 

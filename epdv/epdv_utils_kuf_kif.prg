@@ -203,4 +203,4 @@ FUNCTION rn_g_r_br( cTblName )
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.

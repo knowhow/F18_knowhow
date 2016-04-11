@@ -24,6 +24,7 @@ FUNCTION fin_azuriranje_naloga( automatic )
    LOCAL lViseNalogaUPripremi := .F.
    LOCAL lRet := .F.
    LOCAL lOk := .T.
+   LOCAL hParams := hb_hash()
 
    IF ( automatic == NIL )
       automatic := .F.
@@ -106,9 +107,9 @@ FUNCTION fin_azuriranje_naloga( automatic )
 
    NEXT
 
-   f18_unlock_tables( { __tbl_suban, __tbl_anal, __tbl_sint, __tbl_nalog } )
-   run_sql_query( "COMMIT" )
-   
+   hParams[ "unlock" ] := { __tbl_suban, __tbl_anal, __tbl_sint, __tbl_nalog }
+   run_sql_query( "COMMIT", hParams )
+
 
    SELECT fin_pripr
    my_dbf_pack()

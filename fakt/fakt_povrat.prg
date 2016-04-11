@@ -145,8 +145,9 @@ FUNCTION povrat_fakt_dokumenta( rezerv, id_firma, id_tip_dok, br_dok, test )
       IF _ok
 
          nRet := 1
-         run_sql_query( "COMMIT" )
          f18_unlock_tables( { "fakt_fakt", "fakt_doks", "fakt_doks2" } )
+         run_sql_query( "COMMIT" )
+
          log_write( "F18_DOK_OPER: fakt povrat dokumenta u pripremu: " + id_firma + "-" + id_tip_dok + "-" + br_dok, 2 )
 
       ELSE
@@ -412,8 +413,9 @@ FUNCTION povrat_fakt_po_kriteriju( br_dok, dat_dok, tip_dok, firma )
    ENDDO
 
    IF _ok
-      run_sql_query( "COMMIT" )
       f18_unlock_tables( { "fakt_doks", "fakt_doks2", "fakt_fakt" } )
+      run_sql_query( "COMMIT" )
+
    ELSE
       run_sql_query( "ROLLBACK" )
       MsgBeep( "Problem sa povratom dokumenta u pripremu.#Poništavam operaciju." )
@@ -421,7 +423,7 @@ FUNCTION povrat_fakt_po_kriteriju( br_dok, dat_dok, tip_dok, firma )
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN _ok
 
 
 

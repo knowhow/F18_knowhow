@@ -573,8 +573,8 @@ FUNCTION zamjeni_numericka_polja_u_tabeli( cKolona, cTrazi, cUslov )
    IF lImaSemafor
       IF lOk
          lRet := .T.
-         run_sql_query( "COMMIT" )
          f18_unlock_tables( { cAlias } )
+         run_sql_query( "COMMIT" )
       ELSE
          run_sql_query( "ROLLBACK" )
       ENDIF
@@ -686,8 +686,8 @@ FUNCTION replace_kolona_in_table( cKolona, trazi_val, zamijeni_val, last_search 
    IF _has_semaphore
       IF lOk
          lRet := .T.
-         run_sql_query( "COMMIT" )
          f18_unlock_tables( { cAlias } )
+         run_sql_query( "COMMIT" )
       ELSE
          run_sql_query( "ROLLBACK" )
          MsgBeep( "Greška sa opcijom ALT+R !#Operacija prekinuta." )

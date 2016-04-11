@@ -328,7 +328,7 @@ FUNCTION logiraj_podatke_loma_na_staklima( nDoc_no, cDesc, cAction )
       MsgBeep( "Podaci o lomu na staklima nisu ažurirani.#Greška u transakciji." )
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 

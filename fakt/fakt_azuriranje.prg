@@ -227,8 +227,8 @@ STATIC FUNCTION fakt_azur_sql( id_firma, id_tip_dok, br_dok )
       push_ids_to_semaphore( _tbl_doks, _ids_doks   )
       push_ids_to_semaphore( _tbl_doks2, _ids_doks2  )
 
-      run_sql_query( "COMMIT" )
       f18_unlock_tables( { "fakt_fakt", "fakt_doks", "fakt_doks2" } )
+      run_sql_query( "COMMIT" )
 
 
    ENDIF

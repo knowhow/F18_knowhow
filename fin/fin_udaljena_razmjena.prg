@@ -121,7 +121,7 @@ STATIC FUNCTION _fin_import()
    @ m_x + 1, m_y + 2 SAY "import path:" GET _imp_path PICT "@S50"
    READ
    BoxC()
-	
+
    IF LastKey() == K_ESC
       RETURN
    endif
@@ -584,11 +584,12 @@ STATIC FUNCTION __import( vars, a_details )
    LOCAL _gl_brojac := 0
    LOCAL _detail_rec
    LOCAL lOk := .T.
+   LOCAL hParams := hb_hash()
 
    run_sql_query( "BEGIN" )
 
    IF !f18_lock_tables( { "fin_nalog", "fin_anal", "fin_sint", "fin_suban" }, .T. )
-      run_sql_query( "COMMIT" )
+      run_sql_query( "ROLLBACK" )
       MsgBeep( "Ne mogu zaključati tabele !#Prekidam operaciju." )
       RETURN _cnt
    ENDIF
@@ -819,8 +820,8 @@ STATIC FUNCTION __import( vars, a_details )
    ENDDO
 
    IF lOk
-      f18_unlock_tables( { "fin_nalog", "fin_anal", "fin_sint", "fin_suban" } )
-      run_sql_query( "COMMIT" )
+      hParams[ "unlock" ] := { "fin_nalog", "fin_anal", "fin_sint", "fin_suban" }
+      run_sql_query( "COMMIT", hParams )
    ELSE
       run_sql_query( "ROLLBACK" )
       MsgBeep( "Problem sa importom finansijskih naloga u kumulativne tabele." )
@@ -893,7 +894,7 @@ STATIC FUNCTION brisi_dokument_iz_kumulativa( id_firma, id_vd, br_dok )
          lOk := delete_rec_server_and_dbf( "fin_sint", _del_rec, 2, "CONT" )
       ENDIF
    ENDIF
-  
+
    SELECT ( _t_area )
 
    RETURN lOk

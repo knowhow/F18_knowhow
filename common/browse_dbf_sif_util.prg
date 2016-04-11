@@ -726,8 +726,9 @@ FUNCTION snimi_promjene_sifarnika( lNovi, cTekuciZapis )
    IF lOk
 
       lRet := .T.
-      run_sql_query( "COMMIT" )
       f18_unlock_tables( { cAlias } )
+      run_sql_query( "COMMIT" )
+
       log_write( "F18_DOK_OPER: dodavanje/ispravka zapisa u sifarnik " + cAlias, 2 )
 
    ELSE
@@ -785,8 +786,9 @@ FUNCTION snimi_promjene_cirkularne_ispravke_sifarnika()
 
    IF lOk
       lRet := .T.
-      run_sql_query( "COMMIT" )
       f18_unlock_tables( { _alias } )
+      run_sql_query( "COMMIT" )
+
       log_write( "F18_DOK_OPER: cirkularna ispravka šifrarnika " + _alias, 2 )
    ELSE
       run_sql_query( "ROLLBACK" )
@@ -1106,11 +1108,12 @@ FUNCTION sifarnik_brisi_stavku()
    ENDIF
 
    IF lOk
-      run_sql_query( "COMMIT" )
+
 #ifdef F18_DEBUG
       MsgBeep( "table " + cAlias  + " updated and locked" )
 #endif
       f18_unlock_tables( { cAlias } )
+      run_sql_query( "COMMIT" )
       log_write( "F18_DOK_OPER: brisanje stavke iz šifrarnika, stavka " + pp( hRec ), 2 )
    ELSE
       run_sql_query( "ROLLBACK" )

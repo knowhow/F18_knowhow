@@ -400,13 +400,13 @@ FUNCTION AzurKupData( cIdPos )
 
    update_rec_server_and_dbf( _tbl, _rec, 1, "CONT" )
 
-   run_sql_query( "COMMIT" )
    f18_unlock_tables( { _tbl } )
+   run_sql_query( "COMMIT" )
 
    RETURN .T.
 
-// pretrazi tabelu kupaca i napuni matricu
-FUNCTION fnd_kup_data( cKupac )
+
+FUNCTION fnd_kup_data( cKupac ) // pretrazi tabelu kupaca i napuni matricu
 
    LOCAL aRet := {}
    LOCAL nArr

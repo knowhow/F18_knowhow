@@ -40,8 +40,7 @@ CLASS FaktDokumenti
 
 ENDCLASS
 
-// ---------------------------------
-// ---------------------------------
+
 METHOD FaktDokumenti:New()
 
    ::items := {}

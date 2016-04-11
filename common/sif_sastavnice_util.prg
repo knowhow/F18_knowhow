@@ -69,8 +69,8 @@ FUNCTION copy_sast()
          ENDDO
 
          IF lOk
-            run_sql_query( "COMMIT" )
             f18_unlock_tables( { "sast" } )
+            run_sql_query( "COMMIT" )
          ELSE
             run_sql_query( "ROLLBACK" )
          ENDIF
@@ -163,10 +163,11 @@ FUNCTION bris_sast()
    ENDIF
 
    IF lOk
-      run_sql_query( "COMMIT" )
       f18_unlock_tables( { "roba", "sast" } )
+      run_sql_query( "COMMIT" )
    ELSE
       run_sql_query( "ROLLBACK" )
+      RETURN .F.
    ENDIF
 
    RETURN .T.

@@ -997,7 +997,7 @@ STATIC FUNCTION nafiluj_atribute_grupe( __gr_id, __el_id )
 
    SELECT ( nTArea )
 
-   RETURN
+   RETURN .T.
 
 
 

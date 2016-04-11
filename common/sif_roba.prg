@@ -659,8 +659,8 @@ FUNCTION roba_setuj_mpc_iz_vpc()
    BoxC()
 
    IF lOk
-      run_sql_query( "COMMIT" )
       f18_unlock_tables( { "roba" } )
+      run_sql_query( "COMMIT" )
    ELSE
       run_sql_query( "ROLLBACK" )
    ENDIF

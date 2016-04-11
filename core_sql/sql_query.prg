@@ -65,6 +65,7 @@ FUNCTION run_sql_query( cQry, hParams )
    LOCAL oServer := sql_data_conn()
    LOCAL cTransactionName := "BEGIN"
    LOCAL lLog := .T.
+   LOCAL aUnlock := NIL
 
    IF hParams != NIL
 
@@ -89,9 +90,13 @@ FUNCTION run_sql_query( cQry, hParams )
       IF hb_HHasKey( hParams, "log" )
          lLog :=  hParams[ "log" ]
       ENDIF
+
+      IF hb_HHasKey( hParams, "unlock" )
+         aUnlock :=  hParams[ "unlock" ]
+      ENDIF
    ENDIF
 
-
+/*
    IF !is_in_main_thread()
       IF !is_var_objekat_tpqserver( oServer ) .OR. oServer:pDB == NIL
          // delegiraj izvrsenje u main thread-u
@@ -99,7 +104,7 @@ FUNCTION run_sql_query( cQry, hParams )
          RETURN idle_get_eval( cQry )
       ENDIF
    ENDIF
-
+*/
 
    IF ! is_var_objekat_tpqserver( oServer )
       ?E "run_sql_query server not defined !"
@@ -130,6 +135,10 @@ FUNCTION run_sql_query( cQry, hParams )
       ENDIF
    ENDIF
 
+   IF aUnlock != NIL .AND. Left( cQry, 6 ) == "COMMIT"
+      f18_unlock_tables( aUnlock )
+   ENDIF
+   
    IF Left( cQry, 6 ) == "COMMIT" .OR. Left( cQry, 8 ) == "ROLLBACK"
       IF hb_mutexLock( s_mtxMutex )
          nPos := AScan( s_aTransactions, {| aTran | ValType( aTran ) == "A" .AND. ;

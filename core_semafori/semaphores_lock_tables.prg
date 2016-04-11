@@ -64,8 +64,6 @@ FUNCTION f18_lock_tables( aTables )
    NEXT
 
 
-
-
    RETURN .T.
 
 

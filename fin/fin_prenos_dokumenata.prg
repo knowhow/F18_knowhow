@@ -852,6 +852,7 @@ STATIC FUNCTION EPPK()
 STATIC FUNCTION AzurPPK()
 
    LOCAL lIndik1 := .F., lIndik2 := .F., nZapisa := 0, nSlog := 0, cStavka := "   "
+   LOCAL hParams := hb_hash()
 
    SELECT SUBAN
    SET FILTER TO
@@ -866,8 +867,8 @@ STATIC FUNCTION AzurPPK()
    run_sql_query( "BEGIN" )
 
    IF !f18_lock_tables( { "fin_suban", "fin_anal", "fin_sint" }, .T. )
-      run_sql_query( "COMMIT" )
-      RETURN
+      run_sql_query( "ROLLBACK" )
+      RETURN .F.
    ENDIF
 
    DO WHILE !Eof()
@@ -1100,8 +1101,9 @@ STATIC FUNCTION AzurPPK()
 
    Postotak( -1,,,,, .T. )
 
-   run_sql_query( "COMMIT" )
-   f18_unlock_tables( { "fin_suban", "fin_anal", "fin_sint" } )
+   hParams[ "unlock" ] := { "fin_suban", "fin_anal", "fin_sint" }
+   run_sql_query( "COMMIT", hParams )
+
 
    SELECT TEMP77
    USE

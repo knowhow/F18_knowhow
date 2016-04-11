@@ -111,6 +111,7 @@ STATIC FUNCTION fin_nalog_brisi_iz_kumulativa( cIdFirma, cIdVn, cBrNal )
    LOCAL _rec, cTbl
    LOCAL lOk := .T.
    LOCAL lRet := .F.
+   LOCAL hParams := hb_hash()
 
    _rec := hb_Hash()
    _rec[ "idfirma" ] := cIdFirma
@@ -157,8 +158,8 @@ STATIC FUNCTION fin_nalog_brisi_iz_kumulativa( cIdFirma, cIdVn, cBrNal )
 
    IF lOk
       lRet := .T.
-      f18_unlock_tables( { "fin_suban", "fin_nalog", "fin_sint", "fin_anal" } )
-      run_sql_query( "COMMIT" )
+      hParams[ "unlock" ] := { "fin_suban", "fin_nalog", "fin_sint", "fin_anal" }
+      run_sql_query( "COMMIT", hParams )
 
       log_write( "F18_DOK_OPER: POVRAT_FIN: " + cIdFirma + "-" + cIdVn + "-" + cBrNal, 2 )
    ELSE

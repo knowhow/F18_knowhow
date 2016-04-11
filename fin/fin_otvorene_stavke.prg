@@ -447,8 +447,8 @@ FUNCTION fin_automatsko_zatvaranje_otvorenih_stavki( lAuto, cKto, cPtn )
    ENDDO
 
    IF lOk
-      run_sql_query( "COMMIT" )
       f18_unlock_tables( { "fin_suban" } )
+      run_sql_query( "COMMIT" )
    ELSE
       run_sql_query( "ROLLBACK" )
       MsgBeep( "Greška sa opcijom automatskog zatvaranja stavki !#Operacija poništena." )
@@ -458,7 +458,7 @@ FUNCTION fin_automatsko_zatvaranje_otvorenih_stavki( lAuto, cKto, cPtn )
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN lOk
 
 
 
@@ -507,10 +507,11 @@ STATIC FUNCTION ponisti_markere_postojecih_stavki( cIdFirma, cIdKonto, cIdPartne
 
    IF lOk
       lRet := .T.
-      run_sql_query( "COMMIT" )
       f18_unlock_tables( { "fin_suban" } )
+      run_sql_query( "COMMIT" )
    ELSE
       run_sql_query( "ROLLBACK" )
+      lRet := .F.
    ENDIF
 
    RETURN lRet
@@ -566,8 +567,8 @@ FUNCTION fin_brisanje_markera_otvorenih_stavki()
 
    IF lOk
       lRet := .T.
-      run_sql_query( "COMMIT" )
       f18_unlock_tables( { "fin_suban" } )
+      run_sql_query( "COMMIT" )
    ELSE
       run_sql_query( "ROLLBACK" )
       MsgBeep( "Greška sa opcijom brisanja markera !#Operacija poništena." )
@@ -2213,6 +2214,7 @@ STATIC FUNCTION dodaj_promjene_iz_osuban_u_suban()
    LOCAL _rec
    LOCAL lRet := .F.
    LOCAL lOk := .T.
+   LOCAL hParams
 
    run_sql_query( "BEGIN" )
 
@@ -2249,8 +2251,9 @@ STATIC FUNCTION dodaj_promjene_iz_osuban_u_suban()
 
    IF lOk
       lRet := .T.
-      run_sql_query( "COMMIT" )
-      f18_unlock_tables( { "fin_suban" } )
+      hParams := hb_hash()
+      hParams[ "unlock" ] := { "fin_suban" }
+      run_sql_query( "COMMIT", hParams )
    ELSE
       run_sql_query( "ROLLBACK" )
    ENDIF
@@ -2352,7 +2355,7 @@ FUNCTION StAz()
 
 
 /* SkipDBBK(nRequest)
- *    
+ *
  *   param: nRequest
  */
 

@@ -41,59 +41,32 @@
 
 */
 
-FUNCTION f18_lock_tables( aTables, lAlreadyInTransakcija )
+FUNCTION f18_lock_tables( aTables )
 
    LOCAL _ok := .T.
    LOCAL _i, _tbl, _dbf_rec
 
-   hb_default( @lAlreadyInTransakcija, .F. )
 
    IF Len( aTables ) == NIL
-      RETURN .F.
+      RETURN .T.
    ENDIF
 
-   //IF  iif( lAlreadyInTransakcija, .T., run_sql_query( "BEGIN" ) )
-
-      FOR _i := 1 TO Len( aTables )
-         _dbf_rec := get_a_dbf_rec( aTables[ _i ], .T. )
-         _tbl := _dbf_rec[ "table" ]
-         IF !_dbf_rec[ "sql" ]
-            _ok := _ok .AND. lock_semaphore( _tbl )
+   FOR _i := 1 TO Len( aTables )
+      _dbf_rec := get_a_dbf_rec( aTables[ _i ], .T. )
+      _tbl := _dbf_rec[ "table" ]
+      IF !_dbf_rec[ "sql" ]
+         IF !lock_semaphore( _tbl )
+            error_bar( "lock", "LOCK" + _tbl )
+            ?E "ERROR: neuspjesan lock tabela " + pp( aTables ), "zapeo na:", _tbl
+            RETURN .F.
          ENDIF
-      NEXT
-
-      IF _ok
-
-         //IF !lAlreadyInTransakcija
-         //    run_sql_query( "COMMIT" )
-         //ENDIF
-         //log_write( "uspjesno izvrsen lock tabela " + pp( aTables ), 7 )
-
-
-         //FOR _i := 1 TO Len( aTables )
-          //  _dbf_rec := get_a_dbf_rec( aTables[ _i ] )
-            //IF !_dbf_rec[ "sql" ]
-            //   dbf_refresh( _dbf_rec[ "table" ] )  NE U MAIN THREAD!
-            //ENDIF
-         //NEXT
-
-      ELSE
-         ?E "ERROR: neuspjesan lock tabela " + pp( aTables )
-         //IF !lAlreadyInTransakcija
-         //  run_sql_query( "ROLLBACK" )
-         //ENDIF
-         _ok := .F.
-
       ENDIF
+   NEXT
 
-   // ELSE
-   //
-   //    _ok := .F.
-   //    log_write( "ERROR: nisam uspio napraviti lock tabela " + pp( aTables ), 2 )
-  //
-   //ENDIF
 
-   RETURN _ok
+
+
+   RETURN .T.
 
 
 /*
@@ -122,7 +95,7 @@ FUNCTION f18_free_tables( aTables )
    NEXT
 
    cMsg := "uspjesno izvrseno oslobadjanje tabela " + pp( aTables )
-   //log_write( cMsg, 7 )
+   // log_write( cMsg, 7 )
 
 #ifdef F18_DEBUG
    ?E cMsg

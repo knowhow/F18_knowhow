@@ -190,7 +190,7 @@ STATIC FUNCTION _ispisi_greske( a_error )
 // ----------------------------------
 FUNCTION StornoNaloga()
 
-   Povrat_fin_naloga( .T. )
+   fin_povrat_naloga( .T. )
 
    RETURN
 

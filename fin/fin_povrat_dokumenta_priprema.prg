@@ -12,8 +12,9 @@
 #include "f18.ch"
 
 
+MEMVAR m_x, m_y
 
-FUNCTION povrat_fin_naloga( lStorno )
+FUNCTION fin_povrat_naloga( lStorno )
 
    LOCAL _rec
    LOCAL nRec
@@ -76,7 +77,7 @@ FUNCTION povrat_fin_naloga( lStorno )
    BoxC()
 
    IF Pitanje(, "Nalog " + cIdFirma + "-" + cIdVN + "-" + cBrNal + ;
-         IIF( lStorno," stornirati", " povuci u pripremu" ) + " (D/N) ?", "D" ) == "N"
+         IIF( lStorno," stornirati", " povući u pripremu" ) + " (D/N) ?", "D" ) == "N"
       my_close_all_dbf()
       RETURN .F.
    ENDIF
@@ -92,7 +93,7 @@ FUNCTION povrat_fin_naloga( lStorno )
       RETURN .F.
    ENDIF
 
-   IF !brisi_fin_nalog_iz_kumulativa( cIdFirma, cIdVn, cBrNal )
+   IF !fin_nalog_brisi_iz_kumulativa( cIdFirma, cIdVn, cBrNal )
        MsgBeep( "Greška sa brisanjem naloga iz kumulativa !#Poništavam operaciju." )
    ENDIF
 
@@ -103,7 +104,7 @@ FUNCTION povrat_fin_naloga( lStorno )
 
 
 
-STATIC FUNCTION brisi_fin_nalog_iz_kumulativa( cIdFirma, cIdVn, cBrNal )
+STATIC FUNCTION fin_nalog_brisi_iz_kumulativa( cIdFirma, cIdVn, cBrNal )
 
    LOCAL _rec, cTbl
    LOCAL lOk := .T.

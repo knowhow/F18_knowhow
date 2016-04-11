@@ -845,7 +845,7 @@ FUNCTION edit_fin_pripr()
       ENDIF
 
       my_close_all_dbf()
-      povrat_fin_naloga()
+      fin_povrat_naloga()
       o_fin_edit()
 
       RETURN DE_REFRESH

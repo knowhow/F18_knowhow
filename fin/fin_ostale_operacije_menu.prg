@@ -18,7 +18,7 @@ FUNCTION MnuOstOperacije()
    LOCAL _izbor := 1
 
    AAdd( _opc, "1. povrat dokumenta u pripremu                " )
-   AAdd( _opcexe, {|| povrat_fin_naloga() } )
+   AAdd( _opcexe, {|| fin_povrat_naloga() } )
    AAdd( _opc, "2. preknjiženje     " )
    AAdd( _opcexe, {|| Preknjizenje() } )
    AAdd( _opc, "3. prebacivanje kartica" )

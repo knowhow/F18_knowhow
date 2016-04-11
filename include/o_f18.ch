@@ -91,7 +91,7 @@
 #xcommand O_ERRORS  => SELECT (F_ERRORS)    ; my_usex ("errors")   ; set order to tag "1"
 
 // modul FIN
-#xcommand O_FIN_PRIPR    => select (F_FIN_PRIPR);  my_use ("fin_pripr", NIL, .F.) ; set order to tag "1"
+#xcommand O_FIN_PRIPR    => o_fin_pripr()
 
 #xcommand O_PNALOG       => select (F_PNALOG);     my_usex ( "pnalog" )    ; set order to tag "1"
 #xcommand O_PSUBAN       => select (F_PSUBAN);     my_usex ( "psuban" )    ; set order to tag "1"

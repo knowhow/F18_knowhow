@@ -56,7 +56,7 @@ FUNCTION f18_lock_tables( aTables )
       _tbl := _dbf_rec[ "table" ]
       IF !_dbf_rec[ "sql" ]
          IF !lock_semaphore( _tbl )
-            error_bar( "lock", "LOCK" + _tbl )
+            error_bar( "lock", "ERR LOCK: " + _tbl )
             ?E "ERROR: neuspjesan lock tabela " + pp( aTables ), "zapeo na:", _tbl
             RETURN .F.
          ENDIF

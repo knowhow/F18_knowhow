@@ -11,6 +11,16 @@
 
 #include "f18.ch"
 
+
+FUNCTION o_fin_pripr()
+
+   RETURN o_dbf_table( F_FIN_PRIPR, "fin_pripr", "1" )
+
+FUNCTION select_o_fin_pripr()
+
+   select_o_dbf( "FIN_PRIPR", F_FIN_PRIPR, "fin_pripr", "1" )
+
+
 FUNCTION o_nalog()
    RETURN o_dbf_table( F_NALOG, "nalog", "1" )
 

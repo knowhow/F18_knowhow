@@ -73,7 +73,7 @@ PROCEDURE on_idle_dbf_refresh()
 
    aDbfRec := get_a_dbf_rec( cAlias, .T. )
 
-   IF !is_in_dbf_refresh_queue( aDbfRec[ "table" ] ) .AND. we_need_dbf_refresh( aDbfRec[ "table" ] )
+   IF we_need_dbf_refresh( aDbfRec[ "table" ] )
       thread_dbfs( hb_threadStart(  @thread_dbf_refresh(), aDbfRec[ "table" ] ) )
 #ifdef F18_DEBUG_THREAD
       ?E "alias_dbf_refresh thread start", aDbfRec[ "table" ], "main thread:", main_thread()

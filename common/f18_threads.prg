@@ -164,6 +164,7 @@ FUNCTION remove_from_dbf_refresh_queue( cDatabase, cTable )
 PROCEDURE process_dbf_refresh_queue()
 
    LOCAL aItem, nQLength := 0, nQLength2 := 0, nQLength3 := 0
+   LOCAL cTable
 
    IF ( Seconds() - s_nProcessQueueSeconds ) < ( MIN_LAST_REFRESH_SEC * 2 )
       RETURN
@@ -174,9 +175,10 @@ PROCEDURE process_dbf_refresh_queue()
       IF ValType( aItem ) == "A"
          // info_bar( "idle", "dbf refresh queue " + aItem[ 1 ] + " " + aItem[ 2 ] )
          IF aItem[ 1 ] == my_database()
-            IF we_need_dbf_refresh( aItem[ 2 ] )
-               remove_from_dbf_refresh_queue( aItem[ 1 ],  aItem[ 2 ] )
-               thread_dbfs( hb_threadStart(  @thread_dbf_refresh(), aItem[ 2 ] ) )
+            cTable := aItem[ 2 ]
+            IF we_need_dbf_refresh( cTable )
+               remove_from_dbf_refresh_queue( aItem[ 1 ],  cTable )
+               thread_dbfs( hb_threadStart(  @thread_dbf_refresh(), cTable ) )
                nQLength++
             ENDIF
          ELSE

@@ -133,7 +133,7 @@ FUNCTION my_use( cAlias, cTable, lRefresh )
 #ifdef F18_DEBUG_SYNC
    ?E "MMMMMMM my_use start", aDbfRec[ "table" ], "main thread:", is_in_main_thread(), "lRefresh", lRefresh
 #endif
-   IF lRefresh .AND. !is_in_dbf_refresh_queue( aDbfRec[ "table" ] ) .AND. we_need_dbf_refresh( aDbfRec[ "table" ] )
+   IF lRefresh .AND. we_need_dbf_refresh( aDbfRec[ "table" ] )
       thread_dbfs( hb_threadStart(  @thread_dbf_refresh(), aDbfRec[ "table" ] ) )
 #ifdef F18_DEBUG_THREAD
    ELSE

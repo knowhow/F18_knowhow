@@ -36,7 +36,7 @@ FUNCTION lock_semaphore( table, status, lUnlockTable )
    LOCAL _user_locked
    LOCAL cSemaphoreStatus
 
-   IF .T. .AND. skip_semaphore_sync( table )
+   IF .T. // skip_semaphore_sync( table )
       RETURN .T.
    ENDIF
 

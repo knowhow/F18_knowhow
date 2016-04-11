@@ -66,7 +66,6 @@ FUNCTION run_sql_query( cQry, hParams )
    LOCAL cTransactionName := "BEGIN"
    LOCAL lLog := .T.
 
-
    IF hParams != NIL
 
       IF ValType( hParams ) != "H"
@@ -126,8 +125,6 @@ FUNCTION run_sql_query( cQry, hParams )
             RETURN NIL
          ENDIF
 
-         //AltD()
-
          AAdd( s_aTransactions, { Time(), sql_data_conn():pDB, hb_threadSelf(), cTransactionName } )
          hb_mutexUnlock( s_mtxMutex )
       ENDIF
@@ -135,7 +132,6 @@ FUNCTION run_sql_query( cQry, hParams )
 
    IF Left( cQry, 6 ) == "COMMIT" .OR. Left( cQry, 8 ) == "ROLLBACK"
       IF hb_mutexLock( s_mtxMutex )
-         //AltD()
          nPos := AScan( s_aTransactions, {| aTran | ValType( aTran ) == "A" .AND. ;
             aTran[ 2 ] == sql_data_conn():pDB .AND. aTran[ 3 ] == hb_threadSelf() .AND. aTran[ 4 ] == cTransactionName } )
 
@@ -203,6 +199,30 @@ FUNCTION run_sql_query( cQry, hParams )
 
    RETURN oQuery
 
+
+
+
+FUNCTION is_in_main_thread_sql_transaction()
+
+   IF !is_in_main_thread()
+      RETURN .F.
+   ENDIF
+
+   IF hb_mutexLock( s_mtxMutex )
+
+      nPos := AScan( s_aTransactions, {| aItem | ValType( aItem ) == "A" ;
+         .AND. aItem[ 2 ] == sql_data_conn():pDB .AND. aItem[ 3 ] == main_thread() } )
+
+      hb_mutexUnlock( s_mtxMutex )
+      IF nPos > 0
+         RETURN .T.
+      ENDIF
+
+
+
+   ENDIF
+
+   RETURN .T.
 
 PROCEDURE print_transactions()
 

@@ -204,6 +204,8 @@ FUNCTION run_sql_query( cQry, hParams )
 
 FUNCTION is_in_main_thread_sql_transaction()
 
+   LOCAL nPos
+
    IF !is_in_main_thread()
       RETURN .F.
    ENDIF
@@ -220,7 +222,7 @@ FUNCTION is_in_main_thread_sql_transaction()
 
    ENDIF
 
-   RETURN .T.
+   RETURN .F.
 
 
 PROCEDURE print_transactions()

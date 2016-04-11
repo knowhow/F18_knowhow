@@ -247,10 +247,10 @@ FUNCTION get_ids_from_semaphore( table )
       _qry := "SELECT ids FROM " + _tbl + " WHERE user_code=" + sql_quote( _user )
       _tbl_obj := run_sql_query( _qry )
       IF sql_error_in_query( _tbl_obj, "SELECT" )
-         error_bar( "sem", "IDS SELECT " + table )
+         run_sql_query( "ROLLBACK", hParams )
+         error_bar( "sem", "IDS ROLLBACK SELECT " + table )
          LOG_CALL_STACK cLogMsg
          ?E cLogMsg
-         run_sql_query( "ROLLBACK", hParams )
       ENDIF
 
       _qry := "UPDATE " + _tbl + " SET  ids=NULL, dat=NULL, version=last_trans_version"
@@ -262,7 +262,7 @@ FUNCTION get_ids_from_semaphore( table )
          LOG_CALL_STACK cLogMsg
          ?E cLogMsg
 
-         error_bar( "sem", "IDS UPDATE " + table )
+         error_bar( "sem", "IDS ROLLBACK UPDATE " + table )
          LOOP
 
 

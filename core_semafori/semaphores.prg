@@ -86,7 +86,7 @@ FUNCTION lock_semaphore( table, status, lUnlockTable )
       ENDIF
 
       IF  ( Seconds() - nLockSeconds > SEMAPHORE_LOCK_TIME )  .OR. ( _i >= SEMAPHORE_LOCK_RETRY_NUM )
-         _err_msg := "table " + table + " ostala lockovana nakon " + Str( SEMAPHORE_LOCK_RETRY_NUM, 2 ) + " pokusaja ##" + ;
+         _err_msg := "table " + table + " ostala lockovana nakon " + AllTrim( Str ( SEMAPHORE_LOCK_RETRY_NUM ) ) + " pokusaja ##" + ;
             "nasilno uklanjam lock !"
          ?E _err_msg
          // log_write( _err_msg, 2 )
@@ -287,7 +287,7 @@ FUNCTION reset_semaphore_version( table )
 
    insert_semaphore_if_not_exists( table )
 
-   log_write( "reset semaphore " + _tbl + " update ", 1 )
+   // log_write( "reset semaphore " + _tbl + " update ", 1 )
    _qry := "UPDATE " + _tbl + " SET version=-1, last_trans_version=(CASE WHEN last_trans_version IS NULL THEN 0 ELSE last_trans_version END) WHERE user_code =" + sql_quote( _user )
    run_sql_query( _qry )
 

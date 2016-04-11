@@ -229,16 +229,15 @@ FUNCTION get_ids_from_semaphore( table )
    _qry := "SELECT ids FROM " + _tbl + " WHERE user_code=" + sql_quote( _user )
    _tbl_obj := run_sql_query( _qry )
 
-   _qry := "UPDATE " + _tbl + " SET  ids=NULL , dat=NULL, version=last_trans_version"
+   _qry := "UPDATE " + _tbl + " SET  ids=NULL, dat=NULL, version=last_trans_version"
    _qry += " WHERE user_code =" + sql_quote( _user )
    _update_obj := run_sql_query( _qry )
 
 
-   IF ( _tbl_obj == NIL ) .OR. ( _update_obj == NIL ) .OR. ( ValType( _update_obj ) == "L" .AND. _update_obj == .F. )
+   IF sql_error_in_query( _tbl_obj, "SELECT" ) .OR. sql_error_in_query( _update_obj, "UPDATE" )
 
       IF !lAllreadyInTransaction
          run_sql_query( "ROLLBACK", hParams )
-
       ENDIF
 
       error_bar( "sem", "IDS ISOLATION LEVEL" + table )

@@ -88,7 +88,7 @@ FUNCTION lager_lista_magacin()
       fPocStanje := .F.
    ELSE
       fPocStanje := .T.
-      _PRIPR
+      o_kalk_pripr()
       cBrPSt := "00001   "
       Box(, 3, 60 )
       @ m_x + 1, m_y + 2 SAY8 "Generacija poč.stanja  - broj dokumenta 16 -" GET cBrPSt
@@ -886,10 +886,10 @@ FUNCTION lager_lista_magacin()
    ? __line
 
    FF
-   ENDPRINT
+   end_print()
 
    _o_tables()
-   O_KALK_PRIPR
+   o_kalk_pripr()
 
    IF fimagresaka
       MsgBeep( "Pogledajte artikle za koje je u izvjestaju stavljena oznaka ERR - GRESKA" )

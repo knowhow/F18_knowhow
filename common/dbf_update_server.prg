@@ -195,7 +195,7 @@ FUNCTION update_rec_server_and_dbf( table, values, algoritam, transaction, lock 
 // ----------------------------------------------------------------------
 // algoritam = 1 - nivo zapisa, 2 - dokument ...
 // ----------------------------------------------------------------------
-FUNCTION delete_rec_server_and_dbf( table, values, algoritam, transaction, lock )
+FUNCTION delete_rec_server_and_dbf( table, values, algoritam, transaction )
 
    LOCAL _ids := {}
    LOCAL _pos
@@ -209,14 +209,15 @@ FUNCTION delete_rec_server_and_dbf( table, values, algoritam, transaction, lock 
    LOCAL _alg_tag := ""
    LOCAL _ret
    LOCAL lIndex := .T.
+   LOCAL lLock
+   LOCAL hParams
 
-   IF lock == NIL
-      IF transaction == "FULL"
-         lock := .T.
-      ELSE
-         lock := .F.
-      ENDIF
+   IF transaction == "FULL"
+      lLock := .T.
+   ELSE
+      lLock := .F.
    ENDIF
+
 
    _ret := .T.
 
@@ -233,11 +234,9 @@ FUNCTION delete_rec_server_and_dbf( table, values, algoritam, transaction, lock 
 
    IF transaction $ "FULL#BEGIN"
       run_sql_query( "BEGIN" )
-   ENDIF
-
-   IF lock
       lock_semaphore( table )
    ENDIF
+
 
    IF sql_table_update( table, "del", nil, _where_str )
 
@@ -295,24 +294,25 @@ FUNCTION delete_rec_server_and_dbf( table, values, algoritam, transaction, lock 
          my_unlock()
 
          // log_write( "table: " + table + ", pobrisano iz lokalnog dbf-a broj zapisa = " + AllTrim( Str( _count ) ), 7 )
-         IF lock
-            unlock_semaphore( table )
-         ENDIF
+
 
          IF transaction $ "FULL#END"
-            run_sql_query( "COMMIT" )
+            hParams := hb_Hash()
+            hParams[ "unlock" ] := { table }
+            run_sql_query( "COMMIT", hParams )
          ENDIF
+
          _ret := .T.
 
       ELSE
 
          IF transaction == "FULL"
             run_sql_query( "ROLLBACK" )
+            _msg := "delete rec server " + table + " nije lockovana ! ROLLBACK"
+            ?E _msg
+            Alert( _msg )
          ENDIF
 
-         _msg := "delete rec server " + table + " nije lockovana !!! ROLLBACK"
-         log_write( _msg, 1 )
-         Alert( _msg )
 
          _ret := .F.
 
@@ -322,17 +322,17 @@ FUNCTION delete_rec_server_and_dbf( table, values, algoritam, transaction, lock 
 
       IF transaction == "FULL"
          run_sql_query( "ROLLBACK" )
+         _msg := "delete rec server, " + table + " transakcija neuspjesna ! ROLLBACK"
+         Alert( _msg )
+         ?E _msg
       ENDIF
-
-      _msg := "delete rec server, " + table + " transakcija neuspjesna ! ROLLBACK"
-      Alert( _msg )
-      log_write( _msg, 1 )
-
       _ret := .F.
 
    ENDIF
 
-
+   IF lLock
+      unlock_semaphore( table )
+   ENDIF
    // log_write( "delete rec server, zavrsio", 9 )
 
    RETURN _ret

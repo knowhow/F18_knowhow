@@ -202,4 +202,4 @@ STATIC FUNCTION kopiraj_fin_nalog_u_tabelu_pripreme( cIdFirma, cIdVn, cBrNal, lS
 
    ENDDO
 
-   RETURN
+   RETURN .T.

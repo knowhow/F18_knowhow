@@ -229,8 +229,6 @@ FUNCTION sifra_na_kraju_ima_tacka_ili_dolar( cId, cUslovSrch, cNazSrch )
 
    cId := PadR( cId, 10 )
 
-   AltD()
-
    IF !Empty( ordKey( "NAZ " ) )
       ordSetFocus( "NAZ" )
    ELSE

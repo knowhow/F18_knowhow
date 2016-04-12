@@ -210,7 +210,6 @@ FUNCTION delete_rec_server_and_dbf( table, values, algoritam, transaction, lock 
    LOCAL _ret
    LOCAL lIndex := .T.
 
-   AltD()
    IF lock == NIL
       IF transaction == "FULL"
          lock := .T.

@@ -208,7 +208,7 @@ STATIC FUNCTION fakt_azur_sql( id_firma, id_tip_dok, br_dok )
       ENDIF
    ENDIF
 
-   AltD()
+
    IF _ok == .T.
       @ m_x + 4, m_y + 2 SAY "fakt_atributi -> server "
       oAtrib := DokAtributi():New( "fakt", F_FAKT_ATRIB )

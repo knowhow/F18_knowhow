@@ -74,7 +74,7 @@ FUNCTION GlobalErrorHandler( err_obj, lShowErrorReport, lQuitApp )
    IF is_in_main_thread()
 #ifdef F18_DEBUG
       Alert( err_obj:Description + " " + err_obj:operation )
-      AltD()
+      AltD() // err_obj:Description
 #endif
 
       SET CONSOLE OFF

@@ -71,7 +71,7 @@ FUNCTION run_sql_query( cQry, hParams )
 
       IF ValType( hParams ) != "H"
          Alert( "run sql query param 2 nije hash !?" )
-         AltD()
+         AltD() //run sql query param 2 nije hash
          QUIT
       ENDIF
 
@@ -122,7 +122,7 @@ FUNCTION run_sql_query( cQry, hParams )
             LOG_CALL_STACK cLogMsg
             ?E cLogMsg
             IF is_in_main_thread()
-               AltD()
+               AltD() // sql transaction error
                Alert( "SQL transactions error !" )
             ENDIF
             hb_mutexUnlock( s_mtxMutex )
@@ -210,7 +210,7 @@ FUNCTION run_sql_query( cQry, hParams )
          RETURN NIL
       ENDIF
    ENDIF
-   
+
    RETURN oQuery
 
 

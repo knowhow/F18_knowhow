@@ -1105,7 +1105,7 @@ METHOD F18Admin:delete_db_data_all( db_name, data_type )
       data_type := 1
    ENDIF
 
-   AltD()
+
    IF !::relogin_as_admin( AllTrim( db_name ) )
       RETURN .F.
    ENDIF

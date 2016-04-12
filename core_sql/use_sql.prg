@@ -34,9 +34,9 @@ FUNCTION use_sql_sif( cTable, lMakeIndex )
       RETURN .F.
    ENDIF
 
-   //rddSetDefault( "SQLMIX" )
+   rddSetDefault( "SQLMIX" )
 
-   IF rddInfo( RDDI_CONNECT, { "POSTGRESQL", pConn } ) == 0
+   IF rddInfo( 1001, { "POSTGRESQL", pConn } ) == 0  //#define RDDI_CONNECT          1001
       LOG_CALL_STACK cLogMsg
       ?E "Unable connect to the PSQLserver", cLogMsg
       error_bar( "PSQL", "SQLMIX connect " + cTable )
@@ -52,7 +52,7 @@ FUNCTION use_sql_sif( cTable, lMakeIndex )
       ENDIF
    ENDIF
 
-   //rddSetDefault( "DBFCDX" )
+   rddSetDefault( "DBFCDX" )
 
    RETURN .T.
 

@@ -86,6 +86,8 @@ FUNCTION f18_start_print( cFileName, xPrintOpt, cDocumentName )
       oPDF:PageHeader()
    ENDIF
 
+   my_use_refresh_stop()
+
    RETURN cOpt
 
 
@@ -116,6 +118,7 @@ FUNCTION f18_end_print( cFileName, xPrintOpt )
    LOCAL cOpt
    LOCAL oPDF
 
+   my_use_refresh_start()
    IF xPrintOpt == NIL
       cOpt := "V"
    ENDIF
@@ -138,6 +141,7 @@ FUNCTION f18_end_print( cFileName, xPrintOpt )
    SET PRINTER OFF
    SET PRINTER TO
    SET CONSOLE ON
+
 
    Tone( 440, 2 )
    Tone( 440, 2 )

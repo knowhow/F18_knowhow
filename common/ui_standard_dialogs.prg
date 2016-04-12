@@ -95,7 +95,7 @@ STATIC FUNCTION ValidSamo( cOdg, cMogOdg )
 
 
 /*  Pitanje2(cId,cPitanje,cOdgDefault)
- *    
+ *
  *   param: cId
  *   param: cPitanje       - Pitanje
  *  \cOdgDefault          - Ponudjeni odgovor
@@ -186,11 +186,8 @@ FUNCTION select_print_mode( cDirekt )
 
       BoxC()
 
-      IF LastKey() == K_ESC
-         RETURN ""
-      ELSE
-         RETURN cDirekt
-      ENDIF
+      
+      RETURN cDirekt
 
    ELSE
 

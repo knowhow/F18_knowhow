@@ -377,6 +377,7 @@ FUNCTION init_harbour()
 
    SetColor( F18_COLOR_NORMAL )
 
+   Set( _SET_IDLEREPEAT, .F. )
    hb_idleAdd( {|| on_idle_dbf_refresh() } )
    // hb_idleAdd( {|| idle_eval() } ) - izaziva erore
 

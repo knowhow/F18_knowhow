@@ -145,7 +145,7 @@ FUNCTION kuf_kif_azur_sql( tbl, next_g_rbr, next_br_dok )
    _tbl_epdv := "epdv_" + Lower( tbl )
 
 
-   err_bar( "epdv", "sql " + _tbl_epdv )
+   error_bar( "epdv", "sql " + _tbl_epdv )
 
    run_sql_query( "BEGIN" )
    IF !f18_lock_tables( { _tbl_epdv } )

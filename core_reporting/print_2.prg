@@ -25,6 +25,7 @@ FUNCTION f18_start_print( cFileName, xPrintOpt, cDocumentName )
 
    cFileName := set_print_file_name( cFileName )
 
+   ?E "trace-fin_start_print", cFileName
    IF ( cDocumentName == NIL )
       cDocumentName :=  gModul + '_' + DToC( Date() )
    ENDIF

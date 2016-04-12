@@ -53,8 +53,8 @@ FUNCTION Pitanje( cId, cPitanje, cOdgDefault, cMogOdg, cHeader )
 
    Box( , 3, Len( cPitanje ) + 6, .F. )
 
-   IF VALTYPE( cId ) == "C"
-     @ m_x + 0, m_y + 2 SAY cId
+   IF ValType( cId ) == "C"
+      @ m_x + 0, m_y + 2 SAY cId
    ENDIF
 
    SET CURSOR ON
@@ -145,6 +145,7 @@ FUNCTION Pitanje2( cId, cPitanje, cOdgDefault )
 FUNCTION print_dialog_box( cDirekt )
 
    SET CONFIRM OFF
+   ?E "trace-print-dialog-1"
    SET CURSOR ON
 
    cDirekt := select_print_mode( @cDirekt )
@@ -161,7 +162,9 @@ FUNCTION select_print_mode( cDirekt )
 
    nWidth := 35
 
+   ?E "trace-print-dialog-2"
    Tone( 350, 2 )
+   ?E "trace-print-dialog-3"
 
    m_x := 8
    m_y := 38 - Round( nWidth / 2, 0 )
@@ -172,7 +175,7 @@ FUNCTION select_print_mode( cDirekt )
    IF gcDirekt <> "B"
 
       Box(, 7, nWidth )
-
+      ?E "trace-print-dialog-4"
       @ m_x + 1, m_y + 2 SAY "   Izlaz direktno na printer:" GET cDirekt  PICT "@!" VALID cDirekt $ "DEFGRVP"
 
       @ m_x + 2, m_y + 2 SAY "----------------------------------"
@@ -186,7 +189,7 @@ FUNCTION select_print_mode( cDirekt )
 
       BoxC()
 
-      
+
       RETURN cDirekt
 
    ELSE

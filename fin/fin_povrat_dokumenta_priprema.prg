@@ -95,8 +95,6 @@ FUNCTION fin_povrat_naloga( lStorno )
 
    IF !fin_nalog_brisi_iz_kumulativa( cIdFirma, cIdVn, cBrNal )
        MsgBeep( "Greška sa brisanjem naloga iz kumulativa !#Poništavam operaciju." )
-       select_o_fin_pripr()
-       my_dbf_zap()
    ENDIF
 
    my_close_all_dbf()

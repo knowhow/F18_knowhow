@@ -12,7 +12,9 @@
 
 #include "f18.ch"
 
-FUNCTION use_sql_sif( table, l_make_index )
+FIELD ID, NAZ
+
+FUNCTION use_sql_sif( cTable, lMakeIndex )
 
    LOCAL pConn
    LOCAL nI, cMsg, cLogMsg := ""
@@ -21,42 +23,42 @@ FUNCTION use_sql_sif( table, l_make_index )
       USE
    ENDIF
 
-   IF l_make_index == NIL
-      l_make_index = .T.
+   IF lMakeIndex == NIL
+      lMakeIndex = .T.
    ENDIF
 
    pConn := sql_data_conn():pDB
 
    IF HB_ISNIL( pConn )
-      error_bar( "PSQL", "SQLMIX pDB NIL?! " + table )
+      error_bar( "PSQL", "SQLMIX pDB NIL?! " + cTable )
       RETURN .F.
    ENDIF
 
-   rddSetDefault( "SQLMIX" )
+   //rddSetDefault( "SQLMIX" )
 
    IF rddInfo( RDDI_CONNECT, { "POSTGRESQL", pConn } ) == 0
       LOG_CALL_STACK cLogMsg
       ?E "Unable connect to the PSQLserver", cLogMsg
-      error_bar( "PSQL", "SQLMIX connect " + table )
+      error_bar( "PSQL", "SQLMIX connect " + cTable )
       RETURN .F.
    ENDIF
 
-   dbUseArea( .F., "SQLMIX", "SELECT * FROM " + F18_PSQL_SCHEMA_DOT + table + " ORDER BY ID",  table )
+   dbUseArea( .F., "SQLMIX", "SELECT * FROM " + F18_PSQL_SCHEMA_DOT + cTable + " ORDER BY ID",  cTable )
 
-   IF l_make_index
-      INDEX ON ID TAG ID TO ( table )
+   IF lMakeIndex
+      INDEX ON ID TAG ID TO ( cTable )
       IF FieldPos( "NAZ" ) > 0
-         INDEX ON NAZ TAG NAZ TO ( table )
+         INDEX ON NAZ TAG NAZ TO ( cTable )
       ENDIF
    ENDIF
 
-   rddSetDefault( "DBFCDX" )
+   //rddSetDefault( "DBFCDX" )
 
    RETURN .T.
 
 
 
-FUNCTION use_sql( table, sql_query, cAlias )
+FUNCTION use_sql( cTable, sql_query, cAlias )
 
    LOCAL pConn, oError
    LOCAL nI, cMsg, cLogMsg := ""
@@ -68,7 +70,7 @@ FUNCTION use_sql( table, sql_query, cAlias )
    pConn := sql_data_conn():pDB
 
    IF HB_ISNIL( pConn )
-      error_bar( "SQL", "SQLMIX pDB NIL?!" + table )
+      error_bar( "SQL", "SQLMIX pDB NIL?!" + cTable )
       RETURN .F.
    ENDIF
 
@@ -77,12 +79,12 @@ FUNCTION use_sql( table, sql_query, cAlias )
    IF rddInfo( RDDI_CONNECT, { "POSTGRESQL", pConn } ) == 0
       LOG_CALL_STACK cLogMsg
       ?E "Unable connect to the PSQLserver", cLogMsg
-      error_bar( "SQL", "SQLMIX connect " + table )
+      error_bar( "SQL", "SQLMIX connect " + cTable )
       RETURN .F.
    ENDIF
 
    BEGIN SEQUENCE WITH {| err| Break( err ) }
-      dbUseArea( .F., "SQLMIX", sql_query, iif( cAlias == NIL, table, cAlias ) )
+      dbUseArea( .F., "SQLMIX", sql_query, iif( cAlias == NIL, cTable, cAlias ) )
    RECOVER USING oError
       error_bar( "SQL", "ERR: use_sql" + oError:description + " " + sql_query )
       RETURN .F.
@@ -275,13 +277,13 @@ FUNCTION use_sql_lokalizacija()
    use_sql_tarifa() => otvori šifarnik tarifa sa prilagođenim poljima
 */
 
-FUNCTION use_sql_tarifa( l_make_index )
+FUNCTION use_sql_tarifa( lMakeIndex )
 
    LOCAL cSql
    LOCAL cTable := "tarifa"
 
-   IF l_make_index == NIL
-      l_make_index := .T.
+   IF lMakeIndex == NIL
+      lMakeIndex := .T.
    ENDIF
 
    cSql := "SELECT "
@@ -302,7 +304,7 @@ FUNCTION use_sql_tarifa( l_make_index )
       RETURN .F.
    ENDIF
 
-   IF l_make_index
+   IF lMakeIndex
       INDEX ON ID TAG ID TO ( cTable )
       INDEX ON NAZ TAG NAZ TO ( cTable )
    ENDIF

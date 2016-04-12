@@ -168,12 +168,6 @@ FUNCTION run_sql_query( cQry, hParams )
    ENDIF
 
 
-   IF aUnlock != NIL .AND. Left( cQry, 6 ) == "COMMIT"
-      IF !f18_unlock_tables( aUnlock )
-         RETURN NIL
-      ENDIF
-   ENDIF
-
    FOR nI := 1 TO nRetry
 
 
@@ -211,6 +205,12 @@ FUNCTION run_sql_query( cQry, hParams )
 
    NEXT
 
+   IF aUnlock != NIL .AND. Left( cQry, 6 ) == "COMMIT"
+      IF !f18_unlock_tables( aUnlock )
+         RETURN NIL
+      ENDIF
+   ENDIF
+   
    RETURN oQuery
 
 

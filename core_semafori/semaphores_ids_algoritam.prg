@@ -69,7 +69,9 @@ FUNCTION ids_synchro( dbf_table )
 
          nIdsCnt += Len( hIdsQueries[ "ids" ][ nI ] )
 
-         // log_write( "ids_synchro ids_queries: [" + AllTrim( Str( nI ) ) + "]=" + pp( hIdsQueries[ "ids" ][ nI ]  ), 9 )
+#ifdef F18_DEBUG_SYNC
+         ?E "ids_synchro ids_queries: [" + AllTrim( Str( nI ) ) + "]=" + pp( hIdsQueries[ "ids" ][ nI ]  )
+#endif
          IF !delete_ids_in_dbf( aDbfRec[ 'table' ], hIdsQueries[ "ids" ][ nI ], nI )
             RETURN .F.
          ENDIF
@@ -370,12 +372,12 @@ FUNCTION create_queries_from_ids( table )
       AAdd( _ids_2, NIL )
    NEXT
 
-   //IF lock_semaphore( table )
-      _ids := get_ids_from_semaphore( table )
-   //    unlock_semaphore( table )
-   //ELSE
-   //    RETURN .F.
-   //ENDIF
+   // IF lock_semaphore( table )
+   _ids := get_ids_from_semaphore( table )
+   // unlock_semaphore( table )
+   // ELSE
+   // RETURN .F.
+   // ENDIF
 
    IF _ids == NIL
       ?E "ERR IDS create_queries_from_ids = NIL?"

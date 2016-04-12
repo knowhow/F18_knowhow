@@ -1523,7 +1523,15 @@ STATIC FUNCTION _o_tables()
    ELSE
       ?E "open koncij ERROR?!"
    ENDIF
-   o_konto()
-   o_partn()
+   IF o_konto()
+      ?E "open konto"
+   ELSE
+      ?E "open konto ERROR"
+   ENDIF
+   IF o_partn()
+      ?E "open partn ok"
+   ELSE
+      ?E "open partn error"
+   ENDIF
 
    RETURN .T.

@@ -17,7 +17,5 @@ FUNCTION o_konto()
 
 
 FUNCTION o_partn()
+
    RETURN o_dbf_table( F_PARTN, "partn", "ID" )
-
-
-SELECT ( F_PARTN )   ;  my_use  ( "partn" )     ; SET ORDER TO TAG "ID"

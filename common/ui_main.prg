@@ -425,13 +425,16 @@ FUNCTION BoxCLS()
 
 FUNCTION Beep( nPuta )
 
-   LOCAL _i
+   LOCAL nI
 
 #ifndef TEST
 
-   FOR _i := 1 TO nPuta
+#ifdef __PLATFORM__WINDOWS
+   FOR nI := 1 TO nPuta
       Tone( 300, 1 )
    NEXT
+#endif
+
 #endif
 
    RETURN .T.
@@ -445,7 +448,7 @@ FUNCTION CentrTxt( tekst, lin )
       IF Len( tekst ) > MAXCOLS()
          kol := 0
       ELSE
-         kol := Int( ( MAXCOLS() -Len( tekst ) ) / 2 )
+         kol := Int( ( MAXCOLS() - Len( tekst ) ) / 2 )
       ENDIF
       @ lin, 0 SAY Replicate( Chr( 32 ), MAXCOLS() )
       @ lin, kol SAY tekst

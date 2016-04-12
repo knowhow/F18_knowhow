@@ -792,7 +792,7 @@ FUNCTION dbf_refresh( cTable )
 
    in_dbf_refresh( cTable, .T. )
 
-   ?E "go-to-sync: ", Time(), cTable
+   ?E "go-to-sync: ", Time(), cTable, hb_threadSelf()
 
    dbf_refresh_ids_or_full( cTable )
    dbf_refresh_0( cTable )

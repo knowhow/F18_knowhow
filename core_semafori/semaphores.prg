@@ -884,7 +884,7 @@ FUNCTION skip_semaphore_sync( cTable )
 
    IF Left( cTable, 6 ) == "SYNC__"
 #ifdef F18_DEBUG_SYNC
-      ?E "skip_semaphore_sync", cTable
+      ?E "skip_semaphore_sync SYNC__ ", cTable
 #endif
       RETURN .T.
    ENDIF

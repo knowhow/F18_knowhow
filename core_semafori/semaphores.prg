@@ -59,21 +59,21 @@ FUNCTION lock_semaphore( table )
       ENDIF
 
       IF cSemaphoreStatus == "free"
-           EXIT
+         EXIT
       ENDIF
 
       IF  ( Seconds() - nLockSeconds ) > SEMAPHORE_LOCK_TIME
          RETURN .F.
       ENDIF
 
-      //IF cSemaphoreStatus == "lock"
-         _user_locked := get_semaphore_locked_by_me_status_user( table )
-         _err_msg := ToStr( Time() ) + " : table locked : " + table + " user: " + _user_locked
-         ?E _err_msg
+      // IF cSemaphoreStatus == "lock"
+      _user_locked := get_semaphore_locked_by_me_status_user( table )
+      _err_msg := ToStr( Time() ) + " : table locked : " + table + " user: " + _user_locked
+      ?E _err_msg
 
-         hb_idleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
-         //LOOP
-      //ENDIF
+      hb_idleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
+      // LOOP
+      // ENDIF
 
    ENDDO
 
@@ -743,6 +743,9 @@ FUNCTION we_need_dbf_refresh( cTable )
    aDbfRec := get_a_dbf_rec( cTable, .T. )
    cTable := aDbfRec[ "table" ]
 
+   IF skip_semaphore_sync( aDbfRec ) // tabela nije sem-shared
+      RETURN .F.
+   ENDIF
 
    IF is_last_refresh_before( cTable, MIN_LAST_REFRESH_SEC )
 #ifdef F18_DEBUG_THREAD
@@ -758,9 +761,6 @@ FUNCTION we_need_dbf_refresh( cTable )
       RETURN .F.
    ENDIF
 
-   IF skip_semaphore_sync( cTable ) // tabela nije sem-shared
-      RETURN .F.
-   ENDIF
 
    IF !File( f18_ime_dbf( aDbfRec ) )
 #ifdef F18_DEBUG_THREAD
@@ -876,20 +876,26 @@ STATIC FUNCTION dbf_refresh_0( cTable )
    RETURN .F.
 
 
-FUNCTION skip_semaphore_sync( cTable )
+FUNCTION skip_semaphore_sync( xArg )
 
    LOCAL hRec
+   LOCAL cTable
 
-   cTable := Lower( cTable )
+   IF ValType( xArg ) == "H"
+      hRec := xArg
+      cTable := hRec[ "table" ]
+   ELSE
+      cTable := Lower( xArg )
 
-   IF Left( cTable, 6 ) == "SYNC__"
+      IF Left( cTable, 6 ) == "SYNC__"
 #ifdef F18_DEBUG_SYNC
-      ?E "skip_semaphore_sync SYNC__ ", cTable
+         ?E "skip_semaphore_sync SYNC__ ", cTable
 #endif
-      RETURN .T.
-   ENDIF
+         RETURN .T.
+      ENDIF
 
-   hRec := get_a_dbf_rec( cTable, .T. )
+      hRec := get_a_dbf_rec( cTable, .T. )
+   ENDIF
 
    IF hRec[ "sql" ] .OR. hRec[ "temp" ]
 #ifdef F18_DEBUG_SYNC

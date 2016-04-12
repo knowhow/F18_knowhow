@@ -28,6 +28,19 @@ FUNCTION o_sifk()
    RETURN use_sql_sifk()
 
 
+FUNCTION o_koncij()
+
+   SELECT ( F_KONCIJ )
+
+   IF !use_sql_sif  ( "koncij" )
+      RETURN .F.
+   ENDIF
+   SET ORDER TO TAG "ID"
+
+   RETURN .T.
+
+
+
 
 FUNCTION select_o_sifk()
 
@@ -64,4 +77,3 @@ FUNCTION o_tarifa()
    SET ORDER TO TAG "ID"
 
    RETURN .T.
-   

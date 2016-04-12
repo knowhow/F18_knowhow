@@ -50,6 +50,7 @@ FUNCTION ld_novi_kredit()
    LOCAL nRata2   := 0
    LOCAL cOsnov   := Space( 20 )
    LOCAL nIRata
+   LOCAL hParams
 
    DO WHILE .T.
 
@@ -160,8 +161,9 @@ FUNCTION ld_novi_kredit()
 
       ENDDO
 
-      run_sql_query( "COMMIT" )
-      f18_unlock_tables( { "ld_radkr" } )
+      hParams := hb_hash()
+      hParams[ "unlock" ] := { "ld_radkr" }
+      run_sql_query( "COMMIT", hParams )
 
       log_write( "F18_DOK_OPER: ld unos novog kredita - radnik: " + cIdRadn + " iznos: " + AllTrim( Str( nIznKred ) ), 2 )
 
@@ -251,6 +253,7 @@ FUNCTION ld_krediti_key_handler( Ch )
    LOCAL nRet := DE_CONT
    LOCAL nRec := RecNo()
    LOCAL _placeno, _iznos, _rec
+   LOCAL hParams
 
    SELECT radkr
 
@@ -299,8 +302,9 @@ FUNCTION ld_krediti_key_handler( Ch )
          ENDDO
 
 
-         run_sql_query( "COMMIT" )
-         f18_unlock_tables( { "ld_radkr" } )
+         hParams := hb_hash()
+         hParams[ "unlock" ] := { "ld_radkr" }
+         run_sql_query( "COMMIT", hParams )
 
       ENDIF
 
@@ -346,6 +350,7 @@ FUNCTION ld_krediti_redefinisanje_rata()
    LOCAL nNRata
    LOCAL cNaOsnovu := Space( 20 )
    LOCAL _rec
+   LOCAL hParams
 
    Box(, 6, 60 )
 
@@ -451,8 +456,10 @@ FUNCTION ld_krediti_redefinisanje_rata()
          ENDIF
       ENDDO
 
-      run_sql_query( "COMMIT" )
-      f18_unlock_tables( { "ld_radkr" } )
+
+      hParams := hb_hash()
+      hParams[ "unlock" ] := { "ld_radkr" }
+      run_sql_query( "COMMIT", hParams )
 
 
       log_write( "F18_DOK_OPER: ld, redefinisanje kredita za radnika: " + cIdRadn, 2 )
@@ -467,6 +474,7 @@ FUNCTION SumKredita()
 
    LOCAL fUsed := .T.
    LOCAL cTRada := " "
+   LOCAL hParams
 
    PushWA()
 
@@ -506,8 +514,9 @@ FUNCTION SumKredita()
 
    ENDDO
 
-   run_sql_query( "COMMIT" )
-   f18_unlock_tables( { "ld_radkr" } )
+   hParams := hb_hash()
+   hParams[ "unlock" ] := { "ld_radkr" }
+   run_sql_query( "COMMIT", hParams )
 
    IF !fUsed
       SELECT radkr
@@ -1117,6 +1126,7 @@ FUNCTION DatZadUMjesecu( dDatum )
 FUNCTION ld_brisanje_kredita()
 
    LOCAL _rec
+   LOCAL hParams
 
    cIdRadn := Space( _LR_ )
    cIdKRed := Space( _LK_ )
@@ -1140,7 +1150,7 @@ FUNCTION ld_brisanje_kredita()
 
    IF cBrisi == "N"
       my_close_all_dbf()
-      RETURN
+      RETURN .F.
    ENDIF
 
    SELECT RADKR
@@ -1164,8 +1174,10 @@ FUNCTION ld_brisanje_kredita()
       GO ( nRec )
    ENDDO
 
-   run_sql_query( "COMMIT" )
-   f18_unlock_tables( { "ld_radkr" } )
+
+   hParams := hb_hash()
+   hParams[ "unlock" ] := { "ld_radkr" }
+   run_sql_query( "COMMIT", hParams )
 
 
    IF nStavki > 0

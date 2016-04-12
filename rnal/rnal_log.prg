@@ -265,11 +265,12 @@ FUNCTION logiraj_podatke_loma_na_staklima( nDoc_no, cDesc, cAction )
    LOCAL nDoc_log_no
    LOCAL cDoc_log_type
    LOCAL lOk := .T.
+   LOCAL hParams
 
    SELECT _tmp1
 
    IF RecCount() == 0
-      RETURN
+      RETURN .F.
    ENDIF
 
    IF ( cAction == nil )
@@ -279,7 +280,7 @@ FUNCTION logiraj_podatke_loma_na_staklima( nDoc_no, cDesc, cAction )
    run_sql_query( "BEGIN" )
 
    IF !f18_lock_tables( { "doc_log", "doc_lit" }, .T. )
-      run_sql_query( "COMMIT" )
+      run_sql_query( "ROLLBACK" )
       lOk := .F.
       RETURN lOk
    ENDIF
@@ -321,8 +322,9 @@ FUNCTION logiraj_podatke_loma_na_staklima( nDoc_no, cDesc, cAction )
    ENDIF
 
    IF lOk
-      f18_unlock_tables( { "doc_log", "doc_lit" } )
-      run_sql_query( "COMMIT" )
+      hParams := hb_Hash()
+      hParams[ "unlock" ] := { "doc_log", "doc_lit" }
+      run_sql_query( "COMMIT", hParams )
    ELSE
       run_sql_query( "ROLLBACK" )
       MsgBeep( "Podaci o lomu na staklima nisu ažurirani.#Greška u transakciji." )
@@ -453,6 +455,7 @@ FUNCTION logiraj_zatvaranje_naloga( nDoc_no, cDesc, nDoc_status )
    LOCAL cDoc_log_type
    LOCAL cAction := "+"
    LOCAL lOk := .T.
+   LOCAL hParams
 
    DO CASE
 
@@ -474,7 +477,7 @@ FUNCTION logiraj_zatvaranje_naloga( nDoc_no, cDesc, nDoc_status )
    run_sql_query( "BEGIN" )
 
    IF !f18_lock_tables( { "doc_log", "doc_lit" }, .T. )
-      run_sql_query( "COMMIT" )
+      run_sql_query( "ROLLBACK" )
       MsgBeep( "Ne mogu zaključati tabelu !#Prekidam operaciju." )
       lOk := .F.
       RETURN lOk
@@ -488,8 +491,9 @@ FUNCTION logiraj_zatvaranje_naloga( nDoc_no, cDesc, nDoc_status )
    ENDIF
 
    IF lOk
-       f18_unlock_tables( { "doc_log", "doc_lit" } )
-       run_sql_query( "COMMIT" )
+       hParams := hb_Hash()
+       hParams[ "unlock" ] := { "doc_log", "doc_lit" }
+       run_sql_query( "COMMIT", hParams )
    ELSE
        run_sql_query( "ROLLBACK" )
    ENDIF

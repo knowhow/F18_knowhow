@@ -146,12 +146,12 @@ FUNCTION next_br_dok( cTblName )
    RETURN nLastBrdok + 1
 
 
-// ------------------------
-// ------------------------
+
 FUNCTION rn_g_r_br( cTblName )
 
    LOCAL nRbr, _rec
    LOCAL _table := "epdv_kuf"
+   LOCAL hParams
 
    // TAG: datum : "dtos(datum)+src_br_2"
 
@@ -196,8 +196,9 @@ FUNCTION rn_g_r_br( cTblName )
 
    ENDDO
 
-   f18_unlock_tables( { _table } )
-   run_sql_query( "COMMIT" )
+   hParams := hb_Hash()
+   hParams[ "unlock" ] :=  { _table }
+   run_sql_query( "COMMIT", hParams )
 
    BoxC()
 

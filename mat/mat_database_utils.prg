@@ -156,12 +156,15 @@ FUNCTION brisi_mat_nalog( cIdFirma, cIdVn, cBrNal )
 
    LOCAL _del_rec
    LOCAL _ok := .T.
+   LOCAL hParams
 
+   run_sql_query( "BEGIN" )
    IF !f18_lock_tables( { "mat_suban", "mat_sint", "mat_anal", "mat_nalog" } )
+      run_sql_query( "ROLLBACK" )
       RETURN .F.
    ENDIF
 
-   run_sql_query( "BEGIN" )
+
 
    SELECT mat_suban
    SET ORDER TO TAG "4"
@@ -203,8 +206,9 @@ FUNCTION brisi_mat_nalog( cIdFirma, cIdVn, cBrNal )
       delete_rec_server_and_dbf( "mat_nalog", _del_rec, 1, "CONT" )
    ENDIF
 
-   f18_unlock_tables( { "mat_suban", "mat_sint", "mat_anal", "mat_nalog" } )
-   run_sql_query( "COMMIT" )
+   hParams := hb_Hash()
+   hParams[ "unlock" ] := { "mat_suban", "mat_sint", "mat_anal", "mat_nalog" }
+   run_sql_query( "COMMIT", hParams )
 
    RETURN _ok
 
@@ -402,4 +406,4 @@ FUNCTION mat_prenos_podataka()
    my_close_all_dbf()
    ENDPRINT
 
-   RETURN
+   RETURN .T.

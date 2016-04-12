@@ -19,6 +19,7 @@ FUNCTION sast_repl_all() // zamjena sastavnice u svim proizvodima
    LOCAL cNewS
    LOCAL nKolic
    LOCAL _rec
+   LOCAL hParams
 
    cOldS := Space( 10 )
    cNewS := Space( 10 )
@@ -59,8 +60,9 @@ FUNCTION sast_repl_all() // zamjena sastavnice u svim proizvodima
       ENDDO
 
       IF lOk
-         f18_unlock_tables( { "sast" } )
-         run_sql_query( "COMMIT" )
+         hParams := hb_Hash()
+         hParams[ "unlock" ] :=  { "sast" }
+         run_sql_query( "COMMIT", hParams )
       ELSE
          run_sql_query( "ROLLBACK" )
       ENDIF
@@ -80,6 +82,7 @@ FUNCTION pr_uces_sast() // promjena ucesca
    LOCAL nKolic
    LOCAL nKolic2
    LOCAL _rec
+   LOCAL hParams
 
    cOldS := Space( 10 )
    cNewS := Space( 10 )
@@ -125,8 +128,9 @@ FUNCTION pr_uces_sast() // promjena ucesca
       ENDDO
 
       IF lOk
-         f18_unlock_tables( { "sast" } )
-         run_sql_query( "COMMIT" )
+         hParams := hb_Hash()
+         hParams[ "unlock" ] :=  { "sast" }
+         run_sql_query( "COMMIT", hParams )
       ELSE
          run_sql_query( "ROLLBACK" )
       ENDIF

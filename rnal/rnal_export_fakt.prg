@@ -561,11 +561,12 @@ STATIC FUNCTION _ins_veza( nA_doc_it, nA_docs, cBrfakt, lTemp )
 
    LOCAL nDoc_no
    LOCAL _rec
+   LOCAL hParams
 
    IF !lTemp
       run_sql_query( "BEGIN" )
       IF !f18_lock_tables( { "rnal_docs" }, .T. )
-         run_sql_query( "COMMIT" )
+         run_sql_query( "ROLLBACK" )
          MsgBeep( "Ne mogu zaključati tabelu !#Operacija prekinuta." )
          RETURN .F.
       ENDIF
@@ -589,8 +590,9 @@ STATIC FUNCTION _ins_veza( nA_doc_it, nA_docs, cBrfakt, lTemp )
 
       IF !Found()
          IF !lTemp
-            f18_unlock_tables( { "rnal_docs" } )
-            run_sql_query( "COMMIT" )
+            hParams := hb_Hash()
+            hParams[ "unlock" ] := { "rnal_docs" }
+            run_sql_query( "COMMIT", hParams )
          ENDIF
          MsgBeep( "Traženi nalog ne postoji u ažuriranim dokumentima !" )
          RETURN .F.
@@ -616,8 +618,9 @@ STATIC FUNCTION _ins_veza( nA_doc_it, nA_docs, cBrfakt, lTemp )
    ENDDO
 
    IF !lTemp
-      f18_unlock_tables( { "rnal_docs" } )
-      run_sql_query( "COMMIT" )
+      hParams := hb_Hash()
+      hParams[ "unlock" ] := { "rnal_docs" }
+      run_sql_query( "COMMIT", hParams )
    ENDIF
 
    RETURN .T.

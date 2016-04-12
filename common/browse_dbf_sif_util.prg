@@ -691,6 +691,7 @@ FUNCTION snimi_promjene_sifarnika( lNovi, cTekuciZapis )
    LOCAL cEditovaniZapis
    LOCAL lSqlTable
    LOCAL lAppended := .F.
+   LOCAL hParams
 
    lSqlTable := is_sql_table( cAlias )
 
@@ -724,8 +725,10 @@ FUNCTION snimi_promjene_sifarnika( lNovi, cTekuciZapis )
    IF lOk
 
       lRet := .T.
-      f18_unlock_tables( { cAlias } )
-      run_sql_query( "COMMIT" )
+
+      hParams := hb_hash()
+      hParams[ "unlock" ] :=  { cAlias }
+      run_sql_query( "COMMIT", hParams )
 
       log_write( "F18_DOK_OPER: dodavanje/ispravka zapisa u sifarnik " + cAlias, 2 )
 
@@ -764,6 +767,7 @@ FUNCTION snimi_promjene_cirkularne_ispravke_sifarnika()
    LOCAL lRet := .F.
    LOCAL lOk := .T.
    LOCAL lSqlTable
+   LOCAL hParams
 
    lSqlTable := is_sql_table( Alias() )
 
@@ -784,8 +788,9 @@ FUNCTION snimi_promjene_cirkularne_ispravke_sifarnika()
 
    IF lOk
       lRet := .T.
-      f18_unlock_tables( { _alias } )
-      run_sql_query( "COMMIT" )
+      hParams := hb_hash()
+      hParams[ "unlock" ] :=  { _alias }
+      run_sql_query( "COMMIT", hParams )
 
       log_write( "F18_DOK_OPER: cirkularna ispravka šifrarnika " + _alias, 2 )
    ELSE
@@ -1073,6 +1078,7 @@ FUNCTION sifarnik_brisi_stavku()
    LOCAL _rec_dbf, _rec, cAlias
    LOCAL lOk
    LOCAL hRec
+   LOCAL hParams
 
    IF Pitanje( , "Želite li izbrisati ovu stavku (D/N) ?", "D" ) == "N"
       RETURN DE_CONT
@@ -1110,8 +1116,9 @@ FUNCTION sifarnik_brisi_stavku()
 #ifdef F18_DEBUG
       MsgBeep( "table " + cAlias  + " updated and locked" )
 #endif
-      f18_unlock_tables( { cAlias } )
-      run_sql_query( "COMMIT" )
+      hParams := hb_hash()
+      hParams[ "unlock" ] :=  { cAlias }
+      run_sql_query( "COMMIT", hParams )
       log_write( "F18_DOK_OPER: brisanje stavke iz šifrarnika, stavka " + pp( hRec ), 2 )
    ELSE
       run_sql_query( "ROLLBACK" )

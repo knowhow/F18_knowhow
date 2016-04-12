@@ -36,7 +36,7 @@ FUNCTION o_pk_tbl()
 // ------------------------------------------
 FUNCTION pk_delete( cIdRadn )
 
-   LOCAL nTA
+   LOCAL nTA, hParams
 
    IF Pitanje(, "Izbrisati podatke poreske kartice radnika ?", "N" ) == "N"
       RETURN
@@ -76,8 +76,10 @@ FUNCTION pk_delete( cIdRadn )
       delete_rec_server_and_dbf( "ld_pk_data", _del_rec, 2, "CONT" )
    ENDIF
 
-   run_sql_query( "COMMIT" )
-   f18_unlock_tables( { "ld_pk_data", "ld_pk_radn" } )
+   hParams := hb_Hash()
+   hParams[ "unlock" ] :=  { "ld_pk_data", "ld_pk_radn" }
+   run_sql_query( "COMMIT", hParams )
+
 
 
    IF nCnt > 0

@@ -118,6 +118,7 @@ FUNCTION unos_clan( lNew )
 
    LOCAL nBoxLen := 10
    LOCAL nX
+   LOCAL hParams
 
    Box(, 12, 70, .F. )
 
@@ -219,8 +220,9 @@ FUNCTION unos_clan( lNew )
 
       ENDIF
 
-      f18_unlock_tables( { "ld_pk_data" } )
-      run_sql_query( "COMMIT" )
+      hParams := hb_hash()
+      hParams[ "unlock" ] := { "ld_pk_data" }
+      run_sql_query( "COMMIT", hParams )
 
       IF LastKey() == K_ESC
          EXIT

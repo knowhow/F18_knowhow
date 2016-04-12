@@ -47,11 +47,12 @@ STATIC FUNCTION in_elcode_rule( cElCond, cRule, cRuleName )
    LOCAL cRuleC3
    LOCAL cRuleC4
    LOCAL cRuleC7
+   LOCAL hParams
 
    cTRule := rnal_format_naziva_elementa( cElCond )
 
    IF !Empty( cTRule )
-      RETURN
+      RETURN .F.
    ENDIF
 
    cModul := get_rule_field_mod( "RNAL" )
@@ -69,9 +70,9 @@ STATIC FUNCTION in_elcode_rule( cElCond, cRule, cRuleName )
    run_sql_query( "BEGIN" )
 
    IF !f18_lock_tables( { "f18_rules" }, .T. )
-      run_sql_query( "COMMIT" )
+      run_sql_query( "ROLLBACK" )
       MsgBeep( "Ne mogu zaključati tabelu f18_rules !#Prekidam operaciju." )
-      RETURN
+      RETURN .F.
    ENDIF
 
    APPEND BLANK
@@ -92,8 +93,9 @@ STATIC FUNCTION in_elcode_rule( cElCond, cRule, cRuleName )
    IF !update_rec_server_and_dbf( "f18_rules", _rec, 1, "CONT" )
       run_sql_query( "ROLLBACK" )
    ELSE
-      f18_unlock_tables( { "f18_rules" } )
-      run_sql_query( "COMMIT" )
+      hParams := hb_Hash()
+      hParams[ "unlock" ] := { "f18_rules" }
+      run_sql_query( "COMMIT", hParams )
    ENDIF
 
    RETURN .T.

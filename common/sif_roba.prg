@@ -562,15 +562,16 @@ FUNCTION roba_setuj_mpc_iz_vpc()
    LOCAL _tarifa
    LOCAL _count := 0
    LOCAL lOk := .T.
+   LOCAL hParams
 
    IF !_get_params( @_params )
-      RETURN
+      RETURN .F.
    ENDIF
 
    run_sql_query( "BEGIN" )
    IF !f18_lock_tables( { "roba" }, .T. )
       run_sql_query( "COMMIT" )
-      RETURN
+      RETURN .F.
    ENDIF
 
    O_TARIFA
@@ -659,8 +660,9 @@ FUNCTION roba_setuj_mpc_iz_vpc()
    BoxC()
 
    IF lOk
-      f18_unlock_tables( { "roba" } )
-      run_sql_query( "COMMIT" )
+      hParams := hb_hash()
+      hParams[ "unlock" ] :=  { "roba" }
+      run_sql_query( "COMMIT", hParams )
    ELSE
       run_sql_query( "ROLLBACK" )
    ENDIF

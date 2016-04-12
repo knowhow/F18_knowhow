@@ -350,6 +350,7 @@ FUNCTION AzurKupData( cIdPos )
    LOCAL _rec
    LOCAL _ok
    LOCAL _tbl := "pos_dokspf"
+   LOCAL hParams
 
    O_DRN
    O_DRNTEXT
@@ -361,7 +362,7 @@ FUNCTION AzurKupData( cIdPos )
 
    // nema porezne fakture
    IF cKNaziv == "???"
-      RETURN
+      RETURN .F.
    ENDIF
 
    O_DOKSPF
@@ -400,8 +401,9 @@ FUNCTION AzurKupData( cIdPos )
 
    update_rec_server_and_dbf( _tbl, _rec, 1, "CONT" )
 
-   f18_unlock_tables( { _tbl } )
-   run_sql_query( "COMMIT" )
+   hParams := hb_hash()
+   hParams[ "unlock" ] :=  { _tbl }
+   run_sql_query( "COMMIT", hParams )
 
    RETURN .T.
 

@@ -22,6 +22,7 @@ FUNCTION copy_sast()
    LOCAL nTRec
    LOCAL nCnt := 0
    LOCAL _rec
+   LOCAL hParams
 
    nTRobaRec := RecNo()
 
@@ -69,8 +70,9 @@ FUNCTION copy_sast()
          ENDDO
 
          IF lOk
-            f18_unlock_tables( { "sast" } )
-            run_sql_query( "COMMIT" )
+            hParams := hb_Hash()
+            hParams[ "unlock" ] :=  { "sast" }
+            run_sql_query( "COMMIT", hParams )
          ELSE
             run_sql_query( "ROLLBACK" )
          ENDIF
@@ -99,6 +101,7 @@ FUNCTION bris_sast()
    LOCAL _d_n
    LOCAL _t_rec
    LOCAL _rec
+   LOCAL hParams
 
    _d_n := "0"
 
@@ -163,8 +166,9 @@ FUNCTION bris_sast()
    ENDIF
 
    IF lOk
-      f18_unlock_tables( { "roba", "sast" } )
-      run_sql_query( "COMMIT" )
+      hParams := hb_Hash()
+      hParams[ "unlock" ] :=  { "roba", "sast" }
+      run_sql_query( "COMMIT", hParams )
    ELSE
       run_sql_query( "ROLLBACK" )
       RETURN .F.

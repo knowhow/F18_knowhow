@@ -149,6 +149,7 @@ STATIC FUNCTION _insert_into_fin_priprema( data, konto_data, partn_data, param )
    LOCAL _rec, _i_saldo
    LOCAL _rbr := 0
    LOCAL lOk := .T.
+   LOCAL hParams
 
    _o_tables()
 
@@ -325,8 +326,9 @@ STATIC FUNCTION _insert_into_fin_priprema( data, konto_data, partn_data, param )
       ENDDO
 
       IF lOk
-         f18_unlock_tables( { "partn", "konto" } )
-         run_sql_query( "COMMIT" )
+         hParams := hb_hash()
+         hParams[ "unlock" ] := { "partn", "konto" }
+         run_sql_query( "COMMIT", hParams )
       ELSE
          run_sql_query( "ROLLBACK" )
          MsgBeep( "Problem sa dodavanjem novih šifri na server !" )

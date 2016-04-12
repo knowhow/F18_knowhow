@@ -214,7 +214,6 @@ STATIC FUNCTION ug_key_handler( Ch )
 
    ENDCASE
 
-
    RETURN DE_CONT
 
 
@@ -317,6 +316,7 @@ FUNCTION br_ugovor()
    LOCAL _t_rec
    LOCAL _rec
    LOCAL _ret := 0
+   LOCAL hParams
 
    IF Pitanje(, "Izbrisati ugovor sa pripadajućim stavkama (D/N) ?", "N" ) == "N"
       RETURN _ret
@@ -356,8 +356,9 @@ FUNCTION br_ugovor()
 
    IF lOk
       _ret := 1
-      run_sql_query( "COMMIT" )
-      f18_unlock_tables( { "fakt_ugov", "fakt_rugov" } )
+      hParams := hb_Hash()
+      hParams[ "unlock" ] :=  { "fakt_ugov", "fakt_rugov" }
+      run_sql_query( "COMMIT", hParams )
    ELSE
       run_sql_query( "ROLLBACK" )
    ENDIF

@@ -527,6 +527,7 @@ FUNCTION zamjeni_numericka_polja_u_tabeli( cKolona, cTrazi, cUslov )
    LOCAL lImaSemafor := dbf_alias_has_semaphore()
    LOCAL _rec
    LOCAL cAlias
+   LOCAL hParams
 
    SET ORDER TO 0
 
@@ -573,8 +574,9 @@ FUNCTION zamjeni_numericka_polja_u_tabeli( cKolona, cTrazi, cUslov )
    IF lImaSemafor
       IF lOk
          lRet := .T.
-         f18_unlock_tables( { cAlias } )
-         run_sql_query( "COMMIT" )
+         hParams := hb_hash()
+         hParams[ "unlock" ] :=  { cAlias }
+         run_sql_query( "COMMIT", hParams )
       ELSE
          run_sql_query( "ROLLBACK" )
       ENDIF
@@ -603,6 +605,7 @@ FUNCTION replace_kolona_in_table( cKolona, trazi_val, zamijeni_val, last_search 
    LOCAL _sect
    LOCAL lOk := .T.
    LOCAL cAlias
+   LOCAL hParams
 
    nRec := RecNo()
    nOrder := IndexOrd()
@@ -686,8 +689,9 @@ FUNCTION replace_kolona_in_table( cKolona, trazi_val, zamijeni_val, last_search 
    IF _has_semaphore
       IF lOk
          lRet := .T.
-         f18_unlock_tables( { cAlias } )
-         run_sql_query( "COMMIT" )
+         hParams := hb_hash()
+         hParams[ "unlock" ] :=  { cAlias }
+         run_sql_query( "COMMIT", hParams )
       ELSE
          run_sql_query( "ROLLBACK" )
          MsgBeep( "Greška sa opcijom ALT+R !#Operacija prekinuta." )

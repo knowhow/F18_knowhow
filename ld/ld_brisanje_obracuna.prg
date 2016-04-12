@@ -28,7 +28,7 @@ FUNCTION ld_brisanje_obr()
 
    f18_menu( "bris", .F., _izbor, _opc, _opcexe )
 
-   RETURN
+   RETURN .T.
 
 
 FUNCTION BrisiRadnika()
@@ -39,6 +39,7 @@ FUNCTION BrisiRadnika()
    LOCAL cIdRj
    LOCAL fnovi
    LOCAL _rec
+   LOCAL hParams
 
    nUser := 001
    O_RADN
@@ -128,9 +129,9 @@ FUNCTION BrisiRadnika()
 
             Postotak( 0 )
 
-
-            run_sql_query( "COMMIT" )
-            f18_unlock_tables( { "ld_ld" } )
+            hParams := hb_hash()
+            hParams[ "unlock" ] := { "ld_ld" }
+            run_sql_query( "COMMIT", hParams )
 
          ELSE
             MsgBeep( "Neko već koristi datoteku LD !" )

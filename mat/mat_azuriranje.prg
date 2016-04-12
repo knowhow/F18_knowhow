@@ -192,13 +192,16 @@ STATIC FUNCTION _mat_azur_sql()
    LOCAL _ids_sint := {}
    LOCAL _ids_anal := {}
    LOCAL _ids_nalog := {}
+   LOCAL hParams
 
    _tbl_suban := "mat_suban"
    _tbl_anal  := "mat_anal"
    _tbl_nalog := "mat_nalog"
    _tbl_sint  := "mat_sint"
 
+   run_sql_query( "BEGIN" )
    IF !f18_lock_tables( { _tbl_suban, _tbl_anal, _tbl_sint, _tbl_nalog } )
+      run_sql_query( "ROLLBACK" )
       MsgBeep( "ERROR lock tabele" )
       RETURN .F.
    ENDIF
@@ -210,7 +213,6 @@ STATIC FUNCTION _mat_azur_sql()
    SELECT mat_psuban
    GO TOP
 
-   run_sql_query( "BEGIN" )
 
    _record := dbf_get_rec()
    _tmp_id := _record[ "idfirma" ] + _record[ "idvn" ] + _record[ "brnal" ]
@@ -327,13 +329,14 @@ STATIC FUNCTION _mat_azur_sql()
       push_ids_to_semaphore( _tbl_sint,  _ids_sint  )
       push_ids_to_semaphore( _tbl_nalog, _ids_nalog )
 
-      run_sql_query( "COMMIT" )
+
+      hParams := hb_Hash()
+      hParams[ "unlock" ] :=  { _tbl_suban, _tbl_anal, _tbl_sint, _tbl_nalog }
+      run_sql_query( "COMMIT", hParams )
 
       log_write( "F18_DOK_OPER: mat, azuriranje dokumenta: " + _log_info, 2 )
 
    ENDIF
-
-   f18_unlock_tables( { _tbl_suban, _tbl_anal, _tbl_sint, _tbl_nalog } )
 
    RETURN _ok
 

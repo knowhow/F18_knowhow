@@ -115,7 +115,7 @@ FUNCTION azur_ku_ki( cTbl )
       epdv_otvori_kuf_tabele( .T. )
    ELSE
       epdv_otvori_kif_tabele( .T. )
-   endif
+   ENDIF
 
    BoxC()
 
@@ -134,6 +134,7 @@ FUNCTION kuf_kif_azur_sql( tbl, next_g_rbr, next_br_dok )
    LOCAL _tmp_id
    LOCAL _ids := {}
    LOCAL __area
+   LOCAL hParams
 
    IF tbl == "KIF"
       __area := F_P_KIF
@@ -143,14 +144,17 @@ FUNCTION kuf_kif_azur_sql( tbl, next_g_rbr, next_br_dok )
 
    _tbl_epdv := "epdv_" + Lower( tbl )
 
+
+   err_bar( "epdv", "sql " + _tbl_epdv )
+
+   run_sql_query( "BEGIN" )
    IF !f18_lock_tables( { _tbl_epdv } )
+      run_sql_query( "ROLLBACK" )
       RETURN .F.
    ENDIF
 
    lOk := .T.
 
-   MsgO( "sql " + _tbl_epdv )
-   run_sql_query( "BEGIN" )
 
    IF lOk = .T.
 
@@ -179,8 +183,6 @@ FUNCTION kuf_kif_azur_sql( tbl, next_g_rbr, next_br_dok )
 
       ENDDO
 
-      MsgC()
-
    ENDIF
 
    IF !lOk
@@ -188,11 +190,11 @@ FUNCTION kuf_kif_azur_sql( tbl, next_g_rbr, next_br_dok )
    ELSE
       AAdd( _ids, _tmp_id )
       push_ids_to_semaphore( _tbl_epdv, _ids )
-      f18_unlock_tables( { _tbl_epdv } )
-      run_sql_query( "COMMIT" )
+
+      hParams := hb_Hash()
+      hParams[ "unlock" ] :=  { _tbl_epdv }
+      run_sql_query( "COMMIT", hParams )
    ENDIF
-
-
 
    RETURN lOk
 
@@ -260,7 +262,7 @@ FUNCTION pov_ku_ki( cTbl, nBrDok )
       epdv_otvori_kuf_tabele( .T. )
    ELSE
       epdv_otvori_kif_tabele( .T. )
-   endif
+   ENDIF
 
    SELECT ( _k_area )
    SET ORDER TO TAG "BR_DOK"
@@ -287,7 +289,7 @@ FUNCTION pov_ku_ki( cTbl, nBrDok )
       epdv_otvori_kuf_tabele( .T. )
    ELSE
       epdv_otvori_kif_tabele( .T. )
-   endif
+   ENDIF
 
    BoxC()
 
@@ -337,7 +339,7 @@ FUNCTION epdv_renumeracija_rbr( cTbl, lShow )
       MsgBeep( "Renumeracija pripreme završena" )
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 FUNCTION renm_g_rbr( cTbl, lShow )
@@ -401,4 +403,4 @@ FUNCTION renm_g_rbr( cTbl, lShow )
       MsgBeep( cTbl + " : G.Rbr renumeracija izvršena" )
    ENDIF
 
-   RETURN
+   RETURN .T.

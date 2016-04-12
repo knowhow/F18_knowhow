@@ -257,6 +257,7 @@ FUNCTION rnal_promjena_broja_naloga( old_doc )
 
    LOCAL _new_no := old_doc
    LOCAL lOk := .T.
+   LOCAL hParams
 
    IF !spec_funkcije_sifra( "PRBRNO" )
       RETURN .F.
@@ -274,7 +275,7 @@ FUNCTION rnal_promjena_broja_naloga( old_doc )
    run_sql_query( "BEGIN" )
 
    IF !f18_lock_tables( { "docs", "doc_it", "doc_it2", "doc_ops" }, .T. )
-      run_sql_query( "COMMIT" )
+      run_sql_query( "ROLLBACK" )
       MsgBeep( "Ne mogu zaključati tabele#Prekid opcije promjene broja naloga." )
       RETURN .F.
    ENDIF
@@ -294,8 +295,9 @@ FUNCTION rnal_promjena_broja_naloga( old_doc )
    ENDIF
 
    IF lOk
-      f18_unlock_tables( { "docs", "doc_it", "doc_it2", "doc_ops" } )
-      run_sql_query( "COMMIT" )
+      hParams := hb_Hash()
+      hParams[ "unlock" ] := { "docs", "doc_it", "doc_it2", "doc_ops" }
+      run_sql_query( "COMMIT", hParams )
    ELSE
       run_sql_query( "ROLLBACK" )
    ENDIF

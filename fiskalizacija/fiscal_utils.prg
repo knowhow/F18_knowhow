@@ -136,6 +136,7 @@ FUNCTION gen_all_plu( lSilent )
    LOCAL nP_PLU := 0
    LOCAL nCnt
    LOCAL _rec
+   LOCAL hParams
 
    IF lSilent == nil
       lSilent := .F.
@@ -213,8 +214,9 @@ FUNCTION gen_all_plu( lSilent )
 
    IF lOk
       lRet := .T.
-      f18_unlock_tables( { "roba" } )
-      run_sql_query( "COMMIT" )
+      hParams := hb_Hash()
+      hParams[ "unlock" ] :=  { "roba" }
+      run_sql_query( "COMMIT", hParams )
    ELSE
       run_sql_query( "ROLLBACK" )
    ENDIF

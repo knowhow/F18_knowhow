@@ -145,6 +145,7 @@ STATIC FUNCTION pocetno_stanje_sql( param )
    LOCAL _rec, _id_roba, _kolicina, _vrijednost
    LOCAL _n_br_dok
    LOCAL lOk := .T.
+   LOCAL hParams
 
    prebaci_se_u_bazu( _db_params, _tek_database, _year_sez )
 
@@ -183,7 +184,7 @@ STATIC FUNCTION pocetno_stanje_sql( param )
 
    run_sql_query( "BEGIN" )
    IF !f18_lock_tables( { "pos_pos", "pos_doks" }, .T. )
-      run_sql_query( "COMMIT" )
+      run_sql_query( "ROLLBACK" )
       MsgBeep( "Ne mogu zaključati tabele !#Prekidam operaciju." )
       RETURN .F.
    ENDIF
@@ -260,8 +261,9 @@ STATIC FUNCTION pocetno_stanje_sql( param )
    MsgC()
 
    IF lOk
-      f18_unlock_tables( { "pos_pos", "pos_doks" } )
-      run_sql_query( "COMMIT" )
+      hParams := hb_hash()
+      hParams[ "unlock" ] := { "pos_doks", "pos_pos" }
+      run_sql_query( "COMMIT", hParams )
    ELSE
       run_sql_query( "ROLLBACK" )
    ENDIF

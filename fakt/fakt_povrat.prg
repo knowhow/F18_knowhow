@@ -22,6 +22,7 @@ FUNCTION povrat_fakt_dokumenta( rezerv, id_firma, id_tip_dok, br_dok, test )
    LOCAL oAtrib, _dok_hash
    LOCAL _ok := .T.
    LOCAL nRet := 0
+   LOCAL hParams
 
    IF test == nil
       test := .F.
@@ -145,8 +146,9 @@ FUNCTION povrat_fakt_dokumenta( rezerv, id_firma, id_tip_dok, br_dok, test )
       IF _ok
 
          nRet := 1
-         f18_unlock_tables( { "fakt_fakt", "fakt_doks", "fakt_doks2" } )
-         run_sql_query( "COMMIT" )
+         hParams := hb_hash()
+         hParams[ "unlock" ] := { "fakt_fakt", "fakt_doks", "fakt_doks2" }
+         run_sql_query( "COMMIT", hParams )
 
          log_write( "F18_DOK_OPER: fakt povrat dokumenta u pripremu: " + id_firma + "-" + id_tip_dok + "-" + br_dok, 2 )
 
@@ -263,6 +265,7 @@ FUNCTION povrat_fakt_po_kriteriju( br_dok, dat_dok, tip_dok, firma )
    LOCAL _id_tip_dok
    LOCAL _del_rec
    LOCAL _ok := .T.
+   LOCAL hParams
 
    IF PCount() <> 0
 
@@ -279,7 +282,6 @@ FUNCTION povrat_fakt_po_kriteriju( br_dok, dat_dok, tip_dok, firma )
       ENDIF
 
       _vars[ "tip_dok" ] := PadR( tip_dok, 200 )
-
       _vars[ "rj" ] := gFirma
 
    ELSE
@@ -301,7 +303,7 @@ FUNCTION povrat_fakt_po_kriteriju( br_dok, dat_dok, tip_dok, firma )
 
    IF !uslovi_za_povrat_prema_kriteriju( @_vars )
       my_close_all_dbf()
-      RETURN
+      RETURN .F.
    ENDIF
 
    Beep( 6 )
@@ -413,8 +415,9 @@ FUNCTION povrat_fakt_po_kriteriju( br_dok, dat_dok, tip_dok, firma )
    ENDDO
 
    IF _ok
-      f18_unlock_tables( { "fakt_doks", "fakt_doks2", "fakt_fakt" } )
-      run_sql_query( "COMMIT" )
+      hParams := hb_hash()
+      hParams[ "unlock" ] := { "fakt_doks", "fakt_doks2", "fakt_fakt" }
+      run_sql_query( "COMMIT", hParams )
 
    ELSE
       run_sql_query( "ROLLBACK" )

@@ -19,6 +19,7 @@ FUNCTION pos_brisi_dokument( id_pos, id_vd, dat_dok, br_dok )
    LOCAL _rec
    LOCAL nTArea := Select()
    LOCAL cDokument
+   LOCAL hParams
 
    IF !pos_dokument_postoji( id_pos, id_vd, dat_dok, br_dok )
       RETURN lRet
@@ -26,7 +27,7 @@ FUNCTION pos_brisi_dokument( id_pos, id_vd, dat_dok, br_dok )
 
    run_sql_query( "BEGIN" )
    IF !f18_lock_tables( { "pos_pos", "pos_doks" }, .T. )
-      run_sql_query( "COMMIT" )
+      run_sql_query( "ROLLBACK" )
       SELECT ( _t_area )
       RETURN _ret
    ENDIF
@@ -62,8 +63,10 @@ FUNCTION pos_brisi_dokument( id_pos, id_vd, dat_dok, br_dok )
 
    IF lOk
       lRet := .T.
-      f18_unlock_tables( { "pos_pos", "pos_doks" } )
-      run_sql_query( "COMMIT" )
+      hParams := hb_hash()
+      hParams[ "unlock" ] := { "pos_doks", "pos_pos" }
+      run_sql_query( "COMMIT", hParams )
+
       log_write( "F18_DOK_OPER, izbrisan pos dokument: " + cDokument, 2 )
    ELSE
       run_sql_query( "ROLLBACK" )

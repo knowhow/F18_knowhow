@@ -66,6 +66,7 @@ FUNCTION update_table_konto( zamjena_sifre )
    LOCAL lOk := .T.
    LOCAL _app_rec
    LOCAL _sif_exist := .T.
+   LOCAL hParams
 
    run_sql_query( "BEGIN" )
    IF !f18_lock_tables( { "konto" }, .T. )
@@ -120,8 +121,10 @@ FUNCTION update_table_konto( zamjena_sifre )
 
    IF lOk
       lRet := .T.
-      run_sql_query( "COMMIT" )
-      f18_unlock_tables( { "konto" } )
+      hParams := hb_hash()
+      hParams[ "unlock" ] :=  { "konto" }
+      run_sql_query( "COMMIT", hParams )
+
    ELSE
       run_sql_query( "ROLLBACK" )
    ENDIF
@@ -139,6 +142,7 @@ FUNCTION update_table_partn( zamjena_sifre )
    LOCAL lOk := .T.
    LOCAL _app_rec
    LOCAL _sif_exist := .T.
+   LOCAL hParams
 
    run_sql_query( "BEGIN" )
    IF !f18_lock_tables( { "partn" }, .T. )
@@ -193,8 +197,9 @@ FUNCTION update_table_partn( zamjena_sifre )
 
    IF lOk
       lRet := .T.
-      run_sql_query( "COMMIT" )
-      f18_unlock_tables( { "partn" } )
+      hParams := hb_hash()
+      hParams[ "unlock" ] :=  { "partn" }
+      run_sql_query( "COMMIT", hParams )
    ELSE
       run_sql_query( "ROLLBACK" )
    ENDIF
@@ -209,6 +214,7 @@ FUNCTION update_table_roba( zamjena_sifre )
    LOCAL lOk := .T.
    LOCAL _app_rec
    LOCAL _sif_exist := .T.
+   LOCAL hParams
 
    run_sql_query( "BEGIN" )
    IF !f18_lock_tables( { "roba" }, .T. )
@@ -263,8 +269,10 @@ FUNCTION update_table_roba( zamjena_sifre )
 
    IF lOk
       lRet := .T.
-      run_sql_query( "COMMIT" )
-      f18_unlock_tables( { "roba" } )
+      hParams := hb_hash()
+      hParams[ "unlock" ] :=  { "roba" }
+      run_sql_query( "COMMIT", hParams )
+
    ELSE
       run_sql_query( "ROLLBACK" )
    ENDIF

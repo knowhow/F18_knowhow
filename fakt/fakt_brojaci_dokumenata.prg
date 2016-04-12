@@ -85,10 +85,10 @@ FUNCTION fakt_mpc_iz_sifrarnika()
          nCV := roba->mpc3
       ELSEIF RJ->tip == "M4"
          nCV := roba->mpc4
-//      ELSEIF RJ->tip == "M5"
-//         nCV := roba->mpc5
-//      ELSEIF RJ->tip == "M6"
-//         nCV := roba->mpc6
+         // ELSEIF RJ->tip == "M5"
+         // nCV := roba->mpc5
+         // ELSEIF RJ->tip == "M6"
+         // nCV := roba->mpc6
       ELSE
          nCV := roba->vpc
       ENDIF
@@ -160,12 +160,12 @@ STATIC FUNCTION add_n_found( cId, cNaz, cRbr, cOznaka, nDuzina )
 
    IF !Found()
       APPEND BLANK
-      REPLACE id WITH cId,;
-         naz WITH cNaz,;
-         oznaka WITH cOznaka,;
+      REPLACE id WITH cId, ;
+         naz WITH cNaz, ;
+         oznaka WITH cOznaka, ;
          SORT WITH  cRbr, ;
-         veza WITH "1",;
-         tip WITH "C",;
+         veza WITH "1", ;
+         tip WITH "C", ;
          duzina WITH nDuzina, ;
          f_decimal WITH 0
       _rec := dbf_get_rec()
@@ -519,6 +519,7 @@ FUNCTION fakt_ispravka_podataka_azuriranog_dokumenta( id_firma, tip_dok, br_dok 
    LOCAL __p_tmp
    LOCAL _t_txt
    LOCAL lOk := .T.
+   LOCAL hParams
 
    __idpartn := field->idpartner
    __id_vrsta_p := field->idvrstep
@@ -591,7 +592,7 @@ FUNCTION fakt_ispravka_podataka_azuriranog_dokumenta( id_firma, tip_dok, br_dok 
    run_sql_query( "BEGIN" )
 
    IF !f18_lock_tables( { "fakt_fakt", "fakt_doks" }, .T. )
-      run_sql_query( "COMMIT" )
+      run_sql_query( "ROLLBACK" )
       MsgBeep( "Ne mogu napraviti zaključavanje tabela.#Prekidam operaciju." )
       SELECT ( _t_area )
       RETURN lRet
@@ -608,8 +609,11 @@ FUNCTION fakt_ispravka_podataka_azuriranog_dokumenta( id_firma, tip_dok, br_dok 
    SEEK id_firma + tip_dok + br_dok
 
    IF !Found()
-      f18_unlock_tables( { "fakt_fakt", "fakt_doks" } )
-      run_sql_query( "COMMIT" )
+
+      hParams := hb_Hash()
+      hParams[ "unlock" ] := { "fakt_fakt", "fakt_doks" }
+      run_sql_query( "COMMIT", hParams )
+
       MsgBeep( "Dokument ne postoji, nije ništa zamjenjeno !" )
       RETURN lRet
    ENDIF
@@ -686,8 +690,9 @@ FUNCTION fakt_ispravka_podataka_azuriranog_dokumenta( id_firma, tip_dok, br_dok 
 
    IF lOk
       lRet := .T.
-      f18_unlock_tables( { "fakt_fakt", "fakt_doks" } )
-      run_sql_query( "COMMIT" )
+      hParams := hb_Hash()
+      hParams[ "unlock" ] := { "fakt_fakt", "fakt_doks" }
+      run_sql_query( "COMMIT", hParams )
    ELSE
       run_sql_query( "ROLLBACK" )
       lRet := .F.

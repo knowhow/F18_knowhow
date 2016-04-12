@@ -19,6 +19,7 @@ FUNCTION rnal_azuriraj_dokument( cDesc )
 
    LOCAL _ok := .T.
    LOCAL lDokumentPostoji := .F.
+   LOCAL hParams
 
    IF cDesc == nil
       cDesc := ""
@@ -70,7 +71,7 @@ FUNCTION rnal_azuriraj_dokument( cDesc )
    run_sql_query( "BEGIN" )
 
    IF !f18_lock_tables( { "docs", "doc_it", "doc_it2", "doc_ops" }, .T. )
-      run_sql_query( "COMMIT" )
+      run_sql_query( "ROLLBACK" )
       MsgBeep( "Ne mogu zaključati tabele !?# Prekid operacije ažuriranja" )
       RETURN 0
    ENDIF
@@ -120,8 +121,9 @@ FUNCTION rnal_azuriraj_dokument( cDesc )
 
    IF _ok
 
-      f18_unlock_tables( { "docs", "doc_it", "doc_it2", "doc_ops" } )
-      run_sql_query( "COMMIT" )
+      hParams := hb_Hash()
+      hParams[ "unlock" ] := { "docs", "doc_it", "doc_it2", "doc_ops" }
+      run_sql_query( "COMMIT", hParams )
 
       log_write( "F18_DOK_OPER: rnal, azuriranje dokumenta broj: " + AllTrim( Str( __doc_no ) ) + ;
          ", status: " + AllTrim( Str( __doc_stat ) ), 2 )
@@ -721,7 +723,7 @@ FUNCTION rnal_dokument_postoji( nDoc_no )
    LOCAL lExist := .F.
    LOCAL cWhere
 
-   cWhere := "doc_no = " + ALLTRIM( STR( nDoc_no ) )
+   cWhere := "doc_no = " + AllTrim( Str( nDoc_no ) )
 
    IF table_count( F18_PSQL_SCHEMA_DOT + "rnal_docs", cWhere ) > 0
       lExist := .T.

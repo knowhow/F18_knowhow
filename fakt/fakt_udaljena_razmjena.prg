@@ -694,6 +694,7 @@ STATIC FUNCTION __import( vars, a_details )
    LOCAL _brojevi_dok
    LOCAL _detail_rec
    LOCAL lOk := .T.
+   LOCAL hParams
 
    run_sql_query( "BEGIN" )
 
@@ -897,8 +898,9 @@ STATIC FUNCTION __import( vars, a_details )
    ENDDO
 
    IF lOk
-      f18_unlock_tables( { "fakt_doks", "fakt_doks2", "fakt_fakt" } )
-      run_sql_query( "COMMIT" )
+      hParams := hb_hash()
+      hParams[ "unlock" ] := { "fakt_fakt", "fakt_doks", "fakt_doks2" }
+      run_sql_query( "COMMIT", hParams )
    ELSE
       run_sql_query( "ROLLBACK" )
       Msgbeep( "Problem sa operacijom inserta dokumenata.#Prekidam operaciju." )

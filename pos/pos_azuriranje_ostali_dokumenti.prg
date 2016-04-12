@@ -20,10 +20,11 @@ FUNCTION pos_azuriraj_zaduzenje( cBrDok, cIdVd )
    LOCAL _rec
    LOCAL nCount := 0
    LOCAL cDokument := ""
+   LOCAL hParams
 
    run_sql_query( "BEGIN" )
    IF !f18_lock_tables( { "pos_pos", "pos_doks", "roba" }, .T. )
-      run_sql_query( "COMMIT" )
+      run_sql_query( "ROLLBACK" )
       MsgBeep( "Ne mogu zaključati tabele !#Prekidam operaciju." )
       RETURN lRet
    ENDIF
@@ -38,7 +39,7 @@ FUNCTION pos_azuriraj_zaduzenje( cBrDok, cIdVd )
    _brdok := cBrDok
    _idvd := cIdVd
 
-   cDokument := ALLTRIM( _idpos ) + "-" + _idvd + "-" + ALLTRIM( _brdok ) + " " + DTOC( _datum )
+   cDokument := AllTrim( _idpos ) + "-" + _idvd + "-" + AllTrim( _brdok ) + " " + DToC( _datum )
 
    IF gBrojSto == "D"
       IF cIdVd <> VD_RN
@@ -73,7 +74,7 @@ FUNCTION pos_azuriraj_zaduzenje( cBrDok, cIdVd )
 
          _brdok := cBrDok
          _idvd := cIdVd
-         _rbr := PadL( AllTrim( Str( ++ nCount ) ), 5 )
+         _rbr := PadL( AllTrim( Str( ++nCount ) ), 5 )
 
          _rec := get_dbf_global_memvars()
 
@@ -91,13 +92,16 @@ FUNCTION pos_azuriraj_zaduzenje( cBrDok, cIdVd )
    ENDIF
 
    IF lOk
-       lRet := .T.
-       f18_unlock_tables( { "pos_pos", "pos_doks", "roba" } )
-       run_sql_query( "COMMIT" )
-       log_write( "F18_DOK_OPER, ažuriran pos dokument " + cDokument, 2 )
+      lRet := .T.
+
+      hParams := hb_Hash()
+      hParams[ "unlock" ] :=  { "pos_pos", "pos_doks", "roba" }
+      run_sql_query( "COMMIT", hParams )
+
+      log_write( "F18_DOK_OPER, ažuriran pos dokument " + cDokument, 2 )
    ELSE
-       run_sql_query( "ROLLBACK" )
-       log_write( "F18_DOK_OPER, greška sa ažuriranjem pos dokumenta " + cDokument, 2 )
+      run_sql_query( "ROLLBACK" )
+      log_write( "F18_DOK_OPER, greška sa ažuriranjem pos dokumenta " + cDokument, 2 )
    ENDIF
 
    IF lOk
@@ -105,7 +109,7 @@ FUNCTION pos_azuriraj_zaduzenje( cBrDok, cIdVd )
    ENDIF
 
    IF lOk .AND. fiscal_opt_active()
-       setuj_plu_kodove_artikala_nakon_azuriranja()
+      setuj_plu_kodove_artikala_nakon_azuriranja()
    ENDIF
 
    SELECT PRIPRZ
@@ -115,14 +119,14 @@ FUNCTION pos_azuriraj_zaduzenje( cBrDok, cIdVd )
 
 
 STATIC FUNCTION brisi_tabelu_pripreme()
-     
-   MsgO( "Brisanje tabele pripreme u toku ..." ) 
+
+   MsgO( "Brisanje tabele pripreme u toku ..." )
 
    SELECT priprz
    my_dbf_zap()
 
    MsgC()
- 
+
    RETURN
 
 
@@ -153,10 +157,11 @@ FUNCTION pos_azuriraj_inventura_nivelacija()
    LOCAL nCount := 0
    LOCAL _rec, _t_rec
    LOCAL cTipDok, cDokument
+   LOCAL hParams
 
    run_sql_query( "BEGIN" )
    IF !f18_unlock_tables( { "pos_pos", "pos_doks" } )
-      run_sql_query( "COMMIT" )
+      run_sql_query( "ROLLBACK" )
       MsgBeep( "Ne mogu zaključati tabele !#Prekidam operaciju." )
       RETURN lRet
    ENDIF
@@ -188,7 +193,7 @@ FUNCTION pos_azuriraj_inventura_nivelacija()
    _rec[ "smjena" ] := priprz->smjena
 
    cTipDok := _rec[ "idvd" ]
-   cDokument := ALLTRIM( _rec["idpos"] ) + "-" + _rec["idvd"] + "-" + ALLTRIM( _rec["brdok"] ) + " " + DTOC( _rec["datum"] )
+   cDokument := AllTrim( _rec[ "idpos" ] ) + "-" + _rec[ "idvd" ] + "-" + AllTrim( _rec[ "brdok" ] ) + " " + DToC( _rec[ "datum" ] )
 
    @ m_x + 1, m_y + 2 SAY8 "    AŽURIRANJE DOKUMENTA U TOKU ..."
    @ m_x + 2, m_y + 2 SAY "Formiran dokument: " + cDokument +  " / zap: " + AllTrim( Str( nTotalCount ) )
@@ -228,13 +233,13 @@ FUNCTION pos_azuriraj_inventura_nivelacija()
          _rec[ "c_1" ] := priprz->c_1
          _rec[ "c_2" ] := priprz->c_2
          _rec[ "c_3" ] := priprz->c_3
-         _rec[ "rbr" ] := PadL( AllTrim( Str( ++ nCount ) ), 5 )
+         _rec[ "rbr" ] := PadL( AllTrim( Str( ++nCount ) ), 5 )
 
          @ m_x + 3, m_y + 2 SAY "Stavka " + AllTrim( Str( nCount ) ) + " roba: " + _rec[ "idroba" ]
 
          lOk := update_rec_server_and_dbf( "pos_pos", _rec, 1, "CONT" )
 
-         IF !lOk 
+         IF !lOk
             EXIT
          ENDIF
 
@@ -255,17 +260,19 @@ FUNCTION pos_azuriraj_inventura_nivelacija()
    BoxC()
 
    IF lOk
-       lRet := .T.
-       f18_unlock_tables( { "pos_pos", "pos_doks" } )
-       run_sql_query( "COMMIT" )
-       log_write( "F18_DOK_OPER, ažuriran pos dokument: " + cDokument, 2 )
+      lRet := .T.
+      hParams := hb_Hash()
+      hParams[ "unlock" ] := { "pos_pos", "pos_doks" }
+      run_sql_query( "COMMIT", hParams )
+
+      log_write( "F18_DOK_OPER, ažuriran pos dokument: " + cDokument, 2 )
    ELSE
-       run_sql_query( "ROLLBACK" )
-       log_write( "F18_DOK_OPER, greška sa ažuriranjem pos dokumenta: " + cDokument, 2 )
+      run_sql_query( "ROLLBACK" )
+      log_write( "F18_DOK_OPER, greška sa ažuriranjem pos dokumenta: " + cDokument, 2 )
    ENDIF
 
    IF lOk
-       brisi_tabelu_pripreme()
+      brisi_tabelu_pripreme()
    ENDIF
 
    RETURN lRet
@@ -333,5 +340,3 @@ STATIC FUNCTION azuriraj_artikal_u_sifrarniku()
    lOk := update_rec_server_and_dbf( "roba", _rec, 1, "CONT" )
 
    RETURN lOk
-
-

@@ -116,7 +116,7 @@ STATIC FUNCTION _kalk_import()
    @ m_x + 1, m_y + 2 SAY "import path:" GET _imp_path PICT "@S50"
    READ
    BoxC()
-	
+
    IF LastKey() == K_ESC
       RETURN
    endif
@@ -587,6 +587,7 @@ STATIC FUNCTION __import( vars, a_details )
    LOCAL _gl_brojac := 0
    LOCAL _detail_rec
    LOCAL lOk := .T.
+   LOCAL hParams
 
    _dat_od := vars[ "datum_od" ]
    _dat_do := vars[ "datum_do" ]
@@ -613,7 +614,7 @@ STATIC FUNCTION __import( vars, a_details )
    run_sql_query( "BEGIN" )
 
    IF !f18_lock_tables( { "kalk_kalk", "kalk_doks" }, .T. )
-      run_sql_query( "COMMIT" )
+      run_sql_query( "ROLLBACK" )
       MsgBeep( "Ne mogu zaključati tabele !#Prekidam operaciju." )
       RETURN _cnt
    ENDIF
@@ -726,7 +727,7 @@ STATIC FUNCTION __import( vars, a_details )
       IF !lOk
          EXIT
       ENDIF
-   
+
       ++ _cnt
       @ m_x + 3, m_y + 2 SAY PadR( PadL( AllTrim( Str( _cnt ) ), 5 ) + ". dokument: " + _id_firma + "-" + _id_vd + "-" + _br_dok, 60 )
 
@@ -766,7 +767,7 @@ STATIC FUNCTION __import( vars, a_details )
       ENDDO
 
       IF !lOk
-         EXIT 
+         EXIT
       ENDIF
 
       SELECT e_doks
@@ -775,8 +776,9 @@ STATIC FUNCTION __import( vars, a_details )
    ENDDO
 
    IF lOk
-      f18_unlock_tables( { "kalk_doks", "kalk_kalk" } )
-      run_sql_query( "COMMIT" )
+      hParams := hb_hash()
+      hParams[ "unlock" ] := { "kalk_doks", "kalk_kalk" }
+      run_sql_query( "COMMIT", hParams )
    ELSE
       run_sql_query( "ROLLBACK" )
       MsgBeep( "Problem sa ažuriranjem dokumenta na server !" )

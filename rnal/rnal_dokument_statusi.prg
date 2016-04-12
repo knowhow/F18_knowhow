@@ -71,11 +71,12 @@ FUNCTION rnal_azuriraj_statuse( doc_no )
    LOCAL _promjena := .F.
    LOCAL _promj_count := 0
    LOCAL lOk := .T.
+   LOCAL hParams
 
    run_sql_query( "BEGIN" )
 
    IF !f18_lock_tables( { "rnal_doc_ops" }, .T. )
-      run_sql_query( "COMMIT" )
+      run_sql_query( "ROLLBACK" )
       MsgBeep( "Ne mogu zaključati tabele!#Prekidam operaciju." )
       lOk := .F.
       RETURN lOk
@@ -136,8 +137,9 @@ FUNCTION rnal_azuriraj_statuse( doc_no )
    ENDDO
 
    IF lOk
-      f18_unlock_tables( { "rnal_doc_ops" } )
-      run_sql_query( "COMMIT" )
+      hParams := hb_Hash()
+      hParams[ "unlock" ] := { "rnal_doc_ops" }
+      run_sql_query( "COMMIT", hParams )
    ELSE
       run_sql_query( "ROLLBACK" )
    ENDIF

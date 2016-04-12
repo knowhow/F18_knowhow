@@ -171,7 +171,6 @@ STATIC FUNCTION aktivni_radnici_filter( lFiltered )
 
    LOCAL cFilter := ""
 
-
    IF radn->( FieldPos( "aktivan" ) ) == 0
       RETURN .F.
    ENDIF
@@ -193,13 +192,12 @@ STATIC FUNCTION aktivni_radnici_filter( lFiltered )
       GO TOP
    ENDIF
 
-
    RETURN .T.
 
 
 
 /* P_HiredFrom(dHiredFrom)
- *    
+ *
  *   param: dHiredFrom
  */
 FUNCTION P_HiredFrom( dHiredFrom )
@@ -211,7 +209,7 @@ FUNCTION P_HiredFrom( dHiredFrom )
    RETURN .T.
 
 /* P_StreetNum(cStreetNum)
- *    
+ *
  *   param: cStreetNum - vrijednost polja streetnum
  */
 FUNCTION P_StreetNum( cStreetNum )
@@ -253,6 +251,7 @@ FUNCTION RadBl( Ch )
 
    LOCAL cMjesec := gMjesec
    LOCAL _rec
+   LOCAL hParams
 
    IF lPInfo == .T.
       // ispisi info o poreskoj kartici
@@ -307,8 +306,10 @@ FUNCTION RadBl( Ch )
          SKIP
       ENDDO
 
-      run_sql_query( "COMMIT" )
-      f18_unlock_tables( { "ld_radn" } )
+
+      hParams := hb_Hash()
+      hParams[ "unlock" ] := { "ld_radn" }
+      run_sql_query( "COMMIT", hParams )
 
       MsgC()
 
@@ -1069,10 +1070,12 @@ FUNCTION TotBrisRadn()
 
    LOCAL cSigurno := "N"
    LOCAL nRec
+   LOCAL hParams
+   
    PRIVATE cIdRadn := Space( 6 )
 
    IF !spec_funkcije_sifra( "SIGMATB " )
-      RETURN
+      RETURN .F.
    ENDIF
 
    O_RADN         // id, "1"
@@ -1104,7 +1107,7 @@ FUNCTION TotBrisRadn()
          LOOP
       ENDIF
 
-run_sql_query( "BEGIN" )
+      run_sql_query( "BEGIN" )
       f18_lock_tables( { "ld_ld", "ld_radn", "ld_radkr" }, .T. )
 
       // brisem ga iz sifarnika radnika
@@ -1154,8 +1157,10 @@ run_sql_query( "BEGIN" )
 
    ENDDO
 
-   run_sql_query( "COMMIT" )
-   f18_unlock_tables( { "ld_ld", "ld_radn", "ld_radkr" } )
+
+   hParams := hb_Hash()
+   hParams[ "unlock" ] := { "ld_ld", "ld_radn", "ld_radkr" }
+   run_sql_query( "COMMIT", hParams )
 
    SET KEY K_F5 TO
 

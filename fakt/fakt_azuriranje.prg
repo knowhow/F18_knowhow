@@ -142,6 +142,7 @@ STATIC FUNCTION fakt_azur_sql( id_firma, id_tip_dok, br_dok )
    LOCAL _ids_doks  := {}
    LOCAL _ids_doks2 := {}
    LOCAL oAtrib
+   LOCAL hParams
 
    my_close_all_dbf()
 
@@ -227,8 +228,9 @@ STATIC FUNCTION fakt_azur_sql( id_firma, id_tip_dok, br_dok )
       push_ids_to_semaphore( _tbl_doks, _ids_doks   )
       push_ids_to_semaphore( _tbl_doks2, _ids_doks2  )
 
-      f18_unlock_tables( { "fakt_fakt", "fakt_doks", "fakt_doks2" } )
-      run_sql_query( "COMMIT" )
+      hParams := hb_Hash()
+      hParams[ "unlock" ] :=  { "fakt_fakt", "fakt_doks", "fakt_doks2" }
+      run_sql_query( "COMMIT", hParams )
 
 
    ENDIF

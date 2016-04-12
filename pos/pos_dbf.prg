@@ -526,6 +526,7 @@ FUNCTION pos_import_fmk_roba()
    LOCAL _cnt := 0
    LOCAL _rec
    LOCAL lOk := .T.
+   LOCAL hParams
 
    O_ROBA
 
@@ -556,7 +557,7 @@ FUNCTION pos_import_fmk_roba()
 
    run_sql_query( "BEGIN" )
    IF !f18_lock_tables( { "roba" }, .T. )
-      run_sql_query( "COMMIT" )
+      run_sql_query( "ROLLBACK" )
       RETURN .F.
    ENDIF
 
@@ -606,8 +607,9 @@ FUNCTION pos_import_fmk_roba()
    BoxC()
 
    IF lOk
-      f18_unlock_tables( { "roba" } )
-      run_sql_query( "COMMIT" )
+      hParams := hb_hash()
+      hParams[ "unlock" ] := { "roba" }
+      run_sql_query( "COMMIT", hParams )
    ELSE
       run_sql_query( "ROLLBACK" )
    ENDIF

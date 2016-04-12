@@ -171,6 +171,7 @@ STATIC FUNCTION _os_brisi_tekucu_godinu( info )
    LOCAL _count_promj := 0
    LOCAL _t_rec
    LOCAL _pos_x, _pos_y
+   LOCAL hParams
 
    my_close_all_dbf()
 
@@ -225,8 +226,10 @@ STATIC FUNCTION _os_brisi_tekucu_godinu( info )
 
    ENDDO
 
-   f18_unlock_tables( { __table_os, __table_promj } )
-   run_sql_query( "COMMIT" )
+
+   hParams := hb_Hash()
+   hParams[ "unlock" ] :=  { __table_os, __table_promj }
+   run_sql_query( "COMMIT", hParams )
 
    @ _pos_x, _pos_y + 55 SAY "OK"
 
@@ -257,6 +260,7 @@ STATIC FUNCTION _os_prebaci_iz_prethodne( info )
    LOCAL _year_sez := _year_tek - 1
    LOCAL _table, _table_promj
    LOCAL _pos_x, _pos_y
+   LOCAL hParams
 
    // query za OS/PROMJ
    _qry_os := " SELECT * FROM " + F18_PSQL_SCHEMA_DOT + "" + __table_os
@@ -288,20 +292,23 @@ STATIC FUNCTION _os_prebaci_iz_prethodne( info )
 
    // ubaci sada podatke u OS/PROMJ
 
+   run_sql_query( "BEGIN" )
+
    IF !f18_lock_tables( { __table_os, __table_promj } )
+      run_sql_query( "ROLLBACK" )
       MsgBeep( "Problem sa lokovanjem tabela..." )
       RETURN _ok
    ENDIF
-
-   run_sql_query( "BEGIN" )
 
    @ _pos_x := m_x + 4, _pos_y := m_y + 2 SAY PadR( "3) insert podataka u novoj sezoni ", 40, "." )
 
    _insert_into_os( _data_os )
    _insert_into_promj( _data_promj )
 
-   f18_unlock_tables( { __table_os, __table_promj } )
-   run_sql_query( "COMMIT" )
+
+   hParams := hb_Hash()
+   hParams[ "unlock" ] :=  { __table_os, __table_promj }
+   run_sql_query( "COMMIT", hParams )
 
    @ _pos_x, _pos_y + 55 SAY "OK"
 
@@ -354,7 +361,7 @@ STATIC FUNCTION _insert_into_os( data )
    my_close_all_dbf()
    o_os_sii()
 
-   data:GoTo(1)
+   data:GoTo( 1 )
 
    DO WHILE !data:Eof()
 
@@ -392,7 +399,7 @@ STATIC FUNCTION _insert_into_promj( data )
    my_close_all_dbf()
    o_os_sii_promj()
 
-   data:GoTo(1)
+   data:GoTo( 1 )
 
    DO WHILE !data:Eof()
 
@@ -431,6 +438,7 @@ STATIC FUNCTION _os_generacija_nakon_ps( info )
    LOCAL _data := {}
    LOCAL _i, _count, _otpis_count
    LOCAL _pos_x, _pos_y
+   LOCAL hParams
 
    // nalazim se u tekucoj godini, zelim "slijepiti" promjene i izbrisati
    // otpisana sredstva u protekloj godini
@@ -442,12 +450,13 @@ STATIC FUNCTION _os_generacija_nakon_ps( info )
    select_os_sii()
    GO TOP
 
+   run_sql_query( "BEGIN" )
    IF !f18_lock_tables( { __table_os, __table_promj } )
-      MsgBeep( "Problem sa lokovanjem OS tabela !!!" )
+      run_sql_query( "ROLLBACK" )
+      MsgBeep( "Problem sa zaključavanjem OS tabela !" )
       RETURN _ok
    ENDIF
 
-   run_sql_query( "BEGIN" )
 
    _otpis_count := 0
 
@@ -534,8 +543,9 @@ STATIC FUNCTION _os_generacija_nakon_ps( info )
 
    @ _pos_x, _pos_y + 55 SAY "OK"
 
-   f18_unlock_tables( { __table_os, __table_promj } )
-   run_sql_query( "COMMIT" )
+   hParams := hb_Hash()
+   hParams[ "unlock" ] :=  { __table_os, __table_promj }
+   run_sql_query( "COMMIT", hParams )
 
    my_close_all_dbf()
 

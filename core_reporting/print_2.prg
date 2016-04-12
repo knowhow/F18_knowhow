@@ -25,7 +25,7 @@ FUNCTION f18_start_print( cFileName, xPrintOpt, cDocumentName )
 
    cFileName := set_print_file_name( cFileName )
 
-   ?E "trace-fin_start_print", cFileName
+   ?E "trace-f18_start_print-1", cFileName
    IF ( cDocumentName == NIL )
       cDocumentName :=  gModul + '_' + DToC( Date() )
    ENDIF
@@ -38,8 +38,10 @@ FUNCTION f18_start_print( cFileName, xPrintOpt, cDocumentName )
       cOpt := "V"
    ENDIF
 
+?E "trace-f18_start_print-2"
    set_ptxt_sekvence()
 
+?E "trace-f18_start_print-3"
    IF !( cOpt == "PDF" .OR. cOpt == "D" ) // pdf i direktna stampa bez dijaloga
       cOpt := print_dialog_box( cOpt )
       IF Empty( cOpt )
@@ -47,6 +49,7 @@ FUNCTION f18_start_print( cFileName, xPrintOpt, cDocumentName )
       ENDIF
    ENDIF
 
+?E "trace-f18_start_print-4"
    set_print_codes( cOpt )
 
    PRIVATE GetList := {}
@@ -58,6 +61,7 @@ FUNCTION f18_start_print( cFileName, xPrintOpt, cDocumentName )
 
    MsgO( "Priprema " + iif( cOpt == "PDF", "PDF", "tekst" ) + " izvještaja ..." )
 
+?E "trace-f18_start_print-5"
    LOG_CALL_STACK cLogMsg
    SetPRC( 0, 0 )
    SET CONSOLE OFF
@@ -67,6 +71,7 @@ FUNCTION f18_start_print( cFileName, xPrintOpt, cDocumentName )
 
    SET PRINTER TO ( cFileName )
    SET PRINTER ON
+   ?E "trace-f18_start_print-6"
 
    IF cOpt != "PDF"
       GpIni( cDocumentName )
@@ -87,6 +92,7 @@ FUNCTION f18_start_print( cFileName, xPrintOpt, cDocumentName )
       oPDF:PageHeader()
    ENDIF
 
+?E "trace-f18_start_print-7"
    my_use_refresh_stop()
 
    RETURN cOpt

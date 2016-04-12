@@ -82,7 +82,7 @@ FUNCTION lager_lista_magacin()
       cOpcine := Space( 50 )
    ENDIF
 
-   _o_tables()
+   kalk_open_tables()
 
    IF fPocStanje == NIL
       fPocStanje := .F.
@@ -258,7 +258,7 @@ FUNCTION lager_lista_magacin()
       t_exp_create( aExpFields )
    ENDIF
 
-   _o_tables()
+   kalk_open_tables()
 
    IF o_kalk_report()
       ?E "o_kalk ok"
@@ -888,7 +888,7 @@ FUNCTION lager_lista_magacin()
    FF
    end_print()
 
-   _o_tables()
+   kalk_open_tables()
    o_kalk_pripr()
 
    IF fimagresaka
@@ -1507,7 +1507,7 @@ STATIC FUNCTION _gen_xml( params )
 // ---------------------------------
 // tabele potrebne za report
 // ---------------------------------
-STATIC FUNCTION _o_tables()
+STATIC FUNCTION kalk_open_tables()
 
    O_SIFK
    O_SIFV

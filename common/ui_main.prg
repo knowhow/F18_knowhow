@@ -429,11 +429,9 @@ FUNCTION Beep( nPuta )
 
 #ifndef TEST
 
-#ifdef __PLATFORM__WINDOWS
    FOR nI := 1 TO nPuta
       Tone( 300, 1 )
    NEXT
-#endif
 
 #endif
 

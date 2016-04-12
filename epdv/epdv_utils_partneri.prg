@@ -21,7 +21,7 @@ FUNCTION s_partner( cIdPartn )
 
    PushWA()
 
-   o_partn()
+   o_partn_sifk()
 
    SELECT PARTN
    SET ORDER TO TAG "ID"
@@ -86,7 +86,7 @@ FUNCTION my_firma( lRetArray )
       lRetArray := .F.
    ENDIF
 
-   o_partn()
+   o_partn_sifk()
 
    SELECT partn
    SET ORDER TO TAG "ID"
@@ -179,7 +179,7 @@ FUNCTION part_rejon( cIdPart )
 
    PushWA()
 
-   o_partn()
+   o_partn_sifk()
    GO TOP
    SEEK gFirma
 
@@ -193,7 +193,7 @@ FUNCTION part_rejon( cIdPart )
 // -------------------------------------
 // sifrarnik partnera sa sifk/sifv
 // -------------------------------------
-FUNCTION o_partn()
+FUNCTION o_partn_sifk()
 
    SELECT F_PARTN
    USE
@@ -206,7 +206,7 @@ FUNCTION o_partn()
    O_SIFV
    O_PARTN
 
-   RETURN
+   RETURN .T.
 
 // ---------------------------------------------
 // da li se radi o specijalnom partneru

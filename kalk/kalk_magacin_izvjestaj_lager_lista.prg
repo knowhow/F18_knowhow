@@ -1523,7 +1523,7 @@ STATIC FUNCTION _o_tables()
    ELSE
       ?E "open koncij ERROR?!"
    ENDIF
-   O_KONTO
-   O_PARTN
+   o_konto()
+   o_partn()
 
    RETURN .T.

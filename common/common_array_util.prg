@@ -435,7 +435,7 @@ FUNCTION MABrowse( aArray, nT, nL, nB, nR )
 
          DO CASE
          CASE ( nKey == Asc( ' ' ) )
-            Tone( 300, 1 )
+            f18_tone( 300, 1 )
             aArray[ nTekuciRed, 2 ] := IF( aArray[ nTekuciRed, 2 ] == '*', ' ', '*' )
             o:RefreshCurrent()
 

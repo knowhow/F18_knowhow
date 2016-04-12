@@ -169,8 +169,8 @@ FUNCTION Params2()
    LOCAL ncx, ncy, nOldC
 
    // TODO: skloni
-   // Tone( 320, 1 )
-   // Tone( 320, 1 )
+   // f18_tone( 320, 1 )
+   // f18_tone( 320, 1 )
 
    RETURN .T.
 

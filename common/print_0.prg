@@ -220,8 +220,8 @@ FUNCTION EndPrint()
 
    nSek2 := Seconds()
 
-   Tone( 440, 2 )
-   Tone( 440, 2 )
+   f18_tone( 440, 2 )
+   f18_tone( 440, 2 )
 
    // ako nije direktno na printer
    IF cPrinter <> "D" .OR. ( gPPort $ "89" .AND. cPrinter == "D" ) .OR. gPrinter == "R" .OR. gPrinter == "G" .OR. ( cOutftxt == "D" .AND. cPrinter == "D" )
@@ -465,8 +465,8 @@ FUNCTION EPrint2( xPos )
       !copy &cPom
    ENDIF
 
-   Tone( 440, 2 )
-   Tone( 440, 2 )
+   f18_tone( 440, 2 )
+   f18_tone( 440, 2 )
    Msg( "Stampanje zavrseno. Pritisnite bilo koju tipku za nastavak rada!",  15, xPos )
 
    RETURN .T.

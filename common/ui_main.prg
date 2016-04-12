@@ -430,12 +430,23 @@ FUNCTION Beep( nPuta )
 #ifndef TEST
 
    FOR nI := 1 TO nPuta
-      Tone( 300, 1 )
+      f18_tone( 300, 1 )
    NEXT
 
 #endif
 
    RETURN .T.
+
+
+
+FUNCTION f18_tone( nFreq, nTimes )
+
+#ifdef __PLATFORM__WINDOWS
+   ?E "tone je bugovita trace-print-dialog-1"
+   RETURN Tone( nFreq, nTimes )
+#else
+   RETURN NIL
+#endif
 
 
 FUNCTION CentrTxt( tekst, lin )
@@ -549,7 +560,7 @@ FUNCTION Postotak( nIndik, nUkupno, cTekst, cBNasl, cBOkv, lZvuk )
       Prozor1( 10, 13, 14, 66, cTekst + " u toku...", cNas, , cOkv, F18_COLOR_TEKST, 0 )
       @ 12, 15 SAY Replicate( "X", 50 ) COLOR F18_COLOR_STATUS
       IF lZvuk
-         Tone( 1900, 0 )
+         f18_tone( 1900, 0 )
       ENDIF
 
    CASE nIndik == 2
@@ -562,7 +573,7 @@ FUNCTION Postotak( nIndik, nUkupno, cTekst, cBNasl, cBOkv, lZvuk )
 
       @ 10, ( MAXCOLS() - 2 - Len( cKraj ) ) / 2 SAY " " + cKraj + " " COLOR cNas
       IF lZvuk
-         Tone( 2000, 0 )
+         f18_tone( 2000, 0 )
       ENDIF
 
       IF nIndik == 0
@@ -783,13 +794,13 @@ FUNCTION Zvuk( nTip )
    IF nTip == NIL; nTip := 0; ENDIF
    DO CASE
    CASE nTip == 1
-      Tone( 400, 2 )
+      f18_tone( 400, 2 )
    CASE nTip == 2
-      Tone( 500, 2 )
+      f18_tone( 500, 2 )
    CASE nTip == 3
-      Tone( 600, 2 )
+      f18_tone( 600, 2 )
    CASE nTip == 4
-      Tone( 700, 2 )
+      f18_tone( 700, 2 )
    ENDCASE
 
    RETURN .T.
@@ -1103,7 +1114,7 @@ FUNCTION TxtUNiz( cTxt, nKol )
 FUNCTION MsgBeep2( cTXT )
 
    @ MAXROWS() -1, 0 SAY PadL( cTXT, MAXCOLS() ) COLOR "R/W"
-   Tone( 900, 0.3 )
+   f18_tone( 900, 0.3 )
 
    RETURN .T.
 

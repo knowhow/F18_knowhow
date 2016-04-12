@@ -163,7 +163,7 @@ FUNCTION select_print_mode( cDirekt )
    nWidth := 35
 
    ?E "trace-print-dialog-2"
-   Tone( 350, 2 )
+   f18_tone( 350, 2 )
    ?E "trace-print-dialog-3"
 
    m_x := 8

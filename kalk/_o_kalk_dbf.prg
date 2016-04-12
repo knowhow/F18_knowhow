@@ -20,3 +20,8 @@ FUNCTION o_kalk_pripr()
 FUNCTION select_o_kalk_pripr()
 
    RETURN select_o_dbf( "KALK_PRIPR", F_KALK_PRIPR, "kalk_pripr", "1" )
+
+
+FUNCTION o_kalk_report()
+
+   RETURN o_dbf_table( F_KALK, "kalk", "1" )

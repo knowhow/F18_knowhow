@@ -84,7 +84,7 @@ FUNCTION Rfinansijsko_stanje_prodavnica()
       cIdkonto := Trim( cIdKonto )
    ENDIF
 
-   O_KALKREP
+   o_kalk_report()
    SELECT kalk
    SET ORDER TO TAG "4"
    // "idFirma+Pkonto+idroba+dtos(datdok)+PU_I+IdVD"

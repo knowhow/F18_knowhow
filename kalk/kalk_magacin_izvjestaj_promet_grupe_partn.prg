@@ -92,7 +92,7 @@ FUNCTION kalk_mag_promet_grupe_partnera()
       lSabKon := ( Pitanje(, "Računati stanje robe kao zbir stanja na svim obuhvaćenim kontima ? (D/N)", "N" ) == "D" )
    ENDIF
 
-   O_KALKREP
+   o_kalk_report()
 
    PRIVATE cFilt := ".t."
 

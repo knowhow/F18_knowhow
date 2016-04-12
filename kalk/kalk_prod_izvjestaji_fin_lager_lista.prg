@@ -84,7 +84,7 @@ FUNCTION finansijsko_stanje_prodavnica()
       cIdkonto := Trim( cidkonto )
    ENDIF
 
-   O_KALKREP
+   o_kalk_report()
 
    cFilt1 := "Idfirma=" + dbf_quote( cidfirma ) + ".and. Pkonto=" + dbf_quote( cIdkonto ) + ".and. DatDok<=" + dbf_quote( dDatDo )
    // cFilt1:="Pkonto="+dbf_quote(cIdkonto)

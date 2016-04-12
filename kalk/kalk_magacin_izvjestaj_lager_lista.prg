@@ -88,7 +88,7 @@ FUNCTION lager_lista_magacin()
       fPocStanje := .F.
    ELSE
       fPocStanje := .T.
-      O_KALK_PRIPR
+      _PRIPR
       cBrPSt := "00001   "
       Box(, 3, 60 )
       @ m_x + 1, m_y + 2 SAY8 "Generacija poč.stanja  - broj dokumenta 16 -" GET cBrPSt
@@ -260,7 +260,11 @@ FUNCTION lager_lista_magacin()
 
    _o_tables()
 
-   O_KALKREP
+   IF o_kalk_report()
+      ?E "o_kalk ok"
+   ELSE
+      ?E "o_kalk err"
+   ENDIF
 
    PRIVATE cFilt := ".t."
 
@@ -300,6 +304,7 @@ FUNCTION lager_lista_magacin()
    ENDIF
 
    SELECT kalk
+   ?E "trace-kalk-llm-10"
 
    IF fSint .AND. lSabKon
       SET ORDER TO TAG "6"
@@ -312,6 +317,7 @@ FUNCTION lager_lista_magacin()
    SELECT koncij
    SEEK Trim( cIdKonto )
    SELECT kalk
+   ?E "trace-kalk-llm-11"
 
    IF _print == "2"
       // stampa dokumenta u odt formatu
@@ -327,44 +333,32 @@ FUNCTION lager_lista_magacin()
       _params[ "datum_od" ] := dDatOd
       _params[ "datum_do" ] := dDatDo
       kalk_magacin_llm_odt( _params )
-      RETURN
+      RETURN .F.
    ENDIF
 
+   ?E "trace-kalk-llm-11"
    EOF CRET
+   ?E "trace-kalk-llm-12"
 
    nLen := 1
 
-   IF IsPDV()
-
-      _set_zagl( @cLine, @cTxt1, @cTxt2, @cTxt3, cSredCij )
-
-      __line := cLine
-      __txt1 := cTxt1
-      __txt2 := cTxt2
-      __txt3 := cTxt3
-
-   ELSE
-      m := "------ ---------- -------------------- --- ---------- ---------- ---------- ---------- ---------- ----------"
 
 
+   _set_zagl( @cLine, @cTxt1, @cTxt2, @cTxt3, cSredCij )
 
-      IF cSredCij == "D"
-         m += " ----------"
-      ENDIF
-
-      __line := m
-
-   ENDIF
+   __line := cLine
+   __txt1 := cTxt1
+   __txt2 := cTxt2
+   __txt3 := cTxt3
 
    IF koncij->naz $ "P1#P2"
       cPNab := "D"
    ENDIF
 
-
    gaZagFix := { 7, 5 }
 
-
-   start PRINT cret
+   ?E "trace-kalk-llm-13"
+   start_print_close_ret()
    ?
 
    PRIVATE nTStrana := 0
@@ -392,7 +386,7 @@ FUNCTION lager_lista_magacin()
 
    PRIVATE nRbr := 0
 
-   DO WHILE !Eof() .AND. iif( fSint .AND. lSabKon, idfirma, idfirma + mkonto ) = ;
+   DO WHILE !Eof() .AND. iif( fSint .AND. lSabKon, idfirma, idfirma + mkonto ) == ;
          cidfirma + cSintK .AND. IspitajPrekid()
 
       cIdRoba := Idroba

@@ -185,7 +185,7 @@ FUNCTION lager_lista_prodavnica()
    O_KONTO
    O_PARTN
    O_KONCIJ
-   O_KALKREP
+   o_kalk_report()
 
    PRIVATE lSMark := .F.
    IF Right( Trim( qqRoba ), 1 ) = "*"

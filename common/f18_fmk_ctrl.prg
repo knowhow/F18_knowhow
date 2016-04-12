@@ -431,7 +431,7 @@ STATIC FUNCTION f18_pr_rezultat( a_ctrl, a_data, a_sif )
    FF
    ENDPRINT
 
-   RETURN
+   RETURN .T.
 
 
 // -----------------------------------------
@@ -446,7 +446,7 @@ FUNCTION f18_sif_data( data, checksum )
    O_TRFP
    O_OPS
    O_VALUTE
-   O_KONCIJ
+   o_koncij()
 
    SELECT roba
    SET ORDER TO TAG "ID"

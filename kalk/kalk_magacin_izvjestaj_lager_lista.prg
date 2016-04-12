@@ -1518,7 +1518,11 @@ STATIC FUNCTION _o_tables()
    O_SIFK
    O_SIFV
    O_ROBA
-   O_KONCIJ
+   IF o_koncij()
+      ?E "open koncij ok"
+   ELSE
+      ?E "open koncij ERROR?!"
+   ENDIF
    O_KONTO
    O_PARTN
 

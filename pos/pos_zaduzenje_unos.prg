@@ -361,7 +361,7 @@ FUNCTION StUSif()
 
    IF gZadCij == "D"
 
-      IF _cijena <> pos_get_mpc() .AND. Pitanje(, "Staviti u šifrarnik novu cijenu? (D/N)", "D" ) == "D"
+      IF _cijena <> pos_get_mpc() .AND. Pitanje(, "Staviti u šifarnik novu cijenu? (D/N)", "D" ) == "D"
 
          SELECT ( F_ROBA )
          _rec := dbf_get_rec()

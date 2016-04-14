@@ -127,7 +127,7 @@ STATIC FUNCTION kalk_vrati_iz_pripr2()
          Box(, 4, 70 )
          @ m_x + 1, m_y + 2 SAY "1. Cijene robe su promijenjene."
          @ m_x + 2, m_y + 2 SAY "2. Formiran je dokument nivelacije:" + kalk_pripr2->( idfirma + "-" + idvd + "-" + brdok )
-         @ m_x + 3, m_y + 2 SAY8 "3. Nove cijene su stavljene u šifrarnik."
+         @ m_x + 3, m_y + 2 SAY8 "3. Nove cijene su stavljene u šifarnik."
          @ m_x + 4, m_y + 2 SAY "4. Obradite ovaj dokument."
          Inkey( 0 )
          BoxC()

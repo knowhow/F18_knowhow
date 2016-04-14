@@ -707,7 +707,7 @@ FUNCTION snimi_promjene_sifarnika( lNovi, cTekuciZapis )
 
    IF lNovi .AND. is_sifra_postoji_u_sifarniku( _rec )
       run_sql_query( "COMMIT" )
-      Msgbeep( "Šifra koju želite dodati već postoji u šifrarniku !" )
+      Msgbeep( "Šifra koju želite dodati već postoji u šifarniku !" )
       RETURN lRet
    ENDIF
 
@@ -792,10 +792,10 @@ FUNCTION snimi_promjene_cirkularne_ispravke_sifarnika()
       hParams[ "unlock" ] :=  { _alias }
       run_sql_query( "COMMIT", hParams )
 
-      log_write( "F18_DOK_OPER: cirkularna ispravka šifrarnika " + _alias, 2 )
+      log_write( "F18_DOK_OPER: cirkularna ispravka sifarnika " + _alias, 2 )
    ELSE
       run_sql_query( "ROLLBACK" )
-      log_write( "F18_DOK_OPER: greška sa cirkularnom ispravkom šifrarnika " + _alias, 2 )
+      log_write( "F18_DOK_OPER: greška sa cirkularnom ispravkom sifarnika " + _alias, 2 )
       MsgBeep( "Greška sa operacijom cirkularne ispravke !#Operacija prekinuta." )
    ENDIF
 
@@ -1119,11 +1119,11 @@ FUNCTION sifarnik_brisi_stavku()
       hParams := hb_hash()
       hParams[ "unlock" ] :=  { cAlias }
       run_sql_query( "COMMIT", hParams )
-      log_write( "F18_DOK_OPER: brisanje stavke iz šifrarnika, stavka " + pp( hRec ), 2 )
+      log_write( "F18_DOK_OPER: brisanje stavke iz sifarnika, stavka " + pp( hRec ), 2 )
    ELSE
       run_sql_query( "ROLLBACK" )
-      log_write( "F18_DOK_OPER: greška sa brisanjem stavke iz šifrarnika", 2 )
-      MsgBeep( "Greška sa brisanjem zapisa iz šifrarnika !#Operacija prekinuta." )
+      log_write( "F18_DOK_OPER: greška sa brisanjem stavke iz sifarnika", 2 )
+      MsgBeep( "Greška sa brisanjem zapisa iz šifarnika !#Operacija prekinuta." )
    ENDIF
 
    PopWa()
@@ -1145,10 +1145,10 @@ FUNCTION sifarnik_brisi_sve()
 
    Beep( 6 )
 
-   IF Pitanje( , "Ponavljam : izbrisati BESPOVRATNO kompletan šifrarnik (D/N) ?", "N" ) == "D"
+   IF Pitanje( , "Ponavljam : izbrisati BESPOVRATNO kompletan šifarnik (D/N) ?", "N" ) == "D"
 
       IF delete_all_dbf_and_server( Alias() )
-         log_write( "F18_DOK_OPER: brisanje kompletnog šifrarnika " + Alias(), 2 )
+         log_write( "F18_DOK_OPER: brisanje kompletnog sifarnika " + Alias(), 2 )
       ENDIF
 
       PopWa()

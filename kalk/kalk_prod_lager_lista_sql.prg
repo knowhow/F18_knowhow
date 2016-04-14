@@ -175,7 +175,7 @@ FUNCTION kalk_prod_lager_lista_vars( params, ps )
    @ m_x + _x, m_y + 2 SAY "Prikaz robe tipa T/U (D/N)" GET _roba_tip_tu VALID _roba_tip_tu $ "DN" PICT "@!"
 
    IF ps
-      @ m_x + _x, Col() + 1 SAY8 "MPC uzmi iz šifrarnika (D/N) ?" GET _set_roba VALID _set_roba $ "DN" PICT "@!"
+      @ m_x + _x, Col() + 1 SAY8 "MPC uzmi iz šifarnika (D/N) ?" GET _set_roba VALID _set_roba $ "DN" PICT "@!"
    ENDIF
 
    READ

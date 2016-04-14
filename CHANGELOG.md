@@ -68,9 +68,9 @@
   - LD, vraćena dva izvještaja koji su prethodno izbačeni
     - kartica plate za period
     - specifikacija neto primanja po općinama stanovanja
-  - RNAL, opis artikla u dnu šifrarnika artikala nakon brze pretrage
+  - RNAL, opis artikla u dnu šifarnika artikala nakon brze pretrage
   - F18, šifarnici, ažuriranje unutar jedne transakcije
-  - F18, šifarnici, provjera postojanja identične šifre kod dodavanja u šifrarnik
+  - F18, šifarnici, provjera postojanja identične šifre kod dodavanja u šifarnik
   - POS, unos zaduženja uvijek javlja "počeli ste pripremu dokumenta..." bugfix
 
 1.7.119  2014-07-15, vsasa
@@ -215,7 +215,7 @@
 
   - F18 backup, izbačena ERR poruka o udaljenoj lokaciji ako nije setovana
   - TOPS, ispravka artikla u pripremi računa - bugfix
-  - izbačena opcija ALT+C iz šifrarnika
+  - izbačena opcija ALT+C iz šifarnika
 
 1.7.91  2014-05-27, hernad
 
@@ -352,7 +352,7 @@
 
 1.7.64  2014-04-25, vsasa
 
-  - KALK, promjena cijena, setovanje cijene u šifrarnik - bugfix
+  - KALK, promjena cijena, setovanje cijene u šifarnik - bugfix
   - FAKT, alt+P iz pripreme vraćeno
   - KALK, gTopsDest, čitanje parametra bugfix
 
@@ -834,7 +834,7 @@
 
 1.4.241 2013-11-11, vsasa
 
-  - KADEV, šifrarnik sistematizacije, korekcije (uvođenje opcije F4)
+  - KADEV, šifarnik sistematizacije, korekcije (uvođenje opcije F4)
 
 1.4.240 2013-11-07, vsasa
 
@@ -921,17 +921,17 @@
 
 1.4.223 2013-08-30, vsasa
 
-  - KALK, uzmi MPC iz šifrarnika korekcije
+  - KALK, uzmi MPC iz šifarnika korekcije
 
 1.4.222 2013-08-28, vsasa
 
-  - LD, update minulog rada u šifrarniku radnika, korekcija
+  - LD, update minulog rada u šifarniku radnika, korekcija
   - FAKT, promjena podataka dokumenta, dodatak promjene vrste plaćanja
 
 1.4.221 2013-08-27, vsasa
 
   - POS, vrste plaćanja za fiskalni račun, pretvori u UPPER prije provjere
-  - POS, import šifrarnika FMK/ROBA, fisc_plu polje
+  - POS, import šifarnika FMK/ROBA, fisc_plu polje
   - FAKT, storno dokument, resetuj vrstu placanja na gotovina obavezno
 
 1.4.220 2013-08-26, vsasa
@@ -1066,7 +1066,7 @@
   - F18, ispis verzije db servera na glavnom meniju preduzeća
   - LD, izvještaj topli obrok - bugfix
   - LD, zaštita obračuna, otključavanje/zaključavanje
-  - FIN, štampa IOS-a bez praznog partnera u šifrarniku
+  - FIN, štampa IOS-a bez praznog partnera u šifarniku
   - FIN, brojač naloga - varijanta "2" ( firma + brnal )
   - LD, pretraga radnika, opcija "q" ispravka
   - POS, izdavanje storno računa plaćenog karticom - bugfix
@@ -1101,7 +1101,7 @@
 
   - POS, storniranje računa F7, odabir pos računa
   - POS, popust preko određenog iznosa - bugfix
-  - POS, import šifrarnika FMK/TOPS - polje tip dodano također u import proceduru
+  - POS, import šifarnika FMK/TOPS - polje tip dodano također u import proceduru
   - F18, admin, update baze - bugfix
   - FAKT, odabir odt template-a na osnovu parametara
 
@@ -1201,7 +1201,7 @@
 
   - virm, parametar firme nalogodavca
   - virm, proširenje pripreme naloga (ispis više informacija)
-  - šifrarnik općina, polje region ubačeno
+  - šifarnik općina, polje region ubačeno
   - nakon fiskalne štampe vrati tekući direktorij u my_home()
 
 1.4.166 2013-04-16, vsasa
@@ -1317,7 +1317,7 @@
 1.4.142 2013-03-15, vsasa
 
   - fin, informacije o stanju konta kod knjiženja naloga (samo za konto/partner)
-  - ld, proširen pregled šifrarnika
+  - ld, proširen pregled šifarnika
 
 1.4.141 2013-03-14, vsasa
 
@@ -1334,7 +1334,7 @@
   - ld, unos obracuna, izlazak sa ESC hendliranje
   - fakt, zbirni fiskalni račun, skraćen opis
   - dbf_update_rec bez alerta, sporni događaj se logira
-  - kalk, lager lista sa VPC iz šifrarnika ili VPC iz tabele KALK (sa dokumenata)
+  - kalk, lager lista sa VPC iz šifarnika ili VPC iz tabele KALK (sa dokumenata)
 
 1.4.138 2013-03-13, vsasa
 
@@ -1531,7 +1531,7 @@
 
 1.4.100 2013-01-23, vsasa
 
- - fin, štampanje fin naloga bez veze konto/partner - nema ih u šifrarniku
+ - fin, štampanje fin naloga bez veze konto/partner - nema ih u šifarniku
  - fakt, unos dokumenta - refresh stavki
  - rnal, export naloga u otpremnicu - bugfix sa opisima
 
@@ -1581,11 +1581,11 @@
 
 1.4.88 2013-01-17, vsasa
 
- - unos šifrarnika artikala, unos opisa artikla, pregled opisa na opciju "D" u šifrarniku
+ - unos šifarnika artikala, unos opisa artikla, pregled opisa na opciju "D" u šifarniku
 
 1.4.87 2013-01-16, vsasa
 
- - unos šifrarnika artikala, može i bez "idkonto"
+ - unos šifarnika artikala, može i bez "idkonto"
  - fakt, generacija računa na osnovu otpremnica - privremeno ukinut foreign ključ sa fakt_fakt_atributi
 
 1.4.86 2013-01-15, vsasa
@@ -1703,7 +1703,7 @@
 
 1.4.62 2013-01-04, vsasa
 
- - kreiranje valuta u šifrarniku kod prazne instance - bugfix
+ - kreiranje valuta u šifarniku kod prazne instance - bugfix
 
 1.4.61 2013-01-03, vsasa
 
@@ -1736,7 +1736,7 @@
 
 1.4.55 2013-01-03, vsasa
 
- - rnal, dodjeljivanje novih šifri u šifrarniku sql parametar kao i brojač naloga
+ - rnal, dodjeljivanje novih šifri u šifarniku sql parametar kao i brojač naloga
 
 1.4.54 2013-01-03, vsasa
 
@@ -2194,9 +2194,9 @@
  - fakt, ispis salda kupac/dobavljač, ubačen uslov idfirma [#28635](http://redmine.bring.out.ba/issues/28635)
  - PostojiSifra(), barkod pretraga ispravljena [#28860](http://redmine.bring.out.ba/issues/28860)
  - pos, unos stavki, polje ukupno sada vidljivo u pripremi [#28863](http://redmine.bring.out.ba/issues/28863)
- - pos, prikaz barkod polja unutar browse-a šifrarnika iz računa [#28862](http://redmine.bring.out.ba/issues/28862)
+ - pos, prikaz barkod polja unutar browse-a šifarnika iz računa [#28862](http://redmine.bring.out.ba/issues/28862)
  - pos, unos inventure - bugfix [#28874](http://redmine.bring.out.ba/issues/28874)
- - roba, nedozvoljen unos duplog barkod-a u šifrarnik [#28788](http://redmine.bring.out.ba/issues/28788)
+ - roba, nedozvoljen unos duplog barkod-a u šifarnik [#28788](http://redmine.bring.out.ba/issues/28788)
  - kalk, specifične opcije kod IP [#28834](http://redmine.bring.out.ba/issues/28834)
  - virm, generisanje virmana, fali id javnog prihoda [#28684](http://redmine.bring.out.ba/issues/28684)
  - ld, štampa ostalih specifikacija, delphi štampa 1000 stranica [#28897](http://redmine.bring.out.ba/issues/28897)
@@ -2240,7 +2240,7 @@
 
 1.0.74 2012-07-20, vsasa
 
-  - kalk, 41-42 dokumenti, idtarifa sa dokumenta umjesto iz šifrarnika [#28707](http://redmine.bring.out.ba/issues/28707)
+  - kalk, 41-42 dokumenti, idtarifa sa dokumenta umjesto iz šifarnika [#28707](http://redmine.bring.out.ba/issues/28707)
 
 1.0.73 2012-07-20, vsasa
 
@@ -2551,11 +2551,11 @@
 
 1.0.17 2012-04-24, vsasa
 
-  - pos, import šifrarnika robe iz fmk-pos [#27751](http://redmine.bring.out.ba/issues/27751)
+  - pos, import šifarnika robe iz fmk-pos [#27751](http://redmine.bring.out.ba/issues/27751)
 
 1.0.16 2012-04-23, vsasa
 
-  - pos, import šifrarnika robe iz fmk-pos
+  - pos, import šifarnika robe iz fmk-pos
 
 1.0.15 2012-04-23, vsasa
 

@@ -186,7 +186,7 @@ FUNCTION firma_id_broj( partn_id )
 
 
 /*
-   Opis: vraća id broj unešen u šifrarnik partnera kroz polje SIFK->REGB
+   Opis: vraća id broj unešen u šifarnik partnera kroz polje SIFK->REGB
          ukoliko je broj > 13 vraća se prazno
 */
 

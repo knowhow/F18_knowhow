@@ -159,7 +159,7 @@ STATIC FUNCTION lst_args( nSort )
       s_customers( @cCustomer, cCustomer ), ;
       set_var( @nCustomer, @cCustomer ),  ;
       show_it( g_cust_desc( nCustomer ) ) } ;
-      WHEN set_opc_box( nBoxX, 60, "naručioc naloga, pretraži šifrarnik", nil, nil, cHelpClr )
+      WHEN set_opc_box( nBoxX, 60, "naručioc naloga, pretraži šifarnik", nil, nil, cHelpClr )
 
    nX += 1
    @ m_x + nX, m_y + 2 SAY PadL( "Kontakt (prazno-svi):", 25 ) GET cContact ;
@@ -167,7 +167,7 @@ STATIC FUNCTION lst_args( nSort )
       s_contacts( @cContact, nCustomer, cContact ), ;
       set_var( @nContact, @cContact ), ;
       show_it( g_cont_desc( nContact ) ) } ;
-      WHEN set_opc_box( nBoxX, 60, "kontakt osoba naloga, pretraži šifrarnik", nil, nil, cHelpClr )
+      WHEN set_opc_box( nBoxX, 60, "kontakt osoba naloga, pretraži šifarnik", nil, nil, cHelpClr )
 
    nX += 1
 

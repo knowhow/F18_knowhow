@@ -13,7 +13,7 @@
 
 
 /*
-   use_sql_doc_log() => otvori šifarnik rnal_doc_log
+   use_sql_doc_log => otvori šifarnik rnal_doc_log
 */
 FUNCTION use_sql_doc_log( nDoc_no, cDoc_type )
 

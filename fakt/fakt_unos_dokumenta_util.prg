@@ -691,7 +691,7 @@ FUNCTION UzorTxt2( cList, redni_broj )
 
       DO WHILE .T.
 
-         @ m_x + 1, m_y + 1 SAY8 "Odaberi uzorak teksta iz šifrarnika:" ;
+         @ m_x + 1, m_y + 1 SAY8 "Odaberi uzorak teksta iz šifarnika:" ;
             GET cId PICT "@!"
 
          @ m_x + 11, m_y + 1 SAY8 "<c+W> dodaj novi ili snimi i izađi <ESC> poništi"
@@ -1073,13 +1073,13 @@ FUNCTION set_cijena( cIdTipDok, cIdRoba, nCijena, nRabat )
 
       IF cIdTipDok $ "#10#01#12#20#" .AND. nCijena <> 0
          IF field->vpc <> nCijena .AND. ;
-               Pitanje(, "Postaviti novu VPC u šifrarnik ?", "N" ) == "D"
+               Pitanje(, "Postaviti novu VPC u šifarnik ?", "N" ) == "D"
             _vars[ "vpc" ] := nCijena
             lFill := .T.
          ENDIF
       ELSEIF cIdTipDok $ "11#13#" .AND. nCijena <> 0
          IF field->mpc <> nCijena .AND. ;
-               Pitanje(, "Postaviti novu MPC u šifrarnik ?", "N" ) == "D"
+               Pitanje(, "Postaviti novu MPC u šifarnik ?", "N" ) == "D"
             _vars[ "mpc" ] := nCijena
             lFill := .T.
          ENDIF
@@ -1593,9 +1593,9 @@ FUNCTION c_cijena( nCijena, cTipDok, lNovidok )
    ENDIF
 
    IF gPratiC == "D" .AND. nRCijena <> NIL .AND. nCijena <> nRCijena
-      MsgBeep( "Unesena cijena različita od cijene u šifrarniku !" + ;
+      MsgBeep( "Unesena cijena različita od cijene u šifarniku !" + ;
          "#Trenutna: " + AllTrim( Str( nCijena, 12, 2 ) ) + ;
-         ", šifrarnik: " + AllTrim( Str( nRCijena, 12, 2 ) ) )
+         ", šifarnik: " + AllTrim( Str( nRCijena, 12, 2 ) ) )
       IF Pitanje(, "Koristiti ipak ovu cijenu (D/N) ?", "D" ) == "N"
          lRet := .F.
       ENDIF

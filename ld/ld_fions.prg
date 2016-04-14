@@ -493,7 +493,7 @@ FUNCTION Prosj1( cTip, cTip2, cF0 )
             ENDIF
          ENDIF
       ELSE
-         MsgBeep( _l( "Prosjek je uzet iz šifrarnika radnika - OSN.BOL. !" ) )
+         MsgBeep( _l( "Prosjek je uzet iz šifarnika radnika - OSN.BOL. !" ) )
          SELECT RADN
          SET ORDER TO TAG "1"
          GO TOP
@@ -725,7 +725,7 @@ FUNCTION set_koeficijent_minulog_rada( k_min_rad )
    LOCAL _fields
 
    IF radn->kminrad <> k_min_rad
-      IF Pitanje( , "Staviti u šifrarnik radnika ovu vrijednost (D/N) ?", "N" ) == "D"
+      IF Pitanje( , "Staviti u šifarnik radnika ovu vrijednost (D/N) ?", "N" ) == "D"
 
          SELECT radn
          _fields := dbf_get_rec()

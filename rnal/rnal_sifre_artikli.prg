@@ -832,7 +832,7 @@ STATIC FUNCTION rnal_brisi_artikal( nArt_id, lChkKum, lSilent )
 
    IF Found()
 
-      IF !lSilent .AND. Pitanje(, "Izbrisati artikal iz šifrarnika (D/N) ?", "N" ) == "N"
+      IF !lSilent .AND. Pitanje(, "Izbrisati artikal iz šifarnika (D/N) ?", "N" ) == "N"
          RETURN 0
       ENDIF
 

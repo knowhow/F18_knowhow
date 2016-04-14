@@ -464,7 +464,7 @@ STATIC FUNCTION prikazi_greske_provjere_konta_i_partnera( err )
    NEXT
 
    ? _line
-   ?U "Prije ažuriranja naloga, u šifrarnike potrebno ubaciti nabrojane šifre !"
+   ?U "Prije ažuriranja naloga, u šifarnike potrebno ubaciti nabrojane šifre !"
 
    FF
    end_print()

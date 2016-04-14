@@ -964,7 +964,7 @@ FUNCTION MeniF10()
 
    AAdd( opc, "B. pretvori 11 -> 41  ili  11 -> 42"        )
    AAdd( opc, "C. promijeni predznak za količine"          )
-   AAdd( opc, "D. preuzmi tarife iz šifrarnika"            )
+   AAdd( opc, "D. preuzmi tarife iz šifarnika"            )
    AAdd( opc, "E. storno dokumenta"                        )
    AAdd( opc, "F. prenesi VPC(sifr)+POREZ -> MPCSAPP(dok)" )
    AAdd( opc, "G. prenesi MPCSAPP(dok)    -> MPC(sifr)"    )
@@ -1077,9 +1077,9 @@ STATIC FUNCTION kalk_dokument_prenos_cijena()
    PRIVATE getList := {}
 
    Box(, 7, 65 )
-   @ m_x + 1, m_y + 2 SAY8 "Prenos cijena dokument/šifrarnik ****"
-   @ m_x + 3, m_y + 2 SAY8 "1) prenos MPCSAPP (dok) => šifrarnik"
-   @ m_x + 4, m_y + 2 SAY8 "2) prenos šifrarnik => MPCSAPP (dok)"
+   @ m_x + 1, m_y + 2 SAY8 "Prenos cijena dokument/šifarnik ****"
+   @ m_x + 3, m_y + 2 SAY8 "1) prenos MPCSAPP (dok) => šifarnik"
+   @ m_x + 4, m_y + 2 SAY8 "2) prenos šifarnik => MPCSAPP (dok)"
    @ m_x + 6, m_y + 2 SAY "    odabir > " GET _opt PICT "9"
    READ
    BoxC()
@@ -1153,7 +1153,7 @@ STATIC FUNCTION kalk_dokument_prenos_cijena()
    ENDIF
 
    IF _update
-      MsgBeep( "Ubačene cijene iz šifrarnika !#Odradite asistenta sa opcijom A" )
+      MsgBeep( "Ubačene cijene iz šifarnika !#Odradite asistenta sa opcijom A" )
    ENDIF
 
    RETURN
@@ -2167,7 +2167,7 @@ FUNCTION MPCSAPPiz80uSif()
    cBrDokU  := Space( Len( kalk_pripr->brdok ) )
 
    Box(, 4, 75 )
-   @ m_x + 0, m_y + 5 SAY8 "FORMIRANJE MPC U ŠIFRARNIKU OD MPCSAPP DOKUMENTA TIPA 80"
+   @ m_x + 0, m_y + 5 SAY8 "FORMIRANJE MPC U šifarnikU OD MPCSAPP DOKUMENTA TIPA 80"
    @ m_x + 2, m_y + 2 SAY8 "Dokument: " + cIdFirma + "-" + cIdVdU + "-"
    @ Row(), Col() GET cBrDokU VALID postoji_kalk_dok( cIdFirma + cIdVdU + cBrDokU )
    READ; ESC_BCR

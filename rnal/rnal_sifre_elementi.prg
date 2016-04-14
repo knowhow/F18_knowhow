@@ -863,7 +863,7 @@ STATIC FUNCTION elem_edit( nArt_id, lNewRec, cType, nEl_no )
 
       @ m_x + 5, m_y + 2 SAY PadL( "element pripada grupi:", nLeft ) GET _e_gr_id VALID s_e_groups( @_e_gr_id, .T. )
 
-      @ m_x + 6, m_y + 2 SAY8 PadL( "(0 - otvori šifrarnik)", nLeft )
+      @ m_x + 6, m_y + 2 SAY8 PadL( "(0 - otvori šifarnik)", nLeft )
 
       READ
 
@@ -1048,7 +1048,7 @@ STATIC FUNCTION e_att_edit( nEl_id, lNewRec )
 
    @ m_x + 4, m_y + 2 SAY PadL( "izaberi vrijednost atributa", nLeft ) GET cElGrVal VALID {|| s_e_gr_val( @cElGrVal, _e_gr_at_id, cElGrVal, .T. ), set_var( @_e_gr_vl_id, @cElGrVal ) }
 
-   @ m_x + 5, m_y + 2 SAY8 PadL( "0 - otvori šifrarnik", nLeft )
+   @ m_x + 5, m_y + 2 SAY8 PadL( "0 - otvori šifarnik", nLeft )
 
    READ
    BoxC()
@@ -1110,7 +1110,7 @@ STATIC FUNCTION e_aops_edit( nEl_id, lNewRec )
 
    @ m_x + 4, m_y + 2 SAY PadL( "izaberi atribut operacije", nLeft ) GET _aop_att_id VALID {|| s_aops_att( @_aop_att_id, _aop_id, nil, .T. ), show_it( g_aop_att_desc( _aop_att_id ) )  }
 
-   @ m_x + 5, m_y + 2 SAY8 PadL( "0 - otvori šifrarnik", nLeft )
+   @ m_x + 5, m_y + 2 SAY8 PadL( "0 - otvori šifarnik", nLeft )
 
    READ
    BoxC()

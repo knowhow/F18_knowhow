@@ -11,8 +11,7 @@
 #include "f18.ch"
 
 
-/*  modifikacija struktura
- */
+// modifikacija struktura dbf tabele
 
 FUNCTION modstru_form_file( chs_file )
 
@@ -28,7 +27,8 @@ FUNCTION modstru_form_file( chs_file )
 
    oFile:Close()
 
-   modstru( _ret )
+   RETURN modstru( _ret )
+
 
 /*
  Modstru({"*fin_budzet", "C IDKONTO C 10 0",  "A IDKONTO2 C 7 0"})
@@ -36,21 +36,21 @@ FUNCTION modstru_form_file( chs_file )
 
 FUNCTION modstru( a_commands )
 
-   LOCAL _path, _ime_dbf
+   LOCAL _path, _ime_dbf := ""
    LOCAL _brisi_dbf := .F.,  _rename_dbf := NIL
-   LOCAL _linija := 0
    LOCAL _lin
    LOCAL _stru_changed := .F.
    LOCAL _curr_stru, _new_stru
    LOCAL _full_name
    LOCAL _msg
+   LOCAL _op
 
    CLOSE ALL
 
    info_bar( "modstru", "DBF modstru start" )
    log_write( "MODSTRU cmd: " + pp( a_commands ), 3 )
 
-   _ime_dbf := ""
+
    _path := my_home()
 
    FOR EACH _lin in a_commands
@@ -242,12 +242,12 @@ STATIC FUNCTION chs_op( op, lin, curr_stru, new_stru, brisi_dbf, rename_dbf, str
 // -----------------------------
 FUNCTION kopi( path, ime_dbf, curr_stru, new_stru, brisi_dbf, rename_dbf, stru_changed )
 
-   LOCAL _pos, _pos_2
+   LOCAL _pos
    LOCAL _ext, _ime_old, _ime_new
-   LOCAL _ime_p, _row, _path_2, _tmp
+   LOCAL _ime_p, _tmp
    LOCAL _ime_file, _ime_tmp, _ime_bak
    LOCAL _cdx_file
-   LOCAL _f
+   LOCAL _f, _i, _ime_p_new
    LOCAL _cnt
 
    _f := path + ime_dbf + "."
@@ -300,7 +300,7 @@ FUNCTION kopi( path, ime_dbf, curr_stru, new_stru, brisi_dbf, rename_dbf, stru_c
 
       SELECT OLDDBF
 
-      info_bar( "modstru", "modstru " + Alias() + " " +  Alltrim( Str( RecCount() ) ) )
+      info_bar( "modstru", "modstru " + Alias() + " " +  AllTrim( Str( RecCount() ) ) )
       SET ORDER TO 0
       GO TOP
 

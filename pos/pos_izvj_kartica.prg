@@ -37,7 +37,7 @@ FUNCTION pos_kartica_artikla()
    O_SIFK
    O_SIFV
    O_ROBA
-   O_POS
+   o_pos_pos()
 
    cRoba := Space( 10 )
    cIdPos := gIdPos
@@ -89,7 +89,7 @@ FUNCTION pos_kartica_artikla()
 
 
    IF cPPar == "D"
-      O_POS_DOKS
+      o_pos_doks()
       SELECT ( F_POS_DOKS )
       SET ORDER TO TAG "1"
    ENDIF

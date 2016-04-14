@@ -26,8 +26,8 @@ STATIC FUNCTION o_tables()
    O_OSOB
    SET ORDER TO TAG "NAZ"
    O_VRSTEP
-   O_POS
-   O_POS_DOKS
+   o_pos_pos()
+   o_pos_doks()
 
    RETURN
 

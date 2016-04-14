@@ -620,9 +620,9 @@ FUNCTION replace_kolona_in_table( cKolona, trazi_val, zamijeni_val, last_search 
    _has_semaphore := dbf_alias_has_semaphore()
 
    IF _has_semaphore
-
-   IF !begin_sql_tran_lock_tables( { cAlias  } )
-      RETURN .F.
+      IF !begin_sql_tran_lock_tables( { cAlias  } )
+         RETURN .F.
+      ENDIF
    ENDIF
 
 

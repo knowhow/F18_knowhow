@@ -346,8 +346,8 @@ FUNCTION PrepisInvNiv( fInvent )
 
    StampaInv( .F., .T. )  // drugi parametar kaze da se radi o azuriranom dok
 
-   O_POS_DOKS
-   O_POS
+   o_pos_doks()
+   o_pos_pos()
 
    PopWa()
    // vrati pos gdje je bio

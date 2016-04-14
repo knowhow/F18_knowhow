@@ -175,7 +175,7 @@ STATIC FUNCTION f18_fakt_data( data, checksum )
       AAdd( checksum, { "fakt data", _n_c_stavke, _n_c_iznos } )
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 // -----------------------------------------
@@ -187,7 +187,7 @@ STATIC FUNCTION f18_pos_data( data, checksum )
    LOCAL _n_c_stavke := 0
    LOCAL _dok
 
-   O_POS
+   o_pos_pos()
 
    Box(, 2, 60 )
 

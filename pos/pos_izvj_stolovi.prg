@@ -88,7 +88,7 @@ FUNCTION show_zak_info( nZakBr )
    LOCAL nArr
    nArr := Select()
 
-   O_POS
+   o_pos_pos()
    SELECT pos_doks
    SET ORDER TO TAG "ZAK"
    HSEEK gIdPos + "42" + Str( nZakBr, 6 )
@@ -381,8 +381,8 @@ FUNCTION g_otv_stolovi()
 
    nArr := Select()
 
-   O_POS
-   O_POS_DOKS
+   o_pos_pos()
+   o_pos_doks()
    SELECT pos_doks
    SET ORDER TO TAG "ZAK"
    GO TOP
@@ -532,7 +532,7 @@ FUNCTION zak_sve_stolove()
       RETURN
    ENDIF
 
-   O_POS_DOKS
+   o_pos_doks()
    nNextZak := g_next_zak_br()
 
    SELECT pos_doks
@@ -568,8 +568,8 @@ FUNCTION g_stanje_stola( nStoBr )
    LOCAL nArr
    LOCAL cNijeZaklj := "     0"
    nArr := Select()
-   O_POS
-   O_POS_DOKS
+   o_pos_pos()
+   o_pos_doks()
    SELECT pos_doks
    SET ORDER TO TAG "STO"
    HSEEK gIdPos + "42" + Str( nStoBr ) + cNijeZaklj

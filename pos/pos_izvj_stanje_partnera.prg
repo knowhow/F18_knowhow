@@ -45,8 +45,8 @@ FUNCTION pos_rpt_stanje_partnera()
    ENDDO
 
    O_ROBA
-   O_POS
-   O_POS_DOKS
+   o_pos_pos()
+   o_pos_doks()
    O_PARTN
 
    START PRINT CRET
@@ -286,8 +286,8 @@ FUNCTION I_RnGostiju()
    // otvaranje potrebnih baza
    // /////////////////////////
    // izvjestaj je korektan na serveru, odnosno na stand-alone kasi
-   O_POS
-   O_POS_DOKS
+   o_pos_pos()
+   o_pos_doks()
    O_PARTN
 
    // maska za postavljanje uslova

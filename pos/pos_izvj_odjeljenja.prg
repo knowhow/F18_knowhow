@@ -20,8 +20,8 @@ STATIC FUNCTION _o_tables()
    O_SIFV
    O_KASE
    O_ROBA
-   O_POS
-   O_POS_DOKS
+   o_pos_pos()
+   o_pos_doks()
 
    RETURN .T.
 
@@ -375,8 +375,8 @@ FUNCTION realizacija_dio_objekta
    O_SIFK
    O_SIFV
    O_ROBA
-   O_POS
-   O_POS_DOKS
+   o_pos_pos()
+   o_pos_doks()
 
    aDbf := {}
    AAdd ( aDbf, { "IdDio", "C",  2, 0 } )

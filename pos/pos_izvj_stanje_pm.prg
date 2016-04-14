@@ -63,7 +63,7 @@ FUNCTION pos_stanje_artikala_pm( cD, cS )
    O_SIFK
    O_SIFV
    O_ROBA
-   O_POS
+   o_pos_pos()
 
    cIdPos := gIdPos
 
@@ -139,7 +139,7 @@ FUNCTION pos_stanje_artikala_pm( cD, cS )
       CREATE_INDEX( "5", "IdPos+idroba+DTOS(Datum)", KUMPATH + "POS" )
       SELECT ( F_POS )
       USE
-      O_POS
+      o_pos_pos()
    ENDIF
 
    cFilt := ""

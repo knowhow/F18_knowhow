@@ -27,8 +27,8 @@ FUNCTION pos_pregled_racuna_tabela()
    O_KASE
    O_ROBA
    O__POS_PRIPR
-   O_POS_DOKS
-   O_POS
+   o_pos_doks()
+   o_pos_pos()
 
    dDatOd := Date()
    dDatDo := Date()

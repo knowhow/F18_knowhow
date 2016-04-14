@@ -73,12 +73,12 @@ STATIC FUNCTION _o_pos_prepis_tbl()
 
    SELECT ( F_POS_DOKS )
    IF !Used()
-      O_POS_DOKS
+      o_pos_doks()
    ENDIF
 
    SELECT ( F_POS )
    IF !Used()
-      O_POS
+      o_pos_pos()
    ENDIF
 
    RETURN .T.

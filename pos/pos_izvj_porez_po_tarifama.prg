@@ -53,8 +53,8 @@ FUNCTION PorPoTar
       O_KASE
       O_ROBA
       O_ODJ
-      O_POS_DOKS
-      O_POS
+      o_pos_doks()
+      o_pos_pos()
    ENDIF
 
    // maska za postavljanje uslova

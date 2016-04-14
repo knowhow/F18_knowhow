@@ -224,8 +224,8 @@ FUNCTION o_pos_tables( lOtvoriKumulativ )
 
 STATIC FUNCTION o_pos_kumulativne_tabele()
 
-   O_POS
-   O_POS_DOKS
+   o_pos_pos()
+   o_pos_doks()
    O_DOKSPF
 
    RETURN .T.
@@ -391,7 +391,7 @@ FUNCTION pos_novi_broj_dokumenta( id_pos, tip_dokumenta, dat_dok )
    _param := "pos" + "/" + id_pos + "/" + tip_dokumenta
    _broj := fetch_metric( _param, nil, _broj )
 
-   O_POS_DOKS
+   o_pos_doks()
    SET ORDER TO TAG "1"
    GO TOP
    SEEK id_pos + tip_dokumenta + DToS( dat_dok ) + "Ž"
@@ -665,8 +665,8 @@ FUNCTION pos_brisi_nepostojece_dokumente()
       ENDIF
    ENDIF
 
-   O_POS_DOKS
-   O_POS
+   o_pos_doks()
+   o_pos_pos()
 
    oQry:GoTo( 1 )
 

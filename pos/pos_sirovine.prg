@@ -48,8 +48,8 @@ FUNCTION GenUtrSir( dDatOD, dDatDo, cSmjena )
    O_ROBA
    O_ODJ
    O_DIO
-   O_POS_DOKS
-   O_POS
+   o_pos_doks()
+   o_pos_pos()
 
    IF Empty( cSmjena ) // za period ponovo izgenerisi
       SELECT pos_doks

@@ -53,8 +53,8 @@ FUNCTION Real2Fakt()
    O_SIFV
    O_PARTN
    O_KASE
-   O_POS
-   O_POS_DOKS
+   o_pos_pos()
+   o_pos_doks()
 
    cIdPos := gIdPos
    dDatOd := Date()
@@ -222,8 +222,8 @@ FUNCTION Stanje2Fakt()
    O_SIFV
    O_PARTN
    O_KASE
-   O_POS
-   O_POS_DOKS
+   o_pos_pos()
+   o_pos_doks()
 
    cIdPos := gIdPos
    dDatOd := CToD( "" )

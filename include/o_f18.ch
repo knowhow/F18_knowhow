@@ -305,8 +305,6 @@
 #xcommand O_K1           => select (F_K1)      ; my_use ("k1")     ; set order to tag "ID"
 
 // modul POS
-#xcommand O_POS_DOKS  => o_pos_doks()
-#xcommand O_POS       => o_pos_pos()
 #xcommand O_RNGPLA    => SELECT (F_RNGPLA); my_use ("rngpla"); set order to tag "1"
 #xcommand O_PROMVP    => SELECT (F_PROMVP); my_use ("promvp"); set order to tag "1"
 #xcommand O__POS      => SELECT (F__POS)  ; my_use("_pos")  ; set order to tag "1"

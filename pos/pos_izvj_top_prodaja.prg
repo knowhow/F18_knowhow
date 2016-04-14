@@ -20,8 +20,8 @@ STATIC FUNCTION _o_tables()
    O_SIFK
    O_SIFV
    O_ROBA
-   O_POS
-   O_POS_DOKS
+   o_pos_pos()
+   o_pos_doks()
 
    RETURN .T.
 

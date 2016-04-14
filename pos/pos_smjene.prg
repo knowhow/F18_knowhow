@@ -33,7 +33,7 @@ FUNCTION OdrediSmjenu( lOdredi )
    ENDIF
 
    O__POS
-   O_POS_DOKS
+   o_pos_doks()
    SET ORDER TO TAG "2"  // IdVd+DTOS (Datum)+Smjena
    SEEK VD_RN + Chr ( 254 )
    IF Eof() .OR. pos_doks->IdVd <> VD_RN

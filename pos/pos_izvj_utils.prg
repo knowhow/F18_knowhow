@@ -32,7 +32,7 @@ FUNCTION RealNaDan( dDatum )
    Select( F_POS )
    lOpened := .T.
    IF !Used()
-      O_POS
+      o_pos_pos()
       lOpened := .F.
    ENDIF
 

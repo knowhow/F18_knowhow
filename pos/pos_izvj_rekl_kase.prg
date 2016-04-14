@@ -48,7 +48,7 @@ FUNCTION ReklKase( dDOd, dDDo, cVarijanta )
 
    SELECT ( F_POS_DOKS )
    IF !Used()
-      O_POS_DOKS
+      o_pos_doks()
    ENDIF
    SetFilter( @cFilter, cIdPos, dDat0, dDat1 )
 

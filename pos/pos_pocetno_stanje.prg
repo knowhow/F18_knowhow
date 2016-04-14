@@ -176,8 +176,8 @@ STATIC FUNCTION pocetno_stanje_sql( param )
 
    prebaci_se_u_bazu( _db_params, _tek_database, _year_tek )
 
-   O_POS
-   O_POS_DOKS
+   o_pos_pos()
+   o_pos_doks()
    O_ROBA
 
    _n_br_dok := pos_novi_broj_dokumenta( _id_pos, "16", _date_ps )

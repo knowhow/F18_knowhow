@@ -196,12 +196,12 @@ FUNCTION pos_storno_rn( lSilent, cSt_rn, dSt_date, cSt_fisc )
 
    SELECT ( F_POS )
    IF !Used()
-      O_POS
+      o_pos_pos()
    ENDIF
 
    SELECT ( F_POS_DOKS )
    IF !Used()
-      O_POS_DOKS
+      o_pos_doks()
    ENDIF
 
    Box(, 4, 55 )
@@ -275,7 +275,7 @@ STATIC FUNCTION napravi_u_pripremi_storno_dokument( rn_datum, storno_rn, broj_fi
 
    SELECT ( F_POS )
    IF !Used()
-      O_POS
+      o_pos_pos()
    ENDIF
    SELECT pos
    SEEK gIdPos + "42" + DToS( rn_datum ) + storno_rn

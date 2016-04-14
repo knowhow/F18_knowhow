@@ -280,8 +280,8 @@ STATIC FUNCTION _o_real_table()
 
    O_ROBA
    O_KASE
-   O_POS
-   O_POS_DOKS
+   o_pos_pos()
+   o_pos_doks()
 
    RETURN
 

@@ -103,7 +103,7 @@ STATIC FUNCTION _exp_dok()
 
    SELECT ( nTArea )
 
-   RETURN
+   RETURN .T.
 
 
 // --------------------------------------------

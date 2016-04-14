@@ -11,6 +11,18 @@
 
 #include "f18.ch"
 
+FUNCTION begin_sql_tran_lock_tables( aTables )
+
+   run_sql_query( "BEGIN" )
+
+   IF !f18_lock_tables( aTables, .T. )
+      run_sql_query( "ROLLBACK" )
+      error_bar( "sem", "LOCK ERROR: " + pp( aTables ) )
+      RETURN .F.
+   ENDIF
+
+   RETURN .T.
+
 /*
 
 

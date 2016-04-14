@@ -33,7 +33,7 @@ FUNCTION fakt_import_bterm()
    // pobrisi txt fajl
    TxtErase( cFile, .T. )
 
-   RETURN
+   RETURN .T.
 
 
 // ----------------------------------------
@@ -45,7 +45,7 @@ FUNCTION fakt_export_bterm()
 
    nRet := export_BTerm_data()
 
-   RETURN
+   RETURN .T.
 
 
 // -----------------------------------------------

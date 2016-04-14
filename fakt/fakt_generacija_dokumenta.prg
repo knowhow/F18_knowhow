@@ -12,7 +12,6 @@
 #include "f18.ch"
 
 
-// staticke varijable
 STATIC __generisati := .F.
 
 
@@ -24,7 +23,7 @@ FUNCTION fakt_mnu_generacija_dokumenta()
    LOCAL _opcexe := {}
    LOCAL _izbor := 1
 
-   AAdd( _opc, "1. pocetno stanje                    " )
+   AAdd( _opc, "1. početno stanje                    " )
    AAdd( _opcexe, {|| fakt_pocetno_stanje() } )
    AAdd( _opc, "2. dokument inventure     " )
    AAdd( _opcexe, {|| fakt_unos_inventure() } )
@@ -33,7 +32,7 @@ FUNCTION fakt_mnu_generacija_dokumenta()
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
 
 FUNCTION fakt_generisi_inventuru( cIdRj )

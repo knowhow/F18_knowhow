@@ -73,10 +73,10 @@ FUNCTION my_db_edit( cImeBoxa, xw, yw, bUserF, cMessTop, cMessBot, lInvert, ;
    PRIVATE  TBSkipBlock := {| nSkip| SkipDB( nSkip, @nTBLine ) }
 
    IF ! HB_ISNUMERIC( xw )
-       RaiseError( "xw not number" )
+      RaiseError( "xw not number" )
    ENDIF
    IF ! HB_ISNUMERIC( yw )
-       RaiseError( "yw not number" )
+      RaiseError( "yw not number" )
    ENDIF
 
    IF skipblock <> NIL // ovo je zadavanje skip bloka kroz parametar
@@ -268,8 +268,8 @@ FUNCTION create_tbrowsedb( params, lIzOBJDB )
    @ m_x + 1, m_y + params[ "yw" ] - 6    SAY Str( my_reccount(), 5 )
 
 
-   TB := TBrowseDB( m_x + 2 + IIF( _rows_prazno > 4, 1, _rows_prazno ), m_y + 1,;
-                    ( m_x + _rows ) - _rows_poruke, m_y + _width )
+   TB := TBrowseDB( m_x + 2 + iif( _rows_prazno > 4, 1, _rows_prazno ), m_y + 1, ;
+      ( m_x + _rows ) - _rows_poruke, m_y + _width )
 
    IF TBSkipBlock <> NIL
       Tb:skipBlock := TBSkipBlock
@@ -282,7 +282,7 @@ FUNCTION create_tbrowsedb( params, lIzOBJDB )
          TCol := TBColumnNew( ImeKol[ i, 1 ], ImeKol[ i, 2 ] )
 
          IF params[ "podvuci_b" ] <> NIL
-            TCol:colorBlock := { || iif( Eval( params[ "podvuci_b" ], TCol ), { 5, 2 }, { 1, 2 } ) }
+            TCol:colorBlock := {|| iif( Eval( params[ "podvuci_b" ], TCol ), { 5, 2 }, { 1, 2 } ) }
          ENDIF
 
          TB:addColumn( TCol )
@@ -539,11 +539,11 @@ FUNCTION zamjeni_numericka_polja_u_tabeli( cKolona, cTrazi, cUslov )
    cAlias := Lower( Alias() )
 
    IF lImaSemafor
-      run_sql_query( "BEGIN" )
-      IF !f18_lock_tables( {  cAlias }, .T. )
-         run_sql_query( "ROLLBACK" )
-         RETURN lRet
+
+      IF !begin_sql_tran_lock_tables( { cAlias  } )
+         RETURN .F.
       ENDIF
+
    ENDIF
 
    GO TOP
@@ -574,7 +574,7 @@ FUNCTION zamjeni_numericka_polja_u_tabeli( cKolona, cTrazi, cUslov )
    IF lImaSemafor
       IF lOk
          lRet := .T.
-         hParams := hb_hash()
+         hParams := hb_Hash()
          hParams[ "unlock" ] :=  { cAlias }
          run_sql_query( "COMMIT", hParams )
       ELSE
@@ -620,13 +620,11 @@ FUNCTION replace_kolona_in_table( cKolona, trazi_val, zamijeni_val, last_search 
    _has_semaphore := dbf_alias_has_semaphore()
 
    IF _has_semaphore
-      run_sql_query( "BEGIN" )
-      IF !f18_lock_tables( { cAlias  }, .T. )
-         run_sql_query( "ROLLBACK" )
-         MsgBeep( "Ne mogu zaključati " + cAlias + "!?" )
-         RETURN lRet
-      ENDIF
+
+   IF !begin_sql_tran_lock_tables( { cAlias  } )
+      RETURN .F.
    ENDIF
+
 
    DO WHILE !Eof()
 
@@ -689,7 +687,7 @@ FUNCTION replace_kolona_in_table( cKolona, trazi_val, zamijeni_val, last_search 
    IF _has_semaphore
       IF lOk
          lRet := .T.
-         hParams := hb_hash()
+         hParams := hb_Hash()
          hParams[ "unlock" ] :=  { cAlias }
          run_sql_query( "COMMIT", hParams )
       ELSE

@@ -697,13 +697,12 @@ FUNCTION snimi_promjene_sifarnika( lNovi, cTekuciZapis )
 
    _rec := get_dbf_global_memvars( "w", NIL, lSqlTable )
 
-   run_sql_query( "BEGIN" )
 
-   IF !f18_lock_tables( { cAlias }, .T. )
-      run_sql_query( "ROLLBACK" )
-      Msgbeep( "Ne mogu zaključati tabelu " + cAlias + "!#Prekidam operaciju." )
-      RETURN lRet
+   IF  !begin_sql_tran_lock_tables( { cAlias } )
+      RETURN .F.
    ENDIF
+
+
 
    IF lNovi .AND. is_sifra_postoji_u_sifarniku( _rec )
       run_sql_query( "COMMIT" )
@@ -726,7 +725,7 @@ FUNCTION snimi_promjene_sifarnika( lNovi, cTekuciZapis )
 
       lRet := .T.
 
-      hParams := hb_hash()
+      hParams := hb_Hash()
       hParams[ "unlock" ] :=  { cAlias }
       run_sql_query( "COMMIT", hParams )
 
@@ -774,12 +773,10 @@ FUNCTION snimi_promjene_cirkularne_ispravke_sifarnika()
    _vars := get_dbf_global_memvars( "w", NIL, lSqlTable )
    _alias := Lower( Alias() )
 
-   run_sql_query( "BEGIN" )
-   IF !f18_lock_tables( { _alias  }, .T. )
-      run_sql_query( "ROLLBACK" )
-      MsgBeep( "Ne mogu zaključati tabelu " + _alias + " !#Prekidam operaciju." )
-      RETURN lRet
+   IF !begin_sql_tran_lock_tables( { _alias  } )
+      RETURN .F.
    ENDIF
+
 
    lOk := update_rec_server_and_dbf( _alias, _vars, 1, "CONT" )
    IF lOk
@@ -788,7 +785,7 @@ FUNCTION snimi_promjene_cirkularne_ispravke_sifarnika()
 
    IF lOk
       lRet := .T.
-      hParams := hb_hash()
+      hParams := hb_Hash()
       hParams[ "unlock" ] :=  { _alias }
       run_sql_query( "COMMIT", hParams )
 
@@ -1086,15 +1083,13 @@ FUNCTION sifarnik_brisi_stavku()
 
    cAlias := Lower( Alias() )
 
-   PushWA()
 
-   run_sql_query( "BEGIN" )
-   IF !f18_lock_tables( { cAlias }, .T. )
-      run_sql_query( "ROLLBACK" )
-      MsgBeep( "Ne mogu zaključati tabelu " + cAlias + "!#Prekidam operaciju." )
+   IF !begin_sql_tran_lock_tables( { cAlias } )
       RETURN DE_CONT
    ENDIF
 
+
+   PushWA()
    _rec_dbf := dbf_get_rec()
 
    hRec := _rec_dbf
@@ -1116,7 +1111,7 @@ FUNCTION sifarnik_brisi_stavku()
 #ifdef F18_DEBUG
       MsgBeep( "table " + cAlias  + " updated and locked" )
 #endif
-      hParams := hb_hash()
+      hParams := hb_Hash()
       hParams[ "unlock" ] :=  { cAlias }
       run_sql_query( "COMMIT", hParams )
       log_write( "F18_DOK_OPER: brisanje stavke iz sifarnika, stavka " + pp( hRec ), 2 )

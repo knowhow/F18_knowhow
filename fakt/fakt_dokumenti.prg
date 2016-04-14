@@ -109,8 +109,7 @@ METHOD FaktDokumenti:za_partnera( idfirma, idtipdok, idpartner )
 
 
 
-// ----------------------------------------------
-// ----------------------------------------------
+
 METHOD FaktDokumenti:pretvori_otpremnice_u_racun()
 
    LOCAL _idfirma, _idtipdok, _idpartner

@@ -41,7 +41,7 @@ FUNCTION PrethLin( cFajl, nKraj )
    RETURN IF( nPom == 0, { cPom, 0 }, { SubStr( cPom, nPom + 2 ), nKraj - nKor + nPom - 1 } )
 // {cLinija,nNjenPocetak}
 
-   RETURN
+   RETURN .T.
 
 
 FUNCTION BrLinFajla( cImeF )

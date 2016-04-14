@@ -367,13 +367,10 @@ FUNCTION AzurKupData( cIdPos )
 
    O_DOKSPF
 
-
-   run_sql_query( "BEGIN" )
-   IF !f18_lock_tables( { _tbl } )
-
-      run_sql_query( "ROLLBACK" )
-      MsgBeep( "Ne mogu lock-ovati dokspf tabelu !" )
+   IF !begin_sql_tran_lock_tables( { _tbl }  )
+      RETURN .F.
    ENDIF
+  
 
    SELECT drn
    GO TOP

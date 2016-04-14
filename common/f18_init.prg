@@ -43,9 +43,9 @@ STATIC s_nFontSize  := 20
 STATIC s_nFontWidth := 10
 
 #else
-STATIC s_cFontName  := "fixed"
+STATIC s_cFontName  := "Courier"
 STATIC s_nFontSize  := 20
-STATIC s_nFontWidth := 15
+STATIC s_nFontWidth := 10
 
 #endif
 
@@ -209,11 +209,18 @@ FUNCTION set_screen_dimensions()
 
    CASE _pix_width >= 1440 .AND. _pix_height >= 900
 
+#ifdef  __PLATFORM__DARWIN
+      font_name( "Courier" )
       font_size( 24 )
       font_width( 12 )
       maxrows( 35 - INFO_BAR_ROWS )
       maxcols( 119 )
-
+#else
+      font_size( 24 )
+      font_width( 12 )
+      maxrows( 35 - INFO_BAR_ROWS )
+      maxcols( 119 )
+#endif
       ?E _msg + "1"
 
    CASE _pix_width >= 1280 .AND. _pix_height >= 820
@@ -269,13 +276,13 @@ FUNCTION set_screen_dimensions()
 
    ?E " set font_name: ", hb_gtInfo( HB_GTI_FONTNAME, font_name() )
 
-#if defined( __PLATFORM__LINUX )
+#if defined( __PLATFORM__LINUX ) .OR. defined( __PLATFORM__DARWIN )
    ?E " set font_weight: ", hb_gtInfo( HB_GTI_FONTWEIGHT, HB_GTI_FONTW_BOLD )
 #endif
 
-#if  defined( __PLATFORM__WINDOWS ) .OR. defined( __PLATFORM__LINUX )
+//#if  defined( __PLATFORM__WINDOWS ) .OR. defined( __PLATFORM__LINUX )
    ?E " set font_width: ", hb_gtInfo( HB_GTI_FONTWIDTH, font_width() )
-#endif
+//#endif
    ?E " set font_size: ", hb_gtInfo( HB_GTI_FONTSIZE, font_size() )
 
 
@@ -296,6 +303,7 @@ FUNCTION set_screen_dimensions()
       // linux nece od prve!?
       SetMode( maxrows( hb_gtInfo( HB_GTI_DESKTOPROWS ) - 2 - INFO_BAR_ROWS ) + INFO_BAR_ROWS,  ;
          maxcols( hb_gtInfo( HB_GTI_DESKTOPCOLS ) - 5 ) )
+      ?E " set font_width/2: ", hb_gtInfo( HB_GTI_FONTWIDTH, font_width() )
       ?E "setovanje ekrana/2 "
    ENDIF
 

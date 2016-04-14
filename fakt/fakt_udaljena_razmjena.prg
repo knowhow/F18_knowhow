@@ -699,7 +699,7 @@ STATIC FUNCTION __import( vars, a_details )
    run_sql_query( "BEGIN" )
 
    IF !f18_lock_tables( { "fakt_doks", "fakt_doks2", "fakt_fakt" }, .T. )
-      run_sql_query( "COMMIT" )
+      run_sql_query( "ROLLBACK" )
       MsgBeep( "Problem sa zaključavanjem tabela.#Prekidam operaciju." )
       RETURN _cnt
    ENDIF

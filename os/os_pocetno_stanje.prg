@@ -178,12 +178,14 @@ STATIC FUNCTION _os_brisi_tekucu_godinu( info )
    o_os_sii()
    o_os_sii_promj()
 
+   run_sql_query( "BEGIN" )
    IF !f18_lock_tables( { __table_os, __table_promj } )
+      run_sql_query( "ROLLBACK" )
       MsgBeep( "Problem sa lokovanjem tabela " + __table_os + ", " + __table_promj + " !!!#Prekidamo proceduru." )
       RETURN _ok
    ENDIF
 
-   run_sql_query( "BEGIN" )
+
 
    select_os_sii()
    SET ORDER TO TAG "1"

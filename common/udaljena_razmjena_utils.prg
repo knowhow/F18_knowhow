@@ -70,7 +70,7 @@ FUNCTION update_table_konto( zamjena_sifre )
 
    run_sql_query( "BEGIN" )
    IF !f18_lock_tables( { "konto" }, .T. )
-      run_sql_query( "COMMIT" )
+      run_sql_query( "ROLLBACK" )
       RETURN lRet
    ENDIF
 
@@ -146,7 +146,7 @@ FUNCTION update_table_partn( zamjena_sifre )
 
    run_sql_query( "BEGIN" )
    IF !f18_lock_tables( { "partn" }, .T. )
-      run_sql_query( "COMMIT" )
+      run_sql_query( "ROLLBACK" )
       RETURN lRet
    ENDIF
 
@@ -218,7 +218,7 @@ FUNCTION update_table_roba( zamjena_sifre )
 
    run_sql_query( "BEGIN" )
    IF !f18_lock_tables( { "roba" }, .T. )
-      run_sql_query( "COMMIT" )
+      run_sql_query( "ROLLBACK" )
       RETURN lRet
    ENDIF
 

@@ -40,7 +40,7 @@ FUNCTION copy_sast()
 
          run_sql_query( "BEGIN" )
          IF !f18_lock_tables( { "sast" }, .T. )
-            run_sql_query( "COMMIT" )
+            run_sql_query( "ROLLBACK" )
             MsgBeep( "lock sast neuspjesno !" )
             RETURN .F.
          ENDIF
@@ -120,7 +120,7 @@ FUNCTION bris_sast()
 
    run_sql_query( "BEGIN" )
    IF !f18_lock_tables( { "roba", "sast" }, .T. )
-      run_sql_query( "COMMIT" )
+      run_sql_query( "ROLLBACK" )
       MsgBeep( "lock roba, sast neuspjeno !" )
       RETURN 7
    ENDIF .T.

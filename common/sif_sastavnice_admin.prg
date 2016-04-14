@@ -36,7 +36,7 @@ FUNCTION sast_repl_all() // zamjena sastavnice u svim proizvodima
 
       run_sql_query( "BEGIN" )
       IF !f18_lock_tables( { "sast" }, .T. )
-         run_sql_query( "COMMIT" )
+         run_sql_query( "ROLLBACK" )
          MsgBeep( "Greska sa lock-om tabele sast !" )
          RETURN .F.
       ENDIF
@@ -100,9 +100,9 @@ FUNCTION pr_uces_sast() // promjena ucesca
 
       run_sql_query( "BEGIN" )
       IF !f18_lock_tables( { "sast" }, .T. )
-         run_sql_query( "COMMIT" )
+         run_sql_query( "ROLLBACK" )
          MsgBeep( "Greska sa lock-om tabele sast !" )
-         RETURN
+         RETURN .F.
       ENDIF
 
       SELECT sast

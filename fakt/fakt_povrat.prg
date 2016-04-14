@@ -110,7 +110,7 @@ FUNCTION povrat_fakt_dokumenta( rezerv, id_firma, id_tip_dok, br_dok, test )
       run_sql_query( "BEGIN" )
 
       IF !f18_lock_tables( { "fakt_fakt", "fakt_doks", "fakt_doks2" }, .T. )
-         run_sql_query( "COMMIT" )
+         run_sql_query( "ROLLBACK" )
          MsgBeep( "Ne mogu zaključati fakt tablele.#Prekidam operaciju." )
          RETURN nRet
       ENDIF
@@ -338,9 +338,9 @@ FUNCTION povrat_fakt_po_kriteriju( br_dok, dat_dok, tip_dok, firma )
    run_sql_query( "BEGIN" )
 
    IF !f18_lock_tables( { "fakt_doks", "fakt_doks2", "fakt_fakt" }, .T. )
-      run_sql_query( "COMMIT" )
+      run_sql_query( "ROLLBACK" )
       MsgBeep( "Ne mogu zaključati tabele.#Prekidam operaciju." )
-      RETURN
+      RETURN .F.
    ENDIF
 
    DO WHILE !Eof()

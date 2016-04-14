@@ -232,7 +232,7 @@ METHOD FaktDokumenti:change_idtipdok_markirani( new_idtipdok )
       run_sql_query( "BEGIN; SET TRANSACTION ISOLATION LEVEL SERIALIZABLE" )
 
       IF !::lock
-         run_sql_query( "COMMIT" )
+         run_sql_query( "ROLLBACK" )
          MsgBeep( "Neuspješno zaključavanje tabela, operacija " + ::p_idtipdok + "=>" + new_idtipdok + " otkazana !" )
          _ok := .F.
          BREAK

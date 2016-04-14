@@ -278,8 +278,12 @@ FUNCTION RadBl( Ch )
       SELECT radn
       GO TOP
 
+
       run_sql_query( "BEGIN" )
-      f18_lock_tables( { "ld_radn" }, .T. )
+      IF !f18_lock_tables( { "ld_radn" }, .T. )
+         run_sql_query( "ROLLBACK" )
+         RETURN .F.
+      ENDIF
 
 
       DO WHILE !Eof()
@@ -1071,7 +1075,7 @@ FUNCTION TotBrisRadn()
    LOCAL cSigurno := "N"
    LOCAL nRec
    LOCAL hParams
-   
+
    PRIVATE cIdRadn := Space( 6 )
 
    IF !spec_funkcije_sifra( "SIGMATB " )
@@ -1107,8 +1111,12 @@ FUNCTION TotBrisRadn()
          LOOP
       ENDIF
 
+
       run_sql_query( "BEGIN" )
-      f18_lock_tables( { "ld_ld", "ld_radn", "ld_radkr" }, .T. )
+      IF !f18_lock_tables( { "ld_ld", "ld_radn", "ld_radkr" }, .T. )
+         run_sql_query( "ROLLBACK" )
+         RETURN .F.
+      ENDIF
 
       // brisem ga iz sifarnika radnika
       // -------------------------------

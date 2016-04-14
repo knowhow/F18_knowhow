@@ -157,7 +157,7 @@ FUNCTION gen_all_plu( lSilent )
 
    run_sql_query( "BEGIN" )
    IF !f18_lock_tables( { "roba" }, .T. )
-      run_sql_query( "COMMIT" )
+      run_sql_query( "ROLLBACK" )
       MsgBeep( "Ne mogu zaključati ROBA !#Prekidam operaciju." )
       RETURN lRet
    ENDIF

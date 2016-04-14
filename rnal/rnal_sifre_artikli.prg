@@ -582,7 +582,7 @@ STATIC FUNCTION ispravi_opis_artikla( nArt_id )
       run_sql_query( "BEGIN" )
 
       IF !f18_lock_tables( { "articles" }, .T. )
-         run_sql_query( "COMMIT" )
+         run_sql_query( "ROLLBACK" )
          MsgBeep( "Ne mogu zaključati tabelu articles !#Prekidam operaciju." )
          RETURN nRet
       ENDIF
@@ -839,7 +839,7 @@ STATIC FUNCTION rnal_brisi_artikal( nArt_id, lChkKum, lSilent )
       run_sql_query( "BEGIN" )
 
       IF !f18_lock_tables( { "articles", "elements", "e_att", "e_aops" }, .T. )
-         run_sql_query( "COMMIT" )
+         run_sql_query( "ROLLBACK" )
          MsgBeep( "Ne mogu zaključati tabele !#Prekidam operaciju." )
          RETURN 0
       ENDIF
@@ -886,7 +886,7 @@ STATIC FUNCTION rnal_dupliciraj_artikal( nArt_id )
    run_sql_query( "BEGIN" )
 
    IF !f18_lock_tables( { "articles", "elements", "e_att", "e_aops" }, .T. )
-      run_sql_query( "COMMIT" )
+      run_sql_query( "ROLLBACK" )
       MsgBeep( "Ne mogu zaključati tabele !#Prekidam operaciju." )
       RETURN -1
    ENDIF

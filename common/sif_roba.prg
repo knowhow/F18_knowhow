@@ -570,7 +570,7 @@ FUNCTION roba_setuj_mpc_iz_vpc()
 
    run_sql_query( "BEGIN" )
    IF !f18_lock_tables( { "roba" }, .T. )
-      run_sql_query( "COMMIT" )
+      run_sql_query( "ROLLBACK" )
       RETURN .F.
    ENDIF
 

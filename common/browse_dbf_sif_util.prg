@@ -700,7 +700,7 @@ FUNCTION snimi_promjene_sifarnika( lNovi, cTekuciZapis )
    run_sql_query( "BEGIN" )
 
    IF !f18_lock_tables( { cAlias }, .T. )
-      run_sql_query( "COMMIT" )
+      run_sql_query( "ROLLBACK" )
       Msgbeep( "Ne mogu zaključati tabelu " + cAlias + "!#Prekidam operaciju." )
       RETURN lRet
    ENDIF
@@ -776,7 +776,7 @@ FUNCTION snimi_promjene_cirkularne_ispravke_sifarnika()
 
    run_sql_query( "BEGIN" )
    IF !f18_lock_tables( { _alias  }, .T. )
-      run_sql_query( "COMMIT" )
+      run_sql_query( "ROLLBACK" )
       MsgBeep( "Ne mogu zaključati tabelu " + _alias + " !#Prekidam operaciju." )
       RETURN lRet
    ENDIF
@@ -1090,7 +1090,7 @@ FUNCTION sifarnik_brisi_stavku()
 
    run_sql_query( "BEGIN" )
    IF !f18_lock_tables( { cAlias }, .T. )
-      run_sql_query( "COMMIT" )
+      run_sql_query( "ROLLBACK" )
       MsgBeep( "Ne mogu zaključati tabelu " + cAlias + "!#Prekidam operaciju." )
       RETURN DE_CONT
    ENDIF

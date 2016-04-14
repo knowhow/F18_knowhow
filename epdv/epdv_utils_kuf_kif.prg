@@ -175,12 +175,18 @@ FUNCTION rn_g_r_br( cTblName )
       MsgBeep( "Ne mogu zakljucati bazu " + cTblName + ;
          "## renumeracije nije izvrsena !" )
       my_close_all_dbf()
-   endif
+   ENDIF
 
    Box( , 2, 35 )
 
-   f18_lock_tables( { _table } )
+
    run_sql_query( "BEGIN" )
+
+   IF !f18_lock_tables( { _table } )
+      run_sql_query( "ROLLBACK" )
+      RETURN .F.
+   ENDIF
+
 
    DO WHILE !Eof()
 

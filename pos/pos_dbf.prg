@@ -106,7 +106,7 @@ STATIC FUNCTION dodaj_u_sifrarnik_radnika( cSifra, cLozinka, cOpis, cStatus )
 
 STATIC FUNCTION pos_definisi_inicijalne_podatke()
 
-   LOCAL lOk := .T.
+   LOCAL lOk := .T., hParams
 
    O_STRAD
 
@@ -114,9 +114,9 @@ STATIC FUNCTION pos_definisi_inicijalne_podatke()
 
       MsgO( "Definišem šifre prioriteta ..." )
 
-      // run_sql_query( "BEGIN" )
+      run_sql_query( "BEGIN" )
       IF !f18_lock_tables( { "pos_strad" }, .T. )
-         // run_sql_query( "COMMIT" )
+         run_sql_query( "ROLLBACK" )
          RETURN .F.
       ENDIF
 
@@ -133,10 +133,12 @@ STATIC FUNCTION pos_definisi_inicijalne_podatke()
       MsgC()
 
       IF lOk
-         f18_unlock_tables( { "pos_strad" } )
-         // run_sql_query( "COMMIT" )
+         hParams := hb_hash()
+         hParams[ "unlock" ] := { "pos_strad" }
+         run_sql_query( "COMMIT", hParams )
+
       ELSE
-         // run_sql_query( "ROLLBACK" )
+         run_sql_query( "ROLLBACK" )
       ENDIF
 
    ENDIF

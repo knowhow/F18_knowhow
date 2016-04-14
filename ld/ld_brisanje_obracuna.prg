@@ -105,7 +105,12 @@ FUNCTION BrisiRadnika()
 
             run_sql_query( "BEGIN" )
 
-            f18_lock_tables( { "ld_ld" }, .T. )
+            IF !f18_lock_tables( { "ld_ld" }, .T. )
+               run_sql_query( "ROLLBACK" )
+               Postotak( 0 )
+               RETURN .F.
+            ENDIF
+
             DO WHILE !Eof()
 
                nPom := 0

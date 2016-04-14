@@ -39,7 +39,7 @@ FUNCTION pk_delete( cIdRadn )
    LOCAL nTA, hParams
 
    IF Pitanje(, "Izbrisati podatke poreske kartice radnika ?", "N" ) == "N"
-      RETURN
+      RETURN .F.
    ENDIF
 
    nTA := Select()
@@ -47,8 +47,12 @@ FUNCTION pk_delete( cIdRadn )
 
    o_pk_tbl()
 
+
    run_sql_query( "BEGIN" )
-   f18_lock_tables( { "ld_pk_data", "ld_pk_radn" }, .T. )
+   IF !f18_lock_tables( { "ld_pk_data", "ld_pk_radn" }, .T. )
+      run_sql_query( "ROLLBACK" )
+      RETURN .F.
+   ENDIF
 
 
    // izbrisi pk_radn

@@ -114,7 +114,10 @@ FUNCTION ld_novi_kredit()
       nTekMj := nMjesec - 1
 
       run_sql_query( "BEGIN" )
-      f18_lock_tables( { "ld_radkr" }, .T. )
+      IF !f18_lock_tables( { "ld_radkr" }, .T. )
+         run_sql_query( "ROLLBACK" )
+         RETURN .F.
+      ENDIF
 
       DO WHILE .T.
 
@@ -161,7 +164,7 @@ FUNCTION ld_novi_kredit()
 
       ENDDO
 
-      hParams := hb_hash()
+      hParams := hb_Hash()
       hParams[ "unlock" ] := { "ld_radkr" }
       run_sql_query( "COMMIT", hParams )
 
@@ -283,7 +286,10 @@ FUNCTION ld_krediti_key_handler( Ch )
          SEEK cIdRadn + cIdKred + cNaOsnovu
 
          run_sql_query( "BEGIN" )
-         f18_lock_tables( { "ld_radkr" }, .T. )
+         IF !f18_lock_tables( { "ld_radkr" }, .T. )
+            run_sql_query( "ROLLBACK" )
+            RETURN .F.
+         ENDIF
 
 
          DO WHILE !Eof() .AND. ( field->idradn + field->idkred + field->naosnovu ) == ( cIdRadn + cIdKred + cNaOsnovu )
@@ -302,7 +308,7 @@ FUNCTION ld_krediti_key_handler( Ch )
          ENDDO
 
 
-         hParams := hb_hash()
+         hParams := hb_Hash()
          hParams[ "unlock" ] := { "ld_radkr" }
          run_sql_query( "COMMIT", hParams )
 
@@ -389,7 +395,10 @@ FUNCTION ld_krediti_redefinisanje_rata()
       nTotalKr := 0
 
       run_sql_query( "BEGIN" )
-      f18_lock_tables( { "ld_radkr" }, .T. )
+      IF !f18_lock_tables( { "ld_radkr" }, .T. )
+         run_sql_query( "ROLLBACK" )
+         RETURN .F.
+      ENDIF
 
 
       DO WHILE !Eof() .AND. cKreditor == idkred ;
@@ -457,7 +466,7 @@ FUNCTION ld_krediti_redefinisanje_rata()
       ENDDO
 
 
-      hParams := hb_hash()
+      hParams := hb_Hash()
       hParams[ "unlock" ] := { "ld_radkr" }
       run_sql_query( "COMMIT", hParams )
 
@@ -499,7 +508,10 @@ FUNCTION SumKredita()
    nIznos := 0
 
    run_sql_query( "BEGIN" )
-   f18_lock_tables( { "ld_radkr" }, .T. )
+   IF !f18_lock_tables( { "ld_radkr" }, .T. )
+      run_sql_query( "ROLLBACK" )
+      RETURN .F.
+   ENDIF
 
    DO WHILE !Eof() .AND. _godina == godina .AND. _mjesec == mjesec .AND. idradn == _idradn
 
@@ -514,7 +526,7 @@ FUNCTION SumKredita()
 
    ENDDO
 
-   hParams := hb_hash()
+   hParams := hb_Hash()
    hParams[ "unlock" ] := { "ld_radkr" }
    run_sql_query( "COMMIT", hParams )
 
@@ -1158,7 +1170,10 @@ FUNCTION ld_brisanje_kredita()
    SEEK cIdRadn + cIdKred + cNaOsnovu
 
    run_sql_query( "BEGIN" )
-   f18_lock_tables( { "ld_radkr" }, .T. )
+   IF !f18_lock_tables( { "ld_radkr" }, .T. )
+      run_sql_query( "ROLLBACK" )
+      RETURN .F.
+   ENDIF
 
 
    nStavki := 0
@@ -1175,7 +1190,7 @@ FUNCTION ld_brisanje_kredita()
    ENDDO
 
 
-   hParams := hb_hash()
+   hParams := hb_Hash()
    hParams[ "unlock" ] := { "ld_radkr" }
    run_sql_query( "COMMIT", hParams )
 

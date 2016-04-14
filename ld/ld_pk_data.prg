@@ -202,8 +202,11 @@ FUNCTION unos_clan( lNew )
       READ
 
 
-      f18_lock_tables( { "ld_pk_data" } )
       run_sql_query( "BEGIN" )
+      IF !f18_lock_tables( { "ld_pk_data" }, .T. )
+         run_sql_query( "ROLLBACK" )
+         RETURN .F.
+      ENDIF
 
       IF LastKey() <> K_ESC
 

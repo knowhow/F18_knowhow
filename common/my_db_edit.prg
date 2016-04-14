@@ -541,7 +541,7 @@ FUNCTION zamjeni_numericka_polja_u_tabeli( cKolona, cTrazi, cUslov )
    IF lImaSemafor
       run_sql_query( "BEGIN" )
       IF !f18_lock_tables( {  cAlias }, .T. )
-         run_sql_query( "COMMIT" )
+         run_sql_query( "ROLLBACK" )
          RETURN lRet
       ENDIF
    ENDIF
@@ -622,7 +622,7 @@ FUNCTION replace_kolona_in_table( cKolona, trazi_val, zamijeni_val, last_search 
    IF _has_semaphore
       run_sql_query( "BEGIN" )
       IF !f18_lock_tables( { cAlias  }, .T. )
-         run_sql_query( "COMMIT" )
+         run_sql_query( "ROLLBACK" )
          MsgBeep( "Ne mogu zaključati " + cAlias + "!?" )
          RETURN lRet
       ENDIF

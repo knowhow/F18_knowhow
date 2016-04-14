@@ -386,10 +386,10 @@ FUNCTION fin_automatsko_zatvaranje_otvorenih_stavki( lAuto, cKto, cPtn )
 
    run_sql_query( "BEGIN" )
 
-   IF !f18_lock_tables( { "fin_suban" }, .T. )
-      run_sql_query( "COMMIT" )
+   IF !f18_lock_tables( { "fin_suban" }, .T.
+      run_sql_query( "ROLLBACK" )
       MsgBeep( "Ne mogu zaključati tabelu fin_suban !#Prekidam operaciju zatvaranja stavki." )
-      RETURN
+      RETURN .F.
    ENDIF
 
    DO WHILE !Eof() .AND. idfirma == cidfirma .AND. cIdKonto = IdKonto
@@ -536,7 +536,7 @@ FUNCTION fin_brisanje_markera_otvorenih_stavki()
    run_sql_query( "BEGIN" )
 
    IF !f18_lock_tables( { "fin_suban" }, .T. )
-      run_sql_query( "COMMIT" )
+      run_sql_query( "ROLLBACK" )
       MsgBeep( "Ne mogu zaključati tabelu fin_suban !#Operacija poništena." )
       RETURN lRet
    ENDIF
@@ -2225,7 +2225,7 @@ STATIC FUNCTION dodaj_promjene_iz_osuban_u_suban()
    run_sql_query( "BEGIN" )
 
    IF !f18_lock_tables( { "fin_suban" }, .T. )
-      run_sql_query( "COMMIT" )
+      run_sql_query( "ROLLBACK" )
       MsgBeep( "Ne mogu zaključati tabelu fin_suban !#Operacija poništena." )
       RETURN lRet
    ENDIF

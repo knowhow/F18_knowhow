@@ -284,7 +284,7 @@ STATIC FUNCTION _insert_into_fin_priprema( data, konto_data, partn_data, param )
 
       run_sql_query( "BEGIN" )
       IF !f18_lock_tables( { "partn", "konto" }, .T. )
-         run_sql_query( "COMMIT" )
+         run_sql_query( "ROLLBACK" )
          MsgBeep( "Problem sa zaključavanjem tabela !#Prekidam operaciju." )
          RETURN _ret
       ENDIF

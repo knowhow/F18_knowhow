@@ -749,7 +749,7 @@ STATIC FUNCTION kalk_azur_sql()
    run_sql_query( "BEGIN" )
 
    IF !f18_lock_tables( { _tbl_kalk, _tbl_doks }, .T. )
-      run_sql_query( "COMMIT" )
+      run_sql_query( "ROLLBACK" )
       MsgBeep( "Ne mogu zaključati tabele !#Prekidam operaciju." )
       RETURN lRet
    ENDIF

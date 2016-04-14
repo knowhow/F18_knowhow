@@ -948,9 +948,9 @@ STATIC FUNCTION nafiluj_atribute_grupe( __gr_id, __el_id )
    run_sql_query( "BEGIN" )
 
    IF !f18_lock_tables( { "e_att" }, .T. )
-      run_sql_query( "COMMIT" )
+      run_sql_query( "ROLLBACK" )
       MsgBeep( "Ne mogu zaključati e_att tabelu !#Prekidam operaciju." )
-      RETURN
+      RETURN .F.
    ENDIF
 
    SELECT e_gr_att

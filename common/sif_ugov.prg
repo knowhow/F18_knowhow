@@ -324,7 +324,7 @@ FUNCTION br_ugovor()
 
    run_sql_query( "BEGIN" )
    IF !f18_lock_tables( { "fakt_ugov", "fakt_rugov" }, .T. )
-      run_sql_query( "COMMIT" )
+      run_sql_query( "ROLLBACK" )
       MsgBeep( "Problem sa lokovanjem tabela !" )
       RETURN _ret
    ENDIF

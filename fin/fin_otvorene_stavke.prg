@@ -386,7 +386,7 @@ FUNCTION fin_automatsko_zatvaranje_otvorenih_stavki( lAuto, cKto, cPtn )
 
    run_sql_query( "BEGIN" )
 
-   IF !f18_lock_tables( { "fin_suban" }, .T.
+   IF !f18_lock_tables( { "fin_suban" }, .T. )
       run_sql_query( "ROLLBACK" )
       MsgBeep( "Ne mogu zaključati tabelu fin_suban !#Prekidam operaciju zatvaranja stavki." )
       RETURN .F.

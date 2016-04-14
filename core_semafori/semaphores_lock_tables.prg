@@ -54,6 +54,7 @@ FUNCTION f18_lock_tables( aTables )
       _dbf_rec := get_a_dbf_rec( aTables[ _i ], .T. )
       _tbl := _dbf_rec[ "table" ]
       IF !_dbf_rec[ "sql" ]
+         unlock_semaphore( _tbl )
          IF !lock_semaphore( _tbl )
             error_bar( "lock", "ERR LOCK: " + _tbl )
             ?E "ERROR: neuspjesan lock tabela " + pp( aTables ), "zapeo na:", _tbl

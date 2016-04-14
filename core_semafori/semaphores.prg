@@ -101,13 +101,16 @@ FUNCTION unlock_semaphore( cTable  )
    LOCAL _user_locked
    LOCAL cSemaphoreStatus
    LOCAL nLockSeconds
+   LOCAL hParams := hb_hash()
+
 
    IF skip_semaphore_sync( cTable )
       RETURN .T.
    ENDIF
 
    _qry := "UPDATE sem." + cTable + " SET algorithm='free', last_trans_user_code=" + sql_quote( _user ) + "; "
-   _ret := run_sql_query( _qry )
+   hParams[ "retry" ] := 1
+   _ret := run_sql_query( _qry, hParams )
 
    IF sql_error_in_query( _ret, "UPDATE" )
       RETURN .F.

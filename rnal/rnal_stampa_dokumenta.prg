@@ -274,8 +274,8 @@ STATIC FUNCTION _fill_items( lZpoGN, nVar )
    LOCAL nGr2
    LOCAL cPosition
    LOCAL cIt_lab_pos, cArtShTmp, cOrigDesc
-   LOCAL xx
    LOCAL nScan
+   LOCAL xx
 
    IF nVar == NIL
       nVar := 1
@@ -290,6 +290,7 @@ STATIC FUNCTION _fill_items( lZpoGN, nVar )
       lZPoGn := .F.
    ENDIF
 
+altd()
    // samo kod naloga se vrsi dijeljenje po grupama...
    IF nVar == 1 .AND. Pitanje(, "Razdijeliti nalog po grupama ?", "D" ) == "D"
       lGroups := .T.

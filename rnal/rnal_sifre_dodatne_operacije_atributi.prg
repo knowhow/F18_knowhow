@@ -486,30 +486,34 @@ FUNCTION g_aop_value( cVal )
 
    CASE aTmp[ 1 ] == "<A_B>"
       cRet := _cre_aop_str( aTmp[ 2 ] )
+      BREAK
 
-   // zaobljavanje
-   CASE aTmp[ 1 ] == "<A_Z>"
+   CASE aTmp[ 1 ] == "<A_Z>" // zaobljavanje
       cRet := _cre_aop_Str( aTmp[ 2 ] )
+      BREAK
 
    CASE aTmp[ 1 ] == "STAMP"
       cRet := rnal_pozicija_pecata_stavke( cVal )
+      BREAK
 
    CASE aTmp[ 1 ] == "<A_BU>"
       cRet := rnal_dimenzije_rupa_za_nalog( cVal )
+      BREAK
 
    CASE aTmp[ 1 ] == "<A_PREP>"
       cRet := rnal_dimenzije_prepusta_za_nalog( cVal )
+      BREAK
 
    CASE aTmp[ 1 ] == "RAL"
 
       aRal := TokToNiz( aTmp[ 2 ], "#" )
-      IF ValType( aRal ) != "A" .AND. LEN( aRal ) < 3
+      IF ValType( aRal ) != "A" .OR. LEN( aRal ) < 3
           error_bar( "g_aop", "ERR format RAL:#D1#D2#D3: " + aTmp[ 2] )
           cRet := "XXX"
           RETURN cRet
       ENDIF
-
       cRet := g_ral_value( Val( aRal[ 1 ] ), Val( aRal[ 2 ] ), Val( aRal[ 3 ] ) )
+
    ENDCASE
 
    RETURN cRet

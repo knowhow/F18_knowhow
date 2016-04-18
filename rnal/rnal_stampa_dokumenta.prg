@@ -34,6 +34,7 @@ FUNCTION stampa_nalog_proizvodnje( lTemporary, nDoc_no )
    _fill_main()
    _fill_items()
    fill_za_stampu_doc_it2()
+   altd()
    fill_operacije()
 
    lFlag := is_printati_rekap_repromaterijala()
@@ -290,8 +291,6 @@ STATIC FUNCTION _fill_items( lZpoGN, nVar )
       lZPoGn := .F.
    ENDIF
 
-altd()
-   // samo kod naloga se vrsi dijeljenje po grupama...
    IF nVar == 1 .AND. Pitanje(, "Razdijeliti nalog po grupama ?", "D" ) == "D"
       lGroups := .T.
    ENDIF

@@ -161,11 +161,9 @@ STATIC FUNCTION forma_osnovnih_podataka( nBoxX, nBoxY )
       VALID _doc_type $ "  #NP"
 
    nX += 2
-
    @ m_x + nX, m_y + 2 SAY8 PadL( "Naručioc (*):", nLeft ) GET cCustid VALID {|| s_customers( @cCustId, cCustId ), set_var( @_cust_id, @cCustId ), show_it( g_cust_desc( _cust_id ), 35 ) } WHEN set_opc_box( nBoxX, 50, "0 - otvori sifrarnik" )
 
    nX += 2
-
    @ m_x + nX, m_y + 2 SAY8 PadL( "Datum isporuke (*):", nLeft ) GET _doc_dvr_da ;
         VALID must_enter( _doc_dvr_da ) .AND. valid_datum_isporuke( _doc_dvr_da, _doc_date ) ;
         WHEN set_opc_box( nBoxX, 50 )
@@ -173,20 +171,16 @@ STATIC FUNCTION forma_osnovnih_podataka( nBoxX, nBoxY )
    @ m_x + nX, Col() + 2 SAY8 PadL( "Vrijeme isporuke (*):", nLeft ) GET _doc_dvr_ti VALID must_enter( _doc_dvr_ti ) WHEN set_opc_box( nBoxX, 50, "format: HH:MM" )
 
    nX += 2
-
    @ m_x + nX, m_y + 2 SAY8 PadL( "Objekat isporuke (*):", nLeft ) GET cObjId VALID {|| s_objects( @cObjid, _cust_id, cObjId ), set_var( @_obj_id, @cObjid ), show_it( g_obj_desc( _obj_id ), 35 ) } WHEN set_opc_box( nBoxX, 50, "Objekat u koji se isporučuje", "0 - otvori šifarnik" )
 
    nX += 1
-
    @ m_x + nX, m_y + 2 SAY PadL( "Mjesto isporuke :", nLeft ) GET _doc_ship_p VALID {|| sh_place_pattern( @_doc_ship_p ) } PICT "@S46" WHEN set_opc_box( nBoxX, 50, "mjesto gdje se roba isporucuje", "/RP - rg prod. /T - tvornica nar." )
    @ m_x + nX, Col() SAY ">" COLOR F18_COLOR_I
 
    nX += 1
-
    @ m_x + nX, m_y + 2 SAY PadL( "Kontakt osoba (*):", nLeft ) GET cContid VALID {|| s_contacts( @cContid, _cust_id, cContId ), set_var( @_cont_id, @cContid ), show_it( g_cont_desc( _cont_id ), 35 ) } WHEN set_opc_box( nBoxX, 50, "0 - otvori sifrarnik" )
 
    nX += 1
-
    @ m_x + nX, m_y + 2 SAY PadL( "dodatni opis:", nLeft + 2 ) GET _cont_add_d PICT "@S44" WHEN set_opc_box( nBoxX, 50, "dodatni opis kontakta" )
    @ m_x + nX, Col() SAY ">" COLOR F18_COLOR_I
 
@@ -196,13 +190,13 @@ STATIC FUNCTION forma_osnovnih_podataka( nBoxX, nBoxY )
 
    nX += 1
 
-   @ m_x + nX, m_y + 2 SAY PadL( "Vrsta placanja (*):", nLeft ) GET _doc_pay_id VALID {|| ( _doc_pay_id > 0 .AND. _doc_pay_id < 3 ), show_it( s_pay_id( _doc_pay_id ), 40 ) } PICT "9"  WHEN set_opc_box( nBoxX, 50, "1 - ziro racun, 2 - gotovina" )
+   @ m_x + nX, m_y + 2 SAY8 PadL( "Vrsta plaćanja (*):", nLeft ) GET _doc_pay_id VALID {|| ( _doc_pay_id > 0 .AND. _doc_pay_id < 3 ), show_it( s_pay_id( _doc_pay_id ), 40 ) } PICT "9"  WHEN set_opc_box( nBoxX, 50, "1 - ziro racun, 2 - gotovina" )
 
    nX += 1
 
-   @ m_x + nX, m_y + 2 SAY PadL( "Placeno (D/N)? (*):", nLeft ) GET _doc_paid VALID _doc_paid $ "DN" PICT "@!" WHEN set_opc_box( nBoxX, 50 )
+   @ m_x + nX, m_y + 2 SAY8 PadL( "Plaćeno (D/N)? (*):", nLeft ) GET _doc_paid VALID _doc_paid $ "DN" PICT "@!" WHEN set_opc_box( nBoxX, 50 )
 
-   @ m_x + nX, Col() + 2 SAY "dod.nap.plac:" GET _doc_pay_de PICT "@S29" WHEN set_opc_box( nBoxX, 50, "dodatne napomene vezane za placanje" )
+   @ m_x + nX, Col() + 2 SAY8 "dod.nap.plać:" GET _doc_pay_de PICT "@S29" WHEN set_opc_box( nBoxX, 50, "dodatne napomene vezane za placanje" )
    @ m_x + nX, Col() SAY ">" COLOR F18_COLOR_I
 
    nX += 2

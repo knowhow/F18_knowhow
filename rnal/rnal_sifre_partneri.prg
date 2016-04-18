@@ -102,15 +102,13 @@ STATIC FUNCTION set_f_kol( cCustDesc, cId )
 
 
 
-// -----------------------------------------
-// setovanje kolona tabele
-// -----------------------------------------
+
 STATIC FUNCTION set_a_kol( aImeKol, aKol )
 
    aKol := {}
    aImeKol := {}
 
-   AAdd( aImeKol, { PadC( "ID/MC", 25 ), {|| sif_idmc( cust_id, .F., 25 ) }, "cust_id", {|| rnal_uvecaj_id( @wCust_id, "CUST_ID" ), .F. }, {|| .T. } } )
+   AAdd( aImeKol, { PadC( "ID/MC", 20 ), {|| sif_idmc( cust_id, .F., 20 ) }, "cust_id", {|| rnal_uvecaj_id( @wCust_id, "CUST_ID" ), .F. }, {|| .T. } } )
    AAdd( aImeKol, { PadC( "Naziv", 40 ), {|| PadR( cust_desc, 40 ) }, "cust_desc" } )
    AAdd( aImeKol, { PadC( "Adresa", 20 ), {|| PadR( cust_addr, 20 ) }, "cust_addr" } )
    AAdd( aImeKol, { PadC( "Telefon", 20 ), {|| PadR( cust_tel, 20 ) }, "cust_tel" } )

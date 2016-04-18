@@ -49,7 +49,7 @@ FUNCTION PostojiSifra( nDbf, nNtx, nVisina, nSirina, cNaslov, cID, dx, dy,  bBlo
 
    IF Used() .AND. ( rddName() ==  "SQLMIX" )
       PopSifV()
-      PopWa()
+      PopWa( nDbf )
       RETURN p_sifra( nDbf, nNtx, nVisina, nSirina, cNaslov, @cID, dx, dy,  bBlok, aPoredak, bPodvuci, aZabrane, lInvert, aZabIsp )
    ENDIF
 

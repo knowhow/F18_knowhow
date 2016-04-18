@@ -18,8 +18,10 @@ FUNCTION s_contacts( cId, nCust_id, cContDesc, dx, dy )
 
    LOCAL cHeader
    LOCAL cTag := "4"
+   LOCAL cRet
    PRIVATE ImeKol
    PRIVATE Kol
+
 
    IF nCust_id == nil
       nCust_id := -1
@@ -77,9 +79,7 @@ FUNCTION s_contacts( cId, nCust_id, cContDesc, dx, dy )
    RETURN cRet
 
 
-// --------------------------------------
-// obrada tipki u sifrarniku
-// --------------------------------------
+
 STATIC FUNCTION key_handler()
 
    LOCAL nRet := DE_CONT
@@ -98,10 +98,12 @@ STATIC FUNCTION key_handler()
 // -----------------------------------------
 STATIC FUNCTION set_a_kol( aImeKol, aKol, nCust_id )
 
+   LOCAL i
+
    aKol := {}
    aImeKol := {}
 
-   AAdd( aImeKol, { "ID/MC", {|| sif_idmc( cont_id ) }, "cont_id", {|| rnal_uvecaj_id( @wCont_id, "CONT_ID" ), .F. }, {|| .T. } } )
+   AAdd( aImeKol, { "ID/MC", {|| sif_idmc( cont_id, .F., 20 ) }, "cont_id", {|| rnal_uvecaj_id( @wCont_id, "CONT_ID" ), .F. }, {|| .T. } } )
    AAdd( aImeKol, { _u( "Naručioc" ), {|| g_cust_desc( cust_id ) }, "cust_id", {|| set_cust_id( @wCust_id ) }, {|| s_customers( @wCust_id ), show_it( g_cust_desc( wcust_id ) ) } } )
    AAdd( aImeKol, { "Ime i prezime", {|| PadR( cont_desc, 20 ) }, "cont_desc", {|| .T. }, {|| val_cont_name( wcont_desc ) } } )
    AAdd( aImeKol, { "Telefon", {|| PadR( cont_tel, 20 ) }, "cont_tel" } )

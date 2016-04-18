@@ -60,9 +60,9 @@ FUNCTION sif_idmc( nFieldId, lOnlyMc, nRpad )
    LOCAL cId := Str( nFieldId )
 
    LOCAL cMCode := iif( FieldPos( "MATCH_CODE" ) <> 0, AllTrim( field->match_code ), "" )
-   LOCAL xRet := ""
+   LOCAL cRet := ""
 
-   IF nRpad == nil
+   IF nRpad == NIL
       nRPad := 10
    ENDIF
 
@@ -71,21 +71,21 @@ FUNCTION sif_idmc( nFieldId, lOnlyMc, nRpad )
    ENDIF
 
    IF lOnlyMC <> .T.
-      xRet += AllTrim( cId )
+      cRet += AllTrim( cId )
    ELSE
-      xRet += "--"
+      cRet += "--"
    ENDIF
 
    IF !Empty( cMCode )
-      xRet += "/"
-      IF Len( cMCode ) > 4
-         xRet += Left( cMCode, 4 ) + ".."
+      cRet += "/"
+      IF nRPad < Len( cMCode ) + LEN( cRet ) // 20-4
+         cRet += Left( cMCode, nRPad - LEN( cRet ) - 2 ) + ".."
       ELSE
-         xRet += cMCode
+         cRet += cMCode
       ENDIF
    ENDIF
 
-   RETURN PadR( xRet, nRPad )
+   RETURN PadR( cRet, nRPad )
 
 
 

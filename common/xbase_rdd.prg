@@ -81,6 +81,10 @@ FUNCTION PopWA( nWANeDiraj )
 
    hRet := StackPop( aWaStack )
 
+   IF !HB_ISHASH( hRet )  .OR. !hb_HHasKey( hRet, 'wa' )
+      error_bar( "bug", log_stack( 1 ) )
+      RETURN NIL
+   ENDIF
 
    IF hRet[ 'wa' ] <> NIL  .AND. ( hRet[ 'wa' ] != nWaNeDiraj )
 
@@ -103,6 +107,24 @@ FUNCTION PopWA( nWANeDiraj )
    ENDIF
 
    RETURN hRet
+
+
+FUNCTION log_stack( nStart )
+
+   LOCAL cLogStr := "", nI, cMsg
+
+   FOR nI := nStart TO 30
+      IF !Empty( ProcName( nI ) )
+         cMsg := AllTrim( Str( nI, 3 ) ) + ")" + AllTrim( ProcName( nI ) ) + "/" + AllTrim( Str( ProcLine( nI ), 6 ) )
+         IF Empty( cLogStr )
+            cLogStr := cMsg
+         ELSE
+            cLogStr +=  "% " + cMsg
+         ENDIF
+      END
+   NEXT
+
+   RETURN cLogStr
 
 
 FUNCTION index_tag_num( cName )
@@ -136,7 +158,7 @@ FUNCTION my_flock()
    IF Used() .AND.  ( rddName() != "SQLMIX" )
       lRet := FLock()
       IF !lRet
-         ?E "FLOCK neuspjesno: " + ALIAS()
+         ?E "FLOCK neuspjesno: " + Alias()
       ENDIF
       RETURN lRet
    ENDIF

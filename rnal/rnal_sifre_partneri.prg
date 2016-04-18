@@ -26,7 +26,7 @@ FUNCTION s_customers( cId, cCustDesc, dx, dy )
 
    O_CUSTOMS
 
-   cHeader := "Narucioci"
+   cHeader := "Naručioci"
    cHeader += Space( 5 )
    cHeader += "/ 'K' - pr.kontakata  / 'O' - pr.objekata"
 
@@ -51,7 +51,7 @@ FUNCTION s_customers( cId, cCustDesc, dx, dy )
 
    set_f_kol( cCustDesc, @cId )
 
-   cRet := PostojiSifra( F_CUSTOMS, cTag, maxrows() - 15, maxcols() - 5, cHeader, @cId, dx, dy, {|| key_handler( Ch ) } )
+   cRet := PostojiSifra( F_CUSTOMS, cTag, maxrows() - 15, maxcols() - 5, _u( cHeader ), @cId, dx, dy, {|| key_handler( Ch ) } )
 
    IF !Empty( cCustDesc )
       SET FILTER TO
@@ -110,7 +110,7 @@ STATIC FUNCTION set_a_kol( aImeKol, aKol )
    aKol := {}
    aImeKol := {}
 
-   AAdd( aImeKol, { PadC( "ID/MC", 20 ), {|| sif_idmc( cust_id, .F., 20 ) }, "cust_id", {|| rnal_uvecaj_id( @wCust_id, "CUST_ID" ), .F. }, {|| .T. } } )
+   AAdd( aImeKol, { PadC( "ID/MC", 25 ), {|| sif_idmc( cust_id, .F., 25 ) }, "cust_id", {|| rnal_uvecaj_id( @wCust_id, "CUST_ID" ), .F. }, {|| .T. } } )
    AAdd( aImeKol, { PadC( "Naziv", 40 ), {|| PadR( cust_desc, 40 ) }, "cust_desc" } )
    AAdd( aImeKol, { PadC( "Adresa", 20 ), {|| PadR( cust_addr, 20 ) }, "cust_addr" } )
    AAdd( aImeKol, { PadC( "Telefon", 20 ), {|| PadR( cust_tel, 20 ) }, "cust_tel" } )

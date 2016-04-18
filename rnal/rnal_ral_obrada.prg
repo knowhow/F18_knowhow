@@ -84,7 +84,7 @@ FUNCTION get_ral( nTick )
    BoxC()
 
    SELECT ral
-   SEEK Str( nRal, 5, 0) + Str( nTick, 2, 0)
+   SEEK Str( nRal, 5, 0 ) + Str( nTick, 2, 0 )
 
    IF !Found()
       SEEK Str( nRal, 5, 0 )
@@ -135,8 +135,8 @@ STATIC FUNCTION matrica_valjaka()
 
    LOCAL _arr := {}
 
-   AADD( _arr, { 1, 80 } )
-   AADD( _arr, { 2, 160 } )
+   AAdd( _arr, { 1, 80 } )
+   AAdd( _arr, { 2, 160 } )
 
    RETURN _arr
 
@@ -148,7 +148,7 @@ STATIC FUNCTION dimenzije_valjaka( nValjak )
    LOCAL nScan
    LOCAL aArr := matrica_valjaka()
 
-   nScan := ASCAN( aArr, { |xval| xval[1] == nValjak } )
+   nScan := AScan( aArr, {|xval| xval[ 1 ] == nValjak } )
 
    IF nScan > 0
       nVal := aArr[ nScan, 2 ]
@@ -162,10 +162,24 @@ STATIC FUNCTION dimenzije_valjaka( nValjak )
 // nRal - oznaka RAL-a (numeric)
 // nTick - debljina stakla
 // ----------------------------------------
-FUNCTION g_ral_value( nRal, nTick, nRoller )
+FUNCTION g_ral_value( cRal )
 
    LOCAL xRet := ""
+   LOCAL aRal
+   LOCAL nRal, nTick, nRoller
+
    LOCAL nTArea := Select()
+
+   aRal := TokToNiz( cRal, "#" )
+
+   IF ValType( aRal ) != "A" .OR. Len( aRal ) < 2
+      error_bar( "g_ral", "ERR format RAL:#D1#D2#D3: " +  cRal )
+      RETURN "RAL:ERR"
+   ENDIF
+
+   nRal := Val( aRal[ 1 ] )
+   nTick := Val( aRal[ 2 ] )
+   nRoller :=  Val( aRal[ 3 ] )
 
    SELECT ( F_RAL )
    IF !Used()

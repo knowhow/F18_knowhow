@@ -469,7 +469,7 @@ STATIC FUNCTION prikazi_greske_provjere_konta_i_partnera( err )
    FF
    end_print()
 
-   RETURN
+   RETURN .T.
 
 
 

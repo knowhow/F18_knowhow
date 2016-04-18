@@ -70,26 +70,25 @@ FUNCTION GetRtmFile( cDefRtm )
 
 FUNCTION pocni_stampu()
 
-   IF !lSSIP99 .AND. !StartPrint()
+   IF !lSSIP99 .AND. !start_print_close_ret()
       my_close_all_dbf()
-      RETURN
+      RETURN .F.
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 FUNCTION zavrsi_stampu()
 
    IF !lSSIP99
       my_close_all_dbf()
-      EndPrint()
+      RETURN end_print()
    ENDIF
 
-   RETURN
+   RETURN .F.
 
 
-// --------------------------------------------------------
-// --------------------------------------------------------
+
 FUNCTION StampTXT( cIdFirma, cIdTipDok, cBrDok, lJFill )
 
    PRIVATE InPicDEM := PicDEM

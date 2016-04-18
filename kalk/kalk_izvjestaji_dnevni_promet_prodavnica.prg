@@ -55,7 +55,7 @@ FUNCTION DnevProm()
    ENDIF
 
    cOldIni := gPINI
-   StartPrint( .T. )
+   start_print_close_ret()
    nStr := 1
    Header( dDan, @nStr )
 
@@ -76,7 +76,7 @@ FUNCTION DnevProm()
       nUk += aR[ i, 6 ]
    NEXT
    Footer( cPodvuci, nUk, nUkKol )
-   EndPrint()
+   end_print()
 
    gPINI := cOldIni
    CopyZaSlanje( dDan )
@@ -132,7 +132,7 @@ FUNCTION PromPeriod()
    ENDIF
 
    cOldIni := gPINI
-   StartPrint( .T. )
+   start_print_close_ret()
    nStr := 1
    Header( dDan, @nStr )
 
@@ -152,15 +152,15 @@ FUNCTION PromPeriod()
       nUk += aR[ i, 6 ]
    NEXT
    Footer( cPodvuci, nUk, nUkKol )
-   EndPrint()
+   end_print()
 
    gPINI := cOldIni
    CopyZaSlanje( dDan )
 
    CLOSERET
 
-   RETURN
-// }
+   RETURN .T.
+
 
 
 /* ScanTops(dDan, aR, dDatDo, cPKto)
@@ -381,7 +381,7 @@ STATIC FUNCTION Header( dDan, nStr )
 
    b1 := {|| QOut( "KALK: EVIDENCIJA DNEVNOG PROMETA U MALOPRODAJI NA DAN " + DToC( dDan ), "    Str." + LTrim( Str( nStr ) )  ) }
 
-   b2 := {|| QOut( "ID PM:", my_get_from_ini( "ZaglavljeDnevnogPrometa", "IDPM","01    - Planika Flex BiH", EXEPATH )          ) }
+   b2 := {|| QOut( "ID PM:", my_get_from_ini( "ZaglavljeDnevnogPrometa", "IDPM", "01    - Planika Flex BiH", EXEPATH )          ) }
 
    b3 := {|| QOut( "KONTO:", my_get_from_ini( "ZaglavljeDnevnogPrometa", "KONTO", "132   - ROBA U PRODAVNICI", EXEPATH )         ) }
 

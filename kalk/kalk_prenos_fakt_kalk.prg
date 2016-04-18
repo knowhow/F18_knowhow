@@ -74,7 +74,7 @@ FUNCTION ProvjeriSif( clDok, cImePoljaID, nOblSif, clFor, lTest )
             IF lTest == .F.
                IF !lStartPrint
                   lStartPrint := .T.
-                  StartPrint()
+                  start_print_close_ret()
                   ? "NEPOSTOJECE SIFRE:"
                   ? "------------------"
                ENDIF
@@ -106,7 +106,7 @@ FUNCTION ProvjeriSif( clDok, cImePoljaID, nOblSif, clFor, lTest )
    GO ( nRec )
    IF lStartPrint
       ?
-      EndPrint()
+      end_print()
    ENDIF
 
    RETURN lVrati

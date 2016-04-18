@@ -61,7 +61,7 @@ FUNCTION PPProd()
    cPrinter := gPrinter
    gPrinter := "R"
 
-   StartPrint()
+   start_print_close_ret()
    ?
    ? "#%LANDS#"
 
@@ -119,18 +119,16 @@ FUNCTION PPProd()
    Footer( nUPari, nUBruto1, nUBruto2, nUBruto, nUNeto1, nUNeto2, nUNeto, aPolozi )
    Linija( Len( aPolozi ) )
 
-   EndPrint()
+   end_print()
    gPrinter := cPrinter
 
    CLOSERET
 
-   RETURN
-// }
 
 
 STATIC FUNCTION InitAPolozi( aPolozi )
 
-   // {
+
    LOCAL i
 
    aPolozi := {}

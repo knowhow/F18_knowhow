@@ -140,9 +140,9 @@ FUNCTION p_a4_obrl( lStartPrint )
 
    IF lStartPrint
 
-      IF !StartPrint( nil, nil )
+      IF !start_print_close_ret()
          my_close_all_dbf()
-         RETURN
+         RETURN .F.
       ENDIF
 
    ENDIF
@@ -585,10 +585,10 @@ FUNCTION p_a4_obrl( lStartPrint )
 
    IF lStartPrint
       FF
-      EndPrint()
+      end_print()
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 // ---------------------------------------------

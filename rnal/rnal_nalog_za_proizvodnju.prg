@@ -58,6 +58,7 @@ FUNCTION rnal_nalog_za_proizvodnju_txt()
    LOCAL aGroups := {}
    LOCAL nCnt := 0
    LOCAL i
+   LOCAL nDoc_no, nDoc_gr
 
    LEN_QTTY := Len( PIC_QTTY )
    LEN_VALUE := Len( PIC_VALUE )
@@ -87,21 +88,17 @@ FUNCTION rnal_nalog_za_proizvodnju_txt()
 
    ENDDO
 
-   IF !StartPrint( nil, nil )
-      my_close_all_dbf()
-      RETURN
-   ENDIF
+   start_print_close_ret()
 
    FOR i := 1 TO Len( aGroups )
 
       stampa_naloga_za_grupu( aGroups[ i, 1 ], aGroups[ i, 2 ], Len( aGroups ) )
-
       FF
    NEXT
 
-   EndPrint()
+   end_print()
 
-   RETURN
+   RETURN .T.
 
 
 FUNCTION stampa_naloga_za_grupu( nDoc_gr, nGr_cnt, nGr_total )

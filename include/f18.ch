@@ -411,17 +411,6 @@
                                   ;endif
 
 
-#command START PRINT CRET DOCNAME <y>    =>  PRIVATE __print_opt := NIL ;
-                                             ;if !StartPrint(nil, nil, <y>)    ;
-                                             ;my_close_all_dbf()             ;
-                                             ;return                ;
-                                             ;endif
-
-#command START PRINT CRET <x> DOCNAME  <y> => ;private __print_opt := NIL ;
-                                  ;if !StartPrint(nil, nil, <y>  )  ;
-                                  ;my_close_all_dbf()             ;
-                                  ;return <x>            ;
-                                  ;endif
 
 
 #command STARTPRINTPORT CRET <p>, <x> =>  PRIVATE __print_opt := NIL ;
@@ -563,13 +552,6 @@
        ; dbSetRelation( <(alias1)>,{||'1'+<key1>}, "'1'+"+<"key1"> )      ;
       [; dbSetRelation( <(aliasn)>,{||'1'+<keyn>}, "'1'+"+<"keyn"> ) ]
 
-
-#command POCNI STAMPU   => if !lSSIP99 .and. !StartPrint()       ;
-                           ;my_close_all_dbf()             ;
-                           ;return                ;
-                           ;endif
-
-#command ZAVRSI STAMPU  => if !lSSIP99; EndPrint(); endif
 
 
 #command APPEND NCNL    =>  appblank2(.f.,.f.)

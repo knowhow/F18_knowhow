@@ -405,7 +405,7 @@ STATIC FUNCTION KonIzBlok()
       // ---------------------------------------------------
       SELECT IZVJE
       SEEK cBrI
-      StartPrint()
+      start_print_close_ret()
 
       P_12CPI
       QOPodv( "Izvjestaj " + cBrI + "(" + Trim( DoHasha( IZVJE->naz ) ) + ") - osnovna definicija izvjestaja" )
@@ -465,7 +465,7 @@ STATIC FUNCTION KonIzBlok()
       ENDDO
       FF
 
-      EndPrint()
+      end_print()
       SELECT KONIZ; GO ( nRec )
 
    CASE Ch == K_ALT_P      // popuni nanovo iz sifrarnika kljucnog polja
@@ -993,7 +993,7 @@ FUNCTION StTabPI()
       gPO_Port()
    ENDIF
 
-   EndPrint()
+   end_print()
 
    RETURN .T.
 
@@ -1002,7 +1002,7 @@ FUNCTION StZagPI()
 
    LOCAL xKOT := 0
 
-   StartPrint()
+   start_print_close_ret()
 
    SELECT ZAGLI
    SET FILTER TO
@@ -1021,7 +1021,7 @@ FUNCTION StZagPI()
       SKIP 1
    ENDDO
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -1031,7 +1031,7 @@ FUNCTION QOPodv( cT )
    ? cT
    ? REPL( "-", Len( cT ) )
 
-   RETURN
+   RETURN .T.
 
 FUNCTION DoHasha( cT )
 

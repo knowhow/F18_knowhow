@@ -176,8 +176,7 @@ FUNCTION KaLagM()
    MsgC()
 
 
-   StartPrint()
-   // rpt_tmp je gotova, formiramo izvjestaj
+   start_print_close_ret() // rpt_tmp je gotova, formiramo izvjestaj
    SELECT rpt_tmp
    oRpt:setFiltDbTmp()
    oRpt:sortTmpTbl()
@@ -199,13 +198,13 @@ FUNCTION KaLagM()
 
    oRpt:closeDb()
 
-   EndPrint()
+   end_print()
 
    IF oRpt:cExportDBF == "D"
       oRpt:export2DBF()
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 METHOD openDb

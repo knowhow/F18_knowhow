@@ -751,8 +751,8 @@ FUNCTION snimi_promjene_sifarnika( lNovi, cTekuciZapis )
       cEditovaniZapis := vrati_vrijednosti_polja_sifarnika_u_string( "w" )
       IF cEditovaniZapis <> cTekuciZapis
          log_write( "F18_DOK_OPER: " + ;
-            iif( lNovi, "dodan novi", "ispravljen" ) + " zapis tabele " + cAlias + ;
-            iif( !lNovi, " postojeći zapis: " + cTekuciZapis, "" ) + " novi zapis: " + cEditovaniZapis, 2 )
+            iif( lNovi, "NOVI", "EDIT" ) + " TBL: " + cAlias + ;
+            iif( !lNovi, " OLD: " + cTekuciZapis, "" ) + " NEW: " + cEditovaniZapis, 2 )
       ENDIF
    ENDIF
 

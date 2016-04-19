@@ -485,11 +485,8 @@ FUNCTION PPrint()
    PushWA()
 
    SET CURSOR ON
-   IF gSifreSamoVelikaSlova == "8"
-      SetKey( K_CTRL_F2, NIL )
-   ELSE
-      SetKey( K_SH_F2, NIL )
-   ENDIF
+
+   SetKey( K_SH_F2, NIL )
    SetKey( K_ALT_R, {|| UzmiPPr(), AEval( GetList, {| o| o:display() } ) } )
    PRIVATE GetList := {}
 
@@ -506,14 +503,14 @@ FUNCTION PPrint()
 
    Box(, 3, 65 )
    SET CURSOR ON
-   info_bar("info", "<a-R> - preuzmi parametre štampača")
+   info_bar( "info", "<a-R> - preuzmi parametre štampača" )
    @ m_x + 1, m_y + 2  SAY8 "TEKUCI STAMPAC:"
    @ m_x + 1, Col() + 4  GET  gPrinter PICT "@!"
    @ m_x + 3, m_y + 2 SAY "Pregled sekvenci ?"
    @ m_x + 3, Col() + 2 GET cSekvence VALID csekvence $ "DN" PICT "@!"
    READ
    Boxc()
-   info_bar("info", "<a-R> - preuzmi parametre štampača")
+   info_bar( "info", "<a-R> - preuzmi parametre štampača" )
 
    IF Empty( gPPort )
       gPPort := "1"
@@ -616,11 +613,7 @@ FUNCTION PPrint()
       USE
    ENDIF
 
-   IF gSifreSamoVelikaSlova == "8"
-      SetKey( K_CTRL_F2, {|| PPrint() } )
-   ELSE
-      SetKey( K_SH_F2, {|| PPrint() } )
-   ENDIF
+   SetKey( K_SH_F2, {|| PPrint() } )
    SetKey( K_ALT_R, NIL )
    PopWa()
 

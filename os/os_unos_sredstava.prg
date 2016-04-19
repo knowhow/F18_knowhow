@@ -30,7 +30,7 @@ FUNCTION unos_osnovnih_sredstava()
 
       SET CURSOR ON
 
-      cPicSif := iif( gSifreSamoVelikaSlova = "V", "@!", "" )
+      cPicSif := "@!"
 
       IF gIBJ == "D"
 

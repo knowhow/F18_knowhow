@@ -36,8 +36,7 @@ FUNCTION PrikazVal()
    RETURN ( IF( gDrugaVal == "D", " VALUTA:'" + Trim( cBBV ) + "'", "" ) )
 
 
-// -------------------------------------------
-// -------------------------------------------
+
 FUNCTION os_kartica_sredstva()
 
    o_os_sii_promj()
@@ -45,7 +44,7 @@ FUNCTION os_kartica_sredstva()
 
    cId := Space( Len( id ) )
 
-   cPicSif := IF( gSifreSamoVelikaSlova = "V", "@!", "" )
+   cPicSif := "@!"
 
    // zadajmo jedno ili sva sredstva
    // ------------------------------

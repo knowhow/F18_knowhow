@@ -11,6 +11,7 @@
 
 #include "f18.ch"
 
+MEMVAR m_x, m_y
 
 FUNCTION TAppModNew( oParent, cVerzija, cPeriod, cKorisn, cSifra, p3, p4, p5, p6, p7 )
 
@@ -55,7 +56,7 @@ ENDCLASS
 
 
 
-METHOD new( oParent, cModul, cVerzija, cPeriod, cKorisn, cSifra, p3, p4, p5, p6, p7 ) CLASS TAppMod
+METHOD New( oParent, cModul, cVerzija, cPeriod, cKorisn, cSifra, p3, p4, p5, p6, p7 ) CLASS TAppMod
 
    ::lStarted := nil
 
@@ -257,7 +258,6 @@ METHOD gParams()
 
    gPtkonv := PadR( gPtkonv, 2 )
 
-   @ m_x + 6, m_y + 2 SAY "Unos podataka u sifrarnike velika/mala slova/konv.u 852 (V/M/8)"  GET gSifreSamoVelikaSlova VALID gSifreSamoVelikaSlova $ "VM8" PICT "@!"
    @ m_x + 7, m_y + 2 SAY "Stroga kontrola ispravki/brisanja sifara     (D/N)"  GET gSKSif VALID gSKSif $ "DN" PICT "@!"
    @ m_x + 8, m_y + 2 SAY "Direktorij pomocne kopije podataka" GET gArhDir PICT "@S20"
    @ m_x + 9, m_y + 2 SAY "Default odgovor na pitanje 'Izlaz direktno na printer?' (D/N/V/E)" GET gcDirekt VALID gcDirekt $ "DNVER" PICT "@!"
@@ -302,7 +302,6 @@ METHOD gParams()
 
    IF LastKey() <> K_ESC
       Wpar( "pt", gPTKonv )
-      Wpar( "pS", gSifreSamoVelikaSlova )
       Wpar( "SK", gSKSif )
       Wpar( "DO", gcDirekt )
       Wpar( "FK", gFKolor )
@@ -395,7 +394,7 @@ STATIC FUNCTION wr_to_yml( cFName )
    // zatvori fajl
    FClose( EXEPATH + cFName )
 
-   RETURN
+   RETURN .T.
 
 
 

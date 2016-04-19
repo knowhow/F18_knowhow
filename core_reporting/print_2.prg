@@ -206,6 +206,10 @@ FUNCTION f18_end_print( cFileName, xPrintOpt )
       oPDF:View()
       hb_cdpSelect( "SL852" )
 
+   CASE cOpt == "R"
+
+      Ptxt( cFileName )
+
    OTHERWISE
 
       _cmd := "f18_editor " + cFileName

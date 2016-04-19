@@ -134,7 +134,6 @@ FUNCTION fin_gen_ptabele_stampa_nalozi( lAuto )
 */
 FUNCTION fin_gen_psuban_stampa_nalozi( lAuto, dDatNal )
 
-   LOCAL _print_opt := "V"
    LOCAL oNalog, oNalozi := FinNalozi():New()
 
    PRIVATE aNalozi := {}
@@ -161,7 +160,7 @@ FUNCTION fin_gen_psuban_stampa_nalozi( lAuto, dDatNal )
    EOF CRET .F.
 
    IF lAuto
-      _print_opt := "D"
+      //_print_opt := "D"
       Box(, 3, 75 )
       @ m_x + 0, m_y + 2 SAY "PROCES FORMIRANJA SINTETIKE I ANALITIKE"
    ENDIF
@@ -185,7 +184,7 @@ FUNCTION fin_gen_psuban_stampa_nalozi( lAuto, dDatNal )
       ENDIF
 
       IF !lAuto
-         IF !start_print( @_print_opt )
+         IF !start_print()
             my_close_all_dbf()
             RETURN .F.
          ENDIF
@@ -199,7 +198,7 @@ FUNCTION fin_gen_psuban_stampa_nalozi( lAuto, dDatNal )
       IF !lAuto
          PushWA()
          my_close_all_dbf()
-         f18_end_print( NIL, @_print_opt )
+         end_print()
          fin_open_psuban()
          PopWa()
       ENDIF

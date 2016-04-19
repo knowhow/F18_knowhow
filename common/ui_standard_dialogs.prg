@@ -145,9 +145,9 @@ FUNCTION Pitanje2( cId, cPitanje, cOdgDefault )
 FUNCTION print_dialog_box( cDirekt )
 
    SET CONFIRM OFF
-   ?E "trace-print-dialog-1"
    SET CURSOR ON
 
+altd()
    cDirekt := select_print_mode( @cDirekt )
 
    SET CONFIRM ON

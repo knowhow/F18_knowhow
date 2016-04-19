@@ -14,19 +14,26 @@
 MEMVAR GetList, gModul
 
 THREAD STATIC s_cF18Txt
+THREAD STATIC s_xPrintOpt
 
 STATIC s_nDodatniRedoviPoStranici
+
 
 FUNCTION f18_start_print( cFileName, xPrintOpt, cDocumentName )
 
    LOCAL cMsg, nI, cLogMsg := ""
    LOCAL cOpt
    LOCAL oPDF
+   LOCAL lBezParametara := .F.
 
    cFileName := set_print_file_name( cFileName )
 
    IF ( cDocumentName == NIL )
       cDocumentName :=  gModul + '_' + DToC( Date() )
+   ENDIF
+
+   IF xPrintOpt == NIL  // poziv bez parametara
+      lBezParametara := .T.
    ENDIF
 
    IF ValType( xPrintOpt ) == "H"
@@ -90,6 +97,10 @@ FUNCTION f18_start_print( cFileName, xPrintOpt, cDocumentName )
 
    my_use_refresh_stop()
 
+   IF lBezParametara
+      s_xPrintOpt := cOpt // ovo ce koristiti f18_end_print
+   ENDIF
+
    RETURN cOpt
 
 
@@ -121,6 +132,11 @@ FUNCTION f18_end_print( cFileName, xPrintOpt )
    LOCAL oPDF
 
    my_use_refresh_start()
+
+   IF xPrintOpt == NIL  // poziv bez parametara
+      xPrintOpt := s_xPrintOpt
+   ENDIF
+
    IF xPrintOpt == NIL
       cOpt := "V"
    ENDIF

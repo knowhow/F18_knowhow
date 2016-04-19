@@ -107,7 +107,7 @@ FUNCTION PregNDP()
       m += " ------------------ ----------------- ----------------- ----------------- -------------------"
    ENDIF
 
-   start_print_close_ret()
+   start_print()
    zagl9()
    PRIVATE nTPS1 := nTPS2 := nTS1 := nTS2 := nTT1 := nTT2 := 0
    nCol1 := 60

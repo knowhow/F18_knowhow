@@ -103,7 +103,7 @@ FUNCTION fin_bb_sintetika_b( params )
 
    nStr := 0
 
-   start_print_close_ret()
+   start_print()
 
    B := 1
 

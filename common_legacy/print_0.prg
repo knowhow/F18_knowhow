@@ -336,7 +336,7 @@ FUNCTION SPrint2( cKom )
    LOCAL cddir, nNPort
 
    IF gPrinter = "R"
-      start_print_close_ret()
+      start_print()
       RETURN .T.
    ENDIF
 

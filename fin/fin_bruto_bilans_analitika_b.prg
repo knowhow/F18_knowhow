@@ -105,7 +105,7 @@ FUNCTION fin_bb_analitika_b( params )
 
    nStr := 0
 
-   start_print_close_ret()
+   start_print()
 
    B := 0
    D1S := D2S := D3S := D4S := P1S := P2S := P3S := P4S := 0

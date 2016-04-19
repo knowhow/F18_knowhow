@@ -127,7 +127,7 @@ FUNCTION SpecKK2( lOtvSt )
    EOF CRET
 
    nStr := 0
-   start_print_close_ret()
+   start_print()
 
 
 

@@ -23,7 +23,6 @@ FUNCTION Blagajna()
    LOCAL _rec
    LOCAL _nCol1
 
-
    lSumiraj := .F.
 
    O_KONTO
@@ -116,7 +115,7 @@ FUNCTION Blagajna()
    BoxC()
 
    IF LastKey() == K_ESC
-      RETURN
+      RETURN .F.
    ENDIF
 
    // snimi parametre
@@ -128,7 +127,9 @@ FUNCTION Blagajna()
 
    SELECT fin_pripr
 
-   start_print_close_ret()
+   IF !start_print()
+      RETURN .F.
+   ENDIF
    ?
    F12CPI
    ?? Space( 12 )
@@ -412,7 +413,7 @@ FUNCTION blag_azur()
       RETURN
    ENDIF
 
-   start_print_close_ret()
+   start_print()
 
 
    nRbr := 0

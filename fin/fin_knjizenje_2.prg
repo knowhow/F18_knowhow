@@ -28,7 +28,7 @@ FUNCTION OiNIsplate()
       RETURN ( NIL )
    ENDIF
    IF cBrojOiN == "S"; GO TOP; ENDIF
-   start_print_close_ret()
+   start_print()
 
    DO WHILE !Eof()
       ?

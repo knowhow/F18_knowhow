@@ -70,7 +70,7 @@ FUNCTION GetRtmFile( cDefRtm )
 
 FUNCTION pocni_stampu()
 
-   IF !lSSIP99 .AND. !start_print_close_ret()
+   IF !lSSIP99 .AND. !start_print()
       my_close_all_dbf()
       RETURN .F.
    ENDIF

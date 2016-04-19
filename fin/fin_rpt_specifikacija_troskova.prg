@@ -43,7 +43,7 @@ if g_vars( @dD_from, @dD_to, @cGroup, @cKtoListZ, @cKtoList, @cSp_ld ) == 0
 	return
 endif
 
-start_print_close_ret()
+start_print()
 
 __r_head( dD_from, dD_to )
 

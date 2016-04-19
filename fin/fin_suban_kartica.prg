@@ -401,7 +401,7 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
       xPrintOpt[ "opdf" ] := oPDF
       xPrintOpt[ "left_space" ] := 0
    ENDIF
-   start_print_close_ret( xPrintOpt )
+   start_print( xPrintOpt )
 
    cIdKonto := IdKonto
 

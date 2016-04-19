@@ -213,7 +213,7 @@ STATIC FUNCTION ios_specifikacija( params )
    SEEK _id_firma + _id_konto
    EOF CRET
 
-   start_print_close_ret()
+   start_print()
    ?
 
    _rbr := 0
@@ -666,7 +666,7 @@ STATIC FUNCTION mnu_ios_print()
    // txt forma
    IF _print_tip == "2"
 
-      start_print_close_ret()
+      start_print()
 
    ELSE
 

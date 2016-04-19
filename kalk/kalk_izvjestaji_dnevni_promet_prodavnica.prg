@@ -55,7 +55,7 @@ FUNCTION DnevProm()
    ENDIF
 
    cOldIni := gPINI
-   start_print_close_ret()
+   start_print()
    nStr := 1
    Header( dDan, @nStr )
 
@@ -132,7 +132,7 @@ FUNCTION PromPeriod()
    ENDIF
 
    cOldIni := gPINI
-   start_print_close_ret()
+   start_print()
    nStr := 1
    Header( dDan, @nStr )
 

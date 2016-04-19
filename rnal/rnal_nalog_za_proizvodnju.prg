@@ -88,7 +88,7 @@ FUNCTION rnal_nalog_za_proizvodnju_txt()
 
    ENDDO
 
-   start_print_close_ret()
+   start_print()
 
    FOR i := 1 TO Len( aGroups )
 

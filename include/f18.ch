@@ -395,18 +395,18 @@
 
 
 #xcommand START PRINT CRET  =>    private __print_opt := NIL ;
-                                  ; if EMPTY(f18_start_print(NIL, @__print_opt))       ;
+                                  ; if f18_start_print(NIL, @__print_opt) == "X"  ;
                                   ;    my_close_all_dbf()             ;
                                   ;    return .F.                     ;
                                   ;endif
 
 #xcommand START PRINT RET <x>  =>  private __print_opt := NIL ;
-                                  ;if EMPTY(f18_start_print(NIL, @__print_opt))      ;
+                                  ;if f18_start_print(NIL, @__print_opt) == "X"   ;
                                   ; return <x>            ;
                                   ;endif
 
 #xcommand START PRINT RET      =>  ;private __print_opt := NIL ;
-                                  ;if EMPTY(f18_start_print(NIL, @__print_opt))      ;
+                                  ;if f18_start_print(NIL, @__print_opt) == "X"  ;
                                   ;  return NIL             ;
                                   ;endif
 

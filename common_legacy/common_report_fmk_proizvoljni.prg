@@ -405,7 +405,7 @@ STATIC FUNCTION KonIzBlok()
       // ---------------------------------------------------
       SELECT IZVJE
       SEEK cBrI
-      start_print_close_ret()
+      start_print()
 
       P_12CPI
       QOPodv( "Izvjestaj " + cBrI + "(" + Trim( DoHasha( IZVJE->naz ) ) + ") - osnovna definicija izvjestaja" )
@@ -1002,7 +1002,7 @@ FUNCTION StZagPI()
 
    LOCAL xKOT := 0
 
-   start_print_close_ret()
+   start_print()
 
    SELECT ZAGLI
    SET FILTER TO

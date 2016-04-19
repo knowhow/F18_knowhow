@@ -552,7 +552,7 @@ TODO: izbaciti
 
    Pic := PicBhd
 
-   start_print_close_ret()
+   start_print()
 
    IF cSkVar == "D"
       nDOpis := 25

@@ -358,7 +358,7 @@ FUNCTION lager_lista_magacin()
    gaZagFix := { 7, 5 }
 
    ?E "trace-kalk-llm-13"
-   start_print_close_ret()
+   start_print()
    ?
 
    PRIVATE nTStrana := 0

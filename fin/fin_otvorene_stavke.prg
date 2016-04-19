@@ -2350,7 +2350,7 @@ FUNCTION StAz()
    ENDDO
 
    GO TOP
-   start_print_close_ret()
+   start_print()
 
    print_lista_2( aKol,,, 0,, ;
       , "Rezultati asistenta otvorenih stavki za: " + idkonto + "/" + idpartner + " na datum:" + DToC( Date() ) )

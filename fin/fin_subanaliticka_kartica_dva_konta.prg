@@ -260,7 +260,7 @@ FUNCTION fin_suban_kartica2( lOtvSt )
 
    NFOUND CRET
 
-   start_print_close_ret()
+   start_print()
 
 
    nSviD := nSviP := nSviD2 := nSviP2 := 0

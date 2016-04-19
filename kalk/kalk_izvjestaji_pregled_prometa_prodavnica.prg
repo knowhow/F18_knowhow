@@ -61,7 +61,7 @@ FUNCTION PPProd()
    cPrinter := gPrinter
    gPrinter := "R"
 
-   start_print_close_ret()
+   start_print()
    ?
    ? "#%LANDS#"
 

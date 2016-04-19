@@ -112,7 +112,7 @@ FUNCTION fin_bb_subanalitika_b( params )
 
    nStr := 0
 
-   start_print_close_ret()
+   start_print()
 
    B := 0
    B1 := 0

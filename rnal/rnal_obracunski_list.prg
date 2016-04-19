@@ -140,7 +140,7 @@ FUNCTION p_a4_obrl( lStartPrint )
 
    IF lStartPrint
 
-      IF !start_print_close_ret()
+      IF !start_print()
          my_close_all_dbf()
          RETURN .F.
       ENDIF

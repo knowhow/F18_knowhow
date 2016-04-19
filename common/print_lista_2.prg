@@ -168,9 +168,7 @@ FUNCTION print_lista_2( aKol, bZaRed, nOdvoji, nCrtice, bUslov, lA4papir, cNaslo
       cOk := { "-", "-", " ", "-", " ", "-", " ", "-", "-", " ", "-", " ", "-", "-", "-", " " }
    ELSEIF nCrtice == 1
 
-
       cOk := { "+", "-", "+", "+", ":", "+", "+", "+", "+", "+", "+", ":", "-", "+", "+", "+" }
-
 
    ELSEIF nCrtice == 9
       // rtf-fajlovi
@@ -255,7 +253,7 @@ FUNCTION print_lista_2( aKol, bZaRed, nOdvoji, nCrtice, bUslov, lA4papir, cNaslo
 
       // ispitivanje uslova za prelazak na novu stranicu
       // -----------------------------------------------
-      IF lfor .AND. nStr >= 0 .AND. ( PRow() > gnRedova + IF( gPrinter = "R", 2, 0 ) -IF( xPodvuci, 1, 0 ) -5 -Max( Len( aPrStav ), nPRed ) -IF( lPrenos, Len( aPrSum ) * IF( xTot[ 1 ], ( 2 + 1 / Len( aPrSum ) ), 1 ), 0 ) )
+      IF lFor .AND. nStr >= 0 .AND. ( PRow() > gnRedova + IF( gPrinter = "R", 2, 0 ) -IF( xPodvuci, 1, 0 ) -5 -Max( Len( aPrStav ), nPRed ) -IF( lPrenos, Len( aPrSum ) * IF( xTot[ 1 ], ( 2 + 1 / Len( aPrSum ) ), 1 ), 0 ) )
          NaSljedStranu( @lMozeL, @lPrenos, cLM2, cOk, aPom, nKol, @nStr, cLM, ;
             nDReda, nOdvoji, aPrSum, aKol, nSuma, cTek3, bZagl, ;
             cNaslov, aPrZag, cTek1, xTot )
@@ -497,12 +495,12 @@ FUNCTION print_lista_2( aKol, bZaRed, nOdvoji, nCrtice, bUslov, lA4papir, cNaslo
 
 FUNCTION MDDReda( nZnak, lA4papir )
 
-   // {
+
    nZnak = IF( lA4papir == "4", nZnak * 2 -1, IF( lA4papir == "L4", nZnak * 1.4545 -1, nZnak ) )
 
    RETURN Int( IF( nZnak < 161, 160, IF( nZnak < 193, 192, IF( nZnak < 275, 274, 320 ) ) ) / IF( lA4papir == "4", 2, IF( lA4papir == "L4", 1.4545, 1 ) ) )
 
-   RETURN
+   RETURN .T.
 
 
 

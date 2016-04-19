@@ -47,7 +47,7 @@ FUNCTION kamate_obracun_pojedinacni( fVise )
    O_KS
    SET ORDER TO TAG "2"
 
-   start_print_close_ret()
+   start_print()
 
    ?
    P_10CPI

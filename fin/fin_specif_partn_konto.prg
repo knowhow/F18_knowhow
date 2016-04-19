@@ -85,7 +85,7 @@ FUNCTION fin_spec_partnera_na_kontu()
    EOF CRET
 
    nStr := 0
-   start_print_close_ret()
+   start_print()
    DO WHILE !Eof()
       nSD1DEM := nSP1DEM := nSD1BHD := nSP1BHD := 0
 

@@ -445,7 +445,7 @@ STATIC FUNCTION prikazi_greske_provjere_konta_i_partnera( err )
    _line += Space( 1 )
    _line += Replicate( "-", 30 )
 
-   start_print_close_ret()
+   start_print()
    ?
 
    ?U "Lista nepostojećih šifara na dokumentu:"

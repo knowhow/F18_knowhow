@@ -287,7 +287,7 @@ FUNCTION fin_spec_po_suban_kontima()
       xPrintOpt[ "left_space" ] := 0
    ENDIF
 
-   start_print_close_ret( xPrintOpt )
+   start_print( xPrintOpt )
 
    IF cSkVar == "D"
       nDOpis := 25

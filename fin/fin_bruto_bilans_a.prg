@@ -846,7 +846,7 @@ METHOD FinBrutoBilans:print_txt()
 
    _line := ::zagl[ "line" ]
 
-   start_print_close_ret()
+   start_print()
 
    ::zaglavlje_txt()
 

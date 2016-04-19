@@ -184,7 +184,7 @@ FUNCTION PrenosFin()
    my_dbf_zap()
    SET ORDER TO 0
 
-   start_print_close_ret()
+   start_print()
 
    ?
    ? "Prolazim kroz bazu...."

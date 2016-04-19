@@ -175,7 +175,7 @@ FUNCTION fin_spec_otv_stavke_po_dospijecu( lKartica )
       ENDIF
    ENDIF
 
-   start_print_close_ret()
+   start_print()
 
    nUkDugBHD := 0
    nUkPotBHD := 0

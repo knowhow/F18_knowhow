@@ -47,7 +47,7 @@ FUNCTION PartVanProm()
    ESC_BCR
    BoxC()
 
-   start_print_close_ret()
+   start_print()
 
    INI
    ?

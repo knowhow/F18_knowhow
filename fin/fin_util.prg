@@ -156,7 +156,7 @@ STATIC FUNCTION _ispisi_greske( a_error )
       RETURN
    ENDIF
 
-   start_print_close_ret()
+   start_print()
 
    ?
    ? "Pregled ispravnosti podataka:"
@@ -258,7 +258,7 @@ FUNCTION daterr_rpt()
       dGrDate := _g_gr_date()
    ENDIF
 
-   start_print_close_ret()
+   start_print()
 
    ? "------------------------------------------------"
    ? "Lista naloga sa neispravnim datumima:"

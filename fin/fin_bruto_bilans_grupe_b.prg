@@ -96,7 +96,7 @@ FUNCTION fin_bb_grupe_b( params )
 
    nStr := 0
 
-   start_print_close_ret()
+   start_print()
 
    B := 1
    D1S := D2S := D3S := D4S := P1S := P2S := P3S := P4S := 0

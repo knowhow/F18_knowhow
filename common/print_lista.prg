@@ -1,14 +1,13 @@
 /*
- * This file is part of the bring.out FMK, a free and open source
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+ * This file is part of the bring.out knowhow ERP, a free and open source
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
-
 
 #include "f18.ch"
 
@@ -103,8 +102,8 @@ FUNCTION print_lista( Zaglavlje, ImeDat, bFor, fIndex, lBezUpita )
          NEXT
          @ m_x + 3, m_y + 3  SAY8 "Način sortiranja (ID/NAZ):" GET nSort VALID   AllTrim( nSort ) $ cValid PICT "@!"
       ENDIF
-      @ m_x + 4, m_y + 3  SAY "Odvajati redove linijom (D/N) ?" GET gOdvTab VALID gOdvTab $ "DN" PICTURE "@!"
-      @ m_x + 5, m_y + 3  SAY8 "Razmak između redova   (D/N) ?" GET cRazmak VALID cRazmak $ "DN" PICTURE "@!"
+      @ m_x + 4, m_y + 3  SAY8 "Odvajati redove linijom (D/N) ?" GET gOdvTab VALID gOdvTab $ "DN" PICTURE "@!"
+      @ m_x + 5, m_y + 3  SAY8 "Razmak između redova    (D/N) ?" GET cRazmak VALID cRazmak $ "DN" PICTURE "@!"
       READ
 
    ENDIF
@@ -203,7 +202,9 @@ FUNCTION print_lista( Zaglavlje, ImeDat, bFor, fIndex, lBezUpita )
 
    BoxC()
    IF !lBezUpita
-      START PRINT RET
+      IF !start_print()
+         RETURN .F.
+      ENDIF
    ENDIF
 
    FOR i := 1 TO Len( aKol )
@@ -236,7 +237,8 @@ FUNCTION print_lista( Zaglavlje, ImeDat, bFor, fIndex, lBezUpita )
 
    IF !Empty( Zaglavlje )
       QQOut( Space( gnLMarg ) )
-      gP10CPI(); gPB_ON()
+      gP10CPI()
+      gPB_ON()
       QQOut( PadC( AllTrim( Zaglavlje ), 79 * IF( gA43 == "4", 1, 2 ) -gnLMarg ) )
       gPB_OFF()
       QOut()
@@ -259,16 +261,16 @@ FUNCTION print_lista( Zaglavlje, ImeDat, bFor, fIndex, lBezUpita )
 
 
    print_lista_2( aKol, {|| ZaRedBlok() }, gnLMarg, ;
-      IF( Upper( Right( AllTrim( Set( _SET_PRINTFILE ) ), 3 ) ) == "RTF", 9, gTabela ), ;
-      , IF( gPrinter == "L", "L4", gA43 == "4" ), ;
-      ,, IF( gOstr == "N", -1, ),, gOdvTab == "D",, nSlogova, "Kreiranje tabele" )
+      iif( Upper( Right( AllTrim( Set( _SET_PRINTFILE ) ), 3 ) ) == "RTF", 9, gTabela ), ;
+      , iif( gPrinter == "L", "L4", gA43 == "4" ), ;
+      ,, iif( gOstr == "N", -1, ),, gOdvTab == "D",, nSlogova, "Kreiranje tabele" )
 
    IF ( gPrinter == "L" .OR. gA43 == "4" .AND. nSirIzvj > 165 )
       gPO_Port()
    ENDIF
 
    IF !lBezUpita
-      ENDPRINT
+      end_print()
    ENDIF
 
    RETURN NIL
@@ -276,7 +278,6 @@ FUNCTION print_lista( Zaglavlje, ImeDat, bFor, fIndex, lBezUpita )
 
 FUNCTION ZaRedBlok()
 
-   // {
    ++RedBr
 
    WhileEvent( RedBr, nil )

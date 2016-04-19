@@ -64,7 +64,7 @@ FUNCTION fin_nalog_azurirani()
    SELECT SUBAN
    SEEK cIdfirma + cIdvn + cBrNal
 
-   start_print_close_ret()
+   start_print()
 
    fin_nalog_stampa( "2", NIL, dDatNal )
    my_close_all_dbf()
@@ -184,11 +184,14 @@ FUNCTION fin_gen_psuban_stampa_nalozi( lAuto, dDatNal )
          RETURN .F.
       ENDIF
 
-      oNalog := FinNalog():New( cIdFirma, cIdVn, cBrNal )
-
       IF !lAuto
-         f18_start_print( NIL, @_print_opt )
+         IF !start_print( @_print_opt )
+            my_close_all_dbf()
+            RETURN .F.
+         ENDIF
       ENDIF
+
+      oNalog := FinNalog():New( cIdFirma, cIdVn, cBrNal )
 
       fin_nalog_stampa( "1", lAuto, dDatNal, @oNalog )
       oNalozi:addNalog( oNalog )
@@ -241,6 +244,7 @@ FUNCTION fin_nalog_stampa( cInd, lAuto, dDatNal, oNalog )
    LOCAL nColI
 
 #ifdef F18_DEBUG_FIN_AZUR
+
    AltD() // F18_DEBUG_FIN_AZUR
 #endif
 

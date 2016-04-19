@@ -12,6 +12,7 @@
 
 #include "f18.ch"
 
+MEMVAR ImeKol, Kol, m_x, m_y, wIdKonto
 
 FUNCTION P_TRFP( cId, dx, dy )
 
@@ -25,7 +26,7 @@ FUNCTION P_TRFP( cId, dx, dy )
       { PadC( "Shema", 5 ),    {|| PadC( shema, 5 ) },      "shema"                    }, ;
       { PadC( "ID", 10 ),    {|| id },      "id"                    }, ;
       { PadC( "Naziv", 20 ), {|| naz },     "naz"                   }, ;
-      { "Konto  ", {|| idkonto },        "Idkonto", {|| .T. }, {|| ( "KO" $ widkonto ) .OR. ( "KP" $ widkonto ) .OR. ( "KK" $ widkonto ) .OR. ( "?" $ widkonto ) .OR. ( "A" $ widkonto ) .OR. ( "B" $ widkonto ) .OR. ( "F" $ widkonto ) .OR. ( "IDKONT" $ widkonto ) .OR.  P_konto( @wIdkonto ) }   }, ;
+      { "Konto  ", {|| idkonto },        "Idkonto", {|| .T. }, {|| ( "KO" $ wIdkonto ) .OR. ( "KP" $ wIdkonto ) .OR. ( "KK" $ widkonto ) .OR. ( "?" $ widkonto ) .OR. ( "A" $ widkonto ) .OR. ( "B" $ widkonto ) .OR. ( "F" $ widkonto ) .OR. ( "IDKONT" $ widkonto ) .OR.  P_konto( @wIdkonto ) }   }, ;
       { "Tarifa", {|| idtarifa },        "IdTarifa"              }, ;
       { "D/P",   {|| PadC( D_P, 3 ) },      "D_P"                   }, ;
       { "Znak",    {|| PadC( Znak, 4 ) },        "ZNAK"                  }, ;
@@ -44,7 +45,7 @@ FUNCTION P_TRFP( cId, dx, dy )
    SET ORDER TO TAG "ID"
    GO TOP
 
-   xRet := p_sifra( F_TRFP, 1, 15, 76, "Šeme kontiranja KALK->FIN", @cId, dx, dy, {| Ch| TRfpb( Ch ) } )
+   xRet := p_sifra( F_TRFP, 1, 15, 76, "Sheme kontiranja KALK->FIN", @cId, dx, dy, {| Ch| TRfpb( Ch ) } )
 
    RETURN xRet
 
@@ -70,7 +71,7 @@ STATIC FUNCTION trfp_filter( cShema, cVd )
       cVD := NIL
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 

@@ -150,7 +150,7 @@ enddo
 nUkRezTros:=nUkTros-nUkDirTros
 // ------------------------------------------------
 
-start_print_close_ret()
+start_print()
 ?
 for i:=1 to LEN(aIzvj)
 	cBrDok:=aIzvj[i,1]

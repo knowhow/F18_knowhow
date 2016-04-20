@@ -31,7 +31,7 @@ FUNCTION KalkNabP( cIdFirma, cIdroba, cIdkonto, nKolicina, nKolZN, nNC, nSNC, dD
       IF knab_cache( cIdKonto, cIdroba, @nUlKol, @nIzlKol, @nKolicina, ;
             @nUlNv, @nIzlNv, @nNc ) == 1
          SELECT kalk_pripr
-         RETURN
+         RETURN .F.
       ENDIF
    ENDIF
 
@@ -43,7 +43,7 @@ FUNCTION KalkNabP( cIdFirma, cIdroba, cIdkonto, nKolicina, nKolZN, nNC, nSNC, dD
 
    IF cIdfirma + cIdkonto + cIdroba == field->idfirma + field->pkonto + field->idroba .AND. _datdok < field->datdok
 
-       error_bar( cIdfirma + "-" + cIdvd + "-" + cBrdok, " vec postoji dokument " + field->idfirma + "-" + field->idvd + "-" + field->brdok + " na datum: " + DToC( field->datdok ) )
+       error_bar( "KA_" + cIdfirma + "-" + cIdkonto + "-" + cIdroba, " KA_KART_PROD" + cIdfirma + "-" + cIdkonto + "-" + cIdroba + " postoje stavke na datum< " + DToC( field->datdok ) )
       _ERROR := "1"
    ENDIF
 
@@ -228,7 +228,7 @@ FUNCTION KalkNabP( cIdFirma, cIdroba, cIdkonto, nKolicina, nKolZN, nNC, nSNC, dD
    nKolicina := Round( nKolicina, 4 )
    SELECT kalk_pripr
 
-   RETURN
+   RETURN .T.
 
 
 

@@ -194,7 +194,7 @@ FUNCTION DatPosljK()
    SEEK _idfirma + _mkonto + _idroba + Chr( 254 )
    SKIP -1
    IF _idfirma + _idkonto + _idroba == field->idfirma + field->mkonto + field->idroba .AND. _datdok < field->datdok
-      error_bar( _idfirma + "-" + _idvd + "-" + _brdok, _mkonto + " / " + _idroba + " zadnji dokument: " + DToC( field->datdok ) )
+      error_bar( "KA_" + _idfirma + "-" + _idvd + "-" + _brdok, _mkonto + " / " + _idroba + " zadnji dokument: " + DToC( field->datdok ) )
       _ERROR := "1"
    ENDIF
    SELECT kalk_pripr
@@ -211,17 +211,18 @@ FUNCTION DatPosljP()
    SELECT kalk
    SET ORDER TO TAG "4"
 
-   IF _idroba = "T"
+altd()
+   IF Alltrim( _idroba ) == "T"
       GO BOTTOM
       IF _datdok < datdok
-         Msg( "Zadji dokument je rađen: " + DToC( datdok ) )
+         Msg( "Zadnji dokument za artikal: " + DToC( datdok ) )
          _ERROR := "1"
       ENDIF
    ELSE
       SEEK _idfirma + _idkonto + _idroba + Chr( 254 )
-      SKIP -1
+      SKIP - 1
       IF _idfirma + _idkonto + _idroba == field->idfirma + field->pkonto + field->idroba .AND. _datdok < field->datdok
-         error_bar( _idfirma + "-" + _idvd + "-" + _brdok, _idkonto + " / " + _idroba + " zadnji dokument: " + DToC( field->datdok ) )
+         error_bar( "KA_" + _idfirma + "-" + _idkonto + "-" + _idroba, _idkonto + " / " + _idroba + " zadnji dokument: " + DToC( field->datdok ) )
          _ERROR := "1"
       ENDIF
    ENDIF

@@ -148,8 +148,7 @@ FUNCTION Get1_11()
          VALID {|| V_KolMag(), _vpc := _Fcj, .T. }
    ELSE
       @ m_x + 14, m_y + 50   GET _FCJ    PICTURE PicDEM;
-         VALID {|| V_KolPro(), ;
-         _vpc := _fcj, .T. }
+         VALID {|| V_KolPro(), _vpc := _fcj, .T. }
    ENDIF
 
 

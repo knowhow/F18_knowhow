@@ -322,7 +322,6 @@ FUNCTION kalk_pripr_napuni_sirovine_za( nRbr, _idroba, _kolicina )
          _rec[ "nc" ] := _nc
          update_rec_server_and_dbf( Alias(), _rec, 1, "FULL" ) // nafiluj sifarnik robe sa nc sirovina, robe
 
-
       ENDIF
 
       SELECT kalk_pripr // nc sirovine, gkolicina se puni sa kolicinom na stanju
@@ -353,7 +352,7 @@ FUNCTION kalk_pripr_pr_nv_proizvod( cIdFirma, cIdVd, cBrDok, nRbr, bDokument, bP
          Eval( bProizvodPripadajuceSirovine ) == nRbr // when field->rbr == 301, 302, 303 ...  EVAL( bProizvod ) = 3
          nNV += field->NC * field->kolicina
          IF field->gkolicina < field->kolicina
-            error_bar(  cIdFirma + "-" + cIdVD + "-" + cBrDok, ;
+            error_bar(  "KA_" + cIdFirma + "-" + cIdVD + "-" + cBrDok, ;
                field->idkonto2 + "/" + field->idroba + " stanje " + AllTrim( Str( field->gkolicina, 9, 3 ) ) + " potrebno: " + AllTrim( Str( field->kolicina, 10, 3 ) ) )
             _error := "1"
             RREPLACE field->error WITH "1"
@@ -387,7 +386,7 @@ FUNCTION proizvod_proracunaj_nc_za( nRbr, cIdFirma, cIdVd, cBrDok, bDokument, bP
          Eval( bProizvod ) == nRbr // when field->rbr == 301, 302, 303 ...  EVAL( bProizvod ) = 3
          nNV += field->NC * field->kolicina
          IF field->gKolicina < field->kolicina
-            error_bar( cIdfirma + "-" + cIdvd + "-" + cBrDok, ;
+            error_bar( "KA_" + cIdfirma + "-" + cIdvd + "-" + cBrDok, ;
                AllTrim( field->idkonto2 ) + " / " + field->idRoba + " stanje: " + AllTrim( Str( field->gKolicina, 10, 3 ) ) + ;
                " treba: " + AllTrim( Str( field->kolicina, 10, 3 ) ) )
             RREPLACE field->error WITH "1"

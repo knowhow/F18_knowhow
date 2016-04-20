@@ -299,7 +299,7 @@ STATIC FUNCTION VKol()
 
       IF nkols < Abs( _kolicina )
          _ERROR := "1"
-         error_bar( "KA_" + _idfirma + "-" + _idvd + "-" + _brdok, _idroba + "/" + _idkonto + " kolicina nedovoljna:" + Alltrim( Str( nKols, 12, 3 ) ) )
+         error_bar( "KA_" + _idroba + "/" + _idkonto, _idroba + "/" + _idkonto + " kolicina nedovoljna:" + Alltrim( Str( nKols, 12, 3 ) ) )
       ENDIF
       SELECT kalk_pripr
    ENDIF

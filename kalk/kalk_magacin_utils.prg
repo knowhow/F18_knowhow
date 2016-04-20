@@ -775,7 +775,7 @@ FUNCTION V_KolMag()
    IF nKolS < _Kolicina
       Beep( 4 )
       CLEAR TYPEAHEAD
-      error_bar( "KA_" + _idfirma + "-" + _idvd + "-" + _brdok, ;
+      error_bar( "KA_" + _mkonto + "/" + _idroba, ;
          _mkonto + " / " + _idroba + "na stanju: " + Alltrim(Str( nKolS, 10, 4 )) + " treba " +  Alltrim(Str( _kolicina, 10, 4 )))
       _ERROR := "1"
    ENDIF
@@ -896,7 +896,7 @@ FUNCTION KalkNab( cIdFirma, cIdRoba, cIdKonto, nKolicina, nKolZN, nNC, nSNc, dDa
       IF knab_cache( cIdKonto, cIdroba, @nUlKol, @nIzlKol, @nKolicina, ;
             @nUlNv, @nIzlNv, @nSNC ) == 1
          SELECT kalk_pripr
-         RETURN
+         RETURN .T.
       ENDIF
    ENDIF
 

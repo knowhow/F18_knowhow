@@ -1,16 +1,16 @@
 /*
- * This file is part of the bring.out FMK, a free and open source
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+ * This file is part of the bring.out knowhow ERP, a free and open source
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
 
-
 #include "f18.ch"
+
 
 // ------------------------------------------------------------
 // prijem prodavnica, predispozicija
@@ -385,7 +385,7 @@ STATIC FUNCTION VKol( x_kord )
       dDatNab := CToD( "" )
 
       IF !Empty( gMetodaNC )
-         MsgO( "Racunam stanje u prodavnici" )
+         MsgO( "Računam stanje u prodavnici" )
          KalkNabP( _idfirma, _idroba, _idkonto, @nKolS, @nKolZN, @nC1, @nC2, @dDatNab )
          MsgC()
          @ x_kord, m_y + 30 SAY "Ukupno na stanju "
@@ -403,8 +403,8 @@ STATIC FUNCTION VKol( x_kord )
 
       IF nKols < Abs( _kolicina )
          _ERROR := "1"
-         error_bar( "KA_" + _idfirma + "-" + _idvd + "-" + _brdok, _idkonto + " / " + _idroba + " kolicina:" +;
-             Alltrim(Str( nKols, 12, 3 )) +  " treba: " + Alltrim(Str( _kolicina, 12, 3 )))
+         error_bar( "KA_" + _idkonto + " / " + _idroba, _idkonto + " / " + _idroba + " kolicina:" + ;
+            AllTrim( Str( nKols, 12, 3 ) ) +  " treba: " + AllTrim( Str( _kolicina, 12, 3 ) ) )
       ENDIF
 
       SELECT kalk_pripr

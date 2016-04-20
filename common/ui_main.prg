@@ -442,7 +442,7 @@ FUNCTION Beep( nPuta )
 FUNCTION f18_tone( nFreq, nTimes )
 
 #ifdef __PLATFORM__WINDOWS
-   ?E "tone je bugovita trace-print-dialog-1"
+   //?E "tone je bugovita trace-print-dialog-1"
    RETURN Tone( nFreq, nTimes )
 #else
    RETURN NIL

@@ -70,6 +70,8 @@ FUNCTION lock_semaphore( table )
       _user_locked := get_semaphore_locked_by_me_status_user( table )
       _err_msg := ToStr( Time() ) + " : table locked : " + table + " user: " + _user_locked
       ?E _err_msg
+      info_bar( "sem", _err_msg)
+      error_bar( "bug", log_stack( 1 ) )
 
       hb_idleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
       // LOOP

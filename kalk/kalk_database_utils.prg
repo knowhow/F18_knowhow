@@ -1478,7 +1478,7 @@ FUNCTION kopiraj_set_cijena()
 
    BoxC()
 
-   RETURN
+   RETURN .T.
 
 
 

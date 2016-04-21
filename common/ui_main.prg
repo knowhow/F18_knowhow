@@ -904,9 +904,10 @@ FUNCTION FormPicL( cPic, nDuz )
 
 FUNCTION VarEdit( aNiz, x1, y1, x2, y2, cNaslov, cBoje )
 
-   LOCAL GetList := {}, cbsstara := ShemaBoja( cBoje ), pom1, pom3, pom4, pom5, nP := 0
+   LOCAL GetList := {}, cBsstara := ShemaBoja( cBoje ), pom1, pom3, pom4, pom5, nP := 0
    LOCAL cPomUI := Set( _SET_DEVICE )
 
+   PushWa()
    SET DEVICE TO SCREEN
    Prozor1( x1, y1, x2, y2, cNaslov, cBNaslova,, cBOkvira, cBTeksta, 2 )
    FOR i := 1 TO Len( aNiz )
@@ -931,6 +932,7 @@ FUNCTION VarEdit( aNiz, x1, y1, x2, y2, cNaslov, cBoje )
    ShemaBoja( cBsstara )
    SET( _SET_DEVICE, cPomUI )
 
+   PopWa()
    RETURN iif( LastKey() != K_ESC, .T., .F. )
 
 

@@ -248,7 +248,7 @@
 #xcommand O_RADN_NOT_USED  => select (F_RADN) ;  IF !USED(); my_use( "radn" ); ENDIF  ; set order to tag "1"
 
 #xcommand O_LD_RJ   => open_ld_rj()
-#xcommand O_LD_RJ_NOT_USED   => select (F_LD_RJ)   ; IF !Used();  my_use ("ld_rj") ; ENDIF;   ; set order to tag "ID"
+
 
 #xcommand O__RADN   => select (F__RADN)   ;  my_use ("_radn")
 #xcommand O_TPRSIHT => select (F_TPRSIHT) ;  my_use ("tprsiht")  ; set order to tag "ID"

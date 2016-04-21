@@ -660,7 +660,7 @@ FUNCTION P_LD_RJ( cId, dx, dy )
 
    PushWA()
 
-   O_LD_RJ_NOT_USED
+   select_open_ld_rj()
 
    AAdd( ImeKol, { PadR( "Id", 2 ),      {|| id }, "id", {|| .T. }, {|| vpsifra( wid ) } } )
    AAdd( ImeKol, { PadR( "Naziv", 35 ), {||  naz }, "naz" } )
@@ -676,7 +676,7 @@ FUNCTION P_LD_RJ( cId, dx, dy )
       AAdd( Kol, i )
    NEXT
 
-   lRet := PostojiSifra( F_LD_RJ, 1, MAXROWS() -15, 60, _l( "Lista radnih jedinica" ), @cId, dx, dy )
+   lRet := PostojiSifra( F_LD_RJ, 1, MAXROWS() - 15, 60, "Lista radnih jedinica", @cId, dx, dy )
 
    PopWa( F_LD_RJ )
 

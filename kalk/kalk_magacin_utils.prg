@@ -43,7 +43,7 @@ FUNCTION KalkNabP( cIdFirma, cIdroba, cIdkonto, nKolicina, nKolZN, nNC, nSNC, dD
 
    IF cIdfirma + cIdkonto + cIdroba == field->idfirma + field->pkonto + field->idroba .AND. _datdok < field->datdok
 
-       error_bar( "KA_" + cIdfirma + "-" + cIdkonto + "-" + cIdroba, " KA_KART_PROD " + cIdkonto + "-" + Trim( cIdroba ) + " postoje stavke na datum< " + DToC( field->datdok ) )
+      error_bar( "KA_" + cIdfirma + "-" + cIdkonto + "-" + cIdroba, " KA_KART_PROD " + cIdkonto + "-" + Trim( cIdroba ) + " postoje stavke na datum< " + DToC( field->datdok ) )
       _ERROR := "1"
    ENDIF
 
@@ -776,7 +776,7 @@ FUNCTION V_KolMag()
       Beep( 4 )
       CLEAR TYPEAHEAD
       error_bar( "KA_" + _mkonto + "/" + _idroba, ;
-         _mkonto + " / " + _idroba + "na stanju: " + Alltrim(Str( nKolS, 10, 4 )) + " treba " +  Alltrim(Str( _kolicina, 10, 4 )))
+         _mkonto + " / " + _idroba + "na stanju: " + AllTrim( Str( nKolS, 10, 4 ) ) + " treba " +  AllTrim( Str( _kolicina, 10, 4 ) ) )
       _ERROR := "1"
    ENDIF
 
@@ -900,6 +900,7 @@ FUNCTION KalkNab( cIdFirma, cIdRoba, cIdKonto, nKolicina, nKolZN, nNC, nSNc, dDa
       ENDIF
    ENDIF
 
+   my_use_refresh_stop()
    SELECT kalk
 
    SET ORDER TO TAG "3"
@@ -1092,8 +1093,9 @@ FUNCTION KalkNab( cIdFirma, cIdRoba, cIdKonto, nKolicina, nKolZN, nNC, nSNc, dDa
    nKolicina := Round( nKolicina, 4 )
 
    SELECT kalk_pripr
+   my_use_refresh_start()
 
-   RETURN
+   RETURN .T.
 
 
 // ---------------------------------------------------------

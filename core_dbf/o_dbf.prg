@@ -16,6 +16,7 @@ FUNCTION o_dbf_table( nArea, xTable, cTag )
    LOCAL lUsed := .F.
    LOCAL nCount := 0
    LOCAL cTable, cAlias
+   LOCAL lMyUse
 
    IF ValType( xTable ) == "C"
       cAlias := NIL
@@ -29,7 +30,14 @@ FUNCTION o_dbf_table( nArea, xTable, cTag )
 
    SELECT ( nArea )
    DO WHILE !lUsed .OR. nCount > 7
-      IF my_use( cAlias, cTable )
+
+      IF cAlias != NIL
+         lMyUse := my_use( cAlias, cTable )
+      ELSE
+         lMyUse := my_use( cTable )
+      ENDIF
+      
+      IF lMyUse
          lUsed := .T.
          ordSetFocus( cTag )
          IF Empty( ordKey() )

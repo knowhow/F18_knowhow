@@ -30,6 +30,7 @@ FUNCTION fin_azuriranje_naloga( automatic )
       automatic := .F.
    ENDIF
 
+   AltD()
    o_fin_za_azuriranje()
 
    IF fin_pripr->( RecCount() == 0 ) .OR. ( !automatic .AND. Pitanje(, "Izvršiti ažuriranje fin naloga ? (D/N)?", "N" ) == "N" )
@@ -329,6 +330,9 @@ STATIC FUNCTION fin_provjera_prije_azuriranja_naloga( auto, lista_naloga )
    LOCAL _ok := .F.
 
    _t_area := Select()
+#ifdef F18_DEBUG_FIN_AZUR
+   AltD() // F18_DEBUG_FIN_AZUR
+#endif
 
    IF Len( lista_naloga ) > 1
       _vise_naloga := .T.
@@ -339,9 +343,7 @@ STATIC FUNCTION fin_provjera_prije_azuriranja_naloga( auto, lista_naloga )
       RETURN _ok
    ENDIF
 
-#ifdef F18_DEBUG_FIN_AZUR
-   AltD() // F18_DEBUG_FIN_AZUR
-#endif
+
 
    IF !fin_p_tabele_provjera( lista_naloga )
 

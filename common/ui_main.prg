@@ -123,7 +123,7 @@ FUNCTION Msg( uText, sec, xPos )
 
    DO WHILE ( nHashPos := At ( "#", cText ) ) > 0
       AAdd ( aText, Left ( cText, nHashPos - 1 ) )
-      Text := SubStr ( cText, nHashPos + 1 )
+      cText := SubStr ( cText, nHashPos + 1 )
       nBrRed ++
    END
 
@@ -428,13 +428,10 @@ FUNCTION Beep( nPuta )
 
    LOCAL nI
 
-#ifndef TEST
-
    FOR nI := 1 TO nPuta
       f18_tone( 300, 1 )
    NEXT
 
-#endif
 
    RETURN .T.
 
@@ -980,7 +977,6 @@ INKEY_MOVE          Mouse motion events are allowed
       cMsg := SubStr( cMsg, 1, MAXCOLS() -11 ) + "#" + SubStr( cMsg, MAXCOLS() - 10, MAXCOLS() -11 ) + "#..."
    ENDIF
 
-altd()
 #ifdef TEST
    Msg( cMsg, 1 )
 #else

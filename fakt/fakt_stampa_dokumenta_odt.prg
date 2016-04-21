@@ -542,7 +542,7 @@ STATIC FUNCTION _fakt_dok_gen_xml( xml_file, a_racuni, ctrl_data )
 
    my_use_refresh_stop()
 
-   altd()
+
    FOR _n := 1 TO Len( a_racuni )
 
       // napuni pomocnu tabelu na osnovu fakture

@@ -551,7 +551,7 @@ STATIC FUNCTION _fakt_dok_gen_xml( xml_file, a_racuni, ctrl_data )
 
 
       IF SELECT( "RN" ) == 0  .OR. SELECT( "DRN" ) == 0 // da je fakt_stdok_pdv napunio rn.dbf, drn.dbf
-         error_bar( "fakt_bug", log_stack( 1 ) )
+         error_bar( "fa_bug", log_stack( 1 ) )
          LOOP
       ENDIF
 

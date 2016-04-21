@@ -109,14 +109,16 @@ FUNCTION my_db_edit( cImeBoxa, xw, yw, bUserF, cMessTop, cMessBot, lInvert, ;
 
    PRIVATE Tb
 
-   IF lInvert == NIL
-      lInvert := .F.
-   ENDIF
 
    _params[ "ime" ]           := cImeBoxa
    _params[ "xw" ]            := xw
    _params[ "yw" ]            := yw
-   _params[ "invert" ]        := lInvert
+
+   IF HB_ISLOGICAL( lInvert )
+      _params[ "invert" ]        := lInvert
+   ELSE
+      _params[ "invert" ]        := .F.
+   ENDIF
    _params[ "msgs" ]          := aMessage
    _params[ "freeze" ]        := nFreeze
    _params[ "msg_bott" ]      := cMessBot

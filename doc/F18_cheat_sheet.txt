@@ -76,3 +76,9 @@ f18_end_print( NIL, xPrintOpt )
 static function zagl()
 
 ? zaglavlje
+
+
+
+BUG
+======================
+error_bar( "fa_bug", log_stack( 1 ) )

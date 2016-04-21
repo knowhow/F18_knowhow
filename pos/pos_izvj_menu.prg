@@ -34,8 +34,8 @@ FUNCTION pos_izvjestaji_tops()
       AAdd( opcexe, nil )
       AAdd( opc, "3. najprometniji artikli" )
       AAdd( opcexe, {|| pos_top_narudzbe() } )
-      AAdd( opc, "4. stampa azuriranog dokumenta" )
-      AAdd( opcexe, {|| pos_prepis_dokumenta() } )
+      AAdd( opc, "4. štampa azuriranih dokumenata" )
+      AAdd( opcexe, {|| pos_lista_azuriranih_dokumenata() } )
    ELSE
       // server, samostalna kasa TOPS
 
@@ -58,8 +58,8 @@ FUNCTION pos_izvjestaji_tops()
       AAdd( opcexe, {|| pos_top_narudzbe() } )
       AAdd( opc, "7. stanje partnera" )
       AAdd( opcexe, {|| pos_rpt_stanje_partnera() } )
-      AAdd( opc, "A. štampa azuriranog dokumenta" )
-      AAdd( opcexe, {|| pos_prepis_dokumenta() } )
+      AAdd( opc, "A. štampa azuriranih dokumenata" )
+      AAdd( opcexe, {|| pos_lista_azuriranih_dokumenata() } )
    ENDIF
 
    AAdd( opc, "-------------------" )
@@ -121,8 +121,8 @@ FUNCTION pos_izvjestaji_hops()
 
    AAdd( opc, "8. stanje partnera" )
    AAdd( opcexe, {|| pos_rpt_stanje_partnera() } )
-   AAdd( opc, "A. stampa azuriranog dokumenta" )
-   AAdd( opcexe, {|| pos_prepis_dokumenta() } )
+   AAdd( opc, "A. štampa azuriranih dokumenata" )
+   AAdd( opcexe, {|| pos_lista_azuriranih_dokumenata() } )
 
    Menu_SC( "izvh" )
 

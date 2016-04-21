@@ -209,7 +209,7 @@ FUNCTION MsgO( cText, sec, lUtf )
    SET CURSOR OFF
    SET( _SET_DEVICE, cPom )
 
-   RETURN
+   RETURN .T.
 
 
 FUNCTION MsgC( msg_x1, msg_y1, msg_x2, msg_y2 )
@@ -243,7 +243,7 @@ FUNCTION MsgC( msg_x1, msg_y1, msg_x2, msg_y2 )
  *   param: boxid se ne koristi
  */
 
-FUNCTION Box( BoxId, NA1, Length, Inv, chMsg, cHelpT )
+FUNCTION Box( BoxId, NA1, Length, lInvert, chMsg, cHelpT )
 
    LOCAL x1, y1, x2, y2
    LOCAL LocalC, cPom, cNaslovBoxa
@@ -306,11 +306,11 @@ FUNCTION Box( BoxId, NA1, Length, Inv, chMsg, cHelpT )
       cHelpT;
       } )
 
-   IF Inv == NIL
-      Inv := .F.
+   IF lInvert == NIL
+      lInvert := .F.
    ENDIF
 
-   LocalC := iif ( Inv, F18_COLOR_INVERT , F18_COLOR_NORMAL )
+   LocalC := iif ( lInvert, F18_COLOR_INVERT , F18_COLOR_NORMAL )
 
    SetColor( LocalC )
 

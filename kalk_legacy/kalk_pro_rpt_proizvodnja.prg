@@ -122,14 +122,18 @@ FUNCTION leg_StKalkPR()
          ENDIF
          IF Val( rbr ) < 900
             @ PRow(), PCol() + 1 SAY fcj                   PICTURE PicCDEM
-            @ PRow(), PCol() + 1 SAY nPrevoz / FCJ2 * 100      PICTURE PicProc
-            @ PRow(), PCol() + 1 SAY nBankTr / FCJ2 * 100      PICTURE PicProc
-            @ PRow(), PCol() + 1 SAY nSpedTr / FCJ2 * 100      PICTURE PicProc
-            @ PRow(), PCol() + 1 SAY nCarDaz / FCJ2 * 100      PICTURE PicProc
-            @ PRow(), PCol() + 1 SAY nZavTr / FCJ2 * 100       PICTURE PicProc
-            @ PRow(), PCol() + 1 SAY NC                    PICTURE PicCDEM
-            @ PRow(), PCol() + 1 SAY nMarza / NC * 100         PICTURE PicProc
-            @ PRow(), PCol() + 1 SAY VPC                   PICTURE PicCDEM
+            IF Round( FCJ2, 4 ) != 0
+               @ PRow(), PCol() + 1 SAY nPrevoz / FCJ2 * 100      PICTURE PicProc
+               @ PRow(), PCol() + 1 SAY nBankTr / FCJ2 * 100      PICTURE PicProc
+               @ PRow(), PCol() + 1 SAY nSpedTr / FCJ2 * 100      PICTURE PicProc
+               @ PRow(), PCol() + 1 SAY nCarDaz / FCJ2 * 100      PICTURE PicProc
+               @ PRow(), PCol() + 1 SAY nZavTr / FCJ2 * 100       PICTURE PicProc
+               @ PRow(), PCol() + 1 SAY NC                    PICTURE PicCDEM
+               @ PRow(), PCol() + 1 SAY nMarza / NC * 100         PICTURE PicProc
+               @ PRow(), PCol() + 1 SAY VPC                   PICTURE PicCDEM
+            ELSE
+               error_bar( "ka_bug", log_stack( 1 ) )
+            ENDIF
          ENDIF
 
          IF Val( rbr ) < 900
@@ -173,4 +177,4 @@ FUNCTION leg_StKalkPR()
 
    ? m
 
-   RETURN
+   RETURN .T.

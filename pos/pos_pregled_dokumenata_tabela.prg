@@ -84,7 +84,7 @@ STATIC FUNCTION _o_pos_prepis_tbl()
    RETURN .T.
 
 
-FUNCTION pos_prepis_dokumenta()
+FUNCTION pos_lista_azuriranih_dokumenata()
 
    LOCAL aOpc
    LOCAL _prikaz_partnera := .F.
@@ -104,7 +104,7 @@ FUNCTION pos_prepis_dokumenta()
    BoxC()
 
    IF LastKey() == K_ESC
-      RETURN
+      RETURN .F.
    ENDIF
 
    _o_pos_prepis_tbl()
@@ -160,7 +160,10 @@ FUNCTION pos_prepis_dokumenta()
       AAdd( aOpc, "<F2> - promjena vrste placanja" )
    ENDIF
 
-   my_db_edit( "pos_doks", MAXROWS() - 10, MAXCOLS() - 20, {|| pos_stampa_dokumenta_key_handler( dDatOd, dDatDo ) }, _u( "  ŠTAMPA AŽURIRANOG DOKUMENTA  " ), nil, aOpc )
+
+   my_db_edit( "pos_doks", MAXROWS() - 10, MAXCOLS() - 20, ;  // params cImeBoxa, xw, yw
+   {|| pos_stampa_dokumenta_key_handler( dDatOd, dDatDo ) }, _u( "  ŠTAMPA AŽURIRANOG DOKUMENTA  " ), NIL, ; // bUserF, cMessTop, cMessBot
+   .F., aOpc ) // lInvert, aMessage
 
    CLOSE ALL
 
@@ -450,12 +453,12 @@ FUNCTION pos_pregled_stavki_racuna()
 
    Box(, nMaxRow, nMaxCol )
 
-    @ m_x + 1, m_y + 19 SAY8 PadC ( "Pregled računa " + Trim( pos_doks->IdPos ) + "-" + LTrim ( pos_doks->BrDok ), 30 ) COLOR F18_COLOR_INVERT
+   @ m_x + 1, m_y + 19 SAY8 PadC ( "Pregled računa " + Trim( pos_doks->IdPos ) + "-" + LTrim ( pos_doks->BrDok ), 30 ) COLOR F18_COLOR_INVERT
 
-    oBrowse := FormBrowse( m_x + 2, m_y + 1, m_x + nMaxRow, m_y + nMaxCol, ImeKol, Kol, { BROWSE_PODVUCI_2, BROWSE_PODVUCI, BROWSE_COL_SEP }, 0 )
-    ShowBrowse( oBrowse, {}, {} )
-    SELECT _pos_pripr
-    my_dbf_zap()
+   oBrowse := FormBrowse( m_x + 2, m_y + 1, m_x + nMaxRow, m_y + nMaxCol, ImeKol, Kol, { BROWSE_PODVUCI_2, BROWSE_PODVUCI, BROWSE_COL_SEP }, 0 )
+   ShowBrowse( oBrowse, {}, {} )
+   SELECT _pos_pripr
+   my_dbf_zap()
 
    BoxC()
 

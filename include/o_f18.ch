@@ -249,7 +249,6 @@
 
 #xcommand O_LD_RJ   => open_ld_rj()
 
-
 #xcommand O__RADN   => select (F__RADN)   ;  my_use ("_radn")
 #xcommand O_TPRSIHT => select (F_TPRSIHT) ;  my_use ("tprsiht")  ; set order to tag "ID"
 #xcommand O_NORSIHT => select (F_NORSIHT) ;  my_use ("norsiht")  ; set order to tag "ID"

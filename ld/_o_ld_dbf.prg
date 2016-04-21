@@ -11,6 +11,12 @@
 
 #include "f18.ch"
 
+
+FUNCTION open_ld_rj()
+
+   RETURN o_dbf_table( F_LD_RJ, "ld_rj", "ID" )
+
+
 FUNCTION select_open_ld_rj()
 
    RETURN select_o_dbf( "LD_RJ", F_LD_RJ, "ld_rj", "ID" )

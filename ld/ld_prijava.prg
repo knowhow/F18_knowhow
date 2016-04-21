@@ -61,19 +61,3 @@ FUNCTION ld_postavi_parametre_obracuna()
    ENDIF
 
    RETURN .T.
-
-
-FUNCTION open_ld_rj()
-
-   select (F_LD_RJ)
-
-   DO WHILE .T.
-   IF my_use ("ld_rj")
-      set order to tag "ID"
-      EXIT
-   ELSE
-      hb_idleSleep( 2 )
-   ENDIF
-   ENDDO
-
-   RETURN .T.

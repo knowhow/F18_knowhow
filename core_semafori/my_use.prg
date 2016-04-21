@@ -120,6 +120,12 @@ FUNCTION my_use( cAlias, cTable, lRefresh )
       ?E "my_use ERROR params>3: " + cLogMsg
    ENDIF
 
+   IF ValType( cAlias ) == "N"
+      error_bar( "bug", "cAlias NUM: " + log_stack( 1 ) )
+      ?E "my_use ERROR", cAlias, cTable, lRefresh
+      RETURN .F.
+   ENDIF
+
    hb_default( @lRefresh, s_lRefresh )
 
    IF cTable != NIL

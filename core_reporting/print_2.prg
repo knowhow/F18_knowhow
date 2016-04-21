@@ -126,7 +126,8 @@ STATIC FUNCTION set_print_codes( cOpt )
 FUNCTION f18_end_print( cFileName, xPrintOpt )
 
    LOCAL _ret
-   LOCAL _cmd := ""
+   LOCAL cCommand := ""
+   LOCAL cKom
    LOCAL _port
    LOCAL cOpt
    LOCAL oPDF
@@ -168,13 +169,12 @@ FUNCTION f18_end_print( cFileName, xPrintOpt )
 
    DO CASE
 
-   CASE cOpt == "D"
 
    CASE cOpt == "P"
 
       txt_izvjestaj_podrska_email( cFileName )
 
-   CASE cOpt $ "E#F#G"
+   CASE cOpt $ "D#E#F#G" // direct print
 
 #ifdef __PLATFORM__WINDOWS
       direct_print_windows( cFileName, _port )
@@ -212,11 +212,11 @@ FUNCTION f18_end_print( cFileName, xPrintOpt )
 
    OTHERWISE
 
-      _cmd := "f18_editor " + cFileName
-      _ret := f18_run( _cmd )
+      cCommand := "f18_editor " + cFileName
+      _ret := f18_run( cCommand )
 
       IF _ret <> 0
-         MsgBeep ( "f18_edit nije u pathu ?!##" + "cmd:" + _cmd )
+         MsgBeep ( "f18_edit nije u pathu ?!##" + "cmd:" + cCommand )
       ENDIF
    END CASE
 
@@ -260,7 +260,7 @@ STATIC FUNCTION get_printer_port( xPrintOpt )
 
 STATIC FUNCTION direct_print_unix( cFileName, port_number )
 
-   LOCAL _cmd
+   LOCAL cCommand
    LOCAL _printer := "epson"
    LOCAL _printer_name
    LOCAL _err
@@ -271,19 +271,19 @@ STATIC FUNCTION direct_print_unix( cFileName, port_number )
 
    _printer_name := _printer + "_" + port_number
 
-   _cmd := "lpq -P " + _printer_name + " | grep " + _printer_name
+   cCommand := "lpq -P " + _printer_name + " | grep " + _printer_name
 
-   _err := f18_run( _cmd )
+   _err := f18_run( cCommand )
    IF _err <> 0
       MsgBeep( "Printer " + _printer_name + " nije podešen !" )
       RETURN .F.
    ENDIF
 
-   _cmd := "lpr -P "
-   _cmd += _printer_name + " "
-   _cmd += cFileName
+   cCommand := "lpr -P "
+   cCommand += _printer_name + " "
+   cCommand += cFileName
 
-   _err := f18_run( _cmd )
+   _err := f18_run( cCommand )
 
    IF _err <> 0
       MsgBeep( "Greška sa direktnom štampom !" )
@@ -294,7 +294,7 @@ STATIC FUNCTION direct_print_unix( cFileName, port_number )
 
 STATIC FUNCTION direct_print_windows( cFileName, port_number )
 
-   LOCAL _cmd
+   LOCAL cCommand
    LOCAL _err
 
    IF port_number == NIL
@@ -303,9 +303,9 @@ STATIC FUNCTION direct_print_windows( cFileName, port_number )
 
    cFileName := '"' + cFileName + '"'
 
-   _cmd := "copy " + cFileName + " LPT" + port_number
+   cCommand := "copy " + cFileName + " LPT" + port_number
 
-   _err := f18_run( _cmd )
+   _err := f18_run( cCommand )
 
    IF _err <> 0
       MsgBeep( "Greška sa direktnom štampom !" )

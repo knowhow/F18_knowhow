@@ -253,7 +253,7 @@ FUNCTION print_porezna_faktura( lOpcine )
    RETURN DE_CONT
 
 
-FUNCTION pr_odt( lOpcine )
+FUNCTION fakt_print_odt( lOpcine )
 
    SELECT fakt_doks
 
@@ -263,7 +263,7 @@ FUNCTION pr_odt( lOpcine )
    _cBrDok := brdok
    my_close_all_dbf()
 
-   StDokOdt( _cidfirma, _cIdTipdok, _cbrdok )
+   fakt_stampa_dok_odt( _cidfirma, _cIdTipdok, _cbrdok )
 
 
    close_open_fakt_tabele()
@@ -483,7 +483,7 @@ FUNCTION fakt_tabela_komande( lOpcine, fakt_doks_filt, model )
 
    CASE Ch == K_ALT_P
 
-      nRet := pr_odt( lOpcine )
+      nRet := fakt_print_odt( lOpcine )
       _refresh := .T.
 
    CASE Ch == K_F5

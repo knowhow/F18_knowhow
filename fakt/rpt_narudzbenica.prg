@@ -32,7 +32,7 @@ MEMVAR __print_opt
 /* 
    Korištenje:
    ----------
-   - Prije poziva napniti drn.dbf, za to se koristi npr. stdokpdv()
+   - Prije poziva napniti drn.dbf, za to se koristi npr. fakt_stdok_pdv()
 
    Primjeri korištenja: 
   ---------------------

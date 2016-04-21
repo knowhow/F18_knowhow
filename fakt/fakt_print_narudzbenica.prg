@@ -34,7 +34,7 @@ FUNCTION fakt_print_narudzbenica( cIdFirma, cIdTipDok, cBrDok )
 
 FUNCTION fakt_print_narudzbenica_priprema()
 
-      stdokpdv( nil, nil, nil, .T. )
+      fakt_stdok_pdv( nil, nil, nil, .T. )
       select_fakt_pripr()
 
       print_narudzbenica()

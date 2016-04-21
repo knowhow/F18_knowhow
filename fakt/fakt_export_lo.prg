@@ -41,7 +41,7 @@ STATIC FUNCTION _exp_dok()
    LOCAL cParRegb
 
    // pripremi fakturu za stampu, samo napuni tabele...
-   stdokpdv( nil, nil, nil, .T. )
+   fakt_stdok_pdv( nil, nil, nil, .T. )
 
    O_R_EXP
    O_DRN

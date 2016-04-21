@@ -30,7 +30,7 @@ STATIC __auto_odt := ""
 // ------------------------------------------------
 // stampa dokumenta u odt formatu
 // ------------------------------------------------
-FUNCTION stdokodt( cIdf, cIdVd, cBrDok )
+FUNCTION fakt_stampa_dok_odt( cIdf, cIdVd, cBrDok )
 
    LOCAL _template := ""
    LOCAL _jod_templates_path := F18_TEMPLATE_LOCATION
@@ -39,11 +39,12 @@ FUNCTION stdokodt( cIdf, cIdVd, cBrDok )
    LOCAL _ext_pdf := fetch_metric( "fakt_dokument_pdf_lokacija", my_user(), "" )
    LOCAL _ext_path
    LOCAL _gen_pdf := .F.
+   LOCAL _t_path
    LOCAL _racuni := {}
    LOCAL __tip_dok
 
-   // setuj static var...
-   __auto_odt_template()
+
+   __auto_odt_template() // setuj static var
 
    IF ( cIdF <> NIL )
       _file_pdf := "fakt_" + cIdF + "_" + cIdVd + "_" + AllTrim( cBrDok ) + ".pdf"
@@ -72,11 +73,11 @@ FUNCTION stdokodt( cIdf, cIdVd, cBrDok )
       ENDIF
    ENDIF
 
-   MsgO( "formiram stavke racuna..." )
+   MsgO( "formiram stavke računa..." )
 
    AAdd( _racuni, { cIdF, cIdVd, cBrDok  } )
 
-   _gen_xml( _xml_file, _racuni )
+   _fakt_dok_gen_xml( _xml_file, _racuni )
 
    MsgC()
 
@@ -389,7 +390,7 @@ FUNCTION stdokodt_grupno()
 
    CASE _tip_gen == "1"
 
-      _gen_xml( _xml_file, _racuni, @_ctrl_data )
+      _fakt_dok_gen_xml( _xml_file, _racuni, @_ctrl_data )
 
       IF !Empty( _jod_templates_path )
          _t_path := AllTrim( _jod_templates_path )
@@ -424,7 +425,7 @@ FUNCTION stdokodt_grupno()
          _gen_jedan := {}
          AAdd( _gen_jedan, { _racuni[ _i, 1 ], _racuni[ _i, 2 ], _racuni[ _i, 3 ] } )
 
-         _gen_xml( _xml_file, _gen_jedan, @_ctrl_data )
+         _fakt_dok_gen_xml( _xml_file, _gen_jedan, @_ctrl_data )
 
          IF !Empty( _jod_templates_path )
             _t_path := AllTrim( _jod_templates_path )
@@ -513,7 +514,7 @@ STATIC FUNCTION __upisi_zaglavlje()
 // generisi xml sa podacima
 // a_racuni - lista racuna koji treba da se generisu
 // -------------------------------------------------------
-STATIC FUNCTION _gen_xml( xml_file, a_racuni, ctrl_data )
+STATIC FUNCTION _fakt_dok_gen_xml( xml_file, a_racuni, ctrl_data )
 
    LOCAL i
    LOCAL cTmpTxt := ""
@@ -537,19 +538,24 @@ STATIC FUNCTION _gen_xml( xml_file, a_racuni, ctrl_data )
    open_xml( xml_file )
 
    xml_head()
-
    xml_subnode( "invoice", .F. )
 
    my_use_refresh_stop()
 
+   altd()
    FOR _n := 1 TO Len( a_racuni )
 
       // napuni pomocnu tabelu na osnovu fakture
       // posljednji parametar .t. odredjuje da se samo napune rn i drn tabele
-      StdokPdv( a_racuni[ _n, 1 ], a_racuni[ _n, 2 ], a_racuni[ _n, 3 ], .T. )
+      fakt_stdok_pdv( a_racuni[ _n, 1 ], a_racuni[ _n, 2 ], a_racuni[ _n, 3 ], .T. )
 
-      // zaglavlje ide samo jednom
-      IF _n == 1
+
+      IF SELECT( "RN" ) == 0  .OR. SELECT( "DRN" ) == 0 // da je fakt_stdok_pdv napunio rn.dbf, drn.dbf
+         error_bar( "fakt_bug", log_stack( 1 ) )
+         LOOP
+      ENDIF
+
+      IF _n == 1 // zaglavlje ide samo jednom
          __upisi_zaglavlje()
       ENDIF
 
@@ -558,7 +564,7 @@ STATIC FUNCTION _gen_xml( xml_file, a_racuni, ctrl_data )
 
       _din_dem := AllTrim( get_dtxt_opis( "D07" ) )
 
-      SELECT rn
+      SELECT RN
       GO TOP
       _pdv_stopa := field->ppdv
 

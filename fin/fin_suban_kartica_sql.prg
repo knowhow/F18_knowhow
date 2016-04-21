@@ -157,6 +157,7 @@ STATIC FUNCTION _get_vars( rpt_vars )
 
    BoxC()
 
+altd()
    IF LastKey() == K_ESC
       RETURN .F.
    ENDIF

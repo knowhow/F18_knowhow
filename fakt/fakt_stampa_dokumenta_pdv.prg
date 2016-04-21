@@ -19,7 +19,7 @@ THREAD STATIC __SH_SLD_VAR
 // ----------------------------------------------------
 // lJFill - samo se pune rn, drn pomocne tabele
 // ----------------------------------------------------
-FUNCTION StdokPDV( cIdFirma, cIdTipDok, cBrDok, lJFill )
+FUNCTION fakt_stdok_pdv( cIdFirma, cIdTipDok, cBrDok, lJFill )
 
    LOCAL cFax
    LOCAL lPrepisDok := .F.
@@ -98,7 +98,7 @@ FUNCTION StdokPDV( cIdFirma, cIdTipDok, cBrDok, lJFill )
    ENDIF
 
    IF lJFill
-      RETURN
+      RETURN .F.
    ENDIF
 
    my_close_all_dbf()

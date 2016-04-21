@@ -99,9 +99,9 @@ FUNCTION StampTXT( cIdFirma, cIdTipDok, cBrDok, lJFill )
    ENDIF
 
    IF cIdFirma == nil
-      StDokPDV()
+      fakt_stdok_pdv()
    ELSE
-      StDokPDV( cIdFirma, cIdTipDok, cBrDok, lJFill )
+      fakt_stdok_pdv( cIdFirma, cIdTipDok, cBrDok, lJFill )
    ENDIF
 
    RETURN

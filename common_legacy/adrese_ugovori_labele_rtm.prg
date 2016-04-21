@@ -114,7 +114,7 @@ FUNCTION kreiraj_adrese_iz_ugovora()
       @ m_x + 3, m_y + 2 SAY PadR( "", 60 )
 
       IF !Found()
-         MsgBeep( "Ugovor " + rugov->id + " ne postoji ! Preskacem..." )
+         MsgBeep( "Ugovor " + rugov->id + " ne postoji ! Preskačemo ..." )
          SELECT rugov
          SKIP
          LOOP

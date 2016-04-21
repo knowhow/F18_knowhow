@@ -213,7 +213,7 @@ STATIC FUNCTION fakt_pripr_keyhandler()
          ENDIF
 
          IF _dev_params[ "print_a4" ] $ "G#X" .AND. Pitanje(, "Štampati LibreOffice fakturu ?", "N" ) == "D"
-            stdokodt( __id_firma, __tip_dok, __br_dok )
+            fakt_stampa_dok_odt( __id_firma, __tip_dok, __br_dok )
             close_open_fakt_tabele()
             select_fakt_pripr()
          ENDIF
@@ -273,7 +273,7 @@ STATIC FUNCTION fakt_pripr_keyhandler()
          RETURN DE_REFRESH
       ENDIF
 
-      StDokOdt( nil, nil, nil )
+      fakt_stampa_dok_odt( nil, nil, nil )
 
       close_open_fakt_tabele()
 
@@ -1837,7 +1837,7 @@ STATIC FUNCTION _total_dokumenta()
    _din_dem := fakt_pripr->dindem
 
    // izvuci mi dokument u temp tabele
-   stdokpdv( nil, nil, nil, .T. )
+   fakt_stdok_pdv( nil, nil, nil, .T. )
 
    // sracunaj totale...
    _calc_totals( @_doc_total, _din_dem )

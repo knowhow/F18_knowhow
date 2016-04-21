@@ -211,7 +211,7 @@ FUNCTION DatPosljP()
    SELECT kalk
    SET ORDER TO TAG "4"
 
-altd()
+
    IF Alltrim( _idroba ) == "T"
       GO BOTTOM
       IF _datdok < datdok

@@ -65,6 +65,7 @@ FUNCTION update_rec_server_and_dbf( table, values, algoritam, transaction )
 
    IF transaction $ "FULL#BEGIN"
       run_sql_query( "BEGIN" )
+      unlock_semaphore( table )
       lock_semaphore( table )
    ENDIF
 
@@ -101,7 +102,6 @@ FUNCTION update_rec_server_and_dbf( table, values, algoritam, transaction )
 
          IF transaction == "FULL"
             run_sql_query( "ROLLBACK" )
-            //unlock_semaphore( table )
          ENDIF
 
          _msg := "ERROR: sql delete " + table +  " , ROLLBACK, where: " + _where_str_dbf
@@ -118,7 +118,7 @@ FUNCTION update_rec_server_and_dbf( table, values, algoritam, transaction )
 
       IF transaction == "FULL"
          run_sql_query( "ROLLBACK" )
-         unlock_semaphore( table )
+         //unlock_semaphore( table )
       ENDIF
 
       _msg := RECI_GDJE_SAM + "ERRORY: sql_insert: " + table + " , ROLLBACK values: " + pp( values )
@@ -228,6 +228,7 @@ FUNCTION delete_rec_server_and_dbf( table, values, algoritam, transaction )
 
    IF transaction $ "FULL#BEGIN"
       run_sql_query( "BEGIN" )
+      unlock_semaphore( table )
       lock_semaphore( table )
    ENDIF
 
@@ -249,7 +250,7 @@ FUNCTION delete_rec_server_and_dbf( table, values, algoritam, transaction )
 
             IF transaction == "FULL"
                run_sql_query( "ROLLBACK" )
-               unlock_semaphore( table )
+               //unlock_semaphore( table )
             ENDIF
 
             _msg := "ERROR: " + RECI_GDJE_SAM0 + " tabela: " + table + " DBF_TAG " + _alg[ "dbf_tag" ]
@@ -345,6 +346,7 @@ FUNCTION delete_all_dbf_and_server( table )
    _a_dbf_rec := get_a_dbf_rec( table, .T. )
    reopen_exclusive( _a_dbf_rec[ "table" ] )
 
+   unlock_semaphore(  _a_dbf_rec[ "table" ] )
    IF !lock_semaphore( _a_dbf_rec[ "table" ] )
       RETURN .F.
    ENDIF

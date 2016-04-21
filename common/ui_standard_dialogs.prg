@@ -147,7 +147,6 @@ FUNCTION print_dialog_box( cDirekt )
    SET CONFIRM OFF
    SET CURSOR ON
 
-altd()
    cDirekt := select_print_mode( @cDirekt )
 
    SET CONFIRM ON

@@ -94,7 +94,7 @@ FUNCTION kalk_unos_dok_pr()
    LOCATE FOR Eval( bProizvodPripadajuceSirovine ) == nRbr // stavke
 
    IF Found()
-      info_bar( _idFirma + "-" + _idvd + "-" + _brdok,  "postoje proivodi za rbr" + AllTrim( Str( nRbr ) ) )
+      info_bar( _idFirma + "-" + _idvd + "-" + _brdok,  "postoje proizvodi za rbr" + AllTrim( Str( nRbr ) ) )
       IF Pitanje( , "pobrisati za stavku " + AllTrim( Str( nRbr ) ) + " sirovine?", "N" ) == "D"
          kalk_pripr_pobrisi_sirovine( cIdFirma, cIdVd, cBrDok, nRbr, bDokument )
          kalk_pripr_napuni_sirovine_za( nRbr, _idroba, _kolicina )
@@ -307,7 +307,7 @@ FUNCTION kalk_pripr_napuni_sirovine_za( nRbr, _idroba, _kolicina )
       nC2 := 0
       dDatNab := CToD( "" )
 
-      info_bar( _idkonto2 + "/" + sast->id2, " sirovina stanje na skladistu ..." )
+      info_bar( _idkonto2 + "/" + sast->id2, "sirovina: " + _idkonto2 + "/" + sast->id2 )
       KalkNab( _idfirma, sast->id2, _idkonto2, @nKolS, @nKolZN, @nc1, @nc2, @dDatNab )
       info_bar( _idkonto2 + "/" + sast->id2, NIL )
 

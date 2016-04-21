@@ -168,8 +168,7 @@ use
 
    RETURN .T.
 
-// -----------------------------------------
-// -----------------------------------------
+
 FUNCTION test_sem_1_from_sql_server( algoritam )
 
    LOCAL _result := .F.

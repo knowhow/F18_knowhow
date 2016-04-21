@@ -20,7 +20,7 @@ FUNCTION kalk_razmjena_podataka()
    LOCAL _izbor := 1
 
    AAdd( _opc, "1. generisi FIN,FAKT dokumente (kontiraj)      " )
-   AAdd( _opcexe, {|| Rekapk( .T. ) } )
+   AAdd( _opcexe, {|| kalk_kontiranje( .T. ) } )
    AAdd( _opc, "2. iz FAKT generisi KALK dokumente" )
    AAdd( _opcexe, {|| Faktkalk() } )
    AAdd( _opc, "3. iz TOPS generisi KALK dokumente" )
@@ -34,7 +34,7 @@ FUNCTION kalk_razmjena_podataka()
    AAdd( _opc, "-----------------------------------" )
    AAdd( _opcexe, nil )
    AAdd( _opc, "A. kontiraj dokumente za period - u pripremu" )
-   AAdd( _opcexe, {|| KontVise() } )
+   AAdd( _opcexe, {|| kalk_kontiranje_dokumenata_period() } )
    AAdd( _opc, "B. kontiraj automatski kalkulacije za period" )
    AAdd( _opcexe, {|| kont_v_kalk() } )
 
@@ -42,7 +42,7 @@ FUNCTION kalk_razmjena_podataka()
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
 
 

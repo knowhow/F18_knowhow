@@ -169,7 +169,7 @@ STATIC FUNCTION o_tables( azurirana )
    ENDIF
 
    IF azurirana
-      O_SKALK
+      open_kalk_as_pripr()
    ELSE
       O_KALK_PRIPR
    ENDIF

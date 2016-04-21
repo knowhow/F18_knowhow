@@ -217,7 +217,7 @@ STATIC FUNCTION kalk_zavisni_nakon_azuriranja( lGenerisi, lAuto )
 
    IF lGenerisi = .T.
 
-      RekapK()
+      kalk_kontiranje()
 
       formiraj_finansijski_nalog( lAuto )
 

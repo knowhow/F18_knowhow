@@ -1061,12 +1061,12 @@ FUNCTION IspitajRezim()
 
 
 
-/* RekapK()
+/* kalk_kontiranje()
  *   param: fstara - .f. znaci poziv iz tabele pripreme, .t. radi se o azuriranoj kalkulaciji pa se prvo getuje broj dokumenta (cIdFirma,cIdVD,cBrdok)
  *     Pravi rekapitulaciju kalkulacija a ako je ulazni parametar fstara==.t. poziva se i kontiranje dokumenta
  */
 
-FUNCTION RekapK()
+FUNCTION kalk_kontiranje()
 
    PARAMETERS fStara, cIdFirma, cIdVd, cBrDok, lAuto
 
@@ -1103,16 +1103,9 @@ FUNCTION RekapK()
       close_open_rekap_tables()
 
       IF fStara
-         // otvara se KALK sa aliasom priprema
-         SELECT F_KALK
-         IF !Used()
-            O_SKALK
-         ENDIF
+         select_o_kalk_as_pripr()
       ELSE
-         SELECT F_KALK_PRIPR
-         IF !Used()
-            O_KALK_PRIPR
-         ENDIF
+         select_o_kalk_pripr()
       ENDIF
 
       SELECT finmat
@@ -1292,8 +1285,8 @@ FUNCTION RekapK()
                SET DEVICE TO SCREEN
                IF ! ( ( idvd $ "16#80" )  .AND. !Empty( idkonto2 )  )
                   IF !idvd $ "24"
-                     //Beep( 2 )
-                     //Msg( "Unutar kalkulacije se pojavilo vise dokumenata !", 6 )
+                     // Beep( 2 )
+                     // Msg( "Unutar kalkulacije se pojavilo vise dokumenata !", 6 )
                   ENDIF
                ENDIF
                IF cidvd == "24"
@@ -1592,23 +1585,24 @@ FUNCTION RekapK()
 
    IF !lViseKalk
       my_close_all_dbf()
-      RETURN
+      RETURN .F.
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 
 
 STATIC FUNCTION close_open_rekap_tables()
+
    O_FINMAT
    O_KONTO
    O_PARTN
    O_TDOK
    O_ROBA
    O_TARIFA
-   RETURN
 
+   RETURN .T.
 
 
 
@@ -1629,7 +1623,7 @@ FUNCTION predisp()
 // -----------------------------------
 // kontiraj vise dokumenata u jedan
 // -----------------------------------
-FUNCTION KontVise()
+FUNCTION kalk_kontiranje_dokumenata_period()
 
    LOCAL nCount
    LOCAL aD
@@ -1651,15 +1645,11 @@ FUNCTION KontVise()
 
    SET CURSOR ON
    Box(, 6, 60 )
-   @ m_x + 1, m_y + 2 SAY  "Vrsta kalkulacije " GET cVrsta ;
-      PICT "@!" ;
-      VALID !Empty( cVrsta )
+   @ m_x + 1, m_y + 2 SAY  "Vrsta kalkulacije " GET cVrsta PICT "@!" VALID !Empty( cVrsta )
 
-   @ m_x + 3, m_y + 2 SAY  "Magacinski konto (prazno svi) " GET cMKonto ;
-      PICT "@!"
+   @ m_x + 3, m_y + 2 SAY  "Magacinski konto (prazno svi) " GET cMKonto  PICT "@!"
 
-   @ m_x + 4, m_y + 2 SAY "Prodavnicki kto (prazno svi)  " GET cPKonto ;
-      PICT "@!"
+   @ m_x + 4, m_y + 2 SAY "Prodavnicki kto (prazno svi)  " GET cPKonto PICT "@!"
 
 
    @ m_x + 6, m_y + 2 SAY  "Kontirati za period od " GET dDatOd
@@ -1674,13 +1664,24 @@ FUNCTION KontVise()
 
    IF LastKey() == K_ESC
       my_close_all_dbf()
-      RETURN
+      RETURN .F.
+   ENDIF
+
+   my_use_refresh_stop()
+
+   AltD()
+
+
+   IF Select( "kalk_pripr" ) > 0
+      SELECT KALK_PRIPR
+      USE
    ENDIF
 
    SELECT F_KALK_DOKS
    IF !Used()
       O_KALK_DOKS
    ENDIF
+
 
 
    // "1","IdFirma+idvd+brdok"
@@ -1697,6 +1698,7 @@ FUNCTION KontVise()
    SET FILTER TO &cFilter
    GO TOP
 
+
    nCount := 0
    DO WHILE !Eof()
       nCount ++
@@ -1704,16 +1706,18 @@ FUNCTION KontVise()
       cIdVd := idvd
       cBrDok := brdok
 
-      RekapK( .T., cIdFirma, cIdVd, cBrDok )
+      kalk_kontiranje( .T., cIdFirma, cIdVd, cBrDok )
 
       SELECT KALK_DOKS
       SKIP
    ENDDO
 
-   MsgBeep( "Obradjeno " + Str( nCount, 7, 0 ) + " dokumenata" )
+   MsgBeep(  "Obradjeno " + AllTrim( Str( nCount, 7, 0 ) ) + " dokumenata" )
+
+   my_use_refresh_start()
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
 
 

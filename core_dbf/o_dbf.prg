@@ -11,14 +11,25 @@
 
 #include "f18.ch"
 
-FUNCTION o_dbf_table( nArea, cTable, cTag )
+FUNCTION o_dbf_table( nArea, xTable, cTag )
 
    LOCAL lUsed := .F.
    LOCAL nCount := 0
+   LOCAL cTable, cAlias
+
+   IF ValType( xTable ) == "C"
+      cAlias := NIL
+      cTable := xTable
+   ENDIF
+
+   IF ValType( xTable ) == "A"
+      cAlias := xTable[ 1 ]
+      cTable := xTable[ 2 ]
+   ENDIF
 
    SELECT ( nArea )
    DO WHILE !lUsed .OR. nCount > 7
-      IF my_use( cTable )
+      IF my_use( cAlias, cTable )
          lUsed := .T.
          ordSetFocus( cTag )
          IF Empty( ordKey() )
@@ -40,10 +51,10 @@ FUNCTION o_dbf_table( nArea, cTable, cTag )
    select_o_dbf( "fakt_doks", F_FAKT_DOKS, "fakt_doks", "1" )
 */
 
-FUNCTION select_o_dbf( cAlias, nArea, cTable, cTag )
+FUNCTION select_o_dbf( cAlias, nArea, xTable, cTag )
 
    IF Select( cAlias ) == 0
-      o_dbf_table( nArea, cTable, cTag )
+      o_dbf_table( nArea, xTable, cTag )
    ENDIF
 
    Select( nArea )

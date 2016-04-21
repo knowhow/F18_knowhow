@@ -34,7 +34,7 @@ STATIC FUNCTION _o_gen_tables( from_kum )
    IF from_kum == .T.
       SELECT F_KALK
       IF !Used()
-         O_SKALK
+         open_kalk_as_pripr()
       ENDIF
    ELSE
       SELECT F_KALK_PRIPR

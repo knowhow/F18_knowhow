@@ -381,6 +381,7 @@ FUNCTION harbour_init()
    hb_idleAdd( {|| on_idle_dbf_refresh() } )
    // hb_idleAdd( {|| idle_eval() } ) - izaziva erore
 
+
    RETURN .T.
 
 

@@ -12,6 +12,13 @@
 #include "f18.ch"
 
 
+FUNCTION select_o_kalk_as_pripr()
+   RETURN select_o_dbf( "KALK_PRIPR", F_KALK_PRIPR, { "KALK_PRIPR", "kalk_kalk" }, "1" )
+
+FUNCTION open_kalk_as_pripr()
+   RETURN o_dbf_table( F_KALK_PRIPR, { "KALK_PRIPR", "kalk_kalk" }, "1" )
+
+
 FUNCTION o_kalk_pripr()
 
    RETURN o_dbf_table( F_KALK_PRIPR, "kalk_pripr", "1" )

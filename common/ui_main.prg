@@ -114,20 +114,21 @@ FUNCTION Msg( uText, sec, xPos )
    LOCAL l, msg_x1, msg_x2, msg_y1, msg_y2, cPom := Set( _SET_DEVICE )
 
    LOCAL nLen, nHashPos, aText := {}, nCnt, nBrRed := 0
-   LOCAL text
+   LOCAL cText
 
-   text := Unicode():New( uText, .T. ):getCpString()
+   cText := Unicode():New( uText, .T. ):getCpString()
+
 
    SET DEVICE TO SCREEN
 
-   DO WHILE ( nHashPos := At ( "#", Text ) ) > 0
-      AAdd ( aText, Left ( Text, nHashPos - 1 ) )
-      Text := SubStr ( Text, nHashPos + 1 )
+   DO WHILE ( nHashPos := At ( "#", cText ) ) > 0
+      AAdd ( aText, Left ( cText, nHashPos - 1 ) )
+      Text := SubStr ( cText, nHashPos + 1 )
       nBrRed ++
    END
 
-   IF ! Empty ( Text )
-      AAdd ( aText, Text )
+   IF ! Empty ( cText )
+      AAdd ( aText, cText )
       nBrRed ++
    ENDIF
 
@@ -975,10 +976,11 @@ INKEY_MOVE          Mouse motion events are allowed
 
    _set := Set( _SET_EVENTMASK, INKEY_KEYBOARD )
    // poruke koje su duze od 70 znakova
-   IF Len( cMsg ) > MAXCOLS() -11 .AND.  ( At( cMsg, "#" ) == 0 )
-      cMsg := SubStr( cMsg, 1, MAXCOLS() -11 ) + "#" + SubStr( cMsg, MAXCOLS() -10, MAXCOLS() -11 ) + "#..."
+   IF Len( cMsg ) > MAXCOLS() - 11 .AND.  ( At( cMsg, "#" ) == 0 )
+      cMsg := SubStr( cMsg, 1, MAXCOLS() -11 ) + "#" + SubStr( cMsg, MAXCOLS() - 10, MAXCOLS() -11 ) + "#..."
    ENDIF
 
+altd()
 #ifdef TEST
    Msg( cMsg, 1 )
 #else

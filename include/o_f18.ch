@@ -147,7 +147,7 @@
 #xcommand O_KALKX         => select(F_KALK);  usex  (KUMPATH +"kalk")  ; set order to tag "1"
 #xcommand O_KALKS         => select(F_KALKS);  my_use  ("kalks")  ; set order to tag "1"
 
-#xcommand O_SKALK          => select(F_KALK);  my_use( "kalk_pripr", "kalk_kalk" ) ; set order to tag "1"
+
 #xcommand O_KALK_DOKS      => select(F_KALK_DOKS);  my_use( "kalk_doks") ; set order to tag "1"
 #xcommand O_KALK_DOKS2     => select(F_KALK_DOKS2);  my_use( "kalk_doks2" ) ; set order to tag "1"
 #xcommand O_PORMP          => select(F_PORMP); usex ("pormp")     ; set order to tag "1"

@@ -116,7 +116,7 @@ STATIC FUNCTION _kont_doks( dD_f, dD_t, cId_td, cId_mkto, ;
       cD_brdok := field->brdok
 
       // napuni FINMAT
-      RekapK( .T., cD_firma, cD_tipd, cD_brdok, .T. )
+      kalk_kontiranje( .T., cD_firma, cD_tipd, cD_brdok, .T. )
 
       // uzmi drugi broj naloga
       // _br_nal( cChBrNal, cD_brdok, @cNalog )

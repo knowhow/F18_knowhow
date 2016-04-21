@@ -249,7 +249,7 @@ STATIC FUNCTION kalk_24_rekapitulacija()
 
    my_close_all_dbf()
 
-   RekapK()
+   kalk_kontiranje()
 
    IF Pitanje(, "Želite li izvršiti kontiranje dokumenta (D/N) ?", "D" ) == "D"
       kalk_kontiranje_naloga()
@@ -2238,7 +2238,7 @@ STATIC FUNCTION kalk_open_tables( azurirana )
    O_TDOK
 
    IF azurirana
-      O_SKALK
+      open_kalk_as_pripr()
    ELSE
       O_KALK_PRIPR
    ENDIF

@@ -48,7 +48,7 @@ FUNCTION LdFin()
    O_NALOG
    O_FIN_PRIPR
    O_TRFP3
-   O_REKLD
+   open_rekld()
 
    IF RecCount() == 0
       MsgBeep( "Potrebno pokrenuti specifikaciju u modulu LD !" )

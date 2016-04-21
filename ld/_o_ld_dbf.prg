@@ -11,6 +11,17 @@
 
 #include "f18.ch"
 
+FUNCTION open_rekld()
+
+   // #xcommand O_REKLD   => select (F_REKLD)   ;  my_usex ("rekld")   ; set order to tag "1"
+
+   RETURN o_dbf_table( F_REKLD, "rekld", "1" )
+
+
+FUNCTION select_o_rekld()
+
+   RETURN select_o_dbf( "REKLD", F_REKLD, "rekld", "1" )
+
 
 FUNCTION open_ld_rj()
 

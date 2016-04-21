@@ -29,24 +29,25 @@ FUNCTION o_dbf_table( nArea, xTable, cTag )
    ENDIF
 
    SELECT ( nArea )
-   DO WHILE !lUsed .OR. nCount > 7
+   DO WHILE !lUsed .AND. nCount < 7
 
       IF cAlias != NIL
          lMyUse := my_use( cAlias, cTable )
       ELSE
          lMyUse := my_use( cTable )
       ENDIF
-      
+
       IF lMyUse
          lUsed := .T.
          ordSetFocus( cTag )
          IF Empty( ordKey() )
             lUsed := .F.
-            ?E "ERR o_pos_table:", cTable, cTag
+            ?E "ERR o_table tag:", cTable, cTag
             USE
          ENDIF
       ELSE
          hb_idleSleep( 1.5 )
+         error_bar( "o_dbf", "open dbf err: " + cTable + "/" + cTag + " cnt:" + Alltrim(Str(nCount)))
          nCount++
       ENDIF
 

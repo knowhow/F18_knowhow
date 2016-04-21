@@ -16,11 +16,10 @@ FUNCTION GlobalErrorHandler( err_obj, lShowErrorReport, lQuitApp )
 
    LOCAL _i, _cmd
    LOCAL _out_file
-   LOCAL _msg, _log_msg := "BUG REPORT: "
+   LOCAL _msg, cLogMsg := "BUG REPORT: "
    LOCAL lNotify := .F.
    LOCAL bErr
    LOCAL nI, cMsg
-
 
    IF err_obj:GenCode == 45 .AND. err_obj:SubCode == 1302
    /*
@@ -49,10 +48,10 @@ FUNCTION GlobalErrorHandler( err_obj, lShowErrorReport, lQuitApp )
      10 TFINMOD:RUN / 126
    */
 
-     bErr := ErrorBlock( {| oError | Break( oError ) } )
+      bErr := ErrorBlock( {| oError | Break( oError ) } )
 
-     LOG_CALL_STACK _log_msg
-      ?E "ERR Object destructor failure/Reference to freed block 45/1302", _log_msg
+      LOG_CALL_STACK cLogMsg
+      ?E "ERR Object destructor failure/Reference to freed block 45/1302", cLogMsg
 
       ErrorBlock( bErr )
       RETURN .T.
@@ -93,46 +92,46 @@ FUNCTION GlobalErrorHandler( err_obj, lShowErrorReport, lQuitApp )
    _msg := "Verzija programa: " + F18_VER + " " + F18_VER_DATE + " " + F18_LIB_VER
    OutBug( _msg )
 
-   _log_msg += _msg
+   cLogMsg += _msg
    OutBug()
 
    _msg := "SubSystem/severity    : " + err_obj:SubSystem + " " + to_str( err_obj:severity )
    OutBug( _msg )
-   _log_msg += " ; " + _msg
+   cLogMsg += " ; " + _msg
 
    _msg := "GenCod/SubCode/OsCode : " + to_str( err_obj:GenCode ) + " " + to_str( err_obj:SubCode ) + " " + to_str( err_obj:OsCode )
    OutBug( _msg )
-   _log_msg += " ; " + _msg
+   cLogMsg += " ; " + _msg
 
    _msg := "Opis                  : " + err_obj:description
    OutBug( _msg )
-   _log_msg += " ; " + _msg
+   cLogMsg += " ; " + _msg
 
    _msg := "ImeFajla              : " + err_obj:filename
    OutBug( _msg )
-   _log_msg += " ; " + _msg
+   cLogMsg += " ; " + _msg
 
 
    _msg := "Operacija             : " + err_obj:operation
    OutBug( _msg )
-   _log_msg += " ; " + _msg
+   cLogMsg += " ; " + _msg
 
    _msg := "Argumenti             : " + to_str( err_obj:args )
    OutBug( _msg )
-   _log_msg += " ; " + _msg
+   cLogMsg += " ; " + _msg
 
    _msg := "canRetry/canDefault   : " + to_str( err_obj:canRetry ) + " " + to_str( err_obj:canDefault )
    OutBug( _msg )
-   _log_msg += " ; " + _msg
+   cLogMsg += " ; " + _msg
 
    OutBug()
    _msg := "CALL STACK:"
    OutBug( _msg )
-   _log_msg += " ; " + _msg
+   cLogMsg += " ; " + _msg
 
    OutBug( "---", Replicate( "-", 80 ) )
-   LOG_CALL_STACK _log_msg
-   OutBug( StrTran( _log_msg, "//", hb_eol() ) )
+   LOG_CALL_STACK cLogMsg
+   OutBug( StrTran( cLogMsg, "//", hb_eol() ) )
    OutBug( "---", Replicate( "-", 80 ) )
    OutBug()
 
@@ -150,7 +149,7 @@ FUNCTION GlobalErrorHandler( err_obj, lShowErrorReport, lQuitApp )
    ENDIF
 
    OutBug( _msg )
-   _log_msg += " ; " + _msg
+   cLogMsg += " ; " + _msg
 
    IF err_obj:cargo <> NIL
 
@@ -159,7 +158,7 @@ FUNCTION GlobalErrorHandler( err_obj, lShowErrorReport, lQuitApp )
          IF err_obj:cargo[ _i ] == "var"
             _msg :=  "* var " + to_str( err_obj:cargo[ ++_i ] )  + " : " + to_str( pp( err_obj:cargo[ ++_i ] ) )
             ? _msg
-            _log_msg += " ; " + _msg
+            cLogMsg += " ; " + _msg
          ENDIF
       NEXT
       OutBug( Replicate( "-", 60 ) )
@@ -179,10 +178,11 @@ FUNCTION GlobalErrorHandler( err_obj, lShowErrorReport, lQuitApp )
          _cmd := "f18_editor " + _out_file
          f18_run( _cmd )
       ENDIF
-      log_write( _log_msg, 1 )
-#ifndef F18_DEBUG
+      log_write( cLogMsg, 1 )
+//#ifndef F18_DEBUG
+altd()
       send_email( err_obj, lNotify )
-#endif
+//#endif
    ENDIF
 
    IF lQuitApp
@@ -243,7 +243,7 @@ STATIC FUNCTION server_connection_info()
    LOCAL hParams := my_server_params()
 
    IF !hb_HHasKey( hParams, "host" )
-       RETURN .F.
+      RETURN .F.
    ENDIF
 
    OutBug()
@@ -322,6 +322,7 @@ STATIC FUNCTION send_email( err_obj, lNotify )
    LOCAL _attachment
    LOCAL _answ := fetch_metric( "bug_report_email", my_user(), "A" )
    LOCAL cDatabase
+   LOCAL _attach
 
    IF lNotify == NIL
       lNotify := .F.

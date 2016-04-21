@@ -263,7 +263,7 @@
 #xcommand O_LDSMX   => select (F_LDSM)    ;  my_use ("ldsm")     ; set order to tag "0"
 #xcommand O_OPSLD   => select (F_OPSLD)   ;  my_usex ("opsld")    ; set order to tag "1"
 #xcommand O_REKLD0  => select (F_REKLD)   ;  my_usex ("rekld")
-#xcommand O_REKLD   => select (F_REKLD)   ;  my_usex ("rekld")   ; set order to tag "1"
+
 #xcommand O_REKLDP  => select (F_REKLDP)  ;  my_usex ("rekldp")  ; set order to tag "1"
 
 #xcommand O_KBENEF  => select (F_KBENEF)  ;  my_use ("kbenef")   ; set order to tag "ID"

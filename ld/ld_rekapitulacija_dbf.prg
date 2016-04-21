@@ -133,7 +133,7 @@ FUNCTION ld_rekapitulacija( lSvi )
    CreOpsLD()
    CreRekLD()
 
-   O_REKLD
+   open_rekld()
    O_OPSLD
 
    SELECT ld

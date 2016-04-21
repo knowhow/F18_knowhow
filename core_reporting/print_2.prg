@@ -169,12 +169,14 @@ FUNCTION f18_end_print( cFileName, xPrintOpt )
 
    DO CASE
 
-
+   CASE cOpt == "D"
+       // priprema za email
+       
    CASE cOpt == "P"
 
       txt_izvjestaj_podrska_email( cFileName )
 
-   CASE cOpt $ "D#E#F#G" // direct print
+   CASE cOpt $ "E#F#G" // direct print
 
 #ifdef __PLATFORM__WINDOWS
       direct_print_windows( cFileName, _port )

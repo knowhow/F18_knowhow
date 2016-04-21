@@ -116,7 +116,7 @@ FUNCTION ld_rekapitulacija_sql( lSvi )
    CreOpsLD()
    CreRekLD()
 
-   O_REKLD
+   open_rekld()
    O_OPSLD
 
    SELECT ld

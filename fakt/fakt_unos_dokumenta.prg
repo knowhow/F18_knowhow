@@ -663,12 +663,11 @@ STATIC FUNCTION fakt_unos_nove_stavke()
 
    BoxC()
 
-   RETURN
+   RETURN .T.
 
 
-// ---------------------------------------------------
-// printanje dokumenta
-// ---------------------------------------------------
+
+
 STATIC FUNCTION fakt_print_dokument()
 
    LOCAL _a_fakt_doks
@@ -1550,7 +1549,7 @@ FUNCTION JeStorno10()
 
 
 /* RabPor10()
- *    
+ *
  */
 
 FUNCTION RabPor10()

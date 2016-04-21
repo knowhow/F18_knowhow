@@ -1,71 +1,15 @@
 /*
- * This file is part of the bring.out FMK, a free and open source
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+ * This file is part of the bring.out knowhow ERP, a free and open source
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
 
-
 #include "f18.ch"
-
-
-STATIC FUNCTION _o_tables()
-
-   SELECT ( F_BANKE )
-   IF !Used()
-      O_BANKE
-   ENDIF
-
-   SELECT ( F_JPRIH )
-   IF !Used()
-      O_JPRIH
-   ENDIF
-
-   SELECT ( F_SIFK )
-   IF !Used()
-      O_SIFK
-   ENDIF
-
-   SELECT ( F_SIFV )
-   IF !Used()
-      O_SIFV
-   ENDIF
-
-   SELECT ( F_KRED )
-   IF !Used()
-      O_KRED
-   ENDIF
-
-   SELECT ( F_REKLD )
-   IF !Used()
-      O_REKLD
-   ENDIF
-
-   SELECT ( F_PARTN )
-   IF !Used()
-      O_PARTN
-   ENDIF
-
-   SELECT ( F_VRPRIM )
-   IF !Used()
-      O_VRPRIM
-   ENDIF
-
-   SELECT ( F_LDVIRM )
-   IF !Used()
-      O_LDVIRM
-   ENDIF
-
-   SELECT ( F_VIPRIPR )
-   IF !Used()
-      O_VIRM_PRIPR
-   ENDIF
-
-   RETURN
 
 
 
@@ -90,7 +34,7 @@ FUNCTION virm_prenos_ld( prenos_ld )
       prenos_ld := .F.
    ENDIF
 
-   _o_tables()
+   virm_o_tables()
 
    SELECT virm_pripr
    IF reccount2() > 0 .AND. Pitanje(, "Izbrisati virmane u pripremi?", "N" ) == "D"
@@ -355,7 +299,7 @@ STATIC FUNCTION obrada_plate( godina, mjesec, dat_virm, r_br, dod_opis, per_od, 
             REPLACE field->pnabr WITH _poziv_na_broj
          ENDIF
 
-         _tmp_opis := Trim( vrprim->pom_txt ) +  IIF( !Empty( dod_opis ), " " + AllTrim( dod_opis ), "" ) +  IIF( !Empty( broj_radnika ), " " + broj_radnika, "" )
+         _tmp_opis := Trim( vrprim->pom_txt ) +  iif( !Empty( dod_opis ), " " + AllTrim( dod_opis ), "" ) +  iif( !Empty( broj_radnika ), " " + broj_radnika, "" )
 
          // resetuj varijable
          _kome_zr := ""
@@ -732,4 +676,59 @@ STATIC FUNCTION Rekapld( cId, ;
 
    PopWA()
 
-   RETURN
+   RETURN .T.
+
+
+STATIC FUNCTION virm_o_tables()
+
+   AltD()
+   SELECT ( F_BANKE )
+   IF !Used()
+      O_BANKE
+   ENDIF
+
+   SELECT ( F_JPRIH )
+   IF !Used()
+      O_JPRIH
+   ENDIF
+
+   SELECT ( F_SIFK )
+   IF !Used()
+      O_SIFK
+   ENDIF
+
+   SELECT ( F_SIFV )
+   IF !Used()
+      O_SIFV
+   ENDIF
+
+   SELECT ( F_KRED )
+   IF !Used()
+      O_KRED
+   ENDIF
+
+
+   select_o_rekld()
+
+
+   SELECT ( F_PARTN )
+   IF !Used()
+      O_PARTN
+   ENDIF
+
+   SELECT ( F_VRPRIM )
+   IF !Used()
+      O_VRPRIM
+   ENDIF
+
+   SELECT ( F_LDVIRM )
+   IF !Used()
+      O_LDVIRM
+   ENDIF
+
+   SELECT ( F_VIPRIPR )
+   IF !Used()
+      O_VIRM_PRIPR
+   ENDIF
+
+   RETURN .T.

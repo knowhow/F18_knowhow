@@ -47,7 +47,7 @@ CLASS DokAtributi
    METHOD set_table_name()
    METHOD set_dbf_alias()
    METHOD atrib_delete_duplicate()
-   METHOD atrib_delete_rest()
+   METHOD brisi_visak_atributa()
 
 ENDCLASS
 
@@ -63,7 +63,7 @@ METHOD DokAtributi:New( _modul_, _wa_ )
    ENDIF
 
    IF _wa_ <> NIL
-      ::workarea := _wa_
+      ::workarea := _wa_  // F_FAKT_ATRIB
    ENDIF
 
    RETURN SELF
@@ -426,7 +426,7 @@ METHOD DokAtributi:delete_atrib_from_dbf()
 
    my_unlock()
 
-   //my_dbf_pack()
+   // my_dbf_pack()
 
    USE
 
@@ -657,11 +657,13 @@ METHOD DokAtributi:atrib_server_to_dbf()
    RETURN .T.
 
 
-// -----------------------------------------------------
-// ova funkcija treba da uradi:
-// - provjeri ima li viska atributa
-// - provjeri ima li duplih atributa
-// -----------------------------------------------------
+/*
+ ova funkcija treba da uradi:
+ - provjeri ima li viska atributa
+ - provjeri ima li duplih atributa
+fix_atrib( F_FAKT_PRIPR, _a_fakt_doks )
+
+*/
 METHOD DokAtributi:fix_atrib( area, dok_arr )
 
    LOCAL _dok_params
@@ -679,22 +681,23 @@ METHOD DokAtributi:fix_atrib( area, dok_arr )
 
    NEXT
 
-   ::atrib_delete_rest( area )
+   ::brisi_visak_atributa( area )
 
    RETURN .T.
 
 
-// -----------------------------------------------------
-// brisi visak atributa ako postoji
-// -----------------------------------------------------
-METHOD DokAtributi:atrib_delete_rest( area )
+/*
+  brisi_visak_atributa( F_FAKT_PRIPR )
+*/
+METHOD DokAtributi:brisi_visak_atributa( area )
 
    LOCAL _id_firma, _tip_dok, _br_dok
    LOCAL _t_area := Select()
    LOCAL _ok := .T.
    LOCAL _deleted := .F.
-   LOCAL _alias := ::alias
    LOCAL _tmp := AllTrim( Lower( ::modul ) ) + "_pripr"
+   LOCAL _t_rec
+   LOCAL cSeek
 
    SELECT Alias( area )
    SET ORDER TO TAG "1"
@@ -712,16 +715,21 @@ METHOD DokAtributi:atrib_delete_rest( area )
       _t_rec := RecNo()
       SKIP -1
 
-      SELECT Alias( area )
 
-      seek &( _alias )->idfirma + &( _alias )->idtipdok + &( _alias )->brdok + &( _alias )->rbr
+      IF SELECT ( ::alias ) > 0
+         SELECT ::alias
+         cSeek := field->idfirma + field->idtipdok + field->brdok + field->rbr
+      ELSE
+         error_bar( "bug", log_stack( 1 ) )
+         cSeek := "XXX"
+      ENDIF
+      SELECT Alias( area ) // F_FAKT_PRIPR
+      SEEK cSeek
 
-      IF !Found()
-         SELECT Alias( ::workarea )
+      SELECT Alias( ::workarea ) // F_FAKT_ATRIB
+      IF !Found() // u fakt_pripr nema ove stavke vise, brisi visak
          DELETE
          _deleted := .T.
-      ELSE
-         SELECT Alias( ::workarea )
       ENDIF
 
       GO ( _t_rec )
@@ -730,7 +738,7 @@ METHOD DokAtributi:atrib_delete_rest( area )
    my_unlock()
 
    IF _deleted
-      //my_dbf_pack()
+      // my_dbf_pack()
    ENDIF
 
    USE
@@ -797,7 +805,7 @@ METHOD DokAtributi:atrib_delete_duplicate( param )
    my_unlock()
 
    IF _deleted
-      //my_dbf_pack( .F. )
+      // my_dbf_pack( .F. )
    ENDIF
 
    USE

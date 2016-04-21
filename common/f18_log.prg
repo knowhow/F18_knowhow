@@ -181,7 +181,9 @@ STATIC FUNCTION print_log_data( data, params, print_to_file )
    IF print_to_file
       f18_start_print( _log_path + _log_file, "D" )
    ELSE
-      START PRINT CRET
+      IF !start_print()
+         RETURN .F.
+      ENDIF
    ENDIF
 
    ?
@@ -223,7 +225,7 @@ STATIC FUNCTION print_log_data( data, params, print_to_file )
       f18_end_print( _log_path + _log_file, "D" )
    ELSE
       FF
-      ENDPRINT
+      end_print()
    ENDIF
 
    RETURN _log_file

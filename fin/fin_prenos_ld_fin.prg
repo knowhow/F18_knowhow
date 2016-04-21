@@ -157,11 +157,9 @@ FUNCTION ah_rld( cId, cTag, cOpis )
    SELECT rekld
    SET ORDER TO tag &cTag
    GO TOP
-   SEEK Str( _godina, 4 ) + Str( _mjesec, 2 ) + cId
+   SEEK Str( _godina, 4, 0 ) + Str( _mjesec, 2, 0 ) + cId
 
-   DO WHILE !Eof() .AND. godina == Str( _godina, 4 ) .AND. ;
-         mjesec == Str( _mjesec, 2 ) .AND. ;
-         AllTrim( id ) == cId
+   DO WHILE !Eof() .AND. godina == Str( _godina, 4 ) .AND. mjesec == Str( _mjesec, 2 ) .AND. AllTrim( id ) == cId
 
       cTmp := field->idpartner
       cIzdanje := field->izdanje
@@ -172,8 +170,8 @@ FUNCTION ah_rld( cId, cTag, cOpis )
       DO WHILE !Eof() .AND. godina == Str( _godina, 4 ) .AND. ;
             mjesec == Str( _mjesec, 2 ) .AND. ;
             AllTrim( id ) == cId .AND. ;
-            IF( cTag == "2" .OR. cTag == "4", idpartner == cTmp, .T. ) .AND. ;
-            IF( cTag == "3" .OR. cTag == "4", izdanje == cIzdanje, .T. )
+            IIF( cTag == "2" .OR. cTag == "4", idpartner == cTmp, .T. ) .AND. ;
+            IIF( cTag == "3" .OR. cTag == "4", izdanje == cIzdanje, .T. )
 
          IF !Empty( cOpis ) .AND. At( cOpis, cIzdanje ) == 0
             SKIP
@@ -220,4 +218,4 @@ FUNCTION ah_rld( cId, cTag, cOpis )
 
    SELECT ( nTArea )
 
-   RETURN
+   RETURN .T.

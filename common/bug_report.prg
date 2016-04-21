@@ -65,7 +65,7 @@ FUNCTION GlobalErrorHandler( err_obj, lShowErrorReport, lQuitApp )
    IF !lShowErrorReport
       lNotify := .T.
    ELSE
-      BEEP( 5 )
+      Beep( 5 )
    ENDIF
 
    _out_file := my_home_root() + "error.txt"
@@ -86,7 +86,7 @@ FUNCTION GlobalErrorHandler( err_obj, lShowErrorReport, lQuitApp )
    ENDIF
 
    OutBug()
-   OutBug( "F18 bug report (v5.0) :", Date(), Time() )
+   OutBug( "F18 bug report (v6.0) :", Date(), Time() )
    OutBug( Replicate( "=", 84 ) )
 
    _msg := "Verzija programa: " + F18_VER + " " + F18_VER_DATE + " " + F18_LIB_VER
@@ -179,10 +179,9 @@ FUNCTION GlobalErrorHandler( err_obj, lShowErrorReport, lQuitApp )
          f18_run( _cmd )
       ENDIF
       log_write( cLogMsg, 1 )
-//#ifndef F18_DEBUG
-altd()
+#ifndef F18_DEBUG
       send_email( err_obj, lNotify )
-//#endif
+#endif
    ENDIF
 
    IF lQuitApp
@@ -372,7 +371,7 @@ STATIC FUNCTION send_email( err_obj, lNotify )
 
    _attach := { _attachment }
 
-   info_bar( "err-sync", "Šaljem izvještaj greške podršci bring.out ..." )
+   info_bar( "err-sync", "Slanje greške podršci bring.out ..." )
 
    f18_email_send( _mail_params, _attach )
 

@@ -94,7 +94,7 @@
 #define F_PRIPT     104
 #define F_CACHE     105
 #define F_KALPOS    106
-#define F_KALK_ATRIB  107
+#define F_KALK_ATTR  107
 #define F_KALK_KARTICA  108
 
 
@@ -120,7 +120,7 @@
 #define F_POMGN     127
 #define F_FAKT_PRIPR2     128
 #define F_FAKT_PRIPR9     129
-#define F_FAKT_ATRIB     155
+#define F_FAKT_ATTR     155
 
 
 // modul POS (wa 130-160)

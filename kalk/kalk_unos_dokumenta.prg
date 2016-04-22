@@ -455,9 +455,9 @@ FUNCTION EditStavka()
 
    LOCAL _atributi := hb_Hash()
    LOCAL _dok
-   LOCAL _rok, _opis, _dok_hash
+   LOCAL _rok, _opis, _hAttrId
    LOCAL _old_dok, _new_dok
-   LOCAL oAtrib, _t_rec
+   LOCAL oAttr, _t_rec
 
    _old_dok := hb_Hash()
 
@@ -493,11 +493,11 @@ FUNCTION EditStavka()
    _dok[ "rbr" ] := _rbr
 
    IF _rok
-      _atributi[ "rok" ] := get_kalk_atribut_rok( _dok, .F. )
+      _atributi[ "rok" ] := get_kalk_attr_rok( _dok, .F. )
    ENDIF
 
    IF _opis
-      _atributi[ "opis" ] := get_kalk_atribut_opis( _dok, .F. )
+      _atributi[ "opis" ] := get_kalk_attr_opis( _dok, .F. )
    ENDIF
 
    IF kalk_edit_priprema( .F., @_atributi ) == 0
@@ -523,15 +523,15 @@ FUNCTION EditStavka()
       Gather()
       my_unlock()
 
-      _dok_hash := hb_Hash()
-      _dok_hash[ "idfirma" ] := field->idfirma
-      _dok_hash[ "idtipdok" ] := field->idvd
-      _dok_hash[ "brdok" ] := field->brdok
-      _dok_hash[ "rbr" ] := field->rbr
+      _hAttrId := hb_Hash()
+      _hAttrId[ "idfirma" ] := field->idfirma
+      _hAttrId[ "idtipdok" ] := field->idvd
+      _hAttrId[ "brdok" ] := field->brdok
+      _hAttrId[ "rbr" ] := field->rbr
 
-      oAtrib := DokAtributi():new( "kalk", F_KALK_ATRIB )
-      oAtrib:dok_hash := _dok_hash
-      oAtrib:atrib_hash_to_dbf( _atributi )
+      oAttr := DokAttr():new( "kalk", F_KALK_ATTR )
+      oAttr:hAttrId := _hAttrId
+      oAttr:attr_mem_to_dbf( _atributi )
 
       SELECT kalk_pripr
 
@@ -606,10 +606,10 @@ FUNCTION EditStavka()
 FUNCTION kalk_unos_nova_stavka()
 
    LOCAL _atributi := hb_Hash()
-   LOCAL _dok, _dok_hash
+   LOCAL _dok, _hAttrId
    LOCAL _old_dok := hb_Hash()
    LOCAL _new_dok
-   LOCAL oAtrib
+   LOCAL oAttr
    LOCAL _rok, _opis
    LOCAL _rbr_uvecaj := 0
 
@@ -704,15 +704,15 @@ FUNCTION kalk_unos_nova_stavka()
 
       Gather()
 
-      _dok_hash := hb_Hash()
-      _dok_hash[ "idfirma" ] := field->idfirma
-      _dok_hash[ "idtipdok" ] := field->idvd
-      _dok_hash[ "brdok" ] := field->brdok
-      _dok_hash[ "rbr" ] := field->rbr
+      _hAttrId := hb_Hash()
+      _hAttrId[ "idfirma" ] := field->idfirma
+      _hAttrId[ "idtipdok" ] := field->idvd
+      _hAttrId[ "brdok" ] := field->brdok
+      _hAttrId[ "rbr" ] := field->rbr
 
-      oAtrib := DokAtributi():new( "kalk", F_KALK_ATRIB )
-      oAtrib:dok_hash := _dok_hash
-      oAtrib:atrib_hash_to_dbf( _atributi )
+      oAttr := DokAttr():new( "kalk", F_KALK_ATTR )
+      oAttr:hAttrId := _hAttrId
+      oAttr:attr_mem_to_dbf( _atributi )
 
       IF nRbr == 1
          SELECT kalk_pripr
@@ -771,7 +771,7 @@ FUNCTION kalk_edit_sve_stavke()
 
    LOCAL _atributi := hb_Hash()
    LOCAL _dok
-   LOCAL oAtrib, _dok_hash, _old_dok, _new_dok
+   LOCAL oAttr, _hAttrId, _old_dok, _new_dok
    LOCAL _rok, _opis
 
    PushWA()
@@ -828,11 +828,11 @@ FUNCTION kalk_edit_sve_stavke()
       _dok[ "rbr" ] := _rbr
 
       IF _opis
-         _atributi[ "opis" ] := get_kalk_atribut_opis( _dok, .F. )
+         _atributi[ "opis" ] := get_kalk_attr_opis( _dok, .F. )
       ENDIF
 
       IF _rok
-         _atributi[ "rok" ] := get_kalk_atribut_rok( _dok, .F. )
+         _atributi[ "rok" ] := get_kalk_attr_rok( _dok, .F. )
       ENDIF
 
       IF kalk_edit_priprema( .F., @_atributi ) == 0
@@ -852,9 +852,9 @@ FUNCTION kalk_edit_sve_stavke()
       Gather()
       my_unlock()
 
-      oAtrib := DokAtributi():new( "kalk", F_KALK_ATRIB )
-      oAtrib:dok_hash := _dok
-      oAtrib:atrib_hash_to_dbf( _atributi )
+      oAttr := DokAttr():new( "kalk", F_KALK_ATTR )
+      oAttr:hAttrId := _dok
+      oAttr:attr_mem_to_dbf( _atributi )
 
       SELECT kalk_pripr
 
@@ -1524,7 +1524,7 @@ STATIC FUNCTION izmjeni_sve_stavke_dokumenta( old_dok, new_dok )
    LOCAL _new_firma := new_dok[ "idfirma" ]
    LOCAL _new_brdok := new_dok[ "brdok" ]
    LOCAL _new_tipdok := new_dok[ "idvd" ]
-   LOCAL oAtrib
+   LOCAL oAttr
    LOCAL _vise_konta := fetch_metric( "kalk_dokument_vise_konta", NIL, "N" ) == "D"
 
    SELECT kalk_pripr
@@ -1576,8 +1576,8 @@ STATIC FUNCTION izmjeni_sve_stavke_dokumenta( old_dok, new_dok )
    ENDDO
    GO TOP
 
-   oAtrib := DokAtributi():new( "kalk", F_KALK_ATRIB )
-   oAtrib:open_local_table()
+   oAttr := DokAttr():new( "kalk", F_KALK_ATTR )
+   oAttr:open_attr_dbf()
 
    GO TOP
 

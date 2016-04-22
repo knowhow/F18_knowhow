@@ -357,7 +357,7 @@ STATIC FUNCTION fill_porfakt_data( dok, params )
 
       IF _fakt_params[ "fakt_opis_stavke" ]
          dok[ "rbr" ] := rbr
-         cOpis := get_fakt_atribut_opis( dok, params[ "from_server" ] )
+         cOpis := get_fakt_attr_opis( dok, params[ "from_server" ] )
          SELECT fakt_pripr
       ELSE
          cOpis := ""

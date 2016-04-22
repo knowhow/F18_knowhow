@@ -87,7 +87,7 @@ FUNCTION kalk_azuriranje_dokumenta( lAuto )
       RETURN .F.
    ENDIF
 
-   DokAtributi():new( "kalk", F_KALK_ATRIB ):zapp_local_table()
+   DokAttr():new( "kalk", F_KALK_ATTR ):zap_attr_dbf()
 
    kalk_zavisni_nakon_azuriranja( lGenerisiZavisne, lAuto )
 
@@ -732,7 +732,7 @@ STATIC FUNCTION kalk_azur_sql()
    LOCAL _ids_kalk := {}
    LOCAL _ids_doks := {}
    LOCAL _log_dok
-   LOCAL oAtrib
+   LOCAL oAttr
    LOCAL bDokument := {| cIdFirma, cIdVd, cBrDok |   cIdFirma == field->idFirma .AND. ;
       cIdVd == field->IdVd .AND. cBrDok == field->BrDok }
    LOCAL cIdVd, cIdFirma, cBrDok
@@ -829,13 +829,13 @@ STATIC FUNCTION kalk_azur_sql()
 
       IF _ok == .T.
 
-         @ m_x + 3, m_y + 2 SAY "kalk_atributi -> server "
-         oAtrib := DokAtributi():new( "kalk", F_KALK_ATRIB )
-         oAtrib:dok_hash[ "idfirma" ] := _record_dok[ "idfirma" ]
-         oAtrib:dok_hash[ "idtipdok" ] := _record_dok[ "idvd" ]
-         oAtrib:dok_hash[ "brdok" ] := _record_dok[ "brdok" ]
+         @ m_x + 3, m_y + 2 SAY "kalk_attri -> server "
+         oAttr := DokAttr():new( "kalk", F_KALK_ATTR )
+         oAttr:hAttrId[ "idfirma" ] := _record_dok[ "idfirma" ]
+         oAttr:hAttrId[ "idtipdok" ] := _record_dok[ "idvd" ]
+         oAttr:hAttrId[ "brdok" ] := _record_dok[ "brdok" ]
 
-         _ok := oAtrib:atrib_dbf_to_server()
+         _ok := oAttr:push_attr_from_dbf_to_server()
 
       ENDIF
 

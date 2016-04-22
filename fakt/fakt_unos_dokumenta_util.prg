@@ -2016,7 +2016,7 @@ FUNCTION fakt_brisi_stavku_pripreme()
    LOCAL _rec, _t_rec
    LOCAL _tek, _prva
    LOCAL _id_tip_dok, _id_firma, _br_dok, _r_br
-   LOCAL oAtrib
+   LOCAL oAttr
    LOCAL _update_rbr
 
    IF Pitanje(, "Želite izbrisati ovu stavku ?", "D" ) == "N"
@@ -2056,16 +2056,16 @@ FUNCTION fakt_brisi_stavku_pripreme()
    PushWA()
 
    // pobrisi i fakt atribute ove stavke...
-   oAtrib := DokAtributi():new( "fakt", F_FAKT_ATRIB )
-   oAtrib:dok_hash[ "idfirma" ] := _id_firma
-   oAtrib:dok_hash[ "idtipdok" ] := _id_tip_dok
-   oAtrib:dok_hash[ "brdok" ] := _br_dok
-   oAtrib:dok_hash[ "rbr" ] := _r_br
-   oAtrib:dok_hash[ "update_rbr" ] := _update_rbr
-   oAtrib:delete_atrib_from_dbf()
+   oAttr := DokAttr():new( "fakt", F_FAKT_ATTR )
+   oAttr:hAttrId[ "idfirma" ] := _id_firma
+   oAttr:hAttrId[ "idtipdok" ] := _id_tip_dok
+   oAttr:hAttrId[ "brdok" ] := _br_dok
+   oAttr:hAttrId[ "rbr" ] := _r_br
+   oAttr:hAttrId[ "update_rbr" ] := _update_rbr
+   oAttr:delete_attr_from_dbf()
 
    IF _update_rbr <> NIL
-      oAtrib:update_atrib_rbr()
+      oAttr:update_attr_rbr()
    ENDIF
 
    PopWa()

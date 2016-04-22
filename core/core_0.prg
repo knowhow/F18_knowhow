@@ -16,9 +16,23 @@ FUNCTION f18_ver( lShort )
 
    hb_default( @lShort, .T. )
 
-   RETURN F18_VER + + "/" + F18_LIB_VER + iif( lShort, "", " " + F18_VER_DATE ) 
+   RETURN F18_VER + + "/" + F18_LIB_VER + iif( lShort, "", " " + F18_VER_DATE )
 
 
 FUNCTION f18_ver_info( lShort )
 
    RETURN "v(" + f18_ver( lShort ) + ")"
+
+
+FUNCTION browse_dbf( cDbf )
+
+   LOCAL cScr
+   
+   SAVE SCREEN TO cScr
+   PushWA()
+   dbSelectArea( cDbf )
+   dbEdit()
+   PopWA()
+   RESTORE SCREEN FROM cScr
+
+   RETURN Alias()

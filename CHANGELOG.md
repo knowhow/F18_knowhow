@@ -542,7 +542,7 @@
 1.7.21  2014-04-01, vsasa
 
   - VIRM, generisani virmani imaju redni broj 0
-  - atrib_server_to_dbf() korekcija
+  - get_attr_from_server_to_dbf() korekcija
   - RNAL, tabela dodatnih operacija iskočila iz glavne forme
   - RNAL, odabir elementa artikla menu problem
   - FIN, bruto bilans PTXT print - bugfix
@@ -1489,7 +1489,7 @@
 
 1.4.109 2013-01-30, hernad
 
-  - fakt_atributi - create_index(UNIQUE), brisanje svih sirocica
+  - fakt_attri - create_index(UNIQUE), brisanje svih sirocica
   - linux odt stampa linux/xdg-open trazi "&" i __run_system
 
 1.4.108 2013-01-29, vsasa
@@ -1586,7 +1586,7 @@
 1.4.87 2013-01-16, vsasa
 
  - unos šifarnika artikala, može i bez "idkonto"
- - fakt, generacija računa na osnovu otpremnica - privremeno ukinut foreign ključ sa fakt_fakt_atributi
+ - fakt, generacija računa na osnovu otpremnica - privremeno ukinut foreign ključ sa fakt_fakt_attri
 
 1.4.86 2013-01-15, vsasa
 
@@ -1849,7 +1849,7 @@
 
 1.4.3 2012-12-01, hernad
 
-  - fakt atribut opis: get_fakt_atribut_opis()
+  - fakt atribut opis: get_fakt_attr_opis()
 
 1.4.00 2012-12-01, hernad
 

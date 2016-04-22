@@ -275,7 +275,7 @@ FUNCTION fakt_set_broj_dokumenta()
    LOCAL _t_rec
    LOCAL _firma, _td, _null_brdok
    LOCAL _fakt_params := fakt_params()
-   LOCAL oAtrib
+   LOCAL oAttr
 
    PushWA()
 
@@ -322,8 +322,8 @@ FUNCTION fakt_set_broj_dokumenta()
    ENDDO
    my_unlock()
 
-   oAtrib := DokAtributi():new( "fakt", F_FAKT_ATRIB )
-   oAtrib:open_local_table()
+   oAttr := DokAttr():new( "fakt", F_FAKT_ATTR )
+   oAttr:open_attr_dbf()
 
    SET ORDER TO TAG "1"
    GO TOP

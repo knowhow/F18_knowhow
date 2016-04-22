@@ -343,13 +343,8 @@ FUNCTION select_all_records_from_table( table, fields, where_cond, order_fields 
 
    ENDIF
 
-   _data := run_sql_query( _qry )
+   RETURN run_sql_query( _qry )
 
-   IF  sql_query_no_records( _data )
-      _data := NIL
-   ENDIF
-
-   RETURN _data
 
 
 

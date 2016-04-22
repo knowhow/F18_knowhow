@@ -19,7 +19,7 @@ FUNCTION povrat_fakt_dokumenta( rezerv, id_firma, id_tip_dok, br_dok, test )
    LOCAL _rec, _del_rec
    LOCAL _field_ids, _where_block
    LOCAL _t_rec
-   LOCAL oAtrib, _dok_hash
+   LOCAL oFaktAttr, _hAttrId
    LOCAL _ok := .T.
    LOCAL nRet := 0
    LOCAL hParams
@@ -86,14 +86,14 @@ FUNCTION povrat_fakt_dokumenta( rezerv, id_firma, id_tip_dok, br_dok, test )
 
    kopiraj_dokument_u_tabelu_pripreme( id_firma, id_tip_dok, br_dok )
 
-   _dok_hash := hb_Hash()
-   _dok_hash[ "idfirma" ] := id_firma
-   _dok_hash[ "idtipdok" ] := id_tip_dok
-   _dok_hash[ "brdok" ] := br_dok
+   _hAttrId := hb_Hash()
+   _hAttrId[ "idfirma" ] := id_firma
+   _hAttrId[ "idtipdok" ] := id_tip_dok
+   _hAttrId[ "brdok" ] := br_dok
 
-   oAtrib := DokAtributi():new( "fakt", F_FAKT_ATRIB )
-   oAtrib:dok_hash := _dok_hash
-   oAtrib:atrib_server_to_dbf()
+   oFaktAttr := DokAttr():New( "fakt", F_FAKT_ATTR )
+   oFaktAttr:hAttrId := _hAttrId
+   oFaktAttr:get_attr_from_server_to_dbf()
 
    IF test == .T.
       lBrisatiKumulativ := .T.
@@ -117,8 +117,8 @@ FUNCTION povrat_fakt_dokumenta( rezerv, id_firma, id_tip_dok, br_dok, test )
 
       Box(, 5, 70 )
 
-      @ m_x + 4, m_y + 2 SAY "brisanje : fakt_fakt_atributi"
-      _ok := oAtrib:delete_atrib_from_server()
+      @ m_x + 4, m_y + 2 SAY "brisanje : fakt_fakt_attri"
+      _ok := oFaktAttr:delete_attr_from_server()
 
       IF _ok
          _tbl := "fakt_fakt"

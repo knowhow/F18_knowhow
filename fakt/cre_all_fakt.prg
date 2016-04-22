@@ -255,7 +255,7 @@ FUNCTION cre_all_fakt( ver )
    // ------------------------------------------------
    // FAKT_PRIPR_ATRIB
    // ---------------------------------------------------
-   DokAtributi():new( "fakt", F_FAKT_ATRIB ):create_local_atrib_table()
+   DokAttr():new( "fakt", F_FAKT_ATTR ):create_dbf()
 
    // kreiraj relacije : RELATION
    cre_relation( ver )

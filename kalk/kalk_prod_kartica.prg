@@ -27,7 +27,7 @@ FUNCTION kalk_kartica_prodavnica()
    LOCAL cTxt1
    LOCAL cTxt2
    LOCAL cTxt3
-   LOCAL _is_rok, _dok_hash, _item_istek_roka
+   LOCAL _is_rok, _hAttrId, _item_istek_roka
    LOCAL cIdR := ""
 
    PRIVATE PicCDEM := Replicate( "9", Val( gFPicCDem ) ) + gPicCDEM
@@ -253,12 +253,12 @@ FUNCTION kalk_kartica_prodavnica()
             ENDIF
 
             IF _is_rok
-               _dok_hash := hb_Hash()
-               _dok_hash[ "idfirma" ] := field->idfirma
-               _dok_hash[ "idtipdok" ] := field->idvd
-               _dok_hash[ "brdok" ] := field->brdok
-               _dok_hash[ "rbr" ] := field->rbr
-               _item_istek_roka := CToD( get_kalk_atribut_rok( _dok_hash, .T. ) )
+               _hAttrId := hb_Hash()
+               _hAttrId[ "idfirma" ] := field->idfirma
+               _hAttrId[ "idtipdok" ] := field->idvd
+               _hAttrId[ "brdok" ] := field->brdok
+               _hAttrId[ "rbr" ] := field->rbr
+               _item_istek_roka := CToD( get_kalk_attr_rok( _hAttrId, .T. ) )
                IF DToC( _item_istek_roka ) <> DToC( CToD( "" ) )
                   @ PRow(), PCol() + 1 SAY  "rok: " + DToC( _item_istek_roka )
                ENDIF

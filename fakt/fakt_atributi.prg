@@ -13,33 +13,35 @@
 
 
 
-FUNCTION get_fakt_atribut_opis( dok, from_server )
+FUNCTION get_fakt_attr_opis( hId, lFromServer )
 
-   LOCAL oAtrib := DokAtributi():new( "fakt", F_FAKT_ATRIB )
+   LOCAL oAttr := DokAttr():new( "fakt", F_FAKT_ATTR )
 altd()
-   oAtrib:from_dbf := ( from_server == .F. )
-   oAtrib:atrib := "opis"
-   oAtrib:dok_hash := dok
+   oAttr:lGetAttrFromDbf := ( lFromServer == .F. )
+   oAttr:cAttr := "opis"
+   oAttr:hAttrId := hId
 
-   RETURN oAtrib:get_atrib()
-
-FUNCTION get_fakt_atribut_ref( dok, from_server )
-
-   LOCAL oAtrib := DokAtributi():new( "fakt", F_FAKT_ATRIB )
-
-   oAtrib:from_dbf := ( from_server == .F. )
-   oAtrib:atrib := "ref"
-   oAtrib:dok_hash := dok
-
-   RETURN oAtrib:get_atrib()
+   RETURN oAttr:get_attr()
 
 
-FUNCTION get_fakt_atribut_lot( dok, from_server )
 
-   LOCAL oAtrib := DokAtributi():new( "fakt", F_FAKT_ATRIB )
+FUNCTION get_fakt_attr_ref( dok, from_server )
 
-   oAtrib:from_dbf := ( from_server == .F. )
-   oAtrib:atrib := "lot"
-   oAtrib:dok_hash := dok
+   LOCAL oAttr := DokAttr():new( "fakt", F_FAKT_ATTR )
 
-   RETURN oAtrib:get_atrib()
+   oAttr:lGetAttrFromDbf := ( from_server == .F. )
+   oAttr:cAttr := "ref"
+   oAttr:hAttrId := dok
+
+   RETURN oAttr:get_attr()
+
+
+FUNCTION get_fakt_attr_lot( dok, from_server )
+
+   LOCAL oAttr := DokAttr():new( "fakt", F_FAKT_ATTR )
+
+   oAttr:lGetAttrFromDbf := ( from_server == .F. )
+   oAttr:cAttr := "lot"
+   oAttr:hAttrId := dok
+
+   RETURN oAttr:get_attr()

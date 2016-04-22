@@ -15,7 +15,7 @@
 FUNCTION StKalk81( fzatops )
 
    LOCAL nCol1 := nCol2 := 0, npom := 0
-   LOCAL _is_rok, _dok_hash
+   LOCAL _is_rok, _hAttrId
 
    PRIVATE nPrevoz, nCarDaz, nZavTr, nBankTr, nSpedTr, nMarza, nMarza2, nPRUC, aPorezi
 
@@ -167,12 +167,12 @@ FUNCTION StKalk81( fzatops )
       ENDIF
 
       IF _is_rok
-         _dok_hash := hb_Hash()
-         _dok_hash[ "idfirma" ] := field->idfirma
-         _dok_hash[ "idtipdok" ] := field->idvd
-         _dok_hash[ "brdok" ] := field->brdok
-         _dok_hash[ "rbr" ] := field->rbr
-         _item_istek_roka := CToD( get_kalk_atribut_rok( _dok_hash, .T. ) )
+         _hAttrId := hb_Hash()
+         _hAttrId[ "idfirma" ] := field->idfirma
+         _hAttrId[ "idtipdok" ] := field->idvd
+         _hAttrId[ "brdok" ] := field->brdok
+         _hAttrId[ "rbr" ] := field->rbr
+         _item_istek_roka := CToD( get_kalk_attr_rok( _hAttrId, .T. ) )
          IF DToC( _item_istek_roka ) <> DToC( CToD( "" ) )
             ?? " datum isteka roka:", _item_istek_roka
          ENDIF
@@ -312,7 +312,7 @@ FUNCTION StKalk81( fzatops )
 
 FUNCTION StKalk81_2()
 
-   LOCAL _dok_hash, _is_rok
+   LOCAL _hAttrId, _is_rok
    LOCAL nCol1 := nCol2 := 0, npom := 0
    PRIVATE aPorezi
 
@@ -457,12 +457,12 @@ FUNCTION StKalk81_2()
       ENDIF
 
       IF _is_rok
-         _dok_hash := hb_Hash()
-         _dok_hash[ "idfirma" ] := field->idfirma
-         _dok_hash[ "idtipdok" ] := field->idvd
-         _dok_hash[ "brdok" ] := field->brdok
-         _dok_hash[ "rbr" ] := field->rbr
-         _item_istek_roka := CToD( get_kalk_atribut_rok( _dok_hash, .T. ) )
+         _hAttrId := hb_Hash()
+         _hAttrId[ "idfirma" ] := field->idfirma
+         _hAttrId[ "idtipdok" ] := field->idvd
+         _hAttrId[ "brdok" ] := field->brdok
+         _hAttrId[ "rbr" ] := field->rbr
+         _item_istek_roka := CToD( get_kalk_attr_rok( _hAttrId, .T. ) )
          IF DToC( _item_istek_roka ) <> DToC( CToD( "" ) )
             ?? " datum isteka roka:", _item_istek_roka
          ENDIF

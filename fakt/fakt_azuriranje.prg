@@ -55,7 +55,7 @@ FUNCTION azur_fakt( lSilent )
       ENDIF
    ENDIF
 
-   DokAtributi():new( "fakt", F_FAKT_ATRIB ):fix_atrib( F_FAKT_PRIPR, _a_fakt_doks )
+   DokAttr():New( "fakt", F_FAKT_ATTR ):cleanup_attrs( F_FAKT_PRIPR, _a_fakt_doks )
 
    _ok := .T.
 
@@ -104,7 +104,8 @@ FUNCTION azur_fakt( lSilent )
 
    SELECT fakt_pripr
    my_dbf_zap()
-   DokAtributi():new( "fakt", F_FAKT_ATRIB ):zapp_local_table()
+   DokAttr():New( "fakt", F_FAKT_ATTR ):zap_attr_dbf()
+
    MsgC()
 
    my_close_all_dbf()
@@ -141,7 +142,7 @@ STATIC FUNCTION fakt_azur_sql( id_firma, id_tip_dok, br_dok )
    LOCAL _ids_fakt  := {}
    LOCAL _ids_doks  := {}
    LOCAL _ids_doks2 := {}
-   LOCAL oAtrib
+   LOCAL oAttr
    LOCAL hParams
 
    my_close_all_dbf()
@@ -211,12 +212,12 @@ STATIC FUNCTION fakt_azur_sql( id_firma, id_tip_dok, br_dok )
 
 
    IF _ok == .T.
-      @ m_x + 4, m_y + 2 SAY "fakt_atributi -> server "
-      oAtrib := DokAtributi():New( "fakt", F_FAKT_ATRIB )
-      oAtrib:dok_hash[ "idfirma" ] := id_firma
-      oAtrib:dok_hash[ "idtipdok" ] := id_tip_dok
-      oAtrib:dok_hash[ "brdok" ] := br_dok
-      _ok := oAtrib:atrib_dbf_to_server()
+      @ m_x + 4, m_y + 2 SAY "fakt_attri -> server "
+      oAttr := DokAttr():New( "fakt", F_FAKT_ATTR )
+      oAttr:hAttrId[ "idfirma" ] := id_firma
+      oAttr:hAttrId[ "idtipdok" ] := id_tip_dok
+      oAttr:hAttrId[ "brdok" ] := br_dok
+      _ok := oAttr:push_attr_from_dbf_to_server()
    ENDIF
 
    IF !_ok
@@ -647,7 +648,7 @@ FUNCTION fakt_sredi_redni_broj_u_pripremi()
 FUNCTION fakt_brisanje_pripreme()
 
    LOCAL _id_firma, _tip_dok, _br_dok
-   LOCAL oAtrib
+   LOCAL oAttr
 
    IF Pitanje(, D_ZELITE_LI_IZBRISATI_PRIPREMU, "N" ) == "D"
 
@@ -658,19 +659,19 @@ FUNCTION fakt_brisanje_pripreme()
       _tip_dok := IdTipDok
       _br_dok := BrDok
 
-      oAtrib := DokAtributi():new( "fakt", F_FAKT_ATRIB )
-      oAtrib:dok_hash[ "idfirma" ] := _id_firma
-      oAtrib:dok_hash[ "idtipdok" ] := _tip_dok
-      oAtrib:dok_hash[ "brdok" ] := _br_dok
+      oAttr := DokAttr():new( "fakt", F_FAKT_ATTR )
+      oAttr:hAttrId[ "idfirma" ] := _id_firma
+      oAttr:hAttrId[ "idtipdok" ] := _tip_dok
+      oAttr:hAttrId[ "brdok" ] := _br_dok
 
       IF gcF9usmece == "D"
-         oAtrib:delete_atrib_from_dbf()
+         oAttr:delete_attr_from_dbf()
          azuriraj_smece( .T. )
          log_write( "F18_DOK_OPER: fakt, prenosa dokumenta iz pripreme u smece: " + _id_firma + "-" + _tip_dok + "-" + _br_dok, 2 )
          SELECT fakt_pripr
       ELSE
          my_dbf_zap()
-         oAtrib:zapp_local_table()
+         oAttr:zap_attr_dbf()
          log_write( "F18_DOK_OPER: fakt, brisanje dokumenta iz pripreme: " + _id_firma + "-" + _tip_dok + "-" + _br_dok, 2 )
          fakt_reset_broj_dokumenta( _id_firma, _tip_dok, _br_dok )
       ENDIF

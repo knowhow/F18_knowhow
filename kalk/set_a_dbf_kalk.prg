@@ -50,7 +50,7 @@ FUNCTION set_a_dbf_kalk()
 
    set_a_dbf_temp( "kalk_r_uio", "R_UIO", F_R_UIO         )
    set_a_dbf_temp( "kalk_rpt_tmp", "RPT_TMP", F_RPT_TMP       )
-   set_a_dbf_temp( "kalk_pripr_atrib", "KALK_ATRIB", F_KALK_ATRIB )
+   set_a_dbf_temp( "kalk_attr", "KALK_ATTR", F_KALK_ATTR )
 
    set_a_dbf_temp( "kalk_kartica", "KALK_KARTICA", F_KALK_KARTICA )
 

@@ -196,17 +196,17 @@ METHOD FaktDokument:refresh_dbfs()
 METHOD FaktDokument:change_idtipdok( new_idtipdok )
 
    LOCAL _sql, _qry
-   LOCAL _tmp_tbl := f18_user() + "_tmp_fakt_atributi"
+   LOCAL _tmp_tbl := f18_user() + "_tmp_fakt_attri"
 
    // prvo sve u temp tabeli uraditi
    _sql := "DROP TABLE IF EXISTS " + _tmp_tbl
    _sql += ";"
    _sql += "CREATE TEMP TABLE " + _tmp_tbl + " AS "
-   _sql += "SELECT * FROM " + F18_PSQL_SCHEMA_DOT + "fakt_fakt_atributi WHERE " + ::p_sql_where
+   _sql += "SELECT * FROM " + F18_PSQL_SCHEMA_DOT + "fakt_fakt_attributi WHERE " + ::p_sql_where
    _sql += ";"
    _sql += "UPDATE " + _tmp_tbl + " SET idtipdok=" + sql_quote( new_idtipdok )
    _sql += ";"
-   _sql += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "fakt_fakt_atributi "
+   _sql += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "fakt_fakt_attributi "
    _sql += " WHERE " + ::p_sql_where
    _sql += ";"
 
@@ -223,7 +223,7 @@ METHOD FaktDokument:change_idtipdok( new_idtipdok )
    _sql += " WHERE " + ::p_sql_where
    _sql += ";"
 
-   _sql += "INSERT INTO " + F18_PSQL_SCHEMA_DOT + "fakt_fakt_atributi (SELECT * from " + _tmp_tbl + ")"
+   _sql += "INSERT INTO " + F18_PSQL_SCHEMA_DOT + "fakt_fakt_attributi (SELECT * from " + _tmp_tbl + ")"
 
    _qry := run_sql_query( _sql )
 

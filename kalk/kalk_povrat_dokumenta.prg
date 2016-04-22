@@ -22,7 +22,7 @@ FUNCTION kalk_povrat_dokumenta()
    LOCAL _br_dok
    LOCAL _del_rec
    LOCAL _t_rec
-   LOCAL _dok_hash, oAtrib
+   LOCAL _hAttrId, oAttr
    LOCAL lOk := .T.
 
    IF gCijene == "2" .AND. Pitanje(, "Zadati broj (D) / Povrat po hronologiji obrade (N) ?", "D" ) = "N"
@@ -72,14 +72,14 @@ FUNCTION kalk_povrat_dokumenta()
 
    kalk_kopiraj_dokument_u_tabelu_pripreme( _id_firma, _id_vd, _br_dok )
 
-   _dok_hash := hb_Hash()
-   _dok_hash[ "idfirma" ] := _id_firma
-   _dok_hash[ "idtipdok" ] := _id_vd
-   _dok_hash[ "brdok" ] := _br_dok
+   _hAttrId := hb_Hash()
+   _hAttrId[ "idfirma" ] := _id_firma
+   _hAttrId[ "idtipdok" ] := _id_vd
+   _hAttrId[ "brdok" ] := _br_dok
 
-   oAtrib := DokAtributi():new( "kalk", F_KALK_ATRIB )
-   oAtrib:dok_hash := _dok_hash
-   oAtrib:atrib_server_to_dbf()
+   oAttr := DokAttr():new( "kalk", F_KALK_ATTR )
+   oAttr:hAttrId := _hAttrId
+   oAttr:get_attr_from_server_to_dbf()
 
    IF lBrisiKumulativ
 
@@ -100,7 +100,7 @@ FUNCTION kalk_povrat_dokumenta()
 
       IF Found()
          _del_rec := dbf_get_rec()
-         lOk := oAtrib:delete_atrib_from_server()
+         lOk := oAttr:delete_attr_from_server()
       ENDIF
 
       IF lOk
@@ -247,7 +247,7 @@ STATIC FUNCTION kalk_povrat_prema_kriteriju()
    LOCAL _id_firma := gFirma
    LOCAL _rec
    LOCAL _del_rec
-   LOCAL _dok_hash, oAtrib, __firma, __idvd, __brdok
+   LOCAL _hAttrId, oAttr, __firma, __idvd, __brdok
    LOCAL lOk := .T.
    LOCAL lRet := .F.
 
@@ -309,14 +309,14 @@ STATIC FUNCTION kalk_povrat_prema_kriteriju()
             _rec[ "error" ] := ""
             dbf_update_rec( _rec )
 
-            _dok_hash := hb_Hash()
-            _dok_hash[ "idfirma" ] := __firma
-            _dok_hash[ "idtipdok" ] := __idvd
-            _dok_hash[ "brdok" ] := __brdok
+            _hAttrId := hb_Hash()
+            _hAttrId[ "idfirma" ] := __firma
+            _hAttrId[ "idtipdok" ] := __idvd
+            _hAttrId[ "brdok" ] := __brdok
 
-            oAtrib := DokAtributi():new( "kalk", F_KALK_ATRIB )
-            oAtrib:dok_hash := _dok_hash
-            oAtrib:atrib_server_to_dbf()
+            oAttr := DokAttr():new( "kalk", F_KALK_ATTR )
+            oAttr:hAttrId := _hAttrId
+            oAttr:get_attr_from_server_to_dbf()
 
          ENDIF
 
@@ -362,15 +362,15 @@ STATIC FUNCTION kalk_povrat_prema_kriteriju()
 
          _ok := .T.
 
-         _dok_hash := hb_Hash()
-         _dok_hash[ "idfirma" ] := _id_firma
-         _dok_hash[ "idtipdok" ] := _id_vd
-         _dok_hash[ "brdok" ] := _br_dok
+         _hAttrId := hb_Hash()
+         _hAttrId[ "idfirma" ] := _id_firma
+         _hAttrId[ "idtipdok" ] := _id_vd
+         _hAttrId[ "brdok" ] := _br_dok
 
-         oAtrib := DokAtributi():new( "kalk", F_KALK_ATRIB )
-         oAtrib:dok_hash := _dok_hash
+         oAttr := DokAttr():new( "kalk", F_KALK_ATTR )
+         oAttr:hAttrId := _hAttrId
 
-         lOk := oAtrib:delete_atrib_from_server()
+         lOk := oAttr:delete_attr_from_server()
 
          IF lOk
             lOk := delete_rec_server_and_dbf( "kalk_kalk", _del_rec, 2, "CONT" )

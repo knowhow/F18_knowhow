@@ -340,14 +340,14 @@ FUNCTION exp_2_fmk( lTemp, nDoc_no, aDocList, lNoGen )
          _items_atrib := hb_Hash()
          _items_atrib[ "opis" ] := cDesc
 
-         oAtrib := DokAtributi():new( "fakt", F_FAKT_ATRIB )
-         oAtrib:dok_hash := hb_Hash()
-         oAtrib:dok_hash[ "idfirma" ] := field->idfirma
-         oAtrib:dok_hash[ "idtipdok" ] := field->idtipdok
-         oAtrib:dok_hash[ "brdok" ] := field->brdok
-         oAtrib:dok_hash[ "rbr" ] := field->rbr
+         oAttr := DokAttr():new( "fakt", F_FAKT_ATTR )
+         oAttr:hAttrId := hb_Hash()
+         oAttr:hAttrId[ "idfirma" ] := field->idfirma
+         oAttr:hAttrId[ "idtipdok" ] := field->idtipdok
+         oAttr:hAttrId[ "brdok" ] := field->brdok
+         oAttr:hAttrId[ "rbr" ] := field->rbr
 
-         oAtrib:atrib_hash_to_dbf( _items_atrib )
+         oAttr:attr_mem_to_dbf( _items_atrib )
 
          SELECT ( _t_area )
 
@@ -501,7 +501,7 @@ FUNCTION exp_2_fmk( lTemp, nDoc_no, aDocList, lNoGen )
 
       gather()
 
-      // ubaci mi atribute u fakt_atribute
+      // ubaci mi atribute u fakt_attre
       IF !Empty( cArt_sh )
 
          _t_area := Select()
@@ -509,14 +509,14 @@ FUNCTION exp_2_fmk( lTemp, nDoc_no, aDocList, lNoGen )
          _items_atrib := hb_Hash()
          _items_atrib[ "opis" ] := cArt_sh
 
-         oAtrib := DokAtributi():new( "fakt" )
-         oAtrib:dok_hash := hb_Hash()
-         oAtrib:dok_hash[ "idfirma" ] := field->idfirma
-         oAtrib:dok_hash[ "idtipdok" ] := field->idtipdok
-         oAtrib:dok_hash[ "brdok" ] := field->brdok
-         oAtrib:dok_hash[ "rbr" ] := field->rbr
+         oAttr := DokAttr():new( "fakt" )
+         oAttr:hAttrId := hb_Hash()
+         oAttr:hAttrId[ "idfirma" ] := field->idfirma
+         oAttr:hAttrId[ "idtipdok" ] := field->idtipdok
+         oAttr:hAttrId[ "brdok" ] := field->brdok
+         oAttr:hAttrId[ "rbr" ] := field->rbr
 
-         oAtrib:atrib_hash_to_dbf( _items_atrib )
+         oAttr:attr_mem_to_dbf( _items_atrib )
 
          SELECT ( _t_area )
 

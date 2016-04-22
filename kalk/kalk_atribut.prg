@@ -15,25 +15,25 @@
 // --------------------------------------------------
 // get atribut opis
 // --------------------------------------------------
-function get_kalk_atribut_opis( dok, from_server )
-local oAtrib := DokAtributi():new("kalk", F_KALK_ATRIB)
-oAtrib:from_dbf := ( from_server == .f. )
-oAtrib:atrib := "opis"
-oAtrib:workarea := F_KALK_ATRIB
-oAtrib:dok_hash := dok
-return oAtrib:get_atrib()
+function get_kalk_attr_opis( dok, from_server )
+local oAttr := DokAttr():new("kalk", F_KALK_ATTR)
+oAttr:lGetAttrFromDbf := ( from_server == .f. )
+oAttr:cAttr := "opis"
+oAttr:workarea := F_KALK_ATTR
+oAttr:hAttrId := dok
+return oAttr:get_attr()
 
 
 
 // --------------------------------------------------
 // get atribut rok
 // --------------------------------------------------
-function get_kalk_atribut_rok( dok, from_server )
-local oAtrib := DokAtributi():new("kalk", F_KALK_ATRIB)
-oAtrib:from_dbf := ( from_server == .f. )
-oAtrib:atrib := "rok"
-oAtrib:dok_hash := dok
-return oAtrib:get_atrib()
+function get_kalk_attr_rok( dok, from_server )
+local oAttr := DokAttr():new("kalk", F_KALK_ATTR)
+oAttr:lGetAttrFromDbf := ( from_server == .f. )
+oAttr:cAttr := "rok"
+oAttr:hAttrId := dok
+return oAttr:get_attr()
 
 
 

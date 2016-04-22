@@ -36,7 +36,7 @@ FUNCTION lager_lista_prodavnica()
    LOCAL cMinK := "N"
    LOCAL _is_rok := .F.
    LOCAL _istek_roka := CToD( "" )
-   LOCAL _item_istek_roka, _dok_hash, _sh_item_istek_roka
+   LOCAL _item_istek_roka, _hAttrId, _sh_item_istek_roka
    LOCAL _print := "1"
 
    _is_rok := fetch_metric( "kalk_definisanje_roka_trajanja", NIL, "N" ) == "D"
@@ -345,13 +345,13 @@ FUNCTION lager_lista_prodavnica()
 
             IF !Empty( _istek_roka )
 
-               _dok_hash := hb_Hash()
-               _dok_hash[ "idfirma" ] := field->idfirma
-               _dok_hash[ "idtipdok" ] := field->idvd
-               _dok_hash[ "brdok" ] := field->brdok
-               _dok_hash[ "rbr" ] := field->rbr
+               _hAttrId := hb_Hash()
+               _hAttrId[ "idfirma" ] := field->idfirma
+               _hAttrId[ "idtipdok" ] := field->idvd
+               _hAttrId[ "brdok" ] := field->brdok
+               _hAttrId[ "rbr" ] := field->rbr
 
-               _item_istek_roka := CToD( get_kalk_atribut_rok( _dok_hash, .T. ) )
+               _item_istek_roka := CToD( get_kalk_attr_rok( _hAttrId, .T. ) )
 
                IF DToC( _item_istek_roka ) == DToC( CToD( "" ) ) .OR. _item_istek_roka > _istek_roka
                   SELECT kalk

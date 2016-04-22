@@ -150,8 +150,8 @@ STATIC FUNCTION fakt_pripr_keyhandler()
    LOCAL _fiscal_use := fiscal_opt_active()
    LOCAL _params := fakt_params()
    LOCAL _dok := hb_Hash()
-   LOCAL oAtrib
-   LOCAL _dok_hash
+   LOCAL oAttr
+   LOCAL _hAttrId
 
    IF ( Ch == K_ENTER .AND. Empty( field->brdok ) .AND. Empty( field->rbr ) )
       RETURN DE_CONT
@@ -460,12 +460,12 @@ STATIC FUNCTION fakt_prodji_kroz_stavke( fakt_params )
       _items_atrib := hb_Hash()
 
       IF fakt_params[ "fakt_opis_stavke" ]
-         _items_atrib[ "opis" ] := get_fakt_atribut_opis( _item_before, .F. )
+         _items_atrib[ "opis" ] := get_fakt_attr_opis( _item_before, .F. )
       ENDIF
 
       IF fakt_params[ "ref_lot" ]
-         _items_atrib[ "ref" ] := get_fakt_atribut_ref( _item_before, .F. )
-         _items_atrib[ "lot" ] := get_fakt_atribut_lot( _item_before, .F. )
+         _items_atrib[ "ref" ] := get_fakt_attr_ref( _item_before, .F. )
+         _items_atrib[ "lot" ] := get_fakt_attr_lot( _item_before, .F. )
       ENDIF
 
       _podbr := Space( 2 )
@@ -509,7 +509,7 @@ STATIC FUNCTION fakt_prodji_kroz_stavke( fakt_params )
 // -------------------------------------------------------------------------------------------------------
 STATIC FUNCTION fakt_dodaj_ispravi_stavku( novi, item_hash, items_atrib )
 
-   LOCAL oAtrib, _rec, _item_after_hash
+   LOCAL oAttr, _rec, _item_after_hash
    LOCAL new_hash := hb_Hash()
 
    IF novi == .T.
@@ -526,16 +526,16 @@ STATIC FUNCTION fakt_dodaj_ispravi_stavku( novi, item_hash, items_atrib )
    new_hash[ "brdok" ] := fakt_pripr->brdok
    new_hash[ "rbr" ] := fakt_pripr->rbr
 
-   // ažuriraj atribute u FAKT_FAKT_ATRIBUTI
-   oAtrib := DokAtributi():new( "fakt", F_FAKT_ATRIB )
-   oAtrib:dok_hash := new_hash
+   // ažuriraj atribute u FAKT_FAKT_ATTRUTI
+   oAttr := DokAttr():new( "fakt", F_FAKT_ATTR )
+   oAttr:hAttrId := new_hash
 
    IF !novi .AND. ( item_hash[ "rbr" ] <> new_hash[ "rbr" ] )
-      oAtrib:dok_hash[ "update_rbr" ] := item_hash[ "rbr" ]
-      oAtrib:update_atrib_rbr()
+      oAttr:hAttrId[ "update_rbr" ] := item_hash[ "rbr" ]
+      oAttr:update_attr_rbr()
    ENDIF
 
-   oAtrib:atrib_hash_to_dbf( items_atrib )
+   oAttr:attr_mem_to_dbf( items_atrib )
 
    fakt_promjena_cijene_u_sif()
 
@@ -568,12 +568,12 @@ STATIC FUNCTION fakt_ispravi_dokument( fakt_params )
    __redni_broj := RbrUnum( _rbr )
 altd()
    IF fakt_params[ "fakt_opis_stavke" ]
-      _items_atrib[ "opis" ] := get_fakt_atribut_opis( _item_before, .F. )
+      _items_atrib[ "opis" ] := get_fakt_attr_opis( _item_before, .F. )
    ENDIF
 
    IF fakt_params[ "ref_lot" ]
-      _items_atrib[ "ref" ] := get_fakt_atribut_ref( _item_before, .F. )
-      _items_atrib[ "lot" ] := get_fakt_atribut_lot( _item_before, .F. )
+      _items_atrib[ "ref" ] := get_fakt_attr_ref( _item_before, .F. )
+      _items_atrib[ "lot" ] := get_fakt_attr_lot( _item_before, .F. )
    ENDIF
 
    IF edit_fakt_priprema( .F., @_items_atrib ) == 0
@@ -603,7 +603,7 @@ STATIC FUNCTION fakt_unos_nove_stavke()
    LOCAL _items_atrib
    LOCAL _rec
    LOCAL _total := 0
-   LOCAL oAtrib, _dok_hash
+   LOCAL oAttr, _hAttrId
 
    GO TOP
 
@@ -680,7 +680,7 @@ STATIC FUNCTION fakt_print_dokument()
       MsgBeep( "Postojeći dokumenti u pripremi vec postoje !" )
    ENDIF
 
-   DokAtributi():New( "fakt", F_FAKT_ATRIB ):fix_atrib( F_FAKT_PRIPR, _a_fakt_doks )
+   DokAttr():New( "fakt", F_FAKT_ATTR ):cleanup_attrs( F_FAKT_PRIPR, _a_fakt_doks )
 
    close_open_fakt_tabele()
 
@@ -1733,7 +1733,7 @@ STATIC FUNCTION izmjeni_sve_stavke_dokumenta( old_dok, new_dok )
    LOCAL _new_firma := new_dok[ "idfirma" ]
    LOCAL _new_brdok := new_dok[ "brdok" ]
    LOCAL _new_tipdok := new_dok[ "idtipdok" ]
-   LOCAL oAtrib
+   LOCAL oAttr
 
    // treba da imam podatke koja je stavka bila prije korekcije
    // kao i koja je nova
@@ -1782,8 +1782,8 @@ STATIC FUNCTION izmjeni_sve_stavke_dokumenta( old_dok, new_dok )
    ENDDO
    GO TOP
 
-   oAtrib := DokAtributi():new( "fakt", F_FAKT_ATRIB )
-   oAtrib:open_local_table()
+   oAttr := DokAttr():new( "fakt", F_FAKT_ATTR )
+   oAttr:open_attr_dbf()
 
    GO TOP
 

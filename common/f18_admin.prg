@@ -1121,7 +1121,7 @@ METHOD F18Admin:delete_db_data_all( db_name, data_type )
    _qry += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "pos_pos;"
    _qry += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "pos_dokspf;"
 
-   _qry += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "fakt_fakt_atributi;"
+   _qry += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "fakt_fakt_attri;"
    _qry += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "fakt_doks;"
    _qry += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "fakt_doks2;"
    _qry += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "fakt_fakt;"

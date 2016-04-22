@@ -232,7 +232,7 @@ DO WHILE !EOF()
 ENDDO
 
 
-FillJprih()
+popuni_javne_prihode()
 
 
 CLOSERET

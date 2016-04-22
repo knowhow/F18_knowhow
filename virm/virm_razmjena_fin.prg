@@ -183,7 +183,7 @@ enddo
 
 select virm_pripr
 
-FillJPrih()  
+popuni_javne_prihode()  
 // popuni polja javnih prihoda
 
 return

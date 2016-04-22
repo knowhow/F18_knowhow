@@ -824,7 +824,7 @@ FUNCTION SetJPVar()
 
 
 
-FUNCTION fillJprih()
+FUNCTION popuni_javne_prihode()
 
    // drugi krug; popuni polja vezana za javne prihode ....
    SELECT vrprim

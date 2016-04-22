@@ -25,6 +25,7 @@ FUNCTION virm_prenos_ld( prenos_ld )
    LOCAL _per_od, _per_do
    LOCAL _id_banka, _dod_opis
    LOCAL _r_br, _firma
+   LOCAL _mjesec, _godina
 
    PRIVATE _mjesec, _godina, broj_radnika
 
@@ -106,7 +107,7 @@ FUNCTION virm_prenos_ld( prenos_ld )
    obrada_tekuci_racun( _godina, _mjesec, _dat_virm, @_r_br, _dod_opis )
 
    // popuni polja javnih prihoda
-   filljprih()
+   popuni_javne_prihode()
 
    my_close_all_dbf()
 

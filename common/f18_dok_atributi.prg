@@ -39,7 +39,7 @@ CLASS DokAtributi
 
    VAR table_name_server
    VAR table_name_local
-   VAR ALIAS
+   VAR cAliasAttribTable
 
    METHOD get_atrib_from_server()
    METHOD get_atrib_from_dbf()
@@ -74,7 +74,7 @@ METHOD DokAtributi:New( _modul_, _wa_ )
 
 METHOD DokAtributi:set_dbf_alias()
 
-   ::alias := AllTrim( Lower( ::modul ) ) + "_atrib"
+   ::cAliasAttribTable := AllTrim( Lower( ::modul ) ) + "_atrib"
 
    RETURN SELF
 
@@ -689,7 +689,7 @@ METHOD DokAtributi:fix_atrib( area, dok_arr )
 /*
   brisi_visak_atributa( F_FAKT_PRIPR )
 */
-METHOD DokAtributi:brisi_visak_atributa( area )
+METHOD DokAtributi:brisi_visak_atributa( nArea )
 
    LOCAL _id_firma, _tip_dok, _br_dok
    LOCAL _t_area := Select()
@@ -699,7 +699,7 @@ METHOD DokAtributi:brisi_visak_atributa( area )
    LOCAL _t_rec
    LOCAL cSeek
 
-   SELECT Alias( area )
+   SELECT Alias( nArea )
    SET ORDER TO TAG "1"
 
    ::open_local_table()
@@ -716,14 +716,14 @@ METHOD DokAtributi:brisi_visak_atributa( area )
       SKIP -1
 
 
-      IF SELECT ( ::alias ) > 0
-         SELECT ::alias
+      IF SELECT ( ::cAliasAttribTable ) > 0
+         dbSelectArea( ::cAliasAttribTable )
          cSeek := field->idfirma + field->idtipdok + field->brdok + field->rbr
       ELSE
          error_bar( "bug", log_stack( 1 ) )
          cSeek := "XXX"
       ENDIF
-      SELECT Alias( area ) // F_FAKT_PRIPR
+      SELECT Alias( nArea ) // F_FAKT_PRIPR
       SEEK cSeek
 
       SELECT Alias( ::workarea ) // F_FAKT_ATRIB

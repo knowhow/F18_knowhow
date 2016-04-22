@@ -407,7 +407,9 @@ FUNCTION fakt_kartica()
                ? Space( gnLMarg ); ?? Str( ++nRbr, 3 ) + ".   " + idfirma + "-" + idtipdok + "-" + brdok + Left( serbr, 1 ) + "  " + DToC( datdok )
 
                IF cPPartn == "D"
-                  SELECT fakt_doks; HSEEK fakt->( IdFirma + idtipdok + brdok ); SELECT fakt
+                  SELECT fakt_doks
+                  HSEEK fakt->( IdFirma + idtipdok + brdok )
+                  SELECT fakt
                   @ PRow(), PCol() + 1 SAY PadR( fakt_doks->Partner, 20 )
                ENDIF
 

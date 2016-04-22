@@ -629,7 +629,7 @@ FUNCTION UzorTxt()
 
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -660,7 +660,7 @@ FUNCTION UzorTxt2( cList, redni_broj )
       ENDIF
    ENDIF
 
-   IF IsPdv() .AND. _IdTipDok $ "10#20" .AND. IsIno( _IdPartner )
+   IF  _IdTipDok $ "10#20" .AND. IsIno( _IdPartner )
       InoKlauzula()
       IF Empty( AllTrim( _txt2 ) )
          cId := "IN"
@@ -668,7 +668,7 @@ FUNCTION UzorTxt2( cList, redni_broj )
       ENDIF
    ENDIF
 
-   IF IsPdv() .AND. _IdTipDok == "12" .AND. IsProfil( _IdPartner, "KMS" )
+   IF _IdTipDok == "12" .AND. IsProfil( _IdPartner, "KMS" )
       KmsKlauzula()
       IF Empty( AllTrim( _txt2 ) )
          cId := "KS"
@@ -1362,7 +1362,7 @@ FUNCTION Koef( cdindem )
 
 
 /* SljBrDok13(cBrD,nBrM,cKon)
- *    
+ *
  *   param: cBrD
  *   param: nBrM
  *   param: cKon
@@ -1722,7 +1722,7 @@ FUNCTION Rbr()
    RETURN PadR( cRet, 6 )
 
 /* CijeneOK(cStr)
- *    
+ *
  *   param: cStr
  */
 
@@ -1761,7 +1761,7 @@ FUNCTION CijeneOK( cStr )
 
 
 /* renumeracija_fakt_pripr(cVezOtpr,dNajnoviji)
- *    
+ *
  *   param: cVezOtpr
  *   param: dNajnoviji - datum posljednje radjene otpremnice
  */

@@ -439,7 +439,7 @@ STATIC FUNCTION fakt_prodji_kroz_stavke( fakt_params )
 
    select_fakt_pripr()
 
-   Box( "pst", MAXROWS() - 10, MAXCOLS() - 10, .F. )
+   Box( "pst", MAXROWS() - 3, MAXCOLS() - 10, .F. )
 
    _dug := 0
 

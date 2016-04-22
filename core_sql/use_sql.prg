@@ -36,7 +36,7 @@ FUNCTION use_sql_sif( cTable, lMakeIndex )
 
    rddSetDefault( "SQLMIX" )
 
-   IF rddInfo( 1001, { "POSTGRESQL", pConn } ) == 0  //#define RDDI_CONNECT          1001
+   IF rddInfo( 1001, { "POSTGRESQL", pConn } ) == 0  // #define RDDI_CONNECT          1001
       LOG_CALL_STACK cLogMsg
       ?E "Unable connect to the PSQLserver", cLogMsg
       error_bar( "PSQL", "SQLMIX connect " + cTable )
@@ -402,12 +402,12 @@ FUNCTION use_sql_sifk( cDbf, cOznaka )
    ENDIF
 
 
-   IF cDbf == NIL .AND. cOznaka == NIL
-      INDEX ON ID + SORT + NAZ TAG ID  TO ( cTable )
-      INDEX ON ID + OZNAKA TAG ID2  TO ( cTable )
-      INDEX ON NAZ             TAG NAZ TO ( cTable )
-      SET ORDER TO TAG ID
-   ENDIF
+   // IF cDbf == NIL .AND. cOznaka == NIL
+   INDEX ON ID + SORT + NAZ TAG ID  TO ( cTable )
+   INDEX ON ID + OZNAKA TAG ID2  TO ( cTable )
+   INDEX ON NAZ             TAG NAZ TO ( cTable )
+   SET ORDER TO TAG ID
+   // ENDIF
 
    RETURN .T.
 

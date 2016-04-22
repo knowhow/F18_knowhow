@@ -402,6 +402,7 @@ METHOD PageHeader() CLASS PDFClass
 
 METHOD View() CLASS PDFClass
 
+altd()
    f18_open_document( ::cFileName )
 
    RETURN .T.

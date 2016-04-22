@@ -230,15 +230,15 @@ FUNCTION f18_end_print( cFileName, xPrintOpt )
 
 FUNCTION start_print( xPrintOpt, lCloseDbf )
 
-   LOCAL cFile
-   
+   LOCAL cDocumentName
+
    hb_default( @lCloseDbf, .F. )
 
    IF HB_ISHASH( xPrintOpt ) .AND. hb_HHasKey( xPrintOpt, "header" )
-      cFile := xPrintOpt[ "header" ]
+      cDocumentName := xPrintOpt[ "header" ]
    ENDIF
 
-   IF  f18_start_print( cFile, @xPrintOpt ) == "X"
+   IF  f18_start_print( NIL, @xPrintOpt, cDocumentName ) == "X"
       IF lCloseDbf
          my_close_all_dbf()
       ENDIF

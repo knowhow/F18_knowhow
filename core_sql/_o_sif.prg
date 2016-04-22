@@ -42,27 +42,6 @@ FUNCTION o_koncij()
 
 
 
-FUNCTION select_o_sifk()
-
-   IF Select( "SIFK" ) == 0
-      RETURN o_sifk()
-   ENDIF
-
-   SELECT SIFK
-   RETURN .T.
-
-
-FUNCTION select_o_sifv()
-
-   IF Select( "SIFV" ) == 0
-      RETURN o_sifv()
-   ENDIF
-
-   SELECT SIFV
-
-   RETURN .T.
-
-
 FUNCTION o_tarifa()
 
    SELECT ( F_TARIFA )

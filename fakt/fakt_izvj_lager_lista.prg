@@ -635,7 +635,8 @@ FUNCTION fakt_lager_lista()
       ?
    ENDIF
 
-   f18_end_print( NIL, xPrintOpt )
+altd()
+   end_print( xPrintOpt )
 
    my_close_all_dbf()
 

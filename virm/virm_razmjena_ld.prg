@@ -32,6 +32,11 @@ FUNCTION virm_prenos_ld( prenos_ld )
       prenos_ld := .F.
    ENDIF
 
+   IF !File( f18_ime_dbf( "ld_rekld" ) )
+      MsgBeep( "pokrenuti opciju rekapitulacija plata#prije korištenja ove opcije" )
+      RETURN .F.
+   ENDIF
+
    virm_o_tables()
 
    SELECT virm_pripr
@@ -556,7 +561,6 @@ FUNCTION RLD( cId, nIz12, qqPartn, br_dok )
    IF nIz12 == NIL
       nIz12 := 1
    ENDIF
-
 
    virm_rekap_ld( cId, _godina, _mjesec, @nPom1, @nPom2, , @broj_radnika, qqPartn ) // prolazim kroz rekld i trazim npr DOPR1XSA01
 

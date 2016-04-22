@@ -280,7 +280,9 @@ STATIC FUNCTION fakt_gen_rekapitulacija_mp( params )
          cPart_id := field->idpartner
 
          _tip_partnera := "1" // fizicka lica
-         lOslobodjenPDV := is_part_pdv_oslob_po_clanu( cPart_id )
+         lOslobodjenPDV := is_part_pdv_oslob_po_clanu( cPart_id ) .OR. IsIno( cPart_id )
+
+
 
          IF lPoTipovimaPartnera
 
@@ -472,6 +474,7 @@ STATIC FUNCTION fakt_mp_po_dokumentima( nT_osnovica, nT_pdv, nT_ukupno, lCalc )
    LOCAL cOper_Naz := ""
    LOCAL nS_pdv, nUk_fakt
    LOCAL cIdFirma, cIdTipDok, cBrDok
+   LOCAL lOslobodjenPDV
 
    IF lCalc == nil
       lCalc := .F.
@@ -483,8 +486,8 @@ STATIC FUNCTION fakt_mp_po_dokumentima( nT_osnovica, nT_pdv, nT_ukupno, lCalc )
 
    IF lCalc == .F.
 
-      g_l_mpdok( @cLine ) // vraca liniju
-      s_z_mpdok( cLine ) // zaglavlje pregled po robi
+      get_linija_fakt_mp_po_dok( @cLine )
+      s_z_mpdok( cLine )
    ENDIF
 
    SELECT r_export
@@ -507,11 +510,19 @@ STATIC FUNCTION fakt_mp_po_dokumentima( nT_osnovica, nT_pdv, nT_ukupno, lCalc )
       nS_pdv := 0
       nUk_fakt := 0
 
+     lOslobodjenPDV := is_part_pdv_oslob_po_clanu( cPart_id ) .OR. IsIno( cPart_id )
+
       DO WHILE !Eof() .AND. field->idfirma + field->idtipdok + field->brdok == cIdFirma + cIdTipDok + cBrDok
 
          nOsnovica += field->kolicina * field->c_bpdv
-         nPDV += field->kolicina * field->pdv
-         nS_pdv := field->s_pdv   // pretpostavka je da unutar jednog dokumenta ima samo jedna stopa?!
+
+         IF !lOslobodjenPDV
+           nPDV += field->kolicina * field->pdv
+           nS_pdv := field->s_pdv
+         ELSE
+           nS_pdv := 0
+         ENDIF
+
          nUk_fakt := field->uk_fakt
 
          SKIP
@@ -1059,7 +1070,7 @@ STATIC FUNCTION s_z_mpop( cLine )
    cTxt += Space( 1 )
    cTxt += PadR( "ukupno", 12 )
 
-   ? "Realizacija po opearterima:"
+   ? "Realizacija po operaterima:"
    ? cLine
    ? cTxt
    ? cLine
@@ -1067,10 +1078,7 @@ STATIC FUNCTION s_z_mpop( cLine )
    RETURN .T.
 
 
-// -----------------------------------------
-// vraca liniju za pregled po dokumentima
-// -----------------------------------------
-STATIC FUNCTION g_l_mpdok( cLine )
+STATIC FUNCTION get_linija_fakt_mp_po_dok( cLine )
 
    cLine := ""
 

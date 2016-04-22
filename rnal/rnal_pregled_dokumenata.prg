@@ -407,7 +407,7 @@ STATIC FUNCTION key_handler()
 
          SET FILTER TO
 
-         st_obr_list( .F., nDoc_no, aDocs )
+         rnal_stampa_obracunski_list( .F., nDoc_no, aDocs )
          SELECT docs
 
          set_f_kol( cTmpFilter )

@@ -39,26 +39,26 @@ FUNCTION ld_obracunaj_odbitak_za_elementarne_nepogode( lNovi )
    LOCAL cTipPrimanja := ld_tip_primanja_el_nepogode()
    LOCAL lOk := .T.
    LOCAL nIznos := 0
-   LOCAL cTmp 
-   
+   LOCAL cTmp
+
    IF EMPTY( cTipPrimanja )
       lOk := .F.
       RETURN lOk
    ENDIF
 
    nIznos := obracunaj_odbitak()
-     
+
    cTmp := "_I" + PADL( cTipPrimanja, 2, "0" )
 
    IF nIznos == 0 .AND. Round( &cTmp, 2 ) == 0
       lOk := .F.
       RETURN lOk
    ENDIF
- 
+
    IF nIznos <> 0
       nIznos := -nIznos
    ENDIF
-      
+
    &cTmp := nIznos
 
    RETURN lOk
@@ -81,7 +81,7 @@ STATIC FUNCTION obracunaj_odbitak()
 
    lRadnikJeIzRs := radnik_iz_rs( cOpcSt )
 
-   IF lRadnikJeIzRs 
+   IF lRadnikJeIzRs
       nProcIznos := 1.5
    ENDIF
 
@@ -92,10 +92,10 @@ STATIC FUNCTION obracunaj_odbitak()
    nX := nX + 2
 
    @ m_x + nX, m_y + 2 SAY8 "Tip obračuna (1) procentualni iznos (2) jedna neto dnevnica" GET nTipObracuna PICT "9"
-   
+
    READ
 
-   IF LastKey() == K_ESC 
+   IF LastKey() == K_ESC
       BoxC()
       RETURN nIznos
    ENDIF
@@ -110,7 +110,7 @@ STATIC FUNCTION obracunaj_odbitak()
    ENDIF
 
    READ
- 
+
    IF LastKey() == K_ESC
       BoxC()
       nIznos := 0
@@ -157,19 +157,16 @@ FUNCTION ld_elementarne_nepogode_parametri()
              VALID valid_tip_primanja_elementarne_nepogode( @cTipPrimanja )
 
    ++ nX
-
    @ m_x + nX, m_y + 2 SAY8 "Način obračuna odbitka za elementarne nepogode:"
 
    ++ nX
-
-   @ m_x + nX, m_y + 2 SAY8 " (1) procenat od neto plate uposlenika" 
+   @ m_x + nX, m_y + 2 SAY8 " (1) procenat od neto plate uposlenika"
 
    ++ nX
 
    @ m_x + nX, m_y + 2 SAY8 " (2) iznos jedne neto dnevnice uposlenika"
 
    ++ nX
-   
    @ m_x + nX, m_y + 2 SAY8 "     tekući odabir:" GET nTipObracuna PICT "9" VALID nTipObracuna > 0 .AND. nTipObracuna < 3
 
    READ
@@ -187,7 +184,7 @@ FUNCTION ld_elementarne_nepogode_parametri()
 
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -208,7 +205,7 @@ STATIC FUNCTION valid_tip_primanja_elementarne_nepogode( cTip )
          lRet := .F.
       ENDIF
    ENDIF
- 
+
    RETURN lRet
 
 
@@ -220,7 +217,7 @@ FUNCTION ld_tip_primanja_se_koristi( cTip )
    LOCAL cSql
 
    cSql := "id = " + sql_quote( cTip )
-  
+
    IF table_count( "fmk.tippr", cSql ) > 0
       lRet := .T.
    ENDIF
@@ -256,6 +253,3 @@ STATIC FUNCTION dodaj_tip_primanja_elementarnih_nepogoda( cTip )
    ENDIF
 
    RETURN lOk
-
-
-

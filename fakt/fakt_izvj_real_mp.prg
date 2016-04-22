@@ -47,11 +47,13 @@ FUNCTION fakt_real_maloprodaje()
       RETURN .F.
    ENDIF
 
-   START PRINT CRET
+   IF !start_print()
+      RETURN .F.
+   ENDIF
 
    ?
-   ? "REALIZACIJA PRODAJE na dan: " + DToC( Date() )
-   ? "-----------------------------------------------"
+   ? "REALIZACIJA PRODAJE na dan: " + DToC( Date() ), SPACE(6), f18_ver_info()
+   ? REPLICATE( "-", 80)
    ? "Period od:" + DToC( _params[ "datum_od" ] ) + " do:" + DToC( _params[ "datum_do" ] )
    ?
 
@@ -88,7 +90,7 @@ FUNCTION fakt_real_maloprodaje()
    @ PRow(), PCol() + 1 SAY Str( nT_uk, _NUM, _DEC ) PICT PIC_IZN
 
    FF
-   ENDPRINT
+   end_print()
 
    RETURN .T.
 

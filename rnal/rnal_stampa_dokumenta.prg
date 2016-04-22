@@ -59,18 +59,15 @@ FUNCTION stampa_nalog_proizvodnje( lTemporary, nDoc_no )
 
 
 
-/*
-  stampa obracunskog lista
- filovanje prn tabela
-*/
 
-FUNCTION st_obr_list( temp, doc_no, a_docs )
+FUNCTION rnal_stampa_obracunski_list( temp, doc_no, a_docs )
 
    LOCAL _gn := .T.
    LOCAL _i
    LOCAL _ii
    LOCAL _docs := ""
    LOCAL _flag := "N"
+   LOCAL _count
 
    IF gGnUse == "N"
       _gn := .F.

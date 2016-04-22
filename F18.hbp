@@ -15,6 +15,7 @@ os/*.prg
 virm/*.prg
 {F18_KADEV}kadev/*.prg
 common/*.prg
+core/*.prg
 core_ui2/*.prg
 core_sql/*.prg
 core_dbf/*.prg

@@ -236,7 +236,7 @@ FUNCTION t_rpt_empty()
    SELECT t_pars
    my_dbf_zap()
 
-   RETURN
+   RETURN .T.
 
 
 // otvori print tabele
@@ -299,7 +299,7 @@ FUNCTION a_t_docit2( nDoc_no, nDoc_it_no, nIt_no, cArt_id, cArt_desc, ;
    REPLACE doc_it_pri WITH nDoc_it_price
    REPLACE descr WITH nDescr
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -351,7 +351,7 @@ FUNCTION a_t_docit( nDoc_no, nDoc_gr_no, nDoc_it_no, nArt_id, cArt_desc, ;
       REPLACE doc_it_bru WITH nBruto
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 // dodaj stavke u tabelu T_DOCOP

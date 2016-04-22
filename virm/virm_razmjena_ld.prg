@@ -13,9 +13,7 @@
 
 
 
-// ------------------------------------------------------------------------
-// prenos virmana iz modula LD
-// ------------------------------------------------------------------------
+
 FUNCTION virm_prenos_ld( prenos_ld )
 
    LOCAL _poziv_na_broj
@@ -94,7 +92,7 @@ FUNCTION virm_prenos_ld( prenos_ld )
    _r_br := 0
 
    // obrada plate
-   obrada_plate( _godina, _mjesec, _dat_virm, @_r_br, _dod_opis, _per_od, _per_do )
+   virm_ld_obrada( _godina, _mjesec, _dat_virm, @_r_br, _dod_opis, _per_od, _per_do )
 
    // obradi kredite
    obrada_kredita( _godina, _mjesec, _dat_virm, @_r_br, _dod_opis )
@@ -107,7 +105,7 @@ FUNCTION virm_prenos_ld( prenos_ld )
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
 // ---------------------------------------------------------------------------------------------
 // obrada podataka za isplate na tekuci racun
@@ -227,7 +225,7 @@ STATIC FUNCTION obrada_tekuci_racun( godina, mjesec, dat_virm, r_br, dod_opis )
 // ----------------------------------------------------------------------------------------------------
 // obrada virmana za regularnu isplatu plata, doprinosi, porezi itd...
 // ----------------------------------------------------------------------------------------------------
-STATIC FUNCTION obrada_plate( godina, mjesec, dat_virm, r_br, dod_opis, per_od, per_do )
+STATIC FUNCTION virm_ld_obrada( godina, mjesec, dat_virm, r_br, dod_opis, per_od, per_do )
 
    LOCAL _broj_radnika
    LOCAL _formula, _izr_formula
@@ -542,7 +540,7 @@ STATIC FUNCTION obrada_kredita( godina, mjesec, dat_virm, r_br, dod_opis, bez_nu
 
    ENDDO
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -559,8 +557,8 @@ FUNCTION RLD( cId, nIz12, qqPartn, br_dok )
       nIz12 := 1
    ENDIF
 
-   // prolazim kroz rekld i trazim npr DOPR1XSA01
-   rekapld( cId, _godina, _mjesec, @nPom1, @nPom2, , @broj_radnika, qqPartn )
+
+   virm_rekap_ld( cId, _godina, _mjesec, @nPom1, @nPom2, , @broj_radnika, qqPartn ) // prolazim kroz rekld i trazim npr DOPR1XSA01
 
    IF ValType( nIz12 ) == "N" .AND. nIz12 == 1
       RETURN nPom1
@@ -576,7 +574,7 @@ FUNCTION RLD( cId, nIz12, qqPartn, br_dok )
 // --------------------------------------
 // Rekapitulacija LD-a
 // --------------------------------------
-STATIC FUNCTION Rekapld( cId, ;
+STATIC FUNCTION virm_rekap_ld( cId, ;
       nGodina, ;
       nMjesec, ;
       nIzn1, ;

@@ -829,7 +829,7 @@ STATIC FUNCTION _calc_totals( lSvi, a_benef )
       PopuniOpsLD()
 
       IF RADN->isplata == "TR"  // isplata na tekuci racun
-         Rekapld( "IS_" + RADN->idbanka, nGodina, nMjesecDo, _UIznos, 0, RADN->idbanka, RADN->brtekr, RADNIK, .T. )
+         rekap_ld( "IS_" + RADN->idbanka, nGodina, nMjesecDo, _UIznos, 0, RADN->idbanka, RADN->brtekr, RADNIK, .T. )
       ENDIF
 
       SELECT ld
@@ -860,7 +860,7 @@ STATIC FUNCTION get_bruto( nIznos )
 
 
 
-STATIC FUNCTION RekapLd( cId, nGodina, nMjesec, nIzn1, nIzn2, cIdPartner, cOpis, cOpis2, lObavDodaj, cIzdanje )
+STATIC FUNCTION rekap_ld( cId, nGodina, nMjesec, nIzn1, nIzn2, cIdPartner, cOpis, cOpis2, lObavDodaj, cIzdanje )
 
    IF lObavDodaj == nil
       lObavDodaj := .F.
@@ -1900,7 +1900,7 @@ STATIC FUNCTION napr_obracun( lSvi, a_benef )
       PopuniOpsLD()
 
       IF RADN->isplata == "TR"  // isplata na tekuci racun
-         Rekapld( "IS_" + RADN->idbanka, nGodina, nMjesecDo, _UIznos, 0, RADN->idbanka, RADN->brtekr, RADNIK, .T. )
+         rekap_ld( "IS_" + RADN->idbanka, nGodina, nMjesecDo, _UIznos, 0, RADN->idbanka, RADN->brtekr, RADNIK, .T. )
       ENDIF
 
       SELECT ld
@@ -2069,9 +2069,9 @@ STATIC FUNCTION IspisTP( lSvi )
          ENDIF
 
          IF nMjesec == nMjesecDo
-            Rekapld( "PRIM" + tippr->id, nGodina, nMjesec, aRekap[ i, 2 ], aRekap[ i, 1 ] )
+            rekap_ld( "PRIM" + tippr->id, nGodina, nMjesec, aRekap[ i, 2 ], aRekap[ i, 1 ] )
          ELSE
-            Rekapld( "PRIM" + tippr->id, nGodina, nMjesecDo, aRekap[ i, 2 ], aRekap[ i, 1 ] )
+            rekap_ld( "PRIM" + tippr->id, nGodina, nMjesecDo, aRekap[ i, 2 ], aRekap[ i, 1 ] )
          ENDIF
 
          IspisKred( lSvi )
@@ -2170,7 +2170,7 @@ STATIC FUNCTION IspisKred( lSvi )
 
                   _kr_partija := AllTrim( kred->zirod )
 
-                  RekapLD( "KRED" + cIdKred + cNaOsnovu, nGodina, nMjesecDo, nUkKrRad, 0, ;
+                  rekap_ld( "KRED" + cIdKred + cNaOsnovu, nGodina, nMjesecDo, nUkKrRad, 0, ;
                      cIdkred, cNaosnovu, AllTrim( cOpis2 ) + ", " + _kr_partija, .T. )
 
                ENDIF
@@ -2269,10 +2269,10 @@ STATIC FUNCTION IspisKred( lSvi )
                _kr_partija := AllTrim( kred->zirod )
 
                IF nMjesec == nMjesecDo
-                  Rekapld( "KRED" + cIdkred + cNaOsnovu, nGodina, nMjesec, nUkKred, 0, ;
+                  rekap_ld( "KRED" + cIdkred + cNaOsnovu, nGodina, nMjesec, nUkKred, 0, ;
                      cIdKred, cNaosnovu, AllTrim( cOpis2 ) + ", " + _kr_partija )
                ELSE
-                  Rekapld( "KRED" + cIdKred + cNaosnovu, nGodina, nMjesecDo, nUkkred, 0, ;
+                  rekap_ld( "KRED" + cIdKred + cNaosnovu, nGodina, nMjesecDo, nUkkred, 0, ;
                      cIdKred, cNaosnovu, AllTrim( cOpis2 ) + ", " + _kr_partija )
                ENDIF
 
@@ -2331,9 +2331,9 @@ STATIC FUNCTION ProizvTP()
          @ PRow(), 42 SAY round2( &cPom, gZaok2 ) PICT gpici
       ENDIF
       IF nMjesec == nMjesecDo
-         Rekapld( "PRIM" + tippr->id, nGodina, nMjesec, round2( &cpom, gZaok2 ), 0 )
+         rekap_ld( "PRIM" + tippr->id, nGodina, nMjesec, round2( &cpom, gZaok2 ), 0 )
       ELSE
-         Rekapld( "PRIM" + tippr->id, nGodina, nMjesecDo, round2( &cpom, gZaok2 ), 0 )
+         rekap_ld( "PRIM" + tippr->id, nGodina, nMjesecDo, round2( &cpom, gZaok2 ), 0 )
       ENDIF
 
       SKIP

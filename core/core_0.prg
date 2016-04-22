@@ -9,19 +9,16 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-#define F18_VER_DEFINED
+#include "f18.ch"
 
-#define F18_VER       "1.7.981"
-#define F18_VER_DATE  "22.04.2016"
-#define F18_DEV_PERIOD  "1994-2016"
 
-#define F18_LIB_VER   "13.5.0"
-#define F18_TEMPLATE_VER "2.3.0"
+FUNCTION f18_ver( lShort )
 
-#define F18_DBF_VER_MAJOR  1
-#define F18_DBF_VER_MINOR  0
-#define F18_DBF_VER_PATCH  4
+   hb_default( @lShort, .T. )
 
-#define SERVER_DB_VER_MAJOR  0
-#define SERVER_DB_VER_MINOR  0
-#define SERVER_DB_VER_PATCH  10
+   RETURN F18_VER + + "/" + F18_LIB_VER + iif( lShort, "", " " + F18_VER_DATE ) 
+
+
+FUNCTION f18_ver_info( lShort )
+
+   RETURN "v(" + f18_ver( lShort ) + ")"

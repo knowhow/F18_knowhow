@@ -812,7 +812,7 @@ STATIC FUNCTION _ld_calc_totals( lSvi, a_benef )
 
       IF RADN->isplata == "TR"  // isplata na tekuci racun
          cOpis2 := RADNIK_PREZ_IME
-         RekapLD( "IS_" + RADN->idbanka, nGodina, nMjesecDo, _UIznos, 0, RADN->idbanka, RADN->brtekr, cOpis2, .T. )
+         rekap_ld( "IS_" + RADN->idbanka, nGodina, nMjesecDo, _UIznos, 0, RADN->idbanka, RADN->brtekr, cOpis2, .T. )
       ENDIF
 
       SELECT ld

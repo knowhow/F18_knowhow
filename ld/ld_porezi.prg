@@ -187,7 +187,7 @@ FUNCTION obr_porez( nGodina, nMjesec, nPor, nPor2, nPorOps, nPorOps2, nUPorOl, c
                @ PRow(), PCol() + 1 SAY "UK="
                @ PRow(), PCol() + 1 SAY nPom PICT gPici
 
-               Rekapld( "POR" + por->id + idops, nGodina, nMjesec, nPom, iznos, idops, NLjudi() )
+               rekap_ld( "POR" + por->id + idops, nGodina, nMjesec, nPom, iznos, idops, NLjudi() )
 
             ELSE
 
@@ -219,11 +219,11 @@ FUNCTION obr_porez( nGodina, nMjesec, nPor, nPor2, nPorOps, nPorOps2, nUPorOl, c
                   @ PRow(), PCol() + 1 SAY nPom2 := round2( Max( por->dlimit, por->iznos / 100 * piznos ), gZaok2 ) PICT gpici
                   @ PRow(), PCol() + 1 SAY nPom - nPom2 PICT gpici
 
-                  Rekapld( "POR" + por->id + idops, nGodina, nMjesec, nPom - nPom2, 0, idops, NLjudi() )
+                  rekap_ld( "POR" + por->id + idops, nGodina, nMjesec, nPom - nPom2, 0, idops, NLjudi() )
                   nPorOps2 += nPom2
                ELSE
 
-                  Rekapld( "POR" + por->id + idops, nGodina, nMjesec, nPom, nTmpPor, idops, NLjudi() )
+                  rekap_ld( "POR" + por->id + idops, nGodina, nMjesec, nPom, nTmpPor, idops, NLjudi() )
                ENDIF
 
             ENDIF
@@ -263,9 +263,9 @@ FUNCTION obr_porez( nGodina, nMjesec, nPor, nPor2, nPorOps, nPorOps2, nUPorOl, c
          IF cUmPD == "D"
             @ PRow(), PCol() + 1 SAY nPorOps2   PICT gpici
             @ PRow(), PCol() + 1 SAY nPorOps - nPorOps2   PICT gpici
-            Rekapld( "POR" + por->id, nGodina, nMjesec, nPorOps - nPorOps2, 0,, NLjudi() )
+            rekap_ld( "POR" + por->id, nGodina, nMjesec, nPorOps - nPorOps2, 0,, NLjudi() )
          ELSE
-            Rekapld( "POR" + por->id, nGodina, nMjesec, nPorOps, nOOP,, "(" + AllTrim( Str( nPOLjudi ) ) + ")" )
+            rekap_ld( "POR" + por->id, nGodina, nMjesec, nPorOps, nOOP,, "(" + AllTrim( Str( nPOLjudi ) ) + ")" )
          ENDIF
 
          ? cLinija
@@ -289,10 +289,10 @@ FUNCTION obr_porez( nGodina, nMjesec, nPor, nPor2, nPorOps, nPorOps2, nUPorOl, c
          IF cUmPD == "D"
             @ PRow(), PCol() + 1 SAY nPom2 := round2( Max( dlimit, iznos / 100 * nUNeto2 ), gZaok2 ) PICT gpici
             @ PRow(), PCol() + 1 SAY nPom - nPom2 PICT gpici
-            Rekapld( "POR" + por->id, nGodina, nMjesec, nPom - nPom2, 0 )
+            rekap_ld( "POR" + por->id, nGodina, nMjesec, nPom - nPom2, 0 )
             nPor2 += nPom2
          ELSE
-            Rekapld( "POR" + por->id, nGodina, nMjesec, nPom, nTmpOsnova,, "(" + AllTrim( Str( nLjudi ) ) + ")" )
+            rekap_ld( "POR" + por->id, nGodina, nMjesec, nPom, nTmpOsnova,, "(" + AllTrim( Str( nLjudi ) ) + ")" )
          ENDIF
 
          nPor += nPom

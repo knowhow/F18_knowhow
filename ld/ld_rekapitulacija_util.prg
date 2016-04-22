@@ -13,7 +13,7 @@
 
 THREAD STATIC __var_obr
 
-FUNCTION RekapLD( cId, nGodina, nMjesec, nIzn1, nIzn2, cIdPartner, cOpis, cOpis2, lObavDodaj, cIzdanje )
+FUNCTION rekap_ld( cId, nGodina, nMjesec, nIzn1, nIzn2, cIdPartner, cOpis, cOpis2, lObavDodaj, cIzdanje )
 
    IF lObavDodaj == nil
       lObavDodaj := .F.
@@ -935,9 +935,9 @@ FUNCTION IspisTP( lSvi )
          ENDIF
 
          IF nMjesec == nMjesecDo
-            RekapLD( "PRIM" + tippr->id, nGodina, nMjesec, aRekap[ i, 2 ], aRekap[ i, 1 ] )
+            rekap_ld( "PRIM" + tippr->id, nGodina, nMjesec, aRekap[ i, 2 ], aRekap[ i, 1 ] )
          ELSE
-            RekapLD( "PRIM" + tippr->id, nGodina, nMjesecDo, aRekap[ i, 2 ], aRekap[ i, 1 ] )
+            rekap_ld( "PRIM" + tippr->id, nGodina, nMjesecDo, aRekap[ i, 2 ], aRekap[ i, 1 ] )
          ENDIF
 
          IspisKred( lSvi )
@@ -1035,7 +1035,7 @@ STATIC FUNCTION IspisKred( lSvi )
                IF nUkKrRad <> 0
 
                   _kr_partija := AllTrim( kred->zirod )
-                  RekapLD( "KRED" + cIdKred + cNaOsnovu, nGodina, nMjesecDo, nUkKrRad, 0, ;
+                  rekap_ld( "KRED" + cIdKred + cNaOsnovu, nGodina, nMjesecDo, nUkKrRad, 0, ;
                      cIdkred, cNaosnovu, AllTrim( cOpis2 ) + ", " + _kr_partija, .T. )
 
                ENDIF
@@ -1135,10 +1135,10 @@ STATIC FUNCTION IspisKred( lSvi )
                _kr_partija := AllTrim( kred->zirod )
 
                IF nMjesec == nMjesecDo
-                  RekapLD( "KRED" + cIdkred + cNaOsnovu, nGodina, nMjesec, nUkKred, 0, ;
+                  rekap_ld( "KRED" + cIdkred + cNaOsnovu, nGodina, nMjesec, nUkKred, 0, ;
                      cIdKred, cNaosnovu, AllTrim( cOpis2 ) + ", " + _kr_partija )
                ELSE
-                  RekapLD( "KRED" + cIdKred + cNaosnovu, nGodina, nMjesecDo, nUkkred, 0, ;
+                  rekap_ld( "KRED" + cIdKred + cNaosnovu, nGodina, nMjesecDo, nUkkred, 0, ;
                      cIdKred, cNaosnovu, AllTrim( cOpis2 ) + ", " + _kr_partija )
                ENDIF
 
@@ -1195,9 +1195,9 @@ FUNCTION ProizvTP()
 
       @ PRow(), 60 SAY round2( &cPom, gZaok2 ) PICT gpici
       IF nMjesec == nMjesecDo
-         RekapLD( "PRIM" + tippr->id, nGodina, nMjesec, round2( &cpom, gZaok2 ), 0 )
+         rekap_ld( "PRIM" + tippr->id, nGodina, nMjesec, round2( &cpom, gZaok2 ), 0 )
       ELSE
-         RekapLD( "PRIM" + tippr->id, nGodina, nMjesecDo, round2( &cpom, gZaok2 ), 0 )
+         rekap_ld( "PRIM" + tippr->id, nGodina, nMjesecDo, round2( &cpom, gZaok2 ), 0 )
       ENDIF
 
       SKIP

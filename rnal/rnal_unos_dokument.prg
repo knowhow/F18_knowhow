@@ -729,7 +729,7 @@ STATIC FUNCTION key_handler()
       _doc := field->doc_no
       show_document_no()
 
-      st_obr_list( .T., _docs->doc_no )
+      rnal_stampa_obracunski_list( .T., _docs->doc_no )
 
       SELECT ( nTArea )
       GO TOP

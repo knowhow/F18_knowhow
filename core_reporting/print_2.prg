@@ -170,8 +170,8 @@ FUNCTION f18_end_print( cFileName, xPrintOpt )
    DO CASE
 
    CASE cOpt == "D"
-       // priprema za email
-       
+      // priprema za email
+
    CASE cOpt == "P"
 
       txt_izvjestaj_podrska_email( cFileName )
@@ -230,9 +230,15 @@ FUNCTION f18_end_print( cFileName, xPrintOpt )
 
 FUNCTION start_print( xPrintOpt, lCloseDbf )
 
+   LOCAL cFile
+   
    hb_default( @lCloseDbf, .F. )
 
-   IF  f18_start_print( NIL, @xPrintOpt ) == "X"
+   IF HB_ISHASH( xPrintOpt ) .AND. hb_HHasKey( xPrintOpt, "header" )
+      cFile := xPrintOpt[ "header" ]
+   ENDIF
+
+   IF  f18_start_print( cFile, @xPrintOpt ) == "X"
       IF lCloseDbf
          my_close_all_dbf()
       ENDIF

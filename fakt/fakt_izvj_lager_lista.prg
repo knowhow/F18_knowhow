@@ -265,7 +265,13 @@ FUNCTION fakt_lager_lista()
    GO TOP
    EOF CRET
 
-   f18_start_print( NIL, xPrintOpt,  "FAKT Lager lista " + my_database() + " na dan " + DToC( Date() ) + " za period od " + DToC( dDatOd ) + " - " + DToC( dDatDo ) )
+   IF HB_ISHASH( xPrintOpt )
+      xPrintOpt[ "header" ] := "FAKT Lager lista " + my_database() + " na dan " + DToC( Date() ) + " za period od " + DToC( dDatOd ) + " - " + DToC( dDatDo )
+   ENDIF
+
+   IF !start_print( xPrintOpt )
+      RETURN .F.
+   ENDIF
 
    Eval( bZagl )
 

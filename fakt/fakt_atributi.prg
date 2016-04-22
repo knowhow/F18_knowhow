@@ -16,7 +16,7 @@
 FUNCTION get_fakt_atribut_opis( dok, from_server )
 
    LOCAL oAtrib := DokAtributi():new( "fakt", F_FAKT_ATRIB )
-
+altd()
    oAtrib:from_dbf := ( from_server == .F. )
    oAtrib:atrib := "opis"
    oAtrib:dok_hash := dok

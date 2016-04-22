@@ -359,8 +359,8 @@ METHOD DokAtributi:atrib_hash_to_dbf( hash )
 
    LOCAL _rec, _key
 
-   // prodji kroz atribute i napuni dbf
-   FOR EACH _key in hash:keys()
+   altd()
+   FOR EACH _key in hash:keys() // prodji kroz atribute i napuni dbf
       ::set_atrib( _key, hash[ _key ] )
    NEXT
 

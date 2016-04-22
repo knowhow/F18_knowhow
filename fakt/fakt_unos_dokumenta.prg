@@ -566,7 +566,7 @@ STATIC FUNCTION fakt_ispravi_dokument( fakt_params )
    _item_before[ "rbr" ] := _rbr
 
    __redni_broj := RbrUnum( _rbr )
-
+altd()
    IF fakt_params[ "fakt_opis_stavke" ]
       _items_atrib[ "opis" ] := get_fakt_atribut_opis( _item_before, .F. )
    ENDIF
@@ -1185,6 +1185,7 @@ STATIC FUNCTION edit_fakt_priprema( fNovi, items_atrib )
       @ m_x + _x, m_y + 2 SAY "Opis:" GET _opis PICT "@S50"
    ENDIF
 
+
    IF _params[ "ref_lot" ]
       ++ _x
       @ m_x + _x, m_y + 2 SAY "REF:" GET _ref_broj PICT "@S10"
@@ -1192,7 +1193,7 @@ STATIC FUNCTION edit_fakt_priprema( fNovi, items_atrib )
    ENDIF
 
    _x += 3
-   @ m_x + _x, m_y + 2 SAY8 "Količina "  GET _kolicina PICT pickol VALID V_Kolicina( _tip_cijene )
+   @ m_x + _x, m_y + 2 SAY8 "Količina: "  GET _kolicina PICT pickol VALID V_Kolicina( _tip_cijene )
 
 
    IF gSamokol != "D"
@@ -1228,6 +1229,7 @@ STATIC FUNCTION edit_fakt_priprema( fNovi, items_atrib )
    IF _avansni_racun == "D"
       _idvrstep := "AV"
    ENDIF
+
 
    ESC_RETURN 0
 

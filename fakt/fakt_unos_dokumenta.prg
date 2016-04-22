@@ -439,7 +439,7 @@ STATIC FUNCTION fakt_prodji_kroz_stavke( fakt_params )
 
    select_fakt_pripr()
 
-   Box( "pst", MAXROWS() - 3, MAXCOLS() - 10, .F. )
+   Box( "pst", MAXROWS() - 5, MAXCOLS() - 10, .F. )
 
    _dug := 0
 
@@ -555,7 +555,7 @@ STATIC FUNCTION fakt_ispravi_dokument( fakt_params )
    LOCAL _items_atrib := hb_Hash()
    LOCAL _item_before, _item_after
 
-   Box( "ist", MAXROWS() - 10, MAXCOLS() - 10, .F. )
+   Box( "ist", MAXROWS() - 5, MAXCOLS() - 10, .F. )
 
    set_global_vars_from_dbf( "_" )
 
@@ -614,7 +614,7 @@ STATIC FUNCTION fakt_unos_nove_stavke()
 
    GO BOTTOM
 
-   Box( "knjn", MAXROWS() - 10, MAXCOLS() - 10, .F., "Unos nove stavke" )
+   Box( "knjn", MAXROWS() - 5, MAXCOLS() - 10, .F., "Unos nove stavke" )
 
    DO WHILE .T.
 
@@ -1212,7 +1212,7 @@ STATIC FUNCTION edit_fakt_priprema( fNovi, items_atrib )
 
       IF !( _idtipdok $ "12#13" ) .OR. ( _idtipdok == "12" .AND. gV12Por == "D" )
 
-         @ m_x + _x, Col() + 2 SAY "Rabat" GET _rabat PICT piccdem ;
+         @ m_x + _x, Col() + 2 SAY "Rabat:" GET _rabat PICT piccdem ;
             WHEN _podbr <> " ." .AND. ! _idtipdok $ "15"
 
          @ m_x + _x, Col() + 1 GET _tip_rabat PICT "@!" ;
@@ -1827,11 +1827,11 @@ STATIC FUNCTION _total_dokumenta()
    LOCAL _din_dem
 
    IF fakt_pripr->( RecCount() ) == 0 .OR. ! ( fakt_pripr->idtipdok $ "10#11#12#20" )
-      RETURN
+      RETURN .F.
    ENDIF
 
    _x := MAXROWS() - 20
-   _y := MAXCOLS() - 50
+   _y := MAXCOLS() - 30
 
    // valuta ?
    _din_dem := fakt_pripr->dindem
@@ -1853,23 +1853,18 @@ STATIC FUNCTION _total_dokumenta()
    @ m_x + __x, m_y + 2 SAY PadL( "Osnovica: ", _left ) + Str( _doc_total[ "osn" ], 12, 2 )
 
    ++ __x
-
    @ m_x + __x, m_y + 2 SAY PadL( "Popust: ", _left ) + Str( _doc_total[ "pop" ], 12, 2 )
 
    ++ __x
-
    @ m_x + __x, m_y + 2 SAY PadL( "Osnovica - popust: ", _left ) + Str( _doc_total[ "osn_pop" ], 12, 2 )
 
    ++ __x
-
    @ m_x + __x, m_y + 2 SAY PadL( "PDV: ", _left ) + Str( _doc_total[ "pdv" ], 12, 2 )
 
    ++ __x
-
    @ m_x + __x, m_y + 2 SAY Replicate( "=", _left )
 
    ++ __x
-
    @ m_x + __x, m_y + 2 SAY PadL( "Ukupno sa PDV (" + AllTrim( _din_dem ) + "): ", _left ) + Str( _doc_total[ "total" ], 12, 2 )
 
    IF Left( _din_dem, 3 ) <> Left( ValBazna(), 3 )

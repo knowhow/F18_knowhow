@@ -136,7 +136,7 @@ METHOD FaktDokumenti:pretvori_otpremnice_u_racun()
 
    SET CURSOR ON
 
-   Box(, MAXROWS() -10, MAXCOLS() -10 )
+   Box(, MAXROWS() - 7, MAXCOLS() - 10 )
 
    @ m_x + 1, m_y + 2 SAY "PREGLED OTPREMNICA:"
    @ m_x + 3, m_y + 2 SAY "Radna jedinica" GET  _idfirma PICT "@!"
@@ -226,7 +226,7 @@ METHOD FaktDokumenti:change_idtipdok_markirani( new_idtipdok )
 
    LOCAL _err, _item, _broj, _ok := .T.
 
-   BEGIN SEQUENCE WITH {|err| err:cargo := { ProcName( 1 ), ProcName( 2 ), ProcLine( 1 ), ProcLine( 2 ) }, Break( err ) }
+   BEGIN SEQUENCE WITH {| err| err:cargo := { ProcName( 1 ), ProcName( 2 ), ProcLine( 1 ), ProcLine( 2 ) }, Break( err ) }
 
       run_sql_query( "BEGIN; SET TRANSACTION ISOLATION LEVEL SERIALIZABLE" )
 

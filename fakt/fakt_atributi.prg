@@ -16,7 +16,6 @@
 FUNCTION get_fakt_attr_opis( hId, lFromServer )
 
    LOCAL oAttr := DokAttr():new( "fakt", F_FAKT_ATTR )
-altd()
    oAttr:lGetAttrFromDbf := ( lFromServer == .F. )
    oAttr:cAttr := "opis"
    oAttr:hAttrId := hId

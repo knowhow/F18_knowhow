@@ -344,45 +344,6 @@ FUNCTION f18_promjena_sezone()
 
 
 
-FUNCTION harbour_init()
-
-   rddSetDefault( RDDENGINE )
-   Set( _SET_AUTOPEN, .F.  )
-
-   SET CENTURY OFF
-   // epoha je u stvari 1999, 2000 itd
-   SET EPOCH TO 1960
-   SET DATE TO GERMAN
-
-
-   f18_init_threads()
-
-
-   hb_cdpSelect( "SL852" )
-   hb_SetTermCP( "SLISO" )
-
-   SET DELETED ON
-
-   SetCancel( .F. )
-
-   Set( _SET_EVENTMASK, INKEY_ALL )
-   MSetCursor( .T. )
-
-   SET DATE GERMAN
-   SET SCOREBOARD OFF
-   SET CONFIRM ON
-   SET WRAP ON
-   SET ESCAPE ON
-   SET SOFTSEEK ON
-
-   SetColor( F18_COLOR_NORMAL )
-
-   //Set( _SET_IDLEREPEAT, .F. ) // .T. default
-   hb_idleAdd( {|| on_idle_dbf_refresh() } )
-   // hb_idleAdd( {|| idle_eval() } ) - izaziva erore
-
-
-   RETURN .T.
 
 
 

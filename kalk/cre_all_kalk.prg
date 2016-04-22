@@ -96,7 +96,6 @@ STATIC FUNCTION kreiraj_ostale_kalk_tabele( ver )
 
    IF_NOT_FILE_DBF_CREATE
 
-
    CREATE_INDEX( "ID", "ID", _alias )
    CREATE_INDEX( "NAZ", "NAZ", _alias )
    CREATE_INDEX( "IdObj", "IdObj", _alias )

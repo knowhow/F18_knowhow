@@ -734,6 +734,7 @@ FUNCTION we_need_dbf_refresh( cTable )
 
    LOCAL aDbfRec
 
+
    IF cTable == NIL
       IF !Used() .OR. ( rddName() $  "SQLMIX#ARRAYRDD" )
          RETURN .F.

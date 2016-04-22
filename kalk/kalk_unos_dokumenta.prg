@@ -531,7 +531,7 @@ FUNCTION EditStavka()
 
       oAttr := DokAttr():new( "kalk", F_KALK_ATTR )
       oAttr:hAttrId := _hAttrId
-      oAttr:attr_mem_to_dbf( _atributi )
+      oAttr:push_attr_from_mem_to_dbf( _atributi )
 
       SELECT kalk_pripr
 
@@ -712,7 +712,7 @@ FUNCTION kalk_unos_nova_stavka()
 
       oAttr := DokAttr():new( "kalk", F_KALK_ATTR )
       oAttr:hAttrId := _hAttrId
-      oAttr:attr_mem_to_dbf( _atributi )
+      oAttr:push_attr_from_mem_to_dbf( _atributi )
 
       IF nRbr == 1
          SELECT kalk_pripr
@@ -854,7 +854,7 @@ FUNCTION kalk_edit_sve_stavke()
 
       oAttr := DokAttr():new( "kalk", F_KALK_ATTR )
       oAttr:hAttrId := _dok
-      oAttr:attr_mem_to_dbf( _atributi )
+      oAttr:push_attr_from_mem_to_dbf( _atributi )
 
       SELECT kalk_pripr
 

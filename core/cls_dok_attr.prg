@@ -33,7 +33,7 @@ CREATE CLASS DokAttr
    METHOD push_attr_from_dbf_to_server()
    METHOD get_attr_from_server_to_dbf()
 
-   METHOD attr_mem_to_dbf( hAttribs )
+   METHOD push_attr_from_mem_to_dbf( hAttribs )
    METHOD update_attr_on_server( hParams )
    METHOD delete_attr_from_server()
    METHOD open_attr_dbf()
@@ -98,6 +98,7 @@ METHOD open_attr_dbf()  CLASS DokAttr
    // browse_dbf( ::cTableNameDbf )
    // ENDIF
    // #endif
+   GO TOP
 
    RETURN .T.
 
@@ -106,7 +107,7 @@ METHOD open_attr_dbf()  CLASS DokAttr
 
 METHOD create_dbf( lForceCreate )  CLASS DokAttr
 
-   LOCAL _dbf := {}
+   LOCAL aDbf := {}
    LOCAL _ind_key := "idfirma + idtipdok + brdok + rbr + atribut"
    LOCAL _ind_uniq := ".t."
 
@@ -114,17 +115,19 @@ METHOD create_dbf( lForceCreate )  CLASS DokAttr
       lForceCreate := .F.
    ENDIF
 
-   AAdd( _dbf, { 'IDFIRMA', 'C',   2,  0 } )
-   AAdd( _dbf, { 'IDTIPDOK', 'C',   2,  0 } )
-   AAdd( _dbf, { 'BRDOK', 'C',   8,  0 } )
-   AAdd( _dbf, { 'RBR', 'C',   3,  0 } )
-   AAdd( _dbf, { 'ATRIBUT', 'C',  50,  0 } )
-   AAdd( _dbf, { 'VALUE', 'C', 250,  0 } )
+   AAdd( aDbf, { 'IDFIRMA', 'C',   2,  0 } )
+   AAdd( aDbf, { 'IDTIPDOK', 'C',   2,  0 } )
+   AAdd( aDbf, { 'BRDOK', 'C',   8,  0 } )
+   AAdd( aDbf, { 'RBR', 'C',   3,  0 } )
+   AAdd( aDbf, { 'ATRIBUT', 'C',  50,  0 } )
+   AAdd( aDbf, { 'VALUE', 'C', 250,  0 } )
 
 
-   IF lForceCreate .OR. !File( my_home() + ::cTableNameDbf + ".dbf" )
-      dbCreate( my_home() + ::cTableNameDbf + ".dbf", _dbf )
-   ENDIF
+   dbf_init( aDbf, ::cTableNameDbf, Upper( ::cTableNameDbf ) )
+
+   // IF lForceCreate .OR. !File( my_home() + ::cTableNameDbf + ".dbf" )
+   // dbCreate( my_home() + ::cTableNameDbf + ".dbf", _dbf )
+   // ENDIF
 
    ::open_attr_dbf()
 
@@ -186,7 +189,7 @@ METHOD get_attr_from_dbf( cAttr )  CLASS DokAttr
    ::open_attr_dbf()
 
    SET ORDER TO TAG "1"
-   SEEK ( ::hAttrId[ "idfirma" ] + ::hAttrId[ "idtipdok" ] + ::hAttrId[ "brdok" ] + ::hAttrId[ "rbr" ] + cAttr )
+   dbSeek( ::hAttrId[ "idfirma" ] + ::hAttrId[ "idtipdok" ] + ::hAttrId[ "brdok" ] +  ::hAttrId[ "rbr" ] + cAttr, .T. )
 
    IF Found()
       cRet := AllTrim( field->value )
@@ -332,7 +335,7 @@ METHOD set_attr( cAttr, cValue )  CLASS DokAttr
    ::open_attr_dbf()
 
    SET ORDER TO TAG "1"
-   SEEK ( ::hAttrId[ "idfirma" ] + ::hAttrId[ "idtipdok" ] + ::hAttrId[ "brdok" ] + ::hAttrId[ "rbr" ] + cAttr )
+   dbSeek( ::hAttrId[ "idfirma" ] + ::hAttrId[ "idtipdok" ] + ::hAttrId[ "brdok" ] + ::hAttrId[ "rbr" ] + cAttr )
 
    IF !Found()
 
@@ -370,7 +373,7 @@ METHOD set_attr( cAttr, cValue )  CLASS DokAttr
 
 
 
-METHOD attr_mem_to_dbf( hAttribs )  CLASS DokAttr
+METHOD push_attr_from_mem_to_dbf( hAttribs )  CLASS DokAttr
 
    LOCAL cKey
 
@@ -422,7 +425,8 @@ METHOD delete_attr_from_dbf()  CLASS DokAttr
 
    my_flock()
 
-   SEEK ( _idfirma + _idtipdok + _brdok + _rbr + _atribut )
+
+   dbSeek( _idfirma + _idtipdok + _brdok + _rbr + _atribut, .T. )
 
    DO WHILE !Eof() .AND. field->idfirma == _idfirma .AND. field->idtipdok == _idtipdok ;
          .AND. field->brdok == _brdok ;
@@ -459,7 +463,7 @@ METHOD update_attr_rbr()  CLASS DokAttr
 
    PushWA()
    ::open_attr_dbf()
-   SEEK ( _idfirma + _idtipdok + _brdok + _update_rbr )
+   dbSeek( _idfirma + _idtipdok + _brdok + _update_rbr, .T. )
 
    DO WHILE !Eof() .AND. field->idfirma == _idfirma .AND. field->idtipdok == _idtipdok ;
          .AND. field->brdok == _brdok ;
@@ -557,7 +561,7 @@ METHOD push_attr_from_dbf_to_server()  CLASS DokAttr
       RETURN .F.
    ENDIF
 
-   SELECT ::nAttrWA
+   SELECT ( ::nAttrWA )
    SET ORDER TO TAG "1"
 
    DO WHILE !Eof()
@@ -668,7 +672,7 @@ METHOD brisi_visak_atributa( nAreaPriprema )  CLASS DokAttr
       ENDIF
 
       SELECT ( nAreaPriprema ) // F_FAKT_PRIPR
-      SEEK cSeek
+      dbSeek( cSeek, .T. )
       lStavkaInPriprema := Found()
 
       dbSelectArea( ::cAliasAttribTable )
@@ -711,7 +715,7 @@ METHOD attr_delete_duplicate( hParam )  CLASS DokAttr
    my_flock()
 
    SET ORDER TO TAG "1"
-   SEEK _id_firma + _tip_dok + _br_dok
+   dbSeek( _id_firma + _tip_dok + _br_dok, .T. )
 
    _b1 := {|| field->idfirma == _id_firma .AND. field->idtipdok == _tip_dok .AND. field->brdok == _br_dok }
 

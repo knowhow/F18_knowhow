@@ -367,7 +367,6 @@ FUNCTION renm_g_rbr( cTbl, lShow )
 
    SET ORDER TO TAG "l_datum"
 
-   SET SOFTSEEK ON
    SEEK "DZ"
    SKIP -1
    IF lock == "D"

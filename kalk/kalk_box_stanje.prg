@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -14,94 +14,95 @@
 
 
 
-function KalkStanje(cIdRoba)
-local nUl,nIzl,nRezerv,nRevers,fOtv:=.f.,nIOrd,nFRec, aStanje
-local aZN := { CTOD("") , 0 , 0 , 0 } // zadnja nabavka
+FUNCTION KalkStanje( cIdRoba )
 
-select roba
+   LOCAL nUl, nIzl, nRezerv, nRevers, fOtv := .F., nIOrd, nFRec, aStanje
+   LOCAL aZN := { CToD( "" ), 0, 0, 0 } // zadnja nabavka
 
-select (F_KALK)
-if !USED()
-    O_KALK
-    fOtv := .t.
-else
-    nIOrd := indexord()
-    nFRec := recno()
-endif
+   SELECT roba
 
-// "7","Idroba")
-set order to tag "7"
-seek cIdRoba
-
-aStanje := {}
-
-//{idkonto, nUl,nIzl }         KALK
-
-nUl:=nIzl:=0
-
-do while !eof()  .and. cIdRoba==IdRoba
-   nUlaz:=nIzlaz:=0
-   IF !EMPTY(mkonto)
-     nPos:=ASCAN (aStanje, {|x| x[1]==KALK->mkonto})
-     if nPos==0
-       AADD (aStanje, {mkonto, 0, 0})
-       nPos := LEN (aStanje)
-     endif
-     if mu_i=="1" .and. !(idvd $ "12#22#94")
-       nUlaz  := kolicina-gkolicina-gkolicin2
-     elseif mu_i=="5"
-       nIzlaz := kolicina
-     elseif mu_i=="1" .and. (idvd $ "12#22#94")    // povrat
-       nIzlaz := -kolicina
-     elseif mu_i=="8"
-       nIzlaz := -kolicina
-       nUlaz  := -kolicina
-     endif
+   SELECT ( F_KALK )
+   IF !Used()
+      O_KALK
+      fOtv := .T.
    ELSE
-     nPos:=ASCAN (aStanje, {|x| x[1]==KALK->pkonto})
-     if nPos==0
-       AADD (aStanje, {pkonto, 0, 0})
-       nPos := LEN (aStanje)
-     endif
-     if pu_i=="1"
-       nUlaz  := kolicina-GKolicina-GKolicin2
-     elseif pu_i=="5"  .and. !(idvd $ "12#13#22")
-       nIzlaz := kolicina
-     elseif pu_i=="I"
-       nIzlaz := gkolicin2
-     elseif pu_i=="5"  .and. (idvd $ "12#13#22")    // povrat
-       nUlaz  := -kolicina
-     endif
+      nIOrd := IndexOrd()
+      nFRec := RecNo()
    ENDIF
-   aStanje[nPos,2] += nUlaz
-   aStanje[nPos,3] += nIzlaz
-   IF idvd=="10" .and. kolicina>0 .and. datdok>=aZN[1]
-     aZN[1] := datdok
-     aZN[2] := fcj
-     aZN[3] := rabat
-     aZN[4] := nc
+
+   // "7","Idroba")
+   SET ORDER TO TAG "7"
+   SEEK cIdRoba
+
+   aStanje := {}
+
+   // {idkonto, nUl,nIzl }         KALK
+
+   nUl := nIzl := 0
+
+   DO WHILE !Eof()  .AND. cIdRoba == IdRoba
+      nUlaz := nIzlaz := 0
+      IF !Empty( mkonto )
+         nPos := AScan ( aStanje, {| x| x[ 1 ] == KALK->mkonto } )
+         IF nPos == 0
+            AAdd ( aStanje, { mkonto, 0, 0 } )
+            nPos := Len ( aStanje )
+         ENDIF
+         IF mu_i == "1" .AND. !( idvd $ "12#22#94" )
+            nUlaz  := kolicina - gkolicina - gkolicin2
+         ELSEIF mu_i == "5"
+            nIzlaz := kolicina
+         ELSEIF mu_i == "1" .AND. ( idvd $ "12#22#94" )    // povrat
+            nIzlaz := -kolicina
+         ELSEIF mu_i == "8"
+            nIzlaz := -kolicina
+            nUlaz  := -kolicina
+         ENDIF
+      ELSE
+         nPos := AScan ( aStanje, {| x| x[ 1 ] == KALK->pkonto } )
+         IF nPos == 0
+            AAdd ( aStanje, { pkonto, 0, 0 } )
+            nPos := Len ( aStanje )
+         ENDIF
+         IF pu_i == "1"
+            nUlaz  := kolicina - GKolicina - GKolicin2
+         ELSEIF pu_i == "5"  .AND. !( idvd $ "12#13#22" )
+            nIzlaz := kolicina
+         ELSEIF pu_i == "I"
+            nIzlaz := gkolicin2
+         ELSEIF pu_i == "5"  .AND. ( idvd $ "12#13#22" )    // povrat
+            nUlaz  := -kolicina
+         ENDIF
+      ENDIF
+      aStanje[ nPos, 2 ] += nUlaz
+      aStanje[ nPos, 3 ] += nIzlaz
+      IF idvd == "10" .AND. kolicina > 0 .AND. datdok >= aZN[ 1 ]
+         aZN[ 1 ] := datdok
+         aZN[ 2 ] := fcj
+         aZN[ 3 ] := rabat
+         aZN[ 4 ] := nc
+      ENDIF
+      SKIP 1
+   ENDDO
+
+   PRIVATE ZN_Datum  := aZN[ 1 ]           // datum zadnje nabavke
+   PRIVATE ZN_FakCij := aZN[ 2 ]           // fakturna cijena po zadnjoj nabavci
+   PRIVATE ZN_Rabat  := aZN[ 3 ]           // rabat po zadnjoj nabavci
+   PRIVATE ZN_NabCij := aZN[ 4 ]           // nabavna cijena po zadnjoj nabavci
+
+   IF fotv
+      SELECT kalk
+      USE
+   ELSE
+      dbSetOrder( nIOrd )
+      GO nFRec
    ENDIF
-   skip 1
-enddo
 
-PRIVATE ZN_Datum  := aZN[1]           // datum zadnje nabavke
-PRIVATE ZN_FakCij := aZN[2]           // fakturna cijena po zadnjoj nabavci
-PRIVATE ZN_Rabat  := aZN[3]           // rabat po zadnjoj nabavci
-PRIVATE ZN_NabCij := aZN[4]           // nabavna cijena po zadnjoj nabavci
+   SELECT roba
 
-if fotv
-    select kalk
-    use
-else
-    dbsetorder(nIOrd)
-    go nFRec
-endif
+   BoxStanje( aStanje, cIdRoba )      // nUl,nIzl
 
-select roba
-
-BoxStanje(aStanje, cIdRoba)      // nUl,nIzl
-
-return
+   RETURN
 
 
 
@@ -110,108 +111,111 @@ return
  *     Prikaz stanja robe
  */
 
-function BoxStanje(aStanje,cIdroba)
-local picdem:="9999999.999", nR, nC, nTSta := 0, nTUl := 0, nTIzl := 0,;
-      npd, cDiv := "sum", nLen, nRPoc:=0
+FUNCTION BoxStanje( aStanje, cIdroba )
 
- npd := LEN (picdem)
- nLen := LEN (aStanje)
- nLenKonta := IF( nLen>0 , LEN(aStanje[1,1]) , 7 )
+   LOCAL picdem := "9999999.999", nR, nC, nTSta := 0, nTUl := 0, nTIzl := 0, ;
+      npd, cDiv := "sum", nLen, nRPoc := 0
 
- ASORT(aStanje,,,{|x,y| x[1]<y[1]})
+   npd := Len ( picdem )
+   nLen := Len ( aStanje )
+   nLenKonta := IF( nLen > 0, Len( aStanje[ 1, 1 ] ), 7 )
 
- // ucitajmo dodatne parametre stanja iz FMK.INI u aDodPar
- // ------------------------------------------------------
- aDodPar := {}
- FOR i:=1 TO 6
-   cI := ALLTRIM(STR(i))
-   cPomZ := my_get_from_ini( "BoxStanje" , "ZaglavljeStanje" + cI , "" , KUMPATH )
-   cPomF := my_get_from_ini( "BoxStanje" , "FormulaStanje" + cI   , "" , KUMPATH )
-   IF !EMPTY( cPomF )
-     AADD( aDodPar , { cPomZ , cPomF } )
-   ENDIF
- NEXT
- nLenDP := IF( LEN(aDodPar)>0 , LEN(aDodPar)+1 , 0 )
+   ASort( aStanje,,, {| x, y| x[ 1 ] < y[ 1 ] } )
 
- select roba
- //PushWA()
- set order to tag "ID"; seek cIdRoba
- Box( , MIN( 6+nLen+INT((nLenDP)/2) , 23 ) , 75 )
-  Beep(1)
-  @ m_x+1,m_y+2 SAY "ARTIKAL: "
-  @ m_x+1,col() SAY PADR(AllTrim (cidroba)+" - "+roba->naz,51) COLOR "GR+/B"
-  @ m_x+3,m_y+2 SAY cDiv + PADC("KONTO",nLenKonta) + cDiv + PADC ("Ulaz", npd) + cDiv+ ;
-                    PADC ("Izlaz", npd) + cDiv + ;
-                    PADC ("Stanje", npd) + cDiv
-  nR := m_x+4
-  nRPoc := nR
-  FOR nC := 1 TO nLen
-//{idfirma, nUl,nIzl,nRevers,nRezerv }
-    @ nR,m_y+2 SAY cDiv
-    @ nR,col() SAY aStanje [nC][1]
-    @ nR,col() SAY cDiv
-    @ nR,col() SAY aStanje [nC][2] pict picdem
-    @ nR,col() SAY cDiv
-    @ nR,col() SAY aStanje [nC][3] pict picdem
-    @ nR,col() SAY cDiv
-    nPom := aStanje [nC][2]-aStanje [nC][3]
-    @ nR,col() SAY nPom pict picdem
-    @ nR,col() SAY cDiv
-    nTUl  += aStanje [nC][2]
-    nTIzl += aStanje [nC][3]
-    nTSta += nPom
-    nR ++
+   // ucitajmo dodatne parametre stanja iz FMK.INI u aDodPar
+   // ------------------------------------------------------
+   aDodPar := {}
+   FOR i := 1 TO 6
+      cI := AllTrim( Str( i ) )
+      cPomZ := my_get_from_ini( "BoxStanje", "ZaglavljeStanje" + cI, "", KUMPATH )
+      cPomF := my_get_from_ini( "BoxStanje", "FormulaStanje" + cI, "", KUMPATH )
+      IF !Empty( cPomF )
+         AAdd( aDodPar, { cPomZ, cPomF } )
+      ENDIF
+   NEXT
+   nLenDP := IF( Len( aDodPar ) > 0, Len( aDodPar ) + 1, 0 )
 
-    IF nC%15 = 0 .and. nC<nLen
-      INKEY(0)
-      @ m_x+nRPoc, m_y+2 CLEAR TO m_x+nR-1, m_y+70
-      nR:=nRPoc
-    ENDIF
+   SELECT roba
+   // PushWA()
+   SET ORDER TO TAG "ID"
+   SEEK cIdRoba
+   Box( , Min( 6 + nLen + Int( ( nLenDP ) / 2 ), 23 ), 75 )
+   Beep( 1 )
+   @ m_x + 1, m_y + 2 SAY "ARTIKAL: "
+   @ m_x + 1, Col() SAY PadR( AllTrim ( cidroba ) + " - " + roba->naz, 51 ) COLOR "GR+/B"
+   @ m_x + 3, m_y + 2 SAY cDiv + PadC( "KONTO", nLenKonta ) + cDiv + PadC ( "Ulaz", npd ) + cDiv + ;
+      PadC ( "Izlaz", npd ) + cDiv + ;
+      PadC ( "Stanje", npd ) + cDiv
+   nR := m_x + 4
+   nRPoc := nR
+   FOR nC := 1 TO nLen
+      // {idfirma, nUl,nIzl,nRevers,nRezerv }
+      @ nR, m_y + 2 SAY cDiv
+      @ nR, Col() SAY aStanje[nC ][ 1 ]
+      @ nR, Col() SAY cDiv
+      @ nR, Col() SAY aStanje[nC ][ 2 ] PICT picdem
+      @ nR, Col() SAY cDiv
+      @ nR, Col() SAY aStanje[nC ][ 3 ] PICT picdem
+      @ nR, Col() SAY cDiv
+      nPom := aStanje[nC ][ 2 ] -aStanje[nC ][ 3 ]
+      @ nR, Col() SAY nPom PICT picdem
+      @ nR, Col() SAY cDiv
+      nTUl  += aStanje[nC ][ 2 ]
+      nTIzl += aStanje[nC ][ 3 ]
+      nTSta += nPom
+      nR ++
 
-  NEXT
-    @ nR,m_y+2 SAY cDiv + REPL("-",nLenKonta) + cDiv + REPL ("-", npd) + cDiv+ ;
-                   REPL ("-", npd) + cDiv + ;
-                   REPL ("-", npd) + cDiv
-    nR ++
-    @ nR,m_y+2 SAY cDiv+PADC("UKUPNO:",nLenKonta)+cDiv
-    @ nR,col() SAY nTUl pict picdem
-    @ nR,col() SAY cDiv
-    @ nR,col() SAY nTIzl pict picdem
-    @ nR,col() SAY cDiv
-    @ nR,col() SAY nTSta pict picdem
-    @ nR,col() SAY cDiv
+      IF nC % 15 = 0 .AND. nC < nLen
+         Inkey( 0 )
+         @ m_x + nRPoc, m_y + 2 CLEAR TO m_x + nR - 1, m_y + 70
+         nR := nRPoc
+      ENDIF
 
-    // ispis dodatnih parametara stanja
-    // --------------------------------
-    IF nLenDP>0
+   NEXT
+   @ nR, m_y + 2 SAY cDiv + REPL( "-", nLenKonta ) + cDiv + REPL ( "-", npd ) + cDiv + ;
+      REPL ( "-", npd ) + cDiv + ;
+      REPL ( "-", npd ) + cDiv
+   nR ++
+   @ nR, m_y + 2 SAY cDiv + PadC( "UKUPNO:", nLenKonta ) + cDiv
+   @ nR, Col() SAY nTUl PICT picdem
+   @ nR, Col() SAY cDiv
+   @ nR, Col() SAY nTIzl PICT picdem
+   @ nR, Col() SAY cDiv
+   @ nR, Col() SAY nTSta PICT picdem
+   @ nR, Col() SAY cDiv
+
+   // ispis dodatnih parametara stanja
+   // --------------------------------
+   IF nLenDP > 0
       ++nR
-      @ nR, m_y+2 SAY REPL("-",74)
-      FOR i:=1 TO nLenDP-1
+      @ nR, m_y + 2 SAY REPL( "-", 74 )
+      FOR i := 1 TO nLenDP - 1
 
-        cPom777 := aDodPar[i,2]
+         cPom777 := aDodPar[ i, 2 ]
 
-        IF "TARIFA->" $ UPPER(cPom777)
-          SELECT (F_TARIFA)
-          IF !USED(); O_TARIFA; ENDIF
-          SET ORDER TO TAG "ID"
-          HSEEK ROBA->idtarifa
-          SELECT ROBA
-        ENDIF
+         IF "TARIFA->" $ Upper( cPom777 )
+            SELECT ( F_TARIFA )
+            IF !Used(); O_TARIFA; ENDIF
+            SET ORDER TO TAG "ID"
+            HSEEK ROBA->idtarifa
+            SELECT ROBA
+         ENDIF
 
-        IF i%2!=0
-          ++nR
-          @ nR, m_y+2 SAY PADL( aDodPar[i,1] , 15 ) COLOR "W+/B"
-          @ nR, col()+2 SAY &cPom777 COLOR "R/W"
-        ELSE
-          @ nR, m_y+37 SAY PADL( aDodPar[i,1] , 15 ) COLOR "W+/B"
-          @ nR, col()+2 SAY &cPom777 COLOR "R/W"
-        ENDIF
+         IF i % 2 != 0
+            ++nR
+            @ nR, m_y + 2 SAY PadL( aDodPar[ i, 1 ], 15 ) COLOR "W+/B"
+            @ nR, Col() + 2 SAY &cPom777 COLOR "R/W"
+         ELSE
+            @ nR, m_y + 37 SAY PadL( aDodPar[ i, 1 ], 15 ) COLOR "W+/B"
+            @ nR, Col() + 2 SAY &cPom777 COLOR "R/W"
+         ENDIF
 
       NEXT
-    ENDIF
+   ENDIF
 
-  inkey(0)
- BoxC()
- //PopWa()
-return
-*}
+   Inkey( 0 )
+   BoxC()
+   // PopWa()
+
+   RETURN
+// }

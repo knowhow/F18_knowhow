@@ -535,7 +535,7 @@ STATIC FUNCTION fakt_dodaj_ispravi_stavku( novi, item_hash, items_atrib )
       oAttr:update_attr_rbr()
    ENDIF
 
-   oAttr:attr_mem_to_dbf( items_atrib )
+   oAttr:push_attr_from_mem_to_dbf( items_atrib )
 
    fakt_promjena_cijene_u_sif()
 
@@ -566,7 +566,6 @@ STATIC FUNCTION fakt_ispravi_dokument( fakt_params )
    _item_before[ "rbr" ] := _rbr
 
    __redni_broj := RbrUnum( _rbr )
-altd()
    IF fakt_params[ "fakt_opis_stavke" ]
       _items_atrib[ "opis" ] := get_fakt_attr_opis( _item_before, .F. )
    ENDIF

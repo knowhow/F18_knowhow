@@ -112,7 +112,7 @@ FUNCTION FaKaPrenos_MP_u_razduzenje()
       @ m_x + 6, Col() + 1 SAY "do" GET dFaktDo
 
       @ m_x + 7, m_y + 2 SAY "Uzimati MPC iz sifrarnika (D/N) ?" GET cCjenSif VALID cCjenSif $ "DN" PICT "@!"
-	
+
       @ m_x + 8, m_y + 2 SAY "Sabirati iste artikle (D/N) ?" GET cSabirati VALID cSabirati $ "DN" PICT "@!"
 
       READ
@@ -124,27 +124,27 @@ FUNCTION FaKaPrenos_MP_u_razduzenje()
       SELECT fakt
       SET ORDER TO TAG "1"
       GO TOP
-  	
+
       SEEK cFaktFirma + cIdTipDok
 
       MsgO( "Generisem podatke...." )
 
       DO WHILE !Eof() .AND. cFaktFirma + cIdTipDok == IdFirma + IdTipDok
-       	
+
          // datumska provjera...
          IF fakt->datdok < dFaktOd .OR. fakt->datdok > dFaktDo
-			
+
             SKIP
             LOOP
-			
+
          ENDIF
-		
+
          // usluge ne prenosi tako�er
          IF AllTrim( podbr ) == "."  .OR. idroba = "U"
-          		
+
             SKIP
             LOOP
-			
+
          ENDIF
 
          cIdRoba := fakt->idroba
@@ -152,17 +152,17 @@ FUNCTION FaKaPrenos_MP_u_razduzenje()
          HSEEK cIdRoba
 
          cIdTar := roba->idtarifa
-       		
+
          SELECT tarifa
          HSEEK cIdTar
 
          SELECT koncij
          SEEK Trim( cIdKonto )
-       	
+
          PRIVATE aPorezi := {}
-		
+
          cPKonto := cIdKonto
-		
+
          SELECT kalk_pripr
 
          IF cSabirati == "D"
@@ -175,9 +175,9 @@ FUNCTION FaKaPrenos_MP_u_razduzenje()
          ENDIF
 
          IF !Found()
-			
+
             APPEND BLANK
-       		       		
+
             REPLACE idfirma WITH cIdFirma
             REPLACE rbr WITH Str( ++nRbr, 3 )
             REPLACE idvd WITH "11"
@@ -197,23 +197,23 @@ FUNCTION FaKaPrenos_MP_u_razduzenje()
             REPLACE mpc WITH fakt->porez
             REPLACE tmarza2 WITH "A"
             REPLACE tprevoz WITH "A"
-			
+
             IF cCjenSif == "D"
                REPLACE mpcsapp WITH UzmiMpcSif()
             ELSE
                REPLACE mpcsapp WITH fakt->cijena
             ENDIF
-		
+
          ENDIF
-		
+
          // saberi kolicine za jedan artikal
          my_rlock()
          REPLACE kolicina WITH ( kolicina + fakt->kolicina )
          my_unlock()
-       		
+
          SELECT fakt
          SKIP
-     	
+
       ENDDO
 
       MsgC()
@@ -234,16 +234,16 @@ FUNCTION FaKaPrenos_MP_u_razduzenje()
       SELECT fakt
 
       @ m_x + 10, m_y + 2 SAY "Dokument je prenesen !!"
-     	
+
       IF gBrojac == "D"
          cBrKalk := UBrojDok( Val( Left( cBrKalk, 5 ) ) + 1, 5, Right( cBrKalk, 3 ) )
       ENDIF
-     	
+
       Inkey( 4 )
-	
+
       @ m_x + 8, m_y + 2 SAY Space( 30 )
       @ m_x + 10, m_y + 2 SAY Space( 40 )
-	
+
    ENDDO
 
    Boxc()
@@ -281,7 +281,9 @@ FUNCTION prod_fa_ka_prenos_otpr()
    cBrkalk := Space( 8 )
    IF gBrojac == "D"
       SELECT kalk
-      SELECT kalk; SET ORDER TO TAG "1";SEEK cidfirma + "11X"
+      SELECT kalk
+      SET ORDER TO TAG "1"
+      SEEK cidfirma + "11X"
       SKIP -1
       IF idvd <> "11"
          cbrkalk := Space( 8 )
@@ -379,7 +381,7 @@ FUNCTION prod_fa_ka_prenos_otpr()
                idtarifa WITH Tarifa( cPKonto, fakt->idroba, @aPorezi ), ;
                brfaktp WITH fakt->brdok, ;
                datfaktp WITH fakt->datdok, ;
-               idkonto   WITH cPKonto,;
+               idkonto   WITH cPKonto, ;
                idzaduz  WITH cidzaduz, ;
                idkonto2  WITH cidkonto2, ;
                idzaduz2  WITH cidzaduz2, ;
@@ -476,24 +478,24 @@ FUNCTION FaKaPrenosRacunMP()
       ENDIF
       @ m_x + 5, m_y + 2 SAY "Napraviti zbirnu kalkulaciju (D/N): " GET cZbirno VALID cZbirno $ "DN" PICT "@!"
       READ
-		
+
       IF cZbirno == "N"
 
          cFaktFirma := cIdFirma
-  			
+
          @ m_x + 6, m_y + 2 SAY "Broj fakture: " GET cFaktFirma
          @ m_x + 6, Col() + 2 SAY "- " + cIdTipDok
          @ m_x + 6, Col() + 2 SAY "-" GET cBrDok
-  			
+
          READ
-  		
+
          IF ( LastKey() == K_ESC )
             EXIT
          ENDIF
 
          SELECT fakt
          SEEK cFaktFirma + cIdTipDok + cBrDok
-  		
+
          IF !Found()
             Beep( 4 )
             @ m_x + 14, m_y + 2 SAY "Ne postoji ovaj dokument !!"
@@ -501,9 +503,9 @@ FUNCTION FaKaPrenosRacunMP()
             @ m_x + 14, m_y + 2 SAY Space( 30 )
             LOOP
          ELSE
-     				
+
             aMemo := parsmemo( txt )
-      				
+
             IF Len( aMemo ) >= 5
                @ m_x + 10, m_y + 2 SAY PadR( Trim( aMemo[ 3 ] ), 30 )
                @ m_x + 11, m_y + 2 SAY PadR( Trim( aMemo[ 4 ] ), 30 )
@@ -511,15 +513,15 @@ FUNCTION FaKaPrenosRacunMP()
             ELSE
                cTxt := ""
             ENDIF
-      				
+
             IF ( LastKey() == K_ESC )
                EXIT
             ENDIF
-				
+
             cIdPartner := IdPartner
-      				
+
             @ m_x + 14, m_y + 2 SAY "Sifra partnera:" GET cIdpartner PICT "@!" VALID P_Firma( @cIdPartner )
-      			
+
             READ
 
             SELECT kalk_pripr
@@ -553,13 +555,13 @@ FUNCTION FaKaPrenosRacunMP()
                ENDIF
 
                SELECT kalk_pripr
-       					
+
                PRIVATE aPorezi := {}
-					
+
                Tarifa( cIdKonto, fakt->idRoba, @aPorezi )
-					
+
                nMPVBP := MpcBezPor( fakt->( kolicina * cijena ), aPorezi )
-       				
+
                APPEND BLANK
                REPLACE idfirma WITH cIdFirma, ;
                   rbr WITH Str( ++nRbr, 3 ), ;
@@ -583,7 +585,7 @@ FUNCTION FaKaPrenosRacunMP()
                SELECT fakt
                SKIP
             ENDDO
-			
+
          ENDIF
       ELSE
 
@@ -591,21 +593,21 @@ FUNCTION FaKaPrenosRacunMP()
          cIdTipDok := "11"
          dOdDatFakt := Date()
          dDoDatFakt := Date()
-			
+
          @ m_x + 7, m_y + 2 SAY "ID firma FAKT: " GET cFaktFirma
          @ m_x + 8, m_y + 2 SAY "Datum fakture: "
          @ m_x + 8, Col() + 2 SAY "od " GET dOdDatFakt
          @ m_x + 8, Col() + 2 SAY "do " GET dDoDatFakt
-  		
+
          READ
-  			
+
          IF ( LastKey() == K_ESC )
             EXIT
          ENDIF
 
          SELECT fakt
          GO TOP
-			
+
          DO WHILE !Eof()
 
             IF ( idfirma == cFaktFirma .AND. ;
@@ -614,35 +616,35 @@ FUNCTION FaKaPrenosRacunMP()
                   datdok <= dDoDatFakt )
 
                cIdPartner := IdPartner
-      					
+
                @ m_x + 14, m_y + 2 SAY "Sifra partnera:" GET cIdpartner PICT "@!" VALID P_Firma( @cIdPartner )
-      			
+
                READ
 
                SELECT kalk_pripr
                GO BOTTOM
-     			
+
                IF brdok == cBrKalk
                   nRbr := Val( Rbr )
                ENDIF
-     			
+
                SELECT fakt
-     			
+
                IF !ProvjeriSif( "!eof() .and. '" + cFaktFirma + cIdTipDok + "'==IdFirma+IdTipDok", "IDROBA", F_ROBA )
                   MsgBeep( "U ovom dokumentu nalaze se sifre koje ne postoje u tekucem sifrarniku!#Prenos nije izvrsen!" )
                   LOOP
                ENDIF
-     			
+
                SELECT kalk_pripr
-       					
+
                PRIVATE aPorezi := {}
-					
+
                Tarifa( cIdKonto, fakt->idRoba, @aPorezi )
-					
+
                nMPVBP := MpcBezPor( fakt->( kolicina * cijena ), aPorezi )
-					
+
                APPEND BLANK
-       			
+
                REPLACE idfirma WITH cIdFirma
                REPLACE rbr WITH Str( ++nRbr, 3 )
                REPLACE idvd WITH "41"
@@ -660,7 +662,7 @@ FUNCTION FaKaPrenosRacunMP()
                REPLACE tmarza2 WITH "%"
                REPLACE rabatv with ;
                   ( nMPVBP * fakt->rabat / ( fakt->kolicina * 100 ) ) // * 1.17
-       					
+
                SELECT fakt
                SKIP
                LOOP
@@ -669,20 +671,20 @@ FUNCTION FaKaPrenosRacunMP()
                LOOP
             ENDIF
          ENDDO
-      endif
-		
+      ENDIF
+
       @ m_x + 10, m_y + 2 SAY "Dokument je prenesen !!"
       @ m_x + 11, m_y + 2 SAY "Obavezno pokrenuti asistenta <opcija A>!!!"
-     		
+
       IF gBrojac == "D"
          cBrKalk := UBrojDok( Val( Left( cBrKalk, 5 ) ) + 1, 5, Right( cBrKalk, 3 ) )
       ENDIF
 
       Inkey( 0 )
-     		
+
       @ m_x + 10, m_y + 2 SAY Space( 30 )
       @ m_x + 11, m_y + 2 SAY Space( 40 )
-	
+
    ENDDO
    Boxc()
 
@@ -715,7 +717,9 @@ FUNCTION FaKaPrenos_01_doprema()
    cBrkalk := Space( 8 )
    IF gBrojac == "D"
       SELECT kalk
-      SELECT kalk; SET ORDER TO TAG "1";SEEK cidfirma + "81X"
+      SELECT kalk
+      SET ORDER TO TAG "1"
+      SEEK cidfirma + "81X"
       SKIP -1
       IF idvd <> "81"
          cbrkalk := Space( 8 )
@@ -861,7 +865,9 @@ FUNCTION FaKaPrenos_cm_u_prodavnicu()
    cBrkalk := Space( 8 )
    IF gBrojac == "D"
       SELECT kalk
-      SELECT kalk; SET ORDER TO TAG "1";SEEK cidfirma + "80X"
+      SELECT kalk
+      SET ORDER TO TAG "1"
+      SEEK cidfirma + "80X"
       SKIP -1
       IF idvd <> "80"
          cbrkalk := Space( 8 )
@@ -1038,7 +1044,9 @@ FUNCTION FaKaPrenos_izlaz_putem_vp()
    cBrkalk := Space( 8 )
    IF gBrojac == "D"
       SELECT kalk
-      SELECT kalk; SET ORDER TO TAG "1";SEEK cidfirma + "15X"
+      SELECT kalk
+      SET ORDER TO TAG "1"
+      SEEK cidfirma + "15X"
       SKIP -1
       IF idvd <> "15"
          cbrkalk := Space( 8 )
@@ -1150,31 +1158,31 @@ FUNCTION FaKaPrenos_izlaz_putem_vp()
 
             SELECT kalk_pripr
             APPEND BLANK
-            REPLACE idfirma   WITH cIdFirma,;
-               rbr       WITH Str( ++nRbr, 3 ),;
-               idvd      WITH "15",;   // izlaz iz MP putem VP
-               brdok     WITH cBrKalk,;
-               datdok    WITH dDatKalk,;
-               idtarifa  WITH ROBA->idtarifa,;
-               brfaktp   WITH fakt->brdok,;
-               datfaktp  WITH fakt->datdok,;
-               idkonto   WITH cidkonto,;
-               pkonto    WITH cIdKonto,;
-               pu_i      WITH "1",;
-               idzaduz   WITH cidzaduz,;
-               idkonto2  WITH cidkonto2,;
-               mkonto    WITH cIdKonto2,;
-               mu_i      WITH "8",;
-               idzaduz2  WITH cidzaduz2,;
-               kolicina  WITH -fakt->kolicina,;
-               idroba    WITH fakt->idroba,;
-               nc        WITH ROBA->nc,;
-               vpc       WITH KoncijVPC(),;
-               rabatv    WITH fakt->rabat,;
-               mpc       WITH fakt->porez,;
-               tmarza2   WITH "A",;
-               tprevoz   WITH "R",;
-               idpartner WITH cIdPartner,;
+            REPLACE idfirma   WITH cIdFirma, ;
+               rbr       WITH Str( ++nRbr, 3 ), ;
+               idvd      WITH "15", ;   // izlaz iz MP putem VP
+            brdok     WITH cBrKalk, ;
+               datdok    WITH dDatKalk, ;
+               idtarifa  WITH ROBA->idtarifa, ;
+               brfaktp   WITH fakt->brdok, ;
+               datfaktp  WITH fakt->datdok, ;
+               idkonto   WITH cidkonto, ;
+               pkonto    WITH cIdKonto, ;
+               pu_i      WITH "1", ;
+               idzaduz   WITH cidzaduz, ;
+               idkonto2  WITH cidkonto2, ;
+               mkonto    WITH cIdKonto2, ;
+               mu_i      WITH "8", ;
+               idzaduz2  WITH cidzaduz2, ;
+               kolicina  WITH -fakt->kolicina, ;
+               idroba    WITH fakt->idroba, ;
+               nc        WITH ROBA->nc, ;
+               vpc       WITH KoncijVPC(), ;
+               rabatv    WITH fakt->rabat, ;
+               mpc       WITH fakt->porez, ;
+               tmarza2   WITH "A", ;
+               tprevoz   WITH "R", ;
+               idpartner WITH cIdPartner, ;
                mpcsapp   WITH fakt->cijena
 
             SELECT fakt
@@ -1242,11 +1250,11 @@ FUNCTION FaKaPrenosRacunMPParagon()
    Box(, 15, 60 )
 
    DO WHILE .T.
-		
+
       nRBr := 0
 
       _x := 1
-  		
+
       @ m_x + _x, m_y + 2 SAY "Generisati kalk dokument (1) 11 (2) 42 ?" GET _auto_razd PICT "9"
 
       READ
@@ -1263,7 +1271,7 @@ FUNCTION FaKaPrenosRacunMPParagon()
          SET ORDER TO TAG "1"
          SEEK cIdFirma + _kalk_tip_dok + "X"
          SKIP -1
- 	
+
          IF field->idvd <> _kalk_tip_dok
             cBrkalk := Space( 8 )
          ELSE
@@ -1271,7 +1279,7 @@ FUNCTION FaKaPrenosRacunMPParagon()
          ENDIF
 
          cBrKalk := UBrojDok( Val( Left( cBrKalk, 5 ) ) + 1, 5, Right( cBrKalk, 3 ) )
-	
+
       ENDIF
 
       ++ _x
@@ -1291,7 +1299,7 @@ FUNCTION FaKaPrenosRacunMPParagon()
             PICT "@!" ;
             VALID P_Konto( @cIdKtoZad )
       ENDIF
-  		
+
       IF gNW <> "X"
          @ m_x + _x, Col() + 2 SAY "Partner razduzuje:" GET cIdZaduz ;
             PICT "@!" ;
@@ -1300,23 +1308,23 @@ FUNCTION FaKaPrenosRacunMPParagon()
 
       ++ _x
       ++ _x
-	
+
       @ m_x + _x, m_y + 2 SAY "Napraviti zbirnu kalkulaciju (D/N): " ;
          GET _zbirni_prenos ;
          VALID _zbirni_prenos $ "DN" ;
          PICT "@!"
-		
+
       ++ _x
 
       @ m_x + _x, m_y + 2 SAY "Razdvoji artikle razlicitih cijena (D/N): " ;
          GET _razl_cijene ;
          VALID _razl_cijene $ "DN" ;
          PICT "@!"
-		
+
       READ
 
       ++ _x
-		
+
       IF _zbirni_prenos == "N"
 
          cFaktFirma := cIdFirma
@@ -1326,14 +1334,14 @@ FUNCTION FaKaPrenosRacunMPParagon()
          @ m_x + _x, Col() + 2 SAY "-" GET cBrDok
 
          READ
-  		
+
          IF ( LastKey() == K_ESC )
             EXIT
          ENDIF
 
          SELECT fakt
          SEEK cFaktFirma + cIdTipDok + cBrDok
-  		
+
          IF !Found()
             Beep( 4 )
             @ m_x + 15, m_y + 2 SAY "Ne postoji ovaj dokument !!"
@@ -1341,7 +1349,7 @@ FUNCTION FaKaPrenosRacunMPParagon()
             @ m_x + 15, m_y + 2 SAY Space( 30 )
             LOOP
          ELSE
-     		
+
             aMemo := parsmemo( txt )
 
             IF Len( aMemo ) >= 5
@@ -1381,7 +1389,7 @@ FUNCTION FaKaPrenosRacunMPParagon()
                MsgBeep( "U ovom dokumentu nalaze se sifre koje ne postoje u tekucem sifrarniku!#Prenos nije izvrsen!" )
                LOOP
             ENDIF
-     				
+
 
             DO WHILE !Eof() .AND. cFaktFirma + cIdTipDok + cBrDok == IdFirma + IdTipDok + BrDok
 
@@ -1427,16 +1435,16 @@ FUNCTION FaKaPrenosRacunMPParagon()
                SKIP
 
             ENDDO
-			
+
          ENDIF
 
       ELSE
-			
+
          cFaktFirma := cIdFirma
          cIdTipDok := "11"
          dOdDatFakt := Date()
          dDoDatFakt := Date()
-			
+
          @ m_x + _x, m_y + 2 SAY "ID firma FAKT: " GET cFaktFirma
 
          ++ _x
@@ -1444,50 +1452,50 @@ FUNCTION FaKaPrenosRacunMPParagon()
          @ m_x + _x, m_y + 2 SAY "Datum fakture: "
          @ m_x + _x, Col() + 2 SAY "od " GET dOdDatFakt
          @ m_x + _x, Col() + 2 SAY "do " GET dDoDatFakt
-  			
+
          READ
-  			
+
          IF ( LastKey() == K_ESC )
             EXIT
          ENDIF
 
          SELECT fakt
          GO TOP
-		 	
+
          DO WHILE !Eof()
-				
+
             IF ( field->idfirma == cFaktFirma .AND. ;
                   field->idtipdok == cIdTipDok .AND. ;
                   field->datdok >= dOdDatFakt .AND. ;
                   field->datdok <= dDoDatFakt )
-					
+
                cIdPartner := ""
 
                SELECT kalk_pripr
                GO BOTTOM
-     			
+
                IF field->brdok == cBrKalk
                   nRbr := Val( Rbr )
                ENDIF
-     			
+
                SELECT fakt
-     			
+
                IF !ProvjeriSif( "!eof() .and. '" + cFaktFirma + cIdTipDok + "'==IdFirma+IdTipDok", "IDROBA", F_ROBA )
                   MsgBeep( "U ovom dokumentu nalaze se sifre koje ne postoje u tekucem sifrarniku!#Prenos nije izvrsen!" )
                   LOOP
                ENDIF
-     			
+
                SELECT kalk_pripr
                LOCATE FOR idroba == fakt->idroba
 
                IF Found() .AND. ;
-                  ( ROUND( fakt->rabat, 2 ) == 0 .AND. ROUND( field->rabatv, 2 ) == 0 ) .AND. ;
-                  ( _razl_cijene == "N" .OR. ( _razl_cijene == "D" .AND. mpcsapp == fakt->cijena ) )
+                     ( Round( fakt->rabat, 2 ) == 0 .AND. Round( field->rabatv, 2 ) == 0 ) .AND. ;
+                     ( _razl_cijene == "N" .OR. ( _razl_cijene == "D" .AND. mpcsapp == fakt->cijena ) )
 
-                  RREPLACE field->kolicina with field->kolicina + fakt->kolicina
+                  RREPLACE field->kolicina WITH field->kolicina + fakt->kolicina
 
                ELSE
-					
+
                   PRIVATE aPorezi := {}
 
                   Tarifa( cIdKonto, fakt->idRoba, @aPorezi )
@@ -1495,7 +1503,7 @@ FUNCTION FaKaPrenosRacunMPParagon()
                   nMPVBP := MpcBezPor( fakt->( kolicina * cijena ), aPorezi )
 
                   APPEND BLANK
-       			
+
                   REPLACE idfirma WITH cIdFirma
                   REPLACE rbr WITH Str( ++nRbr, 3 )
                   REPLACE idvd WITH _kalk_tip_dok
@@ -1505,7 +1513,7 @@ FUNCTION FaKaPrenosRacunMPParagon()
                   REPLACE idtarifa WITH ROBA->idtarifa
                   REPLACE brfaktp WITH fakt->brdok
                   REPLACE datfaktp WITH fakt->datdok
-						
+
                   IF _auto_razd == 1
                      REPLACE idkonto WITH cIdKtoZad
                      REPLACE idkonto2 WITH cIdKonto
@@ -1517,7 +1525,7 @@ FUNCTION FaKaPrenosRacunMPParagon()
                   REPLACE kolicina WITH fakt->kolicina
                   REPLACE idroba WITH fakt->idroba
                   REPLACE mpcsapp WITH fakt->cijena
-					  	
+
                   IF _auto_razd == 1
                      REPLACE tprevoz WITH "R"
                      REPLACE tmarza2 WITH "A"
@@ -1537,22 +1545,22 @@ FUNCTION FaKaPrenosRacunMPParagon()
                LOOP
             ENDIF
          ENDDO
-      endif
-		
+      ENDIF
+
       @ m_x + 10, m_y + 2 SAY "Dokument je prenesen !!"
       @ m_x + 11, m_y + 2 SAY "Obavezno pokrenuti asistenta <opcija A>!!!"
-     		
+
       IF gBrojac == "D"
          cBrKalk := UBrojDok( Val( Left( cBrKalk, 5 ) ) + 1, 5, Right( cBrKalk, 3 ) )
       ENDIF
-     		
+
       Inkey( 4 )
-     	
+
       @ m_x + 10, m_y + 2 SAY Space( 30 )
       @ m_x + 11, m_y + 2 SAY Space( 40 )
-	
+
    ENDDO
-	
+
    Boxc()
 
    my_close_all_dbf()

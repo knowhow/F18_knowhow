@@ -55,7 +55,9 @@ FUNCTION MarkBrDok( fNovi )
       SELECT KONCIJ
       HSEEK _idkonto2
       IF !Empty( m1 )
-         SELECT kalk; SET ORDER TO TAG "1"; SEEK _idfirma + _idvd + "X"
+         SELECT kalk
+         SET ORDER TO TAG "1"
+         SEEK _idfirma + _idvd + "X"
          SKIP -1
          _brdok := Space( 8 )
          DO WHILE !Bof() .AND. idvd == _idvd
@@ -69,6 +71,6 @@ FUNCTION MarkBrDok( fNovi )
       ENDIF
       SELECT ( nArr )
    ENDIF
-   @  m_x + 2, m_y + 46  SAY _BrDok COLOR F18_COLOR_INVERT 
+   @  m_x + 2, m_y + 46  SAY _BrDok COLOR F18_COLOR_INVERT
 
    RETURN .T.

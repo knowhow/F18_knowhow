@@ -347,7 +347,7 @@ FUNCTION exp_2_fmk( lTemp, nDoc_no, aDocList, lNoGen )
          oAttr:hAttrId[ "brdok" ] := field->brdok
          oAttr:hAttrId[ "rbr" ] := field->rbr
 
-         oAttr:attr_mem_to_dbf( _items_atrib )
+         oAttr:push_attr_from_mem_to_dbf( _items_atrib )
 
          SELECT ( _t_area )
 
@@ -516,7 +516,7 @@ FUNCTION exp_2_fmk( lTemp, nDoc_no, aDocList, lNoGen )
          oAttr:hAttrId[ "brdok" ] := field->brdok
          oAttr:hAttrId[ "rbr" ] := field->rbr
 
-         oAttr:attr_mem_to_dbf( _items_atrib )
+         oAttr:push_attr_from_mem_to_dbf( _items_atrib )
 
          SELECT ( _t_area )
 

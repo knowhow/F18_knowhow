@@ -41,7 +41,7 @@ FUNCTION p_fakt_objekti( cId, dx, dy )
 
 
 /* RobaBlok(Ch)
- *    
+ *
  *   param: Ch
  */
 
@@ -162,7 +162,7 @@ FUNCTION FaktStanje( cIdRoba )
 
 
 /* fakt_box_stanje(aStanje,cIdRoba)
- *    
+ *
  *   param: aStanje
  *   param: cIdRoba
  */
@@ -190,7 +190,8 @@ FUNCTION fakt_box_stanje( aStanje, cIdroba )
 
    SELECT roba
    // PushWA()
-   SET ORDER TO TAG "ID"; SEEK cIdRoba
+   SET ORDER TO TAG "ID"
+   SEEK cIdRoba
    Box(, 6 + nLen + Int( ( nLenDP ) / 2 ), 75 )
    Beep( 1 )
    @ m_x + 1, m_y + 2 SAY "ARTIKAL: "
@@ -344,7 +345,7 @@ FUNCTION PrikFTxt( top_pos, left_pos, bott_pos, text_length )
 
 
 /* fn ObSif()
- *    
+ *
  */
 
 STATIC FUNCTION ObSif()
@@ -385,7 +386,7 @@ STATIC FUNCTION ObSif()
 
 
 /* ima_u_fakt_kumulativ(cKljuc,cTag)
- *    
+ *
  *   param: cKljuc
  *   param: cTag
  */

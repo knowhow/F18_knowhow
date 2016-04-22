@@ -635,7 +635,6 @@ FUNCTION fakt_lager_lista()
       ?
    ENDIF
 
-altd()
    end_print( xPrintOpt )
 
    my_close_all_dbf()

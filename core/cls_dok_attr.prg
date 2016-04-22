@@ -344,7 +344,7 @@ METHOD set_attr( cAttr, cValue )  CLASS DokAttr
 
       APPEND BLANK
 
-      hRec := dbf_()
+      hRec := dbf_get_rec()
 
       hRec[ "idfirma" ] := ::hAttrId[ "idfirma" ]
       hRec[ "idtipdok" ] := ::hAttrId[ "idtipdok" ]

@@ -474,6 +474,7 @@ STATIC FUNCTION fakt_mp_po_dokumentima( nT_osnovica, nT_pdv, nT_ukupno, lCalc )
    LOCAL cOper_Naz := ""
    LOCAL nS_pdv, nUk_fakt
    LOCAL cIdFirma, cIdTipDok, cBrDok
+   LOCAL cPart_id, cPart_naz
    LOCAL lOslobodjenPDV
 
    IF lCalc == nil

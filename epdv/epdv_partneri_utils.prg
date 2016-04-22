@@ -28,7 +28,7 @@ FUNCTION epdv_set_sif_partneri()
    LOCAL cId
    LOCAL _rec
 
-   IF !select_o_sifk()
+   IF !o_sifk()
       RETURN .F.
    ENDIF
 

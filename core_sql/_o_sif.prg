@@ -45,25 +45,20 @@ FUNCTION o_koncij()
 FUNCTION select_o_sifk()
 
    IF Select( "SIFK" ) == 0
-      IF !use_sql_sifk()
-         RETURN .F.
-      ENDIF
-   ELSE
-      SELECT F_SIFK
+      RETURN o_sifk()
    ENDIF
 
+   SELECT SIFK
    RETURN .T.
 
 
 FUNCTION select_o_sifv()
 
    IF Select( "SIFV" ) == 0
-      IF !use_sql_sifv()
-         RETURN .F.
-      ENDIF
-   ELSE
-      SELECT F_SIFV
+      RETURN o_sifv()
    ENDIF
+
+   SELECT SIFV
 
    RETURN .T.
 

@@ -340,16 +340,13 @@ STATIC FUNCTION set_print_file_name( cFileName )
 
    IF cFileName == NIL
 
-      ?E "trace-set-print-file-name-0"
       IF my_home() == NIL
          cDir := my_home_root()
       ELSE
          cDir := my_home()
       ENDIF
 
-      ?E "trace-set-print-file-name-1", cDir
       IF ( hFile := hb_vfTempFile( @cTempFile, cDir, "F18_rpt_", ".txt" ) ) != NIL // hb_vfTempFile( @<cFileName>, [ <cDir> ], [ <cPrefix> ], [ <cExt> ], [ <nAttr> ] )
-         ?E "trace-set-print-file-name-2"
          hb_vfClose( hFile )
          cFileName := cTempFile
       ELSE
@@ -358,7 +355,6 @@ STATIC FUNCTION set_print_file_name( cFileName )
 
    ENDIF
    s_cF18Txt := cFileName
-   ?E "trace-set-print-file-name-3"
 
    RETURN cFileName
 

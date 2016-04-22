@@ -104,10 +104,10 @@ FUNCTION exp_2_fmk( lTemp, nDoc_no, aDocList, lNoGen )
       st_pripr( lTemp, nDoc_no, aDocList )
    ENDIF
 
-   // uslovi ekporta - raznorazni...
+   // uslovi ekporta
    IF !_export_cond( @_exp_params )
       SELECT ( nTArea )
-      RETURN
+      RETURN .F.
    ENDIF
 
    lSumirati := _exp_params[ "exp_suma" ] == "D"
@@ -768,7 +768,7 @@ STATIC FUNCTION fnd_partn( xPartn, nCustId, cDesc  )
 
    xPartn := Space( 6 )
 
-   Box(, 5, 70 )
+   Box(, 5, MAXCOLS() - 15 )
    @ m_x + 1, m_y + 2 SAY8 "Naručioc: "
    @ m_x + 1, Col() + 1 SAY AllTrim( Str( nCustId ) ) COLOR F18_COLOR_I
    @ m_x + 1, Col() + 1 SAY " -> "

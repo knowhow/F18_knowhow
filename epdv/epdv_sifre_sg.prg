@@ -17,8 +17,7 @@
 // ------------------------------------------------
 // prelged sifrarnika shema generacije za kuf i kif
 // ------------------------------------------------
-FUNCTION p_sg( cTabela, cId, dx, dy )
-
+FUNCTION p_epdv_sheme_generacije( cTabela, cId, dx, dy )
 
    LOCAL nArea
    LOCAL cHeader
@@ -58,8 +57,7 @@ FUNCTION p_sg( cTabela, cId, dx, dy )
 
    set_a_kol( @Kol, @ImeKol )
 
-   RETURN PostojiSifra( nArea, 1, MAXROWS() - 10, MAXCOLS() - 10, cHeader, ;
-      @cId, dx, dy, ;
+   RETURN PostojiSifra( nArea, 1, MAXROWS() - 10, MAXCOLS() - 10, cHeader,   @cId, dx, dy, ;
       {| Ch| k_handler( Ch ) } )
 
 
@@ -72,11 +70,12 @@ STATIC FUNCTION set_a_kol( aKol, aImeKol )
    AAdd( aImeKol, { "Opis", {|| naz }, "naz", {|| .T. }, {|| .T. } } )
 
    // tip: sifrarnik setuje varijable sa "W" prefixom za tekuca polja
-   AAdd( aImeKol, { "src", {|| src }, "src", {|| .T. }, {|| !Empty( g_src_modul( wsrc, .T. ) ) } } )
+   AAdd( aImeKol, { "src", {|| src }, "src", {|| .T. }, {|| !Empty( g_src_modul( wSrc, .T. ) ) } } )
    AAdd( aImeKol, { "src TD", {|| td_src }, "td_src", {|| .T. }, {|| .T. } } )
 
-   AAdd( aImeKol, { "Src.Lokacija.", {|| s_path }, "s_path", {|| .T. }, {|| .T. } } )
-   AAdd( aImeKol, { "Src.lok. sif", {|| s_path_s }, "s_path_s", {|| .T. }, {|| .T. } } )
+
+   // AAdd( aImeKol, { "Src.Lokacija.", {|| s_path }, "s_path", {|| .T. }, {|| .T. } } )
+   // AAdd( aImeKol, { "Src.lok. sif", {|| s_path_s }, "s_path_s", {|| .T. }, {|| .T. } } )
 
    AAdd( aImeKol, { "For.B.PDV vr.", {|| form_b_pdv }, "form_b_pdv", {|| .T. }, {|| .T. } } )
    AAdd( aImeKol, { "For.PDV vr.", {|| form_pdv }, "form_pdv", {|| .T. }, {|| .T. } } )
@@ -88,7 +87,7 @@ STATIC FUNCTION set_a_kol( aKol, aImeKol )
    AAdd( aImeKol, { "Razb.tar.", {|| razb_tar }, "razb_tar", {|| .T. }, {|| .T. } } )
    AAdd( aImeKol, { "Razb.kto.", {|| razb_kto }, "razb_kto", {|| .T. }, {|| .T. } } )
    AAdd( aImeKol, { "Razb.dan.", {|| razb_dan }, "razb_dan", {|| .T. }, {|| .T. } } )
-   AAdd( aImeKol, { "Kat.part.", {|| g_kat_p( kat_p ) }, "kat_p", {|| .T. }, {|| !Empty( g_kat_p( wkat_p, .T. ) ) } } )
+   AAdd( aImeKol, { "Kat.part.", {|| epdv_get_kateg_partner( kat_p ) }, "kat_p", {|| info_partner(), .T. }, {|| !Empty( epdv_get_kateg_partner( wkat_p, .T. ) ) } } )
    AAdd( aImeKol, { "Kat.part.2", {|| g_kat_p_2( kat_p_2 ) }, "kat_p_2", {|| .T. }, {|| !Empty( g_kat_p_2( wkat_p_2, .T. ) ) } } )
    AAdd( aImeKol, { "Zaok c*kol", {|| zaok }, "zaok", {|| wzaok := iif( wzaok == 0, 2, wzaok ), .T. }, {|| .T. } } )
    AAdd( aImeKol, { "Zaok dok", {|| zaok2 }, "zaok2", {|| wzaok2 := iif( wzaok2 == 0, 2, wzaok2 ), .T. }, {|| .T. } } )
@@ -109,8 +108,12 @@ STATIC FUNCTION set_a_kol( aKol, aImeKol )
       AAdd( aKol, i )
    NEXT
 
-   RETURN
+   RETURN .T.
 
+
+FUNCTION info_partner()
+
+   RETURN MsgBeep( "Partn:#0-bez pdv#9-pdv#1-pdv obveznik#2-nepdv obveznik#3-ino" )
 
 
 // ------------------------------------

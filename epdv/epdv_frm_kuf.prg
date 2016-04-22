@@ -78,7 +78,7 @@ STATIC FUNCTION epdv_kuf_edit_item( lNova )
    LOCAL nXPart := 0
    LOCAL nYPart := 22
 
-   Box(, 16, 70 )
+   Box(, MAXROWS() - 10, MAXCOLS() - 12 )
    IF lNova
       _br_dok := 0
       _r_br := next_r_br( "P_KUF" )

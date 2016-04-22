@@ -11,7 +11,7 @@
 
 #include "f18.ch"
 
-
+MEMVAR _mjesec, _godina, broj_radnika
 
 
 FUNCTION virm_prenos_ld( prenos_ld )
@@ -25,7 +25,7 @@ FUNCTION virm_prenos_ld( prenos_ld )
    LOCAL _per_od, _per_do
    LOCAL _id_banka, _dod_opis
    LOCAL _r_br, _firma
-   LOCAL _mjesec, _godina
+
 
    PRIVATE _mjesec, _godina, broj_radnika
 

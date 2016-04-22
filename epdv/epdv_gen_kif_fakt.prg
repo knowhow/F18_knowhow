@@ -1,16 +1,18 @@
 /*
- * This file is part of the bring.out FMK, a free and open source
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+ * This file is part of the bring.out knowhow ERP, a free and open source
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
 
-
 #include "f18.ch"
+
+MEMVAR _id_part, _datum, _opis
+
 
 STATIC dDatOd
 STATIC dDatDo
@@ -26,6 +28,9 @@ STATIC cOpis
 // kategorija partnera
 // 1-pdv obv
 // 2-ne pdv obvz
+// 3-ino
+// 0-svi za koje je pdv 0
+// 9-svi za koje se pdv obracunava
 STATIC cKatP
 
 // kategorija partnera 2
@@ -127,14 +132,12 @@ FUNCTION fakt_kif( dD1, dD2, cSezona )
 
    ENDDO
 
-
-
 FUNCTION close_open_fakt_epdv_tables()
 
    O_FAKT
    close_open_kuf_kif_sif()
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -157,6 +160,8 @@ STATIC FUNCTION gen_fakt_kif_item( cSezona )
    LOCAL dDMinD
    LOCAL dDMaxD
    LOCAL nF_rabat := 0
+   LOCAL lProcesirano
+   LOCAL nProcesiranoDokumenata := 0
 
    close_open_fakt_epdv_tables()
 
@@ -169,15 +174,15 @@ STATIC FUNCTION gen_fakt_kif_item( cSezona )
    cFilter :=  cFilter + ".and. IdTipDok == " + dbf_quote( cTdSrc )
 
 
-   // "1","IdFirma+idtipdok+brdok+rbr+podbr"
-   SET ORDER TO TAG "1"
+
+   SET ORDER TO TAG "1" // "1","IdFirma+idtipdok+brdok+rbr+podbr"
    SET FILTER TO &cFilter
 
    GO TOP
 
-   // prosetajmo kroz fakt tabelu
+
    nCount := 0
-   DO WHILE !Eof()
+   DO WHILE !Eof()  // fakt_fakt
 
       SELECT p_kif
 
@@ -192,6 +197,9 @@ STATIC FUNCTION gen_fakt_kif_item( cSezona )
       PRIVATE _uk_b_pdv := 0
       PRIVATE _popust := 0
 
+      lProcesirano := .F.
+      nProcesiranoDokumenata := 0
+
       DO WHILE !Eof() .AND.  ( datdok == dDMax )
 
          SELECT fakt
@@ -205,20 +213,20 @@ STATIC FUNCTION gen_fakt_kif_item( cSezona )
          _id_part := fakt->idpartner
          _opis := cOpis
 
-         IF !Empty( cIdPart )
-            _id_part := cIdPart
-         ENDIF
-
-         lOslPoClanu := is_pdv_oslobodjen( _id_part )
+         // ispitati partnera koji stoji na fakt dokumentu
+         lOslPoClanu := is_part_pdv_oslob_po_clanu( _id_part )
          lIno := IsIno( _id_part )
          lPdvObveznik := IsPdvObveznik( _id_part )
+
+         IF !Empty( cIdPart ) // ako se u shemi trazi da se stavi jedinstven partner sada ga staviti
+            _id_part := cIdPart
+         ENDIF
 
          lSkip := .F.
          DO CASE
 
-         CASE cKatP == "1"
+         CASE cKatP == "1" // samo pdv obveznici
 
-            // samo pdv obveznici
             IF lIno
                lSkip := .T.
             ENDIF
@@ -227,23 +235,39 @@ STATIC FUNCTION gen_fakt_kif_item( cSezona )
                lSkip := .T.
             ENDIF
 
-         CASE cKatP == "2"
+         CASE cKatP == "2"  // samo ne-pdv obveznici, ako je ino preskoci
 
             IF lPdvObveznik
                lSkip := .T.
             ENDIF
 
-            // samo ne-pdv obveznici, ako je ino preskoci
             IF lIno
                lSkip := .T.
             ENDIF
 
-         CASE cKatP == "3"
-            // ino
+         CASE cKatP == "3"  // ino
+
             IF !lIno
                lSkip := .T.
             ENDIF
 
+         CASE cKatP == "4"  // oslobodjen po clanu
+
+            IF !lOslPoClanu
+               lSkip := .T.
+            ENDIF
+
+         CASE cKatP == "0"  // pdv ili oslobodjen po clanu
+
+            IF !( lOslPoClanu .OR. lIno )
+               lSkip := .T.
+            ENDIF
+
+         CASE cKatP == "9"  // obracunati pdv
+
+            IF ( lOslPoClanu .OR. lIno )
+               lSkip := .T.
+            ENDIF
          ENDCASE
 
          cPartRejon := part_rejon( _id_part )
@@ -285,6 +309,7 @@ STATIC FUNCTION gen_fakt_kif_item( cSezona )
 
          nF_rabat := 0
 
+
          DO WHILE !Eof() .AND. cBrDok == brdok .AND. cIdTipDok == IdTipDok .AND. cIdFirma == IdFirma
 
             IF lSkip
@@ -325,13 +350,13 @@ STATIC FUNCTION gen_fakt_kif_item( cSezona )
                ENDIF
             ENDIF
 
-            // ako je oslobodjen po clanu... PDV0
-            IF lOslPoClanu == .T.
+
+            IF lOslPoClanu == .T. // ako je oslobodjen po clanu... PDV0
                cDokTar := "PDV0  "
             ENDIF
 
-            // ako je avansna faktura setuj na PDV7AV ili PDV0AV
-            IF AllTrim( fakt->idvrstep ) == "AV"
+
+            IF AllTrim( fakt->idvrstep ) == "AV" // ako je avansna faktura setuj na PDV7AV ili PDV0AV
                IF lIno .OR. lOslPoClanu
                   cDokTar := "PDV0AV"
                ELSE
@@ -362,10 +387,15 @@ STATIC FUNCTION gen_fakt_kif_item( cSezona )
 
             _uk_b_pdv += Round( kolicina * ( nCijena * ( 1 - nF_rabat / 100 ) ), nZaok )
             _popust +=  Round( kolicina * ( nCijena *  nF_rabat / 100 ), nZaok )
+            lProcesirano := .T.
 
             SELECT FAKT
             SKIP
          ENDDO
+
+         IF !lSkip
+            nProcesiranoDokumenata++
+         ENDIF
 
          IF ( cRazbDan == "D" )
 
@@ -387,10 +417,9 @@ STATIC FUNCTION gen_fakt_kif_item( cSezona )
          // datumski interval
       ENDDO
 
-      // za datum uzmi ovaj veci
-      _datum := dDMax
+      _datum := dDMax // za datum uzmi ovaj veci
 
-      IF lSkip
+      IF !lProcesirano
          // vrati se gore
          SELECT FAKT
          LOOP
@@ -410,11 +439,13 @@ STATIC FUNCTION gen_fakt_kif_item( cSezona )
       _uk_popust := Round( _popust, nZaok2 )
 
       IF !Empty( cIdTar ) .AND. cDokTar <> "PDV7AV" .AND. !lOslPoClanu
-         // uzmi iz sg sifrarnika tarifu kojom treba setovati
-         _id_tar := cIdTar
+         _id_tar := cIdTar  // uzmi iz sg sifrarnika tarifu kojom treba setovati
       ELSE
-         // uzmi iz dokumenta
-         _id_tar := cDokTar
+         _id_tar := cDokTar // uzmi iz dokumenta
+      ENDIF
+
+      IF nProcesiranoDokumenata > 1 // ako sumiramo vise dokumenata moramo koristiti tarifu iz sifarnika
+         _id_tar := cIdTar
       ENDIF
 
       PRIVATE _uk_pdv :=  _uk_b_pdv * (  g_pdv_stopa( _id_tar ) / 100 )
@@ -431,16 +462,14 @@ STATIC FUNCTION gen_fakt_kif_item( cSezona )
       IF !Empty( cFormPDV )
          _i_pdv := &cFormPdv
       ELSE
-         // nema formule koristi ukupan iznos bez pdv-a
-         _i_pdv :=  _uk_pdv
+         _i_pdv :=  _uk_pdv // nema formule koristi ukupan iznos bez pdv-a
       ENDIF
 
       _i_pdv := Round( _i_pdv, nZaok )
 
-      // snimi gornje podatke
+
       SELECT P_KIF
       APPEND BLANK
-
       Gather()
 
       SELECT fakt

@@ -280,7 +280,7 @@ STATIC FUNCTION fakt_gen_rekapitulacija_mp( params )
          cPart_id := field->idpartner
 
          _tip_partnera := "1" // fizicka lica
-         lOslobodjenPDV := is_pdv_oslobodjen( cPart_id )
+         lOslobodjenPDV := is_part_pdv_oslob_po_clanu( cPart_id )
 
          IF lPoTipovimaPartnera
 

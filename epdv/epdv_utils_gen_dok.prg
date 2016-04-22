@@ -72,9 +72,8 @@ FUNCTION g_src_modul( cSrc, lShow )
 
    RETURN cPom
 
-// ---------------------------------
-// ---------------------------------
-FUNCTION g_kat_p( cKat, lShow )
+
+FUNCTION epdv_get_kateg_partner( cKat, lShow )
 
    LOCAL cPom := ""
 
@@ -94,6 +93,12 @@ FUNCTION g_kat_p( cKat, lShow )
       cPom := "Ne-PDV obvezik"
    CASE cKat == "3"
       cPom := "Ino partner"
+   CASE cKat == "4"
+      cPom := "Oslobodjen po clanu"
+   CASE cKat == "0"
+      cPom := "PDV=0 Ino ili oslobodjen po clanu"
+   CASE cKat == "9"
+      cPom := "PDV obracunati"
    OTHERWISE
       cPom := "Sve kategorije"
    ENDCASE
@@ -103,8 +108,8 @@ FUNCTION g_kat_p( cKat, lShow )
 
    RETURN cPom
 
-// ----------------------------------
-// ----------------------------------
+
+
 FUNCTION g_kat_p_2( cKat, lShow )
 
    LOCAL cPom
@@ -123,7 +128,7 @@ FUNCTION g_kat_p_2( cKat, lShow )
    CASE cKat == "3"
       cPom := "Distrikt Brcko"
    OTHERWISE
-      cPom := "Sve kategorije"
+      cPom := "Svi BiH subjekti"
 
    ENDCASE
 

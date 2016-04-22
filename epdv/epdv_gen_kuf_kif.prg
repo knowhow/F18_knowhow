@@ -60,7 +60,7 @@ FUNCTION gen_kuf()
    epdv_renumeracija_rbr( "P_KUF", .F. )
    BoxC()
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -83,7 +83,7 @@ FUNCTION gen_kif()
    BoxC()
 
    IF LastKey() == K_ESC
-      RETURN
+      RETURN .F.
    ENDIF
 
    SELECT F_P_KIF
@@ -111,4 +111,4 @@ FUNCTION gen_kif()
    epdv_renumeracija_rbr( "P_KIF", .F. )
    BoxC()
 
-   RETURN
+   RETURN .T.

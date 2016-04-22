@@ -15,4 +15,4 @@
 
 FUNCTION p_sg_kif( cId, dx, dy )
 
-   RETURN p_sg( "SG_KIF", cId, dx, dy )
+   RETURN p_epdv_sheme_generacije( "SG_KIF", cId, dx, dy )

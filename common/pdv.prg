@@ -117,7 +117,7 @@ FUNCTION pdv_oslobodjen( cIdPartner )
  da li je partner oslobodjen po clanu
 */
 
-FUNCTION is_pdv_oslobodjen( cIdPartner )
+FUNCTION is_part_pdv_oslob_po_clanu( cIdPartner )
 
    LOCAL lRet := .F.
    LOCAL cClan

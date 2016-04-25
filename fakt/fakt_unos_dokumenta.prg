@@ -1587,7 +1587,7 @@ FUNCTION RabPor10()
 // ---------------------------------------------------------------
 STATIC FUNCTION popup_fakt_unos_dokumenta()
 
-   PRIVATE opc[ 8 ]
+   PRIVATE opc[ 6 ]
 
    opc[ 1 ] := "1. generacija faktura na osnovu ugovora            "
    opc[ 2 ] := "2. sredjivanje rednih br.stavki dokumenta"

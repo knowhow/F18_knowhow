@@ -1622,7 +1622,7 @@ STATIC FUNCTION popup_fakt_unos_dokumenta()
          fakt_sredi_redni_broj_u_pripremi()
       CASE izbor == 3
          O_FAKT_S_PRIPR
-         O_FTXT
+         o_fakt_txt()
          select_fakt_pripr()
          GO TOP
          lDoks2 := ( my_get_from_ini( "FAKT", "Doks2", "N", KUMPATH ) == "D" )

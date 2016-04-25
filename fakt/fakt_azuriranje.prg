@@ -573,7 +573,7 @@ FUNCTION close_open_fakt_tabele( lOpenFaktAsPripr )
    O_SAST
    O_PARTN
    O_ROBA
-   O_FTXT
+   o_fakt_txt()
    O_TARIFA
    O_VALUTE
    O_FAKT_DOKS2

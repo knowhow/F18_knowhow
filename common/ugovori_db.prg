@@ -245,7 +245,7 @@ STATIC FUNCTION a_gug_p()
 // --------------------------------
 FUNCTION o_ugov()
 
-   O_FTXT
+   o_fakt_txt()
    O_SIFK
    O_SIFV
    O_FAKT

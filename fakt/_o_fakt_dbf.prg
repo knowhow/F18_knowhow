@@ -15,6 +15,6 @@
    ftxt uzorci teksta fakture
 */
 
-FUNCTION o_ftxt()
+FUNCTION o_fakt_txt()
 
    RETURN o_dbf_table( F_TXT, "ftxt", "ID" )

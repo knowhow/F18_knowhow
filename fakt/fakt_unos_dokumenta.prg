@@ -1595,22 +1595,14 @@ STATIC FUNCTION popup_fakt_unos_dokumenta()
    opc[ 4 ] := "4. svedi protustavkom vrijednost dokumenta na 0"
    opc[ 5 ] := "5. priprema => smece"
    opc[ 6 ] := "6. smece    => priprema"
-   opc[ 7 ] := "7. "
-   opc[ 8 ] := "8. "
 
-   lKonsig := .F.
-
-   IF lKonsig
-      AAdd( opc, "9. generisi konsignacioni racun" )
-   ELSE
-      AAdd( opc, "-----------------------------------------------" )
-   ENDIF
-
+/*
+   TODO: ovo je mrtvo?
    AAdd( opc, "A. kompletiranje iznosa fakture pomocu usluga" )
    AAdd( opc, "-----------------------------------------------" )
    AAdd( opc, "C. import txt-a" )
    AAdd( opc, "U. stampa ugovora od do " )
-
+*/
    h[ 1 ] := h[ 2 ] := ""
 
    my_close_all_dbf()
@@ -1700,8 +1692,6 @@ STATIC FUNCTION popup_fakt_unos_dokumenta()
 
          povrat_smece()
 
-      CASE izbor == 7 .OR. izbor == 8
-         RETURN DE_CONT
 
       ENDCASE
 
@@ -1715,7 +1705,7 @@ STATIC FUNCTION popup_fakt_unos_dokumenta()
 
    GO BOTTOM
 
-   RETURN
+   RETURN .T.
 
 
 

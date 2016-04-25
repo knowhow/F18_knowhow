@@ -194,7 +194,6 @@
 #xcommand O_FADE           => select (F_FADE)      ; my_use  ("fade")    ; set order to tag "ID"
 
 
-#xcommand O_POR            => select (F_FTXT)      ; my_use  ("por")
 #xcommand O_UPL            => select (F_UPL)       ; my_usex  ("upl")      ; set order to tag "1"
 #xcommand O_DEST           => select (F_DEST)      ; my_use  ("dest")     ; set order to tag "ID"
 #xcommand O_DOKSTXT        => select (F_DOKSTXT)   ; my_use  ("dokstxt") ; set order to tag "ID"

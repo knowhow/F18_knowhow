@@ -245,7 +245,7 @@ METHOD FaktDokumenti:change_idtipdok_markirani( new_idtipdok )
          ENDIF
       NEXT
 
-      hParams := hb_hash()
+      hParams := hb_Hash()
       hParams[ "unlock" ] :=  ::p_lock_tables
       run_sql_query( "COMMIT", hParams )
       _ok := .T.
@@ -277,7 +277,6 @@ METHOD FaktDokumenti:generisi_fakt_pripr()
    LOCAL _first
    LOCAL _qry
    LOCAL _datum_max
-
 
    IF !::generisi_fakt_pripr_vars( @_gen_params ) // parametri generisanja...
       RETURN .F.
@@ -374,3 +373,180 @@ METHOD FaktDokumenti:generisi_fakt_pripr()
    renumeracija_fakt_pripr( _veza_otpremnice, _datum_max )
 
    RETURN _ok
+
+
+
+
+/* renumeracija_fakt_pripr(cVezOtpr,dNajnoviji)
+  *
+  *   param: cVezOtpr
+  *   param: dNajnoviji - datum posljednje radjene otpremnice
+
+  // poziva se samo pri generaciji otpremnica u fakturu
+*/
+
+
+FUNCTION renumeracija_fakt_pripr( veza_otpremnica, datum_max )
+
+   LOCAL dDatDok
+   LOCAL lSetujDatum := .F.
+   PRIVATE nRokPl := 0
+   PRIVATE cSetPor := "N"
+
+   SELECT fakt_pripr
+   SET ORDER TO TAG "1"
+   GO TOP
+
+   IF RecCount2 () == 0
+      RETURN
+   ENDIF
+
+   nRbr := 999
+   GO BOTTOM
+
+   my_flock()
+
+   DO WHILE !Bof()
+      REPLACE rbr WITH Str( --nRbr, 3 )
+      SKIP -1
+   ENDDO
+
+   nRbr := 0
+   DO WHILE !Eof()
+      SKIP
+      nTrec := RecNo()
+      SKIP -1
+      IF Empty( podbr )
+         REPLACE rbr WITH Str( ++nRbr, 3, 0 )
+      ELSE
+         IF nRbr == 0
+            nRbr := 1
+         ENDIF
+         REPLACE rbr WITH Str( nRbr, 3, 0 )
+      ENDIF
+      GO nTrec
+   ENDDO
+
+   my_unlock()
+
+   GO TOP
+
+   Scatter()
+
+   _txt1 := _txt2 := _txt3a := _txt3b := _txt3c := ""
+   _dest := Space( 150 )
+   _m_dveza := Space( 500 )
+
+   IF my_get_from_ini( 'FAKT', 'ProsiriPoljeOtpremniceNa50', 'N', KUMPATH ) == 'D'
+      _BrOtp := Space( 50 )
+   ELSE
+      _BrOtp := Space( 8 )
+   ENDIF
+
+   _DatOtp := CToD( "" )
+   _BrNar := Space( 8 )
+   _DatPl := CToD( "" )
+
+   IF veza_otpremnica == nil
+      veza_otpremnica := ""
+   ENDIF
+
+   aMemo := ParsMemo( _txt )
+   IF Len( aMemo ) > 0
+      _txt1 := aMemo[ 1 ]
+   ENDIF
+   IF Len( aMemo ) >= 2
+      _txt2 := aMemo[ 2 ]
+   ENDIF
+   IF Len( aMemo ) >= 5
+      _txt3a := aMemo[ 3 ]
+      _txt3b := aMemo[ 4 ]
+      _txt3c := aMemo[ 5 ]
+   ENDIF
+   IF Len( aMemo ) >= 9
+      _BrOtp := aMemo[ 6 ]
+      _DatOtp := CToD( aMemo[ 7 ] )
+      _BrNar := amemo[ 8 ]
+      _DatPl := CToD( aMemo[ 9 ] )
+   ENDIF
+   IF Len( aMemo ) >= 10 .AND. !Empty( aMemo[ 10 ] )
+      cVezOtpr := aMemo[ 10 ]
+   ENDIF
+
+   // destinacija
+   IF Len( aMemo ) >= 18
+      _dest := PadR( aMemo[ 18 ], 150 )
+   ENDIF
+
+   IF Len( aMemo ) >= 19
+      _m_dveza := PadR( aMemo[ 19 ], 500 )
+   ENDIF
+
+   nRbr := 1
+
+   Box( "#PARAMETRI DOKUMENTA:", 10, 75 )
+
+   IF gDodPar == "1"
+      @  m_x + 1, m_y + 2 SAY "Otpremnica broj:" GET _brotp
+      @  m_x + 2, m_y + 2 SAY "          datum:" GET _Datotp
+      @  m_x + 3, m_y + 2 SAY8 "Ugovor/narudžba:" GET _brNar
+      @  m_x + 4, m_y + 2 SAY "    Destinacija:" GET _dest PICT "@S45"
+      @  m_x + 5, m_y + 2 SAY "Vezni dokumenti:" GET _m_dveza PICT "@S45"
+   ENDIF
+
+   IF gDodPar == "1" .OR. gDatVal == "D"
+
+      nRokPl := gRokPl
+
+      @  m_x + 6, m_y + 2 SAY "Datum fakture  :" GET _DatDok
+
+      IF datum_max <> NIL
+         @  m_x + 6, m_y + 35 SAY "Datum posljednje otpremnice:" GET datum_max WHEN .F. COLOR "GR+/B"
+      ENDIF
+
+      @ m_x + 7, m_y + 2 SAY8 "Rok plać.(dana):" GET nRokPl PICT "999" WHEN valid_rok_placanja( @nRokPl, "0", .T. ) ;
+         VALID valid_rok_placanja( nRokPl, "1", .T. )
+      @ m_x + 8, m_y + 2 SAY8 "Datum plaćanja :" GET _DatPl VALID valid_rok_placanja( nRokPl, "2", .T. )
+
+      READ
+   ENDIF
+
+   READ
+
+   BoxC()
+
+   dDatDok := _Datdok
+
+   UzorTxt()
+
+   IF !Empty ( veza_otpremnica )
+      _txt2 += Chr( 13 ) + Chr( 10 ) + veza_otpremnica
+   ENDIF
+
+   _txt := Chr( 16 ) + Trim( _txt1 ) + Chr( 17 ) + Chr( 16 ) + _txt2 + Chr( 17 ) + ;
+      Chr( 16 ) + Trim( _txt3a ) + Chr( 17 ) + Chr( 16 ) + _txt3b + Chr( 17 ) + ;
+      Chr( 16 ) + Trim( _txt3c ) + Chr( 17 ) + ;
+      Chr( 16 ) + _BrOtp + Chr( 17 ) + ;
+      Chr( 16 ) + DToC( _DatOtp ) + Chr( 17 ) + ;
+      Chr( 16 ) + _BrNar + Chr( 17 ) + ;
+      Chr( 16 ) + DToC( _DatPl ) + Chr( 17 ) + ;
+      iif( Empty ( veza_otpremnica ), "", Chr( 16 ) + veza_otpremnica + Chr( 17 ) ) + ;
+      Chr( 16 ) + Chr( 17 ) + ;
+      Chr( 16 ) + Chr( 17 ) + ;
+      Chr( 16 ) + Chr( 17 ) + ;
+      Chr( 16 ) + Chr( 17 ) + ;
+      Chr( 16 ) + Chr( 17 ) + ;
+      Chr( 16 ) + Chr( 17 ) + ;
+      Chr( 16 ) + Chr( 17 ) + ;
+      Chr( 16 ) + Trim( _dest ) + Chr( 17 ) + ;
+      Chr( 16 ) + Trim( _m_dveza ) + Chr( 17 )
+
+   IF datDok <> dDatDok
+      lSetujDatum := .T.
+   ENDIF
+
+   my_rlock()
+   Gather()
+   my_unlock()
+
+   RETURN .T.

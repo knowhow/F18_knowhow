@@ -269,7 +269,7 @@ FUNCTION fakt_box_stanje( aStanje, cIdroba )
    Inkey( 0 )
    BoxC()
 
-   RETURN
+   RETURN .T.
 
 
 

@@ -1489,7 +1489,7 @@
 
 1.4.109 2013-01-30, hernad
 
-  - fakt_attri - create_index(UNIQUE), brisanje svih sirocica
+  - fakt_atributi - create_index(UNIQUE), brisanje svih sirocica
   - linux odt stampa linux/xdg-open trazi "&" i __run_system
 
 1.4.108 2013-01-29, vsasa
@@ -1586,7 +1586,7 @@
 1.4.87 2013-01-16, vsasa
 
  - unos šifarnika artikala, može i bez "idkonto"
- - fakt, generacija računa na osnovu otpremnica - privremeno ukinut foreign ključ sa fakt_fakt_attri
+ - fakt, generacija računa na osnovu otpremnica - privremeno ukinut foreign ključ sa fakt_fakt_atributi
 
 1.4.86 2013-01-15, vsasa
 

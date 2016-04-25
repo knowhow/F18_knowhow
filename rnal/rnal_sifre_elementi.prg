@@ -944,6 +944,7 @@ STATIC FUNCTION nafiluj_atribute_grupe( __gr_id, __el_id )
    LOCAL _rec
    LOCAL lAuto := .T.
    LOCAL lOk := .T.
+   LOCAL hParams
 
    run_sql_query( "BEGIN" )
 
@@ -989,8 +990,9 @@ STATIC FUNCTION nafiluj_atribute_grupe( __gr_id, __el_id )
    ENDDO
 
    IF lOk
-      f18_unlock_tables( { "e_att" } )
-      run_sql_query( "COMMIT" )
+      hParams := hb_Hash()
+      hParams[ "unlock" ] := { "e_att" }
+      run_sql_query( "COMMIT", hParams )
    ELSE
       run_sql_query( "ROLLBACK" )
    ENDIF

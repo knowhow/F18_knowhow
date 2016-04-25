@@ -145,7 +145,7 @@ STATIC FUNCTION setuj_plu_kodove_artikala_nakon_azuriranja()
       ENDIF
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -160,7 +160,7 @@ FUNCTION pos_azuriraj_inventura_nivelacija()
    LOCAL hParams
 
    run_sql_query( "BEGIN" )
-   IF !f18_unlock_tables( { "pos_pos", "pos_doks" } )
+   IF !f18_lock_tables( { "pos_pos", "pos_doks" } )
       run_sql_query( "ROLLBACK" )
       MsgBeep( "Ne mogu zaključati tabele !#Prekidam operaciju." )
       RETURN lRet

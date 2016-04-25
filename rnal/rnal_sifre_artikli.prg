@@ -331,7 +331,7 @@ STATIC FUNCTION odaberi_shemu_artikla( cSchema, nType )
 
    IF ( aSch == NIL .OR. Len( aSch ) == 0 )
 
-      MsgBeep( "Ne postoje definisane šeme, koristim standardnu šemu za tip " + ALLTRIM( STR( nType ) ) )
+      MsgBeep( "Ne postoje definisane šeme, koristim standardnu šemu za tip " + AllTrim( Str( nType ) ) )
 
       IF nType == 1
          cSchema := "G"
@@ -575,6 +575,7 @@ STATIC FUNCTION ispravi_opis_artikla( nArt_id )
    LOCAL nTRec := RecNo()
    LOCAL nRet := 0
    LOCAL _rec
+   LOCAL hParams
 
    IF ispravka_artikla_box( @cArt_desc, @cArt_full_desc, @cArt_lab_desc, ;
          @cArt_mcode ) == 1
@@ -603,8 +604,9 @@ STATIC FUNCTION ispravi_opis_artikla( nArt_id )
       IF !update_rec_server_and_dbf( "articles", _rec, 1, "CONT" )
          run_sql_query( "ROLLBACK" )
       ELSE
-         f18_unlock_tables( { "articles" } )
-         run_sql_query( "COMMIT" )
+         hParams := hb_Hash()
+         hParams[ "unlock" ] :=  { "articles" }
+         run_sql_query( "COMMIT", hParams )
          nRet := 1
       ENDIF
 
@@ -806,6 +808,7 @@ STATIC FUNCTION rnal_brisi_artikal( nArt_id, lChkKum, lSilent )
    LOCAL _del_rec, _field_ids, _where_bl
    LOCAL _el_tek, _att_tek, _aops_tek
    LOCAL lOk := .T.
+   LOCAL hParams
 
    IF lSilent == nil
       lSilent := .F.
@@ -847,12 +850,14 @@ STATIC FUNCTION rnal_brisi_artikal( nArt_id, lChkKum, lSilent )
       lOk := brisi_stavku_iz_articles( nArt_id )
 
       IF lOk
-          lOk := brisi_stavke_iz_elemenata_i_operacija( nArt_id )
+         lOk := brisi_stavke_iz_elemenata_i_operacija( nArt_id )
       ENDIF
 
       IF lOk
-         f18_unlock_tables( { "articles", "elements", "e_att", "e_aops" } )
-         run_sql_query( "COMMIT" )
+         hParams := hb_Hash()
+         hParams[ "unlock" ] :=  { "articles", "elements", "e_att", "e_aops" }
+         run_sql_query( "COMMIT", hParams )
+
       ELSE
          run_sql_query( "ROLLBACK" )
       ENDIF
@@ -874,6 +879,7 @@ STATIC FUNCTION rnal_dupliciraj_artikal( nArt_id )
    LOCAL nElNewid := 0
    LOCAL _rec
    LOCAL lOk := .T.
+   LOCAL hParams
 
    IF Pitanje(, "Duplicirati artikal (D/N)?", "D" ) == "N"
       RETURN -1
@@ -938,8 +944,9 @@ STATIC FUNCTION rnal_dupliciraj_artikal( nArt_id )
    ENDDO
 
    IF lOk
-      f18_unlock_tables( { "articles", "elements", "e_att", "e_aops" } )
-      run_sql_query( "COMMIT" )
+      hParams := hb_Hash()
+      hParams[ "unlock" ] :=  { "articles", "elements", "e_att", "e_aops" }
+      run_sql_query( "COMMIT", hParams )
    ELSE
       run_sql_query( "ROLLBACK" )
    ENDIF
@@ -1081,7 +1088,7 @@ FUNCTION rnal_setuj_naziv_artikla( nArt_id, lNew, lAuto, aAttr, lOnlyArr )
 
    rnal_matrica_artikla( nArt_id, @aAttr )
 
-   IF aAttr == NIL .OR. LEN( aAttr ) == 0
+   IF aAttr == NIL .OR. Len( aAttr ) == 0
       RETURN nRet
    ENDIF
 
@@ -1256,7 +1263,7 @@ FUNCTION g_el_descr( aArr, nEl_count )
       RETURN xRet
    ENDIF
 
-   nScan := AScan( aArr, {|xVal| xVal[ 1 ] = nEl_count } )
+   nScan := AScan( aArr, {| xVal| xVal[ 1 ] = nEl_count } )
 
    IF nScan = 0
       xRet := "unknown"
@@ -1324,7 +1331,7 @@ STATIC FUNCTION rnal_setuj_naziv_artikla_iz_pravila( aArr, cArt_code, cArt_desc,
    LOCAL lInsLExtChar := .F.
    LOCAL cLExtraChar := ""
 
-   IF aArr == NIL .OR. LEN( aArr ) == 0
+   IF aArr == NIL .OR. Len( aArr ) == 0
       RETURN .F.
    ENDIF
 

@@ -34,7 +34,7 @@ FUNCTION begin_sql_tran_lock_tables( aTables )
 
   sql_table_update(nil, "BEGIN")
        update_rec_server_and_dbf( ALIAS(), _rec, 1, "CONT" )
-       f18_unlock_tables( {"pos_doks", "pos_pos"} )
+       OLD: f18_unlock_tables( {"pos_doks", "pos_pos"} )
   run_sql_query( "COMMIT" )
 
   ako imamo samo jedan zapis, jednu tabelu, transakcija i lockovanje
@@ -81,7 +81,7 @@ FUNCTION f18_lock_tables( aTables )
 /*
    unlokovanje tabela:
 
-   f18_unlock_tables( {"pos_pos", "pos_doks"} )
+   OLD: f18_unlock_tables( {"pos_pos", "pos_doks"} )
 
 */
 

@@ -268,7 +268,7 @@ METHOD get_attrs_from_server_for_document()  CLASS DokAttr
 
    LOCAL aAttr := {}
    LOCAL _table, oItem
-   LOCAL _idfirma, _idtipdok, _brdok, _rbr, _atrib
+   LOCAL _idfirma, _idtipdok, _brdok, _rbr, cAttr
    LOCAL _where
 
    _idfirma := ::hAttrId[ "idfirma" ]
@@ -276,9 +276,9 @@ METHOD get_attrs_from_server_for_document()  CLASS DokAttr
    _brdok := ::hAttrId[ "brdok" ]
 
    IF ::cAttr == NIL
-      _atrib := ""  // svi atributi
+      cAttr := ""  // svi atributi
    ELSE
-      _atrib := ::cAttr
+      cAttr := ::cAttr
    ENDIF
 
    IF hb_HHasKey( ::hAttrId, "rbr" )
@@ -301,8 +301,8 @@ METHOD get_attrs_from_server_for_document()  CLASS DokAttr
       _where += " AND rbr = " + sql_quote( _rbr )
    ENDIF
 
-   IF !Empty( _atrib )
-      _where += " AND atribut = " + sql_quote( _atrib )
+   IF !Empty( cAttr )
+      _where += " AND atribut = " + sql_quote( cAttr )
    ENDIF
 
    _table := select_all_records_from_table( ::cTableNameServer, NIL, { _where }, { "atribut" } )
@@ -399,7 +399,7 @@ METHOD zap_attr_dbf()  CLASS DokAttr
 
 METHOD delete_attr_from_dbf()  CLASS DokAttr
 
-   LOCAL _idfirma, _idtipdok, _brdok, _rbr, _atribut
+   LOCAL _idfirma, _idtipdok, _brdok, _rbr, cAttr
 
    _idfirma := ::hAttrId[ "idfirma" ]
    _idtipdok := ::hAttrId[ "idtipdok" ]
@@ -407,17 +407,17 @@ METHOD delete_attr_from_dbf()  CLASS DokAttr
    _rbr := ::hAttrId[ "rbr" ]
 
    IF hb_HHasKey( ::hAttrId, "atribut" )
-      _atribut := ::hAttrId[ "atribut" ]
+      cAttr := ::hAttrId[ "atribut" ]
    ELSE
-      _atribut := NIL
+      cAttr := NIL
    ENDIF
 
    IF _rbr == NIL
       _rbr := ""
    ENDIF
 
-   IF _atribut == NIL
-      _atribut := ""
+   IF cAttr == NIL
+      cAttr := ""
    ENDIF
 
    PushWA()
@@ -426,12 +426,12 @@ METHOD delete_attr_from_dbf()  CLASS DokAttr
    my_flock()
 
 
-   dbSeek( _idfirma + _idtipdok + _brdok + _rbr + _atribut, .T. )
+   dbSeek( _idfirma + _idtipdok + _brdok + _rbr + cAttr, .T. )
 
    DO WHILE !Eof() .AND. field->idfirma == _idfirma .AND. field->idtipdok == _idtipdok ;
          .AND. field->brdok == _brdok ;
          .AND. IF( !Empty( _rbr ), field->rbr == _rbr, .T. ) ;
-         .AND. IF( !Empty( _atribut ), field->atribut == _atribut, .T. )
+         .AND. IF( !Empty( cAttr ), field->atribut == cAttr, .T. )
       DELETE
       SKIP
    ENDDO
@@ -701,7 +701,7 @@ METHOD attr_delete_duplicate( hParam )  CLASS DokAttr
 
    LOCAL _id_firma, _tip_dok, _br_dok, _b1
    LOCAL _ok := .T.
-   LOCAL _r_br, _atrib, _r_br_2, _atrib_2
+   LOCAL _r_br, cAttr, _r_br_2, cAttr_2
    LOCAL _deleted := .F.
    LOCAL _thRec
 
@@ -722,14 +722,14 @@ METHOD attr_delete_duplicate( hParam )  CLASS DokAttr
    DO WHILE !Eof() .AND. Eval( _b1 )
 
       _r_br := field->rbr
-      _atrib := field->atribut
+      cAttr := field->atribut
       SKIP 1
       _thRec := RecNo()
       _r_br_2 := field->rbr
-      _atrib_2 := field->atribut
+      cAttr_2 := field->atribut
       SKIP -1
 
-      IF Eval( _b1 ) .AND. ( _r_br_2 == _r_br ) .AND. ( _atrib_2 == _atrib )
+      IF Eval( _b1 ) .AND. ( _r_br_2 == _r_br ) .AND. ( cAttr_2 == cAttr )
          DELETE
          _deleted := .T.
       ENDIF

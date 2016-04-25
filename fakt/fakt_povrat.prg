@@ -117,7 +117,7 @@ FUNCTION povrat_fakt_dokumenta( rezerv, id_firma, id_tip_dok, br_dok, test )
 
       Box(, 5, 70 )
 
-      @ m_x + 4, m_y + 2 SAY "brisanje : fakt_fakt_attri"
+      @ m_x + 4, m_y + 2 SAY "brisanje : fakt_fakt_atributi"
       _ok := oFaktAttr:delete_attr_from_server()
 
       IF _ok

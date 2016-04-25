@@ -212,7 +212,7 @@ STATIC FUNCTION fakt_azur_sql( id_firma, id_tip_dok, br_dok )
 
 
    IF _ok == .T.
-      @ m_x + 4, m_y + 2 SAY "fakt_attri -> server "
+      @ m_x + 4, m_y + 2 SAY "fakt_atributi -> server "
       oAttr := DokAttr():New( "fakt", F_FAKT_ATTR )
       oAttr:hAttrId[ "idfirma" ] := id_firma
       oAttr:hAttrId[ "idtipdok" ] := id_tip_dok

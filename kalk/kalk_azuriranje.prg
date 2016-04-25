@@ -733,6 +733,7 @@ STATIC FUNCTION kalk_azur_sql()
    LOCAL _ids_doks := {}
    LOCAL _log_dok
    LOCAL oAttr
+   LOCAL hParams
    LOCAL bDokument := {| cIdFirma, cIdVd, cBrDok |   cIdFirma == field->idFirma .AND. ;
       cIdVd == field->IdVd .AND. cBrDok == field->BrDok }
    LOCAL cIdVd, cIdFirma, cBrDok
@@ -829,7 +830,7 @@ STATIC FUNCTION kalk_azur_sql()
 
       IF _ok == .T.
 
-         @ m_x + 3, m_y + 2 SAY "kalk_attri -> server "
+         @ m_x + 3, m_y + 2 SAY "kalk_atributi -> server "
          oAttr := DokAttr():new( "kalk", F_KALK_ATTR )
          oAttr:hAttrId[ "idfirma" ] := _record_dok[ "idfirma" ]
          oAttr:hAttrId[ "idtipdok" ] := _record_dok[ "idvd" ]
@@ -858,8 +859,10 @@ STATIC FUNCTION kalk_azur_sql()
 
       @ m_x + 5, m_y + 2 SAY "update semaphore version"
 
-      f18_unlock_tables( { _tbl_kalk, _tbl_doks } )
-      run_sql_query( "COMMIT" )
+
+      hParams := hb_Hash()
+      hParams[ "unlock" ] := { _tbl_kalk, _tbl_doks }
+      run_sql_query( "COMMIT", hParams )
 
       log_write( "F18_DOK_OPER: ažuriranje kalk dokumenta: " + _log_dok, 2 )
 

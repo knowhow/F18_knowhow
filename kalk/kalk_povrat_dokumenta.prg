@@ -24,6 +24,7 @@ FUNCTION kalk_povrat_dokumenta()
    LOCAL _t_rec
    LOCAL _hAttrId, oAttr
    LOCAL lOk := .T.
+   LOCAL hParams
 
    IF gCijene == "2" .AND. Pitanje(, "Zadati broj (D) / Povrat po hronologiji obrade (N) ?", "D" ) = "N"
       Beep( 1 )
@@ -118,10 +119,12 @@ FUNCTION kalk_povrat_dokumenta()
       MsgC()
 
       IF lOk
-         run_sql_query( "COMMIT" )
-         f18_unlock_tables( { "kalk_doks", "kalk_kalk", "kalk_doks2" } )
 
-         log_write( "F18_DOK_OPER: povrat dokumenta u pripremu, kalk: " + _id_firma + "-" + _id_vd + "-" + ALLTRIM( _br_dok ), 2 )
+         hParams := hb_Hash()
+         hParams[ "unlock" ] :=  { "kalk_doks", "kalk_kalk", "kalk_doks2" }
+         run_sql_query( "COMMIT", hParams )
+
+         log_write( "F18_DOK_OPER: KALK DOK_POV: " + _id_firma + "-" + _id_vd + "-" + AllTrim( _br_dok ), 2 )
       ELSE
          run_sql_query( "ROLLBACK" )
          MsgBeep( "Operacija povrata dokumenta u pripremu neuspješna !" )
@@ -250,6 +253,8 @@ STATIC FUNCTION kalk_povrat_prema_kriteriju()
    LOCAL _hAttrId, oAttr, __firma, __idvd, __brdok
    LOCAL lOk := .T.
    LOCAL lRet := .F.
+   LOCAL hParams
+   LOCAL _t_rec
 
    IF !spec_funkcije_sifra()
       my_close_all_dbf()
@@ -341,7 +346,7 @@ STATIC FUNCTION kalk_povrat_prema_kriteriju()
       run_sql_query( "BEGIN" )
 
       IF !f18_lock_tables( { "kalk_doks", "kalk_kalk", "kalk_doks2" }, .T. )
-         run_sql_query( "COMMIT" )
+         run_sql_query( "ROLLBACK" )
          MsgBeep( "Ne mogu zaključati tabele !#Prekidam proceduru povrata." )
          RETURN lRet
       ENDIF
@@ -401,8 +406,10 @@ STATIC FUNCTION kalk_povrat_prema_kriteriju()
 
       IF lOk
          lRet := .T.
-         f18_unlock_tables( { "kalk_doks", "kalk_kalk", "kalk_doks2" } )
-         run_sql_query( "COMMIT" )
+         hParams := hb_Hash()
+         hParams[ "unlock" ] := { "kalk_doks", "kalk_kalk", "kalk_doks2" }
+         run_sql_query( "COMMIT", hParams )
+
       ELSE
          run_sql_query( "ROLLBACK" )
          MsgBeep( "Problem sa brisanjem podataka iz KALK server tabela !" )

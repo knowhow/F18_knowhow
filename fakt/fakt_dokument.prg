@@ -193,18 +193,21 @@ METHOD FaktDokument:refresh_dbfs()
    push_ids_to_semaphore( "fakt_doks",  _ids_doks, .T. )
    push_ids_to_semaphore( "fakt_doks2", _ids_doks, .T. )
 
+   RETURN .T.
+
+
 METHOD FaktDokument:change_idtipdok( new_idtipdok )
 
    LOCAL _sql, _qry
-   LOCAL _tmp_tbl := f18_user() + "_tmp_fakt_atributi"
+   LOCAL cSqlTempTable := f18_user() + "_tmp_fakt_atributi"
 
    // prvo sve u temp tabeli uraditi
-   _sql := "DROP TABLE IF EXISTS " + _tmp_tbl
+   _sql := "DROP TABLE IF EXISTS " + cSqlTempTable
    _sql += ";"
-   _sql += "CREATE TEMP TABLE " + _tmp_tbl + " AS "
+   _sql += "CREATE TEMP TABLE " + cSqlTempTable + " AS "
    _sql += "SELECT * FROM " + F18_PSQL_SCHEMA_DOT + "fakt_fakt_atributi WHERE " + ::p_sql_where
    _sql += ";"
-   _sql += "UPDATE " + _tmp_tbl + " SET idtipdok=" + sql_quote( new_idtipdok )
+   _sql += "UPDATE " + cSqlTempTable + " SET idtipdok=" + sql_quote( new_idtipdok )
    _sql += ";"
    _sql += "DELETE FROM " + F18_PSQL_SCHEMA_DOT + "fakt_fakt_atributi "
    _sql += " WHERE " + ::p_sql_where
@@ -223,7 +226,7 @@ METHOD FaktDokument:change_idtipdok( new_idtipdok )
    _sql += " WHERE " + ::p_sql_where
    _sql += ";"
 
-   _sql += "INSERT INTO " + F18_PSQL_SCHEMA_DOT + "fakt_fakt_atributi (SELECT * from " + _tmp_tbl + ")"
+   _sql += "INSERT INTO " + F18_PSQL_SCHEMA_DOT + "fakt_fakt_atributi (SELECT * from " + cSqlTempTable + ")"
 
    _qry := run_sql_query( _sql )
 

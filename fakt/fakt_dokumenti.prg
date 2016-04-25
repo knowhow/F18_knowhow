@@ -12,6 +12,7 @@
 
 #include "f18.ch"
 
+MEMVAR m_x, m_y
 
 CLASS FaktDokumenti
 
@@ -63,14 +64,7 @@ METHOD FaktDokumenti:Lock()
 
    return ::p_locked
 
-// ----------------------------------------------------------
-// unlock - oslobodi tabele za update od strane drugih
-// ----------------------------------------------------------
-METHOD FaktDokumenti:unlock()
 
-   f18_unlock_tables( ::p_lock_tables )
-
-   RETURN .T.
 
 
 
@@ -182,13 +176,11 @@ METHOD FaktDokumenti:generisi_fakt_pripr_vars( params )
    Box(, 6, 65 )
 
    @ m_x + 1, m_y + 2 SAY "Sumirati stavke otpremnica (D/N) ?" GET _sumiraj ;
-      VALID _sumiraj $ "DN" ;
-      PICT "@!"
+      VALID _sumiraj $ "DN" PICT "@!"
 
    @ m_x + 3, m_y + 2 SAY "Formirati tip racuna: 1 (veleprodaja)"
    @ m_x + 4, m_y + 2 SAY "                      2 (maloprodaja)" GET _tip_rn ;
-      VALID ( _tip_rn > 0 .AND. _tip_rn < 3 ) ;
-      PICT "9"
+      VALID ( _tip_rn > 0 .AND. _tip_rn < 3 ) PICT "9"
 
    @ m_x + 6, m_y + 2 SAY "Valuta (KM/EUR):" GET _valuta VALID !Empty( _valuta ) PICT "@!"
 
@@ -208,6 +200,8 @@ METHOD FaktDokumenti:generisi_fakt_pripr_vars( params )
 
    RETURN _ok
 
+
+
 METHOD FaktDokumenti:count_markirani()
 
    LOCAL _item, _cnt
@@ -225,6 +219,7 @@ METHOD FaktDokumenti:count_markirani()
 METHOD FaktDokumenti:change_idtipdok_markirani( new_idtipdok )
 
    LOCAL _err, _item, _broj, _ok := .T.
+   LOCAL hParams
 
    BEGIN SEQUENCE WITH {| err| err:cargo := { ProcName( 1 ), ProcName( 2 ), ProcLine( 1 ), ProcLine( 2 ) }, Break( err ) }
 
@@ -248,8 +243,9 @@ METHOD FaktDokumenti:change_idtipdok_markirani( new_idtipdok )
          ENDIF
       NEXT
 
-      ::unlock()
-      run_sql_query( "COMMIT" )
+      hParams := hb_hash()
+      hParams[ "unlock" ] :=  ::p_lock_tables
+      run_sql_query( "COMMIT", hParams )
       _ok := .T.
 
    RECOVER

@@ -12,7 +12,8 @@
 
 #include "f18.ch"
 
-MEMVAR m_x, m_y
+MEMVAR m_x, m_y, GetList
+MEMVAR gFirma
 
 CLASS FaktDokumenti
 
@@ -27,7 +28,6 @@ CLASS FaktDokumenti
 
    ASSIGN  locked   INLINE ::p_locked
    METHOD  Lock()
-   METHOD  UNLOCK()
 
    PROTECTED:
    METHOD generisi_fakt_pripr_vars()
@@ -73,6 +73,8 @@ METHOD FaktDokumenti:za_partnera( idfirma, idtipdok, idpartner )
    LOCAL _qry_str
    LOCAL _cnt
    LOCAL _brdok
+   LOCAL _qry
+   LOCAL _item
 
    ::p_idfirma := idfirma
    ::p_idtipdok := idtipdok
@@ -158,7 +160,7 @@ METHOD FaktDokumenti:pretvori_otpremnice_u_racun()
          ::generisi_fakt_pripr()
       ENDIF
    ELSE
-      MsgBeep( "Nije odabrana nijedna odtpremnica ! caos ..." )
+      MsgBeep( "Nije odabrana nijedna otpremnica !" )
    ENDIF
 
    RETURN .T.
@@ -276,8 +278,8 @@ METHOD FaktDokumenti:generisi_fakt_pripr()
    LOCAL _qry
    LOCAL _datum_max
 
-   // parametri generisanja...
-   IF !::generisi_fakt_pripr_vars( @_gen_params )
+
+   IF !::generisi_fakt_pripr_vars( @_gen_params ) // parametri generisanja...
       RETURN .F.
    ENDIF
 

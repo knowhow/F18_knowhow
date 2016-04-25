@@ -95,12 +95,14 @@ METHOD FaktDokument:set_idtipdok( val )
 
    RETURN .T.
 
+
 METHOD FaktDokument:set_brdok( val )
 
    ::p_brdok := val
    ::set_sql_where()
 
    RETURN .T.
+
 
 METHOD FaktDokument:set_sql_where()
 
@@ -109,6 +111,7 @@ METHOD FaktDokument:set_sql_where()
    ::p_sql_where += " AND brdok=" + sql_quote( ::p_brdok )
 
    RETURN .T.
+
 
 METHOD FaktDokument:exists()
 
@@ -134,6 +137,7 @@ METHOD FaktDokument:refresh_info()
    ::p_h_info := NIL
 
    return ::info
+
 
 METHOD FaktDokument:get_info()
 
@@ -178,6 +182,7 @@ METHOD FaktDokument:set_mark( val )
 
    RETURN .T.
 
+
 METHOD FaktDokument:refresh_dbfs()
 
    LOCAL _ids_fakt := {}, _ids_doks := {}
@@ -200,6 +205,10 @@ METHOD FaktDokument:change_idtipdok( new_idtipdok )
 
    LOCAL _sql, _qry
    LOCAL cSqlTempTable := f18_user() + "_tmp_fakt_atributi"
+
+   cSqlTempTable := StrTran( cSqlTempTable, "-", "_")  // ernad.husremovic_tmp_fakt_atributi - ernad_husremovic_tmp_fakt_atributi
+   cSqlTempTable := StrTran( cSqlTempTable, "@", "_")  // ernad@husremovic_tmp_fakt_atributi - ernad_husremovic_tmp_fakt_atributi
+   cSqlTempTable := StrTran( cSqlTempTable, ".", "_")  // ernad-husremovic_tmp_fakt_atributi - ernad_husremovic_tmp_fakt_atributi
 
    // prvo sve u temp tabeli uraditi
    _sql := "DROP TABLE IF EXISTS " + cSqlTempTable
@@ -230,7 +239,7 @@ METHOD FaktDokument:change_idtipdok( new_idtipdok )
 
    _qry := run_sql_query( _sql )
 
-   IF ValType( _qry ) == "O"
+   IF !sql_error_in_query( _qry )
       ::refresh_dbfs()
       ::p_idtipdok := new_idtipdok
       ::refresh_dbfs()

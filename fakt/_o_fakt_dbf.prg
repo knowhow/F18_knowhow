@@ -17,4 +17,4 @@
 
 FUNCTION o_fakt_txt()
 
-   RETURN o_dbf_table( F_TXT, "ftxt", "ID" )
+   RETURN o_dbf_table( F_FTXT, "ftxt", "ID" )

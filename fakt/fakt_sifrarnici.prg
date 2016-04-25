@@ -287,7 +287,7 @@ FUNCTION P_FTxt( cId, dx, dy )
    PRIVATE ImeKol
    PRIVATE Kol
 
-   O_FTXT
+   o_fakt_txt()
 
    ImeKol := {}
    Kol := {}
@@ -361,7 +361,7 @@ STATIC FUNCTION ObSif()
    O_KONTO
    O_PARTN
    O_ROBA
-   O_FTXT
+   o_fakt_txt()
    O_TARIFA
    O_VALUTE
    O_RJ

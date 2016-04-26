@@ -908,6 +908,7 @@ STATIC FUNCTION fakt_to_fprint( id_firma, tip_dok, br_dok, items, head, storno )
    LOCAL _fiscal_no := 0
    LOCAL _total := items[ 1, 14 ]
    LOCAL _partn_naz
+   LOCAL _err_level
 
    fprint_delete_answer( __device_params )
 
@@ -915,7 +916,7 @@ STATIC FUNCTION fakt_to_fprint( id_firma, tip_dok, br_dok, items, head, storno )
 
    _err_level := fprint_read_error( __device_params, @_fiscal_no, storno )
 
-   IF _err_level = -9
+   IF _err_level == -9
       IF Pitanje(, "Da li je nestalo trake (D/N) ?", "N" ) == "D"
          IF Pitanje(, "Ubacite traku i pritisnite 'D'", " " ) == "D"
             _err_level := fprint_read_error( __device_params, @_fiscal_no, storno )
@@ -923,10 +924,10 @@ STATIC FUNCTION fakt_to_fprint( id_firma, tip_dok, br_dok, items, head, storno )
       ENDIF
    ENDIF
 
-   IF _err_level = 2 .AND. storno
-      notify_podrska( "Greška sa izdavanjem reklamiranog računa !" )
+   IF _err_level == 2 .AND. storno
+      error_bar( "fisc", "FPRINT ERR reklamirani fiskalni račun" )
       IF obrada_greske_na_liniji_55_reklamirani_racun( id_firma, tip_dok, br_dok, __device_params )
-         MsgBeep( "Sada možete ponoviti izdavanje reklamiranog računa na fiskalni uređaj." )
+         MsgBeep( "Ponoviti izdavanje reklamiranog računa na fiskalni uređaj." )
          RETURN 0
       ENDIF
    ENDIF
@@ -936,7 +937,7 @@ STATIC FUNCTION fakt_to_fprint( id_firma, tip_dok, br_dok, items, head, storno )
    ENDIF
 
    IF _err_level <> 0
-      notify_podrska( "Greška sa izdavanjem fiskalnog računa !" )
+      error_bar( "fisc", "FPRINT ERR fiskalni racun" )
       obradi_gresku_izdavanja_fiskalnog_racuna( __device_params, _err_level )
       RETURN _err_level
    ENDIF
@@ -949,7 +950,7 @@ STATIC FUNCTION fakt_to_fprint( id_firma, tip_dok, br_dok, items, head, storno )
    set_fiscal_no_to_fakt_doks( id_firma, tip_dok, br_dok, _fiscal_no, storno )
 
    IF __auto = .F.
-      MsgBeep( "Kreiran fiskalni racun broj: " + AllTrim( Str( _fiscal_no ) ) )
+      MsgBeep( "Kreiran fiskalni račun broj: " + AllTrim( Str( _fiscal_no ) ) )
    ENDIF
 
    RETURN _err_level
@@ -972,7 +973,7 @@ STATIC FUNCTION obradi_gresku_izdavanja_fiskalnog_racuna( device_params, error_l
 
    MsgBeep( cMsg )
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -1020,6 +1021,7 @@ STATIC FUNCTION _get_partner_for_email( id_firma, tip_dok, br_dok )
    LOCAL _ret := ""
    LOCAL _t_area := Select()
    LOCAL _partn
+   LOCAL _id_vrste_p
 
    SELECT fakt_doks
    GO TOP
@@ -1080,7 +1082,7 @@ STATIC FUNCTION fakt_to_tremol( id_firma, tip_dok, br_dok, items, head, storno, 
       IF _fiscal_no > 0
          // prikazi poruku samo u direktnoj stampi
          IF __auto = .F.
-            MsgBeep( "Kreiran fiskalni racun broj: " + AllTrim( Str( _fiscal_no ) ) )
+            MsgBeep( "Kreiran fiskalni račun br: " + AllTrim( Str( _fiscal_no ) ) )
          ENDIF
 
          // ubaci broj fiskalnog racuna u fakturu
@@ -1142,7 +1144,7 @@ STATIC FUNCTION set_fiscal_rn_zbirni( data )
       // ako je iskljucena opcija
       // ili ako je sifra artikla genericki PLU
       // ili ako je zadato da ide iznad neke vrijednosti stavki na racunu
-      RETURN
+      RETURN .F.
    ENDIF
 
    _art_naz := "St.rn."
@@ -1181,7 +1183,7 @@ STATIC FUNCTION set_fiscal_rn_zbirni( data )
 
    data := _tmp
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -1220,7 +1222,7 @@ STATIC FUNCTION set_fiscal_no_to_fakt_doks( cFirma, cTD, cBroj, nFiscal, lStorno
 
    SELECT ( nTArea )
 
-   RETURN
+   RETURN .T.
 
 
 

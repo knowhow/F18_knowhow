@@ -21,12 +21,12 @@ FUNCTION ld_obracun()
 
    AAdd( _opc, "1. unos                              " )
    AAdd( _opcexe, {|| ld_unos_obracuna() } )
-   AAdd( _opc, "2. administracija obracuna           " )
+   AAdd( _opc, "2. administracija obračuna           " )
    AAdd( _opcexe, {|| ld_obracun_mnu_admin() } )
 
    f18_menu( "obr", .F., _izbor, _opc, _opcexe )
 
-   RETURN
+   RETURN .T.
 
 
 FUNCTION ld_obracun_mnu_admin()
@@ -38,15 +38,15 @@ FUNCTION ld_obracun_mnu_admin()
 
    AAdd( _opc, "1. brisanje obračuna                             " )
    AAdd( _opcexe, {|| ld_brisanje_obr() } )
- 
+
    AAdd( _opc, "2. unos datuma isplate plaća" )
    AAdd( _opcexe, {|| unos_datuma_isplate_place() } )
 
-   AAdd( _opc, "3. radnici obradjeni vise puta za isti mjesec" )
+   AAdd( _opc, "3. radnici obrađeni više puta za isti mjesec" )
    AAdd( _opcexe, {|| ld_obracun_napravljen_vise_puta() } )
 
    IF gSihtGroup == "D"
-      AAdd( _opc, "S. obrada sihtarica" )
+      AAdd( _opc, "S. obrada šihtarica" )
       AAdd( _opcexe, {|| siht_obr() } )
    ENDIF
 
@@ -57,7 +57,7 @@ FUNCTION ld_obracun_mnu_admin()
 
    f18_menu( "ao", .F., _izbor, _opc, _opcexe )
 
-   RETURN
+   RETURN .T.
 
 
 STATIC FUNCTION siht_obr()

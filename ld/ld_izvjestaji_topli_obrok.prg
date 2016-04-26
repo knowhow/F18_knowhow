@@ -11,6 +11,8 @@
 
 #include "f18.ch"
 
+MEMVAR gRj, gMjesec, gGodina
+FIELD r_bank, r_ime, r_prezime
 
 THREAD STATIC __PAGE_LEN
 
@@ -39,27 +41,25 @@ FUNCTION ld_lista_isplate_toplog_obroka()
    IF _get_vars( @cRj, @cMonthFrom, @cMonthTo, @cYear, @nDays, ;
          @cHours, @nHourLimit, @nMinHrLimit, @nKoef, @nAcontAmount, ;
          @nRptVar1, @nRptVar2, @cKred, @cExport ) == 0
-      RETURN
+      RETURN .F.
    ENDIF
 
-   // generisi listu...
+
    IF _gen_list( cRj, cMonthFrom, cMonthTo, cYear, nDays, ;
          cHours, nHourLimit, nMinHrLimit, nKoef, nAcontAmount, cKred ) == 0
 
-      RETURN
+      RETURN .F.
    ENDIF
 
    IF cExport == "D"
-      // export podataka
       _export_data( nRptVar1, nRptVar2, cKred )
    ELSE
-      // printaj izvjestaj....
       _print_list( cMonthFrom, cMonthTo, cYear, nRptVar1, nRptVar2, cKred )
    ENDIF
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -129,7 +129,7 @@ STATIC FUNCTION _export_data( nVar1, nVar2, banka )
    // kopiraj fajl na desktop
    f18_copy_to_desktop( my_home(), _output_file, _output_file )
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -183,57 +183,44 @@ STATIC FUNCTION _get_vars( cRj, cMonthFrom, cMonthTo, cYear, nDays, ;
    @ m_x + nX, Col() + 1 SAY "Banka (prazno-sve):" GET cKred VALID Empty( cKred ) .OR. P_Kred( @cKred )
 
    nX += 2
-
-   @ m_x + nX, m_y + 2 SAY "Sati primanja koja uticnu na isplatu:" GET cHours PICT "@S30" VALID !Empty( cHours )
+   @ m_x + nX, m_y + 2 SAY8 "Sati primanja koja utiču na isplatu:" GET cHours PICT "@S30" VALID !Empty( cHours )
 
    nX += 2
-
    @ m_x + nX, m_y + 2 SAY "Koeficijent:" GET nKoef PICT "99999.99"
 
    nX += 1
-
    @ m_x + nX, m_y + 2 SAY "Broj dana sa kojim se dijeli:" GET nDays PICT "99999.99"
 
    nX += 2
-
    @ m_x + nX, m_y + 2 SAY "Iznos akontacije:" GET nAcontAmount PICT "99999.99"
    @ m_x + nX, Col() + 1 SAY "KM"
 
    nX += 1
-
    @ m_x + nX, m_y + 2 SAY "Minimalni limit za sate:" GET nMinHrLimit PICT "999999"
 
    nX += 1
-
    @ m_x + nX, m_y + 2 SAY "Maksimalni limit za sate:" GET nHourLimit PICT "999999"
 
    nX += 2
-
-   @ m_x + nX, m_y + 2 SAY "Varijanta izvjestaja:" GET nRptVar1 PICT "9" VALID nRptVar1 > 0 .AND. nRptVar1 < 3
-
-   nX += 1
-
-   @ m_x + nX, m_y + 2 SAY "(1) kompletan obracun" COLOR cColor
+   @ m_x + nX, m_y + 2 SAY8 "Varijanta izvještaja:" GET nRptVar1 PICT "9" VALID nRptVar1 > 0 .AND. nRptVar1 < 3
 
    nX += 1
+   @ m_x + nX, m_y + 2 SAY "(1) kompletan obraćun" COLOR cColor
 
+   nX += 1
    @ m_x + nX, m_y + 2 SAY "(2) samo lista sa radnicima za potpis" COLOR cColor
 
    nX += 1
-
    @ m_x + nX, m_y + 2 SAY Space( 3 ) + "Varijanta prikaza:" GET nRptVar2 PICT "9" VALID nRptVar2 > 0 .AND. nRptVar2 < 3 WHEN nRptVar1 == 2
 
    nX += 1
-
    @ m_x + nX, m_y + 2 SAY Space( 3 ) + "(1) isplata akontacije" COLOR cColor
 
    nX += 1
-
    @ m_x + nX, m_y + 2 SAY Space( 3 ) + "(2) isplata razlike" COLOR cColor
 
    nX += 1
-
-   @ m_x + nX, m_y + 2 SAY Space( 3 ) + "Export izvjestaja ?" ;
+   @ m_x + nX, m_y + 2 SAY8 Space( 3 ) + "Export izvještaja ?" ;
       GET cExport VALID cExport $ "DN" PICT "@!"
 
    READ
@@ -271,12 +258,10 @@ STATIC FUNCTION o_tables()
    O_RADN
    O_LD
 
-   RETURN
+   RETURN .T.
 
 
-// ----------------------------------------------------
-// generise listu radnika... prema parmetrima
-// ----------------------------------------------------
+
 STATIC FUNCTION _gen_list( cRj, cMonthFrom, cMonthTo, cYear, nDays, ;
       cHours, nHourLimit, nMinHrLimit, nKoef, nAcontAmount, cKred )
 
@@ -289,22 +274,18 @@ STATIC FUNCTION _gen_list( cRj, cMonthFrom, cMonthTo, cYear, nDays, ;
    // napuni matricu aHours sa vrijednostima sati...
    aHours := TokToNiz( AllTrim( cHours ), ";" )
 
-   // kreiraj _tmp tabelu
-   _cre_tmp()
+
+   cre_tmp_dbf()
 
    SELECT ld
-   SET ORDER TO TAG "2"
-   // godina + mjesec + idradn + idrj
-   GO TOP
-   HSEEK Str( cYear, 4 ) + Str( cMonthFrom, 2 )
+   SET ORDER TO TAG "2"  // godina + mjesec + idradn + idrj
+   HSEEK Str( cYear, 4, 0 ) + Str( cMonthFrom, 2, 0 )
 
    Box(, 1, 60 )
 
-   @ m_x + 1, m_y + 2 SAY "generacija izvjestaja u toku...."
+   @ m_x + 1, m_y + 2 SAY8 "generacija izvještaja u toku...."
 
-   DO WHILE !Eof() .AND. field->godina == cYear ;
-         .AND. field->mjesec >= cMonthFrom ;
-         .AND. field->mjesec <= cMonthTo
+   DO WHILE !Eof() .AND. field->godina == cYear .AND. field->mjesec >= cMonthFrom .AND. field->mjesec <= cMonthTo
 
       cIdRadn := field->idradn
 
@@ -338,7 +319,6 @@ STATIC FUNCTION _gen_list( cRj, cMonthFrom, cMonthTo, cYear, nDays, ;
          FOR i := 1 TO Len( aHours )
 
             // dodaj na sate
-
             nUSati += &( aHours[ i ] )
 
          NEXT
@@ -348,9 +328,7 @@ STATIC FUNCTION _gen_list( cRj, cMonthFrom, cMonthTo, cYear, nDays, ;
       ENDDO
 
       // ako ima sati i nije probijen limit ako postoji limit
-      IF Round( nUSati, 2 ) > 0  ;
-            .AND. ( nHourLimit == 0 .OR. ;
-            ( nHourLimit <> 0 .AND. nUSati <= nHourLimit ) )
+      IF Round( nUSati, 2 ) > 0   .AND. ( nHourLimit == 0 .OR. ( nHourLimit <> 0 .AND. nUSati <= nHourLimit ) )
 
          SELECT _tmp
          APPEND BLANK
@@ -412,15 +390,18 @@ STATIC FUNCTION _print_list( cMFrom, cMTo, cYear, nRptVar1, nRptVar2, cKred )
    LOCAL nUBTo := 0
    LOCAL cLine
 
+   AltD()
    SELECT _tmp
    // postavi index po bankama
-   INDEX ON r_bank + r_ime + r_prezime TAG "bank"
+   INDEX ON r_bank + r_prezime + r_ime TAG "bank"
    GO TOP
 
    // setuj liniju...
    _get_line( @cLine, nRptVar1, nRptVar2 )
 
-   START PRINT CRET
+   IF !start_print()
+      RETURN .F.
+   ENDIF
 
    // stampaj header
    _p_header( cLine, nRptVar1, nRptVar2, cMFrom, cMTo, cYear )
@@ -610,9 +591,9 @@ STATIC FUNCTION _print_list( cMFrom, cMTo, cYear, nRptVar1, nRptVar2, cKred )
    ? p_potpis()
 
    FF
-   ENDPRINT
+   end_print()
 
-   RETURN
+   RETURN .T.
 
 
 // ----------------------------------------------------
@@ -659,7 +640,7 @@ STATIC FUNCTION _get_line( cLine, nVar1 )
 
    cLine := cTmp
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -724,7 +705,7 @@ STATIC FUNCTION _p_header( cLine, nVar1, nVar2, cMonthFrom, cMonthTo, cYear )
    ? cTmp
    ? cLine
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -732,7 +713,7 @@ STATIC FUNCTION _p_header( cLine, nVar1, nVar2, cMonthFrom, cMonthTo, cYear )
 // -----------------------------
 // kreiraj tmp tabelu...
 // -----------------------------
-STATIC FUNCTION _cre_tmp()
+STATIC FUNCTION cre_tmp_dbf()
 
    LOCAL aDbf := {}
 
@@ -755,7 +736,7 @@ STATIC FUNCTION _cre_tmp()
    SELECT ( F_TMP_1 )
    my_use_temp( "_TMP", my_home() + "_tmp.dbf", .F., .T. )
 
-   RETURN
+   RETURN .T.
 
 
 // --------------------------------------
@@ -767,4 +748,4 @@ STATIC FUNCTION _new_page()
       FF
    ENDIF
 
-   RETURN
+   RETURN .T.

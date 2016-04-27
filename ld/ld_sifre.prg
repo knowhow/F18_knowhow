@@ -543,7 +543,7 @@ FUNCTION P_ParObr( cId, dx, dy )
       AAdd( kol, i )
    NEXT
 
-   RETURN PostojiSifra( F_PAROBR, 1, MAXROWS() -15, MAXCOLS() -20, _l( "Parametri obračuna" ), @cId, dx, dy )
+   RETURN PostojiSifra( F_PAROBR, 1, MAXROWS() -15, MAXCOLS() -20, _u( "Parametri obračuna" ), @cId, dx, dy )
 
 
 FUNCTION g_tp_naz( cId )
@@ -1265,7 +1265,7 @@ FUNCTION PorBl( Ch )
    LOCAL nRec := RecNo()
    PRIVATE GetList := {}
 
-   
+
    RETURN nVrati
 
 

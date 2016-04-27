@@ -18,162 +18,166 @@ CREATE CLASS BrowseFaktDokumenti INHERIT TBrowse
    DATA     tekuci_item
    DATA     tekuci_red   INIT 1
 
-   METHOD   New(top, left, bottom, right, fakt_dokumenti)
+   METHOD   New( top, left, bottom, right, fakt_dokumenti )
    METHOD   set_kolone_markiraj_otpremnice()
 
-   METHOD   browse()
+   METHOD   Browse()
 
-   METHOD   default_keyboard_hook(key)
-   METHOD   keyboard_hook(key)
+   METHOD   default_keyboard_hook( key )
+   METHOD   keyboard_hook( key )
 
-  PROTECTED:
-    METHOD   skipper(s)
+   PROTECTED:
+   METHOD   skipper( s )
+
 ENDCLASS
 
 
-METHOD BrowseFaktDokumenti:New(top, left, bottom, right, fakt_dokumenti)
-LOCAL _i, _item, _col
+METHOD BrowseFaktDokumenti:New( top, left, bottom, right, fakt_dokumenti )
 
-::super:New( top, left, bottom, right )
+   LOCAL _i, _item, _col
 
-::fakt_dokumenti := fakt_dokumenti
+   ::super:New( top, left, bottom, right )
 
-::SkipBlock     := {|n| ::tekuci_item := ::skipper(@n), n }
-::GoBottomBlock := {||  ::tekuci_item := IIF(::fakt_dokumenti:count == 0, NIL, ::fakt_dokumenti:items[::fakt_dokumenti:count]), 1 }
-::GoTopBlock    := {||  ::tekuci_item := IIF(::fakt_dokumenti:count == 0, NIL, ::fakt_dokumenti:items[1]), 1 }
+   ::fakt_dokumenti := fakt_dokumenti
 
-::headSep := BROWSE_HEAD_SEP
-::colsep :=  BROWSE_COL_SEP
+   ::SkipBlock     := {| n| ::tekuci_item := ::skipper( @n ), n }
+   ::GoBottomBlock := {||  ::tekuci_item := iif( ::fakt_dokumenti:count == 0, NIL, ::fakt_dokumenti:aItems[ ::fakt_dokumenti:count ] ), 1 }
+   ::GoTopBlock    := {||  ::tekuci_item := iif( ::fakt_dokumenti:count == 0, NIL, ::fakt_dokumenti:aItems[ 1 ] ), 1 }
 
-RETURN Self
+   ::headSep := BROWSE_HEAD_SEP
+   ::colsep :=  BROWSE_COL_SEP
+
+   RETURN Self
 
 
 METHOD BrowseFaktDokumenti:set_kolone_markiraj_otpremnice()
-local _col
 
-_col := FaktColumn():New("datdok", self, NIL)
-::AddColumn(_col)
+   LOCAL _col
 
-_col := FaktColumn():New("broj", self, NIL)
-::AddColumn(_col)
+   _col := FaktColumn():New( "datdok", self, NIL )
+   ::AddColumn( _col )
 
-_col := FaktColumn():New("neto", self, NIL)
-::AddColumn(_col)
+   _col := FaktColumn():New( "broj", self, NIL )
+   ::AddColumn( _col )
 
-_col := FaktColumn():New("mark", self, NIL)
-::AddColumn(_col)
+   _col := FaktColumn():New( "neto", self, NIL )
+   ::AddColumn( _col )
 
-return .t.
+   _col := FaktColumn():New( "mark", self, NIL )
+   ::AddColumn( _col )
 
-METHOD BrowseFaktDokumenti:skipper(s)
+   RETURN .T.
 
-::tekuci_red += s
+METHOD BrowseFaktDokumenti:skipper( s )
 
-if ::tekuci_red > ::fakt_dokumenti:count
-   s -= ::tekuci_red - ::fakt_dokumenti:count
-   ::tekuci_red := ::fakt_dokumenti:count
-endif
+   ::tekuci_red += s
 
-if ::tekuci_red < 1
-   s +=  1 - ::tekuci_red
-   ::tekuci_red := 1
-endif
+   if ::tekuci_red > ::fakt_dokumenti:count
+      s -= ::tekuci_red - ::fakt_dokumenti:count
+      ::tekuci_red := ::fakt_dokumenti:count
+   ENDIF
 
-return IIF(::fakt_dokumenti:count == 0, NIL, ::fakt_dokumenti:items[::tekuci_red])
+   if ::tekuci_red < 1
+      s +=  1 - ::tekuci_red
+      ::tekuci_red := 1
+   ENDIF
+
+   RETURN iif( ::fakt_dokumenti:count == 0, NIL, ::fakt_dokumenti:items[ ::tekuci_red ] )
 
 
 // --------------------------------------------
 // --------------------------------------------
-METHOD BrowseFaktDokumenti:browse()
-local exit_keys, _vrti := .t., _k
+METHOD BrowseFaktDokumenti:Browse()
 
-IF ! ISARRAY( exit_keys )
-   exit_keys := { K_ESC }
-ENDIF
+   LOCAL exit_keys, _vrti := .T., _k
 
-DO WHILE _vrti
+   IF ! ISARRAY( exit_keys )
+      exit_keys := { K_ESC }
+   ENDIF
 
-   DO WHILE !::Stabilize() .AND. NextKey() == 0
+   DO WHILE _vrti
+
+      DO WHILE !::Stabilize() .AND. NextKey() == 0
+      ENDDO
+
+      _k := Inkey( 0 )
+      IF AScan( exit_keys, _k ) > 0
+         _vrti := .F.
+         LOOP
+      ENDIF
+
+      ::default_keyboard_hook( _k )
    ENDDO
 
-   _k := Inkey(0)
-    IF ASCAN(exit_keys, _k) > 0
-       _vrti := .f.
-       LOOP
-    ENDIF
-
-    ::default_keyboard_hook(_k)
-ENDDO
-
-RETURN self
+   RETURN self
 
 
-METHOD BrowseFaktDokumenti:default_keyboard_hook(key)
+METHOD BrowseFaktDokumenti:default_keyboard_hook( key )
 
-SWITCH (key)
-        CASE K_DOWN
-           ::down()
-           exit
-        CASE K_PGDN
-           ::pageDown()
-           exit
-        CASE K_CTRL_PGDN
-           ::goBottom()
-           exit
-        CASE K_UP
-            ::up()
-            exit
-        CASE K_PGUP
-            ::pageUp()
-            exit
-        CASE K_CTRL_PGUP
-            ::goTop()
-            exit
-        CASE K_RIGHT
-             ::right()
-             exit
-        CASE K_LEFT
-             ::left()
-             exit
-        CASE  K_HOME
-             ::home()
-             exit
-        CASE K_END
-             ::end()
-             exit
-        CASE K_CTRL_LEFT
-            ::panLeft()
-            exit
-        CASE K_CTRL_RIGHT
-            ::panRight()
-            exit
-        CASE K_CTRL_HOME
-            ::panHome()
-            exit
-        CASE K_CTRL_END
-             ::panEnd()
-             exit
-        OTHERWISE
-             ::keyboard_hook(key)
-END
+   SWITCH ( key )
+   CASE K_DOWN
+      ::down()
+      EXIT
+   CASE K_PGDN
+      ::pageDown()
+      EXIT
+   CASE K_CTRL_PGDN
+      ::goBottom()
+      EXIT
+   CASE K_UP
+      ::up()
+      EXIT
+   CASE K_PGUP
+      ::pageUp()
+      EXIT
+   CASE K_CTRL_PGUP
+      ::goTop()
+      EXIT
+   CASE K_RIGHT
+      ::Right()
+      EXIT
+   CASE K_LEFT
+      ::Left()
+      EXIT
+   CASE  K_HOME
+      ::home()
+      EXIT
+   CASE K_END
+      ::end()
+      EXIT
+   CASE K_CTRL_LEFT
+      ::panLeft()
+      EXIT
+   CASE K_CTRL_RIGHT
+      ::panRight()
+      EXIT
+   CASE K_CTRL_HOME
+      ::panHome()
+      EXIT
+   CASE K_CTRL_END
+      ::panEnd()
+      EXIT
+   OTHERWISE
+      ::keyboard_hook( key )
+   END
 
-RETURN self
+   RETURN self
 
 
-METHOD BrowseFaktDokumenti:keyboard_hook(key)
+METHOD BrowseFaktDokumenti:keyboard_hook( key )
 
-   if Chr(key) == " "
-      Beep(1)
+   IF Chr( key ) == " "
+      Beep( 1 )
       if ::tekuci_item == NIL
-         return self
-      endif
+         RETURN self
+      ENDIF
 
       if ::tekuci_item:mark
-         ::tekuci_item:mark := .f.
-      else
-         ::tekuci_item:mark := .t.
-      endif
+         ::tekuci_item:mark := .F.
+      ELSE
+         ::tekuci_item:mark := .T.
+      ENDIF
       ::RefreshAll()
-   endif
+   ENDIF
 
-RETURN self
+   RETURN self

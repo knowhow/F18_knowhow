@@ -17,14 +17,14 @@ MEMVAR gFirma
 
 CLASS FaktDokumenti
 
-   DATA    items
+   DATA    aItems
    DATA    COUNT
 
    METHOD  count_markirani
    METHOD  New()
    METHOD  za_partnera( idfirma, idtipdok, idpartner )
    METHOD  pretvori_otpremnice_u_racun()
-   METHOD  change_idtipdok_markirani( new_idtipdok )
+   METHOD  change_idtipdok_markirani( cIdTipDokNew )
 
    ASSIGN  locked   INLINE ::p_locked
    METHOD  Lock()
@@ -44,7 +44,7 @@ ENDCLASS
 
 METHOD FaktDokumenti:New()
 
-   ::items := {}
+   ::aItems := {}
    ::count := 0
 
    RETURN self
@@ -91,10 +91,10 @@ METHOD FaktDokumenti:za_partnera( idfirma, idtipdok, idpartner )
    _cnt := 0
    DO WHILE !_qry:Eof()
       _brdok := _qry:FieldGet( 3 )
-      // napunicemo items matricom FaktDokument objekata
+      // napunicemo aItems matricom FaktDokument objekata
       _item := FaktDokument():New( ::p_idfirma, ::p_idtipdok, _brdok )
       _item:refresh_info()
-      AAdd( ::items, _item )
+      AAdd( ::aItems, _item )
       _cnt ++
       _qry:skip()
    ENDDO
@@ -209,7 +209,7 @@ METHOD FaktDokumenti:count_markirani()
    LOCAL _item, _cnt
 
    _cnt := 0
-   FOR EACH _item IN ::items
+   FOR EACH _item IN ::aItems
       IF _item:mark
          _cnt ++
       ENDIF
@@ -218,7 +218,7 @@ METHOD FaktDokumenti:count_markirani()
    RETURN _cnt
 
 
-METHOD FaktDokumenti:change_idtipdok_markirani( new_idtipdok )
+METHOD FaktDokumenti:change_idtipdok_markirani( cIdTipDokNew )
 
    LOCAL _err, _item, _broj, _ok := .T.
    LOCAL hParams
@@ -229,15 +229,15 @@ METHOD FaktDokumenti:change_idtipdok_markirani( new_idtipdok )
 
       IF !::lock
          run_sql_query( "ROLLBACK" )
-         MsgBeep( "Neuspješno zaključavanje tabela, operacija " + ::p_idtipdok + "=>" + new_idtipdok + " otkazana !" )
+         MsgBeep( "Neuspješno zaključavanje tabela, operacija " + ::p_idtipdok + "=>" + cIdTipDokNew + " otkazana !" )
          _ok := .F.
          BREAK
       ENDIF
 
-      FOR EACH _item IN ::items
+      FOR EACH _item IN ::aItems
          IF _item:mark
             _broj := _item:broj
-            IF !_item:change_idtipdok( new_idtipdok )
+            IF !_item:change_idtipdok( cIdTipDokNew )
                run_sql_query( "ROLLBACK" )
                _ok := .F.
                BREAK
@@ -252,14 +252,14 @@ METHOD FaktDokumenti:change_idtipdok_markirani( new_idtipdok )
 
    RECOVER
 
-      MsgBeep( "Neuspješna konverzija " + _broj + " idtpdok => " + new_idtipdok + " !" )
+      MsgBeep( "Neuspješna konverzija " + _broj + " idtpdok => " + cIdTipDokNew + " !" )
       _ok := .F.
 
    END SEQUENCE
 
    close_open_fakt_tabele()
 
-   ::p_idtipdok := new_idtipdok
+   ::p_idtipdok := cIdTipDokNew
 
    RETURN _ok
 
@@ -277,6 +277,8 @@ METHOD FaktDokumenti:generisi_fakt_pripr()
    LOCAL _first
    LOCAL _qry
    LOCAL _datum_max
+   LOCAL _sql
+   LOCAL _fakt_rec
 
    IF !::generisi_fakt_pripr_vars( @_gen_params ) // parametri generisanja...
       RETURN .F.
@@ -308,7 +310,7 @@ METHOD FaktDokumenti:generisi_fakt_pripr()
 
    _veza_otpremnice := ""
    _first := .T.
-   FOR EACH _item IN ::items
+   FOR EACH _item IN ::aItems
       IF _item:mark
          IF _first
             _first := .F.
@@ -398,7 +400,7 @@ FUNCTION renumeracija_fakt_pripr( veza_otpremnica, datum_max )
    GO TOP
 
    IF RecCount2 () == 0
-      RETURN
+      RETURN .F.
    ENDIF
 
    nRbr := 999

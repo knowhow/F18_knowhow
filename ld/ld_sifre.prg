@@ -515,6 +515,7 @@ FUNCTION MsgIspl()
 FUNCTION P_ParObr( cId, dx, dy )
 
    LOCAL _tmp_id
+   LOCAL i
    PRIVATE imekol := {}
    PRIVATE kol := {}
 
@@ -542,7 +543,7 @@ FUNCTION P_ParObr( cId, dx, dy )
       AAdd( kol, i )
    NEXT
 
-   RETURN PostojiSifra( F_PAROBR, 1, MAXROWS() -15, MAXCOLS() -20, _l( "Parametri obracuna" ), @cId, dx, dy )
+   RETURN PostojiSifra( F_PAROBR, 1, MAXROWS() -15, MAXCOLS() -20, _l( "Parametri obračuna" ), @cId, dx, dy )
 
 
 FUNCTION g_tp_naz( cId )
@@ -1264,214 +1265,16 @@ FUNCTION PorBl( Ch )
    LOCAL nRec := RecNo()
    PRIVATE GetList := {}
 
-   DO CASE
-   CASE Ch == K_F5
-      // pitati za posljednji mjesec
-      cMj := gMjesec
-      cGod := gGodina
-      Box( "#PROMJENA POREZA U TOKU GODINE", 4, 60 )
-      @ m_x + 2, m_y + 2 SAY "Posljednji mjesec po starim porezima:" GET cMj VALID cMj > 0 .AND. cMj < 13
-      @ m_x + 3, m_y + 2 SAY "Godina: " + Str( cGod )
-      READ
-      IF LastKey() == K_ESC
-         BoxC()
-         RETURN nVrati
-      ENDIF
-      BoxC()
-
-      // formiraj imena direktorija
-      cPodDir := PadL( AllTrim( Str( cMj ) ), 2, "0" ) + Str( cGod, 4 )
-      cPath := SIFPATH
-      aIme := { "POR.DBF", "POR.CDX" }
-      // zatvaram POR.DBF
-      SELECT POR
-      USE
-      // napraviti direktorij i iskopirati POR.* u njega
-      DirMake( cPath + cPodDir )
-      lKopirano := .F.
-      FOR i := 1 TO Len( aIme )
-         IF File( cPath + cPodDir + SLASH + aIme[ i ] )
-            MsgBeep( "Fajl " + aIme[ i ] + " vec postoji u " + cpath + cPodDir + " !" + "#Ukoliko ga sada zamijenite necete ga moci vratiti!" )
-            IF Pitanje(, "Zelite li ga zamijeniti?", "N" ) == "N"
-               LOOP
-            ENDIF
-         ENDIF
-         lKopirano := .T.
-         FileCopy( cPath + aIme[ i ], cPath + cPodDir + SLASH + aIme[ i ] )
-      NEXT
-      // otvaram POR.DBF
-      O_POR
-      GO ( nRec )
-
-      // poruka: mozete definisati nove poreze
-      IF lKopirano
-         MsgBeep( "Stari porezi su smjesteni u podrucje " + cPodDir + "#Nakon ovoga mozete definisati nove poreze." )
-      ENDIF
-
-   CASE Ch == K_F6
-      // meni sezona
-      cPath := SIFPATH
-      cGodina := gGodina
-      Box(, 3, 30 )
-      @ m_x + 2, m_y + 2 SAY "Godina:" GET cGodina PICT "9999"
-      READ
-      BoxC()
-      IF LastKey() == K_ESC
-         RETURN nVrati
-      ENDIF
-      cGodina := Str( cGodina, 4, 0 )
-      aSez := ASezona2( cPath, cGodina, "POR.DBF" )
-      IF Empty( aSez )
-         MsgBeep( "Ne postoje sezone promjena poreza u " + cGodina + ". godini!" )
-         RETURN nVrati
-      ELSE
-         // meni sezona - aSez
-         // ------------------
-         FOR i := 1 TO Len( aSez )
-            aSez[ i ] := PadR( aSez[ i, 1 ] + " - " + ld_naziv_mjeseca( Val( Left( aSez[ i, 1 ], 2 ) ) ), 73 )
-         NEXT
-         h := Array( Len( aSez ) ); AFill( h, "" )
-         Box( "#SEZONE PRED PROMJENU POREZA U " + cGodina + ".GODINI: ÍÍÍÍÍ <Enter>-izbor ", Min( Len( aSez ), 16 ) + 3, 77 )
-         @ m_x + 1, m_y + 2 SAY PadC( "M J E S E C", 75 )
-         @ m_x + 2, m_y + 2 SAY REPL( "Ä", 75 )
-         nPom := 1
-         @ Row() -1, Col() -6 SAY ""
-         nPom := Menu( "SPME", aSez, nPom, .F.,,, { m_x + 2, m_y + 1 } )
-         IF nPom > 0
-            MENU( "SPME", aSez, 0, .F. )
-         ENDIF
-         BoxC()
-         IF nPom > 0
-            cPorDir := Left( aSez[ nPom ], 6 )
-         ELSE
-            RETURN nVrati
-         ENDIF
-      ENDIF
-
-      // otvaranje sezonske baze
-      SELECT ( F_POR )
-      USE
-      USE ( cPath + cPorDir + SLASH + "POR" )
-      SET ORDER TO TAG "ID"
-      GO TOP
-      @ m_x + 11, m_y + 2 SAY "Porezi koji su vazili zakljucno sa (MMGGGG):" + cPorDir
-      KEYBOARD Chr( K_CTRL_PGUP )
-      nVrati := DE_REFRESH
-
-   ENDCASE
-
+   
    RETURN nVrati
 
 
 
-// ------------------------------------
-// ------------------------------------
+
 FUNCTION DoprBl( Ch )
 
    LOCAL nVrati := DE_CONT
    LOCAL nRec := RecNo()
 
-   DO CASE
-   CASE Ch == K_F5
-
-      // pitati za posljednji mjesec
-      // ---------------------------
-      cMj  := gMjesec
-      cGod := gGodina
-      PRIVATE GetList := {}
-      Box( _l( "#PROMJENA DOPRINOSA U TOKU GODINE" ), 4, 60 )
-      @ m_x + 2, m_y + 2 SAY _l( "Posljednji mjesec po starim doprinosima:" ) GET cMj VALID cMj > 0 .AND. cMj < 13
-      @ m_x + 3, m_y + 2 SAY "Godina: " + Str( cGod )
-      READ
-      IF LastKey() == K_ESC; BoxC(); RETURN nVrati; ENDIF
-      BoxC()
-
-      // formiraj imena direktorija
-      // --------------------------
-      cPodDir := PadL( AllTrim( Str( cMj ) ), 2, "0" ) + Str( cGod, 4 )
-      cPath := SIFPATH
-      aIme := { "DOPR.DBF", "DOPR.CDX" }
-
-      // zatvaram DOPR.DBF
-      // -----------------
-      SELECT DOPR
-      USE
-
-      // napraviti direktorij i iskopirati DOPR.* u njega
-      // -------------------------------------------------
-      DirMake( cPath + cPodDir )
-      lKopirano := .F.
-      FOR i := 1 TO Len( aIme )
-         IF File( cpath + cPodDir + "\" + aIme[ i ] )
-            MsgBeep( "Fajl " + aIme[ i ] + " vec postoji u " + cpath + cPodDir + " !" + ;
-               "#Ukoliko ga sada zamijenite necete ga moci vratiti!" )
-            IF Pitanje(, "Zelite li ga zamijeniti?", "N" ) == "N"
-               LOOP
-            ENDIF
-         ENDIF
-         lKopirano := .T.
-         FileCopy( cPath + aIme[ i ], cpath + cPodDir + "\" + aIme[ i ] )
-      NEXT
-
-      // otvaram DOPR.DBF
-      // ----------------
-      O_DOPR
-      GO ( nRec )
-
-      // poruka: mozete definisati nove doprinose
-      // ----------------------------------------
-      IF lKopirano
-         MsgBeep( "Stari doprinosi su smjesteni u podrucje " + cPodDir + "#Nakon ovoga " + ;
-            "mozete definisati nove doprinose." )
-      ENDIF
-
-   CASE Ch == K_F6
-      // meni sezona
-      cPath   := SIFPATH
-      cGodina := gGodina
-      PRIVATE GetList := {}
-      Box(, 3, 30 )
-      @ m_x + 2, m_y + 2 SAY "Godina:" GET cGodina PICT "9999"
-      READ
-      BoxC()
-      IF LastKey() == K_ESC; RETURN nVrati; ENDIF
-      cGodina := Str( cGodina, 4, 0 )
-      aSez := ASezona2( cPath, cGodina, "DOPR.DBF" )
-      IF Empty( aSez )
-         MsgBeep( "Ne postoje sezone promjena doprinosa u " + cGodina + ". godini!" )
-         RETURN nVrati
-      ELSE
-         // meni sezona - aSez
-         // ------------------
-         FOR i := 1 TO Len( aSez )
-            aSez[ i ] := PadR( aSez[ i, 1 ] + " - " + ld_naziv_mjeseca( Val( Left( aSez[ i, 1 ], 2 ) ) ), 73 )
-         NEXT
-         h := Array( Len( aSez ) ); AFill( h, "" )
-         Box( "#SEZONE PRED PROMJENU DOPRINOSA U " + cGodina + ".GODINI: ||||| <Enter>-izbor ", Min( Len( aSez ), 16 ) + 3, 77 )
-         @ m_x + 1, m_y + 2 SAY PadC( "M J E S E C", 75 )
-         @ m_x + 2, m_y + 2 SAY REPL( "-", 75 )
-         nPom := 1
-         @ Row() -1, Col() -6 SAY ""
-         nPom := Menu( "SDME", aSez, nPom, .F.,,, { m_x + 2, m_y + 1 } )
-         IF nPom > 0
-            MENU( "SDME", aSez, 0, .F. )
-         ENDIF
-         BoxC()
-         IF nPom > 0
-            cDoprDir := Left( aSez[ nPom ], 6 )
-         ELSE
-            RETURN nVrati
-         ENDIF
-      ENDIF
-
-      // otvaranje sezonske baze
-      SELECT ( F_DOPR ); USE
-      USE ( cPath + cDoprDir + "\DOPR" ) ; SET ORDER TO TAG "ID"
-      GO TOP
-      @ m_x + 11, m_y + 2 SAY "Doprinosi koji su vazili zakljucno sa (MMGGGG):" + cDoprDir
-      KEYBOARD Chr( K_CTRL_PGUP )
-      nVrati := DE_REFRESH
-
-   ENDCASE
 
    RETURN nVrati

@@ -25,7 +25,7 @@ FUNCTION save_pdv_obracun( dDatOd, dDatDo )
 
    set_global_vars_from_dbf()
 
-   IF Pitanje( , "Želite li obracun pohraniti u bazu PDV prijava ?", " " ) == "D"
+   IF Pitanje( , "Želite li obračun pohraniti u bazu PDV prijava ?", " " ) == "D"
 
       SELECT F_PDV
       IF !Used()
@@ -44,14 +44,11 @@ FUNCTION save_pdv_obracun( dDatOd, dDatDo )
             USE
             SELECT ( F_R_PDV )
             USE
-            RETURN
+            RETURN .F.
          ENDIF
       ENDIF
 
-      // datum kreiranja
-
-      IF Empty( pdv->datum_1 )
-         // datum kreiranja
+      IF Empty( pdv->datum_1 ) // datum kreiranja
          _datum_1 := Date()
       ENDIF
 
@@ -63,7 +60,6 @@ FUNCTION save_pdv_obracun( dDatOd, dDatDo )
       update_rec_server_and_dbf( "epdv_pdv", _rec, 1, "FULL" )
 
       SELECT ( F_PDV )
-
       USE
 
    ENDIF

@@ -448,7 +448,10 @@ FUNCTION imaju_unchecked_sifarnici()
 
       lChk0 := .F.
       IF hb_HHasKey( s_hF18Dbfs[ cDatabase ][ cKey ], "chk0" )
-         lChk0 := s_hF18Dbfs[ cDatabase ][ cKey ][ "chk0" ]
+         IF hb_mutexLock( s_mtxMutex )
+            lChk0 := s_hF18Dbfs[ cDatabase ][ cKey ][ "chk0" ]
+            hb_mutexUnlock( s_mtxMutex )
+         ENDIF
       ENDIF
 
       IF !lSQl .AND. !lChk0 .AND. lSif

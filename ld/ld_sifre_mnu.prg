@@ -72,11 +72,11 @@ FUNCTION ld_specificni_sifarnici()
    LOCAL _opcexe := {}
    LOCAL _izbor := 1
 
-   AAdd( _opc, "1. parametri obracuna                  " )
+   AAdd( _opc, "1. parametri obračuna                  " )
    AAdd( _opcexe, {|| P_ParObr() } )
    AAdd( _opc, "2. tipovi primanja" )
    AAdd( _opcexe, {|| P_TipPr() } )
-   AAdd( _opc, "3. tipovi primanja / ostali obracuni" )
+   AAdd( _opc, "3. tipovi primanja / ostali obračuni" )
    AAdd( _opcexe, {|| P_TipPr2() } )
    AAdd( _opc, "4. porezne stope " )
    AAdd( _opcexe, {|| P_Por() } )
@@ -86,9 +86,9 @@ FUNCTION ld_specificni_sifarnici()
    AAdd( _opcexe, {|| P_KBenef() } )
 
    IF gSihtarica == "D"
-      AAdd( _opc, "7. tipovi primanja u sihtarici" )
+      AAdd( _opc, "7. tipovi primanja u šihtarici" )
       AAdd( _opcexe, {|| P_TprSiht() } )
-      AAdd( _opc, "8. norme radova u sihtarici   " )
+      AAdd( _opc, "8. norme radova u šihtarici   " )
       AAdd( _opcexe, {|| P_NorSiht() } )
    ENDIF
 

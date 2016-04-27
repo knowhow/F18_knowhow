@@ -82,11 +82,9 @@ METHOD BrowseFaktDokumenti:skipper( s )
       ::tekuci_red := 1
    ENDIF
 
-   RETURN iif( ::fakt_dokumenti:count == 0, NIL, ::fakt_dokumenti:items[ ::tekuci_red ] )
+   RETURN iif( ::fakt_dokumenti:count == 0, NIL, ::fakt_dokumenti:aItems[ ::tekuci_red ] )
 
 
-// --------------------------------------------
-// --------------------------------------------
 METHOD BrowseFaktDokumenti:Browse()
 
    LOCAL exit_keys, _vrti := .T., _k

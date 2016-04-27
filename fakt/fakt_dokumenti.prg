@@ -220,19 +220,19 @@ METHOD FaktDokumenti:count_markirani()
 
 METHOD FaktDokumenti:change_idtipdok_markirani( cIdTipDokNew )
 
-   LOCAL _err, _item, _broj, _ok := .T.
+   LOCAL _err, _item, _broj := "XX", _ok := .T.
    LOCAL hParams
+   LOCAL oErr
+
+   run_sql_query( "BEGIN; SET TRANSACTION ISOLATION LEVEL SERIALIZABLE" )
+
+   IF !::lock
+      run_sql_query( "ROLLBACK" )
+      MsgBeep( "Neuspješno zaključavanje tabela, operacija " + ::p_idtipdok + "=>" + cIdTipDokNew + " otkazana !" )
+      RETURN .F.
+   ENDIF
 
    BEGIN SEQUENCE WITH {| err| err:cargo := { ProcName( 1 ), ProcName( 2 ), ProcLine( 1 ), ProcLine( 2 ) }, Break( err ) }
-
-      run_sql_query( "BEGIN; SET TRANSACTION ISOLATION LEVEL SERIALIZABLE" )
-
-      IF !::lock
-         run_sql_query( "ROLLBACK" )
-         MsgBeep( "Neuspješno zaključavanje tabela, operacija " + ::p_idtipdok + "=>" + cIdTipDokNew + " otkazana !" )
-         _ok := .F.
-         BREAK
-      ENDIF
 
       FOR EACH _item IN ::aItems
          IF _item:mark
@@ -250,12 +250,12 @@ METHOD FaktDokumenti:change_idtipdok_markirani( cIdTipDokNew )
       run_sql_query( "COMMIT", hParams )
       _ok := .T.
 
-   RECOVER
+   RECOVER USING oErr
 
-      MsgBeep( "Neuspješna konverzija " + _broj + " idtpdok => " + cIdTipDokNew + " !" )
+      MsgBeep( "Neuspješna konverzija " + _broj + " idtpdok => " + cIdTipDokNew + " !##" + oErr:Description  )
       _ok := .F.
 
-   END SEQUENCE
+   ENDSEQUENCE
 
    close_open_fakt_tabele()
 

@@ -412,7 +412,7 @@ STATIC FUNCTION _fill_xml( cTip, xml_file )
    // zatvori xml fajl za upis
    close_xml()
 
-   RETURN
+   RETURN .T.
 
 
 // ----------------------------------------------------------

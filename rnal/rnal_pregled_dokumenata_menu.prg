@@ -11,9 +11,7 @@
 
 #include "f18.ch"
 
-// ------------------------------
-// menij pregled naloga
-// ------------------------------
+
 FUNCTION m_lst_rnal()
 
    LOCAL opc := {}
@@ -28,4 +26,4 @@ FUNCTION m_lst_rnal()
 
    f18_menu( "lst", .F., izbor, opc, opcexe )
 
-   RETURN
+   RETURN .T.

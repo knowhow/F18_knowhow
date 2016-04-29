@@ -12,7 +12,7 @@
 #include "f18.ch"
 
 
-FUNCTION ld_specifikacija_plate_samostalni()
+FUNCTION ld_specifikacija_plate_samostalni_obr_2002()
 
    LOCAL GetList := {}
    LOCAL aPom := {}
@@ -34,8 +34,8 @@ FUNCTION ld_specifikacija_plate_samostalni()
    LOCAL cMatBr := Space( 13 )
    PRIVATE aSpec := {}
    PRIVATE cFNTZ := "D"
-   PRIVATE gPici := "9,999,999,999,999,999" + IF( gZaok > 0, PadR( ".", gZaok + 1, "9" ), "" )
-   PRIVATE gPici2 := "9,999,999,999,999,999" + IF( gZaok2 > 0, PadR( ".", gZaok2 + 1, "9" ), "" )
+   PRIVATE gPici := "9,999,999,999,999,999" + IIF( gZaok > 0, PadR( ".", gZaok + 1, "9" ), "" )
+   PRIVATE gPici2 := "9,999,999,999,999,999" + IIF( gZaok2 > 0, PadR( ".", gZaok2 + 1, "9" ), "" )
    PRIVATE gPici3 := "999,999,999,999.99"
 
    FOR i := 1 TO nGrupaPoslova + 1
@@ -218,7 +218,7 @@ FUNCTION ld_specifikacija_plate_samostalni()
    nURadnika := 0
    nULicOdbitak := 0
 
-   DO WHILE Str( nGodina, 4 ) + Str( nMjesec, 2 ) == Str( godina, 4 ) + Str( mjesec, 2 )
+   DO WHILE Str( nGodina, 4, 0 ) + Str( nMjesec, 2, 0) == Str( godina, 4, 0 ) + Str( mjesec, 2, 0 )
 
       IF field->idradn <> cRadn
          SKIP
@@ -236,8 +236,8 @@ FUNCTION ld_specifikacija_plate_samostalni()
          LOOP
       ENDIF
 
-      // koeficijent propisani
-      nRSpr_koef := radn->sp_koef
+
+      nRSpr_koef := radn->sp_koef // koeficijent propisani
 
       SELECT LD
 

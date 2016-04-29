@@ -25,13 +25,13 @@ FUNCTION rnal_lista_dokumenata( nStatus )
 
    rnal_o_tables( .F. )
 
-   tbl_list()
+   rnal_browse_azurirani_nalozi()
 
    RETURN .T.
 
 
 
-STATIC FUNCTION tbl_list()
+STATIC FUNCTION rnal_browse_azurirani_nalozi()
 
    LOCAL cFooter
    LOCAL cHeader
@@ -945,75 +945,36 @@ STATIC FUNCTION __sh_cust( cCust, cCont )
 
 STATIC FUNCTION set_a_kol( aImeKol, aKol, nStatus )
 
+   LOCAL i
+
    aImeKol := {}
+
 
    AAdd( aImeKol, { "Narucioc / kontakt", ;
       {|| __sh_cust( g_cust_desc( cust_id ), g_cont_desc( cont_id ) ) }, ;
-      "cust_id", ;
-      {|| .T. }, ;
-      {|| .T. } } )
+      "cust_id", {|| .T. }, {|| .T. } } )
 
-   AAdd( aImeKol, { "Datum", ;
-      {|| doc_date }, ;
-      "doc_date", ;
-      {|| .T. }, ;
-      {|| .T. } } )
+   AAdd( aImeKol, { "Datum", {|| doc_date },  "doc_date", {|| .T. }, {|| .T. } } )
 
-   AAdd( aImeKol, { "Dat.isp.", ;
-      {|| doc_dvr_da }, ;
-      "doc_dvr_da", ;
-      {|| .T. }, ;
-      {|| .T. } } )
+   AAdd( aImeKol, { "Dat.isp.", {|| doc_dvr_da }, "doc_dvr_da", {|| .T. }, {|| .T. } } )
 
-   AAdd( aImeKol, { "Vr.isp.", ;
-      {|| doc_dvr_ti }, ;
-      "doc_dvr_ti", ;
-      {|| .T. }, ;
-      {|| .T. } } )
+   AAdd( aImeKol, { "Vr.isp.", {|| doc_dvr_ti }, "doc_dvr_ti", {|| .T. }, {|| .T. } } )
 
-   AAdd( aImeKol, { PadC( "Dok.br", 10 ), ;
-      {|| doc_no }, ;
-      "doc_no", ;
-      {|| .T. }, ;
-      {|| .T. } } )
+   AAdd( aImeKol, { PadC( "Dok.br", 10 ), {|| doc_no }, "doc_no", {|| .T. }, {|| .T. } } )
 
-   IF _operater = 0
-      AAdd( aImeKol, { "Operater", ;
-         {|| PadR( getusername( operater_i ), 10 ) }, ;
-         "operater_i", ;
-         {|| .T. }, ;
-         {|| .T. } } )
+   IF _operater == 0
+      AAdd( aImeKol, { "Operater", {|| PadR( getusername( operater_i ), 10 ) },  "operater_i",  {|| .T. }, {|| .T. } } )
    ENDIF
 
-   AAdd( aImeKol, { "Prioritet", ;
-      {|| PadR( s_priority( doc_priori ), 10 ) }, ;
-      "doc_priori", ;
-      {|| .T. }, ;
-      {|| .T. } } )
+   AAdd( aImeKol, { "Prioritet", {|| PadR( s_priority( doc_priori ), 10 ) }, "doc_priori", {|| .T. }, {|| .T. } } )
 
-   AAdd( aImeKol, { "Vr.plac", ;
-      {|| PadR( s_pay_id( doc_pay_id ), 10 ) }, ;
-      "doc_pay_id", ;
-      {|| .T. }, ;
-      {|| .T. } } )
+   AAdd( aImeKol, { "Vr.plac", {|| PadR( s_pay_id( doc_pay_id ), 10 ) }, "doc_pay_id", {|| .T. }, {|| .T. } } )
 
-   AAdd( aImeKol, { "Plac.", ;
-      {|| PadR( doc_paid, 4 ) }, ;
-      "doc_paid", ;
-      {|| .T. }, ;
-      {|| .T. } } )
+   AAdd( aImeKol, { "Plac.", {|| PadR( doc_paid, 4 ) }, "doc_paid", {|| .T. }, {|| .T. } } )
 
-   AAdd( aImeKol, { "Tip", ;
-      {|| PadR( doc_type, 2 ) }, ;
-      "doc_type", ;
-      {|| .T. }, ;
-      {|| .T. } } )
+   AAdd( aImeKol, { "Tip", {|| PadR( doc_type, 2 ) }, "doc_type", {|| .T. },  {|| .T. } } )
 
-   AAdd( aImeKol, { "FMK", ;
-      {|| fmk_doc }, ;
-      "fmk_doc", ;
-      {|| .T. }, ;
-      {|| .T. } } )
+   AAdd( aImeKol, { "FMK", {|| fmk_doc }, "fmk_doc", {|| .T. }, {|| .T. } } )
 
    aKol := {}
 
@@ -1021,7 +982,7 @@ STATIC FUNCTION set_a_kol( aImeKol, aKol, nStatus )
       AAdd( aKol, i )
    NEXT
 
-   RETURN
+   RETURN .T.
 
 
 STATIC FUNCTION _chk_date( dD_dvr_date )
@@ -1065,7 +1026,7 @@ STATIC FUNCTION _sh_dvr_warr( nDays, nMinutes, nX, nLen )
 
    @ nX, m_y + 1 SAY PadR( cTmp, nLen ) COLOR cColor
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -1091,7 +1052,7 @@ STATIC FUNCTION _sh_dvr_info( nDays, nX, nLen )
       @ nX, m_y + 1 SAY Space( nLen )
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -1141,7 +1102,7 @@ STATIC FUNCTION _sh_doc_status( doc_status, nX, nY )
 
    @ nX, nY SAY8 PadR( cTmp, 20 ) COLOR cColor
 
-   RETURN
+   RETURN .T.
 
 
 FUNCTION get_status_dokumenta( doc_status )

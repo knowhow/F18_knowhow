@@ -907,7 +907,7 @@ STATIC FUNCTION napuni_podatke( cRj, cGodina, cMjesec, cMjesecDo, ;
          ENDIF
       ENDIF
 
-      cTipRada := g_tip_rada( ld->idradn, ld->idrj )
+      cTipRada := get_ld_rj_tip_rada( ld->idradn, ld->idrj )
       cOpor := g_oporeziv( ld->idradn, ld->idrj )
 
       // samo pozicionira bazu PAROBR na odgovarajuci zapis
@@ -978,7 +978,7 @@ STATIC FUNCTION napuni_podatke( cRj, cGodina, cMjesec, cMjesecDo, ;
          cId_rj := ld->idrj
 
          // uvijek provjeri tip rada, ako ima vise obracuna
-         cTipRada := g_tip_rada( ld->idradn, ld->idrj )
+         cTipRada := get_ld_rj_tip_rada( ld->idradn, ld->idrj )
          cTrosk := radn->trosk
 
          ParObr( ld->mjesec, ld->godina, ;

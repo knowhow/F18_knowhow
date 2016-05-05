@@ -590,7 +590,7 @@ STATIC FUNCTION fill_data( cRj, cGodina, cMjesec, ;
          ENDIF
       ENDIF
 
-      cT_tiprada := g_tip_rada( field->idradn, field->idrj )
+      cT_tiprada := get_ld_rj_tip_rada( field->idradn, field->idrj )
 
       SELECT radn
       SEEK cT_radnik
@@ -641,7 +641,7 @@ STATIC FUNCTION fill_data( cRj, cGodina, cMjesec, ;
             .AND. field->idradn == cT_radnik
 
          // uvijek provjeri tip rada
-         cT_tiprada := g_tip_rada( field->idradn, field->idrj )
+         cT_tiprada := get_ld_rj_tip_rada( field->idradn, field->idrj )
 
          lInRS := radnik_iz_rs( radn->idopsst, radn->idopsrad ) .AND. cT_tipRada $ "A#U"
 

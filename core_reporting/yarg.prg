@@ -21,6 +21,7 @@ CREATE CLASS YargReport
    VAR cReportProperties // ~/.f18/rg_2016/ld_obr_2002.properties
 
    VAR cReportOutput
+   VAR aRecords // { { 'id':1, 'naz':'dva' }, { 'id':2, 'naz':'tri' } }
 
    METHOD New( cName, cType )
 
@@ -47,6 +48,8 @@ METHOD YargReport:New( cName, cType )
 
 METHOD YargReport:create_run_yarg_file()
 
+   LOCAL hFile, cTempFile
+
    ::cRunScript := my_home() + "run_yarg_" + ::cName + iif( is_windows(), ".bat", ".sh" )
 
    SET PRINTER to ( ::cRunScript )
@@ -54,6 +57,14 @@ METHOD YargReport:create_run_yarg_file()
    SET CONSOLE OFF
 
    ::cReportOutput := my_home() + "out_" + ::cName + "." + ::cType
+
+
+   IF ( hFile := hb_vfTempFile( @cTempFile, my_home(), "out_" + ::cName + "_", "." + ::cType ) ) != NIL // hb_vfTempFile( @<cFileName>, [ <cDir> ], [ <cPrefix> ], [ <cExt> ], [ <nAttr> ] )
+      hb_vfClose( hFile )
+      ::cReportOutput := cTempFile
+   ELSE
+      ::cReportOutput := my_home() + "out_" + ::cName + "." + ::cType
+   ENDIF
 
    IF is_linux() .OR. is_mac()
       ?? "#!/bin/bash"
@@ -123,7 +134,7 @@ METHOD YargReport:create_report_properties()
 
 METHOD YargReport:create_yarg_xml()
 
-   LOCAL cTemplate
+   LOCAL cTemplate, hRec, cKey, lFirst, lFirst2
 
    ::cReportXml := my_home() + "yarg_" + ::cName + ".xml"
 
@@ -162,8 +173,28 @@ METHOD YargReport:create_yarg_xml()
 
    xml_subnode_start( 'query name="Data_set_1" type="groovy"' )
    xml_subnode_start( "script" )
-   ?? "return [[ 'naziv':'bring Ernad Husremović', 'j1':1, 'j2':2, 'j3':3, 'j4':4, 'j13':13, 'br_zaposlenih':'2', 'd_od_1':0, 'd_od_2':9 ],"
-   ?? " [ 'naziv':'dva', 'j1':1, 'j2':2, 'br_zaposlenih':'2', 'd_od_1':0, 'd_od_2':9 ]]"
+   ?? "return ["
+
+   lFirst := .T.
+   FOR EACH hRec IN ::aRecords
+      IF !lFirst
+         ?? ","
+      ENDIF
+      lFirst := .F.
+      ?? "["
+      lFirst2 := .T.
+      FOR EACH cKey IN hRec:Keys
+         IF !lFirst2
+            ?? ","
+         ENDIF
+         lFirst2 := .F.
+         ?? sql_quote( cKey ) + ":" + sql_quote( hRec[ cKey ] )
+      NEXT
+      ?? "]"
+   NEXT
+
+   ?? "]"
+
    xml_subnode_end( "script" )
 
    xml_subnode_end( "query" )
@@ -197,6 +228,8 @@ METHOD YargReport:run()
 
    SAVE SCREEN TO cScreen
    CLEAR SCREEN
+
+   FErase( ::cReportOutput )
 
    ? ::cRunScript
    ? "Generisanje ", ::cName, ::cType

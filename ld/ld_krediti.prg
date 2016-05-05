@@ -494,7 +494,7 @@ FUNCTION SumKredita()
    ENDIF
 
    IF gVarObracun == "2"
-      cTRada := g_tip_rada( _idradn, _idrj )
+      cTRada := get_ld_rj_tip_rada( _idradn, _idrj )
       IF cTRada $ "A#U#P#S"
 
          PopWa()

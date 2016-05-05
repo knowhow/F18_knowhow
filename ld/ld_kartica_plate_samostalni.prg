@@ -42,7 +42,7 @@ FUNCTION ld_kartica_plate_samostalni( cIdRj, cMjesec, cGodina, cIdRadn, cObrac, 
    // nLicOdbitak := g_licni_odb( radn->id )
    nLicOdbitak := ld->ulicodb
    nKoefOdbitka := radn->klo
-   cRTipRada := g_tip_rada( ld->idradn, ld->idrj )
+   cRTipRada := get_ld_rj_tip_rada( ld->idradn, ld->idrj )
    nRPrKoef := 0
    IF radn->( FieldPos( "SP_KOEF" ) ) <> 0
       nRPrKoef := radn->sp_koef

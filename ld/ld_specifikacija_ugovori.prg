@@ -243,7 +243,7 @@ FUNCTION ld_specifikacija_plate_ostali()
       SELECT OPS
       HSEEK radn->idopsst
       SELECT RADN
-      cRTR := g_tip_rada( ld->idradn, ld->idrj )
+      cRTR := get_ld_rj_tip_rada( ld->idradn, ld->idrj )
 
       // ugovor o djelu, aut.honorar i predsjednici
       IF !( cRTR $ "U#A#P" )

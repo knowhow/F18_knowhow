@@ -32,7 +32,7 @@ FUNCTION _calc_tpr( nIzn, lCalculate )
       lCalculate := .F.
    ENDIF
 
-   cTR := g_tip_rada( ld->idradn, ld->idrj )
+   cTR := get_ld_rj_tip_rada( ld->idradn, ld->idrj )
 
    IF gPrBruto == "X" .AND. ( tippr->uneto == "D" .OR. lCalculate == .T. )
       nRet := bruto_osn( nIzn, cTR, ld->ulicodb )
@@ -45,7 +45,7 @@ FUNCTION tr_list()
    RETURN "I#N"
 
 
-FUNCTION g_tip_rada( cRadn, cRj )
+FUNCTION get_ld_rj_tip_rada( cRadn, cRj )
 
    LOCAL cTipRada := " "
    LOCAL nSelect := SELECT()

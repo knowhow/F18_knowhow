@@ -275,7 +275,7 @@ STATIC FUNCTION ld_unos_obracuna_box( lSaveObracun )
 
    SELECT radn
 
-   cTR := g_tip_rada( cIdRadn, cIdRj )
+   cTR := get_ld_rj_tip_rada( cIdRadn, cIdRj )
    cOpor := g_oporeziv( cIdRadn, cIdrj )
    cTrosk := radn->trosk
    nULicOdb := ( radn->klo * gOsnLOdb )
@@ -429,7 +429,7 @@ STATIC FUNCTION kalkulacija_obracuna_plate_za_radnika( lNovi )
    kalkulisi_uneto_usati_uiznos_za_radnika()
 
    nKLO := radn->klo
-   cTipRada := g_tip_rada( _idradn, _idrj )
+   cTipRada := get_ld_rj_tip_rada( _idradn, _idrj )
    nSPr_koef := 0
    nTrosk := 0
    nBrOsn := 0

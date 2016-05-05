@@ -53,7 +53,7 @@ FUNCTION ld_kartica_plate_redovan_rad( cIdRj, cMjesec, cGodina, cIdRadn, cObrac,
    // nLicOdbitak := g_licni_odb( radn->id )
    nLicOdbitak := ld->ulicodb
    nKoefOdbitka := g_klo( nLicOdbitak )
-   cRTipRada := g_tip_rada( ld->idradn, ld->idrj )
+   cRTipRada := get_ld_rj_tip_rada( ld->idradn, ld->idrj )
 
    ? cTprLine
    IF gPrBruto == "X"

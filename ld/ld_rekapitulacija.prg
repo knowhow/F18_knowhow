@@ -479,7 +479,7 @@ STATIC FUNCTION _ld_calc_totals( lSvi, a_benef )
 
       SELECT ld
 
-      cTipRada := g_tip_rada( ld->idradn, ld->idrj )
+      cTipRada := get_ld_rj_tip_rada( ld->idradn, ld->idrj )
 
       // provjeri tip rada
       IF cTipRada $ tr_list() .AND. Empty( cRTipRada )

@@ -186,7 +186,7 @@ FUNCTION ld_kartica_plate( cIdRj, cMjesec, cGodina, cIdRadn, cObrac )
          Scatter()
       ENDIF
 
-      cRTRada := g_tip_rada( _idradn, _idrj )
+      cRTRada := get_ld_rj_tip_rada( _idradn, _idrj )
 
       SELECT radn
       HSEEK _idradn

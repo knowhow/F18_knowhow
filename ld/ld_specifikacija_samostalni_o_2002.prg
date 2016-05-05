@@ -32,10 +32,12 @@ FUNCTION ld_specifikacija_plate_samostalni_obr_2002()
    LOCAL cRTipRada := " "
    LOCAL _proizvj_ini := my_home() + "proizvj.ini"
    LOCAL cMatBr := Space( 13 )
+   LOCAL oReport, hRec
+
    PRIVATE aSpec := {}
    PRIVATE cFNTZ := "D"
-   PRIVATE gPici := "9,999,999,999,999,999" + IIF( gZaok > 0, PadR( ".", gZaok + 1, "9" ), "" )
-   PRIVATE gPici2 := "9,999,999,999,999,999" + IIF( gZaok2 > 0, PadR( ".", gZaok2 + 1, "9" ), "" )
+   PRIVATE gPici := "9,999,999,999,999,999" + iif( gZaok > 0, PadR( ".", gZaok + 1, "9" ), "" )
+   PRIVATE gPici2 := "9,999,999,999,999,999" + iif( gZaok2 > 0, PadR( ".", gZaok2 + 1, "9" ), "" )
    PRIVATE gPici3 := "999,999,999,999.99"
 
    FOR i := 1 TO nGrupaPoslova + 1
@@ -76,10 +78,6 @@ FUNCTION ld_specifikacija_plate_samostalni_obr_2002()
    cFirmOpc := Space( 35 )
    cFirmVD := Space( 50 )
    cRadn := Space( _LR_ )
-
-
-altd()
-   YargReport():New( "ld_obr_2002", "xlsx" ):run()
 
 
    OSpecif()
@@ -177,22 +175,65 @@ altd()
 
    cIniName := _proizvj_ini
 
-   UzmiIzIni( cIniName, 'Varijable', "NAZ", cFirmNaz,'WRITE' )
-   UzmiIzIni( cIniName, 'Varijable', "ADRESA", cFirmAdresa,'WRITE' )
-   UzmiIzIni( cIniName, 'Varijable', "OPCINA", cFirmOpc,'WRITE' )
-   UzmiIzIni( cIniName, 'Varijable', "VRDJ", cFirmVD,'WRITE' )
+   AltD()
+   hRec := hb_Hash()
 
-   UzmiIzIni( cIniName, 'Varijable', "GODOD", Razrijedi( Str( nGodinaOd, 4 ) ), 'WRITE' )
-   UzmiIzIni( cIniName, 'Varijable', "GODDO", Razrijedi( Str( nGodinaDo, 4 ) ), 'WRITE' )
+   oReport := YargReport():New( "ld_obr_2002", "xlsx" )
 
-   UzmiIzIni( cIniName, 'Varijable', "MJOD", Razrijedi( StrTran( Str( nMjesecOd, 2 ), " ", "0" ) ), 'WRITE' )
-   UzmiIzIni( cIniName, 'Varijable', "MJDO", Razrijedi( StrTran( Str( nMjesecDo, 2 ), " ", "0" ) ), 'WRITE' )
 
-   UzmiIzIni( cIniName, 'Varijable', "DANOD", Razrijedi( StrTran( Str( nDanOd, 2 ), " ", "0" ) ), 'WRITE' )
-   UzmiIzIni( cIniName, 'Varijable', "DANDO", Razrijedi( StrTran( Str( nDanDo, 2 ), " ", "0" ) ), 'WRITE' )
+   hRec[ "naziv" ] := cFirmNaz
+   hRec[ "adresa" ] := cFirmAdresa
+   hRec[ "opcina" ] :=  cFirmOpc
+   // UzmiIzIni( cIniName, 'Varijable', "VRDJ", cFirmVD,'WRITE' )
 
-   UzmiIzIni( cIniName, 'Varijable', "MATBR", Razrijedi( cMatBR ), 'WRITE' )
-   UzmiIzIni( cIniName, 'Varijable', "DATISPL", DToC( dDatIspl ), 'WRITE' )
+   hRec[ "d_od_1" ] := SubStr( PadL( AllTrim( Str( nDanOd, 2 ) ), 2, "0" ), 1, 1 )
+   hRec[ "d_od_2" ] := SubStr( PadL( AllTrim( Str( nDanOd, 2 ) ), 2, "0" ), 2, 1 )
+
+   hRec[ "m_od_1" ] := SubStr( PadL( AllTrim( Str( nMjesecOd, 2 ) ), 2, "0" ), 1, 1 )
+   hRec[ "m_od_2" ] := SubStr( PadL( AllTrim( Str( nMjesecOd, 2 ) ), 2, "0" ), 2, 1 )
+
+   hRec[ "g_od_1" ] := SubStr( PadL( AllTrim( Str( nGodinaOd, 4 ) ), 4, "0" ), 1, 1 )
+   hRec[ "g_od_2" ] := SubStr( PadL( AllTrim( Str( nGodinaOd, 4 ) ), 4, "0" ), 2, 1 )
+   hRec[ "g_od_3" ] := SubStr( PadL( AllTrim( Str( nGodinaOd, 4 ) ), 4, "0" ), 3, 1 )
+   hRec[ "g_od_4" ] := SubStr( PadL( AllTrim( Str( nGodinaOd, 4 ) ), 4, "0" ), 4, 1 )
+
+
+   hRec[ "d_do_1" ] := SubStr( PadL( AllTrim( Str( nDanDo, 2 ) ), 2, "0" ), 1, 1 )
+   hRec[ "d_do_2" ] := SubStr( PadL( AllTrim( Str( nDanDo, 2 ) ), 2, "0" ), 2, 1 )
+
+   hRec[ "m_do_1" ] := SubStr( PadL( AllTrim( Str( nMjesecDo, 2 ) ), 2, "0" ), 1, 1 )
+   hRec[ "m_do_2" ] := SubStr( PadL( AllTrim( Str( nMjesecDo, 2 ) ), 2, "0" ), 2, 1 )
+
+   hRec[ "g_do_1" ] := SubStr( PadL( AllTrim( Str( nGodinaDo, 4 ) ), 4, "0" ), 1, 1 )
+   hRec[ "g_do_2" ] := SubStr( PadL( AllTrim( Str( nGodinaDo, 4 ) ), 4, "0" ), 2, 1 )
+   hRec[ "g_do_3" ] := SubStr( PadL( AllTrim( Str( nGodinaDo, 4 ) ), 4, "0" ), 3, 1 )
+   hRec[ "g_do_4" ] := SubStr( PadL( AllTrim( Str( nGodinaDo, 4 ) ), 4, "0" ), 4, 1 )
+
+   hRec[ "j1" ] := SubStr( cMatBR, 1, 1 )
+   hRec[ "j2" ] := SubStr( cMatBR, 2, 1 )
+   hRec[ "j3" ] := SubStr( cMatBR, 3, 1 )
+   hRec[ "j4" ] := SubStr( cMatBR, 4, 1 )
+   hRec[ "j5" ] := SubStr( cMatBR, 5, 1 )
+   hRec[ "j6" ] := SubStr( cMatBR, 6, 1 )
+   hRec[ "j7" ] := SubStr( cMatBR, 7, 1 )
+   hRec[ "j8" ] := SubStr( cMatBR, 8, 1 )
+   hRec[ "j9" ] := SubStr( cMatBR, 9, 1 )
+   hRec[ "j10" ] := SubStr( cMatBR, 10, 1 )
+   hRec[ "j11" ] := SubStr( cMatBR, 11, 1 )
+   hRec[ "j12" ] := SubStr( cMatBR, 12, 1 )
+   hRec[ "j13" ] := SubStr( cMatBR, 13, 1 )
+
+
+   hRec[ "d_up_1" ] := SubStr( PadL( AllTrim( Str( Day( dDatIspl ), 2 ) ), 2, "0" ), 1, 1 )
+   hRec[ "d_up_2" ] := SubStr( PadL( AllTrim( Str( Day( dDatIspl ), 2 ) ), 2, "0" ), 2, 1 )
+
+   hRec[ "m_up_1" ] := SubStr( PadL( AllTrim( Str( Month( dDatIspl ), 2 ) ), 2, "0" ), 1, 1 )
+   hRec[ "m_up_2" ] := SubStr( PadL( AllTrim( Str( Month( dDatIspl ), 2 ) ), 2, "0" ), 2, 1 )
+
+   hRec[ "g_up_1" ] := SubStr( PadL( AllTrim( Str( Year( dDatIspl ), 4 ) ), 4, "0" ), 1, 1 )
+   hRec[ "g_up_2" ] := SubStr( PadL( AllTrim( Str( Year( dDatIspl ), 4 ) ), 4, "0" ), 2, 1 )
+   hRec[ "g_up_3" ] := SubStr( PadL( AllTrim( Str( Year( dDatIspl ), 4 ) ), 4, "0" ), 3, 1 )
+   hRec[ "g_up_4" ] := SubStr( PadL( AllTrim( Str( Year( dDatIspl ), 4 ) ), 4, "0" ), 4, 1 )
 
    cObracun := Trim( cObracun )
 
@@ -214,7 +255,8 @@ altd()
    SET FILTER TO &cFilt
 
    GO TOP
-   HSEEK Str( nGodina, 4 ) + Str( nMjesec, 2 )
+   HSEEK Str( nGodina, 4, 0 ) + Str( nMjesec, 2, 0 )
+
 
    nUNeto := 0
    nUNetoOsnova := 0
@@ -223,7 +265,7 @@ altd()
    nURadnika := 0
    nULicOdbitak := 0
 
-   DO WHILE Str( nGodina, 4, 0 ) + Str( nMjesec, 2, 0) == Str( godina, 4, 0 ) + Str( mjesec, 2, 0 )
+   DO WHILE Str( nGodina, 4, 0 ) + Str( nMjesec, 2, 0 ) == Str( godina, 4, 0 ) + Str( mjesec, 2, 0 )
 
       IF field->idradn <> cRadn
          SKIP
@@ -233,7 +275,7 @@ altd()
       SELECT RADN
       HSEEK LD->idradn
 
-      cRTR := g_tip_rada( ld->idradn, ld->idrj )
+      cRTR := get_ld_rj_tip_rada( ld->idradn, ld->idrj )
 
       IF cRTR <> "S"
          SELECT ld
@@ -292,17 +334,19 @@ altd()
       nkD2X := get_dopr( cDopr2, "S" )
       nkD3X := get_dopr( cDopr3, "S" )
 
+      AltD()
       // stope na bruto
+      nPom := nKD1X
+      hRec[ "stopa_19" ] := FormNum2( nPom, 16, gPici3 ) + "%"
+
+      nPom := nKD2X
+      hRec[ "stopa_20" ] := FormNum2( nPom, 16, gPici3 ) + "%"
+
+      nPom := nKD3X
+      hRec[ "stopa_21" ] := FormNum2( nPom, 16, gPici3 ) + "%"
 
       nPom := nKD1X + nKD2X + nKD3X
-      UzmiIzIni( cIniName, 'Varijable', 'D11B', FormNum2( nPom, 16, gpici3 ) + "%", 'WRITE' )
-      nPom := nKD1X
-      UzmiIzIni( cIniName, 'Varijable', 'D11_1B', FormNum2( nPom, 16, gpici3 ) + "%", 'WRITE' )
-      nPom := nKD2X
-      UzmiIzIni( cIniName, 'Varijable', 'D11_2B', FormNum2( nPom, 16, gpici3 ) + "%", 'WRITE' )
-      nPom := nKD3X
-      UzmiIzIni( cIniName, 'Varijable', 'D11_3B', FormNum2( nPom, 16, gpici3 ) + "%", 'WRITE' )
-
+      hRec[ "stopa_22" ] := FormNum2( nPom, 16, gPici3 ) + "%"
 
       nDopr1X := round2( nBrutoOsnova * nkD1X / 100, gZaok2 )
       nDopr2X := round2( nBrutoOsnova * nkD2X / 100, gZaok2 )
@@ -313,20 +357,18 @@ altd()
          round2( ( nPojBrOsn * nkD3X / 100 ), gZaok2 )
 
       // iznos doprinosa
-
-      nPom := nDopr1X + nDopr2X + nDopr3X
-
-      // ukupni doprinosi iz plate
-      nUkDoprIZ := nPom
-
-      UzmiIzIni( cIniName, 'Varijable', 'D11I', FormNum2( nPom, 16, gPici2 ), 'WRITE' )
       nPom := nDopr1X
-      UzmiIzIni( cIniName, 'Varijable', 'D11_1I', FormNum2( nPom, 16, gPici2 ), 'WRITE' )
-      nPom := nDopr2X
-      UzmiIzIni( cIniName, 'Varijable', 'D11_2I', FormNum2( nPom, 16, gPici2 ), 'WRITE' )
-      nPom := nDopr3X
-      UzmiIzIni( cIniName, 'Varijable', 'D11_3I', FormNum2( nPom, 16, gPici2 ), 'WRITE' )
+      hRec[ "iznos_19" ] := FormNum2( nPom, 16, gPici2 )
 
+      nPom := nDopr2X
+      hRec[ "iznos_20" ] := FormNum2( nPom, 16, gPici2 )
+
+      nPom := nDopr3X
+      hRec[ "iznos_21" ] := FormNum2( nPom, 16, gPici2 )
+
+      nPom := nDopr1X + nDopr2X + nDopr3X // ukupni doprinosi iz plate
+      nUkDoprIZ := nPom
+      hRec[ "iznos_22" ] := FormNum2( nPom, 16, gPici2 )
 
       SELECT LD
 
@@ -337,38 +379,36 @@ altd()
    ENDDO
 
    // podaci o radniku
-   // ime poduzetnika
-   UzmiIzIni( cIniName, 'Varijable', 'PODNAZ', AllTrim( radn->ime ) + ;
-      " " + AllTrim( radn->naz ),'WRITE' )
-   // adresa
-   UzmiIzIni( cIniName, 'Varijable', 'PODADR', AllTrim( radn->streetname ) + ;
-      " " + AllTrim( radn->streetnum ),'WRITE' )
-   // matbr
-   UzmiIzIni( cIniName, 'Varijable', 'PODMAT', Razrijedi( radn->matbr ),'WRITE' )
-   // opcina
-   UzmiIzIni( cIniName, 'Varijable', 'PODOPC', ;
-      Ocitaj( F_OPS, radn->idopsrad, "naz", .T. ),'WRITE' )
+   hRec[ "prezime_ime" ] := AllTrim( radn->ime ) + " " + AllTrim( radn->naz )
+   hRec[ "adresa_2" ] := AllTrim( radn->streetname ) +  " " + AllTrim( radn->streetnum )
 
-   // ukupno radnika
-   UzmiIzIni( cIniName, 'Varijable', 'U016', Str( nURadnika, 0 ),'WRITE' )
+   hRec[ "j21" ] := SubStr( radn->matBr, 1, 1 )
+   hRec[ "j22" ] := SubStr( radn->matBr, 2, 1 )
+   hRec[ "j23" ] := SubStr( radn->matBr, 3, 1 )
+   hRec[ "j24" ] := SubStr( radn->matBr, 4, 1 )
+   hRec[ "j25" ] := SubStr( radn->matBr, 5, 1 )
+   hRec[ "j26" ] := SubStr( radn->matBr, 6, 1 )
+   hRec[ "j27" ] := SubStr( radn->matBr, 7, 1 )
+   hRec[ "j28" ] := SubStr( radn->matBr, 8, 1 )
+   hRec[ "j29" ] := SubStr( radn->matBr, 9, 1 )
+   hRec[ "j210" ] := SubStr( radn->matBr, 10, 1 )
+   hRec[ "j211" ] := SubStr( radn->matBr, 11, 1 )
+   hRec[ "j212" ] := SubStr( radn->matBr, 12, 1 )
+   hRec[ "j213" ] := SubStr( radn->matBr, 13, 1 )
 
-   // ukupno neto
-   UzmiIzIni( cIniName, 'Varijable', 'U018', FormNum2( nUNETO, 16, gPici2 ), 'WRITE' )
+   hRec[ "opcina_2" ] := Ocitaj( F_OPS, radn->idopsrad, "naz", .T. )
+
+   hRec[ "br_zaposlenih"] := Alltrim( Str( nURadnika, 6, 0 ))
+
+   // ukupno neto  FormNum2( nUNETO, 16, gPici2 )
 
    nPom := nBrutoOsnova
    nUUNR := nPom
-   UzmiIzIni( cIniName, 'Varijable', 'UNR', FormNum2( nPom, 16, gPici2 ), 'WRITE' )
+   // FormNum2( nPom, 16, gPici2 )
 
-   IniRefresh()
-   // Odstampaj izvjestaj
 
    my_close_all_dbf()
-
-   IF LastKey() != K_ESC
-
-      cSpecRtm := "specbs"
-      f18_rtm_print( AllTrim( cSpecRtm ), "DUMMY", "1" )
-
-   ENDIF
+   oReport:aRecords := { hRec }
+   oReport:run()
 
    RETURN .T.

@@ -444,7 +444,7 @@ FUNCTION ld_specifikacija_plate()
 
       SELECT RADN
       HSEEK LD->idradn
-      cRTR := g_tip_rada( ld->idradn, ld->idrj )
+      cRTR := get_ld_rj_tip_rada( ld->idradn, ld->idrj )
       nRSpr_koef := 0
       IF cRTR == "S"
          nRSpr_koef := radn->sp_koef

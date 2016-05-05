@@ -1036,7 +1036,7 @@ FUNCTION mip_fill_data( cRj, cRjDef, cGod, cMj, ;
          ENDIF
       ENDIF
 
-      cTipRada := g_tip_rada( ld->idradn, ld->idrj )
+      cTipRada := get_ld_rj_tip_rada( ld->idradn, ld->idrj )
       lInRS := radnik_iz_rs( radn->idopsst, radn->idopsrad )
 
       // samo pozicionira bazu PAROBR na odgovarajuci zapis
@@ -1112,7 +1112,7 @@ FUNCTION mip_fill_data( cRj, cRjDef, cGod, cMj, ;
          SELECT ld
 
          // uvijek provjeri tip rada, ako ima vise obracuna
-         cTipRada := g_tip_rada( ld->idradn, ld->idrj )
+         cTipRada := get_ld_rj_tip_rada( ld->idradn, ld->idrj )
          cTrosk := radn->trosk
          lInRS := radnik_iz_rs( radn->idopsst, radn->idopsrad )
 

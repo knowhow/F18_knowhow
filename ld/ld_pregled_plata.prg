@@ -255,7 +255,7 @@ FUNCTION pregled_plata()
 
       SELECT ld
 
-      cRTipRada := g_tip_rada( _idradn, ld->idrj )
+      cRTipRada := get_ld_rj_tip_rada( _idradn, ld->idrj )
       nPrKoef := radn->sp_koef
       cOpor := radn->opor
       cTrosk := radn->trosk

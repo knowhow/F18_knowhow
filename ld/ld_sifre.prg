@@ -1006,9 +1006,11 @@ FUNCTION P_DOPR( cId, dx, dy )
 
 FUNCTION P_KBenef( cId, dx, dy )
 
-   PRIVATE imekol
+   LOCAL xRet
+   PRIVATE Imekol
    PRIVATE kol
 
+   PushWa()
    ImeKol := { { PadR( "Id", 3 ), {|| PadC( id, 3 ) }, "id", {|| .T. }, {|| vpsifra( wid ) } }, ;
       { PadR( "Naziv", 8 ), {||  naz }, "naz" }, ;
       { PadR( "Iznos", 5 ), {||  iznos }, "iznos" }                       ;
@@ -1016,15 +1018,17 @@ FUNCTION P_KBenef( cId, dx, dy )
 
    Kol := { 1, 2, 3 }
 
-   RETURN PostojiSifra( F_KBENEF, 1, MAXROWS() -15, MAXCOLS() -20, ;
-      _l( "Lista koef.beneficiranog radnog staza" ), ;
-      @cId, dx, dy )
+   xRet := PostojiSifra( F_KBENEF, 1, MAXROWS() -15, MAXCOLS() -20,  "Lista koef.beneficiranog radnog staza", @cId, dx, dy )
 
+   PopWa()
+
+   RETURN xRet
 
 
 
 FUNCTION P_StrSpr( cId, dx, dy )
 
+   LOCAL xRet
    PRIVATE imekol, kol
 
    ImeKol := { { PadR( "Id", 3 ), {|| id }, "id", {|| .T. }, {|| vpsifra( wid ) } }, ;
@@ -1033,15 +1037,20 @@ FUNCTION P_StrSpr( cId, dx, dy )
       }
    Kol := { 1, 2, 3 }
 
-   RETURN PostojiSifra( F_STRSPR, 1, MAXROWS() -15, MAXCOLS() -15, ;
-      _l( "Lista: strucne spreme" ), ;
-      @cId, dx, dy )
+   PushWa()
 
+   select_o_str_spr()
+   xRet := PostojiSifra( F_STRSPR, 1, MAXROWS() -15, MAXCOLS() -15,  _u( "Lista: stručne spreme" ), @cId, dx, dy )
+
+   PopWa()
+
+   RETURN xRet
 
 
 
 FUNCTION P_VPosla( cId, dx, dy )
 
+   LOCAL xRet
    PRIVATE imekol
    PRIVATE kol
 
@@ -1051,11 +1060,16 @@ FUNCTION P_VPosla( cId, dx, dy )
       }
    Kol := { 1, 2, 3 }
 
-   RETURN PostojiSifra( F_VPOSLA, 1, 10, 55, _l( "Lista: Vrste posla" ), @cId, dx, dy )
+   PushWA()
+   xRet := PostojiSifra( F_VPOSLA, 1, 10, 55, _l( "Lista: Vrste posla" ), @cId, dx, dy )
 
+   PopWA()
+
+   RETURN xRet
 
 FUNCTION P_NorSiht( cId, dx, dy )
 
+   LOCAL xRet
    PRIVATE imekol
    PRIVATE kol
 
@@ -1066,8 +1080,11 @@ FUNCTION P_NorSiht( cId, dx, dy )
       }
    Kol := { 1, 2, 3, 4 }
 
-   RETURN PostojiSifra( F_NORSIHT, 1, MAXROWS() -15, MAXCOLS() -20, "Lista: Norme u sihtarici", @cId, dx, dy )
+   PushWa()
+   xRet := PostojiSifra( F_NORSIHT, 1, MAXROWS() -15, MAXCOLS() -20, "Lista: Norme u sihtarici", @cId, dx, dy )
+   PopWa()
 
+   RETURN xRet
 
 
 
@@ -1255,7 +1272,7 @@ FUNCTION TRUSif()
       KEYBOARD Chr( K_ENTER ) + Chr( K_UP )
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -1264,7 +1281,6 @@ FUNCTION PorBl( Ch )
    LOCAL nVrati := DE_CONT
    LOCAL nRec := RecNo()
    PRIVATE GetList := {}
-
 
    RETURN nVrati
 
@@ -1275,6 +1291,5 @@ FUNCTION DoprBl( Ch )
 
    LOCAL nVrati := DE_CONT
    LOCAL nRec := RecNo()
-
 
    RETURN nVrati

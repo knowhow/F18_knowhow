@@ -313,7 +313,7 @@ STATIC FUNCTION _gen_xml( xml_file, tkm_no, len_naz )
 
    LOCAL _t_area := Select()
 
-   open_xml( xml_file )
+   create_xml( xml_file )
    xml_head()
 
    xml_subnode( "lab", .F. )

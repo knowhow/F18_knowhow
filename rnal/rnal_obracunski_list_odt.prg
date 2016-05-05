@@ -131,7 +131,7 @@ STATIC FUNCTION _cre_xml( params )
    PIC_VRIJEDNOST := PadL( AllTrim( Right( _picdem, LEN_VRIJEDNOST ) ), LEN_VRIJEDNOST, "9" )
 
    // otvori xml za upis...
-   open_xml( _xml )
+   create_xml( _xml )
 
    xml_subnode( "specifikacija", .F. )
    xml_subnode( "spec", .F. )

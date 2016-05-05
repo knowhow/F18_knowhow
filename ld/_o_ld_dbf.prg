@@ -11,9 +11,14 @@
 
 #include "f18.ch"
 
-FUNCTION open_rekld()
+FUNCTION o_radn()
+   RETURN o_dbf_table( F_RADN, "radn", "1" )
 
-   // #xcommand O_REKLD   => select (F_REKLD)   ;  my_usex ("rekld")   ; set order to tag "1"
+FUNCTION select_o_radn()
+   RETURN select_o_dbf( "RADN", F_RADN, "radn", "1" )
+
+
+FUNCTION open_rekld()
 
    RETURN o_dbf_table( F_REKLD, "rekld", "1" )
 
@@ -31,3 +36,18 @@ FUNCTION open_ld_rj()
 FUNCTION select_open_ld_rj()
 
    RETURN select_o_dbf( "LD_RJ", F_LD_RJ, "ld_rj", "ID" )
+
+
+
+/*
+ strucne spreme
+*/
+
+FUNCTION o_str_spr()
+
+   RETURN o_dbf_table( F_STRSPR, "strspr", "ID" )
+
+
+FUNCTION select_o_str_spr()
+
+   RETURN select_o_dbf( "STRSPR", F_STRSPR, "strspr", "ID" )

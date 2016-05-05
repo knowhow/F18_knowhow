@@ -83,7 +83,7 @@ FUNCTION tremol_rn( dev_params, items, head, storno, cont )
    _xml := dev_params[ "out_dir" ] + _f_name
 
    // otvori xml
-   open_xml( _xml )
+   create_xml( _xml )
 
    // upisi header
    xml_head()
@@ -161,7 +161,7 @@ FUNCTION tremol_rn( dev_params, items, head, storno, cont )
          _tmp += _razmak1 + 'Discount="' + AllTrim( Str( _rabat, 12, 2 ) ) + '%"'
       ENDIF
 
-      xml_snode( "Item", _tmp )
+      xml_single_node( "Item", _tmp )
 
    NEXT
 
@@ -179,14 +179,14 @@ FUNCTION tremol_rn( dev_params, items, head, storno, cont )
       _tmp := 'Type="' + _vr_plac + '"'
       _tmp += _razmak1 + 'Amount="' + AllTrim( Str( _total_plac, 12, 2 ) ) + '"'
 
-      xml_snode( "Payment", _tmp )
+      xml_single_node( "Payment", _tmp )
 
    ENDIF
 
    // dodatna linija, broj veznog racuna
    _tmp := 'Message="Vezni racun: ' + _racun_broj + '"'
 
-   xml_snode( "AdditionalLine", _tmp )
+   xml_single_node( "AdditionalLine", _tmp )
 
    xml_subnode( "TremolFpServer", .T. )
 
@@ -292,7 +292,7 @@ FUNCTION tremol_polog( dev_params, auto )
    _xml := dev_params[ "out_dir" ] + _f_name
 
    // otvori xml
-   open_xml( _xml )
+   create_xml( _xml )
 
    // upisi header
    xml_head()
@@ -301,7 +301,7 @@ FUNCTION tremol_polog( dev_params, auto )
 
    _cmd := 'Amount="' +  AllTrim( Str( Abs( _value ), 12, 2 ) ) + '"'
 
-   xml_snode( "Cash", _cmd )
+   xml_single_node( "Cash", _cmd )
 
    xml_subnode( "/TremolFpServer" )
 
@@ -331,7 +331,7 @@ FUNCTION tremol_reset_plu( dev_params )
    _xml := dev_params[ "out_dir" ] + _f_name
 
    // otvori xml
-   open_xml( _xml )
+   create_xml( _xml )
 
    // upisi header
    xml_head()
@@ -344,7 +344,7 @@ FUNCTION tremol_reset_plu( dev_params )
    _cmd += _razmak1 + 'Data="0"'
    _cmd += _razmak1 + 'Object="K00000;F142HZ              ;0;$"'
 
-   xml_snode( "DirectIO", _cmd )
+   xml_single_node( "DirectIO", _cmd )
 
    xml_subnode( "/TremolFpServer" )
 
@@ -373,7 +373,7 @@ FUNCTION tremol_cmd( dev_params, cmd )
    _xml := dev_params[ "out_dir" ] + _f_name
 
    // otvori xml
-   open_xml( _xml )
+   create_xml( _xml )
 
    // upisi header
    xml_head()

@@ -137,7 +137,7 @@ STATIC FUNCTION _gen_xml( params )
 
    GO TOP
 
-   open_xml( my_home() + "data.xml" )
+   create_xml( my_home() + "data.xml" )
    xml_head()
 
    xml_subnode( "inv", .F. )

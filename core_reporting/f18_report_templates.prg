@@ -41,3 +41,59 @@ FUNCTION f18_template_location()
    ENDIF
 
    RETURN ""
+
+
+
+
+/*
+    Opis: kopira template sa lokacije /knowhowERP/templates => home path
+*/
+
+FUNCTION copy_template_to_my_home( cTemplate )
+
+   LOCAL _ret := .F.
+   LOCAL _a_source, _a_template
+   LOCAL _src_size, _src_date, _src_time
+   LOCAL _temp_size, _temp_date, _temp_time
+   LOCAL _copy := .F.
+
+   IF !File( my_home() + cTemplate )
+      _copy := .T.
+   ELSE
+
+      _a_source := Directory( my_home() + cTemplate )
+      IF Len( _a_source[ 1 ] ) < 4
+         Alert( "file atributi error: " + my_home() + cTemplate )
+      ENDIF
+
+      _a_template := Directory( f18_template_location() + cTemplate )
+      IF Len( _a_template[ 1 ] ) < 4
+         Alert( "file atributi error: " + f18_template_location() + cTemplate )
+      ENDIF
+
+      _src_size := AllTrim( Str( _a_source[ 1, 2 ] ) )
+      _src_date := DToS( _a_source[ 1, 3 ] )
+      _src_time := _a_source[ 1, 4 ]
+
+      _temp_size := AllTrim( Str( _a_template[ 1, 2 ] ) )
+      _temp_date := DToS( _a_template[ 1, 3 ] )
+      _temp_time := _a_template[ 1, 4 ]
+
+      IF _temp_date + _temp_time > _src_date + _src_time // provjera vremena
+         _copy := .T.
+      ENDIF
+
+   ENDIF
+
+   IF _copy
+      IF File( f18_template_location() + cTemplate )
+         FileCopy( f18_template_location() + cTemplate, my_home() + cTemplate )
+      ELSE
+         MsgBeep( "Fajl " + f18_template_location() + cTemplate + " ne postoji !?" )
+         RETURN _ret
+      ENDIF
+   ENDIF
+
+   _ret := .T.
+
+   RETURN _ret

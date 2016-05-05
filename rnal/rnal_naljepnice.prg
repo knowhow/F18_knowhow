@@ -56,7 +56,7 @@ FUNCTION rnal_stampa_naljepnica_odt()
 
          IF ( nCount == 0 .OR. nCount%nMax_komada == 0 )
 
-            open_xml( _data_xml )
+            create_xml( _data_xml )
             xml_head()
             xml_subnode( "label", .F. )
             upisi_header_xml( _h_header )

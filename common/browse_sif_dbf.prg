@@ -11,6 +11,8 @@
 
 #include "f18.ch"
 
+MEMVAR ImeKol, Kol
+
 THREAD STATIC __PSIF_NIVO__ := 0
 THREAD STATIC __A_SIFV__ := { { NIL, NIL, NIL }, { NIL, NIL, NIL }, { NIL, NIL, NIL }, { NIL, NIL, NIL } }
 

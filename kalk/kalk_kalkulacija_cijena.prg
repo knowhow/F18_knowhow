@@ -271,7 +271,7 @@ STATIC FUNCTION gen_kalk_predispozicija_xml( vars )
 
    _t_rec := RecNo()
 
-   open_xml( _xml_file )
+   create_xml( _xml_file )
    xml_head()
 
    xml_subnode( "kalk", .F. )
@@ -439,7 +439,7 @@ STATIC FUNCTION gen_kalk_mp_xml( vars )
 
    _t_rec := RecNo()
 
-   open_xml( _xml_file )
+   create_xml( _xml_file )
    xml_head()
 
    xml_subnode( "kalk", .F. )
@@ -644,7 +644,7 @@ STATIC FUNCTION gen_kalk_vp_xml( vars )
 
    _t_rec := RecNo()
 
-   open_xml( _xml_file )
+   create_xml( _xml_file )
    xml_head()
 
    xml_subnode( "kalk", .F. )

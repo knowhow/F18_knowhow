@@ -640,7 +640,7 @@ STATIC FUNCTION _fill_e_xml( file_name )
    LOCAL nT_lodb := 0
 
    // otvori xml za upis
-   open_xml( file_name )
+   create_xml( file_name )
 
    // upisi header
    _xml_head()
@@ -878,7 +878,7 @@ STATIC FUNCTION _fill_xml( cTip, xml_file )
    LOCAL nT_lodb := 0
 
    // otvori xml za upis
-   open_xml( xml_file )
+   create_xml( xml_file )
    // upisi header
    xml_head()
 

@@ -141,7 +141,7 @@ STATIC FUNCTION kreiraj_xml_fajl( groups, params )
 
    PIC_VRIJEDNOST := PadL( AllTrim( Right( _picdem, LEN_VRIJEDNOST ) ), LEN_VRIJEDNOST, "9" )
 
-   open_xml( _xml )
+   create_xml( _xml )
 
    xml_subnode( "nalozi", .F. )
 

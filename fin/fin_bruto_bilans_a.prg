@@ -531,7 +531,7 @@ METHOD FinBrutoBilans:gen_xml()
       _sint_len := 2
    ENDIF
 
-   open_xml( my_home() + _xml )
+   create_xml( my_home() + _xml )
 
    xml_subnode( "rpt", .F. )
 

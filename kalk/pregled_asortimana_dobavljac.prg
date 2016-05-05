@@ -331,7 +331,7 @@ STATIC FUNCTION print_frm_asort_nar( vars )
    LOCAL _template := "kalk_asort_nar.odt"
    LOCAL _count := 0
 
-   open_xml( _my_xml )
+   create_xml( _my_xml )
    xml_head()
 
    SELECT r_export

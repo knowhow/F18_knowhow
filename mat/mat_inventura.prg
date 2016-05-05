@@ -942,7 +942,7 @@ FUNCTION mat_popisna_lista()
    A := 0
    B := 0
 
-   open_xml( _my_xml )
+   create_xml( _my_xml )
    xml_head()
 
    xml_subnode( "inv", .F. )

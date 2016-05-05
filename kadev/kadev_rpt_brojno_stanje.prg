@@ -178,7 +178,7 @@ STATIC FUNCTION _cre_xml( params )
       RETURN _ok
    ENDIF
 
-   open_xml( __xml_file )
+   create_xml( __xml_file )
    xml_head()
 
    xml_subnode( "rpt", .F. )

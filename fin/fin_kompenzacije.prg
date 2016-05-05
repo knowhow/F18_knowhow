@@ -715,7 +715,7 @@ STATIC FUNCTION _gen_xml( vars, xml_file )
    _dat_do := vars[ "dat_do" ]
    _dat_komp := vars[ "datum" ]
 
-   open_xml( xml_file )
+   create_xml( xml_file )
 
    xml_head()
 

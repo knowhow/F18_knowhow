@@ -12,6 +12,44 @@
 #include "f18.ch"
 
 
+// --------------------------------
+// otvori xml fajl za upis
+// --------------------------------
+FUNCTION create_xml( cFile )
+
+   IF cFile == nil
+      cFile := my_home() + "data.xml"
+   ENDIF
+
+   SET PRINTER to ( cFile )
+   SET PRINTER ON
+   SET CONSOLE OFF
+
+   RETURN .T.
+
+
+// ----------------------------------------------------
+// xml header
+// ----------------------------------------------------
+FUNCTION xml_head( lWrite, cTxt )
+
+   LOCAL cTmp := '<?xml version="1.0" encoding="UTF-8"?>'
+
+   IF cTxt == nil
+      cTxt := cTmp
+   ENDIF
+
+   IF lWrite == nil
+      lWrite := .T.
+   ENDIF
+
+   IF lWrite == .T.
+      ?? cTxt
+      ?
+   ENDIF
+
+   RETURN cTxt
+
 FUNCTION xml_node( cName, cData, lWrite )
 
    LOCAL cTmp
@@ -37,10 +75,14 @@ FUNCTION xml_node( cName, cData, lWrite )
    RETURN cTmp
 
 
-// ------------------------------------
-// xml single node
-// ------------------------------------
-FUNCTION xml_snode( cName, cData, lWrite )
+/*
+
+   cName = position
+   cData = bcr="22" vat="33"
+   => <position bcr="22" vat="33" />
+
+*/
+FUNCTION xml_single_node( cName, cData, lWrite )
 
    LOCAL cTmp
 
@@ -48,10 +90,6 @@ FUNCTION xml_snode( cName, cData, lWrite )
       lWrite := .T.
    ENDIF
 
-   // eg.
-   // cName = position
-   // cData = bcr="22" vat="33"
-   // => <position bcr="22" vat="33" />
 
    cTmp := _sbracket( cName + " " + cData )
 
@@ -63,6 +101,12 @@ FUNCTION xml_snode( cName, cData, lWrite )
    RETURN cTmp
 
 
+
+FUNCTION xml_subnode_start( cName, lWrite )
+   RETURN xml_subnode( cName, .F., lWrite )
+
+FUNCTION xml_subnode_end( cName, lWrite )
+   RETURN xml_subnode( cName, .T., lWrite )
 
 // ----------------------------------------------
 // xml subnode
@@ -88,30 +132,6 @@ FUNCTION xml_subnode( cName, lEscape, lWrite )
    ENDIF
 
    RETURN cTmp
-
-
-
-// ----------------------------------------------------
-// xml header
-// ----------------------------------------------------
-FUNCTION xml_head( lWrite, cTxt )
-
-   LOCAL cTmp := '<?xml version="1.0" encoding="UTF-8"?>'
-
-   IF cTxt == nil
-      cTxt := cTmp
-   ENDIF
-
-   IF lWrite == nil
-      lWrite := .T.
-   ENDIF
-
-   IF lWrite == .T.
-      ?? cTxt
-      ?
-   ENDIF
-
-   RETURN cTxt
 
 
 // --------------------------------------------
@@ -147,20 +167,7 @@ STATIC FUNCTION _bracket( cStr, lEsc )
    RETURN cRet
 
 
-// --------------------------------
-// otvori xml fajl za upis
-// --------------------------------
-FUNCTION open_xml( cFile )
 
-   IF cFile == nil
-      cFile := my_home() + "data.xml"
-   ENDIF
-
-   SET PRINTER to ( cFile )
-   SET PRINTER ON
-   SET CONSOLE OFF
-
-   RETURN
 
 
 // --------------------------------
@@ -172,7 +179,7 @@ FUNCTION close_xml()
    SET PRINTER OFF
    SET CONSOLE ON
 
-   RETURN
+   RETURN .T.
 
 
 // ----------------------------------------------
@@ -189,3 +196,8 @@ FUNCTION xml_date( dDate )
    cRet += PadL( AllTrim( Str( Day( dDate ) ) ), 2, "0" )
 
    RETURN cRet
+
+
+FUNCTION xml_quote( cString )
+
+   RETURN '"' + cString + '"'

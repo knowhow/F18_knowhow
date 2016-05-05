@@ -361,7 +361,7 @@ STATIC FUNCTION _cre_xml( table, rpt_vars )
       RETURN .F.
    ENDIF
 
-   open_xml( _my_xml )
+   create_xml( _my_xml )
 
    xml_head()
 

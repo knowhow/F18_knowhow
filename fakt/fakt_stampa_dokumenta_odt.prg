@@ -535,7 +535,7 @@ STATIC FUNCTION _fakt_dok_gen_xml( xml_file, a_racuni, ctrl_data )
    // brdok, datdok, datval, datisp, vrijeme, zaokr, ukbezpdv, ukpopust
    // ukpoptp, ukbpdvpop, ukpdv, ukupno, ukkol, csumrn
 
-   open_xml( xml_file )
+   create_xml( xml_file )
 
    xml_head()
    xml_subnode( "invoice", .F. )

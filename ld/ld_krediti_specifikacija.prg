@@ -194,7 +194,7 @@ STATIC FUNCTION _cre_xml( data, params )
    LOCAL _t_kred_uplaceno := 0
    LOCAL _t_ostatak := 0
 
-   open_xml( _xml_file )
+   create_xml( _xml_file )
    xml_head()
 
    xml_subnode( "spec", .F. )

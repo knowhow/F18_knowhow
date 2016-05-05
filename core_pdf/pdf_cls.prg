@@ -1,7 +1,4 @@
 #include "f18.ch"
-#require "hbhpdf"
-
-#include "pdf_cls.ch"
 
 // http://www.harbourdoc.com.br/show.asp?seek=description&key=PDFClass
 

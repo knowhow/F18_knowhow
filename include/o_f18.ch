@@ -243,8 +243,8 @@
 #xcommand O_R_PDV   => select(F_R_PDV);  my_usex  ("r_pdv")
 
 // modul LD
-#xcommand O_RADN    => select (F_RADN)    ;  my_use ("radn")     ; set order to tag "1"
-#xcommand O_RADN_NOT_USED  => select (F_RADN) ;  IF !USED(); my_use( "radn" ); ENDIF  ; set order to tag "1"
+#xcommand O_RADN    => o_radn()
+#xcommand O_RADN_NOT_USED  => select_o_radn()
 
 #xcommand O_LD_RJ   => open_ld_rj()
 
@@ -270,7 +270,7 @@
 #xcommand O_DOPR    => select (F_DOPR)    ;  my_use ("dopr")     ; set order to tag "ID"
 #xcommand O_KRED    => select (F_KRED)    ;  my_use ("kred")     ; set order to tag "ID"
 #xcommand O__KRED   => select (F__KRED)   ;  my_use ("_kred")    ; set order to tag "ID"
-#xcommand O_STRSPR  => select (F_STRSPR)  ;  my_use ("strspr")   ; set order to tag "ID"
+#xcommand O_STRSPR  => o_str_spr()
 #xcommand O_VPOSLA  => select (F_VPOSLA)  ;  my_use  ("vposla")  ; set order to tag "ID"
 #xcommand O_PAROBR  => select (F_PAROBR)  ;  my_use ("parobr")   ; set order to tag "ID"
 #xcommand O_TIPPR   => select (F_TIPPR)   ;  my_use ("tippr")    ; set order to tag "ID"

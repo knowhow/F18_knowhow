@@ -297,62 +297,61 @@ HB_FUNC( __RUN_SYSTEM )
 
 
 
-FUNCTION f18_run( cmd, hOutput, always_ok, async )
+FUNCTION f18_run( cCommand, hOutput, lAlwaysOk, lAsync )
 
    LOCAL _ret
    LOCAL cStdOut := "", cStdErr := ""
    LOCAL _prefix
    LOCAL _msg
 
-   IF always_ok == NIL
-      always_ok := .F.
+   IF lAlwaysOk == NIL
+      lAlwaysOk := .F.
    ENDIF
 
-   IF async == NIL
-      async := .F. // najcesce zelimo da okinemo eksternu komandu i nastavimo rad
+   IF lAsync == NIL
+      lAsync := .F. // najcesce zelimo da okinemo eksternu komandu i nastavimo rad
    ENDIF
-
 
 #ifdef __PLATFORM__UNIX
-   _ret := __run_system( cmd + iif( async, "&", "" ) )
+   _ret := __run_system( cCommand + iif( lAsync, "&", "" ) )
 #else
-   _ret := hb_processRun( cmd, NIL, @cStdOut, @cStdErr, async )
+   _ret := hb_processRun( cCommand, NIL, @cStdOut, @cStdErr, lAsync )
 #endif
-   ?E cmd, _ret, "stdout:", cStdOut, "stderr:", cStdErr
+   ?E cCommand, _ret, "stdout:", cStdOut, "stderr:", cStdErr
 
    IF _ret == 0
-      info_bar( "run1", cmd + " : " + cStdOut + "/" + cStdErr )
+      info_bar( "run1", cCommand + " : " + cStdOut + "/" + cStdErr )
    ELSE
-      error_bar( "run1", cmd + cStdOut + "/" + cStdErr )
+      error_bar( "run1", cCommand + cStdOut + "/" + cStdErr )
 
-      _prefix := get_run_prefix( cmd )
+      _prefix := get_run_prefix( cCommand )
 
 #ifdef __PLATFORM__LINUX
-      IF async
-         _ret := __run_system( _prefix + cmd + "&" )
+      IF lAsync
+         _ret := __run_system( _prefix + cCommand + "&" )
       ELSE
-         _ret := hb_processRun( _prefix + cmd, NIL, @cStdOut, @cStdErr )
+         _ret := hb_processRun( _prefix + cCommand, NIL, @cStdOut, @cStdErr )
       ENDIF
 #else
-      _ret := hb_processRun( _prefix + cmd, NIL, @cStdOut, @cStdErr, async )
+      _ret := hb_processRun( _prefix + cCommand, NIL, @cStdOut, @cStdErr, lAsync )
 #endif
-      ?E cmd, _ret, "stdout:", cStdOut, "stderr:", cStdErr
+      ?E cCommand, _ret, "stdout:", cStdOut, "stderr:", cStdErr
 
 
       IF _ret == 0
-         info_bar( "run2", _prefix + cmd + " : " + cStdOut + "/" + cStdErr )
+         info_bar( "run2", _prefix + cCommand + " : " + cStdOut + "/" + cStdErr )
       ELSE
-         error_bar( "run2", _prefix + cmd + " : " + cStdOut + "/" + cStdErr )
+         error_bar( "run2", _prefix + cCommand + " : " + cStdOut + "/" + cStdErr )
 
-         _ret := __run_system( cmd )  // npr. copy komanda trazi system run a ne hbprocess run
-         ?E cmd, _ret, "stdout:", cStdOut, "stderr:", cStdErr
-         IF _ret <> 0 .AND. !always_ok
+         _ret := __run_system( cCommand )  // npr. copy komanda trazi system run a ne hbprocess run
+         ?E cCommand, _ret, "stdout:", cStdOut, "stderr:", cStdErr
+         IF _ret <> 0 .AND. !lAlwaysOk
 
-            error_bar( "run3", cmd + " : " + cStdOut + "/" + cStdErr )
-            _msg := "ERR run cmd: "  + cmd + " : " + cStdOut + "/" + cStdErr
+            error_bar( "run3", cCommand + " : " + cStdOut + "/" + cStdErr )
+            _msg := "ERR run cmd: "  + cCommand + " : " + cStdOut + "/" + cStdErr
             log_write( _msg, 2 )
          ELSE
-            info_bar( "run3", cmd + " : " + cStdOut + "/" + cStdErr )
+            info_bar( "run3", cCommand + " : " + cStdOut + "/" + cStdErr )
 
          ENDIF
 

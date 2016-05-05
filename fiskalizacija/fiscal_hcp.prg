@@ -154,7 +154,7 @@ FUNCTION hcp_rn( dev_params, items, head, storno, rn_total )
    _xml := dev_params[ "out_dir" ] + _inp_dir + SLASH + _f_name
 
    // otvori xml
-   open_xml( _xml )
+   create_xml( _xml )
 
    // upisi header
    xml_head()
@@ -213,7 +213,7 @@ FUNCTION hcp_rn( dev_params, items, head, storno, rn_total )
 
       ENDIF
 
-      xml_snode( "DATA", _tmp )
+      xml_single_node( "DATA", _tmp )
 
    NEXT
 
@@ -239,7 +239,7 @@ FUNCTION hcp_rn( dev_params, items, head, storno, rn_total )
    _tmp := 'PAY="' + _v_plac + '"'
    _tmp += _razmak1 + 'AMN="' + AllTrim( Str( _total_placanje, 12, 2 ) ) + '"'
 
-   xml_snode( "DATA", _tmp )
+   xml_single_node( "DATA", _tmp )
 
    xml_subnode( "RECEIPT", .T. )
 
@@ -313,7 +313,7 @@ FUNCTION hcp_footer( dev_params, footer )
    _xml := dev_params[ "out_dir" ] + _inp_dir + SLASH + _f_name
 
    // otvori xml
-   open_xml( _xml )
+   create_xml( _xml )
 
    // upisi header
    xml_head()
@@ -326,7 +326,7 @@ FUNCTION hcp_footer( dev_params, footer )
       _tmp += ' '
       _tmp += 'BOLD="false"'
 
-      xml_snode( "DATA", _tmp )
+      xml_single_node( "DATA", _tmp )
 
    NEXT
 
@@ -365,7 +365,7 @@ FUNCTION hcp_cli( dev_params, head )
    _xml := dev_params[ "out_dir" ] + _inp_dir + SLASH + _f_name
 
    // otvori xml
-   open_xml( _xml )
+   create_xml( _xml )
 
    // upisi header
    xml_head()
@@ -382,7 +382,7 @@ FUNCTION hcp_cli( dev_params, head )
       _tmp += _razmak1 + 'TOWN="' + ;
          AllTrim( to_xml_encoding( head[ _i, 5 ] ) ) + '"'
 
-      xml_snode( "DATA", _tmp )
+      xml_single_node( "DATA", _tmp )
 
    NEXT
 
@@ -423,7 +423,7 @@ FUNCTION hcp_plu( dev_params, items )
    _xml := dev_params[ "out_dir" ] + _inp_dir + SLASH + _f_name
 
    // otvori xml
-   open_xml( _xml )
+   create_xml( _xml )
 
    // upisi header
    xml_head()
@@ -448,7 +448,7 @@ FUNCTION hcp_plu( dev_params, items )
       _tmp += _razmak1 + 'PRC="' + AllTrim( Str( _art_cijena, 12, 2 ) ) + '"'
       _tmp += _razmak1 + 'LGR="' + AllTrim( Str( _lager, 12, 2 ) ) + '"'
 
-      xml_snode( "DATA", _tmp )
+      xml_single_node( "DATA", _tmp )
 
    NEXT
 
@@ -490,7 +490,7 @@ FUNCTION hcp_txt( dev_params, br_dok )
    _xml := dev_params[ "out_dir" ] + _inp_dir + SLASH + _f_name
 
    // otvori xml
-   open_xml( _xml )
+   create_xml( _xml )
 
    // upisi header
    xml_head()
@@ -502,7 +502,7 @@ FUNCTION hcp_txt( dev_params, br_dok )
       _data := "DATA"
       _tmp := _cmd
 
-      xml_snode( _data, _tmp )
+      xml_single_node( _data, _tmp )
 
    ENDIF
 
@@ -542,7 +542,7 @@ FUNCTION hcp_cmd( dev_params, cmd, trig )
    _xml := dev_params[ "out_dir" ] + _inp_dir + SLASH + _f_name
 
    // otvori xml
-   open_xml( _xml )
+   create_xml( _xml )
 
    // upisi header
    xml_head()
@@ -554,7 +554,7 @@ FUNCTION hcp_cmd( dev_params, cmd, trig )
       _data := "DATA"
       _tmp := cmd
 
-      xml_snode( _data, _tmp )
+      xml_single_node( _data, _tmp )
 
    ENDIF
 
@@ -961,7 +961,7 @@ FUNCTION hcp_create_cmd_ok( dev_params )
    _tmp := dev_params[ "out_dir" ] + _inp_dir + SLASH + _cmdok
 
    // iskoristit cu postojecu funkciju za kreiranje xml fajla...
-   open_xml( _tmp )
+   create_xml( _tmp )
    close_xml()
 
    RETURN

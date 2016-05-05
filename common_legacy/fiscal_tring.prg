@@ -149,7 +149,7 @@ FUNCTION tring_rn( dev_param, items, head, storno )
    tring_delete_answer( dev_param, _trig )
 
    // otvori xml
-   open_xml( _xml )
+   create_xml( _xml )
 
    // upisi header
    xml_head()
@@ -294,7 +294,7 @@ FUNCTION tring_polog( dev_param )
    _xml := dev_param[ "out_dir" ] + _f_name
 
    // otvori xml
-   open_xml( _xml )
+   create_xml( _xml )
 
    // upisi header
    xml_head()
@@ -350,7 +350,7 @@ FUNCTION tring_double( dev_param )
    tring_delete_answer( dev_param, nTrigg )
 
    // otvori xml
-   open_xml( cXml )
+   create_xml( cXml )
 
    // upisi header
    xml_head()
@@ -401,7 +401,7 @@ FUNCTION tring_per_rpt( dev_param )
    tring_delete_answer( dev_param, nTrigg )
 
    // otvori xml
-   open_xml( cXml )
+   create_xml( cXml )
 
    // upisi header
    xml_head()
@@ -450,7 +450,7 @@ FUNCTION tring_reset( dev_param )
    tring_delete_answer( dev_param, nTrigg )
 
    // otvori xml
-   open_xml( cXml )
+   create_xml( cXml )
 
    // upisi header
    xml_head()
@@ -483,7 +483,7 @@ FUNCTION tring_init( dev_param, cOper, cPwd )
    tring_delete_answer( dev_param, nTrigg )
 
    // otvori xml
-   open_xml( cXml )
+   create_xml( cXml )
 
    // upisi header
    xml_head()
@@ -495,10 +495,9 @@ FUNCTION tring_init( dev_param, cOper, cPwd )
 
    xml_subnode( "Operator", .T. )
 
-   // zatvori fajl...
-   close_xml()
 
-   RETURN
+   RETURN close_xml()
+
 
 
 // ----------------------------------------------
@@ -521,7 +520,7 @@ FUNCTION tring_close_rn( dev_param )
    tring_delete_answer( dev_param, nTrigg )
 
    // otvori xml
-   open_xml( cXml )
+   create_xml( cXml )
 
    // upisi header
    xml_head()
@@ -559,7 +558,7 @@ FUNCTION tring_x_rpt( dev_param )
    tring_delete_answer( dev_param, nTrigg )
 
    // otvori xml
-   open_xml( cXml )
+   create_xml( cXml )
 
    // upisi header
    xml_head()
@@ -614,7 +613,7 @@ FUNCTION tring_daily_rpt( dev_param )
    tring_delete_answer( dev_param, nTrigg )
 
    // otvori xml
-   open_xml( cXml )
+   create_xml( cXml )
 
    // upisi header
    xml_head()

@@ -290,7 +290,7 @@ STATIC FUNCTION _fill_xml( cTip, xml_file )
    LOCAL nOsig_od, nOsig_do
 
    // otvori xml za upis
-   open_xml( xml_file )
+   create_xml( xml_file )
    // upisi header
    xml_head()
 

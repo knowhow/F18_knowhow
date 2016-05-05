@@ -374,7 +374,7 @@ STATIC FUNCTION printaj_specifikaciju_odt( params )
 
    GO TOP
 
-   open_xml( cXml )
+   create_xml( cXml )
    xml_subnode( "spec", .F. )
 
    xml_node( "date", DToC( DATE() ) )

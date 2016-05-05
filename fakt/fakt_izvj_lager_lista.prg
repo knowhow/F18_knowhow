@@ -853,7 +853,7 @@ STATIC FUNCTION lager_lista_xml( table, params )
       RETURN .F.
    ENDIF
 
-   open_xml( _xml )
+   create_xml( _xml )
    xml_subnode( "lager", .F. )
 
    // podaci zaglavlja...

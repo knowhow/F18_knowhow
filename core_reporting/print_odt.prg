@@ -80,7 +80,7 @@ FUNCTION generisi_odt_iz_xml( cTemplate, cXml_file, cOutput_file, lBezPitanja )
 
    __current_odt := __output_odt
 
-   _ok := kopiraj_odt_template_u_home_path( cTemplate )
+   _ok := copy_template_to_my_home( cTemplate )
 
    IF !_ok
       RETURN _ok
@@ -88,7 +88,7 @@ FUNCTION generisi_odt_iz_xml( cTemplate, cXml_file, cOutput_file, lBezPitanja )
 
    brisi_odt_fajlove_iz_home_path()
 
-   log_write( "ODT report gen: pobrisao fajl " + __output_odt, 7 )
+   ?E "ODT report gen: pobrisao fajl " + __output_odt
 
    _template := my_home() + cTemplate
 
@@ -262,61 +262,6 @@ STATIC FUNCTION get_util_path()
    ENDIF
 
    RETURN cPath
-
-
-
-/*
-   Opis: kopira template sa lokacije /knowhowERP/templates => home path
-*/
-
-STATIC FUNCTION kopiraj_odt_template_u_home_path( cTemplate )
-
-   LOCAL _ret := .F.
-   LOCAL _a_source, _a_template
-   LOCAL _src_size, _src_date, _src_time
-   LOCAL _temp_size, _temp_date, _temp_time
-   LOCAL _copy := .F.
-
-   IF !File( my_home() + cTemplate )
-      _copy := .T.
-   ELSE
-
-      _a_source := Directory( my_home() + cTemplate )
-      IF LEN( _a_source[ 1 ] ) < 4
-         Alert( "file atributi error: " + my_home() + cTemplate )
-      ENDIF
-
-      _a_template := Directory( f18_template_location() + cTemplate )
-      IF LEN( _a_template[ 1 ] ) < 4
-         Alert( "file atributi error: " + f18_template_location() + cTemplate )
-      ENDIF
-
-      _src_size := AllTrim( Str( _a_source[ 1, 2 ] ) )
-      _src_date := DToS( _a_source[ 1, 3 ] )
-      _src_time := _a_source[ 1, 4 ]
-
-      _temp_size := AllTrim( Str( _a_template[ 1, 2 ] ) )
-      _temp_date := DToS( _a_template[ 1, 3 ] )
-      _temp_time := _a_template[ 1, 4 ]
-
-      IF _temp_date + _temp_time > _src_date + _src_time // provjera vremena
-         _copy := .T.
-      ENDIF
-
-   ENDIF
-
-   IF _copy
-      IF File( f18_template_location() + cTemplate )
-         FileCopy( f18_template_location() + cTemplate, my_home() + cTemplate )
-      ELSE
-         MsgBeep( "Fajl " + f18_template_location() + cTemplate + " ne postoji !?" )
-         RETURN _ret
-      ENDIF
-   ENDIF
-
-   _ret := .T.
-
-   RETURN _ret
 
 
 

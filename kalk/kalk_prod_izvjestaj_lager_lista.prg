@@ -1008,7 +1008,7 @@ STATIC FUNCTION _gen_xml( params )
    _t_ulaz := _t_izlaz := _t_nv_u := _t_nv_i := 0
    _t_mpv_u := _t_mpv_i := _t_rabat := 0
 
-   open_xml( my_home() + "data.xml" )
+   create_xml( my_home() + "data.xml" )
    xml_head()
 
    xml_subnode( "ll", .F. )

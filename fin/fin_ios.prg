@@ -671,7 +671,7 @@ STATIC FUNCTION mnu_ios_print()
    ELSE
 
       // pripremi mi za xml
-      open_xml( _xml_file )
+      create_xml( _xml_file )
       // standardni header
       xml_head()
       xml_subnode( "ios", .F. )

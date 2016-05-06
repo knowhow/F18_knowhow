@@ -203,12 +203,24 @@ FUNCTION set_a_dbf_sifarnik( dbf_table, alias, wa, rec, lSql )
    RETURN .T.
 
 
+FUNCTION get_a_dbf_rec_by_wa( nWa )
+
+   LOCAL cTable, cDatabase := my_database()
+
+   FOR EACH cTable IN  s_hF18Dbfs[ cDatabase ]:Keys
+      IF s_hF18Dbfs[ cDatabase ][ cTable ][ "wa" ] == nWa
+         RETURN s_hF18Dbfs[ cDatabase ][ cTable ]
+      ENDIF
+   NEXT
+
+   RETURN NIL
 
 // -------------------------------------------------------
 // tbl - dbf_table ili alias
 //
 // _only_basic_params - samo table, alias, wa
 // -------------------------------------------------------
+
 FUNCTION get_a_dbf_rec( cTable, _only_basic_params )
 
    LOCAL _msg, _rec, _keys, cDbfTable, _key

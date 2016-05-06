@@ -688,18 +688,19 @@ FUNCTION P_LD_RJ( cId, dx, dy )
 // vraca PU code opstine
 FUNCTION g_ops_code( cId )
 
-   LOCAL nTArea := Select()
+
    LOCAL cRet := ""
 
+   PushWa()
    O_OPS
    SELECT ops
-   GO TOP
    SEEK cId
    IF Found()
       cRet := field->idj
    ENDIF
 
-   SELECT ( nTArea )
+   PopWA()
+
 
    RETURN cRet
 
@@ -707,7 +708,12 @@ FUNCTION g_ops_code( cId )
 
 FUNCTION P_Kred( cId, dx, dy )
 
+   LOCAL lRet
    PRIVATE imekol, kol
+
+   PushWa()
+
+   select_o_kred()
 
    ImeKol := { { PadR( "Id", 6 ), {|| id }, "id", {|| .T. }, {|| vpsifra( wid ) } }, ;
       { PadR( "Naziv", 30 ), {||  naz }, "naz" }, ;
@@ -722,8 +728,11 @@ FUNCTION P_Kred( cId, dx, dy )
    // Dorade 2001
    Kol := { 1, 2, 3, 4, 5, 6, 7, 8 }
 
-   RETURN PostojiSifra( F_KRED, 1, MAXROWS() -15, MAXCOLS() -20, _l( "Lista kreditora" ), @cId, dx, dy )
+   lRet := PostojiSifra( F_KRED, 1, MAXROWS() -15, MAXCOLS() -20, _u( "Lista kreditora" ), @cId, dx, dy )
 
+   PopWa()
+
+   RETURN lRet
 
 
 FUNCTION KrBlok( Ch )
@@ -731,7 +740,7 @@ FUNCTION KrBlok( Ch )
    IF ( Ch == K_CTRL_T )
       IF ImaURadKr( KRED->id, "3" )
          Beep( 1 )
-         Msg( _l( "Firma se ne moze brisati jer je vec koristena u obracunu!" ) )
+         Msg( "Firma se ne moze brisati jer je vec korištena u obračunu!" )
          RETURN 7
       ENDIF
    ELSEIF ( Ch == K_F2 )
@@ -826,7 +835,7 @@ FUNCTION ImaUObrac( cKljuc, cTag )
 
 FUNCTION P_POR( cId, dx, dy )
 
-   LOCAL i
+   LOCAL i, lRet
    LOCAL _st_stopa := fetch_metric( "ld_porezi_stepenasta_stopa", NIL, "N" )
    PRIVATE Imekol := {}
    PRIVATE Kol := {}
@@ -838,11 +847,8 @@ FUNCTION P_POR( cId, dx, dy )
    ENDIF
 
    AAdd( ImeKol, { PadR( "Naziv", 20 ), {|| naz }, "naz" } )
-
    AAdd( ImeKol, { PadR( "Iznos", 20 ), {||  iznos }, "iznos", {|| IF( POR->( FieldPos( "ALGORITAM" ) ) <> 0, wh_oldpor( walgoritam ), .T. ) } } )
-
    AAdd( ImeKol, { PadR( "Donji limit", 12 ), {||  dlimit }, "dlimit" } )
-
    AAdd( ImeKol, { PadR( "PoOpst", 6 ), {||  poopst }, "poopst" } )
 
    AAdd( ImeKol, { "p.tip", {|| por_tip }, "por_tip" } )
@@ -904,12 +910,14 @@ FUNCTION P_POR( cId, dx, dy )
       SKIP
    ENDDO
 
-   PopWa()
 
-   RETURN PostojiSifra( F_POR, 1, MAXROWS() -15, MAXCOLS() -20, ;
-      _l( "Lista poreza na platu.....<F5> arhiviranje poreza, <F6> pregled" ), ;
+   lRet := PostojiSifra( F_POR, 1, MAXROWS() -15, MAXCOLS() -20, _u( "Lista poreza na platu" ), ;
       @cId, dx, dy, {| Ch| PorBl( Ch ) } )
 
+
+   PopWa()
+
+   RETURN lRet
 
 
 // -------------------------------
@@ -943,6 +951,7 @@ FUNCTION wh_oldpor( cAlg )
 
 FUNCTION P_DOPR( cId, dx, dy )
 
+   LOCAL lRet
    PRIVATE imekol := {}
    PRIVATE kol := {}
 
@@ -994,15 +1003,14 @@ FUNCTION P_DOPR( cId, dx, dy )
       SKIP
    ENDDO
 
-   PopWa()
-
    SELECT dopr
 
-   RETURN PostojiSifra( F_DOPR, 1, MAXROWS() -15, MAXCOLS() -20, ;
-      _l( "Lista doprinosa na platu......<F5> arhiviranje doprinosa, <F6> pregled" ), ;
-      @cId, dx, dy, {| Ch| DoprBl( Ch ) } )
+   lRet := PostojiSifra( F_DOPR, 1, MAXROWS() -15, MAXCOLS() -20, ;
+      _u( "Lista doprinosa na platu" ), @cId, dx, dy, {| Ch| DoprBl( Ch ) } )
 
+   PopWa()
 
+   RETURN lRet
 
 FUNCTION P_KBenef( cId, dx, dy )
 

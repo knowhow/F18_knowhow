@@ -268,7 +268,7 @@
 #xcommand O_KBENEF  => select (F_KBENEF)  ;  my_use ("kbenef")   ; set order to tag "ID"
 #xcommand O_POR     => select (F_POR)     ;  my_use ("por")      ; set order to tag "ID"
 #xcommand O_DOPR    => select (F_DOPR)    ;  my_use ("dopr")     ; set order to tag "ID"
-#xcommand O_KRED    => select (F_KRED)    ;  my_use ("kred")     ; set order to tag "ID"
+#xcommand O_KRED    => o_kred()
 #xcommand O__KRED   => select (F__KRED)   ;  my_use ("_kred")    ; set order to tag "ID"
 #xcommand O_STRSPR  => o_str_spr()
 #xcommand O_VPOSLA  => select (F_VPOSLA)  ;  my_use  ("vposla")  ; set order to tag "ID"

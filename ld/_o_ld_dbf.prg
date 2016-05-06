@@ -11,6 +11,14 @@
 
 #include "f18.ch"
 
+
+FUNCTION o_kred()
+   RETURN o_dbf_table( F_KRED, "kred", "ID" )
+
+FUNCTION select_o_kred()
+   RETURN select_o_dbf( "KRED", F_KRED, "kred", "ID" )
+
+
 FUNCTION o_radn()
    RETURN o_dbf_table( F_RADN, "radn", "1" )
 

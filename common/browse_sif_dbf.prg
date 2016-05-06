@@ -21,6 +21,7 @@ THREAD STATIC __A_SIFV__ := { { NIL, NIL, NIL }, { NIL, NIL, NIL }, { NIL, NIL, 
 FUNCTION PostojiSifra( nDbf, nNtx, nVisina, nSirina, cNaslov, cID, dx, dy,  bBlok, aPoredak, bPodvuci, aZabrane, lInvert, aZabIsp )
 
    LOCAL cRet, cIdBK
+   LOCAL hRec
    LOCAL _i
    LOCAL _komande := { "<c-N> Novi", "<F2>  Ispravka", "<ENT> Odabir", _to_str( "<c-T> Briši" ), "<c-P> Print", ;
       "<F4>  Dupliciraj", _to_str( "<c-F9> Briši SVE" ), _to_str( "<c-F> Traži" ), "<a-S> Popuni kol.", ;
@@ -56,14 +57,19 @@ FUNCTION PostojiSifra( nDbf, nNtx, nVisina, nSirina, cNaslov, cID, dx, dy,  bBlo
    ENDIF
 
    IF !Used()
-      error_bar( "bug", log_stack(1) )
-      RETURN .F.
+    altd()
+      hRec := get_a_dbf_rec_by_wa( nDbf )
+      IF hRec == NIL
+         error_bar( "bug", log_stack( 1 ) )
+         RETURN .F.
+      ENDIF
+      my_use( hRec[ "table" ] )
+
    ENDIF
 
    set_mc_imekol( nDbf )
 
    nOrderSif := IndexOrd()
-
 
    sif_set_order( nNTX, index_tag_num( "ID" ), @fID_j )
 

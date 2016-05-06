@@ -67,7 +67,9 @@ FUNCTION copy_template_to_my_home( cTemplate )
       ENDIF
 
       _a_template := Directory( f18_template_location() + cTemplate )
-      IF Len( _a_template[ 1 ] ) < 4
+      IF ValType( _a_template ) == "A" .AND. Len( _a_template) > 0 .AND. Len( _a_template[ 1 ] ) > 4
+         ?E "template location:", f18_template_location(), pp( _a_template[ 1 ] )
+      ELSE
          Alert( "file atributi error: " + f18_template_location() + cTemplate )
       ENDIF
 

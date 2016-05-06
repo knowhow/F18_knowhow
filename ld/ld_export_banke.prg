@@ -153,17 +153,14 @@ METHOD LDExportTxt:params()
    @ m_x + _x, Col() + 1 SAY "obracun:" GET _obr WHEN HelpObr( .T., _obr ) VALID ValObr( .T., _obr )
 
    ++ _x
-
    @ m_x + _x, m_y + 2 SAY "Radna jedinica (prazno-sve):" GET _rj PICT "@S35"
 
    ++ _x
    ++ _x
-
    @ m_x + _x, m_y + 2 SAY "Dodatna eksport polja (Sx, Ix):" GET _dod_polja PICT "@S32"
 
    ++ _x
    ++ _x
-
    @ m_x + _x, m_y + 2 SAY "Tekuca formula eksporta (1 ... n):" GET _id_formula PICT "999" VALID ::get_export_params( @_id_formula )
 
    READ
@@ -179,24 +176,19 @@ METHOD LDExportTxt:params()
 
    ++ _x
    ++ _x
-
    @ m_x + _x, m_y + 2 SAY Replicate( "-", 60 )
 
    ++ _x
-
    @ m_x + _x, m_y + 2 SAY "  Odabrana varijanta: " + PadR( _name, 30 )
 
    ++ _x
-
    @ m_x + _x, m_y + 2 SAY "         Sifra banke: " + ::formula_params[ "banka" ]
 
    ++ _x
-
    @ m_x + _x, m_y + 2 SAY "Naziv izlaznog fajla: " + PadR( _file_name, 20 )
 
    ++ _x
    ++ _x
-
    @ m_x + _x, m_y + 2 SAY "Eksportuj podatke (D/N)?" GET _export VALID _export $ "DN" PICT "@!"
 
    READ
@@ -256,7 +248,7 @@ METHOD LDExportTxt:copy_existing_formula( id_formula )
       IF !Empty( _tmp  )
          id_formula := PadR( _tmp, 500 )
       ELSE
-         MsgBeep( "Zadata formula ne postoji !!!" )
+         MsgBeep( "Zadata formula ne postoji !" )
       ENDIF
 
    ENDIF
@@ -314,7 +306,7 @@ METHOD LDExportTxt:fill_data_from_ld()
       " ld.uodbici, " + ;
       " ld.uiznos "
 
-   if ::export_params[ "krediti_export" ]
+   IF ::export_params[ "krediti_export" ]
       _qry += " , kr.placeno AS kredit, "
       _qry += " kr.naosnovu AS partija, "
       _qry += " kred.ziro AS bank_part "
@@ -323,7 +315,7 @@ METHOD LDExportTxt:fill_data_from_ld()
    _qry += " FROM " + F18_PSQL_SCHEMA_DOT + "ld_ld ld "
    _qry += " LEFT JOIN " + F18_PSQL_SCHEMA_DOT + " ld_radn rd ON ld.idradn = rd.id "
 
-   if ::export_params[ "krediti_export" ]
+   IF ::export_params[ "krediti_export" ]
       _qry += " LEFT JOIN " + F18_PSQL_SCHEMA_DOT + " ld_radkr kr ON ld.idradn = kr.idradn AND "
       _qry += "             ld.mjesec = kr.mjesec AND ld.godina = kr.godina "
       _qry += " LEFT JOIN " + F18_PSQL_SCHEMA_DOT + " kred kred ON kr.idkred = kred.id "
@@ -354,8 +346,8 @@ METHOD LDExportTxt:fill_data_from_ld()
       _qry += " ) "
    ENDIF
 
-   // sortiranje exporta po prezimenu
-   _qry += " ORDER BY ld.godina, ld.mjesec, ld.obr, rd.naz "
+
+   _qry += " ORDER BY ld.godina, ld.mjesec, ld.obr, rd.naz " // sortiranje exporta po prezimenu
 
    MsgO( "formiranje sql upita u toku ..." )
    _table := run_sql_query( _qry )
@@ -455,7 +447,7 @@ METHOD LDExportTxt:create_txt_from_dbf()
    LOCAL _output_filename
    LOCAL _output_dir
    LOCAL _curr_struct
-   LOCAL _separator, _separator_formule
+   LOCAL cSeparator, cSeparatorForumule
    LOCAL _line, _i, _a_struct
 
    _output_dir := my_home() + "export" + SLASH
@@ -473,9 +465,12 @@ METHOD LDExportTxt:create_txt_from_dbf()
 
    // kreriraj makro liniju
    _curr_struct := ::get_export_line_macro()
-   _separator := ::export_params[ "separator" ]
-   _separator_formule := ::export_params[ "separator_formula" ]
-   _a_struct := TokToNiz( _curr_struct, _separator_formule )
+   cSeparator := ::export_params[ "separator" ]
+   IF cSeparator == "t" .OR. cSeparator == "T"
+      cSeparator := Chr( 9 )
+   ENDIF
+   cSeparatorForumule := ::export_params[ "separator_formula" ]
+   _a_struct := TokToNiz( _curr_struct, cSeparatorForumule )
    _line := ""
 
    FOR _i := 1 TO Len( _a_struct )
@@ -491,8 +486,8 @@ METHOD LDExportTxt:create_txt_from_dbf()
          _line += _a_struct[ _i ]
 
          // ako treba separator
-         IF _i < Len( _a_struct ) .AND. !Empty( _separator )
-            _line += ' + "' + _separator + '" '
+         IF _i < Len( _a_struct ) .AND. !Empty( cSeparator )
+            _line += ' + "' + cSeparator + '" '
          ENDIF
 
       ENDIF
@@ -614,7 +609,7 @@ METHOD LDExportTxt:export_setup()
    LOCAL _ok := .F.
    LOCAL _x := 1
    LOCAL _id_formula := fetch_metric( "ld_export_banke_tek", my_user(), 1 )
-   LOCAL _active, _formula, _filename, _name, _sep, _sep_formula, _banka, _kreditori, _kred_exp
+   LOCAL _active, _formula, _filename, _name, cSeparator, cSeparatorFormula, _banka, _kreditori, _kred_exp
    LOCAL _write_params
 
    Box(, 15, 70 )
@@ -633,8 +628,8 @@ METHOD LDExportTxt:export_setup()
    _formula := ::formula_params[ "formula" ]
    _filename := ::formula_params[ "file" ]
    _name := ::formula_params[ "name" ]
-   _sep := ::formula_params[ "separator" ]
-   _sep_formula := ::formula_params[ "separator_formula" ]
+   cSeparator := ::formula_params[ "separator" ]
+   cSeparatorFormula := ::formula_params[ "separator_formula" ]
    _banka := ::formula_params[ "banka" ]
    _kreditori := ::formula_params[ "kreditori" ]
    _kred_exp := ::formula_params[ "krediti_export" ]
@@ -647,14 +642,14 @@ METHOD LDExportTxt:export_setup()
       _banka := Space( 6 )
       _kreditori := Space( 300 )
       _kred_exp := "N"
-      _sep := ";"
-      _sep_formula := ";"
+      cSeparator := ";"
+      cSeparatorFormula := ";"
    ELSE
       _formula := PadR( AllTrim( _formula ), 500 )
       _name := PadR( AllTrim( _name ), 100 )
       _filename := PadR( AllTrim( _filename ), 50 )
-      _sep := PadR( _sep, 1 )
-      _sep_formula := PadR( _sep_formula, 1 )
+      cSeparator := PadR( cSeparator, 1 )
+      cSeparatorFormula := PadR( cSeparatorFormula, 1 )
       _banka := PadR( _banka, 6 )
       _kreditori := PadR( _kreditori, 300 )
       _kred_exp := PadR( _kred_exp, 1 )
@@ -662,36 +657,28 @@ METHOD LDExportTxt:export_setup()
 
    ++ _x
    ++ _x
-
    @ m_x + _x, m_y + 2 SAY "(*)   Naziv:" GET _name PICT "@S50" VALID !Empty( _name )
 
    ++ _x
    ++ _x
-
    @ m_x + _x, m_y + 2 SAY "(*)   Banka:" GET _banka PICT "@S50" VALID !Empty( _banka ) .AND. P_Kred( @_banka )
 
    ++ _x
    ++ _x
-
-   @ m_x + _x, m_y + 2 SAY "(*) Formula:" GET _formula PICT "@S50" VALID ;
-      {|| !Empty( _formula ) .AND. ::copy_existing_formula( @_formula ) }
+   @ m_x + _x, m_y + 2 SAY "(*) Formula:" GET _formula PICT "@S50" VALID {|| !Empty( _formula ) .AND. ::copy_existing_formula( @_formula ) }
 
    ++ _x
    ++ _x
-
    @ m_x + _x, m_y + 2 SAY "Naziv izlaznog fajla:" GET _filename PICT "@S40"
 
    ++ _x
-
-   @ m_x + _x, m_y + 2 SAY "Separator u izl.fajlu [ ; , . ]:" GET _sep
+   @ m_x + _x, m_y + 2 SAY "Separator u izl.fajlu [ ; , . t ]:" GET cSeparator
 
    ++ _x
-
-   @ m_x + _x, m_y + 2 SAY "    Separator formule [ ; , . ]:" GET _sep_formula
+   @ m_x + _x, m_y + 2 SAY "    Separator formule [ ; , . ]:" GET cSeparatorFormula
 
    ++ _x
    ++ _x
-
    @ m_x + _x, m_y + 2 SAY "Eksport kredita (D/N) ?" GET _kred_exp PICT "!@" VALID _kred_exp $ "DN"
 
    ++ _x
@@ -710,8 +697,8 @@ METHOD LDExportTxt:export_setup()
 
    set_metric( "ld_export_banke_tek", my_user(), _id_formula )
 
-   ::formula_params[ "separator" ] := _sep
-   ::formula_params[ "separator_formula" ] := _sep_formula
+   ::formula_params[ "separator" ] := cSeparator
+   ::formula_params[ "separator_formula" ] := cSeparatorFormula
    ::formula_params[ "formula" ] := _formula
    ::formula_params[ "file" ] := _filename
    ::formula_params[ "name" ] := _name
@@ -722,7 +709,6 @@ METHOD LDExportTxt:export_setup()
    ::export_setup_write_params( _id_formula )
 
    RETURN _ok
-
 
 
 

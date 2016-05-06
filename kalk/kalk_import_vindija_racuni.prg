@@ -99,7 +99,7 @@ STATIC FUNCTION aimp_setup()
 
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 /* ImpTxtDok()
@@ -132,7 +132,7 @@ FUNCTION ImpTxtDok()
    // provjeri da li je fajl za import prazan
    IF CheckFile( cImpFile ) == 0
       MsgBeep( "Odabrani fajl je prazan!#!!! Prekidam operaciju !!!" )
-      RETURN
+      RETURN .F.
    ENDIF
 
    PRIVATE aDbf := {}
@@ -141,16 +141,14 @@ FUNCTION ImpTxtDok()
    PRIVATE lFtSkip := .F.
    PRIVATE lNegative := .F.
 
-   // setuj polja temp tabele u matricu aDbf
-   SetTblDok( @aDbf )
-   // setuj pravila upisa podataka u temp tabelu
-   SetRuleDok( @aRules )
-   // prebaci iz txt => temp tbl
-   Txt2TTbl( aDbf, aRules, cImpFile )
+
+   SetTblDok( @aDbf ) // setuj polja temp tabele u matricu aDbf
+   SetRuleDok( @aRules ) // setuj pravila upisa podataka u temp tabelu
+   Txt2TTbl( aDbf, aRules, cImpFile ) // prebaci iz txt => temp tbl
 
    IF !CheckDok()
       MsgBeep( "Prekidamo operaciju !!!#Nepostojece sifre!!!" )
-      RETURN
+      RETURN .F.
    ENDIF
 
    IF CheckBrFakt( @aFaktEx ) == 0
@@ -877,6 +875,8 @@ STATIC FUNCTION CheckRoba()
 // --------------------------------------------------------
 STATIC FUNCTION SDobExist()
 
+   LOCAL aRet
+
    O_ROBA
    SELECT temp
    GO TOP
@@ -909,9 +909,7 @@ STATIC FUNCTION SDobExist()
 
 
 
-/* ParExist()
- *     Provjera da li postoje sifre partnera u sifraniku FMK
- */
+
 STATIC FUNCTION ParExist( lPartNaz )
 
    O_PARTN
@@ -999,6 +997,8 @@ STATIC FUNCTION GetKTipDok( cFaktTD, cPm )
 // ---------------------------------------------------------------
 STATIC FUNCTION GetVPr( cProd, cPoslovnica )
 
+   LOCAL cRet
+
    IF cProd == "XXX"
       RETURN "XXXXX"
    ENDIF
@@ -1028,8 +1028,7 @@ STATIC FUNCTION GetVPr( cProd, cPoslovnica )
 // -----------------------------------------------------------
 STATIC FUNCTION GetTdKonto( cTipDok, cTip, cPoslovnica )
 
-   cRet := my_get_from_ini( "VINDIJA", "TD" + cTipDok + cTip + cPoslovnica, ;
-      "xxxx", KUMPATH )
+   cRet := my_get_from_ini( "VINDIJA", "TD" + cTipDok + cTip + cPoslovnica, "xxxx", KUMPATH )
 
    // primjer:
    // TD14Z050=1310 // posl.sarajevo
@@ -1183,7 +1182,6 @@ STATIC FUNCTION TTbl2Kalk( aFExist, lFSkip, lNegative, cCtrl_art )
 
          cTmp_dob := PadL( AllTrim( temp->idroba ), 5, "0" )
 
-         GO TOP
          SEEK cTmp_dob
 
          cTmp_roba := field->id
@@ -1336,9 +1334,9 @@ STATIC FUNCTION TTbl2Kalk( aFExist, lFSkip, lNegative, cCtrl_art )
       cPPm := cPm
 
       ++ nCnt
-
       SELECT temp
       SKIP
+
    ENDDO
 
    // izvjestaj o prebacenim dokumentima....
@@ -1375,9 +1373,9 @@ STATIC FUNCTION TTbl2Kalk( aFExist, lFSkip, lNegative, cCtrl_art )
       NEXT
 
       ?
-
       FF
       ENDPRINT
+
    ENDIF
 
    IF cCtrl_art == "D" .AND. Len( aArr_ctrl ) > 0
@@ -1462,8 +1460,6 @@ STATIC FUNCTION GetKtKalk( cTipDok, cPm, cTip, cPoslovnica )
  *   param: lEditOld - ispraviti stare zapise
  */
 STATIC FUNCTION TTbl2Partn( lEditOld )
-
-   // {
 
    O_PARTN
    O_SIFK
@@ -1556,7 +1552,6 @@ STATIC FUNCTION TTbl2Roba()
 
       cTmpSif := AllTrim( temp->sifradob )
 
-      GO TOP
       SEEK cTmpSif
 
       IF !Found()
@@ -1751,7 +1746,7 @@ FUNCTION ObradiImport( nPocniOd, lAsPokreni, lStampaj )
 
    MsgBeep( "Dokumenti obradjeni!" )
 
-   RETURN
+   RETURN .T.
 
 
 /* fn SaveObrada()
@@ -1774,7 +1769,7 @@ STATIC FUNCTION SaveObrada( nPRec )
 
    SELECT ( nArr )
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -1798,7 +1793,7 @@ STATIC FUNCTION RestoreObrada()
 
    IF nDosaoDo == 0
       MsgBeep( "Nema zapisa o prekinutoj obradi!" )
-      RETURN
+      RETURN .F.
    ENDIF
 
    O_PRIPT
@@ -1820,7 +1815,7 @@ STATIC FUNCTION RestoreObrada()
 
    ObradiImport( nDosaoDo, nil, __stampaj )
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -2020,7 +2015,7 @@ STATIC FUNCTION FillDobSifra()
 
    IF !spec_funkcije_sifra( "FILLDOB" )
       MsgBeep( "Nemate ovlastenja za ovu opciju!!!" )
-      RETURN
+      RETURN .F.
    ENDIF
 
    O_ROBA
@@ -2106,4 +2101,4 @@ STATIC FUNCTION FillDobSifra()
       ENDPRINT
    ENDIF
 
-   RETURN
+   RETURN .T.

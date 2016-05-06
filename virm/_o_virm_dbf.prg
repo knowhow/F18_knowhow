@@ -9,19 +9,8 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-#define F18_VER_DEFINED
+#include "f18.ch"
 
-#define F18_VER       "1.7.992"
-#define F18_VER_DATE  "06.05.2016"
-#define F18_DEV_PERIOD  "1994-2016"
 
-#define F18_LIB_VER   "14.0.0"
-#define F18_TEMPLATE_VER "3.0.0"
-
-#define F18_DBF_VER_MAJOR  1
-#define F18_DBF_VER_MINOR  0
-#define F18_DBF_VER_PATCH  4
-
-#define SERVER_DB_VER_MAJOR  0
-#define SERVER_DB_VER_MINOR  0
-#define SERVER_DB_VER_PATCH  10
+FUNCTION o_jprih()
+   RETURN o_dbf_table( F_JPRIH, "jprih", "ID" )

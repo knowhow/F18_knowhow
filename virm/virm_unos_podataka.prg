@@ -24,7 +24,7 @@ STATIC FUNCTION _o_virm_edit()
    O_PARTN
    O_VIRM_PRIPR
 
-   RETURN
+   RETURN .T.
 
 
 

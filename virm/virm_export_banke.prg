@@ -233,7 +233,7 @@ METHOD VirmExportTxt:export_setup_duplicate()
 
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -513,8 +513,8 @@ METHOD VirmExportTxt:create_txt_from_dbf()
       MakeDir( _output_dir )
    ENDIF
 
-   // fajl ide u my_home/export/
-   _output_filename := _output_dir + AllTrim( ::export_params[ "fajl" ] )
+
+   _output_filename := _output_dir + AllTrim( ::export_params[ "fajl" ] )  // fajl ide u my_home/export/
 
    _force_eol := ::formula_params[ "forsiraj_eol" ] == "D"
 
@@ -619,17 +619,17 @@ METHOD VirmExportTxt:export()
 
    LOCAL _ok := .F.
 
-   if ::export_params == NIL
+   IF ::export_params == NIL
       MsgBeep( "Prekidam operaciju exporta !" )
       RETURN _ok
    ENDIF
 
-   // kreiraj tabelu exporta
-   ::create_export_dbf()
 
-   // napuni je podacima iz obračuna
-   IF ! ::fill_data_from_virm()
-      MsgBeep( "Problem sa eksportom podataka !!!" )
+   ::create_export_dbf() // kreiraj tabelu exporta
+
+
+   IF ! ::fill_data_from_virm() // napuni je podacima iz obračuna
+      MsgBeep( "Problem sa eksportom podataka !" )
       RETURN _ok
    ENDIF
 
@@ -653,7 +653,7 @@ METHOD VirmExportTxt:export_setup()
    LOCAL _ok := .F.
    LOCAL _x := 1
    LOCAL _id_formula := fetch_metric( "virm_export_banke_tek", my_user(), 1 )
-   LOCAL _active, _formula, _filename, _name, _sep, _sep_formula
+   LOCAL _active, _formula, _filename, _name, cSeparator, cSeparatorFormula
    LOCAL _head_1, _head_2, _footer_1, _footer_2, _force_eol
    LOCAL _write_params
 
@@ -681,8 +681,8 @@ METHOD VirmExportTxt:export_setup()
    _footer_2 := ::formula_params[ "footer_2" ]
    _filename := ::formula_params[ "file" ]
    _name := ::formula_params[ "name" ]
-   _sep := ::formula_params[ "separator" ]
-   _sep_formula := ::formula_params[ "separator_formula" ]
+   cSeparator := ::formula_params[ "separator" ]
+   cSeparatorFormula := ::formula_params[ "separator_formula" ]
    _force_eol := ::formula_params[ "forsiraj_eol" ]
 
    IF _formula == NIL
@@ -694,8 +694,8 @@ METHOD VirmExportTxt:export_setup()
       _footer_2 := _formula
       _name := PadR( "XXXXX Banka", 100 )
       _filename := PadR( "", 50 )
-      _sep := ";"
-      _sep_formula := ";"
+      cSeparator := ";"
+      cSeparatorFormula := ";"
       _force_eol := "D"
    ELSE
       _formula := PadR( AllTrim( _formula ), 1000 )
@@ -705,57 +705,47 @@ METHOD VirmExportTxt:export_setup()
       _footer_2 := PadR( AllTrim( _footer_2 ), 1000 )
       _name := PadR( AllTrim( _name ), 500 )
       _filename := PadR( AllTrim( _filename ), 500 )
-      _sep := PadR( _sep, 1 )
-      _sep_formula := PadR( _sep_formula, 1 )
+      cSeparator := PadR( cSeparator, 1 )
+      cSeparatorFormula := PadR( cSeparatorFormula, 1 )
       _force_eol := PadR( _force_eol, 1 )
    ENDIF
 
    ++ _x
    ++ _x
-
    @ m_x + _x, m_y + 2 SAY "(*)   Naziv:" GET _name PICT "@S50" VALID !Empty( _name )
 
    ++ _x
    ++ _x
-
    @ m_x + _x, m_y + 2 SAY "(*)  Zagl.1:" GET _head_1 PICT "@S50" ;
       VALID {|| Empty( _head_1 ) .OR. ::copy_existing_formula( @_head_1, "h1" ) }
 
    ++ _x
-
    @ m_x + _x, m_y + 2 SAY "(*)  Zagl.2:" GET _head_2 PICT "@S50" ;
       VALID {|| Empty( _head_2 ) .OR. ::copy_existing_formula( @_head_2, "h2" ) }
 
    ++ _x
-
    @ m_x + _x, m_y + 2 SAY "(*) Formula:" GET _formula PICT "@S50" ;
       VALID {|| !Empty( _formula ) .AND. ::copy_existing_formula( @_formula, "i" ) }
 
    ++ _x
-
    @ m_x + _x, m_y + 2 SAY "(*)  Podn.1:" GET _footer_1 PICT "@S50" ;
       VALID {|| Empty( _footer_1 ) .OR. ::copy_existing_formula( @_footer_1, "f1" ) }
 
    ++ _x
-
    @ m_x + _x, m_y + 2 SAY "(*)  Podn.2:" GET _footer_2 PICT "@S50" ;
       VALID {|| Empty( _footer_2 ) .OR. ::copy_existing_formula( @_footer_2, "f2" ) }
 
    ++ _x
    ++ _x
-
    @ m_x + _x, m_y + 2 SAY "Naziv izlaznog fajla:" GET _filename PICT "@S40"
 
    ++ _x
-
-   @ m_x + _x, m_y + 2 SAY "Separator u izl.fajlu [ ; , . ]:" GET _sep
-
-   ++ _x
-
-   @ m_x + _x, m_y + 2 SAY "    Separator formule [ ; , . ]:" GET _sep_formula
+   @ m_x + _x, m_y + 2 SAY "Separator u izl.fajlu [ ; , . t ]:" GET cSeparator
 
    ++ _x
+   @ m_x + _x, m_y + 2 SAY "    Separator formule [ ; , . ]:" GET cSeparatorFormula
 
+   ++ _x
    @ m_x + _x, m_y + 2 SAY "     Forsiraj kraj linije (D/N):" GET _force_eol VALID _force_eol $ "DN" PICT "!@"
 
    READ
@@ -770,8 +760,8 @@ METHOD VirmExportTxt:export_setup()
 
    set_metric( "virm_export_banke_tek", my_user(), _id_formula )
 
-   ::formula_params[ "separator" ] := _sep
-   ::formula_params[ "separator_formula" ] := _sep_formula
+   ::formula_params[ "separator" ] := cSeparator
+   ::formula_params[ "separator_formula" ] := cSeparatorFormula
    ::formula_params[ "formula" ] := _formula
    ::formula_params[ "head_1" ] := _head_1
    ::formula_params[ "head_2" ] := _head_2

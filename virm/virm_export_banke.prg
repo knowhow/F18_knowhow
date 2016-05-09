@@ -480,7 +480,7 @@ METHOD VirmExportTxt:get_macro_line( var )
 
          _macro += _a_struct[ _i ] // makro
 
-         IF _i < Len( _a_struct ) .AND. !Empty( cSeparator ) // ako treba separator
+         IF _i < Len( _a_struct )
             _macro += ' + "' + cSeparator + '" '
          ENDIF
 

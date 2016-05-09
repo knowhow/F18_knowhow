@@ -486,7 +486,7 @@ METHOD LDExportTxt:create_txt_from_dbf()
          _line += _a_struct[ _i ]
 
          // ako treba separator
-         IF _i < Len( _a_struct ) .AND. !Empty( cSeparator )
+         IF _i < Len( _a_struct )
             _line += ' + "' + cSeparator + '" '
          ENDIF
 

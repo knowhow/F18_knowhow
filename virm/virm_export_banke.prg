@@ -1,58 +1,59 @@
-/* 
- * This file is part of the bring.out knowhow ERP, a free and open source 
+/*
+ * This file is part of the bring.out knowhow ERP, a free and open source
  * Enterprise Resource Planning software suite,
  * Copyright (c) 1994-2011 by bring.out d.o.o Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including knowhow ERP specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
 
 #include "f18.ch"
-#include "hbclass.ch"
-#include "common.ch"
+
 
 
 CLASS VirmExportTxt
 
-    METHOD New()
-    METHOD params()
-    METHOD export()
+   METHOD New()
+   METHOD params()
+   METHOD export()
 
-    METHOD export_setup()
-    METHOD export_setup_read_params()
-    METHOD export_setup_write_params()
+   METHOD export_setup()
+   METHOD export_setup_read_params()
+   METHOD export_setup_write_params()
 
-    METHOD export_setup_duplicate()
-    
-    DATA export_params
-    DATA formula_params
-    DATA export_total
-    DATA export_count
-        
-    PROTECTED:
+   METHOD export_setup_duplicate()
 
-        METHOD create_txt_from_dbf()
-        METHOD _dbf_struct()
-        METHOD create_export_dbf()
-        METHOD fill_data_from_virm()
-        METHOD get_export_line_macro()
-        METHOD get_macro_line()
-        METHOD get_export_params()
-        METHOD get_export_list()
-        METHOD copy_existing_formula()
+   DATA export_params
+   DATA formula_params
+   DATA export_total
+   DATA export_count
+
+   PROTECTED:
+
+   METHOD create_txt_from_dbf()
+   METHOD _dbf_struct()
+   METHOD create_export_dbf()
+   METHOD fill_data_from_virm()
+   METHOD get_export_line_macro()
+   METHOD get_macro_line()
+   METHOD get_export_params()
+   METHOD get_export_list()
+   METHOD copy_existing_formula()
 
 ENDCLASS
 
 
 
 METHOD VirmExportTxt:New()
-::export_params := hb_hash()
-::formula_params := hb_hash()
-::export_total := 0
-::export_count := 0
-return SELF
+
+   ::export_params := hb_Hash()
+   ::formula_params := hb_Hash()
+   ::export_total := 0
+   ::export_count := 0
+
+   RETURN SELF
 
 
 
@@ -60,72 +61,74 @@ return SELF
 // struktura pomocne tabele
 // -----------------------------------------------------------
 METHOD VirmExportTxt:_dbf_struct()
-local _dbf := {}
-local _i, _a_tmp
 
-// struktura...
-AADD( _dbf, { "RBR"        , "N",  3, 0 } )
-AADD( _dbf, { "MJESTO"     , "C", 30, 0 } )
+   LOCAL _dbf := {}
+   LOCAL _i, _a_tmp
 
-AADD( _dbf, { "PRIM_RN"    , "C", 16, 0 } )
-AADD( _dbf, { "PRIM_NAZ"   , "C", 50, 0 } )
-AADD( _dbf, { "PRIM_MJ"    , "C", 30, 0 } )
+   // struktura...
+   AAdd( _dbf, { "RBR", "N",  3, 0 } )
+   AAdd( _dbf, { "MJESTO", "C", 30, 0 } )
 
-AADD( _dbf, { "POS_RN"     , "C", 16, 0 } )
-AADD( _dbf, { "POS_NAZ"    , "C", 50, 0 } )
-AADD( _dbf, { "POS_MJ"     , "C", 30, 0 } )
+   AAdd( _dbf, { "PRIM_RN", "C", 16, 0 } )
+   AAdd( _dbf, { "PRIM_NAZ", "C", 50, 0 } )
+   AAdd( _dbf, { "PRIM_MJ", "C", 30, 0 } )
 
-AADD( _dbf, { "SVRHA"      , "C", 140, 0 } )
-AADD( _dbf, { "SIFRA_PL"   , "C",   6, 0 } )
+   AAdd( _dbf, { "POS_RN", "C", 16, 0 } )
+   AAdd( _dbf, { "POS_NAZ", "C", 50, 0 } )
+   AAdd( _dbf, { "POS_MJ", "C", 30, 0 } )
 
-AADD( _dbf, { "DAT_VAL"    , "D",   8, 0 } )
-AADD( _dbf, { "PER_OD"     , "D",   8, 0 } )
-AADD( _dbf, { "PER_DO"     , "D",   8, 0 } )
+   AAdd( _dbf, { "SVRHA", "C", 140, 0 } )
+   AAdd( _dbf, { "SIFRA_PL", "C",   6, 0 } )
 
-AADD( _dbf, { "TIP_ST"     , "C",   1, 0 } )
-AADD( _dbf, { "TIP_DOK"    , "C",   1, 0 } )
-AADD( _dbf, { "V_UPL"      , "C",   1, 0 } )
-AADD( _dbf, { "OPCINA"     , "C",   3, 0 } )
-AADD( _dbf, { "BPO"        , "C",  13, 0 } )
+   AAdd( _dbf, { "DAT_VAL", "D",   8, 0 } )
+   AAdd( _dbf, { "PER_OD", "D",   8, 0 } )
+   AAdd( _dbf, { "PER_DO", "D",   8, 0 } )
 
-AADD( _dbf, { "V_PRIH"     , "C",   6, 0 } )
-AADD( _dbf, { "BUDZET"     , "C",   7, 0 } )
-AADD( _dbf, { "PNABR"      , "C",  10, 0 } )
+   AAdd( _dbf, { "TIP_ST", "C",   1, 0 } )
+   AAdd( _dbf, { "TIP_DOK", "C",   1, 0 } )
+   AAdd( _dbf, { "V_UPL", "C",   1, 0 } )
+   AAdd( _dbf, { "OPCINA", "C",   3, 0 } )
+   AAdd( _dbf, { "BPO", "C",  13, 0 } )
 
-AADD( _dbf, { "IZNOS"      , "N",  15, 2 } )
+   AAdd( _dbf, { "V_PRIH", "C",   6, 0 } )
+   AAdd( _dbf, { "BUDZET", "C",   7, 0 } )
+   AAdd( _dbf, { "PNABR", "C",  10, 0 } )
 
-AADD( _dbf, { "TOT_IZN"    , "N",  15, 2 } )
-AADD( _dbf, { "TOT_ST"     , "N",  15, 2 } )
+   AAdd( _dbf, { "IZNOS", "N",  15, 2 } )
 
-return _dbf
+   AAdd( _dbf, { "TOT_IZN", "N",  15, 2 } )
+   AAdd( _dbf, { "TOT_ST", "N",  15, 2 } )
+
+   RETURN _dbf
 
 
 // -----------------------------------------------------------
 // kreiranje pomocne tabele
 // -----------------------------------------------------------
 METHOD VirmExportTxt:create_export_dbf()
-local _dbf
-local _table_name := "export"
 
-// struktura dbf-a
-_dbf := ::_dbf_struct()
+   LOCAL _dbf
+   LOCAL _table_name := "export"
 
-select ( F_TMP_1 )
-use
+   // struktura dbf-a
+   _dbf := ::_dbf_struct()
 
-FERASE( my_home() + _table_name + ".dbf" )
-FERASE( my_home() + _table_name + ".cdx" )
+   SELECT ( F_TMP_1 )
+   USE
 
-dbcreate( my_home() + _table_name + ".dbf", _dbf )
+   FErase( my_home() + _table_name + ".dbf" )
+   FErase( my_home() + _table_name + ".cdx" )
 
-select ( F_TMP_1 )
-use
-my_use_temp( "EXP_BANK", my_home() + _table_name + ".dbf", .f., .f. )
+   dbCreate( my_home() + _table_name + ".dbf", _dbf )
 
-// indeksi...
-index on ( STR( rbr, 3 ) ) TAG "1"
+   SELECT ( F_TMP_1 )
+   USE
+   my_use_temp( "EXP_BANK", my_home() + _table_name + ".dbf", .F., .F. )
 
-return .t.
+   // indeksi...
+   INDEX on ( Str( rbr, 3 ) ) TAG "1"
+
+   RETURN .T.
 
 
 
@@ -135,71 +138,64 @@ return .t.
 // -----------------------------------------------------------
 
 METHOD VirmExportTxt:params()
-local _ok := .f.
-local _name
-local _export := "D"
-local _obr := "1"
-local _file_name := PADR( "export_virm.txt", 50 )
-local _id_formula := fetch_metric( "virm_export_banke_tek", my_user(), 1 )
-local _x := 1
 
-// citaj parametre
-Box(, 15, 70 )
+   LOCAL _ok := .F.
+   LOCAL _name
+   LOCAL _export := "D"
+   LOCAL _obr := "1"
+   LOCAL _file_name := PadR( "export_virm.txt", 50 )
+   LOCAL _id_formula := fetch_metric( "virm_export_banke_tek", my_user(), 1 )
+   LOCAL _x := 1
 
-    @ m_x + _x, m_y + 2 SAY "Tekuca formula eksporta (1 ... n):" GET _id_formula PICT "999" VALID ::get_export_params( @_id_formula )
-   
-    read
+   Box(, 15, 70 )
 
-    if LastKey() == K_ESC
-        ::export_params := NIL
-        BoxC()
-        return _ok
-    endif
- 
-    _file_name := ::formula_params["file"]
-    _name := ::formula_params["name"]
+   @ m_x + _x, m_y + 2 SAY "Tekuca formula eksporta (1 ... n):" GET _id_formula PICT "999" VALID ::get_export_params( @_id_formula )
 
-    ++ _x
-    ++ _x
+   READ
 
-    @ m_x + _x, m_y + 2 SAY REPLICATE( "-", 60 )
-   
-    ++ _x
- 
-    @ m_x + _x, m_y + 2 SAY "  Odabrana varijanta: " + PADR( _name, 30 ) 
-   
-    ++ _x
-    
-    @ m_x + _x, m_y + 2 SAY "Naziv izlaznog fajla: " + PADR( _file_name, 20 ) 
+   IF LastKey() == K_ESC
+      ::export_params := NIL
+      BoxC()
+      RETURN _ok
+   ENDIF
 
-    ++ _x 
-    ++ _x
+   _file_name := ::formula_params[ "file" ]
+   _name := ::formula_params[ "name" ]
 
-    @ m_x + _x, m_y + 2 SAY "Eksportuj podatke (D/N)?" GET _export VALID _export $ "DN" PICT "@!"
-    
-    read
+   ++ _x
+   ++ _x
+   @ m_x + _x, m_y + 2 SAY Replicate( "-", 60 )
 
-BoxC()
+   ++ _x
+   @ m_x + _x, m_y + 2 SAY "  Odabrana varijanta: " + PadR( _name, 30 )
 
-if LastKey() == K_ESC .or. _export == "N" 
-    ::export_params := NIL
-    return _ok
-endif
+   ++ _x
+   @ m_x + _x, m_y + 2 SAY "Naziv izlaznog fajla: " + PadR( _file_name, 20 )
 
-// snimi parametre
+   ++ _x
+   ++ _x
+   @ m_x + _x, m_y + 2 SAY "Eksportuj podatke (D/N)?" GET _export VALID _export $ "DN" PICT "@!"
 
-set_metric( "virm_export_banke_tek", my_user(), _id_formula )
+   READ
 
-::export_params := hb_hash()
-::export_params["fajl"] := _file_name
-::export_params["formula"] := _id_formula
-::export_params["separator"] := ::formula_params["separator"]
-::export_params["separator_formula"] := ::formula_params["separator_formula"]
+   BoxC()
 
-_ok := .t.
+   IF LastKey() == K_ESC .OR. _export == "N"
+      ::export_params := NIL
+      RETURN _ok
+   ENDIF
 
-return _ok
+   set_metric( "virm_export_banke_tek", my_user(), _id_formula )
 
+   ::export_params := hb_Hash()
+   ::export_params[ "fajl" ] := _file_name
+   ::export_params[ "formula" ] := _id_formula
+   ::export_params[ "separator" ] := ::formula_params[ "separator" ]
+   ::export_params[ "separator_formula" ] := ::formula_params[ "separator_formula" ]
+
+   _ok := .T.
+
+   RETURN _ok
 
 
 
@@ -207,36 +203,37 @@ return _ok
 // dupliciranje postavke eksporta
 // ----------------------------------------------------------
 METHOD VirmExportTxt:export_setup_duplicate()
-local _existing := 1
-local _new := 0
-local oExisting := VirmExportTxt():New()
-local oNew := VirmExportTxt():New()
-private GetList := {}
 
-Box(, 3, 60 )
+   LOCAL _existing := 1
+   LOCAL _new := 0
+   LOCAL oExisting := VirmExportTxt():New()
+   LOCAL oNew := VirmExportTxt():New()
+   PRIVATE GetList := {}
 
-    @ m_x + 1, m_y + 2 SAY "*** DUPLICIRANJE POSTAVKI EKSPORTA"
-    @ m_x + 2, m_y + 2 SAY "Koristiti postojece podesenje broj:" GET _existing PICT "999"
-    @ m_x + 3, m_y + 2 SAY "      Kreirati novo podesenje broj:" GET _new PICT "999"
+   Box(, 3, 60 )
 
-    read
+   @ m_x + 1, m_y + 2 SAY "*** DUPLICIRANJE POSTAVKI EKSPORTA"
+   @ m_x + 2, m_y + 2 SAY "Koristiti postojece podesenje broj:" GET _existing PICT "999"
+   @ m_x + 3, m_y + 2 SAY "      Kreirati novo podesenje broj:" GET _new PICT "999"
 
-BoxC()
+   READ
 
-if LastKey() == K_ESC
-    return
-endif
+   BoxC()
 
-if _new > 0 .and. _new <> _existing
+   IF LastKey() == K_ESC
+      RETURN
+   ENDIF
 
-    oExisting:export_setup_read_params( _existing )
+   IF _new > 0 .AND. _new <> _existing
 
-    oNew:formula_params := oExisting:formula_params
-    oNew:export_setup_write_params( _new )
+      oExisting:export_setup_read_params( _existing )
 
-endif
+      oNew:formula_params := oExisting:formula_params
+      oNew:export_setup_write_params( _new )
 
-return
+   ENDIF
+
+   RETURN
 
 
 
@@ -244,30 +241,31 @@ return
 // kopiranje formule iz postojece formule
 // ----------------------------------------------------------
 METHOD VirmExportTxt:copy_existing_formula( id_formula, var )
-local oExport := VirmExportTxt():New()
-local _tmp
-private GetList := {}
 
-if LEFT( id_formula, 1 ) == "#"
-    id_formula := STRTRAN( ALLTRIM( id_formula ), "#", "" )
-else
-    return .t.
-endif
+   LOCAL oExport := VirmExportTxt():New()
+   LOCAL _tmp
+   PRIVATE GetList := {}
 
-// uzmi postojecu formulu...
-if oExport:get_export_params( VAL( id_formula ) )
+   IF Left( id_formula, 1 ) == "#"
+      id_formula := StrTran( AllTrim( id_formula ), "#", "" )
+   ELSE
+      RETURN .T.
+   ENDIF
 
-    _tmp := oExport:get_export_line_macro( var )
+   // uzmi postojecu formulu...
+   IF oExport:get_export_params( Val( id_formula ) )
 
-    if !EMPTY( _tmp  )
-        id_formula := PADR( _tmp, 500 )
-    else
-        MsgBeep( "Zadata formula ne postoji !!!" )
-    endif
+      _tmp := oExport:get_export_line_macro( var )
 
-endif
+      IF !Empty( _tmp  )
+         id_formula := PadR( _tmp, 500 )
+      ELSE
+         MsgBeep( "Zadata formula ne postoji !!!" )
+      ENDIF
 
-return .t.
+   ENDIF
+
+   RETURN .T.
 
 
 
@@ -276,141 +274,142 @@ return .t.
 // generisanje podataka u pomocnu tabelu iz sql-a
 // -----------------------------------------------------------
 METHOD VirmExportTxt:fill_data_from_virm()
-local _ok := .f.
-local _count, _rec
-local _total := 0
 
-select ( F_VIPRIPR )
-if !USED()
-    O_VIRM_PRIPR
-endif
+   LOCAL _ok := .F.
+   LOCAL _count, _rec
+   LOCAL _total := 0
 
-select virm_pripr
-set order to tag "1"
-go top
+   SELECT ( F_VIPRIPR )
+   IF !Used()
+      O_VIRM_PRIPR
+   ENDIF
 
-if RECCOUNT() == 0
-    MsgBeep( "U pripremi nema virmana !!!" )
-    return _ok
-endif
+   SELECT virm_pripr
+   SET ORDER TO TAG "1"
+   GO TOP
 
-_count := 0
+   IF RecCount() == 0
+      MsgBeep( "U pripremi nema virmana !!!" )
+      RETURN _ok
+   ENDIF
 
-do while !EOF()
+   _count := 0
 
-    _total += field->iznos
-    ++ _count
+   DO WHILE !Eof()
 
-    select exp_bank
-    append blank
-    _rec := dbf_get_rec()
+      _total += field->iznos
+      ++ _count
 
-    // popuni sada _rec
+      SELECT exp_bank
+      APPEND BLANK
+      _rec := dbf_get_rec()
 
-    _rec["rbr"] := virm_pripr->rbr
-    
-    // mjesto
-    _rec["mjesto"] := UPPER( virm_pripr->mjesto )
+      // popuni sada _rec
 
-    // podaci posiljaoca i primaoca
-    _rec["prim_rn"] := virm_pripr->kome_zr
-    _rec["prim_naz"] := UPPER( virm_pripr->kome_txt )
-    _rec["prim_mj"] := UPPER( virm_pripr->kome_sj )
+      _rec[ "rbr" ] := virm_pripr->rbr
 
-    if EMPTY( _rec["prim_mj"] )
-        _rec["prim_mj"] := _rec["mjesto"]
-    endif
+      // mjesto
+      _rec[ "mjesto" ] := Upper( virm_pripr->mjesto )
 
-    _rec["pos_rn"] := virm_pripr->ko_zr
-    _rec["pos_naz"] := UPPER( virm_pripr->ko_txt )
-    _rec["pos_mj"] := UPPER( virm_pripr->ko_sj )
+      // podaci posiljaoca i primaoca
+      _rec[ "prim_rn" ] := virm_pripr->kome_zr
+      _rec[ "prim_naz" ] := Upper( virm_pripr->kome_txt )
+      _rec[ "prim_mj" ] := Upper( virm_pripr->kome_sj )
 
-    if EMPTY( _rec["pos_mj"] )
-        _rec["pos_mj"] := _rec["mjesto"]
-    endif
+      IF Empty( _rec[ "prim_mj" ] )
+         _rec[ "prim_mj" ] := _rec[ "mjesto" ]
+      ENDIF
 
-    // svrha uplate
-    _rec["svrha"] := UPPER( virm_pripr->svrha_doz )
+      _rec[ "pos_rn" ] := virm_pripr->ko_zr
+      _rec[ "pos_naz" ] := Upper( virm_pripr->ko_txt )
+      _rec[ "pos_mj" ] := Upper( virm_pripr->ko_sj )
 
-    // sifra placanja po sifraniku TRN.DAT
-    // ako je sifra duzine 4 za sifru se popuni sa 2 karaktera prazna
-    _rec["sifra_pl"] := virm_pripr->svrha_pl
+      IF Empty( _rec[ "pos_mj" ] )
+         _rec[ "pos_mj" ] := _rec[ "mjesto" ]
+      ENDIF
 
-    // datum valute
-    _rec["dat_val"] := virm_pripr->dat_upl
-    
-    // porezni period od-do
-    _rec["per_od"] := virm_pripr->pod
-    _rec["per_do"] := virm_pripr->pdo
+      // svrha uplate
+      _rec[ "svrha" ] := Upper( virm_pripr->svrha_doz )
 
-    // tip stavke, fiskno "1"
-    _rec["tip_st"] := "1"
+      // sifra placanja po sifraniku TRN.DAT
+      // ako je sifra duzine 4 za sifru se popuni sa 2 karaktera prazna
+      _rec[ "sifra_pl" ] := virm_pripr->svrha_pl
 
-    // tip dokumenta:
-    // 0 - nalog za prenos
-    // 1 - nalog za placanje JP
-    _rec["tip_dok"] := "1"
+      // datum valute
+      _rec[ "dat_val" ] := virm_pripr->dat_upl
 
-    // vrsta uplate:
-    // 0, 1 ili 2
-    _rec["v_upl"] := "0"
+      // porezni period od-do
+      _rec[ "per_od" ] := virm_pripr->pod
+      _rec[ "per_do" ] := virm_pripr->pdo
 
-    // broj poreznog obveznika
-    _rec["bpo"] := virm_pripr->bpo
+      // tip stavke, fiskno "1"
+      _rec[ "tip_st" ] := "1"
 
-    // opcina
-    _rec["opcina"] := virm_pripr->idops
+      // tip dokumenta:
+      // 0 - nalog za prenos
+      // 1 - nalog za placanje JP
+      _rec[ "tip_dok" ] := "1"
 
-    // vrsta prihoda
-    _rec["v_prih"] := virm_pripr->idjprih
+      // vrsta uplate:
+      // 0, 1 ili 2
+      _rec[ "v_upl" ] := "0"
 
-    // budzetska organizacija
-    _rec["budzet"] := virm_pripr->budzorg
+      // broj poreznog obveznika
+      _rec[ "bpo" ] := virm_pripr->bpo
 
-    // poziv na broj
-    _rec["pnabr"] := virm_pripr->pnabr
+      // opcina
+      _rec[ "opcina" ] := virm_pripr->idops
 
-    // iznos virmana
-    _rec["iznos"] := virm_pripr->iznos
-    
-    // total stavki...
-    _rec["tot_st"] := 0
+      // vrsta prihoda
+      _rec[ "v_prih" ] := virm_pripr->idjprih
 
-    // total iznos...
-    _rec["tot_izn"] := 0
+      // budzetska organizacija
+      _rec[ "budzet" ] := virm_pripr->budzorg
 
-    dbf_update_rec( _rec )
+      // poziv na broj
+      _rec[ "pnabr" ] := virm_pripr->pnabr
 
-    select virm_pripr
-    skip
+      // iznos virmana
+      _rec[ "iznos" ] := virm_pripr->iznos
 
-enddo
+      // total stavki...
+      _rec[ "tot_st" ] := 0
 
-// ubaci mi podatke o totalima u polja...
-select exp_bank
-set order to tag "1"
-go top
+      // total iznos...
+      _rec[ "tot_izn" ] := 0
 
-do while !EOF()
+      dbf_update_rec( _rec )
 
-    _rec := dbf_get_rec()
-    _rec["tot_izn"] := _total
-    _rec["tot_st"] := _count
+      SELECT virm_pripr
+      SKIP
 
-    dbf_update_rec( _rec )
+   ENDDO
 
-    skip
+   // ubaci mi podatke o totalima u polja...
+   SELECT exp_bank
+   SET ORDER TO TAG "1"
+   GO TOP
 
-enddo
+   DO WHILE !Eof()
 
-go top
+      _rec := dbf_get_rec()
+      _rec[ "tot_izn" ] := _total
+      _rec[ "tot_st" ] := _count
 
-::export_total := _total
-::export_count := _count
+      dbf_update_rec( _rec )
 
-_ok := .t.
+      SKIP
 
-return _ok
+   ENDDO
+
+   GO TOP
+
+   ::export_total := _total
+   ::export_count := _count
+
+   _ok := .T.
+
+   RETURN _ok
 
 
 
@@ -418,75 +417,78 @@ return _ok
 
 // -----------------------------------------------------------
 // vraca liniju koja ce sluziti kao makro za odsjecanje i prikaz
-// teksta 
+// teksta
 // -----------------------------------------------------------
 METHOD VirmExportTxt:get_export_line_macro( var )
-local _struct
 
-do case 
-    case var == "i"
-        // item line
-        _struct := ALLTRIM( ::formula_params["formula"] )
-    case var == "h1"
-        // header 1
-        _struct := ALLTRIM( ::formula_params["head_1"] )
-    case var == "h2"
-        // header 2
-        _struct := ALLTRIM( ::formula_params["head_2"] )
-    case var == "f1"
-         // footer 1
-        _struct := ALLTRIM( ::formula_params["footer_1"] )
-    case var == "f2"
-         // footer 2
-        _struct := ALLTRIM( ::formula_params["footer_2"] )
-    otherwise
-        MsgBeep( "macro not defined !" )
-        _struct := ""
-endcase
+   LOCAL _struct
 
-return _struct
+   DO CASE
+   CASE var == "i"
+      // item line
+      _struct := AllTrim( ::formula_params[ "formula" ] )
+   CASE var == "h1"
+      // header 1
+      _struct := AllTrim( ::formula_params[ "head_1" ] )
+   CASE var == "h2"
+      // header 2
+      _struct := AllTrim( ::formula_params[ "head_2" ] )
+   CASE var == "f1"
+      // footer 1
+      _struct := AllTrim( ::formula_params[ "footer_1" ] )
+   CASE var == "f2"
+      // footer 2
+      _struct := AllTrim( ::formula_params[ "footer_2" ] )
+   OTHERWISE
+      MsgBeep( "macro not defined !" )
+      _struct := ""
+   ENDCASE
+
+   RETURN _struct
 
 
 
 METHOD VirmExportTxt:get_macro_line( var )
-local _macro := ""
-local _i, _curr_struct
-local _separator, _separator_formule
-local _a_struct
 
-// kreriraj makro liniju za stavku
-_curr_struct := ::get_export_line_macro( var )
+   LOCAL _macro := ""
+   LOCAL _i, _curr_struct
+   LOCAL cSeparator, cSeparatorFormula
+   LOCAL _a_struct
 
-if EMPTY( _curr_struct )
-    return _macro
-endif
+   // kreriraj makro liniju za stavku
+   _curr_struct := ::get_export_line_macro( var )
 
-_separator := ::export_params["separator"]
-_separator_formule := ::export_params["separator_formula"]
-_a_struct := TokToNiz( _curr_struct, _separator_formule )
+   IF Empty( _curr_struct )
+      RETURN _macro
+   ENDIF
 
-for _i := 1 to LEN( _a_struct )
+   cSeparator := ::export_params[ "separator" ]
+   cSeparatorFormula := ::export_params[ "separator_formula" ]
+   IF cSeparator == "t" .OR. cSeparator == "T"
+      cSeparator := Chr( 9 )
+   ENDIF
+   _a_struct := TokToNiz( _curr_struct, cSeparatorFormula )
 
-    if !EMPTY( _a_struct[ _i ] )
+   FOR _i := 1 TO Len( _a_struct )
 
-        // plusevi izmedju...
-        if _i > 1
+      IF !Empty( _a_struct[ _i ] )
+
+
+         IF _i > 1 // plusevi izmedju
             _macro += " + "
-        endif
+         ENDIF
 
-        // makro
-        _macro += _a_struct[ _i ]
+         _macro += _a_struct[ _i ] // makro
 
-        // ako treba separator
-        if _i < LEN( _a_struct ) .and. !EMPTY( _separator )
-            _macro += ' + "' + _separator + '" '
-        endif
+         IF _i < Len( _a_struct ) .AND. !Empty( cSeparator ) // ako treba separator
+            _macro += ' + "' + cSeparator + '" '
+         ENDIF
 
-    endif
+      ENDIF
 
-next
+   NEXT
 
-return _macro
+   RETURN _macro
 
 
 
@@ -496,114 +498,115 @@ return _macro
 // -----------------------------------------------------------
 
 METHOD VirmExportTxt:create_txt_from_dbf()
-local _ok := .f.
-local _output_filename
-local _output_dir 
-local _line
-local _head_1, _head_2
-local _footer_1, _footer_2
-local _force_eol
 
-_output_dir := my_home() + "export" + SLASH
+   LOCAL _ok := .F.
+   LOCAL _output_filename
+   LOCAL _output_dir
+   LOCAL _line
+   LOCAL _head_1, _head_2
+   LOCAL _footer_1, _footer_2
+   LOCAL _force_eol
 
-if DirChange( _output_dir ) != 0
-    MakeDir( _output_dir )
-endif
- 
-// fajl ide u my_home/export/
-_output_filename := _output_dir + ALLTRIM( ::export_params["fajl"] )
+   _output_dir := my_home() + "export" + SLASH
 
-_force_eol := ::formula_params["forsiraj_eol"] == "D"
+   IF DirChange( _output_dir ) != 0
+      MakeDir( _output_dir )
+   ENDIF
 
-SET PRINTER TO ( _output_filename )
-SET PRINTER ON
-set CONSOLE OFF
+   // fajl ide u my_home/export/
+   _output_filename := _output_dir + AllTrim( ::export_params[ "fajl" ] )
 
-// predji na upis podataka
-select exp_bank
-set order to tag "1"
-go top
+   _force_eol := ::formula_params[ "forsiraj_eol" ] == "D"
 
-// header 1
-_head_1 := ::get_macro_line( "h1" )
+   SET PRINTER TO ( _output_filename )
+   SET PRINTER ON
+   SET CONSOLE OFF
 
-if !EMPTY( _head_1 )    
-	?? to_win1250_encoding( hb_strtoutf8( &(_head_1 ) ), .t. )
-    if _force_eol
-        ?
-    endif
-endif
+   // predji na upis podataka
+   SELECT exp_bank
+   SET ORDER TO TAG "1"
+   GO TOP
 
-// header 2
-_head_2 := ::get_macro_line( "h2" )
+   // header 1
+   _head_1 := ::get_macro_line( "h1" )
 
-if !EMPTY( _head_2 )    
-	?? to_win1250_encoding( hb_strtoutf8( &(_head_2) ), .t. )
-    if _force_eol
-        ?
-    endif
-endif
+   IF !Empty( _head_1 )
+      ?? to_win1250_encoding( hb_StrToUTF8( &( _head_1 ) ), .T. )
+      IF _force_eol
+         ?
+      ENDIF
+   ENDIF
 
-// sada stavke...
-_line := ::get_macro_line( "i" )
+   // header 2
+   _head_2 := ::get_macro_line( "h2" )
 
-// predji na upis podataka
-select exp_bank
-set order to tag "1"
-go top
+   IF !Empty( _head_2 )
+      ?? to_win1250_encoding( hb_StrToUTF8( &( _head_2 ) ), .T. )
+      IF _force_eol
+         ?
+      ENDIF
+   ENDIF
 
-do while !EOF()
-    // upisi u fajl...
-	?? to_win1250_encoding( hb_strtoutf8( &(_line) ), .t. )
-    if _force_eol
-        ?
-    endif
-    skip
-enddo
+   // sada stavke...
+   _line := ::get_macro_line( "i" )
 
-// vrati se na vrh tabele
-go top
+   // predji na upis podataka
+   SELECT exp_bank
+   SET ORDER TO TAG "1"
+   GO TOP
 
-// footer 1
-_footer_1 := ::get_macro_line( "f1" )
+   DO WHILE !Eof()
+      // upisi u fajl...
+      ?? to_win1250_encoding( hb_StrToUTF8( &( _line ) ), .T. )
+      IF _force_eol
+         ?
+      ENDIF
+      SKIP
+   ENDDO
 
-if !EMPTY( _footer_1 )    
-	?? to_win1250_encoding( hb_strtoutf8( &(_footer_1 ) ), .t. )
-    if _force_eol
-        ?
-    endif
-endif
+   // vrati se na vrh tabele
+   GO TOP
 
-// footer 2
-_footer_2 := ::get_macro_line( "f2" )
+   // footer 1
+   _footer_1 := ::get_macro_line( "f1" )
 
-if !EMPTY( _footer_2 )    
-	?? to_win1250_encoding( hb_strtoutf8( &(_footer_2) ), .t. )
-    if _force_eol
-        ?
-    endif
-endif
+   IF !Empty( _footer_1 )
+      ?? to_win1250_encoding( hb_StrToUTF8( &( _footer_1 ) ), .T. )
+      IF _force_eol
+         ?
+      ENDIF
+   ENDIF
+
+   // footer 2
+   _footer_2 := ::get_macro_line( "f2" )
+
+   IF !Empty( _footer_2 )
+      ?? to_win1250_encoding( hb_StrToUTF8( &( _footer_2 ) ), .T. )
+      IF _force_eol
+         ?
+      ENDIF
+   ENDIF
 
 
-SET PRINTER TO
-SET PRINTER OFF
-SET CONSOLE ON
+   SET PRINTER TO
+   SET PRINTER OFF
+   SET CONSOLE ON
 
-if FILE( _output_filename )
-    open_folder( _output_dir )
-    MsgBeep( "Fajl uspjesno kreiran !" )
-    _ok := .t.
-else
-    MsgBeep( "Postoji problem sa operacijom kreiranja fajla !!!" )
-endif
+   IF File( _output_filename )
+      open_folder( _output_dir )
+      MsgBeep( "Fajl uspjesno kreiran !" )
+      _ok := .T.
+   ELSE
+      MsgBeep( "Postoji problem sa operacijom kreiranja fajla !!!" )
+   ENDIF
 
-// zatvori tabelu...
-select exp_bank
-use
+   // zatvori tabelu...
+   SELECT exp_bank
+   USE
 
-DirChange( my_home() )
+   DirChange( my_home() )
 
-return _ok
+   RETURN _ok
 
 
 
@@ -613,29 +616,31 @@ return _ok
 // -----------------------------------------------------------
 
 METHOD VirmExportTxt:export()
-local _ok := .f.
 
-if ::export_params == NIL
-    MsgBeep( "Prekidam operaciju exporta !" )
-    return _ok
-endif
+   LOCAL _ok := .F.
 
-// kreiraj tabelu exporta
-::create_export_dbf()
+   if ::export_params == NIL
+      MsgBeep( "Prekidam operaciju exporta !" )
+      RETURN _ok
+   ENDIF
 
-// napuni je podacima iz obračuna
-if ! ::fill_data_from_virm()
-    MsgBeep( "Problem sa eksportom podataka !!!" )
-    return _ok
-endif
+   // kreiraj tabelu exporta
+   ::create_export_dbf()
 
-// kreiraj txt fajl na osnovu dbf tabele
-if ! ::create_txt_from_dbf()
-    return _ok
-endif
+   // napuni je podacima iz obračuna
+   IF ! ::fill_data_from_virm()
+      MsgBeep( "Problem sa eksportom podataka !!!" )
+      RETURN _ok
+   ENDIF
 
-_ok := .t.
-return _ok
+   // kreiraj txt fajl na osnovu dbf tabele
+   IF ! ::create_txt_from_dbf()
+      RETURN _ok
+   ENDIF
+
+   _ok := .T.
+
+   RETURN _ok
 
 
 
@@ -644,140 +649,141 @@ return _ok
 // -----------------------------------------------------------
 
 METHOD VirmExportTxt:export_setup()
-local _ok := .f.
-local _x := 1
-local _id_formula := fetch_metric( "virm_export_banke_tek", my_user(), 1 )
-local _active, _formula, _filename, _name, _sep, _sep_formula
-local _head_1, _head_2, _footer_1, _footer_2, _force_eol
-local _write_params
 
-Box(, 15, 70 )
+   LOCAL _ok := .F.
+   LOCAL _x := 1
+   LOCAL _id_formula := fetch_metric( "virm_export_banke_tek", my_user(), 1 )
+   LOCAL _active, _formula, _filename, _name, _sep, _sep_formula
+   LOCAL _head_1, _head_2, _footer_1, _footer_2, _force_eol
+   LOCAL _write_params
 
-    #ifdef __PLATWORM__DARWIN
-        readinsert(.t.)
-    #endif
+   Box(, 15, 70 )
 
-    @ m_x + _x, m_y + 2 SAY "Varijanta eksporta:" GET _id_formula PICT "999"
+#ifdef __PLATWORM__DARWIN
+   ReadInsert( .T. )
+#endif
 
-    read
+   @ m_x + _x, m_y + 2 SAY "Varijanta eksporta:" GET _id_formula PICT "999"
 
-    if LastKey() == K_ESC
-        BoxC()
-        return _ok
-    endif
+   READ
 
-    ::export_setup_read_params( _id_formula )
+   IF LastKey() == K_ESC
+      BoxC()
+      RETURN _ok
+   ENDIF
 
-    _formula := ::formula_params["formula"]
-    _head_1 := ::formula_params["head_1"]
-    _head_2 := ::formula_params["head_2"]
-    _footer_1 := ::formula_params["footer_1"]
-    _footer_2 := ::formula_params["footer_2"]
-    _filename := ::formula_params["file"]
-    _name := ::formula_params["name"]
-    _sep := ::formula_params["separator"]
-    _sep_formula := ::formula_params["separator_formula"]
-    _force_eol := ::formula_params["forsiraj_eol"]
+   ::export_setup_read_params( _id_formula )
 
-    if _formula == NIL
-        // tek se podesavaju parametri za ovu formulu
-        _formula := SPACE(1000)
-        _head_1 := _formula
-        _head_2 := _formula
-        _footer_1 := _formula
-        _footer_2 := _formula
-        _name := PADR( "XXXXX Banka", 100 )
-        _filename := PADR( "", 50 )
-        _sep := ";"
-        _sep_formula := ";"
-        _force_eol := "D"
-    else
-        _formula := PADR( ALLTRIM( _formula ), 1000 )
-        _head_1 := PADR( ALLTRIM( _head_1 ), 1000 )
-        _head_2 := PADR( ALLTRIM( _head_2 ), 1000 )
-        _footer_1 := PADR( ALLTRIM( _footer_1 ), 1000 )
-        _footer_2 := PADR( ALLTRIM( _footer_2 ), 1000 )
-        _name := PADR( ALLTRIM( _name ), 500 )
-        _filename := PADR( ALLTRIM( _filename ), 500 )
-        _sep := PADR( _sep, 1 )
-        _sep_formula := PADR( _sep_formula, 1 )
-        _force_eol := PADR( _force_eol, 1 )
-    endif
+   _formula := ::formula_params[ "formula" ]
+   _head_1 := ::formula_params[ "head_1" ]
+   _head_2 := ::formula_params[ "head_2" ]
+   _footer_1 := ::formula_params[ "footer_1" ]
+   _footer_2 := ::formula_params[ "footer_2" ]
+   _filename := ::formula_params[ "file" ]
+   _name := ::formula_params[ "name" ]
+   _sep := ::formula_params[ "separator" ]
+   _sep_formula := ::formula_params[ "separator_formula" ]
+   _force_eol := ::formula_params[ "forsiraj_eol" ]
 
-    ++ _x
-    ++ _x
+   IF _formula == NIL
+      // tek se podesavaju parametri za ovu formulu
+      _formula := Space( 1000 )
+      _head_1 := _formula
+      _head_2 := _formula
+      _footer_1 := _formula
+      _footer_2 := _formula
+      _name := PadR( "XXXXX Banka", 100 )
+      _filename := PadR( "", 50 )
+      _sep := ";"
+      _sep_formula := ";"
+      _force_eol := "D"
+   ELSE
+      _formula := PadR( AllTrim( _formula ), 1000 )
+      _head_1 := PadR( AllTrim( _head_1 ), 1000 )
+      _head_2 := PadR( AllTrim( _head_2 ), 1000 )
+      _footer_1 := PadR( AllTrim( _footer_1 ), 1000 )
+      _footer_2 := PadR( AllTrim( _footer_2 ), 1000 )
+      _name := PadR( AllTrim( _name ), 500 )
+      _filename := PadR( AllTrim( _filename ), 500 )
+      _sep := PadR( _sep, 1 )
+      _sep_formula := PadR( _sep_formula, 1 )
+      _force_eol := PadR( _force_eol, 1 )
+   ENDIF
 
-    @ m_x + _x, m_y + 2 SAY "(*)   Naziv:" GET _name PICT "@S50" VALID !EMPTY( _name )
+   ++ _x
+   ++ _x
 
-    ++ _x
-    ++ _x  
+   @ m_x + _x, m_y + 2 SAY "(*)   Naziv:" GET _name PICT "@S50" VALID !Empty( _name )
 
-    @ m_x + _x, m_y + 2 SAY "(*)  Zagl.1:" GET _head_1 PICT "@S50" ;
-            VALID {|| EMPTY( _head_1 ) .or. ::copy_existing_formula( @_head_1, "h1" ) }
-    
-    ++ _x  
+   ++ _x
+   ++ _x
 
-    @ m_x + _x, m_y + 2 SAY "(*)  Zagl.2:" GET _head_2 PICT "@S50" ;
-            VALID {|| EMPTY( _head_2 ) .or. ::copy_existing_formula( @_head_2, "h2" ) }
-    
-    ++ _x  
-    
-    @ m_x + _x, m_y + 2 SAY "(*) Formula:" GET _formula PICT "@S50" ; 
-            VALID {|| !EMPTY( _formula ) .and. ::copy_existing_formula( @_formula, "i" ) }
+   @ m_x + _x, m_y + 2 SAY "(*)  Zagl.1:" GET _head_1 PICT "@S50" ;
+      VALID {|| Empty( _head_1 ) .OR. ::copy_existing_formula( @_head_1, "h1" ) }
 
-    ++ _x
+   ++ _x
 
-    @ m_x + _x, m_y + 2 SAY "(*)  Podn.1:" GET _footer_1 PICT "@S50" ;
-            VALID {|| EMPTY( _footer_1 ) .or. ::copy_existing_formula( @_footer_1, "f1" ) }
- 
-    ++ _x
+   @ m_x + _x, m_y + 2 SAY "(*)  Zagl.2:" GET _head_2 PICT "@S50" ;
+      VALID {|| Empty( _head_2 ) .OR. ::copy_existing_formula( @_head_2, "h2" ) }
 
-    @ m_x + _x, m_y + 2 SAY "(*)  Podn.2:" GET _footer_2 PICT "@S50" ;
-            VALID {|| EMPTY( _footer_2 ) .or. ::copy_existing_formula( @_footer_2, "f2" ) }
-    
-    ++ _x
-    ++ _x
+   ++ _x
 
-    @ m_x + _x, m_y + 2 SAY "Naziv izlaznog fajla:" GET _filename PICT "@S40"
+   @ m_x + _x, m_y + 2 SAY "(*) Formula:" GET _formula PICT "@S50" ;
+      VALID {|| !Empty( _formula ) .AND. ::copy_existing_formula( @_formula, "i" ) }
 
-    ++ _x
+   ++ _x
 
-    @ m_x + _x, m_y + 2 SAY "Separator u izl.fajlu [ ; , . ]:" GET _sep 
+   @ m_x + _x, m_y + 2 SAY "(*)  Podn.1:" GET _footer_1 PICT "@S50" ;
+      VALID {|| Empty( _footer_1 ) .OR. ::copy_existing_formula( @_footer_1, "f1" ) }
 
-    ++ _x
- 
-    @ m_x + _x, m_y + 2 SAY "    Separator formule [ ; , . ]:" GET _sep_formula 
+   ++ _x
 
-    ++ _x
-    
-    @ m_x + _x, m_y + 2 SAY "     Forsiraj kraj linije (D/N):" GET _force_eol VALID _force_eol $ "DN" PICT "!@" 
+   @ m_x + _x, m_y + 2 SAY "(*)  Podn.2:" GET _footer_2 PICT "@S50" ;
+      VALID {|| Empty( _footer_2 ) .OR. ::copy_existing_formula( @_footer_2, "f2" ) }
 
-    read
+   ++ _x
+   ++ _x
 
-BoxC()
+   @ m_x + _x, m_y + 2 SAY "Naziv izlaznog fajla:" GET _filename PICT "@S40"
 
-if LastKey() == K_ESC
-    return _ok
-endif
+   ++ _x
 
-// write params
+   @ m_x + _x, m_y + 2 SAY "Separator u izl.fajlu [ ; , . ]:" GET _sep
 
-set_metric( "virm_export_banke_tek", my_user(), _id_formula )
+   ++ _x
 
-::formula_params["separator"] := _sep
-::formula_params["separator_formula"] := _sep_formula
-::formula_params["formula"] := _formula
-::formula_params["head_1"] := _head_1
-::formula_params["head_2"] := _head_2
-::formula_params["footer_1"] := _footer_1
-::formula_params["footer_2"] := _footer_2
-::formula_params["file"] := _filename
-::formula_params["name"] := _name
-::formula_params["forsiraj_eol"] := _force_eol
+   @ m_x + _x, m_y + 2 SAY "    Separator formule [ ; , . ]:" GET _sep_formula
 
-::export_setup_write_params( _id_formula )
+   ++ _x
 
-return _ok
+   @ m_x + _x, m_y + 2 SAY "     Forsiraj kraj linije (D/N):" GET _force_eol VALID _force_eol $ "DN" PICT "!@"
+
+   READ
+
+   BoxC()
+
+   IF LastKey() == K_ESC
+      RETURN _ok
+   ENDIF
+
+   // write params
+
+   set_metric( "virm_export_banke_tek", my_user(), _id_formula )
+
+   ::formula_params[ "separator" ] := _sep
+   ::formula_params[ "separator_formula" ] := _sep_formula
+   ::formula_params[ "formula" ] := _formula
+   ::formula_params[ "head_1" ] := _head_1
+   ::formula_params[ "head_2" ] := _head_2
+   ::formula_params[ "footer_1" ] := _footer_1
+   ::formula_params[ "footer_2" ] := _footer_2
+   ::formula_params[ "file" ] := _filename
+   ::formula_params[ "name" ] := _name
+   ::formula_params[ "forsiraj_eol" ] := _force_eol
+
+   ::export_setup_write_params( _id_formula )
+
+   RETURN _ok
 
 
 
@@ -788,22 +794,23 @@ return _ok
 // -----------------------------------------------------------
 
 METHOD VirmExportTxt:export_setup_read_params( id )
-local _param_name := "virm_export_" + PADL( ALLTRIM(STR(id)), 2, "0" ) + "_"
-local _ok := .t.
 
-::formula_params := hb_hash()
-::formula_params["name"] := fetch_metric( _param_name + "name", NIL, NIL )
-::formula_params["file"] := fetch_metric( _param_name + "file", NIL, NIL )
-::formula_params["formula"] := fetch_metric( _param_name + "formula", NIL, NIL )
-::formula_params["head_1"] := fetch_metric( _param_name + "head_1", NIL, NIL )
-::formula_params["head_2"] := fetch_metric( _param_name + "head_2", NIL, NIL )
-::formula_params["footer_1"] := fetch_metric( _param_name + "footer_1", NIL, NIL )
-::formula_params["footer_2"] := fetch_metric( _param_name + "footer_2", NIL, NIL )
-::formula_params["separator"] := fetch_metric( _param_name + "sep", NIL, NIL )
-::formula_params["separator_formula"] := fetch_metric( _param_name + "sep_formula", NIL, ";" )
-::formula_params["forsiraj_eol"] := fetch_metric( _param_name + "force_eol", NIL, NIL )
+   LOCAL _param_name := "virm_export_" + PadL( AllTrim( Str( id ) ), 2, "0" ) + "_"
+   LOCAL _ok := .T.
 
-return _ok
+   ::formula_params := hb_Hash()
+   ::formula_params[ "name" ] := fetch_metric( _param_name + "name", NIL, NIL )
+   ::formula_params[ "file" ] := fetch_metric( _param_name + "file", NIL, NIL )
+   ::formula_params[ "formula" ] := fetch_metric( _param_name + "formula", NIL, NIL )
+   ::formula_params[ "head_1" ] := fetch_metric( _param_name + "head_1", NIL, NIL )
+   ::formula_params[ "head_2" ] := fetch_metric( _param_name + "head_2", NIL, NIL )
+   ::formula_params[ "footer_1" ] := fetch_metric( _param_name + "footer_1", NIL, NIL )
+   ::formula_params[ "footer_2" ] := fetch_metric( _param_name + "footer_2", NIL, NIL )
+   ::formula_params[ "separator" ] := fetch_metric( _param_name + "sep", NIL, NIL )
+   ::formula_params[ "separator_formula" ] := fetch_metric( _param_name + "sep_formula", NIL, ";" )
+   ::formula_params[ "forsiraj_eol" ] := fetch_metric( _param_name + "force_eol", NIL, NIL )
+
+   RETURN _ok
 
 
 
@@ -814,45 +821,47 @@ return _ok
 // -----------------------------------------------------------
 
 METHOD VirmExportTxt:export_setup_write_params( id )
-local _param_name := "virm_export_" + PADL( ALLTRIM(STR(id)), 2, "0" ) + "_"
 
-set_metric( _param_name + "name", NIL, ALLTRIM( ::formula_params["name"] ) )
-set_metric( _param_name + "file", NIL, ALLTRIM( ::formula_params["file"] ) )
-set_metric( _param_name + "formula", NIL, ALLTRIM( ::formula_params["formula"] ) )
-set_metric( _param_name + "head_1", NIL, ALLTRIM( ::formula_params["head_1"] ) )
-set_metric( _param_name + "head_2", NIL, ALLTRIM( ::formula_params["head_2"] ) )
-set_metric( _param_name + "footer_1", NIL, ALLTRIM( ::formula_params["footer_1"] ) )
-set_metric( _param_name + "footer_2", NIL, ALLTRIM( ::formula_params["footer_2"] ) )
-set_metric( _param_name + "sep", NIL, ALLTRIM( ::formula_params["separator"] ) )
-set_metric( _param_name + "sep_formula", NIL, ALLTRIM( ::formula_params["separator_formula"] ) )
-set_metric( _param_name + "force_eol", NIL, ALLTRIM( ::formula_params["forsiraj_eol"] ) )
+   LOCAL _param_name := "virm_export_" + PadL( AllTrim( Str( id ) ), 2, "0" ) + "_"
 
-return .t.
+   set_metric( _param_name + "name", NIL, AllTrim( ::formula_params[ "name" ] ) )
+   set_metric( _param_name + "file", NIL, AllTrim( ::formula_params[ "file" ] ) )
+   set_metric( _param_name + "formula", NIL, AllTrim( ::formula_params[ "formula" ] ) )
+   set_metric( _param_name + "head_1", NIL, AllTrim( ::formula_params[ "head_1" ] ) )
+   set_metric( _param_name + "head_2", NIL, AllTrim( ::formula_params[ "head_2" ] ) )
+   set_metric( _param_name + "footer_1", NIL, AllTrim( ::formula_params[ "footer_1" ] ) )
+   set_metric( _param_name + "footer_2", NIL, AllTrim( ::formula_params[ "footer_2" ] ) )
+   set_metric( _param_name + "sep", NIL, AllTrim( ::formula_params[ "separator" ] ) )
+   set_metric( _param_name + "sep_formula", NIL, AllTrim( ::formula_params[ "separator_formula" ] ) )
+   set_metric( _param_name + "force_eol", NIL, AllTrim( ::formula_params[ "forsiraj_eol" ] ) )
+
+   RETURN .T.
 
 
 
 
 METHOD VirmExportTxt:get_export_params( id )
-local _ok := .f.
 
-if id == 0
-    id := ::get_export_list()
-endif
+   LOCAL _ok := .F.
 
-if id == 0
-    MsgBeep( "Potrebno izabrati neku od varijanti !" )
-    return _ok
-endif
+   IF id == 0
+      id := ::get_export_list()
+   ENDIF
 
-::export_setup_read_params( id )
+   IF id == 0
+      MsgBeep( "Potrebno izabrati neku od varijanti !" )
+      RETURN _ok
+   ENDIF
 
-if ::formula_params["name"] == NIL .or. EMPTY( ::formula_params["name"]  )
-    MsgBeep( "Za ovu varijantu ne postoji podesenje !!!#Ukucajte 0 da bi odabrali iz liste." )        
-else
-    _ok := .t.
-endif
+   ::export_setup_read_params( id )
 
-return _ok
+   if ::formula_params[ "name" ] == NIL .OR. Empty( ::formula_params[ "name" ]  )
+      MsgBeep( "Za ovu varijantu ne postoji podesenje !!!#Ukucajte 0 da bi odabrali iz liste." )
+   ELSE
+      _ok := .T.
+   ENDIF
+
+   RETURN _ok
 
 
 
@@ -860,96 +869,96 @@ return _ok
 
 
 METHOD VirmExportTxt:get_export_list()
-local _id := 0
-local _i
-local _param_name := "virm_export_"
-local _opc, _opcexe, _izbor := 1
-local _m_x := m_x
-local _m_y := m_y
 
-_opc := {}
-_opcexe := {}
+   LOCAL _id := 0
+   LOCAL _i
+   LOCAL _param_name := "virm_export_"
+   LOCAL _opc, _opcexe, _izbor := 1
+   LOCAL _m_x := m_x
+   LOCAL _m_y := m_y
 
-for _i := 1 to 20
+   _opc := {}
+   _opcexe := {}
 
-    ::export_setup_read_params( _i )
+   FOR _i := 1 TO 20
 
-    if ::formula_params["name"] <> NIL .and. !EMPTY( ::formula_params["name"] )
-       
-        _tmp := ""
-        _tmp += PADL( ALLTRIM(STR( _i )) + ".", 4 )
-        _tmp += PADR( ::formula_params["name"], 40 )
+      ::export_setup_read_params( _i )
 
-        AADD( _opc, _tmp )
-        AADD( _opcexe, {|| "" } )
+      if ::formula_params[ "name" ] <> NIL .AND. !Empty( ::formula_params[ "name" ] )
 
-    endif
+         _tmp := ""
+         _tmp += PadL( AllTrim( Str( _i ) ) + ".", 4 )
+         _tmp += PadR( ::formula_params[ "name" ], 40 )
 
-next
+         AAdd( _opc, _tmp )
+         AAdd( _opcexe, {|| "" } )
 
-do while .t. .and. LastKey() != K_ESC
-    _izbor := Menu( "choice", _opc, _izbor, .f. )
-	if _izbor == 0
-        exit
-    else
-        _id := VAL( LEFT ( _opc[ _izbor ], 3 ) )
-        _izbor := 0
-    endif
-enddo
+      ENDIF
 
-m_x := _m_x
-m_y := _m_y
+   NEXT
 
-return _id
+   DO WHILE .T. .AND. LastKey() != K_ESC
+      _izbor := Menu( "choice", _opc, _izbor, .F. )
+      IF _izbor == 0
+         EXIT
+      ELSE
+         _id := Val( Left ( _opc[ _izbor ], 3 ) )
+         _izbor := 0
+      ENDIF
+   ENDDO
 
+   m_x := _m_x
+   m_y := _m_y
 
-
-
-function virm_export_banke()
-local _opc := {}
-local _opcexe := {}
-local _izbor := 1
-
-AADD( _opc, "1. export podataka za banku                " )
-AADD( _opcexe, {|| virm_export_txt_banka()  } )
-AADD( _opc, "2. postavke formula exporta   " )
-AADD( _opcexe, {|| virm_export_txt_setup()  } )
-AADD( _opc, "3. dupliciranje postojecih postavaki " )
-AADD( _opcexe, {|| VirmExportTxt():New():export_setup_duplicate()  } )
-
-f18_menu( "el", .f., _izbor, _opc, _opcexe )
-
-return
+   RETURN _id
 
 
 
 
+FUNCTION virm_export_banke()
 
-function virm_export_txt_banka( params )
-local oExp
+   LOCAL _opc := {}
+   LOCAL _opcexe := {}
+   LOCAL _izbor := 1
 
-oExp := VirmExportTxt():New()
+   AAdd( _opc, "1. export podataka za banku                " )
+   AAdd( _opcexe, {|| virm_export_txt_banka()  } )
+   AAdd( _opc, "2. postavke formula exporta   " )
+   AAdd( _opcexe, {|| virm_export_txt_setup()  } )
+   AAdd( _opc, "3. dupliciranje postojecih postavaki " )
+   AAdd( _opcexe, {|| VirmExportTxt():New():export_setup_duplicate()  } )
 
-// u slucaju da nismo setovali parametre, pozovi ih
-if params == NIL
-    oExp:params()
-endif
+   f18_menu( "el", .F., _izbor, _opc, _opcexe )
 
-oExp:export()
-
-return
-
-
-
-
-function virm_export_txt_setup()
-local oExp
-
-oExp := VirmExportTxt():New()
-oExp:export_setup()
-
-return
+   RETURN
 
 
 
 
+
+FUNCTION virm_export_txt_banka( params )
+
+   LOCAL oExp
+
+   oExp := VirmExportTxt():New()
+
+   // u slucaju da nismo setovali parametre, pozovi ih
+   IF params == NIL
+      oExp:params()
+   ENDIF
+
+   oExp:export()
+
+   RETURN
+
+
+
+
+FUNCTION virm_export_txt_setup()
+
+   LOCAL oExp
+
+   oExp := VirmExportTxt():New()
+   oExp:export_setup()
+
+   RETURN

@@ -450,12 +450,16 @@ FUNCTION imaju_unchecked_sifarnici()
 
       lSql := .F.
       IF hb_HHasKey( s_hF18Dbfs[ cDatabase ][ cKey ], "sql" )
-         lSql := s_hF18Dbfs[ cDatabase ][ cKey ][ "sql" ]
+         IF hb_mutexLock( s_mtxMutex )
+            lSql := s_hF18Dbfs[ cDatabase ][ cKey ][ "sql" ]
+         ENDIF
       ENDIF
 
       lSif := .F.
       IF hb_HHasKey( s_hF18Dbfs[ cDatabase ][ cKey ], "sif" )
-         lSif := s_hF18Dbfs[ cDatabase ][ cKey ][ "sif" ]
+         IF hb_mutexLock( s_mtxMutex )
+            lSif := s_hF18Dbfs[ cDatabase ][ cKey ][ "sif" ]
+         ENDIF
       ENDIF
 
       lChk0 := .F.

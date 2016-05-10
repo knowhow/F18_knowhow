@@ -63,7 +63,7 @@ FUNCTION rpt_p_pdv()
    @ m_x + nX, m_y + 2 SAY " izbor ?" GET cSource ;
       PICT "@!" ;
       VALID cSource $ "12"
-	
+
    READ
    nX ++
 
@@ -131,7 +131,7 @@ STATIC FUNCTION f_iz_kuf_kif()
    LOCAL nUlPdvKp := 0
 
    aMyFirma := my_firma( .T. )
-   
+
    O_R_PDV
    APPEND BLANK
 
@@ -171,7 +171,7 @@ STATIC FUNCTION f_iz_kuf_kif()
          _u_nab_21 += nBPdv
          _u_pdv_41 += nPdv
          nUkUlPdv += nPdv
-		
+
       CASE t_u_uvoz( cIdTar )
          _u_uvoz += nBPdv
          _u_pdv_uv += nPdv
@@ -184,14 +184,14 @@ STATIC FUNCTION f_iz_kuf_kif()
 
       CASE t_u_polj_0( cIdTar )
          _u_nab_23 += nBPdv
-	
+
       CASE t_u_n_poup( cIdTar )
          _u_nab_21 += nBPdv
          nUlPdvKp += nPdv
 
       OTHERWISE
          _u_nab_21 += nBPdv
-			
+
       ENDCASE
 
       SELECT KUF
@@ -244,42 +244,42 @@ STATIC FUNCTION f_iz_kuf_kif()
 
       CASE t_i_opor( cIdTar )
          _i_opor += nBPdv
-		
+
       CASE t_i_izvoz( cIdTar )
          _i_izvoz += nBPdv
       CASE t_i_neop( cIdTar )
          _i_neop += nBPdv
-		
+
       ENDCASE
 
 
       IF Round( g_pdv_stopa( cIdTar ), 2 ) > 0
 
          nUkIzPdv += nPdv
-	
+
          IF IsPdvObveznik( id_part )
 
             _i_pdv_r += nPdv
-	
+
          ELSE
             cRejon := part_rejon( id_part )
 
             DO CASE
             CASE cRejon == "2"
                _i_pdv_nr2 += nPdv
-			
+
             CASE cRejon == "3"
                _i_pdv_nr3 += nPdv
-		
+
             CASE cRejon == "4"
                _i_pdv_nr4 += nPdv
-				
+
             OTHERWISE
                _i_pdv_nr1 += nPdv
 
             ENDCASE
          ENDIF
-				
+
       ENDIF
 
       SELECT KIF
@@ -289,33 +289,33 @@ STATIC FUNCTION f_iz_kuf_kif()
    ENDDO
 
    SELECT r_pdv
-	
+
    read_pdv_pars( @_pot_datum, @_pot_mjesto, @_pot_ob, @_pdv_povrat )
 
    _pot_datum := Date()
-	
+
    Box(, 8, 65 )
    @ m_x + 1, m_y + 2 SAY "Prenos PDV-a iz predhodnog perioda (KM) ?" GET _u_pdv_pp ;
       PICT PIC_IZN()
-	
+
    @ m_x + 3, m_y + 2 SAY "- Potpis -----------------"
    @ m_x + 4, m_y + 2 SAY "Datum :" GET _pot_datum ;
       VALID {|| _pot_mjesto := PadR( _po_mjesto, Len( _pot_mjesto ) ), .T. }
    @ m_x + 5, m_y + 2 SAY "Mjesto :" GET _pot_mjesto  ;
       VALID {|| _pot_datum := Date(), .T. }
-	
+
    @ m_x + 6, m_y + 2 SAY "Ime i prezime ? " GET _pot_ob ;
       PICT "@S30" ;
-		
-	
+
+
       @ m_x + 8, m_y + 2 SAY "Zahtjev za povrat ako je preplata (D/N) ? " GET _pdv_povrat ;
       VALID _pdv_povrat $ "DN" ;
       PICT "@!"
-	
+
    READ
 
    save_pdv_pars( _pot_datum, _pot_mjesto, _pot_ob, _pdv_povrat )
-	
+
    BoxC()
 
    SELECT r_pdv
@@ -621,7 +621,7 @@ STATIC FUNCTION show_rpt()
 
    ?? rpt_lm()
    ?? Space( RPT_RI )
-   cPom :=  PadR( "51. PDV obračunat na print_lista(dobra i usluge) ",  RPT_W2 - RPT_BOLD_DELTA ) + Transform( i_pdv_uk, PIC_IZN() )
+   cPom :=  PadR( "51. PDV obračunat na izlaz(dobra i usluge) ",  RPT_W2 - RPT_BOLD_DELTA ) + Transform( i_pdv_uk, PIC_IZN() )
    B_ON
    ??U PadL( cPom, RPT_COL - RPT_RI - RPT_BOLD_DELTA + 1 )
    B_OFF
@@ -758,7 +758,7 @@ STATIC FUNCTION r_zagl()
       ?
       FOR nCol := 1 TO Len( aZaglLen )
          IF Left( aZagl[ i, nCol ], 1 ) = "#"
-	
+
             nMergirano := Val( SubStr( aZagl[ i, nCol ], 2, 1 ) )
             cPom := SubStr( aZagl[ i, nCol ], 3, Len( aZagl[ i, nCol ] ) -2 )
             nMrgWidth := 0

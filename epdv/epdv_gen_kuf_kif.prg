@@ -22,7 +22,6 @@ FUNCTION gen_kuf()
    dDatOd := Date()
    dDatDo := Date()
 
-altd()
    Box(, 6, 40 )
    @ m_x + 1, m_y + 2 SAY "Generacija KUF"
 

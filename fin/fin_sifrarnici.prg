@@ -53,7 +53,7 @@ FUNCTION P_KontoFin( cId, dx, dy, lBlag )
    ENDIF
 
    SELECT konto
-   sif_sifk_fill_kol( "KONTO", @ImeKol, @Kol )
+   sifk_fill_ImeKol( "KONTO", @ImeKol, @Kol )
 
    IF lBlag .AND. !Left( cId, 1 ) $ "0123456789"
       SELECT KONTO

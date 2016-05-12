@@ -57,7 +57,7 @@ FUNCTION PostojiSifra( nDbf, nNtx, nVisina, nSirina, cNaslov, cID, dx, dy,  bBlo
    ENDIF
 
    IF !Used()
-    altd()
+      AltD()
       hRec := get_a_dbf_rec_by_wa( nDbf )
       IF hRec == NIL
          error_bar( "bug", log_stack( 1 ) )
@@ -806,6 +806,7 @@ STATIC FUNCTION set_w_var( ImeKol, _i, show_grup )
 
    LOCAL _tmp, _var_name
 
+
    IF Left( ImeKol[ _i, 3 ], 6 ) != "SIFK->"
 
       _var_name := "w" + ImeKol[ _i, 3 ]
@@ -1038,6 +1039,7 @@ FUNCTION Fill_IDJ( cSTR )
    PopWa()
 
    RETURN .T.
+
 
 // prikaz idroba
 // nalazim se u tabeli koja sadrzi IDROBA, IDROBA_J
@@ -1272,8 +1274,8 @@ FUNCTION VpNaziv( wNaziv )
          MsgBeep( cUpozorenje + AllTrim( cId ) + " !!!" )
          nRet := .F.
       ELSE
-         // bio isti zapis, idi na drugi
-         SKIP 1
+
+         SKIP 1 // bio isti zapis, idi na drugi
          IF !Eof() .AND. wNaziv == naz
             MsgBeep( cUpozorenje + AllTrim( cId ) + " !!!" )
             nRet := .F.

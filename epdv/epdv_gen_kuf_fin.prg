@@ -51,7 +51,6 @@ FUNCTION fin_kuf( dD1, dD2, cSezona )
 
    dDatOd := dD1
    dDatDo := dD2
-altd()
    epdv_otvori_kuf_tabele( .T. )
 
    SELECT F_SG_KUF
@@ -555,7 +554,6 @@ STATIC FUNCTION kuf_fin_trazi_dob( nRecNo, cIdFirma, cIdVn, cBrNal, cBrDok, nRbr
 
    LOCAL i
 
-altd()
    PushWA()
 
    SELECT suban_2

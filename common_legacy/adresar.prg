@@ -79,7 +79,7 @@ FUNCTION P_Adres( cId, dx, dy )
 
    PushWA()
 
-   sif_sifk_fill_kol( PadR( "ADRES", 8 ), @ImeKol, @Kol )
+   sifk_fill_ImeKol( PadR( "ADRES", 8 ), @ImeKol, @Kol )
 
    PopWa()
 

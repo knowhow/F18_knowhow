@@ -133,7 +133,7 @@ FUNCTION p_partneri( cId, dx, dy, lEmptyIdOk )
    NEXT
 
    SELECT PARTN
-   sif_sifk_fill_kol( "PARTN", @ImeKol, @Kol )
+   sifk_fill_ImeKol( "PARTN", @ImeKol, @Kol )
 
    xRet := PostojiSifra( F_PARTN, 1, maxrows() - 15, maxcols() - 15, "Lista Partnera", @cId, dx, dy, {| Ch| partn_k_handler( Ch ) },,,,, { "ID" } )
 

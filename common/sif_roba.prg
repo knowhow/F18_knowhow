@@ -123,7 +123,7 @@ FUNCTION P_Roba( cId, dx, dy, cSeek )
    NEXT
 
    SELECT ROBA
-   sif_sifk_fill_kol( "ROBA", @ImeKol, @Kol )
+   sifk_fill_ImeKol( "ROBA", @ImeKol, @Kol )
 
    bRoba := gRobaBlock
 

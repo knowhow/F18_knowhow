@@ -221,15 +221,15 @@ FUNCTION IzSifkRoba( dbf_name, ozna, u_id_sif, return_nil )
    RETURN  IzSifk( "ROBA", dbf_name, ozna, xSif, return_nil )
 
 
-FUNCTION IzSifk( dbf_name, ozna, u_id_sif, return_nil )
+FUNCTION IzSifk( cDbfName, ozna, u_id_sif, return_nil )
 
-   LOCAL _tmp
+   LOCAL cTmp
 
    PushWA()
-   _tmp := get_sifk_value( dbf_name, ozna, u_id_sif, return_nil )
+   cTmp := get_sifk_value( cDbfName, ozna, u_id_sif, return_nil )
    PopWa()
 
-   RETURN _tmp
+   RETURN cTmp
 
 // -----------------------------------------------------------
 // get_karakter_value
@@ -338,13 +338,13 @@ STATIC FUNCTION get_sifv_value( sifk_tip, sifk_duzina, naz_value )
 
 /*
 
-  IzSifkNaz( "ROBA", "GR1" ) => "Grupa 1  "
-  IzSifkNaz( "ROBA", "XYZ" ) => "         "
+  get_sifk_naz( "ROBA", "GR1" ) => "Grupa 1  "
+  get_sifk_naz( "ROBA", "XYZ" ) => "         "
 
 */
-FUNCTION IzSifkNaz( cDBF, cOznaka )
+FUNCTION get_sifk_naz( cDBF, cOznaka )
 
-   LOCAL xRet := "", nArea
+   LOCAL xRet := ""
 
    PushWA()
 

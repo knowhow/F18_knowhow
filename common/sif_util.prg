@@ -9,6 +9,9 @@
  * By using this software, you agree to be bound by its terms.
  */
 
+#include "f18.ch"
+
+
 // ------------------------------------
 // ispisi naziv kod pretrage sifarnika
 // ------------------------------------
@@ -45,17 +48,19 @@ FUNCTION sif_ispisi_naziv( nDbf, dx, dy )
    RETURN .T.
 
 
-FUNCTION sif_sifk_fill_kol( cDbf, ImeKol, Kol )
+FUNCTION sifk_fill_ImeKol( cDbf, ImeKol, Kol )
 
-   LOCAL _rec, _recs
+   LOCAL _rec, _recs, ii
 
    use_sql_sifk( cDbf, NIL )
    use_sql_sifv()
 
+   cDbf := PADR( cDbf, SIFK_LEN_DBF )
+
    SELECT sifk
    _recs := {}
    GO TOP
-   DO WHILE !Eof() .AND. ID = cDbf
+   DO WHILE !Eof() .AND. field->ID == cDbf
       _rec := dbf_get_rec()
       IF _rec[ "edkolona" ] == NIL
          _rec[ "edkolona" ] := 0
@@ -66,7 +71,7 @@ FUNCTION sif_sifk_fill_kol( cDbf, ImeKol, Kol )
 
    FOR EACH _rec in _recs
 
-      AAdd ( ImeKol, {  IzSifKNaz( cDbf, _rec[ "oznaka" ] ) } )
+      AAdd ( ImeKol, {  get_sifk_naz( cDbf, _rec[ "oznaka" ] ) } )
       AAdd ( ImeKol[ Len( ImeKol ) ], &( "{|| ToStr( IzSifkPartn('" + _rec[ "oznaka" ] + "')) }" ) )
       AAdd ( ImeKol[ Len( ImeKol ) ], "SIFK->" + _rec[ "oznaka" ] )
 

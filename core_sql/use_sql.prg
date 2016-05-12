@@ -407,6 +407,7 @@ FUNCTION use_sql_sifk( cDbf, cOznaka )
    INDEX ON ID + OZNAKA TAG ID2  TO ( cTable )
    INDEX ON NAZ             TAG NAZ TO ( cTable )
    SET ORDER TO TAG ID
+   GO TOP  // ovo obavezno inace ostane na eof() poziciji?!
    // ENDIF
 
    RETURN .T.

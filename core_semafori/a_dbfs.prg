@@ -452,6 +452,7 @@ FUNCTION imaju_unchecked_sifarnici()
       IF hb_HHasKey( s_hF18Dbfs[ cDatabase ][ cKey ], "sql" )
          IF hb_mutexLock( s_mtxMutex )
             lSql := s_hF18Dbfs[ cDatabase ][ cKey ][ "sql" ]
+            hb_mutexUnlock( s_mtxMutex )
          ENDIF
       ENDIF
 
@@ -459,6 +460,7 @@ FUNCTION imaju_unchecked_sifarnici()
       IF hb_HHasKey( s_hF18Dbfs[ cDatabase ][ cKey ], "sif" )
          IF hb_mutexLock( s_mtxMutex )
             lSif := s_hF18Dbfs[ cDatabase ][ cKey ][ "sif" ]
+            hb_mutexUnlock( s_mtxMutex )
          ENDIF
       ENDIF
 

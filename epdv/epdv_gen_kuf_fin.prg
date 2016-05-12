@@ -51,6 +51,7 @@ FUNCTION fin_kuf( dD1, dD2, cSezona )
 
    dDatOd := dD1
    dDatDo := dD2
+altd()
    epdv_otvori_kuf_tabele( .T. )
 
    SELECT F_SG_KUF
@@ -62,6 +63,7 @@ FUNCTION fin_kuf( dD1, dD2, cSezona )
    IF !Used()
       O_ROBA
    ENDIF
+
 
    SELECT sg_kuf
    GO TOP
@@ -81,8 +83,8 @@ FUNCTION fin_kuf( dD1, dD2, cSezona )
 
          cTdSrc := td_src
 
-         // set id tarifu u kuf dokumentu
-         cIdTar := s_id_tar
+
+         cIdTar := s_id_tar // set id tarifu u kuf dokumentu
          cIdPart := s_id_part
 
          cKatP := kat_p
@@ -92,8 +94,8 @@ FUNCTION fin_kuf( dD1, dD2, cSezona )
 
          cRazbDan := razb_dan
 
-         // setuj broj dokumenta
-         cSBRdok := s_br_dok
+
+         cSBRdok := s_br_dok // setuj broj dokumenta
 
          PRIVATE cFormBPdv := form_b_pdv
          PRIVATE cFormPdv := form_pdv
@@ -147,6 +149,7 @@ FUNCTION fin_kuf( dD1, dD2, cSezona )
 
 
 
+
 STATIC FUNCTION gen_fin_kuf_item( cSezona )
 
    LOCAL cPomPath
@@ -162,8 +165,8 @@ STATIC FUNCTION gen_fin_kuf_item( cSezona )
    LOCAL dDMin
    LOCAL dDMax
 
-   // za jedan dokument
-   LOCAL dDMinD
+
+   LOCAL dDMinD // za jedan dokument
    LOCAL dDMaxD
 
    // zavisni troskovi
@@ -248,10 +251,7 @@ STATIC FUNCTION gen_fin_kuf_item( cSezona )
 
          IF !Empty( cIdPart )
             IF ( AllTrim( Upper( cIdPart ) ) == "#TD#" )
-               // trazi dobavljaca
-               _id_part := trazi_dob ( suban->( RecNo() ), ;
-                  suban->idfirma, suban->idvn, suban->brnal, ;
-                  suban->brdok, suban->rbr )
+               _id_part := kuf_fin_trazi_dob ( suban->( RecNo() ), suban->idfirma, suban->idvn, suban->brnal, suban->brdok, suban->rbr )
             ELSE
                _id_part := cIdPart
             ENDIF
@@ -280,13 +280,13 @@ STATIC FUNCTION gen_fin_kuf_item( cSezona )
                lSkip := .T.
             ENDIF
 
-            // samo ne-pdv obveznici, ako je ino preskoci
-            IF lIno
+
+            IF lIno // samo ne-pdv obveznici, ako je ino preskoci
                lSkip := .T.
             ENDIF
 
-         CASE cKatP == "3"
-            // ino
+         CASE cKatP == "3" // ino
+
             IF !lIno
                lSkip := .T.
             ENDIF
@@ -344,8 +344,8 @@ STATIC FUNCTION gen_fin_kuf_item( cSezona )
             LOOP
          ENDIF
 
-         // na nivou dokumenta utvrdi min max datum
-         IF dDMinD > datdok
+
+         IF dDMinD > datdok // na nivou dokumenta utvrdi min max datum
             dDMinD := datdok
          ENDIF
 
@@ -353,8 +353,8 @@ STATIC FUNCTION gen_fin_kuf_item( cSezona )
             dDMaxD := datdok
          ENDIF
 
-         // na nivou dat opsega utvrdi min max datum
-         IF dDMin > datdok
+
+         IF dDMin > datdok  // na nivou dat opsega utvrdi min max datum
             dDMinD := datdok
          ENDIF
 
@@ -453,7 +453,7 @@ STATIC FUNCTION gen_fin_kuf_item( cSezona )
 
    ENDDO
 
-   RETURN
+   RETURN .T.
 
 
 STATIC FUNCTION zav_tr( nZ1, nZ2, nZ3, nZ4, nZ5 )
@@ -548,12 +548,14 @@ STATIC FUNCTION zav_tr( nZ1, nZ2, nZ3, nZ4, nZ5 )
    ENDIF
    nZ5 := nSpedTr
 
-   RETURN
+   RETURN .T.
 
-STATIC FUNCTION trazi_dob( nRecNo, cIdFirma, cIdVn, cBrNal, cBrDok, nRbr )
+
+STATIC FUNCTION kuf_fin_trazi_dob( nRecNo, cIdFirma, cIdVn, cBrNal, cBrDok, nRbr )
 
    LOCAL i
 
+altd()
    PushWA()
 
    SELECT suban_2

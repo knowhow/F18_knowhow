@@ -445,7 +445,11 @@ FUNCTION use_sql_sifv( cDbf, cOznaka, xIdSif, xVrijednost )
          uIdSif := "MLFJUSXX" // nepostojeca sifra
       ELSEIF xVrijednost == NIL  // samo ako je i xVrijednost NIL onda definisi uslov idsif
 
-         xIdSif := ( cDbf )->id
+         IF ( cDbf )->( Used() )
+            xIdSif := ( cDbf )->id
+         ELSE
+            xIdSif := Space( 6 )
+         ENDIF
          uIdSif := ( Unicode():New( xIdSif, lSql ) ):getString()
          cSql += " AND idsif=" + _sql_quote_u( uIdSif )
       ENDIF

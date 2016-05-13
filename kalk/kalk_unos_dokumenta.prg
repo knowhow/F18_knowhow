@@ -55,7 +55,7 @@ FUNCTION kalk_unos_stavki_dokumenta( lAObrada )
    LOCAL _opt_row, _opt_d
    LOCAL _sep := BROWSE_COL_SEP
    LOCAL cPicKol := "999999.999"
-   LOCAL bPodvuci := { || IIF( field->ERROR=="1"  , .T. , .F.) }
+   LOCAL bPodvuci := {|| iif( field->ERROR == "1", .T., .F. ) }
 
    O_PARAMS
 
@@ -155,7 +155,7 @@ FUNCTION kalk_unos_stavki_dokumenta( lAObrada )
    PRIVATE lAutoAsist := .F.
 
 
-   my_db_edit( "PNal", nMaxRow, nMaxCol, {|| kalk_pripr_key_handler( lAutoObr ) }, "<F5>-kartica magacin, <F6>-kartica prodavnica", "Priprema...", , , , bPodvuci , 4 )
+   my_db_edit( "PNal", nMaxRow, nMaxCol, {|| kalk_pripr_key_handler( lAutoObr ) }, "<F5>-kartica magacin, <F6>-kartica prodavnica", "Priprema...", , , , bPodvuci, 4 )
 
    BoxC()
 
@@ -168,17 +168,17 @@ FUNCTION kalk_unos_stavki_dokumenta( lAObrada )
 
 FUNCTION o_kalk_edit()
 
+   O_PARTN
    O_KALK_DOKS
-   O_SIFK
-   O_SIFV
    O_ROBA
    O_KALK
    O_KONTO
-   O_PARTN
    O_TDOK
    O_VALUTE
    O_TARIFA
    O_KONCIJ
+   O_SIFK
+   O_SIFV
    O_KALK_PRIPR
 
    SELECT kalk_pripr

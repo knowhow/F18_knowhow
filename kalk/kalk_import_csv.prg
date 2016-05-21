@@ -150,13 +150,13 @@ FUNCTION ImpCSVOst()
    PRIVATE cImpFile
 
    // setuj varijablu putanje exportovanih fajlova
-   GetExpPath( @cExpPath )
+   cExpPath := get_liste_path()
 
    // daj mi filter za CSV fajlove
    cFFilt := GetImpFilter()
 
    // daj mi pregled fajlova za import, te setuj varijablu cImpFile
-   IF _gFList( cFFilt, cExpPath, @cImpFile ) == 0
+   IF get_file_list( cFFilt, cExpPath, @cImpFile ) == 0
       RETURN
    ENDIF
 
@@ -192,13 +192,13 @@ FUNCTION ImpCSVDok()
    PRIVATE cImpFile
 
    // setuj varijablu putanje exportovanih fajlova
-   GetExpPath( @cExpPath )
+   cExpPath := get_liste_path()
 
    // daj mi filter za import MP ili VP
    cFFilt := GetImpFilter()
 
    // daj mi pregled fajlova za import, te setuj varijablu cImpFile
-   IF _gFList( cFFilt, cExpPath, @cImpFile ) == 0
+   IF get_file_list( cFFilt, cExpPath, @cImpFile ) == 0
       RETURN
    ENDIF
 
@@ -308,17 +308,20 @@ STATIC FUNCTION SetTblDok( aDbf )
    RETURN
 
 
-// -----------------------------------------------------
-// Vraca podesenje putanje do exportovanih fajlova
-// -----------------------------------------------------
-STATIC FUNCTION GetExpPath( cPath )
+/*
+ Vraca podesenje putanje do exportovanih fajlova
+*/
+FUNCTION get_liste_path()
 
-   cPath := my_get_from_ini( "KALK", "ImportPath", "c:" + SLASH + "liste" + SLASH, PRIVPATH )
-   IF Empty( cPath ) .OR. cPath == nil
-      cPath := "c:" + SLASH + "liste" + SLASH
-   ENDIF
+LOCAL cPath
 
-   RETURN .T.
+#ifdef ___PLATFORM__WINDOWS
+   cPath := "c:" + SLASH + "liste" + SLASH
+#else
+   cPath :=  "/data/liste/"
+#endif
+
+   RETURN cPath
 
 
 // --------------------------------------------------------
@@ -674,7 +677,7 @@ STATIC FUNCTION CheckDok()
 
    LOCAL aPomArt
 
-   aPomArt  := TempArtExist()
+   aPomArt  := kalk_imp_partn_exist()
 
    IF ( Len( aPomArt ) > 0 )
 

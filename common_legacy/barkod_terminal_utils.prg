@@ -18,16 +18,16 @@
 // - param cFilter - filter naziva dokumenta
 // - param cPath - putanja do exportovanih dokumenata
 // ------------------------------------------------------
-FUNCTION _gFList( cFilter, cPath, cImpFile )
+FUNCTION get_file_list( cFilter, cPath, cImpFile )
 
    OpcF := {}
 
-   // cFilter := "*.txt"
-   aFiles := Directory( cPath + cFilter )
 
-   // da li postoje fajlovi
-   IF Len( aFiles ) == 0
-      MsgBeep( "U direktoriju za prenos nema podataka" )
+   aFiles := Directory( cPath + cFilter )  // cFilter := "*.txt"
+
+
+   IF Len( aFiles ) == 0 // da li postoje fajlovi
+      MsgBeep( "U direktoriju za prenos nema podataka!##" + cPath + cFilter )
       RETURN 0
    ENDIF
 
@@ -136,59 +136,3 @@ FUNCTION _g_num( cVal )
    cVal := StrTran( cVal, ",", "." )
 
    RETURN Val( cVal )
-
-
-// -------------------------------------------------------------
-// Provjera da li postoje sifre artikla u sifraniku FMK
-//
-// lSifraDob - pretraga po sifri dobavljaca
-// -------------------------------------------------------------
-FUNCTION TempArtExist( lSifraDob )
-
-   IF lSifraDob == nil
-      lSifraDob := .F.
-   ENDIF
-
-   O_ROBA
-   SELECT temp
-   GO TOP
-
-   aRet := {}
-
-   DO WHILE !Eof()
-
-      IF lSifraDob == .T.
-         cTmpRoba := PadL( AllTrim( temp->idroba ), 5, "0" )
-      ELSE
-         cTmpRoba := AllTrim( temp->idroba )
-      ENDIF
-
-      cNazRoba := ""
-
-      // ako u temp postoji "NAZROBA"
-      IF temp->( FieldPos( "nazroba" ) ) <> 0
-         cNazRoba := AllTrim( temp->nazroba )
-      ENDIF
-
-      SELECT roba
-
-      IF lSifraDob == .T.
-         SET ORDER TO TAG "ID_VSD"
-      ENDIF
-
-      GO TOP
-      SEEK cTmpRoba
-
-      // ako nisi nasao dodaj robu u matricu
-      IF !Found()
-         nRes := AScan( aRet, {| aVal| aVal[ 1 ] == cTmpRoba } )
-         IF nRes == 0
-            AAdd( aRet, { cTmpRoba, cNazRoba } )
-         ENDIF
-      ENDIF
-
-      SELECT temp
-      SKIP
-   ENDDO
-
-   RETURN aRet

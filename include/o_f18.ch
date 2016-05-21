@@ -393,6 +393,6 @@
 #xcommand O_KALKSEZ        => select(F_KALK);  my_use  ("kalk")  ; set order to tag "1"
 #xcommand O_ROBASEZ        => select(F_ROBA);  my_use  ("roba")  ; set order to tag "ID"
 #xcommand O_CACHE          => select(F_CACHE);  my_use  ("cache")  ; set order to tag "1"
-#xcommand O_PRIPT          => select(F_PRIPT);  my_usex  ("pript", "kalk_pript")  ; set order to tag "1"
+
 
 #xcommand O_POBJEKTI       => select(F_POBJEKTI);  my_use  ("pobjekti") ; set order to tag "1"

@@ -27,7 +27,7 @@ FUNCTION import_BTerm_data( cI_File )
       RETURN 0
    ENDIF
 
-   IF _gFList( cFilter, cPath, @cI_File ) = 0
+   IF get_file_list( cFilter, cPath, @cI_File ) = 0
       RETURN 0
    ENDIF
 

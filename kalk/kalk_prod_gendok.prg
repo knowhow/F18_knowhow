@@ -1112,7 +1112,7 @@ FUNCTION gen_ip_80()
 
    O_KALK_DOKS
    O_KALK
-   O_PRIPT
+   o_kalk_pript()
    O_KALK_PRIPR
 
    cNxt80 := GetNextKalkDoc( gFirma, "80" )

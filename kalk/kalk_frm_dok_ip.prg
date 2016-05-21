@@ -289,7 +289,7 @@ FUNCTION gen_ip_razlika()
    O_ROBA
    O_KONCIJ
    O_KALK_PRIPR
-   O_PRIPT
+   o_kalk_pript()
    O_KALK
 
    // sljedeci broj kalkulacije IP

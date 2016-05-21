@@ -218,7 +218,7 @@ STATIC FUNCTION get_import_file( br_dok, destinacija, import_fajl )
       NEXT
 
       IF Len( _opc ) == 0
-         MsgBeep( "U direktoriju za prenos nema podataka" )
+         MsgBeep( "U direktoriju za prenos nema podataka /P" )
          CLOSE ALL
          RETURN .F.
       ENDIF

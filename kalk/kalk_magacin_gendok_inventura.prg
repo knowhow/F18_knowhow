@@ -228,7 +228,7 @@ FUNCTION kalk_generisanje_inventure_razlike()
    O_SIFV
    O_ROBA
    O_KALK_PRIPR
-   O_PRIPT
+   o_kalk_pript()
    O_KONCIJ
    O_KALK_DOKS
    O_KALK

@@ -96,6 +96,7 @@
 #define F_KALPOS    106
 #define F_KALK_ATTR  107
 #define F_KALK_KARTICA  108
+#define F_KALK_IMP_TEMP 109
 
 
 // modul FAKT (wa 110-130)

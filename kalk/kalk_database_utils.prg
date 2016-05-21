@@ -1487,9 +1487,9 @@ FUNCTION kopiraj_set_cijena()
 FUNCTION cp_dok_pript( cIdFirma, cIdVd, cBrDok )
 
    // kreiraj pript
-   crepriptdbf()
+   cre_kalk_priprt()
 
-   O_PRIPT
+   o_kalk_pript()
    O_KALK
 
    SELECT kalk

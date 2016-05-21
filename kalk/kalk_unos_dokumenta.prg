@@ -11,6 +11,9 @@
 
 #include "f18.ch"
 
+#define BOX_HEIGHT (MAXROWS() - 8)
+#define BOX_WIDTH  (MAXCOLS() - 6)
+
 MEMVAR PicDEM, PicProc, PicCDem, PicKol, gPicCDEM, gPicDEM, gPICPROC, gPICKol
 MEMVAR ImeKol, Kol
 MEMVAR picv
@@ -22,8 +25,7 @@ MEMVAR _idfirma, _idvd, _brdok
 MEMVAR cSection, cHistory, aHistory
 
 STATIC cENTER := Chr( K_ENTER ) + Chr( K_ENTER ) + Chr( K_ENTER )
-STATIC __box_x
-STATIC __box_y
+
 
 
 FUNCTION kalk_unos_dokumenta()
@@ -33,11 +35,6 @@ FUNCTION kalk_unos_dokumenta()
    PRIVATE PicDEM := gPICDEM
    PRIVATE Pickol := gPICKOL
    PRIVATE lAsistRadi := .F.
-
-   // TODO: asistent iskljuciti u KALK PR
-
-   __box_x := MAXROWS() - 8
-   __box_y := MAXCOLS() - 6
 
    kalk_unos_stavki_dokumenta()
 
@@ -480,7 +477,7 @@ FUNCTION EditStavka()
    nRbr := RbrUNum( _Rbr )
    _ERROR := ""
 
-   Box( "ist", __box_x, __box_y, .F. )
+   Box( "ist", BOX_HEIGHT, BOX_WIDTH, .F. )
 
    _old_dok[ "idfirma" ] := _idfirma
    _old_dok[ "idvd" ] := _idvd
@@ -554,7 +551,7 @@ FUNCTION EditStavka()
          nRbr := RbrUNum( _rbr ) + 1
          _rbr := RedniBroj( nRbr )
 
-         Box( "", __box_x, __box_y, .F., "Protustavka" )
+         Box( "", BOX_HEIGHT, BOX_WIDTH, .F., "Protustavka" )
 
          SEEK _idfirma + _idvd + _brdok + _rbr
 
@@ -619,7 +616,7 @@ FUNCTION kalk_unos_nova_stavka()
    _rok := fetch_metric( "kalk_definisanje_roka_trajanja", NIL, "N" ) == "D"
    _opis := fetch_metric( "kalk_dodatni_opis_kod_unosa_dokumenta", NIL, "N" ) == "D"
 
-   Box( "knjn", __box_x, __box_y, .F., "Unos novih stavki" )
+   Box( "knjn", BOX_HEIGHT, BOX_WIDTH, .F., "Unos novih stavki" )
 
    _TMarza := "A"
 
@@ -735,7 +732,7 @@ FUNCTION kalk_unos_nova_stavka()
          nRbr := RbrUNum( _rbr ) + 1
          _Rbr := RedniBroj( nRbr )
 
-         Box( "", __box_x, __box_y, .F., "Protustavka" )
+         Box( "", BOX_HEIGHT, BOX_WIDTH, .F., "Protustavka" )
 
          IF _idvd == "16"
             Get1_16bPDV()
@@ -780,7 +777,7 @@ FUNCTION kalk_edit_sve_stavke()
    _rok := fetch_metric( "kalk_definisanje_roka_trajanja", NIL, "N" ) == "D"
    _opis := fetch_metric( "kalk_dodatni_opis_kod_unosa_dokumenta", NIL, "N" ) == "D"
 
-   Box( "anal", __box_x, __box_y, .F., "Ispravka naloga" )
+   Box( "anal", BOX_HEIGHT, BOX_WIDTH, .F., "Ispravka naloga" )
 
    nDug := 0
    nPot := 0
@@ -877,7 +874,7 @@ FUNCTION kalk_edit_sve_stavke()
          nRbr := RbrUNum( _rbr ) + 1
          _Rbr := RedniBroj( nRbr )
 
-         Box( "", __box_x, __box_y, .F., "Protustavka" )
+         Box( "", BOX_HEIGHT, BOX_WIDTH, .F., "Protustavka" )
          SEEK _idfirma + _idvd + _brdok + _rbr
          _tbanktr := "X"
          DO WHILE !Eof() .AND. _idfirma + _idvd + _brdok + _rbr == field->idfirma + ;
@@ -1257,7 +1254,7 @@ FUNCTION kalk_edit_priprema( fNovi, atrib )
 
    DO WHILE .T.
 
-      @ m_x + 1, m_y + 1 CLEAR TO m_x + __box_x, m_y + __box_y
+      @ m_x + 1, m_y + 1 CLEAR TO m_x + BOX_HEIGHT, m_y + BOX_WIDTH
 
       SetKey( K_PGDN, {|| NIL } )
       SetKey( K_PGUP, {|| NIL } )
@@ -2190,7 +2187,7 @@ FUNCTION MPCSAPPiz80uSif()
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
 
 

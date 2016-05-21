@@ -65,7 +65,7 @@ FUNCTION get_nivel_p()
    ENDIF
 
    // kreiraj tabelu PRIPT
-   CrePripTDbf()
+   cre_kalk_priprt()
 
    // pokreni generisanje nivelacija
    Box(, 2, 65 )
@@ -132,7 +132,7 @@ FUNCTION get_zcnivel()
    ENDIF
 
    // kreiraj tabelu PRIPT
-   CrePripTDbf()
+   cre_kalk_priprt()
 
    // pokreni generisanje nivelacija
    Box(, 2, 65 )
@@ -176,7 +176,7 @@ FUNCTION gen_nivel_p( cPKonto, dDatDok, cBrKalk, lGledajStanje )
    LOCAL nNivCijena
    LOCAL nStCijena
 
-   O_PRIPT
+   o_kalk_pript()
    O_KALK
    O_ROBA
    O_KONTO
@@ -492,7 +492,7 @@ FUNCTION gen_zcnivel( cPKonto, dDatDok, cBrKalk )
    LOCAL nNivCijena
    LOCAL nStCijena
 
-   O_PRIPT
+   o_kalk_pript()
    O_KALK
    O_ROBA
    O_KONTO
@@ -660,7 +660,7 @@ FUNCTION obr_nivel_p()
       RETURN
    ENDIF
 
-   O_PRIPT
+   o_kalk_pript()
    nRecP := RecCount()
 
    IF nRecP == 0
@@ -726,7 +726,7 @@ FUNCTION st_res_niv_p( cVar, cKolNula )
    LOCAL nURazlbpdv
    LOCAL nURazlspdv
 
-   O_PRIPT
+   o_kalk_pript()
    O_POBJEKTI
    O_ROBA
    O_TARIFA
@@ -1027,7 +1027,7 @@ FUNCTION o_pr_cijena()
    O_PARTN
    O_ROBA
    O_TARIFA
-   O_PRIPT
+   o_kalk_pript()
 
    // uzmi u matricu prodavnice
    g_pript_doks( @aDoks )

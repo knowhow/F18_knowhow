@@ -827,7 +827,7 @@ STATIC FUNCTION get_import_file( import_file )
       // ima li stavki za preuzimanje ?
       IF Len( _opc ) == 0
 
-         MsgBeep( "U direktoriju za prenos nema podataka" )
+         MsgBeep( "U direktoriju za prenos nema podataka /2" )
          _ret := .F.
          RETURN _ret
 

@@ -50,7 +50,7 @@ FUNCTION get_import_file( modul, import_dbf_path )
 
    _filter := AllTrim( modul ) + "*.*"
 
-   IF _gFList( _filter, import_dbf_path, @_file ) == 0
+   IF get_file_list( _filter, import_dbf_path, @_file ) == 0
       _file := ""
    ENDIF
 

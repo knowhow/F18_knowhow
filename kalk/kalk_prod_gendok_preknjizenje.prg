@@ -69,7 +69,7 @@ FUNCTION GetPreknj()
    ENDIF
 
    // kreiraj tabelu PRIPT
-   CrePripTDbf()
+   cre_kalk_priprt()
 
    // pokreni preknjizenje
    Box(, 2, 65 )
@@ -161,7 +161,7 @@ FUNCTION GetPstPDV()
    ENDIF
 
    // kreiraj tabelu PRIPT
-   CrePripTDbf()
+   cre_kalk_priprt()
 
    // pokreni preknjizenje
    Box(, 2, 65 )
@@ -295,7 +295,7 @@ FUNCTION GenPreknj( cPKonto, cPrTarifa, dDatOd, dDatDo, cBrKalk, lPst, dDatPs, c
    O_KONTO
    O_KONCIJ
    O_TARIFA
-   O_PRIPT // pomocna tabela pript
+   o_kalk_pript() // pomocna tabela pript
 
    cIdFirma := gFirma
 

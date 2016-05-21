@@ -39,15 +39,18 @@ FUNCTION o_dbf_table( nArea, xTable, cTag )
 
       IF lMyUse
          lUsed := .T.
-         ordSetFocus( cTag )
-         IF Empty( ordKey() )
-            lUsed := .F.
-            ?E "ERR o_table tag:", cTable, cTag
-            USE
+
+         IF cTag != NIL
+            ordSetFocus( cTag )
+            IF Empty( ordKey() )
+               lUsed := .F.
+               ?E "ERR o_table tag:", cTable, cTag
+               USE
+            ENDIF
          ENDIF
       ELSE
          hb_idleSleep( 1.5 )
-         error_bar( "o_dbf", "open dbf err: " + cTable + "/" + cTag + " cnt:" + Alltrim(Str(nCount)))
+         error_bar( "o_dbf", "open dbf err: " + cTable + "/" + cTag + " cnt:" + AllTrim( Str( nCount ) ) )
          nCount++
       ENDIF
 

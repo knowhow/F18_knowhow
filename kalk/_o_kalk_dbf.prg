@@ -19,17 +19,25 @@ FUNCTION o_kalk_imp_temp()
 
 
 FUNCTION o_kalk_pript()
-   RETURN o_dbf_table( F_PRIPT, { "PRIPT", "kalk_pript"}, "1" )
+   RETURN o_dbf_table( F_PRIPT, { "PRIPT", "kalk_pript" }, "1" )
 
 
-   FUNCTION select_o_kalk_pript()
-      RETURN select_o_dbf( "PRIPT", F_PRIPT, { "PRIPT", "kalk_pript"}, "1" )
+FUNCTION select_o_kalk_pript()
+   RETURN select_o_dbf( "PRIPT", F_PRIPT, { "PRIPT", "kalk_pript" }, "1" )
 
 
 FUNCTION select_o_kalk_as_pripr()
    RETURN select_o_dbf( "KALK_PRIPR", F_KALK_PRIPR, { "KALK_PRIPR", "kalk_kalk" }, "1" )
 
-FUNCTION open_kalk_as_pripr()
+
+FUNCTION open_kalk_as_pripr( lSql, cIdFirma, cIdVd, cBrDok )
+
+   hb_default( @lSql, .F. )
+
+   IF lSql
+      RETURN kalk_otvori_kumulativ_kao_pripremu( cIdFirma, cIdVd, cBrDok )
+   ENDIF
+
    RETURN o_dbf_table( F_KALK_PRIPR, { "KALK_PRIPR", "kalk_kalk" }, "1" )
 
 

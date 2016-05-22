@@ -2231,7 +2231,7 @@ FUNCTION VPCSifUDok()
 
 
 
-STATIC FUNCTION kalk_open_tables( azurirana )
+STATIC FUNCTION kalk_open_tables_unos( lAzuriraniDok, cIdFirma, cIdVD, cBrDok )
 
    O_KONCIJ
    O_ROBA
@@ -2240,8 +2240,8 @@ STATIC FUNCTION kalk_open_tables( azurirana )
    O_KONTO
    O_TDOK
 
-   IF azurirana
-      open_kalk_as_pripr()
+   IF lAzuriraniDok
+      open_kalk_as_pripr( .T., cIdFirma, cIdVd, cBrDok ) // .T. => SQL table
    ELSE
       O_KALK_PRIPR
    ENDIF
@@ -2254,6 +2254,7 @@ STATIC FUNCTION kalk_open_tables( azurirana )
 FUNCTION kalk_stampa_dokumenta()
 
    PARAMETERS fStara, cSeek, lAuto
+
    LOCAL nCol1
    LOCAL nCol2
    LOCAL nPom
@@ -2286,7 +2287,7 @@ FUNCTION kalk_stampa_dokumenta()
 
    my_close_all_dbf()
 
-   kalk_open_tables( fstara )
+   kalk_open_tables_unos( fStara )
 
    SELECT kalk_pripr
    SET ORDER TO TAG "1"
@@ -2319,7 +2320,7 @@ FUNCTION kalk_stampa_dokumenta()
          IF ( cSeek == "" )
             Box( "", 1, 50 )
             SET CURSOR ON
-            @ m_x + 1, m_y + 2 SAY "Dokument broj:"
+            @ m_x + 1, m_y + 2 SAY "KALK Dok broj:"
             IF ( gNW $ "DX" )
                @ m_x + 1, Col() + 2  SAY cIdFirma
             ELSE
@@ -2330,6 +2331,11 @@ FUNCTION kalk_stampa_dokumenta()
             READ
             ESC_BCR
             BoxC()
+
+altd()
+            IF fStara // stampa azuriranog KALK dokumenta
+               open_kalk_as_pripr( .T., cIdFirma, cIdVd, cBrDok )
+            ENDIF
          ENDIF
 
       ENDIF
@@ -2343,8 +2349,8 @@ FUNCTION kalk_stampa_dokumenta()
          HSEEK cIdFirma + cIdVD + cBrDok
       ENDIF
 
-      // provjeri da li kalkulacija ima sve cijene ?
-      IF !kalkulacija_ima_sve_cijene( cIdFirma, cIdVd, cBrDok )
+
+      IF !kalkulacija_ima_sve_cijene( cIdFirma, cIdVd, cBrDok ) // provjeri da li kalkulacija ima sve cijene ?
          MsgBeep( "Unutar kalkulacije nedostaju pojedine cijene bitne za obračun!#Štampanje onemogućeno." )
          my_close_all_dbf()
          RETURN .F.
@@ -2399,22 +2405,29 @@ FUNCTION kalk_stampa_dokumenta()
 
          ELSEIF ( cidvd $ "41#42#43#47#49" )
             StKalk41()
+
          ELSEIF ( cIdvd == "18" )
             StKalk18()
+
          ELSEIF ( cIdvd == "19" )
             StKalk19()
+
          ELSEIF ( cIdvd == "80" )
             StKalk80()
+
          ELSEIF ( cidvd == "81" )
             IF ( c10Var == "1" )
                StKalk81()
             ELSE
                StKalk81_2()
             ENDIF
+
          ELSEIF ( cIdvd == "82" )
             StKalk82()
+
          ELSEIF ( cIdvd == "IM" )
             StKalkIm()
+
          ELSEIF ( cIdvd == "IP" )
             StKalkIp()
          ELSEIF ( cIdvd == "RN" )
@@ -2468,7 +2481,9 @@ FUNCTION kalk_stampa_dokumenta()
          ENDPRINT
       ENDIF
 
-      kalk_open_tables( fstara )
+      // kraj stampe jedne kalkulacije
+
+      kalk_open_tables_unos( fStara )
       PopWa()
 
       IF ( cIdvd $ "80#11#81#12#13#IP#19" )
@@ -2575,13 +2590,15 @@ FUNCTION kalkulacija_ima_sve_cijene( firma, tip_dok, br_dok )
    RETURN _ok
 
 
+
 STATIC FUNCTION pdf_kalk_dokument( cIdVd )
 
    IF is_legacy_ptxt()
       RETURN .F.
    ENDIF
 
-   RETURN cIdVd $ "10#14"  // implementirano za kalk 10
+   RETURN cIdVd $ "10#14"  // implementirano za kalk 10, 14
+
 
 
 /*

@@ -23,7 +23,7 @@ FUNCTION MnuPregledDokumenata()
    AAdd( aOpc, "2. štampanje ažuriranog dokumenta" )
    AAdd( aOpcexe, {|| fin_stampa_azur_naloga_menu() } )
 
-   AAdd( aOpc, "3. stampa liste dokumenata" )
+   AAdd( aOpc, "3. štampa liste dokumenata" )
    AAdd( aOpcexe, {|| fin_stampa_liste_naloga() } )
 
    AAdd( aOpc, "4. kontrola zbira datoteka za period" )

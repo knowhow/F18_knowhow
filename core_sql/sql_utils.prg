@@ -74,7 +74,7 @@ FUNCTION sql_quote( xVar )
 // ------------------------------
 // xVar je vec UTF-8 enkodiran
 // ------------------------------
-FUNCTION _sql_quote_u( xVar )
+FUNCTION sql_quote_u( xVar )
 
    LOCAL cOut
 
@@ -89,8 +89,7 @@ FUNCTION _sql_quote_u( xVar )
 
 
 
-// ---------------------------------------
-// ---------------------------------------
+
 FUNCTION sql_where_from_dbf_key_fields( dbf_key_fields, rec, lSqlTable )
 
    LOCAL _ret, _pos, _item, _key
@@ -113,7 +112,7 @@ FUNCTION sql_where_from_dbf_key_fields( dbf_key_fields, rec, lSqlTable )
          _key := Lower( _item )
          check_hash_key( rec, _key )
          IF lSqlTable
-            _ret += _item + "=" + _sql_quote_u( rec[ _key ] )
+            _ret += _item + "=" + sql_quote_u( rec[ _key ] )
          ELSE
             _ret += _item + "=" + sql_quote( rec[ _key ] )
          ENDIF

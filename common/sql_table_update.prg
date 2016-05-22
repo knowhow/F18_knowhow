@@ -143,7 +143,7 @@ FUNCTION sql_table_update( table, op, record, where_str, silent )
          ELSE
             IF _sql_dbf
                 // sql tabela sadrzi utf-8 enkodirane podatke
-                _qry += _sql_quote_u( record[ _tmp ] )
+                _qry += sql_quote_u( record[ _tmp ] )
             ELSE
                 _qry += sql_quote( record[ _tmp ] )
             ENDIF

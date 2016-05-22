@@ -33,15 +33,16 @@ FUNCTION fin_stampa_liste_naloga()
    LOCAL nRBr, nDugBHD, nPotBHD, nDugDEM, nPotDEM
    LOCAL bZagl
    LOCAL xPrintOpt
+   LOCAL lSql
 
-   cInteg := "N"
+   cInteg := "Q"
    nSort := 1
 
    cIdVN := "  "
-
+altd()
    Box(, 7, 60 )
    @ m_x + 1, m_Y + 2 SAY "Provjeriti integritet podataka"
-   @ m_x + 2, m_Y + 2 SAY "u odnosu na datoteku naloga D/N ?"  GET cInteg  PICT "@!" VALID cInteg $ "DN"
+   @ m_x + 2, m_Y + 2 SAY "u odnosu na datoteku naloga D/N/Q ?"  GET cInteg  PICT "@!" VALID cInteg $ "DNQ"
    @ m_x + 4, m_Y + 2 SAY "Sortiranje dokumenata po:  1-(firma,vn,brnal) "
    @ m_x + 5, m_Y + 2 SAY "2-(firma,brnal,vn),    3-(datnal,firma,vn,brnal) " GET nSort PICT "9"
    @ m_x + 7, m_Y + 2 SAY "Vrsta naloga (prazno-svi) " GET cIDVN PICT "@!"
@@ -49,8 +50,9 @@ FUNCTION fin_stampa_liste_naloga()
    ESC_BCR
    BoxC()
 
-   O_NALOG
-   IF cinteg == "D"
+   lSql := ( cInteg == "Q" )
+   o_nalog( lSql, cIdVN )
+   IF cInteg == "D"
       O_SUBAN
       SET ORDER TO TAG "4"
       O_ANAL
@@ -73,9 +75,9 @@ FUNCTION fin_stampa_liste_naloga()
    xPrintOpt[ "layout" ] := "portrait"
    xPrintOpt[ "opdf" ] := s_oPDF
    xPrintOpt[ "font_size" ] := 9
-   f18_start_print( NIL, xPrintOpt,  "LISTA FINANSIJSKIH NALOGA NA DAN: " + DTOC( Date() ) )
+   f18_start_print( NIL, xPrintOpt,  "LISTA FINANSIJSKIH NALOGA NA DAN: " + DToC( Date() ) )
 
-   m := SPACE( PRINT_LEFT_SPACE ) + "------- --- --- " + Replicate( "-", nBrNalLen + 1 ) + " -------- ---------------- ----------------"
+   m := Space( PRINT_LEFT_SPACE ) + "------- --- --- " + Replicate( "-", nBrNalLen + 1 ) + " -------- ---------------- ----------------"
 
    IF fin_dvovalutno()
       m += " ------------ ------------"
@@ -109,7 +111,7 @@ FUNCTION fin_stampa_liste_naloga()
 
       check_nova_strana( bZagl, s_oPDF )
 
-      @ PRow() + 1, 0 SAY SPACE( PRINT_LEFT_SPACE )
+      @ PRow() + 1, 0 SAY Space( PRINT_LEFT_SPACE )
       @ PRow(), PCol() + 0 SAY ++nRBr PICTURE "999999"
       @ PRow(), PCol() + 2 SAY IdFirma
       @ PRow(), PCol() + 2 SAY IdVN
@@ -193,7 +195,7 @@ FUNCTION fin_stampa_liste_naloga()
    check_nova_strana( bZagl, s_oPDF )
 
    ? m
-   ? SPACE( PRINT_LEFT_SPACE ) + "   UKUPNO:"
+   ? Space( PRINT_LEFT_SPACE ) + "   UKUPNO:"
 
    @ PRow(), nPos SAY nDugBHD PICTURE picBHD
    @ PRow(), PCol() + 1 SAY nPotBHD PICTURE picBHD
@@ -214,7 +216,7 @@ STATIC FUNCTION zagl( nBrNalLen, cInteg )
    zagl_organizacija( PRINT_LEFT_SPACE )
 
    ? m
-   ?U SPACE( PRINT_LEFT_SPACE ) + "* R.br *FIR* V *" + PadR( " BR", nBrNalLen + 1 ) + "* DAT    *   DUGUJE       *   POTRAŽUJE   *" + iif( fin_dvovalutno(), "   DUGUJE   * POTRAZUJE *", "" )
+   ?U Space( PRINT_LEFT_SPACE ) + "* R.br *FIR* V *" + PadR( " BR", nBrNalLen + 1 ) + "* DAT    *   DUGUJE       *   POTRAŽUJE   *" + iif( fin_dvovalutno(), "   DUGUJE   * POTRAZUJE *", "" )
 
    IF FieldPos( "SIFRA" ) <> 0
       ?? "  OP. *"
@@ -224,7 +226,7 @@ STATIC FUNCTION zagl( nBrNalLen, cInteg )
       ?? "  1  * 2 * 3 *"
    ENDIF
 
-   ? SPACE( PRINT_LEFT_SPACE ) + "*      *MA * N *" + PadR( " NAL", nBrNalLen + 1 ) + "* NAL    *    " + ValDomaca() + "        *      " + ValDomaca() + "     *"
+   ? Space( PRINT_LEFT_SPACE ) + "*      *MA * N *" + PadR( " NAL", nBrNalLen + 1 ) + "* NAL    *    " + ValDomaca() + "        *      " + ValDomaca() + "     *"
 
    IF fin_dvovalutno()
       ?? "    " + ValPomocna() + "    *    " + ValPomocna() + "   *"

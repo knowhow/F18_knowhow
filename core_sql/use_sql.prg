@@ -438,7 +438,7 @@ FUNCTION use_sql_sifv( cDbf, cOznaka, xIdSif, xVrijednost )
    lSql := is_sql_table( cDbf )
 
    cSql := "SELECT * from " + F18_PSQL_SCHEMA_DOT + "sifv"
-   cSql += " WHERE id=" + _sql_quote_u( cDbf ) + " AND oznaka=" + _sql_quote_u( cOznaka )
+   cSql += " WHERE id=" + sql_quote_u( cDbf ) + " AND oznaka=" + sql_quote_u( cOznaka )
 
    IF xIdSif == NIL
       IF Empty( cDbf )
@@ -451,12 +451,12 @@ FUNCTION use_sql_sifv( cDbf, cOznaka, xIdSif, xVrijednost )
             xIdSif := Space( 6 )
          ENDIF
          uIdSif := ( Unicode():New( xIdSif, lSql ) ):getString()
-         cSql += " AND idsif=" + _sql_quote_u( uIdSif )
+         cSql += " AND idsif=" + sql_quote_u( uIdSif )
       ENDIF
    ELSE
 
       uIdSif := ( Unicode():New( xIdSif, .F. ) ):getString()
-      cSql += " AND idsif=" + _sql_quote_u( uIdSif )
+      cSql += " AND idsif=" + sql_quote_u( uIdSif )
    ENDIF
 
 

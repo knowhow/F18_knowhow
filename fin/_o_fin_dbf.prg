@@ -18,11 +18,17 @@ FUNCTION o_fin_pripr()
 
 FUNCTION select_o_fin_pripr()
 
-   select_o_dbf( "FIN_PRIPR", F_FIN_PRIPR, "fin_pripr", "1" )
+   RETURN select_o_dbf( "FIN_PRIPR", F_FIN_PRIPR, "fin_pripr", "1" )
 
 
-FUNCTION o_nalog()
+FUNCTION o_nalog( lSql, cIdVN )
+
+   IF lSql
+      RETURN use_sql_fin_nalog( cIdVN, .T. )
+   ENDIF
+
    RETURN o_dbf_table( F_NALOG, "nalog", "1" )
+
 
 FUNCTION o_suban()
    RETURN o_dbf_table( F_SUBAN, "suban", "1" )

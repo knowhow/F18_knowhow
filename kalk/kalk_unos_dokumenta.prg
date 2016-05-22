@@ -145,10 +145,11 @@ FUNCTION kalk_unos_stavki_dokumenta( lAObrada )
 
    @ m_x + nMaxRow, m_y + 2 SAY8 _opt_row
 
+/*
    IF gCijene == "1" .AND. gMetodaNC == " "
       Soboslikar( { { nMaxRow - 3, m_y + 1, nMaxRow, m_y + 77 } }, 23, 14 )
    ENDIF
-
+*/
    PRIVATE lAutoAsist := .F.
 
 
@@ -220,7 +221,7 @@ STATIC FUNCTION printaj_duple_stavke_iz_pripreme()
 
    IF Len( _dup ) > 0
 
-      START PRINT CRET
+      START PRINT CRET .F.
 
       ?U "Sljedeći artikli u pripremi su dupli:"
       ? Replicate( "-", 80 )
@@ -327,6 +328,7 @@ FUNCTION kalk_pripr_key_handler()
       kalk_azuriranje_dokumenta()
       o_kalk_edit()
 
+/* "Indikatori", "ImaU_KALK"
       IF kalk_pripr->( RecCount() ) == 0 .AND. my_get_from_ini( "Indikatori", "ImaU_KALK", "N", PRIVPATH ) == "D"
 
          O__KALK
@@ -350,7 +352,7 @@ FUNCTION kalk_pripr_key_handler()
          MsgBeep( "Stavke koje su bile privremeno uklonjene sada su vraćene! Obradite ih!" )
 
       ENDIF
-
+*/
       RETURN DE_REFRESH
 
    CASE Ch == K_CTRL_P
@@ -402,6 +404,7 @@ FUNCTION kalk_pripr_key_handler()
    CASE Ch == K_CTRL_F8
       RaspTrosk()
       RETURN DE_REFRESH
+
    CASE Ch == K_CTRL_F9
       IF Pitanje(, "Želite izbrisati kompletnu tabelu pripreme (D/N) ?", "N" ) == "D"
 
@@ -417,9 +420,11 @@ FUNCTION kalk_pripr_key_handler()
 
       ENDIF
       RETURN DE_CONT
+
    CASE Upper( Chr( Ch ) ) == "A" .OR. lAutoAsist
 
       RETURN kalk_unos_asistent()
+
    CASE Upper( Chr( Ch ) ) == "K"
       kalkulacija_cijena( .F. )
       SELECT kalk_pripr
@@ -770,6 +775,7 @@ FUNCTION kalk_edit_sve_stavke()
    LOCAL _dok
    LOCAL oAttr, _hAttrId, _old_dok, _new_dok
    LOCAL _rok, _opis
+   LOCAL nKekk, cSekv
 
    PushWA()
    SELECT kalk_pripr
@@ -809,7 +815,7 @@ FUNCTION kalk_edit_sve_stavke()
 
       nRbr := RbrUNum( _rbr )
 
-      IF lAsistRadi
+      IF lAsistRadi // lAsistRadi je varijabla koja salje sekvence znakova
          CLEAR TYPEAHEAD
          cSekv := ""
          FOR nKekk := 1 TO 17

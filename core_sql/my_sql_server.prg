@@ -262,7 +262,7 @@ FUNCTION f18_login_loop( lAutoConnect, arg_v )
       lAutoConnect := .T.
    ENDIF
 
-   oLogin := F18Login():New()
+   oLogin := my_login()
 
    DO WHILE .T.
 
@@ -335,7 +335,7 @@ STATIC FUNCTION show_sacekaj()
 
 FUNCTION f18_promjena_sezone()
 
-   LOCAL oLogin := F18Login():New()
+   LOCAL oLogin := my_login()
 
    oLogin:promjena_sezone()
 

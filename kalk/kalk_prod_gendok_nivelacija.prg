@@ -692,7 +692,7 @@ FUNCTION obr_nivel_p()
    ENDIF
 
    // pokreni obradu pript bez asistenta
-   ObradiImport( 0, .F., lStampati )
+   kalk_imp_obradi_sve_dokumente( 0, .F., lStampati )
 
    IF !lGenFinFakt
       // vrati parametre...

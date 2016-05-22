@@ -168,10 +168,8 @@ FUNCTION ImpTxtDok()
       RETURN .F.
    ENDIF
 
-   // obrada dokumenata iz pript tabele
-   MnuObrDok()
 
-   TxtErase( cImpFile, .T. )
+   menu_kalk_imp_obradi_sve_dokumente() // obrada dokumenata iz pript tabele
 
    RETURN
 
@@ -208,13 +206,13 @@ STATIC FUNCTION GetImpFilter()
 
 
 
-/* MnuObrDok()
+/* menu_kalk_imp_obradi_sve_dokumente()
  *     Obrada dokumenata iz pomocne tabele
  */
-STATIC FUNCTION MnuObrDok()
+STATIC FUNCTION menu_kalk_imp_obradi_sve_dokumente()
 
-   IF Pitanje(, "Obraditi dokumente iz pomocne tabele (D/N)?", "D" ) == "D"
-      ObradiImport( nil, nil, __stampaj )
+   IF Pitanje(, "Obraditi dokumente iz kalk pript (D/N)?", "D" ) == "D"
+      kalk_imp_obradi_sve_dokumente( nil, nil, __stampaj )
    ELSE
       MsgBeep( "Dokumenti nisu obradjeni!#Obrada se moze uraditi i naknadno!" )
       my_close_all_dbf()
@@ -238,13 +236,13 @@ STATIC FUNCTION ImpTxtPartn()
 
    // daj mi pregled fajlova za import, te setuj varijablu cImpFile
    IF get_file_list( cFFilt, cExpPath, @cImpFile ) == 0
-      RETURN
+      RETURN .F.
    ENDIF
 
    // provjeri da li je fajl za import prazan
    IF CheckFile( cImpFile ) == 0
       MsgBeep( "Odabrani fajl je prazan!#!!! Prekidam operaciju !!!" )
-      RETURN
+      RETURN .F.
    ENDIF
 
    PRIVATE aDbf := {}
@@ -261,11 +259,11 @@ STATIC FUNCTION ImpTxtPartn()
    IF CheckPartn() > 0
       IF Pitanje(, "Izvrsiti import partnera (D/N)?", "D" ) == "N"
          MsgBeep( "Opcija prekinuta!" )
-         RETURN
+         RETURN .F.
       ENDIF
    ELSE
       MsgBeep( "Nema novih partnera za import !" )
-      RETURN
+      RETURN .F.
    ENDIF
 
    // ova opcija ipak i nije toliko dobra da se radi!
@@ -275,12 +273,12 @@ STATIC FUNCTION ImpTxtPartn()
 
    IF TTbl2Partn( lEdit ) == 0
       MsgBeep( "Operacija prekinuta!" )
-      RETURN
+      RETURN .F.
    ENDIF
 
    MsgBeep( "Operacija zavrsena !" )
 
-   TxtErase( cImpFile )
+   kalk_imp_brisi_txt( cImpFile )
 
    RETURN .T.
 
@@ -338,7 +336,7 @@ STATIC FUNCTION ImpTxtRoba()
 
    MsgBeep( "Operacija zavrsena !" )
 
-   TxtErase( cImpFile )
+   kalk_imp_brisi_txt( cImpFile )
 
    RETURN .T.
 
@@ -530,7 +528,7 @@ STATIC FUNCTION SetRuleRoba( aRule )
  *   param: aRules - pravila upisivanja jednog zapisa u tabelu, princip uzimanja zapisa iz linije text fajla
  *   param: cTxtFile - txt fajl za import
  */
-// /
+
 STATIC FUNCTION Txt2TTbl( aDbf, aRules, cTxtFile )
 
    LOCAL oFile, nCnt
@@ -541,7 +539,6 @@ STATIC FUNCTION Txt2TTbl( aDbf, aRules, cTxtFile )
    cre_kalk_imp_temp( aDbf )
    o_kalk_imp_temp()
 
-   AltD()
    IF !File( f18_ime_dbf( "kalk_imp_temp" ) )
       MsgBeep( "Ne mogu kreirati fajl kalk_imp_temp.dbf !" )
       RETURN .F.
@@ -616,7 +613,6 @@ STATIC FUNCTION cre_kalk_imp_temp( aDbf )
 
    LOCAL cTmpTbl := "kalk_imp_temp"
 
-   AltD()
    IF File( f18_ime_dbf( cTmpTbl ) ) .AND. FErase( f18_ime_dbf( cTmpTbl ) ) == -1
       MsgBeep( "Ne mogu izbrisati kalk_imp_temp.dbf !" )
 
@@ -1026,9 +1022,8 @@ STATIC FUNCTION GetKTipDok( cFaktTD, cPm )
 // [Vindija]
 // VPR200_050=13200
 // VPR201_050=13201
-// itd....
 // ---------------------------------------------------------------
-STATIC FUNCTION GetVPr( cProd, cPoslovnica )
+STATIC FUNCTION kalk_imp_get_konto_prodavnica_za_pm_i_poslovnicu( cProd, cPoslovnica )
 
    LOCAL cRet
 
@@ -1053,29 +1048,130 @@ STATIC FUNCTION GetVPr( cProd, cPoslovnica )
    RETURN cRet
 
 
-// -----------------------------------------------------------
-// Vraca konto za odredjeni tipdokumenta
-// cTipDok - tip dokumenta
-// cTip - "Z" zaduzuje, "R" - razduzuje
-// cPoslovnica -poslovnica vindije sarajevo, tuzla ili ...
-// -----------------------------------------------------------
-STATIC FUNCTION GetTdKonto( cTipDok, cTip, cPoslovnica )
+/* -----------------------------------------------------------
 
-   cRet := my_get_from_ini( "VINDIJA", "TD" + cTipDok + cTip + cPoslovnica, "xxxx", KUMPATH )
+Vraca konto za odredjeni tipdokumenta
+cTipDok - tip dokumenta
+ cTip - "Z" zaduzuje, "R" - razduzuje
+ cPoslovnica -poslovnica vindije sarajevo, tuzla ili ...
 
-   // primjer:
-   // TD14Z050=1310 // posl.sarajevo
-   // TD14R050=1200
-   // TD14R042=1201 // posl.tuzla npr...
 
-   IF cRet == "" .OR. cRet == nil
-      cRet := "XXXXX"
+ primjer:
+ TD14Z050=1310 // posl.sarajevo
+ TD14R050=1200
+ TD14R042=1201 // posl.tuzla
+
+
+ Poslovnica sarajevo 050
+ ==================================
+ kalk_imp_050_14_Z = 1310   // kalk 14 kto zaduzuje
+ kalk_imp_050_14_R = 1200   // kalk 14 kto razduzuje
+
+*/
+STATIC FUNCTION kalk_imp_get_konto_za_tip_dokumenta_poslovnica( cTipDok, cZadRazd, cPoslovnica )
+
+   cRet := fetch_metric( "kalk_imp_" + cPoslovnica + "_" + cTipDok + "_" + cZadRazd, NIL,  "XXXX" )
+
+   IF cRet == "XXXX"
+      AltD()
+      set_kalk_imp_parametri_za_poslovnica( cPoslovnica )
+      kalk_imp_get_konto_za_tip_dokumenta_poslovnica( cTipDok, cZadRazd, cPoslovnica )
    ENDIF
 
    RETURN cRet
 
 
+STATIC FUNCTION set_kalk_imp_parametri_za_poslovnica( cPoslovnica )
 
+   LOCAL hKonta := hb_Hash(), cTipDok, cZadRazd
+
+   cTipDok := "14"
+   cZadRazd := "Z"
+   hKonta[ "14Z" ] := fetch_metric(  "kalk_imp_" + cPoslovnica + "_" + cTipDok + "_" + cZadRazd, NIL,  Space( 7 ) )
+   cZadRazd := "R"
+   hKonta[ "14R" ] := fetch_metric(  "kalk_imp_" + cPoslovnica + "_" + cTipDok + "_" + cZadRazd, NIL,  Space( 7 ) )
+
+   cTipDok := "11"
+   cZadRazd := "Z"
+   hKonta[ "11Z" ] := fetch_metric(  "kalk_imp_" + cPoslovnica + "_" + cTipDok + "_" + cZadRazd, NIL,  Space( 7 ) )
+   cZadRazd := "R"
+   hKonta[ "11R" ] := fetch_metric(  "kalk_imp_" + cPoslovnica + "_" + cTipDok + "_" + cZadRazd, NIL,  Space( 7 ) )
+
+   cTipDok := "41"
+   cZadRazd := "Z"
+   hKonta[ "41Z" ] := fetch_metric(  "kalk_imp_" + cPoslovnica + "_" + cTipDok + "_" + cZadRazd, NIL,  Space( 7 ) )
+   cZadRazd := "R"
+   hKonta[ "41R" ] := fetch_metric(  "kalk_imp_" + cPoslovnica + "_" + cTipDok + "_" + cZadRazd, NIL,  Space( 7 ) )
+
+   cTipDok := "95"
+   cZadRazd := "Z"
+   hKonta[ "95Z" ] := fetch_metric(  "kalk_imp_" + cPoslovnica + "_" + cTipDok + "_" + cZadRazd, NIL,  Space( 7 ) )
+   cZadRazd := "R"
+   hKonta[ "95R" ] := fetch_metric(  "kalk_imp_" + cPoslovnica + "_" + cTipDok + "_" + cZadRazd, NIL,  Space( 7 ) )
+
+   cTipDok := "KO"
+   cZadRazd := "Z"
+   hKonta[ "KOZ" ] := fetch_metric(  "kalk_imp_" + cPoslovnica + "_" + cTipDok + "_" + cZadRazd, NIL,  Space( 7 ) )
+   cZadRazd := "R"
+   hKonta[ "KOR" ] := fetch_metric(  "kalk_imp_" + cPoslovnica + "_" + cTipDok + "_" + cZadRazd, NIL,  Space( 7 ) )
+
+
+   Box(, 10, 75 )
+   @ m_x + 1, m_y + 2 SAY "Poslovnica: " + cPoslovnica
+
+   @ m_x + 3, m_y + 2 SAY "KALK 14 KTO ZAD: " GET hKonta[ "14Z" ]
+   @ m_x + 3, Col() + 2 SAY "KALK 14 KTO RAZD: " GET hKonta[ "14R" ]
+
+   @ m_x + 4, m_y + 2 SAY "KALK 11 KTO ZAD: " GET hKonta[ "11Z" ]
+   @ m_x + 4, Col() + 2 SAY "KALK 11 KTO RAZD: " GET hKonta[ "11R" ]
+
+   @ m_x + 5, m_y + 2 SAY "KALK 41 KTO ZAD: " GET hKonta[ "41Z" ]
+   @ m_x + 5, Col() + 2 SAY "KALK 41 KTO RAZD: " GET hKonta[ "41R" ]
+
+   @ m_x + 6, m_y + 2 SAY "KALK 95 KTO ZAD: " GET hKonta[ "95Z" ]
+   @ m_x + 6, Col() + 2 SAY "KALK 95 KTO RAZD: " GET hKonta[ "95R" ]
+
+   @ m_x + 7, m_y + 2 SAY "KALK KO KTO ZAD: " GET hKonta[ "KOZ" ]
+   @ m_x + 7, Col() + 2 SAY "KALK KO KTO RAZD: " GET hKonta[ "KOR" ]
+
+   READ
+   BoxC()
+
+   IF LastKey() == K_ESC
+      RETURN .F.
+   ENDIF
+
+   cTipDok := "14"
+   cZadRazd := "Z"
+   set_metric( "kalk_imp_" + cPoslovnica + "_" + cTipDok + "_" + cZadRazd, NIL, hKonta[ cTipDok + cZadRazd ] )
+   cZadRazd := "R"
+   set_metric( "kalk_imp_" + cPoslovnica + "_" + cTipDok + "_" + cZadRazd, NIL, hKonta[ cTipDok + cZadRazd ] )
+
+   cTipDok := "11"
+   cZadRazd := "Z"
+   set_metric( "kalk_imp_" + cPoslovnica + "_" + cTipDok + "_" + cZadRazd, NIL, hKonta[ cTipDok + cZadRazd ] )
+   cZadRazd := "R"
+   set_metric( "kalk_imp_" + cPoslovnica + "_" + cTipDok + "_" + cZadRazd, NIL, hKonta[ cTipDok + cZadRazd ] )
+
+   cTipDok := "41"
+   cZadRazd := "Z"
+   set_metric( "kalk_imp_" + cPoslovnica + "_" + cTipDok + "_" + cZadRazd, NIL, hKonta[ cTipDok + cZadRazd ] )
+   cZadRazd := "R"
+   set_metric( "kalk_imp_" + cPoslovnica + "_" + cTipDok + "_" + cZadRazd, NIL, hKonta[ cTipDok + cZadRazd ] )
+
+   cTipDok := "95"
+   cZadRazd := "Z"
+   set_metric( "kalk_imp_" + cPoslovnica + "_" + cTipDok + "_" + cZadRazd, NIL, hKonta[ cTipDok + cZadRazd ] )
+   cZadRazd := "R"
+   set_metric( "kalk_imp_" + cPoslovnica + "_" + cTipDok + "_" + cZadRazd, NIL, hKonta[ cTipDok + cZadRazd ] )
+
+   cTipDok := "KO"
+   cZadRazd := "Z"
+   set_metric( "kalk_imp_" + cPoslovnica + "_" + cTipDok + "_" + cZadRazd, NIL, hKonta[ cTipDok + cZadRazd ] )
+   cZadRazd := "R"
+   set_metric( "kalk_imp_" + cPoslovnica + "_" + cTipDok + "_" + cZadRazd, NIL, hKonta[ cTipDok + cZadRazd ] )
+
+   RETURN .T.
 
 /* FaktExist()
  *     vraca matricu sa parovima faktura -> pojavljuje se u azur.kalk
@@ -1169,7 +1265,6 @@ STATIC FUNCTION from_kalk_imp_temp_to_pript( aFExist, lFSkip, lNegative, cCtrl_a
    O_KALK_DOKS2
    O_ROBA
    o_kalk_pript()
-   altd()
 
    SELECT kalk_imp_temp
 
@@ -1206,7 +1301,7 @@ STATIC FUNCTION from_kalk_imp_temp_to_pript( aFExist, lFSkip, lNegative, cCtrl_a
 
          nT_scan := 0
 
-         cTmp_kto := GetKtKalk( cTDok, kalk_imp_temp->idpm, "R", cIdPJ )
+         cTmp_kto := kalk_imp_get_konto_by_tip_pm_poslovnica( cTDok, kalk_imp_temp->idpm, "R", cIdPJ )
 
          SELECT roba
          SET ORDER TO TAG "ID_VSD"
@@ -1304,8 +1399,8 @@ STATIC FUNCTION from_kalk_imp_temp_to_pript( aFExist, lFSkip, lNegative, cCtrl_a
          ENDIF
       ENDIF
 
-      _id_konto := GetKtKalk( cTDok, kalk_imp_temp->idpm, "Z", cIdPJ )
-      _id_konto2 := GetKtKalk( cTDok, kalk_imp_temp->idpm, "R", cIdPJ )
+      _id_konto := kalk_imp_get_konto_by_tip_pm_poslovnica( cTDok, kalk_imp_temp->idpm, "Z", cIdPJ )
+      _id_konto2 := kalk_imp_get_konto_by_tip_pm_poslovnica( cTDok, kalk_imp_temp->idpm, "R", cIdPJ )
 
       // pozicioniraj se na konto zaduzuje
       SELECT koncij
@@ -1314,7 +1409,6 @@ STATIC FUNCTION from_kalk_imp_temp_to_pript( aFExist, lFSkip, lNegative, cCtrl_a
       SEEK _id_konto
 
 
-altd()
       select_o_kalk_pript()
 
       APPEND BLANK
@@ -1378,7 +1472,7 @@ altd()
 
       ASort( aPom,,, {| x, y| x[ 1 ] + "-" + x[ 2 ] < y[ 1 ] + "-" + y[ 2 ] } )
 
-      START PRINT CRET
+      START PRINT CRET 0
       ? "========================================"
       ? "Generisani sljedeci dokumenti:          "
       ? "========================================"
@@ -1414,7 +1508,7 @@ altd()
 
    IF cCtrl_art == "D" .AND. Len( aArr_ctrl ) > 0
 
-      START PRINT CRET
+      START PRINT CRET 0
 
       ?
       ? "Ispusteni dokumenti:"
@@ -1457,7 +1551,7 @@ altd()
 
 
 
-/* GetKtKalk(cTipDok, cPm, cTip)
+/* kalk_imp_get_konto_by_tip_pm_poslovnica(cTipDok, cPm, cTip)
  *     Varaca konto za trazeni tip dokumenta i prodajno mjesto
  *   param: cTipDok - tip dokumenta
  *   param: cPm - prodajno mjesto
@@ -1465,23 +1559,26 @@ altd()
  *   param: cPoslovnica - poslovnica tuzla ili sarajevo
  */
 
-STATIC FUNCTION GetKtKalk( cTipDok, cPm, cTip, cPoslovnica )
+STATIC FUNCTION kalk_imp_get_konto_by_tip_pm_poslovnica( cTipDok, cPm, cTip, cPoslovnica )
 
    DO CASE
+
    CASE cTipDok == "14"
-      cRet := GetTDKonto( cTipDok, cTip, cPoslovnica )
+      cRet := kalk_imp_get_konto_za_tip_dokumenta_poslovnica( cTipDok, cTip, cPoslovnica )
+
    CASE cTipDok == "11"
       IF cTip == "R"
-         cRet := GetTDKonto( cTipDok, cTip, cPoslovnica )
+         cRet := kalk_imp_get_konto_za_tip_dokumenta_poslovnica( cTipDok, cTip, cPoslovnica )
       ELSE
-         cRet := GetVPr( cPm, cPoslovnica )
+         cRet := kalk_imp_get_konto_prodavnica_za_pm_i_poslovnicu( cPm, cPoslovnica )
       ENDIF
+
    CASE cTipDok == "41"
-      cRet := GetTDKonto( cTipDok, cTip, cPoslovnica )
+      cRet := kalk_imp_get_konto_za_tip_dokumenta_poslovnica( cTipDok, cTip, cPoslovnica )
    CASE cTipDok == "95"
-      cRet := GetTDKonto( cTipDok, cTip, cPoslovnica )
+      cRet := kalk_imp_get_konto_za_tip_dokumenta_poslovnica( cTipDok, cTip, cPoslovnica )
    CASE cTipDok == "KO"
-      cRet := GetTDKonto( cTipDok, cTip, cPoslovnica )
+      cRet := kalk_imp_get_konto_za_tip_dokumenta_poslovnica( cTipDok, cTip, cPoslovnica )
 
    ENDCASE
 
@@ -1659,10 +1756,10 @@ STATIC FUNCTION GetKVars( dDatDok, cBrKalk, cTipDok, cIdKonto, cIdKonto2, cRazd 
 
 
 
-/* ObradiImport()
+/* kalk_imp_obradi_sve_dokumente()
  *     Obrada importovanih dokumenata
  */
-FUNCTION ObradiImport( nPocniOd, lAsPokreni, lStampaj )
+FUNCTION kalk_imp_obradi_sve_dokumente( nPocniOd, lAsPokreni, lStampaj )
 
    LOCAL cN_kalk_dok := ""
    LOCAL nUvecaj := 0
@@ -1699,8 +1796,8 @@ FUNCTION ObradiImport( nPocniOd, lAsPokreni, lStampaj )
 
    // uzmi parametre koje ces dokumente prenositi
    cBBTipDok := Space( 30 )
-   Box(, 3, 60 )
-   @ 1 + m_x, 2 + m_y SAY "Prenositi sljedece tipove dokumenata:"
+   Box(, 3, 70 )
+   @ 1 + m_x, 2 + m_y SAY "Prenos sljedecih tipova dokumenata ( kalk pript -> pripr) :"
    @ 3 + m_x, 2 + m_y SAY "Tip dokumenta (prazno-svi):" GET cBBTipDok PICT "@S25"
    READ
    BoxC()
@@ -1762,8 +1859,13 @@ FUNCTION ObradiImport( nPocniOd, lAsPokreni, lStampaj )
       IF lAutom // nakon sto smo prebacili dokument u kalk_pripremu obraditi ga
 
          kalk_imp_set_check_point( nPCRec ) // snimi zapis u params da znas dokle si dosao
-         kalk_imp_obradi_dokument( cIdVd, lAsPokreni, lStampaj )
-         kalk_imp_set_check_point( nPTRec )
+         IF kalk_imp_obradi_dokument( cIdVd, lAsPokreni, lStampaj )
+            kalk_imp_set_check_point( nPTRec )
+         ELSE
+            MsgBeep( "prekid operacije importa !" )
+            BoxC()
+            RETURN .F.
+         ENDIF
          o_kalk_pript()
       ENDIF
 
@@ -1774,10 +1876,10 @@ FUNCTION ObradiImport( nPocniOd, lAsPokreni, lStampaj )
 
    BoxC()
 
-   // snimi i da je obrada zavrsena
-   kalk_imp_set_check_point( 0 )
+   kalk_imp_set_check_point( 0 ) // oznaci da je obrada zavrsena
 
    MsgBeep( "Dokumenti obradjeni!" )
+   kalk_imp_brisi_txt( cImpFile, .T. )
 
    RETURN .T.
 
@@ -1846,7 +1948,7 @@ STATIC FUNCTION kalk_imp_continue_from_check_point()
       RETURN .F.
    ENDIF
 
-   ObradiImport( nDosaoDo, nil, __stampaj )
+   kalk_imp_obradi_sve_dokumente( nDosaoDo, nil, __stampaj )
 
    RETURN .T.
 
@@ -1890,14 +1992,13 @@ STATIC FUNCTION kalk_imp_obradi_dokument( cIdVd, lAsPokreni, lStampaj )
 
    PRIVATE nRslt // ako postoje zavisni dokumenti non stop ponavljaj proceduru obrade
 
-   DO WHILE ( ChkKkalk_pripr( cIdVd, @nRslt ) <> 0 )
+   DO WHILE ( provjeri_stanje_kalk_pripreme( cIdVd, @nRslt ) <> 0 )
 
-      // vezni dokument u kalk_pripremi je ok
-      IF nRslt == 1
+
+      IF nRslt == 1 // vezni dokument u kalk_pripremi je ok
 
          IF lAsPokreni
-            // otvori kalk_pripremu
-            kalk_unos_stavki_dokumenta( .T. )
+            kalk_unos_stavki_dokumenta( .T. ) // otvori kalk_pripremu
          ELSE
             o_kalk_edit()
          ENDIF
@@ -1911,52 +2012,41 @@ STATIC FUNCTION kalk_imp_obradi_dokument( cIdVd, lAsPokreni, lStampaj )
 
       ENDIF
 
-      // vezni dokument ne pripada azuriranom dokumentu
-      // sta sa njim
 
-      IF nRslt >= 2
+      IF nRslt >= 2 // vezni dokument u pripremi ne pripada azuriranom dokumentu, sta sa njim
 
          MsgBeep( "Postoji dokument u kalk_pripremi koji je sumljiv!#Radi se o veznom dokumentu ili nekoj drugoj gresci...#Obradite ovaj dokument i autoimport ce nastaviti dalje sa radom !" )
+         IF LastKey() == K_ESC
+            AltD()
+            IF Pitanje(, "Prekid operacije?", "N" ) == "D"
+               RETURN .F.
+            ENDIF
+         ENDIF
          kalk_unos_stavki_dokumenta()
          o_kalk_edit()
 
       ENDIF
    ENDDO
 
-   RETURN .F.
+   RETURN .T.
 
 
-/* ChkKkalk_pripr(cIdVd, nRes)
+/* provjeri_stanje_kalk_pripreme(cIdVd, nRes)
  *     Provjeri da li je kalk_priprema prazna
  *   param: cIdVd - id vrsta dokumenta
  */
-STATIC FUNCTION ChkKkalk_pripr( cIdVd, nRes )
+STATIC FUNCTION provjeri_stanje_kalk_pripreme( cIdVd, nRes )
 
-   // provjeri da li je kalk_priprema prazna, ako je prazna vrati 0
    SELECT kalk_pripr
    GO TOP
 
-   IF RecCount() == 0
-      // idi dalje...
+   IF RecCount() == 0 // provjeri da li je kalk_priprema prazna, ako je prazna vrati 0
       nRes := 0
       RETURN 0
    ENDIF
 
-   // provjeri koji je dokument u kalk_pripremi u odnosu na cIdVd
 
-   RETURN nRes := ChkTipDok( cIdVd )
-
-   RETURN 0
-
-
-
-/* ChkTipDok(cIdVd)
- *     Provjeri kalk_pripremu za tip dokumenta
- *   param: cIdVd - vrsta dokumenta
- */
-STATIC FUNCTION ChkTipDok( cIdVd )
-
-   nNrRec := RecCount()
+   nNrRec := RecCount2()
    nTmp := 0
    cPrviDok := field->idvd
    nPrviDok := Val( cPrviDok )
@@ -1969,19 +2059,24 @@ STATIC FUNCTION ChkTipDok( cIdVd )
    nUzorak := nPrviDok * nNrRec
 
    IF nUzorak <> nNrRec * nTmp
-      // ako u kalk_pripremi ima vise dokumenata vrati 2
+      // ako u kalk_pripremi ima vise dokumenata vrati 3
+      nRes := 3
       RETURN 3
    ENDIF
 
    DO CASE
    CASE cIdVd == "14"
-      RETURN ChkTD14( cPrviDok )
+      nRes := ChkTD14( cPrviDok )
+      RETURN nRes
    CASE cIdVd == "41"
-      RETURN ChkTD41( cPrviDok )
+      nRes := ChkTD41( cPrviDok )
+      RETURN nRes
    CASE cIdVd == "11"
-      RETURN ChkTD11( cPrviDok )
+      nRes := ChkTD11( cPrviDok )
+      RETURN nRes
    CASE cIdVD == "95"
-      RETURN ChkTD95( cPrviDok )
+      nRes := ChkTD95( cPrviDok )
+      RETURN nRes
    ENDCASE
 
    RETURN 0
@@ -1991,7 +2086,7 @@ STATIC FUNCTION ChkTipDok( cIdVd )
 /* ChkTD14(cVezniDok)
  *     Provjeri vezne dokumente za tip dokumenta 14
  *   param: cVezniDok - dokument iz kalk_pripreme
- *  \result vraca 1 ako je sve ok, ili 2 ako vezni dokument ne odgovara
+ *  result vraca 1 ako je sve ok, ili 2 ako vezni dokument ne odgovara
  */
 STATIC FUNCTION ChkTD14( cVezniDok )
 
@@ -2002,7 +2097,7 @@ STATIC FUNCTION ChkTD14( cVezniDok )
    RETURN 2
 
 
-/* ChkTD41()
+/* ChkTD41
  *     Provjeri vezne dokumente za tip dokumenta 41
  */
 STATIC FUNCTION ChkTD41( cVezniDok )
@@ -2130,6 +2225,32 @@ STATIC FUNCTION FillDobSifra()
 
       FF
       ENDPRINT
+   ENDIF
+
+   RETURN .T.
+
+
+
+
+   /* kalk_imp_brisi_txt(cTxtFile, lErase)
+    *     Brisanje fajla cTxtFile
+    *   param: cTxtFile - fajl za brisanje
+    *   param: lErase - .t. ili .f. - brisati ili ne brisati fajl txt nakon importa
+    */
+FUNCTION kalk_imp_brisi_txt( cTxtFile, lErase )
+
+   IF lErase == nil
+      lErase := .F.
+   ENDIF
+
+   // postavi pitanje za brisanje fajla
+   IF lErase .AND. Pitanje(, "Pobrisati txt fajl (D/N)?", "D" ) == "N"
+      RETURN .F.
+   ENDIF
+
+   IF FErase( cTxtFile ) == -1
+      MsgBeep( "Ne mogu izbrisati " + cTxtFile )
+
    ENDIF
 
    RETURN .T.

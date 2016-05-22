@@ -31,7 +31,7 @@ FUNCTION fakt_import_bterm()
    bterm_to_pripr()
 
    // pobrisi txt fajl
-   TxtErase( cFile, .T. )
+   kalk_imp_brisi_txt( cFile, .T. )
 
    RETURN .T.
 

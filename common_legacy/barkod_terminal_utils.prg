@@ -66,28 +66,7 @@ FUNCTION get_file_list( cFilter, cPath, cImpFile )
    RETURN 1
 
 
-/* TxtErase(cTxtFile, lErase)
- *     Brisanje fajla cTxtFile
- *   param: cTxtFile - fajl za brisanje
- *   param: lErase - .t. ili .f. - brisati ili ne brisati fajl txt nakon importa
- */
-FUNCTION TxtErase( cTxtFile, lErase )
 
-   IF lErase == nil
-      lErase := .F.
-   ENDIF
-
-   // postavi pitanje za brisanje fajla
-   IF lErase .AND. Pitanje(, "Pobrisati txt fajl (D/N)?", "D" ) == "N"
-      RETURN
-   ENDIF
-
-   IF FErase( cTxtFile ) == -1
-      MsgBeep( "Ne mogu izbrisati " + cTxtFile )
-
-   ENDIF
-
-   RETURN .T.
 
 
 // -----------------------------------------------------

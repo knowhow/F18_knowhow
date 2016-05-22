@@ -82,3 +82,21 @@ static function zagl()
 BUG
 ======================
 error_bar( "fa_bug", log_stack( 1 ) )
+
+
+
+Parametri
+=========================
+
+
+globalni (nil):
+
+read:
+LOCAL cBrDok := fetch_metric( "labeliranje_ispis_brdok", nil, "N" )
+
+write:
+set_metric( "labeliranje_ispis_brdok", nil, cBrDok )
+
+
+lokalni za usera (my_user()):
+set_metric( "main_menu_fin", my_user(), cFinDN )

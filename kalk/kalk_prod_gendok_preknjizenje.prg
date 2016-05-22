@@ -94,7 +94,7 @@ FUNCTION GetPreknj()
    MsgBeep( "Zavrseno filovanje pomocne tabele pokrecem obradu!" )
    // Automatska obrada dokumenata
    // 0 - kreni od 0, .f. - ne pokreci asistenta
-   ObradiImport( 0, .F., .F. )
+   kalk_imp_obradi_sve_dokumente( 0, .F., .F. )
 
    RETURN
 // }
@@ -187,7 +187,7 @@ FUNCTION GetPstPDV()
 
    MsgBeep( "Zavrseno filovanje pomocne tabele pokrecem obradu!" )
    // Automatska obrada dokumenata
-   ObradiImport( 0, .F., .F. )
+   kalk_imp_obradi_sve_dokumente( 0, .F., .F. )
 
    RETURN
 // }

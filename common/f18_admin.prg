@@ -570,7 +570,7 @@ METHOD F18Admin:update_db()
    IF !Empty( _database )
       AAdd( _db_list, { AllTrim( _database ) } )
    ELSE
-      _db_list := F18Login():New():database_array()
+      _db_list := my_login():database_array()
    ENDIF
 
    IF _upd_empty == "D"
@@ -720,23 +720,22 @@ METHOD F18Admin:update_db_company( company )
       IF Left( company, 1 ) == "!"
 
          company := Right( AllTrim( company ), Len( AllTrim( company ) ) - 1 )
-         // rucno zadat naziv baze, ne gledaj sezone...
-         AAdd( _sess_list, { "empty" } )
+
+         AAdd( _sess_list, { "empty" } ) // rucno zadan naziv baze, ne gledati sezone
 
       ELSEIF ! ( "_" $ company )
 
-         // nema sezone, uzmi sa servera...
-         _sess_list := F18Login():New():get_database_sessions( company )
+
+         _sess_list := my_login():get_database_sessions( company ) // nema sezone, uzeti sa servera
 
       ELSE
 
          IF SubStr( company, Len( company ) - 3, 1 ) $ "1#2"
-            // vec postoji zadana sezona...
-            // samo je dodaj u matricu...
+            // vec postoji zadana sezona, samo je dodati u matricu
             AAdd( _sess_list, { Right( AllTrim( company ), 4 ) } )
             company := PadR( AllTrim( company ), Len( AllTrim( company ) ) - 5  )
          ELSE
-            _sess_list := F18Login():New():get_database_sessions( company )
+            _sess_list := my_login():get_database_sessions( company )
          ENDIF
 
       ENDIF

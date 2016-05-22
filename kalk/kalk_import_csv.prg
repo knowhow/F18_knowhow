@@ -178,7 +178,7 @@ FUNCTION ImpCSVOst()
    // importuj podatke u partnere
    ImportOst()
 
-   TxtErase( cImpFile, .T. )
+   kalk_imp_brisi_txt( cImpFile, .T. )
 
    RETURN
 
@@ -240,7 +240,7 @@ FUNCTION ImpCSVDok()
    // obrada dokumenata iz pript tabele
    MnuObrDok()
 
-   TxtErase( cImpFile, .T. )
+   kalk_imp_brisi_txt( cImpFile, .T. )
 
    RETURN
 
@@ -891,26 +891,22 @@ STATIC FUNCTION ObradiDokument( lAsPokreni, lStampaj )
    ENDIF
 
    IF lAsPokreni
-      // pozovi asistenta
-      kalk_unos_stavki_dokumenta( .T. )
+
+      kalk_unos_stavki_dokumenta( .T. ) // pozovi asistenta
       IF __trosk == .T.
-         // otvori tabele
          o_kalk_edit()
-         // fSilent = .t.
-         RaspTrosk( .T. )
+         RaspTrosk( .T. ) // fSilent = .t.
       ENDIF
    ELSE
       o_kalk_edit()
    ENDIF
 
    IF lStampaj == .T.
-      // odstampaj kalk
-      kalk_stampa_dokumenta( nil, nil, .T. )
+      kalk_stampa_dokumenta( nil, nil, .T. ) // odstampaj kalk
    ENDIF
 
-   // azuriraj kalk
-   kalk_azuriranje_dokumenta( .T. )
+   kalk_azuriranje_dokumenta( .T. ) // azuriraj kalk
 
    o_kalk_edit()
 
-   RETURN
+   RETURN .T.

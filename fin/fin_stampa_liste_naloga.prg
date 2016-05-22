@@ -39,7 +39,6 @@ FUNCTION fin_stampa_liste_naloga()
    nSort := 1
 
    cIdVN := "  "
-altd()
    Box(, 7, 60 )
    @ m_x + 1, m_Y + 2 SAY "Provjeriti integritet podataka"
    @ m_x + 2, m_Y + 2 SAY "u odnosu na datoteku naloga D/N/Q ?"  GET cInteg  PICT "@!" VALID cInteg $ "DNQ"
@@ -51,7 +50,11 @@ altd()
    BoxC()
 
    lSql := ( cInteg == "Q" )
-   o_nalog( lSql, cIdVN )
+   IF !o_nalog( lSql, cIdVN )
+      MsgBeep( "Tabela fin_nalog se ne moze otvoriti" )
+      RETURN .F.
+   ENDIF
+
    IF cInteg == "D"
       O_SUBAN
       SET ORDER TO TAG "4"

@@ -23,6 +23,8 @@ FUNCTION select_o_fin_pripr()
 
 FUNCTION o_nalog( lSql, cIdVN )
 
+   hb_default( @lSql, .F. )
+
    IF lSql
       RETURN use_sql_fin_nalog( cIdVN, .T. )
    ENDIF

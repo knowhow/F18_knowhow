@@ -40,14 +40,15 @@ FUNCTION use_sql_fin_nalog( cIdVN, lMakeIndex )
    ENDIF
 
    cSql := "SELECT "
-   cSql += "  idfirma, idvn, brnal, sifra, datnal, "
+   cSql += "  idfirma, idvn, brnal, sifra, "
+   cSql += "  COALESCE(datnal,('1900-01-01'::date)) AS datnal, "
    cSql += "  COALESCE(dugbhd,0)::numeric(17,2) AS dugbhd, "
    cSql += "  COALESCE(potbhd,0)::numeric(17,2) AS potbhd, "
    cSql += "  COALESCE(dugdem,0)::numeric(15,2) AS dugdem, "
    cSql += "  COALESCE(potdem,0)::numeric(15,2) AS potdem "
    cSql += "FROM " + F18_PSQL_SCHEMA_DOT + cTable
    IF cIdVN != NIL .AND. !Empty( cIdVN )
-      cSql += " WHERE idvd=" + sql_quote( cIdVN )
+      cSql += " WHERE IdVN=" + sql_quote( cIdVN )
    ENDIF
    cSQL += " ORDER BY idfirma, idvn, brnal"
 

@@ -2140,10 +2140,12 @@ FUNCTION MPCSAPPuSif()
    GO TOP
    DO WHILE !Eof()
       cIdKonto := kalk_pripr->pkonto
-      SELECT KONCIJ; HSEEK cIdKonto
+      SELECT KONCIJ
+      HSEEK cIdKonto
       SELECT kalk_pripr
       DO WHILE !Eof() .AND. pkonto == cIdKonto
-         SELECT ROBA; HSEEK kalk_pripr->idroba
+         SELECT ROBA
+         HSEEK kalk_pripr->idroba
          IF Found()
             StaviMPCSif( kalk_pripr->mpcsapp, .F. )
          ENDIF
@@ -2153,7 +2155,7 @@ FUNCTION MPCSAPPuSif()
    ENDDO
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -2173,10 +2175,10 @@ FUNCTION MPCSAPPiz80uSif()
    @ m_x + 0, m_y + 5 SAY8 "FORMIRANJE MPC U šifarnikU OD MPCSAPP DOKUMENTA TIPA 80"
    @ m_x + 2, m_y + 2 SAY8 "Dokument: " + cIdFirma + "-" + cIdVdU + "-"
    @ Row(), Col() GET cBrDokU VALID postoji_kalk_dok( cIdFirma + cIdVdU + cBrDokU )
-   READ; ESC_BCR
+   READ
+   ESC_BCR
    BoxC()
 
-   // pocnimo
    SELECT KALK
    SEEK cIdFirma + cIdVDU + cBrDokU
    cIdKonto := KALK->pkonto
@@ -2204,7 +2206,7 @@ FUNCTION MPCSAPPiz80uSif()
 
 FUNCTION VPCSifUDok()
 
-   // {
+  
    o_kalk_edit()
    SELECT kalk_pripr
    GO TOP
@@ -2253,7 +2255,7 @@ STATIC FUNCTION kalk_open_tables_unos( lAzuriraniDok, cIdFirma, cIdVD, cBrDok )
 
 FUNCTION kalk_stampa_dokumenta()
 
-   PARAMETERS fStara, cSeek, lAuto
+   PARAMETERS lAzuriraniDokument, cSeek, lAuto
 
    LOCAL nCol1
    LOCAL nCol2
@@ -2270,11 +2272,11 @@ FUNCTION kalk_stampa_dokumenta()
    PRIVATE nStr := 0
 
    IF ( PCount() == 0 )
-      fstara := .F.
+      lAzuriraniDokument := .F.
    ENDIF
 
-   IF ( fStara == nil )
-      fStara := .F.
+   IF ( lAzuriraniDokument == nil )
+      lAzuriraniDokument := .F.
    ENDIF
 
    IF ( lAuto == nil )
@@ -2287,7 +2289,7 @@ FUNCTION kalk_stampa_dokumenta()
 
    my_close_all_dbf()
 
-   kalk_open_tables_unos( fStara )
+   kalk_open_tables_unos( lAzuriraniDokument )
 
    SELECT kalk_pripr
    SET ORDER TO TAG "1"
@@ -2332,8 +2334,7 @@ FUNCTION kalk_stampa_dokumenta()
             ESC_BCR
             BoxC()
 
-altd()
-            IF fStara // stampa azuriranog KALK dokumenta
+            IF lAzuriraniDokument // stampa azuriranog KALK dokumenta
                open_kalk_as_pripr( .T., cIdFirma, cIdVd, cBrDok )
             ENDIF
          ENDIF
@@ -2431,7 +2432,7 @@ altd()
          ELSEIF ( cIdvd == "IP" )
             StKalkIp()
          ELSEIF ( cIdvd == "RN" )
-            IF !fStara
+            IF !lAzuriraniDokument
                RaspTrosk( .T. )
             ENDIF
             StkalkRN()
@@ -2483,7 +2484,7 @@ altd()
 
       // kraj stampe jedne kalkulacije
 
-      kalk_open_tables_unos( fStara )
+      kalk_open_tables_unos( lAzuriraniDokument )
       PopWa()
 
       IF ( cIdvd $ "80#11#81#12#13#IP#19" )
@@ -2500,7 +2501,7 @@ altd()
 
    ENDDO  // vrti kroz kalkulacije
 
-   IF ( fTopsD .AND. !fstara .AND. gTops != "0 " )
+   IF ( fTopsD .AND. !lAzuriraniDokument .AND. gTops != "0 " )
       start PRINT cret
       SELECT kalk_pripr
       SET ORDER TO TAG "1"
@@ -2527,7 +2528,7 @@ altd()
 
    ENDIF
 
-   IF ( fFaktD .AND. !fStara .AND. gFakt != "0 " )
+   IF ( fFaktD .AND. !lAzuriraniDokument .AND. gFakt != "0 " )
       start PRINT cret
       o_kalk_edit()
       SELECT kalk_pripr

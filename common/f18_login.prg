@@ -61,7 +61,7 @@ ENDCLASS
 
 FUNCTION my_login()
 
-altd()
+
    IF s_oLogin == NIL
       s_oLogin := F18Login():New()
    ENDIF
@@ -94,7 +94,6 @@ METHOD F18Login:New()
    _ini_params[ "port" ] := nil
    _ini_params[ "session" ] := nil
 
-   AltD()
    IF !f18_ini_config_read( F18_SERVER_INI_SECTION + iif( test_mode(), "_test", "" ), @_ini_params, .T. )
       error_bar( "ini", "problem f18 ini read" )
    ENDIF
@@ -321,8 +320,6 @@ METHOD F18Login:promjena_sezone( cDatabase, cSezona )
    hParams[ "posljednja_org" ] := "x"
    f18_ini_config_read( "sezona", @hParams, .T. ) // promjena, sezone, read global from ~/.f18_config.ini
 
-   AltD()
-
    IF goModul != NIL
       _modul_name := Lower( goModul:cName )
    ENDIF
@@ -483,7 +480,6 @@ METHOD F18Login:server_login_form()
    ::hDbPostgresConnectionParams[ "schema" ] := _schema
    ::hDbPostgresConnectionParams[ "database" ] := "postgres"
 
-   AltD()
    IF Empty( cPassword ) // korisnici user=password se jednostavno logiraju
       ::hDbPostgresConnectionParams[ "password" ] := ::hDbPostgresConnectionParams[ "user" ]
    ELSE

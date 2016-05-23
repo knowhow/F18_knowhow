@@ -66,6 +66,7 @@ FUNCTION P_KonCij( CId, dx, dy )
       AAdd ( ImeKol, { PadC( "KO4", 7 ), {|| KO4 }, "KO4", {|| .T. }, {|| Empty( wKO4 ) .OR. P_Konto( @wKO4 ) } } )
       AAdd ( ImeKol, { PadC( "KO5", 7 ), {|| KO5 }, "KO5", {|| .T. }, {|| Empty( wKO5 ) .OR. P_Konto( @wKO5 ) } } )
    ENDIF
+   
    IF KONCIJ->( FieldPos( "KUMTOPS" ) ) <> 0
       AAdd ( ImeKol, { "Kum.dir.TOPS-a", {|| KUMTOPS }, "KUMTOPS", {|| .T. }, {|| .T. } } )
       AAdd ( ImeKol, { "Sif.dir.TOPS-a", {|| SIFTOPS }, "SIFTOPS", {|| .T. }, {|| .T. } } )

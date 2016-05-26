@@ -15,6 +15,7 @@ THREAD STATIC __var_obr
 
 FUNCTION rekap_ld( cId, nGodina, nMjesec, nIzn1, nIzn2, cIdPartner, cOpis, cOpis2, lObavDodaj, cIzdanje )
 
+
    IF lObavDodaj == nil
       lObavDodaj := .F.
    ENDIF
@@ -41,13 +42,13 @@ FUNCTION rekap_ld( cId, nGodina, nMjesec, nIzn1, nIzn2, cIdPartner, cOpis, cOpis
    IF lObavDodaj
       APPEND BLANK
    ELSE
-      SEEK Str( nGodina, 4 ) + Str( nMjesec, 2 ) + cId + " "
+      SEEK Str( nGodina, 4, 0 ) + Str( nMjesec, 2, 0 ) + cId + " "
       IF !Found()
          APPEND BLANK
       ENDIF
    ENDIF
 
-   REPLACE godina WITH Str( nGodina, 4 ), mjesec WITH Str( nMjesec, 2 ), ;
+   RREPLACE godina WITH Str( nGodina, 4 , 0 ), mjesec WITH Str( nMjesec, 2, 0 ), ;
       id    WITH  cId, ;
       iznos1 WITH nIzn1, iznos2 WITH nIzn2, ;
       idpartner WITH cIdPartner, ;

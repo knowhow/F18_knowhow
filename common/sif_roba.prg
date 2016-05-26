@@ -289,7 +289,7 @@ FUNCTION OFmkRoba()
    O_SIFK
    O_SIFV
    O_KONTO
-   O_KONCIJ
+   o_koncij()
    O_TRFP
    O_TARIFA
    O_ROBA

@@ -37,7 +37,7 @@ FUNCTION tops_nor_96( cIdFirma, cIdTipDok, cIdZaduz2, cIdKonto2, cIdKonto, ;
    ENDIF
 
    O_KALK_PRIPR
-   O_KONCIJ
+   o_koncij()
    O_KALK
    O_KONTO
    O_PARTN
@@ -73,7 +73,7 @@ FUNCTION tops_nor_96( cIdFirma, cIdTipDok, cIdZaduz2, cIdKonto2, cIdKonto, ;
    ENDIF
 
    O_KALK_PRIPR
-   O_KONCIJ
+   o_koncij()
    O_KALK
    O_KONTO
    O_PARTN

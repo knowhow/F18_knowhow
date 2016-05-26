@@ -207,7 +207,7 @@ FUNCTION GetMagKto( aMag )
    // NAZ - tip M1, M2
    // KUMTOPS - lokacija kumulativa tops
 
-   O_KONCIJ
+   o_koncij()
    SELECT koncij
    GO TOP
    DO WHILE !Eof()
@@ -258,7 +258,7 @@ FUNCTION GenPreknM( cMKonto, cPrTarifa, dDatOd, dDatDo, cBrKalk, lPst, dDatPs, c
 
    O_ROBA
    O_KONTO
-   O_KONCIJ
+   o_koncij()
    O_TARIFA
    o_kalk_pript() // pomocna tabela pript
 

@@ -36,7 +36,7 @@ FUNCTION Prenos16()
    LOCAL cIdFirma := gFirma, cIdTipDok := "16", cBrDok := cBrKalk := Space( 8 )
    LOCAL cTipKalk := "10"
 
-   O_KONCIJ
+   o_koncij()
    O_KALK_PRIPR
    O_KALK
    O_ROBA

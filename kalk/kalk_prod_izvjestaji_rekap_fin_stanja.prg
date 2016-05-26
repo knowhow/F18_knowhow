@@ -32,7 +32,7 @@ FUNCTION Rfinansijsko_stanje_prodavnica()
    O_SIFV
    O_ROBA
    O_TARIFA
-   O_KONCIJ
+   o_koncij()
    O_KONTO
    O_PARTN
 

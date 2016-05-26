@@ -140,7 +140,7 @@ STATIC FUNCTION o_tables( azurirana )
 
    SELECT F_KONCIJ
    IF !Used()
-      O_KONCIJ
+      o_koncij()
    ENDIF
 
    SELECT F_ROBA

@@ -249,7 +249,7 @@ STATIC FUNCTION GetVrPlIznos( cField )
  */
 STATIC FUNCTION O_PrVP_DB()
 
-   O_KONCIJ
+   o_koncij()
    O_PARTN
    O_SUBAN
    O_KONTO
@@ -269,7 +269,7 @@ STATIC FUNCTION O_PrVP_DB()
  */
 STATIC FUNCTION GetTopsParams( cTKPath, cProdKonto )
 
-   O_KONCIJ
+   o_koncij()
    SELECT koncij
    // setuj filter po cProdId
    SET FILTER TO idprodmjes = cProdId

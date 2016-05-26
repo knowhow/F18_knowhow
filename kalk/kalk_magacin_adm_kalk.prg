@@ -26,7 +26,7 @@ FUNCTION KorekNC2()
       RETURN
    ENDIF
 
-   O_KONCIJ
+   o_koncij()
    O_KONTO
 
    IF !VarEdit( { { "Magacinski konto", "cMagac", "P_Konto(@cMagac)",, }, { "Datum dokumenta", "dDok",,, } }, 12, 5, 16, 74, ;

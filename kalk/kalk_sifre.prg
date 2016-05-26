@@ -110,7 +110,7 @@ FUNCTION KalkRobaBlock( Ch )
 FUNCTION OSifBaze()
 
    O_KONTO
-   O_KONCIJ
+   o_koncij()
    O_PARTN
    O_TNAL
    O_TDOK

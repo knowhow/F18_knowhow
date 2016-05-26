@@ -180,7 +180,7 @@ FUNCTION gen_nivel_p( cPKonto, dDatDok, cBrKalk, lGledajStanje )
    O_KALK
    O_ROBA
    O_KONTO
-   O_KONCIJ
+   o_koncij()
    O_TARIFA
 
    nRbr := 0
@@ -496,7 +496,7 @@ FUNCTION gen_zcnivel( cPKonto, dDatDok, cBrKalk )
    O_KALK
    O_ROBA
    O_KONTO
-   O_KONCIJ
+   o_koncij()
    O_TARIFA
 
    nRbr := 0

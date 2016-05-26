@@ -92,7 +92,7 @@ seek cIdFirma + cIdVd + cBrDok
 
 O_ROBA
 O_KONTO
-O_KONCIJ
+o_koncij()
 O_TARIFA
 
 SELECT KONTO

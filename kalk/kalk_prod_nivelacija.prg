@@ -20,7 +20,7 @@ FUNCTION Niv_11()
    LOCAL _sufix, _rec
 
    O_TARIFA
-   O_KONCIJ
+   o_koncij()
    O_KALK_PRIPR2
    O_KALK_PRIPR
    O_KALK_DOKS

@@ -78,7 +78,7 @@ FUNCTION PreglKret()
    CreTblRek1( "1" )
 
    O_POBJEKTI
-   O_KONCIJ
+   o_koncij()
    O_ROBA
    O_KONTO
    O_TARIFA

@@ -54,7 +54,7 @@ FUNCTION FaKaPrenos_MP_u_razduzenje()
    LOCAL dFaktDo := Date()
 
    O_KALK_PRIPR
-   O_KONCIJ
+   o_koncij()
    O_KALK
    O_ROBA
    O_KONTO
@@ -264,7 +264,7 @@ FUNCTION prod_fa_ka_prenos_otpr()
    LOCAL cBrKalk := Space( 8 )
 
    O_KALK_PRIPR
-   O_KONCIJ
+   o_koncij()
    O_KALK
    O_ROBA
    O_KONTO
@@ -848,7 +848,7 @@ FUNCTION FaKaPrenos_cm_u_prodavnicu()
    LOCAL cIdFirma := gFirma, cIdTipDok := "13", cBrDok := cBrKalk := Space( 8 )
 
    O_KALK_PRIPR
-   O_KONCIJ
+   o_koncij()
    O_KALK
    O_ROBA
    O_KONTO
@@ -1026,7 +1026,7 @@ FUNCTION FaKaPrenos_izlaz_putem_vp()
    LOCAL fDoks2 := .F.
 
    O_KALK_PRIPR
-   O_KONCIJ
+   o_koncij()
    O_KALK
    IF File( KUMPATH + "DOKS2.DBF" ); fDoks2 := .T. ; O_KALK_DOKS2; ENDIF
    O_ROBA

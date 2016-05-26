@@ -58,7 +58,7 @@ FUNCTION mag_fa_ka_prenos_10_14()
 
    PRIVATE lVrsteP := _params[ "fakt_vrste_placanja" ]
 
-   O_KONCIJ
+   o_koncij()
    O_KALK_PRIPR
    O_KALK
    O_KALK_DOKS
@@ -273,7 +273,7 @@ FUNCTION mag_fa_ka_prenos_10_14()
 
 STATIC FUNCTION _o_prenos_tbls()
 
-   O_KONCIJ
+   o_koncij()
    O_KALK_PRIPR
    O_KALK
    O_KALK_DOKS

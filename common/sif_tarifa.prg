@@ -68,7 +68,7 @@ FUNCTION Tarifa( cIdKonto, cIdRoba, aPorezi, cIdTar )
    ELSE
       SELECT ( F_KONCIJ )
       IF ( !Used() )
-         O_KONCIJ
+         o_koncij()
       ENDIF
       SEEK cIdKonto
       IF !Found()

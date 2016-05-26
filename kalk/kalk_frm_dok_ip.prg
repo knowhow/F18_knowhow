@@ -37,7 +37,7 @@ FUNCTION IP()
 
    BoxC()
 
-   O_KONCIJ
+   o_koncij()
    O_KALK_PRIPR
    O_KALK
 
@@ -287,7 +287,7 @@ FUNCTION gen_ip_razlika()
    O_SIFK
    O_SIFV
    O_ROBA
-   O_KONCIJ
+   o_koncij()
    O_KALK_PRIPR
    o_kalk_pript()
    O_KALK

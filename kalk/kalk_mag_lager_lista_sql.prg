@@ -253,7 +253,7 @@ STATIC FUNCTION kalk_mag_insert_ps_into_pripr( data, params )
 
    O_KALK_PRIPR
    O_KALK_DOKS
-   O_KONCIJ
+   o_koncij()
    O_ROBA
    O_TARIFA
 

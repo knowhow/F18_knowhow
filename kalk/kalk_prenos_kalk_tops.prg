@@ -28,7 +28,7 @@ STATIC FUNCTION _o_gen_tables( from_kum )
 
    SELECT F_KONCIJ
    IF !Used()
-      O_KONCIJ
+      o_koncij()
    ENDIF
 
    IF from_kum == .T.

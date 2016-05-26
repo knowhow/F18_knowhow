@@ -175,7 +175,7 @@ STATIC FUNCTION ScanTops( dDan, aR, dDatDo, cPKto )
    LOCAL nMpcBp
 
    O_TARIFA
-   O_KONCIJ
+   o_koncij()
 
    IF FieldPos( "KUMTOPS" ) = 0
       MsgBeep( "Prvo izvrsite modifikaciju struktura pomocu KALK.CHS !" )

@@ -51,5 +51,6 @@ FUNCTION use_sql_ld_ld( nGodina, nMjesec, nMjesecDo, nVrInvalid, nStInvalid, cFi
       INDEX ON  &( hIndexes[ cKey ] )  TAG ( cKey ) TO ( cTable ) FOR &cFilter
    NEXT
    SET ORDER TO TAG "1"
+   GO TOP
 
    RETURN .T.

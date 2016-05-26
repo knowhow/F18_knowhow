@@ -47,7 +47,7 @@ STATIC FUNCTION _o_imp_tables()
 
    SELECT ( F_KONCIJ )
    IF !Used()
-      O_KONCIJ
+      o_koncij()
    ENDIF
 
    RETURN

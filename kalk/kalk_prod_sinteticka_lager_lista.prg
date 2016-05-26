@@ -75,7 +75,7 @@ FUNCTION sint_lager_lista_prodavnice()
    ENDDO
    BoxC()
 
-   O_KONCIJ
+   o_koncij()
    o_kalk_report()
 
    PRIVATE cFilt1 := ""

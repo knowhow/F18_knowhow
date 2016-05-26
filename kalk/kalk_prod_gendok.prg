@@ -122,7 +122,7 @@ FUNCTION GenNivP()
 
    BoxC()
 
-   O_KONCIJ
+   o_koncij()
    O_KALK_PRIPR
    O_KALK
    PRIVATE cBrDok := SljBroj( cidfirma, "19", 8 )
@@ -256,7 +256,7 @@ FUNCTION NivPoProc()
 
    BoxC()
 
-   O_KONCIJ
+   o_koncij()
    O_KALK_PRIPR
    O_KALK
    PRIVATE cBrDok := SljBroj( cidfirma, "19", 8 )
@@ -500,7 +500,7 @@ FUNCTION KorekMPC()
    ESC_BCR
    BoxC()
 
-   O_KONCIJ
+   o_koncij()
    SEEK Trim( cMagac )
 
    O_ROBA

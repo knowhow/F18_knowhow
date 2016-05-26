@@ -124,7 +124,7 @@ FUNCTION ObrtPoMjF()
 
    O_REKAP2
    O_REKA22
-   O_KONCIJ
+   o_koncij()
    O_ROBA
    O_KONTO
    O_TARIFA

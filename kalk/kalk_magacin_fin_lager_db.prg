@@ -24,7 +24,7 @@ O_SIFK
 O_SIFV
 O_TDOK
 O_ROBA
-O_KONCIJ
+o_koncij()
 O_KONTO
 O_PARTN
 return

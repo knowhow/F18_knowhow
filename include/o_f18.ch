@@ -32,7 +32,6 @@
 #xcommand O_TRMP     => select (F_TRMP)    ;  use_sql_sif  ("trmp")      ; set order to tag "ID"
 #xcommand O_TNAL     => select (F_TNAL)    ;  use_sql_sif  ( "tnal" )  ; set order to tag "ID"
 #xcommand O_TDOK     => select (F_TDOK)    ;  use_sql_sif  ( "tdok" )  ; set order to tag "ID"
-#xcommand O_KONCIJ   => o_koncij()
 #xcommand O_VALUTE   => select (F_VALUTE)  ;  use_sql_valute()    ; set order to tag "ID"
 #xcommand O_REFER    => select (F_REFER)   ;  use_sql_sif  ("refer" )     ; set order to tag "ID"
 #xcommand O_OPS      => select (F_OPS)     ;  use_sql_opstine()      ; set order to tag "ID"

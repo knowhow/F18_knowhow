@@ -15,15 +15,15 @@
 STATIC dDatMax
 
 
-// -----------------------------------------------------------------------
-// kontiranje naloga
-//
-// fAuto - .t. automatski se odrjedjuje broj naloga koji se formira,
-// .f. getuje se broj formiranog naloga - default vrijednost
-// lAGen - automatsko generisanje
-// lViseKalk - vise kalkulacija
-// cNalog - broj naloga koji ce se uzeti, ako je EMPTY() ne uzima se !
-// -----------------------------------------------------------------------
+/* -----------------------------------------------------------------------
+ kontiranje naloga
+
+ fAuto - .t. automatski se odrjedjuje broj naloga koji se formira,
+ .f. getuje se broj formiranog naloga - default vrijednost
+ lAGen - automatsko generisanje
+ lViseKalk - vise kalkulacija
+ cNalog - broj naloga koji ce se uzeti, ako je EMPTY() ne uzima se !
+*/
 FUNCTION kalk_kontiranje_naloga( fAuto, lAGen, lViseKalk, cNalog, auto_brojac )
 
    LOCAL cIdFirma
@@ -84,7 +84,7 @@ FUNCTION kalk_kontiranje_naloga( fAuto, lAGen, lViseKalk, cNalog, auto_brojac )
 
    SELECT F_KONCIJ
    IF !Used()
-      O_KONCIJ
+      o_koncij()
    ENDIF
 
    IF FieldPos( "IDRJ" ) <> 0
@@ -262,10 +262,8 @@ FUNCTION kalk_kontiranje_naloga( fAuto, lAGen, lViseKalk, cNalog, auto_brojac )
          PRIVATE cRj2 := ""
       ENDIF
 
-      PRIVATE dDatVal := CToD( "" )
-      // inicijalizuj datum valute
-      PRIVATE cIdVrsteP := "  "
-      // i vrstu placanja
+      PRIVATE dDatVal := CToD( "" )  // inicijalizuj datum valute
+      PRIVATE cIdVrsteP := "  " // i vrstu placanja
 
       DO WHILE cIdVD == IdVD .AND. cBrDok == BrDok .AND. !Eof()
 
@@ -369,8 +367,8 @@ FUNCTION kalk_kontiranje_naloga( fAuto, lAGen, lViseKalk, cNalog, auto_brojac )
                   cIdkonto := StrTran( cidkonto, "B2", Right( Trim( finmat->idkonto2 ), 2 ) )
                ENDIF
 
-               IF ( cIdkonto = 'KK' )  .OR.  ( cIdkonto = 'KP' )  .OR. ( cIdkonto = 'KO' )
-                  IF Right( Trim( cIdkonto ), 3 ) == "(2)"  // gonjaj idkonto2
+               IF ( cIdkonto = 'KK' )  .OR.  ( cIdkonto = 'KP' )  .OR. ( cIdkonto = 'KO' ) // pocinje sa KK, KO, KP
+                  IF Right( Trim( cIdkonto ), 3 ) == "(2)"  // trazi idkonto2
                      SELECT koncij
                      nRecno := RecNo()
                      SEEK finmat->idkonto2
@@ -381,7 +379,7 @@ FUNCTION kalk_kontiranje_naloga( fAuto, lAGen, lViseKalk, cNalog, auto_brojac )
                      // vrati se na glavni konto
                      SELECT fin_pripr
                      // finansije, priprema
-                  ELSEIF Right( Trim( cIdkonto ), 3 ) == "(1)"  // gonjaj idkonto
+                  ELSEIF Right( Trim( cIdkonto ), 3 ) == "(1)"  // trazi idkonto
                      SELECT koncij
                      nRecNo := RecNo()
                      SEEK finmat->idkonto
@@ -408,10 +406,11 @@ FUNCTION kalk_kontiranje_naloga( fAuto, lAGen, lViseKalk, cNalog, auto_brojac )
                   cIdkonto := StrTran( cidkonto, "B2", Right( Trim( finmat->idkonto2 ), 2 ) )
                ENDIF
 
-               cIdkonto := StrTran( cidkonto, "?1", Trim( ckonto1 ) )
-               cIdkonto := StrTran( cidkonto, "?2", Trim( ckonto2 ) )
-               cIdkonto := StrTran( cidkonto, "?3", Trim( ckonto3 ) )
-               cIdkonto := PadR( cidkonto, 7 )
+altd()
+               cIdkonto := StrTran( cIdkonto, "?1", Trim( cKonto1 ) )
+               cIdkonto := StrTran( cIdkonto, "?2", Trim( cKonto2 ) )
+               cIdkonto := StrTran( cIdkonto, "?3", Trim( cKonto3 ) )
+               cIdkonto := PadR( cIdkonto, 7 )
                cBrDok := Space( 8 )
                dDatDok := finmat->datdok
 
@@ -737,21 +736,21 @@ STATIC FUNCTION __val_nalog( cNalog )
 
 
 
-/* Konto(nBroj,cDef,cTekst)
- *   param: nBroj - koju varijablu punimo (1-ckonto1,2-ckonto2,3-ckonto3)
+/* Konto(nBroj, cDef, cTekst)
+ *   param: nBroj - koju varijablu punimo (1-cKonto1,2-cKonto2,3-cKonto3)
  *   param: cDef - default tj.ponudjeni tekst
  *   param: cTekst - opis podatka koji se unosi
  *     Edit proizvoljnog teksta u varijablu ckonto1,ckonto2 ili ckonto3 ukoliko je izabrana varijabla duzine 0 tj.nije joj vec dodijeljena vrijednost
- *  \return 0
+ *  return 0
  */
 
 FUNCTION Konto( nBroj, cDef, cTekst )
 
    PRIVATE GetList := {}
 
-   IF ( nBroj == 1 .AND. Len( ckonto1 ) <> 0 ) .OR. ;
-         ( nBroj == 2 .AND. Len( ckonto2 ) <> 0 ) .OR. ;
-         ( nBroj == 3 .AND. Len( ckonto3 ) <> 0 )
+   IF ( nBroj == 1 .AND. Len( cKonto1 ) <> 0 ) .OR. ;
+         ( nBroj == 2 .AND. Len( cKonto2 ) <> 0 ) .OR. ;
+         ( nBroj == 3 .AND. Len( cKonto3 ) <> 0 )
       RETURN 0
    ENDIF
 
@@ -759,13 +758,13 @@ FUNCTION Konto( nBroj, cDef, cTekst )
    SET CURSOR ON
    @ m_x + 1, m_y + 2 SAY cTekst
    IF nBroj == 1
-      ckonto1 := cdef
+      cKonto1 := cDef
       @ Row(), Col() + 1 GET cKonto1
    ELSEIF nBroj == 2
-      ckonto2 := cdef
+      cKonto2 := cDef
       @ Row(), Col() + 1 GET cKonto2
    ELSE
-      ckonto3 := cdef
+      cKonto3 := cDef
       @ Row(), Col() + 1 GET cKonto3
    ENDIF
    READ

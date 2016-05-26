@@ -32,7 +32,7 @@ FUNCTION o_koncij()
 
    SELECT ( F_KONCIJ )
 
-   IF !use_sql_sif  ( "koncij" )
+   IF !use_sql_sif ( "koncij" )
       RETURN .F.
    ENDIF
    SET ORDER TO TAG "ID"

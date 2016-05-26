@@ -22,7 +22,7 @@ STATIC FUNCTION _o_tables()
    O_SIFK
    O_SIFV
    O_ROBA
-   O_KONCIJ
+   o_koncij()
    O_KONTO
    O_PARTN
 

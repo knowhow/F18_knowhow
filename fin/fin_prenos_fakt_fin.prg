@@ -312,7 +312,7 @@ FUNCTION fin_kontiranje_naloga( dDatNal )
    O_ROBA
    O_FINMAT
    O_TRFP2
-   O_KONCIJ
+   o_koncij()
    O_VALUTE
 
    lAFin := .T.

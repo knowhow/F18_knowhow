@@ -19,7 +19,7 @@ FUNCTION ODbKalk()
    O_SIFV
    O_TARIFA
    O_ROBA
-   O_KONCIJ
+   o_koncij()
    O_KONTO
    O_PARTN
    O_KALK_DOKS
@@ -1294,7 +1294,7 @@ FUNCTION Generisi11ku_iz10ke( cBrDok )
    LOCAL nArr
    nArr := Select()
    O_TARIFA
-   O_KONCIJ
+   o_koncij()
    O_ROBA
    O_KALK_PRIPR9
    cOtpremnica := Space( 10 )

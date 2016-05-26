@@ -450,7 +450,7 @@ STATIC FUNCTION _o_tbl()
    O_TDOK
    O_ROBA
    O_TARIFA
-   O_KONCIJ
+   o_koncij()
    O_KONTO
    O_PARTN
 

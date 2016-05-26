@@ -1260,7 +1260,7 @@ STATIC FUNCTION from_kalk_imp_temp_to_pript( aFExist, lFSkip, lNegative, cCtrl_a
    LOCAL _id_konto, _id_konto2
 
    O_KALK_PRIPR
-   O_KONCIJ
+   o_koncij()
    O_KALK_DOKS
    O_KALK_DOKS2
    O_ROBA

@@ -15,6 +15,8 @@
 
 FUNCTION P_KonCij( CId, dx, dy )
 
+   LOCAL lRet
+   LOCAL i
    LOCAL nTArea
    PRIVATE ImeKol
    PRIVATE Kol
@@ -22,19 +24,23 @@ FUNCTION P_KonCij( CId, dx, dy )
    ImeKol := {}
    Kol := {}
 
+  altd()
+
    nTArea := Select()
 
-   O_KONCIJ
+   o_koncij()
 
    AAdd( ImeKol, { "ID", {|| id }, "id", {|| .T. }, {|| sifra_postoji( wId ) } } )
    AAdd( ImeKol, { PadC( "Shema", 5 ), {|| PadC( shema, 5 ) }, "shema" } )
    AAdd( ImeKol, { "Tip", {|| naz }, "naz" } )
    AAdd( ImeKol, { "PM", {|| idprodmjes }, "idprodmjes" } )
 
+altd()
+
    IF KONCIJ->( FieldPos( "IDRJ" ) <> 0 )
-      AAdd ( ImeKol, { "RJ", {|| idrj }, "IDRJ", {|| .T. }, {|| .T. } } )
-      AAdd ( ImeKol, { "Sint.RJ", {|| sidrj }, "SIDRJ", {|| .T. }, {|| .T. } } )
-      AAdd ( ImeKol, { "Banka", {|| banka }, "BANKA", {|| .T. }, {|| Empty( wbanka ) .OR. P_Firma( @wbanka ) } } )
+      AAdd ( ImeKol, { "RJ", {|| idrj }, "IDRJ"} )
+      AAdd ( ImeKol, { "Sint.RJ", {|| sidrj }, "SIDRJ" } )
+      AAdd ( ImeKol, { "Banka", {|| banka }, "BANKA" } )
    ENDIF
 
    IF KONCIJ->( FieldPos( "M1" ) <> 0 )
@@ -43,7 +49,7 @@ FUNCTION P_KonCij( CId, dx, dy )
    ENDIF
 
    IF KONCIJ->( FieldPos( "KK1" ) ) <> 0
-      AAdd ( ImeKol, { PadC( "KK1", 7 ), {|| KK1 }, "KK1", {|| .T. }, {|| Empty( wKK1 ) .OR. P_Konto( @wKK1 ) } } )
+      AAdd ( ImeKol, { "KK1", {|| KK1 }, "KK1" } )
       AAdd ( ImeKol, { PadC( "KK2", 7 ), {|| KK2 }, "KK2", {|| .T. }, {|| Empty( wKK2 ) .OR. P_Konto( @wKK2 ) } } )
       AAdd ( ImeKol, { PadC( "KK3", 7 ), {|| KK3 }, "KK3", {|| .T. }, {|| Empty( wKK3 ) .OR. P_Konto( @wKK3 ) } } )
       AAdd ( ImeKol, { PadC( "KK4", 7 ), {|| KK4 }, "KK4", {|| .T. }, {|| Empty( wKK4 ) .OR. P_Konto( @wKK4 ) } } )
@@ -66,7 +72,7 @@ FUNCTION P_KonCij( CId, dx, dy )
       AAdd ( ImeKol, { PadC( "KO4", 7 ), {|| KO4 }, "KO4", {|| .T. }, {|| Empty( wKO4 ) .OR. P_Konto( @wKO4 ) } } )
       AAdd ( ImeKol, { PadC( "KO5", 7 ), {|| KO5 }, "KO5", {|| .T. }, {|| Empty( wKO5 ) .OR. P_Konto( @wKO5 ) } } )
    ENDIF
-   
+
    IF KONCIJ->( FieldPos( "KUMTOPS" ) ) <> 0
       AAdd ( ImeKol, { "Kum.dir.TOPS-a", {|| KUMTOPS }, "KUMTOPS", {|| .T. }, {|| .T. } } )
       AAdd ( ImeKol, { "Sif.dir.TOPS-a", {|| SIFTOPS }, "SIFTOPS", {|| .T. }, {|| .T. } } )
@@ -77,7 +83,7 @@ FUNCTION P_KonCij( CId, dx, dy )
    ENDIF
 
    IF KONCIJ->( FieldPos( "SUFIKS" ) ) <> 0
-      AAdd ( ImeKol, { "Sufiks BrKalk", {|| sufiks }, "sufiks", {|| .T. }, {|| .T. } } )
+      AAdd ( ImeKol, { "Sfx KALK", {|| sufiks }, "sufiks", {|| .T. }, {|| .T. } } )
    ENDIF
 
    FOR i := 1 TO Len( ImeKol )
@@ -86,7 +92,9 @@ FUNCTION P_KonCij( CId, dx, dy )
 
    SELECT ( nTArea )
 
-   RETURN PostojiSifra( F_KONCIJ, 1, 10, 60, "Lista: Konta - tipovi cijena", @cId, dx, dy )
+   lRet := PostojiSifra( F_KONCIJ, 1, MAXROWS() - 10, MAXCOLS() - 15, "Lista: Konta - tipovi cijena", @cId, dx, dy )
+
+   RETURN lRet
 
 
 FUNCTION P_KonCij2( CId, dx, dy )
@@ -99,7 +107,7 @@ FUNCTION P_KonCij2( CId, dx, dy )
    Kol := {}
 
    nTArea := Select()
-   O_KONCIJ
+   o_koncij()
 
    AAdd( ImeKol, { "ID", {|| id }, "id", {|| .T. }, {|| sifra_postoji( wId ) } } )
    AAdd( ImeKol, { PadC( "Shema", 5 ), {|| PadC( shema, 5 ) }, "shema" } )

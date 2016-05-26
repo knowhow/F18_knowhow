@@ -625,7 +625,7 @@ STATIC FUNCTION close_open_kart_tables()
    O_SIFV
    O_ROBA
    O_KONTO
-   O_KONCIJ
+   o_koncij()
    O_KALK
 
    RETURN

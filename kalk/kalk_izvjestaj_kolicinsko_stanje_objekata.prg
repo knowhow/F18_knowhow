@@ -237,7 +237,7 @@ FUNCTION kalk_izvj_stanje_po_objektima()
 STATIC FUNCTION otvori_tabele()
 
    O_POBJEKTI
-   O_KONCIJ
+   o_koncij()
    O_ROBA
    O_KONTO
    O_TARIFA

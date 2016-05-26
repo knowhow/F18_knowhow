@@ -184,7 +184,7 @@ FUNCTION lager_lista_prodavnica()
    O_TARIFA
    O_KONTO
    O_PARTN
-   O_KONCIJ
+   o_koncij()
    o_kalk_report()
 
    PRIVATE lSMark := .F.

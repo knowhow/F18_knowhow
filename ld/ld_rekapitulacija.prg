@@ -90,7 +90,7 @@ FUNCTION ld_rekapitulacija_sql( lSvi )
 
    hParams[ 'obracun' ] := cObracun
    hParams[ 'godina' ] := nGodina
-
+   
    cFilt1 := get_ld_rekap_filter( hParams )
 
    use_sql_ld_ld( nGodina, nMjesec, nMjesecDo, nVrstaInvaliditeta, nStepenInvaliditeta, cFilt1 )

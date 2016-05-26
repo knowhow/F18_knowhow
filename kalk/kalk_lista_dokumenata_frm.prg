@@ -36,7 +36,7 @@ FUNCTION browse_kalk_dok()
    ENDIF
 
    O_ROBA
-   O_KONCIJ
+   o_koncij()
    O_KALK
    O_KONTO
    O_KALK_DOKS
@@ -249,7 +249,7 @@ STATIC FUNCTION usl_browse_kalk_dok( cFirma, cIdVd, dDatOd, dDatDo, ;
 FUNCTION kalk_pregled_dokumenata_hronoloski()
 
    O_ROBA
-   O_KONCIJ
+   o_koncij()
    O_KALK
    O_KONTO
 

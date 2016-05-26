@@ -144,7 +144,7 @@ FUNCTION InvManj()
    // {
    LOCAL nFaktVPC := 0, lOdvojiVisak := .F., nBrSl := 0
 
-   O_KONCIJ
+   o_koncij()
    O_KALK_PRIPR
    O_KALK_PRIPR2
    O_KALK
@@ -296,7 +296,7 @@ FUNCTION MNivPoProc()
 
    BoxC()
 
-   O_KONCIJ
+   o_koncij()
    O_KALK_PRIPR
    O_KALK
    PRIVATE cBrDok := SljBroj( cidfirma, "18", 8 )
@@ -409,7 +409,7 @@ FUNCTION KorekPC()
    // {
    LOCAL dDok := Date(), nPom := 0, nRobaVPC := 0
    PRIVATE cMagac := PadR( "1310   ", gDuzKonto )
-   O_KONCIJ
+   o_koncij()
    O_KONTO
    PRIVATE cSravnitiD := "D"
    PRIVATE cUvijekSif := "D"
@@ -559,7 +559,7 @@ FUNCTION KorekPC()
 
 FUNCTION Otprema()
 
-   O_KONCIJ
+   o_koncij()
    O_KALK_PRIPR2
    O_KALK_PRIPR
    O_KALK

@@ -64,7 +64,7 @@ FUNCTION kalk_generisi_inventuru_magacina()
       BoxC()
    ENDIF
 
-   O_KONCIJ
+   o_koncij()
    O_KALK
 
    IF lOsvjezi
@@ -229,7 +229,7 @@ FUNCTION kalk_generisanje_inventure_razlike()
    O_ROBA
    O_KALK_PRIPR
    o_kalk_pript()
-   O_KONCIJ
+   o_koncij()
    O_KALK_DOKS
    O_KALK
 

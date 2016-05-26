@@ -704,7 +704,7 @@ STATIC FUNCTION kalk_raspored_troskova()
       O_SIFV
       O_ROBA
       O_TARIFA
-      O_KONCIJ
+      o_koncij()
 
       SELECT kalk_pripr
       RaspTrosk( .T. )

@@ -1156,7 +1156,7 @@ FUNCTION GenProdNc()
    O_ROBA
    O_KALK
    O_KALK_PRIPR
-   O_KONCIJ
+   o_koncij()
    GO TOP
 
    Box(, 3, 60 )

@@ -331,8 +331,7 @@ FUNCTION edit_fin_priprema()
 
    @ m_x + 16, m_y + 46  GET _IznosBHD  PICTURE "999999999999.99"  WHEN {|| lIznosUnesen := .T., .T. }
 
-   @ m_x + 17, m_y + 46  GET _IznosDEM  PICTURE '9999999999.99' ;
-      WHEN {|| konverzija_valute( , , "_IZNOSBHD" ), .T. }
+   @ m_x + 17, m_y + 46  GET _IznosDEM  PICTURE '9999999999.99'  WHEN {|| konverzija_valute( , , "_IZNOSBHD" ), .T. }
 
    READ
 

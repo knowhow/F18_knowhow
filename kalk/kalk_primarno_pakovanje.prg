@@ -23,7 +23,7 @@ FUNCTION NaPrimPak()
       RETURN
    ENDIF
 
-   O_KONCIJ
+   o_koncij()
    O_ROBA
    O_KALK_PRIPR
    O_KALK_DOKS
@@ -198,7 +198,7 @@ FUNCTION NaPrPak2()
    ENDIF
 
    O__KALK
-   O_KONCIJ
+   o_koncij()
    O_ROBA
    O_KALK_PRIPR
    O_KALK_DOKS

@@ -174,7 +174,7 @@ FUNCTION o_kalk_edit()
    O_TDOK
    O_VALUTE
    O_TARIFA
-   O_KONCIJ
+   o_koncij()
    O_SIFK
    O_SIFV
    O_KALK_PRIPR
@@ -1104,7 +1104,7 @@ STATIC FUNCTION kalk_dokument_prenos_cijena()
 
       O_KALK_PRIPR
       O_ROBA
-      O_KONCIJ
+      o_koncij()
       O_KONTO
 
       Box(, 1, 50 )
@@ -1662,7 +1662,7 @@ FUNCTION RaspTrosk( fSilent )
       GO TOP
 
       SELECT F_KONCIJ
-      IF !Used(); O_KONCIJ; ENDIF
+      IF !Used(); o_koncij(); ENDIF
       SELECT koncij
       SEEK Trim( kalk_pripr->mkonto )
       SELECT kalk_pripr
@@ -2235,7 +2235,7 @@ FUNCTION VPCSifUDok()
 
 STATIC FUNCTION kalk_open_tables_unos( lAzuriraniDok, cIdFirma, cIdVD, cBrDok )
 
-   O_KONCIJ
+   o_koncij()
    O_ROBA
    O_TARIFA
    O_PARTN

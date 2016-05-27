@@ -58,7 +58,8 @@ FUNCTION sql_quote( xVar )
       cOut := "'" + hb_StrToUTF8( cOut ) + "'"
    ELSEIF ValType( xVar ) == "D"
       IF xVar == CToD( "" )
-         cOut := "'1000-01-01'"
+         //cOut := "'1000-01-01'"
+         cOut := "NULL"
       ELSE
          cOut := "'" + _sql_date_str( xVar ) + "'"
       ENDIF

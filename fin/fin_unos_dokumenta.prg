@@ -208,7 +208,7 @@ FUNCTION edit_fin_priprema()
    LOCAL _fakt_params := fakt_params()
    LOCAL _fin_params := fin_params()
    LOCAL lOstavDUMMY := .F.
-   LOCAL lIznosUnesen := .F.
+   LOCAL lDugmeOtvoreneStavke
    PARAMETERS fNovi
 
    IF fNovi .AND. nRbr == 1
@@ -224,6 +224,7 @@ FUNCTION edit_fin_priprema()
    ENDIF
 
    SET CURSOR ON
+   lDugmeOtvoreneStavke := .T.
 
    IF gNW == "D"
       @  m_x + 1, m_y + 2 SAY8 "Firma: "
@@ -248,11 +249,13 @@ FUNCTION edit_fin_priprema()
 
    ENDIF
 
+
    SET KEY K_ALT_K TO konverzija_valute()
    SET KEY K_ALT_O TO konsult_otvorene_stavke()
 
    @ m_x + 3, m_y + 55 SAY "Broj:" GET _brnal VALID Dupli( _idfirma, _idvn, _brnal ) .AND. !Empty( _brnal )
-   @ m_x + 5, m_y + 2 SAY "Redni broj stavke naloga:" GET nRbr PICTURE "9999"
+   @ m_x + 5, m_y + 2 SAY "Redni broj stavke naloga:" GET nRbr PICTURE "9999" ;
+      VALID { || lDugmeOtvoreneStavke := .T., .T. }
    @ m_x + 7, m_y + 2 SAY "DOKUMENT: "
 
 
@@ -319,19 +322,24 @@ FUNCTION edit_fin_priprema()
       {|| iif( Empty( _idpartner ), Reci( 14, 20, Space( 25 ) ), ), ;
       ( P_Firma( @_IdPartner, 14, 20 ) ) .AND. fin_pravilo_partner() .AND. ;
       iif( g_knjiz_help == "D" .AND. !Empty( _idpartner ), fin_partner_prikaz_stanja_ekran( _idpartner, _idkonto, NIL ), .T. ) } ;
-      WHEN ;
-      {|| iif( ChkKtoMark( _idkonto ), .T., .F. ) }
+      WHEN {|| iif( ChkKtoMark( _idkonto ), .T., .F. ) }
 
 
    @ m_x + 16, m_y + 2  SAY8 "Duguje/Potražuje (1/2):" GET _D_P VALID V_DP() .AND. fin_pravilo_dug_pot() .AND. fin_pravilo_broj_veze()
 
-   @ m_x + 16, m_y + 65 GET lOstavDUMMY PUSHBUTTON  CAPTION "Otvorene stavke"   WHEN {|| lIznosUnesen } ;
-      SIZE X 15 Y 2 STATE {|| konsult_otvorene_stavke() }
+
+   @ m_x + 16, m_y + 46  GET _IznosBHD  PICTURE "999999999999.99"  WHEN {|| .T. } ;
+       VALID {|| lDugmeOtvoreneStavke := .T., .T. }
+
+   @ m_x + 17, m_y + 46  GET _IznosDEM  PICTURE '9999999999.99'  WHEN {|| konverzija_valute( , , "_IZNOSBHD" ),  .T. } ;
+       VALID {|| lDugmeOtvoreneStavke := .F., .T. }
 
 
-   @ m_x + 16, m_y + 46  GET _IznosBHD  PICTURE "999999999999.99"  WHEN {|| lIznosUnesen := .T., .T. }
+    @ m_x + 16, m_y + 65 GET lOstavDUMMY PUSHBUTTON  CAPTION "(Alt-O) Otvorene stavke"   ;
+             WHEN {|| lDugmeOtvoreneStavke } ;
+             SIZE X 20 Y 2 FOCUS {|| lDugmeOtvoreneStavke := .T. , konsult_otvorene_stavke(), lDugmeOtvoreneStavke := .F. }
 
-   @ m_x + 17, m_y + 46  GET _IznosDEM  PICTURE '9999999999.99'  WHEN {|| konverzija_valute( , , "_IZNOSBHD" ), .T. }
+
 
    READ
 

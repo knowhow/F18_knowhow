@@ -30,6 +30,10 @@ FUNCTION select_o_kalk_as_pripr()
    RETURN select_o_dbf( "KALK_PRIPR", F_KALK_PRIPR, { "KALK_PRIPR", "kalk_kalk" }, "1" )
 
 
+FUNCTION select_o_kalk_doks2()
+      RETURN select_o_dbf( "KALK_DOKS2", F_KALK_DOKS2, "kalk_doks2" , "1" )
+
+
 FUNCTION open_kalk_as_pripr( lSql, cIdFirma, cIdVd, cBrDok )
 
    hb_default( @lSql, .F. )

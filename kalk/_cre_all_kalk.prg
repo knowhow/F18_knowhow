@@ -233,6 +233,8 @@ STATIC FUNCTION kreiraj_kalk_bazirane_tabele( ver )
    CREATE_INDEX( "4", "idFirma+idvd+idroba", _alias )
    CREATE_INDEX( "5", "idFirma+idvd+idroba+STR(mpcsapp,12,2)", _alias )
 
+
+
    // KALK_PRIPR2
 
    _alias := "KALK_PRIPR2"
@@ -261,6 +263,16 @@ STATIC FUNCTION kreiraj_kalk_bazirane_tabele( ver )
    IF_NOT_FILE_DBF_CREATE
 
    CREATE_INDEX( "1", "idFirma+IdVD+BrDok+RBr", _alias )
+
+
+   _alias := "PRIPT"  // koristi kalk imp varazdin
+   _table_name := "kalk_pript"
+
+   AAdd( aDBf, { 'DATVAL', 'D',   8,  0 } ) // koristi kalk imp varazdin
+   IF_NOT_FILE_DBF_CREATE
+
+   CREATE_INDEX( "1", "idfirma + idvd + brdok", _alias )
+   CREATE_INDEX( "2", "idfirma + idvd + brdok + idroba", _alias )
 
    RETURN .T.
 

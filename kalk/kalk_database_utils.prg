@@ -320,8 +320,12 @@ FUNCTION GetNextKalkDoc( cIdFirma, cIdTipDok, nUvecaj )
 
    lIdiDalje := .F.
 
+   find_kalk_doks_za_tip( cIdFirma, cIdTipDok )
+
+/*
    O_KALK_DOKS
    SELECT kalk_doks
+*/
    SET ORDER TO TAG "1"
 
    SEEK cIdFirma + cIdTipDok + "XXX"

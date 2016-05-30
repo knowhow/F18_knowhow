@@ -413,7 +413,7 @@ FUNCTION ld_specifikacija_plate_samostalni_obr_2002()
    hb_cdpSelect( "SL852" )
    FOR EACH cKey in hRec:keys()
       IF ValType( hRec[ cKey ] ) == "C"
-         hRec[ cKey ] := to_xml_encoding (  hRec[ cKey ] ) // hRec[ cKey ] je utf8 string
+         hRec[ cKey ] := to_xml_encoding (  hRec[ cKey ] ) // hRec[ cKey ] je cp852 string
       ENDIF
    NEXT
 

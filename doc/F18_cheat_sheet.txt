@@ -35,6 +35,20 @@ select ili otvori ako treba:
 
 
 
+update_rec_server_and_dbf
+--------------------------------------------------------------
+
+_rec := dbf_get_rec()
+
+_rec[ "dat_obr" ] := dDatObr
+_rec[ "dat_gen" ] := dDatGen
+_rec[ "dat_u_fin" ] := dDatLUpl
+_rec[ "kto_kup" ] := cKtoDug
+_rec[ "kto_dob" ] := cKtoPot
+_rec[ "opis" ] := cOpis
+
+update_rec_server_and_dbf( "fakt_gen_ug", _rec, 1, "FULL" )
+
 
 
 pdf txt

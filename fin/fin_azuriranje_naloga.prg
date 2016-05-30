@@ -30,7 +30,6 @@ FUNCTION fin_azuriranje_naloga( automatic )
       automatic := .F.
    ENDIF
 
-   AltD()
    o_fin_za_azuriranje()
 
    IF fin_pripr->( RecCount() == 0 ) .OR. ( !automatic .AND. Pitanje(, "Izvršiti ažuriranje fin naloga ? (D/N)?", "N" ) == "N" )

@@ -255,6 +255,11 @@ FUNCTION create_table_kalk_kalk_atributi()
 
 
 
+FUNCTION find_kalk_doks_za_tip( cIdFirma, cIdvd )
+
+   RETURN find_kalk_doks_by_broj_dokumenta( cIdFirma, cIdvd, NIL )
+
+
 FUNCTION find_kalk_doks_by_broj_dokumenta( cIdFirma, cIdvd, cBrDok )
 
    LOCAL hParams := hb_Hash()

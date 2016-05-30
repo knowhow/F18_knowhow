@@ -221,14 +221,14 @@ FUNCTION SStDoks()
    nNV := nVPV := nRabat := nMPV := 0
    nUkStavki := 0
 
-   DO WHILE !Eof() .AND. IdFirma = cIdFirma
+   DO WHILE !Eof() .AND. IdFirma == cIdFirma
 
       SELECT partn
       HSEEK kalk_doks->idpartner
 
       SELECT kalk_doks
 
-      ? Str( ++nC, 4 ) + "."
+      ? Str( ++nC, 6 ) + "."
 
       @ PRow(), PCol() + 1 SAY field->datdok
       @ PRow(), PCol() + 1 SAY PadR( field->idfirma + "-" + field->idVd + "-" + field->brdok, 16 )
@@ -267,6 +267,11 @@ FUNCTION SStDoks()
       IF FieldPos( "sifra" ) <> 0
          @ PRow(), PCol() + 1 SAY PadR( iif( Empty( sifra ), Space( 2 ), Left( CryptSC( sifra ), 2 ) ), 6 )
       ENDIF
+
+      select_o_kalk_doks2()
+      HSEEK kalk_doks->(idfirma+idvd+brdok)
+      @ prow(), pcol() + 1 SAY kalk_doks2->datval
+      SELECT kalk_doks
 
       // drugi red
       IF _partn_naz == "D" .AND. !Empty( field->idpartner )
@@ -310,7 +315,7 @@ FUNCTION SStDoks()
    ENDDO
 
    ? m
-   ? "UKUPNO "
+   ? "UKUPNO   "
 
    @ PRow(), nCol1 SAY Str( nnv, 12, 2 )
    @ PRow(), PCol() + 1 SAY Str( nvpv, 12, 2 )
@@ -338,7 +343,7 @@ STATIC FUNCTION _get_rpt_header()
 
    LOCAL _head := ""
 
-   _head += PadC( "Rbr", 5 )
+   _head += PadC( "Rbr", 7 )
    _head += Space( 1 )
    _head += PadC( "Datum", 8 )
    _head += Space( 1 )
@@ -363,7 +368,8 @@ STATIC FUNCTION _get_rpt_header()
    _head += PadC( "MPV", 12 )
    _head += Space( 1 )
    _head += PadC( "Op.", 6 )
-
+   _head += Space( 1 )
+   _head += PadC( "DatVal", 8 )
    RETURN _head
 
 
@@ -375,7 +381,7 @@ STATIC FUNCTION _get_rpt_line()
 
    LOCAL _line := ""
 
-   _line += Replicate( "-", 5 )
+   _line += Replicate( "-", 7 )
    _line += Space( 1 )
    _line += Replicate( "-", 8 )
    _line += Space( 1 )
@@ -400,7 +406,9 @@ STATIC FUNCTION _get_rpt_line()
    _line += Replicate( "-", 12 )
    _line += Space( 1 )
    _line += Replicate( "-", 6 )
-
+   _line += Space( 1 )
+   _line += Replicate( "-", 8 )
+   
    RETURN _line
 
 

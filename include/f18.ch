@@ -372,6 +372,12 @@
                          ;endif
 
 
+#xcommand START PRINT EDITOR => PRIVATE __print_opt := "0" ;
+          ; if EMPTY(f18_start_print(NIL, @__print_opt))       ;
+          ;    my_close_all_dbf()             ;
+          ;    return .F.                  ;
+          ;endif
+
 #xcommand START PRINT CRET <x>  => PRIVATE __print_opt := NIL ;
                                   ; if EMPTY(f18_start_print(NIL, @__print_opt))       ;
                                   ;    my_close_all_dbf()             ;

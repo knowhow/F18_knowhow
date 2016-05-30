@@ -675,7 +675,7 @@ STATIC FUNCTION CheckBrFakt( aFakt )
 
    IF Len( aPomFakt ) > 0
 
-      START PRINT CRET
+      START PRINT EDITOR
 
       ?
       ? "Kontrola azuriranih dokumenata:"
@@ -719,7 +719,7 @@ STATIC FUNCTION CheckDok()
 
    IF ( Len( aPomPart ) > 0 .OR. Len( aPomRoba ) > 0 )
 
-      START PRINT CRET
+      START PRINT EDITOR
 
       IF ( Len( aPomPart ) > 0 )
          ? "Lista nepostojecih partnera:"
@@ -846,7 +846,7 @@ STATIC FUNCTION CheckPartn()
 
    IF ( Len( aPomPart ) > 0 )
 
-      START PRINT CRET
+      START PRINT EDITOR
 
       ? "Lista nepostojecih partnera:"
       ? "----------------------------"
@@ -876,7 +876,7 @@ STATIC FUNCTION CheckRoba()
 
    IF ( Len( aPomRoba ) > 0 )
 
-      START PRINT CRET
+      START PRINT EDITOR
 
       ? "Lista promjena u sifrarniku robe:"
       ? "---------------------------------------------------------------------------"
@@ -1497,7 +1497,7 @@ STATIC FUNCTION from_kalk_imp_temp_to_pript( aFExist, lFSkip, lNegative, cCtrl_a
 
       ASort( aPom,,, {| x, y| x[ 1 ] + "-" + x[ 2 ] < y[ 1 ] + "-" + y[ 2 ] } )
 
-      START PRINT CRET 0
+      START PRINT EDITOR
       ? "========================================"
       ? "Generisani sljedeci dokumenti:          "
       ? "========================================"
@@ -1533,7 +1533,7 @@ STATIC FUNCTION from_kalk_imp_temp_to_pript( aFExist, lFSkip, lNegative, cCtrl_a
 
    IF cCtrl_art == "D" .AND. Len( aArr_ctrl ) > 0
 
-      START PRINT CRET 0
+      START PRINT EDITOR
 
       ?
       ? "Ispusteni dokumenti:"
@@ -2282,7 +2282,8 @@ STATIC FUNCTION FillDobSifra()
 
    // ako je report matrica > 0 dakle postoje dupli zapisi
    IF Len( aRpt ) > 0
-      START PRINT CRET
+
+      START PRINT EDITOR
       ? "KONTROLA DULIH SIFARA VINDIJA_FAKT:"
       ? "==================================="
       ? "Sifra Vindija_FAKT -> Sifra FMK  "

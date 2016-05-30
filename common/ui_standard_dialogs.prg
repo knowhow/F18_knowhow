@@ -159,7 +159,7 @@ FUNCTION select_print_mode( cDirekt )
 
    LOCAL nWidth
 
-   nWidth := 35
+   nWidth := 40
 
    ?E "trace-print-dialog-2"
    f18_tone( 350, 2 )
@@ -174,14 +174,14 @@ FUNCTION select_print_mode( cDirekt )
    IF gcDirekt <> "B"
 
       Box(, 7, nWidth )
-      @ m_x + 1, m_y + 2 SAY "   Izlaz direktno na printer:" GET cDirekt  PICT "@!" VALID cDirekt $ "DEFGRVPX"
+      @ m_x + 1, m_y + 2 SAY "   Izlaz direktno na printer:" GET cDirekt  PICT "@!" VALID cDirekt $ "DEFGRVPX0"
 
-      @ m_x + 2, m_y + 2 SAY "----------------------------------"
+      @ m_x + 2, m_y + 2 SAY "-------------------------------------"
       @ m_x + 3, m_y + 2 SAY8 "E - direktna štampa na LPT1 (F,G)"
       @ m_x + 4, m_y + 2 SAY8 "V - prikaz izvještaja u editoru"
       @ m_x + 5, m_y + 2 SAY8 "P - pošalji na email podrške"
-      @ m_x + 6, m_y + 2 SAY8 "R - ptxt štampa"
-      @ m_x + 7, m_y + 2 SAY "-----------------( X izlaz )------"
+      @ m_x + 6, m_y + 2 SAY8 "R - ptxt štampa, 0 - interni editor"
+      @ m_x + 7, m_y + 2 SAY "-----------------( X izlaz )---------"
 
       READ
 

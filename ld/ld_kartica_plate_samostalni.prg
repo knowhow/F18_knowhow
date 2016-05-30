@@ -45,7 +45,7 @@ FUNCTION ld_kartica_plate_samostalni( cIdRj, cMjesec, cGodina, cIdRadn, cObrac, 
    cRTipRada := get_ld_rj_tip_rada( ld->idradn, ld->idrj )
    nRPrKoef := 0
    IF radn->( FieldPos( "SP_KOEF" ) ) <> 0
-      nRPrKoef := radn->sp_koef
+      nRPrKoef := radn->sp_koef // propisani koeficijent samostalni poduzetnici
    ENDIF
 
    FOR i := 1 TO cLDPolja
@@ -108,9 +108,8 @@ FUNCTION ld_kartica_plate_samostalni( cIdRj, cMjesec, cGodina, cIdRadn, cObrac, 
 
    IF gPrBruto == "D"
 
-      // prikaz bruto iznosa
 
-      SELECT ( F_POR )
+      SELECT ( F_POR ) // prikaz bruto iznosa
 
       IF !Used()
          O_POR
@@ -144,7 +143,7 @@ FUNCTION ld_kartica_plate_samostalni( cIdRj, cMjesec, cGodina, cIdRadn, cObrac, 
       ? cMainLine
       ? cLMSK + "1. OSNOVA ZA OBRACUN:"
 
-      @ PRow(), 60 + Len( cLMSK ) SAY nOsnZaBr PICT gpici
+      @ PRow(), 60 + Len( cLMSK ) SAY nOsnZaBr PICT gPici
 
       ? cMainLine
       ? cLMSK + "2. PROPISANI KOEFICIJENT:"
@@ -158,9 +157,9 @@ FUNCTION ld_kartica_plate_samostalni( cIdRj, cMjesec, cGodina, cIdRadn, cObrac, 
 
       ? cMainLine
 
-      // razrada doprinosa ....
+      // razrada doprinosa
 
-      ? cLmSK + cDoprSpace + _l( "Obracun doprinosa:" )
+      ? cLmSK + cDoprSpace +  "Obracun doprinosa:"
 
       SELECT dopr
       GO TOP
@@ -204,8 +203,8 @@ FUNCTION ld_kartica_plate_samostalni( cIdRj, cMjesec, cGodina, cIdRadn, cObrac, 
          @ PRow(), PCol() + 1 SAY iznos PICT "99.99%"
 
          IF Empty( idkbenef )
-            // doprinos udara na neto
-            @ PRow(), PCol() + 1 SAY nBo PICT gpici
+
+            @ PRow(), PCol() + 1 SAY nBo PICT gpici // doprinos udara na neto
             nC1 := PCol() + 1
             @ PRow(), PCol() + 1 SAY nPom := Max( dlimit, Round( iznos / 100 * nBO, gZaok2 ) ) PICT gpici
 
@@ -240,7 +239,7 @@ FUNCTION ld_kartica_plate_samostalni( cIdRj, cMjesec, cGodina, cIdRadn, cObrac, 
       ENDDO
 
       ? cMainLine
-      ?  cLMSK + _l( "UKUPNO ZA ISPLATU" )
+      ?  cLMSK +  "UKUPNO ZA ISPLATU"
       @ PRow(), 60 + Len( cLMSK ) SAY nOsnZaBr PICT gpici
 
       ? cMainLine

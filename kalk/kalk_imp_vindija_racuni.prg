@@ -46,6 +46,11 @@ FUNCTION meni_import_vindija()
    AAdd( opcexe, {|| gen_cache() } )
    AAdd( opc, "8. pregled pomoćne tabele stanja" )
    AAdd( opcexe, {|| brow_cache() } )
+   AAdd( opc, "9. parametri cache" )
+   AAdd( opcexe, {|| brow_cache() } )
+   AAdd( opc, "P. parametri kontiranja poslovnica" )
+   AAdd( opcexe, {|| set_kalk_imp_parametri_za_poslovnica() } )
+
 
    Menu_SC( "itx" )
 
@@ -116,15 +121,15 @@ FUNCTION ImpTxtDok()
    cExpPath := get_liste_path()
 
 
-   // daj mi filter za import MP ili VP
-   cFFilt := GetImpFilter()
+
+   cFFilt := GetImpFilter() // daj filter za import MP ili VP
 
    IF gNC_ctrl > 0 .AND. Pitanje(, "Ispusti artikle sa problematicnom nc (D/N)", ;
          "N" ) == "D"
       cCtrl_art := "D"
    ENDIF
 
-   // daj mi pregled fajlova za import, te setuj varijablu cImpFile
+   // daj pregled fajlova za import, te setuj varijablu cImpFile
    IF get_file_list( cFFilt, cExpPath, @cImpFile ) == 0
       RETURN
    ENDIF
@@ -168,10 +173,14 @@ FUNCTION ImpTxtDok()
       RETURN .F.
    ENDIF
 
+   IF Pitanje(, "Obraditi dokumente iz kalk pript (D/N)?", "D" ) == "D"
+      kalk_imp_obradi_sve_dokumente( nil, nil, __stampaj )
+   ELSE
+      MsgBeep( "Dokumenti nisu obradjeni!#Obrada se moze uraditi i naknadno!" )
+      my_close_all_dbf()
+   ENDIF
 
-   menu_kalk_imp_obradi_sve_dokumente() // obrada dokumenata iz pript tabele
-
-   RETURN
+   RETURN .T.
 
 
 
@@ -205,20 +214,6 @@ STATIC FUNCTION GetImpFilter()
    RETURN cRet
 
 
-
-/* menu_kalk_imp_obradi_sve_dokumente()
- *     Obrada dokumenata iz pomocne tabele
- */
-STATIC FUNCTION menu_kalk_imp_obradi_sve_dokumente()
-
-   IF Pitanje(, "Obraditi dokumente iz kalk pript (D/N)?", "D" ) == "D"
-      kalk_imp_obradi_sve_dokumente( nil, nil, __stampaj )
-   ELSE
-      MsgBeep( "Dokumenti nisu obradjeni!#Obrada se moze uraditi i naknadno!" )
-      my_close_all_dbf()
-   ENDIF
-
-   RETURN
 
 
 
@@ -271,7 +266,7 @@ STATIC FUNCTION ImpTxtPartn()
    // lEdit := Pitanje(,"Izvrsiti korekcije postojecih podataka (D/N)?", "N") == "D"
    lEdit := .F.
 
-   IF TTbl2Partn( lEdit ) == 0
+   IF kalk_imp_temp_to_partn( lEdit ) == 0
       MsgBeep( "Operacija prekinuta!" )
       RETURN .F.
    ENDIF
@@ -329,7 +324,7 @@ STATIC FUNCTION ImpTxtRoba()
 
    lEdit := .F.
 
-   IF TTbl2Roba( lEdit ) == 0
+   IF kalk_imp_temp_to_roba( lEdit ) == 0
       MsgBeep( "Operacija prekinuta!" )
       RETURN .F.
    ENDIF
@@ -1023,7 +1018,7 @@ STATIC FUNCTION GetKTipDok( cFaktTD, cPm )
 // VPR200_050=13200
 // VPR201_050=13201
 // ---------------------------------------------------------------
-STATIC FUNCTION kalk_imp_get_konto_prodavnica_za_pm_i_poslovnicu( cProd, cPoslovnica )
+STATIC FUNCTION kalk_imp_get_konto_zaduz_prodavnica_za_prod_mjesto( cPoslovnica, cProd )
 
    LOCAL cRet
 
@@ -1039,7 +1034,13 @@ STATIC FUNCTION kalk_imp_get_konto_prodavnica_za_pm_i_poslovnicu( cProd, cPoslov
       RETURN "XXXXX"
    ENDIF
 
-   cRet := my_get_from_ini( "VINDIJA", "VPR" + cProd + "_" + cPoslovnica, "xxxx", KUMPATH )
+   cRet := fetch_metric(  "kalk_imp_prod_zad_" + cPoslovnica + "_" + cProd, NIL,  Space( 7 ) )
+
+   IF Empty( cRet )
+      AltD()
+      kalk_imp_set_konto_zaduz_prodavnica_za_prod_mjesto( cPoslovnica, cProd )
+      kalk_imp_get_konto_zaduz_prodavnica_za_prod_mjesto( cPoslovnica, cProd )
+   ENDIF
 
    IF cRet == "" .OR. cRet == nil
       cRet := "XXXXX"
@@ -1047,6 +1048,48 @@ STATIC FUNCTION kalk_imp_get_konto_prodavnica_za_pm_i_poslovnicu( cProd, cPoslov
 
    RETURN cRet
 
+
+/*
+
+   040 poslovnica, prodajno mjesto 0001, konto 13300
+
+*/
+STATIC FUNCTION  kalk_imp_set_konto_zaduz_prodavnica_za_prod_mjesto( cPoslovnica, cPm )
+
+   LOCAL hKonta := hb_Hash()
+
+   Box(, 10, 75 )
+   IF cPoslovnica == NIL
+      cPoslovnica := Space( 3 )
+      cPm := Space( 3 )
+      @ m_x + 1, m_y + 2 SAY "Poslovnica:" GET cPoslovnica
+      @ m_x + 2, m_y + 2 SAY "Prodajno mjesto:" GET cPoslovnica
+      READ
+      IF LastKey() == K_ESC
+         BoxC()
+         RETURN .F.
+      ENDIF
+   ELSE
+      @ m_x + 1, m_y + 2 SAY "Poslovnica: " + cPoslovnica
+      @ m_x + 2, m_y + 2 SAY "Prodajno mjesto: " + cPm
+   ENDIF
+
+
+   cKonto := fetch_metric(  "kalk_imp_prod_zad_" + cPoslovnica + "_" + cPm, NIL,  Space( 7 ) )
+
+
+   @ m_x + 3, m_y + 2 SAY8 "KALK 11 prod konto zaduzuje: " GET cKonto
+
+   READ
+   BoxC()
+
+   IF LastKey() == K_ESC
+      RETURN .F.
+   ENDIF
+
+   set_metric( "kalk_imp_prod_zad_" + cPoslovnica + "_" + cPm, NIL, cKonto )
+
+   RETURN .T.
 
 /* -----------------------------------------------------------
 
@@ -1073,7 +1116,6 @@ STATIC FUNCTION kalk_imp_get_konto_za_tip_dokumenta_poslovnica( cTipDok, cZadRaz
    cRet := fetch_metric( "kalk_imp_" + cPoslovnica + "_" + cTipDok + "_" + cZadRazd, NIL,  "XXXX" )
 
    IF cRet == "XXXX"
-      AltD()
       set_kalk_imp_parametri_za_poslovnica( cPoslovnica )
       kalk_imp_get_konto_za_tip_dokumenta_poslovnica( cTipDok, cZadRazd, cPoslovnica )
    ENDIF
@@ -1084,6 +1126,20 @@ STATIC FUNCTION kalk_imp_get_konto_za_tip_dokumenta_poslovnica( cTipDok, cZadRaz
 STATIC FUNCTION set_kalk_imp_parametri_za_poslovnica( cPoslovnica )
 
    LOCAL hKonta := hb_Hash(), cTipDok, cZadRazd
+
+   Box(, 10, 75 )
+   IF cPoslovnica == NIL
+      cPoslovnica := Space( 3 )
+      @ m_x + 1, m_y + 2 SAY "Poslovnica:" GET cPoslovnica
+      READ
+      IF LastKey() == K_ESC
+         BoxC()
+         RETURN .F.
+      ENDIF
+   ELSE
+      @ m_x + 1, m_y + 2 SAY "Poslovnica: " + cPoslovnica
+   ENDIF
+
 
    cTipDok := "14"
    cZadRazd := "Z"
@@ -1115,9 +1171,6 @@ STATIC FUNCTION set_kalk_imp_parametri_za_poslovnica( cPoslovnica )
    cZadRazd := "R"
    hKonta[ "KOR" ] := fetch_metric(  "kalk_imp_" + cPoslovnica + "_" + cTipDok + "_" + cZadRazd, NIL,  Space( 7 ) )
 
-
-   Box(, 10, 75 )
-   @ m_x + 1, m_y + 2 SAY "Poslovnica: " + cPoslovnica
 
    @ m_x + 3, m_y + 2 SAY "KALK 14 KTO ZAD: " GET hKonta[ "14Z" ]
    @ m_x + 3, Col() + 2 SAY "KALK 14 KTO RAZD: " GET hKonta[ "14R" ]
@@ -1296,8 +1349,8 @@ STATIC FUNCTION from_kalk_imp_temp_to_pript( aFExist, lFSkip, lNegative, cCtrl_a
       cPm := kalk_imp_temp->idpm
       cIdPJ := kalk_imp_temp->idpj
 
-      // pregledaj CACHE, da li treba preskociti ovaj artikal
-      IF cCtrl_art == "D"
+
+      IF cCtrl_art == "D"   // pregledaj CACHE, da li treba preskociti ovaj artikal
 
          nT_scan := 0
 
@@ -1318,8 +1371,8 @@ STATIC FUNCTION from_kalk_imp_temp_to_pript( aFExist, lFSkip, lNegative, cCtrl_a
          GO TOP
          SEEK PadR( cTmp_kto, 7 ) + PadR( cTmp_roba, 10 )
 
-         IF Found() .AND. gNC_ctrl > 0 .AND. ( field->odst > gNC_ctrl )
-            // dodaj sporne u kontrolnu matricu
+
+         IF Found() .AND. gNC_ctrl > 0 .AND. ( field->odst > gNC_ctrl ) // dodaj sporne u kontrolnu matricu
 
             nT_scan := AScan( aArr_ctrl, ;
                {| xVal| xVal[ 1 ] + PadR( xVal[ 2 ], 10 ) == ;
@@ -1335,14 +1388,12 @@ STATIC FUNCTION from_kalk_imp_temp_to_pript( aFExist, lFSkip, lNegative, cCtrl_a
          SELECT kalk_imp_temp
       ENDIF
 
-      // ako je ukljucena opcija preskakanja postojecih faktura
-      IF lFSkip
-         // ako postoji ista u matrici
+      IF lFSkip // ako je ukljucena opcija preskakanja postojecih faktura
          IF Len( aFExist ) > 0
             nFExist := AScan( aFExist, {| aVal| AllTrim( aVal[ 1 ] ) == cFakt } )
             IF nFExist > 0
-               // prekoci onda ovaj zapis i idi dalje
-               SELECT kalk_imp_temp
+
+               SELECT kalk_imp_temp  // prekoci onda ovaj zapis i idi dalje
                SKIP
                LOOP
             ENDIF
@@ -1359,8 +1410,8 @@ STATIC FUNCTION from_kalk_imp_temp_to_pript( aFExist, lFSkip, lNegative, cCtrl_a
          nRbr := 0
          AAdd( aPom, { cTDok, cBrojKalk, cFakt } )
       ELSE
-         // ako su diskontna zaduzenja razgranici ih putem polja prodajno mjesto
-         IF cTDok == "11"
+
+         IF cTDok == "11" // ako su diskontna zaduzenja razgranici ih putem polja prodajno mjesto
             IF cPm <> cPPm
                ++ nUvecaj
                cBrojKalk := GetNextKalkDoc( gFirma, cTDok, nUvecaj )
@@ -1402,8 +1453,8 @@ STATIC FUNCTION from_kalk_imp_temp_to_pript( aFExist, lFSkip, lNegative, cCtrl_a
       _id_konto := kalk_imp_get_konto_by_tip_pm_poslovnica( cTDok, kalk_imp_temp->idpm, "Z", cIdPJ )
       _id_konto2 := kalk_imp_get_konto_by_tip_pm_poslovnica( cTDok, kalk_imp_temp->idpm, "R", cIdPJ )
 
-      // pozicioniraj se na konto zaduzuje
-      SELECT koncij
+
+      SELECT koncij // pozicionirati se na konto zaduzuje
       SET ORDER TO TAG "ID"
       GO TOP
       SEEK _id_konto
@@ -1412,38 +1463,31 @@ STATIC FUNCTION from_kalk_imp_temp_to_pript( aFExist, lFSkip, lNegative, cCtrl_a
       select_o_kalk_pript()
 
       APPEND BLANK
+altd()
+      REPLACE idfirma WITH gFirma ,;
+       rBr WITH Str( ++nRbr, 3 ),;
+       idvd WITH cTDok,; // uzmi pravilan tip dokumenta za kalk
+       brdok WITH cBrojKalk,;
+       datdok WITH kalk_imp_temp->datdok,;
+       idpartner WITH kalk_imp_temp->idpartner,;
+       idtarifa WITH ROBA->idtarifa,;
+       brfaktp WITH cFakt,;
+       datfaktp WITH kalk_imp_temp->datdok
 
-      REPLACE idfirma WITH gFirma
-      REPLACE rBr WITH Str( ++nRbr, 3 )
 
-      // uzmi pravilan tip dokumenta za kalk
-      REPLACE idvd WITH cTDok
-
-      REPLACE brdok WITH cBrojKalk
-      REPLACE datdok WITH kalk_imp_temp->datdok
-      REPLACE idpartner WITH kalk_imp_temp->idpartner
-      REPLACE idtarifa WITH ROBA->idtarifa
-      REPLACE brfaktp WITH cFakt
-      REPLACE datfaktp WITH kalk_imp_temp->datdok
-
-      // konta:
-      // =====================
-      // zaduzuje
-      REPLACE idkonto WITH _id_konto
-      // razduzuje
-      REPLACE idkonto2 WITH _id_konto2
-
+      REPLACE idkonto WITH _id_konto // konto zaduzuje
+      REPLACE idkonto2 WITH _id_konto2 // konto razduzuje
       REPLACE idzaduz2 WITH ""
 
-      // spec.za tip dok 11
-      IF cTDok $ "11#41"
+
+      IF cTDok $ "11#41" // spec.za tip dok 11
 
          REPLACE tmarza2 WITH "A"
          REPLACE tprevoz WITH "A"
 
          IF cTDok == "11"
-            // uzmi mpc iz sifrarnika roba prema podesenju u konciju...
-            REPLACE mpcsapp WITH UzmiMpcSif()
+
+            REPLACE mpcsapp WITH UzmiMpcSif() // uzmi mpc iz sifrarnika roba prema podesenju u koncij
          ELSE
             REPLACE mpcsapp WITH kalk_imp_temp->cijena
          ENDIF
@@ -1523,8 +1567,8 @@ STATIC FUNCTION from_kalk_imp_temp_to_pript( aFExist, lFSkip, lNegative, cCtrl_a
 
    ENDIF
 
-   // pobrisi ispustene dokumente
-   IF cCtrl_art == "D" .AND. Len( aArr_ctrl ) > 0
+
+   IF cCtrl_art == "D" .AND. Len( aArr_ctrl ) > 0 // pobrisi ispustene dokumente
 
       nT_scan := 0
 
@@ -1570,7 +1614,7 @@ STATIC FUNCTION kalk_imp_get_konto_by_tip_pm_poslovnica( cTipDok, cPm, cTip, cPo
       IF cTip == "R"
          cRet := kalk_imp_get_konto_za_tip_dokumenta_poslovnica( cTipDok, cTip, cPoslovnica )
       ELSE
-         cRet := kalk_imp_get_konto_prodavnica_za_pm_i_poslovnicu( cPm, cPoslovnica )
+         cRet := kalk_imp_get_konto_zaduz_prodavnica_za_prod_mjesto( cPoslovnica, cPm )
       ENDIF
 
    CASE cTipDok == "41"
@@ -1586,11 +1630,12 @@ STATIC FUNCTION kalk_imp_get_konto_by_tip_pm_poslovnica( cTipDok, cPm, cTip, cPo
 
 
 
-/* TTbl2Partn(lEditOld)
+/* kalk_imp_temp_to_partn(lEditOld)
  *     kopira podatke iz pomocne tabele u tabelu PARTN
  *   param: lEditOld - ispraviti stare zapise
  */
-STATIC FUNCTION TTbl2Partn( lEditOld )
+
+STATIC FUNCTION kalk_imp_temp_to_partn( lEditOld )
 
    O_PARTN
    O_SIFK
@@ -1603,8 +1648,8 @@ STATIC FUNCTION TTbl2Partn( lEditOld )
 
    DO WHILE !Eof()
 
-      // pronadji partnera
-      SELECT partn
+
+      SELECT partn // pronadji partnera
       cTmpPar := AllTrim( kalk_imp_temp->idpartner )
       SEEK cTmpPar
 
@@ -1622,8 +1667,8 @@ STATIC FUNCTION TTbl2Partn( lEditOld )
          lNovi := .T.
       ENDIF
 
-      // dodaj zapis u partn
-      SELECT partn
+
+      SELECT partn // dodaj zapis u partn
 
       IF lNovi
          APPEND BLANK
@@ -1647,7 +1692,7 @@ STATIC FUNCTION TTbl2Partn( lEditOld )
       REPLACE telefon WITH kalk_imp_temp->telefon
       REPLACE fax WITH kalk_imp_temp->fax
       REPLACE idops WITH kalk_imp_temp->idops
-      // ubaci --vezane-- podatke i u sifK tabelu
+      // ubaci --vezne-- podatke i u sifK tabelu
       USifK( "PARTN", "ROKP", kalk_imp_temp->idpartner, kalk_imp_temp->rokpl )
       USifK( "PARTN", "PORB", kalk_imp_temp->idpartner, kalk_imp_temp->porbr )
       USifK( "PARTN", "REGB", kalk_imp_temp->idpartner, kalk_imp_temp->idbroj )
@@ -1662,10 +1707,8 @@ STATIC FUNCTION TTbl2Partn( lEditOld )
    RETURN 1
 
 
-// -----------------------------------------
-// napuni iz tmp tabele u robu
-// -----------------------------------------
-STATIC FUNCTION TTbl2Roba()
+
+STATIC FUNCTION kalk_imp_temp_to_roba()
 
    O_ROBA
    O_SIFK
@@ -1686,22 +1729,22 @@ STATIC FUNCTION TTbl2Roba()
 
       IF !Found()
 
-         // da li treba dodavati novi zapis ...
+         // da li treba dodavati novi zapis
 
       ELSE
 
-         // mjenja se VPC
-         IF kalk_imp_temp->idpm == "001"
+
+         IF kalk_imp_temp->idpm == "001" // mjenja se VPC
             IF field->vpc <> kalk_imp_temp->mpc
                REPLACE field->vpc WITH kalk_imp_temp->mpc
             ENDIF
-            // mjenja se VPC2
-         ELSEIF kalk_imp_temp->idpm == "002"
+
+         ELSEIF kalk_imp_temp->idpm == "002" // mjenja se VPC2
             IF field->vpc2 <> kalk_imp_temp->mpc
                REPLACE field->vpc2 WITH kalk_imp_temp->mpc
             ENDIF
-            // mjenja se MPC
-         ELSEIF kalk_imp_temp->idpm == "003"
+
+         ELSEIF kalk_imp_temp->idpm == "003"   // mjenja se MPC
             IF field->mpc <> kalk_imp_temp->mpc
                REPLACE field->mpc WITH kalk_imp_temp->mpc
             ENDIF
@@ -1727,6 +1770,7 @@ STATIC FUNCTION TTbl2Roba()
  *   param: cIdKonto2 - konto razduzuje
  *   param: cRazd - razdvajati dokumente po broju fakture (D ili N)
  */
+
 STATIC FUNCTION GetKVars( dDatDok, cBrKalk, cTipDok, cIdKonto, cIdKonto2, cRazd )
 
    dDatDok := Date()
@@ -1759,6 +1803,7 @@ STATIC FUNCTION GetKVars( dDatDok, cBrKalk, cTipDok, cIdKonto, cIdKonto2, cRazd 
 /* kalk_imp_obradi_sve_dokumente()
  *     Obrada importovanih dokumenata
  */
+
 FUNCTION kalk_imp_obradi_sve_dokumente( nPocniOd, lAsPokreni, lStampaj )
 
    LOCAL cN_kalk_dok := ""

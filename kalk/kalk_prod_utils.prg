@@ -470,7 +470,7 @@ FUNCTION V_KolPro()
 
    IF nKolS < ppKolicina
       Beep( 2 )
-      CLEAR TYPEAHEAD
+      CLEAR TYPEAHEAD // zaustavi asistenta prodavnica
       Msg( "U prodavnici je samo" + Str( nKolS, 10, 3 ) + " robe !", 6 )
       _ERROR := "1"
    ENDIF

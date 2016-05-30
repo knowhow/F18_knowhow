@@ -197,7 +197,6 @@ FUNCTION ol_tmp_tbl()
    t_exp_create( aDbf )
 
    O_R_EXP
-   // index on ......
    INDEX ON idradn + Str( godina, 4 ) + Str( mjesec, 2 ) TAG "1"
 
    RETURN

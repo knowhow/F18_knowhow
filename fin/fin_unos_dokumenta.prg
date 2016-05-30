@@ -11,7 +11,7 @@
 
 #include "f18.ch"
 
-MEMVAR Ch, KursLis, gnLOst, gPotpis, lBlagAsis, cBlagIDVN
+MEMVAR m_x, m_y, Ch, KursLis, gnLOst, gPotpis, lBlagAsis, cBlagIDVN
 MEMVAR Kol, ImeKol
 
 STATIC cTekucaRj := ""
@@ -24,9 +24,9 @@ FUNCTION fin_unos_naloga()
    PRIVATE gnLOst := 0
    PRIVATE gPotpis := "N"
 
-   info_bar( "fin", "read_params" )
-   fin_read_params()
-   info_bar( "fin", "read_params_end" )
+   //info_bar( "fin", "read_params" )
+   //fin_read_params()
+   //info_bar( "fin", "read_params_end" )
 
    cTekucaRj := GetTekucaRJ()
    lBlagAsis := .F.
@@ -40,7 +40,7 @@ FUNCTION fin_unos_naloga()
 
 
 /*
- Otvara pripremu za knjizenje naloga
+ Priprema za knjizenje naloga
  */
 
 FUNCTION fin_knjizenje_naloga()
@@ -209,6 +209,7 @@ FUNCTION edit_fin_priprema()
    LOCAL _fin_params := fin_params()
    LOCAL lOstavDUMMY := .F.
    LOCAL lDugmeOtvoreneStavke
+
    PARAMETERS fNovi
 
    IF fNovi .AND. nRbr == 1

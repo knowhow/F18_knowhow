@@ -104,7 +104,7 @@ FUNCTION knab_cache( cC_Kto, cC_Roba, nC_Ulaz, nC_Izlaz, ;
       IF Abs( nOdst ) > gNC_ctrl
 
          Beep( 4 )
-         CLEAR TYPEAHEAD
+         CLEAR TYPEAHEAD // zaustavi asistenta
 
          MsgBeep( "Odstupanje u odnosu na zadnji ulaz je#" + ;
             AllTrim( Str( Abs( nOdst ) ) ) + " %" + "#" + ;

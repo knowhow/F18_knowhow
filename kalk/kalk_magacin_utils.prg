@@ -192,8 +192,8 @@ FUNCTION KalkNabP( cIdFirma, cIdroba, cIdkonto, nKolicina, nKolZN, nNC, nSNC, dD
       nSNC := ( nUlNV - nIzlNV ) / nKolicina
    ENDIF
 
-   // ako se koristi kontrola NC
-   IF gNC_ctrl > 0 .AND. nSNC <> 0 .AND. nZadnjaUNC <> 0
+
+   IF gNC_ctrl > 0 .AND. nSNC <> 0 .AND. nZadnjaUNC <> 0 // ako se koristi kontrola NC
 
       nTmp := Round( nSNC, 4 ) - Round( nZadnjaUNC, 4 )
       nOdst := ( nTmp / Round( nZadnjaUNC, 4 ) ) * 100
@@ -201,7 +201,7 @@ FUNCTION KalkNabP( cIdFirma, cIdroba, cIdkonto, nKolicina, nKolZN, nNC, nSNC, dD
       IF Abs( nOdst ) > gNC_ctrl
 
          Beep( 4 )
-         CLEAR TYPEAHEAD
+         CLEAR TYPEAHEAD // zaustavi asistenta
 
          MsgBeep( "Odstupanje u odnosu na zadnji ulaz je#" + ;
             AllTrim( Str( Abs( nOdst ) ) ) + " %" + "#" + ;
@@ -709,7 +709,7 @@ FUNCTION MMarza()
    ENDIF
 
    RETURN nMarza
-// }
+
 
 
 
@@ -719,7 +719,7 @@ FUNCTION MMarza()
 
 FUNCTION PrerRab()
 
-   // {
+
    LOCAL nPrRab
    IF cTRabat == "%"
       nPrRab := _rabatv
@@ -761,20 +761,20 @@ FUNCTION V_KolMag()
 
    IF ( _nc < 0 ) .AND. !( _idvd $ "11#12#13#22" ) .OR.  _fcj < 0 .AND. _idvd $ "11#12#13#22"
 
-      Msg( "Nabavna cijena manja od 0 ??" )
+      Msg( "Nabavna cijena manja od 0 !?" )
       _ERROR := "1"
 
    ENDIF
 
    IF roba->tip $ "UTY"; RETURN .T. ; ENDIF // usluge
 
-   IF Empty( gMetodaNC ) .OR. _TBankTR == "X"
+   IF Empty( gMetodaNC ) .OR. _TBankTR == "X" // bez ograde
       RETURN .T.
-   ENDIF  // bez ograde
+   ENDIF
 
    IF nKolS < _Kolicina
       Beep( 4 )
-      CLEAR TYPEAHEAD
+      // CLEAR TYPEAHEAD // zaustavi asistent magacin - kolicina
       error_bar( "KA_" + _mkonto + "/" + _idroba, ;
          _mkonto + " / " + _idroba + "na stanju: " + AllTrim( Str( nKolS, 10, 4 ) ) + " treba " +  AllTrim( Str( _kolicina, 10, 4 ) ) )
       _ERROR := "1"

@@ -430,23 +430,30 @@ FUNCTION kalk_pripr_key_handler()
       SELECT kalk_pripr
       GO TOP
       RETURN DE_CONT
+
    CASE Ch == K_F10
       RETURN MeniF10()
+
    CASE Ch == K_F11
       RETURN MeniF11()
+
    CASE Ch == K_F5
       Kmag()
       RETURN DE_CONT
+
    CASE Ch == K_F6
       KPro()
       RETURN DE_CONT
+
    CASE lAutoObr .AND. lAAsist
       lAAsist := .F.
       RETURN kalk_unos_asistent()
+
    CASE lAutoObr .AND. !lAAsist
       lAutoObr := .F.
       KEYBOARD Chr( K_ESC )
       RETURN DE_REFRESH
+
    ENDCASE
 
    RETURN DE_CONT
@@ -883,8 +890,7 @@ FUNCTION kalk_edit_sve_stavke()
          Box( "", BOX_HEIGHT, BOX_WIDTH, .F., "Protustavka" )
          SEEK _idfirma + _idvd + _brdok + _rbr
          _tbanktr := "X"
-         DO WHILE !Eof() .AND. _idfirma + _idvd + _brdok + _rbr == field->idfirma + ;
-               field->idvd + field->brdok + field->rbr
+         DO WHILE !Eof() .AND. _idfirma + _idvd + _brdok + _rbr == field->idfirma + field->idvd + field->brdok + field->rbr
             IF Left( field->idkonto2, 3 ) == "XXX"
                Scatter()
                _tbanktr := ""
@@ -2206,7 +2212,7 @@ FUNCTION MPCSAPPiz80uSif()
 
 FUNCTION VPCSifUDok()
 
-  
+
    o_kalk_edit()
    SELECT kalk_pripr
    GO TOP

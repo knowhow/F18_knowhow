@@ -184,7 +184,7 @@ FUNCTION ld_specifikacija_plate_samostalni_obr_2002()
    hRec[ "naziv" ] := cFirmNaz
    hRec[ "adresa" ] := cFirmAdresa
    hRec[ "opcina" ] :=  cFirmOpc
-   // UzmiIzIni( cIniName, 'Varijable', "VRDJ", cFirmVD,'WRITE' )
+   hRec[ "vrsta_djelatnosti"] :=  cFirmVD
 
    hRec[ "d_od_1" ] := SubStr( PadL( AllTrim( Str( nDanOd, 2 ) ), 2, "0" ), 1, 1 )
    hRec[ "d_od_2" ] := SubStr( PadL( AllTrim( Str( nDanOd, 2 ) ), 2, "0" ), 2, 1 )
@@ -259,6 +259,7 @@ FUNCTION ld_specifikacija_plate_samostalni_obr_2002()
 
 
    nUNeto := 0
+   nUSati := 0
    nUNetoOsnova := 0
    nPorNaPlatu := 0
    nKoefLO := 0
@@ -296,6 +297,7 @@ FUNCTION ld_specifikacija_plate_samostalni_obr_2002()
       nKoefLO := ld->ulicodb
       nULicOdbitak += nKoefLO
       nUNeto += ld->uneto
+      nUSati += ld->usati
       nNetoOsn := Max( ld->uneto, PAROBR->prosld * gPDLimit / 100 )
       nUNetoOsnova += nNetoOsn
 
@@ -304,9 +306,13 @@ FUNCTION ld_specifikacija_plate_samostalni_obr_2002()
       nPojBrOsn := bruto_osn( nNetoOsn, cRTR, nKoefLO, nRSpr_koef )
       nBrutoOsnova += nPojBrOsn
 
-      // ukupno bruto
-      nPom := nBrutoOsnova
-      UzmiIzIni( cIniName, 'Varijable', 'U017', FormNum2( nPom, 16, gPici2 ), 'WRITE' )
+      nPom := nBrutoOsnova // ukupno bruto
+
+      hRec[ "osnovica_obracun" ] := FormNum2( nPom, 16, gPici2 )
+
+      nPom := nUSati
+      hRec[ "br_radnih_sati" ] := FormNum2( nPom, 16, gPici2 )
+
 
       SELECT DOPR
       GO TOP
@@ -335,8 +341,8 @@ FUNCTION ld_specifikacija_plate_samostalni_obr_2002()
       nkD3X := get_dopr( cDopr3, "S" )
 
       AltD()
-      // stope na bruto
-      nPom := nKD1X
+
+      nPom := nKD1X // stope na bruto
       hRec[ "stopa_19" ] := FormNum2( nPom, 16, gPici3 ) + "%"
 
       nPom := nKD2X
@@ -348,16 +354,16 @@ FUNCTION ld_specifikacija_plate_samostalni_obr_2002()
       nPom := nKD1X + nKD2X + nKD3X
       hRec[ "stopa_22" ] := FormNum2( nPom, 16, gPici3 ) + "%"
 
-      nDopr1X := round2( nBrutoOsnova * nkD1X / 100, gZaok2 )
-      nDopr2X := round2( nBrutoOsnova * nkD2X / 100, gZaok2 )
-      nDopr3X := round2( nBrutoOsnova * nkD3X / 100, gZaok2 )
+      nDopr1X := round2( nBrutoOsnova * nKD1X / 100, gZaok2 )
+      nDopr2X := round2( nBrutoOsnova * nKD2X / 100, gZaok2 )
+      nDopr3X := round2( nBrutoOsnova * nKD3X / 100, gZaok2 )
 
       nPojDoprIZ := round2( ( nPojBrOsn * nkD1X / 100 ), gZaok2 ) + ;
          round2( ( nPojBrOsn * nkD2X / 100 ), gZaok2 ) + ;
          round2( ( nPojBrOsn * nkD3X / 100 ), gZaok2 )
 
-      // iznos doprinosa
-      nPom := nDopr1X
+
+      nPom := nDopr1X // iznos doprinosa
       hRec[ "iznos_19" ] := FormNum2( nPom, 16, gPici2 )
 
       nPom := nDopr2X

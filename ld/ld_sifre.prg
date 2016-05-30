@@ -39,8 +39,8 @@ FUNCTION P_Radn( cId, dx, dy )
    O_RADN_NOT_USED
 
 
-   // filterisanje tabele radnika
-   aktivni_radnici_filter( .T. )
+
+   aktivni_radnici_filter( .T. ) // filterisanje tabele radnika
 
    ImeKol := {}
    AAdd( ImeKol, { _l( PadR( "Id", 6 ) ), {|| field->id }, "id", {|| .T. }, {|| vpsifra( wId, "1" ) } } )
@@ -50,6 +50,7 @@ FUNCTION P_Radn( cId, dx, dy )
    AAdd( ImeKol, { PadR( iif( gBodK == "1", _l( "Br.bodova" ), _l( "Koeficij." ) ), 10 ), {|| field->brbod }, "brbod" } )
    AAdd( ImeKol, { _l( PadR( "MinR%", 5 ) ), {|| field->kminrad }, "kminrad" } )
 
+altd()
    IF RADN->( FieldPos( "KLO" ) ) <> 0
 
       AAdd( ImeKol, { _l( PadR( "Koef.l.odb.", 15 ) ), {|| field->klo }, "klo" } )
@@ -57,11 +58,11 @@ FUNCTION P_Radn( cId, dx, dy )
          {|| .T. }, {|| wtiprada $ " #I#A#S#N#P#U#R" .OR. MsgTipRada() } } )
 
       IF RADN->( FieldPos( "SP_KOEF" ) ) <> 0
-         AAdd( ImeKol, { _l( PadR( "prop.koef", 15 ) ), {|| field->sp_koef }, "sp_koef" } )
+         AAdd( ImeKol, { PadR( "prop.koef", 15 ), {|| field->sp_koef }, "sp_koef" } )
       ENDIF
 
       IF RADN->( FieldPos( "OPOR" ) ) <> 0
-         AAdd( ImeKol, { _l( PadR( "oporeziv", 15 ) ), {|| field->opor }, "opor" } )
+         AAdd( ImeKol, { PadR( "oporeziv", 15 ), {|| field->opor }, "opor" } )
       ENDIF
 
       IF RADN->( FieldPos( "TROSK" ) ) <> 0

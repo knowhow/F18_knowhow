@@ -103,19 +103,23 @@ STATIC FUNCTION _get_win_1250_codes_array()
 // to_xml_encoding( "Čekić" )
 // => "&#262;eki&#269;"
 // --------------------------------------------------------------------
-FUNCTION to_xml_encoding( cp852_str )
+FUNCTION to_xml_encoding( cString, lUtf )
 
    LOCAL _ent_arr := _get_ent_codes_array()
    LOCAL _cnt
-   LOCAL _utf8_str
 
-   _utf8_str := hb_StrToUTF8( cp852_str )
+
+   hb_default( @lUtf, .F. )
+
+   IF !lUtf
+      cString := hb_StrToUTF8( cString )
+   ENDIF
 
    FOR _cnt := 1 TO Len( _ent_arr )
-      _utf8_str := StrTran( _utf8_str, _ent_arr[ _cnt, 1 ], _ent_arr[ _cnt, 2 ] )
+      cString := StrTran( cString, _ent_arr[ _cnt, 1 ], _ent_arr[ _cnt, 2 ] )
    NEXT
 
-   RETURN _utf8_str
+   RETURN cString
 
 
 // ------------------------------------------------

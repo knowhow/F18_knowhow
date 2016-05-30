@@ -32,7 +32,7 @@ FUNCTION ld_specifikacija_plate_samostalni_obr_2002()
    LOCAL cRTipRada := " "
    LOCAL _proizvj_ini := my_home() + "proizvj.ini"
    LOCAL cMatBr := Space( 13 )
-   LOCAL oReport, hRec
+   LOCAL oReport, hRec, cKey
 
    PRIVATE aSpec := {}
    PRIVATE cFNTZ := "D"
@@ -184,7 +184,7 @@ FUNCTION ld_specifikacija_plate_samostalni_obr_2002()
    hRec[ "naziv" ] := cFirmNaz
    hRec[ "adresa" ] := cFirmAdresa
    hRec[ "opcina" ] :=  cFirmOpc
-   hRec[ "vrsta_djelatnosti"] :=  cFirmVD
+   hRec[ "vrsta_djelatnosti" ] :=  cFirmVD
 
    hRec[ "d_od_1" ] := SubStr( PadL( AllTrim( Str( nDanOd, 2 ) ), 2, "0" ), 1, 1 )
    hRec[ "d_od_2" ] := SubStr( PadL( AllTrim( Str( nDanOd, 2 ) ), 2, "0" ), 2, 1 )
@@ -404,13 +404,18 @@ FUNCTION ld_specifikacija_plate_samostalni_obr_2002()
 
    hRec[ "opcina_2" ] := Ocitaj( F_OPS, radn->idopsrad, "naz", .T. )
 
-   hRec[ "br_zaposlenih"] := Alltrim( Str( nURadnika, 6, 0 ))
+   hRec[ "br_zaposlenih" ] := AllTrim( Str( nURadnika, 6, 0 ) )
 
-   // ukupno neto  FormNum2( nUNETO, 16, gPici2 )
 
    nPom := nBrutoOsnova
    nUUNR := nPom
-   // FormNum2( nPom, 16, gPici2 )
+
+   hb_cdpSelect( "SL852" )
+   FOR EACH cKey in hRec:keys()
+      IF ValType( hRec[ cKey ] ) == "C"
+         hRec[ cKey ] := to_xml_encoding (  hRec[ cKey ], .T. ) // hRec[ cKey ] je utf8 string
+      ENDIF
+   NEXT
 
 
    my_close_all_dbf()

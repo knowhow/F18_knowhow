@@ -50,7 +50,6 @@ FUNCTION P_Radn( cId, dx, dy )
    AAdd( ImeKol, { PadR( iif( gBodK == "1", _l( "Br.bodova" ), _l( "Koeficij." ) ), 10 ), {|| field->brbod }, "brbod" } )
    AAdd( ImeKol, { _l( PadR( "MinR%", 5 ) ), {|| field->kminrad }, "kminrad" } )
 
-altd()
    IF RADN->( FieldPos( "KLO" ) ) <> 0
 
       AAdd( ImeKol, { _l( PadR( "Koef.l.odb.", 15 ) ), {|| field->klo }, "klo" } )

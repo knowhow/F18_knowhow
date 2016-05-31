@@ -13,8 +13,6 @@
 #include "f18.ch"
 
 
-// ----------------------------------------
-// ----------------------------------------
 FUNCTION cre_cache()
 
    LOCAL aFld := {}
@@ -36,7 +34,7 @@ FUNCTION cre_cache()
       create_index( "1", "idkonto+idroba", cTbl )
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 // -------------------------------
@@ -58,8 +56,7 @@ FUNCTION if_cache()
 // -------------------------------------------
 // vrati informacije iz cache tabele
 // -------------------------------------------
-FUNCTION knab_cache( cC_Kto, cC_Roba, nC_Ulaz, nC_Izlaz, ;
-      nC_Stanje, nC_NVU, nC_NVI, nC_NV )
+FUNCTION knab_cache( cC_Kto, cC_Roba, nC_Ulaz, nC_Izlaz, nC_Stanje, nC_NVU, nC_NVI, nC_NV )
 
    LOCAL nTArea := Select()
    LOCAL nZC_nv := 0
@@ -233,9 +230,8 @@ FUNCTION gen_cache()
    LOCAL nOdstup := 0
    LOCAL _korek_dok := .F.
 
-   IF _g_kto( @cMKtoLst, @cPKtoLst, @dDatGen, @cAppFSif, ;
-         @nT_kol, @nT_ncproc ) == 0
-      RETURN
+   IF _g_kto( @cMKtoLst, @cPKtoLst, @dDatGen, @cAppFSif, @nT_kol, @nT_ncproc ) == 0
+      RETURN .F.
    ENDIF
 
    cre_cache()
@@ -433,8 +429,7 @@ FUNCTION gen_cache()
 
       SEEK cIdFirma + cIdKonto
 
-      DO WHILE !Eof() .AND. cIdFirma == field->idfirma ;
-            .AND. cIdKonto == field->pkonto
+      DO WHILE !Eof() .AND. cIdFirma == field->idfirma  .AND. cIdKonto == field->pkonto
 
 
          cIdRoba := field->idroba
@@ -554,12 +549,12 @@ STATIC FUNCTION _app_from_sif( cM_list, cP_list, nT_kol, nT_ncproc )
 
    IF nT_kol = NIL .OR. nT_kol <= 0
       MsgBeep( "Default kolicina setovana na 0. Kako je to moguce :)" )
-      RETURN
+      RETURN .F.
    ENDIF
 
    IF nT_ncproc = NIL .OR. nT_ncproc <= 0
       MsgBeep( "Default procenat nc setovan na <= 0. Kako je to moguce :)" )
-      RETURN
+      RETURN .F.
    ENDIF
 
    Box(, 3, 60 )
@@ -592,7 +587,7 @@ STATIC FUNCTION _app_from_sif( cM_list, cP_list, nT_kol, nT_ncproc )
 
    SELECT ( nTArea )
 
-   RETURN
+   RETURN .T.
 
 
 // ------------------------------------------------

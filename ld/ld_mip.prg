@@ -228,10 +228,8 @@ FUNCTION ld_mip_obrazac()
 
    @ m_x + 4, m_y + 2 SAY "Radnik (prazno-svi radnici): " GET cRadnik ;
       VALID Empty( cRadnik ) .OR. P_RADN( @cRadnik )
-   @ m_x + 5, m_y + 2 SAY "    Isplate u usl. ili dobrima:" ;
-      GET cPrimDobra PICT "@S30"
-   @ m_x + 6, m_y + 2 SAY "Tipovi koji ne ulaze u obrazac:" ;
-      GET cTP_off PICT "@S30"
+   @ m_x + 5, m_y + 2 SAY "    Isplate u usl. ili dobrima:" GET cPrimDobra PICT "@S30"
+   @ m_x + 6, m_y + 2 SAY "Tipovi koji ne ulaze u obrazac:"  GET cTP_off PICT "@S30"
    @ m_x + 7, m_y + 2 SAY "Izdvojena primanja (bolovanje):" ;
       GET cTP_bol PICT "@S30"
    @ m_x + 8, m_y + 2 SAY "Sifre bolovanja preko 42 dana:" ;
@@ -999,7 +997,7 @@ FUNCTION mip_fill_data( cRj, cRjDef, cGod, cMj, ;
    LOCAL o
    LOCAL cPom
    LOCAL nPrDobra
-   LOCAL nTP_off
+   LOCAL nTP_off, nTP_off_sati
    LOCAL nTP_bol
    LOCAL nTrosk := 0
    LOCAL lInRS := .F.
@@ -1078,6 +1076,7 @@ FUNCTION mip_fill_data( cRj, cRjDef, cGod, cMj, ;
       nNeto := 0
       nPrDobra := 0
       nTP_off := 0
+      nTP_off_sati := 0
       nTP_bol := 0
 
       cR_ime := ""
@@ -1140,28 +1139,28 @@ FUNCTION mip_fill_data( cRj, cRjDef, cGod, cMj, ;
             NEXT
          ENDIF
 
-         IF !Empty( cTP_off )
+         IF !Empty( cTP_off ) // tip primanja koja ne ulaze u obrazac
             FOR o := 1 TO 60
-               cPom := IF( o > 9, Str( o, 2 ), "0" + Str( o, 1 ) )
+               cPom := IIF( o > 9, Str( o, 2 ), "0" + Str( o, 1 ) )
                IF ld->( FieldPos( "I" + cPom ) ) <= 0
                   EXIT
                ENDIF
-               nTP_off += IF( cPom $ cTP_off, LD->&( "I" + cPom ), 0 )
+               nTP_off += IIF( cPom $ cTP_off, LD->&( "I" + cPom ), 0 )
+               nTP_off_sati += IIF( cPom $ cTP_off, LD->&( "I" + cPom ), 0 )
             NEXT
          ENDIF
 
          IF !Empty( cTP_bol )
             FOR b := 1 TO 60
-               cPom := IF( b > 9, Str( b, 2 ), "0" + Str( b, 1 ) )
+               cPom := IIF( b > 9, Str( b, 2 ), "0" + Str( b, 1 ) )
                IF ld->( FieldPos( "S" + cPom ) ) <= 0
                   EXIT
                ENDIF
-               nTP_bol += IF( cPom $ cTP_bol, LD->&( "S" + cPom ), 0 )
+               nTP_bol += IIF( cPom $ cTP_bol, LD->&( "S" + cPom ), 0 )
             NEXT
          ENDIF
 
-         // provjeri da li ima bolovanja preko 42 dana
-         // ili trudnickog bolovanja
+         // provjeri da li ima bolovanja preko 42 dana ili trudnickog bolovanja
 
          lImaBPreko := .F.
 
@@ -1173,8 +1172,7 @@ FUNCTION mip_fill_data( cRj, cRjDef, cGod, cMj, ;
                   EXIT
                ENDIF
 
-               IF cPom $ cBolPreko .AND. ;
-                     LD->&( "S" + cPom ) <> 0
+               IF cPom $ cBolPreko .AND. LD->&( "S" + cPom ) <> 0
 
                   lImaBPreko := .T.
                   EXIT
@@ -1190,8 +1188,7 @@ FUNCTION mip_fill_data( cRj, cRjDef, cGod, cMj, ;
          nSati := field->usati
          nSatiB := nTP_bol
 
-         IF lImaBPreko
-            // uzmi puni fond sati
+         IF lImaBPreko  // uzmi puni fond sati
             nSati := nFondSati
             nSatiB := nFondSati
          ENDIF
@@ -1201,6 +1198,7 @@ FUNCTION mip_fill_data( cRj, cRjDef, cGod, cMj, ;
          // tipovi primanja koji ne ulaze u bruto osnovicu
          IF ( nTP_off > 0 )
             nNeto := ( nNeto - nTP_off )
+            nSati := ( nSati - nTP_off_sati )
          ENDIF
 
          nBruto := bruto_osn( nNeto, cTipRada, nL_odb )

@@ -475,22 +475,22 @@ STATIC FUNCTION TblCrePom()
 
    LOCAL aDbf := {}
 
-   AAdd( aDbf, { "IdPos","C",  2, 0 } )
-   AAdd( aDbf, { "IdRadnik","C",  4, 0 } )
-   AAdd( aDbf, { "IdVrsteP","C",  2, 0 } )
-   AAdd( aDbf, { "IdOdj","C",  2, 0 } )
-   AAdd( aDbf, { "IdRoba","C", 10, 0 } )
-   AAdd( aDbf, { "IdCijena","C",  1, 0 } )
-   AAdd( aDbf, { "Kolicina","N", 12, 3 } )
-   AAdd( aDbf, { "Iznos","N", 20, 5 } )
-   AAdd( aDbf, { "Iznos2","N", 20, 5 } )
-   AAdd( aDbf, { "Iznos3","N", 20, 5 } )
-   AAdd( aDbf, { "K1","C",  4, 0 } )
-   AAdd( aDbf, { "K2","C",  4, 0 } )
+   AAdd( aDbf, { "IdPos", "C",  2, 0 } )
+   AAdd( aDbf, { "IdRadnik", "C",  4, 0 } )
+   AAdd( aDbf, { "IdVrsteP", "C",  2, 0 } )
+   AAdd( aDbf, { "IdOdj", "C",  2, 0 } )
+   AAdd( aDbf, { "IdRoba", "C", 10, 0 } )
+   AAdd( aDbf, { "IdCijena", "C",  1, 0 } )
+   AAdd( aDbf, { "Kolicina", "N", 12, 3 } )
+   AAdd( aDbf, { "Iznos", "N", 20, 5 } )
+   AAdd( aDbf, { "Iznos2", "N", 20, 5 } )
+   AAdd( aDbf, { "Iznos3", "N", 20, 5 } )
+   AAdd( aDbf, { "K1", "C",  4, 0 } )
+   AAdd( aDbf, { "K2", "C",  4, 0 } )
 
    NaprPom( aDbf )
 
-   RETURN
+   RETURN .T.
 
 
 STATIC FUNCTION o_pom_table()

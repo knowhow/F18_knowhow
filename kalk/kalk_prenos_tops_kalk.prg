@@ -50,7 +50,7 @@ STATIC FUNCTION _o_imp_tables()
       o_koncij()
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 // --------------------------------------------------------
@@ -202,12 +202,12 @@ FUNCTION kalk_preuzmi_tops_dokumente_auto()
    LOCAL _params
    LOCAL _mag_konto
 
-   // incijalizacija radi TOPS funkcija
-   PRIVATE gIdPos
+
+   PRIVATE gIdPos // incijalizacija radi TOPS funkcija
 
    // parametri prenosa...
    IF !_get_prenos_params( @_params )
-      RETURN
+      RETURN .F.
    ENDIF
 
    _datum_od := _params[ "datum_od" ]
@@ -219,7 +219,7 @@ FUNCTION kalk_preuzmi_tops_dokumente_auto()
 
    MsgO( "Formiranje fajla prenosa u toku... " )
 
-   // obrisi neki postojeci...
+   // obrisi neki postojeci
    FileDelete( _file )
    FileDelete( StrTran( _file, ".dbf", ".txt" ) )
 
@@ -235,8 +235,8 @@ FUNCTION kalk_preuzmi_tops_dokumente_auto()
       RETURN .F.
    ENDIF
 
-   // 3) pa zatim isti preuzmi iz POS-a
-   kalk_preuzmi_tops_dokumente( _file, _tip_prenosa, _barkod_zamjena, _mag_konto )
+
+   kalk_preuzmi_tops_dokumente( _file, _tip_prenosa, _barkod_zamjena, _mag_konto ) // 3) pa zatim isti preuzmi iz POS-a
 
    MsgC()
 
@@ -251,7 +251,7 @@ FUNCTION kalk_preuzmi_tops_dokumente_auto()
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -282,27 +282,27 @@ FUNCTION kalk_preuzmi_tops_dokumente( sync_file, auto_razd, ch_barkod, mag_konto
       _auto_razduzenje := fetch_metric( "kalk_tops_prenos_auto_razduzenje", my_user(), _auto_razduzenje )
    ENDIF
 
-   // otvori tabele bitne za import podataka
-   _o_imp_tables()
+
+   _o_imp_tables() // otvori tabele bitne za import podataka
 
    IF sync_file <> NIL
       // zadano je parametrom
       _imp_file := sync_file
    ELSE
-      // daj mi fajl za import
-      IF !get_import_file( @_imp_file )
+
+      IF !get_import_file( @_imp_file )   // fajl za import
          my_close_all_dbf()
-         RETURN
+         RETURN .F.
       ENDIF
    ENDIF
 
-   // otvori temp tabelu
-   SELECT ( F_TMP_TOPSKA )
+
+   SELECT ( F_TMP_TOPSKA )  // otvori temp tabelu
    my_use_temp( "TOPSKA", _imp_file )
 
    GO BOTTOM
 
-   // daj mi broj kalkulacije
+   // utvrditi broj kalkulacije
    _br_kalk := Left( StrTran( DToC( field->datum ), ".", "" ), 4 ) + "/" + AllTrim( field->idpos )
    _idvd_pos := field->idvd
 

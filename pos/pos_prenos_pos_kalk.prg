@@ -500,19 +500,19 @@ FUNCTION pos_prenos_pos_kalk( dDateOd, dDateDo, cIdVd, id_pm )
 
             APPEND BLANK
 
-            REPLACE IdPos WITH POS->IdPos
-            REPLACE IdRoba WITH POS->IdRoba
-            REPLACE Kolicina WITH POS->Kolicina
-            REPLACE IdTarifa WITH POS->IdTarifa
-            REPLACE mpc WITH POS->Cijena
-            REPLACE IdCijena WITH POS->IdCijena
-            REPLACE Datum WITH _dat_do
-            REPLACE DatPos WITH pos->datum
-            REPLACE brdok WITH pos->brdok
-            REPLACE idvd WITH POS->IdVd
-            REPLACE StMPC WITH pos->ncijena
-            REPLACE barkod WITH roba->barkod
-            REPLACE robanaz WITH roba->naz
+            REPLACE IdPos WITH POS->IdPos ,;
+                    IdRoba WITH POS->IdRoba ,;
+                    Kolicina WITH POS->Kolicina ,;
+                    IdTarifa WITH POS->IdTarifa ,;
+                    mpc WITH POS->Cijena ,;
+                    IdCijena WITH POS->IdCijena  ,;
+                    Datum WITH _dat_do  ,;
+                    DatPos WITH pos->datum  ,;
+                    brdok WITH pos->brdok  ,;
+                    idvd WITH POS->IdVd  ,;
+                    StMPC WITH pos->ncijena  ,;
+                    barkod WITH roba->barkod  ,;
+                    robanaz WITH roba->naz
 
             IF !Empty( pos_doks->idgost )
                REPLACE idpartner WITH pos_doks->idgost
@@ -556,7 +556,7 @@ FUNCTION pos_prenos_pos_kalk( dDateOd, dDateDo, cIdVd, id_pm )
 
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 STATIC FUNCTION _print_report( datum_od, datum_do, kolicina, iznos, broj_stavki )
@@ -570,12 +570,12 @@ STATIC FUNCTION _print_report( datum_od, datum_do, kolicina, iznos, broj_stavki 
    ? "Broj stavki:", AllTrim( Str( broj_stavki ) )
    ?
    ?U "Ukupna količina:", AllTrim( Str( kolicina, 12, 2 ) )
-   ? "  U kupan iznos:", AllTrim( Str( iznos, 12, 2 ) )
+   ? "  Ukupan iznos:", AllTrim( Str( iznos, 12, 2 ) )
 
    FF
    ENDPRINT
 
-   RETURN
+   RETURN .T.
 
 
 STATIC FUNCTION _cre_pom_table()

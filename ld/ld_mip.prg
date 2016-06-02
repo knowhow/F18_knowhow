@@ -228,8 +228,8 @@ FUNCTION ld_mip_obrazac()
 
    @ m_x + 4, m_y + 2 SAY "Radnik (prazno-svi radnici): " GET cRadnik ;
       VALID Empty( cRadnik ) .OR. P_RADN( @cRadnik )
-   @ m_x + 5, m_y + 2 SAY "    Isplate u usl. ili dobrima:" GET cPrimDobra PICT "@S30"
-   @ m_x + 6, m_y + 2 SAY "Tipovi koji ne ulaze u obrazac:"  GET cTP_off PICT "@S30"
+   @ m_x + 5, m_y + 2 SAY "           Isplate u usl. ili dobrima:" GET cPrimDobra PICT "@S30"
+   @ m_x + 6, m_y + 2 SAY "Tipovi koji ne ulaze u obrazac (sati):"  GET cTP_off PICT "@S30"
    @ m_x + 7, m_y + 2 SAY "Izdvojena primanja (bolovanje):" ;
       GET cTP_bol PICT "@S30"
    @ m_x + 8, m_y + 2 SAY "Sifre bolovanja preko 42 dana:" ;
@@ -1195,10 +1195,10 @@ FUNCTION mip_fill_data( cRj, cRjDef, cGod, cMj, ;
 
          nSatiT := 0
 
-         // tipovi primanja koji ne ulaze u bruto osnovicu
+         // tipovi primanja koji ne ulaze u bruto osnovicu - ovo ne postoji
          IF ( nTP_off > 0 )
-            nNeto := ( nNeto - nTP_off )
-            nSati := ( nSati - nTP_off_sati )
+            //nNeto := ( nNeto - nTP_off )  - ovo ne postoji
+            nSati := ( nSati - nTP_off_sati ) // tipovi primanja koji ne ulaze u sate
          ENDIF
 
          nBruto := bruto_osn( nNeto, cTipRada, nL_odb )

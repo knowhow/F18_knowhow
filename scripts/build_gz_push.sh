@@ -14,5 +14,13 @@ F18_VER=$2
 
 git pull
 
+
+echo "NAPOMENA: envars su bitne, npr:"
+echo "--------------------------------------"
+echo "export F18_RNAL=1"
+echo "export F18_POS=1"
+echo "export POS_PRENOS_POS_KALK=1"
+
+
 ./build.sh --no-rm && scripts/build_gz.sh $F18_VER && scripts/push_to_downloads.sh F18_${F18_TYPE}_${F18_VER}.gz 
 

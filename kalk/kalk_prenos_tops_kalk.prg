@@ -1,57 +1,18 @@
 /*
- * This file is part of the bring.out FMK, a free and open source
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+ * This file is part of the bring.out knowhow ERP, a free and open source
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
 
-
 #include "f18.ch"
 
+
 #define D_MAX_FILES     150
-
-
-// -----------------------------------------------------------
-// otvaranje fajlova potrebnih kod importa podataka
-// -----------------------------------------------------------
-STATIC FUNCTION _o_imp_tables()
-
-   SELECT ( F_ROBA )
-   IF !Used()
-      O_ROBA
-   ENDIF
-
-   SELECT ( F_TARIFA )
-   IF !Used()
-      O_TARIFA
-   ENDIF
-
-   SELECT ( F_KALK_PRIPR )
-   IF !Used()
-      O_KALK_PRIPR
-   ENDIF
-
-   SELECT ( F_KALK_DOKS )
-   IF !Used()
-      O_KALK_DOKS
-   ENDIF
-
-   SELECT ( F_KALK )
-   IF !Used()
-      O_KALK
-   ENDIF
-
-   SELECT ( F_KONCIJ )
-   IF !Used()
-      o_koncij()
-   ENDIF
-
-   RETURN .T.
-
 
 // --------------------------------------------------------
 // upit za konto
@@ -109,20 +70,16 @@ STATIC FUNCTION _bk_replace()
 
    ++ _x
    ++ _x
-
    @ m_x + _x, m_y + 2 SAY "0 - bez zamjene"
 
    ++ _x
-
    @ m_x + _x, m_y + 2 SAY "1 - ubaci samo nove"
 
    ++ _x
-
    @ m_x + _x, m_y + 2 SAY "2 - zamjeni sve"
 
    ++ _x
    ++ _x
-
    @ m_x + _x, m_y + 2 SAY Space( 15 ) + "=> odabir" GET _ret PICT "9"
 
    READ
@@ -133,7 +90,7 @@ STATIC FUNCTION _bk_replace()
 
 
 // parametri auto prenosa
-STATIC FUNCTION _get_prenos_params( params )
+STATIC FUNCTION kalk_tops_get_parametri_prenosa( params )
 
    LOCAL _ok := .F.
    LOCAL _d_od := Date()
@@ -154,7 +111,6 @@ STATIC FUNCTION _get_prenos_params( params )
    @ m_x + _x, Col() + 1 SAY "do:" GET _d_do
 
    ++ _x
-
    @ m_x + _x, m_y + 2 SAY "Prodajno mjesto:" GET _id_pm VALID !Empty( _id_pm )
 
    ++ _x
@@ -205,8 +161,8 @@ FUNCTION kalk_preuzmi_tops_dokumente_auto()
 
    PRIVATE gIdPos // incijalizacija radi TOPS funkcija
 
-   // parametri prenosa...
-   IF !_get_prenos_params( @_params )
+
+   IF !kalk_tops_get_parametri_prenosa( @_params )
       RETURN .F.
    ENDIF
 
@@ -783,8 +739,8 @@ STATIC FUNCTION get_import_file( import_file )
 
    IF gMultiPM == "D"
 
-      // daj mi sva prodajna mjesta iz tabele koncij
-      _prod_mjesta := _prodajna_mjesta_iz_koncij()
+
+      _prod_mjesta := _prodajna_mjesta_iz_koncij() // sva prodajna mjesta iz tabele koncij
 
       IF Len( _prod_mjesta ) == 0
          // imamo problem, nema prodajnih mjesta
@@ -798,16 +754,16 @@ STATIC FUNCTION get_import_file( import_file )
          // putanja koju cu koristiti
          _pos_kum_path := AllTrim( gTopsDest ) + AllTrim( _prod_mjesta[ _i ] ) + SLASH
 
-         // brisi sve fajlove starije od 28 dana
-         BrisiSFajlove( _pos_kum_path )
 
-         // daj mi fajlove u matricu po pattern-u
-         _imp_files := Directory( _pos_kum_path + _imp_patt )
+         BrisiSFajlove( _pos_kum_path ) // brisi sve fajlove starije od 28 dana
+
+
+         _imp_files := Directory( _pos_kum_path + _imp_patt ) // fajlove u matricu po pattern-u
 
          ASort( _imp_files,,, {| x, y| DToS( x[ 3 ] ) + x[ 4 ] > DToS( y[ 3 ] ) + y[ 4 ] } )
 
          // dodaj u matricu za odabir
-         AEval( _imp_files, {|elem| AAdd( _opc, PadR( AllTrim( _prod_mjesta[ _i ] ) + ;
+         AEval( _imp_files, {| elem| AAdd( _opc, PadR( AllTrim( _prod_mjesta[ _i ] ) + ;
             SLASH + Trim( elem[ 1 ] ), 20 ) + " " + ;
             UChkPostoji() + " " + DToC( elem[ 3 ] ) + " " + elem[ 4 ] ;
             ) }, 1, D_MAX_FILES )
@@ -883,3 +839,41 @@ STATIC FUNCTION get_import_file( import_file )
    ENDIF
 
    RETURN _ret
+
+
+// -----------------------------------------------------------
+// otvaranje fajlova potrebnih kod importa podataka
+// -----------------------------------------------------------
+STATIC FUNCTION _o_imp_tables()
+
+   SELECT ( F_ROBA )
+   IF !Used()
+      O_ROBA
+   ENDIF
+
+   SELECT ( F_TARIFA )
+   IF !Used()
+      O_TARIFA
+   ENDIF
+
+   SELECT ( F_KALK_PRIPR )
+   IF !Used()
+      O_KALK_PRIPR
+   ENDIF
+
+   SELECT ( F_KALK_DOKS )
+   IF !Used()
+      O_KALK_DOKS
+   ENDIF
+
+   SELECT ( F_KALK )
+   IF !Used()
+      O_KALK
+   ENDIF
+
+   SELECT ( F_KONCIJ )
+   IF !Used()
+      o_koncij()
+   ENDIF
+
+   RETURN .T.

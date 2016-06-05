@@ -37,6 +37,7 @@ FUNCTION pos_main_menu_admin()
 
    Menu_SC( "adm" )
 
+
 FUNCTION SetPM( nPosSetPM )
 
    LOCAL nLen

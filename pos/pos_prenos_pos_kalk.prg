@@ -384,7 +384,7 @@ FUNCTION pos_prenos_inv_2_kalk( id_pos, id_vd, dat_dok, br_dok )
 
 
 
-FUNCTION pos_prenos_pos_kalk( dDateOd, dDateDo, cIdVd, id_pm )
+FUNCTION pos_prenos_pos_kalk( dDateOd, dDateDo, cIdVd, cIdPM )
 
    LOCAL _usl_roba := Space( 150 )
    LOCAL _usl_mark := "U"
@@ -395,8 +395,9 @@ FUNCTION pos_prenos_pos_kalk( dDateOd, dDateDo, cIdVd, id_pm )
    LOCAL _dat_od, _dat_do, _file
    LOCAL _tmp
    LOCAL _auto_prenos := .F.
+   LOCAL _rec
 
-   IF id_pm <> NIL
+   IF cIdPM <> NIL
       _auto_prenos := .T.
    ENDIF
 
@@ -432,7 +433,7 @@ FUNCTION pos_prenos_pos_kalk( dDateOd, dDateDo, cIdVd, id_pm )
       BoxC()
 
    ELSE
-      cIdPos := id_pm
+      cIdPos := cIdPM
    ENDIF
 
    gIdPos := cIdPos
@@ -631,6 +632,7 @@ STATIC FUNCTION _cre_topska_multi( id_pos, datum_od, datum_do, v_dok, prefix )
    LOCAL _table_path
    LOCAL _dest_file := ""
    LOCAL _bytes := 0
+   LOCAL cIdPM
 
    IF prefix != NIL
       _prefix := prefix
@@ -642,9 +644,9 @@ STATIC FUNCTION _cre_topska_multi( id_pos, datum_od, datum_do, v_dok, prefix )
 
    _dir_create( AllTrim( gKalkDest ) )
 
-   _id_pm := GetPm( id_pos )
+   cIdPM := GetPm( id_pos )
 
-   _export_location := AllTrim( gKalkDest ) + _id_pm + SLASH
+   _export_location := AllTrim( gKalkDest ) + cIdPM + SLASH
 
    _dir_create( AllTrim( _export_location ) )
 

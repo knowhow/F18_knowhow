@@ -59,7 +59,7 @@ FUNCTION kalk_azuriranje_dokumenta( lAuto )
       lBrStDoks := .T.
    ENDIF
 
-   IF gCijene == "2" .AND. !kalk_provjera_integriteta( @aOstaju, lViseDok )
+   IF nije_dozvoljeno_azuriranje_sumnjivih_stavki() .AND. !kalk_provjera_integriteta( @aOstaju, lViseDok )
       RETURN .F.
    ENDIF
 
@@ -316,7 +316,7 @@ STATIC FUNCTION kalk_generisati_zavisne_dokumente( lAuto )
 
    LOCAL lGen := .F.
 
-   IF gCijene == "2"
+   IF nije_dozvoljeno_azuriranje_sumnjivih_stavki()
       lGen := .T.
    ELSE
       IF gMetodaNC == " "
@@ -647,7 +647,7 @@ STATIC FUNCTION kalk_provjeri_duple_dokumente( aRezim )
       gMetodaNC := " "
       // ENDIF
 
-   ELSEIF gCijene == "2"
+   ELSEIF nije_dozvoljeno_azuriranje_sumnjivih_stavki()
       // ako je samo jedan dokument u kalk_pripremi
 
       DO WHILE !Eof()

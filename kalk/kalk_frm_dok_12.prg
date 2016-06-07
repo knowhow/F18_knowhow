@@ -91,7 +91,7 @@ FUNCTION Get1_12()
       _TMarza2 := "A"
    ENDIF
 
-   IF gCijene == "2"
+   IF nije_dozvoljeno_azuriranje_sumnjivih_stavki()
       FaktMPC( @_Mpcsapp, _idfirma + _pkonto + _idroba )
       FaktVPC( @_VPC, _idfirma + _mkonto + _idroba )
    ENDIF

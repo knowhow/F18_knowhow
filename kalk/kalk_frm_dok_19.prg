@@ -85,7 +85,7 @@ FUNCTION Get1_19()
    _PKonto := _Idkonto
    _PU_I := "3"
 
-   IF fnovi .AND.  gCijene = "2"
+   IF fnovi .AND.  dozvoljeno_azuriranje_sumnjivih_stavki()
       FaktMPC( @nStCj, _idfirma + _pkonto + _idroba )
    ENDIF
 

@@ -121,7 +121,7 @@ FUNCTION Get1_41()
 
 
    IF IsPdv()
-      IF ( gCijene == "2" .AND. ( _MpcSAPP == 0 .OR. fNovi ) )
+      IF ( dozvoljeno_azuriranje_sumnjivih_stavki() .AND. ( _MpcSAPP == 0 .OR. fNovi ) )
          FaktMPC( @_MPCSAPP, _idfirma + _idkonto + _idroba )
       ENDIF
    ELSE

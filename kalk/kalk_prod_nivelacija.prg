@@ -85,7 +85,7 @@ FUNCTION Niv_11()
       PRIVATE nMPC := 0
       nMPC := UzmiMPCSif()
 
-      IF gCijene = "2"
+      IF dozvoljeno_azuriranje_sumnjivih_stavki()
          faktMPC( @nMPC, _rec[ "idfirma" ] + _rec[ "pkonto" ] + _rec[ "idroba" ] )
          SELECT kalk_pripr
       ENDIF

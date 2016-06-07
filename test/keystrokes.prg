@@ -109,8 +109,7 @@ FUNCTION stop_keystrokes_task()
    RETURN
 
 
-// --------------------------------------------
-// --------------------------------------------
+
 FUNCTION test_procedure_with_keystrokes( b_proc, h_keystrokes )
 
    LOCAL _task, _var_key, _key_test, _key_tests := {}

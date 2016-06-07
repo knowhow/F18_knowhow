@@ -305,7 +305,7 @@ FUNCTION kalk_par_metoda_nc()
    @ m_x + 1, m_y + 2 SAY "Metoda nabavne cijene: bez kalk./zadnja/prosjecna/prva ( /1/2/3)" GET gMetodaNC ;
       VALID gMetodaNC $ " 123" .AND. metodanc_info()
    @ m_x + 2, m_y + 2 SAY "Program omogucava /ne omogucava azuriranje sumnjivih dokumenata (1/2)" GET gCijene ;
-      when {|| gCijene := iif( Empty( gmetodanc ), "1", "2" ), .T. } VALID  gCijene $ "12"
+      when {|| gCijene := iif( Empty( gMetodaNC ), "1", "2" ), .T. } VALID  gCijene $ "12"
    @ m_x + 4, m_y + 2 SAY "Tekuci odgovor na pitanje o promjeni cijena ?" GET gDefNiv ;
       VALID  gDefNiv $ "DN" PICT "@!"
    READ
@@ -323,6 +323,14 @@ FUNCTION kalk_par_metoda_nc()
    RETURN .F.
 
 
+FUNCTION nije_dozvoljeno_azuriranje_sumnjivih_stavki()
+
+   RETURN ( gCijene == "2" )
+   
+
+FUNCTION dozvoljeno_azuriranje_sumnjivih_stavki()
+
+   RETURN !( gCijene == "2" )
 
 FUNCTION metodanc_info()
 

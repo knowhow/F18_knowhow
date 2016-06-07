@@ -201,7 +201,9 @@ FUNCTION KalkNabP( cIdFirma, cIdroba, cIdkonto, nKolicina, nKolZN, nNC, nSNC, dD
       IF Abs( nOdst ) > gNC_ctrl
 
          Beep( 4 )
-         CLEAR TYPEAHEAD // zaustavi asistenta
+         IF nije_dozvoljeno_azuriranje_sumnjivih_stavki()
+            CLEAR TYPEAHEAD // zaustavi asistenta
+         ENDIF
 
          MsgBeep( "Odstupanje u odnosu na zadnji ulaz je#" + ;
             AllTrim( Str( Abs( nOdst ) ) ) + " %" + "#" + ;
@@ -719,8 +721,8 @@ FUNCTION MMarza()
 
 FUNCTION PrerRab()
 
-
    LOCAL nPrRab
+
    IF cTRabat == "%"
       nPrRab := _rabatv
    ELSEIF cTRabat == "A"
@@ -774,7 +776,9 @@ FUNCTION V_KolMag()
 
    IF nKolS < _Kolicina
       Beep( 4 )
-      // CLEAR TYPEAHEAD // zaustavi asistent magacin - kolicina
+      IF nije_dozvoljeno_azuriranje_sumnjivih_stavki()
+         CLEAR TYPEAHEAD // zaustavi asistent magacin - kolicina
+      ENDIF
       error_bar( "KA_" + _mkonto + "/" + _idroba, ;
          _mkonto + " / " + _idroba + "na stanju: " + AllTrim( Str( nKolS, 10, 4 ) ) + " treba " +  AllTrim( Str( _kolicina, 10, 4 ) ) )
       _ERROR := "1"
@@ -1066,7 +1070,9 @@ FUNCTION KalkNab( cIdFirma, cIdRoba, cIdKonto, nKolicina, nKolZN, nNC, nSNc, dDa
       IF Abs( nOdst ) > gNC_ctrl
 
          Beep( 4 )
-         CLEAR TYPEAHEAD
+         IF nije_dozvoljeno_azuriranje_sumnjivih_stavki()
+            CLEAR TYPEAHEAD
+         ENDIF
 
          MsgBeep( "Odstupanje u odnosu na zadnji ulaz je#" + ;
             AllTrim( Str( Abs( nOdst ) ) ) + " %" + "#" + ;

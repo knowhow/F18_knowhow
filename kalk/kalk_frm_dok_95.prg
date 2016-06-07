@@ -117,7 +117,7 @@ FUNCTION Get1_95()
       _NC := NC
    ENDIF
 
-   IF gCijene = "2" .AND. fNovi
+   IF dozvoljeno_azuriranje_sumnjivih_stavki() .AND. fNovi
       // ///// utvrdjivanje fakticke VPC
       faktVPC( @_VPC, _idfirma + _idkonto2 + _idroba )
       SELECT kalk_pripr

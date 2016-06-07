@@ -93,7 +93,7 @@ FUNCTION Get1_14PDV()
       SELECT kalk_pripr
    ENDIF
 
-   IF gCijene = "2" .AND. fNovi
+   IF dozvoljeno_azuriranje_sumnjivih_stavki() .AND. fNovi
 
 
       SELECT kalk_pripr

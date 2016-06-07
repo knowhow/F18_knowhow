@@ -79,7 +79,7 @@ FUNCTION Niv_10()
       SELECT tarifa; HSEEK roba->idtarifa
       frazlika := .F.
       nRVPC := KoncijVPC()
-      IF gCijene = "2"  .AND. gNiv14 = "1"
+      IF dozvoljeno_azuriranje_sumnjivih_stavki()  .AND. gNiv14 = "1"
          // nivel.se vrsi na ukupnu kolicinu
          // ///// utvrdjivanje fakticke VPC
          faktVPC( @nRVPC, _idfirma + _mkonto + _idroba )

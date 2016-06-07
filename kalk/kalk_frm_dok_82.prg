@@ -79,7 +79,7 @@ FUNCTION Get1_82()
       _VPC := KoncijVPC()
       _NC := NC
    ENDIF
-   IF gCijene = "2" .AND. fNovi
+   IF dozvoljeno_azuriranje_sumnjivih_stavki() .AND. fNovi
       faktVPC( @_VPC, _idfirma + _idkonto + _idroba )
       SELECT kalk_pripr
    ENDIF
@@ -91,7 +91,7 @@ FUNCTION Get1_82()
    dDatNab := CToD( "" )
 
    lGenStavke := .F.
-   IF _TBankTr <> "X" 
+   IF _TBankTr <> "X"
       IF !Empty( gMetodaNC )
          MsgO( "Racunam stanje na skladistu" )
          KalkNab( _idfirma, _idroba, _idkonto, @nKolS, @nKolZN, @nc1, @nc2, @dDatNab )
@@ -130,7 +130,7 @@ FUNCTION Get1_82()
    _MKonto := _Idkonto;_MU_I := "5"     // izlaz iz magacina
    _PKonto := ""; _PU_I := ""
 
-   IF pIzgSt   .AND. _kolicina > 0 .AND. LastKey() <> K_ESC 
+   IF pIzgSt   .AND. _kolicina > 0 .AND. LastKey() <> K_ESC
       // izgenerisane stavke postoje
       PRIVATE nRRec := RecNo()
       GO TOP
@@ -166,4 +166,3 @@ FUNCTION Get1_82()
    SET KEY K_ALT_K TO
 
    RETURN LastKey()
-

@@ -454,7 +454,6 @@ FUNCTION StaviMPCSif( nCijena, lUpit )
 
 FUNCTION V_KolPro()
 
-
    LOCAL ppKolicina
 
    IF Empty( gMetodaNC ) .OR. _TBankTr == "X"
@@ -470,7 +469,9 @@ FUNCTION V_KolPro()
 
    IF nKolS < ppKolicina
       Beep( 2 )
-      CLEAR TYPEAHEAD // zaustavi asistenta prodavnica
+      IF nije_dozvoljeno_azuriranje_sumnjivih_stavki()
+         CLEAR TYPEAHEAD // zaustavi asistenta prodavnica
+      ENDIF
       Msg( "U prodavnici je samo" + Str( nKolS, 10, 3 ) + " robe !", 6 )
       _ERROR := "1"
    ENDIF

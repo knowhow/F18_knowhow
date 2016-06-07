@@ -26,7 +26,7 @@ FUNCTION kalk_povrat_dokumenta()
    LOCAL lOk := .T.
    LOCAL hParams
 
-   IF gCijene == "2" .AND. Pitanje(, "Zadati broj (D) / Povrat po hronologiji obrade (N) ?", "D" ) = "N"
+   IF dozvoljeno_azuriranje_sumnjivih_stavki() .AND. Pitanje(, "Zadati broj (D) / Povrat po hronologiji obrade (N) ?", "D" ) = "N"
       Beep( 1 )
       povrat_najnovije_kalkulacije()
       my_close_all_dbf()

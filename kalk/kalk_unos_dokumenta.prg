@@ -1016,7 +1016,7 @@ FUNCTION MeniF10()
          kalk_par_metoda_nc()
          SELECT params; USE
          IF gCijene <> aRezim[ 1 ] .OR. gMetodaNC <> aRezim[ 2 ]
-            IF gCijene == "1" .AND. gMetodaNC == " "
+            IF !dozvoljeno_azuriranje_sumnjivih_stavki() .AND. gMetodaNC == " "
                Soboslikar( { { m_x + 17, m_y + 1, m_x + 20, m_y + 77 } }, 23, 14 )
             ELSEIF aRezim[ 1 ] == "1" .AND. aRezim[ 2 ] == " "
                Soboslikar( { { m_x + 17, m_y + 1, m_x + 20, m_y + 77 } }, 14, 23 )

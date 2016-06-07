@@ -406,6 +406,10 @@ FUNCTION kalk_kontiranje_naloga( fAuto, lAGen, lViseKalk, cNalog, auto_brojac )
                   cIdkonto := StrTran( cidkonto, "B2", Right( Trim( finmat->idkonto2 ), 2 ) )
                ENDIF
 
+               IF ValType( cKonto1 ) != "C"
+                  cKonto1 := Space( 7 )
+               ENDIF
+
                cIdkonto := StrTran( cIdkonto, "?1", Trim( cKonto1 ) )
                cIdkonto := StrTran( cIdkonto, "?2", Trim( cKonto2 ) )
                cIdkonto := StrTran( cIdkonto, "?3", Trim( cKonto3 ) )

@@ -21,27 +21,30 @@ FUNCTION fin_menu_specifikacije()
    LOCAL _opc := {}
    LOCAL _opcexe := {}
 
-   AAdd( _opc, "1. specifikacije (txt)          " )
-   AAdd( _opcexe, {|| _txt_specif_mnu() } )
-   AAdd( _opc, "2. specifikacije (odt)          " )
-   AAdd( _opcexe, {|| _sql_specif_mnu() } )
+   AAdd( _opc, "1. fin specifikacije (txt)          " )
+   AAdd( _opcexe, {|| fin_izvj_specif_txt_menu() } )
+   AAdd( _opc, "2. fin specifikacije / 2          " )
+   AAdd( _opcexe, {|| fin_izvjestaji_specif_2_menu() } )
 
    f18_menu( "spec", .F., _izbor, _opc, _opcexe )
 
-   RETURN
+   RETURN .T.
 
 
 // ------------------------------------------------------
 // meni specifikacija sql
 // ------------------------------------------------------
-STATIC FUNCTION _sql_specif_mnu()
+STATIC FUNCTION fin_izvjestaji_specif_2_menu()
 
    LOCAL _izbor := 1
    LOCAL _opc := {}
    LOCAL _opcexe := {}
 
-   AAdd( _opc, "1. specifikacija po subanalitičkim kontima          " )
+   AAdd( _opc, "1. specifikacija po subanalitičkim kontima-2          " )
    AAdd( _opcexe, {|| fin_suban_specifikacija_sql() } )
+
+   AAdd( _opc, "2. kupci pregled dugovanja" )
+   AAdd( _opcexe, {|| fin_kupci_pregled_dugovanja() } )
 
    f18_menu( "spsql", .F., _izbor, _opc, _opcexe )
 
@@ -50,7 +53,7 @@ STATIC FUNCTION _sql_specif_mnu()
 
 
 
-STATIC FUNCTION _txt_specif_mnu()
+STATIC FUNCTION fin_izvj_specif_txt_menu()
 
    LOCAL _opc := {}
    LOCAL _opcexe := {}

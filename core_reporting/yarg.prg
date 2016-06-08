@@ -22,8 +22,9 @@ CREATE CLASS YargReport
 
    VAR cReportOutput
    VAR aRecords // { { 'id':1, 'naz':'dva' }, { 'id':2, 'naz':'tri' } }
+   VAR cBands   // primjer: "Band1", "Header#Band1"
 
-   METHOD New( cName, cType )
+   METHOD New( cName, cType, cBands )
 
    METHOD create_run_yarg_file()
    METHOD create_yarg_xml()
@@ -35,12 +36,18 @@ ENDCLASS
 
 
 
-METHOD YargReport:New( cName, cType )
+METHOD YargReport:New( cName, cType, cBands )
 
    ::cName := cName
 
    IF cType != NIL
       ::cType := cType
+   ENDIF
+
+   IF cBands == NIL
+      ::cBands := "Band1"
+   ELSE
+      ::cBands := cBands
    ENDIF
 
    RETURN Self
@@ -168,40 +175,49 @@ METHOD YargReport:create_yarg_xml()
 
    xml_subnode_start( 'rootBand name="Root" orientation="H"' )
    xml_subnode_start( "bands" )
-   xml_subnode_start( 'band name="Band1" orientation="H"' )
-   xml_subnode_start( "queries" )
 
-   xml_subnode_start( 'query name="Data_set_1" type="groovy"' )
-   xml_subnode_start( "script" )
-   ?? "return ["
+   IF "Header#" $ ::cBands
+      xml_subnode_start( 'band name="Header" orientation="H"' )
+      xml_subnode_end( "band" )
+   ENDIF
 
-   lFirst := .T.
-   FOR EACH hRec IN ::aRecords
-      IF !lFirst
-         ?? ","
-      ENDIF
-      lFirst := .F.
-      ?? "["
-      lFirst2 := .T.
-      FOR EACH cKey IN hRec:Keys
-         IF !lFirst2
+   IF "Band1" $ ::cBands
+      xml_subnode_start( 'band name="Band1" orientation="H"' )
+      xml_subnode_start( "queries" )
+
+      xml_subnode_start( 'query name="Data_set_1" type="groovy"' )
+      xml_subnode_start( "script" )
+      ?? "return ["
+
+      lFirst := .T.
+      FOR EACH hRec IN ::aRecords
+         IF !lFirst
             ?? ","
          ENDIF
-         lFirst2 := .F.
-         ?? sql_quote( cKey ) + ":" + sql_quote( hRec[ cKey ] )
+         lFirst := .F.
+         ?? "["
+         lFirst2 := .T.
+         FOR EACH cKey IN hRec:Keys
+            IF !lFirst2
+               ?? ","
+            ENDIF
+            lFirst2 := .F.
+            ?? sql_quote( cKey ) + ":" + sql_quote( hRec[ cKey ] )
+         NEXT
+         ?? "]"
       NEXT
+
       ?? "]"
-   NEXT
 
-   ?? "]"
+      xml_subnode_end( "script" )
 
-   xml_subnode_end( "script" )
+      xml_subnode_end( "query" )
 
-   xml_subnode_end( "query" )
+      xml_subnode_end( "queries" )
 
-   xml_subnode_end( "queries" )
+      xml_subnode_end( "band" ) // band1
+   ENDIF
 
-   xml_subnode_end( "band" )
    xml_subnode_end( "bands" )
    xml_subnode_end( "rootBand" )
 

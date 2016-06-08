@@ -30,7 +30,7 @@ FUNCTION fin_admin_opcije_menu()
    AAdd( opc, "------------------------------------------------------" )
    AAdd( opcexe, {|| NIL } )
 
-   AAdd( opc, "B. podešenje brojaca naloga" )
+   AAdd( opc, "B. podešenje brojača naloga" )
    AAdd( opcexe, {|| fin_set_param_broj_dokumenta() } )
 
    AAdd( opc, "------------------------------------------------------" )
@@ -293,4 +293,34 @@ FUNCTION fin_set_param_broj_dokumenta()
       ENDIF
    ENDIF
 
-   RETURN
+   RETURN .T.
+
+
+
+   /*  Dupli(cIdFirma,cIdVn,cBrNal)
+    *  brief Provjera duplog naloga
+    *  param cIdFirma
+    *  param cIdVn
+    *  param cBrNal
+    */
+
+FUNCTION Dupli( cIdFirma, cIdVn, cBrNal )
+
+   PushWA()
+
+   SELECT NALOG
+   SET ORDER TO TAG "1"
+
+   SEEK cIdFirma + cIdVN + cBrNal
+
+   IF Found()
+      MsgO( " Dupli nalog ! " )
+      Beep( 3 )
+      MsgC()
+      PopWa()
+      RETURN .F.
+   ENDIF
+
+   PopWa()
+
+   RETURN .T.

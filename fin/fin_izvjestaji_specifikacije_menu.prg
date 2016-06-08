@@ -25,6 +25,8 @@ FUNCTION fin_menu_specifikacije()
    AAdd( _opcexe, {|| fin_izvj_specif_txt_menu() } )
    AAdd( _opc, "2. fin specifikacije / 2          " )
    AAdd( _opcexe, {|| fin_izvjestaji_specif_2_menu() } )
+   AAdd( _opc, "3. kupci pregled dugovanja" )
+   AAdd( _opcexe, {|| fin_kupci_pregled_dugovanja() } )
 
    f18_menu( "spec", .F., _izbor, _opc, _opcexe )
 
@@ -43,8 +45,6 @@ STATIC FUNCTION fin_izvjestaji_specif_2_menu()
    AAdd( _opc, "1. specifikacija po subanalitičkim kontima-2          " )
    AAdd( _opcexe, {|| fin_suban_specifikacija_sql() } )
 
-   AAdd( _opc, "2. kupci pregled dugovanja" )
-   AAdd( _opcexe, {|| fin_kupci_pregled_dugovanja() } )
 
    f18_menu( "spsql", .F., _izbor, _opc, _opcexe )
 

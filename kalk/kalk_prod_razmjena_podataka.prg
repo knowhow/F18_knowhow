@@ -52,6 +52,8 @@ FUNCTION FaKaPrenos_MP_u_razduzenje()
    LOCAL cBrKalk := Space( 8 )
    LOCAL dFaktOd := Date() - 10
    LOCAL dFaktDo := Date()
+   LOCAL cArtPocinju := Space( 10 )
+   LOCAL nLeftArt := 0
 
    O_KALK_PRIPR
    o_koncij()
@@ -115,6 +117,8 @@ FUNCTION FaKaPrenos_MP_u_razduzenje()
 
       @ m_x + 8, m_y + 2 SAY "Sabirati iste artikle (D/N) ?" GET cSabirati VALID cSabirati $ "DN" PICT "@!"
 
+      @ m_x + 9, m_y + 2 SAY "Uslov za artikle koji pocinju sa:" GET cArtPocinju
+
       READ
 
       IF LastKey() == K_ESC
@@ -125,21 +129,29 @@ FUNCTION FaKaPrenos_MP_u_razduzenje()
       SET ORDER TO TAG "1"
       GO TOP
 
+      cArtPocinju := Trim( cArtPocinju )
+      nLeftArt := Len( cArtPocinju )
+
       SEEK cFaktFirma + cIdTipDok
 
       MsgO( "Generisem podatke...." )
 
       DO WHILE !Eof() .AND. cFaktFirma + cIdTipDok == IdFirma + IdTipDok
 
-         // datumska provjera...
-         IF fakt->datdok < dFaktOd .OR. fakt->datdok > dFaktDo
+
+         IF fakt->datdok < dFaktOd .OR. fakt->datdok > dFaktDo // datumska provjera
 
             SKIP
             LOOP
 
          ENDIF
 
-         // usluge ne prenosi tako�er
+         IF nLeftArt > 0 .AND. Left( idroba, nLeftArt ) != cArtPocinju
+            SKIP
+            LOOP
+         ENDIF
+
+         // usluge ne prenosi takodjer
          IF AllTrim( podbr ) == "."  .OR. idroba = "U"
 
             SKIP
@@ -206,10 +218,10 @@ FUNCTION FaKaPrenos_MP_u_razduzenje()
 
          ENDIF
 
-         // saberi kolicine za jedan artikal
-         my_rlock()
+
+         my_rlock() // saberi kolicine za jedan artikal
          REPLACE kolicina WITH ( kolicina + fakt->kolicina )
-         my_unlock()
+
 
          SELECT fakt
          SKIP
@@ -225,7 +237,9 @@ FUNCTION FaKaPrenos_MP_u_razduzenje()
       // brisi stavke koje su kolicina = 0
       DO WHILE !Eof()
          IF field->kolicina = 0
+            my_rlock()
             DELETE
+            my_unlock()
          ENDIF
          SKIP
       ENDDO
@@ -233,7 +247,7 @@ FUNCTION FaKaPrenos_MP_u_razduzenje()
 
       SELECT fakt
 
-      @ m_x + 10, m_y + 2 SAY "Dokument je prenesen !!"
+      @ m_x + 10, m_y + 2 SAY "Dokument je prenesen !"
 
       IF gBrojac == "D"
          cBrKalk := UBrojDok( Val( Left( cBrKalk, 5 ) ) + 1, 5, Right( cBrKalk, 3 ) )
@@ -249,7 +263,7 @@ FUNCTION FaKaPrenos_MP_u_razduzenje()
    Boxc()
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
 
 

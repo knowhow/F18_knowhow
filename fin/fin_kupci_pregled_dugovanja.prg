@@ -26,6 +26,8 @@ FUNCTION fin_kupci_pregled_dugovanja()
       hRec := hb_Hash()
       hRec[ "partner_id" ] := "000" + AllTrim( Str ( i ) )
       hRec[ "partner_naz" ] := "naz " + Str( i )
+      hRec[ "i_ukupno" ] := i
+
       AAdd( oReport:aRecords, hRec )
    NEXT
    oReport:run()

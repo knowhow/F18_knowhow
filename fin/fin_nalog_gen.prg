@@ -155,7 +155,6 @@ FUNCTION fin_open_psuban_and_ostalo()
    O_PARTN
    O_TNAL
    O_TDOK
-   altd()
    o_fin_psuban()
    O_FIN_PRIPR
 

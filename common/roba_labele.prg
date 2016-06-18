@@ -78,7 +78,7 @@ STATIC FUNCTION GetVars( cVarijanta, cKolicina, tkm_no, len_naz )
 
       SELECT ( F_KALK_PRIPR )
       IF !Used()
-         O_KALK_PRIPR
+         o_kalk_pripr()
          lOpened := .F.
       ENDIF
 
@@ -201,7 +201,7 @@ STATIC FUNCTION KaFillRLabele( cKolicina )
    LOCAL _predisp := .F.
 
    O_ROBA
-   O_KALK_PRIPR
+   o_kalk_pripr()
 
    SELECT kalk_pripr
    SET ORDER TO TAG "1"

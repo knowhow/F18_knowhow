@@ -31,7 +31,7 @@ FUNCTION select_o_kalk_as_pripr()
 
 
 FUNCTION select_o_kalk_doks2()
-      RETURN select_o_dbf( "KALK_DOKS2", F_KALK_DOKS2, "kalk_doks2" , "1" )
+   RETURN select_o_dbf( "KALK_DOKS2", F_KALK_DOKS2, "kalk_doks2", "1" )
 
 
 FUNCTION open_kalk_as_pripr( lSql, cIdFirma, cIdVd, cBrDok )
@@ -53,6 +53,30 @@ FUNCTION o_kalk_pripr()
 FUNCTION select_o_kalk_pripr()
 
    RETURN select_o_dbf( "KALK_PRIPR", F_KALK_PRIPR, "kalk_pripr", "1" )
+
+FUNCTION select_o_kalk_pripr2()
+
+   RETURN select_o_dbf( "KALK_PRIPR2", F_KALK_PRIPR9, "kalk_pripr2", "1" )
+
+
+FUNCTION select_o_kalk_pripr9()
+
+   RETURN select_o_dbf( "KALK_PRIPR9", F_KALK_PRIPR9, "kalk_pripr9", "1" )
+
+
+FUNCTION o_kalk_kartica()
+
+   RETURN o_dbf_table( F_KALK_DOKS, "kalk_kartica", "ID" )
+
+
+FUNCTION o_kalk_doks()
+
+   RETURN o_dbf_table( F_KALK_DOKS, "kalk_doks", "1" )
+
+
+FUNCTION o_kalk_doks2()
+
+   RETURN o_dbf_table( F_KALK_DOKS2, "kalk_doks", "1" )
 
 
 FUNCTION o_kalk_report()

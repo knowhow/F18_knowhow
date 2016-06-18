@@ -39,7 +39,7 @@ STATIC FUNCTION _o_gen_tables( from_kum )
    ELSE
       SELECT F_KALK_PRIPR
       IF !Used()
-         O_KALK_PRIPR
+         o_kalk_pripr()
       ENDIF
    ENDIF
 
@@ -446,7 +446,7 @@ FUNCTION mnu_prenos_kalk_u_tops()
 // ---------------------------------------------------------------
 STATIC FUNCTION kalk_dokument_postoji( idfirma, tipdokumenta, brojdokumenta )
 
-   O_KALK_DOKS
+   o_kalk_doks()
    SELECT kalk_doks
    HSEEK idfirma + tipdokumenta + brojdokumenta
 

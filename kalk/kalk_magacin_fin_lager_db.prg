@@ -18,7 +18,7 @@
 // otvaranje potrebnih tabela
 // -----------------------------------
 static function _o_tbl()
-O_KALK_DOKS
+o_kalk_doks()
 O_KALK
 O_SIFK
 O_SIFV

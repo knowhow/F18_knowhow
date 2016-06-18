@@ -167,7 +167,7 @@ FUNCTION kalk_unos_stavki_dokumenta( lAObrada )
 FUNCTION o_kalk_edit()
 
    O_PARTN
-   O_KALK_DOKS
+   o_kalk_doks()
    O_ROBA
    O_KALK
    O_KONTO
@@ -177,7 +177,7 @@ FUNCTION o_kalk_edit()
    o_koncij()
    O_SIFK
    O_SIFV
-   O_KALK_PRIPR
+   o_kalk_pripr()
 
    SELECT kalk_pripr
    SET ORDER TO TAG "1"
@@ -193,7 +193,7 @@ STATIC FUNCTION printaj_duple_stavke_iz_pripreme()
    LOCAL _scan, _i
 
    O_ROBA
-   O_KALK_PRIPR
+   o_kalk_pripr()
 
    SELECT kalk_pripr
    GO TOP
@@ -1108,7 +1108,7 @@ STATIC FUNCTION kalk_dokument_prenos_cijena()
 
    IF _opt == 2
 
-      O_KALK_PRIPR
+      o_kalk_pripr()
       O_ROBA
       o_koncij()
       O_KONTO
@@ -1211,7 +1211,7 @@ FUNCTION ProtStErase()
       RETURN
    ENDIF
 
-   O_KALK_PRIPR
+   o_kalk_pripr()
    SELECT kalk_pripr
    GO TOP
 
@@ -1236,7 +1236,7 @@ FUNCTION SetNcTo0()
       RETURN .F.
    ENDIF
 
-   O_KALK_PRIPR
+   o_kalk_pripr()
    SELECT kalk_pripr
    GO TOP
    my_flock()
@@ -2251,7 +2251,7 @@ STATIC FUNCTION kalk_open_tables_unos( lAzuriraniDok, cIdFirma, cIdVD, cBrDok )
    IF lAzuriraniDok
       open_kalk_as_pripr( .T., cIdFirma, cIdVd, cBrDok ) // .T. => SQL table
    ELSE
-      O_KALK_PRIPR
+      o_kalk_pripr()
    ENDIF
 
    RETURN .T.

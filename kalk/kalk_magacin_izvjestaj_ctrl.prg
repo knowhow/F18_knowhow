@@ -60,9 +60,9 @@ FUNCTION r_ct_sast()
    cre_r_tbl( nVar )
 
    O_PARTN
-   O_KALK_PRIPR
+   o_kalk_pripr()
    O_KALK
-   O_KALK_DOKS
+   o_kalk_doks()
    O_ROBA
    O_KONTO
 

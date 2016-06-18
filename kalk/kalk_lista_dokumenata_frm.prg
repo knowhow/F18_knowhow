@@ -39,7 +39,7 @@ FUNCTION browse_kalk_dok()
    o_koncij()
    O_KALK
    O_KONTO
-   O_KALK_DOKS
+   o_kalk_doks()
 
    SELECT kalk
    SELECT kalk_doks
@@ -256,7 +256,7 @@ FUNCTION kalk_pregled_dokumenata_hronoloski()
    cIdFirma := gFirma
    cIdFirma := Left( cIdFirma, 2 )
 
-   O_KALK_DOKS
+   o_kalk_doks()
    SELECT kalk
    SELECT kalk_doks
    SET ORDER TO TAG "3"
@@ -361,7 +361,7 @@ STATIC FUNCTION pregled_dokumenata_hron_keyhandler( Ch )
       nRet := DE_REFRESH
 
    CASE Ch == K_ENTER
-      pregled_dokumenta()
+      kalk_pregled_dokumenta()
       SELECT kalk_doks
       nRet := DE_CONT
    CASE Ch == K_CTRL_P
@@ -370,7 +370,7 @@ STATIC FUNCTION pregled_dokumenata_hron_keyhandler( Ch )
       my_close_all_dbf()
       kalk_stampa_dokumenta( .T., cSeek )
       O_KALK
-      O_KALK_DOKS
+      o_kalk_doks()
       PopWA()
       nRet := DE_REFRESH
    ENDCASE
@@ -379,7 +379,7 @@ STATIC FUNCTION pregled_dokumenata_hron_keyhandler( Ch )
 
 
 
-STATIC FUNCTION pregled_dokumenta()
+STATIC FUNCTION kalk_pregled_dokumenta()
 
    SELECT kalk
    SET ORDER TO TAG "1"
@@ -402,15 +402,15 @@ STATIC FUNCTION pregled_dokumenta()
    SET CURSOR ON
    @ m_x + 2, m_y + 1 SAY "Pregled dokumenta: "
    ?? kalk_doks->idfirma, "-", kalk_doks->idvd, "-", kalk_doks->brdok, " od", kalk_doks->datdok
-   BrowseKey( m_x + 4, m_y + 1, m_x + 15, m_y + 77, ImeKol, {| Ch| pregled_dokumenta_key_handler( Ch ) }, "idFirma+idvd+brdok=kalk_doks->(idFirma+idvd+brdok)", kalk_doks->( idFirma + idvd + brdok ), 2,,, {|| .F. } )
+   BrowseKey( m_x + 4, m_y + 1, m_x + 15, m_y + 77, ImeKol, {| Ch| kalk_pregled_dokumenta_key_handler( Ch ) }, "idFirma+idvd+brdok=kalk_doks->(idFirma+idvd+brdok)", kalk_doks->( idFirma + idvd + brdok ), 2,,, {|| .F. } )
 
    BoxC()
 
-   RETURN
+   RETURN .T.
 
 
 
-STATIC FUNCTION pregled_dokumenta_key_handler( Ch )
+STATIC FUNCTION kalk_pregled_dokumenta_key_handler( Ch )
 
    LOCAL cDn := "N", nTrecDok := 0, nRet := DE_CONT
    DO CASE
@@ -453,7 +453,7 @@ STATIC FUNCTION pregled_kartice()
 
    Box(, 15, 77, .T., "Pregled  kartice " + iif( Empty( cPkonto ), cMKonto, cPKonto ) )
 
-   O_KALK_KARTICA
+   o_kalk_kartica()
    my_dbf_zap()
    SET ORDER TO TAG "ID"
 

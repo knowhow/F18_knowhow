@@ -251,8 +251,8 @@ STATIC FUNCTION kalk_mag_insert_ps_into_pripr( data, params )
    LOCAL _ulaz, _izlaz, _nvu, _nvi, _id_roba, _vpvu, _vpvi
    LOCAL _magacin_po_nabavnoj := .T.
 
-   O_KALK_PRIPR
-   O_KALK_DOKS
+   o_kalk_pripr()
+   o_kalk_doks()
    o_koncij()
    O_ROBA
    O_TARIFA

@@ -16,7 +16,7 @@
 FUNCTION StPripr()
 
    m := "-------------- -------- ----------"
-   O_KALK_PRIPR
+   o_kalk_pripr()
 
    START PRINT CRET
 

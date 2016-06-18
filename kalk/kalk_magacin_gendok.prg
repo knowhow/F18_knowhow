@@ -27,8 +27,6 @@ FUNCTION GenMag()
    AAdd( _opcexe, {|| MnuMInv() } )
    AAdd( _opc, "4. nivelacija po zadatom %" )
    AAdd( _opcexe, {|| MNivPoProc() } )
-   AAdd( _opc, "5. preknjizenje tarifa" )
-   AAdd( _opcexe, {|| GetPreknM() } )
    AAdd( _opc, "6. pocetno stanje na osnovu preknjizenja tarifa" )
    AAdd( _opcexe, {|| GetPstPreknj() } )
 
@@ -145,8 +143,8 @@ FUNCTION InvManj()
    LOCAL nFaktVPC := 0, lOdvojiVisak := .F., nBrSl := 0
 
    o_koncij()
-   O_KALK_PRIPR
-   O_KALK_PRIPR2
+   o_kalk_pripr()
+   o_kalk_pripr2()
    O_KALK
    O_SIFK
    O_SIFV
@@ -164,7 +162,7 @@ FUNCTION InvManj()
 
    PRIVATE cBrOtp := SljBroj( cidfirma, "95", 8 )
    IF lOdvojiVisak
-      O_KALK_PRIPR9
+      o_kalk_pripr9()
       PRIVATE cBrDop := SljBroj( cidfirma, "16", 8 )
       DO WHILE .T.
          SELECT kalk_pripr9
@@ -297,7 +295,7 @@ FUNCTION MNivPoProc()
    BoxC()
 
    o_koncij()
-   O_KALK_PRIPR
+   o_kalk_pripr()
    O_KALK
    PRIVATE cBrDok := SljBroj( cidfirma, "18", 8 )
 
@@ -423,7 +421,7 @@ FUNCTION KorekPC()
    read;ESC_BCR
    BoxC()
    O_ROBA
-   O_KALK_PRIPR
+   o_kalk_pripr()
    O_KALK
 
    nTUlaz := nTIzlaz := 0
@@ -560,8 +558,8 @@ FUNCTION KorekPC()
 FUNCTION Otprema()
 
    o_koncij()
-   O_KALK_PRIPR2
-   O_KALK_PRIPR
+   o_kalk_pripr2()
+   o_kalk_pripr()
    O_KALK
    O_SIFK
    O_SIFV
@@ -657,7 +655,7 @@ FUNCTION Otprema()
 
 
 /* Iz96u16()
- *    
+ *
  */
 
 FUNCTION Iz96u16()

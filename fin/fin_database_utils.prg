@@ -25,7 +25,7 @@ FUNCTION fin_admin_opcije_menu()
    AAdd( opcexe, {|| daterr_rpt() } )
 
    AAdd( opc, "4. kontrola podataka nakon importa iz FMK" )
-   AAdd( opcexe, {|| f18_test_data() } )
+   AAdd( opcexe, {|| fmk_provjera_za_migraciju_f18() } )
 
    AAdd( opc, "------------------------------------------------------" )
    AAdd( opcexe, {|| NIL } )

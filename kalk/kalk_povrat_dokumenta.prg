@@ -141,9 +141,9 @@ FUNCTION kalk_povrat_dokumenta()
 
 STATIC FUNCTION otvori_kalk_tabele_za_povrat()
 
-   O_KALK_DOKS
-   O_KALK_DOKS2
-   O_KALK_PRIPR
+   o_kalk_doks()
+   o_kalk_doks2()
+   o_kalk_pripr()
    O_KALK
    SET ORDER TO TAG "1"
 

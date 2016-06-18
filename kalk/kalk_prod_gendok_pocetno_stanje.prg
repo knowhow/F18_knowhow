@@ -17,8 +17,8 @@ FUNCTION PocStProd()
 
    lager_lista_prodavnica( .T. )
 x   IF !Empty( goModul:oDataBase:cSezonDir ) .AND. Pitanje(, "Prebaciti dokument u radno područje", "D" ) == "D"
-    //  O_KALK_PRIPRRP
-      O_KALK_PRIPR
+    //  o_kalk_pripr()RP
+      o_kalk_pripr()
       IF reccount2() <> 0
          SELECT kalk_priprrp
          APPEND FROM kalk_pripr

@@ -64,7 +64,7 @@ STATIC FUNCTION _kont_doks( dD_f, dD_t, cId_td, cId_mkto, ;
    LOCAL cNalog := ""
 
    // prvo u doks-u nadji dokumente i prema njima onda idi
-   O_KALK_DOKS
+   o_kalk_doks()
 
    cId_td := AllTrim( cId_td )
    cId_mkto := AllTrim( cId_mkto )
@@ -126,7 +126,7 @@ STATIC FUNCTION _kont_doks( dD_f, dD_t, cId_td, cId_mkto, ;
 
       ++ nCount
 
-      O_KALK_DOKS
+      o_kalk_doks()
 
       SELECT kalk_doks
       GO ( nTNRec )

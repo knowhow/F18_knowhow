@@ -23,7 +23,7 @@ FUNCTION kalk_generisi_inventuru_magacina()
 
    lOsvjezi := .F.
 
-   O_KALK_PRIPR
+   o_kalk_pripr()
    GO TOP
 
    IF idvd == "IM"
@@ -227,10 +227,10 @@ FUNCTION kalk_generisanje_inventure_razlike()
    O_SIFK
    O_SIFV
    O_ROBA
-   O_KALK_PRIPR
+   o_kalk_pripr()
    o_kalk_pript()
    o_koncij()
-   O_KALK_DOKS
+   o_kalk_doks()
    O_KALK
 
    PRIVATE cBrDok := SljBroj( cIdFirma, "IM", 8 )

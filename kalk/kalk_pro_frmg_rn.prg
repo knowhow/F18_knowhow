@@ -35,7 +35,7 @@ FUNCTION BrowseRn()
 
    cIdFirma := Left( cIdFirma, 2 )
 
-   O_KALK_DOKS
+   o_kalk_doks()
 
    SELECT kalk_doks
    SET ORDER TO TAG "2"
@@ -106,7 +106,7 @@ FUNCTION EdBrn( Ch )
       my_close_all_dbf()
       kalk_stampa_dokumenta( .T., cSeek )
       O_KALK
-      O_KALK_DOKS
+      o_kalk_doks()
       PopWA()
       nRet := DE_REFRESH
    ENDCASE

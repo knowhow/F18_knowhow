@@ -31,7 +31,7 @@ FUNCTION P_Fakt()
    O_FAKT_PRIPR
    O_PARTN
    O_KONTO
-   O_KALK_PRIPR
+   o_kalk_pripr()
    O_RJ
 
    SET ORDER TO TAG "ID"

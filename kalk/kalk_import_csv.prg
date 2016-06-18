@@ -736,7 +736,7 @@ STATIC FUNCTION GetKTipDok( cFaktTD )
 // ---------------------------------------------------------------
 STATIC FUNCTION FaktExist()
 
-   O_KALK_DOKS
+   o_kalk_doks()
 
    SELECT temp
    GO TOP
@@ -781,9 +781,9 @@ STATIC FUNCTION TTbl2Kalk()
    LOCAL cIdKonto
    LOCAL cIdKonto2
 
-   O_KALK_PRIPR
+   o_kalk_pripr()
    O_KALK
-   O_KALK_DOKS
+   o_kalk_doks()
    O_ROBA
 
    SELECT temp

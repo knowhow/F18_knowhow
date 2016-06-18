@@ -38,7 +38,7 @@ FUNCTION IP()
    BoxC()
 
    o_koncij()
-   O_KALK_PRIPR
+   o_kalk_pripr()
    O_KALK
 
    PRIVATE cBrDok := SljBroj( cidfirma, "IP", 8 )
@@ -288,7 +288,7 @@ FUNCTION gen_ip_razlika()
    O_SIFV
    O_ROBA
    o_koncij()
-   O_KALK_PRIPR
+   o_kalk_pripr()
    o_kalk_pript()
    O_KALK
 

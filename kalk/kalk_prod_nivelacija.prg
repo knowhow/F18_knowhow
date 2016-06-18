@@ -21,9 +21,9 @@ FUNCTION Niv_11()
 
    O_TARIFA
    o_koncij()
-   O_KALK_PRIPR2
-   O_KALK_PRIPR
-   O_KALK_DOKS
+   o_kalk_pripr2()
+   o_kalk_pripr()
+   o_kalk_doks()
    O_KALK
    O_SIFK
    O_SIFV

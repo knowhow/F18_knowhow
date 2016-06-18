@@ -37,7 +37,7 @@ FUNCTION Prenos16()
    LOCAL cTipKalk := "10"
 
    o_koncij()
-   O_KALK_PRIPR
+   o_kalk_pripr()
    O_KALK
    O_ROBA
    O_KONTO

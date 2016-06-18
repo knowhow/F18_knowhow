@@ -35,7 +35,7 @@ FUNCTION KorekNC2()
       CLOSERET
    ENDIF
    O_ROBA
-   O_KALK_PRIPR
+   o_kalk_pripr()
    O_KALK
 
    nTUlaz := 0

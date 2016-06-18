@@ -242,7 +242,7 @@ FUNCTION gen_cache()
    my_dbf_zap()
 
 
-   O_KALK_DOKS
+   o_kalk_doks()
    O_KALK
 
    Box(, 1, 70 )

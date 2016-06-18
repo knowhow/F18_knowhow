@@ -249,8 +249,8 @@ STATIC FUNCTION kalk_prod_insert_ps_into_pripr( data, params )
 
    PRIVATE aPorezi := {}
 
-   O_KALK_PRIPR
-   O_KALK_DOKS
+   o_kalk_pripr()
+   o_kalk_doks()
    o_koncij()
    O_ROBA
    O_TARIFA

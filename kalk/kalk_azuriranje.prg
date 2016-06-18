@@ -27,7 +27,7 @@ FUNCTION kalk_azuriranje_dokumenta( lAuto )
       RETURN .F.
    ENDIF
 
-   O_KALK_PRIPR
+   o_kalk_pripr()
    SELECT kalk_pripr
    GO TOP
 
@@ -45,7 +45,7 @@ FUNCTION kalk_azuriranje_dokumenta( lAuto )
       RETURN .F.
    ENDIF
 
-   O_KALK_PRIPR2
+   o_kalk_pripr2()
    my_dbf_zap()
    USE
 
@@ -118,8 +118,8 @@ STATIC FUNCTION kalk_vrati_iz_pripr2()
    LOCAL lPrebaci := .F.
    LOCAL _rec
 
-   O_KALK_PRIPR
-   O_KALK_PRIPR2
+   o_kalk_pripr()
+   o_kalk_pripr2()
 
    IF field->idvd $ "18#19"
       IF kalk_pripr2->( reccount2() ) <> 0
@@ -254,7 +254,7 @@ STATIC FUNCTION formiraj_fakt_zavisne_dokumente()
 
    LOCAL cOdg := "D"
 
-   O_KALK_PRIPR
+   o_kalk_pripr()
 
    IF !f18_use_module( "fakt" )
       RETURN
@@ -482,7 +482,7 @@ STATIC FUNCTION kalk_provjera_cijena()
    LOCAL cIdVd
    LOCAL cBrDok
 
-   O_KALK_PRIPR
+   o_kalk_pripr()
 
    SELECT kalk_pripr
    GO TOP
@@ -623,7 +623,7 @@ STATIC FUNCTION kalk_provjeri_duple_dokumente( aRezim )
 
    LOCAL lViseDok := .F.
 
-   O_KALK_PRIPR
+   o_kalk_pripr()
    GO BOTTOM
 
    cTest := field->idfirma + field->idvd + field->brdok
@@ -680,10 +680,10 @@ FUNCTION o_kalk_za_azuriranje( raspored_tr )
 
    my_close_all_dbf()
 
-   O_KALK_PRIPR
+   o_kalk_pripr()
    O_KALK
-   O_KALK_DOKS2
-   O_KALK_DOKS
+   o_kalk_doks2()
+   o_kalk_doks()
 
    IF raspored_tr
       kalk_raspored_troskova()

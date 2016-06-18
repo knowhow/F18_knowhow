@@ -123,7 +123,7 @@ FUNCTION GenNivP()
    BoxC()
 
    o_koncij()
-   O_KALK_PRIPR
+   o_kalk_pripr()
    O_KALK
    PRIVATE cBrDok := SljBroj( cidfirma, "19", 8 )
 
@@ -257,7 +257,7 @@ FUNCTION NivPoProc()
    BoxC()
 
    o_koncij()
-   O_KALK_PRIPR
+   o_kalk_pripr()
    O_KALK
    PRIVATE cBrDok := SljBroj( cidfirma, "19", 8 )
 
@@ -406,7 +406,7 @@ FUNCTION VratiZadNiv()
 
    BoxC()
 
-   O_KALK_DOKS
+   o_kalk_doks()
    SET ORDER TO TAG "1"
    GO TOP
    SEEK cIdFirma + "20"
@@ -431,7 +431,7 @@ FUNCTION VratiZadNiv()
       BoxC()
    ENDIF
 
-   O_KALK_PRIPR
+   o_kalk_pripr()
    O_KALK
    PRIVATE cBrDok := SljBroj( cIdFirma, "19", 8 )
 
@@ -504,7 +504,7 @@ FUNCTION KorekMPC()
    SEEK Trim( cMagac )
 
    O_ROBA
-   O_KALK_PRIPR
+   o_kalk_pripr()
    O_KALK
 
    nTUlaz := nTIzlaz := 0
@@ -682,8 +682,8 @@ FUNCTION KorekMPC()
 FUNCTION Iz13u11()
 
    O_KONTO
-   O_KALK_PRIPR
-   O_KALK_PRIPR2
+   o_kalk_pripr()
+   o_kalk_pripr2()
    O_KALK
    O_SIFK
    O_SIFV
@@ -749,7 +749,7 @@ FUNCTION Iz13u11()
 // Generisanje stavki u 42-ki na osnovu storna 41-ica
 FUNCTION Gen41S()
 
-   O_KALK_PRIPR
+   o_kalk_pripr()
    SELECT kalk_pripr
    IF idvd <> "42"
       MsgBeep( "U kalk_pripremi mora da se nalazi dokument 42 !!!" )
@@ -1110,10 +1110,10 @@ FUNCTION gen_ip_80()
       RETURN
    ENDIF
 
-   O_KALK_DOKS
+   o_kalk_doks()
    O_KALK
    o_kalk_pript()
-   O_KALK_PRIPR
+   o_kalk_pripr()
 
    cNxt80 := GetNextKalkDoc( gFirma, "80" )
 

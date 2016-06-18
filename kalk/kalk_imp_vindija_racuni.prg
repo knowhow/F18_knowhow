@@ -1238,7 +1238,7 @@ STATIC FUNCTION fakt_u_kalk_postoji( nRight )
       nRight := 0
    ENDIF
 
-   O_KALK_DOKS
+   o_kalk_doks()
 
    SELECT kalk_imp_temp
    GO TOP
@@ -1311,10 +1311,10 @@ STATIC FUNCTION from_kalk_imp_temp_to_pript( aFExist, lFSkip, lNegative, cCtrl_a
    LOCAL aArr_ctrl := {}
    LOCAL _id_konto, _id_konto2
 
-   O_KALK_PRIPR
+   o_kalk_pripr()
    o_koncij()
-   O_KALK_DOKS
-   O_KALK_DOKS2
+   o_kalk_doks()
+   o_kalk_doks2()
    O_ROBA
    o_kalk_pript()
 
@@ -1772,7 +1772,7 @@ STATIC FUNCTION GetKVars( dDatDok, cBrKalk, cTipDok, cIdKonto, cIdKonto2, cRazd 
    cIdKonto2 := PadR( "1310", 7 )
    cRazd := "D"
    O_KONTO
-   O_KALK_DOKS
+   o_kalk_doks()
    cBrKalk := GetNextKalkDoc( cIdFirma, cTipDok )
 
    Box(, 15, 60 )

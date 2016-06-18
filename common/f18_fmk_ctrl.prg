@@ -15,7 +15,7 @@
 // -----------------------------------------
 // provjera podataka za migraciju f18
 // -----------------------------------------
-FUNCTION f18_test_data()
+FUNCTION fmk_provjera_za_migraciju_f18()
 
    LOCAL _a_sif := {}
    LOCAL _a_data := {}
@@ -85,7 +85,7 @@ FUNCTION f18_test_data()
    // prikazi rezultat testa
    f18_pr_rezultat( _a_ctrl, _a_data, _a_sif )
 
-   RETURN
+   RETURN .T.
 
 
 // -----------------------------------------

@@ -36,7 +36,7 @@ FUNCTION tops_nor_96( cIdFirma, cIdTipDok, cIdZaduz2, cIdKonto2, cIdKonto, ;
       lTest := .T.
    ENDIF
 
-   O_KALK_PRIPR
+   o_kalk_pripr()
    o_koncij()
    O_KALK
    O_KONTO
@@ -72,7 +72,7 @@ FUNCTION tops_nor_96( cIdFirma, cIdTipDok, cIdZaduz2, cIdKonto2, cIdKonto, ;
       O_SAST
    ENDIF
 
-   O_KALK_PRIPR
+   o_kalk_pripr()
    o_koncij()
    O_KALK
    O_KONTO

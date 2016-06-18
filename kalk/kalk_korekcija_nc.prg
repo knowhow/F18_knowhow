@@ -31,7 +31,7 @@ FUNCTION KorekNC()
       closeret
    ENDIF
 
-   O_KALK_PRIPR
+   o_kalk_pripr()
    O_KALK
    GO TOP
 

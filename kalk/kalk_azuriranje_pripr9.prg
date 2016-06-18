@@ -26,8 +26,8 @@ FUNCTION kalk_azuriranje_tabele_pripr9()
    LOCAL _i, _rec, _scan
    LOCAL _id_firma, _id_vd, _br_dok
 
-   O_KALK_PRIPR9
-   O_KALK_PRIPR
+   o_kalk_pripr9()
+   o_kalk_pripr()
 
    SELECT kalk_pripr
    GO TOP
@@ -95,8 +95,8 @@ FUNCTION kalk_povrat_dokumenta_iz_pripr9( cIdFirma, cIdVd, cBrDok )
 
    lSilent := .T.
 
-   O_KALK_PRIPR9
-   O_KALK_PRIPR
+   o_kalk_pripr9()
+   o_kalk_pripr()
 
    SELECT kalk_pripr9
    SET ORDER TO TAG "1"
@@ -224,7 +224,7 @@ FUNCTION kalk_povrat_dokumenta_iz_pripr9( cIdFirma, cIdVd, cBrDok )
       RETURN
    ENDIF
 
-   O_KALK_PRIPR9
+   o_kalk_pripr9()
    SELECT kalk_pripr9
 
    RETURN
@@ -235,8 +235,8 @@ FUNCTION kalk_povrat_najstariji_dokument_iz_pripr9()
 
    LOCAL nRec
 
-   O_KALK_PRIPR9
-   O_KALK_PRIPR
+   o_kalk_pripr9()
+   o_kalk_pripr()
 
    SELECT kalk_pripr9
    SET ORDER TO TAG "3"
@@ -308,6 +308,3 @@ STATIC FUNCTION postoji_li_dokument_u_pripr9( arr )
    NEXT
 
    RETURN
-
-
-

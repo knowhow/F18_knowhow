@@ -122,7 +122,7 @@ STATIC FUNCTION PovPr9()
 STATIC FUNCTION ka_pripr9_set_filter( aUslFirma, aUslDok, dDat1, dDat2 )
 
    // {
-   O_KALK_PRIPR9
+   o_kalk_pripr9()
    SET ORDER TO TAG "1"
 
    // obavezno postavi filter po rbr

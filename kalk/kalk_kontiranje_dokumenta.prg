@@ -861,7 +861,7 @@ FUNCTION DatVal()
    // uzmi datval iz doks2
    PushWA()
 
-   O_KALK_DOKS2
+   o_kalk_doks2()
    SET ORDER TO TAG "1"
    GO TOP
    SEEK finmat->( idfirma + idvd + brdok )
@@ -1687,7 +1687,7 @@ FUNCTION kalk_kontiranje_dokumenata_period()
 
    SELECT F_KALK_DOKS
    IF !Used()
-      O_KALK_DOKS
+      o_kalk_doks()
    ENDIF
 
 

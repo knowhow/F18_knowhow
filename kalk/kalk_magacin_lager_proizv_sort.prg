@@ -213,7 +213,7 @@ METHOD openDb
    O_ROBA
    O_TARIFA
    O_KONTO
-   O_KALK_DOKS
+   o_kalk_doks()
    O_KALK
 
    // "3","idFirma+mkonto+idroba+dtos(datdok)+podbr+MU_I+IdVD
@@ -318,7 +318,7 @@ METHOD getVars
    ::dDatOd := CToD( "" )
    ::dDatDo := Date()
 
-   O_KALK_PRIPR
+   o_kalk_pripr()
    ::cIdKonto := PadR( "1310", Len( kalk_pripr->mKonto ) )
    USE
 

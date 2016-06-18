@@ -209,7 +209,7 @@ METHOD TKalkMod:set_module_gvars()
    PUBLIC lPrikPRUC := .F.
    PUBLIC gDuzKonto
 
-   O_KALK_PRIPR
+   o_kalk_pripr()
    gDuzKonto := Len( mkonto )
 
 

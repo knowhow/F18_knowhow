@@ -19,8 +19,8 @@ FUNCTION Niv_10()
    LOCAL nRVPC := 0
 
    o_koncij()
-   O_KALK_PRIPR
-   O_KALK_PRIPR2
+   o_kalk_pripr()
+   o_kalk_pripr2()
    O_KALK
    O_TARIFA
    O_SIFK

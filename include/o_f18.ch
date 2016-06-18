@@ -133,11 +133,9 @@
 
 
 // modul KALK
-#xcommand O_KALK_PRIPR    => o_kalk_pripr()
 #xcommand O_KALK_S_PRIPR  => select(F_KALK_PRIPR); my_usex ( "kalk_pripr") ; set order to tag "1"
-#xcommand O_KALK_PRIPR2   => select(F_KALK_PRIPR2); my_use ("kalk_pripr2") ; set order to tag "1"
-#xcommand O_KALK_PRIPR9   => select(F_KALK_PRIPR9); my_use ("kalk_pripr9") ; set order to tag "1"
-#xcommand O_KALK_KARTICA  => select(F_KALK_KARTICA); my_use ( "kalk_kartica" ) ; set order to tag "ID"
+
+
 #xcommand O__KALK         => select(F__KALK); my_usex ("_kalk" )
 #xcommand O_KALK_FINMAT   => select(F_KALK_FINMAT); my_usex ("kalk_finmat")    ; set order to tag "1"
 #xcommand O_KALK          => select(F_KALK);  my_use  ("kalk")  ; set order to tag "1"
@@ -146,9 +144,8 @@
 #xcommand O_KALKX         => select(F_KALK);  usex  (KUMPATH +"kalk")  ; set order to tag "1"
 #xcommand O_KALKS         => select(F_KALKS);  my_use  ("kalks")  ; set order to tag "1"
 
+#xcommand XO_KALK         => select (F_FAKT);  my_use ("kalk2", "kalk_kalk" ) ; set order to tag "1"
 
-#xcommand O_KALK_DOKS      => select(F_KALK_DOKS);  my_use( "kalk_doks") ; set order to tag "1"
-#xcommand O_KALK_DOKS2     => select(F_KALK_DOKS2);  my_use( "kalk_doks2" ) ; set order to tag "1"
 #xcommand O_PORMP          => select(F_PORMP); usex ("pormp")     ; set order to tag "1"
 #xcommand O_PRODNC         => select(F_PRODNC);  my_use  ("prodnc")  ; set order to tag "PRODROBA"
 #xcommand O_RVRSTA         => select(F_RVRSTA);  my_use  ("rvrsta")  ; set order to tag "ID"

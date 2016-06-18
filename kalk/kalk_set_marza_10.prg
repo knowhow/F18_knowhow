@@ -25,7 +25,7 @@ FUNCTION SetMarza10()
    READ
    BoxC()
 
-   O_KALK_PRIPR
+   o_kalk_pripr()
    GO TOP
 
    IF !( IDVD == "10" )

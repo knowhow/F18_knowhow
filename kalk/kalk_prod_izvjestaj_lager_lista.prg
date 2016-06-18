@@ -59,7 +59,7 @@ FUNCTION lager_lista_prodavnica()
       lPocStanje := .F.
    ELSE
       lPocStanje := .T.
-      O_KALK_PRIPR
+      o_kalk_pripr()
       cBrPSt := "00001   "
       Box(, 2, 60 )
       @ m_x + 1, m_y + 2 SAY "Generacija poc. stanja  - broj dokumenta 80 -" GET cBrPSt
@@ -171,7 +171,7 @@ FUNCTION lager_lista_prodavnica()
    ENDIF
 
    IF lPocStanje
-      O_KALK_PRIPR
+      o_kalk_pripr()
    ENDIF
    lPrikK2 := .F.
    IF cPrikK2 == "D"

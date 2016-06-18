@@ -52,7 +52,7 @@ FUNCTION KaLabelBKod()
    SET ORDER TO TAG "ID"
 
    O_BARKOD
-   O_KALK_PRIPR
+   o_kalk_pripr()
 
    SELECT KALK_PRIPR
 

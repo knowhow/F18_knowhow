@@ -35,14 +35,14 @@ FUNCTION Iz47u96Norm()
 
    LOCAL cIdFirma := gFirma, cBrDok := cBrKalk := Space( 8 )
 
-   O_KALK_PRIPR
+   o_kalk_pripr()
    O_KALK
    O_ROBA
    O_KONTO
    O_PARTN
    O_TARIFA
    O_SAST
-#xcommand XO_KALK  => select (F_FAKT);  my_use ("kalk2", "kalk_kalk" ) ; set order to tag "1"
+
    XO_KALK
 
    dDatKalk := Date()

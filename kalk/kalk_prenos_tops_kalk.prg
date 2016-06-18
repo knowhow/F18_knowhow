@@ -200,7 +200,7 @@ FUNCTION kalk_preuzmi_tops_dokumente_auto()
    FileDelete( _file )
    FileDelete( StrTran( _file, ".dbf", ".txt" ) )
 
-   O_KALK_PRIPR
+   o_kalk_pripr()
    IF RecCount() <> 0
       MsgBeep( "Prenos dokumenata uspjesan, nalazi se u pripremi !" )
    ENDIF
@@ -858,12 +858,12 @@ STATIC FUNCTION _o_imp_tables()
 
    SELECT ( F_KALK_PRIPR )
    IF !Used()
-      O_KALK_PRIPR
+      o_kalk_pripr()
    ENDIF
 
    SELECT ( F_KALK_DOKS )
    IF !Used()
-      O_KALK_DOKS
+      o_kalk_doks()
    ENDIF
 
    SELECT ( F_KALK )

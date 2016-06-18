@@ -71,7 +71,7 @@ FUNCTION get_nivel_p()
    Box(, 2, 65 )
    @ 1 + m_x, 2 + m_y SAY "Vrsim generisanje nivelacije za " + AllTrim( Str( Len( aProd ) ) ) + " prodavnicu..."
 
-   O_KALK_DOKS
+   o_kalk_doks()
 
    nUvecaj := 1
    FOR nCnt := 1 TO Len( aProd )
@@ -138,7 +138,7 @@ FUNCTION get_zcnivel()
    Box(, 2, 65 )
    @ 1 + m_x, 2 + m_y SAY "Vrsim generisanje nivelacije za " + AllTrim( Str( Len( aProd ) ) ) + " prodavnicu..."
 
-   O_KALK_DOKS
+   o_kalk_doks()
 
    nUvecaj := 1
    FOR nCnt := 1 TO Len( aProd )

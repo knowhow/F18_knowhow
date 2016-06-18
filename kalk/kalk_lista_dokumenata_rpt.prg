@@ -23,7 +23,7 @@ FUNCTION StDoks()
    PRIVATE qqTipDok
    PRIVATE ddatod, ddatdo
 
-   O_KALK_DOKS
+   o_kalk_doks()
 
    IF reccount2() == 0
       kalk_gen_doks_iz_kalk()
@@ -48,7 +48,7 @@ FUNCTION SStDoks()
    LOCAL _qqmkonto, _qqpkonto
    LOCAL _partn_naz := "N"
 
-   O_KALK_DOKS
+   o_kalk_doks()
    O_PARTN
    O_KALK
 

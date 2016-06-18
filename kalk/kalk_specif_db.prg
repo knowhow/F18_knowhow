@@ -1155,7 +1155,7 @@ FUNCTION GenProdNc()
    O_PRODNC
    O_ROBA
    O_KALK
-   O_KALK_PRIPR
+   o_kalk_pripr()
    o_koncij()
    GO TOP
 
@@ -1225,7 +1225,7 @@ FUNCTION GetNcForProdavnica( cPKonto, cIdRoba )
 
    SELECT ( F_PRIPR )
    IF !Used()
-      O_KALK_PRIPR
+      o_kalk_pripr()
    ENDIF
 
    _DatDok = Date()

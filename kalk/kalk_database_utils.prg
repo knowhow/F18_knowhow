@@ -22,7 +22,7 @@ FUNCTION ODbKalk()
    o_koncij()
    O_KONTO
    O_PARTN
-   O_KALK_DOKS
+   o_kalk_doks()
    O_KALK
 
    RETURN
@@ -323,7 +323,7 @@ FUNCTION GetNextKalkDoc( cIdFirma, cIdTipDok, nUvecaj )
    find_kalk_doks_za_tip( cIdFirma, cIdTipDok )
 
 /*
-   O_KALK_DOKS
+   o_kalk_doks()
    SELECT kalk_doks
 */
    SET ORDER TO TAG "1"
@@ -428,7 +428,7 @@ FUNCTION kalk_novi_broj_dokumenta( firma, tip_dokumenta, konto )
    _broj := fetch_metric( _param, nil, _broj )
 
    // konsultuj i doks uporedo
-   O_KALK_DOKS
+   o_kalk_doks()
 
    IF glBrojacPoKontima
       SET ORDER TO TAG "1S"
@@ -757,7 +757,7 @@ FUNCTION renumeracija_kalk_pripr( cDok, cIdvd, silent )
 
    SELECT ( F_KALK_PRIPR )
    IF !Used()
-      O_KALK_PRIPR
+      o_kalk_pripr()
    ENDIF
 
    SELECT kalk_pripr
@@ -877,7 +877,7 @@ FUNCTION ObracunPorezaUvoz()
    // {
    LOCAL nTP, qqT1, qqT2, aUT1, aUT2
 
-   O_KALK_PRIPR
+   o_kalk_pripr()
 
    IF !( kalk_pripr->idvd $ "10#81" )
       MsgBeep( "Ova opcija vrijedi samo za dokumente tipa 10 i 81 !" )
@@ -1300,7 +1300,7 @@ FUNCTION Generisi11ku_iz10ke( cBrDok )
    O_TARIFA
    o_koncij()
    O_ROBA
-   O_KALK_PRIPR9
+   o_kalk_pripr9()
    cOtpremnica := Space( 10 )
    cIdKonto := "1320   "
    nBrojac := 0
@@ -1365,7 +1365,7 @@ FUNCTION Get11FromSmece( cBrDok )
    LOCAL nArr
    nArr := Select()
 
-   O_KALK_PRIPR9
+   o_kalk_pripr9()
    SELECT kalk_pripr9
    GO TOP
    DO WHILE !Eof()

@@ -23,6 +23,7 @@ FUNCTION Main( p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11 )
 
 
    cre_arg_v_hash( @_arg_v, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11 )
+
    set_f18_params( p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11 )
 
    harbour_init()
@@ -44,8 +45,10 @@ FUNCTION Main( p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11 )
 #endif
 
 
+/*
+    vraca hash matricu sa parametrima
+*/
 
-// vraca hash matricu sa parametrima
 STATIC FUNCTION cre_arg_v_hash( hash )
 
    LOCAL _i := 2
@@ -66,10 +69,9 @@ STATIC FUNCTION cre_arg_v_hash( hash )
    hash[ "p11" ] := NIL
 
    DO WHILE _i <= PCount()
-      // ucitaj parametar
-      _param := hb_PValue( _i++ )
-      // p1, p2, p3...
-      hash[ "p" + AllTrim( Str( ++_count ) ) ] := _param
+
+      _param := hb_PValue( _i++ ) // ucitaj parametar
+      hash[ "p" + AllTrim( Str( ++_count ) ) ] := _param // p1, p2, p3...
    ENDDO
 
    RETURN .T.
@@ -170,6 +172,7 @@ STATIC FUNCTION set_program_module_menu( menuop, menuexec, p3, p4, p5, p6, p7 )
 
    LOCAL _count := 0
    LOCAL cMenuBrojac
+
 
    IF f18_use_module( "fin" )
       cMenuBrojac := PadL( AllTrim( Str( ++_count ) ), 2 )

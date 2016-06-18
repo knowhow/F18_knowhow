@@ -66,7 +66,7 @@ FUNCTION fin_nalog_azurirani()
 
    start_print()
 
-   fin_nalog_stampa( "2", NIL, dDatNal )
+   fin_nalog_stampa_fill_psuban( "2", NIL, dDatNal )
    my_close_all_dbf()
 
    end_print()
@@ -132,6 +132,7 @@ FUNCTION fin_gen_ptabele_stampa_nalozi( lAuto )
 /*
    Generiše psuban, pa štampa sve naloge
 */
+
 FUNCTION fin_gen_psuban_stampa_nalozi( lAuto, dDatNal )
 
    LOCAL oNalog, oNalozi := FinNalozi():New()
@@ -146,7 +147,7 @@ FUNCTION fin_gen_psuban_stampa_nalozi( lAuto, dDatNal )
    AltD() // F18_DEBUG_FIN_AZUR
 #endif
 
-   fin_open_psuban()
+   fin_open_psuban_and_ostalo()
 
 
    SELECT PSUBAN
@@ -192,14 +193,14 @@ FUNCTION fin_gen_psuban_stampa_nalozi( lAuto, dDatNal )
 
       oNalog := FinNalog():New( cIdFirma, cIdVn, cBrNal )
 
-      fin_nalog_stampa( "1", lAuto, dDatNal, @oNalog )
+      fin_nalog_stampa_fill_psuban( "1", lAuto, dDatNal, @oNalog )
       oNalozi:addNalog( oNalog )
 
       IF !lAuto
          PushWA()
          my_close_all_dbf()
          end_print()
-         fin_open_psuban()
+         fin_open_psuban_and_ostalo()
          PopWa()
       ENDIF
 
@@ -233,7 +234,7 @@ FUNCTION fin_gen_psuban_stampa_nalozi( lAuto, dDatNal )
    - ako smo na fin_pripr onda puni psuban sa sadržajem fin_pripr
 */
 
-FUNCTION fin_nalog_stampa( cInd, lAuto, dDatNal, oNalog )
+FUNCTION fin_nalog_stampa_fill_psuban( cInd, lAuto, dDatNal, oNalog )
 
    LOCAL nArr := Select()
    LOCAL aRez := {}
@@ -373,13 +374,12 @@ FUNCTION fin_nalog_stampa( cInd, lAuto, dDatNal, oNalog )
 
          SELECT ( nArr )
 
-
          aRez := SjeciStr( cStr, 28 ) // konto partner
          cStr := opis
          aOpis := SjeciStr( cStr, 20 )
 
-         // šifra partnera
-         @ PRow(), PCol() + 1 SAY Idpartner( idpartner )
+
+         @ PRow(), PCol() + 1 SAY Idpartner( idpartner ) // šifra partnera
          nColStr := PCol() + 1
 
 
@@ -491,8 +491,7 @@ FUNCTION fin_nalog_stampa( cInd, lAuto, dDatNal, oNalog )
 
       IF cInd == "1" .AND. AScan( aNalozi, cIdFirma + cIdVN + cBrNal ) == 0
 
-         // priprema
-         SELECT ( nArr )
+         SELECT ( nArr ) // priprema
          Scatter()
          SELECT PSUBAN
          APPEND BLANK
@@ -562,6 +561,7 @@ FUNCTION fin_gen_sint_stavke( lAuto, dDatNal )
    LOCAL nStr, nD1, nD2, nP1, nP2
    LOCAL cIdFirma, cIDVn, cBrNal
    LOCAL nDugBHD, nDugDEM, nPotBHD, nPotDEM
+   LOCAL nRbr
 
    IF lAuto == NIL
       lAuto := .F.
@@ -577,7 +577,7 @@ FUNCTION fin_gen_sint_stavke( lAuto, dDatNal )
    IF Empty( PSUBAN->BrNal )
       MsgBeep( "subanalitika prazna" )
       my_close_all_dbf()
-      RETURN
+      RETURN .F.
    ENDIF
 
    A := 0

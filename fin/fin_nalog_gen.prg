@@ -148,15 +148,15 @@ FUNCTION box_fin_nalog( cIdFirma, cIdVn, cBrNal, dDatNal )
 /*
    otvori psuban i ostale potrebne ostale tabele
 */
-FUNCTION fin_open_psuban()
+FUNCTION fin_open_psuban_and_ostalo()
 
    O_VRSTEP
    O_KONTO
    O_PARTN
    O_TNAL
    O_TDOK
-   O_PSUBAN
-
+   altd()
+   o_fin_psuban()
    O_FIN_PRIPR
 
    RETURN .T.

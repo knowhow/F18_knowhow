@@ -258,18 +258,18 @@ FUNCTION dbf_ext_na_kraju( cIme )
     dbCreate2( cTable, aDbf )
 */
 
-FUNCTION dbCreate2( ime_dbf, struct_dbf, driver )
+FUNCTION dbCreate2( cImeDbf, struct_dbf, driver )
 
    LOCAL _ime_cdx
 
-   ime_dbf := f18_ime_dbf( ime_dbf )
-   _ime_cdx := ImeDbfCdx( ime_dbf )
+   cImeDbf := f18_ime_dbf( cImeDbf )
+   _ime_cdx := ImeDbfCdx( cImeDbf )
 
    IF Right( _ime_cdx, 4 ) == "." + INDEXEXT
       FErase( _ime_cdx )
    ENDIF
 
-   dbCreate( ime_dbf, struct_dbf, driver )
+   dbCreate( cImeDbf, struct_dbf, driver )
 
    RETURN .T.
 

@@ -59,21 +59,21 @@ FUNCTION f18_help()
 
    RETURN .T.
 
-/* --------------------------
+/*
  setup ulazne parametre F18
- -------------------------- */
+*/
 
 FUNCTION set_f18_params()
 
    LOCAL _i := 1
 
-   // setuj ulazne parametre
-   cParams := ""
+
+   cParams := "" // setuj ulazne parametre
 
    DO WHILE _i <= PCount()
 
-      // ucitaj parametar
-      cTok := hb_PValue( _i++ )
+
+      cTok := hb_PValue( _i++ ) // ucitaj parametar
 
 
       DO CASE
@@ -87,6 +87,11 @@ FUNCTION set_f18_params()
       CASE cTok == "--help"
          f18_help()
          QUIT_1
+
+      CASE cTok == "--dbf-prefix"   // prefix privatni dbf
+
+          dbf_prefix( hb_PValue( _i++ ) )
+
 
       CASE cTok == "-h"
          cHostName := hb_PValue( _i++ )
@@ -117,12 +122,14 @@ FUNCTION set_f18_params()
          cParams += Space( 1 ) + "schema=" + cSchema
       ENDCASE
 
+
+
    ENDDO
 
-   RETURN
+   RETURN .T.
 
-// --------------------------------------------------------------
-// --------------------------------------------------------------
+
+
 FUNCTION pp( x )
 
    LOCAL _key, _i
@@ -296,4 +303,4 @@ FUNCTION create_f18_dokumenti_on_desktop( desktop_path )
 
    DirChange( my_home() )
 
-   RETURN
+   RETURN .T.

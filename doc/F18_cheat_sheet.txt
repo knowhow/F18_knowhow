@@ -114,3 +114,22 @@ set_metric( "labeliranje_ispis_brdok", nil, cBrDok )
 
 lokalni za usera (my_user()):
 set_metric( "main_menu_fin", my_user(), cFinDN )
+
+
+
+=====
+
+create temp table kupci as
+select * from (select *
+from (select distinct(idpartner) as idpartner, partn.naz as partner_naz, refer.naz as referent_naz
+from fmk.fin_suban
+LEFT OUTER JOIN fmk.partn ON (fin_suban.idpartner = partn.id)
+LEFT OUTER JOIN fmk.refer ON (partn.idrefer = refer.id)
+where fin_suban.idkonto='2110   '
+order by idpartner) AS kupci
+) as kupci2
+
+select *, (sp_kupac_stanje( '2110   ', kupci.idpartner)).dospjelo from kupci;
+
+select (sp_kupac_stanje( '2110   ', kupci.idpartner)).dospjelo,
+(sp_kupac_stanje( '2110   ', kupci.idpartner)).nedospjelo from kupci;

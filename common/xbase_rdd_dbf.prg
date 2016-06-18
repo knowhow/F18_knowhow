@@ -11,6 +11,9 @@
 
 #include "f18.ch"
 
+STATIC s_cDbfPrefix := ""
+
+
 FUNCTION f18_ime_dbf( xTableRec )
 
    LOCAL _pos
@@ -37,12 +40,53 @@ FUNCTION f18_ime_dbf( xTableRec )
       _ret := "xyz"
       ?E "ERROR_f18_ime_dbf", my_home(), _a_dbf_rec[ "table" ]
    ELSE
-      _ret := my_home() + _a_dbf_rec[ "table" ] + "." + DBFEXT
+      _ret := my_home() + my_dbf_prefix( @_a_dbf_rec ) + _a_dbf_rec[ "table" ] + "." + DBFEXT
    ENDIF
 
    RETURN _ret
 
 
+FUNCTION dbf_prefix( cPrefix )
+
+   IF cPrefix != NIL
+      s_cDbfPrefix := cPrefix
+   ENDIF
+
+   RETURN  s_cDbfPrefix
+
+
+FUNCTION my_dbf_prefix( aDbfRec )
+
+   LOCAL cPath, lTemp
+
+   IF aDbfRec == NIL
+      lTemp := .T.
+   ELSE
+      lTemp := aDbfRec[ "temp" ]
+      lTemp := lTemp .AND. !( "params" $ aDbfRec[ "table" ] )
+   ENDIF
+
+
+   IF Empty( dbf_prefix() )
+      RETURN ""
+   ENDIF
+
+   IF lTemp
+
+      // .f18/bringout_2016
+      // /1/kalk_pripr
+      // /2/kalk_pripr
+      cPath := my_home() + dbf_prefix()
+
+      IF DirChange( cPath ) != 0
+         MakeDir( cPath )
+      ENDIF
+
+      RETURN  dbf_prefix() + SLASH
+
+   ENDIF
+
+   RETURN ""
 
 /*
    uzima sva polja iz tekuceg dbf zapisa
@@ -271,7 +315,7 @@ FUNCTION reopen_dbf( lExclusive, xArg1, lOpenIndex )
    SELECT ( _a_dbf_rec[ "wa" ] )
    USE
 
-   _dbf := my_home() + _a_dbf_rec[ "table" ]
+   _dbf := my_home() + my_dbf_prefix( @_a_dbf_rec ) + _a_dbf_rec[ "table" ]
 
    BEGIN SEQUENCE WITH {| err| Break( err ) }
 
@@ -295,9 +339,10 @@ FUNCTION reopen_dbf( lExclusive, xArg1, lOpenIndex )
    RETURN lRet
 
 
-// ------------------------------------------------------
-// zap, then open shared, lOpenIndex - otvori index
-// ------------------------------------------------------
+/*
+ zap, then open shared, lOpenIndex - otvori index
+*/
+
 FUNCTION reopen_exclusive_and_zap( cDbfTable, lOpenIndex )
 
    LOCAL _err
@@ -387,6 +432,7 @@ FUNCTION open_exclusive_zap_close( xArg1, lOpenIndex )
 
    RETURN .T.
 
+
 FUNCTION my_dbf_zap( cTabelaOrAlias )
 
    LOCAL cAlias
@@ -448,7 +494,7 @@ FUNCTION pakuj_dbf( a_dbf_rec, lSilent )
    BEGIN SEQUENCE WITH {| err| Break( err ) }
 
       SELECT ( a_dbf_rec[ "wa" ] )
-      my_use_temp( a_dbf_rec[ "alias" ], my_home() + a_dbf_rec[ "table" ], .F., .T. )
+      my_use_temp( a_dbf_rec[ "alias" ], my_home() + my_dbf_prefix( @a_dbf_rec ) + a_dbf_rec[ "table" ], .F., .T. )
 
       ?E "PACK-TABELA", a_dbf_rec[ "table" ]
 
@@ -499,9 +545,9 @@ FUNCTION dbf_open_temp_and_count( aDbfRec, nCntSql, nCnt, nDel )
    LOCAL nI, cMsg, cLogMsg := ""
 
    IF !File( cFullDbf )
-       nCnt := -999
-       nDel := -7777
-       RETURN .F.
+      nCnt := -999
+      nDel := -7777
+      RETURN .F.
    ENDIF
 
    cFullIdx := ImeDbfCdx( cFullDbf )

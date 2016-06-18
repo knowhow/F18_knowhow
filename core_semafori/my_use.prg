@@ -53,7 +53,7 @@ FUNCTION my_use_temp( xArg1, cFullDbf, lNewArea, lExcl, lOpenIndex )
       aDbfRec := get_a_dbf_rec( cAlias, .T. )
       nWa := aDbfRec[ 'wa' ]
       IF cFullDbf == NIL
-         cFullDbf := my_home() + aDbfRec[ "table" ]
+         cFullDbf := my_home() + my_dbf_prefix( @aDbfRec ) + aDbfRec[ "table" ]
       ENDIF
       EXIT
 
@@ -128,13 +128,16 @@ FUNCTION my_use( cAlias, cTable, lRefresh )
 
    hb_default( @lRefresh, s_lRefresh )
 
-   IF cTable != NIL
+   IF cAlias != NIL .AND. cTable != NIL
       aDbfRec := get_a_dbf_rec( cTable, .T. ) // my_use( kalk_pripr, kalk_kalk )
    ELSE
       aDbfRec := get_a_dbf_rec( cAlias, .T. )
-      cAlias :=  aDbfRec[ 'alias' ]
+      cAlias :=  aDbfRec[ "alias" ]
    ENDIF
 
+IF cAlias == "PSUBAN"
+altd()
+endif
 
 #ifdef F18_DEBUG_SYNC
    ?E "MMMMMMM my_use start", aDbfRec[ "table" ], "main thread:", is_in_main_thread(), "lRefresh", lRefresh
@@ -147,7 +150,7 @@ FUNCTION my_use( cAlias, cTable, lRefresh )
 #endif
    ENDIF
 
-   cFullDbf := my_home() + aDbfRec[ 'table' ]
+   cFullDbf := my_home() + my_dbf_prefix( @aDbfRec ) + aDbfRec[ "table" ]
 
    IF !File( f18_ime_dbf( aDbfRec ) )
       hb_idleSleep( 1.5 )

@@ -607,7 +607,7 @@ STATIC FUNCTION _o_ruc_zat( lOsuban )
       // otvaram osuban kao suban alijas
       // radi stampe kartice itd...
       SELECT ( F_SUBAN )
-      my_use_temp( "SUBAN", my_home() + "osuban", .F., .F. )
+      my_use_temp( "SUBAN", my_home() + + my_dbf_prefix() + "osuban", .F., .F. )
 
    ELSE
       O_SUBAN
@@ -1332,7 +1332,7 @@ FUNCTION fin_create_pom_table( fTiho, nParLen )
    LOCAL i
    LOCAL nPartLen
    LOCAL _alias := "POM"
-   LOCAL _ime_dbf := my_home() + "pom"
+   LOCAL _ime_dbf := my_home() + my_dbf_prefix() + "pom"
    LOCAL aDbf, aGod
 
    IF fTiho == NIL
@@ -1593,7 +1593,7 @@ STATIC FUNCTION _cre_oext_struct()
    LOCAL _struct
    LOCAL _ret := .T.
 
-   FErase( my_home() + _table + ".cdx" )
+   FErase( my_home() + my_dbf_prefix() + _table + ".cdx" )
 
    SELECT SUBAN
    SET ORDER TO TAG "3"
@@ -1609,11 +1609,11 @@ STATIC FUNCTION _cre_oext_struct()
    SELECT ( F_OSUBAN )
 
    // kreiraj tabelu
-   dbCreate( my_home() + "osuban.dbf", _struct )
+   dbCreate( my_home() + my_dbf_prefix() + "osuban.dbf", _struct )
 
    // otvori osuban ekskluzivno
    SELECT ( F_OSUBAN )
-   my_use_temp( "OSUBAN", my_home() + _table + ".dbf", .F., .T. )
+   my_use_temp( "OSUBAN", my_home() + my_dbf_prefix() + _table + ".dbf", .F., .T. )
 
    // kreiraj indekse
    INDEX ON IdFirma + IdKonto + IdPartner + DToS( DatDok ) + BrNal + RBr TAG "1"
@@ -2040,7 +2040,7 @@ FUNCTION fin_asistent_otv_st()
    // otvaram osuban kao suban alijas
    // radi stampe kartice itd...
    SELECT ( F_SUBAN )
-   my_use_temp( "SUBAN", my_home() + "osuban", .F., .F. )
+   my_use_temp( "SUBAN", my_home() + my_dbf_prefix() + "osuban", .F., .F. )
 
    SELECT suban
    SET ORDER TO TAG "1"
@@ -2152,7 +2152,7 @@ FUNCTION fin_asistent_otv_st()
    IF Pitanje(, "Želite li izvrsiti ažuriranje rezultata asistenta u kumulativ (D/N) ?", "N" ) == "D"
 
       SELECT ( F_OSUBAN )
-      my_use_temp( "OSUBAN", my_home() + "osuban", .F., .T. )
+      my_use_temp( "OSUBAN", my_home() + my_dbf_prefix() + "osuban", .F., .T. )
 
       O_SUBAN
 

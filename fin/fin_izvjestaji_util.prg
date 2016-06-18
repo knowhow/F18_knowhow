@@ -18,14 +18,14 @@
         te otvara kao ANAL ili SINT
 
   Usage: otvori_sint_anal_kroz_temp( .T., "IDRJ = '01'")
-    
+
    Parameters:
       lSint - .T. sintetika, .F. analitika
       cFilter - filter za suban tabelu
-    
+
   Return:
     otvorena pomoćna tabela ali kao alias SINT ili ANAL
- 
+
 */
 
 FUNCTION otvori_sint_anal_kroz_temp( lSint, cFilter )
@@ -177,9 +177,9 @@ STATIC FUNCTION close_sint_anal( lSint )
 
    IF Used()
       USE
-   ENDIF      
- 
-   RETURN
+   ENDIF
+
+   RETURN .T.
 
 
 
@@ -187,7 +187,7 @@ STATIC FUNCTION close_sint_anal( lSint )
 STATIC FUNCTION napravi_pomocnu_tabelu( lSint )
 
    LOCAL aDbf := {}
-   LOCAL cTable := my_home() + "pom"
+   LOCAL cTable := my_home() + my_dbf_prefix() + "pom"
 
    close_sint_anal( lSint )
 
@@ -225,6 +225,5 @@ STATIC FUNCTION napravi_pomocnu_tabelu( lSint )
       INDEX ON Idkonto                      TAG "4"
       INDEX ON DatNal                       TAG "5"
    ENDIF
- 
-   RETURN
 
+   RETURN

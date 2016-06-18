@@ -69,7 +69,7 @@ STATIC FUNCTION bterm_to_pripr()
    SELECT ( F_TMP_1 )
    USE
 
-   my_use_temp( "temp", my_home() + "temp" )
+   my_use_temp( "temp", my_home() + my_dbf_prefix() + "temp" )
 
    IF _gForm( @aParams ) = 0
       RETURN 0

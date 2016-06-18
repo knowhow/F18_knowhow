@@ -161,10 +161,6 @@ FUNCTION thread_dbfs( pThreadID )
 
 
 
-
-
-
-
 // -----------------------------------------------------------
 // vraca informaciju o nivou logiranja aplikcije
 // -----------------------------------------------------------
@@ -284,7 +280,6 @@ FUNCTION set_screen_dimensions()
    ?E " set font_width: ", hb_gtInfo( HB_GTI_FONTWIDTH, font_width() )
 //#endif
    ?E " set font_size: ", hb_gtInfo( HB_GTI_FONTSIZE, font_size() )
-
 
 
 

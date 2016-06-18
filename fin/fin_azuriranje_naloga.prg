@@ -170,14 +170,14 @@ FUNCTION o_fin_za_azuriranje()
    O_SINT
    O_NALOG
 
-   O_PSUBAN
+   o_fin_psuban()
    O_PANAL
    O_PSINT
    O_PNALOG
 
    O_FIN_PRIPR
 
-   RETURN
+   RETURN .T.
 
 
 

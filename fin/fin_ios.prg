@@ -727,7 +727,7 @@ STATIC FUNCTION mnu_ios_print()
    ENDIF
 
    IF _print_tip == "2" .AND. _export_dbf == "D"
-      f18_open_mime_document( my_home() + "r_export.dbf" )
+      f18_open_mime_document( my_home() + my_dbf_prefix() + "r_export.dbf" )
    ENDIF
 
    my_close_all_dbf()

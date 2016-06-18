@@ -226,7 +226,7 @@ FUNCTION TrfpB( Ch )
 
 FUNCTION UndoSheme( lKopi )
 
-   // {
+   
    LOCAL cPom := "170771.POM", cStari := SIFPATH + "TRFP.ST", cTekuci := SIFPATH + "TRFP.DBF"
    LOCAL cStari2 := SIFPATH + "TRFPI1.ST", cTekuci2 := SIFPATH + "TRFP.CDX"
    IF lKopi == NIL; lKopi := .F. ; ENDIF

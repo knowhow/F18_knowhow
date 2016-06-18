@@ -635,7 +635,7 @@ STATIC FUNCTION _cre_temp77()
    LOCAL _ret := .T.
    LOCAL _dbf
 
-   IF !File( my_home() + _table + ".dbf" )
+   IF !File( my_home() + my_dbf_prefix() + _table + ".dbf" )
 
       _dbf := dbStruct()
 
@@ -643,15 +643,15 @@ STATIC FUNCTION _cre_temp77()
       AAdd( _dbf, { "PART2", "C", 6, 0 } )
       AAdd( _dbf, { "NSLOG", "N", 10, 0 } )
 
-      dbCreate( my_home() + _table + ".dbf", _dbf )
+      dbCreate( my_home() + my_dbf_prefix() + _table + ".dbf", _dbf )
 
    ENDIF
 
-   my_use_temp( "TEMP77", my_home() + _table, .F., .T. )
+   my_use_temp( "TEMP77", my_home() + my_dbf_prefix() + _table, .F., .T. )
 
    my_dbf_zap()
 
-   RETURN
+   RETURN .T.
 
 
 // ---------------------------------------------------------------

@@ -364,14 +364,14 @@ STATIC FUNCTION _create_labelu_dbf()
    SELECT ( F_LABELU )
    USE
 
-   FErase( my_home() + _table_label + ".dbf" )
-   FErase( my_home() + _table_label + ".cdx" )
+   FErase( my_home() + my_dbf_prefix() + _table_label + ".dbf" )
+   FErase( my_home() + my_dbf_prefix() + _table_label + ".cdx" )
 
-   dbCreate( my_home() + _table_label + ".dbf", _dbf )
+   dbCreate( my_home() + my_dbf_prefix() + _table_label + ".dbf", _dbf )
 
    SELECT ( F_LABELU )
    USE
-   my_use_temp( "labelu", my_home() + _table_label + ".dbf", .F., .F. )
+   my_use_temp( "labelu", my_home() + my_dbf_prefix() + _table_label + ".dbf", .F., .F. )
 
    INDEX on ( kol_c + mjesto + naz ) TAG "1"
    INDEX on ( mjesto + naz + kol_c ) TAG "2"
@@ -380,17 +380,17 @@ STATIC FUNCTION _create_labelu_dbf()
    INDEX on ( idpartner ) TAG "5"
    INDEX on ( kol_c ) TAG "6"
 
-   FErase( my_home() + _table_label_2 + ".dbf" )
-   FErase( my_home() + _table_label_2 + ".cdx" )
+   FErase( my_home() + my_dbf_prefix() + _table_label_2 + ".dbf" )
+   FErase( my_home() + my_dbf_prefix() + _table_label_2 + ".cdx" )
 
    SELECT ( F_LABELU2 )
    USE
 
-   dbCreate( my_home() + _table_label_2 + ".dbf", _dbf )
+   dbCreate( my_home() + my_dbf_prefix() + _table_label_2 + ".dbf", _dbf )
 
    SELECT ( F_LABELU2 )
    USE
-   my_use_temp( "lab2", my_home() + _table_label_2 + ".dbf", .F., .F. )
+   my_use_temp( "lab2", my_home()+ my_dbf_prefix() + _table_label_2 + ".dbf", .F., .F. )
 
    INDEX on ( Str( idx, 12, 0 ) ) TAG "1"
 

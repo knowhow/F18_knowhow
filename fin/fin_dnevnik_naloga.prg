@@ -121,7 +121,7 @@ FUNCTION DnevnikNaloga()
       SELECT SUBAN
       HSEEK cIdFirma + cIdVN + cBrNal
 
-      fin_nalog_stampa( "3", NIL, dDatNal )
+      fin_nalog_stampa_fill_psuban( "3", NIL, dDatNal )
 
       SELECT NALOG
 

@@ -157,9 +157,9 @@ FUNCTION usporedna_lista_fakt_kalk()
    ENDIF
 
    // pobrisi pom tabele
-   FErase( my_home() + "pom.dbf" )
-   FErase( my_home() + "pom.cdx" )
-   FErase( my_home() + "pomi1.cdx" )
+   FErase( my_home() + my_dbf_prefix() + "pom.dbf" )
+   FErase( my_home() + my_dbf_prefix() + "pom.cdx" )
+   FErase( my_home() + my_dbf_prefix() + "pomi1.cdx" )
 
    aDbf := {}
    AAdd ( aDbf, { "IdRoba", "C", 10, 0 } )
@@ -167,17 +167,17 @@ FUNCTION usporedna_lista_fakt_kalk()
    AAdd ( aDbf, { "FVR",    "N", 15, 5 } )
    AAdd ( aDbf, { "KST",    "N", 15, 5 } )
    AAdd ( aDbf, { "KVR",    "N", 15, 5 } )
-   dbCreate( my_home() + "pom", aDbf )
+   dbCreate( my_home() + my_dbf_prefix() + "pom", aDbf )
 
    SELECT ( F_POM )
    IF Used()
       USE
    ENDIF
 
-   my_use_temp( "POM", my_home() + "pom", .F., .T. )
-   INDEX ON IdRoba to ( my_home() + "pomi1" )
+   my_use_temp( "POM", my_home() + my_dbf_prefix() + "pom", .F., .T. )
+   INDEX ON IdRoba to ( my_home() + my_dbf_prefix() + "pomi1" )
 
-   SET INDEX to ( my_home() + "pomi1" )
+   SET INDEX to ( my_home() + my_dbf_prefix() + "pomi1" )
 
    BoxC()
 
@@ -250,22 +250,22 @@ FUNCTION usporedna_lista_fakt_kalk()
       cIdRoba := IdRoba
       nSt := 0
       nVr := 0
-  	
+
       WHILE !Eof() .AND. cIdRoba == field->IdRoba
-    	
+
          IF field->idfirma <> cIdfirma
             SKIP
             LOOP
          ENDIF
-    	
-         // atributi!!!!!!!!!!!!!
+
+         // atributi
          IF !Empty( AllTrim( cK1 ) )
             IF ck1 <> K1
                SKIP
                LOOP
             ENDIF
          ENDIF
-    	
+
          IF !Empty( AllTrim( cK2 ) )
             IF ck2 <> K2
                SKIP
@@ -374,7 +374,7 @@ FUNCTION usporedna_lista_fakt_kalk()
       ENDIF
       RREPLACE KST WITH nSt, KVR WITH nVr
       SELECT KALK
-  	
+
    ENDDO
 
 

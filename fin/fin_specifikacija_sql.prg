@@ -35,7 +35,7 @@ FUNCTION fin_suban_specifikacija_sql()
 
    IF _rpt_data == NIL
       Msgbeep( "Problem sa generisanjem izvještaja !" )
-      RETURN
+      RETURN .F.
    ENDIF
 
    IF _rpt_vars[ "export_dbf" ] == "D"
@@ -51,7 +51,7 @@ FUNCTION fin_suban_specifikacija_sql()
    ENDIF
 
    IF _exported
-      f18_open_mime_document( my_home() + "r_export.dbf" )
+      f18_open_mime_document( my_home() + my_dbf_prefix() + "r_export.dbf" )
    ENDIF
 
    RETURN

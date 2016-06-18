@@ -12,6 +12,26 @@
 #include "f18.ch"
 
 
+FUNCTION o_fin_pnalog()
+
+   RETURN o_dbf_table( F_PNALOG, { "PNALOG", "fin_pnalog" }, "1" )
+
+
+FUNCTION o_fin_psint()
+
+   RETURN o_dbf_table( F_PSINT, { "PSINT", "fin_psint" }, "1" )
+
+
+FUNCTION o_fin_panal()
+
+      RETURN o_dbf_table( F_PANAL, { "PANAL", "fin_panal" }, "1" )
+
+
+FUNCTION o_fin_psuban()
+
+   RETURN o_dbf_table( F_PSUBAN, { "PSUBAN", "fin_psuban" }, "1" )
+
+
 FUNCTION o_fin_pripr()
 
    RETURN o_dbf_table( F_FIN_PRIPR, "fin_pripr", "1" )

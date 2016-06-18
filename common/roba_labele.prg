@@ -148,8 +148,8 @@ STATIC FUNCTION cre_rlabele()
    ENDIF
 
    _tbl := "rlabele"
-   _dbf := my_home() + _tbl + ".dbf"
-   _cdx := my_home() + _tbl + ".cdx"
+   _dbf := my_home() + my_dbf_prefix() + _tbl + ".dbf"
+   _cdx := my_home() + my_dbf_prefix() + _tbl + ".cdx"
 
    FErase( _dbf )
    FErase( _cdx )

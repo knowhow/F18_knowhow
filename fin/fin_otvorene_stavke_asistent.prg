@@ -107,12 +107,12 @@ STATIC FUNCTION _cre_fin_otvorene_stavke()
    AAdd( _dbf, { 'UPLACENO', 'N',  21,  2 } )
    AAdd( _dbf, { 'M2', 'C',  1, 0 } )
 
-   dbCreate( my_home() + _table + ".dbf", _dbf )
+   dbCreate( my_home() + my_dbf_prefix() + _table + ".dbf", _dbf )
 
    SELECT ( F_OSTAV )
    USE
 
-   my_use_temp( "OSTAV", my_home() + _table, .F., .T. )
+   my_use_temp( "OSTAV", my_home() + my_dbf_prefix() + _table, .F., .T. )
 
    INDEX ON DToS( DatDok ) + DToS( iif( Empty( datval ), datdok, datval ) ) + brdok TAG "1"
 

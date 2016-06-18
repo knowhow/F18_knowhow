@@ -215,11 +215,12 @@ FUNCTION get_a_dbf_rec_by_wa( nWa )
 
    RETURN NIL
 
-// -------------------------------------------------------
-// tbl - dbf_table ili alias
-//
-// _only_basic_params - samo table, alias, wa
-// -------------------------------------------------------
+/*
+
+tbl - dbf_table ili alias
+_only_basic_params - samo table, alias, wa
+
+*/
 
 FUNCTION get_a_dbf_rec( cTable, _only_basic_params )
 
@@ -600,10 +601,10 @@ FUNCTION set_dbf_fields_from_struct( xRec )
 
    IF !Used() .AND. !lSql
 
-      _dbf := my_home() + hRec[ "table" ]
+      _dbf := my_home() + my_dbf_prefix( @hRec ) + hRec[ "table" ]
       IF !File( f18_ime_dbf( hRec ) )
 #ifdef F18_DEBUG
-         cLogMsg := "NO-DBF : tbl:" + my_home() + hRec[ "table" ] + " alias:" + hRec[ "alias" ] + " ne postoji"
+         cLogMsg := "NO-DBF : tbl:" + my_home() + my_dbf_prefix( @hRec ) +  hRec[ "table" ] + " alias:" + hRec[ "alias" ] + " ne postoji"
          LOG_CALL_STACK cLogMsg
 #endif
          RETURN .F.

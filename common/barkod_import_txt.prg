@@ -51,7 +51,7 @@ FUNCTION bterm_txt_to_tbl( cTxtFile )
    // kreiraj tabelu
    cre_temp_tbl( aDbf, .T. )
 
-   IF !File( my_home() + "temp.dbf" )
+   IF !File( my_home() + my_dbf_prefix() + "temp.dbf" )
       MsgBeep( "Ne mogu kreirati fajl TEMP.DBF!" )
       RETURN .F.
    ENDIF
@@ -61,7 +61,7 @@ FUNCTION bterm_txt_to_tbl( cTxtFile )
 
    SELECT ( F_TMP_1 )
    USE
-   my_use_temp( "temp", my_home() + "temp.dbf" )
+   my_use_temp( "temp", my_home() + my_dbf_prefix() + "temp.dbf" )
 
    // zatim iscitaj fajl i ubaci podatke u tabelu
 
@@ -139,16 +139,16 @@ STATIC FUNCTION cre_temp_tbl( aDbf, lIndex )
       lIndex := .T.
    ENDIF
 
-   FErase( my_home() + "temp.dbf" )
+   FErase( my_home() + my_dbf_prefix() + "temp.dbf" )
 
-   dbCreate( my_home() + _table, aDbf )
+   dbCreate( my_home() + my_dbf_prefix() + _table, aDbf )
 
    IF lIndex
 
       SELECT ( F_TMP_1 )
       USE
 
-      my_use_temp( "temp", my_home() + "temp.dbf" )
+      my_use_temp( "temp", my_home() + my_dbf_prefix() + "temp.dbf" )
 
       INDEX ON barkod TAG "1"
       INDEX ON idroba TAG "2"

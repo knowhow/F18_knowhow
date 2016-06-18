@@ -138,7 +138,7 @@
 
 #xcommand O__KALK         => select(F__KALK); my_usex ("_kalk" )
 #xcommand O_KALK_FINMAT   => select(F_KALK_FINMAT); my_usex ("kalk_finmat")    ; set order to tag "1"
-#xcommand O_KALK          => select(F_KALK);  my_use  ("kalk")  ; set order to tag "1"
+
 #xcommand O_KALKSEZ       => select(F_KALKSEZ);  my_use  ("KALK")  ; set order to "1"
 #xcommand O_ROBASEZ       => select(F_ROBASEZ);  my_use  ("ROBA")  ; set order to tag "ID"
 #xcommand O_KALKX         => select(F_KALK);  usex  (KUMPATH +"kalk")  ; set order to tag "1"

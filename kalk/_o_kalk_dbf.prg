@@ -50,6 +50,16 @@ FUNCTION o_kalk_pripr()
    RETURN o_dbf_table( F_KALK_PRIPR, "kalk_pripr", "1" )
 
 
+FUNCTION o_kalk_pripr2()
+
+   RETURN o_dbf_table( F_KALK_PRIPR, "kalk_pripr2", "1" )
+
+
+FUNCTION o_kalk_pripr9()
+
+   RETURN o_dbf_table( F_KALK_PRIPR, "kalk_pripr9", "1" )
+
+
 FUNCTION select_o_kalk_pripr()
 
    RETURN select_o_dbf( "KALK_PRIPR", F_KALK_PRIPR, "kalk_pripr", "1" )
@@ -67,6 +77,12 @@ FUNCTION select_o_kalk_pripr9()
 FUNCTION o_kalk_kartica()
 
    RETURN o_dbf_table( F_KALK_DOKS, "kalk_kartica", "ID" )
+
+
+
+FUNCTION o_kalk()
+
+   RETURN o_dbf_table( F_KALK, { "KALK", "kalk_kalk" }, "1" )
 
 
 FUNCTION o_kalk_doks()

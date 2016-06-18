@@ -43,7 +43,7 @@ FUNCTION Iz47u96Norm()
    O_TARIFA
    O_SAST
 
-   Xo_kalk()
+   XO_KALK
 
    dDatKalk := Date()
    cIdKonto := PadR( "", 7 )

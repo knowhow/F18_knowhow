@@ -12,14 +12,14 @@
 
 #include "f18.ch"
 
-// array
+/*
 STATIC aPorezi := {}
-// ;
+
 
 
 FUNCTION get_nivel_p()
 
-   // {
+
    LOCAL aProd // matrica sa prodavnicama
    LOCAL cProd // prodavnica
    LOCAL cPKonto
@@ -93,71 +93,6 @@ FUNCTION get_nivel_p()
    RETURN
 
 
-
-FUNCTION get_zcnivel()
-
-   LOCAL aProd // matrica sa prodavnicama
-   LOCAL cProd // prodavnica
-   LOCAL cPKonto
-   LOCAL dDatDok
-
-   O_KONTO
-
-   Box(, 4, 70 )
-   cProd := Space( 7 )
-   dDatDok := Date()
-   @ m_x + 1, m_Y + 2 SAY "Prodavnica (prazno-sve)" GET cProd VALID Empty( cProd ) .OR. P_Konto( @cProd )
-   @ m_x + 2, m_Y + 2 SAY "Datum" GET dDatDok
-   READ
-   ESC_BCR
-   BoxC()
-
-   IF Pitanje(, "Generisati nivelacije (D/N)?", "D" ) == "N"
-      RETURN
-   ENDIF
-
-   aProd := {}
-
-   IF Empty( AllTrim( cProd ) )
-      // napuni matricu sa prodavnckim kontima
-      GetProdKto( @aProd )
-   ELSE
-      AAdd( aProd, { cProd } )
-   ENDIF
-
-   // provjeri velicinu matrice
-   IF Len( aProd ) == 0
-      MsgBeep( "Ne postoje definisane prodavnice u KONCIJ-u!" )
-      RETURN
-   ENDIF
-
-   // kreiraj tabelu PRIPT
-   cre_kalk_priprt()
-
-   // pokreni generisanje nivelacija
-   Box(, 2, 65 )
-   @ 1 + m_x, 2 + m_y SAY "Vrsim generisanje nivelacije za " + AllTrim( Str( Len( aProd ) ) ) + " prodavnicu..."
-
-   o_kalk_doks()
-
-   nUvecaj := 1
-   FOR nCnt := 1 TO Len( aProd )
-      // daj broj kalkulacije
-      cBrKalk := GetNextKalkDoc( gFirma, "19", nUvecaj )
-      cPKonto := aProd[ nCnt, 1 ]
-
-      @ 2 + m_x, 2 + m_y SAY Str( nCnt, 3 ) + " Prodavnica: " + AllTrim( cPKonto ) + "   dokument: " + gFirma + "-19-" + AllTrim( cBrKalk )
-
-      gen_zcnivel( cPKonto, dDatDok, cBrKalk )
-
-      ++ nUvecaj
-   NEXT
-
-   BoxC()
-
-   result_nivel_p()
-
-   RETURN
 
 
 // --------------------------------------------------------------------
@@ -623,7 +558,7 @@ FUNCTION gen_zcnivel( cPKonto, dDatDok, cBrKalk )
 
 FUNCTION result_nivel_p()
 
-   // {
+
    LOCAL cVarijanta
    LOCAL cKolNula
 
@@ -1185,3 +1120,4 @@ FUNCTION st_pr_cijena( cFirma, cIdTip, cBrDok, cPodvuceno, cProred )
    ENDPRINT
 
    RETURN
+*/

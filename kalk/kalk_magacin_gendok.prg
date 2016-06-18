@@ -27,12 +27,11 @@ FUNCTION GenMag()
    AAdd( _opcexe, {|| MnuMInv() } )
    AAdd( _opc, "4. nivelacija po zadatom %" )
    AAdd( _opcexe, {|| MNivPoProc() } )
-   AAdd( _opc, "6. pocetno stanje na osnovu preknjizenja tarifa" )
-   AAdd( _opcexe, {|| GetPstPreknj() } )
+
 
    f18_menu( "mmg", .F., _izbor, _opc, _opcexe )
 
-   RETURN
+   RETURN .T.
 
 
 

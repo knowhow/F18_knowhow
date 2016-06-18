@@ -353,7 +353,7 @@ STATIC FUNCTION rpt_not_incl( aArr )
 STATIC FUNCTION o_tables()
 
    o_kalk_pripr()
-   O_KALK
+   o_kalk()
    o_kalk_doks()
    O_KONTO
    O_PARTN
@@ -561,7 +561,7 @@ FUNCTION PrenosNo2()
    LOCAL cBrKalk := Space( 8 )
 
    o_kalk_pripr()
-   O_KALK
+   o_kalk()
    O_ROBA
    O_KONTO
    O_PARTN

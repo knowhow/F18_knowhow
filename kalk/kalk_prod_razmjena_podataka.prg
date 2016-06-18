@@ -57,7 +57,7 @@ FUNCTION FaKaPrenos_MP_u_razduzenje()
 
    o_kalk_pripr()
    o_koncij()
-   O_KALK
+   o_kalk()
    O_ROBA
    O_KONTO
    O_PARTN
@@ -279,7 +279,7 @@ FUNCTION prod_fa_ka_prenos_otpr()
 
    o_kalk_pripr()
    o_koncij()
-   O_KALK
+   o_kalk()
    O_ROBA
    O_KONTO
    O_PARTN
@@ -449,7 +449,7 @@ FUNCTION FaKaPrenosRacunMP()
    PRIVATE cFaktFirma
 
    o_kalk_pripr()
-   O_KALK
+   o_kalk()
    O_ROBA
    O_KONTO
    O_PARTN
@@ -716,7 +716,7 @@ FUNCTION FaKaPrenos_01_doprema()
    // {
    LOCAL cIdFirma := gFirma, cIdTipDok := "01", cBrDok := cBrKalk := Space( 8 )
    o_kalk_pripr()
-   O_KALK
+   o_kalk()
    O_ROBA
    O_KONTO
    O_PARTN
@@ -863,7 +863,7 @@ FUNCTION FaKaPrenos_cm_u_prodavnicu()
 
    o_kalk_pripr()
    o_koncij()
-   O_KALK
+   o_kalk()
    O_ROBA
    O_KONTO
    O_PARTN
@@ -1041,7 +1041,7 @@ FUNCTION FaKaPrenos_izlaz_putem_vp()
 
    o_kalk_pripr()
    o_koncij()
-   O_KALK
+   o_kalk()
    IF File( KUMPATH + "DOKS2.DBF" ); fDoks2 := .T. ; o_kalk_doks2(); ENDIF
    O_ROBA
    O_KONTO
@@ -1224,7 +1224,7 @@ FUNCTION FaKaPrenos_izlaz_putem_vp()
 STATIC FUNCTION _o_prenos_tbls()
 
    o_kalk_pripr()
-   O_KALK
+   o_kalk()
    O_ROBA
    O_KONTO
    O_PARTN

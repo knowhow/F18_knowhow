@@ -49,7 +49,7 @@ FUNCTION RekMagTar()
    O_SIFV
    O_ROBA
    O_TARIFA
-   O_KALK
+   o_kalk()
    SET ORDER TO TAG "6"
    // "idFirma+IDTarifa+idroba"
 

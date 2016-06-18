@@ -60,7 +60,7 @@ FUNCTION PregProdaje()
    ENDDO
    BoxC()
 
-   O_KALK
+   o_kalk()
    O_ROBA
    O_SIFK
    O_SIFV

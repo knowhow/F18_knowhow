@@ -626,7 +626,7 @@ STATIC FUNCTION close_open_kart_tables()
    O_ROBA
    O_KONTO
    o_koncij()
-   O_KALK
+   o_kalk()
 
    RETURN
 

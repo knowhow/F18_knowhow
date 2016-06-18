@@ -50,7 +50,7 @@ FUNCTION SStDoks()
 
    o_kalk_doks()
    O_PARTN
-   O_KALK
+   o_kalk()
 
    cIdfirma := gFirma
    dDatOd := CToD( "" )
@@ -421,7 +421,7 @@ STATIC FUNCTION _get_rpt_line()
 FUNCTION kalk_gen_doks_iz_kalk()
 
    // {
-   O_KALK
+   o_kalk()
 
    SELECT kalk
    GO TOP

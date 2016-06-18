@@ -124,7 +124,7 @@ FUNCTION GenNivP()
 
    o_koncij()
    o_kalk_pripr()
-   O_KALK
+   o_kalk()
    PRIVATE cBrDok := SljBroj( cidfirma, "19", 8 )
 
    nRbr := 0
@@ -258,7 +258,7 @@ FUNCTION NivPoProc()
 
    o_koncij()
    o_kalk_pripr()
-   O_KALK
+   o_kalk()
    PRIVATE cBrDok := SljBroj( cidfirma, "19", 8 )
 
    nRbr := 0
@@ -432,7 +432,7 @@ FUNCTION VratiZadNiv()
    ENDIF
 
    o_kalk_pripr()
-   O_KALK
+   o_kalk()
    PRIVATE cBrDok := SljBroj( cIdFirma, "19", 8 )
 
    nRbr := 0
@@ -505,7 +505,7 @@ FUNCTION KorekMPC()
 
    O_ROBA
    o_kalk_pripr()
-   O_KALK
+   o_kalk()
 
    nTUlaz := nTIzlaz := 0
    nTVPVU := nTVPVI := nTNVU := nTNVI := 0
@@ -684,7 +684,7 @@ FUNCTION Iz13u11()
    O_KONTO
    o_kalk_pripr()
    o_kalk_pripr2()
-   O_KALK
+   o_kalk()
    O_SIFK
    O_SIFV
    O_ROBA
@@ -764,7 +764,7 @@ FUNCTION Gen41S()
 
    O_TARIFA
    O_ROBA
-   O_KALK
+   o_kalk()
 
    SELECT kalk_pripr
    GO BOTTOM
@@ -1111,7 +1111,7 @@ FUNCTION gen_ip_80()
    ENDIF
 
    o_kalk_doks()
-   O_KALK
+   o_kalk()
    o_kalk_pript()
    o_kalk_pripr()
 

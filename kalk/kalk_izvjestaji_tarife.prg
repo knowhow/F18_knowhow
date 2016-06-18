@@ -101,7 +101,7 @@ FUNCTION Kart41_42()
    SELECT params; USE
 
 
-   O_KALK
+   o_kalk()
    nKolicina := 0
    SELECT kalk
    SET ORDER TO TAG "4"
@@ -318,7 +318,7 @@ FUNCTION Kart412v2()
    ENDIF
    SELECT params; USE
 
-   O_KALK
+   o_kalk()
    nKolicina := 0
    SELECT kalk
    SET ORDER TO TAG "4"

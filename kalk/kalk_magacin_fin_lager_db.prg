@@ -19,7 +19,7 @@
 // -----------------------------------
 static function _o_tbl()
 o_kalk_doks()
-O_KALK
+o_kalk()
 O_SIFK
 O_SIFV
 O_TDOK

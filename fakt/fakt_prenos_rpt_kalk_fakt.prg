@@ -29,7 +29,7 @@ FUNCTION usporedna_lista_fakt_kalk()
    PRIVATE cOpis2 := "FAKT 2.FIRMA"
 
    O_FAKT_DOKS
-   O_KALK
+   o_kalk()
    O_KONTO
    O_TARIFA
    O_SIFK

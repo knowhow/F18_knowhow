@@ -144,7 +144,7 @@ STATIC FUNCTION otvori_kalk_tabele_za_povrat()
    o_kalk_doks()
    o_kalk_doks2()
    o_kalk_pripr()
-   O_KALK
+   o_kalk()
    SET ORDER TO TAG "1"
 
    RETURN

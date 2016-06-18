@@ -214,7 +214,7 @@ METHOD openDb
    O_TARIFA
    O_KONTO
    o_kalk_doks()
-   O_KALK
+   o_kalk()
 
    // "3","idFirma+mkonto+idroba+dtos(datdok)+podbr+MU_I+IdVD
    SELECT kalk

@@ -20,7 +20,7 @@ FUNCTION PRobDob()
    O_SIFV
    O_ROBA
    O_PARTN
-   O_KALK
+   o_kalk()
 
    SET RELATION TO idroba INTO ROBA
 

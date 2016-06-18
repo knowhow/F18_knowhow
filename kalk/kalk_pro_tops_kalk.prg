@@ -38,7 +38,7 @@ FUNCTION tops_nor_96( cIdFirma, cIdTipDok, cIdZaduz2, cIdKonto2, cIdKonto, ;
 
    o_kalk_pripr()
    o_koncij()
-   O_KALK
+   o_kalk()
    O_KONTO
    O_PARTN
    O_TARIFA
@@ -74,7 +74,7 @@ FUNCTION tops_nor_96( cIdFirma, cIdTipDok, cIdZaduz2, cIdKonto2, cIdKonto, ;
 
    o_kalk_pripr()
    o_koncij()
-   O_KALK
+   o_kalk()
    O_KONTO
    O_PARTN
    O_TARIFA

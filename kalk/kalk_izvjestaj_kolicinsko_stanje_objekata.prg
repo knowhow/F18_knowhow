@@ -243,7 +243,7 @@ STATIC FUNCTION otvori_tabele()
    O_TARIFA
    O_K1
    O_OBJEKTI
-   O_KALK
+   o_kalk()
    O_REKAP1
 
    RETURN

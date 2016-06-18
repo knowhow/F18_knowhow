@@ -15,7 +15,7 @@
 
 FUNCTION BrowseRn()
 
-   O_KALK
+   o_kalk()
    O_KONTO
    cmkonto := Space( 7 )
    cIdFirma := gFirma
@@ -105,7 +105,7 @@ FUNCTION EdBrn( Ch )
       cSeek := idfirma + idvd + brdok
       my_close_all_dbf()
       kalk_stampa_dokumenta( .T., cSeek )
-      O_KALK
+      o_kalk()
       o_kalk_doks()
       PopWA()
       nRet := DE_REFRESH

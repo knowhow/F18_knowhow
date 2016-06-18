@@ -23,7 +23,7 @@ FUNCTION KalkStanje( cIdRoba )
 
    SELECT ( F_KALK )
    IF !Used()
-      O_KALK
+      o_kalk()
       fOtv := .T.
    ELSE
       nIOrd := IndexOrd()

@@ -98,7 +98,7 @@ FUNCTION ObrazInv()
    O_TARIFA
    O_K1
    O_OBJEKTI
-   O_KALK
+   o_kalk()
    O_REKAP1
 
    GenRekap1( aUsl1, aUsl2, aUslR, cKartica, "2", nil, nil, nil, nil, cIdKPovrata )

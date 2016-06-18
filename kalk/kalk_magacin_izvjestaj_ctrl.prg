@@ -61,7 +61,7 @@ FUNCTION r_ct_sast()
 
    O_PARTN
    o_kalk_pripr()
-   O_KALK
+   o_kalk()
    o_kalk_doks()
    O_ROBA
    O_KONTO

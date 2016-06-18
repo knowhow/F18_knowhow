@@ -169,7 +169,7 @@ FUNCTION o_kalk_edit()
    O_PARTN
    o_kalk_doks()
    O_ROBA
-   O_KALK
+   o_kalk()
    O_KONTO
    O_TDOK
    O_VALUTE

@@ -27,7 +27,7 @@ FUNCTION NaPrimPak()
    O_ROBA
    o_kalk_pripr()
    o_kalk_doks()
-   O_KALK
+   o_kalk()
    O_SIFK
    O_SIFV
 
@@ -202,7 +202,7 @@ FUNCTION NaPrPak2()
    O_ROBA
    o_kalk_pripr()
    o_kalk_doks()
-   O_KALK
+   o_kalk()
    O_SIFK
    O_SIFV
 

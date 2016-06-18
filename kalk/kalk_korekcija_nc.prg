@@ -32,7 +32,7 @@ FUNCTION KorekNC()
    ENDIF
 
    o_kalk_pripr()
-   O_KALK
+   o_kalk()
    GO TOP
 
    nCount := 0

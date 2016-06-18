@@ -37,7 +37,7 @@ FUNCTION browse_kalk_dok()
 
    O_ROBA
    o_koncij()
-   O_KALK
+   o_kalk()
    O_KONTO
    o_kalk_doks()
 
@@ -250,7 +250,7 @@ FUNCTION kalk_pregled_dokumenata_hronoloski()
 
    O_ROBA
    o_koncij()
-   O_KALK
+   o_kalk()
    O_KONTO
 
    cIdFirma := gFirma
@@ -369,7 +369,7 @@ STATIC FUNCTION pregled_dokumenata_hron_keyhandler( Ch )
       cSeek := idfirma + idvd + brdok
       my_close_all_dbf()
       kalk_stampa_dokumenta( .T., cSeek )
-      O_KALK
+      o_kalk()
       o_kalk_doks()
       PopWA()
       nRet := DE_REFRESH

@@ -84,7 +84,7 @@ FUNCTION PreglKret()
    O_TARIFA
    O_K1
    O_OBJEKTI
-   O_KALK
+   o_kalk()
    O_REKAP1
 
    GenRekap1( aUsl1, aUsl2, aUslR, cKartica, "1", cKesiraj, lSMark, cK1, cK7, cK9, cIdKPovrata, aUslSez )

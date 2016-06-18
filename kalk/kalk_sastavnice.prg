@@ -239,7 +239,7 @@ STATIC FUNCTION g_kalk_stanje( cIdRoba, cKto )
 
    IF !Empty( cKto )
 
-      O_KALK
+      o_kalk()
       SELECT kalk
       SET ORDER TO TAG "3"
       GO TOP

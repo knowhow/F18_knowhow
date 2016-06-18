@@ -177,7 +177,7 @@ FUNCTION gen_nivel_p( cPKonto, dDatDok, cBrKalk, lGledajStanje )
    LOCAL nStCijena
 
    o_kalk_pript()
-   O_KALK
+   o_kalk()
    O_ROBA
    O_KONTO
    o_koncij()
@@ -493,7 +493,7 @@ FUNCTION gen_zcnivel( cPKonto, dDatDok, cBrKalk )
    LOCAL nStCijena
 
    o_kalk_pript()
-   O_KALK
+   o_kalk()
    O_ROBA
    O_KONTO
    o_koncij()

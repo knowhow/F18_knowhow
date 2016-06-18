@@ -103,7 +103,7 @@ FUNCTION FaktFin()
       O_SAST
       SELECT ( F_KALK )
       IF !Used()
-         O_KALK
+         o_kalk()
       ENDIF
       SET ORDER TO TAG "1"
    ENDIF

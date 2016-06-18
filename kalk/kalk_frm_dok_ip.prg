@@ -39,7 +39,7 @@ FUNCTION IP()
 
    o_koncij()
    o_kalk_pripr()
-   O_KALK
+   o_kalk()
 
    PRIVATE cBrDok := SljBroj( cidfirma, "IP", 8 )
 
@@ -290,7 +290,7 @@ FUNCTION gen_ip_razlika()
    o_koncij()
    o_kalk_pripr()
    o_kalk_pript()
-   O_KALK
+   o_kalk()
 
    // sljedeci broj kalkulacije IP
    PRIVATE cBrDok := SljBroj( cIdFirma, "IP" )

@@ -86,7 +86,7 @@ if LastKey()==K_ESC
 	closeret
 endif
 
-O_KALK
+o_kalk()
 SET ORDER TO TAG "1"
 seek cIdFirma + cIdVd + cBrDok
 
@@ -231,7 +231,7 @@ O_R_EXP
 
 SELECT (F_KALK)
 if !used()
-	O_KALK
+	o_kalk()
 endif
 
 SELECT (F_ROBA)

@@ -128,7 +128,7 @@ FUNCTION ObrtPoMjF()
    O_ROBA
    O_KONTO
    O_TARIFA
-   O_KALK
+   o_kalk()
    O_K1
    O_OBJEKTI
 

@@ -38,7 +38,7 @@ FUNCTION Prenos16()
 
    o_koncij()
    o_kalk_pripr()
-   O_KALK
+   o_kalk()
    O_ROBA
    O_KONTO
    O_PARTN

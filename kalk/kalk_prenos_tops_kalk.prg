@@ -868,7 +868,7 @@ STATIC FUNCTION _o_imp_tables()
 
    SELECT ( F_KALK )
    IF !Used()
-      O_KALK
+      o_kalk()
    ENDIF
 
    SELECT ( F_KONCIJ )

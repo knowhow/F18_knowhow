@@ -23,7 +23,7 @@ FUNCTION ODbKalk()
    O_KONTO
    O_PARTN
    o_kalk_doks()
-   O_KALK
+   o_kalk()
 
    RETURN
 
@@ -1091,7 +1091,7 @@ FUNCTION ima_u_kalk_kumulativ( cKljuc, cTag )
    SELECT ( F_KALK )
    IF !Used()
       lUsed := .F.
-      O_KALK
+      o_kalk()
    ELSE
       PushWA()
    ENDIF
@@ -1494,7 +1494,7 @@ FUNCTION cp_dok_pript( cIdFirma, cIdVd, cBrDok )
    cre_kalk_priprt()
 
    o_kalk_pript()
-   O_KALK
+   o_kalk()
 
    SELECT kalk
    SET ORDER TO TAG "1"

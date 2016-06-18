@@ -782,7 +782,7 @@ STATIC FUNCTION TTbl2Kalk()
    LOCAL cIdKonto2
 
    o_kalk_pripr()
-   O_KALK
+   o_kalk()
    o_kalk_doks()
    O_ROBA
 

@@ -444,7 +444,7 @@ STATIC FUNCTION _add_to_exp( id_firma, id_tip_dok, broj_dok, d_opis, datum_dok, 
 STATIC FUNCTION _o_tbl()
 
    o_kalk_doks()
-   O_KALK
+   o_kalk()
    O_SIFK
    O_SIFV
    O_TDOK

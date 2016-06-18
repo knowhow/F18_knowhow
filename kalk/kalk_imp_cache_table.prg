@@ -243,7 +243,7 @@ FUNCTION gen_cache()
 
 
    o_kalk_doks()
-   O_KALK
+   o_kalk()
 
    Box(, 1, 70 )
 

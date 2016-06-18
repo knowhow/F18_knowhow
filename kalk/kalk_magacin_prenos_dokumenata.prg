@@ -60,7 +60,7 @@ FUNCTION mag_fa_ka_prenos_10_14()
 
    o_koncij()
    o_kalk_pripr()
-   O_KALK
+   o_kalk()
    o_kalk_doks()
    o_kalk_doks2()
    O_ROBA
@@ -275,7 +275,7 @@ STATIC FUNCTION _o_prenos_tbls()
 
    o_koncij()
    o_kalk_pripr()
-   O_KALK
+   o_kalk()
    o_kalk_doks()
    O_ROBA
    O_KONTO

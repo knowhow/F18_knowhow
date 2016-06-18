@@ -281,7 +281,7 @@ STATIC FUNCTION ScanKalk( dDan, aR, dDatDo, cPKto )
    // {
 
    O_ROBA
-   O_KALK
+   o_kalk()
    // idFirma+dtos(datdok)+podbr+idvd+brdok
    SET ORDER TO TAG "5"
 

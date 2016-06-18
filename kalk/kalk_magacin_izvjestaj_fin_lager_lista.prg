@@ -149,7 +149,7 @@ FUNCTION Flager_lista_magacin()
       ENDIF
    ENDIF
 
-   O_KALK
+   o_kalk()
    SELECT kalk
    SET ORDER TO TAG "5"
    // "idFirma+dtos(datdok)+idvd+brdok+rbr"

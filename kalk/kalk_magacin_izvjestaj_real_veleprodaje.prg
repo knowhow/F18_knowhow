@@ -74,7 +74,7 @@ BoxC()
 
 
 O_TARIFA
-O_KALK
+o_kalk()
 set order to tag PMAG
 
 private cFilt1:=""

@@ -1154,7 +1154,7 @@ FUNCTION GenProdNc()
 
    O_PRODNC
    O_ROBA
-   O_KALK
+   o_kalk()
    o_kalk_pripr()
    o_koncij()
    GO TOP

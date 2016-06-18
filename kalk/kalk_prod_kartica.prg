@@ -119,7 +119,7 @@ FUNCTION kalk_kartica_prodavnica()
       dDatOd := CToD( "" )
    ENDIF
 
-   O_KALK
+   o_kalk()
 
    nKolicina := 0
 
@@ -534,7 +534,7 @@ FUNCTION NPArtikli()
    SELECT params
    USE
 
-   O_KALK
+   o_kalk()
 
    cFilt := aUsl1 + " .and. " + aUsl2 + " .and. DATDOK>=" + dbf_quote( dDat0 ) + ;
       " .and. DATDOK<=" + dbf_quote( dDat1 ) + ;

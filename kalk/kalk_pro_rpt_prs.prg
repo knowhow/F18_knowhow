@@ -118,7 +118,7 @@ STATIC FUNCTION _gen_rpt( cBrFakt, cValuta, dDatOd, dDatDo, cRekap )
    _idx := my_home() + "brfakt_pr.idx"
 
    O_R_EXP
-   O_KALK
+   o_kalk()
    O_ROBA
    O_SIFK
    O_SIFV

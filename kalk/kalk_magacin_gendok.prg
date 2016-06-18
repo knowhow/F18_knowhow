@@ -145,7 +145,7 @@ FUNCTION InvManj()
    o_koncij()
    o_kalk_pripr()
    o_kalk_pripr2()
-   O_KALK
+   o_kalk()
    O_SIFK
    O_SIFV
    O_ROBA
@@ -296,7 +296,7 @@ FUNCTION MNivPoProc()
 
    o_koncij()
    o_kalk_pripr()
-   O_KALK
+   o_kalk()
    PRIVATE cBrDok := SljBroj( cidfirma, "18", 8 )
 
    nRbr := 0
@@ -422,7 +422,7 @@ FUNCTION KorekPC()
    BoxC()
    O_ROBA
    o_kalk_pripr()
-   O_KALK
+   o_kalk()
 
    nTUlaz := nTIzlaz := 0
    nTVPVU := nTVPVI := nTNVU := nTNVI := 0
@@ -560,7 +560,7 @@ FUNCTION Otprema()
    o_koncij()
    o_kalk_pripr2()
    o_kalk_pripr()
-   O_KALK
+   o_kalk()
    O_SIFK
    O_SIFV
    O_ROBA

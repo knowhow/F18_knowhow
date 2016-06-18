@@ -138,7 +138,7 @@ FUNCTION kalk_kif( dD1, dD2, cSezona )
 
 FUNCTION close_open_kalk_epdv_tables()
 
-   O_KALK
+   o_kalk()
    close_open_kuf_kif_sif()
 
    RETURN

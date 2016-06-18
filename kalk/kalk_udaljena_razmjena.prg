@@ -856,7 +856,7 @@ STATIC FUNCTION _cre_exp_tbls( use_path )
    _dir_create( use_path )
 
    // tabela kalk
-   O_KALK
+   o_kalk()
    COPY STRUCTURE EXTENDED to ( my_home() + "struct" )
    USE
    CREATE ( use_path + "e_kalk" ) from ( my_home() + "struct" )
@@ -905,7 +905,7 @@ STATIC FUNCTION _cre_exp_tbls( use_path )
 // ----------------------------------------------------
 STATIC FUNCTION _o_tables()
 
-   O_KALK
+   o_kalk()
    o_kalk_doks()
    O_SIFK
    O_SIFV

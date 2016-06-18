@@ -681,7 +681,7 @@ FUNCTION o_kalk_za_azuriranje( raspored_tr )
    my_close_all_dbf()
 
    o_kalk_pripr()
-   O_KALK
+   o_kalk()
    o_kalk_doks2()
    o_kalk_doks()
 

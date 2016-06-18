@@ -36,14 +36,14 @@ FUNCTION Iz47u96Norm()
    LOCAL cIdFirma := gFirma, cBrDok := cBrKalk := Space( 8 )
 
    o_kalk_pripr()
-   O_KALK
+   o_kalk()
    O_ROBA
    O_KONTO
    O_PARTN
    O_TARIFA
    O_SAST
 
-   XO_KALK
+   Xo_kalk()
 
    dDatKalk := Date()
    cIdKonto := PadR( "", 7 )

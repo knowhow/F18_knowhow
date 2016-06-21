@@ -37,7 +37,7 @@ FUNCTION PushWA()
          cFilter := dbFilter()
          lSql := .F.
       ELSE
-         cFilter := ""
+         cFilter := dbFilter()
          lSql := .T.
       ENDIF
       hRet[ 'wa' ] := Select()

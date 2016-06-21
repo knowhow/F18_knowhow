@@ -146,10 +146,11 @@ FUNCTION fin_kif( dD1, dD2, cSezona )
 
 
 
-FUNCTION close_open_fin_epdv_tables()
+FUNCTION close_open_fin_epdv_tables( dDatOd, dDatDo )
 
-   o_suban()
+   find_suban_za_period( dDatOd, dDatDo )
 
+/*
    // radi manipulacije kod generisanja kif-a tabela SUBAN se otvara i kao drugi ALIAS
    SELECT ( F_TMP_1 )
    IF !Used()
@@ -157,10 +158,11 @@ FUNCTION close_open_fin_epdv_tables()
    ENDIF
    SELECT suban_2
    SET ORDER TO TAG "4"
+*/
 
    close_open_kuf_kif_sif()
 
-   RETURN
+   RETURN .T.
 
 
 STATIC FUNCTION gen_fin_kif_item( cSezona )
@@ -189,15 +191,15 @@ STATIC FUNCTION gen_fin_kif_item( cSezona )
    LOCAL cOpisSuban
    LOCAL nRecNoSuban
 
-   close_open_fin_epdv_tables()
+   close_open_fin_epdv_tables( dDatOd, dDatDo )
 
    SELECT SUBAN
-   PRIVATE cFilter := ""
+   PRIVATE cFilter := ".T."
 
-   cFilter :=  dbf_quote( dDatOd ) + " <= datdok .and. " + dbf_quote( dDatDo ) + ">= datdok"
+   //cFilter :=  dbf_quote( dDatOd ) + " <= datdok .and. " + dbf_quote( dDatDo ) + ">= datdok"
 
-   // setuj tip dokumenta
-   IF !Empty( cTdSrc )
+
+   IF !Empty( cTdSrc ) // setuj tip dokumenta
       IF Len( Trim( cTdSrc ) ) == 1
          // ako se stavi "B " onda se uzimaju svi nalozi koji pocinju
          // sa B
@@ -216,9 +218,8 @@ STATIC FUNCTION gen_fin_kif_item( cSezona )
    ENDIF
 
    // "4","idFirma+IdVN+BrNal+Rbr",KUMPATH+"SUBAN"
-   SET ORDER TO TAG "4"
+   //SET ORDER TO TAG "4"
    SET FILTER TO &cFilter
-
    GO TOP
 
    // prosetajmo kroz suban tabelu
@@ -236,11 +237,11 @@ STATIC FUNCTION gen_fin_kif_item( cSezona )
       dDMin := datdok
       dDMax := datdok
 
-      // ove var moraju biti private da bi se mogle macro-om evaluirati
-      PRIVATE _iznos := 0
 
-      // datumski period
-      DO WHILE !Eof() .AND.  ( datdok == dDMax )
+      PRIVATE _iznos := 0 // ove var moraju biti private da bi se mogle macro-om evaluirati
+
+
+      DO WHILE !Eof() .AND.  ( datdok == dDMax ) // datumski period
 
          SELECT suban
 
@@ -262,9 +263,8 @@ STATIC FUNCTION gen_fin_kif_item( cSezona )
          IF !Empty( cIdPart )
             IF ( AllTrim( Upper( cIdPart ) ) == "#TD#" )
                // trazi dobavljaca
-               _id_part := trazi_dob ( suban->( RecNo() ), ;
-                  suban->idfirma, suban->idvn, suban->brnal, ;
-                  suban->brdok, suban->rbr )
+               _id_part := kif_fin_trazi_dob ( suban->( RecNo() ), ;
+                  suban->idfirma, suban->idvn, suban->brnal, suban->brdok, suban->rbr )
             ELSE
                _id_part := cIdPart
             ENDIF
@@ -323,8 +323,7 @@ STATIC FUNCTION gen_fin_kif_item( cSezona )
             ENDIF
 
          CASE cKatP2 == "3"
-            // nije bd, preskoci
-            IF !( cPartRejon == "3" )
+            IF !( cPartRejon == "3" ) // nije bd, preskoci
                lSkip := .T.
             ENDIF
          ENDCASE
@@ -486,8 +485,8 @@ STATIC FUNCTION gen_fin_kif_item( cSezona )
       // ----------------------------------------------------------
       PopWa()
 
-      // snimi gornje podatke
-      SELECT P_KIF
+
+      SELECT P_KIF // snimi gornje podatke
       APPEND BLANK
       Gather()
 
@@ -495,11 +494,10 @@ STATIC FUNCTION gen_fin_kif_item( cSezona )
 
    ENDDO
 
-   RETURN
+   RETURN .T.
 
 
-// ----------------------------------------------
-// ----------------------------------------------
+
 STATIC FUNCTION zav_tr( nZ1, nZ2, nZ3, nZ4, nZ5 )
 
    LOCAL Skol := 0
@@ -592,26 +590,28 @@ STATIC FUNCTION zav_tr( nZ1, nZ2, nZ3, nZ4, nZ5 )
    ENDIF
    nZ5 := nSpedTr
 
-   RETURN
+   RETURN .T.
 
 // -----------------------------------------------------------
 // trazi dobavljaca za trosak - mora biti u blizini - iznad ili
 // ispod samog troska
 // -----------------------------------------------------------
-STATIC FUNCTION trazi_dob( nRecNo, cIdFirma, cIdVn, cBrNal, cBrDok, nRbr )
+STATIC FUNCTION kif_fin_trazi_dob( nRecNo, cIdFirma, cIdVn, cBrNal, cBrDok, nRbr )
 
    LOCAL i
 
-   PushWA()
+   PushWa()
+   SELECT SUBAN
 
-   SELECT suban_2
+   PushWA()
+   SELECT suban
+   SET FILTER TO
 
    FOR i := -2 TO 2
 
-      // idi na zadati slog ...
-      GO ( nRecNo )
-      // pa onda skoci dva unazad i dva unaprijed ...
-      SKIP i
+
+      GO ( nRecNo ) // idi na zadati slog
+      SKIP i // pa onda skoci dva unazad i dva unaprijed
 
 
       cKto := Left( idkonto, 3 )
@@ -622,13 +622,15 @@ STATIC FUNCTION trazi_dob( nRecNo, cIdFirma, cIdVn, cBrNal, cBrDok, nRbr )
          cIdPartner := idpartner
 
          PopWa()
+         PopWA()
          RETURN cIdPartner
       ENDIF
 
    NEXT
 
-   // nema nista - nisam nista nasao
-   PopWa()
+
+   PopWa() // nema nista - nisam nista nasao
+   PopWA()
 
    RETURN ""
 

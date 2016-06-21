@@ -182,12 +182,12 @@ STATIC FUNCTION gen_fin_kuf_item( cSezona )
    LOCAL cOpisSuban
    LOCAL nRecNoSuban
 
-   close_open_fin_epdv_tables()
+   close_open_fin_epdv_tables( dDatOd, dDatDo )
 
-   SELECT SUBAN
-   PRIVATE cFilter := ""
 
-   cFilter :=  dbf_quote( dDatOd ) + " <= datdok .and. " + dbf_quote( dDatDo ) + ">= datdok"
+   PRIVATE cFilter := ".T."
+
+   //cFilter :=  dbf_quote( dDatOd ) + " <= datdok .and. " + dbf_quote( dDatDo ) + ">= datdok"
 
    // setuj tip dokumenta
    IF !Empty( cTdSrc )
@@ -208,9 +208,9 @@ STATIC FUNCTION gen_fin_kuf_item( cSezona )
       cFilter +=  ".and. " + cKtoFilter
    ENDIF
 
-   SET ORDER TO TAG "4"
+   SELECT SUBAN
+   //SET ORDER TO TAG "4"
    SET FILTER TO &cFilter
-
    GO TOP
 
    // prosetajmo kroz suban tabelu
@@ -225,11 +225,10 @@ STATIC FUNCTION gen_fin_kuf_item( cSezona )
       dDMin := datdok
       dDMax := datdok
 
-      // ove var moraju biti private da bi se mogle macro-om evaluirati
-      PRIVATE _iznos := 0
+      PRIVATE _iznos := 0 // ove var moraju biti private da bi se mogle macro-om evaluirati
 
-      // datumski period
-      DO WHILE !Eof() .AND.  ( datdok == dDMax )
+
+      DO WHILE !Eof() .AND.  ( datdok == dDMax ) // datumski period
 
          SELECT suban
 
@@ -238,8 +237,8 @@ STATIC FUNCTION gen_fin_kuf_item( cSezona )
          cIdFirma := suban->IdFirma
 
          nRecnoSuban := suban->( RecNo() )
-         // datum kuf-a
-         _datum := suban->datdok
+
+         _datum := suban->datdok  // datum kuf-a
          _id_part := suban->idpartner
          _opis := cOpis
 
@@ -248,6 +247,7 @@ STATIC FUNCTION gen_fin_kuf_item( cSezona )
          cOpisSuban := AllTrim( suban->opis )
          _opis := StrTran( _opis, "##opis##", cOpisSuban )
 
+altd()
          IF !Empty( cIdPart )
             IF ( AllTrim( Upper( cIdPart ) ) == "#TD#" )
                _id_part := kuf_fin_trazi_dob ( suban->( RecNo() ), suban->idfirma, suban->idvn, suban->brnal, suban->brdok, suban->rbr )
@@ -554,9 +554,12 @@ STATIC FUNCTION kuf_fin_trazi_dob( nRecNo, cIdFirma, cIdVn, cBrNal, cBrDok, nRbr
 
    LOCAL i
 
+   PushWa()
+   SELECT SUBAN
    PushWA()
-
-   SELECT suban_2
+   //SELECT suban_2
+   SELECT suban
+   SET FILTER TO
 
    FOR i := -3 TO 3
 
@@ -566,7 +569,8 @@ STATIC FUNCTION kuf_fin_trazi_dob( nRecNo, cIdFirma, cIdVn, cBrNal, cBrDok, nRbr
       cKto := Left( idkonto, 3 )
 
       IF ( cKto $ AllTrim( gL_kto_dob ) ) .AND. ( IdFirma ==  cIdFirma ) .AND. ( IdVn == cIdVn ) .AND. ( BrNal == cBrNal ) .AND. ( BrDok == cBrDok )
-         cIdPartner := idpartner
+         cIdPartner := suban->idpartner
+         PopWa()
          PopWa()
          RETURN cIdPartner
       ENDIF
@@ -574,8 +578,10 @@ STATIC FUNCTION kuf_fin_trazi_dob( nRecNo, cIdFirma, cIdVn, cBrNal, cBrDok, nRbr
    NEXT
 
    PopWa()
+   PopWa()
 
    RETURN ""
+
 
 FUNCTION traz_pdv_dob( nRecNo, cIdFirma, cIdVn, cBrNal, cBrDok, nRbr, cOpis )
 
@@ -592,9 +598,12 @@ FUNCTION traz_pdv_dob( nRecNo, cIdFirma, cIdVn, cBrNal, cBrDok, nRbr, cOpis )
       cOpis := suban->opis
    ENDIF
 
+   PushWa()
+   SELECT SUBAN
    PushWA()
 
-   SELECT suban_2
+   //SELECT suban_2
+   SELECT suban
 
    nPdvIznos := 0
 
@@ -615,11 +624,13 @@ FUNCTION traz_pdv_dob( nRecNo, cIdFirma, cIdVn, cBrNal, cBrDok, nRbr, cOpis )
          ENDIF
 
          PopWa()
+         PopWa()
          RETURN nPdvIznos
       ENDIF
 
    NEXT
 
+   PopWa()
    PopWa()
 
    RETURN nPdvIznos
@@ -671,9 +682,10 @@ STATIC FUNCTION extract_oznaka( cOpis )
    RETURN cPom
 
 
-// -----------------------------------------------------------
-// trazi odredjeni konto unutar tekuceg naloga
-// -----------------------------------------------------------
+/*
+   trazi odredjeni konto unutar tekuceg naloga
+*/
+
 FUNCTION trazi_kto( cIdKonto, nRecNo, cIdFirma, cIdVn, cBrNal, cBrDok, nRbr, cOpis )
 
    LOCAL nIznos := 0
@@ -690,9 +702,13 @@ FUNCTION trazi_kto( cIdKonto, nRecNo, cIdFirma, cIdVn, cBrNal, cBrDok, nRbr, cOp
       cOpis := suban->opis
    ENDIF
 
+   PushWa()
+   SELECT SUBAN
    PushWA()
 
-   SELECT suban_2
+   //SELECT suban_2
+   SELECT suban
+   SET FILTER TO
 
    FOR i := -15 TO 15
 
@@ -708,11 +724,13 @@ FUNCTION trazi_kto( cIdKonto, nRecNo, cIdFirma, cIdVn, cBrNal, cBrDok, nRbr, cOp
          ENDIF
 
          PopWa()
+         PopWa()
          RETURN nIznos
       ENDIF
 
    NEXT
 
+   PopWa()
    PopWa()
 
    RETURN nIznos

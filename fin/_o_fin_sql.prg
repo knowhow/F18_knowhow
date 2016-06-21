@@ -13,6 +13,20 @@
 
 FIELD idfirma, idvn, brnal, datnal
 
+FUNCTION find_suban_za_period( dDatOd, dDatDo )
+
+   LOCAL hParams := hb_Hash()
+
+   hParams[ "dat_od" ] := dDatOd
+   hParams[ "dat_do" ] := dDatDo
+
+   hParams[ "order_by" ] := "idFirma,IdVN,BrNal,Rbr"
+
+   hParams[ "indeks" ] := .F.
+   use_sql_suban( hParams )
+   GO TOP
+
+   RETURN ! Eof()
 
 FUNCTION find_suban_by_konto_partner( cIdFirma, cIdKonto, cIdPartner )
 
@@ -164,7 +178,6 @@ FUNCTION use_sql_suban( hParams )
       cTable := hParams[ "alias" ]
    ENDIF
 
-   AltD()
    SELECT ( F_SUBAN )
 
    use_sql( cTable, cSql )
@@ -207,23 +220,23 @@ STATIC FUNCTION use_sql_suban_where( hParams )
    LOCAL dDatOd
 
    IF hb_HHasKey( hParams, "idfirma" )
-      cWhere += parsiraj_sql( "idfirma", hParams[ "idfirma" ] )
+      cWhere := parsiraj_sql( "idfirma", hParams[ "idfirma" ] )
    ENDIF
 
    IF hb_HHasKey( hParams, "idvn" )
-      cWhere += " AND " + parsiraj_sql( "idvn", hParams[ "idvn" ] )
+      cWhere += IIF( Empty( cWhere), "", " AND ") + parsiraj_sql( "idvn", hParams[ "idvn" ] )
    ENDIF
 
    IF hb_HHasKey( hParams, "brnal" )
-      cWhere += " AND " + parsiraj_sql( "brnal", hParams[ "brnal" ] )
+      cWhere += IIF( Empty( cWhere), "", " AND ") + parsiraj_sql( "brnal", hParams[ "brnal" ] )
    ENDIF
 
    IF hb_HHasKey( hParams, "idkonto" )
-      cWhere += " AND " + parsiraj_sql( "idkonto", hParams[ "idkonto" ] )
+      cWhere += IIF( Empty( cWhere), "", " AND ") + parsiraj_sql( "idkonto", hParams[ "idkonto" ] )
    ENDIF
 
    IF hb_HHasKey( hParams, "idpartner" )
-      cWhere += " AND " + parsiraj_sql( "idpartner", hParams[ "idpartner" ] )
+      cWhere += IIF( Empty( cWhere), "", " AND ") + parsiraj_sql( "idpartner", hParams[ "idpartner" ] )
    ENDIF
 
 
@@ -233,7 +246,7 @@ STATIC FUNCTION use_sql_suban_where( hParams )
       ELSE
          dDatOd := hParams[ "dat_od" ]
       ENDIF
-      cWhere += " AND " + parsiraj_sql_date_interval( "datdok", dDatOd, hParams[ "dat_do" ] )
+      cWhere += IIF( Empty( cWhere), "", " AND ") + parsiraj_sql_date_interval( "datdok", dDatOd, hParams[ "dat_do" ] )
    ENDIF
 
    RETURN cWhere

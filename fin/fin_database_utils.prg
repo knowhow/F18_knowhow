@@ -149,7 +149,7 @@ FUNCTION fin_novi_broj_dokumenta( firma, tip_dokumenta )
    _broj := fetch_metric( _param, nil, _broj )
 
    // konsultuj i doks uporedo
-   O_NALOG
+   o_nalog()
 
    IF gBrojac == "2"
       SET ORDER TO TAG "2"

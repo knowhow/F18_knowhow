@@ -88,7 +88,7 @@ FUNCTION fin_spec_otv_stavke_preko_dana()
       O_VRSTEP
    ENDIF
 
-   O_SUBAN ; SET ORDER TO TAG "3"
+   o_suban() ; SET ORDER TO TAG "3"
    // "IdFirma+IdKonto+IdPartner+BrDok+dtos(DatDok)"
    HSEEK cIdFirma + cIdKonto
 

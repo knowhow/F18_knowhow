@@ -61,7 +61,7 @@ cIdFirma:=left(cIdFirma,2)
 
 O_FAKT_OBJEKTI
 O_KONTO
-O_SUBAN
+o_suban()
 
 // 1) utvrditi ukupne troskove (nUkTros)
 cPom:=my_get_from_ini("Troskovi","Uslov",'idKonto="3"',KUMPATH)

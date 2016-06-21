@@ -26,7 +26,7 @@ FUNCTION Blagajna()
    lSumiraj := .F.
 
    O_KONTO
-   O_ANAL
+   o_anal()
    O_FIN_PRIPR
 
    GO TOP
@@ -365,8 +365,8 @@ FUNCTION blag_azur()
 
    O_PARTN
    O_KONTO
-   O_ANAL
-   O_SUBAN
+   o_anal()
+   o_suban()
 
    cDinDem := "1"
 

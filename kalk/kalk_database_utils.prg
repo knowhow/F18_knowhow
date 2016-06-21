@@ -13,7 +13,7 @@
 #include "f18.ch"
 
 
-FUNCTION ODbKalk()
+FUNCTION o_kalk_tabele_izvj()
 
    O_SIFK
    O_SIFV
@@ -260,26 +260,36 @@ FUNCTION SljBroj( cidfirma, cIdvD, nMjesta )
 
 
 
-// ------------------------------------------------
-// ------------------------------------------------
+/*
+   sljedeci broj kalkulacije
+*/
+
 FUNCTION SljBrKalk( cTipKalk, cIdFirma, cSufiks )
 
-   // {
+
    LOCAL cBrKalk := Space( 8 )
    IF cSufiks == nil
       cSufiks := Space( 3 )
    ENDIF
    IF gBrojac == "D"
       IF glBrojacPoKontima
+      /*
          SELECT kalk_doks
-         SET ORDER TO TAG "1S"
+         SET ORDER TO TAG "1S" // "IdFirma+idvd+SUBSTR(brdok,6)+LEFT(brdok,5)"
          SEEK cIdFirma + cTipKalk + cSufiks + "X"
+      */
+          find_kalk_doks_za_tip_sufix( cIdFirma, cTipKalk, cSufix )
       ELSE
+         find_kalk_doks_za_tip( cIdFirma, cTipKalk )
+      /*
          SELECT kalk
          SET ORDER TO TAG "1"
          SEEK cIdFirma + cTipKalk + "X"
+      */
       ENDIF
-      SKIP -1
+
+      //SKIP -1
+      GO BOTTOM // zzadnji u nizu
 
       IF cTipKalk <> field->idVD .OR. glBrojacPoKontima .AND. Right( field->brDok, 3 ) <> cSufiks
          cBrKalk := Space( gLenBrKalk ) + cSufiks

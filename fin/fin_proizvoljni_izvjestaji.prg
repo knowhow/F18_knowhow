@@ -67,7 +67,7 @@ FUNCTION PrPromRn()
 
    O_KONTO
    O_PARTN
-   O_SUBAN
+   o_suban()
 
 
 

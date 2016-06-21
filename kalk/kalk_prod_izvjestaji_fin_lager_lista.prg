@@ -12,7 +12,10 @@
 #include "f18.ch"
 
 
-// finansijsko stanje prodavnice
+/*
+   finansijsko stanje prodavnice
+*/
+
 FUNCTION finansijsko_stanje_prodavnica()
 
    LOCAL nKolUlaz
@@ -24,7 +27,7 @@ FUNCTION finansijsko_stanje_prodavnica()
    cIdFirma := gFirma
    cIdKonto := PadR( "1320", gDuzKonto )
 
-   ODbKalk()
+   o_kalk_tabele_izvj()
 
    dDatOd := CToD( "" )
    dDatDo := Date()
@@ -77,11 +80,11 @@ FUNCTION finansijsko_stanje_prodavnica()
    BoxC()
 
    // ovo je napusteno ...
-   fSaberikol := ( my_get_from_ini( 'Svi', 'SaberiKol', 'N' ) == 'D' )
+   // fSaberikol := ( my_get_from_ini( 'Svi', 'SaberiKol', 'N' ) == 'D' )
 
    // sinteticki konto
-   IF Len( Trim( cidkonto ) ) == 3
-      cIdkonto := Trim( cidkonto )
+   IF Len( Trim( cIdkonto ) ) == 3
+      cIdkonto := Trim( cIdkonto )
    ENDIF
 
    o_kalk_report()
@@ -110,8 +113,7 @@ FUNCTION finansijsko_stanje_prodavnica()
    ENDIF
 
    SELECT KALK
-   SET ORDER TO TAG "5"
-   // ("5","idFirma+dtos(datdok)+idvd+brdok+rbr","KALK")
+   SET ORDER TO TAG "5"  // ("5","idFirma+dtos(datdok)+idvd+brdok+rbr","KALK")
    SET FILTER to &cFilt1
 
    // HSEEK cidfirma
@@ -133,23 +135,15 @@ FUNCTION finansijsko_stanje_prodavnica()
    AAdd( aRFLLP, { Len( PicDem ), "  NV", " potraz." } )
    AAdd( aRFLLP, { Len( PicDem ), "  NV", " ukupno" } )
 
-   IF IsPDV()
-      AAdd( aRFLLP, { Len( PicDem ), "   PV", " duguje" } )
-      AAdd( aRFLLP, { Len( PicDem ), "   PV", " potraz." } )
-      AAdd( aRFLLP, { Len( PicDem ), "   PV", " ukupno" } )
-      AAdd( aRFLLP, { Len( PicDem ), " PV sa PDV", " duguje" } )
-      AAdd( aRFLLP, { Len( PicDem ), " PV sa PDV", " potraz." } )
-      AAdd( aRFLLP, { Len( PicDem ), " Popust", "" } )
-      AAdd( aRFLLP, { Len( PicDem ), " PV sa PDV", " - pop." } )
-      AAdd( aRFLLP, { Len( PicDem ), " PV sa PDV", " ukupno" } )
-   ELSE
-      AAdd( aRFLLP, { Len( PicDem ), "  MPV", " duguje" } )
-      AAdd( aRFLLP, { Len( PicDem ), "  MPV", " potraz." } )
-      AAdd( aRFLLP, { Len( PicDem ), "  MPV", " ukupno" } )
-      AAdd( aRFLLP, { Len( PicDem ), " MPV sa PP", " duguje" } )
-      AAdd( aRFLLP, { Len( PicDem ), " MPV sa PP", " potraz." } )
-      AAdd( aRFLLP, { Len( PicDem ), " MPV sa PP", " ukupno" } )
-   ENDIF
+   AAdd( aRFLLP, { Len( PicDem ), "   PV", " duguje" } )
+   AAdd( aRFLLP, { Len( PicDem ), "   PV", " potraz." } )
+   AAdd( aRFLLP, { Len( PicDem ), "   PV", " ukupno" } )
+   AAdd( aRFLLP, { Len( PicDem ), " PV sa PDV", " duguje" } )
+   AAdd( aRFLLP, { Len( PicDem ), " PV sa PDV", " potraz." } )
+   AAdd( aRFLLP, { Len( PicDem ), " Popust", "" } )
+   AAdd( aRFLLP, { Len( PicDem ), " PV sa PDV", " - pop." } )
+   AAdd( aRFLLP, { Len( PicDem ), " PV sa PDV", " ukupno" } )
+
 
    PRIVATE cLine := SetRptLineAndText( aRFLLP, 0 )
    PRIVATE cText1 := SetRptLineAndText( aRFLLP, 1, "*" )

@@ -140,7 +140,7 @@ FUNCTION kalk_kontiranje_naloga( fAuto, lAGen, lViseKalk, cNalog, auto_brojac )
       SET ORDER TO TAG "1"
       GO TOP
 
-      O_NALOG
+      o_nalog()
       SET ORDER TO TAG "1"
 
    ENDIF
@@ -1120,8 +1120,8 @@ FUNCTION kalk_kontiranje()
       my_dbf_zap()
 
       SELECT KALK_PRIPR
-      // idfirma+ idvd + brdok+rbr
-      SET ORDER TO TAG "1"
+
+      SET ORDER TO TAG "1" // idfirma+ idvd + brdok+rbr
 
       IF fPrvi
          // nisu prosljedjeni parametri
@@ -1171,8 +1171,8 @@ FUNCTION kalk_kontiranje()
          cBrdok := brdok
       ENDIF
 
-      // potrebno je ispitati da li je predispozicija !
-      IF idvd == "80" .AND. !Empty( idkonto2 )
+
+      IF idvd == "80" .AND. !Empty( idkonto2 ) // potrebno je ispitati da li je predispozicija !
          _predispozicija := .T.
       ENDIF
 
@@ -1320,8 +1320,10 @@ FUNCTION kalk_kontiranje()
 
             SELECT ROBA
             HSEEK KALK_PRIPR->IdRoba
+
             SELECT TARIFA
             HSEEK KALK_PRIPR->idtarifa
+
             SELECT KALK_PRIPR
 
             IF cIdVd == "24"
@@ -1382,7 +1384,7 @@ FUNCTION kalk_kontiranje()
                BrDok     WITH kalk_pripr->BrDok, ;
                DatDok    WITH kalk_pripr->DatDok, ;
                GKV       WITH Round( kalk_PRIPR->( GKolicina * FCJ2 ), gZaokr ), ;   // vrijednost transp.kala
-            GKV2      WITH Round( kalk_PRIPR->( GKolicin2 * FCJ2 ), gZaokr )   // vrijednost ostalog kala
+               GKV2      WITH Round( kalk_PRIPR->( GKolicin2 * FCJ2 ), gZaokr )   // vrijednost ostalog kala
 
             REPLACE Prevoz    WITH Round( kalk_PRIPR->( nPrevoz * SKol ), gZaokr ), ;
                CarDaz    WITH Round( kalk_PRIPR->( nCarDaz * SKol ), gZaokr ), ;
@@ -1391,7 +1393,7 @@ FUNCTION kalk_kontiranje()
                ZavTr     WITH Round( kalk_PRIPR->( nZavTr * SKol ), gZaokr ), ;
                NV        WITH Round( kalk_PRIPR->( NC * ( Kolicina - GKolicina - GKolicin2 ) ), gZaokr ), ;
                Marza     WITH Round( kalk_PRIPR->( nMarza * ( Kolicina - GKolicina - GKolicin2 ) ), gZaokr ), ;           // marza se ostvaruje nad stvarnom kolicinom
-            VPV       WITH Round( kalk_PRIPR->( VPC * ( Kolicina - GKolicina - GKolicin2 ) ), gZaokr )        // vpv se formira nad stvarnom kolicinom
+               VPV       WITH Round( kalk_PRIPR->( VPC * ( Kolicina - GKolicina - GKolicin2 ) ), gZaokr )        // vpv se formira nad stvarnom kolicinom
 
 
             nPom := kalk_pripr->( RabatV / 100 * VPC * Kolicina )

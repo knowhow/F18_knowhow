@@ -12,23 +12,61 @@
 #include "f18.ch"
 
 FIELD idfirma, idvn, brnal, datnal
-/*
 
-CREATE TABLE fmk.fin_nalog
-(
-  idfirma character(2) NOT NULL,
-  idvn character(2) NOT NULL,
-  brnal character(8) NOT NULL,
-  datnal date,
-  dugbhd numeric(17,2),
-  potbhd numeric(17,2),
-  dugdem numeric(15,2),
-  potdem numeric(15,2),
-  sifra character(6),
-  CONSTRAINT fin_nalog_pkey PRIMARY KEY (idfirma, idvn, brnal)
-)
 
-*/
+FUNCTION find_suban_by_konto_partner( cIdFirma, cIdKonto, cIdPartner )
+
+   LOCAL hParams := hb_Hash()
+
+   IF cIdFirma <> NIL
+      hParams[ "idfirma" ] := cIdFirma
+   ENDIF
+
+   IF cIdKonto <> NIL
+      hParams[ "idkonto" ] := cIdKonto
+   ENDIF
+
+   IF cIdPartner <> NIL
+      hParams[ "idpartner" ] := cIdPartner
+   ELSE
+      hParams[ "order_by" ] := "datdok" // ako ima vise brojeva dokumenata sortiraj po njima
+   ENDIF
+
+   hParams[ "indeks" ] := .T. // ne trositi vrijeme na kreiranje indeksa
+
+   use_sql_suban( hParams )
+   GO TOP
+
+   RETURN ! Eof()
+
+
+FUNCTION find_suban_by_broj_dokumenta( cIdFirma, cIdVN, cBrNal )
+
+   LOCAL hParams := hb_Hash()
+
+   IF cIdFirma <> NIL
+      hParams[ "idfirma" ] := cIdFirma
+   ENDIF
+
+   IF cIdVN <> NIL
+      hParams[ "idvn" ] := cIdvn
+   ENDIF
+
+   IF cBrNal <> NIL
+      hParams[ "brnal" ] := cBrNal
+   ELSE
+      hParams[ "order_by" ] := "brnal" // ako ima vise brojeva dokumenata sortiraj po njima
+   ENDIF
+
+   hParams[ "indeks" ] := .F. // ne trositi vrijeme na kreiranje indeksa
+
+   use_sql_suban( hParams )
+   GO TOP
+
+   RETURN ! Eof()
+
+
+
 FUNCTION use_sql_fin_nalog( cIdVN, lMakeIndex )
 
    LOCAL cSql
@@ -67,3 +105,135 @@ FUNCTION use_sql_fin_nalog( cIdVN, lMakeIndex )
    ENDIF
 
    RETURN .T.
+
+
+
+
+
+FUNCTION use_sql_suban( hParams )
+
+   LOCAL cTable := "SUBAN"
+   LOCAL cWhere, cOrder
+   LOCAL cSql
+
+   default_if_nil( @hParams, hb_Hash() )
+
+   cSql := "SELECT "
+   cSql += coalesce_char_zarez( "idfirma", 2 )
+   cSql += coalesce_char_zarez( "idvn", 2 )
+   cSql += coalesce_char_zarez( "brnal", 10 )
+   cSql += coalesce_char_zarez( "idkonto", 10 )
+   cSql += coalesce_char_zarez( "idpartner", 6 )
+   cSql += coalesce_char_zarez( "rbr", 4 )
+   cSql += coalesce_char_zarez( "idtipdok", 2 )
+   cSql += coalesce_char_zarez( "brdok", 20 )
+   cSql += "datdok, datval, "
+   cSql += coalesce_char_zarez( "otvst", 1 )
+   cSql += coalesce_char_zarez( "d_p", 1 )
+
+   cSql += coalesce_char_zarez( "opis", 500 )
+   cSql += coalesce_char_zarez( "k1", 1 )
+   cSql += coalesce_char_zarez( "k2", 1 )
+   cSql += coalesce_char_zarez( "k3", 2 )
+   cSql += coalesce_char_zarez( "k4", 2 )
+   cSql += coalesce_char_zarez( "m1", 1 )
+   cSql += coalesce_char_zarez( "m2", 2 )
+   cSql += coalesce_char_zarez( "idrj", 6 )
+   cSql += coalesce_char_zarez( "funk", 5 )
+   cSql += coalesce_char_zarez( "fond", 4 )
+
+   cSql += coalesce_num_num_zarez( "iznosbhd", 17, 2 )
+   cSql += coalesce_num_num( "iznosdem", 15, 2  )
+
+   cSql += " FROM fmk.fin_suban"
+
+
+   cWhere := use_sql_suban_where( hParams )
+   cOrder := use_sql_suban_order( hParams )
+
+   IF !Empty( cWhere )
+      cSql += " WHERE " + cWhere
+      IF !Empty( cOrder )
+         cSql += cOrder
+      ENDIF
+   ELSE
+      cSql += " OFFSET 0 LIMIT 1000"
+   ENDIF
+
+   IF hb_HHasKey( hParams, "alias" )
+      cTable := hParams[ "alias" ]
+   ENDIF
+
+   AltD()
+   SELECT ( F_SUBAN )
+
+   use_sql( cTable, cSql )
+
+   IF is_sql_rdd_treba_indeks( hParams )
+      INDEX ON IdFirma + IdKonto + IdPartner + DToS( DatDok ) + BrNal + RBr  TAG "1" TO cTable
+      INDEX ON IdFirma + IdPartner + IdKonto  TAG "2" TO cTable
+      INDEX ON IdFirma + IdKonto + IdPartner + BrDok + DToS( DatDok )  TAG "3" TO cTable
+      INDEX ON idFirma + IdVN + BrNal + Rbr  TAG "4" TO cTable
+      INDEX ON idFirma + IdKonto + DToS( DatDok ) + idpartner  TAG "5" TO cTable
+      INDEX ON IdKonto  TAG "6" TO cTable
+      INDEX ON Idpartner  TAG "7" TO cTable
+      INDEX ON Datdok  TAG "8" TO cTable
+      INDEX ON idfirma + idkonto + idrj + idpartner + DToS( datdok ) + brnal + rbr  TAG "9" TO cTable
+      INDEX ON idFirma + IdVN + BrNal + idkonto + DToS( datdok )  TAG "10" TO cTable
+
+      SET ORDER TO TAG "1"
+      GO TOP
+   ENDIF
+
+   RETURN .T.
+
+
+STATIC FUNCTION use_sql_suban_order( hParams )
+
+   LOCAL cOrder := ""
+
+   IF hb_HHasKey( hParams, "order_by" )
+      cOrder += " ORDER BY " + hParams[ "order_by" ]
+   ELSE
+      cOrder += " ORDER BY idvn,brnal"
+   ENDIF
+
+   RETURN cOrder
+
+
+STATIC FUNCTION use_sql_suban_where( hParams )
+
+   LOCAL cWhere := ""
+   LOCAL dDatOd
+
+   IF hb_HHasKey( hParams, "idfirma" )
+      cWhere += parsiraj_sql( "idfirma", hParams[ "idfirma" ] )
+   ENDIF
+
+   IF hb_HHasKey( hParams, "idvn" )
+      cWhere += " AND " + parsiraj_sql( "idvn", hParams[ "idvn" ] )
+   ENDIF
+
+   IF hb_HHasKey( hParams, "brnal" )
+      cWhere += " AND " + parsiraj_sql( "brnal", hParams[ "brnal" ] )
+   ENDIF
+
+   IF hb_HHasKey( hParams, "idkonto" )
+      cWhere += " AND " + parsiraj_sql( "idkonto", hParams[ "idkonto" ] )
+   ENDIF
+
+   IF hb_HHasKey( hParams, "idpartner" )
+      cWhere += " AND " + parsiraj_sql( "idpartner", hParams[ "idpartner" ] )
+   ENDIF
+
+
+   IF hb_HHasKey( hParams, "dat_do" )
+      IF !hb_HHasKey( hParams, "dat_od" )
+         dDatOd := CToD( "" )
+      ELSE
+         dDatOd := hParams[ "dat_od" ]
+      ENDIF
+      cWhere += " AND " + parsiraj_sql_date_interval( "datdok", dDatOd, hParams[ "dat_do" ] )
+   ENDIF
+
+   RETURN cWhere

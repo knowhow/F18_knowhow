@@ -172,7 +172,7 @@ FUNCTION konsult_otvorene_stavke()
 
    SELECT ( F_SUBAN )
    USE
-   O_SUBAN
+   o_suban()
 
    SELECT suban
    SET ORDER TO TAG "1" // IdFirma+IdKonto+IdPartner+dtos(DatDok)+BrNal+RBr

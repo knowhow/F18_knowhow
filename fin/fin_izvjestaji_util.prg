@@ -41,7 +41,7 @@ FUNCTION otvori_sint_anal_kroz_temp( lSint, cFilter )
    SET ORDER TO TAG "0"
    GO TOP
 
-   O_SUBAN
+   o_suban()
 
    Box(, 2, 30 )
 

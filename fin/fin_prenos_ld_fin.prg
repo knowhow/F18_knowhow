@@ -45,7 +45,7 @@ FUNCTION LdFin()
    set_metric( "fin_prenos_ld_mjesec", my_user(), _mjesec )
 
    O_FAKT_OBJEKTI
-   O_NALOG
+   o_nalog()
    O_FIN_PRIPR
    O_TRFP3
    open_rekld()

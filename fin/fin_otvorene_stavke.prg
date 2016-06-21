@@ -107,7 +107,7 @@ STATIC FUNCTION SpecOtSt()
 
    nStr := 0
 
-   O_SUBAN
+   o_suban()
 
    CistiK1k4( .F. )
 
@@ -360,7 +360,7 @@ FUNCTION fin_automatsko_zatvaranje_otvorenih_stavki( lAuto, cKto, cPtn )
 
    cIdFirma := Left( cIdFirma, 2 )
 
-   O_SUBAN
+   o_suban()
 
    SELECT SUBAN
    SET ORDER TO TAG "3"
@@ -543,7 +543,7 @@ FUNCTION fin_brisanje_markera_otvorenih_stavki()
 
    SELECT ( F_SUBAN )
    IF !Used()
-      O_SUBAN
+      o_suban()
    ENDIF
 
    SET ORDER TO TAG "1"
@@ -610,7 +610,7 @@ STATIC FUNCTION _o_ruc_zat( lOsuban )
       my_use_temp( "SUBAN", my_home() + + my_dbf_prefix() + "osuban", .F., .F. )
 
    ELSE
-      O_SUBAN
+      o_suban()
    ENDIF
 
    RETURN .T.
@@ -961,7 +961,7 @@ FUNCTION StKart( fSolo, fTiho, bFilter )
 
    ELSEIF fsolo
 
-      O_SUBAN
+      o_suban()
       O_PARTN
       O_KONTO
       cIdFirma := gFirma
@@ -1639,7 +1639,7 @@ FUNCTION fin_asistent_otv_st()
 
    O_KONTO
    O_PARTN
-   O_SUBAN
+   o_suban()
 
    // ovo su parametri kartice
    cIdFirma := gFirma
@@ -2154,7 +2154,7 @@ FUNCTION fin_asistent_otv_st()
       SELECT ( F_OSUBAN )
       my_use_temp( "OSUBAN", my_home() + my_dbf_prefix() + "osuban", .F., .T. )
 
-      O_SUBAN
+      o_suban()
 
       IF !promjene_otvorenih_stavki_se_mogu_azurirati()
          my_close_all_dbf()

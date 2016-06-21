@@ -191,7 +191,7 @@ FUNCTION o_fin_edit()
    O_PARTN
    O_TNAL
    O_TDOK
-   O_NALOG
+   o_nalog()
    O_FIN_PRIPR
 
    SELECT fin_pripr

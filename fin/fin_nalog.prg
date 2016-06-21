@@ -27,14 +27,11 @@ FUNCTION fin_nalog_azurirani()
    fin_read_params()
 
    o_nalog()
-   o_suban()
+
    O_KONTO
    O_PARTN
    O_TNAL
    O_TDOK
-
-   SELECT SUBAN
-   SET ORDER TO TAG "4"
 
    cIdVN := Space( 2 )
    cIdFirma := gFirma
@@ -61,8 +58,12 @@ FUNCTION fin_nalog_azurirani()
    NFOUND CRET
    dDatNal := datnal
 
-   SELECT SUBAN
-   SEEK cIdfirma + cIdvn + cBrNal
+   // SELECT SUBAN
+   // SEEK cIdfirma + cIdvn + cBrNal
+
+   find_suban_by_broj_dokumenta( cIdFirma, cIdvn, cBrnal )
+   // SELECT SUBAN
+   SET ORDER TO TAG "4"
 
    start_print()
 
@@ -161,7 +162,7 @@ FUNCTION fin_gen_psuban_stampa_nalozi( lAuto, dDatNal )
    EOF CRET .F.
 
    IF lAuto
-      //_print_opt := "D"
+      // _print_opt := "D"
       Box(, 3, 75 )
       @ m_x + 0, m_y + 2 SAY "PROCES FORMIRANJA SINTETIKE I ANALITIKE"
    ENDIF

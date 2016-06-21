@@ -141,7 +141,7 @@ FUNCTION prefin_unos_naloga()
 
    O_FIN_PRIPR
    O_KONTO
-   O_SUBAN
+   o_suban()
 
    IF cK1 == "9"
       cK1 := ""

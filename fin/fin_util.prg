@@ -93,10 +93,10 @@ FUNCTION ImaUSubanNemaUNalog()
 
    my_close_all_dbf()
 
-   O_NALOG
-   O_SUBAN
-   O_ANAL
-   O_SINT
+   o_nalog()
+   o_suban()
+   o_anal()
+   o_sint()
 
    FOR _i := 1 TO 3
 
@@ -237,16 +237,16 @@ FUNCTION daterr_rpt()
 
    my_close_all_dbf()
 
-   O_SUBAN
+   o_suban()
    SELECT suban
    SET ORDER TO TAG "10"
    // idfirma+idvn+brnal+idkonto+datdok
 
-   O_ANAL
+   o_anal()
    SELECT anal
    SET ORDER TO TAG "2"
 
-   O_NALOG
+   o_nalog()
    SELECT nalog
    SET ORDER TO TAG "1"
    GO TOP

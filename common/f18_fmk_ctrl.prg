@@ -97,7 +97,7 @@ STATIC FUNCTION f18_fin_data( data, checksum )
    LOCAL _n_c_stavke := 0
    LOCAL _scan
 
-   O_SUBAN
+   o_suban()
 
    Box(, 2, 60 )
 

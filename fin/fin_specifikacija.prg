@@ -182,7 +182,7 @@ FUNCTION fin_spec_po_suban_kontima()
 
    O_PARTN
    O_KONTO
-   O_SUBAN
+   o_suban()
 
    CistiK1k4()
 

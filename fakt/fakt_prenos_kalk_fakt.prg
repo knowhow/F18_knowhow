@@ -35,7 +35,7 @@ FUNCTION KaFak()
 
    Menu_SC( "prenosfakt" )
 
-   RETURN
+   RETURN .T.
 
 
 // ---------------------------------------
@@ -63,7 +63,7 @@ STATIC FUNCTION _params()
    SELECT params
    USE
 
-   RETURN
+   RETURN .T.
 
 
 // -----------------------------------------
@@ -109,8 +109,8 @@ FUNCTION kalk_2_fakt()
          EXIT
       ENDIF
 
-      // vrati tip dokumenta za fakturisanje
-      cTipFakt := _g_fakt_type( cIdTipDok )
+
+      cTipFakt := _g_fakt_type( cIdTipDok ) // vrati tip dokumenta za fakturisanje
 
       cBrFakt := cBrDok
       cIdRj := cIdFirma
@@ -127,8 +127,8 @@ FUNCTION kalk_2_fakt()
          EXIT
       ENDIF
 
-      // ako je kalk 10 i fakt 10 onda je to fakt racun...
-      IF cTipFakt == "10" .AND. cIdTipDok == "10"
+
+      IF cTipFakt == "10" .AND. cIdTipDok == "10" // ako je kalk 10 i fakt 10 onda je to fakt racun
          lToRacun := .T.
       ENDIF
 
@@ -160,7 +160,7 @@ FUNCTION kalk_2_fakt()
       IF !Found()
 
          Beep( 4 )
-         @ m_x + 14, m_y + 2 SAY "Ne postoji ovaj dokument !!"
+         @ m_x + 14, m_y + 2 SAY "Ne postoji ovaj dokument !"
          Inkey( 4 )
          @ m_x + 14, m_y + 2 SAY Space( 30 )
          LOOP
@@ -176,8 +176,8 @@ FUNCTION kalk_2_fakt()
       SELECT KALK
       lFirst := .T.
 
-      // rok placanja...
-      nRokPl := 0
+
+      nRokPl := 0 // rok placanja
 
       dDatPl := kalk->datdok
       dDatDok := kalk->datdok
@@ -283,7 +283,7 @@ FUNCTION kalk_2_fakt()
          SKIP
       ENDDO
 
-      @ m_x + 8, m_y + 2 SAY "Dokument je prenesen !!"
+      @ m_x + 8, m_y + 2 SAY "Dokument je prenesen !"
 
       Inkey( 4 )
 
@@ -295,7 +295,7 @@ FUNCTION kalk_2_fakt()
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
 
 

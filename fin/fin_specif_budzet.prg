@@ -112,7 +112,7 @@ FUNCTION IzvrsBudz()
    O_KONTO
    O_RJ
    O_FUNK
-   O_SUBAN
+   o_suban()
 
    SELECT SUBAN
    cFilter := ""
@@ -1086,7 +1086,7 @@ FUNCTION Prihodi()
 
    O_BUDZET
    O_KONTO
-   O_SUBAN
+   o_suban()
 
 
    SELECT SUBAN

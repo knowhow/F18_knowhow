@@ -63,7 +63,7 @@ FUNCTION my_dbf_prefix( aDbfRec )
       lTemp := .T.
    ELSE
       lTemp := aDbfRec[ "temp" ]
-      lTemp := lTemp .AND. !( "params" $ aDbfRec[ "table" ] )
+      //lTemp := lTemp .AND. !( "params" $ aDbfRec[ "table" ] )
    ENDIF
 
 

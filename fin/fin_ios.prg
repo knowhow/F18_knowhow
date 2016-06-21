@@ -205,7 +205,7 @@ STATIC FUNCTION ios_specifikacija( params )
 
    O_PARTN
    O_KONTO
-   O_SUBAN
+   o_suban()
 
    SELECT suban
    SET ORDER TO TAG "1"
@@ -425,7 +425,7 @@ STATIC FUNCTION ios_generacija_podataka( params )
 
    O_PARTN
    O_KONTO
-   O_SUBAN
+   o_suban()
    O_IOS
 
    // reset tabele IOS
@@ -651,9 +651,9 @@ STATIC FUNCTION mnu_ios_print()
    // otvori mi tabele
    O_KONTO
    O_PARTN
-   O_SUBAN
+   o_suban()
    O_TNAL
-   O_SUBAN
+   o_suban()
    O_IOS
 
    SELECT ios

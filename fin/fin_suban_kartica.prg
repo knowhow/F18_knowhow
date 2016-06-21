@@ -1239,7 +1239,7 @@ STATIC FUNCTION close_open_kartica_tbl()
    O_SIFK
    O_SIFV
    O_RJ
-   O_SUBAN
+   o_suban()
    O_TDOK
 
    RETURN .T.

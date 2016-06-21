@@ -800,7 +800,6 @@ STATIC FUNCTION TTbl2Kalk()
 
    DO WHILE !Eof()
 
-      // pronadji robu
       SELECT roba
       cTmpArt := AllTrim( temp->idroba )
       GO TOP

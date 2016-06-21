@@ -135,9 +135,6 @@ FUNCTION my_use( cAlias, cTable, lRefresh )
       cAlias :=  aDbfRec[ "alias" ]
    ENDIF
 
-IF cAlias == "PSUBAN"
-altd()
-endif
 
 #ifdef F18_DEBUG_SYNC
    ?E "MMMMMMM my_use start", aDbfRec[ "table" ], "main thread:", is_in_main_thread(), "lRefresh", lRefresh

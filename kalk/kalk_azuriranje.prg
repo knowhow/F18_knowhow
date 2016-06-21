@@ -194,10 +194,11 @@ STATIC FUNCTION kalk_vrati_iz_pripr2()
    RETURN .T.
 
 
-// ------------------------------------------------------------------------
-// generisanje zavisnih dokumenata nakon azuriranja kalkulacije
-// mozda cemo dobiti i nove dokumente u pripremi
-// ------------------------------------------------------------------------
+/*
+ generisanje zavisnih dokumenata nakon azuriranja kalkulacije
+ mozda cemo dobiti i nove dokumente u pripremi
+*/
+
 STATIC FUNCTION kalk_zavisni_nakon_azuriranja( lGenerisi, lAuto )
 
    LOCAL lForm11 := .F.
@@ -232,7 +233,7 @@ STATIC FUNCTION kalk_zavisni_nakon_azuriranja( lGenerisi, lAuto )
       Get11FromSmece( cNext11 )
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 STATIC FUNCTION formiraj_finansijski_nalog( lAuto )
@@ -433,7 +434,7 @@ STATIC FUNCTION kalk_azur_dbf( lAuto, lViseDok, aOstaju, aRezim, lBrStDoks )
          APPEND BLANK
          dbf_update_rec( _rec, .T. )
 
-         IF cIdVd == "97"
+         IF cIdVd == "97" // protustavka
 
             _rec := dbf_get_rec()
             APPEND BLANK

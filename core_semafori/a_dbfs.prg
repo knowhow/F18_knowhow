@@ -98,12 +98,13 @@ FUNCTION set_a_dbfs()
 FUNCTION set_a_dbfs_key_fields()
 
    LOCAL _key
+   LOCAL cDatabase := my_server_params()[ "database" ]
 
-   FOR EACH _key in s_hF18Dbfs[ my_server_params()[ "database" ] ]:Keys
+   FOR EACH _key in s_hF18Dbfs[ cDatabase ]:Keys
 
       // nije zadano - na osnovu strukture dbf-a napraviti dbf_fields
-      IF !hb_HHasKey( s_hF18Dbfs[ my_server_params()[ "database" ] ][ _key ], "dbf_fields" )  .OR.  s_hF18Dbfs[ my_server_params()[ "database" ] ][ _key ][ "dbf_fields" ] == NIL
-         set_dbf_fields_from_struct( @s_hF18Dbfs[ my_server_params()[ "database" ] ][ _key ] )
+      IF !hb_HHasKey( s_hF18Dbfs[ cDatabase ][ _key ], "dbf_fields" )  .OR.  s_hF18Dbfs[ cDatabase ][ _key ][ "dbf_fields" ] == NIL
+         set_dbf_fields_from_struct( @s_hF18Dbfs[ cDatabase ][ _key ] )
       ENDIF
 
    NEXT

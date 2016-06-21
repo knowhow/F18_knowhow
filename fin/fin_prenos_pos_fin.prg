@@ -251,10 +251,10 @@ STATIC FUNCTION O_PrVP_DB()
 
    o_koncij()
    O_PARTN
-   O_SUBAN
+   o_suban()
    O_KONTO
    O_FAKT_OBJEKTI
-   O_NALOG
+   o_nalog()
    O_FIN_PRIPR
    O_TRFP2
 

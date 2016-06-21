@@ -75,7 +75,7 @@ FUNCTION fin_spec_partnera_na_kontu()
    ELSE
       M := "---- " + Replicate( "-", FIELD_PARTNER_ID_LENGTH ) + " ------------------------- ----------------- ----------------- ----------------- -----------------"
    ENDIF
-   O_SUBAN
+   o_suban()
    SELECT SUBAN
    PRIVATE cFilt1 := "IdFirma=='" + cIdFirma + "'.and." + aUsl1 + ".and." + aUsl2
    SET FILTER to &cFilt1

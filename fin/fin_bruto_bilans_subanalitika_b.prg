@@ -64,7 +64,7 @@ FUNCTION fin_bb_subanalitika_b( params )
 
    O_KONTO
    O_PARTN
-   O_SUBAN
+   o_suban()
    O_KONTO
    O_BBKLAS
 

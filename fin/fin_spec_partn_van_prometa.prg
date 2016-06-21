@@ -24,7 +24,7 @@ FUNCTION PartVanProm()
 
    O_KONTO
    O_PARTN
-   O_SUBAN
+   o_suban()
 
    Box (, 11, 60 )
    @ m_x, m_y + 15 SAY "PREGLED PARTNERA BEZ PROMETA"

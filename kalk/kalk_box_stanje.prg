@@ -30,8 +30,8 @@ FUNCTION KalkStanje( cIdRoba )
       nFRec := RecNo()
    ENDIF
 
-   // "7","Idroba")
-   SET ORDER TO TAG "7"
+
+   SET ORDER TO TAG "7" // "7","Idroba"
    SEEK cIdRoba
 
    aStanje := {}
@@ -102,7 +102,7 @@ FUNCTION KalkStanje( cIdRoba )
 
    BoxStanje( aStanje, cIdRoba )      // nUl,nIzl
 
-   RETURN
+   RETURN .T.
 
 
 

@@ -51,7 +51,7 @@ FUNCTION import_elba( cTxt )
    ENDIF
 
    O_FIN_PRIPR
-   O_NALOG
+   o_nalog()
 
 
    s_cDelimiter := Chr( 9 ) // delimiter je TAB

@@ -84,7 +84,7 @@ STATIC FUNCTION MnuPInv()
    LOCAL _izbor := 1
 
    AAdd( _opc, "1. dokument inventure                       " )
-   AAdd( _opcexe, {|| IP() } )
+   AAdd( _opcexe, {|| kalk_ip() } )
    AAdd( _opc, "2. inventura-razlika prema postojecoj IP " )
    AAdd( _opcexe, {|| gen_ip_razlika() } )
    AAdd( _opc, "3. na osnovu IP generisi 80-ku " )

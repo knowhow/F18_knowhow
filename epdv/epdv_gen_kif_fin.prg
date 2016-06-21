@@ -148,7 +148,7 @@ FUNCTION fin_kif( dD1, dD2, cSezona )
 
 FUNCTION close_open_fin_epdv_tables()
 
-   O_SUBAN
+   o_suban()
 
    // radi manipulacije kod generisanja kif-a tabela SUBAN se otvara i kao drugi ALIAS
    SELECT ( F_TMP_1 )

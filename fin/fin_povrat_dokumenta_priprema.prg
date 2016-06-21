@@ -29,11 +29,11 @@ FUNCTION fin_povrat_naloga( lStorno )
       lStorno := .F.
    ENDIF
 
-   O_SUBAN
+   o_suban()
    O_FIN_PRIPR
-   O_ANAL
-   O_SINT
-   O_NALOG
+   o_anal()
+   o_sint()
+   o_nalog()
 
    SELECT SUBAN
    SET ORDER TO TAG "4"

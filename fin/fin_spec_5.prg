@@ -72,7 +72,7 @@ FUNCTION PregNDP()
 
    BoxC()
 
-   O_SUBAN
+   o_suban()
 
    IF cPoRP == "1"
       O_RJ

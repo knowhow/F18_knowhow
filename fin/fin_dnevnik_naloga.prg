@@ -51,8 +51,8 @@ FUNCTION DnevnikNaloga()
    O_TDOK
    O_PARTN
    O_KONTO
-   O_NALOG
-   O_SUBAN
+   o_nalog()
+   o_suban()
 
 
    SELECT SUBAN
@@ -162,7 +162,7 @@ FUNCTION VidiNaloge()
 
    LOCAL i
 
-   O_NALOG
+   o_nalog()
    SET ORDER TO TAG "3"
    GO TOP
 

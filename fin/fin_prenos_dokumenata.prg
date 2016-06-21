@@ -705,11 +705,11 @@ FUNCTION fin_prekart()
 
    O_KONTO
    O_PARTN
-   O_SINT
+   o_sint()
    SET ORDER TO TAG "2"
-   O_ANAL
+   o_anal()
    SET ORDER TO TAG "2"
-   O_SUBAN
+   o_suban()
 
    _cre_temp77()
 

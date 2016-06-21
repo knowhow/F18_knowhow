@@ -54,7 +54,7 @@ FUNCTION fin_spec_otv_stavke_po_dospijecu( lKartica )
    fVeci := .F.
    cPrelomljeno := "N"
 
-   O_SUBAN
+   o_suban()
    O_PARTN
    O_KONTO
 
@@ -161,7 +161,7 @@ FUNCTION fin_spec_otv_stavke_po_dospijecu( lKartica )
    // kreiraj pomocnu bazu
 
    O_TRFP2
-   O_SUBAN
+   o_suban()
    O_PARTN
    O_KONTO
 

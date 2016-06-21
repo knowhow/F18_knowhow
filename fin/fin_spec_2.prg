@@ -97,7 +97,7 @@ FUNCTION SpecSubPro()
    nArr := 0
    cImeTmp := ""
 
-   O_SUBAN
+   o_suban()
    SET RELATION TO suban->idpartner INTO partn
 
    IF cK1 == "9"

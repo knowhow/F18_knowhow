@@ -165,10 +165,10 @@ FUNCTION o_fin_za_azuriranje()
    O_SIFK
    O_SIFV
 
-   O_SUBAN
-   O_ANAL
-   O_SINT
-   O_NALOG
+   o_suban()
+   o_anal()
+   o_sint()
+   o_nalog()
 
    o_fin_psuban()
    O_PANAL

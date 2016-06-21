@@ -92,7 +92,7 @@ FUNCTION spec_sub()
    cN2Fin := my_get_from_ini( 'FIN', 'PartnerNaziv2', 'N' )
 
    O_PARTN
-   O_SUBAN
+   o_suban()
    __rj_len := Len( suban->idrj )
 
    // kreiraj tabelu exporta
@@ -287,7 +287,7 @@ FUNCTION spec_sub()
       cIdFirma := Left( cIdFirma, 2 )
    ENDIF
 
-   O_SUBAN
+   o_suban()
    CistiK1k4()
 
    // prodji po godinama i azuriraj u tbl_export
@@ -310,7 +310,7 @@ TODO: izbaciti
       O_RJ
       O_PARTN
       O_KONTO
-      O_SUBAN
+      o_suban()
 
       SELECT suban
 

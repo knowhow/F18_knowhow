@@ -80,7 +80,7 @@ FUNCTION SpecKK2( lOtvSt )
       PRIVATE m := Replicate( "-", FIELD_PARTNER_ID_LENGTH ) + " ------------------------- ---------------- ---------------- ---------------- ----------------"
    ENDIF
 
-   O_SUBAN
+   o_suban()
 
    cIdRj := "999999"  // samo da program ne ispada u f-ji CistiK1K4()
    cFunk := "99999"

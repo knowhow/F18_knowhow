@@ -56,11 +56,11 @@ FUNCTION fin_stampa_liste_naloga()
    ENDIF
 
    IF cInteg == "D"
-      O_SUBAN
+      o_suban()
       SET ORDER TO TAG "4"
-      O_ANAL
+      o_anal()
       SET ORDER TO TAG "2"
-      O_SINT
+      o_sint()
       SET ORDER TO TAG "2"
    ENDIF
 

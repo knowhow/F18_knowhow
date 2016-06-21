@@ -12,7 +12,10 @@
 
 #include "f18.ch"
 
-// rekapitulacija finansijskog stanja po magacinima
+/*
+ rekapitulacija finansijskog stanja po magacinima
+*/
+
 FUNCTION RFlager_lista_magacin()
 
    LOCAL nKolUlaz
@@ -23,7 +26,7 @@ FUNCTION RFlager_lista_magacin()
 
    cIdFirma := gFirma
    cidKonto := PadR( "13.", gDuzKonto )
-   ODbKalk()
+   o_kalk_tabele_izvj()
 
    dDatOd := CToD( "" )
    dDatDo := Date()
@@ -68,8 +71,7 @@ FUNCTION RFlager_lista_magacin()
 
 
    SELECT kalk
-   SET ORDER TO TAG "3"
-   // ("3","idFirma+mkonto+idroba+dtos(datdok)+MU_I+IdVD","KALK")
+   SET ORDER TO TAG "3" // ("3","idFirma+mkonto+idroba+dtos(datdok)+MU_I+IdVD","KALK")
    HSEEK cidfirma
 
    SELECT koncij

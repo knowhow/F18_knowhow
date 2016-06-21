@@ -41,7 +41,7 @@ FUNCTION SpecPop()
    nDugDEM := nPotDEM := nUKDugDEM := nUkPotDEM := 0
 
    O_KONTO
-   O_SUBAN
+   o_suban()
 
    SELECT SUBAN; SET ORDER TO TAG "2"  // idfirma+idpartner+idkonto
    cIdFirma := Left( cIdFirma, 2 )

@@ -38,7 +38,7 @@ FUNCTION SpecDugPartnera()
    fVeci := .F.
    cPrelomljeno := "N"
 
-   O_SUBAN
+   o_suban()
    O_PARTN
    O_KONTO
 

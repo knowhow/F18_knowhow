@@ -307,7 +307,7 @@ P_COND
 ? cTxt
 ? cLine
 
-O_SUBAN
+o_suban()
 select suban
 set order to tag "1"
 go top
@@ -501,7 +501,7 @@ P_COND
 ? cTxt
 ? cLine
 
-O_SUBAN
+o_suban()
 select suban
 set order to tag "2"
 // idfirma+idpartner+idkonto

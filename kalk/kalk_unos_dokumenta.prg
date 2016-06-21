@@ -1005,7 +1005,7 @@ FUNCTION MeniF10()
       CASE izbor == 6
          kalk_generisi_inventuru_magacina()
       CASE izbor == 7
-         ip()
+         kalk_ip()
       CASE izbor == 8
          GenNivP()
       CASE izbor == 9

@@ -423,7 +423,7 @@ FUNCTION ImaUSuban( cKljuc, cTag )
    SELECT ( F_SUBAN )
    IF !Used()
       lUsed := .F.
-      O_SUBAN
+      o_suban()
    ELSE
       PushWA()
    ENDIF

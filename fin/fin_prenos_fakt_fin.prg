@@ -323,7 +323,7 @@ FUNCTION fin_kontiranje_naloga( dDatNal )
 
    cBrNalF := ""
 
-   O_NALOG
+   o_nalog()
    O_FIN_PRIPR
 
    SELECT FINMAT

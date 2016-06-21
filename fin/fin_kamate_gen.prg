@@ -56,7 +56,7 @@ FUNCTION prenos_fin_kam()
 
    BoxC()
 
-   O_SUBAN
+   o_suban()
 
    IF !Empty( _usl )
       _filter := _usl

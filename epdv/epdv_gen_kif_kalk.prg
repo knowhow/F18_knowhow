@@ -141,7 +141,7 @@ FUNCTION close_open_kalk_epdv_tables()
    o_kalk()
    close_open_kuf_kif_sif()
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -175,8 +175,8 @@ STATIC FUNCTION gen_kalk_kif_item( cSezona )
 
    cFilter :=  dbf_quote( dDatOd ) + " <= datdok .and. " + dbf_quote( dDatDo ) + ">= datdok"
 
-   // setuj tip dokumenta
-   cFilter :=  cFilter + ".and. IdVD == " + dbf_quote( cTdSrc )
+
+   cFilter :=  cFilter + ".and. IdVD == " + dbf_quote( cTdSrc ) // setuj tip dokumenta
 
    IF !Empty( cTarFilter )
       cFilter += ".and. " + cTarFilter
@@ -186,10 +186,7 @@ STATIC FUNCTION gen_kalk_kif_item( cSezona )
       cFilter +=  ".and. " + cKtoFilter
    ENDIF
 
-
-
-   // "1","IdFirma+idtipdok+brdok+rbr+podbr"
-   SET ORDER TO TAG "1"
+   SET ORDER TO TAG "1"  // "1","IdFirma+idtipdok+brdok+rbr+podbr"
    SET FILTER TO &cFilter
 
    GO TOP

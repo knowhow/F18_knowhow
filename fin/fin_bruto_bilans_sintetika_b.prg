@@ -61,7 +61,7 @@ FUNCTION fin_bb_sintetika_b( params )
    IF gRJ == "D" .AND. Len( cIdRJ ) <> 0
       otvori_sint_anal_kroz_temp( .T., "IDRJ='" + cIdRJ + "'" )
    ELSE
-      O_SINT
+      o_sint()
    ENDIF
 
    SELECT BBKLAS

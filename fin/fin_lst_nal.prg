@@ -19,7 +19,7 @@ FUNCTION st_sv_nal()
    aFields := get_exp_fields()
    t_exp_create( aFields )
 
-   O_SUBAN
+   o_suban()
    O_KONTO
    O_PARTN
 

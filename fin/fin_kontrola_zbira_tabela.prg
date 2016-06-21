@@ -55,10 +55,10 @@ FUNCTION fin_kontrola_zbira( bDat, lSilent )
    ENDIF
 
    my_close_all_dbf()
-   O_NALOG
-   O_SUBAN
-   O_SINT
-   O_ANAL
+   o_nalog()
+   o_suban()
+   o_sint()
+   o_anal()
 
    IF !lSilent
 

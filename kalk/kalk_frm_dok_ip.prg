@@ -13,7 +13,7 @@
 
 
 
-FUNCTION IP()
+FUNCTION kalk_ip()
 
    O_KONTO
    O_TARIFA

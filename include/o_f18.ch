@@ -103,13 +103,10 @@
 #xcommand O_KOMP_DUG    => select (F_FIN_KOMP_DUG);  my_use ("komp_dug")
 #xcommand O_KOMP_POT    => select (F_FIN_KOMP_POT);  my_use ("komp_pot")
 
-#xcommand O_SUBAN     => o_suban()
-#xcommand O_ANAL      => o_anal()
-#xcommand O_NALOG     => o_nalog()
-#xcommand O_SINT      => o_sint()
+
 #xcommand O_RSUBAN    => select (F_SUBAN);    my_usex("suban")    ; set order to tag "1"
 #xcommand O_RANAL     => select (F_ANAL);     my_usex("anal")     ; set order to tag "1"
-#xcommand O_SINTSUB   => select (F_SUBAN);    my_use("suban")     ; set order to tag "1"
+//#xcommand o_sint()SUB   => select (F_SUBAN);    my_use("suban")     ; set order to tag "1"
 #xcommand O_BUDZET    => select (F_BUDZET);   my_use("budzet")    ; set order to tag "1"
 #xcommand O_PAREK     => select (F_PAREK);    my_use("parek")     ; set order to tag "1"
 #xcommand O_BBKLAS    => select (F_BBKLAS);   my_use("bbklas")    ; set order to tag "1"

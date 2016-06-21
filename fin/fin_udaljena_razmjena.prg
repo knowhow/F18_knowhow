@@ -917,25 +917,25 @@ STATIC FUNCTION _cre_exp_tbls( use_path )
    _dir_create( use_path )
 
    // tabela suban
-   O_SUBAN
+   o_suban()
    COPY STRUCTURE EXTENDED to ( my_home() + "struct" )
    USE
    CREATE ( use_path + "e_suban" ) from ( my_home() + "struct" )
 
    // tabela nalog
-   O_NALOG
+   o_nalog()
    COPY STRUCTURE EXTENDED to ( my_home() + "struct" )
    USE
    CREATE ( use_path + "e_nalog" ) from ( my_home() + "struct" )
 
    // tabela sint
-   O_SINT
+   o_sint()
    COPY STRUCTURE EXTENDED to ( my_home() + "struct" )
    USE
    CREATE ( use_path + "e_sint" ) from ( my_home() + "struct" )
 
    // tabela anal
-   O_ANAL
+   o_anal()
    COPY STRUCTURE EXTENDED to ( my_home() + "struct" )
    USE
    CREATE ( use_path + "e_anal" ) from ( my_home() + "struct" )
@@ -972,10 +972,10 @@ STATIC FUNCTION _cre_exp_tbls( use_path )
 // ----------------------------------------------------
 STATIC FUNCTION _o_tables()
 
-   O_SUBAN
-   O_NALOG
-   O_ANAL
-   O_SINT
+   o_suban()
+   o_nalog()
+   o_anal()
+   o_sint()
    O_SIFK
    O_SIFV
    O_KONTO

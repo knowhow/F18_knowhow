@@ -834,7 +834,6 @@ STATIC FUNCTION dbf_refresh_0( cTable )
 
    LOCAL cMsg1, cMsg2
    LOCAL nCntSql, nCntDbf, nDeleted
-   LOCAL lRet := .T.
    LOCAL aDbfRec := get_a_dbf_rec( cTable, .T. )
 
    IF is_chk0( aDbfRec[ "table" ] )

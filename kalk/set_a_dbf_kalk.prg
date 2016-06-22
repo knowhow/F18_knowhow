@@ -73,7 +73,8 @@ FUNCTION set_a_dbf_kalk_kalk()
    _item[ "wa" ]    := F_KALK
    _item[ "temp" ]  := .F.
    _item[ "sif" ] := .F.
-   _item[ "sql" ] := .T.
+   _item[ "sql" ] := .F.
+   // _item[ "sql" ] := .T.  BUG_CPU100
    _item[ "algoritam" ] := {}
 
    // algoritam 1 - default

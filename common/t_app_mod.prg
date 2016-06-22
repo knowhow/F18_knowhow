@@ -114,7 +114,7 @@ METHOD run()
       ::lStarted := .F.
    ENDIF
 
-   // add_idle_handlers()  BUG_CPU100
+   add_idle_handlers()  //BUG_CPU100
    start_f18_program_module( self, .T. )
 
    ::lStarted := .T.

@@ -261,7 +261,7 @@ FUNCTION PrenosFin()
                   SELECT fin_pripr
                   APPEND BLANK
                   Gather()
-                  RREPLACE rbr WITH Str( ++nRbr, 4 ), ;
+                  RREPLACE rbr WITH  ++nRbr, ;
                      idvn WITH "00", ;
                      brnal WITH "00000001"
 
@@ -351,7 +351,7 @@ FUNCTION PrenosFin()
                         REPLACE  idfirma WITH cidfirma, ;
                            idvn WITH "00", ;
                            brnal WITH "00000001", ;
-                           rbr WITH Str( ++nRbr, 4 ), ;
+                           rbr WITH ++nRbr, ;
                            idkonto WITH cIdkonto, ;
                            idpartner WITH cidpartner, ;
                            brdok  WITH cBrDok, ;
@@ -416,7 +416,7 @@ FUNCTION PrenosFin()
                         REPLACE  idfirma WITH cidfirma, ;
                            idvn WITH "00", ;
                            brnal WITH "00000001", ;
-                           rbr WITH Str( ++nRbr, 4 ), ;
+                           rbr WITH ++nRbr, ;
                            idkonto WITH cIdkonto, ;
                            idpartner WITH cidpartner, ;
                            idrj WITH cIDRJ, ;
@@ -463,7 +463,7 @@ FUNCTION PrenosFin()
                         REPLACE  idfirma WITH cidfirma, ;
                            idvn WITH "00", ;
                            brnal WITH "00000001", ;
-                           rbr WITH Str( ++nRbr, 4 ), ;
+                           rbr WITH ++nRbr, ;
                            idkonto WITH cIdkonto, ;
                            idpartner WITH cidpartner, ;
                            idrj WITH cIDRJ, ;
@@ -507,7 +507,7 @@ FUNCTION PrenosFin()
                         REPLACE  idfirma WITH cidfirma, ;
                            idvn WITH "00", ;
                            brnal WITH "00000001", ;
-                           rbr WITH Str( ++nRbr, 4 ), ;
+                           rbr WITH ++nRbr, ;
                            idkonto WITH cIdkonto, ;
                            idpartner WITH cidpartner, ;
                            idrj WITH cIDRJ, ;
@@ -550,7 +550,7 @@ FUNCTION PrenosFin()
                IF ( Round( nDin, 2 ) <> 0 ) .OR. ( ( Round( nDem, 2 ) <> 0 ) .AND. lStranaBitna )
                   SELECT fin_pripr
                   APPEND BLANK
-                  REPLACE rbr WITH  Str( ++nRbr, 4 ), ;
+                  REPLACE rbr WITH  Str( ++nRbr, 5 ), ;
                      idkonto WITH cIdkonto, ;
                      idpartner WITH cidpartner, ;
                      datdok WITH dDatDo + 1, ;
@@ -585,7 +585,7 @@ FUNCTION PrenosFin()
             IF ( Round( nDin, 2 ) <> 0 ) .OR. ( Round( nDem, 2 ) <> 0  .AND. lStranaBitna )
                SELECT fin_pripr
                APPEND BLANK
-               REPLACE rbr WITH  Str( ++nRbr, 4 ), ;
+               REPLACE rbr WITH  Str( ++nRbr, 5 ), ;
                   idkonto WITH cIdkonto, ;
                   datdok WITH dDatDo + 1, ;
                   idfirma WITH cidfirma, ;

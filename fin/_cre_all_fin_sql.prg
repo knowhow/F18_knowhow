@@ -40,7 +40,7 @@ CREATE TABLE fmk.fin_suban
   brnal character varying(10) NOT NULL,
   idkonto character varying(10),
   idpartner character varying(6),
-  rbr character varying(4) NOT NULL,
+  rbr character integer NOT NULL,
   idtipdok character(2),
   brdok character varying(20),
   datdok date,

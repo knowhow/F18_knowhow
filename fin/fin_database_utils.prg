@@ -60,8 +60,8 @@ FUNCTION fin_dok_get_next_rbr( idfirma, idvn, brnal )
       RETURN _rbr
    ENDIF
 
-   // uvecaj i sredi redni broj
-   _rbr := Str( Val( AllTrim( _rbr ) ) + 1, 4 )
+
+   _rbr :=  _rbr  + 1
 
    RETURN _rbr
 

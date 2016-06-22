@@ -74,7 +74,7 @@ STATIC FUNCTION _del_nal_xx()
 
    DO WHILE !Eof() .AND. field->idfirma == "XX"
 
-      IF field->rbr == "000"
+      IF field->rbr == 0
          my_delete()
       ENDIF
 
@@ -175,7 +175,7 @@ FUNCTION konsult_otvorene_stavke()
    o_suban()
 
    SELECT suban
-   SET ORDER TO TAG "1" // IdFirma+IdKonto+IdPartner+dtos(DatDok)+BrNal+RBr
+   SET ORDER TO TAG "1" // IdFirma+IdKonto+IdPartner+dtos(DatDok)+BrNal+str(RBr,5)
 
    GO TOP
 
@@ -416,7 +416,7 @@ FUNCTION konsult_otvorene_stavke()
                wFond := cFond
             ENDIF
 
-            wrbr      := Str( nRBr, 4 )
+            wRbr      :=  nRBr
             nRbr ++
             wd_p      := _D_p
             wIznosBhd := ostav->uplaceno

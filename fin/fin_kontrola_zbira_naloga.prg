@@ -103,7 +103,7 @@ FUNCTION kontrola_zbira_naloga()
          READ
 
          IF LastKey() <> K_ESC
-            _Rbr := Str( Val( _Rbr ) + 1, 4 )
+            _Rbr :=  _Rbr + 1
             _IdPartner := ""
             _IznosBHD := Dug - Pot
             konverzija_valute( NIL, NIL, "_IZNOSBHD" )
@@ -226,7 +226,7 @@ FUNCTION kontrola_zbira_naloga_kalk( lAuto )
 
          IF lAuto == .T. .OR. LastKey() <> K_ESC
 
-            _Rbr := Str( Val( _Rbr ) + 1, 4 )
+            _Rbr := _Rbr + 1
             _IdPartner := ""
             _IznosBHD := Dug - Pot
 

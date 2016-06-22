@@ -18,10 +18,10 @@
 #define F18_LIB_VER   "14.4.0"
 #define F18_TEMPLATE_VER "3.0.0"
 
-#define F18_DBF_VER_MAJOR  1
+#define F18_DBF_VER_MAJOR  2
 #define F18_DBF_VER_MINOR  0
-#define F18_DBF_VER_PATCH  4
+#define F18_DBF_VER_PATCH  0
 
 #define SERVER_DB_VER_MAJOR  0
 #define SERVER_DB_VER_MINOR  0
-#define SERVER_DB_VER_PATCH  10
+#define SERVER_DB_VER_PATCH  14

@@ -137,7 +137,7 @@ FUNCTION WRbr()
 
    _rec := dbf_get_rec()
 
-   IF Val( _rec[ "rbr" ] ) < 2
+   IF _rec[ "rbr" ]  < 2
       @ m_x + 1, m_y + 2 SAY8 "Dokument:" GET _rec[ "idvn" ]
       @ m_x + 1, Col() + 2  GET _rec[ "brnal" ]
       READ
@@ -357,7 +357,7 @@ FUNCTION edit_fin_priprema()
    SET KEY K_ALT_K TO
 
    _k3 := K3U256( _k3 )
-   _Rbr := Str( nRbr, 4 )
+   _Rbr := nRbr
 
    SELECT fin_pripr
 
@@ -606,7 +606,7 @@ FUNCTION edit_fin_pripr()
 
    CASE Ch == K_F9
 
-      SrediRbrFin()
+      sredi_rbr_fin_nalog()
       RETURN DE_REFRESH
 
    CASE Ch == K_ALT_T
@@ -622,7 +622,7 @@ FUNCTION edit_fin_pripr()
       IF Pitanje(, "Želite izbrisati ovu stavku ?", "D" ) == "D"
 
          cBDok := field->idfirma + "-" + field->idvn + "-" + field->brnal
-         cStavka := field->rbr
+         cStavka := STR(field->rbr,5)
          cBKonto := field->idkonto
          cBDP := field->d_p
          dBDatnal := field->datdok
@@ -654,7 +654,7 @@ FUNCTION edit_fin_pripr()
       Box( "ist", MAXROWS() - 5, MAXCOLS() - 8, .F. )
       set_global_vars_from_dbf( "_" )
 
-      nRbr := Val( _Rbr )
+      nRbr := _Rbr
 
       IF edit_fin_priprema( .F. ) == 0
          BoxC()
@@ -682,7 +682,7 @@ FUNCTION edit_fin_pripr()
          nTR2 := RecNo()
          SKIP -1
          set_global_vars_from_dbf()
-         nRbr := Val( _Rbr )
+         nRbr := _Rbr
          @ m_x + 1, m_y + 1 CLEAR TO m_x + MAXROWS() - 8, m_y + MAXCOLS() - 10
          IF edit_fin_priprema( .F. ) == 0
             EXIT
@@ -739,7 +739,7 @@ FUNCTION edit_fin_pripr()
             _brDok := Space( Len( _brDok ) )
          ENDIF
 
-         nRbr := Val( _Rbr ) + 1
+         nRbr := _Rbr + 1
 
          @ m_x + 1, m_y + 1 CLEAR TO m_x + MAXROWS() - 5, m_y + MAXCOLS() - 8
 
@@ -870,14 +870,13 @@ STATIC FUNCTION fin_brisi_stavke_od_do()
 
    LOCAL nRet := 1
    LOCAL GetList := {}
-   LOCAL cOd := Space( 4 )
-   LOCAL cDo := Space( 4 )
-   LOCAL nOd
-   LOCAL nDo
+   LOCAL nOd := 0
+   LOCAL nDo := 0
+   LOCAL nRbr
 
    Box(, 1, 31 )
-   @ m_x + 1, m_y + 2 SAY "Brisi stavke od:" GET cOd VALID _rbr_fix( @cOd )
-   @ m_x + 1, Col() + 1 SAY "do:" GET cDo VALID _rbr_fix( @cDo )
+   @ m_x + 1, m_y + 2 SAY "Brisi stavke od:" GET nOd VALID _rbr_fix( @nOd )
+   @ m_x + 1, Col() + 1 SAY "do:" GET nDo VALID _rbr_fix( @nDo )
    READ
    BoxC()
 
@@ -890,9 +889,9 @@ STATIC FUNCTION fin_brisi_stavke_od_do()
 
    DO WHILE !Eof()
 
-      cRbr := field->rbr
+      nRbr := field->rbr
 
-      IF cRbr >= cOd .AND. cRbr <= cDo
+      IF nRbr >= nOd .AND. nRbr <= nDo
          my_delete()
       ENDIF
 
@@ -911,7 +910,7 @@ STATIC FUNCTION fin_brisi_stavke_od_do()
 // -----------------------------------------
 STATIC FUNCTION _rbr_fix( cStr )
 
-   cStr := PadL( AllTrim( cStr ), 4 )
+   cStr := PadL( AllTrim( cStr ), 5 )
 
    RETURN .T.
 
@@ -1071,16 +1070,16 @@ FUNCTION PodijeliN()
          nPot += iznosbhd
       ENDIF
 
-      IF nRbr1 <> 0 .AND. nRbr1 == Val( fin_pripr->Rbr )
+      IF nRbr1 <> 0 .AND. nRbr1 == fin_pripr->Rbr
          nRbr := nRbr1
 
-      ELSEIF nRbr2 <> 0 .AND. nRbr2 == Val( fin_pripr->Rbr )
+      ELSEIF nRbr2 <> 0 .AND. nRbr2 == fin_pripr->Rb
          nRbr := nRbr2
 
-      ELSEIF nRbr3 <> 0 .AND. nRbr3 == Val( fin_pripr->Rbr )
+      ELSEIF nRbr3 <> 0 .AND. nRbr3 == fin_pripr->Rbr
          nRbr := nRbr3
 
-      ELSEIF nRbr4 <> 0 .AND. nRbr4 == Val( fin_pripr->Rbr )
+      ELSEIF nRbr4 <> 0 .AND. nRbr4 == fin_pripr->Rbr
          nRbr := nRbr4
       ELSE
          nRbr := 0  // nista
@@ -1105,7 +1104,7 @@ FUNCTION PodijeliN()
             _rec[ "iznosbhd" ] :=  nPot - nDug
          ENDIF
 
-         _rec[ "rbr" ] := Str( nRbr, 4 )
+         _rec[ "rbr" ] := Str( nRbr, 5 )
          dbf_update_rec( _rec )
 
          // slijedi dodavanje protustavke
@@ -1135,7 +1134,7 @@ FUNCTION PodijeliN()
    GO TOP
    my_flock()
    DO WHILE !Eof()
-      IF nRbr1 <> 0 .AND. Val( fin_pripr->Rbr ) <= nRbr1
+      IF nRbr1 <> 0 .AND. fin_pripr->Rbr <= nRbr1
          IF opis = ">prenos iz p.n.<"   .AND. idkonto = cPomKTO
             IF nRbr2 = 0
                REPLACE brnal WITH cBrnal5
@@ -1145,7 +1144,7 @@ FUNCTION PodijeliN()
          ELSE
             REPLACE brnal WITH cBrnal1
          ENDIF
-      ELSEIF nRbr2 <> 0 .AND. Val( fin_pripr->Rbr ) <= nRbr2
+      ELSEIF nRbr2 <> 0 .AND.  fin_pripr->Rbr <= nRbr2
          IF opis = ">prenos iz p.n.<"     .AND. idkonto = cPomKTO
             IF nRbr3 = 0
                REPLACE brnal WITH cBrnal5
@@ -1155,7 +1154,7 @@ FUNCTION PodijeliN()
          ELSE
             REPLACE brnal WITH cBrnal2
          ENDIF
-      ELSEIF nRbr3 <> 0 .AND. Val( fin_pripr->Rbr ) <= nRbr3
+      ELSEIF nRbr3 <> 0 .AND. fin_pripr->Rbr <= nRbr3
          IF opis = ">prenos iz p.n.<"      .AND. idkonto = cPomKTO
             IF nRbr4 = 0
                REPLACE brnal WITH cBrnal5
@@ -1165,7 +1164,7 @@ FUNCTION PodijeliN()
          ELSE
             REPLACE brnal WITH cBrnal3
          ENDIF
-      ELSEIF nRbr4 <> 0 .AND. Val( fin_pripr->Rbr ) <= nRbr4
+      ELSEIF nRbr4 <> 0 .AND. fin_pripr->Rbr <= nRbr4
          IF opis = ">prenos iz p.n.<"    .AND. idkonto = cPomKTO
             REPLACE brnal WITH cBrnal5
          ELSE
@@ -1313,7 +1312,7 @@ STATIC FUNCTION brisi_fin_pripr_po_uslovu()
 
       // redni brojevi...
       IF ( _od_broj + _do_broj ) > 0
-         IF Val( field->rbr ) >= _od_broj .AND. Val( field->rbr ) <= _do_broj
+         IF field->rbr >= _od_broj .AND.  field->rbr <= _do_broj
             _delete_rec := .T.
          ENDIF
       ENDIF
@@ -1339,7 +1338,7 @@ STATIC FUNCTION brisi_fin_pripr_po_uslovu()
       my_dbf_pack()
 
       // renumerisi fin pripremu...
-      sredirbrfin( .T. )
+      sredi_rbr_fin_nalog( .T. )
 
    ELSE
       MsgBeep( "Nema stavki za brisanje po zadanom kriteriju !" )

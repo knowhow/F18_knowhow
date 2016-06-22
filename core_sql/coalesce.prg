@@ -44,9 +44,26 @@ FUNCTION coalesce_num_num( cField, nNum, nDec, lZarez )
    RETURN coalesce_num( cField, cFormat, lZarez )
 
 
+
+FUNCTION coalesce_int( cField, lZarez )
+
+   LOCAL cFormat
+
+   default_if_nil( @lZarez, .F. )
+
+   cFormat := "integer"
+
+   RETURN coalesce_num( cField, cFormat, lZarez )
+
+FUNCTION coalesce_int_zarez( cField )
+
+   RETURN coalesce_int( cField, .T. )
+
+
 FUNCTION coalesce_real_zarez( cField )
 
    RETURN coalesce_real( cField, .T. )
+
 
 
 FUNCTION coalesce_real( cField, lZarez )

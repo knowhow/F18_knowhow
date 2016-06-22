@@ -49,13 +49,13 @@ FUNCTION SetDatUPripr()
    RETURN .T.
 
 /* K3Iz256(cK3)
- *    
+ *
  *   param: cK3
  */
 
 FUNCTION K3Iz256( cK3 )
 
-   // {
+   
    LOCAL i, c, o, d := 0, aC := { " ", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" }
    IF my_get_from_ini( "FIN", "LimitiPoUgovoru_PoljeK3", "N", SIFPATH ) == "D"
       IF !Empty( cK3 )
@@ -79,7 +79,7 @@ FUNCTION K3Iz256( cK3 )
 
 
 /* K3U256(cK3)
- *    
+ *
  *  \cK3
  */
 

@@ -417,7 +417,7 @@ STATIC FUNCTION put_elba_item_into_pripr( hFinItem, cImpView )
 */
 
    ++s_nRbr
-   cRbr := Str( s_nRbr, 4 )
+   cRbr := Str( s_nRbr, 5 )
 
 
    hFinItem[ "opis" ] := PadR( hFinItem[ "opis" ], 100 )
@@ -459,7 +459,7 @@ STATIC FUNCTION put_elba_item_into_pripr( hFinItem, cImpView )
       field->brnal WITH hFinItem[ "brnal" ], ;
       field->brdok WITH hFinItem[ "brdok" ], ;
       field->opis WITH Trim( hFinItem[ "opis" ] ) + " / " + hFinItem[ "partner_opis" ], ;
-      field->rbr WITH cRbr, ;
+      field->rbr WITH s_nRbr, ;
       field->datdok WITH hFinItem[ "datdok" ], ;
       field->idkonto WITH hFinItem[ "konto" ], ;
       field->idpartner WITH hFinItem[ "partner" ], ;
@@ -468,7 +468,7 @@ STATIC FUNCTION put_elba_item_into_pripr( hFinItem, cImpView )
 
 
    ++s_nRbr
-   cRbr := Str( s_nRbr, 4 )
+
 
    hFinItem[ "konto" ] := s_cKtoBanka
 
@@ -497,7 +497,7 @@ STATIC FUNCTION put_elba_item_into_pripr( hFinItem, cImpView )
       field->brnal WITH hFinItem[ "brnal" ], ;
       field->brdok WITH hFinItem[ "brdok" ], ;
       field->opis WITH Trim( hFinItem[ "opis" ] ) + " / " + hFinItem[ "partner_opis" ], ;
-      field->rbr WITH cRbr, ;
+      field->rbr WITH s_nRbr, ;
       field->datdok WITH hFinItem[ "datdok" ], ;
       field->idkonto WITH hFinItem[ "konto" ], ;
       field->idpartner WITH "", ;

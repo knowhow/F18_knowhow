@@ -122,7 +122,7 @@ FUNCTION OiNIsplate()
 
 
 
-FUNCTION SrediRbrFin( lSilent )
+FUNCTION sredi_rbr_fin_nalog( lSilent )
 
    LOCAL nArr
    LOCAL nTREC
@@ -135,7 +135,7 @@ FUNCTION SrediRbrFin( lSilent )
 
    IF !lSilent
       IF Pitanje(, "Srediti redne brojeve?", "D" ) == "N"
-         RETURN
+         RETURN .F.
       ENDIF
    ENDIF
 
@@ -151,17 +151,16 @@ FUNCTION SrediRbrFin( lSilent )
    Box(, 1, 50 )
 
    DO WHILE !Eof()
-
       SKIP 1
       nTREC := RecNo()
       SKIP -1
 
       _rec := dbf_get_rec()
 
-      _rec[ "rbr" ] := PadL( AllTrim( Str( i ) ), 4 )
+      _rec[ "rbr" ] := i
       dbf_update_rec( _rec )
 
-      @ m_x + 1, m_y + 2 SAY "redni broj: " + field->rbr
+      @ m_x + 1, m_y + 2 SAY "redni broj: " + STR( field->rbr, 5)
 
       ++ i
 
@@ -178,7 +177,7 @@ FUNCTION SrediRbrFin( lSilent )
    SELECT ( nArr )
    GO nRec
 
-   RETURN
+   RETURN .T.
 
 
 

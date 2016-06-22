@@ -33,9 +33,6 @@ FUNCTION fin_bb_subanalitika_b( params )
    LOCAL nBBK := 1
    PRIVATE M6, M7, M8, M9, M10
 
-
-altd()
-
    PICD := FormPicL( gPicBHD, 15 )
 
    IF gRJ == "D" .AND. ( "." $ cIdRj )
@@ -44,18 +41,18 @@ altd()
 
    IF cFormat $ "1#3"
       REP1_LEN := 236
-      th1 := "---- ------- -------- --------------------------------------------------- -------------- ----------------- --------------------------------- ------------------------------- ------------------------------- -------------------------------"
-      th2 := "*R. * KONTO *PARTNER *     NAZIV KONTA ILI PARTNERA                      *    MJESTO    *      ADRESA     *        POČETNO STANJE           *         TEKUĆI PROMET         *       KUMULATIVNI PROMET      *            SALDO             *"
-      th3 := "                                                                                                           --------------------------------- ------------------------------- ------------------------------- -------------------------------"
-      th4 := "*BR.*       *        *                                                   *              *                 *    DUGUJE       *   POTRAŽUJE   *    DUGUJE     *   POTRAŽUJE   *    DUGUJE     *   POTRAŽUJE   *     DUGUJE    *   POTRAŽUJE  *"
-      th5 := "---- ------- -------- --------------------------------------------------- -------------- ----------------- ----------------- --------------- --------------- --------------- --------------- --------------- --------------- ---------------"
+      th1 := "------ ------- -------- --------------------------------------------------- -------------- ----------------- --------------------------------- ------------------------------- ------------------------------- -------------------------------"
+      th2 := "*R.   * KONTO *PARTNER *     NAZIV KONTA ILI PARTNERA                      *    MJESTO    *      ADRESA     *        POČETNO STANJE           *         TEKUĆI PROMET         *       KUMULATIVNI PROMET      *            SALDO             *"
+      th3 := "                                                                                                             --------------------------------- ------------------------------- ------------------------------- -------------------------------"
+      th4 := "*BR.  *       *        *                                                   *              *                 *    DUGUJE       *   POTRAŽUJE   *    DUGUJE     *   POTRAŽUJE   *    DUGUJE     *   POTRAŽUJE   *     DUGUJE    *   POTRAŽUJE  *"
+      th5 := "------ ------- -------- --------------------------------------------------- -------------- ----------------- ----------------- --------------- --------------- --------------- --------------- --------------- --------------- ---------------"
    ELSE
       REP1_LEN := 158
-      th1 := "---- ------- -------- -------------------------------------- --------------------------------- ------------------------------- -------------------------------"
-      th2 := "*R. * KONTO *PARTNER *    NAZIV KONTA ILI PARTNERA          *        POČETNO STANJE           *       KUMULATIVNI PROMET      *            SALDO             *"
-      th3 := "                                                             --------------------------------- ------------------------------- -------------------------------"
-      th4 := "*BR.*       *        *                                      *    DUGUJE       *   POTRAŽUJE   *    DUGUJE     *   POTRAŽUJE   *     DUGUJE    *   POTRAŽUJE  *"
-      th5 := "---- ------- -------- -------------------------------------- ----------------- --------------- --------------- --------------- --------------- ---------------"
+      th1 := "------ ------- -------- -------------------------------------- --------------------------------- ------------------------------- -------------------------------"
+      th2 := "*R.   * KONTO *PARTNER *    NAZIV KONTA ILI PARTNERA          *        POČETNO STANJE           *       KUMULATIVNI PROMET      *            SALDO             *"
+      th3 := "                                                               --------------------------------- ------------------------------- -------------------------------"
+      th4 := "*BR.  *       *        *                                      *    DUGUJE       *   POTRAŽUJE   *    DUGUJE     *   POTRAŽUJE   *     DUGUJE    *   POTRAŽUJE  *"
+      th5 := "------ ------- -------- -------------------------------------- ----------------- --------------- --------------- --------------- --------------- ---------------"
    ENDIF
 
    fin_bb_txt_header()
@@ -103,7 +100,7 @@ altd()
       nSlog := 0
       nUkupno := RECCOUNT2()
       cFilt := IIF( Empty( cFilter ), "IDFIRMA=" + dbf_quote( cIdFirma ), cFilter + ".and.IDFIRMA=" + dbf_quote( cIdFirma ) )
-      cSort1 := "IdKonto+IdPartner+dtos(DatDok)+BrNal+RBr"
+      cSort1 := "IdKonto+IdPartner+dtos(DatDok)+BrNal+STR(RBr,5)"
       INDEX ON &cSort1 TO "SUBTMP" FOR &cFilt Eval( fin_tek_rec_2() ) EVERY 1
       GO TOP
       BoxC()
@@ -216,7 +213,7 @@ altd()
 
                ELSE
 
-                  @ PRow() + 1, 0 SAY  ++B  PICTURE '9999'
+                  @ PRow() + 1, 0 SAY  ++B  PICTURE '999999'
                   @ PRow(), PCol() + 1 SAY cIdKonto
                   @ PRow(), PCol() + 1 SAY cIdPartner
                   SELECT PARTN
@@ -270,7 +267,7 @@ altd()
             nova_strana( params, @nStr )
 
             @ PRow() + 1, 2 SAY Replicate( "-", REP1_LEN - 2 )
-            @ PRow() + 1, 2 SAY ++B1 PICTURE '9999'
+            @ PRow() + 1, 2 SAY ++B1 PICTURE '999999'
             @ PRow(), PCol() + 1 SAY cIdKonto
 
             SELECT KONTO
@@ -331,7 +328,7 @@ altd()
          nova_strana( params, @nStr, 61 )
 
          @ PRow() + 1, 4 SAY Replicate( "=", REP1_LEN - 4 )
-         @ PRow() + 1, 4 SAY ++B2 PICTURE '9999';?? "."
+         @ PRow() + 1, 4 SAY ++B2 PICTURE '999999'; ?? "."
          @ PRow(), PCol() + 1 SAY cSinKonto
 
          SELECT KONTO
@@ -421,7 +418,7 @@ altd()
    nova_strana( params, @nStr )
 
    ?U th5
-   @ PRow() + 1, 6 SAY "UKUPNO:"
+   @ PRow() + 1, 8 SAY "UKUPNO:"
    @ PRow(), nCol1 SAY D4PS PICTURE PicD
    @ PRow(), PCol() + 1 SAY P4PS PICTURE PicD
    IF cFormat == "1"

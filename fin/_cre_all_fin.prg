@@ -27,7 +27,7 @@ FUNCTION cre_all_fin( ver )
    AAdd( aDBf, { "IDPARTNER", "C",   6,  0 } )
    AAdd( aDBf, { "IDVN", "C",   2,  0 } )
    AAdd( aDBf, { "BRNAL", "C",   8,  0 } )
-   AAdd( aDBf, { "RBR", "C",   4,  0 } )
+   AAdd( aDBf, { "RBR", "I",        4,  0 } )
    AAdd( aDBf, { "IDTIPDOK", "C",   2,  0 } )
    AAdd( aDBf, { "BRDOK", "C",   10,  0 } )
    AAdd( aDBf, { "DATDOK", "D",   8,  0 } )
@@ -55,6 +55,10 @@ FUNCTION cre_all_fin( ver )
       f18_delete_dbf( _table_name )
    ENDIF
 
+   IF ver[ "current" ] > 0 .AND. ver[ "current" ] < 020000 // 2.0.0 - rbr numeric
+      f18_delete_dbf( _table_name )
+   ENDIF
+
    IF_NOT_FILE_DBF_CREATE
 
    // 0.3.0
@@ -63,15 +67,15 @@ FUNCTION cre_all_fin( ver )
    ENDIF
 
 
-   CREATE_INDEX( "1", "IdFirma+IdKonto+IdPartner+dtos(DatDok)+BrNal+RBr", _alias )
+   CREATE_INDEX( "1", "IdFirma+IdKonto+IdPartner+dtos(DatDok)+BrNal+Str(RBr,5)", _alias )
    CREATE_INDEX( "2", "IdFirma+IdPartner+IdKonto", _alias )
    CREATE_INDEX( "3", "IdFirma+IdKonto+IdPartner+BrDok+dtos(DatDok)", _alias )
-   CREATE_INDEX( "4", "idFirma+IdVN+BrNal+Rbr", _alias )
+   CREATE_INDEX( "4", "idFirma+IdVN+BrNal+Str(Rbr,5)", _alias )
    CREATE_INDEX( "5", "idFirma+IdKonto+dtos(DatDok)+idpartner", _alias )
    CREATE_INDEX( "6", "IdKonto", _alias )
    CREATE_INDEX( "7", "Idpartner", _alias )
    CREATE_INDEX( "8", "Datdok", _alias )
-   CREATE_INDEX( "9", "idfirma+idkonto+idrj+idpartner+DTOS(datdok)+brnal+rbr", _alias )
+   CREATE_INDEX( "9", "idfirma+idkonto+idrj+idpartner+DTOS(datdok)+brnal+Str(rbr,5)", _alias )
    CREATE_INDEX( "10", "idFirma+IdVN+BrNal+idkonto+DTOS(datdok)", _alias )
    AFTER_CREATE_INDEX
 
@@ -86,6 +90,9 @@ FUNCTION cre_all_fin( ver )
 
 
    IF ver[ "current" ] > 0 .AND. ver[ "current" ] < 010004 // 1.0.4 - currency polja iznosi
+      f18_delete_dbf( _table_name )
+   ENDIF
+   IF ver[ "current" ] > 0 .AND. ver[ "current" ] < 020000 // 2.0.0 - rbr numeric
       f18_delete_dbf( _table_name )
    ENDIF
    IF_NOT_FILE_DBF_CREATE
@@ -109,6 +116,9 @@ FUNCTION cre_all_fin( ver )
    IF ver[ "current" ] > 0 .AND. ver[ "current" ] < 010004 // 1.0.4 - currency polja iznosi
       f18_delete_dbf( _table_name )
    ENDIF
+   IF ver[ "current" ] > 0 .AND. ver[ "current" ] < 020000 // 2.0.0 - rbr numeric
+      f18_delete_dbf( _table_name )
+   ENDIF
    IF_NOT_FILE_DBF_CREATE
 
    // 0.4.1
@@ -116,7 +126,7 @@ FUNCTION cre_all_fin( ver )
       modstru( { "*" + _table_name, "A IDRJ C 6 0", "A FUNK C 5 0", "A FOND C 4 0" } )
    ENDIF
 
-   CREATE_INDEX( "1", "idFirma+IdVN+BrNal+Rbr", _alias )
+   CREATE_INDEX( "1", "idFirma+IdVN+BrNal+Str(Rbr,5)", _alias )
    CREATE_INDEX( "2", "idFirma+IdVN+BrNal+IdKonto", _alias )
 
    // -----------------------------------------------------------
@@ -131,7 +141,7 @@ FUNCTION cre_all_fin( ver )
    AAdd( aDBf, { "IDKONTO", "C",   7,  0 } )
    AAdd( aDBf, { "IDVN", "C",   2,  0 } )
    AAdd( aDBf, { "BRNAL", "C",   8,  0 } )
-   AAdd( aDBf, { "RBR", "C",   3,  0 } )
+   AAdd( aDBf, { "RBR",   "C",   3,  0 } )
    AAdd( aDBf, { "DATNAL", "D",   8,  0 } )
    AAdd( aDBf, { "DUGBHD", "B",  8,  2 } )
    AAdd( aDBf, { "POTBHD", "B",  8,  2 } )

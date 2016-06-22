@@ -320,7 +320,7 @@ FUNCTION fin_nalog_stampa_fill_psuban( cInd, lAuto, dDatNal, oNalog )
             @ PRow(), PCol() + 1 SAY " " + Left( DToC( dDatNal ), 2 )
             @ PRow(), PCol() + 1 SAY RBr
          ELSE
-            @ PRow(), 0 SAY RBr
+            @ PRow(), 0 SAY RBr PICT "99999"
          ENDIF
 
          @ PRow(), PCol() + 1 SAY IdKonto
@@ -713,7 +713,7 @@ FUNCTION fin_nalog_zaglavlje( dDatNal )
    IF !_fin_params[ "fin_tip_dokumenta" ]
       P_NRED
 
-      cTmp := iif( lDnevnik, "R.BR. *   BROJ   *DAN*", "" ) + "*R. * KONTO *" + PadC( "PART", FIELD_PARTNER_ID_LENGTH )
+      cTmp := iif( lDnevnik, "R.BR. *   BROJ   *DAN*", "" ) + "*R.   * KONTO *" + PadC( "PART", FIELD_PARTNER_ID_LENGTH )
       cTmp +=  "*" + "    NAZIV PARTNERA ILI      "  + "*   D  O  K  U  M  E  N  T    *         IZNOS U  " + ValDomaca() + "         *"
       cTmp += iif( fin_jednovalutno(), "", "    IZNOS U " + ValPomocna() + "    *" )
       ??U cTmp
@@ -733,20 +733,20 @@ FUNCTION fin_nalog_zaglavlje( dDatNal )
    ELSE
       P_NRED
 
-      cTmp := iif( lDnevnik, "R.BR. *   BROJ   *DAN*", "" ) + "*R. * KONTO *" + PadC( "PART", FIELD_PARTNER_ID_LENGTH ) + "*"
+      cTmp := iif( lDnevnik, "R.BR. *   BROJ   *DAN*", "" ) + "*R.   * KONTO *" + PadC( "PART", FIELD_PARTNER_ID_LENGTH ) + "*"
       cTmp += "    NAZIV PARTNERA ILI      "  + "*           D  O  K  U  M  E  N  T             *         IZNOS U  " + ValDomaca() + "         *"
       cTmp += iif( fin_jednovalutno(), "", "    IZNOS U " + ValPomocna() + "    *" )
       ??U cTmp
       P_NRED
 
-      cTmp := iif( lDnevnik, "U DNE-*  NALOGA  *   *", "" ) + "             " + PadC( "NER", FIELD_PARTNER_ID_LENGTH ) + " "
+      cTmp := iif( lDnevnik, "U DNE-*  NALOGA  *   *", "" ) + "               " + PadC( "NER", FIELD_PARTNER_ID_LENGTH ) + " "
       cTmp += "                            " + " ---------------------------------------------- ------------------------------- "
       cTmp += iif( fin_jednovalutno(), "", "---------------------" )
       ??U cTmp
       P_NRED
 
 
-      cTmp := iif( lDnevnik, "VNIKU *          *   *", "" ) + "*BR *       *" + REPL( " ", FIELD_PARTNER_ID_LENGTH ) + "*"
+      cTmp := iif( lDnevnik, "VNIKU *          *   *", "" ) + "*BR   *       *" + REPL( " ", FIELD_PARTNER_ID_LENGTH ) + "*"
       cTmp += "    NAZIV KONTA             " + "*  TIP I NAZIV   * BROJ VEZE * DATUM  * VALUTA *  DUGUJE " + ValDomaca() + "  * POTRAŽUJE " + ValDomaca() + "*"
       cTmp +=  iif( fin_jednovalutno(), "", " DUG. " + ValPomocna() + "* POT." + ValPomocna() + "*" )
       ??U cTmp
@@ -758,7 +758,7 @@ FUNCTION fin_nalog_zaglavlje( dDatNal )
 
    Select( nArr )
 
-   RETURN
+   RETURN .T.
 
 
 /* PrenosDNal()

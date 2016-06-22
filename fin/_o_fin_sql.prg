@@ -155,7 +155,7 @@ FUNCTION use_sql_suban( hParams )
    cSql += coalesce_char_zarez( "brnal", 10 )
    cSql += coalesce_char_zarez( "idkonto", 10 )
    cSql += coalesce_char_zarez( "idpartner", 6 )
-   cSql += coalesce_char_zarez( "rbr", 4 )
+   cSql += coalesce_int_zarez( "rbr" )
    cSql += coalesce_char_zarez( "idtipdok", 2 )
    cSql += coalesce_char_zarez( "brdok", 20 )
    cSql += "datdok, datval, "

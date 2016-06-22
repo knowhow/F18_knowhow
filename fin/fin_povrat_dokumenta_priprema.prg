@@ -29,15 +29,16 @@ FUNCTION fin_povrat_naloga( lStorno )
       lStorno := .F.
    ENDIF
 
-   o_suban()
+
    O_FIN_PRIPR
    o_anal()
    o_sint()
    o_nalog()
 
+/*
    SELECT SUBAN
    SET ORDER TO TAG "4"
-
+*/
    cIdFirma         := gFirma
    cIdFirma2        := gFirma
    cIdVN := cIdVN2  := Space( 2 )
@@ -77,10 +78,12 @@ FUNCTION fin_povrat_naloga( lStorno )
    BoxC()
 
    IF Pitanje(, "Nalog " + cIdFirma + "-" + cIdVN + "-" + cBrNal + ;
-         IIF( lStorno," stornirati", " povući u pripremu" ) + " (D/N) ?", "D" ) == "N"
+         IIF( lStorno, " stornirati", " povući u pripremu" ) + " (D/N) ?", "D" ) == "N"
       my_close_all_dbf()
       RETURN .F.
    ENDIF
+
+   find_suban_by_broj_dokumenta( cIdFirma, cIdVN, cBrNal )
 
    IF !lStorno
       lBrisiKumulativ := Pitanje(, "Nalog " + cIdFirma + "-" + cIdVN + "-" + ALLTRIM( cBrNal ) + " izbrisati iz baze ažuriranih dokumenata (D/N) ?", "D" ) == "D"
@@ -125,7 +128,7 @@ STATIC FUNCTION fin_nalog_brisi_iz_kumulativa( cIdFirma, cIdVn, cBrNal )
    ENDIF
 
    Box(, 5, 70 )
-
+altd()
    cTbl := "fin_suban"
    @ m_x + 1, m_y + 2 SAY "delete " + cTbl
    SELECT suban
@@ -174,12 +177,18 @@ STATIC FUNCTION kopiraj_fin_nalog_u_tabelu_pripreme( cIdFirma, cIdVn, cBrNal, lS
 
    LOCAL _rec
 
+/*
    SELECT suban
    SET ORDER TO TAG "4"
    GO TOP
    SEEK cIdfirma + cIdvn + cBrNal
+*/
+altd()
 
-   DO WHILE !Eof() .AND. cIdFirma == field->IdFirma .AND. cIdVN == field->IdVN .AND. cBrNal == field->BrNal
+   SELECT SUBAN
+   GO TOP
+   DO WHILE !Eof() .AND. cIdFirma == field->IdFirma .AND. cIdVN == field->IdVN ;
+      .AND. cBrNal == field->BrNal //  suban.brnal char(8) na serveru
 
       _rec := dbf_get_rec()
 

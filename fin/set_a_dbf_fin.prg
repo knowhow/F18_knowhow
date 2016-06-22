@@ -67,7 +67,7 @@ FUNCTION set_a_dbf_fin_suban()
    _item[ "temp" ]  := .F.
    _item[ "algoritam" ] := {}
    _item[ "sif" ] := .F.
-   _item[ "sql" ] := .F.
+   _item[ "sql" ] := .T.
 
    // algoritam 1 - default
    // -------------------------------------------------------------------------------

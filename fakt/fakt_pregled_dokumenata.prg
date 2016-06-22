@@ -235,7 +235,7 @@ FUNCTION print_porezna_faktura( lOpcine )
 
    close_open_fakt_tabele()
 
-   StampTXT( _cidfirma, _cIdTipdok, _cbrdok )
+   fakt_stamp_txt_dokumenta( _cidfirma, _cIdTipdok, _cbrdok )
 
    SELECT ( F_FAKT_DOKS )
    USE

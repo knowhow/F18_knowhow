@@ -29,16 +29,16 @@ FUNCTION fakt_stampa_azuriranog()
    BoxC()
 
    IF LastKey() == K_ESC
-      RETURN
+      RETURN .F.
    ENDIF
 
    my_close_all_dbf()
 
-   StampTXT( cIdFirma, cIdTipDok, cBrDok )
+   fakt_stamp_txt_dokumenta( cIdFirma, cIdTipDok, cBrDok )
 
    SELECT F_FAKT_PRIPR
    IF Used()
       USE
    ENDIF
 
-   RETURN
+   RETURN .T.

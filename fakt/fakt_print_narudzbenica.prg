@@ -19,7 +19,7 @@ FUNCTION fakt_print_narudzbenica( cIdFirma, cIdTipDok, cBrDok )
    close_open_fakt_tabele()
 
    // izgenerisi rn.dbf i drn.dbf, ali nemoj stampati poreznu fakturu
-   StampTXT( cIdfirma, cIdTipdok, cBrDok, .T. )
+   fakt_stamp_txt_dokumenta( cIdfirma, cIdTipdok, cBrDok, .T. )
 
    print_narudzbenica()
 

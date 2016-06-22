@@ -207,7 +207,7 @@ STATIC FUNCTION fakt_pripr_keyhandler()
       IF _dev_params[ "print_a4" ] $ "D#G#X"
 
          IF _dev_params[ "print_a4" ] $ "D#X" .AND. Pitanje(, "Štampati fakturu ?", "N" ) == "D"
-            StampTXT( __id_firma, __tip_dok, __br_dok )
+            fakt_stamp_txt_dokumenta( __id_firma, __tip_dok, __br_dok )
             close_open_fakt_tabele()
             select_fakt_pripr()
          ENDIF
@@ -689,7 +689,7 @@ STATIC FUNCTION fakt_print_dokument()
 
    gPtxtC50 := .F.
 
-   StampTXT( nil, nil, nil )
+   fakt_stamp_txt_dokumenta( nil, nil, nil )
    close_open_fakt_tabele()
 
    RETURN

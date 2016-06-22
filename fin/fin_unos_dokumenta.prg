@@ -1219,7 +1219,7 @@ FUNCTION SetTekucaRJ( cRJ )
 
    set_metric( "fin_knjiz_tek_rj", my_home(), cRJ )
 
-   RETURN
+   RETURN .T.
 
 
 

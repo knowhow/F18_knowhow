@@ -86,7 +86,7 @@ FUNCTION find_suban_by_broj_dokumenta( cIdFirma, cIdVN, cBrNal )
    IF cBrNal <> NIL
       hParams[ "brnal" ] := cBrNal
    ELSE
-      hParams[ "order_by" ] := "brnal" // ako ima vise brojeva dokumenata sortiraj po njima
+      hParams[ "order_by" ] := "idfirma,brnal,rbr" // ako ima vise brojeva dokumenata sortiraj po njima
    ENDIF
 
    hParams[ "indeks" ] := .F. // ne trositi vrijeme na kreiranje indeksa
@@ -152,7 +152,7 @@ FUNCTION use_sql_suban( hParams )
    cSql := "SELECT "
    cSql += coalesce_char_zarez( "idfirma", 2 )
    cSql += coalesce_char_zarez( "idvn", 2 )
-   cSql += coalesce_char_zarez( "brnal", 10 )
+   cSql += coalesce_char_zarez( "brnal", 8 )
    cSql += coalesce_char_zarez( "idkonto", 10 )
    cSql += coalesce_char_zarez( "idpartner", 6 )
    cSql += coalesce_int_zarez( "rbr" )

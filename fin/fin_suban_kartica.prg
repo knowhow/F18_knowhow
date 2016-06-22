@@ -348,7 +348,7 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
       ELSEIF cBrza == "D" .AND. RTrim( qqPartner ) == ";"
          INDEX ON IdKonto + DToS( DatDok ) + idpartner TO SUBSUB for &cFilter
       ELSE
-         INDEX ON IdKonto + IdPartner + DToS( DatDok ) + BrNal + RBr TO SUBSUB for &cFilter
+         INDEX ON IdKonto + IdPartner + DToS( DatDok ) + BrNal + Str(RBr,5) TO SUBSUB for &cFilter
       ENDIF
    ELSE
       IF cRasclaniti == "D"
@@ -648,7 +648,7 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
                ? IdVN
                @ PRow(), PCol() + 1 SAY BrNal
                IF cSazeta == "N"
-                  @ PRow(), PCol() + 1 SAY RBr
+                  @ PRow(), PCol() + 1 SAY RBr PICT '9999'
                   IF _fin_params[ "fin_tip_dokumenta" ]
                      @ PRow(), PCol() + 1 SAY IdTipDok
                      SELECT TDOK

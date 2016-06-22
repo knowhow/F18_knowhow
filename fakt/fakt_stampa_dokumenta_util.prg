@@ -89,7 +89,7 @@ FUNCTION zavrsi_stampu()
 
 
 
-FUNCTION StampTXT( cIdFirma, cIdTipDok, cBrDok, lJFill )
+FUNCTION fakt_stamp_txt_dokumenta( cIdFirma, cIdTipDok, cBrDok, lJFill )
 
    PRIVATE InPicDEM := PicDEM
    PRIVATE InPicCDEM := PicCDEM

@@ -66,7 +66,7 @@ FUNCTION sql_table_update( table, op, record, where_str, silent )
 
    ENDIF
 
-   log_write( "sql table update, poceo", 9, silent )
+   //log_write( "sql table update, poceo", 9, silent )
 
    DO CASE
 
@@ -159,6 +159,7 @@ FUNCTION sql_table_update( table, op, record, where_str, silent )
 
    END CASE
 
+   ?E "sql table update", _qry
    _ret := run_sql_query( _qry )
 
    log_write( "sql table update, table: " + IIF( table == NIL, "NIL", table ) + ", op: " + op + ", qry: " + _qry, 8, silent )

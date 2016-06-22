@@ -118,7 +118,7 @@ FUNCTION update_rec_server_and_dbf( table, values, algoritam, transaction )
 
       IF transaction == "FULL"
          run_sql_query( "ROLLBACK" )
-         //unlock_semaphore( table )
+         // unlock_semaphore( table )
       ENDIF
 
       _msg := RECI_GDJE_SAM + "ERRORY: sql_insert: " + table + " , ROLLBACK values: " + pp( values )
@@ -160,7 +160,7 @@ FUNCTION update_rec_server_and_dbf( table, values, algoritam, transaction )
       IF dbf_update_rec( values )
 
          IF transaction $ "FULL#END"
-            hParams := hb_hash()
+            hParams := hb_Hash()
             hParams[ "unlock" ] := { table }
             run_sql_query( "COMMIT" )
          ENDIF
@@ -235,22 +235,24 @@ FUNCTION delete_rec_server_and_dbf( table, values, algoritam, transaction )
 
    IF sql_table_update( table, "del", nil, _where_str )
 
-      _full_id := get_dbf_rec_primary_key( _alg[ "dbf_key_fields" ], values )
+      IF !_a_dbf_rec[ "sql" ]
+         _full_id := get_dbf_rec_primary_key( _alg[ "dbf_key_fields" ], values )
+         AAdd( _ids, _alg_tag + _full_id )
+         push_ids_to_semaphore( table, _ids )
 
-      AAdd( _ids, _alg_tag + _full_id )
-      push_ids_to_semaphore( table, _ids )
-
-      SELECT ( _a_dbf_rec[ "wa" ] )
-      IF !Used()
-         my_use( _a_dbf_rec[ "table" ] )
+         SELECT ( _a_dbf_rec[ "wa" ] )
+         IF !Used()
+            my_use( _a_dbf_rec[ "table" ] )
+         ENDIF
       ENDIF
+
 
       IF index_tag_num( _alg[ "dbf_tag" ] ) < 1
          IF !_a_dbf_rec[ "sql" ]
 
             IF transaction == "FULL"
                run_sql_query( "ROLLBACK" )
-               //unlock_semaphore( table )
+               // unlock_semaphore( table )
             ENDIF
 
             _msg := "ERROR: " + RECI_GDJE_SAM0 + " tabela: " + table + " DBF_TAG " + _alg[ "dbf_tag" ]
@@ -286,7 +288,6 @@ FUNCTION delete_rec_server_and_dbf( table, values, algoritam, transaction )
          ENDIF
 
          my_unlock()
-
 
 #ifdef F18_DEBUG_SYNC
          ?E "table: " + table + ", pobrisano iz lokalnog dbf-a broj zapisa = " + AllTrim( Str( _count ) )

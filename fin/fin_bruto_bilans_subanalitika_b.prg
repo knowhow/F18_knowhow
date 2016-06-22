@@ -33,6 +33,9 @@ FUNCTION fin_bb_subanalitika_b( params )
    LOCAL nBBK := 1
    PRIVATE M6, M7, M8, M9, M10
 
+
+altd()
+
    PICD := FormPicL( gPicBHD, 15 )
 
    IF gRJ == "D" .AND. ( "." $ cIdRj )
@@ -64,7 +67,7 @@ FUNCTION fin_bb_subanalitika_b( params )
 
    O_KONTO
    O_PARTN
-   o_suban()
+   o_sql_suban_kto_partner( cIdFirma )
    O_KONTO
    O_BBKLAS
 
@@ -99,14 +102,16 @@ FUNCTION fin_bb_subanalitika_b( params )
       Box(, 2, 30 )
       nSlog := 0
       nUkupno := RECCOUNT2()
-      cFilt := IF( Empty( cFilter ), "IDFIRMA=" + dbf_quote( cIdFirma ), cFilter + ".and.IDFIRMA=" + dbf_quote( cIdFirma ) )
+      cFilt := IIF( Empty( cFilter ), "IDFIRMA=" + dbf_quote( cIdFirma ), cFilter + ".and.IDFIRMA=" + dbf_quote( cIdFirma ) )
       cSort1 := "IdKonto+IdPartner+dtos(DatDok)+BrNal+RBr"
       INDEX ON &cSort1 TO "SUBTMP" FOR &cFilt Eval( fin_tek_rec_2() ) EVERY 1
       GO TOP
       BoxC()
    ELSE
-      HSEEK cIdFirma
+      //HSEEK cIdFirma
+      GO TOP
    ENDIF
+
 
    EOF CRET
 
@@ -523,7 +528,7 @@ STATIC FUNCTION nova_strana( params, nStr, duz )
       zagl_bb_suban( params, @nStr )
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 

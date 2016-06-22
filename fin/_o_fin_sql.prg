@@ -13,6 +13,23 @@
 
 FIELD idfirma, idvn, brnal, datnal
 
+
+FUNCTION o_sql_suban_kto_partner( cIdFirma )
+
+   LOCAL hParams := hb_Hash()
+
+   IF cIdFirma <> NIL
+      hParams[ "idfirma" ] := cIdFirma
+   ENDIF
+
+   hParams[ "order_by" ] := "IdFirma,IdKonto,IdPartner,DatDok,BrNal,RBr"
+   hParams[ "indeks" ] := .F. // ne trositi vrijeme na kreiranje indeksa
+
+   use_sql_suban( hParams )
+   GO TOP
+
+   RETURN ! Eof()
+
 FUNCTION find_suban_za_period( dDatOd, dDatDo )
 
    LOCAL hParams := hb_Hash()

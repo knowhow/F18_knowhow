@@ -886,6 +886,7 @@ FUNCTION skip_semaphore_sync( xArg )
    LOCAL hRec
    LOCAL cTable
 
+RETURN .T.
    IF ValType( xArg ) == "H"
       hRec := xArg
       cTable := hRec[ "table" ]

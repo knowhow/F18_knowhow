@@ -886,7 +886,7 @@ FUNCTION skip_semaphore_sync( xArg )
    LOCAL hRec
    LOCAL cTable
 
-RETURN .T.
+RETURN .T.  // BUG_CPU100
    IF ValType( xArg ) == "H"
       hRec := xArg
       cTable := hRec[ "table" ]

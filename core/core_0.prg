@@ -45,7 +45,9 @@ FUNCTION harbour_init()
    SetColor( F18_COLOR_NORMAL )
 
    // Set( _SET_IDLEREPEAT, .F. ) // .T. default
-   hb_idleAdd( {|| on_idle_dbf_refresh() } )
+
+   // hb_idleAdd( {|| on_idle_dbf_refresh() } )  BUG_CPU100
+
    // hb_idleAdd( {|| idle_eval() } ) - izaziva erore
 
    RETURN .T.

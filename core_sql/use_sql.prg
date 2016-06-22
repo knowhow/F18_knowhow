@@ -86,6 +86,7 @@ FUNCTION use_sql( cTable, sql_query, cAlias )
    BEGIN SEQUENCE WITH {| err| Break( err ) }
       dbUseArea( .F., "SQLMIX", sql_query, iif( cAlias == NIL, cTable, cAlias ) )
    RECOVER USING oError
+      ?E "SQL ERR", oError:description, sql_query
       error_bar( "SQL", "ERR: use_sql" + oError:description + " " + sql_query )
       RETURN .F.
    END SEQUENCE

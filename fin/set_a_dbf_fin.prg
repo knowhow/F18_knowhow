@@ -110,7 +110,7 @@ FUNCTION set_a_dbf_fin_anal()
    _item[ "table" ] := _tbl
    _item[ "temp" ]  := .F.
    _item[ "sif" ] := .F.
-   _item[ "sql" ] := .F.
+   _item[ "sql" ] := .T.
 
    _item[ "algoritam" ] := {}
 
@@ -155,7 +155,7 @@ FUNCTION set_a_dbf_fin_sint()
    _item[ "wa" ]    := F_SINT
    _item[ "temp" ]  := .F.
    _item[ "sif" ] := .F.
-   _item[ "sql" ] := .F.
+   _item[ "sql" ] := .T.
 
    _item[ "algoritam" ] := {}
 
@@ -202,7 +202,7 @@ FUNCTION set_a_dbf_fin_nalog()
    _item[ "table" ] := _tbl
    _item[ "temp" ]  := .F.
    _item[ "sif" ] := .F.
-   _item[ "sql" ] := .F.
+   _item[ "sql" ] := .T.
 
    _item[ "algoritam" ] := {}
 

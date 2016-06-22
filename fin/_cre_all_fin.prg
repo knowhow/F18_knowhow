@@ -236,6 +236,7 @@ FUNCTION cre_all_fin( ver )
    AAdd( aDBf, { "POTBHD", "B",   8,  2 } )
    AAdd( aDBf, { "DUGDEM", "B",   8,  2 } )
    AAdd( aDBf, { "POTDEM", "B",   8,  2 } )
+   AAdd( aDBf, { "SIFRA", "C",   6,  0 } )
 
    _alias := "NALOG"
    _table_name := "fin_nalog"
@@ -244,6 +245,10 @@ FUNCTION cre_all_fin( ver )
    IF ver[ "current" ] > 0 .AND. ver[ "current" ] < 010004 // 1.0.4 - currency polja iznosi
       f18_delete_dbf( _table_name )
    ENDIF
+   IF ver[ "current" ] > 0 .AND. ver[ "current" ] < 020001 // sifra
+       f18_delete_dbf( _table_name )
+   ENDIF
+
    IF_NOT_FILE_DBF_CREATE
 
    CREATE_INDEX( "1", "IdFirma+IdVn+BrNal", _alias )
@@ -265,6 +270,10 @@ FUNCTION cre_all_fin( ver )
    IF ver[ "current" ] > 0 .AND. ver[ "current" ] < 010004 // 1.0.4 - currency polja iznosi
       f18_delete_dbf( _table_name )
    ENDIF
+   IF ver[ "current" ] > 0 .AND. ver[ "current" ] < 020001 // sifra
+       f18_delete_dbf( _table_name )
+   ENDIF
+   
    IF_NOT_FILE_DBF_CREATE
    CREATE_INDEX( "1", "IdFirma+IdVn+BrNal", _alias )
 

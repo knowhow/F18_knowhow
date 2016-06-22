@@ -31,9 +31,7 @@ FUNCTION fin_povrat_naloga( lStorno )
 
 
    O_FIN_PRIPR
-   o_anal()
-   o_sint()
-   o_nalog()
+
 
 /*
    SELECT SUBAN
@@ -84,6 +82,10 @@ FUNCTION fin_povrat_naloga( lStorno )
    ENDIF
 
    find_suban_by_broj_dokumenta( cIdFirma, cIdVN, cBrNal )
+   find_anal_by_broj_dokumenta( cIdFirma, cIdVN, cBrNal )
+   find_sint_by_broj_dokumenta( cIdFirma, cIdVN, cBrNal )
+   find_nalog_by_broj_dokumenta( cIdFirma, cIdVN, cBrNal )
+
 
    IF !lStorno
       lBrisiKumulativ := Pitanje(, "Nalog " + cIdFirma + "-" + cIdVN + "-" + ALLTRIM( cBrNal ) + " izbrisati iz baze ažuriranih dokumenata (D/N) ?", "D" ) == "D"

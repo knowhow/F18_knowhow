@@ -73,7 +73,7 @@ FUNCTION set_a_dbf_kalk_kalk()
    _item[ "wa" ]    := F_KALK
    _item[ "temp" ]  := .F.
    _item[ "sif" ] := .F.
-   _item[ "sql" ] := .F.
+   _item[ "sql" ] := .T.
    // _item[ "sql" ] := .T.  BUG_CPU100
    _item[ "algoritam" ] := {}
 
@@ -116,7 +116,7 @@ FUNCTION set_a_dbf_kalk_doks_doks2( table, alias, wa )
    _item[ "wa" ]    := wa
    _item[ "temp" ]  := .F.
    _item[ "sif" ] := .F.
-   _item[ "sql" ] := .F.
+   _item[ "sql" ] := .T.
 
    _item[ "algoritam" ] := {}
 

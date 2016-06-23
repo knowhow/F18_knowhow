@@ -55,7 +55,9 @@ FUNCTION fin_anal_kartica()
       ENDIF
       @ m_x + 3, m_y + 2 SAY "Brza kartica (D/N/S)" GET cBrza PICT "@!" VALID cBrza $ "DNS"
       @ m_x + 4, m_y + 2 SAY "BEZ/SA prethodnim prometom (1/2):" GET cPredh VALID cPredh $ "12"
-      read; ESC_BCR
+      READ
+      ESC_BCR
+
       IF cBrza == "D"
          qqKonto := PadR( qqKonto, 7 )
          @ m_x + 6, m_y + 2 SAY "Konto: " GET qqKonto VALID P_Konto( @qqKonto )
@@ -73,7 +75,8 @@ FUNCTION fin_anal_kartica()
          cIdRJ := "999999"
          @ m_x + 9, m_y + 2 SAY "Radna jedinica (999999-sve): " GET cIdRj
       ENDIF
-      read; ESC_BCR
+      READ
+      ESC_BCR
 
       IF cBrza == "N" .OR. cBrza == "S"
          qqKonto := Trim( qqKonto )
@@ -86,6 +89,7 @@ FUNCTION fin_anal_kartica()
    BoxC()
 
    IF cIdRj == "999999"; cIdrj := ""; ENDIF
+
    IF gRJ == "D" .AND. gSAKrIz == "D" .AND. "." $ cidrj
       cidrj := Trim( StrTran( cidrj, ".", "" ) )
       // odsjeci ako je tacka. prakticno "01. " -> sve koje pocinju sa  "01"
@@ -100,17 +104,28 @@ FUNCTION fin_anal_kartica()
    SELECT params
    USE
 
+   MsgO( "Preuzimanje podataka sa SQL servera ..." )
+
    IF gNW == "N" .AND. cPTD == "D"
       m := Stuff( m, 30, 0, " -- ------------- ---------- --------------------" )
-      o_suban(); SET ORDER TO TAG 4
+      o_sql_suban_kto_partner( cIdFirma )
+      SET ORDER TO TAG 4
       O_TDOK
    ENDIF
 
    IF gRJ == "D" .AND. gSAKrIz == "D" .AND. Len( cIdRJ ) <> 0
       otvori_sint_anal_kroz_temp( .F., "IDRJ='" + cIdRJ + "'" )
    ELSE
-      o_anal()
+
+      IF cBrza == "D"
+         find_anal_by_konto( cIdFirma, qqKonto )
+
+      ELSE
+         find_anal_by_konto( cIdFirma )
+      ENDIF
+
    ENDIF
+
    O_KONTO
 
    SELECT ANAL
@@ -119,9 +134,9 @@ FUNCTION fin_anal_kartica()
       SET ORDER TO TAG "3"
    ENDIF
 
-   cFilt1 := ".t." + IF( cBrza == "D", "", ".and." + aUsl1 ) + ;
-      IF( Empty( dDatOd ) .OR. cPredh == "2", "", ".and.DATNAL>=" + dbf_quote( dDatOd ) ) + ;
-      IF( Empty( dDatDo ), "", ".and.DATNAL<=" + dbf_quote( dDatDo ) )
+   cFilt1 := ".t." + iif( cBrza == "D", "", ".and." + aUsl1 ) + ;
+      iif( Empty( dDatOd ) .OR. cPredh == "2", "", ".and.DATNAL>=" + dbf_quote( dDatOd ) ) + ;
+      iif( Empty( dDatDo ), "", ".and.DATNAL<=" + dbf_quote( dDatDo ) )
 
    cFilt1 := StrTran( cFilt1, ".t..and.", "" )
 
@@ -129,12 +144,8 @@ FUNCTION fin_anal_kartica()
       SET FILTER TO &cFilt1
    ENDIF
 
-   IF cBrza == "D"
-      HSEEK cIdFirma + qqKonto
-   ELSE
-      HSEEK cIdFirma
-   ENDIF
-
+   GO TOP
+   MsgC()
    EOF CRET
 
    nStr := 0

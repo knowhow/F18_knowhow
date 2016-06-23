@@ -40,7 +40,7 @@ FUNCTION fin_sint_kartica()
    RPar( "c3", @cBrza )
    RPar( "c4", @cPredh )
 
-   IF gNW == "D";cIdFirma := gFirma; ENDIF
+   IF gNW == "D"; cIdFirma := gFirma; ENDIF
 
    Box( "", 9, 75 )
    DO WHILE .T.
@@ -94,10 +94,17 @@ FUNCTION fin_sint_kartica()
       // odsjeci ako je tacka. prakticno "01. " -> sve koje pocinju sa  "01"
    ENDIF
 
+   MsgO( "Preuzimanje podataka sa SQL servera ..." )
+   
    IF gRJ == "D" .AND. gSAKrIz == "D" .AND. Len( cIdRJ ) <> 0
       otvori_sint_anal_kroz_temp( .T., "IDRJ='" + cIdRJ + "'" )
    ELSE
-      o_sint()
+      IF cBrza == "D"
+         find_sint_by_konto( cIdFirma, qqKonto )
+      ELSE
+
+         find_sint_by_konto( cIdFirma )
+      ENDIF
    ENDIF
    O_KONTO
 
@@ -113,11 +120,8 @@ FUNCTION fin_sint_kartica()
       SET FILTER TO &cFilt1
    ENDIF
 
-   IF cBrza == "D"
-      HSEEK cIdFirma + qqKonto
-   ELSE
-      HSEEK cIdFirma
-   ENDIF
+   GO TOP
+   MsgC()
 
    EOF RET
 

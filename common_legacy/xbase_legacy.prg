@@ -346,17 +346,19 @@ FUNCTION nErr( oe )
 
    break oe
 
+
+
 /*  EofFndRet(ef, close)
  *  Daje poruku da ne postoje podaci
  *  param ef = .t.   gledaj eof();  ef == .f. gledaj found()
  *  return  .t. ako ne postoje podaci
  */
 
-FUNCTION EofFndRet( ef, close )
+FUNCTION EofFndRet( lEof, lClose )
 
    LOCAL fRet := .F., cStr := "Ne postoje traženi podaci.."
 
-   IF ef // eof()
+   IF lEof // eof()
       IF Eof()
          Beep( 1 )
          Msg( cStr, 6 )
@@ -370,7 +372,7 @@ FUNCTION EofFndRet( ef, close )
       ENDIF
    ENDIF
 
-   IF CLOSE .AND. fRet
+   IF lClose .AND. fRet
       my_close_all_dbf()
    ENDIF
 
@@ -483,7 +485,7 @@ FUNCTION F_Baze( tbl )
 
    IF _area <= 0
       my_close_all_dbf()
-      //QUIT_1
+      // QUIT_1
    ENDIF
 
    RETURN _area
@@ -500,7 +502,7 @@ FUNCTION Sel_Bazu( tbl )
       SELECT ( _area )
    ELSE
       my_close_all_dbf()
-      //QUIT_1
+      // QUIT_1
    ENDIF
 
    RETURN

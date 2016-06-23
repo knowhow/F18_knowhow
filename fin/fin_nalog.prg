@@ -26,8 +26,6 @@ FUNCTION fin_nalog_azurirani()
 
    fin_read_params()
 
-   o_nalog()
-
    O_KONTO
    O_PARTN
    O_TNAL
@@ -44,7 +42,7 @@ FUNCTION fin_nalog_azurirani()
    @ m_x + 1, m_y + 2 SAY "Nalog:"
    @ m_x + 1, Col() + 1 SAY cIdFirma
    @ m_x + 1, Col() + 1 SAY "-" GET cIdVN PICT "@!"
-   @ m_x + 1, Col() + 1 SAY "-" GET cBrNal VALID _f_brnal( @cBrNal )
+   @ m_x + 1, Col() + 1 SAY "-" GET cBrNal VALID fin_fix_broj_naloga( @cBrNal )
 
    READ
 
@@ -52,10 +50,14 @@ FUNCTION fin_nalog_azurirani()
 
    BoxC()
 
-   SELECT nalog
-   SEEK cIdfirma + cIdvn + cBrnal
+   altd()
 
-   NFOUND CRET
+
+   find_nalog_by_broj_dokumenta( cIdFirma, cIdvn, cBrnal )
+   GO TOP
+
+   EOF CRET
+
    dDatNal := datnal
 
    // SELECT SUBAN
@@ -64,6 +66,7 @@ FUNCTION fin_nalog_azurirani()
    find_suban_by_broj_dokumenta( cIdFirma, cIdvn, cBrnal )
    // SELECT SUBAN
    SET ORDER TO TAG "4"
+   GO TOP
 
    start_print()
 
@@ -704,7 +707,7 @@ FUNCTION fin_nalog_zaglavlje( dDatNal )
       @ PRow(), PCol() + 4 SAY naz
    ENDIF
 
-   @ PRow(), PCol() + 15 SAY "Str:" + Str( ++nStr, 3 )
+   @ PRow(), PCol() + 15 SAY "Str:" + Str( ++nStr, 4 )
 
    P_NRED
 

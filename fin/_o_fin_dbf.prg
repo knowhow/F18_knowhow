@@ -24,7 +24,7 @@ FUNCTION o_fin_psint()
 
 FUNCTION o_fin_panal()
 
-      RETURN o_dbf_table( F_PANAL, { "PANAL", "fin_panal" }, "1" )
+   RETURN o_dbf_table( F_PANAL, { "PANAL", "fin_panal" }, "1" )
 
 
 FUNCTION o_fin_psuban()
@@ -49,17 +49,29 @@ FUNCTION o_nalog( lSql, cIdVN )
       RETURN use_sql_fin_nalog( cIdVN, .T. )
    ENDIF
 
-   RETURN o_dbf_table( F_NALOG, "nalog", "1" )
+   // RETURN o_dbf_table( F_NALOG, "nalog", "1" )
+
+   RETURN use_sql_nalog()
 
 
 FUNCTION o_suban()
-   RETURN o_dbf_table( F_SUBAN, "suban", "1" )
+
+   // RETURN o_dbf_table( F_SUBAN, "suban", "1" )
+
+   RETURN use_sql_suban()
 
 FUNCTION o_anal()
-   RETURN o_dbf_table( F_ANAL, "anal", "1" )
+
+   // RETURN o_dbf_table( F_ANAL, "anal", "1" )
+
+   RETURN use_sql_anal()
+
 
 FUNCTION o_sint()
-   RETURN o_dbf_table( F_SINT, "sint", "1" )
+
+   // RETURN o_dbf_table( F_SINT, "sint", "1" )
+
+   RETURN use_sql_sint()
 
 
 
@@ -70,11 +82,14 @@ FUNCTION o_ulimit()
 FUNCTION o_vrnal()
    RETURN o_dbf_table( F_VRNAL, "vrnal", "1" )
 
+
 FUNCTION o_relac()
    RETURN o_dbf_table( F_RELAC, "relac", "ID" )
 
+
 FUNCTION o_funk()
    RETURN o_dbf_table( F_FUNK, "funk", "ID" )
+
 
 FUNCTION o_fond()
    RETURN o_dbf_table( F_FOND, "fond", "ID" )

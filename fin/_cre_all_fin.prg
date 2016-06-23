@@ -266,14 +266,13 @@ FUNCTION cre_all_fin( ver )
    _alias := "PNALOG"
    _table_name := "fin_pnalog"
 
-
    IF ver[ "current" ] > 0 .AND. ver[ "current" ] < 010004 // 1.0.4 - currency polja iznosi
       f18_delete_dbf( _table_name )
    ENDIF
    IF ver[ "current" ] > 0 .AND. ver[ "current" ] < 020001 // sifra
        f18_delete_dbf( _table_name )
    ENDIF
-   
+
    IF_NOT_FILE_DBF_CREATE
    CREATE_INDEX( "1", "IdFirma+IdVn+BrNal", _alias )
 

@@ -45,6 +45,53 @@ FUNCTION find_suban_za_period( dDatOd, dDatDo )
 
    RETURN ! Eof()
 
+
+
+FUNCTION find_sint_by_konto( cIdFirma, cIdKonto )
+
+   LOCAL hParams := hb_Hash()
+
+   IF cIdFirma <> NIL
+      hParams[ "idfirma" ] := cIdFirma
+   ENDIF
+
+   IF cIdKonto <> NIL
+      hParams[ "idkonto" ] := cIdKonto
+   ENDIF
+
+   hParams[ "order_by" ] := "datnal" // ako ima vise brojeva dokumenata sortiraj po njima
+
+   hParams[ "indeks" ] := .T. // ne trositi vrijeme na kreiranje indeksa
+
+   use_sql_sint( hParams )
+   GO TOP
+
+   RETURN ! Eof()
+
+
+
+FUNCTION find_anal_by_konto( cIdFirma, cIdKonto )
+
+   LOCAL hParams := hb_Hash()
+
+   IF cIdFirma <> NIL
+      hParams[ "idfirma" ] := cIdFirma
+   ENDIF
+
+   IF cIdKonto <> NIL
+      hParams[ "idkonto" ] := cIdKonto
+   ENDIF
+
+   hParams[ "order_by" ] := "datnal" // ako ima vise brojeva dokumenata sortiraj po njima
+
+   hParams[ "indeks" ] := .T. // ne trositi vrijeme na kreiranje indeksa
+
+   use_sql_anal( hParams )
+   GO TOP
+
+   RETURN ! Eof()
+
+
 FUNCTION find_suban_by_konto_partner( cIdFirma, cIdKonto, cIdPartner )
 
    LOCAL hParams := hb_Hash()
@@ -85,9 +132,9 @@ FUNCTION find_nalog_by_broj_dokumenta( cIdFirma, cIdVN, cBrNal )
 
    IF cBrNal <> NIL
       hParams[ "brnal" ] := cBrNal
-   ELSE
-      hParams[ "order_by" ] := "idfirma,brnal,rbr" // ako ima vise brojeva dokumenata sortiraj po njima
    ENDIF
+
+   hParams[ "order_by" ] := "idfirma,idvn,brnal" // ako ima vise brojeva dokumenata sortiraj po njima
 
    hParams[ "indeks" ] := .F. // ne trositi vrijeme na kreiranje indeksa
 
@@ -110,9 +157,9 @@ FUNCTION find_sint_by_broj_dokumenta( cIdFirma, cIdVN, cBrNal )
 
    IF cBrNal <> NIL
       hParams[ "brnal" ] := cBrNal
-   ELSE
-      hParams[ "order_by" ] := "idfirma,brnal,rbr" // ako ima vise brojeva dokumenata sortiraj po njima
    ENDIF
+
+   hParams[ "order_by" ] := "idfirma,idvn,brnal,rbr" // ako ima vise brojeva dokumenata sortiraj po njima
 
    hParams[ "indeks" ] := .F. // ne trositi vrijeme na kreiranje indeksa
 
@@ -120,6 +167,7 @@ FUNCTION find_sint_by_broj_dokumenta( cIdFirma, cIdVN, cBrNal )
    GO TOP
 
    RETURN ! Eof()
+
 
 FUNCTION find_anal_by_broj_dokumenta( cIdFirma, cIdVN, cBrNal )
 
@@ -135,9 +183,9 @@ FUNCTION find_anal_by_broj_dokumenta( cIdFirma, cIdVN, cBrNal )
 
    IF cBrNal <> NIL
       hParams[ "brnal" ] := cBrNal
-   ELSE
-      hParams[ "order_by" ] := "idfirma,brnal,rbr" // ako ima vise brojeva dokumenata sortiraj po njima
    ENDIF
+
+   hParams[ "order_by" ] := "idfirma,idvn,brnal,rbr" // ako ima vise brojeva dokumenata sortiraj po njima
 
    hParams[ "indeks" ] := .F. // ne trositi vrijeme na kreiranje indeksa
 
@@ -147,9 +195,11 @@ FUNCTION find_anal_by_broj_dokumenta( cIdFirma, cIdVN, cBrNal )
    RETURN ! Eof()
 
 
-FUNCTION find_suban_by_broj_dokumenta( cIdFirma, cIdVN, cBrNal )
+FUNCTION find_suban_by_broj_dokumenta( cIdFirma, cIdVN, cBrNal, lIndex )
 
    LOCAL hParams := hb_Hash()
+
+   hb_default( @lIndex, .F. )
 
    IF cIdFirma <> NIL
       hParams[ "idfirma" ] := cIdFirma
@@ -161,11 +211,11 @@ FUNCTION find_suban_by_broj_dokumenta( cIdFirma, cIdVN, cBrNal )
 
    IF cBrNal <> NIL
       hParams[ "brnal" ] := cBrNal
-   ELSE
-      hParams[ "order_by" ] := "idfirma,brnal,rbr" // ako ima vise brojeva dokumenata sortiraj po njima
    ENDIF
 
-   hParams[ "indeks" ] := .F. // ne trositi vrijeme na kreiranje indeksa
+   hParams[ "order_by" ] := "idfirma,idvn,brnal,rbr" // ako ima vise brojeva dokumenata sortiraj po njima
+
+   hParams[ "indeks" ] := lIndex  // ne trositi vrijeme na kreiranje indeksa, osim ako se ne naglasi
 
    use_sql_suban( hParams )
    GO TOP
@@ -239,7 +289,7 @@ CREATE TABLE fmk.fin_nalog
 )
 */
 
-altd()
+   AltD()
 
    default_if_nil( @hParams, hb_Hash() )
 
@@ -266,7 +316,7 @@ altd()
          cSql += cOrder
       ENDIF
    ELSE
-      cSql += " OFFSET 0 LIMIT 1000"
+      cSql += " OFFSET 0 LIMIT 1"
    ENDIF
 
    IF hb_HHasKey( hParams, "alias" )
@@ -281,7 +331,7 @@ altd()
 
       INDEX ON idFirma + IdVN + BrNal  TAG "1" TO cTable
       INDEX ON IdFirma + Str( Val( BrNal ), 8 ) + idvn  TAG "2" TO cTable
-      INDEX ON DtoS( datnal ) + IdFirma + idvn + brnal  TAG "3" TO cTable
+      INDEX ON DToS( datnal ) + IdFirma + idvn + brnal  TAG "3" TO cTable
       INDEX ON datnal  TAG "4" TO cTable
 
       SET ORDER TO TAG "1"
@@ -386,7 +436,7 @@ CREATE TABLE fmk.fin_sint
          cSql += cOrder
       ENDIF
    ELSE
-      cSql += " OFFSET 0 LIMIT 1000"
+      cSql += " OFFSET 0 LIMIT 1"
    ENDIF
 
    IF hb_HHasKey( hParams, "alias" )
@@ -514,7 +564,7 @@ GRANT ALL ON TABLE fmk.fin_anal TO xtrole;
          cSql += cOrder
       ENDIF
    ELSE
-      cSql += " OFFSET 0 LIMIT 1000"
+      cSql += " OFFSET 0 LIMIT 1"
    ENDIF
 
    IF hb_HHasKey( hParams, "alias" )
@@ -603,7 +653,7 @@ FUNCTION use_sql_suban( hParams )
    cSql += coalesce_int_zarez( "rbr" )
    cSql += coalesce_char_zarez( "idtipdok", 2 )
    cSql += coalesce_char_zarez( "brdok", 20 )
-   cSql += "datdok, datval, "
+   cSql += "coalesce(datdok, TO_DATE('','yyyymmdd')) as datdok, coalesce( datval, TO_DATE('','yyyymmdd')) as datval,"
    cSql += coalesce_char_zarez( "otvst", 1 )
    cSql += coalesce_char_zarez( "d_p", 1 )
 
@@ -633,7 +683,7 @@ FUNCTION use_sql_suban( hParams )
          cSql += cOrder
       ENDIF
    ELSE
-      cSql += " OFFSET 0 LIMIT 1000"
+      cSql += " OFFSET 0 LIMIT 1"
    ENDIF
 
    IF hb_HHasKey( hParams, "alias" )

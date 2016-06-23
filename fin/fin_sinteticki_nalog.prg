@@ -39,7 +39,7 @@ FUNCTION fin_sinteticki_nalog( kumulativ )
          @ m_x + 1, Col() + 1 GET cIdFirma
       ENDIF
       @ m_x + 1, Col() + 1 SAY "-" GET cIdVN PICT "@!"
-      @ m_x + 1, Col() + 1 SAY "-" GET cBrNal VALID _f_brnal( @cBrNal )
+      @ m_x + 1, Col() + 1 SAY "-" GET cBrNal VALID fin_fix_broj_naloga( @cBrNal )
       READ
       ESC_BCR
       BoxC()

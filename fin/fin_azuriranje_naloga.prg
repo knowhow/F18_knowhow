@@ -682,7 +682,7 @@ STATIC FUNCTION fin_brisi_p_tabele( close_all )
       my_close_all_dbf()
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -776,7 +776,6 @@ FUNCTION panal_anal( nalog_ctrl )
       _rec := dbf_get_rec()
 
       SELECT ANAL
-
       APPEND BLANK
 
       dbf_update_rec( _rec, .F. )
@@ -786,7 +785,7 @@ FUNCTION panal_anal( nalog_ctrl )
 
    ENDDO
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -813,7 +812,7 @@ FUNCTION psint_sint( nalog_ctrl )
 
    ENDDO
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -841,7 +840,7 @@ FUNCTION pnalog_nalog( nalog_ctrl )
 
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -853,12 +852,16 @@ FUNCTION psuban_suban( nalog_ctrl )
 
    @ m_x + 3, m_y + 2 SAY "SUBANALITIKA   "
 
-   SELECT SUBAN
-   SET ORDER TO TAG "3"
+
 
    SELECT PSUBAN
    SEEK nalog_ctrl
 
+altd()
+   find_suban_by_broj_dokumenta( psuban->idfirma, psuban->idvn, psuban->brnal, .T. )
+
+
+   SELECT PSUBAN
    nC := 0
 
    DO WHILE !Eof() .AND. nalog_ctrl == IdFirma + IdVn + BrNal
@@ -874,6 +877,8 @@ FUNCTION psuban_suban( nalog_ctrl )
       ENDIF
 
       SELECT SUBAN
+      SET ORDER TO TAG "3"
+      GO TOP
       SEEK _rec[ "idfirma" ] + _rec[ "idkonto" ] + _rec[ "idpartner" ] + _rec[ "brdok" ]
 
       nRec := RecNo()
@@ -912,7 +917,7 @@ FUNCTION psuban_suban( nalog_ctrl )
 
    ENDDO
 
-   RETURN
+   RETURN .T.
 
 
 

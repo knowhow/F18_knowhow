@@ -53,7 +53,7 @@ FUNCTION fin_povrat_naloga( lStorno )
    ENDIF
 
    @ m_x + 1, Col() + 1 SAY "-" GET cIdVN PICT "@!"
-   @ m_x + 1, Col() + 1 SAY "-" GET cBrNal VALID _f_brnal( @cBrNal )
+   @ m_x + 1, Col() + 1 SAY "-" GET cBrNal VALID fin_fix_broj_naloga( @cBrNal )
 
    IF lStorno
 

@@ -133,6 +133,8 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
       RETURN fin_suban_kartica_sql( lOtvSt )
    ENDIF
 
+   close_open_kartica_tbl()
+
    ++nX
    @ m_x + ( ++nX ), m_y + 2 SAY "BEZ/SA kumulativnim prometom  (1/2):" GET cKumul
    @ m_x + ( ++nX ), m_y + 2 SAY "BEZ/SA prethodnim prometom (1/2):" GET cPredh
@@ -142,7 +144,6 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
 
    DO WHILE .T.
 
-      close_open_kartica_tbl()
 
       IF gDUFRJ == "D"
          cIdFirma := PadR( gFirma + ";", 30 )
@@ -308,7 +309,22 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
 
    lVrsteP := .F.
 
-   close_open_kartica_tbl()
+
+   MsgO( "Preuzimanje podataka sa SQL servera ...")
+   IF cBrza == "D"
+      IF RTrim( qqPartner ) == ";"
+         find_suban_by_konto_partner( cIdFirma, qqKonto )
+         SET ORDER TO TAG "5"
+      ELSE
+        find_suban_by_konto_partner( cIdFirma, qqKonto, qqPartner )
+        SET ORDER TO TAG "1"
+      ENDIF
+   ELSE
+       o_sql_suban_kto_partner( cIdFirma )
+   ENDIF
+
+   GO TOP
+   MsgC()
 
    IF _fakt_params[ "fakt_vrste_placanja" ]
       lVrsteP := .T.
@@ -363,11 +379,12 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
       ENDIF
    ENDIF
 
+/*
    IF Len( cIdFirma ) < 2 .OR. gDUFRJ == "D"
       GO TOP
    ELSE
       IF cBrza == "N"
-         HSEEK cIdFirma
+         //HSEEK cIdFirma
       ELSE
          IF RTrim( qqPartner ) == ";"
             SET ORDER TO TAG "5"
@@ -378,7 +395,8 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
          ENDIF
       ENDIF
    ENDIF
-
+*/
+   GO TOP
 
    EOF RET
 

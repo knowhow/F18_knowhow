@@ -15,7 +15,7 @@
 // ----------------------------------
 // fix brnal
 // ----------------------------------
-FUNCTION _f_brnal( cBrNal )
+FUNCTION fin_fix_broj_naloga( cBrNal )
 
    IF Right( AllTrim( cBrNal ), 1 ) == "*"
       cBrNal := StrTran( cBrNal, "*", "" )

@@ -12,7 +12,7 @@
 #include "f18.ch"
 
 STATIC PICD
-STATIC REP1_LEN := 158 
+STATIC REP1_LEN := 158
 
 FUNCTION fin_bb_sintetika_b( params )
 
@@ -24,7 +24,7 @@ FUNCTION fin_bb_sintetika_b( params )
    LOCAL cIdRj := params[ "id_rj" ]
    LOCAL lNule := params[ "saldo_nula" ]
    LOCAL lPodKlas := params[ "podklase" ]
-   LOCAL cFormat := params["format"]
+   LOCAL cFormat := params[ "format" ]
    LOCAL cKlKonto, cSinKonto, cIdKonto, cIdPartner
    LOCAL cFilter, aUsl1, nStr := 0
    LOCAL b, b1, b2
@@ -32,7 +32,7 @@ FUNCTION fin_bb_sintetika_b( params )
    LOCAL nBBK := 1
    LOCAL aNaziv, nColNaz
    PRIVATE M6, M7, M8, M9, M10
- 
+
    PICD := FormPicL( gPicBHD, 15 )
 
    IF gRJ == "D" .AND. ( "." $ cIdRj )
@@ -58,11 +58,14 @@ FUNCTION fin_bb_sintetika_b( params )
    O_KONTO
    O_BBKLAS
 
+   MsgO( "Povlacim podatke sa SQL servera" )
    IF gRJ == "D" .AND. Len( cIdRJ ) <> 0
       otvori_sint_anal_kroz_temp( .T., "IDRJ='" + cIdRJ + "'" )
    ELSE
-      o_sint()
+      find_sint_by_konto( cIdFirma )
    ENDIF
+
+   MsgC()
 
    SELECT BBKLAS
    my_dbf_zap()
@@ -96,9 +99,10 @@ FUNCTION fin_bb_sintetika_b( params )
       IF !Empty( cFilter )
          SET FILTER TO &cFilter
       ENDIF
-      HSEEK cIdFirma
+      //HSEEK cIdFirma
    ENDIF
 
+   GO TOP
    EOF CRET
 
    nStr := 0
@@ -219,7 +223,7 @@ FUNCTION fin_bb_sintetika_b( params )
 
          SELECT SINT
 
-         D3PS += D1PS 
+         D3PS += D1PS
          P3PS += P1PS
          D3TP += D1TP
          P3TP += P1TP
@@ -229,7 +233,7 @@ FUNCTION fin_bb_sintetika_b( params )
          ++B
 
 
-      ENDDO 
+      ENDDO
 
       SELECT BBKLAS
 
@@ -278,8 +282,8 @@ FUNCTION fin_bb_sintetika_b( params )
    ENDDO
 
    IF PRow() > 58 + dodatni_redovi_po_stranici()
-       FF
-       zagl_bb_sint( params, @nStr )
+      FF
+      zagl_bb_sint( params, @nStr )
    ENDIF
 
    ?U M5
@@ -384,13 +388,13 @@ FUNCTION fin_bb_sintetika_b( params )
 STATIC FUNCTION zagl_bb_sint( params, nStr )
 
    ?
- 
+
    P_COND2
 
    ??U "FIN: SINTETIČKI BRUTO BILANS U VALUTI '" + IF( params[ "valuta" ] == 1, ValDomaca(), ValPomocna() ) + "'"
 
-   IF !( Empty( params["datum_od"] ) .AND. Empty( params["datum_do"] ) )
-      ?? " ZA PERIOD OD", params["datum_od"], "-", params["datum_do"]
+   IF !( Empty( params[ "datum_od" ] ) .AND. Empty( params[ "datum_do" ] ) )
+      ?? " ZA PERIOD OD", params[ "datum_od" ], "-", params[ "datum_do" ]
    ENDIF
 
    ?? " NA DAN: "
@@ -403,19 +407,19 @@ STATIC FUNCTION zagl_bb_sint( params, nStr )
       ? "Firma:", gFirma, gNFirma
    ELSE
       ? "Firma:"
-      @ PRow(), PCol() + 2 SAY params["idfirma"]
+      @ PRow(), PCol() + 2 SAY params[ "idfirma" ]
       SELECT PARTN
-      HSEEK params["idfirma"]
+      HSEEK params[ "idfirma" ]
       @ PRow(), PCol() + 2 SAY Naz
       @ PRow(), PCol() + 2 SAY Naz2
    ENDIF
 
-   IF !EMPTY( params["konto"] )
-      ? "Odabrana konta: " + ALLTRIM( params["konto"] )
+   IF !Empty( params[ "konto" ] )
+      ? "Odabrana konta: " + AllTrim( params[ "konto" ] )
    ENDIF
 
-   IF gRJ == "D" .AND. LEN( params["id_rj"] ) <> 0
-      ? "Radna jedinica ='" + params["id_rj"] + "'"
+   IF gRJ == "D" .AND. Len( params[ "id_rj" ] ) <> 0
+      ? "Radna jedinica ='" + params[ "id_rj" ] + "'"
    ENDIF
 
    SELECT SINT

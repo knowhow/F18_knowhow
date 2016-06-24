@@ -594,7 +594,7 @@ FUNCTION lager_lista_magacin()
 
          // rbr, idroba, naziv...
 
-         ? Str( ++nRbr, 5 ) + ".", cIdRoba
+         ? Str( ++nRbr, 6 ) + ".", cIdRoba
          nCr := PCol() + 1
 
          @ PRow(), PCol() + 1 SAY aNaz[ 1 ]
@@ -910,9 +910,9 @@ FUNCTION lager_lista_magacin()
       ENDIF
    ENDIF
 
-   // lansiraj report....
+
    IF lExpDbf == .T.
-      tbl_export()
+      tbl_export() // lansiraj report
    ENDIF
 
    gPicDem := cPicDem
@@ -1054,7 +1054,7 @@ STATIC FUNCTION _set_zagl( cLine, cTxt1, cTxt2, cTxt3, cSredCij )
    LOCAL nPom
 
    // r.br
-   nPom := 6
+   nPom := 7
    AAdd( aLLM, { nPom, PadC( "R.", nPom ), PadC( "br.", nPom ), PadC( "", nPom ) } )
 
    // artikl

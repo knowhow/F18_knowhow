@@ -41,7 +41,7 @@ FUNCTION StDoks()
 
 FUNCTION SStDoks()
 
-   LOCAL lImaUkSt := .F.
+   // LOCAL lImaUkSt := .F.
    LOCAL _head
    LOCAL _n_col := 20
    LOCAL _pkonto, _mkonto
@@ -142,9 +142,9 @@ FUNCTION SStDoks()
 
    SELECT kalk_doks
 
-   IF FieldPos( "ukstavki" ) <> 0
-      lImaUkSt := .T.
-   ENDIF
+   // IF FieldPos( "ukstavki" ) <> 0
+   // lImaUkSt := .T.
+   // ENDIF
 
    PRIVATE cFilt := ".t."
 
@@ -269,8 +269,8 @@ FUNCTION SStDoks()
       ENDIF
 
       select_o_kalk_doks2()
-      HSEEK kalk_doks->(idfirma+idvd+brdok)
-      @ prow(), pcol() + 1 SAY kalk_doks2->datval
+      HSEEK kalk_doks->( idfirma + idvd + brdok )
+      @ PRow(), PCol() + 1 SAY kalk_doks2->datval
       SELECT kalk_doks
 
       // drugi red
@@ -284,6 +284,7 @@ FUNCTION SStDoks()
       nRabat += Rabat
       nMPV += MPV
 
+/*
       IF lImaUkSt
          IF field->ukStavki == 0
 
@@ -309,7 +310,7 @@ FUNCTION SStDoks()
          @ PRow(), PCol() + 1 SAY Str( field->ukStavki, 6 )
 
       ENDIF
-
+*/
       SKIP
 
    ENDDO
@@ -326,9 +327,9 @@ FUNCTION SStDoks()
       ?? "       "
    ENDIF
 
-   IF lImaUkSt
-      @ PRow(), PCol() + 1 SAY Str( nUkStavki, 6 )
-   ENDIF
+   // IF lImaUkSt
+   // @ PRow(), PCol() + 1 SAY Str( nUkStavki, 6 )
+   // ENDIF
    ? m
 
    FF
@@ -336,7 +337,7 @@ FUNCTION SStDoks()
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
 
 STATIC FUNCTION _get_rpt_header()
@@ -370,6 +371,7 @@ STATIC FUNCTION _get_rpt_header()
    _head += PadC( "Op.", 6 )
    _head += Space( 1 )
    _head += PadC( "DatVal", 8 )
+
    RETURN _head
 
 
@@ -408,7 +410,7 @@ STATIC FUNCTION _get_rpt_line()
    _line += Replicate( "-", 6 )
    _line += Space( 1 )
    _line += Replicate( "-", 8 )
-   
+
    RETURN _line
 
 

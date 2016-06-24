@@ -17,7 +17,8 @@ FUNCTION kalk_azuriranje_dokumenta( lAuto )
    LOCAL aRezim := {}
    LOCAL aOstaju := {}
    LOCAL lGenerisiZavisne := .F.
-   LOCAL lBrStDoks := .F.
+
+   // LOCAL lBrStDoks := .F.
 
    IF ( lAuto == nil )
       lAuto := .F.
@@ -53,11 +54,10 @@ FUNCTION kalk_azuriranje_dokumenta( lAuto )
 
    o_kalk_za_azuriranje( .T. )
 
-   SELECT kalk_doks
-
-   IF FieldPos( "ukstavki" ) <> 0
-      lBrStDoks := .T.
-   ENDIF
+   // SELECT kalk_doks
+   // IF FieldPos( "ukstavki" ) <> 0
+   // lBrStDoks := .T.
+   // ENDIF
 
    IF nije_dozvoljeno_azuriranje_sumnjivih_stavki() .AND. !kalk_provjera_integriteta( @aOstaju, lViseDok )
       RETURN .F.
@@ -77,7 +77,7 @@ FUNCTION kalk_azuriranje_dokumenta( lAuto )
 
       o_kalk_za_azuriranje()
 
-      IF !kalk_azur_dbf( lAuto, lViseDok, aOstaju, aRezim, lBrStDoks )
+      IF !kalk_azur_dbf( lAuto, lViseDok, aOstaju, aRezim ) // , lBrStDoks )
          MsgBeep( "Neuspješno ažuriranje KALK dokumenta u DBF tabele !" )
          RETURN .F.
       ENDIF
@@ -214,7 +214,7 @@ STATIC FUNCTION kalk_zavisni_nakon_azuriranja( lGenerisi, lAuto )
       Generisi11ku_iz10ke( cNext11 )
    ENDIF
 
-   SELECT KALK
+   // SELECT KALK
 
    IF lGenerisi = .T.
 
@@ -335,7 +335,6 @@ STATIC FUNCTION kalk_generisati_zavisne_dokumente( lAuto )
 
 STATIC FUNCTION kalk_zavisni_dokumenti()
 
-
    Niv_11()
    Otprema()
    Iz13u11()
@@ -345,7 +344,7 @@ STATIC FUNCTION kalk_zavisni_dokumenti()
 
 
 
-STATIC FUNCTION kalk_azur_dbf( lAuto, lViseDok, aOstaju, aRezim, lBrStDoks )
+STATIC FUNCTION kalk_azur_dbf( lAuto, lViseDok, aOstaju, aRezim ) // , lBrStDoks )
 
    LOCAL cIdFirma, _rec
    LOCAL cIdVd
@@ -463,9 +462,9 @@ STATIC FUNCTION kalk_azur_dbf( lAuto, lViseDok, aOstaju, aRezim, lBrStDoks )
       _rec[ "rabat" ] := nRabat
       _rec[ "mpv" ] := nMpv
       _rec[ "podbr" ] := cNPodBr
-      IF lBrStDoks
-         _rec[ "ukstavki" ] := nBrStavki
-      ENDIF
+      // IF lBrStDoks
+      // _rec[ "ukstavki" ] := nBrStavki
+      // ENDIF
       dbf_update_rec( _rec, .T. )
 
       SELECT kalk_pripr
@@ -589,12 +588,9 @@ STATIC FUNCTION kalk_provjera_integriteta( aDoks, lViseDok )
 
       ENDDO
 
-      SELECT kalk
-      SEEK cIdFirma + cIdVD + cBrDok
-
-      IF Found()
+      IF find_kalk_doks_by_broj_dokumenta( cIdFirma, cIdvd, cBrDok )
          error_bar( cIdfirma + "-" + cIdvd + "-" + cBrdok, ;
-         "Postoji dokument na stanju: " + cIdFirma + "-" + cIdvd + "-" + AllTrim( cBrDok ) )
+            "Postoji dokument na stanju: " + cIdFirma + "-" + cIdvd + "-" + AllTrim( cBrDok ) )
          IF !lViseDok
             my_close_all_dbf()
             RETURN .F.
@@ -655,7 +651,7 @@ STATIC FUNCTION kalk_provjeri_duple_dokumente( aRezim )
 
          // TODO: cleanup sumnjive stavke
          IF field->ERROR == "1"
-            error_bar( field->idfirma + "-" + field->idvd + "-" + field->brdok, " /  Rbr." + field->rbr + " sumnjiva! ")
+            error_bar( field->idfirma + "-" + field->idvd + "-" + field->brdok, " /  Rbr." + field->rbr + " sumnjiva! " )
             IF Pitanje(, "Želite li dokument ažurirati bez obzira na sumnjive stavke? (D/N)", "N" ) == "D"
                aRezim := {}
                AAdd( aRezim, gCijene )
@@ -682,9 +678,9 @@ FUNCTION o_kalk_za_azuriranje( raspored_tr )
    my_close_all_dbf()
 
    o_kalk_pripr()
-   o_kalk()
-   o_kalk_doks2()
-   o_kalk_doks()
+   // o_kalk()
+   // o_kalk_doks2()
+   // o_kalk_doks()
 
    IF raspored_tr
       kalk_raspored_troskova()

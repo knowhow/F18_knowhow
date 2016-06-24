@@ -57,7 +57,7 @@ FUNCTION find_kalk_doks_by_broj_dokumenta( cIdFirma, cIdvd, cBrDok )
    IF cBrDok <> NIL
       hParams[ "brdok" ] := cBrDok
    ELSE
-      hParams[ "order_by" ] := "brdok" // ako ima vise brojeva dokumenata sortiraj po njima
+      hParams[ "order_by" ] := "idfirma, idvn, brdok" // ako ima vise brojeva dokumenata sortiraj po njima
    ENDIF
 
    hParams[ "indeks" ] := .F. // ne trositi vrijeme na kreiranje indeksa
@@ -106,15 +106,28 @@ FUNCTION find_kalk_doks_by_broj_fakture( cBrojFakture )
    RETURN ! Eof()
 
 
-FUNCTION find_kalk_by_mkonto_idroba( cIdFirma, cIdKonto, cIdRoba, cOrder )
+FUNCTION find_kalk_by_mkonto_idroba( cIdFirma, cIdKonto, cIdRoba, cOrderBy, lReport )
 
    LOCAL hParams := hb_Hash()
 
-  hb_default( @cOrder, "idfirma, mkonto, idroba, datdok, podbr, mu_i, idvd" )
-   hParams[ "idfirma" ] := cIdFirma
-   hParams[ "mkonto" ] := cIdKonto
-   hParams[ "idroba" ] := cIdRoba
-   hParams[ "order_by" ] := cOrder
+   hb_default( @cOrderBy, "idfirma, mkonto, idroba, datdok, podbr, mu_i, idvd" )
+   hb_default( @lReport, .T. )
+
+   AltD()
+   IF cIdFirma != NIL
+      hParams[ "idfirma" ] := cIdFirma
+   ENDIF
+   IF cIdKonto != NIL
+      hParams[ "mkonto" ] := cIdKonto
+   ENDIF
+   IF cIdRoba != NIL
+      hParams[ "idroba" ] := cIdRoba
+   ENDIF
+   hParams[ "order_by" ] := cOrderBy
+
+   IF lReport
+      hParams[ "polja" ] := "rpt_magacin" // samo polja potrebna za magacin
+   ENDIF
 
    use_sql_kalk( hParams )
    GO TOP
@@ -126,9 +139,15 @@ FUNCTION find_kalk_by_pkonto_idroba( cIdFirma, cIdKonto, cIdRoba )
 
    LOCAL hParams := hb_Hash()
 
-   hParams[ "idfirma" ] := cIdFirma
-   hParams[ "pkonto" ] := cIdKonto
-   hParams[ "idroba" ] := cIdRoba
+   IF cIdFirma != NIL
+      hParams[ "idfirma" ] := cIdFirma
+   ENDIF
+   IF cIdKonto != NIL
+      hParams[ "pkonto" ] := cIdKonto
+   ENDIF
+   IF cIdRoba != NIL
+      hParams[ "idroba" ] := cIdRoba
+   ENDIF
    hParams[ "order_by" ] := "idfirma, pkonto, idroba, datdok, podbr, mu_i, idvd"
 
    use_sql_kalk( hParams )
@@ -219,7 +238,7 @@ FUNCTION use_sql_kalk( hParams )
    cSql += coalesce_char_zarez( "idvd", 2 )
    cSql += coalesce_char_zarez( "brdok", 8 )
    cSql += coalesce_char_zarez( "rbr", 3 )
-   cSql += "datdok, datfaktp, "
+   cSql += "coalesce(datdok, TO_DATE('','yyyymmdd')) as datdok, coalesce( datfaktp, TO_DATE('','yyyymmdd')) as datfaktp,"
    cSql += coalesce_char_zarez( "brfaktp", 10 )
    cSql += coalesce_char_zarez( "idpartner", 6 )
    cSql += coalesce_char_zarez( "idtarifa", 6 )
@@ -228,9 +247,11 @@ FUNCTION use_sql_kalk( hParams )
    cSql += coalesce_char_zarez( "idkonto", 7 )
    cSql += coalesce_char_zarez( "idkonto2", 7 )
 
+   cSql += coalesce_char_zarez( "idzaduz", 6 )
+   cSql += coalesce_char_zarez( "idzaduz2", 6 )
+   
    IF !( lReportMagacin  .OR. lReportProdavnica )
-      cSql += coalesce_char_zarez( "idzaduz", 6 )
-      cSql += coalesce_char_zarez( "idzaduz2", 6 )
+
       cSql += coalesce_char_zarez( "trabat", 1 )
       cSql += coalesce_char_zarez( "tprevoz", 1 )
       cSql += coalesce_char_zarez( "tprevoz2", 1 )
@@ -295,6 +316,7 @@ FUNCTION use_sql_kalk( hParams )
 
    SELECT ( F_KALK )
 
+   ?E cSql
    use_sql( cTable, cSql )
 
    IF is_sql_rdd_treba_indeks( hParams )
@@ -333,9 +355,9 @@ STATIC FUNCTION use_sql_kalk_order( hParams )
    LOCAL cOrder := ""
 
    IF hb_HHasKey( hParams, "order_by" )
-      cOrder += " ORDER BY " + order_by( hParams[ "order_by" ] )
+      cOrder += " ORDER BY " + hParams[ "order_by" ]
    ELSE
-      cOrder += " ORDER BY " + order_by( "brdok" )
+      cOrder += " ORDER BY idfirma, idvd, brdok"
    ENDIF
 
    RETURN cOrder
@@ -382,6 +404,7 @@ STATIC FUNCTION use_sql_kalk_where( hParams )
    RETURN cWhere
 
 
+/*
 STATIC FUNCTION order_by(  cSort )
 
    LOCAL cRet := "idfirma"
@@ -404,7 +427,7 @@ STATIC FUNCTION order_by(  cSort )
    cRet += ",datdok"
 
    RETURN cRet
-
+*/
 
 
 FUNCTION kalk_mkonto( cIdFirma, cIdKonto, cIdRoba, cX )

@@ -362,13 +362,13 @@ FUNCTION Marza( fmarza )
 
 
 
-/* FaktVPC(nVPC,cseek,dDatum)
+/* 
  *     Fakticka veleprodajna cijena
  */
 
-FUNCTION FaktVPC( nVPC, cseek, dDatum )
+FUNCTION kalk_vpc_po_kartici( nVPC, cIdFirma, cMKonto, cIdRoba, dDatum )
 
-   // {
+
    LOCAL nOrder
 
    IF koncij->naz == "V2" .AND. roba->( FieldPos( "vpc2" ) ) <> 0
@@ -381,16 +381,19 @@ FUNCTION FaktVPC( nVPC, cseek, dDatum )
       nVPC := 0
    ENDIF
 
-   SELECT kalk
+
    PushWA()
-   SET FILTER TO
+
+
+   //SET FILTER TO
    // nOrder:=indexord()
-   SET ORDER TO TAG "3" // idFirma+mkonto+idroba+dtos(datdok)
-   SEEK cseek + "X"
-   SKIP -1
+   //SET ORDER TO TAG "3" // idFirma+mkonto+idroba+dtos(datdok)
+   //SEEK cseek + "X"
+   //SKIP -1
+   find_kalk_by_mkonto_idroba( cIdFirma, cMKonto, cIdRoba)
 
 
-   DO WHILE !Bof() .AND. idfirma + mkonto + idroba == cseek
+   DO WHILE !Bof() .AND. idfirma + mkonto + idroba == cIdFirma + cMKonto + cIdRoba
 
       IF dDatum <> NIL .AND. dDatum < datdok
          SKIP -1
@@ -412,8 +415,7 @@ FUNCTION FaktVPC( nVPC, cseek, dDatum )
    PopWa()
    // dbsetorder(nOrder)
 
-   RETURN
-// }
+   RETURN .T.
 
 
 
@@ -423,11 +425,12 @@ FUNCTION FaktVPC( nVPC, cseek, dDatum )
 
 FUNCTION PratiKMag( cIdFirma, cIdKonto, cIdRoba )
 
-   // {
    LOCAL nPom
-   SELECT kalk ; SET ORDER TO TAG "3"
-   HSEEK cIdFirma + cIdKonto + cIdRoba
+
+   // SELECT kalk ; SET ORDER TO TAG "3"
+   // HSEEK cIdFirma + cIdKonto + cIdRoba
    // "KALKi3","idFirma+mkonto+idroba+dtos(datdok)+PODBR+MU_I+IdVD",KUMPATH+"KALK")
+   find_kalk_by_mkonto_idroba( cIdFirma, cIdKonto, cIdRoba )
 
    nVPV := 0
    nKolicina := 0
@@ -905,12 +908,17 @@ FUNCTION KalkNab( cIdFirma, cIdRoba, cIdKonto, nKolicina, nKolZN, nNC, nSNc, dDa
    ENDIF
 
    my_use_refresh_stop()
-   SELECT kalk
 
-   SET ORDER TO TAG "3"
-   SEEK cIdFirma + cIdKonto + cIdRoba + "X"
 
-   SKIP -1
+   // SELECT kalk
+
+   // SET ORDER TO TAG "3"
+   // SEEK cIdFirma + cIdKonto + cIdRoba + "X"
+   // SKIP -1
+
+   find_kalk_by_mkonto_idroba( cIdFirma, cIdKonto, cIdRoba )
+   GO BOTTOM
+
    IF ( ( cIdFirma + cIdKonto + cIdRoba ) == ( field->idfirma + field->mkonto + field->idroba ) ) .AND. _datdok < field->datdok
       error_bar( "KA_" + cIdfirma + "/" + cIdKonto + "/" + cIdRoba, "Postoji dokument " + field->idfirma + "-" + field->idvd + "-" + field->brdok + " na datum: " + DToC( field->datdok ), 4 )
       _ERROR := "1"

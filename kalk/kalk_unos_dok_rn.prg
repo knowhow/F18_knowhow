@@ -53,7 +53,7 @@ FUNCTION Get1_RN()
       ENDDO
       my_unlock()
       my_dbf_pack()
- 
+
       SELECT kalk_doks
       SET ORDER TO TAG "2"
       // CREATE_INDEX("DOKSi2","IdFirma+MKONTO+idzaduz2+idvd+brdok","DOKS")
@@ -81,10 +81,11 @@ FUNCTION Get1_RN()
          nKolicina := 0   ; nNabV := 0
          DO WHILE !Eof() .AND. kalk_doks->( idfirma + idvd + brdok ) == ( idfirma + idvd + brdok )
 
-            // CREATE_INDEX(PRIVPATH+"PRIPRi3","idFirma+idvd+brdok+idroba+rbr",PRIVPATH+"PRIPR")
-            SELECT kalk_pripr; SET ORDER TO TAG "3"
-            SEEK _idfirma + _idvd + _brdok + kalk->idroba + "9"
-            // nadji odgovoarajucu stavku iznad 900
+
+            SELECT kalk_pripr
+            SET ORDER TO TAG "3" // kalk pripr tag 3 idFirma+idvd+brdok+idroba+rbr
+            SEEK _idfirma + _idvd + _brdok + kalk->idroba + "9" // nadji odgovoarajucu stavku iznad 900
+
 
             IF !Found()
                ++nCntR
@@ -290,4 +291,3 @@ FUNCTION Get2_RN()
 
    RETURN LastKey()
 // }
-

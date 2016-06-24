@@ -101,7 +101,8 @@ FUNCTION Get1_11()
 
    IF nije_dozvoljeno_azuriranje_sumnjivih_stavki() .OR. Round( _VPC, 3 ) = 0 // uvijek nadji
       SELECT koncij; SEEK Trim( _mkonto ); SELECT kalk_pripr  // magacin
-      FaktVPC( @_VPC, _idfirma + _mkonto + _idroba )
+
+      kalk_vpc_po_kartici( @_VPC, _idfirma, _mkonto, _idroba )
       SELECT koncij; SEEK Trim( _pkonto ); SELECT kalk_pripr  // magacin
    ENDIF
 

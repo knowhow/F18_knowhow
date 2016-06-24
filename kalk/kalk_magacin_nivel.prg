@@ -82,7 +82,7 @@ FUNCTION Niv_10()
       IF dozvoljeno_azuriranje_sumnjivih_stavki()  .AND. gNiv14 = "1"
          // nivel.se vrsi na ukupnu kolicinu
          // ///// utvrdjivanje fakticke VPC
-         faktVPC( @nRVPC, _idfirma + _mkonto + _idroba )
+         kalk_vpc_po_kartici( @nRVPC, _idfirma, _mkonto, _idroba )
          SELECT kalk_pripr
       ENDIF
       IF Round( _vpc, 3 ) <> Round( nRVPC, 3 )  // izvrsiti nivelaciju

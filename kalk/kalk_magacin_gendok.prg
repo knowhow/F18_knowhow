@@ -191,7 +191,7 @@ FUNCTION InvManj()
       SELECT roba; HSEEK _idroba
 
       IF koncij->naz <> "N1"
-         FaktVPC( @nFaktVPC, _idfirma + _idkonto + _idroba )
+         kalk_vpc_po_kartici( @nFaktVPC, _idfirma, _idkonto, _idroba )
       ENDIF
       SELECT kalk; SET ORDER TO TAG "1"; SELECT kalk_pripr
 

@@ -241,37 +241,37 @@ FUNCTION CrePPProd()
 
 
 
-FUNCTION GenRekap1( aUsl1, aUsl2, aUslR, cKartica, cVarijanta, cKesiraj, fSMark,  cK1, cK7, cK9, cIdKPovrata, aUslSez ) 
+FUNCTION GenRekap1( aUsl1, aUsl2, aUslR, cKartica, cVarijanta, cKesiraj, fSMark,  cK1, cK7, cK9, cIdKPovrata, aUslSez )
 
-   LOCAL nSec 
+   LOCAL nSec
 
-   IF ( cKesiraj = nil ) 
-      cKesiraj := "N" 
-   ENDIF 
-   
-   IF ( fSMark == nil ) 
-      fSMark := .F.  
-   ENDIF 
+   IF ( cKesiraj = nil )
+      cKesiraj := "N"
+   ENDIF
 
-   IF ( cK1 == nil ) 
-      cK1 := "9999" 
-   ENDIF 
+   IF ( fSMark == nil )
+      fSMark := .F.
+   ENDIF
 
-   IF ( cK7 == nil ) 
-      cK7 := "N" 
-   ENDIF 
+   IF ( cK1 == nil )
+      cK1 := "9999"
+   ENDIF
 
-   IF ( cK9 == nil ) 
-      cK9 := "999" 
-   ENDIF 
+   IF ( cK7 == nil )
+      cK7 := "N"
+   ENDIF
 
-   IF ( cIdKPovrata == nil ) 
-      cIdKPovrata := "XXXXXXXX" 
-   ENDIF 
+   IF ( cK9 == nil )
+      cK9 := "999"
+   ENDIF
 
-   IF ( aUslSez == nil ) 
-      aUslSez := ".t." 
-   ENDIF 
+   IF ( cIdKPovrata == nil )
+      cIdKPovrata := "XXXXXXXX"
+   ENDIF
+
+   IF ( aUslSez == nil )
+      aUslSez := ".t."
+   ENDIF
 
 
    nSec := Seconds()
@@ -325,7 +325,7 @@ FUNCTION GenRekap1( aUsl1, aUsl2, aUslR, cKartica, cVarijanta, cKesiraj, fSMark,
          SKIP
          LOOP
       ENDIF
-	
+
       SELECT rekap1
       ScanMKonto( dDatOd, dDatDo, cIdKPovrata, cKartica, cVarijanta, cKesiraj )
 
@@ -398,19 +398,19 @@ FUNCTION ScanMKonto( dDatOd, dDatDo, cIdKPovrata, cKartica, cVarijanta, cKesiraj
    HSEEK kalk->( mKonto + idroba )
 
    IF !Found()
-	
+
       APPEND BLANK
 
       _rec := dbf_get_rec()
-	
+
       // radi promjene tarifa promjenio sam kalk->idtarifa u roba->idtarifa
       // replace objekat with kalk->mKonto, idroba with kalk->idroba, idtarifa with kalk->idtarifa, g1 with roba->k1
-	
+
       _rec[ "objekat" ] := kalk->mkonto
       _rec[ "idroba" ] := kalk->idroba
       _rec[ "idtarifa" ] := roba->idtarifa
       _rec[ "g1" ] := roba->k1
-	
+
       IF ( cKartica == "D" )
          // ocitaj sa kartica
          nMpc := 0
@@ -424,7 +424,7 @@ FUNCTION ScanMKonto( dDatOd, dDatDo, cIdKPovrata, cKartica, cVarijanta, cKesiraj
             SEEK Trim( kalk->mKonto )
             SELECT kalk
             // dan prije inventure !!!
-            FaktVPC( @nmpc, cSeek, dDatDo - 1 )
+            kalk_vpc_po_kartici( @nmpc, cSeek, dDatDo - 1 )
             dbSetOrder( nGGOrd )
             GO nGGo
 
@@ -530,7 +530,7 @@ FUNCTION ScanPKonto( dDatOd, dDatDo, cIdKPovrata, cKartica, cVarijanta, cKesiraj
       _rec[ "idroba" ] := kalk->idroba
       _rec[ "idtarifa" ] := roba->idtarifa
       _rec[ "g1" ] := roba->k1
-	
+
       IF ( cKartica == "D" )
          // ocitaj sa kartica
          nMpc := 0
@@ -558,7 +558,7 @@ FUNCTION ScanPKonto( dDatOd, dDatDo, cIdKPovrata, cKartica, cVarijanta, cKesiraj
    ENDIF
 
    IF ( kalk->pu_i == "1" .AND. kalk->kolicina > 0 )
-	
+
       // ulaz moze biti po osnovu prijema, 80 - preknjizenja
       // odnosno internog dokumenta
 
@@ -641,7 +641,7 @@ FUNCTION ScanPKonto( dDatOd, dDatDo, cIdKPovrata, cKartica, cVarijanta, cKesiraj
       ELSE
 
          // izlazi iz prodavnice po ostalim osnovima
-		
+
          IF ( cVarijanta <> "1" )
             IF ( kalk->idvd $ "11#12#13" .AND. kalk->mKonto == cIdKPovrata )
                // reklamacija
@@ -720,7 +720,7 @@ FUNCTION GenRekap2( lK2X, cC, lPrDatOd, lVpRab, lMarkiranaRoba )
       ENDIF
       SELECT roba
       HSEEK kalk->idRoba
-	
+
       lMagacin := .T.
       SELECT rekap2
 
@@ -774,7 +774,7 @@ FUNCTION Sca2MKonto( dDatOd, dDatDo, aUsl1, aUsl2, cIdKPovrata, cC, lK2X, lMagac
    IF !lMagacin
 
    ELSEIF ( kalk->mu_i == "1" .OR. ( kalk->mu_i == "5" .AND. kalk->idvd == "97" ) )
-	
+
       // mu_i=="5" jeste izlaz iz magacina, ali ga ovdje treba prikazivati
       // kao storno ulaza
       IF ( kalk->mu_i == "5" .AND. kalk->idvd == "97" )
@@ -786,9 +786,9 @@ FUNCTION Sca2MKonto( dDatOd, dDatDo, aUsl1, aUsl2, cIdKPovrata, cC, lK2X, lMagac
          field->stanjek += nPomKolicina
       ENDIF
       field->stanjef += nPomKolicina * nTC
-	
+
       IF ( kalk->datDok <= dDatOd )
-		
+
          IF !lK2X .OR. !( Left( roba->K2, 1 ) == 'X' )
             field->zalihak += nPomKolicina
          ENDIF
@@ -815,7 +815,7 @@ FUNCTION Sca2MKonto( dDatOd, dDatDo, aUsl1, aUsl2, cIdKPovrata, cC, lK2X, lMagac
       ENDIF
 
    ELSEIF ( kalk->mu_i == "5" )
-	
+
       // izlaz iz magacina
       IF ( !lK2X .OR. !( Left( roba->k2, 1 ) == 'X' ) )
          field->stanjek -= kalk->kolicina
@@ -878,7 +878,7 @@ FUNCTION Sca2MKonto( dDatOd, dDatDo, aUsl1, aUsl2, cIdKPovrata, cC, lK2X, lMagac
 
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 FUNCTION Sca2PKonto( dDatOd, dDatDo, aUsl1, aUsl2, cIdKPovrata, cC, lK2X, lMagacin, lPrDatOd )
@@ -916,7 +916,7 @@ FUNCTION Sca2PKonto( dDatOd, dDatDo, aUsl1, aUsl2, cIdKPovrata, cC, lK2X, lMagac
    IF !lProdavnica
 
    ELSEIF ( kalk->pu_i == "1" )
-	
+
       // ulaz moze biti po osnovu prijema, 80 - preknjizenja
       // odnosno internog dokumenta
 
@@ -942,9 +942,9 @@ FUNCTION Sca2PKonto( dDatOd, dDatDo, aUsl1, aUsl2, cIdKPovrata, cC, lK2X, lMagac
 
 
    ELSEIF kalk->Pu_i == "3" .AND. cC == "P"
-	
+
       // nivelacija - samo za prod.cijenu
-	
+
       field->stanjef += kalk->( kolicina * nTC )
 
       IF kalk->datdok <= dDatOd
@@ -959,7 +959,7 @@ FUNCTION Sca2PKonto( dDatOd, dDatDo, aUsl1, aUsl2, cIdKPovrata, cC, lK2X, lMagac
 
 
    ELSEIF kalk->pu_i == "5"
-	
+
       // izlaz iz prodavnice moze biti 42,41,11,12,13
 
       IF !lK2X .OR. !( roba->K2 = 'X' )
@@ -974,7 +974,7 @@ FUNCTION Sca2PKonto( dDatOd, dDatDo, aUsl1, aUsl2, cIdKPovrata, cC, lK2X, lMagac
          field->zalihaf -= kalk->( kolicina * nTC )
 
       ENDIF
-	
+
       IF lPrDatOd == .T.
          // prodaja 01.01
          IF kalk->datdok >= dDatOd
@@ -1007,11 +1007,11 @@ STATIC FUNCTION GRekap22()
 
    nStavki := 0
    SELECT rekap2
-   SET ORDER TO TAG "3"
+   SET ORDER TO TAG "3" // rekap2
 
    GO TOP
    DO WHILE !Eof()
-	
+
       cG1 := g1
       nZalihaF := 0
       nZalihaK := 0
@@ -1033,23 +1033,23 @@ STATIC FUNCTION GRekap22()
       nOMPRucF := 0
       nStanjeF := 0
       nStanjeK := 0
-	
+
       SELECT rekap2
 
       DO WHILE ( !Eof() .AND. rekap2->g1 == cG1 )
-		
+
          SELECT rekap2
          nMjesec := rekap2->mjesec
          nGodina := rekap2->godina
-		
+
          DO WHILE ( ( !Eof() .AND. rekap2->g1 == cG1  .AND. nMjesec == rekap2->mjesec .AND. nGodina == rekap2->godina ) )
-			
+
             IF ( Year( dDatOd ) == Godina .AND. Month( dDatOd ) == mjesec )
                // samo je 01.98 mjesec poc zalihe
                nZalihaf += zalihaf
                nZalihak += zalihak
             ENDIF
-			
+
             nNabavF += nabavf
             nNabavK += nabavk
             nPNabavF += pnabavf
@@ -1066,10 +1066,10 @@ STATIC FUNCTION GRekap22()
             nSnizenje += snizenje
             nORucF += orucf
             nOMPRucF += omprucf
-			
+
             SELECT rekap2
             SKIP
-			
+
          ENDDO
 
          IF ( Year( dDatOd ) == rekap2->godina .AND. Month( dDatOd ) == rekap2->mjesec )
@@ -1080,12 +1080,12 @@ STATIC FUNCTION GRekap22()
          IF Round( nStanjef, 4 ) <> 0
             AAdd( AZalihe, { nStanjeF, nStanjeK } )
          ENDIF
-		
+
          // 01.01 - 30.09
          // znaci imamo 10 uzoraka: 01.01, 31.01, 31.02, ..., 30.09
 
       ENDDO
-	
+
       SELECT reka22
       APPEND BLANK
       nProszalf := 0
@@ -1170,12 +1170,12 @@ FUNCTION GenProdNc()
          SKIP
          LOOP
       ENDIF
-	
+
       @ m_x + 1, m_y + 2 SAY "Prodavnica: " + cPKonto
       SELECT roba
       GO TOP
       DO WHILE !Eof()
-	
+
          cIdRoba := roba->id
          IF IsRobaInProdavnica( cPKonto, cIdRoba )
             @ m_x + 2, m_y + 2 SAY "Roba " + cIdRoba
@@ -1187,11 +1187,11 @@ FUNCTION GenProdNc()
          ELSE
             @ m_x + 2, m_y + 2 SAY "!Roba " + cIdRoba
          ENDIF
-		
+
          SELECT roba
          SKIP
       ENDDO
-			
+
       SELECT koncij
       SKIP
    ENDDO
@@ -1310,14 +1310,14 @@ FUNCTION SetIdPartnerRoba()
       USE  ( KUMPATH + cGodina + "\kalk" )
       SET ORDER TO TAG "1"
 
-	
+
       @ m_x + 1, m_y + 2 SAY iif( cGodina == "", "2003", cGodina )
-	
+
       SEEK gFirma + "10"
       DO WHILE !Eof() .AND. ( IdVd == "10" )
 
          @ m_x + 2, m_y + 2 SAY kalk->IdRoba
-		
+
          SELECT ROBA
          cIdPartner = kalk->IdPartner
          SEEK kalk->IdRoba
@@ -1339,7 +1339,3 @@ FUNCTION SetIdPartnerRoba()
    BoxC()
 
    RETURN
-
-
-
-

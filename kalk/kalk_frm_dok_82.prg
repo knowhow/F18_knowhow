@@ -80,7 +80,7 @@ FUNCTION Get1_82()
       _NC := NC
    ENDIF
    IF dozvoljeno_azuriranje_sumnjivih_stavki() .AND. fNovi
-      faktVPC( @_VPC, _idfirma + _idkonto + _idroba )
+      kalk_vpc_po_kartici( @_VPC, _idfirma, _idkonto, _idroba )
       SELECT kalk_pripr
    ENDIF
    VtPorezi()

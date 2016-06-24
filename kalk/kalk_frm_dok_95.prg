@@ -118,8 +118,8 @@ FUNCTION Get1_95()
    ENDIF
 
    IF dozvoljeno_azuriranje_sumnjivih_stavki() .AND. fNovi
-      // ///// utvrdjivanje fakticke VPC
-      faktVPC( @_VPC, _idfirma + _idkonto2 + _idroba )
+  
+      kalk_vpc_po_kartici( @_VPC, _idfirma, _idkonto2, _idroba )
       SELECT kalk_pripr
    ENDIF
 

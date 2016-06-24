@@ -1142,16 +1142,14 @@ FUNCTION Zagllager_lista_magacin()
 
    Preduzece()
 
-
    P_COND2
-
 
    SELECT konto
    HSEEK cIdKonto
 
    SET CENTURY ON
 
-   ?? "KALK: LAGER LISTA  ZA PERIOD", dDatOd, "-", dDatdo, "  na dan", Date(), Space( 12 ), "Str:", Str( ++nTStrana, 3 )
+   ?? "KALK: LAGER LISTA  ZA PERIOD", dDatOd, "-", dDatdo, "  na dan", Date(), Space( 12 ), "Str:", Str( ++nTStrana, 4 )
 
    SET CENTURY OFF
 

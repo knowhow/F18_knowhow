@@ -93,7 +93,7 @@ FUNCTION Get1_12()
 
    IF nije_dozvoljeno_azuriranje_sumnjivih_stavki()
       FaktMPC( @_Mpcsapp, _idfirma + _pkonto + _idroba )
-      FaktVPC( @_VPC, _idfirma + _mkonto + _idroba )
+      kalk_vpc_po_kartici( @_VPC, _idfirma, _mkonto, _idroba )
    ENDIF
 
    VTPOREZI()

@@ -26,7 +26,7 @@ STATIC FUNCTION _o_tables()
    O_KONTO
    O_PARTN
 
-   RETURN
+   RETURN .T.
 
 
 

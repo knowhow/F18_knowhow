@@ -12,7 +12,7 @@
 
 #include "f18.ch"
 
-
+/*
 
 FUNCTION TKaLagMNew()
 
@@ -120,7 +120,7 @@ END CLASS
 
 FUNCTION KaLagM()
 
-   // {
+
    LOCAL cIdRoba
    LOCAL cIdTarifa
    LOCAL nRec
@@ -223,7 +223,7 @@ METHOD openDb
    GO TOP
 
    RETURN
-// }
+
 
 
 METHOD closeDb
@@ -750,3 +750,5 @@ STATIC FUNCTION g_exp_fields()
    AAdd( aTbl, { "rabat",  "N", 16, 4 } )
 
    RETURN aTbl
+
+*/

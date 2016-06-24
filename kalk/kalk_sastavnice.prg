@@ -239,12 +239,13 @@ STATIC FUNCTION g_kalk_stanje( cIdRoba, cKto )
 
    IF !Empty( cKto )
 
-      o_kalk()
-      SELECT kalk
-      SET ORDER TO TAG "3"
-      GO TOP
+      //o_kalk()
+      //SELECT kalk
+      //SET ORDER TO TAG "3"
+      //GO TOP
+      //SEEK gFirma + cKto + cIdRoba
 
-      SEEK gFirma + cKto + cIdRoba
+      find_kalk_by_mkonto_idroba( gFirma, cKto, cIdRoba )
 
       DO WHILE !Eof() .AND. idfirma + mkonto + idroba == gFirma + cKto + cIdRoba
 

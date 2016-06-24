@@ -80,7 +80,7 @@ FUNCTION mag_fa_ka_prenos_10_14()
       READ
       BoxC()
       cSufiks := SufBrKalk( cIdKonto2 )
-      cBrKalk := SljBrKalk( "14", cIdFirma, cSufiks )
+      cBrKalk := kalk_sljedeci_brdok( "14", cIdFirma, cSufiks )
    ELSE
       cBrKalk := GetNextKalkDoc( cIdFirma, "14" )
    ENDIF
@@ -251,7 +251,7 @@ FUNCTION mag_fa_ka_prenos_10_14()
          set_metric( "kalk_fakt_prenos_10_14_konto_1", my_user(), cIdKonto )
          set_metric( "kalk_fakt_prenos_10_14_konto_2", my_user(), cIdKonto2 )
 
-         IF gBrojac == "D"
+         IF gBrojacKalkulacija == "D"
             cBrKalk := UBrojDok( Val( Left( cbrkalk, 5 ) ) + 1, 5, Right( cBrKalk, 3 ) )
          ENDIF
 
@@ -344,7 +344,7 @@ FUNCTION mag_fa_ka_prenos_otpr( cIndik )
       BoxC()
 
       cSufiks := SufBrKalk( cIdKonto )
-      cBrKalk := SljBrKalk( cTipKalk, cIdFirma, cSufiks )
+      cBrKalk := kalk_sljedeci_brdok( cTipKalk, cIdFirma, cSufiks )
 
    ELSE
       cBrKalk := GetNextKalkDoc( cIdFirma, cTipKalk )
@@ -515,7 +515,7 @@ FUNCTION mag_fa_ka_prenos_otpr( cIndik )
          set_metric( "kalk_fakt_prenos_otpr_konto_1", my_user(), cIdKonto )
          set_metric( "kalk_fakt_prenos_otpr_konto_2", my_user(), cIdKonto2 )
 
-         IF gBrojac == "D"
+         IF gBrojacKalkulacija == "D"
             cBrKalk := UBrojDok( Val( Left( cBrKalk, 5 ) ) + 1, 5, Right( cBrKalk, 3 ) )
          ENDIF
 

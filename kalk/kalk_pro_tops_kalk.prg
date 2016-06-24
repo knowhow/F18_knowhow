@@ -79,7 +79,7 @@ FUNCTION tops_nor_96( cIdFirma, cIdTipDok, cIdZaduz2, cIdKonto2, cIdKonto, ;
    O_PARTN
    O_TARIFA
 
-   IF lTest == .F. .AND. gBrojac == "D"
+   IF lTest == .F. .AND. gBrojacKalkulacija == "D"
       SELECT kalk
       SET ORDER TO TAG "1"
       SEEK cIdFirma + "96X"
@@ -98,7 +98,7 @@ FUNCTION tops_nor_96( cIdFirma, cIdTipDok, cIdZaduz2, cIdKonto2, cIdKonto, ;
    IF lTest == .F.
 
       Box(, 10, 60 )
-      IF gBrojac == "D"
+      IF gBrojacKalkulacija == "D"
          cBrKalk := UBrojDok( Val( Left( cBrKalk, 5 ) ) + 1, 5, Right( cBrKalk, 3 ) )
       ENDIF
 

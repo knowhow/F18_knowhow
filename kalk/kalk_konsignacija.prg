@@ -54,7 +54,7 @@ FUNCTION Prenos16()
    cIdZaduz2 := Space( 6 )
 
    cBrkalk := Space( 8 )
-   IF gBrojac == "D"
+   IF gBrojacKalkulacija == "D"
       SELECT kalk
       SELECT kalk; SET ORDER TO TAG "1"
       SEEK cidfirma + cTipkalk + "X"
@@ -67,7 +67,7 @@ FUNCTION Prenos16()
    ENDIF
    Box(, 15, 60 )
 
-   IF gBrojac == "D"
+   IF gBrojacKalkulacija == "D"
       cbrkalk := UBrojDok( Val( Left( cbrkalk, 5 ) ) + 1, 5, Right( cBrKalk, 3 ) )
    ENDIF
 
@@ -172,7 +172,7 @@ FUNCTION Prenos16()
             SKIP 1
          ENDDO
          @ m_x + 8, m_y + 2 SAY "Dokument je prenesen !!"
-         IF gBrojac == "D"
+         IF gBrojacKalkulacija == "D"
             cbrkalk := UBrojDok( Val( Left( cbrkalk, 5 ) ) + 1, 5, Right( cBrKalk, 3 ) )
          ENDIF
          Inkey( 4 )

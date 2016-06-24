@@ -90,7 +90,7 @@ FUNCTION kalk_sljedeci( cIdFirma, cVrsta )
 
    LOCAL cBrKalk
 
-   IF gBrojac == "D"
+   IF gBrojacKalkulacija == "D"
 
       find_kalk_doks_za_tip( cIdFirma, cVrsta )
 

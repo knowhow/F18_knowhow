@@ -56,7 +56,7 @@ FUNCTION Niv_11()
    _sufix := SufBrKalk( kalk_pripr->idkonto )
    SELECT kalk_pripr
 
-   cBrNiv := SljBrKalk( "19", gFirma, _sufix )
+   cBrNiv := kalk_sljedeci_brdok( "19", gFirma, _sufix )
    // cBrNiv := UBrojDok(val(left(cBrNiv,5))+1,5,right(cBrNiv,3))
 
    SELECT kalk_pripr

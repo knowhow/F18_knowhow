@@ -118,9 +118,11 @@ FUNCTION find_suban_by_konto_partner( cIdFirma, cIdKonto, cIdPartner )
    RETURN ! Eof()
 
 
-FUNCTION find_nalog_by_broj_dokumenta( cIdFirma, cIdVN, cBrNal )
+FUNCTION find_nalog_by_broj_dokumenta( cIdFirma, cIdVN, cBrNal, cOrderBy )
 
    LOCAL hParams := hb_Hash()
+
+   hb_default( @cOrderBy, "idfirma,idvn,brnal" )
 
    IF cIdFirma <> NIL
       hParams[ "idfirma" ] := cIdFirma
@@ -134,7 +136,7 @@ FUNCTION find_nalog_by_broj_dokumenta( cIdFirma, cIdVN, cBrNal )
       hParams[ "brnal" ] := cBrNal
    ENDIF
 
-   hParams[ "order_by" ] := "idfirma,idvn,brnal" // ako ima vise brojeva dokumenata sortiraj po njima
+   hParams[ "order_by" ] :=  cOrderBy // ako ima vise brojeva dokumenata sortiraj po njima
 
    hParams[ "indeks" ] := .F. // ne trositi vrijeme na kreiranje indeksa
 

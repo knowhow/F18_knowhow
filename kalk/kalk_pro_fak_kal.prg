@@ -68,7 +68,7 @@ FUNCTION PrenosNo( dD_from, dD_to, cIdKonto2, cIdTipDok, dDatKalk, cRobaUsl, ;
       O_R_EXP
    ENDIF
 
-   IF gBrojac == "D" .AND. lTest == .F.
+   IF gBrojacKalkulacija == "D" .AND. lTest == .F.
       SELECT kalk
       SET ORDER TO TAG "1"
       SEEK cidfirma + "96X"
@@ -86,7 +86,7 @@ FUNCTION PrenosNo( dD_from, dD_to, cIdKonto2, cIdTipDok, dDatKalk, cRobaUsl, ;
 
    Box(, 15, 60 )
 
-   IF gBrojac == "D" .AND. lTest == .F.
+   IF gBrojacKalkulacija == "D" .AND. lTest == .F.
       cbrkalk := UBrojDok( Val( Left( cbrkalk, 5 ) ) + 1, 5, Right( cBrKalk, 3 ) )
    ENDIF
 
@@ -290,7 +290,7 @@ FUNCTION PrenosNo( dD_from, dD_to, cIdKonto2, cIdTipDok, dDatKalk, cRobaUsl, ;
 
          @ m_x + 10, m_y + 2 SAY "Dokumenti su preneseni !!"
 
-         IF gBrojac == "D"
+         IF gBrojacKalkulacija == "D"
             cbrkalk := UBrojDok( Val( Left( cbrkalk, 5 ) ) + 1, 5, Right( cBrKalk, 3 ) )
          ENDIF
 
@@ -422,7 +422,7 @@ FUNCTION PrenosNoFakt()
 
    cBrkalk := Space( 8 )
 
-   IF gBrojac == "D"
+   IF gBrojacKalkulacija == "D"
       SELECT kalk
       SET ORDER TO TAG "1"
       SEEK cIdFirma + "96X"
@@ -436,7 +436,7 @@ FUNCTION PrenosNoFakt()
 
    Box(, 15, 60 )
 
-   IF gBrojac == "D"
+   IF gBrojacKalkulacija == "D"
       cBrKalk := UBrojDok( Val( Left( cBrKalk, 5 ) ) + 1, 5, Right( cBrKalk, 3 ) )
    ENDIF
 
@@ -531,7 +531,7 @@ FUNCTION PrenosNoFakt()
 
       @ m_x + 10, m_y + 2 SAY "Dokumenti su preneseni !!"
 
-      IF gBrojac == "D"
+      IF gBrojacKalkulacija == "D"
          cBrKalk := UBrojDok( Val( Left( cBrKalk, 5 ) ) + 1, 5, Right( cBrKalk, 3 ) )
       ENDIF
 
@@ -573,7 +573,7 @@ FUNCTION PrenosNo2()
    cIdKonto := PadR( "5100", 7 )
    cIdZaduz2 := Space( 6 )
 
-   IF gBrojac == "D"
+   IF gBrojacKalkulacija == "D"
       SELECT kalk
       SET ORDER TO TAG "1"
       SEEK cIdFirma + "10X"
@@ -587,7 +587,7 @@ FUNCTION PrenosNo2()
 
    Box(, 15, 60 )
 
-   IF gBrojac == "D"
+   IF gBrojacKalkulacija == "D"
       cBrKalk := UBrojDok( Val( Left( cbrkalk, 5 ) ) + 1, 5, Right( cBrKalk, 3 ) )
    ENDIF
 
@@ -699,7 +699,7 @@ FUNCTION PrenosNo2()
 
       @ m_x + 10, m_y + 2 SAY "Dokumenti su preneseni !!"
 
-      IF gBrojac == "D"
+      IF gBrojacKalkulacija == "D"
          cbrkalk := UBrojDok( Val( Left( cbrkalk, 5 ) ) + 1, 5, Right( cBrKalk, 3 ) )
       ENDIF
 

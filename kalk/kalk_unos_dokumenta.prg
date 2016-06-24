@@ -1475,7 +1475,7 @@ FUNCTION Get1Header( fNovi )
    READ
    ESC_RETURN 0
 
-   IF fNovi .AND. gBrojac == "D" .AND. ( _idfirma <> idfirma .OR. _idvd <> idvd )
+   IF fNovi .AND. gBrojacKalkulacija == "D" .AND. ( _idfirma <> idfirma .OR. _idvd <> idvd )
 
       IF glBrojacPoKontima
 
@@ -1491,11 +1491,11 @@ FUNCTION Get1Header( fNovi )
          ENDIF
          BoxC()
 
-         _brDok := SljBrKalk( _idvd, _idfirma, cSufiks )
+         _brDok := kalk_sljedeci_brdok( _idvd, _idfirma, cSufiks )
 
       ELSE
 
-         _brDok := SljBrKalk( _idvd, _idfirma )
+         _brDok := kalk_sljedeci_brdok( _idvd, _idfirma )
 
       ENDIF
 

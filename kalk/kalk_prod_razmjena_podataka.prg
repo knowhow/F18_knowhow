@@ -78,7 +78,7 @@ FUNCTION FaKaPrenos_MP_u_razduzenje()
    cSabirati := gAutoCjen
    cCjenSif := "N"
 
-   IF gBrojac == "D"
+   IF gBrojacKalkulacija == "D"
 
       SELECT kalk
       SET ORDER TO TAG "1"
@@ -95,7 +95,7 @@ FUNCTION FaKaPrenos_MP_u_razduzenje()
 
    Box(, 15, 60 )
 
-   IF gBrojac == "D"
+   IF gBrojacKalkulacija == "D"
       cBrKalk := UBrojDok( Val( Left( cBrKalk, 5 ) ) + 1, 5, Right( cBrKalk, 3 ) )
    ENDIF
 
@@ -249,7 +249,7 @@ FUNCTION FaKaPrenos_MP_u_razduzenje()
 
       @ m_x + 10, m_y + 2 SAY "Dokument je prenesen !"
 
-      IF gBrojac == "D"
+      IF gBrojacKalkulacija == "D"
          cBrKalk := UBrojDok( Val( Left( cBrKalk, 5 ) ) + 1, 5, Right( cBrKalk, 3 ) )
       ENDIF
 
@@ -293,7 +293,7 @@ FUNCTION prod_fa_ka_prenos_otpr()
    cIdZaduz2 := cIdZaduz := Space( 6 )
 
    cBrkalk := Space( 8 )
-   IF gBrojac == "D"
+   IF gBrojacKalkulacija == "D"
       SELECT kalk
       SELECT kalk
       SET ORDER TO TAG "1"
@@ -307,7 +307,7 @@ FUNCTION prod_fa_ka_prenos_otpr()
    ENDIF
    Box(, 15, 60 )
 
-   IF gBrojac == "D"
+   IF gBrojacKalkulacija == "D"
       cbrkalk := UBrojDok( Val( Left( cbrkalk, 5 ) ) + 1, 5, Right( cBrKalk, 3 ) )
    ENDIF
 
@@ -420,7 +420,7 @@ FUNCTION prod_fa_ka_prenos_otpr()
             SKIP
          ENDDO
          @ m_x + 8, m_y + 2 SAY "Dokument je prenesen !!"
-         IF gBrojac == "D"
+         IF gBrojacKalkulacija == "D"
             cbrkalk := UBrojDok( Val( Left( cbrkalk, 5 ) ) + 1, 5, Right( cBrKalk, 3 ) )
          ENDIF
          Inkey( 4 )
@@ -464,7 +464,7 @@ FUNCTION FaKaPrenosRacunMP()
    cZbirno := "N"
    cNac_rab := "P"
 
-   IF gBrojac == "D"
+   IF gBrojacKalkulacija == "D"
       SELECT kalk
       SELECT kalk
       SET ORDER TO TAG "1"
@@ -478,7 +478,7 @@ FUNCTION FaKaPrenosRacunMP()
    ENDIF
 
    Box(, 15, 60 )
-   IF gBrojac == "D"
+   IF gBrojacKalkulacija == "D"
       cBrKalk := UBrojDok( Val( Left( cBrKalk, 5 ) ) + 1, 5, Right( cBrKalk, 3 ) )
    ENDIF
 
@@ -690,7 +690,7 @@ FUNCTION FaKaPrenosRacunMP()
       @ m_x + 10, m_y + 2 SAY "Dokument je prenesen !!"
       @ m_x + 11, m_y + 2 SAY "Obavezno pokrenuti asistenta <opcija A>!!!"
 
-      IF gBrojac == "D"
+      IF gBrojacKalkulacija == "D"
          cBrKalk := UBrojDok( Val( Left( cBrKalk, 5 ) ) + 1, 5, Right( cBrKalk, 3 ) )
       ENDIF
 
@@ -729,7 +729,7 @@ FUNCTION FaKaPrenos_01_doprema()
    cIdZaduz := Space( 6 )
 
    cBrkalk := Space( 8 )
-   IF gBrojac == "D"
+   IF gBrojacKalkulacija == "D"
       SELECT kalk
       SELECT kalk
       SET ORDER TO TAG "1"
@@ -743,7 +743,7 @@ FUNCTION FaKaPrenos_01_doprema()
    ENDIF
    Box(, 15, 60 )
 
-   IF gBrojac == "D"
+   IF gBrojacKalkulacija == "D"
       cbrkalk := UBrojDok( Val( Left( cbrkalk, 5 ) ) + 1, 5, Right( cBrKalk, 3 ) )
    ENDIF
 
@@ -834,7 +834,7 @@ FUNCTION FaKaPrenos_01_doprema()
             SKIP
          ENDDO
          @ m_x + 8, m_y + 2 SAY "Dokument je prenesen !!"
-         IF gBrojac == "D"
+         IF gBrojacKalkulacija == "D"
             cbrkalk := UBrojDok( Val( Left( cbrkalk, 5 ) ) + 1, 5, Right( cBrKalk, 3 ) )
          ENDIF
          Inkey( 4 )
@@ -877,7 +877,7 @@ FUNCTION FaKaPrenos_cm_u_prodavnicu()
    cIdZaduz2 := cIdZaduz := Space( 6 )
 
    cBrkalk := Space( 8 )
-   IF gBrojac == "D"
+   IF gBrojacKalkulacija == "D"
       SELECT kalk
       SELECT kalk
       SET ORDER TO TAG "1"
@@ -891,7 +891,7 @@ FUNCTION FaKaPrenos_cm_u_prodavnicu()
    ENDIF
    Box(, 15, 60 )
 
-   IF gBrojac == "D"
+   IF gBrojacKalkulacija == "D"
       cbrkalk := UBrojDok( Val( Left( cbrkalk, 5 ) ) + 1, 5, Right( cBrKalk, 3 ) )
    ENDIF
 
@@ -1010,7 +1010,7 @@ FUNCTION FaKaPrenos_cm_u_prodavnicu()
             SKIP
          ENDDO
          @ m_x + 8, m_y + 2 SAY "Dokument je prenesen !!"
-         IF gBrojac == "D"
+         IF gBrojacKalkulacija == "D"
             cbrkalk := UBrojDok( Val( Left( cbrkalk, 5 ) ) + 1, 5, Right( cBrKalk, 3 ) )
          ENDIF
          Inkey( 4 )
@@ -1056,7 +1056,7 @@ FUNCTION FaKaPrenos_izlaz_putem_vp()
    cIdZaduz2 := cIdZaduz := Space( 6 )
 
    cBrkalk := Space( 8 )
-   IF gBrojac == "D"
+   IF gBrojacKalkulacija == "D"
       SELECT kalk
       SELECT kalk
       SET ORDER TO TAG "1"
@@ -1070,7 +1070,7 @@ FUNCTION FaKaPrenos_izlaz_putem_vp()
    ENDIF
    Box(, 15, 60 )
 
-   IF gBrojac == "D"
+   IF gBrojacKalkulacija == "D"
       cbrkalk := UBrojDok( Val( Left( cbrkalk, 5 ) ) + 1, 5, Right( cBrKalk, 3 ) )
    ENDIF
 
@@ -1203,7 +1203,7 @@ FUNCTION FaKaPrenos_izlaz_putem_vp()
             SKIP
          ENDDO
          @ m_x + 8, m_y + 2 SAY "Dokument je prenesen !!"
-         IF gBrojac == "D"
+         IF gBrojacKalkulacija == "D"
             cbrkalk := UBrojDok( Val( Left( cbrkalk, 5 ) ) + 1, 5, Right( cBrKalk, 3 ) )
          ENDIF
          Inkey( 4 )
@@ -1279,7 +1279,7 @@ FUNCTION FaKaPrenosRacunMPParagon()
          _kalk_tip_dok := "42"
       ENDIF
 
-      IF gBrojac == "D"
+      IF gBrojacKalkulacija == "D"
 
          SELECT kalk
          SET ORDER TO TAG "1"
@@ -1564,7 +1564,7 @@ FUNCTION FaKaPrenosRacunMPParagon()
       @ m_x + 10, m_y + 2 SAY "Dokument je prenesen !!"
       @ m_x + 11, m_y + 2 SAY "Obavezno pokrenuti asistenta <opcija A>!!!"
 
-      IF gBrojac == "D"
+      IF gBrojacKalkulacija == "D"
          cBrKalk := UBrojDok( Val( Left( cBrKalk, 5 ) ) + 1, 5, Right( cBrKalk, 3 ) )
       ENDIF
 

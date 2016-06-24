@@ -271,7 +271,7 @@ FUNCTION SljBroj( cidfirma, cIdvD, nMjesta )
    sljedeci broj kalkulacije
 */
 
-FUNCTION SljBrKalk( cTipKalk, cIdFirma, cSufiks )
+FUNCTION kalk_sljedeci_brdok( cTipKalk, cIdFirma, cSufiks )
 
 
    LOCAL cBrKalk := Space( 8 )

@@ -205,7 +205,7 @@ FUNCTION kalk_par_razno()
 
    Box(, 20, 75, .F., "RAZNO" )
 
-   @ m_x + _x, m_y + 2 SAY "Brojac kalkulacija D/N         " GET gBrojac PICT "@!" VALID gbrojac $ "DN"
+   @ m_x + _x, m_y + 2 SAY "Brojac kalkulacija D/N         " GET gBrojacKalkulacija PICT "@!" VALID gBrojacKalkulacija $ "DN"
    @ m_x + _x, Col() + 2 SAY "duzina brojaca:" GET gLenBrKalk PICT "9" VALID gLenBrKalk > 0 .AND. gLenBrKalk < 10
    ++ _x
    @ m_x + _x, m_y + 2 SAY "Brojac kalkulacija po kontima (D/N)" GET _brojac VALID _brojac $ "DN" PICT "@!"
@@ -265,7 +265,7 @@ FUNCTION kalk_par_razno()
       ENDIF
 
       set_metric( "kalk_koristiti_barkod_pri_unosu", my_user(), lKoristitiBK )
-      set_metric( "kalk_brojac_kalkulacija", nil, gBrojac )
+      set_metric( "kalk_brojac_kalkulacija", nil, gBrojacKalkulacija )
       set_metric( "kalk_brojac_dokumenta_po_kontima", nil, glBrojacPoKontima )
       set_metric( "kalk_potpis_na_kraju_naloga", nil, gPotpis )
       set_metric( "kalk_tip_tabele", nil, gTabela )

@@ -796,7 +796,7 @@ STATIC FUNCTION TTbl2Kalk()
    // osnovni podaci ove kalkulacije
    cFakt := AllTrim( temp->brdok )
    cTDok := GetKTipDok( AllTrim( temp->idtipdok ) )
-   cBrojKalk := SljBrKalk( cTDok, gFirma )
+   cBrojKalk := kalk_sljedeci_brdok( cTDok, gFirma )
 
    DO WHILE !Eof()
 

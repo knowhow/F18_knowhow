@@ -149,17 +149,13 @@ FUNCTION fin_novi_broj_dokumenta( firma, tip_dokumenta )
    _broj := fetch_metric( _param, nil, _broj )
 
    // konsultuj i doks uporedo
-   o_nalog()
-
-   IF gBrojac == "2"
-      SET ORDER TO TAG "2"
-      GO BOTTOM
+   IF gBrojac == "2" // Brojac naloga: 1 - (firma,vn,brnal), 2 - (firma,brnal)
+      find_nalog_by_broj_dokumenta( firma, tip_dokumenta, NIL, "idfirma,brnal" )
    ELSE
-      SET ORDER TO TAG "1"
-      GO TOP
-      SEEK firma + tip_dokumenta + "Ž"
-      SKIP -1
+      find_nalog_by_broj_dokumenta( firma, tip_dokumenta )
+
    ENDIF
+   GO BOTTOM
 
    IF field->idfirma == firma .AND. IF( gBrojac == "1", field->idvn == tip_dokumenta, .T. )
       _broj_nalog := Val( field->brnal )
@@ -311,6 +307,5 @@ FUNCTION fin_valid_provjeri_postoji_nalog( cIdFirma, cIdVn, cBrNal )
       error_bar( "fin_unos", " Dupli nalog " + cIdFirma + "-" + cIdvn + "-" + cBrNal )
       RETURN .F.
    ENDIF
-
 
    RETURN .T.

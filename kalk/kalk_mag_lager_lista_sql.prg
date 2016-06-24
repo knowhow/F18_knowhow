@@ -259,7 +259,7 @@ STATIC FUNCTION kalk_mag_insert_ps_into_pripr( data, params )
 
    IF glBrojacPoKontima
       _sufix := SufBrKalk( _m_konto )
-      _kalk_broj := SljBrKalk( _kalk_tip, gFirma, _sufix )
+      _kalk_broj := kalk_sljedeci_brdok( _kalk_tip, gFirma, _sufix )
    ELSE
       _kalk_broj := GetNextKalkDoc( gFirma, _kalk_tip )
    ENDIF

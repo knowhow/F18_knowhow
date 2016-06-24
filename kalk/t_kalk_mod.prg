@@ -118,7 +118,7 @@ METHOD TKalkMod:set_module_gvars()
    PUBLIC gDirMaK := ""
    PUBLIC gDirFakt := ""
    PUBLIC gDirFaKK := ""
-   PUBLIC gBrojac := "D"
+   PUBLIC gBrojacKalkulacija := "D"
    PUBLIC gRokTr := "N"
    PUBLIC gVarVP := "1"
    PUBLIC gAFin := "D"
@@ -251,7 +251,7 @@ METHOD TKalkMod:set_module_gvars()
    gAFin := fetch_metric( "kalk_kontiranje_fin", f18_user(), gAFin )
    gAMat := fetch_metric( "kalk_kontiranje_mat", f18_user(), gAMat )
    gAFakt := fetch_metric( "kalk_kontiranje_fakt", f18_user(), gAFakt )
-   gBrojac := fetch_metric( "kalk_brojac_kalkulacija", nil, gBrojac )
+   gBrojacKalkulacija := fetch_metric( "kalk_brojac_kalkulacija", nil, gBrojacKalkulacija )
    gMagacin := fetch_metric( "kalk_magacin_po_nc", nil, gMagacin )
    gCijene := fetch_metric( "kalk_azuriranje_sumnjivih_dokumenata", nil, gCijene )
    gTS := fetch_metric( "kalk_tip_subjekta", nil,  gTS)

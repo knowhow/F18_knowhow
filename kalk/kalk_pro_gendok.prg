@@ -51,7 +51,7 @@ FUNCTION Iz47u96Norm()
    cIdZaduz2 := Space( 6 )
 
    cBrkalk := Space( 8 )
-   IF gBrojac == "D"
+   IF gBrojacKalkulacija == "D"
       SELECT kalk
       SET ORDER TO TAG "1"
       SEEK cidfirma + "96X"
@@ -65,7 +65,7 @@ FUNCTION Iz47u96Norm()
 
    Box(, 15, 60 )
 
-   IF gBrojac == "D"
+   IF gBrojacKalkulacija == "D"
       cbrkalk := UBrojDok( Val( Left( cbrkalk, 5 ) ) + 1, 5, Right( cBrKalk, 3 ) )
    ENDIF
 
@@ -131,7 +131,7 @@ FUNCTION Iz47u96Norm()
       ENDDO
 
       @ m_x + 10, m_y + 2 SAY "Dokument je prenesen !!"
-      IF gBrojac == "D"
+      IF gBrojacKalkulacija == "D"
          cbrkalk := UBrojDok( Val( Left( cbrkalk, 5 ) ) + 1, 5, Right( cBrKalk, 3 ) )
       ENDIF
       Inkey( 4 )

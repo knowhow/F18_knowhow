@@ -20,7 +20,7 @@ FUNCTION prenos_fakt_kalk_magacin()
    LOCAL _izbor := 1
 
    AAdd( _opc, "1. fakt->kalk (10->14) racun veleprodaje               " )
-   AAdd( _opcexe, {||  mag_fa_ka_prenos_10_14() } )
+   AAdd( _opcexe, {||  magacin_prenos_fakt_10_to_kalk_14() } )
    AAdd( _opc, "2. fakt->kalk (12->96) otpremnica" )
    AAdd( _opcexe, {||  mag_fa_ka_prenos_otpr()  } )
    AAdd( _opc, "3. fakt->kalk (19->96) izlazi po ostalim osnovama" )
@@ -40,11 +40,11 @@ FUNCTION prenos_fakt_kalk_magacin()
 
 
 
-/* mag_fa_ka_prenos_10_14()
+/* magacin_prenos_fakt_10_to_kalk_14()
  *     Prenos FAKT 10 -> KALK 14 (veleprodajni racun)
  */
 
-FUNCTION mag_fa_ka_prenos_10_14()
+FUNCTION magacin_prenos_fakt_10_to_kalk_14()
 
    LOCAL nRabat := 0
    LOCAL cIdFirma := gFirma
@@ -59,9 +59,9 @@ FUNCTION mag_fa_ka_prenos_10_14()
 
    o_koncij()
    o_kalk_pripr()
-   o_kalk()
-   o_kalk_doks()
-   o_kalk_doks2()
+   //o_kalk()
+   //o_kalk_doks()
+   //o_kalk_doks2()
    O_ROBA
    O_KONTO
    O_PARTN
@@ -156,7 +156,7 @@ FUNCTION mag_fa_ka_prenos_10_14()
 
          IF Found() // faktura je vec prenesena
             Beep( 4 )
-            @ m_x + 8, m_y + 2 SAY "Dokument je vec prenesen !!"
+            @ m_x + 8, m_y + 2 SAY "Dokument je vec prenesen !"
             Inkey( 4 )
             @ m_x + 8, m_y + 2 SAY Space( 30 )
             LOOP

@@ -38,7 +38,7 @@ CREATE TABLE fmk.fin_suban
   idfirma character varying(2) NOT NULL,
   idvn character varying(2) NOT NULL,
   brnal character varying(10) NOT NULL,
-  idkonto character varying(10),
+  idkonto character varying(7),
   idpartner character varying(6),
   rbr character integer NOT NULL,
   idtipdok character(2),

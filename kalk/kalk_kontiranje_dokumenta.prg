@@ -508,20 +508,22 @@ FUNCTION kalk_kontiranje_naloga( fAuto, lAGen, lViseKalk, cNalog, auto_brojac )
                   ENDDO
 
                   IF !fExist
+                     // fin_pripr
                      SEEK finmat->idfirma + cIdVN + cBrNalF + "ZZZZ"
                      SKIP -1
-                     IF idfirma + idvn + brnal == finmat->idfirma + cIdVN + cBrNalF
-                        nRbr := Val( Rbr ) + 1
+                     IF fin_pripr->(idfirma + idvn + brnal) == finmat->idfirma + cIdVN + cBrNalF
+                        nRbr := fin_pripr->Rbr + 1
                      ELSE
                         nRbr := 1
                      ENDIF
                      APPEND BLANK
                   ENDIF
                ELSE
+                  // fin_pripr
                   SEEK finmat->idfirma + cIdVN + cBrNalF + "ZZZZ"
                   SKIP -1
                   IF idfirma + idvn + brnal == finmat->idfirma + cIdVN + cBrNalF
-                     nRbr := Val( Rbr ) + 1
+                     nRbr := Rbr + 1
                   ELSE
                      nRbr := 1
                   ENDIF
@@ -569,7 +571,7 @@ FUNCTION kalk_kontiranje_naloga( fAuto, lAGen, lViseKalk, cNalog, auto_brojac )
                ENDIF
 
                IF !fExist
-                  REPLACE Rbr  WITH Str( nRbr, 4 )
+                  REPLACE Rbr  WITH nRbr // fin_pripr
                ENDIF
                my_unlock()
             ENDIF // nIz <>0
@@ -642,7 +644,7 @@ FUNCTION kalk_kontiranje_naloga( fAuto, lAGen, lViseKalk, cNalog, auto_brojac )
                nRbr2 := Val( rbr ) + 1
                APPEND BLANK
 
-               REPLACE IdFirma   WITH finmat->IdFirma, ;
+               REPLACE IdFirma   WITH finmat->IdFirma, ; // mpripr
                   BrNal     WITH cBrNalM, ;
                   IdVN      WITH cIdVN, ;
                   IdPartner WITH cIdPartner, ;
@@ -846,26 +848,25 @@ FUNCTION RJ( nBroj, cDef, cTekst )
 
 
 
-
-
 /* DatVal()
  *     Odredjivanje datuma valute - varijabla dDatVal
  */
+
+FUNCTION kalk_datval()
+   RETURN datval()
+
 
 FUNCTION DatVal()
 
    LOCAL _uvecaj := 15
    LOCAL _rec
+   LOCAL dDatVal
+
    PRIVATE GetList := {}
 
-   // uzmi datval iz doks2
    PushWA()
 
-   o_kalk_doks2()
-   SET ORDER TO TAG "1"
-   GO TOP
-   SEEK finmat->( idfirma + idvd + brdok )
-
+   find_kalk_doks2_by_broj_dokumenta( finmat->idfirma, finmat->idvd, finmat->brdok )
    IF Found()
       dDatVal := field->datval
    ELSE
@@ -900,13 +901,12 @@ FUNCTION DatVal()
 
       BoxC()
 
-      SELECT kalk_doks2
-      GO TOP
-      SEEK finmat->( idfirma + idvd + brdok )
+
+      find_kalk_doks2_by_broj_dokumenta( finmat->idfirma, finmat->idvd, finmat->brdok )
 
       IF !Found()
-         APPEND BLANK
-         // ovo se moze desiti ako je neko mjenjao dokumenta u KALK
+         APPEND BLANK // ovo se moze desiti ako je neko mjenjao dokumenta u KALK
+
          _rec := dbf_get_rec()
          _rec[ "idfirma" ] := finmat->idfirma
          _rec[ "idvd" ] := finmat->idvd
@@ -1384,7 +1384,7 @@ FUNCTION kalk_kontiranje()
                BrDok     WITH kalk_pripr->BrDok, ;
                DatDok    WITH kalk_pripr->DatDok, ;
                GKV       WITH Round( kalk_PRIPR->( GKolicina * FCJ2 ), gZaokr ), ;   // vrijednost transp.kala
-               GKV2      WITH Round( kalk_PRIPR->( GKolicin2 * FCJ2 ), gZaokr )   // vrijednost ostalog kala
+            GKV2      WITH Round( kalk_PRIPR->( GKolicin2 * FCJ2 ), gZaokr )   // vrijednost ostalog kala
 
             REPLACE Prevoz    WITH Round( kalk_PRIPR->( nPrevoz * SKol ), gZaokr ), ;
                CarDaz    WITH Round( kalk_PRIPR->( nCarDaz * SKol ), gZaokr ), ;
@@ -1393,7 +1393,7 @@ FUNCTION kalk_kontiranje()
                ZavTr     WITH Round( kalk_PRIPR->( nZavTr * SKol ), gZaokr ), ;
                NV        WITH Round( kalk_PRIPR->( NC * ( Kolicina - GKolicina - GKolicin2 ) ), gZaokr ), ;
                Marza     WITH Round( kalk_PRIPR->( nMarza * ( Kolicina - GKolicina - GKolicin2 ) ), gZaokr ), ;           // marza se ostvaruje nad stvarnom kolicinom
-               VPV       WITH Round( kalk_PRIPR->( VPC * ( Kolicina - GKolicina - GKolicin2 ) ), gZaokr )        // vpv se formira nad stvarnom kolicinom
+            VPV       WITH Round( kalk_PRIPR->( VPC * ( Kolicina - GKolicina - GKolicin2 ) ), gZaokr )        // vpv se formira nad stvarnom kolicinom
 
 
             nPom := kalk_pripr->( RabatV / 100 * VPC * Kolicina )

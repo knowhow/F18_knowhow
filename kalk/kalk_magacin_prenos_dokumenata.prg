@@ -53,7 +53,6 @@ FUNCTION mag_fa_ka_prenos_10_14()
    LOCAL cBrKalk := Space( 8 )
    LOCAL cFaktFirma := gFirma
    LOCAL dDatPl := CToD( "" )
-   LOCAL fDoks2 := .T.
    LOCAL _params := fakt_params()
 
    PRIVATE lVrsteP := _params[ "fakt_vrste_placanja" ]
@@ -154,8 +153,8 @@ FUNCTION mag_fa_ka_prenos_10_14()
          SELECT kalk_pripr
          LOCATE FOR BrFaktP = cBrDok
 
-         // faktura je vec prenesena
-         IF Found()
+
+         IF Found() // faktura je vec prenesena
             Beep( 4 )
             @ m_x + 8, m_y + 2 SAY "Dokument je vec prenesen !!"
             Inkey( 4 )
@@ -172,33 +171,31 @@ FUNCTION mag_fa_ka_prenos_10_14()
             LOOP
          ENDIF
 
-         IF fdoks2
 
-            SELECT kalk_doks2
-            HSEEK cidfirma + "14" + cbrkalk
+         find_kalk_doks2_by_broj_dokumenta( cIdFirma, "14", cBrKalk )
 
-            IF !Found()
-               APPEND BLANK
-               _rec := dbf_get_rec()
-               _rec[ "idvd" ] := "14"
-               _rec[ "idfirma" ] := cIdFirma
-               _rec[ "brdok" ] := cBrKalk
-            ELSE
-               _rec := dbf_get_rec()
-            ENDIF
+         // SELECT kalk_doks2
+         // HSEEK cIdfirma + "14" + cBrkalk
 
-            _rec[ "datval" ] := dDatPl
-
-            IF lVrsteP
-               _rec[ "k2" ] := cIdVrsteP
-            ENDIF
-
-            update_rec_server_and_dbf( "kalk_doks2", _rec, 1, "FULL" )
-
-            SELECT fakt
-
+         IF !Found()
+            APPEND BLANK
+            _rec := dbf_get_rec()
+            _rec[ "idvd" ] := "14"
+            _rec[ "idfirma" ] := cIdFirma
+            _rec[ "brdok" ] := cBrKalk
+         ELSE
+            _rec := dbf_get_rec()
          ENDIF
 
+         _rec[ "datval" ] := dDatPl
+
+         IF lVrsteP
+            _rec[ "k2" ] := cIdVrsteP
+         ENDIF
+
+         update_rec_server_and_dbf( "kalk_doks2", _rec, 1, "FULL" )
+
+         SELECT fakt
          DO WHILE !Eof() .AND. cFaktFirma + cIdTipDok + cBrDok == IdFirma + IdTipDok + BrDok
 
             SELECT ROBA
@@ -226,7 +223,7 @@ FUNCTION mag_fa_ka_prenos_10_14()
             REPLACE idfirma WITH cIdFirma, ;
                rbr     WITH Str( ++nRbr, 3 ), ;
                idvd WITH "14", ;   // izlazna faktura
-            brdok WITH cBrKalk, ;
+               brdok WITH cBrKalk, ;
                datdok WITH dDatKalk, ;
                idpartner WITH cIdPartner, ;
                idtarifa WITH ROBA->idtarifa, ;
@@ -241,11 +238,12 @@ FUNCTION mag_fa_ka_prenos_10_14()
                vpc WITH fakt->cijena, ;
                rabatv WITH nRabat, ;
                mpc WITH fakt->porez
+
             SELECT fakt
             SKIP
          ENDDO
 
-         @ m_x + 8, m_y + 2 SAY "Dokument je prenesen !!"
+         @ m_x + 8, m_y + 2 SAY "Dokument je prenesen !"
 
          set_metric( "kalk_fakt_prenos_10_14_datum", my_user(), dDatKalk )
          set_metric( "kalk_fakt_prenos_10_14_konto_1", my_user(), cIdKonto )
@@ -267,7 +265,7 @@ FUNCTION mag_fa_ka_prenos_10_14()
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
 
 

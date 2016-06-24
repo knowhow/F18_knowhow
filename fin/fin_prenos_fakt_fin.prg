@@ -112,7 +112,7 @@ FUNCTION FaktFin()
    IF !Used()
       O_FAKT
    ENDIF
-   
+
    // "1","IdFirma+idtipdok+brdok+rbr+podbr",KUMPATH+"FAKT")
    SET ORDER TO TAG "1"
 
@@ -323,7 +323,7 @@ FUNCTION fin_kontiranje_naloga( dDatNal )
 
    cBrNalF := ""
 
-   o_nalog()
+   //o_nalog()
    O_FIN_PRIPR
 
    SELECT FINMAT
@@ -331,13 +331,12 @@ FUNCTION fin_kontiranje_naloga( dDatNal )
    SELECT trfp2
    SEEK finmat->IdVD + " "
 
-   cIdVN := IdVN   // uzmi vrstu naloga koja ce se uzeti u odnosu na prvu kalkulaciju
-   // koja se kontira
+   cIdVN := IdVN   // uzmi vrstu naloga koja ce se uzeti u odnosu na prvu kalkulaciju koja se kontira
 
    IF lAFin
       cBrNalF := fin_novi_broj_dokumenta( finmat->idfirma, cIdVn )
-      SELECT nalog
-      USE
+      //SELECT nalog
+      //USE
    ENDIF
 
    SELECT finmat
@@ -359,20 +358,22 @@ FUNCTION fin_kontiranje_naloga( dDatNal )
    PRIVATE cKonto1 := NIL
    PRIVATE KursLis := "1"
 
-   DO WHILE !Eof()    // datoteka finmat
+   DO WHILE !finmat->(Eof())    // finmat
+
       cIDVD := IdVD
       cBrDok := BrDok
       IF ValType( cKonto1 ) <> "C"
-         PRIVATE cKonto1 := "";cKonto2 := "";cKonto3 := ""
+         PRIVATE cKonto1 := ""; cKonto2 := "";cKonto3 := ""
          PRIVATE cPartner1 := "";cPartner2 := cPartner3 := ""
       ENDIF
       DO WHILE cIdVD == IdVD .AND. cBrDok == BrDok .AND. !Eof()
+
          SELECT roba
          HSEEK finmat->idroba
          SELECT trfp2
          SEEK cIdVD + " "
-         // nemamo vise sema kontiranja kao u kalk
-         DO WHILE !Empty( cBrNalF ) .AND. idvd == cIDVD  .AND. shema = " " .AND. !Eof()
+
+         DO WHILE !Empty( cBrNalF ) .AND. idvd == cIDVD  .AND. shema = " " .AND. !Eof()  // nemamo vise sema kontiranja kao u kalk
             cStavka := Id
             SELECT finmat
             nIz := &cStavka
@@ -382,6 +383,7 @@ FUNCTION fin_kontiranje_naloga( dDatNal )
                nIz := 0
             ENDIF
             IF nIz <> 0
+
                // ako je iznos elementa <> 0, dodaj stavku u fpripr
                SELECT fin_pripr
                IF trfp2->znak == "-"
@@ -393,9 +395,9 @@ FUNCTION fin_kontiranje_naloga( dDatNal )
                nIz2 := nIz * Kurs( dDatNal, "D", "P" )
 
                cIdKonto := trfp2->Idkonto
-               cIdkonto := StrTran( cidkonto, "?1", Trim( ckonto1 ) )
-               cIdkonto := StrTran( cidkonto, "?2", Trim( ckonto2 ) )
-               cIdkonto := StrTran( cidkonto, "?3", Trim( ckonto3 ) )
+               cIdkonto := StrTran( cidkonto, "?1", Trim( cKonto1 ) )
+               cIdkonto := StrTran( cidkonto, "?2", Trim( cKonto2 ) )
+               cIdkonto := StrTran( cidkonto, "?3", Trim( cKonto3 ) )
                IF "F1" $ cIdKonto
                   IF Empty( gDzokerF1 )
                      cPom := ""
@@ -404,7 +406,7 @@ FUNCTION fin_kontiranje_naloga( dDatNal )
                   ENDIF
                   cIdkonto := StrTran( cidkonto, "F1", cPom )
                ENDIF
-               cIdkonto := PadR( cidkonto, 7 )
+               cIdkonto := PadR( cIdkonto, 7 )
                cIdPartner := Space( 6 )
                IF trfp2->Partner == "1"  // stavi Partnera
                   cIdpartner := FINMAT->IdPartner
@@ -423,10 +425,10 @@ FUNCTION fin_kontiranje_naloga( dDatNal )
                   dDatDok := dDatNal
                ENDIF
                fExist := .F.
-               SEEK FINMAT->IdFirma + cidvn + cBrNalF
-               IF Found()
+               SEEK FINMAT->IdFirma + cIdVn + cBrNalF
+               IF fin_pripr->(Found())
                   fExist := .F.
-                  DO WHILE FINMAT->idfirma + cidvn + cBrNalF == IdFirma + idvn + BrNal
+                  DO WHILE FINMAT->idfirma + cIdvn + cBrNalF == fin_pripr->(IdFirma + idvn + BrNal)
                      IF IdKonto == cIdKonto .AND. IdPartner == cIdPartner .AND. trfp2->d_p == d_p  .AND. idtipdok == FINMAT->idvd .AND. PadR( brdok, 10 ) == PadR( cBrDok, 10 ) .AND. datdok == dDatDok
                         // provjeriti da li se vec nalazi stavka koju dodajemo
                         fExist := .T.
@@ -436,12 +438,12 @@ FUNCTION fin_kontiranje_naloga( dDatNal )
                   ENDDO
                   IF !fExist
                      GO BOTTOM
-                     nRbr := Val( Rbr ) + 1
+                     nRbr := fin_pripr->Rbr + 1
                      APPEND BLANK
                   ENDIF
                ELSE
                   GO BOTTOM
-                  nRbr := Val( rbr ) + 1
+                  nRbr := fin_pripr->rbr + 1
                   APPEND BLANK
                ENDIF
 
@@ -477,7 +479,8 @@ FUNCTION fin_kontiranje_naloga( dDatNal )
 
    IF lAFin
 
-      SELECT fin_pripr; GO TOP
+      SELECT fin_pripr
+      GO TOP
 
       my_flock()
       DO WHILE !Eof()
@@ -504,7 +507,7 @@ FUNCTION fin_kontiranje_naloga( dDatNal )
 
    closeret
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -539,7 +542,7 @@ FUNCTION PrStopa( nProc )
 
 
 /* IzKalk(cIdRoba,cKonSir,cSta)
- *    
+ *
  *   param: cIdRoba
  *   param: cKonSir
  *   param: cSta

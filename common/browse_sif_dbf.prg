@@ -57,7 +57,6 @@ FUNCTION PostojiSifra( nDbf, nNtx, nVisina, nSirina, cNaslov, cID, dx, dy,  bBlo
    ENDIF
 
    IF !Used()
-      AltD()
       hRec := get_a_dbf_rec_by_wa( nDbf )
       IF hRec == NIL
          error_bar( "bug", log_stack( 1 ) )

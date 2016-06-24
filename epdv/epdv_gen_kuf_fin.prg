@@ -247,7 +247,6 @@ STATIC FUNCTION gen_fin_kuf_item( cSezona )
          cOpisSuban := AllTrim( suban->opis )
          _opis := StrTran( _opis, "##opis##", cOpisSuban )
 
-altd()
          IF !Empty( cIdPart )
             IF ( AllTrim( Upper( cIdPart ) ) == "#TD#" )
                _id_part := kuf_fin_trazi_dob ( suban->( RecNo() ), suban->idfirma, suban->idvn, suban->brnal, suban->brdok, suban->rbr )

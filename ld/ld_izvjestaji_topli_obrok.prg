@@ -390,7 +390,7 @@ STATIC FUNCTION _print_list( cMFrom, cMTo, cYear, nRptVar1, nRptVar2, cKred )
    LOCAL nUBTo := 0
    LOCAL cLine
 
-   AltD()
+
    SELECT _tmp
    // postavi index po bankama
    INDEX ON r_bank + r_prezime + r_ime TAG "bank"

@@ -302,7 +302,6 @@ CREATE TABLE fmk.fin_nalog
 )
 */
 
-   AltD()
 
    default_if_nil( @hParams, hb_Hash() )
 

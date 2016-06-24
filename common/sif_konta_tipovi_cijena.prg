@@ -24,7 +24,6 @@ FUNCTION P_KonCij( CId, dx, dy )
    ImeKol := {}
    Kol := {}
 
-  altd()
 
    nTArea := Select()
 
@@ -35,7 +34,6 @@ FUNCTION P_KonCij( CId, dx, dy )
    AAdd( ImeKol, { "Tip", {|| naz }, "naz" } )
    AAdd( ImeKol, { "PM", {|| idprodmjes }, "idprodmjes" } )
 
-altd()
 
    IF KONCIJ->( FieldPos( "IDRJ" ) <> 0 )
       AAdd ( ImeKol, { "RJ", {|| idrj }, "IDRJ"} )

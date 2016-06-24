@@ -143,7 +143,6 @@ FUNCTION find_kalk_by_mkonto_idroba( cIdFirma, cIdKonto, cIdRoba, cOrderBy, lRep
    hb_default( @cOrderBy, "idfirma, mkonto, idroba, datdok, podbr, mu_i, idvd" )
    hb_default( @lReport, .T. )
 
-   AltD()
    IF cIdFirma != NIL
       hParams[ "idfirma" ] := cIdFirma
    ENDIF

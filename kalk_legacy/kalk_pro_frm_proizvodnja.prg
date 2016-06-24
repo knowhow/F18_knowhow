@@ -46,8 +46,6 @@ FUNCTION leg_Get1_PR()
 
       READ
 
-      altd()
-
       // _BrFaktP := _idzaduz2
       // sada trazim trebovanja u proizvod. u toku i filujem u stavke
       // od 100 pa nadalje

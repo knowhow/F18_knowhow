@@ -857,7 +857,6 @@ FUNCTION psuban_suban( nalog_ctrl )
    SELECT PSUBAN
    SEEK nalog_ctrl
 
-altd()
    find_suban_by_broj_dokumenta( psuban->idfirma, psuban->idvn, psuban->brnal, .T. )
 
 

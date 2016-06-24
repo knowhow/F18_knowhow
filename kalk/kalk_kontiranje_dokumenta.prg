@@ -1679,7 +1679,6 @@ FUNCTION kalk_kontiranje_dokumenata_period()
 
    my_use_refresh_stop()
 
-   AltD()
 
 
    IF Select( "kalk_pripr" ) > 0

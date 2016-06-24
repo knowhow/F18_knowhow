@@ -791,7 +791,6 @@ STATIC FUNCTION kalk_azur_sql()
 
          kalk_set_doks_total_fields( @_doks_nv, @_doks_vpv, @_doks_mpv, @_doks_rabat )
 
-altd()
          _record_item := dbf_get_rec()
          IF !sql_table_update( "kalk_kalk", "ins", _record_item )
             _ok := .F.

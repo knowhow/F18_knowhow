@@ -259,7 +259,7 @@ STATIC FUNCTION _g_kalk_tp( cIdFirma, cKto_list, dD_from, dD_to )
 
 /*
       SELECT kalk
-      SET ORDER TO TAG "3"
+      --SET ORDER TO TAG "3"
       GO TOP
 
       SEEK cIdFirma + cIdKonto

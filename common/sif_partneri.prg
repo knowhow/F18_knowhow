@@ -115,8 +115,6 @@ FUNCTION p_partneri( cId, dx, dy, lEmptyIdOk )
    Kol := {}
 
    AAdd ( ImeKol, { PadR( "Dev ZR", 22 ), {|| DZIROR }, "Dziror" } )
-
-
    AAdd( Imekol, { PadR( "Telefon", 12 ),  {|| TELEFON }, "telefon"  } )
    AAdd ( ImeKol, { PadR( "Fax", 12 ), {|| fax }, "fax" } )
    AAdd ( ImeKol, { PadR( "MobTel", 20 ), {|| mobtel }, "mobtel" } )
@@ -208,8 +206,6 @@ FUNCTION p_group()
 
 
 
-// -----------------------------------
-// -----------------------------------
 FUNCTION p_set_group( set_field )
 
    LOCAL _opc := {}
@@ -257,8 +253,6 @@ FUNCTION gr_opis( cGroup )
    RETURN cRet
 
 
-// -----------------------------------
-// -----------------------------------
 FUNCTION p_gr( xVal, nX, nY )
 
    LOCAL cRet := ""

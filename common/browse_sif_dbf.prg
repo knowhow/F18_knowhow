@@ -520,6 +520,7 @@ STATIC FUNCTION sif_komande( nDbf, cNaslov, bBlok, aZabrane, aZabIsp )
          RETURN DE_ABORT
       ENDIF
 
+#ifdef F18_USE_MATCH_CODE
    CASE Upper( Chr( Ch ) ) == "F"
 
       IF m_code_src() == 0
@@ -527,6 +528,7 @@ STATIC FUNCTION sif_komande( nDbf, cNaslov, bBlok, aZabrane, aZabIsp )
       ELSE
          RETURN DE_REFRESH
       ENDIF
+#endif
 
    CASE ( Ch == K_CTRL_N .OR. Ch == K_F4 )
 
@@ -636,7 +638,9 @@ FUNCTION browse_edit_stavka( Ch, nOrder, aZabIsp, lNovi )
 
    cTekuciZapis := vrati_vrijednosti_polja_sifarnika_u_string( "w" )
 
+#ifdef F18_USE_MATCH_CODE
    add_match_code( @ImeKol, @Kol )
+#endif
 
    __A_SIFV__[ __PSIF_NIVO__, 3 ] :=  Ch
 
@@ -806,7 +810,6 @@ STATIC FUNCTION set_w_var( ImeKol, _i, show_grup )
 
    LOCAL _tmp, _var_name
 
-
    IF Left( ImeKol[ _i, 3 ], 6 ) != "SIFK->"
 
       _var_name := "w" + ImeKol[ _i, 3 ]
@@ -929,7 +932,7 @@ FUNCTION sif_dbf_getlist( var_name, GetList, lZabIsp, aZabIsp, lShowGrup, Ch, nG
    RETURN .T.
 
 
-
+#ifdef F18_USE_MATCH_CODE
 STATIC FUNCTION add_match_code( ImeKol, Kol )
 
    LOCAL  _pos, cMCField := Alias()
@@ -948,6 +951,7 @@ STATIC FUNCTION add_match_code( ImeKol, Kol )
       ENDIF
 
    ENDIF
+#endif
 
 FUNCTION SetSifVars()
 
@@ -1306,6 +1310,7 @@ FUNCTION ImaSlovo( cSlova, cString )
 FUNCTION UslovSif()
 
    LOCAL aStruct := dbStruct()
+   LOCAL nPos
 
    SkratiAZaD( @aStruct )
 
@@ -1331,7 +1336,17 @@ FUNCTION UslovSif()
 
    SET CURSOR ON
 
+
+#ifndef F18_USE_MATCH_CODE
+   nPos :=   AScan( aStruct, {| aItem | aItem[ 1 ] == "MATCH_CODE" } )
+   IF nPos > 0
+      ADel( aStruct, nPos )
+      ASize( aStruct, Len( aStruct ) - 1 )
+   ENDIF
+#endif
+
    FOR i := 1 TO Len( aStruct )
+
       IF i == 23
          @ m_x + 1, m_y + 1 CLEAR TO m_x + 22, m_y + 67
       ENDIF
@@ -1379,6 +1394,7 @@ FUNCTION UslovSif()
    GO TOP
 
    RETURN NIL
+
 
 // -------------------------------------------
 // sredi uslov ako nije postavljeno ; na kraj

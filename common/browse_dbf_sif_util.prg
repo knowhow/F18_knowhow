@@ -406,6 +406,7 @@ STATIC FUNCTION ed_sql_sif( nDbf, cNaslov, bBlok, aZabrane, aZabIsp )
          RETURN DE_ABORT
       ENDIF
 
+#ifdef F18_USE_MATCH_CODE
    CASE Upper( Chr( Ch ) ) == "F"
 
       IF m_code_src() == 0
@@ -413,7 +414,7 @@ STATIC FUNCTION ed_sql_sif( nDbf, cNaslov, bBlok, aZabrane, aZabIsp )
       ELSE
          RETURN DE_REFRESH
       ENDIF
-
+#endif
    CASE ( Ch == K_CTRL_N .OR. Ch == K_F4 )
 
       Tb:RefreshCurrent()
@@ -523,8 +524,9 @@ STATIC FUNCTION edit_sql_sif_item( Ch, cOrderTag, aZabIsp, lNovi )
 
    cTekuciZapis := vrati_vrijednosti_polja_sifarnika_u_string( "w" )
 
+#ifdef F18_USE_MATCH_CODE
    add_match_code( @ImeKol, @Kol )
-
+#endif
    __A_SIFV__[ __PSIF_NIVO__, 3 ] :=  Ch
 
    IF Ch == K_CTRL_N .OR. Ch == K_F2
@@ -937,7 +939,7 @@ FUNCTION sif_sql_getlist( var_name, GetList, lZabIsp, aZabIsp, lShowGrup, Ch, nG
 
 
 
-
+#ifdef F18_USE_MATCH_CODE
 STATIC FUNCTION add_match_code( ImeKol, Kol )
 
    LOCAL  _pos, cMCField := Alias()
@@ -954,6 +956,7 @@ STATIC FUNCTION add_match_code( ImeKol, Kol )
    ENDIF
 
    RETURN .T.
+#endif
 
 /*
    vraca naziv polja + vrijednost za tekuci alias

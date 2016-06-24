@@ -50,7 +50,6 @@ FUNCTION fin_nalog_azurirani()
 
    BoxC()
 
-   altd()
 
 
    find_nalog_by_broj_dokumenta( cIdFirma, cIdvn, cBrnal )

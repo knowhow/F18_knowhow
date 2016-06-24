@@ -183,9 +183,9 @@ FUNCTION fin_specifikacija_suban()
    O_PARTN
    O_KONTO
    MsgO( "Preuzimanje podataka sa SQL servera ..." )
-   find_suban_za_period( cIdFirma, dDatOd, dDatDo, "idfirma,idpartner,idkonto,brdok" )
+   find_suban_za_period( cIdFirma, dDatOd, dDatDo, "idfirma,idkonto,idpartner,brdok" )
    Msgc()
-   
+
    CistiK1k4()
 
    SELECT SUBAN

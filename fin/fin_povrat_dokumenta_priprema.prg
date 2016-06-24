@@ -130,7 +130,7 @@ STATIC FUNCTION fin_nalog_brisi_iz_kumulativa( cIdFirma, cIdVn, cBrNal )
    ENDIF
 
    Box(, 5, 70 )
-altd()
+
    cTbl := "fin_suban"
    @ m_x + 1, m_y + 2 SAY "delete " + cTbl
    SELECT suban
@@ -185,7 +185,9 @@ STATIC FUNCTION kopiraj_fin_nalog_u_tabelu_pripreme( cIdFirma, cIdVn, cBrNal, lS
    GO TOP
    SEEK cIdfirma + cIdvn + cBrNal
 */
-altd()
+
+  // ranije pozvana fja find_suban_by_broj_dokumenta( cIdFirma, cIdVN, cBrNal )
+
 
    SELECT SUBAN
    GO TOP

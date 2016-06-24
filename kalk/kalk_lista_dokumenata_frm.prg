@@ -259,7 +259,7 @@ FUNCTION kalk_pregled_dokumenata_hronoloski()
    o_kalk_doks()
    SELECT kalk
    SELECT kalk_doks
-   SET ORDER TO TAG "3"
+   SET ORDER TO TAG "3" // kalk_doks
 
    Box(, 19, 77 )
 
@@ -445,6 +445,7 @@ STATIC FUNCTION pregled_kartice()
          cMkonto := ""
       ENDIF
    ENDIF
+   
    IF Empty( cPkonto )
       SET ORDER TO TAG "3"
    ELSE

@@ -12,6 +12,7 @@
 
 #include "f18.ch"
 
+/*
 
 // -----------------------------------------------------
 // korekcija nc pomocu dokumenta 95 - nc iz sif.robe
@@ -54,8 +55,9 @@ FUNCTION KorekNC2()
 
    SELECT koncij
    SEEK Trim( cMagac )
+
    SELECT kalk
-   SET ORDER TO TAG "3"
+   //SET ORDER TO TAG "3"
    HSEEK gFirma + cMagac
 
    DO WHILE !Eof() .AND. idfirma + mkonto = gFirma + cMagac
@@ -142,4 +144,6 @@ FUNCTION KorekNC2()
    CLOSERET
 
    RETURN
-// }
+
+
+*/

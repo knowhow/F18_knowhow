@@ -49,7 +49,7 @@ FUNCTION Gen9999()
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
 
 /* KalkNaF(cidroba,nKols)
@@ -61,7 +61,8 @@ FUNCTION KalkNaF( cidroba, nKols )
    SELECT ( F_FAKT )
    IF !Used(); O_FAKT; ENDIF
 
-   SELECT fakt; SET ORDER TO TAG "3" // idroba
+   SELECT fakt
+   SET ORDER TO TAG "3" // fakt idroba
    nKols := 0
    SEEK cidroba
    DO WHILE !Eof() .AND. cidroba == idroba
@@ -189,10 +190,16 @@ FUNCTION DuplRoba()
 
 FUNCTION DatPosljK()
 
+/*
    SELECT kalk
-   SET ORDER TO TAG "3"
+   --SET ORDER TO TAG "3"
    SEEK _idfirma + _mkonto + _idroba + Chr( 254 )
    SKIP -1
+*/
+
+   find_kalk_by_mkonto_idroba( _IdFirma, _MKonto, _IdRoba )
+   GO BOTTOM
+
    IF _idfirma + _idkonto + _idroba == field->idfirma + field->mkonto + field->idroba .AND. _datdok < field->datdok
       error_bar( "KA_" + _idfirma + "-" + _idvd + "-" + _brdok, _mkonto + " / " + _idroba + " zadnji dokument: " + DToC( field->datdok ) )
       _ERROR := "1"

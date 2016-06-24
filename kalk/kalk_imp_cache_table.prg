@@ -259,15 +259,18 @@ FUNCTION gen_cache()
 
       @ m_x + 1, m_y + 2 SAY "mag. konto: " + cIdKonto
 
+/*
       SELECT kalk
       // mkonto
-      SET ORDER TO TAG "3"
+      --SET ORDER TO TAG "3"
       GO TOP
 
       SEEK cIdFirma + cIdKonto
+*/
+      find_kalk_by_mkonto_idroba( cIdFirma, cIdKonto )
+      GO TOP
 
-      DO WHILE !Eof() .AND. cIdFirma == field->idfirma ;
-            .AND. cIdKonto == field->mkonto
+      DO WHILE !Eof() .AND. cIdFirma == field->idfirma .AND. cIdKonto == field->mkonto
 
 
          cIdRoba := field->idroba

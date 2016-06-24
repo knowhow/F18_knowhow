@@ -106,14 +106,15 @@ FUNCTION find_kalk_doks_by_broj_fakture( cBrojFakture )
    RETURN ! Eof()
 
 
-FUNCTION find_kalk_by_mkonto_idroba( cIdFirma, cIdKonto, cIdRoba )
+FUNCTION find_kalk_by_mkonto_idroba( cIdFirma, cIdKonto, cIdRoba, cOrder )
 
    LOCAL hParams := hb_Hash()
 
+  hb_default( @cOrder, "idfirma, mkonto, idroba, datdok, podbr, mu_i, idvd" )
    hParams[ "idfirma" ] := cIdFirma
    hParams[ "mkonto" ] := cIdKonto
    hParams[ "idroba" ] := cIdRoba
-   hParams[ "order_by" ] := "idfirma, mkonto, idroba, datdok, podbr, mu_i, idvd"
+   hParams[ "order_by" ] := cOrder
 
    use_sql_kalk( hParams )
    GO TOP
@@ -285,7 +286,7 @@ FUNCTION use_sql_kalk( hParams )
          cSql += cOrder
       ENDIF
    ELSE
-      cSql += " OFFSET 0 LIMIT 1000"
+      cSql += " OFFSET 0 LIMIT 1"
    ENDIF
 
    IF hb_HHasKey( hParams, "alias" )

@@ -13,6 +13,28 @@
 
 
 
+FUNCTION o_kalk()
+
+   // RETURN o_dbf_table( F_KALK, { "KALK", "kalk_kalk" }, "1" )
+
+   RETURN use_sql_kalk()
+
+
+FUNCTION o_kalk_doks()
+
+   // RETURN o_dbf_table( F_KALK_DOKS, "kalk_doks", "1" )
+
+   RETURN use_sql_kalk_doks()
+
+
+FUNCTION o_kalk_doks2()
+
+   // RETURN o_dbf_table( F_KALK_DOKS2, "kalk_doks", "1" )
+
+   RETURN use_sql_kalk_doks2()
+
+   
+
 FUNCTION o_kalk_imp_temp()
 
    RETURN o_dbf_table( F_KALK_IMP_TEMP, "kalk_imp_temp", NIL )
@@ -80,19 +102,6 @@ FUNCTION o_kalk_kartica()
 
 
 
-FUNCTION o_kalk()
-
-   RETURN o_dbf_table( F_KALK, { "KALK", "kalk_kalk" }, "1" )
-
-
-FUNCTION o_kalk_doks()
-
-   RETURN o_dbf_table( F_KALK_DOKS, "kalk_doks", "1" )
-
-
-FUNCTION o_kalk_doks2()
-
-   RETURN o_dbf_table( F_KALK_DOKS2, "kalk_doks", "1" )
 
 
 FUNCTION o_kalk_report()

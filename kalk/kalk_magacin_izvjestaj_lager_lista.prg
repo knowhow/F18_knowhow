@@ -249,7 +249,7 @@ FUNCTION lager_lista_magacin()
       cIdkonto := Trim( cIdKonto )
       cSintK := cIdKonto
       fSint := .T.
-      lSabKon := ( Pitanje(, "Racunati stanje robe kao zbir stanja na svim obuhvacenim kontima? (D/N)", "N" ) == "D" )
+      lSaberiStanjeZaSvaKonta := ( Pitanje(, "Racunati stanje robe kao zbir stanja na svim obuhvacenim kontima? (D/N)", "N" ) == "D" )
    ENDIF
 
    IF lExpDbf == .T.
@@ -288,7 +288,7 @@ FUNCTION lager_lista_magacin()
    IF !Empty( dDatOd ) .OR. !Empty( dDatDo )
       cFilt += ".and. DatDok>=" + dbf_quote( dDatOd ) + ".and. DatDok<=" + dbf_quote( dDatDo )
    ENDIF
-   IF fSint .AND. lSabKon
+   IF fSint .AND. lSaberiStanjeZaSvaKonta
       cFilt += ".and. MKonto=" + dbf_quote( cSintK )
       cSintK := ""
    ENDIF
@@ -306,13 +306,19 @@ FUNCTION lager_lista_magacin()
    SELECT kalk
    ?E "trace-kalk-llm-10"
 
-   IF fSint .AND. lSabKon
-      SET ORDER TO TAG "6"
-      HSEEK cIdFirma
+   MsgO( "Preuzimanje podataka sa SQL servera ..." )
+   IF fSint .AND. lSaberiStanjeZaSvaKonta
+      // HSEEK cIdFirma
+      find_kalk_by_mkonto_idroba( cIdFirma, NIL, NIL, "idFirma,IdTarifa,idroba" )
+      // kalk index tag ( "6", "idFirma+IdTarifa+idroba" )
+      // SET ORDER TO TAG "6"
+      GO TOP
    ELSE
-      SET ORDER TO TAG "3"
-      HSEEK cIdFirma + cIdKonto
+      // SET ORDER TO TAG "3"
+      // HSEEK cIdFirma + cIdKonto
+      find_kalk_by_mkonto_idroba( cIdFirma, cIdKonto )
    ENDIF
+   MsgC()
 
    SELECT koncij
    SEEK Trim( cIdKonto )
@@ -386,7 +392,7 @@ FUNCTION lager_lista_magacin()
 
    PRIVATE nRbr := 0
 
-   DO WHILE !Eof() .AND. iif( fSint .AND. lSabKon, idfirma, idfirma + mkonto ) == ;
+   DO WHILE !Eof() .AND. iif( fSint .AND. lSaberiStanjeZaSvaKonta, idfirma, idfirma + mkonto ) == ;
          cidfirma + cSintK .AND. IspitajPrekid()
 
       cIdRoba := Idroba
@@ -485,7 +491,7 @@ FUNCTION lager_lista_magacin()
 
 
 
-      DO WHILE !Eof() .AND. iif( fSint .AND. lSabKon, cIdFirma + cIdRoba == idFirma + idroba, cIdFirma + cIdKonto + cIdRoba == idFirma + mkonto + idroba ) .AND. IspitajPrekid()
+      DO WHILE !Eof() .AND. iif( fSint .AND. lSaberiStanjeZaSvaKonta, cIdFirma + cIdRoba == idFirma + idroba, cIdFirma + cIdKonto + cIdRoba == idFirma + mkonto + idroba ) .AND. IspitajPrekid()
 
          IF roba->tip $ "TU"
             SKIP

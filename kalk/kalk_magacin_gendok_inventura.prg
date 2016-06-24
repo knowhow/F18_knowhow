@@ -65,7 +65,8 @@ FUNCTION kalk_generisi_inventuru_magacina()
    ENDIF
 
    o_koncij()
-   o_kalk()
+
+
 
    IF lOsvjezi
       PRIVATE cBrDok := kalk_pripr->brdok
@@ -74,7 +75,7 @@ FUNCTION kalk_generisi_inventuru_magacina()
    ENDIF
 
    nRbr := 0
-   SET ORDER TO TAG "3"
+   // SET ORDER TO TAG "3"
 
 
    MsgO( "Generacija dokumenta IM - " + cBrdok )
@@ -82,8 +83,9 @@ FUNCTION kalk_generisi_inventuru_magacina()
    SELECT koncij
    SEEK Trim( cIdKonto )
 
-   SELECT kalk
-   HSEEK cIdFirma + cIdKonto
+   find_kalk_by_mkonto_idroba( cIdFirma, cIdkonto )
+   GO TOP
+
 
    DO WHILE !Eof() .AND. cIdFirma + cIdKonto == field->idfirma + field->mkonto
 
@@ -138,7 +140,7 @@ FUNCTION kalk_generisi_inventuru_magacina()
       ELSEIF lOsvjezi
 
          SELECT kalk_pripr
-         SET ORDER TO TAG "3"
+         SET ORDER TO TAG "3" // kalk_pripr
          GO TOP
          SEEK cIdFirma + "IM" + cBrDok + cIdRoba
 
@@ -220,7 +222,7 @@ FUNCTION kalk_generisanje_inventure_razlike()
 
    // kopiraj postojecu IM u pript
    IF cp_dok_pript( cIdFirma, cIdVd, cOldBrDok ) == 0
-      RETURN
+      RETURN .F.
    ENDIF
 
    O_TARIFA
@@ -235,8 +237,7 @@ FUNCTION kalk_generisanje_inventure_razlike()
 
    PRIVATE cBrDok := SljBroj( cIdFirma, "IM", 8 )
 
-   SELECT kalk
-   SET ORDER TO TAG "3"
+
 
    nRbr := 0
 
@@ -246,8 +247,8 @@ FUNCTION kalk_generisanje_inventure_razlike()
    SELECT koncij
    SEEK Trim( cIdKonto )
 
-   SELECT kalk
-   HSEEK cIdFirma + cIdKonto
+
+   find_kalk_by_mkonto_idroba( cIdFirma, cIdKonto )
 
    DO WHILE !Eof() .AND. cIdFirma + cIdKonto == field->idfirma + field->mkonto
 
@@ -257,8 +258,8 @@ FUNCTION kalk_generisanje_inventure_razlike()
       SET ORDER TO TAG "2"
       HSEEK cIdFirma + cIdVd + cOldBrDok + cIdRoba
 
-      // ako sam nasao prekoci ovaj zapis
-      IF Found()
+
+      IF Found() // ako sam nasao prekoci ovaj zapis
          SELECT kalk
          SKIP
          LOOP
@@ -305,7 +306,7 @@ FUNCTION kalk_generisanje_inventure_razlike()
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -315,10 +316,11 @@ FUNCTION AzurPostojece( cIdFirma, cIdKonto, cBrDok, dDatDok, nRbr, cIdRoba, nUla
       cSrSort := "N"
    ENDIF
 
+   SELECT kalk_pripr
    IF cSrSort == "D"
       SET ORDER TO "SDOB"
    ELSE
-      SET ORDER TO TAG "3"
+      SET ORDER TO TAG "3" // kalk_pripr
    ENDIF
 
    GO TOP
@@ -367,7 +369,7 @@ FUNCTION AzurPostojece( cIdFirma, cIdKonto, cBrDok, dDatDok, nRbr, cIdRoba, nUla
       Gather2()
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 

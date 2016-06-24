@@ -257,15 +257,15 @@ STATIC FUNCTION _g_kalk_tp( cIdFirma, cKto_list, dD_from, dD_to )
 
       @ m_x + 1, m_y + 2 SAY "obradjujem mag. konto: " + cIdKonto
 
+/*
       SELECT kalk
-      // mkonto
       SET ORDER TO TAG "3"
       GO TOP
 
       SEEK cIdFirma + cIdKonto
-
-      DO WHILE !Eof() .AND. cIdFirma == field->idfirma ;
-            .AND. cIdKonto == field->mkonto
+*/
+      find_kalk_by_mkonto_idroba( cIdFirma, cIdkonto )
+      DO WHILE !Eof() .AND. cIdFirma == field->idfirma .AND. cIdKonto == field->mkonto
 
 
          cIdRoba := field->idroba

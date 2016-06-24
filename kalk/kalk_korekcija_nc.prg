@@ -12,7 +12,7 @@
 
 #include "f18.ch"
 
-
+/*
 FUNCTION KorekNC()
 
    LOCAL dDok := Date()
@@ -87,7 +87,8 @@ FUNCTION KorekNC()
    SELECT ( nTArea )
 
    CLOSERET
-   // }
+
+*/
 
 
 /* TraziRbr(cKljuc)
@@ -96,7 +97,7 @@ FUNCTION KorekNC()
 
 FUNCTION TraziRbr( cKljuc )
 
-   // {
+
    LOCAL cVrati := "  1"
    SELECT kalk_pripr; GO TOP
    SEEK cKljuc
@@ -106,21 +107,27 @@ FUNCTION TraziRbr( cKljuc )
    ENDIF
 
    RETURN cVrati
-// }
+
 
 
 /* TraziNC(cTrazi,dDat)
  *     Utvrdjuje najcescu NC zadane robe na zadanom kontu do zadanog datuma
- */
+
 
 FUNCTION TraziNC( cTrazi, dDat )
 
-   // {
+
    LOCAL nSlog := 0, aNiz := { { 0, 0 } }, nPom := 0, nVrati := 0
-   SELECT KALK
-   nSlog := RecNo()
-   SET ORDER TO TAG "3"
+
+
+  // SELECT KALK
+  // nSlog := RecNo()
+  // SET ORDER TO TAG "3"
+  // GO TOP
+
+  find_kalk_by_mkonto_idroba( cIdFirma, cIdKonto )
    GO TOP
+
    SEEK cTrazi
    DO WHILE cTrazi == idfirma + mkonto + idroba .AND. datdok <= dDat .AND. !Eof()
       nPom := AScan( aNiz, {| x| KALK->nc == x[ 1 ] } )
@@ -142,3 +149,4 @@ FUNCTION TraziNC( cTrazi, dDat )
    SELECT kalk_pripr
 
    RETURN nVrati
+*/

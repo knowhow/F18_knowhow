@@ -19,15 +19,16 @@ FUNCTION GenMag()
    LOCAL _opcexe := {}
    LOCAL _izbor := 1
 
-   AAdd( _opc, "1. pocetno stanje                                            " )
+   AAdd( _opc, "1. početno stanje                                            " )
    AAdd( _opcexe, {|| kalk_mag_pocetno_stanje() } )
-   AAdd( _opc, "2. pocetno stanje (stara opcija / legacy)" )
+   AAdd( _opc, "2. početno stanje (stara opcija)" )
    AAdd( _opcexe, {|| PocStMag() } )
    AAdd( _opc, "3. inventure" )
    AAdd( _opcexe, {|| MnuMInv() } )
+/*
    AAdd( _opc, "4. nivelacija po zadatom %" )
    AAdd( _opcexe, {|| MNivPoProc() } )
-
+*/
 
    f18_menu( "mmg", .F., _izbor, _opc, _opcexe )
 
@@ -254,18 +255,18 @@ FUNCTION InvManj()
    closeret
 
    RETURN
-// }
+
 
 
 
 
 /* MNivPoProc()
  *     Nivelacija u magacinu po procentima
- */
+
 
 FUNCTION MNivPoProc()
 
-   // {
+
    LOCAL nStopa := 0.0, nZaokr := 1
 
    O_KONTO
@@ -299,7 +300,7 @@ FUNCTION MNivPoProc()
    PRIVATE cBrDok := SljBroj( cidfirma, "18", 8 )
 
    nRbr := 0
-   SET ORDER TO TAG "3"  // "3","idFirma+mkonto+idroba+dtos(datdok)+podbr+MU_I+IdVD",KUMPATH+"KALK")
+   ## SET ORDER TO TAG "3"  // "3","idFirma+mkonto+idroba+dtos(datdok)+podbr+MU_I+IdVD",KUMPATH+"KALK")
 
    MsgO( "Generacija dokumenta 18 - " + cbrdok )
 
@@ -391,9 +392,9 @@ FUNCTION MNivPoProc()
    MsgC()
    CLOSERET
 
-   RETURN
-// }
+   RETURN .T.
 
+*/
 
 
 
@@ -403,7 +404,7 @@ FUNCTION MNivPoProc()
 
 FUNCTION KorekPC()
 
-   // {
+
    LOCAL dDok := Date(), nPom := 0, nRobaVPC := 0
    PRIVATE cMagac := PadR( "1310   ", gDuzKonto )
    o_koncij()
@@ -421,17 +422,18 @@ FUNCTION KorekPC()
    BoxC()
    O_ROBA
    o_kalk_pripr()
-   o_kalk()
+
 
    nTUlaz := nTIzlaz := 0
    nTVPVU := nTVPVI := nTNVU := nTNVI := 0
    nTRabat := 0
    PRIVATE nRbr := 0
 
-   SELECT kalk
-   cBrNiv := kalk_sljedeci( gfirma, "18" )
-   SELECT kalk; SET ORDER TO TAG "3"
-   HSEEK gFirma + cMagac
+
+   cBrNiv := kalk_sljedeci( gFirma, "18" )
+
+   find_kalk_by_mkonto_idroba( gFirma, gMagac)
+   GO TOP
    DO WHILE !Eof() .AND. idfirma + mkonto = gFirma + cMagac
 
       cIdRoba := Idroba; nUlaz := nIzlaz := 0; nVPVU := nVPVI := nNVU := nNVI := 0; nRabat := 0

@@ -239,14 +239,14 @@ FUNCTION kalk_povrat_najstariji_dokument_iz_pripr9()
    o_kalk_pripr()
 
    SELECT kalk_pripr9
-   SET ORDER TO TAG "3"
+   SET ORDER TO TAG "3" // kalk_pripr9
    cidfirma := gfirma
    cIdVD := Space( 2 )
    cBrDok := Space( 8 )
 
    IF Pitanje(, "Povuci u pripremu najstariji dokument ?", "N" ) == "N"
       my_close_all_dbf()
-      RETURN
+      RETURN .F.
    ENDIF
 
    SELECT kalk_pripr9

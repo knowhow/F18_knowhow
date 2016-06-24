@@ -81,7 +81,7 @@ FUNCTION RobaIdSredi()
       ENDDO
       Beep( 2 )
       @ m_x + 6, m_y + 2 SAY "Sifra promijenjena"
-   ENDDO // .t.
+   ENDDO  // .t.
 
    BoxC()
    closeret
@@ -91,10 +91,9 @@ FUNCTION kalk_sljedeci( cIdFirma, cVrsta )
    LOCAL cBrKalk
 
    IF gBrojac == "D"
-      SELECT kalk
-      SET ORDER TO TAG "1"
-      SEEK cIdFirma + cVrsta + "X"
-      SKIP -1
+
+      find_kalk_doks_za_tip( cIdFirma, cVrsta )
+
       IF idvd <> cVrsta
          cBrKalk := Space( 8 )
       ELSE

@@ -254,7 +254,7 @@ FUNCTION edit_fin_priprema()
    SET KEY K_ALT_K TO konverzija_valute()
    SET KEY K_ALT_O TO konsult_otvorene_stavke()
 
-   @ m_x + 3, m_y + 55 SAY "Broj:" GET _brnal VALID Dupli( _idfirma, _idvn, _brnal ) .AND. !Empty( _brnal )
+   @ m_x + 3, m_y + 55 SAY "Broj:" GET _brnal VALID fin_valid_provjeri_postoji_nalog( _idfirma, _idvn, _brnal ) .AND. !Empty( _brnal )
    @ m_x + 5, m_y + 2 SAY "Redni broj stavke naloga:" GET nRbr PICTURE "9999" ;
       VALID { || lDugmeOtvoreneStavke := .T., .T. }
    @ m_x + 7, m_y + 2 SAY "DOKUMENT: "

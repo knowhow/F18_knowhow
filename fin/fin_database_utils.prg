@@ -304,23 +304,13 @@ FUNCTION fin_set_param_broj_dokumenta()
     *  param cBrNal
     */
 
-FUNCTION Dupli( cIdFirma, cIdVn, cBrNal )
+FUNCTION fin_valid_provjeri_postoji_nalog( cIdFirma, cIdVn, cBrNal )
 
-   PushWA()
+   IF find_nalog_by_broj_dokumenta( cIdFirma, cIdVn, cBrNal )
 
-   SELECT NALOG
-   SET ORDER TO TAG "1"
-
-   SEEK cIdFirma + cIdVN + cBrNal
-
-   IF Found()
-      MsgO( " Dupli nalog ! " )
-      Beep( 3 )
-      MsgC()
-      PopWa()
+      error_bar( "fin_unos", " Dupli nalog " + cIdFirma + "-" + cIdvn + "-" + cBrNal )
       RETURN .F.
    ENDIF
 
-   PopWa()
 
    RETURN .T.

@@ -75,13 +75,14 @@ FUNCTION kalk_azuriranje_dokumenta( lAuto )
 
    IF kalk_azur_sql()
 
+/*
       o_kalk_za_azuriranje()
 
       IF !kalk_azur_dbf( lAuto, lViseDok, aOstaju, aRezim ) // , lBrStDoks )
          MsgBeep( "Neuspješno ažuriranje KALK dokumenta u DBF tabele !" )
          RETURN .F.
       ENDIF
-
+*/
    ELSE
       MsgBeep( "Neuspješno ažuriranja KALK dokumenta u SQL bazu !" )
       RETURN .F.
@@ -343,7 +344,7 @@ STATIC FUNCTION kalk_zavisni_dokumenti()
    RETURN .T.
 
 
-
+/*
 STATIC FUNCTION kalk_azur_dbf( lAuto, lViseDok, aOstaju, aRezim ) // , lBrStDoks )
 
    LOCAL cIdFirma, _rec
@@ -357,7 +358,7 @@ STATIC FUNCTION kalk_azur_dbf( lAuto, lViseDok, aOstaju, aRezim ) // , lBrStDoks
    LOCAL cOpis
    LOCAL nBrStavki
 
-   MsgO( "Ažuriranje kalk pripr ->  DBF kalk ..." )
+   MsgO( "Ažuriranje kalk pripr ->  DBF kalk" )
 
    SELECT kalk_pripr
    GO TOP
@@ -455,7 +456,7 @@ STATIC FUNCTION kalk_azur_dbf( lAuto, lViseDok, aOstaju, aRezim ) // , lBrStDoks
 
       ENDDO
 
-      SELECT kalk_doks  // azuriranje cijena
+      SELECT kalk_doks  // azuriranje vrijednosti u kalk doks
       _rec := dbf_get_rec()
       _rec[ "nv" ] := nNv
       _rec[ "vpv" ] := nVpv
@@ -474,7 +475,7 @@ STATIC FUNCTION kalk_azur_dbf( lAuto, lViseDok, aOstaju, aRezim ) // , lBrStDoks
    MsgC()
 
    RETURN .T.
-
+*/
 
 STATIC FUNCTION kalk_provjera_cijena()
 
@@ -752,6 +753,9 @@ STATIC FUNCTION kalk_azur_sql()
       RETURN lRet
    ENDIF
 
+   o_kalk()
+   o_kalk_doks()
+
    SELECT kalk_pripr
    GO TOP
 
@@ -787,6 +791,7 @@ STATIC FUNCTION kalk_azur_sql()
 
          kalk_set_doks_total_fields( @_doks_nv, @_doks_vpv, @_doks_mpv, @_doks_rabat )
 
+altd()
          _record_item := dbf_get_rec()
          IF !sql_table_update( "kalk_kalk", "ins", _record_item )
             _ok := .F.

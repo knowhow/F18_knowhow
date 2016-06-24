@@ -1045,7 +1045,7 @@ FUNCTION kalk_set_doks_total_fields( nNv, nVpv, nMpv, nRabat )
       nMPV += field->mpcsapp * field->kolicina
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 

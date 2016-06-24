@@ -23,7 +23,7 @@ FUNCTION kalk_pregled_dokumenata()
    AAdd( _opcexe, {|| kalk_stampa_dokumenta( .T. ) } )
 
    AAdd( _opc, "2. štampa liste dokumenata" )
-   AAdd( _opcexe, {|| StDoks() } )
+   AAdd( _opcexe, {|| kalk_stampa_liste_dokumenata() } )
    AAdd( _opc, "3. pregled dokumenata po hronologiji obrade" )
    AAdd( _opcexe, {|| kalk_pregled_dokumenata_hronoloski() } )
    AAdd( _opc, "4. pregled dokumenata - tabelarni pregled" )

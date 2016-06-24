@@ -35,7 +35,7 @@ FUNCTION kalk_povrat_dokumenta()
 
    otvori_kalk_tabele_za_povrat()
 
-   _id_firma := gfirma
+   _id_firma := gFirma
    _id_vd := Space( 2 )
    _br_dok := Space( 8 )
 
@@ -96,8 +96,7 @@ FUNCTION kalk_povrat_dokumenta()
 
       MsgO( "Brišem KALK dokument iz kumulativa ..." )
 
-      SELECT kalk
-      HSEEK _id_firma + _id_vd + _br_dok
+      find_kalk_by_broj_dokumenta( _id_firma, _id_vd, _br_dok )
 
       IF Found()
          _del_rec := dbf_get_rec()
@@ -141,13 +140,13 @@ FUNCTION kalk_povrat_dokumenta()
 
 STATIC FUNCTION otvori_kalk_tabele_za_povrat()
 
-   o_kalk_doks()
-   o_kalk_doks2()
+   //o_kalk_doks()
+   //o_kalk_doks2()
    o_kalk_pripr()
-   o_kalk()
-   SET ORDER TO TAG "1"
+   //o_kalk()
+   //SET ORDER TO TAG "1"
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -157,10 +156,7 @@ STATIC FUNCTION brisi_dokument_iz_tabele_doks( cIdFirma, cIdVd, cBrDok )
    LOCAL lOk := .T.
    LOCAL _rec
 
-   SELECT kalk_doks
-   HSEEK cIdFirma + cIdVd + cBrDok
-
-   IF Found()
+   IF find_kalk_doks_by_broj_dokumenta( cIdFirma, cIdVd, cBrDok )
       _rec := dbf_get_rec()
       lOk := delete_rec_server_and_dbf( "kalk_doks", _rec, 1, "CONT" )
    ENDIF
@@ -174,10 +170,7 @@ STATIC FUNCTION brisi_dokument_iz_tabele_doks2( cIdFirma, cIdVd, cBrDok )
    LOCAL lOk := .T.
    LOCAL _rec
 
-   SELECT kalk_doks2
-   HSEEK cIdFirma + cIdVd + cBrDok
-
-   IF Found()
+   IF find_kalk_doks2_by_broj_dokumenta( cIdFirma, cIdVd, cBrDok )
       _rec := dbf_get_rec()
       lOk := delete_rec_server_and_dbf( "kalk_doks2", _rec, 1, "CONT" )
    ENDIF
@@ -191,10 +184,8 @@ STATIC FUNCTION brisi_dokument_iz_tabele_kalk( cIdFirma, cIdVd, cBrDok )
    LOCAL lOk := .T.
    LOCAL _rec
 
-   SELECT kalk
-   HSEEK cIdFirma + cIdVd + cBrDok
 
-   IF Found()
+   IF find_kalk_by_broj_dokumenta( cIdFirma, cIdVd, cBrDok )
       _rec := dbf_get_rec()
       lOk := delete_rec_server_and_dbf( "kalk_kalk", _rec, 2, "CONT" )
    ENDIF
@@ -209,8 +200,7 @@ STATIC FUNCTION kalk_kopiraj_dokument_u_tabelu_pripreme( cFirma, cIdVd, cBroj )
 
    LOCAL _rec
 
-   SELECT kalk
-   HSEEK cFirma + cIdVd + cBroj
+   find_kalk_by_broj_dokumenta( cFirma, cIdVd, cBroj )
 
    MsgO( "Prebacujem dokument u pripremu ..." )
 
@@ -233,7 +223,7 @@ STATIC FUNCTION kalk_kopiraj_dokument_u_tabelu_pripreme( cFirma, cIdVd, cBroj )
 
    MsgC()
 
-   RETURN
+   RETURN .T.
 
 
 

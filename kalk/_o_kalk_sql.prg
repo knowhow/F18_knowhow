@@ -14,6 +14,35 @@
 FIELD idfirma, idvd, brdok, rbr, podbr, idtarifa, mkonto, pkonto, idroba, mu_i, pu_i, datdok, idpartner
 
 
+FUNCTION find_kalk_doks_by_tip_datum( cIdFirma, cIdVd, dDatOd, dDatDo )
+
+   LOCAL hParams := hb_Hash()
+
+   IF cIdFirma <> NIL
+      hParams[ "idfirma" ] := cIdFirma
+   ENDIF
+
+   IF cIdVd <> NIL
+      hParams[ "idvd" ] := cIdVd
+   ENDIF
+
+   IF dDatOd <> NIL
+      hParams[ "dat_od" ] := dDatOd
+   ENDIF
+   IF dDatOd <> NIL
+      hParams[ "dat_do" ] := dDatDo
+   ENDIF
+
+   hParams[ "order_by" ] := "idfirma, idvd, brdok, datdok" // ako ima vise brojeva dokumenata sortiraj po njima
+   hParams[ "indeks" ] := .F. // ne trositi vrijeme na kreiranje indeksa
+
+
+   use_sql_kalk_doks( hParams )
+   GO TOP
+
+   RETURN ! Eof()
+
+
 FUNCTION find_kalk_doks_za_tip_sufix( cIdFirma, cIdVd, cBrDokSfx )
 
    LOCAL hParams := hb_Hash()
@@ -56,11 +85,11 @@ FUNCTION find_kalk_doks_by_broj_dokumenta( cIdFirma, cIdvd, cBrDok )
 
    IF cBrDok <> NIL
       hParams[ "brdok" ] := cBrDok
-   ELSE
-      hParams[ "order_by" ] := "idfirma, idvn, brdok" // ako ima vise brojeva dokumenata sortiraj po njima
    ENDIF
 
-   hParams[ "indeks" ] := .F. // ne trositi vrijeme na kreiranje indeksa
+
+   hParams[ "order_by"] := "idfirma,idvd,brdok"
+   hParams[ "indeks" ] := .F.  // ne trositi vrijeme na kreiranje indeksa
 
    use_sql_kalk_doks( hParams )
    GO TOP
@@ -84,7 +113,8 @@ FUNCTION find_kalk_doks2_by_broj_dokumenta( cIdFirma, cIdvd, cBrDok )
       hParams[ "brdok" ] := cBrDok
    ENDIF
 
-   hParams[ "indeks" ] := .T.
+   hParams[ "order_by"] := "idfirma,idvd,brdok"
+   hParams[ "indeks" ] := .F.
 
    use_sql_kalk_doks2( hParams )
    GO TOP
@@ -156,7 +186,7 @@ FUNCTION find_kalk_by_pkonto_idroba( cIdFirma, cIdKonto, cIdRoba )
    RETURN !Eof()
 
 
-FUNCTION find_kalk_kalk_by_broj_dokumenta( cIdFirma, cIdvd, cBrDok )
+FUNCTION find_kalk_by_broj_dokumenta( cIdFirma, cIdvd, cBrDok )
 
    LOCAL hParams := hb_Hash()
 
@@ -172,9 +202,10 @@ FUNCTION find_kalk_kalk_by_broj_dokumenta( cIdFirma, cIdvd, cBrDok )
       hParams[ "brdok" ] := cBrDok
    ENDIF
 
-   hParams[ "indeks" ] := .T.
+   hParams[ "order_by"] := "idfirma,idvd,brdok"
+   hParams[ "indeks" ] := .F.
 
-   use_sql_kalk_kalk( hParams )
+   use_sql_kalk( hParams )
    GO TOP
 
    RETURN ! Eof()
@@ -249,7 +280,7 @@ FUNCTION use_sql_kalk( hParams )
 
    cSql += coalesce_char_zarez( "idzaduz", 6 )
    cSql += coalesce_char_zarez( "idzaduz2", 6 )
-   
+
    IF !( lReportMagacin  .OR. lReportProdavnica )
 
       cSql += coalesce_char_zarez( "trabat", 1 )
@@ -527,7 +558,7 @@ FUNCTION use_sql_kalk_doks( hParams )
 
 STATIC FUNCTION sql_kalk_doks_where( hParams )
 
-   LOCAL cWhere := ""
+   LOCAL cWhere := "", dDatOd
 
    IF hb_HHasKey( hParams, "idfirma" )
       cWhere += "idfirma = " + sql_quote( hParams[ "idfirma" ] )
@@ -559,6 +590,15 @@ STATIC FUNCTION sql_kalk_doks_where( hParams )
          cWhere += " AND "
       ENDIF
       cWhere += "substr(brdok,6) = " + sql_quote( hParams[ "brdok_sfx" ] )
+   ENDIF
+
+   IF hb_HHasKey( hParams, "dat_do" )
+      IF !hb_HHasKey( hParams, "dat_od" )
+         dDatOd := CToD( "" )
+      ELSE
+         dDatOd := hParams[ "dat_od" ]
+      ENDIF
+      cWhere += " AND " + parsiraj_sql_date_interval( "datdok", dDatOd, hParams[ "dat_do" ] )
    ENDIF
 
    RETURN cWhere

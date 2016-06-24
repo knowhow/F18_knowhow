@@ -278,14 +278,16 @@ FUNCTION kalk_sljedeci_brdok( cTipKalk, cIdFirma, cSufiks )
    IF cSufiks == nil
       cSufiks := Space( 3 )
    ENDIF
-   IF gBrojac == "D"
+
+   IF gBrojacKalkulacija == "D"
+   
       IF glBrojacPoKontima
       /*
          SELECT kalk_doks
          SET ORDER TO TAG "1S" // "IdFirma+idvd+SUBSTR(brdok,6)+LEFT(brdok,5)"
          SEEK cIdFirma + cTipKalk + cSufiks + "X"
       */
-          find_kalk_doks_za_tip_sufix( cIdFirma, cTipKalk, cSufix )
+          find_kalk_doks_za_tip_sufix( cIdFirma, cTipKalk, cSufiks )
       ELSE
          find_kalk_doks_za_tip( cIdFirma, cTipKalk )
       /*

@@ -91,7 +91,7 @@ PROCEDURE set_global_vars_0()
    PUBLIC gKtoLimit := "N"
    PUBLIC gnKtoLimit := 3
    PUBLIC gDUFRJ := "N"
-   PUBLIC gBrojac := "1"
+   PUBLIC gBrojacFinNaloga := "1"
    PUBLIC gDatVal := "D"
    PUBLIC gnLOSt := 0
    PUBLIC gPotpis := "N"

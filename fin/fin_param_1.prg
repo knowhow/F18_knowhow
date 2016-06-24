@@ -76,7 +76,7 @@ STATIC FUNCTION par_obrada()
 
    nX := nX + 2
 
-   @ m_x + nX, m_y + 2 SAY "Brojac naloga: 1 - (firma,vn,brnal), 2 - (firma,brnal)" GET gBrojac VALID gbrojac $ "12"
+   @ m_x + nX, m_y + 2 SAY "Brojac naloga: 1 - (firma,vn,brnal), 2 - (firma,brnal)" GET gBrojacFinNaloga VALID gBrojacFinNaloga $ "12"
 
    ++ nX
 
@@ -201,7 +201,7 @@ FUNCTION fin_read_params()
    gRj := fetch_metric( "fin_evidencija_radne_jedinice", nil, gRj )
    gTroskovi := fetch_metric( "fin_evidencija_ekonomske_kategorije", nil, gTroskovi )
    gRavnot := fetch_metric( "fin_unos_ravnoteza_naloga", nil, gRavnot )
-   gBrojac := fetch_metric( "fin_vrsta_brojaca_naloga", nil, gBrojac )
+   gBrojacFinNaloga := fetch_metric( "fin_vrsta_brojaca_naloga", nil, gBrojacFinNaloga )
    gnLOst := fetch_metric( "fin_limit_otvorene_stavke", nil, gnLOst )
    gDUFRJ := fetch_metric( "fin_dugi_uslov_za_rj", nil, gDUFRJ )
    gBezVracanja := fetch_metric( "fin_zabrana_povrata_naloga", nil, gBezVracanja )
@@ -242,7 +242,7 @@ FUNCTION fin_write_params()
    set_metric( "fin_evidencija_radne_jedinice", nil, gRj )
    set_metric( "fin_evidencija_ekonomske_kategorije", nil, gTroskovi )
    set_metric( "fin_unos_ravnoteza_naloga", nil, gRavnot )
-   set_metric( "fin_vrsta_brojaca_naloga", nil, gBrojac )
+   set_metric( "fin_vrsta_brojaca_naloga", nil, gBrojacFinNaloga )
    set_metric( "fin_limit_otvorene_stavke", nil, gnLOst )
    set_metric( "fin_dugi_uslov_za_rj", nil, gDUFRJ )
    set_metric( "fin_zabrana_povrata_naloga", nil, gBezVracanja )

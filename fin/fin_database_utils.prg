@@ -135,21 +135,21 @@ FUNCTION fin_novi_broj_dokumenta( firma, tip_dokumenta )
    LOCAL _ret := ""
    LOCAL _t_area := Select()
 
-   // obratiti paznju na gBrojac... 1 ili 2
+   // obratiti paznju na gBrojacFinNaloga... 1 ili 2
    // 1 - idfirma + idvn + brnal
    // 2 - idfirma + brnal
 
    // param: fin/10/10
    _param := "fin" + "/" + firma + "/" + tip_dokumenta
 
-   IF gBrojac == "2"
+   IF gBrojacFinNaloga == "2"
       _param := "fin" + "/" + firma
    ENDIF
 
    _broj := fetch_metric( _param, nil, _broj )
 
    // konsultuj i doks uporedo
-   IF gBrojac == "2" // Brojac naloga: 1 - (firma,vn,brnal), 2 - (firma,brnal)
+   IF gBrojacFinNaloga == "2" // Brojac naloga: 1 - (firma,vn,brnal), 2 - (firma,brnal)
       find_nalog_by_broj_dokumenta( firma, tip_dokumenta, NIL, "idfirma,brnal" )
    ELSE
       find_nalog_by_broj_dokumenta( firma, tip_dokumenta )
@@ -157,7 +157,7 @@ FUNCTION fin_novi_broj_dokumenta( firma, tip_dokumenta )
    ENDIF
    GO BOTTOM
 
-   IF field->idfirma == firma .AND. IF( gBrojac == "1", field->idvn == tip_dokumenta, .T. )
+   IF field->idfirma == firma .AND. IIF( gBrojacFinNaloga == "1", field->idvn == tip_dokumenta, .T. )
       _broj_nalog := Val( field->brnal )
    ELSE
       _broj_nalog := 0
@@ -255,7 +255,7 @@ FUNCTION fin_set_param_broj_dokumenta()
 
    @ m_x + 1, m_y + 2 SAY "Nalog:" GET _firma
 
-   IF gBrojac == "1"
+   IF gBrojacFinNaloga == "1"
       @ m_x + 1, Col() + 1 SAY "-" GET _tip_dok
    ENDIF
 
@@ -267,7 +267,7 @@ FUNCTION fin_set_param_broj_dokumenta()
    ENDIF
 
    // param: fin/10/10
-   IF gBrojac == "1"
+   IF gBrojacFinNaloga == "1"
       _param := "fin" + "/" + _firma + "/" + _tip_dok
    ELSE
       _param := "fin" + "/" + _firma

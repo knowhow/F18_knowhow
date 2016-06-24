@@ -30,14 +30,25 @@ FUNCTION o_sql_suban_kto_partner( cIdFirma )
 
    RETURN ! Eof()
 
-FUNCTION find_suban_za_period( dDatOd, dDatDo )
+FUNCTION find_suban_za_period( cIdFirma, dDatOd, dDatDo, cOrderBy )
 
    LOCAL hParams := hb_Hash()
 
-   hParams[ "dat_od" ] := dDatOd
-   hParams[ "dat_do" ] := dDatDo
+   hb_default( @cOrderBy, "idFirma,IdVN,BrNal,Rbr" )
 
-   hParams[ "order_by" ] := "idFirma,IdVN,BrNal,Rbr"
+   IF cIdFirma <> NIL
+      hParams[ "idfirma" ] := cIdFirma
+   ENDIF
+
+   IF dDatOd != NIL
+      hParams[ "dat_od" ] := dDatOd
+   ENDIF
+
+   IF dDatDo != NIL
+      hParams[ "dat_do" ] := dDatDo
+   ENDIF
+
+   hParams[ "order_by" ] := cOrderBy
 
    hParams[ "indeks" ] := .F.
    use_sql_suban( hParams )

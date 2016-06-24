@@ -148,7 +148,7 @@ FUNCTION fin_kif( dD1, dD2, cSezona )
 
 FUNCTION close_open_fin_epdv_tables( dDatOd, dDatDo )
 
-   find_suban_za_period( dDatOd, dDatDo )
+   find_suban_za_period( NIL, dDatOd, dDatDo )
 
 /*
    // radi manipulacije kod generisanja kif-a tabela SUBAN se otvara i kao drugi ALIAS

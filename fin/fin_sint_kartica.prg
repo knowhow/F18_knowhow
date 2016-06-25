@@ -95,15 +95,15 @@ FUNCTION fin_sint_kartica()
    ENDIF
 
    MsgO( "Preuzimanje podataka sa SQL servera ..." )
-   
+
    IF gRJ == "D" .AND. gSAKrIz == "D" .AND. Len( cIdRJ ) <> 0
       otvori_sint_anal_kroz_temp( .T., "IDRJ='" + cIdRJ + "'" )
    ELSE
       IF cBrza == "D"
-         find_sint_by_konto( cIdFirma, qqKonto )
+         find_sint_by_konto_za_period( cIdFirma, qqKonto, dDatOd, dDatDo )
       ELSE
 
-         find_sint_by_konto( cIdFirma )
+         find_sint_by_konto_za_period( cIdFirma, NIL, dDatOd, dDatDo )
       ENDIF
    ENDIF
    O_KONTO

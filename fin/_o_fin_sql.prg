@@ -30,6 +30,7 @@ FUNCTION o_sql_suban_kto_partner( cIdFirma )
 
    RETURN ! Eof()
 
+
 FUNCTION find_suban_za_period( cIdFirma, dDatOd, dDatDo, cOrderBy )
 
    LOCAL hParams := hb_Hash()
@@ -58,9 +59,11 @@ FUNCTION find_suban_za_period( cIdFirma, dDatOd, dDatDo, cOrderBy )
 
 
 
-FUNCTION find_sint_by_konto( cIdFirma, cIdKonto )
+FUNCTION find_sint_by_konto_za_period( cIdFirma, cIdKonto, dDatOd, dDatDo, cOrderBy )
 
    LOCAL hParams := hb_Hash()
+
+   hb_default( @cOrderBy, "idFirma,idkonto,datnal" )
 
    IF cIdFirma <> NIL
       hParams[ "idfirma" ] := cIdFirma
@@ -70,9 +73,17 @@ FUNCTION find_sint_by_konto( cIdFirma, cIdKonto )
       hParams[ "idkonto" ] := cIdKonto
    ENDIF
 
-   hParams[ "order_by" ] := "datnal" // ako ima vise brojeva dokumenata sortiraj po njima
+   IF dDatOd != NIL
+      hParams[ "dat_od" ] := dDatOd
+   ENDIF
 
-   hParams[ "indeks" ] := .T. // ne trositi vrijeme na kreiranje indeksa
+   IF dDatDo != NIL
+      hParams[ "dat_do" ] := dDatDo
+   ENDIF
+
+   hParams[ "order_by" ] := cOrderBy // ako ima vise brojeva dokumenata sortiraj po njima
+
+   hParams[ "indeks" ] := .F. // ne trositi vrijeme na kreiranje indeksa
 
    use_sql_sint( hParams )
    GO TOP
@@ -103,9 +114,11 @@ FUNCTION find_anal_by_konto( cIdFirma, cIdKonto )
    RETURN ! Eof()
 
 
-FUNCTION find_suban_by_konto_partner( cIdFirma, cIdKonto, cIdPartner )
+FUNCTION find_suban_by_konto_partner( cIdFirma, cIdKonto, cIdPartner, cBrDok, cOrderBy )
 
    LOCAL hParams := hb_Hash()
+
+   hb_default( @cOrderBy, "IdFirma,IdKonto,IdPartner,brdok,datdok" )
 
    IF cIdFirma <> NIL
       hParams[ "idfirma" ] := cIdFirma
@@ -117,11 +130,14 @@ FUNCTION find_suban_by_konto_partner( cIdFirma, cIdKonto, cIdPartner )
 
    IF cIdPartner <> NIL
       hParams[ "idpartner" ] := cIdPartner
-   ELSE
-      hParams[ "order_by" ] := "datdok" // ako ima vise brojeva dokumenata sortiraj po njima
    ENDIF
 
-   hParams[ "indeks" ] := .T. // ne trositi vrijeme na kreiranje indeksa
+   IF cIdPartner <> NIL
+      hParams[ "brdok" ] := cBrDok
+   ENDIF
+
+   hParams[ "order_by" ] := cOrderBy // ako ima vise brojeva dokumenata sortiraj po njima
+   hParams[ "indeks" ] := .F.
 
    use_sql_suban( hParams )
    GO TOP
@@ -155,6 +171,7 @@ FUNCTION find_nalog_by_broj_dokumenta( cIdFirma, cIdVN, cBrNal, cOrderBy )
    GO TOP
 
    RETURN ! Eof()
+
 
 FUNCTION find_sint_by_broj_dokumenta( cIdFirma, cIdVN, cBrNal )
 
@@ -301,7 +318,6 @@ CREATE TABLE fmk.fin_nalog
   sifra character(6)
 )
 */
-
 
    default_if_nil( @hParams, hb_Hash() )
 
@@ -761,6 +777,10 @@ STATIC FUNCTION use_sql_suban_where( hParams )
 
    IF hb_HHasKey( hParams, "idpartner" )
       cWhere += iif( Empty( cWhere ), "", " AND " ) + parsiraj_sql( "idpartner", hParams[ "idpartner" ] )
+   ENDIF
+
+   IF hb_HHasKey( hParams, "brdok" )
+      cWhere += iif( Empty( cWhere ), "", " AND " ) + parsiraj_sql( "brdok", hParams[ "brdok" ] )
    ENDIF
 
 

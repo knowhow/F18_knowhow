@@ -62,15 +62,13 @@ FUNCTION fin_bb_sintetika_b( params )
    IF gRJ == "D" .AND. Len( cIdRJ ) <> 0
       otvori_sint_anal_kroz_temp( .T., "IDRJ='" + cIdRJ + "'" )
    ELSE
-      find_sint_by_konto( cIdFirma )
+      find_sint_by_konto_za_period( cIdFirma, NIL, dDatOd, dDatDo )
    ENDIF
 
    MsgC()
 
    SELECT BBKLAS
    my_dbf_zap()
-
-   SELECT SINT
 
    cFilter := ""
 
@@ -84,6 +82,7 @@ FUNCTION fin_bb_sintetika_b( params )
    ELSEIF !( Empty( dDatOd ) .AND. Empty( dDatDo ) )
       cFilter := "DATNAL>=" + dbf_quote( dDatOd ) + " .and. DATNAL<=" + dbf_quote( dDatDo )
    ENDIF
+
 
    IF Len( cIdFirma ) < 2
       SELECT SINT

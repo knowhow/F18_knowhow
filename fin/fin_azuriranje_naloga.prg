@@ -875,10 +875,7 @@ FUNCTION psuban_suban( nalog_ctrl )
          nSaldo := -_rec[ "iznosbhd" ]
       ENDIF
 
-      SELECT SUBAN
-      SET ORDER TO TAG "3"
-      GO TOP
-      SEEK _rec[ "idfirma" ] + _rec[ "idkonto" ] + _rec[ "idpartner" ] + _rec[ "brdok" ]
+      find_suban_by_konto_partner( _rec[ "idfirma" ], _rec[ "idkonto" ], _rec[ "idpartner" ], _rec[ "brdok" ] )
 
       nRec := RecNo()
       DO WHILE  !Eof() .AND. ( _rec[ "idfirma" ] + _rec[ "idkonto" ] + _rec[ "idpartner" ] + _rec[ "brdok" ] ) == ( IdFirma + IdKonto + IdPartner + BrDok )

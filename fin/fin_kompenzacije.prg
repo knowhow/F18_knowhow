@@ -167,8 +167,8 @@ FUNCTION kompenzacija()
    ENDIF
 
    ImeKol := { ;
-      { "Br.racuna", {|| PadR( brdok, 10 )    }, "brdok"    },;
-      { "Iznos",     {|| iznosbhd }, "iznosbhd" },;
+      { "Br.racuna", {|| PadR( brdok, 10 )    }, "brdok"    }, ;
+      { "Iznos",     {|| iznosbhd }, "iznosbhd" }, ;
       { "Marker",    {|| marker }, "marker" } ;
       }
 
@@ -253,17 +253,16 @@ STATIC FUNCTION _gen_kompen( vars )
    LOCAL _dug_bhd, _pot_bhd, _dug_dem, _pot_dem
    LOCAL _kon_d, _kon_p, _kon_d2, _kon_p2
    LOCAL _svi_d, _svi_p, _svi_d2, _svi_p2
+   LOCAL cOrderBy
 
    zap_tabele_kompenzacije()
 
-   o_suban()
+   // o_suban()
    O_TDOK
 
-   SELECT SUBAN
+   // SELECT SUBAN
 
-   IF _po_vezi == "D"
-      SET ORDER TO TAG "3"
-   ENDIF
+
 
    _filter := ".t."
 
@@ -275,6 +274,18 @@ STATIC FUNCTION _gen_kompen( vars )
       _filter += " .and. DATDOK <= " + dbf_quote( _dat_do )
    ENDIF
 
+   cOrderBy := "IdFirma,IdKonto,IdPartner,brdok,datdok"
+
+   IF _po_vezi == "D"
+      // SET ORDER TO TAG "3"
+      cOrderBy := "idfirma,idvn,brnal"
+   ENDIF
+
+   IF !find_suban_by_konto_partner( _id_firma, _usl_kto, _usl_partn, NIL, cOrderBy )
+      find_suban_by_konto_partner( _id_firma, _usl_kto2, _usl_partn, NIL, cOrderBy )
+   ENDIF
+
+
    MsgO( "setujem filter... " )
    IF _filter == ".t."
       SET FILTER TO
@@ -283,13 +294,8 @@ STATIC FUNCTION _gen_kompen( vars )
    ENDIF
    MsgC()
 
-   SEEK _id_firma + _usl_kto + _usl_partn
-
-   IF !Found()
-      SEEK _id_firma + _usl_kto2 + _usl_partn
-   ENDIF
-
-   NFOUND CRET
+   GO TOP
+   EOF CRET
 
    _svi_d := 0
    _svi_p := 0
@@ -545,7 +551,7 @@ STATIC FUNCTION key_handler( vars )
 
       CASE Ch == K_CTRL_P
 
-         _area := SELECT()
+         _area := Select()
 
          print_kompen( vars )
 

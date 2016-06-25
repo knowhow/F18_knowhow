@@ -886,12 +886,13 @@ STATIC FUNCTION print_ios_xml( params )
    SELECT suban
 
    IF _kao_kartica == "D"
-      SET ORDER TO TAG "1"
+      //SET ORDER TO TAG "1"
+      find_suban_by_konto_partner( _id_firma, _id_konto, _id_partner, NIL, "idfirma,idvn,brnal")
    ELSE
-      SET ORDER TO TAG "3"
+      //SET ORDER TO TAG "3"
+      find_suban_by_konto_partner( _id_firma, _id_konto, _id_partner, NIL )
    ENDIF
 
-   SEEK _id_firma + _id_konto + _id_partner
 
    _u_dug_1 := 0
    _u_dug_2 := 0
@@ -1220,15 +1221,14 @@ STATIC FUNCTION print_ios_txt( params )
 
    nCol1 := 62
 
-   SELECT suban
-
    IF _kao_kartica == "D"
-      SET ORDER TO TAG "1"
+      //SET ORDER TO TAG "1"
+      find_suban_by_konto_partner( _id_firma, _id_konto, _id_partner, NIL, "idfirma,idvn,brnal")
    ELSE
-      SET ORDER TO TAG "3"
+      //SET ORDER TO TAG "3"
+      find_suban_by_konto_partner( _id_firma, _id_konto, _id_partner, NIL )
    ENDIF
-
-   SEEK _id_firma + _id_konto + _id_partner
+   
 
    nDugBHD := nPotBHD := nDugDEM := nPotDEM := 0
    nDugBHDZ := nPotBHDZ := nDugDEMZ := nPotDEMZ := 0

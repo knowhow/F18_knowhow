@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -17,730 +17,743 @@
 // izvjestaj specifikacija troskova
 // fuelboss - specifican
 // ---------------------------------------------
-function r_spec_tr()
-local dD_from
-local dD_to
-local cKtoList
-local cKtoListZ
-local cSp_ld
-local cGroup
-local cKonto
-local cTxt
-local cLine
-private nLD_ras := 0
-private nLD_pri := 0
-private nLD_bruto := 0
-private nFIN_ras := 0
-private nFIN_pri := 0
-private nKALK_pri := 0
-private nKALK_ras := 0
+FUNCTION r_spec_tr()
 
-O_KONTO
-O_RJ
+   LOCAL dD_from
+   LOCAL dD_to
+   LOCAL cKtoList
+   LOCAL cKtoListZ
+   LOCAL cSp_ld
+   LOCAL cGroup
+   LOCAL cKonto
+   LOCAL cTxt
+   LOCAL cLine
+   PRIVATE nLD_ras := 0
+   PRIVATE nLD_pri := 0
+   PRIVATE nLD_bruto := 0
+   PRIVATE nFIN_ras := 0
+   PRIVATE nFIN_pri := 0
+   PRIVATE nKALK_pri := 0
+   PRIVATE nKALK_ras := 0
 
-// uslovi izvjestaja
-if g_vars( @dD_from, @dD_to, @cGroup, @cKtoListZ, @cKtoList, @cSp_ld ) == 0
-	return
-endif
+   O_KONTO
+   O_RJ
 
-start_print()
+   // uslovi izvjestaja
+   IF g_vars( @dD_from, @dD_to, @cGroup, @cKtoListZ, @cKtoList, @cSp_ld ) == 0
+      RETURN
+   ENDIF
 
-__r_head( dD_from, dD_to )
+   start_print()
 
-
-? "1) stavke koje ne uticu na rekapitulaciju:"
-?
-
-// prvo uzmi podatke iz fin-a samo za pregled
-__gen2_fin( dD_from, dD_to, cGroup, cKtoList )
-
-?
-? "2) stavke koje uticu na rekapitulaciju:"
-?
-
-// zatim uzmi podatke iz fin-a koji uticu na zbir
-__gen_fin( dD_from, dD_to, cGroup, cKtoListZ )
-
-? 
-
-// daj konto za kalk
-cKonto := _g_gr_kto( cGroup )
-
-// uzmi podatke kalk-a
-__gen_kalk( dD_from, dD_to, cKonto )
-
-?
-
-if cSp_ld == "D"
-	__get_ld( dD_from, cGroup )
-endif
-
-cLine := ""
-cTxt := ""
-
-cLine += REPLICATE( "-", 20 )
-cLine += SPACE(1)
-cLine += REPLICATE( "-", 12 )
-cLine += SPACE(1)
-cLine += REPLICATE( "-", 12 )
-cLine += SPACE(1)
-cLine += REPLICATE( "-", 12 )
-
-cTxt += PADR( "SEKCIJA", 20 )
-cTxt += SPACE(1)
-cTxt += PADL( "PRIHOD", 12 )
-cTxt += SPACE(1)
-cTxt += PADL( "RASHOD", 12 )
-cTxt += SPACE(1)
-cTxt += PADL( "UKUPNO", 12 )
-
-P_10CPI
-
-?
-? "------------------------"
-? "REKAPITULACIJA TROSKOVA:"
-? cLine 
-? cTxt
-? cLine
-
-? PADR( "1) place", 20 )
-? PADL( "bruto:", 20 )
-@ prow(), pcol()+1 SAY STR(0,12,2)
-@ prow(), pcol()+1 SAY STR(nLD_bruto,12,2)
-@ prow(), pcol()+1 SAY STR(0 - nLD_bruto,12,2)
-? PADL( "10.5% od bruta:", 20 )
-nTmpBr := ( nLD_bruto * 0.105 )
-@ prow(), pcol()+1 SAY STR(0,12,2)
-@ prow(), pcol()+1 SAY STR(nTmpBr,12,2)
-@ prow(), pcol()+1 SAY STR(0 - nTmpBr,12,2)
-? PADL( "ostali troskovi:", 20 )
-@ prow(), pcol()+1 SAY STR(0,12,2)
-@ prow(), pcol()+1 SAY STR(nLD_ras,12,2)
-@ prow(), pcol()+1 SAY STR(0 - nLD_ras,12,2)
+   __r_head( dD_from, dD_to )
 
 
-? PADR( "2) roba - materijal", 20 )
-@ prow(), pcol()+1 SAY STR(nKALK_pri,12,2)
-@ prow(), pcol()+1 SAY STR(nKALK_ras,12,2)
-@ prow(), pcol()+1 SAY STR(nKALK_pri-nKALK_ras,12,2)
+   ? "1) stavke koje ne uticu na rekapitulaciju:"
+   ?
 
-? PADR( "3) finansije", 20 )
-@ prow(), pcol()+1 SAY STR(nFIN_pri,12,2)
-@ prow(), pcol()+1 SAY STR(nFIN_ras,12,2)
-@ prow(), pcol()+1 SAY STR(nFIN_pri-nFIN_ras,12,2)
+   // prvo uzmi podatke iz fin-a samo za pregled
+   __gen2_fin( dD_from, dD_to, cGroup, cKtoList )
 
-? cLine
+   ?
+   ? "2) stavke koje uticu na rekapitulaciju:"
+   ?
 
-? PADR( "UKUPNO:", 20 )
+   // zatim uzmi podatke iz fin-a koji uticu na zbir
+   __gen_fin( dD_from, dD_to, cGroup, cKtoListZ )
 
-nTO_prih := ( nLD_pri + nKALK_pri + nFIN_pri )
-nTO_rash := ( nLD_ras + nTmpBr + nLD_bruto + nKALK_ras + nFIN_ras )
+   ?
 
-// prihodi total
-@ prow(), pcol()+1 SAY STR( nTO_prih , 12, 2 )
-// rashodi total
-@ prow(), pcol()+1 SAY STR( nTO_rash , 12, 2 ) 
-// ukupno prihodi - rashodi
-@ prow(), pcol()+1 SAY STR( nTO_prih - nTO_rash , 12, 2 )
+   // daj konto za kalk
+   cKonto := _g_gr_kto( cGroup )
 
-? cLine
+   // uzmi podatke kalk-a
+   __gen_kalk( dD_from, dD_to, cKonto )
 
-FF
-end_print()
+   ?
 
-return
+   IF cSp_ld == "D"
+      __get_ld( dD_from, cGroup )
+   ENDIF
+
+   cLine := ""
+   cTxt := ""
+
+   cLine += Replicate( "-", 20 )
+   cLine += Space( 1 )
+   cLine += Replicate( "-", 12 )
+   cLine += Space( 1 )
+   cLine += Replicate( "-", 12 )
+   cLine += Space( 1 )
+   cLine += Replicate( "-", 12 )
+
+   cTxt += PadR( "SEKCIJA", 20 )
+   cTxt += Space( 1 )
+   cTxt += PadL( "PRIHOD", 12 )
+   cTxt += Space( 1 )
+   cTxt += PadL( "RASHOD", 12 )
+   cTxt += Space( 1 )
+   cTxt += PadL( "UKUPNO", 12 )
+
+   P_10CPI
+
+   ?
+   ? "------------------------"
+   ? "REKAPITULACIJA TROSKOVA:"
+   ? cLine
+   ? cTxt
+   ? cLine
+
+   ? PadR( "1) place", 20 )
+   ? PadL( "bruto:", 20 )
+   @ PRow(), PCol() + 1 SAY Str( 0, 12, 2 )
+   @ PRow(), PCol() + 1 SAY Str( nLD_bruto, 12, 2 )
+   @ PRow(), PCol() + 1 SAY Str( 0 - nLD_bruto, 12, 2 )
+   ? PadL( "10.5% od bruta:", 20 )
+   nTmpBr := ( nLD_bruto * 0.105 )
+   @ PRow(), PCol() + 1 SAY Str( 0, 12, 2 )
+   @ PRow(), PCol() + 1 SAY Str( nTmpBr, 12, 2 )
+   @ PRow(), PCol() + 1 SAY Str( 0 - nTmpBr, 12, 2 )
+   ? PadL( "ostali troskovi:", 20 )
+   @ PRow(), PCol() + 1 SAY Str( 0, 12, 2 )
+   @ PRow(), PCol() + 1 SAY Str( nLD_ras, 12, 2 )
+   @ PRow(), PCol() + 1 SAY Str( 0 - nLD_ras, 12, 2 )
 
 
-// ---------------------------------------------
-// vraca konto grupe
-// ---------------------------------------------
-static function _g_gr_kto( cId )
-local xRet := ""
-local nTArea := SELECT()
+   ? PadR( "2) roba - materijal", 20 )
+   @ PRow(), PCol() + 1 SAY Str( nKALK_pri, 12, 2 )
+   @ PRow(), PCol() + 1 SAY Str( nKALK_ras, 12, 2 )
+   @ PRow(), PCol() + 1 SAY Str( nKALK_pri - nKALK_ras, 12, 2 )
 
-O_RJ
-select rj
-seek cId
+   ? PadR( "3) finansije", 20 )
+   @ PRow(), PCol() + 1 SAY Str( nFIN_pri, 12, 2 )
+   @ PRow(), PCol() + 1 SAY Str( nFIN_ras, 12, 2 )
+   @ PRow(), PCol() + 1 SAY Str( nFIN_pri - nFIN_ras, 12, 2 )
 
-if FOUND()
-	xRet := field->konto
-endif
+   ? cLine
 
-select (nTArea)
-return xRet
+   ? PadR( "UKUPNO:", 20 )
+
+   nTO_prih := ( nLD_pri + nKALK_pri + nFIN_pri )
+   nTO_rash := ( nLD_ras + nTmpBr + nLD_bruto + nKALK_ras + nFIN_ras )
+
+   // prihodi total
+   @ PRow(), PCol() + 1 SAY Str( nTO_prih, 12, 2 )
+   // rashodi total
+   @ PRow(), PCol() + 1 SAY Str( nTO_rash, 12, 2 )
+   // ukupno prihodi - rashodi
+   @ PRow(), PCol() + 1 SAY Str( nTO_prih - nTO_rash, 12, 2 )
+
+   ? cLine
+
+   FF
+   end_print()
+
+   RETURN
 
 
 // ---------------------------------------------
 // vraca konto grupe
 // ---------------------------------------------
-static function _g_gr_naz( cId )
-local xRet := ""
-local nTArea := SELECT()
+STATIC FUNCTION _g_gr_kto( cId )
 
-O_RJ
-select rj
-seek cId
+   LOCAL xRet := ""
+   LOCAL nTArea := Select()
 
-if FOUND()
-	xRet := ALLTRIM( field->naz )
-endif
+   O_RJ
+   SELECT rj
+   SEEK cId
 
-select (nTArea)
-return xRet
+   IF Found()
+      xRet := field->konto
+   ENDIF
+
+   SELECT ( nTArea )
+
+   RETURN xRet
+
+
+// ---------------------------------------------
+// vraca konto grupe
+// ---------------------------------------------
+STATIC FUNCTION _g_gr_naz( cId )
+
+   LOCAL xRet := ""
+   LOCAL nTArea := Select()
+
+   O_RJ
+   SELECT rj
+   SEEK cId
+
+   IF Found()
+      xRet := AllTrim( field->naz )
+   ENDIF
+
+   SELECT ( nTArea )
+
+   RETURN xRet
 
 
 // ---------------------------------------------
 // vraca naziv konta
 // ---------------------------------------------
-static function _g_kt_naz( cId )
-local xRet := ""
-local nTArea := SELECT()
+STATIC FUNCTION _g_kt_naz( cId )
 
-O_KONTO
-select konto
-seek cId
+   LOCAL xRet := ""
+   LOCAL nTArea := Select()
 
-if FOUND()
-	xRet := ALLTRIM( field->naz )
-endif
+   O_KONTO
+   SELECT konto
+   SEEK cId
 
-select (nTArea)
-return xRet
+   IF Found()
+      xRet := AllTrim( field->naz )
+   ENDIF
+
+   SELECT ( nTArea )
+
+   RETURN xRet
 
 
 // ---------------------------------------------
 // vraca naziv partnera
 // ---------------------------------------------
-static function _g_pt_naz( cId )
-local xRet := ""
-local nTArea := SELECT()
+STATIC FUNCTION _g_pt_naz( cId )
 
-O_PARTN
-select partn
-seek cId
+   LOCAL xRet := ""
+   LOCAL nTArea := Select()
 
-if FOUND()
-	xRet := ALLTRIM( field->naz )
-endif
+   O_PARTN
+   SELECT partn
+   SEEK cId
 
-select (nTArea)
-return xRet
+   IF Found()
+      xRet := AllTrim( field->naz )
+   ENDIF
+
+   SELECT ( nTArea )
+
+   RETURN xRet
 
 
 
 // ---------------------------------------------
 // header izvjestaja
 // ---------------------------------------------
-static function __r_head( dD_from, dD_to )
-?
-? "PREGLED TROSKOVA PO OBJEKTIMA ZA PERIOD: " + DTOC( dD_from ) + ;
-	"-" + DTOC(dD_to)
-?
-return
+STATIC FUNCTION __r_head( dD_from, dD_to )
+
+   ?
+   ? "PREGLED TROSKOVA PO OBJEKTIMA ZA PERIOD: " + DToC( dD_from ) + ;
+      "-" + DToC( dD_to )
+   ?
+
+   RETURN
 
 
 // --------------------------------------------------
 // generisi podatke iz fin-a
 // --------------------------------------------------
-static function __gen_fin( dD_from, dD_to, cGroup, cKtoList )
-local cFilter := ""
-local cIdFirma := gFirma
-local cIdKonto
-local cIdPartner
+STATIC FUNCTION __gen_fin( dD_from, dD_to, cGroup, cKtoList )
 
-// partner dug/pot/saldo
-local nP_dug := 0
-local nP_pot := 0
-local nP_saldo := 0
+   LOCAL cFilter := ""
+   LOCAL cIdFirma := gFirma
+   LOCAL cIdKonto
+   LOCAL cIdPartner
 
-// konto dug/pot/saldo
-local nK_dug := 0
-local nK_pot := 0
-local nK_saldo := 0
+   // partner dug/pot/saldo
+   LOCAL nP_dug := 0
+   LOCAL nP_pot := 0
+   LOCAL nP_saldo := 0
 
-// total dug/pot/saldo
-local nT_dug := 0
-local nT_pot := 0
-local nT_saldo := 0
+   // konto dug/pot/saldo
+   LOCAL nK_dug := 0
+   LOCAL nK_pot := 0
+   LOCAL nK_saldo := 0
 
-local nRbr := 0
-local nP_col := 50
-local nK_col := 30
+   // total dug/pot/saldo
+   LOCAL nT_dug := 0
+   LOCAL nT_pot := 0
+   LOCAL nT_saldo := 0
 
-local cTxt := ""
-local cLine := ""
+   LOCAL nRbr := 0
+   LOCAL nP_col := 50
+   LOCAL nK_col := 30
 
-cTxt += PADR( "r.br", 5 )
-cTxt += SPACE(1)
-cTxt += PADR( "konto", 7 )
-cTxt += SPACE(1)
-cTxt += PADR( "part.", 6 )
-cTxt += SPACE(1)
-cTxt += PADR( "naziv", 40 )
-cTxt += SPACE(1)
-cTxt += PADR( "duguje", 12 )
-cTxt += SPACE(1)
-cTxt += PADR( "potrazuje", 12 )
-cTxt += SPACE(1)
-cTxt += PADR( "saldo", 12 )
+   LOCAL cTxt := ""
+   LOCAL cLine := ""
 
-cLine += REPLICATE("-", 5)
-cLine += SPACE(1)
-cLine += REPLICATE("-", 7)
-cLine += SPACE(1)
-cLine += REPLICATE("-", 6)
-cLine += SPACE(1)
-cLine += REPLICATE("-", 40)
-cLine += SPACE(1)
-cLine += REPLICATE("-", 12)
-cLine += SPACE(1)
-cLine += REPLICATE("-", 12)
-cLine += SPACE(1)
-cLine += REPLICATE("-", 12)
+   cTxt += PadR( "r.br", 5 )
+   cTxt += Space( 1 )
+   cTxt += PadR( "konto", 7 )
+   cTxt += Space( 1 )
+   cTxt += PadR( "part.", 6 )
+   cTxt += Space( 1 )
+   cTxt += PadR( "naziv", 40 )
+   cTxt += Space( 1 )
+   cTxt += PadR( "duguje", 12 )
+   cTxt += Space( 1 )
+   cTxt += PadR( "potrazuje", 12 )
+   cTxt += Space( 1 )
+   cTxt += PadR( "saldo", 12 )
 
-? "FIN :: stanje objekta " + cGroup + ;
-	" od " + DTOC( dD_from ) + " do " + DTOC( dD_to )
+   cLine += Replicate( "-", 5 )
+   cLine += Space( 1 )
+   cLine += Replicate( "-", 7 )
+   cLine += Space( 1 )
+   cLine += Replicate( "-", 6 )
+   cLine += Space( 1 )
+   cLine += Replicate( "-", 40 )
+   cLine += Space( 1 )
+   cLine += Replicate( "-", 12 )
+   cLine += Space( 1 )
+   cLine += Replicate( "-", 12 )
+   cLine += Space( 1 )
+   cLine += Replicate( "-", 12 )
 
-P_COND
+   ? "FIN :: stanje objekta " + cGroup + ;
+      " od " + DToC( dD_from ) + " do " + DToC( dD_to )
 
-? cLine
-? cTxt
-? cLine
+   P_COND
 
-o_suban()
-select suban
-set order to tag "1"
-go top
+   ? cLine
+   ? cTxt
+   ? cLine
 
-// radna jedinica
-cFilter += "idrj=" + dbf_quote( cGroup )
+   o_suban()
+   SELECT suban
+   SET ORDER TO TAG "1"
+   GO TOP
 
-// datumski period
-cFilter += ".and. datdok >= CTOD('" + ;
-	DTOC( dD_from ) + ;
-	"') .and. datdok <= CTOD('" + ;
-	DTOC( dD_to )+ ;
-	"')"
+   // radna jedinica
+   cFilter += "idrj=" + dbf_quote( cGroup )
 
-if !EMPTY( ALLTRIM( cKtoList ) )
-	cFilter += ".and." + PARSIRAJ( ALLTRIM( cKtoList ), "idkonto" )
-endif
+   // datumski period
+   cFilter += ".and. datdok >= CTOD('" + ;
+      DToC( dD_from ) + ;
+      "') .and. datdok <= CTOD('" + ;
+      DToC( dD_to ) + ;
+      "')"
 
-set filter to &cFilter
-go top
-HSEEK cIdFirma
+   IF !Empty( AllTrim( cKtoList ) )
+      cFilter += ".and." + PARSIRAJ( AllTrim( cKtoList ), "idkonto" )
+   ENDIF
 
-do while !EOF() .and. field->idfirma == cIdFirma   
+   SET FILTER to &cFilter
+   GO TOP
+   HSEEK cIdFirma
 
-  cIdKonto := field->idkonto
-  nK_dug := 0
-  nK_pot := 0
-  nK_saldo := 0
+   DO WHILE !Eof() .AND. field->idfirma == cIdFirma
 
-  do while !EOF() .and. field->idfirma == cIdFirma ;
-		.and. field->idkonto == cIdKonto 
-	    
-	cIdPartner := field->idpartner
-            
-	nP_dug := 0
-	nP_pot := 0
-	nP_saldo := 0
-            
-	do while !EOF() .and. field->idfirma == cIdFirma ;
-	    	.and. field->idkonto == cIdKonto ;
-		.and. field->idpartner == cIdPartner 
-	      
-	      	// duguje/potrazuje
-        	if field->d_p == "1"
-			nP_dug += field->IznosBHD
-		else
-			nP_pot += field->IznosBHD
-		endif
-              
-              	skip
-	
-	enddo
+      cIdKonto := field->idkonto
+      nK_dug := 0
+      nK_pot := 0
+      nK_saldo := 0
 
-	nP_saldo := ( nP_dug - nP_pot ) 
+      DO WHILE !Eof() .AND. field->idfirma == cIdFirma ;
+            .AND. field->idkonto == cIdKonto
 
-	if prow() > 61 + dodatni_redovi_po_stranici()
-		FF
-	endif
+         cIdPartner := field->idpartner
 
-	// ne prikazuj podatke ako su 0
-	if ROUND( nP_saldo, 2) == 0
-		loop
-	endif
+         nP_dug := 0
+         nP_pot := 0
+         nP_saldo := 0
 
-	? PADL( ALLTRIM( STR( ++ nRbr, 4 )) + ".", 5 )
+         DO WHILE !Eof() .AND. field->idfirma == cIdFirma ;
+               .AND. field->idkonto == cIdKonto ;
+               .AND. field->idpartner == cIdPartner
 
-       	@ prow(), pcol()+1 SAY cIdKonto
-      	@ prow(), pcol()+1 SAY cIdPartner       
+            // duguje/potrazuje
+            IF field->d_p == "1"
+               nP_dug += field->IznosBHD
+            ELSE
+               nP_pot += field->IznosBHD
+            ENDIF
 
-        if EMPTY( cIdPartner )
-		@ prow(), nK_col := pcol()+1 SAY PADR( _g_kt_naz( cIdKonto ) , 40 )  
-	else
-		@ prow(), nK_col := pcol()+1 SAY PADR( _g_pt_naz( cIdPartner ) , 40 )  
-	endif
-	
-	// duguje
-	@ prow(), nP_col := pcol()+1 SAY STR(nP_dug,12,2)
-	// potrazuje
-        @ prow(), pcol()+1 SAY STR(nP_pot,12,2)
-	// saldo
-        @ prow(), pcol()+1 SAY STR(nP_saldo,12,2)
-       
-        // saldo po kontu
-	nK_dug += nP_dug
-	nK_pot += nP_pot
-	nK_saldo += nP_saldo
+            SKIP
 
-	// total ...
-	nT_dug += nP_dug
-	nT_pot += nP_pot
-	nT_saldo += nP_saldo
+         ENDDO
 
-	if LEFT( cIdKonto, 1 ) == "6"
-		// prihod je na 6-ci
-		nFIN_pri += ABS( nP_saldo )
-	else
-		// ovo je rashod
-		nFIN_ras += nP_saldo
-	endif
+         nP_saldo := ( nP_dug - nP_pot )
 
-  enddo
+         IF PRow() > 61 + dodatni_redovi_po_stranici()
+            FF
+         ENDIF
 
-  ? cLine
-  ? "ukupno konto " + cIdKonto
-  @ prow(), nK_col SAY PADR( _g_kt_naz( cIdKonto ), 40)
-  @ prow(), nP_col SAY STR( nK_dug, 12, 2 )
-  @ prow(), pcol()+1 SAY STR( nK_pot, 12, 2 )
-  @ prow(), pcol()+1 SAY STR( nK_saldo, 12, 2 )
-  ? cLine
+         // ne prikazuj podatke ako su 0
+         IF Round( nP_saldo, 2 ) == 0
+            LOOP
+         ENDIF
 
-enddo
+         ? PadL( AllTrim( Str( ++nRbr, 4 ) ) + ".", 5 )
 
-// ispisi total...
+         @ PRow(), PCol() + 1 SAY cIdKonto
+         @ PRow(), PCol() + 1 SAY cIdPartner
 
-? "UKUPNO:"
-@ prow(), nP_col SAY STR( nT_dug, 12, 2 )
-@ prow(), pcol()+1 SAY STR( nT_pot, 12, 2 )
-@ prow(), pcol()+1 SAY STR( nT_saldo, 12, 2 )
+         IF Empty( cIdPartner )
+            @ PRow(), nK_col := PCol() + 1 SAY PadR( _g_kt_naz( cIdKonto ), 40 )
+         ELSE
+            @ PRow(), nK_col := PCol() + 1 SAY PadR( _g_pt_naz( cIdPartner ), 40 )
+         ENDIF
 
-? cLine
-	 
+         // duguje
+         @ PRow(), nP_col := PCol() + 1 SAY Str( nP_dug, 12, 2 )
+         // potrazuje
+         @ PRow(), PCol() + 1 SAY Str( nP_pot, 12, 2 )
+         // saldo
+         @ PRow(), PCol() + 1 SAY Str( nP_saldo, 12, 2 )
 
-return
+         // saldo po kontu
+         nK_dug += nP_dug
+         nK_pot += nP_pot
+         nK_saldo += nP_saldo
+
+         // total ...
+         nT_dug += nP_dug
+         nT_pot += nP_pot
+         nT_saldo += nP_saldo
+
+         IF Left( cIdKonto, 1 ) == "6"
+            // prihod je na 6-ci
+            nFIN_pri += Abs( nP_saldo )
+         ELSE
+            // ovo je rashod
+            nFIN_ras += nP_saldo
+         ENDIF
+
+      ENDDO
+
+      ? cLine
+      ? "ukupno konto " + cIdKonto
+      @ PRow(), nK_col SAY PadR( _g_kt_naz( cIdKonto ), 40 )
+      @ PRow(), nP_col SAY Str( nK_dug, 12, 2 )
+      @ PRow(), PCol() + 1 SAY Str( nK_pot, 12, 2 )
+      @ PRow(), PCol() + 1 SAY Str( nK_saldo, 12, 2 )
+      ? cLine
+
+   ENDDO
+
+   // ispisi total...
+
+   ? "UKUPNO:"
+   @ PRow(), nP_col SAY Str( nT_dug, 12, 2 )
+   @ PRow(), PCol() + 1 SAY Str( nT_pot, 12, 2 )
+   @ PRow(), PCol() + 1 SAY Str( nT_saldo, 12, 2 )
+
+   ? cLine
+
+   RETURN
 
 
 // --------------------------------------------------
 // generisi podatke iz fin-a unakrsno
 // --------------------------------------------------
-static function __gen2_fin( dD_from, dD_to, cGroup, cKtoList )
-local cFilter := ""
-local cIdFirma := gFirma
-local cIdKonto
-local cIdPartner
+STATIC FUNCTION __gen2_fin( dD_from, dD_to, cGroup, cKtoList )
 
-// partner dug/pot/saldo
-local nP_dug := 0
-local nP_pot := 0
-local nP_saldo := 0
+   LOCAL cFilter := ""
+   LOCAL cIdFirma := gFirma
+   LOCAL cIdKonto
+   LOCAL cIdPartner
 
-// konto dug/pot/saldo
-local nK_dug := 0
-local nK_pot := 0
-local nK_saldo := 0
+   // partner dug/pot/saldo
+   LOCAL nP_dug := 0
+   LOCAL nP_pot := 0
+   LOCAL nP_saldo := 0
 
-// total dug/pot/saldo
-local nT_dug := 0
-local nT_pot := 0
-local nT_saldo := 0
+   // konto dug/pot/saldo
+   LOCAL nK_dug := 0
+   LOCAL nK_pot := 0
+   LOCAL nK_saldo := 0
 
-local nRbr := 0
-local nP_col := 50
-local nK_col := 30
+   // total dug/pot/saldo
+   LOCAL nT_dug := 0
+   LOCAL nT_pot := 0
+   LOCAL nT_saldo := 0
 
-local cTxt := ""
-local cLine := ""
+   LOCAL nRbr := 0
+   LOCAL nP_col := 50
+   LOCAL nK_col := 30
 
-cTxt += PADR( "r.br", 5 )
-cTxt += SPACE(1)
-cTxt += PADR( "konto", 7 )
-cTxt += SPACE(1)
-cTxt += PADR( "part.", 6 )
-cTxt += SPACE(1)
-cTxt += PADR( "naziv", 40 )
-cTxt += SPACE(1)
-cTxt += PADR( "duguje", 12 )
-cTxt += SPACE(1)
-cTxt += PADR( "potrazuje", 12 )
-cTxt += SPACE(1)
-cTxt += PADR( "saldo", 12 )
+   LOCAL cTxt := ""
+   LOCAL cLine := ""
 
-cLine += REPLICATE("-", 5)
-cLine += SPACE(1)
-cLine += REPLICATE("-", 7)
-cLine += SPACE(1)
-cLine += REPLICATE("-", 6)
-cLine += SPACE(1)
-cLine += REPLICATE("-", 40)
-cLine += SPACE(1)
-cLine += REPLICATE("-", 12)
-cLine += SPACE(1)
-cLine += REPLICATE("-", 12)
-cLine += SPACE(1)
-cLine += REPLICATE("-", 12)
+   cTxt += PadR( "r.br", 5 )
+   cTxt += Space( 1 )
+   cTxt += PadR( "konto", 7 )
+   cTxt += Space( 1 )
+   cTxt += PadR( "part.", 6 )
+   cTxt += Space( 1 )
+   cTxt += PadR( "naziv", 40 )
+   cTxt += Space( 1 )
+   cTxt += PadR( "duguje", 12 )
+   cTxt += Space( 1 )
+   cTxt += PadR( "potrazuje", 12 )
+   cTxt += Space( 1 )
+   cTxt += PadR( "saldo", 12 )
 
-? "FIN :: stanje po objektu " + cGroup + ;
-	" od " + DTOC( dD_from ) + " do " + DTOC( dD_to )
+   cLine += Replicate( "-", 5 )
+   cLine += Space( 1 )
+   cLine += Replicate( "-", 7 )
+   cLine += Space( 1 )
+   cLine += Replicate( "-", 6 )
+   cLine += Space( 1 )
+   cLine += Replicate( "-", 40 )
+   cLine += Space( 1 )
+   cLine += Replicate( "-", 12 )
+   cLine += Space( 1 )
+   cLine += Replicate( "-", 12 )
+   cLine += Space( 1 )
+   cLine += Replicate( "-", 12 )
 
-P_COND
+   ? "FIN :: stanje po objektu " + cGroup + ;
+      " od " + DToC( dD_from ) + " do " + DToC( dD_to )
 
-? cLine
-? cTxt
-? cLine
+   P_COND
 
-o_suban()
-select suban
-set order to tag "2"
-// idfirma+idpartner+idkonto
+   ? cLine
+   ? cTxt
+   ? cLine
 
-// radna jedinica
-cFilter += "idrj=" + dbf_quote( cGroup )
+   o_suban()
+   SELECT suban
+   SET ORDER TO TAG "2"
+   // idfirma+idpartner+idkonto
 
-// datumski period
-cFilter += ".and. datdok >= CTOD('" + ;
-	DTOC( dD_from ) + ;
-	"') .and. datdok <= CTOD('" + ;
-	DTOC( dD_to )+ ;
-	"')"
+   // radna jedinica
+   cFilter += "idrj=" + dbf_quote( cGroup )
 
-if !EMPTY( ALLTRIM( cKtoList ) )
-	cFilter += ".and." + PARSIRAJ( ALLTRIM( cKtoList ), "idkonto" )
-endif
+   // datumski period
+   cFilter += ".and. datdok >= CTOD('" + ;
+      DToC( dD_from ) + ;
+      "') .and. datdok <= CTOD('" + ;
+      DToC( dD_to ) + ;
+      "')"
 
-set filter to &cFilter
-go top
-HSEEK cIdFirma
+   IF !Empty( AllTrim( cKtoList ) )
+      cFilter += ".and." + PARSIRAJ( AllTrim( cKtoList ), "idkonto" )
+   ENDIF
 
-do while !EOF() .and. field->idfirma == cIdFirma   
+   SET FILTER to &cFilter
+   GO TOP
+   HSEEK cIdFirma
 
-  cIdPartner := field->idpartner
-            
-  nP_dug := 0
-  nP_pot := 0
-  nP_saldo := 0
- 
-  do while !EOF() .and. field->idfirma == cIdFirma ;
-		.and. field->idpartner == cIdPartner 
-	    
- 	cIdKonto := field->idkonto
-  	nK_dug := 0
-  	nK_pot := 0
-  	nK_saldo := 0
-    
-	do while !EOF() .and. field->idfirma == cIdFirma ;
-	    	.and. field->idkonto == cIdKonto ;
-		.and. field->idpartner == cIdPartner 
-	      
-	      	// duguje/potrazuje
-        	if field->d_p == "1"
-			nK_dug += field->IznosBHD
-		else
-			nK_pot += field->IznosBHD
-		endif
-              
-              	skip
-	
-	enddo
+   DO WHILE !Eof() .AND. field->idfirma == cIdFirma
 
-	nK_saldo := ( nK_dug - nK_pot ) 
+      cIdPartner := field->idpartner
 
-	if prow() > 61 + dodatni_redovi_po_stranici()
-		FF
-	endif
+      nP_dug := 0
+      nP_pot := 0
+      nP_saldo := 0
 
-	// ne prikazuj podatke ako su 0
-	if ROUND( nK_saldo, 2) == 0
-		loop
-	endif
+      DO WHILE !Eof() .AND. field->idfirma == cIdFirma ;
+            .AND. field->idpartner == cIdPartner
 
-	? PADL( ALLTRIM( STR( ++ nRbr, 4 )) + ".", 5 )
+         cIdKonto := field->idkonto
+         nK_dug := 0
+         nK_pot := 0
+         nK_saldo := 0
 
-       	@ prow(), pcol()+1 SAY cIdKonto
-      	@ prow(), pcol()+1 SAY cIdPartner       
+         DO WHILE !Eof() .AND. field->idfirma == cIdFirma ;
+               .AND. field->idkonto == cIdKonto ;
+               .AND. field->idpartner == cIdPartner
 
-        if EMPTY( cIdPartner )
-		@ prow(), nK_col := pcol()+1 SAY PADR( _g_kt_naz( cIdKonto ) , 40 )  
-	else
-		@ prow(), nK_col := pcol()+1 SAY PADR( _g_pt_naz( cIdPartner ) , 40 )  
-	endif
-	
-	// duguje
-	@ prow(), nP_col := pcol()+1 SAY STR(nK_dug,12,2)
-	// potrazuje
-        @ prow(), pcol()+1 SAY STR(nK_pot,12,2)
-	// saldo
-        @ prow(), pcol()+1 SAY STR(nK_saldo,12,2)
-       
-        // saldo po kontu
-	nP_dug += nK_dug
-	nP_pot += nK_pot
-	nP_saldo += nK_saldo
+            // duguje/potrazuje
+            IF field->d_p == "1"
+               nK_dug += field->IznosBHD
+            ELSE
+               nK_pot += field->IznosBHD
+            ENDIF
 
-	// total ...
-	nT_dug += nK_dug
-	nT_pot += nK_pot
-	nT_saldo += nK_saldo
+            SKIP
 
-  enddo
+         ENDDO
 
-  //? cLine
-  //? "ukupno partner " + cIdPartner
-  //@ prow(), nK_col SAY PADR( _g_pt_naz( cIdPartner ), 40)
-  //@ prow(), nP_col SAY STR( nP_dug, 12, 2 )
-  //@ prow(), pcol()+1 SAY STR( nP_pot, 12, 2 )
-  //@ prow(), pcol()+1 SAY STR( nP_saldo, 12, 2 )
-  //? cLine
+         nK_saldo := ( nK_dug - nK_pot )
 
-enddo
+         IF PRow() > 61 + dodatni_redovi_po_stranici()
+            FF
+         ENDIF
 
-// ispisi total...
+         // ne prikazuj podatke ako su 0
+         IF Round( nK_saldo, 2 ) == 0
+            LOOP
+         ENDIF
 
-? cLine
-? "UKUPNO:"
-@ prow(), nP_col SAY STR( nT_dug, 12, 2 )
-@ prow(), pcol()+1 SAY STR( nT_pot, 12, 2 )
-@ prow(), pcol()+1 SAY STR( nT_saldo, 12, 2 )
+         ? PadL( AllTrim( Str( ++nRbr, 4 ) ) + ".", 5 )
 
-? cLine
+         @ PRow(), PCol() + 1 SAY cIdKonto
+         @ PRow(), PCol() + 1 SAY cIdPartner
 
-return
+         IF Empty( cIdPartner )
+            @ PRow(), nK_col := PCol() + 1 SAY PadR( _g_kt_naz( cIdKonto ), 40 )
+         ELSE
+            @ PRow(), nK_col := PCol() + 1 SAY PadR( _g_pt_naz( cIdPartner ), 40 )
+         ENDIF
+
+         // duguje
+         @ PRow(), nP_col := PCol() + 1 SAY Str( nK_dug, 12, 2 )
+         // potrazuje
+         @ PRow(), PCol() + 1 SAY Str( nK_pot, 12, 2 )
+         // saldo
+         @ PRow(), PCol() + 1 SAY Str( nK_saldo, 12, 2 )
+
+         // saldo po kontu
+         nP_dug += nK_dug
+         nP_pot += nK_pot
+         nP_saldo += nK_saldo
+
+         // total ...
+         nT_dug += nK_dug
+         nT_pot += nK_pot
+         nT_saldo += nK_saldo
+
+      ENDDO
+
+      // ? cLine
+      // ? "ukupno partner " + cIdPartner
+      // @ prow(), nK_col SAY PADR( _g_pt_naz( cIdPartner ), 40)
+      // @ prow(), nP_col SAY STR( nP_dug, 12, 2 )
+      // @ prow(), pcol()+1 SAY STR( nP_pot, 12, 2 )
+      // @ prow(), pcol()+1 SAY STR( nP_saldo, 12, 2 )
+      // ? cLine
+
+   ENDDO
+
+   // ispisi total...
+
+   ? cLine
+   ? "UKUPNO:"
+   @ PRow(), nP_col SAY Str( nT_dug, 12, 2 )
+   @ PRow(), PCol() + 1 SAY Str( nT_pot, 12, 2 )
+   @ PRow(), PCol() + 1 SAY Str( nT_saldo, 12, 2 )
+
+   ? cLine
+
+   RETURN
 
 
 
 // --------------------------------------------------
 // generisi podatke iz kalk-a
 // --------------------------------------------------
-static function __gen_kalk( dD_from, dD_to, cKto )
-local cPath := STRTRAN( KUMPATH, "FIN", "KALK" )
-local cIdFirma := gFirma
-local cLine
-local cTxt
-local nIzlNV
-local nUlNV
-local nUlKol
-local nIzKol
-local nKolicina
+STATIC FUNCTION __gen_kalk( dD_from, dD_to, cKto )
 
-select (102)
-use ( cPath + SLASH + "kalk" ) alias "ka_exp"
+   LOCAL cPath := StrTran( KUMPATH, "FIN", "KALK" )
+   LOCAL cIdFirma := gFirma
+   LOCAL cLine
+   LOCAL cTxt
+   LOCAL nIzlNV
+   LOCAL nUlNV
+   LOCAL nUlKol
+   LOCAL nIzKol
+   LOCAL nKolicina
 
-select ka_exp
-// mkonto
-set order to tag "3"
-go top
+   SELECT ( 102 )
+   USE ( cPath + SLASH + "kalk" ) ALIAS "ka_exp"
 
-seek cIdFirma + cKto
+   SELECT ka_exp
+   // mkonto
+   SET ORDER TO TAG "3"
+   GO TOP
 
-nIzlNV := 0   
-nUlNV := 0
-nUlKol := 0
-nIzKol := 0
-nKolicina := 0
+   SEEK cIdFirma + cKto
 
-// prodji kroz KALK za ovaj konto...
+   nIzlNV := 0
+   nUlNV := 0
+   nUlKol := 0
+   nIzKol := 0
+   nKolicina := 0
 
-do while !EOF() .and. field->idfirma == cIdFirma ;
-	.and. field->mkonto == cKto	
-	
-	// provjeri datum
-	if field->datdok > dD_to .or. field->datdok < dD_from
-		skip
-		loop
-	endif
-  
- 	if field->mu_i == "1"
+   // prodji kroz KALK za ovaj konto...
 
-		if !(field->idvd $ "12#22#94")
-			nKolicina := field->kolicina - field->gkolicina - field->gkolicin2
- 			nUlKol += nKolicina
-			nUlNv += round( field->nc*(field->kolicina-field->gkolicina-field->gkolicin2) , gZaokr)
-		else
-			nKolicina := -field->kolicina
-			nIzlKol += nKolicina
-     			nIzlNV -= round( field->nc*field->kolicina , gZaokr)
-    		endif
+   DO WHILE !Eof() .AND. field->idfirma == cIdFirma ;
+         .AND. field->mkonto == cKto
 
-  	elseif field->mu_i=="5"
+      // provjeri datum
+      IF field->datdok > dD_to .OR. field->datdok < dD_from
+         SKIP
+         LOOP
+      ENDIF
 
-    		nKolicina := field->kolicina
-    		nIzlKol += nKolicina
-    		nIzlNV += ROUND(field->nc*field->kolicina, gZaokr)
+      IF field->mu_i == "1"
 
-  	elseif field->mu_i=="8"
-     		
-		nKolicina := -field->kolicina
-     		nIzlKol += nKolicina
-		nIzlNV += ROUND(field->nc*(-kolicina), gZaokr)
-   		nKolicina := -field->kolicina
-		nUlKol += nKolicina	
-		nUlKol += round(-nc*(field->kolicina-gkolicina-gkolicin2) , gZaokr)
-  	endif
+         IF !( field->idvd $ "12#22#94" )
+            nKolicina := field->kolicina - field->gkolicina - field->gkolicin2
+            nUlKol += nKolicina
+            nUlNv += Round( field->nc * ( field->kolicina - field->gkolicina - field->gkolicin2 ), gZaokr )
+         ELSE
+            nKolicina := -field->kolicina
+            nIzlKol += nKolicina
+            nIzlNV -= Round( field->nc * field->kolicina, gZaokr )
+         ENDIF
 
-	//select kalk
-	skip
+      ELSEIF field->mu_i == "5"
 
-enddo
+         nKolicina := field->kolicina
+         nIzlKol += nKolicina
+         nIzlNV += Round( field->nc * field->kolicina, gZaokr )
 
-// sada imam podatke, ispisi ih...
+      ELSEIF field->mu_i == "8"
 
-cLine := ""
-cTxt := ""
+         nKolicina := -field->kolicina
+         nIzlKol += nKolicina
+         nIzlNV += Round( field->nc * ( -kolicina ), gZaokr )
+         nKolicina := -field->kolicina
+         nUlKol += nKolicina
+         nUlKol += Round( -nc * ( field->kolicina - gkolicina - gkolicin2 ), gZaokr )
+      ENDIF
 
-cLine += REPLICATE( "-", 7 )
-cLine += SPACE(1)
-cLine += REPLICATE( "-", 60 )
-cLine += SPACE(1)
-cLine += REPLICATE( "-", 12 )
-cLine += SPACE(1)
-cLine += REPLICATE( "-", 12 )
-cLine += SPACE(1)
-cLine += REPLICATE( "-", 12 )
+      // select kalk
+      SKIP
 
-cTxt += PADR( "objekat", 7 )
-cTxt += SPACE(1)
-cTxt += PADR( "naziv", 60 )
-cTxt += SPACE(1)
-cTxt += PADR( "NV ulaz", 12 )
-cTxt += SPACE(1)
-cTxt += PADR( "NV izlaz", 12 )
-cTxt += SPACE(1)
-cTxt += PADR( "NV stanje", 12 )
+   ENDDO
 
-P_10CPI
+   // sada imam podatke, ispisi ih...
 
-? "KALK :: stanje objekta", cKto, "od " + DTOC(dD_from) + ;
-	" do " + DTOC( dD_to )
+   cLine := ""
+   cTxt := ""
 
-P_COND
+   cLine += Replicate( "-", 7 )
+   cLine += Space( 1 )
+   cLine += Replicate( "-", 60 )
+   cLine += Space( 1 )
+   cLine += Replicate( "-", 12 )
+   cLine += Space( 1 )
+   cLine += Replicate( "-", 12 )
+   cLine += Space( 1 )
+   cLine += Replicate( "-", 12 )
 
-// ispisi zaglavlje
-? cLine
-? cTxt
-? cLine
+   cTxt += PadR( "objekat", 7 )
+   cTxt += Space( 1 )
+   cTxt += PadR( "naziv", 60 )
+   cTxt += Space( 1 )
+   cTxt += PadR( "NV ulaz", 12 )
+   cTxt += Space( 1 )
+   cTxt += PadR( "NV izlaz", 12 )
+   cTxt += Space( 1 )
+   cTxt += PadR( "NV stanje", 12 )
 
-? cKto
-@ prow(), pcol()+1 SAY PADR( _g_kt_naz( cKto ), 60)
-@ prow(), pcol()+1 SAY STR(nUlNV,12,2)
-@ prow(), pcol()+1 SAY STR(nIzlNV,12,2)
-@ prow(), pcol()+1 SAY STR(nUlNV-nIzlNV,12,2)
-? cLine
+   P_10CPI
 
-nKALK_ras += ( nUlNv - nIzlNV)
+   ? "KALK :: stanje objekta", cKto, "od " + DToC( dD_from ) + ;
+      " do " + DToC( dD_to )
 
-return
+   P_COND
+
+   // ispisi zaglavlje
+   ? cLine
+   ? cTxt
+   ? cLine
+
+   ? cKto
+   @ PRow(), PCol() + 1 SAY PadR( _g_kt_naz( cKto ), 60 )
+   @ PRow(), PCol() + 1 SAY Str( nUlNV, 12, 2 )
+   @ PRow(), PCol() + 1 SAY Str( nIzlNV, 12, 2 )
+   @ PRow(), PCol() + 1 SAY Str( nUlNV - nIzlNV, 12, 2 )
+   ? cLine
+
+   nKALK_ras += ( nUlNv - nIzlNV )
+
+   RETURN
 
 
 
@@ -748,374 +761,374 @@ return
 // -------------------------------------------
 // vraca linije i header
 // -------------------------------------------
-static function _g_ld_line( cLine )
+STATIC FUNCTION _g_ld_line( cLine )
 
-cLine := REPLICATE("-", 5)
-cLine += SPACE(1)
-cLine += REPLICATE("-", 30)
-cLine += SPACE(1)
-cLine += REPLICATE("-", 8)
-cLine += SPACE(1)
-cLine += REPLICATE("-", 12)
-cLine += SPACE(1)
-cLine += REPLICATE("-", 12)
-cLine += SPACE(1)
-cLine += REPLICATE("-", 12)
-cLine += SPACE(1)
-cLine += REPLICATE("-", 12)
-cLine += SPACE(1)
-cLine += REPLICATE("-", 12)
-cLine += SPACE(1)
-cLine += REPLICATE("-", 12)
+   cLine := Replicate( "-", 5 )
+   cLine += Space( 1 )
+   cLine += Replicate( "-", 30 )
+   cLine += Space( 1 )
+   cLine += Replicate( "-", 8 )
+   cLine += Space( 1 )
+   cLine += Replicate( "-", 12 )
+   cLine += Space( 1 )
+   cLine += Replicate( "-", 12 )
+   cLine += Space( 1 )
+   cLine += Replicate( "-", 12 )
+   cLine += Space( 1 )
+   cLine += Replicate( "-", 12 )
+   cLine += Space( 1 )
+   cLine += Replicate( "-", 12 )
+   cLine += Space( 1 )
+   cLine += Replicate( "-", 12 )
 
-cTxt := PADR("R.br", 5)
-cTxt += SPACE(1)
-cTxt += PADR("Ime i prezime radnika", 30)
-cTxt += SPACE(1)
-cTxt += PADR("Sati", 8)
-cTxt += SPACE(1)
-cTxt += PADR("Bruto", 12)
-cTxt += SPACE(1)
-cTxt += PADR("Neto", 12)
-cTxt += SPACE(1)
-cTxt += PADR("Dopr.PIO", 12)
-cTxt += SPACE(1)
-cTxt += PADR("Dopr.ZDR", 12)
-cTxt += SPACE(1)
-cTxt += PADR("Dopr.NEZ", 12)
-cTxt += SPACE(1)
-cTxt += PADR("Porez", 12)
+   cTxt := PadR( "R.br", 5 )
+   cTxt += Space( 1 )
+   cTxt += PadR( "Ime i prezime radnika", 30 )
+   cTxt += Space( 1 )
+   cTxt += PadR( "Sati", 8 )
+   cTxt += Space( 1 )
+   cTxt += PadR( "Bruto", 12 )
+   cTxt += Space( 1 )
+   cTxt += PadR( "Neto", 12 )
+   cTxt += Space( 1 )
+   cTxt += PadR( "Dopr.PIO", 12 )
+   cTxt += Space( 1 )
+   cTxt += PadR( "Dopr.ZDR", 12 )
+   cTxt += Space( 1 )
+   cTxt += PadR( "Dopr.NEZ", 12 )
+   cTxt += Space( 1 )
+   cTxt += PadR( "Porez", 12 )
 
-if ld_exp->tp_1 <> 0
-	cLine += SPACE(1)
-	cLine += REPLICATE("-", 12)
-	cTxt += SPACE(1)
-	cTxt += PADR( "dp-1", 12 )
-endif
-if ld_exp->tp_2 <> 0
-	cLine += SPACE(1)
-	cLine += REPLICATE("-", 12)
-	cTxt += SPACE(1)
-	cTxt += PADR( "dp-2", 12 )
-endif
-if ld_exp->tp_3 <> 0
-	cLine += SPACE(1)
-	cLine += REPLICATE("-", 12)
-	cTxt += SPACE(1)
-	cTxt += PADR( "dp-3", 12 )
-endif
-if ld_exp->tp_4 <> 0
-	cLine += SPACE(1)
-	cLine += REPLICATE("-", 12)
-	cTxt += SPACE(1)
-	cTxt += PADR( "dp-4", 12 )
-endif
-if ld_exp->tp_5 <> 0
-	cLine += SPACE(1)
-	cLine += REPLICATE("-", 12)
-	cTxt += SPACE(1)
-	cTxt += PADR( "dp-5", 12 )
-endif
+   IF ld_exp->tp_1 <> 0
+      cLine += Space( 1 )
+      cLine += Replicate( "-", 12 )
+      cTxt += Space( 1 )
+      cTxt += PadR( "dp-1", 12 )
+   ENDIF
+   IF ld_exp->tp_2 <> 0
+      cLine += Space( 1 )
+      cLine += Replicate( "-", 12 )
+      cTxt += Space( 1 )
+      cTxt += PadR( "dp-2", 12 )
+   ENDIF
+   IF ld_exp->tp_3 <> 0
+      cLine += Space( 1 )
+      cLine += Replicate( "-", 12 )
+      cTxt += Space( 1 )
+      cTxt += PadR( "dp-3", 12 )
+   ENDIF
+   IF ld_exp->tp_4 <> 0
+      cLine += Space( 1 )
+      cLine += Replicate( "-", 12 )
+      cTxt += Space( 1 )
+      cTxt += PadR( "dp-4", 12 )
+   ENDIF
+   IF ld_exp->tp_5 <> 0
+      cLine += Space( 1 )
+      cLine += Replicate( "-", 12 )
+      cTxt += Space( 1 )
+      cTxt += PadR( "dp-5", 12 )
+   ENDIF
 
-? cLine
-? cTxt
-? cLine
+   ? cLine
+   ? cTxt
+   ? cLine
 
-return
+   RETURN
 
 
 // ----------------------------------------------------------
 // printanje reporta iz ld-a
 // ----------------------------------------------------------
-static function __get_ld( dD_from, cGroup )
-local cLine
-local nU_sati := 0
-local nU_bruto := 0 
-local nU_neto := 0
-local nU_d_pio := 0
-local nU_d_nez := 0
-local nU_d_zdr := 0
-local nU_i_por := 0
-local nU_o_por := 0
-local nU_tp_1 := 0
-local nU_tp_2 := 0
-local nU_tp_3 := 0
-local nU_tp_4 := 0
-local nU_tp_5 := 0
-local nT_sati := 0
-local nT_bruto := 0 
-local nT_neto := 0
-local nT_d_pio := 0
-local nT_d_nez := 0
-local nT_d_zdr := 0
-local nT_i_por := 0
-local nT_o_por := 0
-local nT_tp_1 := 0
-local nT_tp_2 := 0
-local nT_tp_3 := 0
-local nT_tp_4 := 0
-local nT_tp_5 := 0
-local nCol := 15
-local cPath := STRTRAN( PRIVPATH, "FIN", "LD" )
+STATIC FUNCTION __get_ld( dD_from, cGroup )
 
-select (101)
-use ( cPath + SLASH + "r_export" ) alias "ld_exp"
-index on group + idradn + STR(godina,4) + STR(mjesec,2) tag "1"
-select ld_exp
-set order to tag "1"
-go top
+   LOCAL cLine
+   LOCAL nU_sati := 0
+   LOCAL nU_bruto := 0
+   LOCAL nU_neto := 0
+   LOCAL nU_d_pio := 0
+   LOCAL nU_d_nez := 0
+   LOCAL nU_d_zdr := 0
+   LOCAL nU_i_por := 0
+   LOCAL nU_o_por := 0
+   LOCAL nU_tp_1 := 0
+   LOCAL nU_tp_2 := 0
+   LOCAL nU_tp_3 := 0
+   LOCAL nU_tp_4 := 0
+   LOCAL nU_tp_5 := 0
+   LOCAL nT_sati := 0
+   LOCAL nT_bruto := 0
+   LOCAL nT_neto := 0
+   LOCAL nT_d_pio := 0
+   LOCAL nT_d_nez := 0
+   LOCAL nT_d_zdr := 0
+   LOCAL nT_i_por := 0
+   LOCAL nT_o_por := 0
+   LOCAL nT_tp_1 := 0
+   LOCAL nT_tp_2 := 0
+   LOCAL nT_tp_3 := 0
+   LOCAL nT_tp_4 := 0
+   LOCAL nT_tp_5 := 0
+   LOCAL nCol := 15
+   LOCAL cPath := StrTran( PRIVPATH, "FIN", "LD" )
 
-P_10CPI
+   SELECT ( 101 )
+   USE ( cPath + SLASH + "r_export" ) ALIAS "ld_exp"
+   INDEX ON group + idradn + Str( godina, 4 ) + Str( mjesec, 2 ) TAG "1"
+   SELECT ld_exp
+   SET ORDER TO TAG "1"
+   GO TOP
 
-? "LD :: pregled utroska za grupu:", cGroup, STR(MONTH(dD_from)) ;
-	+ "/" + STR(YEAR(dD_from))
+   P_10CPI
 
-P_COND2
+   ? "LD :: pregled utroska za grupu:", cGroup, Str( Month( dD_from ) ) ;
+      + "/" + Str( Year( dD_from ) )
 
-_g_ld_line( @cLine ) 
+   P_COND2
 
-nCnt := 0
-do while !EOF()
+   _g_ld_line( @cLine )
 
-	// n.str
-	if prow() > 64 
-		FF
-	endif
-	
-	cGr_id := field->group
-	cGr_naz := field->gr_naz
+   nCnt := 0
+   DO WHILE !Eof()
 
-	nU_sati := 0
-	nU_bruto := 0 
-	nU_neto := 0
-	nU_d_pio := 0
-	nU_d_nez := 0
-	nU_d_zdr := 0
-	nU_i_por := 0
-	nU_o_por := 0
-	nU_tp_1 := 0
-	nU_tp_2 := 0
-	nU_tp_3 := 0
-	nU_tp_4 := 0
-	nU_tp_5 := 0
+      // n.str
+      IF PRow() > 64
+         FF
+      ENDIF
 
-	? SPACE(1), "Objekat: ", ;
-		"(" + cGr_id + ")", ;
-		PADR( cGr_naz, 30 )
+      cGr_id := field->group
+      cGr_naz := field->gr_naz
 
-	do while !EOF() .and. field->group == cGr_id
+      nU_sati := 0
+      nU_bruto := 0
+      nU_neto := 0
+      nU_d_pio := 0
+      nU_d_nez := 0
+      nU_d_zdr := 0
+      nU_i_por := 0
+      nU_o_por := 0
+      nU_tp_1 := 0
+      nU_tp_2 := 0
+      nU_tp_3 := 0
+      nU_tp_4 := 0
+      nU_tp_5 := 0
 
-		// n.str
-		if prow() > 64 
-			FF
-		endif
+      ? Space( 1 ), "Objekat: ", ;
+         "(" + cGr_id + ")", ;
+         PadR( cGr_naz, 30 )
 
-		? PADL( ALLTRIM(STR(++nCnt)) + ".", 5 )
-		@ prow(), pcol()+1 SAY PADR( field->r_naz, 30 )
-		@ prow(), nCol:=pcol()+1 SAY STR(field->sati, 8, 2)
-		@ prow(), pcol()+1 SAY STR(field->bruto, 12, 2)
-		@ prow(), pcol()+1 SAY STR(field->neto, 12, 2)
-		@ prow(), pcol()+1 SAY STR(field->dop_pio, 12, 2)
-		@ prow(), pcol()+1 SAY STR(field->dop_zdr, 12, 2)
-		@ prow(), pcol()+1 SAY STR(field->dop_nez, 12, 2)
-		@ prow(), pcol()+1 SAY STR(field->izn_por, 12, 2)
+      DO WHILE !Eof() .AND. field->group == cGr_id
 
-		if field->tp_1 <> 0
-			@ prow(), pcol()+1 SAY STR(field->tp_1, 12, 2)
-		endif
-		if field->tp_2 <> 0
-			@ prow(), pcol()+1 SAY STR(field->tp_2, 12, 2)
-		endif
-		if field->tp_3 <> 0
-			@ prow(), pcol()+1 SAY STR(field->tp_3, 12, 2)
-		endif
-		if field->tp_4 <> 0
-			@ prow(), pcol()+1 SAY STR(field->tp_4, 12, 2)
-		endif
-		if field->tp_5 <> 0
-			@ prow(), pcol()+1 SAY STR(field->tp_5, 12, 2)
-		endif
+         // n.str
+         IF PRow() > 64
+            FF
+         ENDIF
 
-		nU_sati += field->sati
-		nU_bruto += field->bruto
-		nU_neto += field->neto
-		nU_d_pio += field->dop_pio
-		nU_d_nez += field->dop_nez
-		nU_d_zdr += field->dop_zdr
-		nU_i_por += field->izn_por
-		nU_o_por += field->osn_por
-		nU_tp_1 += field->tp_1
-		nU_tp_2 += field->tp_2
-		nU_tp_3 += field->tp_3
-		nU_tp_4 += field->tp_4
-		nU_tp_5 += field->tp_5
-		
-		nT_sati += field->sati
-		nT_bruto += field->bruto
-		nT_neto += field->neto
-		nT_d_pio += field->dop_pio
-		nT_d_nez += field->dop_nez
-		nT_d_zdr += field->dop_zdr
-		nT_i_por += field->izn_por
-		nT_o_por += field->osn_por
-		nT_tp_1 += field->tp_1
-		nT_tp_2 += field->tp_2
-		nT_tp_3 += field->tp_3
-		nT_tp_4 += field->tp_4
-		nT_tp_5 += field->tp_5
+         ? PadL( AllTrim( Str( ++nCnt ) ) + ".", 5 )
+         @ PRow(), PCol() + 1 SAY PadR( field->r_naz, 30 )
+         @ PRow(), nCol := PCol() + 1 SAY Str( field->sati, 8, 2 )
+         @ PRow(), PCol() + 1 SAY Str( field->bruto, 12, 2 )
+         @ PRow(), PCol() + 1 SAY Str( field->neto, 12, 2 )
+         @ PRow(), PCol() + 1 SAY Str( field->dop_pio, 12, 2 )
+         @ PRow(), PCol() + 1 SAY Str( field->dop_zdr, 12, 2 )
+         @ PRow(), PCol() + 1 SAY Str( field->dop_nez, 12, 2 )
+         @ PRow(), PCol() + 1 SAY Str( field->izn_por, 12, 2 )
 
-		skip
-	enddo
+         IF field->tp_1 <> 0
+            @ PRow(), PCol() + 1 SAY Str( field->tp_1, 12, 2 )
+         ENDIF
+         IF field->tp_2 <> 0
+            @ PRow(), PCol() + 1 SAY Str( field->tp_2, 12, 2 )
+         ENDIF
+         IF field->tp_3 <> 0
+            @ PRow(), PCol() + 1 SAY Str( field->tp_3, 12, 2 )
+         ENDIF
+         IF field->tp_4 <> 0
+            @ PRow(), PCol() + 1 SAY Str( field->tp_4, 12, 2 )
+         ENDIF
+         IF field->tp_5 <> 0
+            @ PRow(), PCol() + 1 SAY Str( field->tp_5, 12, 2 )
+         ENDIF
 
-	// total po grupi....
-	? cLine
-	? PADL( "Ukupno " + cGr_id + ":", 25 )
-	@ prow(), nCol SAY STR( nU_sati, 8, 2 )
-	@ prow(), pcol()+1 SAY STR( nU_bruto, 12, 2 )
-	@ prow(), pcol()+1 SAY STR( nU_neto, 12, 2 )
-	@ prow(), pcol()+1 SAY STR( nU_d_pio, 12, 2 )
-	@ prow(), pcol()+1 SAY STR( nU_d_zdr, 12, 2 )
-	@ prow(), pcol()+1 SAY STR( nU_d_nez, 12, 2 )
-	@ prow(), pcol()+1 SAY STR( nU_i_por, 12, 2 )
-	
-	if nU_tp_1 <> 0
-		@ prow(), pcol()+1 SAY STR( nU_tp_1, 12, 2 )
-	endif
-	if nU_tp_2 <> 0
-		@ prow(), pcol()+1 SAY STR( nU_tp_2, 12, 2 )
-	endif
-	if nU_tp_3 <> 0
-		@ prow(), pcol()+1 SAY STR( nU_tp_3, 12, 2 )
-	endif
-	if nU_tp_4 <> 0
-		@ prow(), pcol()+1 SAY STR( nU_tp_4, 12, 2 )
-	endif
-	if nU_tp_5 <> 0
-		@ prow(), pcol()+1 SAY STR( nU_tp_5, 12, 2 )
-	endif
-	
-	? 
+         nU_sati += field->sati
+         nU_bruto += field->bruto
+         nU_neto += field->neto
+         nU_d_pio += field->dop_pio
+         nU_d_nez += field->dop_nez
+         nU_d_zdr += field->dop_zdr
+         nU_i_por += field->izn_por
+         nU_o_por += field->osn_por
+         nU_tp_1 += field->tp_1
+         nU_tp_2 += field->tp_2
+         nU_tp_3 += field->tp_3
+         nU_tp_4 += field->tp_4
+         nU_tp_5 += field->tp_5
 
-enddo
+         nT_sati += field->sati
+         nT_bruto += field->bruto
+         nT_neto += field->neto
+         nT_d_pio += field->dop_pio
+         nT_d_nez += field->dop_nez
+         nT_d_zdr += field->dop_zdr
+         nT_i_por += field->izn_por
+         nT_o_por += field->osn_por
+         nT_tp_1 += field->tp_1
+         nT_tp_2 += field->tp_2
+         nT_tp_3 += field->tp_3
+         nT_tp_4 += field->tp_4
+         nT_tp_5 += field->tp_5
 
-// total za sve....
-? cLine
-? "UKUPNO: "
-@ prow(), nCol SAY STR( nT_sati, 8, 2 )
-@ prow(), pcol()+1 SAY STR( nT_bruto, 12, 2 )
-@ prow(), pcol()+1 SAY STR( nT_neto, 12, 2 )
-@ prow(), pcol()+1 SAY STR( nT_d_pio, 12, 2 )
-@ prow(), pcol()+1 SAY STR( nT_d_zdr, 12, 2 )
-@ prow(), pcol()+1 SAY STR( nT_d_nez, 12, 2 )
-@ prow(), pcol()+1 SAY STR( nT_i_por, 12, 2 )
-	
-if nT_tp_1 <> 0
-	@ prow(), pcol()+1 SAY STR( nT_tp_1, 12, 2 )
-endif
-if nT_tp_2 <> 0
-	@ prow(), pcol()+1 SAY STR( nT_tp_2, 12, 2 )
-endif
-if nT_tp_3 <> 0
-	@ prow(), pcol()+1 SAY STR( nT_tp_3, 12, 2 )
-endif
-if nT_tp_4 <> 0
-	@ prow(), pcol()+1 SAY STR( nT_tp_4, 12, 2 )
-endif
-if nT_tp_5 <> 0
-	@ prow(), pcol()+1 SAY STR( nT_tp_5, 12, 2 )
-endif
-	
-? cLine
+         SKIP
+      ENDDO
 
-// ukalkulisi u rashod
+      // total po grupi....
+      ? cLine
+      ? PadL( "Ukupno " + cGr_id + ":", 25 )
+      @ PRow(), nCol SAY Str( nU_sati, 8, 2 )
+      @ PRow(), PCol() + 1 SAY Str( nU_bruto, 12, 2 )
+      @ PRow(), PCol() + 1 SAY Str( nU_neto, 12, 2 )
+      @ PRow(), PCol() + 1 SAY Str( nU_d_pio, 12, 2 )
+      @ PRow(), PCol() + 1 SAY Str( nU_d_zdr, 12, 2 )
+      @ PRow(), PCol() + 1 SAY Str( nU_d_nez, 12, 2 )
+      @ PRow(), PCol() + 1 SAY Str( nU_i_por, 12, 2 )
 
-nLD_bruto += nT_bruto
-nLD_ras += ( nT_tp_1 + nT_tp_2 + nT_tp_3 + nT_tp_4 + nT_tp_5 )
- 
-return
+      IF nU_tp_1 <> 0
+         @ PRow(), PCol() + 1 SAY Str( nU_tp_1, 12, 2 )
+      ENDIF
+      IF nU_tp_2 <> 0
+         @ PRow(), PCol() + 1 SAY Str( nU_tp_2, 12, 2 )
+      ENDIF
+      IF nU_tp_3 <> 0
+         @ PRow(), PCol() + 1 SAY Str( nU_tp_3, 12, 2 )
+      ENDIF
+      IF nU_tp_4 <> 0
+         @ PRow(), PCol() + 1 SAY Str( nU_tp_4, 12, 2 )
+      ENDIF
+      IF nU_tp_5 <> 0
+         @ PRow(), PCol() + 1 SAY Str( nU_tp_5, 12, 2 )
+      ENDIF
+
+      ?
+
+   ENDDO
+
+   // total za sve....
+   ? cLine
+   ? "UKUPNO: "
+   @ PRow(), nCol SAY Str( nT_sati, 8, 2 )
+   @ PRow(), PCol() + 1 SAY Str( nT_bruto, 12, 2 )
+   @ PRow(), PCol() + 1 SAY Str( nT_neto, 12, 2 )
+   @ PRow(), PCol() + 1 SAY Str( nT_d_pio, 12, 2 )
+   @ PRow(), PCol() + 1 SAY Str( nT_d_zdr, 12, 2 )
+   @ PRow(), PCol() + 1 SAY Str( nT_d_nez, 12, 2 )
+   @ PRow(), PCol() + 1 SAY Str( nT_i_por, 12, 2 )
+
+   IF nT_tp_1 <> 0
+      @ PRow(), PCol() + 1 SAY Str( nT_tp_1, 12, 2 )
+   ENDIF
+   IF nT_tp_2 <> 0
+      @ PRow(), PCol() + 1 SAY Str( nT_tp_2, 12, 2 )
+   ENDIF
+   IF nT_tp_3 <> 0
+      @ PRow(), PCol() + 1 SAY Str( nT_tp_3, 12, 2 )
+   ENDIF
+   IF nT_tp_4 <> 0
+      @ PRow(), PCol() + 1 SAY Str( nT_tp_4, 12, 2 )
+   ENDIF
+   IF nT_tp_5 <> 0
+      @ PRow(), PCol() + 1 SAY Str( nT_tp_5, 12, 2 )
+   ENDIF
+
+   ? cLine
+
+   // ukalkulisi u rashod
+
+   nLD_bruto += nT_bruto
+   nLD_ras += ( nT_tp_1 + nT_tp_2 + nT_tp_3 + nT_tp_4 + nT_tp_5 )
+
+   RETURN
 
 
 // -------------------------------------------------------
 // uslovi reporta
 // -------------------------------------------------------
-static function g_vars( dD_from, dD_to, cGroup, cKtoListZ, cKtoList, ;
-	cSpecLd )
-local nRet := 1
-local nBoxX := 10
-local nBoxY := 65
-local nX := 1
-local nTArea := SELECT()
+STATIC FUNCTION g_vars( dD_from, dD_to, cGroup, cKtoListZ, cKtoList, ;
+      cSpecLd )
 
-dD_from := DATE()-30
-dD_to := DATE()
-cSpecLD := "D"
-cKtoList := SPACE(200)
-cKtoListZ := SPACE(200)
-cGroup := SPACE(6)
+   LOCAL nRet := 1
+   LOCAL nBoxX := 10
+   LOCAL nBoxY := 65
+   LOCAL nX := 1
+   LOCAL nTArea := Select()
 
-O_PARAMS
-private cSection := "S"
-private cHistory := " "
-private aHistory := {}
+   dD_from := Date() -30
+   dD_to := Date()
+   cSpecLD := "D"
+   cKtoList := Space( 200 )
+   cKtoListZ := Space( 200 )
+   cGroup := Space( 6 )
 
-RPar("d1", @dD_from)
-RPar("d2", @dD_to)
-RPar("ld", @cSpecLD)
-RPar("kl", @cKtoList)
-RPar("kz", @cKtoListZ)
-RPar("gr", @cGroup)
+   O_PARAMS
+   PRIVATE cSection := "S"
+   PRIVATE cHistory := " "
+   PRIVATE aHistory := {}
 
-Box(, nBoxX, nBoxY )
-		
-	@ m_x + nX, m_y + 2 SAY "Za period od:" GET dD_From
-	@ m_x + nX, col() + 1 SAY "do:" GET dD_to
+   RPar( "d1", @dD_from )
+   RPar( "d2", @dD_to )
+   RPar( "ld", @cSpecLD )
+   RPar( "kl", @cKtoList )
+   RPar( "kz", @cKtoListZ )
+   RPar( "gr", @cGroup )
 
-	++ nX
-	++ nX
-	
-	@ m_x + nX, m_y + 2 SAY "Grupa:" GET cGroup ;
-		VALID p_rj( @cGroup )
+   Box(, nBoxX, nBoxY )
 
-	++ nX
+   @ m_x + nX, m_y + 2 SAY "Za period od:" GET dD_From
+   @ m_x + nX, Col() + 1 SAY "do:" GET dD_to
 
-	@ m_x + nX, m_y + 2 SAY "Specifikacija LD (D/N)?" GET cSpecLd ;
-		VALID cSpecLd $ "DN" PICT "@!"
-	
-	++ nX
-	++ nX
-	
-	@ m_x + nX, m_y + 2 SAY "FIN konta   - lista    (uticu na zbir):" ;
-		GET cKtoListZ ;
-		PICT "@S20"
-	
-	++ nX
+   ++ nX
+   ++ nX
 
-	@ m_x + nX, m_y + 2 SAY "FIN konta   - lista (ne uticu na zbir):" ;
-		GET cKtoList ;
-		PICT "@S20"
-	
+   @ m_x + nX, m_y + 2 SAY "Grupa:" GET cGroup ;
+      VALID p_rj( @cGroup )
 
-	read
-BoxC()
+   ++ nX
 
-if LastKey() == K_ESC
-	nRet := 0
-	return nRet
-endif
+   @ m_x + nX, m_y + 2 SAY "Specifikacija LD (D/N)?" GET cSpecLd ;
+      VALID cSpecLd $ "DN" PICT "@!"
 
-// write params
-WPar("d1", dD_from)
-WPar("d2", dD_to)
-WPar("ld", cSpecLD)
-WPar("kl", cKtoList)
-WPar("kz", cKtoListZ)
-WPar("gr", cGroup)
+   ++ nX
+   ++ nX
 
-select params
-use
+   @ m_x + nX, m_y + 2 SAY "FIN konta   - lista    (uticu na zbir):" ;
+      GET cKtoListZ ;
+      PICT "@S20"
 
-select (nTArea)
-return nRet
+   ++ nX
+
+   @ m_x + nX, m_y + 2 SAY "FIN konta   - lista (ne uticu na zbir):" ;
+      GET cKtoList ;
+      PICT "@S20"
 
 
+   READ
+   BoxC()
 
+   IF LastKey() == K_ESC
+      nRet := 0
+      RETURN nRet
+   ENDIF
+
+   // write params
+   WPar( "d1", dD_from )
+   WPar( "d2", dD_to )
+   WPar( "ld", cSpecLD )
+   WPar( "kl", cKtoList )
+   WPar( "kz", cKtoListZ )
+   WPar( "gr", cGroup )
+
+   SELECT params
+   USE
+
+   SELECT ( nTArea )
+
+   RETURN nRet

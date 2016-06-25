@@ -556,7 +556,7 @@ FUNCTION IzKalk( cIdRoba, cKonSir, cSta )
    DO CASE
    CASE cSta == "NC"
       // "idFirma+mkonto+idroba+dtos(datdok)+podbr+MU_I+IdVD"
-      SET ORDER TO TAG "3"
+      SET ORDER TO TAG "3" // kalk
       SEEK gFirma + cKonSir + cIdRoba
       nNV := nUlaz := nIzlaz := 0
       DO WHILE !Eof() .AND. idfirma + mkonto + idroba == gFirma + cKonSir + cIdRoba

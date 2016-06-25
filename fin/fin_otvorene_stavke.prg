@@ -111,9 +111,7 @@ STATIC FUNCTION SpecOtSt()
 
    CistiK1k4( .F. )
 
-   SELECT SUBAN
-   // IdFirma+IdKonto+IdPartner+BrDok+dtos(DatDok)
-   SET ORDER TO TAG "3"
+
 
    cFilt1 := "OTVST==' '"
 
@@ -143,10 +141,15 @@ STATIC FUNCTION SpecOtSt()
       cFilt1 += ( ".and. Fond='" + cFond + "'" )
    ENDIF
 
-   SET FILTER TO &cFilt1
+   // SELECT SUBAN
+   // IdFirma+IdKonto+IdPartner+BrDok+dtos(DatDok)
+   // SET ORDER TO TAG "3"
+   // SEEK cidfirma + cidkonto
+   find_suban_by_konto_partner( cIdFirma, cIdKonto )
 
-   SEEK cidfirma + cidkonto
-   NFOUND CRET
+   SET FILTER TO &cFilt1
+   GO TOP
+   EOF CRET
 
    START PRINT  CRET
 
@@ -360,11 +363,10 @@ FUNCTION fin_automatsko_zatvaranje_otvorenih_stavki( lAuto, cKto, cPtn )
 
    cIdFirma := Left( cIdFirma, 2 )
 
-   o_suban()
-
-   SELECT SUBAN
-   SET ORDER TO TAG "3"
-   SEEK cIdFirma + cIdKonto
+   //o_suban()
+   //SELECT SUBAN
+   //SET ORDER TO TAG "3"
+   find_suban_by_konto_partner( cIdFirma, cIdKonto )
 
    EOF CRET
 
@@ -448,7 +450,7 @@ FUNCTION fin_automatsko_zatvaranje_otvorenih_stavki( lAuto, cKto, cPtn )
    ENDDO
 
    IF lOk
-      hParams := hb_hash()
+      hParams := hb_Hash()
       hParams[ "unlock" ] := { "fin_suban" }
       run_sql_query( "COMMIT", hParams )
    ELSE
@@ -510,7 +512,7 @@ STATIC FUNCTION ponisti_markere_postojecih_stavki( cIdFirma, cIdKonto, cIdPartne
 
    IF lOk
       lRet := .T.
-      hParams := hb_hash()
+      hParams := hb_Hash()
       hParams[ "unlock" ] := { "fin_suban" }
       run_sql_query( "COMMIT", hParams )
    ELSE
@@ -572,7 +574,7 @@ FUNCTION fin_brisanje_markera_otvorenih_stavki()
 
    IF lOk
       lRet := .T.
-      hParams := hb_hash()
+      hParams := hb_Hash()
       hParams[ "unlock" ] := { "fin_suban" }
       run_sql_query( "COMMIT", hParams )
    ELSE
@@ -1056,13 +1058,14 @@ FUNCTION StKart( fSolo, fTiho, bFilter )
 
    nUkDugBHD := nUkPotBHD := 0
 
-   SELECT suban
-   SET ORDER TO TAG "3"
+   //SELECT suban
+   //SET ORDER TO TAG "3"
 
    IF cSvi == "D"
-      SEEK cidfirma + cidkonto
+      find_suban_by_konto_partner(  cIdFirma, cIdkonto )
+
    ELSE
-      SEEK cidfirma + cidkonto + cidpartner
+      find_suban_by_konto_partner(  cIdFirma, cIdkonto, cIdPartner )
    ENDIF
 
    DO WHILE !Eof() .AND. idfirma == cidfirma .AND. cIdKonto == IdKonto
@@ -1485,8 +1488,9 @@ FUNCTION StBrVeze()
    ENDIF
 
    nUkDugBHD := nUkPotBHD := 0
-   SELECT suban; SET ORDER TO TAG "3"
-   SEEK cidfirma + cidkonto + cidpartner + cBrDok
+   //SELECT suban; SET ORDER TO TAG "3"
+   // SEEK cidfirma + cidkonto + cidpartner + cBrDok
+   find_suban_by_konto_partner( cIdfirma, cIdkonto, cIdpartner, cBrDok )
 
 
    nDug2 := nPot2 := 0
@@ -1595,7 +1599,7 @@ STATIC FUNCTION _cre_oext_struct()
 
    FErase( my_home() + my_dbf_prefix() + _table + ".cdx" )
 
-   SELECT SUBAN
+   o_suban()
    SET ORDER TO TAG "3"
 
    // uzmi suban strukturu
@@ -1658,12 +1662,12 @@ FUNCTION fin_asistent_otv_st()
    Box(, 3, 60 )
    @ m_x + 1, m_y + 2 SAY "Konto   " GET cIdKonto   VALID p_kontoFin( @cIdKonto )  PICT "@!"
    @ m_x + 2, m_y + 2 SAY "Partner " GET cIdPartner VALID P_Firma( @cIdPartner ) PICT "@!"
-   @ m_x + 3, m_y + 2 SAY "Konto duguje / potrazuje" GET cdugpot when {|| cDugPot := iif( cidkonto = '54', '2', '1' ), .T. } VALID  cdugpot $ "12"
+   @ m_x + 3, m_y + 2 SAY "Konto duguje / potrazuje" GET cDugPot when {|| cDugPot := iif( cidkonto = '54', '2', '1' ), .T. } VALID  cdugpot $ "12"
    READ
    BoxC()
 
    IF LastKey() == K_ESC
-      RETURN
+      RETURN .F.
    ENDIF
 
    set_metric( "fin_kartica_id_firma", my_user(), cIdFirma )
@@ -1672,11 +1676,12 @@ FUNCTION fin_asistent_otv_st()
 
    // kreiraj oext
    IF !_cre_oext_struct()
-      RETURN
+      RETURN .F.
    ENDIF
 
-   SELECT suban
-   SEEK cIdfirma + cIdkonto + cIdpartner
+   //SELECT suban
+   //SEEK cIdfirma + cIdkonto + cIdpartner
+   find_suban_by_konto_partner( cIdfirma, cIdkonto, cIdpartner )
 
    // ukupan broj storno racuna za partnera
    nBrojStornoRacuna := 0
@@ -1693,7 +1698,7 @@ FUNCTION fin_asistent_otv_st()
             MsgBeep( "Postoje nepopunjen brojevi veze :" + ;
                field->idvn + "-" + field->brdok + "/" + field->rbr + "##Morate ih popuniti !" )
             my_close_all_dbf()
-            RETURN
+            RETURN .F.
          ENDIF
 
          IF field->d_p = "1"
@@ -2004,7 +2009,7 @@ FUNCTION fin_asistent_otv_st()
    ENDDO
 
    // !!! markiraj stavke koje su postale zatvorene
-   SET ORDER TO TAG "3"
+   SET ORDER TO TAG "3" // osuban
    GO TOP
 
    DO WHILE !Eof()
@@ -2021,7 +2026,7 @@ FUNCTION fin_asistent_otv_st()
          ENDIF
          SKIP
       ENDDO
-      IF Round( nsaldo, 4 ) = 0
+      IF Round( nSaldo, 4 ) == 0
          GO nSljRec
          DO WHILE !Eof() .AND. cidfirma + cidkonto + cidpartner + cbrdok = idfirma + idkonto + idpartner + brdok
             _rec := dbf_get_rec()
@@ -2049,7 +2054,7 @@ FUNCTION fin_asistent_otv_st()
    IF RecCount() = 0
       USE
       MsgBeep( "Nema otvorenih stavki" )
-      RETURN
+      RETURN .F.
    ENDIF
 
    Box(, _max_rows, _max_cols )
@@ -2158,19 +2163,19 @@ FUNCTION fin_asistent_otv_st()
 
       IF !promjene_otvorenih_stavki_se_mogu_azurirati()
          my_close_all_dbf()
-         RETURN
+         RETURN .F.
       ENDIF
 
       IF !brisi_otvorene_stavke_iz_tabele_suban()
          MsgBeep( "Greška sa brisanjem stavki iz tabele SUBAN !" )
          my_close_all_dbf()
-         RETURN
+         RETURN .F.
       ENDIF
 
       IF !dodaj_promjene_iz_osuban_u_suban()
          MsgBeep( "Greška kod dodavanja stavki u kumulativnu SUBAN tabelu !" )
          my_close_all_dbf()
-         RETURN
+         RETURN .F.
       ENDIF
 
       MsgBeep( "Promjene su izvršene - provjerite podatke na kartici !" )
@@ -2179,7 +2184,7 @@ FUNCTION fin_asistent_otv_st()
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -2257,7 +2262,7 @@ STATIC FUNCTION dodaj_promjene_iz_osuban_u_suban()
 
    IF lOk
       lRet := .T.
-      hParams := hb_hash()
+      hParams := hb_Hash()
       hParams[ "unlock" ] := { "fin_suban" }
       run_sql_query( "COMMIT", hParams )
    ELSE
@@ -2265,6 +2270,7 @@ STATIC FUNCTION dodaj_promjene_iz_osuban_u_suban()
    ENDIF
 
    RETURN lRet
+
 
 
 STATIC FUNCTION brisi_otvorene_stavke_iz_tabele_suban()
@@ -2311,7 +2317,7 @@ STATIC FUNCTION brisi_otvorene_stavke_iz_tabele_suban()
 
    IF lOk
       lRet := .T.
-      hParams := hb_hash()
+      hParams := hb_Hash()
       hParams[ "unlock" ] := { "fin_suban" }
       run_sql_query( "COMMIT", hParams )
    ELSE

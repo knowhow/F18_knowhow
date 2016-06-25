@@ -131,7 +131,7 @@ FUNCTION fin_anal_kartica()
    SELECT ANAL
 
    IF cBrza == "S"
-      SET ORDER TO TAG "3"
+      SET ORDER TO TAG "3"  // anal
    ENDIF
 
    cFilt1 := ".t." + iif( cBrza == "D", "", ".and." + aUsl1 ) + ;

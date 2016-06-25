@@ -131,8 +131,9 @@ FUNCTION PrenosFin()
    ENDIF
 
    IF lPrenos4 .OR. lPrenos5 .OR. lPrenos6
-      SELECT ( F_SUBAN )
-      usex ( "suban" )
+      //SELECT ( F_SUBAN )
+      //usex ( "suban" )
+      find_suban_by_broj_dokumenta( gFirma )
       IF lPrenos4
          INDEX ON idfirma + idkonto + idpartner + idrj + funk + fond TO SUBSUB
       ENDIF
@@ -142,9 +143,9 @@ FUNCTION PrenosFin()
       IF lPrenos6
          INDEX ON idfirma + idkonto + idpartner + idrj TO SUBSUB6
       ENDIF
-      USE
-      SELECT ( F_SUBAN )
-      usex ( "suban" )
+      //USE
+      //SELECT ( F_SUBAN )
+      //usex ( "suban" )
       IF lPrenos4
          SET INDEX TO SUBSUB
          SET ORDER TO TAG "SUBSUB"
@@ -158,10 +159,12 @@ FUNCTION PrenosFin()
          SET ORDER TO TAG "SUBSUB6"
       ENDIF
    ELSE
-      SELECT ( F_SUBAN )
-      usex ( "suban" )
-      SET ORDER TO TAG "3"
-      // IdFirma+IdKonto+IdPartner+BrDok+dtos(DatDok)"
+
+      find_suban_by_konto_partner( gFirma )
+
+      //SELECT ( F_SUBAN )
+      //usex ( "suban" )
+      //SET ORDER TO TAG "3" - IdFirma+IdKonto+IdPartner+BrDok+dtos(DatDok)"
    ENDIF
 
    IF !( cFilter == ".t." )

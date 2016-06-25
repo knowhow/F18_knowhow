@@ -180,13 +180,15 @@ FUNCTION fin_spec_otv_stavke_po_dospijecu( lKartica )
    nUkDugBHD := 0
    nUkPotBHD := 0
 
-   SELECT suban
-   SET ORDER TO TAG "3"
+   // SELECT suban
+   // SET ORDER TO TAG "3"
 
    IF cSvi == "D"
-      SEEK cIdFirma + cIdKonto
+      // SEEK cIdFirma + cIdKonto
+      find_suban_by_konto_partner( cIdFirma, cIdKonto )
    ELSE
-      SEEK cIdFirma + cIdKonto + cIdPartner
+      find_suban_by_konto_partner( cIdFirma, cIdKonto, cIdPartner )
+      // SEEK cIdFirma + cIdKonto + cIdPartner
    ENDIF
 
    DO WHILE !Eof() .AND. idfirma == cIdfirma .AND. cIdKonto == IdKonto

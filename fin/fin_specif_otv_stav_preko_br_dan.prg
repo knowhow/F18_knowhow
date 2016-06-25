@@ -88,9 +88,12 @@ FUNCTION fin_spec_otv_stavke_preko_dana()
       O_VRSTEP
    ENDIF
 
-   o_suban() ; SET ORDER TO TAG "3"
+   // o_suban() ; SET ORDER TO TAG "3"
    // "IdFirma+IdKonto+IdPartner+BrDok+dtos(DatDok)"
-   HSEEK cIdFirma + cIdKonto
+   // HSEEK cIdFirma + cIdKonto
+
+   find_suban_by_konto_partner( cIdFirma, cIdKonto )
+
 
    EOF CRET
 

@@ -192,10 +192,8 @@ FUNCTION konsult_otvorene_stavke()
    nUkDugBHD := 0
    nUkPotBHD := 0
 
-   SELECT suban
-   SET ORDER TO TAG "3"
 
-   SEEK cIdfirma + cIdkonto + cIdpartner
+   find_suban_by_konto_partner( cIdfirma, cIdkonto, cIdpartner)
 
    dDatDok := CToD( "" )
 
@@ -513,10 +511,12 @@ STATIC FUNCTION EdKonsROS()
 
          IF LastKey() <> K_ESC
 
-            SELECT suban
             PushWA()
-            SET ORDER TO TAG "3"
-            SEEK _idfirma + _idkonto + _idpartner + obrdok
+
+
+            find_suban_by_konto_partner( _idfirma, _idkonto, _idpartner, oBrdok )
+
+
 
             DO WHILE !Eof() .AND. _idfirma + _idkonto + _idpartner + obrdok == idfirma + idkonto + idpartner + brdok
 

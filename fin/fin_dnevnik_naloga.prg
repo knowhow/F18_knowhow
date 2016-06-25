@@ -59,7 +59,7 @@ FUNCTION DnevnikNaloga()
    SET ORDER TO TAG "4"
 
    SELECT NALOG
-   SET ORDER TO TAG "3"
+   SET ORDER TO TAG "3" //nalog
 
    IF !Empty( dOd ) .OR. !Empty( dDo )
 
@@ -163,7 +163,7 @@ FUNCTION VidiNaloge()
    LOCAL i
 
    o_nalog()
-   SET ORDER TO TAG "3"
+   SET ORDER TO TAG "3" //nalog
    GO TOP
 
    ImeKol := { ;

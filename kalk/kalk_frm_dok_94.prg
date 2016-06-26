@@ -89,7 +89,7 @@ FUNCTION Get1_94()
 
 
 
-   DatPosljK()
+   check_datum_posljednje_kalkulacije()
    DuplRoba()
 
    _GKolicina := 0

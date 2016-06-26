@@ -91,7 +91,7 @@ FUNCTION Get1_41()
    _PKonto := _Idkonto
 
    // provjerava kada je radjen zadnji dokument za ovaj artikal
-   DatPosljK()
+   check_datum_posljednje_kalkulacije()
    DatPosljP()
 
    _GKolicina := 0

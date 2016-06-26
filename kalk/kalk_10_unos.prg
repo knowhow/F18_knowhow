@@ -82,8 +82,8 @@ FUNCTION Get1_10PDV()
 
    ENDIF
 
-   ++ _x
-   ++ _x
+   _x += 2
+
    _kord_x := m_x + _x
 
    IF lKoristitiBK
@@ -126,15 +126,14 @@ FUNCTION Get1_10PDV()
 
    _MKonto := _Idkonto
    _MU_I := "1"
-   DatPosljK()
+   check_datum_posljednje_kalkulacije()
 
    SELECT TARIFA
    HSEEK _IdTarifa
    SELECT kalk_pripr
 
    ++ _x
-
-   @ m_x + _x, m_y + 2 SAY "Kolicina " GET _Kolicina PICT PicKol VALID _Kolicina <> 0
+   @ m_x + _x, m_y + 2 SAY8 "Količina " GET _Kolicina PICT PicKol VALID _Kolicina <> 0
 
    IF fNovi
       SELECT ROBA

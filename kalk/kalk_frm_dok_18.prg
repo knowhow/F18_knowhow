@@ -44,7 +44,7 @@ FUNCTION Get1_18()
    SELECT kalk_pripr  // napuni tarifu
 
    _MKonto := _Idkonto
-   DatPosljK()
+   check_datum_posljednje_kalkulacije()
    DuplRoba()
 
    dDatNab := CToD( "" )

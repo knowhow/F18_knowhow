@@ -83,7 +83,7 @@ FUNCTION Get1_14PDV()
       _FCJ := roba->PlC
    ENDIF
 
-   DatPosljK()
+   check_datum_posljednje_kalkulacije()
    DuplRoba()
 
    IF fNovi

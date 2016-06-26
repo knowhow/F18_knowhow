@@ -184,11 +184,11 @@ FUNCTION DuplRoba()
    RETURN .T.
 
 
-/* DatPosljK()
+/* check_datum_posljednje_kalkulacije()
  *     Ispituje da li je datum zadnje promjene na zadanom magacinu i za zadani artikal noviji od one koja se unosi
  */
 
-FUNCTION DatPosljK()
+FUNCTION check_datum_posljednje_kalkulacije()
 
 /*
    SELECT kalk
@@ -197,13 +197,16 @@ FUNCTION DatPosljK()
    SKIP -1
 */
 
+   info_bar( "kalk_unos", "START chk datdok: " + _IdFirma + "/" + _MKonto + "/" + _IdRoba )
    find_kalk_by_mkonto_idroba( _IdFirma, _MKonto, _IdRoba )
+   info_bar( "kalk_unos", "END chk datdok: " + _IdFirma + "/" + _MKonto + "/" + _IdRoba )
    GO BOTTOM
 
    IF _idfirma + _idkonto + _idroba == field->idfirma + field->mkonto + field->idroba .AND. _datdok < field->datdok
       error_bar( "KA_" + _idfirma + "-" + _idvd + "-" + _brdok, _mkonto + " / " + _idroba + " zadnji dokument: " + DToC( field->datdok ) )
       _ERROR := "1"
    ENDIF
+
    SELECT kalk_pripr
 
    RETURN .T.
@@ -280,7 +283,7 @@ FUNCTION kalk_sljedeci_brdok( cTipKalk, cIdFirma, cSufiks )
    ENDIF
 
    IF gBrojacKalkulacija == "D"
-   
+
       IF glBrojacPoKontima
       /*
          SELECT kalk_doks

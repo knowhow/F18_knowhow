@@ -88,7 +88,7 @@ FUNCTION find_kalk_doks_by_broj_dokumenta( cIdFirma, cIdvd, cBrDok )
    ENDIF
 
 
-   hParams[ "order_by"] := "idfirma,idvd,brdok"
+   hParams[ "order_by" ] := "idfirma,idvd,brdok"
    hParams[ "indeks" ] := .F.  // ne trositi vrijeme na kreiranje indeksa
 
    use_sql_kalk_doks( hParams )
@@ -113,7 +113,7 @@ FUNCTION find_kalk_doks2_by_broj_dokumenta( cIdFirma, cIdvd, cBrDok )
       hParams[ "brdok" ] := cBrDok
    ENDIF
 
-   hParams[ "order_by"] := "idfirma,idvd,brdok"
+   hParams[ "order_by" ] := "idfirma,idvd,brdok"
    hParams[ "indeks" ] := .F.
 
    use_sql_kalk_doks2( hParams )
@@ -158,6 +158,7 @@ FUNCTION find_kalk_by_mkonto_idroba( cIdFirma, cIdKonto, cIdRoba, cOrderBy, lRep
       hParams[ "polja" ] := "rpt_magacin" // samo polja potrebna za magacin
    ENDIF
 
+   hParams[ "indeks" ] := .F.
    use_sql_kalk( hParams )
    GO TOP
 
@@ -201,7 +202,7 @@ FUNCTION find_kalk_by_broj_dokumenta( cIdFirma, cIdvd, cBrDok )
       hParams[ "brdok" ] := cBrDok
    ENDIF
 
-   hParams[ "order_by"] := "idfirma,idvd,brdok"
+   hParams[ "order_by" ] := "idfirma,idvd,brdok"
    hParams[ "indeks" ] := .F.
 
    use_sql_kalk( hParams )

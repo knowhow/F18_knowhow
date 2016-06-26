@@ -68,7 +68,7 @@ FUNCTION Get1_82()
 
    _MKonto := _Idkonto2
    DuplRoba()
-   DatPosljK()
+   check_datum_posljednje_kalkulacije()
 
    @ m_x + 12, m_y + 2   SAY "Kolicina " GET _Kolicina PICTURE PicKol VALID _Kolicina <> 0
 

@@ -69,7 +69,7 @@ FUNCTION Get1_12()
    _PKonto := _Idkonto
    _MKonto := _Idkonto2
    DatPosljP()
-   DatPosljK()
+   check_datum_posljednje_kalkulacije()
    DuplRoba()
 
    _GKolicina := 0

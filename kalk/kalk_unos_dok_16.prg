@@ -85,7 +85,7 @@ FUNCTION kalk_get1_16()
    _MKonto := _Idkonto
    _MU_I := "1"
 
-   DatPosljK()
+   check_datum_posljednje_kalkulacije()
    DuplRoba()
    _GKolicina := 0
    IF fNovi

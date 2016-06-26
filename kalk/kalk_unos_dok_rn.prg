@@ -164,7 +164,7 @@ FUNCTION Get1_RN()
    SELECT koncij; HSEEK Trim( _idkonto ); SELECT kalk_pripr
 
    _MKonto := _Idkonto; _MU_I := "1"
-   DatPosljK()
+   check_datum_posljednje_kalkulacije()
 
    SELECT TARIFA; HSEEK _IdTarifa  // postavi TARIFA na pravu poziciju
    SELECT kalk_pripr  // napuni tarifu

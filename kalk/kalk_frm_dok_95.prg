@@ -91,7 +91,7 @@ FUNCTION Get1_95()
    ENDIF
 
    _MKonto := _Idkonto2
-   DatPosljK()
+   check_datum_posljednje_kalkulacije()
    DuplRoba()
 
    SELECT koncij

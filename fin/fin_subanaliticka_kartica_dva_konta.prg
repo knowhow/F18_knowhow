@@ -106,7 +106,7 @@ FUNCTION fin_suban_kartica2( lOtvSt )
       IF _fin_params[ "fin_k1" ]
          @ m_x + 14, m_y + 2 SAY "K1 (9 svi) :" GET cK1
       ENDIF
- 		
+
       IF _fin_params[ "fin_k2" ]
          @ m_x + 15, m_y + 2 SAY "K2 (9 svi) :" GET cK2
       ENDIF
@@ -195,7 +195,12 @@ FUNCTION fin_suban_kartica2( lOtvSt )
       O_VRSTEP
    ENDIF
 
-   o_suban()
+
+      find_suban_by_konto_partner( cIdFirma, cIdKonto )
+   ELSE
+      find_suban_by_konto_partner( cIdFirma, cIdKonto, cIdPartner )
+      // SEEK cIdFirma + cIdKonto + cIdPartner
+   ENDIF
    O_TDOK
 
    SELECT SUBAN
@@ -203,7 +208,7 @@ FUNCTION fin_suban_kartica2( lOtvSt )
    IF cPoVezi == "D"
 
       // "IdFirma+IdKonto+IdPartner+BrDok+dtos(DatDok)"
-      SET ORDER TO TAG "3"
+      //SET ORDER TO TAG "3"
 
    ENDIF
 
@@ -215,12 +220,12 @@ FUNCTION fin_suban_kartica2( lOtvSt )
       cK2 := ""
    ENDIF
 
-   IF ck3 == REPL( "9", Len( cK3 ) )
-      ck3 := ""
+   IF cK3 == REPL( "9", Len( cK3 ) )
+      cK3 := ""
    ELSE
       cK3 := K3U256( cK3 )
    ENDIF
-   IF ck4 == "99"; ck4 := ""; ENDIF
+   IF cK4 == "99"; ck4 := ""; ENDIF
 
    PRIVATE cFilter
 
@@ -240,6 +245,15 @@ FUNCTION fin_suban_kartica2( lOtvSt )
 
    cFilter := StrTran( cFilter, ".t..and.", "" )
 
+   IF Empty( qqpartner )
+      qqPartner := Trim( qqpartner )
+   ENDIF
+
+   SEEK cidfirma + qqkonto + qqpartner
+   IF !Found() // nema na 1200
+      SEEK cidfirma + qqkonto2 + qqpartner
+   ENDIF
+   
    IF cfilter == ".t."
       SET FILTER TO
    ELSE
@@ -249,16 +263,10 @@ FUNCTION fin_suban_kartica2( lOtvSt )
 
    nStr := 0
 
-   IF Empty( qqpartner )
-      qqPartner := Trim( qqpartner )
-   ENDIF
 
-   SEEK cidfirma + qqkonto + qqpartner
-   IF !Found() // nema na 1200
-      SEEK cidfirma + qqkonto2 + qqpartner
-   ENDIF
 
-   NFOUND CRET
+GO TOP
+   EOF CRET
 
    start_print()
 
@@ -392,7 +400,7 @@ FUNCTION fin_suban_kartica2( lOtvSt )
             IF fOtvSt .AND. cOtvSt == "9"
                nZDugDEM += nDDEM
                nZPotDEM += nPDEM
-            ELSE 
+            ELSE
                @ PRow(), PCol() + 1 SAY nDDEM PICTURE picbhd
                @ PRow(), PCol() + 1 SAY nPDEM PICTURE picbhd
                nDugDEM += nDDEM
@@ -422,7 +430,7 @@ FUNCTION fin_suban_kartica2( lOtvSt )
          ENDIF
 
          IF !( fOtvSt .AND. cOtvSt == "9" )
-            
+
             IF cDinDem = "1"
                @ PRow(), PCol() + 1 SAY nDugBHD - nPotBHD PICT picbhd
             ELSEIF cDinDem == "2"

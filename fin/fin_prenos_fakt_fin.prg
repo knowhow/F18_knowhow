@@ -32,12 +32,12 @@ FUNCTION FaktFin()
    gDzokerF1 := Trim( gDzokerF1 )
 
    IF Empty( gFaktKum ) .OR. cOdradjeno = "N"
-      gFaktKum := Trim( StrTran( cDirRad, "FIN", "FAKT" ) ) + "\"
+      gFaktKum := Trim( StrTran( cDirRad, "FIN", "FAKT" ) ) + SLASH
       Wpar( "a1", @gFaktKum )
    ENDIF
 
    IF Empty( gKalkKum ) .OR. cOdradjeno = "N"
-      gKalkKum := Trim( StrTran( cDirRad, "FIN", "KALK" ) ) + "\"
+      gKalkKum := Trim( StrTran( cDirRad, "FIN", "KALK" ) ) + SLASH
       Wpar( "a3", @gKalkKum )
    ENDIF
 
@@ -87,7 +87,7 @@ FUNCTION FaktFin()
 
    IF LastKey() == K_ESC
       my_close_all_dbf()
-      RETURN
+      RETURN .F.
    ENDIF
 
    // ovo dole je ukradeno iz KALK/REKAPK
@@ -113,8 +113,8 @@ FUNCTION FaktFin()
       O_FAKT
    ENDIF
 
-   // "1","IdFirma+idtipdok+brdok+rbr+podbr",KUMPATH+"FAKT")
-   SET ORDER TO TAG "1"
+
+   SET ORDER TO TAG "1"  // "1","IdFirma+idtipdok+brdok+rbr+podbr""FAKT"
 
    SELECT FINMAT
    my_dbf_zap()
@@ -461,7 +461,7 @@ FUNCTION fin_kontiranje_naloga( dDatNal )
                   opis     WITH trfp2->naz
 
                IF !fExist
-                  RREPLACE Rbr  WITH Str( nRbr, 4 )
+                  RREPLACE Rbr  WITH nRbr
                ENDIF
 
             ENDIF // nIz <>0

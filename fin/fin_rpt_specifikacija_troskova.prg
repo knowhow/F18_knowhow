@@ -628,7 +628,7 @@ STATIC FUNCTION __gen2_fin( dD_from, dD_to, cGroup, cKtoList )
 
    ? cLine
 
-   RETURN
+   RETURN .T.
 
 
 

@@ -114,11 +114,13 @@ FUNCTION find_anal_by_konto( cIdFirma, cIdKonto )
    RETURN ! Eof()
 
 
-FUNCTION find_suban_by_konto_partner( cIdFirma, cIdKonto, cIdPartner, cBrDok, cOrderBy )
+
+FUNCTION find_suban_by_konto_partner( cIdFirma, cIdKonto, cIdPartner, cBrDok, cOrderBy, lIndeks )
 
    LOCAL hParams := hb_Hash()
 
    hb_default( @cOrderBy, "IdFirma,IdKonto,IdPartner,brdok,datdok" )
+   hb_default( @lIndeks, .F. )
 
    IF cIdFirma <> NIL
       hParams[ "idfirma" ] := cIdFirma
@@ -137,7 +139,7 @@ FUNCTION find_suban_by_konto_partner( cIdFirma, cIdKonto, cIdPartner, cBrDok, cO
    ENDIF
 
    hParams[ "order_by" ] := cOrderBy // ako ima vise brojeva dokumenata sortiraj po njima
-   hParams[ "indeks" ] := .F.
+   hParams[ "indeks" ] := lIndeks
 
    use_sql_suban( hParams )
    GO TOP

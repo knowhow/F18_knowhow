@@ -196,21 +196,16 @@ FUNCTION fin_suban_kartica2( lOtvSt )
    ENDIF
 
 
-      find_suban_by_konto_partner( cIdFirma, cIdKonto )
-   ELSE
-      find_suban_by_konto_partner( cIdFirma, cIdKonto, cIdPartner )
-      // SEEK cIdFirma + cIdKonto + cIdPartner
-   ENDIF
    O_TDOK
 
-   SELECT SUBAN
+   // SELECT SUBAN
 
-   IF cPoVezi == "D"
+   // IF cPoVezi == "D"
 
-      // "IdFirma+IdKonto+IdPartner+BrDok+dtos(DatDok)"
-      //SET ORDER TO TAG "3"
+   // "IdFirma+IdKonto+IdPartner+BrDok+dtos(DatDok)"
+   // SET ORDER TO TAG "3"
 
-   ENDIF
+   // ENDIF
 
    IF cK1 == "9"
       cK1 := ""
@@ -225,19 +220,19 @@ FUNCTION fin_suban_kartica2( lOtvSt )
    ELSE
       cK3 := K3U256( cK3 )
    ENDIF
-   IF cK4 == "99"; ck4 := ""; ENDIF
+   IF cK4 == "99"; cK4 := ""; ENDIF
 
    PRIVATE cFilter
 
-   cFilter := ".t." + IF( Empty( dDatOd ), "", ".and.DATDOK>=" + dbf_quote( dDatOd ) ) + ;
+   cFilter := ".t." + iif( Empty( dDatOd ), "", ".and.DATDOK>=" + dbf_quote( dDatOd ) ) + ;
       iif( Empty( dDatDo ), "", ".and.DATDOK<=" + dbf_quote( dDatDo ) )
 
    IF ! ( _fin_params[ "fin_k1" ] .AND. _fin_params[ "fin_k2" ] .AND. _fin_params[ "fin_k3" ] .AND.  _fin_params[ "fin_k4" ] )
-      cFilter := cFilter + ".and.k1=" + dbf_quote( ck1 ) + ".and.k2=" + dbf_quote( ck2 ) + ;
-         ".and.k3=ck3.and.k4=" + dbf_quote( ck4 )
+      cFilter := cFilter + ".and.k1=" + dbf_quote( cK1 ) + ".and.k2=" + dbf_quote( ck2 ) + ;
+         ".and.k3=ck3.and.k4=" + dbf_quote( cK4 )
    ENDIF
 
-   IF ";" $ qqpartner
+   IF ";" $ qqPartner
       qqPartner := StrTran( qqpartner, ";", "" )
       cFilter += ".and. idpartner='" + Trim( qqpartner ) + "'"
       qqpartner := ""
@@ -249,43 +244,45 @@ FUNCTION fin_suban_kartica2( lOtvSt )
       qqPartner := Trim( qqpartner )
    ENDIF
 
-   SEEK cidfirma + qqkonto + qqpartner
-   IF !Found() // nema na 1200
-      SEEK cidfirma + qqkonto2 + qqpartner
-   ENDIF
-   
-   IF cfilter == ".t."
-      SET FILTER TO
-   ELSE
-      SET FILTER to &cFilter
-   ENDIF
 
 
    nStr := 0
 
 
 
-GO TOP
+   nSviD := nSviP := nSviD2 := nSviP2 := 0
+   nKonD := nKonP := nKonD2 := nKonP2 := 0
+
+
+   nProlaz := 0
+
+   MsgO( "Preuzimanje podataka sa SQL servera ..." )
+   find_suban_by_konto_partner( cIdFirma, NIL, iif( Empty( qqPartner ), NIL, qqPartner ), NIL, NIL, .T. )
+   MsgC()
    EOF CRET
 
    start_print()
 
-
-   nSviD := nSviP := nSviD2 := nSviP2 := 0
-
-   nKonD := nKonP := nKonD2 := nKonP2 := 0
+   IF cFilter == ".t."
+      SET FILTER TO
+   ELSE
+      SET FILTER to &cFilter
+   ENDIF
+   GO TOP
    cIdKonto := IdKonto
 
-   nProlaz := 0
 
-   IF Empty( qqpartner )  // prodji tri puta
-      nProlaz := 1
-      HSEEK cidfirma + qqkonto
-      IF Eof()
-         nProlaz := 2
-         HSEEK cidfirma + qqkonto2
-      ENDIF
+   SET ORDER TO TAG "3"
+   HSEEK cIdFirma + qqKonto + qqPartner
+
+   nProlaz := 1
+
+   IF !Found()
+      nProlaz := 2
+      HSEEK cIdFirma + qqKonto2 + qqPartner
    ENDIF
+
+
 
    DO WHILE .T.
 
@@ -536,7 +533,7 @@ GO TOP
          IF qqkonto <> idkonto
             nProlaz := 2
             SEEK cidfirma + qqkonto2
-            cIdpartner := Replicate( CHR( 255 ), Len( idpartner ) )
+            cIdpartner := Replicate( Chr( 255 ), Len( idpartner ) )
             IF !Found()
                EXIT
             ENDIF
@@ -570,7 +567,7 @@ GO TOP
    end_print()
    closeret
 
-   RETURN
+   RETURN .T.
 
 
 

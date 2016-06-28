@@ -11,21 +11,16 @@
 
 #include "f18.ch"
 
-/* \file fmk/fin/razdb/1g/mnu_raz.prg
- *     Menij razmjene podataka
- */
 
-/* MnuRazmjenaPodataka()
- *     Menij razmjene podataka
- */
-FUNCTION MnuRazmjenaPodataka()
+
+FUNCTION fin_razmjena_podataka_meni()
 
    PRIVATE opc := {}
    PRIVATE opcexe := {}
    PRIVATE Izbor := 1
 
    AAdd( opc, "1. fakt->fin                   " )
-   AAdd( opcexe, {|| fakt_fin_prenos()) } )
+   AAdd( opcexe, {|| fakt_fin_prenos() } )
    AAdd( opc, "2. ld->fin " )
    AAdd( opcexe, {|| LdFin() } )
    AAdd( opc, "3. import elba " )
@@ -37,7 +32,7 @@ FUNCTION MnuRazmjenaPodataka()
 
    Menu_SC( "raz" )
 
-   RETURN
+   RETURN .T.
 
 
 

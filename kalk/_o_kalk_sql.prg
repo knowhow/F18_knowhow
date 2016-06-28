@@ -75,13 +75,13 @@ FUNCTION find_kalk_doks_za_tip( cIdFirma, cIdvd )
 FUNCTION find_kalk_doks_by_broj_fakture( cIdVd, cBrFaktP )
 
    LOCAL hParams := hb_Hash()
-  
+
    IF cIdVd <> NIL
       hParams[ "idvd" ] := cIdVd
    ENDIF
 
    IF cBrFaktP <> NIL
-      hParams[ "brfaktp" ] := cBrFaktP
+      hParams[ "broj_fakture" ] := cBrFaktP
    ENDIF
 
    hParams[ "order_by" ] := "brfaktp,idvd"
@@ -89,6 +89,9 @@ FUNCTION find_kalk_doks_by_broj_fakture( cIdVd, cBrFaktP )
 
    use_sql_kalk_doks( hParams )
    GO TOP
+
+
+
 
 FUNCTION find_kalk_doks_by_broj_dokumenta( cIdFirma, cIdvd, cBrDok )
 
@@ -142,17 +145,6 @@ FUNCTION find_kalk_doks2_by_broj_dokumenta( cIdFirma, cIdvd, cBrDok )
 
 
 
-FUNCTION find_kalk_doks_by_broj_fakture( cBrojFakture )
-
-   LOCAL hParams := hb_Hash()
-
-   hParams[ "broj_fakture" ] := cBrojFakture
-   hParams[ "indeks" ] := .T.
-
-   use_sql_kalk_doks( hParams )
-   GO TOP
-
-   RETURN ! Eof()
 
 
 FUNCTION find_kalk_za_period( cIdFirma, cIdVd, cIdPartner, cIdRoba, dDatOd, dDatDo, cOrderBy )
@@ -353,7 +345,7 @@ FUNCTION use_sql_kalk( hParams )
       cSql += coalesce_char_zarez( "tmarza2", 1 )
       cSql += coalesce_num_num_zarez( "rabat", 18, 8 )
       cSql += coalesce_num_num_zarez( "marza2", 18, 8 )
-      cSql += coalesce_num_num_zarez( "fcj2", 18, 8 )
+
       cSql += coalesce_num_num_zarez( "fcj3", 18, 8 )
       cSql += coalesce_num_num_zarez( "prevoz", 18, 8 )
       cSql += coalesce_num_num_zarez( "banktr", 18, 8 )
@@ -367,6 +359,7 @@ FUNCTION use_sql_kalk( hParams )
    cSql += coalesce_num_num_zarez( "gkolicin2", 12, 3  )
 
    cSql += coalesce_num_num_zarez( "fcj", 18, 8 )
+   cSql += coalesce_num_num_zarez( "fcj2", 18, 8 )
    cSql += coalesce_num_num_zarez( "nc", 18, 8 )
    cSql += coalesce_num_num_zarez( "marza", 18, 8 )
    cSql += coalesce_num_num_zarez( "vpc", 18, 8 )

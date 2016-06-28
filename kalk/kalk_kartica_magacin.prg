@@ -352,7 +352,7 @@ FUNCTION kartica_magacin()
                ENDIF
 
                IF cPrikFCJ2 == "D" .AND. idvd == "10"
-                  @ PRow() + IF( cBrFDa == "D", 0, 1 ), nColFCJ2 SAY fcj2 PICT piccdem
+                  @ PRow() + IIF( cBrFDa == "D", 0, 1 ), nColFCJ2 SAY fcj2 PICT piccdem
                ENDIF
             ENDIF
 

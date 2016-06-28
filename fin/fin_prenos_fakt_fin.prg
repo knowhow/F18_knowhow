@@ -11,7 +11,7 @@
 
 #include "f18.ch"
 
-FUNCTION fakt_fin_prenos() )
+FUNCTION fakt_fin_prenos()
 
    O_PARAMS
    PRIVATE cSection := "(", cHistory := " "; aHistory := {}

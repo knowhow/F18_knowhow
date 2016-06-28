@@ -23,7 +23,7 @@ FUNCTION kalk_udaljena_razmjena_podataka()
    LOCAL _opcexe := {}
    LOCAL _izbor := 1
 
-   __import_dbf_path := my_home() + "import_dbf" + SLASH
+   __import_dbf_path := my_home() + "export_dbf" + SLASH
    __export_dbf_path := my_home() + "export_dbf" + SLASH
    __import_zip_name := "kalk_exp.zip"
    __export_zip_name := "kalk_exp.zip"

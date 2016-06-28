@@ -118,7 +118,7 @@ FUNCTION CreDIntDB()
 
    // kreiraj index za tabelu DINTEG1/2
    CREATE_INDEX ( "1", "DTOS(DATUM)+VRIJEME+STR(ID)", "DINTEG1" )
-   CREATE_INDEX ( "2", "ID", KUMPATH + "DINTEG1" )
+   CREATE_INDEX ( "2", "ID", "DINTEG1" )
    CREATE_INDEX ( "1", "DTOS(DATUM)+VRIJEME+STR(ID)", "DINTEG2" )
    CREATE_INDEX ( "2", "ID", "DINTEG2" )
 
@@ -160,7 +160,7 @@ FUNCTION cre_tbl_errors()
 
 
 /* ChkDTbl()
- *    
+ *
  */
 FUNCTION ChkDTbl()
 

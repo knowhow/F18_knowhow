@@ -395,7 +395,6 @@ FUNCTION use_sql_kalk( hParams )
    ENDIF
 
    SELECT ( F_KALK )
-   USE
 
    ?E cSql
    use_sql( cTable, cSql )
@@ -594,7 +593,6 @@ FUNCTION use_sql_kalk_doks( hParams )
    ENDIF
 
    SELECT ( F_KALK_DOKS )
-   USE
    use_sql( cTable, cSql )
 
    IF is_sql_rdd_treba_indeks( hParams )
@@ -710,7 +708,6 @@ FUNCTION use_sql_kalk_doks2( hParams )
    ENDIF
 
    SELECT ( F_KALK_DOKS2 )
-   USE
    use_sql( cTable, cSql )
 
    IF is_sql_rdd_treba_indeks( hParams )
@@ -845,7 +842,6 @@ FUNCTION use_sql_kalk_kalk( hParams )
    ENDIF
 
    SELECT ( F_KALK_KALK )
-   USE
    use_sql( cTable, cSql )
 
    IF is_sql_rdd_treba_indeks( hParams )
@@ -941,7 +937,6 @@ FUNCTION use_sql_kalk_kalk_atributi( hParams )
    ENDIF
 
    SELECT ( F_KALK_ATRIBUTI )
-   USE
    use_sql( cTable, cSql )
 
    IF is_sql_rdd_treba_indeks( hParams )

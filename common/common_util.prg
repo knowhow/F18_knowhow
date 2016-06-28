@@ -204,8 +204,7 @@ FUNCTION get_file_list_array( cPath, cFilter, cFile, lSilent )
    RETURN 1
 
 
-// --------------------
-// --------------------
+
 FUNCTION preduzece()
 
    LOCAL _t_arr := Select()
@@ -223,8 +222,8 @@ FUNCTION preduzece()
          O_PARTN
       ENDIF
       SELECT partn
-      HSEEK cIdFirma
-      ?? cIdFirma, AllTrim( partn->naz ), AllTrim( partn->naz2 )
+      HSEEK gFirma
+      ?? gFirma, AllTrim( partn->naz ), AllTrim( partn->naz2 )
    ENDIF
 
    B_OFF
@@ -232,7 +231,7 @@ FUNCTION preduzece()
 
    SELECT ( _t_arr )
 
-   RETURN
+   RETURN .T.
 
 
 

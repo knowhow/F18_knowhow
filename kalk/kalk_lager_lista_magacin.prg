@@ -447,6 +447,7 @@ FUNCTION lager_lista_magacin()
          ENDIF
          SELECT roba
       ENDIF
+
       // po vindija GRUPA
       IF IsVindija()
          IF !Empty( cGr )

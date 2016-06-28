@@ -758,7 +758,6 @@ FUNCTION use_sql_suban( hParams )
    ENDIF
 
    SELECT ( F_SUBAN )
-
    use_sql( cTable, cSql )
 
    IF is_sql_rdd_treba_indeks( hParams )

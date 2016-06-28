@@ -1,21 +1,17 @@
 /*
- * This file is part of the bring.out FMK, a free and open source
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+ * This file is part of the bring.out knowhow ERP, a free and open source
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
 
-
 #include "f18.ch"
 
 
-/* PregledProdaje()
- *     Pregled prodaje - Vindija
- */
 
 FUNCTION roba_pregled_prodje()
 
@@ -60,7 +56,7 @@ FUNCTION roba_pregled_prodje()
    O_SIFV
    SET ORDER TO TAG "ID"
 
-   CrePom2()
+   cre_prodaja()
 
    //SELECT KALK
    //SET ORDER TO TAG "7"   // idroba+idvd
@@ -305,7 +301,7 @@ FUNCTION roba_pregled_prodje()
 // -------------------------------------------------------------
 // kreiranje i otvaranje pomocne baze POM.DBF za pregled prodaje
 // -------------------------------------------------------------
-STATIC FUNCTION CrePom2()
+STATIC FUNCTION cre_prodaja()
 
    LOCAL cImeDbf
    LOCAL cAlias := "PRODAJA"
@@ -334,8 +330,8 @@ STATIC FUNCTION CrePom2()
 
    //USEX ( cImeDBF )
 
-   CREATE_INDEX( "IDG + IDPG + IDROBA", "1", cAlias)
-   CREATE_INDEX( IDG + IDPG + Left( NAZ, 40 ), "2", cAlias )
+   CREATE_INDEX( "1", "IDG + IDPG + IDROBA", cAlias)
+   CREATE_INDEX( "2", "IDG + IDPG + Left( NAZ, 40 )", cAlias )
 
    USEX( cAlias )
    SET ORDER TO TAG "1"

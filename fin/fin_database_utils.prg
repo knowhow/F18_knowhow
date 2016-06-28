@@ -24,8 +24,10 @@ FUNCTION fin_admin_opcije_menu()
    AAdd( opc, "2. pregled datumskih gresaka u nalozima" )
    AAdd( opcexe, {|| daterr_rpt() } )
 
+#ifdef F18_FMK
    AAdd( opc, "4. kontrola podataka nakon importa iz FMK" )
    AAdd( opcexe, {|| fmk_provjera_za_migraciju_f18() } )
+#endif
 
    AAdd( opc, "------------------------------------------------------" )
    AAdd( opcexe, {|| NIL } )

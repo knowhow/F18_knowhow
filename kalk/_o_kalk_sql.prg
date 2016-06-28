@@ -136,6 +136,45 @@ FUNCTION find_kalk_doks_by_broj_fakture( cBrojFakture )
    RETURN ! Eof()
 
 
+FUNCTION find_kalk_za_period( cIdFirma, cIdVd, cIdPartner, cIdRoba, dDatOd, dDatDo, cOrderBy )
+
+   LOCAL hParams := hb_Hash()
+
+   hb_default( @cOrderBy, "idFirma,IdVD,BrDok,RBr" )
+
+
+   IF cIdFirma != NIL
+      hParams[ "idfirma" ] := cIdFirma
+   ENDIF
+
+   IF cIdVd != NIL
+      hParams[ "idvd" ] := cIdVd
+   ENDIF
+
+   IF cIdPartner != NIL
+      hParams[ "idpartner" ] := cIdPartner
+   ENDIF
+
+   IF cIdRoba != NIL
+      hParams[ "idroba" ] := cIdRoba
+   ENDIF
+
+   IF dDatOd <> NIL
+      hParams[ "dat_od" ] := dDatOd
+   ENDIF
+   IF dDatOd <> NIL
+      hParams[ "dat_do" ] := dDatDo
+   ENDIF
+
+   hParams[ "order_by" ] := cOrderBy
+
+
+   hParams[ "indeks" ] := .F.
+   use_sql_kalk( hParams )
+   GO TOP
+
+   RETURN !Eof()
+
 FUNCTION find_kalk_by_mkonto_idroba( cIdFirma, cIdKonto, cIdRoba, cOrderBy, lReport )
 
    LOCAL hParams := hb_Hash()
@@ -417,6 +456,10 @@ STATIC FUNCTION use_sql_kalk_where( hParams )
 
    IF hb_HHasKey( hParams, "pkonto" )
       cWhere += " AND " + parsiraj_sql( "pkonto", hParams[ "pkonto" ] )
+   ENDIF
+
+   IF hb_HHasKey( hParams, "idpartner" )
+      cWhere += "AND " + parsiraj_sql( "idpartner", hParams[ "idpartner" ] )
    ENDIF
 
    IF hb_HHasKey( hParams, "idroba" )

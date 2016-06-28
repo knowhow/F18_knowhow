@@ -33,27 +33,48 @@ FUNCTION fin_stampa_liste_naloga()
    LOCAL nRBr, nDugBHD, nPotBHD, nDugDEM, nPotDEM
    LOCAL bZagl
    LOCAL xPrintOpt
-   LOCAL lSql
 
-   cInteg := "Q"
+   LOCAL dDatOd := CToD( "" ), dDatDo := CToD( "" ), cOrderBy
+
+   cInteg := "N"
    nSort := 1
 
    cIdVN := "  "
-   Box(, 7, 60 )
+   Box(, 9, 60 )
    @ m_x + 1, m_Y + 2 SAY "Provjeriti integritet podataka"
-   @ m_x + 2, m_Y + 2 SAY "u odnosu na datoteku naloga D/N/Q ?"  GET cInteg  PICT "@!" VALID cInteg $ "DNQ"
+   @ m_x + 2, m_Y + 2 SAY "u odnosu na datoteku naloga D/N/Q ?"  GET cInteg  PICT "@!" VALID cInteg $ "DN"
    @ m_x + 4, m_Y + 2 SAY "Sortiranje dokumenata po:  1-(firma,vn,brnal) "
    @ m_x + 5, m_Y + 2 SAY "2-(firma,brnal,vn),    3-(datnal,firma,vn,brnal) " GET nSort PICT "9"
    @ m_x + 7, m_Y + 2 SAY "Vrsta naloga (prazno-svi) " GET cIDVN PICT "@!"
+
+   @ m_x + 9, m_y + 2 SAY "Datum od:" GET dDatOd
+   @ m_x + 9, Col() + 2 SAY "do:" GET dDatDo
+
    READ
    ESC_BCR
    BoxC()
 
-   lSql := ( cInteg == "Q" )
-   IF !o_nalog( lSql, cIdVN )
-      MsgBeep( "Tabela fin_nalog se ne moze otvoriti" )
-      RETURN .F.
+   DO CASE
+   CASE nSort == 1
+      cOrderBy := "idfirma,idvn,brnal"
+   CASE nSort == 2
+      cOrderBy := "idfirma,brnal,idvn"
+   OTHERWISE
+      cOrderBy := "datnal,idfirma,vn,brnal"
+   ENDCASE
+
+   IF Empty( dDatOd )
+      dDatOd := NIL
    ENDIF
+   IF Empty( dDatDo )
+      dDatDo := NIL
+   ENDIF
+   IF Empty( cIdVn )
+      cIdVN := NIL
+   ENDIF
+
+   find_nalog_za_period( gFirma, cIdVn, dDatOd, dDatDo, cOrderBy  )
+
 
    IF cInteg == "D"
       o_suban()

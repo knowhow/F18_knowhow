@@ -147,6 +147,39 @@ FUNCTION find_suban_by_konto_partner( cIdFirma, cIdKonto, cIdPartner, cBrDok, cO
    RETURN ! Eof()
 
 
+
+
+FUNCTION find_nalog_za_period( cIdFirma, cIdVN, dDatOd, dDatDo, cOrderBy )
+
+   LOCAL hParams := hb_Hash()
+
+   hb_default( @cOrderBy, "idFirma,IdVN,BrNal" )
+
+   IF cIdFirma <> NIL
+      hParams[ "idfirma" ] := cIdFirma
+   ENDIF
+
+   IF cIdFirma <> NIL
+      hParams[ "idvn" ] := cIdVN
+   ENDIF
+
+   IF dDatOd != NIL
+      hParams[ "dat_od" ] := dDatOd
+   ENDIF
+
+   IF dDatDo != NIL
+      hParams[ "dat_do" ] := dDatDo
+   ENDIF
+
+   hParams[ "order_by" ] := cOrderBy
+
+   hParams[ "indeks" ] := .F.
+   use_sql_nalog( hParams )
+   GO TOP
+
+   RETURN ! Eof()
+
+
 FUNCTION find_nalog_by_broj_dokumenta( cIdFirma, cIdVN, cBrNal, cOrderBy )
 
    LOCAL hParams := hb_Hash()
@@ -617,6 +650,9 @@ GRANT ALL ON TABLE fmk.fin_anal TO xtrole;
    ENDIF
 
    RETURN .T.
+
+
+
 
 
 STATIC FUNCTION use_sql_anal_order( hParams )

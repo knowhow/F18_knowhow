@@ -55,10 +55,7 @@ FUNCTION fin_kontrola_zbira( bDat, lSilent )
    ENDIF
 
    my_close_all_dbf()
-   o_nalog()
-   o_suban()
-   o_sint()
-   o_anal()
+
 
    IF !lSilent
 
@@ -98,138 +95,57 @@ FUNCTION fin_kontrola_zbira( bDat, lSilent )
 
    ENDIF
 
-   SELECT nalog
-   GO TOP
-
-   nDug := nPot := nDu2 := nPo2 := 0
-   DO WHILE !Eof() .AND. Inkey() != 27
-      IF ( bDat )
-         IF ( field->datnal < dDOd .OR. field->datnal > dDDo )
-            SKIP
-            LOOP
-         ENDIF
-      ENDIF
-      nDug += DugBHD
-      nPot += PotBHD
-      nDu2 += DugDEM
-      nPo2 += PotDEM
-      SKIP
-   ENDDO
-
-   nSaldo += nDug - nPot
-   nNalD := nDug
-   nNalP := nPot
-
+   fin_kzb_nalog()
+altd()
    IF !lSilent
       IF LastKey() == K_ESC
          BoxC()
          CLOSERET
       ENDIF
-      @ m_x + 3, m_y + 12 SAY nDug PICTURE picBHD
-      @ m_x + 4, m_y + 12 SAY nPot PICTURE picBHD
-      @ m_x + 5, m_y + 12 SAY nDug - nPot PICTURE picBHD
-      @ m_x + 7, m_y + 12 SAY nDu2 PICTURE picDEM
-      @ m_x + 8, m_y + 12 SAY nPo2 PICTURE picDEM
-      @ m_x + 9, m_y + 12 SAY nDu2 - nPo2 PICTURE picDEM
+      @ m_x + 3, m_y + 12 SAY duguje PICTURE picBHD
+      @ m_x + 4, m_y + 12 SAY potrazuje PICTURE picBHD
+      @ m_x + 5, m_y + 12 SAY duguje - potrazuje PICTURE picBHD
+      @ m_x + 7, m_y + 12 SAY duguje2 PICTURE picDEM
+      @ m_x + 8, m_y + 12 SAY potrazuje2 PICTURE picDEM
+      @ m_x + 9, m_y + 12 SAY duguje2 - potrazuje2 PICTURE picDEM
    ENDIF
 
-   SELECT SINT
-   GO TOP
-   nDug := nPot := nDu2 := nPo2 := 0
-   GO TOP
-   DO WHILE !Eof() .AND. Inkey() != 27
-      IF ( bDat )
-         IF ( field->datnal < dDOd .OR. field->datnal > dDDo )
-            SKIP
-            LOOP
-         ENDIF
-      ENDIF
-      nDug += Dugbhd
-      nPot += Potbhd
-      nDu2 += Dugdem
-      nPo2 += Potdem
-      SKIP
-   ENDDO
-
-   nSaldo += nDug - nPot
-   nSintD := nDug
-   nSintP := nPot
-
+   fin_kzb_sint()
    IF !lSilent
       ESC_BCR
-      @ m_x + 3, m_y + 29 SAY nDug PICTURE picBHD
-      @ m_x + 4, m_y + 29 SAY nPot PICTURE picBHD
-      @ m_x + 5, m_y + 29 SAY nDug - nPot PICTURE picBHD
-      @ m_x + 7, m_y + 29 SAY nDu2 PICTURE picDEM
-      @ m_x + 8, m_y + 29 SAY nPo2 PICTURE picDEM
-      @ m_x + 9, m_y + 29 SAY nDu2 - nPo2 PICTURE picDEM
+      @ m_x + 3, m_y + 29 SAY duguje PICTURE picBHD
+      @ m_x + 4, m_y + 29 SAY potrazuje PICTURE picBHD
+      @ m_x + 5, m_y + 29 SAY duguje - potrazuje PICTURE picBHD
+      @ m_x + 7, m_y + 29 SAY duguje2 PICTURE picDEM
+      @ m_x + 8, m_y + 29 SAY potrazuje2 PICTURE picDEM
+      @ m_x + 9, m_y + 29 SAY duguje2 - potrazuje2 PICTURE picDEM
    ENDIF
 
-   SELECT ANAL
-   GO TOP
-   nDug := nPot := nDu2 := nPo2 := 0
-   DO WHILE !Eof() .AND. Inkey() != 27
-      IF ( bDat )
-         IF ( field->datnal < dDOd .OR. field->datnal > dDDo )
-            SKIP
-            LOOP
-         ENDIF
-      ENDIF
-      nDug += Dugbhd
-      nPot += Potbhd
-      nDu2 += Dugdem
-      nPo2 += Potdem
-      SKIP
-   ENDDO
-
-   nSaldo += nDug - nPot
-   nAnalD := nDug
-   nAnalP := nPot
-
+   fin_kzb_anal()
    IF !lSilent
       ESC_BCR
-      @ m_x + 3, m_y + 46 SAY nDug PICTURE picBHD
-      @ m_x + 4, m_y + 46 SAY nPot PICTURE picBHD
-      @ m_x + 5, m_y + 46 SAY nDug - nPot PICTURE picBHD
-      @ m_x + 7, m_y + 46 SAY nDu2 PICTURE picDEM
-      @ m_x + 8, m_y + 46 SAY nPo2 PICTURE picDEM
-      @ m_x + 9, m_y + 46 SAY nDu2 - nPo2 PICTURE picDEM
+
+
+      @ m_x + 3, m_y + 46 SAY duguje PICTURE picBHD
+      @ m_x + 4, m_y + 46 SAY potrazuje PICTURE picBHD
+      @ m_x + 5, m_y + 46 SAY duguje - potrazuje PICTURE picBHD
+      @ m_x + 7, m_y + 46 SAY duguje2 PICTURE picDEM
+      @ m_x + 8, m_y + 46 SAY potrazuje2 PICTURE picDEM
+      @ m_x + 9, m_y + 46 SAY duguje2 - potrazuje2 PICTURE picDEM
    ENDIF
 
-   SELECT SUBAN
-   nDug := nPot := nDu2 := nPo2 := 0
-   GO TOP
 
-   DO WHILE !Eof() .AND. Inkey() != 27
-      IF ( bDat )
-         IF ( field->datdok < dDOd .OR. field->datdok > dDDo )
-            SKIP
-            LOOP
-         ENDIF
-      ENDIF
-
-      IF D_P == "1"
-         nDug += Iznosbhd
-         nDu2 += Iznosdem
-      ELSE
-         nPot += Iznosbhd
-         nPo2 += Iznosdem
-      ENDIF
-      SKIP
-   ENDDO
-
-   nSaldo += nDug - nPot
-   nSubD := nDug
-   nSubP := nPot
-
+   fin_kzb_suban()
    IF !lSilent
       ESC_BCR
-      @ m_x + 3, m_y + 63 SAY nDug PICTURE picBHD
-      @ m_x + 4, m_y + 63 SAY nPot PICTURE picBHD
-      @ m_x + 5, m_y + 63 SAY nDug - nPot PICTURE picBHD
-      @ m_x + 7, m_y + 63 SAY nDu2 PICTURE picDEM
-      @ m_x + 8, m_y + 63 SAY nPo2 PICTURE picDEM
-      @ m_x + 9, m_y + 63 SAY nDu2 - nPo2 PICTURE picDEM
+
+      @ m_x + 3, m_y + 63 SAY duguje PICTURE picBHD
+      @ m_x + 4, m_y + 63 SAY potrazuje PICTURE picBHD
+      @ m_x + 5, m_y + 63 SAY duguje - potrazuje PICTURE picBHD
+      @ m_x + 7, m_y + 63 SAY duguje2 PICTURE picDEM
+      @ m_x + 8, m_y + 63 SAY potrazuje2 PICTURE picDEM
+      @ m_x + 9, m_y + 63 SAY duguje2 - potrazuje2 PICTURE picDEM
+
       WHILE Inkey( 0.1 ) != K_ESC
       END
       BoxC()
@@ -287,4 +203,60 @@ FUNCTION auto_kzb()
 
    SELECT ( nTArea )
 
-   RETURN
+   RETURN .T.
+
+
+
+
+FUNCTION fin_kzb_suban()
+
+   LOCAL cTable := "SUBAN"
+   LOCAL cSql :=  "select "
+
+   cSql += "sum(CASE WHEN d_p='1' THEN iznosbhd ELSE 0 END) as duguje,"
+   cSql += "sum(CASE WHEN d_p='2' THEN iznosbhd ELSE 0 END) as potrazuje,"
+   cSql += "sum(CASE WHEN d_p='1' THEN iznosdem ELSE 0 END) as duguje2,"
+   cSql += "sum(CASE WHEN d_p='2' THEN iznosdem ELSE 0 END) as potrazuje2"
+   cSql += " from fmk.fin_suban"
+
+   RETURN use_sql( cTable, cSql )
+
+FUNCTION fin_kzb_anal()
+
+   LOCAL cTable := "ANAL"
+   LOCAL cSql :=  "select "
+
+   cSql += "sum(dugbhd) as duguje,"
+   cSql += "sum(potbhd) as potrazuje,"
+   cSql += "sum(dugdem) as duguje2,"
+   cSql += "sum(potdem) as potrazuje2"
+   cSql += " from fmk.fin_anal"
+
+   RETURN use_sql( cTable, cSql )
+
+
+FUNCTION fin_kzb_sint()
+
+   LOCAL cTable := "SINT"
+   LOCAL cSql :=  "select "
+
+   cSql += "sum(dugbhd) as duguje,"
+   cSql += "sum(potbhd) as potrazuje,"
+   cSql += "sum(dugdem) as duguje2,"
+   cSql += "sum(potdem) as potrazuje2"
+   cSql += " from fmk.fin_sint"
+
+   RETURN use_sql( cTable, cSql )
+
+FUNCTION fin_kzb_nalog()
+
+   LOCAL cTable := "NALOG"
+   LOCAL cSql :=  "select "
+
+   cSql += "sum(dugbhd) as duguje,"
+   cSql += "sum(potbhd) as potrazuje,"
+   cSql += "sum(dugdem) as duguje2,"
+   cSql += "sum(potdem) as potrazuje2"
+   cSql += " from fmk.fin_nalog"
+
+   RETURN use_sql( cTable, cSql )

@@ -307,14 +307,14 @@ STATIC FUNCTION _o_tables()
    O_FAKT_DOKS
    O_ROBA
    O_RJ
-   o_kalk()
+   // o_kalk()
    O_FAKT
    O_FAKT_PRIPR
    O_SIFK
    O_SIFV
    O_PARTN
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -398,8 +398,8 @@ FUNCTION kalkp_2_fakt()
    qqIdVd     := PadR( "41;", 40 )
    cIdTipDok  := "11"
 
-   SELECT kalk
-   SET ORDER TO TAG "7"
+   // SELECT kalk
+   // SET ORDER TO TAG "7" //  "7", "idroba+idvd"
 
    Box( "#KALK->FAKT za partnera", 17, 75 )
 
@@ -413,8 +413,7 @@ FUNCTION kalkp_2_fakt()
          @ m_x + 1, Col() + 1 SAY cIdFirma PICT "@!"
       ENDIF
 
-      @ m_x + 2, m_y + 2 SAY "Kalk partner" GET cIdPartner ;
-         VALID P_Firma( @cIdPartner )
+      @ m_x + 2, m_y + 2 SAY "Kalk partner" GET cIdPartner  VALID P_Firma( @cIdPartner )
       @ m_x + 3, m_y + 2 SAY "Vrste KALK dokumenata" GET qqIdVd PICT "@!S30"
       @ m_x + 4, m_y + 2 SAY "Za period od" GET dOd
       @ m_x + 4, Col() + 1 SAY "do" GET dDo
@@ -457,12 +456,13 @@ FUNCTION kalkp_2_fakt()
 
       IF Found()
          Beep( 4 )
-         @ m_x + 14, m_y + 2 SAY "U FAKT vec postoji ovaj dokument !!"
+         @ m_x + 14, m_y + 2 SAY "U FAKT vec postoji ovaj dokument !"
          Inkey( 4 )
          @ m_x + 14, m_y + 2 SAY Space( 37 )
          LOOP
       ENDIF
 
+/*
       SELECT KALK
 
       cFilter := "idfirma == cIdFirma"
@@ -477,6 +477,15 @@ FUNCTION kalkp_2_fakt()
          cFilter += ".and." + aUsl1
       ENDIF
 
+      SET FILTER TO &cFilter
+      GO TOP
+*/
+
+      find_kalk_za_period( cIdFirma, NIL, cIdPartner, NIL, dOd, dDo )
+      cFilter := "idfirma == cIdFirma"
+      IF !Empty( qqIdVd )
+         cFilter += ".and." + aUsl1
+      ENDIF
       SET FILTER TO &cFilter
       GO TOP
 

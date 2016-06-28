@@ -71,6 +71,25 @@ FUNCTION find_kalk_doks_za_tip( cIdFirma, cIdvd )
    RETURN find_kalk_doks_by_broj_dokumenta( cIdFirma, cIdvd, NIL )
 
 
+
+FUNCTION find_kalk_doks_by_broj_fakture( cIdVd, cBrFaktP )
+
+   LOCAL hParams := hb_Hash()
+  
+   IF cIdVd <> NIL
+      hParams[ "idvd" ] := cIdVd
+   ENDIF
+
+   IF cBrFaktP <> NIL
+      hParams[ "brfaktp" ] := cBrFaktP
+   ENDIF
+
+   hParams[ "order_by" ] := "brfaktp,idvd"
+   hParams[ "indeks" ] := .F.  // ne trositi vrijeme na kreiranje indeksa
+
+   use_sql_kalk_doks( hParams )
+   GO TOP
+
 FUNCTION find_kalk_doks_by_broj_dokumenta( cIdFirma, cIdvd, cBrDok )
 
    LOCAL hParams := hb_Hash()
@@ -175,11 +194,12 @@ FUNCTION find_kalk_za_period( cIdFirma, cIdVd, cIdPartner, cIdRoba, dDatOd, dDat
 
    RETURN !Eof()
 
+
 FUNCTION find_kalk_by_mkonto_idroba( cIdFirma, cIdKonto, cIdRoba, cOrderBy, lReport )
 
    LOCAL hParams := hb_Hash()
 
-   hb_default( @cOrderBy, "idfirma, mkonto, idroba, datdok, podbr, mu_i, idvd" )
+   hb_default( @cOrderBy, "idfirma,mkonto,idroba,datdok,podbr,mu_i,idvd" )
    hb_default( @lReport, .T. )
 
    IF cIdFirma != NIL
@@ -217,7 +237,7 @@ FUNCTION find_kalk_by_pkonto_idroba( cIdFirma, cIdKonto, cIdRoba )
    IF cIdRoba != NIL
       hParams[ "idroba" ] := cIdRoba
    ENDIF
-   hParams[ "order_by" ] := "idfirma, pkonto, idroba, datdok, podbr, mu_i, idvd"
+   hParams[ "order_by" ] := "idfirma,pkonto,idroba,datdok, podbr, mu_i, idvd"
 
    use_sql_kalk( hParams )
    GO TOP

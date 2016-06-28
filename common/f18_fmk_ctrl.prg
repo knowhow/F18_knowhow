@@ -362,7 +362,7 @@ STATIC FUNCTION f18_kalk_data( data, checksum )
    LOCAL _n_c_iznos := 0
    LOCAL _n_c_stavke := 0
 
-   o_kalk()
+   o_kalk() // iskljuceno
 
    Box(, 2, 60 )
 

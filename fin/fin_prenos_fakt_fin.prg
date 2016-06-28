@@ -11,7 +11,7 @@
 
 #include "f18.ch"
 
-FUNCTION FaktFin()
+FUNCTION fakt_fin_prenos() )
 
    O_PARAMS
    PRIVATE cSection := "(", cHistory := " "; aHistory := {}
@@ -20,7 +20,7 @@ FUNCTION FaktFin()
    cKonSir   := PadR( my_get_from_ini( "FAKTFIN", "KontoSirovinaIzSastavnice", "1010", KUMPATH ), 7 )
 
    gFaktKum := ""
-   gKalkKum := ""
+
    gDzokerF1 := ""
 
    cOdradjeno := "D"
@@ -36,10 +36,7 @@ FUNCTION FaktFin()
       Wpar( "a1", @gFaktKum )
    ENDIF
 
-   IF Empty( gKalkKum ) .OR. cOdradjeno = "N"
-      gKalkKum := Trim( StrTran( cDirRad, "FIN", "KALK" ) ) + SLASH
-      Wpar( "a3", @gKalkKum )
-   ENDIF
+
 
    cIdRjFakt := "10"
    cIdFakt := "10"
@@ -64,20 +61,18 @@ FUNCTION FaktFin()
    READ
    IF cSetPar == "D"
       gFaktKum := PadR( gFaktKum, 35 )
-      gKalkKum := PadR( gKalkKum, 35 )
+
       gDzokerF1 := PadR( gDzokerF1, 80 )
       @ m_x + 8, m_y + 2 SAY "FAKT Kumulativ" GET gFaktKum  PICT "@S25"
       @ m_x + 9, m_y + 2 SAY "Dzoker F1(formula)" GET gDzokerF1  PICT "@S25"
-      IF lNCPoSast
-         @ m_x + 10, m_y + 2 SAY "KALK Kumulativ" GET gKalkKum  PICT "@S25"
-      ENDIF
+
       READ
       gFaktKum := Trim( gFaktKum )
-      gKalkKum := Trim( gKalkKum )
+
       gDzokerF1 := Trim( gDzokerF1 )
       Wpar( "a1", @gFaktKum )
       Wpar( "a2", @gDzokerF1 )
-      Wpar( "a3", @gKalkKum )
+
    ENDIF
 
    BoxC()
@@ -90,7 +85,6 @@ FUNCTION FaktFin()
       RETURN .F.
    ENDIF
 
-   // ovo dole je ukradeno iz KALK/REKAPK
 
    O_FINMAT
    O_KONTO
@@ -101,10 +95,7 @@ FUNCTION FaktFin()
 
    IF lNCPoSast
       O_SAST
-      SELECT ( F_KALK )
-      IF !Used()
-         o_kalk()
-      ENDIF
+
       SET ORDER TO TAG "1"
    ENDIF
 
@@ -147,7 +138,7 @@ FUNCTION FaktFin()
          Box(, 6, 66 )
          aMemo := parsmemo( txt )
          IF Len( aMemo ) >= 5
-            @ m_x + 1,m_y + 2 SAY "FAKT broj:" + BrDOK
+            @ m_x + 1, m_y + 2 SAY "FAKT broj:" + BrDOK
             @ m_x + 2, m_y + 2 SAY PadR( Trim( amemo[ 3 ] ), 30 )
             @ m_x + 3, m_y + 2 SAY PadR( Trim( amemo[ 4 ] ), 30 )
             @ m_x + 4, m_y + 2 SAY PadR( Trim( amemo[ 5 ] ), 30 )
@@ -175,7 +166,7 @@ FUNCTION FaktFin()
             SELECT SAST
             HSEEK FAKT->idroba
             DO WHILE !Eof() .AND. id == FAKT->idroba
-               nNV += FAKT->kolicina * SAST->kolicina * IzKalk( SAST->id2, cKonSir, "NC" )
+               nNV += FAKT->kolicina * SAST->kolicina * get_nabavna_cijena_iz_kalk( SAST->id2, cKonSir )
                SKIP 1
             ENDDO
          ENDIF
@@ -189,8 +180,8 @@ FUNCTION FaktFin()
             IdVD      WITH cIdVD, ;
             BrDok     WITH fakt->BrDok, ;
             DatDok    WITH fakt->DatDok, ;
-            FV        WITH nFV,;
-            NV        WITH nNV,;
+            FV        WITH nFV, ;
+            NV        WITH nNV, ;
             Marza     WITH 0, ;
             VPV       WITH nFV, ;
             RABATV    WITH nRabat, ;
@@ -323,7 +314,7 @@ FUNCTION fin_kontiranje_naloga( dDatNal )
 
    cBrNalF := ""
 
-   //o_nalog()
+   // o_nalog()
    O_FIN_PRIPR
 
    SELECT FINMAT
@@ -335,8 +326,8 @@ FUNCTION fin_kontiranje_naloga( dDatNal )
 
    IF lAFin
       cBrNalF := fin_novi_broj_dokumenta( finmat->idfirma, cIdVn )
-      //SELECT nalog
-      //USE
+      // SELECT nalog
+      // USE
    ENDIF
 
    SELECT finmat
@@ -358,7 +349,7 @@ FUNCTION fin_kontiranje_naloga( dDatNal )
    PRIVATE cKonto1 := NIL
    PRIVATE KursLis := "1"
 
-   DO WHILE !finmat->(Eof())    // finmat
+   DO WHILE !finmat->( Eof() )    // finmat
 
       cIDVD := IdVD
       cBrDok := BrDok
@@ -426,9 +417,9 @@ FUNCTION fin_kontiranje_naloga( dDatNal )
                ENDIF
                fExist := .F.
                SEEK FINMAT->IdFirma + cIdVn + cBrNalF
-               IF fin_pripr->(Found())
+               IF fin_pripr->( Found() )
                   fExist := .F.
-                  DO WHILE FINMAT->idfirma + cIdvn + cBrNalF == fin_pripr->(IdFirma + idvn + BrNal)
+                  DO WHILE FINMAT->idfirma + cIdvn + cBrNalF == fin_pripr->( IdFirma + idvn + BrNal )
                      IF IdKonto == cIdKonto .AND. IdPartner == cIdPartner .AND. trfp2->d_p == d_p  .AND. idtipdok == FINMAT->idvd .AND. PadR( brdok, 10 ) == PadR( cBrDok, 10 ) .AND. datdok == dDatDok
                         // provjeriti da li se vec nalazi stavka koju dodajemo
                         fExist := .T.
@@ -548,39 +539,35 @@ FUNCTION PrStopa( nProc )
  *   param: cSta
  */
 
-FUNCTION IzKalk( cIdRoba, cKonSir, cSta )
+FUNCTION get_nabavna_cijena_iz_kalk( cIdRoba, cKonSir )
 
    LOCAL x := 0, nArr := Select(), nNV, nUlaz, nIzlaz
 
-   SELECT KALK
-   DO CASE
-   CASE cSta == "NC"
-      // "idFirma+mkonto+idroba+dtos(datdok)+podbr+MU_I+IdVD"
-      SET ORDER TO TAG "3" // kalk
-      SEEK gFirma + cKonSir + cIdRoba
-      nNV := nUlaz := nIzlaz := 0
-      DO WHILE !Eof() .AND. idfirma + mkonto + idroba == gFirma + cKonSir + cIdRoba
-         IF mu_i == "1" .AND. !( idvd $ "12#22#94" )
-            nUlaz  += kolicina - gkolicina - gkolicin2
-            nNV    += nc * ( kolicina - gkolicina - gkolicin2 )
-         ELSEIF mu_i == "5"
-            nIzlaz += kolicina
-            nNV    -= nc * ( kolicina )
-         ELSEIF mu_i == "1" .AND. ( idvd $ "12#22#94" )    // povrat
-            nIzlaz -= kolicina
-            nNV    += nc * ( kolicina )
-         ENDIF
-         SKIP 1
-      ENDDO
-      IF nUlaz - nIzlaz <> 0
-         x := nNV / ( nUlaz - nIzlaz )
+   find_kalk_by_mkonto_idroba( gFirma, cKonSir, cIdRoba )
+
+   nNV := nUlaz := nIzlaz := 0
+   DO WHILE !Eof() .AND. idfirma + mkonto + idroba == gFirma + cKonSir + cIdRoba
+      IF mu_i == "1" .AND. !( idvd $ "12#22#94" )
+         nUlaz  += kolicina - gkolicina - gkolicin2
+         nNV    += nc * ( kolicina - gkolicina - gkolicin2 )
+      ELSEIF mu_i == "5"
+         nIzlaz += kolicina
+         nNV    -= nc * ( kolicina )
+      ELSEIF mu_i == "1" .AND. ( idvd $ "12#22#94" )    // povrat
+         nIzlaz -= kolicina
+         nNV    += nc * ( kolicina )
       ENDIF
-      IF x <= 0
-         MsgBeep( "GRESKA! Artikal:" + cIdRoba + ", konto:" + cKonSir + ", NC=" + Str( x ) + " !?" + ;
-            "#FAKT dok.:" + FAKT->( idfirma + "-" + idtipdok + "-" + brdok ) + ", stavka br." + FAKT->rbr + ;
-            "#Proizvod:" + FAKT->idroba )
-      ENDIF
-   ENDCASE
+      SKIP 1
+   ENDDO
+   IF nUlaz - nIzlaz <> 0
+      x := nNV / ( nUlaz - nIzlaz )
+   ENDIF
+   IF x <= 0
+      MsgBeep( "GRESKA! Artikal:" + cIdRoba + ", konto:" + cKonSir + ", NC=" + Str( x ) + " !?" + ;
+         "#FAKT dok.:" + FAKT->( idfirma + "-" + idtipdok + "-" + brdok ) + ", stavka br." + FAKT->rbr + ;
+         "#Proizvod:" + FAKT->idroba )
+   ENDIF
+
    SELECT ( nArr )
 
    RETURN x

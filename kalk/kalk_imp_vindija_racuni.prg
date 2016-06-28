@@ -81,7 +81,7 @@ STATIC FUNCTION aimp_setup()
    @ m_x + nX, m_y + 2 SAY "Automatska ravnoteza naloga na konto: " GET gAImpRKonto
 
    nX += 1
-   @ m_x + nX, m_y + 2 SAY "Provjera broj naloga (minus karaktera):" GET gAImpRight PICT "9"
+   //@ m_x + nX, m_y + 2 SAY "Provjera broj naloga (minus karaktera):" GET gAImpRight PICT "9"
 
 
    READ
@@ -97,7 +97,7 @@ STATIC FUNCTION aimp_setup()
 
       WPar( "ap", gAImpPrint )
       WPar( "ak", gAImpRKonto )
-      WPar( "ar", gAImpRight )
+      //WPar( "ar", gAImpRight )
 
       SELECT params
       USE
@@ -671,7 +671,9 @@ FUNCTION cre_kalk_priprt()
  */
 STATIC FUNCTION CheckBrFakt( aFakt )
 
-   aPomFakt := fakt_u_kalk_postoji( gAImpRight )
+   //aPomFakt := kalk_postoji_faktura_a( gAImpRight )
+   aPomFakt := kalk_postoji_faktura_a()
+
 
    IF Len( aPomFakt ) > 0
 
@@ -1225,20 +1227,21 @@ STATIC FUNCTION set_kalk_imp_parametri_za_poslovnica( cPoslovnica )
 
    RETURN .T.
 
+
 /* fakt_u_kalk_postoji
  *     vraca matricu sa parovima faktura -> pojavljuje se u azur.kalk
- *   param: nRight - npr. bez zadnjih nRight brojeva
  */
-STATIC FUNCTION fakt_u_kalk_postoji( nRight )
+STATIC FUNCTION kalk_postoji_faktura_a()
 
    LOCAL cBrFakt
    LOCAL cTDok
+   LOCAL aRet, cDok
 
    IF nRight == nil
       nRight := 0
    ENDIF
 
-   o_kalk_doks()
+   //o_kalk_doks()
 
    SELECT kalk_imp_temp
    GO TOP
@@ -1262,7 +1265,9 @@ STATIC FUNCTION fakt_u_kalk_postoji( nRight )
          LOOP
       ENDIF
 
+/*
       SELECT kalk_doks
+
 
       IF nRight > 0
          SET ORDER TO TAG "V_BRF2"
@@ -1277,10 +1282,11 @@ STATIC FUNCTION fakt_u_kalk_postoji( nRight )
       ELSE
          SEEK PadR( cBrFakt, 10 ) + cTDok
       ENDIF
+*/
 
-      IF Found()
+      //IF Found()
+      IF find_kalk_doks_by_broj_fakture( cTDok,  PadR( cBrFakt, 10 ) )
          AAdd( aRet, { cBrOriginal, kalk_doks->idfirma + "-" + kalk_doks->idvd + "-" + AllTrim( kalk_doks->brdok ) } )
-
       ENDIF
 
       SELECT kalk_imp_temp

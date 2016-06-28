@@ -19,11 +19,14 @@ FUNCTION KalkStanje( cIdRoba )
    LOCAL nUl, nIzl, nRezerv, nRevers, fOtv := .F., nIOrd, nFRec, aStanje
    LOCAL aZN := { CToD( "" ), 0, 0, 0 } // zadnja nabavka
 
-   SELECT roba
+   PushWA()
 
+   //SELECT roba
+
+/*
    SELECT ( F_KALK )
    IF !Used()
-      o_kalk()
+    --  o_kalk()
       fOtv := .T.
    ELSE
       nIOrd := IndexOrd()
@@ -33,6 +36,10 @@ FUNCTION KalkStanje( cIdRoba )
 
    SET ORDER TO TAG "7" // "7","Idroba"
    SEEK cIdRoba
+*/
+
+   find_kalk_za_period( gFirma, NIL, NIL, cIdRoba )
+
 
    aStanje := {}
 
@@ -90,17 +97,11 @@ FUNCTION KalkStanje( cIdRoba )
    PRIVATE ZN_Rabat  := aZN[ 3 ]           // rabat po zadnjoj nabavci
    PRIVATE ZN_NabCij := aZN[ 4 ]           // nabavna cijena po zadnjoj nabavci
 
-   IF fotv
-      SELECT kalk
-      USE
-   ELSE
-      dbSetOrder( nIOrd )
-      GO nFRec
-   ENDIF
-
-   SELECT roba
+   //SELECT roba
 
    BoxStanje( aStanje, cIdRoba )      // nUl,nIzl
+
+   PopWa()
 
    RETURN .T.
 
@@ -151,17 +152,17 @@ FUNCTION BoxStanje( aStanje, cIdroba )
    FOR nC := 1 TO nLen
       // {idfirma, nUl,nIzl,nRevers,nRezerv }
       @ nR, m_y + 2 SAY cDiv
-      @ nR, Col() SAY aStanje[nC ][ 1 ]
+      @ nR, Col() SAY aStanje[ nC ][ 1 ]
       @ nR, Col() SAY cDiv
-      @ nR, Col() SAY aStanje[nC ][ 2 ] PICT picdem
+      @ nR, Col() SAY aStanje[ nC ][ 2 ] PICT picdem
       @ nR, Col() SAY cDiv
-      @ nR, Col() SAY aStanje[nC ][ 3 ] PICT picdem
+      @ nR, Col() SAY aStanje[ nC ][ 3 ] PICT picdem
       @ nR, Col() SAY cDiv
-      nPom := aStanje[nC ][ 2 ] -aStanje[nC ][ 3 ]
+      nPom := aStanje[ nC ][ 2 ] -aStanje[ nC ][ 3 ]
       @ nR, Col() SAY nPom PICT picdem
       @ nR, Col() SAY cDiv
-      nTUl  += aStanje[nC ][ 2 ]
-      nTIzl += aStanje[nC ][ 3 ]
+      nTUl  += aStanje[ nC ][ 2 ]
+      nTIzl += aStanje[ nC ][ 3 ]
       nTSta += nPom
       nR ++
 

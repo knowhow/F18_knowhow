@@ -138,7 +138,7 @@ FUNCTION kalk_kif( dD1, dD2, cSezona )
 
 FUNCTION close_open_kalk_epdv_tables()
 
-   o_kalk()
+   //o_kalk()
    close_open_kuf_kif_sif()
 
    RETURN .T.
@@ -170,13 +170,13 @@ STATIC FUNCTION gen_kalk_kif_item( cSezona )
 
    close_open_kalk_epdv_tables()
 
+   find_kalk_za_period( gFirma, cTdSrc, NIL, NIL, dDatOd, dDatDo )
+
    SELECT KALK
-   PRIVATE cFilter := ""
+   PRIVATE cFilter := ".T."
 
-   cFilter :=  dbf_quote( dDatOd ) + " <= datdok .and. " + dbf_quote( dDatDo ) + ">= datdok"
-
-
-   cFilter :=  cFilter + ".and. IdVD == " + dbf_quote( cTdSrc ) // setuj tip dokumenta
+   //cFilter :=  dbf_quote( dDatOd ) + " <= datdok .and. " + dbf_quote( dDatDo ) + ">= datdok"
+   //cFilter :=  cFilter + ".and. IdVD == " + dbf_quote( cTdSrc ) // setuj tip dokumenta
 
    IF !Empty( cTarFilter )
       cFilter += ".and. " + cTarFilter
@@ -186,9 +186,8 @@ STATIC FUNCTION gen_kalk_kif_item( cSezona )
       cFilter +=  ".and. " + cKtoFilter
    ENDIF
 
-   SET ORDER TO TAG "1"  // "1","IdFirma+idtipdok+brdok+rbr+podbr"
+   //SET ORDER TO TAG "1"  // "1","IdFirma+idtipdok+brdok+rbr+podbr"
    SET FILTER TO &cFilter
-
    GO TOP
 
    // prosetajmo kroz kalk tabelu
@@ -199,7 +198,6 @@ STATIC FUNCTION gen_kalk_kif_item( cSezona )
       // ----------------------------------------------
       SELECT p_kif
       Scatter()
-      // ----------------------------------------------
 
       SELECT KALK
 
@@ -287,9 +285,6 @@ STATIC FUNCTION gen_kalk_kif_item( cSezona )
                lSkip := .T.
             ENDIF
          ENDCASE
-
-
-
 
 
 

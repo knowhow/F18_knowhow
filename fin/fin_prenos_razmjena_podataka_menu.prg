@@ -25,7 +25,7 @@ FUNCTION MnuRazmjenaPodataka()
    PRIVATE Izbor := 1
 
    AAdd( opc, "1. fakt->fin                   " )
-   AAdd( opcexe, {|| FaktFin() } )
+   AAdd( opcexe, {|| fakt_fin_prenos()) } )
    AAdd( opc, "2. ld->fin " )
    AAdd( opcexe, {|| LdFin() } )
    AAdd( opc, "3. import elba " )

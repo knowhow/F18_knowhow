@@ -753,8 +753,8 @@ STATIC FUNCTION kalk_azur_sql()
       RETURN lRet
    ENDIF
 
-   o_kalk()
-   o_kalk_doks()
+   o_kalk()  // otvoriti samo radi strukture tabele
+   o_kalk_doks() // otvoriti samo radi strukture tabele
 
    SELECT kalk_pripr
    GO TOP

@@ -21,15 +21,17 @@ FUNCTION FaktKalk()
    AAdd( opcexe, {|| prenos_fakt_kalk_magacin() } )
    AAdd( Opc, "2. prodavnica fakt->kalk" )
    AAdd( opcexe, {||  prenos_fakt_kalk_prodavnica()  } )
+
    AAdd( Opc, "3. proizvodnja fakt->kalk" )
-   AAdd( opcexe, {||  FaKaProizvodnja() } )
+   AAdd( opcexe, {||  menu_fakt_kalk_prenos_normativi() } )
+
    AAdd( Opc, "4. konsignacija fakt->kalk" )
    AAdd( opcexe, {|| FaktKonsig() } )
    PRIVATE Izbor := 1
    Menu_SC( "faka" )
    CLOSERET
 
-   RETURN
+   RETURN .T.
 
 
 

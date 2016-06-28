@@ -13,11 +13,10 @@
 #include "f18.ch"
 
 
-
 // ---------------------------------------------
 // meni za razmjenu dokumenata proizvodnje
 // ---------------------------------------------
-FUNCTION FaKaProizvodnja()
+FUNCTION menu_fakt_kalk_prenos_normativi()
 
    LOCAL _opc := {}
    LOCAL _opcexe := {}
@@ -69,15 +68,15 @@ FUNCTION PrenosNo( dD_from, dD_to, cIdKonto2, cIdTipDok, dDatKalk, cRobaUsl, ;
    ENDIF
 
    IF gBrojacKalkulacija == "D" .AND. lTest == .F.
-      SELECT kalk
-      SET ORDER TO TAG "1"
-      SEEK cidfirma + "96X"
-      SKIP -1
-      IF idvd <> "96"
-         cbrkalk := Space( 8 )
+
+      find_kalk_doks_za_tip( cIdFirma, "96" )
+      GO BOTTOM
+      IF idvd <> "10"
+         cBrKalk := Space( 8 )
       ELSE
-         cbrkalk := brdok
+         cBrKalk := brdok
       ENDIF
+
    ENDIF
 
    IF lTest == .T.
@@ -148,12 +147,16 @@ FUNCTION PrenosNo( dD_from, dD_to, cIdKonto2, cIdTipDok, dDatKalk, cRobaUsl, ;
 
             cFBrDok := fakt->brdok
 
-            SELECT kalk_doks
-            SET ORDER TO TAG "V_BRF"
-            GO TOP
-            SEEK PadR( cFBrDok, 10 ) + "96"
+            //SELECT kalk_doks
+            //SET ORDER TO TAG "V_BRF"  // "brfaktp+idvd"
 
-            IF Found() .AND. AllTrim( kalk_doks->brfaktp ) == AllTrim( cFBrDok ) .AND. kalk_doks->idvd == "96"
+            //GO TOP
+            //SEEK PadR( cFBrDok, 10 ) + "96"
+
+            find_kalk_doks_by_broj_fakture( "96", PadR( cFBrDok, 10 ) )
+
+
+            IF !EOF()
 
                cTmp := fakt->idfirma + "-" + ( cFBrDok )
                dTmpDate := fakt->datdok
@@ -353,14 +356,14 @@ STATIC FUNCTION rpt_not_incl( aArr )
 STATIC FUNCTION o_tables()
 
    o_kalk_pripr()
-   o_kalk()
+   // o_kalk()
    o_kalk_doks()
    O_KONTO
    O_PARTN
    O_TARIFA
    O_FAKT
 
-   RETURN
+   RETURN .T.
 
 
 // -------------------------------------------
@@ -423,15 +426,16 @@ FUNCTION PrenosNoFakt()
    cBrkalk := Space( 8 )
 
    IF gBrojacKalkulacija == "D"
-      SELECT kalk
-      SET ORDER TO TAG "1"
-      SEEK cIdFirma + "96X"
-      SKIP -1
-      IF idvd <> "96"
-         cBrKalk := Space( 8 )
-      ELSE
-         cBrKalk := brdok
-      ENDIF
+
+
+         find_kalk_doks_za_tip( cIdFirma, "96" )
+         GO BOTTOM
+         IF idvd <> "10"
+            cBrKalk := Space( 8 )
+         ELSE
+            cBrKalk := brdok
+         ENDIF
+
    ENDIF
 
    Box(, 15, 60 )
@@ -561,7 +565,7 @@ FUNCTION PrenosNo2()
    LOCAL cBrKalk := Space( 8 )
 
    o_kalk_pripr()
-   o_kalk()
+   // o_kalk()
    O_ROBA
    O_KONTO
    O_PARTN
@@ -574,21 +578,21 @@ FUNCTION PrenosNo2()
    cIdZaduz2 := Space( 6 )
 
    IF gBrojacKalkulacija == "D"
-      SELECT kalk
-      SET ORDER TO TAG "1"
-      SEEK cIdFirma + "10X"
-      SKIP -1
+
+      find_kalk_doks_za_tip( cIdFirma, "10" )
+      GO BOTTOM
       IF idvd <> "10"
          cBrKalk := Space( 8 )
       ELSE
          cBrKalk := brdok
       ENDIF
+
    ENDIF
 
    Box(, 15, 60 )
 
    IF gBrojacKalkulacija == "D"
-      cBrKalk := UBrojDok( Val( Left( cbrkalk, 5 ) ) + 1, 5, Right( cBrKalk, 3 ) )
+      cBrKalk := UBrojDok( Val( Left( cBrKalk, 5 ) ) + 1, 5, Right( cBrKalk, 3 ) )
    ENDIF
 
    DO WHILE .T.
@@ -697,7 +701,7 @@ FUNCTION PrenosNo2()
 
       ENDDO
 
-      @ m_x + 10, m_y + 2 SAY "Dokumenti su preneseni !!"
+      @ m_x + 10, m_y + 2 SAY "Dokumenti su preneseni !"
 
       IF gBrojacKalkulacija == "D"
          cbrkalk := UBrojDok( Val( Left( cbrkalk, 5 ) ) + 1, 5, Right( cBrKalk, 3 ) )
@@ -712,4 +716,4 @@ FUNCTION PrenosNo2()
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.

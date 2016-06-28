@@ -242,8 +242,8 @@ FUNCTION gen_cache()
    my_dbf_zap()
 
 
-   o_kalk_doks()
-   o_kalk()
+   //o_kalk_doks()
+   //o_kalk()
 
    Box(, 1, 70 )
 
@@ -298,10 +298,13 @@ FUNCTION gen_cache()
                LOOP
             ENDIF
 
+/*
             SELECT kalk_doks
             SET ORDER TO TAG "1"
             GO TOP
             SEEK kalk->idfirma + kalk->idvd + kalk->brdok
+  */
+            find_kalk_doks_by_broj_dokumenta( kalk->idfirma, kalk->idvd, kalk->brdok )
             SELECT kalk
 
             // provjera postojanja dokumenta korekcije

@@ -11,6 +11,7 @@
 
 #include "f18.ch"
 
+#ifdef F18_FMK
 
 // -----------------------------------------
 // provjera podataka za migraciju f18
@@ -44,7 +45,7 @@ FUNCTION fmk_provjera_za_migraciju_f18()
    BoxC()
 
    IF LastKey() == K_ESC
-      RETURN
+      RETURN .F.
    ENDIF
 
    // provjeri sifrarnik
@@ -130,7 +131,7 @@ STATIC FUNCTION f18_fin_data( data, checksum )
       AAdd( checksum, { "fin data", _n_c_stavke, _n_c_iznos } )
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -220,7 +221,7 @@ STATIC FUNCTION f18_pos_data( data, checksum )
       AAdd( checksum, { "pos data", _n_c_stavke, _n_c_iznos } )
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -266,7 +267,7 @@ STATIC FUNCTION f18_ld_data( data, checksum )
       AAdd( checksum, { "ld data", _n_c_stavke, _n_c_iznos } )
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 // -----------------------------------------
@@ -345,7 +346,7 @@ STATIC FUNCTION f18_epdv_data( data, checksum )
       AAdd( checksum, { "kif data", _n_c_stavke, _n_c_iznos } )
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -508,3 +509,6 @@ STATIC FUNCTION f18_sif_check( data, checksum )
    ENDIF
 
    RETURN
+
+
+#endif

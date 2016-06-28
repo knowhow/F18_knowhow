@@ -19,6 +19,7 @@ echo "NAPOMENA: envars su bitne, npr:"
 echo "--------------------------------------"
 echo "export F18_RNAL=1"
 echo "export F18_USE_MATCH_CODE=1"
+echo "export F18_FMK=1"
 echo "export F18_POS=1"
 echo "export POS_PRENOS_POS_KALK=1"
 

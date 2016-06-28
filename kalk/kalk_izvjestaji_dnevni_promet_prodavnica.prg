@@ -15,11 +15,11 @@
 STATIC cLinija
 
 
-/* DnevProm()
+/* kalk_dnevni_promet_prodavnice()
  *     Izvjestaj dnevnog prometa
- *  \todo Ovaj izvjestaj nije dobro uradjen - formira se matrica, koja ce puci na velikom broju artikala
- */
-FUNCTION DnevProm()
+ *  Ovaj izvjestaj nije dobro uradjen - formira se matrica, koja ce puci na velikom broju artikala
+
+FUNCTION kalk_dnevni_promet_prodavnice()
 
    LOCAL i
    LOCAL cOldIni
@@ -84,15 +84,15 @@ FUNCTION DnevProm()
    CLOSERET
 
    RETURN
-// }
+*/
 
 
 /* PromPeriod()
  *     (Vise)dnevni promet za period
- */
+
 FUNCTION PromPeriod()
 
-   // {
+
    LOCAL i
    LOCAL cOldIni
    LOCAL dDan
@@ -160,7 +160,7 @@ FUNCTION PromPeriod()
    CLOSERET
 
    RETURN .T.
-
+ */
 
 
 /* ScanTops(dDan, aR, dDatDo, cPKto)
@@ -168,7 +168,7 @@ FUNCTION PromPeriod()
  */
 STATIC FUNCTION ScanTops( dDan, aR, dDatDo, cPKto )
 
-   // {
+
    LOCAL cTSifP
    LOCAL nSifP
    LOCAL cTKumP
@@ -270,19 +270,18 @@ STATIC FUNCTION ScanTops( dDan, aR, dDatDo, cPKto )
    ASort( aR,,, {| x, y| x[ 1 ] < y[ 1 ] } )
 
    RETURN 1
-// }
+
 
 
 /* ScanKalk(dDan, aR, dDatDo, cPKto)
  *     Skenira tabelu kalk i kupi promet prodavnica
- */
+
 STATIC FUNCTION ScanKalk( dDan, aR, dDatDo, cPKto )
 
-   // {
+
 
    O_ROBA
-   o_kalk()
-   // idFirma+dtos(datdok)+podbr+idvd+brdok
+   xx o_kalk() // idFirma+dtos(datdok)+podbr+idvd+brdok
    SET ORDER TO TAG "5"
 
    SEEK gFirma + DToS( dDan )
@@ -326,11 +325,12 @@ STATIC FUNCTION ScanKalk( dDan, aR, dDatDo, cPKto )
    NEXT
 
    RETURN 1
-// }
+
+
 
 STATIC FUNCTION GetVars( dDan, cTops, cPodvuci, cFilterDn, cFilter, dDatDo, aUslPKto )
 
-   // {
+
    LOCAL cIspraviFilter
 
    cIspraviFilter := "N"
@@ -370,7 +370,6 @@ STATIC FUNCTION GetVars( dDan, cTops, cPodvuci, cFilterDn, cFilter, dDatDo, aUsl
    BoxC()
 
    RETURN 1
-// }
 
 
 STATIC FUNCTION Header( dDan, nStr )
@@ -436,4 +435,6 @@ STATIC FUNCTION CopyZaSlanje( dDan )
       MsgBeep( "KOPIRANJE FAJLA-IZVJESTAJA NIJE USPJELO!" )
    ENDIF
 
-   RETURN
+   RETURN .T.
+
+*/

@@ -13,11 +13,6 @@
 #include "f18.ch"
 
 
-/* \file fmk/kalk/specif/vindija/1g/vindija.prg
- *     Specificnosti za Vindiju
- */
-
-
 /* PregledProdaje()
  *     Pregled prodaje - Vindija
  */
@@ -60,7 +55,7 @@ FUNCTION PregProdaje()
    ENDDO
    BoxC()
 
-   o_kalk()
+
    O_ROBA
    O_SIFK
    O_SIFV
@@ -303,7 +298,7 @@ FUNCTION PregProdaje()
    CLOSERET
 
    RETURN
-// }
+
 
 
 

@@ -782,8 +782,8 @@ STATIC FUNCTION TTbl2Kalk()
    LOCAL cIdKonto2
 
    o_kalk_pripr()
-   o_kalk()
-   o_kalk_doks()
+   //o_kalk()
+   //o_kalk_doks()
    O_ROBA
 
    SELECT temp

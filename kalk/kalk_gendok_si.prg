@@ -18,12 +18,13 @@ FUNCTION Otpis16SI()
    o_koncij()
    o_kalk_pripr()
    o_kalk_pripr2()
-   o_kalk()
+   //o_kalk()
    O_SIFK
    O_SIFV
    O_ROBA
 
-   SELECT kalk_pripr; GO TOP
+   SELECT kalk_pripr
+   GO TOP
    PRIVATE cIdFirma := idfirma, cIdVD := idvd, cBrDok := brdok
    IF !( cidvd $ "16" ) .OR. "-X" $ cBrDok .OR. Pitanje(, "Formirati dokument radi evidentiranja otpisanog dijela? (D/N)", "N" ) == "N"
       my_close_all_dbf()
@@ -51,4 +52,3 @@ FUNCTION Otpis16SI()
    my_close_all_dbf()
 
    RETURN .T.
-// }

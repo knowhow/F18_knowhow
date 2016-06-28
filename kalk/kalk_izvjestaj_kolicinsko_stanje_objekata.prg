@@ -230,7 +230,7 @@ FUNCTION kalk_izvj_stanje_po_objektima()
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -243,10 +243,10 @@ STATIC FUNCTION otvori_tabele()
    O_TARIFA
    O_K1
    O_OBJEKTI
-   o_kalk()
+   //o_kalk()
    O_REKAP1
 
-   RETURN
+   RETURN .T.
 
 
 

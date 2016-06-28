@@ -14,7 +14,7 @@
 
 
 // Pregled finansijskog obrta magacin/prodavnica
-FUNCTION ObrtPoMjF()
+FUNCTION kalk_finansijski_obrt()
 
    LOCAL nOpseg
    LOCAL nKorekcija := 1
@@ -128,7 +128,7 @@ FUNCTION ObrtPoMjF()
    O_ROBA
    O_KONTO
    O_TARIFA
-   o_kalk()
+   //o_kalk()
    O_K1
    O_OBJEKTI
 

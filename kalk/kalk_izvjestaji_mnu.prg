@@ -24,8 +24,10 @@ FUNCTION kalk_meni_mag_izvjestaji()
    AAdd( _opcexe, {|| kalk_izvjestaji_magacina() } )
    AAdd( _opc, "2. izvještaji prodavnica" )
    AAdd( _opcexe, {|| kalk_izvjestaji_prodavnice_menu() } )
+
    AAdd( _opc, "3. izvještaji magacin+prodavnica" )
    AAdd( _opcexe, {|| kalk_izvjestaji_mag_i_pro() } )
+
    AAdd( _opc, "4. proizvoljni izvještaji" )
    AAdd( _opcexe, {|| ProizvKalk() } )
    AAdd( _opc, "5. export dokumenata" )
@@ -35,7 +37,7 @@ FUNCTION kalk_meni_mag_izvjestaji()
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -47,9 +49,11 @@ FUNCTION kalk_izvjestaji_mag_i_pro()
    LOCAL _izbor := 1
 
    AAdd( _opc, "F. finansijski obrt za period mag+prod" )
-   AAdd( _opcexe, {|| ObrtPoMjF() } )
+   AAdd( _opcexe, {|| kalk_finansijski_obrt() } )
+
    AAdd( _opc, "N. najprometniji artikli" )
    AAdd( _opcexe, {|| NPArtikli() } )
+
    AAdd( _opc, "O. stanje artikala po objektima " )
    AAdd( _opcexe, {|| kalk_izvj_stanje_po_objektima() } )
 
@@ -62,4 +66,4 @@ FUNCTION kalk_izvjestaji_mag_i_pro()
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.

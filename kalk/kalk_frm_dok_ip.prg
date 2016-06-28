@@ -39,9 +39,9 @@ FUNCTION kalk_ip()
 
    o_koncij()
    o_kalk_pripr()
-   o_kalk()
+   //o_kalk()
 
-   PRIVATE cBrDok := SljBroj( cidfirma, "IP", 8 )
+   PRIVATE cBrDok := SljBroj( cIdfirma, "IP", 8 )
 
    nRbr := 0
 
@@ -290,15 +290,15 @@ FUNCTION gen_ip_razlika()
    o_koncij()
    o_kalk_pripr()
    o_kalk_pript()
-   o_kalk()
+   //o_kalk()
 
    // sljedeci broj kalkulacije IP
    PRIVATE cBrDok := SljBroj( cIdFirma, "IP" )
 
    nRbr := 0
 
-   SELECT kalk
-   SET ORDER TO TAG "4"
+   //SELECT kalk
+   //SET ORDER TO TAG "4"
 
    Box( , 3, 60 )
 
@@ -307,8 +307,9 @@ FUNCTION gen_ip_razlika()
    SELECT koncij
    SEEK Trim( cIdKonto )
 
-   SELECT kalk
-   HSEEK cIdFirma + cIdKonto
+   //SELECT kalk
+   //HSEEK cIdFirma + cIdKonto
+   find_kalk_by_pkonto_idroba( cIdFirma, cIdKonto )
 
    DO WHILE !Eof() .AND. cIdFirma + cIdKonto == idfirma + pkonto
 

@@ -57,12 +57,19 @@ FUNCTION RekProd()
    AAdd( _opcexe, {|| sint_lager_lista_prodavnice() } )
    AAdd( _opc, "2. rekapitulacija fin stanja po objektima" )
    AAdd( _opcexe, {|| Rfinansijsko_stanje_prodavnica() } )
+
+/*
    AAdd( _opc, "3. dnevni promet za sve objekte" )
-   AAdd( _opcexe, {|| DnevProm() } )
+   AAdd( _opcexe, {|| kalk_dnevni_promet_prodavnice() } )
+  */
+
    AAdd( _opc, "4. pregled prometa prodavnica za period" )
    AAdd( _opcexe, {|| PPProd() } )
+
+/*
    AAdd( _opc, "5. (vise)dnevni promet za sve objekte" )
    AAdd( _opcexe, {|| PromPeriod() } )
+*/
 
    f18_menu( "prsi", .F., _izbor, _opc, _opcexe )
 

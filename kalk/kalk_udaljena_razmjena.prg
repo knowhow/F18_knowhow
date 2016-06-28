@@ -58,8 +58,8 @@ STATIC FUNCTION _kalk_export()
    // pobrisi u folderu tmp fajlove ako postoje
    delete_exp_files( __export_dbf_path, "kalk" ) // pobrisi u folderu tmp fajlove ako postoje
 
-   // exportuj podatake
-   _exported_rec := __export( _vars, @_a_data )
+
+   _exported_rec := __export( _vars, @_a_data )  // exportuj podatake
 
    // zatvori sve tabele prije operacije pakovanja
    my_close_all_dbf()
@@ -367,7 +367,7 @@ STATIC FUNCTION __export( vars, a_details )
    _export_sif := AllTrim( vars[ "export_sif" ] )
 
    _cre_exp_tbls( __export_dbf_path ) // kreiraj tabele exporta
-   _o_exp_tables( __export_dbf_path ) // otvori export tabele za pisanje podataka
+   kalk_o_exp_tabele( __export_dbf_path ) // otvori export tabele za pisanje podataka
 
 
    _o_tables()
@@ -571,7 +571,7 @@ STATIC FUNCTION __import( vars, a_details )
       _fmk_import := .T.
    ENDIF
 
-   _o_exp_tables( __import_dbf_path, _fmk_import )
+   kalk_o_exp_tabele( __import_dbf_path, _fmk_import )
 
    _o_tables()
 
@@ -808,60 +808,60 @@ STATIC FUNCTION del_kalk_doc( id_firma, id_vd, br_dok )
 // ----------------------------------------
 // kreiranje tabela razmjene
 // ----------------------------------------
-STATIC FUNCTION _cre_exp_tbls( use_path )
+STATIC FUNCTION _cre_exp_tbls( cDbfPath )
 
    LOCAL _cre
 
-   IF use_path == NIL
-      use_path := my_home()
+   IF cDbfPath == NIL
+      cDbfPath := my_home() + my_dbf_prefix()
    ENDIF
 
    // provjeri da li postoji direktorij, pa ako ne - kreiraj
-   _dir_create( use_path )
+   _dir_create( cDbfPath )
 
-   // tabela kalk
+
    o_kalk()
-   COPY STRUCTURE EXTENDED to ( my_home() + "struct" )
+   COPY STRUCTURE EXTENDED to ( cDbfPath + "struct" )
    USE
-   CREATE ( use_path + "e_kalk" ) from ( my_home() + "struct" )
+   CREATE ( cDbfPath + "e_kalk" ) from ( cDbfPath + "struct" )
 
-   // tabela doks
+
    o_kalk_doks()
-   COPY STRUCTURE EXTENDED to ( my_home() + "struct" )
+   COPY STRUCTURE EXTENDED to ( cDbfPath + "struct" )
    USE
-   CREATE ( use_path + "e_doks" ) from ( my_home() + "struct" )
+   CREATE ( cDbfPath + "e_doks" ) from ( cDbfPath + "struct" )
 
    // tabela roba
    O_ROBA
-   COPY STRUCTURE EXTENDED to ( my_home() + "struct" )
+   COPY STRUCTURE EXTENDED to ( cDbfPath + "struct" )
    USE
-   CREATE ( use_path + "e_roba" ) from ( my_home() + "struct" )
+   CREATE ( cDbfPath + "e_roba" ) from ( cDbfPath + "struct" )
 
    // tabela partn
    O_PARTN
-   COPY STRUCTURE EXTENDED to ( my_home() + "struct" )
+   COPY STRUCTURE EXTENDED to ( cDbfPath + "struct" )
    USE
-   CREATE ( use_path + "e_partn" ) from ( my_home() + "struct" )
+   CREATE ( cDbfPath + "e_partn" ) from ( cDbfPath + "struct" )
 
    // tabela konta
    O_KONTO
-   COPY STRUCTURE EXTENDED to ( my_home() + "struct" )
+   COPY STRUCTURE EXTENDED to ( cDbfPath + "struct" )
    USE
-   CREATE ( use_path + "e_konto" ) from ( my_home() + "struct" )
+   CREATE ( cDbfPath + "e_konto" ) from ( cDbfPath + "struct" )
 
    // tabela sifk
    O_SIFK
-   COPY STRUCTURE EXTENDED to ( my_home() + "struct" )
+   COPY STRUCTURE EXTENDED to ( cDbfPath + "struct" )
    USE
-   CREATE ( use_path + "e_sifk" ) from ( my_home() + "struct" )
+   CREATE ( cDbfPath + "e_sifk" ) from ( cDbfPath + "struct" )
 
    // tabela sifv
    O_SIFV
-   COPY STRUCTURE EXTENDED to ( my_home() + "struct" )
+   COPY STRUCTURE EXTENDED to ( cDbfPath + "struct" )
    USE
-   CREATE ( use_path + "e_sifv" ) from ( my_home() + "struct" )
+   CREATE ( cDbfPath + "e_sifv" ) from ( cDbfPath + "struct" )
 
-   RETURN
+   RETURN .T.
 
 
 // ----------------------------------------------------
@@ -883,12 +883,12 @@ STATIC FUNCTION _o_tables()
 // ----------------------------------------------------
 // otvranje export tabela
 // ----------------------------------------------------
-STATIC FUNCTION _o_exp_tables( use_path, from_fmk )
+STATIC FUNCTION kalk_o_exp_tabele( cDbfPath, from_fmk )
 
    LOCAL _dbf_name
 
-   IF ( use_path == NIL )
-      use_path := my_home()
+   IF ( cDbfPath == NIL )
+      cDbfPath := my_home() + my_dbf_prefix()
    ENDIF
 
    IF ( from_fmk == NIL )
@@ -907,10 +907,11 @@ STATIC FUNCTION _o_exp_tables( use_path, from_fmk )
 
    // otvori kalk tabelu
    SELECT ( F_TMP_E_KALK )
-   my_use_temp( "E_KALK", use_path + _dbf_name, .F., .T. )
+   my_use_temp( "E_KALK", cDbfPath + _dbf_name, .F., .T. )
    INDEX on ( idfirma + idvd + brdok ) TAG "1"
+   ?E alias(), ordkey()
 
-   log_write( "otvorio i indeksirao: " + use_path + _dbf_name, 5 )
+   //log_write( "otvorio i indeksirao: " + cDbfPath + _dbf_name, 5 )
 
    _dbf_name := "e_doks.dbf"
    IF from_fmk
@@ -919,10 +920,10 @@ STATIC FUNCTION _o_exp_tables( use_path, from_fmk )
 
    // otvori doks tabelu
    SELECT ( F_TMP_E_DOKS )
-   my_use_temp( "E_DOKS", use_path + _dbf_name, .F., .T. )
+   my_use_temp( "E_DOKS", cDbfPath + _dbf_name, .F., .T. )
    INDEX on ( idfirma + idvd + brdok ) TAG "1"
-
-   log_write( "otvorio i indeksirao: " + use_path + _dbf_name, 5 )
+   ?E alias(), ordkey()
+   //log_write( "otvorio i indeksirao: " + cDbfPath + _dbf_name, 5 )
 
    _dbf_name := "e_roba.dbf"
    IF from_fmk
@@ -931,8 +932,9 @@ STATIC FUNCTION _o_exp_tables( use_path, from_fmk )
 
    // otvori roba tabelu
    SELECT ( F_TMP_E_ROBA )
-   my_use_temp( "E_ROBA", use_path + _dbf_name, .F., .T. )
+   my_use_temp( "E_ROBA", cDbfPath + _dbf_name, .F., .T. )
    INDEX on ( id ) TAG "ID"
+   ?E alias(), ordkey()
 
    _dbf_name := "e_partn.dbf"
    IF from_fmk
@@ -941,8 +943,9 @@ STATIC FUNCTION _o_exp_tables( use_path, from_fmk )
 
    // otvori partn tabelu
    SELECT ( F_TMP_E_PARTN )
-   my_use_temp( "E_PARTN", use_path + _dbf_name, .F., .T. )
+   my_use_temp( "E_PARTN", cDbfPath + _dbf_name, .F., .T. )
    INDEX on ( id ) TAG "ID"
+   ?E alias(), ordkey()
 
    _dbf_name := "e_konto.dbf"
    IF from_fmk
@@ -951,8 +954,9 @@ STATIC FUNCTION _o_exp_tables( use_path, from_fmk )
 
    // otvori konto tabelu
    SELECT ( F_TMP_E_KONTO )
-   my_use_temp( "E_KONTO", use_path + _dbf_name, .F., .T. )
+   my_use_temp( "E_KONTO", cDbfPath + _dbf_name, .F., .T. )
    INDEX on ( id ) TAG "ID"
+   ?E alias(), ordkey()
 
    _dbf_name := "e_sifk.dbf"
    IF from_fmk
@@ -961,9 +965,10 @@ STATIC FUNCTION _o_exp_tables( use_path, from_fmk )
 
    // otvori konto sifk
    SELECT ( F_TMP_E_SIFK )
-   my_use_temp( "E_SIFK", use_path + _dbf_name, .F., .T. )
+   my_use_temp( "E_SIFK", cDbfPath + _dbf_name, .F., .T. )
    INDEX on ( id + sort + naz ) TAG "ID"
    INDEX on ( id + oznaka ) TAG "ID2"
+   ?E alias(), ordkey()
 
    _dbf_name := "e_sifv.dbf"
    IF from_fmk
@@ -972,10 +977,11 @@ STATIC FUNCTION _o_exp_tables( use_path, from_fmk )
 
    // otvori konto tabelu
    SELECT ( F_TMP_E_SIFV )
-   my_use_temp( "E_SIFV", use_path + _dbf_name, .F., .T. )
+   my_use_temp( "E_SIFV", cDbfPath + _dbf_name, .F., .T. )
    INDEX on ( id + oznaka + idsif + naz ) TAG "ID"
    INDEX on ( id + idsif ) TAG "IDIDSIF"
+   ?E alias(), ordkey()
 
-   log_write( "otvorene sve import tabele i indeksirane...", 9 )
+   //log_write( "otvorene sve import tabele i indeksirane...", 9 )
 
    RETURN .T.

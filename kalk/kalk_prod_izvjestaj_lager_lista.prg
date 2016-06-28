@@ -119,7 +119,7 @@ FUNCTION lager_lista_prodavnica()
       IF _is_rok
          @ m_x + 9, Col() + 1 SAY "Datum isteka roka:" GET _istek_roka
       ENDIF
-	
+
       @ m_x + 10, m_y + 2 SAY "Varijanta stampe TXT/ODT (1/2)" GET _print VALID _print $ "12" PICT "@!"
 
       IF lPocStanje
@@ -185,8 +185,11 @@ FUNCTION lager_lista_prodavnica()
    O_KONTO
    O_PARTN
    o_koncij()
-   o_kalk_report()
 
+   MsgO( "Preuzimanje podataka sa SQL servera ..." )
+   find_kalk_by_pkonto_idroba( gFirma, cIdKonto )
+   MsgC()
+   
    PRIVATE lSMark := .F.
    IF Right( Trim( qqRoba ), 1 ) = "*"
       lSMark := .T.
@@ -207,14 +210,7 @@ FUNCTION lager_lista_prodavnica()
       cFilter += ".and." + aUsl4   // partner
    ENDIF
 
-   SELECT KALK
-
-   SET ORDER TO TAG "4"
-
-   SET FILTER to &cFilter
-   // "4","idFirma+Pkonto+idroba+dtos(datdok)+PU_I+IdVD","KALKS")
-
-   HSEEK cIdfirma + cIdkonto
+   GO TOP
    EOF CRET
 
    IF _print == "2"
@@ -226,7 +222,7 @@ FUNCTION lager_lista_prodavnica()
       _params[ "datum_od" ] := dDatOd
       _params[ "datum_do" ] := dDatDo
       kalk_prodavnica_llp_odt( _params )
-      RETURN
+      RETURN .T.
    ENDIF
 
 
@@ -283,9 +279,9 @@ FUNCTION lager_lista_prodavnica()
    Eval( bZagl )
 
    DO WHILE !Eof() .AND. cIdFirma + cIdKonto == field->idfirma + field->pkonto .AND. IspitajPrekid()
-	
+
       cIdRoba := field->Idroba
-	
+
       IF lSMark .AND. SkLoNMark( "ROBA", cIdroba )
          SKIP
          LOOP
@@ -293,7 +289,7 @@ FUNCTION lager_lista_prodavnica()
 
       SELECT roba
       HSEEK cIdRoba
-	
+
       nMink := roba->mink
 
       IF IsVindija()
@@ -304,7 +300,7 @@ FUNCTION lager_lista_prodavnica()
                LOOP
             ENDIF
          ENDIF
-		
+
          IF ( cPSPDN == "D" )
             SELECT kalk
             IF !( kalk->idvd $ "41#42#43" ) .AND. !( kalk->pu_i == "5" )
@@ -314,7 +310,7 @@ FUNCTION lager_lista_prodavnica()
             SELECT roba
          ENDIF
       ENDIF
-	
+
       SELECT KALK
 
       nPKol := 0
@@ -334,7 +330,7 @@ FUNCTION lager_lista_prodavnica()
       ENDIF
 
       DO WHILE !Eof() .AND. cIdfirma + cIdkonto + cIdroba == field->idFirma + field->pkonto + field->idroba .AND. IspitajPrekid()
-	
+
          IF lSMark .AND. SkLoNMark( "ROBA", cIdroba )
             SKIP
             LOOP
@@ -455,22 +451,22 @@ FUNCTION lager_lista_prodavnica()
          ENDIF
          SKIP
       ENDDO
-	
+
       IF cMinK == "D" .AND. ( nUlaz - nIzlaz - nMink ) > 0
          LOOP
       ENDIF
 
       // ne prikazuj stavke 0
       IF cNula == "D" .OR. Round( nMPVU - nMPVI + nPMPV, 2 ) <> 0
-	
+
          IF PRow() > page_length()
             FF
             Eval( bZagl )
          ENDIF
-		
+
          SELECT roba
          HSEEK cIdRoba
-		
+
          SELECT kalk
          aNaz := Sjecistr( roba->naz, 20 )
 
@@ -482,23 +478,23 @@ FUNCTION lager_lista_prodavnica()
          @ PRow(), PCol() + 1 SAY roba->jmj
 
          nCol0 := PCol() + 1
-		
+
          IF cPredhStanje == "D"
             @ PRow(), PCol() + 1 SAY nPKol PICT gpickol
          ENDIF
-		
+
          @ PRow(), PCol() + 1 SAY nUlaz PICT gpickol
          @ PRow(), PCol() + 1 SAY nIzlaz PICT gpickol
          @ PRow(), PCol() + 1 SAY nUlaz - nIzlaz + nPkol PICT gpickol
-		
+
          IF lPocStanje
-  			
+
             SELECT kalk_pripr
-  			
+
             IF Round( nUlaz - nIzlaz, 4 ) <> 0 .AND. cSrKolNula $ "01"
-     				
+
                APPEND BLANK
-     				
+
                REPLACE idFirma WITH cIdfirma
                REPLACE idroba WITH cIdRoba
                REPLACE idkonto WITH cIdKonto
@@ -511,18 +507,18 @@ FUNCTION lager_lista_prodavnica()
                REPLACE nc WITH ( nNVU - nNVI + nPNV ) / ( nulaz - nizlaz + nPKol )
                REPLACE mpcsapp WITH ( nMPVU - nMPVI + nPMPV ) / ( nulaz - nizlaz + nPKol )
                REPLACE TMarza2 WITH "A"
-				
+
                IF koncij->NAZ == "N1"
                   REPLACE vpc WITH nc
                ENDIF
-			
+
             ELSEIF cSrKolNula $ "12" .AND. Round( nUlaz - nIzlaz, 4 ) = 0
-				
+
                IF ( nMPVU - nMPVI + nPMPV ) <> 0
-					
+
                   // 1 stavka (minus)
                   APPEND BLANK
-     				
+
                   REPLACE idFirma WITH cIdfirma
                   REPLACE idroba WITH cIdRoba
                   REPLACE idkonto WITH cIdKonto
@@ -536,14 +532,14 @@ FUNCTION lager_lista_prodavnica()
                   REPLACE nc WITH 0
                   REPLACE mpcsapp WITH 0
                   REPLACE TMarza2 WITH "A"
-				
+
                   IF koncij->NAZ == "N1"
                      REPLACE vpc WITH nc
                   ENDIF
-					
+
                   // 2 stavka (plus i razlika mpv)
                   APPEND BLANK
-     				
+
                   REPLACE idFirma WITH cIdfirma
                   REPLACE idroba WITH cIdRoba
                   REPLACE idkonto WITH cIdKonto
@@ -558,15 +554,15 @@ FUNCTION lager_lista_prodavnica()
                   REPLACE mpcsapp with ;
                      ( nMPVU - nMPVI + nPMPV )
                   REPLACE TMarza2 WITH "A"
-				
+
                   IF koncij->NAZ == "N1"
                      REPLACE vpc WITH nc
                   ENDIF
-			
+
                ENDIF
 
             ENDIF
-  			
+
             SELECT KALK
 
          ENDIF
@@ -679,7 +675,7 @@ FUNCTION lager_lista_prodavnica()
             ENDIF
             ?? " rok istice:", DToC( _sh_item_istek_roka ), " dana:", AllTrim( Str( _sh_item_istek_roka - Date() ) )
          ENDIF
-		
+
       ENDIF
 
    ENDDO
@@ -777,9 +773,9 @@ FUNCTION ZaglLLP( lSint )
    ?U __line
 
    IF cPredhStanje == "D"
-	
+
       IF IsPDV()
-		
+
          cTmp := " R.  * Artikal  *   Naziv            *jmj*"
          nPom := Len( gPicKol )
          cTmp += PadC( "Predh.st", nPom ) + "*"
@@ -792,11 +788,11 @@ FUNCTION ZaglLLP( lSint )
          nPom := Len( gPicCDem )
          cTmp += PadC( "PC.SA PDV", nPom ) + "*"
          cTmp += cSC1
-  		
+
          ?U cTmp
-		
+
       ELSE
-		
+
          cTmp := " R.  * Artikal  *   Naziv            *jmj*"
          nPom := Len( gPicKol )
          cTmp += PadC( "Predh.st", nPom ) + "*"
@@ -809,11 +805,11 @@ FUNCTION ZaglLLP( lSint )
          nPom := Len( gPicCDem )
          cTmp += PadC( "MPC sa PP", nPom ) + "*"
          cTmp += cSC1
-  	
+
          ?U cTmp
 
       ENDIF
-	
+
       cTmp := " br. *          *                    *   *"
       nPom := Len( gPicKol )
       cTmp += PadC( "Kol/MPV", nPom ) + "*"
@@ -825,11 +821,11 @@ FUNCTION ZaglLLP( lSint )
       cTmp += REPL( " ", nPom ) + "*"
       cTmp += REPL( " ", nPom ) + "*"
       cTmp += cSC2
-	
+
       ?U cTmp
-	
+
       IF cPNab == "D"
-  		
+
          cTmp := "     *          *                    *   *"
          nPom := Len( gPicKol )
          cTmp += REPL( " ", nPom ) + "*"
@@ -841,7 +837,7 @@ FUNCTION ZaglLLP( lSint )
          cTmp += PadC( "NV", nPom ) + "*"
          cTmp += REPL( " ", nPom ) + "*"
          cTmp += cSC2
-		
+
          ?U cTmp
       ENDIF
    ELSE
@@ -856,7 +852,7 @@ FUNCTION ZaglLLP( lSint )
       cTmp += PadC( "PC.SA PDV", nPom ) + "*"
       cTmp += cSC1
       ?U cTmp
-  	
+
       cTmp := " br. *          *                    *   *"
       nPom := Len( gPicKol )
       cTmp += REPL( " ", nPom ) + " " + REPL( " ", nPom ) + "*"
@@ -867,11 +863,11 @@ FUNCTION ZaglLLP( lSint )
       cTmp += REPL( " ", nPom ) + "*"
       cTmp += REPL( " ", nPom ) + "*"
       cTmp += cSC2
-	
+
       ?U cTmp
-	
+
       IF cPNab == "D"
-  		
+
          cTmp := "     *          *                    *   *"
          nPom := Len( gPicKol )
          cTmp += REPL( " ", nPom ) + " " + REPL( " ", nPom ) + "*"
@@ -882,14 +878,14 @@ FUNCTION ZaglLLP( lSint )
          cTmp += PadC( "NV", nPom ) + "*"
          cTmp += REPL( " ", nPom ) + "*"
          cTmp += cSC2
-	
+
          ?U cTmp
-		
+
       ENDIF
    ENDIF
 
    IF cPredhStanje == "D"
-	
+
       cTmp := "     *    1     *        2           * 3 *"
       nPom := Len( gPicKol )
       cTmp += PadC( "4", nPom ) + "*"
@@ -902,11 +898,11 @@ FUNCTION ZaglLLP( lSint )
       cTmp += PadC( "7 - 8", nPom ) + "*"
       cTmp += PadC( "9", nPom ) + "*"
       cTmp += cSC2
-  	
+
       ?U cTmp
-	
+
    ELSE
-	
+
       cTmp := "     *    1     *        2           * 3 *"
       nPom := Len( gPicKol )
       cTmp += PadC( "4", nPom ) + "*"
@@ -918,9 +914,9 @@ FUNCTION ZaglLLP( lSint )
       cTmp += PadC( "6 - 7", nPom ) + "*"
       cTmp += PadC( "8", nPom ) + "*"
       cTmp += cSC2
-	
+
       ?U cTmp
-	
+
    ENDIF
 
    ?U __line
@@ -967,7 +963,7 @@ STATIC FUNCTION AzurKontrolnaTabela( cIdRoba, nStanje, nMpv )
    REPLACE kolicina WITH nStanje
    REPLACE Mpv WITH nMpv
 
-   SELECT( nArea )
+   Select( nArea )
 
    RETURN
 
@@ -1025,9 +1021,9 @@ STATIC FUNCTION _gen_xml( params )
    SELECT kalk
 
    DO WHILE !Eof() .AND. _idfirma + _idkonto == field->idfirma + field->pkonto .AND. IspitajPrekid()
-	
+
       _idroba := field->Idroba
-	
+
       SELECT roba
       HSEEK _idroba
 
@@ -1042,7 +1038,7 @@ STATIC FUNCTION _gen_xml( params )
       _rabat := 0
 
       DO WHILE !Eof() .AND. _idfirma + _idkonto + _idroba == field->idfirma + field->pkonto + field->idroba .AND. IspitajPrekid()
-	
+
          IF field->datdok < params[ "datum_od" ] .OR. field->datdok > params[ "datum_do" ]
             SKIP
             LOOP
@@ -1084,10 +1080,10 @@ STATIC FUNCTION _gen_xml( params )
          SKIP
 
       ENDDO
-	
+
       // ne prikazuj stavke 0
       IF params[ "nule" ] .OR. Round( _mpv_u - _mpv_i, 2 ) <> 0
-			
+
          SELECT koncij
          SEEK _idkonto
 

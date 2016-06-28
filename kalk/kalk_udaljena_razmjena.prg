@@ -37,7 +37,7 @@ FUNCTION kalk_udaljena_razmjena_podataka()
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
 
 // ----------------------------------------
@@ -52,11 +52,11 @@ STATIC FUNCTION _kalk_export()
 
    // uslovi exporta
    IF !_vars_export( @_vars )
-      RETURN
+      RETURN .F.
    ENDIF
 
    // pobrisi u folderu tmp fajlove ako postoje
-   delete_exp_files( __export_dbf_path, "kalk" )
+   delete_exp_files( __export_dbf_path, "kalk" ) // pobrisi u folderu tmp fajlove ako postoje
 
    // exportuj podatake
    _exported_rec := __export( _vars, @_a_data )
@@ -97,7 +97,7 @@ STATIC FUNCTION _kalk_export()
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -118,36 +118,36 @@ STATIC FUNCTION _kalk_import()
    BoxC()
 
    IF LastKey() == K_ESC
-      RETURN
-   endif
+      RETURN .F.
+   ENDIF
 
-   // snimi u parametre
-   __import_dbf_path := AllTrim( _imp_path )
+
+   __import_dbf_path := AllTrim( _imp_path ) // snimi u parametre
    set_metric( "kalk_import_path", my_user(), _imp_path )
 
-   // import fajl iz liste
-   _imp_file := get_import_file( "kalk", __import_dbf_path )
+
+   _imp_file := get_import_file( "kalk", __import_dbf_path ) // import fajl iz liste
 
    IF _imp_file == NIL .OR. Empty( _imp_file )
-      MsgBeep( "Nema odabranog import fajla !????" )
-      RETURN
+      MsgBeep( "Nema odabranog import fajla !?" )
+      RETURN .F.
    ENDIF
 
    // parametri
    IF !_vars_import( @_vars )
-      RETURN
+      RETURN .F.
    ENDIF
 
    IF !import_file_exist( _imp_file )
       // nema fajla za import ?
-      MsgBeep( "import fajl ne postoji !??? prekidam operaciju" )
-      RETURN
+      MsgBeep( "import fajl ne postoji !? prekidam operaciju" )
+      RETURN .F.
    ENDIF
 
    // dekompresovanje podataka
    IF _decompress_files( _imp_file, __import_dbf_path, __import_zip_name ) <> 0
       // ako je bilo greske
-      RETURN
+      RETURN .F.
    ENDIF
 
 #ifdef __PLATFORM__UNIX
@@ -181,7 +181,7 @@ STATIC FUNCTION _kalk_import()
    // vrati se na home direktorij nakon svega
    DirChange( my_home() )
 
-   RETURN
+   RETURN .T.
 
 
 // -------------------------------------------
@@ -208,27 +208,22 @@ STATIC FUNCTION _vars_export( vars )
 
    ++ _x
    ++ _x
-
    @ m_x + _x, m_y + 2 SAY "Vrste dokumenata:" GET _vrste_dok PICT "@S40"
 
    ++ _x
-
    @ m_x + _x, m_y + 2 SAY "Datumski period od" GET _dat_od
    @ m_x + _x, Col() + 1 SAY "do" GET _dat_do
 
    ++ _x
    ++ _x
-
    @ m_x + _x, m_y + 2 SAY "Uzeti u obzir sljedeca konta:" GET _konta PICT "@S30"
 
    ++ _x
    ++ _x
-
    @ m_x + _x, m_y + 2 SAY "Eksportovati sifrarnike (D/N) ?" GET _exp_sif PICT "@!" VALID _exp_sif $ "DN"
 
    ++ _x
    ++ _x
-
    @ m_x + _x, m_y + 2 SAY "Eksport lokacija:" GET _exp_path PICT "@S50"
 
    READ
@@ -288,22 +283,18 @@ STATIC FUNCTION _vars_import( vars )
 
    ++ _x
    ++ _x
-
    @ m_x + _x, m_y + 2 SAY "Vrste dokumenata (prazno-sve):" GET _vrste_dok PICT "@S30"
 
    ++ _x
-
    @ m_x + _x, m_y + 2 SAY "Datumski period od" GET _dat_od
    @ m_x + _x, Col() + 1 SAY "do" GET _dat_do
 
    ++ _x
    ++ _x
-
    @ m_x + _x, m_y + 2 SAY "Uzeti u obzir sljedeca konta:" GET _konta PICT "@S30"
 
    ++ _x
    ++ _x
-
    @ m_x + _x, m_y + 2 SAY "Zamjeniti postojece dokumente novim (D/N):" GET _zamjeniti_dok PICT "@!" VALID _zamjeniti_dok $ "DN"
 
    ++ _x
@@ -312,12 +303,10 @@ STATIC FUNCTION _vars_import( vars )
 
    ++ _x
    ++ _x
-
    @ m_x + _x, m_y + 2 SAY "Import fajl dolazi iz FMK (D/N) ?" GET _iz_fmk PICT "@!" VALID _iz_fmk $ "DN"
 
    ++ _x
    ++ _x
-
    @ m_x + _x, m_y + 2 SAY "Import lokacija:" GET _imp_path PICT "@S50"
 
    READ
@@ -377,23 +366,21 @@ STATIC FUNCTION __export( vars, a_details )
    _vrste_dok := AllTrim( vars[ "vrste_dok" ] )
    _export_sif := AllTrim( vars[ "export_sif" ] )
 
+   _cre_exp_tbls( __export_dbf_path ) // kreiraj tabele exporta
+   _o_exp_tables( __export_dbf_path ) // otvori export tabele za pisanje podataka
 
-   // kreiraj tabele exporta
-   _cre_exp_tbls( __export_dbf_path )
 
-   // otvori export tabele za pisanje podataka
-   _o_exp_tables( __export_dbf_path )
-
-   // otvori lokalne tabele za prenos
    _o_tables()
 
    Box(, 2, 65 )
 
    @ m_x + 1, m_y + 2 SAY "... export kalk dokumenata u toku"
 
-   SELECT kalk_doks
-   SET ORDER TO TAG "1"
-   GO TOP
+   // SELECT kalk_doks
+   // SET ORDER TO TAG "1"
+   // GO TOP
+   find_kalk_doks_by_tip_datum( gFirma, NIL, _dat_od, _dat_do )
+
 
    DO WHILE !Eof()
 
@@ -404,7 +391,7 @@ STATIC FUNCTION __export( vars, a_details )
       _p_konto := field->pkonto
       _m_konto := field->mkonto
 
-      // provjeri uslove ?!??
+
 
       // lista konta...
       IF !Empty( _konta )
@@ -429,20 +416,7 @@ STATIC FUNCTION __export( vars, a_details )
          ENDIF
       ENDIF
 
-      // datumski uslov...
-      IF _dat_od <> CToD( "" )
-         IF ( field->datdok < _dat_od )
-            SKIP
-            LOOP
-         ENDIF
-      ENDIF
 
-      IF _dat_do <> CToD( "" )
-         IF ( field->datdok > _dat_do )
-            SKIP
-            LOOP
-         ENDIF
-      ENDIF
 
       // ako je sve zadovoljeno !
       // dodaj zapis u tabelu e_doks
@@ -468,14 +442,10 @@ STATIC FUNCTION __export( vars, a_details )
       @ m_x + 2, m_y + 2 SAY PadR(  PadL( AllTrim( Str( _cnt ) ), 6 ) + ". " + "dokument: " + _id_firma + "-" + _id_vd + "-" + AllTrim( _br_dok ), 50 )
 
       // dodaj zapis i u tabelu e_kalk
-      SELECT kalk
-      SET ORDER TO TAG "1"
-      GO TOP
-      SEEK _id_firma + _id_vd + _br_dok
+      find_kalk_by_broj_dokumenta( _id_firma, _id_vd, _br_dok )
 
       DO WHILE !Eof() .AND. field->idfirma == _id_firma .AND. field->idvd == _id_vd .AND. field->brdok == _br_dok
 
-         // uzmi robu...
          _id_roba := field->idroba
 
          // upisi zapis u tabelu e_kalk
@@ -500,7 +470,7 @@ STATIC FUNCTION __export( vars, a_details )
             ENDIF
          ENDIF
 
-         // idi dalje...
+
          SELECT kalk
          SKIP
 
@@ -605,6 +575,9 @@ STATIC FUNCTION __import( vars, a_details )
 
    _o_tables()
 
+   o_kalk()   // za azuriranje
+   o_kalk_doks() // za azuriranje
+
    SELECT e_doks
    _total_doks := RECCOUNT2()
 
@@ -637,6 +610,7 @@ STATIC FUNCTION __import( vars, a_details )
 
       IF _dat_od <> CToD( "" )
          IF field->datdok < _dat_od
+            SELECT e_doks
             SKIP
             LOOP
          ENDIF
@@ -644,6 +618,7 @@ STATIC FUNCTION __import( vars, a_details )
 
       IF _dat_do <> CToD( "" )
          IF field->datdok > _dat_do
+            SELECT e_doks
             SKIP
             LOOP
          ENDIF
@@ -656,6 +631,7 @@ STATIC FUNCTION __import( vars, a_details )
 
          IF !( &_usl_mkonto )
             IF !( &_usl_pkonto )
+               SELECT e_doks
                SKIP
                LOOP
             ENDIF
@@ -665,12 +641,13 @@ STATIC FUNCTION __import( vars, a_details )
 
       IF !Empty( _vrste_dok )
          IF !( field->idvd $ _vrste_dok )
+            SELECT e_doks
             SKIP
             LOOP
          ENDIF
       ENDIF
 
-      IF kalk_dokument_postoji( _id_firma, _id_vd, _br_dok )
+      IF find_kalk_doks_by_broj_dokumenta( _id_firma, _id_vd, _br_dok )
 
          _detail_rec := hb_Hash()
          _detail_rec[ "dokument" ] := _id_firma + "-" + _id_vd + "-" + _br_dok
@@ -684,14 +661,12 @@ STATIC FUNCTION __import( vars, a_details )
 
             _detail_rec[ "tip" ] := "delete"
             add_to_details( @a_details, _detail_rec )
-
             lOk := del_kalk_doc( _id_firma, _id_vd, _br_dok )
 
          ELSE
 
             _detail_rec[ "tip" ] := "x"
             add_to_details( @a_details, _detail_rec )
-
             SELECT e_doks
             SKIP
             LOOP
@@ -723,7 +698,6 @@ STATIC FUNCTION __import( vars, a_details )
       APPEND BLANK
 
       lOk := update_rec_server_and_dbf( "kalk_doks", _app_rec, 1, "CONT" )
-
       IF !lOk
          EXIT
       ENDIF
@@ -756,7 +730,6 @@ STATIC FUNCTION __import( vars, a_details )
          APPEND BLANK
 
          lOk := update_rec_server_and_dbf( "kalk_kalk", _app_rec, 1, "CONT" )
-
          IF !lOk
             EXIT
          ENDIF
@@ -776,7 +749,7 @@ STATIC FUNCTION __import( vars, a_details )
    ENDDO
 
    IF lOk
-      hParams := hb_hash()
+      hParams := hb_Hash()
       hParams[ "unlock" ] := { "kalk_doks", "kalk_kalk" }
       run_sql_query( "COMMIT", hParams )
    ELSE
@@ -814,23 +787,14 @@ STATIC FUNCTION del_kalk_doc( id_firma, id_vd, br_dok )
    LOCAL _del_rec
    LOCAL _ret := .F.
 
-   SELECT kalk_doks
-   SET ORDER TO TAG "1"
-   GO TOP
-   SEEK id_firma + id_vd + br_dok
-
-   IF Found()
+   IF find_kalk_doks_by_broj_dokumenta( id_firma, id_vd, br_dok )
       _ret := .T.
       _del_rec := dbf_get_rec()
       delete_rec_server_and_dbf( "kalk_doks", _del_rec, 1, "CONT" )
    ENDIF
 
-   SELECT kalk
-   SET ORDER TO TAG "1"
-   GO TOP
-   SEEK id_firma + id_vd + br_dok
 
-   IF Found()
+   IF find_kalk_by_broj_dokumenta( id_firma, id_vd, br_dok )
       _del_rec := dbf_get_rec()
       delete_rec_server_and_dbf( "kalk_kalk", _del_rec, 2, "CONT" )
    ENDIF
@@ -905,15 +869,15 @@ STATIC FUNCTION _cre_exp_tbls( use_path )
 // ----------------------------------------------------
 STATIC FUNCTION _o_tables()
 
-   o_kalk()
-   o_kalk_doks()
+   // o_kalk()
+   // o_kalk_doks()
    O_SIFK
    O_SIFV
    O_KONTO
    O_PARTN
    O_ROBA
 
-   RETURN
+   RETURN .T.
 
 
 // ----------------------------------------------------
@@ -1014,4 +978,4 @@ STATIC FUNCTION _o_exp_tables( use_path, from_fmk )
 
    log_write( "otvorene sve import tabele i indeksirane...", 9 )
 
-   RETURN
+   RETURN .T.

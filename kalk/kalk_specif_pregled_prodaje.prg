@@ -17,7 +17,7 @@
  *     Pregled prodaje - Vindija
  */
 
-FUNCTION PregProdaje()
+FUNCTION roba_pregled_prodje()
 
 
    O_PARTN
@@ -55,7 +55,6 @@ FUNCTION PregProdaje()
    ENDDO
    BoxC()
 
-
    O_ROBA
    O_SIFK
    O_SIFV
@@ -63,9 +62,10 @@ FUNCTION PregProdaje()
 
    CrePom2()
 
-   SELECT KALK
-   SET ORDER TO TAG "7"   // idroba+idvd
-   GO TOP
+   //SELECT KALK
+   //SET ORDER TO TAG "7"   // idroba+idvd
+   find_kalk_za_period( gFirma, NIL, NIL, cIdRoba, NIL, NIL, "idroba,idvd" )
+
 
    DO WHILE !Eof()
       cIdRoba := idroba
@@ -297,7 +297,7 @@ FUNCTION PregProdaje()
    ENDPRINT
    CLOSERET
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -307,19 +307,16 @@ FUNCTION PregProdaje()
 // -------------------------------------------------------------
 STATIC FUNCTION CrePom2()
 
-   // {
+   LOCAL cImeDbf
+   LOCAL cAlias := "PRODAJA"
 
-   SELECT 0      // idi na slobodno podrucje
-   cPom := PRIVPATH + "PRODAJA"
-   IF File( cPom + ".DBF" ) .AND. FErase( cPom + ".DBF" ) == -1
-      MsgBeep( "Ne mogu izbrisati fajl PRODAJA.DBF!" )
 
-   ENDIF
-   IF File( cPom + ".CDX" ) .AND. FErase( cPom + ".CDX" ) == -1
-      MsgBeep( "Ne mogu izbrisati fajl PRODAJA.CDX!" )
+   cImeDBf := f18_ime_dbf( "prodaja" )
 
-   ENDIF
-   // ferase(cPom+".CDX")
+   FERASE( cImeDbf )
+   Ferase( ImeDbfCdx( cImeDbf ))
+
+
    aDbf := {}
    AAdd( aDBf, { 'IDROBA', 'C', 10,  0 } )
    AAdd( aDBf, { 'IDG', 'C', 10,  0 } )
@@ -333,14 +330,19 @@ STATIC FUNCTION CrePom2()
    AAdd( aDBf, { 'KOLICINA', 'N', 18,  8 } )
    AAdd( aDBf, { 'CIJENA', 'N', 10,  4 } )
    AAdd( aDBf, { 'IZNOS', 'N', 18,  8 } )
-   DBCREATE2 ( cPom, aDbf )
-   USEX ( cPom )
-   INDEX ON IDG + IDPG + IDROBA TAG "1"
-   INDEX ON IDG + IDPG + Left( NAZ, 40 ) TAG "2"
-   SET ORDER TO TAG "1" ; GO TOP
+   DBCREATE2 ( cImeDbf, aDbf )
+
+   //USEX ( cImeDBF )
+
+   CREATE_INDEX( "IDG + IDPG + IDROBA", "1", cAlias)
+   CREATE_INDEX( IDG + IDPG + Left( NAZ, 40 ), "2", cAlias )
+
+   USEX( cAlias )
+   SET ORDER TO TAG "1"
+   GO TOP
 
    RETURN .T.
-// }
+
 
 
 // sa artiklima
@@ -493,7 +495,7 @@ FUNCTION SDiv( nDjelilac, nDijeljenik )
    ENDIF
 
    RETURN nV
-// }
+
 
 
 /* GetPictDem(nLen, nDec)
@@ -503,7 +505,6 @@ FUNCTION SDiv( nDjelilac, nDijeljenik )
  */
 FUNCTION GetPictDem( nLen, nDec )
 
-   // {
    // ovo odmah znamo = duzina
    nLen := Len( gPicDem )
 
@@ -513,5 +514,4 @@ FUNCTION GetPictDem( nLen, nDec )
 
    nDec := Len( nPom )
 
-   RETURN
-// }
+   RETURN .T.

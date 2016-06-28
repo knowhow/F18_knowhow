@@ -57,10 +57,10 @@ FUNCTION kalk_izvjestaji_mag_i_pro()
    AAdd( _opc, "O. stanje artikala po objektima " )
    AAdd( _opcexe, {|| kalk_izvj_stanje_po_objektima() } )
 
-   IF IsVindija()
-      AAdd( _opc, "V. pregled prodaje" )
-      AAdd( _opcexe, {|| PregProdaje() } )
-   ENDIF
+   //IF IsVindija()
+      AAdd( _opc, "V. roba pregled prodaje" )
+      AAdd( _opcexe, {|| roba_pregled_prodje() } )
+   //ENDIF
 
    f18_menu( "izmp", .F., _izbor, _opc, _opcexe )
 

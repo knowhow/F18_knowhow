@@ -22,14 +22,14 @@ FUNCTION find_kalk_doks_by_tip_datum( cIdFirma, cIdVd, dDatOd, dDatDo )
       hParams[ "idfirma" ] := cIdFirma
    ENDIF
 
-   IF cIdVd <> NIL
+   IF cIdVd <> NIL .AND. !( Empty( cIdVd ) )
       hParams[ "idvd" ] := cIdVd
    ENDIF
 
-   IF dDatOd <> NIL
+   IF dDatOd <> NIL .AND. !Empty( dDatOd )
       hParams[ "dat_od" ] := dDatOd
    ENDIF
-   IF dDatOd <> NIL
+   IF dDatDo <> NIL .AND. !Empty( dDatDo )
       hParams[ "dat_do" ] := dDatDo
    ENDIF
 
@@ -90,9 +90,6 @@ FUNCTION find_kalk_doks_by_broj_fakture( cIdVd, cBrFaktP )
    use_sql_kalk_doks( hParams )
    GO TOP
 
-
-
-
 FUNCTION find_kalk_doks_by_broj_dokumenta( cIdFirma, cIdvd, cBrDok )
 
    LOCAL hParams := hb_Hash()
@@ -101,7 +98,7 @@ FUNCTION find_kalk_doks_by_broj_dokumenta( cIdFirma, cIdvd, cBrDok )
       hParams[ "idfirma" ] := cIdFirma
    ENDIF
 
-   IF cIdVd <> NIL
+   IF cIdVd <> NIL .AND. !( Empty( cIdVd ) )
       hParams[ "idvd" ] := cIdVd
    ENDIF
 
@@ -229,7 +226,7 @@ FUNCTION find_kalk_by_pkonto_idroba( cIdFirma, cIdKonto, cIdRoba )
    IF cIdRoba != NIL
       hParams[ "idroba" ] := cIdRoba
    ENDIF
-   hParams[ "order_by" ] := "idfirma,pkonto,idroba,datdok, podbr, mu_i, idvd"
+   hParams[ "order_by" ] := "idfirma,pkonto,idroba,datdok,podbr,mu_i,idvd"
 
    use_sql_kalk( hParams )
    GO TOP
@@ -398,6 +395,7 @@ FUNCTION use_sql_kalk( hParams )
    ENDIF
 
    SELECT ( F_KALK )
+   USE
 
    ?E cSql
    use_sql( cTable, cSql )
@@ -596,6 +594,7 @@ FUNCTION use_sql_kalk_doks( hParams )
    ENDIF
 
    SELECT ( F_KALK_DOKS )
+   USE
    use_sql( cTable, cSql )
 
    IF is_sql_rdd_treba_indeks( hParams )
@@ -711,6 +710,7 @@ FUNCTION use_sql_kalk_doks2( hParams )
    ENDIF
 
    SELECT ( F_KALK_DOKS2 )
+   USE
    use_sql( cTable, cSql )
 
    IF is_sql_rdd_treba_indeks( hParams )
@@ -845,6 +845,7 @@ FUNCTION use_sql_kalk_kalk( hParams )
    ENDIF
 
    SELECT ( F_KALK_KALK )
+   USE
    use_sql( cTable, cSql )
 
    IF is_sql_rdd_treba_indeks( hParams )
@@ -940,6 +941,7 @@ FUNCTION use_sql_kalk_kalk_atributi( hParams )
    ENDIF
 
    SELECT ( F_KALK_ATRIBUTI )
+   USE
    use_sql( cTable, cSql )
 
    IF is_sql_rdd_treba_indeks( hParams )

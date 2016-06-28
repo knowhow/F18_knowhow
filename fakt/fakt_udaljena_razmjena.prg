@@ -673,7 +673,7 @@ FUNCTION add_to_details( details, rec )
       rec[ "iznos" ], ;
       rec[ "datum" ] } )
 
-   RETURN
+   RETURN .T.
 
 
 STATIC FUNCTION __import( vars, a_details )

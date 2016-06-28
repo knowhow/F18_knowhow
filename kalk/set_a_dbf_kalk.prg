@@ -38,6 +38,7 @@ FUNCTION set_a_dbf_kalk()
    set_a_dbf_temp( "p_kalk_doksrc", "P_KALK_DOKSRC", F_P_DOKSRC     )
 
    set_a_dbf_temp( "kalk_ppprod", "PPPROD", F_PPPROD        )
+   set_a_dbf_temp( "prodaja", "PRODAJA", F_PRODAJA        )
 
    set_a_dbf_temp( "kalk_pobjekti", "POBJEKTI", F_POBJEKTI      )
    set_a_dbf_temp( "kalk_prodnc", "PRODNC", F_PRODNC        )

@@ -40,7 +40,7 @@ FUNCTION NaprPom( aDbf, cPom )
    // kreiraj tabelu pom.dbf
    dbCreate( my_home() + "pom.dbf", aDbf )
 
-   RETURN
+   RETURN .T.
 
 
 FUNCTION pos2_pripr()

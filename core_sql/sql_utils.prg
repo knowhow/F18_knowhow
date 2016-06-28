@@ -107,6 +107,7 @@ FUNCTION sql_where_from_dbf_key_fields( dbf_key_fields, rec, lSqlTable )
          // numeric
          _key := Lower( _item[ 1 ] )
          check_hash_key( rec, _key )
+         altd()
          _ret += _item[ 1 ] + "=" + Str( rec[ _key ], _item[ 2 ] )
 
       ELSEIF ValType( _item ) == "C"

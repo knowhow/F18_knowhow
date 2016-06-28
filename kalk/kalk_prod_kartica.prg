@@ -1,22 +1,21 @@
 /*
- * This file is part of the bring.out FMK, a free and open source
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+ * This file is part of the bring.out knowhow ERP, a free and open source
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
 
-
 #include "f18.ch"
+
 
 STATIC __line
 STATIC __txt1
 STATIC __txt2
 STATIC __txt3
-
 
 
 FUNCTION kalk_kartica_prodavnica()
@@ -109,7 +108,7 @@ FUNCTION kalk_kartica_prodavnica()
          IF Pitanje(, "Niste zadali šifru artikla, izlistati sve kartice (D/N) ?", "N" ) == "N"
             my_close_all_dbf()
             RETURN .F.
-        ENDIF
+         ENDIF
       ELSE
          cIdr := cIdRoba
       ENDIF
@@ -119,12 +118,11 @@ FUNCTION kalk_kartica_prodavnica()
       dDatOd := CToD( "" )
    ENDIF
 
-   o_kalk()
-
    nKolicina := 0
 
-   SELECT kalk
-   SET ORDER TO TAG "4"
+   MsgO( "Preuzimanje podataka sa SQL servera ..." )
+   find_kalk_by_pkonto_idroba( cIdFirma, cIdKonto, iif( Empty( cIdRoba ), NIL, cIdRoba ) )
+   MsgC()
 
    PRIVATE cFilt := ".t."
 
@@ -132,8 +130,7 @@ FUNCTION kalk_kartica_prodavnica()
       SET FILTER to &cFilt
    ENDIF
 
-   HSEEK cIdFirma + cIdKonto + cIdR
-
+   GO TOP
    EOF CRET
 
    gaZagFix := { 7, 3 }
@@ -141,7 +138,6 @@ FUNCTION kalk_kartica_prodavnica()
    START PRINT CRET
 
    ?
-
    nLen := 1
 
    _set_zagl( @cLine, @cTxt1 )

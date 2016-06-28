@@ -313,6 +313,7 @@ FUNCTION use_sql_fin_nalog( cIdVN, lMakeIndex )
    cSQL += " ORDER BY idfirma, idvn, brnal"
 
    SELECT F_NALOG
+   USE
    IF !use_sql( cTable, cSql, cAlias )
       RETURN .F.
    ENDIF

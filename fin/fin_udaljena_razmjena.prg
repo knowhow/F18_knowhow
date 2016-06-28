@@ -41,7 +41,7 @@ FUNCTION fin_udaljena_razmjena_podataka()
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
 
 // ----------------------------------------
@@ -56,7 +56,7 @@ STATIC FUNCTION _fin_export()
 
    // uslovi exporta
    IF !_vars_export( @_vars )
-      RETURN
+      RETURN .F.
    ENDIF
 
    // pobrisi u folderu tmp fajlove ako postoje
@@ -101,7 +101,7 @@ STATIC FUNCTION _fin_export()
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -123,7 +123,7 @@ STATIC FUNCTION _fin_import()
    BoxC()
 
    IF LastKey() == K_ESC
-      RETURN
+      RETURN .F.
    endif
 
    // snimi u parametre
@@ -140,19 +140,19 @@ STATIC FUNCTION _fin_import()
 
    // parametri
    IF !_vars_import( @_vars )
-      RETURN
+      RETURN .F.
    ENDIF
 
    IF !import_file_exist( _imp_file )
       // nema fajla za import ?
-      MsgBeep( "import fajl ne postoji !??? prekidam operaciju" )
-      RETURN
+      MsgBeep( "import fajl ne postoji !? prekidam operaciju" )
+      RETURN .F.
    ENDIF
 
    // dekompresovanje podataka
    IF _decompress_files( _imp_file, __import_dbf_path, __import_zip_name ) <> 0
       // ako je bilo greske
-      RETURN
+      RETURN .F.
    ENDIF
 
 #ifdef __PLATFORM__UNIX
@@ -187,7 +187,7 @@ STATIC FUNCTION _fin_import()
    // vrati se na home direktorij nakon svega
    DirChange( my_home() )
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -215,11 +215,9 @@ STATIC FUNCTION _vars_export( vars )
 
    ++ _x
    ++ _x
-
    @ m_x + _x, m_y + 2 SAY "Vrste dokumenata:" GET _vrste_dok PICT "@S40"
 
    ++ _x
-
    @ m_x + _x, m_y + 2 SAY "Datumski period od" GET _dat_od
    @ m_x + _x, Col() + 1 SAY "do" GET _dat_do
 
@@ -230,11 +228,9 @@ STATIC FUNCTION _vars_export( vars )
 
    ++ _x
    ++ _x
-
    @ m_x + _x, m_y + 2 SAY "Eksportovati sifrarnike (D/N) ?" GET _exp_sif PICT "@!" VALID _exp_sif $ "DN"
 
    ++ _x
-
    @ m_x + _x, m_y + 2 SAY "Eksport lokacija:" GET _exp_path PICT "@S50"
 
    READ
@@ -295,17 +291,14 @@ STATIC FUNCTION _vars_import( vars )
 
    ++ _x
    ++ _x
-
    @ m_x + _x, m_y + 2 SAY "Vrste dokumenata (prazno-sve):" GET _vrste_dok PICT "@S30"
 
    ++ _x
-
    @ m_x + _x, m_y + 2 SAY "Datumski period od" GET _dat_od
    @ m_x + _x, Col() + 1 SAY "do" GET _dat_do
 
    ++ _x
    ++ _x
-
    @ m_x + _x, m_y + 2 SAY "Uzeti u obzir sljedeca konta:" GET _konta PICT "@S30"
 
    ++ _x
@@ -314,17 +307,14 @@ STATIC FUNCTION _vars_import( vars )
    @ m_x + _x, m_y + 2 SAY "Zamjeniti postojece dokumente novim (D/N):" GET _zamjeniti_dok PICT "@!" VALID _zamjeniti_dok $ "DN"
 
    ++ _x
-
    @ m_x + _x, m_y + 2 SAY "Zamjeniti postojece sifre novim (D/N):" GET _zamjeniti_sif PICT "@!" VALID _zamjeniti_sif $ "DN"
 
    ++ _x
    ++ _x
-
    @ m_x + _x, m_y + 2 SAY "Import fajl dolazi iz FMK (D/N) ?" GET _iz_fmk PICT "@!" VALID _iz_fmk $ "DN"
 
    ++ _x
    ++ _x
-
    @ m_x + _x, m_y + 2 SAY "Import lokacija:" GET _imp_path PICT "@S50"
 
 
@@ -397,9 +387,7 @@ STATIC FUNCTION __export( vars, a_details )
 
    @ m_x + 1, m_y + 2 SAY "... export fin dokumenata u toku"
 
-   SELECT nalog
-   SET ORDER TO TAG "1"
-   GO TOP
+   find_nalog_za_period( gFirma, NIL, _dat_od, _dat_do )
 
    DO WHILE !Eof()
 
@@ -407,9 +395,6 @@ STATIC FUNCTION __export( vars, a_details )
       _id_vd := field->idvn
       _br_dok := field->brnal
 
-      // provjeri uslove ?!??
-
-      // lista dokumenata...
       IF !Empty( _vrste_dok )
          IF !( field->idvn $ _vrste_dok )
             SKIP
@@ -417,7 +402,6 @@ STATIC FUNCTION __export( vars, a_details )
          ENDIF
       ENDIF
 
-      // datumski uslov...
       IF _dat_od <> CToD( "" )
          IF ( field->datnal < _dat_od )
             SKIP
@@ -456,26 +440,23 @@ STATIC FUNCTION __export( vars, a_details )
       @ m_x + 2, m_y + 2 SAY PadR(  PadL( AllTrim( Str( _cnt ) ), 6 ) + ". " + "dokument: " + _id_firma + "-" + _id_vd + "-" + AllTrim( _br_dok ), 50 )
 
       // dodaj zapis i u tabelu e_suban
-      SELECT suban
-      SET ORDER TO TAG "4"
-      GO TOP
-      SEEK _id_firma + _id_vd + _br_dok
+      find_suban_by_broj_dokumenta( _id_firma, _id_vd, _br_dok )
 
       DO WHILE !Eof() .AND. field->idfirma == _id_firma .AND. field->idvn == _id_vd .AND. field->brnal == _br_dok
 
-         // uzmi konto...
-         // uzmi partner...
+
          _id_konto := field->idkonto
          _id_partner := field->idpartner
 
          // upisi zapis u tabelu e_suban
          _app_rec := dbf_get_rec()
+         altd()
          SELECT e_suban
          APPEND BLANK
          dbf_update_rec( _app_rec )
 
-         // uzmi sada konto sa ove stavke pa je ubaci u e_konto
-         SELECT konto
+
+         SELECT konto // uzmi sada konto sa ove stavke pa je ubaci u e_konto
          HSEEK _id_konto
          IF Found() .AND. _export_sif == "D"
             _app_rec := dbf_get_rec()
@@ -490,8 +471,8 @@ STATIC FUNCTION __export( vars, a_details )
             ENDIF
          ENDIF
 
-         // uzmi sada partnera sa ove stavke pa je ubaci u e_partn
-         SELECT partn
+
+         SELECT partn // uzmi sada partnera sa ove stavke pa je ubaci u e_partn
          HSEEK _id_partner
          IF Found() .AND. _export_sif == "D"
             _app_rec := dbf_get_rec()
@@ -506,17 +487,14 @@ STATIC FUNCTION __export( vars, a_details )
             ENDIF
          ENDIF
 
-         // idi dalje...
+
          SELECT suban
          SKIP
 
       ENDDO
 
       // dodaj zapis i u tabelu e_sint, e_anal
-      SELECT sint
-      SET ORDER TO TAG "2"
-      GO TOP
-      SEEK _id_firma + _id_vd + _br_dok
+      find_sint_by_broj_dokumenta( _id_firma, _id_vd, _br_dok )
       DO WHILE !Eof() .AND. field->idfirma == _id_firma .AND. field->idvn == _id_vd .AND. field->brnal == _br_dok
 
          // ubaci u e_sint
@@ -530,10 +508,8 @@ STATIC FUNCTION __export( vars, a_details )
 
       ENDDO
 
-      SELECT anal
-      SET ORDER TO TAG "2"
-      GO TOP
-      SEEK _id_firma + _id_vd + _br_dok
+
+      find_anal_by_broj_dokumenta( _id_firma, _id_vd, _br_dok )
       DO WHILE !Eof() .AND. field->idfirma == _id_firma .AND. field->idvn == _id_vd .AND. field->brnal == _br_dok
 
          // ubaci u e_anal
@@ -547,6 +523,7 @@ STATIC FUNCTION __export( vars, a_details )
          SKIP
 
       ENDDO
+
 
       SELECT nalog
       SKIP
@@ -723,11 +700,11 @@ STATIC FUNCTION __import( vars, a_details )
 
          _app_rec := dbf_get_rec()
 
-         _app_rec[ "rbr" ] := PadL( AllTrim( Str( ++_redni_broj ) ), 4 )
+         _app_rec[ "rbr" ] :=  ++_redni_broj
 
          _gl_brojac += _redni_broj
 
-         @ m_x + 3, m_y + 40 SAY "stavka: " + AllTrim( Str( _gl_brojac ) ) + " / " + _app_rec[ "rbr" ]
+         @ m_x + 3, m_y + 40 SAY "stavka: " + AllTrim( Str( _gl_brojac ) ) + " / " + STR( _app_rec[ "rbr" ], 5)
 
          SELECT suban
          APPEND BLANK
@@ -964,7 +941,7 @@ STATIC FUNCTION _cre_exp_tbls( use_path )
    USE
    CREATE ( use_path + "e_sifv" ) from ( my_home() + "struct" )
 
-   RETURN
+   RETURN .T.
 
 
 // ----------------------------------------------------
@@ -981,7 +958,7 @@ STATIC FUNCTION _o_tables()
    O_KONTO
    O_PARTN
 
-   RETURN
+   RETURN .T.
 
 
 

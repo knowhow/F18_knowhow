@@ -103,12 +103,13 @@ FUNCTION kalk_dokument_postoji( cFirma, cIdVd, cBroj )
       lExist := .T.
    ENDIF
 
+/*
    IF !lExist
       IF table_count( F18_PSQL_SCHEMA_DOT + "kalk_kalk", cWhere ) > 0
          lExist := .T.
       ENDIF
    ENDIF
-
+*/
    RETURN lExist
 
 

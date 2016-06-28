@@ -35,6 +35,7 @@
 #define F_TRFP3     32
 #define F__ROBA     33
 #define F_OBJEKTI   34
+#define F_PRODAJA   35
 
 // modul FIN (wa 50-80)
 #define F_FIN_PRIPR     50

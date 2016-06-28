@@ -72,9 +72,9 @@ FUNCTION set_a_dbf_fin_suban()
    // algoritam 1 - default
    // -------------------------------------------------------------------------------
    _alg := hb_Hash()
-   _alg[ "dbf_key_block" ]  := {|| field->idfirma + field->idvn + field->brnal + field->rbr }
-   _alg[ "dbf_key_fields" ] := { "idfirma", "idvn", "brnal", "rbr" }
-   _alg[ "sql_in" ]         := "rpad(idfirma,2) || rpad(idvn, 2) || rpad(brnal, 8) || lpad(rbr, 4)"
+   _alg[ "dbf_key_block" ]  := {|| field->idfirma + field->idvn + field->brnal + STR(field->rbr,5,0) }
+   _alg[ "dbf_key_fields" ] := { "idfirma", "idvn", "brnal", {"rbr",5} }
+   _alg[ "sql_in" ]         := "rpad(idfirma,2) || rpad(idvn, 2) || rpad(brnal, 8) || lpad(rbr::char(5),5)"
    _alg[ "dbf_tag" ]        := "4"
    AAdd( _item[ "algoritam" ], _alg )
 

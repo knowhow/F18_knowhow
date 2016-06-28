@@ -528,7 +528,7 @@ FUNCTION delete_exp_files( use_path, modul )
    NEXT
    MsgC()
 
-   RETURN
+   RETURN .T.
 
 
 // -------------------------------------------------------

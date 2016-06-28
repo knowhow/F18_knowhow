@@ -20,6 +20,7 @@ FUNCTION kalk_stampa_liste_dokumenata()
    LOCAL m
 
    // LOCAL lImaUkSt := .F.
+   LOCAL cIdVd
    LOCAL _head
    LOCAL _n_col := 20
    LOCAL _pkonto, _mkonto
@@ -121,6 +122,9 @@ FUNCTION kalk_stampa_liste_dokumenata()
 
    BoxC()
 
+   IF Empty( cIdvd )
+      cIdVd := NIL
+   ENDIF
    find_kalk_doks_by_tip_datum( cIdFirma, cIdVd, dDatOd, dDatDo )
 
    // IF FieldPos( "ukstavki" ) <> 0
@@ -207,9 +211,7 @@ FUNCTION kalk_stampa_liste_dokumenata()
 
       IF field->idvd == "80"
 
-         SELECT kalk
-         GO TOP
-         SEEK kalk_doks->idfirma + kalk_doks->idvd + kalk_doks->brdok
+         find_kalk_by_broj_dokumenta( kalk_doks->idfirma, kalk_doks->idvd, kalk_doks->brdok)
 
          IF !Empty( kalk->idkonto2 )
             @ PRow(), PCol() + 1 SAY PadR( AllTrim( field->idkonto ) + "->" + AllTrim( field->idkonto2 ), 15 )

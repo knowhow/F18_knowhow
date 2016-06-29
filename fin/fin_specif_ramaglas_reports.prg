@@ -1,10 +1,10 @@
-/* 
- * This file is part of the bring.out FMK, a free and open source 
+/*
+ * This file is part of the bring.out FMK, a free and open source
  * accounting software suite,
  * Copyright (c) 1994-2011 by bring.out d.o.o Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including knowhow ERP specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the 
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
@@ -148,9 +148,10 @@ enddo
 
 // 3) ukupni rezijski troskovi (nUkRezTros = nUkTros - nUkDirTros)
 nUkRezTros:=nUkTros-nUkDirTros
-// ------------------------------------------------
 
-start_print()
+IF !start_print()
+	 RETURN .F.
+ENDIF
 ?
 for i:=1 to LEN(aIzvj)
 	cBrDok:=aIzvj[i,1]
@@ -181,10 +182,3 @@ end_print()
 
 closeret
 return
-
-
-
-
-
-
-

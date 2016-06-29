@@ -41,10 +41,13 @@ FUNCTION r_spec_tr()
 
    // uslovi izvjestaja
    IF g_vars( @dD_from, @dD_to, @cGroup, @cKtoListZ, @cKtoList, @cSp_ld ) == 0
-      RETURN
+      RETURN .F.
    ENDIF
 
-   start_print()
+
+   IF !start_print()
+      RETURN .F.
+   ENDIF
 
    __r_head( dD_from, dD_to )
 

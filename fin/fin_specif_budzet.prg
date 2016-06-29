@@ -149,7 +149,9 @@ FUNCTION IzvrsBudz()
    ENDIF
    SET FILTER to &cFiltB
 
-   start_print()
+   IF !start_print()
+      RETURN .F.
+   ENDIF
    P_INI
    ?
    F10CPI
@@ -1132,7 +1134,10 @@ FUNCTION Prihodi()
 
    EOF CRET
 
-   start_print()
+
+   IF !start_print()
+      RETURN .F.
+   ENDIF
 
    SELECT BUDZET
    SET ORDER TO TAG "1"

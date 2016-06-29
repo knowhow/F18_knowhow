@@ -13,7 +13,7 @@
 #include "f18.ch"
 
 STATIC PICD
-STATIC REP1_LEN := 158 
+STATIC REP1_LEN := 158
 
 
 FUNCTION fin_bb_analitika_b( params )
@@ -25,7 +25,7 @@ FUNCTION fin_bb_analitika_b( params )
    LOCAL cIdRj := params[ "id_rj" ]
    LOCAL lNule := params[ "saldo_nula" ]
    LOCAL lPodKlas := params[ "podklase" ]
-   LOCAL cFormat := params["format"]
+   LOCAL cFormat := params[ "format" ]
    LOCAL cKlKonto, cSinKonto, cIdKonto, cIdPartner
    LOCAL cFilter, aUsl1, nStr := 0
    LOCAL b, b1, b2
@@ -105,7 +105,9 @@ FUNCTION fin_bb_analitika_b( params )
 
    nStr := 0
 
-   start_print()
+   IF !start_print()
+      RETURN .F.
+   ENDIF
 
    B := 0
    D1S := D2S := D3S := D4S := P1S := P2S := P3S := P4S := 0
@@ -116,7 +118,7 @@ FUNCTION fin_bb_analitika_b( params )
    DO WHILE !Eof() .AND. IdFirma = cIdFirma
 
       IF PRow() == 0
-          zagl_bb_anal( params, @nStr )
+         zagl_bb_anal( params, @nStr )
       ENDIF
 
       cKlKonto := Left( IdKonto, 1 )
@@ -138,7 +140,7 @@ FUNCTION fin_bb_analitika_b( params )
                IF nValuta == 1
                   Dug := DugBHD * nBBK
                   Pot := PotBHD * nBBK
-               ELSE 
+               ELSE
                   Dug := DUGDEM
                   Pot := POTDEM
                ENDIF
@@ -152,7 +154,7 @@ FUNCTION fin_bb_analitika_b( params )
                   P1TP += Pot
                ENDIF
                SKIP
-            ENDDO 
+            ENDDO
 
             @ PRow() + 1, 1 SAY ++B PICTURE '9999'
             ?? "."
@@ -209,11 +211,11 @@ FUNCTION fin_bb_analitika_b( params )
             P2KP = P2KP + P1KP
 
             IF PRow() > 65 + dodatni_redovi_po_stranici()
-                FF
-                zagl_bb_anal( params, @nStr )
+               FF
+               zagl_bb_anal( params, @nStr )
             ENDIF
 
-         ENDDO 
+         ENDDO
 
          IF PRow() > 61 + dodatni_redovi_po_stranici()
             FF
@@ -241,7 +243,7 @@ FUNCTION fin_bb_analitika_b( params )
          D3KP = D3KP + D2KP
          P3KP = P3KP + P2KP
 
-      ENDDO 
+      ENDDO
 
       SELECT BBKLAS
       APPEND BLANK
@@ -289,8 +291,8 @@ FUNCTION fin_bb_analitika_b( params )
    ENDDO
 
    IF PRow() > 61 + dodatni_redovi_po_stranici()
-       FF 
-       zagl_bb_anal( params, @nStr )
+      FF
+      zagl_bb_anal( params, @nStr )
    ENDIF
 
    ?U M5
@@ -311,7 +313,7 @@ FUNCTION fin_bb_analitika_b( params )
       FF
    ELSE
       ?
-      ? 
+      ?
    ENDIF
 
    ?? "REKAPITULACIJA PO KLASAMA NA DAN: "
@@ -377,8 +379,8 @@ FUNCTION zagl_bb_anal( params, nStr )
 
    ??U "FIN: ANALITIČKI BRUTO BILANS U VALUTI '" + IF( params[ "valuta" ] == 1, ValDomaca(), ValPomocna() ) + "'"
 
-   IF !( Empty( params["datum_od"] ) .AND. Empty( params["datum_do"] ) )
-      ?? " ZA PERIOD OD", params["datum_od"], "-", params["datum_do"]
+   IF !( Empty( params[ "datum_od" ] ) .AND. Empty( params[ "datum_do" ] ) )
+      ?? " ZA PERIOD OD", params[ "datum_od" ], "-", params[ "datum_do" ]
    ENDIF
 
    ?? " NA DAN: "
@@ -391,19 +393,19 @@ FUNCTION zagl_bb_anal( params, nStr )
       ? "Firma:", gFirma, gNFirma
    ELSE
       ? "Firma:"
-      @ PRow(), PCol() + 2 SAY params["idfirma"]
+      @ PRow(), PCol() + 2 SAY params[ "idfirma" ]
       SELECT PARTN
-      HSEEK params["idfirma"]
+      HSEEK params[ "idfirma" ]
       @ PRow(), PCol() + 2 SAY Naz
       @ PRow(), PCol() + 2 SAY Naz2
    ENDIF
 
-   IF !EMPTY( params["konto"] )
-      ? "Odabrana konta: " + ALLTRIM( params["konto"] )
+   IF !Empty( params[ "konto" ] )
+      ? "Odabrana konta: " + AllTrim( params[ "konto" ] )
    ENDIF
 
-   IF gRJ == "D" .AND. Len( params["id_rj"] ) <> 0
-      ? "Radna jedinica ='" + params["id_rj"] + "'"
+   IF gRJ == "D" .AND. Len( params[ "id_rj" ] ) <> 0
+      ? "Radna jedinica ='" + params[ "id_rj" ] + "'"
    ENDIF
 
    SELECT ANAL
@@ -415,5 +417,3 @@ FUNCTION zagl_bb_anal( params, nStr )
    ?U M5
 
    RETURN
-
-

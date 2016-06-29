@@ -80,7 +80,7 @@ FUNCTION rnal_nalog_za_proizvodnju_txt()
       nDoc_gr := field->doc_gr_no
       DO WHILE !Eof() .AND. field->doc_no == nDoc_no .AND. field->doc_gr_no == nDoc_gr
 
-         skip
+         SKIP
       ENDDO
 
       ++ nCnt
@@ -88,7 +88,9 @@ FUNCTION rnal_nalog_za_proizvodnju_txt()
 
    ENDDO
 
-   start_print()
+   IF !start_print()
+      RETURN .F.
+   ENDIF
 
    FOR i := 1 TO Len( aGroups )
 
@@ -226,7 +228,7 @@ FUNCTION stampa_naloga_za_grupu( nDoc_gr, nGr_cnt, nGr_total )
             IF PRow() > LEN_PAGE - DSTR_KOREKCIJA()
                ++ nPage
                Nstr_a4( nPage, .T. )
-            endif
+            ENDIF
          NEXT
 
       ENDIF
@@ -262,7 +264,7 @@ FUNCTION stampa_naloga_za_grupu( nDoc_gr, nGr_cnt, nGr_total )
                IF PRow() > LEN_PAGE - DSTR_KOREKCIJA()
                   ++ nPage
                   Nstr_a4( nPage, .T. )
-               endif
+               ENDIF
 
                ? RAZMAK
                ?? PadL( "", LEN_IT_NO )
@@ -346,7 +348,7 @@ FUNCTION stampa_naloga_za_grupu( nDoc_gr, nGr_cnt, nGr_total )
             ++ nPage
             Nstr_a4( nPage, .T. )
 
-         endif
+         ENDIF
 
          ? RAZMAK
          ?? PadL( "", LEN_IT_NO )
@@ -369,7 +371,7 @@ FUNCTION stampa_naloga_za_grupu( nDoc_gr, nGr_cnt, nGr_total )
             ++ nPage
             Nstr_a4( nPage, .T. )
 
-         endif
+         ENDIF
 
          ? RAZMAK
          ?? PadL( "", LEN_IT_NO )
@@ -433,7 +435,7 @@ FUNCTION stampa_naloga_za_grupu( nDoc_gr, nGr_cnt, nGr_total )
 
             cPom += " "
             cPom += "(SHEMA U PRILOGU)"
-         endif
+         ENDIF
 
          // nadmorska visina
          IF field->doc_it_alt <> 0
@@ -480,7 +482,7 @@ FUNCTION stampa_naloga_za_grupu( nDoc_gr, nGr_cnt, nGr_total )
          ++ nPage
          Nstr_a4( nPage, .T. )
 
-      endif
+      ENDIF
 
       SELECT t_docit
       SKIP
@@ -497,7 +499,7 @@ FUNCTION stampa_naloga_za_grupu( nDoc_gr, nGr_cnt, nGr_total )
    IF PRow() + 4 > LEN_PAGE - DSTR_KOREKCIJA()
       ++nPage
       Nstr_a4( nPage, .T. )
-   endif
+   ENDIF
 
    ? cLine
    ? RAZMAK + PadR( "UKUPNA KOLICINA:", 90 ), show_number( _qtty_total, nil, -10 )
@@ -722,7 +724,7 @@ STATIC FUNCTION s_nal_izdao()
    IF PRow() > LEN_PAGE - DSTR_KOREKCIJA()
       ++ nPage
       Nstr_a4( nPage, .T. )
-   endif
+   ENDIF
 
    // izvuci operatera iz PARS
    cOper := g_t_pars_opis( "N13" )
@@ -752,7 +754,7 @@ STATIC FUNCTION s_nal_footer()
    IF PRow() > LEN_PAGE - DSTR_KOREKCIJA()
       ++ nPage
       Nstr_a4( nPage, .T. )
-   endif
+   ENDIF
 
    cPayDesc := g_t_pars_opis( "N06" )
    cPayed := g_t_pars_opis( "N10" )
@@ -769,7 +771,7 @@ STATIC FUNCTION s_nal_footer()
       IF PRow() > LEN_PAGE - DSTR_KOREKCIJA()
          ++ nPage
          Nstr_a4( nPage, .T. )
-      endif
+      ENDIF
 
       cPom := "Placeno: "
 
@@ -790,7 +792,7 @@ STATIC FUNCTION s_nal_footer()
       IF PRow() > LEN_PAGE - DSTR_KOREKCIJA()
          ++ nPage
          Nstr_a4( nPage, .T. )
-      endif
+      ENDIF
 
       cPom := "Napomene za placanje: "
       cPom += cPayAddDesc
@@ -804,7 +806,7 @@ STATIC FUNCTION s_nal_footer()
    IF PRow() + 4 > LEN_PAGE - DSTR_KOREKCIJA()
       ++ nPage
       Nstr_a4( nPage, .T. )
-   endif
+   ENDIF
 
    // oznacene pozicije na nalogu
    cPom := "Oznacene pozicije:"
@@ -829,7 +831,7 @@ STATIC FUNCTION s_nal_footer()
    IF PRow() > LEN_PAGE - DSTR_KOREKCIJA()
       ++ nPage
       Nstr_a4( nPage, .T. )
-   endif
+   ENDIF
 
    // potvrda narudzbe
 

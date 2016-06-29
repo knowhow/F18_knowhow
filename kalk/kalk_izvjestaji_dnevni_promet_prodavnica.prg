@@ -55,7 +55,7 @@ FUNCTION kalk_dnevni_promet_prodavnice()
    ENDIF
 
    cOldIni := gPINI
-   start_print()
+   -- start_print()
    nStr := 1
    Header( dDan, @nStr )
 
@@ -132,7 +132,7 @@ FUNCTION PromPeriod()
    ENDIF
 
    cOldIni := gPINI
-   start_print()
+   -- start_print()
    nStr := 1
    Header( dDan, @nStr )
 

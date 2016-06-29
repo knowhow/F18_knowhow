@@ -114,7 +114,9 @@ FUNCTION fin_bb_subanalitika_b( params )
 
    nStr := 0
 
-   start_print()
+   IF !start_print()
+      RETURN .F.
+   ENDIF
 
    B := 0
    B1 := 0

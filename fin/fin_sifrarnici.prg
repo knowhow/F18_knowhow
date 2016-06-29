@@ -140,7 +140,10 @@ FUNCTION KontoBlok( Ch )
 
    SET FILTER TO &aUsl1
 
-   start_print()
+
+   IF !start_print()
+      RETURN .F.
+   ENDIF
 
    ?
    B_ON

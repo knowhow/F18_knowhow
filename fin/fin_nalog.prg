@@ -64,10 +64,13 @@ FUNCTION fin_nalog_azurirani()
 
    find_suban_by_broj_dokumenta( cIdFirma, cIdvn, cBrnal )
    // SELECT SUBAN
-   SET ORDER TO TAG "4"
-   GO TOP
+   //SET ORDER TO TAG "4"
+   //GO TOP
 
-   start_print()
+
+   IF !start_print()
+      RETURN .F.
+   ENDIF
 
    fin_nalog_stampa_fill_psuban( "2", NIL, dDatNal )
    my_close_all_dbf()

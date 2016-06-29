@@ -153,10 +153,13 @@ STATIC FUNCTION _ispisi_greske( a_error )
    LOCAL _i
 
    IF Len( a_error ) == 0 .OR. a_error == NIL
-      RETURN
+      RETURN .T.
    ENDIF
 
-   start_print()
+
+   IF !start_print()
+      RETURN .F.
+   ENDIF
 
    ?
    ? "Pregled ispravnosti podataka:"
@@ -258,7 +261,9 @@ FUNCTION daterr_rpt()
       dGrDate := _g_gr_date()
    ENDIF
 
-   start_print()
+   IF !start_print()
+      RETURN .F.
+   ENDIF
 
    ? "------------------------------------------------"
    ? "Lista naloga sa neispravnim datumima:"

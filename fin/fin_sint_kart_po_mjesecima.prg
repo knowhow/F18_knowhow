@@ -53,6 +53,7 @@ FUNCTION fin_sint_kart_po_mjesecima()
          @ m_x + 5, m_y + 2 SAY "Radna jedinica (999999-sve): " GET cIdRj
       ENDIF
       READ;  ESC_BCR
+
       aUsl1 := Parsiraj( qqKonto, "IdKonto", "C" )
       IF aUsl1 <> NIL; exit; ENDIF
    ENDDO
@@ -70,7 +71,8 @@ FUNCTION fin_sint_kart_po_mjesecima()
    IF Params2()
       WPar( "c1", @cIdFirma ); WPar( "c2", @qqKonto ); WPar( "d1", @dDatOd ); WPar( "d2", @dDatDo )
    ENDIF
-   SELECT params; USE
+   SELECT params
+   USE
 
 
    IF gRJ == "D" .AND. gSAKrIz == "D" .AND. Len( cIdRJ ) <> 0
@@ -82,23 +84,24 @@ FUNCTION fin_sint_kart_po_mjesecima()
 
    SELECT SINT
 
-   cFilt1 := aUsl1 + ;
-      IF( Empty( dDatOd ), "", ".and.DATNAL>=" + dbf_quote( dDatOd ) ) + ;
-      IF( Empty( dDatDo ), "", ".and.DATNAL<=" + dbf_quote( dDatDo ) )
+   cFilt1 := aUsl1
 
-   cFilt1 := StrTran( cFilt1, ".t..and.", "" )
+
+   find_sint_by_konto_za_period( cIdFirma, NIL, dDatOd, dDatDo )
 
    IF !( cFilt1 == ".t." )
       SET FILTER TO &cFilt1
    ENDIF
 
-   HSEEK cidfirma
    EOF RET
 
    nStr := 0
-   start_print()
 
-   IF nStr == 0; ZaglSink2();ENDIF
+   IF !start_print()
+      RETURN .F.
+   ENDIF
+
+   IF nStr == 0; ZaglSink2(); ENDIF
    nSviD := nSviP := nSviD2 := nSviP2 := 0
 
    DO WHILE idfirma == cidfirma .AND. !Eof()

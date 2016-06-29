@@ -34,6 +34,7 @@ FUNCTION fin_specifikacija_suban()
    LOCAL cVN := Space( 20 )
    LOCAL bZagl :=  {|| zagl_fin_specif( cSkVar ) }
    LOCAL oPDF, xPrintOpt
+   LOCAL cSqlWhere
 
    LOCAL nC
    PRIVATE cSkVar := "N"
@@ -151,15 +152,16 @@ FUNCTION fin_specifikacija_suban()
       SELECT params
       USE
 
-      aUsl1 := Parsiraj( qqKonto, "IdKonto" )
-      aUsl2 := Parsiraj( qqPartner, "IdPartner" )
+      cSqlWhere := parsiraj_sql( "idkonto", qqKonto )
+      cSqlWhere += " AND " + parsiraj_sql( "idpartner", qqPartner )
+
       IF gDUFRJ == "D"
          aUsl3 := Parsiraj( cIdFirma, "IdFirma" )
          aUsl4 := Parsiraj( cIdRJ, "IdRj" )
       ENDIF
       aBV := Parsiraj( qqBrDok, "UPPER(BRDOK)", "C" )
       aVN := Parsiraj( cVN, "IDVN", "C" )
-      IF aBV <> NIL .AND. aVN <> NIL .AND. ausl1 <> NIL .AND. aUsl2 <> NIL .AND. IF( gDUFRJ == "D", aUsl3 <> NIL .AND. aUsl4 <> NIL, .T. )
+      IF aBV <> NIL .AND. aVN <> NIL .AND. IIF( gDUFRJ == "D", aUsl3 <> NIL .AND. aUsl4 <> NIL, .T. )
          EXIT
       ENDIF
    ENDDO
@@ -183,7 +185,7 @@ FUNCTION fin_specifikacija_suban()
    O_PARTN
    O_KONTO
    MsgO( "Preuzimanje podataka sa SQL servera ..." )
-   find_suban_za_period( cIdFirma, dDatOd, dDatDo, "idfirma,idkonto,idpartner,brdok" )
+   find_suban_za_period( cIdFirma, dDatOd, dDatDo, "idfirma,idkonto,idpartner,brdok", cSqlWhere )
    Msgc()
 
    CistiK1k4()
@@ -228,13 +230,6 @@ FUNCTION fin_specifikacija_suban()
       cFilter += ( ".and." + aBV )
    ENDIF
 
-   IF aUsl1 <> ".t."
-      cFilter += ( ".and." + aUsl1 )
-   ENDIF
-
-   IF aUsl2 <> ".t."
-      cFilter += ( ".and." + aUsl2 )
-   ENDIF
 
    IF !Empty( dDatOd ) .OR. !Empty( dDatDo )
       cFilter += ( ".and. DATDOK>=" + dbf_quote( dDatOd ) + ".and. DATDOK<=" + dbf_quote( dDatDo ) )
@@ -289,7 +284,9 @@ FUNCTION fin_specifikacija_suban()
       xPrintOpt[ "left_space" ] := 0
    ENDIF
 
-   start_print( xPrintOpt )
+   IF !start_print( xPrintOpt )
+      RETURN .F.
+   ENDIF
 
    IF cSkVar == "D"
       nDOpis := 25

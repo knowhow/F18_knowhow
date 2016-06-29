@@ -13,7 +13,7 @@
 #include "f18.ch"
 
 STATIC PICD
-STATIC REP1_LEN := 158 
+STATIC REP1_LEN := 158
 
 
 FUNCTION fin_bb_grupe_b( params )
@@ -34,7 +34,7 @@ FUNCTION fin_bb_grupe_b( params )
    LOCAL nBBK := 1
    LOCAL aNaziv, nColNaz
    PRIVATE M6, M7, M8, M9, M10
- 
+
    PICD := FormPicL( gPicBHD, 15 )
 
    IF gRJ == "D" .AND. ( "." $ cIdRj )
@@ -96,7 +96,9 @@ FUNCTION fin_bb_grupe_b( params )
 
    nStr := 0
 
-   start_print()
+   IF !start_print()
+      RETURN .F.
+   ENDIF
 
    B := 1
    D1S := D2S := D3S := D4S := P1S := P2S := P3S := P4S := 0
@@ -125,7 +127,7 @@ FUNCTION fin_bb_grupe_b( params )
             IF nValuta == 1
                Dug := DugBHD * nBBK
                Pot := PotBHD * nBBK
-            ELSE 
+            ELSE
                Dug := DUGDEM
                Pot := POTDEM
             ENDIF
@@ -141,7 +143,7 @@ FUNCTION fin_bb_grupe_b( params )
                P1TP += Pot
             ENDIF
             SKIP
-         ENDDO 
+         ENDDO
 
          IF PRow() > 63 + dodatni_redovi_po_stranici()
              FF
@@ -226,7 +228,7 @@ FUNCTION fin_bb_grupe_b( params )
    ENDDO
 
    IF PRow() > 58 + dodatni_redovi_po_stranici()
-      FF 
+      FF
       zagl_bb_grupe( params, @nStr )
    ENDIF
 
@@ -363,5 +365,3 @@ STATIC FUNCTION zagl_bb_grupe( params, nStr )
    ?U M5
 
    RETURN
-
-

@@ -73,7 +73,9 @@ FUNCTION DnevnikNaloga()
 
    GO TOP
 
-   start_print()
+   IF !start_print()
+      RETURN .F.
+   ENDIF
 
    nUkDugBHD := nUkPotBHD := nUkDugDEM := nUkPotDEM := 0  // sve strane ukupno
 

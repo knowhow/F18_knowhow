@@ -127,7 +127,10 @@ FUNCTION fin_sint_kartica()
 
    nStr := 0
 
-   start_print()
+
+   IF !start_print()
+      RETURN .F.
+   ENDIF
 
    IF nStr == 0; SinkZagl();ENDIF
    nSviD := nSviP := nSviD2 := nSviP2 := 0

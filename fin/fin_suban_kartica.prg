@@ -310,17 +310,17 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
    lVrsteP := .F.
 
 
-   MsgO( "Preuzimanje podataka sa SQL servera ...")
+   MsgO( "Preuzimanje podataka sa SQL servera ..." )
    IF cBrza == "D"
       IF RTrim( qqPartner ) == ";"
          find_suban_by_konto_partner( cIdFirma, qqKonto )
          SET ORDER TO TAG "5"
       ELSE
-        find_suban_by_konto_partner( cIdFirma, qqKonto, qqPartner )
-        SET ORDER TO TAG "1"
+         find_suban_by_konto_partner( cIdFirma, qqKonto, qqPartner )
+         SET ORDER TO TAG "1"
       ENDIF
    ELSE
-       o_sql_suban_kto_partner( cIdFirma )
+      o_sql_suban_kto_partner( cIdFirma )
    ENDIF
 
    GO TOP
@@ -364,7 +364,7 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
       ELSEIF cBrza == "D" .AND. RTrim( qqPartner ) == ";"
          INDEX ON IdKonto + DToS( DatDok ) + idpartner TO SUBSUB for &cFilter
       ELSE
-         INDEX ON IdKonto + IdPartner + DToS( DatDok ) + BrNal + Str(RBr,5) TO SUBSUB for &cFilter
+         INDEX ON IdKonto + IdPartner + DToS( DatDok ) + BrNal + Str( RBr, 5 ) TO SUBSUB for &cFilter
       ENDIF
    ELSE
       IF cRasclaniti == "D"
@@ -419,7 +419,9 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
       xPrintOpt[ "opdf" ] := oPDF
       xPrintOpt[ "left_space" ] := 0
    ENDIF
-   start_print( xPrintOpt )
+   IF !start_print( xPrintOpt )
+      RETURN .F.
+   ENDIF
 
    cIdKonto := IdKonto
 
@@ -553,7 +555,7 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
                   HSEEK cIdPartner
                   @ PRow(), PCol() + 1 SAY AllTrim( naz )
                   @ PRow(), PCol() + 1 SAY AllTrim( naz2 )
-                  @ PRow(), PCol() + 1 SAY Alltrim( ZiroR )
+                  @ PRow(), PCol() + 1 SAY AllTrim( ZiroR )
                ENDIF
                ??U "  "
                @ PRow(), PCol() + 1 SAY Left( cRasclan, 6 ) + "/" + SubStr( cRasclan, 7, 5 ) + "/" + SubStr( cRasclan, 12 )

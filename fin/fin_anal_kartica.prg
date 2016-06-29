@@ -164,7 +164,9 @@ FUNCTION fin_anal_kartica()
       xPrintOpt[ "left_space" ] := 0
    ENDIF
 
-   start_print( xPrintOpt )
+   IF !start_print( xPrintOpt )
+      RETURN .F.
+   ENDIF
 
    Eval( bZagl )
 

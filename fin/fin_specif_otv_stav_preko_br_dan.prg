@@ -97,7 +97,10 @@ FUNCTION fin_spec_otv_stavke_preko_dana()
 
    EOF CRET
 
-   start_print()
+  
+   IF !start_print()
+      RETURN .F.
+   ENDIF
 
    cIdKonto := IdKonto
 

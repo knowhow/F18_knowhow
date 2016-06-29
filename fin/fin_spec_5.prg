@@ -72,7 +72,8 @@ FUNCTION PregNDP()
 
    BoxC()
 
-   o_suban()
+
+   find_suban_by_konto_partner( cIdFirma, cIdkonto)
 
    IF cPoRP == "1"
       O_RJ
@@ -92,7 +93,7 @@ FUNCTION PregNDP()
       ENDIF
    ENDIF
 
-   HSEEK cidfirma + cidkonto
+   
    EOF CRET
 
    IF cPG == "D"
@@ -107,7 +108,10 @@ FUNCTION PregNDP()
       m += " ------------------ ----------------- ----------------- ----------------- -------------------"
    ENDIF
 
-   start_print()
+   IF !start_print()
+      RETURN .F.
+   ENDIF
+
    zagl9()
    PRIVATE nTPS1 := nTPS2 := nTS1 := nTS2 := nTT1 := nTT2 := 0
    nCol1 := 60

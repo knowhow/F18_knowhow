@@ -12,14 +12,18 @@
 #include "f18.ch"
 
 
-FUNCTION parsiraj_sql( field_name, cond, not )
+/*
+    cKontoUslov := "13201;13202;"
+    parsiraj_sql( "mkonto", cKontoUslov, .F. )
+*/
+FUNCTION parsiraj_sql( cFieldName, cond, lNot )
 
    LOCAL _ret := ""
    LOCAL cond_arr := TOKTONIZ( cond, ";" )
    LOCAL _cond
 
-   IF not == NIL
-      not := .F.
+   IF lNot == NIL
+      lNot := .F.
    ENDIF
 
    FOR EACH _cond in cond_arr
@@ -28,15 +32,15 @@ FUNCTION parsiraj_sql( field_name, cond, not )
          LOOP
       ENDIF
 
-      _ret += "  OR " + field_name
+      _ret += "  OR " + cFieldName
 
       IF Len( cond_arr ) > 1
-         IF not
+         IF lNot
             _ret += " NOT "
          ENDIF
          _ret += " LIKE " + sql_quote( AllTrim( _cond ) + "%" )
       ELSE
-         IF not
+         IF lNot
             _ret += " <> "
          ELSE
             _ret += " = "
@@ -60,7 +64,7 @@ FUNCTION parsiraj_sql( field_name, cond, not )
 
 
 
-FUNCTION parsiraj_sql_date_interval( field_name, date1, date2 )
+FUNCTION parsiraj_sql_date_interval( cFieldName, date1, date2 )
 
    LOCAL _ret := ""
 
@@ -81,18 +85,18 @@ FUNCTION parsiraj_sql_date_interval( field_name, date1, date2 )
          _ret := "TRUE"
          // samo prvi je prazan
       ELSEIF DToC( date1 ) == DToC( CToD( "" ) )
-         _ret := field_name + " <= " + sql_quote( date2 )
+         _ret := cFieldName + " <= " + sql_quote( date2 )
          // drugi je prazan
       ELSEIF DToC( date2 ) == DToC( CToD( "" ) )
-         _ret := field_name + " >= " + sql_quote( date1 )
+         _ret := cFieldName + " >= " + sql_quote( date1 )
          // imamo dva regularna datuma
       ELSE
          // ako su razliciti datumi
          IF DToC( date1 ) <> DToC( date2 )
-            _ret := field_name + " BETWEEN " + sql_quote( date1 ) + " AND " + sql_quote( date2 )
+            _ret := cFieldName + " BETWEEN " + sql_quote( date1 ) + " AND " + sql_quote( date2 )
             // ako su identicni, samo nam jedan treba u LIKE klauzuli
          ELSE
-            _ret := field_name + "::char(20) LIKE " + sql_quote( _sql_date_str( date1 ) + "%" )
+            _ret := cFieldName + "::char(20) LIKE " + sql_quote( _sql_date_str( date1 ) + "%" )
          ENDIF
       ENDIF
 
@@ -100,7 +104,7 @@ FUNCTION parsiraj_sql_date_interval( field_name, date1, date2 )
       _ret := "TRUE"
       // samo jedan datumski uslov
    ELSE
-      _ret := field_name + "::char(20) LIKE " + sql_quote( _sql_date_str( date1 ) + "%" )
+      _ret := cFieldName + "::char(20) LIKE " + sql_quote( _sql_date_str( date1 ) + "%" )
    ENDIF
 
    RETURN "(" + _ret + ")"

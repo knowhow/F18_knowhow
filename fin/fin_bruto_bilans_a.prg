@@ -846,7 +846,9 @@ METHOD FinBrutoBilans:print_txt()
 
    _line := ::zagl[ "line" ]
 
-   start_print()
+   IF !start_print()
+      RETURN .F.
+   ENDIF
 
    ::zaglavlje_txt()
 
@@ -881,7 +883,7 @@ METHOD FinBrutoBilans:print_txt()
                ::zaglavlje_txt()
             ENDIF
 
-            @ PRow() + 1, 0 SAY+ + _rbr PICT "9999"
+            @ PRow() + 1, 0 SAY + + _rbr PICT "9999"
             @ PRow(), PCol() + 1 SAY field->idkonto
 
             if ::tip < 4
@@ -1008,7 +1010,7 @@ METHOD FinBrutoBilans:print_txt()
             // ispisi sintetiku....
             ? _line
 
-            @ PRow() + 1, 2 SAY+ + _rbr_2 PICT "9999"
+            @ PRow() + 1, 2 SAY + + _rbr_2 PICT "9999"
             @ PRow(), PCol() + 1 SAY _sint
 
             IF __sint == NIL
@@ -1046,7 +1048,7 @@ METHOD FinBrutoBilans:print_txt()
       // ispisi klasu
       ? _line
 
-      @ PRow() + 1, 2 SAY+ + _rbr_3 PICT "9999"
+      @ PRow() + 1, 2 SAY + + _rbr_3 PICT "9999"
       @ PRow(), PCol() + 1 SAY _klasa
 
       if ::tip < 3

@@ -61,7 +61,10 @@ FUNCTION PPProd()
    cPrinter := gPrinter
    gPrinter := "R"
 
-   start_print()
+
+   IF !start_print()
+      RETURN .F.
+   ENDIF
    ?
    ? "#%LANDS#"
 

@@ -205,15 +205,15 @@ STATIC FUNCTION ios_specifikacija( params )
 
    O_PARTN
    O_KONTO
-   o_suban()
 
-   SELECT suban
-   SET ORDER TO TAG "1"
+   find_suban_by_broj_dokumenta(  _id_firma, _id_konto )
 
-   SEEK _id_firma + _id_konto
    EOF CRET
 
-   start_print()
+
+   IF !start_print()
+      RETURN .F.
+   ENDIF
    ?
 
    _rbr := 0
@@ -666,7 +666,9 @@ STATIC FUNCTION mnu_ios_print()
    // txt forma
    IF _print_tip == "2"
 
-      start_print()
+      IF !start_print()
+         RETURN .F.
+      ENDIF
 
    ELSE
 
@@ -1228,7 +1230,7 @@ STATIC FUNCTION print_ios_txt( params )
       //SET ORDER TO TAG "3"
       find_suban_by_konto_partner( _id_firma, _id_konto, _id_partner, NIL )
    ENDIF
-   
+
 
    nDugBHD := nPotBHD := nDugDEM := nPotDEM := 0
    nDugBHDZ := nPotBHDZ := nDugDEMZ := nPotDEMZ := 0

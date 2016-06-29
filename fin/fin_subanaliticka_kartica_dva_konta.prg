@@ -261,7 +261,9 @@ FUNCTION fin_suban_kartica2( lOtvSt )
    MsgC()
    EOF CRET
 
-   start_print()
+   IF !start_print()
+      RETURN .F.
+   ENDIF
 
    IF cFilter == ".t."
       SET FILTER TO

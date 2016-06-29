@@ -410,10 +410,12 @@ FUNCTION blag_azur()
    // nisam pronasao dokument
    IF !Found()
       MsgBeep( "Dokument " + cIdFirma + "-" + cTipDok + "-" + cBrDok + " ne postoji!" )
-      RETURN
+      RETURN .F.
    ENDIF
 
-   start_print()
+   IF !start_print()
+      RETURN .F.
+   ENDIF
 
 
    nRbr := 0

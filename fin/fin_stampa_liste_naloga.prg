@@ -99,8 +99,10 @@ FUNCTION fin_stampa_liste_naloga()
    xPrintOpt[ "layout" ] := "portrait"
    xPrintOpt[ "opdf" ] := s_oPDF
    xPrintOpt[ "font_size" ] := 9
-   f18_start_print( NIL, xPrintOpt,  "LISTA FINANSIJSKIH NALOGA NA DAN: " + DToC( Date() ) )
-
+   IF !f18_start_print( NIL, xPrintOpt,  "LISTA FINANSIJSKIH NALOGA NA DAN: " + DToC( Date() ) )
+      RETURN .F.
+   ENDIF
+   
    m := Space( PRINT_LEFT_SPACE ) + "------- --- --- " + Replicate( "-", nBrNalLen + 1 ) + " -------- ---------------- ----------------"
 
    IF fin_dvovalutno()

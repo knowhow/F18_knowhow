@@ -47,7 +47,10 @@ FUNCTION PartVanProm()
    ESC_BCR
    BoxC()
 
-   start_print()
+
+   IF !start_print()
+      RETURN .F.
+   ENDIF
 
    INI
    ?

@@ -31,7 +31,7 @@ FUNCTION o_sql_suban_kto_partner( cIdFirma )
    RETURN ! Eof()
 
 
-FUNCTION find_suban_za_period( cIdFirma, dDatOd, dDatDo, cOrderBy )
+FUNCTION find_suban_za_period( cIdFirma, dDatOd, dDatDo, cOrderBy, cWhere )
 
    LOCAL hParams := hb_Hash()
 
@@ -52,6 +52,11 @@ FUNCTION find_suban_za_period( cIdFirma, dDatOd, dDatDo, cOrderBy )
    hParams[ "order_by" ] := cOrderBy
 
    hParams[ "indeks" ] := .F.
+
+   IF cWhere != NIL
+      hParams[ "where" ] := cWhere
+   ENDIF
+
    use_sql_suban( hParams )
    GO TOP
 
@@ -829,6 +834,11 @@ STATIC FUNCTION use_sql_suban_where( hParams )
          dDatOd := hParams[ "dat_od" ]
       ENDIF
       cWhere += iif( Empty( cWhere ), "", " AND " ) + parsiraj_sql_date_interval( "datdok", dDatOd, hParams[ "dat_do" ] )
+   ENDIF
+
+   IF hb_HHasKey( hParams, "where" )
+      cWhere += iif( Empty( cWhere ), "", " AND " ) +  hParams[ "where" ]
+      altd()
    ENDIF
 
    RETURN cWhere

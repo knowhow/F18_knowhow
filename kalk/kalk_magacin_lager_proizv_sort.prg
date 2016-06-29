@@ -176,7 +176,7 @@ FUNCTION KaLagM()
    MsgC()
 
 
-   start_print() // rpt_tmp je gotova, formiramo izvjestaj
+   -- start_print() // rpt_tmp je gotova, formiramo izvjestaj
    SELECT rpt_tmp
    oRpt:setFiltDbTmp()
    oRpt:sortTmpTbl()

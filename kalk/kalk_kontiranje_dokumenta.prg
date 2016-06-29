@@ -406,6 +406,9 @@ FUNCTION kalk_kontiranje_naloga( fAuto, lAGen, lViseKalk, cNalog, auto_brojac )
                   cIdkonto := StrTran( cidkonto, "B2", Right( Trim( finmat->idkonto2 ), 2 ) )
                ENDIF
 
+               IF ValType( cIdKonto ) != "C"
+                  cIdKonto := Replicate( "X", 7 )
+               ENDIF
                IF ValType( cKonto1 ) != "C"
                   cKonto1 := Space( 7 )
                ENDIF
@@ -415,6 +418,7 @@ FUNCTION kalk_kontiranje_naloga( fAuto, lAGen, lViseKalk, cNalog, auto_brojac )
                IF ValType( cKonto3 ) != "C"
                   cKonto3 := Space( 7 )
                ENDIF
+
                cIdkonto := StrTran( cIdkonto, "?1", Trim( cKonto1 ) )
                cIdkonto := StrTran( cIdkonto, "?2", Trim( cKonto2 ) )
                cIdkonto := StrTran( cIdkonto, "?3", Trim( cKonto3 ) )
@@ -861,10 +865,13 @@ FUNCTION DatVal()
    LOCAL _uvecaj := 15
    LOCAL _rec
    LOCAL dDatVal
+   LOCAL nRokPartner
 
    PRIVATE GetList := {}
 
    PushWA()
+
+
 
    IF find_kalk_doks2_by_broj_dokumenta( finmat->idfirma, finmat->idvd, finmat->brdok )
       dDatVal := field->datval
@@ -885,7 +892,13 @@ FUNCTION DatVal()
    IF dDatVal == CToD( "" )
 
       IF kalk_imp_autom()
+         AltD()
+         nRokPartner := IzSifkPartn( "ROKP", finmat->idpartner, .T. )
+         IF nRokPartner != NIL
+            _uvecaj := nRokPartner
+         ENDIF
          dDatVal := finmat->datfaktp + _uvecaj
+
       ELSE
 
          Box(, 3 + iif( lVrsteP .AND. Empty( cIdVrsteP ), 1, 0 ), 60 )

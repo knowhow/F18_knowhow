@@ -211,7 +211,7 @@ FUNCTION kalk_stampa_liste_dokumenata()
 
       IF field->idvd == "80"
 
-         find_kalk_by_broj_dokumenta( kalk_doks->idfirma, kalk_doks->idvd, kalk_doks->brdok)
+         find_kalk_by_broj_dokumenta( kalk_doks->idfirma, kalk_doks->idvd, kalk_doks->brdok )
 
          IF !Empty( kalk->idkonto2 )
             @ PRow(), PCol() + 1 SAY PadR( AllTrim( field->idkonto ) + "->" + AllTrim( field->idkonto2 ), 15 )
@@ -240,14 +240,15 @@ FUNCTION kalk_stampa_liste_dokumenata()
 
       @ PRow(), PCol() + 1 SAY kalk_doks->brfaktp
 
-      IF FieldPos( "sifra" ) <> 0
-         @ PRow(), PCol() + 1 SAY PadR( iif( Empty( sifra ), Space( 2 ), Left( CryptSC( sifra ), 2 ) ), 6 )
-      ENDIF
 
       find_kalk_doks2_by_broj_dokumenta( idfirma, idvd, brdok )
       @ PRow(), PCol() + 1 SAY kalk_doks2->datval
 
       SELECT kalk_doks
+      // IF FieldPos( "sifra" ) <> 0
+      @ PRow(), PCol() + 1 SAY PadR( iif( Empty( sifra ), Space( 2 ), Left( CryptSC( sifra ), 2 ) ), 6 )
+      // ENDIF
+
 
       // drugi red
       IF _partn_naz == "D" .AND. !Empty( field->idpartner )
@@ -347,9 +348,9 @@ STATIC FUNCTION _get_rpt_header()
    _head += Space( 1 )
    _head += PadC( "brfaktp", 10 )
    _head += Space( 1 )
-   _head += PadC( "Op.", 6 )
-   _head += Space( 1 )
    _head += PadC( "DatVal", 8 )
+   _head += Space( 1 )
+   _head += PadC( "Op.", 6 )
 
    RETURN _head
 
@@ -383,8 +384,10 @@ STATIC FUNCTION _get_rpt_line()
    _line += Space( 1 )
    _line += Replicate( "-", 12 )
    _line += Space( 1 )
-   _line += Replicate( "-", 6 )
+   _line += Replicate( "-", 10 )
    _line += Space( 1 )
    _line += Replicate( "-", 8 )
+   _line += Space( 1 )
+   _line += Replicate( "-", 6 )
 
    RETURN _line

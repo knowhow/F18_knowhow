@@ -197,6 +197,7 @@ FUNCTION IzSifkPartn( dbf_name, ozna, u_id_sif, return_nil )
    ENDIF
    RETURN  IzSifk( "PARTN", dbf_name, ozna, xSif, return_nil )
 
+
 FUNCTION IzSifkKonto( dbf_name, ozna, u_id_sif, return_nil )
 
    LOCAL xSif

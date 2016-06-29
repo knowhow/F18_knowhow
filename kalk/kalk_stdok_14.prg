@@ -50,7 +50,7 @@ FUNCTION StKalk14()
 
    bZagl := {|| zagl() }
 
-   EVAL( bZagl )
+   Eval( bZagl )
 
    nTot4 := nTot5 := nTot6 := nTot7 := nTot8 := nTot9 := nTota := nTotb := nTotc := nTotd := 0
 
@@ -76,9 +76,7 @@ FUNCTION StKalk14()
 
       KTroskovi()
 
-
       check_nova_strana( bZagl, oPdf )
-
 
       IF kalk_pripr->idvd = "15"
          SKol := - Kolicina
@@ -226,7 +224,6 @@ FUNCTION StKalk14()
 
 STATIC FUNCTION zagl()
 
-
    IF cIdvd == "14" .OR. cIdvd == "74"
       ?U "IZLAZ KUPCU PO VELEPRODAJI"
    ELSEIF cIdvd == "15"
@@ -241,7 +238,12 @@ STATIC FUNCTION zagl()
    SELECT PARTN
    HSEEK cIdPartner
 
-   ? "KUPAC:", cIdPartner, "-", PadR( naz, 20 ), Space( 5 ), "DOKUMENT Broj:", cBrFaktP, "Datum:", dDatFaktP
+   ? "KUPAC:", cIdPartner, "-", PadR( naz, 20 ), " FAKT br.:", cBrFaktP, "Datum:", dDatFaktP
+
+   SELECT kalk_pripr
+   find_kalk_doks2_by_broj_dokumenta( kalk_pripr->idfirma, kalk_pripr->idvd, kalk_pripr->brdok )
+   ?? "  DatVal:", kalk_doks2->datval
+
 
    IF cIdvd == "94"
       SELECT konto

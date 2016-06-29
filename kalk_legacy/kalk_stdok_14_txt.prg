@@ -48,7 +48,10 @@ FUNCTION StKalk14_txt()
    SELECT PARTN
    HSEEK cIdPartner
 
-   ?  "KUPAC:", cIdPartner, "-", PadR( naz, 20 ), Space( 5 ), "DOKUMENT Broj:", cBrFaktP, "Datum:", dDatFaktP
+   ?  "KUPAC:", cIdPartner, "-", PadR( naz, 20 ), " FAKT br.:", cBrFaktP, "Datum:", dDatFaktP
+   SELECT kalk_pripr
+   find_kalk_doks2_by_broj_dokumenta( kalk_pripr->idfirma, kalk_pripr->idvd, kalk_pripr->brdok )
+   ?? "  DatVal:", kalk_doks2->datval
 
    IF cidvd == "94"
       SELECT konto

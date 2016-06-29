@@ -17,19 +17,9 @@ STATIC s_cPictKolicina := "999999999.999"
 STATIC s_cPictIznos := "999999999.99"
 
 
-STATIC FUNCTION _o_tables()
-
-   O_SIFK
-   O_SIFV
-   O_ROBA
-   o_koncij()
-   O_KONTO
-   O_PARTN
-
-   RETURN .T.
 
 
-
+/*
 FUNCTION kalk_mag_promet_grupe_partnera()
 
    nlPK := Len( s_cPictKolicina )
@@ -92,7 +82,7 @@ FUNCTION kalk_mag_promet_grupe_partnera()
       lSabKon := ( Pitanje(, "Računati stanje robe kao zbir stanja na svim obuhvaćenim kontima ? (D/N)", "N" ) == "D" )
    ENDIF
 
-   o_kalk()
+   -- o_kalk()
 
    PRIVATE cFilt := ".t."
 
@@ -318,3 +308,18 @@ FUNCTION ZaglPGP()
    ? m
 
    RETURN ( nil )
+
+
+   STATIC FUNCTION _o_tables()
+
+      O_SIFK
+      O_SIFV
+      O_ROBA
+      o_koncij()
+      O_KONTO
+      O_PARTN
+
+      RETURN .T.
+
+
+  */

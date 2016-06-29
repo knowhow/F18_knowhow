@@ -11,6 +11,7 @@
 
 #include "f18.ch"
 
+/*
 
 // Izvjestaj "rekapitulacija prometa u magacinu po tarifama"
 FUNCTION RekMagTar()
@@ -200,3 +201,5 @@ FUNCTION RekMagTar()
 
    SET SOFTSEEK ON
    closeret
+
+*/

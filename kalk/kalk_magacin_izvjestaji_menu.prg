@@ -32,8 +32,11 @@ FUNCTION kalk_izvjestaji_magacina()
    AAdd( _opcexe, {|| finansijsko_stanje_magacin() } )
    AAdd( _Opc, "5. realizacija po partnerima" )
    AAdd( _opcexe, {|| kalk_real_partnera() } )
+
+/*
    AAdd( _Opc, "6. promet grupe partnera" )
    AAdd( _opcexe, {|| kalk_mag_promet_grupe_partnera() } )
+*/
 
 /*
    AAdd( _opc, "7. pregled robe za dobavljača" )
@@ -42,12 +45,14 @@ FUNCTION kalk_izvjestaji_magacina()
 
    AAdd( _Opc, "8. trgovačka knjiga na veliko" )
    AAdd( _opcexe, {|| kalk_tkv() } )
-   AAdd( _Opc, "----------------------------------" )
-   AAdd( _opcexe, nil )
+
+
+/*
    AAdd( _Opc, "P. porezi" )
    AAdd( _opcexe, {|| MPoreziMag() } )
-   AAdd( _Opc, "----------------------------------" )
-   AAdd( _opcexe, nil )
+  */
+
+
 
 
    //AAdd( _Opc, "K. kontrolni izvještaji" )
@@ -84,6 +89,7 @@ FUNCTION m_ctrl_rpt()
    RETURN .T.
 */
 
+/*
 FUNCTION MPoreziMag()
 
    LOCAL _opc := {}
@@ -91,15 +97,15 @@ FUNCTION MPoreziMag()
    LOCAL _izbor := 1
 
 
-   AAdd( _Opc, "3. rekapitulacija po tarifama" )
-   AAdd( _opcexe, {|| RekmagTar() } )
+   //AAdd( _Opc, "3. rekapitulacija po tarifama" )
+   //AAdd( _opcexe, {|| RekmagTar() } )
 
    f18_menu( "porm", .F., _izbor, _opc, _opcexe )
 
    my_close_all_dbf()
 
    RETURN .T.
-
+*/
 
 FUNCTION MRekMag()
 
@@ -108,9 +114,9 @@ FUNCTION MRekMag()
    LOCAL _izbor := 1
 
    AAdd( _opc, "1. rekapitulacija finansijskog stanja" )
-   AAdd( _opcexe, {|| Rfinansijsko_stanje_magacin() } )
+   AAdd( _opcexe, {|| rekap_finansijsko_stanje_magacin() } )
 
    f18_menu( "rmag", .F., _izbor, _opc, _opcexe )
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.

@@ -28,6 +28,10 @@ FUNCTION kalk_izvjestaji_prodavnice_menu()
    AAdd( _opcexe, {|| kalk_tkm() } )
    AAdd( _Opc, "5. pregled asortimana za dobavljača" )
    AAdd( _opcexe, {|| asortiman_dobavljac_mp() } )
+
+   AAdd( _opc, "N. najprometniji artikli u prodavnicama" )
+   AAdd( _opcexe, {|| naprometniji_artikli_prodavnica() } )
+
    AAdd( _Opc,  "V. pregled za više objekata" )
    AAdd( _opcexe, {|| RekProd() } )
 

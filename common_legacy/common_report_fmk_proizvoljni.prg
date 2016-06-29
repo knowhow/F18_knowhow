@@ -32,11 +32,11 @@ FUNCTION proizvoljni_izvjestaji()
    PRIVATE cPIKSif := ""
    PRIVATE cPIImeKP := ""
 
-   IF programski_modul() == "KALK"
-      OtBazPIKalk()
-   ELSE
+   //IF programski_modul() == "KALK"
+  //    OtBazPIKalk()
+   //ELSE
       OtBazPIFin()
-   ENDIF
+   //ENDIF
 
    // # hash na pocetku kaze - obavezno browsaj !
    P_Proizv( @cBrI, NIL, NIL, "#Odaberi izvjestaj :" )
@@ -98,10 +98,10 @@ FUNCTION proizvoljni_izvjestaji()
 
    PrikaziTI( cBrI )
 
-   IF programski_modul() == "KALK"
-      GenProIzvKalk()
-      OtBazPIKalk()
-   ELSEIF programski_modul() == "FIN"
+   //IF programski_modul() == "KALK"
+  //    GenProIzvKalk()
+  //    OtBazPIKalk()
+   IF programski_modul() == "FIN"
       GenProIzvFin()
       OtBazPIFin()
    ENDIF
@@ -118,10 +118,10 @@ FUNCTION proizvoljni_izvjestaji()
       CASE izbor == 0
          EXIT
       CASE izbor == 1
-         IF programski_modul() == "KALK"
-            GenProIzvKalk()
-            OtBazPIKalk()
-         ELSEIF programski_modul() == "FIN"
+         //IF programski_modul() == "KALK"
+        //    GenProIzvKalk()
+        //    OtBazPIKalk()
+         IF programski_modul() == "FIN"
             GenProIzvFin()
             OtBazPIFin()
          ENDIF
@@ -136,9 +136,9 @@ FUNCTION proizvoljni_izvjestaji()
       CASE izbor == 5
          P_KolProIzv()
       CASE izbor == 6
-         IF programski_modul() == "KALK"
-            ParSviIzvjKalk()
-         ELSEIF programski_modul() == "FIN"
+         //IF programski_modul() == "KALK"
+          //  ParSviIzvjKalk()
+         IF programski_modul() == "FIN"
             ParSviIzvjFin()
          ENDIF
       CASE izbor == 7

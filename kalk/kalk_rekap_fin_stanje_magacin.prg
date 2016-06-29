@@ -17,9 +17,6 @@ FUNCTION rekap_finansijsko_stanje_magacin()
    LOCAL nKolUlaz
    LOCAL nKolIzlaz
 
-   PicDem := Replicate( "9", Val( gFPicDem ) ) + gPicDem
-   PicCDem := Replicate( "9", Val( gFPicCDem ) ) + gPicCDem
-
    cIdFirma := gFirma
    cidKonto := PadR( "132", gDuzKonto )
    o_kalk_tabele_izvj()
@@ -93,13 +90,13 @@ FUNCTION rekap_finansijsko_stanje_magacin()
    aRFLLM := {}
    AAdd( aRFLLM, { 5, " R.br" } )
    AAdd( aRFLLM, { 11, " Konto" } )
-   AAdd( aRFLLM, { Len( PicDem ), " NV.Dug." } )
-   AAdd( aRFLLM, { Len( PicDem ), " NV.Pot." } )
-   AAdd( aRFLLM, { Len( PicDem ), " NV" } )
-   AAdd( aRFLLM, { Len( PicDem ), " VPV Dug." } )
-   AAdd( aRFLLM, { Len( PicDem ), " VPV Pot." } )
-   AAdd( aRFLLM, { Len( PicDem ), " VPV" } )
-   AAdd( aRFLLM, { Len( PicDem ), " Rabat" } )
+   AAdd( aRFLLM, { Len( pict_iznos() ), " NV.Dug." } )
+   AAdd( aRFLLM, { Len( pict_iznos() ), " NV.Pot." } )
+   AAdd( aRFLLM, { Len( pict_iznos() ), " NV" } )
+   AAdd( aRFLLM, { Len( pict_iznos() ), " VPV Dug." } )
+   AAdd( aRFLLM, { Len( pict_iznos() ), " VPV Pot." } )
+   AAdd( aRFLLM, { Len( pict_iznos() ), " VPV" } )
+   AAdd( aRFLLM, { Len( pict_iznos() ), " Rabat" } )
    PRIVATE cLine := SetRptLineAndText( aRFLLM, 0 )
    PRIVATE cText1 := SetRptLineAndText( aRFLLM, 1, "*" )
 
@@ -205,13 +202,13 @@ FUNCTION rekap_finansijsko_stanje_magacin()
       nTNVU += nNVU; nTNVI += nNVI
       nTRabat += nRabat
 
-      @ PRow(), PCol() + 1 SAY nNVU PICT picdem
-      @ PRow(), PCol() + 1 SAY nNVI PICT picdem
-      @ PRow(), PCol() + 1 SAY nNVU - nNVI PICT picdem
-      @ PRow(), PCol() + 1 SAY nVPVU PICT picdem
-      @ PRow(), PCol() + 1 SAY nVPVI PICT picdem
-      @ PRow(), PCol() + 1 SAY nVPVU - NVPVI PICT picdem
-      @ PRow(), PCol() + 1 SAY nRabat PICT picdem
+      @ PRow(), PCol() + 1 SAY nNVU PICT pict_iznos()
+      @ PRow(), PCol() + 1 SAY nNVI PICT pict_iznos()
+      @ PRow(), PCol() + 1 SAY nNVU - nNVI PICT pict_iznos()
+      @ PRow(), PCol() + 1 SAY nVPVU PICT pict_iznos()
+      @ PRow(), PCol() + 1 SAY nVPVI PICT pict_iznos()
+      @ PRow(), PCol() + 1 SAY nVPVU - NVPVI PICT pict_iznos()
+      @ PRow(), PCol() + 1 SAY nRabat PICT pict_iznos()
       @ PRow() + 1, 6 SAY cNaz
 
    ENDDO
@@ -219,13 +216,13 @@ FUNCTION rekap_finansijsko_stanje_magacin()
    ? cLine
    ? "UKUPNO:"
 
-   @ PRow(), nCol1    SAY ntNVU PICT picdem
-   @ PRow(), PCol() + 1 SAY ntNVI PICT picdem
-   @ PRow(), PCol() + 1 SAY ntNVU - NtNVI PICT picdem
-   @ PRow(), PCol() + 1 SAY ntVPVU PICT picdem
-   @ PRow(), PCol() + 1 SAY ntVPVI PICT picdem
-   @ PRow(), PCol() + 1 SAY ntVPVU - NtVPVI PICT picdem
-   @ PRow(), PCol() + 1 SAY ntRabat PICT picdem
+   @ PRow(), nCol1    SAY ntNVU PICT pict_iznos()
+   @ PRow(), PCol() + 1 SAY ntNVI PICT pict_iznos()
+   @ PRow(), PCol() + 1 SAY ntNVU - NtNVI PICT pict_iznos()
+   @ PRow(), PCol() + 1 SAY ntVPVU PICT pict_iznos()
+   @ PRow(), PCol() + 1 SAY ntVPVI PICT pict_iznos()
+   @ PRow(), PCol() + 1 SAY ntVPVU - NtVPVI PICT pict_iznos()
+   @ PRow(), PCol() + 1 SAY ntRabat PICT pict_iznos()
 
    ? cLine
 
@@ -266,5 +263,8 @@ FUNCTION Zaglrekap_finansijsko_stanje_magacin()
    ? cText1
    ? cLine
 
-   RETURN
-// }
+   RETURN .T.
+
+
+FUNCTION pict_iznos()
+   RETURN "99,999,999.99"

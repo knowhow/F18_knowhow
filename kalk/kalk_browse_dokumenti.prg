@@ -234,13 +234,13 @@ STATIC FUNCTION usl_browse_kalk_dokumenti( cFirma, cIdVd, dDatOd, dDatDo, ;
 
    RETURN 1
 
-
+/*
 
 FUNCTION kalk_pregled_dokumenata_hronoloski()
 
    O_ROBA
    o_koncij()
-   o_kalk()
+   -- o_kalk()
    O_KONTO
 
    cIdFirma := gFirma
@@ -365,8 +365,8 @@ STATIC FUNCTION pregled_dokumenata_hron_keyhandler( Ch )
       cSeek := idfirma + idvd + brdok
       my_close_all_dbf()
       kalk_stampa_dokumenta( .T., cSeek )
-      o_kalk()
-      o_kalk_doks()
+      -- o_kalk()
+      -- o_kalk_doks()
       PopWA()
       nRet := DE_REFRESH
    ENDCASE
@@ -719,3 +719,5 @@ STATIC FUNCTION EdKart( Ch )
    ENDCASE
 
    RETURN nRet
+
+*/

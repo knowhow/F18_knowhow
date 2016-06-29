@@ -282,7 +282,7 @@ FUNCTION NivPoProc()
 
    o_koncij()
    o_kalk_pripr()
-   o_kalk()
+   -- o_kalk()
    PRIVATE cBrDok := SljBroj( cidfirma, "19", 8 )
 
    nRbr := 0
@@ -459,7 +459,7 @@ FUNCTION VratiZadNiv()
    ENDIF
 
    o_kalk_pripr()
-   o_kalk()
+   -- o_kalk()
    PRIVATE cBrDok := SljBroj( cIdFirma, "19", 8 )
 
    nRbr := 0
@@ -532,7 +532,7 @@ FUNCTION KorekMPC()
 
    O_ROBA
    o_kalk_pripr()
-   o_kalk()
+
 
    nTUlaz := nTIzlaz := 0
    nTVPVU := nTVPVI := nTNVU := nTNVI := 0
@@ -540,12 +540,10 @@ FUNCTION KorekMPC()
    lGenerisao := .F.
    PRIVATE nRbr := 0
 
-   SELECT kalk
-   cBrNiv := kalk_sljedeci( gfirma, "19" )
+   cBrNiv := kalk_sljedeci( gFirma, "19" )
 
-   SELECT kalk
-   SET ORDER TO TAG "4"
-   HSEEK gFirma + cMagac
+   find_kalk_by_mkonto_idroba( gFirma, cMagac )
+
 
    Box(, 6, 65 )
 
@@ -702,7 +700,7 @@ FUNCTION KorekMPC()
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
 
 // Generisanje dokumenta tipa 11 na osnovu 13-ke
@@ -769,9 +767,9 @@ FUNCTION Iz13u11()
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
-
+/*
 
 // Generisanje stavki u 42-ki na osnovu storna 41-ica
 FUNCTION Gen41S()
@@ -791,7 +789,7 @@ FUNCTION Gen41S()
 
    O_TARIFA
    O_ROBA
-   o_kalk()
+   -- o_kalk()
 
    SELECT kalk_pripr
    GO BOTTOM
@@ -898,6 +896,7 @@ FUNCTION Gen41S()
 
    RETURN .T.
 
+*/
 
 // Generisanje dokumenta tipa 41 ili 42 na osnovu 11-ke
 FUNCTION Iz11u412()

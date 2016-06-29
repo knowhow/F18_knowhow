@@ -464,22 +464,19 @@ STATIC FUNCTION Zagl()
    SELECT kalk
    P_COND
    ? __line
-   IF IsPDV()
-      ? __txt1
-   ELSE
-      ? " Datum     Dokument  Tarifa  Partn " + "    Ulaz      Izlaz     Stanje      NC         VPC       MPCSAPP        MPV"
-   ENDIF
+   ? __txt1
    ? __line
 
-   RETURN
+   RETURN .T.
 
 
-FUNCTION NPArtikli()
+
+FUNCTION naprometniji_artikli_prodavnica()
 
    LOCAL PicDEM := gPicDem
-   LOCAL Pickol := "@Z " + gpickol
+   LOCAL Pickol := "@Z " + gPicKol
 
-   qqKonto := "132;"
+   qqKonto := "133;"
    qqRoba  := ""
    cSta    := "O"
    dDat0   := Date()
@@ -504,8 +501,7 @@ FUNCTION NPArtikli()
 
    DO WHILE .T.
       IF !VarEdit( aNiz, 9, 1, 19, 78, ;
-            'USLOVI ZA IZVJESTAJ "NAJPROMETNIJI ARTIKLI"', ;
-            "B1" )
+            'USLOVI ZA IZVJESTAJ "NAJPROMETNIJI ARTIKLI"', "B1" )
          CLOSERET
       ENDIF
       aUsl1 := Parsiraj( qqRoba, "IDROBA", "C" )
@@ -527,17 +523,17 @@ FUNCTION NPArtikli()
       WPar( "d1", dDat0 )
       WPar( "d2", dDat1 )
    ENDIF
+
    SELECT params
    USE
 
-   o_kalk()
+   O_ROBA
 
-   cFilt := aUsl1 + " .and. " + aUsl2 + " .and. DATDOK>=" + dbf_quote( dDat0 ) + ;
-      " .and. DATDOK<=" + dbf_quote( dDat1 ) + ;
-      ' .and. PU_I=="5"' + ;
-      ' .and. !(IDVD $ "12#13#22")'
+   find_kalk_za_period( gFirma, NIL, NIL, NIL, dDat0, dDat1, "idroba,idvd" )
 
-   SET ORDER TO TAG "7"
+   cFilt := aUsl1 + " .and. " + aUsl2 + ' .and. PU_I=="5"' + ' .and. !(IDVD $ "12#13#22")'
+
+
    SET FILTER TO &cFilt
 
    nMinI := 999999999999
@@ -588,52 +584,54 @@ FUNCTION NPArtikli()
    ASort( aTopI,,, {| x, y| x[ 2 ] > y[ 2 ] } )
    ASort( aTopK,,, {| x, y| x[ 2 ] > y[ 2 ] } )
 
-   O_ROBA
-   SELECT ROBA
+
 
    START PRINT CRET
    ?
    Preduzece()
    ?? "Najprometniji artikli za period", ddat0, "-", ddat1
-   ?U "Obuhvaćene prodavnice:", IF( Empty( qqKonto ), "SVE", "'" + Trim( qqKonto ) + "'" )
-   ?U "Obuhvaćeni artikli   :", IF( Empty( qqRoba ), "SVI", "'" + Trim( qqRoba ) + "'" )
+   ?U "Obuhvaćene prodavnice:", iif( Empty( qqKonto ), "SVE", "'" + Trim( qqKonto ) + "'" )
+   ?U "Obuhvaćeni artikli   :", iif( Empty( qqRoba ), "SVI", "'" + Trim( qqRoba ) + "'" )
    ?
 
    IF cSta $ "IO"
       m := AllTrim( Str( Min( nTop, Len( aTopI ) ) ) ) + " NAJPROMETNIJIH ARTIKALA POSMATRANO PO IZNOSIMA:"
-      ? __line
+      ?
       ? REPL( "-", Len( m ) )
       ?
-      ?U PadC( "ŠIFRA", Len( id ) ) + " " + PadC( "NAZIV", Len( naz ) ) + " " + PadC( "IZNOS", 20 )
-      ? REPL( "-", Len( id ) ) + " " + REPL( "-", Len( naz ) ) + " " + REPL( "-", 20 )
+      ?U PadC( "ŠIFRA", Len( roba->id ) ) + " " + PadC( "NAZIV", 50 ) + " " + PadC( "IZNOS", 20 )
+      ? REPL( "-", Len( roba->id ) ) + " " + REPL( "-", 50 ) + " " + REPL( "-", 20 )
       FOR i := 1 TO Len( aTopI )
          cIdRoba := aTopI[ i, 1 ]
+         SELECT ROBA
          SEEK cIdRoba
-         ? cIdRoba, Left( ROBA->naz, 40 ), PadC( Transform( aTopI[ i, 2 ], picdem ), 20 )
+         ? cIdRoba, Left( ROBA->naz, 50 ), PadC( Transform( aTopI[ i, 2 ], picdem ), 20 )
       NEXT
-      ? REPL( "-", Len( id ) ) + " " + REPL( "-", Len( naz ) ) + " " + REPL( "-", 20 )
+      ? REPL( "-", Len( id ) ) + " " + REPL( "-", 50 ) + " " + REPL( "-", 20 )
 
    ENDIF
 
    IF cSta $ "KO"
+
       IF cSta == "O"
          ?
          ?
          ?
       ENDIF
       m := AllTrim( Str( Min( nTop, Len( aTopK ) ) ) ) + " NAJPROMETNIJIH ARTIKALA POSMATRANO PO KOLICINAMA:"
-      ? __line
+      ?
       ? REPL( "-", Len( m ) )
       ?
-      ?U PadC( "ŠIFRA", Len( id ) ) + " " + PadC( "NAZIV", Len( naz ) ) + " " + PadC( "KOLICINA", 20 )
-      ? REPL( "-", Len( id ) ) + " " + REPL( "-", Len( naz ) ) + " " + REPL( "-", 20 )
+      ?U PadC( "ŠIFRA", Len( roba->id ) ) + " " + PadC( "NAZIV", 50 ) + " " + PadC( "KOLIČINA", 20 )
+      ? REPL( "-", Len( roba->id ) ) + " " + REPL( "-", 50 ) + " " + REPL( "-", 20 )
 
       FOR i := 1 TO Len( aTopK )
          cIdRoba := aTopK[ i, 1 ]
+         SELECT ROBA
          SEEK cIdRoba
-         ? cIdRoba, Left( ROBA->naz, 40 ), PadC( Transform( aTopK[ i, 2 ], pickol ), 20 )
+         ? cIdRoba, Left( ROBA->naz, 50 ), PadC( Transform( aTopK[ i, 2 ], pickol ), 20 )
       NEXT
-      ? REPL( "-", Len( id ) ) + " " + REPL( "-", Len( naz ) ) + " " + REPL( "-", 20 )
+      ? REPL( "-", Len( id ) ) + " " + REPL( "-", 50 ) + " " + REPL( "-", 20 )
 
    ENDIF
 
@@ -643,4 +641,4 @@ FUNCTION NPArtikli()
 
    CLOSERET
 
-   RETURN
+   RETURN .T.

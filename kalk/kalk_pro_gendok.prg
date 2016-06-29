@@ -12,23 +12,26 @@
 
 #include "f18.ch"
 
-
+/*
 FUNCTION GenProizvodnja()
 
    LOCAL _opc := {}
    LOCAL _opcexe := {}
    LOCAL _izbor := 1
 
-   AAdd( _opc, "1. generisi 96 na osnovu 47 po normativima" )
-   AAdd( _opcexe, {|| Iz47u96Norm() } )
+
+   //AAdd( _opc, "1. generisi 96 na osnovu 47 po normativima" )
+   //AAdd( _opcexe, {|| Iz47u96Norm() } )
 
    f18_menu( "kkno", .F.,  _izbor, _opc, _opcexe )
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
+*/
 
+/*
 
 
 FUNCTION Iz47u96Norm()
@@ -36,7 +39,7 @@ FUNCTION Iz47u96Norm()
    LOCAL cIdFirma := gFirma, cBrDok := cBrKalk := Space( 8 )
 
    o_kalk_pripr()
-   o_kalk()
+   -- o_kalk()
    O_ROBA
    O_KONTO
    O_PARTN
@@ -143,4 +146,6 @@ FUNCTION Iz47u96Norm()
    closeret
 
    RETURN
-// }
+
+
+*/

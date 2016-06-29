@@ -28,8 +28,8 @@ FUNCTION kalk_meni_mag_izvjestaji()
    AAdd( _opc, "3. izvještaji magacin+prodavnica" )
    AAdd( _opcexe, {|| kalk_izvjestaji_mag_i_pro() } )
 
-   AAdd( _opc, "4. proizvoljni izvještaji" )
-   AAdd( _opcexe, {|| ProizvKalk() } )
+   //AAdd( _opc, "4. proizvoljni izvještaji" )
+   //AAdd( _opcexe, {|| ProizvKalk() } )
    AAdd( _opc, "5. export dokumenata" )
    AAdd( _opcexe, {|| krpt_export() } )
 
@@ -51,8 +51,6 @@ FUNCTION kalk_izvjestaji_mag_i_pro()
    AAdd( _opc, "F. finansijski obrt za period magacina+prodavnica" )
    AAdd( _opcexe, {|| kalk_finansijski_obrt() } )
 
-   AAdd( _opc, "N. najprometniji artikli" )
-   AAdd( _opcexe, {|| NPArtikli() } )
 
    AAdd( _opc, "O. stanje artikala po objektima " )
    AAdd( _opcexe, {|| kalk_izvj_stanje_po_objektima() } )

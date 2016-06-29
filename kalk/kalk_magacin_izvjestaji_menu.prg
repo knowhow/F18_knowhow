@@ -54,7 +54,7 @@ FUNCTION kalk_izvjestaji_magacina()
    // AAdd( _Opc, "K. kontrolni izvještaji" )
    // AAdd( _opcexe, {|| m_ctrl_rpt() } )
 
-   AAdd( _opc, "R. rekapitulacija finansijskog stanja magacin" )
+   AAdd( _opc, "R. rekapitulacija finansijskog stanja magacina" )
    AAdd( _opcexe, {|| rekap_finansijsko_stanje_magacin() } )
 
    // AAdd( _Opc, "T. lista trebovanja po sastavnicama" )

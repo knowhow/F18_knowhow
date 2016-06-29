@@ -12,6 +12,7 @@
 
 #include "f18.ch"
 
+/*
 
 FUNCTION ProizvKalk()
 
@@ -643,4 +644,6 @@ FUNCTION ParSviIzvjKalk()
    ENDIF
 
    RETURN
-// }
+
+
+*/

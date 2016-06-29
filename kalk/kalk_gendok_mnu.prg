@@ -23,8 +23,10 @@ FUNCTION kalk_mnu_generacija_dokumenta()
    AAdd( _opcexe, {|| GenMag() } )
    AAdd( _opc, "2. prodavnica - generacija dokumenata" )
    AAdd( _opcexe, {|| GenProd() } )
-   AAdd( _opc, "3. proizvodnja - generacija dokumenata" )
-   AAdd( _opcexe, {|| GenProizvodnja() } )
+
+   //AAdd( _opc, "3. proizvodnja - generacija dokumenata" )
+   //AAdd( _opcexe, {|| GenProizvodnja() } )
+
    AAdd( _opc, "4. storno dokument" )
    AAdd( _opcexe, {|| storno_kalk_dokument() } )
 

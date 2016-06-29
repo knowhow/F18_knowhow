@@ -895,7 +895,7 @@ STATIC FUNCTION kalk_o_exp_tabele( cDbfPath, from_fmk )
       from_fmk := .F.
    ENDIF
 
-   log_write( "otvaram kalk tabele importa i pravim indekse...", 9 )
+   //log_write( "otvaram kalk tabele importa i pravim indekse...", 9 )
 
    // zatvori sve prije otvaranja ovih tabela
    my_close_all_dbf()
@@ -904,8 +904,6 @@ STATIC FUNCTION kalk_o_exp_tabele( cDbfPath, from_fmk )
    IF from_fmk
       _dbf_name := Upper( _dbf_name )
    ENDIF
-
-   // otvori kalk tabelu
    SELECT ( F_TMP_E_KALK )
    my_use_temp( "E_KALK", cDbfPath + _dbf_name, .F., .T. )
    INDEX on ( idfirma + idvd + brdok ) TAG "1"
@@ -917,8 +915,6 @@ STATIC FUNCTION kalk_o_exp_tabele( cDbfPath, from_fmk )
    IF from_fmk
       _dbf_name := Upper( _dbf_name )
    ENDIF
-
-   // otvori doks tabelu
    SELECT ( F_TMP_E_DOKS )
    my_use_temp( "E_DOKS", cDbfPath + _dbf_name, .F., .T. )
    INDEX on ( idfirma + idvd + brdok ) TAG "1"
@@ -929,8 +925,6 @@ STATIC FUNCTION kalk_o_exp_tabele( cDbfPath, from_fmk )
    IF from_fmk
       _dbf_name := Upper( _dbf_name )
    ENDIF
-
-   // otvori roba tabelu
    SELECT ( F_TMP_E_ROBA )
    my_use_temp( "E_ROBA", cDbfPath + _dbf_name, .F., .T. )
    INDEX on ( id ) TAG "ID"
@@ -940,8 +934,6 @@ STATIC FUNCTION kalk_o_exp_tabele( cDbfPath, from_fmk )
    IF from_fmk
       _dbf_name := Upper( _dbf_name )
    ENDIF
-
-   // otvori partn tabelu
    SELECT ( F_TMP_E_PARTN )
    my_use_temp( "E_PARTN", cDbfPath + _dbf_name, .F., .T. )
    INDEX on ( id ) TAG "ID"
@@ -951,8 +943,6 @@ STATIC FUNCTION kalk_o_exp_tabele( cDbfPath, from_fmk )
    IF from_fmk
       _dbf_name := Upper( _dbf_name )
    ENDIF
-
-   // otvori konto tabelu
    SELECT ( F_TMP_E_KONTO )
    my_use_temp( "E_KONTO", cDbfPath + _dbf_name, .F., .T. )
    INDEX on ( id ) TAG "ID"
@@ -962,8 +952,6 @@ STATIC FUNCTION kalk_o_exp_tabele( cDbfPath, from_fmk )
    IF from_fmk
       _dbf_name := Upper( _dbf_name )
    ENDIF
-
-   // otvori konto sifk
    SELECT ( F_TMP_E_SIFK )
    my_use_temp( "E_SIFK", cDbfPath + _dbf_name, .F., .T. )
    INDEX on ( id + sort + naz ) TAG "ID"
@@ -974,8 +962,6 @@ STATIC FUNCTION kalk_o_exp_tabele( cDbfPath, from_fmk )
    IF from_fmk
       _dbf_name := Upper( _dbf_name )
    ENDIF
-
-   // otvori konto tabelu
    SELECT ( F_TMP_E_SIFV )
    my_use_temp( "E_SIFV", cDbfPath + _dbf_name, .F., .T. )
    INDEX on ( id + oznaka + idsif + naz ) TAG "ID"

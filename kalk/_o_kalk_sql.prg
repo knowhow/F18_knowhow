@@ -323,7 +323,9 @@ FUNCTION use_sql_kalk( hParams )
    IF hb_HHasKey( hParams, "polja" ) .AND. hParams[ "polja" ] == "rpt_magacin"
       lReportMagacin := .T.
    ENDIF
-
+   IF hb_HHasKey( hParams, "polja" ) .AND. hParams[ "polja" ] == "rpt_prod"
+      lReportProdavnica := .T.
+   ENDIF
    cSql := "SELECT "
    cSql += coalesce_char_zarez( "idfirma", 2 )
    cSql += coalesce_char_zarez( "idroba", 10 )
@@ -358,6 +360,8 @@ FUNCTION use_sql_kalk( hParams )
 
       cSql += coalesce_num_num_zarez( "fcj3", 18, 8 )
       cSql += coalesce_num_num_zarez( "prevoz", 18, 8 )
+      cSql += coalesce_num_num_zarez( "prevoz2", 18, 8 )
+  
       cSql += coalesce_num_num_zarez( "banktr", 18, 8 )
       cSql += coalesce_num_num_zarez( "cardaz", 18, 8 )
       cSql += coalesce_num_num_zarez( "spedtr", 18, 8 )

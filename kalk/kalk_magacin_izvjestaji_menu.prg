@@ -29,7 +29,7 @@ FUNCTION kalk_izvjestaji_magacina()
 */
 
    AAdd( _Opc, "4. finansijsko stanje magacina" )
-   AAdd( _opcexe, {|| Flager_lista_magacin() } )
+   AAdd( _opcexe, {|| finansijsko_stanje_magacin() } )
    AAdd( _Opc, "5. realizacija po partnerima" )
    AAdd( _opcexe, {|| kalk_real_partnera() } )
    AAdd( _Opc, "6. promet grupe partnera" )
@@ -101,7 +101,7 @@ FUNCTION MRekMag()
    LOCAL _izbor := 1
 
    AAdd( _opc, "1. rekapitulacija finansijskog stanja" )
-   AAdd( _opcexe, {|| RFlager_lista_magacin() } )
+   AAdd( _opcexe, {|| Rfinansijsko_stanje_magacin() } )
 
    f18_menu( "rmag", .F., _izbor, _opc, _opcexe )
    my_close_all_dbf()

@@ -428,15 +428,17 @@ FUNCTION gen_cache()
 
       @ m_x + 1, m_y + 2 SAY "prod.konto: " + cIdKonto
 
+/*
       SELECT kalk
       // pkonto
       SET ORDER TO TAG "4"
       GO TOP
 
       SEEK cIdFirma + cIdKonto
+*/
+      find_kalk_by_pkonto_idroba( cIdFirma, cIdKonto )
 
       DO WHILE !Eof() .AND. cIdFirma == field->idfirma  .AND. cIdKonto == field->pkonto
-
 
          cIdRoba := field->idroba
 
@@ -538,7 +540,7 @@ FUNCTION gen_cache()
       _app_from_sif( cMKtoLst, cPKtoLst, nT_kol, nT_ncproc )
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 // ---------------------------------------------------------------

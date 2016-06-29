@@ -122,7 +122,7 @@ FUNCTION ImpTxtDok()
 
 
 
-   cFFilt := GetImpFilter() // daj filter za import MP ili VP
+   cFFilt := GetImpFilter() // filter za import MP ili VP
 
    IF gNC_ctrl > 0 .AND. Pitanje(, "Ispusti artikle sa problematicnom nc (D/N)", ;
          "N" ) == "D"
@@ -294,13 +294,13 @@ STATIC FUNCTION ImpTxtRoba()
 
    // daj mi pregled fajlova za import, te setuj varijablu cImpFile
    IF get_file_list( cFFilt, cExpPath, @cImpFile ) == 0
-      RETURN
+      RETURN .F.
    ENDIF
 
    // provjeri da li je fajl za import prazan
    IF CheckFile( cImpFile ) == 0
       MsgBeep( "Odabrani fajl je prazan!#Prekidam operaciju !" )
-      RETURN
+      RETURN .F.
    ENDIF
 
    PRIVATE aDbf := {}
@@ -529,7 +529,7 @@ STATIC FUNCTION Txt2TTbl( aDbf, aRules, cTxtFile )
 
    LOCAL oFile, nCnt
 
-   // prvo kreiraj tabelu temp
+
    my_close_all_dbf()
 
    cre_kalk_imp_temp( aDbf )

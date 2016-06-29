@@ -537,7 +537,7 @@ FUNCTION gen_cache()
 
    IF cAppFSif == "D"
       // dodaj stavke iz sifrarnika robe koje ne postoje
-      _app_from_sif( cMKtoLst, cPKtoLst, nT_kol, nT_ncproc )
+      add_to_cache_stavke_iz_sifarnika( cMKtoLst, cPKtoLst, nT_kol, nT_ncproc )
    ENDIF
 
    RETURN .T.
@@ -547,7 +547,7 @@ FUNCTION gen_cache()
 // dodaj u cache tabelu stavke iz sifrarnika koje ne postoje
 // u cache
 // ---------------------------------------------------------------
-STATIC FUNCTION _app_from_sif( cM_list, cP_list, nT_kol, nT_ncproc )
+STATIC FUNCTION add_to_cache_stavke_iz_sifarnika( cM_list, cP_list, nT_kol, nT_ncproc )
 
    LOCAL nTArea := Select()
    LOCAL aKto := {}
@@ -608,7 +608,7 @@ STATIC FUNCTION _app_for_kto( cKto, nKol, nNcProc, lSilent )
    LOCAL nVPC
 
    IF Empty( cKto )
-      RETURN
+      RETURN .F.
    ENDIF
 
    cKto := PadR( cKto, 7 )

@@ -100,14 +100,14 @@ FUNCTION KontoBlok( Ch )
       cSif2 := KONTO->id
       PopWA()
       IF !( cSif == cSif2 )
-         IF ImaUSuban( KONTO->id, "6" )
+         IF is_konto_ima_u_prometu( KONTO->id )
             Beep( 1 )
             Msg( "Stavka konta se ne moze brisati jer se vec nalazi u knjizenjima!" )
             RETURN 7
          ENDIF
       ENDIF
    ELSEIF Ch == K_F2 .AND. gSKSif == "D"
-      IF ImaUSuban( KONTO->id, "6" )
+      IF is_konto_ima_u_prometu( KONTO->id )
          RETURN 99
       ENDIF
    ENDIF
@@ -198,7 +198,7 @@ FUNCTION P_PKonto( CId, dx, dy )
    PRIVATE ImeKol, Kol
 
    ImeKol := { { "ID  ",  {|| id },   "id", {|| .T. }, {|| vpsifra( wid ) }    }, ;
-      { PadC( "Tip prenosa", 25 ), {|| PadC( TipPkonto( tip ), 25 ) },     "tip",{|| .T. }, {|| wtip $ "123456" }     };
+      { PadC( "Tip prenosa", 25 ), {|| PadC( TipPkonto( tip ), 25 ) },     "tip", {|| .T. }, {|| wtip $ "123456" }     };
       }
    Kol := { 1, 2 }
 
@@ -359,7 +359,7 @@ FUNCTION P_ParEK( cId, dx, dy )
       }
    Kol := { 1, 2 }
 
-   RETURN PostojiSifra( F_PAREK, 1, 10, 55, "Partije->Konta",@cId, dx, dy )
+   RETURN PostojiSifra( F_PAREK, 1, 10, 55, "Partije->Konta", @cId, dx, dy )
 
 
 
@@ -403,42 +403,26 @@ FUNCTION P_TRFP3( cId, dx, dy )
    ENDIF
 
    RETURN PostojiSifra( F_TRFP3, 1, 15, 76, "Sheme kontiranja obracuna LD", @cId, dx, dy )
-SELECT trfp3
-SET FILTER TO
-
-   RETURN
 
 
 
-/* ImaUSuban(cKljuc,cTag)
- *    
- *   param: cKljuc
- *   param: cTag
- */
 
-FUNCTION ImaUSuban( cKljuc, cTag )
 
-   LOCAL lVrati := .F., lUsed := .T., nArr := Select()
+FUNCTION is_konto_ima_u_prometu( cKonto )
 
-   SELECT ( F_SUBAN )
-   IF !Used()
-      lUsed := .F.
-      o_suban()
-   ELSE
-      PushWA()
-   ENDIF
+   LOCAL cSql := "select count(*) as cnt from fmk.fin_anal where idkonto=" + sql_quote( cKonto )
+   LOCAL lRet
 
-   SET ORDER TO TAG ( cTag )
-   SEEK cKljuc
-   lVrati := Found()
-   IF !lUsed
-      USE
-   ELSE
-      PopWA()
-   ENDIF
-   SELECT ( nArr )
+   PushWa()
 
-   RETURN lVrati
+   SELECT 0
+   use_sql( "DATASET", cSql )
+   lRet := ( dataset->cnt > 0 )
+   USE
+
+   PopWA()
+
+   RETURN  lRet
 
 
 FUNCTION P_Roba_fin( CId, dx, dy )

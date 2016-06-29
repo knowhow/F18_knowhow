@@ -27,7 +27,7 @@ FUNCTION fakt_fin_prenos()
 
    Rpar( "a1", @gFaktKum )
    Rpar( "a2", @gDzokerF1 )
-   Rpar( "a3", @gKalkKum )
+  
 
    gDzokerF1 := Trim( gDzokerF1 )
 

@@ -18,8 +18,8 @@ FUNCTION fin_admin_opcije_menu()
    PRIVATE opcexe := {}
    PRIVATE Izbor := 1
 
-   AAdd( opc, "1. provjera integriteta tabela - ima u suban nema u nalog " )
-   AAdd( opcexe, {|| ImaUSubanNemaUNalog() } )
+   //AAdd( opc, "1. provjera integriteta tabela - ima u suban nema u nalog " )
+   //AAdd( opcexe, {|| check_ima_u_suban_nema_u_nalog() } )
 
    AAdd( opc, "2. pregled datumskih gresaka u nalozima" )
    AAdd( opcexe, {|| daterr_rpt() } )

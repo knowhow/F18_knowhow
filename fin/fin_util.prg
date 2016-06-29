@@ -80,9 +80,9 @@ FUNCTION fin_print_ostatak_opisa( cO, nCO, bUslov, nSir )
    RETURN .T.
 
 
+/*
 
-
-FUNCTION ImaUSubanNemaUNalog()
+FUNCTION check_ima_u_suban_nema_u_nalog()
 
    LOCAL _i
    LOCAL _area
@@ -143,7 +143,7 @@ FUNCTION ImaUSubanNemaUNalog()
    my_close_all_dbf()
 
    RETURN
-
+*/
 
 // -----------------------------------------------
 // ispis gresaka nakon provjere

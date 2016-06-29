@@ -193,11 +193,7 @@ FUNCTION NaPrimPak()
 
 
 
-
-
-/* NaPrPak2()
- *     Svedi artikle na primarno pakovanje v.2
- */
+//     Svedi artikle na primarno pakovanje v.2
 
 FUNCTION NaPrPak2()
 

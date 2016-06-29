@@ -253,3 +253,5 @@ FUNCTION tops_nor_96( cIdFirma, cIdTipDok, cIdZaduz2, cIdKonto2, cIdKonto, ;
    ENDIF
 
    RETURN
+
+*/

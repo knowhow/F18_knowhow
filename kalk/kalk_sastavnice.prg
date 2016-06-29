@@ -13,7 +13,7 @@
 #include "f18.ch"
 
 
-
+/*
 // --------------------------------
 // lista sastavnica
 // --------------------------------
@@ -371,3 +371,4 @@ STATIC FUNCTION fill_exp_tbl( cSast, cNaz, nKol, nStanje )
    SELECT ( nTArea )
 
    RETURN
+*/

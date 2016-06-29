@@ -12,6 +12,7 @@
 
 #include "f18.ch"
 
+/*
 
 // -----------------------------------------------------
 // report: specifikacija po sastavnicama
@@ -638,3 +639,6 @@ STATIC FUNCTION _show_rekap( cValuta, cFaktBr )
    ENDPRINT
 
    RETURN
+
+
+*/

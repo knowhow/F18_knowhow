@@ -19,7 +19,7 @@ FUNCTION kalk_izvjestaji_magacina()
    LOCAL _opcexe := {}
    LOCAL _izbor := 1
 
-   AAdd( _opc, "1. kartica - magacin                        " )
+   AAdd( _opc, "1. kartica - magacin                                " )
    AAdd( _opcexe, {|| Kartica_magacin() } )
    AAdd( _Opc, "2. lager lista - magacin" )
    AAdd( _opcexe, {|| lager_lista_magacin() } )
@@ -46,24 +46,22 @@ FUNCTION kalk_izvjestaji_magacina()
    AAdd( _Opc, "8. trgovačka knjiga na veliko" )
    AAdd( _opcexe, {|| kalk_tkv() } )
 
-
 /*
    AAdd( _Opc, "P. porezi" )
    AAdd( _opcexe, {|| MPoreziMag() } )
   */
 
+   // AAdd( _Opc, "K. kontrolni izvještaji" )
+   // AAdd( _opcexe, {|| m_ctrl_rpt() } )
 
+   AAdd( _opc, "R. rekapitulacija finansijskog stanja magacin" )
+   AAdd( _opcexe, {|| rekap_finansijsko_stanje_magacin() } )
 
+   // AAdd( _Opc, "T. lista trebovanja po sastavnicama" )
+   // AAdd( _opcexe, {|| g_sast_list() } )
 
-   //AAdd( _Opc, "K. kontrolni izvještaji" )
-   //AAdd( _opcexe, {|| m_ctrl_rpt() } )
-
-   AAdd( _Opc, "S. pregledi za vise objekata" )
-   AAdd( _opcexe, {|| MRekMag() } )
-   AAdd( _Opc, "T. lista trebovanja po sastavnicama" )
-   AAdd( _opcexe, {|| g_sast_list() } )
-   AAdd( _Opc, "U. specifikacija izlaza po sastavnicama" )
-   AAdd( _opcexe, {|| rpt_prspec() } )
+   // AAdd( _Opc, "U. specifikacija izlaza po sastavnicama" )
+   // AAdd( _opcexe, {|| rpt_prspec() } )
 
    f18_menu( "imag", .F., _izbor, _opc, _opcexe )
 
@@ -106,17 +104,3 @@ FUNCTION MPoreziMag()
 
    RETURN .T.
 */
-
-FUNCTION MRekMag()
-
-   LOCAL _opc := {}
-   LOCAL _opcexe := {}
-   LOCAL _izbor := 1
-
-   AAdd( _opc, "1. rekapitulacija finansijskog stanja" )
-   AAdd( _opcexe, {|| rekap_finansijsko_stanje_magacin() } )
-
-   f18_menu( "rmag", .F., _izbor, _opc, _opcexe )
-   my_close_all_dbf()
-
-   RETURN .T.

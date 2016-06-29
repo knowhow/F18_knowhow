@@ -461,10 +461,9 @@ FUNCTION gen_cache()
                LOOP
             ENDIF
 
-            SELECT kalk_doks
-            SET ORDER TO TAG "1"
-            GO TOP
-            SEEK kalk->idfirma + kalk->idvd + kalk->brdok
+
+            find_kalk_doks_by_broj_dokumenta( kalk->idfirma, kalk->idvd, kalk->brdok )
+
             SELECT kalk
 
             // provjera postojanja dokumenta korekcije
@@ -476,8 +475,8 @@ FUNCTION gen_cache()
 
             IF field->pu_i == "1" .OR. field->pu_i == "5"
 
-               IF ( field->pu_i == "1" .AND. field->kolicina > 0 ) ;
-                     .OR. ( field->pu_i == "5" .AND. field->kolicina < 0 )
+               IF ( field->pu_i == "1" .AND. field->kolicina > 0 ) .OR. ;
+                  ( field->pu_i == "5" .AND. field->kolicina < 0 )
                   nKolicina += Abs( field->kolicina )
                   nUlKol    += Abs( field->kolicina )
                   nUlNV     += ( Abs( field->kolicina ) * field->nc )

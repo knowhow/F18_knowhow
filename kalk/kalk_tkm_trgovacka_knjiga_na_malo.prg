@@ -44,7 +44,7 @@ STATIC FUNCTION get_vars( vars )
    LOCAL _usluge := fetch_metric( "kalk_tkm_gledaj_usluge", my_user(), "N" )
    LOCAL _vise_konta := "D"
 
-   Box(, 10, 70 )
+   Box(, 11, 72 )
 
    @ m_x + _x, m_y + 2 SAY "*** maloprodaja - izvjestaj TKM"
 
@@ -55,7 +55,9 @@ STATIC FUNCTION get_vars( vars )
 
    ++ _x
    ++ _x
-   @ m_x + _x, m_y + 2 SAY "     Konto (prazno-svi):" GET _konta PICT "@S35"
+   @ m_x + _x, m_y + 2 SAY "Konto (jedan, sint, vise):" GET _konta PICT "@S35"
+   ++ _x
+   @ m_x + _x, m_y + 2 SAY "jedan: 13300 sint: 133 vise: 13300;13301;"
 
    ++ _x
    @ m_x + _x, m_y + 2 SAY "Vrste dok. (prazno-svi):" GET _vr_dok PICT "@S35"
@@ -80,8 +82,10 @@ STATIC FUNCTION get_vars( vars )
    vars[ "konto" ] := _konta
    vars[ "vrste_dok" ] := _vr_dok
    vars[ "gledati_usluge" ] := _usluge
-   IF Right( AllTrim( _konta ), 1 ) == "."
+
+   IF Right( AllTrim( _konta ), 1 ) != ";"
       _vise_konta := "N"
+      vars[ "konto" ] := Padr( vars[ "konto"], 7 )
    ENDIF
    vars[ "vise_konta" ] := _vise_konta
 
@@ -122,6 +126,7 @@ STATIC FUNCTION stampaj_tkm( vars )
    _t_rabat := 0
 
    SELECT r_export
+   altd()
    GO TOP
 
    DO WHILE !Eof()

@@ -20,14 +20,20 @@ FUNCTION finansijsko_stanje_prodavnica()
 
    LOCAL nKolUlaz
    LOCAL nKolIzlaz
+   LOCAL hParams
+   LOCAL dDatOd, dDatDo
+   LOCAL cIdFirma
 
    PicDem := Replicate( "9", Val( gFPicDem ) ) + gPicDem
    PicCDem := Replicate( "9", Val( gFPicCDem ) ) + gPicCDem
 
    cIdFirma := gFirma
-   cIdKonto := PadR( "1320", gDuzKonto )
+   cIdKonto := PadR( "133", gDuzKonto )
 
-   o_kalk_tabele_izvj()
+   o_koncij()
+   O_ROBA
+   o_tarifa()
+   o_konto()
 
    dDatOd := CToD( "" )
    dDatDo := Date()
@@ -44,7 +50,7 @@ FUNCTION finansijsko_stanje_prodavnica()
       IF gNW $ "DX"
          @ m_x + 1, m_y + 2 SAY "Firma "; ?? gFirma, "-", gNFirma
       ELSE
-         @ m_x + 1, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| P_Firma( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
+         @ m_x + 1, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| P_Firma( @cIdFirma ), cIdfirma := Left( cidfirma, 2 ), .T. }
       ENDIF
 
       @ m_x + 2, m_y + 2 SAY "Konto   " GET cIdKonto VALID P_Konto( @cIdKonto )
@@ -82,24 +88,33 @@ FUNCTION finansijsko_stanje_prodavnica()
    // ovo je napusteno ...
    // fSaberikol := ( my_get_from_ini( 'Svi', 'SaberiKol', 'N' ) == 'D' )
 
-   // sinteticki konto
-   IF Len( Trim( cIdkonto ) ) == 3
+
+   hParams := hb_Hash()
+
+   hParams[ "idfirma" ] := cIdFirma
+
+   IF Len( Trim( cIdkonto ) ) == 3  // sinteticki konto
       cIdkonto := Trim( cIdkonto )
+      hParams[ "pkonto_sint" ] := cIdKonto
+   ELSE
+      hParams[ "pkonto" ] := cIdKonto
    ENDIF
-
-   o_kalk_report()
-
-   cFilt1 := "Idfirma=" + dbf_quote( cidfirma ) + ".and. Pkonto=" + dbf_quote( cIdkonto ) + ".and. DatDok<=" + dbf_quote( dDatDo )
-   // cFilt1:="Pkonto="+dbf_quote(cIdkonto)
-   // set order to tag "D"
-   // set scopebottom to dDatDo
 
    IF !Empty( dDatOd )
-      // set order to tag "D"
-      // set scopetop to  dDatOd
-      cFilt1 += ".and. DatDok>=" + dbf_quote( dDatOd )
+      hParams[ "dat_od" ] := dDatOd
    ENDIF
 
+   IF !Empty( dDatDo )
+      hParams[ "dat_do" ] := dDatDo
+   ENDIF
+
+   hParams[ "order_by" ] := "idFirma,datdok,idvd,brdok,rbr"
+
+   MsgO( "Preuzimanje podataka sa SQL servera ..." )
+   find_kalk_za_period( hParams )
+   MsgC()
+
+   cFilt1 := ".T."
    IF aUsl2 <> ".t."
       cFilt1 += ".and." + aUsl2
    ENDIF
@@ -112,18 +127,15 @@ FUNCTION finansijsko_stanje_prodavnica()
       cFilt1 += ".and." + aUsl4
    ENDIF
 
-   SELECT KALK
-   SET ORDER TO TAG "5"  // ("5","idFirma+dtos(datdok)+idvd+brdok+rbr","KALK")
    SET FILTER to &cFilt1
-
-   // HSEEK cidfirma
    GO TOP
 
-   SELECT koncij
-   SEEK Trim( cidkonto )
-   SELECT KALK
-
    EOF CRET
+
+   SELECT koncij
+   SEEK Trim( cIdkonto )
+
+   SELECT KALK
 
    nLen := 1
 
@@ -153,10 +165,10 @@ FUNCTION finansijsko_stanje_prodavnica()
    ?
 
    PRIVATE nTStrana := 0
-   PRIVATE bZagl := {|| Zaglfinansijsko_stanje_prodavnica() }
+   PRIVATE bZagl := {|| Zaglfinansijsko_stanje_prodavnica( dDatOd, dDatDo ) }
    PRIVATE aPorezi := {}
 
-   Eval( bZagl )
+   Eval( bZagl, dDatOd, dDatDo )
    nTUlaz := nTIzlaz := 0
    ntMPVBU := ntMPVBI := ntMPVU := ntMPVI := ntNVU := ntNVI := ntMPVIP := 0
    ntPopust := 0
@@ -339,7 +351,7 @@ FUNCTION finansijsko_stanje_prodavnica()
    RETURN
 
 // zaglavlje fin.stanje
-FUNCTION Zaglfinansijsko_stanje_prodavnica()
+FUNCTION Zaglfinansijsko_stanje_prodavnica( dDatOd, dDatDo )
 
    SELECT konto
    HSEEK cIdKonto
@@ -362,4 +374,4 @@ FUNCTION Zaglfinansijsko_stanje_prodavnica()
    ? cText2
    ? cLine
 
-   RETURN
+   RETURN .T.

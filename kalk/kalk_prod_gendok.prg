@@ -27,8 +27,10 @@ FUNCTION GenProd()
    // AADD(_opcexe, {|| PocStProd() } )
    AAdd( _opc, "3. inventure    " )
    AAdd( _opcexe, {|| MnuPInv() } )
-   AAdd( _opc, "4. nivelacije" )
-   AAdd( _opcexe, {|| MnuPNivel() } )
+
+   //AAdd( _opc, "4. nivelacije" )
+   //AAdd( _opcexe, {|| MnuPNivel() } )
+
    //AAdd( _opc, "5. setuj mpc po uzoru na postojecu za % " )
    //AAdd( _opcexe, {|| set_mpc_2() } )
 
@@ -44,19 +46,29 @@ STATIC FUNCTION MnuPNivel()
    LOCAL _opcexe := {}
    LOCAL _izbor := 1
 
+/*
    AAdd( _opc, "1. nivelacija prema zadatnom %                  " )
    AAdd( _opcexe, {|| NivPoProc() } )
+*/
+
+/*
    AAdd( _opc, "2. vrati na cijene prije posljednje nivelacije" )
    AAdd( _opcexe, {|| VratiZadNiv() } )
-   AAdd( _opc, "---------------------------------------------" )
-   AAdd( _opcexe, {|| nil } )
+*/
+
+//   AAdd( _opc, "---------------------------------------------" )
+//   AAdd( _opcexe, {|| nil } )
 
 /*
    AAdd( _opc, "3. generacija nivelacije za sve prodavnice" )
    AAdd( _opcexe, {|| get_nivel_p() } )
 */
+
+/*
    AAdd( _opc, "4. pregled promjene cijena (roba->zanivel)" )
    AAdd( _opcexe, {|| rpt_zanivel() } )
+*/
+
    //AAdd( _opc, "5. pregled efekata nivelacije za sve prodavnice" )
    //AAdd( _opcexe, {|| result_nivel_p() } )
    //AAdd( _opc, "6. azuriranje nivelacije za sve prodavnice" )
@@ -92,7 +104,7 @@ STATIC FUNCTION MnuPInv()
 
    f18_menu( "pmi", nil, _izbor, _opc, _opcexe )
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -110,7 +122,7 @@ FUNCTION GenNivP()
    cIdFirma := gFirma
    cIdVD := "19"
    cOldDok := Space( 8 )
-   cIdkonto := PadR( "1320", 7 )
+   cIdkonto := PadR( "1330", 7 )
    dDatDok := Date()
 
    @ m_x + 1, m_Y + 2 SAY "Prodavnica:" GET  cidkonto VALID P_Konto( @cidkonto )
@@ -126,28 +138,34 @@ FUNCTION GenNivP()
 
    o_koncij()
    o_kalk_pripr()
-   o_kalk()
-   PRIVATE cBrDok := SljBroj( cidfirma, "19", 8 )
+   //o_kalk()
+   PRIVATE cBrDok := SljBroj( cIdfirma, "19", 8 )
 
    nRbr := 0
    SET ORDER TO TAG "1"
    // "KALKi1","idFirma+IdVD+BrDok+RBr","KALK")
 
    SELECT koncij; SEEK Trim( cidkonto )
-   SELECT kalk
-   HSEEK cidfirma + cidvd + colddok
+
+
+   find_kalk_by_broj_dokumenta( cIdfirma, cIdvd, cOlddok, "KALK_1", F_KALK + 300 )
+
    DO WHILE !Eof() .AND. cidfirma + cidvd + colddok == idfirma + idvd + brdok
 
-      nTrec := RecNo()    // tekuci slog
+
       cIdRoba := Idroba
       nUlaz := nIzlaz := 0
       nMPVU := nMPVI := nNVU := nNVI := 0
       nRabat := 0
-      SELECT roba; HSEEK cidroba; SELECT kalk
-      SET ORDER TO TAG "4"
-      // "KALKi4","idFirma+Pkonto+idroba+dtos(datdok)+PU_I+IdVD","KALK")
-      SEEK cidfirma + cidkonto + cidroba
+      SELECT roba
+      HSEEK cidroba
 
+      //SELECT kalk
+
+      //SET ORDER TO TAG "4"
+      // "KALKi4","idFirma+Pkonto+idroba+dtos(datdok)+PU_I+IdVD","KALK")
+      //?? drugi alias trebamo ?? SEEK cidfirma + cidkonto + cidroba
+      find_kalk_by_pkonto_idroba(  cidfirma, cidkonto, cidroba)
       DO WHILE !Eof() .AND. cidfirma + cidkonto + cidroba == idFirma + pkonto + idroba
 
          IF ddatdok < datdok  // preskoci
@@ -185,10 +203,11 @@ FUNCTION GenNivP()
          SKIP
       ENDDO // po orderu 4
 
-      SELECT kalk; SET ORDER TO TAG "1"; GO nTrec
+      SELECT KALK_1
 
       SELECT roba
-      HSEEK cidroba
+      HSEEK cIdroba
+
       SELECT kalk_pripr
       scatter()
       APPEND ncnl
@@ -202,7 +221,7 @@ FUNCTION GenNivP()
       _mpc := kalk->mpc
       _mpcsapp := kalk->mpcsapp
       IF ( _kolicina > 0 .AND.  Round( ( nmpvu - nmpvi ) / _kolicina, 4 ) == Round( _fcj, 4 ) ) .OR. ;
-            ( Round( _kolicina, 4 ) = 0 .AND. Round( nmpvu - nmpvi, 4 ) = 0 )
+            ( Round( _kolicina, 4 ) == 0 .AND. Round( nMpvu - nMpvi, 4 ) == 0 )
          _ERROR := "0"
       ELSE
          _ERROR := "1"
@@ -212,17 +231,20 @@ FUNCTION GenNivP()
       Gather2()
       my_unlock()
 
-      SELECT kalk
+      SELECT kalk_1
 
       SKIP
    ENDDO
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
 
-// Generisanje dokumenta tipa 19 tj. nivelacije na osnovu zadanog %
+/*
+
+ Generisanje dokumenta tipa 19 tj. nivelacije na osnovu zadanog %
+
 FUNCTION NivPoProc()
 
    LOCAL nStopa := 0.0
@@ -382,11 +404,14 @@ FUNCTION NivPoProc()
    MsgC()
    my_close_all_dbf()
 
-   RETURN
+   RETURN .F.
+
+*/
 
 
+/*
+  Generise novu 19-ku tj.nivelaciju na osnovu vec azurirane
 
-// Generise novu 19-ku tj.nivelaciju na osnovu vec azurirane
 FUNCTION VratiZadNiv()
 
    LOCAL nSlog := 0, nPom := 0, cStBrDok := ""
@@ -474,7 +499,7 @@ FUNCTION VratiZadNiv()
    RETURN
 
 
-
+*/
 
 
 

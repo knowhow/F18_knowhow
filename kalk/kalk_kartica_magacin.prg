@@ -32,7 +32,7 @@ FUNCTION kartica_magacin()
    PRIVATE PicDEM := Replicate( "9", Val( gFPicDem ) ) + gPicDem
    PRIVATE Pickol := "@Z " + Replicate( "9", Val( gFPicKol ) ) + gPickol
 
-   close_open_kart_tables()
+   kartica_magacin_open_tabele()
 
    IF cIdFirma != NIL
       dDatOd := CToD( "" )
@@ -578,11 +578,11 @@ FUNCTION kartica_magacin()
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
 
 
-STATIC FUNCTION close_open_kart_tables()
+STATIC FUNCTION kartica_magacin_open_tabele()
 
    SELECT ( F_SIFK )
    IF Used()
@@ -631,9 +631,9 @@ STATIC FUNCTION close_open_kart_tables()
    O_ROBA
    O_KONTO
    o_koncij()
-   o_kalk()
+   o_kalk() // kalk_kartica
 
-   RETURN
+   RETURN .T.
 
 
 STATIC FUNCTION _set_zagl( cLine, cTxt1, cTxt2, cPVSS, cPicKol, cPicCDem )

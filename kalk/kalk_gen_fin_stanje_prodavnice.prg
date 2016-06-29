@@ -1,32 +1,34 @@
 /*
- * This file is part of the bring.out FMK, a free and open source
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+ * This file is part of the bring.out knowhow ERP, a free and open source
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
-
 
 #include "f18.ch"
 
 
 
-// -----------------------------------------------
-// pomocna tabela finansijskog stanja prodavnice
-//
-// uslovi koji se u hash matrici trebaju koristi
-// su:
-// - "vise_konta" (D/N)
-// - "konto" (lista konta ili jedan konto)
-// - "datum_od"
-// - "datum_do"
-// - "tarife"
-// - "vrste_dok"
-//
-// -----------------------------------------------
+/* -----------------------------------------------
+ pomocna tabela finansijskog stanja prodavnice
+
+ uslovi koji se u hash matrici trebaju koristi
+ su:
+ - "vise_konta" (D/N)
+ - "konto" (lista konta ili jedan konto)
+ - "datum_od"
+ - "datum_do"
+ - "tarife"
+ - "vrste_dok"
+
+koristi TKM
+
+*/
+
 FUNCTION kalk_gen_fin_stanje_prodavnice( vars )
 
    LOCAL _konto := ""
@@ -53,24 +55,32 @@ FUNCTION kalk_gen_fin_stanje_prodavnice( vars )
    LOCAL _cnt := 0
    LOCAL _a_porezi
    LOCAL __porez, _porez, _d_opis
+   LOCAL hParams
 
    aPorezi := {}
+
+
+     altd()
+
+   hParams := hb_Hash()
+   hParams[ "idfirma" ] := _id_firma
+
+
+   IF hb_HHasKey( vars, "datum_od" )
+      hParams[ "dat_od" ] := vars[ "datum_od" ]
+   ENDIF
+
+   IF hb_HHasKey( vars, "datum_do" )
+      hParams[ "dat_do" ] := vars[ "datum_do" ]
+   ENDIF
+
+   hParams[ "order_by" ] := "idFirma,datdok,idvd,brdok,rbr"
+
 
    IF hb_HHasKey( vars, "vise_konta" )
       _v_konta := vars[ "vise_konta" ]
    ENDIF
 
-   IF hb_HHasKey( vars, "konto" )
-      _konto := vars[ "konto" ]
-   ENDIF
-
-   IF hb_HHasKey( vars, "datum_od" )
-      _datum_od := vars[ "datum_od" ]
-   ENDIF
-
-   IF hb_HHasKey( vars, "datum_do" )
-      _datum_do := vars[ "datum_do" ]
-   ENDIF
 
    IF hb_HHasKey( vars, "tarife" )
       _tarife := vars[ "tarife" ]
@@ -84,16 +94,30 @@ FUNCTION kalk_gen_fin_stanje_prodavnice( vars )
       _gledati_usluge := vars[ "gledati_usluge" ]
    ENDIF
 
-   _cre_tmp_tbl()
+   IF hb_HHasKey( vars, "konto" )
+      _konto :=  vars[ "konto" ]
+   ENDIF
 
+   _cre_tmp_tbl()
    _o_tbl()
 
    IF _v_konta == "D"
       _vise_konta := .T.
    ENDIF
 
-   IF _vise_konta .AND. !Empty( _konto )
-      _usl_konto := Parsiraj( _konto, "pkonto" )
+   IF _vise_konta
+      IF !Empty( _konto )
+         _usl_konto := Parsiraj( _konto, "pkonto" )
+      ENDIF
+   ELSE
+
+      IF Len( Trim( _konto ) ) == 3
+         _konto := Trim( _konto )
+         hParams[ "pkonto_sint" ] := _konto
+      ELSE
+         hParams[ "pkonto" ] := _konto
+      ENDIF
+
    ENDIF
 
    IF !Empty( _tarife )
@@ -104,19 +128,16 @@ FUNCTION kalk_gen_fin_stanje_prodavnice( vars )
       _usl_vrste_dok := Parsiraj( _vrste_dok, "idvd" )
    ENDIF
 
-   IF !_vise_konta
-      IF Len( Trim( _konto ) ) <= 3 .OR. "." $ _konto
-         IF "." $ _konto
-            _konto := StrTran( _konto, ".", "" )
-         ENDIF
-         _konto := Trim( _konto )
-      ENDIF
-   ENDIF
+   MsgO( "Preuzimanje podataka sa SQL servera ..." )
+   find_kalk_za_period( hParams )
+   MsgC()
 
+/*
    SELECT kalk
-   SET ORDER TO TAG "5"
-
+   SET ORDER TO TAG "5"  CREATE_INDEX( "5", "idFirma+dtos(datdok)+podbr+idvd+brdok", _alias )
    HSEEK _id_firma
+  */
+
 
    SELECT koncij
    SEEK Trim( _konto )
@@ -129,15 +150,6 @@ FUNCTION kalk_gen_fin_stanje_prodavnice( vars )
 
    DO WHILE !Eof() .AND. _id_firma == field->idfirma .AND. IspitajPrekid()
 
-      IF !_vise_konta .AND. field->pkonto <> _konto
-         SKIP
-         LOOP
-      ENDIF
-
-      IF ( field->datdok < _datum_od .OR. field->datdok > _datum_do )
-         SKIP
-         LOOP
-      ENDIF
 
       IF _vise_konta .AND. !Empty( _usl_konto )
          IF !Tacno( _usl_konto )
@@ -191,8 +203,6 @@ FUNCTION kalk_gen_fin_stanje_prodavnice( vars )
          _d_opis := "predispozicija " + AllTrim( field->idkonto ) + " -> " + AllTrim( field->idkonto2 )
       ENDIF
 
-      _t_area := Select()
-
       SELECT tdok
       HSEEK _tip_dok
       _tip_dok_naz := field->naz
@@ -219,14 +229,9 @@ FUNCTION kalk_gen_fin_stanje_prodavnice( vars )
 
       ENDIF
 
-      SELECT ( _t_area )
 
+      SELECT KALK
       DO WHILE !Eof() .AND. _id_firma + DToS( _dat_dok ) + _broj_dok == field->idfirma + DToS( field->datdok ) + field->idvd + "-" + field->brdok .AND. IspitajPrekid()
-
-         IF !_vise_konta .AND. ( field->datdok < _datum_od .OR. field->datdok > _datum_do .OR. field->pkonto <> _konto )
-            SKIP
-            LOOP
-         ENDIF
 
          IF _vise_konta .AND. !Empty( _usl_konto )
             IF !Tacno( _usl_konto )
@@ -278,6 +283,7 @@ FUNCTION kalk_gen_fin_stanje_prodavnice( vars )
             _a_porezi := RacPorezeMP( aPorezi, field->mpc, field->mpcsapp, field->nc )
 
             __porez := _a_porezi[ 1 ]
+
             IF field->idvd $ "12#13"
 
                _mp_ulaz -= field->mpc * field->kolicina
@@ -323,13 +329,14 @@ FUNCTION kalk_gen_fin_stanje_prodavnice( vars )
 
          ENDIF
 
-         SKIP 1
+         SKIP
 
       ENDDO
 
+
       @ m_x + 2, m_y + 2 SAY "Dokument: " + _id_d_firma + "-" + _tip_dok + "-" + _d_br_dok
 
-      _add_to_exp( _id_d_firma, _tip_dok, _d_br_dok, _d_opis, _dat_dok, _tip_dok_naz, _id_partner, ;
+      insert_into_rexport( _id_d_firma, _tip_dok, _d_br_dok, _d_opis, _dat_dok, _tip_dok_naz, _id_partner, ;
          _partn_naziv, _partn_mjesto, _partn_ptt, _partn_adresa, _br_fakt, ;
          _nv_ulaz, _nv_izlaz, _nv_ulaz - _nv_izlaz, ;
          _mp_ulaz, _mp_izlaz, _mp_ulaz - _mp_izlaz, ;
@@ -385,7 +392,7 @@ STATIC FUNCTION _cre_tmp_tbl()
    RETURN _dbf
 
 
-STATIC FUNCTION _add_to_exp( id_firma, id_tip_dok, broj_dok, d_opis, datum_dok, vrsta_dok, id_partner, ;
+STATIC FUNCTION insert_into_rexport( id_firma, id_tip_dok, broj_dok, d_opis, datum_dok, vrsta_dok, id_partner, ;
       part_naz, part_mjesto, part_ptt, part_adr, broj_fakture, ;
       n_v_dug, n_v_pot, n_v_saldo, ;
       m_p_dug, m_p_pot, m_p_saldo, ;
@@ -443,8 +450,8 @@ STATIC FUNCTION _add_to_exp( id_firma, id_tip_dok, broj_dok, d_opis, datum_dok, 
 
 STATIC FUNCTION _o_tbl()
 
-   o_kalk_doks()
-   o_kalk()
+   //o_kalk_doks()
+   //o_kalk()
    O_SIFK
    O_SIFV
    O_TDOK
@@ -454,4 +461,4 @@ STATIC FUNCTION _o_tbl()
    O_KONTO
    O_PARTN
 
-   RETURN
+   RETURN .T.

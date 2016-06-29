@@ -142,18 +142,22 @@ FUNCTION find_kalk_doks2_by_broj_dokumenta( cIdFirma, cIdvd, cBrDok )
 
 
 
-
-
-FUNCTION find_kalk_za_period( cIdFirma, cIdVd, cIdPartner, cIdRoba, dDatOd, dDatDo, cOrderBy )
+FUNCTION find_kalk_za_period( xIdFirma, cIdVd, cIdPartner, cIdRoba, dDatOd, dDatDo, cOrderBy )
 
    LOCAL hParams := hb_Hash()
 
-   hb_default( @cOrderBy, "idFirma,IdVD,BrDok,RBr" )
-
-
-   IF cIdFirma != NIL
-      hParams[ "idfirma" ] := cIdFirma
+   IF xIdFirma != NIL
+      IF ValType( xIdFirma ) == "C"
+         hParams[ "idfirma" ] := xIdFirma
+         hb_default( @cOrderBy, "idFirma,IdVD,BrDok,RBr" )
+      ELSE
+         hParams := hb_HClone( xIdFirma )
+         use_sql_kalk( hParams )
+         GO TOP
+         RETURN !Eof()
+      ENDIF
    ENDIF
+
 
    IF cIdVd != NIL
       hParams[ "idvd" ] := cIdVd
@@ -170,6 +174,7 @@ FUNCTION find_kalk_za_period( cIdFirma, cIdVd, cIdPartner, cIdRoba, dDatOd, dDat
    IF dDatOd <> NIL
       hParams[ "dat_od" ] := dDatOd
    ENDIF
+
    IF dDatOd <> NIL
       hParams[ "dat_do" ] := dDatDo
    ENDIF
@@ -234,7 +239,7 @@ FUNCTION find_kalk_by_pkonto_idroba( cIdFirma, cIdKonto, cIdRoba )
    RETURN !Eof()
 
 
-FUNCTION find_kalk_by_broj_dokumenta( cIdFirma, cIdvd, cBrDok )
+FUNCTION find_kalk_by_broj_dokumenta( cIdFirma, cIdvd, cBrDok, cAlias, nWa )
 
    LOCAL hParams := hb_Hash()
 
@@ -250,8 +255,16 @@ FUNCTION find_kalk_by_broj_dokumenta( cIdFirma, cIdvd, cBrDok )
       hParams[ "brdok" ] := cBrDok
    ENDIF
 
+   IF cAlias <> NIL
+      hParams[ "alias" ] := cAlias
+   ENDIF
+   IF nWa <> NIL
+      hParams[ "wa" ] := nWA
+   ENDIF
+
    hParams[ "order_by" ] := "idfirma,idvd,brdok"
    hParams[ "indeks" ] := .F.
+
 
    use_sql_kalk( hParams )
    GO TOP
@@ -394,7 +407,12 @@ FUNCTION use_sql_kalk( hParams )
       cTable := hParams[ "alias" ]
    ENDIF
 
-   SELECT ( F_KALK )
+   IF hb_HHasKey( hParams, "wa" )
+      SELECT ( hParams[ "wa" ] )
+   ELSE
+      SELECT ( F_KALK )
+   ENDIF
+
 
    ?E cSql
    use_sql( cTable, cSql )
@@ -463,9 +481,15 @@ STATIC FUNCTION use_sql_kalk_where( hParams )
    IF hb_HHasKey( hParams, "mkonto" )
       cWhere += " AND " + parsiraj_sql( "mkonto", hParams[ "mkonto" ] )
    ENDIF
+   IF hb_HHasKey( hParams, "mkonto_sint" )
+      cWhere += " AND " + parsiraj_sql( "LEFT(mkonto,3)", hParams[ "mkonto_sint" ] )
+   ENDIF
 
    IF hb_HHasKey( hParams, "pkonto" )
       cWhere += " AND " + parsiraj_sql( "pkonto", hParams[ "pkonto" ] )
+   ENDIF
+   IF hb_HHasKey( hParams, "pkonto_sint" )
+      cWhere += " AND " + parsiraj_sql( "LEFT(pkonto,3)", hParams[ "pkonto_sint" ] )
    ENDIF
 
    IF hb_HHasKey( hParams, "idpartner" )

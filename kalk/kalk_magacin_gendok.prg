@@ -82,7 +82,9 @@ FUNCTION Iz12u97()
    BoxC()
 
    // utvrdimo broj nove kalkulacije
-   SELECT KALK_DOKS; SEEK cIdFirma + cIdVdI + Chr( 255 ); SKIP -1
+   find_kalk_doks_by_broj_dokumenta( cIdFirma, cIdVdI )
+   //SELECT KALK_DOKS; SEEK cIdFirma + cIdVdI + Chr( 255 ); SKIP -1
+   GO BOTTOM
    IF cIdFirma + cIdVdI == IDFIRMA + IDVD
       cBrDokI := brdok
    ELSE
@@ -92,8 +94,11 @@ FUNCTION Iz12u97()
 
    // pocnimo sa generacijom dokumenta
    SELECT KALK
-   SEEK cIdFirma + cIdVDU + cBrDokU
+   find_kalk_by_broj_dokumenta( cIdFirma, cIdVDU, cBrDokU )
+
+
    DO WHILE !Eof() .AND. cIdFirma + cIdVDU + cBrDokU == IDFIRMA + IDVD + BRDOK
+
       SELECT kalk_pripr; APPEND BLANK; Scatter()
       _idfirma   := cIdFirma
       _idkonto2  := KALK->idkonto2
@@ -127,8 +132,8 @@ FUNCTION Iz12u97()
 
    CLOSERET
 
-   RETURN
-// }
+   RETURN .T.
+
 
 
 
@@ -139,24 +144,25 @@ FUNCTION Iz12u97()
 
 FUNCTION InvManj()
 
-   // {
    LOCAL nFaktVPC := 0, lOdvojiVisak := .F., nBrSl := 0
 
    o_koncij()
    o_kalk_pripr()
    o_kalk_pripr2()
-   o_kalk()
+   //o_kalk()
    O_SIFK
    O_SIFV
    O_ROBA
 
-   SELECT kalk_pripr; GO TOP
+   SELECT kalk_pripr
+   GO TOP
    PRIVATE cIdFirma := idfirma, cIdVD := idvd, cBrDok := brdok
 
    IF !( cidvd $ "IM" )
       closeret
    ENDIF
-   SELECT koncij; SEEK Trim( kalk_pripr->idkonto )
+   SELECT koncij
+   SEEK Trim( kalk_pripr->idkonto )
 
    lOdvojiVisak := Pitanje(, "Napraviti poseban dokument za visak?", "N" ) == "D"
 
@@ -165,6 +171,7 @@ FUNCTION InvManj()
       o_kalk_pripr9()
       PRIVATE cBrDop := SljBroj( cidfirma, "16", 8 )
       DO WHILE .T.
+
          SELECT kalk_pripr9
          SEEK cidFirma + "16" + cBrDop
          IF Found()
@@ -188,12 +195,14 @@ FUNCTION InvManj()
    PRIVATE nRBr := 0, nRBr2 := 0
    DO WHILE !Eof() .AND. cidfirma == idfirma .AND. cidvd == idvd .AND. cbrdok == brdok
       scatter()
-      SELECT roba; HSEEK _idroba
+      SELECT roba
+      HSEEK _idroba
 
       IF koncij->naz <> "N1"
          kalk_vpc_po_kartici( @nFaktVPC, _idfirma, _idkonto, _idroba )
       ENDIF
-      SELECT kalk; SET ORDER TO TAG "1"; SELECT kalk_pripr
+
+      SELECT kalk_pripr
 
       IF Round( kolicina - gkolicina, 3 ) <> 0   // popisana-stvarna=(>0 visak,<0 manjak)
          IF lOdvojiVisak .AND. Round( kolicina - gkolicina, 3 ) > 0  // visak odvojiti
@@ -254,7 +263,7 @@ FUNCTION InvManj()
 
    closeret
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -404,9 +413,9 @@ FUNCTION MNivPoProc()
 
 FUNCTION KorekPC()
 
-
    LOCAL dDok := Date(), nPom := 0, nRobaVPC := 0
    PRIVATE cMagac := PadR( "1310   ", gDuzKonto )
+
    o_koncij()
    O_KONTO
    PRIVATE cSravnitiD := "D"
@@ -432,12 +441,15 @@ FUNCTION KorekPC()
 
    cBrNiv := kalk_sljedeci( gFirma, "18" )
 
-   find_kalk_by_mkonto_idroba( gFirma, gMagac)
+   find_kalk_by_mkonto_idroba( gFirma, gMagac )
    GO TOP
    DO WHILE !Eof() .AND. idfirma + mkonto = gFirma + cMagac
 
       cIdRoba := Idroba; nUlaz := nIzlaz := 0; nVPVU := nVPVI := nNVU := nNVI := 0; nRabat := 0
-      SELECT roba; HSEEK cidroba; SELECT kalk
+      SELECT roba
+      HSEEK cidroba
+
+      SELECT kalk
       IF roba->tip $ "TU"; skip; loop; ENDIF
 
       cIdkonto  := mkonto
@@ -528,7 +540,7 @@ FUNCTION KorekPC()
                idtarifa WITH roba->idtarifa, ;
                datfaktp WITH dDok, ;
                kolicina WITH nStanje, ;
-               idvd WITH "18", brdok WITH cBrNiv,;
+               idvd WITH "18", brdok WITH cBrNiv, ;
                rbr WITH Str( nRbr, 3 ), ;
                mkonto WITH cMagac, ;
                mu_i WITH "3"
@@ -561,7 +573,7 @@ FUNCTION Otprema()
    o_koncij()
    o_kalk_pripr2()
    o_kalk_pripr()
-   o_kalk()
+   // o_kalk()
    O_SIFK
    O_SIFV
    O_ROBA
@@ -576,9 +588,10 @@ FUNCTION Otprema()
    ENDIF
 
    PRIVATE cBrUlaz := "0"
-   SELECT kalk
-   SEEK cidfirma + "16" + Chr( 254 )   // doprema
-   SKIP -1
+
+   find_kalk_doks_by_broj_fakture( cIdFirma, "16" )
+   GO BOTTOM
+
    IF idvd <> "16"
       cBrUlaz := Space( 8 )
    ELSE
@@ -597,6 +610,7 @@ FUNCTION Otprema()
       scatter()
       SELECT roba
       HSEEK _idroba
+
       SELECT kalk_pripr2
       APPEND BLANK
 
@@ -650,7 +664,7 @@ FUNCTION Otprema()
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
 
 

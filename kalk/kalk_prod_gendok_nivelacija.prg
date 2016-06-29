@@ -112,7 +112,7 @@ FUNCTION gen_nivel_p( cPKonto, dDatDok, cBrKalk, lGledajStanje )
    LOCAL nStCijena
 
    o_kalk_pript()
-   o_kalk()
+   -- o_kalk()
    O_ROBA
    O_KONTO
    o_koncij()
@@ -428,7 +428,7 @@ FUNCTION gen_zcnivel( cPKonto, dDatDok, cBrKalk )
    LOCAL nStCijena
 
    o_kalk_pript()
-   o_kalk()
+   -- o_kalk()
    O_ROBA
    O_KONTO
    o_koncij()
@@ -1120,4 +1120,71 @@ FUNCTION st_pr_cijena( cFirma, cIdTip, cBrDok, cPodvuceno, cProred )
    ENDPRINT
 
    RETURN
+*/
+
+
+/* ------------------------------------------------------
+ stampa rekapitulacije stara cijena -> nova cijena
+
+FUNCTION rpt_zanivel()
+
+   LOCAL nTArea := Select()
+   LOCAL cZagl
+   LOCAL cLine
+   LOCAL cRazmak := Space( 1 )
+   LOCAL nCnt
+
+   O_ROBA
+   SELECT roba
+   SET ORDER TO TAG "ID"
+   GO TOP
+
+   // ako ne postoji polje u robi, nista...
+   IF roba->( FieldPos( "zanivel" ) ) == 0
+      RETURN
+   ENDIF
+
+   cZagl := PadC( "R.br", 6 )
+   cZagl += cRazmak
+   cZagl += PadC( "ID", 10 )
+   cZagl += cRazmak
+   cZagl += PadC( "Naziv", 20 )
+   cZagl += cRazmak
+   cZagl += PadC( "Stara cijena", 15 )
+   cZagl += cRazmak
+   cZagl += PadC( "Nova cijena", 15 )
+
+   cLine := Replicate( "-", Len( cZagl ) )
+
+   START PRINT CRET
+
+   ? "Pregled promjene cijena u sifrarniku robe"
+   ?
+   ? cLine
+   ? cZagl
+   ? cLine
+
+   nCnt := 0
+
+   DO WHILE !Eof()
+
+      IF field->zanivel == 0
+         SKIP
+         LOOP
+      ENDIF
+
+      ++ nCnt
+
+      ? PadL( Str( nCnt, 5 ) + ".", 6 ), PadR( field->id, 10 ), PadR( field->naz, 20 ), PadL( Str( field->mpc, 12, 2 ), 15 ), PadL( Str( field->zanivel, 12, 2 ), 15 )
+
+      SKIP
+
+   ENDDO
+
+   FF
+   ENDPRINT
+
+   SELECT ( nTArea )
+
+   RETURN .T.
 */

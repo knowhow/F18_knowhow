@@ -76,7 +76,7 @@ FUNCTION sint_lager_lista_prodavnice()
    BoxC()
 
    o_koncij()
-   o_kalk_report()
+   o_kalk()
 
    PRIVATE cFilt1 := ""
    cFilt1 := "!EMPTY(pu_i).and." + aUsl1 + ".and." + aUsl4

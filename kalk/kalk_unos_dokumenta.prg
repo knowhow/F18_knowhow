@@ -280,8 +280,8 @@ FUNCTION kalk_pripr_key_handler()
 
    DO CASE
 
-   CASE Ch == K_ALT_H
-      Savjetnik()
+   //CASE Ch == K_ALT_H
+  //    Savjetnik()
 
    CASE Ch == K_ALT_K
       RETURN kalk_24_rekapitulacija()
@@ -1813,7 +1813,9 @@ FUNCTION RaspTrosk( fSilent )
                   _TZavTr := "U"
                ENDIF
                SELECT roba; HSEEK _idroba
-               SELECT tarifa; HSEEK _idtarifa; SELECT kalk_pripr
+               SELECT tarifa; HSEEK _idtarifa
+
+               SELECT kalk_pripr
                IF _idvd == "RN"
                   IF Val( _rbr ) < 900
                      NabCj()
@@ -1844,6 +1846,7 @@ FUNCTION RaspTrosk( fSilent )
                SKIP
             ENDDO
          ENDIF // cidvd $ 10
+
          IF cidvd $ "11#12#13"
             GO nRec
             RTPrevoz := .F. ;RPrevoz := 0
@@ -1887,101 +1890,7 @@ FUNCTION RaspTrosk( fSilent )
    ENDIF // pitanje
    GO TOP
 
-   RETURN
-
-
-
-
-/* fn Savjetnik()
- *  brief Zamisljeno da se koristi kao pomoc u rjesavanju problema pri unosu dokumenta. Nije razradjeno.
- */
-
-FUNCTION Savjetnik()
-
-   LOCAL nRec := RecNo(), lGreska := .F.
-
-   MsgO( "Priprema izvjestaja..." )
-   SET CONSOLE OFF
-   cKom := PRIVPATH + "savjeti.txt"
-   SET PRINTER OFF
-   SET DEVICE TO PRINTER
-   cDDir := Set( _SET_DEFAULT )
-   SET DEFAULT TO
-   SET PRINTER to ( ckom )
-   SET PRINTER ON
-   Set( _SET_DEFAULT, cDDir )
-
-   SELECT kalk_pripr
-   GO TOP
-
-   DO WHILE !Eof()
-      lGreska := .F.
-      DO CASE
-
-      CASE idvd == "11"     // magacin->prodavnica
-         IF vpc == 0
-            OpisStavke( @lGreska )
-            ? "PROBLEM: - veleprodajna cijena = 0"
-            ? "OPIS:    - niste napravili ulaz u magacin, ili nemate veleprodajnu"
-            ? "           cijenu (VPC) u sifrarniku za taj artikal"
-         ENDIF
-
-      ENDCASE
-
-      IF Empty( datdok )
-         OpisStavke( @lGreska )
-         ? "DATUM KALKULACIJE NIJE UNESEN!!!"
-      ENDIF
-
-      IF Empty( error )
-         OpisStavke( @lGreska )
-         ? "STAVKA PRIPADA AUTOMATSKI FORMIRANOM DOKUMENTU !!!"
-         ? "Pokrenite opciju <A> - asistent ako zelite da program sam prodje"
-         ? "kroz sve stavke ili udjite sa <Enter> u ispravku samo ove stavke."
-         IF idvd == "11"
-            ? "Kada pokrenete <A> za ovu kalkulaciju (11), veleprodajna"
-            ? "cijena ce biti preuzeta: 1) Ako program omogucava azuriranje"
-            ? "sumnjivih dokumenata, VPC ce ostati nepromijenjena; 2) Ako program"
-            ? "radi tako da ne omogucava azuriranje sumnjivih dokumenata, VPC ce"
-            ? "biti preuzeta iz trenutne kartice artikla. Ako nemate evidentiranih"
-            ? "ulaza artikla u magacin, bice preuzeta 0 sto naravno nije korektno."
-         ENDIF
-      ENDIF
-
-      IF lGreska; ?; ENDIF
-      SKIP 1
-   ENDDO
-
-   SET PRINTER TO
-   SET PRINTER OFF
-   SET CONSOLE ON
-   SET DEVICE TO SCREEN
-   SET PRINTER TO
-   MsgC()
-   SAVE SCREEN TO cS
-   VidiFajl( cKom )
-   RESTORE SCREEN FROM cS
-   SELECT kalk_pripr
-   GO ( nRec )
-
-   RETURN
-
-
-
-/* OpisStavke(lGreska)
- *     Daje informacije o dokumentu i artiklu radi lociranja problema. Koristi je opcija "savjetnik"
- *  \sa Savjetnik()
- */
-
-FUNCTION OpisStavke( lGreska )
-
-   IF !lGreska
-      ? "Dokument:    " + idfirma + "-" + idvd + "-" + brdok + ", stavka " + rbr
-      ? "Artikal: " + idroba + "-" + Left( Ocitaj( F_ROBA, idroba, "naz" ), 40 )
-      lGreska := .T.
-   ENDIF
-
-   RETURN
+   RETURN .T.
 
 
 

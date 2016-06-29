@@ -33,7 +33,7 @@ FUNCTION o_kalk_doks2()
 
    RETURN use_sql_kalk_doks2()
 
-   
+
 
 FUNCTION o_kalk_imp_temp()
 
@@ -99,11 +99,3 @@ FUNCTION select_o_kalk_pripr9()
 FUNCTION o_kalk_kartica()
 
    RETURN o_dbf_table( F_KALK_DOKS, "kalk_kartica", "ID" )
-
-
-
-
-
-FUNCTION o_kalk_report()
-
-   RETURN o_dbf_table( F_KALK, "kalk", "1" )

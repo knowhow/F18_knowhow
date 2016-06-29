@@ -37,7 +37,7 @@ FUNCTION KorekNC2()
    ENDIF
    O_ROBA
    o_kalk_pripr()
-   o_kalk()
+   -- o_kalk()
 
    nTUlaz := 0
    nTIzlaz := 0

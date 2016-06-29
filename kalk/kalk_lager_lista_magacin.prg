@@ -260,7 +260,7 @@ FUNCTION lager_lista_magacin()
 
    kalk_open_tables()
 
-   IF o_kalk_report()
+   IF o_kalk()
       ?E "o_kalk ok"
    ELSE
       ?E "o_kalk err"

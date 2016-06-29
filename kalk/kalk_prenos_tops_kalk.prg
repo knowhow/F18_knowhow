@@ -272,12 +272,13 @@ FUNCTION kalk_preuzmi_tops_dokumente( sync_file, auto_razd, ch_barkod, mag_konto
       RETURN
    ENDIF
 
-   SELECT kalk
+   //SELECT kalk
 
    IF ( _idvd_pos == "42" .AND. _auto_razduzenje == "D" )
 
-      SEEK gFirma + "11" + "X"
-      SKIP -1
+      find_kalk_doks_by_broj_dokumenta( gFirma, "11" )
+      //SKIP -1
+      GO BOTTOM
 
       IF field->idvd <> "11"
          _br_kalk := Space( 8 )
@@ -289,12 +290,11 @@ FUNCTION kalk_preuzmi_tops_dokumente( sync_file, auto_razd, ch_barkod, mag_konto
 
    ELSE
 
-      SEEK gfirma + _idvd_pos + _br_kalk
 
-      IF Found()
+      IF find_kalk_doks_by_broj_dokumenta( gFirma, _idvd_pos, _br_kalk )
          Msg( "Vec postoji dokument pod brojem " + gFirma + "-" + _idvd_pos + "-" + _br_kalk + "#Prenos nece biti izvrsen" )
          my_close_all_dbf()
-         RETURN
+         RETURN .F.
       ENDIF
 
    ENDIF
@@ -410,7 +410,7 @@ FUNCTION kalk_preuzmi_tops_dokumente( sync_file, auto_razd, ch_barkod, mag_konto
       FErase( StrTran( _imp_file, ".dbf", ".txt" ) )
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 STATIC FUNCTION _show_report_roba( data )
@@ -457,7 +457,7 @@ STATIC FUNCTION kalk_import_roba( a_roba, tip_cijene, update_roba )
 
    // ako nema ovog polja, nista ne radi !
    IF topska->( FieldPos( "robanaz" ) ) == 0
-      RETURN
+      RETURN .F.
    ENDIF
 
    IF update_roba == NIL
@@ -538,7 +538,7 @@ STATIC FUNCTION import_row_ip( broj_dok, id_konto, id_konto2, r_br )
    LOCAL _marzap := 50
 
    IF ( topska->kol2 == 0 )
-      RETURN
+      RETURN .F.
    ENDIF
 
    // sracunaj za ovu stavku stanje inventurno u kalk-u
@@ -599,7 +599,7 @@ STATIC FUNCTION import_row_ip( broj_dok, id_konto, id_konto2, r_br )
 
    SELECT ( _t_area )
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -613,7 +613,7 @@ STATIC FUNCTION import_row_11( broj_dok, id_konto, id_konto2, r_br )
    LOCAL _t_area := Select()
 
    IF ( topska->kolicina == 0 )
-      RETURN
+      RETURN .F.
    ENDIF
 
    SELECT kalk_pripr
@@ -641,7 +641,7 @@ STATIC FUNCTION import_row_11( broj_dok, id_konto, id_konto2, r_br )
 
    SELECT ( _t_area )
 
-   RETURN
+   RETURN .T.
 
 
 // ---------------------------------------------------------
@@ -859,16 +859,6 @@ STATIC FUNCTION _o_imp_tables()
    SELECT ( F_KALK_PRIPR )
    IF !Used()
       o_kalk_pripr()
-   ENDIF
-
-   SELECT ( F_KALK_DOKS )
-   IF !Used()
-      o_kalk_doks()
-   ENDIF
-
-   SELECT ( F_KALK )
-   IF !Used()
-      o_kalk()
    ENDIF
 
    SELECT ( F_KONCIJ )

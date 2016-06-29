@@ -24,12 +24,20 @@ FUNCTION kalk_pregled_dokumenata()
 
    AAdd( _opc, "2. štampa liste dokumenata" )
    AAdd( _opcexe, {|| kalk_stampa_liste_dokumenata() } )
+
+/*
    AAdd( _opc, "3. pregled dokumenata po hronologiji obrade" )
    AAdd( _opcexe, {|| kalk_pregled_dokumenata_hronoloski() } )
+*/
+
    AAdd( _opc, "4. pregled dokumenata - tabelarni pregled" )
-   AAdd( _opcexe, {|| browse_kalk_dok() } )
+   AAdd( _opcexe, {|| browse_kalk_dokumenti() } )
+
+/*
    AAdd( _opc, "5. radni nalozi " )
    AAdd( _opcexe, {|| BrowseRn() } )
+*/
+
    AAdd( _opc, "8. kalkulacija cijena" )
    AAdd( _opcexe, {|| kalkulacija_cijena() } )
 

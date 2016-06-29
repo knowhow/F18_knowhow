@@ -709,7 +709,7 @@ FUNCTION psuban_partner_check( arr, silent )
       _scan := AScan( arr, {| val| val[ 1 ] + val[ 2 ] == "PARTN" + psuban->idpartner } )
 
       IF _scan == 0
-         AAdd( arr, { "PARTN", psuban->idpartner, psuban->rbr } )
+         AAdd( arr, { "PARTN", psuban->idpartner, Str( psuban->rbr, 5, 0 ) } )
       ENDIF
 
       IF !silent
@@ -747,7 +747,7 @@ FUNCTION psuban_konto_check( arr, silent )
       _scan := AScan( arr, {| val| val[ 1 ] + val[ 2 ] == "KONTO" + psuban->idkonto } )
 
       IF _scan == 0
-         AAdd( arr, { "KONTO", psuban->idkonto, psuban->rbr } )
+         AAdd( arr, { "KONTO", psuban->idkonto, Str( psuban->rbr, 5, 0 ) } )
       ENDIF
 
       IF !silent

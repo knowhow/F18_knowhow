@@ -12,6 +12,7 @@
 
 #include "f18.ch"
 
+/*
 
 FUNCTION MAdminKALK()
 
@@ -19,10 +20,10 @@ FUNCTION MAdminKALK()
    LOCAL _opcexe := {}
    LOCAL _izbor := 1
 
-/*
-   AAdd( _opc, "1. sređivanje kartica                                            " )
-   AAdd( _opcexe, {|| MenuSK() } )
-*/
+
+   //AAdd( _opc, "1. sređivanje kartica                                            " )
+   //AAdd( _opcexe, {|| MenuSK() } )
+
    AAdd( _opc, "5. kopiraj set cijena iz/u" )
    AAdd( _opcexe, {|| kopiraj_set_cijena() } )
 
@@ -38,7 +39,7 @@ FUNCTION MAdminKALK()
    my_close_all_dbf()
 
    RETURN .T.
-
+*/
 
 /* TODO: izbaciti ?
 FUNCTION MenuSK()

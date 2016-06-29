@@ -16,10 +16,10 @@
 // --------------------------------------------
 // browse dokumenata - tabelarni pregled
 // --------------------------------------------
-FUNCTION browse_kalk_dok()
+FUNCTION browse_kalk_dokumenti()
 
    LOCAL cFirma := gFirma
-   LOCAL cIdVd := PadR( "80;", 30 )
+   LOCAL cIdVd := PadR( "", 30 )
    LOCAL dDatOd := Date() - 7
    LOCAL dDatDo := Date()
    LOCAL cProdKto := PadR( "", 50 )
@@ -30,22 +30,18 @@ FUNCTION browse_kalk_dok()
    PRIVATE ImeKol
    PRIVATE Kol
 
-   IF usl_browse_kalk_dok( @cFirma, @cIdVd, @dDatOd, @dDatDo, ;
-         @cMagKto, @cProdKto, @cPartner ) == 0
-      RETURN
+   IF usl_browse_kalk_dokumenti( @cFirma, @cIdVd, @dDatOd, @dDatDo, @cMagKto, @cProdKto, @cPartner ) == 0
+      RETURN .F.
    ENDIF
 
    O_ROBA
    o_koncij()
-   o_kalk()
-   O_KONTO
-   o_kalk_doks()
 
-   SELECT kalk
-   SELECT kalk_doks
-   SET ORDER TO TAG "1"
-   // setuj filter na tabeli
-   set_f_tbl( cFirma, cIdVd, dDatOd, dDatDo, cMagKto, cProdKto, cPartner )
+   O_KONTO
+   altd()
+   find_kalk_doks_by_tip_datum( cFirma, NIL, dDatOd, dDatDo )
+   set_filter_kalk_doks( cFirma, cIdVd, dDatOd, dDatDo, cMagKto, cProdKto, cPartner )
+   GO TOP
 
    Box(, 20, 77 )
 
@@ -61,14 +57,13 @@ FUNCTION browse_kalk_dok()
 
    closeret
 
-   RETURN
+   RETURN .T.
 
 
 // --------------------------------------------------------
 // setovanje filtera na tabeli..
 // --------------------------------------------------------
-STATIC FUNCTION set_f_tbl( cFirma, cIdVd, dDatOd, dDatDo, ;
-      cMagKto, cProdKto, cPartner )
+STATIC FUNCTION set_filter_kalk_doks( cFirma, cIdVd, dDatOd, dDatDo, cMagKto, cProdKto, cPartner )
 
    LOCAL cFilter := ".t."
 
@@ -106,7 +101,7 @@ STATIC FUNCTION set_f_tbl( cFirma, cIdVd, dDatOd, dDatDo, ;
    GO TOP
    MsgC()
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -134,7 +129,7 @@ STATIC FUNCTION set_a_kol( aImeKol, aKol )
       AAdd( aKol, i )
    NEXT
 
-   RETURN
+   RETURN .T.
 
 // -------------------------------------------------------------
 // prikazi status dokumenata
@@ -198,7 +193,7 @@ STATIC FUNCTION brow_keyhandler( Ch )
 // ----------------------------------------
 // uslovi browse-a dokumenata
 // ----------------------------------------
-STATIC FUNCTION usl_browse_kalk_dok( cFirma, cIdVd, dDatOd, dDatDo, ;
+STATIC FUNCTION usl_browse_kalk_dokumenti( cFirma, cIdVd, dDatOd, dDatDo, ;
       cMagKto, cProdKto, cPartner )
 
    LOCAL nX := 1
@@ -211,25 +206,19 @@ STATIC FUNCTION usl_browse_kalk_dok( cFirma, cIdVd, dDatOd, dDatDo, ;
    @ nX + m_x, 2 + m_y SAY "Firma" GET cFirma
 
    ++ nX
-
    @ nX + m_x, 2 + m_y SAY "Datumski period od" GET dDatOd
-
    @ nX + m_x, Col() + 1 SAY "do" GET dDatDo
 
    nX := nX + 2
-
    @ nX + m_x, 2 + m_y SAY "Vrsta dokumenta (prazno-svi)" GET cIdVd PICT "@S30"
 
    ++ nX
-
    @ nX + m_x, 2 + m_y SAY "Magacinski konto (prazno-svi)" GET cMagKto PICT "@S30"
 
    ++ nX
-
    @ nX + m_x, 2 + m_y SAY "Prodavnicki konto (prazno-svi)" GET cProdKto PICT "@S30"
 
    nX := nX + 2
-
    @ nX + m_x, 2 + m_y SAY "Partner:" GET cPartner VALID Empty( cPartner ) .OR. p_firma( @cPartner )
 
    READ
@@ -244,6 +233,7 @@ STATIC FUNCTION usl_browse_kalk_dok( cFirma, cIdVd, dDatOd, dDatDo, ;
    cProdKto := Parsiraj( cProdKto, "pkonto" )
 
    RETURN 1
+
 
 
 FUNCTION kalk_pregled_dokumenata_hronoloski()
@@ -265,7 +255,7 @@ FUNCTION kalk_pregled_dokumenata_hronoloski()
 
    ImeKol := {}
    AAdd( ImeKol, { "Dat.Dok.",   {|| DatDok }                          } )
-   AAdd( ImeKol, { "Podbr",      {|| IF( Len( podbr ) > 1, Str( asc256( podbr ), 5 ), Str( Asc( podbr ), 3 ) ) }                          } )
+   AAdd( ImeKol, { "Podbr",      {|| IIF( Len( podbr ) > 1, Str( asc256( podbr ), 5 ), Str( Asc( podbr ), 3 ) ) }                          } )
    AAdd( ImeKol, { "VD  ",       {|| IdVD }                           } )
    AAdd( ImeKol, { "Broj  ",     {|| BrDok }                           } )
    AAdd( ImeKol, { "M.Konto",    {|| mkonto }                    } )
@@ -285,7 +275,7 @@ FUNCTION kalk_pregled_dokumenata_hronoloski()
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
 
 STATIC FUNCTION pregled_dokumenata_hron_keyhandler( Ch )
@@ -296,11 +286,14 @@ STATIC FUNCTION pregled_dokumenata_hron_keyhandler( Ch )
    CASE Ch == K_CTRL_PGUP
       Tb:GoTop()
       nRet := DE_REFRESH
+
    CASE Ch == K_CTRL_PGDN
       Tb:GoBottom()
       nRet := DE_REFRESH
+
    CASE Ch == K_ESC
       nRet := DE_ABORT
+
    CASE Ch == Asc( " " )
 
       SELECT kalk_doks
@@ -336,7 +329,8 @@ STATIC FUNCTION pregled_dokumenata_hron_keyhandler( Ch )
 
       GO nTrecDok
 
-      SELECT kalk_doks;  SET ORDER TO TAG "1"
+      SELECT kalk_doks
+      SET ORDER TO TAG "1"
       SEEK cidfirma + cidvd + cbrdok
       REPLACE podbr WITH cGPodbr
 
@@ -355,7 +349,8 @@ STATIC FUNCTION pregled_dokumenata_hron_keyhandler( Ch )
          SKIP
       ENDDO
 
-      SELECT kalk_doks; SET ORDER TO TAG "3"
+      SELECT kalk_doks
+      SET ORDER TO TAG "3"
       GO nTrecDok
 
       nRet := DE_REFRESH
@@ -364,6 +359,7 @@ STATIC FUNCTION pregled_dokumenata_hron_keyhandler( Ch )
       kalk_pregled_dokumenta()
       SELECT kalk_doks
       nRet := DE_CONT
+
    CASE Ch == K_CTRL_P
       PushWA()
       cSeek := idfirma + idvd + brdok
@@ -445,7 +441,7 @@ STATIC FUNCTION pregled_kartice()
          cMkonto := ""
       ENDIF
    ENDIF
-   
+
    IF Empty( cPkonto )
       SET ORDER TO TAG "3"
    ELSE
@@ -571,8 +567,7 @@ STATIC FUNCTION pregled_kartice()
 
    BoxC()
 
-   RETURN
-
+   RETURN .T.
 
 
 

@@ -12,6 +12,7 @@
 
 #include "f18.ch"
 
+/*
 
 FUNCTION BrowseRn()
 
@@ -29,7 +30,8 @@ FUNCTION BrowseRn()
       @ m_x + 3, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| P_Firma( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
    ENDIF
    @ m_x + 4, m_y + 2 SAY "Magacin Konto: " GET cMKonto   VALID  P_Konto( @cMKonto )
-   read; ESC_BCR
+   read
+   ESC_BCR
 
    BoxC()
 
@@ -65,19 +67,12 @@ FUNCTION BrowseRn()
    closeret
 
    RETURN
-// }
 
 
-
-
-
-/* EdBrn(Ch)
- *     Obrada opcija u browse-u radnih naloga
- */
 
 FUNCTION EdBrn( Ch )
 
-   // {
+
    LOCAL cDn := "N", nRet := DE_CONT
    DO CASE
    CASE Ch == K_F2
@@ -112,4 +107,5 @@ FUNCTION EdBrn( Ch )
    ENDCASE
 
    RETURN nRet
-// }
+
+*/

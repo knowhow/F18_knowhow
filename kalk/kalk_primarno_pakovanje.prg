@@ -12,7 +12,7 @@
 
 #include "f18.ch"
 
-
+/*
 
 FUNCTION NaPrimPak()
 
@@ -20,14 +20,14 @@ FUNCTION NaPrimPak()
 
    IF my_get_from_ini( "Svi", "Sifk" ) <> "D"
       MsgBeep( "Sifrarnik dodatnih karakteristika nedostupan! (Sifk<>'D')" )
-      RETURN
+      RETURN .F.
    ENDIF
 
    o_koncij()
    O_ROBA
    o_kalk_pripr()
-   o_kalk_doks()
-   o_kalk()
+   -- o_kalk_doks()
+   -- o_kalk()
    O_SIFK
    O_SIFV
 
@@ -52,7 +52,10 @@ FUNCTION NaPrimPak()
    // ------------------------------
    cIdVdI := "80"
    cIdFirma := gFirma
-   SELECT kalk_doks; SEEK cIdFirma + cIdVdI + Chr( 255 ); SKIP -1
+
+   find_kalk_doks_by_broj_dokumenta( cIdFirma, cIdVdI )
+   //SELECT kalk_doks; SEEK cIdFirma + cIdVdI + Chr( 255 ); SKIP -1
+   GO BOTTOM
    IF cIdFirma + cIdVdI == IDFIRMA + IDVD
       cBrDok := brdok
    ELSE
@@ -65,9 +68,12 @@ FUNCTION NaPrimPak()
    // ----------------------------------------------
    cFilter := aUsl1 + ".and." + aUsl2 + ".and. !EMPTY(PKONTO)"
    // cFilter:=aUsl1+".and."+aUsl2+".and. !EMPTY(MKONTO)"
+
    SELECT KALK
    SET ORDER TO TAG "4"
-   // SET ORDER TO TAG "3"       // "3" - magacin
+
+
+
    SET FILTER TO &cFilter
 
    GO TOP
@@ -78,7 +84,10 @@ FUNCTION NaPrimPak()
    GO TOP
    DO WHILE !Eof()
       cIdKonto := PKONTO
-      SELECT KONCIJ; HSEEK cIdKonto
+
+      SELECT KONCIJ
+      HSEEK cIdKonto
+
       SELECT KALK
       DO WHILE !Eof() .AND. PKONTO == cIdKonto
          cIdRoba := IDROBA
@@ -103,6 +112,7 @@ FUNCTION NaPrimPak()
             ENDIF
             SKIP
          ENDDO
+
          SELECT kalk_pripr
          // generisi stavke storna zaduzenja primarnih pakovanja ("sirovina")
          // -----------------------------------------------------------------
@@ -142,7 +152,8 @@ FUNCTION NaPrimPak()
          // generisi stavku zaduzenja sekundarnog pakovanja
          // -----------------------------------------------
          IF Len( aSastav ) != 0
-            SELECT ROBA; HSEEK cidroba
+            SELECT ROBA
+            HSEEK cidroba
             SELECT kalk_pripr        // kalk_priprema dokumenta
             IF ( ( nulaz - nizlaz )  <> 0 )
                nRBr++
@@ -178,8 +189,8 @@ FUNCTION NaPrimPak()
    MsgBeep( "Obradite izgenerisane dokumente u kalk_pripremi!" )
    CLOSERET
 
-   RETURN
-// }
+   RETURN .T.
+
 
 
 
@@ -201,8 +212,8 @@ FUNCTION NaPrPak2()
    o_koncij()
    O_ROBA
    o_kalk_pripr()
-   o_kalk_doks()
-   o_kalk()
+   -- o_kalk_doks()
+   -- o_kalk()
    O_SIFK
    O_SIFV
 
@@ -362,4 +373,6 @@ FUNCTION NaPrPak2()
    CLOSERET
 
    RETURN
-// }
+
+
+*/

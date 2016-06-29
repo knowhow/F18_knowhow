@@ -56,9 +56,10 @@ STATIC FUNCTION mnu_prenos_tops_u_kalk()
    AAdd( _opcexe, {|| kalk_preuzmi_tops_dokumente() } )
    AAdd( _opc, "2. prenos podataka pos->kalk (razduzi automatski)" )
    AAdd( _opcexe, {|| kalk_preuzmi_tops_dokumente_auto() } )
+/*
    AAdd( _opc, "3. pos->kalk 96 po normativima za period " )
    AAdd( _opcexe, {|| tops_nor_96() } )
-
+*/
    f18_menu( "rpka", .F., _izbor, _opc, _opcexe )
 
-   RETURN
+   RETURN .T.

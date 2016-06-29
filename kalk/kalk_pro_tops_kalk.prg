@@ -12,7 +12,7 @@
 
 #include "f18.ch"
 
-
+/*
 
 // prenos tops->kalk 96 po normativima
 FUNCTION tops_nor_96( cIdFirma, cIdTipDok, cIdZaduz2, cIdKonto2, cIdKonto, ;
@@ -38,7 +38,7 @@ FUNCTION tops_nor_96( cIdFirma, cIdTipDok, cIdZaduz2, cIdKonto2, cIdKonto, ;
 
    o_kalk_pripr()
    o_koncij()
-   o_kalk()
+   -- o_kalk()
    O_KONTO
    O_PARTN
    O_TARIFA

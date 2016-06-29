@@ -398,14 +398,9 @@ STATIC FUNCTION _add_to_exp( id_firma, id_tip_dok, broj_dok, datum_dok, vrsta_do
    RETURN .T.
 
 
-
-
-// -----------------------------------
-// otvaranje potrebnih tabela
-// -----------------------------------
 STATIC FUNCTION _o_tbl()
 
-   o_kalk()
+   // o_kalk()
    O_SIFK
    O_SIFV
    O_TDOK

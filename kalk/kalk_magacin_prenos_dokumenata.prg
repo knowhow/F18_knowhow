@@ -171,7 +171,6 @@ FUNCTION magacin_prenos_fakt_10_to_kalk_14()
             LOOP
          ENDIF
 
-
          find_kalk_doks2_by_broj_dokumenta( cIdFirma, "14", cBrKalk )
 
          // SELECT kalk_doks2
@@ -273,15 +272,13 @@ STATIC FUNCTION _o_prenos_tbls()
 
    o_koncij()
    o_kalk_pripr()
-   o_kalk()
-   o_kalk_doks()
    O_ROBA
    O_KONTO
    O_PARTN
    O_TARIFA
    O_FAKT
 
-   RETURN
+   RETURN .T.
 
 // ----------------------------------------------------------
 // magacin: fakt->kalk prenos otpremnica
@@ -394,9 +391,8 @@ FUNCTION mag_fa_ka_prenos_otpr( cIndik )
          LOOP
       ELSE
 
-         // iscupaj podatke iz memo polja
 
-         aMemo := ParsMemo( field->txt )
+         aMemo := ParsMemo( field->txt )  // iscupaj podatke iz memo polja
 
          IF Len( aMemo ) >= 5
             @ m_x + 10, m_y + 2 SAY PadR( Trim( aMemo[ 3 ] ), 30 )
@@ -406,8 +402,7 @@ FUNCTION mag_fa_ka_prenos_otpr( cIndik )
             cTxt := ""
          ENDIF
 
-         // uzmi i partnera za prebaciti
-         cIdPartner := field->idpartner
+         cIdPartner := field->idpartner // uzmi i partnera za prebaciti
 
          PRIVATE cBeze := " "
 
@@ -423,11 +418,10 @@ FUNCTION mag_fa_ka_prenos_otpr( cIndik )
 
          SELECT kalk_pripr
          LOCATE FOR brfaktp = cBrDok
-         // da li je faktura je vec prenesena ??????
 
-         IF Found()
+         IF Found() // da li je faktura je vec prenesena ?
             Beep( 4 )
-            @ m_x + 8, m_y + 2 SAY "Dokument je vec prenesen !!"
+            @ m_x + 8, m_y + 2 SAY "Dokument je vec prenesen !"
             Inkey( 4 )
             @ m_x + 8, m_y + 2 SAY Space( 30 )
             LOOP
@@ -508,7 +502,7 @@ FUNCTION mag_fa_ka_prenos_otpr( cIndik )
 
          ENDDO
 
-         @ m_x + 8, m_y + 2 SAY "Dokument je prenesen !!"
+         @ m_x + 8, m_y + 2 SAY "Dokument je prenesen !"
 
          set_metric( "kalk_fakt_prenos_otpr_konto_1", my_user(), cIdKonto )
          set_metric( "kalk_fakt_prenos_otpr_konto_2", my_user(), cIdKonto2 )
@@ -529,13 +523,14 @@ FUNCTION mag_fa_ka_prenos_otpr( cIndik )
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
 
 
-// ----------------------------------------------------------
-// magacin: fakt->kalk prenos otpremnica za period
-// ----------------------------------------------------------
+/*
+    magacin: fakt->kalk prenos otpremnica za period
+*/
+
 FUNCTION mag_fa_ka_prenos_otpr_period()
 
    LOCAL _id_firma := gFirma
@@ -700,7 +695,7 @@ FUNCTION mag_fa_ka_prenos_otpr_period()
 
       ENDDO
 
-      @ m_x + 14, m_y + 2 SAY "Dokument je generisan !!"
+      @ m_x + 14, m_y + 2 SAY "Dokument je generisan !"
 
       set_metric( "kalk_fakt_prenos_otpr_konto_1", my_user(), _id_konto )
       set_metric( "kalk_fakt_prenos_otpr_konto_2", my_user(), _id_konto_2 )
@@ -715,7 +710,7 @@ FUNCTION mag_fa_ka_prenos_otpr_period()
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -740,8 +735,7 @@ FUNCTION SufBrKalk( cIdKonto )
    RETURN cSufiks
 
 
-// --------------------------
-// --------------------------
+
 FUNCTION IsNumeric( cString )
 
    IF At( cString, "0123456789" ) <> 0

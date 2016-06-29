@@ -34,8 +34,12 @@ FUNCTION kalk_izvjestaji_magacina()
    AAdd( _opcexe, {|| kalk_real_partnera() } )
    AAdd( _Opc, "6. promet grupe partnera" )
    AAdd( _opcexe, {|| kalk_mag_promet_grupe_partnera() } )
+
+/*
    AAdd( _opc, "7. pregled robe za dobavljača" )
    AAdd( _opcexe, {|| ProbDob() } )
+  */
+
    AAdd( _Opc, "8. trgovačka knjiga na veliko" )
    AAdd( _opcexe, {|| kalk_tkv() } )
    AAdd( _Opc, "----------------------------------" )
@@ -44,8 +48,11 @@ FUNCTION kalk_izvjestaji_magacina()
    AAdd( _opcexe, {|| MPoreziMag() } )
    AAdd( _Opc, "----------------------------------" )
    AAdd( _opcexe, nil )
-   AAdd( _Opc, "K. kontrolni izvještaji" )
-   AAdd( _opcexe, {|| m_ctrl_rpt() } )
+
+
+   //AAdd( _Opc, "K. kontrolni izvještaji" )
+   //AAdd( _opcexe, {|| m_ctrl_rpt() } )
+
    AAdd( _Opc, "S. pregledi za vise objekata" )
    AAdd( _opcexe, {|| MRekMag() } )
    AAdd( _Opc, "T. lista trebovanja po sastavnicama" )
@@ -57,9 +64,9 @@ FUNCTION kalk_izvjestaji_magacina()
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
-
+/*
 // ----------------------------------------------------
 // kontrolni izvjestaji
 // ----------------------------------------------------
@@ -75,7 +82,7 @@ FUNCTION m_ctrl_rpt()
    f18_menu( "ctrl", .F., _izbor, _opc, _opcexe )
 
    RETURN .T.
-
+*/
 
 FUNCTION MPoreziMag()
 

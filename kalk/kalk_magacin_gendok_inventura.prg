@@ -232,11 +232,10 @@ FUNCTION kalk_generisanje_inventure_razlike()
    o_kalk_pripr()
    o_kalk_pript()
    o_koncij()
-   o_kalk_doks()
-   o_kalk()
+   //o_kalk_doks()
+   //o_kalk()
 
    PRIVATE cBrDok := SljBroj( cIdFirma, "IM", 8 )
-
 
 
    nRbr := 0
@@ -293,8 +292,10 @@ FUNCTION kalk_generisanje_inventure_razlike()
       ENDDO
 
       IF ( Round( nUlaz - nIzlaz, 4 ) <> 0 ) .OR. ( Round( nVpvU - nVpvI, 4 ) <> 0 )
+
          SELECT roba
          HSEEK cIdroba
+
          SELECT kalk_pripr
          DodajImStavku( cIdFirma, cIdKonto, cBrDok, dDatDok, @nRbr, cIdRoba, nUlaz, nIzlaz, nVpvU, nVpvI, nNvU, nNvI, .T. )
 
@@ -320,10 +321,10 @@ FUNCTION AzurPostojece( cIdFirma, cIdKonto, cBrDok, dDatDok, nRbr, cIdRoba, nUla
    IF cSrSort == "D"
       SET ORDER TO "SDOB"
    ELSE
-      SET ORDER TO TAG "3" // kalk_pripr
+      SET ORDER TO TAG "3"
    ENDIF
 
-   GO TOP
+   GO TOP // kalk_pripr
    SEEK cIdFirma + "IM" + cBrDok + cIdRoba
 
    IF Found()

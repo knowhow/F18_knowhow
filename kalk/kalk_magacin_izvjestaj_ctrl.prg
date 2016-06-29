@@ -1,17 +1,18 @@
 /*
- * This file is part of the bring.out FMK, a free and open source
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+ * This file is part of the bring.out knowhow ERP, a free and open source
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
 
-
 #include "f18.ch"
 
+
+/*
 
 // -----------------------------------------------------------------
 // kontrola sastavnica
@@ -48,7 +49,7 @@ FUNCTION r_ct_sast()
    // uslovi izvjestaja
    IF g_vars( @dD_from, @dD_to, @cIdFirma, @cIdKonto, @cProdKto, ;
          @cArtfilter, @cTDokList, @cSezona, @cSirovina ) == 0
-      RETURN
+      RETURN .F.
    ENDIF
 
    // kreiraj pomocnu tabelu
@@ -61,7 +62,7 @@ FUNCTION r_ct_sast()
 
    O_PARTN
    o_kalk_pripr()
-   o_kalk()
+   -- o_kalk()
    o_kalk_doks()
    O_ROBA
    O_KONTO
@@ -824,3 +825,6 @@ STATIC FUNCTION r_naz( id )
    SELECT ( nTArea )
 
    RETURN cRet
+
+
+*/

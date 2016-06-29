@@ -305,7 +305,7 @@ FUNCTION MNivPoProc()
 
    o_koncij()
    o_kalk_pripr()
-   o_kalk()
+   -- o_kalk()
    PRIVATE cBrDok := SljBroj( cidfirma, "18", 8 )
 
    nRbr := 0

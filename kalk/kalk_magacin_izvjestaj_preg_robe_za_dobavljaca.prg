@@ -12,6 +12,7 @@
 
 #include "f18.ch"
 
+/*
 
 // pregled robe za dobavljaca
 FUNCTION PRobDob()
@@ -20,7 +21,7 @@ FUNCTION PRobDob()
    O_SIFV
    O_ROBA
    O_PARTN
-   o_kalk()
+   -- o_kalk()
 
    SET RELATION TO idroba INTO ROBA
 
@@ -291,3 +292,5 @@ FUNCTION ImaUProsGod( nPrSez, cIdPartner, cIdRoba, nNC )
    SELECT ( nArr )
 
    RETURN lIma
+
+*/

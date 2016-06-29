@@ -16,7 +16,7 @@
 
 FUNCTION BrowseRn()
 
-   o_kalk()
+   -- o_kalk()
    O_KONTO
    cmkonto := Space( 7 )
    cIdFirma := gFirma

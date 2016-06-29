@@ -128,7 +128,7 @@ FUNCTION kalk_unos_stavki_dokumenta( lAObrada )
    @ m_x + nMaxRow - 3, m_y + 2 SAY8 _opt_row
    _opt_row :=  _upadr( "<c+A> Ispravka", _opt_d ) + _sep
    _opt_row +=  _upadr( "<c+P> Štampa dok.", _opt_d ) + _sep
-   _opt_row +=  _upadr( "<a+A> Ažuriranje", _opt_d ) + _sep
+   _opt_row +=  _upadr( "<a+A>|<X> Ažuriranje", _opt_d ) + _sep
    _opt_row +=  _upadr( "<Q> Etikete", _opt_d )  + _sep
 
    @ m_x + nMaxRow - 2, m_y + 2 SAY8 _opt_row
@@ -321,7 +321,7 @@ FUNCTION kalk_pripr_key_handler()
 
       RETURN DE_CONT
 
-   CASE is_key_alt_a( Ch )
+   CASE is_key_alt_a( Ch ) .OR. Ch == ASC( 'x' ) .OR. Ch == ASC( 'X' )
 
       my_close_all_dbf()
 

@@ -212,7 +212,7 @@ FUNCTION InvManj()
             APPEND BLANK
 
             _nc := 0; nc1 := 0; nc2 := 0
-            KalkNab( _idfirma, _idroba, _idkonto, 0, 0, @nc1, @nc2, _datdok )
+            get_kalk_nab( _idfirma, _idroba, _idkonto, 0, 0, @nc1, @nc2, _datdok )
             IF gMetodaNC $ "13"; _nc := nc1; ELSEIF gMetodaNC == "2"; _nc := nc2; ENDIF
             SELECT kalk_pripr9
 

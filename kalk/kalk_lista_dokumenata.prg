@@ -238,6 +238,8 @@ FUNCTION kalk_stampa_liste_dokumenata()
       @ PRow(), PCol() + 1 SAY Str( rabat, 12, 2 )
       @ PRow(), PCol() + 1 SAY Str( mpv, 12, 2 )
 
+      @ PRow(), PCol() + 1 SAY kalk_doks->brfaktp
+
       IF FieldPos( "sifra" ) <> 0
          @ PRow(), PCol() + 1 SAY PadR( iif( Empty( sifra ), Space( 2 ), Left( CryptSC( sifra ), 2 ) ), 6 )
       ENDIF
@@ -342,6 +344,8 @@ STATIC FUNCTION _get_rpt_header()
    _head += PadC( "RABATV", 12 )
    _head += Space( 1 )
    _head += PadC( "MPV", 12 )
+   _head += Space( 1 )
+   _head += PadC( "brfaktp", 10 )
    _head += Space( 1 )
    _head += PadC( "Op.", 6 )
    _head += Space( 1 )

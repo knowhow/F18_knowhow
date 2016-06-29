@@ -362,7 +362,7 @@ FUNCTION Marza( fmarza )
 
 
 
-/* 
+/*
  *     Fakticka veleprodajna cijena
  */
 
@@ -869,7 +869,7 @@ FUNCTION V_RabatV()
 
 /*
   Racuna nabavnu cijenu i stanje robe u magacinu
-   KalkNab(cIdFirma, cIdRoba, cIdKonto, 4-nKolicina, 5-nKolZN, 6-nNC, 7-nSNC, 8-dDatNab)
+   get_kalk_nab(cIdFirma, cIdRoba, cIdKonto, 4-nKolicina, 5-nKolZN, 6-nNC, 7-nSNC, 8-dDatNab)
 
   4) kolicina na stanju
   5) nKolZN - kolicina koja je na stanju od zadnje nabavke
@@ -879,7 +879,7 @@ FUNCTION V_RabatV()
 
 */
 
-FUNCTION KalkNab( cIdFirma, cIdRoba, cIdKonto, nKolicina, nKolZN, nNC, nSNc, dDatNab )
+FUNCTION get_kalk_nab( cIdFirma, cIdRoba, cIdKonto, nKolicina, nKolZN, nNC, nSNc, dDatNab )
 
    LOCAL nPom
    LOCAL fProso
@@ -939,7 +939,7 @@ FUNCTION KalkNab( cIdFirma, cIdRoba, cIdKonto, nKolicina, nKolZN, nNC, nSNc, dDa
 
    // ovo je prvi prolaz
    // u njemu se proracunava totali za jednu karticu
-   HSEEK cIdFirma + cIdKonto + cIdRoba
+   GO TOP
    DO WHILE !Eof() .AND. ( ( cIdFirma + cIdKonto + cIdRoba ) == ( idFirma + mkonto + idroba ) ) .AND. _datdok >= datdok
 
       IF mu_i == "1" .OR. mu_i == "5"
@@ -990,76 +990,6 @@ FUNCTION KalkNab( cIdFirma, cIdRoba, cIdKonto, nKolicina, nKolZN, nNC, nSNc, dDa
 
    ENDDO
    // ovo je bio prvi prolaz
-
-
-   // koliko znam i ovo niko ne koristi svi koriste srednju nabavnu
-   // gMetodaNC=="3"  // prva nabavka  se prva skida sa stanja
-   IF gMetodaNc == "3"
-      HSEEK cIdFirma + cIdKonto + cIdRoba
-      nSkiniKol := nIzlKol + _Kolicina // skini sa stanja ukupnu izlaznu kolicinu+tekucu kolicinu
-      nNabVr := 0  // stanje nabavne vrijednosti
-      DO WHILE !Eof() .AND. cIdFirma + cIdKonto + cIdRoba == idFirma + mkonto + idroba .AND. _datdok >= datdok
-
-         IF mu_i == "1" .OR. mu_i == "5"
-            IF ( mu_i == "1" .AND. kolicina > 0 ) .OR. ( mu_i == "5" .AND. kolicina < 0 ) // ulaz
-               IF nSkiniKol > Abs( kolicina )
-                  nNabVr   += Abs( kolicina * nc )
-                  nSkinikol -= Abs( kolicina )
-               ELSE
-                  nNabVr   += Abs( nSkiniKol * nc )
-                  nSkinikol := 0
-                  dDatNab := datdok
-                  nKolZN := nSkiniKol
-                  EXIT // uzeta je potrebna nabavka, izadji iz do while
-               ENDIF
-            ENDIF
-         ENDIF
-         SKIP
-      ENDDO // ovo je drugi prolaz , metoda "3"
-
-      IF _kolicina <> 0
-         nNC := ( nNabVr - nIzlNV ) / _kolicina
-      ELSE
-         nNC := 0
-      ENDIF
-   ENDIF
-
-   // koliko znam i ovo niko ne koristi svi koriste srednju nabavnu
-   // gMetodaNC=="1"  // zadnja nabavka se prva skida sa stanja
-   IF gMetodaNc == "1"
-      SEEK cIdFirma + cIdKonto + cIdRoba + Chr( 254 )
-      nSkiniKol := nIzlKol + _Kolicina // skini sa stanja ukupnu izlaznu kolicinu+tekucu kolicinu
-      nNabVr := 0  // stanje nabavne vrijednosti
-      SKIP -1
-      DO WHILE !Bof() .AND. cIdFirma + cIdKonto + cIdRoba == idFirma + mkonto + idroba
-
-         IF _datdok <= datdok // preskaci novije datume
-            SKIP -1; LOOP
-         ENDIF
-
-         IF mu_i == "1" .OR. mu_i == "5"
-            IF ( mu_i == "1" .AND. kolicina > 0 ) .OR. ( mu_i == "5" .AND. kolicina < 0 ) // ulaz
-               IF nSkiniKol > Abs( kolicina )
-                  nNabVr   += Abs( kolicina * nc )
-                  nSkinikol -= Abs( kolicina )
-               ELSE
-                  nNabVr   += Abs( nSkiniKol * nc )
-                  nSkinikol := 0
-                  dDatNab := datdok
-                  nKolZN := nSkiniKol
-                  EXIT // uzeta je potrebna nabavka, izadji iz do while
-               ENDIF
-            ENDIF
-         ENDIF
-         SKIP -1
-      ENDDO // ovo je drugi prolaz , metoda "1"
-
-      IF _kolicina <> 0
-         nNC := ( nNabVr - nIzlNV ) / _kolicina   // nabavna cijena po metodi zadnje
-      ELSE
-         nNC := 0
-      ENDIF
-   ENDIF
 
    // utvrdi srednju nabavnu cijenu na osnovu posljednjeg pozitivnog stanja
    IF Round( nKol_poz, 8 ) == 0

@@ -308,7 +308,7 @@ FUNCTION kalk_pripr_napuni_sirovine_za( nRbr, _idroba, _kolicina )
       dDatNab := CToD( "" )
 
       info_bar( _idkonto2 + "/" + sast->id2, "sirovina: " + _idkonto2 + "/" + sast->id2 )
-      KalkNab( _idfirma, sast->id2, _idkonto2, @nKolS, @nKolZN, @nc1, @nc2, @dDatNab )
+      get_kalk_nab( _idfirma, sast->id2, _idkonto2, @nKolS, @nKolZN, @nc1, @nc2, @dDatNab )
       info_bar( _idkonto2 + "/" + sast->id2, NIL )
 
       IF dDatNab > _DatDok

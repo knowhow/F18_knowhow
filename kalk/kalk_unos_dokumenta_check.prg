@@ -343,17 +343,8 @@ FUNCTION GetNextKalkDoc( cIdFirma, cIdTipDok, nUvecaj )
 
    lIdiDalje := .F.
 
-   find_kalk_doks_za_tip( cIdFirma, cIdTipDok )
-
-/*
-   o_kalk_doks()
-   SELECT kalk_doks
-*/
-   SET ORDER TO TAG "1"
-
-   SEEK cIdFirma + cIdTipDok + "XXX"
-   // vrati se na zadnji zapis
-   SKIP -1
+   find_kalk_doks_by_broj_dokumenta( cIdFirma, cIdTipDok )
+   GO BOTTOM
 
    DO WHILE .T.
       FOR i := 2 TO Len( AllTrim( field->brDok ) )
@@ -418,7 +409,7 @@ FUNCTION kalk_reset_broj_dokumenta( firma, tip_dokumenta, broj_dokumenta, konto 
       set_metric( _param, nil, _broj )
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 // ------------------------------------------------------------------
@@ -451,18 +442,17 @@ FUNCTION kalk_novi_broj_dokumenta( firma, tip_dokumenta, konto )
    _broj := fetch_metric( _param, nil, _broj )
 
    // konsultuj i doks uporedo
-   o_kalk_doks()
+   find_kalk_doks_za_tip_sufix(  firma, tip_dokumenta, _sufix )
 
-   IF glBrojacPoKontima
-      SET ORDER TO TAG "1S"
-   ELSE
-      SET ORDER TO TAG "1"
-   ENDIF
-
-   GO TOP
-
-   SEEK firma + tip_dokumenta + _sufix + "X"
-   SKIP -1
+   //IF glBrojacPoKontima
+   //    SET ORDER TO TAG "1S"
+   //ELSE
+   //    SET ORDER TO TAG "1"
+   //ENDIF
+   //GO TOP
+   //SEEK firma + tip_dokumenta + _sufix + "X"
+   //SKIP -1
+   GO BOTTOM
 
    IF field->idfirma == firma .AND. field->idvd == tip_dokumenta .AND. ;
          iif( glBrojacPoKontima, Right( AllTrim( field->brdok ), Len( _sufix ) ) == _sufix, .T. )
@@ -470,7 +460,7 @@ FUNCTION kalk_novi_broj_dokumenta( firma, tip_dokumenta, konto )
       IF glBrojacPoKontima .AND. ( _sufix $ field->brdok )
          _len_brdok := Len( AllTrim( field->brdok ) )
          _len_sufix := Len( _sufix )
-         // odrezi mi sufiks ako postoji
+         // odrezi sufiks ako postoji
          _broj_dok := Val( Left( AllTrim( field->brdok ), _len_brdok - _len_sufix ) )
       ELSE
          _broj_dok := Val( field->brdok )
@@ -480,8 +470,7 @@ FUNCTION kalk_novi_broj_dokumenta( firma, tip_dokumenta, konto )
       _broj_dok := 0
    ENDIF
 
-   // uzmi sta je vece, dokument broj ili globalni brojac
-   _broj := Max( _broj, _broj_dok )
+   _broj := Max( _broj, _broj_dok ) // uzmi sta je vece, dokument broj ili globalni brojac
 
    // uvecaj broj
    ++ _broj

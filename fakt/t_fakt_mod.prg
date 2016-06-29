@@ -243,7 +243,7 @@ METHOD set_module_gvars()
    PUBLIC gFUgRab := PadR( "UGRAB.TXT", 12 )
 
    PUBLIC gSamokol := "N"
-   PUBLIC gRokPl := 0
+   PUBLIC gRokPl := 15
    PUBLIC gRabIzRobe := "N"
 
    PUBLIC gKarC1 := "N"

@@ -729,7 +729,7 @@ STATIC FUNCTION kalk_azur_sql()
    LOCAL _ids := {}
    LOCAL _ids_kalk := {}
    LOCAL _ids_doks := {}
-   LOCAL _log_dok
+   LOCAL _log_dok := "0"
    LOCAL oAttr
    LOCAL hParams
    LOCAL bDokument := {| cIdFirma, cIdVd, cBrDok |   cIdFirma == field->idFirma .AND. ;

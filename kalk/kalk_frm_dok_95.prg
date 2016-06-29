@@ -136,7 +136,7 @@ FUNCTION Get1_95()
       IF !Empty( gMetodaNC )  .AND. !( roba->tip $ "UT" )
 
          MsgO( "Racunam stanje na skladistu" )
-         KalkNab( _idfirma, _idroba, _idkonto2, @nKolS, @nKolZN, @nc1, @nc2, @dDatNab )
+         get_kalk_nab( _idfirma, _idroba, _idkonto2, @nKolS, @nKolZN, @nc1, @nc2, @dDatNab )
          MsgC()
 
          @ m_x + 12, m_y + 30   SAY "Ukupno na stanju "; @ m_x + 12, Col() + 2 SAY nKols PICT pickol

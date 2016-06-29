@@ -167,9 +167,9 @@ FUNCTION kalk_unos_stavki_dokumenta( lAObrada )
 FUNCTION o_kalk_edit()
 
    O_PARTN
-   o_kalk_doks()
+   //o_kalk_doks()
    O_ROBA
-   o_kalk()
+   //o_kalk()
    O_KONTO
    O_TDOK
    O_VALUTE

@@ -96,7 +96,6 @@ FUNCTION fin_kontrola_zbira( bDat, lSilent )
    ENDIF
 
    fin_kzb_nalog()
-altd()
    IF !lSilent
       IF LastKey() == K_ESC
          BoxC()

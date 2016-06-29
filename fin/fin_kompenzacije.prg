@@ -649,14 +649,19 @@ STATIC FUNCTION print_kompen( vars )
    Box(, 10, 50 )
    ++ _x
    @ m_x + _x, m_y + 2 SAY "Datum kompenzacije: " GET _dat_komp
+
    ++ _x
    @ m_x + _x, m_y + 2 SAY8 "Rok plaćanja (dana): " GET _rok_pl VALID _rok_pl >= 0 PICT "999"
+
    ++ _x
    @ m_x + _x, m_y + 2 SAY "Valuta kompenzacije (D/P): " GET _valuta  VALID _valuta $ "DP"  PICT "!@"
+
    ++ _x
    @ m_x + _x, m_y + 2 SAY "Broj kompenzacije: " GET _br_komp
+
    ++ _x
    @ m_x + _x, m_y + 2 SAY8 "Šifra (ID) povjerioca: " GET _id_pov VALID P_Firma( @_id_pov ) PICT "@!"
+
    ++ _x
    @ m_x + _x, m_y + 2 SAY8 "   Šifra (ID) dužnika: " GET _id_partn VALID P_Firma( @_id_partn ) PICT "@!"
    READ

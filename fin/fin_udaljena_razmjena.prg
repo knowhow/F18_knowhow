@@ -448,9 +448,8 @@ STATIC FUNCTION __export( vars, a_details )
          _id_konto := field->idkonto
          _id_partner := field->idpartner
 
-         // upisi zapis u tabelu e_suban
+         
          _app_rec := dbf_get_rec()
-         altd()
          SELECT e_suban
          APPEND BLANK
          dbf_update_rec( _app_rec )

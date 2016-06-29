@@ -511,7 +511,7 @@ FUNCTION kalk_kontiranje_naloga( fAuto, lAGen, lViseKalk, cNalog, auto_brojac )
                      // fin_pripr
                      SEEK finmat->idfirma + cIdVN + cBrNalF + "ZZZZ"
                      SKIP -1
-                     IF fin_pripr->(idfirma + idvn + brnal) == finmat->idfirma + cIdVN + cBrNalF
+                     IF fin_pripr->( idfirma + idvn + brnal ) == finmat->idfirma + cIdVN + cBrNalF
                         nRbr := fin_pripr->Rbr + 1
                      ELSE
                         nRbr := 1
@@ -645,7 +645,7 @@ FUNCTION kalk_kontiranje_naloga( fAuto, lAGen, lViseKalk, cNalog, auto_brojac )
                APPEND BLANK
 
                REPLACE IdFirma   WITH finmat->IdFirma, ; // mpripr
-                  BrNal     WITH cBrNalM, ;
+               BrNal     WITH cBrNalM, ;
                   IdVN      WITH cIdVN, ;
                   IdPartner WITH cIdPartner, ;
                   IdRoba    WITH finmat->idroba, ;
@@ -866,8 +866,7 @@ FUNCTION DatVal()
 
    PushWA()
 
-   find_kalk_doks2_by_broj_dokumenta( finmat->idfirma, finmat->idvd, finmat->brdok )
-   IF Found()
+   IF find_kalk_doks2_by_broj_dokumenta( finmat->idfirma, finmat->idvd, finmat->brdok )
       dDatVal := field->datval
    ELSE
       dDatVal := CToD( "" )
@@ -881,32 +880,36 @@ FUNCTION DatVal()
       _uvecaj := ( dDatVal - finmat->datfaktp )
    ENDIF
 
+
+
    IF dDatVal == CToD( "" )
 
-      Box(, 3 + iif( lVrsteP .AND. Empty( cIdVrsteP ), 1, 0 ), 60 )
+      IF kalk_imp_autom()
+         dDatVal := finmat->datfaktp + _uvecaj
+      ELSE
 
-      SET CURSOR ON
+         Box(, 3 + iif( lVrsteP .AND. Empty( cIdVrsteP ), 1, 0 ), 60 )
 
-      @ m_x + 1, m_y + 2 SAY "Datum dokumenta: "
-      ??  finmat->datfaktp
+         SET CURSOR ON
 
-      @ m_x + 2, m_y + 2 SAY "Uvecaj dana    :" GET _uvecaj PICT "999"
-      @ m_x + 3, m_y + 2 SAY "Valuta         :" GET dDatVal WHEN {|| dDatVal := finmat->datfaktp + _uvecaj, .T. }
+         @ m_x + 1, m_y + 2 SAY "Datum dokumenta: "
+         ??  finmat->datfaktp
 
-      IF lVrsteP .AND. Empty( cIdVrsteP )
-         @ m_x + 4, m_y + 2 SAY "Sifra vrste placanja:" GET cIdVrsteP PICT "@!"
+         @ m_x + 2, m_y + 2 SAY "Uvecaj dana    :" GET _uvecaj PICT "999"
+         @ m_x + 3, m_y + 2 SAY "Valuta         :" GET dDatVal WHEN {|| dDatVal := finmat->datfaktp + _uvecaj, .T. }
+
+         IF lVrsteP .AND. Empty( cIdVrsteP )
+            @ m_x + 4, m_y + 2 SAY "Sifra vrste placanja:" GET cIdVrsteP PICT "@!"
+         ENDIF
+
+         READ
+         BoxC()
+
       ENDIF
 
-      READ
 
-      BoxC()
-
-
-      find_kalk_doks2_by_broj_dokumenta( finmat->idfirma, finmat->idvd, finmat->brdok )
-
-      IF !Found()
+      IF !find_kalk_doks2_by_broj_dokumenta( finmat->idfirma, finmat->idvd, finmat->brdok )
          APPEND BLANK // ovo se moze desiti ako je neko mjenjao dokumenta u KALK
-
          _rec := dbf_get_rec()
          _rec[ "idfirma" ] := finmat->idfirma
          _rec[ "idvd" ] := finmat->idvd

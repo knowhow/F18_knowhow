@@ -119,7 +119,7 @@ FUNCTION Get1_11()
          dDatNab := CToD( "" )
          IF _kolicina > 0
             MsgO( "Racunam stanje na skladistu" )
-            KalkNab( _idfirma, _idroba, _idkonto2, @nKolS, @nKolZN, @nc1, @nc2, @dDatNab )
+            get_kalk_nab( _idfirma, _idroba, _idkonto2, @nKolS, @nKolZN, @nc1, @nc2, @dDatNab )
             MsgC()
          ELSE
             MsgO( "Racunam stanje prodavnice" )

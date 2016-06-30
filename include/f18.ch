@@ -44,7 +44,6 @@
 #include "f_f18.ch"
 #include "f18_separator.ch"
 #include "f18_rabat.ch"
-#include "f18_ver.ch"
 #include "f18_request.ch"
 #include "f18_cre_all.ch"
 

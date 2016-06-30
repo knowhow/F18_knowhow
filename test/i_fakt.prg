@@ -42,7 +42,7 @@ FUNCTION i_fakt()
 
    setup_i_fakt()
 
-   _omodul := TFaktMod():new( nil, "FAKT", F18_VER, F18_VER_DATE, "test", "test" )
+   _omodul := TFaktMod():new( nil, "FAKT", f18_ver(), f18_ver()_DATE, "test", "test" )
 
 
    goModul := _omodul

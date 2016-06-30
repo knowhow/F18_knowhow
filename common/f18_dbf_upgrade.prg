@@ -10,6 +10,7 @@
  */
 
 #include "f18.ch"
+#include "f18_ver.ch"
 
 STATIC __ini_section := "DBF_version"
 

@@ -380,7 +380,7 @@ STATIC FUNCTION odt_na_email_podrska( cErrorTxt )
       lIzlazniOdt := .F.
    ENDIF
 
-   cSubject := "Uzorak ODT izvještaja, F18 " + F18_VER
+   cSubject := "Uzorak ODT izvještaja, F18 " + f18_ver()
    cSubject += ", " + my_server_params()[ "database" ] + "/" + AllTrim( f18_user() )
    cSubject += ", " + DToC( Date() ) + " " + PadR( Time(), 8 )
 

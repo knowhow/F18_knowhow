@@ -11,6 +11,7 @@
 
 #include "f18.ch"
 
+
 CLASS F18Admin
 
    VAR update_app_f18
@@ -192,8 +193,8 @@ METHOD F18Admin:update_app_run_app_update( params )
 
    _upd_file := StrTran( _upd_file, "#VER#", ::update_app_f18_version )
 
-   if ::update_app_f18_version == F18_VER
-      MsgBeep( "Verzija aplikacije " + F18_VER + " je vec instalirana !" )
+   if ::update_app_f18_version == f18_ver()
+      MsgBeep( "Verzija aplikacije " + f18_ver() + " je vec instalirana !" )
       RETURN SELF
    ENDIF
 
@@ -255,10 +256,10 @@ METHOD F18Admin:update_app_form( upd_params )
    _col_app := "W/G+"
    _col_temp := "W/G+"
 
-   IF F18_VER < upd_params[ "f18" ]
+   IF f18_ver() < upd_params[ "f18" ]
       _col_app := "W/R+"
    ENDIF
-   IF F18_TEMPLATE_VER < upd_params[ "templates" ]
+   IF f18_template_ver() < upd_params[ "templates" ]
       _col_temp := "W/R+"
    ENDIF
 
@@ -277,12 +278,12 @@ METHOD F18Admin:update_app_form( upd_params )
    @ m_x + _x, m_y + 2 SAY _line
 
    ++ _x
-   @ m_x + _x, m_y + 2 SAY PadR( "F18", 10 ) + " " + PadC( F18_VER, 20 )
+   @ m_x + _x, m_y + 2 SAY PadR( "F18", 10 ) + " " + PadC( f18_ver(), 20 )
    @ m_x + _x, Col() SAY " "
    @ m_x + _x, Col() SAY PadC( upd_params[ "f18" ], 20 ) COLOR _col_app
 
    ++ _x
-   @ m_x + _x, m_y + 2 SAY PadR( "template", 10 ) + " " + PadC( F18_TEMPLATE_VER, 20 )
+   @ m_x + _x, m_y + 2 SAY PadR( "template", 10 ) + " " + PadC( f18_template_ver(), 20 )
    @ m_x + _x, Col() SAY " "
    @ m_x + _x, Col() SAY PadC( upd_params[ "templates" ], 20 ) COLOR _col_temp
 

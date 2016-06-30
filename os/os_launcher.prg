@@ -20,7 +20,7 @@ FUNCTION MainOs( cKorisn, cSifra, p3, p4, p5, p6, p7 )
    cModul := "OS"
    PUBLIC goModul
 
-   oOs := TOsMod():new( NIL, cModul, F18_VER, F18_VER_DATE, cKorisn, cSifra, p3, p4, p5, p6, p7 )
+   oOs := TOsMod():new( NIL, cModul, f18_ver(), f18_ver()_DATE, cKorisn, cSifra, p3, p4, p5, p6, p7 )
    goModul := oOs
 
    oOs:run()

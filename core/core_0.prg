@@ -57,7 +57,7 @@ FUNCTION f18_ver( lShort )
 
    hb_default( @lShort, .T. )
 
-   RETURN F18_VER + + "/" + F18_LIB_VER + iif( lShort, "", " " + F18_VER_DATE )
+   RETURN f18_ver() + + "/" + f18_lib_ver() + iif( lShort, "", " " + f18_ver_date() )
 
 
 FUNCTION f18_ver_info( lShort )

@@ -20,7 +20,7 @@ FUNCTION MainFakt( cKorisn, cSifra, p3, p4, p5, p6, p7 )
    cModul := "FAKT"
    PUBLIC goModul
 
-   oFakt := TFaktMod():new( NIL, cModul, F18_VER, F18_VER_DATE, cKorisn, cSifra, p3, p4, p5, p6, p7 )
+   oFakt := TFaktMod():new( NIL, cModul, f18_ver(), f18_ver()_DATE, cKorisn, cSifra, p3, p4, p5, p6, p7 )
    goModul := oFakt
 
    oFakt:run()

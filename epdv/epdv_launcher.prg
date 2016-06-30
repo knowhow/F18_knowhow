@@ -19,7 +19,7 @@ FUNCTION MainEpdv( cKorisn, cSifra, p3, p4, p5, p6, p7 )
    cModul := "EPDV"
    PUBLIC goModul
 
-   oEpdv := TEpdvMod():new( NIL, cModul, F18_VER, F18_VER_DATE, cKorisn, cSifra, p3, p4, p5, p6, p7 )
+   oEpdv := TEpdvMod():new( NIL, cModul, f18_ver(), f18_ver()_DATE, cKorisn, cSifra, p3, p4, p5, p6, p7 )
    goModul := oEpdv
 
    oEpdv:run()

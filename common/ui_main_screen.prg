@@ -105,7 +105,7 @@ METHOD showMainScreen( lClear )
       DispBox( 5, 0, MAXROWS() - 1, MAXCOLS() - 1, B_DOUBLE + BOX_CHAR_BACKGROUND, F18_COLOR_INVERT  )
    ENDIF
 
-   @ _ver_pos, 1 SAY PadC( gNaslov + ' Ver.' + F18_VER, MAXCOLS() - 8 ) COLOR F18_COLOR_NORMAL
+   @ _ver_pos, 1 SAY PadC( gNaslov + ' Ver.' + f18_ver(), MAXCOLS() - 8 ) COLOR F18_COLOR_NORMAL
 
    f18_ispisi_status_log_levela()
    f18_ispisi_status_podrucja( _ver_pos )

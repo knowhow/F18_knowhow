@@ -9,21 +9,27 @@
  * By using this software, you agree to be bound by its terms.
  */
 
-#include "f18.ch"
+#include "f18_ver.ch"
+
+FUNCTION f18_ver()
+
+   RETURN F18_VER
+
+FUNCTION f18_ver_date()
+
+   RETURN F18_VER_DATE
+
+   
+FUNCTION f18_lib_ver()
+
+   RETURN F18_LIB_VER
 
 
+FUNCTION f18_dev_period()
 
-FUNCTION MainMat( cKorisn, cSifra, p3, p4, p5, p6, p7 )
+   RETURN F18_DEV_PERIOD
 
-   LOCAL oMat
-   LOCAL cModul
 
-   cModul := "MAT"
-   PUBLIC goModul
+FUNCTION f18_template_ver()
 
-   oMat := TMatMod():new( NIL, cModul, f18_ver(), f18_ver()_DATE, cKorisn, cSifra, p3, p4, p5, p6, p7 )
-   goModul := oMat
-
-   oMat:run()
-
-   RETURN .T.
+   RETURN F18_TEMPLATE_VER

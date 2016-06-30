@@ -311,11 +311,3 @@ FUNCTION init_printer() // procitaj gPrinter, gpini,  postavi shift F2 kao hotke
    info_bar( "init", "init printer seqs end" )
 
    RETURN .T.
-
-
-
-// ---------------------------------
-// F18_LIB_VER - defined in fmk.ch
-// ---------------------------------
-FUNCTION f18_lib_ver()
-   RETURN F18_LIB_VER

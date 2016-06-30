@@ -226,7 +226,7 @@ FUNCTION my_server_login( hSqlParams, nConnType )
          sql_postgres_conn( oServer )
       ELSE
          sql_data_conn( oServer ) // konekcija za organizaciju
-         // info_bar( "login", "server connection ok: " + hSqlParams[ "user" ] + " / " + iif ( nConnType == 1, hSqlParams[ "database" ], "postgres" ) + " / verzija aplikacije: " + F18_VER, 1 )
+         // info_bar( "login", "server connection ok: " + hSqlParams[ "user" ] + " / " + iif ( nConnType == 1, hSqlParams[ "database" ], "postgres" ) + " / verzija aplikacije: " + f18_ver(), 1 )
       ENDIF
 
       hParams := hb_Hash()
@@ -327,7 +327,7 @@ STATIC FUNCTION show_sacekaj()
    // @ _x + 1, 2 SAY8 _txt
 
 
-   naslovni_ekran_splash_screen( "F18", F18_VER )
+   naslovni_ekran_splash_screen( "F18", f18_ver() )
 
    RETURN .T.
 

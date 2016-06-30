@@ -10,6 +10,7 @@
  */
 
 #include "f18.ch"
+#include "f18_ver.ch"
 
 /*
    Opis: šalje izvještaj na email podrške
@@ -20,7 +21,7 @@ FUNCTION txt_izvjestaj_podrska_email( file_name )
 
    // Uzorak TXT izvještaja, F18 1.7.21, rg_2013/bjasko, 02.04.04, 15:00:07
    _subject := "Uzorak TXT izvještaja, F18 "
-   _subject += F18_VER
+   _subject += f18_ver()
    _subject += ", " + my_server_params()[ "database" ] + "/" + AllTrim( f18_user() )
    _subject += ", " + DToC( Date() ) + " " + PadR( Time(), 8 )
 

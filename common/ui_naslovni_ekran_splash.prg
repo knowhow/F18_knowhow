@@ -48,7 +48,7 @@ FUNCTION naslovni_ekran_splash_screen( cNaslov, cVer )
 
    @  2, 2 SAY PadC( cNaslov, 60 )
    @  3, 2 SAY PadC( "Verzija: " + cVer, 60 )
-   @  5, 2 SAY PadC( "bring.out d.o.o. Sarajevo (" + F18_DEV_PERIOD + ")", 60 )
+   @  5, 2 SAY PadC( "bring.out d.o.o. Sarajevo (" + f18_dev_period() + ")", 60 )
    @  7, 2 SAY PadC( "Juraja Najtharta 3, Sarajevo, BiH", 60 )
    @  8, 2 SAY PadC( "tel: 033/269-291, fax: 033/269-292", 60 )
    @  9, 2 SAY PadC( "web: http://bring.out.ba", 60 )

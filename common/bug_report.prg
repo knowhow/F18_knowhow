@@ -260,7 +260,7 @@ STATIC FUNCTION server_db_version_info()
 
    LOCAL _server_db_num, _server_db_str, _f18_required_server_str, _f18_required_server_num
 
-   _f18_required_server_num := get_version_num( SERVER_DB_VER_MAJOR, SERVER_DB_VER_MINOR, SERVER_DB_VER_PATCH )
+   _f18_required_server_num := get_version_num( server_db_ver_major(), server_db_ver_minor(), server_db_ver_patch() )
 
    _server_db_num := server_db_version()
 

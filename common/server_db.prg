@@ -41,7 +41,7 @@ FUNCTION check_server_db_version()
    LOCAL _msg
 
    info_bar( "init", "check_server_db_version" )
-   _f18_required_server_num := get_version_num( SERVER_DB_VER_MAJOR, SERVER_DB_VER_MINOR, SERVER_DB_VER_PATCH )
+   _f18_required_server_num := get_version_num( server_db_ver_major(), server_db_ver_minor(), server_db_ver_patch() )
 
    _server_db_num := server_db_version()
 

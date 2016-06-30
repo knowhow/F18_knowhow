@@ -963,7 +963,7 @@ METHOD F18Login:show_info_bar( database, x_pos )
 
    @ _x, _y SAY PadR( "Info: " + _info, _max_len )
    ++_x
-   @ _x, _y SAY PadR( "F18 version: " + f18_ver(), _max_len )
+   @ _x, _y SAY "F18 version: " + f18_ver() + " lib: " + f18_lib_ver()
 
    RETURN .T.
 

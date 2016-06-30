@@ -19,7 +19,7 @@ FUNCTION f18_ver_date()
 
    RETURN F18_VER_DATE
 
-   
+
 FUNCTION f18_lib_ver()
 
    RETURN F18_LIB_VER
@@ -33,3 +33,18 @@ FUNCTION f18_dev_period()
 FUNCTION f18_template_ver()
 
    RETURN F18_TEMPLATE_VER
+
+
+FUNCTION server_db_ver_major()
+
+   RETURN SERVER_DB_VER_MAJOR
+
+
+FUNCTION server_db_ver_minor()
+
+   RETURN SERVER_DB_VER_MINOR
+
+
+FUNCTION server_db_ver_patch()
+
+   RETURN SERVER_DB_VER_PATCH

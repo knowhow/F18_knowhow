@@ -10,7 +10,6 @@
  */
 
 #include "f18.ch"
-#include "f18_ver.ch"
 
 /*
    Opis: šalje izvještaj na email podrške

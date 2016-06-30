@@ -138,8 +138,8 @@ FUNCTION os_obracun_amortizacije()
 
          set_global_memvars_from_dbf()
 
-         // setuj datum otpisa ako postoji
-         _datum_otpisa := _datotp
+
+         _datum_otpisa := fix_dat_var( _datotp ) // setuj datum otpisa ako postoji
 
          SELECT amort
          HSEEK _idam
@@ -147,8 +147,8 @@ FUNCTION os_obracun_amortizacije()
          select_os_sii()
 
          IF !Empty( _datotp ) .AND. Year( _datotp ) < Year( dDatObr )
-            // otpisano sredstvo, ne amortizuj
-            SKIP
+
+            SKIP // otpisano sredstvo, ne amortizuj
             LOOP
          ENDIF
 
@@ -296,7 +296,7 @@ FUNCTION os_obracun_amortizacije()
             set_global_memvars_from_dbf()
 
             // setuj datum otpisa
-            _datum_otpisa := _datotp
+            _datum_otpisa := fix_dat_var( _datotp )
 
             IF !Empty( _datotp ) .AND. Year( _datotp ) < Year( dDatobr )
                // otpisano sredstvo, ne amortizuj
@@ -342,7 +342,7 @@ FUNCTION os_obracun_amortizacije()
             ENDIF
 
             @ PRow(), PCol() + 1 SAY _amp * nBBK PICT gpici
-            @ PRow(), PCol() + 1 SAY _datotp PICT gpici
+            @ PRow(), PCol() + 1 SAY fix_dat_var( _datotp ) PICT gpici
 
             nUkupno += Round( _amp, 2 )
 
@@ -832,16 +832,23 @@ FUNCTION os_obracun_revalorizacije()
    ? " INV.BR     DatNab  S.Rev     Sredstvo                  Nab.vr      Otp.vr+Am   Reval.DUG    Rev.POT    Rev.Am    Stopa"
    ? m
 
+   _datotp := fix_dat_var(_datotp)
+
    nURevDug := 0
    nURevPot := 0
    nURevAm := 0
    DO WHILE !Eof()
       Scatter()
+      _datotp := fix_dat_var(_datotp)
+
       IF !Empty( _datotp )  .AND. Year( _datotp ) < Year( dDatobr )    // otpisano sredstvo, ne amortizuj
          SKIP
          LOOP
       ENDIF
-      SELECT reval; HSEEK _idrev; select_os_sii()
+      SELECT reval
+      HSEEK _idrev
+      select_os_sii()
+
       nRevAm := 0
       nKoef := izracunaj_os_reval( _datum, iif( !Empty( _datotp ), Min( dDatOBr, _datotp ), dDatObr ), @nRevAm )     // napuni _revp,_revd
       ? _id, _datum, _idrev, _naz
@@ -950,8 +957,8 @@ FUNCTION izracunaj_os_reval( d1, d2, nRevAm )
       nk2 := reval->&c2
    ENDIF
    nkoef := ( nk2 + 1 ) / ( nk1 + 1 ) - 1
-   nIzn := Round( _nabvr * nkoef,2 )
-   nIzn2 := Round( ( _otpvr + _amp ) * nkoef,2 )
+   nIzn := Round( _nabvr * nkoef, 2 )
+   nIzn2 := Round( ( _otpvr + _amp ) * nkoef, 2 )
    nRevAm := Round( _amp * nkoef, 2 )
    _RevD := nIzn
    _RevP := nIzn2

@@ -32,7 +32,7 @@ FUNCTION Gather( cZn )
    aStruct := dbStruct()
 
    FOR i := 1 TO Len( aStruct )
-      _field_b := FieldBlock( _ime_p := aStruct[ i, 1 ] )
+      _field_b := FieldBlock( _ime_p := fix_dat_var( aStruct[ i, 1 ] ) )
 
       // cImeP - privatna var
       cVar := cZn + _ime_p

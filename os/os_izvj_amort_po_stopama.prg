@@ -149,8 +149,8 @@ FUNCTION os_amortizacija_po_stopama()
          nDug3 := nPot31 := nPot32 := 0
          DO WHILE !Eof() .AND. ( idrj = cidrj .OR. Empty( cidrj ) )  .AND. idam == cidamort
             IF PRow() > 60; FF; os_zagl_amort(); ENDIF
-            IF !( ( cON == "N" .AND. Empty( datotp ) ) .OR. ;
-                  ( con == "O" .AND. !Empty( datotp ) ) .OR. ;
+            IF !( ( cON == "N" .AND. datotp_prazan() ) .OR. ;
+                  ( con == "O" .AND. !datotp_prazan() ) .OR. ;
                   ( con == "B" .AND. Year( datum ) = Year( gdatobr ) ) .OR. ;
                   ( con == "G" .AND. Year( datum ) < Year( gdatobr ) ) .OR. ;
                   Empty( con ) )
@@ -358,7 +358,7 @@ STATIC FUNCTION fill_rpt_exp( cId, cNaz, dDatum, dDatOtp, ;
    REPLACE field->id WITH cId
    REPLACE field->naziv WITH cNaz
    REPLACE field->datum WITH dDatum
-   REPLACE field->datotp WITH dDatOtp
+   REPLACE field->datopt WITH fix_dat_var( dDatOtp )
    REPLACE field->idkonto WITH cIdKto
    REPLACE field->kolicina WITH nKol
    REPLACE field->jmj WITH cJmj

@@ -203,13 +203,13 @@ FUNCTION os_amortizacija_po_kontima()
 
       print_lista_2( aKol,,, gTabela,, ;
          ,, ;
-         {|| FFor1s() }, IF( gOstr == "D",, -1 ),,,,, )
+         {|| FFor1s() }, IIF( gOstr == "D",, -1 ),,,,, )
 
    ELSE
 
       print_lista_2( aKol,,, gTabela,, ;
          ,, ;
-         {|| FFor1() }, IF( gOstr == "D",, -1 ),,,,, )
+         {|| FFor1() }, IIF( gOstr == "D",, -1 ),,,,, )
 
    ENDIF
 
@@ -217,7 +217,7 @@ FUNCTION os_amortizacija_po_kontima()
    ENDPRINT
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -230,8 +230,8 @@ STATIC FUNCTION FFor1()
    gaSubTotal  := {}
    gaDodStavke := {}
 
-   IF !( ( cON == "N" .AND. Empty( datotp ) ) .OR. ;
-         ( con == "O" .AND. !Empty( datotp ) ) .OR. ;
+   IF !( ( cON == "N" .AND. datotp_prazan() ) .OR. ;
+         ( con == "O" .AND. !datotp_prazan() ) .OR. ;
          ( con == "B" .AND. Year( datum ) = Year( gdatobr ) ) .OR. ;
          ( con == "G" .AND. Year( datum ) < Year( gdatobr ) ) .OR. ;
          Empty( con ) )
@@ -345,8 +345,8 @@ STATIC FUNCTION FFor1s()
    gaSubTotal  := {}
    gaDodStavke := {}
 
-   IF !( ( cON == "N" .AND. Empty( datotp ) ) .OR. ;
-         ( con == "O" .AND. !Empty( datotp ) ) .OR. ;
+   IF !( ( cON == "N" .AND. datotp_prazan() ) .OR. ;
+         ( con == "O" .AND. !datotp_prazan() ) .OR. ;
          ( con == "B" .AND. Year( datum ) = Year( gdatobr ) ) .OR. ;
          ( con == "G" .AND. Year( datum ) < Year( gdatobr ) ) .OR. ;
          Empty( con ) )

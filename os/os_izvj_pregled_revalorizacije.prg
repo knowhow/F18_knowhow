@@ -122,8 +122,8 @@ FUNCTION os_pregled_revalorizacije()
                os_zagl_reval()
             ENDIF
 
-            IF !( ( cON == "N" .AND. Empty( field->datotp ) ) .OR. ;
-                  ( con == "O" .AND. !Empty( field->datotp ) ) .OR. ;
+            IF !( ( cON == "N" .AND. datotp_prazan() ) .OR. ;
+                  ( con == "O" .AND. !datotp_prazan() ) .OR. ;
                   ( con == "B" .AND. Year( field->datum ) = Year( gdatobr ) ) .OR. ;
                   ( con == "G" .AND. Year( field->datum ) < Year( gdatobr ) ) .OR. ;
                   Empty( con ) )

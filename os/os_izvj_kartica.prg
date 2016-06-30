@@ -159,7 +159,7 @@ FUNCTION os_kartica_sredstva()
          ?
          ? "INVENTURNI BROJ:", cInvBr
          ? "NAZIV          :", naz
-         ? "OPIS           :", opis, IF( !Empty( datotp ), "OTPIS: " + Trim( opisotp ) + " " + DToC( datotp ) + " !", "" )
+         ? "OPIS           :", opis, IIF( !datotp_prazan(), "OTPIS: " + Trim( opisotp ) + " " + DToC( datotp ) + " !", "" )
          ? "��������������������������������������������������������������������������������������������������������������������������������Ŀ"
          ? "�        �       N A B A V N A    V R I J E D N O S T         �       O T P I S A N A    V R I J E D N O S T       �             �"
          ? "� DATUM  ���������������������������������������������������������������������������������������������������������Ĵ   SADASNJA  �"

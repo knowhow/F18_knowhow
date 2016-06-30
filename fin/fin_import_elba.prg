@@ -286,7 +286,7 @@ STATIC FUNCTION get_elba_stavka_from_txt( aItem )
 
    hRet[ "idfirma" ] := gFirma
    hRet[ "transakcija" ] := aItem[ 1 ]
-   hRet[ "datdok" ] := elba_get_datum( aItem[ 2 ] )
+   hRet[ "datdok" ] := elba_fix_dat_var( aItem[ 2 ] )
 
 
    IF  Len( aItem ) == 11 .AND. "BBI DD" $ aItem[ 8 ] // bbi naknade
@@ -508,7 +508,7 @@ STATIC FUNCTION put_elba_item_into_pripr( hFinItem, cImpView )
 
 
 
-STATIC FUNCTION elba_get_datum( cDate )
+STATIC FUNCTION elba_fix_dat_var( cDate )
 
    LOCAL dDate
 

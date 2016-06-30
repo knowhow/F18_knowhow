@@ -478,6 +478,7 @@ STATIC FUNCTION _os_generacija_nakon_ps( info )
 
       _rec[ "nabvr" ] := _rec[ "nabvr" ] + _rec[ "revd" ]
       _rec[ "otpvr" ] := _rec[ "otpvr" ] + _rec[ "revp" ] + _rec[ "amp" ]
+      _rec[ "datotp" ] := fix_dat_var( _rec[ "datotp" ] )
 
       // brisi sta je otpisano
       // ali samo osnovna sredstva, sitan inventar ostaje u bazi...

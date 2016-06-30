@@ -251,8 +251,8 @@ FUNCTION os_pregled_po_kontima()
                os_zagl_konta()
             ENDIF
 
-            IF ( cON == "N" .AND. Empty( datotp ) ) .OR. ;
-                  ( con == "O"  .AND. !Empty( datotp ) ) .OR. ;
+            IF ( cON == "N" .AND. datotp_prazan() ) .OR. ;
+                  ( con == "O"  .AND. !datotp_prazan() ) .OR. ;
                   ( con == "B"  .AND. Year( datum ) = Year( gdatobr ) ) .OR. ;
                   ( con == "G"  .AND. Year( datum ) < Year( gdatobr ) ) .OR. ;
                   Empty( con )
@@ -285,7 +285,7 @@ FUNCTION os_pregled_po_kontima()
                   // ako zelim samo promjene vidi ima li za sr.
                   // uopste promjena
                   _sr_id := field->id
-                  _sr_dat_otp := field->datotp
+                  _sr_dat_otp := get_datotp()
                   _sr_datum := field->datum
 
                   select_promj()
@@ -335,7 +335,7 @@ FUNCTION os_pregled_po_kontima()
 
                   // prikaz promjena
                   _sr_id := field->id
-                  _sr_dat_otp := field->datotp
+                  _sr_dat_otp := get_datotp()
                   _sr_datum := field->datum
 
                   select_promj()
@@ -419,7 +419,7 @@ FUNCTION os_pregled_po_kontima()
 
                      // prikaz promjena
                      _sr_id := field->id
-                     _sr_dat_otp := field->datotp
+                     _sr_dat_otp := get_datotp()
                      _sr_datum := field->datum
                      _sr_id_rj := field->idrj
                      _sr_id_am := field->idam

@@ -175,8 +175,8 @@ FUNCTION os_pregled_amortizacije()
                os_zagl_amort()
             ENDIF
 
-            IF !( ( cON == "N" .AND. Empty( datotp ) ) .OR. ;
-                  ( con == "O" .AND. !Empty( datotp ) ) .OR. ;
+            IF !( ( cON == "N" .AND. datotp_prazan() ) .OR. ;
+                  ( con == "O" .AND. !datotp_prazan() ) .OR. ;
                   ( con == "B" .AND. Year( datum ) = Year( gdatobr ) ) .OR. ;
                   ( con == "G" .AND. Year( datum ) < Year( gdatobr ) ) .OR. ;
                   Empty( con ) )

@@ -80,7 +80,7 @@ FUNCTION unos_datuma_isplate_place()
 
    IF obracuni->( FieldPos( "DAT_ISPL" ) ) == 0 .OR. obracuni->( FieldPos( "OBR" ) ) == 0
       MsgBeep( "Potrebna modifikacija struktura LD.CHS !!!#Prekidam operaciju" )
-      RETURN
+      RETURN .F.
    ENDIF
 
 
@@ -90,7 +90,6 @@ FUNCTION unos_datuma_isplate_place()
 
    ++nX
    ++nX
-
    @ m_x + nX, m_y + 2 SAY "Tekuca godina:" GET nGod PICT "9999"
 
    @ m_x + nX, Col() + 2 SAY "Radna jedinica:" GET cRJ PICT "99" ;
@@ -99,7 +98,6 @@ FUNCTION unos_datuma_isplate_place()
    @ m_x + nX, Col() + 2 SAY "Obracun:" GET cObr VALID cObr $ " 123456789"
 
    ++nX
-
    @ m_x + nX, m_y + 2 SAY "----------------------------------------"
    ++nX
 
@@ -127,7 +125,6 @@ FUNCTION unos_datuma_isplate_place()
       PadL( "vrsta ispl.", 18 )
 
    ++nX
-
    @ m_x + nX, m_y + 2 SAY "12." + AllTrim( Str( nGod - 1 ) ) + ;
       " => " GET dDatPr
    @ m_x + nX, Col() + 2 SAY "" GET nMjPr PICT "99"
@@ -135,7 +132,6 @@ FUNCTION unos_datuma_isplate_place()
    @ m_x + nX, Col() + 2 SAY "" GET cVrIsPr PICT "@S15"
 
    ++nX
-
    @ m_x + nX, m_y + 2 SAY "01." + AllTrim( Str( nGod ) ) + ;
       " => " GET dDat1
    @ m_x + nX, Col() + 2 SAY "" GET nMj1 PICT "99"
@@ -143,7 +139,6 @@ FUNCTION unos_datuma_isplate_place()
    @ m_x + nX, Col() + 2 SAY "" GET cVrIs1 PICT "@S15"
 
    ++nX
-
    @ m_x + nX, m_y + 2 SAY "02." + AllTrim( Str( nGod ) ) + ;
       " => " GET dDat2
    @ m_x + nX, Col() + 2 SAY "" GET nMj2 PICT "99"
@@ -191,7 +186,6 @@ FUNCTION unos_datuma_isplate_place()
    @ m_x + nX, Col() + 2 SAY "" GET cVrIs7 PICT "@S15"
 
    ++nX
-
    @ m_x + nX, m_y + 2 SAY "08." + AllTrim( Str( nGod ) ) + ;
       " => " GET dDat8
    @ m_x + nX, Col() + 2 SAY "" GET nMj8 PICT "99"
@@ -199,7 +193,6 @@ FUNCTION unos_datuma_isplate_place()
    @ m_x + nX, Col() + 2 SAY "" GET cVrIs8 PICT "@S15"
 
    ++nX
-
    @ m_x + nX, m_y + 2 SAY "09." + AllTrim( Str( nGod ) ) + ;
       " => " GET dDat9
    @ m_x + nX, Col() + 2 SAY "" GET nMj9 PICT "99"
@@ -207,7 +200,6 @@ FUNCTION unos_datuma_isplate_place()
    @ m_x + nX, Col() + 2 SAY "" GET cVrIs9 PICT "@S15"
 
    ++nX
-
    @ m_x + nX, m_y + 2 SAY "10." + AllTrim( Str( nGod ) ) + ;
       " => " GET dDat10
    @ m_x + nX, Col() + 2 SAY "" GET nMj10 PICT "99"
@@ -215,7 +207,6 @@ FUNCTION unos_datuma_isplate_place()
    @ m_x + nX, Col() + 2 SAY "" GET cVrIs10 PICT "@S15"
 
    ++nX
-
    @ m_x + nX, m_y + 2 SAY "11." + AllTrim( Str( nGod ) ) + ;
       " => " GET dDat11
    @ m_x + nX, Col() + 2 SAY "" GET nMj11 PICT "99"
@@ -223,7 +214,6 @@ FUNCTION unos_datuma_isplate_place()
    @ m_x + nX, Col() + 2 SAY "" GET cVrIs11 PICT "@S15"
 
    ++nX
-
    @ m_x + nX, m_y + 2 SAY "12." + AllTrim( Str( nGod ) ) + ;
       " => " GET dDat12
    @ m_x + nX, Col() + 2 SAY "" GET nMj12 PICT "99"
@@ -233,7 +223,6 @@ FUNCTION unos_datuma_isplate_place()
 
    ++nX
    ++nX
-
    @ m_x + nX, m_y + 2 SAY "Unos ispravan (D/N)" GET cOk ;
       VALID cOK $ "DN" ;
       PICT "@!"
@@ -244,7 +233,7 @@ FUNCTION unos_datuma_isplate_place()
    IF LastKey() <> K_ESC
 
       IF cOk == "N"
-         RETURN
+         RETURN .F.
       ENDIF
 
       nGodina := nGod
@@ -269,7 +258,7 @@ FUNCTION unos_datuma_isplate_place()
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
 
 FUNCTION g_isp_date( cRj, nGod, nMjesec, cObr, nMjIsp, cIsplZa, cVrsta )
@@ -300,6 +289,9 @@ FUNCTION g_isp_date( cRj, nGod, nMjesec, cObr, nMjIsp, cIsplZa, cVrsta )
          field->status == "G"
 
       dDate := field->dat_ispl
+      IF dDate < SToD( "10010101" ) // 1000-01-01
+         dDate := CToD( "" )
+      ENDIF
       nMjIsp := field->mj_ispl
       cIsplZa := field->ispl_za
       cVrsta := field->vr_ispl
@@ -331,11 +323,8 @@ STATIC FUNCTION s_isp_date( cRj, nGod, nMjesec, cObr, dDatIspl, nMjIspl, cIsplZa
    SEEK  cRJ + AllTrim( Str( nGod ) ) + ld_formatiraj_mjesec( nMjesec ) + "G" + cObr
 
 
-   IF field->rj == cRj .AND. ;
-         field->mjesec = nMjesec .AND. ;
-         field->godina = nGod .AND. ;
-         field->obr == cObr .AND. ;
-         field->status == "G"
+   IF field->rj == cRj .AND. field->mjesec = nMjesec .AND. field->godina = nGod .AND. ;
+         field->obr == cObr .AND. field->status == "G"
 
       _rec := dbf_get_rec()
       _rec[ "dat_ispl" ] := dDatIspl

@@ -11,6 +11,25 @@
 
 #include "f18.ch"
 
+
+/*
+   1000-01-01 => CtoD("")
+*/
+FUNCTION fix_dat_var( xVar )
+
+   IF ValType( xVar ) != "D"
+      RETURN xVar
+   ENDIF
+
+   IF xVar < SToD( "10010101" )
+      RETURN CToD( "" )
+   ENDIF
+
+   RETURN xVar
+
+
+
+
 FUNCTION coalesce_num_zarez( cField, cFormat )
 
    RETURN coalesce_num( cField, cFormat, .T. )

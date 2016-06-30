@@ -726,6 +726,8 @@ FUNCTION use_sql_suban( hParams )
    cSql += coalesce_char_zarez( "idtipdok", 2 )
    cSql += coalesce_char_zarez( "brdok", 20 )
    cSql += "coalesce(datdok, TO_DATE('','yyyymmdd')) as datdok, coalesce( datval, TO_DATE('','yyyymmdd')) as datval,"
+   //cSql += "datdok,datval,"
+
    cSql += coalesce_char_zarez( "otvst", 1 )
    cSql += coalesce_char_zarez( "d_p", 1 )
 

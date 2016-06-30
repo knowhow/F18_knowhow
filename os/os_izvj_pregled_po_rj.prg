@@ -180,13 +180,13 @@ FUNCTION os_pregled_po_rj()
          // prikazi samo novonabavlj.
       ENDIF
 
-      IF ( !Empty( datotp ) .AND. Year( datotp ) <= Year( gdatobr ) ) .AND. cON $ "NB"
+      IF ( !datotp_prazan() .AND. Year( datotp ) <= Year( gdatobr ) ) .AND. cON $ "NB"
          // otpisano sredstvo , a zelim prikaz neotpisanih
          SKIP
          LOOP
       ENDIF
 
-      IF ( Empty( datotp ) .AND. Year( datotp ) < Year( gdatobr ) ) .AND. cON == "O"
+      IF ( datotp_prazan() .AND. Year( datotp ) < Year( gdatobr ) ) .AND. cON == "O"
          // neotpisano, a zelim prikaz otpisanih
          SKIP
          LOOP

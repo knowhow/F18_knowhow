@@ -557,10 +557,12 @@ STATIC FUNCTION validator_vrijednosti( cNaziv, nValue, nMinValue, nMaxValue, nDe
       RETURN .F.
    ENDIF
 
+
    IF nDec <> NIL .AND. ( Abs( nValue ) - Abs( Round( nValue, nDec ) ) <> 0 )
       cMsg := cNaziv + " / val: " + AllTrim( Str( nValue ) ) + " dec max: " + AllTrim( Str( nDec ) )
       error_bar( "fisk", cMsg )
-      RETURN .F.
+
+      RETURN .T.
    ENDIF
 
    RETURN .T.

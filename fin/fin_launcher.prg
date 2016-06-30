@@ -18,7 +18,7 @@ FUNCTION MainFin( cKorisn, cSifra, p3, p4, p5, p6, p7 )
    LOCAL cModul := "FIN"
    PUBLIC goModul
 
-   oFin := TFinMod():new( NIL, cModul, f18_ver(), f18_ver()_DATE, cKorisn, cSifra, p3, p4, p5, p6, p7 )
+   oFin := TFinMod():new( NIL, cModul, f18_ver(), f18_ver_date(), cKorisn, cSifra, p3, p4, p5, p6, p7 )
    goModul := oFin
 
    oFin:run()

@@ -21,7 +21,7 @@ FUNCTION MainMat( cKorisn, cSifra, p3, p4, p5, p6, p7 )
    cModul := "MAT"
    PUBLIC goModul
 
-   oMat := TMatMod():new( NIL, cModul, f18_ver(), f18_ver()_DATE, cKorisn, cSifra, p3, p4, p5, p6, p7 )
+   oMat := TMatMod():new( NIL, cModul, f18_ver(), f18_ver_date(), cKorisn, cSifra, p3, p4, p5, p6, p7 )
    goModul := oMat
 
    oMat:run()

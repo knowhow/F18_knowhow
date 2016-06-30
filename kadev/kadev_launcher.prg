@@ -22,7 +22,7 @@ FUNCTION MainKadev( cKorisn, cSifra, p3, p4, p5, p6, p7 )
    cModul := "KADEV"
    PUBLIC goModul
 
-   oKadev := TKadevMod():new( NIL, cModul, f18_ver(), f18_ver()_DATE, cKorisn, cSifra, p3, p4, p5, p6, p7 )
+   oKadev := TKadevMod():new( NIL, cModul, f18_ver(), f18_ver_date(), cKorisn, cSifra, p3, p4, p5, p6, p7 )
    goModul := oKadev
 
    oKadev:run()

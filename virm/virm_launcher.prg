@@ -21,7 +21,7 @@ FUNCTION MainVirm( cKorisn, cSifra, p3, p4, p5, p6, p7 )
    cModul := "VIRM"
    PUBLIC goModul
 
-   oVirm := TVirmMod():new( NIL, cModul, f18_ver(), f18_ver()_DATE, cKorisn, cSifra, p3, p4, p5, p6, p7 )
+   oVirm := TVirmMod():new( NIL, cModul, f18_ver(), f18_ver_date(), cKorisn, cSifra, p3, p4, p5, p6, p7 )
    goModul := oVirm
 
    oVirm:run()

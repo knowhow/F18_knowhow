@@ -20,7 +20,7 @@ FUNCTION MainPos( cKorisn, cSifra, p3, p4, p5, p6, p7 )
    cModul := "TOPS"
    PUBLIC goModul
 
-   oPos := TPosMod():new( NIL, cModul, f18_ver(), f18_ver()_DATE, cKorisn, cSifra, p3, p4, p5, p6, p7 )
+   oPos := TPosMod():new( NIL, cModul, f18_ver(), f18_ver_date(), cKorisn, cSifra, p3, p4, p5, p6, p7 )
    goModul := oPos
 
    oPos:run()

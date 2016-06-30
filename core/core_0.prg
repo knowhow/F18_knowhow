@@ -53,7 +53,7 @@ FUNCTION harbour_init()
    RETURN .T.
 
 
-FUNCTION f18_ver( lShort )
+FUNCTION f18_ver_show( lShort )
 
    hb_default( @lShort, .T. )
 

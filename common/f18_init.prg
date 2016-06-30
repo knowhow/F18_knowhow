@@ -673,13 +673,13 @@ FUNCTION run_on_startup()
 
    SWITCH _ini[ "modul" ]
    CASE "FIN"
-      oModul := TFinMod():new( NIL, "FIN", f18_ver(), f18_ver()_DATE, my_user(), "dummy" )
+      oModul := TFinMod():new( NIL, "FIN", f18_ver(), f18_ver_date(), my_user(), "dummy" )
       EXIT
    CASE "KALK"
-      oModul := TKalkMod():new( NIL, "KALK", f18_ver(), f18_ver()_DATE, my_user(), "dummy" )
+      oModul := TKalkMod():new( NIL, "KALK", f18_ver(), f18_ver_date(), my_user(), "dummy" )
       EXIT
    CASE "FAKT"
-      oModul := TFaktMod():new( NIL, "FAKT", f18_ver(), f18_ver()_DATE, my_user(), "dummy" )
+      oModul := TFaktMod():new( NIL, "FAKT", f18_ver(), f18_ver_date(), my_user(), "dummy" )
       EXIT
 
    ENDSWITCH

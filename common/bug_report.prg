@@ -89,7 +89,7 @@ FUNCTION GlobalErrorHandler( err_obj, lShowErrorReport, lQuitApp )
    OutBug( "F18 bug report (v6.0) :", Date(), Time() )
    OutBug( Replicate( "=", 84 ) )
 
-   _msg := "Verzija programa: " + f18_ver()
+   _msg := "Verzija programa: " + f18_ver_show( .F. )
    OutBug( _msg )
 
    cLogMsg += _msg

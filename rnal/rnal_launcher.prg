@@ -20,7 +20,7 @@ FUNCTION MainRnal( cKorisn, cSifra, p3, p4, p5, p6, p7 )
    cModul := "RNAL"
    PUBLIC goModul
 
-   oRnal := TRnalMod():new( NIL, cModul, f18_ver(), f18_ver()_DATE, cKorisn, cSifra, p3, p4, p5, p6, p7 )
+   oRnal := TRnalMod():new( NIL, cModul, f18_ver(), f18_ver_date(), cKorisn, cSifra, p3, p4, p5, p6, p7 )
    goModul := oRnal
 
    oRnal:run()

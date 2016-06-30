@@ -69,7 +69,7 @@ FUNCTION fakt_fiskalni_racun( id_firma, tip_dok, br_dok, auto_print, dev_param )
 
    _dev_drv := AllTrim( dev_param[ "drv" ] )
 
-   lRacunBezgBezPartnera := ( dev_param["vp_no_customer"] == "D" )
+   lRacunBezgBezPartnera := ( dev_param[ "vp_no_customer" ] == "D" )
 
    __DRV_CURRENT := _dev_drv
 
@@ -85,7 +85,7 @@ FUNCTION fakt_fiskalni_racun( id_firma, tip_dok, br_dok, auto_print, dev_param )
    SELECT fakt_doks
 
    IF postoji_fiskalni_racun( id_firma, tip_dok, br_dok, _dev_drv )
-      MsgBeep( "Za dokument " + tip_dok + "-" + ALLTRIM(br_dok) + " već postoji izdat fiskalni račun !" )
+      MsgBeep( "Za dokument " + tip_dok + "-" + AllTrim( br_dok ) + " već postoji izdat fiskalni račun !" )
       RETURN _err_level
    ENDIF
 
@@ -211,7 +211,7 @@ STATIC FUNCTION fakt_izracunaj_ukupnu_vrijednost_racuna( idfirma, idtipdok, brdo
    aIznosi := get_a_iznos( idfirma, idtipdok, brdok )
    _data_total := fakt_izracunaj_total( aIznosi, cIdPartner, idtipdok )
 
-   nUkupno := _data_total["ukupno"]
+   nUkupno := _data_total[ "ukupno" ]
 
    RETURN nUkupno
 
@@ -234,16 +234,16 @@ STATIC FUNCTION fakt_reklamirani_racun_preduslovi( idfirma, idtipdok, brdok, dev
    ENDIF
 
    IF !lForsirano
-      MsgBeep( "Želite izdati reklamirani račun.#Prije toga je neophodno da postoji minimalan depozit u uređaju.")
+      MsgBeep( "Želite izdati reklamirani račun.#Prije toga je neophodno da postoji minimalan depozit u uređaju." )
    ENDIF
 
    IF !lForsirano .AND. Pitanje(, "Da li je potrebno napraviti unos depozita (D/N) ?", " " ) == "N"
-       RETURN lRet
+      RETURN lRet
    ENDIF
 
-   nDepozit := ABS( fakt_izracunaj_ukupnu_vrijednost_racuna( idfirma, idtipdok, brdok ) )
+   nDepozit := Abs( fakt_izracunaj_ukupnu_vrijednost_racuna( idfirma, idtipdok, brdok ) )
 
-   nDepozit := ROUND( nDepozit + 1, 0 )
+   nDepozit := Round( nDepozit + 1, 0 )
 
    fprint_delete_answer( device_params )
 
@@ -292,7 +292,7 @@ FUNCTION postoji_fiskalni_racun( id_firma, tip_dok, br_dok, model )
    cWhere += " AND idtipdok = " + sql_quote( tip_dok )
    cWhere += " AND brdok = " + sql_quote( br_dok )
 
-   IF ALLTRIM( model ) $ "FPRINT#HCP"
+   IF AllTrim( model ) $ "FPRINT#HCP"
       cWhere += " AND ( ( iznos > 0 AND fisc_rn > 0 ) "
       cWhere += "  OR ( iznos < 0 AND fisc_st > 0 ) ) "
    ELSE
@@ -398,6 +398,11 @@ STATIC FUNCTION fakt_izracunaj_total( arr, partner, tip_dok )
 
    NEXT
 
+   // svesti na dvije decimale
+   _calc[ "ukupno" ] := Round( _calc[ "ukupno" ], 2 )
+   _calc[ "osnovica" ] := Round( _calc[ "osnovica" ], 2 )
+   _calc[ "pdv" ] := Round( _calc[ "pdv" ], 2 )
+
    SELECT ( _t_area )
 
    RETURN _calc
@@ -440,7 +445,7 @@ STATIC FUNCTION get_a_iznos( idfirma, idtipdok, brdok )
          _tar := PadR( "PDV17", 6 )
       ENDIF
 
-      _scan := AScan( _a_iznos, {|var| VAR[ 1 ] == _tar } )
+      _scan := AScan( _a_iznos, {| var| VAR[ 1 ] == _tar } )
 
       IF _scan == 0
          AAdd( _a_iznos, { PadR( _tar, 6 ), _iznos } )
@@ -570,7 +575,7 @@ STATIC FUNCTION fakt_fiscal_stavke_racuna( id_firma, tip_dok, br_dok, storno, pa
       _art_plu := roba->fisc_plu
 
       IF __device_params[ "plu_type" ] == "D" .AND.  ;
-        ( __device_params[ "vp_sum" ] <> 1 .OR. tip_dok $ "11" .OR. Len( _a_iznosi ) > 1 )
+            ( __device_params[ "vp_sum" ] <> 1 .OR. tip_dok $ "11" .OR. Len( _a_iznosi ) > 1 )
 
          _art_plu := auto_plu( nil, nil,  __device_params )
 
@@ -728,7 +733,7 @@ STATIC FUNCTION vrsta_placanja_za_fiskalni_uredjaj( tip_dok, vrsta_placanja )
 STATIC FUNCTION dokument_se_moze_fiskalizovati( tip_dok )
 
    IF tip_dok $ "10#11"
-       RETURN .T.
+      RETURN .T.
    ENDIF
 
    RETURN .F.
@@ -842,7 +847,7 @@ STATIC FUNCTION fakt_fiscal_podaci_partnera( id_firma, tip_dok, br_dok, storno, 
    _partn_id := field->idpartner
    _vrsta_p := field->idvrstep
 
-   IF EMPTY( _partn_id )
+   IF Empty( _partn_id )
       MsgBeep( "Šifra partnera ne postoji, izdavanje računa nije moguće !" )
       RETURN .F.
    ENDIF
@@ -967,7 +972,7 @@ STATIC FUNCTION obradi_gresku_izdavanja_fiskalnog_racuna( device_params, error_l
    fprint_delete_out( cPath + cFilename )
 
    cMsg := "ERR FISC: stampa racuna err:" + AllTrim( Str( error_level ) ) + ;
-         "##" + cPath + cFilename
+      "##" + cPath + cFilename
 
    log_write( cMsg, 2 )
 
@@ -989,7 +994,7 @@ STATIC FUNCTION obrada_greske_na_liniji_55_reklamirani_racun( idfirma, idtipdok,
    MsgBeep( "Greška se desila kod izdavanja reklamiranog računa.#Mogući uzrok je nedostatak depozita u uređaju." )
 
    IF Pitanje(, "Želite li otkloniti uzrok dodavanjem depozita (D/N) ?", " " ) == "N"
-       RETURN lRet
+      RETURN lRet
    ENDIF
 
    fprint_delete_answer( device_params )

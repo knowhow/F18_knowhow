@@ -458,7 +458,7 @@ FUNCTION provjeri_kolicine_i_cijene_fiskalnog_racuna( items, storno, nLevel, drv
       lImaGreska := .F.
 
       _cijena := items[ _i, 5 ]
-      _plu_cijena := items[ _i, 10 ]
+      _plu_cijena := items[ _i, 4 ]
       _kolicina := items[ _i, 6 ]
       _naziv := items[ _i, 4 ]
 

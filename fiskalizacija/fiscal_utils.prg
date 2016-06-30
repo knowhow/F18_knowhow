@@ -457,9 +457,9 @@ FUNCTION provjeri_kolicine_i_cijene_fiskalnog_racuna( items, storno, nLevel, drv
 
       lImaGreska := .F.
 
-      _cijena := items[ _i, 5 ]
-      _plu_cijena := items[ _i, 4 ]
-      _kolicina := items[ _i, 6 ]
+      _cijena := Round( items[ _i, 5 ], 4 )
+      _plu_cijena := Round( items[ _i, 10 ], 4 )
+      _kolicina := Round( items[ _i, 6 ], 4 )
       _naziv := items[ _i, 4 ]
 
       IF ( !is_ispravna_kolicina( _naziv, _kolicina ) .OR. !is_ispravna_cijena( _naziv, _cijena ) ) .OR. !is_ispravna_cijena( _naziv, _plu_cijena )

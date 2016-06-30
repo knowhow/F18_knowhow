@@ -144,6 +144,29 @@ FUNCTION set_ptxt_sekvence()
    RETURN .T.
 
 
+FUNCTION set_0_sekvence()
+
+   PUBLIC gpIni :=  ""
+   PUBLIC gpCOND := ""
+   PUBLIC gpCOND2 := ""
+   PUBLIC gp10CPI := ""
+   PUBLIC gP12CPI := ""
+   PUBLIC gPB_ON := ""
+   PUBLIC gPB_OFF := ""
+   PUBLIC gPU_ON := ""
+   PUBLIC gPU_OFF := ""
+   PUBLIC gPI_ON := ""
+   PUBLIC gPI_OFF := ""
+   PUBLIC gPFF   := ""
+   PUBLIC gPO_Port := ""
+   PUBLIC gPO_Land := ""
+   PUBLIC gPPort := "1"
+   PUBLIC gRPL_Normal := ""
+   PUBLIC gRPL_Gusto := ""
+   PUBLIC gPPTK := " "
+
+   RETURN .T.
+
 FUNCTION set_global_vars_1()
 
    LOCAL cImeDbf

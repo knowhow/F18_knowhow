@@ -155,7 +155,7 @@ FUNCTION ImpTxtDok()
       RETURN .F.
    ENDIF
 
-   IF kalk_imp_check_broj_fakture_exist( @aFaktEx ) == 0
+   IF kalk_imp_check_broj_fakture_exist( @aFaktEx )
       IF Pitanje(, "Preskociti ove dokumente prilikom importa (D/N)?", "D" ) == "D"
          lFtSkip := .T.
       ENDIF
@@ -669,15 +669,18 @@ FUNCTION cre_kalk_priprt()
  */
 STATIC FUNCTION kalk_imp_check_broj_fakture_exist( aFakt )
 
-   MsgO( "provjera da li u kalk dokumentima vec postoje brfakt ..." )
+   MsgO( "provjera da li u kalk dokumentima vec postoje brfaktp ..." )
    // aPomFakt := kalk_postoji_faktura_a( gAImpRight )
-   aPomFakt := kalk_postoji_faktura_a()
+   aFakt := kalk_postoji_faktura_a()
    MsgC()
 
-   IF Len( aPomFakt ) > 0
+   IF Len( aFakt ) > 0
 
-      START PRINT EDITOR
-
+      start_print_editor()
+      ?
+      ? "Kontrolom azuriranih KALK dokumenata, uoceno da se vec pojavljuju"
+      ? "navedeni brojevi faktura iz fajla za import:"
+      ?
       ?
       ? "Kontrola azuriranih dokumenata:"
       ? "-------------------------------"
@@ -685,26 +688,20 @@ STATIC FUNCTION kalk_imp_check_broj_fakture_exist( aFakt )
       ? "-------------------------------"
       ?
 
-      FOR i := 1 TO Len( aPomFakt )
-         ? aPomFakt[ i, 1 ] + " => " + aPomFakt[ i, 2 ]
+      FOR i := 1 TO Len( aFakt )
+         ? aFakt[ i, 1 ] + " => " + aFakt[ i, 2 ]
       NEXT
 
-      ?
-      ? "Kontrolom azuriranih dokumenata, uoceno da se vec pojavljuju"
-      ? "navedeni brojevi faktura iz fajla za import !"
-      ?
 
-      FF
-      ENDPRINT
 
-      aFakt := aPomFakt
-      RETURN 0
+      end_print_editor()
+
+      RETURN .T.
 
    ENDIF
 
-   aFakt := aPomFakt
 
-   RETURN 1
+   RETURN .F. // ne postoje azurirane fakture
 
 
 
@@ -720,7 +717,8 @@ STATIC FUNCTION kalk_imp_check_partn_roba_exist()
 
    IF ( Len( aPomPart ) > 0 .OR. Len( aPomRoba ) > 0 )
 
-      START PRINT EDITOR
+
+      start_print_editor()
 
       IF ( Len( aPomPart ) > 0 )
          ? "Lista nepostojecih partnera:"
@@ -742,8 +740,7 @@ STATIC FUNCTION kalk_imp_check_partn_roba_exist()
          ?
       ENDIF
 
-      FF
-      ENDPRINT
+      end_print_editor()
 
       RETURN .F.
    ENDIF
@@ -848,7 +845,7 @@ STATIC FUNCTION CheckPartn()
 
    IF ( Len( aPomPart ) > 0 )
 
-      START PRINT EDITOR
+      start_print_editor()
 
       ? "Lista nepostojecih partnera:"
       ? "----------------------------"
@@ -858,9 +855,7 @@ STATIC FUNCTION CheckPartn()
          ?? " " + aPomPart[ i, 2 ]
       NEXT
       ?
-
-      FF
-      ENDPRINT
+      end_print_editor()
 
    ENDIF
 

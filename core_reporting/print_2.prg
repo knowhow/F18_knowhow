@@ -113,6 +113,11 @@ STATIC FUNCTION set_print_codes( cOpt )
       gPrinter := "E"
       set_epson_print_codes()
 
+   CASE cOpt == "0"
+      AltD()
+      gPrinter := "0"
+      set_0_sekvence()
+
    OTHERWISE
 
       gPrinter := "R"
@@ -231,6 +236,9 @@ FUNCTION f18_end_print( cFileName, xPrintOpt )
    RETURN .T.
 
 
+FUNCTION start_print_editor()
+   RETURN start_print( "0" )
+
 FUNCTION start_print( xPrintOpt, lCloseDbf )
 
    LOCAL cDocumentName
@@ -249,6 +257,11 @@ FUNCTION start_print( xPrintOpt, lCloseDbf )
    ENDIF
 
    RETURN .T.
+
+
+FUNCTION end_print_editor()
+
+   RETURN f18_end_print( NIL, "0" )
 
 
 FUNCTION end_print( xPrintOpt )

@@ -107,7 +107,8 @@ STATIC FUNCTION check_barkod_import()
       RETURN aErr
    ENDIF
 
-   START PRINT CRET
+   start_print_editor()
+
    ?
    ? "Lista nepostojecih artikala:"
    ? "--------------------------------------------------------------"
@@ -119,7 +120,7 @@ STATIC FUNCTION check_barkod_import()
    NEXT
 
    FF
-   ENDPRINT
+   end_print()
 
    RETURN aErr
 

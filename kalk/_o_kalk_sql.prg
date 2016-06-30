@@ -89,6 +89,9 @@ FUNCTION find_kalk_doks_by_broj_fakture( cIdVd, cBrFaktP )
 
    use_sql_kalk_doks( hParams )
    GO TOP
+   
+   RETURN ! Eof()
+
 
 FUNCTION find_kalk_doks_by_broj_dokumenta( cIdFirma, cIdvd, cBrDok )
 
@@ -361,7 +364,7 @@ FUNCTION use_sql_kalk( hParams )
       cSql += coalesce_num_num_zarez( "fcj3", 18, 8 )
       cSql += coalesce_num_num_zarez( "prevoz", 18, 8 )
       cSql += coalesce_num_num_zarez( "prevoz2", 18, 8 )
-  
+
       cSql += coalesce_num_num_zarez( "banktr", 18, 8 )
       cSql += coalesce_num_num_zarez( "cardaz", 18, 8 )
       cSql += coalesce_num_num_zarez( "spedtr", 18, 8 )

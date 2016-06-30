@@ -681,7 +681,7 @@ STATIC FUNCTION CheckDok()
 
    IF ( Len( aPomArt ) > 0 )
 
-      START PRINT CRET
+      start_print_editor()
 
       IF ( Len( aPomArt ) > 0 )
          ? "Lista nepostojecih artikala:"
@@ -699,8 +699,7 @@ STATIC FUNCTION CheckDok()
          ?
       ENDIF
 
-      FF
-      ENDPRINT
+      end_print_editor()
 
       RETURN .F.
 

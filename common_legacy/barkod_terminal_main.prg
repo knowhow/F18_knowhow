@@ -119,8 +119,7 @@ STATIC FUNCTION check_barkod_import()
       @ PRow(), PCol() + 1 SAY "_________________________________"
    NEXT
 
-   FF
-   end_print()
+   end_print_editor()
 
    RETURN aErr
 

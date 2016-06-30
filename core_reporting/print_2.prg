@@ -239,6 +239,7 @@ FUNCTION f18_end_print( cFileName, xPrintOpt )
 FUNCTION start_print_editor()
    RETURN start_print( "0" )
 
+
 FUNCTION start_print( xPrintOpt, lCloseDbf )
 
    LOCAL cDocumentName

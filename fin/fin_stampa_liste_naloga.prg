@@ -99,7 +99,7 @@ FUNCTION fin_stampa_liste_naloga()
    xPrintOpt[ "layout" ] := "portrait"
    xPrintOpt[ "opdf" ] := s_oPDF
    xPrintOpt[ "font_size" ] := 9
-   IF !f18_start_print( NIL, xPrintOpt,  "LISTA FINANSIJSKIH NALOGA NA DAN: " + DToC( Date() ) )
+   IF f18_start_print( NIL, xPrintOpt,  "LISTA FINANSIJSKIH NALOGA NA DAN: " + DToC( Date() ) ) == "X"
       RETURN .F.
    ENDIF
    

@@ -131,8 +131,8 @@ FUNCTION PrenosFin()
    ENDIF
 
    IF lPrenos4 .OR. lPrenos5 .OR. lPrenos6
-      //SELECT ( F_SUBAN )
-      //usex ( "suban" )
+      // SELECT ( F_SUBAN )
+      // usex ( "suban" )
       find_suban_by_broj_dokumenta( gFirma )
       IF lPrenos4
          INDEX ON idfirma + idkonto + idpartner + idrj + funk + fond TO SUBSUB
@@ -143,9 +143,9 @@ FUNCTION PrenosFin()
       IF lPrenos6
          INDEX ON idfirma + idkonto + idpartner + idrj TO SUBSUB6
       ENDIF
-      //USE
-      //SELECT ( F_SUBAN )
-      //usex ( "suban" )
+      // USE
+      // SELECT ( F_SUBAN )
+      // usex ( "suban" )
       IF lPrenos4
          SET INDEX TO SUBSUB
          SET ORDER TO TAG "SUBSUB"
@@ -162,9 +162,9 @@ FUNCTION PrenosFin()
 
       find_suban_by_konto_partner( gFirma )
 
-      //SELECT ( F_SUBAN )
-      //usex ( "suban" )
-      //SET ORDER TO TAG "3" - IdFirma+IdKonto+IdPartner+BrDok+dtos(DatDok)"
+      // SELECT ( F_SUBAN )
+      // usex ( "suban" )
+      // SET ORDER TO TAG "3" - IdFirma+IdKonto+IdPartner+BrDok+dtos(DatDok)"
    ENDIF
 
    IF !( cFilter == ".t." )
@@ -313,10 +313,10 @@ FUNCTION PrenosFin()
                                  IF Empty( DatVal ) .AND. !( IsVindija() .AND. idvn == "09" )
                                     dDatVal := datdok
                                  ELSE
-                                    dDatVal := datval
+                                    dDatVal := fix_dat_var( datval, .T. )
                                  ENDIF
                               ELSE
-                                 IF Empty( DatVal )
+                                 IF Empty( fix_dat_var( DatVal, .T. ) )
                                     dDatVal := datdok
                                  ELSE
                                     dDatVal := datval
@@ -358,7 +358,7 @@ FUNCTION PrenosFin()
                            idkonto WITH cIdkonto, ;
                            idpartner WITH cidpartner, ;
                            brdok  WITH cBrDok, ;
-                           datdok WITH dDatDo + 1,;
+                           datdok WITH dDatDo + 1, ;
                            datval WITH dDatVal
 
                         IF !( cFilter == ".t." )
@@ -749,19 +749,19 @@ FUNCTION fin_prekart()
    GO TOP
 
    ImeKol := { ;
-      { "F.",            {|| IdFirma }, "IdFirma" },;
-      { "VN",            {|| IdVN    }, "IdVN" },;
+      { "F.",            {|| IdFirma }, "IdFirma" }, ;
+      { "VN",            {|| IdVN    }, "IdVN" }, ;
       { "Br.",           {|| BrNal   }, "BrNal" }, ;
-      { "R.br",          {|| RBr     }, "rbr", {|| wrbr() }, {|| vrbr() } },;
-      { "Konto",         {|| IdKonto }, "IdKonto", {|| .T. }, {|| P_Konto( @_IdKonto ), .T. } },;
-      { "Novi konto",    {|| konto2  }, "konto2", {|| .T. }, {|| P_Konto( @_konto2 ), .T. } },;
-      { "Partner",       {|| IdPartner }, "IdPartner", {|| .T. }, {|| P_Firma( @_idpartner ), .T. } },;
-      { "Novi partner",  {|| part2  }, "part2", {|| .T. }, {|| P_Firma( @_part2 ), .T. } },;
-      { "Br.veze ",      {|| BrDok   }, "BrDok" },;
-      { "Datum",         {|| DatDok  }, "DatDok" },;
-      { "D/P",           {|| D_P     }, "D_P" },;
-      { ValDomaca(),     {|| Transform( IznosBHD, FormPicL( gPicBHD, 15 ) ) }, "iznos " + AllTrim( ValDomaca() ) },;
-      { ValPomocna(),    {|| Transform( IznosDEM, FormPicL( gPicDEM, 10 ) ) }, "iznos " + AllTrim( ValPomocna() ) },;
+      { "R.br",          {|| RBr     }, "rbr", {|| wrbr() }, {|| vrbr() } }, ;
+      { "Konto",         {|| IdKonto }, "IdKonto", {|| .T. }, {|| P_Konto( @_IdKonto ), .T. } }, ;
+      { "Novi konto",    {|| konto2  }, "konto2", {|| .T. }, {|| P_Konto( @_konto2 ), .T. } }, ;
+      { "Partner",       {|| IdPartner }, "IdPartner", {|| .T. }, {|| P_Firma( @_idpartner ), .T. } }, ;
+      { "Novi partner",  {|| part2  }, "part2", {|| .T. }, {|| P_Firma( @_part2 ), .T. } }, ;
+      { "Br.veze ",      {|| BrDok   }, "BrDok" }, ;
+      { "Datum",         {|| DatDok  }, "DatDok" }, ;
+      { "D/P",           {|| D_P     }, "D_P" }, ;
+      { ValDomaca(),     {|| Transform( IznosBHD, FormPicL( gPicBHD, 15 ) ) }, "iznos " + AllTrim( ValDomaca() ) }, ;
+      { ValPomocna(),    {|| Transform( IznosDEM, FormPicL( gPicDEM, 10 ) ) }, "iznos " + AllTrim( ValPomocna() ) }, ;
       { "Opis",          {|| Opis      }, "OPIS" }, ;
       { "K1",            {|| k1      }, "k1" }, ;
       { "K2",            {|| k2      }, "k2" }, ;
@@ -855,7 +855,7 @@ STATIC FUNCTION EPPK()
 STATIC FUNCTION AzurPPK()
 
    LOCAL lIndik1 := .F., lIndik2 := .F., nZapisa := 0, nSlog := 0, cStavka := "   "
-   LOCAL hParams := hb_hash()
+   LOCAL hParams := hb_Hash()
 
    SELECT SUBAN
    SET FILTER TO

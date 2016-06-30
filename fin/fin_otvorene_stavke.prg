@@ -1109,17 +1109,17 @@ FUNCTION StKart( fSolo, fTiho, bFilter )
 
             IF lEx .AND. D_P == cDugPot
                aFaktura[ 1 ] := DATDOK
-               aFaktura[ 2 ] := DATVAL
+               aFaktura[ 2 ] := fix_dat_var( DATVAL, .T. )
             ENDIF
 
             IF fTiho
                // poziv iz procedure RekPPG()
                // za izvjestaj maksuz radjen za Opresu³22.03.01.³
                // ------------------------------------ÀÄ MSÄÄÄÄÄÙ
-               IF afaktura[ 3 ] < iif( Empty( DatVal ), DatDok, DatVal )
+               IF aFaktura[ 3 ] < iif( Empty( fix_dat_var( DATVAL, .T. ) ), DatDok, DatVal )
                   // datum zadnje promjene iif ubacen 03.11.2000 eh
                   // ----------------------------------------------
-                  aFaktura[ 3 ] := iif( Empty( DatVal ), DatDok, DatVal )
+                  aFaktura[ 3 ] := iif( Empty( fix_dat_var( DATVAL, .T. ) ), DatDok, DatVal )
                ENDIF
             ELSE
                // kao u asist.otv.stavki - koristi npr. Exclusive³22.03.01.³
@@ -1159,7 +1159,7 @@ FUNCTION StKart( fSolo, fTiho, bFilter )
                Scatter()
                _idpartner := cIdPartner
                _datdok    := aFaktura[ 1 ]
-               _datval    := aFaktura[ 2 ]
+               _datval    := fix_dat_var( aFaktura[ 2 ], .T. )
                _datzpr    := aFaktura[ 3 ]
                IF Empty( _DatDok ) .AND. Empty( _DatVal )
                   _DatVal := _DatZPR

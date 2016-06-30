@@ -545,7 +545,7 @@ STATIC FUNCTION set_datval_datdok()
 
    DO WHILE !Eof()
 
-      IF field->idkonto == _id_konto .AND. Empty( field->datval )
+      IF field->idkonto == _id_konto .AND. datval_prazan()
 
          _ret := .T. // bilo je promjena
 

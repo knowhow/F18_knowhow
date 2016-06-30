@@ -258,7 +258,7 @@ FUNCTION konsult_otvorene_stavke()
 
          IF field->d_p == cPrirkto
             aFaktura[ 1 ] := field->DATDOK
-            aFaktura[ 2 ] := field->DATVAL
+            aFaktura[ 2 ] := fix_dat_var( field->DATVAL, .T. )
          ENDIF
 
          IF aFaktura[ 3 ] < field->DatDok

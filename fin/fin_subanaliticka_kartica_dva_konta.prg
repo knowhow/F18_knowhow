@@ -337,10 +337,10 @@ FUNCTION fin_suban_kartica2( lOtvSt )
             IF ck14 == "1"
                @ PRow(), PCol() + 1 SAY k1 + "-" + k2 + "-" + K3Iz256( k3 ) + k4
             ELSEIF ck14 == "2"
-               @ PRow(), PCol() + 1 SAY DatVal
+               @ PRow(), PCol() + 1 SAY get_datval_field()
             ELSE
                nC7 := PCol() + 1
-               @ PRow(), nc7 SAY DatVal
+               @ PRow(), nc7 SAY get_datval_field()
             ENDIF
 
             IF cSazeta == "N"

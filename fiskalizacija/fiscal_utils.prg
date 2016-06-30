@@ -547,18 +547,18 @@ STATIC FUNCTION is_ispravna_cijena( cNaziv, nCijena )
 
 
 
-STATIC FUNCTION validator_vrijednosti( cNaziv, value, nMinValue, nMaxValue, dec )
+STATIC FUNCTION validator_vrijednosti( cNaziv, nValue, nMinValue, nMaxValue, nDec )
 
    LOCAL cMsg
 
-   IF value > nMaxValue .OR. value < nMinValue
-      cMsg := cNaziv + " / val: " + AllTrim( Str( value ) ) + " min: " + AllTrim( Str( nMinValue ) ) + " max: " +  AllTrim( Str( nMaxValue ) )
+   IF nValue > nMaxValue .OR. nValue < nMinValue
+      cMsg := cNaziv + " / val: " + AllTrim( Str( nValue ) ) + " min: " + AllTrim( Str( nMinValue ) ) + " max: " +  AllTrim( Str( nMaxValue ) )
       error_bar( "fisk", cMsg )
       RETURN .F.
    ENDIF
 
-   IF dec <> NIL .AND. ( Abs( value ) - Abs( Round( value, dec ) ) <> 0 )
-      cMsg := cNaziv + " / val: " + AllTrim( Str( value ) ) + " dec max: " + AllTrim( Str( dec ) )
+   IF nDec <> NIL .AND. ( Abs( nValue ) - Abs( Round( nValue, nDec ) ) <> 0 )
+      cMsg := cNaziv + " / val: " + AllTrim( Str( nValue ) ) + " dec max: " + AllTrim( Str( nDec ) )
       error_bar( "fisk", cMsg )
       RETURN .F.
    ENDIF

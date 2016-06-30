@@ -46,9 +46,7 @@ FUNCTION fin_spec_otv_stavke_preko_dana()
 
    // uzeti u obzir datum valutiranja
    PRIVATE cObzirDatVal := "D"
-   IF my_get_from_ini( "FIN", "Ostav_DatVal", "D", KUMPATH ) == "N"
-      cObzirDatVal := "N"
-   ENDIF
+
 
 
    Box( "skpoi", 14, 70, .F. )
@@ -97,7 +95,7 @@ FUNCTION fin_spec_otv_stavke_preko_dana()
 
    EOF CRET
 
-  
+
    IF !start_print()
       RETURN .F.
    ENDIF
@@ -170,7 +168,7 @@ FUNCTION fin_spec_otv_stavke_preko_dana()
                   // dDatDok:=datdok
                   IF cObzirDatVal == "D"
                      // uzima se u obzir datum valutiranja
-                     dDatDok := iif( Empty( DATVAL ), DATDOK, DATVAL )
+                     dDatDok := iif( datval_prazan(), DATDOK, DATVAL )
                   ELSE
                      dDatDok := DatDok
                   ENDIF

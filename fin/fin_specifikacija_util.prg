@@ -171,7 +171,7 @@ FUNCTION IspisRoc2( i )
 // -------------------------------------
 FUNCTION RRocnost()
 
-   LOCAL nDana := Abs( IF( Empty( datval ), datdok, datval ) - dNaDan ), nVrati
+   LOCAL nDana := Abs( IIF( datval_prazan() , datdok, datval ) - dNaDan ), nVrati
 
    IF nDana <= nDoDana1
       nVrati := 1
@@ -210,7 +210,7 @@ FUNCTION IspisRocnosti()
 // --------------------------------
 FUNCTION Rocnost()
 
-   LOCAL nDana := Abs( IF( Empty( datval ), datdok, datval ) - dNaDan ), cVrati
+   LOCAL nDana := Abs( IIF( datval_prazan(), datdok, datval ) - dNaDan ), cVrati
 
    IF nDana <= nDoDana1
       cVrati := Str( nDoDana1, 3 )

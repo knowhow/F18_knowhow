@@ -208,7 +208,7 @@ FUNCTION SpecDugPartnera()
             _pot       := nPot
             _dug2      := nDug2
             _pot2      := nPot2
-            _otvst     := IOF( IIF( Empty( _datval ), _datdok > dNaDan, _datval > dNaDan ), " ", "1" )
+            _otvst     := IIF( IIF( Empty( _datval ), _datdok > dNaDan, _datval > dNaDan ), " ", "1" )
             Gather()
             SELECT SUBAN
          ENDIF

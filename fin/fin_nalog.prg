@@ -409,7 +409,7 @@ FUNCTION fin_nalog_stampa_fill_psuban( cInd, lAuto, dDatNal, oNalog )
 
          @ PRow(), PCol() + 1 SAY DatDok
          IF gDatVal == "D"
-            @ PRow(), PCol() + 1 SAY DatVal
+            @ PRow(), PCol() + 1 SAY get_datval_field()
          ELSE
             @ PRow(), PCol() + 1 SAY Space( 8 )
          ENDIF

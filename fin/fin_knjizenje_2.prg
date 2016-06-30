@@ -121,7 +121,7 @@ FUNCTION OiNIsplate()
 
    RETURN ( NIL )
 
-
+*/
 
 
 FUNCTION sredi_rbr_fin_nalog( lSilent )
@@ -205,5 +205,3 @@ FUNCTION ChkKtoMark( cIdKonto )
    ENDCASE
 
    RETURN bRet
-
-*/

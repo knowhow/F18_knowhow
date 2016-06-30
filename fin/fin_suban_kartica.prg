@@ -661,7 +661,7 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
                __br_nal := field->brnal
                __r_br := field->rbr
                __dat_nal := field->datdok
-               __dat_val := field->datval
+               __dat_val := fix_dat_var( field->datval, .T. )
                __opis := field->opis
                __br_veze := field->brdok
 
@@ -685,10 +685,10 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
                IF ck14 == "1"
                   @ PRow(), PCol() + 1 SAY k1 + "-" + k2 + "-" + K3Iz256( k3 ) + k4
                ELSEIF ck14 == "2"
-                  @ PRow(), PCol() + 1 SAY DatVal
+                  @ PRow(), PCol() + 1 SAY get_datval_field()
                ELSEIF ck14 == "3"
                   nC7 := PCol() + 1
-                  @ PRow(), nc7 SAY DatVal
+                  @ PRow(), nc7 SAY get_datval_field()
                ENDIF
 
                IF cSazeta == "N"
@@ -1043,7 +1043,7 @@ STATIC FUNCTION _add_to_export( cKonto, cK_naz, cPartn, cP_naz, cVn, cBr, cRbr, 
    REPLACE field->nal_rbr WITH cRbr
    REPLACE field->broj_veze with ( cBrVeze )
    REPLACE field->dat_nal WITH dDatum
-   REPLACE field->dat_val WITH dDatVal
+   REPLACE field->dat_val WITH fix_dat_var( dDatVal, .T. )
    REPLACE field->opis_nal with ( cOpis )
    REPLACE field->duguje WITH nDug
    REPLACE field->potrazuje WITH nPot

@@ -14,6 +14,19 @@
 FIELD idfirma, idvn, brnal, datnal
 
 
+FUNCTION datval_prazan()
+
+   RETURN Empty( fix_dat_var( field->datval, .T. ) )
+
+
+FUNCTION get_datval_field()
+
+   RETURN fix_dat_var( DatVal, .T. )
+
+
+
+
+
 FUNCTION o_sql_suban_kto_partner( cIdFirma )
 
    LOCAL hParams := hb_Hash()
@@ -726,7 +739,7 @@ FUNCTION use_sql_suban( hParams )
    cSql += coalesce_char_zarez( "idtipdok", 2 )
    cSql += coalesce_char_zarez( "brdok", 20 )
    cSql += "coalesce(datdok, TO_DATE('','yyyymmdd')) as datdok, coalesce( datval, TO_DATE('','yyyymmdd')) as datval,"
-   //cSql += "datdok,datval,"
+   // cSql += "datdok,datval,"
 
    cSql += coalesce_char_zarez( "otvst", 1 )
    cSql += coalesce_char_zarez( "d_p", 1 )
@@ -840,7 +853,7 @@ STATIC FUNCTION use_sql_suban_where( hParams )
 
    IF hb_HHasKey( hParams, "where" )
       cWhere += iif( Empty( cWhere ), "", " AND " ) +  hParams[ "where" ]
-      altd()
+      AltD()
    ENDIF
 
    RETURN cWhere

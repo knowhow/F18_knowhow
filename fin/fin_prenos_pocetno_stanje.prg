@@ -172,7 +172,7 @@ STATIC FUNCTION _insert_into_fin_priprema( data, konto_data, partn_data, param )
       _br_veze := PadR( hb_UTF8ToStr( _row:FieldGet( _row:FieldPos( "brdok" ) ) ), 20 )
 
       _dat_dok := _row:FieldGet( _row:FieldPos( "datdok" ) )
-      _dat_val := _row:FieldGet( _row:FieldPos( "datval" ) )
+      _dat_val := fix_dat_var( _row:FieldGet( _row:FieldPos( "datval" ) ), .T. )
 
       _otv_st := _row:FieldGet( _row:FieldPos( "otvst" ) )
 
@@ -204,7 +204,7 @@ STATIC FUNCTION _insert_into_fin_priprema( data, konto_data, partn_data, param )
 
             _i_br_veze := PadR( hb_UTF8ToStr( _row2:FieldGet( _row2:FieldPos( "brdok" ) ) ), 20 )
 
-            _i_dat_val := _row2:FieldGet( _row2:FieldPos( "datval" ) )
+            _i_dat_val := fix_dat_var( _row2:FieldGet( _row2:FieldPos( "datval" ) ), .T. )
             IF _i_dat_val == CToD( "" )
                _i_dat_val := _row2:FieldGet( _row2:FieldPos( "datdok" ) )
             ENDIF
@@ -241,7 +241,7 @@ STATIC FUNCTION _insert_into_fin_priprema( data, konto_data, partn_data, param )
          _rec[ "brdok" ] := "PS"
       ELSE
          _rec[ "brdok" ] := _i_br_veze
-         _rec[ "datval" ] := _i_dat_val
+         _rec[ "datval" ] := fix_dat_var( _i_dat_val, .T. )
       ENDIF
 
       IF _tip_prenosa == "1"

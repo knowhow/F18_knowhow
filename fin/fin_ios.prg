@@ -919,7 +919,7 @@ STATIC FUNCTION print_ios_xml( params )
       __br_dok := field->brdok
       __dat_dok := field->datdok
       __opis := AllTrim( field->opis )
-      __dat_val := field->datval
+      __dat_val := fix_dat_var( field->datval )
       _dug_1 := 0
       _pot_1 := 0
       _dug_2 := 0
@@ -947,7 +947,7 @@ STATIC FUNCTION print_ios_xml( params )
                xml_node( "brdok", to_xml_encoding( field->brdok ) )
                xml_node( "opis", to_xml_encoding( field->opis ) )
                xml_node( "datdok", DToC( field->datdok ) )
-               xml_node( "datval", DToC( field->datval ) )
+               xml_node( "datval", DToC( fix_dat_var( field->datval ) ) )
 
                IF _din_dem == "1"
                   xml_node( "dug", AllTrim( Str( iif( field->d_p == "1", field->iznosbhd, 0 ), 12, 2 ) ) )
@@ -1026,8 +1026,8 @@ STATIC FUNCTION print_ios_xml( params )
                xml_node( "rbr", AllTrim( Str( ++_rbr ) ) )
                xml_node( "brdok", to_xml_encoding( __br_dok ) )
                xml_node( "opis", to_xml_encoding( __opis ) )
-               xml_node( "datdok", DToC( __dat_dok ) )
-               xml_node( "datval", DToC( __dat_val ) )
+               xml_node( "datdok", DToC( fix_dat_var( __dat_dok ) ) )
+               xml_node( "datval", DToC( fix_dat_var( __dat_val ) ) )
                xml_node( "dug", AllTrim( Str( _dug_1, 12, 2 ) ) )
                xml_node( "pot", AllTrim( Str( _pot_1, 12, 2 ) ) )
 
@@ -1248,7 +1248,7 @@ STATIC FUNCTION print_ios_txt( params )
       cBrDok := field->brdok
       dDatdok := field->datdok
       cOpis := AllTrim( field->opis )
-      dDatVal := field->datval
+      dDatVal := fix_dat_var( field->datval )
       nDBHD := 0
       nPBHD := 0
       nDDEM := 0
@@ -1278,7 +1278,7 @@ STATIC FUNCTION print_ios_txt( params )
                _n_opis := PCol() + 1
                @ PRow(), _n_opis SAY PadR( field->Opis, 20 )
                @ PRow(), PCol() + 1 SAY field->DatDok
-               @ PRow(), PCol() + 1 SAY field->DatVal
+               @ PRow(), PCol() + 1 SAY fix_dat_var( field->DatVal )
 
                IF _din_dem == "1"
                   @ PRow(), nCol1 SAY iif( field->D_P == "1", field->iznosbhd, 0 ) PICT picBHD

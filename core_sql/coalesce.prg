@@ -15,7 +15,13 @@
 /*
    1000-01-01 => CtoD("")
 */
-FUNCTION fix_dat_var( xVar )
+FUNCTION fix_dat_var( xVar, lNilToDate )
+
+   hb_default( @lNilToDate, .F. )
+
+   IF lNilToDate .AND. xVar == NIL
+      RETURN CtoD( "" )
+   ENDIF
 
    IF ValType( xVar ) != "D"
       RETURN xVar

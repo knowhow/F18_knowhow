@@ -830,10 +830,10 @@ FUNCTION edit_fin_pripr()
 
       RETURN DE_REFRESH
 
-   CASE Ch == K_ALT_I
+  // CASE Ch == K_ALT_I
 
-      fin_set_broj_dokumenta()
-      OiNIsplate()
+  //    fin_set_broj_dokumenta()
+  //    OiNIsplate()
 
       RETURN DE_CONT
 

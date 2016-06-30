@@ -105,11 +105,11 @@ FUNCTION prenos_fin_kam()
             IF field->d_p == "1"
 
                IF Empty( _dat_pocetka )
-                  IF Empty( field->datval )
+                  IF Empty( fix_dat_var( field->datval, .T. ) )
                      _dat_pocetka := field->datdok + _dodaj_dana
                   ELSE
                      // datum valutiranja
-                     _dat_pocetka := field->datval
+                     _dat_pocetka := fix_dat_var( field->datval, .T. )
                   ENDIF
                ENDIF
 

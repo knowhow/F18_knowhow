@@ -11,9 +11,9 @@
 
 #include "f18.ch"
 
-/* OiNIsplate()
+/* OiNIsplate
  *     Odobrenje i nalog isplate
- */
+
 FUNCTION OiNIsplate()
 
    LOCAL nRec := 0
@@ -205,3 +205,5 @@ FUNCTION ChkKtoMark( cIdKonto )
    ENDCASE
 
    RETURN bRet
+
+*/

@@ -164,7 +164,7 @@ FUNCTION SpecDugPartnera()
 
             IF D_P == cDugPot
                aFaktura[ 1 ] := DATDOK
-               aFaktura[ 2 ] := DATVAL
+               aFaktura[ 2 ] := fix_dat_var( DATVAL, .T. )
             ENDIF
 
             IF aFaktura[ 3 ] < DatDok  // datum zadnje promjene
@@ -201,14 +201,14 @@ FUNCTION SpecDugPartnera()
             Scatter()
             _idpartner := cIdPartner
             _datdok    := aFaktura[ 1 ]
-            _datval    := aFaktura[ 2 ]
+            _datval    := fix_dat_var( aFaktura[ 2 ], .T. )
             _datzpr    := aFaktura[ 3 ]
             _brdok     := cBrDok
             _dug       := nDug
             _pot       := nPot
             _dug2      := nDug2
             _pot2      := nPot2
-            _otvst     := IF( IF( Empty( _datval ), _datdok > dNaDan, _datval > dNaDan ), " ", "1" )
+            _otvst     := IOF( IIF( Empty( _datval ), _datdok > dNaDan, _datval > dNaDan ), " ", "1" )
             Gather()
             SELECT SUBAN
          ENDIF

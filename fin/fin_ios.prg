@@ -1294,7 +1294,7 @@ STATIC FUNCTION print_ios_txt( params )
                      field->brdok, ;
                      field->opis, ;
                      field->datdok, ;
-                     field->datval, ;
+                     fix_dat_var( field->datval ), ;
                      iif( field->d_p == "1", field->iznosbhd, 0 ), ;
                      iif( field->d_p == "2", field->iznosbhd, 0 ) )
                ENDIF
@@ -1341,7 +1341,7 @@ STATIC FUNCTION print_ios_txt( params )
             _n_opis := PCol() + 1
             @ PRow(), _n_opis SAY PadR( cOpis, 20 )
             @ PRow(), PCol() + 1 SAY dDatDok
-            @ PRow(), PCol() + 1 SAY dDatVal
+            @ PRow(), PCol() + 1 SAY fix_dat_var( dDatVal, .T. )
 
          ENDIF
 
@@ -1370,7 +1370,7 @@ STATIC FUNCTION print_ios_txt( params )
                      cBrDok, ;
                      cOpis, ;
                      dDatdok, ;
-                     dDatval, ;
+                     fix_dat_var( dDatval, .T. ), ;
                      nDBHD, ;
                      nPBHD )
                ENDIF
@@ -1399,7 +1399,7 @@ STATIC FUNCTION print_ios_txt( params )
                      cBrdok, ;
                      cOpis, ;
                      dDatdok, ;
-                     dDatval, ;
+                     fix_dat_var( dDatval, .T. ), ;
                      nDDEM, ;
                      nPDEM )
                ENDIF

@@ -116,8 +116,7 @@ FUNCTION ImpTxtDok()
 
    cre_kalk_priprt()
 
-   cExpPath := get_liste_path()
-
+   cExpPath := get_liste_za_import_path()
 
 
    cFFilt := GetImpFilter() // filter za import MP ili VP
@@ -225,7 +224,7 @@ STATIC FUNCTION ImpTxtPartn()
    PRIVATE cExpPath
    PRIVATE cImpFile
 
-   cExpPath := get_liste_path()
+   cExpPath := get_liste_za_import_path()
 
    cFFilt := "p*.p??"
 
@@ -287,7 +286,7 @@ STATIC FUNCTION ImpTxtRoba()
    PRIVATE cExpPath
    PRIVATE cImpFile
 
-   cExpPath := get_liste_path()
+   cExpPath := get_liste_za_import_path()
 
    cFFilt := "s*.s??"
 

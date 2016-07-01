@@ -150,7 +150,7 @@ FUNCTION ImpCSVOst()
    PRIVATE cImpFile
 
    // setuj varijablu putanje exportovanih fajlova
-   cExpPath := get_liste_path()
+   cExpPath := get_liste_za_import_path()
 
    // daj mi filter za CSV fajlove
    cFFilt := GetImpFilter()
@@ -192,7 +192,7 @@ FUNCTION ImpCSVDok()
    PRIVATE cImpFile
 
    // setuj varijablu putanje exportovanih fajlova
-   cExpPath := get_liste_path()
+   cExpPath := get_liste_za_import_path()
 
    // daj mi filter za import MP ili VP
    cFFilt := GetImpFilter()
@@ -305,13 +305,14 @@ STATIC FUNCTION SetTblDok( aDbf )
    AAdd( aDbf, { "trosk4", "N", 14, 5 } )
    AAdd( aDbf, { "trosk5", "N", 14, 5 } )
 
-   RETURN
+   RETURN .T.
 
 
 /*
  Vraca podesenje putanje do exportovanih fajlova
 */
-FUNCTION get_liste_path()
+
+FUNCTION get_liste_za_import_path()
 
 LOCAL cPath
 

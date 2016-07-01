@@ -38,7 +38,6 @@ FUNCTION browse_kalk_dokumenti()
    o_koncij()
 
    O_KONTO
-   altd()
    find_kalk_doks_by_tip_datum( cFirma, NIL, dDatOd, dDatDo )
    set_filter_kalk_doks( cFirma, cIdVd, dDatOd, dDatDo, cMagKto, cProdKto, cPartner )
    GO TOP

@@ -126,7 +126,6 @@ STATIC FUNCTION stampaj_tkm( vars )
    _t_rabat := 0
 
    SELECT r_export
-   altd()
    GO TOP
 
    DO WHILE !Eof()

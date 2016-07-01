@@ -21,7 +21,7 @@ FUNCTION VRoba( lSay )
    ENDIF
 
    IF lSay
-      Reci( 11, 23, Trim( Left( roba->naz, 40 ) ) + " (" + AllTrim( roba->jmj ) + ")", 40 )
+      say_from_valid( 11, 23, Trim( Left( roba->naz, 40 ) ) + " (" + AllTrim( roba->jmj ) + ")", 40 )
    ENDIF
 
    IF fNovi

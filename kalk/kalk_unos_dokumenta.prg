@@ -243,11 +243,11 @@ STATIC FUNCTION printaj_duple_stavke_iz_pripreme()
    RETURN .T.
 
 
-STATIC FUNCTION kalk_24_rekapitulacija()
+STATIC FUNCTION kalk_kontiraj_alt_k()
 
    my_close_all_dbf()
 
-   kalk_kontiranje()
+   kalk_generisi_finmat()
 
    IF Pitanje(, "Želite li izvršiti kontiranje dokumenta (D/N) ?", "D" ) == "D"
       kalk_kontiranje_naloga()
@@ -284,7 +284,7 @@ FUNCTION kalk_pripr_key_handler()
   //    Savjetnik()
 
    CASE Ch == K_ALT_K
-      RETURN kalk_24_rekapitulacija()
+      RETURN kalk_kontiraj_alt_k()
 
    CASE Ch == K_SH_F9
 
@@ -1347,10 +1347,10 @@ FUNCTION kalk_unos_1( fNovi, atrib )
       RETURN GET1_12()
 
    ELSEIF _idvd == "14"
-      RETURN Get1_14PDV()
+      RETURN kalk_14_get1()
 
    ELSEIF _idvd == "KO"
-      RETURN GET1_14PDV()
+      RETURN kalk_14_get1()
 
    ELSEIF _idvd == "16"
       RETURN kalk_get1_16()
@@ -2210,9 +2210,9 @@ FUNCTION kalk_stampa_dokumenta()
    SET ORDER TO TAG "1"
    GO TOP
 
-   IF ( field->idvd == "24" )
-      RETURN kalk_24_rekapitulacija()
-   ENDIF
+   //IF ( field->idvd == "24" )
+  //    RETURN kalk_kontiraj_alt_k()
+   //ENDIF
 
    fTopsD := .F.
    fFaktD := .F.

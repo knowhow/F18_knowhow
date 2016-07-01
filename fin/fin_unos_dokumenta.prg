@@ -320,7 +320,7 @@ FUNCTION edit_fin_priprema()
 
    @ m_x + 14, m_y + 2 SAY "Partner:" GET _IdPartner PICT "@!" ;
       VALID ;
-      {|| iif( Empty( _idpartner ), Reci( 14, 20, Space( 25 ) ), ), ;
+      {|| iif( Empty( _idpartner ), say_from_valid( 14, 20, Space( 25 ) ), ), ;
       ( P_Firma( @_IdPartner, 14, 20 ) ) .AND. fin_pravilo_partner() .AND. ;
       iif( g_knjiz_help == "D" .AND. !Empty( _idpartner ), fin_partner_prikaz_stanja_ekran( _idpartner, _idkonto, NIL ), .T. ) } ;
       WHEN {|| iif( ChkKtoMark( _idkonto ), .T., .F. ) }

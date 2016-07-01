@@ -157,7 +157,7 @@ FUNCTION Get1_RN()
 
    @ m_x + 11, m_y + 66 SAY "Tarif.brĿ"
    @ m_x + 12, m_y + 2  SAY "Proizvod  " GET _IdRoba PICT "@!" ;
-      valid  {|| P_Roba( @_IdRoba ), Reci( 12, 25, Trim( roba->naz ) + " (" + ROBA->jmj + ")", 40 ), _IdTarifa := iif( fnovi, ROBA->idtarifa, _IdTarifa ), .T. }
+      valid  {|| P_Roba( @_IdRoba ), say_from_valid( 12, 25, Trim( roba->naz ) + " (" + ROBA->jmj + ")", 40 ), _IdTarifa := iif( fnovi, ROBA->idtarifa, _IdTarifa ), .T. }
    @ m_x + 12, m_y + 70 GET _IdTarifa WHEN gPromTar == "N" VALID P_Tarifa( @_IdTarifa )
 
    read; ESC_RETURN K_ESC

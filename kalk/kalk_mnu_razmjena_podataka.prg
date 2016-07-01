@@ -20,7 +20,7 @@ FUNCTION kalk_razmjena_podataka()
    LOCAL _izbor := 1
 
    AAdd( _opc, "1. generisi FIN,FAKT dokumente (kontiraj)      " )
-   AAdd( _opcexe, {|| kalk_kontiranje( .T. ) } )
+   AAdd( _opcexe, {|| kalk_generisi_finmat( .T. ) } )
    AAdd( _opc, "2. iz FAKT generisi KALK dokumente" )
    AAdd( _opcexe, {|| Faktkalk() } )
    AAdd( _opc, "3. iz TOPS generisi KALK dokumente" )

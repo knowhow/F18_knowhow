@@ -446,7 +446,6 @@ STATIC FUNCTION prikazi_greske_provjere_konta_i_partnera( err )
    _line += Space( 1 )
    _line += Replicate( "-", 30 )
 
-altd()
    start_print_editor()
    ?
 

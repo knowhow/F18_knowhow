@@ -12,7 +12,9 @@
 #include "f18.ch"
 
 
-FUNCTION Get1_14PDV()
+FUNCTION kalk_14_get1()
+
+   LOCAL dDatVal := CtoD( "" )
 
    pIzgSt := .F.
 
@@ -25,17 +27,17 @@ FUNCTION Get1_14PDV()
    IF nRbr == 1 .OR. !fnovi
       @ m_x + 6, m_y + 2   SAY "KUPAC:" GET _IdPartner PICT "@!" VALID Empty( _IdPartner ) .OR. P_Firma( @_IdPartner, 6, 18 )
       @ m_x + 7, m_y + 2   SAY "Faktura Broj:" GET _BrFaktP
-      @ m_x + 7, Col() + 2 SAY "Datum:" GET _DatFaktP   ;
-         valid {|| .T. }
+      @ m_x + 7, Col() + 2 SAY "Datum:" GET _DatFaktP   valid {|| .T. }
+      @ m_x + 7, Col() + 2 SAY "DatVal:" GET dDatVal ;
+         WHEN  { || dDatVal := get_kalk_14_datval( _brdok ), .T. } ;
+         VALID { || update_kalk_14_datval( _BrDok, dDatVal ), .T. }
       _IdZaduz := ""
       _Idkonto := "1200"
       PRIVATE cNBrDok := _brdok
-      @ m_x + 9, m_y + 2 SAY "Magacinski konto razduzuje"  GET _IdKonto2 ;
+      @ m_x + 9, m_y + 2 SAY8 "Magacinski konto razdužuje"  GET _IdKonto2 ;
          valid ( Empty( _IdKonto2 ) .OR. P_Konto( @_IdKonto2, 21, 5 ) ) .AND. ;
          MarkBrDok( fNovi )
-      IF gNW <> "X"
-         @ m_x + 9, m_y + 40 SAY8 "Razdužuje:" GET _IdZaduz2   PICT "@!"  VALID Empty( _idZaduz2 ) .OR. P_Firma( @_IdZaduz2, 21, 5 )
-      ENDIF
+
    ELSE
       @ m_x + 6, m_y + 2   SAY8 "KUPAC: "; ?? _IdPartner
       @ m_x + 7, m_y + 2   SAY8 "Faktura Broj: "; ?? _BrFaktP
@@ -52,14 +54,14 @@ FUNCTION Get1_14PDV()
    @ m_x + 10, m_y + 66 SAY "Tarif.br "
 
    IF lKoristitiBK
-      @ m_x + 11, m_y + 2   SAY "Artikal  " GET _IdRoba PICT "@!S10" when {|| _IdRoba := PadR( _idroba, Val( gDuzSifIni ) ), .T. } valid  {|| P_Roba( @_IdRoba ), Reci( 11, 23, Trim( Left( roba->naz, 40 ) ) + " (" + ROBA->jmj + ")", 40 ), _IdTarifa := iif( fnovi, ROBA->idtarifa, _IdTarifa ), .T. }
+      @ m_x + 11, m_y + 2   SAY8 "Artikal  " GET _IdRoba PICT "@!S10" when {|| _IdRoba := PadR( _idroba, Val( gDuzSifIni ) ), .T. } valid  {|| P_Roba( @_IdRoba ), say_from_valid( 11, 23, Trim( Left( roba->naz, 40 ) ) + " (" + ROBA->jmj + ")", 40 ), _IdTarifa := iif( fnovi, ROBA->idtarifa, _IdTarifa ), .T. }
    ELSE
-      @ m_x + 11, m_y + 2   SAY "Artikal  " GET _IdRoba PICT "@!" valid  {|| P_Roba( @_IdRoba ), Reci( 11, 23, Trim( Left( roba->naz, 40 ) ) + " (" + ROBA->jmj + ")", 40 ), _IdTarifa := iif( fnovi, ROBA->idtarifa, _IdTarifa ), .T. }
+      @ m_x + 11, m_y + 2   SAY8 "Artikal  " GET _IdRoba PICT "@!" valid  {|| P_Roba( @_IdRoba ), say_from_valid( 11, 23, Trim( Left( roba->naz, 40 ) ) + " (" + ROBA->jmj + ")", 40 ), _IdTarifa := iif( fnovi, ROBA->idtarifa, _IdTarifa ), .T. }
    ENDIF
 
    @ m_x + 11, m_y + 70 GET _IdTarifa WHEN gPromTar == "N" VALID P_Tarifa( @_IdTarifa )
 
-   @ m_x + 12, m_y + 2   SAY "Kolicina " GET _Kolicina PICTURE PicKol VALID _Kolicina <> 0
+   @ m_x + 12, m_y + 2   SAY8 "Količina " GET _Kolicina PICTURE PicKol VALID _Kolicina <> 0
 
    READ
    ESC_RETURN K_ESC

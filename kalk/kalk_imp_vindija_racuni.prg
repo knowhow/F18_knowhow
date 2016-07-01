@@ -11,9 +11,12 @@
 
 #include "f18.ch"
 
+MEMVAR cSection, cHistory, aHistory, izbor, opc, opcexe, gAImpPrint, gAImpRKonto
+MEMVAR GetList, m_x, m_y
+MEMVAR cExpPath, cImpFile
 
-// stampanje dokumenata .t. or .f.
-STATIC __stampaj
+
+STATIC __stampaj // stampanje dokumenata .t. or .f.
 STATIC s_lAutom
 
 FUNCTION meni_import_vindija()
@@ -49,7 +52,6 @@ FUNCTION meni_import_vindija()
    AAdd( opc, "P. parametri kontiranja poslovnica" )
    AAdd( opcexe, {|| set_kalk_imp_parametri_za_poslovnica() } )
 
-
    Menu_SC( "itx" )
 
    RETURN .T.
@@ -78,7 +80,7 @@ STATIC FUNCTION aimp_setup()
    nX += 1
    @ m_x + nX, m_y + 2 SAY "Automatska ravnoteza naloga na konto: " GET gAImpRKonto
 
-   nX += 1
+   // nX += 1
    // @ m_x + nX, m_y + 2 SAY "Provjera broj naloga (minus karaktera):" GET gAImpRight PICT "9"
 
 
@@ -105,9 +107,9 @@ STATIC FUNCTION aimp_setup()
    RETURN .T.
 
 
-/* ImpTxtDok()
- *     Import dokumenta
+/*   Import dokumenta
  */
+
 FUNCTION ImpTxtDok()
 
    LOCAL cCtrl_art := "N"
@@ -121,7 +123,7 @@ FUNCTION ImpTxtDok()
 
    cFFilt := GetImpFilter() // filter za import MP ili VP
 
-   IF gNC_ctrl > 0 .AND. Pitanje(, "Ispusti artikle sa problematicnom nc (D/N)", ;
+   IF gNC_ctrl > 0 .AND. Pitanje(, "Ispusti artikle sa problematičnom NC (D/N)", ;
          "N" ) == "D"
       cCtrl_art := "D"
    ENDIF
@@ -188,7 +190,8 @@ FUNCTION ImpTxtDok()
  */
 STATIC FUNCTION GetImpFilter()
 
-   cVPMP := "V"
+   LOCAL cVPMP := "V", cRet
+
    // pozovi box za izbor
    Box(, 5, 60 )
    @ 1 + m_x, 2 + m_y SAY "Importovati:"
@@ -221,6 +224,8 @@ STATIC FUNCTION GetImpFilter()
  */
 STATIC FUNCTION ImpTxtPartn()
 
+   LOCAL cFFilt
+
    PRIVATE cExpPath
    PRIVATE cImpFile
 
@@ -228,14 +233,14 @@ STATIC FUNCTION ImpTxtPartn()
 
    cFFilt := "p*.p??"
 
-   // daj mi pregled fajlova za import, te setuj varijablu cImpFile
-   IF get_file_list( cFFilt, cExpPath, @cImpFile ) == 0
+
+   IF get_file_list( cFFilt, cExpPath, @cImpFile ) == 0  // pregled fajlova za import, te setuj varijablu cImpFile
       RETURN .F.
    ENDIF
 
-   // provjeri da li je fajl za import prazan
-   IF CheckFile( cImpFile ) == 0
-      MsgBeep( "Odabrani fajl je prazan!#!!! Prekidam operaciju !!!" )
+
+   IF CheckFile( cImpFile ) == 0 // provjeri da li je fajl za import prazan
+      MsgBeep( "Odabrani fajl je prazan!#Prekid operacije !" )
       RETURN .F.
    ENDIF
 
@@ -698,7 +703,6 @@ STATIC FUNCTION kalk_imp_check_broj_fakture_exist( aFakt )
       RETURN .T.
 
    ENDIF
-
 
    RETURN .F. // ne postoje azurirane fakture
 
@@ -1884,7 +1888,7 @@ FUNCTION kalk_imp_obradi_sve_dokumente( nPocniOd, lAsPokreni, lStampaj )
          Gather()
 
          IF _idvd == "14"
-            update_kalk_doks2_datval( cN_kalk_dok, dDatVal )
+            update_kalk_14_datval( cN_kalk_dok, dDatVal )
          ENDIF
 
          SELECT pript
@@ -1931,16 +1935,11 @@ FUNCTION kalk_imp_autom()
    RETURN s_lAutom
 
 
-STATIC FUNCTION update_kalk_doks2_datval( cBrojKalk, dDatVal )
+FUNCTION update_kalk_14_datval( cBrojKalk, dDatVal )
 
    LOCAL hRec
 
-   // kalk_doks2->datval koristi se kod kontiranja kalk->fin
-
-   // error_bar( "kalk_imp", "ERR SKIP datval" )
-   // IF .F.
-   // IF cTDok == "14"
-
+   PushWa()
    IF !find_kalk_doks2_by_broj_dokumenta( gFirma, "14", cBrojKalk )
       APPEND BLANK
    ENDIF
@@ -1952,8 +1951,23 @@ STATIC FUNCTION update_kalk_doks2_datval( cBrojKalk, dDatVal )
    hRec[ "datval" ] := dDatVal
 
    update_rec_server_and_dbf( "kalk_doks2", hRec, 1, "FULL" )
-
+   PopWa()
+   
    RETURN .T.
+
+FUNCTION get_kalk_14_datval( cBrojKalk )
+
+   LOCAL dRet
+
+   PushWa()
+   IF !find_kalk_doks2_by_broj_dokumenta( gFirma, "14", cBrojKalk )
+      dRet := CToD( "" )
+   ELSE
+      dRet := kalk_doks2->datval
+   ENDIF
+   PopWa()
+
+   RETURN dRet
 
 
 /* fn kalk_imp_set_check_point

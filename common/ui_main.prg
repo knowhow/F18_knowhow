@@ -1119,17 +1119,20 @@ FUNCTION MsgBeep2( cTXT )
    RETURN .T.
 
 
-FUNCTION Reci( x, y, cT, nP )
+FUNCTION say_from_valid( x, y, cString, nP )
 
-   LOCAL px := Row(), py := Col()
+   LOCAL pX := Row(), pY := Col()
 
    IF nP == 40 .AND. ( x == 11 .AND. y == 23 .OR. x == 12 .AND. y == 23 .OR. x == 12 .AND. y == 24 .OR. x == 12 .AND. y == 25 )
       nP += 6
    ENDIF
-   IF nP == NIL; nP := 0; ENDIF
+   IF nP == NIL
+      nP := 0
+   ENDIF
    @ m_x + x, m_y + y SAY iif( nP > 0, Space( nP ), "" )
-   @ m_x + x, m_y + y SAY8 cT
-   SetPos( px, py )
+   @ m_x + x, m_y + y SAY cString
+   SetPos( pX, pY )
+
 
    RETURN .T.
 

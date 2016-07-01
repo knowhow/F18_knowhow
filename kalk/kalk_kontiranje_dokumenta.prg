@@ -860,18 +860,19 @@ FUNCTION kalk_datval()
    RETURN datval()
 
 
+/*
+   treba da setuje privatnu varijablu DatVal
+   */
 FUNCTION DatVal()
 
    LOCAL _uvecaj := 15
-   LOCAL _rec
-   LOCAL dDatVal
+   //LOCAL _rec
    LOCAL nRokPartner
 
    PRIVATE GetList := {}
 
+   //treba da setuje dDatVal
    PushWA()
-
-
 
    IF find_kalk_doks2_by_broj_dokumenta( finmat->idfirma, finmat->idvd, finmat->brdok )
       dDatVal := field->datval
@@ -879,20 +880,17 @@ FUNCTION DatVal()
       dDatVal := CToD( "" )
    ENDIF
 
-   IF lVrsteP
-      cIdVrsteP := k2
-   ENDIF
+   // IF lVrsteP
+   // cIdVrsteP := k2
+   // ENDIF
 
-   IF !Empty( dDatVal )
-      _uvecaj := ( dDatVal - finmat->datfaktp )
-   ENDIF
+   dDatVal := fix_dat_var( dDatVal )
 
 
+   IF Empty( dDatVal )
 
-   IF dDatVal == CToD( "" )
 
-      IF kalk_imp_autom()
-         AltD()
+      IF kalk_imp_autom() // osloni se na rok placanja
          nRokPartner := IzSifkPartn( "ROKP", finmat->idpartner, .T. )
          IF nRokPartner != NIL
             _uvecaj := nRokPartner
@@ -901,26 +899,27 @@ FUNCTION DatVal()
 
       ELSE
 
-         Box(, 3 + iif( lVrsteP .AND. Empty( cIdVrsteP ), 1, 0 ), 60 )
+         Box(, 3, 60 )
 
          SET CURSOR ON
 
          @ m_x + 1, m_y + 2 SAY "Datum dokumenta: "
          ??  finmat->datfaktp
-
          @ m_x + 2, m_y + 2 SAY "Uvecaj dana    :" GET _uvecaj PICT "999"
          @ m_x + 3, m_y + 2 SAY "Valuta         :" GET dDatVal WHEN {|| dDatVal := finmat->datfaktp + _uvecaj, .T. }
 
-         IF lVrsteP .AND. Empty( cIdVrsteP )
-            @ m_x + 4, m_y + 2 SAY "Sifra vrste placanja:" GET cIdVrsteP PICT "@!"
-         ENDIF
+         //IF lVrsteP .AND. Empty( cIdVrsteP )
+         //    @ m_x + 4, m_y + 2 SAY "Sifra vrste placanja:" GET cIdVrsteP PICT "@!"
+         //ENDIF
 
          READ
          BoxC()
 
       ENDIF
 
+   ENDIF
 
+/*
       IF !find_kalk_doks2_by_broj_dokumenta( finmat->idfirma, finmat->idvd, finmat->brdok )
          APPEND BLANK // ovo se moze desiti ako je neko mjenjao dokumenta u KALK
          _rec := dbf_get_rec()
@@ -939,11 +938,11 @@ FUNCTION DatVal()
 
       update_rec_server_and_dbf( "kalk_doks2", _rec, 1, "FULL" )
 
-   ENDIF
+*/
 
    PopWa()
 
-   RETURN 0
+   RETURN 0 // funkcija se koristi u kontiranju i mora vratiti 0
 
 
 
@@ -1079,18 +1078,18 @@ FUNCTION IspitajRezim()
       gMetodaNC = aRezim[ 2 ]
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 
 
 
-/* kalk_kontiranje()
+/* kalk_generisi_finmat()
  *   param: fstara - .f. znaci poziv iz tabele pripreme, .t. radi se o azuriranoj kalkulaciji pa se prvo getuje broj dokumenta (cIdFirma,cIdVD,cBrdok)
  *     Pravi rekapitulaciju kalkulacija a ako je ulazni parametar fstara==.t. poziva se i kontiranje dokumenta
  */
 
-FUNCTION kalk_kontiranje()
+FUNCTION kalk_generisi_finmat()
 
    PARAMETERS fStara, cIdFirma, cIdVd, cBrDok, lAuto
 
@@ -1243,7 +1242,7 @@ FUNCTION kalk_kontiranje()
       nStr := 0
       nTot1 := nTot2 := nTot3 := nTot4 := nTot5 := nTot6 := nTot7 := nTot8 := nTot9 := nTota := nTotb := nTotC := 0
 
-      DO WHILE !Eof() .AND. cIdFirma == idfirma .AND. cidvd == idvd
+      DO WHILE !Eof() .AND. cIdFirma == idfirma .AND. cIdvd == idvd
 
          cBrDok := BrDok
          cIdPartner := IdPartner
@@ -1513,21 +1512,7 @@ FUNCTION kalk_kontiranje()
                ENDIF
             ENDIF
 
-            IF !IsPdv()
 
-               IF glUgost
-                  REPLACE prucmp WITH Round( kalk_pripr->( aIPor[ 2 ] * ( Kolicina - GKolicina - GKolicin2 ) ), gZaokr )
-                  REPLACE porpot WITH Round( kalk_pripr->( aIPor[ 3 ] * ( Kolicina - GKolicina - GKolicin2 ) ), gZaokr )
-               ENDIF
-
-
-               IF  idvd $ "14#94"
-                  // / ppp porezi
-                  IF  gVarVP == "2"  // unazad VPC - preracunata stopa
-                     REPLACE POREZV WITH Round( TARIFA->VPP / 100 / ( 1 + tarifa->vpp / 100 ) * iif( nMarza < 0, 0, nMarza ) * Kolicina, gZaokr )
-                  ENDIF
-               ENDIF
-            ENDIF
 
             // napuni marker da se radi o predispoziciji...
             IF _predispozicija
@@ -1548,7 +1533,7 @@ FUNCTION kalk_kontiranje()
 
       ENDDO // idfirma,idvd
 
-      IF cidvd == "24" .AND. PRow() > 60
+      IF cIdvd == "24" .AND. PRow() > 60
          FF
          @ PRow(), 125 SAY "Str:" + Str( ++nStr, 3 )
       ENDIF
@@ -1587,11 +1572,11 @@ FUNCTION kalk_kontiranje()
             my_close_all_dbf()
          ENDIF
 
-         // kontiranje dokumenta...
-         kalk_kontiranje_naloga( .F., NIL, lViseKalk, NIL, _fin_auto_broj == "D" )
 
-         // automatska ravnoteza naloga
-         IF cAutoRav == "D"
+         kalk_kontiranje_naloga( .F., NIL, lViseKalk, NIL, _fin_auto_broj == "D" )  // kontiranje dokumenta
+
+
+         IF cAutoRav == "D" // automatska ravnoteza naloga
             kontrola_zbira_naloga( .T. )
          ENDIF
 
@@ -1731,7 +1716,7 @@ FUNCTION kalk_kontiranje_dokumenata_period()
       cIdVd := idvd
       cBrDok := brdok
 
-      kalk_kontiranje( .T., cIdFirma, cIdVd, cBrDok )
+      kalk_generisi_finmat( .T., cIdFirma, cIdVd, cBrDok )
 
       SELECT KALK_DOKS
       SKIP

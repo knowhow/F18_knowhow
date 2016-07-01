@@ -60,8 +60,6 @@ FUNCTION kalk_gen_fin_stanje_prodavnice( vars )
    aPorezi := {}
 
 
-     altd()
-
    hParams := hb_Hash()
    hParams[ "idfirma" ] := _id_firma
 
@@ -450,8 +448,8 @@ STATIC FUNCTION insert_into_rexport( id_firma, id_tip_dok, broj_dok, d_opis, dat
 
 STATIC FUNCTION _o_tbl()
 
-   //o_kalk_doks()
-   //o_kalk()
+   // o_kalk_doks()
+   // o_kalk()
    O_SIFK
    O_SIFV
    O_TDOK

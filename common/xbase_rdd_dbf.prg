@@ -105,7 +105,6 @@ FUNCTION dbf_get_rec()
       IF !( "#" + _ime_polja + "#" $ "#BRISANO#_OID_#_COMMIT_#" )
          _ret[ Lower( _ime_polja ) ] := Eval( FieldBlock( _ime_polja ) )
          IF  _struct[ _i, 2 ] == "D"
-         altd()
            _ret[ Lower( _ime_polja ) ]  := fix_dat_var( _ret[ Lower( _ime_polja ) ] )
          ENDIF
       ENDIF

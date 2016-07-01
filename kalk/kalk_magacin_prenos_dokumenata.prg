@@ -36,7 +36,7 @@ FUNCTION prenos_fakt_kalk_magacin()
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -55,7 +55,7 @@ FUNCTION magacin_prenos_fakt_10_to_kalk_14()
    LOCAL dDatPl := CToD( "" )
    LOCAL _params := fakt_params()
 
-   PRIVATE lVrsteP := _params[ "fakt_vrste_placanja" ]
+   //PRIVATE lVrsteP := _params[ "fakt_vrste_placanja" ]
 
    o_koncij()
    o_kalk_pripr()
@@ -119,9 +119,9 @@ FUNCTION magacin_prenos_fakt_10_to_kalk_14()
          LOOP
       ELSE
 
-         IF lVrsteP
-            cIdVrsteP := idvrstep
-         ENDIF
+         //IF lVrsteP
+        //    cIdVrsteP := idvrstep
+         //ENDIF
 
          aMemo := ParsMemo( txt )
 
@@ -188,11 +188,12 @@ FUNCTION magacin_prenos_fakt_10_to_kalk_14()
 
          _rec[ "datval" ] := dDatPl
 
-         IF lVrsteP
-            _rec[ "k2" ] := cIdVrsteP
-         ENDIF
+         //IF lVrsteP
+          //  _rec[ "k2" ] := cIdVrsteP
+         //ENDIF
 
          update_rec_server_and_dbf( "kalk_doks2", _rec, 1, "FULL" )
+
 
          SELECT fakt
          DO WHILE !Eof() .AND. cFaktFirma + cIdTipDok + cBrDok == IdFirma + IdTipDok + BrDok

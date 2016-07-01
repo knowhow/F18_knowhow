@@ -76,7 +76,7 @@ FUNCTION fin_povrat_naloga( lStorno )
    BoxC()
 
    IF Pitanje(, "Nalog " + cIdFirma + "-" + cIdVN + "-" + cBrNal + ;
-         IIF( lStorno, " stornirati", " povući u pripremu" ) + " (D/N) ?", "D" ) == "N"
+         iif( lStorno, " stornirati", " povući u pripremu" ) + " (D/N) ?", "D" ) == "N"
       my_close_all_dbf()
       RETURN .F.
    ENDIF
@@ -88,18 +88,20 @@ FUNCTION fin_povrat_naloga( lStorno )
 
 
    IF !lStorno
-      lBrisiKumulativ := Pitanje(, "Nalog " + cIdFirma + "-" + cIdVN + "-" + ALLTRIM( cBrNal ) + " izbrisati iz baze ažuriranih dokumenata (D/N) ?", "D" ) == "D"
+      lBrisiKumulativ := Pitanje(, "Nalog " + cIdFirma + "-" + cIdVN + "-" + AllTrim( cBrNal ) + " izbrisati iz baze ažuriranih dokumenata (D/N) ?", "D" ) == "D"
    ENDIF
 
+   MsgO( "fin -> fin_pripr  ..." )
    kopiraj_fin_nalog_u_tabelu_pripreme( cIdFirma, cIdVn, cBrNal, lStorno )
-
+   MsgC()
+   
    IF !lBrisiKumulativ .OR. lStorno
       my_close_all_dbf()
       RETURN .F.
    ENDIF
 
    IF !fin_nalog_brisi_iz_kumulativa( cIdFirma, cIdVn, cBrNal )
-       MsgBeep( "Greška sa brisanjem naloga iz kumulativa !#Poništavam operaciju." )
+      MsgBeep( "Greška sa brisanjem naloga iz kumulativa !#Poništavam operaciju." )
    ENDIF
 
    my_close_all_dbf()
@@ -114,7 +116,7 @@ STATIC FUNCTION fin_nalog_brisi_iz_kumulativa( cIdFirma, cIdVn, cBrNal )
    LOCAL _rec, cTbl
    LOCAL lOk := .T.
    LOCAL lRet := .F.
-   LOCAL hParams := hb_hash()
+   LOCAL hParams := hb_Hash()
 
    _rec := hb_Hash()
    _rec[ "idfirma" ] := cIdFirma
@@ -186,13 +188,13 @@ STATIC FUNCTION kopiraj_fin_nalog_u_tabelu_pripreme( cIdFirma, cIdVn, cBrNal, lS
    SEEK cIdfirma + cIdvn + cBrNal
 */
 
-  // ranije pozvana fja find_suban_by_broj_dokumenta( cIdFirma, cIdVN, cBrNal )
+   // ranije pozvana fja find_suban_by_broj_dokumenta( cIdFirma, cIdVN, cBrNal )
 
 
    SELECT SUBAN
    GO TOP
    DO WHILE !Eof() .AND. cIdFirma == field->IdFirma .AND. cIdVN == field->IdVN ;
-      .AND. cBrNal == field->BrNal //  suban.brnal char(8) na serveru
+         .AND. cBrNal == field->BrNal // suban.brnal char(8) na serveru
 
       _rec := dbf_get_rec()
 

@@ -60,12 +60,13 @@ FUNCTION fin_azuriranje_naloga( automatic )
 
       run_sql_query( "BEGIN" )
 
+/*
       IF !f18_lock_tables( { __tbl_suban, __tbl_anal, __tbl_sint, __tbl_nalog }, .T. )
          run_sql_query( "ROLLBACK" )
          MsgBeep( "Ne mogu napraviti zaključavanje tabela !#Poništavam operaciju ažuriranja naloga." )
          RETURN lRet
       ENDIF
-
+*/
       _id_firma := aNalozi[ _i, 1 ]
       _id_vn := aNalozi[ _i, 2 ]
       _br_nal := aNalozi[ _i, 3 ]
@@ -95,6 +96,9 @@ FUNCTION fin_azuriranje_naloga( automatic )
 
       ENDIF
 
+      fin_pripr_delete( _id_firma + _id_vn + _br_nal )
+
+/*
       IF !fin_azur_dbf( automatic, _id_firma, _id_vn, _br_nal )
 
          run_sql_query( "ROLLBACK" )
@@ -104,9 +108,13 @@ FUNCTION fin_azuriranje_naloga( automatic )
          RETURN lRet
 
       ENDIF
+*/
 
+/*
       hParams[ "unlock" ] := { __tbl_suban, __tbl_anal, __tbl_sint, __tbl_nalog }
       run_sql_query( "COMMIT", hParams )
+*/
+      run_sql_query( "COMMIT" )
 
       log_write( "F18_DOK_OPER: azuriranje fin naloga: " + _id_firma + "-" + _id_vn + "-" + _br_nal, 2 )
 
@@ -611,7 +619,7 @@ STATIC FUNCTION fin_p_tabele_provjera( lista_naloga )
 
 
 
-
+/*
 FUNCTION fin_azur_dbf( auto, id_firma, id_vn, br_nal )
 
    LOCAL _n_c
@@ -658,7 +666,7 @@ FUNCTION fin_azur_dbf( auto, id_firma, id_vn, br_nal )
 
    RETURN _ok
 
-
+*/
 
 STATIC FUNCTION fin_brisi_p_tabele( close_all )
 
@@ -853,7 +861,6 @@ FUNCTION psuban_suban( nalog_ctrl )
    @ m_x + 3, m_y + 2 SAY "SUBANALITIKA   "
 
 
-
    SELECT PSUBAN
    SEEK nalog_ctrl
 
@@ -924,8 +931,8 @@ FUNCTION fin_pripr_delete( nalog_ctrl )
    SELECT fin_pripr
    SEEK nalog_ctrl
 
-   @ m_x + 3, m_y + 2 SAY8 "BRIŠEM PRIPREMU "
-
+   // @ m_x + 3, m_y + 2 SAY8 "BRIŠEM PRIPREMU "
+   MsgO( "Brisanje fin_pripr" )
    my_flock()
 
    DO WHILE !Eof() .AND. nalog_ctrl == IdFirma + IdVn + BrNal
@@ -937,6 +944,8 @@ FUNCTION fin_pripr_delete( nalog_ctrl )
       GO ( _t_rec )
 
    ENDDO
+
+   MsgC()
 
    RETURN .T.
 

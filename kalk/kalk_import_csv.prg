@@ -308,19 +308,16 @@ STATIC FUNCTION SetTblDok( aDbf )
    RETURN .T.
 
 
-/*
- Vraca podesenje putanje do exportovanih fajlova
-*/
 
 FUNCTION get_liste_za_import_path()
 
-LOCAL cPath
+   LOCAL cPath
 
-#ifdef ___PLATFORM__WINDOWS
-   cPath := "c:" + SLASH + "liste" + SLASH
-#else
-   cPath :=  "/data/liste/"
-#endif
+   IF is_windows()
+      cPath := "c:" + SLASH + "liste" + SLASH
+   ELSE
+      cPath :=  "/data/liste/"
+   ENDIF
 
    RETURN cPath
 
@@ -782,8 +779,8 @@ STATIC FUNCTION TTbl2Kalk()
    LOCAL cIdKonto2
 
    o_kalk_pripr()
-   //o_kalk()
-   //o_kalk_doks()
+   // o_kalk()
+   // o_kalk_doks()
    O_ROBA
 
    SELECT temp

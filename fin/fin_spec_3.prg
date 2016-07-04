@@ -22,11 +22,11 @@ FUNCTION SpecPop()
 
    DO WHILE .T.
       @ m_x + 1, m_y + 6 SAY "SPECIFIKACIJA KONTA ZA ODREDJENE PARTNERE"
-      IF gNW == "D"
+      //IF gNW == "D"
          @ m_x + 3, m_y + 2 SAY "Firma "; ?? gFirma, "-", gNFirma
-      ELSE
-         @ m_x + 3, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| P_Firma( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
-      ENDIF
+      //ELSE
+      //   @ m_x + 3, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| P_Firma( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
+      //ENDIF
       @ m_x + 5, m_y + 2 SAY "Partner:" GET qqPartner PICT "@!S50"
       @ m_x + 6, m_y + 2 SAY "Konta  :" GET  qqKonto PICT "@!S50"
       READ; ESC_BCR
@@ -154,12 +154,12 @@ FUNCTION ZglSpSifK()
    @ PRow(), 125 SAY "Str:" + Str( ++nStr, 3 )
 
 
-   IF gNW == "D"
+   //IF gNW == "D"
       ? "Firma:", gFirma, gNFirma
-   ELSE
-      SELECT PARTN; HSEEK cIdFirma
-      ? "Firma:", cidfirma, PadR( partn->naz, 25 ), partn->naz2
-   ENDIF
+   //ELSE
+    //  SELECT PARTN; HSEEK cIdFirma
+      //? "Firma:", cidfirma, PadR( partn->naz, 25 ), partn->naz2
+   //ENDIF
 
    ? "----- ------- ----------------------------- ------------------------------------------------------------ -----------------------------"
    ? "*RED.* KONTO *       N A Z I V             *     K U M U L A T I V N I    P R O M E T                   *      S A L D O              "
@@ -169,4 +169,4 @@ FUNCTION ZglSpSifK()
 
    SELECT SUBAN
 
-   RETURN
+   RETURN .T.

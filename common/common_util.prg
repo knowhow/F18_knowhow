@@ -214,9 +214,11 @@ FUNCTION preduzece()
 
    ? AllTrim( gTS ) + ": "
 
-   IF gNW == "D"
-      ?? gFirma, "-", AllTrim( gNFirma )
-   ELSE
+   // IF gNW == "D"
+   ?? gFirma, "-", AllTrim( gNFirma )
+
+/*
+     ELSE
       SELECT ( F_PARTN )
       IF !Used()
          O_PARTN
@@ -225,6 +227,7 @@ FUNCTION preduzece()
       HSEEK gFirma
       ?? gFirma, AllTrim( partn->naz ), AllTrim( partn->naz2 )
    ENDIF
+*/
 
    B_OFF
    ?
@@ -238,10 +241,11 @@ FUNCTION preduzece()
 FUNCTION RbrUNum( cRBr )
 
    IF Left( cRbr, 1 ) > "9"
-      RETURN  ( Asc( Left( cRbr, 1 ) ) -65 + 10 ) * 100  + Val( SubStr( cRbr, 2, 2 ) )
+      RETURN  ( Asc( Left( cRbr, 1 ) ) - 65 + 10 ) * 100  + Val( SubStr( cRbr, 2, 2 ) )
    ELSE
       RETURN Val( cRbr )
    ENDIF
+
 
 FUNCTION RedniBroj( nRbr )
 
@@ -255,9 +259,9 @@ FUNCTION RedniBroj( nRbr )
    ENDIF
 
 
-   // ------------------------------------------------
-   // provjera rednog broja u tabeli
-   // ------------------------------------------------
+/*
+ provjera rednog broja u tabeli
+*/
 
 FUNCTION provjeri_redni_broj()
 
@@ -332,7 +336,7 @@ FUNCTION dok_potpis( nLen, cPad, cRow1, cRow2 )
       ? PadL( cRow2, nLen )
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 

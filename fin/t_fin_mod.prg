@@ -57,21 +57,29 @@ METHOD programski_modul_osnovni_meni()
    AAdd( _opc, "5. moduli - razmjena podataka" )
    AAdd( _opcexe, {|| fin_razmjena_podataka_meni() } )
    AAdd( _opc, "6. ostale operacije nad dokumentima" )
-   AAdd( _opcexe, {|| MnuOstOperacije() } )
-   AAdd( _opc, "7. udaljene lokacije - razmjena podataka " )
+   AAdd( _opcexe, {|| fin_ostale_operacije_meni() } )
+
+   AAdd( _opc, "O. otvorene stavke" )
+   AAdd( _opcexe, {|| fin_otvorene_stavke_meni() } )
+
+   AAdd( _opc, "R. udaljene lokacije - razmjena podataka " )
    AAdd( _opcexe, {|| fin_udaljena_razmjena_podataka() } )
    AAdd( _opc, "------------------------------------" )
    AAdd( _opcexe, {|| nil } )
-   AAdd( _opc, "8. matični podaci - šifarnici" )
+   AAdd( _opc, "S. matični podaci - šifarnici" )
    AAdd( _opcexe, {|| MnuSifrarnik() } )
-   AAdd( _opc, "9. administracija baze podataka" )
+
+   AAdd( _opc, "A. administracija baze podataka" )
    AAdd( _opcexe, {|| fin_admin_opcije_menu() } )
+
    AAdd( _opc, "------------------------------------" )
    AAdd( _opcexe, {|| nil } )
    AAdd( _opc, "K. kontrola zbira datoteka" )
    AAdd( _opcexe, {|| fin_kontrola_zbira() } )
    AAdd( _opc, "P. povrat dokumenta u pripremu" )
    AAdd( _opcexe, {|| fin_povrat_naloga() } )
+
+
    AAdd( _opc, "------------------------------------" )
    AAdd( _opcexe, {|| nil } )
    AAdd( _opc, "X. parametri" )

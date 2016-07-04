@@ -11,7 +11,7 @@
 
 #include "f18.ch"
 
-FUNCTION MnuOstOperacije()
+FUNCTION fin_ostale_operacije_meni()
 
    LOCAL _opc := {}
    LOCAL _opcexe := {}
@@ -23,8 +23,10 @@ FUNCTION MnuOstOperacije()
    AAdd( _opcexe, {|| Preknjizenje() } )
    AAdd( _opc, "3. prebacivanje kartica" )
    AAdd( _opcexe, {|| Prebfin_kartica() } )
+
    AAdd( _opc, "4. otvorene stavke" )
-   AAdd( _opcexe, {|| fin_otvorene_stavke() } )
+   AAdd( _opcexe, {|| fin_otvorene_stavke_meni() } )
+
    AAdd( _opc, "5. obrada kamata " )
    AAdd( _opcexe, {|| fin_kamate_menu() } )
 

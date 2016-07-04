@@ -11,6 +11,8 @@
 
 #include "f18.ch"
 
+MEMVAR PicDEM, picBHD, gPicDEM, gPicBHD
+
 FUNCTION fin_kartice_menu()
 
    LOCAL _opc := {}
@@ -20,13 +22,16 @@ FUNCTION fin_kartice_menu()
    PRIVATE picDEM := FormPicL( gPicDEM, 12 )
    PRIVATE picBHD := FormPicL( gPicBHD, 16 )
 
-   AAdd( _opc, "1. subanalitika                           " )
-   AAdd( _opcexe, {|| fin_suban_kartica() } )
-   AAdd( _opc, "2. analitika" )
+   AAdd( _opc, "1. subanalitička kartica                         " )
+   AAdd( _opcexe, {|| fin_suban_kartica( .F. ) } )
+   AAdd( _opc, "O. kartica otvorenih stavki" )
+   AAdd( _opcexe, {|| fin_suban_kartica( .T. ) } )
+
+   AAdd( _opc, "A. analitika" )
    AAdd( _opcexe, {|| fin_anal_kartica() } )
-   AAdd( _opc, "3. sintetika" )
+   AAdd( _opc, "S. sintetika" )
    AAdd( _opcexe, {|| fin_sint_kartica() } )
-   AAdd( _opc, "4. sintetika - po mjesecima" )
+   AAdd( _opc, "M. sintetika - po mjesecima" )
    AAdd( _opcexe, {|| fin_sint_kart_po_mjesecima() } )
 
    f18_menu( "fin_kart", .F., _izbor, _opc, _opcexe )

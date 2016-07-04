@@ -13,7 +13,7 @@ FUNCTION SpecKK2( lOtvSt )
 
    PRIVATE picBHD := FormPicL( "9 " + gPicBHD, 16 )
    PRIVATE picDEM := FormPicL( "9 " + gPicDEM, 14 ), cPG := "D"
-   PRIVATE fOtvSt := lOtvSt
+   PRIVATE lOtvoreneStavke := lOtvSt
 
    O_KONTO
    O_PARTN

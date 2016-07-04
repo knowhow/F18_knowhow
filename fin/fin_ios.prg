@@ -892,7 +892,7 @@ STATIC FUNCTION print_ios_xml( params )
       find_suban_by_konto_partner( _id_firma, _id_konto, _id_partner, NIL, "idfirma,idvn,brnal")
    ELSE
       //SET ORDER TO TAG "3"
-      find_suban_by_konto_partner( _id_firma, _id_konto, _id_partner, NIL )
+      find_suban_by_konto_partner( _id_firma, _id_konto, _id_partner, NIL, "IdFirma,IdKonto,IdPartner,brdok" )
    ENDIF
 
 
@@ -1209,7 +1209,7 @@ STATIC FUNCTION print_ios_txt( params )
       @ PRow(), PCol() + 1 SAY "VA�U"
    ENDIF
 
-   @ PRow(), PCol() + 1 SAY "KORIST I SASTOJI SE IZ SLIJEDE�IH OTVORENIH STAVKI:"
+   @ PRow(), PCol() + 1 SAY "KORIST I SASTOJI SE IZ SLIJEDECIH OTVORENIH STAVKI:"
 
    P_COND
 
@@ -1228,7 +1228,7 @@ STATIC FUNCTION print_ios_txt( params )
       find_suban_by_konto_partner( _id_firma, _id_konto, _id_partner, NIL, "idfirma,idvn,brnal")
    ELSE
       //SET ORDER TO TAG "3"
-      find_suban_by_konto_partner( _id_firma, _id_konto, _id_partner, NIL )
+      find_suban_by_konto_partner( _id_firma, _id_konto, _id_partner, NIL, "IdFirma,IdKonto,IdPartner,brdok" )
    ENDIF
 
 

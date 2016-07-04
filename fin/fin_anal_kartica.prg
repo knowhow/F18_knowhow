@@ -42,17 +42,19 @@ FUNCTION fin_anal_kartica()
    RPar( "c3", @cBrza )
    RPar( "c4", @cPredh )
    RPar( "c8", @cPTD )
-   IF gNW == "D";cIdFirma := gFirma; ENDIF
+   //IF gNW == "D";
+   cIdFirma := gFirma
+   // ENDIF
 
    Box( "", 9, 65, .F. )
    DO WHILE .T.
       SET CURSOR ON
       @ m_x + 1, m_y + 2 SAY8 "ANALITIČKA KARTICA"
-      IF gNW == "D"
+      //IF gNW == "D"
          @ m_x + 2, m_y + 2 SAY "Firma "; ?? gFirma, "-", gNFirma
-      ELSE
-         @ m_x + 2, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| Empty( cIdFirma ) .OR. P_Firma( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
-      ENDIF
+      //ELSE
+      //   @ m_x + 2, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| Empty( cIdFirma ) .OR. P_Firma( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
+      //ENDIF
       @ m_x + 3, m_y + 2 SAY "Brza kartica (D/N/S)" GET cBrza PICT "@!" VALID cBrza $ "DNS"
       @ m_x + 4, m_y + 2 SAY "BEZ/SA prethodnim prometom (1/2):" GET cPredh VALID cPredh $ "12"
       READ
@@ -65,9 +67,11 @@ FUNCTION fin_anal_kartica()
          qqKonto := PadR( qqKonto, 60 )
          @ m_x + 6, m_y + 2 SAY "Konto: " GET qqKonto PICTURE "@S50"
       ENDIF
+
       IF gNW == "N"
          @ m_x + 7, m_y + 2 SAY "Prikaz tipa dokumenta (D/N)" GET cPTD PICT "@!" VALID cPTD $ "DN"
       ENDIF
+
       @ m_x + 8, m_y + 2 SAY "Datum od:" GET dDatOd
       @ m_x + 8, Col() + 2 SAY "do:" GET dDatDo
       cIdRJ := ""

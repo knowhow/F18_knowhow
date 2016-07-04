@@ -59,12 +59,12 @@ FUNCTION SpecDugPartnera()
    PICPIC := "9999999999.99"
 
    Box(, 13, 60 )
-   IF gNW == "D"
+   //IF gNW == "D"
       @ m_x + 1, m_y + 2 SAY "Firma "
       ?? gFirma, "-", gNFirma
-   ELSE
-      @ m_x + 1, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| P_Firma( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
-   ENDIF
+   //ELSE
+  //  @ m_x + 1, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| P_Firma( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
+   //ENDIF
 
    @ m_x + 2, m_y + 2 SAY "Konto:               " GET cIdkonto   PICT "@!"  VALID P_konto( @cIdkonto )
    @ m_x + 3, m_y + 2 SAY "Izvjestaj se pravi na dan:" GET dNaDan
@@ -119,7 +119,7 @@ FUNCTION SpecDugPartnera()
    nUkPotBHD := 0
 
 
-   find_suban_by_konto_partner( cIdFirma, cIdKonto, cIdPartner )
+   find_suban_by_konto_partner( cIdFirma, cIdKonto, cIdPartner, NIL, "IdFirma,IdKonto,IdPartner,brdok" )
 
 
 

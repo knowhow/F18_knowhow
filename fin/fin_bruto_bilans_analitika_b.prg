@@ -389,9 +389,10 @@ FUNCTION zagl_bb_anal( params, nStr )
 
    @ PRow(), REP1_LEN - 15 SAY "Str:" + Str( ++nStr, 3 )
 
-   IF gNW == "D"
+   //IF gNW == "D"
       ? "Firma:", gFirma, gNFirma
-   ELSE
+   /*
+    ELSE
       ? "Firma:"
       @ PRow(), PCol() + 2 SAY params[ "idfirma" ]
       SELECT PARTN
@@ -399,6 +400,7 @@ FUNCTION zagl_bb_anal( params, nStr )
       @ PRow(), PCol() + 2 SAY Naz
       @ PRow(), PCol() + 2 SAY Naz2
    ENDIF
+   */
 
    IF !Empty( params[ "konto" ] )
       ? "Odabrana konta: " + AllTrim( params[ "konto" ] )
@@ -416,4 +418,4 @@ FUNCTION zagl_bb_anal( params, nStr )
    ?U M4
    ?U M5
 
-   RETURN
+   RETURN .T.

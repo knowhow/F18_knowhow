@@ -770,16 +770,16 @@ FUNCTION psuban_konto_check( arr, silent )
 
 
 
-FUNCTION panal_anal( nalog_ctrl )
+FUNCTION panal_anal( cNalogId )
 
    LOCAL _rec
 
    @ m_x + 3, m_y + 2 SAY "ANALITIKA       "
 
    SELECT panal
-   SEEK nalog_ctrl
+   SEEK cNalogId
 
-   DO WHILE !Eof() .AND. nalog_ctrl == IdFirma + IdVn + BrNal
+   DO WHILE !Eof() .AND. cNalogId == IdFirma + IdVn + BrNal
 
       _rec := dbf_get_rec()
 
@@ -798,15 +798,15 @@ FUNCTION panal_anal( nalog_ctrl )
 
 
 
-FUNCTION psint_sint( nalog_ctrl )
+FUNCTION psint_sint( cNalogId )
 
    LOCAL _rec
 
    @ m_x + 3, m_y + 2 SAY "SINTETIKA       "
    SELECT PSINT
-   SEEK nalog_ctrl
+   SEEK cNalogId
 
-   DO WHILE !Eof() .AND. nalog_ctrl == IdFirma + IdVn + BrNal
+   DO WHILE !Eof() .AND. cNalogId == IdFirma + IdVn + BrNal
 
       _rec := dbf_get_rec()
 
@@ -825,12 +825,12 @@ FUNCTION psint_sint( nalog_ctrl )
 
 
 
-FUNCTION pnalog_nalog( nalog_ctrl )
+FUNCTION pnalog_nalog( cNalogId )
 
    LOCAL _rec
 
    SELECT pnalog
-   SEEK nalog_ctrl
+   SEEK cNalogId
 
    IF Found()
 
@@ -852,7 +852,7 @@ FUNCTION pnalog_nalog( nalog_ctrl )
 
 
 
-FUNCTION psuban_suban( nalog_ctrl )
+FUNCTION psuban_suban( cNalogId )
 
    LOCAL nSaldo := 0
    LOCAL nC := 0
@@ -862,7 +862,7 @@ FUNCTION psuban_suban( nalog_ctrl )
 
 
    SELECT PSUBAN
-   SEEK nalog_ctrl
+   SEEK cNalogId
 
    find_suban_by_broj_dokumenta( psuban->idfirma, psuban->idvn, psuban->brnal, .T. )
 
@@ -870,7 +870,7 @@ FUNCTION psuban_suban( nalog_ctrl )
    SELECT PSUBAN
    nC := 0
 
-   DO WHILE !Eof() .AND. nalog_ctrl == IdFirma + IdVn + BrNal
+   DO WHILE !Eof() .AND. cNalogId == IdFirma + IdVn + BrNal
 
       @ m_x + 3, m_y + 25 SAY ++nC  PICT "99999999999"
 
@@ -924,18 +924,18 @@ FUNCTION psuban_suban( nalog_ctrl )
 
 
 
-FUNCTION fin_pripr_delete( nalog_ctrl )
+FUNCTION fin_pripr_delete( cNalogId )
 
    LOCAL _t_rec
 
    SELECT fin_pripr
-   SEEK nalog_ctrl
+   SEEK cNalogId
 
    // @ m_x + 3, m_y + 2 SAY8 "BRIŠEM PRIPREMU "
    MsgO( "Brisanje fin_pripr" )
    my_flock()
 
-   DO WHILE !Eof() .AND. nalog_ctrl == IdFirma + IdVn + BrNal
+   DO WHILE !Eof() .AND. cNalogId == IdFirma + IdVn + BrNal
 
       SKIP
       _t_rec := RecNo()

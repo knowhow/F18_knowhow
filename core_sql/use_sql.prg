@@ -62,16 +62,23 @@ FUNCTION use_sql( cTable, sql_query, cAlias )
 
    LOCAL pConn, oError
    LOCAL nI, cMsg, cLogMsg := ""
+   LOCAL nWa
 
-   IF Used()
-      USE
-   ENDIF
+   // IF Used()
+   // USE
+   // ENDIF
 
    pConn := sql_data_conn():pDB
 
    IF HB_ISNIL( pConn )
       error_bar( "SQL", "SQLMIX pDB NIL?!" + cTable )
       RETURN .F.
+   ENDIF
+
+   nWa := Select( cTable )
+   IF nWa > 0
+      SELECT ( nWa )
+      USE
    ENDIF
 
    rddSetDefault( "SQLMIX" )

@@ -852,17 +852,20 @@ FUNCTION RJ( nBroj, cDef, cTekst )
 
 
 
-/* DatVal()
- *     Odredjivanje datuma valute - varijabla dDatVal
- */
+
 
 FUNCTION kalk_datval()
    RETURN datval()
 
 
 /*
+   setovanje datuma valutiranja pri kontiranju
    treba da setuje privatnu varijablu DatVal
-   */
+
+    ova funkcija treba setovati PRIVATE dDatVal
+
+*/
+
 FUNCTION DatVal()
 
    LOCAL _uvecaj := 15
@@ -871,7 +874,7 @@ FUNCTION DatVal()
 
    PRIVATE GetList := {}
 
-   //treba da setuje dDatVal
+
    PushWA()
 
    IF find_kalk_doks2_by_broj_dokumenta( finmat->idfirma, finmat->idvd, finmat->brdok )

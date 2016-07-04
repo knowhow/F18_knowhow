@@ -21,7 +21,7 @@ FUNCTION datval_prazan()
 
 FUNCTION get_datval_field()
 
-   RETURN fix_dat_var( DatVal, .T. )
+   RETURN fix_dat_var( field->DatVal, .T. )
 
 
 
@@ -38,7 +38,10 @@ FUNCTION o_sql_suban_kto_partner( cIdFirma )
    hParams[ "order_by" ] := "IdFirma,IdKonto,IdPartner,DatDok,BrNal,RBr"
    hParams[ "indeks" ] := .F. // ne trositi vrijeme na kreiranje indeksa
 
-   use_sql_suban( hParams )
+   IF !use_sql_suban( hParams )
+      RETURN .F.
+   ENDIF
+
    GO TOP
 
    RETURN ! Eof()
@@ -137,7 +140,8 @@ FUNCTION find_suban_by_konto_partner( cIdFirma, cIdKonto, cIdPartner, cBrDok, cO
 
    LOCAL hParams := hb_Hash()
 
-   hb_default( @cOrderBy, "IdFirma,IdKonto,IdPartner,brdok,datdok" )
+   //hb_default( @cOrderBy, "IdFirma,IdKonto,IdPartner,datdok" )
+   hb_default( @cOrderBy, "IdFirma,IdKonto,IdPartner,brdok" )
    hb_default( @lIndeks, .F. )
 
    IF cIdFirma <> NIL
@@ -273,6 +277,7 @@ FUNCTION find_anal_by_broj_dokumenta( cIdFirma, cIdVN, cBrNal )
    hParams[ "indeks" ] := .F. // ne trositi vrijeme na kreiranje indeksa
 
    use_sql_anal( hParams )
+
    GO TOP
 
    RETURN ! Eof()
@@ -331,7 +336,6 @@ FUNCTION use_sql_fin_nalog( cIdVN, lMakeIndex )
    cSQL += " ORDER BY idfirma, idvn, brnal"
 
    SELECT F_NALOG
-   USE
    IF !use_sql( cTable, cSql, cAlias )
       RETURN .F.
    ENDIF
@@ -407,7 +411,9 @@ CREATE TABLE fmk.fin_nalog
 
    SELECT ( F_NALOG )
 
-   use_sql( cTable, cSql )
+   IF !use_sql( cTable, cSql )
+      RETURN .F.
+   ENDIF
 
    IF is_sql_rdd_treba_indeks( hParams )
 
@@ -527,7 +533,9 @@ CREATE TABLE fmk.fin_sint
 
    SELECT ( F_SINT )
 
-   use_sql( cTable, cSql )
+   IF !use_sql( cTable, cSql )
+      RETURN .F.
+   ENDIF
 
    IF is_sql_rdd_treba_indeks( hParams )
       INDEX ON  IdFirma + IdKonto + DToS( DatNal )  TAG "1" TO cTable
@@ -654,8 +662,9 @@ GRANT ALL ON TABLE fmk.fin_anal TO xtrole;
    ENDIF
 
    SELECT ( F_ANAL )
-
-   use_sql( cTable, cSql )
+   IF !use_sql( cTable, cSql )
+      RETURN .F.
+   ENDIF
 
    IF is_sql_rdd_treba_indeks( hParams )
       INDEX ON  IdFirma + IdKonto + DToS( DatNal )  TAG "1" TO cTable
@@ -665,8 +674,8 @@ GRANT ALL ON TABLE fmk.fin_anal TO xtrole;
       INDEX ON  DatNal  TAG "5" TO cTable
 
       SET ORDER TO TAG "1"
-      GO TOP
    ENDIF
+   GO TOP
 
    RETURN .T.
 
@@ -778,7 +787,9 @@ FUNCTION use_sql_suban( hParams )
    ENDIF
 
    SELECT ( F_SUBAN )
-   use_sql( cTable, cSql )
+   IF !use_sql( cTable, cSql )
+      RETURN .F.
+   ENDIF
 
    IF is_sql_rdd_treba_indeks( hParams )
       INDEX ON IdFirma + IdKonto + IdPartner + DToS( DatDok ) + BrNal + Str( RBr, 5 )  TAG "1" TO cTable
@@ -793,11 +804,11 @@ FUNCTION use_sql_suban( hParams )
       INDEX ON idFirma + IdVN + BrNal + idkonto + DToS( datdok )  TAG "10" TO cTable
 
       SET ORDER TO TAG "1"
-      GO TOP
    ENDIF
 
-   RETURN .T.
+   GO TOP
 
+   RETURN .T.
 
 STATIC FUNCTION use_sql_suban_order( hParams )
 

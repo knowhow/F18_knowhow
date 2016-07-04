@@ -61,7 +61,7 @@ FUNCTION fin_knjizenje_naloga()
       { "F.",            {|| dbSelectArea( F_FIN_PRIPR ), field->IdFirma }, "IdFirma" }, ;
       { "VN",            {|| field->IdVN    }, "IdVN" }, ;
       { "Br.",           {|| field->BrNal   }, "BrNal" }, ;
-      { "R.br",          {|| field->RBr     }, "rbr", {|| wrbr() }, {|| vrbr() } }, ;
+      { "R.br",          {|| STR( field->RBr, 5, 0) }, "rbr", {|| wRbr() }, {|| .T. } }, ;
       { "Konto",         {|| field->IdKonto }, "IdKonto", {|| .T. }, {|| P_Konto( @_IdKonto ), .T. } }, ;
       { "Partner",       {|| field->IdPartner }, "IdPartner" }, ;
       { "Br.veze ",      {|| field->BrDok   }, "BrDok" }, ;
@@ -143,6 +143,7 @@ FUNCTION WRbr()
       READ
    ENDIF
 
+altd()
    SET ORDER TO 0
    GO TOP
    DO WHILE !Eof()
@@ -159,8 +160,6 @@ FUNCTION WRbr()
    RETURN .T.
 
 
-FUNCTION vrbr()
-   RETURN .T.
 
 
 
@@ -252,7 +251,7 @@ FUNCTION edit_fin_priprema()
 
 
    SET KEY K_ALT_K TO konverzija_valute()
-   SET KEY K_ALT_O TO konsult_otvorene_stavke()
+   SET KEY K_ALT_O TO knjizenje_gen_otvorene_stavke()
 
    @ m_x + 3, m_y + 55 SAY "Broj:" GET _brnal VALID fin_valid_provjeri_postoji_nalog( _idfirma, _idvn, _brnal ) .AND. !Empty( _brnal )
    @ m_x + 5, m_y + 2 SAY "Redni broj stavke naloga:" GET nRbr PICTURE "9999" ;
@@ -338,7 +337,7 @@ FUNCTION edit_fin_priprema()
 
     @ m_x + 16, m_y + 65 GET lOstavDUMMY PUSHBUTTON  CAPTION "(Alt-O) Otvorene stavke"   ;
              WHEN {|| lDugmeOtvoreneStavke } ;
-             SIZE X 20 Y 2 FOCUS {|| lDugmeOtvoreneStavke := .T. , konsult_otvorene_stavke(), lDugmeOtvoreneStavke := .F. }
+             SIZE X 20 Y 2 FOCUS {|| lDugmeOtvoreneStavke := .T. , knjizenje_gen_otvorene_stavke(), lDugmeOtvoreneStavke := .F. }
 
 
 

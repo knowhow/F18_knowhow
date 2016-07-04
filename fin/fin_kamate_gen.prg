@@ -56,7 +56,9 @@ FUNCTION prenos_fin_kam()
 
    BoxC()
 
-   o_suban()
+
+   find_suban_by_konto_partner( gFirma, _id_konto, NIL, NIL, "IdFirma,IdKonto,IdPartner,brdok" )
+
 
    IF !Empty( _usl )
       _filter := _usl
@@ -64,8 +66,6 @@ FUNCTION prenos_fin_kam()
    ELSE
       SET FILTER TO
    ENDIF
-
-   find_suban_by_konto_partner( gFirma, _id_konto )
 
    DO WHILE !Eof() .AND. field->idkonto == _id_konto .AND. field->idfirma == gFirma
 

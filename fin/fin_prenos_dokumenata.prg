@@ -752,7 +752,7 @@ FUNCTION fin_prekart()
       { "F.",            {|| IdFirma }, "IdFirma" }, ;
       { "VN",            {|| IdVN    }, "IdVN" }, ;
       { "Br.",           {|| BrNal   }, "BrNal" }, ;
-      { "R.br",          {|| RBr     }, "rbr", {|| wrbr() }, {|| vrbr() } }, ;
+      { "R.br",          {|| RBr     }, "rbr", {|| wRbr() }, {|| .T. } }, ;
       { "Konto",         {|| IdKonto }, "IdKonto", {|| .T. }, {|| P_Konto( @_IdKonto ), .T. } }, ;
       { "Novi konto",    {|| konto2  }, "konto2", {|| .T. }, {|| P_Konto( @_konto2 ), .T. } }, ;
       { "Partner",       {|| IdPartner }, "IdPartner", {|| .T. }, {|| P_Firma( @_idpartner ), .T. } }, ;

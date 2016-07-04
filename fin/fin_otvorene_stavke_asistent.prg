@@ -90,7 +90,7 @@ STATIC FUNCTION _del_nal_xx()
 // -----------------------------------------------------------
 // kreiranje tabele ostav za otvorene stavke
 // -----------------------------------------------------------
-STATIC FUNCTION _cre_fin_otvorene_stavke()
+STATIC FUNCTION fin_cre_open_dbf_ostav()
 
    LOCAL _dbf
    LOCAL _ret := .T.
@@ -120,13 +120,15 @@ STATIC FUNCTION _cre_fin_otvorene_stavke()
 
 
 
-FUNCTION konsult_otvorene_stavke()
+FUNCTION knjizenje_gen_otvorene_stavke()
 
-   LOCAL fgenerisano
+   LOCAL fGenerisano
    LOCAL nNaz := 1
    LOCAL nRec := RecNo()
    LOCAL _col, _row
    LOCAL _rec, _i
+   LOCAL nCnt
+   LOCAL cBrDok, cOtvSt, dDatDok
 
    lAsist := .T.
    lSumirano := .F.
@@ -170,14 +172,14 @@ FUNCTION konsult_otvorene_stavke()
 
    cIdFirma := Left( cIdFirma, 2 )
 
-   SELECT ( F_SUBAN )
-   USE
-   o_suban()
+   // SELECT ( F_SUBAN )
+   // USE
+   // o_suban()
 
-   SELECT suban
-   SET ORDER TO TAG "1" // IdFirma+IdKonto+IdPartner+dtos(DatDok)+BrNal+str(RBr,5)
+   // SELECT suban
+   // SET ORDER TO TAG "1" // IdFirma+IdKonto+IdPartner+dtos(DatDok)+BrNal+str(RBr,5)
 
-   GO TOP
+   // GO TOP
 
    Box(, 20, 77 )
 
@@ -187,18 +189,19 @@ FUNCTION konsult_otvorene_stavke()
    AltD() // F18_DEBUG_FIN_AZUR
 #endif
 
-   _cre_fin_otvorene_stavke() // kreiraj tabelu ostav
+   fin_cre_open_dbf_ostav()
+   my_flock()
 
    nUkDugBHD := 0
    nUkPotBHD := 0
 
-
-   find_suban_by_konto_partner( cIdfirma, cIdkonto, cIdpartner)
+   MsgO( "Preuzimanje podataka sa SQL servera ..." )
+   find_suban_by_konto_partner( cIdfirma, cIdkonto, cIdpartner, NIL, "IdFirma,IdKonto,IdPartner,brdok" )
+   MsgC()
 
    dDatDok := CToD( "" )
 
-   cPrirkto := "1"
-   // priroda konta
+   cPrirkto := "1"  // priroda konta - dugovni 1, potrazni 2
 
    SELECT ( F_TRFP2 )
    IF !Used()
@@ -230,6 +233,8 @@ FUNCTION konsult_otvorene_stavke()
 
    fPrviprolaz := .T.
 
+   nCnt := 0
+   Box( , 1, 40 )
    DO WHILE !Eof() .AND. field->idfirma == cIdFirma .AND. cIdKonto == field->idkonto .AND. cIdPartner == field->idpartner
 
       cBrDok := field->brdok
@@ -241,6 +246,11 @@ FUNCTION konsult_otvorene_stavke()
       nDug := 0
       nPot := 0
 
+      ++nCnt
+      IF nCnt % 500 == 0
+         @ m_x + 1, m_y + 2 SAY "suban: "
+         @ m_x + 1, Col() + 2 SAY nCnt PICT "99999"
+      ENDIF
       aFaktura := { CToD( "" ), CToD( "" ), CToD( "" ) }
 
       DO WHILE !Eof() .AND. field->idfirma == cIdFirma .AND. cIdKonto == field->idkonto .AND. cIdPartner == field->idpartner ;
@@ -256,14 +266,13 @@ FUNCTION konsult_otvorene_stavke()
             nPot2 += field->IznosDEM
          ENDIF
 
-         IF field->d_p == cPrirkto
+         IF field->d_p == cPrirKto
             aFaktura[ 1 ] := field->DATDOK
             aFaktura[ 2 ] := fix_dat_var( field->DATVAL, .T. )
          ENDIF
 
          IF aFaktura[ 3 ] < field->DatDok
-            // datum zadnje promjene
-            aFaktura[ 3 ] := field->DatDok
+            aFaktura[ 3 ] := field->DatDok   // datum zadnje promjene
          ENDIF
 
          SKIP
@@ -273,7 +282,6 @@ FUNCTION konsult_otvorene_stavke()
       IF Round( nDug - nPot, 2 ) <> 0
 
          SELECT ostav
-         my_flock()
 
          APPEND BLANK
          REPLACE field->iznosbhd with ( nDug - nPot ), ;
@@ -285,16 +293,18 @@ FUNCTION konsult_otvorene_stavke()
          IF ( cDugPot == "2" )
             REPLACE field->d_p WITH "1"
          ELSE
-            REPLACE field->d_p WITH "2", ;
-               field->iznosbhd WITH -iznosbhd
+            REPLACE field->d_p WITH "2", field->iznosbhd WITH - iznosbhd
          ENDIF
 
-         my_unlock()
          SELECT suban
 
       ENDIF
 
    ENDDO
+
+   SELECT ostav
+   my_unlock()
+   BoxC()
 
    ImeKol := {}
 
@@ -312,8 +322,8 @@ FUNCTION konsult_otvorene_stavke()
       AAdd( Kol, _i )
    NEXT
 
-   _row := MAXROWS() - 15
-   _col := MAXCOLS() - 6
+   _row := MAXROWS() - 10
+   _col := MAXCOLS() - 8
 
    Box(, _row, _col, .T. )
 
@@ -323,7 +333,7 @@ FUNCTION konsult_otvorene_stavke()
    @ m_x + _row - 1, m_y + 1 SAY '<F10>   Asistent'
    @ m_x + _row,    m_y + 1 SAY ""
 
-   ?? "  IZNOS Koji zatvaramo: " + IF( cDugPot == "1", "duguje", "potrazuje" ) + " " + AllTrim( Str( nIznos ) )
+   ?? "  IZNOS Koji zatvaramo: " + iif( cDugPot == "1", "duguje", "potrazuje" ) + " " + AllTrim( Str( nIznos ) )
 
    PRIVATE cPomBrDok := Space( 10 )
 
@@ -335,6 +345,7 @@ FUNCTION konsult_otvorene_stavke()
    Boxc()
 
    SELECT ostav
+   my_flock()
 
    nNaz := Kurs( _datdok )
 
@@ -356,6 +367,8 @@ FUNCTION konsult_otvorene_stavke()
 
       SELECT ( F_OSTAV )
       GO TOP
+      SELECT fin_pripr
+      my_flock()
 
       SELECT ostav
 
@@ -363,13 +376,11 @@ FUNCTION konsult_otvorene_stavke()
 
          IF field->m2 == "3"
 
-            my_rlock()
             REPLACE field->m2 WITH ""
-            my_unlock()
 
-            SELECT ( F_FIN_PRIPR )
+            SELECT fin_pripr
 
-            IF fgenerisano
+            IF fGenerisano
                APPEND BLANK
             ELSE
                IF !fNovi
@@ -382,22 +393,21 @@ FUNCTION konsult_otvorene_stavke()
                   APPEND BLANK
                ENDIF
 
-               // prvi put
-               fGenerisano := .T.
+               fGenerisano := .T. // prvi put
 
             ENDIF
 
             Scatter( "w" )
 
-            widfirma  := cidfirma
+            widfirma  := cIdfirma
             widvn     := _idvn
             wbrnal    := _brnal
             widtipdok := _idtipdok
             wdATvAL   := CToD( "" )
             wdatdok   := _datdok
             wopis     := ""
-            wIdkonto  := cidkonto
-            widpartner := cidpartner
+            wIdkonto  := cIdKonto
+            widpartner := cIdPartner
             wOpis     := cOpis
             wk1       := _k1
             wk2       := _k2
@@ -424,11 +434,9 @@ FUNCTION konsult_otvorene_stavke()
             ENDIF
 
             wBrDok    := ostav->brdok
-            wiznosdem := if( Round( nNaz, 4 ) == 0, 0, wiznosbhd / nNaz )
+            wIznosdem := IIF( Round( nNaz, 4 ) == 0, 0, wiznosbhd / nNaz )
 
-            my_rlock()
             Gather( "w" )
-            my_unlock()
 
             SELECT ( F_OSTAV )
 
@@ -438,7 +446,10 @@ FUNCTION konsult_otvorene_stavke()
 
       ENDDO
 
+
    ENDIF
+
+
 
    BoxC()
 
@@ -448,7 +459,6 @@ FUNCTION konsult_otvorene_stavke()
 
       SELECT ( F_FIN_PRIPR )
 
-      // uzmi posljednji slog
       Scatter()
 
       IF fNovi
@@ -467,9 +477,11 @@ FUNCTION konsult_otvorene_stavke()
    ENDIF
 
    SELECT ( F_OSTAV )
+   my_unlock()
    USE
 
    SELECT ( F_FIN_PRIPR )
+   my_unlock()
 
    IF !fGenerisano
       IF !Used()
@@ -514,10 +526,7 @@ STATIC FUNCTION EdKonsROS()
             PushWA()
 
 
-            find_suban_by_konto_partner( _idfirma, _idkonto, _idpartner, oBrdok )
-
-
-
+            find_suban_by_konto_partner( _idfirma, _idkonto, _idpartner, oBrdok, "IdFirma,IdKonto,IdPartner,brdok" )
             DO WHILE !Eof() .AND. _idfirma + _idkonto + _idpartner + obrdok == idfirma + idkonto + idpartner + brdok
 
                SKIP

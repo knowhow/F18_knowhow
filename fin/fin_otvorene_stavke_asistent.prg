@@ -344,9 +344,8 @@ FUNCTION fin_asistent_otv_st()
                      nZatvori -= nUplaceno
 
                   ELSEIF nZatvori < nUplaceno
-
-                     // imamo i ostatak sredstava razbij uplatu !!
-                     SKIP
+      
+                     SKIP // imamo i ostatak sredstava razbiti uplatu !!
                      nSljRec := RecNo()
                      SKIP -1
 

@@ -254,10 +254,10 @@ FUNCTION edit_fin_priprema()
    SET KEY K_ALT_O TO knjizenje_gen_otvorene_stavke()
 
    @ m_x + 3, m_y + 55 SAY "Broj:" GET _brnal VALID fin_valid_provjeri_postoji_nalog( _idfirma, _idvn, _brnal ) .AND. !Empty( _brnal )
-   @ m_x + 5, m_y + 2 SAY "Redni broj stavke naloga:" GET nRbr PICTURE "9999" ;
+   @ m_x + 5, m_y + 2 SAY "Redni broj stavke naloga:" GET nRbr PICTURE "99999" ;
       VALID { || lDugmeOtvoreneStavke := .T., .T. }
-   @ m_x + 7, m_y + 2 SAY "DOKUMENT: "
 
+   @ m_x + 7, m_y + 2 SAY "DOKUMENT: "
 
    IF _fin_params[ "fin_tip_dokumenta" ]
       @ m_x + 7, m_y + 14  SAY "Tip:" GET _IdTipDok VALID browse_tdok( @_IdTipDok, 7, 26 )

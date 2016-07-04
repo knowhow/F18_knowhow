@@ -50,6 +50,7 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
    LOCAL bZagl  :=  {|| zagl_suban_kartica( cBrza ) }
    LOCAL lKarticaNovaStrana := .F.
    LOCAL nTmp
+   LOCAL cOrderBy
 
    LOCAL oPDF, xPrintOpt
 
@@ -310,15 +311,15 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
    lVrsteP := .F.
 
 
+   cOrderBy := "IdFirma,IdKonto,IdPartner,datdok"
+
    MsgO( "Preuzimanje podataka sa SQL servera ..." )
    IF cBrza == "D"
       IF RTrim( qqPartner ) == ";"
-         find_suban_by_konto_partner( cIdFirma, qqKonto, NIL, NIL, "IdFirma,IdKonto,IdPartner,datdok" )
-         //SET ORDER TO TAG "5"
-      ELSE
-         find_suban_by_konto_partner( cIdFirma, qqKonto, qqPartner, NIL, "idfirma,idvn,brnal,rbr" )
-         //SET ORDER TO TAG "1"
+         find_suban_by_konto_partner( cIdFirma, qqKonto, NIL, NIL, cOrderBy )
 
+      ELSE
+         find_suban_by_konto_partner( cIdFirma, qqKonto, qqPartner, NIL, cOrderBy )
       ENDIF
    ELSE
       o_sql_suban_kto_partner( cIdFirma )

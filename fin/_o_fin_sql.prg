@@ -73,7 +73,10 @@ FUNCTION find_suban_za_period( cIdFirma, dDatOd, dDatDo, cOrderBy, cWhere )
       hParams[ "where" ] := cWhere
    ENDIF
 
-   use_sql_suban( hParams )
+   IF !use_sql_suban( hParams )
+      RETURN .F.
+   ENDIF
+
    GO TOP
 
    RETURN ! Eof()
@@ -106,7 +109,10 @@ FUNCTION find_sint_by_konto_za_period( cIdFirma, cIdKonto, dDatOd, dDatDo, cOrde
 
    hParams[ "indeks" ] := .F. // ne trositi vrijeme na kreiranje indeksa
 
-   use_sql_sint( hParams )
+   IF !use_sql_sint( hParams )
+      RETURN .F.
+   ENDIF
+
    GO TOP
 
    RETURN ! Eof()
@@ -129,23 +135,32 @@ FUNCTION find_anal_by_konto( cIdFirma, cIdKonto )
 
    hParams[ "indeks" ] := .T. // ne trositi vrijeme na kreiranje indeksa
 
-   use_sql_anal( hParams )
+   IF !use_sql_anal( hParams )
+      RETURN .F.
+   ENDIF
    GO TOP
 
    RETURN ! Eof()
 
 
 
-FUNCTION find_suban_by_konto_partner( cIdFirma, cIdKonto, cIdPartner, cBrDok, cOrderBy, lIndeks )
+FUNCTION find_suban_by_konto_partner( xIdFirma, cIdKonto, cIdPartner, cBrDok, cOrderBy, lIndeks )
 
    LOCAL hParams := hb_Hash()
 
-   //hb_default( @cOrderBy, "IdFirma,IdKonto,IdPartner,datdok" )
-   hb_default( @cOrderBy, "IdFirma,IdKonto,IdPartner,brdok" )
-   hb_default( @lIndeks, .F. )
-
-   IF cIdFirma <> NIL
-      hParams[ "idfirma" ] := cIdFirma
+   IF xIdFirma != NIL
+      IF ValType( xIdFirma ) == "C"
+         hParams[ "idfirma" ] := xIdFirma
+         hb_default( @cOrderBy, "IdFirma,IdKonto,IdPartner,brdok" )
+         hb_default( @lIndeks, .F. )
+      ELSE
+         hParams := hb_HClone( xIdFirma )
+         IF !use_sql_suban( hParams )
+            RETURN .F.
+         ENDIF
+         GO TOP
+         RETURN !Eof()
+      ENDIF
    ENDIF
 
    IF cIdKonto <> NIL
@@ -163,7 +178,9 @@ FUNCTION find_suban_by_konto_partner( cIdFirma, cIdKonto, cIdPartner, cBrDok, cO
    hParams[ "order_by" ] := cOrderBy // ako ima vise brojeva dokumenata sortiraj po njima
    hParams[ "indeks" ] := lIndeks
 
-   use_sql_suban( hParams )
+   IF !use_sql_suban( hParams )
+      RETURN .F.
+   ENDIF
    GO TOP
 
    RETURN ! Eof()
@@ -196,7 +213,9 @@ FUNCTION find_nalog_za_period( cIdFirma, cIdVN, dDatOd, dDatDo, cOrderBy )
    hParams[ "order_by" ] := cOrderBy
 
    hParams[ "indeks" ] := .F.
-   use_sql_nalog( hParams )
+   IF !use_sql_nalog( hParams )
+      RETURN .F.
+   ENDIF
    GO TOP
 
    RETURN ! Eof()
@@ -224,7 +243,10 @@ FUNCTION find_nalog_by_broj_dokumenta( cIdFirma, cIdVN, cBrNal, cOrderBy )
 
    hParams[ "indeks" ] := .F. // ne trositi vrijeme na kreiranje indeksa
 
-   use_sql_nalog( hParams )
+   IF !use_sql_nalog( hParams )
+      RETURN .F.
+   ENDIF
+
    GO TOP
 
    RETURN ! Eof()
@@ -250,7 +272,9 @@ FUNCTION find_sint_by_broj_dokumenta( cIdFirma, cIdVN, cBrNal )
 
    hParams[ "indeks" ] := .F. // ne trositi vrijeme na kreiranje indeksa
 
-   use_sql_sint( hParams )
+   IF use_sql_sint( hParams )
+      RETURN .F.
+   ENDIF
    GO TOP
 
    RETURN ! Eof()
@@ -276,7 +300,9 @@ FUNCTION find_anal_by_broj_dokumenta( cIdFirma, cIdVN, cBrNal )
 
    hParams[ "indeks" ] := .F. // ne trositi vrijeme na kreiranje indeksa
 
-   use_sql_anal( hParams )
+   IF !use_sql_anal( hParams )
+      RETURN .F.
+   ENDIF
 
    GO TOP
 
@@ -305,7 +331,9 @@ FUNCTION find_suban_by_broj_dokumenta( cIdFirma, cIdVN, cBrNal, lIndex )
 
    hParams[ "indeks" ] := lIndex  // ne trositi vrijeme na kreiranje indeksa, osim ako se ne naglasi
 
-   use_sql_suban( hParams )
+   IF !use_sql_suban( hParams )
+      RETURN .F.
+   ENDIF
    GO TOP
 
    RETURN ! Eof()
@@ -852,6 +880,9 @@ STATIC FUNCTION use_sql_suban_where( hParams )
       cWhere += iif( Empty( cWhere ), "", " AND " ) + parsiraj_sql( "brdok", hParams[ "brdok" ] )
    ENDIF
 
+   IF hb_HHasKey( hParams, "otvst" )
+      cWhere += iif( Empty( cWhere ), "", " AND " ) + parsiraj_sql( "otvst", hParams[ "otvst" ] )
+   ENDIF
 
    IF hb_HHasKey( hParams, "dat_do" )
       IF !hb_HHasKey( hParams, "dat_od" )

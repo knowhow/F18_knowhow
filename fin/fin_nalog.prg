@@ -169,7 +169,7 @@ FUNCTION fin_gen_psuban_stampa_nalozi( lAuto, dDatNal )
    IF lAuto
       // _print_opt := "D"
       Box(, 3, 75 )
-      @ m_x + 0, m_y + 2 SAY "PROCES FORMIRANJA SINTETIKE I ANALITIKE"
+      @ m_x + 0, m_y + 2 SAY8 "Formiranje sintetičkih i analitičkih stavki"
    ENDIF
 
    DO WHILE !Eof()

@@ -129,6 +129,7 @@ FUNCTION knjizenje_gen_otvorene_stavke()
    LOCAL _rec, _i
    LOCAL nCnt
    LOCAL cBrDok, cOtvSt, dDatDok
+   LOCAL hParams
 
    lAsist := .T.
    lSumirano := .F.
@@ -183,7 +184,7 @@ FUNCTION knjizenje_gen_otvorene_stavke()
 
    Box(, 20, 77 )
 
-   @ m_x, m_y + 25 SAY "KONSULTOVANJE OTVORENIH STAVKI"
+   @ m_x, m_y + 10 SAY8 "KONSULTOVANJE OTVORENIH STAVKI PRI KNJŽENJU"
 
 #ifdef F18_DEBUG_FIN_AZUR
    AltD() // F18_DEBUG_FIN_AZUR
@@ -196,7 +197,14 @@ FUNCTION knjizenje_gen_otvorene_stavke()
    nUkPotBHD := 0
 
    MsgO( "Preuzimanje podataka sa SQL servera ..." )
-   find_suban_by_konto_partner( cIdfirma, cIdkonto, cIdpartner, NIL, "IdFirma,IdKonto,IdPartner,brdok" )
+   hParams := hb_hash()
+   hParams[ "idfirma" ] := cIdFirma
+   hParams[ "idkonto" ] := cIdKonto
+   hParams[ "idpartner" ] := cIdPartner
+   hParams[ "otvst" ] := " "
+   hParams[ "order_by"] := "IdFirma,IdKonto,IdPartner,brdok"
+
+   find_suban_by_konto_partner( @hParams  )
    MsgC()
 
    dDatDok := CToD( "" )

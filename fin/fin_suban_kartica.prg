@@ -51,6 +51,7 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
    LOCAL lKarticaNovaStrana := .F.
    LOCAL nTmp
    LOCAL cOrderBy
+   LOCAL lPrviProlaz
 
    LOCAL oPDF, xPrintOpt
 
@@ -310,7 +311,6 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
 
    lVrsteP := .F.
 
-
    cOrderBy := "IdFirma,IdKonto,IdPartner,datdok"
 
    MsgO( "Preuzimanje podataka sa SQL servera ..." )
@@ -466,10 +466,12 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
          nPotBHD := 0
          nDugDEM := 0
          nPotDEM := 0
-         nZDugBHD := 0
+
+         nZDugBHD := 0 // zatvorene stavke
          nZPotBHD := 0
          nZDugDEM := 0
          nZPotDEM := 0
+
          cIdPartner := IdPartner
 
          nTarea := Select()
@@ -538,7 +540,7 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
             ? m
          ENDIF
 
-         fPrviPr := .T.  // prvi prolaz
+         lPrviProlaz := .T.  // prvi prolaz
 
          DO WHILE !Eof() .AND. cIdKonto == IdKonto .AND. ( cIdPartner == IdPartner .OR. ( cBrza == "D" .AND. RTrim( qqPartner ) == ";" ) ) .AND. Rasclan() .AND. iif( gDUFRJ != "D", IdFirma == cIdFirma, .T. )
 
@@ -565,9 +567,12 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
                ? m
             ENDIF
 
-            IF cPredh == "2" .AND. fPrviPr
-               fPrviPr := .F.
-               DO WHILE !Eof() .AND. cIdKonto == IdKonto .AND. ( cIdPartner == IdPartner .OR. ( cBrza == "D" .AND. RTrim( qqPartner ) == ";" ) ) .AND. Rasclan() .AND. dDatOd > DatDok  .AND. iif( gDUFRJ != "D", IdFirma == cIdFirma, .T. )
+            IF cPredh == "2" .AND. lPrviProlaz
+               lPrviProlaz := .F.
+
+               DO WHILE !Eof() .AND. cIdKonto == IdKonto .AND. ( cIdPartner == IdPartner .OR. ( cBrza == "D" .AND. RTrim( qqPartner ) == ";" ) ) ;
+                    .AND. Rasclan() .AND. dDatOd > DatDok  .AND. iif( gDUFRJ != "D", IdFirma == cIdFirma, .T. )
+
                   IF lOtvoreneStavke .AND. OtvSt == "9"
                      IF d_P == "1"
                         nZDugBHD += iznosbhd
@@ -711,11 +716,11 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
             IF cDinDem == "1"
                IF lOtvoreneStavke .AND. OtvSt == "9"
                   IF D_P == "1"
-                     nZDugBHD += IznosBHD
+                     nZDugBHD += IznosBHD // zatvorena stavka
                   ELSE
                      nZPotBHD += IznosBHD
                   ENDIF
-               ELSE // otvorena stavka
+               ELSE
                   IF D_P == "1"
                      @ PRow(), PCol() + 1 SAY IznosBHD PICTURE picBHD
                      @ PRow(), PCol() + 1 SAY 0 PICT picBHD
@@ -872,6 +877,7 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
                   @ PRow(), PCol() + 1 SAY nZPotBHD PICT picbhd
                ENDIF
                @ PRow(), PCol() + 1 SAY nZDugBHD - nZPotBHD PICT picbhd
+
             ELSEIF cDinDem == "2"
                @ PRow(), nC1      SAY nZDugDEM PICTURE picBHD
                @ PRow(), PCol() + 1 SAY nZPotDEM PICTURE picBHD

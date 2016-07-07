@@ -65,58 +65,18 @@ FUNCTION fin_brisanje_markera_otvorenih_stavki()
    LOCAL hParams
 
    IF Pitanje(, "Pobrisati sve markere otvorenih stavki (D/N) ?", "N" ) == "N"
-      RETURN lRet
+      RETURN .F.
    ENDIF
 
-   run_sql_query( "BEGIN" )
-
-   IF !f18_lock_tables( { "fin_suban" }, .T. )
-      run_sql_query( "ROLLBACK" )
-      MsgBeep( "Ne mogu zaključati tabelu fin_suban !#Operacija poništena." )
-      RETURN lRet
+   IF Pitanje(, "Jeste li sigurni ?!", "N" ) == "N"
+      RETURN .F.
    ENDIF
-
-   SELECT ( F_SUBAN )
-   IF !Used()
-      o_suban()
-   ENDIF
-
-   SET ORDER TO TAG "1"
-   GO TOP
-
+   cSql := "update fmk.fin_suban set otvst=' ' where otvst='9'; select count(*) from fmk.fin_suban where otvst='9'"
    MsgO( "Brisanje markera... molimo sačekajte trenutak ..." )
-
-   DO WHILE !Eof()
-
-      _rec := dbf_get_rec()
-
-      IF _rec[ "otvst" ] <> ""
-         _rec[ "otvst" ] := ""
-         lOk := update_rec_server_and_dbf( "fin_suban", _rec, 1, "CONT" )
-      ENDIF
-
-      IF !lOk
-         EXIT
-      ENDIF
-
-      SKIP
-
-   ENDDO
-
+   lRet := use_sql( "del_ostav", cSql )
    MsgC()
 
-   IF lOk
-      lRet := .T.
-      hParams := hb_Hash()
-      hParams[ "unlock" ] := { "fin_suban" }
-      run_sql_query( "COMMIT", hParams )
-   ELSE
-      run_sql_query( "ROLLBACK" )
-      MsgBeep( "Greška sa opcijom brisanja markera !#Operacija poništena." )
-   ENDIF
-
-   SELECT ( F_SUBAN )
-   USE
+   MsgBeep( "ostav cnt=" + STR(del_ostav->count,5) )
 
    RETURN lRet
 

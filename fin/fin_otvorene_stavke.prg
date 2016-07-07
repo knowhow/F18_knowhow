@@ -62,7 +62,7 @@ FUNCTION fin_brisanje_markera_otvorenih_stavki()
 
    LOCAL lRet := .F.
    LOCAL lOk := .T.
-   LOCAL hParams
+   LOCAL hParams, cSql
 
    IF Pitanje(, "Pobrisati sve markere otvorenih stavki (D/N) ?", "N" ) == "N"
       RETURN .F.
@@ -79,119 +79,6 @@ FUNCTION fin_brisanje_markera_otvorenih_stavki()
    MsgBeep( "ostav cnt=" + STR(del_ostav->count,5) )
 
    RETURN lRet
-
-
-
-
-
-FUNCTION fin_rucno_zatvaranje_otvorenih_stavki()
-
-   open_otv_stavke_tabele()
-
-   cIdFirma := gFirma
-   cIdPartner := Space( Len( partn->id ) )
-
-   picD := FormPicL( "9 " + gPicBHD, 14 )
-   picDEM := FormPicL( "9 " + gPicDEM, 9 )
-
-   cIdKonto := Space( Len( konto->id ) )
-
-   Box(, 7, 66, )
-
-   SET CURSOR ON
-
-   @ m_x + 1, m_y + 2 SAY "ISPRAVKA BROJA VEZE - OTVORENE STAVKE"
-   IF gNW == "D"
-      @ m_x + 3, m_y + 2 SAY "Firma "; ?? gFirma, "-", gNFirma
-   ELSE
-      @ m_x + 3, m_y + 2 SAY "Firma  " GET cIdFirma valid {|| P_Firma( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
-   ENDIF
-   @ m_x + 4, m_y + 2 SAY "Konto  " GET cIdKonto  VALID  P_KontoFin( @cIdKonto )
-   @ m_x + 5, m_y + 2 SAY "Partner" GET cIdPartner VALID Empty( cIdPartner ) .OR. P_Firma( @cIdPartner ) PICT "@!"
-   IF gRj == "D"
-      cIdRj := Space( Len( RJ->id ) )
-      @ m_x + 6, m_y + 2 SAY "RJ" GET cidrj PICT "@!" VALID Empty( cidrj ) .OR. P_Rj( @cidrj )
-   ENDIF
-   READ
-   ESC_BCR
-
-   BoxC()
-
-   IF Empty( cIdpartner )
-      cIdPartner := ""
-   ENDIF
-
-   cIdFirma := Left( cIdFirma, 2 )
-
-   SELECT SUBAN
-   SET ORDER TO TAG "1"
-
-   IF gRJ == "D" .AND. !Empty( cIdRJ )
-      SET FILTER TO IDRJ == cIdRj
-   ENDIF
-
-   Box(, MAXROWS() - 5, MAXCOLS() - 10 )
-
-   ImeKol := {}
-   AAdd( ImeKol, { "O",          {|| OtvSt }             } )
-   AAdd( ImeKol, { "Partn.",     {|| IdPartner }         } )
-   AAdd( ImeKol, { "Br.Veze",    {|| BrDok }             } )
-   AAdd( ImeKol, { "Dat.Dok.",   {|| DatDok }            } )
-   AAdd( ImeKol, { "Opis",       {|| PadR( opis, 20 ) }, "opis",  {|| .T. }, {|| .T. }, "V"  } )
-   AAdd( ImeKol, { PadR( "Duguje " + AllTrim( ValDomaca() ), 13 ), {|| Str( ( iif( D_P == "1", iznosbhd, 0 ) ), 13, 2 ) }     } )
-   AAdd( ImeKol, { PadR( "Potraz." + AllTrim( ValDomaca() ), 13 ),   {|| Str( ( iif( D_P == "2", iznosbhd, 0 ) ), 13, 2 ) }     } )
-   AAdd( ImeKol, { "M1",         {|| m1 }                } )
-   AAdd( ImeKol, { PadR( "Iznos " + AllTrim( ValPomocna() ), 14 ),  {|| Str( iznosdem, 14, 2 ) }                       } )
-   AAdd( ImeKol, { "nalog",      {|| idvn + "-" + brnal + "/" + Str( rbr, 5, 0 ) }                  } )
-   Kol := {}
-
-   FOR i := 1 TO Len( ImeKol )
-      AAdd( Kol, i )
-   NEXT
-
-   PRIVATE aPPos := { 2, 3 }
-   PRIVATE bGoreRed := NIL
-   PRIVATE bDoleRed := NIL
-   PRIVATE bDodajRed := NIL
-   PRIVATE fTBNoviRed := .F. // trenutno smo u novom redu ?
-   PRIVATE TBCanClose := .T. // da li se moze zavrsiti unos podataka ?
-   PRIVATE TBAppend := "N"  // mogu dodavati slogove
-   PRIVATE bZaglavlje := NIL
-   PRIVATE TBSkipBlock := {| nSkip| fin_otvorene_stavke_browse_skip( nSkip ) }
-   PRIVATE nTBLine := 1      // tekuca linija-kod viselinijskog browsa
-   PRIVATE nTBLastLine := 1  // broj linija kod viselinijskog browsa
-   PRIVATE TBPomjerise := "" // ako je ">2" pomjeri se lijevo dva
-   PRIVATE TBScatter := "N"  // uzmi samo tekuce polje
-   adImeKol := {}
-
-   FOR i := 1 TO Len( ImeKol )
-      AAdd( adImeKol, ImeKol[ i ] )
-   NEXT
-
-   adKol := {}
-   FOR i := 1 TO Len( adImeKol )
-      AAdd( adKol, i )
-   NEXT
-
-   PRIVATE bBKUslov := {|| idFirma + idkonto + idpartner = cIdFirma + cIdkonto + cIdpartner }
-   PRIVATE bBkTrazi := {|| cIdFirma + cIdkonto + cIdPartner }
-
-   SET CURSOR ON
-
-   PRIVATE cPomBrDok := Space( 10 )
-
-   SEEK Eval( bBkUslov )
-
-   opcije_browse_pregleda()
-
-   my_db_edit( "Ost", MAXROWS() - 10, MAXCOLS() - 10, {|| rucno_zatvaranje_otv_stavki_key_handler() }, ;
-      "", "", .F., NIL, 1, {|| otvst == "9" }, 6, 0, NIL, {| nSkip| fin_otvorene_stavke_browse_skip( nSkip ) } )
-
-   BoxC()
-
-   my_close_all_dbf()
-
-   RETURN .T.
 
 
 

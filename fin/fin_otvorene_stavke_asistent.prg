@@ -344,7 +344,7 @@ FUNCTION fin_asistent_otv_st()
                      nZatvori -= nUplaceno
 
                   ELSEIF nZatvori < nUplaceno
-      
+
                      SKIP // imamo i ostatak sredstava razbiti uplatu !!
                      nSljRec := RecNo()
                      SKIP -1
@@ -490,7 +490,7 @@ FUNCTION fin_asistent_otv_st()
    PRIVATE  bZaglavlje := NIL
    // zaglavlje se edituje kada je kursor u prvoj koloni
    // prvog reda
-   PRIVATE  TBSkipBlock := {| nSkip| fin_otvorene_stavke_browse_skip( nSkip ) }
+   //PRIVATE  TBSkipBlock := {| nSkip| fin_otvorene_stavke_browse_skip( nSkip ) }
    PRIVATE  nTBLine := 1      // tekuca linija-kod viselinijskog browsa
    PRIVATE  nTBLastLine := 1  // broj linija kod viselinijskog browsa
    PRIVATE  TBPomjerise := "" // ako je ">2" pomjeri se lijevo dva
@@ -525,7 +525,8 @@ FUNCTION fin_asistent_otv_st()
    SEEK Eval( bBkTrazi )
 
    my_db_edit( "Ost", _max_rows, _max_cols, {|| rucno_zatvaranje_otv_stavki_key_handler( .T. ) }, "", "", .F., NIL, 1, {|| brdok <> _obrdok }, 6, 0, ;  // zadnji par: nGPrazno
-   NIL, {| nSkip| fin_otvorene_stavke_browse_skip( nSkip ) } )
+   NIL, NIL )
+   //{| nSkip| fin_otvorene_stavke_browse_skip( nSkip ) } )
 
    BoxC()
 
@@ -766,220 +767,6 @@ STATIC FUNCTION brisi_otvorene_stavke_iz_tabele_suban()
 
    RETURN lRet
 
-
-
-FUNCTION rucno_zatvaranje_otv_stavki_key_handler( l_osuban )
-
-   LOCAL _rec
-   LOCAL cMark
-   LOCAL cDn  := "N"
-   LOCAL nRet := DE_CONT
-   LOCAL _otv_st := " "
-   LOCAL _t_rec := RecNo()
-   LOCAL _tb_filter := dbFilter()
-   LOCAL _t_area := Select()
-
-   IF l_osuban == NIL
-      l_osuban := .F.
-   ENDIF
-
-   DO CASE
-
-   CASE Ch == K_ALT_E .AND. FieldPos( "_OBRDOK" ) = 0
-
-      IF Pitanje(, "Preći u mod direktog unosa podataka u tabelu ? (D/N)", "D" ) == "D"
-         log_write( "otovrene stavke, mod direktnog unosa = D", 5 )
-         opcije_browse_pregleda()
-         DaTBDirektni()
-      ENDIF
-
-   CASE Ch == K_ENTER
-
-      cDn := "N"
-
-      Box(, 3, 50 )
-      @ m_x + 1, m_y + 2 SAY8 "Ne preporučuje se koristenje ove opcije !"
-      @ m_x + 3, m_y + 2 SAY8 "Želite li ipak nastaviti D/N" GET cDN PICT "@!" VALID cDn $ "DN"
-      READ
-      BoxC()
-
-      IF cDN == "D"
-
-         IF field->otvst <> "9"
-            cMark   := ""
-            _otv_st := "9"
-         ELSE
-            cMark   := "9"
-            _otv_st := " "
-         ENDIF
-
-         _rec := dbf_get_rec()
-         _rec[ "otvst" ] := _otv_st
-         update_rec_server_and_dbf( "fin_suban", _rec, 1, "FULL" )
-
-         log_write( "otvorene stavke, set marker=" + cMark, 5 )
-
-         nRet := DE_REFRESH
-
-      ELSE
-
-         nRet := DE_CONT
-
-      ENDIF
-
-   CASE ( Ch == Asc( "K" ) .OR. Ch == Asc( "k" ) )
-
-      IF field->m1 <> "9"
-         _otv_st := "9"
-      ELSE
-         _otv_st := " "
-      ENDIF
-      log_write( "otvorene stavke, marker=" + _otv_st, 5 )
-      _rec := dbf_get_rec()
-      _rec[ "m1" ] := _otv_st
-
-      update_rec_server_and_dbf( "fin_suban", _rec, 1, "FULL" )
-
-      nReti := DE_REFRESH
-
-   CASE Ch == K_F2
-
-      cBrDok := field->BrDok
-      cOpis := field->opis
-      dDatDok := field->datdok
-      dDatVal := field->datval
-
-      Box( "eddok", 5, 70, .F. )
-      @ m_x + 1, m_y + 2 SAY "Broj Dokumenta (broj veze):" GET cBrDok
-      @ m_x + 2, m_y + 2 SAY "Opis:" GET cOpis PICT "@S50"
-      @ m_x + 4, m_y + 2 SAY "Datum dokumenta: "
-      ?? dDatDok
-      @ m_x + 5, m_y + 2 SAY "Datum valute   :" GET dDatVal
-      READ
-      BoxC()
-
-      IF LastKey() <> K_ESC
-
-         _rec := dbf_get_rec()
-
-         _rec[ "brdok" ] := cBrDok
-         _rec[ "opis" ]  := cOpis
-         _rec[ "datval" ] := dDatVal
-         log_write( "otvorene stavke, ispravka broja veze, set=" + cBrDok, 5 )
-         update_rec_server_and_dbf( "fin_suban", _rec, 1, "FULL" )
-
-      ENDIF
-
-      nRet := DE_REFRESH
-
-   CASE Ch == K_F5
-
-      cPomBrDok := field->BrDok
-
-   CASE Ch == K_F6
-
-      IF FieldPos( "_OBRDOK" ) <> 0
-         // nalazimo se u asistentu
-         fin_ostav_stampa_azuriranih_promjena()
-
-         open_otv_stavke_tabele( l_osuban )
-         SELECT ( _t_area )
-         SET FILTER to &( _tb_filter )
-         GO ( _t_rec )
-
-
-      ELSE
-         IF Pitanje(, "Želite li da vezni broj " + BrDok + " zamijenite brojem " + cPomBrDok + " ?", "D" ) == "D"
-
-            _rec := dbf_get_rec()
-            _rec[ "brdok" ] := cPomBrDok
-            log_write( "otvorene stavke, zamjena broja veze, set=" + cPomBrDok, 5 )
-            update_rec_server_and_dbf( "fin_suban", _rec, 1, "FULL" )
-
-         ENDIF
-      ENDIF
-
-      nRet := DE_REFRESH
-
-   CASE Ch == K_CTRL_P
-
-      fin_kartica_otvorene_stavke_po_broju_veze()
-
-      open_otv_stavke_tabele( l_osuban )
-      SELECT ( _t_area )
-      SET FILTER to &( _tb_filter )
-      GO ( _t_rec )
-
-
-      nRet := DE_REFRESH
-
-   CASE Ch == K_ALT_P
-
-      StBrVeze()
-
-      open_otv_stavke_tabele( l_osuban )
-      SELECT ( _t_area )
-      SET FILTER to &( _tb_filter )
-      GO ( _t_rec )
-
-      nRet := DE_REFRESH
-
-   ENDCASE
-
-   RETURN nRet
-
-
-
-/* fin_otvorene_stavke_browse_skip(nRequest)
-       *
-       *   param: nRequest
-       */
-
-FUNCTION fin_otvorene_stavke_browse_skip( nRequest )
-
-   LOCAL nCount
-
-   nCount := 0
-
-   IF LastRec() != 0
-
-      IF ! Eval( bBKUslov )
-         SEEK Eval( bBkTrazi )
-         IF ! Eval( bBKUslov )
-            GO BOTTOM
-            SKIP 1
-         ENDIF
-         nRequest = 0
-      ENDIF
-
-      IF nRequest > 0
-         DO WHILE nCount < nRequest .AND. Eval( bBKUslov )
-            SKIP 1
-            IF Eof() .OR. !Eval( bBKUslov )
-               SKIP -1
-               EXIT
-            ENDIF
-            nCount++
-         ENDDO
-
-      ELSEIF nRequest < 0
-         DO WHILE nCount > nRequest .AND. Eval( bBKUslov )
-            SKIP -1
-            IF ( Bof() )
-               EXIT
-            ENDIF
-            nCount--
-         ENDDO
-         IF !Eval( bBKUslov )
-            SKIP 1
-            nCount++
-         ENDIF
-
-      ENDIF
-
-   ENDIF
-
-   RETURN ( nCount )
 
 
 

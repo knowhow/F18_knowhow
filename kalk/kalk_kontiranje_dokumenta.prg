@@ -887,7 +887,7 @@ FUNCTION DatVal()
    // cIdVrsteP := k2
    // ENDIF
 
-   dDatVal := fix_dat_var( dDatVal )
+   dDatVal := fix_dat_var( dDatVal, .T. )
 
 
    IF Empty( dDatVal )

@@ -790,8 +790,8 @@ METHOD FinBrutoBilans:print()
    ::create_temp_table()
    ::fill_temp_table()
 
-   if ::params[ "export_dbf" ]
-      f18_open_mime_document( my_home() + "r_export.dbf" )
+   IF ::params[ "export_dbf" ]
+      f18_open_mime_document( my_home() + my_dbf_prefix() + "r_export.dbf" )
       RETURN SELF
    ENDIF
 

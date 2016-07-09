@@ -143,7 +143,6 @@ FUNCTION WRbr()
       READ
    ENDIF
 
-altd()
    SET ORDER TO 0
    GO TOP
    DO WHILE !Eof()

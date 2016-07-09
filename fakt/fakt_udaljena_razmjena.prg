@@ -39,7 +39,7 @@ FUNCTION fakt_udaljena_razmjena_podataka()
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
 
 STATIC FUNCTION _fakt_export()

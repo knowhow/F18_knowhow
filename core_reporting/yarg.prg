@@ -22,6 +22,7 @@ CREATE CLASS YargReport
 
    VAR cReportOutput
    VAR aRecords // { { 'id':1, 'naz':'dva' }, { 'id':2, 'naz':'tri' } }
+   VAR aSql  // { "select * from fmk.fin_suban",  "select + from fmk.partn where id=${BandSql1.idpartner}"}
    VAR cBands   // primjer: "Band1", "Header#Band1"
 
    METHOD New( cName, cType, cBands )
@@ -57,34 +58,32 @@ METHOD YargReport:create_run_yarg_file()
 
    LOCAL hFile, cTempFile
 
-   ::cRunScript := my_home() + "run_yarg_" + ::cName + iif( is_windows(), ".bat", ".sh" )
+   ::cRunScript := my_home() + my_dbf_prefix() + "run_yarg_" + ::cName + iif( is_windows(), ".bat", ".sh" )
 
-   SET PRINTER to ( ::cRunScript )
+   SET PRINTER TO ( ::cRunScript )
    SET PRINTER ON
    SET CONSOLE OFF
 
-   ::cReportOutput := my_home() + "out_" + ::cName + "." + ::cType
+   ::cReportOutput := my_home() + my_dbf_prefix() + "out_" + ::cName + "." + ::cType
 
-
-   IF ( hFile := hb_vfTempFile( @cTempFile, my_home(), "out_" + ::cName + "_", "." + ::cType ) ) != NIL // hb_vfTempFile( @<cFileName>, [ <cDir> ], [ <cPrefix> ], [ <cExt> ], [ <nAttr> ] )
+   IF ( hFile := hb_vfTempFile( @cTempFile, my_home() + my_dbf_prefix(), "out_" + ::cName + "_", "." + ::cType ) ) != NIL // hb_vfTempFile( @<cFileName>, [ <cDir> ], [ <cPrefix> ], [ <cExt> ], [ <nAttr> ] )
       hb_vfClose( hFile )
       ::cReportOutput := cTempFile
-   ELSE
-      ::cReportOutput := my_home() + "out_" + ::cName + "." + ::cType
    ENDIF
 
    IF is_linux() .OR. is_mac()
       ?? "#!/bin/bash"
    ENDIF
-   ? "yarg" + SLASH + "bin" + SLASH + "yarg" + iif( is_windows(), ".bat", "" )
-   ?? " -rp " + ::cReportXml
-   ?? " -op " + ::cReportOutput
+
+   ? file_path_quote( f18_current_directory() + SLASH + "yarg" + SLASH + "bin" + SLASH + "yarg" + iif( is_windows(), ".bat", "" ) )
+   ?? " -rp " + file_path_quote( ::cReportXml )
+   ?? " -op " + file_path_quote( ::cReportOutput )
    // -Pparam1="string a b c d" \
    // -Pparam2=11/11/11 11:00 \
    // -Pparam3=10 \
    // -Pparam4=[\{\"col1\":\"json1\ ttttttttttttttttttttt\",\"col2\":\"json2\"\},\{\"col1\":\"json3\",\"col2\":\"json4\"\}] \
 
-   ?? " -prop " + my_home() + ::cName + ".properties"
+   ?? " -prop " + file_path_quote( my_home() + my_dbf_prefix() + ::cName + ".properties" )
 
 
    SET PRINTER TO
@@ -92,7 +91,7 @@ METHOD YargReport:create_run_yarg_file()
    SET CONSOLE ON
 
    IF is_linux() .OR. is_mac()
-      f18_run( "chmod +x " + ::cRunScript )
+      f18_run( "chmod +x " + file_path_quote( ::cRunScript ) )
    ENDIF
 
    RETURN .T.
@@ -100,23 +99,25 @@ METHOD YargReport:create_run_yarg_file()
 
 METHOD YargReport:create_report_properties()
 
-   ::cReportProperties := my_home() + ::cName + ".properties"
+   LOCAL  hServerParams := my_server_params()
+
+   ::cReportProperties := my_home() + my_dbf_prefix() + ::cName + ".properties"
 
    SET PRINTER to ( ::cReportProperties )
    SET PRINTER ON
    SET CONSOLE OFF
 
-   ? "cuba.reporting.sql.driver=org.hsqldb.jdbcDriver"
-   ? "cuba.reporting.sql.dbUrl=jdbc:hsqldb:hsql://localhost/reportingDb"
-   ? "cuba.reporting.sql.user=sa"
-   ? "cuba.reporting.sql.password="
+   // ? "cuba.reporting.sql.driver=org.hsqldb.jdbcDriver"
+   // ? "cuba.reporting.sql.dbUrl=jdbc:hsqldb:hsql://localhost/reportingDb"
+   // ? "cuba.reporting.sql.user=sa"
+   // ? "cuba.reporting.sql.password="
 
-    /*
-    cuba.reporting.sql.driver=org.postgresql.Driver
-    #cuba.reporting.sql.dbUrl=jdbc:postgresql://localhost/rg_2016
-    #cuba.reporting.sql.user=admin
-    #cuba.reporting.sql.password=pwd
-    */
+
+   ? "cuba.reporting.sql.driver=org.postgresql.Driver"
+   ? "cuba.reporting.sql.dbUrl=jdbc:postgresql://" + hServerParams[ "host" ] + "/" + hServerParams[ "database" ]
+   ? "cuba.reporting.sql.user=" + hServerParams[ "user" ]
+   ? "cuba.reporting.sql.password=" + + hServerParams[ "password" ]
+
 
    IF is_mac()
       ? "cuba.reporting.openoffice.path=/Applications/LibreOffice.app/Contents/MacOS"
@@ -143,7 +144,7 @@ METHOD YargReport:create_yarg_xml()
 
    LOCAL cTemplate, hRec, cKey, lFirst, lFirst2
 
-   ::cReportXml := my_home() + "yarg_" + ::cName + ".xml"
+   ::cReportXml := my_home() + my_dbf_prefix() + "yarg_" + ::cName + ".xml"
 
    create_xml( ::cReportXml )
    xml_head()
@@ -218,6 +219,27 @@ METHOD YargReport:create_yarg_xml()
       xml_subnode_end( "band" ) // band1
    ENDIF
 
+   IF "BandSql1" $ ::cBands
+
+      xml_subnode_start( 'band name="Sql1" orientation="H"' )
+      xml_subnode_start( "queries" )
+
+      xml_subnode_start( 'query name="Sql1" type="sql"' )
+      xml_subnode_start( "script" )
+      ??  to_xml_encoding( ::aSql[ 1 ] )
+      ?
+      ?E ::aSql[ 1 ]
+      xml_subnode_end( "script" )
+
+      xml_subnode_end( "query" )
+
+      xml_subnode_end( "queries" )
+
+      xml_subnode_end( "band" ) // band1
+
+
+   ENDIF
+
    xml_subnode_end( "bands" )
    xml_subnode_end( "rootBand" )
 
@@ -229,7 +251,9 @@ METHOD YargReport:create_yarg_xml()
 
 METHOD YargReport:view()
 
-   RETURN f18_open_document( ::cReportOutput )
+   RETURN f18_open_mime_document( ::cReportOutput )
+
+
 
 
 METHOD YargReport:run()
@@ -251,16 +275,17 @@ METHOD YargReport:run()
    ? "Generisanje ", ::cName, ::cType
 
 
-   nError := hb_processRun( ::cRunScript, NIL, @cStdOut, @cStdErr, .F. )
-
+   MsgO( "Generacija YARG izvještaja ..." )
+   nError := hb_processRun( file_path_quote( ::cRunScript ), NIL, @cStdOut, @cStdErr, .F. )
+   MsgC()
 
    IF nError <> 0
-      ? "STDOUT", _u( cStdOut )
-      ? "STDERR", _u( cStdErr )
+      ? "STDOUT:", _u( cStdOut )
+      ? "STDERR:", _u( cStdErr )
       ?
       ? "<ENTER> nastavak"
       Inkey( 0 )
-      ?E "greska", ::cRunScript
+      ?E "greska", file_path_quote( ::cRunScript )
       error_bar( "yarg", ::cRunScript )
       RESTORE SCREEN FROM cScreen
       RETURN .F.

@@ -18,32 +18,32 @@ FUNCTION usex( cTable )
 // --------------------------------------------------
 // kreira direktorij ako ne postoji
 // --------------------------------------------------
-FUNCTION f18_create_dir( location )
+FUNCTION f18_create_dir( cLocation )
 
    LOCAL _len
    LOCAL _loc
    LOCAL _create
 
-   _loc := location + "*.*"
+   _loc := cLocation + "*.*"
 
-   _loc := _path_quote( location + "*.*" )
+   _loc := file_path_quote( cLocation + "*.*" )
 
    _len := ADir( _loc )
 
    IF _len == 0
 
-      _create := DirMake( location )
+      _create := DirMake( cLocation )
 
       IF _create <> 0
-         log_write( "f18_create_dir(), problem sa kreiranjem direktorija: " + location, 5 )
+         log_write( "f18_create_dir, problem sa kreiranjem direktorija: " + cLocation, 5 )
       ENDIF
 
    ENDIF
 
-   RETURN
+   RETURN .T.
 
-// ---------------------------------------
-// ---------------------------------------
+
+
 FUNCTION f18_help()
 
    ? "F18 parametri"

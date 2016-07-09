@@ -420,7 +420,7 @@ STATIC FUNCTION _xml_export( mjesec, godina )
 
    _id_br := AllTrim( _id_br )
 
-   _lokacija := _path_quote( my_home() + "export" + SLASH )
+   _lokacija := my_home() + "export" + SLASH
 
    IF DirChange( _lokacija ) != 0
       _cre := MakeDir ( _lokacija )

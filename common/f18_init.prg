@@ -19,6 +19,8 @@ STATIC s_psqlServer_log := .F. // logiranje na server
 STATIC s_cF18HomeRoot := NIL // za sve threadove identican home_root
 STATIC s_cF18HomeBackup := NIL // svi threadovi ista backup lokacija
 
+STATIC s_cF18CurrentDirectory := NIL
+
 THREAD STATIC s_cF18Home := NIL // svaki thread ima svoj my home ovisno o tekucoj bazi
 
 
@@ -276,9 +278,9 @@ FUNCTION set_screen_dimensions()
    ?E " set font_weight: ", hb_gtInfo( HB_GTI_FONTWEIGHT, HB_GTI_FONTW_BOLD )
 #endif
 
-//#if  defined( __PLATFORM__WINDOWS ) .OR. defined( __PLATFORM__LINUX )
+   // #if  defined( __PLATFORM__WINDOWS ) .OR. defined( __PLATFORM__LINUX )
    ?E " set font_width: ", hb_gtInfo( HB_GTI_FONTWIDTH, font_width() )
-//#endif
+   // #endif
    ?E " set font_size: ", hb_gtInfo( HB_GTI_FONTSIZE, font_size() )
 
 
@@ -433,13 +435,20 @@ FUNCTION my_home( cHome )
 
 
 
-FUNCTION _path_quote( path )
+FUNCTION file_path_quote( cPath )
 
-   IF ( At( path, " " ) != 0 ) .AND. ( At( PATH, '"' ) == 0 )
-      RETURN  '"' + path + '"'
+   IF ( At( " ", cPath ) != 0 ) .AND. ( At( '"', cPath ) == 0 )
+      RETURN  '"' + cPath + '"'
    ENDIF
 
-   RETURN PATH
+
+/*
+   IF ( At( ' ', cPath ) != 0 ) .AND. ( At( '\ ', cPath ) == 0 )
+      RETURN  StrTran( cPath, ' ', '\ ' )
+   ENDIF
+*/
+
+   RETURN cPath
 
 
 
@@ -456,22 +465,36 @@ FUNCTION my_home_root( home_root )
    RETURN s_cF18HomeRoot
 
 
+FUNCTION set_f18_current_directory()
+
+   s_cF18CurrentDirectory := iif( is_windows(), hb_CurDrive(), "/" ) + CurDir()
+
+   ?E "current directory:", s_cF18CurrentDirectory
+
+   RETURN s_cF18CurrentDirectory
+
+
+FUNCTION f18_current_directory()
+
+   RETURN s_cF18CurrentDirectory
+
+
 FUNCTION set_f18_home_root()
 
-   LOCAL home
+   LOCAL cHome
 
 #ifdef __PLATFORM__WINDOWS
 
-   home := hb_DirSepAdd( GetEnv( "USERPROFILE" ) )
+   cHome := hb_DirSepAdd( GetEnv( "USERPROFILE" ) )
 #else
-   home := hb_DirSepAdd( GetEnv( "HOME" ) )
+   cHome := hb_DirSepAdd( GetEnv( "HOME" ) )
 #endif
 
-   home := hb_DirSepAdd( home + ".f18" )
+   cHome := hb_DirSepAdd( cHome + ".f18" )
 
-   f18_create_dir( home )
+   f18_create_dir( cHome )
 
-   my_home_root( home )
+   my_home_root( cHome )
 
    RETURN .T.
 

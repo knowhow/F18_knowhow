@@ -394,6 +394,7 @@ FUNCTION f18_open_document( cDocument )
 
 
 #ifdef __PLATFORM__WINDOWS
+
    _prefix := "cmd /c "
 #else
 #ifdef __PLATFORM__DARWIN
@@ -405,7 +406,7 @@ FUNCTION f18_open_document( cDocument )
 
 
 #ifdef __PLATFORM__WINDOWS
-      cDocument := '"' + cDocument + '"'
+   cDocument := '"' + cDocument + '"'
 #endif
 
 #ifdef __PLATFORM__LINUX
@@ -418,24 +419,25 @@ FUNCTION f18_open_document( cDocument )
 
 
 
-FUNCTION open_folder( folder )
+FUNCTION open_folder( cFolder )
 
    LOCAL _cmd
-#ifdef __PLATFORM__WINDOWS
 
-   folder := _path_quote( folder )
-#endif
+   cFolder := file_path_quote( cFolder )
 
-   RETURN f18_open_document( folder )
+   RETURN f18_open_document( cFolder )
+
 
 
 FUNCTION f18_open_mime_document( cDocument )
 
-   LOCAL _cmd := ""
+   LOCAL _cmd := "", _error
 
-   IF Pitanje(, "Otvoriti " + AllTrim( cDocument ) + " ?", "D" ) == "N"
-      RETURN 0
-   ENDIF
+   cDocument := file_path_quote( cDocument )
+
+   //IF Pitanje(, "Otvoriti " + AllTrim( cDocument ) + " ?", "D" ) == "N"
+   //    RETURN .F.
+   //ENDIF
 
 #ifdef __PLATFORM__UNIX
 
@@ -447,7 +449,6 @@ FUNCTION f18_open_mime_document( cDocument )
 
 #else __PLATFORM__WINDOWS
 
-   cDocument := '"' + cDocument + '"'
    _cmd += "cmd /c " + cDocument
 
 #endif
@@ -456,7 +457,7 @@ FUNCTION f18_open_mime_document( cDocument )
 
    IF _error <> 0
       MsgBeep( "Problem sa otvaranjem dokumenta !#Greška: " + AllTrim( Str( _error ) ) )
-      RETURN _error
+      RETURN .F.
    ENDIF
 
-   RETURN 0
+   RETURN .T.

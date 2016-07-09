@@ -28,6 +28,7 @@ FUNCTION Main( p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11 )
 
    harbour_init()
    init_parameters_cache()
+   set_f18_current_directory()
    set_f18_home_root()
    set_global_vars_0()
    f18_error_block()

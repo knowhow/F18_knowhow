@@ -18,7 +18,7 @@ FUNCTION f18_ime_dbf( xTableRec )
 
    LOCAL _pos
    LOCAL _a_dbf_rec
-   LOCAL _ret
+   LOCAL cRet
 
    SWITCH ValType( xTableRec )
 
@@ -37,13 +37,13 @@ FUNCTION f18_ime_dbf( xTableRec )
    ENDIF
 
    IF ValType( _a_dbf_rec[ "table" ] ) != "C" .OR. ValType( my_home() ) != "C"
-      _ret := "xyz"
+      cRet := "xyz"
       ?E "ERROR_f18_ime_dbf", my_home(), _a_dbf_rec[ "table" ]
    ELSE
-      _ret := my_home() + my_dbf_prefix( @_a_dbf_rec ) + _a_dbf_rec[ "table" ] + "." + DBFEXT
+      cRet := my_home() + my_dbf_prefix( @_a_dbf_rec ) + _a_dbf_rec[ "table" ] + "." + DBFEXT
    ENDIF
 
-   RETURN _ret
+   RETURN cRet
 
 
 FUNCTION dbf_prefix( cPrefix )
@@ -94,7 +94,7 @@ FUNCTION my_dbf_prefix( aDbfRec )
 FUNCTION dbf_get_rec()
 
    LOCAL _ime_polja, _i, _struct
-   LOCAL _ret := hb_Hash()
+   LOCAL cRet := hb_Hash()
 
    _struct := dbStruct()
    FOR _i := 1 TO Len( _struct )
@@ -103,15 +103,15 @@ FUNCTION dbf_get_rec()
 
 
       IF !( "#" + _ime_polja + "#" $ "#BRISANO#_OID_#_COMMIT_#" )
-         _ret[ Lower( _ime_polja ) ] := Eval( FieldBlock( _ime_polja ) )
+         cRet[ Lower( _ime_polja ) ] := Eval( FieldBlock( _ime_polja ) )
          IF  _struct[ _i, 2 ] == "D"
-           _ret[ Lower( _ime_polja ) ]  := fix_dat_var( _ret[ Lower( _ime_polja ) ] )
+           cRet[ Lower( _ime_polja ) ]  := fix_dat_var( cRet[ Lower( _ime_polja ) ] )
          ENDIF
       ENDIF
 
    NEXT
 
-   RETURN _ret
+   RETURN cRet
 
 
 /*

@@ -456,8 +456,8 @@ METHOD LDExportTxt:create_txt_from_dbf()
       MakeDir( _output_dir )
    ENDIF
 
-   // fajl ide u my_home/export/
-   _output_filename := _output_dir + AllTrim( ::export_params[ "fajl" ] )
+
+   _output_filename := _output_dir + AllTrim( ::export_params[ "fajl" ] )  // fajl ide u my_home/export/
 
    SET PRINTER TO ( _output_filename )
    SET PRINTER ON

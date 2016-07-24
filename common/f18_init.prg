@@ -467,7 +467,7 @@ FUNCTION my_home_root( home_root )
 
 FUNCTION set_f18_current_directory()
 
-   s_cF18CurrentDirectory := iif( is_windows(), hb_CurDrive(), "/" ) + CurDir()
+   s_cF18CurrentDirectory := iif( is_windows(), hb_CurDrive() + ":" + SLASH, "/" ) + CurDir()
 
    ?E "current directory:", s_cF18CurrentDirectory
 

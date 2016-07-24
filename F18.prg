@@ -19,7 +19,6 @@ STATIC __relogin_opt := .F.
 FUNCTION Main( p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11 )
 
    LOCAL _arg_v := hb_Hash()
-   PUBLIC gDebug := 9
 
 
    cre_arg_v_hash( @_arg_v, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11 )

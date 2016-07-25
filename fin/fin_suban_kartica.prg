@@ -67,7 +67,7 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
    PRIVATE picDEM := FormPicL( gPicDEM, 12 )
 
    PRIVATE cSazeta := "N"
-   PRIVATE cK14 := "1"
+   PRIVATE cK14 := "2" // default prikazati datval
 
    cDinDem := "1"
    dDatOd := CToD( "" )
@@ -151,12 +151,10 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
          cIdFirma := PadR( gFirma + ";", 30 )
          @ m_x + ( ++nX ), m_y + 2 SAY "Firma: " GET cIdFirma PICT "@!S20"
       ELSE
-         IF gNW == "D"
-            @ m_x + ( ++nX ), m_y + 2 SAY "Firma "
-            ?? gFirma, "-", gNFirma
-         ELSE
-            @ m_x + ( ++nX ), m_y + 2 SAY "Firma: " GET cIdFirma valid {|| Empty( cIdFirma ) .OR. P_Firma( @cIdFirma ), cIdfirma := Left( cIdFirma, 2 ), .T. }
-         ENDIF
+
+         @ m_x + ( ++nX ), m_y + 2 SAY "Firma "
+         ?? gFirma, "-", gNFirma
+
       ENDIF
 
       IF cBrza == "D"
@@ -311,7 +309,7 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
 
    lVrsteP := .F.
 
-   cOrderBy := "IdFirma,IdKonto,IdPartner,datdok"
+   cOrderBy := "IdFirma,IdKonto,IdPartner,datdok,brdok"
 
    MsgO( "Preuzimanje podataka sa SQL servera ..." )
    IF cBrza == "D"
@@ -571,7 +569,7 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
                lPrviProlaz := .F.
 
                DO WHILE !Eof() .AND. cIdKonto == IdKonto .AND. ( cIdPartner == IdPartner .OR. ( cBrza == "D" .AND. RTrim( qqPartner ) == ";" ) ) ;
-                    .AND. Rasclan() .AND. dDatOd > DatDok  .AND. iif( gDUFRJ != "D", IdFirma == cIdFirma, .T. )
+                     .AND. Rasclan() .AND. dDatOd > DatDok  .AND. iif( gDUFRJ != "D", IdFirma == cIdFirma, .T. )
 
                   IF lOtvoreneStavke .AND. OtvSt == "9"
                      IF d_P == "1"

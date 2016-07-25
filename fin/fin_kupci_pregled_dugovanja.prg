@@ -17,12 +17,16 @@ FUNCTION fin_kupci_pregled_dugovanja()
 
    LOCAL i
    LOCAL oReport, cSql
-   LOCAL cIdKonto := PadR( "2110", 7 )
-   LOCAL cIdPartner := SPACE(6)
+   LOCAL cIdKonto := PadR( "21", 7 )
+   LOCAL cIdPartner := Space( 6 )
+   LOCAL dDatOd := CToD( "01.01." + AllTrim( Str( Year( Date() ) ) ) )
+   LOCAL dDatDo := Date()
 
-   Box(, 3, 60 )
-   @ m_x + 1, m_y + 2  SAY "         Konto duguje: " GET cIdKonto
-   @ m_x + 2, m_y + 2  SAY "Partner% (prazno svi): " GET cIdPartner
+   Box(, 4, 60 )
+   @ m_x + 1, m_y + 2  SAY "Datum od " GET dDatOd
+   @ m_x + 1, Col() + 2 SAY "do" GET dDatDo
+   @ m_x + 3, m_y + 2  SAY "Konto% duguje: " GET cIdKonto
+   @ m_x + 4, m_y + 2  SAY "Partner% (prazno svi): " GET cIdPartner
    READ
    BoxC()
 
@@ -30,16 +34,18 @@ FUNCTION fin_kupci_pregled_dugovanja()
       RETURN .F.
    ENDIF
    oReport := YargReport():New( "kupci_pregled_dugovanja", "xlsx", "Header#BandSql1" )
-   cSql := "select * from v_dugovanja WHERE i_ukupno<>0  and trim(konto_id)=" + sql_quote( TRIM(cIdKonto) )
+   cSql := "select * from sp_dugovanja("
+   cSql += sql_quote( dDatOd ) + ","
+   cSql += sql_quote( dDatDo ) + ","
+   cSql += sql_quote( Trim( cIdKonto ) + "%" ) + ","
+   cSql += sql_quote( Trim( cIdPartner ) + "%" ) + ")"
 
-   IF !empty(cIdPartner)
-     cSql += "AND trim(partner_id) LIKE " + sql_quote( TRIM( cIdPartner) + "%" )
-   ENDIF
+   cSql += " WHERE i_ukupno<>0 "
+
+altd()
    // cSql += " WHERE i_ukupno"+to_xml_encoding("<>")+"0"
    // cSql += " AND idkonto=" + to_xml_encoding(sql_quote( Padr( "2110", 7) ))
    oReport:aSql := { cSql }
-
-
 
 /*   oReport:aRecords := {}
 

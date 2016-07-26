@@ -82,7 +82,7 @@ FUNCTION Get1_11()
    _MKonto := _Idkonto2
    _PKonto := _Idkonto
    check_datum_posljednje_kalkulacije()
-   DatPosljP()
+   kalk_dat_poslj_promjene_prod()
    DuplRoba()
 
 

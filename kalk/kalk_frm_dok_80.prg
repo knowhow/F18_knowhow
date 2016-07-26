@@ -129,7 +129,7 @@ FUNCTION Get1_80( atrib )
 
    _pkonto := _idkonto
 
-   DatPosljP()
+   kalk_dat_poslj_promjene_prod()
    DuplRoba()
 
    IF fNovi
@@ -253,7 +253,7 @@ FUNCTION Get1_80b()
 
    _pkonto := _idkonto
 
-   DatPosljP()
+   kalk_dat_poslj_promjene_prod()
 
    PRIVATE fMarza := " "
 

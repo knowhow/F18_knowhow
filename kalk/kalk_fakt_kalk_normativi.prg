@@ -74,7 +74,7 @@ FUNCTION PrenosNo( dD_from, dD_to, cIdKonto2, cIdTipDok, dDatKalk, cRobaUsl, ;
       IF idvd <> "10"
          cBrKalk := Space( 8 )
       ELSE
-         cBrKalk := brdok
+         cBrKalk := field->brdok
       ENDIF
 
    ENDIF
@@ -86,7 +86,7 @@ FUNCTION PrenosNo( dD_from, dD_to, cIdKonto2, cIdTipDok, dDatKalk, cRobaUsl, ;
    Box(, 15, 60 )
 
    IF gBrojacKalkulacija == "D" .AND. lTest == .F.
-      cbrkalk := UBrojDok( Val( Left( cbrkalk, 5 ) ) + 1, 5, Right( cBrKalk, 3 ) )
+      cBrKalk := UBrojDok( Val( Left( cbrkalk, 5 ) ) + 1, 5, Right( cBrKalk, 3 ) )
    ENDIF
 
    DO WHILE .T.

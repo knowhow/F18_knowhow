@@ -110,6 +110,7 @@ FUNCTION kalk_dokument_postoji( cFirma, cIdVd, cBroj )
       ENDIF
    ENDIF
 */
+
    RETURN lExist
 
 
@@ -217,54 +218,44 @@ FUNCTION check_datum_posljednje_kalkulacije()
  *  Ispituje da li je datum zadnje promjene na zadanoj prodavnici i za zadani artikal noviji od one koja se unosi
  */
 
-FUNCTION DatPosljP()
+FUNCTION kalk_dat_poslj_promjene_prod()
 
-   SELECT kalk
-   SET ORDER TO TAG "4"
+   find_kalk_by_pkonto_idroba( _IdFirma, _IdKonto, _IdRoba )
+   GO BOTTOM
 
-
-   IF Alltrim( _idroba ) == "T"
-      GO BOTTOM
-      IF _datdok < datdok
-         Msg( "Zadnji dokument za artikal: " + DToC( datdok ) )
-         _ERROR := "1"
-      ENDIF
-   ELSE
-      SEEK _idfirma + _idkonto + _idroba + Chr( 254 )
-      SKIP - 1
-      IF _idfirma + _idkonto + _idroba == field->idfirma + field->pkonto + field->idroba .AND. _datdok < field->datdok
-         error_bar( "KA_" + _idfirma + "-" + _idkonto + "-" + _idroba, _idkonto + " / " + _idroba + " zadnji dokument: " + DToC( field->datdok ) )
-         _ERROR := "1"
-      ENDIF
+   IF _datdok < field->datdok
+      error_bar( "KA_" + _idfirma + "-" + _idkonto + "-" + _idroba, _idkonto + " / " + _idroba + " zadnji dokument: " + DToC( field->datdok ) )
+      _ERROR := "1"
    ENDIF
+
    SELECT kalk_pripr
 
    RETURN .T.
 
 
 
-/* SljBroj(cidfirma,cIdvD,nMjesta)
+/* kalk_sljedeci_broj(cidfirma,cIdvD,nMjesta)
  *     Sljedeci slobodan broj dokumenta za zadanu firmu i vrstu dokumenta
  */
 
-FUNCTION SljBroj( cidfirma, cIdvD, nMjesta )
+FUNCTION kalk_sljedeci_broj( cIdfirma, cIdvD, nMjesta )
 
-   PRIVATE cReturn := "0"
+   LOCAL cReturn := "0"
 
-   SELECT kalk
-   SEEK cidfirma + cidvd + "ä"
-   SKIP -1
-   IF idvd <> cidvd
-      cReturn := Space( 8 )
+
+   find_kalk_doks_za_tip( cIdFirma, cIdVd )
+   GO BOTTOM
+   IF idvd <> cIdVd
+      cBrKalk := Space( 8 )
    ELSE
-      cReturn := brdok
+      cBrKalk := field->brdok
    ENDIF
+
 
    IF AllTrim( cReturn ) >= "99999"
       cReturn := PadR( novasifra( AllTrim( cReturn ) ), 5 )
    ELSE
-      cReturn := UBrojDok( Val( Left( cReturn, 5 ) ) + 1, ;
-         5, Right( cReturn ) )
+      cReturn := UBrojDok( Val( Left( cReturn, 5 ) ) + 1, 5, Right( cReturn ) )
    ENDIF
 
    RETURN cReturn
@@ -277,8 +268,8 @@ FUNCTION SljBroj( cidfirma, cIdvD, nMjesta )
 
 FUNCTION kalk_sljedeci_brdok( cTipKalk, cIdFirma, cSufiks )
 
-
    LOCAL cBrKalk := Space( 8 )
+
    IF cSufiks == nil
       cSufiks := Space( 3 )
    ENDIF
@@ -291,7 +282,7 @@ FUNCTION kalk_sljedeci_brdok( cTipKalk, cIdFirma, cSufiks )
          SET ORDER TO TAG "1S" // "IdFirma+idvd+SUBSTR(brdok,6)+LEFT(brdok,5)"
          SEEK cIdFirma + cTipKalk + cSufiks + "X"
       */
-          find_kalk_doks_za_tip_sufix( cIdFirma, cTipKalk, cSufiks )
+         find_kalk_doks_za_tip_sufix( cIdFirma, cTipKalk, cSufiks )
       ELSE
          find_kalk_doks_za_tip( cIdFirma, cTipKalk )
       /*
@@ -301,7 +292,7 @@ FUNCTION kalk_sljedeci_brdok( cTipKalk, cIdFirma, cSufiks )
       */
       ENDIF
 
-      //SKIP -1
+      // SKIP -1
       GO BOTTOM // zzadnji u nizu
 
       IF cTipKalk <> field->idVD .OR. glBrojacPoKontima .AND. Right( field->brDok, 3 ) <> cSufiks
@@ -444,14 +435,14 @@ FUNCTION kalk_novi_broj_dokumenta( firma, tip_dokumenta, konto )
    // konsultuj i doks uporedo
    find_kalk_doks_za_tip_sufix(  firma, tip_dokumenta, _sufix )
 
-   //IF glBrojacPoKontima
-   //    SET ORDER TO TAG "1S"
-   //ELSE
-   //    SET ORDER TO TAG "1"
-   //ENDIF
-   //GO TOP
-   //SEEK firma + tip_dokumenta + _sufix + "X"
-   //SKIP -1
+   // IF glBrojacPoKontima
+   // SET ORDER TO TAG "1S"
+   // ELSE
+   // SET ORDER TO TAG "1"
+   // ENDIF
+   // GO TOP
+   // SEEK firma + tip_dokumenta + _sufix + "X"
+   // SKIP -1
    GO BOTTOM
 
    IF field->idfirma == firma .AND. field->idvd == tip_dokumenta .AND. ;
@@ -952,6 +943,7 @@ FUNCTION ObracunPorezaUvoz()
 FUNCTION ImePoljaTroska( n )
 
    LOCAL aTros
+
    aTros := { "Prevoz", "BankTr", "SpedTr", "CarDaz", "ZavTr" }
 
    RETURN aTros[ n ]
@@ -1150,12 +1142,12 @@ FUNCTION UkupnoKolP( nTotalUlaz, nTotalIzlaz )
    nSelect := Select()
 
    lUsedRoba := .T.
-   SELECT( F_ROBA )
+   Select( F_ROBA )
    IF !Used()
       lUsedRoba := .F.
       O_ROBA
    ELSE
-      SELECT( F_ROBA )
+      Select( F_ROBA )
    ENDIF
    SEEK cIdRoba
 
@@ -1193,12 +1185,12 @@ FUNCTION UkupnoKolM( nTotalUlaz, nTotalIzlaz )
    nSelect := Select()
 
    lUsedRoba := .T.
-   SELECT( F_ROBA )
+   Select( F_ROBA )
    IF !Used()
       lUsedRoba := .F.
       O_ROBA
    ELSE
-      SELECT( F_ROBA )
+      Select( F_ROBA )
    ENDIF
    SEEK cIdRoba
 

@@ -45,13 +45,13 @@ FUNCTION Get1_19()
 
 
    _MKonto := _Idkonto
-   DatPosljP()
+   kalk_dat_poslj_promjene_prod()
 
    SELECT koncij
    SEEK Trim( _idkonto )
    SELECT kalk_pripr  // napuni tarifu
 
-   DatPosljP()
+   kalk_dat_poslj_promjene_prod()
    DuplRoba()
 
    dDatNab := CToD( "" )

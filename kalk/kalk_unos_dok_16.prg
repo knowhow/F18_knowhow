@@ -158,7 +158,7 @@ FUNCTION Get1_16bPDV()
 
    _PKonto := _Idkonto
 
-   DatPosljP()
+   kalk_dat_poslj_promjene_prod()
    DuplRoba()
 
    PRIVATE fMarza := " "

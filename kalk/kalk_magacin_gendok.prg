@@ -166,10 +166,10 @@ FUNCTION InvManj()
 
    lOdvojiVisak := Pitanje(, "Napraviti poseban dokument za visak?", "N" ) == "D"
 
-   PRIVATE cBrOtp := SljBroj( cidfirma, "95", 8 )
+   PRIVATE cBrOtp := kalk_sljedeci_broj( cidfirma, "95", 8 )
    IF lOdvojiVisak
       o_kalk_pripr9()
-      PRIVATE cBrDop := SljBroj( cidfirma, "16", 8 )
+      PRIVATE cBrDop := kalk_sljedeci_broj( cidfirma, "16", 8 )
       DO WHILE .T.
 
          SELECT kalk_pripr9
@@ -306,7 +306,7 @@ FUNCTION MNivPoProc()
    o_koncij()
    o_kalk_pripr()
    -- o_kalk()
-   PRIVATE cBrDok := SljBroj( cidfirma, "18", 8 )
+   PRIVATE cBrDok := kalk_sljedeci_broj( cidfirma, "18", 8 )
 
    nRbr := 0
    ## SET ORDER TO TAG "3"  // "3","idFirma+mkonto+idroba+dtos(datdok)+podbr+MU_I+IdVD",KUMPATH+"KALK")

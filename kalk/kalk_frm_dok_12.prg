@@ -68,7 +68,7 @@ FUNCTION Get1_12()
 
    _PKonto := _Idkonto
    _MKonto := _Idkonto2
-   DatPosljP()
+   kalk_dat_poslj_promjene_prod()
    check_datum_posljednje_kalkulacije()
    DuplRoba()
 

@@ -41,7 +41,7 @@ FUNCTION kalk_ip()
    o_kalk_pripr()
    //o_kalk()
 
-   PRIVATE cBrDok := SljBroj( cIdfirma, "IP", 8 )
+   PRIVATE cBrDok := kalk_sljedeci_broj( cIdfirma, "IP", 8 )
 
    nRbr := 0
 
@@ -293,7 +293,7 @@ FUNCTION gen_ip_razlika()
    //o_kalk()
 
    // sljedeci broj kalkulacije IP
-   PRIVATE cBrDok := SljBroj( cIdFirma, "IP" )
+   PRIVATE cBrDok := kalk_sljedeci_broj( cIdFirma, "IP" )
 
    nRbr := 0
 

@@ -71,7 +71,7 @@ FUNCTION kalk_generisi_inventuru_magacina()
    IF lOsvjezi
       PRIVATE cBrDok := kalk_pripr->brdok
    ELSE
-      PRIVATE cBrDok := SljBroj( cIdFirma, "IM", 8 )
+      PRIVATE cBrDok := kalk_sljedeci_broj( cIdFirma, "IM", 8 )
    ENDIF
 
    nRbr := 0
@@ -235,7 +235,7 @@ FUNCTION kalk_generisanje_inventure_razlike()
    //o_kalk_doks()
    //o_kalk()
 
-   PRIVATE cBrDok := SljBroj( cIdFirma, "IM", 8 )
+   PRIVATE cBrDok := kalk_sljedeci_broj( cIdFirma, "IM", 8 )
 
 
    nRbr := 0

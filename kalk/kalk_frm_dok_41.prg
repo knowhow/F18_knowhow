@@ -92,7 +92,7 @@ FUNCTION Get1_41()
 
    // provjerava kada je radjen zadnji dokument za ovaj artikal
    check_datum_posljednje_kalkulacije()
-   DatPosljP()
+   kalk_dat_poslj_promjene_prod()
 
    _GKolicina := 0
    _GKolicin2 := 0

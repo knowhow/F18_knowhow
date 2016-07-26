@@ -139,7 +139,7 @@ FUNCTION GenNivP()
    o_koncij()
    o_kalk_pripr()
    //o_kalk()
-   PRIVATE cBrDok := SljBroj( cIdfirma, "19", 8 )
+   PRIVATE cBrDok := kalk_sljedeci_broj( cIdfirma, "19", 8 )
 
    nRbr := 0
    SET ORDER TO TAG "1"
@@ -283,7 +283,7 @@ FUNCTION NivPoProc()
    o_koncij()
    o_kalk_pripr()
    -- o_kalk()
-   PRIVATE cBrDok := SljBroj( cidfirma, "19", 8 )
+   PRIVATE cBrDok := kalk_sljedeci_broj( cidfirma, "19", 8 )
 
    nRbr := 0
    SET ORDER TO TAG "4"
@@ -460,7 +460,7 @@ FUNCTION VratiZadNiv()
 
    o_kalk_pripr()
    -- o_kalk()
-   PRIVATE cBrDok := SljBroj( cIdFirma, "19", 8 )
+   PRIVATE cBrDok := kalk_sljedeci_broj( cIdFirma, "19", 8 )
 
    nRbr := 0
    SELECT KALK

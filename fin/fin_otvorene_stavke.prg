@@ -43,8 +43,8 @@ FUNCTION fin_otvorene_stavke_meni()
    AAdd( opc, "8. kompenzacija" )
    AAdd( opcexe, {|| Kompenzacija() } )
 
-   AAdd( opc, "9. asistent otvorenih stavki" )
-   AAdd( opcexe, {|| fin_asistent_otv_st() } )
+   //AAdd( opc, "9. asistent otvorenih stavki" )
+   //AAdd( opcexe, {|| fin_asistent_otv_st() } )
 
    AAdd( opc, "B. brisanje svih markera otvorenih stavki" )
    AAdd( opcexe, {|| fin_brisanje_markera_otvorenih_stavki() } )

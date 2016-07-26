@@ -11,7 +11,7 @@
 
 #include "f18.ch"
 
-
+/*
 
 FUNCTION fin_asistent_otv_st()
 
@@ -770,6 +770,36 @@ STATIC FUNCTION brisi_otvorene_stavke_iz_tabele_suban()
 
 
 
+
+
+
+
+
+
+
+
+*/
+
+FUNCTION opcije_browse_pregleda()
+
+   LOCAL _x, _y
+
+   _x := m_x + MAXROWS() - 15
+   _y := m_y + 1
+
+   @ _x,     _y SAY " <F2>   Ispravka broja dok.       <c-P> Print   <a-P> Print Br.Dok          "
+   @ _x + 1, _y SAY8 " <K>    Uključi/isključi račun za kamate         <F5> uzmi broj dok.        "
+   @ _x + 2, _y SAY '<ENTER> Postavi/ukini zatvaranje                 <F6> "nalijepi" broj dok.  '
+
+   @ _x + 3, _y SAY REPL( BROWSE_PODVUCI, MAXCOLS() - 12 )
+
+   @ _x + 4, _y SAY ""
+
+   ?? "Konto:", cIdKonto
+
+   RETURN .T.
+
+
 FUNCTION open_otv_stavke_tabele( lOsuban )
 
    IF lOSuban == NIL
@@ -795,27 +825,5 @@ FUNCTION open_otv_stavke_tabele( lOsuban )
    ELSE
       o_suban()
    ENDIF
-
-   RETURN .T.
-
-
-
-
-FUNCTION opcije_browse_pregleda()
-
-   LOCAL _x, _y
-
-   _x := m_x + MAXROWS() - 15
-   _y := m_y + 1
-
-   @ _x,     _y SAY " <F2>   Ispravka broja dok.       <c-P> Print   <a-P> Print Br.Dok          "
-   @ _x + 1, _y SAY8 " <K>    Uključi/isključi račun za kamate         <F5> uzmi broj dok.        "
-   @ _x + 2, _y SAY '<ENTER> Postavi/ukini zatvaranje                 <F6> "nalijepi" broj dok.  '
-
-   @ _x + 3, _y SAY REPL( BROWSE_PODVUCI, MAXCOLS() - 12 )
-
-   @ _x + 4, _y SAY ""
-
-   ?? "Konto:", cIdKonto
 
    RETURN .T.

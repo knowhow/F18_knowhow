@@ -81,10 +81,11 @@ FUNCTION fin_automatsko_zatvaranje_otvorenih_stavki( lAuto, cKto, cPtn )
    find_suban_by_konto_partner( cIdFirma, cIdKonto, iif( Empty( cIdPartner ), NIL, cIdPartner ), NIL, "IdFirma,IdKonto,IdPartner,brdok" )
    MsgC()
 
+altd()
    EOF CRET
 
    IF cPobSt == "D" .AND. Pitanje(, "Želite li zaista pobrisati markere ??", "N" ) == "D"
-      IF !ponisti_markere_postojecih_stavki( cIdFirma, cIdKonto, cIdPart )
+      IF !ponisti_markere_postojecih_stavki( cIdFirma, cIdKonto, cIdPartner )
          RETURN .F.
       ENDIF
    ENDIF
@@ -96,11 +97,16 @@ FUNCTION fin_automatsko_zatvaranje_otvorenih_stavki( lAuto, cKto, cPtn )
    @ m_x + 1, m_y + 2 SAY "Zatvoreno:"
    @ m_x + 1, m_y + 12 SAY nCntZatvoreno
 
-   EOF CRET
+   GO TOP
+   IF Eof()
+      BoxC()
+      RETURN .F.
+   ENDIF
 
    run_sql_query( "BEGIN" )
 
    IF !f18_lock_tables( { "fin_suban" }, .T. )
+      BoxC()
       run_sql_query( "ROLLBACK" )
       MsgBeep( "Ne mogu zaključati tabelu fin_suban !#Prekidam operaciju zatvaranja stavki." )
       RETURN .F.
@@ -131,7 +137,7 @@ FUNCTION fin_automatsko_zatvaranje_otvorenih_stavki( lAuto, cKto, cPtn )
          @ m_x + 1, m_y + 2 SAY cIdKonto + "-" + cIdPartner + "/" + cBrDok
          @ m_x + 1, Col() + 2 SAY ++nCntZatvoreno PICT '99999'
 
-         DO WHILE !Eof() .AND. cIdKonto = IdKonto .AND. cIdPartner == IdPartner .AND. cBrDok == BrDok
+         DO WHILE !Eof() .AND. cIdKonto == IdKonto .AND. cIdPartner == IdPartner .AND. cBrDok == BrDok
 
             _rec := dbf_get_rec()
             _rec[ "otvst" ] := "9"

@@ -1,181 +1,74 @@
 /*
- * This file is part of the bring.out FMK, a free and open source
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+ * This file is part of the bring.out knowhow ERP, a free and open source
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
 
-
 #include "f18.ch"
 
-// -------------------------------------------
-// otvori tabele potrebne za generaciju
-// -------------------------------------------
-STATIC FUNCTION _o_gen_tables( from_kum )
-
-   IF from_kum == NIL
-      from_kum := .F.
-   ENDIF
-
-   SELECT F_ROBA
-   IF !Used()
-      O_ROBA
-   ENDIF
-
-   SELECT F_KONCIJ
-   IF !Used()
-      o_koncij()
-   ENDIF
-
-   IF from_kum == .T.
-      SELECT F_KALK
-      IF !Used()
-         open_kalk_as_pripr()
-      ENDIF
-   ELSE
-      SELECT F_KALK_PRIPR
-      IF !Used()
-         o_kalk_pripr()
-      ENDIF
-   ENDIF
-
-   RETURN
 
 
+/*
+ generacija tops dokumenata na osnovu kalk dokumenata
+*/
 
-// -------------------------------------------
-// kreiraj tabelu za prenos u TOPS
-// -------------------------------------------
-STATIC FUNCTION _cre_katops_dbf( dbf_table, from_kum )
-
-   LOCAL _dbf
-
-   IF from_kum == NIL
-      from_kum := .F.
-   ENDIF
-
-   _o_gen_tables( from_kum )
-
-   SELECT kalk_pripr
-   GO TOP
-
-   _dbf := {}
-   AAdd( _dbf, { "IDFIRMA", "C", 2, 0 } )
-   AAdd( _dbf, { "BRDOK", "C", 8, 0 } )
-   AAdd( _dbf, { "IDVD", "C", 2, 0 } )
-   AAdd( _dbf, { "DATDOK", "D", 8, 0 } )
-   AAdd( _dbf, { "IDKONTO", "C", 7, 0 } )
-   AAdd( _dbf, { "IDKONTO2", "C", 7, 0 } )
-   AAdd( _dbf, { "IDPARTNER", "C", 6, 0 } )
-   AAdd( _dbf, { "IDPOS", "C", 2, 0 } )
-   AAdd( _dbf, { "IDROBA", "C", 10, 0 } )
-   AAdd( _dbf, { "kolicina", "N", 13, 4 } )
-   AAdd( _dbf, { "kol2", "N", 13, 4 } )
-   AAdd( _dbf, { "MPC", "N", 13, 4 } )
-   AAdd( _dbf, { "MPC2", "N", 13, 4 } )
-   AAdd( _dbf, { "NAZIV", "C", 250, 0 } )
-   AAdd( _dbf, { "IDTARIFA", "C", 6, 0 } )
-   AAdd( _dbf, { "JMJ", "C", 3, 0 } )
-   AAdd( _dbf, { "K1", "C", 4, 0 } )
-   AAdd( _dbf, { "K2", "C", 4, 0 } )
-   AAdd( _dbf, { "K7", "C", 1, 0 } )
-   AAdd( _dbf, { "K8", "C", 2, 0 } )
-   AAdd( _dbf, { "K9", "C", 3, 0 } )
-   AAdd( _dbf, { "N1", "N", 12, 2 } )
-   AAdd( _dbf, { "N2", "N", 12, 2 } )
-   AAdd( _dbf, { "BARKOD", "C", 13, 0 } )
-
-   // kreiraj tabelu
-   dbCreate( dbf_table, _dbf )
-
-   SELECT ( F_TMP_KATOPS )
-   my_use_temp( "KATOPS", dbf_table )
-
-   RETURN
-
-
-// -------------------------------------------------------
-// prenos prerequisites
-// -------------------------------------------------------
-STATIC FUNCTION _prenos_prereq()
-
-   LOCAL _ret := .F.
-
-   IF AllTrim( gTops ) <> "0"
-      // provjeri i gTopsDest
-      IF Empty( AllTrim( gTopsDest ) )
-         MsgBeep( "Nije podesen direktorij za prenos podataka !" )
-      ELSE
-         _ret := .T.
-      ENDIF
-   ENDIF
-
-   IF _ret
-      IF Pitanje(, "Generisati datoteku prenosa za modul TOPS (D/N) ?", "N" ) == "N"
-         _ret := .F.
-      ENDIF
-   ENDIF
-
-   RETURN _ret
-
-
-// ----------------------------------------------------------
-// generacija tops dokumenata na osnovu kalk dokumenata
-// ----------------------------------------------------------
-FUNCTION kalk_generisi_tops_dokumente( id_firma, id_tip_dok, br_dok )
+FUNCTION kalk_generisi_tops_dokumente( cIdFirma, cIdTipDok, cBrDok )
 
    LOCAL _katops_table := "katops.dbf"
    LOCAL _rbr, _dat_dok
    LOCAL _pos_locations
-   LOCAL _from_kum := .T.
+   LOCAL _lFromKumulativ := .T.
    LOCAL _total := 0
 
    my_close_all_dbf()
 
    IF PCount() == 0
-      // generisanje iz pripreme
-      _from_kum := .F.
+      _lFromKumulativ := .F. // generisanje iz pripreme
    ENDIF
 
-   // provjeri uslove za prenos
-   IF !_prenos_prereq()
 
-      _o_gen_tables( _from_kum )
+   IF !kalk_tops_prenos_prerequisites() // provjeri uslove za prenos
+
+      kalk_tops_o_gen_tables( _lFromKumulativ )
       SELECT kalk_pripr
-      RETURN
+      RETURN .F.
 
    ENDIF
 
-   // otvori tabele
-   _o_gen_tables( _from_kum )
 
-   // kreiraj tabelu katops
-   // ona ce se kreirati u privatnom direktoriju...
-   _cre_katops_dbf( my_home() + _katops_table, _from_kum )
+   kalk_tops_o_gen_tables( _lFromKumulativ ) // otvori tabele
+
+   IF _lFromKumulativ
+       open_kalk_as_pripr( .T., cIdFirma, cIdTipDok, cBrDok ) // .T. => SQL table
+   ENDIF
+
+   _cre_katops_dbf( my_home() + _katops_table, _lFromKumulativ ) // kreiraj tabelu katops, ona ce se kreirati u privatnom direktoriju
+
 
    SELECT kalk_pripr
    SET ORDER TO TAG "1"
    GO TOP
 
-   IF _from_kum == .F.
-      id_firma := field->idfirma
-      id_tip_dok := field->idvd
-      br_dok := field->brdok
+   IF _lFromKumulativ == .F.
+      cIdFirma := field->idfirma
+      cIdTipDok := field->idvd
+      cBrDok := field->brdok
    ENDIF
 
-   SEEK id_firma + id_tip_dok + br_dok
+   SEEK cIdFirma + cIdTipDok + cBrDok
 
    _rbr := 0
    _dat_dok := Date()
 
-   // matrica pos mjesta koje kaci kalkulacija
-   _pos_locations := {}
 
-   DO WHILE !Eof() .AND. field->idfirma == id_firma .AND. field->idvd == id_tip_dok .AND. field->brdok == br_dok
+   _pos_locations := {} // matrica pos mjesta koje kaci kalkulacija
+
+   DO WHILE !Eof() .AND. field->idfirma == cIdFirma .AND. field->idvd == cIdTipDok .AND. field->brdok == cBrDok
 
       SELECT roba
       HSEEK kalk_pripr->idroba
@@ -183,11 +76,11 @@ FUNCTION kalk_generisi_tops_dokumente( id_firma, id_tip_dok, br_dok )
       SELECT koncij
       SEEK Trim( kalk_pripr->pkonto )
 
-      // provjeri postoji li koncij zapis !
-      IF Empty( koncij->idprodmjes )
+
+      IF Empty( koncij->idprodmjes ) // provjeri postoji li koncij zapis
          Msgbeep( "Nije definisano prodajno mjesto u tabeli konta - tipovi cijena !" )
          SELECT kalk_pripr
-         RETURN
+         RETURN .T.
       ENDIF
 
       SELECT katops
@@ -210,8 +103,8 @@ FUNCTION kalk_generisi_tops_dokumente( id_firma, id_tip_dok, br_dok )
 
       REPLACE field->kolicina WITH kalk_pripr->kolicina
 
-      // kod inventure
-      IF field->idvd == "IP"
+
+      IF field->idvd == "IP"   // kod inventure
          REPLACE field->kol2 WITH kalk_pripr->gkolicina
       ENDIF
 
@@ -229,8 +122,8 @@ FUNCTION kalk_generisi_tops_dokumente( id_firma, id_tip_dok, br_dok )
       REPLACE field->n2 WITH roba->n2
       REPLACE field->barkod WITH roba->barkod
 
-      // cijene...
-      IF kalk_pripr->pu_i == "3"
+
+      IF kalk_pripr->pu_i == "3" // cijene
          // radi se o nivelaciji
          // mpc - stara cijena
          REPLACE field->mpc WITH kalk_pripr->fcj
@@ -267,19 +160,19 @@ FUNCTION kalk_generisi_tops_dokumente( id_firma, id_tip_dok, br_dok )
 
       my_close_all_dbf()
       // ispisi report
-      _print_report( id_firma, id_tip_dok, br_dok, _rbr, _total, _exp_file )
+      _print_report( cIdFirma, cIdTipDok, cBrDok, _rbr, _total, _exp_file )
 
    ENDIF
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
 
 // ---------------------------------------------
 // printaj rezultat prenosa podataka
 // ---------------------------------------------
-STATIC FUNCTION _print_report( firma, tip_dok, br_dok, broj_stavki, total_prenosa, export_fajl )
+STATIC FUNCTION _print_report( firma, tip_dok, cBrDok, broj_stavki, total_prenosa, export_fajl )
 
    START PRINT CRET
 
@@ -289,7 +182,7 @@ STATIC FUNCTION _print_report( firma, tip_dok, br_dok, broj_stavki, total_prenos
    ?
    ? Space( 2 ) + "Formiran dokument: " + export_fajl
    ?
-   ? Space( 2 ) + "Dokument: " + firma + "-" + tip_dok + "-" + br_dok
+   ? Space( 2 ) + "Dokument: " + firma + "-" + tip_dok + "-" + cBrDok
    ?
    ? Space( 2 ) + "Broj prenesenih stavki: " + AllTrim( Str( broj_stavki ) )
    ? Space( 2 ) + "Saldo: " + AllTrim( Str( total_prenosa, 10, 2 ) )
@@ -304,7 +197,7 @@ STATIC FUNCTION _print_report( firma, tip_dok, br_dok, broj_stavki, total_prenos
 
    ENDPRINT
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -434,6 +327,117 @@ FUNCTION mnu_prenos_kalk_u_tops()
    IF kalk_dokument_postoji( cIDFirma, cIDTipDokumenta, cBrojDokumenta, .F. )
       IF ( gTops <> "0 " .AND. Pitanje(, "Izgenerisati datoteku prenosa?", "N" ) == "D" )
          kalk_generisi_tops_dokumente( cIDFirma, cIDTipDokumenta, cBrojDokumenta ) // generisi datoteku prenosa
+      ENDIF
+   ENDIF
+
+   RETURN .T.
+
+
+
+// -------------------------------------------
+// kreiraj tabelu za prenos u TOPS
+// -------------------------------------------
+STATIC FUNCTION _cre_katops_dbf( dbf_table, lFromKumulativ )
+
+   LOCAL _dbf
+
+   IF lFromKumulativ == NIL
+      lFromKumulativ := .F.
+   ENDIF
+
+   kalk_tops_o_gen_tables( lFromKumulativ )
+
+   SELECT kalk_pripr
+   GO TOP
+
+   _dbf := {}
+   AAdd( _dbf, { "IDFIRMA", "C", 2, 0 } )
+   AAdd( _dbf, { "BRDOK", "C", 8, 0 } )
+   AAdd( _dbf, { "IDVD", "C", 2, 0 } )
+   AAdd( _dbf, { "DATDOK", "D", 8, 0 } )
+   AAdd( _dbf, { "IDKONTO", "C", 7, 0 } )
+   AAdd( _dbf, { "IDKONTO2", "C", 7, 0 } )
+   AAdd( _dbf, { "IDPARTNER", "C", 6, 0 } )
+   AAdd( _dbf, { "IDPOS", "C", 2, 0 } )
+   AAdd( _dbf, { "IDROBA", "C", 10, 0 } )
+   AAdd( _dbf, { "kolicina", "N", 13, 4 } )
+   AAdd( _dbf, { "kol2", "N", 13, 4 } )
+   AAdd( _dbf, { "MPC", "N", 13, 4 } )
+   AAdd( _dbf, { "MPC2", "N", 13, 4 } )
+   AAdd( _dbf, { "NAZIV", "C", 250, 0 } )
+   AAdd( _dbf, { "IDTARIFA", "C", 6, 0 } )
+   AAdd( _dbf, { "JMJ", "C", 3, 0 } )
+   AAdd( _dbf, { "K1", "C", 4, 0 } )
+   AAdd( _dbf, { "K2", "C", 4, 0 } )
+   AAdd( _dbf, { "K7", "C", 1, 0 } )
+   AAdd( _dbf, { "K8", "C", 2, 0 } )
+   AAdd( _dbf, { "K9", "C", 3, 0 } )
+   AAdd( _dbf, { "N1", "N", 12, 2 } )
+   AAdd( _dbf, { "N2", "N", 12, 2 } )
+   AAdd( _dbf, { "BARKOD", "C", 13, 0 } )
+
+   // kreiraj tabelu
+   dbCreate( dbf_table, _dbf )
+
+   SELECT ( F_TMP_KATOPS )
+   my_use_temp( "KATOPS", dbf_table )
+
+   RETURN .T.
+
+
+
+
+STATIC FUNCTION kalk_tops_prenos_prerequisites()
+
+   LOCAL _ret := .F.
+
+   IF AllTrim( gTops ) <> "0"
+
+      IF Empty( AllTrim( gTopsDest ) )  // provjeri i gTopsDest
+         MsgBeep( "Nije podesen direktorij za prenos podataka !" )
+      ELSE
+         _ret := .T.
+      ENDIF
+   ENDIF
+
+   IF _ret
+      IF Pitanje(, "Generisati datoteku prenosa za modul TOPS (D/N) ?", "N" ) == "N"
+         _ret := .F.
+      ENDIF
+   ENDIF
+
+   RETURN _ret
+
+
+/*
+    tabele potrebne za generaciju
+*/
+
+STATIC FUNCTION kalk_tops_o_gen_tables( lFromKumulativ )
+
+   IF lFromKumulativ == NIL
+      lFromKumulativ := .F.
+   ENDIF
+
+   SELECT F_ROBA
+   IF !Used()
+      O_ROBA
+   ENDIF
+
+   SELECT F_KONCIJ
+   IF !Used()
+      o_koncij()
+   ENDIF
+
+   IF lFromKumulativ == .T.
+      //SELECT F_KALK
+
+      //open_kalk_as_pripr( .T., cIdFirma, cIdVd, cBrDok ) // .T. => SQL table
+
+   ELSE
+      SELECT F_KALK_PRIPR
+      IF !Used()
+         o_kalk_pripr()
       ENDIF
    ENDIF
 

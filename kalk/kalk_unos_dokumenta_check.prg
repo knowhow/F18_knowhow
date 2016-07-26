@@ -81,19 +81,14 @@ FUNCTION KalkNaF( cidroba, nKols )
 
 
 
-/*
-    Opis: provjerava postojanje ažuriranog dokumenta u tabelama kalk_doks i kalk_kalk
 
-    Prvo se provjerava tabela kalk_doks, ako je rezultat FALSE za svaki slučaj se provjerava i tabela kalk_kalk
 
-    Returns:
-       kalk_dokument_postoji( "10", "10", "00001" ) => TRUE ili FALSE
- */
-
-FUNCTION kalk_dokument_postoji( cFirma, cIdVd, cBroj )
+FUNCTION kalk_dokument_postoji( cFirma, cIdVd, cBroj, lSilent )
 
    LOCAL lExist := .F.
    LOCAL cWhere
+
+   hb_default( @lSilent, .T. )
 
    cWhere := "idfirma = " + sql_quote( cFirma )
    cWhere += " AND idvd = " + sql_quote( cIdVd )
@@ -103,13 +98,9 @@ FUNCTION kalk_dokument_postoji( cFirma, cIdVd, cBroj )
       lExist := .T.
    ENDIF
 
-/*
-   IF !lExist
-      IF table_count( F18_PSQL_SCHEMA_DOT + "kalk_kalk", cWhere ) > 0
-         lExist := .T.
-      ENDIF
+   IF !lSilent .AND. !lExist
+      MsgBeep( "Dokument " + Trim( cFirma ) + "-" + Trim( cIdVd ) + "-" + Trim( cBroj ) + " ne postoji !" )
    ENDIF
-*/
 
    RETURN lExist
 
@@ -242,10 +233,9 @@ FUNCTION kalk_sljedeci_broj( cIdfirma, cIdvD, nMjesta )
 
    LOCAL cReturn := "0"
 
-
    find_kalk_doks_za_tip( cIdFirma, cIdVd )
    GO BOTTOM
-   IF idvd <> cIdVd
+   IF field->idvd <> cIdVd
       cBrKalk := Space( 8 )
    ELSE
       cBrKalk := field->brdok

@@ -431,30 +431,10 @@ FUNCTION mnu_prenos_kalk_u_tops()
    ESC_BCR
    BoxC()
 
-   IF kalk_dokument_postoji( cIDFirma, cIDTipDokumenta, cBrojDokumenta )
+   IF kalk_dokument_postoji( cIDFirma, cIDTipDokumenta, cBrojDokumenta, .F. )
       IF ( gTops <> "0 " .AND. Pitanje(, "Izgenerisati datoteku prenosa?", "N" ) == "D" )
-         // generisi datoteku prenosa
-         kalk_generisi_tops_dokumente( cIDFirma, cIDTipDokumenta, cBrojDokumenta )
+         kalk_generisi_tops_dokumente( cIDFirma, cIDTipDokumenta, cBrojDokumenta ) // generisi datoteku prenosa
       ENDIF
    ENDIF
 
-   RETURN
-
-
-// ---------------------------------------------------------------
-// provjera da li trazeni dokument postoji ?
-// ---------------------------------------------------------------
-STATIC FUNCTION kalk_dokument_postoji( idfirma, tipdokumenta, brojdokumenta )
-
-   o_kalk_doks()
-   SELECT kalk_doks
-   HSEEK idfirma + tipdokumenta + brojdokumenta
-
-   IF !Found()
-      MsgBeep( "Dokument " + Trim( idfirma ) + "-" + Trim( tipdokumenta ) + "-" + Trim( brojdokumenta ) + " ne postoji !!!" )
-      RETURN .F.
-   ELSE
-      RETURN .T.
-   ENDIF
-
-   RETURN .F.
+   RETURN .T.

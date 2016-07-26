@@ -8,5 +8,5 @@
 
 GREEN1=docker@192.168.168.106
 
-scp $1 $GREEN1:/data/f18-downloads/downloads.bring.out.ba/www/files/
+scp $1 $GREEN1:/data_0/f18-downloads/downloads.bring.out.ba/www/files/
 

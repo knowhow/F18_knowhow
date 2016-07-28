@@ -102,7 +102,7 @@ FUNCTION Niv_11()
          PRIVATE nKolZn := nKols := nc1 := nc2 := 0
          PRIVATE dDatNab := CToD( "" )
 
-         KalkNabP( _rec[ "idfirma" ], _rec[ "idroba" ], _rec[ "idkonto" ], @nKolS, @nKolZN, @nc1, @nc2, @dDatNab )
+         kalk_nabavna_prod( _rec[ "idfirma" ], _rec[ "idroba" ], _rec[ "idkonto" ], @nKolS, @nKolZN, @nc1, @nc2, @dDatNab )
 
          IF dDatNab > _rec[ "datdok" ]
             Beep( 1 )

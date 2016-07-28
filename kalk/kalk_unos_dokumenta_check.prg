@@ -828,7 +828,7 @@ FUNCTION NCuMP( _idfirma, _idroba, _idkonto, nKolicina, dDatDok )
    SELECT KALK
    PushWA()
    MsgO( "Računam stanje u prodavnici" )
-   KalkNabP( _idfirma, PadR( _idroba, Len( idroba ) ), _idkonto, @nKolS, @nKolZN, @nc1, @nc2, @dDatNab )
+   kalk_nabavna_prod( _idfirma, PadR( _idroba, Len( idroba ) ), _idkonto, @nKolS, @nKolZN, @nc1, @nc2, @dDatNab )
    MsgC()
    SELECT KALK
    PopWA()

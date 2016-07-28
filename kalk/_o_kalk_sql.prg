@@ -89,7 +89,7 @@ FUNCTION find_kalk_doks_by_broj_fakture( cIdVd, cBrFaktP )
 
    use_sql_kalk_doks( hParams )
    GO TOP
-   
+
    RETURN ! Eof()
 
 
@@ -234,7 +234,7 @@ FUNCTION find_kalk_by_pkonto_idroba( cIdFirma, cIdKonto, cIdRoba )
    IF cIdRoba != NIL
       hParams[ "idroba" ] := cIdRoba
    ENDIF
-   hParams[ "order_by" ] := "idfirma,pkonto,idroba,datdok,podbr,mu_i,idvd"
+   hParams[ "order_by" ] := "idfirma,pkonto,idroba,datdok,podbr,pu_i,idvd"
 
    use_sql_kalk( hParams )
    GO TOP

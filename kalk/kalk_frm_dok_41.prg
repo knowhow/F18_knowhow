@@ -158,7 +158,7 @@ FUNCTION Get1_41()
             nc1 := 0
             nc2 := 0
             MsgO( "Racunam stanje u prodavnici" )
-            KalkNabP( _idfirma, _idroba, _idkonto, @nKolS, @nKolZN, @nc1, @nc2 )
+            kalk_nabavna_prod( _idfirma, _idroba, _idkonto, @nKolS, @nKolZN, @nc1, @nc2 )
             MsgC()
             IF dDatNab > _DatDok
                Beep( 1 )

@@ -123,7 +123,7 @@ FUNCTION Get1_11()
             MsgC()
          ELSE
             MsgO( "Racunam stanje prodavnice" )
-            KalkNabP( _idfirma, _idroba, _idkonto, @nKolS, @nKolZN, @nc1, @nc2, dDatNab )
+            kalk_nabavna_prod( _idfirma, _idroba, _idkonto, @nKolS, @nKolZN, @nc1, @nc2, dDatNab )
             MsgC()
          ENDIF
          IF dDatNab > _DatDok; Beep( 1 );Msg( "Datum nabavke je " + DToC( dDatNab ), 4 );ENDIF

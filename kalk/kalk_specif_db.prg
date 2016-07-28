@@ -1229,7 +1229,7 @@ FUNCTION GetNcForProdavnica( cPKonto, cIdRoba )
    ENDIF
 
    _DatDok = Date()
-   KalkNabP( gFirma, cIdRoba, cPKonto, @nKolS, @nKolZN, @nNc1, @nSredNc, @dDatNab )
+   kalk_nabavna_prod( gFirma, cIdRoba, cPKonto, @nKolS, @nKolZN, @nNc1, @nSredNc, @dDatNab )
 
    RETURN nSredNc
 

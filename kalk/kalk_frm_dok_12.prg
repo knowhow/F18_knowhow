@@ -103,7 +103,7 @@ FUNCTION Get1_12()
    IF _TBankTr <> "X"
       IF !Empty( gMetodaNC )
          MsgO( "Racunam stanje na skladistu" )
-         KalkNabP( _idfirma, _idroba, _idkonto, @nKolS, @nKolZN, @nc1, @nc2, dDatNab )
+         kalk_nabavna_prod( _idfirma, _idroba, _idkonto, @nKolS, @nKolZN, @nc1, @nc2, dDatNab )
          MsgC()
          IF dDatNab > _DatDok; Beep( 1 );Msg( "Datum nabavke je " + DToC( dDatNab ), 4 );ENDIF
          IF gMetodaNC $ "13"; _fcj := nc1; ELSEIF gMetodaNC == "2"; _fcj := nc2; ENDIF

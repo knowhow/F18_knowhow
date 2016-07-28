@@ -980,7 +980,7 @@ FUNCTION Iz11u412()
          // MsgO("Racunam stanje u prodavnici")
 
          // ? ?           ?
-         KalkNabP( _idfirma, _idroba, _idkonto, 0, 0, @nc1, @nc2, )
+         kalk_nabavna_prod( _idfirma, _idroba, _idkonto, 0, 0, @nc1, @nc2, )
 
          // MsgC()
          // if dDatNab>_DatDok; Beep(1);Msg("Datum nabavke je "+dtoc(dDatNab),4);endif
@@ -1082,7 +1082,7 @@ FUNCTION Iz10u11()
          // MsgO("Racunam stanje u prodavnici")
 
          // ? ?           ?
-         KalkNabP( _idfirma, _idroba, _idkonto, 0, 0, @nc1, @nc2, )
+         kalk_nabavna_prod( _idfirma, _idroba, _idkonto, 0, 0, @nc1, @nc2, )
 
          // MsgC()
          // if dDatNab>_DatDok; Beep(1);Msg("Datum nabavke je "+dtoc(dDatNab),4);endif

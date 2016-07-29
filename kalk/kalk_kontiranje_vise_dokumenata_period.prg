@@ -89,8 +89,7 @@ STATIC FUNCTION kont_dokumente( dDatOd, dDatDo, cIdVD, cId_mkto, cId_pkto )
 
       kalk_generisi_finmat( .T., cD_firma, cD_tipd, cD_brdok, .T. )  // napuni FINMAT
 
-
-      kalk_kontiranje_naloga( .T., .T., .F., NIL, .F. ) // kontiraj
+      kalk_kontiranje_naloga( .T., .T., .T., NIL, .F. ) // kontiraj
 
       ++ nCount
 

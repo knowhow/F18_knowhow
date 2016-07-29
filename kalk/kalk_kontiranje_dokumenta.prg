@@ -438,8 +438,8 @@ FUNCTION kalk_kontiranje_naloga( fAuto, lAGen, lViseKalk, cNalog, auto_brojac )
                ELSEIF trfp->Dokument == "3"
                   dDatDok := dDatNal
                ELSEIF trfp->Dokument == "9"
-                  // koristi se za vise kalkulacija
-                  dDatDok := dDatMax
+
+                  dDatDok := dDatMax // koristi se za vise kalkulacija
                ENDIF
 
                cIdPartner := Space( 6 )
@@ -711,8 +711,8 @@ FUNCTION kalk_kontiranje_naloga( fAuto, lAGen, lViseKalk, cNalog, auto_brojac )
 
    MsgC()
 
-   // ako je vise kalkulacija ne zatvaraj tabele
-   IF !lViseKalk
+
+   IF !lViseKalk // ako je vise kalkulacija ne zatvaraj tabele
       my_close_all_dbf()
       RETURN .T.
    ENDIF

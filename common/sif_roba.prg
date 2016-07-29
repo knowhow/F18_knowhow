@@ -127,8 +127,13 @@ FUNCTION P_Roba( cId, dx, dy, cSeek )
 
    bRoba := gRobaBlock
 
+altd()
    IF !Empty( cSeek )
-      cPomTag := cSeek
+      cPomTag := TRIM( cSeek )
+      IF cPomTag == "SIFRADOB" .AND. LEN( TRIM( cId )) < 5 // https://redmine.bring.out.ba/issues/36373
+        cId := PadL( Trim(cId), 5, "0")
+      ENDIF
+
    ELSE
       cPomTag := "ID"
    ENDIF

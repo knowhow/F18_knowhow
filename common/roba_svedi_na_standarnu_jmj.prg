@@ -60,7 +60,7 @@ FUNCTION fix_sifradob( cSifra, nLen, cFill )
 
    LOCAL nTmpLen
 
-   IF gArtPretragaSifraDob = "SIFRADOB"
+   IF pretraga_po_sifri_dob()
 
       nTmpLen := Len( roba->sifradob )
 
@@ -71,3 +71,16 @@ FUNCTION fix_sifradob( cSifra, nLen, cFill )
    ENDIF
 
    RETURN .T.
+
+
+FUNCTION pretraga_po_sifri_dob()
+
+   IF gArtPretragaSifraDob == NIL
+      gArtPretragaSifraDob := fetch_metric( "roba_trazi_po_sifradob", NIL, Space( 20 ) )
+   ENDIF
+
+   IF gArtPretragaSifraDob == "SIFRADOB"
+      RETURN .T.
+   ENDIF
+
+   RETURN .F.

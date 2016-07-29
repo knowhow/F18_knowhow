@@ -207,7 +207,7 @@ METHOD TKalkMod:set_module_gvars()
    // ravnoteza def.konto
    PUBLIC gAImpRKonto := PadR( "1370", 7 )
 
-   //PUBLIC gAImpRight := 0  // kod provjere prebacenih dokumenata odrezi sa desne strane broj karaktera
+   // PUBLIC gAImpRight := 0  // kod provjere prebacenih dokumenata odrezi sa desne strane broj karaktera
    PUBLIC gKalks := .F.
    PUBLIC lKoristitiBK := .F.
    PUBLIC lPrikPRUC := .F.
@@ -258,7 +258,7 @@ METHOD TKalkMod:set_module_gvars()
    gBrojacKalkulacija := fetch_metric( "kalk_brojac_kalkulacija", nil, gBrojacKalkulacija )
    gMagacin := fetch_metric( "kalk_magacin_po_nc", nil, gMagacin )
    gCijene := fetch_metric( "kalk_azuriranje_sumnjivih_dokumenata", nil, gCijene )
-   gTS := fetch_metric( "kalk_tip_subjekta", nil,  gTS)
+   gTS := fetch_metric( "kalk_tip_subjekta", nil,  gTS )
    gTabela := fetch_metric( "kalk_tip_tabele", nil, gTabela )
    gSetForm := fetch_metric( "kalk_set_formula", nil, gSetForm )
    gGen16 := fetch_metric( "kalk_generisi_16_nakon_96", f18_user(), gGen16 )
@@ -314,11 +314,11 @@ METHOD TKalkMod:set_module_gvars()
    gNC_ctrl := fetch_metric( "kalk_kontrola_odstupanja_nc", f18_user(), gNC_ctrl )
    gnLOst := fetch_metric( "kalk_limit_za_otvorene_stavke", f18_user(), gnLOst )
    gLenBrKalk := fetch_metric( "kalk_duzina_brojaca_dokumenta", nil, gLenBrKalk )
-   gArtPretragaSifraDob := fetch_metric( "roba_trazi_po_sifradob", NIL, gArtPretragaSifraDob )
+   gArtPretragaSifraDob := fetch_metric( "roba_trazi_po_sifradob", NIL, Space( 20 ) )
 
    gAImpPrint := fetch_metric( "kalk_auto_import_podataka_printanje", f18_user(), gAImpPrint )
    gAImpRKonto := fetch_metric( "kalk_auto_import_podataka_konto", f18_user(), gAImpRKonto )
-   //gAImpRight := fetch_metric( "kalk_auto_import_podataka_karakteri", f18_user(), gAImpRight )
+   // gAImpRight := fetch_metric( "kalk_auto_import_podataka_karakteri", f18_user(), gAImpRight )
 
 
    lKoristitiBK := fetch_metric( "kalk_koristiti_barkod_pri_unosu", my_user(), lKoristitiBK )
@@ -340,6 +340,6 @@ METHOD TKalkMod:set_module_gvars()
    gNW := "D"
 
    info_bar( ::cName, ::cName + " - kalk set gvars end" )
-   info_bar( "KALK", "params in cache: " + Alltrim( Str( params_in_cache() ) ) )
+   info_bar( "KALK", "params in cache: " + AllTrim( Str( params_in_cache() ) ) )
 
    RETURN .T.

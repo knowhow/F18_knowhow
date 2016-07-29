@@ -25,6 +25,7 @@ STATIC __txt3
 FUNCTION lager_lista_magacin()
 
    PARAMETERS fPocStanje
+
    LOCAL fimagresaka := .F.
    LOCAL _curr_user := "<>"
    LOCAL lExpDbf := .F.
@@ -33,8 +34,8 @@ FUNCTION lager_lista_magacin()
    LOCAL _vpc_iz_sif := "D"
    LOCAL _print := "1"
 
-   // ulaz, izlaz parovno
-   LOCAL nTUlazP
+
+   LOCAL nTUlazP  // ulaz, izlaz parovno
    LOCAL nTIzlazP
    LOCAL nKolicina
    LOCAL cPicDem
@@ -610,9 +611,9 @@ FUNCTION lager_lista_magacin()
          nCol0 := PCol() + 1
 
          // ulaz, izlaz, stanje
-         @ PRow(), PCol() + 1 SAY nKJMJ * nUlaz          PICT gpickol
-         @ PRow(), PCol() + 1 SAY nKJMJ * nIzlaz         PICT gpickol
-         @ PRow(), PCol() + 1 SAY nKJMJ * ( nUlaz - nIzlaz ) PICT gpickol
+         @ PRow(), PCol() + 1 SAY nKJMJ * nUlaz          PICT gPicKol
+         @ PRow(), PCol() + 1 SAY nKJMJ * nIzlaz         PICT gPicKol
+         @ PRow(), PCol() + 1 SAY nKJMJ * ( nUlaz - nIzlaz ) PICT gPicKol
 
          IF fPocStanje
 
@@ -694,26 +695,25 @@ FUNCTION lager_lista_magacin()
 
 
          // NV
-         @ PRow(), PCol() + 1 SAY nNVU PICT gpicdem
-         @ PRow(), PCol() + 1 SAY nNVI PICT gpicdem
-         @ PRow(), PCol() + 1 SAY nNVU - nNVI PICT gpicdem
+         @ PRow(), PCol() + 1 SAY nNVU PICT gPicDem
+         @ PRow(), PCol() + 1 SAY nNVI PICT gPicDem
+         @ PRow(), PCol() + 1 SAY nNVU - nNVI PICT gPicDem
 
          IF cDoNab == "N"
 
-            // PV - samo u pdv rezimu
 
             IF _vpc_iz_sif == "D"
                // sa vpc iz sifrarnika robe
-               @ PRow(), PCol() + 1 SAY nVPVU PICT gpicdem
-               @ PRow(), PCol() + 1 SAY nRabat PICT gpicdem
-               @ PRow(), PCol() + 1 SAY nVPVI PICT gpicdem
-               @ PRow(), PCol() + 1 SAY nVPVU - nVPVI PICT gpicdem
+               @ PRow(), PCol() + 1 SAY nVPVU PICT gPicDem
+               @ PRow(), PCol() + 1 SAY nRabat PICT gPicDem
+               @ PRow(), PCol() + 1 SAY nVPVI PICT gPicDem
+               @ PRow(), PCol() + 1 SAY nVPVU - nVPVI PICT gPicDem
             ELSE
                // sa vpc iz tabele kalk
-               @ PRow(), PCol() + 1 SAY nVPVRU PICT gpicdem
-               @ PRow(), PCol() + 1 SAY nRabat PICT gpicdem
-               @ PRow(), PCol() + 1 SAY nVPVRI PICT gpicdem
-               @ PRow(), PCol() + 1 SAY nVPVRU - nVPVRI PICT gpicdem
+               @ PRow(), PCol() + 1 SAY nVPVRU PICT gPicDem
+               @ PRow(), PCol() + 1 SAY nRabat PICT gPicDem
+               @ PRow(), PCol() + 1 SAY nVPVRI PICT gPicDem
+               @ PRow(), PCol() + 1 SAY nVPVRU - nVPVRI PICT gPicDem
             ENDIF
 
          ENDIF
@@ -748,34 +748,34 @@ FUNCTION lager_lista_magacin()
 
 
          IF cMink <> "N" .AND. nMink > 0
-            @ PRow(), ncol0    SAY PadR( "min.kolic:", Len( gpickol ) )
-            @ PRow(), PCol() + 1 SAY nKJMJ * nMink  PICT gpickol
+            @ PRow(), ncol0    SAY PadR( "min.kolic:", Len( gPicKol ) )
+            @ PRow(), PCol() + 1 SAY nKJMJ * nMink  PICT gPicKol
          ENDIF
 
 
          // ulaz - prazno
-         @ PRow(), nCol0 SAY Space( Len( gpickol ) )
+         @ PRow(), nCol0 SAY Space( Len( gPicKol ) )
          // izlaz - prazno
-         @ PRow(), PCol() + 1 SAY Space( Len( gpickol ) )
+         @ PRow(), PCol() + 1 SAY Space( Len( gPicKol ) )
          // stanje - prazno
-         @ PRow(), PCol() + 1 SAY Space( Len( gpickol ) )
+         @ PRow(), PCol() + 1 SAY Space( Len( gPicKol ) )
          // nv.dug - prazno
-         @ PRow(), PCol() + 1 SAY Space( Len( gpicdem ) )
+         @ PRow(), PCol() + 1 SAY Space( Len( gPicDem ) )
          // nv.pot - prazno
-         @ PRow(), PCol() + 1 SAY Space( Len( gpicdem ) )
+         @ PRow(), PCol() + 1 SAY Space( Len( gPicDem ) )
          // prikazi NC
          IF Round( nUlaz - nIzlaz, 4 ) <> 0
 
-            @ PRow(), PCol() + 1 SAY ( nNVU - nNVI ) / ( nUlaz - nIzlaz ) PICT gpicdem
+            @ PRow(), PCol() + 1 SAY ( nNVU - nNVI ) / ( nUlaz - nIzlaz ) PICT gPicDem
 
          ENDIF
          IF cDoNab == "N"
             // pv.dug - prazno
-            @ PRow(), PCol() + 1 SAY Space( Len( gpicdem ) )
+            @ PRow(), PCol() + 1 SAY Space( Len( gPicDem ) )
             // rabat - prazno
-            @ PRow(), PCol() + 1 SAY Space( Len( gpicdem ) )
+            @ PRow(), PCol() + 1 SAY Space( Len( gPicDem ) )
             // pv.pot - prazno
-            @ PRow(), PCol() + 1 SAY Space( Len( gpicdem ) )
+            @ PRow(), PCol() + 1 SAY Space( Len( gPicDem ) )
             // prikazi PC
             IF Round( nUlaz - nIzlaz, 4 ) <> 0
                @ PRow(), PCol() + 1 SAY nVPCIzSif PICT gpiccdem
@@ -854,35 +854,33 @@ FUNCTION lager_lista_magacin()
    ? __line
    ? "UKUPNO:"
 
-   @ PRow(), nCol0 SAY ntUlaz PICT pic_format( gpickol, ntUlaz )
-   @ PRow(), PCol() + 1 SAY ntIzlaz PICT pic_format( gpickol, ntIzlaz )
-   @ PRow(), PCol() + 1 SAY ntUlaz - ntIzlaz PICT pic_format( gpickol, ( ntUlaz - ntIzlaz ) )
+   @ PRow(), nCol0 SAY ntUlaz PICT pic_format( gPicKol, ntUlaz )
+   @ PRow(), PCol() + 1 SAY ntIzlaz PICT pic_format( gPicKol, ntIzlaz )
+   @ PRow(), PCol() + 1 SAY ntUlaz - ntIzlaz PICT pic_format( gPicKol, ( ntUlaz - ntIzlaz ) )
 
    nCol1 := PCol() + 1
 
 
    // NV
-   @ PRow(), PCol() + 1 SAY ntNVU PICT pic_format( gpicdem, ntNVU )
-   @ PRow(), PCol() + 1 SAY ntNVI PICT pic_format( gpicdem, ntNVI )
-   @ PRow(), PCol() + 1 SAY ntNV PICT pic_format( gpicdem, ntNV )
+   @ PRow(), PCol() + 1 SAY ntNVU PICT pic_format( gPicDem, ntNVU )
+   @ PRow(), PCol() + 1 SAY ntNVI PICT pic_format( gPicDem, ntNVI )
+   @ PRow(), PCol() + 1 SAY ntNV PICT pic_format( gPicDem, ntNV )
 
    IF IsPDV() .AND. cDoNab == "N"
       IF _vpc_iz_sif == "D"
          // PV - samo u pdv rezimu
-         @ PRow(), PCol() + 1 SAY ntVPVU PICT pic_format( gpicdem, ntVPVU )
-         @ PRow(), PCol() + 1 SAY ntRabat PICT pic_format( gpicdem, ntRabat )
-         @ PRow(), PCol() + 1 SAY ntVPVI PICT pic_format( gpicdem, ntVPVI )
-         @ PRow(), PCol() + 1 SAY ntVPVU - NtVPVI PICT pic_format( gpicdem, ( ntVPVU - ntVPVI ) )
+         @ PRow(), PCol() + 1 SAY ntVPVU PICT pic_format( gPicDem, ntVPVU )
+         @ PRow(), PCol() + 1 SAY ntRabat PICT pic_format( gPicDem, ntRabat )
+         @ PRow(), PCol() + 1 SAY ntVPVI PICT pic_format( gPicDem, ntVPVI )
+         @ PRow(), PCol() + 1 SAY ntVPVU - NtVPVI PICT pic_format( gPicDem, ( ntVPVU - ntVPVI ) )
       ELSE
          // PV - samo u pdv rezimu
-         @ PRow(), PCol() + 1 SAY ntVPVRU PICT pic_format( gpicdem, ntVPVU )
-         @ PRow(), PCol() + 1 SAY ntRabat PICT pic_format( gpicdem, ntRabat )
-         @ PRow(), PCol() + 1 SAY ntVPVRI PICT pic_format( gpicdem, ntVPVI )
-         @ PRow(), PCol() + 1 SAY ntVPVRU - NtVPVRI PICT pic_format( gpicdem, ( ntVPVRU - ntVPVRI ) )
+         @ PRow(), PCol() + 1 SAY ntVPVRU PICT pic_format( gPicDem, ntVPVU )
+         @ PRow(), PCol() + 1 SAY ntRabat PICT pic_format( gPicDem, ntRabat )
+         @ PRow(), PCol() + 1 SAY ntVPVRI PICT pic_format( gPicDem, ntVPVI )
+         @ PRow(), PCol() + 1 SAY ntVPVRU - NtVPVRI PICT pic_format( gPicDem, ( ntVPVRU - ntVPVRI ) )
       ENDIF
    ENDIF
-
-
 
 
    ? __line
@@ -920,35 +918,20 @@ FUNCTION lager_lista_magacin()
    RETURN .T.
 
 
-// --------------------------------------------------
-// sredjivanje formata ispisa
-// --------------------------------------------------
-STATIC FUNCTION pic_format( curr_pic, num )
+/*
+   sredjivanje formata ispisa
+*/
+STATIC FUNCTION pic_format( cPicture, nNum )
 
-   LOCAL _format
-   LOCAL _a_pic := TokToNiz( AllTrim( curr_pic ), "." )
+   LOCAL cPictureOut
 
-   IF _a_pic == NIL
-      _num := 12
-      _dec := 2
+   IF "*" $ Transform( nNum, cPicture )
+      cPictureOut := StrTran( cPicture, ".", "9" ) // jednostavno ukini decimalno mjesto kod ispisa
    ELSE
-      IF Len( _a_pic ) == 1
-         _num := Len( _a_pic[ 1 ] )
-         _dec := 0
-      ELSE
-         _num := Len( _a_pic[ 1 ] )
-         _dec := Len( _a_pic[ 2 ] )
-      ENDIF
+      cPictureOut := cPicture
    ENDIF
 
-   IF Len( AllTrim( curr_pic ) ) < Len( AllTrim( Str( num, _num, _dec ) ) )
-      // jednostavno ukini decimalno mjesto kod ispisa
-      _format := StrTran( curr_pic, ".", "9" )
-   ELSE
-      _format := curr_pic
-   ENDIF
-
-   RETURN _format
+   RETURN cPictureOut
 
 
 // --------------------------------------
@@ -1086,29 +1069,19 @@ STATIC FUNCTION _set_zagl( cLine, cTxt1, cTxt2, cTxt3, cSredCij )
    AAdd( aLLM, { nPom, PadC( "NV", nPom ), PadC( "NC", nPom ), PadC( "6 - 7", nPom ) } )
 
    IF cDoNab == "N"
-      IF IsPDV()
 
-         nPom := Len( gPicCDem )
-         // pv.dug
-         AAdd( aLLM, { nPom, PadC( "PV.Dug.", nPom ), PadC( "", nPom ), PadC( "8", nPom ) } )
-         // rabat
-         AAdd( aLLM, { nPom, PadC( "Rabat", nPom ), PadC( "", nPom ), PadC( "9", nPom ) } )
-         // pv pot.
-         AAdd( aLLM, { nPom, PadC( "PV.Pot.", nPom ), PadC( "", nPom ), PadC( "10", nPom ) } )
-         // PV
-         AAdd( aLLM, { nPom, PadC( "PV", nPom ), PadC( "PC", nPom ), PadC( "8 - 10", nPom ) } )
-      ELSE
+      nPom := Len( gPicCDem )
+      // pv.dug
+      AAdd( aLLM, { nPom, PadC( "PV.Dug.", nPom ), PadC( "", nPom ), PadC( "8", nPom ) } )
+      // rabat
+      AAdd( aLLM, { nPom, PadC( "Rabat", nPom ), PadC( "", nPom ), PadC( "9", nPom ) } )
+      // pv pot.
+      AAdd( aLLM, { nPom, PadC( "PV.Pot.", nPom ), PadC( "", nPom ), PadC( "10", nPom ) } )
+      // PV
+      AAdd( aLLM, { nPom, PadC( "PV", nPom ), PadC( "PC", nPom ), PadC( "8 - 10", nPom ) } )
 
-         nPom := Len( gPicCDem )
-         // PV
-         AAdd( aLLM, { nPom, PadC( "PV", nPom ), PadC( "", nPom ), PadC( "8", nPom ) } )
-
-      ENDIF
 
    ENDIF
-
-
-
 
 
    IF cSredCij == "D"
@@ -1129,9 +1102,6 @@ STATIC FUNCTION _set_zagl( cLine, cTxt1, cTxt2, cTxt3, cSredCij )
 
 
 
-// --------------------------------
-// zaglavlje lager liste
-// --------------------------------
 FUNCTION Zagllager_lista_magacin()
 
    LOCAL nTArea := Select()
@@ -1145,7 +1115,7 @@ FUNCTION Zagllager_lista_magacin()
 
    SET CENTURY ON
 
-   ?? "KALK: LAGER LISTA  ZA PERIOD", dDatOd, "-", dDatdo, "  na dan", Date(), Space( 12 ), "Str:", Str( ++nTStrana, 4 )
+   ?? "KALK: LAGER LISTA ZA PERIOD", dDatOd, "-", dDatdo, "  na dan", Date(), Space( 12 ), "Str:", Str( ++nTStrana, 4 )
 
    SET CENTURY OFF
 

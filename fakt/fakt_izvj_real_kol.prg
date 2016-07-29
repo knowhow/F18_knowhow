@@ -13,10 +13,7 @@
 
 
 
-// ---------------------------------------
-// specifikacija prodaje
-// ---------------------------------------
-FUNCTION fakt_real_kolicina()
+FUNCTION fakt_specif_prodaje_real_kolicina()
 
    LOCAL nX := 1
    LOCAL cExport := "N"
@@ -107,7 +104,6 @@ FUNCTION fakt_real_kolicina()
 
 
       IF lRelations == .T.
-
          ++ nX
          @ m_x + nX, m_y + 2 SAY "Relacija (prazno sve):" GET cRelation
       ENDIF

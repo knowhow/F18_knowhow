@@ -16,14 +16,14 @@
 FUNCTION fakt_tip_dokumenta_default_menu()
 
    LOCAL nRet
-  
-   // gIMenu := "3" 
-   nRet := VAL( gIMenu )
+
+
+   nRet := VAL( gIMenu ) // gIMenu := "3" 
    IF nRet < 1
        nRet := 1
    ENDIF
 
-   RETURN nRet   
+   RETURN nRet
 
 
 
@@ -32,7 +32,7 @@ FUNCTION fakt_naziv_dokumenta( aTipDok, cIdtipDok)
    LOCAL nPos, cRet
 
    nPos := AScan( aTipDok, { | x | cIdTipDok == Left( x, 2 ) } )
- 
+
    IF nPos > 0
        cRet := aTipDok[ nPos ]
    ELSE

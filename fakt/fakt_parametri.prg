@@ -161,7 +161,7 @@ FUNCTION fakt_par_razno()
    Box(, MAXROWS() - 5, MAXCOLS() - 15, .F., "OSTALI PARAMETRI (RAZNO)" )
 
    _x := 2
-   @ m_x + _x, m_y + 2 SAY "Inicijalna meni-opcija (1-9)" GET gIMenu VALID gIMenu $ "123456789" PICT "@!"
+   @ m_x + _x, m_y + 2 SAY8 "Fakt tekući dokument (1-9)" GET gIMenu VALID gIMenu $ "123456789" PICT "@!"
    _x += 2
    @ m_x + _x, m_y + 2 SAY8 "Tekuća radna jedinica kod unosa dokumenta:" GET _def_rj
    ++ _x
@@ -250,7 +250,7 @@ FUNCTION fakt_par_razno()
       set_metric( "fakt_voditi_samo_kolicine", nil, gSamoKol )
       set_metric( "fakt_rok_placanja_tekuca_vrijednost", my_user(), gRokPl )
       set_metric( "fakt_reset_artikla_na_unosu", my_user(), gResetRoba )
-      set_metric( "fakt_incijalni_meni_odabri", my_user(), gIMenu )
+      set_metric( "fakt_meni_tekuci", my_user(), gIMenu )
       set_metric( "fakt_default_radna_jedinica", my_user(), _def_rj )
       set_metric( "fakt_prikaz_barkod", my_user(), _prik_bk )
       set_metric( "fakt_dokument_pdf_lokacija", my_user(), _ext_pdf )

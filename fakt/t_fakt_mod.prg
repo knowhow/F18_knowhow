@@ -106,7 +106,6 @@ METHOD set_module_gvars()
 
    __default_odt_template()
 
-
    ::nDuzinaSifre := 10
    ::cTekVpc := "1"
 
@@ -366,7 +365,7 @@ METHOD set_module_gvars()
    gSamoKol := fetch_metric( "fakt_voditi_samo_kolicine", nil, gSamoKol )
    gRokPl := fetch_metric( "fakt_rok_placanja_tekuca_vrijednost", my_user(), gRokPl )
    gResetRoba := fetch_metric( "fakt_reset_artikla_na_unosu", my_user(), gResetRoba )
-   gIMenu := fetch_metric( "fakt_incijalni_meni_odabri", my_user(), gIMenu )
+   gIMenu := fetch_metric( "fakt_meni_tekuci", my_user(), gIMenu )
 
    // potpisi
    g10Str := fetch_metric( "fakt_dokument_dok_10_naziv", nil, g10Str )

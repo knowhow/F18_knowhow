@@ -840,7 +840,7 @@ STATIC FUNCTION _set_memo_txt_from_vars()
 
    _txt += Chr( 16 ) + _tmp + Chr( 17 )
 
-   RETURN
+   RETURN .T.
 
 
 STATIC FUNCTION edit_fakt_priprema( fNovi, items_atrib )
@@ -970,9 +970,7 @@ STATIC FUNCTION edit_fakt_priprema( fNovi, items_atrib )
 
       @ m_x + _x, m_y + 2 SAY PadR( gNFirma, 20 )
 
-      @ m_x + _x, Col() + 2 SAY " RJ:" GET _idfirma ;
-         PICT "@!" ;
-         VALID {|| Empty( _idfirma ) .OR. _idfirma == gFirma ;
+      @ m_x + _x, Col() + 2 SAY " RJ:" GET _idfirma PICT "@!" VALID {|| Empty( _idfirma ) .OR. _idfirma == gFirma ;
          .OR. P_RJ( @_idfirma ) .AND. V_Rj(), _idfirma := Left( _idfirma, 2 ), .T. }
 
       READ

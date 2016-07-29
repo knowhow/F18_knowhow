@@ -60,7 +60,7 @@ FUNCTION fix_sifradob( cSifra, nLen, cFill )
 
    LOCAL nTmpLen
 
-   IF gArtCDX = "SIFRADOB"
+   IF gArtPretragaSifraDob = "SIFRADOB"
 
       nTmpLen := Len( roba->sifradob )
 

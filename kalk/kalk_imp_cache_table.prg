@@ -629,8 +629,8 @@ STATIC FUNCTION _app_for_kto( cKto, nKol, nNcProc, lSilent )
 
    DO WHILE !Eof()
 
-      // ako nema sifre dobavljaca, preskoci...
-      IF Empty( field->sifradob ) .OR. field->vpc = 0
+
+      IF Empty( field->sifradob ) .OR. field->vpc == 0 // ako nema sifre dobavljaca, preskoci
          SKIP
          LOOP
       ENDIF

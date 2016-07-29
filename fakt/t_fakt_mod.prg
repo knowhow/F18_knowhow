@@ -198,7 +198,7 @@ METHOD set_module_gvars()
    PUBLIC gPdvDokVar := "1"
 
    // artikal sort - cdx
-   PUBLIC gArtCDX := Space( 20 )
+   PUBLIC gArtPretragaSifraDob := Space( 20 )
 
    PUBLIC gTipF := "2"
    PUBLIC gVarF := "2"

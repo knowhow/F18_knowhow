@@ -48,8 +48,8 @@ FUNCTION select_o_kalk_pript()
    RETURN select_o_dbf( "PRIPT", F_PRIPT, { "PRIPT", "kalk_pript" }, "1" )
 
 
-FUNCTION select_o_kalk_as_pripr()
-   RETURN select_o_dbf( "KALK_PRIPR", F_KALK_PRIPR, { "KALK_PRIPR", "kalk_kalk" }, "1" )
+//FUNCTION select_o_kalk_as_pripr()
+//   RETURN select_o_dbf( "KALK_PRIPR", F_KALK_PRIPR, { "KALK_PRIPR", "kalk_kalk" }, "1" )
 
 
 FUNCTION select_o_kalk_doks2()

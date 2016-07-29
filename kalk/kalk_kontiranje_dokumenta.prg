@@ -713,7 +713,7 @@ FUNCTION kalk_kontiranje_naloga( fAuto, lAGen, lViseKalk, cNalog, auto_brojac )
 
    MsgC()
 
-altd()
+   AltD()
    IF !lViseKalk // ako je vise kalkulacija ne zatvaraj tabele
       my_close_all_dbf()
       RETURN .T.
@@ -871,7 +871,8 @@ FUNCTION kalk_datval()
 FUNCTION DatVal()
 
    LOCAL _uvecaj := 15
-   //LOCAL _rec
+
+   // LOCAL _rec
    LOCAL nRokPartner
 
    PRIVATE GetList := {}
@@ -913,9 +914,9 @@ FUNCTION DatVal()
          @ m_x + 2, m_y + 2 SAY "Uvecaj dana    :" GET _uvecaj PICT "999"
          @ m_x + 3, m_y + 2 SAY "Valuta         :" GET dDatVal WHEN {|| dDatVal := finmat->datfaktp + _uvecaj, .T. }
 
-         //IF lVrsteP .AND. Empty( cIdVrsteP )
-         //    @ m_x + 4, m_y + 2 SAY "Sifra vrste placanja:" GET cIdVrsteP PICT "@!"
-         //ENDIF
+         // IF lVrsteP .AND. Empty( cIdVrsteP )
+         // @ m_x + 4, m_y + 2 SAY "Sifra vrste placanja:" GET cIdVrsteP PICT "@!"
+         // ENDIF
 
          READ
          BoxC()
@@ -1129,10 +1130,9 @@ FUNCTION kalk_generisi_finmat()
       _predispozicija := .F.
 
       close_open_rekap_tables()
-
-altd()
+      AltD()
       IF fStara
-         select_o_kalk_as_pripr()
+         kalk_otvori_kumulativ_kao_pripremu( cIdFirma, cIdVd, cBrDok )
       ELSE
          select_o_kalk_pripr()
       ENDIF
@@ -1240,10 +1240,7 @@ altd()
          ENDIF
       ENDIF
 
-      IF cIdVd == "24"
-         START PRINT CRET
-         ?
-      ENDIF
+      
 
       nStr := 0
       nTot1 := nTot2 := nTot3 := nTot4 := nTot5 := nTot6 := nTot7 := nTot8 := nTot9 := nTota := nTotb := nTotC := 0
@@ -1257,22 +1254,6 @@ altd()
          cIdKonto := IdKonto
          cIdKonto2 := IdKonto2
 
-         IF cIdVd == "24" .AND. ( PRow() == 0 .OR. PRow() > 55 )
-            IF PRow() -dodatni_redovi_po_stranici() > 55
-               FF
-            ENDIF
-            P_COND
-            ?? "KALK: REKAPITULACIJA NA DAN:", Date()
-            @ PRow(), 125 SAY "Str:" + Str( ++nStr, 3 )
-         ENDIF
-
-         IF cIdVd == "24"
-            ?
-            ? "KALKULACIJA BR:",  cIdFirma + "-" + cIdVD + "-" + cBrDok, Space( 2 ), P_TipDok( cIdVD, -2 ), Space( 2 ), "Datum:", DatDok
-            SELECT PARTN
-            HSEEK cIdPartner
-            ?  "KUPAC:", cIdPartner, "-", naz, Space( 5 ), "DOKUMENT Broj:", cBrFaktP, "Datum:", dDatFaktP
-         ENDIF
 
          SELECT KONTO
          HSEEK cIdKonto
@@ -1280,20 +1261,7 @@ altd()
          HSEEK cIdKonto2
          SELECT KALK_PRIPR
 
-         m := ""
-         IF cidvd == "24"
-            m := "---- -------------- -------------- -------------- -------------- -------------- ---------- ---------- ---------- ---------- ----------"
-            P_COND2
-            ? m
-            IF IsPDV()
-               ? "*R. * " + Left( c24T1, 12 ) + " * " + Left( c24T2, 12 ) + " * " + Left( c24T3, 12 ) + " * " + Left( c24T4, 12 ) + " * " + Left( c24T5, 12 ) + " *   FV     *   PDV    *   PDV    *   FV     * PRIHOD  *"
-               ? "*Br.* " + Left( c24T6, 12 ) + " * " + Left( c24T7, 12 ) + " * " + Left( c24T8, 12 ) + " * " + Space( 12 ) + " * " + Space( 12 ) + " * BEZ PDV  *   %      *          * SA PDV   *         *"
-            ELSE
-               ? "*R. * " + Left( c24T1, 12 ) + " * " + Left( c24T2, 12 ) + " * " + Left( c24T3, 12 ) + " * " + Left( c24T4, 12 ) + " * " + Left( c24T5, 12 ) + " *   FV     * POREZ    *  POREZ   *   FV     * PRIHOD  *"
-               ? "*Br.* " + Left( c24T6, 12 ) + " * " + Left( c24T7, 12 ) + " * " + Space( 12 ) + " * " + Space( 12 ) + " * " + Space( 12 ) + " * BEZ POR  *   %      *          * SA POR   *         *"
-            ENDIF
-            ? m
-         ENDIF
+
 
          IF lVoSaTa
             cIdd := idpartner + idkonto + idkonto2
@@ -1318,9 +1286,7 @@ altd()
                      // Msg( "Unutar kalkulacije se pojavilo vise dokumenata !", 6 )
                   ENDIF
                ENDIF
-               IF cidvd == "24"
-                  SET DEVICE TO PRINTER
-               ENDIF
+
             ENDIF
 
             // iznosi troskova koji se izracunavaju u KTroskovi()
@@ -1334,10 +1300,6 @@ altd()
                SKol := Kolicina
             ENDIF
 
-            IF cidvd == "24" .AND. PRow() > 62
-               FF
-               @ PRow(), 125 SAY "Str:" + Str( ++nStr, 3 )
-            ENDIF
 
             SELECT ROBA
             HSEEK KALK_PRIPR->IdRoba
@@ -1347,43 +1309,11 @@ altd()
 
             SELECT KALK_PRIPR
 
-            IF cIdVd == "24"
-               Tarifa( pkonto, idroba, @aPorezi, kalk_pripr->idtarifa )
-            ELSE
-               Tarifa( pkonto, idroba, @aPorezi )
-            ENDIF
+            Tarifa( pkonto, idroba, @aPorezi )
+
 
             KTroskovi()
 
-            IF cidvd == "24"
-               @ PRow() + 1, 0 SAY  Rbr PICTURE "999"
-            ENDIF
-
-            IF cidvd == "24"
-               nCol1 := PCol() + 6
-               @ PRow(), PCol() + 6 SAY n1 := prevoz    PICT picdem
-               @ PRow(), PCol() + 5 SAY n2 := banktr    PICT picdem
-               @ PRow(), PCol() + 5 SAY n3 := spedtr    PICT picdem
-               @ PRow(), PCol() + 5 SAY n4 := cardaz    PICT picdem
-               @ PRow(), PCol() + 5 SAY n5 := zavtr     PICT picdem
-               @ PRow(), PCol() + 1 SAY n6 := fcj       PICT picdem
-
-               IF IsPDV()
-                  @ PRow(), PCol() + 1 SAY tarifa->opp   PICT picproc
-               ELSE
-                  @ PRow(), PCol() + 1 SAY tarifa->vpp   PICT picproc
-               ENDIF
-
-               @ PRow(), PCol() + 1 SAY n7 := nc - fcj    PICT picdem
-               @ PRow(), PCol() + 1 SAY n8 := nc        PICT picdem
-               @ PRow(), PCol() + 1 SAY n9 := marza     PICT picdem
-               @ PRow() + 1, nCol1  SAY nA := mpc       PICT picdem
-               @ PRow(), PCol() + 5 SAY nB := mpcsapp PICT picdem
-               @ PRow(), PCol() + 5 SAY nJCI := fcj3 PICT picdem
-               nTot1 += n1; nTot2 += n2; nTot3 += n3; nTot4 += n4
-               nTot5 += n5; nTot6 += n6; nTot7 += n7; nTot8 += n8
-               nTot9 += n9; nTotA += na; nTotB += nB; nTotC += nJCI
-            ENDIF
 
             VtPorezi()
 
@@ -1421,15 +1351,7 @@ altd()
             nPom := Round( nPom, gZaokr )
             REPLACE RABATV  WITH nPom
 
-            IF IsPDV() .AND.  kalk_pripr->idvd == "24"
-               nPom := kalk_pripr->( FCJ3 * Skol )
-               nPom := Round( nPom, gZaokr )
-               REPLACE VPVSAP WITH nPom
-            ELSE
-               nPom := kalk_pripr->( VPCSaP * Kolicina )
-               nPom := Round( nPom, gZaokr )
-               REPLACE VPVSAP WITH  nPom
-            ENDIF
+
 
             nPom := kalk_pripr->( nMarza2 * ( Kolicina - GKolicina - GKolicin2 ) )
             nPom := Round( nPom, gZaokr )
@@ -1483,11 +1405,8 @@ altd()
                SELECT tarifa
                HSEEK roba->idtarifa
                SELECT finmat
-               IF IsPDV()
-                  REPLACE UPOREZV WITH  Round( kalk_pripr->( nMarza * kolicina * TARIFA->OPP / 100 / ( 1 + TARIFA->OPP / 100 ) ), gZaokr )
-               ELSE
-                  REPLACE UPOREZV WITH  Round( kalk_pripr->( nMarza * kolicina * TARIFA->VPP / 100 / ( 1 + TARIFA->VPP / 100 ) ), gZaokr )
-               ENDIF
+               REPLACE UPOREZV WITH  Round( kalk_pripr->( nMarza * kolicina * TARIFA->OPP / 100 / ( 1 + TARIFA->OPP / 100 ) ), gZaokr )
+
                SELECT tarifa
                HSEEK roba->idtarifa
                SELECT finmat
@@ -1501,10 +1420,6 @@ altd()
                   POREZV WITH Round( nMarza * kalk_pripr->( GKolicina + Gkolicin2 ), gZaokr ) // negativna marza za kalo
             ENDIF
 
-            IF kalk_pripr->idvd == "24"
-               REPLACE mpv     WITH kalk_pripr->mpc, ;
-                  mpvsapp WITH kalk_pripr->mpcsapp
-            ENDIF
 
             IF kalk_pripr->IDVD $ "18#19"
                REPLACE Kolicina WITH 0
@@ -1519,9 +1434,7 @@ altd()
             ENDIF
 
 
-
-            // napuni marker da se radi o predispoziciji...
-            IF _predispozicija
+            IF _predispozicija // napuni marker da se radi o predispoziciji
                REPLACE k1 WITH "P"
             ENDIF
 
@@ -1529,42 +1442,16 @@ altd()
             SKIP
          ENDDO // brdok
 
-         IF cIdVd == "24"
-            ? m
-         ELSE
-            IF fStara
-               EXIT
-            ENDIF
+
+         IF fStara
+            EXIT
          ENDIF
+
 
       ENDDO // idfirma,idvd
 
-      IF cIdvd == "24" .AND. PRow() > 60
-         FF
-         @ PRow(), 125 SAY "Str:" + Str( ++nStr, 3 )
-      ENDIF
 
-      IF cidvd == "24"
-         ?
-         ? m
-         @ PRow() + 1, 0      SAY  "Ukup." + cIdVD + ":"
-         @ PRow(), nCol1    SAY  nTot1         PICTURE   picdem
-         @ PRow(), PCol() + 5 SAY  nTot2         PICTURE   picdem
-         @ PRow(), PCol() + 5 SAY  nTot3         PICTURE   picdem
-         @ PRow(), PCol() + 5 SAY  nTot4         PICTURE   picdem
-         @ PRow(), PCol() + 5 SAY  nTot5         PICTURE   picdem
-         @ PRow(), PCol() + 1 SAY  nTot6         PICTURE   picdem
-         @ PRow(), PCol() + 1 SAY  Space( Len( picproc ) )
-         @ PRow(), PCol() + 1  SAY  nTot7        PICTURE   picdem
-         @ PRow(), PCol() + 1  SAY  nTot8        PICTURE   picdem
-         @ PRow(), PCol() + 1  SAY  nTot9        PICTURE   picdem
-         @ PRow() + 1, nCol1   SAY  nTota         PICTURE   picdem
-         @ PRow(), PCol() + 5  SAY  nTotb         PICTURE   picdem
-         @ PRow(), PCol() + 5  SAY  nTotC         PICTURE   picdem
-         ? m
-         ?
-         ENDPRINT
-      ENDIF
+
 
       IF !fStara .OR. lAuto == .T.
          EXIT

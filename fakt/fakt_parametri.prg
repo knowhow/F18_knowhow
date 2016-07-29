@@ -454,7 +454,7 @@ FUNCTION fakt_par_cijene()
 
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -486,7 +486,7 @@ FUNCTION fakt_par_varijante_prikaza()
    @ m_x + 17, m_y + 35 SAY "Var.fakt.po ugovorima (1/2) :" GET gVFU PICT "9" VALID gVFU $ "12"
    @ m_x + 18, m_y + 2 SAY "Var.fakt.rok plac. samo vece od 0 :" GET gVFRP0 PICT "@!" VALID gVFRP0 $ "DN"
    @ m_x + 20, m_y + 2 SAY "Prikaz samo kolicina na dokumentima (0/D/N)" GET gPSamoKol PICT "@!" VALID gPSamoKol $ "0DN"
-   @ m_x + 21, m_y + 2 SAY "Pretraga artikla po indexu:" GET gArtCdx PICT "@!"
+
    @ m_x + 22, m_y + 2 SAY "Koristiti rabat iz sif.robe (polje N1) ?" GET gRabIzRobe PICT "@!" VALID gRabIzRobe $ "DN"
    @ m_x + 23, m_y + 2 SAY "Brisi direktno u smece" GET gcF9usmece PICT "@!" VALID gcF9usmece $ "DN"
    @ m_x + 23, Col() + 2 SAY "Timeout kod azuriranja" GET gAzurTimeout PICT "9999"
@@ -520,13 +520,13 @@ FUNCTION fakt_par_varijante_prikaza()
       WPar( "g3", gKarC3 )
       WPar( "g4", gKarN1 )
       WPar( "g5", gKarN2 )
-      WPar( "gC", gArtCDX )
+
       WPar( "rR", gRabIzRobe )
       WPar( "Fz", gAzurTimeout )
 
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 

@@ -314,13 +314,12 @@ METHOD TKalkMod:set_module_gvars()
    gNC_ctrl := fetch_metric( "kalk_kontrola_odstupanja_nc", f18_user(), gNC_ctrl )
    gnLOst := fetch_metric( "kalk_limit_za_otvorene_stavke", f18_user(), gnLOst )
    gLenBrKalk := fetch_metric( "kalk_duzina_brojaca_dokumenta", nil, gLenBrKalk )
-   gArtCDX := fetch_metric( "kalk_index_za_pretragu_artikla", f18_user(), gArtCDX )
+   gArtCDX := fetch_metric( "kalk_index_za_pretragu_artikla", NIL, gArtCDX )
 
    gAImpPrint := fetch_metric( "kalk_auto_import_podataka_printanje", f18_user(), gAImpPrint )
    gAImpRKonto := fetch_metric( "kalk_auto_import_podataka_konto", f18_user(), gAImpRKonto )
    //gAImpRight := fetch_metric( "kalk_auto_import_podataka_karakteri", f18_user(), gAImpRight )
 
-   // iz FMK inija...
 
    lKoristitiBK := fetch_metric( "kalk_koristiti_barkod_pri_unosu", my_user(), lKoristitiBK )
 

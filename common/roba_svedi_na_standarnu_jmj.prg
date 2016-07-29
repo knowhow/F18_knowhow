@@ -64,8 +64,8 @@ FUNCTION fix_sifradob( cSifra, nLen, cFill )
 
       nTmpLen := Len( roba->sifradob )
 
-      // dodaj prefiks ako je ukucano manje od 5
-      IF Len( AllTrim( cSifra ) ) < 5
+
+      IF Len( AllTrim( cSifra ) ) < 5 // dodaj prefiks ako je ukucano manje od 5
          cSifra := PadR( PadL( AllTrim( cSifra ), nLen, cFill ), nTmpLen )
       ENDIF
    ENDIF

@@ -11,7 +11,7 @@
 
 #include "f18.ch"
 
-MEMVAR m_x, m_y
+MEMVAR m_x, m_y, gcF9usmece
 
 FUNCTION azur_fakt( lSilent )
 
@@ -655,9 +655,9 @@ FUNCTION fakt_brisanje_pripreme()
       SELECT fakt_pripr
       GO TOP
 
-      _id_firma := IdFirma
-      _tip_dok := IdTipDok
-      _br_dok := BrDok
+      _id_firma := field->IdFirma
+      _tip_dok := field->IdTipDok
+      _br_dok := field->BrDok
 
       oAttr := DokAttr():new( "fakt", F_FAKT_ATTR )
       oAttr:hAttrId[ "idfirma" ] := _id_firma

@@ -404,7 +404,10 @@ METHOD delete_attr_from_dbf()  CLASS DokAttr
    _idfirma := ::hAttrId[ "idfirma" ]
    _idtipdok := ::hAttrId[ "idtipdok" ]
    _brdok := ::hAttrId[ "brdok" ]
-   _rbr := ::hAttrId[ "rbr" ]
+
+   IF hb_HHasKey( ::hAttrId, "rbr" )
+      _rbr := ::hAttrId[ "rbr" ]
+   ENDIF
 
    IF hb_HHasKey( ::hAttrId, "atribut" )
       cAttr := ::hAttrId[ "atribut" ]
@@ -438,7 +441,6 @@ METHOD delete_attr_from_dbf()  CLASS DokAttr
 
    my_unlock()
 
-   // my_dbf_pack()
 
    PopWa()
 

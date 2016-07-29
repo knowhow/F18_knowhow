@@ -364,9 +364,9 @@ FUNCTION kalk_par_cijene()
    @ m_x + 5, m_y + 2 SAY "Ispravka NC    " GET gPicNC
    @ m_x + 6, m_y + 2 SAY "Decimale za kolicine" GET gDecKol PICT "9"
    @ m_x + 7, m_y + 2 SAY Replicate( "-", 30 )
-   @ m_x + 8, m_y + 2 SAY "Dodatno prosirenje cijene" GET gFPicCDem
-   @ m_x + 9, m_y + 2 SAY "Dodatno prosirenje iznosa" GET gFPicDem
-   @ m_x + 10, m_y + 2 SAY "Dodatno prosirenje kolicine" GET gFPicKol
+   @ m_x + 8, m_y + 2 SAY8 "Dodatno proširenje cijene" GET gFPicCDem
+   @ m_x + 9, m_y + 2 SAY8 "Dodatno proširenje iznosa" GET gFPicDem
+   @ m_x + 10, m_y + 2 SAY8 "Dodatno proširenje količine" GET gFPicKol
    READ
    BoxC()
 

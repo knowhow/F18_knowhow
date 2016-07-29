@@ -281,10 +281,12 @@ FUNCTION set_global_vars_roba()
    gPicCDEM := "999999.999"
    gPicProc := "999999.99%"
    gPicDEM := "9999999.99"
-   gPickol := "999999.999"
-   gFPicCDem := "0"
-   gFPicDem := "0"
-   gFPicKol := "0"
+   gPicKol := "999999.999"
+
+   gFPicCDem := "3"
+   gFPicDem := "3"
+   gFPicKol := "3"
+
    gDuzSifINI := "10"
 
    RETURN .T.

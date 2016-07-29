@@ -237,7 +237,7 @@ FUNCTION kalk_par_razno()
    @ m_x + _x, m_y + 2 SAY "Kontrola odstupanja NC:" GET gNC_ctrl PICT "999.99"
    @ m_x + _x, Col() SAY "%"
    ++ _x
-   @ m_x + _x, m_y + 2 SAY "Indeks kod pretrage artikla:" GET gArtPretragaSifraDob PICT "@15"
+   @ m_x + _x, m_y + 2 SAY8 "Traži robu prema (prazno/SIFRADOB/)" GET gArtPretragaSifraDob PICT "@15"
    ++ _x
    @ m_x + _x, m_y + 2 SAY "Reset artikla prilikom unosa dokumenta (D/N)" GET _reset_roba PICT "@!" VALID _reset_roba $ "DN"
    ++ _x
@@ -278,7 +278,7 @@ FUNCTION kalk_par_razno()
       set_metric( "kalk_kontrola_odstupanja_nc", f18_user(), gNC_ctrl )
       set_metric( "kalk_limit_za_otvorene_stavke", f18_user(), gnLOst )
       set_metric( "kalk_duzina_brojaca_dokumenta", nil, gLenBrKalk )
-      set_metric( "kalk_index_za_pretragu_artikala", NIL, gArtPretragaSifraDob )
+      set_metric( "roba_trazi_po_sifradob", NIL, gArtPretragaSifraDob )
       set_metric( "kalk_reset_artikla_kod_unosa", my_user(), _reset_roba )
       set_metric( "pregled_rabata_kod_ulaza", my_user(), _rabat )
       set_metric( "kalk_definisanje_roka_trajanja", NIL, _rok )

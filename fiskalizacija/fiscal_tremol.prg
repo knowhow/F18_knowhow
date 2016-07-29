@@ -50,7 +50,7 @@ STATIC __zahtjev_nula := "0"
 // --------------------------------------------------------------------------
 // stampa fiskalnog racuna tring fiskalizacija
 // --------------------------------------------------------------------------
-FUNCTION tremol_rn( dev_params, items, head, storno, cont )
+FUNCTION tremol_rn( dev_params, items, head, lStornoRacun, cContinue )
 
    LOCAL _racun_broj, _vr_plac, _total_plac, _xml, _i
    LOCAL _reklamni_broj, _kolicina, _cijena, _rabat
@@ -61,12 +61,13 @@ FUNCTION tremol_rn( dev_params, items, head, storno, cont )
    LOCAL _cmd := ""
    LOCAL _cust_id, _cust_name, _cust_addr, _cust_city
    LOCAL _fiscal_no := 0
+   LOCAL _fisc_txt, _fisc_rek_txt, _fisc_cust_txt, _f_name
 
    // pobrisi tmp fajlove i ostalo sto je u input direktoriju
    tremol_delete_tmp( dev_params )
 
-   IF cont == nil
-      cont := "0"
+   IF cContinue == nil
+      cContinue := "0"
    ENDIF
 
    // ima podataka kupca !
@@ -79,25 +80,22 @@ FUNCTION tremol_rn( dev_params, items, head, storno, cont )
 
    _f_name := fiscal_out_filename( dev_params[ "out_file" ], _racun_broj )
 
-   // putanja do izlaznog xml fajla
-   _xml := dev_params[ "out_dir" ] + _f_name
+   _xml := dev_params[ "out_dir" ] + _f_name // putanja do izlaznog xml fajla
 
-   // otvori xml
+
    create_xml( _xml )
-
-   // upisi header
    xml_head()
 
    _fisc_txt := 'TremolFpServer Command="Receipt"'
    _fisc_rek_txt := ''
    _fisc_cust_txt := ''
 
-   IF cont == "1"
-      _fisc_txt += ' Continue="' + cont + '"'
+   IF cContinue == "1" // https://redmine.bring.out.ba/issues/36372
+      //_fisc_txt += ' Continue="' + cContinue + '"'
    ENDIF
 
-   // ukljuci storno triger
-   IF storno
+
+   IF lStornoRacun // ukljuci storno triger
       _fisc_rek_txt := ' RefundReceipt="' + AllTrim( items[ 1, 8 ] ) + '"'
    ENDIF
 
@@ -174,7 +172,7 @@ FUNCTION tremol_rn( dev_params, items, head, storno, cont )
    _vr_plac := fiscal_txt_get_vr_plac( items[ 1, 13 ], "TREMOL" )
    _total_plac := items[ 1, 14 ]
 
-   IF items[ 1, 13 ] <> "0" .AND. !storno
+   IF items[ 1, 13 ] <> "0" .AND. !lStornoRacun
 
       _tmp := 'Type="' + _vr_plac + '"'
       _tmp += _razmak1 + 'Amount="' + AllTrim( Str( _total_plac, 12, 2 ) ) + '"'

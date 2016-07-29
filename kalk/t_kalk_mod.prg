@@ -314,7 +314,7 @@ METHOD TKalkMod:set_module_gvars()
    gNC_ctrl := fetch_metric( "kalk_kontrola_odstupanja_nc", f18_user(), gNC_ctrl )
    gnLOst := fetch_metric( "kalk_limit_za_otvorene_stavke", f18_user(), gnLOst )
    gLenBrKalk := fetch_metric( "kalk_duzina_brojaca_dokumenta", nil, gLenBrKalk )
-   gArtPretragaSifraDob := fetch_metric( "kalk_index_za_pretragu_artikla", NIL, gArtPretragaSifraDob )
+   gArtPretragaSifraDob := fetch_metric( "roba_trazi_po_sifradob", NIL, gArtPretragaSifraDob )
 
    gAImpPrint := fetch_metric( "kalk_auto_import_podataka_printanje", f18_user(), gAImpPrint )
    gAImpRKonto := fetch_metric( "kalk_auto_import_podataka_konto", f18_user(), gAImpRKonto )
@@ -324,8 +324,7 @@ METHOD TKalkMod:set_module_gvars()
    lKoristitiBK := fetch_metric( "kalk_koristiti_barkod_pri_unosu", my_user(), lKoristitiBK )
 
    IF lKoristitiBK
-      // ako se koristi barkod onda je duzina robe 13
-      gDuzSifIni := "13"
+      gDuzSifIni := "13" // ako se koristi barkod onda je duzina robe 13
    ENDIF
 
    lPrikPRUC := fetch_metric( "kalk_prikazi_kolone_pruc", nil, lPrikPRUC )
@@ -338,7 +337,7 @@ METHOD TKalkMod:set_module_gvars()
 
    gRobaBlock := {| Ch| KalkRobaBlock( Ch ) }
 
-   gNW := "X" // TODO: pogledati u svim drugim modulima je "D" ?!
+   gNW := "D"
 
    info_bar( ::cName, ::cName + " - kalk set gvars end" )
    info_bar( "KALK", "params in cache: " + Alltrim( Str( params_in_cache() ) ) )

@@ -16,6 +16,7 @@ STATIC dDatMax
 
 
 /* -----------------------------------------------------------------------
+
  kontiranje naloga
 
  fAuto - .t. automatski se odrjedjuje broj naloga koji se formira,
@@ -23,7 +24,8 @@ STATIC dDatMax
  lAGen - automatsko generisanje
  lViseKalk - vise kalkulacija
  cNalog - broj naloga koji ce se uzeti, ako je EMPTY() ne uzima se !
-*/
+
+--------------------------------------------------------------------------  */
 FUNCTION kalk_kontiranje_naloga( fAuto, lAGen, lViseKalk, cNalog, auto_brojac )
 
    LOCAL cIdFirma
@@ -711,7 +713,7 @@ FUNCTION kalk_kontiranje_naloga( fAuto, lAGen, lViseKalk, cNalog, auto_brojac )
 
    MsgC()
 
-
+altd()
    IF !lViseKalk // ako je vise kalkulacija ne zatvaraj tabele
       my_close_all_dbf()
       RETURN .T.
@@ -1119,8 +1121,8 @@ FUNCTION kalk_generisi_finmat()
 
    lVoSaTa := .F.
 
-   // prvi prolaz
-   fprvi := .T.
+
+   fprvi := .T. // prvi prolaz
 
    DO WHILE .T.
 
@@ -1128,6 +1130,7 @@ FUNCTION kalk_generisi_finmat()
 
       close_open_rekap_tables()
 
+altd()
       IF fStara
          select_o_kalk_as_pripr()
       ELSE

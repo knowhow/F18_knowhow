@@ -13,7 +13,7 @@
 
 
 
-FUNCTION kontiranje_vise_dokumenata_period()
+FUNCTION kontiranje_vise_dokumenata_period_auto()
 
    LOCAL dDatOd := Date() - 30
    LOCAL dDatDo := Date()

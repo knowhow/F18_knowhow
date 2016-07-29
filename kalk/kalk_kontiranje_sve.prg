@@ -13,11 +13,7 @@
 
 
 
-
-// -----------------------------------------
-// kontiranje vise naloga od jednom
-// -----------------------------------------
-FUNCTION kont_v_kalk()
+FUNCTION kontiranje_vise_dokumenata_period()
 
    LOCAL dD_f := Date() -30
    LOCAL dD_t := Date()
@@ -26,7 +22,7 @@ FUNCTION kont_v_kalk()
    LOCAL cId_pkto := PadR( "", 100 )
    LOCAL cChBrNal := "N"
 
-   // uslovi...
+
    Box( , 5, 65 )
 
    @ m_x + 1, m_y + 2 SAY "Datum od:" GET dD_f
@@ -46,33 +42,28 @@ FUNCTION kont_v_kalk()
    BoxC()
 
    IF LastKey() == K_ESC
-      RETURN
+      RETURN .F.
    ENDIF
 
-   _kont_doks( dD_f, dD_t, cId_td, cId_mkto, cId_pkto, cChBrNal )
+   kont_dokumente( dD_f, dD_t, cId_td, cId_mkto, cId_pkto, cChBrNal )
 
-   RETURN
+   RETURN .T.
 
-// -----------------------------------------------------
-// kontiraj dokumente po uslovima
-// -----------------------------------------------------
-STATIC FUNCTION _kont_doks( dD_f, dD_t, cId_td, cId_mkto, ;
-      cId_pkto, cChBrNal )
+
+STATIC FUNCTION kont_dokumente( dD_f, dD_t, cId_td, cId_mkto, cId_pkto, cChBrNal )
 
    LOCAL nCount := 0
    LOCAL nTNRec
    LOCAL cNalog := ""
 
-   // prvo u doks-u nadji dokumente i prema njima onda idi
-   o_kalk_doks()
+
+   find_kalk_doks_by_tip_datum( gFirma, cId_td, dD_f, dD_t )
 
    cId_td := AllTrim( cId_td )
    cId_mkto := AllTrim( cId_mkto )
    cId_pkto := AllTrim( cId_pkto )
 
-   SELECT kalk_doks
    GO TOP
-
 
    DO WHILE !Eof()
 
@@ -100,8 +91,8 @@ STATIC FUNCTION _kont_doks( dD_f, dD_t, cId_td, cId_mkto, ;
          ENDIF
       ENDIF
 
-      // provjeri prodavnicka konta
-      IF !Empty( cId_pkto )
+
+      IF !Empty( cId_pkto ) // provjeri prodavnicka konta
          IF AllTrim( field->pkonto ) $ cId_pkto
             // idi dalje...
          ELSE
@@ -115,18 +106,13 @@ STATIC FUNCTION _kont_doks( dD_f, dD_t, cId_td, cId_mkto, ;
       cD_tipd := field->idvd
       cD_brdok := field->brdok
 
-      // napuni FINMAT
-      kalk_generisi_finmat( .T., cD_firma, cD_tipd, cD_brdok, .T. )
 
-      // uzmi drugi broj naloga
-      // _br_nal( cChBrNal, cD_brdok, @cNalog )
+      kalk_generisi_finmat( .T., cD_firma, cD_tipd, cD_brdok, .T. )  // napuni FINMAT
 
-      // kontiraj
-      kalk_kontiranje_naloga( .T., .T., .F., NIL, .F. )
+
+      kalk_kontiranje_naloga( .T., .T., .F., NIL, .F. ) // kontiraj
 
       ++ nCount
-
-      o_kalk_doks()
 
       SELECT kalk_doks
       GO ( nTNRec )
@@ -138,22 +124,4 @@ STATIC FUNCTION _kont_doks( dD_f, dD_t, cId_td, cId_mkto, ;
       MsgBeep( "Kontirao " + AllTrim( Str( nCount ) ) + " dokumenata !" )
    ENDIF
 
-   RETURN
-
-
-
-// --------------------------------------------------------
-// uskladi broj naloga sa brojem kalkulacije
-// --------------------------------------------------------
-STATIC FUNCTION _br_nal( cChange, cBrKalk, cNalog )
-
-   IF cChange == "N"
-      RETURN
-   ENDIF
-
-   IF ( "/" $ cBrKalk )
-      // samo ako ima ovaj znak
-      cNalog := PadL( AllTrim( cBrKalk ), 8, "0" )
-   ENDIF
-
-   RETURN
+   RETURN .T.

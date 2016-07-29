@@ -45,7 +45,7 @@ FUNCTION kontiranje_vise_dokumenata_period()
    RETURN .T.
 
 
-STATIC FUNCTION kont_dokumente( dD_f, dDatDo, cIdVD, cId_mkto, cId_pkto )
+STATIC FUNCTION kont_dokumente( dDatOd, dDatDo, cIdVD, cId_mkto, cId_pkto )
 
    LOCAL nCount := 0
    LOCAL nTNRec

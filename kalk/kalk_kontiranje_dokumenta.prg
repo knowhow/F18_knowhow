@@ -26,7 +26,7 @@ STATIC dDatMax
  cNalog - broj naloga koji ce se uzeti, ako je EMPTY() ne uzima se !
 
 --------------------------------------------------------------------------  */
-FUNCTION kalk_kontiranje_naloga( fAuto, lAGen, lViseKalk, cNalog, auto_brojac )
+FUNCTION kalk_kontiranje_naloga( fAuto, lAGen, lViseKalk, cNalog, lAutoBrojac )
 
    LOCAL cIdFirma
    LOCAL cIdVd
@@ -56,8 +56,8 @@ FUNCTION kalk_kontiranje_naloga( fAuto, lAGen, lViseKalk, cNalog, auto_brojac )
       cNalog := ""
    ENDIF
 
-   IF ( auto_brojac == NIL )
-      auto_brojac := .T.
+   IF ( lAutoBrojac == NIL )
+      lAutoBrojac := .T.
    ENDIF
 
    SELECT F_SIFK
@@ -174,15 +174,15 @@ FUNCTION kalk_kontiranje_naloga( fAuto, lAGen, lViseKalk, cNalog, auto_brojac )
 
       IF Empty( cNalog )
 
-         IF auto_brojac
+         IF lAutoBrojac
             cBrNalF := fin_novi_broj_dokumenta( finmat->idfirma, cIdVn )
          ELSE
             cBrNalF := fin_prazan_broj_naloga()
          ENDIF
 
       ELSE
-         // ako je zadat broj naloga taj i uzmi...
-         cBrNalF := cNalog
+
+         cBrNalF := cNalog // ako je zadat broj naloga taj i uzmi
       ENDIF
 
    ENDIF
@@ -202,14 +202,14 @@ FUNCTION kalk_kontiranje_naloga( fAuto, lAGen, lViseKalk, cNalog, auto_brojac )
          IF !lAFin
             cBrNalF := ""
          ELSE
-            @ m_x + 1, m_y + 2  SAY "Broj naloga u FIN  " + finmat->idfirma + " - " + cidvn + " - " + cBrNalF
+            @ m_x + 1, m_y + 2  SAY "Broj naloga u FIN  " + finmat->idfirma + " - " + cIdvn + " - " + cBrNalF
          ENDIF
 
          IF !lAMat
             cBrBalM := ""
          ELSE
             IF idvd <> "24" // kalkulacija usluge
-               @ m_x + 2, m_y + 2 SAY "Broj naloga u MAT  " + finmat->idfirma + " - " + cidvn + " - " + cBrNalM
+               @ m_x + 2, m_y + 2 SAY "Broj naloga u MAT  " + finmat->idfirma + " - " + cIdvn + " - " + cBrNalM
             ENDIF
          ENDIF
 
@@ -223,11 +223,11 @@ FUNCTION kalk_kontiranje_naloga( fAuto, lAGen, lViseKalk, cNalog, auto_brojac )
 
       ELSE
          IF lAFin2
-            @ m_x + 1, m_y + 2 SAY "Broj naloga u FIN  " + finmat->idfirma + " - " + cidvn + " -" GET cBrNalF
+            @ m_x + 1, m_y + 2 SAY "Broj naloga u FIN  " + finmat->idfirma + " - " + cIdvn + " -" GET cBrNalF
          ENDIF
 
          IF idvd <> "24" .AND. lAMat2
-            @ m_x + 2, m_y + 2 SAY "Broj naloga u MAT  " + finmat->idfirma + " - " + cidvn + " -" GET cBrNalM
+            @ m_x + 2, m_y + 2 SAY "Broj naloga u MAT  " + finmat->idfirma + " - " + cIdvn + " -" GET cBrNalM
          ENDIF
 
          @ m_x + 5, m_y + 2 SAY "(ako je broj naloga prazan - ne vrsi se kontiranje)"
@@ -242,7 +242,7 @@ FUNCTION kalk_kontiranje_naloga( fAuto, lAGen, lViseKalk, cNalog, auto_brojac )
    nRbr := 0
    nRbr2 := 0
 
-   MsgO( "Prenos KALK -> FIN" )
+   MsgO( "Prenos KALK -> FIN / " + cIdVN + " - " + cBrNalF  )
 
    SELECT finmat
    PRIVATE cKonto1 := NIL
@@ -713,7 +713,6 @@ FUNCTION kalk_kontiranje_naloga( fAuto, lAGen, lViseKalk, cNalog, auto_brojac )
 
    MsgC()
 
-   AltD()
    IF !lViseKalk // ako je vise kalkulacija ne zatvaraj tabele
       my_close_all_dbf()
       RETURN .T.
@@ -908,7 +907,6 @@ FUNCTION DatVal()
          Box(, 3, 60 )
 
          SET CURSOR ON
-
          @ m_x + 1, m_y + 2 SAY "Datum dokumenta: "
          ??  finmat->datfaktp
          @ m_x + 2, m_y + 2 SAY "Uvecaj dana    :" GET _uvecaj PICT "999"
@@ -1130,7 +1128,7 @@ FUNCTION kalk_generisi_finmat()
       _predispozicija := .F.
 
       close_open_rekap_tables()
-      AltD()
+
       IF fStara
          kalk_otvori_kumulativ_kao_pripremu( cIdFirma, cIdVd, cBrDok )
       ELSE
@@ -1240,7 +1238,7 @@ FUNCTION kalk_generisi_finmat()
          ENDIF
       ENDIF
 
-      
+
 
       nStr := 0
       nTot1 := nTot2 := nTot3 := nTot4 := nTot5 := nTot6 := nTot7 := nTot8 := nTot9 := nTota := nTotb := nTotC := 0

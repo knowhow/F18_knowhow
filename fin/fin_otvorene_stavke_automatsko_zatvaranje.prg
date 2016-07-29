@@ -81,7 +81,6 @@ FUNCTION fin_automatsko_zatvaranje_otvorenih_stavki( lAuto, cKto, cPtn )
    find_suban_by_konto_partner( cIdFirma, cIdKonto, iif( Empty( cIdPartner ), NIL, cIdPartner ), NIL, "IdFirma,IdKonto,IdPartner,brdok" )
    MsgC()
 
-altd()
    EOF CRET
 
    IF cPobSt == "D" .AND. Pitanje(, "Želite li zaista pobrisati markere ??", "N" ) == "D"

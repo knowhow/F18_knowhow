@@ -17,7 +17,7 @@ MEMVAR cExpPath, cImpFile
 
 
 STATIC __stampaj // stampanje dokumenata .t. or .f.
-STATIC s_lAutom
+STATIC s_lAutom := .T. // Automatski asistent i ažuriranje naloga (D/N)
 
 FUNCTION meni_import_vindija()
 
@@ -1818,7 +1818,7 @@ FUNCTION kalk_imp_obradi_sve_dokumente( nPocniOd, lAsPokreni, lStampaj )
       nPocniOd := 0
    ENDIF
 
-   s_lAutom := .F.
+
    IF Pitanje(, "Automatski asistent i ažuriranje naloga (D/N)?", "D" ) == "D"
       s_lAutom := .T.
    ENDIF
@@ -1952,7 +1952,7 @@ FUNCTION update_kalk_14_datval( cBrojKalk, dDatVal )
 
    update_rec_server_and_dbf( "kalk_doks2", hRec, 1, "FULL" )
    PopWa()
-   
+
    RETURN .T.
 
 FUNCTION get_kalk_14_datval( cBrojKalk )

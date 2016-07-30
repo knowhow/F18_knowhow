@@ -13,36 +13,37 @@
 #include "f18.ch"
 
 
-function StKalk82()
-local nCol0:=nCol1:=nCol2:=0,npom:=0
+FUNCTION StKalk82()
 
-Private nMarza,nMarza2
+   LOCAL nCol0 := nCol1 := nCol2 := 0, npom := 0
 
-nStr:=0
-cIdPartner:=IdPartner; cBrFaktP:=BrFaktP; dDatFaktP:=DatFaktP
+   PRIVATE nMarza, nMarza2
 
-cIdKonto:=IdKonto; cIdKonto2:=IdKonto2
+   nStr := 0
+   cIdPartner := IdPartner; cBrFaktP := BrFaktP; dDatFaktP := DatFaktP
 
-P_COND
-?? "KALK BR:",  cIdFirma+"-"+cIdVD+"-"+cBrDok,SPACE(2),P_TipDok(cIdVD,-2), SPACE(2),"Datum:",DatDok
-@ prow(),125 SAY "Str:"+str(++nStr,3)
-select PARTN; HSEEK cIdPartner
+   cIdKonto := IdKonto; cIdKonto2 := IdKonto2
 
-select KONTO; HSEEK cIdKonto
-?  "Magacin razduzuje:",cIdKonto,"-",ALLTRIM(naz)
+   P_COND
+   ?? "KALK BR:",  cIdFirma + "-" + cIdVD + "-" + cBrDok, Space( 2 ), P_TipDok( cIdVD, -2 ), Space( 2 ), "Datum:", DatDok
+   @ PRow(), 125 SAY "Str:" + Str( ++nStr, 3 )
+   SELECT PARTN; HSEEK cIdPartner
 
-select kalk_pripr
+   SELECT KONTO; HSEEK cIdKonto
+   ?  "Magacin razduzuje:", cIdKonto, "-", AllTrim( naz )
 
-m:="--- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ----------"
-? m
-? "*R * ROBA     * Kolicina *   NC     *  VPC    *    MPC   *   PPP %  *   PPP    *  MPC     *"
-? "*BR*          *          *          *         *          *   PPU %  *   PPU    *  SA Por  *"
-? "*  *          *          *   sum    *         *    sum   *    sum   *   sum    *   sum    *"
-? m
-nTot1:=nTot1b:=nTot2:=nTot3:=nTot4:=nTot5:=nTot6:=nTot7:=0
+   SELECT kalk_pripr
 
-private cIdd:=idpartner+brfaktp+idkonto+idkonto2
-do while !eof() .and. cIdFirma==IdFirma .and.  cBrDok==BrDok .and. cIdVD==IdVD
+   m := "--- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ----------"
+   ? m
+   ? "*R * ROBA     * Kolicina *   NC     *  VPC    *    MPC   *   PPP %  *   PPP    *  MPC     *"
+   ? "*BR*          *          *          *         *          *   PPU %  *   PPU    *  SA Por  *"
+   ? "*  *          *          *   sum    *         *    sum   *    sum   *   sum    *   sum    *"
+   ? m
+   nTot1 := nTot1b := nTot2 := nTot3 := nTot4 := nTot5 := nTot6 := nTot7 := 0
+
+   PRIVATE cIdd := idpartner + brfaktp + idkonto + idkonto2
+   DO WHILE !Eof() .AND. cIdFirma == IdFirma .AND.  cBrDok == BrDok .AND. cIdVD == IdVD
 
 /*
     if idpartner+brfaktp+idkonto+idkonto2<>cidd
@@ -53,126 +54,128 @@ do while !eof() .and. cIdFirma==IdFirma .and.  cBrDok==BrDok .and. cIdVD==IdVD
     endif
 */
 
-    scatter()  // formiraj varijable _....
-    Marza2R()   // izracunaj nMarza2
-    KTroskovi()
+      scatter()  // formiraj varijable _....
+      Marza2R()   // izracunaj nMarza2
+      KTroskovi()
 
-    select ROBA; HSEEK kalk_pripr->IdRoba
-    select TARIFA; HSEEK kalk_pripr->IdTarifa
-    select kalk_pripr
-    VtPorezi()
+      SELECT ROBA; HSEEK kalk_pripr->IdRoba
+      SELECT TARIFA; HSEEK kalk_pripr->IdTarifa
+      SELECT kalk_pripr
+      VtPorezi()
 
-    if prow() > page_length()
-        FF
-        @ prow(),125 SAY "Str:"+str(++nStr,3)
-    endif
+      IF PRow() > page_length()
+         FF
+         @ PRow(), 125 SAY "Str:" + Str( ++nStr, 3 )
+      ENDIF
 
-    nTot3+=  (nU3:= NC*kolicina )
-    nTot4+=  (nU4:= vpc*(1-rabatv/100)*Kolicina )
-    nTot5+=  (nU5:= MPC*Kolicina )
-    nPor1:=  MPC*_OPP
-    nPor2:=  MPC*(1+_OPP)*_PPP
-    nTot6+=  (nU6:=(nPor1+nPor2)*Kolicina)
-    nTot7+=  (nU7:= MPcSaPP*Kolicina )
+      nTot3 +=  ( nU3 := NC * kolicina )
+      nTot4 +=  ( nU4 := vpc * ( 1 -rabatv / 100 ) * Kolicina )
+      nTot5 +=  ( nU5 := MPC * Kolicina )
+      nPor1 :=  MPC * _OPP
+      nPor2 :=  MPC * ( 1 + _OPP ) * _PPP
+      nTot6 +=  ( nU6 := ( nPor1 + nPor2 ) * Kolicina )
+      nTot7 +=  ( nU7 := MPcSaPP * Kolicina )
 
-    @ prow()+1,0 SAY  Rbr PICTURE "999"
-    @ prow(),4 SAY  ""; ?? trim(LEFT(ROBA->naz,40)),"(",ROBA->jmj,")"
+      @ PRow() + 1, 0 SAY  Rbr PICTURE "999"
+      @ PRow(), 4 SAY  ""; ?? Trim( Left( ROBA->naz, 40 ) ), "(", ROBA->jmj, ")"
 
-	if lKoristitiBK .and. !EMPTY( roba->barkod )
-		?? ", BK: " + roba->barkod
-	endif
+      IF lKoristitiBK .AND. !Empty( roba->barkod )
+         ?? ", BK: " + roba->barkod
+      ENDIF
 
-    @ prow()+1,4 SAY IdRoba
-    @ prow(),pcol()+1 SAY Kolicina             PICTURE PicKol
+      @ PRow() + 1, 4 SAY IdRoba
+      @ PRow(), PCol() + 1 SAY Kolicina             PICTURE PicKol
 
-    nCol0:=pcol()+1
-    @ prow(),pcol()+1 SAY NC                   PICTURE PicCDEM
-    @ prow(),pcol()+1 SAY vpc*(1-rabatv/100)   PICTURE PicCDEM
-    @ prow(),pcol()+1 SAY MPC                  PICTURE PicCDEM
-    nCol1:=pcol()+1
-    @ prow(),pcol()+1 SAY TARIFA->OPP          PICTURE PicProc
-    @ prow(),pcol()+1 SAY nPor1                PICTURE PiccDEM
-    @ prow(),pcol()+1 SAY MPCSAPP              PICTURE PicCDEM
+      nCol0 := PCol() + 1
+      @ PRow(), PCol() + 1 SAY NC                   PICTURE PicCDEM
+      @ PRow(), PCol() + 1 SAY vpc * ( 1 -rabatv / 100 )   PICTURE PicCDEM
+      @ PRow(), PCol() + 1 SAY MPC                  PICTURE PicCDEM
+      nCol1 := PCol() + 1
+      @ PRow(), PCol() + 1 SAY TARIFA->OPP          PICTURE PicProc
+      @ PRow(), PCol() + 1 SAY nPor1                PICTURE PiccDEM
+      @ PRow(), PCol() + 1 SAY MPCSAPP              PICTURE PicCDEM
 
-    @ prow()+1, nCol0     SAY  nc*kolicina      picture picdem
-    @ prow(),   pcol()+1  SAY  vpc*(1-rabatv/100)*kolicina  picture picdem
-    @ prow(),   pcol()+1  SAY  mpc*kolicina      picture picdem
+      @ PRow() + 1, nCol0     SAY  nc * kolicina      PICTURE picdem
+      @ PRow(),   PCol() + 1  SAY  vpc * ( 1 -rabatv / 100 ) * kolicina  PICTURE picdem
+      @ PRow(),   PCol() + 1  SAY  mpc * kolicina      PICTURE picdem
 
-    @ prow(),nCol1    SAY    _PPP       picture picproc
-    @ prow(),  pcol()+1 SAY  nPor2             picture piccdem
+      @ PRow(), nCol1    SAY    _PPP       PICTURE picproc
+      @ PRow(),  PCol() + 1 SAY  nPor2             PICTURE piccdem
 
-    skip
+      SKIP
 
-enddo
+   ENDDO
 
-if prow() > page_length()
-    FF
-    @ prow(),125 SAY "Str:"+str(++nStr,3)
-endif
-? m
-@ prow()+1,0        SAY "Ukupno:"
-@ prow(),nCol0      SAY  nTot3        picture       PicDEM
-@ prow(),pcol()+1   SAY  nTot4        picture       PicDEM
-@ prow(),pcol()+1   SAY  nTot5        picture       PicDEM
-@ prow(),pcol()+1   SAY  space(len(picproc))
-@ prow(),pcol()+1   SAY  nTot6        picture        PicDEM
-@ prow(),pcol()+1   SAY  nTot7        picture        PicDEM
-? m
+   IF PRow() > page_length()
+      FF
+      @ PRow(), 125 SAY "Str:" + Str( ++nStr, 3 )
+   ENDIF
+   ? m
+   @ PRow() + 1, 0        SAY "Ukupno:"
+   @ PRow(), nCol0      SAY  nTot3        PICTURE       PicDEM
+   @ PRow(), PCol() + 1   SAY  nTot4        PICTURE       PicDEM
+   @ PRow(), PCol() + 1   SAY  nTot5        PICTURE       PicDEM
+   @ PRow(), PCol() + 1   SAY  Space( Len( picproc ) )
+   @ PRow(), PCol() + 1   SAY  nTot6        PICTURE        PicDEM
+   @ PRow(), PCol() + 1   SAY  nTot7        PICTURE        PicDEM
+   ? m
 
-IF prow() > page_length()
-    FF
-    @ prow(),125 SAY "Str:"+str(++nStr,3)
-endif
-nRec:=recno()
-select kalk_pripr
-set order to tag "2"
-seek cidfirma+cidvd+cbrdok
-m:="------ ---------- ---------- ---------- ---------- ---------- ----------"
-? m
-? "* Tar *  PPP%    *   PPU%   *    MPV   *    PPP   *   PPU    * MPVSAPP *"
-? m
-nTot1:=nTot2:=nTot3:=nTot4:=0
-nTot5:=nTot6:=nTot7:=0
-do while !eof() .and. cidfirma+cidvd+cbrdok==idfirma+idvd+brdok
-  cidtarifa:=idtarifa
-  nU1:=nU2:=nU3:=nU4:=0
-  select tarifa; HSEEK cidtarifa
-  select kalk_pripr
-  do while !eof() .and. cidfirma+cidvd+cbrdok==idfirma+idvd+brdok .and. idtarifa==cidtarifa
-    select roba; HSEEK kalk_pripr->idroba; select kalk_pripr
-    VtPorezi()
-    nU1+=mpc*kolicina
-    nU2+=mpc*_OPP*kolicina
-    nU3+=mpc*(1+_OPP)*_PPP*kolicina
-    nU4+=mpcsapp*kolicina
-    nTot5+=(mpc-nc)*kolicina
-    skip
-  enddo
-  nTot1+=nu1; nTot2+=nU2; nTot3+=nU3
-  nTot4+=nU4
-  ? cidtarifa
-  @ prow(),pcol()+1   SAY _OPP*100 pict picproc
-  @ prow(),pcol()+1   SAY _PPP*100 pict picproc
-  nCol1:=pcol()+1
-  @ prow(),pcol()+1   SAY nu1 pict picdem
-  @ prow(),pcol()+1   SAY nu2 pict picdem
-  @ prow(),pcol()+1   SAY nu3 pict picdem
-  @ prow(),pcol()+1   SAY nu4 pict picdem
-enddo
-IF prow() > page_length()
-    FF
-    @ prow(),125 SAY "Str:"+str(++nStr,3)
-endif
-? m
-? "UKUPNO"
-@ prow(),nCol1      SAY nTot1 pict picdem
-@ prow(),pcol()+1   SAY nTot2 pict picdem
-@ prow(),pcol()+1   SAY nTot3 pict picdem
-@ prow(),pcol()+1   SAY nTot4 pict picdem
-? m
-? "RUC:";  @ prow(),pcol()+1 SAY nTot5 pict picdem
-? m
+   IF PRow() > page_length()
+      FF
+      @ PRow(), 125 SAY "Str:" + Str( ++nStr, 3 )
+   ENDIF
+   nRec := RecNo()
 
-set order to tag "1"
-go nRec
-return
+   SELECT kalk_pripr
+   SET ORDER TO TAG "2"
+   SEEK cidfirma + cidvd + cbrdok
+   m := "------ ---------- ---------- ---------- ---------- ---------- ----------"
+   ? m
+   ? "* Tar *  PPP%    *   PPU%   *    MPV   *    PPP   *   PPU    * MPVSAPP *"
+   ? m
+   nTot1 := nTot2 := nTot3 := nTot4 := 0
+   nTot5 := nTot6 := nTot7 := 0
+   DO WHILE !Eof() .AND. cidfirma + cidvd + cbrdok == idfirma + idvd + brdok
+      cidtarifa := idtarifa
+      nU1 := nU2 := nU3 := nU4 := 0
+      SELECT tarifa; HSEEK cidtarifa
+      SELECT kalk_pripr
+      DO WHILE !Eof() .AND. cidfirma + cidvd + cbrdok == idfirma + idvd + brdok .AND. idtarifa == cidtarifa
+         SELECT roba; HSEEK kalk_pripr->idroba; SELECT kalk_pripr
+         VtPorezi()
+         nU1 += mpc * kolicina
+         nU2 += mpc * _OPP * kolicina
+         nU3 += mpc * ( 1 + _OPP ) * _PPP * kolicina
+         nU4 += mpcsapp * kolicina
+         nTot5 += ( mpc - nc ) * kolicina
+         SKIP
+      ENDDO
+      nTot1 += nu1; nTot2 += nU2; nTot3 += nU3
+      nTot4 += nU4
+      ? cidtarifa
+      @ PRow(), PCol() + 1   SAY _OPP * 100 PICT picproc
+      @ PRow(), PCol() + 1   SAY _PPP * 100 PICT picproc
+      nCol1 := PCol() + 1
+      @ PRow(), PCol() + 1   SAY nu1 PICT picdem
+      @ PRow(), PCol() + 1   SAY nu2 PICT picdem
+      @ PRow(), PCol() + 1   SAY nu3 PICT picdem
+      @ PRow(), PCol() + 1   SAY nu4 PICT picdem
+   ENDDO
+   IF PRow() > page_length()
+      FF
+      @ PRow(), 125 SAY "Str:" + Str( ++nStr, 3 )
+   ENDIF
+   ? m
+   ? "UKUPNO"
+   @ PRow(), nCol1      SAY nTot1 PICT picdem
+   @ PRow(), PCol() + 1   SAY nTot2 PICT picdem
+   @ PRow(), PCol() + 1   SAY nTot3 PICT picdem
+   @ PRow(), PCol() + 1   SAY nTot4 PICT picdem
+   ? m
+   ? "RUC:";  @ PRow(), PCol() + 1 SAY nTot5 PICT picdem
+   ? m
+
+   SET ORDER TO TAG "1"
+   GO nRec
+
+   RETURN

@@ -140,9 +140,9 @@ FUNCTION kalk_generisi_inventuru_magacina()
       ELSEIF lOsvjezi
 
          SELECT kalk_pripr
-         SET ORDER TO TAG "3" // kalk_pripr
+         SET ORDER TO TAG "3"
          GO TOP
-         SEEK cIdFirma + "IM" + cBrDok + cIdRoba
+         SEEK cIdFirma + "IM" + cBrDok + cIdRoba // kalk_pripr
 
          IF Found()
             DELETE

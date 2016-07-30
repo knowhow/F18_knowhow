@@ -28,11 +28,11 @@ FUNCTION GenProd()
    AAdd( _opc, "3. inventure    " )
    AAdd( _opcexe, {|| MnuPInv() } )
 
-   //AAdd( _opc, "4. nivelacije" )
-   //AAdd( _opcexe, {|| MnuPNivel() } )
+   // AAdd( _opc, "4. nivelacije" )
+   // AAdd( _opcexe, {|| MnuPNivel() } )
 
-   //AAdd( _opc, "5. setuj mpc po uzoru na postojecu za % " )
-   //AAdd( _opcexe, {|| set_mpc_2() } )
+   // AAdd( _opc, "5. setuj mpc po uzoru na postojecu za % " )
+   // AAdd( _opcexe, {|| set_mpc_2() } )
 
    f18_menu( "gdpr", nil, _izbor, _opc, _opcexe )
 
@@ -56,8 +56,8 @@ STATIC FUNCTION MnuPNivel()
    AAdd( _opcexe, {|| VratiZadNiv() } )
 */
 
-//   AAdd( _opc, "---------------------------------------------" )
-//   AAdd( _opcexe, {|| nil } )
+   // AAdd( _opc, "---------------------------------------------" )
+   // AAdd( _opcexe, {|| nil } )
 
 /*
    AAdd( _opc, "3. generacija nivelacije za sve prodavnice" )
@@ -69,16 +69,16 @@ STATIC FUNCTION MnuPNivel()
    AAdd( _opcexe, {|| rpt_zanivel() } )
 */
 
-   //AAdd( _opc, "5. pregled efekata nivelacije za sve prodavnice" )
-   //AAdd( _opcexe, {|| result_nivel_p() } )
-   //AAdd( _opc, "6. azuriranje nivelacije za sve prodavnice" )
-   //AAdd( _opcexe, {|| obr_nivel_p() } )
-   //AAdd( _opc, "7. setovanje mpc nakon obradjenih nivelacija" )
-   //AAdd( _opcexe, {|| set_mpc_iz_zanivel() } )
-   //AAdd( _opc, "8. kopiranje podataka n.cijena 2 -> n.cijena 1" )
-   //AAdd( _opcexe, {|| zaniv2_zaniv() } )
-   //AAdd( _opc, "9. stampa obrazaca o prom.cijena za sve prod." )
-   //AAdd( _opcexe, {|| o_pr_cijena() } )
+   // AAdd( _opc, "5. pregled efekata nivelacije za sve prodavnice" )
+   // AAdd( _opcexe, {|| result_nivel_p() } )
+   // AAdd( _opc, "6. azuriranje nivelacije za sve prodavnice" )
+   // AAdd( _opcexe, {|| obr_nivel_p() } )
+   // AAdd( _opc, "7. setovanje mpc nakon obradjenih nivelacija" )
+   // AAdd( _opcexe, {|| set_mpc_iz_zanivel() } )
+   // AAdd( _opc, "8. kopiranje podataka n.cijena 2 -> n.cijena 1" )
+   // AAdd( _opcexe, {|| zaniv2_zaniv() } )
+   // AAdd( _opc, "9. stampa obrazaca o prom.cijena za sve prod." )
+   // AAdd( _opcexe, {|| o_pr_cijena() } )
    AAdd( _opc, "---------------------------------------------" )
    AAdd( _opcexe, {|| nil } )
 
@@ -138,7 +138,7 @@ FUNCTION GenNivP()
 
    o_koncij()
    o_kalk_pripr()
-   //o_kalk()
+   // o_kalk()
    PRIVATE cBrDok := kalk_sljedeci_broj( cIdfirma, "19", 8 )
 
    nRbr := 0
@@ -160,12 +160,12 @@ FUNCTION GenNivP()
       SELECT roba
       HSEEK cidroba
 
-      //SELECT kalk
+      // SELECT kalk
 
-      //SET ORDER TO TAG "4"
+      // SET ORDER TO TAG "4"
       // "KALKi4","idFirma+Pkonto+idroba+dtos(datdok)+PU_I+IdVD","KALK")
-      //?? drugi alias trebamo ?? SEEK cidfirma + cidkonto + cidroba
-      find_kalk_by_pkonto_idroba(  cidfirma, cidkonto, cidroba)
+      // ?? drugi alias trebamo ?? SEEK cidfirma + cidkonto + cidroba
+      find_kalk_by_pkonto_idroba(  cidfirma, cidkonto, cidroba )
       DO WHILE !Eof() .AND. cidfirma + cidkonto + cidroba == idFirma + pkonto + idroba
 
          IF ddatdok < datdok  // preskoci
@@ -669,7 +669,7 @@ FUNCTION KorekMPC()
                idtarifa WITH roba->idtarifa, ;
                datfaktp WITH dDok, ;
                kolicina WITH nStanje, ;
-               idvd WITH "19", brdok WITH cBrNiv,;
+               idvd WITH "19", brdok WITH cBrNiv, ;
                rbr WITH Str( nRbr, 3 ), ;
                pkonto WITH cMagac, ;
                pu_i WITH "3"
@@ -898,7 +898,10 @@ FUNCTION Gen41S()
 
 */
 
-// Generisanje dokumenta tipa 41 ili 42 na osnovu 11-ke
+/*
+  Generisanje dokumenta tipa 41 ili 42 na osnovu 11-ke
+*/
+
 FUNCTION Iz11u412()
 
    o_kalk_edit()
@@ -939,18 +942,20 @@ FUNCTION Iz11u412()
    ENDIF
 
    // utvrdimo broj nove kalkulacije
-   SELECT KALK_DOKS; SEEK cIdFirma + cIdVdI + Chr( 255 ); SKIP -1
-   IF cIdFirma + cIdVdI == IDFIRMA + IDVD
-      cBrDokI := brdok
+
+   find_kalk_doks_za_tip( cIdFirma, cIdVdI )
+   GO BOTTOM
+   IF field->idvd <> cIdVdI
+      cBrDokI  := Space( 8 )
    ELSE
-      cBrDokI := Space( 8 )
+      cBrDokI := field->brdok
    ENDIF
    cBrDokI := UBrojDok( Val( Left( cBrDokI, 5 ) ) + 1, 5, Right( cBrDokI, 3 ) )
 
-   // pocnimo sa generacijom dokumenta
-   SELECT KALK
-   SEEK cIdFirma + cIdVDU + cBrDokU
+
+   find_kalk_by_broj_dokumenta( cIdFirma, cIdVDU, cBrDokU )
    DO WHILE !Eof() .AND. cIdFirma + cIdVDU + cBrDokU == IDFIRMA + IDVD + BRDOK
+
       PushWA()
       SELECT kalk_pripr; APPEND BLANK; Scatter()
       _idfirma   := cIdFirma
@@ -978,8 +983,7 @@ FUNCTION Iz11u412()
       IF !Empty( gMetodaNC ) .AND. cPoMetodiNC == "D"
          nc1 := nc2 := 0
          // MsgO("Racunam stanje u prodavnici")
-
-         // ? ?           ?
+         ?
          kalk_nabavna_prod( _idfirma, _idroba, _idkonto, 0, 0, @nc1, @nc2, )
 
          // MsgC()
@@ -1001,7 +1005,7 @@ FUNCTION Iz11u412()
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
 
 // Generisanje dokumenta tipa 11 na osnovu 10-ke
@@ -1033,18 +1037,18 @@ FUNCTION Iz10u11()
    BoxC()
 
 
-   // utvrdimo broj nove kalkulacije
-   SELECT KALK_DOKS; SEEK cIdFirma + cIdVdI + Chr( 255 ); SKIP -1
-   IF cIdFirma + cIdVdI == IDFIRMA + IDVD
-      cBrDokI := brdok
+   find_kalk_doks_za_tip( cIdFirma, cIdVdI )
+   GO BOTTOM
+   IF field->idvd <> cIdVdI
+      cBrDokI  := Space( 8 )
    ELSE
-      cBrDokI := Space( 8 )
+      cBrDokI := field->brdok
    ENDIF
+
    cBrDokI := UBrojDok( Val( Left( cBrDokI, 5 ) ) + 1, 5, Right( cBrDokI, 3 ) )
 
-   // pocnimo sa generacijom dokumenta
-   SELECT KALK
-   SEEK cIdFirma + cIdVDU + cBrDokU
+   find_kalk_by_broj_dokumenta( cIdFirma, cIdVDU, cBrDokU )
+
    DO WHILE !Eof() .AND. cIdFirma + cIdVDU + cBrDokU == IDFIRMA + IDVD + BRDOK
       PushWA()
       SELECT kalk_pripr
@@ -1103,7 +1107,7 @@ FUNCTION Iz10u11()
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -1124,16 +1128,16 @@ FUNCTION gen_ip_80()
    BoxC()
 
    IF LastKey() == K_ESC
-      RETURN
+      RETURN .F.
    ENDIF
 
    IF Pitanje(, "Generisati 80-ku (D/N)?", "D" ) == "N"
-      RETURN
+      RETURN .F.
    ENDIF
 
    // kopiraj dokument u pript
    IF cp_dok_pript( cIdFirma, cTipDok, cIpBrDok ) == 0
-      RETURN
+      RETURN .F.
    ENDIF
 
    o_kalk_doks()
@@ -1177,4 +1181,4 @@ FUNCTION gen_ip_80()
 
    BoxC()
 
-   RETURN
+   RETURN .T.

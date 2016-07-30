@@ -42,14 +42,12 @@ FUNCTION kalk_nivelacija_11()
 
    PRIVATE cBrNiv := "0"
 
-   SELECT kalk
-   SEEK cIdFirma + "19" + Chr( 254 )
-   SKIP -1
-
-   IF idvd <> "19"
+   find_kalk_doks_za_tip( cIdFirma, "19" )
+   GO BOTTOM
+   IF field->idvd <> "19"
       cBrNiv := Space( 8 )
    ELSE
-      cBrNiv := brdok
+      cBrNiv := field->brdok
    ENDIF
 
    _sufix := SufBrKalk( kalk_pripr->idkonto )
@@ -89,8 +87,7 @@ FUNCTION kalk_nivelacija_11()
          SELECT kalk_pripr
       ENDIF
 
-      IF _rec[ "mpcsapp" ] <> nMPC
-         // izvrsiti nivelaciju
+      IF _rec[ "mpcsapp" ] <> nMPC // izvrsiti nivelaciju
 
          IF !fNivelacija
             // prva stavka za nivelaciju
@@ -171,4 +168,4 @@ FUNCTION kalk_nivelacija_11()
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.

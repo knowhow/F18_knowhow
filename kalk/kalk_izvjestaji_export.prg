@@ -132,7 +132,6 @@ STATIC FUNCTION set_launcher( cLauncher )
  */
 STATIC FUNCTION get_exp_fields( aArr, cIdVd, lVpcCij, lMpcCij )
 
-   // {
 
 
    IF lZaokruziti
@@ -186,13 +185,13 @@ STATIC FUNCTION get_exp_fields( aArr, cIdVd, lVpcCij, lMpcCij )
    AAdd( aArr, { "cij_nov_1",  "N",  10, nCijDec } )
    AAdd( aArr, { "cij_nov_2",  "N",  10, nCijDec } )
 
-   RETURN
-// }
+   RETURN .T.
+
 
 
 FUNCTION kt_exp_create( cIdVd, lVpcCij, lMpcCij )
 
-   // {
+
    LOCAL cExpTbl := "R_EXPORT.DBF"
    LOCAL aArr := {}
 
@@ -208,7 +207,7 @@ FUNCTION kt_exp_create( cIdVd, lVpcCij, lMpcCij )
    // CREATE_INDEX("ROB", "idRoba", PRIVPATH +  cExpTbl, .t.)
    // CREATE_INDEX("TAR", "idTarifa+idRoba", PRIVPATH +  cExpTbl, .t.)
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -250,6 +249,8 @@ STATIC FUNCTION fill_exp( cIdFirma, cIdVd,  cBrDok, lVpcCij, lMpcCij )
 
    Box(, 3, 60 )
 
+
+   SELECT KALK
 
    nCount := 0
 
@@ -348,7 +349,7 @@ STATIC FUNCTION fill_exp( cIdFirma, cIdVd,  cBrDok, lVpcCij, lMpcCij )
    ENDIF
 
    RETURN
-// }
+
 
 
 STATIC FUNCTION msoff_start( cVersion )

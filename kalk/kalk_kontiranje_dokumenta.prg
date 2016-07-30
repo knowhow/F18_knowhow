@@ -253,9 +253,9 @@ FUNCTION kalk_kontiranje_fin_naloga( fAuto, lAGen, lViseKalk, cNalog, lAutoBroja
 
    DO WHILE !Eof()
 
-      // datoteka finmat
-      cIDVD := IdVD
-      cBrDok := BrDok
+
+      cIDVD := finmat->IdVD
+      cBrDok := finmat->BrDok
 
       IF ValType( cKonto1 ) <> "C"
          PRIVATE cKonto1 := ""
@@ -307,8 +307,8 @@ FUNCTION kalk_kontiranje_fin_naloga( fAuto, lAGen, lViseKalk, cNalog, lAutoBroja
             ENDIF
 
             IF Empty( trfp->idtarifa ) .AND. roba->tip $ "U"
-               // roba tipa u,t
-               nIz := 0
+
+               nIz := 0 // roba tipa u,t
             ENDIF
 
             // iskoristeno u slucaju RN, gdje se za kontiranje stavke
@@ -319,8 +319,7 @@ FUNCTION kalk_kontiranje_fin_naloga( fAuto, lAGen, lViseKalk, cNalog, lAutoBroja
 
             IF nIz <> 0
 
-               // ako je iznos elementa <> 0, dodaj stavku u fpripr
-               IF lPoRj
+               IF lPoRj // ako je iznos elementa <> 0, dodaj stavku u fpripr
                   IF TRFP->porj = "D"
                      cIdRj := KONCIJ->idrj
                   ELSEIF TRFP->porj = "S"
@@ -346,11 +345,19 @@ FUNCTION kalk_kontiranje_fin_naloga( fAuto, lAGen, lViseKalk, cNalog, lAutoBroja
                ENDIF
 
                IF gBaznaV == "P"
-                  nIz := ROUND7( nIz, Right( trfp->naz, 2 ) )
-                  nIz2 := ROUND7( nIz * Kurs( dDFDok, "P", "D" ), Right( trfp->naz, 2 ) )
+                  //nIz := ROUND7( nIz, Right( trfp->naz, 2 ) )
+                  //nIz2 := ROUND7( nIz * Kurs( dDFDok, "P", "D" ), Right( trfp->naz, 2 ) )
+
+                  nIz := nIz
+                  nIz2 :=  nIz * Kurs( dDFDok, "P", "D" )
+
                ELSE
-                  nIz2 := ROUND7( nIz, Right( trfp->naz, 2 ) )
-                  nIz := ROUND7( nIz2 * Kurs( dDFDok, "D", "P" ), Right( trfp->naz, 2 ) )
+                  //nIz2 := ROUND7( nIz, Right( trfp->naz, 2 ) )
+                  // nIz := ROUND7( nIz2 * Kurs( dDFDok, "D", "P" ), Right( trfp->naz, 2 ) )
+
+                  nIz2 := nIz
+                  nIz := nIz2 * Kurs( dDFDok, "D", "P" )
+
                ENDIF
 
                IF "IDKONTO" == PadR( trfp->IdKonto, 7 )
@@ -500,7 +507,7 @@ FUNCTION kalk_kontiranje_fin_naloga( fAuto, lAGen, lViseKalk, cNalog, lAutoBroja
                ENDIF
 
                fExist := .F.
-               SEEK finmat->IdFirma + cidvn + cBrNalF
+               SEEK finmat->IdFirma + cIdvn + cBrNalF
 
                my_flock()
                IF Found()

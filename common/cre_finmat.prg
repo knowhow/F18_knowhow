@@ -77,7 +77,7 @@ Harbour extended Field Types
    AAdd( aDBf, { "VPV", "B",  8,  8 } )
    AAdd( aDBf, { "MPV", "B",  8,  8 } )
    AAdd( aDBf, { "MARZA2", "B",  8,  8 } )
-   AAdd( aDBf, { "POREZ", "B",  8,  8 } )
+   AAdd( aDBf, { "POREZ", "B",  8,  10 } )
    AAdd( aDBf, { "POREZ2", "B",  8,  8 } )
    AAdd( aDBf, { "POREZ3", "B",  8,  8 } )
    AAdd( aDBf, { "MPVSAPP", "B",  8,  8 } )
@@ -94,7 +94,7 @@ Harbour extended Field Types
    _table_name := "finmat"
 
 
-   IF ver[ "current" ] > 0 .AND. ver[ "current" ] < 020103 // 2.1.2 - rbr numeric
+   IF ver[ "current" ] > 0 .AND. ver[ "current" ] < 020104 // 2.1.2 - rbr numeric
       f18_delete_dbf( "finmat" )
    ENDIF
 

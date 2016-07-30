@@ -313,23 +313,20 @@ FUNCTION MpcBezPorO( nMpcSaPP, aPorezi, nRabat, nNC )
 
 
 
-/* Izn_P_PPP(nMPCBp, aPorezi, aPoreziIzn, nMpcSaP)
+/* kalk_porezi_maloprodaja(nMPCBp, aPorezi nMpcSaP)
  *     Racuna iznos PPP
  *   param: nMpcBp Maloprodajna cijena bez poreza
  *   param: aPorezi Matrica poreza
  *   param: aPoreziIzn Matrica izracunatih poreza
  *   param: nMpcSaP Maloprodajna cijena sa porezom
  */
-FUNCTION Izn_P_PPP( nMpcBp, aPorezi, aPoreziIzn, nMpcSaP )
+FUNCTION kalk_porezi_maloprodaja( nMpcBp, aPorezi, nMpcSaP )
 
    LOCAL nPom
    LOCAL nUkPor
 
-   // zadate je cijena sa porezom, utvrdi cijenu bez poreza
-   IF nMpcBp == nil
-      // PPP - PDV,
-      // PP -  porez na potrosnju
-      nUkPor := aPorezi[ POR_PPP ] + aPorezi[ POR_PP ]
+   IF nMpcBp == nil // zadate je cijena sa porezom, utvrdi cijenu bez poreza
+      nUkPor := aPorezi[ POR_PPP ] // POR_PPP - PDV
       nMpcBp := nMpcSaP / ( nUkPor / 100 + 1 )
    ENDIF
 
@@ -436,7 +433,7 @@ FUNCTION Izn_P_PRugost( nMpcSaPP, nMPCBp, nNc, aPorezi, aPoreziIzn )
          nMarza := nMpcSaPP - nNc
       ENDIF
    ELSE
-      nMarza := nMpcSaPP - nNc - Izn_P_PPP(, aPorezi,, nMpcSaPP )
+      nMarza := nMpcSaPP - nNc - kalk_porezi_maloprodaja( NIL, aPorezi, nMpcSaPP )
    ENDIF
 
    DO CASE
@@ -575,7 +572,7 @@ FUNCTION PrPPUMP()
 
 
 
-/* \fn RacPorezeMP(aPorezi, nMpc, nMpcSaPP, nNc)
+/*  RacPorezeMP(aPorezi, nMpc, nMpcSaPP, nNc)
  *    Racunanje poreza u maloprodaji
  *  param: aPorezi Matrica poreza
  *  param: nMpc Maloprodajna cijena
@@ -588,7 +585,7 @@ FUNCTION RacPorezeMP( aPorezi, nMpc, nMpcSaPP, nNc )
    LOCAL nP1, nP2, nP3
 
    // PDV
-   nP1 := Izn_P_PPP( nMpc, aPorezi, , nMpcSaPP )
+   nP1 := kalk_porezi_maloprodaja( nMpc, aPorezi, nMpcSaPP )
    nP2 := 0
    nP3 := 0
 

@@ -222,15 +222,10 @@ FUNCTION Rfinansijsko_stanje_prodavnica()
 
          nElem := AScan( aRTar, {| x| x[ 1 ] == TARIFA->ID } )
 
-         IF glUgost
-            nP1 := Izn_P_PPP( nBezP, aPorezi,, nSaP )
-            nP2 := Izn_P_PRugost( nSaP, nBezP, nNV, aPorezi )
-            nP3 := Izn_P_PPUgost( nSaP, nP2, aPorezi )
-         ELSE
-            nP1 := Izn_P_PPP( nBezP, aPorezi,, nSaP )
-            nP2 := Izn_P_PPU( nBezP, aPorezi )
-            nP3 := Izn_P_PP( nBezP, aPorezi )
-         ENDIF
+         nP1 := kalk_porezi_maloprodaja( nBezP, aPorezi, nSaP )
+         nP2 := Izn_P_PPU( nBezP, aPorezi )
+         nP3 := Izn_P_PP( nBezP, aPorezi )
+
 
          IF nElem > 0
             aRTar[ nElem, 2 ] += nBezP

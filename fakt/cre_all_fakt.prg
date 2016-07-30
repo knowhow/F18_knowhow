@@ -54,6 +54,11 @@ FUNCTION cre_all_fakt( ver )
    _alias := "FAKT"
    _table_name := "fakt_fakt"
 
+   IF ver[ "current" ] > 0 .AND. ver[ "current" ] < 020101 // 2.1.1 - rbr numeric
+      f18_delete_dbf( "fakt_fakt" )
+      f18_delete_dbf( "fakt_pripr" )
+   ENDIF
+   
    IF_NOT_FILE_DBF_CREATE
 
    // 0.8.3
@@ -75,10 +80,7 @@ FUNCTION cre_all_fakt( ver )
       modstru( { "*" + "fakt_pripr", "C FISC_RN I 4 0 FISC_RN N 10 0" } )
    ENDIF
 
-   IF ver[ "current" ] > 0 .AND. ver[ "current" ] < 020101 // 2.1.1 - rbr numeric
-      f18_delete_dbf( "fakt_fakt" )
-      f18_delete_dbf( "fakt_pripr" )
-   ENDIF
+
 
    CREATE_INDEX( "1", "IdFirma+idtipdok+brdok+rbr+podbr", _alias )
    CREATE_INDEX( "2", "IdFirma+dtos(datDok)+idtipdok+brdok+rbr", _alias )

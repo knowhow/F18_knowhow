@@ -91,11 +91,11 @@ STATIC FUNCTION kont_dokumente( dDatOd, dDatDo, cIdVD, cId_mkto, cId_pkto )
       kalk_generisi_finmat( .T., cD_firma, cD_tipd, cD_brdok, .T. )  // napuni FINMAT
 
 
-      IF is_kalk_fin_isti_broj()
-         cBrFinNalog := cD_brdok
-      ENDIF
+      //IF is_kalk_fin_isti_broj()
+      //   cBrFinNalog := cD_brdok
+      //ENDIF
 
-      kalk_kontiranje_fin_naloga( .T., .T., .T., cBrFinNalog, .T. ) // kontiraj
+      kalk_kontiranje_fin_naloga( .T., .T., .T., NIL, .T. ) // kontiraj
 
       ++ nCount
 
@@ -209,4 +209,4 @@ FUNCTION kalk_kontiranje_dokumenata_period()
    my_close_all_dbf()
 
    RETURN .T.
-*/ 
+*/

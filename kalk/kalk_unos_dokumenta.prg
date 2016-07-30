@@ -247,9 +247,9 @@ STATIC FUNCTION kalk_kontiraj_alt_k()
 
    LOCAL cBrNal := NIL
 
-   IF is_kalk_fin_isti_broj()
-      cBrNal := kalk_pripr->brDok
-   ENDIF
+   //IF is_kalk_fin_isti_broj()
+    //  cBrNal := kalk_pripr->brDok
+   //ENDIF
 
    my_close_all_dbf()
 

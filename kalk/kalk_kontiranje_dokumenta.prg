@@ -54,7 +54,6 @@ FUNCTION kalk_kontiranje_fin_naloga( fAuto, lAGen, lViseKalk, cNalog, lAutoBroja
    ENDIF
 
 
-
    IF ( lAutoBrojac == NIL )
       lAutoBrojac := .T.
    ENDIF
@@ -106,6 +105,9 @@ FUNCTION kalk_kontiranje_fin_naloga( fAuto, lAGen, lViseKalk, cNalog, lAutoBroja
    IF ( cNalog == NIL )
       IF is_kalk_fin_isti_broj()
          cNalog := finmat->brdok
+         IF Val( AllTrim( cNalog ) ) > 0 // 00001 => 00000001, ako je 00001/BH ostaviti
+            cNalog := PadL( AllTrim( cNalog ), 8, "0" )
+         ENDIF
       ENDIF
    ENDIF
 

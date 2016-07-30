@@ -15,7 +15,7 @@
 // ---------------------------------------------------------------------
 // automatsko formiranje nivelacije na osnovu ulaznog dokumenta
 // ---------------------------------------------------------------------
-FUNCTION Niv_11()
+FUNCTION kalk_nivelacija_11()
 
    LOCAL _sufix, _rec
 
@@ -23,8 +23,7 @@ FUNCTION Niv_11()
    o_koncij()
    o_kalk_pripr2()
    o_kalk_pripr()
-   o_kalk_doks()
-   o_kalk()
+
    O_SIFK
    O_SIFV
    O_ROBA
@@ -38,7 +37,7 @@ FUNCTION Niv_11()
 
    IF !( cIdvd $ "11#81" ) .AND. !Empty( gMetodaNC )
       my_close_all_dbf()
-      RETURN
+      RETURN .F.
    ENDIF
 
    PRIVATE cBrNiv := "0"

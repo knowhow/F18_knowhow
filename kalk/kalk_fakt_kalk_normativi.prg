@@ -427,7 +427,6 @@ FUNCTION PrenosNoFakt()
 
    IF gBrojacKalkulacija == "D"
 
-
          find_kalk_doks_za_tip( cIdFirma, "96" )
          GO BOTTOM
          IF idvd <> "10"
@@ -704,7 +703,7 @@ FUNCTION PrenosNo2()
       @ m_x + 10, m_y + 2 SAY "Dokumenti su preneseni !"
 
       IF gBrojacKalkulacija == "D"
-         cbrkalk := UBrojDok( Val( Left( cbrkalk, 5 ) ) + 1, 5, Right( cBrKalk, 3 ) )
+         cBrkalk := UBrojDok( Val( Left( cbrkalk, 5 ) ) + 1, 5, Right( cBrKalk, 3 ) )
       ENDIF
 
       Inkey( 4 )

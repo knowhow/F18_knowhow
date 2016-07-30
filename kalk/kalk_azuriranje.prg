@@ -336,7 +336,7 @@ STATIC FUNCTION kalk_generisati_zavisne_dokumente( lAuto )
 
 STATIC FUNCTION kalk_zavisni_dokumenti()
 
-   Niv_11()
+   kalk_nivelacija_11()
    Otprema()
    Iz13u11()
    InvManj()

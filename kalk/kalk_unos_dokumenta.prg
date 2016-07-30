@@ -1483,6 +1483,7 @@ FUNCTION Get1Header( fNovi )
          IF _idvd $ "10#16#18#IM#"
             @ m_x + 2, m_y + 2 SAY8 "Magacinski konto zadužuje" GET _idKonto VALID P_Konto( @_idKonto ) PICT "@!"
             READ
+            
             cSufiks := SufBrKalk( _idKonto )
          ELSE
             @ m_x + 2, m_y + 2 SAY8 "Magacinski konto razdužuje" GET _idKonto2 VALID P_Konto( @_idKonto2 ) PICT "@!"

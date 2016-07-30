@@ -250,7 +250,7 @@ FUNCTION magacin_prenos_fakt_10_to_kalk_14()
          set_metric( "kalk_fakt_prenos_10_14_konto_2", my_user(), cIdKonto2 )
 
          IF gBrojacKalkulacija == "D"
-            cBrKalk := UBrojDok( Val( Left( cbrkalk, 5 ) ) + 1, 5, Right( cBrKalk, 3 ) )
+            cBrKalk := UBrojDok( Val( Left( cBrKalk, 5 ) ) + 1, 5, Right( cBrKalk, 3 ) )
          ENDIF
 
          Inkey( 4 )

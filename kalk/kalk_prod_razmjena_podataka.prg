@@ -80,7 +80,6 @@ FUNCTION FaKaPrenos_MP_u_razduzenje()
 
    IF gBrojacKalkulacija == "D"
 
-
       find_kalk_doks_za_tip( cIdFirma, "11" )
       GO BOTTOM
       IF field->idvd <> "11"
@@ -285,22 +284,20 @@ FUNCTION prod_fa_ka_prenos_otpr()
 
    cBrkalk := Space( 8 )
    IF gBrojacKalkulacija == "D"
-      SELECT kalk
-      SELECT kalk
-      SET ORDER TO TAG "1"
-      SEEK cidfirma + "11X"
-      SKIP -1
-      IF idvd <> "11"
-         cbrkalk := Space( 8 )
+
+      find_kalk_doks_za_tip( cIdFirma, "11" )
+      GO BOTTOM
+      IF field->idvd <> "11"
+         cBrkalk := Space( 8 )
       ELSE
-         cbrkalk := brdok
+         cBrkalk := field->brdok
       ENDIF
+
+      cBrkalk := UBrojDok( Val( Left( cbrkalk, 5 ) ) + 1, 5, Right( cBrKalk, 3 ) )
    ENDIF
+
    Box(, 15, 60 )
 
-   IF gBrojacKalkulacija == "D"
-      cbrkalk := UBrojDok( Val( Left( cbrkalk, 5 ) ) + 1, 5, Right( cBrKalk, 3 ) )
-   ENDIF
 
    DO WHILE .T.
 
@@ -410,9 +407,10 @@ FUNCTION prod_fa_ka_prenos_otpr()
             SELECT fakt
             SKIP
          ENDDO
-         @ m_x + 8, m_y + 2 SAY "Dokument je prenesen !!"
+         @ m_x + 8, m_y + 2 SAY "Dokument je prenesen !"
+
          IF gBrojacKalkulacija == "D"
-            cbrkalk := UBrojDok( Val( Left( cbrkalk, 5 ) ) + 1, 5, Right( cBrKalk, 3 ) )
+            cBrkalk := UBrojDok( Val( Left( cbrkalk, 5 ) ) + 1, 5, Right( cBrKalk, 3 ) )
          ENDIF
          Inkey( 4 )
          @ m_x + 8, m_y + 2 SAY Space( 30 )
@@ -423,8 +421,8 @@ FUNCTION prod_fa_ka_prenos_otpr()
    Boxc()
    my_close_all_dbf()
 
-   RETURN
-// }
+   RETURN .T.
+
 
 
 /* FaKaPrenosRacunMP()
@@ -456,22 +454,21 @@ FUNCTION FaKaPrenosRacunMP()
    cNac_rab := "P"
 
    IF gBrojacKalkulacija == "D"
-      SELECT kalk
-      SELECT kalk
-      SET ORDER TO TAG "1"
-      SEEK cIdFirma + "41X"
-      SKIP -1
-      IF idvd <> "41"
-         cBrkalk := Space( 8 )
+
+      find_kalk_doks_za_tip( cIdFirma, "41" )
+      GO BOTTOM
+      IF field->idvd <> "41"
+         cBrKalk := Space( 8 )
       ELSE
-         cBrKalk := brdok
+         cBrKalk := field->brdok
       ENDIF
+
+      cBrKalk := UBrojDok( Val( Left( cBrKalk, 5 ) ) + 1, 5, Right( cBrKalk, 3 ) )
+
    ENDIF
 
    Box(, 15, 60 )
-   IF gBrojacKalkulacija == "D"
-      cBrKalk := UBrojDok( Val( Left( cBrKalk, 5 ) ) + 1, 5, Right( cBrKalk, 3 ) )
-   ENDIF
+
 
    DO WHILE .T.
       nRBr := 0
@@ -678,12 +675,15 @@ FUNCTION FaKaPrenosRacunMP()
          ENDDO
       ENDIF
 
-      @ m_x + 10, m_y + 2 SAY "Dokument je prenesen !!"
+      @ m_x + 10, m_y + 2 SAY "Dokument je prenesen !"
       @ m_x + 11, m_y + 2 SAY "Obavezno pokrenuti asistenta <opcija A>!!!"
 
       IF gBrojacKalkulacija == "D"
          cBrKalk := UBrojDok( Val( Left( cBrKalk, 5 ) ) + 1, 5, Right( cBrKalk, 3 ) )
       ENDIF
+
+
+
 
       Inkey( 0 )
 
@@ -721,22 +721,20 @@ FUNCTION FaKaPrenos_01_doprema()
 
    cBrkalk := Space( 8 )
    IF gBrojacKalkulacija == "D"
-      SELECT kalk
-      SELECT kalk
-      SET ORDER TO TAG "1"
-      SEEK cidfirma + "81X"
-      SKIP -1
-      IF idvd <> "81"
-         cbrkalk := Space( 8 )
+
+      find_kalk_doks_za_tip( cIdFirma, "81" )
+      GO BOTTOM
+      IF field->idvd <> "81"
+         cBrKalk := Space( 8 )
       ELSE
-         cbrkalk := brdok
+         cBrKalk := field->brdok
       ENDIF
+
+      cBrKalk := UBrojDok( Val( Left( cBrKalk, 5 ) ) + 1, 5, Right( cBrKalk, 3 ) )
+
    ENDIF
    Box(, 15, 60 )
 
-   IF gBrojacKalkulacija == "D"
-      cbrkalk := UBrojDok( Val( Left( cbrkalk, 5 ) ) + 1, 5, Right( cBrKalk, 3 ) )
-   ENDIF
 
    DO WHILE .T.
 
@@ -824,10 +822,12 @@ FUNCTION FaKaPrenos_01_doprema()
             SELECT fakt
             SKIP
          ENDDO
-         @ m_x + 8, m_y + 2 SAY "Dokument je prenesen !!"
+         @ m_x + 8, m_y + 2 SAY "Dokument je prenesen !"
+
          IF gBrojacKalkulacija == "D"
-            cbrkalk := UBrojDok( Val( Left( cbrkalk, 5 ) ) + 1, 5, Right( cBrKalk, 3 ) )
+            cBrkalk := UBrojDok( Val( Left( cbrkalk, 5 ) ) + 1, 5, Right( cBrKalk, 3 ) )
          ENDIF
+
          Inkey( 4 )
          @ m_x + 8, m_y + 2 SAY Space( 30 )
       ENDIF
@@ -869,22 +869,21 @@ FUNCTION FaKaPrenos_cm_u_prodavnicu()
 
    cBrkalk := Space( 8 )
    IF gBrojacKalkulacija == "D"
-      SELECT kalk
-      SELECT kalk
-      SET ORDER TO TAG "1"
-      SEEK cidfirma + "80X"
-      SKIP -1
-      IF idvd <> "80"
-         cbrkalk := Space( 8 )
+
+
+      find_kalk_doks_za_tip( cIdFirma, "80" )
+      GO BOTTOM
+      IF field->idvd <> "80"
+         cBrKalk := Space( 8 )
       ELSE
-         cbrkalk := brdok
+         cBrKalk := field->brdok
       ENDIF
+
+      cBrKalk := UBrojDok( Val( Left( cBrKalk, 5 ) ) + 1, 5, Right( cBrKalk, 3 ) )
+
    ENDIF
    Box(, 15, 60 )
 
-   IF gBrojacKalkulacija == "D"
-      cbrkalk := UBrojDok( Val( Left( cbrkalk, 5 ) ) + 1, 5, Right( cBrKalk, 3 ) )
-   ENDIF
 
    DO WHILE .T.
 
@@ -1000,10 +999,12 @@ FUNCTION FaKaPrenos_cm_u_prodavnicu()
             SELECT fakt
             SKIP
          ENDDO
-         @ m_x + 8, m_y + 2 SAY "Dokument je prenesen !!"
+         @ m_x + 8, m_y + 2 SAY "Dokument je prenesen !"
+
          IF gBrojacKalkulacija == "D"
-            cbrkalk := UBrojDok( Val( Left( cbrkalk, 5 ) ) + 1, 5, Right( cBrKalk, 3 ) )
+            cBrkalk := UBrojDok( Val( Left( cbrkalk, 5 ) ) + 1, 5, Right( cBrKalk, 3 ) )
          ENDIF
+
          Inkey( 4 )
          @ m_x + 8, m_y + 2 SAY Space( 30 )
          @ m_x + 10, m_y + 2 SAY Space( 40 )
@@ -1013,8 +1014,8 @@ FUNCTION FaKaPrenos_cm_u_prodavnicu()
    Boxc()
    my_close_all_dbf()
 
-   RETURN
-// }
+   RETURN .T.
+
 
 
 
@@ -1048,22 +1049,21 @@ FUNCTION FaKaPrenos_izlaz_putem_vp()
 
    cBrkalk := Space( 8 )
    IF gBrojacKalkulacija == "D"
-      SELECT kalk
-      SELECT kalk
-      SET ORDER TO TAG "1"
-      SEEK cidfirma + "15X"
-      SKIP -1
-      IF idvd <> "15"
-         cbrkalk := Space( 8 )
+
+      find_kalk_doks_za_tip( cIdFirma, "15" )
+      GO BOTTOM
+      IF field->idvd <> "15"
+         cBrKalk := Space( 8 )
       ELSE
-         cbrkalk := brdok
+         cBrKalk := field->brdok
       ENDIF
+
+      cBrKalk := UBrojDok( Val( Left( cBrKalk, 5 ) ) + 1, 5, Right( cBrKalk, 3 ) )
+
    ENDIF
    Box(, 15, 60 )
 
-   IF gBrojacKalkulacija == "D"
-      cbrkalk := UBrojDok( Val( Left( cbrkalk, 5 ) ) + 1, 5, Right( cBrKalk, 3 ) )
-   ENDIF
+
 
    DO WHILE .T.
 
@@ -1193,10 +1193,12 @@ FUNCTION FaKaPrenos_izlaz_putem_vp()
             SELECT fakt
             SKIP
          ENDDO
-         @ m_x + 8, m_y + 2 SAY "Dokument je prenesen !!"
+         @ m_x + 8, m_y + 2 SAY "Dokument je prenesen !"
+
          IF gBrojacKalkulacija == "D"
-            cbrkalk := UBrojDok( Val( Left( cbrkalk, 5 ) ) + 1, 5, Right( cBrKalk, 3 ) )
+            cBrkalk := UBrojDok( Val( Left( cbrkalk, 5 ) ) + 1, 5, Right( cBrKalk, 3 ) )
          ENDIF
+
          Inkey( 4 )
          @ m_x + 8, m_y + 2 SAY Space( 30 )
          @ m_x + 10, m_y + 2 SAY Space( 40 )
@@ -1271,20 +1273,15 @@ FUNCTION FaKaPrenosRacunMPParagon()
       ENDIF
 
       IF gBrojacKalkulacija == "D"
-
-         SELECT kalk
-         SET ORDER TO TAG "1"
-         SEEK cIdFirma + _kalk_tip_dok + "X"
-         SKIP -1
-
+         find_kalk_doks_za_tip( cIdFirma, _kalk_tip_dok )
+         GO BOTTOM
          IF field->idvd <> _kalk_tip_dok
-            cBrkalk := Space( 8 )
+            cBrKalk := Space( 8 )
          ELSE
             cBrKalk := field->brdok
          ENDIF
 
          cBrKalk := UBrojDok( Val( Left( cBrKalk, 5 ) ) + 1, 5, Right( cBrKalk, 3 ) )
-
       ENDIF
 
       ++ _x
@@ -1552,8 +1549,8 @@ FUNCTION FaKaPrenosRacunMPParagon()
          ENDDO
       ENDIF
 
-      @ m_x + 10, m_y + 2 SAY "Dokument je prenesen !!"
-      @ m_x + 11, m_y + 2 SAY "Obavezno pokrenuti asistenta <opcija A>!!!"
+      @ m_x + 10, m_y + 2 SAY "Dokument je prenesen !"
+      @ m_x + 11, m_y + 2 SAY "Obavezno pokrenuti asistenta <opcija A>!"
 
       IF gBrojacKalkulacija == "D"
          cBrKalk := UBrojDok( Val( Left( cBrKalk, 5 ) ) + 1, 5, Right( cBrKalk, 3 ) )

@@ -670,8 +670,8 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
                __opis := field->opis
                __br_veze := field->brdok
 
-               ? IdVN
-               @ PRow(), PCol() + 1 SAY BrNal
+               ? field->IdVN
+               @ PRow(), PCol() + 1 SAY field->BrNal
                IF cSazeta == "N"
                   @ PRow(), PCol() + 1 SAY RBr PICT '99999'
                   IF _fin_params[ "fin_tip_dokumenta" ]
@@ -687,7 +687,7 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
                @ PRow(), PCol() + 1 SAY PadR( BrDok, 10 )
                @ PRow(), PCol() + 1 SAY datdok
 
-               IF ck14 == "1"
+               IF cK14 == "1"
                   @ PRow(), PCol() + 1 SAY k1 + "-" + k2 + "-" + K3Iz256( k3 ) + k4
                ELSEIF ck14 == "2"
                   @ PRow(), PCol() + 1 SAY get_datval_field()
@@ -712,6 +712,7 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
             ENDIF
 
             IF cDinDem == "1"
+
                IF lOtvoreneStavke .AND. OtvSt == "9"
                   IF D_P == "1"
                      nZDugBHD += IznosBHD // zatvorena stavka
@@ -760,6 +761,7 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
                ENDIF
 
             ELSEIF cDinDem == "3"
+
                IF lOtvoreneStavke .AND. OtvSt == "9"
                   IF D_P == "1"
                      nZDugBHD += IznosBHD
@@ -812,7 +814,7 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
             ENDIF
             fin_print_ostatak_opisa( @cOpis, nCOpis, {|| check_nova_strana( bZagl, oPDF ) }, nSirOp )
 
-            IF cExpDbf == "D"
+            IF cExpDbf == "D" .AND. !(lOtvoreneStavke .AND. OtvSt == "9")
 
                IF field->d_p == "1"
                   __dug := field->iznosbhd

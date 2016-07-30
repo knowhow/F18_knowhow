@@ -253,7 +253,7 @@ STATIC FUNCTION kalk_kontiraj_alt_k()
 
    my_close_all_dbf()
 
-   kalk_generisi_finmat()
+   kalk_kontiranje_gen_finmat()
 
    IF Pitanje(, "Želite li izvršiti kontiranje dokumenta (D/N) ?", "D" ) == "D"
       kalk_kontiranje_fin_naloga( NIL, NIL, NIL, cBrNal )

@@ -27,7 +27,6 @@ FUNCTION StKalk41()
    nMarza := nMarza2 := nPRUC := 0
    aPorezi := {}
 
-   lVoSaTa := ( my_get_from_ini( "KALK", "VodiSamoTarife", "N", PRIVPATH ) == "D" )
 
    nStr := 0
    cIdPartner := IdPartner; cBrFaktP := BrFaktP; dDatFaktP := DatFaktP
@@ -40,7 +39,7 @@ FUNCTION StKalk41()
    SELECT kalk_pripr
 
    m := "--- ---------- ---------- ---------- ---------- ---------- ---------- ----------"
-   IF cidvd <> '47' .AND. !lVoSaTa
+   IF cidvd <> '47'
       m += " ---------- ---------- ---------- ----------"
       IF lPrikPRUC
          m += " ----------"
@@ -49,7 +48,7 @@ FUNCTION StKalk41()
 
    ? m
 
-   IF cIdVd = '47' .OR. lVoSaTa
+   IF cIdVd = '47'
       ? "*R * ROBA     * Kolicina *    MPC   *   PPP %  *   PPU%   *   PP%    *  MPC     *"
       ? "*BR*          *          *          *   PPU    *   PPU    *   PP     *  SA Por  *"
       ? "*  *          *          *    sum   *    sum   *   sum    *          *   sum    *"
@@ -70,23 +69,12 @@ FUNCTION StKalk41()
    nTot1 := nTot1b := nTot2 := nTot3 := nTot4 := nTot5 := nTot6 := nTot7 := nTot8 := nTot9 := 0
    nTot4a := 0
 
-   IF lVoSaTa
-      PRIVATE cIdd := idpartner + idkonto + idkonto2
-   ELSE
-      PRIVATE cIdd := idpartner + brfaktp + idkonto + idkonto2
-   ENDIF
+
+   PRIVATE cIdd := idpartner + brfaktp + idkonto + idkonto2
+
 
    DO WHILE !Eof() .AND. cIdFirma == IdFirma .AND.  cBrDok == BrDok .AND. cIdVD == IdVD
 
-/*
-    IF lVoSaTa .and. idpartner+idkonto+idkonto2<>cidd .or.;
-       !lVoSaTa .and. idpartner+brfaktp+idkonto+idkonto2<>cidd
-     set device to screen
-     Beep(2)
-     Msg("Unutar kalkulacije se pojavilo vise dokumenata !",6)
-     set device to printer
-    ENDIF
-*/
 
       // formiraj varijable _....
       Scatter()
@@ -128,7 +116,7 @@ FUNCTION StKalk41()
       nCol0 := PCol()
 
       @ PRow(), nCol0 SAY ""
-      IF IDVD <> '47' .AND. !lVoSaTa
+      IF IDVD <> '47'
          IF ROBA->tip = "U"
             @ PRow(), PCol() + 1 SAY 0                   PICTURE PicCDEM
          ELSE
@@ -144,7 +132,7 @@ FUNCTION StKalk41()
       @ PRow(), PCol() + 1 SAY aPorezi[ POR_PPP ]      PICTURE PicProc
       @ PRow(), PCol() + 1 SAY PrPPUMP()             PICTURE PicProc
       @ PRow(), PCol() + 1 SAY aPorezi[ POR_PP ]     PICTURE PicProc
-      IF IDVD <> "47" .AND. !lVoSaTa
+      IF IDVD <> "47"
          @ PRow(), PCol() + 1 SAY MPCSAPP - RabatV       PICTURE PicCDEM
          @ PRow(), PCol() + 1 SAY RabatV               PICTURE PicCDEM
       ENDIF
@@ -152,7 +140,7 @@ FUNCTION StKalk41()
 
       @ PRow() + 1, 4 SAY idTarifa
       @ PRow(), nCol0 SAY ""
-      IF cIDVD <> '47' .AND. !lVoSaTa
+      IF cIDVD <> '47'
          IF ROBA->tip = "U"
             @ PRow(), PCol() + 1  SAY  0                PICTURE picdem
          ELSE
@@ -168,7 +156,7 @@ FUNCTION StKalk41()
       @ PRow(), nCol1    SAY  nPor1 * kolicina    PICTURE piccdem
       @ PRow(), PCol() + 1 SAY  nPor2 * kolicina    PICTURE piccdem
       @ PRow(), PCol() + 1 SAY  nPor3 * kolicina   PICTURE PiccDEM
-      IF IDVD <> "47" .AND. !lVoSaTa
+      IF IDVD <> "47"
          @ PRow(), PCol() + 1 SAY  ( mpcsapp - RabatV ) * kolicina   PICTURE picdem
          @ PRow(), PCol() + 1 SAY  RabatV * kolicina   PICTURE picdem
       ENDIF
@@ -184,7 +172,7 @@ FUNCTION StKalk41()
    @ PRow() + 1, 0        SAY "Ukupno:"
 
    @ PRow(), nCol0  SAY  ""
-   IF cIDVD <> '47' .AND. !lVoSaTa
+   IF cIDVD <> '47'
       @ PRow(), PCol() + 1      SAY  nTot3        PICTURE       PicDEM
       @ PRow(), PCol() + 1   SAY  nTot4        PICTURE       PicDEM
       IF lPrikPRUC
@@ -195,7 +183,7 @@ FUNCTION StKalk41()
    @ PRow(), PCol() + 1   SAY  Space( Len( picproc ) )
    @ PRow(), PCol() + 1   SAY  Space( Len( picproc ) )
    @ PRow(), PCol() + 1   SAY  nTot6        PICTURE        PicDEM
-   IF cIDVD <> "47" .AND. !lVoSaTa
+   IF cIDVD <> "47"
       @ PRow(), PCol() + 1   SAY  nTot8        PICTURE        PicDEM
       @ PRow(), PCol() + 1   SAY  nTot9        PICTURE        PicDEM
    ENDIF
@@ -326,14 +314,14 @@ FUNCTION RekTar41( cIdFirma, cIdVd, cBrDok, nStr )
    @ PRow(), PCol() + 1   SAY nTotP PICT picdem
    @ PRow(), PCol() + 1   SAY nTot5 PICT picdem
    ? m
-   IF cIdVd <> "47" .AND. !lVoSaTa
+   IF cIdVd <> "47"
       ? "RUC:"
       @ PRow(), PCol() + 1 SAY nTot6 PICT picdem
       ? m
    ENDIF
 
-   RETURN
-// }
+   RETURN .T.
+
 
 
 

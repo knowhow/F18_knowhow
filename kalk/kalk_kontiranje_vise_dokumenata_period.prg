@@ -88,7 +88,7 @@ STATIC FUNCTION kont_dokumente( dDatOd, dDatDo, cIdVD, cId_mkto, cId_pkto )
       cD_brdok := field->brdok
 
 
-      kalk_generisi_finmat( .T., cD_firma, cD_tipd, cD_brdok, .T. )  // napuni FINMAT
+      kalk_kontiranje_gen_finmat( .T., cD_firma, cD_tipd, cD_brdok, .T. )  // napuni FINMAT
 
 
       //IF is_kalk_fin_isti_broj()
@@ -197,7 +197,7 @@ FUNCTION kalk_kontiranje_dokumenata_period()
       cIdVd := idvd
       cBrDok := brdok
 
-      kalk_generisi_finmat( .T., cIdFirma, cIdVd, cBrDok )
+      kalk_kontiranje_gen_finmat( .T., cIdFirma, cIdVd, cBrDok )
 
       SELECT KALK_DOKS
       SKIP

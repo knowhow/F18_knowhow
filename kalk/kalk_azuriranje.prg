@@ -221,7 +221,7 @@ STATIC FUNCTION kalk_zavisni_nakon_azuriranja( lGenerisi, lAuto )
    IF lGenerisi = .T.
 
 altd()
-      kalk_generisi_finmat()
+      kalk_kontiranje_gen_finmat()
 
       formiraj_finansijski_nalog( lAuto )
 

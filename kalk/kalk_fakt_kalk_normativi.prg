@@ -67,27 +67,10 @@ FUNCTION PrenosNo( dD_from, dD_to, cIdKonto2, cIdTipDok, dDatKalk, cRobaUsl, ;
       O_R_EXP
    ENDIF
 
-   IF gBrojacKalkulacija == "D" .AND. lTest == .F.
-
-      find_kalk_doks_za_tip( cIdFirma, "96" )
-      GO BOTTOM
-      IF idvd <> "10"
-         cBrKalk := Space( 8 )
-      ELSE
-         cBrKalk := field->brdok
-      ENDIF
-
-   ENDIF
-
-   IF lTest == .T.
-      cBrKalk := "99999"
-   ENDIF
+   kalk_set_brkalk_za_idvd( "96", @cBrKalk )
 
    Box(, 15, 60 )
 
-   IF gBrojacKalkulacija == "D" .AND. lTest == .F.
-      cBrKalk := UBrojDok( Val( Left( cbrkalk, 5 ) ) + 1, 5, Right( cBrKalk, 3 ) )
-   ENDIF
 
    DO WHILE .T.
 
@@ -147,16 +130,16 @@ FUNCTION PrenosNo( dD_from, dD_to, cIdKonto2, cIdTipDok, dDatKalk, cRobaUsl, ;
 
             cFBrDok := fakt->brdok
 
-            //SELECT kalk_doks
-            //SET ORDER TO TAG "V_BRF"  // "brfaktp+idvd"
+            // SELECT kalk_doks
+            // SET ORDER TO TAG "V_BRF"  // "brfaktp+idvd"
 
-            //GO TOP
-            //SEEK PadR( cFBrDok, 10 ) + "96"
+            // GO TOP
+            // SEEK PadR( cFBrDok, 10 ) + "96"
 
             find_kalk_doks_by_broj_fakture( "96", PadR( cFBrDok, 10 ) )
 
 
-            IF !EOF()
+            IF !Eof()
 
                cTmp := fakt->idfirma + "-" + ( cFBrDok )
                dTmpDate := fakt->datdok
@@ -183,8 +166,8 @@ FUNCTION PrenosNo( dD_from, dD_to, cIdKonto2, cIdTipDok, dDatKalk, cRobaUsl, ;
             SELECT ROBA
             HSEEK fakt->idroba
 
-            // provjeri prije svega uslov za robu...
-            IF !Empty( cRobaUsl )
+
+            IF !Empty( cRobaUsl ) // provjeri prije svega uslov za robu
 
                cTmp := Parsiraj( cRobaUsl, "idroba" )
 
@@ -291,10 +274,10 @@ FUNCTION PrenosNo( dD_from, dD_to, cIdKonto2, cIdTipDok, dDatKalk, cRobaUsl, ;
             rpt_not_incl( aNotIncl )
          ENDIF
 
-         @ m_x + 10, m_y + 2 SAY "Dokumenti su preneseni !!"
+         @ m_x + 10, m_y + 2 SAY "Dokumenti su preneseni !"
 
          IF gBrojacKalkulacija == "D"
-            cbrkalk := UBrojDok( Val( Left( cbrkalk, 5 ) ) + 1, 5, Right( cBrKalk, 3 ) )
+            cBrkalk := UBrojDok( Val( Left( cBrkalk, 5 ) ) + 1, 5, Right( cBrKalk, 3 ) )
          ENDIF
 
          Inkey( 4 )
@@ -425,23 +408,10 @@ FUNCTION PrenosNoFakt()
 
    cBrkalk := Space( 8 )
 
-   IF gBrojacKalkulacija == "D"
-
-         find_kalk_doks_za_tip( cIdFirma, "96" )
-         GO BOTTOM
-         IF idvd <> "10"
-            cBrKalk := Space( 8 )
-         ELSE
-            cBrKalk := brdok
-         ENDIF
-
-   ENDIF
+   kalk_set_brkalk_za_idvd( "96", @cBrKalk )
 
    Box(, 15, 60 )
 
-   IF gBrojacKalkulacija == "D"
-      cBrKalk := UBrojDok( Val( Left( cBrKalk, 5 ) ) + 1, 5, Right( cBrKalk, 3 ) )
-   ENDIF
 
    DO WHILE .T.
 
@@ -576,17 +546,8 @@ FUNCTION PrenosNo2()
    cIdKonto := PadR( "5100", 7 )
    cIdZaduz2 := Space( 6 )
 
-   IF gBrojacKalkulacija == "D"
+   kalk_set_brkalk_za_idvd( "10", @cBrKalk )
 
-      find_kalk_doks_za_tip( cIdFirma, "10" )
-      GO BOTTOM
-      IF idvd <> "10"
-         cBrKalk := Space( 8 )
-      ELSE
-         cBrKalk := brdok
-      ENDIF
-
-   ENDIF
 
    Box(, 15, 60 )
 

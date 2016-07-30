@@ -709,12 +709,13 @@ FUNCTION Iz13u11()
    O_KONTO
    o_kalk_pripr()
    o_kalk_pripr2()
-   o_kalk()
+   //o_kalk()
    O_SIFK
    O_SIFV
    O_ROBA
 
-   SELECT kalk_pripr; GO TOP
+   SELECT kalk_pripr
+   GO TOP
    PRIVATE cIdFirma := idfirma, cIdVD := idvd, cBrDok := brdok
    IF !( cidvd $ "13" )   .OR. Pitanje(, "Zelite li zaduziti drugu prodavnicu ?", "D" ) == "N"
       closeret
@@ -726,15 +727,9 @@ FUNCTION Iz13u11()
    READ
    BoxC()
    PRIVATE cBrUlaz := "0"
-   SELECT kalk
-   SEEK cidfirma + "11�"
-   SKIP -1
-   IF idvd <> "11"
-      cBrUlaz := Space( 8 )
-   ELSE
-      cBrUlaz := brdok
-   ENDIF
-   cBrUlaz := UBrojDok( Val( Left( cBrUlaz, 5 ) ) + 1, 5, Right( cBrUlaz, 3 ) )
+
+
+   kalk_set_brkalk_za_idvd( "11", @cBrUlaz )
 
    SELECT kalk_pripr
    GO TOP
@@ -941,16 +936,7 @@ FUNCTION Iz11u412()
       BoxC()
    ENDIF
 
-   // utvrdimo broj nove kalkulacije
-
-   find_kalk_doks_za_tip( cIdFirma, cIdVdI )
-   GO BOTTOM
-   IF field->idvd <> cIdVdI
-      cBrDokI  := Space( 8 )
-   ELSE
-      cBrDokI := field->brdok
-   ENDIF
-   cBrDokI := UBrojDok( Val( Left( cBrDokI, 5 ) ) + 1, 5, Right( cBrDokI, 3 ) )
+   kalk_set_brkalk_za_idvd( cIdVdI, @cBrDokI )
 
 
    find_kalk_by_broj_dokumenta( cIdFirma, cIdVDU, cBrDokU )
@@ -1037,15 +1023,8 @@ FUNCTION Iz10u11()
    BoxC()
 
 
-   find_kalk_doks_za_tip( cIdFirma, cIdVdI )
-   GO BOTTOM
-   IF field->idvd <> cIdVdI
-      cBrDokI  := Space( 8 )
-   ELSE
-      cBrDokI := field->brdok
-   ENDIF
+   kalk_set_brkalk_za_idvd( cIdVdI, @cBrDokI )
 
-   cBrDokI := UBrojDok( Val( Left( cBrDokI, 5 ) ) + 1, 5, Right( cBrDokI, 3 ) )
 
    find_kalk_by_broj_dokumenta( cIdFirma, cIdVDU, cBrDokU )
 

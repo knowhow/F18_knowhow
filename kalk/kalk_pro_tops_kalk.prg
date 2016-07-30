@@ -99,7 +99,7 @@ FUNCTION tops_nor_96( cIdFirma, cIdTipDok, cIdZaduz2, cIdKonto2, cIdKonto, ;
 
       Box(, 10, 60 )
       IF gBrojacKalkulacija == "D"
-         cBrKalk := UBrojDok( Val( Left( cBrKalk, 5 ) ) + 1, 5, Right( cBrKalk, 3 ) )
+         -- cBrKalk := UBrojDok( Val( Left( cBrKalk, 5 ) ) + 1, 5, Right( cBrKalk, 3 ) )
       ENDIF
 
       @ m_x + 1, m_y + 2 SAY "Broj kalkulacije 96 -" GET cBrKalk PICT "@!"

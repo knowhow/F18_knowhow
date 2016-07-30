@@ -61,7 +61,7 @@ FUNCTION NaPrimPak()
    ELSE
       cBrDok := Space( 8 )
    ENDIF
-   cBrDok := UBrojDok( Val( Left( cBrDok, 5 ) ) + 1, 5, Right( cBrDok, 3 ) )
+   -- cBrDok := UBrojDok( Val( Left( cBrDok, 5 ) ) + 1, 5, Right( cBrDok, 3 ) )
    nRBr := 0
 
    // postavimo odgovarajuci indeks i filter na KALK

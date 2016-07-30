@@ -1483,28 +1483,7 @@ FUNCTION Get1Header( fNovi )
 
    IF fNovi .AND. gBrojacKalkulacija == "D" .AND. ( _idfirma <> idfirma .OR. _idvd <> idvd )
 
-      IF glBrojacPoKontima
-
-         Box( "#Glavni konto", 3, 70 )
-         IF _idvd $ "10#16#18#IM#"
-            @ m_x + 2, m_y + 2 SAY8 "Magacinski konto zadužuje" GET _idKonto VALID P_Konto( @_idKonto ) PICT "@!"
-            READ
-
-            cSufiks := SufBrKalk( _idKonto )
-         ELSE
-            @ m_x + 2, m_y + 2 SAY8 "Magacinski konto razdužuje" GET _idKonto2 VALID P_Konto( @_idKonto2 ) PICT "@!"
-            READ
-            cSufiks := SufBrKalk( _idKonto2 )
-         ENDIF
-         BoxC()
-
-         _brDok := kalk_sljedeci_brdok( _idvd, _idfirma, cSufiks )
-
-      ELSE
-
-         _brDok := kalk_sljedeci_brdok( _idvd, _idfirma )
-
-      ENDIF
+      _brDok := get_kalk_brdok( _idfirma, _idvd, _idkonto, _idkonto2 )
 
       SELECT kalk_pripr
 

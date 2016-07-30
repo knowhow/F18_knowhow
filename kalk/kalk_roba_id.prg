@@ -88,18 +88,8 @@ FUNCTION RobaIdSredi()
 
 FUNCTION kalk_sljedeci( cIdFirma, cVrsta )
 
-   LOCAL cBrKalk
+   LOCAL cBrKalk := Space( 8 )
 
-   IF gBrojacKalkulacija == "D"
-
-      find_kalk_doks_za_tip( cIdFirma, cVrsta )
-
-      IF idvd <> cVrsta
-         cBrKalk := Space( 8 )
-      ELSE
-         cBrKalk := brdok
-      ENDIF
-      cBrKalk := UBrojDok( Val( Left( cBrKalk, 5 ) ) + 1, 5, Right( cBrKalk, 3 ) )
-   ENDIF
+   kalk_set_brkalk_za_idvd( cVrsta, @cBrKalk )
 
    RETURN cBrKalk

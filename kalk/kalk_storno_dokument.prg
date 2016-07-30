@@ -14,7 +14,6 @@
 
 FUNCTION storno_kalk_dokument()
 
-
    o_kalk_edit()
    cIdFirma := gFirma
    cIdVdU   := "  "
@@ -30,18 +29,9 @@ FUNCTION storno_kalk_dokument()
    READ; ESC_BCR
    BoxC()
 
-   // utvrdimo broj nove kalkulacije
-   SELECT kalk_doks; SEEK cIdFirma + cIdVdU + Chr( 255 ); SKIP -1
-   IF cIdFirma + cIdVdU == IDFIRMA + IDVD
-      cBrDokI := brdok
-   ELSE
-      cBrDokI := Space( 8 )
-   ENDIF
-   cBrDokI := UBrojDok( Val( Left( cBrDokI, 5 ) ) + 1, 5, Right( cBrDokI, 3 ) )
+   kalk_set_brkalk_za_idvd( cIdVdU, @cBrDokI )
 
-   // pocnimo sa generacijom dokumenta
-   SELECT KALK
-   SEEK cIdFirma + cIdVDU + cBrDokU
+   find_kalk_by_broj_dokumenta( cIdFirma, cIdVDU, cBrDokU )
    DO WHILE !Eof() .AND. cIdFirma + cIdVDU + cBrDokU == IDFIRMA + IDVD + BRDOK
       PushWA()
       Scatter()

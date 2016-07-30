@@ -56,7 +56,7 @@ FUNCTION fakt_kalk_prenos_11_11()
 
    o_kalk_pripr()
    o_koncij()
-   //o_kalk()
+   // o_kalk()
    O_ROBA
    O_KONTO
    O_PARTN
@@ -68,8 +68,8 @@ FUNCTION fakt_kalk_prenos_11_11()
 
    dDatKalk := Date()
 
-   cIdKonto := PadR( "1320", 7 )
-   cIdKonto2 := PadR( "1310", 7 )
+   cIdKonto := PadR( "1330", 7 )
+   cIdKonto2 := PadR( "1320", 7 )
 
    cIdZaduz2 := Space( 6 )
    cIdZaduz := Space( 6 )
@@ -77,18 +77,8 @@ FUNCTION fakt_kalk_prenos_11_11()
    cSabirati := gAutoCjen
    cCjenSif := "N"
 
-   IF gBrojacKalkulacija == "D"
 
-      find_kalk_doks_za_tip( cIdFirma, "11" )
-      GO BOTTOM
-      IF field->idvd <> "11"
-         cBrKalk := Space( 8 )
-      ELSE
-         cBrKalk := field->brdok
-      ENDIF
-      cBrKalk := UBrojDok( Val( Left( cBrKalk, 5 ) ) + 1, 5, Right( cBrKalk, 3 ) )
-
-   ENDIF
+   kalk_set_brkalk_za_idvd( "11", @cBrKalk )
 
    Box(, 15, 60 )
 
@@ -267,7 +257,7 @@ FUNCTION prod_fa_ka_prenos_otpr()
 
    o_kalk_pripr()
    o_koncij()
-   //o_kalk()
+   // o_kalk()
    O_ROBA
    O_KONTO
    O_PARTN
@@ -281,17 +271,9 @@ FUNCTION prod_fa_ka_prenos_otpr()
    cIdZaduz2 := cIdZaduz := Space( 6 )
 
    cBrkalk := Space( 8 )
-   IF gBrojacKalkulacija == "D"
 
-      find_kalk_doks_za_tip( cIdFirma, "11" )
-      GO BOTTOM
-      IF field->idvd <> "11"
-         cBrkalk := Space( 8 )
-      ELSE
-         cBrkalk := field->brdok
-      ENDIF
-      cBrkalk := UBrojDok( Val( Left( cbrkalk, 5 ) ) + 1, 5, Right( cBrKalk, 3 ) )
-   ENDIF
+   kalk_set_brkalk_za_idvd( "11", @cBrKalk )
+
 
    Box(, 15, 60 )
 
@@ -450,19 +432,7 @@ FUNCTION FaKaPrenosRacunMP()
    cZbirno := "N"
    cNac_rab := "P"
 
-   IF gBrojacKalkulacija == "D"
-
-      find_kalk_doks_za_tip( cIdFirma, "41" )
-      GO BOTTOM
-      IF field->idvd <> "41"
-         cBrKalk := Space( 8 )
-      ELSE
-         cBrKalk := field->brdok
-      ENDIF
-
-      cBrKalk := UBrojDok( Val( Left( cBrKalk, 5 ) ) + 1, 5, Right( cBrKalk, 3 ) )
-
-   ENDIF
+   kalk_set_brkalk_za_idvd( "41", @cBrKalk )
 
    Box(, 15, 60 )
 
@@ -673,14 +643,11 @@ FUNCTION FaKaPrenosRacunMP()
       ENDIF
 
       @ m_x + 10, m_y + 2 SAY "Dokument je prenesen !"
-      @ m_x + 11, m_y + 2 SAY "Obavezno pokrenuti asistenta <opcija A>!!!"
+      @ m_x + 11, m_y + 2 SAY "Obavezno pokrenuti asistenta <opcija A> !"
 
       IF gBrojacKalkulacija == "D"
          cBrKalk := UBrojDok( Val( Left( cBrKalk, 5 ) ) + 1, 5, Right( cBrKalk, 3 ) )
       ENDIF
-
-
-
 
       Inkey( 0 )
 
@@ -692,7 +659,7 @@ FUNCTION FaKaPrenosRacunMP()
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
 
 /* FaKaPrenos_01_doprema()
@@ -717,19 +684,9 @@ FUNCTION FaKaPrenos_01_doprema()
    cIdZaduz := Space( 6 )
 
    cBrkalk := Space( 8 )
-   IF gBrojacKalkulacija == "D"
 
-      find_kalk_doks_za_tip( cIdFirma, "81" )
-      GO BOTTOM
-      IF field->idvd <> "81"
-         cBrKalk := Space( 8 )
-      ELSE
-         cBrKalk := field->brdok
-      ENDIF
+   kalk_set_brkalk_za_idvd( "81", @cBrKalk )
 
-      cBrKalk := UBrojDok( Val( Left( cBrKalk, 5 ) ) + 1, 5, Right( cBrKalk, 3 ) )
-
-   ENDIF
    Box(, 15, 60 )
 
 
@@ -833,8 +790,7 @@ FUNCTION FaKaPrenos_01_doprema()
    Boxc()
    my_close_all_dbf()
 
-   RETURN
-// }
+   RETURN .T.
 
 
 
@@ -865,20 +821,8 @@ FUNCTION FaKaPrenos_cm_u_prodavnicu()
    cIdZaduz2 := cIdZaduz := Space( 6 )
 
    cBrkalk := Space( 8 )
-   IF gBrojacKalkulacija == "D"
+   kalk_set_brkalk_za_idvd( "80", @cBrKalk )
 
-
-      find_kalk_doks_za_tip( cIdFirma, "80" )
-      GO BOTTOM
-      IF field->idvd <> "80"
-         cBrKalk := Space( 8 )
-      ELSE
-         cBrKalk := field->brdok
-      ENDIF
-
-      cBrKalk := UBrojDok( Val( Left( cBrKalk, 5 ) ) + 1, 5, Right( cBrKalk, 3 ) )
-
-   ENDIF
    Box(, 15, 60 )
 
 
@@ -1045,19 +989,8 @@ FUNCTION FaKaPrenos_izlaz_putem_vp()
    cIdZaduz2 := cIdZaduz := Space( 6 )
 
    cBrkalk := Space( 8 )
-   IF gBrojacKalkulacija == "D"
+   kalk_set_brkalk_za_idvd( "15", @cBrKalk )
 
-      find_kalk_doks_za_tip( cIdFirma, "15" )
-      GO BOTTOM
-      IF field->idvd <> "15"
-         cBrKalk := Space( 8 )
-      ELSE
-         cBrKalk := field->brdok
-      ENDIF
-
-      cBrKalk := UBrojDok( Val( Left( cBrKalk, 5 ) ) + 1, 5, Right( cBrKalk, 3 ) )
-
-   ENDIF
    Box(, 15, 60 )
 
 
@@ -1205,7 +1138,7 @@ FUNCTION FaKaPrenos_izlaz_putem_vp()
    Boxc()
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
 
 // ------------------------------------------------------
@@ -1269,17 +1202,7 @@ FUNCTION FaKaPrenosRacunMPParagon()
          _kalk_tip_dok := "42"
       ENDIF
 
-      IF gBrojacKalkulacija == "D"
-         find_kalk_doks_za_tip( cIdFirma, _kalk_tip_dok )
-         GO BOTTOM
-         IF field->idvd <> _kalk_tip_dok
-            cBrKalk := Space( 8 )
-         ELSE
-            cBrKalk := field->brdok
-         ENDIF
-
-         cBrKalk := UBrojDok( Val( Left( cBrKalk, 5 ) ) + 1, 5, Right( cBrKalk, 3 ) )
-      ENDIF
+      kalk_set_brkalk_za_idvd( _kalk_tip_dok, @cBrKalk )
 
       ++ _x
       ++ _x
@@ -1288,7 +1211,6 @@ FUNCTION FaKaPrenosRacunMPParagon()
       @ m_x + _x, Col() + 2 SAY "Datum:" GET _dat_kalk
 
       ++ _x
-
       @ m_x + _x, m_y + 2 SAY "Konto razduzuje:" GET cIdKonto ;
          PICT "@!" ;
          VALID P_Konto( @cIdKonto )
@@ -1564,4 +1486,4 @@ FUNCTION FaKaPrenosRacunMPParagon()
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.

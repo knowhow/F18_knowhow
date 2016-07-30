@@ -62,7 +62,7 @@
   * param D - da, default vrijednost
   * param N - ne, ispisace se i tekst "UGOVOR:", te datum ugovora
   */
-  
+
 // string FmkIni_ExePath_Fakt_Ugovori_UNapomenuSamoBrUgovora;
 
 
@@ -232,8 +232,7 @@ FUNCTION gen_ug()
       IF cidtipdok <> idtipdok
          cBrDok := UBrojDok( 1, gNumDio, "" )
       ELSE
-         cBrDok := UBrojDok( Val( Left( brdok, gNumDio ) ) + 1, ;
-            gNumDio, Right( brdok, Len( brdok ) -gNumDio ) )
+         cBrDok := UBrojDok( Val( Left( brdok, gNumDio ) ) + 1, gNumDio, Right( brdok, Len( brdok ) -gNumDio ) )
       ENDIF
 
 

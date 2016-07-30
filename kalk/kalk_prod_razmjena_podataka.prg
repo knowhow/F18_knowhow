@@ -1,20 +1,17 @@
 /*
- * This file is part of the bring.out FMK, a free and open source
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+ * This file is part of the bring.out knowhow ERP, a free and open source
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
 
-
 #include "f18.ch"
 
-// ----------------------------------------------------------
-// meni opcije prenos FAKT->KALK prodavnica
-// ----------------------------------------------------------
+
 FUNCTION prenos_fakt_kalk_prodavnica()
 
    PRIVATE Opc := {}
@@ -22,12 +19,16 @@ FUNCTION prenos_fakt_kalk_prodavnica()
 
    AAdd( Opc, "1. fakt->kalk (13->11) otpremnica maloprodaje        " )
    AAdd( opcexe, {||  prod_fa_ka_prenos_otpr() } )
+
    AAdd( Opc, "2. fakt->kalk (11->41) racun maloprodaje" )
    AAdd( opcexe, {||  FaKaPrenosRacunMP()  } )
+
    AAdd( Opc, "3. fakt->kalk (11->42) paragon" )
    AAdd( opcexe, {||  FaKaPrenosRacunMPParagon()  } )
+
    AAdd( Opc, "4. fakt->kalk (11->11) racun mp u razduzenje mag." )
-   AAdd( opcexe, {||  FaKaPrenos_MP_u_razduzenje()  } )
+   AAdd( opcexe, {||  fakt_kalk_prenos_11_11()  } )
+
    AAdd( Opc, "5. fakt->kalk (01->81) doprema u prod" )
    AAdd( opcexe, {||  FaKaPrenos_01_doprema() } )
    AAdd( Opc, "6. fakt->kalk (13->80) prenos iz c.m. u prodavnicu" )
@@ -41,10 +42,8 @@ FUNCTION prenos_fakt_kalk_prodavnica()
    RETURN .T.
 
 
-// -----------------------------------------
-// prenos 11->11
-// -----------------------------------------
-FUNCTION FaKaPrenos_MP_u_razduzenje()
+
+FUNCTION fakt_kalk_prenos_11_11()
 
    LOCAL cIdFirma := gFirma
    LOCAL cIdTipDok := "11"
@@ -57,7 +56,7 @@ FUNCTION FaKaPrenos_MP_u_razduzenje()
 
    o_kalk_pripr()
    o_koncij()
-   o_kalk()
+   //o_kalk()
    O_ROBA
    O_KONTO
    O_PARTN
@@ -87,7 +86,6 @@ FUNCTION FaKaPrenos_MP_u_razduzenje()
       ELSE
          cBrKalk := field->brdok
       ENDIF
-
       cBrKalk := UBrojDok( Val( Left( cBrKalk, 5 ) ) + 1, 5, Right( cBrKalk, 3 ) )
 
    ENDIF
@@ -130,7 +128,7 @@ FUNCTION FaKaPrenos_MP_u_razduzenje()
 
       SEEK cFaktFirma + cIdTipDok
 
-      MsgO( "Generacija podataka ...." )
+      MsgO( "Generacija podataka: " + cFaktFirma + "-" + cIdTipDok )
 
       DO WHILE !Eof() .AND. cFaktFirma + cIdTipDok == IdFirma + IdTipDok
 
@@ -145,8 +143,8 @@ FUNCTION FaKaPrenos_MP_u_razduzenje()
             LOOP
          ENDIF
 
-         // usluge ne prenosi takodjer
-         IF AllTrim( podbr ) == "."  .OR. idroba = "U"
+
+         IF AllTrim( podbr ) == "."  .OR. idroba = "U" // usluge ne prenosi takodjer
             SKIP
             LOOP
          ENDIF
@@ -269,7 +267,7 @@ FUNCTION prod_fa_ka_prenos_otpr()
 
    o_kalk_pripr()
    o_koncij()
-   o_kalk()
+   //o_kalk()
    O_ROBA
    O_KONTO
    O_PARTN
@@ -292,7 +290,6 @@ FUNCTION prod_fa_ka_prenos_otpr()
       ELSE
          cBrkalk := field->brdok
       ENDIF
-
       cBrkalk := UBrojDok( Val( Left( cbrkalk, 5 ) ) + 1, 5, Right( cBrKalk, 3 ) )
    ENDIF
 

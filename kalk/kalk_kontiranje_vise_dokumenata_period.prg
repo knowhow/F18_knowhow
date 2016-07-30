@@ -49,7 +49,8 @@ STATIC FUNCTION kont_dokumente( dDatOd, dDatDo, cIdVD, cId_mkto, cId_pkto )
 
    LOCAL nCount := 0
    LOCAL nTNRec
-   LOCAL cNalog := ""
+   LOCAL cBrFinNalog := NIL
+   LOCAL cD_firma, cD_tipd, cD_brdok
 
    IF Empty( cIdVD )
       cIdVD := NIL
@@ -89,7 +90,12 @@ STATIC FUNCTION kont_dokumente( dDatOd, dDatDo, cIdVD, cId_mkto, cId_pkto )
 
       kalk_generisi_finmat( .T., cD_firma, cD_tipd, cD_brdok, .T. )  // napuni FINMAT
 
-      kalk_kontiranje_naloga( .T., .T., .T., NIL, .T. ) // kontiraj
+
+      IF is_kalk_fin_isti_broj()
+         cBrFinNalog := cD_brdok
+      ENDIF
+
+      kalk_kontiranje_fin_naloga( .T., .T., .T., cBrFinNalog, .T. ) // kontiraj
 
       ++ nCount
 
@@ -104,3 +110,103 @@ STATIC FUNCTION kont_dokumente( dDatOd, dDatDo, cIdVD, cId_mkto, cId_pkto )
    ENDIF
 
    RETURN .T.
+
+
+
+
+/*
+ kontiraj vise dokumenata u jedan
+
+FUNCTION kalk_kontiranje_dokumenata_period()
+
+   LOCAL nCount
+   LOCAL aD
+   LOCAL dDatOd
+   LOCAL dDatDo
+   LOCAL cVrsta
+   LOCAL cMKonto
+   LOCAL cPKonto
+
+   aD := kalk_rpt_datumski_interval( Date() )
+
+   cVrsta := Space( 2 )
+
+   dDatOd := aD[ 1 ]
+   dDatDo := aD[ 2 ]
+
+   cMKonto := PadR( "", 7 )
+   cPKonto := PadR( "", 7 )
+
+   SET CURSOR ON
+   Box(, 6, 60 )
+   @ m_x + 1, m_y + 2 SAY  "Vrsta kalkulacije " GET cVrsta PICT "@!" VALID !Empty( cVrsta )
+
+   @ m_x + 3, m_y + 2 SAY  "Magacinski konto (prazno svi) " GET cMKonto  PICT "@!"
+
+   @ m_x + 4, m_y + 2 SAY "Prodavnicki kto (prazno svi)  " GET cPKonto PICT "@!"
+
+
+   @ m_x + 6, m_y + 2 SAY  "Kontirati za period od " GET dDatOd
+   @ m_x + 6, Col() + 2  SAY  " do " GET dDatDo
+
+   READ
+
+   BoxC()
+
+   // koristi se kao datum kontiranja za trfp.dokument = "9"
+   dDatMax := dDatDo
+
+   IF LastKey() == K_ESC
+      my_close_all_dbf()
+      RETURN .F.
+   ENDIF
+
+   my_use_refresh_stop()
+
+
+   IF Select( "kalk_pripr" ) > 0
+      SELECT KALK_PRIPR
+      USE
+   ENDIF
+
+   SELECT F_KALK_DOKS
+   IF !Used()
+      o_kalk_doks()
+   ENDIF
+
+
+   // "1","IdFirma+idvd+brdok"
+   PRIVATE cFilter := "DatDok >= "  + dbf_quote( dDatOd ) + ".and. DatDok <= " + dbf_quote( dDatDo ) + ".and. IdVd==" + dbf_quote( cVrsta )
+
+   IF !Empty( cMKonto )
+      cFilter += ".and. mkonto==" + dbf_quote( cMKonto )
+   ENDIF
+
+   IF !Empty( cPKonto )
+      cFilter += ".and. pkonto==" + dbf_quote( cPKonto )
+   ENDIF
+
+   SET FILTER TO &cFilter
+   GO TOP
+
+
+   nCount := 0
+   DO WHILE !Eof()
+      nCount ++
+      cIdFirma := idFirma
+      cIdVd := idvd
+      cBrDok := brdok
+
+      kalk_generisi_finmat( .T., cIdFirma, cIdVd, cBrDok )
+
+      SELECT KALK_DOKS
+      SKIP
+   ENDDO
+
+   MsgBeep(  "Obradjeno " + AllTrim( Str( nCount, 7, 0 ) ) + " dokumenata" )
+
+   my_use_refresh_start()
+   my_close_all_dbf()
+
+   RETURN .T.
+*/ 

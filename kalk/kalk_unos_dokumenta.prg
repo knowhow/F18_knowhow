@@ -167,9 +167,9 @@ FUNCTION kalk_unos_stavki_dokumenta( lAObrada )
 FUNCTION o_kalk_edit()
 
    O_PARTN
-   //o_kalk_doks()
+   // o_kalk_doks()
    O_ROBA
-   //o_kalk()
+   // o_kalk()
    O_KONTO
    O_TDOK
    O_VALUTE
@@ -245,12 +245,18 @@ STATIC FUNCTION printaj_duple_stavke_iz_pripreme()
 
 STATIC FUNCTION kalk_kontiraj_alt_k()
 
+   LOCAL cBrNal := NIL
+
+   IF is_kalk_fin_isti_broj()
+      cBrNal := kalk_pripr->brDok
+   ENDIF
+
    my_close_all_dbf()
 
    kalk_generisi_finmat()
 
    IF Pitanje(, "Želite li izvršiti kontiranje dokumenta (D/N) ?", "D" ) == "D"
-      kalk_kontiranje_naloga()
+      kalk_kontiranje_fin_naloga( NIL, NIL, NIL, cBrNal )
    ENDIF
 
    o_kalk_edit()
@@ -280,8 +286,8 @@ FUNCTION kalk_pripr_key_handler()
 
    DO CASE
 
-   //CASE Ch == K_ALT_H
-  //    Savjetnik()
+      // CASE Ch == K_ALT_H
+      // Savjetnik()
 
    CASE Ch == K_ALT_K
       RETURN kalk_kontiraj_alt_k()
@@ -321,7 +327,7 @@ FUNCTION kalk_pripr_key_handler()
 
       RETURN DE_CONT
 
-   CASE is_key_alt_a( Ch ) .OR. Ch == ASC( 'x' ) .OR. Ch == ASC( 'X' )
+   CASE is_key_alt_a( Ch ) .OR. Ch == Asc( 'x' ) .OR. Ch == Asc( 'X' )
 
       my_close_all_dbf()
 
@@ -1483,7 +1489,7 @@ FUNCTION Get1Header( fNovi )
          IF _idvd $ "10#16#18#IM#"
             @ m_x + 2, m_y + 2 SAY8 "Magacinski konto zadužuje" GET _idKonto VALID P_Konto( @_idKonto ) PICT "@!"
             READ
-            
+
             cSufiks := SufBrKalk( _idKonto )
          ELSE
             @ m_x + 2, m_y + 2 SAY8 "Magacinski konto razdužuje" GET _idKonto2 VALID P_Konto( @_idKonto2 ) PICT "@!"
@@ -2122,7 +2128,6 @@ FUNCTION MPCSAPPiz80uSif()
 
 FUNCTION VPCSifUDok()
 
-
    o_kalk_edit()
    SELECT kalk_pripr
    GO TOP
@@ -2211,9 +2216,9 @@ FUNCTION kalk_stampa_dokumenta()
    SET ORDER TO TAG "1"
    GO TOP
 
-   //IF ( field->idvd == "24" )
-  //    RETURN kalk_kontiraj_alt_k()
-   //ENDIF
+   // IF ( field->idvd == "24" )
+   // RETURN kalk_kontiraj_alt_k()
+   // ENDIF
 
    fTopsD := .F.
    fFaktD := .F.

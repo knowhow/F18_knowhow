@@ -33,10 +33,11 @@ FUNCTION kalk_razmjena_podataka()
    AAdd( _opcexe, {|| MnuImpCSV() } )
    AAdd( _opc, "-----------------------------------" )
    AAdd( _opcexe, nil )
-   AAdd( _opc, "A. kontiraj dokumente za period - u pripremu" )
-   AAdd( _opcexe, {|| kalk_kontiranje_dokumenata_period() } )
 
-   AAdd( _opc, "B. kontiraj automatski kalkulacije za period" )
+   //AAdd( _opc, "A. kontiraj dokumente za period - u pripremu" )
+   //AAdd( _opcexe, {|| kalk_kontiranje_dokumenata_period() } )
+
+   AAdd( _opc, "K. kontiraj automatski kalkulacije za period" )
    AAdd( _opcexe, {|| kontiranje_vise_dokumenata_period_auto() } )
 
    f18_menu( "rmod", .F., _izbor, _opc, _opcexe )

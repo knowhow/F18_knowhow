@@ -15,7 +15,7 @@
 STATIC dDatMax
 
 
-/* -----------------------------------------------------------------------
+/*
 
  kontiranje naloga
 
@@ -23,10 +23,11 @@ STATIC dDatMax
  .f. getuje se broj formiranog naloga - default vrijednost
  lAGen - automatsko generisanje
  lViseKalk - vise kalkulacija
- cNalog - broj naloga koji ce se uzeti, ako je EMPTY() ne uzima se !
+ cNalog - zadani broj FIN naloga, ako je EMPTY() ne uzima se !
 
---------------------------------------------------------------------------  */
-FUNCTION kalk_kontiranje_naloga( fAuto, lAGen, lViseKalk, cNalog, lAutoBrojac )
+*/
+
+FUNCTION kalk_kontiranje_fin_naloga( fAuto, lAGen, lViseKalk, cNalog, lAutoBrojac )
 
    LOCAL cIdFirma
    LOCAL cIdVd
@@ -52,9 +53,7 @@ FUNCTION kalk_kontiranje_naloga( fAuto, lAGen, lViseKalk, cNalog, lAutoBrojac )
       dDatMax := CToD( "" )
    ENDIF
 
-   IF ( cNalog == NIL )
-      cNalog := ""
-   ENDIF
+
 
    IF ( lAutoBrojac == NIL )
       lAutoBrojac := .T.
@@ -104,12 +103,17 @@ FUNCTION kalk_kontiranje_naloga( fAuto, lAGen, lViseKalk, cNalog, lAutoBrojac )
       fAuto := .F.
    ENDIF
 
+   IF ( cNalog == NIL )
+      IF is_kalk_fin_isti_broj()
+         cNalog := finmat->brdok
+      ENDIF
+   ENDIF
+
    lAFin := ( gAFin == "D" )
 
    IF lAFin
 
       Beep( 1 )
-
       IF !lAGen
          lAfin := Pitanje(, "Formirati FIN nalog?", "D" ) == "D"
       ELSE
@@ -208,9 +212,7 @@ FUNCTION kalk_kontiranje_naloga( fAuto, lAGen, lViseKalk, cNalog, lAutoBrojac )
          IF !lAMat
             cBrBalM := ""
          ELSE
-            IF idvd <> "24" // kalkulacija usluge
-               @ m_x + 2, m_y + 2 SAY "Broj naloga u MAT  " + finmat->idfirma + " - " + cIdvn + " - " + cBrNalM
-            ENDIF
+            @ m_x + 2, m_y + 2 SAY "Broj naloga u MAT  " + finmat->idfirma + " - " + cIdvn + " - " + cBrNalM
          ENDIF
 
          @ m_x + 4, m_y + 2 SAY "Datum naloga: "
@@ -964,7 +966,6 @@ FUNCTION DatVal()
 
 FUNCTION Partner( nBroj, cDef, cTekst, lFaktura, dp )
 
-   // {
    IF lFaktura == NIL; lFaktura := .F. ; ENDIF
    IF dp == NIL; dp := 6; ENDIF
    IF cDef == NIL; cDef := ""; ENDIF
@@ -1067,10 +1068,6 @@ FUNCTION kalk_set_doks_total_fields( nNv, nVpv, nMpv, nRabat )
    RETURN .T.
 
 
-
-
-
-
 /* IspitajRezim()
  *     Ako se radi o privremenom rezimu obrade KALK dokumenata setuju se vrijednosti parametara gCijene i gMetodaNC na vrijednosti u dvoclanom nizu aRezim
  */
@@ -1127,7 +1124,7 @@ FUNCTION kalk_generisi_finmat()
 
       _predispozicija := .F.
 
-      close_open_rekap_tables()
+      kalk_open_tabele_za_kontiranje()
 
       IF fStara
          kalk_otvori_kumulativ_kao_pripremu( cIdFirma, cIdVd, cBrDok )
@@ -1155,8 +1152,7 @@ FUNCTION kalk_generisi_finmat()
             lViseKalk := .F.
 
          ELSE
-            // parametri su prosljedjeni RekapK funkciji
-            lViseKalk := .T.
+            lViseKalk := .T. // parametri su prosljedjeni RekapK funkciji
          ENDIF
          fPrvi := .F.
 
@@ -1181,7 +1177,7 @@ FUNCTION kalk_generisi_finmat()
             BoxC()
          ENDIF
 
-         HSEEK cIdFirma + cIdVd + cBrDok
+         HSEEK cIdFirma + cIdVd + cBrDok // kalk_pripr
 
       ELSE
          GO TOP
@@ -1239,7 +1235,6 @@ FUNCTION kalk_generisi_finmat()
       ENDIF
 
 
-
       nStr := 0
       nTot1 := nTot2 := nTot3 := nTot4 := nTot5 := nTot6 := nTot7 := nTot8 := nTot9 := nTota := nTotb := nTotC := 0
 
@@ -1258,7 +1253,6 @@ FUNCTION kalk_generisi_finmat()
 
          HSEEK cIdKonto2
          SELECT KALK_PRIPR
-
 
 
          IF lVoSaTa
@@ -1298,7 +1292,6 @@ FUNCTION kalk_generisi_finmat()
                SKol := Kolicina
             ENDIF
 
-
             SELECT ROBA
             HSEEK KALK_PRIPR->IdRoba
 
@@ -1308,11 +1301,7 @@ FUNCTION kalk_generisi_finmat()
             SELECT KALK_PRIPR
 
             Tarifa( pkonto, idroba, @aPorezi )
-
-
             KTroskovi()
-
-
             VtPorezi()
 
             aIPor := RacPorezeMP( aPorezi, mpc, mpcSaPP, nc )
@@ -1333,9 +1322,8 @@ FUNCTION kalk_generisi_finmat()
                BrDok     WITH kalk_pripr->BrDok, ;
                DatDok    WITH kalk_pripr->DatDok, ;
                GKV       WITH Round( kalk_PRIPR->( GKolicina * FCJ2 ), gZaokr ), ;   // vrijednost transp.kala
-            GKV2      WITH Round( kalk_PRIPR->( GKolicin2 * FCJ2 ), gZaokr )   // vrijednost ostalog kala
-
-            REPLACE Prevoz    WITH Round( kalk_PRIPR->( nPrevoz * SKol ), gZaokr ), ;
+            GKV2      WITH Round( kalk_PRIPR->( GKolicin2 * FCJ2 ), gZaokr ), ;   // vrijednost ostalog kala
+            Prevoz    WITH Round( kalk_PRIPR->( nPrevoz * SKol ), gZaokr ), ;
                CarDaz    WITH Round( kalk_PRIPR->( nCarDaz * SKol ), gZaokr ), ;
                BankTr    WITH Round( kalk_PRIPR->( nBankTr * SKol ), gZaokr ), ;
                SpedTr    WITH Round( kalk_PRIPR->( nSpedTr * SKol ), gZaokr ), ;
@@ -1348,7 +1336,6 @@ FUNCTION kalk_generisi_finmat()
             nPom := kalk_pripr->( RabatV / 100 * VPC * Kolicina )
             nPom := Round( nPom, gZaokr )
             REPLACE RABATV  WITH nPom
-
 
 
             nPom := kalk_pripr->( nMarza2 * ( Kolicina - GKolicina - GKolicin2 ) )
@@ -1364,13 +1351,12 @@ FUNCTION kalk_generisi_finmat()
             REPLACE MPV WITH nPom
 
             // PDV
-
             nPom := kalk_pripr->( aIPor[ 1 ] * ( Kolicina - GKolicina - GKolicin2 ) )
             nPom := Round( nPom, gZaokr )
             REPLACE Porez WITH nPom
 
             // ugostiteljstvo porez na potr
-            REPLACE Porez2    WITH Round( kalk_PRIPR->( aIPor[ 3 ] * ( Kolicina - GKolicina - GKolicin2 ) ), gZaokr )
+            // REPLACE Porez2    WITH Round( kalk_PRIPR->( aIPor[ 3 ] * ( Kolicina - GKolicina - GKolicin2 ) ), gZaokr )
 
 
             nPom := kalk_pripr->( MPCSaPP * ( Kolicina - GKolicina - GKolicin2 ) )
@@ -1378,9 +1364,9 @@ FUNCTION kalk_generisi_finmat()
             REPLACE MPVSaPP WITH nPom
 
             // porezv je aIPor[2] koji se ne koristi
-            nPom := kalk_pripr->( aIPor[ 2 ] * ( Kolicina - GKolicina - GKolicin2 ) )
-            nPom := Round( nPom, gZaokr )
-            REPLACE Porezv WITH nPom
+            // nPom := kalk_pripr->( aIPor[ 2 ] * ( Kolicina - GKolicina - GKolicin2 ) )
+            // nPom := Round( nPom, gZaokr )
+            // REPLACE Porezv WITH nPom
 
             REPLACE idroba    WITH kalk_pripr->idroba
             REPLACE  Kolicina  WITH kalk_pripr->( Kolicina - GKolicina - GKolicin2 )
@@ -1399,6 +1385,7 @@ FUNCTION kalk_generisi_finmat()
                REPLACE  MPVSaPP   WITH  kalk_pripr->( VPC * ( 1 -RabatV / 100 ) * ( Kolicina - GKolicina - GKolicin2 ) )
             ENDIF
 
+/*
             IF !Empty( kalk_pripr->mu_i )
                SELECT tarifa
                HSEEK roba->idtarifa
@@ -1409,6 +1396,7 @@ FUNCTION kalk_generisi_finmat()
                HSEEK roba->idtarifa
                SELECT finmat
             ENDIF
+*/
 
             IF gKalo == "2" .AND.  kalk_pripr->idvd $ "10#81"  // kalo ima vrijednost po NC
                REPLACE GKV   WITH Round( kalk_pripr->( GKolicina * NC ), gZaokr ), ;   // vrijednost transp.kala
@@ -1418,14 +1406,12 @@ FUNCTION kalk_generisi_finmat()
                   POREZV WITH Round( nMarza * kalk_pripr->( GKolicina + Gkolicin2 ), gZaokr ) // negativna marza za kalo
             ENDIF
 
-
             IF kalk_pripr->IDVD $ "18#19"
                REPLACE Kolicina WITH 0
             ENDIF
 
             IF ( kalk_pripr->IdVD $ "41#42" )
-               // popust maloprodaje se smjesta ovdje
-               REPLACE Rabat WITH kalk_pripr->RabatV * kalk_pripr->kolicina
+               REPLACE Rabat WITH kalk_pripr->RabatV * kalk_pripr->kolicina // popust maloprodaje se smjesta ovdje
                IF AllTrim( gnFirma ) == "TEST FIRMA"
                   MsgBeep( "Popust MP = finmat->rabat " + Str( Rabat, 10, 2 ) )
                ENDIF
@@ -1450,7 +1436,6 @@ FUNCTION kalk_generisi_finmat()
 
 
 
-
       IF !fStara .OR. lAuto == .T.
          EXIT
       ELSE
@@ -1463,8 +1448,9 @@ FUNCTION kalk_generisi_finmat()
             my_close_all_dbf()
          ENDIF
 
-
-         kalk_kontiranje_naloga( .F., NIL, lViseKalk, NIL, _fin_auto_broj == "D" )  // kontiranje dokumenta
+         AltD()
+         // ovo ispod kontiranje je visak!?
+         kalk_kontiranje_fin_naloga( .F., NIL, lViseKalk, NIL, _fin_auto_broj == "D" )  // kontiranje dokumenta
 
 
          IF cAutoRav == "D" // automatska ravnoteza naloga
@@ -1495,7 +1481,7 @@ FUNCTION kalk_generisi_finmat()
 
 
 
-STATIC FUNCTION close_open_rekap_tables()
+STATIC FUNCTION kalk_open_tabele_za_kontiranje()
 
    O_FINMAT
    O_KONTO
@@ -1521,104 +1507,6 @@ FUNCTION predisp()
 
 
 
-
-// -----------------------------------
-// kontiraj vise dokumenata u jedan
-// -----------------------------------
-FUNCTION kalk_kontiranje_dokumenata_period()
-
-   LOCAL nCount
-   LOCAL aD
-   LOCAL dDatOd
-   LOCAL dDatDo
-   LOCAL cVrsta
-   LOCAL cMKonto
-   LOCAL cPKonto
-
-   aD := kalk_rpt_datumski_interval( Date() )
-
-   cVrsta := Space( 2 )
-
-   dDatOd := aD[ 1 ]
-   dDatDo := aD[ 2 ]
-
-   cMKonto := PadR( "", 7 )
-   cPKonto := PadR( "", 7 )
-
-   SET CURSOR ON
-   Box(, 6, 60 )
-   @ m_x + 1, m_y + 2 SAY  "Vrsta kalkulacije " GET cVrsta PICT "@!" VALID !Empty( cVrsta )
-
-   @ m_x + 3, m_y + 2 SAY  "Magacinski konto (prazno svi) " GET cMKonto  PICT "@!"
-
-   @ m_x + 4, m_y + 2 SAY "Prodavnicki kto (prazno svi)  " GET cPKonto PICT "@!"
-
-
-   @ m_x + 6, m_y + 2 SAY  "Kontirati za period od " GET dDatOd
-   @ m_x + 6, Col() + 2  SAY  " do " GET dDatDo
-
-   READ
-
-   BoxC()
-
-   // koristi se kao datum kontiranja za trfp.dokument = "9"
-   dDatMax := dDatDo
-
-   IF LastKey() == K_ESC
-      my_close_all_dbf()
-      RETURN .F.
-   ENDIF
-
-   my_use_refresh_stop()
-
-
-
-   IF Select( "kalk_pripr" ) > 0
-      SELECT KALK_PRIPR
-      USE
-   ENDIF
-
-   SELECT F_KALK_DOKS
-   IF !Used()
-      o_kalk_doks()
-   ENDIF
-
-
-
-   // "1","IdFirma+idvd+brdok"
-   PRIVATE cFilter := "DatDok >= "  + dbf_quote( dDatOd ) + ".and. DatDok <= " + dbf_quote( dDatDo ) + ".and. IdVd==" + dbf_quote( cVrsta )
-
-   IF !Empty( cMKonto )
-      cFilter += ".and. mkonto==" + dbf_quote( cMKonto )
-   ENDIF
-
-   IF !Empty( cPKonto )
-      cFilter += ".and. pkonto==" + dbf_quote( cPKonto )
-   ENDIF
-
-   SET FILTER TO &cFilter
-   GO TOP
-
-
-   nCount := 0
-   DO WHILE !Eof()
-      nCount ++
-      cIdFirma := idFirma
-      cIdVd := idvd
-      cBrDok := brdok
-
-      kalk_generisi_finmat( .T., cIdFirma, cIdVd, cBrDok )
-
-      SELECT KALK_DOKS
-      SKIP
-   ENDDO
-
-   MsgBeep(  "Obradjeno " + AllTrim( Str( nCount, 7, 0 ) ) + " dokumenata" )
-
-   my_use_refresh_start()
-   my_close_all_dbf()
-
-   RETURN .T.
 
 
 

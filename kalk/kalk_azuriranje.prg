@@ -73,7 +73,7 @@ FUNCTION kalk_azuriranje_dokumenta( lAuto )
       kalk_zavisni_dokumenti()
    ENDIF
 
-   IF kalk_azur_sql()
+   IF !kalk_azur_sql()
 
 /*
       o_kalk_za_azuriranje()
@@ -82,8 +82,9 @@ FUNCTION kalk_azuriranje_dokumenta( lAuto )
          MsgBeep( "Neuspješno ažuriranje KALK dokumenta u DBF tabele !" )
          RETURN .F.
       ENDIF
-*/
    ELSE
+*/
+
       MsgBeep( "Neuspješno ažuriranja KALK dokumenta u SQL bazu !" )
       RETURN .F.
    ENDIF
@@ -219,6 +220,7 @@ STATIC FUNCTION kalk_zavisni_nakon_azuriranja( lGenerisi, lAuto )
 
    IF lGenerisi = .T.
 
+altd()
       kalk_generisi_finmat()
 
       formiraj_finansijski_nalog( lAuto )
@@ -240,16 +242,16 @@ STATIC FUNCTION kalk_zavisni_nakon_azuriranja( lGenerisi, lAuto )
 STATIC FUNCTION formiraj_finansijski_nalog( lAuto )
 
    IF !f18_use_module( "fin" )
-      RETURN
+      RETURN .F.
    ENDIF
 
    IF ( gaFin == "D" .OR. gaMat == "D" )
-      IF kalk_kontiranje_naloga( .T., lAuto )
+      IF kalk_kontiranje_fin_naloga( .T., lAuto )
          fin_nalog_priprema_kalk( lAuto )
       ENDIF
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 STATIC FUNCTION formiraj_fakt_zavisne_dokumente()

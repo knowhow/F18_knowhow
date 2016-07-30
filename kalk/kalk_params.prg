@@ -1,16 +1,18 @@
 /*
- * This file is part of the bring.out FMK, a free and open source
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+ * This file is part of the bring.out knowhow ERP, a free and open source
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
 
-
 #include "f18.ch"
+
+
+STATIC s_cKalkFinIstirBroj := NIL
 
 MEMVAR m_x, m_y
 
@@ -46,11 +48,8 @@ FUNCTION kalk_params()
    AAdd( _opc, "8. nacin formiranja zavisnih dokumenata" )
    AAdd( _opcexe, {|| kalk_par_zavisni_dokumenti( 'D' ) } )
 
-   AAdd( _opc, "9. lokacije FIN/MAT/FAKT .." )
-   AAdd( _opcexe, {|| SetOdirs( 'D' ) } )
 
-   AAdd( _opc, "A. parametri za komisionu prodaju" )
-   AAdd( _opcexe, {|| SetKomis( 'D' ) } )
+
 
    AAdd( _opc, "B. parametri - razno" )
    AAdd( _opcexe, {|| kalk_par_razno( 'D' ) } )
@@ -206,17 +205,23 @@ FUNCTION kalk_par_razno()
    Box(, 20, 75, .F., "RAZNO" )
 
    @ m_x + _x, m_y + 2 SAY "Brojac kalkulacija D/N         " GET gBrojacKalkulacija PICT "@!" VALID gBrojacKalkulacija $ "DN"
+
    @ m_x + _x, Col() + 2 SAY "duzina brojaca:" GET gLenBrKalk PICT "9" VALID gLenBrKalk > 0 .AND. gLenBrKalk < 10
    ++ _x
+
    @ m_x + _x, m_y + 2 SAY "Brojac kalkulacija po kontima (D/N)" GET _brojac VALID _brojac $ "DN" PICT "@!"
    ++ _x
+
    @ m_x + _x, m_y + 2 SAY "Koristiti BARCOD pri unosu kalkulacija (D/N)" GET _unos_barkod VALID _unos_barkod $ "DN" PICT "@!"
    ++ _x
+
    @ m_x + _x, m_y + 2 SAY "Potpis na kraju naloga D/N     " GET gPotpis VALID gPotpis $ "DN"
    ++ _x
+
    @ m_x + _x, m_y + 2 SAY8 "Novi korisnički interfejs D/N/X" GET gNW VALID gNW $ "DNX" PICT "@!"
    ++ _x
    ++ _x
+
    @ m_x + _x, m_y + 2 SAY "Tip tabele (0/1/2)             " GET gTabela VALID gTabela < 3 PICT "9"
    @ m_x + _x, Col() + 2 SAY "Vise konta na dokumentu (D/N) ?" GET _vise_konta VALID _vise_konta $ "DN" PICT "@!"
    ++ _x
@@ -237,8 +242,11 @@ FUNCTION kalk_par_razno()
    @ m_x + _x, m_y + 2 SAY "Kontrola odstupanja NC:" GET gNC_ctrl PICT "999.99"
    @ m_x + _x, Col() SAY "%"
    ++ _x
+
    @ m_x + _x, m_y + 2 SAY8 "Traži robu prema (prazno/SIFRADOB/)" GET gArtPretragaSifraDob PICT "@15"
+
    ++ _x
+
    @ m_x + _x, m_y + 2 SAY "Reset artikla prilikom unosa dokumenta (D/N)" GET _reset_roba PICT "@!" VALID _reset_roba $ "DN"
    ++ _x
    @ m_x + _x, m_y + 2 SAY "Pregled rabata za dobavljaca kod unosa ulaza (D/N)" GET _rabat PICT "@!" VALID _rabat $ "DN"
@@ -305,7 +313,7 @@ FUNCTION kalk_par_metoda_nc()
    @ m_x + 1, m_y + 2 SAY "Metoda nabavne cijene: bez kalk./zadnja/prosjecna/prva ( /1/2/3)" GET gMetodaNC ;
       VALID gMetodaNC $ " 123" .AND. metodanc_info()
    @ m_x + 2, m_y + 2 SAY "Program omogucava /ne omogucava azuriranje sumnjivih dokumenata (1/2)" GET gCijene ;
-     VALID  gCijene $ "12"
+      VALID  gCijene $ "12"
    @ m_x + 4, m_y + 2 SAY "Tekuci odgovor na pitanje o promjeni cijena ?" GET gDefNiv ;
       VALID  gDefNiv $ "DN" PICT "@!"
    READ
@@ -386,28 +394,20 @@ FUNCTION kalk_par_cijene()
 
 
 
-FUNCTION SetKomis()
+FUNCTION is_kalk_fin_isti_broj()
 
-   PRIVATE  GetList := {}
+   IF s_cKalkFinIstirBroj == NIL
+      s_cKalkFinIstirBroj := fetch_metric( "kalk_fin_isti_broj", NIL, "D" )
+  ENDIF
 
-   Box(, 6, 76, .F., "PARAMETRI KOMISIONE PRODAJE" )
-   @ m_x + 1, m_y + 2 SAY "Komision: -konto" GET gKomKonto VALID P_Konto( @gKomKonto )
-   @ m_x + 2, m_y + 2 SAY "Oznaka RJ u FAKT" GET gKomFakt
-   READ
-   BoxC()
-
-   IF LastKey() <> K_ESC
-      set_metric( "kalk_oznaka_rj_u_fakt", nil, gKomFakt )
-      set_metric( "kalk_komision_konto", nil, gKomKonto )
-   ENDIF
-
-   RETURN NIL
-
+   RETURN s_cKalkFinIstirBroj == "D"
 
 
 FUNCTION kalk_par_zavisni_dokumenti()
 
    LOCAL _auto_razduzenje := fetch_metric( "kalk_tops_prenos_auto_razduzenje", my_user(), "N" )
+   LOCAL cKalkFinIstiBroj := fetch_metric( "kalk_fin_isti_broj", NIL, "D" )
+
    PRIVATE  GetList := {}
 
    Box(, 12, 76, .F., "NACINI FORMIRANJA ZAVISNIH DOKUMENATA" )
@@ -415,9 +415,12 @@ FUNCTION kalk_par_zavisni_dokumenti()
    @ m_x + 1, m_y + 2 SAY "Automatika formiranja FIN naloga D/N/0" GET gAFin PICT "@!" VALID gAFin $ "DN0"
    @ m_x + 2, m_y + 2 SAY "Automatika formiranja MAT naloga D/N/0" GET gAMAT PICT "@!" VALID gAMat $ "DN0"
    @ m_x + 3, m_y + 2 SAY "Automatika formiranja FAKT dokum D/N" GET gAFakt PICT "@!" VALID gAFakt $ "DN"
+
    @ m_x + 4, m_y + 2 SAY "Generisati 16-ku nakon 96  D/N (1/2) ?" GET gGen16  VALID gGen16 $ "12"
    @ m_x + 5, m_y + 2 SAY "Nakon stampe zaduzenja prodavnice prenos u TOPS 0-ne/1 /2 " GET gTops  VALID gTops $ "0 /1 /2 /3 /99" PICT "@!"
    @ m_x + 6, m_y + 2 SAY "Nakon stampe zaduzenja prenos u FAKT 0-ne/1 /2 " GET gFakt  VALID gFakt $ "0 /1 /2 /3 /99" PICT "@!"
+
+   @ m_x + 7, m_y + 2 SAY8 "KALK-FIN identičan broj (D/N): " GET cKalkFinIstiBroj VALID cKalkFinIstiBroj $ "DN" PICT "@!"
 
    READ
 
@@ -442,6 +445,7 @@ FUNCTION kalk_par_zavisni_dokumenti()
       set_metric( "kalk_destinacija_topska", f18_user(), AllTrim( gTopsDest ) )
       set_metric( "kalk_tops_prenos_vise_prodajnih_mjesta", f18_user(), gMultiPM )
       set_metric( "kalk_tops_prenos_auto_razduzenje", my_user(), _auto_razduzenje )
+      set_metric( "kalk_fin_isti_broj", NIL, cKalkFinIstiBroj )
 
    ENDIF
 
@@ -449,46 +453,6 @@ FUNCTION kalk_par_zavisni_dokumenti()
 
 
 
-
-FUNCTION SetODirs()
-
-   PRIVATE  GetList := {}
-
-   gDirFin := PadR( gDirFin, 30 )
-   gDirMat := PadR( gDirMat, 30 )
-   gDirFiK := PadR( gDirFiK, 30 )
-   gDirMaK := PadR( gDirMaK, 30 )
-   gDirFakt := PadR( gDirFakt, 30 )
-   gDirFakK := PadR( gDirFakK, 30 )
-
-   Box(, 5, 76, .F., "DIREKTORIJI" )
-   @ m_x + 1, m_y + 2 SAY "Priv.dir.FIN" GET gDirFin  PICT "@S25"
-   @ m_x + 1, Col() + 1 SAY "Rad.dir.FIN" GET gDirFiK  PICT "@S25"
-   @ m_x + 3, m_y + 2 SAY "Priv.dir.MAT" GET gDirMat   PICT "@S25"
-   @ m_x + 3, Col() + 1 SAY "Rad.dir.MAT" GET gDirMaK  PICT "@S25"
-   @ m_x + 5, m_y + 2 SAY "Pri.dir.FAKT" GET gDirFakt  PICT "@S25"
-   @ m_x + 5, Col() + 1 SAY "Ra.dir.FAKT" GET gDirFakk  PICT "@S25"
-   READ
-   BoxC()
-
-   gDirFin := Trim( gDirFin )
-   gDirMat := Trim( gDirMat )
-   gDirFiK := Trim( gDirFiK )
-   gDirMaK := Trim( gDirMaK )
-   gDirFakt := Trim( gDirFakt )
-   gDirFakK := Trim( gDirFakK )
-
-   IF LastKey() <> K_ESC
-      // set_metric("df",gDirFIN)
-      // set_metric("d3",gDirFIK)
-      // set_metric("d4",gDirMaK)
-      // set_metric("dm",gDirMat)
-
-      // set_metric("dx",@gDirFakt)
-      // set_metric("d5",@gDirFakK)
-   ENDIF
-
-   RETURN NIL
 
 
 

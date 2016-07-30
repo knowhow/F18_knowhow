@@ -96,10 +96,7 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
    cDinDem := fetch_metric( "fin_kart_valuta", my_user(), cDinDem )
    c1K1Z := fetch_metric( "fin_kart_kz", my_user(), c1K1Z )
    cK14 := fetch_metric( "fin_kart_k14", my_user(), cK14 )
-
-   IF gNW == "D"
-      cIdFirma := gFirma
-   ENDIF
+   cIdFirma := gFirma
 
    cK1 := "9"
    cK2 := "9"
@@ -135,7 +132,7 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
       RETURN fin_suban_kartica_sql( lOtvSt )
    ENDIF
 
-   close_open_kartica_tbl()
+   kartica_otvori_tabele()
 
    ++nX
    @ m_x + ( ++nX ), m_y + 2 SAY "BEZ/SA kumulativnim prometom  (1/2):" GET cKumul
@@ -144,8 +141,8 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
    @ m_x + nX, Col() + 2 SAY8 "Sažeta kartica (bez opisa) D/N" GET cSazeta  PICT "@!" VALID cSazeta $ "DN"
    READ
 
-   DO WHILE .T.
 
+   DO WHILE .T.
 
       IF gDUFRJ == "D"
          cIdFirma := PadR( gFirma + ";", 30 )
@@ -201,6 +198,11 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
 
       READ
       ESC_BCR
+
+      IF cExpDbf == "D"
+         aExpFields := fin_kartica_dbf_struct() // inicijalizuj export
+         t_exp_create( aExpFields )
+      ENDIF
 
       IF !( cK14 $ "123" ) .AND. ( cSazeta == "D" .OR. gNW == "D" )
          cK14 := "3"
@@ -263,11 +265,6 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
    set_metric( "fin_kart_kz", my_user(), c1K1Z )
    set_metric( "fin_kart_k14", my_user(), cK14 )
 
-   IF cExpDbf == "D"
-      // inicijalizuj export
-      aExpFields := g_exp_fields()
-      t_exp_create( aExpFields )
-   ENDIF
 
    cIdFirma := Trim( cIdFirma )
 
@@ -428,6 +425,7 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
    Eval( bZagl )
 
    DO WHILE !Eof() .AND. iif( gDUFRJ != "D", IdFirma == cIdFirma, .T. )
+
       nKonD := 0
       nKonP := 0
       nKonD2 := 0
@@ -439,6 +437,7 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
             EXIT
          ENDIF
       ENDIF
+
       IF !Empty( qqNazKonta )
          SELECT konto
          HSEEK cIdKonto
@@ -505,11 +504,12 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
          ? m
          ? "KONTO:  "
          @ PRow(), PCol() + 1 SAY cIdKonto
+
          SELECT KONTO
          HSEEK cIdKonto
          __k_naz := field->naz
 
-         @ PRow(), PCol() + 2 SAY naz
+         @ PRow(), PCol() + 2 SAY __k_naz
          ? "Partner: "
          @ PRow(), PCol() + 1 SAY iif( cBrza == "D" .AND. RTrim( qqPartner ) == ";", ":  SVI", cIdPartner )
          IF cRasclaniti == "D"
@@ -1008,7 +1008,7 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
    RETURN .T.
 
 
-STATIC FUNCTION g_exp_fields()
+FUNCTION fin_kartica_dbf_struct()
 
    LOCAL aDbf := {}
 
@@ -1018,7 +1018,7 @@ STATIC FUNCTION g_exp_fields()
    AAdd( aDbf, { "naz_partn", "C", 50, 0 }  )
    AAdd( aDbf, { "vrsta_nal", "C", 2, 0 }  )
    AAdd( aDbf, { "broj_nal", "C", 8, 0 }  )
-   AAdd( aDbf, { "nal_rbr", "C", 4, 0 }  )
+   AAdd( aDbf, { "nal_rbr", "N", 6, 0 }  )
    AAdd( aDbf, { "broj_veze", "C", 10, 0 }  )
    AAdd( aDbf, { "dat_nal", "D", 8, 0 }  )
    AAdd( aDbf, { "dat_val", "D", 8, 0 }  )
@@ -1032,7 +1032,7 @@ STATIC FUNCTION g_exp_fields()
 /*
    upisuje u export tabelu podatke
 */
-STATIC FUNCTION _add_to_export( cKonto, cK_naz, cPartn, cP_naz, cVn, cBr, cRbr, cBrVeze, dDatum, dDatVal, cOpis, nDug, nPot, nSaldo )
+STATIC FUNCTION _add_to_export( cKonto, cK_naz, cPartn, cP_naz, cVn, cBr, nRbr, cBrVeze, dDatum, dDatVal, cOpis, nDug, nPot, nSaldo )
 
    LOCAL nTArea := Select()
 
@@ -1046,7 +1046,7 @@ STATIC FUNCTION _add_to_export( cKonto, cK_naz, cPartn, cP_naz, cVn, cBr, cRbr, 
    REPLACE field->naz_partn with ( cP_naz )
    REPLACE field->vrsta_nal WITH cVn
    REPLACE field->broj_nal WITH cBr
-   REPLACE field->nal_rbr WITH cRbr
+   REPLACE field->nal_rbr WITH nRbr
    REPLACE field->broj_veze with ( cBrVeze )
    REPLACE field->dat_nal WITH dDatum
    REPLACE field->dat_val WITH fix_dat_var( dDatVal, .T. )
@@ -1256,7 +1256,7 @@ FUNCTION Prelomi( nDugX, nPotX )
 
    RETURN .T.
 
-STATIC FUNCTION close_open_kartica_tbl()
+STATIC FUNCTION kartica_otvori_tabele()
 
    my_close_all_dbf()
 
@@ -1265,7 +1265,7 @@ STATIC FUNCTION close_open_kartica_tbl()
    O_SIFK
    O_SIFV
    O_RJ
-   o_suban()
+   // o_suban()
    O_TDOK
 
    RETURN .T.

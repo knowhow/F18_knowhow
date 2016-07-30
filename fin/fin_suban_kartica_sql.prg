@@ -319,27 +319,6 @@ STATIC FUNCTION _export_dbf( table, rpt_vars )
    RETURN .T.
 
 
-FUNCTION fin_kartica_dbf_struct()
-
-   LOCAL aDbf := {}
-
-   AAdd( aDbf, { "id_konto", "C", 7, 0 }  )
-   AAdd( aDbf, { "naz_konto", "C", 100, 0 }  )
-   AAdd( aDbf, { "id_partn", "C", 6, 0 }  )
-   AAdd( aDbf, { "naz_partn", "C", 50, 0 }  )
-   AAdd( aDbf, { "vrsta_nal", "C", 2, 0 }  )
-   AAdd( aDbf, { "broj_nal", "C", 8, 0 }  )
-   AAdd( aDbf, { "nal_rbr", "C", 4, 0 }  )
-   AAdd( aDbf, { "broj_veze", "C", 10, 0 }  )
-   AAdd( aDbf, { "dat_nal", "D", 8, 0 }  )
-   AAdd( aDbf, { "dat_val", "D", 8, 0 }  )
-   AAdd( aDbf, { "opis_nal", "C", 100, 0 }  )
-   AAdd( aDbf, { "duguje", "N", 15, 5 }  )
-   AAdd( aDbf, { "potrazuje", "N", 15, 5 }  )
-   AAdd( aDbf, { "saldo", "N", 15, 5 }  )
-
-   RETURN aDbf
-
 
 
 STATIC FUNCTION _cre_xml( table, rpt_vars )

@@ -15,11 +15,15 @@
 STATIC s_cExportDbf := "r_export"
 
 
-FUNCTION t_exp_create( aFieldList )
+FUNCTION t_exp_create( aFieldList, lCloseDbfs )
 
    LOCAL cImeDbf, cImeCdx
 
-   my_close_all_dbf()
+   hb_default( @lCloseDbfs, .F. )
+
+   IF lCloseDbfs
+      my_close_all_dbf()
+   ENDIF
 
    cImeDBf := f18_ime_dbf( "r_export" )
    cImeCdx := ImeDbfCdx( cImeDbf )

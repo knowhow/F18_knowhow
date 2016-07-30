@@ -38,7 +38,7 @@ FUNCTION prenos_fakt_kalk_prodavnica()
    Menu_SC( "fkpr" )
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
 
 // -----------------------------------------
@@ -64,8 +64,8 @@ FUNCTION FaKaPrenos_MP_u_razduzenje()
    O_TARIFA
 
    O_FAKT
-   // idfirma + DTOS(datdok)
-   SET ORDER TO TAG "7"
+
+   SET ORDER TO TAG "7" // idfirma + DTOS(datdok)
 
    dDatKalk := Date()
 
@@ -80,24 +80,21 @@ FUNCTION FaKaPrenos_MP_u_razduzenje()
 
    IF gBrojacKalkulacija == "D"
 
-      SELECT kalk
-      SET ORDER TO TAG "1"
-      SEEK cIdFirma + "11X"
-      SKIP -1
 
-      IF idvd <> "11"
+      find_kalk_doks_za_tip( cIdFirma, "11" )
+      GO BOTTOM
+      IF field->idvd <> "11"
          cBrKalk := Space( 8 )
       ELSE
-         cBrKalk := brdok
+         cBrKalk := field->brdok
       ENDIF
+
+      cBrKalk := UBrojDok( Val( Left( cBrKalk, 5 ) ) + 1, 5, Right( cBrKalk, 3 ) )
 
    ENDIF
 
    Box(, 15, 60 )
 
-   IF gBrojacKalkulacija == "D"
-      cBrKalk := UBrojDok( Val( Left( cBrKalk, 5 ) ) + 1, 5, Right( cBrKalk, 3 ) )
-   ENDIF
 
    DO WHILE .T.
 
@@ -134,16 +131,14 @@ FUNCTION FaKaPrenos_MP_u_razduzenje()
 
       SEEK cFaktFirma + cIdTipDok
 
-      MsgO( "Generisem podatke...." )
+      MsgO( "Generacija podataka ...." )
 
       DO WHILE !Eof() .AND. cFaktFirma + cIdTipDok == IdFirma + IdTipDok
 
 
          IF fakt->datdok < dFaktOd .OR. fakt->datdok > dFaktDo // datumska provjera
-
             SKIP
             LOOP
-
          ENDIF
 
          IF nLeftArt > 0 .AND. Left( idroba, nLeftArt ) != cArtPocinju
@@ -153,10 +148,8 @@ FUNCTION FaKaPrenos_MP_u_razduzenje()
 
          // usluge ne prenosi takodjer
          IF AllTrim( podbr ) == "."  .OR. idroba = "U"
-
             SKIP
             LOOP
-
          ENDIF
 
          cIdRoba := fakt->idroba
@@ -182,8 +175,7 @@ FUNCTION FaKaPrenos_MP_u_razduzenje()
             SEEK cIdFirma + "11" + cIdRoba
          ELSE
             SET ORDER TO TAG "5"
-            SEEK cIdFirma + "11" + cIdRoba + ;
-               Str( fakt->cijena, 12, 2 )
+            SEEK cIdFirma + "11" + cIdRoba + Str( fakt->cijena, 12, 2 )
          ENDIF
 
          IF !Found()
@@ -218,7 +210,6 @@ FUNCTION FaKaPrenos_MP_u_razduzenje()
 
          ENDIF
 
-
          my_rlock() // saberi kolicine za jedan artikal
          REPLACE kolicina WITH ( kolicina + fakt->kolicina )
 
@@ -234,8 +225,8 @@ FUNCTION FaKaPrenos_MP_u_razduzenje()
       SET ORDER TO TAG "1"
       GO TOP
 
-      // brisi stavke koje su kolicina = 0
-      DO WHILE !Eof()
+
+      DO WHILE !Eof() // brisi stavke koje su kolicina = 0
          IF field->kolicina = 0
             my_rlock()
             DELETE

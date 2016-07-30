@@ -122,7 +122,6 @@
 #define F_POMGN     127
 #define F_FAKT_PRIPR2     128
 #define F_FAKT_PRIPR9     129
-#define F_PRIPR9    430
 #define F_FAKT_ATTR     155
 
 

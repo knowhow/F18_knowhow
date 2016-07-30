@@ -122,7 +122,7 @@ FUNCTION Get1_41()
 
    IF IsPdv()
       IF ( dozvoljeno_azuriranje_sumnjivih_stavki() .AND. ( _MpcSAPP == 0 .OR. fNovi ) )
-         FaktMPC( @_MPCSAPP, _idfirma + _idkonto + _idroba )
+         kalk_fakticka_mpc( @_MPCSAPP, _idfirma, _idkonto, _idroba )
       ENDIF
    ELSE
 
@@ -130,7 +130,7 @@ FUNCTION Get1_41()
       // ovo dole do daljnjeg ostavljamo
       IF ( ( _idvd <> '47' ) .AND. !fnovi .AND. gcijene == "2" .AND. roba->tip != "T" .AND. _MpcSapp = 0 )
          // uzmi mpc sa kartice
-         FaktMPC( @_MPCSAPP, _idfirma + _idkonto + _idroba )
+         kalk_fakticka_mpc( @_MPCSAPP, _idfirma, _idkonto, _idroba )
       ENDIF
 
    ENDIF

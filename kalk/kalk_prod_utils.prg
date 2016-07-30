@@ -316,43 +316,43 @@ FUNCTION MarzaMpR()
    AEval( GetList, {| o| o:display() } )
 
    RETURN
-// }
 
 
 
-/* FaktMPC(nMPC,cseek,dDatum)
- *     Fakticka maloprodajna cijena
- */
 
-FUNCTION FaktMPC( nMPC, cseek, dDatum )
 
-   // {
+FUNCTION kalk_fakticka_mpc( nMPC, cIdFirma, cPKonto, cIdRoba, dDatum )
+
    LOCAL nOrder
+
    nMPC := UzmiMPCSif()
-   SELECT kalk
+
    PushWA()
-   SET FILTER TO
-   // nOrder:=indexord()
-   SET ORDER TO TAG "4" // idFirma+pkonto+idroba+dtos(datdok)
-   SEEK cseek + "X"
-   SKIP -1
-   DO WHILE !Bof() .AND. idfirma + pkonto + idroba == cseek
+
+   find_kalk_by_pkonto_idroba( cIdFirma, cPKonto, cIdRoba )
+   GO BOTTOM
+
+   DO WHILE !Bof() .AND. idfirma + pkonto + idroba == cIdFirma + cPKonto + cIdRoba
+
       IF dDatum <> NIL .AND. dDatum < datdok
-         SKIP -1; LOOP
+         SKIP -1
+         LOOP
       ENDIF
+
       IF idvd $ "11#80#81"
-         nMPC := mpcsapp
+         nMPC := field->mpcsapp
          EXIT
       ELSEIF idvd == "19"
          nMPC := fcj + mpcsapp
          EXIT
       ENDIF
-      SKIP -1
+
+      SKIP -1 // od dna kartice ka vrhu
    ENDDO
    PopWa()
-   // dbsetorder(nOrder)
 
-   RETURN
+
+   RETURN .T.
 
 
 

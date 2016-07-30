@@ -83,7 +83,7 @@ FUNCTION kalk_nivelacija_11()
       nMPC := UzmiMPCSif()
 
       IF dozvoljeno_azuriranje_sumnjivih_stavki()
-         faktMPC( @nMPC, _rec[ "idfirma" ] + _rec[ "pkonto" ] + _rec[ "idroba" ] )
+         kalk_fakticka_mpc( @nMPC, _rec[ "idfirma" ], _rec[ "pkonto" ], _rec[ "idroba" ] )
          SELECT kalk_pripr
       ENDIF
 

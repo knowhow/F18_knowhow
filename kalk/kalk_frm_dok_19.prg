@@ -86,7 +86,7 @@ FUNCTION Get1_19()
    _PU_I := "3"
 
    IF fnovi .AND.  dozvoljeno_azuriranje_sumnjivih_stavki()
-      FaktMPC( @nStCj, _idfirma + _pkonto + _idroba )
+      kalk_fakticka_mpc( @nStCj, _idfirma, _pkonto, _idroba )
    ENDIF
 
    VTPorezi()

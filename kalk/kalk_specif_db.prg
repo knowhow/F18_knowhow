@@ -534,15 +534,16 @@ FUNCTION ScanPKonto( dDatOd, dDatDo, cIdKPovrata, cKartica, cVarijanta, cKesiraj
       IF ( cKartica == "D" )
          // ocitaj sa kartica
          nMpc := 0
-         cSeek := kalk->( idfirma + pkonto + idroba )
+         //cSeek := kalk->( idfirma + pkonto + idroba )
          SELECT kalk
          nGGo := RecNo()
          nGGOrd := IndexOrd()
          SELECT koncij
          SEEK Trim( kalk->pkonto )
          SELECT kalk
-         // dan prije inventure !!!
-         FaktMPC( @nmpc, cSeek, dDatDo - 1 )
+
+
+         kalk_fakticka_mpc( @nMpc, kalk->idfirma, kalk->pkonto, kalk->idroba, dDatDo - 1 ) // dan prije inventure !
          dbSetOrder( nGGOrd )
          GO nGGo
          SELECT rekap1

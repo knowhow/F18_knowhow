@@ -1756,41 +1756,6 @@ STATIC FUNCTION kalk_imp_temp_to_roba()
 
 
 
-/* GetKVars(dDatDok, cBrKalk, cTipDok, cIdKonto, cIdKonto2, cRazd)
- *     Setuj parametre prenosa kalk_imp_temp->kalk_pripr(KALK)
- *   param: dDatDok - datum dokumenta
- *   param: cBrKalk - broj kalkulacije
- *   param: cTipDok - tip dokumenta
- *   param: cIdKonto - id konto zaduzuje
- *   param: cIdKonto2 - konto razduzuje
- *   param: cRazd - razdvajati dokumente po broju fakture (D ili N)
- */
-
-STATIC FUNCTION GetKVars( dDatDok, cBrKalk, cTipDok, cIdKonto, cIdKonto2, cRazd )
-
-   dDatDok := Date()
-   cTipDok := "14"
-   cIdFirma := gFirma
-   cIdKonto := PadR( "1200", 7 )
-   cIdKonto2 := PadR( "1310", 7 )
-   cRazd := "D"
-   O_KONTO
-   cBrKalk := kalk_get_next_kalk_doc_uvecaj( cIdFirma, cTipDok )
-
-   Box(, 15, 60 )
-   @ m_x + 1, m_y + 2   SAY "Broj kalkulacije 14-" GET cBrKalk PICT "@!"
-   @ m_x + 1, Col() + 2 SAY "Datum:" GET dDatDok
-   @ m_x + 4, m_y + 2   SAY "Konto razduzuje:" GET cIdKonto2 PICT "@!" VALID P_Konto( @cIdKonto2 )
-   @ m_x + 6, m_y + 2   SAY "Razdvajati kalkulacije po broju faktura" GET cRazd PICT "@!" VALID cRazd $ "DN"
-   READ
-   BoxC()
-
-   IF LastKey() == K_ESC
-      RETURN 0
-   ENDIF
-
-   RETURN 1
-
 
 
 
@@ -1803,6 +1768,7 @@ FUNCTION kalk_imp_obradi_sve_dokumente( nPocniOd, lAsPokreni, lStampaj )
    LOCAL dDatVal
    LOCAL cN_kalk_dok := ""
    LOCAL nUvecaj := 0
+   LOCAL cMKonto, cPKonto
 
    o_kalk_pripr()
    o_kalk_pript()
@@ -1834,8 +1800,8 @@ FUNCTION kalk_imp_obradi_sve_dokumente( nPocniOd, lAsPokreni, lStampaj )
       GO nPocniOd
    ENDIF
 
-   // uzmi parametre koje ces dokumente prenositi
-   cBBTipDok := Space( 30 )
+
+   cBBTipDok := Space( 30 ) // uzmi parametre koje ces dokumente prenositi
    Box(, 3, 70 )
    @ 1 + m_x, 2 + m_y SAY "Prenos sljedecih tipova dokumenata ( kalk pript -> pripr) :"
    @ 3 + m_x, 2 + m_y SAY "Tip dokumenta (prazno-svi):" GET cBBTipDok PICT "@S25"
@@ -1859,6 +1825,8 @@ FUNCTION kalk_imp_obradi_sve_dokumente( nPocniOd, lAsPokreni, lStampaj )
       cBrDok := field->brdok
       cFirma := field->idfirma
       cIdVd  := field->idvd
+      cPKonto := field->pkonto
+      cMKonto := field->mkonto
 
       IF !Empty( cBBTipDok ) .AND. !( cIdVd $ cBBTipDok )
          SKIP
@@ -1866,13 +1834,13 @@ FUNCTION kalk_imp_obradi_sve_dokumente( nPocniOd, lAsPokreni, lStampaj )
       ENDIF
 
       nT_area := Select()
-      cN_kalk_dok := kalk_get_next_kalk_doc_uvecaj( cFirma, cIdVd, 1 ) // daj konacni novi broj dokumenta kalk
+      cN_kalk_dok := kalk_get_next_broj_v5( cFirma, cIdVd, kalk_konto_za_brojac( cIdVd, cMKonto, cPKonto ) )  // daj konacni novi broj dokumenta kalk
       SELECT ( nT_area )
 
       @ 3 + m_x, 2 + m_y SAY "Prebacujem: " + cFirma + "-" + cIdVd + "-" + cBrDok
 
       nStCnt := 0
-      DO WHILE !Eof() .AND. field->brdok = cBrDok .AND. field->idfirma = cFirma .AND. field->idvd = cIdVd
+      DO WHILE !Eof() .AND. field->brdok == cBrDok .AND. field->idfirma == cFirma .AND. field->idvd == cIdVd
 
 
          SELECT kalk_pripr // jedan po jedan row azuriraj u kalk_pripr

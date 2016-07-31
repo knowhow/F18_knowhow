@@ -192,6 +192,7 @@ FUNCTION kalk_par_razno()
    LOCAL _vise_konta := fetch_metric( "kalk_dokument_vise_konta", NIL, "N" )
    LOCAL _rok := fetch_metric( "kalk_definisanje_roka_trajanja", NIL, "N" )
    LOCAL _opis := fetch_metric( "kalk_dodatni_opis_kod_unosa_dokumenta", NIL, "N" )
+   LOCAL nLenBrKalk :=  kalk_duzina_brojaca_dokumenta()
    PRIVATE  GetList := {}
 
    IF glBrojacPoKontima
@@ -206,7 +207,7 @@ FUNCTION kalk_par_razno()
 
    @ m_x + _x, m_y + 2 SAY "Brojac kalkulacija D/N         " GET gBrojacKalkulacija PICT "@!" VALID gBrojacKalkulacija $ "DN"
 
-   @ m_x + _x, Col() + 2 SAY "duzina brojaca:" GET gLenBrKalk PICT "9" VALID gLenBrKalk > 0 .AND. gLenBrKalk < 10
+   @ m_x + _x, Col() + 2 SAY8 "dužina brojača:" GET nLenBrKalk PICT "9" VALID ( nLenBrKalk > 0 .AND. nLenBrKalk < 10 )
    ++ _x
 
    @ m_x + _x, m_y + 2 SAY "Brojac kalkulacija po kontima (D/N)" GET _brojac VALID _brojac $ "DN" PICT "@!"
@@ -285,7 +286,7 @@ FUNCTION kalk_par_razno()
       set_metric( "kalk_cache_tabela", f18_user(), gCache )
       set_metric( "kalk_kontrola_odstupanja_nc", f18_user(), gNC_ctrl )
       set_metric( "kalk_limit_za_otvorene_stavke", f18_user(), gnLOst )
-      set_metric( "kalk_duzina_brojaca_dokumenta", nil, gLenBrKalk )
+      kalk_duzina_brojaca_dokumenta( nLenBrKalk )
       set_metric( "roba_trazi_po_sifradob", NIL, gArtPretragaSifraDob )
       set_metric( "kalk_reset_artikla_kod_unosa", my_user(), _reset_roba )
       set_metric( "pregled_rabata_kod_ulaza", my_user(), _rabat )
@@ -398,7 +399,7 @@ FUNCTION is_kalk_fin_isti_broj()
 
    IF s_cKalkFinIstirBroj == NIL
       s_cKalkFinIstirBroj := fetch_metric( "kalk_fin_isti_broj", NIL, "D" )
-  ENDIF
+   ENDIF
 
    RETURN s_cKalkFinIstirBroj == "D"
 

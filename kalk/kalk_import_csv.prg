@@ -790,10 +790,13 @@ STATIC FUNCTION TTbl2Kalk()
    nRbr := 0
    nUvecaj := 1
 
-   // osnovni podaci ove kalkulacije
-   cFakt := AllTrim( temp->brdok )
+
+   cFakt := AllTrim( temp->brdok ) // osnovni podaci ove kalkulacije
    cTDok := GetKTipDok( AllTrim( temp->idtipdok ) )
-   cBrojKalk := kalk_sljedeci_brdok( cTDok, gFirma )
+
+
+   //cBrojKalk := kalk_sljedeci_brdok( cTDok, gFirma )
+   cBrojKalk :=  kalk_get_next_broj_v5( gFirma, cTDok, NIL )
 
    DO WHILE !Eof()
 

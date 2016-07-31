@@ -257,12 +257,8 @@ STATIC FUNCTION kalk_mag_insert_ps_into_pripr( data, params )
    O_ROBA
    O_TARIFA
 
-   IF glBrojacPoKontima
-      _sufix := kalk_sufix_brdok( _m_konto )
-      _kalk_broj := kalk_sljedeci_brdok( _kalk_tip, gFirma, _sufix )
-   ELSE
-      _kalk_broj := kalk_get_next_kalk_doc_uvecaj( gFirma, _kalk_tip )
-   ENDIF
+   _kalk_broj := kalk_get_next_broj_v5( gFirma, _kalk_tip, _mkonto )
+
 
    IF Empty( _kalk_broj )
       _kalk_broj := PadR( "00001", 8 )

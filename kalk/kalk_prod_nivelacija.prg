@@ -42,19 +42,7 @@ FUNCTION kalk_nivelacija_11()
 
    PRIVATE cBrNiv := "0"
 
-   find_kalk_doks_za_tip( cIdFirma, "19" )
-   GO BOTTOM
-   IF field->idvd <> "19"
-      cBrNiv := Space( 8 )
-   ELSE
-      cBrNiv := field->brdok
-   ENDIF
-
-   _sufix := kalk_sufix_brdok( kalk_pripr->idkonto )
-   SELECT kalk_pripr
-
-   cBrNiv := kalk_sljedeci_brdok( "19", gFirma, _sufix )
-   // cBrNiv := UBrojDok(val(left(cBrNiv,5))+1,5,right(cBrNiv,3))
+   cBrNiv := kalk_get_next_broj_v5( gFirma, "19", kalk_pripr->idkonto  )
 
    SELECT kalk_pripr
    GO TOP

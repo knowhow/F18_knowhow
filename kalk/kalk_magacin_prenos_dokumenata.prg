@@ -55,13 +55,13 @@ FUNCTION magacin_prenos_fakt_10_to_kalk_14()
    LOCAL dDatPl := CToD( "" )
    LOCAL _params := fakt_params()
 
-   //PRIVATE lVrsteP := _params[ "fakt_vrste_placanja" ]
+   // PRIVATE lVrsteP := _params[ "fakt_vrste_placanja" ]
 
    o_koncij()
    o_kalk_pripr()
-   //o_kalk()
-   //o_kalk_doks()
-   //o_kalk_doks2()
+   // o_kalk()
+   // o_kalk_doks()
+   // o_kalk_doks2()
    O_ROBA
    O_KONTO
    O_PARTN
@@ -73,16 +73,15 @@ FUNCTION magacin_prenos_fakt_10_to_kalk_14()
    cIdKonto2 := fetch_metric( "kalk_fakt_prenos_10_14_konto_2", my_user(), PadR( "1310", 7 ) )
    cIdZaduz2 := Space( 6 )
 
+
    IF glBrojacPoKontima
       Box( "#FAKT->KALK", 3, 70 )
       @ m_x + 2, m_y + 2 SAY "Konto razduzuje" GET cIdKonto2 PICT "@!" VALID P_Konto( @cIdKonto2 )
       READ
       BoxC()
-      cSufiks := kalk_sufix_brdok( cIdKonto2 )
-      cBrKalk := kalk_sljedeci_brdok( "14", cIdFirma, cSufiks )
-   ELSE
-      cBrKalk := kalk_get_next_kalk_doc_uvecaj( cIdFirma, "14" )
    ENDIF
+   cBrKalk :=  kalk_get_next_broj_v5( cIdFirma, "14", cIdKonto2 )
+
 
    Box(, 15, 60 )
 
@@ -93,9 +92,9 @@ FUNCTION magacin_prenos_fakt_10_to_kalk_14()
       @ m_x + 1, Col() + 2 SAY "Datum:" GET dDatKalk
       @ m_x + 4, m_y + 2   SAY "Konto razduzuje:" GET cIdKonto2 PICT "@!" WHEN !glBrojacPoKontima VALID P_Konto( @cIdKonto2 )
 
-      //IF gNW <> "X"
-      //   @ m_x + 4, Col() + 2 SAY "Razduzuje:" GET cIdZaduz2  PICT "@!"      VALID Empty( cidzaduz2 ) .OR. P_Firma( @cIdZaduz2 )
-      //ENDIF
+      // IF gNW <> "X"
+      // @ m_x + 4, Col() + 2 SAY "Razduzuje:" GET cIdZaduz2  PICT "@!"      VALID Empty( cidzaduz2 ) .OR. P_Firma( @cIdZaduz2 )
+      // ENDIF
 
       cFaktFirma := IF( cIdKonto2 == gKomKonto, gKomFakt, cIdFirma )
       @ m_x + 6, m_y + 2 SAY "Broj fakture: " GET cFaktFirma
@@ -119,9 +118,9 @@ FUNCTION magacin_prenos_fakt_10_to_kalk_14()
          LOOP
       ELSE
 
-         //IF lVrsteP
-        //    cIdVrsteP := idvrstep
-         //ENDIF
+         // IF lVrsteP
+         // cIdVrsteP := idvrstep
+         // ENDIF
 
          aMemo := ParsMemo( txt )
 
@@ -188,9 +187,9 @@ FUNCTION magacin_prenos_fakt_10_to_kalk_14()
 
          _rec[ "datval" ] := dDatPl
 
-         //IF lVrsteP
-          //  _rec[ "k2" ] := cIdVrsteP
-         //ENDIF
+         // IF lVrsteP
+         // _rec[ "k2" ] := cIdVrsteP
+         // ENDIF
 
          update_rec_server_and_dbf( "kalk_doks2", _rec, 1, "FULL" )
 
@@ -223,7 +222,7 @@ FUNCTION magacin_prenos_fakt_10_to_kalk_14()
             REPLACE idfirma WITH cIdFirma, ;
                rbr     WITH Str( ++nRbr, 3 ), ;
                idvd WITH "14", ;   // izlazna faktura
-               brdok WITH cBrKalk, ;
+            brdok WITH cBrKalk, ;
                datdok WITH dDatKalk, ;
                idpartner WITH cIdPartner, ;
                idtarifa WITH ROBA->idtarifa, ;
@@ -327,24 +326,19 @@ FUNCTION mag_fa_ka_prenos_otpr( cIndik )
 
    cIdKonto := fetch_metric( "kalk_fakt_prenos_otpr_konto_1", my_user(), cIdKonto )
    cIdKonto2 := fetch_metric( "kalk_fakt_prenos_otpr_konto_2", my_user(), cIdKonto2 )
-
    cIdZaduz2 := Space( 6 )
 
    IF glBrojacPoKontima
 
       Box( "#FAKT->KALK", 3, 70 )
-      @ m_x + 2, m_y + 2 SAY "Konto zaduzuje" GET cIdKonto ;
-         PICT "@!" ;
-         VALID P_Konto( @cIdKonto )
+      @ m_x + 2, m_y + 2 SAY "Konto zaduzuje" GET cIdKonto PICT "@!" VALID P_Konto( @cIdKonto )
       READ
       BoxC()
 
-      cSufiks := kalk_sufix_brdok( cIdKonto )
-      cBrKalk := kalk_sljedeci_brdok( cTipKalk, cIdFirma, cSufiks )
-
-   ELSE
-      cBrKalk := kalk_get_next_kalk_doc_uvecaj( cIdFirma, cTipKalk )
    ENDIF
+
+   cBrKalk := kalk_get_next_broj_v5( cIdFirma, cTipKalk, cIdKonto )
+
 
    Box(, 15, 60 )
 
@@ -356,9 +350,9 @@ FUNCTION mag_fa_ka_prenos_otpr( cIndik )
       @ m_x + 1, Col() + 2 SAY "Datum:" GET dDatKalk
       @ m_x + 3, m_y + 2 SAY "Konto zaduzuje :" GET cIdKonto  PICT "@!" WHEN !glBrojacPoKontima VALID P_Konto( @cIdKonto )
       @ m_x + 4, m_y + 2 SAY "Konto razduzuje:" GET cIdKonto2 PICT "@!" VALID Empty( cidkonto2 ) .OR. P_Konto( @cIdKonto2 )
-      //IF gNW <> "X"
-      //   @ m_x + 4, Col() + 2 SAY "Razduzuje:" GET cIdZaduz2  PICT "@!"      VALID Empty( cidzaduz2 ) .OR. P_Firma( @cIdZaduz2 )
-      //ENDIF
+      // IF gNW <> "X"
+      // @ m_x + 4, Col() + 2 SAY "Razduzuje:" GET cIdZaduz2  PICT "@!"      VALID Empty( cidzaduz2 ) .OR. P_Firma( @cIdZaduz2 )
+      // ENDIF
 
       cFaktFirma := cIdFirma
 
@@ -572,9 +566,9 @@ FUNCTION mag_fa_ka_prenos_otpr_period()
       @ m_x + 3, m_y + 2 SAY "Konto zaduzuje :" GET _id_konto PICT "@!" VALID Empty( _id_konto ) .OR. P_Konto( @_id_konto )
       @ m_x + 4, m_y + 2 SAY "Konto razduzuje:" GET _id_konto_2 PICT "@!" VALID Empty( _id_konto_2 ) .OR. P_Konto( @_id_konto_2 )
 
-      //IF gNW <> "X"
-      //   @ m_x + 4, Col() + 2 SAY "Razduzuje:" GET _razduzuje PICT "@!" VALID Empty( _razduzuje ) .OR. P_Firma( @_razduzuje )
-    //  ENDIF
+      // IF gNW <> "X"
+      // @ m_x + 4, Col() + 2 SAY "Razduzuje:" GET _razduzuje PICT "@!" VALID Empty( _razduzuje ) .OR. P_Firma( @_razduzuje )
+      // ENDIF
 
       _fakt_id_firma := _id_firma
 

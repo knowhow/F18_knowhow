@@ -11,16 +11,112 @@
 
 #include "f18.ch"
 
-MEMVAR m_x, m_y, GetList
+MEMVAR m_x, m_y, GetList, glBrojacPoKontima
+
+STATIC s_nLenKalkBrojac
+
+
+FUNCTION kalk_get_next_broj_v5( cIdFirma, cIdVd, cIdKonto )
+
+   LOCAL cSufiks := Space( 3 )
+
+   IF is_brojac_po_kontima() .AND. cIdKonto != NIL
+      cSufiks := kalk_sufiks_brdok( cIdKonto )
+   ENDIF
+
+   RETURN kalk_sljedeci_brdok( cIdVd, cIdFirma, cSufiks )
+
+
+FUNCTION is_brojac_po_kontima()
+
+   RETURN glBrojacPoKontima
+
+
+FUNCTION kalk_duzina_brojaca_dokumenta( nLen )
+
+   IF s_nLenKalkBrojac == NIL
+      s_nLenKalkBrojac := fetch_metric( "kalk_duzina_brojaca_dokumenta", nil, 5 )
+   ENDIF
+
+   IF nLen <> NIL
+      set_metric( "kalk_duzina_brojaca_dokumenta", nil, nLen )
+      s_nLenKalkBrojac  := nLen
+   ENDIF
+
+   RETURN s_nLenKalkBrojac
+
+
 /*
-   kalk_set_brkalk_za_idvd( "11", @cBrKalk )
+       kalk_konto_za_brojac( "11", "1320", "13301" ) => 13301
+*/
+
+FUNCTION kalk_konto_za_brojac( cIdVd, cMKonto, cPKonto )
+
+   DO CASE
+   CASE cIdvd $ "KO#10#16#14#96#95#IM"
+      RETURN cMkonto
+
+   CASE cIdvd $ "80#81#11#41#42#19"
+      RETURN cPKonto
+   OTHERWISE
+
+      RETURN cMKonto
+   ENDCASE
+
+   RETURN cMKonto
+
+
+/*
+  sljedeci broj kalkulacije, za zadani sufiks
+*/
+
+FUNCTION kalk_sljedeci_brdok( cTipKalk, cIdFirma, cSufiks )
+
+   LOCAL cBrKalk := Space( 8 )
+   LOCAL nLenGlavni := kalk_duzina_brojaca_dokumenta()
+   LOCAL nLenSufiks := 8 - nLenGlavni
+
+   IF cSufiks == NIL .OR. Empty( cSufiks )
+      cSufiks := Space( nLenSufiks )
+   ELSE
+      // "/BL"
+      nLenSufiks := Len( cSufiks )
+      nLenGlavni := 8 - nLenSufiks // duzina sifre se mora prilagoditi sufiksu
+   ENDIF
+
+altd()
+   IF is_brojac_po_kontima() .AND. !Empty( cSufiks ) // samo trazi ako ima sufiks npr '/T '
+      find_kalk_doks_za_tip_sufix_zadnji_broj( cIdFirma, cTipKalk, cSufiks )
+   ELSE // ako je sufiks prazan, onda se samo gleda tip
+      find_kalk_doks_za_tip_zadnji_broj( cIdFirma, cTipKalk )
+   ENDIF
+
+   GO BOTTOM
+
+   IF cTipKalk <> field->idVD .OR. ( is_brojac_po_kontima() .AND. Right( field->brDok, nLenSufiks ) <> cSufiks )
+      cBrKalk := Space( kalk_duzina_brojaca_dokumenta() ) + cSufiks
+   ELSE
+      cBrKalk := field->brDok
+   ENDIF
+
+   IF AllTrim( cBrKalk ) >= Replicate( "9", nLenGlavni )  // 10_0001 -> A0001, 11_0001 -> B0001
+      cBrKalk := PadR( novasifra( AllTrim( cBrKalk ) ), nLenGlavni ) + Right( cBrKalk, nLenSufiks )
+   ELSE
+      cBrKalk := UBrojDok( Val( Left( cBrKalk, nLenGlavni ) ) + 1, nLenGlavni, Right( cBrKalk, nLenSufiks ) )
+   ENDIF
+
+   RETURN cBrKalk
+
+
+/*
+      kalk_set_brkalk_za_idvd( "11", @cBrKalk )
 */
 
 FUNCTION kalk_set_brkalk_za_idvd( cIdVd, cBrKalk )
 
    IF gBrojacKalkulacija == "D"
 
-      find_kalk_doks_za_tip( gFirma, "11" )
+      find_kalk_doks_za_tip_zadnji_broj( gFirma, cIdVd )
       GO BOTTOM
       IF field->idvd <> cIdVd
          cBrKalk := Space( 8 )
@@ -33,64 +129,9 @@ FUNCTION kalk_set_brkalk_za_idvd( cIdVd, cBrKalk )
 
    RETURN cBrKalk
 
-
-
 /*
-  sljedeci broj kalkulacije
-*/
-
-FUNCTION kalk_sljedeci_brdok( cTipKalk, cIdFirma, cSufiks )
-
-   LOCAL cBrKalk := Space( 8 )
-
-   IF cSufiks == nil
-      cSufiks := Space( 3 )
-   ENDIF
-
-
-   IF glBrojacPoKontima
-         /*
-            SELECT kalk_doks
-            SET ORDER TO TAG "1S" // "IdFirma+idvd+SUBSTR(brdok,6)+LEFT(brdok,5)"
-            SEEK cIdFirma + cTipKalk + cSufiks + "X"
-         */
-      find_kalk_doks_za_tip_sufix( cIdFirma, cTipKalk, cSufiks )
-   ELSE
-      find_kalk_doks_za_tip( cIdFirma, cTipKalk )
-         /*
-            SELECT kalk
-            SET ORDER TO TAG "1"
-            SEEK cIdFirma + cTipKalk + "X"
-         */
-   ENDIF
-
-   // SKIP -1
-   GO BOTTOM // zzadnji u nizu
-
-   IF cTipKalk <> field->idVD .OR. glBrojacPoKontima .AND. Right( field->brDok, 3 ) <> cSufiks
-      cBrKalk := Space( gLenBrKalk ) + cSufiks
-   ELSE
-      cBrKalk := field->brDok
-   ENDIF
-
-   IF cTipKalk == "16" .AND. glEvidOtpis
-      cBrKalk := StrTran( cBrKalk, "-X", "  " )
-   ENDIF
-
-   IF AllTrim( cBrKalk ) >= "99999"
-      cBrKalk := PadR( novasifra( AllTrim( cBrKalk ) ), 5 ) + Right( cBrKalk, 3 )
-   ELSE
-      cBrKalk := UBrojDok( Val( Left( cBrKalk, 5 ) ) + 1, 5, Right( cBrKalk, 3 ) )
-   ENDIF
-
-   RETURN cBrKalk
-
-
-
-
-   /*
     uvecava broj kalkulacije sa stepenom uvecanja nUvecaj
-   */
+*/
 
 FUNCTION kalk_get_next_kalk_doc_uvecaj( cIdFirma, cIdTipDok, nUvecaj )
 
@@ -156,8 +197,8 @@ FUNCTION kalk_reset_broj_dokumenta( firma, tip_dokumenta, broj_dokumenta, konto 
       konto := ""
    ENDIF
 
-   IF glBrojacPoKontima
-      _sufix := kalk_sufix_brdok( konto )
+   IF is_brojac_po_kontima()
+      _sufix := kalk_sufiks_brdok( konto )
    ENDIF
 
    // param: kalk/10/10
@@ -194,25 +235,18 @@ FUNCTION kalk_novi_broj_dokumenta( firma, tip_dokumenta, konto )
    ENDIF
 
 
-   IF glBrojacPoKontima // moramo pronaci sufiks
-      _sufix := kalk_sufix_brdok( konto )
+   IF is_brojac_po_kontima()
+      _sufix := kalk_sufiks_brdok( konto )
    ENDIF
 
    // param: kalk/10/10
    _param := "kalk" + "/" + firma + "/" + tip_dokumenta + iif( !Empty( _sufix ), "_" + _sufix, "" )
    _broj := fetch_metric( _param, nil, _broj )
 
-   // konsultuj i doks uporedo
-   find_kalk_doks_za_tip_sufix(  firma, tip_dokumenta, _sufix )
 
-   // IF glBrojacPoKontima
-   // SET ORDER TO TAG "1S"
-   // ELSE
-   // SET ORDER TO TAG "1"
-   // ENDIF
-   // GO TOP
-   // SEEK firma + tip_dokumenta + _sufix + "X"
-   // SKIP -1
+   find_kalk_doks_za_tip_sufix_zadnji_broj(  firma, tip_dokumenta, _sufix )    // konsultuj i kalk_doks uporedo
+
+
    GO BOTTOM
 
    IF field->idfirma == firma .AND. field->idvd == tip_dokumenta .AND. ;
@@ -249,10 +283,12 @@ FUNCTION kalk_novi_broj_dokumenta( firma, tip_dokumenta, konto )
 
 
 
-// ---------------------------------------------
-// odredjuje sufiks broja dokumenta
-// ---------------------------------------------
-FUNCTION kalk_sufix_brdok( cIdKonto )
+/*
+
+koncij.sufiks  polje
+*/
+
+FUNCTION kalk_sufiks_brdok( cIdKonto )
 
    LOCAL nArr := Select()
    LOCAL cSufiks := Space( 3 )
@@ -271,9 +307,7 @@ FUNCTION kalk_sufix_brdok( cIdKonto )
 
 
 
-// ------------------------------------------------------------
-// setuj broj dokumenta u pripremi ako treba !
-// ------------------------------------------------------------
+/*  ovo se ne koristi ?
 FUNCTION kalk_set_broj_dokumenta()
 
    LOCAL _broj_dokumenta
@@ -298,8 +332,8 @@ FUNCTION kalk_set_broj_dokumenta()
    _td := field->idvd
    _konto := field->idkonto
 
-   // daj mi novi broj dokumenta
-   _broj_dokumenta := kalk_novi_broj_dokumenta( _firma, _td, _konto )
+
+   _broj_dokumenta := kalk_novi_broj_dokumenta( _firma, _td, _konto ) // odrediti novi broj dokumenta
 
    SELECT kalk_pripr
    SET ORDER TO TAG "1"
@@ -324,7 +358,7 @@ FUNCTION kalk_set_broj_dokumenta()
    PopWa()
 
    RETURN .T.
-
+*/
 
 
 // ------------------------------------------------------------
@@ -353,11 +387,11 @@ FUNCTION kalk_set_param_broj_dokumenta()
 
    IF LastKey() == K_ESC
       BoxC()
-      RETURN
+      RETURN .F.
    ENDIF
 
    IF glBrojacPoKontima
-      _sufix := kalk_sufix_brdok( _konto )
+      _sufix := kalk_sufiks_brdok( _konto )
    ENDIF
 
    // param: kalk/10/10
@@ -382,31 +416,27 @@ FUNCTION kalk_set_param_broj_dokumenta()
 
 
 
+
 FUNCTION get_kalk_brdok( _idfirma, _idvd, _idkonto, _idkonto2 )
 
-   LOCAL _brdok, cSufiks
+   LOCAL _brdok, cIdKonto
 
-   IF glBrojacPoKontima
+altd()
+   IF is_brojac_po_kontima()
 
       Box( "#Glavni konto", 3, 70 )
       IF _idvd $ "10#16#18#IM#"
          @ m_x + 2, m_y + 2 SAY8 "Magacinski konto zadužuje" GET _idKonto VALID P_Konto( @_idKonto ) PICT "@!"
          READ
 
-         cSufiks := kalk_sufix_brdok( _idKonto )
+         cIdKonto := _idKonto
       ELSE
          @ m_x + 2, m_y + 2 SAY8 "Magacinski konto razdužuje" GET _idKonto2 VALID P_Konto( @_idKonto2 ) PICT "@!"
          READ
-         cSufiks := kalk_sufix_brdok( _idKonto2 )
+         cIdKonto := _idKonto2
       ENDIF
       BoxC()
 
-      _brDok := kalk_sljedeci_brdok( _idvd, _idfirma, cSufiks )
-
-   ELSE
-
-      _brDok := kalk_sljedeci_brdok( _idvd, _idfirma )
-
    ENDIF
 
-   RETURN _brdok
+   RETURN kalk_get_next_broj_v5( _idfirma, _idvd, cIdKonto )

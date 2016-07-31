@@ -131,7 +131,6 @@ METHOD TKalkMod:set_module_gvars()
    PUBLIC gVodiKalo := "N"
    PUBLIC gAutoRavn := "N"
    PUBLIC gAutoCjen := "D"
-   PUBLIC gLenBrKalk := 5
    PUBLIC gArtPretragaSifraDob := Space( 20 )
    PUBLIC gVarEv := "1"  // 1-sa cijenama   2-bez cijena
    PUBLIC c24T1 := PadR( "Tr 1", 15 )
@@ -219,7 +218,6 @@ METHOD TKalkMod:set_module_gvars()
 
    PUBLIC glZabraniVisakIP
    PUBLIC glBrojacPoKontima := .F.
-   PUBLIC glEvidOtpis
    PUBLIC gcSLObrazac
    PUBLIC ZAOKRUZENJE := 2
 
@@ -313,7 +311,7 @@ METHOD TKalkMod:set_module_gvars()
    gCache := fetch_metric( "kalk_cache_tabela", f18_user(), gCache )
    gNC_ctrl := fetch_metric( "kalk_kontrola_odstupanja_nc", f18_user(), gNC_ctrl )
    gnLOst := fetch_metric( "kalk_limit_za_otvorene_stavke", f18_user(), gnLOst )
-   gLenBrKalk := fetch_metric( "kalk_duzina_brojaca_dokumenta", nil, gLenBrKalk )
+
    gArtPretragaSifraDob := fetch_metric( "roba_trazi_po_sifradob", NIL, Space( 20 ) )
 
    gAImpPrint := fetch_metric( "kalk_auto_import_podataka_printanje", f18_user(), gAImpPrint )
@@ -332,7 +330,6 @@ METHOD TKalkMod:set_module_gvars()
    glZabraniVisakIP := fetch_metric( "kalk_zabrani_visak_kod_ip", nil, glZabraniVisakIP )
    glBrojacPoKontima := fetch_metric( "kalk_brojac_dokumenta_po_kontima", nil, glBrojacPoKontima )
 
-   glEvidOtpis := fetch_metric( "kalk_evidentiraj_otpis", nil, glEvidOtpis )
    gcSlObracun := fetch_metric( "kalk_sl_obrazac", nil, gcSLObrazac )
 
    gRobaBlock := {| Ch| KalkRobaBlock( Ch ) }

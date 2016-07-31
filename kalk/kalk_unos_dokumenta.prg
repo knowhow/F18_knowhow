@@ -1329,7 +1329,7 @@ FUNCTION kalk_unos_1( fNovi, atrib )
    PRIVATE pIzgSt := .F.
    PRIVATE Getlist := {}
 
-   IF Get1Header( fNovi ) == 0
+   IF kalk_header_get1( fNovi ) == 0
       RETURN K_ESC
    ENDIF
 
@@ -1458,7 +1458,7 @@ FUNCTION kalk_unos_2( fNovi )
 
 
 
-FUNCTION Get1Header( fNovi )
+FUNCTION kalk_header_get1( fNovi )
 
    IF fnovi
       _idfirma := gFirma
@@ -1481,6 +1481,7 @@ FUNCTION Get1Header( fNovi )
    READ
    ESC_RETURN 0
 
+altd()
    IF fNovi .AND. gBrojacKalkulacija == "D" .AND. ( _idfirma <> idfirma .OR. _idvd <> idvd )
 
       _brDok := get_kalk_brdok( _idfirma, _idvd, _idkonto, _idkonto2 )

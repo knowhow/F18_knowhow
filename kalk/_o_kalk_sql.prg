@@ -43,9 +43,10 @@ FUNCTION find_kalk_doks_by_tip_datum( cIdFirma, cIdVd, dDatOd, dDatDo )
    RETURN ! Eof()
 
 
-FUNCTION find_kalk_doks_za_tip_sufix( cIdFirma, cIdVd, cBrDokSfx )
+FUNCTION find_kalk_doks_za_tip_sufix_zadnji_broj( cIdFirma, cIdVd, cBrDokSfx )
 
    LOCAL hParams := hb_Hash()
+   LOCAL nLenSufiks := Len( cBrDokSfx )
 
    IF cIdFirma <> NIL
       hParams[ "idfirma" ] := cIdFirma
@@ -54,11 +55,13 @@ FUNCTION find_kalk_doks_za_tip_sufix( cIdFirma, cIdVd, cBrDokSfx )
    IF cIdVd <> NIL
       hParams[ "idvd" ] := cIdVd
    ENDIF
-
+   AltD()
    hParams[ "brdok_sfx" ] := cBrDokSfx  // 000010/T => /T
-   hParams[ "order_by" ] := "SUBSTR(brdok,6),LEFT(brdok,5)" // ako ima brojeva dokumenata sortiraj po sufixu
-
-   hParams[ "indeks" ] := .F. // ne trositi vrijeme na kreiranje indeksa
+   // hParams[ "order_by" ] := "SUBSTR(brdok,6),LEFT(brdok,5)" // ako ima brojeva dokumenata sortiraj po sufixu
+   hParams[ "order_by" ] := "SUBSTR(brdok," + AllTrim( Str( 8 -nLenSufiks + 1 ) ) + "),LEFT(brdok," + AllTrim( Str( 8 -nLenSufiks ) ) + ")" // ako ima brojeva dokumenata sortiraj po sufixu
+   hParams[ "indeks" ] := .F.
+   hParams[ "desc" ] := .T.
+   hParams[ "limit" ] := 1
 
    use_sql_kalk_doks( hParams )
    GO TOP
@@ -70,6 +73,30 @@ FUNCTION find_kalk_doks_za_tip( cIdFirma, cIdvd )
 
    RETURN find_kalk_doks_by_broj_dokumenta( cIdFirma, cIdvd, NIL )
 
+
+FUNCTION find_kalk_doks_za_tip_zadnji_broj( cIdFirma, cIdvd )
+
+   LOCAL hParams := hb_Hash()
+
+   IF cIdFirma <> NIL
+      hParams[ "idfirma" ] := cIdFirma
+   ENDIF
+
+   IF cIdVd <> NIL .AND. !( Empty( cIdVd ) )
+      hParams[ "idvd" ] := cIdVd
+   ENDIF
+
+
+   hParams[ "order_by" ] := "idfirma,idvd,brdok"
+   hParams[ "indeks" ] := .F.  // ne trositi vrijeme na kreiranje indeksa
+   hParams[ "desc" ] := .T.
+   hParams[ "limit" ] := 1
+   hParams[ "where_ext" ] := " AND not brdok like '%/%'"
+
+   use_sql_kalk_doks( hParams )
+   GO TOP
+
+   RETURN ! Eof()
 
 
 FUNCTION find_kalk_doks_by_broj_fakture( cIdVd, cBrFaktP )
@@ -612,12 +639,24 @@ FUNCTION use_sql_kalk_doks( hParams )
 
    IF !Empty( cWhere )
       cSql += " WHERE " + cWhere
+      IF hb_HHasKey( hParams, "where_ext" )
+        cSql += " " + hParams[ "where_ext" ]
+      ENDIF
       IF !Empty( cOrder )
          cSql += cOrder
       ENDIF
    ELSE
       cSql += " OFFSET 0 LIMIT 1 "
    ENDIF
+
+   IF hb_HHasKey( hParams, "desc" ) .AND. hParams[ "desc" ]
+      cSql += " DESC "
+   ENDIF
+   IF hb_HHasKey( hParams, "limit" )
+      cSql += " LIMIT " + sql_quote( hParams[ "limit" ] )
+   ENDIF
+
+
 
    IF hb_HHasKey( hParams, "alias" )
       cTable := hParams[ "alias" ]
@@ -673,7 +712,14 @@ STATIC FUNCTION sql_kalk_doks_where( hParams )
       IF !Empty( cWhere )
          cWhere += " AND "
       ENDIF
-      cWhere += "substr(brdok,6) = " + sql_quote( hParams[ "brdok_sfx" ] )
+
+/*
+      select * from fmk.kalk_doks
+      where substr(brdok,6) ='/T'
+      order by substr(brdok,6),left(brdok,5) DESC
+*/
+      // cWhere += "substr(brdok,6) = " + sql_quote( Trim(hParams[ "brdok_sfx" ]) )
+      cWhere += "substr(brdok," + AllTrim( Str( 8 -Len( hParams[ "brdok_sfx" ] ) + 1 ) ) + ")=" + sql_quote( Trim(hParams[ "brdok_sfx" ]) )
    ENDIF
 
    IF hb_HHasKey( hParams, "dat_do" )

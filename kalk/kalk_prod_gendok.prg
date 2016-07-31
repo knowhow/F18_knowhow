@@ -1124,7 +1124,7 @@ FUNCTION gen_ip_80()
    o_kalk_pript()
    o_kalk_pripr()
 
-   cNxt80 := GetNextKalkDoc( gFirma, "80" )
+   cNxt80 := kalk_get_next_kalk_doc_uvecaj( gFirma, "80" )
 
    // obradi dokument u kalk_pripremu -> konvertuj u 80
    SELECT pript

@@ -284,17 +284,17 @@ FUNCTION prod_fa_ka_prenos_otpr()
       @ m_x + 1, m_y + 2   SAY "Broj kalkulacije 11 -" GET cBrKalk PICT "@!"
       @ m_x + 1, Col() + 2 SAY "Datum:" GET dDatKalk
       @ m_x + 3, m_y + 2   SAY "Magac. konto razduzuje:" GET cIdKonto2 PICT "@!" VALID P_Konto( @cIdKonto2 )
-      IF gNW <> "X"
-         @ m_x + 3, Col() + 2 SAY "Razduzuje:" GET cIdZaduz2  PICT "@!"      VALID Empty( cidzaduz2 ) .OR. P_Firma( @cIdZaduz2 )
-      ENDIF
+      //IF gNW <> "X"
+        // @ m_x + 3, Col() + 2 SAY "Razduzuje:" GET cIdZaduz2  PICT "@!"      VALID Empty( cidzaduz2 ) .OR. P_Firma( @cIdZaduz2 )
+      //ENDIF
 
       IF gVar13u11 == "1"
          @ m_x + 4, m_y + 2   SAY "Prodavn. konto zaduzuje :" GET cIdKonto  PICT "@!" VALID P_Konto( @cIdKonto )
       ENDIF
 
-      IF gNW <> "X"
-         @ m_x + 4, Col() + 2 SAY "Zaduzuje:" GET cIdZaduz  PICT "@!"      VALID Empty( cidzaduz ) .OR. P_Firma( @cIdZaduz )
-      ENDIF
+      //IF gNW <> "X"
+        // @ m_x + 4, Col() + 2 SAY "Zaduzuje:" GET cIdZaduz  PICT "@!"      VALID Empty( cidzaduz ) .OR. P_Firma( @cIdZaduz )
+      //ENDIF
 
       cFaktFirma := cIdFirma
       @ m_x + 6, m_y + 2 SAY "Broj otpremnice u MP: " GET cFaktFirma
@@ -442,9 +442,9 @@ FUNCTION FaKaPrenosRacunMP()
       @ m_x + 1, m_y + 2 SAY "Broj kalkulacije 41 -" GET cBrKalk PICT "@!"
       @ m_x + 1, Col() + 2 SAY "Datum:" GET dDatKalk
       @ m_x + 3, m_y + 2 SAY "Konto razduzuje :" GET cIdKonto  PICT "@!" VALID P_Konto( @cIdKonto )
-      IF gNW <> "X"
-         @ m_x + 3, Col() + 2 SAY "Razduzuje:" GET cIdZaduz  PICT "@!"      VALID Empty( cidzaduz ) .OR. P_Firma( @cIdZaduz )
-      ENDIF
+      //IF gNW <> "X"
+        // @ m_x + 3, Col() + 2 SAY "Razduzuje:" GET cIdZaduz  PICT "@!"      VALID Empty( cidzaduz ) .OR. P_Firma( @cIdZaduz )
+      //ENDIF
       @ m_x + 5, m_y + 2 SAY "Napraviti zbirnu kalkulaciju (D/N): " GET cZbirno VALID cZbirno $ "DN" PICT "@!"
       READ
 
@@ -696,9 +696,9 @@ FUNCTION FaKaPrenos_01_doprema()
       @ m_x + 1, m_y + 2   SAY "Broj kalkulacije 81 -" GET cBrKalk PICT "@!"
       @ m_x + 1, Col() + 2 SAY "Datum:" GET dDatKalk
       @ m_x + 3, m_y + 2   SAY "Konto razduzuje :" GET cIdKonto  PICT "@!" VALID P_Konto( @cIdKonto )
-      IF gNW <> "X"
-         @ m_x + 3, Col() + 2 SAY "Zaduzuje:" GET cIdZaduz  PICT "@!"      VALID Empty( cidzaduz ) .OR. P_Firma( @cIdZaduz )
-      ENDIF
+      //IF gNW <> "X"
+      //   @ m_x + 3, Col() + 2 SAY "Zaduzuje:" GET cIdZaduz  PICT "@!"      VALID Empty( cidzaduz ) .OR. P_Firma( @cIdZaduz )
+      //ENDIF
 
       cFaktFirma := cIdFirma
       @ m_x + 6, m_y + 2 SAY "Broj fakture: " GET cFaktFirma
@@ -832,13 +832,13 @@ FUNCTION FaKaPrenos_cm_u_prodavnicu()
       @ m_x + 1, m_y + 2   SAY "Broj kalkulacije 80 -" GET cBrKalk PICT "@!"
       @ m_x + 1, Col() + 2 SAY "Datum:" GET dDatKalk
       @ m_x + 3, m_y + 2   SAY "Prodavn. konto zaduzuje :" GET cIdKonto  PICT "@!" VALID P_Konto( @cIdKonto )
-      IF gNW <> "X"
-         @ m_x + 3, Col() + 2 SAY "Zaduzuje:" GET cIdZaduz  PICT "@!"      VALID Empty( cidzaduz ) .OR. P_Firma( @cIdZaduz )
-      ENDIF
+      //IF gNW <> "X"
+      //   @ m_x + 3, Col() + 2 SAY "Zaduzuje:" GET cIdZaduz  PICT "@!"      VALID Empty( cidzaduz ) .OR. P_Firma( @cIdZaduz )
+      //ENDIF
       @ m_x + 4, m_y + 2   SAY "CM. konto razduzuje:" GET cIdKonto2 PICT "@!" VALID P_Konto( @cIdKonto2 )
-      IF gNW <> "X"
-         @ m_x + 4, Col() + 2 SAY "Razduzuje:" GET cIdZaduz2  PICT "@!"      VALID Empty( cidzaduz2 ) .OR. P_Firma( @cIdZaduz2 )
-      ENDIF
+      //IF gNW <> "X"
+      //   @ m_x + 4, Col() + 2 SAY "Razduzuje:" GET cIdZaduz2  PICT "@!"      VALID Empty( cidzaduz2 ) .OR. P_Firma( @cIdZaduz2 )
+      //ENDIF
 
       cFaktFirma := cIdFirma
       @ m_x + 6, m_y + 2 SAY "Broj otpremnice u MP: " GET cFaktFirma
@@ -1001,13 +1001,13 @@ FUNCTION FaKaPrenos_izlaz_putem_vp()
       @ m_x + 1, m_y + 2   SAY "Broj kalkulacije 15 -" GET cBrKalk PICT "@!"
       @ m_x + 1, Col() + 2 SAY "Datum:" GET dDatKalk
       @ m_x + 3, m_y + 2   SAY "Magac. konto razduzuje:" GET cIdKonto2 PICT "@!" VALID P_Konto( @cIdKonto2 )
-      IF gNW <> "X"
-         @ m_x + 3, Col() + 2 SAY "Razduzuje:" GET cIdZaduz2  PICT "@!"      VALID Empty( cidzaduz2 ) .OR. P_Firma( @cIdZaduz2 )
-      ENDIF
+      //IF gNW <> "X"
+      //   @ m_x + 3, Col() + 2 SAY "Razduzuje:" GET cIdZaduz2  PICT "@!"      VALID Empty( cidzaduz2 ) .OR. P_Firma( @cIdZaduz2 )
+      //ENDIF
       @ m_x + 4, m_y + 2   SAY "Prodavn. konto razduzuje :" GET cIdKonto  PICT "@!" VALID P_Konto( @cIdKonto )
-      IF gNW <> "X"
-         @ m_x + 4, Col() + 2 SAY "Zaduzuje:" GET cIdZaduz  PICT "@!"      VALID Empty( cidzaduz ) .OR. P_Firma( @cIdZaduz )
-      ENDIF
+      //IF gNW <> "X"
+    //     @ m_x + 4, Col() + 2 SAY "Zaduzuje:" GET cIdZaduz  PICT "@!"      VALID Empty( cidzaduz ) .OR. P_Firma( @cIdZaduz )
+      //ENDIF
 
       cFaktFirma := cIdFirma
       @ m_x + 6, m_y + 2 SAY "Broj fakture: " GET cFaktFirma
@@ -1221,11 +1221,11 @@ FUNCTION FaKaPrenosRacunMPParagon()
             VALID P_Konto( @cIdKtoZad )
       ENDIF
 
-      IF gNW <> "X"
-         @ m_x + _x, Col() + 2 SAY "Partner razduzuje:" GET cIdZaduz ;
-            PICT "@!" ;
-            VALID Empty( cIdZaduz ) .OR. P_Firma( @cIdZaduz )
-      ENDIF
+      //IF gNW <> "X"
+      //   @ m_x + _x, Col() + 2 SAY "Partner razduzuje:" GET cIdZaduz ;
+      //      PICT "@!" ;
+      //      VALID Empty( cIdZaduz ) .OR. P_Firma( @cIdZaduz )
+      //ENDIF
 
       ++ _x
       ++ _x

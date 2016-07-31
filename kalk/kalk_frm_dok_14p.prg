@@ -46,9 +46,9 @@ FUNCTION kalk_14_get1()
       _IdZaduz := ""
       _Idkonto := "1200"
       @ m_x + 9, m_y + 2 SAY8 "Magacinski konto razdužuje "; ?? _IdKonto2
-      IF gNW <> "X"
-         @ m_x + 9, m_y + 40 SAY8 "Razdužuje: "; ?? _IdZaduz2
-      ENDIF
+      //IF gNW <> "X"
+      //   @ m_x + 9, m_y + 40 SAY8 "Razdužuje: "; ?? _IdZaduz2
+      //ENDIF
    ENDIF
 
    @ m_x + 10, m_y + 66 SAY "Tarif.br "

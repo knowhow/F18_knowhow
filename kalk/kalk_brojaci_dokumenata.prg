@@ -47,42 +47,40 @@ FUNCTION kalk_sljedeci_brdok( cTipKalk, cIdFirma, cSufiks )
       cSufiks := Space( 3 )
    ENDIF
 
-   IF gBrojacKalkulacija == "D"
 
-      IF glBrojacPoKontima
+   IF glBrojacPoKontima
          /*
             SELECT kalk_doks
             SET ORDER TO TAG "1S" // "IdFirma+idvd+SUBSTR(brdok,6)+LEFT(brdok,5)"
             SEEK cIdFirma + cTipKalk + cSufiks + "X"
          */
-         find_kalk_doks_za_tip_sufix( cIdFirma, cTipKalk, cSufiks )
-      ELSE
-         find_kalk_doks_za_tip( cIdFirma, cTipKalk )
+      find_kalk_doks_za_tip_sufix( cIdFirma, cTipKalk, cSufiks )
+   ELSE
+      find_kalk_doks_za_tip( cIdFirma, cTipKalk )
          /*
             SELECT kalk
             SET ORDER TO TAG "1"
             SEEK cIdFirma + cTipKalk + "X"
          */
-      ENDIF
+   ENDIF
 
-      // SKIP -1
-      GO BOTTOM // zzadnji u nizu
+   // SKIP -1
+   GO BOTTOM // zzadnji u nizu
 
-      IF cTipKalk <> field->idVD .OR. glBrojacPoKontima .AND. Right( field->brDok, 3 ) <> cSufiks
-         cBrKalk := Space( gLenBrKalk ) + cSufiks
-      ELSE
-         cBrKalk := field->brDok
-      ENDIF
+   IF cTipKalk <> field->idVD .OR. glBrojacPoKontima .AND. Right( field->brDok, 3 ) <> cSufiks
+      cBrKalk := Space( gLenBrKalk ) + cSufiks
+   ELSE
+      cBrKalk := field->brDok
+   ENDIF
 
-      IF cTipKalk == "16" .AND. glEvidOtpis
-         cBrKalk := StrTran( cBrKalk, "-X", "  " )
-      ENDIF
+   IF cTipKalk == "16" .AND. glEvidOtpis
+      cBrKalk := StrTran( cBrKalk, "-X", "  " )
+   ENDIF
 
-      IF AllTrim( cBrKalk ) >= "99999"
-         cBrKalk := PadR( novasifra( AllTrim( cBrKalk ) ), 5 ) + Right( cBrKalk, 3 )
-      ELSE
-         cBrKalk := UBrojDok( Val( Left( cBrKalk, 5 ) ) + 1, 5, Right( cBrKalk, 3 ) )
-      ENDIF
+   IF AllTrim( cBrKalk ) >= "99999"
+      cBrKalk := PadR( novasifra( AllTrim( cBrKalk ) ), 5 ) + Right( cBrKalk, 3 )
+   ELSE
+      cBrKalk := UBrojDok( Val( Left( cBrKalk, 5 ) ) + 1, 5, Right( cBrKalk, 3 ) )
    ENDIF
 
    RETURN cBrKalk
@@ -94,7 +92,7 @@ FUNCTION kalk_sljedeci_brdok( cTipKalk, cIdFirma, cSufiks )
     uvecava broj kalkulacije sa stepenom uvecanja nUvecaj
    */
 
-FUNCTION GetNextKalkDoc( cIdFirma, cIdTipDok, nUvecaj )
+FUNCTION kalk_get_next_kalk_doc_uvecaj( cIdFirma, cIdTipDok, nUvecaj )
 
    LOCAL xx
    LOCAL i
@@ -159,7 +157,7 @@ FUNCTION kalk_reset_broj_dokumenta( firma, tip_dokumenta, broj_dokumenta, konto 
    ENDIF
 
    IF glBrojacPoKontima
-      _sufix := SufBrKalk( konto )
+      _sufix := kalk_sufix_brdok( konto )
    ENDIF
 
    // param: kalk/10/10
@@ -195,9 +193,9 @@ FUNCTION kalk_novi_broj_dokumenta( firma, tip_dokumenta, konto )
       konto := ""
    ENDIF
 
-   // moramo pronaci sufiks
-   IF glBrojacPoKontima
-      _sufix := SufBrKalk( konto )
+
+   IF glBrojacPoKontima // moramo pronaci sufiks
+      _sufix := kalk_sufix_brdok( konto )
    ENDIF
 
    // param: kalk/10/10
@@ -250,6 +248,26 @@ FUNCTION kalk_novi_broj_dokumenta( firma, tip_dokumenta, konto )
    RETURN _ret
 
 
+
+// ---------------------------------------------
+// odredjuje sufiks broja dokumenta
+// ---------------------------------------------
+FUNCTION kalk_sufix_brdok( cIdKonto )
+
+   LOCAL nArr := Select()
+   LOCAL cSufiks := Space( 3 )
+
+   SELECT koncij
+   SEEK cIdKonto
+
+   IF Found()
+      IF FieldPos( "sufiks" ) <> 0
+         cSufiks := field->sufiks
+      ENDIF
+   ENDIF
+   SELECT ( nArr )
+
+   RETURN cSufiks
 
 
 
@@ -339,7 +357,7 @@ FUNCTION kalk_set_param_broj_dokumenta()
    ENDIF
 
    IF glBrojacPoKontima
-      _sufix := SufBrKalk( _konto )
+      _sufix := kalk_sufix_brdok( _konto )
    ENDIF
 
    // param: kalk/10/10
@@ -375,11 +393,11 @@ FUNCTION get_kalk_brdok( _idfirma, _idvd, _idkonto, _idkonto2 )
          @ m_x + 2, m_y + 2 SAY8 "Magacinski konto zadužuje" GET _idKonto VALID P_Konto( @_idKonto ) PICT "@!"
          READ
 
-         cSufiks := SufBrKalk( _idKonto )
+         cSufiks := kalk_sufix_brdok( _idKonto )
       ELSE
          @ m_x + 2, m_y + 2 SAY8 "Magacinski konto razdužuje" GET _idKonto2 VALID P_Konto( @_idKonto2 ) PICT "@!"
          READ
-         cSufiks := SufBrKalk( _idKonto2 )
+         cSufiks := kalk_sufix_brdok( _idKonto2 )
       ENDIF
       BoxC()
 

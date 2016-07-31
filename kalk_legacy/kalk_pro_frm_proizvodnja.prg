@@ -154,18 +154,18 @@ FUNCTION leg_Get1_PR()
       ENDIF
       SELECT kalk_pripr
       GO nTPriPrec
-      IF gNW <> "X"
-         @ m_x + 10, m_y + 42  SAY "Zaduzuje: "   GET _IdZaduz  PICT "@!" VALID Empty( _idZaduz ) .OR. P_Firma( @_IdZaduz, 24 )
-      ENDIF
+      //IF gNW <> "X"
+      //   @ m_x + 10, m_y + 42  SAY "Zaduzuje: "   GET _IdZaduz  PICT "@!" VALID Empty( _idZaduz ) .OR. P_Firma( @_IdZaduz, 24 )
+      //ENDIF
       READ
       ESC_RETURN K_ESC
    ELSE
 
       @ m_x + 7, m_y + 2   SAY "Mag. gotovih proizvoda zaduzuje ";?? _IdKonto
       @ m_x + 8, m_y + 2   SAY "Magacin sirovina razduzuje      ";?? _IdKonto2
-      IF gNW <> "X"
-         @ m_x + 10, m_y + 42  SAY "Zaduzuje: "; ?? _IdZaduz
-      ENDIF
+      //IF gNW <> "X"
+      //   @ m_x + 10, m_y + 42  SAY "Zaduzuje: "; ?? _IdZaduz
+      //ENDIF
 
    ENDIF
 

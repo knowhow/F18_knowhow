@@ -393,7 +393,7 @@ STATIC FUNCTION _g_fakt_pr( cIdKonto, dD_From, dD_to, cTDokList, cSezona, ;
    MsgO( "generisem pomocnu datoteku razduzenja FAKT...." )
 
    // prenesi fakt->kalk
-   prenosNo( dD_from, dD_to, cKto, cTDokList, dD_to, cRobaUsl, ;
+   kalk_fakt_kalk_prenos_normativi( dD_from, dD_to, cKto, cTDokList, dD_to, cRobaUsl, ;
       cRobaIncl, cSezona, cSirovina )
 
    MsgC()

@@ -76,7 +76,7 @@ FUNCTION get_nivel_p()
    nUvecaj := 1
    FOR nCnt := 1 TO Len( aProd )
       // daj broj kalkulacije
-      cBrKalk := GetNextKalkDoc( gFirma, "19", nUvecaj )
+      cBrKalk := kalk_get_next_kalk_doc_uvecaj( gFirma, "19", nUvecaj )
       cPKonto := aProd[ nCnt, 1 ]
 
       @ 2 + m_x, 2 + m_y SAY Str( nCnt, 3 ) + " Prodavnica: " + AllTrim( cPKonto ) + "   dokument: " + gFirma + "-19-" + AllTrim( cBrKalk )

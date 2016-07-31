@@ -38,19 +38,19 @@ FUNCTION Get1_94()
 
       @ m_x + 9, m_y + 2 SAY "Magacinski konto zaduzuje"  GET _IdKonto ;
          VALID Empty( _IdKonto ) .OR. P_Konto( @_IdKonto, 21, 5 )
-      IF gNW <> "X"
-         @ m_x + 9, m_y + 40 SAY "Zaduzuje:" GET _IdZaduz   PICT "@!"  VALID Empty( _idZaduz ) .OR. P_Firma( @_IdZaduz, 21, 5 )
-      ELSE
+      //IF gNW <> "X"
+      //   @ m_x + 9, m_y + 40 SAY "Zaduzuje:" GET _IdZaduz   PICT "@!"  VALID Empty( _idZaduz ) .OR. P_Firma( @_IdZaduz, 21, 5 )
+      //ELSE
          IF !Empty( cRNT1 )
             @ m_x + 9, m_y + 40 SAY "Rad.nalog:"   GET _IdZaduz2  PICT "@!"
          ENDIF
-      ENDIF
+      //ENDIF
 
       IF _idvd == "16"
          @ m_x + 10, m_y + 2   SAY "Prenos na konto          " GET _IdKonto2   VALID Empty( _idkonto2 ) .OR. P_Konto( @_IdKonto2, 21, 5 ) PICT "@!"
-         IF gNW <> "X"
-            @ m_x + 10, m_y + 35  SAY "Zaduzuje: "   GET _IdZaduz2  PICT "@!" VALID Empty( _idZaduz ) .OR. P_Firma( @_IdZaduz2, 21, 5 )
-         ENDIF
+         //IF gNW <> "X"
+        //    @ m_x + 10, m_y + 35  SAY "Zaduzuje: "   GET _IdZaduz2  PICT "@!" VALID Empty( _idZaduz ) .OR. P_Firma( @_IdZaduz2, 21, 5 )
+        // ENDIF
       ENDIF
 
    ELSE
@@ -58,9 +58,9 @@ FUNCTION Get1_94()
       @  m_x + 7, m_y + 2   SAY "Faktura Broj: "; ?? _BrFaktP
       @  m_x + 7, Col() + 2 SAY "Datum: "; ?? _DatFaktP
       @ m_x + 9, m_y + 2 SAY "Magacinski konto zaduzuje "; ?? _IdKonto
-      IF gNW <> "X"
-         @ m_x + 9, m_y + 40 SAY "Zaduzuje: "; ?? _IdZaduz
-      ENDIF
+      //IF gNW <> "X"
+    //     @ m_x + 9, m_y + 40 SAY "Zaduzuje: "; ?? _IdZaduz
+      //ENDIF
 
    ENDIF
 

@@ -78,7 +78,7 @@ FUNCTION Iz47u96Norm()
       @ m_x + 1, m_y + 2   SAY "Broj kalkulacije 96 -" GET cBrKalk PICT "@!"
       @ m_x + 1, Col() + 2 SAY "Datum:" GET dDatKalk
       @ m_x + 3, m_y + 2   SAY "Konto razduzuje:" GET cIdKonto2 PICT "@!" VALID P_Konto( @cIdKonto2 )
-      IF gNW <> "X"
+      --IF gNW <> "X"
          @ m_x + 3, Col() + 2 SAY "Razduzuje:" GET cIdZaduz2  PICT "@!"      VALID Empty( cidzaduz2 ) .OR. P_Firma( @cIdZaduz2 )
       ENDIF
       @ m_x + 4, m_y + 2   SAY "Konto zaduzuje :" GET cIdKonto  PICT "@!" VALID Empty( cIdKonto ) .OR. P_Konto( @cIdKonto )

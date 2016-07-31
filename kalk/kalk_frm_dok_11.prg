@@ -32,15 +32,15 @@ FUNCTION Get1_11()
       ENDIF
 
       @ m_x + 8, m_y + 2   SAY "Prodavnicki Konto zaduzuje" GET _IdKonto VALID  P_Konto( @_IdKonto, 21, 5 ) PICT "@!"
-      IF gNW <> "X"
-         @ m_x + 8, m_y + 42  SAY "Zaduzuje: "   GET _IdZaduz  PICT "@!" VALID Empty( _idZaduz ) .OR. P_Firma( @_IdZaduz, 24 )
-      ENDIF
+      //IF gNW <> "X"
+      //   @ m_x + 8, m_y + 42  SAY "Zaduzuje: "   GET _IdZaduz  PICT "@!" VALID Empty( _idZaduz ) .OR. P_Firma( @_IdZaduz, 24 )
+      //ENDIF
 
       @ m_x + 9, m_y + 2   SAY "Magacinski konto razduzuje"  GET _IdKonto2 ;
          VALID Empty( _IdKonto2 ) .OR. P_Konto( @_IdKonto2, 21, 5 )
-      IF gNW <> "X"
-         @ m_x + 9, m_y + 42 SAY "Razduzuje:" GET _IdZaduz2   PICT "@!"  VALID Empty( _idZaduz2 ) .OR. P_Firma( @_IdZaduz2, 24 )
-      ENDIF
+      //IF gNW <> "X"
+      //   @ m_x + 9, m_y + 42 SAY "Razduzuje:" GET _IdZaduz2   PICT "@!"  VALID Empty( _idZaduz2 ) .OR. P_Firma( @_IdZaduz2, 24 )
+      //ENDIF
       read; ESC_RETURN K_ESC
    ELSE
       IF _IdVD $ "11#12#13#22"
@@ -48,13 +48,13 @@ FUNCTION Get1_11()
          @  m_x + 6, Col() + 2 SAY "Datum: "; ?? _DatFaktP
       ENDIF
       @ m_x + 8, m_y + 2   SAY "Prodavnicki Konto zaduzuje "; ?? _IdKonto
-      IF gNW <> "X"
-         @ m_x + 8, m_y + 42  SAY "Zaduzuje: "; ?? _IdZaduz
-      ENDIF
+      //IF gNW <> "X"
+      //   @ m_x + 8, m_y + 42  SAY "Zaduzuje: "; ?? _IdZaduz
+      //ENDIF
       @ m_x + 9, m_y + 2   SAY "Magacinski konto razduzuje "; ?? _IdKonto2
-      IF gNW <> "X"
-         @ m_x + 9, m_y + 42  SAY "Razduzuje: "; ?? _IdZaduz2
-      ENDIF
+      //IF gNW <> "X"
+      //   @ m_x + 9, m_y + 42  SAY "Razduzuje: "; ?? _IdZaduz2
+      //ENDIF
    ENDIF
 
    @ m_x + 10, m_y + 66 SAY "Tarifa ->"

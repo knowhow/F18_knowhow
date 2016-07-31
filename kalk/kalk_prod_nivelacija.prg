@@ -50,7 +50,7 @@ FUNCTION kalk_nivelacija_11()
       cBrNiv := field->brdok
    ENDIF
 
-   _sufix := SufBrKalk( kalk_pripr->idkonto )
+   _sufix := kalk_sufix_brdok( kalk_pripr->idkonto )
    SELECT kalk_pripr
 
    cBrNiv := kalk_sljedeci_brdok( "19", gFirma, _sufix )

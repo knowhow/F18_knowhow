@@ -69,9 +69,9 @@ FUNCTION kalk_unos_dok_81( atrib )
       @ m_x + _x, m_y + 2 SAY8 "Konto zadužuje:" GET _idkonto ;
         VALID {|| P_Konto( @_IdKonto ), ispisi_naziv_sifre( F_KONTO, _idkonto, _kord_x, 40, 30 ) } PICT "@!"
 
-      IF gNW <> "X"
-         @ m_x + _x, m_y + 42 SAY8 "Zadužuje: " GET _idzaduz PICT "@!" VALID Empty( _idzaduz ) .OR. P_Firma( @_idzaduz )
-      ENDIF
+      //IF gNW <> "X"
+      //   @ m_x + _x, m_y + 42 SAY8 "Zadužuje: " GET _idzaduz PICT "@!" VALID Empty( _idzaduz ) .OR. P_Firma( @_idzaduz )
+      //ENDIF
 
       READ
 
@@ -92,10 +92,10 @@ FUNCTION kalk_unos_dok_81( atrib )
       @ m_x + _x, m_y + 2 SAY "Konto zaduzuje: "
       ?? _idkonto
 
-      IF gNW <> "X"
-         @  m_x + _x, m_y + 42 SAY "Zaduzuje: "
-         ?? _idzaduz
-      ENDIF
+      //IF gNW <> "X"
+      //   @  m_x + _x, m_y + 42 SAY "Zaduzuje: "
+      //   ?? _idzaduz
+      //ENDIF
       READ
       ESC_RETURN K_ESC
 
@@ -183,6 +183,7 @@ FUNCTION kalk_unos_dok_81( atrib )
       VALID {|| SetKey( K_ALT_T, {|| NIL } ), .T. }
    @ m_x + _x, Col() + 1 SAY "*** <ALT+T> unos kaskadnog rabata"
 
+/*
    IF gNW <> "X"
       ++ _x
       @ m_x + _x, m_y + 2 SAY "Transport. kalo:"
@@ -191,7 +192,7 @@ FUNCTION kalk_unos_dok_81( atrib )
       @ m_x + _x, m_y + 2 SAY "    Ostalo kalo:"
       @ m_x + _x, m_y + _unos_left GET _gkolicin2 PICT PicKol
    ENDIF
-
+*/
    READ
 
    ESC_RETURN K_ESC

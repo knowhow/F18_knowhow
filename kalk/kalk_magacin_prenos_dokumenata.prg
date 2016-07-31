@@ -78,10 +78,10 @@ FUNCTION magacin_prenos_fakt_10_to_kalk_14()
       @ m_x + 2, m_y + 2 SAY "Konto razduzuje" GET cIdKonto2 PICT "@!" VALID P_Konto( @cIdKonto2 )
       READ
       BoxC()
-      cSufiks := SufBrKalk( cIdKonto2 )
+      cSufiks := kalk_sufix_brdok( cIdKonto2 )
       cBrKalk := kalk_sljedeci_brdok( "14", cIdFirma, cSufiks )
    ELSE
-      cBrKalk := GetNextKalkDoc( cIdFirma, "14" )
+      cBrKalk := kalk_get_next_kalk_doc_uvecaj( cIdFirma, "14" )
    ENDIF
 
    Box(, 15, 60 )
@@ -93,9 +93,9 @@ FUNCTION magacin_prenos_fakt_10_to_kalk_14()
       @ m_x + 1, Col() + 2 SAY "Datum:" GET dDatKalk
       @ m_x + 4, m_y + 2   SAY "Konto razduzuje:" GET cIdKonto2 PICT "@!" WHEN !glBrojacPoKontima VALID P_Konto( @cIdKonto2 )
 
-      IF gNW <> "X"
-         @ m_x + 4, Col() + 2 SAY "Razduzuje:" GET cIdZaduz2  PICT "@!"      VALID Empty( cidzaduz2 ) .OR. P_Firma( @cIdZaduz2 )
-      ENDIF
+      //IF gNW <> "X"
+      //   @ m_x + 4, Col() + 2 SAY "Razduzuje:" GET cIdZaduz2  PICT "@!"      VALID Empty( cidzaduz2 ) .OR. P_Firma( @cIdZaduz2 )
+      //ENDIF
 
       cFaktFirma := IF( cIdKonto2 == gKomKonto, gKomFakt, cIdFirma )
       @ m_x + 6, m_y + 2 SAY "Broj fakture: " GET cFaktFirma
@@ -339,11 +339,11 @@ FUNCTION mag_fa_ka_prenos_otpr( cIndik )
       READ
       BoxC()
 
-      cSufiks := SufBrKalk( cIdKonto )
+      cSufiks := kalk_sufix_brdok( cIdKonto )
       cBrKalk := kalk_sljedeci_brdok( cTipKalk, cIdFirma, cSufiks )
 
    ELSE
-      cBrKalk := GetNextKalkDoc( cIdFirma, cTipKalk )
+      cBrKalk := kalk_get_next_kalk_doc_uvecaj( cIdFirma, cTipKalk )
    ENDIF
 
    Box(, 15, 60 )
@@ -356,9 +356,9 @@ FUNCTION mag_fa_ka_prenos_otpr( cIndik )
       @ m_x + 1, Col() + 2 SAY "Datum:" GET dDatKalk
       @ m_x + 3, m_y + 2 SAY "Konto zaduzuje :" GET cIdKonto  PICT "@!" WHEN !glBrojacPoKontima VALID P_Konto( @cIdKonto )
       @ m_x + 4, m_y + 2 SAY "Konto razduzuje:" GET cIdKonto2 PICT "@!" VALID Empty( cidkonto2 ) .OR. P_Konto( @cIdKonto2 )
-      IF gNW <> "X"
-         @ m_x + 4, Col() + 2 SAY "Razduzuje:" GET cIdZaduz2  PICT "@!"      VALID Empty( cidzaduz2 ) .OR. P_Firma( @cIdZaduz2 )
-      ENDIF
+      //IF gNW <> "X"
+      //   @ m_x + 4, Col() + 2 SAY "Razduzuje:" GET cIdZaduz2  PICT "@!"      VALID Empty( cidzaduz2 ) .OR. P_Firma( @cIdZaduz2 )
+      //ENDIF
 
       cFaktFirma := cIdFirma
 
@@ -556,7 +556,7 @@ FUNCTION mag_fa_ka_prenos_otpr_period()
    _razduzuje := Space( 6 )
    _dat_fakt_od := Date()
    _dat_fakt_do := Date()
-   _br_kalk_dok := GetNextKalkDoc( _id_firma, _tip_kalk )
+   _br_kalk_dok := kalk_get_next_kalk_doc_uvecaj( _id_firma, _tip_kalk )
 
    _id_konto := fetch_metric( "kalk_fakt_prenos_otpr_konto_1", my_user(), _id_konto )
    _id_konto_2 := fetch_metric( "kalk_fakt_prenos_otpr_konto_2", my_user(), _id_konto_2 )
@@ -572,13 +572,13 @@ FUNCTION mag_fa_ka_prenos_otpr_period()
       @ m_x + 3, m_y + 2 SAY "Konto zaduzuje :" GET _id_konto PICT "@!" VALID Empty( _id_konto ) .OR. P_Konto( @_id_konto )
       @ m_x + 4, m_y + 2 SAY "Konto razduzuje:" GET _id_konto_2 PICT "@!" VALID Empty( _id_konto_2 ) .OR. P_Konto( @_id_konto_2 )
 
-      IF gNW <> "X"
-         @ m_x + 4, Col() + 2 SAY "Razduzuje:" GET _razduzuje PICT "@!" VALID Empty( _razduzuje ) .OR. P_Firma( @_razduzuje )
-      ENDIF
+      //IF gNW <> "X"
+      //   @ m_x + 4, Col() + 2 SAY "Razduzuje:" GET _razduzuje PICT "@!" VALID Empty( _razduzuje ) .OR. P_Firma( @_razduzuje )
+    //  ENDIF
 
       _fakt_id_firma := _id_firma
 
-      // postavi uslove za period...
+      // postavi uslove za period
       @ m_x + 6, m_y + 2 SAY "FAKT: id firma:" GET _fakt_id_firma
       @ m_x + 7, m_y + 2 SAY "Vrste dokumenata:" GET _tip_dok_fakt PICT "@S30"
       @ m_x + 8, m_y + 2 SAY "Dokumenti u periodu od" GET _dat_fakt_od
@@ -714,26 +714,6 @@ FUNCTION mag_fa_ka_prenos_otpr_period()
    RETURN .T.
 
 
-
-// ---------------------------------------------
-// odredjuje sufiks broja dokumenta
-// ---------------------------------------------
-FUNCTION SufBrKalk( cIdKonto )
-
-   LOCAL nArr := Select()
-   LOCAL cSufiks := Space( 3 )
-
-   SELECT koncij
-   SEEK cIdKonto
-
-   IF Found()
-      IF FieldPos( "sufiks" ) <> 0
-         cSufiks := field->sufiks
-      ENDIF
-   ENDIF
-   SELECT ( nArr )
-
-   RETURN cSufiks
 
 
 

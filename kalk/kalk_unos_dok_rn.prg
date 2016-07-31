@@ -142,16 +142,16 @@ FUNCTION Get1_RN()
 
       GO  nTPriPrec
       SELECT kalk_pripr
-      IF gNW <> "X"
-         @ m_x + 10, m_y + 42  SAY "Zaduzuje: "   GET _IdZaduz  PICT "@!" VALID Empty( _idZaduz ) .OR. P_Firma( @_IdZaduz, 24 )
-      ENDIF
+    //  IF gNW <> "X"
+      //   @ m_x + 10, m_y + 42  SAY "Zaduzuje: "   GET _IdZaduz  PICT "@!" VALID Empty( _idZaduz ) .OR. P_Firma( @_IdZaduz, 24 )
+      //ENDIF
       read; ESC_RETURN K_ESC
    ELSE
 
       @ m_x + 10, m_y + 2   SAY "Mag. gotovih proizvoda zaduzuje ";?? _IdKonto
-      IF gNW <> "X"
-         @ m_x + 10, m_y + 42  SAY "Zaduzuje: "; ?? _IdZaduz
-      ENDIF
+      //IF gNW <> "X"
+      //   @ m_x + 10, m_y + 42  SAY "Zaduzuje: "; ?? _IdZaduz
+      //ENDIF
    ENDIF
 
 
@@ -194,14 +194,15 @@ FUNCTION Get1_RN()
    @ m_x + 15, m_y + 2   SAY "N.CJ.(DEM/JM):"
    @ m_x + 15, m_y + 50  GET _FCJ PICTURE PicDEM VALID _fcj > 0 when {|| _fcj := iif( nRbr > 1 .AND. fnovi, _vpc, _fcj ), V_kol10() }
 
-
-   IF gNW <> "X"
+/*
+   --IF gNW <> "X"
       @ m_x + 18, m_y + 2   SAY "Transport. kalo:"
       @ m_x + 18, m_y + 40  GET _GKolicina PICTURE PicKol
 
       @ m_x + 19, m_y + 2   SAY "Ostalo kalo:    "
       @ m_x + 19, m_y + 40  GET _GKolicin2 PICTURE PicKol
    ENDIF
+*/
 
    read; ESC_RETURN K_ESC
 

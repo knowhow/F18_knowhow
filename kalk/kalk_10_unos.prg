@@ -48,9 +48,9 @@ FUNCTION Get1_10PDV()
 
       @ m_x + _x, m_y + 2 SAY "Magacinski Konto zaduzuje" GET _IdKonto valid {|| P_Konto( @_IdKonto ), ispisi_naziv_sifre( F_KONTO, _idkonto, _kord_x, 40, 30 ) } PICT "@!"
 
-      IF gNW <> "X"
-         @ m_x + _x, m_y + 42  SAY "Zaduzuje: " GET _IdZaduz  PICT "@!" VALID Empty( _idZaduz ) .OR. P_Firma( @_IdZaduz )
-      ENDIF
+      //IF gNW <> "X"
+      //   @ m_x + _x, m_y + 42  SAY "Zaduzuje: " GET _IdZaduz  PICT "@!" VALID Empty( _idZaduz ) .OR. P_Firma( @_IdZaduz )
+      //ENDIF
 
       IF !Empty( cRNT1 )
          @ m_x + _x, m_y + 42  SAY "Rad.nalog:" GET _IdZaduz2  PICT "@!"
@@ -73,10 +73,10 @@ FUNCTION Get1_10PDV()
       @ m_x + _x, m_y + 2 SAY "Magacinski Konto zaduzuje "
       ?? _IdKonto
 
-      IF gNW <> "X"
-         @ m_x + _x, m_y + 42 SAY "Zaduzuje: "
-         ?? _IdZaduz
-      ENDIF
+      //IF gNW <> "X"
+      //   @ m_x + _x, m_y + 42 SAY "Zaduzuje: "
+      //   ?? _IdZaduz
+      //ENDIF
 
       _ino_dob( _idpartner )
 
@@ -164,6 +164,7 @@ FUNCTION Get1_10PDV()
    @ m_x + _x, m_y + 2 SAY "Rabat (%):"
    @ m_x + _x, m_y + _unos_left GET _Rabat PICT PicDEM WHEN DuplRoba()
 
+   /*
    IF gNW <> "X" .OR. gVodiKalo == "D"
       ++ _x
       @ m_x + _x, m_y + 2 SAY "Normalni . kalo:"
@@ -172,6 +173,7 @@ FUNCTION Get1_10PDV()
       @ m_x + _x, m_y + 2 SAY "Preko  kalo:    "
       @ m_x + _x, m_y + _unos_left GET _GKolicin2 PICTURE PicKol
    ENDIF
+   */
 
 
 

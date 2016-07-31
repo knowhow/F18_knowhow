@@ -1410,7 +1410,7 @@ STATIC FUNCTION from_kalk_imp_temp_to_pript( aFExist, lFSkip, lNegative, cCtrl_a
 
       IF cFakt <> cPredhodniFaktDokument
          ++ nUvecaj
-         cBrojKalk := get_next_temp_broj( nUvecaj ) // GetNextKalkDoc( gFirma, cTDok, nUvecaj )
+         cBrojKalk := get_next_temp_broj( nUvecaj ) // kalk_get_next_kalk_doc_uvecaj( gFirma, cTDok, nUvecaj )
          nRbr := 0
          AAdd( aPom, { cTDok, cBrojKalk, cFakt } )
       ELSE
@@ -1419,7 +1419,7 @@ STATIC FUNCTION from_kalk_imp_temp_to_pript( aFExist, lFSkip, lNegative, cCtrl_a
 
             IF cPm <> cPredhodnoProdMjesto
                ++ nUvecaj
-               cBrojKalk := get_next_temp_broj( nUvecaj ) // GetNextKalkDoc( gFirma, cTDok, nUvecaj )
+               cBrojKalk := get_next_temp_broj( nUvecaj ) // kalk_get_next_kalk_doc_uvecaj( gFirma, cTDok, nUvecaj )
                nRbr := 0
                AAdd( aPom, { cTDok, cBrojKalk, cFakt } )
             ENDIF
@@ -1775,7 +1775,7 @@ STATIC FUNCTION GetKVars( dDatDok, cBrKalk, cTipDok, cIdKonto, cIdKonto2, cRazd 
    cIdKonto2 := PadR( "1310", 7 )
    cRazd := "D"
    O_KONTO
-   cBrKalk := GetNextKalkDoc( cIdFirma, cTipDok )
+   cBrKalk := kalk_get_next_kalk_doc_uvecaj( cIdFirma, cTipDok )
 
    Box(, 15, 60 )
    @ m_x + 1, m_y + 2   SAY "Broj kalkulacije 14-" GET cBrKalk PICT "@!"
@@ -1866,7 +1866,7 @@ FUNCTION kalk_imp_obradi_sve_dokumente( nPocniOd, lAsPokreni, lStampaj )
       ENDIF
 
       nT_area := Select()
-      cN_kalk_dok := GetNextKalkDoc( cFirma, cIdVd, 1 ) // daj konacni novi broj dokumenta kalk
+      cN_kalk_dok := kalk_get_next_kalk_doc_uvecaj( cFirma, cIdVd, 1 ) // daj konacni novi broj dokumenta kalk
       SELECT ( nT_area )
 
       @ 3 + m_x, 2 + m_y SAY "Prebacujem: " + cFirma + "-" + cIdVd + "-" + cBrDok

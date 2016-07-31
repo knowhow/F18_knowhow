@@ -49,9 +49,9 @@ FUNCTION Get1_41()
 
    @ m_x + 8, m_y + 2   SAY "Prodavnicki Konto razduzuje" GET _IdKonto VALID  P_Konto( @_IdKonto, 21, 5 ) PICT "@!"
 
-   IF gNW <> "X"
-      @ m_x + 8, m_y + 50  SAY "Razduzuje: "   GET _IdZaduz  PICT "@!" VALID Empty( _idZaduz ) .OR. P_Firma( @_IdZaduz, 21, 5 )
-   ENDIF
+   //IF gNW <> "X"
+  //    @ m_x + 8, m_y + 50  SAY "Razduzuje: "   GET _IdZaduz  PICT "@!" VALID Empty( _idZaduz ) .OR. P_Firma( @_IdZaduz, 21, 5 )
+   //ENDIF
 
    _idkonto2 := ""
    _idzaduz2 := ""

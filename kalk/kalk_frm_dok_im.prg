@@ -19,9 +19,9 @@ FUNCTION Get1_IM()
    _DatFaktP := _datdok
 
    @ m_x + 8, m_y + 2  SAY "Konto koji zaduzuje" GET _IdKonto VALID  P_Konto( @_IdKonto, 21, 5 ) PICT "@!"
-   IF gNW <> "X"
-      @ m_x + 8, m_y + 35  SAY "Zaduzuje: "   GET _IdZaduz  PICT "@!" VALID Empty( _idZaduz ) .OR. P_Firma( @_IdZaduz, 21, 5 )
-   ENDIF
+   //IF gNW <> "X"
+  //    @ m_x + 8, m_y + 35  SAY "Zaduzuje: "   GET _IdZaduz  PICT "@!" VALID Empty( _idZaduz ) .OR. P_Firma( @_IdZaduz, 21, 5 )
+   //ENDIF
    READ
    ESC_RETURN K_ESC
 

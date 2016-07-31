@@ -466,10 +466,10 @@ FUNCTION Get1_IP()
    @ m_x + _x, m_y + 2 SAY "Konto koji zaduzuje" GET _IdKonto ;
       VALID P_Konto( @_IdKonto, _x, 35 ) PICT "@!"
 
-   IF gNW <> "X"
-      @ m_x + _x, m_y + 35 SAY "Zaduzuje: " GET _idzaduz PICT "@!" ;
-         VALID Empty( _idzaduz ) .OR. P_Firma( @_idzaduz, _x, 35 )
-   ENDIF
+   //IF gNW <> "X"
+  //    @ m_x + _x, m_y + 35 SAY "Zaduzuje: " GET _idzaduz PICT "@!" ;
+  //       VALID Empty( _idzaduz ) .OR. P_Firma( @_idzaduz, _x, 35 )
+   //ENDIF
 
    READ
    ESC_RETURN K_ESC

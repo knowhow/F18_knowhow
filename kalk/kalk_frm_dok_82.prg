@@ -33,9 +33,9 @@ FUNCTION Get1_82()
 
       @ m_x + 9, m_y + 2 SAY "Magacinski konto razduzuje"  GET _IdKonto ;
          VALID Empty( _IdKonto ) .OR. P_Konto( @_IdKonto, 21, 5 )
-      IF gNW <> "X"
-         @ m_x + 9, m_y + 40 SAY "Razduzuje:" GET _IdZaduz   PICT "@!"  VALID Empty( _idZaduz ) .OR. P_Firma( @_IdZaduz, 21, 5 )
-      ENDIF
+      //IF gNW <> "X"
+      //   @ m_x + 9, m_y + 40 SAY "Razduzuje:" GET _IdZaduz   PICT "@!"  VALID Empty( _idZaduz ) .OR. P_Firma( @_IdZaduz, 21, 5 )
+      //ENDIF
    ELSE
       // @  m_x+6,m_y+2   SAY "KUPAC: "; ?? _IdPartner
       @  m_x + 7, m_y + 2   SAY "Faktura Broj: "; ?? _BrFaktP
@@ -43,9 +43,9 @@ FUNCTION Get1_82()
       _IdZaduz := ""
       _Idkonto2 := ""
       @ m_x + 9, m_y + 2 SAY "Magacinski konto razduzuje "; ?? _IdKonto
-      IF gNW <> "X"
-         @ m_x + 9, m_y + 40 SAY "Razduzuje: "; ?? _IdZaduz
-      ENDIF
+      //IF gNW <> "X"
+      //   @ m_x + 9, m_y + 40 SAY "Razduzuje: "; ?? _IdZaduz
+      //ENDIF
    ENDIF
 
    @ m_x + 10, m_y + 66 SAY "Tarif.brĿ"

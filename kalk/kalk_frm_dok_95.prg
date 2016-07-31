@@ -33,9 +33,9 @@ FUNCTION Get1_95()
       _IdZaduz := ""
       @ m_x + 8, m_y + 2 SAY8 "Magacinski konto razdužuje"  GET _IdKonto2 ;
          VALID Empty( _IdKonto2 ) .OR. P_Konto( @_IdKonto2, 21, 5 )
-      IF gNW <> "X"
-         @ m_x + 8, m_y + 40 SAY "Razdužuje:" GET _IdZaduz2   PICT "@!"  VALID Empty( _idZaduz2 ) .OR. P_Firma( @_IdZaduz2, 21, 5 )
-      ELSE
+      //IF gNW <> "X"
+      //   @ m_x + 8, m_y + 40 SAY "Razdužuje:" GET _IdZaduz2   PICT "@!"  VALID Empty( _idZaduz2 ) .OR. P_Firma( @_IdZaduz2, 21, 5 )
+      //ELSE
          IF !Empty( cRNT1 ) .AND. _idvd $ "97#96#95"
             IF ( IsRamaGlas() )
                @ m_x + 8, m_y + 40 SAY "Rad.nalog:" GET _IdZaduz2 PICT "@!" VALID RadNalOK()
@@ -43,7 +43,7 @@ FUNCTION Get1_95()
                @ m_x + 8, m_y + 40 SAY "Rad.nalog:" GET _IdZaduz2   PICT "@!"
             ENDIF
          ENDIF
-      ENDIF
+      //ENDIF
       IF _idvd $ "97#96#95"    // ako je otprema, gdje to ide
 
          @ m_x + 9, m_y + 2   SAY "Konto zaduzuje            " GET _IdKonto VALID  Empty( _IdKonto ) .OR. P_Konto( @_IdKonto, 21, 5 ) PICT "@!"
@@ -71,9 +71,9 @@ FUNCTION Get1_95()
       _IdZaduz := ""
       @ m_x + 8, m_y + 2 SAY "Magacinski konto razduzuje "; ?? _IdKonto2
       @ m_x + 9, m_y + 2 SAY "Konto zaduzuje "; ?? _IdKonto
-      IF gNW <> "X"
-         @ m_x + 9, m_y + 40 SAY "Razduzuje: "; ?? _IdZaduz2
-      ENDIF
+      //IF gNW <> "X"
+      //   @ m_x + 9, m_y + 40 SAY "Razduzuje: "; ?? _IdZaduz2
+      //ENDIF
    ENDIF
 
    @ m_x + 10, m_y + 66 SAY "Tarif.brÄ¿"
@@ -118,7 +118,7 @@ FUNCTION Get1_95()
    ENDIF
 
    IF dozvoljeno_azuriranje_sumnjivih_stavki() .AND. fNovi
-  
+
       kalk_vpc_po_kartici( @_VPC, _idfirma, _idkonto2, _idroba )
       SELECT kalk_pripr
    ENDIF

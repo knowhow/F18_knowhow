@@ -76,7 +76,7 @@ FUNCTION fix_sifradob( cSifra, nLen, cFill )
 FUNCTION pretraga_po_sifri_dob()
 
    IF gArtPretragaSifraDob == NIL
-      gArtPretragaSifraDob := fetch_metric( "roba_trazi_po_sifradob", NIL, Space( 20 ) )
+      gArtPretragaSifraDob := fetch_metric( "roba_trazi_po_sifradob", my_user(), Space( 20 ) )
    ENDIF
 
    IF gArtPretragaSifraDob == "SIFRADOB"

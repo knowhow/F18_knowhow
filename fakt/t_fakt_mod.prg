@@ -197,8 +197,6 @@ METHOD set_module_gvars()
    PUBLIC gPdvDokVar := "1"
 
 
-   PUBLIC gArtPretragaSifraDob := fetch_metric( "roba_trazi_po_sifradob", my_user(), SPACE(20) )
-
    PUBLIC gTipF := "2"
    PUBLIC gVarF := "2"
    PUBLIC gVarRF := " "
@@ -573,3 +571,8 @@ METHOD set_module_gvars()
    info_bar( "FAKT", "params in cache: " + Alltrim( Str( params_in_cache() ) ) )
 
    RETURN .T.
+
+
+function is_modul_fakt()
+
+return gModul == "FAKT"

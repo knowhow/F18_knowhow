@@ -248,9 +248,8 @@ FUNCTION magacin_prenos_fakt_10_to_kalk_14()
          set_metric( "kalk_fakt_prenos_10_14_konto_1", my_user(), cIdKonto )
          set_metric( "kalk_fakt_prenos_10_14_konto_2", my_user(), cIdKonto2 )
 
-         IF gBrojacKalkulacija == "D"
-            cBrKalk := UBrojDok( Val( Left( cBrKalk, 5 ) ) + 1, 5, Right( cBrKalk, 3 ) )
-         ENDIF
+         kalk_fix_brdok_add_1( @cBrKalk )
+
 
          Inkey( 4 )
 
@@ -502,9 +501,7 @@ FUNCTION mag_fa_ka_prenos_otpr( cIndik )
          set_metric( "kalk_fakt_prenos_otpr_konto_1", my_user(), cIdKonto )
          set_metric( "kalk_fakt_prenos_otpr_konto_2", my_user(), cIdKonto2 )
 
-         IF gBrojacKalkulacija == "D"
-            cBrKalk := UBrojDok( Val( Left( cBrKalk, 5 ) ) + 1, 5, Right( cBrKalk, 3 ) )
-         ENDIF
+         kalk_fix_brdok_add_1( @cBrKalk )
 
          Inkey( 4 )
 

@@ -11,7 +11,7 @@
 
 #include "f18.ch"
 
-MEMVAR m_x, m_y, GetList, glBrojacPoKontima
+MEMVAR m_x, m_y, GetList, glBrojacPoKontima, gBrojacKalkulacija, gFirma
 
 STATIC s_nLenKalkBrojac
 
@@ -84,7 +84,7 @@ FUNCTION kalk_sljedeci_brdok( cTipKalk, cIdFirma, cSufiks )
       nLenGlavni := 8 - nLenSufiks // duzina sifre se mora prilagoditi sufiksu
    ENDIF
 
-altd()
+   AltD()
    IF is_brojac_po_kontima() .AND. !Empty( cSufiks ) // samo trazi ako ima sufiks npr '/T '
       find_kalk_doks_za_tip_sufix_zadnji_broj( cIdFirma, cTipKalk, cSufiks )
    ELSE // ako je sufiks prazan, onda se samo gleda tip
@@ -98,6 +98,15 @@ altd()
    ELSE
       cBrKalk := field->brDok
    ENDIF
+
+   /*
+   update fmk.kalk_doks set brdok=lPad( (100000 + substr(brdok,2)::integer)::text, 8, '0')
+    where left(brdok,1)='A' and  not brdok like '%/%';
+   update fmk.kalk_doks set brdok=lPad( (110000 + substr(brdok,2)::integer)::text, 8, '0')
+    where left(brdok,1)='B' and  not brdok like '%/%';
+   update fmk.kalk_doks set brdok=lPad( trim(brdok), 8, '0')
+    where Length(trim(brdok))<8  and not brdok like '%/%'
+   */
 
    IF AllTrim( cBrKalk ) >= Replicate( "9", nLenGlavni )  // 10_0001 -> A0001, 11_0001 -> B0001
       cBrKalk := PadR( novasifra( AllTrim( cBrKalk ) ), nLenGlavni ) + Right( cBrKalk, nLenSufiks )
@@ -123,8 +132,21 @@ FUNCTION kalk_set_brkalk_za_idvd( cIdVd, cBrKalk )
       ELSE
          cBrKalk := field->brdok
       ENDIF
-      cBrKalk := UBrojDok( Val( Left( cBrKalk, 5 ) ) + 1, 5, Right( cBrKalk, 3 ) )
+      // cBrKalk := UBrojDok( Val( Left( cBrKalk, 5 ) ) + 1, 5, Right( cBrKalk, 3 ) )
+      kalk_fix_brdok_add_1( @cBrKalk )
 
+   ENDIF
+
+   RETURN cBrKalk
+
+
+FUNCTION kalk_fix_brdok_add_1( cBrKalk )
+
+   LOCAL nLenGlavni := kalk_duzina_brojaca_dokumenta()
+   LOCAL nLenSufiks := 8 - nLenGlavni
+
+   IF gBrojacKalkulacija == "D"
+      cBrKalk := UBrojDok( Val( Left( cBrKalk, nLenGlavni ) ) + 1, nLenGlavni, Right( cBrKalk, nLenSufiks ) )
    ENDIF
 
    RETURN cBrKalk
@@ -177,11 +199,44 @@ FUNCTION kalk_get_next_kalk_doc_uvecaj( cIdFirma, cIdTipDok, nUvecaj )
 
 
 
-// ------------------------------------------------
-// vraca prazan broj dokumenta
-// ------------------------------------------------
 FUNCTION kalk_prazan_broj_dokumenta()
-   RETURN PadR( "0", 5, "0" )
+   RETURN PadR( "0", kalk_duzina_brojaca_dokumenta(), "0" )
+
+
+/* MarkBrDok(fNovi)
+   Odredjuje sljedeci broj dokumenta uzimajuci u obzir marker definisan u polju koncij->m1
+
+
+FUNCTION MarkBrDok( fNovi )
+
+   LOCAL nArr := Select()
+
+   _brdok := cNBrDok
+   IF fNovi .AND. KONCIJ->( FieldPos( "M1" ) ) <> 0
+      SELECT KONCIJ
+      HSEEK _idkonto2
+      IF !Empty( m1 )
+         SELECT kalk
+         SET ORDER TO TAG "1"
+         SEEK _idfirma + _idvd + "X"
+         SKIP -1
+         _brdok := Space( 8 )
+         DO WHILE !Bof() .AND. idvd == _idvd
+            IF Upper( Right( brdok, 3 ) ) == Upper( KONCIJ->m1 )
+               _brdok := brdok
+               EXIT
+            ENDIF
+            SKIP -1
+         ENDDO
+         _Brdok := UBrojDok( Val( Left( _brdok, 5 ) ) + 1, 5, KONCIJ->m1 )
+
+      ENDIF
+      SELECT ( nArr )
+   ENDIF
+   @  m_x + 2, m_y + 46  SAY _BrDok COLOR F18_COLOR_INVERT
+
+   RETURN .T.
+*/
 
 
 // ------------------------------------------------------------
@@ -421,7 +476,7 @@ FUNCTION get_kalk_brdok( _idfirma, _idvd, _idkonto, _idkonto2 )
 
    LOCAL _brdok, cIdKonto
 
-altd()
+   AltD()
    IF is_brojac_po_kontima()
 
       Box( "#Glavni konto", 3, 70 )

@@ -35,8 +35,9 @@ altd()
       _IdZaduz := ""
       _Idkonto := "2110"
       PRIVATE cNBrDok := _brdok
-      @ m_x + 9, m_y + 2 SAY8 "Magacinski konto razdužuje"  GET _IdKonto2  valid ( Empty( _IdKonto2 ) .OR. P_Konto( @_IdKonto2, 21, 5 ) ) .AND. ;
-         MarkBrDok( fNovi )
+      @ m_x + 9, m_y + 2 SAY8 "Magacinski konto razdužuje"  GET _IdKonto2  valid ( Empty( _IdKonto2 ) .OR. P_Konto( @_IdKonto2, 21, 5 ) )
+
+      //.AND. MarkBrDok( fNovi )
 
    ELSE
       @ m_x + 6, m_y + 2   SAY8 "KUPAC: "; ?? _IdPartner

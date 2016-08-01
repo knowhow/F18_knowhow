@@ -40,37 +40,3 @@ FUNCTION KM2()
    SELECT kalk_pripr
 
    RETURN NIL
-
-
-/* MarkBrDok(fNovi)
- *     Odredjuje sljedeci broj dokumenta uzimajuci u obzir marker definisan u polju koncij->m1
- */
-
-FUNCTION MarkBrDok( fNovi )
-
-   LOCAL nArr := Select()
-
-   _brdok := cNBrDok
-   IF fNovi .AND. KONCIJ->( FieldPos( "M1" ) ) <> 0
-      SELECT KONCIJ
-      HSEEK _idkonto2
-      IF !Empty( m1 )
-         SELECT kalk
-         SET ORDER TO TAG "1"
-         SEEK _idfirma + _idvd + "X"
-         SKIP -1
-         _brdok := Space( 8 )
-         DO WHILE !Bof() .AND. idvd == _idvd
-            IF Upper( Right( brdok, 3 ) ) == Upper( KONCIJ->m1 )
-               _brdok := brdok
-               EXIT
-            ENDIF
-            SKIP -1
-         ENDDO
-         _Brdok := UBrojDok( Val( Left( _brdok, 5 ) ) + 1, 5, KONCIJ->m1 )
-      ENDIF
-      SELECT ( nArr )
-   ENDIF
-   @  m_x + 2, m_y + 46  SAY _BrDok COLOR F18_COLOR_INVERT
-
-   RETURN .T.

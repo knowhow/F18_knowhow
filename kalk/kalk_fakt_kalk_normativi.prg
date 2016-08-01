@@ -274,9 +274,7 @@ FUNCTION kalk_fakt_kalk_prenos_normativi( dD_from, dD_to, cIdKonto2, cIdTipDok, 
 
          @ m_x + 10, m_y + 2 SAY "Dokumenti su preneseni !"
 
-         IF gBrojacKalkulacija == "D"
-            cBrkalk := UBrojDok( Val( Left( cBrkalk, 5 ) ) + 1, 5, Right( cBrKalk, 3 ) )
-         ENDIF
+         kalk_fix_brdok_add_1( @cBrKalk )
 
          Inkey( 4 )
          @ m_x + 8, m_y + 2 SAY Space( 30 )
@@ -502,9 +500,7 @@ FUNCTION PrenosNoFakt()
 
       @ m_x + 10, m_y + 2 SAY "Dokumenti su preneseni !!"
 
-      IF gBrojacKalkulacija == "D"
-         cBrKalk := UBrojDok( Val( Left( cBrKalk, 5 ) ) + 1, 5, Right( cBrKalk, 3 ) )
-      ENDIF
+      kalk_fix_brdok_add_1( @cBrKalk )
 
       cFaBrDok := UBrojDok( Val( Left( cFaBrDok, 5 ) ) + 1, 5, Right( cFaBrDok, 3 ) )
 
@@ -549,9 +545,7 @@ FUNCTION PrenosNo2()
 
    Box(, 15, 60 )
 
-   IF gBrojacKalkulacija == "D"
-      cBrKalk := UBrojDok( Val( Left( cBrKalk, 5 ) ) + 1, 5, Right( cBrKalk, 3 ) )
-   ENDIF
+   kalk_fix_brdok_add_1( @cBrKalk )
 
    DO WHILE .T.
 
@@ -661,9 +655,7 @@ FUNCTION PrenosNo2()
 
       @ m_x + 10, m_y + 2 SAY "Dokumenti su preneseni !"
 
-      IF gBrojacKalkulacija == "D"
-         cBrkalk := UBrojDok( Val( Left( cbrkalk, 5 ) ) + 1, 5, Right( cBrKalk, 3 ) )
-      ENDIF
+      kalk_fix_brdok_add_1( @cBrKalk )
 
       Inkey( 4 )
       @ m_x + 8, m_y + 2 SAY Space( 30 )

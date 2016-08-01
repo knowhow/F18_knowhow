@@ -439,7 +439,7 @@ FUNCTION V_Roba( lPrikTar )
       ENDIF
    ENDIF
 
-   P_Roba( @_Idroba, nil, nil, gArtPretragaSifraDob )
+   P_Roba( @_Idroba, nil, nil, roba_trazi_po_sifradob() )
 
    SELECT roba
    SELECT fakt_pripr

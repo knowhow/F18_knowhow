@@ -193,6 +193,7 @@ FUNCTION kalk_par_razno()
    LOCAL _rok := fetch_metric( "kalk_definisanje_roka_trajanja", NIL, "N" )
    LOCAL _opis := fetch_metric( "kalk_dodatni_opis_kod_unosa_dokumenta", NIL, "N" )
    LOCAL nLenBrKalk :=  kalk_duzina_brojaca_dokumenta()
+   LOCAL cRobaTrazi := roba_trazi_po_sifradob()
    PRIVATE  GetList := {}
 
    IF glBrojacPoKontima
@@ -244,7 +245,7 @@ FUNCTION kalk_par_razno()
    @ m_x + _x, Col() SAY "%"
    ++ _x
 
-   @ m_x + _x, m_y + 2 SAY8 "Traži robu prema (prazno/SIFRADOB/)" GET gArtPretragaSifraDob PICT "@15"
+   @ m_x + _x, m_y + 2 SAY8 "Traži robu prema (prazno/SIFRADOB/)" GET cRobaTrazi PICT "@15"
 
    ++ _x
 
@@ -287,7 +288,7 @@ FUNCTION kalk_par_razno()
       set_metric( "kalk_kontrola_odstupanja_nc", f18_user(), gNC_ctrl )
       set_metric( "kalk_limit_za_otvorene_stavke", f18_user(), gnLOst )
       kalk_duzina_brojaca_dokumenta( nLenBrKalk )
-      set_metric( "roba_trazi_po_sifradob", my_user(), gArtPretragaSifraDob )
+      roba_trazi_po_sifradob( cRobaTrazi )
       set_metric( "kalk_reset_artikla_kod_unosa", my_user(), _reset_roba )
       set_metric( "pregled_rabata_kod_ulaza", my_user(), _rabat )
       set_metric( "kalk_definisanje_roka_trajanja", NIL, _rok )

@@ -90,7 +90,8 @@ FUNCTION Iz12u97()
    ELSE
       cBrDokI := Space( 8 )
    ENDIF
-   cBrDokI := UBrojDok( Val( Left( cBrDokI, 5 ) ) + 1, 5, Right( cBrDokI, 3 ) )
+
+   kalk_fix_brdok_add_1( @cBrDokI )
 
    // pocnimo sa generacijom dokumenta
    SELECT KALK
@@ -601,7 +602,8 @@ FUNCTION Otprema()
    IF my_get_from_ini( "KALKSI", "EvidentirajOtpis", "N", KUMPATH ) == "D"
       cBrUlaz := StrTran( cBrUlaz, "-X", "  " )
    ENDIF
-   cBrUlaz := UBrojDok( Val( Left( cBrUlaz, 5 ) ) + 1, 5, Right( cBrUlaz, 3 ) )
+
+   kalk_fix_brdok_add_1( @cBrUlaz )
 
    SELECT kalk_pripr
    GO TOP
@@ -675,14 +677,16 @@ FUNCTION Otprema()
 
 FUNCTION Iz96u16()
 
-   o_kalk_edit()
-   cIdFirma    := gFirma
-   cIdVdU      := "96"
-   cIdVdI      := "16"
-   cBrDokU     := Space( Len( kalk_pripr->brdok ) )
-   cBrDokI     := ""
-   dDatDok     := CToD( "" )
 
+
+   LOCAL cIdFirma    := gFirma
+   LOCAL cIdVdU      := "96"
+   LOCAL cIdVdI      := "16"
+   LOCAL cBrDokU     := Space( Len( kalk_pripr->brdok ) )
+   LOCAL cBrDokI     := ""
+   LOCAL dDatDok     := CToD( "" )
+
+   o_kalk_edit()
    cIdPartner  := Space( Len( kalk_pripr->idpartner ) )
    dDatFaktP   := CToD( "" )
 
@@ -696,14 +700,9 @@ FUNCTION Iz96u16()
    READ; ESC_BCR
    BoxC()
 
-   // utvrdimo broj nove kalkulacije
-   SELECT KALK_DOKS; SEEK cIdFirma + cIdVdI + Chr( 255 ); SKIP -1
-   IF cIdFirma + cIdVdI == IDFIRMA + IDVD
-      cBrDokI := brdok
-   ELSE
-      cBrDokI := Space( 8 )
-   ENDIF
-   cBrDokI := UBrojDok( Val( Left( cBrDokI, 5 ) ) + 1, 5, Right( cBrDokI, 3 ) )
+
+   cBrDokI := kalk_get_next_broj_v5( cIdFirma, cIdVdI, NIL )
+
 
    // pocnimo sa generacijom dokumenta
    SELECT KALK
@@ -734,8 +733,8 @@ FUNCTION Iz96u16()
 
    CLOSERET
 
-   RETURN
-// }
+   RETURN .F.
+
 
 
 
@@ -745,7 +744,7 @@ FUNCTION Iz96u16()
 
 FUNCTION Iz16u14()
 
-   // {
+
    o_kalk_edit()
 
    cIdFirma    := gFirma
@@ -773,14 +772,8 @@ FUNCTION Iz16u14()
    READ; ESC_BCR
    BoxC()
 
-   // utvrdimo broj nove kalkulacije
-   SELECT KALK_DOKS; SEEK cIdFirma + cIdVdI + Chr( 255 ); SKIP -1
-   IF cIdFirma + cIdVdI == IDFIRMA + IDVD
-      cBrDokI := brdok
-   ELSE
-      cBrDokI := Space( 8 )
-   ENDIF
-   cBrDokI := UBrojDok( Val( Left( cBrDokI, 5 ) ) + 1, 5, Right( cBrDokI, 3 ) )
+   cBrDokI := kalk_get_next_broj_v5( cIdFirma, cIdVdI, NIL )
+
 
    // pocnimo sa generacijom dokumenta
    SELECT KALK
@@ -819,4 +812,4 @@ FUNCTION Iz16u14()
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.

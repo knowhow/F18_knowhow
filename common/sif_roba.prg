@@ -18,7 +18,7 @@ MEMVAR ImeKol, Kol
    P_Roba( @cId, NIL, NIL, "IDP") - tag IDP - proizvodi
 */
 
-FUNCTION P_Roba( cId, dx, dy, cSeek )
+FUNCTION P_Roba( cId, dx, dy, cTraziPoSifraDob )
 
    LOCAL xRet
    LOCAL bRoba
@@ -28,8 +28,8 @@ FUNCTION P_Roba( cId, dx, dy, cSeek )
    PRIVATE ImeKol
    PRIVATE Kol
 
-   IF cSeek == NIL
-      cSeek := ""
+   IF cTraziPoSifraDob == NIL
+      cTraziPoSifraDob := ""
    ENDIF
 
    ImeKol := {}
@@ -127,8 +127,8 @@ FUNCTION P_Roba( cId, dx, dy, cSeek )
 
    bRoba := gRobaBlock
 
-   IF !Empty( cSeek )
-      cPomTag := TRIM( cSeek )
+   IF is_modul_fakt()  .AND. is_roba_trazi_po_sifradob() .AND. !Empty( cTraziPoSifraDob )
+      cPomTag := TRIM( cTraziPoSifraDob )
       IF cPomTag == "SIFRADOB" .AND. LEN( TRIM( cId )) < 5 // https://redmine.bring.out.ba/issues/36373
         cId := PadL( Trim(cId), 5, "0") // 7148 => 07148, 22 => 00022
       ENDIF

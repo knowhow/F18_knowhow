@@ -131,7 +131,6 @@ METHOD TKalkMod:set_module_gvars()
    PUBLIC gVodiKalo := "N"
    PUBLIC gAutoRavn := "N"
    PUBLIC gAutoCjen := "D"
-   PUBLIC gArtPretragaSifraDob := Space( 20 )
    PUBLIC gVarEv := "1"  // 1-sa cijenama   2-bez cijena
    PUBLIC c24T1 := PadR( "Tr 1", 15 )
    PUBLIC c24T2 := PadR( "Tr 2", 15 )
@@ -312,7 +311,6 @@ METHOD TKalkMod:set_module_gvars()
    gNC_ctrl := fetch_metric( "kalk_kontrola_odstupanja_nc", f18_user(), gNC_ctrl )
    gnLOst := fetch_metric( "kalk_limit_za_otvorene_stavke", f18_user(), gnLOst )
 
-   gArtPretragaSifraDob := fetch_metric( "roba_trazi_po_sifradob", NIL, Space( 20 ) )
 
    gAImpPrint := fetch_metric( "kalk_auto_import_podataka_printanje", f18_user(), gAImpPrint )
    gAImpRKonto := fetch_metric( "kalk_auto_import_podataka_konto", f18_user(), gAImpRKonto )

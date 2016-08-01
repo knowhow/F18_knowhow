@@ -227,9 +227,7 @@ FUNCTION fakt_kalk_prenos_11_11()
 
       @ m_x + 10, m_y + 2 SAY "Dokument je prenesen !"
 
-      IF gBrojacKalkulacija == "D"
-         cBrKalk := UBrojDok( Val( Left( cBrKalk, 5 ) ) + 1, 5, Right( cBrKalk, 3 ) )
-      ENDIF
+      kalk_fix_brdok_add_1( @cBrKalk )
 
       Inkey( 4 )
 
@@ -388,9 +386,8 @@ FUNCTION prod_fa_ka_prenos_otpr()
          ENDDO
          @ m_x + 8, m_y + 2 SAY "Dokument je prenesen !"
 
-         IF gBrojacKalkulacija == "D"
-            cBrkalk := UBrojDok( Val( Left( cbrkalk, 5 ) ) + 1, 5, Right( cBrKalk, 3 ) )
-         ENDIF
+         kalk_fix_brdok_add_1( @cBrKalk )
+
          Inkey( 4 )
          @ m_x + 8, m_y + 2 SAY Space( 30 )
          @ m_x + 10, m_y + 2 SAY Space( 40 )
@@ -645,9 +642,7 @@ FUNCTION FaKaPrenosRacunMP()
       @ m_x + 10, m_y + 2 SAY "Dokument je prenesen !"
       @ m_x + 11, m_y + 2 SAY "Obavezno pokrenuti asistenta <opcija A> !"
 
-      IF gBrojacKalkulacija == "D"
-         cBrKalk := UBrojDok( Val( Left( cBrKalk, 5 ) ) + 1, 5, Right( cBrKalk, 3 ) )
-      ENDIF
+      kalk_fix_brdok_add_1( @cBrKalk )
 
       Inkey( 0 )
 
@@ -778,9 +773,7 @@ FUNCTION FaKaPrenos_01_doprema()
          ENDDO
          @ m_x + 8, m_y + 2 SAY "Dokument je prenesen !"
 
-         IF gBrojacKalkulacija == "D"
-            cBrkalk := UBrojDok( Val( Left( cbrkalk, 5 ) ) + 1, 5, Right( cBrKalk, 3 ) )
-         ENDIF
+         kalk_fix_brdok_add_1( @cBrKalk )
 
          Inkey( 4 )
          @ m_x + 8, m_y + 2 SAY Space( 30 )
@@ -942,9 +935,7 @@ FUNCTION FaKaPrenos_cm_u_prodavnicu()
          ENDDO
          @ m_x + 8, m_y + 2 SAY "Dokument je prenesen !"
 
-         IF gBrojacKalkulacija == "D"
-            cBrkalk := UBrojDok( Val( Left( cbrkalk, 5 ) ) + 1, 5, Right( cBrKalk, 3 ) )
-         ENDIF
+         kalk_fix_brdok_add_1( @cBrKalk )
 
          Inkey( 4 )
          @ m_x + 8, m_y + 2 SAY Space( 30 )
@@ -1125,9 +1116,7 @@ FUNCTION FaKaPrenos_izlaz_putem_vp()
          ENDDO
          @ m_x + 8, m_y + 2 SAY "Dokument je prenesen !"
 
-         IF gBrojacKalkulacija == "D"
-            cBrkalk := UBrojDok( Val( Left( cbrkalk, 5 ) ) + 1, 5, Right( cBrKalk, 3 ) )
-         ENDIF
+         kalk_fix_brdok_add_1( @cBrKalk )
 
          Inkey( 4 )
          @ m_x + 8, m_y + 2 SAY Space( 30 )
@@ -1471,9 +1460,7 @@ FUNCTION FaKaPrenosRacunMPParagon()
       @ m_x + 10, m_y + 2 SAY "Dokument je prenesen !"
       @ m_x + 11, m_y + 2 SAY "Obavezno pokrenuti asistenta <opcija A>!"
 
-      IF gBrojacKalkulacija == "D"
-         cBrKalk := UBrojDok( Val( Left( cBrKalk, 5 ) ) + 1, 5, Right( cBrKalk, 3 ) )
-      ENDIF
+      kalk_fix_brdok_add_1( @cBrKalk )
 
       Inkey( 4 )
 

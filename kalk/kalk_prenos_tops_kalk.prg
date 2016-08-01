@@ -275,19 +275,7 @@ FUNCTION kalk_preuzmi_tops_dokumente( sync_file, auto_razd, ch_barkod, mag_konto
    //SELECT kalk
 
    IF ( _idvd_pos == "42" .AND. _auto_razduzenje == "D" )
-
-      find_kalk_doks_by_broj_dokumenta( gFirma, "11" )
-      //SKIP -1
-      GO BOTTOM
-
-      IF field->idvd <> "11"
-         _br_kalk := Space( 8 )
-      ELSE
-         _br_kalk := field->brdok
-      ENDIF
-
-      _br_kalk := UBrojDok( Val( Left ( _br_kalk, 5 ) ) + 1, 5, Right( _br_kalk, 3 ) )
-
+      _br_kalk  := kalk_get_next_broj_v5( gFirma, "11", NIL )
    ELSE
 
 

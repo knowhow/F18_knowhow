@@ -12,6 +12,58 @@
 #include "f18.ch"
 
 
+STATIC s_cRobaTraziPoSifradob := NIL
+
+
+
+// ----------------------------------------------------------
+// sredi sifru dobavljaca, poravnanje i popunjavanje
+// ako je sifra manja od LEN(5) popuni na LEN(8) sa "0"
+//
+// cSifra - sifra dobavljaca
+// nLen - na koliko provjeravati
+// cFill - cime popuniti
+// ----------------------------------------------------------
+FUNCTION fix_sifradob( cSifra, nLen, cFill )
+
+   LOCAL nTmpLen
+
+   IF is_roba_trazi_po_sifradob()
+
+      nTmpLen := Len( roba->sifradob )
+      IF Len( AllTrim( cSifra ) ) < 5 // dodaj prefiks ako je ukucano manje od 5
+         cSifra := PadR( PadL( AllTrim( cSifra ), nLen, cFill ), nTmpLen )
+      ENDIF
+   ENDIF
+
+   RETURN .T.
+
+
+FUNCTION roba_trazi_po_sifradob( cSet )
+
+   IF s_cRobaTraziPoSifradob == NIL
+      s_cRobaTraziPoSifradob := fetch_metric( "roba_trazi_po_sifradob", NIL, Space( 20 ) )
+   ENDIF
+
+   IF cSet != NIL
+      s_cRobaTraziPoSifradob  := cSet
+      set_metric( "roba_trazi_po_sifradob", NIL, cSet )
+   ENDIF
+
+   RETURN Trim( s_cRobaTraziPoSifradob )
+
+
+FUNCTION is_roba_trazi_po_sifradob()
+
+   IF roba_trazi_po_sifradob() == "SIFRADOB"
+      RETURN .T.
+   ENDIF
+
+   RETURN .F.
+
+
+
+
 // ----------------------------------
 // svedi na standardnu jedinicu mjere
 // ( npr. KOM->LIT ili KOM->KG )
@@ -45,42 +97,3 @@ FUNCTION SJMJ( nKol, cIdRoba, cJMJ )
    SELECT ( nArr )
 
    RETURN nVrati
-
-
-
-// ----------------------------------------------------------
-// sredi sifru dobavljaca, poravnanje i popunjavanje
-// ako je sifra manja od LEN(5) popuni na LEN(8) sa "0"
-//
-// cSifra - sifra dobavljaca
-// nLen - na koliko provjeravati
-// cFill - cime popuniti
-// ----------------------------------------------------------
-FUNCTION fix_sifradob( cSifra, nLen, cFill )
-
-   LOCAL nTmpLen
-
-   IF pretraga_po_sifri_dob()
-
-      nTmpLen := Len( roba->sifradob )
-
-
-      IF Len( AllTrim( cSifra ) ) < 5 // dodaj prefiks ako je ukucano manje od 5
-         cSifra := PadR( PadL( AllTrim( cSifra ), nLen, cFill ), nTmpLen )
-      ENDIF
-   ENDIF
-
-   RETURN .T.
-
-
-FUNCTION pretraga_po_sifri_dob()
-
-   IF gArtPretragaSifraDob == NIL
-      gArtPretragaSifraDob := fetch_metric( "roba_trazi_po_sifradob", my_user(), Space( 20 ) )
-   ENDIF
-
-   IF gArtPretragaSifraDob == "SIFRADOB"
-      RETURN .T.
-   ENDIF
-
-   RETURN .F.

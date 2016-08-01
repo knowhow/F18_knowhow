@@ -103,7 +103,7 @@ FUNCTION Get1_10PDV()
          PICT "@!" ;
          VALID {|| ;
          _idroba := iif( Len( Trim( _idroba ) ) < 10, Left( _idroba, 10 ), _idroba ), ;
-         P_Roba( @_IdRoba, nil, nil, gArtPretragaSifraDob ), ;
+         P_Roba( @_IdRoba, nil, nil, NIL ), ;
          ispisi_naziv_sifre( F_ROBA, _idroba, _kord_x, 25, 40 ), ;
          _IdTarifa := iif( fnovi, ROBA->idtarifa, _IdTarifa ), zadnji_ulazi_info( _idpartner, _idroba, "M" ), ;
          .T. }

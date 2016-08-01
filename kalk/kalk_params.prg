@@ -211,7 +211,7 @@ FUNCTION kalk_par_razno()
    LOCAL _rok := fetch_metric( "kalk_definisanje_roka_trajanja", NIL, "N" )
    LOCAL _opis := fetch_metric( "kalk_dodatni_opis_kod_unosa_dokumenta", NIL, "N" )
    LOCAL nLenBrKalk :=  kalk_duzina_brojaca_dokumenta()
-   LOCAL cRobaTrazi := roba_trazi_po_sifradob()
+   LOCAL cRobaTrazi := PADR( roba_trazi_po_sifradob(), 20 )
    PRIVATE  GetList := {}
 
    IF glBrojacPoKontima

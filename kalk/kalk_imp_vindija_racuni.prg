@@ -123,8 +123,7 @@ FUNCTION ImpTxtDok()
 
    cFFilt := GetImpFilter() // filter za import MP ili VP
 
-   IF gNC_ctrl > 0 .AND. Pitanje(, "Ispusti artikle sa problematičnom NC (D/N)", ;
-         "N" ) == "D"
+   IF gNC_ctrl > 0 .AND. Pitanje(, "Ispusti artikle sa problematičnom NC (D/N)",  "N" ) == "D"
       cCtrl_art := "D"
    ENDIF
 
@@ -147,7 +146,7 @@ FUNCTION ImpTxtDok()
 
 
    SetTblDok( @aDbf ) // setuj polja temp tabele u matricu aDbf
-   SetRuleDok( @aRules ) // setuj pravila upisa podataka u temp tabelu
+   kalk_imp_set_rule_dok( @aRules ) // setuj pravila upisa podataka u temp tabelu
    Txt2TTbl( aDbf, aRules, cImpFile ) // prebaci iz txt => temp tbl
 
 
@@ -412,11 +411,11 @@ STATIC FUNCTION set_adbf_roba( aDbf )
 
 
 
-/* SetRuleDok(aRule)
+/* kalk_imp_set_rule_dok(aRule)
  *     Setovanje pravila upisa zapisa u temp tabelu
  *   param: aRule - matrica pravila
  */
-STATIC FUNCTION SetRuleDok( aRule )
+STATIC FUNCTION kalk_imp_set_rule_dok( aRule )
 
    // idfirma
    AAdd( aRule, { "SUBSTR(cVar, 1, 2)" } )
@@ -542,9 +541,8 @@ STATIC FUNCTION Txt2TTbl( aDbf, aRules, cTxtFile )
       RETURN .F.
    ENDIF
 
-   // zatim iscitaj fajl i ubaci podatke u tabelu
 
-   cTxtFile := AllTrim( cTxtFile )
+   cTxtFile := AllTrim( cTxtFile ) // zatim iscitaj fajl i ubaci podatke u tabelu
 
    oFile := TFileRead():New( cTxtFile )
    oFile:Open()
@@ -554,10 +552,10 @@ STATIC FUNCTION Txt2TTbl( aDbf, aRules, cTxtFile )
    ENDIF
 
    // prodji kroz svaku liniju i insertuj zapise u temp.dbf
-   WHILE oFile:MoreToRead()
+   DO WHILE oFile:MoreToRead()
 
-      // uzmi u cText liniju fajla
-      cVar := hb_StrToUTF8( oFile:ReadLine() )
+
+      cVar := hb_StrToUTF8( oFile:ReadLine() ) // uzmi u cText liniju fajla
 
 
       SELECT kalk_imp_temp
@@ -566,7 +564,7 @@ STATIC FUNCTION Txt2TTbl( aDbf, aRules, cTxtFile )
       FOR nCt := 1 TO Len( aRules )
          fname := FIELD( nCt )
          xVal := aRules[ nCt, 1 ]
-         replace &fname with &xVal
+         REPLACE &fname with &xVal
       NEXT
 
    ENDDO
@@ -672,6 +670,8 @@ FUNCTION cre_kalk_priprt()
  *     Provjeri da li postoji broj fakture u azuriranim dokumentima
  */
 STATIC FUNCTION kalk_imp_check_broj_fakture_exist( aFakt )
+
+   LOCAL i
 
    MsgO( "provjera da li u kalk dokumentima vec postoje brfaktp ..." )
    // aPomFakt := kalk_postoji_faktura_a( gAImpRight )
@@ -968,8 +968,6 @@ STATIC FUNCTION SDobExist()
 
 
 
-
-
 /* get_kalk_tip_by_vind_fakt_tip(cFaktTD)
  *     Vraca kalk tip dokumenta na osnovu fakt tip dokumenta
  *   param: cFaktTD - fakt tip dokumenta
@@ -1055,7 +1053,7 @@ STATIC FUNCTION kalk_imp_get_konto_zaduz_prodavnica_za_prod_mjesto( cPoslovnica,
 */
 STATIC FUNCTION  kalk_imp_set_konto_zaduz_prodavnica_za_prod_mjesto( cPoslovnica, cPm )
 
-   LOCAL hKonta := hb_Hash()
+   LOCAL hKonta := hb_Hash(), cKonto
 
    Box(, 10, 75 )
    IF cPoslovnica == NIL
@@ -1112,7 +1110,7 @@ cTipDok - tip dokumenta
 */
 STATIC FUNCTION kalk_imp_get_konto_za_tip_dokumenta_poslovnica( cTipDok, cZadRazd, cPoslovnica )
 
-   cRet := fetch_metric( "kalk_imp_" + cPoslovnica + "_" + cTipDok + "_" + cZadRazd, NIL,  "XXXX" )
+   LOCAL cRet := fetch_metric( "kalk_imp_" + cPoslovnica + "_" + cTipDok + "_" + cZadRazd, NIL,  "XXXX" )
 
    IF cRet == "XXXX"
       set_kalk_imp_parametri_za_poslovnica( cPoslovnica )
@@ -1379,8 +1377,7 @@ STATIC FUNCTION from_kalk_imp_temp_to_pript( aFExist, lFSkip, lNegative, cCtrl_a
          IF Found() .AND. gNC_ctrl > 0 .AND. ( field->odst > gNC_ctrl ) // dodaj sporne u kontrolnu matricu
 
             nT_scan := AScan( aArr_ctrl, ;
-               {| xVal| xVal[ 1 ] + PadR( xVal[ 2 ], 10 ) == ;
-               cTDok + PadR( AllTrim( cFakt ), 10 ) } )
+               {| xVal| xVal[ 1 ] + PadR( xVal[ 2 ], 10 ) == cTDok + PadR( AllTrim( cFakt ), 10 ) } )
 
             IF nT_scan = 0
                AAdd( aArr_ctrl, { cTDok, ;
@@ -1426,8 +1423,8 @@ STATIC FUNCTION from_kalk_imp_temp_to_pript( aFExist, lFSkip, lNegative, cCtrl_a
          ENDIF
       ENDIF
 
-      // pronadji robu
-      SELECT roba
+
+      SELECT roba   // pronadji robu
       SET ORDER TO TAG "ID_VSD"
       cTmpArt := PadL( AllTrim( kalk_imp_temp->idroba ), 5, "0" )
       GO TOP
@@ -1446,11 +1443,11 @@ STATIC FUNCTION from_kalk_imp_temp_to_pript( aFExist, lFSkip, lNegative, cCtrl_a
 
       select_o_kalk_pript()
 
-      APPEND BLANK
+      APPEND BLANK // pript
       REPLACE idfirma WITH gFirma, ;
          rBr WITH Str( ++nRbr, 3 ), ;
          idvd WITH cTDok, ; // uzmi pravilan tip dokumenta za kalk
-      brdok WITH cBrojKalk, ;
+         brdok WITH cBrojKalk, ;
          datdok WITH kalk_imp_temp->datdok, ;
          idpartner WITH kalk_imp_temp->idpartner, ;
          idtarifa WITH ROBA->idtarifa, ;
@@ -1470,7 +1467,6 @@ STATIC FUNCTION from_kalk_imp_temp_to_pript( aFExist, lFSkip, lNegative, cCtrl_a
          REPLACE tprevoz WITH "A"
 
          IF cTDok == "11"
-
             REPLACE mpcsapp WITH UzmiMpcSif() // uzmi mpc iz sifrarnika roba prema podesenju u koncij
          ELSE
             REPLACE mpcsapp WITH kalk_imp_temp->cijena
@@ -1481,8 +1477,10 @@ STATIC FUNCTION from_kalk_imp_temp_to_pript( aFExist, lFSkip, lNegative, cCtrl_a
       REPLACE kolicina WITH kalk_imp_temp->kolicina
       REPLACE idroba WITH roba->id
       REPLACE nc WITH ROBA->nc
+
       REPLACE vpc WITH kalk_imp_temp->cijena
       REPLACE rabatv WITH kalk_imp_temp->rabatp
+
       REPLACE mpc WITH kalk_imp_temp->porez
 
       cPredhodniFaktDokument := cFakt
@@ -1722,12 +1720,7 @@ STATIC FUNCTION kalk_imp_temp_to_roba()
 
       SEEK cTmpSif
 
-      IF !Found()
-
-         // da li treba dodavati novi zapis
-
-      ELSE
-
+      IF Found()
 
          IF kalk_imp_temp->idpm == "001" // mjenja se VPC
             IF field->vpc <> kalk_imp_temp->mpc
@@ -1903,6 +1896,7 @@ FUNCTION kalk_imp_autom()
    RETURN s_lAutom
 
 
+
 FUNCTION update_kalk_14_datval( cBrojKalk, dDatVal )
 
    LOCAL hRec
@@ -1923,6 +1917,7 @@ FUNCTION update_kalk_14_datval( cBrojKalk, dDatVal )
 
    RETURN .T.
 
+
 FUNCTION get_kalk_14_datval( cBrojKalk )
 
    LOCAL dRet
@@ -1938,8 +1933,8 @@ FUNCTION get_kalk_14_datval( cBrojKalk )
    RETURN dRet
 
 
-/* fn kalk_imp_set_check_point
- *  brief Snima momenat do kojeg je dosao pri obradi dokumenata
+/*  kalk_imp_set_check_point
+ *  Snima momenat do kojeg je dosao pri obradi dokumenata
  */
 STATIC FUNCTION kalk_imp_set_check_point( nPRec )
 
@@ -1962,7 +1957,7 @@ STATIC FUNCTION kalk_imp_set_check_point( nPRec )
 
 
 
-/* fn kalk_imp_continue_from_check_point()
+/* kalk_imp_continue_from_check_point
  *  Pokrece ponovo obradu od momenta do kojeg je stao
  */
 STATIC FUNCTION kalk_imp_continue_from_check_point()
@@ -2190,7 +2185,10 @@ STATIC FUNCTION ChkTD95( cVezniDok )
 /* FillDobSifra()
  *     Popunjavanje polja sifradob prema kljucu
  */
+
 STATIC FUNCTION FillDobSifra()
+
+   LOCAL i
 
    IF !spec_funkcije_sifra( "FILLDOB" )
       MsgBeep( "Nemate ovlastenja za ovu opciju!!!" )

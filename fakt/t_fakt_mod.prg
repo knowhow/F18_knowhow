@@ -197,7 +197,7 @@ METHOD set_module_gvars()
    PUBLIC gPdvDokVar := "1"
 
 
-   PUBLIC gArtPretragaSifraDob := fetch_metric( "roba_trazi_po_sifradob", NIL, SPACE(20) )
+   PUBLIC gArtPretragaSifraDob := fetch_metric( "roba_trazi_po_sifradob", my_user(), SPACE(20) )
 
    PUBLIC gTipF := "2"
    PUBLIC gVarF := "2"

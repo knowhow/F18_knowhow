@@ -176,7 +176,7 @@ METHOD TKalkMod:set_module_gvars()
    PUBLIC g11bezNC := "N"
    PUBLIC gMpcPomoc := "N"
    PUBLIC gKolicFakt := "N"
-   PUBLIC gRobaTrosk := "N"
+
    PUBLIC gRobaTr1Tip := "%"
    PUBLIC gRobaTr2Tip := "%"
    PUBLIC gRobaTr3Tip := "%"
@@ -280,7 +280,6 @@ METHOD TKalkMod:set_module_gvars()
    gRCRP := fetch_metric( "kalk_varijanta_popusta_na_dokumentima", nil, gRCRP )
    gAutoRavn := fetch_metric( "kalk_kontiranje_automatska_ravnoteza_naloga", nil, gAutoRavn )
    gAutoCjen := fetch_metric( "kalk_automatsko_azuriranje_cijena", nil, gAutoCjen )
-   gRobaTrosk := fetch_metric( "PreuzimanjeTroskovaIzSifRoba", nil, gRobaTrosk )
    gRobaTr1Tip := fetch_metric( "kalk_trosak_1_tip", nil, gRobaTr1Tip )
    gRobaTr2Tip := fetch_metric( "kalk_trosak_2_tip", nil, gRobaTr2Tip )
    gRobaTr3Tip := fetch_metric( "kalk_trosak_3_tip", nil, gRobaTr3Tip )

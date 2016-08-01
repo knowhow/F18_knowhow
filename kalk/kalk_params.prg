@@ -13,6 +13,8 @@
 
 
 STATIC s_cKalkFinIstirBroj := NIL
+STATIC s_cKalkPreuzimanjeTroskovaIzSifRoba := NIL
+
 
 MEMVAR m_x, m_y
 
@@ -65,9 +67,25 @@ FUNCTION kalk_params()
 
 
 
+FUNCTION kalk_preuzimanje_troskova_iz_sif_roba( cSet )
+
+   IF s_cKalkPreuzimanjeTroskovaIzSifRoba == NIL
+      s_cKalkPreuzimanjeTroskovaIzSifRoba := fetch_metric( "kalk_preuzimanje_troskova_iz_sif_roba", nil, "N" )
+   ENDIF
+
+   IF cSet != NIL
+      set_metric( "kalk_preuzimanje_troskova_iz_sif_roba", nil, cSet )
+      s_cKalkPreuzimanjeTroskovaIzSifRoba := cSet
+   ENDIF
+
+   RETURN s_cKalkPreuzimanjeTroskovaIzSifRoba
+
+
+
 FUNCTION kalk_par_varijante_prikaza()
 
    LOCAL nX := 1
+   LOCAL cRobaTrosk :=  kalk_preuzimanje_troskova_iz_sif_roba()
    PRIVATE  GetList := {}
 
    Box(, 23, 76, .F., "Varijante obrade i prikaza pojedinih dokumenata" )
@@ -87,7 +105,7 @@ FUNCTION kalk_par_varijante_prikaza()
    @ m_x + nX, m_y + 2 SAY "10 - ** kolicina = (1) kol-kalo ; (2) kol" GET gKalo VALID gKalo $ "12"
 
    nX += 1
-   @ m_x + nX, m_y + 2 SAY "10 - automatsko preuzimanje troskova iz sifrarnika robe ? (0/D/N)" GET gRobaTrosk VALID gRobaTrosk $ "0DN" PICT "@!"
+   @ m_x + nX, m_y + 2 SAY "10 - automatsko preuzimanje troskova iz sifrarnika robe ? (0/D/N)" GET cRobaTrosk VALID cRobaTrosk $ "0DN" PICT "@!"
 
    nX += 1
 
@@ -153,7 +171,6 @@ FUNCTION kalk_par_varijante_prikaza()
 
       set_metric( "kalk_magacin_po_nc", nil, gMagacin )
 
-
       set_metric( "kalk_kolicina_kalo", nil, gKalo )
       set_metric( "kalk_voditi_kalo", nil, gVodiKalo )
       set_metric( "kalk_dokument_10_prikaz_ukalk_poreza", nil, g10Porez )
@@ -165,7 +182,8 @@ FUNCTION kalk_par_varijante_prikaza()
       set_metric( "kalk_varijanta_fakt_13_kalk_11_cijena", nil, gVar13u11 )
       set_metric( "kalk_pomoc_sa_mpc", nil, gMPCPomoc )
       set_metric( "kalk_kolicina_kod_nivelacije_fakt", nil, gKolicFakt )
-      set_metric( "kalk_preuzimanje_troskova_iz_sif_roba", nil, gRobaTrosk )
+
+      kalk_preuzimanje_troskova_iz_sif_roba( cRobaTrosk )
       set_metric( "kalk_varijanta_popusta_na_dokumentima", nil, gRCRP )
       set_metric( "kalk_kontiranje_automatska_ravnoteza_naloga", nil, gAutoRavn )
       set_metric( "kalk_automatsko_azuriranje_cijena", nil, gAutoCjen )

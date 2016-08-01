@@ -466,11 +466,11 @@ STATIC FUNCTION _auto_set_trosk( lNewItem )
    ENDIF
 
    // ako su automatski troskovi = "N", izadji
-   IF gRobaTrosk == "N"
-      RETURN
+   IF kalk_preuzimanje_troskova_iz_sif_roba() == "N"
+      RETURN .F.
    ENDIF
 
-   IF gRobaTrosk == "0"
+   IF kalk_preuzimanje_troskova_iz_sif_roba() == "0"
 
       IF Pitanje( , "Preuzeti troskove iz sifrarnika robe ?", "D" ) == "N"
          RETURN

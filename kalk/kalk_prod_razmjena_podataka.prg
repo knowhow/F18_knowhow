@@ -190,7 +190,7 @@ FUNCTION fakt_kalk_prenos_11_11()
             REPLACE tprevoz WITH "A"
 
             IF cCjenSif == "D"
-               REPLACE mpcsapp WITH UzmiMpcSif()
+               REPLACE mpcsapp WITH kalk_get_mpc_by_koncij_pravilo()
             ELSE
                REPLACE mpcsapp WITH fakt->cijena
             ENDIF
@@ -375,7 +375,7 @@ FUNCTION prod_fa_ka_prenos_otpr()
                mpcsapp WITH IF( gVar13u11 == "1", roba->mpc, fakt->cijena )
 
             IF gVar13u11 == "1"
-               REPLACE mpcsapp WITH UzmiMPCSif()
+               REPLACE mpcsapp WITH kalk_get_mpc_by_koncij_pravilo()
             ENDIF
             IF gVar13u11 == "2" .AND. Empty( fakt->idpartner )
                REPLACE idkonto WITH cidkonto

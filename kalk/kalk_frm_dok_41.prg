@@ -103,7 +103,7 @@ FUNCTION Get1_41()
       SEEK Trim( _idkonto )
       SELECT ROBA
       HSEEK _IdRoba
-      _MPCSaPP := UzmiMPCSif()
+      _MPCSaPP := kalk_get_mpc_by_koncij_pravilo()
 
       IF gMagacin == "2"
          _FCJ := NC

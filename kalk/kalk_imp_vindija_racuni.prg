@@ -1467,7 +1467,7 @@ STATIC FUNCTION from_kalk_imp_temp_to_pript( aFExist, lFSkip, lNegative, cCtrl_a
          REPLACE tprevoz WITH "A"
 
          IF cTDok == "11"
-            REPLACE mpcsapp WITH UzmiMpcSif() // uzmi mpc iz sifrarnika roba prema podesenju u koncij
+            REPLACE mpcsapp WITH kalk_get_mpc_by_koncij_pravilo() // uzmi mpc iz sifrarnika roba prema podesenju u koncij
          ELSE
             REPLACE mpcsapp WITH kalk_imp_temp->cijena
          ENDIF

@@ -77,7 +77,7 @@ FUNCTION Get1_19()
    IF fnovi
       SELECT koncij
       SEEK Trim( _idkonto )
-      nStCj := Round( UzmiMPCSif(), 3 )
+      nStCj := Round( kalk_get_mpc_by_koncij_pravilo(), 3 )
    ELSE
       nStCj := _fcj
    ENDIF

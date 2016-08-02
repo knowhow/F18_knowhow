@@ -245,7 +245,7 @@ FUNCTION sint_lager_lista_prodavnice()
 
       SELECT roba
       HSEEK cIdRoba
-      _mpc := UzmiMPCSif()
+      _mpc := kalk_get_mpc_by_koncij_pravilo()
       SELECT kalk
 
       IF Round( nUlaz - nIzlaz, 4 ) <> 0

@@ -143,7 +143,7 @@ FUNCTION NaPrimPak()
                   mpc        WITH 0,;
                   tmarza2    WITH "A",;
                   tprevoz    WITH "A",;
-                  mpcsapp    WITH UzmiMPCSif(),;
+                  mpcsapp    WITH kalk_get_mpc_by_koncij_pravilo(),;
                   idroba     WITH cidPrim,;
                   KOLICINA   with ( nUlaz - nIzlaz ) * nKolicina
                nUkNV += kolicina * nc
@@ -175,7 +175,7 @@ FUNCTION NaPrimPak()
                   mpc        WITH 0,;
                   tmarza2    WITH "A",;
                   tprevoz    WITH "A",;
-                  mpcsapp    WITH UzmiMPCSif(),;
+                  mpcsapp    WITH kalk_get_mpc_by_koncij_pravilo(),;
                   idroba     WITH cidroba,;
                   KOLICINA   WITH -( nUlaz - nIzlaz )
             ENDIF
@@ -312,7 +312,7 @@ FUNCTION NaPrPak2()
                   mpc        WITH 0,;
                   tmarza2    WITH "A",;
                   tprevoz    WITH "A",;
-                  mpcsapp    WITH UzmiMPCSif(),;
+                  mpcsapp    WITH kalk_get_mpc_by_koncij_pravilo(),;
                   idroba     WITH cidPrim,;
                   KOLICINA   with ( nUlaz - nIzlaz ) * nKolicina
                nUkNV += kolicina * nc
@@ -343,7 +343,7 @@ FUNCTION NaPrPak2()
                   mpc        WITH 0,;
                   tmarza2    WITH "A",;
                   tprevoz    WITH "A",;
-                  mpcsapp    WITH UzmiMPCSif(),;
+                  mpcsapp    WITH kalk_get_mpc_by_koncij_pravilo(),;
                   idroba     WITH cidroba,;
                   KOLICINA   WITH -( nUlaz - nIzlaz )
             ENDIF

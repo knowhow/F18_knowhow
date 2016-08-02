@@ -153,7 +153,7 @@ FUNCTION kalk_unos_dok_81( atrib )
       SEEK Trim( _idkonto )
       SELECT roba
       HSEEK _idroba
-      _mpcsapp := UzmiMPCSif()
+      _mpcsapp := kalk_get_mpc_by_koncij_pravilo()
       _TMarza2 := "%"
       _TCarDaz := "%"
       _CarDaz := 0

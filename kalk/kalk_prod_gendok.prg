@@ -377,7 +377,7 @@ FUNCTION NivPoProc()
          _kolicina := nUlaz - nIzlaz
          _datdok := _DatFaktP := dDatDok
          _error := "0"
-         _fcj := UzmiMPCSif()
+         _fcj := kalk_get_mpc_by_koncij_pravilo()
 
          IF cVarijanta == "1"  // roba->n1
             _mpcsapp := Round( -_fcj * roba->N1 / 100, nZaokr )
@@ -567,7 +567,7 @@ FUNCTION KorekMPC()
 
       cIdkonto := pkonto
 
-      nUlazVPC  := UzmiMPCSif()
+      nUlazVPC  := kalk_get_mpc_by_koncij_pravilo()
       nStartMPC := nUlazVPC
       // od ove cijene pocinjemo
 

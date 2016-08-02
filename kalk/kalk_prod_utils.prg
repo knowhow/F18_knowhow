@@ -325,7 +325,7 @@ FUNCTION kalk_fakticka_mpc( nMPC, cIdFirma, cPKonto, cIdRoba, dDatum )
 
    LOCAL nOrder
 
-   nMPC := UzmiMPCSif()
+   nMPC := kalk_get_mpc_by_koncij_pravilo()
 
    PushWA()
 
@@ -351,22 +351,31 @@ FUNCTION kalk_fakticka_mpc( nMPC, cIdFirma, cPKonto, cIdRoba, dDatum )
    ENDDO
    PopWa()
 
-
    RETURN .T.
 
 
 
 
 
-FUNCTION UzmiMPCSif()
+FUNCTION kalk_get_mpc_by_koncij_pravilo( cIdKonto )
 
-   LOCAL nCV := 0
+   LOCAL nCV := 0, cRule
 
-   IF koncij->naz == "M2"
+   IF cIdKonto != NIL
+      PushWa()
+      SELECT koncij
+      SEEK cIdKonto
+      cRule := koncij->naz
+      PopWa()
+   ELSE
+      cRule := koncij->naz
+   ENDIF
+
+   IF cRule == "M2"
       nCV := roba->mpc2
-   ELSEIF koncij->naz == "M3"
+   ELSEIF cRule == "M3"
       nCV := roba->mpc3
-   ELSEIF koncij->naz == "M4" .AND. roba->( FieldPos( "mpc4" ) ) <> 0
+   ELSEIF cRule == "M4" .AND. roba->( FieldPos( "mpc4" ) ) <> 0
       nCV := roba->mpc4
       // ELSEIF koncij->naz == "M5" .AND. roba->( FieldPos( "mpc5" ) ) <> 0
       // nCV := roba->mpc5

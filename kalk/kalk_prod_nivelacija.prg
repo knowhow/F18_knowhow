@@ -68,7 +68,7 @@ FUNCTION kalk_nivelacija_11()
       SELECT roba
 
       PRIVATE nMPC := 0
-      nMPC := UzmiMPCSif()
+      nMPC := kalk_get_mpc_by_koncij_pravilo()
 
       IF dozvoljeno_azuriranje_sumnjivih_stavki()
          kalk_fakticka_mpc( @nMPC, _rec[ "idfirma" ], _rec[ "pkonto" ], _rec[ "idroba" ] )

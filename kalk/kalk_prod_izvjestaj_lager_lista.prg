@@ -579,7 +579,7 @@ FUNCTION lager_lista_prodavnica()
          SELECT roba
          HSEEK cIdRoba
 
-         _mpc := UzmiMPCSif()
+         _mpc := kalk_get_mpc_by_koncij_pravilo()
 
          SELECT kalk
 
@@ -1090,7 +1090,7 @@ STATIC FUNCTION _gen_xml( params )
          SELECT roba
          HSEEK _idroba
 
-         _mpcs := UzmiMPCSif()
+         _mpcs := kalk_get_mpc_by_koncij_pravilo()
 
          SELECT kalk
 

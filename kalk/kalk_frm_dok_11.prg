@@ -1,16 +1,16 @@
 /*
- * This file is part of the bring.out FMK, a free and open source
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+ * This file is part of the bring.out knowhow ERP, a free and open source
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
 
-
 #include "f18.ch"
+
 
 
 FUNCTION Get1_11()
@@ -31,12 +31,12 @@ FUNCTION Get1_11()
          @  m_x + 6, Col() + 2 SAY "Datum:" GET _DatFaktP
       ENDIF
 
-      @ m_x + 8, m_y + 2   SAY "Prodavnicki Konto zaduzuje" GET _IdKonto VALID  P_Konto( @_IdKonto, 21, 5 ) PICT "@!"
+      @ m_x + 8, m_y + 2   SAY8 "Prodavnički Konto zaduzuje" GET _IdKonto VALID  P_Konto( @_IdKonto, 21, 5 ) PICT "@!"
       //IF gNW <> "X"
       //   @ m_x + 8, m_y + 42  SAY "Zaduzuje: "   GET _IdZaduz  PICT "@!" VALID Empty( _idZaduz ) .OR. P_Firma( @_IdZaduz, 24 )
       //ENDIF
 
-      @ m_x + 9, m_y + 2   SAY "Magacinski konto razduzuje"  GET _IdKonto2 ;
+      @ m_x + 9, m_y + 2   SAY8 "Magacinski konto razdužuje"  GET _IdKonto2 ;
          VALID Empty( _IdKonto2 ) .OR. P_Konto( @_IdKonto2, 21, 5 )
       //IF gNW <> "X"
       //   @ m_x + 9, m_y + 42 SAY "Razduzuje:" GET _IdZaduz2   PICT "@!"  VALID Empty( _idZaduz2 ) .OR. P_Firma( @_IdZaduz2, 24 )
@@ -47,11 +47,11 @@ FUNCTION Get1_11()
          @  m_x + 6, m_y + 2   SAY "Otpremnica - Broj: "; ?? _BrFaktP
          @  m_x + 6, Col() + 2 SAY "Datum: "; ?? _DatFaktP
       ENDIF
-      @ m_x + 8, m_y + 2   SAY "Prodavnicki Konto zaduzuje "; ?? _IdKonto
+      @ m_x + 8, m_y + 2   SAY8 "Prodavnicki Konto zadužuje "; ?? _IdKonto
       //IF gNW <> "X"
       //   @ m_x + 8, m_y + 42  SAY "Zaduzuje: "; ?? _IdZaduz
       //ENDIF
-      @ m_x + 9, m_y + 2   SAY "Magacinski konto razduzuje "; ?? _IdKonto2
+      @ m_x + 9, m_y + 2   SAY8 "Magacinski konto razdužuje "; ?? _IdKonto2
       //IF gNW <> "X"
       //   @ m_x + 9, m_y + 42  SAY "Razduzuje: "; ?? _IdZaduz2
       //ENDIF
@@ -66,7 +66,7 @@ FUNCTION Get1_11()
 
    @ m_x + 11, m_y + 70 GET _IdTarifa WHEN gPromTar == "N" VALID P_Tarifa( @_IdTarifa )
 
-   @ m_x + 12, m_y + 2   SAY "Kolicina " GET _Kolicina PICTURE PicKol VALID _Kolicina <> 0
+   @ m_x + 12, m_y + 2   SAY8 "Količina " GET _Kolicina PICTURE PicKol VALID _Kolicina <> 0
 
    READ
    ESC_RETURN K_ESC
@@ -75,12 +75,17 @@ FUNCTION Get1_11()
       _idRoba := Left( _idRoba, 10 )
    ENDIF
 
-   SELECT koncij
-   SEEK Trim( _idkonto )
-   SELECT kalk_pripr  // napuni tarifu
+altd()
 
    _MKonto := _Idkonto2
    _PKonto := _Idkonto
+
+   SELECT koncij
+   SEEK Trim( _pkonto )
+
+
+   SELECT kalk_pripr  // napuni tarifu
+
    check_datum_posljednje_kalkulacije()
    kalk_dat_poslj_promjene_prod()
    DuplRoba()
@@ -89,7 +94,7 @@ FUNCTION Get1_11()
    _GKolicina := _GKolicin2 := 0
    IF fNovi
       SELECT roba
-      _MPCSaPP := UzmiMPCSif()
+      _MPCSaPP := kalk_get_mpc_by_koncij_pravilo( _pkonto )
 
       _FCJ := NC
       _VPC := NC
@@ -100,10 +105,14 @@ FUNCTION Get1_11()
    ENDIF
 
    IF nije_dozvoljeno_azuriranje_sumnjivih_stavki() .OR. Round( _VPC, 3 ) = 0 // uvijek nadji
-      SELECT koncij; SEEK Trim( _mkonto ); SELECT kalk_pripr  // magacin
-
+      SELECT koncij
+      SEEK Trim( _mkonto )
+      SELECT kalk_pripr  // magacin
       kalk_vpc_po_kartici( @_VPC, _idfirma, _mkonto, _idroba )
-      SELECT koncij; SEEK Trim( _pkonto ); SELECT kalk_pripr  // magacin
+
+      SELECT koncij
+      SEEK Trim( _pkonto )
+      SELECT kalk_pripr  // magacin
    ENDIF
 
    VTPorezi()

@@ -145,7 +145,7 @@ FUNCTION gen_nivel_p( cPKonto, dDatDok, cBrKalk, lGledajStanje )
       cIdRoba := field->id
       nNivCijena := field->zanivel
       // uzmi MPC iz sifrarnika
-      nStCijena := UzmiMpcSif()
+      nStCijena := kalk_get_mpc_by_koncij_pravilo()
 
       nUlaz := 0
       nIzlaz := 0

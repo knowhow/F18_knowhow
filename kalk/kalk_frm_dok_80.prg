@@ -86,8 +86,7 @@ FUNCTION Get1_80( atrib )
 
    SELECT kalk_pripr
 
-   ++ _x
-   ++ _x
+   _x += 2
 
    _kord_x := m_x + _x
 
@@ -139,7 +138,7 @@ FUNCTION Get1_80( atrib )
       SELECT roba
       HSEEK _idroba
 
-      _mpcsapp := UzmiMPCSif()
+      _mpcsapp := kalk_get_mpc_by_koncij_pravilo()
 
       _TMarza2 := "%"
       _TCarDaz := "%"
@@ -149,10 +148,9 @@ FUNCTION Get1_80( atrib )
 
    SELECT kalk_pripr
 
-   // NC
 
-   ++ _x
-   ++ _x
+   _x += 2 // NC
+
 
    _kord_x := m_x + _x
 
@@ -266,7 +264,7 @@ FUNCTION Get1_80b()
    HSEEK _idroba
 
    // ako nije popunjeno
-   _mpcsapp := UzmiMPCSif()
+   _mpcsapp := kalk_get_mpc_by_koncij_pravilo()
    _TMarza2 := "%"
    _TCarDaz := "%"
    _CarDaz := 0
@@ -345,7 +343,7 @@ FUNCTION Svedi( cSvedi )
       SEEK Trim( _idkonto )
       SELECT roba
       HSEEK _idroba
-      _mpcsapp := UzmiMPCSif()
+      _mpcsapp := kalk_get_mpc_by_koncij_pravilo()
 
    ELSEIF cSvedi == "S"
 

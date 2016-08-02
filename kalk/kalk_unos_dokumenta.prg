@@ -1150,7 +1150,7 @@ STATIC FUNCTION kalk_dokument_prenos_cijena()
          ENDIF
 
          SELECT kalk_pripr
-         _rec[ "mpcsapp" ] := UzmiMpcSif()
+         _rec[ "mpcsapp" ] := kalk_get_mpc_by_koncij_pravilo()
 
          IF Round( _rec[ "mpcsapp" ], 2 ) <= 0
             MsgBeep( "Artikal " + _rec[ "idroba" ] + " cijena <= 0 !"  )

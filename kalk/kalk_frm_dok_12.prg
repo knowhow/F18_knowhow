@@ -80,7 +80,7 @@ FUNCTION Get1_12()
       SELECT ROBA
       HSEEK _IdRoba
 
-      _MPCSaPP := UzmiMPCSif()
+      _MPCSaPP := kalk_get_mpc_by_koncij_pravilo()
 
 
       _FCJ := NC

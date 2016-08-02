@@ -333,7 +333,7 @@ STATIC FUNCTION kalk_prod_insert_ps_into_pripr( data, params )
       _rec[ "mpcsapp" ] := Round( ( _mpvu - _mpvi ) / ( _ulaz - _izlaz ), 2 )
 
       IF params[ "set_mpc" ]
-         _rec[ "mpcsapp" ] := UzmiMpcSif()
+         _rec[ "mpcsapp" ] := kalk_get_mpc_by_koncij_pravilo()
       ENDIF
 
       IF _rec[ "mpcsapp" ] <> 0

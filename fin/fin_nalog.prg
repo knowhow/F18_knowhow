@@ -50,23 +50,13 @@ FUNCTION fin_nalog_azurirani()
 
    BoxC()
 
-
-
    find_nalog_by_broj_dokumenta( cIdFirma, cIdvn, cBrnal )
    GO TOP
-
    EOF CRET
 
    dDatNal := datnal
 
-   // SELECT SUBAN
-   // SEEK cIdfirma + cIdvn + cBrNal
-
    find_suban_by_broj_dokumenta( cIdFirma, cIdvn, cBrnal )
-   // SELECT SUBAN
-   //SET ORDER TO TAG "4"
-   //GO TOP
-
 
    IF !start_print()
       RETURN .F.
@@ -87,12 +77,25 @@ FUNCTION fin_nalog_priprema()
 
    RETURN NIL
 
+
+FUNCTION formiraj_finansijski_nalog( lAuto )
+
+   IF !f18_use_module( "fin" )
+      RETURN .F.
+   ENDIF
+
+   IF ( gaFin == "D" .OR. gaMat == "D" )
+      IF kalk_kontiranje_fin_naloga( .T., lAuto )
+         fin_nalog_priprema_auto_import( lAuto )
+      ENDIF
+   ENDIF
+
+   RETURN .T.
 /*
    Koristi se u KALK za štampu finansijskog naloga
-
 */
 
-FUNCTION fin_nalog_priprema_kalk( lAuto )
+FUNCTION fin_nalog_priprema_auto_import( lAuto )
 
    PRIVATE gDatNal := "N"
    PRIVATE gRavnot := "D"
@@ -104,18 +107,203 @@ FUNCTION fin_nalog_priprema_kalk( lAuto )
 
    IF gaFin == "D"
 
-      kontrola_zbira_naloga_kalk( lAuto )
+      fin_nalog_fix_greska_zaokruzenja( lAuto )
 
       IF lAuto == .F. .OR. ( lAuto == .T. .AND. gAImpPrint == "D" )
          fin_gen_ptabele_stampa_nalozi( lAuto )
       ELSE
-         fin_gen_psuban_stavke_kalk()
-         fin_gen_sint_stavke_kalk()
+         fin_gen_psuban_stavke_auto_import()
+         fin_gen_sint_stavke_auto_import()
       ENDIF
 
       fin_azuriranje_naloga( lAuto )
 
    ENDIF
+
+   RETURN .T.
+
+
+
+FUNCTION fin_nalog_fix_greska_zaokruzenja( lAuto )
+
+   O_KONTO
+   O_VALUTE
+   O_FIN_PRIPR
+
+   IF lAuto == nil
+      lAuto := .F.
+   ENDIF
+
+   Box( "kzb", 12, 70, .F., "Kontrola zbira FIN naloga" )
+
+   SET CURSOR ON
+
+   cIdFirma := IdFirma
+   cIdVN := IdVN
+   cBrNal := BrNal
+
+   @ m_x + 1, m_y + 2 SAY "Nalog broj: " + cIdfirma + "-" + cIdvn + "-" + cBrNal
+
+   SET ORDER TO TAG "1"
+   SEEK cIdFirma + cIdVn + cBrNal
+
+   PRIVATE dug := 0
+   PRIVATE dug2 := 0
+   PRIVATE Pot := 0
+   PRIVATE Pot2 := 0
+
+
+   DO WHILE  !Eof() .AND. ( IdFirma + IdVn + BrNal == cIdFirma + cIdVn + cBrNal )
+
+      IF D_P == "1"
+         dug += IznosBHD
+         dug2 += iznosdem
+      ELSE
+         pot += IznosBHD
+         pot2 += iznosdem
+      ENDIF
+
+      SKIP
+   ENDDO
+
+   SKIP -1
+
+   Scatter()
+
+   cPic := "999 999 999 999.99"
+
+   @ m_x + 5, m_y + 2 SAY "Zbir naloga:"
+   @ m_x + 6, m_y + 2 SAY "     Duguje:"
+   @ m_x + 6, Col() + 2 SAY Dug PICTURE cPic
+   @ m_x + 6, Col() + 2 SAY Dug2 PICTURE cPic
+   @ m_x + 7, m_y + 2 SAY "  Potrazuje:"
+   @ m_x + 7, Col() + 2 SAY Pot  PICTURE cPic
+   @ m_x + 7, Col() + 2 SAY Pot2  PICTURE cPic
+   @ m_x + 8, m_y + 2 SAY "      Saldo:"
+   @ m_x + 8, Col() + 2 SAY Dug - Pot  PICTURE cPic
+   @ m_x + 8, Col() + 2 SAY Dug2 - Pot2  PICTURE cPic
+
+   IF Round( Dug - Pot, 2 ) <> 0
+
+      PRIVATE cDN := "D"
+
+      IF lAuto == .F.
+
+         SET CURSOR ON
+
+         @ m_x + 10, m_y + 2 SAY "Zelite li uravnoteziti nalog (D/N) ?" GET cDN valid ( cDN $ "DN" ) PICT "@!"
+
+         READ
+
+      ELSE
+         cDN := "D" // uravnoteziti nalog ako je auto import
+      ENDIF
+
+      IF cDN == "D"
+
+         _Opis := "GRESKA ZAOKRUZ."
+         _BrDok := ""
+         _D_P := "2"
+         _IdKonto := Space( 7 )
+
+         IF lAuto == .F.
+
+            @ m_x + 11, m_y + 2 SAY "Staviti na konto ?" GET _IdKonto VALID P_Konto( @_IdKonto )
+            @ m_x + 11, Col() + 1 SAY "Datum dokumenta:" GET _DatDok
+
+            READ
+
+         ELSE
+
+            _idkonto := kalk_auto_import_podataka_konto()
+
+         ENDIF
+
+         IF lAuto == .T. .OR. LastKey() <> K_ESC
+
+            _Rbr := _Rbr + 1
+            _IdPartner := ""
+            _IznosBHD := Dug - Pot
+
+            nTArea := Select()
+
+            konverzija_valute( NIL, NIL, "_IZNOSBHD" )
+
+            SELECT ( nTArea )
+
+            APPEND BLANK
+
+            Gather()
+
+         ENDIF
+      ENDIF
+   ENDIF
+   BoxC()
+
+   my_close_all_dbf()
+
+   RETURN .T.
+
+
+
+FUNCTION fin_nalog_fix_greska_zaokruzenja_fin_pripr( cIdFirma, cIdVn, cBrNal )
+
+   LOCAL dug := 0
+   LOCAL dug2 := 0
+   LOCAL Pot := 0
+   LOCAL Pot2 := 0
+
+   PushWa()
+
+   SELECT fin_pripr
+
+   SEEK cIdFirma + cIdVn + cBrNal
+
+   DO WHILE  !Eof() .AND. ( IdFirma + IdVn + BrNal == cIdFirma + cIdVn + cBrNal )
+
+      IF D_P == "1"
+         dug += IznosBHD
+         dug2 += iznosdem
+      ELSE
+         pot += IznosBHD
+         pot2 += iznosdem
+      ENDIF
+
+      SKIP
+   ENDDO
+
+   SKIP -1
+
+   Scatter()
+
+
+   IF Round( Dug - Pot, 2 ) <> 0 .AND. Pitanje(, "Zelite li uravnoteziti nalog (D/N) ?", "N" ) == "D"
+
+
+      _Opis := "GRESKA ZAOKRUZ."
+      _BrDok := ""
+      _D_P := "2"
+
+      _idkonto := kalk_auto_import_podataka_konto()
+
+
+      _Rbr := _Rbr + 1
+      _IdPartner := ""
+      _IznosBHD := Dug - Pot
+
+      nTArea := Select()
+
+      konverzija_valute( NIL, NIL, "_IZNOSBHD" )
+
+      SELECT ( nTArea )
+
+      APPEND BLANK
+
+      Gather()
+
+   ENDIF
+
+   PopWa()
 
    RETURN .T.
 
@@ -135,635 +323,9 @@ FUNCTION fin_gen_ptabele_stampa_nalozi( lAuto )
 
 
 
-/*
-   Generiše psuban, pa štampa sve naloge
-*/
 
-FUNCTION fin_gen_psuban_stampa_nalozi( lAuto, dDatNal )
 
-   LOCAL oNalog, oNalozi := FinNalozi():New()
 
-   PRIVATE aNalozi := {}
-
-   IF lAuto == NIL
-      lAuto := .F.
-   ENDIF
-
-#ifdef F18_DEBUG_FIN_AZUR
-   AltD() // F18_DEBUG_FIN_AZUR
-#endif
-
-   fin_open_psuban_and_ostalo()
-
-
-   SELECT PSUBAN
-   my_dbf_zap()
-
-   SELECT fin_pripr
-   SET ORDER TO TAG "1"
-
-   GO TOP
-
-   EOF CRET .F.
-
-   IF lAuto
-      // _print_opt := "D"
-      Box(, 3, 75 )
-      @ m_x + 0, m_y + 2 SAY8 "Formiranje sintetičkih i analitičkih stavki"
-   ENDIF
-
-   DO WHILE !Eof()
-
-      cIdFirma := IdFirma
-      cIdVN := IdVN
-      cBrNal := BrNal
-
-      IF !lAuto
-         IF !box_fin_nalog( @cIdFirma, @cIdVn, @cBrNal, @dDatNal )
-            RETURN .F.
-         ENDIF
-      ENDIF
-
-      HSEEK cIdFirma + cIdVN + cBrNal
-      IF Eof()
-         my_close_all_dbf()
-         RETURN .F.
-      ENDIF
-
-      IF !lAuto
-         IF !start_print()
-            my_close_all_dbf()
-            RETURN .F.
-         ENDIF
-      ENDIF
-
-      oNalog := FinNalog():New( cIdFirma, cIdVn, cBrNal )
-
-      fin_nalog_stampa_fill_psuban( "1", lAuto, dDatNal, @oNalog )
-      oNalozi:addNalog( oNalog )
-
-      IF !lAuto
-         PushWA()
-         my_close_all_dbf()
-         end_print()
-         fin_open_psuban_and_ostalo()
-         PopWa()
-      ENDIF
-
-
-      IF AScan( aNalozi, cIdFirma + cIdVN + cBrNal ) == 0
-
-         AAdd( aNalozi, cIdFirma + cIdVN + cBrNal ) // lista naloga koji su otisli
-         IF lAuto
-            @ m_x + 2, m_y + 2 SAY "Formirana sintetika i analitika za nalog:" + cIdFirma + "-" + cIdVN + "-" + cBrNal
-         ENDIF
-      ENDIF
-
-   ENDDO
-
-   IF lAuto
-      BoxC()
-   ENDIF
-
-   my_close_all_dbf()
-
-   IF !oNalozi:valid()
-      oNalozi:showErrors()
-   ENDIF
-
-   RETURN .T.
-
-
-
-/*
-   Štampa (su)banalitičkog finansijski nalog
-   - ako smo na fin_pripr onda puni psuban sa sadržajem fin_pripr
-*/
-
-FUNCTION fin_nalog_stampa_fill_psuban( cInd, lAuto, dDatNal, oNalog )
-
-   LOCAL nArr := Select()
-   LOCAL aRez := {}
-   LOCAL aOpis := {}
-   LOCAL _vrste_placanja
-   LOCAL _fin_params := fin_params()
-   LOCAL nColI
-
-#ifdef F18_DEBUG_FIN_AZUR
-
-   AltD() // F18_DEBUG_FIN_AZUR
-#endif
-
-   IF lAuto = NIL
-      lAuto := .F.
-   ENDIF
-
-   IF dDatNal == NIL
-      dDatNal := Date()
-   ENDIF
-
-   _vrste_placanja := .F.
-
-   O_PARTN
-   SELECT ( nArr )
-
-
-   PicBHD := "@Z " + FormPicL( gPicBHD, 15 )
-   PicDEM := "@Z " + FormPicL( gPicDEM, 10 )
-
-   M := iif( cInd == "3", "------ -------------- --- ", "" )
-   IF _fin_params[ "fin_tip_dokumenta" ]
-
-      M +=  + "---- ------- " + REPL( "-", FIELD_PARTNER_ID_LENGTH ) + " ----------------------------"
-      M +=  " -- ------------- ----------- -------- -------- --------------- ---------------"
-
-   ELSE
-
-      M +=  "---- ------- "
-      M += REPL( "-", FIELD_PARTNER_ID_LENGTH ) + " ----------------------------"
-      M += " ----------- -------- -------- --------------- ---------------"
-
-   ENDIF
-   M += iif( fin_jednovalutno(), "-", " ---------- ----------" )
-
-   IF cInd $ "1#2"
-      nUkDugBHD := nUkPotBHD := nUkDugDEM := nUkPotDEM := 0
-      nStr := 0
-   ENDIF
-
-   cIdFirma := field->IdFirma
-   cIdVN := field->IdVN
-   cBrNal := field->BrNal
-
-   b2 := {|| cIdFirma == IdFirma .AND. cIdVN == IdVN .AND. cBrNal == BrNal }
-
-   IF cInd $ "1#2" .AND. !lAuto
-      fin_nalog_zaglavlje( dDatNal )
-   ENDIF
-
-   DO WHILE !Eof() .AND. Eval( b2 )
-
-      IF oNalog != NIL
-         oNalog:addStavka( field->datDok )
-      ENDIF
-
-      IF !lAuto
-
-         IF PRow() > 61 + iif( cInd == "3", -7, 0 ) + dodatni_redovi_po_stranici()
-            IF cInd == "3"
-               PrenosDNal()
-            ELSE
-               FF
-            ENDIF
-            fin_nalog_zaglavlje( dDatnal )
-         ENDIF
-         P_NRED
-
-         IF cInd == "3"
-            @ PRow(), 0 SAY Str( ++nRBrDN, 6 )
-            @ PRow(), PCol() + 1 SAY cIdFirma + "-" + cIdVN + "-" + cBrNal
-            @ PRow(), PCol() + 1 SAY " " + Left( DToC( dDatNal ), 2 )
-            @ PRow(), PCol() + 1 SAY RBr
-         ELSE
-            @ PRow(), 0 SAY RBr PICT "99999"
-         ENDIF
-
-         @ PRow(), PCol() + 1 SAY IdKonto
-
-         _kto_naz := ""
-         _part_naz := ""
-         _part_naz2 := ""
-
-         IF !Empty( IdPartner )
-
-            IF gVSubOp == "D"
-
-               SELECT KONTO
-               HSEEK ( nArr )->idkonto
-               IF Found()
-                  _kto_naz := konto->naz
-               ENDIF
-
-               SELECT PARTN
-               HSEEK ( nArr )->idpartner
-               IF Found()
-                  _part_naz := partn->naz
-                  _part_naz2 := partn->naz2
-               ENDIF
-
-               cStr := Trim( _kto_naz ) + " (" + Trim( Trim( _part_naz ) + " " + Trim( _part_naz2 ) ) + ")"
-
-            ELSE
-
-               SELECT PARTN
-               HSEEK ( nArr )->idpartner
-               IF Found()
-                  _part_naz := partn->naz
-                  _part_naz2 := partn->naz2
-               ENDIF
-
-               cStr := Trim( _part_naz ) + " " + Trim( _part_naz2 )
-
-            ENDIF
-         ELSE
-
-            SELECT KONTO
-            HSEEK ( nArr )->idkonto
-
-            IF Found()
-               _kto_naz := konto->naz
-            ENDIF
-
-            cStr := _kto_naz
-
-         ENDIF
-
-         SELECT ( nArr )
-
-         aRez := SjeciStr( cStr, 28 ) // konto partner
-         cStr := opis
-         aOpis := SjeciStr( cStr, 20 )
-
-
-         @ PRow(), PCol() + 1 SAY Idpartner( idpartner ) // šifra partnera
-         nColStr := PCol() + 1
-
-
-         @  PRow(), PCol() + 1 SAY PadR( aRez[ 1 ], 28 )
-         nColDok := PCol() + 1
-
-         IF _fin_params[ "fin_tip_dokumenta" ]
-
-            @ PRow(), PCol() + 1 SAY IdTipDok
-
-            SELECT TDOK
-            HSEEK ( nArr )->idtipdok
-            @ PRow(), PCol() + 1 SAY PadR( naz, 13 )
-
-            SELECT ( nArr )
-            @ PRow(), PCol() + 1 SAY PadR( BrDok, 11 )
-
-         ELSE
-            @ PRow(), PCol() + 1 SAY PadR( BrDok, 11 )
-         ENDIF
-
-         @ PRow(), PCol() + 1 SAY DatDok
-         IF gDatVal == "D"
-            @ PRow(), PCol() + 1 SAY get_datval_field()
-         ELSE
-            @ PRow(), PCol() + 1 SAY Space( 8 )
-         ENDIF
-         s_nColIzn := PCol() + 1
-
-      ENDIF
-
-      IF D_P == "1"
-
-         IF !lAuto
-            @ PRow(), PCol() + 1 SAY IznosBHD PICTURE PicBHD
-            @ PRow(), PCol() + 1 SAY 0 PICTURE PicBHD
-         ENDIF
-         nUkDugBHD += IznosBHD
-         IF cInd == "3"
-            nTSDugBHD += IznosBHD
-         ENDIF
-
-      ELSE
-
-         IF !lAuto
-            @ PRow(), PCol() + 1 SAY 0 PICTURE PicBHD
-            @ PRow(), PCol() + 1 SAY IznosBHD PICTURE PicBHD
-         ENDIF
-         nUkPotBHD += IznosBHD
-         IF cInd == "3"
-            nTSPotBHD += IznosBHD
-         ENDIF
-
-      ENDIF
-
-      IF fin_dvovalutno()
-
-         IF D_P == "1"
-            IF !lAuto
-               @ PRow(), PCol() + 1 SAY IznosDEM PICTURE PicDEM
-               @ PRow(), PCol() + 1 SAY 0 PICTURE PicDEM
-            ENDIF
-            nUkDugDEM += IznosDEM
-            IF cInd == "3"
-               nTSDugDEM += IznosDEM
-            ENDIF
-
-         ELSE
-
-            IF !lAuto
-               @ PRow(), PCol() + 1 SAY 0 PICTURE PicDEM
-               @ PRow(), PCol() + 1 SAY IznosDEM PICTURE PicDEM
-            ENDIF
-            nUkPotDEM += IznosDEM
-            IF cInd == "3"
-               nTSPotDEM += IznosDEM
-            ENDIF
-         ENDIF
-
-      ENDIF
-
-      IF !lAuto
-
-         Pok := 0
-         FOR i := 2 TO Max( Len( aRez ), Len( aOpis ) + 1 )
-            IF i <= Len( aRez )
-               @ PRow() + 1, nColStr SAY aRez[ i ]
-            ELSE
-               pok := 1
-            ENDIF
-
-            @ PRow() + pok, nColDok SAY iif( i - 1 <= Len( aOpis ), aOpis[ i - 1 ], Space( 20 ) )
-            IF i == 2 .AND. ( !Empty( k1 + k2 + k3 + k4 ) .OR. grj == "D" .OR. gtroskovi == "D" )
-               ?? " " + k1 + "-" + k2 + "-" + K3Iz256( k3 ) + "-" + k4
-               IF _vrste_placanja
-                  ?? "(" + Ocitaj( F_VRSTEP, k4, "naz" ) + ")"
-               ENDIF
-               IF gRj == "D"
-                  ?? " RJ:", idrj
-               ENDIF
-               IF gTroskovi == "D"
-                  ?? "    Funk:", Funk
-                  ?? "    Fond:", Fond
-               ENDIF
-            ENDIF
-         NEXT
-
-      ENDIF
-
-      IF cInd == "1" .AND. AScan( aNalozi, cIdFirma + cIdVN + cBrNal ) == 0
-
-         SELECT ( nArr ) // priprema
-         Scatter()
-         SELECT PSUBAN
-         APPEND BLANK
-
-         Gather()
-      ENDIF
-
-      SELECT ( nArr )
-      SKIP 1
-   ENDDO
-
-   IF cInd $ "1#2" .AND. !lAuto
-
-      IF PRow() > 58 + dodatni_redovi_po_stranici()
-         FF
-         fin_nalog_zaglavlje( dDatNal )
-      ENDIF
-
-      P_NRED
-      ?? M
-      P_NRED
-
-      ?? "Z B I R   N A L O G A:"
-      @ PRow(), s_nColIzn  SAY nUkDugBHD PICTURE picBHD
-      @ PRow(), PCol() + 1 SAY nUkPotBHD PICTURE picBHD
-
-      IF fin_dvovalutno()
-         @ PRow(), PCol() + 1 SAY nUkDugDEM PICTURE picDEM
-         @ PRow(), PCol() + 1 SAY nUkPotDEM PICTURE picDEM
-      ENDIF
-
-      P_NRED
-      ?? M
-
-      nUkDugBHD := nUKPotBHD := nUkDugDEM := nUKPotDEM := 0
-
-      IF gPotpis == "D"
-         IF PRow() > 58 + dodatni_redovi_po_stranici()
-            FF
-            fin_nalog_zaglavlje( dDatNal )
-         ENDIF
-         P_NRED
-         P_NRED
-         F12CPI
-         P_NRED
-         @ PRow(), 55 SAY "Obrada AOP "; ?? Replicate( "_", 20 )
-         P_NRED
-         @ PRow(), 55 SAY "Kontirao   "; ?? Replicate( "_", 20 )
-      ENDIF
-      FF
-
-   ELSEIF cInd == "3"
-      IF PRow() > 54 + dodatni_redovi_po_stranici()
-         PrenosDNal()
-      ENDIF
-   ENDIF
-
-   RETURN .T.
-
-
-
-
-
-FUNCTION fin_gen_sint_stavke( lAuto, dDatNal )
-
-   LOCAL A, cDN := "N"
-   LOCAL nStr, nD1, nD2, nP1, nP2
-   LOCAL cIdFirma, cIDVn, cBrNal
-   LOCAL nDugBHD, nDugDEM, nPotBHD, nPotDEM
-   LOCAL nRbr
-
-   IF lAuto == NIL
-      lAuto := .F.
-   ENDIF
-
-   IF !fin_open_lock_panal( .T. )
-      RETURN .F.
-   ENDIF
-
-   SELECT PSUBAN
-   SET ORDER TO TAG "2"
-   GO TOP
-   IF Empty( PSUBAN->BrNal )
-      MsgBeep( "subanalitika prazna" )
-      my_close_all_dbf()
-      RETURN .F.
-   ENDIF
-
-   A := 0
-   DO WHILE !Eof()
-
-      cIdFirma := psuban->IdFirma
-      cIDVn = psuban->IdVN
-      cBrNal := psuban->BrNal
-
-      fin_gen_panal_psint( cIdFirma, cIdVn, cBrNal, dDatNal )
-
-      IF !lAuto
-         Box(, 2, 58 )
-         @ m_x + 1, m_y + 2 SAY8 "Štampanje analitike/sintetike za nalog " + cIdfirma + "-" + cIdvn + "-" + cBrnal + " ?"  GET cDN PICT "@!" VALID cDN $ "DN"
-         READ
-         BoxC()
-      ENDIF
-
-      SELECT PSUBAN
-      PushWA()
-
-      IF cDN == "D"
-         SELECT PANAL
-         SEEK cIdfirma + cIdvn + cBrnal
-         fin_sinteticki_nalog( .F. )
-      ENDIF
-
-      my_close_all_dbf()
-      fin_open_lock_panal( .F. )
-
-      PopWa()
-
-   ENDDO
-
-   SELECT PANAL
-   my_flock()
-
-   GO TOP
-   DO WHILE !Eof()
-      nRbr := 0
-      cIdFirma := IdFirma
-      cIDVn = IdVN
-      cBrNal := BrNal
-      DO WHILE !Eof() .AND. cIdFirma == IdFirma .AND. cIdVN == IdVN .AND. cBrNal == BrNal
-         REPLACE rbr WITH Str( ++nRbr, 3 )
-         SKIP
-      ENDDO
-   ENDDO
-
-   SELECT PSINT
-   my_flock()
-
-   GO TOP
-   DO WHILE !Eof()
-      nRbr := 0
-      cIdFirma := IdFirma
-      cIDVn = IdVN
-      cBrNal := BrNal
-      DO WHILE !Eof() .AND. cIdFirma == IdFirma .AND. cIdVN == IdVN .AND. cBrNal == BrNal
-         REPLACE rbr WITH Str( ++nRbr, 3 )
-         SKIP
-      ENDDO
-   ENDDO
-
-   my_close_all_dbf()
-
-   RETURN .T.
-
-
-/*
-    fin_nalog_zaglavlje()
-    Zaglavlje (sub)analitickog naloga
-*/
-
-FUNCTION fin_nalog_zaglavlje( dDatNal )
-
-   LOCAL nArr, lDnevnik := .F.
-   LOCAL _fin_params := fin_params()
-   LOCAL cTmp
-
-   IF "DNEVNIKN" == PadR( Upper( ProcName( 1 ) ), 8 ) .OR. "DNEVNIKN" == PadR( Upper( ProcName( 2 ) ), 8 )
-      lDnevnik := .T.
-   ENDIF
-
-
-   ?
-   IF _fin_params[ "fin_tip_dokumenta" ] .AND. fin_dvovalutno()
-      P_COND2
-   ELSE
-      P_COND
-   ENDIF
-
-   B_ON
-
-   ?? Upper( gTS ) + ":", gNFirma
-   ?
-   nArr := Select()
-
-   IF _fin_params[ "fin_tip_dokumenta" ]
-      SELECT partn
-      HSEEK cIdfirma
-      SELECT ( nArr )
-      ? cidfirma, "-", AllTrim( partn->naz )
-   ENDIF
-
-   ?
-   IF lDnevnik
-      ?U "FIN:      D N E V N I K    K NJ I Ž E NJ A    Z A    " + ;
-         Upper( NazMjeseca( Month( dDatNal ) ) ) + " " + Str( Year( dDatNal ) ) + ". GODINE"
-   ELSE
-      ?U "FIN: NALOG ZA KNJIŽENJE BROJ :"
-      @ PRow(), PCol() + 2 SAY cIdFirma + " - " + cIdVn + " - " + cBrNal
-   ENDIF
-
-   B_OFF
-   IF gDatNal == "D" .AND. !lDnevnik
-      @ PRow(), PCol() + 4 SAY "DATUM: "
-      ?? dDatNal
-   ENDIF
-
-   IF !lDnevnik
-      SELECT TNAL; HSEEK cidvn
-      @ PRow(), PCol() + 4 SAY naz
-   ENDIF
-
-   @ PRow(), PCol() + 15 SAY "Str:" + Str( ++nStr, 4 )
-
-   P_NRED
-
-   ?? M
-
-   IF !_fin_params[ "fin_tip_dokumenta" ]
-      P_NRED
-
-      cTmp := iif( lDnevnik, "R.BR. *   BROJ   *DAN*", "" ) + "*R.   * KONTO *" + PadC( "PART", FIELD_PARTNER_ID_LENGTH )
-      cTmp +=  "*" + "    NAZIV PARTNERA ILI      "  + "*   D  O  K  U  M  E  N  T    *         IZNOS U  " + ValDomaca() + "         *"
-      cTmp += iif( fin_jednovalutno(), "", "    IZNOS U " + ValPomocna() + "    *" )
-      ??U cTmp
-      P_NRED
-
-      cTmp := iif( lDnevnik, "U DNE-*  NALOGA  *   *", "" ) + "             " + PadC( "NER", FIELD_PARTNER_ID_LENGTH ) + " "
-      cTmp += "                            " + " ----------------------------- ------------------------------- "
-      cTmp += iif( fin_jednovalutno(), "", "---------------------" )
-      ??U cTmp
-      P_NRED
-
-      cTmp := iif( lDnevnik, "VNIKU *          *   *", "" ) + "*BR *       *" + REPL( " ", FIELD_PARTNER_ID_LENGTH ) + "*"
-      cTmp += "    NAZIV KONTA             "  + "* BROJ VEZE * DATUM  * VALUTA *  DUGUJE " + ValDomaca() + "  * POTRAŽUJE " + ValDomaca() + "*"
-      cTmp += iif( fin_jednovalutno(), "", " DUG. " + ValPomocna() + "* POT." + ValPomocna() + "*" )
-      ??U cTmp
-
-   ELSE
-      P_NRED
-
-      cTmp := iif( lDnevnik, "R.BR. *   BROJ   *DAN*", "" ) + "*R.   * KONTO *" + PadC( "PART", FIELD_PARTNER_ID_LENGTH ) + "*"
-      cTmp += "    NAZIV PARTNERA ILI      "  + "*           D  O  K  U  M  E  N  T             *         IZNOS U  " + ValDomaca() + "         *"
-      cTmp += iif( fin_jednovalutno(), "", "    IZNOS U " + ValPomocna() + "    *" )
-      ??U cTmp
-      P_NRED
-
-      cTmp := iif( lDnevnik, "U DNE-*  NALOGA  *   *", "" ) + "               " + PadC( "NER", FIELD_PARTNER_ID_LENGTH ) + " "
-      cTmp += "                            " + " ---------------------------------------------- ------------------------------- "
-      cTmp += iif( fin_jednovalutno(), "", "---------------------" )
-      ??U cTmp
-      P_NRED
-
-
-      cTmp := iif( lDnevnik, "VNIKU *          *   *", "" ) + "*BR   *       *" + REPL( " ", FIELD_PARTNER_ID_LENGTH ) + "*"
-      cTmp += "    NAZIV KONTA             " + "*  TIP I NAZIV   * BROJ VEZE * DATUM  * VALUTA *  DUGUJE " + ValDomaca() + "  * POTRAŽUJE " + ValDomaca() + "*"
-      cTmp +=  iif( fin_jednovalutno(), "", " DUG. " + ValPomocna() + "* POT." + ValPomocna() + "*" )
-      ??U cTmp
-
-   ENDIF
-
-   P_NRED
-   ?? M
-
-   Select( nArr )
-
-   RETURN .T.
 
 
 /* PrenosDNal()

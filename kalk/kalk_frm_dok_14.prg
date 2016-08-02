@@ -16,7 +16,6 @@ FUNCTION kalk_14_get1()
 
    LOCAL dDatVal := CtoD( "" )
 
-altd()
    pIzgSt := .F.
 
    SET KEY K_ALT_K TO KM2()

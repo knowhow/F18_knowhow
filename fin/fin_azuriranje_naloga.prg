@@ -351,7 +351,6 @@ STATIC FUNCTION fin_provjera_prije_azuriranja_naloga( auto, lista_naloga )
    ENDIF
 
 
-
    IF !fin_p_tabele_provjera( lista_naloga )
 
       IF !_vise_naloga
@@ -582,17 +581,17 @@ STATIC FUNCTION fin_p_tabele_provjera( lista_naloga )
 
    SELECT psuban
    IF RecCount2() == 0
-      RETURN _ok
+      RETURN .F.
    ENDIF
 
    SELECT panal
    IF RecCount2() == 0
-      RETURN _ok
+      RETURN .F.
    ENDIF
 
    SELECT psint
    IF RecCount2() == 0
-      RETURN _ok
+      RETURN .F.
    ENDIF
 
    FOR _i := 1 TO Len( lista_naloga )

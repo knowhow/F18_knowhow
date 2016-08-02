@@ -239,19 +239,6 @@ altd()
    RETURN .T.
 
 
-STATIC FUNCTION formiraj_finansijski_nalog( lAuto )
-
-   IF !f18_use_module( "fin" )
-      RETURN .F.
-   ENDIF
-
-   IF ( gaFin == "D" .OR. gaMat == "D" )
-      IF kalk_kontiranje_fin_naloga( .T., lAuto )
-         fin_nalog_priprema_kalk( lAuto )
-      ENDIF
-   ENDIF
-
-   RETURN .T.
 
 
 STATIC FUNCTION formiraj_fakt_zavisne_dokumente()

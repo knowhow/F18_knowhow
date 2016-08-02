@@ -75,8 +75,6 @@ FUNCTION Get1_11()
       _idRoba := Left( _idRoba, 10 )
    ENDIF
 
-altd()
-
    _MKonto := _Idkonto2
    _PKonto := _Idkonto
 

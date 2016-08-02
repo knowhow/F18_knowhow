@@ -24,9 +24,9 @@ FUNCTION fin_unos_naloga()
    PRIVATE gnLOst := 0
    PRIVATE gPotpis := "N"
 
-   //info_bar( "fin", "read_params" )
-   //fin_read_params()
-   //info_bar( "fin", "read_params_end" )
+   // info_bar( "fin", "read_params" )
+   // fin_read_params()
+   // info_bar( "fin", "read_params_end" )
 
    cTekucaRj := GetTekucaRJ()
    lBlagAsis := .F.
@@ -61,7 +61,7 @@ FUNCTION fin_knjizenje_naloga()
       { "F.",            {|| dbSelectArea( F_FIN_PRIPR ), field->IdFirma }, "IdFirma" }, ;
       { "VN",            {|| field->IdVN    }, "IdVN" }, ;
       { "Br.",           {|| field->BrNal   }, "BrNal" }, ;
-      { "R.br",          {|| STR( field->RBr, 5, 0) }, "rbr", {|| wRbr() }, {|| .T. } }, ;
+      { "R.br",          {|| Str( field->RBr, 5, 0 ) }, "rbr", {|| wRbr() }, {|| .T. } }, ;
       { "Konto",         {|| field->IdKonto }, "IdKonto", {|| .T. }, {|| P_Konto( @_IdKonto ), .T. } }, ;
       { "Partner",       {|| field->IdPartner }, "IdPartner" }, ;
       { "Br.veze ",      {|| field->BrDok   }, "BrDok" }, ;
@@ -120,81 +120,11 @@ FUNCTION fin_knjizenje_naloga()
 
    @ m_x + _x_row, m_y + 2 SAY8 _opt_row
 
-   my_db_edit( "PN2", _x_row, _y_row, {|| edit_fin_pripr() }, "", "Priprema...", , , , , _help_columns )
+   my_db_edit( "PN2", _x_row, _y_row, {|| edit_fin_pripr_key_handler() }, "", "Priprema...", , , , , _help_columns )
 
    BoxC()
 
    my_close_all_dbf()
-
-   RETURN .T.
-
-
-
-FUNCTION WRbr()
-
-   LOCAL _rec
-   LOCAL _rec_2
-
-   _rec := dbf_get_rec()
-
-   IF _rec[ "rbr" ]  < 2
-      @ m_x + 1, m_y + 2 SAY8 "Dokument:" GET _rec[ "idvn" ]
-      @ m_x + 1, Col() + 2  GET _rec[ "brnal" ]
-      READ
-   ENDIF
-
-   SET ORDER TO 0
-   GO TOP
-   DO WHILE !Eof()
-      _rec_2 := dbf_get_rec()
-      _rec_2[ "idvn" ]  := _rec[ "idvn" ]
-      _rec_2[ "brnal" ] := _rec[ "brnal" ]
-      dbf_update_rec( _rec_2 )
-      SKIP
-   ENDDO
-
-   SET ORDER TO TAG "1"
-   GO TOP
-
-   RETURN .T.
-
-
-
-
-
-FUNCTION o_fin_edit()
-
-   my_close_all_dbf()
-
-   O_VRSTEP
-   O_ULIMIT
-
-   IF ( IsRamaGlas() )
-      O_FAKT_OBJEKTI
-   ENDIF
-
-   O_RJ
-
-   IF gTroskovi == "D"
-      O_FOND
-      O_FUNK
-   ENDIF
-
-   O_PSUBAN
-   O_PANAL
-   O_PSINT
-   O_PNALOG
-   O_PAREK
-   O_KONTO
-   O_PARTN
-   O_TNAL
-   O_TDOK
-   o_nalog()
-   O_FIN_PRIPR
-
-   SELECT fin_pripr
-   SET ORDER TO TAG "1"
-   GO TOP
 
    RETURN .T.
 
@@ -254,7 +184,7 @@ FUNCTION edit_fin_priprema()
 
    @ m_x + 3, m_y + 55 SAY "Broj:" GET _brnal VALID fin_valid_provjeri_postoji_nalog( _idfirma, _idvn, _brnal ) .AND. !Empty( _brnal )
    @ m_x + 5, m_y + 2 SAY "Redni broj stavke naloga:" GET nRbr PICTURE "99999" ;
-      VALID { || lDugmeOtvoreneStavke := .T., .T. }
+      VALID {|| lDugmeOtvoreneStavke := .T., .T. }
 
    @ m_x + 7, m_y + 2 SAY "DOKUMENT: "
 
@@ -328,15 +258,15 @@ FUNCTION edit_fin_priprema()
 
 
    @ m_x + 16, m_y + 46  GET _IznosBHD  PICTURE "999999999999.99"  WHEN {|| .T. } ;
-       VALID {|| lDugmeOtvoreneStavke := .T., .T. }
+      VALID {|| lDugmeOtvoreneStavke := .T., .T. }
 
    @ m_x + 17, m_y + 46  GET _IznosDEM  PICTURE '9999999999.99'  WHEN {|| konverzija_valute( , , "_IZNOSBHD" ),  .T. } ;
-       VALID {|| lDugmeOtvoreneStavke := .F., .T. }
+      VALID {|| lDugmeOtvoreneStavke := .F., .T. }
 
 
-    @ m_x + 16, m_y + 65 GET lOstavDUMMY PUSHBUTTON  CAPTION "(Alt-O) Otvorene stavke"   ;
-             WHEN {|| lDugmeOtvoreneStavke } ;
-             SIZE X 20 Y 2 FOCUS {|| lDugmeOtvoreneStavke := .T. , knjizenje_gen_otvorene_stavke(), lDugmeOtvoreneStavke := .F. }
+   @ m_x + 16, m_y + 65 GET lOstavDUMMY PUSHBUTTON  CAPTION "(Alt-O) Otvorene stavke"   ;
+      WHEN {|| lDugmeOtvoreneStavke } ;
+      SIZE X 20 Y 2 FOCUS {|| lDugmeOtvoreneStavke := .T., knjizenje_gen_otvorene_stavke(), lDugmeOtvoreneStavke := .F. }
 
 
 
@@ -362,210 +292,7 @@ FUNCTION edit_fin_priprema()
    RETURN 1
 
 
-
-FUNCTION MinKtoLen( cIdKonto )
-
-   IF gKtoLimit == "N"
-      RETURN .T.
-   ENDIF
-
-   IF gKtoLimit == "D" .AND. gnKtoLimit > 0
-      IF Len( AllTrim( cIdKonto ) ) > gnKtoLimit
-         RETURN .T.
-      ELSE
-         MsgBeep( "Dužina konta mora biti veća od " + AllTrim( Str( gnKtoLimit ) ) )
-         RETURN .F.
-      ENDIF
-   ENDIF
-
-   RETURN
-
-
-
-/* CheckMark(cIdKonto)
- *     Provjerava da li je konto markiran, ako nije izbrisi zapamceni _IdPartner
- *   param: cIdKonto - oznaka konta
- *   param: cIdPartner - sifra partnera koja ce se ponuditi
- *   param: cNewPartner - zapamcena sifra partnera
- */
-
-FUNCTION CheckMark( cIdKonto, cIdPartner, cNewPartner )
-
-   IF ( ChkKtoMark( _idkonto ) )
-      cIdPartner := cNewPartner
-   ELSE
-      cIdPartner := Space( 6 )
-   ENDIF
-
-   RETURN .T.
-
-
-
-/* Partija(cIdKonto)
- *
- *   param: cIdKonto - oznaka konta
- */
-
-FUNCTION Partija( cIdKonto )
-
-   IF Right( Trim( cIdkonto ), 1 ) == "*"
-      SELECT parek
-      HSEEK StrTran( cIdkonto, "*", "" ) + " "
-      cIdkonto := idkonto
-      SELECT fin_pripr
-   ENDIF
-
-   RETURN .T.
-
-
-
-// -----------------------------------------------------
-// Ispis duguje/potrazuje u domacoj i pomocnoj valuti
-// -----------------------------------------------------
-FUNCTION V_DP()
-
-   SetPos( m_x + 16, m_y + 30 )
-
-   IF _d_p == "1"
-      ?? "   DUGUJE"
-   ELSE
-      ??U "POTRAŽUJE"
-   ENDIF
-
-   ?? " " + ValDomaca()
-
-   SetPos( m_x + 17, m_y + 30 )
-
-   IF _d_p == "1"
-      ?? "   DUGUJE"
-   ELSE
-      ??U "POTRAŽUJE"
-   ENDIF
-
-   ?? " " + ValPomocna()
-
-   RETURN _d_p $ "12"
-
-
-
-// -----------------------------------------------------
-// konvertovanje valute u pripremi...
-// -----------------------------------------------------
-FUNCTION fin_konvert_valute( rec, tip )
-
-   LOCAL _ok := .T.
-   LOCAL _kurs := Kurs( rec[ "datdok" ] )
-
-   IF tip == "P"
-      rec[ "iznosbhd" ] := rec[ "iznosdem" ] * _kurs
-   ELSEIF tip == "D"
-      IF Round( _kurs, 4 ) == 0
-         rec[ "iznosdem" ] := 0
-      ELSE
-         rec[ "iznosdem" ] := rec[ "iznosbhd" ] / _kurs
-      ENDIF
-   ENDIF
-
-   RETURN _ok
-
-
-
-/*  DinDem
-
- */
-FUNCTION konverzija_valute( p1, p2, cVar )
-
-   LOCAL _kurs
-
-   _kurs := Kurs( _datdok )
-
-   IF cVar == "_IZNOSDEM"
-      _iznosbhd := _iznosdem * _kurs
-   ELSEIF cVar = "_IZNOSBHD"
-      IF Round( _kurs, 4 ) == 0
-         _iznosdem := 0
-      ELSE
-         _iznosdem := _iznosbhd / _kurs
-      ENDIF
-   ENDIF
-
-
-   AEval( GetList, {| oGet | refresh_numeric_get( oGet )  } )
-
-   RETURN .T.
-
-STATIC FUNCTION refresh_numeric_get( oGet )
-
-   // ?E pp( __objgetmsglist( oGet ) )
-   IF  oGet:Type()  != "U" .AND. !( "DUMMY" $ oGet:name() )
-      oGet:display()
-   ENDIF
-
-   RETURN .T.
-
-/*
- poziva je ObjDbedit u fin_knjizenje_naloga
- c-T  -  Brisanje stavke,  F5 - kontrola zbira za jedan nalog
- F6 -  Suma naloga, ENTER-edit stavke, c-A - ispravka naloga
-
- setuj datval na osnovu datdok u pripremi
-*/
-
-STATIC FUNCTION set_datval_datdok()
-
-   LOCAL _ret := .F.
-   LOCAL _dana, _dat_dok, _id_konto
-
-   IF Pitanje(, "Za konto u nalogu postaviti datum val. DATDOK->DATVAL", "N" ) == "N"
-      RETURN _ret
-   ENDIF
-
-   _id_konto := Space( 7 )
-   _dat_dok := Date()
-   _dana := 15
-
-   Box(, 5, 60 )
-
-   @ m_x + 1, m_y + 2 SAY "Promjena za konto  " GET _id_konto
-   @ m_x + 3, m_y + 2 SAY "Novi datum dok " GET _dat_dok
-   @ m_x + 5, m_y + 2 SAY "uvecati stari datdok za (dana) " GET _dana PICT "99"
-
-   READ
-
-   BoxC()
-
-   IF LastKey() == K_ESC
-      RETURN _ret
-   ENDIF
-
-   SELECT fin_pripr
-   GO TOP
-
-   DO WHILE !Eof()
-
-      IF field->idkonto == _id_konto .AND. datval_prazan()
-
-         _ret := .T. // bilo je promjena
-
-         _rec := dbf_get_rec()
-         _rec[ "datval" ] := field->datdok + _dana
-         _rec[ "datdok" ] := _dat_dok
-
-         dbf_update_rec( _rec )
-
-      ENDIF
-      SKIP
-   ENDDO
-
-   GO TOP
-
-   RETURN _ret
-
-
-
-
-
-FUNCTION edit_fin_pripr()
+FUNCTION edit_fin_pripr_key_handler()
 
    LOCAL nTr2
    LOCAL lLogUnos := .F.
@@ -620,7 +347,7 @@ FUNCTION edit_fin_pripr()
       IF Pitanje(, "Želite izbrisati ovu stavku ?", "D" ) == "D"
 
          cBDok := field->idfirma + "-" + field->idvn + "-" + field->brnal
-         cStavka := STR(field->rbr,5)
+         cStavka := Str( field->rbr, 5 )
          cBKonto := field->idkonto
          cBDP := field->d_p
          dBDatnal := field->datdok
@@ -800,14 +527,7 @@ FUNCTION edit_fin_pripr()
 
    CASE Upper( Chr( Ch ) ) == "X"
 
-      fin_set_broj_dokumenta()
-
-      my_close_all_dbf()
-      fin_gen_ptabele_stampa_nalozi( .T. )
-      my_close_all_dbf()
-
-      fin_azuriranje_naloga( .T. )
-      o_fin_edit()
+      fin_azuriraj_x()
       RETURN DE_REFRESH
 
 
@@ -828,10 +548,10 @@ FUNCTION edit_fin_pripr()
 
       RETURN DE_REFRESH
 
-  // CASE Ch == K_ALT_I
+      // CASE Ch == K_ALT_I
 
-  //    fin_set_broj_dokumenta()
-  //    OiNIsplate()
+      // fin_set_broj_dokumenta()
+      // OiNIsplate()
 
       RETURN DE_CONT
 
@@ -859,6 +579,298 @@ FUNCTION edit_fin_pripr()
    ENDCASE
 
    RETURN DE_CONT
+
+
+
+FUNCTION fin_azuriraj_x()
+
+   fin_set_broj_dokumenta()
+
+   my_close_all_dbf()
+   fin_gen_ptabele_stampa_nalozi( .T. )
+   my_close_all_dbf()
+
+   fin_azuriranje_naloga( .T. )
+   o_fin_edit()
+
+   RETURN .T.
+
+
+FUNCTION WRbr()
+
+   LOCAL _rec
+   LOCAL _rec_2
+
+   _rec := dbf_get_rec()
+
+   IF _rec[ "rbr" ]  < 2
+      @ m_x + 1, m_y + 2 SAY8 "Dokument:" GET _rec[ "idvn" ]
+      @ m_x + 1, Col() + 2  GET _rec[ "brnal" ]
+      READ
+   ENDIF
+
+   SET ORDER TO 0
+   GO TOP
+   DO WHILE !Eof()
+      _rec_2 := dbf_get_rec()
+      _rec_2[ "idvn" ]  := _rec[ "idvn" ]
+      _rec_2[ "brnal" ] := _rec[ "brnal" ]
+      dbf_update_rec( _rec_2 )
+      SKIP
+   ENDDO
+
+   SET ORDER TO TAG "1"
+   GO TOP
+
+   RETURN .T.
+
+
+
+
+FUNCTION o_fin_edit()
+
+   my_close_all_dbf()
+
+   O_VRSTEP
+   O_ULIMIT
+
+   IF ( IsRamaGlas() )
+      O_FAKT_OBJEKTI
+   ENDIF
+
+   O_RJ
+
+   IF gTroskovi == "D"
+      O_FOND
+      O_FUNK
+   ENDIF
+
+   O_PSUBAN
+   O_PANAL
+   O_PSINT
+   O_PNALOG
+   O_PAREK
+   O_KONTO
+   O_PARTN
+   O_TNAL
+   O_TDOK
+   o_nalog()
+   O_FIN_PRIPR
+
+   SELECT fin_pripr
+   SET ORDER TO TAG "1"
+   GO TOP
+
+   RETURN .T.
+
+
+
+
+FUNCTION MinKtoLen( cIdKonto )
+
+   IF gKtoLimit == "N"
+      RETURN .T.
+   ENDIF
+
+   IF gKtoLimit == "D" .AND. gnKtoLimit > 0
+      IF Len( AllTrim( cIdKonto ) ) > gnKtoLimit
+         RETURN .T.
+      ELSE
+         MsgBeep( "Dužina konta mora biti veća od " + AllTrim( Str( gnKtoLimit ) ) )
+         RETURN .F.
+      ENDIF
+   ENDIF
+
+   RETURN .T.
+
+
+
+/* CheckMark(cIdKonto)
+ *     Provjerava da li je konto markiran, ako nije izbrisi zapamceni _IdPartner
+ *   param: cIdKonto - oznaka konta
+ *   param: cIdPartner - sifra partnera koja ce se ponuditi
+ *   param: cNewPartner - zapamcena sifra partnera
+ */
+
+FUNCTION CheckMark( cIdKonto, cIdPartner, cNewPartner )
+
+   IF ( ChkKtoMark( _idkonto ) )
+      cIdPartner := cNewPartner
+   ELSE
+      cIdPartner := Space( 6 )
+   ENDIF
+
+   RETURN .T.
+
+
+
+/* Partija(cIdKonto)
+ *
+ *   param: cIdKonto - oznaka konta
+ */
+
+FUNCTION Partija( cIdKonto )
+
+   IF Right( Trim( cIdkonto ), 1 ) == "*"
+      SELECT parek
+      HSEEK StrTran( cIdkonto, "*", "" ) + " "
+      cIdkonto := idkonto
+      SELECT fin_pripr
+   ENDIF
+
+   RETURN .T.
+
+
+
+// -----------------------------------------------------
+// Ispis duguje/potrazuje u domacoj i pomocnoj valuti
+// -----------------------------------------------------
+FUNCTION V_DP()
+
+   SetPos( m_x + 16, m_y + 30 )
+
+   IF _d_p == "1"
+      ?? "   DUGUJE"
+   ELSE
+      ??U "POTRAŽUJE"
+   ENDIF
+
+   ?? " " + ValDomaca()
+
+   SetPos( m_x + 17, m_y + 30 )
+
+   IF _d_p == "1"
+      ?? "   DUGUJE"
+   ELSE
+      ??U "POTRAŽUJE"
+   ENDIF
+
+   ?? " " + ValPomocna()
+
+   RETURN _d_p $ "12"
+
+
+
+// -----------------------------------------------------
+// konvertovanje valute u pripremi...
+// -----------------------------------------------------
+FUNCTION fin_konvert_valute( rec, tip )
+
+   LOCAL _ok := .T.
+   LOCAL _kurs := Kurs( rec[ "datdok" ] )
+
+   IF tip == "P"
+      rec[ "iznosbhd" ] := rec[ "iznosdem" ] * _kurs
+   ELSEIF tip == "D"
+      IF Round( _kurs, 4 ) == 0
+         rec[ "iznosdem" ] := 0
+      ELSE
+         rec[ "iznosdem" ] := rec[ "iznosbhd" ] / _kurs
+      ENDIF
+   ENDIF
+
+   RETURN _ok
+
+
+
+/*
+   DinDem
+
+ */
+FUNCTION konverzija_valute( p1, p2, cVar )
+
+   LOCAL _kurs
+
+   _kurs := Kurs( _datdok )
+
+   IF cVar == "_IZNOSDEM"
+      _iznosbhd := _iznosdem * _kurs
+   ELSEIF cVar = "_IZNOSBHD"
+      IF Round( _kurs, 4 ) == 0
+         _iznosdem := 0
+      ELSE
+         _iznosdem := _iznosbhd / _kurs
+      ENDIF
+   ENDIF
+
+
+   AEval( GetList, {| oGet | refresh_numeric_get( oGet )  } )
+
+   RETURN .T.
+
+
+
+STATIC FUNCTION refresh_numeric_get( oGet )
+
+   // ?E pp( __objgetmsglist( oGet ) )
+   IF  oGet:Type()  != "U" .AND. !( "DUMMY" $ oGet:name() )
+      oGet:display()
+   ENDIF
+
+   RETURN .T.
+
+/*
+ poziva je ObjDbedit u fin_knjizenje_naloga
+ c-T  -  Brisanje stavke,  F5 - kontrola zbira za jedan nalog
+ F6 -  Suma naloga, ENTER-edit stavke, c-A - ispravka naloga
+
+ setuj datval na osnovu datdok u pripremi
+*/
+
+STATIC FUNCTION set_datval_datdok()
+
+   LOCAL _ret := .F.
+   LOCAL _dana, _dat_dok, _id_konto
+
+   IF Pitanje(, "Za konto u nalogu postaviti datum val. DATDOK->DATVAL", "N" ) == "N"
+      RETURN _ret
+   ENDIF
+
+   _id_konto := Space( 7 )
+   _dat_dok := Date()
+   _dana := 15
+
+   Box(, 5, 60 )
+
+   @ m_x + 1, m_y + 2 SAY "Promjena za konto  " GET _id_konto
+   @ m_x + 3, m_y + 2 SAY "Novi datum dok " GET _dat_dok
+   @ m_x + 5, m_y + 2 SAY "uvecati stari datdok za (dana) " GET _dana PICT "99"
+
+   READ
+
+   BoxC()
+
+   IF LastKey() == K_ESC
+      RETURN _ret
+   ENDIF
+
+   SELECT fin_pripr
+   GO TOP
+
+   DO WHILE !Eof()
+
+      IF field->idkonto == _id_konto .AND. datval_prazan()
+
+         _ret := .T. // bilo je promjena
+
+         _rec := dbf_get_rec()
+         _rec[ "datval" ] := field->datdok + _dana
+         _rec[ "datdok" ] := _dat_dok
+
+         dbf_update_rec( _rec )
+
+      ENDIF
+      SKIP
+   ENDDO
+
+   GO TOP
+
+   RETURN _ret
+
+
+
+
+
 
 
 // ----------------------------------------
@@ -1000,12 +1012,10 @@ FUNCTION OstaleOpcije()
    m_y := am_y
    o_fin_edit()
 
-   RETURN
+   RETURN .T.
 
 
-/* PodijeliN()
- *
- */
+
 
 FUNCTION PodijeliN()
 

@@ -202,9 +202,7 @@ METHOD TKalkMod:set_module_gvars()
    // KALK: auto import
    // print dokumenata pri auto importu
    PUBLIC gAImpPrint := "N"
-   // ravnoteza def.konto
-   PUBLIC gAImpRKonto := PadR( "1370", 7 )
-
+   
    // PUBLIC gAImpRight := 0  // kod provjere prebacenih dokumenata odrezi sa desne strane broj karaktera
    PUBLIC gKalks := .F.
    PUBLIC lKoristitiBK := .F.
@@ -312,8 +310,7 @@ METHOD TKalkMod:set_module_gvars()
 
 
    gAImpPrint := fetch_metric( "kalk_auto_import_podataka_printanje", f18_user(), gAImpPrint )
-   gAImpRKonto := fetch_metric( "kalk_auto_import_podataka_konto", f18_user(), gAImpRKonto )
-   // gAImpRight := fetch_metric( "kalk_auto_import_podataka_karakteri", f18_user(), gAImpRight )
+
 
 
    lKoristitiBK := fetch_metric( "kalk_koristiti_barkod_pri_unosu", my_user(), lKoristitiBK )

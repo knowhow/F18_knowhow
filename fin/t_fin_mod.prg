@@ -69,8 +69,8 @@ METHOD programski_modul_osnovni_meni()
    AAdd( _opc, "S. matični podaci - šifarnici" )
    AAdd( _opcexe, {|| MnuSifrarnik() } )
 
-   AAdd( _opc, "A. administracija baze podataka" )
-   AAdd( _opcexe, {|| fin_admin_opcije_menu() } )
+   AAdd( _opc, "A. kontrolni izvještaji" )
+   AAdd( _opcexe, {|| fin_kontrolni_izvjestaji_meni() } )
 
    AAdd( _opc, "------------------------------------" )
    AAdd( _opcexe, {|| nil } )

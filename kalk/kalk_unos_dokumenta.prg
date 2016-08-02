@@ -1481,7 +1481,7 @@ FUNCTION kalk_header_get1( fNovi )
    READ
    ESC_RETURN 0
 
-altd()
+
    IF fNovi .AND. gBrojacKalkulacija == "D" .AND. ( _idfirma <> idfirma .OR. _idvd <> idvd )
 
       _brDok := get_kalk_brdok( _idfirma, _idvd, _idkonto, _idkonto2 )

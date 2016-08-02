@@ -43,7 +43,7 @@ FUNCTION MnuImpCSV()
 
    Menu_SC( "ics" )
 
-   RETURN
+   RETURN .T.
 
 
 // ----------------------------------
@@ -54,26 +54,26 @@ STATIC FUNCTION aimp_setup()
    LOCAL nX
    LOCAL GetList := {}
 
-   gAImpRKonto := PadR( gAImpRKonto, 7 )
+   LOCAL cAImpRKonto := PadR( kalk_auto_import_podataka_konto(), 7 )
+
 
    nX := 1
 
    Box(, 10, 70 )
 
-   @ m_x + nX, m_y + 2 SAY "Podesenja importa ********"
+   @ m_x + nX, m_y + 2 SAY8 "Podešenja importa ********"
 
    nX += 2
-
-   @ m_x + nX, m_y + 2 SAY "Stampati dokumente pri auto obradi (D/N)" GET gAImpPrint VALID gAImpPrint $ "DN" PICT "@!"
+   @ m_x + nX, m_y + 2 SAY8 "Štampati dokumente pri auto obradi (D/N)" GET gAImpPrint VALID gAImpPrint $ "DN" PICT "@!"
 
    nX += 1
-
-   @ m_x + nX, m_y + 2 SAY "Automatska ravnoteza naloga na konto: " GET gAImpRKonto
+   @ m_x + nX, m_y + 2 SAY8 "Automatska ravnoteža naloga na konto: " GET cAImpRKonto
    READ
    BoxC()
 
    IF LastKey() <> K_ESC
 
+      kalk_auto_import_podataka_konto( cAImpRKonto )
       O_PARAMS
 
       PRIVATE cSection := "7"
@@ -81,14 +81,14 @@ STATIC FUNCTION aimp_setup()
       PRIVATE aHistory := {}
 
       WPar( "ap", gAImpPrint )
-      WPar( "ak", gAImpRKonto )
+
 
       SELECT params
       USE
 
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 // ----------------------------------------
 // setuj glavne parametre importa
@@ -795,7 +795,7 @@ STATIC FUNCTION TTbl2Kalk()
    cTDok := GetKTipDok( AllTrim( temp->idtipdok ) )
 
 
-   //cBrojKalk := kalk_sljedeci_brdok( cTDok, gFirma )
+   // cBrojKalk := kalk_sljedeci_brdok( cTDok, gFirma )
    cBrojKalk :=  kalk_get_next_broj_v5( gFirma, cTDok, NIL )
 
    DO WHILE !Eof()

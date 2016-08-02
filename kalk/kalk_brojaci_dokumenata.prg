@@ -53,10 +53,10 @@ FUNCTION kalk_duzina_brojaca_dokumenta( nLen )
 FUNCTION kalk_konto_za_brojac( cIdVd, cMKonto, cPKonto )
 
    DO CASE
-   CASE cIdvd $ "KO#10#16#14#96#95#IM"
+   CASE cIdvd $ "KO#10#16#14#96#95#IM#11"  // 11-ke uzimaju konto magacina za osnovu brojaca, malo glupo, ali tako je napravljeno
       RETURN cMkonto
 
-   CASE cIdvd $ "80#81#11#41#42#19"
+   CASE cIdvd $ "80#81#41#42#19"
       RETURN cPKonto
    OTHERWISE
 
@@ -84,7 +84,6 @@ FUNCTION kalk_sljedeci_brdok( cTipKalk, cIdFirma, cSufiks )
       nLenGlavni := 8 - nLenSufiks // duzina sifre se mora prilagoditi sufiksu
    ENDIF
 
-   AltD()
    IF is_brojac_po_kontima() .AND. !Empty( cSufiks ) // samo trazi ako ima sufiks npr '/T '
       find_kalk_doks_za_tip_sufix_zadnji_broj( cIdFirma, cTipKalk, cSufiks )
    ELSE // ako je sufiks prazan, onda se samo gleda tip
@@ -476,7 +475,7 @@ FUNCTION get_kalk_brdok( _idfirma, _idvd, _idkonto, _idkonto2 )
 
    LOCAL _brdok, cIdKonto
 
-   AltD()
+
    IF is_brojac_po_kontima()
 
       Box( "#Glavni konto", 3, 70 )

@@ -12,7 +12,7 @@
 #include "f18.ch"
 
 
-FUNCTION fin_admin_opcije_menu()
+FUNCTION fin_kontrolni_izvjestaji_meni()
 
    PRIVATE opc := {}
    PRIVATE opcexe := {}
@@ -21,7 +21,7 @@ FUNCTION fin_admin_opcije_menu()
    //AAdd( opc, "1. provjera integriteta tabela - ima u suban nema u nalog " )
    //AAdd( opcexe, {|| check_ima_u_suban_nema_u_nalog() } )
 
-   AAdd( opc, "2. pregled datumskih gresaka u nalozima" )
+   AAdd( opc, "2. pregled datumskih grešaka u nalozima" )
    AAdd( opcexe, {|| daterr_rpt() } )
 
 #ifdef F18_FMK

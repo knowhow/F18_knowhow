@@ -252,65 +252,10 @@ STATIC FUNCTION lock_fin_priprema( lZap )
    RETURN .T.
 
 
-/*
-  filovanje potrebnih tabela kod auto importa
-*/
-FUNCTION fin_gen_psuban_stavke_kalk()
-
-   my_close_all_dbf()
-
-   O_FIN_PRIPR
-   O_KONTO
-   O_PARTN
-   O_TNAL
-   O_TDOK
-   O_PSUBAN
-
-   SELECT PSUBAN
-   my_dbf_zap()
-
-   SELECT fin_pripr
-   SET ORDER TO TAG "1"
-   GO TOP
-
-   IF Eof()
-      my_close_all_dbf()
-      RETURN
-   ENDIF
-
-   DO WHILE !Eof()
-
-      cIdFirma := IdFirma
-      cIdVN := IdVN
-      cBrNal := BrNal
-
-      b2 := {|| cIdFirma == IdFirma .AND. cIdVN == IdVN .AND. cBrNal == BrNal }
-
-      DO WHILE !Eof() .AND. Eval( b2 )
-
-         SELECT PSUBAN
-         Scatter()
-         SELECT fin_pripr
-         Scatter()
-
-         SELECT PSUBAN
-         APPEND BLANK
-         Gather()
-
-         SELECT fin_pripr
-         SKIP
-
-      ENDDO
-
-   ENDDO
-
-   my_close_all_dbf()
-
-   RETURN
 
 
 
-FUNCTION fin_gen_sint_stavke_kalk( lAuto )
+FUNCTION fin_gen_sint_stavke_auto_import( lAuto )
 
    O_PANAL
    O_PSINT

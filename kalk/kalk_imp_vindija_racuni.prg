@@ -11,11 +11,11 @@
 
 #include "f18.ch"
 
-MEMVAR cSection, cHistory, aHistory, izbor, opc, opcexe, gAImpPrint, gAImpRKonto
+MEMVAR cSection, cHistory, aHistory, izbor, opc, opcexe, gAImpPrint
 MEMVAR GetList, m_x, m_y, gFirma
 MEMVAR cExpPath, cImpFile
 
-
+STATIC s_cKalkAutoImportPodatakaKonto := nil
 STATIC __stampaj // stampanje dokumenata .t. or .f.
 STATIC s_lAutom := .T. // Automatski asistent i ažuriranje naloga (D/N)
 
@@ -58,6 +58,21 @@ FUNCTION meni_import_vindija()
 
 
 
+
+FUNCTION kalk_auto_import_podataka_konto( cSet )
+
+   IF s_cKalkAutoImportPodatakaKonto == nil
+      s_cKalkAutoImportPodatakaKonto := fetch_metric( "kalk_auto_import_podataka_konto", f18_user(), PadR( "1370", 7 ) )
+   ENDIF
+
+   IF cSet != NIL
+      s_cKalkAutoImportPodatakaKonto := cSet
+      set_metric( "kalk_auto_import_podataka_konto", f18_user(), cSet )
+   ENDIF
+
+   RETURN s_cKalkAutoImportPodatakaKonto
+
+
 // ----------------------------------
 // podesenja importa
 // ----------------------------------
@@ -66,7 +81,8 @@ STATIC FUNCTION aimp_setup()
    LOCAL nX
    LOCAL GetList := {}
 
-   gAImpRKonto := PadR( gAImpRKonto, 7 )
+   cAImpRKonto := PadR( kalk_auto_import_podataka_konto(), 7 )
+
 
    nX := 1
 
@@ -78,7 +94,7 @@ STATIC FUNCTION aimp_setup()
    @ m_x + nX, m_y + 2 SAY "Stampati dokumente pri auto obradi (D/N)" GET gAImpPrint VALID gAImpPrint $ "DN" PICT "@!"
 
    nX += 1
-   @ m_x + nX, m_y + 2 SAY "Automatska ravnoteza naloga na konto: " GET gAImpRKonto
+   @ m_x + nX, m_y + 2 SAY "Automatska ravnoteza naloga na konto: " GET cAImpRKonto
 
    // nX += 1
    // @ m_x + nX, m_y + 2 SAY "Provjera broj naloga (minus karaktera):" GET gAImpRight PICT "9"
@@ -89,6 +105,8 @@ STATIC FUNCTION aimp_setup()
 
    IF LastKey() <> K_ESC
 
+      kalk_auto_import_podataka_konto( cAImpRKonto )
+
       O_PARAMS
 
       PRIVATE cSection := "7"
@@ -96,7 +114,6 @@ STATIC FUNCTION aimp_setup()
       PRIVATE aHistory := {}
 
       WPar( "ap", gAImpPrint )
-      WPar( "ak", gAImpRKonto )
       // WPar( "ar", gAImpRight )
 
       SELECT params
@@ -1448,7 +1465,7 @@ STATIC FUNCTION from_kalk_imp_temp_to_pript( aFExist, lFSkip, lNegative, cCtrl_a
       REPLACE idfirma WITH gFirma, ;
          rBr WITH Str( ++nRbr, 3 ), ;
          idvd WITH cTDok, ; // uzmi pravilan tip dokumenta za kalk
-         brdok WITH cBrojKalk, ;
+      brdok WITH cBrojKalk, ;
          datdok WITH kalk_imp_temp->datdok, ;
          idpartner WITH kalk_imp_temp->idpartner, ;
          idtarifa WITH ROBA->idtarifa, ;
@@ -1468,9 +1485,9 @@ STATIC FUNCTION from_kalk_imp_temp_to_pript( aFExist, lFSkip, lNegative, cCtrl_a
          REPLACE tprevoz WITH "A"
 
          IF cTDok == "11"
-            REPLACE pkonto with cIdKontoZaduzuje,;
-                    mkonto with cIdKontoRazduzuje, ;
-                    mpcsapp WITH kalk_get_mpc_by_koncij_pravilo( cIdKontoZaduzuje )
+            REPLACE pkonto WITH cIdKontoZaduzuje, ;
+               mkonto WITH cIdKontoRazduzuje, ;
+               mpcsapp WITH kalk_get_mpc_by_koncij_pravilo( cIdKontoZaduzuje )
          ELSE
             REPLACE mpcsapp WITH kalk_imp_temp->cijena
          ENDIF

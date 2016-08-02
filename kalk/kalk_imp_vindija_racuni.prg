@@ -12,7 +12,7 @@
 #include "f18.ch"
 
 MEMVAR cSection, cHistory, aHistory, izbor, opc, opcexe, gAImpPrint, gAImpRKonto
-MEMVAR GetList, m_x, m_y
+MEMVAR GetList, m_x, m_y, gFirma
 MEMVAR cExpPath, cImpFile
 
 
@@ -1310,7 +1310,10 @@ STATIC FUNCTION from_kalk_imp_temp_to_pript( aFExist, lFSkip, lNegative, cCtrl_a
    LOCAL cIdKonto2
    LOCAL cIdPJ
    LOCAL aArr_ctrl := {}
-   LOCAL _id_konto, _id_konto2
+   LOCAL cIdKontoZaduzuje, cIdKontoRazduzuje
+   LOCAL nRbr, nUvecaj, nCnt, cPredhodniFaktDokument, cPredhodniTipDokumenta, cPredhodnoProdMjesto, aPom
+   LOCAL cFakt, cTDok, cPm
+   LOCAL nFExist, nT_scan, cTmpArt
 
    o_kalk_pripr()
    o_koncij()
@@ -1430,15 +1433,13 @@ STATIC FUNCTION from_kalk_imp_temp_to_pript( aFExist, lFSkip, lNegative, cCtrl_a
       GO TOP
       SEEK cTmpArt
 
-
-      _id_konto := kalk_imp_get_konto_by_tip_pm_poslovnica( cTDok, kalk_imp_temp->idpm, "Z", cIdPJ )
-      _id_konto2 := kalk_imp_get_konto_by_tip_pm_poslovnica( cTDok, kalk_imp_temp->idpm, "R", cIdPJ )
-
+      cIdKontoZaduzuje := kalk_imp_get_konto_by_tip_pm_poslovnica( cTDok, kalk_imp_temp->idpm, "Z", cIdPJ )
+      cIdKontoRazduzuje := kalk_imp_get_konto_by_tip_pm_poslovnica( cTDok, kalk_imp_temp->idpm, "R", cIdPJ )
 
       SELECT koncij // pozicionirati se na konto zaduzuje
       SET ORDER TO TAG "ID"
       GO TOP
-      SEEK _id_konto
+      SEEK cIdKontoZaduzuje
 
 
       select_o_kalk_pript()
@@ -1456,8 +1457,8 @@ STATIC FUNCTION from_kalk_imp_temp_to_pript( aFExist, lFSkip, lNegative, cCtrl_a
          datval WITH kalk_imp_temp->datval
 
 
-      REPLACE idkonto WITH _id_konto // konto zaduzuje
-      REPLACE idkonto2 WITH _id_konto2 // konto razduzuje
+      REPLACE idkonto WITH cIdKontoZaduzuje // konto zaduzuje
+      REPLACE idkonto2 WITH cIdKontoRazduzuje // konto razduzuje
       REPLACE idzaduz2 WITH ""
 
 
@@ -1467,7 +1468,9 @@ STATIC FUNCTION from_kalk_imp_temp_to_pript( aFExist, lFSkip, lNegative, cCtrl_a
          REPLACE tprevoz WITH "A"
 
          IF cTDok == "11"
-            REPLACE mpcsapp WITH kalk_get_mpc_by_koncij_pravilo() // uzmi mpc iz sifrarnika roba prema podesenju u koncij
+            REPLACE pkonto with cIdKontoZaduzuje,;
+                    mkonto with cIdKontoRazduzuje, ;
+                    mpcsapp WITH kalk_get_mpc_by_koncij_pravilo( cIdKontoZaduzuje )
          ELSE
             REPLACE mpcsapp WITH kalk_imp_temp->cijena
          ENDIF

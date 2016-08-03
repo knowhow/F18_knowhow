@@ -884,6 +884,8 @@ STATIC FUNCTION CheckPartn()
 // --------------------------------------------------------------------------
 STATIC FUNCTION CheckRoba()
 
+   LOCAL cLine
+
    aPomRoba := SDobExist( .T. )
 
    IF ( Len( aPomRoba ) > 0 )
@@ -899,36 +901,36 @@ STATIC FUNCTION CheckRoba()
       FOR i := 1 TO Len( aPomRoba )
 
 
-         IF ! ( nCijena == aPomRoba[ i, 4 ] ) // ako je cijena txt ista kao sifarnik, izbaci
-            ? aPomRoba[ i, 2 ]
 
-            ?? " " + aPomRoba[ i, 9 ]
+         cLine := aPomRoba[ i, 2 ]
+         cLine += " " + aPomRoba[ i, 9 ]
 
-            IF aPomRoba[ i, 1 ] == "1"
+         IF aPomRoba[ i, 1 ] == "1"
 
-               IF aPomRoba[ i, 3 ] == "001"
+            IF aPomRoba[ i, 3 ] == "001"
 
-                  nCijena := aPomRoba[ i, 6 ] // vpc
+               nCijena := aPomRoba[ i, 6 ] // vpc
 
-               ELSEIF aPomRoba[ i, 3 ] == "002"
+            ELSEIF aPomRoba[ i, 3 ] == "002"
 
-                  nCijena := aPomRoba[ i, 7 ]  // vpc2
-               ELSEIF aPomRoba[ i, 3 ] == "003"
+               nCijena := aPomRoba[ i, 7 ]  // vpc2
+            ELSEIF aPomRoba[ i, 3 ] == "003"
 
-                  nCijena := aPomRoba[ i, 8 ] // mpc
-               ENDIF
-
-               ?? Str( nCijena, 12, 2 )
-               ?? Str( aPomRoba[ i, 4 ], 12, 2 )
-
-               IF nCijena = aPomRoba[ i, 4 ]
-                  ?? " x"
-               ENDIF
-
-            ELSE
-               ?? " ovog artikla nema u sifrarniku !"
+               nCijena := aPomRoba[ i, 8 ] // mpc
             ENDIF
+
+            cLine += Str( nCijena, 12, 2 )
+            cLine += Str( aPomRoba[ i, 4 ], 12, 2 )
+
+            IF !( nCijena == aPomRoba[ i, 4 ] ) // ako je cijena txt ista kao sifarnik, ne prikazuj
+               ? cLine
+               // ?? " x"
+            ENDIF
+
+         ELSE
+            ?? " ovog artikla nema u sifrarniku !"
          ENDIF
+
 
       NEXT
 

@@ -309,7 +309,7 @@ STATIC FUNCTION kalk_import_txt_roba()
    cFFilt := "s*.s??"
 
 
-   IF get_file_list( cFFilt, cExpPath, @cImpFile ) == 0 //  pregled fajlova za import, te setuj varijablu cImpFile
+   IF get_file_list( cFFilt, cExpPath, @cImpFile ) == 0 // pregled fajlova za import, te setuj varijablu cImpFile
       RETURN .F.
    ENDIF
 
@@ -898,32 +898,36 @@ STATIC FUNCTION CheckRoba()
 
       FOR i := 1 TO Len( aPomRoba )
 
-         ? aPomRoba[ i, 2 ]
 
-         ?? " " + aPomRoba[ i, 9 ]
+         IF ! ( nCijena == aPomRoba[ i, 4 ] ) // ako je cijena txt ista kao sifarnik, izbaci
+            ? aPomRoba[ i, 2 ]
 
-         IF aPomRoba[ i, 1 ] == "1"
+            ?? " " + aPomRoba[ i, 9 ]
 
-            IF aPomRoba[ i, 3 ] == "001"
-               // vpc
-               nCijena := aPomRoba[ i, 6 ]
-            ELSEIF aPomRoba[ i, 3 ] == "002"
-               // vpc2
-               nCijena := aPomRoba[ i, 7 ]
-            ELSEIF aPomRoba[ i, 3 ] == "003"
-               // mpc
-               nCijena := aPomRoba[ i, 8 ]
+            IF aPomRoba[ i, 1 ] == "1"
+
+               IF aPomRoba[ i, 3 ] == "001"
+
+                  nCijena := aPomRoba[ i, 6 ] // vpc
+
+               ELSEIF aPomRoba[ i, 3 ] == "002"
+
+                  nCijena := aPomRoba[ i, 7 ]  // vpc2
+               ELSEIF aPomRoba[ i, 3 ] == "003"
+
+                  nCijena := aPomRoba[ i, 8 ] // mpc
+               ENDIF
+
+               ?? Str( nCijena, 12, 2 )
+               ?? Str( aPomRoba[ i, 4 ], 12, 2 )
+
+               IF nCijena = aPomRoba[ i, 4 ]
+                  ?? " x"
+               ENDIF
+
+            ELSE
+               ?? " ovog artikla nema u sifrarniku !"
             ENDIF
-
-            ?? Str( nCijena, 12, 2 )
-            ?? Str( aPomRoba[ i, 4 ], 12, 2 )
-
-            IF nCijena = aPomRoba[ i, 4 ]
-               ?? " x"
-            ENDIF
-
-         ELSE
-            ?? " ovog artikla nema u sifrarniku !"
          ENDIF
 
       NEXT

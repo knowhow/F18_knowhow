@@ -36,7 +36,7 @@ FUNCTION meni_import_vindija()
    AAdd( opc, "2. import vindija partner" )
    AAdd( opcexe, {|| ImpTxtPartn() } )
    AAdd( opc, "3. import vindija roba" )
-   AAdd( opcexe, {|| ImpTxtRoba() } )
+   AAdd( opcexe, {|| kalk_import_txt_roba() } )
    AAdd( opc, "4. popuna polja šifra dobavljača " )
    AAdd( opcexe, {|| FillDobSifra() } )
    AAdd( opc, "5. nastavak obrade dokumenata ... " )
@@ -164,7 +164,7 @@ FUNCTION ImpTxtDok()
 
    SetTblDok( @aDbf ) // setuj polja temp tabele u matricu aDbf
    kalk_imp_set_rule_dok( @aRules ) // setuj pravila upisa podataka u temp tabelu
-   Txt2TTbl( aDbf, aRules, cImpFile ) // prebaci iz txt => temp tbl
+   kalk_imp_txt_to_temp( aDbf, aRules, cImpFile ) // prebaci iz txt => temp tbl
 
 
    IF !kalk_imp_check_partn_roba_exist()
@@ -269,7 +269,7 @@ STATIC FUNCTION ImpTxtPartn()
    SetRulePartn( @aRules )
 
    // prebaci iz txt => temp tbl
-   Txt2TTbl( aDbf, aRules, cImpFile )
+   kalk_imp_txt_to_temp( aDbf, aRules, cImpFile )
 
    IF CheckPartn() > 0
       IF Pitanje(, "Izvrsiti import partnera (D/N)?", "D" ) == "N"
@@ -299,10 +299,7 @@ STATIC FUNCTION ImpTxtPartn()
 
 
 
-// ------------------------------------------
-// import sifrarnika robe
-// ------------------------------------------
-STATIC FUNCTION ImpTxtRoba()
+STATIC FUNCTION kalk_import_txt_roba()
 
    PRIVATE cExpPath
    PRIVATE cImpFile
@@ -311,8 +308,8 @@ STATIC FUNCTION ImpTxtRoba()
 
    cFFilt := "s*.s??"
 
-   // daj mi pregled fajlova za import, te setuj varijablu cImpFile
-   IF get_file_list( cFFilt, cExpPath, @cImpFile ) == 0
+
+   IF get_file_list( cFFilt, cExpPath, @cImpFile ) == 0 //  pregled fajlova za import, te setuj varijablu cImpFile
       RETURN .F.
    ENDIF
 
@@ -323,14 +320,12 @@ STATIC FUNCTION ImpTxtRoba()
    ENDIF
 
    PRIVATE aDbf := {}
-   PRIVATE aRules := {}
-   // setuj polja temp tabele u matricu aDbf
-   set_adbf_roba( @aDbf )
-   // setuj pravila upisa podataka u temp tabelu
+   PRIVATE aRules := {} // setuj polja temp tabele u matricu aDbf
+   set_adbf_roba( @aDbf ) // setuj pravila upisa podataka u temp tabelu
    SetRuleRoba( @aRules )
 
-   // prebaci iz txt => temp tbl
-   Txt2TTbl( aDbf, aRules, cImpFile )
+
+   kalk_imp_txt_to_temp( aDbf, aRules, cImpFile )  // prebaci iz txt => temp tbl
 
    IF CheckRoba() > 0
       IF Pitanje(, "Importovati nove cijene u sifrarnika robe (D/N)?", "D" ) == "N"
@@ -537,14 +532,14 @@ STATIC FUNCTION SetRuleRoba( aRule )
 
 
 
-/* Txt2TTbl(aDbf, aRules, cTxtFile)
+/* kalk_imp_txt_to_temp(aDbf, aRules, cTxtFile)
  *     Kreiranje temp tabele, te prenos zapisa iz text fajla "cTextFile" u tabelu putem aRules pravila
  *   param: aDbf - struktura tabele
  *   param: aRules - pravila upisivanja jednog zapisa u tabelu, princip uzimanja zapisa iz linije text fajla
  *   param: cTxtFile - txt fajl za import
  */
 
-STATIC FUNCTION Txt2TTbl( aDbf, aRules, cTxtFile )
+STATIC FUNCTION kalk_imp_txt_to_temp( aDbf, aRules, cTxtFile )
 
    LOCAL oFile, nCnt
 
@@ -581,7 +576,7 @@ STATIC FUNCTION Txt2TTbl( aDbf, aRules, cTxtFile )
       FOR nCt := 1 TO Len( aRules )
          fname := FIELD( nCt )
          xVal := aRules[ nCt, 1 ]
-         REPLACE &fname with &xVal
+         RREPLACE &fname with &xVal
       NEXT
 
    ENDDO
@@ -597,9 +592,9 @@ STATIC FUNCTION Txt2TTbl( aDbf, aRules, cTxtFile )
       my_flock()
       DO WHILE !Eof()
          IF field->idtipdok == "10" .AND. field->kolicina < 0
-            REPLACE field->dtype WITH "0"
+            RREPLACE field->dtype WITH "0"
          ELSE
-            REPLACE field->dtype WITH "1"
+            RREPLACE field->dtype WITH "1"
          ENDIF
          SKIP
       ENDDO
@@ -1744,17 +1739,17 @@ STATIC FUNCTION kalk_imp_temp_to_roba()
 
          IF kalk_imp_temp->idpm == "001" // mjenja se VPC
             IF field->vpc <> kalk_imp_temp->mpc
-               REPLACE field->vpc WITH kalk_imp_temp->mpc
+               RREPLACE field->vpc WITH kalk_imp_temp->mpc
             ENDIF
 
          ELSEIF kalk_imp_temp->idpm == "002" // mjenja se VPC2
             IF field->vpc2 <> kalk_imp_temp->mpc
-               REPLACE field->vpc2 WITH kalk_imp_temp->mpc
+               RREPLACE field->vpc2 WITH kalk_imp_temp->mpc
             ENDIF
 
          ELSEIF kalk_imp_temp->idpm == "003"   // mjenja se MPC
             IF field->mpc <> kalk_imp_temp->mpc
-               REPLACE field->mpc WITH kalk_imp_temp->mpc
+               RREPLACE field->mpc WITH kalk_imp_temp->mpc
             ENDIF
          ENDIF
 

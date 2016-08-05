@@ -89,7 +89,7 @@ FUNCTION roba_pregled_prodaje_po_grupama()
       cPodgrupa := IzSifKRoba( "GR2", cIdRoba, .F. )
 
       cJMJ := ROBA->jmj
-      nKJMJ := SJMJ( 1, cIdRoba, @cJMJ )
+      nKJMJ := svedi_na_jedinicu_mjere( 1, cIdRoba, @cJMJ )
       SELECT KALK
 
 

@@ -600,7 +600,7 @@ FUNCTION lager_lista_magacin()
          nVPCIzSif := ROBA->VPC
 
          IF lSvodi
-            nKJMJ  := SJMJ( 1, cIdRoba, @cJMJ )
+            nKJMJ  := svedi_na_jedinicu_mjere( 1, cIdRoba, @cJMJ )
             cJMJ := PadR( cJMJ, Len( ROBA->JMJ ) )
          ELSE
             nKJMJ  := 1
@@ -1378,7 +1378,7 @@ STATIC FUNCTION _gen_xml( params )
          _nc_sif := roba->nc
 
          IF _svodi_jmj
-            _k_jmj := SJMJ( 1, _idroba, @_jmj )
+            _k_jmj := svedi_na_jedinicu_mjere( 1, _idroba, @_jmj )
             _jmj := PadR( _jmj, Len( roba->jmj ) )
          ELSE
             _k_jmj := 1

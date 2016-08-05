@@ -190,7 +190,7 @@ STATIC FUNCTION _gen_rpt( cBrFakt, cValuta, dDatOd, dDatDo, cRekap )
       // sekundarna jedinica mjere
       // sracunaj odmah sve za upis u tabelu
       cJmjSec := ""
-      nKolSec := SJMJ( 1, cSastId, @cJmjSec )
+      nKolSec := svedi_na_jedinicu_mjere( 1, cSastId, @cJmjSec )
       REPLACE field->jmjsec WITH cJmjSec
 
       // kolicina u sekundarnoj jmj po 1 komadu

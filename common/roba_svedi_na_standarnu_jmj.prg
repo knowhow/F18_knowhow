@@ -69,31 +69,30 @@ FUNCTION is_roba_trazi_po_sifradob()
 // ( npr. KOM->LIT ili KOM->KG )
 // ----------------------------------
 
-FUNCTION SJMJ( nKol, cIdRoba, cJMJ )
+FUNCTION svedi_na_jedinicu_mjere( nKol, cIdRoba, cJMJ )
 
    LOCAL nVrati := 0, nArr := Select(), aNaz := {}, cKar := "SJMJ", nKO := 1, n_Pos := 0
+   LOCAL cSvedi
 
-   SELECT SIFV; SET ORDER TO TAG "ID"
-   HSEEK "ROBA    " + cKar + PadR( cIdRoba, 15 )
-   DO WHILE !Eof() .AND. id + oznaka + idsif == "ROBA    " + cKar + PadR( cIdRoba, 15 )
-      IF !Empty( naz )
-         AAdd( aNaz, naz )
-      ENDIF
-      SKIP 1
-   ENDDO
+   cSvedi := IzSifk( "ROBA", "SJMJ", cIdRoba, .F. )
+
+   IF !Empty( cSvedi )
+      AAdd( aNaz, cSvedi )
+   ENDIF
+
+
    IF Len( aNaz ) > 0
-      // slijedi preracunavanje
-      // ----------------------
-      n_Pos := At( "_", aNaz[ 1 ] )
+
+      n_Pos := At( "_", aNaz[ 1 ] ) // slijedi preracunavanje 0.1_KG
       cPom   := AllTrim( SubStr( aNaz[ 1 ], n_Pos + 1 ) )
       nKO    := &cPom
       nVrati := nKol * nKO
       cJMJ   := AllTrim( Left( aNaz[ 1 ], n_Pos - 1 ) )
    ELSE
-      // valjda je ve� u osnovnoj JMJ
-      // ----------------------------
-      nVrati := nKol
+
+      nVrati := nKol // artikal je vec u osnovnoj JMJ
    ENDIF
+
    SELECT ( nArr )
 
    RETURN nVrati

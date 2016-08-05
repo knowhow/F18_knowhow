@@ -117,7 +117,6 @@ FUNCTION fakt_specif_prodaje_real_kolicina()
       ENDIF
 
       ++nX
-
       @ m_x + nX, m_y + 2 SAY "Svedi na jedinicu mjere ?" GET cSvediJmj VALID cSvediJmj $ "DN" PICT "@!"
 
       nX := nX + 2
@@ -158,21 +157,18 @@ FUNCTION fakt_specif_prodaje_real_kolicina()
    USE
    BoxC()
 
-   // ako je export izabran
-   IF cExport == "D"
+   IF cExport == "D" // ako je export izabran
       lExpRpt := .T.
    ENDIF
 
-   // export dokumenta
-   IF lExpRpt == .T.
+   IF lExpRpt == .T. // export dokumenta
       aExpFields := get_rpt_fields()
       t_exp_create( aExpFields )
    ENDIF
 
    _o_tables()
 
-   IF fakt_doks->( FieldPos( "dat_isp" ) ) = 0
-      // ako nema ovog polja, samo gledaj po dokumentima
+   IF fakt_doks->( FieldPos( "dat_isp" ) ) = 0 // ako nema ovog polja, samo gledaj po dokumentima
       cDDokOtpr := "D"
    ENDIF
 
@@ -441,7 +437,7 @@ FUNCTION fakt_specif_prodaje_real_kolicina()
             IF cSvediJmj == "D"
 
                cJmj := ""
-               nKolJmj += SJMJ( kolicina, idroba, @cJmj )
+               nKolJmj += svedi_na_jedinicu_mjere( kolicina, idroba, @cJmj )
 
             ENDIF
 

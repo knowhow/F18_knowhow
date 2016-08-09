@@ -86,10 +86,10 @@ FUNCTION fc_pos_err( cFPath, cFName, cDate, cTime )
    LOCAL cF_ts := SubStr( cTime, 7, 2 )
    LOCAL i
 
-   IF !Empty( AllTrim( gFc_path2 ) )
-      cTmp := cFPath + AllTrim( gFc_path2 ) + SLASH + cFName
+   IF !Empty( AllTrim( flink_path2() ) )
+      cTmp := cFPath + AllTrim( flink_path2() ) + SLASH + cFName
    ELSE
-      cTmp := cFPath + "printe~1\" + cFName
+      cTmp := cFPath + "printe~1" + SLASH + cFName
    ENDIF
 
    aDir := Directory( cTmp )
@@ -137,11 +137,11 @@ FUNCTION fc_pos_err( cFPath, cFName, cDate, cTime )
 // --------------------------------------------------------
 STATIC FUNCTION _f_err_delete( cFPath, cFName )
 
-   LOCAL cTmp := cFPath + "printe~1\" + cFName
+   LOCAL cTmp := cFPath + "printe~1" + SLASH + cFName
 
    FErase( cTmp )
 
-   RETURN
+   RETURN .T.
 
 
 // ----------------------------------------
@@ -164,7 +164,7 @@ STATIC FUNCTION fl_d_tmp()
 
    MsgO( "brisem tmp fajlove..." )
 
-   cF_path := AllTrim( gFc_path )
+   cF_path := AllTrim( flink_path() )
    cTmp := "*.inp"
 
    AEval( Directory( cF_path + cTmp ), {| aFile| FErase( cF_path + ;
@@ -198,7 +198,7 @@ FUNCTION fc_pos_art( cFPath, cFName, aData )
 
    _a_to_file( cFPath, cFName, aStruct, aPosData )
 
-   RETURN
+   RETURN .T.
 
 
 // ------------------------------------------------------
@@ -645,3 +645,10 @@ STATIC FUNCTION _fl_reset()
    AAdd( aArr, { cTmp } )
 
    RETURN aArr
+
+
+FUNCTION flink_path()
+   RETURN PadR( "c:" + SLASH + "fiscal" + SLASH, 150 )
+
+FUNCTION flink_path2()
+   RETURN PadR( "", 150 )

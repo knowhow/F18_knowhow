@@ -57,13 +57,13 @@ FUNCTION fiskalni_izvjestaji_komande( low_level, from_pos )
       AAdd( opc, "------ izvještaji ---------------------------------" )
       AAdd( opcexe, {|| .F. } )
       AAdd( opc, "1. dnevni izvještaj  (Z-rep / X-rep)          " )
-      AAdd( opcexe, {|| fl_daily( AllTrim( gFC_path ), AllTrim( gFC_name ), nDevice ) } )
+      AAdd( opcexe, {|| fl_daily( AllTrim( flink_path() ), AllTrim( gFC_name ), nDevice ) } )
       AAdd( opc, "------ ostale komande --------------------" )
       AAdd( opcexe, {|| .F. } )
       AAdd( opc, "5. unos depozita u uređaj       " )
-      AAdd( opcexe, {|| fl_polog( AllTrim( gFC_path ), AllTrim( gFC_name ) ) } )
+      AAdd( opcexe, {|| fl_polog( AllTrim( flink_path() ), AllTrim( gFC_name ) ) } )
       AAdd( opc, "6. poništi otvoren racun      " )
-      AAdd( opcexe, {|| fl_reset( AllTrim( gFC_path ), AllTrim( gFC_name ) ) } )
+      AAdd( opcexe, {|| fl_reset( AllTrim( flink_path() ), AllTrim( gFC_name ) ) } )
 
    CASE _dev_drv == "FPRINT"
 
@@ -123,7 +123,7 @@ FUNCTION fiskalni_izvjestaji_komande( low_level, from_pos )
    CASE _dev_drv == "HCP"
 
       IF !low_level
-    	
+
          AAdd( opc, "------ izvještaji -----------------------" )
          AAdd( opcexe, {|| .F. } )
          AAdd( opc, "1. dnevni fiskalni izvještaj (Z rep.)    " )

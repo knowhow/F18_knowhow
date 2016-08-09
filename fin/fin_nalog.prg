@@ -259,14 +259,14 @@ FUNCTION fin_nalog_fix_greska_zaokruzenja_fin_pripr( cIdFirma, cIdVn, cBrNal )
 
    SEEK cIdFirma + cIdVn + cBrNal
 
-   DO WHILE  !Eof() .AND. ( IdFirma + IdVn + BrNal == cIdFirma + cIdVn + cBrNal )
+   DO WHILE  !Eof() .AND. ( field->IdFirma + field->IdVn + field->BrNal == cIdFirma + cIdVn + cBrNal )
 
-      IF D_P == "1"
-         dug += IznosBHD
-         dug2 += iznosdem
+      IF field->D_P == "1"
+         dug += field->IznosBHD
+         dug2 += field->iznosdem
       ELSE
-         pot += IznosBHD
-         pot2 += iznosdem
+         pot += field->IznosBHD
+         pot2 += field->iznosdem
       ENDIF
 
       SKIP

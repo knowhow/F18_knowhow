@@ -390,6 +390,8 @@ STATIC FUNCTION fin_provjera_prije_azuriranja_naloga( auto, lista_naloga )
          RETURN _ok
       ENDIF
 
+      fin_nalog_fix_greska_zaokruzenja_fin_pripr( cIdFirma, cIdVn, cBrNal )
+
       IF !fin_p_saldo_provjera( cIdFirma, cIdVn, cBrNal )
          SELECT ( _t_area )
          RETURN _ok

@@ -80,8 +80,8 @@ FUNCTION parsiraj_sql_date_interval( cFieldName, date1, date2 )
          date2 := CToD( "" )
       ENDIF
 
-      // oba su prazna
-      IF DToC( date1 ) == DToC( CToD( "" ) ) .AND. DToC( date2 ) == DToC( CToD( "" ) )
+
+      IF DToC( date1 ) == DToC( CToD( "" ) ) .AND. DToC( date2 ) == DToC( CToD( "" ) ) // oba su prazna
          _ret := "TRUE"
          // samo prvi je prazan
       ELSEIF DToC( date1 ) == DToC( CToD( "" ) )

@@ -16,20 +16,20 @@ STATIC PICD
 STATIC REP1_LEN := 158
 
 
-FUNCTION fin_bb_analitika_b( params )
+FUNCTION fin_bb_analitika_b( hParams )
 
-   LOCAL cIdFirma := params[ "idfirma" ]
-   LOCAL dDatOd := params[ "datum_od" ]
-   LOCAL dDatDo := params[ "datum_do" ]
-   LOCAL qqKonto := params[ "konto" ]
-   LOCAL cIdRj := params[ "id_rj" ]
-   LOCAL lNule := params[ "saldo_nula" ]
-   LOCAL lPodKlas := params[ "podklase" ]
-   LOCAL cFormat := params[ "format" ]
+   LOCAL cIdFirma := hParams[ "idfirma" ]
+   LOCAL dDatOd := hParams[ "datum_od" ]
+   LOCAL dDatDo := hParams[ "datum_do" ]
+   LOCAL qqKonto := hParams[ "konto" ]
+   LOCAL cIdRj := hParams[ "id_rj" ]
+   LOCAL lNule := hParams[ "saldo_nula" ]
+   LOCAL lPodKlas := hParams[ "podklase" ]
+   LOCAL cFormat := hParams[ "format" ]
    LOCAL cKlKonto, cSinKonto, cIdKonto, cIdPartner
    LOCAL cFilter, aUsl1, nStr := 0
    LOCAL b, b1, b2
-   LOCAL nValuta := params[ "valuta" ]
+   LOCAL nValuta := hParams[ "valuta" ]
    LOCAL nBBK := 1
    LOCAL aNaziv, nColNaz
    PRIVATE M6, M7, M8, M9, M10
@@ -63,7 +63,9 @@ FUNCTION fin_bb_analitika_b( params )
    IF gRJ == "D" .AND. Len( cIdRJ ) <> 0
       otvori_sint_anal_kroz_temp( .F., "IDRJ='" + cIdRJ + "'" )
    ELSE
-      o_anal()
+      MsgO( "Preuzimanje podataka sa SQL servera ..." )
+      find_anal_za_period( cIdFirma, dDatOd, dDatDo, "idfirma,idkonto" )
+      MsgC()
    ENDIF
 
    SELECT BBKLAS
@@ -82,8 +84,7 @@ FUNCTION fin_bb_analitika_b( params )
          cFilter += ( iif( Empty( cFilter ), "", ".and." ) + aUsl1 )
       ENDIF
    ELSEIF !( Empty( dDatOd ) .AND. Empty( dDatDo ) )
-      cFilter += ( iif( Empty( cFilter ), "", ".and." ) + ;
-         "DATNAL>=" + dbf_quote( dDatOd ) + " .and. DATNAL<=" + dbf_quote( dDatDo ) )
+      cFilter += ( iif( Empty( cFilter ), "", ".and." ) + "DATNAL>=" + dbf_quote( dDatOd ) + " .and. DATNAL<=" + dbf_quote( dDatDo ) )
    ENDIF
 
    IF Len( cIdFirma ) < 2
@@ -91,14 +92,14 @@ FUNCTION fin_bb_analitika_b( params )
       Box(, 2, 30 )
       nSlog := 0
       nUkupno := RECCOUNT2()
-      cFilt := IF( Empty( cFilter ), "IDFIRMA=" + dbf_quote( cIdFirma ), cFilter + ".and.IDFIRMA=" + dbf_quote( cIdFirma ) )
+      cFilt := iif( Empty( cFilter ), "IDFIRMA=" + dbf_quote( cIdFirma ), cFilter + ".and.IDFIRMA=" + dbf_quote( cIdFirma ) )
       cSort1 := "IdKonto+dtos(DatNal)"
       INDEX ON &cSort1 TO "ANATMP" FOR &cFilt Eval( fin_tek_rec_2() ) EVERY 1
       GO TOP
       BoxC()
    ELSE
       SET FILTER TO &cFilter
-      HSEEK cIdFirma
+      GO TOP
    ENDIF
 
    EOF CRET
@@ -115,10 +116,10 @@ FUNCTION fin_bb_analitika_b( params )
 
    nCol1 := 50
 
-   DO WHILE !Eof() .AND. IdFirma = cIdFirma
+   DO WHILE !Eof() .AND. IdFirma == cIdFirma
 
       IF PRow() == 0
-         zagl_bb_anal( params, @nStr )
+         zagl_bb_anal( hParams, @nStr )
       ENDIF
 
       cKlKonto := Left( IdKonto, 1 )
@@ -212,14 +213,14 @@ FUNCTION fin_bb_analitika_b( params )
 
             IF PRow() > 65 + dodatni_redovi_po_stranici()
                FF
-               zagl_bb_anal( params, @nStr )
+               zagl_bb_anal( hParams, @nStr )
             ENDIF
 
          ENDDO
 
          IF PRow() > 61 + dodatni_redovi_po_stranici()
             FF
-            zagl_bb_anal( params, @nStr )
+            zagl_bb_anal( hParams, @nStr )
          ENDIF
 
          ?U M5
@@ -292,7 +293,7 @@ FUNCTION fin_bb_analitika_b( params )
 
    IF PRow() > 61 + dodatni_redovi_po_stranici()
       FF
-      zagl_bb_anal( params, @nStr )
+      zagl_bb_anal( hParams, @nStr )
    ENDIF
 
    ?U M5
@@ -372,15 +373,15 @@ FUNCTION fin_bb_analitika_b( params )
 
 
 
-FUNCTION zagl_bb_anal( params, nStr )
+FUNCTION zagl_bb_anal( hParams, nStr )
 
    ?
    P_COND2
 
-   ??U "FIN: ANALITIČKI BRUTO BILANS U VALUTI '" + IF( params[ "valuta" ] == 1, ValDomaca(), ValPomocna() ) + "'"
+   ??U "FIN: ANALITIČKI BRUTO BILANS U VALUTI '" + IF( hParams[ "valuta" ] == 1, ValDomaca(), ValPomocna() ) + "'"
 
-   IF !( Empty( params[ "datum_od" ] ) .AND. Empty( params[ "datum_do" ] ) )
-      ?? " ZA PERIOD OD", params[ "datum_od" ], "-", params[ "datum_do" ]
+   IF !( Empty( hParams[ "datum_od" ] ) .AND. Empty( hParams[ "datum_do" ] ) )
+      ?? " ZA PERIOD OD", hParams[ "datum_od" ], "-", hParams[ "datum_do" ]
    ENDIF
 
    ?? " NA DAN: "
@@ -389,25 +390,25 @@ FUNCTION zagl_bb_anal( params, nStr )
 
    @ PRow(), REP1_LEN - 15 SAY "Str:" + Str( ++nStr, 3 )
 
-   //IF gNW == "D"
-      ? "Firma:", gFirma, gNFirma
+   // IF gNW == "D"
+   ? "Firma:", gFirma, gNFirma
    /*
     ELSE
       ? "Firma:"
-      @ PRow(), PCol() + 2 SAY params[ "idfirma" ]
+      @ PRow(), PCol() + 2 SAY hParams[ "idfirma" ]
       SELECT PARTN
-      HSEEK params[ "idfirma" ]
+      HSEEK hParams[ "idfirma" ]
       @ PRow(), PCol() + 2 SAY Naz
       @ PRow(), PCol() + 2 SAY Naz2
    ENDIF
    */
 
-   IF !Empty( params[ "konto" ] )
-      ? "Odabrana konta: " + AllTrim( params[ "konto" ] )
+   IF !Empty( hParams[ "konto" ] )
+      ? "Odabrana konta: " + AllTrim( hParams[ "konto" ] )
    ENDIF
 
-   IF gRJ == "D" .AND. Len( params[ "id_rj" ] ) <> 0
-      ? "Radna jedinica ='" + params[ "id_rj" ] + "'"
+   IF gRJ == "D" .AND. Len( hParams[ "id_rj" ] ) <> 0
+      ? "Radna jedinica ='" + hParams[ "id_rj" ] + "'"
    ENDIF
 
    SELECT ANAL

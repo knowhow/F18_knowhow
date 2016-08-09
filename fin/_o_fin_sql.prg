@@ -14,18 +14,6 @@
 FIELD idfirma, idvn, brnal, datnal
 
 
-FUNCTION datval_prazan()
-
-   RETURN Empty( fix_dat_var( field->datval, .T. ) )
-
-
-FUNCTION get_datval_field()
-
-   RETURN fix_dat_var( field->DatVal, .T. )
-
-
-
-
 
 FUNCTION o_sql_suban_kto_partner( cIdFirma )
 
@@ -186,6 +174,34 @@ FUNCTION find_suban_by_konto_partner( xIdFirma, cIdKonto, cIdPartner, cBrDok, cO
    RETURN ! Eof()
 
 
+
+FUNCTION find_anal_za_period( cIdFirma, dDatOd, dDatDo, cOrderBy )
+
+   LOCAL hParams := hb_Hash()
+
+   hb_default( @cOrderBy, "idFirma,idkonto" )
+
+   IF cIdFirma <> NIL
+      hParams[ "idfirma" ] := cIdFirma
+   ENDIF
+
+   IF dDatOd != NIL
+      hParams[ "dat_od" ] := dDatOd
+   ENDIF
+
+   IF dDatDo != NIL
+      hParams[ "dat_do" ] := dDatDo
+   ENDIF
+
+   hParams[ "order_by" ] := cOrderBy
+
+   hParams[ "indeks" ] := .F.
+   IF !use_sql_anal( hParams )
+      RETURN .F.
+   ENDIF
+   GO TOP
+
+   RETURN ! Eof()
 
 
 FUNCTION find_nalog_za_period( cIdFirma, cIdVN, dDatOd, dDatDo, cOrderBy )
@@ -899,3 +915,15 @@ STATIC FUNCTION use_sql_suban_where( hParams )
    ENDIF
 
    RETURN cWhere
+
+
+
+
+FUNCTION datval_prazan()
+
+   RETURN Empty( fix_dat_var( field->datval, .T. ) )
+
+
+FUNCTION get_datval_field()
+
+   RETURN fix_dat_var( field->DatVal, .T. )

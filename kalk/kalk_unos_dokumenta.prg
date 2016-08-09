@@ -331,7 +331,7 @@ FUNCTION kalk_pripr_key_handler()
 
       my_close_all_dbf()
 
-      kalk_azuriranje_dokumenta()
+      kalk_azuriranje_dokumenta( .T. )  // .T. - lAuto - znaci bez pitanja, hoces-neces
       o_kalk_edit()
 
 /* "Indikatori", "ImaU_KALK"

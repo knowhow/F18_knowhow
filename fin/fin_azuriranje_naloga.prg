@@ -16,6 +16,7 @@ STATIC __tbl_nalog := "fin_nalog"
 STATIC __tbl_anal := "fin_anal"
 STATIC __tbl_sint := "fin_sint"
 
+
 FUNCTION fin_azuriranje_naloga( automatic )
 
    LOCAL oServer := sql_data_conn()
@@ -390,9 +391,8 @@ STATIC FUNCTION fin_provjera_prije_azuriranja_naloga( auto, lista_naloga )
          RETURN _ok
       ENDIF
 
-      fin_nalog_fix_greska_zaokruzenja_fin_pripr( cIdFirma, cIdVn, cBrNal )
 
-      IF !fin_p_saldo_provjera( cIdFirma, cIdVn, cBrNal )
+      IF !fin_saldo_provjera_psuban( cIdFirma, cIdVn, cBrNal )
          SELECT ( _t_area )
          RETURN _ok
       ENDIF
@@ -533,7 +533,7 @@ STATIC FUNCTION fin_p_nalog_bez_provjere( auto )
 
 
 
-STATIC FUNCTION fin_p_saldo_provjera( id_firma, id_vn, br_nal )
+STATIC FUNCTION fin_saldo_provjera_psuban( id_firma, id_vn, br_nal )
 
    LOCAL _ok := .F.
    LOCAL _tmp, _saldo

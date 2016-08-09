@@ -32,7 +32,6 @@ FUNCTION fin_gen_psuban_stampa_nalozi( lAuto, dDatNal )
 
    fin_open_psuban_and_ostalo()
 
-
    SELECT PSUBAN
    my_dbf_zap()
 
@@ -76,9 +75,10 @@ FUNCTION fin_gen_psuban_stampa_nalozi( lAuto, dDatNal )
 
       oNalog := FinNalog():New( cIdFirma, cIdVn, cBrNal )
 
-      fin_nalog_fix_greska_zaokruzenja_fin_pripr( cIdFirma, cIdVn, cBrNal )
+      fin_nalog_fix_greska_zaokruzenja_fin_pripr( cIdFirma, cIdVn, cBrNal, .F. )
 
       fin_nalog_stampa_fill_psuban( "1", lAuto, dDatNal, @oNalog )
+      
       oNalozi:addNalog( oNalog )
 
       IF !lAuto

@@ -516,11 +516,9 @@ FUNCTION edit_fin_pripr_key_handler()
 
    CASE Ch == K_CTRL_P
 
-
       fin_set_broj_dokumenta()
-      fin_nalog_priprema()
+      fin_nalog_k_ctrl_p()
       o_fin_edit()
-
 
       RETURN DE_REFRESH
 

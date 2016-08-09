@@ -223,7 +223,7 @@ STATIC FUNCTION kalk_zavisni_nakon_azuriranja( lGenerisi, lAuto )
 altd()
       kalk_kontiranje_gen_finmat()
 
-      formiraj_finansijski_nalog( lAuto )
+      generisi_finansijski_nalog_iz_kalk( lAuto )
 
       gAFin := lgAFin
       gAMat := lgAMat

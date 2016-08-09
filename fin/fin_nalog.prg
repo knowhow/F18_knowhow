@@ -70,7 +70,7 @@ FUNCTION fin_nalog_azurirani()
    RETURN .T.
 
 
-FUNCTION fin_nalog_priprema()
+FUNCTION fin_nalog_k_ctrl_p()
 
    my_close_all_dbf()
    fin_gen_ptabele_stampa_nalozi()
@@ -78,7 +78,7 @@ FUNCTION fin_nalog_priprema()
    RETURN NIL
 
 
-FUNCTION formiraj_finansijski_nalog( lAuto )
+FUNCTION generisi_finansijski_nalog_iz_kalk( lAuto )
 
    IF !f18_use_module( "fin" )
       RETURN .F.
@@ -91,6 +91,8 @@ FUNCTION formiraj_finansijski_nalog( lAuto )
    ENDIF
 
    RETURN .T.
+
+
 /*
    Koristi se u KALK za štampu finansijskog naloga
 */
@@ -107,7 +109,8 @@ FUNCTION fin_nalog_priprema_auto_import( lAuto )
 
    IF gaFin == "D"
 
-      fin_nalog_fix_greska_zaokruzenja( lAuto )
+
+      fin_nalog_fix_greska_zaokruzenja_fin_pripr( NIL, NIL, NIL, lAuto )
 
       IF lAuto == .F. .OR. ( lAuto == .T. .AND. gAImpPrint == "D" )
          fin_gen_ptabele_stampa_nalozi( lAuto )
@@ -123,8 +126,8 @@ FUNCTION fin_nalog_priprema_auto_import( lAuto )
    RETURN .T.
 
 
-
-FUNCTION fin_nalog_fix_greska_zaokruzenja( lAuto )
+/*
+--FUNCTION fin_nalog_fix_greska_zaokruzenja( lAuto )
 
    O_KONTO
    O_VALUTE
@@ -243,23 +246,38 @@ FUNCTION fin_nalog_fix_greska_zaokruzenja( lAuto )
    my_close_all_dbf()
 
    RETURN .T.
+*/
 
 
-
-FUNCTION fin_nalog_fix_greska_zaokruzenja_fin_pripr( cIdFirma, cIdVn, cBrNal )
+FUNCTION fin_nalog_fix_greska_zaokruzenja_fin_pripr( cIdFirma, cIdVn, cBrNal, lAuto )
 
    LOCAL dug := 0
    LOCAL dug2 := 0
    LOCAL Pot := 0
    LOCAL Pot2 := 0
+   LOCAL lRet := .T.
 
+   hb_default( @lAuto, .F. ) // .T. - ispravka se vrsi bez pitanja
    PushWa()
 
+   SELECT F_FIN_PRIPR
+   IF !Used()
+      O_FIN_PRIPR
+   ENDIF
+
    SELECT fin_pripr
+   IF cIdFirma == NIL
+      cIdFirma := field->idfirma
+      cIdVn := field->idvn
+      cBrNal := field->brnal
+   ENDIF
 
    SEEK cIdFirma + cIdVn + cBrNal
 
+   my_flock()
    DO WHILE  !Eof() .AND. ( field->IdFirma + field->IdVn + field->BrNal == cIdFirma + cIdVn + cBrNal )
+
+      REPLACE field->iznosbhd WITH ROUND(field->iznosbhd, 2) // iznos KM dvije decimale
 
       IF field->D_P == "1"
          dug += field->IznosBHD
@@ -271,14 +289,14 @@ FUNCTION fin_nalog_fix_greska_zaokruzenja_fin_pripr( cIdFirma, cIdVn, cBrNal )
 
       SKIP
    ENDDO
+   my_unlock()
 
    SKIP -1
 
    Scatter()
 
 
-   IF Round( Dug - Pot, 2 ) <> 0 .AND. Pitanje(, "Zelite li uravnoteziti nalog (D/N) ?", "N" ) == "D"
-
+   IF Round( dug - pot, 2 ) <> 0 .AND. ( lAuto .OR. (Pitanje(, "Želite li uravnotežiti nalog (D/N) ?", "N" ) == "D") )
 
       _Opis := "GRESKA ZAOKRUZ."
       _BrDok := ""
@@ -298,19 +316,23 @@ FUNCTION fin_nalog_fix_greska_zaokruzenja_fin_pripr( cIdFirma, cIdVn, cBrNal )
       SELECT ( nTArea )
 
       APPEND BLANK
-
       Gather()
+
+      lRet := .T.
+   ELSE
+      lRet := .F.
 
    ENDIF
 
    PopWa()
 
-   RETURN .T.
+   RETURN lRet
 
 
 /*
    generisi psuban, psint, pnalog, štampaj sve naloge
 */
+
 FUNCTION fin_gen_ptabele_stampa_nalozi( lAuto )
 
    LOCAL dDatNal := Date()

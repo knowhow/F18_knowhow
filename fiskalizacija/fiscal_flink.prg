@@ -652,3 +652,12 @@ FUNCTION flink_path()
 
 FUNCTION flink_path2()
    RETURN PadR( "", 150 )
+
+
+FUNCTION flink_name()
+   RETURN  PadR( "OUT.TXT", 150 )
+
+
+FUNCTION flink_type()
+
+   RETURN "FPRINT"

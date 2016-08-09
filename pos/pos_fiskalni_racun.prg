@@ -465,14 +465,14 @@ STATIC FUNCTION _fix_naz( cR_naz, cNaziv )
 
    DO CASE
 
-   CASE AllTrim( gFc_type ) == "FLINK"
+   CASE AllTrim( flik_type() ) == "FLINK"
       cNaziv := StrKzn( cNaziv, "8", "E" )
       cNaziv := Lower( cNaziv )
       cNaziv := StrTran( cNaziv, ",", "." )
 
    ENDCASE
 
-   RETURN
+   RETURN .T.
 
 
 /*

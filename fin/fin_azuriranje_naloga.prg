@@ -33,7 +33,7 @@ FUNCTION fin_azuriranje_naloga( automatic )
 
    o_fin_za_azuriranje()
 
-   IF fin_pripr->( RecCount() == 0 ) .OR. ( !automatic .AND. Pitanje(, "Izvršiti ažuriranje fin naloga ? (D/N)?", "N" ) == "N" )
+   IF fin_pripr->( RecCount() == 0 ) .OR. ( !automatic .AND. Pitanje(, "Izvršiti ažuriranje fin naloga ? (D/N)?", "D" ) == "N" )
       RETURN lRet
    ENDIF
 

@@ -296,7 +296,7 @@ FUNCTION fin_nalog_fix_greska_zaokruzenja_fin_pripr( cIdFirma, cIdVn, cBrNal, lA
    Scatter()
 
 
-   IF Round( dug - pot, 2 ) <> 0 .AND. ( lAuto .OR. (Pitanje(, "Želite li uravnotežiti nalog (D/N) ?", "N" ) == "D") )
+   IF Round( dug - pot, 2 ) <> 0 .AND. ( lAuto .OR. (Pitanje(, "Želite li uravnotežiti nalog (D/N) ?", "D" ) == "D") )
 
       _Opis := "GRESKA ZAOKRUZ."
       _BrDok := ""

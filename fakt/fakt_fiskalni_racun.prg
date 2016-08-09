@@ -109,7 +109,7 @@ FUNCTION fakt_fiskalni_racun( id_firma, tip_dok, br_dok, auto_print, dev_param )
 
    _items_data := fakt_fiscal_stavke_racuna( id_firma, tip_dok, br_dok, _storno, _partn_data )
 
-   IF ValType( _items_data ) == "L" .OR. _items_data == NIL
+   IF ValType( _items_data ) == "L"  .OR. _items_data == NIL
       RETURN 1
    ENDIF
 
@@ -127,6 +127,10 @@ FUNCTION fakt_fiskalni_racun( id_firma, tip_dok, br_dok, auto_print, dev_param )
 
    CASE _dev_drv == __DRV_HCP
       _err_level := fakt_to_hcp( id_firma, tip_dok, br_dok, _items_data, _partn_data, _storno )
+
+   CASE _dev_drv == __DRV_FLINK
+      _err_level := fakt_to_flink( __device_params, id_firma, tip_dok, br_dok, _items_data, _partn_data, _storno )
+
 
    CASE _dev_drv == __DRV_TRING
       _err_level := fakt_to_tring( id_firma, tip_dok, br_dok, _items_data, _partn_data, _storno )
@@ -1052,9 +1056,10 @@ STATIC FUNCTION _get_partner_for_email( id_firma, tip_dok, br_dok )
 
 
 
-// -------------------------------------------------------------
-// izdavanje fiskalnog isjecka na TREMOL uredjaj
-// -------------------------------------------------------------
+/*
+   izdavanje fiskalnog isjecka na TREMOL uredjaj
+*/
+
 STATIC FUNCTION fakt_to_tremol( id_firma, tip_dok, br_dok, items, head, storno, cont )
 
    LOCAL _err_level := 0
@@ -1068,21 +1073,21 @@ STATIC FUNCTION fakt_to_tremol( id_firma, tip_dok, br_dok, items, head, storno, 
       cont := "0"
    ENDIF
 
-   // stampaj racun !
-   _err_level := tremol_rn( __device_params, items, head, storno, cont )
+
+   _err_level := tremol_rn( __device_params, items, head, storno, cont ) // stampaj racun
 
    _f_name := AllTrim( fiscal_out_filename( __device_params[ "out_file" ], br_dok ) )
 
-   // da li postoji ista na izlazu ?
-   IF tremol_read_out( __device_params, _f_name, __device_params[ "timeout" ] )
-      // procitaj sada gresku
-      _err_level := tremol_read_error( __device_params, _f_name, @_fiscal_no )
+
+   IF tremol_read_out( __device_params, _f_name, __device_params[ "timeout" ] ) // da li postoji ista na izlazu ?
+
+      _err_level := tremol_read_error( __device_params, _f_name, @_fiscal_no ) // procitaj sada gresku
 
    ELSE
       _err_level := -99
    ENDIF
 
-   IF _err_level = 0 .AND. !storno .AND. cont <> "2"
+   IF _err_level == 0 .AND. !storno .AND. cont <> "2"
       // vrati broj fiskalnog racuna
       IF _fiscal_no > 0
          // prikazi poruku samo u direktnoj stampi
@@ -1090,8 +1095,8 @@ STATIC FUNCTION fakt_to_tremol( id_firma, tip_dok, br_dok, items, head, storno, 
             MsgBeep( "Kreiran fiskalni račun br: " + AllTrim( Str( _fiscal_no ) ) )
          ENDIF
 
-         // ubaci broj fiskalnog racuna u fakturu
-         set_fiscal_no_to_fakt_doks( id_firma, tip_dok, br_dok, _fiscal_no )
+
+         set_fiscal_no_to_fakt_doks( id_firma, tip_dok, br_dok, _fiscal_no ) // ubaci broj fiskalnog racuna u fakturu
 
       ENDIF
 
@@ -1275,214 +1280,6 @@ STATIC FUNCTION fakt_to_tring( id_firma, tip_dok, br_dok, items, head, storno )
 
 
 
-// ------------------------------------------------------
-// posalji racun na fiskalni stampac
-// ------------------------------------------------------
-STATIC FUNCTION fakt_to_flink( cFirma, cTipDok, cBrDok )
-
-   LOCAL aItems := {}
-   LOCAL aTxt := {}
-   LOCAL aPla_data := {}
-   LOCAL aSem_data := {}
-   LOCAL lStorno := .T.
-   LOCAL aMemo := {}
-   LOCAL nBrDok
-   LOCAL nReklRn := 0
-   LOCAL cStPatt := "/S"
-   LOCAL GetList := {}
-
-   SELECT fakt_doks
-   SEEK cFirma + cTipDok + cBrDok
-
-   // ako je storno racun ...
-   IF cStPatt $ AllTrim( field->brdok )
-      nReklRn := Val( StrTran( AllTrim( field->brdok ), cStPatt, "" ) )
-   ENDIF
-
-   nBrDok := Val( AllTrim( field->brdok ) )
-   nTotal := field->iznos
-   nNRekRn := 0
-
-   IF nReklRn <> 0
-      Box( , 1, 60 )
-      @ m_x + 1, m_y + 2 SAY "Broj rekl.fiskalnog racuna:" ;
-         GET nNRekRn PICT "99999" VALID ( nNRekRn > 0 )
-      READ
-      BoxC()
-   ENDIF
-
-   SELECT fakt
-   SEEK cFirma + cTipDok + cBrDok
-
-   nTRec := RecNo()
-
-   // da li se radi o storno racunu ?
-   DO WHILE !Eof() .AND. field->idfirma == cFirma ;
-         .AND. field->idtipdok == cTipDok ;
-         .AND. field->brdok == cBrDok
-
-      IF field->kolicina > 0
-         lStorno := .F.
-         EXIT
-      ENDIF
-
-      SKIP
-
-   ENDDO
-
-   // nTipRac = 1 - maloprodaja
-   // nTipRac = 2 - veleprodaja
-
-   // nSemCmd = semafor komanda
-   // 0 - stampa mp racuna
-   // 1 - stampa storno mp racuna
-   // 20 - stampa vp racuna
-   // 21 - stampa storno vp racuna
-
-   nSemCmd := 0
-   nPartnId := 0
-
-   IF cTipDok $ "10#"
-
-      // veleprodajni racun
-
-      nTipRac := 2
-
-      // daj mi partnera za ovu fakturu
-      nPartnId := _g_spart( fakt_doks->idpartner )
-
-      // stampa vp racuna
-      nSemCmd := 20
-
-      IF lStorno == .T.
-         // stampa storno vp racuna
-         nSemCmd := 21
-      ENDIF
-
-   ELSEIF cTipDok $ "11#"
-
-      // maloprodajni racun
-
-      nTipRac := 1
-
-      // nema parnera
-      nPartnId := 0
-
-      // stampa mp racuna
-      nSemCmd := 0
-
-      IF lStorno == .T.
-         // stampa storno mp racuna
-         nSemCmd := 1
-      ENDIF
-
-   ENDIF
-
-   // vrati se opet na pocetak
-   GO ( nTRec )
-
-   // upisi u [items] stavke
-   DO WHILE !Eof() .AND. field->idfirma == cFirma ;
-         .AND. field->idtipdok == cTipDok ;
-         .AND. field->brdok == cBrDok
-
-      // nastimaj se na robu ...
-      SELECT roba
-      SEEK fakt->idroba
-
-      SELECT fakt
-
-      // storno identifikator
-      nSt_Id := 0
-
-      IF ( field->kolicina < 0 ) .AND. lStorno == .F.
-         nSt_id := 1
-      ENDIF
-
-      nSifRoba := _g_sdob( field->idroba )
-      cNazRoba := AllTrim( to_xml_encoding( roba->naz ) )
-      cBarKod := AllTrim( roba->barkod )
-      nGrRoba := 1
-      nPorStopa := 1
-      nR_cijena := Abs( field->cijena )
-      nR_kolicina := Abs( field->kolicina )
-
-      AAdd( aItems, { nBrDok, ;
-         nTipRac, ;
-         nSt_id, ;
-         nSifRoba, ;
-         cNazRoba, ;
-         cBarKod, ;
-         nGrRoba, ;
-         nPorStopa, ;
-         nR_cijena, ;
-         nR_kolicina } )
-
-      SKIP
-   ENDDO
-
-   // tip placanja
-   // --------------------
-   // 0 - gotovina
-   // 1 - cek
-   // 2 - kartica
-   // 3 - virman
-
-   nTipPla := 0
-
-   IF lStorno == .F.
-      // povrat novca
-      nPovrat := 0
-      // uplaceno novca
-      nUplaceno := nTotal
-   ELSE
-      // povrat novca
-      nPovrat := nTotal
-      // uplaceno novca
-      nUplaceno := 0
-   ENDIF
-
-   // upisi u [pla_data] stavke
-   AAdd( aPla_data, { nBrDok, ;
-      nTipRac, ;
-      nTipPla, ;
-      Abs( nUplaceno ), ;
-      Abs( nTotal ), ;
-      Abs( nPovrat ) } )
-
-   // RACUN.MEM data
-   AAdd( aTxt, { "fakt: " + cTipDok + "-" + cBrDok } )
-
-   // reklamni racun uzmi sa box-a
-   nReklRn := nNRekRn
-   // print memo od - do
-   nPrMemoOd := 1
-   nPrMemoDo := 1
-
-   // upisi stavke za [semafor]
-   AAdd( aSem_data, { nBrDok, ;
-      nSemCmd, ;
-      nPrMemoOd, ;
-      nPrMemoDo, ;
-      nPartnId, ;
-      nReklRn } )
-
-
-   IF nTipRac == 2
-
-
-      fisc_v_rn( flink_path(), aItems, aTxt, aPla_data, aSem_data )   // veleprodaja, posalji na fiskalni stampac
-
-
-   ELSEIF nTipRac == 1
-
-
-      fisc_m_rn( flink_path(), aItems, aTxt, aPla_data, aSem_data ) // maloprodaja posalji na fiskalni stampac
-
-   ENDIF
-
-   RETURN .T.
-
 
 // --------------------------------------------------------
 // vraca broj fiskalnog isjecka
@@ -1533,37 +1330,3 @@ STATIC FUNCTION _snd_eml( fisc_rn, fakt_dok, kupac, eml_file, u_total )
    f18_email_send( _mail_param, nil )
 
    RETURN NIL
-
-
-// ------------------------------------------------
-// vraca sifru dobavljaca
-// ------------------------------------------------
-STATIC FUNCTION _g_sdob( id_roba )
-
-   LOCAL _ret := 0
-   LOCAL _t_area := Select()
-
-   SELECT roba
-   SEEK id_roba
-
-   IF Found()
-      _ret := Val( AllTrim( field->sifradob ) )
-   ENDIF
-
-   SELECT ( _t_area )
-
-   RETURN _ret
-
-
-// ------------------------------------------------
-// vraca sifru partnera
-// ------------------------------------------------
-STATIC FUNCTION _g_spart( id_partner )
-
-   LOCAL _ret := 0
-   LOCAL _tmp
-
-   _tmp := Right( AllTrim( id_partner ), 5 )
-   _ret := Val( _tmp )
-
-   RETURN _ret

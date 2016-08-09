@@ -588,7 +588,7 @@ FUNCTION fakt_tabela_komande( lOpcine, fakt_doks_filt, model )
       _rn_params[ "datum" ] := field->fisc_date
       _rn_params[ "vrijeme" ] := field->fisc_time
 
-      fprint_double( _dev_params, _rn_params )
+      fprint_dupliciraj_racun( _dev_params, _rn_params )
 
       MsgBeep( "Duplikat računa za datum: " + DToC( field->fisc_date ) + ", vrijeme: " + AllTrim( field->fisc_time ) )
 

@@ -199,8 +199,7 @@ FUNCTION _g_f_struct( cFileName )
 // ----------------------------------------------------------
 // upisi u fajl
 // ----------------------------------------------------------
-FUNCTION _a_to_file( cFilePath, cFileName, aStruct, aData, ;
-      cSeparator, lTrim, lLastSep )
+FUNCTION fiscal_array_to_file( cFilePath, cFileName, aStruct, aData, cSeparator, lTrim, lLastSep )
 
    LOCAL i
    LOCAL ii
@@ -283,7 +282,7 @@ FUNCTION _a_to_file( cFilePath, cFileName, aStruct, aData, ;
    SET PRINTER OFF
    SET CONSOLE ON
 
-   RETURN
+   RETURN .T.
 
 
 // ----------------------------------------------------------

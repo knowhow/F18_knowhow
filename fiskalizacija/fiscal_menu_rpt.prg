@@ -90,7 +90,7 @@ FUNCTION fiskalni_izvjestaji_komande( low_level, from_pos )
       AAdd( opcexe, {|| fprint_polog( __device_params ) } )
 
       AAdd( opc, "6. štampanje duplikata       " )
-      AAdd( opcexe, {|| fprint_double( __device_params ) } )
+      AAdd( opcexe, {|| fprint_dupliciraj_racun( __device_params ) } )
 
       AAdd( opc, "7. zatvori račun (cmd 56)       " )
       AAdd( opcexe, {|| fprint_rn_close( __device_params ) } )

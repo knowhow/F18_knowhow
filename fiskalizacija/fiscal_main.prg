@@ -115,7 +115,7 @@ STATIC F_POS_RN := "POS_RN"
 // cRnNum - broj racuna
 // nTotal - total racuna
 // -------------------------------------------------------
-FUNCTION fisc_v_rn( cFPath, aItems, aTxt, aPla_data, aSem_data )
+FUNCTION flink_racun_veleprodaja( cFPath, aItems, aTxt, aPla_data, aSem_data )
 
    // cFPath := PRIVPATH
 
@@ -135,30 +135,28 @@ FUNCTION fisc_v_rn( cFPath, aItems, aTxt, aPla_data, aSem_data )
    cPom := f_filename( _F_VRN_TXT, nInvoice )
 
    // upisi aItems prema aVRnTxt u PRIVPATH + "F_V_RACUN.TXT"
-   _a_to_file( cFPath, cPom, aS_rn_txt, aItems )
+   fiscal_array_to_file( cFPath, cPom, aS_rn_txt, aItems )
 
    IF Len( aTxt ) <> 0
 
       cPom := f_filename( _F_VRN_MEM, nInvoice )
       // upisi zatim stavke u fajl "F_V_RACUN.MEM"
-      _a_to_file( cFPath, cPom, aS_rn_mem, aTxt )
+      fiscal_array_to_file( cFPath, cPom, aS_rn_mem, aTxt )
    ENDIF
 
    cPom := f_filename( _F_VRN_PLA, nInvoice )
    // upisi zatim stavke u fajl "F_V_RACUN.PLA"
-   _a_to_file( cFPath, cPom, aS_rn_pla, aPla_Data )
+   fiscal_array_to_file( cFPath, cPom, aS_rn_pla, aPla_Data )
 
    cPom := f_filename( _F_SEMAFOR, nInvoice )
-   // upisi i semafor "F_SEMAFOR.TXT"
-   _a_to_file( cFPath, cPom, aS_semafor, aSem_Data )
 
-   RETURN
+   fiscal_array_to_file( cFPath, cPom, aS_semafor, aSem_Data ) // upisi i semafor "F_SEMAFOR.TXT"
+
+   RETURN .T.
 
 
-// ---------------------------------
-// racun maloprodaje
-// ---------------------------------
-FUNCTION fisc_m_rn( cFPath, aItems, aTxt, aPla_data, aSem_data )
+
+FUNCTION flink_racun_maloprodaja( cFPath, aItems, aTxt, aPla_data, aSem_data )
 
    // cFPath := PRIVPATH
 
@@ -177,24 +175,24 @@ FUNCTION fisc_m_rn( cFPath, aItems, aTxt, aPla_data, aSem_data )
 
    cPom := f_filename( _F_MRN_TXT, nInvoice )
    // upisi aItems prema aVRnTxt u PRIVPATH + "F_V_RACUN.TXT"
-   _a_to_file( cFPath, cPom, aS_rn_txt, aItems )
+   fiscal_array_to_file( cFPath, cPom, aS_rn_txt, aItems )
 
    IF Len( aTxt ) <> 0
 
       cPom := f_filename( _F_MRN_MEM, nInvoice )
       // upisi zatim stavke u fajl "F_V_RACUN.MEM"
-      _a_to_file( cFPath, cPom, aS_rn_mem, aTxt )
+      fiscal_array_to_file( cFPath, cPom, aS_rn_mem, aTxt )
    ENDIF
 
    cPom := f_filename( _F_MRN_PLA, nInvoice )
    // upisi zatim stavke u fajl "F_V_RACUN.PLA"
-   _a_to_file( cFPath, cPom, aS_rn_pla, aPla_Data )
+   fiscal_array_to_file( cFPath, cPom, aS_rn_pla, aPla_Data )
 
    cPom := f_filename( _F_SEMAFOR, nInvoice )
    // upisi i semafor "F_SEMAFOR.TXT"
-   _a_to_file( cFPath, cPom, aS_semafor, aSem_Data )
+   fiscal_array_to_file( cFPath, cPom, aS_semafor, aSem_Data )
 
-   RETURN
+   RETURN .T.
 
 
 // ----------------------------------------------------
@@ -224,11 +222,11 @@ FUNCTION fisc_nivel( cFPath, aItems, aSem_data )
 
    cPom := f_filename( _F_NIV, nInvoice )
    // upisi aItems prema aVRnTxt u PRIVPATH + "F_V_RACUN.TXT"
-   _a_to_file( cFPath, cPom, aS_nivel, aItems )
+   fiscal_array_to_file( cFPath, cPom, aS_nivel, aItems )
 
    cPom := f_filename( _F_SEMAFOR, nInvoice )
    // upisi i semafor "F_SEMAFOR.TXT"
-   _a_to_file( cFPath, cPom, aS_semafor, aSem_Data )
+   fiscal_array_to_file( cFPath, cPom, aS_semafor, aSem_Data )
 
    RETURN .T.
 
@@ -247,21 +245,21 @@ FUNCTION fisc_init( cFPath, aPor, aRoba, aRobGr, aPartn, aObj, aOper )
    aS_oper := _g_f_struct( F_FOPER )
 
    // upisi poreze
-   _a_to_file( cFPath, _F_FPOR, aS_por, aPor )
+   fiscal_array_to_file( cFPath, _F_FPOR, aS_por, aPor )
 
    // upisi robu
-   _a_to_file( cFPath, _F_FROBA, aS_roba, aRoba )
+   fiscal_array_to_file( cFPath, _F_FROBA, aS_roba, aRoba )
 
    // upisi grupe robe
-   _a_to_file( cFPath, _F_FROBGR, aS_robgr, aRobGr )
+   fiscal_array_to_file( cFPath, _F_FROBGR, aS_robgr, aRobGr )
 
    // upisi partnere
-   _a_to_file( cFPath, _F_FPART, aS_partn, aPartn )
+   fiscal_array_to_file( cFPath, _F_FPART, aS_partn, aPartn )
 
    // upisi objekte
-   _a_to_file( cFPath, _F_FOBJ, aS_obj, aObj )
+   fiscal_array_to_file( cFPath, _F_FOBJ, aS_obj, aObj )
 
    // upisi operatere
-   _a_to_file( cFPath, _F_FOPER, aS_oper, aOper )
+   fiscal_array_to_file( cFPath, _F_FOPER, aS_oper, aOper )
 
    RETURN

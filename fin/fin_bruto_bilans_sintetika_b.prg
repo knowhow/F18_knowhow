@@ -58,32 +58,25 @@ FUNCTION fin_bb_sintetika_b( params )
    O_KONTO
    O_BBKLAS
 
-   MsgO( "Povlacim podatke sa SQL servera" )
+
    IF gRJ == "D" .AND. Len( cIdRJ ) <> 0
       otvori_sint_anal_kroz_temp( .T., "IDRJ='" + cIdRJ + "'" )
    ELSE
+      MsgO( "Preuzimanje podataka sa SQL servera ..." )
       find_sint_by_konto_za_period( cIdFirma, NIL, dDatOd, dDatDo )
+      MsgC()
    ENDIF
 
-   MsgC()
-
-   SELECT BBKLAS
-   my_dbf_zap()
 
    cFilter := ""
 
-   IF !( Empty( qqkonto ) )
+   IF !( Empty( qqKonto ) )
       aUsl1 := Parsiraj( qqKonto, "idkonto" )
-      IF !( Empty( dDatOd ) .AND. Empty( dDatDo ) )
-         cFilter := aUsl1 + ".and. DATNAL>=" + dbf_quote( dDatOd ) + " .and. DATNAL<=" + dbf_quote( dDatDo )
-      ELSE
-         cFilter := aUsl1
-      ENDIF
-   ELSEIF !( Empty( dDatOd ) .AND. Empty( dDatDo ) )
-      cFilter := "DATNAL>=" + dbf_quote( dDatOd ) + " .and. DATNAL<=" + dbf_quote( dDatDo )
+      cFilter += ( iif( Empty( cFilter ), "", ".and." ) + aUsl1 )
    ENDIF
 
 
+/*
    IF Len( cIdFirma ) < 2
       SELECT SINT
       Box(, 2, 30 )
@@ -95,11 +88,14 @@ FUNCTION fin_bb_sintetika_b( params )
       GO TOP
       BoxC()
    ELSE
-      IF !Empty( cFilter )
-         SET FILTER TO &cFilter
-      ENDIF
-      //HSEEK cIdFirma
+*/
+
+
+   IF !Empty( cFilter )
+      SET FILTER TO &cFilter
    ENDIF
+
+   // ENDIF
 
    GO TOP
    EOF CRET
@@ -110,6 +106,10 @@ FUNCTION fin_bb_sintetika_b( params )
       RETURN .F.
    ENDIF
 
+   SELECT BBKLAS
+   my_dbf_zap()
+
+   SELECT sint
    B := 1
 
    D1S := D2S := D3S := D4S := P1S := P2S := P3S := P4S := 0

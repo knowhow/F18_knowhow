@@ -1,21 +1,21 @@
 /*
- * This file is part of the bring.out FMK, a free and open source
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+ * This file is part of the bring.out knowhow ERP, a free and open source
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
 
-
 #include "f18.ch"
 
+MEMVAR gFirma
 
 CLASS FinBrutoBilans
 
-   DATA params
+   DATA hParams
    DATA DATA
    DATA zagl
    DATA klase
@@ -34,8 +34,8 @@ CLASS FinBrutoBilans
    METHOD print_txt()
    METHOD print_odt()
 
-   METHOD create_temp_table()
-   METHOD fill_temp_table()
+   METHOD create_r_export()
+   METHOD fill_r_export()
 
    PROTECTED:
 
@@ -76,22 +76,22 @@ METHOD FinBrutoBilans:New( _tip_ )
 
 METHOD FinBrutoBilans:init_params()
 
-   ::params := hb_Hash()
-   ::params[ "idfirma" ] := gFirma
-   ::params[ "datum_od" ] := CToD( "" )
-   ::params[ "datum_do" ] := Date()
-   ::params[ "konto" ] := ""
-   ::params[ "valuta" ] := 1
-   ::params[ "id_rj" ] := ""
-   ::params[ "export_dbf" ] := .F.
-   ::params[ "saldo_nula" ] := .F.
-   ::params[ "txt" ] := .T.
-   ::params[ "kolona_tek_prom" ] := .T.
-   ::params[ "naziv" ] := ""
-   ::params[ "odt_template" ] := ""
-   ::params[ "varijanta" ] := "B"
-   ::params[ "podklase" ] := .F.
-   ::params[ "format" ] := "2"
+   ::hParams := hb_Hash()
+   ::hParams[ "idfirma" ] := gFirma
+   ::hParams[ "datum_od" ] := CToD( "" )
+   ::hParams[ "datum_do" ] := Date()
+   ::hParams[ "konto" ] := ""
+   ::hParams[ "valuta" ] := 1
+   ::hParams[ "id_rj" ] := ""
+   ::hParams[ "export_dbf" ] := .F.
+   ::hParams[ "saldo_nula" ] := .F.
+   ::hParams[ "txt" ] := .T.
+   ::hParams[ "kolona_tek_prom" ] := .T.
+   ::hParams[ "naziv" ] := ""
+   ::hParams[ "odt_template" ] := ""
+   ::hParams[ "varijanta" ] := "B"
+   ::hParams[ "podklase" ] := .F.
+   ::hParams[ "format" ] := "2"
 
    ::pict_iznos := AllTrim( gPicBHD )
 
@@ -103,17 +103,17 @@ METHOD FinBrutoBilans:set_bb_params()
 
    DO CASE
    case ::tip == 1
-      ::params[ "naziv" ] := "SUBANALITIČKI BRUTO BILANS"
-      ::params[ "odt_template" ] := "fin_bbl.odt"
+      ::hParams[ "naziv" ] := "SUBANALITIČKI BRUTO BILANS"
+      ::hParams[ "odt_template" ] := "fin_bbl.odt"
    case ::tip == 2
-      ::params[ "naziv" ] := "ANALITIČKI BRUTO BILANS"
-      ::params[ "odt_template" ] := "fin_bbl.odt"
+      ::hParams[ "naziv" ] := "ANALITIČKI BRUTO BILANS"
+      ::hParams[ "odt_template" ] := "fin_bbl.odt"
    case ::tip == 3
-      ::params[ "naziv" ] := "SINTETIČKI BRUTO BILANS"
-      ::params[ "odt_template" ] := "fin_bbl.odt"
+      ::hParams[ "naziv" ] := "SINTETIČKI BRUTO BILANS"
+      ::hParams[ "odt_template" ] := "fin_bbl.odt"
    case ::tip == 4
-      ::params[ "naziv" ] := "BRUTO BILANS PO GRUPAMA"
-      ::params[ "odt_template" ] := "fin_bbl.odt"
+      ::hParams[ "naziv" ] := "BRUTO BILANS PO GRUPAMA"
+      ::hParams[ "odt_template" ] := "fin_bbl.odt"
    ENDCASE
 
    RETURN SELF
@@ -121,17 +121,15 @@ METHOD FinBrutoBilans:set_bb_params()
 
 METHOD FinBrutoBilans:print_b_rpt()
 
-   // stampanje dbf varijante izvjestaja
-
    DO CASE
    case ::tip == 1
-      fin_bb_subanalitika_b( ::params )
+      fin_bb_subanalitika_b( ::hParams )
    case ::tip == 2
-      fin_bb_analitika_b( ::params )
+      fin_bb_analitika_b( ::hParams )
    case ::tip == 3
-      fin_bb_sintetika_b( ::params )
+      fin_bb_sintetika_b( ::hParams )
    case ::tip == 4
-      fin_bb_grupe_b( ::params )
+      fin_bb_grupe_b( ::hParams )
    ENDCASE
 
    RETURN SELF
@@ -264,19 +262,19 @@ METHOD FinBrutoBilans:get_vars()
    set_metric( "fin_bb_pod_klase", _user, _podklase )
    set_metric( "fin_bb_format", _user, _format )
 
-   ::params[ "idfirma" ] := gFirma
-   ::params[ "konto" ] := AllTrim( _konto )
-   ::params[ "datum_od" ] := _dat_od
-   ::params[ "datum_do" ] := _dat_do
-   ::params[ "valuta" ] := _valuta
-   ::params[ "id_rj" ] := IF( Empty( _id_rj ), AllTrim( _id_rj ), _id_rj )
-   ::params[ "export_dbf" ] := ( _export_dbf == "D" )
-   ::params[ "saldo_nula" ] := ( _saldo_nula == "D" )
-   ::params[ "kolona_tek_prom" ] := ( _tek_prom == "D" )
-   ::params[ "varijanta" ] := _var_ab
-   ::params[ "podklase" ] := ( _podklase == "D" )
-   ::params[ "format" ] := _format
-   ::params[ "txt" ] := ( _var_txt == "1" )
+   ::hParams[ "idfirma" ] := gFirma
+   ::hParams[ "konto" ] := AllTrim( _konto )
+   ::hParams[ "datum_od" ] := _dat_od
+   ::hParams[ "datum_do" ] := _dat_do
+   ::hParams[ "valuta" ] := _valuta
+   ::hParams[ "id_rj" ] := IF( Empty( _id_rj ), AllTrim( _id_rj ), _id_rj )
+   ::hParams[ "export_dbf" ] := ( _export_dbf == "D" )
+   ::hParams[ "saldo_nula" ] := ( _saldo_nula == "D" )
+   ::hParams[ "kolona_tek_prom" ] := ( _tek_prom == "D" )
+   ::hParams[ "varijanta" ] := _var_ab
+   ::hParams[ "podklase" ] := ( _podklase == "D" )
+   ::hParams[ "format" ] := _format
+   ::hParams[ "txt" ] := ( _var_txt == "1" )
 
    ::tip := _tip
 
@@ -292,10 +290,10 @@ METHOD FinBrutoBilans:get_vars()
 METHOD FinBrutoBilans:get_data()
 
    LOCAL _qry, _data, _where
-   LOCAL _konto := ::params[ "konto" ]
-   LOCAL _dat_od := ::params[ "datum_od" ]
-   LOCAL _dat_do := ::params[ "datum_do" ]
-   LOCAL _id_rj := ::params[ "id_rj" ]
+   LOCAL _konto := ::hParams[ "konto" ]
+   LOCAL _dat_od := ::hParams[ "datum_od" ]
+   LOCAL _dat_do := ::hParams[ "datum_do" ]
+   LOCAL _id_rj := ::hParams[ "id_rj" ]
    LOCAL _iznos_dug := "iznosbhd"
    LOCAL _iznos_pot := "iznosbhd"
    LOCAL _table := F18_PSQL_SCHEMA_DOT + "fin_suban"
@@ -320,7 +318,7 @@ METHOD FinBrutoBilans:get_data()
    ENDIF
 
    // valuta 1 = domaca
-   if ::params[ "valuta" ] == 2
+   if ::hParams[ "valuta" ] == 2
 
       _iznos_dug := "iznosdem"
       _iznos_pot := "iznosdem"
@@ -362,7 +360,7 @@ METHOD FinBrutoBilans:get_data()
       _qry += "SUM( CASE WHEN sub.d_p = '1' AND sub.idvn = '00' THEN sub." + _iznos_dug + " END ) as ps_dug, "
       _qry += "SUM( CASE WHEN sub.d_p = '2' AND sub.idvn = '00' THEN sub." + _iznos_pot + " END ) as ps_pot, "
 
-      if ::params[ "kolona_tek_prom" ]
+      if ::hParams[ "kolona_tek_prom" ]
          _qry += "SUM( CASE WHEN sub.d_p = '1' AND sub.idvn <> '00' THEN sub." + _iznos_dug + " END ) as tek_dug, "
          _qry += "SUM( CASE WHEN sub.d_p = '2' AND sub.idvn <> '00' THEN sub." + _iznos_pot + " END ) as tek_pot, "
       ENDIF
@@ -375,7 +373,7 @@ METHOD FinBrutoBilans:get_data()
       _qry += "SUM( CASE WHEN sub.idvn = '00' THEN sub." + _iznos_dug + " END ) as ps_dug, "
       _qry += "SUM( CASE WHEN sub.idvn = '00' THEN sub." + _iznos_pot + " END ) as ps_pot, "
 
-      if ::params[ "kolona_tek_prom" ]
+      if ::hParams[ "kolona_tek_prom" ]
          _qry += "SUM( CASE WHEN sub.idvn <> '00' THEN sub." + _iznos_dug + " END ) as tek_dug, "
          _qry += "SUM( CASE WHEN sub.idvn <> '00' THEN sub." + _iznos_pot + " END ) as tek_pot, "
       ENDIF
@@ -460,7 +458,7 @@ METHOD FinBrutoBilans:set_txt_lines()
    _tmp := ( Len( ::pict_iznos ) * 2 ) + 1
    AAdd( _arr, { _tmp, PadC( "POČETNO STANJE", _tmp ), PadC( REPL( "-", _tmp ), _tmp ), PadC( "DUGUJE     POTRAŽUJE", _tmp ) } )
 
-   if ::params[ "kolona_tek_prom" ]
+   if ::hParams[ "kolona_tek_prom" ]
       // tekuci promet
       AAdd( _arr, { _tmp, PadC( "TEKUĆI PROMET", _tmp ), PadC( REPL( "-", _tmp ), _tmp ), PadC( "DUGUJE     POTRAŽUJE", _tmp ) } )
    ENDIF
@@ -495,8 +493,8 @@ METHOD FinBrutoBilans:zaglavlje_txt()
    P_COND2
 
    ?
-   ? "FIN: " + hb_UTF8ToStr( ::params[ "naziv" ] ) + " U VALUTI " + if( ::params[ "valuta" ] == 1, ValDomaca(), ValPomocna() )
-   ?? " ZA PERIOD OD", ::params[ "datum_od" ], "-", ::params[ "datum_do" ]
+   ? "FIN: " + hb_UTF8ToStr( ::hParams[ "naziv" ] ) + " U VALUTI " + if( ::hParams[ "valuta" ] == 1, ValDomaca(), ValPomocna() )
+   ?? " ZA PERIOD OD", ::hParams[ "datum_od" ], "-", ::hParams[ "datum_do" ]
    ?? " NA DAN: "
    ?? Date()
    ?? " (v.A)"
@@ -541,11 +539,11 @@ METHOD FinBrutoBilans:gen_xml()
    xml_node( "firma", to_xml_encoding( gFirma ) )
    xml_node( "naz", to_xml_encoding( gNFirma ) )
    xml_node( "datum", DToC( Date() ) )
-   xml_node( "datum_od", DToC( ::params[ "datum_od" ] ) )
-   xml_node( "datum_do", DToC( ::params[ "datum_do" ] ) )
+   xml_node( "datum_od", DToC( ::hParams[ "datum_od" ] ) )
+   xml_node( "datum_do", DToC( ::hParams[ "datum_do" ] ) )
 
-   IF !Empty( ::params[ "konto" ] )
-      xml_node( "konto", to_xml_encoding( ::params[ "konto" ] ) )
+   IF !Empty( ::hParams[ "konto" ] )
+      xml_node( "konto", to_xml_encoding( ::hParams[ "konto" ] ) )
    ELSE
       xml_node( "konto", to_xml_encoding( "- sva konta -" ) )
    ENDIF
@@ -766,36 +764,34 @@ METHOD FinBrutoBilans:gen_xml()
 
 
 
-// ----------------------------------------------------------
-// ----------------------------------------------------------
 METHOD FinBrutoBilans:print()
 
-   IF Empty( ::params[ "konto" ] )
+   IF Empty( ::hParams[ "konto" ] )
       IF !::get_vars()
          RETURN SELF
       ENDIF
    ENDIF
 
-   IF ::params[ "varijanta" ] == "B"
+   IF ::hParams[ "varijanta" ] == "B"
       ::print_b_rpt()
       RETURN SELF
    ENDIF
 
    ::get_data()
 
-   if ::data == NIL
+   IF ::data == NIL
       RETURN SELF
    ENDIF
 
-   ::create_temp_table()
-   ::fill_temp_table()
+   ::create_r_export()
+   ::fill_r_export()
 
-   IF ::params[ "export_dbf" ]
+   IF ::hParams[ "export_dbf" ]
       f18_open_mime_document( my_home() + my_dbf_prefix() + "r_export.dbf" )
       RETURN SELF
    ENDIF
 
-   if ::params[ "txt" ]
+   if ::hParams[ "txt" ]
       ::print_txt()
    ELSE
       ::print_odt()
@@ -873,7 +869,7 @@ METHOD FinBrutoBilans:print_txt()
 
          DO WHILE !Eof() .AND. Left( field->idkonto, _sint_len ) == _sint
 
-            IF !::params[ "saldo_nula" ] .AND. Round( field->kum_dug - field->kum_pot, 2 ) == 0
+            IF !::hParams[ "saldo_nula" ] .AND. Round( field->kum_dug - field->kum_pot, 2 ) == 0
                SKIP
                LOOP
             ENDIF
@@ -925,7 +921,7 @@ METHOD FinBrutoBilans:print_txt()
             @ PRow(), PCol() + 1 SAY field->ps_dug PICT ::pict_iznos
             @ PRow(), PCol() + 1 SAY field->ps_pot PICT ::pict_iznos
 
-            if ::params[ "kolona_tek_prom" ]
+            if ::hParams[ "kolona_tek_prom" ]
                @ PRow(), PCol() + 1 SAY field->tek_dug PICT ::pict_iznos
                @ PRow(), PCol() + 1 SAY field->tek_pot PICT ::pict_iznos
             ENDIF
@@ -1022,7 +1018,7 @@ METHOD FinBrutoBilans:print_txt()
             @ PRow(), _i_col SAY _u_ps_dug PICT ::pict_iznos
             @ PRow(), PCol() + 1 SAY _u_ps_pot PICT ::pict_iznos
 
-            if ::params[ "kolona_tek_prom" ]
+            if ::hParams[ "kolona_tek_prom" ]
                @ PRow(), PCol() + 1 SAY _u_tek_dug PICT ::pict_iznos
                @ PRow(), PCol() + 1 SAY _u_tek_pot PICT ::pict_iznos
             ENDIF
@@ -1062,7 +1058,7 @@ METHOD FinBrutoBilans:print_txt()
       @ PRow(), _i_col SAY _t_ps_dug PICT ::pict_iznos
       @ PRow(), PCol() + 1 SAY _t_ps_pot PICT ::pict_iznos
 
-      if ::params[ "kolona_tek_prom" ]
+      if ::hParams[ "kolona_tek_prom" ]
          @ PRow(), PCol() + 1 SAY _t_tek_dug PICT ::pict_iznos
          @ PRow(), PCol() + 1 SAY _t_tek_pot PICT ::pict_iznos
       ENDIF
@@ -1090,7 +1086,7 @@ METHOD FinBrutoBilans:print_txt()
    @ PRow(), _i_col SAY _tt_ps_dug PICT ::pict_iznos
    @ PRow(), PCol() + 1 SAY _tt_ps_pot PICT ::pict_iznos
 
-   if ::params[ "kolona_tek_prom" ]
+   if ::hParams[ "kolona_tek_prom" ]
       @ PRow(), PCol() + 1 SAY _tt_tek_dug PICT ::pict_iznos
       @ PRow(), PCol() + 1 SAY _tt_tek_pot PICT ::pict_iznos
    ENDIF
@@ -1178,7 +1174,7 @@ METHOD FinBrutoBilans:rekapitulacija_klasa()
 
 
 
-METHOD FinBrutoBilans:fill_temp_table()
+METHOD FinBrutoBilans:fill_r_export()
 
    LOCAL _count := 0
    LOCAL oRow, _rec
@@ -1228,7 +1224,7 @@ METHOD FinBrutoBilans:fill_temp_table()
       _rec[ "ps_dug" ] := query_row( oRow, "ps_dug" )
       _rec[ "ps_pot" ] := query_row( oRow, "ps_pot" )
 
-      if ::params[ "kolona_tek_prom" ]
+      if ::hParams[ "kolona_tek_prom" ]
          _rec[ "tek_dug" ] := query_row( oRow, "tek_dug" )
          _rec[ "tek_pot" ] := query_row( oRow, "tek_pot" )
       ELSE
@@ -1265,10 +1261,7 @@ METHOD FinBrutoBilans:fill_temp_table()
 
 
 
-// ----------------------------------------------
-// kreiranje pomocne tabele izvjestaja
-// ----------------------------------------------
-METHOD FinBrutoBilans:create_temp_table()
+METHOD FinBrutoBilans:create_r_export()
 
    LOCAL _dbf := {}
 

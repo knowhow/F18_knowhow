@@ -11,6 +11,9 @@
 
 #include "f18.ch"
 
+
+STATIC s_cPath, s_cPath2, s_cName
+
 THREAD STATIC F_POS_RN := "POS_RN" // pos komande
 
 
@@ -39,11 +42,11 @@ FUNCTION fc_pos_rn( cFPath, cFName, aData, lStorno, cError )
 
    fl_d_tmp() // pobrisi temp fajlove
 
-   // naziv fajla
-   cFName := f_filepos( aData[ 1, 1 ] )
 
-   // izbrisi fajl greske odmah na pocetku ako postoji
-   _f_err_delete( cFPath, cFName )
+   cFName := f_filepos( aData[ 1, 1 ] ) // naziv fajla
+
+
+   _f_err_delete( cFPath, cFName ) // izbrisi fajl greske odmah na pocetku ako postoji
 
    // uzmi strukturu tabele za pos racun
    aStruct := _g_f_struct( F_POS_RN )
@@ -54,7 +57,7 @@ FUNCTION fc_pos_rn( cFPath, cFName, aData, lStorno, cError )
    cTmp_date := DToC( Date() )
    cTmp_time := Time()
 
-   _a_to_file( cFPath, cFName, aStruct, aPosData )
+   fiscal_array_to_file( cFPath, cFName, aStruct, aPosData )
 
    IF cError == "D"
       MsgO( "...provjeravam greske..." )
@@ -94,8 +97,8 @@ FUNCTION fc_pos_err( cFPath, cFName, cDate, cTime )
 
    aDir := Directory( cTmp )
 
-   // nema fajla...
-   IF Len( aDir ) = 0
+
+   IF Len( aDir ) == 0  // nema fajla
       RETURN nErr
    ENDIF
 
@@ -167,23 +170,22 @@ STATIC FUNCTION fl_d_tmp()
    cF_path := AllTrim( flink_path() )
    cTmp := "*.inp"
 
-   AEval( Directory( cF_path + cTmp ), {| aFile| FErase( cF_path + ;
-      AllTrim( aFile[ 1 ] ) ) } )
+   AEval( Directory( cF_path + cTmp ), {| aFile| FErase( cF_path +  AllTrim( aFile[ 1 ] ) ) } )
 
    Sleep( 1 )
 
    MsgC()
 
-   RETURN
+   RETURN .T.
 
 
 
 
-// -----------------------------------------------------
+/*
 // fiskalno upisivanje robe
 // cFPath - putanja do fajla
 // aData - podaci racuna
-// -----------------------------------------------------
+
 FUNCTION fc_pos_art( cFPath, cFName, aData )
 
    LOCAL cSep := ";"
@@ -196,10 +198,10 @@ FUNCTION fc_pos_art( cFPath, cFName, aData )
    // iscitaj pos matricu
    aPosData := __pos_art( aData )
 
-   _a_to_file( cFPath, cFName, aStruct, aPosData )
+   fiscal_array_to_file( cFPath, cFName, aStruct, aPosData )
 
    RETURN .T.
-
+*/
 
 // ------------------------------------------------------
 // vraca popunjenu matricu za upis artikla u memoriju
@@ -465,7 +467,7 @@ FUNCTION fl_polog( cFPath, cFName, nPolog )
    // iscitaj pos matricu
    aPolog := _fl_polog( nPolog )
 
-   _a_to_file( cFPath, cFName, aStruct, aPolog )
+   fiscal_array_to_file( cFPath, cFName, aStruct, aPolog )
 
    RETURN
 
@@ -494,7 +496,7 @@ FUNCTION fl_reset( cFPath, cFName )
    // iscitaj pos matricu
    aReset := _fl_reset()
 
-   _a_to_file( cFPath, cFName, aStruct, aReset )
+   fiscal_array_to_file( cFPath, cFName, aStruct, aReset )
 
    RETURN
 
@@ -540,7 +542,7 @@ FUNCTION fl_daily( cFPath, cFName )
    // iscitaj pos matricu
    aRpt := _fl_daily( cRpt )
 
-   _a_to_file( cFPath, cFName, aStruct, aRpt )
+   fiscal_array_to_file( cFPath, cFName, aStruct, aRpt )
 
    RETURN
 
@@ -646,18 +648,282 @@ STATIC FUNCTION _fl_reset()
 
    RETURN aArr
 
+/*
+     _err_level := fakt_to_flink( id_firma, tip_dok, br_dok, _items_data, _partn_data, _storno )
+*/
 
-FUNCTION flink_path()
-   RETURN PadR( "c:" + SLASH + "fiscal" + SLASH, 150 )
+FUNCTION fakt_to_flink( hDeviceParams, cFirma, cTipDok, cBrDok )
 
-FUNCTION flink_path2()
-   RETURN PadR( "", 150 )
+   LOCAL aItems := {}
+   LOCAL aTxt := {}
+   LOCAL aPla_data := {}
+   LOCAL aSem_data := {}
+   LOCAL lStorno := .T.
+   LOCAL aMemo := {}
+   LOCAL nBrDok
+   LOCAL nReklRn := 0
+   LOCAL cStPatt := "/S"
+   LOCAL GetList := {}
+
+   SELECT fakt_doks
+   SEEK cFirma + cTipDok + cBrDok
+
+   AltD()
+   flink_name( hDeviceParams[ "out_file" ] )
+   flink_path( hDeviceParams[ "out_dir" ] )
+
+   AltD()
+
+   IF cStPatt $ AllTrim( field->brdok )  // ako je storno racun
+      nReklRn := Val( StrTran( AllTrim( field->brdok ), cStPatt, "" ) )
+   ENDIF
+
+   nBrDok := Val( AllTrim( field->brdok ) )
+   nTotal := field->iznos
+   nNRekRn := 0
+
+   IF nReklRn <> 0
+      Box( , 1, 60 )
+      @ m_x + 1, m_y + 2 SAY "Broj rekl.fiskalnog racuna:" ;
+         GET nNRekRn PICT "99999" VALID ( nNRekRn > 0 )
+      READ
+      BoxC()
+   ENDIF
+
+   SELECT fakt
+   SEEK cFirma + cTipDok + cBrDok
+
+   nTRec := RecNo()
+
+   // da li se radi o storno racunu ?
+   DO WHILE !Eof() .AND. field->idfirma == cFirma ;
+         .AND. field->idtipdok == cTipDok ;
+         .AND. field->brdok == cBrDok
+
+      IF field->kolicina > 0
+         lStorno := .F.
+         EXIT
+      ENDIF
+
+      SKIP
+
+   ENDDO
+
+   // nTipRac = 1 - maloprodaja
+   // nTipRac = 2 - veleprodaja
+
+   // nSemCmd = semafor komanda
+   // 0 - stampa mp racuna
+   // 1 - stampa storno mp racuna
+   // 20 - stampa vp racuna
+   // 21 - stampa storno vp racuna
+
+   nSemCmd := 0
+   nPartnId := 0
+
+   IF cTipDok $ "10#"
+
+      // veleprodajni racun
+
+      nTipRac := 2
+
+      // daj mi partnera za ovu fakturu
+      nPartnId := _g_spart( fakt_doks->idpartner )
+
+      // stampa vp racuna
+      nSemCmd := 20
+
+      IF lStorno == .T.
+         // stampa storno vp racuna
+         nSemCmd := 21
+      ENDIF
+
+   ELSEIF cTipDok $ "11#"
+
+      // maloprodajni racun
+
+      nTipRac := 1
+
+      // nema parnera
+      nPartnId := 0
+
+      // stampa mp racuna
+      nSemCmd := 0
+
+      IF lStorno == .T.
+         // stampa storno mp racuna
+         nSemCmd := 1
+      ENDIF
+
+   ENDIF
+
+   // vrati se opet na pocetak
+   GO ( nTRec )
+
+   // upisi u [items] stavke
+   DO WHILE !Eof() .AND. field->idfirma == cFirma ;
+         .AND. field->idtipdok == cTipDok ;
+         .AND. field->brdok == cBrDok
+
+      // nastimaj se na robu ...
+      SELECT roba
+      SEEK fakt->idroba
+
+      SELECT fakt
+
+      // storno identifikator
+      nSt_Id := 0
+
+      IF ( field->kolicina < 0 ) .AND. lStorno == .F.
+         nSt_id := 1
+      ENDIF
+
+      nSifRoba := _g_sdob( field->idroba )
+      cNazRoba := AllTrim( to_xml_encoding( roba->naz ) )
+      cBarKod := AllTrim( roba->barkod )
+      nGrRoba := 1
+      nPorStopa := 1
+      nR_cijena := Abs( field->cijena )
+      nR_kolicina := Abs( field->kolicina )
+
+      AAdd( aItems, { nBrDok, ;
+         nTipRac, ;
+         nSt_id, ;
+         nSifRoba, ;
+         cNazRoba, ;
+         cBarKod, ;
+         nGrRoba, ;
+         nPorStopa, ;
+         nR_cijena, ;
+         nR_kolicina } )
+
+      SKIP
+   ENDDO
+
+   // tip placanja
+   // --------------------
+   // 0 - gotovina
+   // 1 - cek
+   // 2 - kartica
+   // 3 - virman
+
+   nTipPla := 0
+
+   IF lStorno == .F.
+      // povrat novca
+      nPovrat := 0
+      // uplaceno novca
+      nUplaceno := nTotal
+   ELSE
+      // povrat novca
+      nPovrat := nTotal
+      // uplaceno novca
+      nUplaceno := 0
+   ENDIF
+
+   // upisi u [pla_data] stavke
+   AAdd( aPla_data, { nBrDok, ;
+      nTipRac, ;
+      nTipPla, ;
+      Abs( nUplaceno ), ;
+      Abs( nTotal ), ;
+      Abs( nPovrat ) } )
+
+   // RACUN.MEM data
+   AAdd( aTxt, { "fakt: " + cTipDok + "-" + cBrDok } )
+
+   // reklamni racun uzmi sa box-a
+   nReklRn := nNRekRn
+   // print memo od - do
+   nPrMemoOd := 1
+   nPrMemoDo := 1
+
+   // upisi stavke za [semafor]
+   AAdd( aSem_data, { nBrDok, ;
+      nSemCmd, ;
+      nPrMemoOd, ;
+      nPrMemoDo, ;
+      nPartnId, ;
+      nReklRn } )
 
 
-FUNCTION flink_name()
-   RETURN  PadR( "OUT.TXT", 150 )
+   IF nTipRac == 2
+
+      flink_racun_veleprodaja( flink_path(), aItems, aTxt, aPla_data, aSem_data )   // veleprodaja, posalji na fiskalni stampac
+
+   ELSEIF nTipRac == 1
+
+      flink_racun_maloprodaja( flink_path(), aItems, aTxt, aPla_data, aSem_data ) // maloprodaja posalji na fiskalni stampac
+
+   ENDIF
+
+   RETURN .T.
+
+
+
+FUNCTION flink_path( cSet )
+
+   // RETURN PadR( "c:" + SLASH + "fiscal" + SLASH, 150 )
+   IF cSet != NIL
+      s_cPath := cSet
+   ENDIF
+
+   RETURN  s_cPath
+
+FUNCTION flink_path2( cSet )
+
+   IF cSet != NIL
+      s_cPath2 := cSet
+   ENDIF
+   // RETURN PadR( "", 150 )
+
+   RETURN s_cPath2
+
+
+FUNCTION flink_name( cSet )
+
+   // RETURN  PadR( "OUT.TXT", 150 )
+   IF cSet != NIL
+      s_cName := cSet
+   ENDIF
+
+   RETURN s_cName
 
 
 FUNCTION flink_type()
 
    RETURN "FPRINT"
+
+
+// ------------------------------------------------
+// vraca sifru dobavljaca
+// ------------------------------------------------
+STATIC FUNCTION _g_sdob( id_roba )
+
+   LOCAL _ret := 0
+   LOCAL _t_area := Select()
+
+   SELECT roba
+   SEEK id_roba
+
+   IF Found()
+      _ret := Val( AllTrim( field->sifradob ) )
+   ENDIF
+
+   SELECT ( _t_area )
+
+   RETURN _ret
+
+
+// ------------------------------------------------
+// vraca sifru partnera
+// ------------------------------------------------
+STATIC FUNCTION _g_spart( id_partner )
+
+   LOCAL _ret := 0
+   LOCAL _tmp
+
+   _tmp := Right( AllTrim( id_partner ), 5 )
+   _ret := Val( _tmp )
+
+   RETURN _ret

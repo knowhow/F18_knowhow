@@ -1,16 +1,16 @@
 /*
- * This file is part of the bring.out FMK, a free and open source
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+ * This file is part of the bring.out knowhow ERP, a free and open source
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
 
-
 #include "f18.ch"
+
 
 
 // pos komande
@@ -53,13 +53,11 @@ FUNCTION fprint_rn( dev_params, items, head, storno )
       storno := .F.
    ENDIF
 
-   // uzmi strukturu tabele za pos racun
-   _struct := _g_f_struct( F_POS_RN )
+   _struct := _g_f_struct( F_POS_RN ) // uzmi strukturu tabele za pos racun
 
-   // iscitaj pos matricu
-   _data := _fprint_rn( items, head, storno, dev_params )
+   _data := _fprint_rn( items, head, storno, dev_params ) // iscitaj pos matricu
 
-   _a_to_file( dev_params[ "out_dir" ], dev_params[ "out_file" ], _struct, _data )
+   fiscal_array_to_file( dev_params[ "out_dir" ], dev_params[ "out_file" ], _struct, _data )
 
    RETURN _err
 
@@ -99,7 +97,7 @@ FUNCTION fprint_polog( dev_params, nPolog, lShowBox )
       lShowBox := .F.
    ENDIF
 
-   IF nPolog = 0 .OR. lShowBox
+   IF nPolog == 0 .OR. lShowBox
 
       Box(, 1, 60 )
       @ m_x + 1, m_y + 2 SAY8 "Zadužujem kasu za:" GET nPolog ;
@@ -122,16 +120,14 @@ FUNCTION fprint_polog( dev_params, nPolog, lShowBox )
 
    aPolog := _fp_polog( nPolog )
 
-   _a_to_file( dev_params[ "out_dir" ], dev_params[ "out_file" ], aStruct, aPolog )
+   fiscal_array_to_file( dev_params[ "out_dir" ], dev_params[ "out_file" ], aStruct, aPolog )
 
    RETURN .T.
 
 
 
-// ----------------------------------------------------
-// fprint: dupliciranje racuna
-// ----------------------------------------------------
-FUNCTION fprint_double( dev_params, rn_params )
+
+FUNCTION fprint_dupliciraj_racun( dev_params, rn_params )
 
    LOCAL cSep := ";"
    LOCAL aDouble := {}
@@ -222,7 +218,7 @@ FUNCTION fprint_double( dev_params, rn_params )
    // iscitaj pos matricu
    aDouble := _fp_double( cType, dD_from, dD_to, cT_from, cT_to )
 
-   _a_to_file( dev_params[ "out_dir" ], dev_params[ "out_file" ], aStruct, aDouble )
+   fiscal_array_to_file( dev_params[ "out_dir" ], dev_params[ "out_file" ], aStruct, aDouble )
 
    RETURN .T.
 
@@ -254,13 +250,13 @@ FUNCTION fprint_komanda_301_zatvori_racun( dev_params )
    LOCAL aVoid := {}
    LOCAL aStruct := {}
 
-   // uzmi strukturu tabele za pos racun
-   aStruct := _g_f_struct( F_POS_RN )
+
+   aStruct := _g_f_struct( F_POS_RN ) // uzmi strukturu tabele za pos racun
 
    // iscitaj pos matricu
    aVoid := _fp_void_rn()
 
-   _a_to_file( dev_params[ "out_dir" ], dev_params[ "out_file" ], aStruct, aVoid )
+   fiscal_array_to_file( dev_params[ "out_dir" ], dev_params[ "out_file" ], aStruct, aVoid )
 
    RETURN .T.
 
@@ -275,15 +271,15 @@ FUNCTION fprint_nf_txt( dev_params, cTxt )
    LOCAL aTxt := {}
    LOCAL aStruct := {}
 
-   // uzmi strukturu tabele za pos racun
-   aStruct := _g_f_struct( F_POS_RN )
+
+   aStruct := _g_f_struct( F_POS_RN ) // uzmi strukturu tabele za pos racun
 
    // iscitaj pos matricu
    aTxt := _fp_nf_txt( to_win1250_encoding( cTxt ) )
 
-   _a_to_file( dev_params[ "out_dir" ], dev_params[ "out_file" ], aStruct, aTxt )
+   fiscal_array_to_file( dev_params[ "out_dir" ], dev_params[ "out_file" ], aStruct, aTxt )
 
-   RETURN
+   RETURN .T.
 
 
 FUNCTION fprint_delete_plu( dev_params, silent )
@@ -317,7 +313,7 @@ FUNCTION fprint_delete_plu( dev_params, silent )
    aStruct := _g_f_struct( F_POS_RN )
    aDel := _fp_del_plu( nMaxPlu, dev_params )
 
-   _a_to_file( dev_params[ "out_dir" ], dev_params[ "out_file" ], aStruct, aDel )
+   fiscal_array_to_file( dev_params[ "out_dir" ], dev_params[ "out_file" ], aStruct, aDel )
 
    RETURN .T.
 
@@ -338,7 +334,7 @@ FUNCTION fprint_rn_close( dev_params )
    // iscitaj pos matricu
    aClose := _fp_close_rn()
 
-   _a_to_file( dev_params[ "out_dir" ], dev_params[ "out_file" ], aStruct, aClose )
+   fiscal_array_to_file( dev_params[ "out_dir" ], dev_params[ "out_file" ], aStruct, aClose )
 
    RETURN .T.
 
@@ -373,7 +369,7 @@ FUNCTION fprint_manual_cmd( dev_params )
 
    aStruct := _g_f_struct( F_POS_RN )
    aManCmd := _fp_man_cmd( nCmd, cCond )
-   _a_to_file( dev_params[ "out_dir" ], dev_params[ "out_file" ], aStruct, aManCmd )
+   fiscal_array_to_file( dev_params[ "out_dir" ], dev_params[ "out_file" ], aStruct, aManCmd )
 
    IF cErr == "D"
       nErr := fprint_read_error( dev_params, 0 )
@@ -410,7 +406,7 @@ FUNCTION fprint_sold_plu( dev_params )
    aStruct := _g_f_struct( F_POS_RN )
    aPlu := _fp_sold_plu( cType )
 
-   _a_to_file( dev_params[ "out_dir" ], dev_params[ "out_file" ], aStruct, aPlu )
+   fiscal_array_to_file( dev_params[ "out_dir" ], dev_params[ "out_file" ], aStruct, aPlu )
 
    RETURN .T.
 
@@ -464,7 +460,7 @@ FUNCTION fprint_daily_rpt( dev_params )
    fprint_delete_answer( dev_params )
    aStruct := _g_f_struct( F_POS_RN )
    aDaily := _fp_daily_rpt( cType )
-   _a_to_file( dev_params[ "out_dir" ], dev_params[ "out_file" ], aStruct, aDaily )
+   fiscal_array_to_file( dev_params[ "out_dir" ], dev_params[ "out_file" ], aStruct, aDaily )
 
    nErr := fprint_read_error( dev_params, 0 )
 
@@ -532,7 +528,7 @@ FUNCTION fprint_per_rpt( dev_params )
 
    aStruct := _g_f_struct( F_POS_RN )
    aPer := _fp_per_rpt( dD_from, dD_to )
-   _a_to_file( dev_params[ "out_dir" ], dev_params[ "out_file" ], aStruct, aPer )
+   fiscal_array_to_file( dev_params[ "out_dir" ], dev_params[ "out_file" ], aStruct, aPer )
 
    _err_level := fprint_read_error( dev_params, 0 )
 

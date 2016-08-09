@@ -21,9 +21,10 @@ STATIC __MIN_PERC := -99.99
 
 
 
-// ----------------------------------------
-// fajl za fiskalni stampac
-// ----------------------------------------
+/*
+ fajl za fiskalni stampac
+*/
+
 FUNCTION fiscal_out_filename( file_name, rn_broj, trig )
 
    LOCAL _ret, _rn
@@ -37,8 +38,8 @@ FUNCTION fiscal_out_filename( file_name, rn_broj, trig )
 
    DO CASE
 
-      // po broju racuna ( TREMOL )
-   CASE "$rn" $ _f_name
+
+   CASE "$rn" $ _f_name // po broju racuna ( TREMOL )
 
       IF Empty( rn_broj )
          _ret := StrTran( _f_name, "$rn", "0000" )
@@ -52,8 +53,8 @@ FUNCTION fiscal_out_filename( file_name, rn_broj, trig )
 
       _ret := Upper( _ret )
 
-      // po trigeru ( HCP, TRING )
-   CASE "TR$" $ _f_name
+
+   CASE "TR$" $ _f_name // po trigeru ( HCP, TRING )
 
       // odredjuje PLU ili CLI ili RCP na osnovu trigera
       _ret := StrTran( _f_name, "TR$", trig )
@@ -63,8 +64,8 @@ FUNCTION fiscal_out_filename( file_name, rn_broj, trig )
          _ret := trig
       ENDIF
 
-      // ostale verijante
-   OTHERWISE
+
+   OTHERWISE  // ostale verijante
       _ret := _f_name
 
    ENDCASE

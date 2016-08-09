@@ -505,7 +505,7 @@ FUNCTION fl_reset( cFPath, cFName )
 // ----------------------------------------------------
 // flink: dnevni izvjestaji
 // ----------------------------------------------------
-FUNCTION fl_daily( cFPath, cFName )
+FUNCTION flink_dnevni_izvjestaj( cFPath, cFName )
 
    LOCAL cSep := ";"
    LOCAL aRpt := {}
@@ -540,11 +540,11 @@ FUNCTION fl_daily( cFPath, cFName )
    aStruct := _g_f_struct( F_POS_RN )
 
    // iscitaj pos matricu
-   aRpt := _fl_daily( cRpt )
+   aRpt := _flink_dnevni_izvjestaj( cRpt )
 
    fiscal_array_to_file( cFPath, cFName, aStruct, aRpt )
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -594,7 +594,7 @@ STATIC FUNCTION _fl_polog( nIznos )
 // ---------------------------------------------------
 // dnevni izvjestaj x i z
 // ---------------------------------------------------
-STATIC FUNCTION _fl_daily( cTip )
+STATIC FUNCTION _flink_dnevni_izvjestaj( cTip )
 
    LOCAL cTmp := ""
    LOCAL cLogic
@@ -672,7 +672,6 @@ FUNCTION fakt_to_flink( hDeviceParams, cFirma, cTipDok, cBrDok )
    flink_name( hDeviceParams[ "out_file" ] )
    flink_path( hDeviceParams[ "out_dir" ] )
 
-   AltD()
 
    IF cStPatt $ AllTrim( field->brdok )  // ako je storno racun
       nReklRn := Val( StrTran( AllTrim( field->brdok ), cStPatt, "" ) )
@@ -684,8 +683,7 @@ FUNCTION fakt_to_flink( hDeviceParams, cFirma, cTipDok, cBrDok )
 
    IF nReklRn <> 0
       Box( , 1, 60 )
-      @ m_x + 1, m_y + 2 SAY "Broj rekl.fiskalnog racuna:" ;
-         GET nNRekRn PICT "99999" VALID ( nNRekRn > 0 )
+      @ m_x + 1, m_y + 2 SAY "Broj rekl.fiskalnog racuna:"  GET nNRekRn PICT "99999" VALID ( nNRekRn > 0 )
       READ
       BoxC()
    ENDIF
@@ -696,9 +694,7 @@ FUNCTION fakt_to_flink( hDeviceParams, cFirma, cTipDok, cBrDok )
    nTRec := RecNo()
 
    // da li se radi o storno racunu ?
-   DO WHILE !Eof() .AND. field->idfirma == cFirma ;
-         .AND. field->idtipdok == cTipDok ;
-         .AND. field->brdok == cBrDok
+   DO WHILE !Eof() .AND. field->idfirma == cFirma .AND. field->idtipdok == cTipDok .AND. field->brdok == cBrDok
 
       IF field->kolicina > 0
          lStorno := .F.
@@ -723,15 +719,13 @@ FUNCTION fakt_to_flink( hDeviceParams, cFirma, cTipDok, cBrDok )
 
    IF cTipDok $ "10#"
 
-      // veleprodajni racun
 
-      nTipRac := 2
+      nTipRac := 2 // veleprodajni racun
 
-      // daj mi partnera za ovu fakturu
-      nPartnId := _g_spart( fakt_doks->idpartner )
 
-      // stampa vp racuna
-      nSemCmd := 20
+      nPartnId := _g_spart( fakt_doks->idpartner ) // daj mi partnera za ovu fakturu
+
+      nSemCmd := 20 // stampa vp racuna
 
       IF lStorno == .T.
          // stampa storno vp racuna
@@ -757,29 +751,28 @@ FUNCTION fakt_to_flink( hDeviceParams, cFirma, cTipDok, cBrDok )
 
    ENDIF
 
-   // vrati se opet na pocetak
-   GO ( nTRec )
+   GO ( nTRec ) // vrati se opet na pocetak
 
    // upisi u [items] stavke
-   DO WHILE !Eof() .AND. field->idfirma == cFirma ;
-         .AND. field->idtipdok == cTipDok ;
-         .AND. field->brdok == cBrDok
+   DO WHILE !Eof() .AND. field->idfirma == cFirma .AND. field->idtipdok == cTipDok .AND. field->brdok == cBrDok
 
-      // nastimaj se na robu ...
+
       SELECT roba
       SEEK fakt->idroba
 
       SELECT fakt
 
-      // storno identifikator
-      nSt_Id := 0
+
+      nSt_Id := 0 // storno identifikator
 
       IF ( field->kolicina < 0 ) .AND. lStorno == .F.
          nSt_id := 1
       ENDIF
 
       nSifRoba := _g_sdob( field->idroba )
-      cNazRoba := AllTrim( to_xml_encoding( roba->naz ) )
+      // cNazRoba := AllTrim( to_xml_encoding( roba->naz ) )
+      cNazRoba := flink_konverzija_znakova( AllTrim( roba->naz ) )
+
       cBarKod := AllTrim( roba->barkod )
       nGrRoba := 1
       nPorStopa := 1
@@ -822,17 +815,12 @@ FUNCTION fakt_to_flink( hDeviceParams, cFirma, cTipDok, cBrDok )
    ENDIF
 
    // upisi u [pla_data] stavke
-   AAdd( aPla_data, { nBrDok, ;
-      nTipRac, ;
-      nTipPla, ;
-      Abs( nUplaceno ), ;
-      Abs( nTotal ), ;
-      Abs( nPovrat ) } )
+   AAdd( aPla_data, { nBrDok,  nTipRac, nTipPla,  Abs( nUplaceno ), Abs( nTotal ),  Abs( nPovrat ) } )
 
    // RACUN.MEM data
    AAdd( aTxt, { "fakt: " + cTipDok + "-" + cBrDok } )
 
-   // reklamni racun uzmi sa box-a
+   // reklamirani racun uzmi sa box-a
    nReklRn := nNRekRn
    // print memo od - do
    nPrMemoOd := 1
@@ -857,7 +845,7 @@ FUNCTION fakt_to_flink( hDeviceParams, cFirma, cTipDok, cBrDok )
 
    ENDIF
 
-   RETURN .T.
+   RETURN 0
 
 
 
@@ -865,6 +853,9 @@ FUNCTION flink_path( cSet )
 
    // RETURN PadR( "c:" + SLASH + "fiscal" + SLASH, 150 )
    IF cSet != NIL
+      IF Right( cSet ) != SLASH
+         cSet += SLASH
+      ENDIF
       s_cPath := cSet
    ENDIF
 
@@ -873,6 +864,9 @@ FUNCTION flink_path( cSet )
 FUNCTION flink_path2( cSet )
 
    IF cSet != NIL
+      IF Right( cSet ) != SLASH
+         cSet += SLASH
+      ENDIF
       s_cPath2 := cSet
    ENDIF
    // RETURN PadR( "", 150 )
@@ -927,3 +921,19 @@ STATIC FUNCTION _g_spart( id_partner )
    _ret := Val( _tmp )
 
    RETURN _ret
+
+
+STATIC FUNCTION flink_konverzija_znakova( cIn )
+
+   LOCAL cOut := cIn
+
+   cOut := StrTran( cOut, hb_UTF8ToStr( "š" ), "s" )
+   cOut := StrTran( cOut, hb_UTF8ToStr( "Š" ), "S" )
+   cOut := StrTran( cOut, hb_UTF8ToStr( "ć" ), "c" )
+   cOut := StrTran( cOut, hb_UTF8ToStr( "Ć" ), "C" )
+   cOut := StrTran( cOut, hb_UTF8ToStr( "č" ), "c" )
+   cOut := StrTran( cOut, hb_UTF8ToStr( "Č" ), "C" )
+   cOut := StrTran( cOut, hb_UTF8ToStr( "ž" ), "z" )
+   cOut := StrTran( cOut, hb_UTF8ToStr( "Ž" ), "Z" )
+
+   RETURN cOut

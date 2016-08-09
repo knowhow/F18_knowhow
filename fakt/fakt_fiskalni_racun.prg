@@ -142,7 +142,7 @@ FUNCTION fakt_fiskalni_racun( id_firma, tip_dok, br_dok, auto_print, dev_param )
    log_write( "fiskalni racun " + _dev_drv + " za dokument: " + ;
       AllTrim( id_firma ) + "-" + AllTrim( tip_dok ) + "-" + AllTrim( br_dok ) + ;
       " err level: " + AllTrim( Str( _err_level ) ) + ;
-      " partner: " + IF( _partn_data <> NIL, AllTrim( _partn_data[ 1, 1 ] ) + ;
+      " partner: " + IIF( _partn_data <> NIL, AllTrim( _partn_data[ 1, 1 ] ) + ;
       " - " + AllTrim( _partn_data[ 1, 2 ] ), "NIL" ), 3 )
 
    IF _err_level > 0

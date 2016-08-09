@@ -196,9 +196,7 @@ FUNCTION _g_f_struct( cFileName )
 
 
 
-// ----------------------------------------------------------
-// upisi u fajl
-// ----------------------------------------------------------
+
 FUNCTION fiscal_array_to_file( cFilePath, cFileName, aStruct, aData, cSeparator, lTrim, lLastSep )
 
    LOCAL i

@@ -1263,7 +1263,7 @@ STATIC FUNCTION fakt_to_tring( id_firma, tip_dok, br_dok, items, head, storno )
    IF _err_level <> 0
       // ostavit cu answer fajl za svaki slucaj!
       // pobrisi izlazni fajl ako je ostao !
-      MsgBeep( "Postoji greska sa stampanjem !!!" )
+      MsgBeep( "Postoji greska sa stampanjem !" )
    ELSE
       tring_delete_answer( __device_params, _trig )
       // ubaci broj fiskalnog racuna u fakturu
@@ -1468,23 +1468,20 @@ STATIC FUNCTION fakt_to_flink( cFirma, cTipDok, cBrDok )
       nReklRn } )
 
 
-   IF nTipRac = 2
+   IF nTipRac == 2
 
-      // veleprodaja
-      // posalji na fiskalni stampac...
 
-      fisc_v_rn( gFC_path, aItems, aTxt, aPla_data, aSem_data )
+      fisc_v_rn( flink_path(), aItems, aTxt, aPla_data, aSem_data )   // veleprodaja, posalji na fiskalni stampac
 
-   ELSEIF nTipRac = 1
 
-      // maloprodaja
-      // posalji na fiskalni stampac
+   ELSEIF nTipRac == 1
 
-      fisc_m_rn( gFC_path, aItems, aTxt, aPla_data, aSem_data )
+
+      fisc_m_rn( flink_path(), aItems, aTxt, aPla_data, aSem_data ) // maloprodaja posalji na fiskalni stampac
 
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 // --------------------------------------------------------

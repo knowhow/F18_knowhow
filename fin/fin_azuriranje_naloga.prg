@@ -20,7 +20,7 @@ FUNCTION fin_azuriranje_naloga( automatic )
 
    LOCAL oServer := sql_data_conn()
    LOCAL aNalozi, _i
-   LOCAL _id_firma, _id_vn, _br_nal
+   LOCAL cIdFirma, cIdVn, cBrNal
    LOCAL lViseNalogaUPripremi := .F.
    LOCAL lRet := .F.
    LOCAL lOk := .T.
@@ -67,13 +67,13 @@ FUNCTION fin_azuriranje_naloga( automatic )
          RETURN lRet
       ENDIF
 */
-      _id_firma := aNalozi[ _i, 1 ]
-      _id_vn := aNalozi[ _i, 2 ]
-      _br_nal := aNalozi[ _i, 3 ]
+      cIdFirma := aNalozi[ _i, 1 ]
+      cIdVn := aNalozi[ _i, 2 ]
+      cBrNal := aNalozi[ _i, 3 ]
 
-      IF fin_dokument_postoji( _id_firma, _id_vn, _br_nal )
+      IF fin_dokument_postoji( cIdFirma, cIdVn, cBrNal )
 
-         MsgBeep( "Nalog " + _id_firma + "-" + _id_vn + "-" + AllTrim( _br_nal ) + " već postoji ažuriran !" )
+         MsgBeep( "Nalog " + cIdFirma + "-" + cIdVn + "-" + AllTrim( cBrNal ) + " već postoji ažuriran !" )
 
          IF !lViseNalogaUPripremi
             run_sql_query( "ROLLBACK" )
@@ -85,10 +85,10 @@ FUNCTION fin_azuriranje_naloga( automatic )
 
       ENDIF
 
-      IF !fin_azur_sql( oServer, _id_firma, _id_vn, _br_nal )
+      IF !fin_azur_sql( oServer, cIdFirma, cIdVn, cBrNal )
 
          run_sql_query( "ROLLBACK" )
-         log_write( "F18_DOK_OPER: greška kod ažuriranja fin naloga: " + _id_firma + "-" + _id_vn + "-" + _br_nal, 2 )
+         log_write( "F18_DOK_OPER: greška kod ažuriranja fin naloga: " + cIdFirma + "-" + cIdVn + "-" + cBrNal, 2 )
 
          MsgBeep( "Problem sa ažuriranjem naloga na SQL server !" )
 
@@ -96,13 +96,13 @@ FUNCTION fin_azuriranje_naloga( automatic )
 
       ENDIF
 
-      fin_pripr_delete( _id_firma + _id_vn + _br_nal )
+      fin_pripr_delete( cIdFirma + cIdVn + cBrNal )
 
 /*
-      IF !fin_azur_dbf( automatic, _id_firma, _id_vn, _br_nal )
+      IF !fin_azur_dbf( automatic, cIdFirma, cIdVn, cBrNal )
 
          run_sql_query( "ROLLBACK" )
-         log_write( "F18_DOK_OPER: greška kod ažuriranja fin naloga: " + _id_firma + "-" + _id_vn + "-" + _br_nal, 2 )
+         log_write( "F18_DOK_OPER: greška kod ažuriranja fin naloga: " + cIdFirma + "-" + cIdVn + "-" + cBrNal, 2 )
          MsgBeep( "Problem sa ažuriranjem naloga u DBF tabele !" )
 
          RETURN lRet
@@ -116,7 +116,7 @@ FUNCTION fin_azuriranje_naloga( automatic )
 */
       run_sql_query( "COMMIT" )
 
-      log_write( "F18_DOK_OPER: azuriranje fin naloga: " + _id_firma + "-" + _id_vn + "-" + _br_nal, 2 )
+      log_write( "F18_DOK_OPER: azuriranje fin naloga: " + cIdFirma + "-" + cIdVn + "-" + cBrNal, 2 )
 
    NEXT
 
@@ -332,7 +332,7 @@ FUNCTION fin_azur_sql( oServer, id_firma, id_vn, br_nal )
 STATIC FUNCTION fin_provjera_prije_azuriranja_naloga( auto, lista_naloga )
 
    LOCAL _t_area, _i, _t_rec
-   LOCAL _id_firma, _id_vn, _br_nal
+   LOCAL cIdFirma, cIdVn, cBrNal
    LOCAL _vise_naloga := .F.
    LOCAL _ok := .F.
 
@@ -368,14 +368,14 @@ STATIC FUNCTION fin_provjera_prije_azuriranja_naloga( auto, lista_naloga )
 
    FOR _i := 1 TO Len( lista_naloga )
 
-      _id_firma := lista_naloga[ _i, 1 ]
-      _id_vn := lista_naloga[ _i, 2 ]
-      _br_nal := lista_naloga[ _i, 3 ]
+      cIdFirma := lista_naloga[ _i, 1 ]
+      cIdVn := lista_naloga[ _i, 2 ]
+      cBrNal := lista_naloga[ _i, 3 ]
 
       SELECT fin_pripr
       SET ORDER TO TAG "1"
       GO TOP
-      SEEK _id_firma + _id_vn + _br_nal
+      SEEK cIdFirma + cIdVn + cBrNal
 
       _t_rec := RecNo()
 
@@ -385,12 +385,12 @@ STATIC FUNCTION fin_provjera_prije_azuriranja_naloga( auto, lista_naloga )
          RETURN _ok
       ENDIF
 
-      IF !fin_p_provjeri_redni_broj( _id_firma, _id_vn, _br_nal )
+      IF !fin_p_provjeri_redni_broj( cIdFirma, cIdVn, cBrNal )
          SELECT ( _t_area )
          RETURN _ok
       ENDIF
 
-      IF !fin_p_saldo_provjera( _id_firma, _id_vn, _br_nal )
+      IF !fin_p_saldo_provjera( cIdFirma, cIdVn, cBrNal )
          SELECT ( _t_area )
          RETURN _ok
       ENDIF
@@ -577,7 +577,7 @@ STATIC FUNCTION fin_p_tabele_provjera( lista_naloga )
 
    LOCAL _ok := .F.
    LOCAL _i
-   LOCAL _id_firma, _id_vn, _br_nal
+   LOCAL cIdFirma, cIdVn, cBrNal
 
    SELECT psuban
    IF RecCount2() == 0
@@ -596,17 +596,17 @@ STATIC FUNCTION fin_p_tabele_provjera( lista_naloga )
 
    FOR _i := 1 TO Len( lista_naloga )
 
-      _id_firma := lista_naloga[ _i, 1 ]
-      _id_vn := lista_naloga[ _i, 2 ]
-      _br_nal := lista_naloga[ _i, 3 ]
+      cIdFirma := lista_naloga[ _i, 1 ]
+      cIdVn := lista_naloga[ _i, 2 ]
+      cBrNal := lista_naloga[ _i, 3 ]
 
       SELECT psuban
       SET ORDER TO TAG "1"
       GO TOP
-      SEEK _id_firma + _id_vn + _br_nal
+      SEEK cIdFirma + cIdVn + cBrNal
 
       IF !Found()
-         MsgBeep( "Nalog " + _id_firma + "-" + _id_vn + "-" + AllTrim( _br_nal ) + " ne postoji u PSUBAN !" )
+         MsgBeep( "Nalog " + cIdFirma + "-" + cIdVn + "-" + AllTrim( cBrNal ) + " ne postoji u PSUBAN !" )
          RETURN _ok
       ENDIF
 

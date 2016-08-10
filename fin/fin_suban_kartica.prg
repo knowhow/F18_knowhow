@@ -525,9 +525,9 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
             SELECT PARTN
             HSEEK cIdPartner
             __p_naz := field->naz
-            @ PRow(), PCol() + 1 SAY AllTrim( naz )
-            @ PRow(), PCol() + 1 SAY AllTrim( naz2 )
-            @ PRow(), PCol() + 1 SAY ZiroR
+            @ PRow(), PCol() + 1 SAY AllTrim( field->naz )
+            @ PRow(), PCol() + 1 SAY AllTrim( field->naz2 )
+            @ PRow(), PCol() + 1 SAY field->ZiroR
          ENDIF
 
          SELECT SUBAN
@@ -573,19 +573,19 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
 
                   IF lOtvoreneStavke .AND. OtvSt == "9"
                      IF d_P == "1"
-                        nZDugBHD += iznosbhd
-                        nZDugDEM += iznosdem
+                        nZDugBHD += field->iznosbhd
+                        nZDugDEM += field->iznosdem
                      ELSE
-                        nZPotBHD += iznosbhd
-                        nZPotDEM += iznosdem
+                        nZPotBHD += field->iznosbhd
+                        nZPotDEM += field->iznosdem
                      ENDIF
                   ELSE
                      IF d_P == "1"
-                        nPDugBHD += iznosbhd
-                        nPDugDEM += iznosdem
+                        nPDugBHD += field->iznosbhd
+                        nPDugDEM += field->iznosdem
                      ELSE
-                        nPPotBHD += iznosbhd
-                        nPPotDEM += iznosdem
+                        nPPotBHD += field->iznosbhd
+                        nPPotDEM += field->iznosdem
                      ENDIF
                   ENDIF
                   SKIP
@@ -667,7 +667,7 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
                __r_br := field->rbr
                __dat_nal := field->datdok
                __dat_val := fix_dat_var( field->datval, .T. )
-               __opis := field->opis
+               __opis := hb_UTF8ToStr( field->opis )
                __br_veze := field->brdok
 
                ? field->IdVN
@@ -700,11 +700,11 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
                   IF cDinDem == "3"
                      nSirOp := 16
                      nCOpis := PCol() + 1
-                     @ PRow(), PCol() + 1 SAY PadR( cOpis := AllTrim( Opis ), 16 )
+                     @ PRow(), PCol() + 1 SAY PadR( cOpis := AllTrim( hb_UTF8ToStr( field->Opis ) ), 16 )
                   ELSE
                      nSirOp := 20
                      nCOpis := PCol() + 1
-                     @ PRow(), PCol() + 1 SAY PadR( cOpis := AllTrim( Opis ), 20 )
+                     @ PRow(), PCol() + 1 SAY PadR( cOpis := AllTrim( hb_UTF8ToStr( field->Opis ) ), 20 )
                   ENDIF
                ENDIF
 
@@ -814,7 +814,7 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
             ENDIF
             fin_print_ostatak_opisa( @cOpis, nCOpis, {|| check_nova_strana( bZagl, oPDF ) }, nSirOp )
 
-            IF cExpDbf == "D" .AND. !(lOtvoreneStavke .AND. OtvSt == "9")
+            IF cExpDbf == "D" .AND. !( lOtvoreneStavke .AND. OtvSt == "9" )
 
                IF field->d_p == "1"
                   __dug := field->iznosbhd

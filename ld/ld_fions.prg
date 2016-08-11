@@ -363,7 +363,7 @@ FUNCTION Prosj3( cTip, cTip2 )
 /* UPrim()
  *     Racuna ukupna primanja
  */
- 
+
 FUNCTION UPrim()
 
    LOCAL c719
@@ -446,8 +446,8 @@ FUNCTION Prosj1( cTip, cTip2, cF0 )
       cFormula := cF0
    ENDIF
 
-   // CREATE_INDEX("LDi1","str(godina)+idrj+str(mjesec)+idradn","LD")
-   // CREATE_INDEX("LDi2","str(godina)+str(mjesec)+idradn","LD")
+   // "1","str(godina)+idrj+str(mjesec)+idradn"
+   // "2","str(godina)+str(mjesec)+idradn"
    SET ORDER TO tag ( TagVO( "2", "I" ) )
 
    i := 0
@@ -466,8 +466,8 @@ FUNCTION Prosj1( cTip, cTip2, cF0 )
          IF lViseObr
             ScatterS( godina, mjesec, idrj, idradn, "w" )
          ELSE
-            wuneto := uneto
-            wusati := usati
+            wUneto := field->uneto
+            wUsati := field->usati
          ENDIF
          IF cTip $ "13"
             nMj1 := wUNeto
@@ -488,7 +488,7 @@ FUNCTION Prosj1( cTip, cTip2, cF0 )
             ELSE
                nMj1 := 0
             ENDIF
-         ELSEIF cTip $ "7"
+         ELSEIF cTip $ "7"  // Prosj1( "7")
             IF URSati() <> 0
                nMj1 := nMj1 / URSati()
             ELSE
@@ -496,7 +496,7 @@ FUNCTION Prosj1( cTip, cTip2, cF0 )
             ENDIF
          ENDIF
       ELSE
-         MsgBeep( _l( "Prosjek je uzet iz šifarnika radnika - OSN.BOL. !" ) )
+         MsgBeep( "Prosjek je uzet iz šifarnika radnika - OSN.BOL. !"  )
          SELECT RADN
          SET ORDER TO TAG "1"
          GO TOP

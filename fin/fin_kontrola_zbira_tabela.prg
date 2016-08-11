@@ -96,6 +96,7 @@ FUNCTION fin_kontrola_zbira( bDat, lSilent )
    ENDIF
 
    fin_kzb_nalog()
+
    IF !lSilent
       IF LastKey() == K_ESC
          BoxC()
@@ -225,10 +226,10 @@ FUNCTION fin_kzb_anal()
    LOCAL cTable := "ANAL"
    LOCAL cSql :=  "select "
 
-   cSql += "coalsece(sum(dugbhd),0) as duguje,"
-   cSql += "coalsece(sum(potbhd),0) as potrazuje,"
-   cSql += "coalsece(sum(dugdem),0) as duguje2,"
-   cSql += "coalsece(sum(potdem),0) as potrazuje2"
+   cSql += "coalesce(sum(dugbhd),0) as duguje,"
+   cSql += "coalesce(sum(potbhd),0) as potrazuje,"
+   cSql += "coalesce(sum(dugdem),0) as duguje2,"
+   cSql += "coalesce(sum(potdem),0) as potrazuje2"
    cSql += " from fmk.fin_anal"
 
    RETURN use_sql( cTable, cSql )
@@ -239,10 +240,10 @@ FUNCTION fin_kzb_sint()
    LOCAL cTable := "SINT"
    LOCAL cSql :=  "select "
 
-   cSql += "coalsece(sum(dugbhd),0) as duguje,"
-   cSql += "coalsece(sum(potbhd),0) as potrazuje,"
-   cSql += "coalsece(sum(dugdem),0) as duguje2,"
-   cSql += "coalsece(sum(potdem),0) as potrazuje2"
+   cSql += "coalesce(sum(dugbhd),0) as duguje,"
+   cSql += "coalesce(sum(potbhd),0) as potrazuje,"
+   cSql += "coalesce(sum(dugdem),0) as duguje2,"
+   cSql += "coalesce(sum(potdem),0) as potrazuje2"
    cSql += " from fmk.fin_sint"
 
    RETURN use_sql( cTable, cSql )
@@ -252,10 +253,10 @@ FUNCTION fin_kzb_nalog()
    LOCAL cTable := "NALOG"
    LOCAL cSql :=  "select "
 
-   cSql += "coalsece(sum(dugbhd),0) as duguje,"
-   cSql += "coalsece(sum(potbhd),0) as potrazuje,"
-   cSql += "coalsece(sum(dugdem),0) as duguje2,"
-   cSql += "coalsece(sum(potdem),0) as potrazuje2"
+   cSql += "coalesce(sum(dugbhd),0) as duguje,"
+   cSql += "coalesce(sum(potbhd),0) as potrazuje,"
+   cSql += "coalesce(sum(dugdem),0) as duguje2,"
+   cSql += "coalesce(sum(potdem),0) as potrazuje2"
    cSql += " from fmk.fin_nalog"
 
    RETURN use_sql( cTable, cSql )

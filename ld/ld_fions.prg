@@ -151,8 +151,8 @@ FUNCTION Izracunaj( ixx, fPrikaz )
    cFormula := Trim( tippr->formula )
 
    IF ( tippr->fiksan <> "D" )
-      // ako je fiksan iznos nista ne izracunavaj!
-      IF Empty( cFormula )
+
+      IF Empty( cFormula ) // ako je fiksan iznos nista ne izracunavaj!
          ixx := 0
       ELSE
          ixx := &cFormula
@@ -169,9 +169,9 @@ FUNCTION Izracunaj( ixx, fPrikaz )
  *   param: cTip
  *   param: cTip2
  */
+
 FUNCTION Prosj3( cTip, cTip2 )
 
-   // {
    // cTip1
    // "1"  -> prosjek neta/ satu
    // "2"  -> prosjek ukupnog primanja/satu
@@ -186,18 +186,18 @@ FUNCTION Prosj3( cTip, cTip2 )
    // "1"  -> striktno predhodna 3 mjeseca
    // "2"  -> vracam se mjesec unazad u kome nije bilo godisnjeg
 
-   LOCAL nMj1 := nMj2 := nMj3 := 0, nDijeli := 0, cmj1 := cmj2 := cmj3 := "", npomak := 0, i := 0
-   LOCAL nss1 := 0, nss2 := 0, nss3 := 0, nSumsat := 0
-   LOCAL nsp1 := 0, nsp2 := 0, nsp3 := 0
+   LOCAL nMj1 := nMj2 := nMj3 := 0, nDijeli := 0, cmj1 := cmj2 := cmj3 := "", nPomak := 0, i := 0
+   LOCAL nSS1 := 0, nSS2 := 0, nSS3 := 0, nSumsat := 0
+   LOCAL nSP1 := 0, nsp2 := 0, nsp3 := 0
 
    PushWA()
 
-   // CREATE_INDEX("LDi1","str(godina)+idrj+str(mjesec)+idradn","LD")
-   // CREATE_INDEX("LDi2","str(godina)+str(mjesec)+idradn","LD")
+   //  "1","str(godina)+idrj+str(mjesec)+idradn"
+   // "2","str(godina)+str(mjesec)+idradn"
    SET ORDER TO tag ( TagVO( "2", "I" ) )
 
    i := 0
-   IF ctip2 == "2"
+   IF cTip2 == "2" // "2"  -> vracam se mjesec unazad u kome nije bilo godisnjeg
       DO WHILE .T.
          ++i
          IF _Mjesec - i < 1
@@ -207,7 +207,7 @@ FUNCTION Prosj3( cTip, cTip2 )
             SEEK Str( _Godina, 4 ) + Str( _mjesec - i, 2 ) + _idradn
             cMj1 := Str( _mjesec - i, 2 ) + "." + Str( _godina, 4 )
          ENDIF
-         if &gFUGod <> 0
+         if &gFUGod <> 0  // formula za godisnji, default: I06
             nPomak++
          ELSE
             EXIT
@@ -218,31 +218,31 @@ FUNCTION Prosj3( cTip, cTip2 )
       ENDDO
    ENDIF
 
-   IF _mjesec - 1 -npomak < 1
-      SEEK Str( _Godina - 1, 4 ) + Str( 12 + _Mjesec - 1 -npomak, 2 ) + _idradn
-      cMj1 := Str( 12 + _mjesec - 1 -npomak, 2 ) + "." + Str( _godina - 1, 4 )
+   IF _mjesec - 1 -nPomak < 1
+      SEEK Str( _Godina - 1, 4 ) + Str( 12 + _Mjesec - 1 -nPomak, 2 ) + _idradn
+      cMj1 := Str( 12 + _mjesec - 1 -nPomak, 2 ) + "." + Str( _godina - 1, 4 )
    ELSE
-      SEEK Str( _Godina, 4 ) + Str( _Mjesec - 1 -npomak, 2 ) + _idradn
-      cMj1 := Str( _mjesec - 1 -npomak, 2 ) + "." + Str( _godina, 4 )
+      SEEK Str( _Godina, 4 ) + Str( _Mjesec - 1 -nPomak, 2 ) + _idradn
+      cMj1 := Str( _mjesec - 1 -nPomak, 2 ) + "." + Str( _godina, 4 )
    ENDIF
    IF Found()
       IF lViseObr
          ScatterS( godina, mjesec, idrj, idradn, "w" )
       ELSE
-         wuneto := uneto
-         wusati := usati
+         wUneto := field->uneto
+         wUsati := field->usati
       ENDIF
-      IF cTip $ "13"
+      IF cTip $ "13"  // tip "1"  -> prosjek neta/ satu, "3"  -> prosjek neta
          nMj1 := wUNeto
       ELSEIF cTip $ "678"
          nMj1 := URPrim()
       ELSE
-         nMj1 := UPrim()
+         nMj1 := UPrim() // tip "2"  -> prosjek ukupnog primanja/satu, "5"  -> prosjek ukupnog primanja/ukupno sati
       ENDIF
       IF cTip $ "126"
          nSS1 := wUSati
          nSP1 := nMj1
-         IF wusati <> 0
+         IF wUsati <> 0
             nMj1 := nMj1 / wUSati
          ELSE
             nMj1 := 0
@@ -256,12 +256,12 @@ FUNCTION Prosj3( cTip, cTip2 )
          ++nDijeli
       ENDIF
    ENDIF
-   IF _mjesec - 2 -npomak < 1
-      SEEK Str( _Godina - 1, 4 ) + Str( 12 + _Mjesec - 2 -npomak, 2 ) + _idradn
-      cMj2 := Str( 12 + _mjesec - 2 -npomak, 2 ) + "." + Str( _godina - 1, 4 )
+   IF _mjesec - 2 -nPomak < 1
+      SEEK Str( _Godina - 1, 4 ) + Str( 12 + _Mjesec - 2 -nPomak, 2 ) + _idradn
+      cMj2 := Str( 12 + _mjesec - 2 -nPomak, 2 ) + "." + Str( _godina - 1, 4 )
    ELSE
-      SEEK Str( _Godina, 4 ) + Str( _Mjesec - 2 -npomak, 2 ) + _idradn
-      cMj2 := Str( _mjesec - 2 -npomak, 2 ) + "." + Str( _godina, 4 )
+      SEEK Str( _Godina, 4 ) + Str( _Mjesec - 2 -nPomak, 2 ) + _idradn
+      cMj2 := Str( _mjesec - 2 -nPomak, 2 ) + "." + Str( _godina, 4 )
    ENDIF
    IF Found()
       IF lViseObr
@@ -295,19 +295,19 @@ FUNCTION Prosj3( cTip, cTip2 )
       ENDIF
    ENDIF
 
-   IF _mjesec - 3 -npomak < 1
-      SEEK Str( _Godina - 1, 4 ) + Str( 12 + _Mjesec - 3 -npomak, 2 ) + _idradn
-      cMj3 := Str( 12 + _mjesec - 3 -npomak, 2 ) + "." + Str( _godina - 1, 4 )
+   IF _mjesec - 3 -nPomak < 1
+      SEEK Str( _Godina - 1, 4 ) + Str( 12 + _Mjesec - 3 -nPomak, 2 ) + _idradn
+      cMj3 := Str( 12 + _mjesec - 3 -nPomak, 2 ) + "." + Str( _godina - 1, 4 )
    ELSE
-      SEEK Str( _Godina, 4 ) + Str( _Mjesec - 3 -npomak, 2 ) + _idradn
-      cMj3 := Str( _mjesec - 3 -npomak, 2 ) + "." + Str( _godina, 4 )
+      SEEK Str( _Godina, 4 ) + Str( _Mjesec - 3 -nPomak, 2 ) + _idradn
+      cMj3 := Str( _mjesec - 3 -nPomak, 2 ) + "." + Str( _godina, 4 )
    ENDIF
    IF Found()
       IF lViseObr
          ScatterS( godina, mjesec, idrj, idradn, "w" )
       ELSE
-         wuneto := uneto
-         wusati := usati
+         wuneto := field->uneto
+         wusati := field->usati
       ENDIF
       IF cTip $ "13"
          nMj3 := wUNeto
@@ -338,34 +338,36 @@ FUNCTION Prosj3( cTip, cTip2 )
       nDijeli := 99999999
    ENDIF
 
-   nSumsat := IF( nSS1 + nSS2 + nSS3 <> 0, nSS1 + nSS2 + nSS3, 99999999 )
+   nSumsat := IIF( nSS1 + nSS2 + nSS3 <> 0, nSS1 + nSS2 + nSS3, 99999999 )
 
    Box( "#" + IF( cTip $ "57", "UKUPNA PRIMANJA", "Prosjek" ) + " ZA MJESECE UNAZAD:", 6, 60 )
    @ m_x + 2, m_y + 2 SAY cmj1; @ Row(), Col() + 2 SAY nMj1 PICT "999999.999"
-   IF cTip $ "126"; ?? "  primanja/sati:"; ?? nsp1, "/", nss1; ENDIF
-   IF cTip $ "57"; ?? "  sati:"; ?? nss1; ENDIF
+   IF cTip $ "126"; ?? "  primanja/sati:"; ?? nSP1, "/", nSS1; ENDIF
+   IF cTip $ "57"; ?? "  sati:"; ?? nSS1; ENDIF
    @ m_x + 3, m_y + 2 SAY cmj2; @ Row(), Col() + 2 SAY nMj2 PICT "999999.999"
-   IF cTip $ "126"; ?? "  primanja/sati:"; ?? nsp2, "/", nss2; ENDIF
-   IF cTip $ "57"; ?? "  sati:"; ?? nss2; ENDIF
+   IF cTip $ "126"; ?? "  primanja/sati:"; ?? nsp2, "/", nSS2; ENDIF
+   IF cTip $ "57"; ?? "  sati:"; ?? nSS2; ENDIF
    @ m_x + 4, m_y + 2 SAY cmj3; @ Row(), Col() + 2 SAY nMj3 PICT "999999.999"
-   IF cTip $ "126"; ?? "  primanja/sati:"; ?? nsp3, "/", nss3; ENDIF
-   IF cTip $ "57"; ?? "  sati:"; ?? nss3; ENDIF
-   @ m_x + 6, m_y + 2 SAY "Prosjek"; @ Row(), Col() + 2 SAY ( nMj3 + nMj2 + nMj1 ) / IF( cTip $ "57", nSumsat, nDijeli ) PICT "999999.999"
+   IF cTip $ "126"; ?? "  primanja/sati:"; ?? nsp3, "/", nSS3; ENDIF
+   IF cTip $ "57"; ?? "  sati:"; ?? nSS3; ENDIF
+   @ m_x + 6, m_y + 2 SAY "Prosjek"; @ Row(), Col() + 2 SAY ( nMj3 + nMj2 + nMj1 ) / IIF( cTip $ "57", nSumsat, nDijeli ) PICT "999999.999"
    Inkey( 0 )
    BoxC()
 
    PopWa()
 
-   RETURN  ( nMj3 + nMj2 + nMj1 ) / IF( cTip $ "57", nSumsat, ndijeli )
-// }
+   RETURN  ( nMj3 + nMj2 + nMj1 ) / IIF( cTip $ "57", nSumsat, nDijeli )
+
 
 
 /* UPrim()
  *     Racuna ukupna primanja
  */
+ 
 FUNCTION UPrim()
 
-   // {
+   LOCAL c719
+
    IF lViseObr
       c719 := UbaciPrefix( gFUPrim, "w" )
    ELSE
@@ -373,7 +375,7 @@ FUNCTION UPrim()
    ENDIF
 
    return &c719
-// }
+
 
 /* USati()
  *     Racuna ukupne sate
@@ -389,7 +391,7 @@ FUNCTION USati()
 
 
 
-/* URPrim()
+/*
  *     Ukupna razna primanja
  */
 FUNCTION URPrim()
@@ -416,6 +418,7 @@ FUNCTION URSati()
 
    return &c719
 
+
 FUNCTION Prosj1( cTip, cTip2, cF0 )
 
    // if cTip== "1"  -> prosjek neta/ satu
@@ -437,7 +440,7 @@ FUNCTION Prosj1( cTip, cTip2, cF0 )
    PRIVATE cFormula
    PushWA()
 
-   IF cF0 = NIL
+   IF cF0 == NIL
       cFormula := "0"
    ELSE
       cFormula := cF0
@@ -507,7 +510,7 @@ FUNCTION Prosj1( cTip, cTip2, cF0 )
          LOOP
       ENDIF
 
-      if &cFormula <> 0
+      IF &cFormula <> 0
          LOOP
       ENDIF
 

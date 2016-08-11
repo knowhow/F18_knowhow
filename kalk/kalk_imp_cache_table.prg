@@ -1,19 +1,18 @@
 /*
- * This file is part of the bring.out FMK, a free and open source
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+ * This file is part of the bring.out knowhow ERP, a free and open source
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
 
-
 #include "f18.ch"
 
 
-FUNCTION cre_cache()
+FUNCTION kalk_cre_cache()
 
    LOCAL aFld := {}
    LOCAL cTbl := "cache.dbf"
@@ -29,7 +28,7 @@ FUNCTION cre_cache()
    AAdd( aFld, { "z_nv", "N", 18, 8 } )
    AAdd( aFld, { "odst", "N", 18, 8 } )
 
-   IF !if_cache()
+   IF !kalk_if_cache_exists()
       DBCreate2( cTbl, aFld )
       create_index( "1", "idkonto+idroba", cTbl )
    ENDIF
@@ -40,7 +39,7 @@ FUNCTION cre_cache()
 // -------------------------------
 // ima li cache tabele
 // -------------------------------
-FUNCTION if_cache()
+FUNCTION kalk_if_cache_exists()
 
    LOCAL lRet := .F.
 
@@ -61,7 +60,7 @@ FUNCTION knab_cache( cC_Kto, cC_Roba, nC_Ulaz, nC_Izlaz, nC_Stanje, nC_NVU, nC_N
    LOCAL nTArea := Select()
    LOCAL nZC_nv := 0
 
-   IF !if_cache() .OR. gCache == "N"
+   IF !kalk_if_cache_exists() .OR. gCache == "N"
       RETURN 0
    ENDIF
 
@@ -139,8 +138,7 @@ FUNCTION knab_cache( cC_Kto, cC_Roba, nC_Ulaz, nC_Izlaz, nC_Stanje, nC_NVU, nC_N
 // ------------------------------------------------------------
 // lista konta
 // ------------------------------------------------------------
-STATIC FUNCTION _g_kto( cMList, cPList, dDatGen, cAppendSif, ;
-      nT_kol, nT_ncproc )
+STATIC FUNCTION _g_kto( cMList, cPList, dDatGen, cAppendSif, nT_kol, nT_ncproc )
 
    LOCAL GetList := {}
    LOCAL nTArea := Select()
@@ -234,7 +232,7 @@ FUNCTION gen_cache()
       RETURN .F.
    ENDIF
 
-   cre_cache()
+   kalk_cre_cache()
 
    O_CACHE
 

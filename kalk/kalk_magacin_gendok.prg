@@ -571,6 +571,8 @@ FUNCTION KorekPC()
 
 FUNCTION kalk_generisi_prijem16_iz_otpreme96()
 
+   LOCAL cBrUlaz
+
    o_koncij()
    o_kalk_pripr2()
    o_kalk_pripr()
@@ -607,7 +609,10 @@ FUNCTION kalk_generisi_prijem16_iz_otpreme96()
 
    kalk_fix_brdok_add_1( @cBrUlaz )
 */
-   PRIVATE cBrUlaz := kalk_get_next_broj_v5( cIdFirma, "16", field->idkonto )
+
+   //PRIVATE cBrUlaz := kalk_get_next_broj_v5( cIdFirma, "16", field->idkonto )
+   cBrUlaz := "G" + SUBSTR( field->brdok, 2 )
+
 
    SELECT kalk_pripr
    GO TOP

@@ -91,7 +91,7 @@ FUNCTION find_kalk_doks_za_tip_zadnji_broj( cIdFirma, cIdvd )
    hParams[ "indeks" ] := .F.  // ne trositi vrijeme na kreiranje indeksa
    hParams[ "desc" ] := .T.
    hParams[ "limit" ] := 1
-   hParams[ "where_ext" ] := " AND not brdok like '%/%'"
+   hParams[ "where_ext" ] := " AND not (left(brdok,1)='G' OR brdok similar to '%(-|/)%')" // NOT: G00000001, 00020-BL, 00020/BL
 
    use_sql_kalk_doks( hParams )
    GO TOP

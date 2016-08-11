@@ -88,6 +88,17 @@ FUNCTION o_koncij()
    RETURN .T.
 
 
+FUNCTION select_o_koncij()
+
+   LOCAL lRet := .T.
+
+   IF Select( "KONCIJ" ) == 0 // nije otvoren, otvori
+      lRet := o_koncij()
+   ENDIF
+
+   Select( F_KONCIJ )
+
+   RETURN lRet
 
 
 FUNCTION o_tarifa()

@@ -338,15 +338,15 @@ FUNCTION kalk_novi_broj_dokumenta( firma, tip_dokumenta, konto )
 
 
 /*
-
 koncij.sufiks  polje
 */
 
 FUNCTION kalk_sufiks_brdok( cIdKonto )
 
-   LOCAL nArr := Select()
    LOCAL cSufiks := Space( 3 )
 
+   PushWa()
+   select_o_koncij()
    SELECT koncij
    SEEK cIdKonto
 
@@ -355,7 +355,7 @@ FUNCTION kalk_sufiks_brdok( cIdKonto )
          cSufiks := field->sufiks
       ENDIF
    ENDIF
-   SELECT ( nArr )
+   PopWa()
 
    RETURN cSufiks
 
@@ -474,7 +474,6 @@ FUNCTION kalk_set_param_broj_dokumenta()
 FUNCTION get_kalk_brdok( _idfirma, _idvd, _idkonto, _idkonto2 )
 
    LOCAL _brdok, cIdKonto
-
 
    IF is_brojac_po_kontima()
 

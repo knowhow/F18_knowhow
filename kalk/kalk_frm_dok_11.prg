@@ -153,10 +153,10 @@ FUNCTION Get1_11()
    @ m_x + 14, m_y + 2    SAY "NABAVNA CIJENA (NC)       :"
    IF _kolicina > 0
       @ m_x + 14, m_y + 50   GET _FCj    PICTURE gPicNC ;
-         VALID {|| V_KolMag(), _vpc := _Fcj, .T. }
+         VALID {|| kalk_valid_kolicina_mag(), _vpc := _Fcj, .T. }
    ELSE
       @ m_x + 14, m_y + 50   GET _FCJ    PICTURE PicDEM;
-         VALID {|| V_KolPro(), _vpc := _fcj, .T. }
+         VALID {|| kalk_valid_kolicina_prod(), _vpc := _fcj, .T. }
    ENDIF
 
 

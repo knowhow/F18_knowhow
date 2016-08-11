@@ -366,6 +366,10 @@ FUNCTION nije_dozvoljeno_azuriranje_sumnjivih_stavki()
 
 FUNCTION dozvoljeno_azuriranje_sumnjivih_stavki()
 
+   RETURN ( gCijene != "2" )
+
+FUNCTION dozvoljeno_azuriranje_sumnjivih_stavki()
+
    RETURN !( gCijene == "2" )
 
 FUNCTION metodanc_info()

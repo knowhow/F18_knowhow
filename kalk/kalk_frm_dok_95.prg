@@ -169,7 +169,7 @@ FUNCTION Get1_95()
    ENDIF
 
    SELECT kalk_pripr
-   @ m_x + 14, m_y + 2  SAY "NAB.CJ   "  GET _NC  PICTURE gPicNC  VALID V_KolMag()
+   @ m_x + 14, m_y + 2  SAY "NAB.CJ   "  GET _NC  PICTURE gPicNC  VALID kalk_valid_kolicina_mag()
    PRIVATE _vpcsappp := 0
 
    READ

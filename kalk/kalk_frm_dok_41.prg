@@ -175,7 +175,7 @@ FUNCTION Get1_41()
       @ m_x + 12, m_y + 30 SAY "Ukupno na stanju "
       @ m_x + 12, Col() + 2 SAY nkols PICT pickol
 
-      @ m_x + 14, m_y + 2 SAY "NC  :" GET _fcj PICT picdem VALID {|| V_KolPro(), _tprevoz := "A", _prevoz := 0, _nc := _fcj, .T. }
+      @ m_x + 14, m_y + 2 SAY "NC  :" GET _fcj PICT picdem VALID {|| kalk_valid_kolicina_prod(), _tprevoz := "A", _prevoz := 0, _nc := _fcj, .T. }
 
       @ m_x + 15, m_y + 40 SAY "MP marza:" GET _TMarza2  VALID _Tmarza2 $ "%AU" PICTURE "@!"
       @ m_x + 15, Col() + 1 GET _Marza2 PICTURE  PicDEM

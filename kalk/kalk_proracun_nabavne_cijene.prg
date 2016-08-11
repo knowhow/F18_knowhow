@@ -589,7 +589,7 @@ FUNCTION PrerRab()
 // Nabavna cijena manja od 0 ??
 // Ukupno na stanju samo XX robe !!
 
-FUNCTION V_KolMag()
+FUNCTION kalk_valid_kolicina_mag()
 
    IF ( _nc < 0 ) .AND. !( _idvd $ "11#12#13#22" ) .OR.  _fcj < 0 .AND. _idvd $ "11#12#13#22"
 
@@ -608,10 +608,11 @@ FUNCTION V_KolMag()
       Beep( 4 )
       IF nije_dozvoljeno_azuriranje_sumnjivih_stavki()
          CLEAR TYPEAHEAD // zaustavi asistent magacin - kolicina
+         _ERROR := "1"
       ENDIF
       error_bar( "KA_" + _mkonto + "/" + _idroba, ;
          _mkonto + " / " + _idroba + "na stanju: " + AllTrim( Str( nKolS, 10, 4 ) ) + " treba " +  AllTrim( Str( _kolicina, 10, 4 ) ) )
-      _ERROR := "1"
+      
    ENDIF
 
    RETURN .T.

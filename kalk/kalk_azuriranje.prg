@@ -579,8 +579,7 @@ STATIC FUNCTION kalk_provjera_integriteta( aDoks, lViseDok )
       ENDDO
 
       IF find_kalk_doks_by_broj_dokumenta( cIdFirma, cIdvd, cBrDok )
-         error_bar( cIdfirma + "-" + cIdvd + "-" + cBrdok, ;
-            "Postoji dokument na stanju: " + cIdFirma + "-" + cIdvd + "-" + AllTrim( cBrDok ) )
+         error_bar( cIdfirma + "-" + cIdvd + "-" + cBrdok, "Postoji dokument na stanju: " + cIdFirma + "-" + cIdvd + "-" + AllTrim( cBrDok ) )
          IF !lViseDok
             my_close_all_dbf()
             RETURN .F.

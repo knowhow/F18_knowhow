@@ -137,7 +137,7 @@ FUNCTION kalk_14_get1()
    SELECT kalk_pripr
 
 
-   @ m_x + 13, m_y + 2    SAY8 "Nab.Cjena "  GET _NC  PICTURE PicDEM      VALID V_KolMag()
+   @ m_x + 13, m_y + 2    SAY8 "Nab.Cjena "  GET _NC  PICTURE PicDEM      VALID kalk_valid_kolicina_mag()
 
    PRIVATE _vpcsappp := 0
 

@@ -114,7 +114,7 @@ FUNCTION Get1_12()
 
    @ m_x + 14, m_y + 2    SAY "NABAVNA CIJENA (NC)         :"
    @ m_x + 14, m_y + 50   GET _FCJ    PICTURE PicDEM;
-      VALID {|| V_KolPro(), ;
+      VALID {|| kalk_valid_kolicina_prod(), ;
       _vpc := _fcj, .T. }
 
 

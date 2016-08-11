@@ -457,11 +457,11 @@ FUNCTION StaviMPCSif( nCijena, lUpit )
 
 
 
-/* V_KolPro()
+/* kalk_valid_kolicina_prod()
  *
  */
 
-FUNCTION V_KolPro()
+FUNCTION kalk_valid_kolicina_prod()
 
    LOCAL ppKolicina
 
@@ -480,9 +480,13 @@ FUNCTION V_KolPro()
       Beep( 2 )
       IF nije_dozvoljeno_azuriranje_sumnjivih_stavki()
          CLEAR TYPEAHEAD // zaustavi asistenta prodavnica
+         _ERROR := "1"
       ENDIF
-      Msg( "U prodavnici je samo" + Str( nKolS, 10, 3 ) + " robe !", 6 )
-      _ERROR := "1"
+      //Msg( "U prodavnici je samo" + Str( nKolS, 10, 3 ) + " robe !", 6 )
+      error_bar( "KA_" + _pkonto + "/" + _idroba, ;
+         _pkonto + " / " + _idroba + "na stanju: " + AllTrim( Str( nKolS, 10, 4 ) ) + " treba " +  AllTrim( Str( _kolicina, 10, 4 ) ) )
+
+
    ENDIF
 
    RETURN .T.

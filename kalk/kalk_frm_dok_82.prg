@@ -103,7 +103,7 @@ FUNCTION Get1_82()
    SELECT kalk_pripr
 
    @ m_x + 12, m_y + 30   SAY "Ukupno na stanju "; @ m_x + 12, Col() + 2 SAY nkols PICT pickol
-   @ m_x + 13, m_y + 2    SAY "NAB.CJ   "  GET _NC  PICTURE PicDEM      VALID V_KolMag()
+   @ m_x + 13, m_y + 2    SAY "NAB.CJ   "  GET _NC  PICTURE PicDEM      VALID kalk_valid_kolicina_mag()
 
    PRIVATE _vpcsappp := 0
 

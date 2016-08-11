@@ -59,7 +59,7 @@ FUNCTION kalk_unos_dok_81( atrib )
       _kord_x := m_x + _x
 
       @ m_x + _x, m_y + 2 SAY8 "DOBAVLJAČ:" GET _IdPartner PICT "@!" ;
-          VALID {|| Empty( _IdPartner ) .OR. P_Firma( @_IdPartner ), ispisi_naziv_sifre( F_PARTN, _idpartner, _kord_x - 1, 22, 20 ) }
+         VALID {|| Empty( _IdPartner ) .OR. P_Firma( @_IdPartner ), ispisi_naziv_sifre( F_PARTN, _idpartner, _kord_x - 1, 22, 20 ) }
       @ m_x + _x, 50 SAY "Broj fakture:" GET _brfaktp
       @ m_x + _x, Col() + 1 SAY "Datum:" GET _datfaktp
 
@@ -67,11 +67,11 @@ FUNCTION kalk_unos_dok_81( atrib )
       _kord_x := m_x + _x
 
       @ m_x + _x, m_y + 2 SAY8 "Konto zadužuje:" GET _idkonto ;
-        VALID {|| P_Konto( @_IdKonto ), ispisi_naziv_sifre( F_KONTO, _idkonto, _kord_x, 40, 30 ) } PICT "@!"
+         VALID {|| P_Konto( @_IdKonto ), ispisi_naziv_sifre( F_KONTO, _idkonto, _kord_x, 40, 30 ) } PICT "@!"
 
-      //IF gNW <> "X"
-      //   @ m_x + _x, m_y + 42 SAY8 "Zadužuje: " GET _idzaduz PICT "@!" VALID Empty( _idzaduz ) .OR. P_Firma( @_idzaduz )
-      //ENDIF
+      // IF gNW <> "X"
+      // @ m_x + _x, m_y + 42 SAY8 "Zadužuje: " GET _idzaduz PICT "@!" VALID Empty( _idzaduz ) .OR. P_Firma( @_idzaduz )
+      // ENDIF
 
       READ
 
@@ -92,10 +92,10 @@ FUNCTION kalk_unos_dok_81( atrib )
       @ m_x + _x, m_y + 2 SAY "Konto zaduzuje: "
       ?? _idkonto
 
-      //IF gNW <> "X"
-      //   @  m_x + _x, m_y + 42 SAY "Zaduzuje: "
-      //   ?? _idzaduz
-      //ENDIF
+      // IF gNW <> "X"
+      // @  m_x + _x, m_y + 42 SAY "Zaduzuje: "
+      // ?? _idzaduz
+      // ENDIF
       READ
       ESC_RETURN K_ESC
 
@@ -298,9 +298,11 @@ STATIC FUNCTION VKol()
          Msg( "Datum nabavke je " + DToC( dDatNab ), 4 )
       ENDIF
 
-      IF nkols < Abs( _kolicina )
-         _ERROR := "1"
-         error_bar( "KA_" + _idroba + "/" + _idkonto, _idroba + "/" + _idkonto + " kolicina nedovoljna:" + Alltrim( Str( nKols, 12, 3 ) ) )
+      IF nKols < Abs( _kolicina )
+         IF nije_dozvoljeno_azuriranje_sumnjivih_stavki()
+            _ERROR := "1"
+         ENDIF
+         error_bar( "KA_" + _idroba + "/" + _idkonto, _idroba + "/" + _idkonto + " kolicina nedovoljna:" + AllTrim( Str( nKols, 12, 3 ) ) )
       ENDIF
       SELECT kalk_pripr
    ENDIF

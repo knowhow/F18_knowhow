@@ -213,10 +213,10 @@ FUNCTION fin_kzb_suban()
    LOCAL cTable := "SUBAN"
    LOCAL cSql :=  "select "
 
-   cSql += "sum(CASE WHEN d_p='1' THEN iznosbhd ELSE 0 END) as duguje,"
-   cSql += "sum(CASE WHEN d_p='2' THEN iznosbhd ELSE 0 END) as potrazuje,"
-   cSql += "sum(CASE WHEN d_p='1' THEN iznosdem ELSE 0 END) as duguje2,"
-   cSql += "sum(CASE WHEN d_p='2' THEN iznosdem ELSE 0 END) as potrazuje2"
+   cSql += "coalesce(sum(CASE WHEN d_p='1' THEN iznosbhd ELSE 0 END),0) as duguje,"
+   cSql += "coalesce(sum(CASE WHEN d_p='2' THEN iznosbhd ELSE 0 END),0) as potrazuje,"
+   cSql += "coalesce(sum(CASE WHEN d_p='1' THEN iznosdem ELSE 0 END),0) as duguje2,"
+   cSql += "coalesce(sum(CASE WHEN d_p='2' THEN iznosdem ELSE 0 END),0) as potrazuje2"
    cSql += " from fmk.fin_suban"
 
    RETURN use_sql( cTable, cSql )

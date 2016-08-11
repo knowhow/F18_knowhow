@@ -225,10 +225,10 @@ FUNCTION fin_kzb_anal()
    LOCAL cTable := "ANAL"
    LOCAL cSql :=  "select "
 
-   cSql += "sum(dugbhd) as duguje,"
-   cSql += "sum(potbhd) as potrazuje,"
-   cSql += "sum(dugdem) as duguje2,"
-   cSql += "sum(potdem) as potrazuje2"
+   cSql += "coalsece(sum(dugbhd),0) as duguje,"
+   cSql += "coalsece(sum(potbhd),0) as potrazuje,"
+   cSql += "coalsece(sum(dugdem),0) as duguje2,"
+   cSql += "coalsece(sum(potdem),0) as potrazuje2"
    cSql += " from fmk.fin_anal"
 
    RETURN use_sql( cTable, cSql )
@@ -239,10 +239,10 @@ FUNCTION fin_kzb_sint()
    LOCAL cTable := "SINT"
    LOCAL cSql :=  "select "
 
-   cSql += "sum(dugbhd) as duguje,"
-   cSql += "sum(potbhd) as potrazuje,"
-   cSql += "sum(dugdem) as duguje2,"
-   cSql += "sum(potdem) as potrazuje2"
+   cSql += "coalsece(sum(dugbhd),0) as duguje,"
+   cSql += "coalsece(sum(potbhd),0) as potrazuje,"
+   cSql += "coalsece(sum(dugdem),0) as duguje2,"
+   cSql += "coalsece(sum(potdem),0) as potrazuje2"
    cSql += " from fmk.fin_sint"
 
    RETURN use_sql( cTable, cSql )
@@ -252,10 +252,10 @@ FUNCTION fin_kzb_nalog()
    LOCAL cTable := "NALOG"
    LOCAL cSql :=  "select "
 
-   cSql += "sum(dugbhd) as duguje,"
-   cSql += "sum(potbhd) as potrazuje,"
-   cSql += "sum(dugdem) as duguje2,"
-   cSql += "sum(potdem) as potrazuje2"
+   cSql += "coalsece(sum(dugbhd),0) as duguje,"
+   cSql += "coalsece(sum(potbhd),0) as potrazuje,"
+   cSql += "coalsece(sum(dugdem),0) as duguje2,"
+   cSql += "coalsece(sum(potdem),0) as potrazuje2"
    cSql += " from fmk.fin_nalog"
 
    RETURN use_sql( cTable, cSql )

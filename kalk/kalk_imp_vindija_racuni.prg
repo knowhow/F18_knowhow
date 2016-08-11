@@ -51,6 +51,9 @@ FUNCTION meni_import_vindija()
    AAdd( opcexe, {|| brow_cache() } )
    AAdd( opc, "P. parametri kontiranja poslovnica" )
    AAdd( opcexe, {|| set_kalk_imp_parametri_za_poslovnica() } )
+   AAdd( opc, "R. parametri kontiranja prodavnica" )
+   AAdd( opcexe, {|| kalk_imp_set_konto_zaduz_prodavnica_za_prod_mjesto() } )
+
 
    Menu_SC( "itx" )
 
@@ -990,7 +993,7 @@ STATIC FUNCTION SDobExist()
  */
 STATIC FUNCTION get_kalk_tip_by_vind_fakt_tip( cFaktTD, cPm )
 
-   cRet := ""
+   LOCAL cRet := ""
 
    IF ( cFaktTD == "" .OR. cFaktTD == nil )
       RETURN "XX"
@@ -1002,12 +1005,11 @@ STATIC FUNCTION get_kalk_tip_by_vind_fakt_tip( cFaktTD, cPm )
       cRet := "14"
 
 
+   CASE ( cFaktTD == "11" .AND. cPm < "200" ) // zaduzenje prodavnica KALK 11
+      cRet := "11"
+
    CASE ( cFaktTD == "11" .AND. cPm >= "200" ) // diskont vindija FAKT 11 -> KALK 41
       cRet := "41"
-
-
-   CASE ( cFaktTD == "11" .AND. cPm < "200" ) // zaduzenje prodavnica FAKT 13 -> KALK 11
-      cRet := "11"
 
 
    CASE cFaktTD $ "90#91#92" // kalo, rastur - otpis radio se u kalku
@@ -1049,11 +1051,12 @@ STATIC FUNCTION kalk_imp_get_konto_zaduz_prodavnica_za_prod_mjesto( cPoslovnica,
       RETURN "XXXXX"
    ENDIF
 
+
    cRet := fetch_metric(  "kalk_imp_prod_zad_" + cPoslovnica + "_" + cProd, NIL,  Space( 7 ) )
 
    IF Empty( cRet )
       kalk_imp_set_konto_zaduz_prodavnica_za_prod_mjesto( cPoslovnica, cProd )
-      kalk_imp_get_konto_zaduz_prodavnica_za_prod_mjesto( cPoslovnica, cProd )
+      cRet := kalk_imp_get_konto_zaduz_prodavnica_za_prod_mjesto( cPoslovnica, cProd )
    ENDIF
 
    IF cRet == "" .OR. cRet == nil
@@ -1089,7 +1092,7 @@ STATIC FUNCTION  kalk_imp_set_konto_zaduz_prodavnica_za_prod_mjesto( cPoslovnica
    ENDIF
 
 
-   cKonto := fetch_metric(  "kalk_imp_prod_zad_" + cPoslovnica + "_" + cPm, NIL,  Space( 7 ) )
+   cKonto := PadR( fetch_metric(  "kalk_imp_prod_zad_" + cPoslovnica + "_" + cPm, NIL,  Space( 7 ) ), 7 )
 
 
    @ m_x + 3, m_y + 2 SAY8 "KALK 11 prod konto zaduzuje: " GET cKonto

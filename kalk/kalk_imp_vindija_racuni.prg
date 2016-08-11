@@ -42,7 +42,7 @@ FUNCTION meni_import_vindija()
    AAdd( opc, "5. nastavak obrade dokumenata ... " )
    AAdd( opcexe, {|| kalk_imp_continue_from_check_point() } )
    AAdd( opc, "6. podešenja importa " )
-   AAdd( opcexe, {|| aimp_setup() } )
+   AAdd( opcexe, {|| kalk_auto_import_setup() } )
    AAdd( opc, "7. kreiraj pomoćnu tabelu stanja" )
    AAdd( opcexe, {|| gen_cache() } )
    AAdd( opc, "8. pregled pomoćne tabele stanja" )
@@ -73,10 +73,8 @@ FUNCTION kalk_auto_import_podataka_konto( cSet )
    RETURN s_cKalkAutoImportPodatakaKonto
 
 
-// ----------------------------------
-// podesenja importa
-// ----------------------------------
-STATIC FUNCTION aimp_setup()
+
+STATIC FUNCTION kalk_auto_import_setup()
 
    LOCAL nX
    LOCAL GetList := {}
@@ -144,13 +142,13 @@ FUNCTION ImpTxtDok()
       cCtrl_art := "D"
    ENDIF
 
-   // daj pregled fajlova za import, te setuj varijablu cImpFile
-   IF get_file_list( cFFilt, cExpPath, @cImpFile ) == 0
+
+   IF get_file_list( cFFilt, cExpPath, @cImpFile ) == 0 // daj pregled fajlova za import, te setuj varijablu cImpFile
       RETURN .F.
    ENDIF
 
-   // provjeri da li je fajl za import prazan
-   IF CheckFile( cImpFile ) == 0
+
+   IF CheckFile( cImpFile ) == 0 // provjeri da li je fajl za import prazan
       MsgBeep( "Odabrani fajl je prazan!#Prekidam operaciju !" )
       RETURN .F.
    ENDIF
@@ -201,7 +199,7 @@ FUNCTION ImpTxtDok()
 
 
 
-/* GetImpFilter()
+/*    GetImpFilter
  *     Vraca filter za naziv dokumenta u zavisnosti sta je odabrano VP ili MP
  */
 STATIC FUNCTION GetImpFilter()
@@ -263,13 +261,13 @@ STATIC FUNCTION ImpTxtPartn()
    PRIVATE aDbf := {}
    PRIVATE aRules := {}
 
-   // setuj polja temp tabele u matricu aDbf
-   set_adbf_partner( @aDbf )
-   // setuj pravila upisa podataka u temp tabelu
-   SetRulePartn( @aRules )
 
-   // prebaci iz txt => temp tbl
-   kalk_imp_txt_to_temp( aDbf, aRules, cImpFile )
+   set_adbf_partner( @aDbf ) // setuj polja temp tabele u matricu aDbf
+
+   SetRulePartn( @aRules ) // setuj pravila upisa podataka u temp tabelu
+
+
+   kalk_imp_txt_to_temp( aDbf, aRules, cImpFile ) // prebaci iz txt => temp tbl
 
    IF CheckPartn() > 0
       IF Pitanje(, "Izvrsiti import partnera (D/N)?", "D" ) == "N"
@@ -352,7 +350,7 @@ STATIC FUNCTION kalk_import_txt_roba()
 
 
 
-/* SetTblDok(aDbf)
+/*
  *     Setuj matricu sa poljima tabele dokumenata RACUN
  *   param: aDbf - matrica
  */
@@ -380,7 +378,7 @@ STATIC FUNCTION SetTblDok( aDbf )
 
    RETURN .T.
 
-/* set_adbf_partner(aDbf)
+/*
  *     Set polja tabele partner
  *   param: aDbf - matrica sa def.polja
  */
@@ -423,7 +421,7 @@ STATIC FUNCTION set_adbf_roba( aDbf )
 
 
 
-/* kalk_imp_set_rule_dok(aRule)
+/*
  *     Setovanje pravila upisa zapisa u temp tabelu
  *   param: aRule - matrica pravila
  */
@@ -532,7 +530,7 @@ STATIC FUNCTION SetRuleRoba( aRule )
 
 
 
-/* kalk_imp_txt_to_temp(aDbf, aRules, cTxtFile)
+/*
  *     Kreiranje temp tabele, te prenos zapisa iz text fajla "cTextFile" u tabelu putem aRules pravila
  *   param: aDbf - struktura tabele
  *   param: aRules - pravila upisivanja jednog zapisa u tabelu, princip uzimanja zapisa iz linije text fajla
@@ -563,8 +561,8 @@ STATIC FUNCTION kalk_imp_txt_to_temp( aDbf, aRules, cTxtFile )
       MsgBeep( oFile:ErrorMsg( "Problem sa otvaranjem fajla: " ) )
    ENDIF
 
-   // prodji kroz svaku liniju i insertuj zapise u temp.dbf
-   DO WHILE oFile:MoreToRead()
+
+   DO WHILE oFile:MoreToRead() // prodji kroz svaku liniju i insertuj zapise u temp.dbf
 
 
       cVar := hb_StrToUTF8( oFile:ReadLine() ) // uzmi u cText liniju fajla
@@ -628,16 +626,16 @@ STATIC FUNCTION cre_kalk_imp_temp( aDbf )
 
    DbCreate2( cTmpTbl, aDbf )
 
-   // provjeri jesu li partneri ili dokumenti ili je roba
-   IF aDbf[ 1, 1 ] == "idpartner"
-      // partner
-      create_index( "1", "idpartner", cTmpTbl )
+
+   IF aDbf[ 1, 1 ] == "idpartner" // provjeri jesu li partneri ili dokumenti ili je roba
+
+      create_index( "1", "idpartner", cTmpTbl ) // partner
    ELSEIF aDbf[ 1, 1 ] == "idpm"
-      // roba
-      create_index( "1", "sifradob", cTmpTbl )
+
+      create_index( "1", "sifradob", cTmpTbl ) // roba
    ELSE
-      // dokumenti
-      create_index( "1", "idfirma+idtipdok+brdok+rbr", cTmpTbl )
+
+      create_index( "1", "idfirma+idtipdok+brdok+rbr", cTmpTbl ) // dokumenti
       create_index( "2", "dtype+idfirma+idtipdok+brdok+rbr", cTmpTbl )
    ENDIF
 
@@ -851,7 +849,7 @@ FUNCTION kalk_imp_roba_exist( lSifraDob )
 
 
 
-/* fn CheckPartn()
+/*
  *  Provjerava i daje listu nepostojecih partnera pri importu liste partnera
  */
 STATIC FUNCTION CheckPartn()
@@ -1034,6 +1032,7 @@ STATIC FUNCTION get_kalk_tip_by_vind_fakt_tip( cFaktTD, cPm )
 // VPR200_050=13200
 // VPR201_050=13201
 // ---------------------------------------------------------------
+
 STATIC FUNCTION kalk_imp_get_konto_zaduz_prodavnica_za_prod_mjesto( cPoslovnica, cProd )
 
    LOCAL cRet
@@ -1078,7 +1077,7 @@ STATIC FUNCTION  kalk_imp_set_konto_zaduz_prodavnica_za_prod_mjesto( cPoslovnica
       cPoslovnica := Space( 3 )
       cPm := Space( 3 )
       @ m_x + 1, m_y + 2 SAY "Poslovnica:" GET cPoslovnica
-      @ m_x + 2, m_y + 2 SAY "Prodajno mjesto:" GET cPoslovnica
+      @ m_x + 2, m_y + 2 SAY "Prodajno mjesto:" GET cPm
       READ
       IF LastKey() == K_ESC
          BoxC()
@@ -1626,15 +1625,17 @@ STATIC FUNCTION kalk_imp_get_konto_by_tip_pm_poslovnica( cTipDok, cPm, cTip, cPo
 
    CASE cTipDok == "11"
       IF cTip == "R"
-         cRet := kalk_imp_get_konto_za_tip_dokumenta_poslovnica( cTipDok, cTip, cPoslovnica )
+         cRet := kalk_imp_get_konto_za_tip_dokumenta_poslovnica( cTipDok, cTip, cPoslovnica ) // razduzuje magacin
       ELSE
-         cRet := kalk_imp_get_konto_zaduz_prodavnica_za_prod_mjesto( cPoslovnica, cPm )
+         cRet := kalk_imp_get_konto_zaduz_prodavnica_za_prod_mjesto( cPoslovnica, cPm ) // zaduzuje prodavnica
       ENDIF
 
    CASE cTipDok == "41"
       cRet := kalk_imp_get_konto_za_tip_dokumenta_poslovnica( cTipDok, cTip, cPoslovnica )
+
    CASE cTipDok == "95"
       cRet := kalk_imp_get_konto_za_tip_dokumenta_poslovnica( cTipDok, cTip, cPoslovnica )
+
    CASE cTipDok == "KO"
       cRet := kalk_imp_get_konto_za_tip_dokumenta_poslovnica( cTipDok, cTip, cPoslovnica )
 
@@ -1644,7 +1645,7 @@ STATIC FUNCTION kalk_imp_get_konto_by_tip_pm_poslovnica( cTipDok, cPm, cTip, cPo
 
 
 
-/* kalk_imp_temp_to_partn(lEditOld)
+/*
  *     kopira podatke iz pomocne tabele u tabelu PARTN
  *   param: lEditOld - ispraviti stare zapise
  */

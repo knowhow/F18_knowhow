@@ -39,7 +39,7 @@ FUNCTION MnuImpCSV()
    AAdd( opc, "2. import csv - ostalo " )
    AAdd( opcexe, {|| ImpCsvOst() } )
    AAdd( opc, "6. podesenja importa " )
-   AAdd( opcexe, {|| aimp_setup() } )
+   AAdd( opcexe, {|| kalk_auto_import_setup() } )
 
    Menu_SC( "ics" )
 
@@ -49,7 +49,7 @@ FUNCTION MnuImpCSV()
 // ----------------------------------
 // podesenja importa
 // ----------------------------------
-STATIC FUNCTION aimp_setup()
+STATIC FUNCTION kalk_auto_import_setup()
 
    LOCAL nX
    LOCAL GetList := {}

@@ -266,7 +266,7 @@ FUNCTION kalk_par_razno()
    @ m_x + _x, Col() SAY "%"
    ++ _x
 
-   @ m_x + _x, m_y + 2 SAY "Standardna stopa marze [NC x ( 1 + ST_STOPA ) = VPC] :" GET nStandardnaStopaMarza PICT "999.99"
+   @ m_x + _x, m_y + 2 SAY "Standardna stopa marze [NC x ( 1 + ST_STOPA ) = Roba.VPC] :" GET nStandardnaStopaMarza PICT "999.99"
    @ m_x + _x, Col() SAY "%"
    ++ _x
 

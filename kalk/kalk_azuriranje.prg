@@ -148,8 +148,8 @@ STATIC FUNCTION kalk_vrati_iz_pripr2()
       ENDIF
 
    ELSEIF field->idvd $ "16" .AND. gGen16 == "1"
-      // nakon otpreme doprema
-      IF kalk_pripr2->( reccount2() ) <> 0
+
+      IF kalk_pripr2->( reccount2() ) <> 0 // nakon otpreme doprema
          Beep( 1 )
          Box(, 4, 70 )
          @ m_x + 1, m_y + 2 SAY "1. Roba je otpremljena u magacin " + kalk_pripr2->idkonto
@@ -198,7 +198,7 @@ STATIC FUNCTION kalk_vrati_iz_pripr2()
 
 /*
  generisanje zavisnih dokumenata nakon azuriranja kalkulacije
- mozda cemo dobiti i nove dokumente u pripremi
+  mozda cemo dobiti i nove dokumente u pripremi
 */
 
 STATIC FUNCTION kalk_zavisni_nakon_azuriranja( lGenerisi, lAuto )
@@ -220,7 +220,7 @@ STATIC FUNCTION kalk_zavisni_nakon_azuriranja( lGenerisi, lAuto )
 
    IF lGenerisi = .T.
 
-altd()
+
       kalk_kontiranje_gen_finmat()
 
       generisi_finansijski_nalog_iz_kalk( lAuto )
@@ -252,7 +252,7 @@ STATIC FUNCTION formiraj_fakt_zavisne_dokumente()
    ENDIF
 
    IF gAFakt != "D"
-      RETURN
+      RETURN .F.
    ENDIF
 
    IF field->idvd $ "10#12#13#16#11#95#96#97#PR#RN"
@@ -277,8 +277,8 @@ STATIC FUNCTION formiraj_fakt_zavisne_dokumente()
 // ----------------------------------------------------------------
 STATIC FUNCTION kalk_ostavi_samo_duple( lViseDok, aOstaju )
 
-   // izbrisi samo azurirane
-   SELECT kalk_pripr
+
+   SELECT kalk_pripr // izbrisi samo azurirane
 
    GO TOP
    my_flock()
@@ -326,7 +326,7 @@ STATIC FUNCTION kalk_generisati_zavisne_dokumente( lAuto )
 STATIC FUNCTION kalk_zavisni_dokumenti()
 
    kalk_nivelacija_11()
-   Otprema()
+   kalk_generisi_prijem16_iz_otpreme96()
    Iz13u11()
    InvManj()
 

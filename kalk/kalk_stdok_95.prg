@@ -105,9 +105,7 @@ FUNCTION kalk_stdok_95() // stampa kalkulacije tip-a 95, 96, 97
 
    PRIVATE cIdd := field->idpartner + field->brfaktp + field->idkonto + field->idkonto2
 
-   DO WHILE !Eof() .AND. cIdFirma == field->IdFirma ;
-         .AND. cBrDok == field->BrDok ;
-         .AND. cIdVD == field->IdVD
+   DO WHILE !Eof() .AND. cIdFirma == field->IdFirma .AND. cBrDok == field->BrDok .AND. cIdVD == field->IdVD
 
       nT4 := nT5 := nT8 := 0
       cBrFaktP := field->brfaktp
@@ -121,12 +119,10 @@ FUNCTION kalk_stdok_95() // stampa kalkulacije tip-a 95, 96, 97
       SELECT partn
       hseek cIdPartner
 
-      // vrni se na kalk
+
       SELECT kalk_pripr
 
-      DO WHILE !Eof() .AND. cIdFirma == field->IdFirma ;
-            .AND. cBrDok == field->BrDok ;
-            .AND. cIdVD == field->IdVD ;
+      DO WHILE !Eof() .AND. cIdFirma == field->IdFirma .AND. cBrDok == field->BrDok .AND. cIdVD == field->IdVD ;
             .AND. field->idpartner + field->brfaktp + DToS( field->datfaktp ) == cIdpartner + cBrfaktp + DToS( dDatfaktp )
 
          IF cIdVd $ "97" .AND. field->tbanktr == "X"
@@ -223,6 +219,7 @@ STATIC FUNCTION _get_naslov_dokumenta( id_vd )
    ENDIF
 
    RETURN _ret
+   
 
 
 STATIC FUNCTION _get_line()

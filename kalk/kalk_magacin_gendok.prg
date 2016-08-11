@@ -569,7 +569,7 @@ FUNCTION KorekPC()
 
 
 
-FUNCTION Otprema()
+FUNCTION kalk_generisi_prijem16_iz_otpreme96()
 
    o_koncij()
    o_kalk_pripr2()
@@ -582,12 +582,14 @@ FUNCTION Otprema()
    SELECT kalk_pripr
    GO TOP
 
-   PRIVATE cIdFirma := idfirma, cIdVD := idvd, cBrDok := brdok
+   PRIVATE cIdFirma := field->idfirma, cIdVD := field->idvd, cBrDok := field->brdok
 
-   IF !( cidvd $ "96#95" )  .OR. Empty( idkonto )
+   IF !( cIdvd $ "96#95" )  .OR. Empty( field->idkonto )
       closeret
    ENDIF
 
+
+/*
    PRIVATE cBrUlaz := "0"
 
    find_kalk_doks_by_broj_fakture( cIdFirma, "16" )
@@ -604,6 +606,8 @@ FUNCTION Otprema()
    ENDIF
 
    kalk_fix_brdok_add_1( @cBrUlaz )
+*/
+   PRIVATE cBrUlaz := kalk_get_next_broj_v5( cIdFirma, "16", field->idkonto )
 
    SELECT kalk_pripr
    GO TOP
@@ -671,11 +675,11 @@ FUNCTION Otprema()
 
 
 
-/* Iz96u16()
+/* kalk_gen_16_iz_96
  *
- */
 
-FUNCTION Iz96u16()
+
+FUNCTION kalk_gen_16_iz_96()
 
 
 
@@ -734,11 +738,11 @@ FUNCTION Iz96u16()
    CLOSERET
 
    RETURN .F.
+ */
 
 
 
-
-/* Iz16u14()
+/* Iz16u14
  *     Od 16 napravi 14
  */
 

@@ -211,7 +211,10 @@ FUNCTION kalk_par_razno()
    LOCAL _rok := fetch_metric( "kalk_definisanje_roka_trajanja", NIL, "N" )
    LOCAL _opis := fetch_metric( "kalk_dodatni_opis_kod_unosa_dokumenta", NIL, "N" )
    LOCAL nLenBrKalk :=  kalk_duzina_brojaca_dokumenta()
-   LOCAL cRobaTrazi := PADR( roba_trazi_po_sifradob(), 20 )
+   LOCAL cRobaTrazi := PadR( roba_trazi_po_sifradob(), 20 )
+   LOCAL nPragOdstupanjaNc := prag_odstupanja_nc_sumnjiv()
+   LOCAL nStandardnaStopaMarza  := standardna_stopa_marze()
+
    PRIVATE  GetList := {}
 
    IF glBrojacPoKontima
@@ -224,7 +227,7 @@ FUNCTION kalk_par_razno()
 
    Box(, 20, 75, .F., "RAZNO" )
 
-   @ m_x + _x, m_y + 2 SAY "Brojac kalkulacija D/N         " GET gBrojacKalkulacija PICT "@!" VALID gBrojacKalkulacija $ "DN"
+   @ m_x + _x, m_y + 2 SAY "Brojac kalkulacija D/N     " GET gBrojacKalkulacija PICT "@!" VALID gBrojacKalkulacija $ "DN"
 
    @ m_x + _x, Col() + 2 SAY8 "dužina brojača:" GET nLenBrKalk PICT "9" VALID ( nLenBrKalk > 0 .AND. nLenBrKalk < 10 )
    ++ _x
@@ -259,14 +262,17 @@ FUNCTION kalk_par_razno()
    ++ _x
    @ m_x + _x, m_y + 2 SAY "Auto obrada dokumenata iz cache tabele (D/N)" GET gCache VALID gCache $ "DN" PICT "@!"
    ++ _x
-   @ m_x + _x, m_y + 2 SAY "Kontrola odstupanja NC:" GET gNC_ctrl PICT "999.99"
+   @ m_x + _x, m_y + 2 SAY "Prag odstupanja NC od posljednjeg ulaza sumnjiv :" GET nPragOdstupanjaNc PICT "999.99"
+   @ m_x + _x, Col() SAY "%"
+   ++ _x
+
+   @ m_x + _x, m_y + 2 SAY "Standardna stopa marze [NC x ( 1 + ST_STOPA ) = VPC] :" GET nStandardnaStopaMarza PICT "999.99"
    @ m_x + _x, Col() SAY "%"
    ++ _x
 
    @ m_x + _x, m_y + 2 SAY8 "Traži robu prema (prazno/SIFRADOB/)" GET cRobaTrazi PICT "@15"
 
    ++ _x
-
    @ m_x + _x, m_y + 2 SAY "Reset artikla prilikom unosa dokumenta (D/N)" GET _reset_roba PICT "@!" VALID _reset_roba $ "DN"
    ++ _x
    @ m_x + _x, m_y + 2 SAY "Pregled rabata za dobavljaca kod unosa ulaza (D/N)" GET _rabat PICT "@!" VALID _rabat $ "DN"
@@ -303,10 +309,11 @@ FUNCTION kalk_par_razno()
       set_metric( "kalk_djoker_f2_kod_kontiranja", nil, gFunKon2 )
       set_metric( "kalk_timeout_kod_azuriranja", nil, gAzurTimeout )
       set_metric( "kalk_cache_tabela", f18_user(), gCache )
-      set_metric( "kalk_kontrola_odstupanja_nc", f18_user(), gNC_ctrl )
+      prag_odstupanja_nc_sumnjiv( nPragOdstupanjaNc )
       set_metric( "kalk_limit_za_otvorene_stavke", f18_user(), gnLOst )
       kalk_duzina_brojaca_dokumenta( nLenBrKalk )
       roba_trazi_po_sifradob( cRobaTrazi )
+      standardna_stopa_marze( nStandardnaStopaMarza )
       set_metric( "kalk_reset_artikla_kod_unosa", my_user(), _reset_roba )
       set_metric( "pregled_rabata_kod_ulaza", my_user(), _rabat )
       set_metric( "kalk_definisanje_roka_trajanja", NIL, _rok )
@@ -316,6 +323,7 @@ FUNCTION kalk_par_razno()
    ENDIF
 
    RETURN .T.
+
 
 
 

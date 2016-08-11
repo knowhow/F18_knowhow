@@ -121,7 +121,7 @@ FUNCTION leg_Get1_PR()
                      // ako je X onda su stavke vec izgenerisane
                      IF !Empty( gMetodaNC )  .AND. !( roba->tip $ "UT" )
                         MsgO( "Racunam stanje na skladistu" )
-                        get_kalk_nab( _idfirma, sast->id2, _idkonto2, @nKolS, @nKolZN, @nc1, @nc2, @dDatNab )
+                        kalk_get_nabavna_mag( _idfirma, sast->id2, _idkonto2, @nKolS, @nKolZN, @nc1, @nc2, @dDatNab )
                         MsgC()
                      ENDIF
                      IF dDatNab > _DatDok
@@ -191,7 +191,7 @@ FUNCTION leg_Get1_PR()
          // ako je X onda su stavke vec izgenerisane
          IF !Empty( gMetodaNC )  .AND. !( roba->tip $ "UT" )
             MsgO( "Racunam stanje na skladistu" )
-            get_kalk_nab( _idfirma, _idroba, _idkonto2, @nKolS, @nKolZN, @nc1, @nc2, @dDatNab )
+            kalk_get_nabavna_mag( _idfirma, _idroba, _idkonto2, @nKolS, @nKolZN, @nc1, @nc2, @dDatNab )
             MsgC()
          ENDIF
          IF dDatNab > _DatDok

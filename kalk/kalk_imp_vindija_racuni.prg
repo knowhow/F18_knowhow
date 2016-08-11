@@ -140,7 +140,7 @@ FUNCTION ImpTxtDok()
 
    cFFilt := GetImpFilter() // filter za import MP ili VP
 
-   IF gNC_ctrl > 0 .AND. Pitanje(, "Ispusti artikle sa problematičnom NC (D/N)",  "N" ) == "D"
+   IF prag_odstupanja_nc_sumnjiv() > 0 .AND. Pitanje(, "Ispusti artikle sa sumnjivom NC (D/N)",  "N" ) == "D"
       cCtrl_art := "D"
    ENDIF
 
@@ -1395,7 +1395,7 @@ STATIC FUNCTION from_kalk_imp_temp_to_pript( aFExist, lFSkip, lNegative, cCtrl_a
          SEEK PadR( cTmp_kto, 7 ) + PadR( cTmp_roba, 10 )
 
 
-         IF Found() .AND. gNC_ctrl > 0 .AND. ( field->odst > gNC_ctrl ) // dodaj sporne u kontrolnu matricu
+         IF Found() .AND. prag_odstupanja_nc_sumnjiv() > 0 .AND. ( field->odst > prag_odstupanja_nc_sumnjiv() ) // dodaj sporne u kontrolnu matricu
 
             nT_scan := AScan( aArr_ctrl, ;
                {| xVal| xVal[ 1 ] + PadR( xVal[ 2 ], 10 ) == cTDok + PadR( AllTrim( cFakt ), 10 ) } )

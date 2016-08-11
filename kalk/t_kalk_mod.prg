@@ -192,8 +192,7 @@ METHOD TKalkMod:set_module_gvars()
 
    // auto obrada iz cache tabele
    PUBLIC gCache := "N"
-   // kontrola odstupanja nab.cijene
-   PUBLIC gNC_ctrl := 0
+
    // matrica koja sluzi u svrhu kontrole NC
    PUBLIC aNC_ctrl := {}
    // limit za otvorene stavke
@@ -202,7 +201,7 @@ METHOD TKalkMod:set_module_gvars()
    // KALK: auto import
    // print dokumenata pri auto importu
    PUBLIC gAImpPrint := "N"
-   
+
    // PUBLIC gAImpRight := 0  // kod provjere prebacenih dokumenata odrezi sa desne strane broj karaktera
    PUBLIC gKalks := .F.
    PUBLIC lKoristitiBK := .F.
@@ -305,7 +304,6 @@ METHOD TKalkMod:set_module_gvars()
    gAzurTimeout := fetch_metric( "kalk_timeout_kod_azuriranja", nil, gAzurTimeout )
    gAzurFinTO := fetch_metric( "kalk_timeout_kod_azuriranja_fin_naloga", nil, gAzurFinTO )
    gCache := fetch_metric( "kalk_cache_tabela", f18_user(), gCache )
-   gNC_ctrl := fetch_metric( "kalk_kontrola_odstupanja_nc", f18_user(), gNC_ctrl )
    gnLOst := fetch_metric( "kalk_limit_za_otvorene_stavke", f18_user(), gnLOst )
 
 

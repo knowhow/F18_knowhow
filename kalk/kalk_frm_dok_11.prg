@@ -126,11 +126,11 @@ FUNCTION Get1_11()
          dDatNab := CToD( "" )
          IF _kolicina > 0
             MsgO( "Racunam stanje na skladistu" )
-            get_kalk_nab( _idfirma, _idroba, _idkonto2, @nKolS, @nKolZN, @nc1, @nc2, @dDatNab )
+            kalk_get_nabavna_mag( _idfirma, _idroba, _idkonto2, @nKolS, @nKolZN, @nc1, @nc2, @dDatNab )
             MsgC()
          ELSE
             MsgO( "Racunam stanje prodavnice" )
-            kalk_nabavna_prod( _idfirma, _idroba, _idkonto, @nKolS, @nKolZN, @nc1, @nc2, dDatNab )
+            kalk_get_nabavna_prod( _idfirma, _idroba, _idkonto, @nKolS, @nKolZN, @nc1, @nc2, dDatNab )
             MsgC()
          ENDIF
          IF dDatNab > _DatDok; Beep( 1 );Msg( "Datum nabavke je " + DToC( dDatNab ), 4 );ENDIF

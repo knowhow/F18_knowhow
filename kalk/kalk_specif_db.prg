@@ -1,14 +1,13 @@
 /*
- * This file is part of the bring.out FMK, a free and open source
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+ * This file is part of the bring.out knowhow ERP, a free and open source
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
-
 
 #include "f18.ch"
 
@@ -27,7 +26,7 @@ FUNCTION SumirajKolicinu( nUlaz, nIzlaz, nTotalUlaz, nTotalIzlaz, fPocStanje, lP
    nTotalUlaz += nUlaz
    nTotalIzlaz += nIzlaz
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -92,7 +91,7 @@ FUNCTION CreTblRek1( cVarijanta )
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -183,7 +182,7 @@ FUNCTION CreTblRek2()
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -1230,7 +1229,7 @@ FUNCTION GetNcForProdavnica( cPKonto, cIdRoba )
    ENDIF
 
    _DatDok = Date()
-   kalk_nabavna_prod( gFirma, cIdRoba, cPKonto, @nKolS, @nKolZN, @nNc1, @nSredNc, @dDatNab )
+   kalk_get_nabavna_prod( gFirma, cIdRoba, cPKonto, @nKolS, @nKolZN, @nNc1, @nSredNc, @dDatNab )
 
    RETURN nSredNc
 

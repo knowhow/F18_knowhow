@@ -91,22 +91,19 @@ FUNCTION knab_cache( cC_Kto, cC_Roba, nC_Ulaz, nC_Izlaz, nC_Stanje, nC_NVU, nC_N
       nZC_nv := field->z_nv
    ENDIF
 
-   // ako se koristi kontrola NC
-   IF gNC_ctrl > 0 .AND. nC_nv <> 0 .AND. nZC_nv <> 0
+
+   IF prag_odstupanja_nc_sumnjiv() > 0 .AND. nC_nv <> 0 .AND. nZC_nv <> 0
 
       nTmp := Round( nC_nv, 4 ) - Round( nZC_nv, 4 )
       nOdst := ( nTmp / Round( nZC_nv, 4 ) ) * 100
 
-      IF Abs( nOdst ) > gNC_ctrl
+      IF Abs( nOdst ) > prag_odstupanja_nc_sumnjiv()
 
          Beep( 4 )
          CLEAR TYPEAHEAD // zaustavi asistenta
 
-         MsgBeep( "Odstupanje u odnosu na zadnji ulaz je#" + ;
-            AllTrim( Str( Abs( nOdst ) ) ) + " %" + "#" + ;
-            "artikal: " + AllTrim( cC_roba ) + " " + ;
-            PadR( roba->naz, 15 ) + " nc:" + ;
-            AllTrim( Str( nC_nv, 12, 2 ) ) )
+         MsgBeep( "Odstupanje u odnosu na zadnji ulaz je#" + AllTrim( Str( Abs( nOdst ) ) ) + " %" + "#" + ;
+            "artikal: " + AllTrim( cC_roba ) + " " + PadR( roba->naz, 15 ) + " nc:" + AllTrim( Str( nC_nv, 12, 2 ) ) )
 
          // a_nc_ctrl( @aNC_ctrl, field->idroba, field->stanje, ;
          // field->nv, field->z_nv )

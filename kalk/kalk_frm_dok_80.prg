@@ -383,7 +383,7 @@ STATIC FUNCTION VKol( x_kord )
 
       IF !Empty( gMetodaNC )
          MsgO( "Računam stanje u prodavnici" )
-         kalk_nabavna_prod( _idfirma, _idroba, _idkonto, @nKolS, @nKolZN, @nC1, @nC2, @dDatNab )
+         kalk_get_nabavna_prod( _idfirma, _idroba, _idkonto, @nKolS, @nKolZN, @nC1, @nC2, @dDatNab )
          MsgC()
          @ x_kord, m_y + 30 SAY "Ukupno na stanju "
          @ x_kord, Col() + 2 SAY nKols PICT pickol

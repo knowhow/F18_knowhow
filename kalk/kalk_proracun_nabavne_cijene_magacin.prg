@@ -39,6 +39,7 @@ FUNCTION kalk_get_nabavna_mag( cIdFirma, cIdRoba, cIdKonto, nKolicina, nKolZN, n
    LOCAL nUKol_poz, nIKol_poz
    LOCAL nTmp
    LOCAL nTmp_n_stanje, nTmp_n_nv, nTmp_s_nv
+   LOCAL cIdVd
 
    nKolicina := 0
 
@@ -129,10 +130,10 @@ FUNCTION kalk_get_nabavna_mag( cIdFirma, cIdRoba, cIdKonto, nKolicina, nKolZN, n
       nSrednjaNabavnaCijena := ( nUVr_poz - nIVr_poz ) / nKol_poz // srednja nabavna cijena
    ENDIF
 
-   IF !( field->idvd == "95" ) // 95 - optisi su sravnjenje kartice, to ne treba korigovati
+   IF  _idvd != "95"  // 95 - optisi su sravnjenje kartice, to ne treba korigovati
       nSrednjaNabavnaCijena := korekcija_nabavne_cijene_sa_zadnjom_ulaznom( nKolicina, nZadnjaUlaznaNC, nSrednjaNabavnaCijena )
    ENDIF
-   
+
    nKolicina := Round( nKolicina, 4 )
 
    nSrednjaNabavnaCijena := korekcija_nabavna_cijena_0( nSrednjaNabavnaCijena )

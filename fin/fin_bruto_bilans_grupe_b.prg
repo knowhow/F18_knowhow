@@ -26,7 +26,7 @@ FUNCTION fin_bb_grupe_b( params )
    LOCAL cIdRj := params[ "id_rj" ]
    LOCAL lNule := params[ "saldo_nula" ]
    LOCAL lPodKlas := params[ "podklase" ]
-   LOCAL cFormat := params["format"]
+   LOCAL cFormat := params[ "format" ]
    LOCAL cKlKonto, cSinKonto, cIdKonto, cIdPartner
    LOCAL cFilter, aUsl1, nStr := 0
    LOCAL b, b1, b2
@@ -56,23 +56,20 @@ FUNCTION fin_bb_grupe_b( params )
    SELECT BBKLAS
    my_dbf_zap()
 
+
    IF gRJ == "D" .AND. Len( cIdRJ ) <> 0
       otvori_sint_anal_kroz_temp( .T., "IDRJ='" + cIdRJ + "'" )
    ELSE
-      o_sint()
+      MsgO( "Preuzimanje podataka sa SQL servera ..." )
+      find_sint_by_konto_za_period( cIdFirma, NIL, dDatOd, dDatDo )
+      MsgC()
    ENDIF
 
    cFilter := ""
 
    IF !( Empty( qqkonto ) )
       aUsl1 := Parsiraj( qqKonto, "idkonto" )
-      IF !( Empty( dDatOd ) .AND. Empty( dDatDo ) )
-         cFilter := aUsl1 + ".and. DATNAL>=" + dbf_quote( dDatOd ) + " .and. DATNAL<=" + dbf_quote( dDatDo )
-      ELSE
-         cFilter := aUsl1
-      ENDIF
-   ELSEIF !( Empty( dDatOd ) .AND. Empty( dDatDo ) )
-      cFilter := "DATNAL>=" + dbf_quote( dDatOd ) + " .and. DATNAL<=" + dbf_quote( dDatDo )
+      cFilter := aUsl1
    ENDIF
 
    IF Len( cIdFirma ) < 2
@@ -89,9 +86,10 @@ FUNCTION fin_bb_grupe_b( params )
       IF !Empty( cFilter )
          SET FILTER TO &cFilter
       ENDIF
-      HSEEK cIdFirma
    ENDIF
 
+   GO TOP
+   
    EOF CRET
 
    nStr := 0
@@ -146,8 +144,8 @@ FUNCTION fin_bb_grupe_b( params )
          ENDDO
 
          IF PRow() > 63 + dodatni_redovi_po_stranici()
-             FF
-             zagl_bb_grupe( params, @nStr )
+            FF
+            zagl_bb_grupe( params, @nStr )
          ENDIF
 
          @ PRow() + 1, 1 SAY B PICTURE '9999'
@@ -327,8 +325,8 @@ STATIC FUNCTION zagl_bb_grupe( params, nStr )
 
    ??U "FIN.P:BRUTO BILANS PO GRUPAMA KONTA U VALUTI '" + IF( params[ "valuta" ] == 1, ValDomaca(), ValPomocna() ) + "'"
 
-   IF !( Empty( params["datum_od"] ) .AND. Empty( params["datum_do"] ) )
-      ?? " ZA PERIOD OD", params["datum_od"], "-", params["datum_do"]
+   IF !( Empty( params[ "datum_od" ] ) .AND. Empty( params[ "datum_do" ] ) )
+      ?? " ZA PERIOD OD", params[ "datum_od" ], "-", params[ "datum_do" ]
    ENDIF
 
    ?? " NA DAN: "
@@ -341,19 +339,19 @@ STATIC FUNCTION zagl_bb_grupe( params, nStr )
       ? "Firma:", gFirma, gNFirma
    ELSE
       ? "Firma:"
-      @ PRow(), PCol() + 2 SAY params["idfirma"]
+      @ PRow(), PCol() + 2 SAY params[ "idfirma" ]
       SELECT PARTN
-      HSEEK params["idfirma"]
+      HSEEK params[ "idfirma" ]
       @ PRow(), PCol() + 2 SAY Naz
       @ PRow(), PCol() + 2 SAY Naz2
    ENDIF
 
-   IF !EMPTY( params["konto"] )
-      ? "Odabrana konta: " + ALLTRIM( params["konto"] )
+   IF !Empty( params[ "konto" ] )
+      ? "Odabrana konta: " + AllTrim( params[ "konto" ] )
    ENDIF
 
-   IF gRJ == "D" .AND. Len( params["id_rj"] ) <> 0
-      ? "Radna jedinica ='" + params["id_rj"] + "'"
+   IF gRJ == "D" .AND. Len( params[ "id_rj" ] ) <> 0
+      ? "Radna jedinica ='" + params[ "id_rj" ] + "'"
    ENDIF
 
    SELECT SINT

@@ -455,7 +455,6 @@ FUNCTION kalk_par_zavisni_dokumenti()
 
    IF gTops <> "0 " .OR. gFakt <> "0 "
       @ m_x + 8, m_y + 2 SAY "Destinacija fajla za razmjenu:" GET gTopsDest PICT "@S40"
-      @ m_x + 9, m_y + 2 SAY "Koristi se vise prodajnih mjesta (D/N) ?" GET gMultiPM PICT "@!" VALID gMultiPM $ "DN"
       @ m_x + 10, m_y + 2 SAY "Auto.zaduzenje prod.konta (KALK 11) (D/N) ?" GET _auto_razduzenje ;
          PICT "@!" VALID _auto_razduzenje $ "DN"
       READ
@@ -472,7 +471,6 @@ FUNCTION kalk_par_zavisni_dokumenti()
       set_metric( "kalk_prenos_pos", f18_user(), gTops )
       set_metric( "kalk_prenos_fakt", f18_user(), gFakt )
       set_metric( "kalk_destinacija_topska", f18_user(), AllTrim( gTopsDest ) )
-      set_metric( "kalk_tops_prenos_vise_prodajnih_mjesta", f18_user(), gMultiPM )
       set_metric( "kalk_tops_prenos_auto_razduzenje", my_user(), _auto_razduzenje )
       set_metric( "kalk_fin_isti_broj", NIL, cKalkFinIstiBroj )
 

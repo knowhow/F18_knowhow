@@ -112,7 +112,6 @@ METHOD TKalkMod:set_module_gvars()
    PUBLIC gDecKol := 5
    PUBLIC gKalo := "2"
    PUBLIC gMagacin := "2"
-   PUBLIC gMultiPM := "D"
    PUBLIC gRCRP := "C"
    PUBLIC gPotpis := "N"
    PUBLIC g10Porez := "N"
@@ -294,7 +293,6 @@ METHOD TKalkMod:set_module_gvars()
    gTops := fetch_metric( "kalk_prenos_pos", f18_user(), gTops )
    gFakt := fetch_metric( "kalk_prenos_fakt", f18_user(), gFakt )
    gTopsDest := PadR( fetch_metric( "kalk_destinacija_topska", f18_user(), gTopsDest ), 100 )
-   gMultiPM := fetch_metric( "kalk_tops_prenos_vise_prodajnih_mjesta", f18_user(), gMultiPM )
    gMPCPomoc := fetch_metric( "kalk_pomoc_sa_mpc", nil, gMPCPomoc )
    gKolicFakt := fetch_metric( "kalk_kolicina_kod_nivelacije_fakt", nil, gKolicFakt )
    gPromTar := fetch_metric( "kalk_zabrana_promjene_tarifa", nil, gPromTar )

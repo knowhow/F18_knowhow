@@ -14,7 +14,7 @@
 
 
 /*
- generacija tops dokumenata na osnovu kalk dokumenata
+      generacija tops dokumenata na osnovu kalk dokumenata
 */
 
 FUNCTION kalk_generisi_tops_dokumente( cIdFirma, cIdTipDok, cBrDok )
@@ -32,7 +32,7 @@ FUNCTION kalk_generisi_tops_dokumente( cIdFirma, cIdTipDok, cBrDok )
    ENDIF
 
 
-   IF !kalk_tops_prenos_prerequisites() // provjeri uslove za prenos
+   IF !kalk_tops_prenos_prerequisites()
 
       kalk_tops_o_gen_tables( _lFromKumulativ )
       SELECT kalk_pripr
@@ -44,7 +44,7 @@ FUNCTION kalk_generisi_tops_dokumente( cIdFirma, cIdTipDok, cBrDok )
    kalk_tops_o_gen_tables( _lFromKumulativ ) // otvori tabele
 
    IF _lFromKumulativ
-       open_kalk_as_pripr( .T., cIdFirma, cIdTipDok, cBrDok ) // .T. => SQL table
+      open_kalk_as_pripr( .T., cIdFirma, cIdTipDok, cBrDok ) // .T. => SQL table
    ENDIF
 
    _cre_katops_dbf( my_home() + _katops_table, _lFromKumulativ ) // kreiraj tabelu katops, ona ce se kreirati u privatnom direktoriju
@@ -127,8 +127,8 @@ FUNCTION kalk_generisi_tops_dokumente( cIdFirma, cIdTipDok, cBrDok )
          // radi se o nivelaciji
          // mpc - stara cijena
          REPLACE field->mpc WITH kalk_pripr->fcj
-         // mpc2 - nova cijena
-         REPLACE field->mpc2 WITH kalk_pripr->( fcj + mpcsapp )
+
+         REPLACE field->mpc2 WITH kalk_pripr->( fcj + mpcsapp ) // mpc2 - nova cijena
       ENDIF
 
       IF kalk_pripr->pu_i == "5"
@@ -139,8 +139,7 @@ FUNCTION kalk_generisi_tops_dokumente( cIdFirma, cIdTipDok, cBrDok )
          REPLACE field->idpos WITH gTops
       ENDIF
 
-      // saberi total...
-      _total += ( field->kolicina * field->mpc )
+      _total += ( field->kolicina * field->mpc ) // saberi total
 
       ++ _rbr
 
@@ -149,18 +148,18 @@ FUNCTION kalk_generisi_tops_dokumente( cIdFirma, cIdTipDok, cBrDok )
 
    ENDDO
 
-   // zatvori sta treba zatvoriti
+
    SELECT katops
    USE
 
    IF _rbr > 0
 
-      // napravi i prebaci izlazne fajlove gdje trebaju
-      _exp_file := _kreiraj_fajl_prenosa( _dat_dok, _pos_locations, _rbr )
+
+      _exp_file := kalk_tops_kreiraj_fajl_prenosa( _dat_dok, _pos_locations, _rbr ) // napravi i prebaci izlazne fajlove gdje trebaju
 
       my_close_all_dbf()
-      // ispisi report
-      _print_report( cIdFirma, cIdTipDok, cBrDok, _rbr, _total, _exp_file )
+
+      kalk_tops_print_report( cIdFirma, cIdTipDok, cBrDok, _rbr, _total, _exp_file ) // ispisi report
 
    ENDIF
 
@@ -169,10 +168,8 @@ FUNCTION kalk_generisi_tops_dokumente( cIdFirma, cIdTipDok, cBrDok )
    RETURN .T.
 
 
-// ---------------------------------------------
-// printaj rezultat prenosa podataka
-// ---------------------------------------------
-STATIC FUNCTION _print_report( firma, tip_dok, cBrDok, broj_stavki, total_prenosa, export_fajl )
+
+STATIC FUNCTION kalk_tops_print_report( firma, tip_dok, cBrDok, broj_stavki, total_prenosa, export_fajl )
 
    START PRINT CRET
 
@@ -201,10 +198,7 @@ STATIC FUNCTION _print_report( firma, tip_dok, cBrDok, broj_stavki, total_prenos
 
 
 
-// -------------------------------------------------------
-// kreiranje fajla prenosa
-// -------------------------------------------------------
-STATIC FUNCTION _kreiraj_fajl_prenosa( datum, pos_locations, broj_stavki )
+STATIC FUNCTION kalk_tops_kreiraj_fajl_prenosa( datum, pos_locations, broj_stavki )
 
    LOCAL _i, _n
    LOCAL _dest_file, _dest_patt
@@ -218,50 +212,42 @@ STATIC FUNCTION _kreiraj_fajl_prenosa( datum, pos_locations, broj_stavki )
       gTopsDest := AllTrim( gTopsDest ) + SLASH
    ENDIF
 
-   // napravi direktorij prenosa ako ga nema !
-   _dir_create( AllTrim( gTopsDest ) )
 
-   // export lokacija generalna
-   _export_location := AllTrim( gTopsDest )
+   _dir_create( AllTrim( gTopsDest ) ) // napravi direktorij prenosa ako ga nema !
 
-   IF gMultiPM == "D"
 
-      // prodji kroz sve lokacije i postavi datoteke eksporta
-      FOR _n := 1 TO Len( pos_locations )
+   _export_location := AllTrim( gTopsDest ) // export lokacija generalna
 
-         // export ce biti u poddirektoriju kojem treba da bude...
-         // recimo /prenos/1/
-         _export := _export_location + AllTrim( pos_locations[ _n ] ) + SLASH
 
-         // kreiraj mi ovaj direktorij ako ne postoji
-         _dir_create( _export )
+   // prodji kroz sve lokacije i postavi datoteke eksporta
+   FOR _n := 1 TO Len( pos_locations )
 
-         // nakon dir create prebaci se na my_local_folder
-         DirChange( my_home() )
+      // export ce biti u poddirektoriju kojem treba da bude...
+      // recimo /prenos/1/
+      _export := _export_location + AllTrim( pos_locations[ _n ] ) + SLASH
 
-         // pronadji mi naziv fajla koji je dozvoljen
-         _dest_patt := get_topskalk_export_file( "2", _export, datum )
+      // kreiraj mi ovaj direktorij ako ne postoji
+      _dir_create( _export )
 
-         // kopiraj katops.dbf
-         _dest_file := _export + StrTran( _table_name, "katops.", _dest_patt + "." )
-         _ret := _dest_file
+      // nakon dir create prebaci se na my_local_folder
+      DirChange( my_home() )
 
-         IF FileCopy( _table_path + _table_name, _dest_file ) > 0
-            // kopiraj txt fajl
-            _dest_file := StrTran( _dest_file, ".dbf", ".txt" )
-            FileCopy( my_home() + OUTF_FILE, _dest_file )
-         ELSE
-            MsgBeep( "Problem sa kopiranjem fajla na destinaciju #" + _export )
-         ENDIF
+      // pronadji mi naziv fajla koji je dozvoljen
+      _dest_patt := get_topskalk_export_file( "2", _export, datum )
 
-      NEXT
+      // kopiraj katops.dbf
+      _dest_file := _export + StrTran( _table_name, "katops.", _dest_patt + "." )
+      _ret := _dest_file
 
-   ELSE
+      IF FileCopy( _table_path + _table_name, _dest_file ) > 0
+         // kopiraj txt fajl
+         _dest_file := StrTran( _dest_file, ".dbf", ".txt" )
+         FileCopy( my_home() + OUTF_FILE, _dest_file )
+      ELSE
+         MsgBeep( "Problem sa kopiranjem fajla na destinaciju #" + _export )
+      ENDIF
 
-      _integ := IntegDbf( _table_name )
-      NapraviCRC( AllTrim( gTopsDEST ) + "crckt.crc", _integ[ 1 ], _integ[ 2 ] )
-
-   ENDIF
+   NEXT
 
    RETURN _ret
 
@@ -430,9 +416,9 @@ STATIC FUNCTION kalk_tops_o_gen_tables( lFromKumulativ )
    ENDIF
 
    IF lFromKumulativ == .T.
-      //SELECT F_KALK
+      // SELECT F_KALK
 
-      //open_kalk_as_pripr( .T., cIdFirma, cIdVd, cBrDok ) // .T. => SQL table
+      // open_kalk_as_pripr( .T., cIdFirma, cIdVd, cBrDok ) // .T. => SQL table
 
    ELSE
       SELECT F_KALK_PRIPR

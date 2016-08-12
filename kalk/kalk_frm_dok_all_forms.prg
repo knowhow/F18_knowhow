@@ -43,7 +43,7 @@ FUNCTION VRoba( lSay )
 
 
 
-/* WMpc(fRealizacija,fMarza)
+/*
  *     When blok za unos MPC
  *   param: fRealizacija -
  *   param: fMarza -
@@ -116,7 +116,6 @@ FUNCTION VMpc( fRealizacija, fMarza )
 
 FUNCTION VMpcSaPP( fRealizacija, fMarza )
 
-   // {
    LOCAL nRabat
 
    IF fRealizacija == NIL
@@ -153,7 +152,7 @@ FUNCTION VMpcSaPP( fRealizacija, fMarza )
    fMarza := " "
 
    RETURN .T.
-// }
+
 
 
 
@@ -165,25 +164,15 @@ FUNCTION VMpcSaPP( fRealizacija, fMarza )
 
 FUNCTION SayPorezi( nRow )
 
-   // {
-   IF IsPDV()
-      @ m_x + nRow, m_y + 2  SAY "PDV (%):"
-      @ Row(), Col() + 2 SAY aPorezi[ POR_PPP ] PICTURE "99.99"
-      IF glUgost
-         @ m_x + nRow, Col() + 8  SAY "PP (%):"
-         @ Row(), Col() + 2  SAY aPorezi[ POR_PP ] PICTURE "99.99"
-      ENDIF
-   ELSE
-      @ m_x + nRow, m_y + 2  SAY "PPP (%):"
-      @ Row(), Col() + 2 SAY  aPorezi[ POR_PPP ] PICTURE "99.99"
-      @ m_x + nRow, Col() + 8  SAY "PPU (%):"
-      @ Row(), Col() + 2  SAY PrPPUMP() PICTURE "99.99"
+   @ m_x + nRow, m_y + 2  SAY "PDV (%):"
+   @ Row(), Col() + 2 SAY aPorezi[ POR_PPP ] PICTURE "99.99"
+   IF glUgost
       @ m_x + nRow, Col() + 8  SAY "PP (%):"
       @ Row(), Col() + 2  SAY aPorezi[ POR_PP ] PICTURE "99.99"
    ENDIF
 
-   RETURN
-// }
+   RETURN .T.
+
 
 
 
@@ -195,7 +184,7 @@ FUNCTION SayPorezi( nRow )
 
 FUNCTION FillIzgStavke( pIzgStavke )
 
-   // {
+
    IF pIzgSt .AND. _kolicina > 0 .AND. LastKey() <> K_ESC // izgenerisane stavke postoje
       PRIVATE nRRec := RecNo()
       GO TOP
@@ -223,7 +212,7 @@ FUNCTION FillIzgStavke( pIzgStavke )
                mkonto WITH _mkonto, ;
                mu_i WITH  _mu_i, ;
                pkonto WITH _pkonto, ;
-               pu_i WITH  _pu_i,;
+               pu_i WITH  _pu_i, ;
                error WITH "0"
          ENDIF
          SKIP
@@ -232,8 +221,7 @@ FUNCTION FillIzgStavke( pIzgStavke )
       GO nRRec
    ENDIF
 
-   RETURN
-// }
+   RETURN .T.
 
 
 
@@ -311,16 +299,14 @@ FUNCTION W_Mpc_( cIdVd, lNaprijed, aPorezi )
 
 
 
-/* WMpc_lv(fRealizacija, fMarza, aPorezi)
+/*
  *     When blok za unos MPC
  *   param: fRealizacija -
  *   param: fMarza -
- *  \note koriste se lokalne varijable
+ *  note koriste se lokalne varijable
  */
 
 FUNCTION WMpc_lv( fRealizacija, fMarza, aPorezi )
-
-   // {
 
    // legacy
 
@@ -344,7 +330,7 @@ FUNCTION WMpc_lv( fRealizacija, fMarza, aPorezi )
    ENDIF
 
    RETURN .T.
-// }
+
 
 
 
@@ -358,7 +344,7 @@ FUNCTION WMpc_lv( fRealizacija, fMarza, aPorezi )
 
 FUNCTION VMpc_lv( fRealizacija, fMarza, aPorezi )
 
-   // {
+
    IF fRealizacija == nil
       fRealizacija := .F.
    ENDIF
@@ -375,7 +361,7 @@ FUNCTION VMpc_lv( fRealizacija, fMarza, aPorezi )
    ENDIF
 
    RETURN .T.
-// }
+
 
 
 
@@ -405,7 +391,7 @@ FUNCTION V_Mpc_( cIdVd, lNaprijed, aPorezi )
  *     Valid blok za unos MpcSaPP
  *   param: fRealizacija -
  *   param: fMarza -
- *  \note koriste se lokalne varijable
+ *  note koriste se lokalne varijable
  */
 
 FUNCTION VMpcSaPP_lv( fRealizacija, fMarza, aPorezi, lShowGets )
@@ -491,33 +477,18 @@ FUNCTION V_MpcSaPP_( cIdVd, lNaprijed, aPorezi, lShowGets )
 
 
 
-
-
-/* SayPorezi_lv(nRow, aPorezi)
+/*
  *     Ispisuje poreze
  *   param: nRow - relativna kooordinata reda u kojem se ispisuju porezi
- *  \aPorezi - koristi lokalne varijable
+ *  aPorezi - koristi lokalne varijable
  */
 
 FUNCTION SayPorezi_lv( nRow, aPorezi )
 
-   // {
-   IF IsPDV()
+
       @ m_x + nRow, m_y + 2  SAY "PDV (%):"
       @ Row(), Col() + 2 SAY  aPorezi[ POR_PPP ] PICTURE "99.99"
 
-      IF glUgost
-         @ m_x + nRow, Col() + 8  SAY "PP (%):"
-         @ Row(), Col() + 2  SAY aPorezi[ POR_PP ] PICTURE "99.99"
-      ENDIF
-   ELSE
-      @ m_x + nRow, m_y + 2  SAY "PPP (%):"
-      @ Row(), Col() + 2 SAY  aPorezi[ POR_PPP ] PICTURE "99.99"
-      @ m_x + nRow, Col() + 8  SAY "PPU (%):"
-      @ Row(), Col() + 2  SAY PrPPUMP() PICTURE "99.99"
-      @ m_x + nRow, Col() + 8  SAY "PP (%):"
-      @ Row(), Col() + 2  SAY aPorezi[ POR_PP ] PICTURE "99.99"
-   ENDIF
 
-   RETURN
-// }
+
+   RETURN .T.

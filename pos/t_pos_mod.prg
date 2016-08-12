@@ -287,7 +287,6 @@ METHOD set_module_gvars()
    PUBLIC LocSIFPATH := my_home()
    PUBLIC gServerPath := PadR( "i:" + SLASH + "sigma", 40 )
    PUBLIC gKalkDEST := PadR( "a:" + SLASH, 300 )
-   PUBLIC gMultiPM := "D"
    PUBLIC gUseChkDir := "N"
    PUBLIC gStrValuta := Space( 4 )
    // upit o nacinu placanja
@@ -332,7 +331,6 @@ METHOD set_module_gvars()
    gIdDio := fetch_metric( "OznakaDijelaObjekta", nil, gIdDio )
    gServerPath := fetch_metric( "PutanjaServera", nil, gServerPath )
    gKalkDest := fetch_metric( "KalkDestinacija", my_user(), gKalkDest )
-   gMultiPM := fetch_metric( "kalk_tops_prenos_vise_prodajnih_mjesta", my_user(), gMultiPM )
    gUseChkDir := fetch_metric( "KoristitiDirektorijProvjere", my_user(), gUseChkDir )
    gStrValuta := fetch_metric( "StranaValuta", nil, gStrValuta )
    gLocPort := fetch_metric( "OznakaLokalnogPorta", my_user(), gLocPort )

@@ -121,7 +121,7 @@ STATIC FUNCTION uslovi_za_insert_ispunjeni()
    LOCAL lOk := .T.
 
    IF Abs( katops->mpc ) - Abs( Val( Str( katops->mpc, 8, 3 ) ) ) <> 0
-      MsgBeep( "Cijena artikla: " + AllTrim( katops->idroba ) + " van dozvoljenog ranga: " + AllTrim(Str( katops->mpc)) )
+      MsgBeep( "Cijena artikla: " + AllTrim( katops->idroba ) + " van dozvoljenog ranga: " + AllTrim( Str( katops->mpc ) ) )
       lOk := .F.
    ENDIF
 
@@ -188,79 +188,58 @@ STATIC FUNCTION get_import_file( br_dok, destinacija, import_fajl )
    LOCAL _izbor
    LOCAL _prenesi
 
-   IF gMultiPM == "D"
+   _filter := 2
+   _prodajno_mjesto := GetPm( gIdPos )
 
-      _filter := 2
-      _prodajno_mjesto := GetPm( gIdPos )
-
-      IF !Empty( _prodajno_mjesto )
-         _id_pos := _prodajno_mjesto
-         _prefix := ( Trim( _prodajno_mjesto ) ) + SLASH
-      ELSE
-         _prefix := ""
-      ENDIF
-
-      destinacija := AllTrim( gKalkDest ) + _prefix
-
-      BrisiSFajlove( destinacija )
-
-      _imp_files := Directory( destinacija + "kt*.dbf" )
-
-      ASort( _imp_files,,, {| x, y| DToS( x[ 3 ] ) + x[ 4 ] > DToS( y[ 3 ] ) + y[ 4 ] } )
-
-      AEval( _imp_files, {| elem| AAdd( _opc, PadR( elem[ 1 ], 15 ) + UChkPostoji() + " " + DToC( elem[ 3 ] ) + " " + elem[ 4 ] ) }, 1 )
-
-      ASort( _opc,,, {| x, y| Right( x, 17 ) > Right( y, 17 ) } )
-
-      _h := Array( Len( _opc ) )
-      FOR _i := 1 TO Len( _h )
-         _h[ _i ] := ""
-      NEXT
-
-      IF Len( _opc ) == 0
-         MsgBeep( "U direktoriju za prenos nema podataka /P" )
-         CLOSE ALL
-         RETURN .F.
-      ENDIF
-
+   IF !Empty( _prodajno_mjesto )
+      _id_pos := _prodajno_mjesto
+      _prefix := ( Trim( _prodajno_mjesto ) ) + SLASH
    ELSE
-      MsgBeep ( "Pripremi disketu za prenos ....#te pritisni neku tipku za nastavak!!!" )
+      _prefix := ""
    ENDIF
 
-   IF gMultiPM == "D"
+   destinacija := AllTrim( gKalkDest ) + _prefix
 
-      _izbor := 1
-      _prenesi := .F.
-      DO WHILE .T.
-         _izbor := Menu( "k2p", _opc, _izbor, .F. )
-         IF _izbor == 0
-            EXIT
-         ELSE
-            import_fajl := Trim( destinacija ) + Trim( Left( _opc[ _izbor ], 15 ) )
-            IF Pitanje(, "Želite li izvršiti prenos podataka (D/N) ?", "D" ) == "D"
-               _prenesi := .T.
-               _izbor := 0
-            ENDIF
+   BrisiSFajlove( destinacija )
+
+   _imp_files := Directory( destinacija + "kt*.dbf" )
+
+   ASort( _imp_files,,, {| x, y| DToS( x[ 3 ] ) + x[ 4 ] > DToS( y[ 3 ] ) + y[ 4 ] } )
+
+   AEval( _imp_files, {| elem| AAdd( _opc, PadR( elem[ 1 ], 15 ) + UChkPostoji() + " " + DToC( elem[ 3 ] ) + " " + elem[ 4 ] ) }, 1 )
+
+   ASort( _opc,,, {| x, y| Right( x, 17 ) > Right( y, 17 ) } )
+
+   _h := Array( Len( _opc ) )
+   FOR _i := 1 TO Len( _h )
+      _h[ _i ] := ""
+   NEXT
+
+   IF Len( _opc ) == 0
+      MsgBeep( "U direktoriju za prenos nema podataka /P" )
+      CLOSE ALL
+      RETURN .F.
+   ENDIF
+
+
+
+   _izbor := 1
+   _prenesi := .F.
+   DO WHILE .T.
+      _izbor := Menu( "k2p", _opc, _izbor, .F. )
+      IF _izbor == 0
+         EXIT
+      ELSE
+         import_fajl := Trim( destinacija ) + Trim( Left( _opc[ _izbor ], 15 ) )
+         IF Pitanje(, "Želite li izvršiti prenos podataka (D/N) ?", "D" ) == "D"
+            _prenesi := .T.
+            _izbor := 0
          ENDIF
-      ENDDO
-
-      IF !_prenesi
-         RETURN .F.
       ENDIF
+   ENDDO
 
-   ELSE
-
-      import_fajl := Trim( destinacija ) + "katops.dbf"
-      _a_tmp1 := IscitajCRC( Trim( destinacija ) + "crckt.crc" )
-      _a_tmp2 := IntegDbf( imp_fajl )
-
-      IF !( _a_tmp1[ 1 ] == _a_tmp2[ 1 ] .AND. _a_tmp1[ 2 ] == _a_tmp2[ 2 ] )
-         MsgBeep( "CRC se ne slaze" )
-         IF Pitanje(, "Ipak želite prenos (D/N)?", "N" ) == "N"
-            RETURN .F.
-         ENDIF
-      ENDIF
-
+   IF !_prenesi
+      RETURN .F.
    ENDIF
 
    RETURN .T.
@@ -372,14 +351,13 @@ FUNCTION pos_prenos_inv_2_kalk( id_pos, id_vd, dat_dok, br_dok )
    SELECT pom
    USE
 
-   IF gMultiPM == "D"
-      _file := _cre_topska_multi( id_pos, dat_dok, dat_dok, id_vd, "tk_p" )
-      MsgBeep( "Kreiran fajl " + _file + "#broj stavki: " + AllTrim( Str( _r_br ) ) )
-   ENDIF
+   _file := tops_kalk_create_topska( id_pos, dat_dok, dat_dok, id_vd, "tk_p" )
+   MsgBeep( "Kreiran fajl " + _file + "#broj stavki: " + AllTrim( Str( _r_br ) ) )
+
 
    SELECT ( _t_area )
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -501,19 +479,19 @@ FUNCTION pos_prenos_pos_kalk( dDateOd, dDateDo, cIdVd, cIdPM )
 
             APPEND BLANK
 
-            REPLACE IdPos WITH POS->IdPos ,;
-                    IdRoba WITH POS->IdRoba ,;
-                    Kolicina WITH POS->Kolicina ,;
-                    IdTarifa WITH POS->IdTarifa ,;
-                    mpc WITH POS->Cijena ,;
-                    IdCijena WITH POS->IdCijena  ,;
-                    Datum WITH _dat_do  ,;
-                    DatPos WITH pos->datum  ,;
-                    brdok WITH pos->brdok  ,;
-                    idvd WITH POS->IdVd  ,;
-                    StMPC WITH pos->ncijena  ,;
-                    barkod WITH roba->barkod  ,;
-                    robanaz WITH roba->naz
+            REPLACE IdPos WITH POS->IdPos, ;
+               IdRoba WITH POS->IdRoba, ;
+               Kolicina WITH POS->Kolicina, ;
+               IdTarifa WITH POS->IdTarifa, ;
+               mpc WITH POS->Cijena, ;
+               IdCijena WITH POS->IdCijena, ;
+               Datum WITH _dat_do, ;
+               DatPos WITH pos->datum, ;
+               brdok WITH pos->brdok, ;
+               idvd WITH POS->IdVd, ;
+               StMPC WITH pos->ncijena, ;
+               barkod WITH roba->barkod, ;
+               robanaz WITH roba->naz
 
             IF !Empty( pos_doks->idgost )
                REPLACE idpartner WITH pos_doks->idgost
@@ -547,11 +525,8 @@ FUNCTION pos_prenos_pos_kalk( dDateOd, dDateDo, cIdVd, cIdPM )
 
       _print_report( _dat_od, _dat_do, _kol, _iznos, _r_br )
 
-      IF gMultiPM == "D"
-         _file := _cre_topska_multi( cIdPos, _dat_od, _dat_do, cIdVd )
-      ELSE
-         _file := _cre_topska()
-      ENDIF
+      _file := tops_kalk_create_topska( cIdPos, _dat_od, _dat_do, cIdVd )
+
 
       MsgBeep( "Kreiran fajl " + _file + "#broj stavki: " + AllTrim( Str( _r_br ) ) )
 
@@ -624,7 +599,7 @@ STATIC FUNCTION _cre_pom_table()
 // --------------------------------------------------------------------------
 // kreira izlazni fajl za multi prodajna mjesta režim
 // --------------------------------------------------------------------------
-STATIC FUNCTION _cre_topska_multi( id_pos, datum_od, datum_do, v_dok, prefix )
+STATIC FUNCTION tops_kalk_create_topska( id_pos, datum_od, datum_do, v_dok, prefix )
 
    LOCAL _prefix := "tk"
    LOCAL _export_location
@@ -663,20 +638,3 @@ STATIC FUNCTION _cre_topska_multi( id_pos, datum_od, datum_do, v_dok, prefix )
    ENDIF
 
    RETURN _dest_file
-
-
-
-// -----------------------------------------------------------
-// kreira topska za jednu instancu
-// -----------------------------------------------------------
-STATIC FUNCTION _cre_topska()
-
-   LOCAL _dbf
-   LOCAL _destination
-
-   _destination := AllTrim( gKalkDest ) + "topska.dbf"
-
-   _dbf := IntegDbf( _destination )
-   NapraviCRC( AllTrim( gKalkDEST ) + "crctk.crc", _dbf[ 1 ], _dbf[ 2 ] )
-
-   RETURN _destination

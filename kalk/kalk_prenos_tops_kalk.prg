@@ -161,7 +161,6 @@ FUNCTION kalk_preuzmi_tops_dokumente_auto()
 
    PRIVATE gIdPos // incijalizacija radi TOPS funkcija
 
-
    IF !kalk_tops_get_parametri_prenosa( @_params )
       RETURN .F.
    ENDIF
@@ -272,7 +271,7 @@ FUNCTION kalk_preuzmi_tops_dokumente( sync_file, auto_razd, ch_barkod, mag_konto
       RETURN
    ENDIF
 
-   //SELECT kalk
+   // SELECT kalk
 
    IF ( _idvd_pos == "42" .AND. _auto_razduzenje == "D" )
       _br_kalk  := kalk_get_next_broj_v5( gFirma, "11", NIL )
@@ -390,7 +389,7 @@ FUNCTION kalk_preuzmi_tops_dokumente( sync_file, auto_razd, ch_barkod, mag_konto
    // prikazi report...
    _show_report_roba( _roba_data )
 
-   IF ( gMultiPM == "D" .AND. _count > 0 .AND. _auto_razduzenje == "N" )
+   IF ( _count > 0 .AND. _auto_razduzenje == "N" )
       // pobrisi fajlove...
       IF FErase( _imp_file ) == -1
          MsgBeep( "Problem sa brisanjem fajla !" )
@@ -725,105 +724,81 @@ STATIC FUNCTION get_import_file( import_file )
    LOCAL _imp_patt := "t*.dbf"
    LOCAL _prenesi, _izbor, _a_tmp1, _a_tmp2
 
-   IF gMultiPM == "D"
+   _prod_mjesta := _prodajna_mjesta_iz_koncij() // sva prodajna mjesta iz tabele koncij
 
-
-      _prod_mjesta := _prodajna_mjesta_iz_koncij() // sva prodajna mjesta iz tabele koncij
-
-      IF Len( _prod_mjesta ) == 0
-         // imamo problem, nema prodajnih mjesta
-         MsgBeep( "U tabeli koncij nisu definisana prodajna mjesta !!!" )
-         _ret := .F.
-         RETURN _ret
-      ENDIF
-
-      FOR _i := 1 TO Len( _prod_mjesta )
-
-         // putanja koju cu koristiti
-         _pos_kum_path := AllTrim( gTopsDest ) + AllTrim( _prod_mjesta[ _i ] ) + SLASH
-
-
-         BrisiSFajlove( _pos_kum_path ) // brisi sve fajlove starije od 28 dana
-
-
-         _imp_files := Directory( _pos_kum_path + _imp_patt ) // fajlove u matricu po pattern-u
-
-         ASort( _imp_files,,, {| x, y| DToS( x[ 3 ] ) + x[ 4 ] > DToS( y[ 3 ] ) + y[ 4 ] } )
-
-         // dodaj u matricu za odabir
-         AEval( _imp_files, {| elem| AAdd( _opc, PadR( AllTrim( _prod_mjesta[ _i ] ) + ;
-            SLASH + Trim( elem[ 1 ] ), 20 ) + " " + ;
-            UChkPostoji() + " " + DToC( elem[ 3 ] ) + " " + elem[ 4 ] ;
-            ) }, 1, D_MAX_FILES )
-
-
-      NEXT
-
-      // R/X + datum + vrijeme
-      ASort( _opc,,, {| x, y| Right( x, 19 ) > Right( y, 19 ) } )
-
-      _h := Array( Len( _opc ) )
-
-      FOR _n := 1 TO Len( _h )
-         _h[ _n ] := ""
-      NEXT
-
-      // ima li stavki za preuzimanje ?
-      IF Len( _opc ) == 0
-
-         MsgBeep( "U direktoriju za prenos nema podataka /2" )
-         _ret := .F.
-         RETURN _ret
-
-      ENDIF
-
-   ELSE
-      MsgBeep( "Pripremi disketu za prenos ....#te pritisni nesto za nastavak" )
+   IF Len( _prod_mjesta ) == 0
+      // imamo problem, nema prodajnih mjesta
+      MsgBeep( "U tabeli koncij nisu definisana prodajna mjesta !!!" )
+      _ret := .F.
+      RETURN _ret
    ENDIF
 
-   IF gMultiPM == "D"
+   FOR _i := 1 TO Len( _prod_mjesta )
 
-      _izbor := 1
-      _prenesi := .F.
+      // putanja koju cu koristiti
+      _pos_kum_path := AllTrim( gTopsDest ) + AllTrim( _prod_mjesta[ _i ] ) + SLASH
 
-      DO WHILE .T.
 
-         _izbor := Menu( "izdat", _opc, _izbor, .F. )
+      BrisiSFajlove( _pos_kum_path ) // brisi sve fajlove starije od 28 dana
 
-         IF _izbor == 0
-            EXIT
+
+      _imp_files := Directory( _pos_kum_path + _imp_patt ) // fajlove u matricu po pattern-u
+
+      ASort( _imp_files,,, {| x, y| DToS( x[ 3 ] ) + x[ 4 ] > DToS( y[ 3 ] ) + y[ 4 ] } )
+
+      // dodaj u matricu za odabir
+      AEval( _imp_files, {| elem| AAdd( _opc, PadR( AllTrim( _prod_mjesta[ _i ] ) + ;
+         SLASH + Trim( elem[ 1 ] ), 20 ) + " " + ;
+         UChkPostoji() + " " + DToC( elem[ 3 ] ) + " " + elem[ 4 ] ;
+         ) }, 1, D_MAX_FILES )
+
+
+   NEXT
+
+   // R/X + datum + vrijeme
+   ASort( _opc,,, {| x, y| Right( x, 19 ) > Right( y, 19 ) } )
+
+   _h := Array( Len( _opc ) )
+
+   FOR _n := 1 TO Len( _h )
+      _h[ _n ] := ""
+   NEXT
+
+   // ima li stavki za preuzimanje ?
+   IF Len( _opc ) == 0
+
+      MsgBeep( "U direktoriju za prenos nema podataka /2" )
+      _ret := .F.
+      RETURN _ret
+
+   ENDIF
+
+
+   _izbor := 1
+   _prenesi := .F.
+
+   DO WHILE .T.
+
+      _izbor := Menu( "izdat", _opc, _izbor, .F. )
+
+      IF _izbor == 0
+         EXIT
+      ELSE
+
+         import_file := AllTrim( gTopsDest ) + AllTrim( Left( _opc[ _izbor ], 20 ) )
+
+         IF Pitanje(, "Zelite li izvrsiti prenos ?", "D" ) == "D"
+            _prenesi := .T.
+            _izbor := 0
          ELSE
-
-            import_file := AllTrim( gTopsDest ) + AllTrim( Left( _opc[ _izbor ], 20 ) )
-
-            IF Pitanje(, "Zelite li izvrsiti prenos ?", "D" ) == "D"
-               _prenesi := .T.
-               _izbor := 0
-            ELSE
-               LOOP
-            ENDIF
+            LOOP
          ENDIF
-      ENDDO
-
-      IF !_prenesi
-         _ret := .F.
-         RETURN _ret
       ENDIF
+   ENDDO
 
-   ELSE
-
-      // CRC gledamo ako nije modemska veza
-      import_file := AllTrim( gTopsDest ) + "topska.dbf"
-
-      _a_tmp1 := IscitajCRC( AllTrim( gTopsDest ) + "crctk.crc" )
-      _a_tmp2 := IntegDBF( import_file )
-
-      IF !( _a_tmp1[ 1 ] == _a_tmp2[ 1 ] .AND. _a_tmp1[ 2 ] == _a_tmp2[ 2 ] )
-         Msg( "CRCTK.CRC se ne slaze. Greska na disketi !", 4 )
-         _ret := .F.
-         RETURN _ret
-      ENDIF
-
+   IF !_prenesi
+      _ret := .F.
+      RETURN _ret
    ENDIF
 
    RETURN _ret

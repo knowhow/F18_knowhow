@@ -11,6 +11,9 @@
 
 #include "f18.ch"
 
+
+MEMVAR _idroba, _Kolicina
+
 STATIC s_nPragOdstupanjaNCSumnjiv := NIL
 STATIC s_nStandarnaStopaMarze := NIL
 
@@ -61,6 +64,61 @@ FUNCTION standardna_stopa_marze( nSet )
    ENDIF
 
    RETURN s_nStandarnaStopaMarze
+
+
+FUNCTION korekcija_nabavne_cijene_sa_zadnjom_ulaznom( nKolicina, nZadnjaUlaznaNC, nSrednjaNabavnaCijena )
+
+   LOCAL nTmp, nOdst
+   LOCAL nTmp_n_stanje, nTmp_n_nv, nTmp_s_nv
+
+   IF !( prag_odstupanja_nc_sumnjiv() > 0 .AND. nSrednjaNabavnaCijena <> 0 .AND. nZadnjaUlaznaNC <> 0 )
+      // koriguj samo akoj je prag odstupanja > 0, nc <>0, i zadnjanc <> 0
+      RETURN nSrednjaNabavnaCijena
+   ENDIF
+
+   nTmp := Round( nSrednjaNabavnaCijena, 4 ) - Round( nZadnjaUlaznaNC, 4 )
+   nOdst := ( nTmp / Round( nZadnjaUlaznaNC, 4 ) ) * 100
+
+   IF Abs( nOdst ) > prag_odstupanja_nc_sumnjiv()
+
+      IF nije_dozvoljeno_azuriranje_sumnjivih_stavki()
+         Beep( 4 )
+         CLEAR TYPEAHEAD
+      ENDIF
+
+      MsgBeep( "Odstupanje u odnosu na zadnji ulaz je#" + AllTrim( Str( Abs( nOdst ) ) ) + " %" + "#" + ;
+         "artikal: " + AllTrim( _idroba ) + " " + PadR( roba->naz, 15 ) + " nc:" + AllTrim( Str( nSrednjaNabavnaCijena, 12, 2 ) ) )
+
+      // a_nc_ctrl( @aNC_ctrl, idroba, nKolicina, ;
+      // nSrednjaNabavnaCijena, nZadnjaUlaznaNC )
+
+
+      IF Pitanje(, "Napraviti korekciju NC (D/N)?", "N" ) == "D"
+
+         nTmp_n_stanje := ( nKolicina - _kolicina )
+         nTmp_n_nv := ( nTmp_n_stanje * nZadnjaUlaznaNC )
+         nTmp_s_nv := ( nKolicina * nSrednjaNabavnaCijena )
+
+         nSrednjaNabavnaCijena := ( ( nTmp_s_nv - nTmp_n_nv ) / _kolicina )
+
+      ENDIF
+   ENDIF
+
+   RETURN nSrednjaNabavnaCijena
+
+
+/*
+       ako je nabavna cijena 0, ponuditi cijenu koja je roba.vpc / ( 1 + standardna_stopa_marze )
+       npr. vpc=1, standarna_stopa_marze = 20%, nc=0.8
+*/
+
+FUNCTION korekcija_nabavna_cijena_0( nSrednjaNabavnaCijena )
+
+   IF Abs( Round( nSrednjaNabavnaCijena, 4 ) ) <= 0 .AND. roba->vpc != 0
+      nSrednjaNabavnaCijena := Round( roba->vpc / ( 1 + standardna_stopa_marze() / 100 ), 4 )
+   ENDIF
+
+   RETURN nSrednjaNabavnaCijena
 
 
 
@@ -612,7 +670,7 @@ FUNCTION kalk_valid_kolicina_mag()
       ENDIF
       error_bar( "KA_" + _mkonto + "/" + _idroba, ;
          _mkonto + " / " + _idroba + "na stanju: " + AllTrim( Str( nKolS, 10, 4 ) ) + " treba " +  AllTrim( Str( _kolicina, 10, 4 ) ) )
-      
+
    ENDIF
 
    RETURN .T.

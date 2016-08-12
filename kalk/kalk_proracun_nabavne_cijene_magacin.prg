@@ -58,7 +58,7 @@ FUNCTION kalk_get_nabavna_mag( cIdFirma, cIdRoba, cIdKonto, nKolicina, nKolZN, n
 
    IF ( ( cIdFirma + cIdKonto + cIdRoba ) == ( field->idfirma + field->mkonto + field->idroba ) ) .AND. _datdok < field->datdok
       error_bar( "KA_" + cIdfirma + "/" + cIdKonto + "/" + cIdRoba, "Postoji dokument " + field->idfirma + "-" + field->idvd + "-" + field->brdok + " na datum: " + DToC( field->datdok ), 4 )
-      //_ERROR := "1"
+      // _ERROR := "1"
    ENDIF
 
    nLen := 1
@@ -129,46 +129,14 @@ FUNCTION kalk_get_nabavna_mag( cIdFirma, cIdRoba, cIdKonto, nKolicina, nKolZN, n
       nSrednjaNabavnaCijena := ( nUVr_poz - nIVr_poz ) / nKol_poz // srednja nabavna cijena
    ENDIF
 
-
-   IF prag_odstupanja_nc_sumnjiv() > 0 .AND. nSrednjaNabavnaCijena <> 0 .AND. nZadnjaUlaznaNC <> 0 // ako se koristi kontrola NC
-
-      nTmp := Round( nSrednjaNabavnaCijena, 4 ) - Round( nZadnjaUlaznaNC, 4 )
-      nOdst := ( nTmp / Round( nZadnjaUlaznaNC, 4 ) ) * 100
-
-      IF Abs( nOdst ) > prag_odstupanja_nc_sumnjiv()
-
-         Beep( 4 )
-         IF nije_dozvoljeno_azuriranje_sumnjivih_stavki()
-            CLEAR TYPEAHEAD
-         ENDIF
-
-         MsgBeep( "Odstupanje u odnosu na zadnji ulaz je#" + AllTrim( Str( Abs( nOdst ) ) ) + " %" + "#" + ;
-            "artikal: " + AllTrim( _idroba ) + " " + PadR( roba->naz, 15 ) + " nc:" + AllTrim( Str( nSrednjaNabavnaCijena, 12, 2 ) ) )
-
-         // a_nc_ctrl( @aNC_ctrl, idroba, nKolicina, ;
-         // nSrednjaNabavnaCijena, nZadnjaUlaznaNC )
-
-
-         IF Pitanje(, "Napraviti korekciju NC (D/N)?", "N" ) == "D"
-
-            nTmp_n_stanje := ( nKolicina - _kolicina )
-            nTmp_n_nv := ( nTmp_n_stanje * nZadnjaUlaznaNC )
-            nTmp_s_nv := ( nKolicina * nSrednjaNabavnaCijena )
-
-            nSrednjaNabavnaCijena := ( ( nTmp_s_nv - nTmp_n_nv ) / _kolicina )
-
-         ENDIF
-      ENDIF
-
+   IF !( field->idvd == "95" ) // 95 - optisi su sravnjenje kartice, to ne treba korigovati
+      nSrednjaNabavnaCijena := korekcija_nabavne_cijene_sa_zadnjom_ulaznom( nKolicina, nZadnjaUlaznaNC, nSrednjaNabavnaCijena )
    ENDIF
-
+   
    nKolicina := Round( nKolicina, 4 )
 
-   // ako je nabavna cijena 0, ponuditi cijenu koja je roba.vpc / ( 1 + standardna_stopa_marze )
-   // npr. vpc=1, standarna_stopa_marze = 20%, nc=0.8
-   IF Abs( Round( nSrednjaNabavnaCijena, 4 ) ) <= 0 .AND. roba->vpc != 0
-      nSrednjaNabavnaCijena := Round( roba->vpc / ( 1 + standardna_stopa_marze() / 100 ), 4 )
-   ENDIF
+   nSrednjaNabavnaCijena := korekcija_nabavna_cijena_0( nSrednjaNabavnaCijena )
+
 
    SELECT kalk_pripr
    my_use_refresh_start()

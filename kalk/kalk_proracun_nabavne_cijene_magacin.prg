@@ -40,7 +40,6 @@ FUNCTION kalk_get_nabavna_mag( cIdFirma, cIdRoba, cIdKonto, nKolicina, nKolZN, n
    LOCAL nTmp
    LOCAL nTmp_n_stanje, nTmp_n_nv, nTmp_s_nv
    LOCAL cIdVd
-   LOCAL nKolicina
 
    nKolicina := 0
 

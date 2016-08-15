@@ -399,7 +399,9 @@ STATIC FUNCTION VKol( x_kord )
       ENDIF
 
       IF nKols < Abs( _kolicina )
-         _ERROR := "1"
+
+       sumnjive_stavke_error()
+
          error_bar( "KA_" + _idkonto + " / " + _idroba, _idkonto + " / " + _idroba + " kolicina:" + ;
             AllTrim( Str( nKols, 12, 3 ) ) +  " treba: " + AllTrim( Str( _kolicina, 12, 3 ) ) )
       ENDIF

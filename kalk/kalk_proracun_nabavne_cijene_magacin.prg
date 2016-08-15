@@ -40,11 +40,11 @@ FUNCTION kalk_get_nabavna_mag( cIdFirma, cIdRoba, cIdKonto, nKolicina, nKolZN, n
    LOCAL nTmp
    LOCAL nTmp_n_stanje, nTmp_n_nv, nTmp_s_nv
    LOCAL cIdVd
+   LOCAL nKolicina
 
    nKolicina := 0
 
    IF lAutoObr == .T.
-
       IF knab_cache( cIdKonto, cIdroba, @nUlKol, @nIzlKol, @nKolicina, @nUlNv, @nIzlNv, @nSrednjaNabavnaCijena ) == 1   // uzmi stanje iz cache tabele
          SELECT kalk_pripr
          RETURN .T.
@@ -79,8 +79,6 @@ FUNCTION kalk_get_nabavna_mag( cIdFirma, cIdRoba, cIdKonto, nKolicina, nKolZN, n
       IF field->mu_i == "1" .OR. field->mu_i == "5"
 
          IF field->IdVd == "10"
-            // kod 10-ki je originalno predvidjeno gubitak kolicine (kalo i rastur)
-            // mislim da ovo niko i ne koristi, ali eto neka stoji
             nKolNeto := Abs( field->kolicina - field->gKolicina - field->gKolicin2 )
          ELSE
             nKolNeto := Abs( field->kolicina )
@@ -94,7 +92,7 @@ FUNCTION kalk_get_nabavna_mag( cIdFirma, cIdRoba, cIdKonto, nKolicina, nKolZN, n
             nUlNV     += ( nKolNeto * field->nc )
 
 
-            IF field->idvd $ "10#16#96" // zapamti uvijek zadnju ulaznu NC
+            IF field->idvd $ "10#16" // zapamti uvijek zadnju ulaznu NC
                nZadnjaUlaznaNC := field->nc
             ENDIF
 
@@ -108,12 +106,9 @@ FUNCTION kalk_get_nabavna_mag( cIdFirma, cIdRoba, cIdKonto, nKolicina, nKolZN, n
 
 
          IF Round( nKolicina, 8 ) > 0  // ako je kolicinsko stanje pozitivno zapamti ga
-
             nKol_poz := nKolicina
-
             nUKol_poz := nUlKol
             nIKol_poz := nIzlKol
-
             nUVr_poz := nUlNv
             nIVr_poz := nIzlNv
          ENDIF
@@ -124,10 +119,16 @@ FUNCTION kalk_get_nabavna_mag( cIdFirma, cIdRoba, cIdKonto, nKolicina, nKolZN, n
 
    ENDDO // ovo je bio prvi prolaz
 
-   IF Round( nKol_poz, 8 ) == 0 // utvrdi srednju nabavnu cijenu na osnovu posljednjeg pozitivnog stanja
+   // IF Round( nKol_poz, 8 ) == 0 // utvrdi srednju nabavnu cijenu na osnovu posljednjeg pozitivnog stanja
+   IF Round( nKolicina, 0 ) == 0
       nSrednjaNabavnaCijena := 0
    ELSE
-      nSrednjaNabavnaCijena := ( nUVr_poz - nIVr_poz ) / nKol_poz // srednja nabavna cijena
+      // nSrednjaNabavnaCijena := ( nUVr_poz - nIVr_poz ) / nKol_poz // srednja nabavna cijena
+      nSrednjaNabavnaCijena :=  ( nIzlNV  - nUlNv ) / nKolicina
+
+      IF nSrednjaNabavnaCijena < 0 // kartica je prolupala, srednja nabavna cijena negativna
+         nSrednjaNabavnaCijena := 0
+      ENDIF
    ENDIF
 
    IF  _idvd != "95"  // 95 - optisi su sravnjenje kartice, to ne treba korigovati

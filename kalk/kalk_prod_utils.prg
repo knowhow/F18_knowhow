@@ -482,7 +482,6 @@ FUNCTION kalk_valid_kolicina_prod()
       error_bar( "KA_" + _pkonto + "/" + _idroba, ;
          _pkonto + " / " + _idroba + "na stanju: " + AllTrim( Str( nKolS, 10, 4 ) ) + " treba " +  AllTrim( Str( _kolicina, 10, 4 ) ) )
 
-
    ENDIF
 
    RETURN .T.

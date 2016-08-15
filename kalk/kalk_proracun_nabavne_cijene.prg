@@ -81,10 +81,8 @@ FUNCTION korekcija_nabavne_cijene_sa_zadnjom_ulaznom( nKolicina, nZadnjaUlaznaNC
 
    IF Abs( nOdst ) > prag_odstupanja_nc_sumnjiv()
 
-      IF nije_dozvoljeno_azuriranje_sumnjivih_stavki()
-         Beep( 4 )
-         CLEAR TYPEAHEAD
-      ENDIF
+      sumnjive_stavke_error( .F. )
+
 
       MsgBeep( "Odstupanje u odnosu na zadnji ulaz je#" + AllTrim( Str( Abs( nOdst ) ) ) + " %" + "#" + ;
          "artikal: " + AllTrim( _idroba ) + " " + PadR( roba->naz, 15 ) + " nc:" + AllTrim( Str( nSrednjaNabavnaCijena, 12, 2 ) ) )
@@ -663,11 +661,9 @@ FUNCTION kalk_valid_kolicina_mag()
    ENDIF
 
    IF nKolS < _Kolicina
-      Beep( 4 )
-      IF nije_dozvoljeno_azuriranje_sumnjivih_stavki()
-         CLEAR TYPEAHEAD // zaustavi asistent magacin - kolicina
-         _ERROR := "1"
-      ENDIF
+
+      sumnjive_stavke_error()
+    
       error_bar( "KA_" + _mkonto + "/" + _idroba, ;
          _mkonto + " / " + _idroba + "na stanju: " + AllTrim( Str( nKolS, 10, 4 ) ) + " treba " +  AllTrim( Str( _kolicina, 10, 4 ) ) )
 

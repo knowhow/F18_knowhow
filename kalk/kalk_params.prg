@@ -369,6 +369,22 @@ FUNCTION dozvoljeno_azuriranje_sumnjivih_stavki()
 
    RETURN !( gCijene == "2" )
 
+
+FUNCTION sumnjive_stavke_error( lErrorSet )
+
+   hb_default( @lErrorSet, .T. )
+   
+   IF nije_dozvoljeno_azuriranje_sumnjivih_stavki()
+      Beep( 2 )
+      CLEAR TYPEAHEAD // zaustavi asistenta prodavnica, kolicina
+
+      IF lErrorSet
+         _ERROR := "1"
+      ENDIF
+   ENDIF
+
+   RETURN .T.
+
 FUNCTION metodanc_info()
 
    IF gMetodanc == " "

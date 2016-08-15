@@ -299,9 +299,7 @@ STATIC FUNCTION VKol()
       ENDIF
 
       IF nKols < Abs( _kolicina )
-         IF nije_dozvoljeno_azuriranje_sumnjivih_stavki()
-            _ERROR := "1"
-         ENDIF
+         sumnjive_stavke_error()
          error_bar( "KA_" + _idroba + "/" + _idkonto, _idroba + "/" + _idkonto + " kolicina nedovoljna:" + AllTrim( Str( nKols, 12, 3 ) ) )
       ENDIF
       SELECT kalk_pripr

@@ -457,9 +457,7 @@ FUNCTION StaviMPCSif( nCijena, lUpit )
 
 
 
-/* kalk_valid_kolicina_prod()
- *
- */
+
 
 FUNCTION kalk_valid_kolicina_prod()
 
@@ -478,12 +476,9 @@ FUNCTION kalk_valid_kolicina_prod()
 
    IF nKolS < ppKolicina
 
-      IF nije_dozvoljeno_azuriranje_sumnjivih_stavki()
-         Beep( 2 )
-         CLEAR TYPEAHEAD // zaustavi asistenta prodavnica, kolicina
-         _ERROR := "1"
-      ENDIF
-      //Msg( "U prodavnici je samo" + Str( nKolS, 10, 3 ) + " robe !", 6 )
+      sumnjive_stavke_error()
+
+      // Msg( "U prodavnici je samo" + Str( nKolS, 10, 3 ) + " robe !", 6 )
       error_bar( "KA_" + _pkonto + "/" + _idroba, ;
          _pkonto + " / " + _idroba + "na stanju: " + AllTrim( Str( nKolS, 10, 4 ) ) + " treba " +  AllTrim( Str( _kolicina, 10, 4 ) ) )
 
@@ -501,8 +496,8 @@ FUNCTION kalk_valid_kolicina_prod()
 
 FUNCTION StanjeProd( cKljuc, ddatdok )
 
-   // {
    LOCAL nUlaz := 0, nIzlaz := 0
+
    SELECT KALK
    SET ORDER TO TAG "4"
    GO TOP
@@ -532,4 +527,3 @@ FUNCTION StanjeProd( cKljuc, ddatdok )
    ENDDO
 
    RETURN ( nUlaz - nIzlaz )
-// }

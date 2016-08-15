@@ -71,7 +71,7 @@ FUNCTION korekcija_nabavne_cijene_sa_zadnjom_ulaznom( nKolicina, nZadnjaUlaznaNC
    LOCAL nTmp, nOdst
    LOCAL nTmp_n_stanje, nTmp_n_nv, nTmp_s_nv
 
-   IF !( prag_odstupanja_nc_sumnjiv() > 0 .AND. nSrednjaNabavnaCijena <> 0 .AND. nZadnjaUlaznaNC <> 0 )
+   IF !( prag_odstupanja_nc_sumnjiv() > 0 .AND. nSrednjaNabavnaCijena > 0 .AND. nZadnjaUlaznaNC > 0 )
       // koriguj samo akoj je prag odstupanja > 0, nc <>0, i zadnjanc <> 0
       RETURN nSrednjaNabavnaCijena
    ENDIF
@@ -83,13 +83,11 @@ FUNCTION korekcija_nabavne_cijene_sa_zadnjom_ulaznom( nKolicina, nZadnjaUlaznaNC
 
       sumnjive_stavke_error( .F. )
 
-
       MsgBeep( "Odstupanje u odnosu na zadnji ulaz je#" + AllTrim( Str( Abs( nOdst ) ) ) + " %" + "#" + ;
          "artikal: " + AllTrim( _idroba ) + " " + PadR( roba->naz, 15 ) + " nc:" + AllTrim( Str( nSrednjaNabavnaCijena, 12, 2 ) ) )
 
       // a_nc_ctrl( @aNC_ctrl, idroba, nKolicina, ;
       // nSrednjaNabavnaCijena, nZadnjaUlaznaNC )
-
 
       IF Pitanje(, "Napraviti korekciju NC (D/N)?", "N" ) == "D"
 
@@ -663,7 +661,7 @@ FUNCTION kalk_valid_kolicina_mag()
    IF nKolS < _Kolicina
 
       sumnjive_stavke_error()
-    
+
       error_bar( "KA_" + _mkonto + "/" + _idroba, ;
          _mkonto + " / " + _idroba + "na stanju: " + AllTrim( Str( nKolS, 10, 4 ) ) + " treba " +  AllTrim( Str( _kolicina, 10, 4 ) ) )
 

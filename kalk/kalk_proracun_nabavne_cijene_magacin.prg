@@ -118,12 +118,13 @@ FUNCTION kalk_get_nabavna_mag( cIdFirma, cIdRoba, cIdKonto, nKolicina, nKolZN, n
 
    ENDDO // ovo je bio prvi prolaz
 
+altd()
    // IF Round( nKol_poz, 8 ) == 0 // utvrdi srednju nabavnu cijenu na osnovu posljednjeg pozitivnog stanja
    IF Round( nKolicina, 0 ) == 0
       nSrednjaNabavnaCijena := 0
    ELSE
       // nSrednjaNabavnaCijena := ( nUVr_poz - nIVr_poz ) / nKol_poz // srednja nabavna cijena
-      nSrednjaNabavnaCijena :=  ( nIzlNV  - nUlNv ) / nKolicina
+      nSrednjaNabavnaCijena :=  ( nUlNv - nIzlNv  ) / nKolicina
 
       IF nSrednjaNabavnaCijena < 0 // kartica je prolupala, srednja nabavna cijena negativna
          nSrednjaNabavnaCijena := 0

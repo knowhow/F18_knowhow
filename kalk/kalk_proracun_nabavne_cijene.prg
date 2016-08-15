@@ -71,7 +71,7 @@ FUNCTION korekcija_nabavne_cijene_sa_zadnjom_ulaznom( nKolicina, nZadnjaUlaznaNC
    LOCAL nTmp, nOdst
    LOCAL nTmp_n_stanje, nTmp_n_nv, nTmp_s_nv
 
-   IF !( prag_odstupanja_nc_sumnjiv() > 0 .AND. nSrednjaNabavnaCijena > 0 .AND. nZadnjaUlaznaNC > 0 )
+   IF !(  prag_odstupanja_nc_sumnjiv() > 0 .AND. nSrednjaNabavnaCijena >= 0 .AND. nZadnjaUlaznaNC > 0 )
       // koriguj samo akoj je prag odstupanja > 0, nc <>0, i zadnjanc <> 0
       RETURN nSrednjaNabavnaCijena
    ENDIF
@@ -79,17 +79,17 @@ FUNCTION korekcija_nabavne_cijene_sa_zadnjom_ulaznom( nKolicina, nZadnjaUlaznaNC
    nTmp := Round( nSrednjaNabavnaCijena, 4 ) - Round( nZadnjaUlaznaNC, 4 )
    nOdst := ( nTmp / Round( nZadnjaUlaznaNC, 4 ) ) * 100
 
-   IF Abs( nOdst ) > prag_odstupanja_nc_sumnjiv()
+   IF ( Abs( nOdst ) > prag_odstupanja_nc_sumnjiv() ) .OR. ( Round( nSrednjaNabavnaCijena, 4 ) == 0 ) // ako je srednja nabavna cijena 0 takodje koriguj
 
-      sumnjive_stavke_error( .F. )
+      IF ! Round( nSrednjaNabavnaCijena, 4 ) == 0
 
-      MsgBeep( "Odstupanje u odnosu na zadnji ulaz je#" + AllTrim( Str( Abs( nOdst ) ) ) + " %" + "#" + ;
-         "artikal: " + AllTrim( _idroba ) + " " + PadR( roba->naz, 15 ) + " nc:" + AllTrim( Str( nSrednjaNabavnaCijena, 12, 2 ) ) )
+         MsgBeep( "Odstupanje #" + AllTrim( Str( Abs( nOdst ) ) ) + " %" + "#" + ;
+            "artikal: " + AllTrim( _idroba ) + " " + PadR( roba->naz, 15 ) + ;
+            "# srednja.nc:" + AllTrim( Str( nSrednjaNabavnaCijena, 12, 2 ) ) + ", zadnji ulaz nc:" + AllTrim( Str( nZadnjaUlaznaNC, 12, 2 ) ) )
+      ENDIF
 
-      // a_nc_ctrl( @aNC_ctrl, idroba, nKolicina, ;
-      // nSrednjaNabavnaCijena, nZadnjaUlaznaNC )
 
-      IF Pitanje(, "Napraviti korekciju NC (D/N)?", "N" ) == "D"
+      IF ( Round( nSrednjaNabavnaCijena, 4 ) == 0 ) .OR. Pitanje(, "Napraviti korekciju NC (D/N)?", "N" ) == "D"
 
          nTmp_n_stanje := ( nKolicina - _kolicina )
          nTmp_n_nv := ( nTmp_n_stanje * nZadnjaUlaznaNC )

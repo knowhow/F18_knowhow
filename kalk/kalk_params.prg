@@ -370,17 +370,14 @@ FUNCTION dozvoljeno_azuriranje_sumnjivih_stavki()
    RETURN !( gCijene == "2" )
 
 
-FUNCTION sumnjive_stavke_error( lErrorSet )
+FUNCTION sumnjive_stavke_error( lForce )
 
-   hb_default( @lErrorSet, .T. )
-   
-   IF nije_dozvoljeno_azuriranje_sumnjivih_stavki()
+   hb_default( @lForce, .F. )
+
+   IF lForce .OR. nije_dozvoljeno_azuriranje_sumnjivih_stavki()
       Beep( 2 )
       CLEAR TYPEAHEAD // zaustavi asistenta prodavnica, kolicina
-
-      IF lErrorSet
-         _ERROR := "1"
-      ENDIF
+      _ERROR := "1"
    ENDIF
 
    RETURN .T.

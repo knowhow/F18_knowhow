@@ -136,6 +136,10 @@ FUNCTION kalk_get_nabavna_mag( cIdFirma, cIdRoba, cIdKonto, nKolicina, nKolZN, n
    nKolicina := Round( nKolicina, 4 )
    nSrednjaNabavnaCijena := korekcija_nabavna_cijena_0( nSrednjaNabavnaCijena )
 
+   IF Round( nSrednjaNabavnaCijena, 4 ) <= 0
+      sumnjive_stavke_error()
+   ENDIF
+   
    SELECT kalk_pripr
    my_use_refresh_start()
 

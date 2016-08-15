@@ -12,7 +12,6 @@
 #include "f18.ch"
 
 
-
 /*
       generacija tops dokumenata na osnovu kalk dokumenata
 */
@@ -21,7 +20,7 @@ FUNCTION kalk_generisi_tops_dokumente( cIdFirma, cIdTipDok, cBrDok )
 
    LOCAL _katops_table := "katops.dbf"
    LOCAL _rbr, _dat_dok
-   LOCAL _pos_locations
+   LOCAL _aPosLokacije
    LOCAL _lFromKumulativ := .T.
    LOCAL _total := 0
 
@@ -39,7 +38,6 @@ FUNCTION kalk_generisi_tops_dokumente( cIdFirma, cIdTipDok, cBrDok )
       RETURN .F.
 
    ENDIF
-
 
    kalk_tops_o_gen_tables( _lFromKumulativ ) // otvori tabele
 
@@ -66,7 +64,7 @@ FUNCTION kalk_generisi_tops_dokumente( cIdFirma, cIdTipDok, cBrDok )
    _dat_dok := Date()
 
 
-   _pos_locations := {} // matrica pos mjesta koje kaci kalkulacija
+   _aPosLokacije := {} // matrica pos mjesta koje kaci kalkulacija
 
    DO WHILE !Eof() .AND. field->idfirma == cIdFirma .AND. field->idvd == cIdTipDok .AND. field->brdok == cBrDok
 
@@ -86,8 +84,8 @@ FUNCTION kalk_generisi_tops_dokumente( cIdFirma, cIdTipDok, cBrDok )
       SELECT katops
       APPEND BLANK
 
-      IF AScan( _pos_locations, {| x| x == koncij->idprodmjes } ) == 0
-         AAdd( _pos_locations, koncij->idprodmjes )
+      IF AScan( _aPosLokacije, {| x| x == koncij->idprodmjes } ) == 0
+         AAdd( _aPosLokacije, koncij->idprodmjes )
       ENDIF
 
       _dat_dok := kalk_pripr->datdok
@@ -140,7 +138,6 @@ FUNCTION kalk_generisi_tops_dokumente( cIdFirma, cIdTipDok, cBrDok )
       ENDIF
 
       _total += ( field->kolicina * field->mpc ) // saberi total
-
       ++ _rbr
 
       SELECT kalk_pripr
@@ -154,8 +151,7 @@ FUNCTION kalk_generisi_tops_dokumente( cIdFirma, cIdTipDok, cBrDok )
 
    IF _rbr > 0
 
-
-      _exp_file := kalk_tops_kreiraj_fajl_prenosa( _dat_dok, _pos_locations, _rbr ) // napravi i prebaci izlazne fajlove gdje trebaju
+      _exp_file := kalk_tops_kreiraj_fajl_prenosa( _dat_dok, _aPosLokacije, _rbr ) // napravi i prebaci izlazne fajlove gdje trebaju
 
       my_close_all_dbf()
 
@@ -198,7 +194,7 @@ STATIC FUNCTION kalk_tops_print_report( firma, tip_dok, cBrDok, broj_stavki, tot
 
 
 
-STATIC FUNCTION kalk_tops_kreiraj_fajl_prenosa( datum, pos_locations, broj_stavki )
+STATIC FUNCTION kalk_tops_kreiraj_fajl_prenosa( datum, aPosLokacije, broj_stavki )
 
    LOCAL _i, _n
    LOCAL _dest_file, _dest_patt
@@ -213,35 +209,31 @@ STATIC FUNCTION kalk_tops_kreiraj_fajl_prenosa( datum, pos_locations, broj_stavk
    ENDIF
 
 
-   _dir_create( AllTrim( gTopsDest ) ) // napravi direktorij prenosa ako ga nema !
+   _dir_create( AllTrim( gTopsDest ) ) // napravi direktorij prenosa ako ga nema
+   _export_location := AllTrim( gTopsDest ) // export lokacija, bazna
 
 
-   _export_location := AllTrim( gTopsDest ) // export lokacija generalna
+   FOR _n := 1 TO Len( aPosLokacije ) // prodji kroz sve lokacije i postavi datoteke eksporta
+
+      // export ce biti u poddirektoriju kojem treba da bude, npr /prenos/1/
+      _export := _export_location + AllTrim( aPosLokacije[ _n ] ) + SLASH
 
 
-   // prodji kroz sve lokacije i postavi datoteke eksporta
-   FOR _n := 1 TO Len( pos_locations )
-
-      // export ce biti u poddirektoriju kojem treba da bude...
-      // recimo /prenos/1/
-      _export := _export_location + AllTrim( pos_locations[ _n ] ) + SLASH
-
-      // kreiraj mi ovaj direktorij ako ne postoji
-      _dir_create( _export )
+      _dir_create( _export ) // kreirati direktorij ako ne postoji
 
       // nakon dir create prebaci se na my_local_folder
       DirChange( my_home() )
 
-      // pronadji mi naziv fajla koji je dozvoljen
-      _dest_patt := get_topskalk_export_file( "2", _export, datum )
 
-      // kopiraj katops.dbf
-      _dest_file := _export + StrTran( _table_name, "katops.", _dest_patt + "." )
+      _dest_patt := get_topskalk_export_file( "2", _export, datum ) // pronadji naziv fajla koji je dozvoljen
+
+
+      _dest_file := _export + StrTran( _table_name, "katops.", _dest_patt + "." ) // kopiraj katops.dbf na destinaciju
       _ret := _dest_file
 
       IF FileCopy( _table_path + _table_name, _dest_file ) > 0
-         // kopiraj txt fajl
-         _dest_file := StrTran( _dest_file, ".dbf", ".txt" )
+
+         _dest_file := StrTran( _dest_file, ".dbf", ".txt" ) // kopiraj txt fajl
          FileCopy( my_home() + OUTF_FILE, _dest_file )
       ELSE
          MsgBeep( "Problem sa kopiranjem fajla na destinaciju #" + _export )

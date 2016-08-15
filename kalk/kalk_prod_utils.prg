@@ -477,9 +477,10 @@ FUNCTION kalk_valid_kolicina_prod()
    ENDIF
 
    IF nKolS < ppKolicina
-      Beep( 2 )
+
       IF nije_dozvoljeno_azuriranje_sumnjivih_stavki()
-         CLEAR TYPEAHEAD // zaustavi asistenta prodavnica
+         Beep( 2 )
+         CLEAR TYPEAHEAD // zaustavi asistenta prodavnica, kolicina
          _ERROR := "1"
       ENDIF
       //Msg( "U prodavnici je samo" + Str( nKolS, 10, 3 ) + " robe !", 6 )

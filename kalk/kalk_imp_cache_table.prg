@@ -235,6 +235,7 @@ FUNCTION gen_cache()
 
    SELECT cache
    my_dbf_zap()
+   my_flock()
 
 
    //o_kalk_doks()
@@ -272,8 +273,8 @@ FUNCTION gen_cache()
 
          nKolicina := 0
          nIzlNV := 0
-         // ukupna izlazna nabavna vrijednost
-         nUlNV := 0
+
+         nUlNV := 0 // ukupna izlazna nabavna vrijednost
          nIzlKol := 0
          // ukupna izlazna kolicina
          nUlKol := 0
@@ -287,23 +288,17 @@ FUNCTION gen_cache()
 
          DO WHILE !Eof() .AND. ( ( cIdFirma + cIdKonto + cIdRoba ) == ( idFirma + mkonto + idroba ) )
 
-            // provjeri datum
-            IF field->datdok > dDatGen
+
+            IF field->datdok > dDatGen // provjeri datum
                SKIP
                LOOP
             ENDIF
 
-/*
-            SELECT kalk_doks
-            SET ORDER TO TAG "1"
-            GO TOP
-            SEEK kalk->idfirma + kalk->idvd + kalk->brdok
-  */
             find_kalk_doks_by_broj_dokumenta( kalk->idfirma, kalk->idvd, kalk->brdok )
             SELECT kalk
 
-            // provjera postojanja dokumenta korekcije
-            IF Left( kalk_doks->brfaktp, 6 ) == "#KOREK"
+
+            IF Left( kalk_doks->brfaktp, 6 ) == "#KOREK" // provjera postojanja dokumenta korekcije
                _korek_dok := .T.
             ELSE
                _korek_dok := .F.
@@ -324,8 +319,7 @@ FUNCTION gen_cache()
                   nUlKol += nKolNeto
                   nUlNV += ( nKolNeto * field->nc )
 
-                  // zadnja nabavna cijena ulaza
-                  IF idvd $ "10#16#96" .AND. !_korek_dok
+                  IF idvd $ "10#16#96" .AND. !_korek_dok // zadnja nabavna cijena ulaza
                      nZadnjaNC := field->nc
                   ENDIF
 
@@ -335,15 +329,15 @@ FUNCTION gen_cache()
                   nIzlKol += nKolNeto
                   nIzlNV += ( nKolNeto * field->nc )
 
-                  // zadnja nabavna cijena ulaza
-                  IF idvd == "16" .AND. _korek_dok
+
+                  IF idvd == "16" .AND. _korek_dok // zadnja nabavna cijena ulaza
                      nZadnjaNC := field->nc
                   ENDIF
 
                ENDIF
 
-               // ako je stanje pozitivno zapamti ga
-               IF Round( nKolicina, 8 ) > 0
+
+               IF Round( nKolicina, 8 ) > 0 // ako je stanje pozitivno zapamti ga
                   nKol_poz := nKolicina
 
                   nUKol_poz := nUlKol
@@ -359,22 +353,20 @@ FUNCTION gen_cache()
 
          ENDDO
 
-         // utvrdi srednju nabavnu cijenu na osnovu posljednjeg pozitivnog stanja
-         IF Round( nKol_poz, 8 ) == 0
+
+         IF Round( nKol_poz, 8 ) == 0 // utvrdi srednju nabavnu cijenu na osnovu posljednjeg pozitivnog stanja
             nSNc := 0
          ELSE
-            // srednja nabavna cijena
-            nSNc := ( nUVr_poz - nIVr_poz ) / nKol_poz
+            nSNc := ( nUVr_poz - nIVr_poz ) / nKol_poz // srednja nabavna cijena
          ENDIF
 
          nKolicina := Round( nKolicina, 4 )
 
          IF Round( nKol_poz, 8 ) <> 0
 
-            // upisi u cache
+
             SELECT cache
 
-            my_flock()
             APPEND BLANK
 
             REPLACE idkonto WITH cIdKonto
@@ -388,7 +380,6 @@ FUNCTION gen_cache()
             REPLACE z_nv WITH nZadnjaNC
 
             IF nSNC <> 0 .AND. nZadnjaNC <> 0
-
                nTmp := ( Round( nSNC, 4 ) - Round( nZadnjaNC, 4 ) )
                nOdst := ( nTmp / Round( nZadnjaNC, 4 ) ) * 100
 
@@ -397,7 +388,7 @@ FUNCTION gen_cache()
                REPLACE odst WITH 0
             ENDIF
 
-            my_unlock()
+
 
          ENDIF
 
@@ -503,7 +494,6 @@ FUNCTION gen_cache()
             // upisi u cache
             SELECT cache
 
-            my_flock()
 
             APPEND BLANK
 
@@ -517,7 +507,6 @@ FUNCTION gen_cache()
             REPLACE nv WITH nSnc
             REPLACE z_nv WITH 0
 
-            my_unlock()
 
          ENDIF
 
@@ -527,8 +516,12 @@ FUNCTION gen_cache()
 
    NEXT
 
-   BoxC()
 
+   BoxC()
+   SELECT cache
+   my_unlock()
+   SELECT kalk
+   
    IF cAppFSif == "D"
       // dodaj stavke iz sifrarnika robe koje ne postoje
       add_to_cache_stavke_iz_sifarnika( cMKtoLst, cPKtoLst, nT_kol, nT_ncproc )

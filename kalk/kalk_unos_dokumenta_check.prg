@@ -159,7 +159,7 @@ FUNCTION DuplRoba()
             dkolicina += kolicina
             my_delete()
          ELSE
-            _ERROR := "1"
+            --_ERROR := "1"
          ENDIF
       ENDIF
       SKIP
@@ -197,7 +197,7 @@ FUNCTION check_datum_posljednje_kalkulacije()
 
    IF _idfirma + _idkonto + _idroba == field->idfirma + field->mkonto + field->idroba .AND. _datdok < field->datdok
       error_bar( "KA_" + _idfirma + "-" + _idvd + "-" + _brdok, _mkonto + " / " + _idroba + " zadnji dokument: " + DToC( field->datdok ) )
-      _ERROR := "1"
+      //_ERROR := "1"
    ENDIF
 
    SELECT kalk_pripr
@@ -216,7 +216,7 @@ FUNCTION kalk_dat_poslj_promjene_prod()
 
    IF _datdok < field->datdok
       error_bar( "KA_" + _idfirma + "-" + _idkonto + "-" + _idroba, _idkonto + " / " + _idroba + " zadnji dokument: " + DToC( field->datdok ) )
-      _ERROR := "1"
+      // _ERROR := "1"
    ENDIF
 
    SELECT kalk_pripr

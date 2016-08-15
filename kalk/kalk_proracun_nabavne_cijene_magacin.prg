@@ -135,9 +135,7 @@ FUNCTION kalk_get_nabavna_mag( cIdFirma, cIdRoba, cIdKonto, nKolicina, nKolZN, n
    ENDIF
 
    nKolicina := Round( nKolicina, 4 )
-
    nSrednjaNabavnaCijena := korekcija_nabavna_cijena_0( nSrednjaNabavnaCijena )
-
 
    SELECT kalk_pripr
    my_use_refresh_start()

@@ -955,7 +955,7 @@ FUNCTION MsgBeep( cMsg )
    Beep( 2 )
 
 #ifndef TEST
-   CLEAR TYPEAHEAD
+   CLEAR TYPEAHEAD // MsgBeep
 #endif
 
 /*

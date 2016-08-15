@@ -100,6 +100,10 @@ FUNCTION kalk_get_nabavna_prod( cIdFirma, cIdroba, cIdkonto, nKolicina, nKolZN, 
 
    nSrednjaNabavnaCijena := korekcija_nabavna_cijena_0( nSrednjaNabavnaCijena )
 
+   IF Round( nSrednjaNabavnaCijena, 4 ) <= 0
+      sumnjive_stavke_error()
+   ENDIF
+   
    SELECT kalk_pripr
 
    RETURN .T.

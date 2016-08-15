@@ -71,7 +71,6 @@ FUNCTION kalk_get_nabavna_mag( cIdFirma, cIdRoba, cIdKonto, nKolicina, nKolZN, n
    nZadnjaUlaznaNC := 0
 
 
-   // ovo je prvi prolaz, u njemu se proracunava totali za jednu karticu
    GO TOP
    DO WHILE !Eof() .AND. ( ( cIdFirma + cIdKonto + cIdRoba ) == ( idFirma + mkonto + idroba ) ) .AND. _datdok >= datdok
 
@@ -116,9 +115,8 @@ FUNCTION kalk_get_nabavna_mag( cIdFirma, cIdRoba, cIdKonto, nKolicina, nKolZN, n
       ENDIF
       SKIP
 
-   ENDDO // ovo je bio prvi prolaz
+   ENDDO
 
-altd()
    // IF Round( nKol_poz, 8 ) == 0 // utvrdi srednju nabavnu cijenu na osnovu posljednjeg pozitivnog stanja
    IF Round( nKolicina, 0 ) == 0
       nSrednjaNabavnaCijena := 0

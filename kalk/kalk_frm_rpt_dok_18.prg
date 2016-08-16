@@ -31,50 +31,51 @@
  *     Stampa dokumenta tipa 18
  */
 
-function StKalk18()
-*{
-local nCol1:=nCol2:=0,npom:=0,nCR:=0
+FUNCTION StKalk18()
 
-Private nPrevoz,nCarDaz,nZavTr,nBankTr,nSpedTr,nMarza,nMarza2
-// iznosi troskova i marzi koji se izracunavaju u KTroskovi()
+   // {
+   LOCAL nCol1 := nCol2 := 0, npom := 0, nCR := 0
 
-if cSeek!='IZDOKS'  // stampa se vise dokumenata odjednom
-  nStr:=1
-endif
+   PRIVATE nPrevoz, nCarDaz, nZavTr, nBankTr, nSpedTr, nMarza, nMarza2
+   // iznosi troskova i marzi koji se izracunavaju u KTroskovi()
 
-cIdPartner:=IdPartner; cBrFaktP:=BrFaktP; dDatFaktP:=DatFaktP
+   IF cSeek != 'IZDOKS'  // stampa se vise dokumenata odjednom
+      nStr := 1
+   ENDIF
 
-cIdKonto:=IdKonto; cIdKonto2:=IdKonto2
+   cIdPartner := IdPartner; cBrFaktP := BrFaktP; dDatFaktP := DatFaktP
 
-P_10CPI
-B_ON
-?? "PROMJENA CIJENA U MAGACINU"
-B_OFF
-?
-P_COND
-? "KALK BR:",  cIdFirma+"-"+cIdVD+"-"+cBrDok,SPACE(2),", Datum:",DatDok
-@ prow(),122 SAY "Str:"+str(nStr,3)
+   cIdKonto := IdKonto; cIdKonto2 := IdKonto2
 
-select KONTO; HSEEK cidkonto
-?  "KONTO zaduzuje :",cIdKonto,"-",naz
-select kalk_pripr
+   P_10CPI
+   B_ON
+   ?? "PROMJENA CIJENA U MAGACINU"
+   B_OFF
+   ?
+   P_COND
+   ? "KALK BR:",  cIdFirma + "-" + cIdVD + "-" + cBrDok, Space( 2 ), ", Datum:", DatDok
+   @ PRow(), 122 SAY "Str:" + Str( nStr, 3 )
 
-m:="--- ------------------------------------------------ ----------- ---------- ---------- ---------- ---------- ---------- ----------"
+   SELECT KONTO; HSEEK cidkonto
+   ?  "KONTO zaduzuje :", cIdKonto, "-", naz
+   SELECT kalk_pripr
 
-? m
-if IsPDV()
-	? "*RB*       ROBA                                     * Kolicina  * STARA PC *  RAZLIKA *  NOVA  PC*  IZNOS   *   PDV%  *  IZNOS   *"
-	? "*  *                                                *           *  BEZ PDV *PC BEZ PDV*  BEZ PDV *  RAZLIKE *         *   PDV    *"
-else
-	? "*RB*       ROBA                                     * Kolicina  * STARA VPC*  RAZLIKA *  NOVA VPC*  IZNOS   *   PPP%  *  IZNOS   *"
-	? "*  *                                                *           *          *    VPC   *          *  RAZLIKE *         *   PPP    *"
-endif
-? m
-nTotA:=nTotB:=nTotC:=0
+   m := "--- ------------------------------------------------ ----------- ---------- ---------- ---------- ---------- ---------- ----------"
+
+   ? m
+   IF IsPDV()
+      ? "*RB*       ROBA                                     * Kolicina  * STARA PC *  RAZLIKA *  NOVA  PC*  IZNOS   *   PDV%  *  IZNOS   *"
+      ? "*  *                                                *           *  BEZ PDV *PC BEZ PDV*  BEZ PDV *  RAZLIKE *         *   PDV    *"
+   ELSE
+      ? "*RB*       ROBA                                     * Kolicina  * STARA VPC*  RAZLIKA *  NOVA VPC*  IZNOS   *   PPP%  *  IZNOS   *"
+      ? "*  *                                                *           *          *    VPC   *          *  RAZLIKE *         *   PPP    *"
+   ENDIF
+   ? m
+   nTotA := nTotB := nTotC := 0
 
 
-private cIdd:=idpartner+brfaktp+idkonto+idkonto2
-do while !eof() .and. cIdFirma==IdFirma .and.  cBrDok==BrDok .and. cIdVD==IdVD
+   PRIVATE cIdd := idpartner + brfaktp + idkonto + idkonto2
+   DO WHILE !Eof() .AND. cIdFirma == IdFirma .AND.  cBrDok == BrDok .AND. cIdVD == IdVD
 
 /*
  if idpartner+brfaktp+idkonto+idkonto2<>cidd
@@ -86,63 +87,64 @@ do while !eof() .and. cIdFirma==IdFirma .and.  cBrDok==BrDok .and. cIdVD==IdVD
 */
 
 
- select ROBA; HSEEK kalk_pripr->IdRoba
- select TARIFA; HSEEK kalk_pripr->IdTarifa
- select kalk_pripr
+      SELECT ROBA; HSEEK kalk_pripr->IdRoba
+      SELECT TARIFA; HSEEK kalk_pripr->IdTarifa
+      SELECT kalk_pripr
 
- KTroskovi()
+      KTroskovi()
 
-if prow() > page_length()
-    FF
-    @ prow(),122 SAY "Str:"+str(++nStr,3)
-endif
+      IF PRow() > page_length()
+         FF
+         @ PRow(), 122 SAY "Str:" + Str( ++nStr, 3 )
+      ENDIF
 
- VTPOREZI()
+      VTPOREZI()
 
-nTotA+=VPC*Kolicina
-nTotB+=vpc/(1+_PORVT)*_PORVT*kolicina
+      nTotA += VPC * Kolicina
+      nTotB += vpc / ( 1 + _PORVT ) * _PORVT * kolicina
 
-@ prow()+1,0 SAY  Rbr PICTURE "999"
-@ prow(),pcol()+1 SAY IdRoba
-aNaz:=SjeciStr(trim(ROBA->naz)+" ( "+ROBA->jmj+" )",37)
-@ prow(),(nCR:=pcol()+1) SAY  ""; ?? aNaz[1]
-@ prow(),52 SAY Kolicina
-@ prow(),pcol()+1 SAY MPCSAPP  PICTURE PicCDEM
-@ prow(),pcol()+1 SAY VPC      PICTURE PicCDEM
-@ prow(),pcol()+1 SAY MPCSAPP+VPC  PICTURE PicCDEM
-nC1:=pcol()+1
-@ prow(),pcol()+1 SAY VPC*Kolicina  PICTURE PicDEM
-@ prow(),pcol()+1 SAY _porvt*100    PICTURE Picproc
-@ prow(),pcol()+1 SAY vpc/(1+_PORVT)*_PORVT*kolicina   PICTURE Picdem
+      @ PRow() + 1, 0 SAY  Rbr PICTURE "999"
+      @ PRow(), PCol() + 1 SAY IdRoba
+      aNaz := SjeciStr( Trim( ROBA->naz ) + " ( " + ROBA->jmj + " )", 37 )
+      @ PRow(), ( nCR := PCol() + 1 ) SAY  ""; ?? aNaz[ 1 ]
+      @ PRow(), 52 SAY Kolicina
+      @ PRow(), PCol() + 1 SAY MPCSAPP  PICTURE PicCDEM
+      @ PRow(), PCol() + 1 SAY VPC      PICTURE PicCDEM
+      @ PRow(), PCol() + 1 SAY MPCSAPP + VPC  PICTURE PicCDEM
+      nC1 := PCol() + 1
+      @ PRow(), PCol() + 1 SAY VPC * Kolicina  PICTURE PicDEM
+      @ PRow(), PCol() + 1 SAY _porvt * 100    PICTURE Picproc
+      @ PRow(), PCol() + 1 SAY vpc / ( 1 + _PORVT ) * _PORVT * kolicina   PICTURE Picdem
 
-// novi red
-if len(aNaz)>1
- @ prow()+1,0 SAY ""
- @ prow(),nCR  SAY ""; ?? aNaz[2]
-endif
+      // novi red
+      IF Len( aNaz ) > 1
+         @ PRow() + 1, 0 SAY ""
+         @ PRow(), nCR  SAY ""; ?? aNaz[ 2 ]
+      ENDIF
 
-skip
+      SKIP
 
-enddo
+   ENDDO
 
-if prow() > page_length()
-    FF
-    @ prow(),125 SAY "Str:"+str(++nStr,3)
-endif
-? m
-@ prow()+1,0        SAY "Ukupno:"
+   IF PRow() > page_length()
+      FF
+      @ PRow(), 125 SAY "Str:" + Str( ++nStr, 3 )
+   ENDIF
+   ? m
+   @ PRow() + 1, 0        SAY "Ukupno:"
 
-@ prow(),nC1  SAY nTota         PICTURE PicDEM
-@ prow(),pcol()+1  SAY 0             PICTURE PicDEM
-@ prow(),pcol()+1  SAY nTotB         PICTURE PicDEM
+   @ PRow(), nC1  SAY nTota         PICTURE PicDEM
+   @ PRow(), PCol() + 1  SAY 0             PICTURE PicDEM
+   @ PRow(), PCol() + 1  SAY nTotB         PICTURE PicDEM
 
-? m
+   ? m
 
-?
-P_10CPI
-? padl("Clanovi komisije: 1. ___________________",75)
-? padl("2. ___________________",75)
-? padl("3. ___________________",75)
-?
-return
-*}
+   ?
+   P_10CPI
+   ? PadL( "Clanovi komisije: 1. ___________________", 75 )
+   ? PadL( "2. ___________________", 75 )
+   ? PadL( "3. ___________________", 75 )
+   ?
+
+   RETURN
+// }

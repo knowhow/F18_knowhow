@@ -162,7 +162,7 @@ STATIC FUNCTION kreiraj_kalk_bazirane_tabele( ver )
    _table_name := "kalk_pripr"
 
 
-   IF ver[ "current" ] > 0 .AND. ver[ "current" ] < 020105 // 2.1.5
+   IF ver[ "current" ] > 0 .AND. ver[ "current" ] < 020106 // 2.1.5
       f18_delete_dbf( _table_name )
    ENDIF
 
@@ -182,7 +182,7 @@ STATIC FUNCTION kreiraj_kalk_bazirane_tabele( ver )
    _alias := "KALK_PRIPR2"
    _table_name := "kalk_pripr2"
 
-   IF ver[ "current" ] > 0 .AND. ver[ "current" ] < 020105 // 2.1.5
+   IF ver[ "current" ] > 0 .AND. ver[ "current" ] < 020106 // 2.1.5
       f18_delete_dbf( _table_name )
    ENDIF
 
@@ -196,7 +196,7 @@ STATIC FUNCTION kreiraj_kalk_bazirane_tabele( ver )
    _alias := "KALK_PRIPR9"
    _table_name := "kalk_pripr9"
 
-   IF ver[ "current" ] > 0 .AND. ver[ "current" ] < 020105 // 2.1.5
+   IF ver[ "current" ] > 0 .AND. ver[ "current" ] < 020106 // 2.1.5
       f18_delete_dbf( _table_name )
    ENDIF
 
@@ -211,7 +211,7 @@ STATIC FUNCTION kreiraj_kalk_bazirane_tabele( ver )
    _alias := "_KALK"
    _table_name := "_kalk"
 
-   IF ver[ "current" ] > 0 .AND. ver[ "current" ] < 020105 // 2.1.5
+   IF ver[ "current" ] > 0 .AND. ver[ "current" ] < 020106 // 2.1.5
       f18_delete_dbf( _table_name )
    ENDIF
    IF_NOT_FILE_DBF_CREATE
@@ -224,7 +224,7 @@ STATIC FUNCTION kreiraj_kalk_bazirane_tabele( ver )
 
    AAdd( aDBf, { 'DATVAL', 'D',   8,  0 } ) // koristi kalk imp varazdin
 
-   IF ver[ "current" ] > 0 .AND. ver[ "current" ] < 020105 // 2.1.5
+   IF ver[ "current" ] > 0 .AND. ver[ "current" ] < 020106 // 2.1.5
       f18_delete_dbf( _table_name )
    ENDIF
    IF_NOT_FILE_DBF_CREATE
@@ -262,32 +262,32 @@ STATIC FUNCTION definicija_kalk_tabele()
    AAdd( aDBf, { 'TRABAT', 'C',   1,  0 } )
    AAdd( aDBf, { 'TMARZA', 'C',   1,  0 } )
    AAdd( aDBf, { 'TMARZA2', 'C',   1,  0 } )
-   AAdd( aDBf, { 'NC', 'N', 18, 18 } )
-   AAdd( aDBf, { 'MPC', 'N', 18, 18 } )
-   AAdd( aDBf, { 'VPC', 'N', 18, 18 } )
-   AAdd( aDBf, { 'MPCSAPP', 'N', 18, 18 } )
+   AAdd( aDBf, { 'NC', 'N', 18, 8 } )
+   AAdd( aDBf, { 'MPC', 'N', 18, 8 } )
+   AAdd( aDBf, { 'VPC', 'N', 18, 8 } )
+   AAdd( aDBf, { 'MPCSAPP', 'N', 18, 8 } )
    AAdd( aDBf, { 'IDTARIFA', 'C',   6,  0 } )
    AAdd( aDBf, { 'MKONTO', 'C',   7,  0 } )
    AAdd( aDBf, { 'PKONTO', 'C',   7,  0 } )
    AAdd( aDBf, { 'MU_I', 'C',   1,  0 } )
    AAdd( aDBf, { 'PU_I', 'C',   1,  0 } )
    AAdd( aDBf, { 'ERROR', 'C',   1,  0 } )
-   AAdd( aDBf, { 'KOLICINA', 'N', 18, 18 } )
-   AAdd( aDBf, { 'GKOLICINA', 'N', 18, 18 } )
-   AAdd( aDBf, { 'GKOLICIN2', 'N', 18, 18 } )
-   AAdd( aDBf, { 'FCJ', 'N', 18, 18 } )
-   AAdd( aDBf, { 'FCJ2', 'N', 18, 18 } )
-   AAdd( aDBf, { 'FCJ3', 'N', 18, 18 } )
-   AAdd( aDBf, { 'RABAT', 'N', 18, 18 } )
-   AAdd( aDBf, { 'PREVOZ', 'N', 18, 18 } )
-   AAdd( aDBf, { 'BANKTR', 'N', 18, 18 } )
-   AAdd( aDBf, { 'SPEDTR', 'N', 18, 18 } )
-   AAdd( aDBf, { 'PREVOZ2', 'N', 18, 18 } )
-   AAdd( aDBf, { 'CARDAZ', 'N', 18, 18 } )
-   AAdd( aDBf, { 'ZAVTR', 'N', 18, 18 } )
-   AAdd( aDBf, { 'MARZA', 'N', 18, 18 } )
-   AAdd( aDBf, { 'MARZA2', 'N', 18, 18 } )
-   AAdd( aDBf, { 'RABATV', 'N', 18, 18 } )
-   AAdd( aDBf, { 'VPCSAP', 'N', 18, 18 } )
+   AAdd( aDBf, { 'KOLICINA', 'N', 18, 8 } )
+   AAdd( aDBf, { 'GKOLICINA', 'N', 18, 8 } )
+   AAdd( aDBf, { 'GKOLICIN2', 'N', 18, 8 } )
+   AAdd( aDBf, { 'FCJ', 'N', 18, 8 } )
+   AAdd( aDBf, { 'FCJ2', 'N', 18, 8 } )
+   AAdd( aDBf, { 'FCJ3', 'N', 18, 8 } )
+   AAdd( aDBf, { 'RABAT', 'N', 18, 8 } )
+   AAdd( aDBf, { 'PREVOZ', 'N', 18, 8 } )
+   AAdd( aDBf, { 'BANKTR', 'N', 18, 8 } )
+   AAdd( aDBf, { 'SPEDTR', 'N', 18, 8 } )
+   AAdd( aDBf, { 'PREVOZ2', 'N', 18, 8 } )
+   AAdd( aDBf, { 'CARDAZ', 'N', 18, 8 } )
+   AAdd( aDBf, { 'ZAVTR', 'N', 18, 8 } )
+   AAdd( aDBf, { 'MARZA', 'N', 18, 8 } )
+   AAdd( aDBf, { 'MARZA2', 'N', 18, 8 } )
+   AAdd( aDBf, { 'RABATV', 'N', 18, 8 } )
+   AAdd( aDBf, { 'VPCSAP', 'N', 18, 8 } )
 
    RETURN aDbf

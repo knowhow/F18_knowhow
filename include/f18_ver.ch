@@ -20,7 +20,7 @@
 
 #define F18_DBF_VER_MAJOR  2
 #define F18_DBF_VER_MINOR  1
-#define F18_DBF_VER_PATCH  5
+#define F18_DBF_VER_PATCH  6
 
 #define SERVER_DB_VER_MAJOR  0
 #define SERVER_DB_VER_MINOR  0

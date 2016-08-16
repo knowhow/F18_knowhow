@@ -795,7 +795,6 @@ STATIC FUNCTION TTbl2Kalk()
    cTDok := GetKTipDok( AllTrim( temp->idtipdok ) )
 
 
-   // cBrojKalk := kalk_sljedeci_brdok( cTDok, gFirma )
    cBrojKalk :=  kalk_get_next_broj_v5( gFirma, cTDok, NIL )
 
    DO WHILE !Eof()

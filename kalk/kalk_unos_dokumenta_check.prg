@@ -227,7 +227,7 @@ FUNCTION kalk_dat_poslj_promjene_prod()
 
 /* kalk_sljedeci_broj(cidfirma,cIdvD,nMjesta)
  *     Sljedeci slobodan broj dokumenta za zadanu firmu i vrstu dokumenta
- */
+
 
 FUNCTION kalk_sljedeci_broj( cIdfirma, cIdvD, nMjesta )
 
@@ -250,7 +250,7 @@ FUNCTION kalk_sljedeci_broj( cIdfirma, cIdvD, nMjesta )
 
    RETURN cReturn
 
-
+*/
 
 
 

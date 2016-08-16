@@ -139,7 +139,7 @@ FUNCTION GenNivP()
    o_koncij()
    o_kalk_pripr()
    // o_kalk()
-   PRIVATE cBrDok := kalk_sljedeci_broj( cIdfirma, "19", 8 )
+   PRIVATE cBrDok := kalk_get_next_broj_v5( cIdFirma, "19", NIL )
 
    nRbr := 0
    SET ORDER TO TAG "1"

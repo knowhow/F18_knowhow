@@ -167,14 +167,14 @@ FUNCTION InvManj()
 
    lOdvojiVisak := Pitanje(, "Napraviti poseban dokument za visak?", "N" ) == "D"
 
-   PRIVATE cBrOtp := kalk_sljedeci_broj( cidfirma, "95", 8 )
+   PRIVATE cBrOtp := kalk_get_next_broj_v5( cIdFirma, "95", NIL )
    IF lOdvojiVisak
       o_kalk_pripr9()
-      PRIVATE cBrDop := kalk_sljedeci_broj( cidfirma, "16", 8 )
+      PRIVATE cBrDop := kalk_get_next_broj_v5( cIdFirma, "16", NIL )
       DO WHILE .T.
 
          SELECT kalk_pripr9
-         SEEK cidFirma + "16" + cBrDop
+         SEEK cIdFirma + "16" + cBrDop
          IF Found()
             Beep( 1 )
             IF Pitanje(, "U smecu vec postoji " + cidfirma + "-16-" + cbrdop + ", zelite li ga izbrisati?", "D" ) == "D"

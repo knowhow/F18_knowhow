@@ -71,7 +71,7 @@ FUNCTION kalk_generisi_inventuru_magacina()
    IF lOsvjezi
       PRIVATE cBrDok := kalk_pripr->brdok
    ELSE
-      PRIVATE cBrDok := kalk_sljedeci_broj( cIdFirma, "IM", 8 )
+      PRIVATE cBrDok := kalk_get_next_broj_v5( cIdFirma, "IM", NIL )
    ENDIF
 
    nRbr := 0
@@ -235,7 +235,7 @@ FUNCTION kalk_generisanje_inventure_razlike()
    // o_kalk_doks()
    // o_kalk()
 
-   PRIVATE cBrDok := kalk_sljedeci_broj( cIdFirma, "IM", 8 )
+   PRIVATE cBrDok := kalk_get_next_broj_v5( cIdFirma, "IM", NIL )
 
 
    nRbr := 0
@@ -427,7 +427,7 @@ STATIC FUNCTION kalk_dodaj_im_stavku( cIdFirma, cIdKonto, cBrDok, dDatDok, nRbr,
    IF "*" $ Transform( _nc, "999999999" )
       _nc := -99.99
    ENDIF
-   
+
    Gather2()
 
    RETURN .T.

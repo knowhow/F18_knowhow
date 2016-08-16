@@ -1334,11 +1334,11 @@ STATIC FUNCTION from_kalk_imp_temp_to_pript( aFExist, lFSkip, lNegative, cCtrl_a
    LOCAL nRbr, nUvecaj, nCnt, cPredhodniFaktDokument, cPredhodniTipDokumenta, cPredhodnoProdMjesto, aPom
    LOCAL cFakt, cTDok, cPm
    LOCAL nFExist, nT_scan, cTmpArt
+   LOCAL cIdKontoTmp, cSifraDobavljaca, cIdRobaTmp
 
    o_kalk_pripr()
    o_koncij()
-   // o_kalk_doks()
-   // o_kalk_doks2()
+
 
    O_ROBA
    o_kalk_pript()
@@ -1379,22 +1379,20 @@ STATIC FUNCTION from_kalk_imp_temp_to_pript( aFExist, lFSkip, lNegative, cCtrl_a
 
          nT_scan := 0
 
-         cTmp_kto := kalk_imp_get_konto_by_tip_pm_poslovnica( cTDok, kalk_imp_temp->idpm, "R", cIdPJ )
+         cIdKontoTmp := kalk_imp_get_konto_by_tip_pm_poslovnica( cTDok, kalk_imp_temp->idpm, "R", cIdPJ )
 
          SELECT roba
          SET ORDER TO TAG "ID_VSD"
+         cSifraDobavljaca := PadL( AllTrim( kalk_imp_temp->idroba ), 5, "0" )
 
-         cTmp_dob := PadL( AllTrim( kalk_imp_temp->idroba ), 5, "0" )
-
-         SEEK cTmp_dob
-
-         cTmp_roba := field->id
+         SEEK cSifraDobavljaca // aha trazi se po sifri dobavljaca 52 => 00052
+         cIdRobaTmp := field->id
 
          O_CACHE
          SELECT cache
          SET ORDER TO TAG "1"
          GO TOP
-         SEEK PadR( cTmp_kto, 7 ) + PadR( cTmp_roba, 10 )
+         SEEK PadR( cIdKontoTmp, 7 ) + PadR( cIdRobaTmp, 10 )
 
 
          IF Found() .AND. prag_odstupanja_nc_sumnjiv() > 0 .AND. ( field->odst > prag_odstupanja_nc_sumnjiv() ) // dodaj sporne u kontrolnu matricu
@@ -1403,8 +1401,7 @@ STATIC FUNCTION from_kalk_imp_temp_to_pript( aFExist, lFSkip, lNegative, cCtrl_a
                {| xVal| xVal[ 1 ] + PadR( xVal[ 2 ], 10 ) == cTDok + PadR( AllTrim( cFakt ), 10 ) } )
 
             IF nT_scan = 0
-               AAdd( aArr_ctrl, { cTDok, ;
-                  PadR( AllTrim( cFakt ), 10 ) } )
+               AAdd( aArr_ctrl, { cTDok, PadR( AllTrim( cFakt ), 10 ) } )
             ENDIF
 
          ENDIF
@@ -1424,26 +1421,15 @@ STATIC FUNCTION from_kalk_imp_temp_to_pript( aFExist, lFSkip, lNegative, cCtrl_a
       ENDIF
 
 
-      IF cTDok <> cPredhodniTipDokumenta // promjena tipa dokumenta
-         nUvecaj := 0
-      ENDIF
+      //IF cTDok <> cPredhodniTipDokumenta // promjena tipa dokumenta
+      //   nUvecaj := 0
+      //ENDIF
 
-      IF cFakt <> cPredhodniFaktDokument
+      IF (cFakt <> cPredhodniFaktDokument) //.OR. (cTDok == "11" .AND. (cPm <> cPredhodnoProdMjesto) )
          ++ nUvecaj
-         cBrojKalk := get_next_temp_broj( nUvecaj ) // kalk_get_next_kalk_doc_uvecaj( gFirma, cTDok, nUvecaj )
+         cBrojKalk := kalk_imp_get_next_temp_broj( nUvecaj )
          nRbr := 0
          AAdd( aPom, { cTDok, cBrojKalk, cFakt } )
-      ELSE
-
-         IF cTDok == "11" // ako su diskontna zaduzenja razgranici ih putem polja prodajno mjesto
-
-            IF cPm <> cPredhodnoProdMjesto
-               ++ nUvecaj
-               cBrojKalk := get_next_temp_broj( nUvecaj ) // kalk_get_next_kalk_doc_uvecaj( gFirma, cTDok, nUvecaj )
-               nRbr := 0
-               AAdd( aPom, { cTDok, cBrojKalk, cFakt } )
-            ENDIF
-         ENDIF
       ENDIF
 
 
@@ -1467,8 +1453,8 @@ STATIC FUNCTION from_kalk_imp_temp_to_pript( aFExist, lFSkip, lNegative, cCtrl_a
       APPEND BLANK // pript
       REPLACE idfirma WITH gFirma, ;
          rBr WITH Str( ++nRbr, 3 ), ;
-         idvd WITH cTDok, ; // uzmi pravilan tip dokumenta za kalk
-      brdok WITH cBrojKalk, ;
+         idvd WITH cTDok, ;
+         brdok WITH cBrojKalk, ;
          datdok WITH kalk_imp_temp->datdok, ;
          idpartner WITH kalk_imp_temp->idpartner, ;
          idtarifa WITH ROBA->idtarifa, ;
@@ -1536,9 +1522,7 @@ STATIC FUNCTION from_kalk_imp_temp_to_pript( aFExist, lFSkip, lNegative, cCtrl_a
          cT_ctrl := ""
 
          IF cCtrl_art == "D" .AND. Len( aArr_ctrl ) > 0
-            nT_scan := AScan( aArr_ctrl, ;
-               {| xVal| xVal[ 1 ] + PadR( xVal[ 2 ], 10 ) == ;
-               cT_tipdok + PadR( cT_brfakt, 10 ) } )
+            nT_scan := AScan( aArr_ctrl, {| xVal| xVal[ 1 ] + PadR( xVal[ 2 ], 10 ) == cT_tipdok + PadR( cT_brfakt, 10 ) } )
 
             IF nT_scan <> 0
                cT_ctrl := " !!! ERROR !!!"
@@ -1583,9 +1567,7 @@ STATIC FUNCTION from_kalk_imp_temp_to_pript( aFExist, lFSkip, lNegative, cCtrl_a
 
       DO WHILE !Eof()
 
-         nT_scan := AScan( aArr_ctrl, ;
-            {| xval| xval[ 1 ] + PadR( xval[ 2 ], 10 ) == ;
-            field->idvd + PadR( field->brfaktp, 10 ) } )
+         nT_scan := AScan( aArr_ctrl, {| xval| xval[ 1 ] + PadR( xval[ 2 ], 10 ) == field->idvd + PadR( field->brfaktp, 10 ) } )
 
          IF nT_scan <> 0
             DELETE
@@ -1600,7 +1582,7 @@ STATIC FUNCTION from_kalk_imp_temp_to_pript( aFExist, lFSkip, lNegative, cCtrl_a
 
 
 
-FUNCTION get_next_temp_broj( nUvecaj )
+FUNCTION kalk_imp_get_next_temp_broj( nUvecaj )
 
    LOCAL nX := 1, cResult := "00001   "
 
@@ -1784,7 +1766,7 @@ STATIC FUNCTION kalk_imp_temp_to_roba()
 FUNCTION kalk_imp_obradi_sve_dokumente( nPocniOd, lAsPokreni, lStampaj )
 
    LOCAL dDatVal
-   LOCAL cN_kalk_dok := ""
+   LOCAL cNoviKalkBrDok := ""
    LOCAL nUvecaj := 0
    LOCAL cMKonto, cPKonto
 
@@ -1832,9 +1814,9 @@ FUNCTION kalk_imp_obradi_sve_dokumente( nPocniOd, lAsPokreni, lStampaj )
 
    // SetKey(K_F3,{|| kalk_imp_set_check_point(nPTRec)})
 
-   Box(, 10, 70 )
-   @ 1 + m_x, 2 + m_y SAY "Obrada dokumenata iz pomocne tabele:" COLOR F18_COLOR_I
-   @ 2 + m_x, 2 + m_y SAY "===================================="
+   Box(, 10, 79 )
+   @ 1 + m_x, 2 + m_y SAY8 "Obrada dokumenata iz pomoćne tabele:" COLOR F18_COLOR_I
+   @ 2 + m_x, 2 + m_y SAY "======================================="
 
    DO WHILE !Eof()
 
@@ -1852,10 +1834,10 @@ FUNCTION kalk_imp_obradi_sve_dokumente( nPocniOd, lAsPokreni, lStampaj )
       ENDIF
 
       nT_area := Select()
-      cN_kalk_dok := kalk_get_next_broj_v5( cFirma, cIdVd, kalk_konto_za_brojac( cIdVd, cMKonto, cPKonto ) )  // daj konacni novi broj dokumenta kalk
+      cNoviKalkBrDok := kalk_get_next_broj_v5( cFirma, cIdVd, kalk_konto_za_brojac( cIdVd, cMKonto, cPKonto ) )  // daj konacni novi broj dokumenta kalk
       SELECT ( nT_area )
 
-      @ 3 + m_x, 2 + m_y SAY "Prebacujem: " + cFirma + "-" + cIdVd + "-" + cBrDok
+      @ 3 + m_x, 2 + m_y SAY "KALK IMP Prebacujem: " + cFirma + "-" + cIdVd + "-" + cBrDok + " /"  + cNoviKalkBrDok
 
       nStCnt := 0
       DO WHILE !Eof() .AND. field->brdok == cBrDok .AND. field->idfirma == cFirma .AND. field->idvd == cIdVd
@@ -1870,11 +1852,11 @@ FUNCTION kalk_imp_obradi_sve_dokumente( nPocniOd, lAsPokreni, lStampaj )
          Scatter()
 
          SELECT kalk_pripr
-         _brdok := cN_kalk_dok
+         _brdok := cNoviKalkBrDok
          Gather()
 
          IF _idvd == "14"
-            update_kalk_14_datval( cN_kalk_dok, dDatVal )
+            update_kalk_14_datval( cNoviKalkBrDok, dDatVal )
          ENDIF
 
          SELECT pript

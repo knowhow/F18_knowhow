@@ -108,7 +108,7 @@ FUNCTION knab_cache( cC_Kto, cC_Roba, nC_Ulaz, nC_Izlaz, nC_Stanje, nC_NVU, nC_N
          // a_nc_ctrl( @aNC_ctrl, field->idroba, field->stanje, ;
          // field->nv, field->z_nv )
 
-         IF Pitanje(, "Napraviti korekciju NC (D/N)?", "N" ) == "D"
+         IF Pitanje(, "Napraviti korekciju NC (D/N)?", "D" ) == "D"
 
             nTmp_n_stanje := ( nC_stanje - _kolicina )
             nTmp_n_nv := ( nTmp_n_stanje * nZC_nv )
@@ -521,7 +521,7 @@ FUNCTION gen_cache()
    SELECT cache
    my_unlock()
    SELECT kalk
-   
+
    IF cAppFSif == "D"
       // dodaj stavke iz sifrarnika robe koje ne postoje
       add_to_cache_stavke_iz_sifarnika( cMKtoLst, cPKtoLst, nT_kol, nT_ncproc )

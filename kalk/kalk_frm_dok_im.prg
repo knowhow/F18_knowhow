@@ -63,4 +63,3 @@ FUNCTION Get1_IM()
    nStrana := 3
 
    RETURN LastKey()
-// }

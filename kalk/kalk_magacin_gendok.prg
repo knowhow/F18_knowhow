@@ -307,7 +307,7 @@ FUNCTION MNivPoProc()
    o_koncij()
    o_kalk_pripr()
    -- o_kalk()
-   PRIVATE cBrDok := kalk_sljedeci_broj( cidfirma, "18", 8 )
+   --PRIVATE cBrDok := kalk_sljedeci_broj( cidfirma, "18", 8 )
 
    nRbr := 0
    ## SET ORDER TO TAG "3"  // "3","idFirma+mkonto+idroba+dtos(datdok)+podbr+MU_I+IdVD",KUMPATH+"KALK")

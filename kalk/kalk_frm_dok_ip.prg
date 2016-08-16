@@ -41,7 +41,7 @@ FUNCTION kalk_ip()
    o_kalk_pripr()
    //o_kalk()
 
-   PRIVATE cBrDok := kalk_sljedeci_broj( cIdfirma, "IP", 8 )
+   PRIVATE cBrDok := kalk_get_next_broj_v5( cIdFirma, "IP", NIL )
 
    nRbr := 0
 
@@ -277,7 +277,7 @@ FUNCTION gen_ip_razlika()
    // ona ce sluziti za usporedbu...
    IF cp_dok_pript( cIdFirma, cIdVd, cOldBrDok ) == 0
       MsgC()
-      RETURN
+      RETURN .F.
    ENDIF
 
    MsgC()
@@ -293,7 +293,7 @@ FUNCTION gen_ip_razlika()
    //o_kalk()
 
    // sljedeci broj kalkulacije IP
-   PRIVATE cBrDok := kalk_sljedeci_broj( cIdFirma, "IP" )
+   PRIVATE cBrDok := kalk_get_next_broj_v5( cIdFirma, "IP", NIL )
 
    nRbr := 0
 

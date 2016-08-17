@@ -416,7 +416,7 @@ STATIC FUNCTION _cre_xml( table, rpt_vars )
          xml_node( "broj", _val )
 
          _val := oRow:FieldGet( oRow:FieldPos( "rbr" ) )
-         xml_node( "rbr", _val )
+         xml_node( "rbr", show_number( _val, "9999" ) )
 
          _val := oRow:FieldGet( oRow:FieldPos( "brdok" ) )
          xml_node( "veza", to_xml_encoding( hb_UTF8ToStr( _val ) ) )

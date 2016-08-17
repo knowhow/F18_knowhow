@@ -193,8 +193,7 @@ STATIC FUNCTION fin_kopiraj_nalog_u_tabelu_pripreme( cIdFirma, cIdVn, cBrNal, lS
 
    SELECT SUBAN
    GO TOP
-   DO WHILE !Eof() .AND. cIdFirma == field->IdFirma .AND. cIdVN == field->IdVN ;
-         .AND. cBrNal == field->BrNal // suban.brnal char(8) na serveru
+   DO WHILE !Eof() .AND. cIdFirma == field->IdFirma .AND. cIdVN == field->IdVN .AND. cBrNal == field->BrNal // suban.brnal char(8) na serveru
 
       _rec := dbf_get_rec()
 

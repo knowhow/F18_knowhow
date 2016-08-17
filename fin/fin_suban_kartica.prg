@@ -312,7 +312,6 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
    IF cBrza == "D"
       IF RTrim( qqPartner ) == ";"
          find_suban_by_konto_partner( cIdFirma, qqKonto, NIL, NIL, cOrderBy )
-
       ELSE
          find_suban_by_konto_partner( cIdFirma, qqKonto, qqPartner, NIL, cOrderBy )
       ENDIF
@@ -342,11 +341,16 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
       iif( fk4 .AND. Len( ck4 ) <> 0, ".and.k4=" + dbf_quote( ck4 ), "" ) + ;
       iif( gRj == "D" .AND. Len( cIdrj ) <> 0, iif( gDUFRJ == "D", ".and." + aUsl5, ".and.idrj=" + dbf_quote( cIdRJ ) ), "" ) + ;
       iif( gTroskovi == "D" .AND. Len( cFunk ) <> 0, ".and.funk=" + dbf_quote( cFunk ), "" ) + ;
-      iif( gTroskovi == "D" .AND. Len( cFond ) <> 0, ".and.fond=" + dbf_quote( cFond ), "" ) + ;
-      iif( gDUFRJ == "D", ".and." + aUsl4, ;
-      iif( Len( cIdFirma ) < 2, ".and. IDFIRMA=" + dbf_quote( cIdFirma ), "" ) + ;
-      iif( Len( cIdFirma ) < 2 .AND. cBrza == "D", ".and.IDKONTO==" + dbf_quote( qqKonto ), "" ) + ;
-      iif( Len( cIdFirma ) < 2 .AND. cBrza == "D" .AND. !( RTrim( qqPartner ) == ";" ), ".and.IDPARTNER==" + dbf_quote( qqPartner ), "" ) )
+      iif( gTroskovi == "D" .AND. Len( cFond ) <> 0, ".and.fond=" + dbf_quote( cFond ), "" ) // + ;
+
+   // iif( gDUFRJ == "D", ".and." + aUsl4, ;
+   // iif( Len( cIdFirma ) < 2, ".and. IDFIRMA=" + dbf_quote( cIdFirma ), "" )
+   // + ;
+
+   // iif( Len( cIdFirma ) < 2 .AND. cBrza == "D", ".and.IDKONTO==" + dbf_quote( qqKonto ), "" )
+
+   // + ;
+   // iif( Len( cIdFirma ) < 2 .AND. cBrza == "D" .AND. !( RTrim( qqPartner ) == ";" ), ".and.IDPARTNER==" + dbf_quote( qqPartner ), "" ) )
 
    IF !Empty( qqBrDok )
       cFilter += ( ".and." + aBV )
@@ -431,13 +435,13 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
       nKonD2 := 0
       nKonP2 := 0
       cIdKonto := IdKonto
-
+/*
       IF cBrza == "D"
          IF IdKonto <> qqKonto .OR. IdPartner <> qqPartner .AND. RTrim( qqPartner ) != ";"
             EXIT
          ENDIF
       ENDIF
-
+*/
       IF !Empty( qqNazKonta )
          SELECT konto
          HSEEK cIdKonto
@@ -493,11 +497,11 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
             cRasclan := ""
          ENDIF
 
-         IF cBrza == "D"
-            IF IdKonto <> qqKonto .OR. IdPartner <> qqPartner .AND. RTrim( qqPartner ) != ";"
-               EXIT
-            ENDIF
-         ENDIF
+         // IF cBrza == "D"
+         // IF IdKonto <> qqKonto
+         // EXIT
+         // ENDIF
+         // ENDIF
 
          check_nova_strana( bZagl, oPdf, .F., 6 )
 
@@ -1063,7 +1067,7 @@ STATIC FUNCTION _add_to_export( cKonto, cK_naz, cPartn, cP_naz, cVn, cBr, nRbr, 
 
 
 
-/* Telefon(cTel)
+/*
  *     Postavlja uslov za partnera (npr. Telefon('417'))
  *   param: cTel  - Broj telefona
  */
@@ -1213,7 +1217,7 @@ FUNCTION zagl_suban_kartica( cBrza )
 
 
 
-/* Rasclan()
+/*
  *  Rasclanjuje SUBAN->(IdRj+Funk+Fond)
  */
 

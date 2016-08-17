@@ -25,7 +25,7 @@ FUNCTION fin_bb_subanalitika_b( params )
    LOCAL lExpRpt := params[ "export_dbf" ]
    LOCAL lNule := params[ "saldo_nula" ]
    LOCAL lPodKlas := params[ "podklase" ]
-   LOCAL cFormat := params["format"]
+   LOCAL cFormat := params[ "format" ]
    LOCAL aExpFields, cLaunch, cKlKonto, cSinKonto, cIdKonto, cIdPartner
    LOCAL cFilter, aUsl1, nStr := 0
    LOCAL b, b1, b2
@@ -79,10 +79,10 @@ FUNCTION fin_bb_subanalitika_b( params )
       cFilter += iif( Empty( cFilter ), "", ".and." ) + "idrj=" + dbf_quote( cIdRj )
    ENDIF
 
-   IF !EMPTY( qqKonto )
+   IF !Empty( qqKonto )
       aUsl1 := Parsiraj( qqKonto, "idkonto" )
       IF aUsl1 <> ".t."
-          cFilter += iif( Empty( cFilter ), "", ".and." ) + aUsl1
+         cFilter += iif( Empty( cFilter ), "", ".and." ) + aUsl1
       ENDIF
    ENDIF
 
@@ -99,13 +99,13 @@ FUNCTION fin_bb_subanalitika_b( params )
       Box(, 2, 30 )
       nSlog := 0
       nUkupno := RECCOUNT2()
-      cFilt := IIF( Empty( cFilter ), "IDFIRMA=" + dbf_quote( cIdFirma ), cFilter + ".and.IDFIRMA=" + dbf_quote( cIdFirma ) )
+      cFilt := iif( Empty( cFilter ), "IDFIRMA=" + dbf_quote( cIdFirma ), cFilter + ".and.IDFIRMA=" + dbf_quote( cIdFirma ) )
       cSort1 := "IdKonto+IdPartner+dtos(DatDok)+BrNal+STR(RBr,5)"
       INDEX ON &cSort1 TO "SUBTMP" FOR &cFilt Eval( fin_tek_rec_2() ) EVERY 1
       GO TOP
       BoxC()
    ELSE
-      //HSEEK cIdFirma
+      // HSEEK cIdFirma
       GO TOP
    ENDIF
 
@@ -150,16 +150,16 @@ FUNCTION fin_bb_subanalitika_b( params )
          cSinKonto := Left( IdKonto, 3 )
          D2PS := P2PS := D2TP := P2TP := D2KP := P2KP := D2S := P2S := 0
 
-         DO WHILE !Eof() .AND. IdFirma = cIdFirma .AND. cSinKonto == Left( IdKonto, 3 )
+         DO WHILE !Eof() .AND. IdFirma == cIdFirma .AND. cSinKonto == Left( IdKonto, 3 )
 
             cIdKonto := IdKonto
             D1PS := P1PS := D1TP := P1TP := D1KP := P1KP := D1S := P1S := 0
             DO WHILE !Eof() .AND. IdFirma = cIdFirma .AND. cIdKonto == IdKonto
 
-               cIdPartner := IdPartner
+               cIdPartner := hb_UTF8ToStr( field->IdPartner )
                D0PS := P0PS := D0TP := P0TP := D0KP := P0KP := D0S := P0S := 0
 
-               DO WHILE !Eof() .AND. IdFirma = cIdFirma .AND. cIdKonto == IdKonto .AND. cIdPartner == IdPartner
+               DO WHILE !Eof() .AND. IdFirma == cIdFirma .AND. cIdKonto == IdKonto .AND. cIdPartner == hb_UTF8ToStr( field->IdPartner )
 
                   IF nValuta == 1
                      IF D_P = "1"
@@ -178,15 +178,15 @@ FUNCTION fin_bb_subanalitika_b( params )
                   IF nValuta == 1
                      IF IdVN = "00"
                         IF D_P == "1"
-                            D0PS += IznosBHD * nBBK
+                           D0PS += IznosBHD * nBBK
                         ELSE
-                            P0PS += IznosBHD * nBBK
+                           P0PS += IznosBHD * nBBK
                         ENDIF
                      ELSE
                         IF D_P == "1"
-                            D0TP += IznosBHD * nBBK
+                           D0TP += IznosBHD * nBBK
                         ELSE
-                            P0TP += IznosBHD * nBBK
+                           P0TP += IznosBHD * nBBK
                         ENDIF
                      ENDIF
                   ELSE
@@ -368,7 +368,7 @@ FUNCTION fin_bb_subanalitika_b( params )
          P3KP += P2KP
 
          IF lExpRpt
-             dodaj_stavku_u_tabelu_eksporta( cSinKonto, "", konto->naz, D2PS, P2PS, D2KP, P2KP, D2S, P2S )
+            dodaj_stavku_u_tabelu_eksporta( cSinKonto, "", konto->naz, D2PS, P2PS, D2KP, P2KP, D2S, P2S )
          ENDIF
 
       ENDDO
@@ -535,15 +535,15 @@ STATIC FUNCTION zagl_bb_suban( params, nStr )
 
    ?
 
-   IF params["format"] $ "1#3"
+   IF params[ "format" ] $ "1#3"
       ? "#%LANDS#"
    ENDIF
 
    P_COND2
 
    ??U "FIN: SUBANALITIČKI BRUTO BILANS U VALUTI '" + IF( params[ "valuta" ] == 1, ValDomaca(), ValPomocna() ) + "'"
-   IF !( Empty( params["datum_od"] ) .AND. Empty( params["datum_do"] ) )
-      ?? " ZA PERIOD OD", params["datum_od"], "-", params["datum_do"]
+   IF !( Empty( params[ "datum_od" ] ) .AND. Empty( params[ "datum_do" ] ) )
+      ?? " ZA PERIOD OD", params[ "datum_od" ], "-", params[ "datum_do" ]
    ENDIF
    ?? " NA DAN: "
    ?? Date()
@@ -554,19 +554,19 @@ STATIC FUNCTION zagl_bb_suban( params, nStr )
       ? "Firma:", gFirma, gNFirma
    ELSE
       ? "Firma:"
-      @ PRow(), PCol() + 2 SAY params["idfirma"]
+      @ PRow(), PCol() + 2 SAY params[ "idfirma" ]
       SELECT PARTN
-      HSEEK params["idfirma"]
+      HSEEK params[ "idfirma" ]
       @ PRow(), PCol() + 2 SAY Naz
       @ PRow(), PCol() + 2 SAY Naz2
    ENDIF
 
-   IF !EMPTY( params["konto"] )
-      ? "Odabrana konta: " + ALLTRIM( params["konto"] )
+   IF !Empty( params[ "konto" ] )
+      ? "Odabrana konta: " + AllTrim( params[ "konto" ] )
    ENDIF
 
-   IF gRJ == "D" .AND. Len( params["id_rj"] ) <> 0
-      ? "Radna jedinica ='" + params["id_rj"] + "'"
+   IF gRJ == "D" .AND. Len( params[ "id_rj" ] ) <> 0
+      ? "Radna jedinica ='" + params[ "id_rj" ] + "'"
    ENDIF
 
    ?U th1
@@ -581,9 +581,7 @@ STATIC FUNCTION zagl_bb_suban( params, nStr )
 
 
 
-STATIC FUNCTION dodaj_stavku_u_tabelu_eksporta( cKonto, cIdPart, cNaziv, ;
-      nPsDug, nPsPot, nKumDug, nKumPot, ;
-      nSldDug, nSldPot )
+STATIC FUNCTION dodaj_stavku_u_tabelu_eksporta( cKonto, cIdPart, cNaziv, nPsDug, nPsPot, nKumDug, nKumPot, nSldDug, nSldPot )
 
    LOCAL nArr
 

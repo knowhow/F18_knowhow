@@ -92,9 +92,9 @@ FUNCTION fin_povrat_naloga( lStorno )
    ENDIF
 
    MsgO( "fin -> fin_pripr  ..." )
-   kopiraj_fin_nalog_u_tabelu_pripreme( cIdFirma, cIdVn, cBrNal, lStorno )
+   fin_kopiraj_nalog_u_tabelu_pripreme( cIdFirma, cIdVn, cBrNal, lStorno )
    MsgC()
-   
+
    IF !lBrisiKumulativ .OR. lStorno
       my_close_all_dbf()
       RETURN .F.
@@ -177,7 +177,7 @@ STATIC FUNCTION fin_nalog_brisi_iz_kumulativa( cIdFirma, cIdVn, cBrNal )
 
 
 
-STATIC FUNCTION kopiraj_fin_nalog_u_tabelu_pripreme( cIdFirma, cIdVn, cBrNal, lStorno )
+STATIC FUNCTION fin_kopiraj_nalog_u_tabelu_pripreme( cIdFirma, cIdVn, cBrNal, lStorno )
 
    LOCAL _rec
 

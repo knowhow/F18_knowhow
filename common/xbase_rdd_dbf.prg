@@ -63,7 +63,7 @@ FUNCTION my_dbf_prefix( aDbfRec )
       lTemp := .T.
    ELSE
       lTemp := aDbfRec[ "temp" ]
-      //lTemp := lTemp .AND. !( "params" $ aDbfRec[ "table" ] )
+      // lTemp := lTemp .AND. !( "params" $ aDbfRec[ "table" ] )
    ENDIF
 
 
@@ -95,17 +95,25 @@ FUNCTION dbf_get_rec()
 
    LOCAL _ime_polja, _i, _struct
    LOCAL cRet := hb_Hash()
+   LOCAL lSql := ( rddName() ==  "SQLMIX" )
 
    _struct := dbStruct()
    FOR _i := 1 TO Len( _struct )
 
-      _ime_polja := _struct[ _i, 1 ]
+      _ime_polja := Lower( _struct[ _i, 1 ] )
 
 
       IF !( "#" + _ime_polja + "#" $ "#BRISANO#_OID_#_COMMIT_#" )
-         cRet[ Lower( _ime_polja ) ] := Eval( FieldBlock( _ime_polja ) )
+         cRet[ _ime_polja ] := Eval( FieldBlock( _ime_polja ) )
+
+         IF _struct[ _i, 2 ] == "C" .AND. lSql // sql tabela
+            IF cRet[ _ime_polja ] == NIL
+               cRet[ _ime_polja ] := Space( _struct[ _i, 3 ] )
+            ENDIF
+            cRet[ _ime_polja ] := hb_UTF8ToStr( cRet[ _ime_polja ] )
+         ENDIF
          IF  _struct[ _i, 2 ] == "D"
-           cRet[ Lower( _ime_polja ) ]  := fix_dat_var( cRet[ Lower( _ime_polja ) ] )
+            cRet[ _ime_polja ]  := fix_dat_var( cRet[ _ime_polja ] )
          ENDIF
       ENDIF
 

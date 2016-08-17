@@ -89,13 +89,9 @@ FUNCTION korekcija_nabavne_cijene_sa_zadnjom_ulaznom( nKolicina, nZadnjaUlaznaNC
       ENDIF
 
 
-      IF ( Round( nSrednjaNabavnaCijena, 4 ) == 0 ) .OR. Pitanje(, "Napraviti korekciju NC (D/N)?", "D" ) == "D"
+      IF ( Round( nSrednjaNabavnaCijena, 4 ) == 0 ) .OR. Pitanje(, "Napraviti korekciju NC na zadnju ulaznu (D/N)?", "D" ) == "D"
 
-         nTmp_n_stanje := ( nKolicina - _kolicina )
-         nTmp_n_nv := ( nTmp_n_stanje * nZadnjaUlaznaNC )
-         nTmp_s_nv := ( nKolicina * nSrednjaNabavnaCijena )
-
-         nSrednjaNabavnaCijena := ( ( nTmp_s_nv - nTmp_n_nv ) / _kolicina )
+         nSrednjaNabavnaCijena := nZadnjaUlaznaNC
 
       ENDIF
    ENDIF

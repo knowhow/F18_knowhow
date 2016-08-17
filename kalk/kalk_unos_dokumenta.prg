@@ -1380,7 +1380,7 @@ FUNCTION kalk_unos_1( fNovi, atrib )
       RETURN GET1_24PDV()
 
    ELSEIF _idvd $ "95#96#97"
-      RETURN GET1_95()
+      RETURN kalk_get_1_95()
 
    ELSEIF _idvd $  "94#16"    // storno fakture, storno otpreme, doprema
       RETURN GET1_94()

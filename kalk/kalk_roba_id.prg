@@ -86,6 +86,7 @@ FUNCTION RobaIdSredi()
    BoxC()
    closeret
 
+/*
 FUNCTION kalk_sljedeci( cIdFirma, cVrsta )
 
    LOCAL cBrKalk := Space( 8 )
@@ -93,3 +94,4 @@ FUNCTION kalk_sljedeci( cIdFirma, cVrsta )
    kalk_set_brkalk_za_idvd( cVrsta, @cBrKalk )
 
    RETURN cBrKalk
+*/

@@ -1077,20 +1077,20 @@ FUNCTION kalk_set_doks_total_fields( nNv, nVpv, nMpv, nRabat )
    RETURN .T.
 
 
-/* IspitajRezim()
+/*
  *     Ako se radi o privremenom rezimu obrade KALK dokumenata setuju se vrijednosti parametara gCijene i gMetodaNC na vrijednosti u dvoclanom nizu aRezim
- */
+
 
 FUNCTION IspitajRezim()
 
    IF !Empty( aRezim )
-      gCijene   = aRezim[ 1 ]
+    --  gCijene   = aRezim[ 1 ]
       gMetodaNC = aRezim[ 2 ]
    ENDIF
 
    RETURN .T.
 
-
+ */
 
 
 

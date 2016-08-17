@@ -63,7 +63,8 @@ FUNCTION Get1_12()
       _idRoba := Left( _idRoba, 10 )
    ENDIF
 
-   SELECT koncij; SEEK Trim( _idkonto )
+   SELECT koncij
+   SEEK Trim( _idkonto )
    SELECT kalk_pripr
 
    _PKonto := _Idkonto
@@ -113,17 +114,14 @@ FUNCTION Get1_12()
    @ m_x + 12, m_y + 30   SAY "Ukupno na stanju "; @ m_x + 12, Col() + 2 SAY nkols PICT pickol
 
    @ m_x + 14, m_y + 2    SAY "NABAVNA CIJENA (NC)         :"
-   @ m_x + 14, m_y + 50   GET _FCJ    PICTURE PicDEM;
-      VALID {|| kalk_valid_kolicina_prod(), ;
-      _vpc := _fcj, .T. }
+   @ m_x + 14, m_y + 50   GET _FCJ    PICTURE PicDEM VALID {|| kalk_valid_kolicina_prod(), _vpc := _fcj, .T. }
 
 
    _TPrevoz := "R"
 
-   @ m_x + 16, m_y + 2  SAY "MP marza:" GET _TMarza2  VALID _Tmarza2 $ "%AU" PICTURE "@!"
+   @ m_x + 16, m_y + 2  SAY8 "MP marža:" GET _TMarza2  VALID _Tmarza2 $ "%AU" PICTURE "@!"
    @ m_x + 16, Col() + 1  GET _Marza2 PICTURE  PicDEM ;
-      valid {|| _nc := _fcj + iif( _TPrevoz == "A", _Prevoz, 0 ), ;
-      _Tmarza := "A", ;                // VP marza
+      valid {|| _nc := _fcj + iif( _TPrevoz == "A", _Prevoz, 0 ), _Tmarza := "A", ;                // VP marza
       _marza := _vpc / ( 1 + _PORVT ) -_fcj, .T. }       // VP marza
 
    @ m_x + 17, m_y + 2  SAY "MALOPROD. CJENA (MPC):"

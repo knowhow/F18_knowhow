@@ -13,7 +13,17 @@
 
 STATIC s_mtxMutex
 STATIC s_aTransactions := {}
+STATIC s_lSqlTransactionError := .F.
 
+
+FUNCTION sql_transaction_error( lSet )
+
+   IF lSet != NIL
+      s_lSqlTransactionError := lSet
+   ENDIF
+
+   RETURN s_lSqlTransactionError
+   
 FUNCTION set_sql_search_path()
 
    LOCAL _path := my_server_search_path()
@@ -71,7 +81,7 @@ FUNCTION run_sql_query( cQry, hParams )
 
       IF ValType( hParams ) != "H"
          Alert( "run sql query param 2 nije hash !?" )
-         AltD() //run sql query param 2 nije hash
+         AltD() // run sql query param 2 nije hash
          QUIT
       ENDIF
 
@@ -124,6 +134,7 @@ FUNCTION run_sql_query( cQry, hParams )
             IF is_in_main_thread()
                AltD() // sql transaction error
                Alert( "SQL transactions error !" )
+               sql_transaction_error( .T. )
             ENDIF
             hb_mutexUnlock( s_mtxMutex )
             print_transactions()

@@ -1015,19 +1015,22 @@ FUNCTION MeniF10()
       CASE izbor == 8
          GenNivP()
       CASE izbor == 9
-         aRezim := { gCijene, gMetodaNC }
+         //aRezim := { gCijene, gMetodaNC }
          O_PARAMS
          PRIVATE cSection := "K", cHistory := " "; aHistory := {}
          cIspravka := "D"
          kalk_par_metoda_nc()
-         SELECT params; USE
-         IF gCijene <> aRezim[ 1 ] .OR. gMetodaNC <> aRezim[ 2 ]
+         SELECT params
+         USE
+/*
+      --   IF gCijene <> aRezim[ 1 ] .OR. gMetodaNC <> aRezim[ 2 ]
             IF !dozvoljeno_azuriranje_sumnjivih_stavki() .AND. gMetodaNC == " "
                Soboslikar( { { m_x + 17, m_y + 1, m_x + 20, m_y + 77 } }, 23, 14 )
             ELSEIF aRezim[ 1 ] == "1" .AND. aRezim[ 2 ] == " "
                Soboslikar( { { m_x + 17, m_y + 1, m_x + 20, m_y + 77 } }, 14, 23 )
             ENDIF
          ENDIF
+*/
 
       CASE Izbor == 10 .AND. cIdVDTek == "19"
 

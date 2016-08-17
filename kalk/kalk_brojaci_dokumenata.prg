@@ -70,7 +70,7 @@ FUNCTION kalk_konto_za_brojac( cIdVd, cMKonto, cPKonto )
   sljedeci broj kalkulacije, za zadani sufiks
 */
 
-FUNCTION kalk_sljedeci_brdok( cTipKalk, cIdFirma, cSufiks )
+STATIC FUNCTION kalk_sljedeci_brdok( cTipKalk, cIdFirma, cSufiks )
 
    LOCAL cBrKalk := Space( 8 )
    LOCAL nLenGlavni := kalk_duzina_brojaca_dokumenta()

@@ -51,7 +51,7 @@ FUNCTION KorekNC2()
 
    SELECT kalk
 
-   cBr95 := kalk_sljedeci( gFirma, "95" )
+   --cBr95 := kalk_sljedeci( gFirma, "95" )
 
    SELECT koncij
    SEEK Trim( cMagac )

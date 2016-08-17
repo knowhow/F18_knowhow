@@ -192,7 +192,7 @@ FUNCTION ImpTxtDok()
    ENDIF
 
    IF Pitanje(, "Obraditi dokumente iz kalk pript (D/N)?", "D" ) == "D"
-      kalk_imp_obradi_sve_dokumente( nil, nil, __stampaj )
+      kalk_imp_obradi_sve_dokumente_iz_pript( nil, __stampaj )
    ELSE
       MsgBeep( "Dokumenti nisu obradjeni!#Obrada se moze uraditi i naknadno!" )
       my_close_all_dbf()
@@ -1421,11 +1421,11 @@ STATIC FUNCTION from_kalk_imp_temp_to_pript( aFExist, lFSkip, lNegative, cCtrl_a
       ENDIF
 
 
-      //IF cTDok <> cPredhodniTipDokumenta // promjena tipa dokumenta
-      //   nUvecaj := 0
-      //ENDIF
+      // IF cTDok <> cPredhodniTipDokumenta // promjena tipa dokumenta
+      // nUvecaj := 0
+      // ENDIF
 
-      IF (cFakt <> cPredhodniFaktDokument) //.OR. (cTDok == "11" .AND. (cPm <> cPredhodnoProdMjesto) )
+      IF ( cFakt <> cPredhodniFaktDokument ) // .OR. (cTDok == "11" .AND. (cPm <> cPredhodnoProdMjesto) )
          ++ nUvecaj
          cBrojKalk := kalk_imp_get_next_temp_broj( nUvecaj )
          nRbr := 0
@@ -1754,28 +1754,23 @@ STATIC FUNCTION kalk_imp_temp_to_roba()
    RETURN 1
 
 
-
-
-
-
-
-/* kalk_imp_obradi_sve_dokumente()
- *     Obrada importovanih dokumenata
+/*
+ *     Obrada importovanih dokumenata pript -> pripr
  */
 
-FUNCTION kalk_imp_obradi_sve_dokumente( nPocniOd, lAsPokreni, lStampaj )
+FUNCTION kalk_imp_obradi_sve_dokumente_iz_pript( nPocniOd, lStampaj, lOstaviBrdok )
 
    LOCAL dDatVal
    LOCAL cNoviKalkBrDok := ""
    LOCAL nUvecaj := 0
    LOCAL cMKonto, cPKonto
+   LOCAL lAsPokreni
 
    o_kalk_pripr()
    o_kalk_pript()
 
-   IF lAsPokreni == nil
-      lAsPokreni := .T.
-   ENDIF
+   sql_transaction_error( .F. )
+
    IF lStampaj == nil
       lStampaj := .T.
    ENDIF
@@ -1784,11 +1779,11 @@ FUNCTION kalk_imp_obradi_sve_dokumente( nPocniOd, lAsPokreni, lStampaj )
       nPocniOd := 0
    ENDIF
 
+   hb_default( @lOstaviBrdok, .F. ) // ostavi broj dokumenta koji se nalazi u pript
 
    IF Pitanje(, "Automatski asistent i ažuriranje naloga (D/N)?", "D" ) == "D"
       s_lAutom := .T.
    ENDIF
-
 
 
    SELECT pript // iz kalk_pript prebaci u kalk_pripr jednu po jednu kalkulaciju
@@ -1834,7 +1829,13 @@ FUNCTION kalk_imp_obradi_sve_dokumente( nPocniOd, lAsPokreni, lStampaj )
       ENDIF
 
       nT_area := Select()
-      cNoviKalkBrDok := kalk_get_next_broj_v5( cFirma, cIdVd, kalk_konto_za_brojac( cIdVd, cMKonto, cPKonto ) )  // daj konacni novi broj dokumenta kalk
+
+      IF lOstaviBrdok
+         cNoviKalkBrDok := cBrDok
+      ELSE
+         cNoviKalkBrDok := kalk_get_next_broj_v5( cFirma, cIdVd, kalk_konto_za_brojac( cIdVd, cMKonto, cPKonto ) )  // daj konacni novi broj dokumenta kalk
+      ENDIF
+
       SELECT ( nT_area )
 
       @ 3 + m_x, 2 + m_y SAY "KALK IMP Prebacujem: " + cFirma + "-" + cIdVd + "-" + cBrDok + " /"  + cNoviKalkBrDok
@@ -1870,8 +1871,14 @@ FUNCTION kalk_imp_obradi_sve_dokumente( nPocniOd, lAsPokreni, lStampaj )
       ENDDO
 
 
-      IF s_lAutom // nakon sto smo prebacili dokument u kalk_pripremu obraditi ga
+      IF s_lAutom // nakon sto smo prebacili dokument u kalk_pripremu oznaciti dokle smo stili
 
+         IF sql_transaction_error()
+            MsgBeep( "prekid operacije importa - sql transaction error !" )
+            BoxC()
+            RETURN .F.
+         ENDIF
+         
          kalk_imp_set_check_point( nPCRec ) // snimi zapis u params da znas dokle si dosao
          IF kalk_imp_obradi_dokument( cIdVd, lAsPokreni, lStampaj )
             kalk_imp_set_check_point( nPTRec )
@@ -1890,10 +1897,9 @@ FUNCTION kalk_imp_obradi_sve_dokumente( nPocniOd, lAsPokreni, lStampaj )
 
    BoxC()
 
-   kalk_imp_set_check_point( 0 ) // oznaci da je obrada zavrsena
-
-   MsgBeep( "Dokumenti obradjeni!" )
-   kalk_imp_brisi_txt( cImpFile, .T. )
+   IF sql_transaction_error()
+      RETURN .F.
+   ENDIF
 
    RETURN .T.
 
@@ -2004,7 +2010,12 @@ STATIC FUNCTION kalk_imp_continue_from_check_point()
       RETURN .F.
    ENDIF
 
-   kalk_imp_obradi_sve_dokumente( nDosaoDo, nil, __stampaj )
+   IF kalk_imp_obradi_sve_dokumente_iz_pript( nDosaoDo, __stampaj )
+
+      kalk_imp_set_check_point( 0 ) // oznaci da je obrada zavrsena
+      MsgBeep( "Dokumenti obradjeni!" )
+      kalk_imp_brisi_txt( cImpFile, .T. )
+   ENDIF
 
    RETURN .T.
 

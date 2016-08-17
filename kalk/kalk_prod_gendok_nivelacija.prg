@@ -627,7 +627,7 @@ FUNCTION obr_nivel_p()
    ENDIF
 
    // pokreni obradu pript bez asistenta
-   kalk_imp_obradi_sve_dokumente( 0, .F., lStampati )
+   --kalk_imp_obradi_sve_dokumente_iz_pript( 0, nemavise.F., lStampati )
 
    IF !lGenFinFakt
       // vrati parametre...

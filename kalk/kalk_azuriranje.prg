@@ -197,8 +197,8 @@ STATIC FUNCTION kalk_vrati_iz_pripr2()
 
 
 /*
- generisanje zavisnih dokumenata nakon azuriranja kalkulacije
-  mozda cemo dobiti i nove dokumente u pripremi
+   generisanje zavisnih dokumenata nakon azuriranja kalkulacije
+   mozda cemo dobiti i nove dokumente u pripremi
 */
 
 STATIC FUNCTION kalk_zavisni_nakon_azuriranja( lGenerisi, lAuto )
@@ -212,7 +212,7 @@ STATIC FUNCTION kalk_zavisni_nakon_azuriranja( lGenerisi, lAuto )
 
    IF Generisati11_ku()
       lForm11 := .T.
-      cNext11 := kalk_sljedeci_brdok( "11", gFirma )
+      cNext11 := kalk_get_next_broj_v5( gFirma, "11", NIL )
       Generisi11ku_iz10ke( cNext11 )
    ENDIF
 
@@ -627,10 +627,10 @@ STATIC FUNCTION kalk_provjeri_duple_dokumente( aRezim )
       lViseDok := .T.
       aRezim := {}
 
-      AAdd( aRezim, gCijene )
-      AAdd( aRezim, gMetodaNC )
-      gCijene   := "1"
-      gMetodaNC := " "
+      //AAdd( aRezim, gCijene )
+      //AAdd( aRezim, gMetodaNC )
+      //gCijene   := "1"
+      //gMetodaNC := " "
       // ENDIF
 
    ELSEIF nije_dozvoljeno_azuriranje_sumnjivih_stavki()
@@ -643,9 +643,9 @@ STATIC FUNCTION kalk_provjeri_duple_dokumente( aRezim )
             error_bar( field->idfirma + "-" + field->idvd + "-" + field->brdok, " /  Rbr." + field->rbr + " sumnjiva! " )
             IF Pitanje(, "Želite li dokument ažurirati bez obzira na sumnjive stavke? (D/N)", "N" ) == "D"
                aRezim := {}
-               AAdd( aRezim, gCijene )
-               AAdd( aRezim, gMetodaNC )
-               gCijene   := "1"
+               //AAdd( aRezim, gCijene )
+               //AAdd( aRezim, gMetodaNC )
+               //gCijene   := "1"
             ENDIF
             EXIT
          ENDIF

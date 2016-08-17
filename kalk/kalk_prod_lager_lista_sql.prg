@@ -256,10 +256,10 @@ STATIC FUNCTION kalk_prod_insert_ps_into_pripr( data, params )
    O_TARIFA
 
    IF glBrojacPoKontima
-      _sufix := kalk_sufiks_brdok( _p_konto )
-      _kalk_broj := kalk_sljedeci_brdok( _kalk_tip, gFirma, _sufix )
+      //_sufix := kalk_sufiks_brdok( _p_konto )
+      _kalk_broj := kalk_get_next_broj_v5( gFirma, _kalk_tip, _p_konto )
    ELSE
-      _kalk_broj := kalk_get_next_kalk_doc_uvecaj( gFirma, _kalk_tip )
+      _kalk_broj := kalk_get_next_broj_v5( gFirma, _kalk_tip, NIL )
    ENDIF
 
    IF Empty( _kalk_broj )

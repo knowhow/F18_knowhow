@@ -540,7 +540,7 @@ FUNCTION KorekMPC()
    lGenerisao := .F.
    PRIVATE nRbr := 0
 
-   cBrNiv := kalk_sljedeci( gFirma, "19" )
+   cBrNiv := kalk_get_next_broj_v5( gFirma, "19", NIL )
 
    find_kalk_by_mkonto_idroba( gFirma, cMagac )
 

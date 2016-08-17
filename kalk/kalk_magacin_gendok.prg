@@ -440,8 +440,8 @@ FUNCTION KorekPC()
    PRIVATE nRbr := 0
 
 
-   cBrNiv := kalk_sljedeci( gFirma, "18" )
-
+   cBrNiv :=  kalk_get_next_broj_v5( gFirma, "18", NIL )
+   
    find_kalk_by_mkonto_idroba( gFirma, gMagac )
    GO TOP
    DO WHILE !Eof() .AND. idfirma + mkonto = gFirma + cMagac

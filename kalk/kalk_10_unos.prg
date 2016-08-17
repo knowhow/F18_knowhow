@@ -253,7 +253,8 @@ FUNCTION Get2_10()
 
       IF gMpcPomoc == "D"
          IF ( roba->mpc == 0 .OR. roba->mpc <> Round( _mpcsapp, 2 ) ) .AND. Pitanje(, "Staviti MPC u sifrarnik" ) == "D"
-            SELECT roba; REPLACE mpc WITH _mpcsapp
+            SELECT roba
+            REPLACE mpc WITH _mpcsapp
             SELECT kalk_pripr
          ENDIF
       ENDIF
@@ -409,7 +410,7 @@ STATIC FUNCTION obracun_kalkulacija_tip_10_pdv( x_kord )
 
       ++ _x
 
-      // VPC se izracunava pomocu MPC cijene !!
+      // VPC se izracunava pomocu MPC cijene !
       @ m_x + _x, m_y + 2 SAY "PROD.CJENA SA PDV:"
       @ m_x + _x, m_y + _unos_left GET _mpcsapp PICT PicDEM ;
          valid {|| _mpcsapp := iif( _mpcsapp = 0, Round( _vpc * ( 1 + TARIFA->opp / 100 ) / ( 1 + TARIFA->PPP / 100 ), 2 ), _mpcsapp ), _mpc := _mpcsapp / ( 1 + TARIFA->opp / 100 ) / ( 1 + TARIFA->PPP / 100 ), ;
@@ -426,7 +427,6 @@ STATIC FUNCTION obracun_kalkulacija_tip_10_pdv( x_kord )
          SELECT roba
          _rec := dbf_get_rec()
          _rec[ "mpc" ] := _mpcsapp
-
          update_rec_server_and_dbf( Alias(), _rec, 1, "FULL" )
 
          SELECT kalk_pripr

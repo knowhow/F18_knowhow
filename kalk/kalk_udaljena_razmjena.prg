@@ -28,9 +28,9 @@ FUNCTION kalk_udaljena_razmjena_podataka()
    __import_zip_name := "kalk_exp.zip"
    __export_zip_name := "kalk_exp.zip"
 
-   AAdd( _opc, "1. => export podataka               " )
+   AAdd( _opc, "1. => kalk export podataka               " )
    AAdd( _opcexe, {|| _kalk_export() } )
-   AAdd( _opc, "2. <= import podataka    " )
+   AAdd( _opc, "2. <= kalk import podataka    " )
    AAdd( _opcexe, {|| _kalk_import() } )
 
    f18_menu( "razmjena", .F., _izbor, _opc, _opcexe )
@@ -101,9 +101,7 @@ STATIC FUNCTION _kalk_export()
 
 
 
-// ----------------------------------------
-// import podataka modula KALK
-// ----------------------------------------
+
 STATIC FUNCTION _kalk_import()
 
    LOCAL _imported_rec
@@ -121,7 +119,6 @@ STATIC FUNCTION _kalk_import()
       RETURN .F.
    ENDIF
 
-
    __import_dbf_path := AllTrim( _imp_path ) // snimi u parametre
    set_metric( "kalk_import_path", my_user(), _imp_path )
 
@@ -133,8 +130,7 @@ STATIC FUNCTION _kalk_import()
       RETURN .F.
    ENDIF
 
-   // parametri
-   IF !_vars_import( @_vars )
+   IF !_vars_import( @_vars ) // parametri
       RETURN .F.
    ENDIF
 
@@ -144,8 +140,8 @@ STATIC FUNCTION _kalk_import()
       RETURN .F.
    ENDIF
 
-   // dekompresovanje podataka
-   IF _decompress_files( _imp_file, __import_dbf_path, __import_zip_name ) <> 0
+
+   IF _decompress_files( _imp_file, __import_dbf_path, __import_zip_name ) <> 0 // dekompresovanje podataka
       // ako je bilo greske
       RETURN .F.
    ENDIF
@@ -154,32 +150,28 @@ STATIC FUNCTION _kalk_import()
    set_file_access( __import_dbf_path )
 #endif
 
-   // import procedura
-   _imported_rec := __import( _vars, @_a_data )
 
-   // zatvori sve
+   _imported_rec := kalk_import_podataka( _vars, @_a_data )
+
    my_close_all_dbf()
 
-   // brisi fajlove importa
-   delete_exp_files( __import_dbf_path, "kalk" )
 
-   IF ( _imported_rec > 0 )
+   delete_exp_files( __import_dbf_path, "kalk" )  // brisi fajlove importa
 
-      // nakon uspjesnog importa...
-      IF Pitanje(, "Pobrisati fajl razmjne ?", "D" ) == "D"
-         // brisi zip fajl...
+   IF ( _imported_rec > 0 ) // nakon uspjesnog importa
+
+
+      IF Pitanje(, "Pobrisati fajl razmjene ?", "D" ) == "D"
          delete_zip_files( _imp_file )
       ENDIF
 
       MsgBeep( "Importovao " + AllTrim( Str( _imported_rec ) ) + " dokumenta." )
-
-      // printaj izvjestaj
-      print_imp_exp_report( _a_data )
+      print_imp_exp_report( _a_data ) // printaj izvjestaj
 
    ENDIF
 
-   // vrati se na home direktorij nakon svega
-   DirChange( my_home() )
+
+   DirChange( my_home() ) // vrati se na home direktorij nakon svega
 
    RETURN .T.
 
@@ -272,6 +264,7 @@ STATIC FUNCTION _vars_import( vars )
    LOCAL _iz_fmk := fetch_metric( "kalk_import_iz_fmk", my_user(), "N" )
    LOCAL _imp_path := fetch_metric( "kalk_import_path", my_user(), PadR( "", 300 ) )
    LOCAL _x := 1
+   LOCAL cPript := fetch_metric( "kalk_import_pript", my_user(), "N" )
 
    IF Empty( AllTrim( _imp_path ) )
       _imp_path := PadR( __import_dbf_path, 300 )
@@ -309,6 +302,11 @@ STATIC FUNCTION _vars_import( vars )
    ++ _x
    @ m_x + _x, m_y + 2 SAY "Import lokacija:" GET _imp_path PICT "@S50"
 
+   _x += 2
+
+   @ m_x + _x, m_y + 2 SAY "pript->obrada->kalk:" GET cPript PICT "@!" VALID cPript $ "DN"
+
+
    READ
 
    BoxC()
@@ -326,6 +324,7 @@ STATIC FUNCTION _vars_import( vars )
       set_metric( "kalk_import_zamjeniti_sifre", my_user(), _zamjeniti_sif )
       set_metric( "kalk_import_iz_fmk", my_user(), _iz_fmk )
       set_metric( "kalk_import_path", my_user(), _imp_path )
+      set_metric( "kalk_import_pript", my_user(), cPript )
 
       // set static var
       __import_dbf_path := AllTrim( _imp_path )
@@ -337,6 +336,7 @@ STATIC FUNCTION _vars_import( vars )
       vars[ "zamjeniti_dokumente" ] := _zamjeniti_dok
       vars[ "zamjeniti_sifre" ] := _zamjeniti_sif
       vars[ "import_iz_fmk" ] := _iz_fmk
+      vars[ "pript" ] := ( cPript == "D" )
 
    ENDIF
 
@@ -370,15 +370,13 @@ STATIC FUNCTION __export( vars, a_details )
    kalk_o_exp_tabele( __export_dbf_path ) // otvori export tabele za pisanje podataka
 
 
-   _o_tables()
+   kalk_o_tabele()
 
    Box(, 2, 65 )
 
    @ m_x + 1, m_y + 2 SAY "... export kalk dokumenata u toku"
 
-   // SELECT kalk_doks
-   // SET ORDER TO TAG "1"
-   // GO TOP
+
    find_kalk_doks_by_tip_datum( gFirma, NIL, _dat_od, _dat_do )
 
 
@@ -537,10 +535,8 @@ STATIC FUNCTION __export( vars, a_details )
 
 
 
-// ----------------------------------------
-// import podataka
-// ----------------------------------------
-STATIC FUNCTION __import( vars, a_details )
+
+STATIC FUNCTION kalk_import_podataka( vars, a_details )
 
    LOCAL _ret := 0
    LOCAL _id_firma, _id_vd, _br_dok
@@ -573,10 +569,7 @@ STATIC FUNCTION __import( vars, a_details )
 
    kalk_o_exp_tabele( __import_dbf_path, _fmk_import )
 
-   _o_tables()
-
-   o_kalk()   // za azuriranje
-   o_kalk_doks() // za azuriranje
+   kalk_o_tabele()
 
    SELECT e_doks
    _total_doks := RECCOUNT2()
@@ -584,12 +577,30 @@ STATIC FUNCTION __import( vars, a_details )
    SELECT e_kalk
    _total_kalk := RECCOUNT2()
 
-   run_sql_query( "BEGIN" )
 
-   IF !f18_lock_tables( { "kalk_kalk", "kalk_doks" }, .T. )
-      run_sql_query( "ROLLBACK" )
-      MsgBeep( "Ne mogu zaključati tabele !#Prekidam operaciju." )
-      RETURN _cnt
+   IF vars[ "pript" ]
+      IF pitanje(, "izbrisati tabele pripreme fin_pripr, kalk_pripr, pript ?", "D" ) == "N"
+         RETURN .F.
+      ENDIF
+      select_o_fin_pripr()
+      my_dbf_zap()
+      USE
+      select_o_kalk_pripr()
+      my_dbf_zap()
+      USE
+      select_o_kalk_pript()
+      my_flock()
+      my_dbf_zap()
+   ELSE
+      o_kalk()   // za azuriranje
+      o_kalk_doks() // za azuriranje
+      run_sql_query( "BEGIN" )
+      IF !f18_lock_tables( { "kalk_kalk", "kalk_doks" }, .T. )
+         run_sql_query( "ROLLBACK" )
+         MsgBeep( "Ne mogu zaključati tabele !#Prekidam operaciju." )
+         RETURN _cnt
+      ENDIF
+
    ENDIF
 
    SELECT e_doks
@@ -694,12 +705,13 @@ STATIC FUNCTION __import( vars, a_details )
 
       _app_rec[ "podbr" ] := ""
 
-      SELECT kalk_doks
-      APPEND BLANK
-
-      lOk := update_rec_server_and_dbf( "kalk_doks", _app_rec, 1, "CONT" )
-      IF !lOk
-         EXIT
+      IF !vars[ "pript" ]
+         SELECT kalk_doks
+         APPEND BLANK
+         lOk := update_rec_server_and_dbf( "kalk_doks", _app_rec, 1, "CONT" )
+         IF !lOk
+            EXIT
+         ENDIF
       ENDIF
 
       ++ _cnt
@@ -726,12 +738,22 @@ STATIC FUNCTION __import( vars, a_details )
 
          @ m_x + 3, m_y + 40 SAY "stavka: " + AllTrim( Str( _gl_brojac ) ) + " / " + _app_rec[ "rbr" ]
 
-         SELECT kalk
-         APPEND BLANK
+         IF vars[ "pript" ]
 
-         lOk := update_rec_server_and_dbf( "kalk_kalk", _app_rec, 1, "CONT" )
-         IF !lOk
-            EXIT
+            hRec := dbf_get_rec()
+            SELECT pript
+            APPEND BLANK
+            dbf_update_rec( hRec )
+
+         ELSE
+
+            SELECT kalk
+            APPEND BLANK
+            lOk := update_rec_server_and_dbf( "kalk_kalk", _app_rec, 1, "CONT" )
+            IF !lOk
+               EXIT
+            ENDIF
+
          ENDIF
 
          SELECT e_kalk
@@ -748,25 +770,32 @@ STATIC FUNCTION __import( vars, a_details )
 
    ENDDO
 
-   IF lOk
-      hParams := hb_Hash()
-      hParams[ "unlock" ] := { "kalk_doks", "kalk_kalk" }
-      run_sql_query( "COMMIT", hParams )
-   ELSE
-      run_sql_query( "ROLLBACK" )
-      MsgBeep( "Problem sa ažuriranjem dokumenta na server !" )
-   ENDIF
-
    IF _cnt >= 0 .AND. lOk
 
       @ m_x + 3, m_y + 2 SAY PadR( "", 69 )
-
       update_table_roba( _zamjeniti_sif )
       update_table_partn( _zamjeniti_sif )
       update_table_konto( _zamjeniti_sif )
       update_sifk_sifv()
 
    ENDIF
+
+   IF vars[ "pript" ]
+      SELECT pript
+      my_unlock()
+      kalk_imp_obradi_sve_dokumente_iz_pript( 0, .F., .T. ) // .F. - ne stampati, .T. - ostaviti broj dokumenta koji stoji u pript
+   ELSE  // dokumenti idu direktno na stanje
+      IF lOk
+         hParams := hb_Hash()
+         hParams[ "unlock" ] := { "kalk_doks", "kalk_kalk" }
+         run_sql_query( "COMMIT", hParams )
+      ELSE
+         run_sql_query( "ROLLBACK" )
+         MsgBeep( "Problem sa ažuriranjem dokumenta na server !" )
+      ENDIF
+   ENDIF
+
+
 
    BoxC()
 
@@ -867,7 +896,7 @@ STATIC FUNCTION _cre_exp_tbls( cDbfPath )
 // ----------------------------------------------------
 // otvaranje potrebnih tabela za prenos
 // ----------------------------------------------------
-STATIC FUNCTION _o_tables()
+STATIC FUNCTION kalk_o_tabele()
 
    // o_kalk()
    // o_kalk_doks()
@@ -895,7 +924,7 @@ STATIC FUNCTION kalk_o_exp_tabele( cDbfPath, from_fmk )
       from_fmk := .F.
    ENDIF
 
-   //log_write( "otvaram kalk tabele importa i pravim indekse...", 9 )
+   // log_write( "otvaram kalk tabele importa i pravim indekse...", 9 )
 
    // zatvori sve prije otvaranja ovih tabela
    my_close_all_dbf()
@@ -907,9 +936,9 @@ STATIC FUNCTION kalk_o_exp_tabele( cDbfPath, from_fmk )
    SELECT ( F_TMP_E_KALK )
    my_use_temp( "E_KALK", cDbfPath + _dbf_name, .F., .T. )
    INDEX on ( idfirma + idvd + brdok ) TAG "1"
-   ?E alias(), ordkey()
+   ?E Alias(), ordKey()
 
-   //log_write( "otvorio i indeksirao: " + cDbfPath + _dbf_name, 5 )
+   // log_write( "otvorio i indeksirao: " + cDbfPath + _dbf_name, 5 )
 
    _dbf_name := "e_doks.dbf"
    IF from_fmk
@@ -918,8 +947,8 @@ STATIC FUNCTION kalk_o_exp_tabele( cDbfPath, from_fmk )
    SELECT ( F_TMP_E_DOKS )
    my_use_temp( "E_DOKS", cDbfPath + _dbf_name, .F., .T. )
    INDEX on ( idfirma + idvd + brdok ) TAG "1"
-   ?E alias(), ordkey()
-   //log_write( "otvorio i indeksirao: " + cDbfPath + _dbf_name, 5 )
+   ?E Alias(), ordKey()
+   // log_write( "otvorio i indeksirao: " + cDbfPath + _dbf_name, 5 )
 
    _dbf_name := "e_roba.dbf"
    IF from_fmk
@@ -928,7 +957,7 @@ STATIC FUNCTION kalk_o_exp_tabele( cDbfPath, from_fmk )
    SELECT ( F_TMP_E_ROBA )
    my_use_temp( "E_ROBA", cDbfPath + _dbf_name, .F., .T. )
    INDEX on ( id ) TAG "ID"
-   ?E alias(), ordkey()
+   ?E Alias(), ordKey()
 
    _dbf_name := "e_partn.dbf"
    IF from_fmk
@@ -937,7 +966,7 @@ STATIC FUNCTION kalk_o_exp_tabele( cDbfPath, from_fmk )
    SELECT ( F_TMP_E_PARTN )
    my_use_temp( "E_PARTN", cDbfPath + _dbf_name, .F., .T. )
    INDEX on ( id ) TAG "ID"
-   ?E alias(), ordkey()
+   ?E Alias(), ordKey()
 
    _dbf_name := "e_konto.dbf"
    IF from_fmk
@@ -946,7 +975,7 @@ STATIC FUNCTION kalk_o_exp_tabele( cDbfPath, from_fmk )
    SELECT ( F_TMP_E_KONTO )
    my_use_temp( "E_KONTO", cDbfPath + _dbf_name, .F., .T. )
    INDEX on ( id ) TAG "ID"
-   ?E alias(), ordkey()
+   ?E Alias(), ordKey()
 
    _dbf_name := "e_sifk.dbf"
    IF from_fmk
@@ -956,7 +985,7 @@ STATIC FUNCTION kalk_o_exp_tabele( cDbfPath, from_fmk )
    my_use_temp( "E_SIFK", cDbfPath + _dbf_name, .F., .T. )
    INDEX on ( id + sort + naz ) TAG "ID"
    INDEX on ( id + oznaka ) TAG "ID2"
-   ?E alias(), ordkey()
+   ?E Alias(), ordKey()
 
    _dbf_name := "e_sifv.dbf"
    IF from_fmk
@@ -966,8 +995,8 @@ STATIC FUNCTION kalk_o_exp_tabele( cDbfPath, from_fmk )
    my_use_temp( "E_SIFV", cDbfPath + _dbf_name, .F., .T. )
    INDEX on ( id + oznaka + idsif + naz ) TAG "ID"
    INDEX on ( id + idsif ) TAG "IDIDSIF"
-   ?E alias(), ordkey()
+   ?E Alias(), ordKey()
 
-   //log_write( "otvorene sve import tabele i indeksirane...", 9 )
+   // log_write( "otvorene sve import tabele i indeksirane...", 9 )
 
    RETURN .T.

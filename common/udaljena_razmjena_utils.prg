@@ -405,7 +405,7 @@ STATIC FUNCTION update_rec_roba_struct( rec )
 
    brisi_iz_hash_matrice( _remove, @rec )
 
-   RETURN
+   RETURN .T.
 
 
 

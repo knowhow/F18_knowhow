@@ -155,7 +155,7 @@ FUNCTION kalk_fix_brdok( cBrKalk )
    LOCAL nLenGlavni := kalk_duzina_brojaca_dokumenta()
    LOCAL nLenSufiks := 8 - nLenGlavni
 
-   IF "/" $ cBrKalk  .OR. "-" $ cBrKalk  // ne mijenjati nista za 00002/TZ, 00002-TZ
+   IF "/" $ cBrKalk  .OR. "-" $ cBrKalk .OR. "G" $ cBrKalk  // ne mijenjati nista za G000002, 00002/TZ, 00002-TZ
       RETURN cBrKalk
    ENDIF
 

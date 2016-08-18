@@ -18,7 +18,7 @@ MEMVAR nStr, cIdFirma, cIdVd, cBrDok, cIdPartner, cBrFaktP, dDatFaktP, cIdKonto,
 FIELD IdPartner, BrFaktP, DatFaktP, IdKonto, IdKonto2, Kolicina, DatDok
 FIELD naz, pkonto, mkonto
 
-FUNCTION StKalk14()
+FUNCTION kalk_stampa_dok_14()
 
    LOCAL nCol1 := 0
    LOCAL nCol2 := 0

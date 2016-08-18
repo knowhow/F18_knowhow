@@ -13,7 +13,7 @@
 #include "f18.ch"
 
 
-FUNCTION StKalk82()
+FUNCTION kalk_stampa_dok_82()
 
    LOCAL nCol0 := nCol1 := nCol2 := 0, npom := 0
 

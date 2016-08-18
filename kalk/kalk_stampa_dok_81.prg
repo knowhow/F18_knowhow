@@ -306,11 +306,11 @@ FUNCTION StKalk81( fzatops )
 
 
 
-/* StKalk81_2()
+/* kalk_stampa_dok_81()
  *     Stampa kalkulacije 81 - direktno zaduzenje prodavnice
  */
 
-FUNCTION StKalk81_2()
+FUNCTION kalk_stampa_dok_81()
 
    LOCAL _hAttrId, _is_rok
    LOCAL nCol1 := nCol2 := 0, npom := 0

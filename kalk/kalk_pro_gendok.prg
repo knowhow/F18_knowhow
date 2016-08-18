@@ -69,7 +69,7 @@ FUNCTION Iz47u96Norm()
    Box(, 15, 60 )
 
    IF gBrojacKalkulacija == "D"
-      cbrkalk := UBrojDok( Val( Left( cbrkalk, 5 ) ) + 1, 5, Right( cBrKalk, 3 ) )
+    --  cbrkalk := UBrojDok( Val( Left( cbrkalk, 5 ) ) + 1, 5, Right( cBrKalk, 3 ) )
    ENDIF
 
    DO WHILE .T.
@@ -135,7 +135,7 @@ FUNCTION Iz47u96Norm()
 
       @ m_x + 10, m_y + 2 SAY "Dokument je prenesen !!"
       IF gBrojacKalkulacija == "D"
-         cbrkalk := UBrojDok( Val( Left( cbrkalk, 5 ) ) + 1, 5, Right( cBrKalk, 3 ) )
+      --   cbrkalk := UBrojDok( Val( Left( cbrkalk, 5 ) ) + 1, 5, Right( cBrKalk, 3 ) )
       ENDIF
       Inkey( 4 )
       @ m_x + 8, m_y + 2 SAY Space( 30 )

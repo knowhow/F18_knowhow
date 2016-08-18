@@ -14,7 +14,7 @@
 
 MEMVAR m
 
-FUNCTION st_kalk_dokument_pr()
+FUNCTION kalk_stampa_dok_pr()
 
    LOCAL nCol1 := nCol2 := 0, nProc, nPom := 0
    LOCAL bProizvod

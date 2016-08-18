@@ -1,39 +1,20 @@
 /*
- * This file is part of the bring.out FMK, a free and open source
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+ * This file is part of the bring.out knowhow ERP, a free and open source
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
 
-
 #include "f18.ch"
 
-/*
- * $Source: c:/cvsroot/cl/sigma/fmk/kalk/mag/dok/1g/rpt_18.prg,v $
- * $Author: mirsad $
- * $Revision: 1.3 $
- * $Log: rpt_18.prg,v $
- * Revision 1.3  2002/06/20 13:13:03  mirsad
- * dokumentovanje
- */
+
+FUNCTION kalk_stampa_dok_18()
 
 
-/* \file fmk/kalk/mag/dok/1g/rpt_18.prg
- *     Stampa dokumenta tipa 18
- */
-
-
-/* StKalk18()
- *     Stampa dokumenta tipa 18
- */
-
-FUNCTION StKalk18()
-
-   // {
    LOCAL nCol1 := nCol2 := 0, npom := 0, nCR := 0
 
    PRIVATE nPrevoz, nCarDaz, nZavTr, nBankTr, nSpedTr, nMarza, nMarza2

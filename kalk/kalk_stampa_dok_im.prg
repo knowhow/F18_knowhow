@@ -15,7 +15,7 @@
 // ------------------------------------------------
 // stampa kalkulacije tipa "IM"
 // ------------------------------------------------
-FUNCTION StKalkIM()
+FUNCTION kalk_stampa_dok_im()
 
    LOCAL nCol1 := 0
    LOCAL nCol2 := 0

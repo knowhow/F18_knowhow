@@ -157,7 +157,6 @@ METHOD TKalkMod:set_module_gvars()
    PUBLIC gTopsDEST := ""
    PUBLIC gSetForm := "1"
 
-   PUBLIC c10Var := "2"  // 1-stara varijanta izvjestaja, nova varijanta izvj
    PUBLIC g80VRT := "1"
    PUBLIC gCijene := "2" // cijene iz sifrarnika, validnost
    PUBLIC gGen16 := "1"
@@ -284,7 +283,6 @@ METHOD TKalkMod:set_module_gvars()
    gDokKVal := fetch_metric( "kalk_konverzija_valute_na_unosu", nil, gDokKVal )
 
    g10Porez := fetch_metric( "kalk_dokument_10_prikaz_ukalk_poreza", nil, g10Porez )
-   c10Var := fetch_metric( "kalk_dokument_10_varijanta", nil, c10Var )
    g11BezNC := fetch_metric( "kalk_dokument_11_bez_nc", nil, g11bezNC )
    g80VRT := fetch_metric( "kalk_dokument_80_rekap_po_tar", nil, g80VRT )
    gVarVP := fetch_metric( "kalk_dokument_14_varijanta_poreza", nil, gVarVP )

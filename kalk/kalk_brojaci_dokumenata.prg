@@ -227,7 +227,7 @@ FUNCTION MarkBrDok( fNovi )
             ENDIF
             SKIP -1
          ENDDO
-         _Brdok := UBrojDok( Val( Left( _brdok, 5 ) ) + 1, 5, KONCIJ->m1 )
+        -- _Brdok := UBrojDok( Val( Left( _brdok, 5 ) ) + 1, 5, KONCIJ->m1 )
 
       ENDIF
       SELECT ( nArr )

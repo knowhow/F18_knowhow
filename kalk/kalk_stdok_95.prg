@@ -12,7 +12,7 @@
 #include "f18.ch"
 
 
-FUNCTION kalk_stdok_95() // stampa kalkulacije tip-a 95, 96, 97
+FUNCTION kalk_stampa_dok_95() // stampa kalkulacije tip-a 95, 96, 97
 
    LOCAL cKto1
    LOCAL cKto2

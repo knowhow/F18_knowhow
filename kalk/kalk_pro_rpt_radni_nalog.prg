@@ -14,7 +14,7 @@
 
 
 
-FUNCTION StKalkRN()
+FUNCTION kalk_stampa_dok_rn()
 
    LOCAL nCol1 := nCol2 := 0, npom := 0
 

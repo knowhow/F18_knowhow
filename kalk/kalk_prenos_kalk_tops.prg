@@ -126,7 +126,7 @@ FUNCTION kalk_generisi_tops_dokumente( cIdFirma, cIdTipDok, cBrDok )
          // mpc - stara cijena
          REPLACE field->mpc WITH kalk_pripr->fcj
 
-         REPLACE field->mpc2 WITH kalk_pripr->( fcj + mpcsapp ) // mpc2 - nova cijena
+         REPLACE field->mpc2 WITH kalk_pripr->fcj + kalk_pripr->mpcsapp // mpc2 - nova cijena
       ENDIF
 
       IF kalk_pripr->pu_i == "5"
@@ -215,15 +215,13 @@ STATIC FUNCTION kalk_tops_kreiraj_fajl_prenosa( datum, aPosLokacije, broj_stavki
 
    FOR _n := 1 TO Len( aPosLokacije ) // prodji kroz sve lokacije i postavi datoteke eksporta
 
-      // export ce biti u poddirektoriju kojem treba da bude, npr /prenos/1/
-      _export := _export_location + AllTrim( aPosLokacije[ _n ] ) + SLASH
+
+      _export := _export_location + AllTrim( aPosLokacije[ _n ] ) + SLASH // export ce biti u poddirektoriju kojem treba da bude, npr /prenos/1/
 
 
       _dir_create( _export ) // kreirati direktorij ako ne postoji
 
-      // nakon dir create prebaci se na my_local_folder
-      DirChange( my_home() )
-
+      DirChange( my_home() ) // nakon dir create prebaci se na my_local_folder
 
       _dest_patt := get_topskalk_export_file( "2", _export, datum ) // pronadji naziv fajla koji je dozvoljen
 
@@ -268,8 +266,8 @@ FUNCTION get_topskalk_export_file( topskalk, export_path, datum, prefix )
    // kt110401, kt110402 itd...
 
    FOR _i := 1 TO 99
-      // nastavak na fajl
-      _tmp := PadL( AllTrim( Str( _i ) ), 2, "0" )
+
+      _tmp := PadL( AllTrim( Str( _i ) ), 2, "0" ) // nastavak na fajl
       _file := _prefix + _tmp_date + _tmp
 
       IF !File( export_path + _file + ".dbf" )
@@ -303,7 +301,7 @@ FUNCTION mnu_prenos_kalk_u_tops()
    BoxC()
 
    IF kalk_dokument_postoji( cIDFirma, cIDTipDokumenta, cBrojDokumenta, .F. )
-      IF ( gTops <> "0 " .AND. Pitanje(, "Izgenerisati datoteku prenosa?", "N" ) == "D" )
+      IF ( gTops <> "0 " .AND. Pitanje(, "Izgenerisati datoteku prenosa?", "D" ) == "D" )
          kalk_generisi_tops_dokumente( cIDFirma, cIDTipDokumenta, cBrojDokumenta ) // generisi datoteku prenosa
       ENDIF
    ENDIF

@@ -12,11 +12,8 @@
 #include "f18.ch"
 
 
-/*
- *     Stampa dokumenta tipa 19
- */
 
-FUNCTION StKalk19()
+FUNCTION kalk_stampa_dok_19()
 
 
    LOCAL nCol1 := nCol2 := 0, npom := 0

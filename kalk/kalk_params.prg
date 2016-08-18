@@ -95,8 +95,6 @@ FUNCTION kalk_par_varijante_prikaza()
    nX += 1
    @ m_x + nX, m_y + 2 SAY "14 - Nivelaciju izvrsiti na ukupno stanje/na prodanu kolicinu  1/2 ?" GET gNiv14  VALID gNiv14 $ "12"
 
-   nX += 2
-   @ m_x + nX, m_y + 2 SAY "10 - Varijanta izvjestaja (1/2/3)" GET c10Var  VALID c10Var $ "123"
 
    nX += 1
    @ m_x + nX, m_y + 2 SAY "10 - prikaz ukalkulisanog poreza (D/N)" GET  g10Porez  PICT "@!" VALID g10Porez $ "DN"
@@ -175,7 +173,6 @@ FUNCTION kalk_par_varijante_prikaza()
       set_metric( "kalk_voditi_kalo", nil, gVodiKalo )
       set_metric( "kalk_dokument_10_prikaz_ukalk_poreza", nil, g10Porez )
       set_metric( "kalk_dokument_14_varijanta_poreza", nil, gVarVP )
-      set_metric( "kalk_dokument_10_varijanta", nil, c10Var )
       set_metric( "kalk_dokument_11_bez_nc", nil, g11bezNC )
       set_metric( "kalk_dokument_80_rekap_po_tar", nil, g80VRT )
       set_metric( "kalk_tip_nivelacije_14", nil, gNiv14 )

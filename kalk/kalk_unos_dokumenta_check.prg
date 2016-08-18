@@ -245,7 +245,7 @@ FUNCTION kalk_dat_poslj_promjene_prod()
    IF AllTrim( cReturn ) >= "99999"
       cReturn := PadR( novasifra( AllTrim( cReturn ) ), 5 )
    ELSE
-      cReturn := UBrojDok( Val( Left( cReturn, 5 ) ) + 1, 5, Right( cReturn ) )
+    --  cReturn := UBrojDok( Val( Left( cReturn, 5 ) ) + 1, 5, Right( cReturn ) )
    ENDIF
 
    RETURN cReturn

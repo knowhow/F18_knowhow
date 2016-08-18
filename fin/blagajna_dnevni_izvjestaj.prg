@@ -16,7 +16,7 @@
 // -----------------------------------------------------------------------------
 // Blagajna dnevni izvjestaj
 // -----------------------------------------------------------------------------
-FUNCTION Blagajna()
+FUNCTION fin_blagajna_dnevni_izvjestaj()
 
    LOCAL nRbr, nCOpis := 0, cOpis := ""
    LOCAL _idvn
@@ -219,7 +219,7 @@ FUNCTION Blagajna()
 
       ELSE
 
-         IF idkonto <> cidkonto
+         IF field->idkonto <> cIdKonto
             SKIP
             LOOP
          ENDIF
@@ -345,7 +345,7 @@ FUNCTION PZagBlag( nDug, nPot, m, cBrDok, pici, cDinDem, dDatDok )
    @ PRow(), PCol() + 1 SAY PadL( Transform( npot, pici ), 14 )
    ? m
 
-   RETURN
+   RETURN .T.
 
 
 

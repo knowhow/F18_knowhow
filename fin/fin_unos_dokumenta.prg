@@ -544,7 +544,7 @@ FUNCTION edit_fin_pripr_key_handler()
 
       fin_set_broj_dokumenta()
       my_close_all_dbf()
-      Blagajna()
+      fin_blagajna_dnevni_izvjestaj()
 
       o_fin_edit()
 

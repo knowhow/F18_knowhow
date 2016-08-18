@@ -306,3 +306,12 @@ FUNCTION kalk_stampa_dokumenta( lAzuriraniDokument, cSeek, lAuto )
    my_close_all_dbf()
 
    RETURN NIL
+
+
+STATIC FUNCTION pdf_kalk_dokument( cIdVd )
+
+   IF is_legacy_ptxt()
+      RETURN .F.
+   ENDIF
+
+   RETURN cIdVd $ "10#14"  // implementirano za kalk 10, 14

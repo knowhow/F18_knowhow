@@ -2137,7 +2137,7 @@ FUNCTION VPCSifUDok()
 
 
 
-STATIC FUNCTION kalk_open_tables_unos( lAzuriraniDok, cIdFirma, cIdVD, cBrDok )
+FUNCTION kalk_open_tables_unos( lAzuriraniDok, cIdFirma, cIdVD, cBrDok )
 
    o_koncij()
    O_ROBA
@@ -2192,15 +2192,6 @@ FUNCTION kalkulacija_ima_sve_cijene( firma, tip_dok, br_dok )
 
    RETURN _ok
 
-
-
-STATIC FUNCTION pdf_kalk_dokument( cIdVd )
-
-   IF is_legacy_ptxt()
-      RETURN .F.
-   ENDIF
-
-   RETURN cIdVd $ "10#14"  // implementirano za kalk 10, 14
 
 
 

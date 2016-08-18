@@ -19,7 +19,7 @@ FUNCTION kalk_stampa_dok_19()
    LOCAL nCol1 := nCol2 := 0, npom := 0
 
    PRIVATE nPrevoz, nCarDaz, nZavTr, nBankTr, nSpedTr, nMarza, nMarza2, aPorezi
-   // iznosi troskova i marzi koji se izracunavaju u KTroskovi()
+   // iznosi troskova i marzi koji se izracunavaju u kalk_unos_troskovi()
 
    aPorezi := {}
    nStr := 0
@@ -60,7 +60,7 @@ FUNCTION kalk_stampa_dok_19()
 
       vise_kalk_dok_u_pripremi( cIdd )
       RptSeekRT()
-      KTroskovi()
+      kalk_unos_troskovi()
       VTPOREZI()
 
       Tarifa( kalk_pripr->pkonto, kalk_pripr->idroba, @aPorezi )
@@ -161,7 +161,7 @@ FUNCTION Obraz19()
    LOCAL nCol1 := nCol2 := 0, npom := 0
 
    PRIVATE nPrevoz, nCarDaz, nZavTr, nBankTr, nSpedTr, nMarza, nMarza2
-   // iznosi troskova i marzi koji se izracunavaju u KTroskovi()
+   // iznosi troskova i marzi koji se izracunavaju u kalk_unos_troskovi()
 
    nStr := 0
    cIdPartner := IdPartner

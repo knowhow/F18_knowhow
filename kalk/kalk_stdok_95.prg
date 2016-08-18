@@ -138,7 +138,7 @@ FUNCTION kalk_stampa_dok_95() // stampa kalkulacije tip-a 95, 96, 97
 
          SELECT kalk_pripr
 
-         KTroskovi()
+         kalk_unos_troskovi()
 
          print_nova_strana( 125, @nStr, 5 )
 

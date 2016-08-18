@@ -355,7 +355,7 @@ local lKontPRUCMP
 private nPrevoz,nCarDaz,nZavTr,nBankTr,nSpedTr,nMarza,nMarza2
 nFV:=FCj*Kolicina
 SKol:=Kolicina
-KTroskovi()
+kalk_unos_troskovi()
 VtPorezi()
 cIdVd:=kalk->idvd
 lKontPRUCMP:=(gUVarPP$"MJRT")
@@ -377,11 +377,11 @@ return
 *}
 
 
-/* KTroskovi()
+/* kalk_unos_troskovi()
  *     Proracun iznosa troskova pri unosu u pripremi
  */
 
-static function KTroskovi()
+static function kalk_unos_troskovi()
 *{
 local Skol:=0,nPPP:=0
 

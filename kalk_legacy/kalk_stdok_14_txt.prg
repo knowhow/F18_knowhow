@@ -18,7 +18,7 @@ FUNCTION StKalk14_txt()
 
    PRIVATE nPrevoz, nCarDaz, nZavTr, nBankTr, nSpedTr, nMarza, nMarza2
 
-   // iznosi troskova i marzi koji se izracunavaju u KTroskovi()
+   // iznosi troskova i marzi koji se izracunavaju u kalk_unos_troskovi()
 
    nStr := 0
    cIdPartner := IdPartner; cBrFaktP := BrFaktP; dDatFaktP := DatFaktP
@@ -99,7 +99,7 @@ FUNCTION StKalk14_txt()
       SELECT TARIFA; HSEEK kalk_pripr->IdTarifa
       SELECT kalk_pripr
 
-      KTroskovi()
+      kalk_unos_troskovi()
 
       IF PRow() > page_length()
          FF

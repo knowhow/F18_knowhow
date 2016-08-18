@@ -71,7 +71,7 @@ FUNCTION kalk_stampa_dok_41()
 
       // izracunaj nMarza2
       MarzaMPR()
-      KTroskovi()
+      kalk_unos_troskovi()
 
       Tarifa( pkonto, idRoba, @aPorezi, _idtarifa )
 

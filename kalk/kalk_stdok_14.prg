@@ -75,7 +75,7 @@ FUNCTION kalk_stampa_dok_14()
       HSEEK kalk_pripr->IdTarifa
       SELECT kalk_pripr
 
-      KTroskovi()
+      kalk_unos_troskovi()
 
       check_nova_strana( bZagl, oPdf )
 

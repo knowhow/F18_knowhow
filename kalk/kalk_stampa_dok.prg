@@ -188,7 +188,7 @@ FUNCTION kalk_stampa_dokumenta( lAzuriraniDokument, cSeek, lAuto )
 
          ELSEIF ( cIdvd == "RN" )
             IF !lAzuriraniDokument
-               RaspTrosk( .T. )
+               kalk_raspored_troskova( .T. )
             ENDIF
             kalk_stampa_dok_rn()
          ELSEIF ( cidvd == "PR" )

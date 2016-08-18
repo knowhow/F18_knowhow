@@ -20,7 +20,7 @@ FUNCTION kalk_stampa_dok_rn()
 
    PRIVATE nPrevoz, nCarDaz, nZavTr, nBankTr, nSpedTr, nMarza, nMarza2
 
-   // iznosi troskova i marzi koji se izracunavaju u KTroskovi()
+   // iznosi troskova i marzi koji se izracunavaju u kalk_unos_troskovi()
 
    nStr := 0
    cIdPartner := IdPartner; cBrFaktP := BrFaktP; dDatFaktP := DatFaktP
@@ -64,7 +64,7 @@ FUNCTION kalk_stampa_dok_rn()
     endif
    endif
 */
-         KTroskovi()
+         kalk_unos_troskovi()
 
          SELECT ROBA; HSEEK kalk_pripr->IdRoba
          SELECT TARIFA; HSEEK kalk_pripr->IdTarifa

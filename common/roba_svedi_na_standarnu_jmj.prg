@@ -71,24 +71,26 @@ FUNCTION is_roba_trazi_po_sifradob()
 
 FUNCTION svedi_na_jedinicu_mjere( nKol, cIdRoba, cJMJ )
 
-   LOCAL nVrati := 0, nArr := Select(), aNaz := {}, cKar := "SJMJ", nKO := 1, n_Pos := 0
+   LOCAL nVrati := 0, nArr := Select(), aNaz := {}, nKoeficijent := 1, n_Pos := 0
    LOCAL cSvedi
+   LOCAL cPom, cJmjRoba
 
    cSvedi := IzSifk( "ROBA", "SJMJ", cIdRoba, .F. )
 
    IF !Empty( cSvedi )
-      AAdd( aNaz, cSvedi )
-   ENDIF
 
-
-   IF Len( aNaz ) > 0
-
-      n_Pos := At( "_", aNaz[ 1 ] ) // slijedi preracunavanje 0.1_KG
-      cPom   := AllTrim( SubStr( aNaz[ 1 ], n_Pos + 1 ) )
-      nKO    := &cPom
-      nVrati := nKol * nKO
-      cJMJ   := AllTrim( Left( aNaz[ 1 ], n_Pos - 1 ) )
+      n_Pos := At( "_", cSvedi ) // slijedi preracunavanje 0.1_KG
+      cPom   := AllTrim( SubStr( cSvedi, n_Pos + 1 ) )
+      nKoeficijent   := &cPom  // "0.1" => 0.1 numeric
+      nVrati := nKol * nKoeficijent
+      cJMJ   := AllTrim( Left( cSvedi, n_Pos - 1 ) )
    ELSE
+
+      cJmjRoba := find_roba_jmj( cIdRoba )
+
+      IF cJmjRoba == "KOM" // nema definisano svodjenje na jednicu mjere
+         MsgBeep( cIdRoba + "nema definisanu težinu !?" )
+      ENDIF
 
       nVrati := nKol // artikal je vec u osnovnoj JMJ
    ENDIF
@@ -96,3 +98,16 @@ FUNCTION svedi_na_jedinicu_mjere( nKol, cIdRoba, cJMJ )
    SELECT ( nArr )
 
    RETURN nVrati
+
+
+FUNCTION find_roba_jmj( cIdroba )
+
+   LOCAL cRet
+
+   PushWa()
+   select_o_roba()
+   SEEK cIDRoba
+   cRet := roba->jmj
+   PopWa()
+
+   RETURN cRet

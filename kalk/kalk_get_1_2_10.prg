@@ -230,7 +230,7 @@ FUNCTION _set_konv( nFcj, cPretv )
 
 STATIC FUNCTION kalk_get_2_10( x_kord )
 
-   LOCAL cSPom := " (%,A,U,R) "
+   LOCAL cSPom := " (%,A,U,R,T) "
    LOCAL _x := x_kord + 4
    LOCAL _unos_left := 40
    LOCAL _kord_x
@@ -258,30 +258,30 @@ STATIC FUNCTION kalk_get_2_10( x_kord )
 
    IF _sa_troskovima
 
-      // automatski setuj troskove....
-      _auto_set_trosk( fNovi )
+
+      _auto_set_trosk( fNovi )   // automatski setuj troskove
 
       // TROSKOVNIK
 
       @ m_x + _x, m_y + 2 SAY "Raspored troskova kalkulacije ->"
 
-      @ m_x + _x, m_y + _unos_left + 10 SAY c10T1 + cSPom GET _TPrevoz VALID _TPrevoz $ "%AUR" PICTURE "@!"
+      @ m_x + _x, m_y + _unos_left + 10 SAY c10T1 + cSPom GET _TPrevoz VALID _TPrevoz $ "%AURT" PICTURE "@!"
       @ m_x + _x, Col() + 2 GET _Prevoz PICT  PicDEM
 
       ++ _x
-      @ m_x + _x, m_y + _unos_left + 10 SAY c10T2 + cSPom  GET _TBankTr VALID _TBankTr $ "%AUR" PICT "@!"
+      @ m_x + _x, m_y + _unos_left + 10 SAY c10T2 + cSPom  GET _TBankTr VALID _TBankTr $ "%AURT" PICT "@!"
       @ m_x + _x, Col() + 2 GET _BankTr PICT PicDEM
 
       ++ _x
-      @ m_x + _x, m_y + _unos_left + 10 SAY c10T3 + cSPom GET _TSpedTr VALID _TSpedTr $ "%AUR" PICT "@!"
+      @ m_x + _x, m_y + _unos_left + 10 SAY c10T3 + cSPom GET _TSpedTr VALID _TSpedTr $ "%AURT" PICT "@!"
       @ m_x + _x, Col() + 2 GET _SpedTr PICT PicDEM
 
       ++ _x
-      @ m_x + _x, m_y + _unos_left + 10 SAY c10T4 + cSPom GET _TCarDaz VALID _TCarDaz $ "%AUR" PICTURE "@!"
+      @ m_x + _x, m_y + _unos_left + 10 SAY c10T4 + cSPom GET _TCarDaz VALID _TCarDaz $ "%AURT" PICTURE "@!"
       @ m_x + _x, Col() + 2 GET _CarDaz PICT PicDEM
 
       ++ _x
-      @ m_x + _x, m_y + _unos_left + 10 SAY c10T5 + cSPom GET _TZavTr VALID _TZavTr $ "%AUR" PICTURE "@!"
+      @ m_x + _x, m_y + _unos_left + 10 SAY c10T5 + cSPom GET _TZavTr VALID _TZavTr $ "%AURT" PICTURE "@!"
       @ m_x + _x, Col() + 2 GET _ZavTr PICT PicDEM VALID {|| NabCj(), .T. }
 
       _x += 2

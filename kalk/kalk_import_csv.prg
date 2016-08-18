@@ -893,7 +893,7 @@ STATIC FUNCTION ObradiDokument( lAsPokreni, lStampaj )
       kalk_unos_stavki_dokumenta( .T. ) // pozovi asistenta
       IF __trosk == .T.
          o_kalk_edit()
-         RaspTrosk( .T. ) // fSilent = .t.
+         kalk_raspored_troskova( .T. ) // fSilent = .t.
       ENDIF
    ELSE
       o_kalk_edit()

@@ -56,7 +56,7 @@ FUNCTION kalk_stampa_dok_82()
 
       scatter()  // formiraj varijable _....
       Marza2R()   // izracunaj nMarza2
-      KTroskovi()
+      kalk_unos_troskovi()
 
       SELECT ROBA; HSEEK kalk_pripr->IdRoba
       SELECT TARIFA; HSEEK kalk_pripr->IdTarifa

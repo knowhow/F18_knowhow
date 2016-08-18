@@ -328,7 +328,7 @@ STATIC FUNCTION gen_kalk_predispozicija_xml( vars )
 
          ++ _generated
 
-         KTroskovi()
+         kalk_unos_troskovi()
          RptSeekRT()
          _porezna_stopa := tarifa->opp
          Tarifa( field->pkonto, field->idroba, @aPorezi )
@@ -474,7 +474,7 @@ STATIC FUNCTION gen_kalk_mp_xml( vars )
 
       ++ _generated
 
-      KTroskovi()
+      kalk_unos_troskovi()
       RptSeekRT()
       _porezna_stopa := tarifa->opp
       Tarifa( field->pkonto, field->idroba, @aPorezi )
@@ -680,7 +680,7 @@ STATIC FUNCTION gen_kalk_vp_xml( vars )
       ++ _generated
 
       RptSeekRT()
-      KTroskovi()
+      kalk_unos_troskovi()
 
       _porezna_stopa := tarifa->opp
 

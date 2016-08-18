@@ -444,8 +444,8 @@ FUNCTION fakt_specif_prodaje_real_kolicina()
             // pojedinacna osnova
             nPojOsn := Round( kolicina * Cijena * ( 1 -Rabat / 100 ) * ( 1 + Porez / 100 ), ZAOKRUZENJE )
 
-            // ukupni iznos sa PDV
-            nPojUk := nPojOsn
+
+            nPojUk := nPojOsn // ukupni iznos sa PDV
 
             // ako je rijec o MP dokumentima
             // potrebno je izvuci osnovicu iz iznosa
@@ -496,6 +496,7 @@ FUNCTION fakt_specif_prodaje_real_kolicina()
             ?? Str( ++nC, 4 ) + ".", cIdRoba, Left( roba->naz, 40 )
             nCol1 := PCol() + 1
             @ PRow(), PCol() + 1 SAY Str( nKolicina, 12, 2 )
+
             IF cSvediJmj == "D"
                @ PRow(), PCol() + 1 SAY Str( nKolJmj, 12, 2 )
                nTKolJmj += nKolJmj

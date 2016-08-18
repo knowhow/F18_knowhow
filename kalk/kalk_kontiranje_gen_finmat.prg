@@ -207,7 +207,7 @@ FUNCTION kalk_kontiranje_gen_finmat()
 
             ENDIF
 */
-            // iznosi troskova koji se izracunavaju u KTroskovi()
+            // iznosi troskova koji se izracunavaju u kalk_unos_troskovi()
             PRIVATE nPrevoz, nCarDaz, nZavTr, nBankTr, nSpedTr, nMarza, nMarza2
 
             nFV := FCj * Kolicina
@@ -227,7 +227,7 @@ FUNCTION kalk_kontiranje_gen_finmat()
             SELECT KALK_PRIPR
 
             Tarifa( pkonto, idroba, @aPorezi )
-            KTroskovi()
+            kalk_unos_troskovi()
             VtPorezi()
 
 

@@ -672,13 +672,13 @@ FUNCTION o_kalk_za_azuriranje( raspored_tr )
    // o_kalk_doks()
 
    IF raspored_tr
-      kalk_raspored_troskova()
+      kalk_raspored_troskova_azuriranje()
    ENDIF
 
    RETURN .T.
 
 
-STATIC FUNCTION kalk_raspored_troskova()
+STATIC FUNCTION kalk_raspored_troskova_azuriranje()
 
    SELECT kalk_pripr
 
@@ -693,7 +693,7 @@ STATIC FUNCTION kalk_raspored_troskova()
       o_koncij()
 
       SELECT kalk_pripr
-      RaspTrosk( .T. )
+      kalk_raspored_troskova( .T. )
 
    ENDIF
 

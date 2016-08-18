@@ -83,7 +83,7 @@ FUNCTION kalk_stampa_dok_10_txt()
    DO WHILE !Eof() .AND. cIdFirma == IdFirma .AND.  cBrDok == BrDok .AND. cIdVD == IdVD
       vise_kalk_dok_u_pripremi( cIdd )
       RptSeekRT()
-      KTroskovi()
+      kalk_unos_troskovi()
       print_nova_strana( 125, @nStr, 2 )
       IF gKalo == "1"
          SKol := field->Kolicina - field->GKolicina - field->GKolicin2
@@ -95,12 +95,8 @@ FUNCTION kalk_stampa_dok_10_txt()
       nPDV := MPCsaPP / ( 1 + ( tarifa->opp / 100 ) ) * ( tarifa->opp / 100 )
 
       nTot +=  ( nU := Round( FCj * Kolicina, gZaokr ) )
-      IF gKalo == "1"
-         nTot1 += ( nU1 := Round( FCj2 * ( GKolicina + GKolicin2 ), gZaokr ) )
-      ELSE
-         // stanex
-         nTot1 += ( nU1 := Round( NC * ( GKolicina + GKolicin2 ), gZaokr ) )
-      ENDIF
+      nTot1 += ( nU1 := Round( FCj2 * ( GKolicina + GKolicin2 ), gZaokr ) )
+
       nTot2 += ( nU2 := Round( -Rabat / 100 * FCJ * Kolicina, gZaokr ) )
       nTot3 += ( nU3 := Round( nPrevoz * SKol, gZaokr ) )
       nTot4 += ( nU4 := Round( nBankTr * SKol, gZaokr ) )

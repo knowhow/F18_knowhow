@@ -110,3 +110,9 @@ FUNCTION o_tarifa()
    SET ORDER TO TAG "ID"
 
    RETURN .T.
+
+
+
+FUNCTION select_o_roba()
+
+   RETURN select_o_dbf( "ROBA", F_ROBA, "roba", "ID" )

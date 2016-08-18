@@ -593,7 +593,7 @@ STATIC FUNCTION dat_kto_blag( dDatum, cKonto, cFirma, cIdVn, cBrNal )
    find_suban_by_broj_dokumenta( cIdFirma, cTipDok, cBrNal )
 
    // nisam pronasao dokument
-   IF !Found()
+   IF EOF()
       MsgBeep( "Dokument " + cFirma + "-" + cIdVn + "-" + cBrNal + " ne postoji!" )
       RETURN .F.
    ENDIF

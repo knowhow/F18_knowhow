@@ -52,7 +52,7 @@ FUNCTION fin_knjizenje_naloga()
    LOCAL _y_row := _d
    LOCAL _opt_row
    LOCAL _help_columns := 4
-   LOCAL _opts := {}
+   LOCAL _opts := {}, _opt_d
    LOCAL i
 
    o_fin_edit()
@@ -114,9 +114,10 @@ FUNCTION fin_knjizenje_naloga()
    @ m_x + _x_row - 1, m_y + 2 SAY8 _opt_row
 
    _opt_row := _upadr( " <a+T> Briši po uslovu", _opt_d ) + _sep
+   _opt_row += _upadr( " <B> odredi broj dokumenta", _opt_d ) + _sep
    _opt_row += _upadr( " <F9> sredi Rbr.", _opt_d ) + _sep
    _opt_row += _upadr( " <F10> Ostale opcije", _opt_d ) + _sep
-   _opt_row += ""
+
 
    @ m_x + _x_row, m_y + 2 SAY8 _opt_row
 
@@ -321,7 +322,6 @@ FUNCTION edit_fin_pripr_key_handler()
       ENDIF
 
    CASE Ch == K_F8 // brisi stavke u pripremi od - do
-
 
       IF fin_brisi_stavke_od_do() == 1
          RETURN DE_REFRESH
@@ -534,6 +534,10 @@ FUNCTION edit_fin_pripr_key_handler()
       fin_set_broj_dokumenta()
       fin_azuriranje_naloga()
       o_fin_edit()
+      RETURN DE_REFRESH
+
+   CASE Upper( Chr( Ch ) ) == "B"
+      fin_set_broj_dokumenta()
       RETURN DE_REFRESH
 
    CASE Ch == K_ALT_B

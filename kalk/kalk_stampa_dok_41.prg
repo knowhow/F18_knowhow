@@ -522,4 +522,47 @@ FUNCTION PDVRekTar41( cIdFirma, cIdVd, cBrDok, nStr )
       ? _line
    ENDIF
 
-   RETURN
+   RETURN .T.
+
+
+FUNCTION Naslov4x()
+
+   LOCAL cSvediDatFakt
+
+   B_ON
+
+   IF CIDVD == "41"
+      ?? "IZLAZ IZ PRODAVNICE - KUPAC"
+   ELSEIF CIDVD == "49"
+      ?? "IZLAZ IZ PRODAVNICE PO OSTALIM OSNOVAMA"
+   ELSEIF cIdVd == "43"
+      ?? "IZLAZ IZ PRODAVNICE - KOMISIONA - PARAGON BLOK"
+   ELSEIF cIdVd == "47"
+      ?? "PREGLED PRODAJE"
+   ELSE
+      ?? "IZLAZ IZ PRODAVNICE - PARAGON BLOK"
+   ENDIF
+
+   B_OFF
+
+   P_COND
+
+   ?
+
+   ?? "KALK BR:",  cIdFirma + "-" + cIdVD + "-" + cBrDok, Space( 2 ), P_TipDok( cIdVD, -2 ), Space( 2 ), "Datum:", DatDok
+   @ PRow(), 125 SAY "Str:" + Str( ++nStr, 3 )
+
+   SELECT PARTN
+   HSEEK cIdPartner
+
+   IF cIdVd == "41"
+      ?  "KUPAC:", cIdPartner, "-", PadR( naz, 20 ), Space( 5 ), "DOKUMENT Broj:", cBrFaktP, "Datum:", dDatFaktP
+   ELSEIF cidvd == "43"
+      ?  "DOBAVLJAC KOMIS.ROBE:", cIdPartner, "-", PadR( naz, 20 )
+   ENDIF
+
+   SELECT KONTO
+   HSEEK cIdKonto
+   ?  "Prodavnicki konto razduzuje:", cIdKonto, "-", PadR( naz, 60 )
+
+   RETURN NIL

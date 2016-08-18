@@ -99,7 +99,7 @@ FUNCTION EdBrn( Ch )
       PushWA()
       cSeek := idfirma + idvd + brdok
       my_close_all_dbf()
-      kalk_stampa_dokumenta( .T., cSeek )
+      -- kalk_stampa_dokumenta( .T., cSeek )
       -- o_kalk()
       o_kalk_doks()
       PopWA()

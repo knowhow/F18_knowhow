@@ -11,13 +11,14 @@
 
 #include "f18.ch"
 
+MEMVAR cIdfirma, cIdvd, cBrdok
 
 FUNCTION kalk_stampa_dokumenta( lAzuriraniDokument, cSeek, lAuto )
 
    LOCAL nCol1
    LOCAL nCol2
    LOCAL nPom
-   LOCAL cIdfirma, cIdvd, cBrdok
+   PRIVATE cIdfirma, cIdvd, cBrdok
 
    nCol1 := 0
    nCol2 := 0
@@ -40,7 +41,7 @@ FUNCTION kalk_stampa_dokumenta( lAzuriraniDokument, cSeek, lAuto )
    IF ( lAuto == nil )
       lAuto := .F.
    ENDIF
-
+altd()
    IF ( cSeek == nil )
       cSeek := ""
    ENDIF
@@ -54,15 +55,14 @@ FUNCTION kalk_stampa_dokumenta( lAzuriraniDokument, cSeek, lAuto )
    GO TOP
 
 
-
    fTopsD := .F.
    fFaktD := .F.
 
    DO WHILE .T.
 
-      cIdFirma := IdFirma
-      cBrDok := BrDok
-      cIdVD := IdVD
+      cIdFirma := field->IdFirma
+      cBrDok := field->BrDok
+      cIdVD := field->IdVD
 
       IF Eof()
          EXIT
@@ -269,7 +269,7 @@ FUNCTION kalk_stampa_dokumenta( lAzuriraniDokument, cSeek, lAuto )
       ELSEIF ( cIdVd == "81" )
          Stkalk81( .T. )
       ELSEIF ( cIdVd == "IP" )
-         StkalkIP( .T. )
+         kalk_stampa_dok_ip( .T. )
       ELSEIF ( cIdVd == "19" )
          kalk_stampa_dok_19()
       ENDIF

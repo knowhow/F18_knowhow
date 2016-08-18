@@ -50,9 +50,9 @@ FUNCTION fin_gen_psuban_stampa_nalozi( lAuto, dDatNal )
 
    DO WHILE !Eof()
 
-      cIdFirma := IdFirma
-      cIdVN := IdVN
-      cBrNal := BrNal
+      cIdFirma := field->IdFirma
+      cIdVN := field->IdVN
+      cBrNal := field->BrNal
 
       IF !lAuto
          IF !box_fin_nalog( @cIdFirma, @cIdVn, @cBrNal, @dDatNal )
@@ -78,7 +78,7 @@ FUNCTION fin_gen_psuban_stampa_nalozi( lAuto, dDatNal )
       fin_nalog_fix_greska_zaokruzenja_fin_pripr( cIdFirma, cIdVn, cBrNal, .F. )
 
       fin_nalog_stampa_fill_psuban( "1", lAuto, dDatNal, @oNalog )
-      
+
       oNalozi:addNalog( oNalog )
 
       IF !lAuto

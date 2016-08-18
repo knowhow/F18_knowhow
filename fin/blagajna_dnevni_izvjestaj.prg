@@ -266,9 +266,9 @@ FUNCTION Blagajna()
    ENDDO
    SELECT anal
 
-   // TAG 1 - "IdFirma+IdKonto+dtos(DatNal)", "ANAL"
 
-   HSEEK cIdfirma + cIdkonto
+   find_anal_by_konto( cIdForma, cIdkonto )
+
    nDugSt := nPotSt := 0
    DO WHILE !Eof() .AND. idfirma == cIdfirma .AND. idkonto == cIdkonto .AND. datnal <= dDatDok
 
@@ -310,6 +310,7 @@ FUNCTION Blagajna()
    FF
    end_print()
    closeret
+
 
 FUNCTION PZagBlag( nDug, nPot, m, cBrDok, pici, cDinDem, dDatDok )
 
@@ -400,15 +401,14 @@ FUNCTION blag_azur()
    BoxC()
 
    IF LastKey() == K_ESC
-      RETURN
+      RETURN .F.
    ENDIF
 
-   SELECT SUBAN
-   SET ORDER TO TAG "4"
-   HSEEK cIdFirma + cTipDok + cBrDok
 
-   // nisam pronasao dokument
-   IF !Found()
+   find_suban_by_broj_dokumenta( cIdFirma, cTipDok, cBrDok )
+
+
+   IF EOF() // nisam pronasao dokument
       MsgBeep( "Dokument " + cIdFirma + "-" + cTipDok + "-" + cBrDok + " ne postoji!" )
       RETURN .F.
    ENDIF
@@ -533,8 +533,7 @@ FUNCTION blag_azur()
    ENDDO
 
    // procesljaj staro stanje
-   SELECT anal
-   HSEEK cIdfirma + cIdkonto
+   find_anal_by_konto( cIdFirma, cIdKonto )
 
    nDugSt := 0
    nPotSt := 0
@@ -590,14 +589,13 @@ STATIC FUNCTION dat_kto_blag( dDatum, cKonto, cFirma, cIdVn, cBrNal )
    LOCAL nLenKto
    LOCAL cTmpKto
 
-   SELECT suban
-   SET ORDER TO TAG "4"
-   HSEEK cFirma + cIdVn + cBrNal
+
+   find_suban_by_broj_dokumenta( cIdFirma, cTipDok, cBrNal )
 
    // nisam pronasao dokument
    IF !Found()
       MsgBeep( "Dokument " + cFirma + "-" + cIdVn + "-" + cBrNal + " ne postoji!" )
-      RETURN
+      RETURN .F.
    ENDIF
 
    DO WHILE !Eof() .AND. suban->( idfirma + idvn + brnal ) == cFirma + cIdVn + cBrNal

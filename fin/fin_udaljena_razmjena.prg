@@ -439,7 +439,7 @@ STATIC FUNCTION __export( vars, a_details )
       ++ _cnt
       @ m_x + 2, m_y + 2 SAY PadR(  PadL( AllTrim( Str( _cnt ) ), 6 ) + ". " + "dokument: " + _id_firma + "-" + _id_vd + "-" + AllTrim( _br_dok ), 50 )
 
-      // dodaj zapis i u tabelu e_suban
+
       find_suban_by_broj_dokumenta( _id_firma, _id_vd, _br_dok )
 
       DO WHILE !Eof() .AND. field->idfirma == _id_firma .AND. field->idvn == _id_vd .AND. field->brnal == _br_dok
@@ -448,7 +448,7 @@ STATIC FUNCTION __export( vars, a_details )
          _id_konto := field->idkonto
          _id_partner := field->idpartner
 
-         
+
          _app_rec := dbf_get_rec()
          SELECT e_suban
          APPEND BLANK

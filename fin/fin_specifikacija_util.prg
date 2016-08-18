@@ -125,106 +125,13 @@ FUNCTION RasclanRJ()
    // prikaz vrijednosti na izvjestaju
    // ------------------------------------------
 
-FUNCTION Pljuc( xVal )
-
-   ? "�"
-   ?? xVal
-   ?? "�"
-
-   RETURN
-
-// -------------------------------------------
-// prikaz vrijednosti na izvjestaju
-// -------------------------------------------
-FUNCTION PPljuc( xVal )
-
-   ?? xVal
-   ?? "�"
-
-   RETURN
 
 
-// -------------------------------
-// ispis rocnosti
-// -------------------------------
-FUNCTION IspisRoc2( i )
-
-   LOCAL cVrati
-
-   IF i == 1
-      cVrati := " DO " + Str( nDoDana1, 3 )
-   ELSEIF i == 2
-      cVrati := " DO " + Str( nDoDana2, 3 )
-   ELSEIF i == 3
-      cVrati := " DO " + Str( nDoDana3, 3 )
-   ELSEIF i == 4
-      cVrati := " DO " + Str( nDoDana4, 3 )
-   ELSE
-      cVrati := " PR." + Str( nDoDana4, 3 )
-   ENDIF
-
-   RETURN cVrati + " DANA"
 
 
-// -------------------------------------
-// ispis rocnosti
-// -------------------------------------
-FUNCTION RRocnost()
-
-   LOCAL nDana := Abs( IIF( datval_prazan() , datdok, datval ) - dNaDan ), nVrati
-
-   IF nDana <= nDoDana1
-      nVrati := 1
-   ELSEIF nDana <= nDoDana2
-      nVrati := 2
-   ELSEIF nDana <= nDoDana3
-      nVrati := 3
-   ELSEIF nDana <= nDoDana4
-      nVrati := 4
-   ELSE
-      nVrati := 5
-   ENDIF
-
-   RETURN nVrati
 
 
-/* IspisRocnosti()
- *     Ispis rocnosti
- */
 
-FUNCTION IspisRocnosti()
-
-   LOCAL cRocnost := Rocnost(), cVrati
-
-   IF cRocnost == "999"
-      cVrati := " PREKO " + Str( nDoDana4, 3 ) + " DANA"
-   ELSE
-      cVrati := " DO " + cRocnost + " DANA"
-   ENDIF
-
-   RETURN cVrati
-
-
-// --------------------------------
-// rocnost
-// --------------------------------
-FUNCTION Rocnost()
-
-   LOCAL nDana := Abs( IIF( datval_prazan(), datdok, datval ) - dNaDan ), cVrati
-
-   IF nDana <= nDoDana1
-      cVrati := Str( nDoDana1, 3 )
-   ELSEIF nDana <= nDoDana2
-      cVrati := Str( nDoDana2, 3 )
-   ELSEIF nDana <= nDoDana3
-      cVrati := Str( nDoDana3, 3 )
-   ELSEIF nDana <= nDoDana4
-      cVrati := Str( nDoDana4, 3 )
-   ELSE
-      cVrati := "999"
-   ENDIF
-
-   RETURN cVrati
 
 
 

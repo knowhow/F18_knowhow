@@ -53,7 +53,7 @@ FUNCTION kalk_ip()
    SEEK Trim( cidkonto )
    SELECT kalk
 
-   HSEEK cidfirma + cidkonto
+   HSEEK cIdfirma + cIdkonto
 
    DO WHILE !Eof() .AND. cidfirma + cidkonto == idfirma + pkonto
 
@@ -63,7 +63,7 @@ FUNCTION kalk_ip()
       nRabat := 0
 
       SELECT roba
-      HSEEK cidroba
+      HSEEK cIdroba
 
       SELECT kalk
 

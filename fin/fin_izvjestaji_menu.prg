@@ -20,16 +20,25 @@ FUNCTION fin_izvjestaji()
 
    AAdd( opc, "1. kartica                      " )
    AAdd( opcexe, {|| fin_kartice_menu() } )
+
    AAdd( opc, "2. bruto bilansi" )
    AAdd( opcexe, {|| FinBrutoBilans():New():print() } )
+
    AAdd( opc, "3. specifikacije" )
    AAdd( opcexe, {|| fin_menu_specifikacije() } )
+
+   AAdd( opc, "4. ročni intervali" )
+   AAdd( opcexe, {|| fin_rocni_intervali_meni() } )
+
    AAdd( opc, "5. proizvoljni izvještaji" )
    AAdd( opcexe, {|| ProizvFin() } )
+
    AAdd( opc, "6. dnevnik naloga" )
    AAdd( opcexe, {|| DnevnikNaloga() } )
+
    AAdd( opc, "7. ostali izvještaji" )
    AAdd( opcexe, {|| fin_izvjestaji_ostali() } )
+
    AAdd( opc, "8. blagajnicki nalog" )
    AAdd( opcexe, {|| blag_azur() } )
 

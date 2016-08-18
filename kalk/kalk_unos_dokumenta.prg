@@ -1344,34 +1344,34 @@ FUNCTION kalk_unos_1( fNovi, atrib )
 
    IF _idvd == "10"
 
-      RETURN Get1_10PDV()
+      RETURN kalk_get_1_10()
 
    ELSEIF _idvd == "11"
-      RETURN GET1_11()
+      RETURN kalk_get_1_11()
 
    ELSEIF _idvd == "12"
-      RETURN GET1_12()
+      RETURN kalk_get_1_12()
 
    ELSEIF _idvd == "13"
-      RETURN GET1_12()
+      RETURN kalk_get_1_12()
 
    ELSEIF _idvd == "14"
-      RETURN kalk_14_get1()
+      RETURN kalk_get_1_14()
 
    ELSEIF _idvd == "KO"
-      RETURN kalk_14_get1()
+      RETURN kalk_get_1_14()
 
    ELSEIF _idvd == "16"
       RETURN kalk_get1_16()
 
    ELSEIF _idvd == "18"
-      RETURN GET1_18()
+      RETURN kalk_get_1_18()
 
    ELSEIF _idvd == "19"
-      RETURN GET1_19()
+      RETURN kalk_get_1_19()
 
    ELSEIF _idvd $ "41#42#43#47#49"
-      RETURN GET1_41()
+      RETURN kalk_get_1_41()
 
    ELSEIF _idvd == "81"
       RETURN kalk_unos_dok_81( @atrib )
@@ -1379,8 +1379,6 @@ FUNCTION kalk_unos_1( fNovi, atrib )
    ELSEIF _idvd == "80"
       RETURN GET1_80( @atrib )
 
-   ELSEIF _idvd == "24"
-      RETURN GET1_24PDV()
 
    ELSEIF _idvd $ "95#96#97"
       RETURN kalk_get_1_95()
@@ -1392,7 +1390,7 @@ FUNCTION kalk_unos_1( fNovi, atrib )
       RETURN GET1_82()
 
    ELSEIF _idvd == "IM"
-      RETURN GET1_IM()
+      RETURN kalk_get_1_im()
 
    ELSEIF _idvd == "IP"
       RETURN GET1_IP()

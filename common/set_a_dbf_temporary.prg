@@ -12,9 +12,10 @@
 #include "f18.ch"
 
 
-// -------------------------------------------------------------------
-// setovanje temporary tabela koje koriste svi moduli
-// -------------------------------------------------------------------
+/*
+ setovanje temporary tabela koje koriste svi moduli
+*/
+
 FUNCTION set_a_dbf_temporary()
 
    LOCAL _rec
@@ -25,6 +26,7 @@ FUNCTION set_a_dbf_temporary()
    set_a_dbf_temp( "finmat",  "FINMAT", F_FINMAT     )
    set_a_dbf_temp( "r_export",  "R_EXPORT", F_R_EXP      )
    set_a_dbf_temp( "pom2",  "POM2", F_POM2       )
+   set_a_dbf_temp( "pom",   "POM", F_POM  )
    set_a_dbf_temp( "dracun",  "DRN", F_DRN        )
    set_a_dbf_temp( "racun",  "RN", F_RN         )
    set_a_dbf_temp( "dracuntext",  "DRNTEXT", F_DRNTEXT    )

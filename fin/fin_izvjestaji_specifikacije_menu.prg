@@ -85,12 +85,8 @@ STATIC FUNCTION fin_izvj_specif_txt_menu()
       AAdd( _opcexe, {|| Prihodi() } )
    ENDIF
 
-   AAdd( _opc, "C. otvorene stavke po dospijeću - po racunima (kao kartica)" )
-   AAdd( _opcexe, {|| fin_spec_otv_stavke_po_dospijecu( .T. ) } )
-   AAdd( _opc, "D. otvorene stavke po dospijeću - specifikacija partnera" )
-   AAdd( _opcexe, {|| fin_spec_otv_stavke_po_dospijecu( .F. ) } )
-   AAdd( _opc, "F. pregled dugovanja partnera po ročnim intervalima " )
-   AAdd( _opcexe, {|| SpecDugPartnera() } )
+
+
    AAdd( _opc, "S. specifikacija troskova po gradilištima " )
    AAdd( _opcexe, {|| r_spec_tr() } )
 

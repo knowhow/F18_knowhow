@@ -41,7 +41,7 @@ FUNCTION kalk_stampa_dokumenta( lAzuriraniDokument, cSeek, lAuto )
    IF ( lAuto == nil )
       lAuto := .F.
    ENDIF
-altd()
+
    IF ( cSeek == nil )
       cSeek := ""
    ENDIF
@@ -76,16 +76,22 @@ altd()
       IF !lAuto
 
          IF ( cSeek == "" )
-            Box( "", 1, 50 )
+            Box( "", 4, 65 )
             SET CURSOR ON
             @ m_x + 1, m_y + 2 SAY "KALK Dok broj:"
 
             @ m_x + 1, Col() + 2  SAY cIdFirma
             @ m_x + 1, Col() + 1 SAY "-" GET cIdVD  PICT "@!"
-            @ m_x + 1, Col() + 1 SAY "-" GET cBrDok
+            @ m_x + 1, Col() + 1 SAY "-" GET cBrDok valid {|| cBrdok := kalk_fix_brdok( cBrDok ), .T. }
+
+            @ m_x + 3, m_y + 2 SAY "(Brdok: '00000022', '22' -> '00000022', '00005/TZ'"
+            @ m_x + 4, m_y + 2 SAY "        '22#  ' -> '22   ', '0022' -> '00000022' ) "
             READ
+
             ESC_BCR
             BoxC()
+
+            altd()
 
             IF lAzuriraniDokument // stampa azuriranog KALK dokumenta
                open_kalk_as_pripr( .T., cIdFirma, cIdVd, cBrDok )

@@ -131,7 +131,6 @@ FUNCTION kalk_set_brkalk_za_idvd( cIdVd, cBrKalk )
       ELSE
          cBrKalk := field->brdok
       ENDIF
-      // cBrKalk := UBrojDok( Val( Left( cBrKalk, 5 ) ) + 1, 5, Right( cBrKalk, 3 ) )
       kalk_fix_brdok_add_1( @cBrKalk )
 
    ENDIF
@@ -146,6 +145,26 @@ FUNCTION kalk_fix_brdok_add_1( cBrKalk )
 
    IF gBrojacKalkulacija == "D"
       cBrKalk := UBrojDok( Val( Left( cBrKalk, nLenGlavni ) ) + 1, nLenGlavni, Right( cBrKalk, nLenSufiks ) )
+   ENDIF
+
+   RETURN cBrKalk
+
+
+FUNCTION kalk_fix_brdok( cBrKalk )
+
+   LOCAL nLenGlavni := kalk_duzina_brojaca_dokumenta()
+   LOCAL nLenSufiks := 8 - nLenGlavni
+
+   IF "/" $ cBrKalk  .OR. "-" $ cBrKalk  // ne mijenjati nista za 00002/TZ, 00002-TZ
+      RETURN cBrKalk
+   ENDIF
+
+   IF Right( AllTrim( cBrKalk ), 1 ) == "#" // ako imam neki "ludi broj" npr "0003    ", onda navodim "0003#"
+      RETURN StrTran( cBrKalk, "#", " " )
+   ENDIF
+
+   IF gBrojacKalkulacija == "D"
+      cBrKalk := UBrojDok( Val( Left( cBrKalk, nLenGlavni ) ), nLenGlavni, Right( cBrKalk, nLenSufiks ) )
    ENDIF
 
    RETURN cBrKalk
@@ -200,6 +219,8 @@ FUNCTION kalk_get_next_kalk_doc_uvecaj( cIdFirma, cIdTipDok, nUvecaj )
 
 FUNCTION kalk_prazan_broj_dokumenta()
    RETURN PadR( "0", kalk_duzina_brojaca_dokumenta(), "0" )
+
+
 
 
 /* MarkBrDok(fNovi)

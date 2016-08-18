@@ -168,3 +168,30 @@ FUNCTION fin_set_param_broj_dokumenta()
    ENDIF
 
    RETURN .T.
+
+
+
+// ------------------------------------------------
+// vraca prazan broj naloga
+// ------------------------------------------------
+FUNCTION fin_prazan_broj_naloga()
+   RETURN PadR( "0", 8, "0" )
+
+
+// ------------------------------------------------------------
+// resetuje brojač dokumenta ako smo pobrisali dokument
+// ------------------------------------------------------------
+FUNCTION fin_reset_broj_dokumenta( firma, tip_dokumenta, broj_dokumenta )
+
+   LOCAL _param
+   LOCAL _broj := 0
+
+   _param := "fin" + "/" + firma + "/" + tip_dokumenta // param: fin/10/10
+   _broj := fetch_metric( _param, nil, _broj )
+
+   IF Val( broj_dokumenta ) == _broj
+      -- _broj // smanji globalni brojac za 1
+      set_metric( _param, nil, _broj )
+   ENDIF
+
+   RETURN .T.

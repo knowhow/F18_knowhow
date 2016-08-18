@@ -95,31 +95,6 @@ FUNCTION fin_dok_get_last_rbr( idfirma, idvn, brnal )
    RETURN _last
 
 
-// ------------------------------------------------
-// vraca prazan broj naloga
-// ------------------------------------------------
-FUNCTION fin_prazan_broj_naloga()
-   RETURN PadR( "0", 8, "0" )
-
-
-// ------------------------------------------------------------
-// resetuje brojač dokumenta ako smo pobrisali dokument
-// ------------------------------------------------------------
-FUNCTION fin_reset_broj_dokumenta( firma, tip_dokumenta, broj_dokumenta )
-
-   LOCAL _param
-   LOCAL _broj := 0
-
-   // param: fin/10/10
-   _param := "fin" + "/" + firma + "/" + tip_dokumenta
-   _broj := fetch_metric( _param, nil, _broj )
-
-   IF Val( broj_dokumenta ) == _broj
-      -- _broj // smanji globalni brojac za 1
-      set_metric( _param, nil, _broj )
-   ENDIF
-
-   RETURN .T.
 
 
 

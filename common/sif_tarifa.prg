@@ -40,7 +40,7 @@ FUNCTION P_Tarifa( cid, dx, dy )
 
 
 
-/* fn Tarifa(cIdKonto, cIdRoba, aPorezi, cIdTar)
+/*
  *   Ispitivanje tarife, te punjenje matrice aPorezi
  * param: cIdKonto - Oznaka konta
  * param: cIdRoba - Oznaka robe
@@ -117,7 +117,7 @@ FUNCTION Tarifa( cIdKonto, cIdRoba, aPorezi, cIdTar )
       cIdTarifa := cIdTar
    ENDIF
 
-   SetAPorezi( @aPorezi )
+   set_pdv_array( @aPorezi )
 
    IF ( !lUsedRoba )
       Select( F_ROBA )
@@ -134,32 +134,6 @@ FUNCTION Tarifa( cIdKonto, cIdRoba, aPorezi, cIdTar )
    RETURN cIdTarifa
 
 
-/* SetAPorezi(aPorezi)
- *     Filovanje matrice aPorezi sa porezima
- *   param: aPorezi Matrica poreza, aPorezi:={PPP,PP,PPU,PRUC,PRUCMP,DLRUC}
- */
-FUNCTION SetAPorezi( aPorezi )
-
-   IF ( aPorezi == nil )
-      aPorezi := {}
-   ENDIF
-   IF ( Len( aPorezi ) == 0 )
-      // inicijaliziraj poreze
-      aPorezi := { 0, 0, 0, 0, 0, 0, 0 }
-   ENDIF
-   aPorezi[ POR_PPP ] := tarifa->opp
-   aPorezi[ POR_PP ] := tarifa->zpp
-   aPorezi[ POR_PPU ] := tarifa->ppp
-   aPorezi[ POR_PRUC ]  := tarifa->vpp
-   IF tarifa->( FieldPos( "mpp" ) ) <> 0
-      aPorezi[ POR_PRUCMP ] := tarifa->mpp
-      aPorezi[ POR_DLRUC ] := tarifa->dlruc
-   ELSE
-      aPorezi[ POR_PRUCMP ] := 0
-      aPorezi[ POR_DLRUC ] := 0
-   ENDIF
-
-   RETURN NIL
 
 
 /* MpcSaPorUgost(nPosebniPorez, nPorezNaRuc, aPorezi)
@@ -219,8 +193,8 @@ FUNCTION MpcSaPorO( nMPCBp, aPorezi, aPoreziIzn )
    LOCAL nPPP
    LOCAL nPPU
 
-   nDLRUC := aPorezi[ POR_DLRUC ] / 100
-   nMPP := aPorezi[ POR_PRUCMP ] / 100
+   nDLRUC := 0
+   nMPP := 0
    nPP := aPorezi[ POR_PP ] / 100
    nPPP := aPorezi[ POR_PPP ] / 100
    nPPU := aPorezi[ POR_PPU ] / 100
@@ -230,7 +204,7 @@ FUNCTION MpcSaPorO( nMPCBp, aPorezi, aPoreziIzn )
    RETURN nPom
 
 
-/* MpcBezPor(nMpcSaPP, aPorezi, nRabat, nNC)
+/*
  *     Racuna maloprodajnu cijenu bez poreza
  *   param: nMpcSaPP maloprodajna cijena sa porezom
  *   param: aPorezi Matrica poreza
@@ -250,211 +224,25 @@ FUNCTION MpcBezPor( nMpcSaPP, aPorezi, nRabat, nNC )
    LOCAL nBrutoMarza
    LOCAL nMpcBezPor
 
-   IF IsPdv()
-
-      IF nRabat == nil
-         nRabat := 0
-      ENDIF
-
-      nPDV := aPorezi[ POR_PPP ]
-
-      nPP := 0
-
-      RETURN nMpcSaPP / ( ( nPDV + nPP ) / 100 + 1 )
-
-   ELSE
-
-      // stari PPP obracun
-      // suma nepregledna ...
-      RETURN MpcBezPorO( nMpcSaPP, aPorezi, nRabat, nNc )
-
-   ENDIF
-
-
-/* MpcBezPor(nMpcSaPP, aPorezi, nRabat, nNC)
- *     Racuna maloprodajnu cijenu bez poreza
- *   param: nMpcSaPP maloprodajna cijena sa porezom
- *   param: aPorezi Matrica poreza
- *   param: nRabat Rabat
- *   param: nNC Nabavna cijena
- */
-
-FUNCTION MpcBezPorO( nMpcSaPP, aPorezi, nRabat, nNC )
-
-   LOCAL nPor1
-   LOCAL nPor2
-   LOCAL nPom
-   LOCAL nDLRUC
-   LOCAL nMPP
-   LOCAL nPP
-   LOCAL nPPP
-   LOCAL nPPU
-   LOCAL nBrutoMarza
-   LOCAL nMpcBezPor
-
    IF nRabat == nil
       nRabat := 0
    ENDIF
 
-   nDLRUC := aPorezi[ POR_DLRUC ] / 100
-   nMPP := aPorezi[ POR_PRUCMP ] / 100
-   nPP := aPorezi[ POR_PP ] / 100
-   nPPP := aPorezi[ POR_PPP ] / 100
-   nPPU := aPorezi[ POR_PPU ] / 100
+   nPDV := aPorezi[ POR_PPP ]
 
-   IF ( !IsVindija() ) .AND. nMpcSaPP <> nil
-      nMpcSaPP := nMpcSaPP - nRabat
-   ENDIF
+   nPP := 0
 
-
-   nPom := nMpcSaPP / ( nPP + ( nPPP + 1 ) * ( 1 + nPPU ) )
-
-   RETURN nPom
+   RETURN nMpcSaPP / ( ( nPDV + nPP ) / 100 + 1 )
 
 
 
-/* kalk_porezi_maloprodaja(nMPCBp, aPorezi nMpcSaP)
- *     Racuna iznos PPP
- *   param: nMpcBp Maloprodajna cijena bez poreza
- *   param: aPorezi Matrica poreza
- *   param: aPoreziIzn Matrica izracunatih poreza
- *   param: nMpcSaP Maloprodajna cijena sa porezom
- */
-FUNCTION kalk_porezi_maloprodaja( nMpcBp, aPorezi, nMpcSaP )
-
-   LOCAL nPom
-   LOCAL nUkPor
-
-   IF nMpcBp == nil // zadate je cijena sa porezom, utvrdi cijenu bez poreza
-      nUkPor := aPorezi[ POR_PPP ] // POR_PPP - PDV
-      nMpcBp := nMpcSaP / ( nUkPor / 100 + 1 )
-   ENDIF
-
-   nPom := nMpcBP * aPorezi[ POR_PPP ] / 100
-
-   RETURN nPom
-
-
-/* Izn_P_PPU(nMpcBp, aPorezi, aPoreziIzn)
- *     Racuna iznos PPU
- *   param: nMpcBp Maloprodajna cijena bez poreza
- *   param: aPorezi Matrica poreza
- *   param: aPoreziIzn Matrica izracunatih poreza
- */
-FUNCTION Izn_P_PPU( nMPCBp, aPorezi, aPoreziIzn )
-
-   LOCAL nPom
-
-   nPom := nMpcBp * ( aPorezi[ POR_PPP ] / 100 + 1 ) * ( aPorezi[ POR_PPU ] / 100 )
-
-   RETURN nPom
-
-
-/* Izn_P_PP(nMpcBp, aPorezi, aPoreziIzn)
- *     Racuna iznos PP
- *   param: nMpcBp Maloprodajna cijena bez poreza
- *   param: aPorezi Matrica poreza
- *   param: aPoreziIzn Matrica izracunatih poreza
- */
-FUNCTION Izn_P_PP( nMpcBp, aPorezi, aPoreziIzn )
-
-   LOCAL nOsnovica
-   LOCAL nMpcSaPor
-   LOCAL nPom
-   LOCAL nUkPor
-
-   IF glUgost
-      nPom := nMpcBp * aPorezi[ POR_PP ] / 100
-   ELSE
-      nPom := 0
-   ENDIF
-
-   RETURN nPom
-
-/* Izn_P_PPUgost(nMpcSaPP, nIznPRuc, aPorezi)
- *     Racuna posebni porez u ugostiteljstvu
- *   param: nMpcSaPP Maloprodajna cijena sa porezom
- *   param: nIznPRuc Iznos poreza na razliku u cijeni
- *   param: aPorezi Matrica poreza
- */
-FUNCTION Izn_P_PPUgost( nMpcSaPP, nIznPRuc, aPorezi )
-
-   LOCAL nPom
-   LOCAL nDLRUC
-   LOCAL nMPP
-
-   // ova se funkcija u PDV-u ne koristi
-
-   nDLRUC := aPorezi[ POR_DLRUC ] / 100
-   nMPP := aPorezi[ POR_PRUCMP ] / 100
-
-   IF gUgostVarijanta = "MPCSAPOR"
-      nIznPRuc := nMpcSaPP * nDLRUC * nMPP / ( 1 + nMPP )
-   ENDIF
-
-   // osnovica je cijena sa porezom umanjena za porez na ruc
-   nPom := ( nMpcSaPP - nIznPRuc ) * aPorezi[ POR_PP ] / 100
-
-   RETURN nPom
-
-
-/* Izn_P_PRugost(nMpcSaPP, nMPCBp, nNc, aPorezi, aPoreziIzn)
- *     Porez na razliku u cijeni u ugostiteljstvu
- *   param: nMpcSaPP maloprodajna cijena sa porezom
- *   param: nMpcBp maloprodajna cijena bez poreza
- *   param: nNc nabavna cijena
- *   param: aPorezi matrica poreza
- *   param: aPoreziIzn matrica izracunatih poreza
- */
-FUNCTION Izn_P_PRugost( nMpcSaPP, nMPCBp, nNc, aPorezi, aPoreziIzn )
-
-   // ovo se ne koristi u rezimu PDV-a
-
-   LOCAL nPom
-   LOCAL nMarza
-   LOCAL nDLRUC
-   // preracunata stopa poreza na ruc
-   LOCAL nPStopaMPP
-   // donji limit stope RUC-a
-   nDLRUC := aPorezi[ POR_DLRUC ] / 100
-
-   // porez na ruc
-   nMPP := aPorezi[ POR_PRUCMP ] / 100
-
-   // preracunata stopa poreza na ruc
-   nPStopaMPP := nMPP / ( 1 + nMPP )
-
-   // varijanta "I", izaslo u sl.novinama.
-   IF gUVarPP == "I"
-      // ako je nc=0 marzu racunaj kao mpc * dlruc
-      IF nNc == 0
-         nMarza := nMpcSaPP * nDLRUC
-      ELSE
-         nMarza := nMpcSaPP - nNc
-      ENDIF
-   ELSE
-      nMarza := nMpcSaPP - nNc - kalk_porezi_maloprodaja( NIL, aPorezi, nMpcSaPP )
-   ENDIF
-
-   DO CASE
-   CASE gUgostVarijanta $ "MPCSAPOR"
-      // uvijek je osnova mpc
-      nPom := ( nMpcSaPP * nDLRUC ) * nPStopaMPP
-
-   CASE gUgostVarijanta = "RMARZA_DLIMIT"
-      // realizovana marza ili dlimit
-      nPom := Max( ( nMpcSaPP * nDLRUC ) * nPStopaMPP, nMarza * nPStopaMPP )
-   OTHERWISE
-      nPom := -9999999
-   ENDCASE
-
-   RETURN nPom
 
 
 
-/* KorekTar()
- *     Korekcija tarifa
- */
+
+
+/*
+
 FUNCTION KorekTar()
 
    LOCAL cTekIdTarifa
@@ -545,30 +333,7 @@ FUNCTION KorekTar()
    CLOSERET
 
    RETURN
-
-
-/* PrPPUMP()
- *     Vraca procenat poreza na usluge. U ugostiteljstvu to je porez na razliku u cijeni. aPorezi, _mpp i _ppp moraju biti definisane (privatne ili javne var.)
 */
-FUNCTION PrPPUMP()
-
-   LOCAL nV
-
-   IF !glPoreziLegacy
-      IF glUgost
-         nV := aPorezi[ POR_PRUCMP ]
-      ELSE
-         nV := aPorezi[ POR_PPU ]
-      ENDIF
-   ELSE
-      IF gUVarPP $ "MJT"
-         nV := _mpp * 100
-      ELSE
-         nV := _ppp * 100
-      ENDIF
-   ENDIF
-
-   RETURN nV
 
 
 

@@ -30,7 +30,7 @@ FUNCTION VRoba( lSay )
       // za postojece dokumente uzmi u obzir unesenu tarifu
       SELECT TARIFA
       SEEK _idtarifa
-      SetAPorezi( @aPorezi )
+      set_pdv_array( @aPorezi )
    ENDIF
 
    IF fNovi
@@ -244,7 +244,7 @@ FUNCTION VRoba_lv( fNovi, aPorezi )
       // za postojece dokumente uzmi u obzir unesenu tarifu
       SELECT TARIFA
       SEEK _IdTarifa
-      SetAPorezi( @aPorezi )
+      set_pdv_array( @aPorezi )
    ENDIF
 
    IF fNovi

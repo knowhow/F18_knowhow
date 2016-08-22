@@ -11,18 +11,54 @@
 
 #include "f18.ch"
 
+STATIC s_cKalkDestinacijaTopska := NIL
+STATIC s_cTxtPrint
+
+MEMVAR m_x, m_y, gFirma, GetList
+
+FUNCTION kalk_tops_meni()
+
+   LOCAL cIDFirma := gFirma
+   LOCAL cIdVd := "80"
+   LOCAL cBrDok := Space( 8 )
+
+   DO WHILE .T.
+      Box(, 5, 40 )
+      SET CURSOR ON
+      @ m_x + 1, m_y + 2 SAY "Generacija KALK -> TOPS: "
+      @ m_x + 2, m_y + 2 SAY "-------------------------------"
+      @ m_x + 4, m_y + 2 SAY "Dokument: " GET cIDFirma
+      @ m_x + 4, m_y + 16 SAY " - " GET cIdVd VALID !Empty( cIdVd )
+      @ m_x + 4, m_y + 23 SAY " - " GET cBrDok valid {|| cBrdok := kalk_fix_brdok( cBrDok ), .T. }
+      READ
+      ESC_BCR
+      BoxC()
+
+      AltD()
+      IF kalk_dokument_postoji( cIDFirma, cIdVd, cBrDok, .F. )
+         kalk_generisi_tops_dokumente( cIDFirma, cIdVd, cBrDok ) // generisi datoteku prenosa
+      ENDIF
+
+      cBrDok := kalk_fix_brdok_add_1( cBrDok )
+   ENDDO
+
+   RETURN .T.
+
+
 
 /*
       generacija tops dokumenata na osnovu kalk dokumenata
 */
 
-FUNCTION kalk_generisi_tops_dokumente( cIdFirma, cIdTipDok, cBrDok )
+FUNCTION kalk_generisi_tops_dokumente( cIdFirma, cIdVd, cBrDok )
 
    LOCAL _katops_table := "katops.dbf"
    LOCAL _rbr, _dat_dok
    LOCAL _aPosLokacije
    LOCAL _lFromKumulativ := .T.
    LOCAL _total := 0
+   LOCAL cStavke := ""
+   LOCAL cPm, cPKonto
 
    my_close_all_dbf()
 
@@ -32,17 +68,14 @@ FUNCTION kalk_generisi_tops_dokumente( cIdFirma, cIdTipDok, cBrDok )
 
 
    IF !kalk_tops_prenos_prerequisites()
-
-      kalk_tops_o_gen_tables( _lFromKumulativ )
-      SELECT kalk_pripr
+      // kalk_tops_o_gen_tables( _lFromKumulativ )
       RETURN .F.
-
    ENDIF
 
    kalk_tops_o_gen_tables( _lFromKumulativ ) // otvori tabele
 
    IF _lFromKumulativ
-      open_kalk_as_pripr( .T., cIdFirma, cIdTipDok, cBrDok ) // .T. => SQL table
+      open_kalk_as_pripr( .T., cIdFirma, cIdVd, cBrDok ) // .T. => SQL table
    ENDIF
 
    _cre_katops_dbf( my_home() + _katops_table, _lFromKumulativ ) // kreiraj tabelu katops, ona ce se kreirati u privatnom direktoriju
@@ -54,11 +87,11 @@ FUNCTION kalk_generisi_tops_dokumente( cIdFirma, cIdTipDok, cBrDok )
 
    IF _lFromKumulativ == .F.
       cIdFirma := field->idfirma
-      cIdTipDok := field->idvd
+      cIdVd := field->idvd
       cBrDok := field->brdok
    ENDIF
 
-   SEEK cIdFirma + cIdTipDok + cBrDok
+   SEEK cIdFirma + cIdVd + cBrDok
 
    _rbr := 0
    _dat_dok := Date()
@@ -66,14 +99,17 @@ FUNCTION kalk_generisi_tops_dokumente( cIdFirma, cIdTipDok, cBrDok )
 
    _aPosLokacije := {} // matrica pos mjesta koje kaci kalkulacija
 
-   DO WHILE !Eof() .AND. field->idfirma == cIdFirma .AND. field->idvd == cIdTipDok .AND. field->brdok == cBrDok
+   DO WHILE !Eof() .AND. field->idfirma == cIdFirma .AND. field->idvd == cIdVd .AND. field->brdok == cBrDok
+
+
+      cStavke += AllTrim( idroba ) + " x " + AllTrim( Str( kolicina, 8, 2 ) ) + "; "
 
       SELECT roba
       HSEEK kalk_pripr->idroba
 
       SELECT koncij
-      SEEK Trim( kalk_pripr->pkonto )
-
+      SEEK kalk_pripr->pkonto
+      cPKonto := kalk_pripr->pkonto
 
       IF Empty( koncij->idprodmjes ) // provjeri postoji li koncij zapis
          Msgbeep( "Nije definisano prodajno mjesto u tabeli konta - tipovi cijena !" )
@@ -84,6 +120,7 @@ FUNCTION kalk_generisi_tops_dokumente( cIdFirma, cIdTipDok, cBrDok )
       SELECT katops
       APPEND BLANK
 
+      cPm := koncij->idprodmjes
       IF AScan( _aPosLokacije, {| x| x == koncij->idprodmjes } ) == 0
          AAdd( _aPosLokacije, koncij->idprodmjes )
       ENDIF
@@ -121,9 +158,7 @@ FUNCTION kalk_generisi_tops_dokumente( cIdFirma, cIdTipDok, cBrDok )
       REPLACE field->barkod WITH roba->barkod
 
 
-      IF kalk_pripr->pu_i == "3" // cijene
-         // radi se o nivelaciji
-         // mpc - stara cijena
+      IF kalk_pripr->pu_i == "3" // radi se o nivelaciji,  mpc - stara cijena
          REPLACE field->mpc WITH kalk_pripr->fcj
 
          REPLACE field->mpc2 WITH kalk_pripr->fcj + kalk_pripr->mpcsapp // mpc2 - nova cijena
@@ -150,12 +185,14 @@ FUNCTION kalk_generisi_tops_dokumente( cIdFirma, cIdTipDok, cBrDok )
    USE
 
    IF _rbr > 0
+      kalk_tops_print_report( cIdFirma, cIdVd, cBrDok, _rbr, _total, cStavke, cPm, cPKonto ) // , _exp_file ) // ispisi report
 
-      _exp_file := kalk_tops_kreiraj_fajl_prenosa( _dat_dok, _aPosLokacije, _rbr ) // napravi i prebaci izlazne fajlove gdje trebaju
+      // _exp_file :=
+      kalk_tops_kreiraj_fajl_prenosa( _dat_dok, _aPosLokacije, _rbr ) // napravi i prebaci izlazne fajlove gdje trebaju
 
       my_close_all_dbf()
 
-      kalk_tops_print_report( cIdFirma, cIdTipDok, cBrDok, _rbr, _total, _exp_file ) // ispisi report
+
 
    ENDIF
 
@@ -165,32 +202,53 @@ FUNCTION kalk_generisi_tops_dokumente( cIdFirma, cIdTipDok, cBrDok )
 
 
 
-STATIC FUNCTION kalk_tops_print_report( firma, tip_dok, cBrDok, broj_stavki, total_prenosa, export_fajl )
+STATIC FUNCTION kalk_tops_print_report( cIdFirma, cIdVd, cBrDok, nBrojStavki, nSaldo,  cStavke, cPm, cPKonto )
 
-   START PRINT CRET
-
+   // START PRINT CRET
+   start_print_editor()
    ?
    ? Space( 2 ) + "Prenos KALK -> TOPS na dan: ", Date()
    ? Space( 2 ) + "---------------------------------------"
+   // ? Space( 2 ) + "Formiran dokument: " + export_fajl
    ?
-   ? Space( 2 ) + "Formiran dokument: " + export_fajl
+   ? Space( 2 ) + "KALK: " + cIdFirma + "-" + cIdVd + "-" + cBrDok, "PM:", cPm, "PKonto:", cPKonto
    ?
-   ? Space( 2 ) + "Dokument: " + firma + "-" + tip_dok + "-" + cBrDok
+   ? Space( 2 ) + "Broj prenesenih stavki: " + AllTrim( Str( nBrojStavki ) )
+   ? Space( 2 ) + "Saldo: " + AllTrim( Str( nSaldo, 10, 2 ) )
    ?
-   ? Space( 2 ) + "Broj prenesenih stavki: " + AllTrim( Str( broj_stavki ) )
-   ? Space( 2 ) + "Saldo: " + AllTrim( Str( total_prenosa, 10, 2 ) )
-   ?
-   ?
+   ? Space( 2 ) + "Stavke:", cStavke
 
-   IF tip_dok == "80" .AND. total_prenosa == 0
+   IF cIdVd == "80" .AND. nSaldo == 0
       ? Space( 2 ) + "Predispozicija"
    ENDIF
 
    ?
 
-   ENDPRINT
+   // ENDPRINT
+   s_cTxtPrint := end_print_editor()
 
    RETURN .T.
+
+
+
+FUNCTION kalk_destinacija_topska( cSet )
+
+   IF s_cKalkDestinacijaTopska == NIL
+      s_cKalkDestinacijaTopska := fetch_metric( "kalk_destinacija_topska", f18_user(), "" )
+   ENDIF
+
+   IF cSet != nil
+      s_cKalkDestinacijaTopska := cSet
+      set_metric( "kalk_destinacija_topska", f18_user(), AllTrim( cSet ) )
+   ENDIF
+
+   s_cKalkDestinacijaTopska := AllTrim( s_cKalkDestinacijaTopska )
+
+   IF Right( s_cKalkDestinacijaTopska, 1 ) <> SLASH
+      s_cKalkDestinacijaTopska := s_cKalkDestinacijaTopska + SLASH
+   ENDIF
+
+   RETURN s_cKalkDestinacijaTopska
 
 
 
@@ -201,40 +259,37 @@ STATIC FUNCTION kalk_tops_kreiraj_fajl_prenosa( datum, aPosLokacije, broj_stavki
    LOCAL _integ := {}
    LOCAL _table_name := "katops.dbf"
    LOCAL _table_path := my_home()
-   LOCAL _export_location, _export
+   LOCAL cExportHomeDir, cExporPosDir
    LOCAL _ret := ""
+   LOCAL cTopsDest
 
-   IF Right( AllTrim( gTopsDest ), 1 ) <> SLASH
-      gTopsDest := AllTrim( gTopsDest ) + SLASH
-   ENDIF
+   AltD()
 
+   cTopsDest := kalk_destinacija_topska( cTopsDest )
 
-   _dir_create( AllTrim( gTopsDest ) ) // napravi direktorij prenosa ako ga nema
-   _export_location := AllTrim( gTopsDest ) // export lokacija, bazna
+   _dir_create( cTopsDest ) // napravi direktorij prenosa ako ga nema
+   cExportHomeDir := cTopsDest // export lokacija, bazna
 
 
    FOR _n := 1 TO Len( aPosLokacije ) // prodji kroz sve lokacije i postavi datoteke eksporta
 
+      cExporPosDir := cExportHomeDir + AllTrim( aPosLokacije[ _n ] ) + SLASH // export ce biti u poddirektoriju kojem treba da bude, npr /prenos/1/
 
-      _export := _export_location + AllTrim( aPosLokacije[ _n ] ) + SLASH // export ce biti u poddirektoriju kojem treba da bude, npr /prenos/1/
-
-
-      _dir_create( _export ) // kreirati direktorij ako ne postoji
+      _dir_create( cExporPosDir ) // kreirati direktorij ako ne postoji
 
       DirChange( my_home() ) // nakon dir create prebaci se na my_local_folder
 
-      _dest_patt := get_topskalk_export_file( "2", _export, datum ) // pronadji naziv fajla koji je dozvoljen
+      _dest_patt := get_topskalkcExporPosDir_file( "2", cExporPosDir, datum ) // pronadji naziv fajla koji je dozvoljen
 
-
-      _dest_file := _export + StrTran( _table_name, "katops.", _dest_patt + "." ) // kopiraj katops.dbf na destinaciju
+      _dest_file := cExporPosDir + StrTran( _table_name, "katops.", _dest_patt + "." ) // kopiraj katops.dbf na destinaciju
       _ret := _dest_file
 
       IF FileCopy( _table_path + _table_name, _dest_file ) > 0
-
          _dest_file := StrTran( _dest_file, ".dbf", ".txt" ) // kopiraj txt fajl
-         FileCopy( my_home() + OUTF_FILE, _dest_file )
+         // FileCopy( my_home() + OUTF_FILE, _dest_file )
+         FileCopy( s_cTxtPrint, _dest_file )
       ELSE
-         MsgBeep( "Problem sa kopiranjem fajla na destinaciju #" + _export )
+         MsgBeep( "Problem sa kopiranjem fajla na destinaciju #" + cExporPosDir )
       ENDIF
 
    NEXT
@@ -245,7 +300,7 @@ STATIC FUNCTION kalk_tops_kreiraj_fajl_prenosa( datum, aPosLokacije, broj_stavki
 // ---------------------------------------------------------------
 // vraca naziv fajla za export
 // ---------------------------------------------------------------
-FUNCTION get_topskalk_export_file( topskalk, export_path, datum, prefix )
+FUNCTION get_topskalkcExporPosDir_file( topskalk, export_path, datum, prefix )
 
    LOCAL _file := ""
    LOCAL _prefix := "kt"
@@ -279,34 +334,6 @@ FUNCTION get_topskalk_export_file( topskalk, export_path, datum, prefix )
    RETURN _file
 
 
-
-// ------------------------------------------------------------------
-// generisanje topska na osnovu azuriranog kalk dokumenta
-// ------------------------------------------------------------------
-FUNCTION mnu_prenos_kalk_u_tops()
-
-   LOCAL cIDFirma := gFirma
-   LOCAL cIDTipDokumenta := "80"
-   LOCAL cBrojDokumenta := Space( 8 )
-
-   Box(, 5, 40 )
-   SET CURSOR ON
-   @ m_x + 1, m_y + 2 SAY "Generacija KALK -> TOPS: "
-   @ m_x + 2, m_y + 2 SAY "-------------------------------"
-   @ m_x + 4, m_y + 2 SAY "Dokument: " GET cIDFirma
-   @ m_x + 4, m_y + 16 SAY " - " GET cIDTipDokumenta VALID !Empty( cIDTipDokumenta )
-   @ m_x + 4, m_y + 23 SAY " - " GET cBrojDokumenta VALID !Empty( cBrojDokumenta )
-   READ
-   ESC_BCR
-   BoxC()
-
-   IF kalk_dokument_postoji( cIDFirma, cIDTipDokumenta, cBrojDokumenta, .F. )
-      IF ( gTops <> "0 " .AND. Pitanje(, "Izgenerisati datoteku prenosa?", "D" ) == "D" )
-         kalk_generisi_tops_dokumente( cIDFirma, cIDTipDokumenta, cBrojDokumenta ) // generisi datoteku prenosa
-      ENDIF
-   ENDIF
-
-   RETURN .T.
 
 
 
@@ -367,17 +394,16 @@ STATIC FUNCTION kalk_tops_prenos_prerequisites()
 
    LOCAL _ret := .F.
 
-   IF AllTrim( gTops ) <> "0"
+   cTopsDest := kalk_destinacija_topska()
 
-      IF Empty( AllTrim( gTopsDest ) )  // provjeri i gTopsDest
-         MsgBeep( "Nije podesen direktorij za prenos podataka !" )
-      ELSE
-         _ret := .T.
-      ENDIF
+   IF Empty( cTopsDest )
+      MsgBeep( "Nije podesen direktorij za prenos podataka !" )
+   ELSE
+      _ret := .T.
    ENDIF
 
    IF _ret
-      IF Pitanje(, "Generisati datoteku prenosa za modul TOPS (D/N) ?", "N" ) == "N"
+      IF Pitanje(, "Generisati datoteku prenosa za modul TOPS (D/N) ?", "D" ) == "N"
          _ret := .F.
       ENDIF
    ENDIF

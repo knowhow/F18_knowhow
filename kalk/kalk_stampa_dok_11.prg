@@ -111,7 +111,7 @@ FUNCTION kalk_stampa_dok_11( fZaTops )
       nMarza := _marza
       // izracunaj nMarza,nMarza2
 
-      VTPorezi()
+      set_pdv_public_vars()
 
       Tarifa( field->pkonto, field->idRoba, @aPorezi, field->idtarifa )
       aIPor := RacPorezeMP( aPorezi, field->mpc, field->mpcSaPP, field->nc )

@@ -104,7 +104,7 @@ FUNCTION Get1_94()
       ENDIF
    ENDIF
 
-   VTPorezi()
+   set_pdv_public_vars()
 
    SELECT kalk_pripr
 

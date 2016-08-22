@@ -356,7 +356,7 @@ private nPrevoz,nCarDaz,nZavTr,nBankTr,nSpedTr,nMarza,nMarza2
 nFV:=FCj*Kolicina
 SKol:=Kolicina
 kalk_unos_troskovi()
-VtPorezi()
+set_pdv_public_vars()
 cIdVd:=kalk->idvd
 lKontPRUCMP:=(gUVarPP$"MJRT")
 

@@ -96,7 +96,7 @@ STATIC FUNCTION MnuPInv()
    LOCAL _izbor := 1
 
    AAdd( _opc, "1. dokument inventure                       " )
-   AAdd( _opcexe, {|| kalk_ip() } )
+   AAdd( _opcexe, {|| kalk_generisi_ip() } )
    AAdd( _opc, "2. inventura-razlika prema postojecoj IP " )
    AAdd( _opcexe, {|| gen_ip_razlika() } )
    AAdd( _opc, "3. na osnovu IP generisi 80-ku " )
@@ -801,7 +801,7 @@ FUNCTION Gen41S()
       cIdTarifa := IdTarifa
       SELECT roba; HSEEK kalk->idroba
       SELECT tarifa; HSEEK cIdTarifa; SELECT kalk
-      VtPorezi()
+      set_pdv_public_vars()
       nOPP := TARIFA->OPP; nPPP := TARIFA->PPP
       nZPP := tarifa->zpp
       nMPV := nMPVSaPP := 0

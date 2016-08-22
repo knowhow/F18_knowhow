@@ -213,7 +213,7 @@ STATIC FUNCTION kalk_zavisni_nakon_azuriranja( lGenerisi, lAuto )
    IF Generisati11_ku()
       lForm11 := .T.
       cNext11 := kalk_get_next_broj_v5( gFirma, "11", NIL )
-      Generisi11ku_iz10ke( cNext11 )
+      kalk_gen_11_iz_10( cNext11 )
    ENDIF
 
    // SELECT KALK

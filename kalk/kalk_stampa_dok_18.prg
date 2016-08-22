@@ -79,7 +79,7 @@ FUNCTION kalk_stampa_dok_18()
          @ PRow(), 122 SAY "Str:" + Str( ++nStr, 3 )
       ENDIF
 
-      VTPOREZI()
+      set_pdv_public_vars()
 
       nTotA += VPC * Kolicina
       nTotB += vpc / ( 1 + _PORVT ) * _PORVT * kolicina

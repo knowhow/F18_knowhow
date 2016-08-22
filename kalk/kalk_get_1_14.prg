@@ -100,7 +100,7 @@ FUNCTION kalk_get_1_14()
       SELECT kalk_pripr
    ENDIF
 
-   VtPorezi()
+   set_pdv_public_vars()
 
    _GKolicina := 0
 

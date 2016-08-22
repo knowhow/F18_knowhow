@@ -199,7 +199,7 @@ FUNCTION gvim_print( cOut_Name )
 
    START PRINT CRET
 
-   RETURN
+   RETURN .T.
 
 
 

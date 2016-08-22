@@ -999,7 +999,7 @@ FUNCTION MeniF10()
       CASE Izbor == 0
          EXIT
       CASE izbor == 1
-         FaktKalk()
+         fakt_kalk()
       CASE izbor == 2
          kalk_povrat_dokumenta()
       CASE izbor == 3
@@ -1011,7 +1011,7 @@ FUNCTION MeniF10()
       CASE izbor == 6
          kalk_generisi_inventuru_magacina()
       CASE izbor == 7
-         kalk_ip()
+         kalk_generisi_ip()
       CASE izbor == 8
          GenNivP()
       CASE izbor == 9

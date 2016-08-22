@@ -375,7 +375,7 @@ FUNCTION lager_lista_prodavnica()
                   Tarifa( field->pkonto, field->idroba, @aPorezi, field->idtarifa )
                   aIPor := RacPorezeMP( aPorezi, field->mpc, field->mpcsapp, field->nc )
                   nPor1 := aIPor[ 1 ]
-                  VtPorezi()
+                  set_pdv_public_vars()
 
                   SumirajKolicinu( -( field->kolicina ), 0, @nPKol, 0, lPocStanje, lPrikK2 )
 
@@ -426,7 +426,7 @@ FUNCTION lager_lista_prodavnica()
                Tarifa( field->pkonto, field->idroba, @aPorezi, field->idtarifa )
                aIPor := RacPorezeMP( aPorezi, field->mpc, field->mpcsapp, field->nc )
                nPor1 := aIPor[ 1 ]
-               VtPorezi()
+               set_pdv_public_vars()
 
                IF idvd $ "12#13"
                   SumirajKolicinu( -( field->kolicina ), 0, @nUlaz, 0, lPocStanje, lPrikK2 )
@@ -1055,7 +1055,7 @@ STATIC FUNCTION _gen_xml( params )
                Tarifa( field->pkonto, field->idroba, @aPorezi, field->idtarifa )
                aIPor := RacPorezeMP( aPorezi, field->mpc, field->mpcsapp, field->nc )
                nPor1 := aIPor[ 1 ]
-               VtPorezi()
+               set_pdv_public_vars()
                IF field->idvd $ "12#13"
                   SumirajKolicinu( -( field->kolicina ), 0, @_ulaz, 0, .F., .F. )
                   _mpv_u -= field->mpcsapp * field->kolicina

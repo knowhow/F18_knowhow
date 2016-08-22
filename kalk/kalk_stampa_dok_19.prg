@@ -15,10 +15,10 @@
 
 FUNCTION kalk_stampa_dok_19()
 
-
    LOCAL nCol1 := nCol2 := 0, npom := 0
 
    PRIVATE nPrevoz, nCarDaz, nZavTr, nBankTr, nSpedTr, nMarza, nMarza2, aPorezi
+
    // iznosi troskova i marzi koji se izracunavaju u kalk_unos_troskovi()
 
    aPorezi := {}
@@ -61,7 +61,7 @@ FUNCTION kalk_stampa_dok_19()
       vise_kalk_dok_u_pripremi( cIdd )
       RptSeekRT()
       kalk_unos_troskovi()
-      VTPOREZI()
+      set_pdv_public_vars()
 
       Tarifa( kalk_pripr->pkonto, kalk_pripr->idroba, @aPorezi )
 
@@ -104,9 +104,9 @@ FUNCTION kalk_stampa_dok_19()
 
       // 2. red
 
-      @ PRow() + 1, nC1 SAY PrPPUMP()                        PICTURE PicProc
-      @ PRow(), PCol() + 1 SAY nPor2                         PICTURE PicDEM
-      @ PRow(), PCol() + 1 SAY nPor2 * Kolicina                PICTURE PicDEM
+      @ PRow() + 1, nC1 SAY 0                       PICTURE PicProc
+      @ PRow(), PCol() + 1 SAY nPor2                PICTURE PicDEM
+      @ PRow(), PCol() + 1 SAY nPor2 * Kolicina     PICTURE PicDEM
       @ PRow(), PCol() + 1 SAY ( MPCSAPP / FCJ ) * 100  PICTURE picproc
       @ PRow(), PCol() + 1 SAY Space( Len( PicCDEM ) )
 

@@ -1796,7 +1796,7 @@
 
 1.4.43 2012-12-26, vsasa
 
- - KALK, kalk_ip(), IM() prikaz barkod-a [#29825](http://redmine.bring.out.ba/issues/29825)
+ - KALK, kalk_generisi_ip(), IM() prikaz barkod-a [#29825](http://redmine.bring.out.ba/issues/29825)
 
 1.4.42 2012-12-22, vsasa
 

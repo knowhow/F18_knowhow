@@ -150,7 +150,7 @@ DO WHILE !EOF() .and. idfirma==cidfirma .and. cidkonto=mkonto .and. IspitajPreki
 				loop
      			endif
 
-     			VtPorezi()
+     			set_pdv_public_vars()
      
      			nVPVBP := nVPV / (1 + _PORVT)
      			nPaNV += round( NC*kolicina  , gZaokr)

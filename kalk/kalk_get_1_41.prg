@@ -139,7 +139,7 @@ FUNCTION kalk_get_1_41()
       _vpc := roba->plc
    ENDIF
 
-   VtPorezi()
+   set_pdv_public_vars()
 
    IF ( ( _idvd <> "47" ) .AND. roba->tip != "T" )
 

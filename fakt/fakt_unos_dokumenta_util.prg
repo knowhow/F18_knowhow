@@ -1279,12 +1279,12 @@ FUNCTION TarifaR( cRegion, cIdRoba, aPorezi )
    ENDIF
    SEEK cTarifa
 
-   SetAPorezi( @aPorezi )
+   set_pdv_array( @aPorezi )
 
    PopWa()
 
    RETURN tarifa->id
-// }
+
 
 
 // ----------------------------------------

@@ -270,7 +270,7 @@ FUNCTION kalk_kartica_prodavnica()
             Tarifa( field->pkonto, field->idroba, @aPorezi, field->idtarifa )
             aIPor := RacPorezeMP( aPorezi, field->mpc, field->mpcsapp, field->nc )
             nPor1 := aIPor[ 1 ]
-            VtPorezi()
+            set_pdv_public_vars()
 
             IF field->datdok >= dDatod
 

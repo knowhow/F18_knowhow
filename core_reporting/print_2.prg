@@ -221,7 +221,7 @@ FUNCTION f18_end_print( cFileName, xPrintOpt )
       Ptxt( cFileName )
 
    CASE cOpt == "0"
-      editor( cFileName )
+      RETURN editor( cFileName )
 
    OTHERWISE
 

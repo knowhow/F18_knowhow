@@ -317,7 +317,7 @@ STATIC FUNCTION kalk_prod_insert_ps_into_pripr( data, params )
 
       _rec[ "idtarifa" ] := Tarifa( _p_konto, _id_roba, @aPorezi )
 
-      VTPorezi()
+      set_pdv_public_vars()
 
       _rec[ "tcardaz" ] := "%"
       _rec[ "pu_i" ] := "1"

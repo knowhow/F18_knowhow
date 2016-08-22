@@ -444,6 +444,7 @@ FUNCTION is_kalk_fin_isti_broj()
 
 FUNCTION kalk_par_zavisni_dokumenti()
 
+   LOCAL cTopsDest := Padr( kalk_destinacija_topska(), 100 )
    LOCAL _auto_razduzenje := fetch_metric( "kalk_tops_prenos_auto_razduzenje", my_user(), "N" )
    LOCAL cKalkFinIstiBroj := fetch_metric( "kalk_fin_isti_broj", NIL, "D" )
 
@@ -461,14 +462,14 @@ FUNCTION kalk_par_zavisni_dokumenti()
 
    @ m_x + 7, m_y + 2 SAY8 "KALK-FIN identičan broj (D/N): " GET cKalkFinIstiBroj VALID cKalkFinIstiBroj $ "DN" PICT "@!"
 
-   READ
+   //READ
 
-   IF gTops <> "0 " .OR. gFakt <> "0 "
-      @ m_x + 8, m_y + 2 SAY "Destinacija fajla za razmjenu:" GET gTopsDest PICT "@S40"
-      @ m_x + 10, m_y + 2 SAY "Auto.zaduzenje prod.konta (KALK 11) (D/N) ?" GET _auto_razduzenje ;
-         PICT "@!" VALID _auto_razduzenje $ "DN"
-      READ
-   ENDIF
+   //IF gTops <> "0 " .OR. gFakt <> "0 "
+      @ m_x + 8, m_y + 2 SAY "kalk->tops destinacija: " GET cTopsDest PICT "@S40"
+      @ m_x + 10, m_y + 2 SAY "Auto.zaduzenje prod.konta (KALK 11) (D/N) ?" GET _auto_razduzenje PICT "@!" VALID _auto_razduzenje $ "DN"
+
+  READ
+   //ENDIF
 
    BoxC()
 
@@ -480,7 +481,7 @@ FUNCTION kalk_par_zavisni_dokumenti()
       set_metric( "kalk_generisi_16_nakon_96", f18_user(), gGen16 )
       set_metric( "kalk_prenos_pos", f18_user(), gTops )
       set_metric( "kalk_prenos_fakt", f18_user(), gFakt )
-      set_metric( "kalk_destinacija_topska", f18_user(), AllTrim( gTopsDest ) )
+      kalk_destinacija_topska( cTopsDest )
       set_metric( "kalk_tops_prenos_auto_razduzenje", my_user(), _auto_razduzenje )
       set_metric( "kalk_fin_isti_broj", NIL, cKalkFinIstiBroj )
 

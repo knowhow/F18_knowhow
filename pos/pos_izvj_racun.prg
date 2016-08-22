@@ -218,7 +218,7 @@ FUNCTION pos_stampa_racuna( cIdPos, cBrDok, lPrepis, cIdVrsteP, dDatumRn, aVezan
             aPorezi[ nPoz ][ 4 ] += nPPiznos
          ENDIF
       ELSE // stara varijanta
-         SetAPorezi( @aPorezi )
+         set_pdv_array( @aPorezi )
          aIPor := RacPorezeMP( aPorezi, nMPVBP, nIznosSt, 0 )
          ? " PPP(" + Str( nPPP, 2, 0 ) + "%)" + AllTrim( Str( Round( aIPor[ 1 ], 2 ) ) )
          ?? " PPU(" + Str( nPPU, 2, 0 ) + "%)" + AllTrim( Str( Round( aIPor[ 2 ], 2 ) ) )

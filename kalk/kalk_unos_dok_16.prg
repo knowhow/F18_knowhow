@@ -99,7 +99,7 @@ FUNCTION kalk_get1_16()
          _NC := NC
       ENDIF
    ENDIF
-   VTPorezi()
+   set_pdv_public_vars()
    SELECT kalk_pripr
 
    @ m_x + 14, m_y + 2   SAY "NAB.CJ   "  GET _NC  PICTURE gPicNC  WHEN V_kol10()
@@ -177,7 +177,7 @@ FUNCTION Get1_16bPDV()
 
    SELECT kalk_pripr
 
-   VTPorezi()
+   set_pdv_public_vars()
    SELECT kalk_pripr
 
 

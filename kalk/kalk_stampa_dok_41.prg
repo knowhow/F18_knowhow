@@ -81,7 +81,7 @@ FUNCTION kalk_stampa_dok_41()
 
       nPor1 := aIPor[ 1 ]
 
-      VTPorezi()
+      set_pdv_public_vars()
 
       print_nova_strana( 125, @nStr, 2 )
 
@@ -408,7 +408,7 @@ FUNCTION PDVRekTar41( cIdFirma, cIdVd, cBrDok, nStr )
 
          SELECT kalk_pripr
 
-         VtPorezi()
+         set_pdv_public_vars()
 
          Tarifa( kalk_pripr->pkonto, kalk_pripr->idRoba, @aPorezi, kalk_pripr->idtarifa )
 

@@ -268,7 +268,7 @@ FUNCTION kalk_gen_fin_stanje_prodavnice( vars )
 
          Tarifa( field->pkonto, field->idRoba, @aPorezi )
 
-         VtPorezi()
+         set_pdv_public_vars()
 
          IF field->pu_i == "1"
 

@@ -61,7 +61,7 @@ FUNCTION kalk_stampa_dok_82()
       SELECT ROBA; HSEEK kalk_pripr->IdRoba
       SELECT TARIFA; HSEEK kalk_pripr->IdTarifa
       SELECT kalk_pripr
-      VtPorezi()
+      set_pdv_public_vars()
 
       IF PRow() > page_length()
          FF
@@ -142,7 +142,7 @@ FUNCTION kalk_stampa_dok_82()
       SELECT kalk_pripr
       DO WHILE !Eof() .AND. cidfirma + cidvd + cbrdok == idfirma + idvd + brdok .AND. idtarifa == cidtarifa
          SELECT roba; HSEEK kalk_pripr->idroba; SELECT kalk_pripr
-         VtPorezi()
+         set_pdv_public_vars()
          nU1 += mpc * kolicina
          nU2 += mpc * _OPP * kolicina
          nU3 += mpc * ( 1 + _OPP ) * _PPP * kolicina

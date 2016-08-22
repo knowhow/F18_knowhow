@@ -95,7 +95,7 @@ FUNCTION kalk_get_1_12()
       kalk_vpc_po_kartici( @_VPC, _idfirma, _mkonto, _idroba )
    ENDIF
 
-   VTPOREZI()
+   set_pdv_public_vars()
 
    nKolS := 0;nKolZN := 0;nc1 := nc2 := 0;dDatNab := CToD( "" )
    lGenStavke := .F.

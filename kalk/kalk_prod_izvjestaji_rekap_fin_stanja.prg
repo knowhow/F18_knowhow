@@ -179,7 +179,7 @@ FUNCTION Rfinansijsko_stanje_prodavnica()
          SELECT kalk
 
          Tarifa( pkonto, idroba, @aPorezi, idtarifa )
-         VtPorezi()
+         set_pdv_public_vars()
 
          nBezP := 0
          nSaP := 0
@@ -223,8 +223,8 @@ FUNCTION Rfinansijsko_stanje_prodavnica()
          nElem := AScan( aRTar, {| x| x[ 1 ] == TARIFA->ID } )
 
          nP1 := kalk_porezi_maloprodaja( nBezP, aPorezi, nSaP )
-         nP2 := Izn_P_PPU( nBezP, aPorezi )
-         nP3 := Izn_P_PP( nBezP, aPorezi )
+         nP2 := 0
+         nP3 := 0
 
 
          IF nElem > 0
@@ -235,7 +235,7 @@ FUNCTION Rfinansijsko_stanje_prodavnica()
             aRTar[ nElem, 9 ] += nP1 + nP2 + nP3
             aRTar[ nElem, 10 ] += nSaP
          ELSE
-            AAdd( aRTar, { TARIFA->ID, nBezP, _OPP * 100, PrPPUMP(), _ZPP * 100, nP1, nP2, nP3, nP1 + nP2 + nP3, nSaP } )
+            AAdd( aRTar, { TARIFA->ID, nBezP, _OPP * 100, 0, _ZPP * 100, nP1, nP2, nP3, nP1 + nP2 + nP3, nSaP } )
          ENDIF
          SKIP
       ENDDO

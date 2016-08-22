@@ -75,7 +75,8 @@ FUNCTION Get1_82()
    _GKolicina := 0
 
    IF fNovi
-      SELECT ROBA; HSEEK _IdRoba
+      SELECT ROBA
+      HSEEK _IdRoba
       _VPC := KoncijVPC()
       _NC := NC
    ENDIF
@@ -83,7 +84,7 @@ FUNCTION Get1_82()
       kalk_vpc_po_kartici( @_VPC, _idfirma, _idkonto, _idroba )
       SELECT kalk_pripr
    ENDIF
-   VtPorezi()
+   set_pdv_public_vars()
 
    nKolS := 0
    nKolZN := 0

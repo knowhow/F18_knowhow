@@ -27,4 +27,4 @@ FUNCTION editor( cFile )
    oEditor:edit()
    RESTORE SCREEN FROM cScr
 
-   RETURN .T.
+   RETURN cFile

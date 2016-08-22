@@ -815,7 +815,7 @@ FUNCTION UzmiIzP( cSta )
          nVrati := -mpc * kolicina
       ELSEIF pu_i == "I"
          nArr := Select()
-         SELECT TARIFA; HSEEK ( nArr )->IDTARIFA; VTPorezi()
+         SELECT TARIFA; HSEEK ( nArr )->IDTARIFA; set_pdv_public_vars()
          SELECT ( nArr )
          nVrati := -mpcsapp / ( ( 1 + _OPP ) * ( 1 + _PPP ) ) * gkolicin2
       ELSEIF pu_i == "5"  .AND. ( idvd $ "12#13#22" )    // povrat
@@ -826,12 +826,12 @@ FUNCTION UzmiIzP( cSta )
    ENDIF
 
    RETURN nVrati
-// }
 
 
-FUNCTION Generisi11ku_iz10ke( cBrDok )
 
-   // {
+FUNCTION kalk_gen_11_iz_10( cBrDok )
+
+
    LOCAL nArr
    nArr := Select()
    O_TARIFA
@@ -860,8 +860,8 @@ FUNCTION Generisi11ku_iz10ke( cBrDok )
       SEEK cRoba
       SELECT tarifa
       SEEK cTarifa
-      SetAPorezi( @aPorezi )
-      VTPorezi()
+      set_pdv_array( @aPorezi )
+      set_pdv_public_vars()
       SELECT kalk_pripr
       Scatter()
       SELECT kalk_pripr9

@@ -524,10 +524,7 @@ FUNCTION pos_prenos_pos_kalk( dDateOd, dDateDo, cIdVd, cIdPM )
    IF !_auto_prenos
 
       _print_report( _dat_od, _dat_do, _kol, _iznos, _r_br )
-
       _file := tops_kalk_create_topska( cIdPos, _dat_od, _dat_do, cIdVd )
-
-
       MsgBeep( "Kreiran fajl " + _file + "#broj stavki: " + AllTrim( Str( _r_br ) ) )
 
    ENDIF
@@ -591,7 +588,7 @@ STATIC FUNCTION _cre_pom_table()
 
    SET ORDER TO TAG "1"
 
-   RETURN
+   RETURN .T.
 
 
 

@@ -229,7 +229,7 @@ FUNCTION finansijsko_stanje_prodavnica()
          HSEEK KALK->idtarifa
          SELECT KALK
 
-         VtPorezi()
+         set_pdv_public_vars()
 
          IF field->pu_i == "1"
 

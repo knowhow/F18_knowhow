@@ -12,7 +12,7 @@
 
 #include "f18.ch"
 
-FUNCTION FaktKalk()
+FUNCTION fakt_kalk()
 
    PRIVATE Opc := {}
    PRIVATE opcexe := {}

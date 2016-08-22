@@ -113,7 +113,7 @@ FUNCTION kalk_get_1_11()
       SELECT kalk_pripr  // magacin
    ENDIF
 
-   VTPorezi()
+   set_pdv_public_vars()
 
    nKolS := 0
    nKolZN := 0

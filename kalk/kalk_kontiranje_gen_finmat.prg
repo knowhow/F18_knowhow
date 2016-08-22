@@ -228,7 +228,7 @@ FUNCTION kalk_kontiranje_gen_finmat()
 
             Tarifa( pkonto, idroba, @aPorezi )
             kalk_unos_troskovi()
-            VtPorezi()
+            set_pdv_public_vars()
 
 
             SELECT finmat

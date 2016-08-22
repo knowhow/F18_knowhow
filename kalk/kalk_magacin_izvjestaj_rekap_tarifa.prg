@@ -135,7 +135,7 @@ FUNCTION RekMagTar()
             SELECT roba
             HSEEK kalk->idroba
             SELECT kalk
-            VtPorezi()
+            set_pdv_public_vars()
             IF _PORVT <> 0
                cVT := .T.
             ENDIF

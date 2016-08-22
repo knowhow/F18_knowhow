@@ -154,7 +154,6 @@ METHOD TKalkMod:set_module_gvars()
    // Koristim TOPS - 0 - ne prenosi se podaci,"1 " - prod mjes 1
    PUBLIC gFakt := "0 "
    // Koristim FAKT - 0 - ne prenosi se podaci,"1 " - prod mjes 1
-   PUBLIC gTopsDEST := ""
    PUBLIC gSetForm := "1"
 
    PUBLIC g80VRT := "1"
@@ -290,7 +289,7 @@ METHOD TKalkMod:set_module_gvars()
 
    gTops := fetch_metric( "kalk_prenos_pos", f18_user(), gTops )
    gFakt := fetch_metric( "kalk_prenos_fakt", f18_user(), gFakt )
-   gTopsDest := PadR( fetch_metric( "kalk_destinacija_topska", f18_user(), gTopsDest ), 100 )
+
    gMPCPomoc := fetch_metric( "kalk_pomoc_sa_mpc", nil, gMPCPomoc )
    gKolicFakt := fetch_metric( "kalk_kolicina_kod_nivelacije_fakt", nil, gKolicFakt )
    gPromTar := fetch_metric( "kalk_zabrana_promjene_tarifa", nil, gPromTar )

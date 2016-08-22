@@ -372,7 +372,7 @@
 #define POR_PP      3
 #define POR_PRUC    4
 #define POR_PRUCMP  5
-#define POR_DLRUC   6
+
 
 #define POR_I_PRUC  1
 #define POR_I_MPC2  2

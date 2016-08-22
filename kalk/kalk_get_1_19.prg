@@ -89,7 +89,7 @@ FUNCTION kalk_get_1_19()
       kalk_fakticka_mpc( @nStCj, _idfirma, _pkonto, _idroba )
    ENDIF
 
-   VTPorezi()
+   set_pdv_public_vars()
    SELECT kalk_pripr
 
    nNCJ := nStCj + _MPCSaPP

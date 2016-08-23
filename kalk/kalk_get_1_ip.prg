@@ -13,6 +13,100 @@
 
 
 
+FUNCTION kalk_get_1_ip()
+
+   LOCAL nFaktVPC
+   LOCAL _x := 8
+   LOCAL _pos_x, _pos_y
+   LOCAL _left := 25
+   PRIVATE aPorezi := {}
+
+   _datfaktp := _datdok
+
+   @ m_x + _x, m_y + 2 SAY "Konto koji zaduzuje" GET _IdKonto ;
+      VALID P_Konto( @_IdKonto, _x, 35 ) PICT "@!"
+
+   // IF gNW <> "X"
+   // @ m_x + _x, m_y + 35 SAY "Zaduzuje: " GET _idzaduz PICT "@!" ;
+   // VALID Empty( _idzaduz ) .OR. P_Firma( @_idzaduz, _x, 35 )
+   // ENDIF
+
+   READ
+   ESC_RETURN K_ESC
+
+   _x += 2
+   _pos_x := m_x + _x
+
+   kalk_pripr_form_get_roba( @_idRoba, @_idTarifa, _IdVd, fNovi, m_x + _x, m_y + 2, @aPorezi )
+
+
+   @ m_x + _x, m_y + ( MAXCOLS() - 20 ) SAY "Tarifa:" GET _idtarifa WHEN gPromTar == "N" VALID P_Tarifa( @_idtarifa )
+
+   READ
+
+   ESC_RETURN K_ESC
+
+   IF roba_barkod_pri_unosu()
+      _idroba := Left( _idroba, 10 )
+   ENDIF
+
+   // proracunava knjizno stanje robe na prodavnici
+   // kada je dokument prenesen iz tops-a onda ovo ne bi trebalo da radi
+   IF !Empty( gMetodaNC ) .AND. _nc = 0 .AND. _mpcsapp = 0
+      knjizst()
+   ENDIF
+
+   SELECT tarifa
+   HSEEK _idtarifa
+
+   SELECT kalk_pripr
+
+
+   DuplRoba() // provjeri duplu robu
+
+   ++ _x
+   ++ _x
+
+   @ m_x + _x, m_y + 2 SAY PadL( "KNJIZNA KOLICINA:", _left ) GET _gkolicina PICT PicKol  ;
+      WHEN {|| iif( gMetodaNC == " ", .T., .F. ) }
+
+   @ m_x + _x, Col() + 2 SAY "POPISANA KOLICINA:" GET _kolicina VALID VKol() PICT PicKol
+
+
+   _tmp := "P.CIJENA (SA PDV):"
+
+
+   ++ _x
+   ++ _x
+   @ m_x + _x, m_y + 2 SAY PadL( "NABAVNA CIJENA:", _left ) GET _nc PICT picdem
+
+   ++ _x
+   ++ _x
+   @ m_x + _x, m_y + 2 SAY PadL( _tmp, _left ) GET _mpcsapp PICT picdem
+
+   READ
+
+   ESC_RETURN K_ESC
+
+   // _fcj - knjizna prodajna vrijednost
+   // _fcj3 - knjizna nabavna vrijednost
+
+   _gkolicin2 := _gkolicina - _kolicina
+
+   // ovo je kolicina izlaza koja nije proknjizena
+   _mkonto := ""
+   _pkonto := _idkonto
+
+   _mu_i := ""
+   _pu_i := "I"
+   // inventura
+
+   nStrana := 3
+
+   RETURN LastKey()
+
+
+
 FUNCTION kalk_generisi_ip()
 
    O_KONTO
@@ -39,7 +133,7 @@ FUNCTION kalk_generisi_ip()
 
    o_koncij()
    o_kalk_pripr()
-   //o_kalk()
+   // o_kalk()
 
    PRIVATE cBrDok := kalk_get_next_broj_v5( cIdFirma, "IP", NIL )
 
@@ -290,15 +384,15 @@ FUNCTION gen_ip_razlika()
    o_koncij()
    o_kalk_pripr()
    o_kalk_pript()
-   //o_kalk()
+   // o_kalk()
 
    // sljedeci broj kalkulacije IP
    PRIVATE cBrDok := kalk_get_next_broj_v5( cIdFirma, "IP", NIL )
 
    nRbr := 0
 
-   //SELECT kalk
-   //SET ORDER TO TAG "4"
+   // SELECT kalk
+   // SET ORDER TO TAG "4"
 
    Box( , 3, 60 )
 
@@ -307,8 +401,8 @@ FUNCTION gen_ip_razlika()
    SELECT koncij
    SEEK Trim( cIdKonto )
 
-   //SELECT kalk
-   //HSEEK cIdFirma + cIdKonto
+   // SELECT kalk
+   // HSEEK cIdFirma + cIdKonto
    find_kalk_by_pkonto_idroba( cIdFirma, cIdKonto )
 
    DO WHILE !Eof() .AND. cIdFirma + cIdKonto == idfirma + pkonto
@@ -445,116 +539,8 @@ FUNCTION gen_ip_razlika()
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
-
-
-
-// ---------------------------------------
-// forma za unos dokument
-// ---------------------------------------
-FUNCTION Get1_IP()
-
-   LOCAL nFaktVPC
-   LOCAL _x := 8
-   LOCAL _pos_x, _pos_y
-   LOCAL _left := 25
-   PRIVATE aPorezi := {}
-
-   _datfaktp := _datdok
-
-   @ m_x + _x, m_y + 2 SAY "Konto koji zaduzuje" GET _IdKonto ;
-      VALID P_Konto( @_IdKonto, _x, 35 ) PICT "@!"
-
-   //IF gNW <> "X"
-  //    @ m_x + _x, m_y + 35 SAY "Zaduzuje: " GET _idzaduz PICT "@!" ;
-  //       VALID Empty( _idzaduz ) .OR. P_Firma( @_idzaduz, _x, 35 )
-   //ENDIF
-
-   READ
-   ESC_RETURN K_ESC
-
-   ++ _x
-   ++ _x
-
-   _pos_x := m_x + _x
-
-   IF lKoristitiBK
-      @ m_x + _x, m_y + 2 SAY "Artikal  " GET _idroba PICT "@!S10" ;
-         WHEN {|| _idroba := PadR( _idroba, Val( gDuzSifIni ) ), .T. } ;
-         VALID {|| vroba( .F. ), ispisi_naziv_sifre( F_ROBA, _idroba, _pos_x, 25, 40 ), .T.  }
-   ELSE
-      @ m_x + _x, m_y + 2 SAY "Artikal  " GET _idroba PICT "@!" ;
-         VALID {|| vroba( .F. ), ispisi_naziv_sifre( F_ROBA, _idroba, _pos_x, 25, 40 ), .T.  }
-   ENDIF
-
-   @ m_x + _x, m_y + ( MAXCOLS() - 20 ) SAY "Tarifa:" GET _idtarifa ;
-      WHEN gPromTar == "N" VALID P_Tarifa( @_idtarifa )
-
-   READ
-
-   ESC_RETURN K_ESC
-
-   IF lKoristitiBK
-      _idroba := Left( _idroba, 10 )
-   ENDIF
-
-   // proracunava knjizno stanje robe na prodavnici
-   // kada je dokument prenesen iz tops-a onda ovo ne bi trebalo da radi
-   IF !Empty( gMetodaNC ) .AND. _nc = 0 .AND. _mpcsapp = 0
-      knjizst()
-   ENDIF
-
-   SELECT tarifa
-   HSEEK _idtarifa
-
-   SELECT kalk_pripr
-
-   // provjeri duplu robu...
-   DuplRoba()
-
-   ++ _x
-   ++ _x
-
-   @ m_x + _x, m_y + 2 SAY PadL( "KNJIZNA KOLICINA:", _left ) GET _gkolicina PICT PicKol  ;
-      WHEN {|| iif( gMetodaNC == " ", .T., .F. ) }
-
-   @ m_x + _x, Col() + 2 SAY "POPISANA KOLICINA:" GET _kolicina VALID VKol() PICT PicKol
-
-   IF IsPDV()
-      _tmp := "P.CIJENA (SA PDV):"
-   ELSE
-      _tmp := " CIJENA (MPCSAPP):"
-   ENDIF
-
-   ++ _x
-   ++ _x
-   @ m_x + _x, m_y + 2 SAY PadL( "NABAVNA CIJENA:", _left ) GET _nc PICT picdem
-
-   ++ _x
-   ++ _x
-   @ m_x + _x, m_y + 2 SAY PadL( _tmp, _left ) GET _mpcsapp PICT picdem
-
-   READ
-
-   ESC_RETURN K_ESC
-
-   // _fcj - knjizna prodajna vrijednost
-   // _fcj3 - knjizna nabavna vrijednost
-
-   _gkolicin2 := _gkolicina - _kolicina
-
-   // ovo je kolicina izlaza koja nije proknjizena
-   _mkonto := ""
-   _pkonto := _idkonto
-
-   _mu_i := ""
-   _pu_i := "I"
-   // inventura
-
-   nStrana := 3
-
-   RETURN LastKey()
 
 
 
@@ -565,7 +551,7 @@ STATIC FUNCTION VKol()
 
    IF ( glZabraniVisakIP )
       IF ( _kolicina > _gkolicina )
-         MsgBeep( "Ne dozvoljavam evidentiranje viska na ovaj nacin!" )
+         MsgBeep( "Nije dozvoljeno evidentiranje viska na ovaj nacin!" )
          lMoze := .F.
       ENDIF
    ENDIF

@@ -201,7 +201,6 @@ METHOD TKalkMod:set_module_gvars()
 
    // PUBLIC gAImpRight := 0  // kod provjere prebacenih dokumenata odrezi sa desne strane broj karaktera
    PUBLIC gKalks := .F.
-   PUBLIC lKoristitiBK := .F.
    PUBLIC lPrikPRUC := .F.
    PUBLIC gDuzKonto
 
@@ -304,13 +303,9 @@ METHOD TKalkMod:set_module_gvars()
 
    gAImpPrint := fetch_metric( "kalk_auto_import_podataka_printanje", f18_user(), gAImpPrint )
 
-
-
-   lKoristitiBK := fetch_metric( "kalk_koristiti_barkod_pri_unosu", my_user(), lKoristitiBK )
-
-   IF lKoristitiBK
-      gDuzSifIni := "13" // ako se koristi barkod onda je duzina robe 13
-   ENDIF
+   //IF roba_barkod_pri_unosu()
+  //   -- gDuzSifIni := "13" // ako se koristi barkod onda je duzina robe 13
+   //ENDIF
 
    lPrikPRUC := fetch_metric( "kalk_prikazi_kolone_pruc", nil, lPrikPRUC )
 

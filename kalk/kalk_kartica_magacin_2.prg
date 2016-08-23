@@ -29,7 +29,7 @@ FUNCTION KM2()
    SELECT tarifa
    nR3 := RecNo()
    my_close_all_dbf()
-   Kartica_magacin( _IdFirma, _idroba, _IdKonto2 )
+   kalk_kartica_magacin( _IdFirma, _idroba, _IdKonto2 )
    o_kalk_edit()
    SELECT roba
    GO nR1

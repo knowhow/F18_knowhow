@@ -47,7 +47,7 @@ FUNCTION kalk_povrat_dokumenta()
       @ m_x + 1, Col() + 1 GET _id_firma
    ENDIF
    @ m_x + 1, Col() + 1 SAY "-" GET _id_vd PICT "@!"
-   @ m_x + 1, Col() + 1 SAY "-" GET _br_dok
+   @ m_x + 1, Col() + 1 SAY "-" GET _br_dok VALID {|| _br_dok := kalk_fix_brdok( _br_dok ), .T. }
    READ
    ESC_BCR
    BoxC()
@@ -140,11 +140,11 @@ FUNCTION kalk_povrat_dokumenta()
 
 STATIC FUNCTION otvori_kalk_tabele_za_povrat()
 
-   //o_kalk_doks()
-   //o_kalk_doks2()
+   // o_kalk_doks()
+   // o_kalk_doks2()
    o_kalk_pripr()
-   //o_kalk()
-   //SET ORDER TO TAG "1"
+   // o_kalk()
+   // SET ORDER TO TAG "1"
 
    RETURN .T.
 
@@ -183,7 +183,6 @@ STATIC FUNCTION brisi_dokument_iz_tabele_kalk( cIdFirma, cIdVd, cBrDok )
 
    LOCAL lOk := .T.
    LOCAL _rec
-
 
    IF find_kalk_by_broj_dokumenta( cIdFirma, cIdVd, cBrDok )
       _rec := dbf_get_rec()

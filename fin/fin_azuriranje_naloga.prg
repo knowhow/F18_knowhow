@@ -75,7 +75,8 @@ FUNCTION fin_azuriranje_naloga( automatic )
       IF fin_dokument_postoji( cIdFirma, cIdVn, cBrNal )
 
          MsgBeep( "Nalog " + cIdFirma + "-" + cIdVn + "-" + AllTrim( cBrNal ) + " već postoji ažuriran !" )
-
+         automatska_obrada_error( .T. )
+         
          IF !lViseNalogaUPripremi
             run_sql_query( "ROLLBACK" )
             RETURN lRet

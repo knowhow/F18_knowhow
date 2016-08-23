@@ -75,11 +75,8 @@ FUNCTION kalk_kartica_prodavnica()
 
          @ m_x + 2, m_y + 2 SAY "Konto " GET cIdKonto VALID P_Konto( @cIdKonto )
 
-         IF lKoristitiBK
-            @ m_x + 3, m_y + 2 SAY "Roba  " GET cIdRoba WHEN {|| cIdRoba := PadR( cIdRoba, Val( gDuzSifIni ) ), .T. } VALID {|| Empty( cIdRoba ), cIdRoba := iif( Len( Trim( cIdRoba ) ) <= 10, Left( cIdRoba, 10 ), cIdRoba ), P_Roba( @cIdRoba ) } PICT "@!"
-         ELSE
-            @ m_x + 3, m_y + 2 SAY "Roba  " GET cIdRoba VALID Empty( cidroba ) .OR. P_Roba( @cIdRoba ) PICT "@!"
-         ENDIF
+         form_get_roba_id( @cIdRoba, m_x + 3, m_y + 2 )
+
 
          @ m_x + 5, m_y + 2 SAY "Datum od " GET dDatOd
          @ m_x + 5, Col() + 2 SAY "do" GET dDatDo
@@ -167,7 +164,7 @@ FUNCTION kalk_kartica_prodavnica()
       ? __line
 
       ? "Artikal:", cIdRoba, "-", Trim( Left( roba->naz, 40 ) ) + ;
-         iif( lKoristitiBK, " BK: " + roba->barkod, "" ) + " (" + AllTrim( roba->jmj ) + ")"
+         iif( roba_barkod_pri_unosu(), " BK: " + roba->barkod, "" ) + " (" + AllTrim( roba->jmj ) + ")"
 
       ? __line
 

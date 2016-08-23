@@ -11,12 +11,13 @@
 
 #include "f18.ch"
 
+STATIC aPorezi := {}
 
 // prijem robe 16
-// storno 14-ke fakture !!!!!!!!!! - 94
+// storno 14-ke fakture ! - 94
 // storno otpreme  - 97
 
-FUNCTION Get1_94()
+FUNCTION kalk_get_1_16_94()
 
    LOCAL nRVPC
 
@@ -33,24 +34,22 @@ FUNCTION Get1_94()
          @  m_x + 6, m_y + 2   SAY "KUPAC:" GET _IdPartner PICT "@!" VALID Empty( _IdPartner ) .OR. P_Firma( @_IdPartner, 6, 18 )
       ENDIF
       @  m_x + 7, m_y + 2   SAY "Faktura/Otpremnica Broj:" GET _BrFaktP
-      @  m_x + 7, Col() + 2 SAY "Datum:" GET _DatFaktP   ;
-         valid {|| .T. }
+      @  m_x + 7, Col() + 2 SAY "Datum:" GET _DatFaktP   valid {|| .T. }
 
-      @ m_x + 9, m_y + 2 SAY "Magacinski konto zaduzuje"  GET _IdKonto ;
-         VALID Empty( _IdKonto ) .OR. P_Konto( @_IdKonto, 21, 5 )
-      //IF gNW <> "X"
-      //   @ m_x + 9, m_y + 40 SAY "Zaduzuje:" GET _IdZaduz   PICT "@!"  VALID Empty( _idZaduz ) .OR. P_Firma( @_IdZaduz, 21, 5 )
-      //ELSE
-         IF !Empty( cRNT1 )
-            @ m_x + 9, m_y + 40 SAY "Rad.nalog:"   GET _IdZaduz2  PICT "@!"
-         ENDIF
-      //ENDIF
+      @ m_x + 9, m_y + 2 SAY "Magacinski konto zaduzuje"  GET _IdKonto VALID Empty( _IdKonto ) .OR. P_Konto( @_IdKonto, 21, 5 )
+      // IF gNW <> "X"
+      // @ m_x + 9, m_y + 40 SAY "Zaduzuje:" GET _IdZaduz   PICT "@!"  VALID Empty( _idZaduz ) .OR. P_Firma( @_IdZaduz, 21, 5 )
+      // ELSE
+      IF !Empty( cRNT1 )
+         @ m_x + 9, m_y + 40 SAY "Rad.nalog:"   GET _IdZaduz2  PICT "@!"
+      ENDIF
+      // ENDIF
 
       IF _idvd == "16"
          @ m_x + 10, m_y + 2   SAY "Prenos na konto          " GET _IdKonto2   VALID Empty( _idkonto2 ) .OR. P_Konto( @_IdKonto2, 21, 5 ) PICT "@!"
-         //IF gNW <> "X"
-        //    @ m_x + 10, m_y + 35  SAY "Zaduzuje: "   GET _IdZaduz2  PICT "@!" VALID Empty( _idZaduz ) .OR. P_Firma( @_IdZaduz2, 21, 5 )
-        // ENDIF
+         // IF gNW <> "X"
+         // @ m_x + 10, m_y + 35  SAY "Zaduzuje: "   GET _IdZaduz2  PICT "@!" VALID Empty( _idZaduz ) .OR. P_Firma( @_IdZaduz2, 21, 5 )
+         // ENDIF
       ENDIF
 
    ELSE
@@ -58,24 +57,28 @@ FUNCTION Get1_94()
       @  m_x + 7, m_y + 2   SAY "Faktura Broj: "; ?? _BrFaktP
       @  m_x + 7, Col() + 2 SAY "Datum: "; ?? _DatFaktP
       @ m_x + 9, m_y + 2 SAY "Magacinski konto zaduzuje "; ?? _IdKonto
-      //IF gNW <> "X"
-    //     @ m_x + 9, m_y + 40 SAY "Zaduzuje: "; ?? _IdZaduz
-      //ENDIF
+      // IF gNW <> "X"
+      // @ m_x + 9, m_y + 40 SAY "Zaduzuje: "; ?? _IdZaduz
+      // ENDIF
 
    ENDIF
 
    @ m_x + 10, m_y + 66 SAY "Tarif.br "
-   IF lKoristitiBK
-      @ m_x + 11, m_y + 2   SAY "Artikal  " GET _IdRoba PICT "@!S10" when {|| _idRoba := PadR( _idRoba, Val( gDuzSifIni ) ), .T. } valid  {|| P_Roba( @_IdRoba ), say_from_valid( 11, 23, Trim( Left( roba->naz, 40 ) ) + " (" + ROBA->jmj + ")", 40 ), _IdTarifa := iif( fnovi, ROBA->idtarifa, _IdTarifa ), .T. }
-   ELSE
-      @ m_x + 11, m_y + 2   SAY "Artikal  " GET _IdRoba PICT "@!" valid  {|| P_Roba( @_IdRoba ), say_from_valid( 11, 23, Trim( Left( roba->naz, 40 ) ) + " (" + ROBA->jmj + ")", 40 ), _IdTarifa := iif( fnovi, ROBA->idtarifa, _IdTarifa ), .T. }
-   ENDIF
 
+   kalk_pripr_form_get_roba( @_idRoba, @_idTarifa, _IdVd, fNovi, m_x + 11, m_y + 2, @aPorezi, _idPartner )
+
+/*
+   IF roba_barkod_pri_unosu()
+    --  @ m_x + 11, m_y + 2   SAY "Artikal  " GET _IdRoba PICT "@!S10" when {|| _idRoba := PadR( _idRoba, Val( --gDuzSifIni ) ), .T. } valid  {|| P_Roba( @_IdRoba ), say_from_valid( 11, 23, Trim( Left( roba->naz, 40 ) ) + " (" + ROBA->jmj + ")", 40 ), _IdTarifa := iif( fnovi, ROBA->idtarifa, _IdTarifa ), .T. }
+   ELSE
+    --  @ m_x + 11, m_y + 2   SAY "Artikal  " GET _IdRoba PICT "@!" valid  {|| P_Roba( @_IdRoba ), say_from_valid( 11, 23, Trim( Left( roba->naz, 40 ) ) + " (" + ROBA->jmj + ")", 40 ), _IdTarifa := iif( fnovi, ROBA->idtarifa, _IdTarifa ), .T. }
+   ENDIF
+*/
    @ m_x + 11, m_y + 70 GET _IdTarifa WHEN gPromTar == "N" VALID P_Tarifa( @_IdTarifa )
 
    @ m_x + 12, m_y + 2   SAY "Kolicina " GET _Kolicina PICTURE PicKol VALID _Kolicina <> 0
    read; ESC_RETURN K_ESC
-   IF lKoristitiBK
+   IF roba_barkod_pri_unosu()
       _idRoba := Left( _idRoba, 10 )
    ENDIF
 
@@ -149,7 +152,7 @@ FUNCTION KM94()
    SELECT tarifa
    nR3 := RecNo()
    my_close_all_dbf()
-   kartica_magacin( _IdFirma, _idroba, _IdKonto )
+   kalk_kartica_magacin( _IdFirma, _idroba, _IdKonto )
    o_kalk_edit()
    SELECT roba
    GO nR1

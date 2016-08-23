@@ -59,7 +59,7 @@ FUNCTION kalk_ostale_operacije_doks()
 
 
    AAdd( _opc, "S. pregled smeća " )
-   AAdd( _opcexe, {|| kalk_pripr9view() } )
+   AAdd( _opcexe, {|| kalk_pregled_smece_pripr9() } )
 
 
    f18_menu( "mazd", .F., _izbor, _opc, _opcexe )

@@ -52,9 +52,6 @@ FUNCTION kalk_if_cache_exists()
 
 
 
-// -------------------------------------------
-// vrati informacije iz cache tabele
-// -------------------------------------------
 FUNCTION knab_cache( cC_Kto, cC_Roba, nC_Ulaz, nC_Izlaz, nC_Stanje, nC_NVU, nC_NVI, nC_NV )
 
    LOCAL nTArea := Select()

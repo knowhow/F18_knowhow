@@ -665,12 +665,12 @@ FUNCTION lager_lista_prodavnica()
          nTPMPV += nPMPV
          nTPNV += nPNV
 
-         IF lKoristitiBK
+         IF roba_barkod_pri_unosu()
             ? Space( 6 ) + roba->barkod
          ENDIF
 
          IF _is_rok .AND. !Empty( _istek_roka ) .AND. !Empty( _sh_item_istek_roka )
-            IF !lKoristitiBK
+            IF !roba_barkod_pri_unosu()
                ? Space( 6 )
             ENDIF
             ?? " rok istice:", DToC( _sh_item_istek_roka ), " dana:", AllTrim( Str( _sh_item_istek_roka - Date() ) )

@@ -37,18 +37,18 @@ FUNCTION Get1_80( atrib )
       ++ _x
       @ m_x + _x, m_y + 2 SAY "Konto zaduzuje/razduzuje:" GET _IdKonto VALID {|| P_Konto( @_IdKonto ), ispisi_naziv_sifre( F_KONTO, _idkonto, _kord_x - 1, 40, 20 ) } PICT "@!"
 
-      //IF gNW <> "X"
-      //   @ m_x + _x, m_y + 50  SAY "Partner zaduzuje:" GET _IdZaduz PICT "@!" VALID Empty( _idZaduz ) .OR. P_Firma( @_IdZaduz )
-      //ENDIF
+      // IF gNW <> "X"
+      // @ m_x + _x, m_y + 50  SAY "Partner zaduzuje:" GET _IdZaduz PICT "@!" VALID Empty( _idZaduz ) .OR. P_Firma( @_IdZaduz )
+      // ENDIF
 
       ++ _x
       _kord_x := m_x + _x
 
       @ m_x + _x, m_y + 2 SAY "Prenos na konto:" GET _IdKonto2 VALID {|| Empty( _idkonto2 ) .OR. P_Konto( @_IdKonto2 ), ispisi_naziv_sifre( F_KONTO, _idkonto2, _kord_x, 30, 20 )  } PICT "@!"
 
-      //IF gNW <> "X"
-      //   @ m_x + _x, m_y + 50 SAY "Partner zaduzuje:" GET _IdZaduz2 PICT "@!" VALID Empty( _idZaduz ) .OR. P_Firma( @_IdZaduz2 )
-      //ENDIF
+      // IF gNW <> "X"
+      // @ m_x + _x, m_y + 50 SAY "Partner zaduzuje:" GET _IdZaduz2 PICT "@!" VALID Empty( _idZaduz ) .OR. P_Firma( @_IdZaduz2 )
+      // ENDIF
 
       READ
 
@@ -66,18 +66,18 @@ FUNCTION Get1_80( atrib )
 
       @ m_x + _x, m_y + 2 SAY "Konto zaduzuje/razduzuje: "
       ?? _IdKonto
-      //IF gNW <> "X"
-      //   @ m_x + _x, Col() + 2  SAY "Partner zaduzuje: "
-      //   ?? _IdZaduz
-      //ENDIF
+      // IF gNW <> "X"
+      // @ m_x + _x, Col() + 2  SAY "Partner zaduzuje: "
+      // ?? _IdZaduz
+      // ENDIF
 
       ++ _x
       @ m_x + _x, m_y + 2 SAY "Prenos na konto: "
       ?? _IdKonto2
-      //IF gNW <> "X"
-      //   @ m_x + _x, Col() + 2 SAY "Partner zaduzuje: "
-      //   ?? _IdZaduz2
-      //ENDIF
+      // IF gNW <> "X"
+      // @ m_x + _x, Col() + 2 SAY "Partner zaduzuje: "
+      // ?? _IdZaduz2
+      // ENDIF
 
       READ
       ESC_RETURN K_ESC
@@ -88,16 +88,7 @@ FUNCTION Get1_80( atrib )
 
    _x += 2
 
-   _kord_x := m_x + _x
-
-   IF lKoristitiBK
-      @ m_x + _x, m_y + 2 SAY "Artikal  " GET _IdRoba PICT "@!S10" ;
-         WHEN {|| _IdRoba := PadR( _idroba, Val( gDuzSifIni ) ), .T. } ;
-         VALID {|| VRoba_lv( fNovi, @aPorezi ), ispisi_naziv_sifre( F_ROBA, _idroba, _kord_x, 25, 40 ) }
-   ELSE
-      @ m_x + _x, m_y + 2 SAY "Artikal  " GET _IdRoba PICT "@!" ;
-         VALID {|| VRoba_lv( fNovi, @aPorezi ), ispisi_naziv_sifre( F_ROBA, _idroba, _kord_x, 25, 40 ) }
-   ENDIF
+   kalk_pripr_form_get_roba( @_idRoba, @_idTarifa, _IdVd, fNovi, m_x + _x, m_y + 2, @aPorezi )
 
    @ m_x + _x, m_y + ( MAXCOLS() - 20 ) SAY "Tarifa:" GET _IdTarifa  WHEN gPromTar == "N" VALID P_Tarifa( @_IdTarifa )
 
@@ -109,7 +100,7 @@ FUNCTION Get1_80( atrib )
    READ
    ESC_RETURN K_ESC
 
-   IF lKoristitiBK
+   IF roba_barkod_pri_unosu()
       _idRoba := Left( _idRoba, 10 )
    ENDIF
 
@@ -226,14 +217,18 @@ FUNCTION Get1_80b()
 
    READ
 
-   // zapamti zadnji unos
-   set_metric( "kalk_dok_80_predispozicija_set_cijena", my_user(), cSvedi )
+
+   set_metric( "kalk_dok_80_predispozicija_set_cijena", my_user(), cSvedi ) // zapamti zadnji unos
 
    _x := 12
    _kord_x := m_x + _x
 
-   @ m_x + _x, m_y + 2 SAY "Artikal  " GET _IdRoba PICT "@!" ;
-      VALID {|| VRoba_lv( fNovi, @aPorezi ), ispisi_naziv_sifre( F_ROBA, _idroba, _kord_x, 21, 20 ) }
+   kalk_pripr_form_get_roba( @_idRoba, @_idTarifa, _IdVd, fNovi, m_x + _x, m_y + 2, @aPorezi )
+/*
+   --@ m_x + _x, m_y + 2 SAY "Artikal  " GET _IdRoba PICT "@!" ;
+    --  VALID {|| VRoba_lv( fNovi, @aPorezi ), ispisi_naziv_sifre( F_ROBA, _idroba, _kord_x, 21, 20 ) }
+*/
+
 
    @ m_x + _x, m_y + ( MAXCOLS() - 20 ) SAY "Tarifa:" ;
       GET _IdTarifa WHEN gPromTar == "N" VALID P_Tarifa( @_IdTarifa )
@@ -399,7 +394,7 @@ STATIC FUNCTION VKol( x_kord )
 
       IF nKols < Abs( _kolicina )
 
-       sumnjive_stavke_error()
+         sumnjive_stavke_error()
 
          error_bar( "KA_" + _idkonto + " / " + _idroba, _idkonto + " / " + _idroba + " kolicina:" + ;
             AllTrim( Str( nKols, 12, 3 ) ) +  " treba: " + AllTrim( Str( _kolicina, 12, 3 ) ) )

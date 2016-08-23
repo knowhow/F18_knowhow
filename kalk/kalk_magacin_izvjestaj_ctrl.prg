@@ -40,7 +40,7 @@ FUNCTION r_ct_sast()
    LOCAL nVar := 1
 
    PRIVATE nRslt := 0
-   PRIVATE lAsistRadi := .T.
+   --PRIVATE lKalkAsistentUToku := .T.
 
    O_ROBA
    O_SIFK
@@ -259,7 +259,7 @@ STATIC FUNCTION _g_kalk_tp( cIdFirma, cKto_list, dD_from, dD_to )
       @ m_x + 1, m_y + 2 SAY "obradjujem mag. konto: " + cIdKonto
 
 
-  
+
 
       find_kalk_by_mkonto_idroba( cIdFirma, cIdkonto )
       DO WHILE !Eof() .AND. cIdFirma == field->idfirma .AND. cIdKonto == field->mkonto

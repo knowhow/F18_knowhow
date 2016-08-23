@@ -13,6 +13,7 @@
 #include "f18.ch"
 
 STATIC __k_val // konverzija valute
+STATIC aPorezi := {}
 
 FUNCTION kalk_get_1_10()
 
@@ -43,9 +44,9 @@ FUNCTION kalk_get_1_10()
 
       @ m_x + _x, m_y + 2 SAY "Magacinski Konto zaduzuje" GET _IdKonto valid {|| P_Konto( @_IdKonto ), ispisi_naziv_sifre( F_KONTO, _idkonto, _kord_x, 40, 30 ) } PICT "@!"
 
-      //IF gNW <> "X"
-      //   @ m_x + _x, m_y + 42  SAY "Zaduzuje: " GET _IdZaduz  PICT "@!" VALID Empty( _idZaduz ) .OR. P_Firma( @_IdZaduz )
-      //ENDIF
+      // IF gNW <> "X"
+      // @ m_x + _x, m_y + 42  SAY "Zaduzuje: " GET _IdZaduz  PICT "@!" VALID Empty( _idZaduz ) .OR. P_Firma( @_IdZaduz )
+      // ENDIF
 
       IF !Empty( cRNT1 )
          @ m_x + _x, m_y + 42  SAY "Rad.nalog:" GET _IdZaduz2  PICT "@!"
@@ -68,10 +69,10 @@ FUNCTION kalk_get_1_10()
       @ m_x + _x, m_y + 2 SAY "Magacinski Konto zaduzuje "
       ?? _IdKonto
 
-      //IF gNW <> "X"
-      //   @ m_x + _x, m_y + 42 SAY "Zaduzuje: "
-      //   ?? _IdZaduz
-      //ENDIF
+      // IF gNW <> "X"
+      // @ m_x + _x, m_y + 42 SAY "Zaduzuje: "
+      // ?? _IdZaduz
+      // ENDIF
 
       _ino_dob( _idpartner )
 
@@ -81,17 +82,21 @@ FUNCTION kalk_get_1_10()
 
    _kord_x := m_x + _x
 
-   IF lKoristitiBK
+
+   kalk_pripr_form_get_roba( @_idRoba, @_idTarifa, _IdVd, fNovi, _kord_x, m_y + 2, @aPorezi, _idPartner )
+
+/* kalk 10
+   IF roba_barkod_pri_unosu()
       @ m_x + _x, m_y + 2 SAY "Artikal  " GET _IdRoba ;
          PICT "@!S10" ;
-         WHEN {|| _idroba := PadR( _idroba, Val( gDuzSifIni ) ), .T. } ;
+         WHEN {|| _idroba := PadR( _idroba, Val( --gDuzSifIni ) ), .T. } ;
          VALID {|| ;
          _idroba := iif( Len( Trim( _idroba ) ) < 10, Left( _idroba, 10 ), _idroba ), ;
          _ocitani_barkod := _idroba, ;
          P_Roba( @_IdRoba ), ;
          if ( !tezinski_barkod_get_tezina( @_ocitani_barkod, @_kolicina ), .T., .T. ), ;
          ispisi_naziv_sifre( F_ROBA, _idroba, _kord_x, 25, 40 ), ;
-         _IdTarifa := iif( fnovi, ROBA->idtarifa, _IdTarifa ), zadnji_ulazi_info( _idpartner, _idroba, "M" ), .T. }
+         _IdTarifa := iif( fnovi, ROBA->idtarifa, _IdTarifa ), kalk_zadnji_ulazi_info( _idpartner, _idroba, "M" ), .T. }
    ELSE
       @ m_x + _x, m_y + 2  SAY "Artikal  " GET _IdRoba ;
          PICT "@!" ;
@@ -99,10 +104,11 @@ FUNCTION kalk_get_1_10()
          _idroba := iif( Len( Trim( _idroba ) ) < 10, Left( _idroba, 10 ), _idroba ), ;
          P_Roba( @_IdRoba, nil, nil, NIL ), ;
          ispisi_naziv_sifre( F_ROBA, _idroba, _kord_x, 25, 40 ), ;
-         _IdTarifa := iif( fnovi, ROBA->idtarifa, _IdTarifa ), zadnji_ulazi_info( _idpartner, _idroba, "M" ), ;
+         _IdTarifa := iif( fnovi, ROBA->idtarifa, _IdTarifa ), kalk_zadnji_ulazi_info( _idpartner, _idroba, "M" ), ;
          .T. }
 
    ENDIF
+*/
 
    @ m_x + _x, m_y + ( MAXCOLS() - 20  ) SAY "Tarifa:" GET _IdTarifa WHEN gPromTar == "N" VALID P_Tarifa( @_IdTarifa )
 
@@ -110,7 +116,7 @@ FUNCTION kalk_get_1_10()
 
    ESC_RETURN K_ESC
 
-   IF lKoristitiBK
+   IF roba_barkod_pri_unosu()
       _idRoba := Left( _idRoba, 10 )
    ENDIF
 

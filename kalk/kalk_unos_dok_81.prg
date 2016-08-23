@@ -104,25 +104,16 @@ FUNCTION kalk_unos_dok_81( atrib )
    _x += 2
    _kord_x := m_x + _x
 
-   IF lKoristitiBK
-      @ m_x + _x, m_y + 2 SAY "Artikal  " GET _idroba ;
-         PICT "@!S10" ;
-         WHEN {|| _idroba := PadR( _idroba, Val( gDuzSifIni ) ), .T. } ;
-         VALID {|| VRoba_lv( fNovi, @aPorezi ), ispisi_naziv_sifre( F_ROBA, _idroba, _kord_x, 25, 40 ), zadnji_ulazi_info( _idpartner, _idroba, "P" ) }
-   ELSE
-      @ m_x + _x, m_y + 2 SAY "Artikal  " GET _idroba ;
-         PICT "@!"  ;
-         VALID {|| VRoba_lv( fNovi, @aPorezi ), ispisi_naziv_sifre( F_ROBA, _idroba, _kord_x, 25, 40 ), zadnji_ulazi_info( _idpartner, _idroba, "P" ) }
-   ENDIF
+   kalk_pripr_form_get_roba( @_idRoba, @_idTarifa, _IdVd, fNovi, _kord_x, m_y + 2, @aPorezi, _idPartner )
 
-   @ m_x + _x, m_y + ( MAXCOLS() - 20 ) SAY "Tarifa:" GET _idtarifa ;
-      WHEN gPromTar == "N" ;
-      VALID P_Tarifa( @_IdTarifa )
+
+
+   @ m_x + _x, m_y + ( MAXCOLS() - 20 ) SAY "Tarifa:" GET _idtarifa WHEN gPromTar == "N"  VALID P_Tarifa( @_IdTarifa )
 
    READ
    ESC_RETURN K_ESC
 
-   IF lKoristitiBK
+   IF roba_barkod_pri_unosu()
       _idroba := Left( _idroba, 10 )
    ENDIF
 
@@ -385,34 +376,18 @@ STATIC FUNCTION obracun_kalkulacija_tip_81_pdv( x_kord )
 
    ++ _x
 
-   IF IsPDV()
+   @ m_x + _x, m_y + 2 SAY "PDV (%):"
+   @ m_x + _x, Col() + 2 SAY TARIFA->OPP PICTURE "99.99"
 
-      @ m_x + _x, m_y + 2 SAY "PDV (%):"
-      @ m_x + _x, Col() + 2 SAY TARIFA->OPP PICTURE "99.99"
-
-      IF glUgost
-         @ m_x + _x, Col() + 2 SAY "PP (%):"
-         @ m_x + _x, Col() + 2 SAY TARIFA->ZPP PICTURE "99.99"
-      ENDIF
-
-   ELSE
-
-      @ m_x + _x, m_y + 2 SAY "PPP (%):"
-      @ m_x + _x, Col() + 2 SAY  TARIFA->OPP PICTURE "99.99"
-      @ m_x + _x, Col() + 2 SAY "PPU (%):"
-      @ m_x + _x, Col() + 2 SAY TARIFA->PPP PICTURE "99.99"
+   IF glUgost
       @ m_x + _x, Col() + 2 SAY "PP (%):"
       @ m_x + _x, Col() + 2 SAY TARIFA->ZPP PICTURE "99.99"
-
    ENDIF
 
    ++ _x
 
-   IF IsPDV()
-      @ m_x + _x, m_y + 2 SAY "PC SA PDV:"
-   ELSE
-      @ m_x + _x, m_y + 2 SAY "MPC SA POREZOM:"
-   ENDIF
+   @ m_x + _x, m_y + 2 SAY "PC SA PDV:"
+
 
    @ m_x + _x, m_y + _unos_left GET _mpcsapp PICT PicDEM ;
       WHEN {|| fMarza := " ", _Marza2 := 0, .T. } ;

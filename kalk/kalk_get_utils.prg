@@ -12,33 +12,6 @@
 #include "f18.ch"
 
 
-FUNCTION VRoba( lSay )
-
-   P_Roba( @_IdRoba )
-
-   IF lSay == NIL
-      lSay := .T.
-   ENDIF
-
-   IF lSay
-      say_from_valid( 11, 23, Trim( Left( roba->naz, 40 ) ) + " (" + AllTrim( roba->jmj ) + ")", 40 )
-   ENDIF
-
-   IF fNovi
-      cTarifa := Tarifa( _idkonto, _idroba, @aPorezi )
-   ELSE
-      // za postojece dokumente uzmi u obzir unesenu tarifu
-      SELECT TARIFA
-      SEEK _idtarifa
-      set_pdv_array( @aPorezi )
-   ENDIF
-
-   IF fNovi
-      _idtarifa := cTarifa
-   ENDIF
-
-   RETURN .T.
-
 
 
 
@@ -225,46 +198,7 @@ FUNCTION FillIzgStavke( pIzgStavke )
 
 
 
-/* VRoba_lv(fNovi, aPorezi)
- *     Setuje tarifu i poreze na osnovu sifrarnika robe i tarifa
- *  \note koristi lokalne varijable
- */
 
-FUNCTION VRoba_lv( fNovi, aPorezi )
-
-   LOCAL _tezina := 0
-   LOCAL _ocitani_barkod := _idroba
-
-   P_Roba( @_IdRoba )
-
-   IF fNovi
-      // nadji odgovarajucu tarifu regiona
-      cTarifa := Tarifa( _IdKonto, _IdRoba, @aPorezi )
-   ELSE
-      // za postojece dokumente uzmi u obzir unesenu tarifu
-      SELECT TARIFA
-      SEEK _IdTarifa
-      set_pdv_array( @aPorezi )
-   ENDIF
-
-   IF fNovi
-      _IdTarifa := cTarifa
-   ENDIF
-
-   // momenat kada mozemo ocitati tezinu iz barkod-a ako se koristi...
-   IF tezinski_barkod_get_tezina( _ocitani_barkod, @_tezina ) .AND. _tezina <> 0
-
-      // ako je ocitan tezinski barkod...
-      _kolicina := _tezina
-
-      // kod predispozicije kolicina treba biti negativna kod prvog ocitanja
-      IF _idvd == "80" .AND. ( !Empty( _idkonto2 ) .AND. _idkonto2 <> "XXX" )
-         _kolicina := -_kolicina
-      ENDIF
-
-   ENDIF
-
-   RETURN .T.
 
 
 

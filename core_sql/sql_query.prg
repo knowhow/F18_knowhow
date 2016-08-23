@@ -16,14 +16,15 @@ STATIC s_aTransactions := {}
 STATIC s_lSqlTransactionError := .F.
 
 
-FUNCTION sql_transaction_error( lSet )
+FUNCTION automatska_obrada_error( lSet )
 
    IF lSet != NIL
       s_lSqlTransactionError := lSet
    ENDIF
 
    RETURN s_lSqlTransactionError
-   
+
+
 FUNCTION set_sql_search_path()
 
    LOCAL _path := my_server_search_path()
@@ -132,9 +133,9 @@ FUNCTION run_sql_query( cQry, hParams )
             LOG_CALL_STACK cLogMsg
             ?E cLogMsg
             IF is_in_main_thread()
-               AltD() // sql transaction error
-               Alert( "SQL transactions error !" )
-               sql_transaction_error( .T. )
+               //AltD() // sql transaction error
+               //Alert( "SQL transactions error !" )
+               automatska_obrada_error( .T. )
             ENDIF
             hb_mutexUnlock( s_mtxMutex )
             print_transactions()

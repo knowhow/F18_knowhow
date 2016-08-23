@@ -58,12 +58,15 @@ FUNCTION kalk_get_1_11()
    ENDIF
 
    @ m_x + 10, m_y + 66 SAY "Tarifa ->"
-   IF lKoristitiBK
-      @ m_x + 11, m_y + 2   SAY "Artikal  " GET _IdRoba PICT "@!S10" when {|| _IdRoba := PadR( _idroba, Val( gDuzSifIni ) ), .T. } VALID VRoba()
-   ELSE
-      @ m_x + 11, m_y + 2   SAY "Artikal  " GET _IdRoba PICT "@!" VALID VRoba()
-   ENDIF
 
+kalk_pripr_form_get_roba( @_idRoba, @_idTarifa, _IdVd, fNovi, m_x + 11, m_y + 2, @aPorezi )
+   /*
+   IF roba_barkod_pri_unosu()
+    --  @ m_x + 11, m_y + 2   SAY "Artikal  " GET _IdRoba PICT "@!S10" when {|| _IdRoba := PadR( _idroba, Val(-- gDuzSifIni ) ), .T. } VALID VRoba()
+   ELSE
+    --  @ m_x + 11, m_y + 2   SAY "Artikal  " GET _IdRoba PICT "@!" VALID VRoba()
+   ENDIF
+*/
    @ m_x + 11, m_y + 70 GET _IdTarifa WHEN gPromTar == "N" VALID P_Tarifa( @_IdTarifa )
 
    @ m_x + 12, m_y + 2   SAY8 "Količina " GET _Kolicina PICTURE PicKol VALID _Kolicina <> 0
@@ -71,7 +74,7 @@ FUNCTION kalk_get_1_11()
    READ
    ESC_RETURN K_ESC
 
-   IF lKoristitiBK
+   IF roba_barkod_pri_unosu()
       _idRoba := Left( _idRoba, 10 )
    ENDIF
 

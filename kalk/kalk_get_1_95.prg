@@ -14,7 +14,6 @@
 
 FUNCTION kalk_get_1_95()
 
-
    pIzgSt := .F. // izgenerisane stavke jos ne postoje
 
 
@@ -31,17 +30,17 @@ FUNCTION kalk_get_1_95()
       _IdZaduz := ""
       @ m_x + 8, m_y + 2 SAY8 "Magacinski konto razdužuje"  GET _IdKonto2 ;
          VALID Empty( _IdKonto2 ) .OR. P_Konto( @_IdKonto2, 21, 5 )
-      //IF gNW <> "X"
-      //   @ m_x + 8, m_y + 40 SAY "Razdužuje:" GET _IdZaduz2   PICT "@!"  VALID Empty( _idZaduz2 ) .OR. P_Firma( @_IdZaduz2, 21, 5 )
-      //ELSE
-         IF !Empty( cRNT1 ) .AND. _idvd $ "97#96#95"
-            IF ( IsRamaGlas() )
-               @ m_x + 8, m_y + 40 SAY "Rad.nalog:" GET _IdZaduz2 PICT "@!" VALID RadNalOK()
-            ELSE
-               @ m_x + 8, m_y + 40 SAY "Rad.nalog:" GET _IdZaduz2   PICT "@!"
-            ENDIF
+      // IF gNW <> "X"
+      // @ m_x + 8, m_y + 40 SAY "Razdužuje:" GET _IdZaduz2   PICT "@!"  VALID Empty( _idZaduz2 ) .OR. P_Firma( @_IdZaduz2, 21, 5 )
+      // ELSE
+      IF !Empty( cRNT1 ) .AND. _idvd $ "97#96#95"
+         IF ( IsRamaGlas() )
+            @ m_x + 8, m_y + 40 SAY "Rad.nalog:" GET _IdZaduz2 PICT "@!" VALID RadNalOK()
+         ELSE
+            @ m_x + 8, m_y + 40 SAY "Rad.nalog:" GET _IdZaduz2   PICT "@!"
          ENDIF
-      //ENDIF
+      ENDIF
+      // ENDIF
       IF _idvd $ "97#96#95"    // ako je otprema, gdje to ide
 
          @ m_x + 9, m_y + 2   SAY "Konto zaduzuje            " GET _IdKonto VALID  Empty( _IdKonto ) .OR. P_Konto( @_IdKonto, 21, 5 ) PICT "@!"
@@ -69,24 +68,27 @@ FUNCTION kalk_get_1_95()
       _IdZaduz := ""
       @ m_x + 8, m_y + 2 SAY "Magacinski konto razduzuje "; ?? _IdKonto2
       @ m_x + 9, m_y + 2 SAY "Konto zaduzuje "; ?? _IdKonto
-      //IF gNW <> "X"
-      //   @ m_x + 9, m_y + 40 SAY "Razduzuje: "; ?? _IdZaduz2
-      //ENDIF
+      // IF gNW <> "X"
+      // @ m_x + 9, m_y + 40 SAY "Razduzuje: "; ?? _IdZaduz2
+      // ENDIF
    ENDIF
 
-   @ m_x + 10, m_y + 66 SAY "Tarif.brÄ¿"
+   @ m_x + 10, m_y + 66 SAY "Tarif.br->"
 
-   IF lKoristitiBK
-      @ m_x + 11, m_y + 2   SAY "Artikal  " GET _IdRoba PICT "@!S10" when {|| _idRoba := PadR( _idRoba, Val( gDuzSifIni ) ), .T. } valid  {|| P_Roba( @_IdRoba ), say_from_valid( 11, 23, Trim( Left( roba->naz, 40 ) ) + " (" + ROBA->jmj + ")", 40 ), _IdTarifa := iif( fnovi, ROBA->idtarifa, _IdTarifa ), .T. }
+   kalk_pripr_form_get_roba( @_idRoba, @_idTarifa, _IdVd, fNovi, m_x + 11, m_y + 2, @aPorezi )
+/*
+   IF roba_barkod_pri_unosu()
+  --    @ m_x + 11, m_y + 2   SAY "Artikal  " GET _IdRoba PICT "@!S10" when {|| _idRoba := PadR( _idRoba, Val( --gDuzSifIni ) ), .T. } valid  {|| P_Roba( @_IdRoba ), say_from_valid( 11, 23, Trim( Left( roba->naz, 40 ) ) + " (" + ROBA->jmj + ")", 40 ), _IdTarifa := iif( fnovi, ROBA->idtarifa, _IdTarifa ), .T. }
    ELSE
-      @ m_x + 11, m_y + 2   SAY "Artikal  " GET _IdRoba PICT "@!" valid  {|| P_Roba( @_IdRoba ), say_from_valid( 11, 23, Trim( Left( roba->naz, 40 ) ) + " (" + ROBA->jmj + ")", 40 ), _IdTarifa := iif( fnovi, ROBA->idtarifa, _IdTarifa ), .T. }
+  --    @ m_x + 11, m_y + 2   SAY "Artikal  " GET _IdRoba PICT "@!" valid  {|| P_Roba( @_IdRoba ), say_from_valid( 11, 23, Trim( Left( roba->naz, 40 ) ) + " (" + ROBA->jmj + ")", 40 ), _IdTarifa := iif( fnovi, ROBA->idtarifa, _IdTarifa ), .T. }
    ENDIF
+  */
    @ m_x + 11, m_y + 70 GET _IdTarifa WHEN gPromTar == "N" VALID P_Tarifa( @_IdTarifa )
 
-   read
+   READ
    ESC_RETURN K_ESC
-   
-   IF lKoristitiBK
+
+   IF roba_barkod_pri_unosu()
       _idRoba := Left( _idRoba, 10 )
    ENDIF
 

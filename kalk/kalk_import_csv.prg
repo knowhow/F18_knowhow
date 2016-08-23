@@ -261,7 +261,7 @@ STATIC FUNCTION GetImpFilter()
 STATIC FUNCTION MnuObrDok()
 
    IF Pitanje(, "Obraditi automatski dokument iz kalk_pripreme (D/N)?", "N" ) == "D"
-      ObradiDokument( nil, nil, __stampaj )
+      kalk_import_csv_obradi_dokument( nil, nil, __stampaj )
    ELSE
       MsgBeep( "Dokument nije obradjen!#Obradu uradite iz kalk_pripreme!" )
       my_close_all_dbf()
@@ -870,7 +870,7 @@ STATIC FUNCTION TTbl2Kalk()
 // ---------------------------------------------
 // Obrada jednog dokumenta
 // ---------------------------------------------
-STATIC FUNCTION ObradiDokument( lAsPokreni, lStampaj )
+STATIC FUNCTION kalk_import_csv_obradi_dokument( lAsPokreni, lStampaj )
 
    LOCAL lTrosk := .F.
 
@@ -878,7 +878,7 @@ STATIC FUNCTION ObradiDokument( lAsPokreni, lStampaj )
    // 2. azuriraj kalk
    // 3. azuriraj FIN
 
-   PRIVATE lAsistRadi := .F.
+   PRIVATE lKalkAsistentUToku := .F.
 
    IF lAsPokreni == nil
       lAsPokreni := .T.
@@ -890,7 +890,7 @@ STATIC FUNCTION ObradiDokument( lAsPokreni, lStampaj )
 
    IF lAsPokreni
 
-      kalk_unos_stavki_dokumenta( .T. ) // pozovi asistenta
+      kalk_pripr_obrada_stavki_sa_asistentom()
       IF __trosk == .T.
          o_kalk_edit()
          kalk_raspored_troskova( .T. ) // fSilent = .t.

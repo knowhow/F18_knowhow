@@ -671,7 +671,7 @@ FUNCTION KudaDalje( cTekst, aOpc, cPom )
       NEXT
 
 #ifndef TEST
-      CLEAR TYPEAHEAD
+      CLEAR TYPEAHEAD // kuda dalje
 #endif
       nTipka := Inkey( 0 )
 

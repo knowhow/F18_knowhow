@@ -196,11 +196,11 @@ FUNCTION kalk_par_varijante_prikaza()
    RETURN NIL
 
 
-// kalk :: parametri razno
+
 FUNCTION kalk_par_razno()
 
    LOCAL _brojac := "N"
-   LOCAL _unos_barkod := "N"
+   LOCAL _unos_barkod := roba_barkod_pri_unosu()
    LOCAL _x := 1
    LOCAL _reset_roba := fetch_metric( "kalk_reset_artikla_kod_unosa", my_user(), "N" )
    LOCAL _rabat := fetch_metric( "pregled_rabata_kod_ulaza", my_user(), "N" )
@@ -218,9 +218,6 @@ FUNCTION kalk_par_razno()
       _brojac := "D"
    ENDIF
 
-   IF lKoristitiBK
-      _unos_barkod := "D"
-   ENDIF
 
    Box(, 20, 75, .F., "RAZNO" )
 
@@ -239,10 +236,10 @@ FUNCTION kalk_par_razno()
    ++ _x
 
    @ m_x + _x, m_y + 2 SAY8 "Novi korisnički interfejs D/N/X" GET gNW VALID gNW $ "DNX" PICT "@!"
-   ++ _x
-   ++ _x
 
+   _x += 2
    @ m_x + _x, m_y + 2 SAY "Tip tabele (0/1/2)             " GET gTabela VALID gTabela < 3 PICT "9"
+
    @ m_x + _x, Col() + 2 SAY "Vise konta na dokumentu (D/N) ?" GET _vise_konta VALID _vise_konta $ "DN" PICT "@!"
    ++ _x
    @ m_x + _x, m_y + 2 SAY "Zabraniti promjenu tarife u dokumentima? (D/N)" GET gPromTar VALID gPromTar $ "DN" PICT "@!"
@@ -289,13 +286,8 @@ FUNCTION kalk_par_razno()
          glBrojacPoKontima := .F.
       ENDIF
 
-      IF _unos_barkod == "D"
-         lKoristitiBK := .T.
-      ELSE
-         lKoristitiBK := .F.
-      ENDIF
 
-      set_metric( "kalk_koristiti_barkod_pri_unosu", my_user(), lKoristitiBK )
+      roba_barkod_pri_unosu( _unos_barkod == "D" )
       set_metric( "kalk_brojac_kalkulacija", nil, gBrojacKalkulacija )
       set_metric( "kalk_brojac_dokumenta_po_kontima", nil, glBrojacPoKontima )
       set_metric( "kalk_potpis_na_kraju_naloga", nil, gPotpis )
@@ -373,11 +365,14 @@ FUNCTION sumnjive_stavke_error( lForce )
 
    IF lForce .OR. nije_dozvoljeno_azuriranje_sumnjivih_stavki()
       Beep( 2 )
-      CLEAR TYPEAHEAD // zaustavi asistenta prodavnica, kolicina
+      error_bar( "kalk_asist", "sumnjive stavke error")
+      CLEAR TYPEAHEAD // zaustavi asistenta
+
       _ERROR := "1"
    ENDIF
 
    RETURN .T.
+
 
 FUNCTION metodanc_info()
 

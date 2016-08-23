@@ -16,7 +16,7 @@ STATIC __line
 STATIC __txt1
 STATIC __txt2
 
-FUNCTION kartica_magacin()
+FUNCTION kalk_kartica_magacin()
 
    PARAMETERS cIdFirma, cIdRoba, cIdKonto
 
@@ -80,11 +80,16 @@ FUNCTION kartica_magacin()
             @ m_x + 1, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| P_Firma( @cIdFirma ), cIdFirma := Left( cIdFirma, 2 ), .T. }
          ENDIF
          @ m_x + 2, m_y + 2 SAY "Konto  " GET cIdKonto VALID P_Konto( @cIdKonto )
-         IF lKoristitiBK
-            @ m_x + 3, m_y + 2 SAY "Artikal" GET cIdRoba  PICT "@!" when {|| cIdRoba := PadR( cIdRoba, Val( gDuzSifIni ) ), .T. } valid {|| Empty( cIdRoba ), cIdRoba := iif( Len( Trim( cIdRoba ) ) <= 10, Left( cIdRoba, 10 ), cIdRoba ), Right( Trim( cIdRoba ), 1 ) $ ";>", P_ROBA( @cIdRoba ) }
+
+
+         form_get_roba_id( @cIdRoba, m_x + 3, m_y + 2 )
+         /*
+         IF roba_barkod_pri_unosu()
+            @ m_x + 3, m_y + 2 SAY "Artikal" GET cIdRoba  PICT "@!" when {|| cIdRoba := PadR( cIdRoba, Val( --gDuzSifIni ) ), .T. } valid {|| Empty( cIdRoba ), cIdRoba := iif( Len( Trim( cIdRoba ) ) <= 10, Left( cIdRoba, 10 ), cIdRoba ), Right( Trim( cIdRoba ), 1 ) $ ";>", P_ROBA( @cIdRoba ) }
          ELSE
             @ m_x + 3, m_y + 2 SAY "Artikal" GET cIdRoba  PICT "@!" VALID Empty( cIdRoba ) .OR. Right( Trim( cIdRoba ), 1 ) $ ";>" .OR. P_ROBA( @cIdRoba )
          ENDIF
+         */
 
          IF !Empty( cRNT1 )
             @ m_x + 4, m_y + 2 SAY "Broj radnog naloga:" GET cRNalBroj PICT "@S20"
@@ -206,7 +211,7 @@ FUNCTION kartica_magacin()
       SELECT tarifa
       HSEEK roba->idtarifa
       ? __line
-      ? "Artikal:", cIdRoba, "-", Trim( Left( roba->naz, 40 ) ) + iif( lKoristitiBK, " BK:" + roba->barkod, "" ) + " (" + roba->jmj + ")"
+      ? "Artikal:", cIdRoba, "-", Trim( Left( roba->naz, 40 ) ) + iif( roba_barkod_pri_unosu(), " BK:" + roba->barkod, "" ) + " (" + roba->jmj + ")"
 
       ? __line
       SELECT kalk
@@ -352,7 +357,7 @@ FUNCTION kartica_magacin()
                ENDIF
 
                IF cPrikFCJ2 == "D" .AND. idvd == "10"
-                  @ PRow() + IIF( cBrFDa == "D", 0, 1 ), nColFCJ2 SAY fcj2 PICT piccdem
+                  @ PRow() + iif( cBrFDa == "D", 0, 1 ), nColFCJ2 SAY fcj2 PICT piccdem
                ENDIF
             ENDIF
 

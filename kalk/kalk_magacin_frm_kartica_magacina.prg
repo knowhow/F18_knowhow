@@ -47,7 +47,7 @@ FUNCTION KMag()
 
    my_close_all_dbf()
 
-   kartica_magacin( cIdFirma, cIdRoba, cKonto )
+   kalk_kartica_magacin( cIdFirma, cIdRoba, cKonto )
 
    o_kalk_edit()
 

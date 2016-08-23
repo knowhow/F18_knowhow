@@ -43,12 +43,14 @@ FUNCTION kalk_get_nabavna_mag( cIdFirma, cIdRoba, cIdKonto, nKolicina, nKolZN, n
 
    nKolicina := 0
 
-   IF lAutoObr == .T.
+/*
+--   IF lAutoObr == .T.
       IF knab_cache( cIdKonto, cIdroba, @nUlKol, @nIzlKol, @nKolicina, @nUlNv, @nIzlNv, @nSrednjaNabavnaCijena ) == 1   // uzmi stanje iz cache tabele
          SELECT kalk_pripr
          RETURN .T.
       ENDIF
    ENDIF
+*/
 
    my_use_refresh_stop()
 

@@ -389,7 +389,7 @@ FUNCTION NivPoProc()
 
          PRIVATE aPorezi := {}
          PRIVATE fNovi := .T.
-         VRoba( .F. )
+         --VRoba( .F. )
          // P_Tarifa(@_idTarifa)
          SELECT kalk_pripr
          my_rlock()

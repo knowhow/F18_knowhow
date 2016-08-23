@@ -24,13 +24,15 @@ FUNCTION kalk_get_nabavna_prod( cIdFirma, cIdroba, cIdkonto, nKolicina, nKolZN, 
 
    nKolicina := 0
 
-   IF lAutoObr == .T.
+/*
+  -- IF lAutoObr == .T.
 
       IF knab_cache( cIdKonto, cIdroba, @nUlKol, @nIzlKol, @nKolicina,  @nUlNv, @nIzlNv, @nNc ) == 1 // uzmi stanje iz cache tabele
          SELECT kalk_pripr
          RETURN .F.
       ENDIF
    ENDIF
+*/
 
    find_kalk_by_pkonto_idroba( cIdFirma, cIdKonto, cIdRoba )
    GO BOTTOM
@@ -103,7 +105,7 @@ FUNCTION kalk_get_nabavna_prod( cIdFirma, cIdroba, cIdkonto, nKolicina, nKolZN, 
    IF Round( nSrednjaNabavnaCijena, 4 ) <= 0
       sumnjive_stavke_error()
    ENDIF
-   
+
    SELECT kalk_pripr
 
    RETURN .T.

@@ -112,7 +112,7 @@ FUNCTION kalk_stampa_dok_41()
 
       ?? Trim( Left( roba->naz, 40 ) ), "(", roba->jmj, ")"
 
-      IF lKoristitiBK .AND. !Empty( roba->barkod )
+      IF roba_barkod_pri_unosu() .AND. !Empty( roba->barkod )
          ?? ", BK: " + roba->barkod
       ENDIF
 

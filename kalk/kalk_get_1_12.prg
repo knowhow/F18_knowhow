@@ -26,15 +26,15 @@ FUNCTION kalk_get_1_12()
 
       @ m_x + 8, m_y + 2   SAY "Prodavnicki konto razduzuje " GET _IdKonto VALID P_Konto( @_IdKonto, 21, 5 ) PICT "@!"
 
-      //IF gNW <> "X"
-      //   @ m_x + 8, m_y + 40  SAY "Razduzuje "   GET _IdZaduz  PICT "@!" VALID Empty( _idZaduz ) .OR. P_Firma( @_IdZaduz, 21, 5 )
-      //ENDIF
+      // IF gNW <> "X"
+      // @ m_x + 8, m_y + 40  SAY "Razduzuje "   GET _IdZaduz  PICT "@!" VALID Empty( _idZaduz ) .OR. P_Firma( @_IdZaduz, 21, 5 )
+      // ENDIF
 
       @ m_x + 9, m_y + 2   SAY "Magacinski konto zaduzuje   "  GET _IdKonto2 ;
          VALID Empty( _IdKonto2 ) .OR. P_Konto( @_IdKonto2, 24 )
-      //IF gNW <> "X"
-      //   @ m_x + 9, m_y + 40  SAY "Zaduzuje  " GET _IdZaduz2   PICT "@!"  VALID Empty( _idZaduz2 ) .OR. P_Firma( @_IdZaduz2, 21, 5 )
-      //ENDIF
+      // IF gNW <> "X"
+      // @ m_x + 9, m_y + 40  SAY "Zaduzuje  " GET _IdZaduz2   PICT "@!"  VALID Empty( _idZaduz2 ) .OR. P_Firma( @_IdZaduz2, 21, 5 )
+      // ENDIF
       read; ESC_RETURN K_ESC
    ELSE
       @ m_x + 6, m_y + 2   SAY "Otpremnica - Broj: "; ?? _BrFaktP
@@ -45,11 +45,16 @@ FUNCTION kalk_get_1_12()
       @ m_x + 9, m_y + 2   SAY "Magacinski konto zaduzuje   "; ?? _IdKonto2
    ENDIF
    @ m_x + 10, m_y + 66 SAY "Tarif.br->"
-   IF lKoristitiBK
-      @ m_x + 11, m_y + 2   SAY "Artikal  " GET _IdRoba PICT "@!S10" when {|| _IdRoba := PadR( _idroba, Val( gDuzSifIni ) ), .T. } VALID VRoba()
+
+   kalk_pripr_form_get_roba( @_idRoba, @_idTarifa, _IdVd, fNovi, m_x + 11, m_y + 2, @aPorezi )
+   /*
+   IF roba_barkod_pri_unosu()
+    --  @ m_x + 11, m_y + 2   SAY "Artikal  " GET _IdRoba PICT "@!S10" when {|| _IdRoba := PadR( _idroba, Val( --gDuzSifIni ) ), .T. } VALID VRoba()
    ELSE
-      @ m_x + 11, m_y + 2   SAY "Artikal  " GET _IdRoba PICT "@!" VALID VRoba()
+    --  @ m_x + 11, m_y + 2   SAY "Artikal  " GET _IdRoba PICT "@!" VALID VRoba()
    ENDIF
+   */
+
    @ m_x + 11, m_y + 70 GET _IdTarifa WHEN gPromTar == "N" VALID P_Tarifa( @_IdTarifa )
 
    @ m_x + 12, m_y + 2   SAY "Kolicina " GET _Kolicina PICTURE PicKol VALID _Kolicina <> 0
@@ -57,7 +62,7 @@ FUNCTION kalk_get_1_12()
    READ
    ESC_RETURN K_ESC
 
-   IF lKoristitiBK
+   IF roba_barkod_pri_unosu()
       _idRoba := Left( _idRoba, 10 )
    ENDIF
 

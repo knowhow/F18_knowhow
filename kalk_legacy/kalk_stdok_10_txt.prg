@@ -128,7 +128,7 @@ FUNCTION kalk_stampa_dok_10_txt()
          ?? " KATBR:", roba->katbr
       ENDIF
 
-      IF lKoristitiBK .AND. !Empty( roba->barkod )
+      IF roba_barkod_pri_unosu() .AND. !Empty( roba->barkod )
          ?? ", BK: " + roba->barkod
       ENDIF
 

@@ -13,7 +13,6 @@
 
 
 
-
 FUNCTION editor( cFile )
 
    LOCAL oEditor, cScr

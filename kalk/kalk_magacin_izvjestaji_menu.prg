@@ -19,7 +19,7 @@ FUNCTION kalk_izvjestaji_magacina()
    LOCAL _izbor := 1
 
    AAdd( _opc, "1. kartica - magacin                                " )
-   AAdd( _opcexe, {|| Kartica_magacin() } )
+   AAdd( _opcexe, {|| kalk_kartica_magacin() } )
    AAdd( _Opc, "2. lager lista - magacin" )
    AAdd( _opcexe, {|| lager_lista_magacin() } )
 /*

@@ -20,26 +20,28 @@ FUNCTION kalk_get_1_19()
 
    @ m_x + 8, m_y + 2   SAY "Konto koji zaduzuje" GET _IdKonto VALID  P_Konto( @_IdKonto, 21, 5 ) PICT "@!"
 
-   //IF gNW <> "X"
-  //    @ m_x + 8, m_y + 35  SAY "Zaduzuje: "   GET _IdZaduz  PICT "@!" VALID Empty( _idZaduz ) .OR. P_Firma( @_IdZaduz, 21, 5 )
-   //ENDIF
+   // IF gNW <> "X"
+   // @ m_x + 8, m_y + 35  SAY "Zaduzuje: "   GET _IdZaduz  PICT "@!" VALID Empty( _idZaduz ) .OR. P_Firma( @_IdZaduz, 21, 5 )
+   // ENDIF
 
    READ
    ESC_RETURN K_ESC
 
    @ m_x + 10, m_y + 66 SAY "Tarif.br->"
 
-   IF lKoristitiBK
-      @ m_x + 11, m_y + 2   SAY "Artikal  " GET _IdRoba PICT "@!S10" when {|| _IdRoba := PadR( _idroba, Val( gDuzSifIni ) ), .T. } VALID VRoba()
+   kalk_pripr_form_get_roba( @_idRoba, @_idTarifa, _idVd, fNovi, m_x + 11, m_y + 2, @aPorezi )
+/*
+   IF roba_barkod_pri_unosu()
+    --  @ m_x + 11, m_y + 2   SAY "Artikal  " GET _IdRoba PICT "@!S10" when {|| _IdRoba := PadR( _idroba, Val( --gDuzSifIni ) ), .T. } VALID VRoba()
    ELSE
-      @ m_x + 11, m_y + 2   SAY "Artikal  " GET _IdRoba PICT "@!" VALID VRoba()
+    --  @ m_x + 11, m_y + 2   SAY "Artikal  " GET _IdRoba PICT "@!" VALID VRoba()
    ENDIF
-
+*/
    @ m_x + 11, m_y + 70 GET _IdTarifa WHEN gPromTar == "N" VALID P_Tarifa( @_IdTarifa )
 
    READ
    ESC_RETURN K_ESC
-   IF lKoristitiBK
+   IF roba_barkod_pri_unosu()
       _idRoba := Left( _idRoba, 10 )
    ENDIF
 

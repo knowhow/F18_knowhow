@@ -162,7 +162,7 @@ FUNCTION StKalk81( fzatops )
       @ PRow(), 4 SAY ""
       ?? Trim( Left( ROBA->naz, 40 ) ), "(", ROBA->jmj, ")"
 
-      IF lKoristitiBK .AND. !Empty( roba->barkod )
+      IF roba_barkod_pri_unosu() .AND. !Empty( roba->barkod )
          ?? ", BK: " + ROBA->barkod
       ENDIF
 
@@ -452,7 +452,7 @@ FUNCTION kalk_stampa_dok_81()
       @ PRow() + 1, 0 SAY  Rbr PICTURE "999"
       @ PRow(), 4 SAY  ""; ?? Trim( Left( ROBA->naz, 40 ) ), "(", ROBA->jmj, ")"
 
-      IF lKoristitiBK .AND. !Empty( roba->barkod )
+      IF roba_barkod_pri_unosu() .AND. !Empty( roba->barkod )
          ?? ", BK: " + roba->barkod
       ENDIF
 

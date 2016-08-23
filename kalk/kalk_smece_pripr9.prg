@@ -1,20 +1,19 @@
 /*
- * This file is part of the bring.out FMK, a free and open source
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+ * This file is part of the bring.out knowhow ERP, a free and open source
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
-
 
 #include "f18.ch"
 
 
 
-FUNCTION kalk_pripr9View()
+FUNCTION kalk_pregled_smece_pripr9()
 
    PRIVATE aUslFirma := gFirma
    PRIVATE aUslDok := Space( 50 )
@@ -31,7 +30,7 @@ FUNCTION kalk_pripr9View()
    BoxC()
 
    IF LastKey() == K_ESC
-      RETURN
+      RETURN .F.
    ENDIF
 
    ka_pripr9_set_filter( aUslFirma, aUslDok, dDat1, dDat2 )
@@ -40,12 +39,12 @@ FUNCTION kalk_pripr9View()
 
    PRIVATE PicV := "99999999.9"
    ImeKol := { ;
-      { "F.", {|| IdFirma                  }, "IdFirma"     },;
-      { "VD", {|| IdVD                     }, "IdVD"        },;
-      { "BrDok", {|| BrDok                    }, "BrDok"       },;
-      { "Dat.Kalk", {|| DatDok                   }, "DatDok"      },;
-      { "K.zad. ", {|| IdKonto                  }, "IdKonto"     },;
-      { "K.razd.", {|| IdKonto2                 }, "IdKonto2"    },;
+      { "F.", {|| IdFirma                  }, "IdFirma"     }, ;
+      { "VD", {|| IdVD                     }, "IdVD"        }, ;
+      { "BrDok", {|| BrDok                    }, "BrDok"       }, ;
+      { "Dat.Kalk", {|| DatDok                   }, "DatDok"      }, ;
+      { "K.zad. ", {|| IdKonto                  }, "IdKonto"     }, ;
+      { "K.razd.", {|| IdKonto2                 }, "IdKonto2"    }, ;
       { "Br.Fakt", {|| brfaktp                  }, "brfaktp"     }, ;
       { "Partner", {|| idpartner                }, "idpartner"   }, ;
       { "E", {|| error                    }, "error"       } ;
@@ -66,54 +65,50 @@ FUNCTION kalk_pripr9View()
       Soboslikar( { { m_x + 17, m_y + 1, m_x + 20, m_y + 77 } }, 23, 14 )
    ENDIF
 
-   PRIVATE lAutoAsist := .F.
+   // PRIVATE lKalkAsistentAuto := .F.
 
    my_db_edit( "KALK_PRIPR9", 20, 77, {|| ka_pripr9_key_handler() }, "<P>-povrat dokumenta u pripremu", "Pregled smeca...", , , , , 4 )
    BoxC()
 
-   RETURN
+   RETURN .T.
 
 
-/* ka_pripr9_key_handler()
+/*
  *     Opcije pregleda smeca
  */
 FUNCTION ka_pripr9_key_handler()
 
-   // {
+   LOCAL nArr
+
    DO CASE
    CASE Ch == K_CTRL_T // brisanje dokumenta iz kalk_pripr9
-      ErPripr9( idfirma, idvd, brdok )
+      kalk_del_smece_pripr9( idfirma, idvd, brdok )
+
       RETURN DE_REFRESH
    CASE Ch == K_CTRL_F9 // brisanje kompletnog kalk_pripr9
       ErP9All()
       RETURN DE_REFRESH
+
    CASE Chr( Ch ) $ "pP" // povrat dokumenta u kalk_pripremu
-      PovPr9()
+
+
+      nArr := Select()
+
+      kalk_povrat_dokumenta_iz_pripr9( field->idfirma, field->idvd, field->brdok )
+
+      SELECT ( nArr )
+      RETURN DE_CONT
+
       ka_pripr9_set_filter( aUslFirma, aUslDok, dDat1, dDat2 )
       RETURN DE_REFRESH
+
    ENDCASE
 
    RETURN DE_CONT
 
-   RETURN
-// }
+   RETURN .T.
 
 
-/* PovPr9()
- *     povrat dokumenta iz kalk_pripr9
- */
-STATIC FUNCTION PovPr9()
-
-   // {
-   LOCAL nArr
-   nArr := Select()
-
-   kalk_povrat_dokumenta_iz_pripr9( idfirma, idvd, brdok )
-
-   SELECT ( nArr )
-
-   RETURN DE_CONT
-// }
 
 
 /* ka_pripr9_set_filter(aUslFirma, aUslDok, dDat1, dDat2)
@@ -121,7 +116,7 @@ STATIC FUNCTION PovPr9()
  */
 STATIC FUNCTION ka_pripr9_set_filter( aUslFirma, aUslDok, dDat1, dDat2 )
 
-   // {
+
    o_kalk_pripr9()
    SET ORDER TO TAG "1"
 
@@ -149,15 +144,14 @@ STATIC FUNCTION ka_pripr9_set_filter( aUslFirma, aUslDok, dDat1, dDat2 )
 
    GO TOP
 
-   RETURN
+   RETURN .T.
 
 
-// ------------------------------------------------------------------
-// ------------------------------------------------------------------
-FUNCTION ErPripr9( cIdF, cIdVd, cBrDok )
+
+FUNCTION kalk_del_smece_pripr9( cIdF, cIdVd, cBrDok )
 
    IF Pitanje(, "Sigurno zelite izbrisati dokument?", "N" ) == "N"
-      RETURN
+      RETURN .F.
    ENDIF
 
    SELECT kalk_pripr9
@@ -172,19 +166,18 @@ FUNCTION ErPripr9( cIdF, cIdVd, cBrDok )
    ENDDO
    my_unlock()
 
-   RETURN
+   RETURN .T.
 
 
-// ------------------------------------------------------------------
-// ------------------------------------------------------------------
+
 FUNCTION ErP9All()
 
    IF Pitanje(, "Sigurno zelite izbrisati sve zapise?", "N" ) == "N"
-      RETURN
+      RETURN .F.
    ENDIF
 
    SELECT kalk_pripr9
    GO TOP
    my_dbf_zap()
 
-   RETURN
+   RETURN .T.

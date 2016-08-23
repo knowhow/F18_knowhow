@@ -117,7 +117,7 @@ FUNCTION kalk_stampa_dok_ip( fZaTops )
 
       ?? field->idroba, Trim( Left( roba->naz, 40 ) ), "(", roba->jmj, ")"
 
-      IF lKoristitiBK .AND. !Empty( roba->barkod )
+      IF roba_barkod_pri_unosu() .AND. !Empty( roba->barkod )
          ?? ", BK: " + roba->barkod
       ENDIF
 

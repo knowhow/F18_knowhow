@@ -1769,7 +1769,7 @@ FUNCTION kalk_imp_obradi_sve_dokumente_iz_pript( nPocniOd, lStampaj, lOstaviBrdo
    o_kalk_pripr()
    o_kalk_pript()
 
-   sql_transaction_error( .F. )
+   automatska_obrada_error( .F. )
 
    IF lStampaj == nil
       lStampaj := .T.
@@ -1871,14 +1871,14 @@ FUNCTION kalk_imp_obradi_sve_dokumente_iz_pript( nPocniOd, lStampaj, lOstaviBrdo
       ENDDO
 
 
-      IF s_lAutom // nakon sto smo prebacili dokument u kalk_pripremu oznaciti dokle smo stili
+      IF s_lAutom // nakon sto smo prebacili dokument u kalk_pripremu oznaciti dokle smo stigli
 
-         IF sql_transaction_error()
-            MsgBeep( "prekid operacije importa - sql transaction error !" )
+         IF automatska_obrada_error()
+            MsgBeep( "prekid operacije importa - greške u automatskoj obradi!" )
             BoxC()
             RETURN .F.
          ENDIF
-         
+
          kalk_imp_set_check_point( nPCRec ) // snimi zapis u params da znas dokle si dosao
          IF kalk_imp_obradi_dokument( cIdVd, lAsPokreni, lStampaj )
             kalk_imp_set_check_point( nPTRec )
@@ -1897,7 +1897,7 @@ FUNCTION kalk_imp_obradi_sve_dokumente_iz_pript( nPocniOd, lStampaj, lOstaviBrdo
 
    BoxC()
 
-   IF sql_transaction_error()
+   IF automatska_obrada_error()
       RETURN .F.
    ENDIF
 
@@ -2021,17 +2021,21 @@ STATIC FUNCTION kalk_imp_continue_from_check_point()
 
 
 
-/* fn kalk_imp_obradi_dokument(cIdVd)
+/*
  *  brief Obrada jednog dokumenta
  *  param cIdVd - id vrsta dokumenta
  */
 STATIC FUNCTION kalk_imp_obradi_dokument( cIdVd, lAsPokreni, lStampaj )
 
+   LOCAL nRslt
+
    // 1. pokreni asistenta
    // 2. azuriraj kalk
    // 3. azuriraj FIN
 
-   PRIVATE lAsistRadi := .F.
+
+
+   PRIVATE lKalkAsistentUToku := .F.
 
    IF lAsPokreni == nil
       lAsPokreni := .T.
@@ -2042,7 +2046,7 @@ STATIC FUNCTION kalk_imp_obradi_dokument( cIdVd, lAsPokreni, lStampaj )
    ENDIF
 
    IF lAsPokreni
-      kalk_unos_stavki_dokumenta( .T. ) // pozovi asistenta
+      kalk_pripr_obrada_stavki_sa_asistentom()
    ELSE
       o_kalk_edit()
    ENDIF
@@ -2057,15 +2061,13 @@ STATIC FUNCTION kalk_imp_obradi_dokument( cIdVd, lAsPokreni, lStampaj )
    o_kalk_edit()
 
 
-   PRIVATE nRslt // ako postoje zavisni dokumenti non stop ponavljaj proceduru obrade
-
-   DO WHILE ( provjeri_stanje_kalk_pripreme( cIdVd, @nRslt ) <> 0 )
+   DO WHILE ( nRslt := provjeri_stanje_kalk_pripreme( cIdVd ) <> 0 )
 
 
       IF nRslt == 1 // vezni dokument u kalk_pripremi je ok
 
          IF lAsPokreni
-            kalk_unos_stavki_dokumenta( .T. ) // otvori kalk_pripremu
+            kalk_pripr_obrada_stavki_sa_asistentom()
          ELSE
             o_kalk_edit()
          ENDIF
@@ -2082,33 +2084,40 @@ STATIC FUNCTION kalk_imp_obradi_dokument( cIdVd, lAsPokreni, lStampaj )
 
       IF nRslt >= 2 // vezni dokument u pripremi ne pripada azuriranom dokumentu, sta sa njim
 
+         error_bar( "kalk_auto_imp", "postoji dokument u pripremi koji je sumnjiv" )
+
          MsgBeep( "Postoji dokument u kalk_pripremi koji je sumljiv!#Radi se o veznom dokumentu ili nekoj drugoj gresci...#Obradite ovaj dokument i autoimport ce nastaviti dalje sa radom !" )
          IF LastKey() == K_ESC
             IF Pitanje(, "Prekid operacije?", "N" ) == "D"
                RETURN .F.
             ENDIF
          ENDIF
-         kalk_unos_stavki_dokumenta()
+         kalk_pripr_obrada()
          o_kalk_edit()
 
       ENDIF
+
    ENDDO
 
    RETURN .T.
 
 
-/* provjeri_stanje_kalk_pripreme(cIdVd, nRes)
- *     Provjeri da li je kalk_priprema prazna
+/*
+ *   Provjeri da li je kalk_priprema prazna
  *   param: cIdVd - id vrsta dokumenta
  */
-STATIC FUNCTION provjeri_stanje_kalk_pripreme( cIdVd, nRes )
+
+STATIC FUNCTION provjeri_stanje_kalk_pripreme( cIdVd )
+
+   LOCAL nNrRec, nTmp, nPrviDok, cPrviDok, nUzorak
 
    SELECT kalk_pripr
    GO TOP
 
-   IF RecCount() == 0 // provjeri da li je kalk_priprema prazna, ako je prazna vrati 0
-      nRes := 0
-      RETURN 0
+   AltD()
+
+   IF RecCount() == 0
+      RETURN 0 // provjeri da li je kalk_priprema prazna, ako je prazna vrati 0
    ENDIF
 
 
@@ -2125,72 +2134,73 @@ STATIC FUNCTION provjeri_stanje_kalk_pripreme( cIdVd, nRes )
    nUzorak := nPrviDok * nNrRec
 
    IF nUzorak <> nNrRec * nTmp
-      // ako u kalk_pripremi ima vise dokumenata vrati 3
-      nRes := 3
-      RETURN 3
+      RETURN 3 // ako u kalk_pripremi ima vise vrsta dokumenata vrati 3
    ENDIF
 
    DO CASE
    CASE cIdVd == "14"
-      nRes := ChkTD14( cPrviDok )
-      RETURN nRes
+      RETURN provjeri_vezne_dokumente_za_14( cPrviDok )
+
+
    CASE cIdVd == "41"
-      nRes := ChkTD41( cPrviDok )
-      RETURN nRes
+      RETURN provjeri_vezne_dokumente_za_41( cPrviDok )
+
+
    CASE cIdVd == "11"
-      nRes := ChkTD11( cPrviDok )
-      RETURN nRes
+      RETURN provjeri_vezne_dokumente_za_11( cPrviDok )
+
+
    CASE cIdVD == "95"
-      nRes := ChkTD95( cPrviDok )
-      RETURN nRes
+      RETURN provjeri_vezne_dokumente_za_95( cPrviDok )
+
    ENDCASE
 
    RETURN 0
 
 
 
-/* ChkTD14(cVezniDok)
+/*
  *     Provjeri vezne dokumente za tip dokumenta 14
  *   param: cVezniDok - dokument iz kalk_pripreme
  *  result vraca 1 ako je sve ok, ili 2 ako vezni dokument ne odgovara
  */
-STATIC FUNCTION ChkTD14( cVezniDok )
+STATIC FUNCTION provjeri_vezne_dokumente_za_14( cVezniDok )
 
-   IF cVezniDok $ "18#19#95#16#11"
+   IF cVezniDok $ "19#95#16#11"
       RETURN 1
    ENDIF
 
    RETURN 2
 
 
-/* ChkTD41
+/*
  *     Provjeri vezne dokumente za tip dokumenta 41
  */
-STATIC FUNCTION ChkTD41( cVezniDok )
+STATIC FUNCTION provjeri_vezne_dokumente_za_41( cVezniDok )
 
-   IF cVezniDok $ "18#19#95#16#11"
+   IF cVezniDok $ "19#95#16#11"
       RETURN 1
    ENDIF
 
    RETURN 2
 
 
-/* ChkTD11()
+/*
  *     Provjeri vezne dokumente za tip dokumenta 11
  */
-STATIC FUNCTION ChkTD11( cVezniDok )
+STATIC FUNCTION provjeri_vezne_dokumente_za_11( cVezniDok )
 
-   IF cVezniDok $ "18#19#95#16#11"
+   IF cVezniDok $ "19#95#16#11"
       RETURN 1
    ENDIF
 
    RETURN 2
 
 
-/* ChkTD95()
+/*
  *     Provjeri vezne dokumente za tip dokumenta 95
  */
-STATIC FUNCTION ChkTD95( cVezniDok )
+STATIC FUNCTION provjeri_vezne_dokumente_za_95( cVezniDok )
 
    IF cVezniDok $ "18#19#95#16#11"
       RETURN 1

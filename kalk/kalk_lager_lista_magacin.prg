@@ -834,7 +834,7 @@ FUNCTION lager_lista_magacin()
 
       ENDIF
 
-      IF lKoristitiBK
+      IF roba_barkod_pri_unosu()
          ? Space( 6 ) + roba->barkod
       ENDIF
 

@@ -18,7 +18,7 @@ MEMVAR PicDEM, PicProc, PicCDem, PicKol, gPicCDEM, gPicDEM, gPICPROC, gPICKol
 MEMVAR ImeKol, Kol
 MEMVAR picv
 MEMVAR m_x, m_y
-MEMVAR lAsistRadi, lAutoObr, lAsist, lAAzur, lAAsist
+MEMVAR lKalkAsistentUToku, lAutoObr, lAsist, lAAzur, lAAsist
 MEMVAR Ch
 MEMVAR opc, Izbor, h
 MEMVAR _idfirma, _idvd, _brdok
@@ -34,17 +34,21 @@ FUNCTION kalk_unos_dokumenta()
    PRIVATE PicProc := gPicProc
    PRIVATE PicDEM := gPICDEM
    PRIVATE Pickol := gPICKOL
-   PRIVATE lAsistRadi := .F.
+   PRIVATE lKalkAsistentUToku := .F.
 
-   kalk_unos_stavki_dokumenta()
+   kalk_pripr_obrada()
 
    my_close_all_dbf()
 
    RETURN .T.
 
 
+FUNCTION kalk_pripr_obrada_stavki_sa_asistentom()
 
-FUNCTION kalk_unos_stavki_dokumenta( lAObrada )
+   RETURN kalk_pripr_obrada( .T. ) // kalk unos sa pozovi asistenta
+
+
+FUNCTION kalk_pripr_obrada( lAObrada )
 
    LOCAL nMaxCol := MAXCOLS() - 3
    LOCAL nMaxRow := MAXROWS() - 4
@@ -93,7 +97,7 @@ FUNCTION kalk_unos_stavki_dokumenta( lAObrada )
    AAdd( ImeKol, { "K.razd.", {|| field->IdKonto2            }, "IdKonto2"    } )
    AAdd( ImeKol, { "IdRoba", {|| field->IdRoba                }, "IdRoba"      } )
 
-   IF lKoristitiBK
+   IF roba_barkod_pri_unosu()
       AAdd( ImeKol, { "Barkod", {|| roba_ocitaj_barkod( field->idroba ) }, "IdRoba" } )
    ENDIF
 
@@ -150,7 +154,7 @@ FUNCTION kalk_unos_stavki_dokumenta( lAObrada )
       Soboslikar( { { nMaxRow - 3, m_y + 1, nMaxRow, m_y + 77 } }, 23, 14 )
    ENDIF
 */
-   PRIVATE lAutoAsist := .F.
+   PRIVATE lKalkAsistentAuto := .F.
 
 
    my_db_edit( "PNal", nMaxRow, nMaxCol, {|| kalk_pripr_key_handler( lAutoObr ) }, "<F5>-kartica magacin, <F6>-kartica prodavnica", "Priprema...", , , , bPodvuci, 4 )
@@ -267,8 +271,6 @@ STATIC FUNCTION kalk_kontiraj_alt_k()
 FUNCTION kalk_pripr_key_handler()
 
    LOCAL nTr2
-   LOCAL cSekv
-   LOCAL nKekk
    LOCAL iSekv
    LOCAL _log_info
 
@@ -400,7 +402,7 @@ FUNCTION kalk_pripr_key_handler()
    CASE Ch == K_ENTER
       RETURN EditStavka()
 
-   CASE ( Ch == K_CTRL_A .OR. lAsistRadi )
+   CASE ( Ch == K_CTRL_A .OR. lKalkAsistentUToku )
       RETURN kalk_edit_sve_stavke()
 
    CASE Ch == K_CTRL_N
@@ -427,9 +429,18 @@ FUNCTION kalk_pripr_key_handler()
       ENDIF
       RETURN DE_CONT
 
-   CASE Upper( Chr( Ch ) ) == "A" .OR. lAutoAsist
+   CASE Upper( Chr( Ch ) ) == "A" .OR. lKalkAsistentAuto
 
       RETURN kalk_unos_asistent()
+
+   CASE lAutoObr .AND. lAAsist
+      lAAsist := .F.
+      RETURN kalk_unos_asistent()
+
+   CASE lAutoObr .AND. !lAAsist
+      lAutoObr := .F.
+      KEYBOARD Chr( K_ESC )
+      RETURN DE_REFRESH
 
    CASE Upper( Chr( Ch ) ) == "K"
       kalkulacija_cijena( .F. )
@@ -438,7 +449,7 @@ FUNCTION kalk_pripr_key_handler()
       RETURN DE_CONT
 
    CASE Ch == K_F10
-      RETURN MeniF10()
+      RETURN kalk_meni_f10()
 
    CASE Ch == K_F11
       RETURN MeniF11()
@@ -451,14 +462,7 @@ FUNCTION kalk_pripr_key_handler()
       KPro()
       RETURN DE_CONT
 
-   CASE lAutoObr .AND. lAAsist
-      lAAsist := .F.
-      RETURN kalk_unos_asistent()
 
-   CASE lAutoObr .AND. !lAAsist
-      lAutoObr := .F.
-      KEYBOARD Chr( K_ESC )
-      RETURN DE_REFRESH
 
    ENDCASE
 
@@ -788,7 +792,6 @@ FUNCTION kalk_edit_sve_stavke()
    LOCAL _dok
    LOCAL oAttr, _hAttrId, _old_dok, _new_dok
    LOCAL _rok, _opis
-   LOCAL nKekk, cSekv
 
    PushWA()
    SELECT kalk_pripr
@@ -828,14 +831,7 @@ FUNCTION kalk_edit_sve_stavke()
 
       nRbr := RbrUNum( _rbr )
 
-      IF lAsistRadi // lAsistRadi je varijabla koja salje sekvence znakova
-         CLEAR TYPEAHEAD
-         cSekv := ""
-         FOR nKekk := 1 TO 17
-            cSekv += cEnter
-         NEXT
-         KEYBOARD cSekv
-      ENDIF
+      kalk_unos_asistent_send_entere()
 
       _dok := hb_Hash()
       _dok[ "idfirma" ] := _idfirma
@@ -929,12 +925,12 @@ FUNCTION kalk_edit_sve_stavke()
 
    Beep( 1 )
 
-   CLEAR TYPEAHEAD
+
    PopWA()
 
    BoxC()
 
-   lAsistRadi := .F.
+   kalk_unos_asistent_stop()
 
    RETURN DE_REFRESH
 
@@ -942,8 +938,10 @@ FUNCTION kalk_edit_sve_stavke()
 
 FUNCTION kalk_unos_asistent()
 
-   lAutoAsist := .F.
-   lAsistRadi := .T.
+   LOCAL cSekv
+
+   lKalkAsistentAuto := .F.
+   lKalkAsistentUToku := .T.
 
    cSekv := Chr( K_CTRL_A )
    KEYBOARD cSekv
@@ -951,7 +949,28 @@ FUNCTION kalk_unos_asistent()
    RETURN DE_REFRESH
 
 
-FUNCTION MeniF10()
+FUNCTION kalk_unos_asistent_send_entere()
+
+   LOCAL nKekk, cSekv
+
+   IF lKalkAsistentUToku //
+      CLEAR TYPEAHEAD // lKalkAsistentUToku prije keyboar cSekv
+      cSekv := ""
+      FOR nKekk := 1 TO 17
+         cSekv += cEnter
+      NEXT
+      KEYBOARD cSekv
+   ENDIF
+
+FUNCTION kalk_unos_asistent_stop()
+
+   CLEAR TYPEAHEAD
+   lKalkAsistentUToku := .F.
+
+   RETURN .T.
+
+
+FUNCTION kalk_meni_f10()
 
    PRIVATE opc[ 9 ]
 
@@ -979,7 +998,7 @@ FUNCTION MeniF10()
 
    AAdd( opc, "B. pretvori 11 -> 41  ili  11 -> 42"        )
    AAdd( opc, "C. promijeni predznak za količine"          )
-   AAdd( opc, "D. preuzmi tarife iz šifarnika"            )
+   // AAdd( opc, "D. preuzmi tarife iz šifarnika"            )
    AAdd( opc, "E. storno dokumenta"                        )
    AAdd( opc, "F. prenesi VPC(sifr)+POREZ -> MPCSAPP(dok)" )
    AAdd( opc, "G. prenesi MPCSAPP(dok)    -> MPC(sifr)"    )
@@ -1049,31 +1068,30 @@ FUNCTION MeniF10()
          Iz11u412()
 
       CASE izbor == 12
-         PlusMinusKol()
+         kalk_plus_minus_kol()
+
+         // CASE izbor == 13
+         // UzmiTarIzSif()
 
       CASE izbor == 13
-         UzmiTarIzSif()
-
-      CASE izbor == 14
          storno_kalk_dokument()
 
+      CASE izbor == 14
+         kalk_set_diskont_mpc()
+
       CASE izbor == 15
-         DiskMPCSAPP()
-
-      CASE izbor == 16
-
          kalk_dokument_prenos_cijena()
 
-      CASE izbor == 17
+      CASE izbor == 16
          VPCSifUDok()
 
-      CASE izbor == 18
+      CASE izbor == 17
          Iz12u97()     // 11,12 -> 96,97
 
-      CASE izbor == 19
+      CASE izbor == 18
          Iz10u11()
 
-      CASE izbor == 20
+      CASE izbor == 19
          Iz16u14()
 
 
@@ -1185,12 +1203,16 @@ FUNCTION MeniF11()
 
    AAdd( opc, "1. ubacivanje troškova-uvozna kalkulacija" )
    AAdd( opcexe, {|| KalkTrUvoz() } )
+
+   /*
    AAdd( opc, "2. pretvori maloprodajni popust u smanjenje MPC" )
    AAdd( opcexe, {|| PopustKaoNivelacijaMP() } )
+   */
+
    AAdd( opc, "3. obračun poreza pri uvozu" )
    AAdd( opcexe, {|| ObracunPorezaUvoz() } )
    AAdd( opc, "4. pregled smeća" )
-   AAdd( opcexe, {|| kalk_pripr9View() } )
+   AAdd( opcexe, {|| kalk_pregled_smece_pripr9() } )
    AAdd( opc, "5. briši sve protu-stavke" )
    AAdd( opcexe, {|| ProtStErase() } )
    AAdd( opc, "6. setuj sve NC na 0" )
@@ -1384,7 +1406,7 @@ FUNCTION kalk_unos_1( fNovi, atrib )
       RETURN kalk_get_1_95()
 
    ELSEIF _idvd $  "94#16"    // storno fakture, storno otpreme, doprema
-      RETURN GET1_94()
+      RETURN kalk_get_1_16_94()
 
    ELSEIF _idvd == "82"
       RETURN GET1_82()
@@ -1393,7 +1415,7 @@ FUNCTION kalk_unos_1( fNovi, atrib )
       RETURN kalk_get_1_im()
 
    ELSEIF _idvd == "IP"
-      RETURN GET1_IP()
+      RETURN kalk_get_1_ip()
 
    ELSEIF _idvd == "RN"
       RETURN GET1_RN()
@@ -1684,11 +1706,11 @@ STATIC FUNCTION NazProdObj()
 
 
 
-/* fn PlusMinusKol()
+/*
  *     Mijenja predznak kolicini u svim stavkama u kalk_pripremi
  */
 
-FUNCTION PlusMinusKol()
+FUNCTION kalk_plus_minus_kol()
 
    o_kalk_edit()
    SELECT kalk_pripr
@@ -1702,22 +1724,22 @@ FUNCTION PlusMinusKol()
       SKIP 1
    ENDDO
    my_unlock()
+
    // Msg("Automatski pokrecem asistenta (Alt+F10)!",1)
-   // lAutoAsist:=.t.
+   // lKalkAsistentAuto:=.t.
    KEYBOARD Chr( K_ESC )
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
 
 
 
-/* UzmiTarIzSif()
- *     Filuje tarifu u svim stavkama u kalk_pripremi odgovarajucom sifrom tarife iz sifrarnika robe
- */
+/*
 
-FUNCTION UzmiTarIzSif()
+
+-- FUNCTION UzmiTarIzSif()
 
    o_kalk_edit()
    SELECT kalk_pripr
@@ -1732,27 +1754,29 @@ FUNCTION UzmiTarIzSif()
    ENDDO
    my_unlock()
    Msg( "Automatski pokrećem asistenta (opcija A)!", 1 )
-   lAutoAsist := .T.
-   KEYBOARD Chr( K_ESC )
+   --lKalkAsistentAuto := .T.
+   -- KEYBOARD Chr( K_ESC )
    my_close_all_dbf()
 
    RETURN
 
+   *     Filuje tarifu u svim stavkama u kalk_pripremi odgovarajucom sifrom tarife iz sifrarnika robe
+*/
 
 
 
-/* DiskMPCSAPP()
+/*
  *     Formira diskontnu maloprodajnu cijenu u svim stavkama u kalk_pripremi
  */
 
-FUNCTION DiskMPCSAPP()
+FUNCTION kalk_set_diskont_mpc()
 
-   // {
    aPorezi := {}
    o_kalk_edit()
    SELECT kalk_pripr
    GO TOP
    my_flock()
+
    DO WHILE !Eof()
       SELECT ROBA
       HSEEK kalk_pripr->idroba
@@ -1768,10 +1792,13 @@ FUNCTION DiskMPCSAPP()
       Gather()
       SKIP 1
    ENDDO
+
    my_unlock()
+
    Msg( "Automatski pokrećem asistenta (opcija A)!", 1 )
-   lAutoAsist := .T.
+   lKalkAsistentAuto := .T.
    KEYBOARD Chr( K_ESC )
+
    my_close_all_dbf()
 
    RETURN .T.
@@ -1850,7 +1877,7 @@ FUNCTION MPCSAPPiz80uSif()
 
 
 
-/* fn VPCSifUDok()
+/* fn
  *  brief Filuje VPC u svim stavkama u kalk_pripremi odgovarajucom VPC iz sifrarnika robe
  */
 
@@ -1861,8 +1888,10 @@ FUNCTION VPCSifUDok()
    GO TOP
    my_flock()
    DO WHILE !Eof()
-      SELECT ROBA; HSEEK kalk_pripr->idroba
-      SELECT KONCIJ; SEEK Trim( kalk_pripr->mkonto )
+      SELECT ROBA
+      HSEEK kalk_pripr->idroba
+      SELECT KONCIJ
+      SEEK Trim( kalk_pripr->mkonto )
       // SELECT TARIFA; HSEEK ROBA->idtarifa
       SELECT kalk_pripr
       Scatter()
@@ -1873,7 +1902,7 @@ FUNCTION VPCSifUDok()
    ENDDO
    my_unlock()
    Msg( "Automatski pokrećem asistenta (opcija A) !", 1 )
-   lAutoAsist := .T.
+   lKalkAsistentAuto := .T.
    KEYBOARD Chr( K_ESC )
    my_close_all_dbf()
 
@@ -1942,7 +1971,7 @@ FUNCTION kalkulacija_ima_sve_cijene( firma, tip_dok, br_dok )
 
 /*
  *  Umjesto iskazanog popusta odradjuje smanjenje MPC
- */
+
 
 FUNCTION PopustKaoNivelacijaMP()
 
@@ -1981,3 +2010,4 @@ FUNCTION PopustKaoNivelacijaMP()
    CLOSERET
 
    RETURN .T.
+*/

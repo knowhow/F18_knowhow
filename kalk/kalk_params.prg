@@ -200,7 +200,7 @@ FUNCTION kalk_par_varijante_prikaza()
 FUNCTION kalk_par_razno()
 
    LOCAL _brojac := "N"
-   LOCAL _unos_barkod := roba_barkod_pri_unosu()
+   LOCAL _unos_barkod := "N"
    LOCAL _x := 1
    LOCAL _reset_roba := fetch_metric( "kalk_reset_artikla_kod_unosa", my_user(), "N" )
    LOCAL _rabat := fetch_metric( "pregled_rabata_kod_ulaza", my_user(), "N" )
@@ -218,6 +218,9 @@ FUNCTION kalk_par_razno()
       _brojac := "D"
    ENDIF
 
+   IF roba_barkod_pri_unosu()
+      _unos_barkod := "D"
+   ENDIF
 
    Box(, 20, 75, .F., "RAZNO" )
 
@@ -365,7 +368,7 @@ FUNCTION sumnjive_stavke_error( lForce )
 
    IF lForce .OR. nije_dozvoljeno_azuriranje_sumnjivih_stavki()
       Beep( 2 )
-      error_bar( "kalk_asist", "sumnjive stavke error")
+      error_bar( "kalk_asist", "sumnjive stavke error" )
       CLEAR TYPEAHEAD // zaustavi asistenta
 
       _ERROR := "1"
@@ -439,7 +442,7 @@ FUNCTION is_kalk_fin_isti_broj()
 
 FUNCTION kalk_par_zavisni_dokumenti()
 
-   LOCAL cTopsDest := Padr( kalk_destinacija_topska(), 100 )
+   LOCAL cTopsDest := PadR( kalk_destinacija_topska(), 100 )
    LOCAL _auto_razduzenje := fetch_metric( "kalk_tops_prenos_auto_razduzenje", my_user(), "N" )
    LOCAL cKalkFinIstiBroj := fetch_metric( "kalk_fin_isti_broj", NIL, "D" )
 
@@ -457,14 +460,14 @@ FUNCTION kalk_par_zavisni_dokumenti()
 
    @ m_x + 7, m_y + 2 SAY8 "KALK-FIN identičan broj (D/N): " GET cKalkFinIstiBroj VALID cKalkFinIstiBroj $ "DN" PICT "@!"
 
-   //READ
+   // READ
 
-   //IF gTops <> "0 " .OR. gFakt <> "0 "
-      @ m_x + 8, m_y + 2 SAY "kalk->tops destinacija: " GET cTopsDest PICT "@S40"
-      @ m_x + 10, m_y + 2 SAY "Auto.zaduzenje prod.konta (KALK 11) (D/N) ?" GET _auto_razduzenje PICT "@!" VALID _auto_razduzenje $ "DN"
+   // IF gTops <> "0 " .OR. gFakt <> "0 "
+   @ m_x + 8, m_y + 2 SAY "kalk->tops destinacija: " GET cTopsDest PICT "@S40"
+   @ m_x + 10, m_y + 2 SAY "Auto.zaduzenje prod.konta (KALK 11) (D/N) ?" GET _auto_razduzenje PICT "@!" VALID _auto_razduzenje $ "DN"
 
-  READ
-   //ENDIF
+   READ
+   // ENDIF
 
    BoxC()
 

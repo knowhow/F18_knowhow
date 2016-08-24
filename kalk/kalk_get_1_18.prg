@@ -50,7 +50,7 @@ FUNCTION kalk_get_1_18()
 
    _MKonto := _Idkonto
    check_datum_posljednje_kalkulacije()
-   DuplRoba()
+   //DuplRoba()
 
    dDatNab := CToD( "" )
    IF fnovi

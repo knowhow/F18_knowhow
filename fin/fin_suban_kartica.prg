@@ -142,6 +142,7 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
    READ
 
 
+altd()
    DO WHILE .T.
 
       IF gDUFRJ == "D"

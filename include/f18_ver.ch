@@ -11,8 +11,8 @@
 
 #define F18_VER_DEFINED
 
-#define F18_VER       "2.2.93"
-#define F18_VER_DATE  "22.08.2016"
+#define F18_VER       "2.2.94"
+#define F18_VER_DATE  "24.08.2016"
 #define F18_DEV_PERIOD  "1994-2016"
 
 #define F18_LIB_VER   "22.0.1"
@@ -24,4 +24,4 @@
 
 #define SERVER_DB_VER_MAJOR  0
 #define SERVER_DB_VER_MINOR  0
-#define SERVER_DB_VER_PATCH  24
+#define SERVER_DB_VER_PATCH  25

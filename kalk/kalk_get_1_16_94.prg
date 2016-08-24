@@ -93,7 +93,7 @@ FUNCTION kalk_get_1_94()
 
 
    check_datum_posljednje_kalkulacije()
-   DuplRoba()
+   //DuplRoba()
 
    _GKolicina := 0
    IF fNovi
@@ -134,7 +134,7 @@ FUNCTION kalk_get_1_94()
 
 
 
-/* 
+/*
  *     Magacinska kartica kao pomoc pri unosu 94-ke
  */
 

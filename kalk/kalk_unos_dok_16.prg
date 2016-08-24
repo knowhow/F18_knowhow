@@ -91,7 +91,7 @@ FUNCTION kalk_get_1_16()
    _MU_I := "1"
 
    check_datum_posljednje_kalkulacije()
-   DuplRoba()
+   //DuplRoba()
    _GKolicina := 0
    IF fNovi
       SELECT ROBA
@@ -154,8 +154,7 @@ FUNCTION Get1_16bPDV()
    READ
    ESC_RETURN K_ESC
    SELECT TARIFA
-   HSEEK _IdTarifa
-   // postavi TARIFA na pravu poziciju
+   HSEEK _IdTarifa // postavi TARIFA na pravu poziciju
    SELECT koncij
    SEEK Trim( _idkonto )
    SELECT kalk_pripr
@@ -164,7 +163,7 @@ FUNCTION Get1_16bPDV()
    _PKonto := _Idkonto
 
    kalk_dat_poslj_promjene_prod()
-   DuplRoba()
+   //DuplRoba()
 
    PRIVATE fMarza := " "
 

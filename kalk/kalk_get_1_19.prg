@@ -54,7 +54,7 @@ FUNCTION kalk_get_1_19()
    SELECT kalk_pripr  // napuni tarifu
 
    kalk_dat_poslj_promjene_prod()
-   DuplRoba()
+   //DuplRoba()
 
    dDatNab := CToD( "" )
    IF fnovi

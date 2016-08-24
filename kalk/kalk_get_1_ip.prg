@@ -62,7 +62,7 @@ FUNCTION kalk_get_1_ip()
    SELECT kalk_pripr
 
 
-   DuplRoba() // provjeri duplu robu
+   //DuplRoba()
 
    ++ _x
    ++ _x
@@ -91,9 +91,7 @@ FUNCTION kalk_get_1_ip()
    // _fcj - knjizna prodajna vrijednost
    // _fcj3 - knjizna nabavna vrijednost
 
-   _gkolicin2 := _gkolicina - _kolicina
-
-   // ovo je kolicina izlaza koja nije proknjizena
+   _gkolicin2 := _gkolicina - _kolicina // ovo je kolicina izlaza koja nije proknjizena
    _mkonto := ""
    _pkonto := _idkonto
 

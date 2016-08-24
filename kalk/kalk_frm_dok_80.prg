@@ -118,7 +118,7 @@ FUNCTION Get1_80( atrib )
    _pkonto := _idkonto
 
    kalk_dat_poslj_promjene_prod()
-   DuplRoba()
+   //DuplRoba()
 
    IF fNovi
 

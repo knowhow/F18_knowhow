@@ -12,7 +12,7 @@
 #include "f18.ch"
 
 STATIC aPorezi := {}
-  
+
 FUNCTION kalk_get_1_im()
 
    LOCAL nFaktVPC
@@ -48,7 +48,7 @@ kalk_pripr_form_get_roba( @_idRoba, @_idTarifa, _IdVd, fNovi, _kord_x, m_y + 2, 
    HSEEK _IdTarifa
    SELECT kalk_pripr
 
-   DuplRoba()
+   //DuplRoba()
    @ m_x + 13, m_y + 2   SAY "Knjizna kolicina " GET _GKolicina PICTURE PicKol WHEN {|| iif( gMetodaNC == " ", .T., .F. ) }
    @ m_x + 13, Col() + 2 SAY "Popisana Kolicina" GET _Kolicina PICTURE PicKol
    @ m_x + 15, m_y + 2    SAY "CIJENA" GET _vpc PICT picdem

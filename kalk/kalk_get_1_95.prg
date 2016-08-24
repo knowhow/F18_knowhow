@@ -12,7 +12,7 @@
 #include "f18.ch"
 
 STATIC aPorezi := {}
-  
+
 FUNCTION kalk_get_1_95()
 
    pIzgSt := .F. // izgenerisane stavke jos ne postoje
@@ -94,7 +94,7 @@ FUNCTION kalk_get_1_95()
 
    _MKonto := _Idkonto2
    check_datum_posljednje_kalkulacije()
-   DuplRoba()
+   //DuplRoba()
 
    SELECT koncij
    SEEK Trim( _idkonto2 )

@@ -476,7 +476,7 @@ FUNCTION kalk_valid_kolicina_prod()
 
    IF _fcj < 0
       MsgBeep( _idroba + "NC < 0 ! STOP !" )
-      error_bar( "prod", _idroba + " nc < 0" )
+      error_bar( "prod", _pkonto + " " + _idroba + " nc < 0" )
       _ERROR := "1"
       RETURN .F.
    ENDIF

@@ -20,7 +20,7 @@ FUNCTION fix_dat_var( xVar, lNilToDate )
    hb_default( @lNilToDate, .F. )
 
    IF lNilToDate .AND. xVar == NIL
-      RETURN CtoD( "" )
+      RETURN CToD( "" )
    ENDIF
 
    IF ValType( xVar ) != "D"
@@ -112,9 +112,16 @@ FUNCTION coalesce_char_zarez( cField, nNum )
 */
 FUNCTION coalesce_char( cField, nNum, lZarez )
 
-   LOCAL cFormat
+   LOCAL cFormat, cFieldAs, nPos
 
    default_if_nil( @lZarez, .F. )
    cFormat := "char(" + AllTrim( Str( nNum ) ) + ")"
 
-   RETURN " COALESCE( " + cField + ", '')::" + cFormat + " AS " + cField + iif( lZarez, ", ", "" )
+   nPos := At( ".", cField )
+   IF nPos > 0
+      cFieldAs := SubStr( cField, nPos + 1 )
+   ELSE
+      cFieldAs := cField
+   ENDIF
+
+   RETURN " COALESCE( " + cField + ", '')::" + cFormat + " AS " + cFieldAs + iif( lZarez, ", ", "" )

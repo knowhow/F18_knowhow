@@ -91,7 +91,7 @@ FUNCTION kalk_get_1_11()
 
    check_datum_posljednje_kalkulacije()
    kalk_dat_poslj_promjene_prod()
-   DuplRoba()
+   //DuplRoba()
 
 
    _GKolicina := _GKolicin2 := 0
@@ -157,10 +157,10 @@ FUNCTION kalk_get_1_11()
    _vpc := _fcj
    @ m_x + 14, m_y + 2    SAY "NABAVNA CIJENA (NC)       :"
    IF _kolicina > 0
-      @ m_x + 14, m_y + 50   GET _FCj    PICTURE gPicNC ;
+      @ m_x + 14, m_y + 50   GET _FCj   PICTURE gPicNC ;
          VALID {|| lRet := kalk_valid_kolicina_mag(), _vpc := _fcj, lRet }
    ELSE
-      @ m_x + 14, m_y + 50   GET _FCJ    PICTURE PicDEM;
+      @ m_x + 14, m_y + 50   GET _FCJ   PICTURE PicDEM;
          VALID {|| lRet := kalk_valid_kolicina_prod(), _vpc := _fcj, lRet }
    ENDIF
 

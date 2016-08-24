@@ -11,7 +11,7 @@
 
 #include "f18.ch"
 
-STATIC s_cServerVersion
+STATIC s_nServerVersion
 
 
 FUNCTION server_db_version( lInit )
@@ -21,17 +21,17 @@ FUNCTION server_db_version( lInit )
 
    hb_default( @lInit, .F. )
 
-   IF lInit .OR. HB_ISNIL( s_cServerVersion )
+   IF lInit .OR. HB_ISNIL( s_nServerVersion )
       _qry := "SELECT max(version) from public.schema_migrations"
       _ret := run_sql_query( _qry )
       IF sql_error_in_query( _ret, "SELECT" )
-         s_cServerVersion := -1
+         s_nServerVersion := -1
       ELSE
-         s_cServerVersion := _ret:FieldGet( 1 )
+         s_nServerVersion := _ret:FieldGet( 1 )
       ENDIF
    ENDIF
 
-   RETURN s_cServerVersion
+   RETURN s_nServerVersion
 
 
 

@@ -28,6 +28,8 @@ FUNCTION kalk_kartica_magacin()
    LOCAL cPrikSredNc := "N"
    LOCAL cIdvd := Space( 2 )
    LOCAL nNc, nSredNc, nOdstupanje, cTransakcija
+   LOCAL lPrikaziObradjeno := .F.
+   LOCAL cOrderBy
 
    PRIVATE fKNabC := .F.
    PRIVATE fVeci := .F.
@@ -150,6 +152,14 @@ FUNCTION kalk_kartica_magacin()
 
    ENDIF
 
+
+   IF server_db_version() >= 25
+      lPrikaziObradjeno := .T.
+      cOrderBy := "idfirma,mkonto,idroba,datdok,obradjeno,mu_i,idvd"
+   ELSE
+      cOrderBy := "idfirma,mkonto,idroba,datdok,mu_i,idvd"
+   ENDIF
+
    lBezG2 := .F.
    nKolicina := 0
 
@@ -165,9 +175,9 @@ FUNCTION kalk_kartica_magacin()
    ENDIF
 
    IF Empty( cIdRoba )
-      find_kalk_by_mkonto_idroba_idvd( cIdFirma, cIdVd, cIdKonto )
+      find_kalk_by_mkonto_idroba_idvd( cIdFirma, cIdVd, cIdKonto, NIL, cOrderBy )
    ELSE
-      find_kalk_by_mkonto_idroba_idvd( cIdFirma, cIdVd, cIdKonto, cIdRoba )
+      find_kalk_by_mkonto_idroba_idvd( cIdFirma, cIdVd, cIdKonto, cIdRoba, cOrderBy )
    ENDIF
 
    IF !( cFilt == ".t." )
@@ -553,7 +563,14 @@ FUNCTION kalk_kartica_magacin()
                ENDIF
             ENDIF
 
-            ? Space( 71 ), cTransakcija, " SNc:", say_kolicina( nSredNc ), ""
+            ? Space( 48 )
+            IF lPrikaziObradjeno
+               ?? field->obradjeno
+            ELSE
+               ?? Space( 20 )
+            ENDIF
+
+            ?? cTransakcija, " SNc:", say_kolicina( nSredNc ), ""
 
             IF Abs( nOdstupanje ) > 60
                ?? ">>>> ODST SNc-Nc: "

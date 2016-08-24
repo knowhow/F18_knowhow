@@ -127,13 +127,14 @@ FUNCTION VVT()
    RETURN .T.
 
 
-/* DuplRoba()
+/*
  *     Obrada slucaja pojavljivanja duplog unosa robe u dokumentu
  */
 
+/*
 FUNCTION DuplRoba()
 
-/*
+
    LOCAL nRREC, fdupli := .F., dkolicina := 0, dfcj := 0
    PRIVATE GetList := {}
 
@@ -173,11 +174,11 @@ FUNCTION DuplRoba()
    SET ORDER TO TAG "1"
 
    RETURN .T.
-*/
+
    RETURN .T.
+*/
 
-
-/* check_datum_posljednje_kalkulacije()
+/*
  *     Ispituje da li je datum zadnje promjene na zadanom magacinu i za zadani artikal noviji od one koja se unosi
  */
 

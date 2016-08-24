@@ -16,36 +16,41 @@
     cKontoUslov := "13201;13202;"
     parsiraj_sql( "mkonto", cKontoUslov, .F. )
 */
-FUNCTION parsiraj_sql( cFieldName, cond, lNot )
+FUNCTION parsiraj_sql( cFieldName, cConditionParam, lNot )
 
    LOCAL _ret := ""
-   LOCAL cond_arr := TOKTONIZ( cond, ";" )
-   LOCAL _cond
+   LOCAL aConditions := TOKTONIZ( cConditionParam, ";" )
+   LOCAL lPrazno := .F.
+   LOCAL cCondition
 
    IF lNot == NIL
       lNot := .F.
    ENDIF
 
-   FOR EACH _cond in cond_arr
+   IF LEN( cConditionParam ) == 0
+      lPrazno := .T.
+   ENDIF
 
-      IF Empty( _cond )
+   FOR EACH cCondition in aConditions
+
+      IF lPrazno
          LOOP
       ENDIF
 
       _ret += "  OR " + cFieldName
 
-      IF Len( cond_arr ) > 1
+      IF Len( aConditions ) > 1
          IF lNot
             _ret += " NOT "
          ENDIF
-         _ret += " LIKE " + sql_quote( AllTrim( _cond ) + "%" )
+         _ret += " LIKE " + sql_quote( AllTrim( cCondition ) + "%" )
       ELSE
          IF lNot
             _ret += " <> "
          ELSE
             _ret += " = "
          ENDIF
-         _ret += sql_quote( _cond )
+         _ret += sql_quote( cCondition )
       ENDIF
 
    NEXT

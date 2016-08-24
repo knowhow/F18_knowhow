@@ -159,7 +159,7 @@ FUNCTION find_suban_by_konto_partner( xIdFirma, cIdKonto, cIdPartner, cBrDok, cO
       hParams[ "idpartner" ] := cIdPartner
    ENDIF
 
-   IF cIdPartner <> NIL
+   IF cBrDok <> NIL
       hParams[ "brdok" ] := cBrDok
    ENDIF
 

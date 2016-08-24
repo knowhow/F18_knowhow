@@ -353,9 +353,11 @@ FUNCTION usporedna_lista_fakt_kalk()
             ELSEIF pu_i == "5"  .AND. !( idvd $ "12#13#22" )
                nSt -= kolicina
                nVr -= Round( mpcsapp * kolicina, ZAOKRUZENJE )
+               
             ELSEIF pu_i == "I"
                nSt += gkolicin2
                nVr -= mpcsapp * gkolicin2
+
             ELSEIF pu_i == "5"  .AND. ( idvd $ "12#13#22" )    // povrat
                nSt -= kolicina
                nVr -= Round( mpcsapp * kolicina, ZAOKRUZENJE )

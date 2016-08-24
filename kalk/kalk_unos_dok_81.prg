@@ -166,11 +166,11 @@ FUNCTION kalk_unos_dok_81( atrib )
       WHEN VKol()
    @ m_x + _x, Col() + 1 SAY "*** <ALT+T> unos ukupne FV"
 
-   // KASA-SKONTO ili RABAT
+
    ++ _x
    @ m_x + _x, m_y + 2   SAY "Rabat (%):"
    @ m_x + _x, m_y + _unos_left GET _rabat PICT PicDEM ;
-      WHEN {|| SetKey( K_ALT_T, {|| _kaskadni_rabat( @_krabat ) } ), DuplRoba() } ;
+      WHEN {|| SetKey( K_ALT_T, {|| _kaskadni_rabat( @_krabat ) } ), .T. } ;
       VALID {|| SetKey( K_ALT_T, {|| NIL } ), .T. }
    @ m_x + _x, Col() + 1 SAY "*** <ALT+T> unos kaskadnog rabata"
 
@@ -190,7 +190,7 @@ FUNCTION kalk_unos_dok_81( atrib )
 
    _fcj2 := _fcj * ( 1 - _rabat / 100 )
 
-   // setuj atribute...
+   // setuj atribute
    IF _use_opis
       atrib[ "opis" ] := _opis
    ENDIF

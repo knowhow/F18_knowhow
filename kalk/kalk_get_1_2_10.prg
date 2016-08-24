@@ -149,7 +149,6 @@ FUNCTION kalk_get_1_10()
       _Marza := 0 // procente ne diraj
    ENDIF
 
-
    ++ _x
    @ m_x + _x, m_y + 2 SAY "Fakturna cijena:"
 
@@ -161,7 +160,7 @@ FUNCTION kalk_get_1_10()
 
    ++ _x
    @ m_x + _x, m_y + 2 SAY "Rabat (%):"
-   @ m_x + _x, m_y + _unos_left GET _Rabat PICT PicDEM WHEN DuplRoba()
+   @ m_x + _x, m_y + _unos_left GET _Rabat PICT PicDEM
 
    /*
    IF gNW <> "X" .OR. gVodiKalo == "D"

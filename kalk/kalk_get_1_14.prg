@@ -91,7 +91,7 @@ FUNCTION kalk_get_1_14()
    ENDIF
 
    check_datum_posljednje_kalkulacije()
-   DuplRoba()
+   //DuplRoba()
 
    IF fNovi
       SELECT roba

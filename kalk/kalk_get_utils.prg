@@ -118,7 +118,7 @@ FUNCTION VMpcSaPP( fRealizacija, fMarza )
       ShowGets()
 
       IF fRealizacija
-         DuplRoba()
+         //DuplRoba()
       ENDIF
    ENDIF
 
@@ -361,7 +361,7 @@ FUNCTION VMpcSaPP_lv( fRealizacija, fMarza, aPorezi, lShowGets )
          ShowGets()
       ENDIF
       IF fRealizacija
-         DuplRoba()
+         //DuplRoba()
       ENDIF
    ENDIF
 
@@ -401,7 +401,7 @@ FUNCTION V_MpcSaPP_( cIdVd, lNaprijed, aPorezi, lShowGets )
       ENDIF
 
       IF cIdVd $ "41#42"
-         DuplRoba()
+        //DuplRoba()
       ENDIF
 
    ENDIF

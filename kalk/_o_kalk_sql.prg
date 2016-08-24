@@ -224,12 +224,18 @@ FUNCTION find_kalk_by_mkonto_idroba_idvd( cIdFirma, cIdVd, cIdKonto, cIdRoba, cO
    LOCAL hParams := hb_Hash()
 
    hb_default( @cOrderBy, "idfirma,mkonto,idroba,datdok,podbr,mu_i,idvd" )
+
+   AltD()
+   IF "obradjeno" $ cOrderBy
+      hParams[ "obradjeno" ] := .T.
+   ENDIF
+
    hb_default( @lReport, .T. )
 
    IF cIdFirma != NIL
       hParams[ "idfirma" ] := cIdFirma
    ENDIF
-   
+
    IF cIdVd != NIL .AND. !Empty( cIdVd )
       hParams[ "idvd" ] := cIdVd
    ENDIF
@@ -390,22 +396,22 @@ FUNCTION use_sql_kalk( hParams )
       lReportProdavnica := .T.
    ENDIF
    cSql := "SELECT "
-   cSql += coalesce_char_zarez( "idfirma", 2 )
+   cSql += coalesce_char_zarez( "kalk_kalk.idfirma", 2 )
+   cSql += coalesce_char_zarez( "kalk_kalk.idvd", 2 )
+   cSql += coalesce_char_zarez( "kalk_kalk.brdok", 8 )
    cSql += coalesce_char_zarez( "idroba", 10 )
-   cSql += coalesce_char_zarez( "idvd", 2 )
-   cSql += coalesce_char_zarez( "brdok", 8 )
    cSql += coalesce_char_zarez( "rbr", 3 )
-   cSql += "coalesce(datdok, TO_DATE('','yyyymmdd')) as datdok, coalesce( datfaktp, TO_DATE('','yyyymmdd')) as datfaktp,"
-   cSql += coalesce_char_zarez( "brfaktp", 10 )
-   cSql += coalesce_char_zarez( "idpartner", 6 )
+   cSql += "coalesce(kalk_kalk.datdok, TO_DATE('','yyyymmdd')) as datdok, coalesce( kalk_kalk.datfaktp, TO_DATE('','yyyymmdd')) as datfaktp,"
+   cSql += coalesce_char_zarez( "kalk_kalk.brfaktp", 10 )
+   cSql += coalesce_char_zarez( "kalk_kalk.idpartner", 6 )
    cSql += coalesce_char_zarez( "idtarifa", 6 )
-   cSql += coalesce_char_zarez( "mkonto", 7 )
-   cSql += coalesce_char_zarez( "pkonto", 7 )
+   cSql += coalesce_char_zarez( "kalk_kalk.mkonto", 7 )
+   cSql += coalesce_char_zarez( "kalk_kalk.pkonto", 7 )
    cSql += coalesce_char_zarez( "idkonto", 7 )
    cSql += coalesce_char_zarez( "idkonto2", 7 )
 
-   cSql += coalesce_char_zarez( "idzaduz", 6 )
-   cSql += coalesce_char_zarez( "idzaduz2", 6 )
+   cSql += coalesce_char_zarez( "kalk_kalk.idzaduz", 6 )
+   cSql += coalesce_char_zarez( "kalk_kalk.idzaduz2", 6 )
 
    IF !( lReportMagacin  .OR. lReportProdavnica )
 
@@ -454,9 +460,22 @@ FUNCTION use_sql_kalk( hParams )
    cSql += coalesce_char_zarez( "mu_i", 1 )
    cSql += coalesce_char_zarez( "pu_i", 1 )
    cSql += coalesce_char_zarez( "error", 1 )
-   cSql += coalesce_char( "podbr", 2 )
 
-   cSql += " FROM fmk.kalk_kalk"
+   AltD()
+   IF hb_HHasKey( hParams, "obradjeno" )
+      cSql += " kalk_doks.obradjeno as obradjeno, "
+   ENDIF
+   cSql += coalesce_char( "kalk_kalk.podbr", 2 )
+
+   cSql += " FROM fmk.kalk_kalk "
+
+   IF hb_HHasKey( hParams, "obradjeno" )
+
+      // select kolicina, kalk_doks.obradjeno  from fmk.kalk_kalk
+      // join fmk.kalk_doks on  kalk_doks.idfirma=kalk_kalk.idfirma and kalk_doks.idvd=kalk_kalk.idvd and kalk_doks.brdok=kalk_kalk.brdok
+      // limit 1
+      cSql += "JOIN fmk.kalk_doks on  kalk_doks.idfirma=kalk_kalk.idfirma and kalk_doks.idvd=kalk_kalk.idvd and kalk_doks.brdok=kalk_kalk.brdok "
+   ENDIF
 
    cWhere := use_sql_kalk_where( hParams )
    cOrder := use_sql_kalk_order( hParams )
@@ -534,33 +553,33 @@ STATIC FUNCTION use_sql_kalk_where( hParams )
    LOCAL dDatOd
 
    IF hb_HHasKey( hParams, "idfirma" )
-      cWhere += parsiraj_sql( "idfirma", hParams[ "idfirma" ] )
+      cWhere += parsiraj_sql( "kalk_kalk.idfirma", hParams[ "idfirma" ] )
    ENDIF
 
    IF hb_HHasKey( hParams, "idvd" )
-      cWhere += " AND " + parsiraj_sql( "idvd", hParams[ "idvd" ] )
+      cWhere += " AND " + parsiraj_sql( "kalk_kalk.idvd", hParams[ "idvd" ] )
    ENDIF
 
    IF hb_HHasKey( hParams, "brdok" )
-      cWhere += " AND " + parsiraj_sql( "brdok", hParams[ "brdok" ] )
+      cWhere += " AND " + parsiraj_sql( "kalk_kalk.brdok", hParams[ "brdok" ] )
    ENDIF
 
    IF hb_HHasKey( hParams, "mkonto" )
-      cWhere += " AND " + parsiraj_sql( "mkonto", hParams[ "mkonto" ] )
+      cWhere += " AND " + parsiraj_sql( "kalk_kalk.mkonto", hParams[ "mkonto" ] )
    ENDIF
    IF hb_HHasKey( hParams, "mkonto_sint" )
-      cWhere += " AND " + parsiraj_sql( "LEFT(mkonto,3)", hParams[ "mkonto_sint" ] )
+      cWhere += " AND " + parsiraj_sql( "LEFT(kalk_kalk.mkonto,3)", hParams[ "mkonto_sint" ] )
    ENDIF
 
    IF hb_HHasKey( hParams, "pkonto" )
-      cWhere += " AND " + parsiraj_sql( "pkonto", hParams[ "pkonto" ] )
+      cWhere += " AND " + parsiraj_sql( "kalk_kalk.pkonto", hParams[ "pkonto" ] )
    ENDIF
    IF hb_HHasKey( hParams, "pkonto_sint" )
-      cWhere += " AND " + parsiraj_sql( "LEFT(pkonto,3)", hParams[ "pkonto_sint" ] )
+      cWhere += " AND " + parsiraj_sql( "LEFT(kalk_kalk.pkonto,3)", hParams[ "pkonto_sint" ] )
    ENDIF
 
    IF hb_HHasKey( hParams, "idpartner" )
-      cWhere += "AND " + parsiraj_sql( "idpartner", hParams[ "idpartner" ] )
+      cWhere += "AND " + parsiraj_sql( "kalk_kalk.idpartner", hParams[ "idpartner" ] )
    ENDIF
 
    IF hb_HHasKey( hParams, "idroba" )
@@ -573,7 +592,7 @@ STATIC FUNCTION use_sql_kalk_where( hParams )
       ELSE
          dDatOd := hParams[ "dat_od" ]
       ENDIF
-      cWhere += " AND " + parsiraj_sql_date_interval( "datdok", dDatOd, hParams[ "dat_do" ] )
+      cWhere += " AND " + parsiraj_sql_date_interval( "kalk_kalk.datdok", dDatOd, hParams[ "dat_do" ] )
    ENDIF
 
    RETURN cWhere
@@ -932,11 +951,24 @@ FUNCTION use_sql_kalk_kalk( hParams )
    cSql += coalesce_char_zarez( "mkonto", 7 )
    cSql += coalesce_char_zarez( "pkonto", 7 )
    cSql += " roktr, "
+   AltD()
+   IF hb_HHasKey( hParams, "obradjeno" )
+      cSql += " kalk_doks.obradjeno as obradjeno, "
+   ENDIF
    cSql += coalesce_char_zarez( "m_ui", 1 )
    cSql += coalesce_char_zarez( "p_ui", 1 )
    cSql += coalesce_char_zarez( "error", 1 )
    cSql += coalesce_char( "podbr", 2 )
    cSql += " FROM fmk.kalk_kalk "
+
+   IF hb_HHasKey( hParams, "obradjeno" )
+
+      // select kolicina, kalk_doks.obradjeno  from fmk.kalk_kalk
+      // join fmk.kalk_doks on  kalk_doks.idfirma=kalk_kalk.idfirma and kalk_doks.idvd=kalk_kalk.idvd and kalk_doks.brdok=kalk_kalk.brdok
+      // limit 1
+      cSql += "JOIN fmk.kalk_doks on  kalk_doks.idfirma=kalk_kalk.idfirma and kalk_doks.idvd=kalk_kalk.idvd and kalk_doks.brdok=kalk_kalk.brdok "
+   ENDIF
+
 
    IF !Empty( cWhere )
       cSql += " WHERE " + cWhere

@@ -85,7 +85,7 @@ FUNCTION korekcija_nabavne_cijene_sa_zadnjom_ulaznom( nKolicina, nZadnjaUlaznaNC
 
          MsgBeep( "Odstupanje #" + AllTrim( Str( Abs( nOdst ) ) ) + " %" + "#" + ;
             "artikal: " + AllTrim( _idroba ) + " " + PadR( roba->naz, 15 ) + ;
-            "# srednja.nc:" + AllTrim( Str( nSrednjaNabavnaCijena, 12, 2 ) ) + ", zadnji ulaz nc:" + AllTrim( Str( nZadnjaUlaznaNC, 12, 2 ) ) )
+            "# srednja.nc:" + AllTrim( Str( nSrednjaNabavnaCijena, 12, 2 ) ) + ", zadnji ulaz nc:" + AllTrim( Str( nZadnjaUlaznaNC, 12, 2 ) ), .F. )
       ENDIF
 
 

@@ -370,7 +370,6 @@ FUNCTION sumnjive_stavke_error( lForce )
       Beep( 2 )
       error_bar( "kalk_asist", "sumnjive stavke error" )
       CLEAR TYPEAHEAD // zaustavi asistenta
-
       _ERROR := "1"
    ENDIF
 

@@ -637,8 +637,9 @@ FUNCTION PrerRab()
 FUNCTION kalk_valid_kolicina_mag()
 
    IF (( _nc < 0 ) .AND. !( _idvd $ "11#12#13#22" )) .OR. ( _fcj < 0 .AND. _idvd $ "11#12#13#22" )
-
-      Msg( "Nabavna cijena manja od 0 !?" )
+      // kod 11-ke se unosi fcj
+      Msg( _idroba + " Nabavna cijena manja od 0 ! STOP!" )
+      error_bar( "kalk_mag", _mkonto + "/" + _idroba + " Nabavna cijena manja od 0 !" )
       _ERROR := "1"
       RETURN .F.
    ENDIF
@@ -652,7 +653,6 @@ FUNCTION kalk_valid_kolicina_mag()
    IF nKolS < _Kolicina
 
       sumnjive_stavke_error()
-
       error_bar( "KA_" + _mkonto + "/" + _idroba, ;
          _mkonto + " / " + _idroba + "na stanju: " + AllTrim( Str( nKolS, 10, 4 ) ) + " treba " +  AllTrim( Str( _kolicina, 10, 4 ) ) )
 

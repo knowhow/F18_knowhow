@@ -14,6 +14,8 @@
 
 FUNCTION kalk_get_1_12()
 
+   LOCAL lRet
+
    pIzgSt := .F.   // izgenerisane stavke jos ne postoje
    PRIVATE aPorezi := {}
 
@@ -117,7 +119,7 @@ FUNCTION kalk_get_1_12()
    @ m_x + 12, m_y + 30   SAY "Ukupno na stanju "; @ m_x + 12, Col() + 2 SAY nkols PICT pickol
 
    @ m_x + 14, m_y + 2    SAY "NABAVNA CIJENA (NC)         :"
-   @ m_x + 14, m_y + 50   GET _FCJ    PICTURE PicDEM VALID {|| kalk_valid_kolicina_prod(), _vpc := _fcj, .T. }
+   @ m_x + 14, m_y + 50   GET _FCJ    PICTURE PicDEM VALID {|| lRet := kalk_valid_kolicina_prod(), _vpc := _fcj, lRet }
 
 
    _TPrevoz := "R"

@@ -474,7 +474,7 @@ FUNCTION kalk_valid_kolicina_prod()
       ppKolicina := Abs( _Kolicina )
    ENDIF
 
-   IF _nc < 0
+   IF _fcj < 0
       MsgBeep( _idroba + "NC < 0 ! STOP !" )
       error_bar( "prod", _idroba + " nc < 0" )
       _ERROR := "1"

@@ -15,6 +15,8 @@
 
 FUNCTION kalk_get_1_11()
 
+   LOCAL lRet
+
    pIzgSt := .F.   // izgenerisane stavke jos ne postoje
 
    IF nRbr == 1 .AND. fnovi
@@ -32,15 +34,15 @@ FUNCTION kalk_get_1_11()
       ENDIF
 
       @ m_x + 8, m_y + 2   SAY8 "Prodavnički Konto zaduzuje" GET _IdKonto VALID  P_Konto( @_IdKonto, 21, 5 ) PICT "@!"
-      //IF gNW <> "X"
-      //   @ m_x + 8, m_y + 42  SAY "Zaduzuje: "   GET _IdZaduz  PICT "@!" VALID Empty( _idZaduz ) .OR. P_Firma( @_IdZaduz, 24 )
-      //ENDIF
+      // IF gNW <> "X"
+      // @ m_x + 8, m_y + 42  SAY "Zaduzuje: "   GET _IdZaduz  PICT "@!" VALID Empty( _idZaduz ) .OR. P_Firma( @_IdZaduz, 24 )
+      // ENDIF
 
       @ m_x + 9, m_y + 2   SAY8 "Magacinski konto razdužuje"  GET _IdKonto2 ;
          VALID Empty( _IdKonto2 ) .OR. P_Konto( @_IdKonto2, 21, 5 )
-      //IF gNW <> "X"
-      //   @ m_x + 9, m_y + 42 SAY "Razduzuje:" GET _IdZaduz2   PICT "@!"  VALID Empty( _idZaduz2 ) .OR. P_Firma( @_IdZaduz2, 24 )
-      //ENDIF
+      // IF gNW <> "X"
+      // @ m_x + 9, m_y + 42 SAY "Razduzuje:" GET _IdZaduz2   PICT "@!"  VALID Empty( _idZaduz2 ) .OR. P_Firma( @_IdZaduz2, 24 )
+      // ENDIF
       read; ESC_RETURN K_ESC
    ELSE
       IF _IdVD $ "11#12#13#22"
@@ -48,18 +50,18 @@ FUNCTION kalk_get_1_11()
          @  m_x + 6, Col() + 2 SAY "Datum: "; ?? _DatFaktP
       ENDIF
       @ m_x + 8, m_y + 2   SAY8 "Prodavnicki Konto zadužuje "; ?? _IdKonto
-      //IF gNW <> "X"
-      //   @ m_x + 8, m_y + 42  SAY "Zaduzuje: "; ?? _IdZaduz
-      //ENDIF
+      // IF gNW <> "X"
+      // @ m_x + 8, m_y + 42  SAY "Zaduzuje: "; ?? _IdZaduz
+      // ENDIF
       @ m_x + 9, m_y + 2   SAY8 "Magacinski konto razdužuje "; ?? _IdKonto2
-      //IF gNW <> "X"
-      //   @ m_x + 9, m_y + 42  SAY "Razduzuje: "; ?? _IdZaduz2
-      //ENDIF
+      // IF gNW <> "X"
+      // @ m_x + 9, m_y + 42  SAY "Razduzuje: "; ?? _IdZaduz2
+      // ENDIF
    ENDIF
 
    @ m_x + 10, m_y + 66 SAY "Tarifa ->"
 
-kalk_pripr_form_get_roba( @_idRoba, @_idTarifa, _IdVd, fNovi, m_x + 11, m_y + 2, @aPorezi )
+   kalk_pripr_form_get_roba( @_idRoba, @_idTarifa, _IdVd, fNovi, m_x + 11, m_y + 2, @aPorezi )
    /*
    IF roba_barkod_pri_unosu()
     --  @ m_x + 11, m_y + 2   SAY "Artikal  " GET _IdRoba PICT "@!S10" when {|| _IdRoba := PadR( _idroba, Val(-- gDuzSifIni ) ), .T. } VALID VRoba()
@@ -156,10 +158,10 @@ kalk_pripr_form_get_roba( @_idRoba, @_idTarifa, _IdVd, fNovi, m_x + 11, m_y + 2,
    @ m_x + 14, m_y + 2    SAY "NABAVNA CIJENA (NC)       :"
    IF _kolicina > 0
       @ m_x + 14, m_y + 50   GET _FCj    PICTURE gPicNC ;
-         VALID {|| kalk_valid_kolicina_mag(), _vpc := _Fcj, .T. }
+         VALID {|| lRet := kalk_valid_kolicina_mag(), _vpc := _fcj, lRet }
    ELSE
       @ m_x + 14, m_y + 50   GET _FCJ    PICTURE PicDEM;
-         VALID {|| kalk_valid_kolicina_prod(), _vpc := _fcj, .T. }
+         VALID {|| lRet := kalk_valid_kolicina_prod(), _vpc := _fcj, lRet }
    ENDIF
 
 

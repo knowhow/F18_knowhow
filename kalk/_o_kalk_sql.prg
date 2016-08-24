@@ -219,6 +219,39 @@ FUNCTION find_kalk_za_period( xIdFirma, cIdVd, cIdPartner, cIdRoba, dDatOd, dDat
    RETURN !Eof()
 
 
+FUNCTION find_kalk_by_mkonto_idroba_idvd( cIdFirma, cIdVd, cIdKonto, cIdRoba, cOrderBy, lReport )
+
+   LOCAL hParams := hb_Hash()
+
+   hb_default( @cOrderBy, "idfirma,mkonto,idroba,datdok,podbr,mu_i,idvd" )
+   hb_default( @lReport, .T. )
+
+   IF cIdFirma != NIL
+      hParams[ "idfirma" ] := cIdFirma
+   ENDIF
+   
+   IF cIdVd != NIL .AND. !Empty( cIdVd )
+      hParams[ "idvd" ] := cIdVd
+   ENDIF
+
+   IF cIdKonto != NIL
+      hParams[ "mkonto" ] := cIdKonto
+   ENDIF
+   IF cIdRoba != NIL
+      hParams[ "idroba" ] := cIdRoba
+   ENDIF
+   hParams[ "order_by" ] := cOrderBy
+
+   IF lReport
+      hParams[ "polja" ] := "rpt_magacin" // samo polja potrebna za magacin
+   ENDIF
+
+   hParams[ "indeks" ] := .F.
+   use_sql_kalk( hParams )
+   GO TOP
+
+   RETURN !Eof()
+
 FUNCTION find_kalk_by_mkonto_idroba( cIdFirma, cIdKonto, cIdRoba, cOrderBy, lReport )
 
    LOCAL hParams := hb_Hash()
@@ -640,7 +673,7 @@ FUNCTION use_sql_kalk_doks( hParams )
    IF !Empty( cWhere )
       cSql += " WHERE " + cWhere
       IF hb_HHasKey( hParams, "where_ext" )
-        cSql += " " + hParams[ "where_ext" ]
+         cSql += " " + hParams[ "where_ext" ]
       ENDIF
       IF !Empty( cOrder )
          cSql += cOrder
@@ -719,7 +752,7 @@ STATIC FUNCTION sql_kalk_doks_where( hParams )
       order by substr(brdok,6),left(brdok,5) DESC
 */
       // cWhere += "substr(brdok,6) = " + sql_quote( Trim(hParams[ "brdok_sfx" ]) )
-      cWhere += "substr(brdok," + AllTrim( Str( 8 -Len( hParams[ "brdok_sfx" ] ) + 1 ) ) + ")=" + sql_quote( Trim(hParams[ "brdok_sfx" ]) )
+      cWhere += "substr(brdok," + AllTrim( Str( 8 -Len( hParams[ "brdok_sfx" ] ) + 1 ) ) + ")=" + sql_quote( Trim( hParams[ "brdok_sfx" ] ) )
    ENDIF
 
    IF hb_HHasKey( hParams, "dat_do" )

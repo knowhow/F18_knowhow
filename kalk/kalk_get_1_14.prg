@@ -11,6 +11,7 @@
 
 #include "f18.ch"
 
+STATIC aPorezi := {}
 
 FUNCTION kalk_get_1_14()
 
@@ -140,7 +141,7 @@ FUNCTION kalk_get_1_14()
    SELECT kalk_pripr
 
 
-   @ m_x + 13, m_y + 2    SAY8 "Nab.Cjena "  GET _NC  PICTURE PicDEM      VALID kalk_valid_kolicina_mag()
+   @ m_x + 13, m_y + 2    SAY8 "Nab.Cjena "  GET _NC  PICTURE PicDEM   VALID kalk_valid_kolicina_mag()
 
    PRIVATE _vpcsappp := 0
 

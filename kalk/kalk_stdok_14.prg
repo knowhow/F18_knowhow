@@ -26,7 +26,7 @@ FUNCTION kalk_stampa_dok_14()
    LOCAL oPDF, xPrintOpt, bZagl
 
    IF is_legacy_ptxt()
-      RETURN StKalk14_txt()
+      RETURN kalk_stampa_dok_14_txt_legacy()
    ENDIF
 
    PRIVATE nPrevoz, nCarDaz, nZavTr, nBankTr, nSpedTr, nMarza, nMarza2

@@ -17,7 +17,7 @@ STATIC aPorezi := {}
 // storno 14-ke fakture ! - 94
 // storno otpreme  - 97
 
-FUNCTION kalk_get_1_16_94()
+FUNCTION kalk_get_1_94()
 
    LOCAL nRVPC
 
@@ -134,7 +134,7 @@ FUNCTION kalk_get_1_16_94()
 
 
 
-/* KM94()
+/* 
  *     Magacinska kartica kao pomoc pri unosu 94-ke
  */
 

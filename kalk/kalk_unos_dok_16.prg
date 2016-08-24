@@ -11,8 +11,9 @@
 
 #include "f18.ch"
 
+STATIC aPorezi := {}
 
-FUNCTION kalk_get1_16()
+FUNCTION kalk_get_1_16()
 
    LOCAL nRVPC
 

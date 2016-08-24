@@ -593,7 +593,7 @@ FUNCTION EditStavka()
          _idkonto2 := "XXX"
 
          IF _idvd == "16"
-            kalk_get1_16()
+            kalk_get_1_16()
          ELSE
             Get1_80b()
          ENDIF
@@ -903,7 +903,7 @@ FUNCTION kalk_edit_sve_stavke()
          _idkonto := cIdkont2
          _idkonto2 := "XXX"
          IF _idvd == "16"
-            kalk_get1_16()
+            kalk_get_1_16()
          ELSE
             Get1_80b()
          ENDIF
@@ -1384,7 +1384,7 @@ FUNCTION kalk_unos_1( fNovi, atrib )
       RETURN kalk_get_1_14()
 
    ELSEIF _idvd == "16"
-      RETURN kalk_get1_16()
+      RETURN kalk_get_1_16()
 
    ELSEIF _idvd == "18"
       RETURN kalk_get_1_18()
@@ -1405,8 +1405,8 @@ FUNCTION kalk_unos_1( fNovi, atrib )
    ELSEIF _idvd $ "95#96#97"
       RETURN kalk_get_1_95()
 
-   ELSEIF _idvd $  "94#16"    // storno fakture, storno otpreme, doprema
-      RETURN kalk_get_1_16_94()
+   ELSEIF _idvd $  "94"    // storno fakture, storno otpreme, doprema
+      RETURN kalk_get_1_94()
 
    ELSEIF _idvd == "82"
       RETURN GET1_82()

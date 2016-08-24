@@ -297,7 +297,7 @@ FUNCTION kalk_vpc_po_kartici( nVPC, cIdFirma, cMKonto, cIdRoba, dDatum )
 
 
 
-/* PratiKMag(cIdFirma,cIdKonto,cIdRoba)
+/*
  *     Prati karticu magacina
  */
 
@@ -305,9 +305,6 @@ FUNCTION PratiKMag( cIdFirma, cIdKonto, cIdRoba )
 
    LOCAL nPom
 
-   // SELECT kalk ; SET ORDER TO TAG "3"
-   // HSEEK cIdFirma + cIdKonto + cIdRoba
-   // "KALKi3","idFirma+mkonto+idroba+dtos(datdok)+PODBR+MU_I+IdVD",KUMPATH+"KALK")
    find_kalk_by_mkonto_idroba( cIdFirma, cIdKonto, cIdRoba )
 
    nVPV := 0
@@ -641,11 +638,11 @@ FUNCTION PrerRab()
 
 FUNCTION kalk_valid_kolicina_mag()
 
-   IF ( _nc < 0 ) .AND. !( _idvd $ "11#12#13#22" ) .OR.  _fcj < 0 .AND. _idvd $ "11#12#13#22"
+   IF (( _nc < 0 ) .AND. !( _idvd $ "11#12#13#22" )) .OR. ( _fcj < 0 .AND. _idvd $ "11#12#13#22" )
 
       Msg( "Nabavna cijena manja od 0 !?" )
       _ERROR := "1"
-
+      RETURN .F.
    ENDIF
 
    IF roba->tip $ "UTY"; RETURN .T. ; ENDIF // usluge

@@ -12,7 +12,7 @@
 #include "f18.ch"
 
 
-FUNCTION StKalk14_txt()
+FUNCTION kalk_stampa_dok_14_txt_legacy()
 
    LOCAL nCol1 := nCol2 := 0, npom := 0
 
@@ -28,7 +28,7 @@ FUNCTION StKalk14_txt()
    P_10CPI
    B_ON
 
-   IF cidvd == "14" .OR. cIdvd == "74"
+   IF cIdvd == "14" .OR. cIdvd == "74"
       ?? "IZLAZ KUPCU PO VELEPRODAJI"
    ELSEIF cidvd == "15"
       ?? "OBRACUN VELEPRODAJE"
@@ -53,7 +53,7 @@ FUNCTION StKalk14_txt()
    find_kalk_doks2_by_broj_dokumenta( kalk_pripr->idfirma, kalk_pripr->idvd, kalk_pripr->brdok )
    ?? "  DatVal:", kalk_doks2->datval
 
-   IF cidvd == "94"
+   IF cIdvd == "94"
       SELECT konto
       HSEEK cidkonto2
       ?  "Storno razduzenja KONTA:", cIdKonto, "-", AllTrim( naz )

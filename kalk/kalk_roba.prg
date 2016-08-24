@@ -29,7 +29,7 @@ FUNCTION form_get_roba_id( cIdRoba, nX, nY )
       bValid := {|| Empty( cIdroba ) .OR. P_Roba( @cIdRoba ) }
    ENDIF
 
-   @ nX, nY SAY "Roba  " GET cIdRoba WHEN bWhen VALID  bValid PICT "@!"
+   @ nX, nY SAY "Roba  " GET cIdRoba WHEN Eval( bWhen )  VALID  Eval( bValid ) PICT "@!"
 
    RETURN .T.
 
@@ -56,9 +56,9 @@ FUNCTION kalk_pripr_form_get_roba( cIdRoba, cIdTarifa, cIdVd, lNoviDokument, nKo
 
 
 
-   //_ocitani_barkod := _idroba, ;
-   //P_Roba( @_IdRoba ), ;
-   //if ( !tezinski_barkod_get_tezina( @_ocitani_barkod, @_kolicina ), .T., .T. ), ;
+   // _ocitani_barkod := _idroba, ;
+   // P_Roba( @_IdRoba ), ;
+   // if ( !tezinski_barkod_get_tezina( @_ocitani_barkod, @_kolicina ), .T., .T. ), ;
 
    @ nKoordX, nKoordY SAY "Artikal  " GET cIdRoba PICT "@!S10" WHEN  Eval( bWhen ) VALID Eval( bValid )
 

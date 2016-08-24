@@ -20,6 +20,8 @@
 
 FUNCTION kalk_get_1_41()
 
+   LOCAL lRet
+
    pIzgSt := .F.
    // izgenerisane stavke jos ne postoje
    PRIVATE aPorezi := {}
@@ -59,7 +61,6 @@ FUNCTION kalk_get_1_41()
 
 
    SELECT kalk_pripr
-
    ESC_RETURN K_ESC
 
    @ m_x + 10, m_y + 66 SAY "Tarif.br->"
@@ -73,7 +74,7 @@ FUNCTION kalk_get_1_41()
    ENDIF
 */
    @ m_x + 11, m_y + 70 GET _IdTarifa WHEN gPromTar == "N" VALID P_Tarifa( @_IdTarifa )
-   @ m_x + 12, m_y + 2   SAY "Kolicina " GET _Kolicina PICTURE PicKol VALID _Kolicina <> 0
+   @ m_x + 12, m_y + 2  SAY "Kolicina " GET _Kolicina PICTURE PicKol VALID _Kolicina <> 0
 
    READ
    ESC_RETURN K_ESC
@@ -91,7 +92,7 @@ FUNCTION kalk_get_1_41()
 
    _PKonto := _Idkonto
 
-   // provjerava kada je radjen zadnji dokument za ovaj artikal
+
    check_datum_posljednje_kalkulacije()
    kalk_dat_poslj_promjene_prod()
 
@@ -120,21 +121,10 @@ FUNCTION kalk_get_1_41()
 
    ENDIF
 
-
-   IF IsPdv()
-      IF ( dozvoljeno_azuriranje_sumnjivih_stavki() .AND. ( _MpcSAPP == 0 .OR. fNovi ) )
-         kalk_fakticka_mpc( @_MPCSAPP, _idfirma, _idkonto, _idroba )
-      ENDIF
-   ELSE
-
-      // ppp varijanta
-      // ovo dole do daljnjeg ostavljamo
-      IF ( ( _idvd <> '47' ) .AND. !fnovi .AND. gcijene == "2" .AND. roba->tip != "T" .AND. _MpcSapp = 0 )
-         // uzmi mpc sa kartice
-         kalk_fakticka_mpc( @_MPCSAPP, _idfirma, _idkonto, _idroba )
-      ENDIF
-
+   IF ( dozvoljeno_azuriranje_sumnjivih_stavki() .AND. ( _MpcSAPP == 0 .OR. fNovi ) )
+      kalk_fakticka_mpc( @_MPCSAPP, _idfirma, _idkonto, _idroba )
    ENDIF
+
 
    IF roba->( FieldPos( "PLC" ) ) <> 0
       // stavi plansku cijenu
@@ -174,9 +164,10 @@ FUNCTION kalk_get_1_41()
       ENDIF
 
       @ m_x + 12, m_y + 30 SAY "Ukupno na stanju "
-      @ m_x + 12, Col() + 2 SAY nkols PICT pickol
+      @ m_x + 12, Col() + 2 SAY nKols PICT pickol
 
-      @ m_x + 14, m_y + 2 SAY "NC  :" GET _fcj PICT picdem VALID {|| kalk_valid_kolicina_prod(), _tprevoz := "A", _prevoz := 0, _nc := _fcj, .T. }
+      @ m_x + 14, m_y + 2 SAY "NC  :" GET _fcj PICT picdem ;
+         VALID {|| lRet := kalk_valid_kolicina_prod(), _tprevoz := "A", _prevoz := 0, _nc := _fcj, lRet }
 
       @ m_x + 15, m_y + 40 SAY "MP marza:" GET _TMarza2  VALID _Tmarza2 $ "%AU" PICTURE "@!"
       @ m_x + 15, Col() + 1 GET _Marza2 PICTURE  PicDEM

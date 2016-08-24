@@ -54,7 +54,6 @@ FUNCTION kalk_get_nabavna_prod( cIdFirma, cIdroba, cIdkonto, nKolicina, nKolZN, 
    nUlKol := 0 // ulazna kolicina
    nZadnjaUlaznaNC := 0
 
-   AltD()
    GO TOP
    DO WHILE !Eof() .AND. cIdFirma + cIdKonto + cIdroba == idFirma + pkonto + idroba .AND. _datdok >= datdok
 

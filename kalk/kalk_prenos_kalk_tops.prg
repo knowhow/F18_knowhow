@@ -34,7 +34,6 @@ FUNCTION kalk_tops_meni()
       ESC_BCR
       BoxC()
 
-      AltD()
       IF kalk_dokument_postoji( cIDFirma, cIdVd, cBrDok, .F. )
          kalk_generisi_tops_dokumente( cIDFirma, cIdVd, cBrDok ) // generisi datoteku prenosa
       ENDIF
@@ -263,7 +262,6 @@ STATIC FUNCTION kalk_tops_kreiraj_fajl_prenosa( datum, aPosLokacije, broj_stavki
    LOCAL _ret := ""
    LOCAL cTopsDest
 
-   AltD()
 
    cTopsDest := kalk_destinacija_topska( cTopsDest )
 

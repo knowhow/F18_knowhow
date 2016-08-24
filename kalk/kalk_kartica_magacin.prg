@@ -36,7 +36,6 @@ FUNCTION kalk_kartica_magacin()
    PRIVATE PicDEM := Replicate( "9", Val( gFPicDem ) ) + gPicDem
    PRIVATE Pickol :=  "@Z " + Replicate( "9", Val( gFPicKol ) ) + gPickol
 
-   AltD()
    kartica_magacin_open_tabele()
 
    IF cIdFirma != NIL
@@ -532,7 +531,7 @@ FUNCTION kalk_kartica_magacin()
                ENDIF
 
                IF cBrFDa == "D"
-                  @ PRow() + 1, nColDok SAY brfaktp
+                  @ PRow() + 1, nColDok SAY field->brfaktp
                   IF !Empty( field->idzaduz2 )
                      @ PRow(), PCol() + 1 SAY " RN: "; ?? field->idzaduz2
                   ENDIF

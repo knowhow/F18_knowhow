@@ -157,7 +157,7 @@ FUNCTION Marza2( fMarza )
 
 FUNCTION Marza2O( fMarza )
 
-   // {
+
    LOCAL nPrevMP, nPPP
 
    IF fMarza == nil
@@ -472,6 +472,13 @@ FUNCTION kalk_valid_kolicina_prod()
    ppKolicina := _Kolicina
    IF _idvd == "11"
       ppKolicina := Abs( _Kolicina )
+   ENDIF
+
+   IF _nc < 0
+      MsgBeep( _idroba + "NC < 0 ! STOP !" )
+      error_bar( "prod", _idroba + " nc < 0" )
+      _ERROR := "1"
+      RETURN .F.
    ENDIF
 
    IF nKolS < ppKolicina

@@ -2114,7 +2114,6 @@ STATIC FUNCTION provjeri_stanje_kalk_pripreme( cIdVd )
    SELECT kalk_pripr
    GO TOP
 
-   AltD()
 
    IF RecCount() == 0
       RETURN 0 // provjeri da li je kalk_priprema prazna, ako je prazna vrati 0

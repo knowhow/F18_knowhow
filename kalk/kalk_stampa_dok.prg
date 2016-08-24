@@ -91,7 +91,6 @@ FUNCTION kalk_stampa_dokumenta( lAzuriraniDokument, cSeek, lAuto )
             ESC_BCR
             BoxC()
 
-            altd()
 
             IF lAzuriraniDokument // stampa azuriranog KALK dokumenta
                open_kalk_as_pripr( .T., cIdFirma, cIdVd, cBrDok )

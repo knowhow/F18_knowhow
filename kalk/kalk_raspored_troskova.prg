@@ -375,7 +375,7 @@ FUNCTION kalk_raspored_troskova( fSilent )
                _TSpedTr := "U"
             ENDIF
 
-altd()
+
             IF cTipZavTr $ "RT"   // troskovi 5
                IF Round( nUkupanIznosFakture, 4 ) == 0
                   _ZavTr := 0

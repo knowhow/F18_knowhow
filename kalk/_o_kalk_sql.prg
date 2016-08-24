@@ -225,7 +225,6 @@ FUNCTION find_kalk_by_mkonto_idroba_idvd( cIdFirma, cIdVd, cIdKonto, cIdRoba, cO
 
    hb_default( @cOrderBy, "idfirma,mkonto,idroba,datdok,podbr,mu_i,idvd" )
 
-   AltD()
    IF "obradjeno" $ cOrderBy
       hParams[ "obradjeno" ] := .T.
    ENDIF
@@ -461,7 +460,6 @@ FUNCTION use_sql_kalk( hParams )
    cSql += coalesce_char_zarez( "pu_i", 1 )
    cSql += coalesce_char_zarez( "error", 1 )
 
-   AltD()
    IF hb_HHasKey( hParams, "obradjeno" )
       cSql += " kalk_doks.obradjeno as obradjeno, "
    ENDIF
@@ -951,7 +949,6 @@ FUNCTION use_sql_kalk_kalk( hParams )
    cSql += coalesce_char_zarez( "mkonto", 7 )
    cSql += coalesce_char_zarez( "pkonto", 7 )
    cSql += " roktr, "
-   AltD()
    IF hb_HHasKey( hParams, "obradjeno" )
       cSql += " kalk_doks.obradjeno as obradjeno, "
    ENDIF

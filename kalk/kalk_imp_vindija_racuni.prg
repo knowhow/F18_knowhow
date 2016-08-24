@@ -31,8 +31,8 @@ FUNCTION meni_import_vindija()
       __stampaj := .T.
    ENDIF
 
-   AAdd( opc, "1. import vindija račun                 " )
-   AAdd( opcexe, {|| ImpTxtDok() } )
+   AAdd( opc, "1. import vindija računi                 " )
+   AAdd( opcexe, {|| kalk_auto_import_racuni() } )
    AAdd( opc, "2. import vindija partner" )
    AAdd( opcexe, {|| ImpTxtPartn() } )
    AAdd( opc, "3. import vindija roba" )
@@ -125,12 +125,10 @@ STATIC FUNCTION kalk_auto_import_setup()
    RETURN .T.
 
 
-/*   Import dokumenta
- */
 
-FUNCTION ImpTxtDok()
+FUNCTION kalk_auto_import_racuni()
 
-   LOCAL cCtrl_art := "N"
+   //LOCAL cCtrl_art := "N"
    PRIVATE cExpPath
    PRIVATE cImpFile
 
@@ -141,9 +139,9 @@ FUNCTION ImpTxtDok()
 
    cFFilt := GetImpFilter() // filter za import MP ili VP
 
-   IF prag_odstupanja_nc_sumnjiv() > 0 .AND. Pitanje(, "Ispusti artikle sa sumnjivom NC (D/N)",  "N" ) == "D"
-      cCtrl_art := "D"
-   ENDIF
+   //IF prag_odstupanja_nc_sumnjiv() > 0 .AND. Pitanje(, "Ispusti artikle sa sumnjivom NC (D/N)",  "N" ) == "D"
+  //    cCtrl_art := "D"
+   //ENDIF
 
 
    IF get_file_list( cFFilt, cExpPath, @cImpFile ) == 0 // daj pregled fajlova za import, te setuj varijablu cImpFile
@@ -186,13 +184,15 @@ FUNCTION ImpTxtDok()
    ENDIF
 
 
-   IF from_kalk_imp_temp_to_pript( aFaktEx, lFtSkip, lNegative, cCtrl_art ) == 0
+   IF from_kalk_imp_temp_to_pript( aFaktEx, lFtSkip, lNegative ) == 0  //, cCtrl_art ) == 0
       MsgBeep( "Operacija prekinuta!" )
       RETURN .F.
    ENDIF
 
    IF Pitanje(, "Obraditi dokumente iz kalk pript (D/N)?", "D" ) == "D"
-      kalk_imp_obradi_sve_dokumente_iz_pript( nil, __stampaj )
+      IF kalk_imp_obradi_sve_dokumente_iz_pript( nil, __stampaj )
+         kalk_imp_brisi_txt( cImpFile )
+      ENDIF
    ELSE
       MsgBeep( "Dokumenti nisu obradjeni!#Obrada se moze uraditi i naknadno!" )
       my_close_all_dbf()
@@ -1322,7 +1322,7 @@ STATIC FUNCTION kalk_postoji_faktura_a()
  *  - lNegative - prvo prebaci negativne fakture
  * - cCtrl_art - preskoci sporne artikle NC u hendeku ! na osnovu CACHE tabele
  */
-STATIC FUNCTION from_kalk_imp_temp_to_pript( aFExist, lFSkip, lNegative, cCtrl_art )
+STATIC FUNCTION from_kalk_imp_temp_to_pript( aFExist, lFSkip, lNegative )//, cCtrl_art )
 
    LOCAL cBrojKalk
    LOCAL cTipDok
@@ -1374,7 +1374,7 @@ STATIC FUNCTION from_kalk_imp_temp_to_pript( aFExist, lFSkip, lNegative, cCtrl_a
       cPm := kalk_imp_temp->idpm
       cIdPJ := kalk_imp_temp->idpj
 
-
+/*
       IF cCtrl_art == "D"   // pregledaj CACHE, da li treba preskociti ovaj artikal
 
          nT_scan := 0
@@ -1408,6 +1408,7 @@ STATIC FUNCTION from_kalk_imp_temp_to_pript( aFExist, lFSkip, lNegative, cCtrl_a
 
          SELECT kalk_imp_temp
       ENDIF
+*/
 
       IF lFSkip // ako je ukljucena opcija preskakanja postojecih faktura
          IF Len( aFExist ) > 0
@@ -1521,6 +1522,7 @@ STATIC FUNCTION from_kalk_imp_temp_to_pript( aFExist, lFSkip, lNegative, cCtrl_a
          cT_brfakt := aPom[ i, 3 ]
          cT_ctrl := ""
 
+/*
          IF cCtrl_art == "D" .AND. Len( aArr_ctrl ) > 0
             nT_scan := AScan( aArr_ctrl, {| xVal| xVal[ 1 ] + PadR( xVal[ 2 ], 10 ) == cT_tipdok + PadR( cT_brfakt, 10 ) } )
 
@@ -1528,7 +1530,7 @@ STATIC FUNCTION from_kalk_imp_temp_to_pript( aFExist, lFSkip, lNegative, cCtrl_a
                cT_ctrl := " !!! ERROR !!!"
             ENDIF
          ENDIF
-
+*/
          ? cT_tipdok + " - " + cT_brdok, cT_ctrl
 
       NEXT
@@ -1539,6 +1541,7 @@ STATIC FUNCTION from_kalk_imp_temp_to_pript( aFExist, lFSkip, lNegative, cCtrl_a
 
    ENDIF
 
+/*
    IF cCtrl_art == "D" .AND. Len( aArr_ctrl ) > 0
 
       START PRINT EDITOR
@@ -1555,8 +1558,9 @@ STATIC FUNCTION from_kalk_imp_temp_to_pript( aFExist, lFSkip, lNegative, cCtrl_a
       ENDPRINT
 
    ENDIF
+*/
 
-
+/*
    IF cCtrl_art == "D" .AND. Len( aArr_ctrl ) > 0 // pobrisi ispustene dokumente
 
       nT_scan := 0
@@ -1577,7 +1581,7 @@ STATIC FUNCTION from_kalk_imp_temp_to_pript( aFExist, lFSkip, lNegative, cCtrl_a
       ENDDO
 
    ENDIF
-
+*/
    RETURN 1
 
 
@@ -2014,7 +2018,7 @@ STATIC FUNCTION kalk_imp_continue_from_check_point()
 
       kalk_imp_set_check_point( 0 ) // oznaci da je obrada zavrsena
       MsgBeep( "Dokumenti obradjeni!" )
-      kalk_imp_brisi_txt( cImpFile, .T. )
+      kalk_imp_brisi_txt( cImpFile )
    ENDIF
 
    RETURN .T.
@@ -2311,25 +2315,21 @@ STATIC FUNCTION FillDobSifra()
 
 
 
-   /* kalk_imp_brisi_txt(cTxtFile, lErase)
+/*
     *     Brisanje fajla cTxtFile
     *   param: cTxtFile - fajl za brisanje
-    *   param: lErase - .t. ili .f. - brisati ili ne brisati fajl txt nakon importa
-    */
-FUNCTION kalk_imp_brisi_txt( cTxtFile, lErase )
+*/
 
-   IF lErase == nil
-      lErase := .F.
-   ENDIF
+FUNCTION kalk_imp_brisi_txt( cTxtFile )
 
+   CLEAR TYPEAHEAD
    // postavi pitanje za brisanje fajla
-   IF lErase .AND. Pitanje(, "Pobrisati txt fajl (D/N)?", "D" ) == "N"
+   IF Pitanje(, "Pobrisati txt fajl " + cTxtFile + " (D/N)?", "D" ) == "N"
       RETURN .F.
    ENDIF
 
    IF FErase( cTxtFile ) == -1
       MsgBeep( "Ne mogu izbrisati " + cTxtFile )
-
    ENDIF
 
    RETURN .T.

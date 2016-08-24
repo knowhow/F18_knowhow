@@ -948,14 +948,19 @@ FUNCTION DuzMaske( cPicture )
 
 
 
-FUNCTION MsgBeep( cMsg )
+FUNCTION MsgBeep( cMsg, lClearTypeahead )
 
    LOCAL _set
 
-   Beep( 2 )
+   hb_default( @lClearTypeahead, .T. )
+
+
 
 #ifndef TEST
+IF lClearTypeahead
+Beep( 2 )
    CLEAR TYPEAHEAD // MsgBeep
+   endif
 #endif
 
 /*

@@ -547,7 +547,11 @@ FUNCTION kalk_kartica_magacin()
                nOdstupanje := 0
             ELSE
                nSredNc := nNv / ( nUlaz - nIzlaz )
-               nOdstupanje := Round( ( nSredNc - nNc ) / nSredNc * 100, 0 )
+               IF Round( nSredNC, 4 ) == 0
+                  nOdstupanje := 0
+               ELSE
+                  nOdstupanje := Round( ( nSredNc - nNc ) / nSredNc * 100, 0 )
+               ENDIF
             ENDIF
 
             ? Space( 71 ), cTransakcija, " SNc:", say_kolicina( nSredNc ), ""

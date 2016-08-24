@@ -11,11 +11,11 @@
 
 #include "f18.ch"
 
-
+STATIC aPorezi := {}
+  
 FUNCTION kalk_get_1_95()
 
    pIzgSt := .F. // izgenerisane stavke jos ne postoje
-
 
    SET KEY K_ALT_K TO KM2()
    IF nRbr == 1 .AND. fnovi

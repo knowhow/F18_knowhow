@@ -116,7 +116,7 @@ FUNCTION fin_pocetno_stanje_sql()
    ENDIF
 
    IF !_insert_into_fin_priprema( _data, _konto_data, _partn_data, _param )
-      RETURN
+      RETURN .F.
    ENDIF
 
    fin_set_broj_dokumenta()
@@ -130,7 +130,7 @@ FUNCTION fin_pocetno_stanje_sql()
 
    MsgBeep( "Dokument formiran i automatski ažuriran..." )
 
-   RETURN
+   RETURN .T.
 
 
 

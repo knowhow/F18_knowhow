@@ -27,20 +27,18 @@ FUNCTION mnu_fin_params()
    AAdd( _opc, "1. osnovni parametri                        " )
    AAdd( _opcexe, {|| parametri_organizacije() } )
    AAdd( _opc, "2. parametri rada " )
-   AAdd( _opcexe, {|| par_obrada() } )
+   AAdd( _opcexe, {|| fin_parametri_obrade_naloga() } )
    AAdd( _opc, "3. parametri izgleda " )
    AAdd( _opcexe, {|| fin_parametri_izgleda() } )
 
    f18_menu( "fin_param", .F., _izbor, _opc, _opcexe )
 
-   RETURN
+   RETURN .T.
 
 
 
-// ---------------------------------------
-// parametri obrade naloga
-// ---------------------------------------
-STATIC FUNCTION par_obrada()
+
+STATIC FUNCTION fin_parametri_obrade_naloga()
 
    LOCAL nX := 1
    LOCAL _k1 := fin_k1(), _k2 := fin_k2(), _k3 := fin_k3(), _k4 := fin_k4()

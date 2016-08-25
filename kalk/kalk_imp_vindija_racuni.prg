@@ -1988,7 +1988,7 @@ STATIC FUNCTION kalk_imp_continue_from_check_point()
 
    IF nDosaoDo == nil
       MsgBeep( "Nema nista zapisano u parametrima!#Prekidam operaciju!" )
-      RETURN
+      RETURN .F.
    ENDIF
 
    IF nDosaoDo == 0
@@ -2309,7 +2309,7 @@ STATIC FUNCTION FillDobSifra()
 
 
 /*
-    *     Brisanje fajla cTxtFile
+    *   Brisanje fajla cTxtFile
     *   param: cTxtFile - fajl za brisanje
 */
 

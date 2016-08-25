@@ -81,15 +81,13 @@ FUNCTION korekcija_nabavne_cijene_sa_zadnjom_ulaznom( nKolicina, nZadnjaUlaznaNC
    ENDIF
 
    nOdst := ( Round( nSrednjaNabavnaCijena, 4 ) - Round( nZadnjaUlaznaNC, 4 ) ) / ;
-      Min( Round( nZadnjaUlaznaNC, 4 ), Round( nSrednjaNabavnaCijena, 4 )  ) * 100
-
-
+      Min( Abs( Round( nZadnjaUlaznaNC, 4 ) ), Abs( Round( nSrednjaNabavnaCijena, 4 ) )  ) * 100
 
    IF Abs( nOdst ) > prag_odstupanja_nc_sumnjiv()
 
       MsgBeep( "Odstupanje #" + AllTrim( Str( Abs( nOdst ) ) ) + " %" + "#" + ;
          "artikal: " + AllTrim( _idroba ) + " " + PadR( roba->naz, 15 ) + ;
-         "# srednja.nc:" + AllTrim( Str( nSrednjaNabavnaCijena, 12, 2 ) ) + ", zadnji ulaz nc:" + AllTrim( Str( nZadnjaUlaznaNC, 12, 2 ) ), .F. )
+         "# srednja nc:" + AllTrim( say_cijena( nSrednjaNabavnaCijena ) ) + ", zadnji ulaz nc:" + AllTrim( say_cijena( nZadnjaUlaznaNC ) ), .F. )
 
       IF Pitanje(, "Korigovati NC na zadnju ulaznu (D/N)?", "N" ) == "D"
          nSrednjaNabavnaCijena := nZadnjaUlaznaNC

@@ -26,12 +26,14 @@ FUNCTION kalk_povrat_dokumenta()
    LOCAL lOk := .T.
    LOCAL hParams
 
+/*
    IF dozvoljeno_azuriranje_sumnjivih_stavki() .AND. Pitanje(, "Zadati broj (D) / Povrat po hronologiji obrade (N) ?", "D" ) = "N"
       Beep( 1 )
       povrat_najnovije_kalkulacije()
       my_close_all_dbf()
       RETURN .F.
    ENDIF
+*/
 
    otvori_kalk_tabele_za_povrat()
 
@@ -41,11 +43,8 @@ FUNCTION kalk_povrat_dokumenta()
 
    Box( "", 1, 35 )
    @ m_x + 1, m_y + 2 SAY "Dokument:"
-   IF gNW $ "DX"
-      @ m_x + 1, Col() + 1 SAY _id_firma
-   ELSE
-      @ m_x + 1, Col() + 1 GET _id_firma
-   ENDIF
+   @ m_x + 1, Col() + 1 SAY _id_firma
+
    @ m_x + 1, Col() + 1 SAY "-" GET _id_vd PICT "@!"
    @ m_x + 1, Col() + 1 SAY "-" GET _br_dok VALID {|| _br_dok := kalk_fix_brdok( _br_dok ), .T. }
    READ
@@ -94,7 +93,7 @@ FUNCTION kalk_povrat_dokumenta()
 
       o_kalk_za_azuriranje()
 
-      MsgO( "Brišem KALK dokument iz kumulativa ..." )
+      MsgO( "Brisanje KALK dokumenata iz kumulativa ..." )
 
       find_kalk_by_broj_dokumenta( _id_firma, _id_vd, _br_dok )
 
@@ -413,7 +412,7 @@ STATIC FUNCTION kalk_povrat_prema_kriteriju()
 
 
 
-
+/*
 STATIC FUNCTION povrat_najnovije_kalkulacije()
 
    LOCAL nRec
@@ -428,7 +427,7 @@ STATIC FUNCTION povrat_najnovije_kalkulacije()
    SELECT kalk
    SET ORDER TO TAG "5"
 
-   cIdfirma := gfirma
+   cIdfirma := gFirma
    cIdVD := Space( 2 )
    cBrDok := Space( 8 )
 
@@ -440,12 +439,12 @@ STATIC FUNCTION povrat_najnovije_kalkulacije()
    IF Eof()
       Msg( "Na stanju nema dokumenata !" )
       my_close_all_dbf()
-      RETURN
+      RETURN .F.
    ENDIF
 
    IF Pitanje(, "Vratiti u pripremu dokumente od " + DToC( dDatDok ) + " ?", "N" ) == "N"
       my_close_all_dbf()
-      RETURN
+      RETURN .F.
    ENDIF
 
    SELECT kalk
@@ -548,3 +547,5 @@ STATIC FUNCTION povrat_najnovije_kalkulacije()
    my_close_all_dbf()
 
    RETURN
+
+*/

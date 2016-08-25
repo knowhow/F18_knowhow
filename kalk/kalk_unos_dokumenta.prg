@@ -60,17 +60,18 @@ FUNCTION kalk_pripr_obrada( lAObrada )
 
    O_PARAMS
 
-   PRIVATE lAutoObr := .F.
-   PRIVATE lAAsist := .F.
-   PRIVATE lAAzur := .F.
+   hb_default( @lAObrada, .F. )
+   // PRIVATE lAutoObr := .F.
+   // PRIVATE lAAsist := .F.
+   // PRIVATE lAAzur := .F.
 
-   IF lAObrada == nil
-      lAutoObr := .F.
-   ELSE
-      lAutoObr := lAObrada
-      lAAsist := .T.
-      lAAzur := .T.
-   ENDIF
+   // IF lAObrada == nil
+   // lAutoObr := .F.
+   // ELSE
+   // lAutoObr := lAObrada
+   // lAAsist := .T.
+   // lAAzur := .T.
+   // ENDIF
 
    PRIVATE cSection := "K"
    PRIVATE cHistory := " "
@@ -157,7 +158,7 @@ FUNCTION kalk_pripr_obrada( lAObrada )
    PRIVATE lKalkAsistentAuto := .F.
 
 
-   my_db_edit( "PNal", nMaxRow, nMaxCol, {|| kalk_pripr_key_handler( lAutoObr ) }, "<F5>-kartica magacin, <F6>-kartica prodavnica", "Priprema...", , , , bPodvuci, 4 )
+   my_db_edit( "PNal", nMaxRow, nMaxCol, {|| kalk_pripr_key_handler( lAObrada ) }, "<F5>-kartica magacin, <F6>-kartica prodavnica", "Priprema...", , , , bPodvuci, 4 )
 
    BoxC()
 
@@ -268,7 +269,7 @@ STATIC FUNCTION kalk_kontiraj_alt_k()
    RETURN DE_REFRESH
 
 
-FUNCTION kalk_pripr_key_handler()
+FUNCTION kalk_pripr_key_handler( lAObrada )
 
    LOCAL nTr2
    LOCAL iSekv
@@ -308,7 +309,6 @@ FUNCTION kalk_pripr_key_handler()
    CASE Ch == K_ALT_L
 
       my_close_all_dbf()
-
       label_bkod()
       o_kalk_edit()
 
@@ -429,17 +429,20 @@ FUNCTION kalk_pripr_key_handler()
       ENDIF
       RETURN DE_CONT
 
-   CASE Upper( Chr( Ch ) ) == "A" .OR. lKalkAsistentAuto
+   CASE Upper( Chr( Ch ) ) == "A" .OR. lKalkAsistentAuto .OR. lAObrada
 
-      RETURN kalk_unos_asistent()
+      kalk_unos_asistent()
 
-   CASE lAutoObr .AND. lAAsist
-      lAAsist := .F.
-      RETURN kalk_unos_asistent()
+      // CASE lAutoObr .AND. lAAsist
+      // lAAsist := .F.
+      // RETURN kalk_unos_asistent()
 
-   CASE lAutoObr .AND. !lAAsist
-      lAutoObr := .F.
-      KEYBOARD Chr( K_ESC )
+      // CASE lAutoObr .AND. !lAAsist
+      // lAutoObr := .F.
+
+      IF lAObrada
+         kalk_unos_asistent_send_esc()
+      ENDIF
       RETURN DE_REFRESH
 
    CASE Upper( Chr( Ch ) ) == "K"
@@ -949,6 +952,13 @@ FUNCTION kalk_unos_asistent()
    RETURN DE_REFRESH
 
 
+FUNCTION kalk_unos_asistent_send_esc()
+
+   KEYBOARD Chr( K_ESC )
+
+   RETURN DE_REFRESH
+
+
 FUNCTION kalk_unos_asistent_send_entere()
 
    LOCAL nKekk, cSekv
@@ -1146,7 +1156,7 @@ STATIC FUNCTION kalk_dokument_prenos_cijena()
       BoxC()
 
       IF LastKey() == K_ESC
-         RETURN
+         RETURN .F.
       ENDIF
 
       SELECT koncij
@@ -1257,7 +1267,7 @@ FUNCTION ProtStErase()
 
    GO TOP
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -1463,7 +1473,7 @@ FUNCTION ispisi_naziv_sifre( area, id, x, y, len )
 
 
 
-/* Get2()
+/*
  *  param fnovi
  *  Druga strana/prozor maske unosa/ispravke stavke dokumenta
  */
@@ -1519,7 +1529,6 @@ FUNCTION kalk_header_get1( fNovi )
 
    @ m_x + 3, m_y + 2  SAY "Redni broj stavke:" GET nRBr PICT '9999' ;
       VALID {|| valid_kalk_rbr_stavke( _idvd ) }
-
 
 
    READ
@@ -1630,8 +1639,8 @@ STATIC FUNCTION izmjeni_sve_stavke_dokumenta( old_dok, new_dok )
 
 
 
-/* VpcSaPpp()
- *     Vrsi se preracunavanje veleprodajnih cijena ako je _VPC=0
+/*
+ *  Vrsi se preracunavanje veleprodajnih cijena ako je _VPC=0
  */
 
 FUNCTION VpcSaPpp()
@@ -1687,7 +1696,7 @@ FUNCTION kalk_zagl_firma()
    ?
    ?
 
-   RETURN
+   RETURN .T.
 
 
 STATIC FUNCTION NazProdObj()
@@ -1727,7 +1736,8 @@ FUNCTION kalk_plus_minus_kol()
 
    // Msg("Automatski pokrecem asistenta (Alt+F10)!",1)
    // lKalkAsistentAuto:=.t.
-   KEYBOARD Chr( K_ESC )
+   //KEYBOARD Chr( K_ESC )
+   kalk_unos_asistent()
 
    my_close_all_dbf()
 
@@ -1795,9 +1805,10 @@ FUNCTION kalk_set_diskont_mpc()
 
    my_unlock()
 
-   Msg( "Automatski pokrećem asistenta (opcija A)!", 1 )
-   lKalkAsistentAuto := .T.
-   KEYBOARD Chr( K_ESC )
+   //Msg( "Automatski pokrećem asistenta (opcija A)!", 1 )
+   //lKalkAsistentAuto := .T.
+   //KEYBOARD Chr( K_ESC )
+   kalk_unos_asistent()
 
    my_close_all_dbf()
 
@@ -1806,7 +1817,7 @@ FUNCTION kalk_set_diskont_mpc()
 
 
 
-/* MPCSAPPuSif()
+/*
  *     Maloprodajne cijene svih artikala u kalk_pripremi kopira u sifrarnik robe
  */
 
@@ -1836,7 +1847,7 @@ FUNCTION MPCSAPPuSif()
 
 
 
-/* MPCSAPPiz80uSif()
+/*
  *     Maloprodajne cijene svih artikala iz izabranog azuriranog dokumenta tipa 80 kopira u sifrarnik robe
  */
 
@@ -1859,7 +1870,9 @@ FUNCTION MPCSAPPiz80uSif()
    SELECT KALK
    SEEK cIdFirma + cIdVDU + cBrDokU
    cIdKonto := KALK->pkonto
-   SELECT KONCIJ; HSEEK cIdKonto
+   SELECT KONCIJ
+   HSEEK cIdKonto
+
    SELECT KALK
    DO WHILE !Eof() .AND. cIdFirma + cIdVDU + cBrDokU == IDFIRMA + IDVD + BRDOK
       SELECT ROBA; HSEEK KALK->idroba
@@ -1877,7 +1890,7 @@ FUNCTION MPCSAPPiz80uSif()
 
 
 
-/* fn
+/*
  *  brief Filuje VPC u svim stavkama u kalk_pripremi odgovarajucom VPC iz sifrarnika robe
  */
 
@@ -1901,9 +1914,12 @@ FUNCTION VPCSifUDok()
       SKIP 1
    ENDDO
    my_unlock()
-   Msg( "Automatski pokrećem asistenta (opcija A) !", 1 )
-   lKalkAsistentAuto := .T.
-   KEYBOARD Chr( K_ESC )
+
+   //Msg( "Automatski pokrećem asistenta (opcija A) !", 1 )
+   //lKalkAsistentAuto := .T.
+   //KEYBOARD Chr( K_ESC )
+   kalk_unos_asistent()
+
    my_close_all_dbf()
 
    RETURN .T.

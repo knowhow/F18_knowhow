@@ -65,7 +65,7 @@ FUNCTION kalk_pregled_smece_pripr9()
       Soboslikar( { { m_x + 17, m_y + 1, m_x + 20, m_y + 77 } }, 23, 14 )
    ENDIF
 
-   // PRIVATE lKalkAsistentAuto := .F.
+   //PRIVATE lKalkAsistentAuto := .F.
 
    my_db_edit( "KALK_PRIPR9", 20, 77, {|| ka_pripr9_key_handler() }, "<P>-povrat dokumenta u pripremu", "Pregled smeca...", , , , , 4 )
    BoxC()

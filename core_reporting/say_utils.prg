@@ -12,14 +12,25 @@
 #include "f18.ch"
 
 
-FUNCTION say_kolicina( nVar )
-   RETURN say_pict( nVar, "999999999.999" , .T. )
+FUNCTION say_kolicina( nVar, cPic )
 
-FUNCTION say_iznos( nVar )
-   RETURN say_pict( nVar, "9999999999.99" )
+   hb_default( @cPic, "999999999.999" )
 
-FUNCTION say_cijena( nVar )
-   RETURN say_pict( nVar, "999999999.999" )
+   RETURN say_pict( nVar, cPic, .T. )
+
+
+FUNCTION say_iznos( nVar, cPic )
+
+   hb_default( @cPic, "9999999999.99" )
+
+   RETURN say_pict( nVar, cPic )
+
+
+FUNCTION say_cijena( nVar, cPic )
+
+   hb_default( @cPic, "999999999.999" )
+
+   RETURN say_pict( nVar, cPic )
 
 
 FUNCTION say_pict( nVar, cPicture, lZero )

@@ -39,7 +39,7 @@ FUNCTION kalk_get_nabavna_mag( cIdFirma, cIdRoba, cIdKonto, nKolicina, nKolZN, n
    LOCAL nUKol_poz, nIKol_poz
    LOCAL nTmp
    LOCAL nTmp_n_stanje, nTmp_n_nv, nTmp_s_nv
-   LOCAL cIdVd
+   LOCAL cIdVd, nLen
 
    nKolicina := 0
 
@@ -51,7 +51,7 @@ FUNCTION kalk_get_nabavna_mag( cIdFirma, cIdRoba, cIdKonto, nKolicina, nKolZN, n
       ENDIF
    ENDIF
 */
-
+   MsgO( "Računam stanje u magacinu: " + AllTrim( cIdKonto ) + "/" + cIdRoba )
    my_use_refresh_stop()
 
 
@@ -143,5 +143,7 @@ FUNCTION kalk_get_nabavna_mag( cIdFirma, cIdRoba, cIdKonto, nKolicina, nKolZN, n
 
    SELECT kalk_pripr
    my_use_refresh_start()
+
+   MsgC()
 
    RETURN .T.

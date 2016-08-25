@@ -148,9 +148,9 @@ FUNCTION kalk_get_1_41()
          IF !Empty( gMetodaNC )
             nc1 := 0
             nc2 := 0
-            MsgO( "Racunam stanje u prodavnici" )
+            //MsgO( "Racunam stanje u prodavnici" )
             kalk_get_nabavna_prod( _idfirma, _idroba, _idkonto, @nKolS, @nKolZN, @nc1, @nc2 )
-            MsgC()
+            //MsgC()
             IF dDatNab > _DatDok
                Beep( 1 )
                Msg( "Datum nabavke je " + DToC( dDatNab ), 4 )

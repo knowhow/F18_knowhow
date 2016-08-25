@@ -18,7 +18,7 @@ MEMVAR PicDEM, PicProc, PicCDem, PicKol, gPicCDEM, gPicDEM, gPICPROC, gPICKol
 MEMVAR ImeKol, Kol
 MEMVAR picv
 MEMVAR m_x, m_y
-MEMVAR lKalkAsistentUToku, lAutoObr, lAsist, lAAzur, lAAsist
+// MEMVAR lKalkAsistentUToku, lAutoObr, lAsist, lAAzur, lAAsist
 MEMVAR Ch
 MEMVAR opc, Izbor, h
 MEMVAR _idfirma, _idvd, _brdok
@@ -26,22 +26,22 @@ MEMVAR cSection, cHistory, aHistory
 
 STATIC cENTER := Chr( K_ENTER ) + Chr( K_ENTER ) + Chr( K_ENTER )
 
-
-
+/*
 FUNCTION kalk_unos_dokumenta()
 
    PRIVATE PicCDEM := gPicCDEM
    PRIVATE PicProc := gPicProc
    PRIVATE PicDEM := gPICDEM
    PRIVATE Pickol := gPICKOL
-   PRIVATE lKalkAsistentUToku := .F.
+
+   // PRIVATE lKalkAsistentUToku := .F.
 
    kalk_pripr_obrada()
 
    my_close_all_dbf()
 
    RETURN .T.
-
+*/
 
 FUNCTION kalk_pripr_obrada_stavki_sa_asistentom()
 
@@ -58,7 +58,7 @@ FUNCTION kalk_pripr_obrada( lAObrada )
    LOCAL cPicKol := "999999.999"
    LOCAL bPodvuci := {|| iif( field->ERROR == "1", .T., .F. ) }
 
-   O_PARAMS
+   // O_PARAMS
 
    hb_default( @lAObrada, .F. )
    // PRIVATE lAutoObr := .F.
@@ -73,14 +73,19 @@ FUNCTION kalk_pripr_obrada( lAObrada )
    // lAAzur := .T.
    // ENDIF
 
-   PRIVATE cSection := "K"
-   PRIVATE cHistory := " "
-   PRIVATE aHistory := {}
+   // PRIVATE cSection := "K"
+   // PRIVATE cHistory := " "
+   // PRIVATE aHistory := {}
 
-   SELECT 99
-   USE
+   // SELECT 99
+   // USE
 
    o_kalk_edit()
+   PRIVATE fNovi := .F.
+   PRIVATE PicCDEM := gPicCDEM
+   PRIVATE PicProc := gPicProc
+   PRIVATE PicDEM := gPicDEM
+   PRIVATE Pickol := gPicKol
 
    PRIVATE gVarijanta := "2"
    PRIVATE PicV := "99999999.9"
@@ -102,15 +107,15 @@ FUNCTION kalk_pripr_obrada( lAObrada )
       AAdd( ImeKol, { "Barkod", {|| roba_ocitaj_barkod( field->idroba ) }, "IdRoba" } )
    ENDIF
 
-   AAdd( ImeKol, { _u( "Količina" ), {|| Transform( field->Kolicina, cPicKol ) }, "kolicina"    } )
+   AAdd( ImeKol, { _u( "Količina" ), {|| say_kolicina( field->Kolicina, "99999.999" ) }, "kolicina"    } )
    AAdd( ImeKol, { "IdTarifa", {|| field->idtarifa                 }, "idtarifa"    } )
-   AAdd( ImeKol, { "F.Cj.", {|| Transform( field->FCJ, picv )      }, "fcj"         } )
-   AAdd( ImeKol, { "F.Cj2.", {|| Transform( field->FCJ2, picv )     }, "fcj2"        } )
-   AAdd( ImeKol, { "Nab.Cj.", {|| Transform( field->NC, picv )       }, "nc"          } )
-   AAdd( ImeKol, { "VPC", {|| Transform( field->VPC, picv )      }, "vpc"         } )
-   AAdd( ImeKol, { "VPCj.sa P.", {|| Transform( field->VPCsaP, picv )   }, "vpcsap"      } )
-   AAdd( ImeKol, { "MPC", {|| Transform( field->MPC, picv )      }, "mpc"         } )
-   AAdd( ImeKol, { "MPC sa PP", {|| Transform( field->MPCSaPP, picv )  }, "mpcsapp"     } )
+   AAdd( ImeKol, { "F.Cj.", {|| say_cijena( field->FCJ, "99999.999" )      }, "fcj"         } )
+   AAdd( ImeKol, { "F.Cj2.", {|| say_cijena( field->FCJ2, "99999.999" )     }, "fcj2"        } )
+   AAdd( ImeKol, { "Nab.Cj.", {|| say_cijena( field->NC, "99999.999" )       }, "nc"          } )
+   AAdd( ImeKol, { "VPC", {|| say_cijena( field->VPC, "99999.999" )      }, "vpc"         } )
+   // AAdd( ImeKol, { "VPCj.sa P.", {|| say_cijena( field->VPCsaP )   }, "vpcsap"      } )
+   AAdd( ImeKol, { "MPC", {|| say_cijena( field->MPC, "99999.999" )      }, "mpc"         } )
+   AAdd( ImeKol, { "MPC sa PP", {|| say_cijena( field->MPCSaPP, "99999.999" )  }, "mpcsapp"     } )
    AAdd( ImeKol, { "RN", {|| field->idzaduz2                 }, "idzaduz2"    } )
    AAdd( ImeKol, { "Br.Fakt", {|| field->brfaktp                  }, "brfaktp"     } )
    AAdd( ImeKol, { "Partner", {|| field->idpartner                }, "idpartner"   } )
@@ -155,7 +160,7 @@ FUNCTION kalk_pripr_obrada( lAObrada )
       Soboslikar( { { nMaxRow - 3, m_y + 1, nMaxRow, m_y + 77 } }, 23, 14 )
    ENDIF
 */
-   PRIVATE lKalkAsistentAuto := .F.
+   // PRIVATE lKalkAsistentAuto := .F.
 
 
    my_db_edit( "PNal", nMaxRow, nMaxCol, {|| kalk_pripr_key_handler( lAObrada ) }, "<F5>-kartica magacin, <F6>-kartica prodavnica", "Priprema...", , , , bPodvuci, 4 )
@@ -252,10 +257,6 @@ STATIC FUNCTION kalk_kontiraj_alt_k()
 
    LOCAL cBrNal := NIL
 
-   // IF is_kalk_fin_isti_broj()
-   // cBrNal := kalk_pripr->brDok
-   // ENDIF
-
    my_close_all_dbf()
 
    kalk_kontiranje_gen_finmat()
@@ -269,21 +270,27 @@ STATIC FUNCTION kalk_kontiraj_alt_k()
    RETURN DE_REFRESH
 
 
+
 FUNCTION kalk_pripr_key_handler( lAObrada )
 
    LOCAL nTr2
    LOCAL iSekv
    LOCAL _log_info
 
+   hb_default( @lAObrada, .F. )
+
+
+   IF lAObrada
+      kalk_unos_asistent()
+      kalk_unos_asistent_send_esc()
+      RETURN DE_ABORT
+   ENDIF
+
    IF ( Ch == K_CTRL_T .OR. Ch == K_ENTER ) .AND. Eof()
       RETURN DE_CONT
    ENDIF
 
-   PRIVATE fNovi := .F.
-   PRIVATE PicCDEM := gPicCDEM
-   PRIVATE PicProc := gPicProc
-   PRIVATE PicDEM := gPicDEM
-   PRIVATE Pickol := gPicKol
+
 
    select_o_kalk_pripr()
 
@@ -385,7 +392,6 @@ FUNCTION kalk_pripr_key_handler( lAObrada )
          nVpc := kalk_pripr->vpc
 
          my_delete()
-
          log_write( "F18_DOK_OPER: kalk, brisanje stavke u pripremi: " + _log_info + " stavka br: " + cStavka, 2 )
 
 
@@ -400,10 +406,11 @@ FUNCTION kalk_pripr_key_handler( lAObrada )
       RETURN DE_CONT
 
    CASE Ch == K_ENTER
-      RETURN EditStavka()
+      RETURN kalk_edit_stavka()
 
-   CASE ( Ch == K_CTRL_A .OR. lKalkAsistentUToku )
+   CASE ( Ch == K_CTRL_A )
       RETURN kalk_edit_sve_stavke()
+
 
    CASE Ch == K_CTRL_N
       fNovi := .T.
@@ -429,9 +436,10 @@ FUNCTION kalk_pripr_key_handler( lAObrada )
       ENDIF
       RETURN DE_CONT
 
-   CASE Upper( Chr( Ch ) ) == "A" .OR. lKalkAsistentAuto .OR. lAObrada
+   CASE Upper( Chr( Ch ) ) == "A" .OR. lAObrada // lKalkAsistentAuto .OR.
 
-      kalk_unos_asistent()
+      // kalk_unos_asistent()
+      kalk_edit_sve_stavke( .T. )
 
       // CASE lAutoObr .AND. lAAsist
       // lAAsist := .F.
@@ -440,9 +448,9 @@ FUNCTION kalk_pripr_key_handler( lAObrada )
       // CASE lAutoObr .AND. !lAAsist
       // lAutoObr := .F.
 
-      IF lAObrada
-         kalk_unos_asistent_send_esc()
-      ENDIF
+      // IF lAObrada
+      // kalk_unos_asistent_send_esc()
+      // ENDIF
       RETURN DE_REFRESH
 
    CASE Upper( Chr( Ch ) ) == "K"
@@ -473,7 +481,7 @@ FUNCTION kalk_pripr_key_handler( lAObrada )
 
 
 
-FUNCTION EditStavka()
+FUNCTION kalk_edit_stavka()
 
    LOCAL _atributi := hb_Hash()
    LOCAL _dok
@@ -598,7 +606,7 @@ FUNCTION EditStavka()
          IF _idvd == "16"
             kalk_get_1_16()
          ELSE
-            Get1_80b()
+            kalk_get_1_80_protustavka()
          ENDIF
 
          IF _tbanktr == "X"
@@ -763,7 +771,7 @@ FUNCTION kalk_unos_nova_stavka()
             Get1_16bPDV()
 
          ELSE
-            Get1_80b()
+            kalk_get_1_80_protustavka()
          ENDIF
 
          APPEND BLANK
@@ -789,7 +797,7 @@ FUNCTION kalk_unos_nova_stavka()
 
 
 
-FUNCTION kalk_edit_sve_stavke()
+FUNCTION kalk_edit_sve_stavke( lAObrada )
 
    LOCAL _atributi := hb_Hash()
    LOCAL _dok
@@ -834,7 +842,9 @@ FUNCTION kalk_edit_sve_stavke()
 
       nRbr := RbrUNum( _rbr )
 
-      kalk_unos_asistent_send_entere()
+      IF lAObrada
+         kalk_unos_asistent_send_entere()
+      ENDIF
 
       _dok := hb_Hash()
       _dok[ "idfirma" ] := _idfirma
@@ -908,7 +918,7 @@ FUNCTION kalk_edit_sve_stavke()
          IF _idvd == "16"
             kalk_get_1_16()
          ELSE
-            Get1_80b()
+            kalk_get_1_80_protustavka()
          ENDIF
 
          IF _tbanktr == "X"
@@ -933,7 +943,9 @@ FUNCTION kalk_edit_sve_stavke()
 
    BoxC()
 
-   kalk_unos_asistent_stop()
+   IF lAObrada
+      kalk_unos_asistent_stop()
+   ENDIF
 
    RETURN DE_REFRESH
 
@@ -941,13 +953,13 @@ FUNCTION kalk_edit_sve_stavke()
 
 FUNCTION kalk_unos_asistent()
 
-   LOCAL cSekv
+   // LOCAL cSekv
+   // lKalkAsistentAuto := .F.
+   // lKalkAsistentUToku := .T.
 
-   lKalkAsistentAuto := .F.
-   lKalkAsistentUToku := .T.
-
-   cSekv := Chr( K_CTRL_A )
-   KEYBOARD cSekv
+   // cSekv :=
+   kalk_edit_sve_stavke( .T. )
+   // KEYBOARD Chr( K_CTRL_A )
 
    RETURN DE_REFRESH
 
@@ -963,19 +975,22 @@ FUNCTION kalk_unos_asistent_send_entere()
 
    LOCAL nKekk, cSekv
 
-   IF lKalkAsistentUToku //
-      CLEAR TYPEAHEAD // lKalkAsistentUToku prije keyboar cSekv
-      cSekv := ""
-      FOR nKekk := 1 TO 17
-         cSekv += cEnter
-      NEXT
-      KEYBOARD cSekv
-   ENDIF
+   // IF lKalkAsistentUToku
+   CLEAR TYPEAHEAD // kalk_unos_asistent_send_entere
+   cSekv := ""
+   FOR nKekk := 1 TO 17
+      cSekv += cEnter
+   NEXT
+   KEYBOARD cSekv
+   // ENDIF
+
+   RETURN .T.
+
 
 FUNCTION kalk_unos_asistent_stop()
 
    CLEAR TYPEAHEAD
-   lKalkAsistentUToku := .F.
+   // lKalkAsistentUToku := .F.
 
    RETURN .T.
 
@@ -1736,7 +1751,7 @@ FUNCTION kalk_plus_minus_kol()
 
    // Msg("Automatski pokrecem asistenta (Alt+F10)!",1)
    // lKalkAsistentAuto:=.t.
-   //KEYBOARD Chr( K_ESC )
+   // KEYBOARD Chr( K_ESC )
    kalk_unos_asistent()
 
    my_close_all_dbf()
@@ -1805,9 +1820,9 @@ FUNCTION kalk_set_diskont_mpc()
 
    my_unlock()
 
-   //Msg( "Automatski pokrećem asistenta (opcija A)!", 1 )
-   //lKalkAsistentAuto := .T.
-   //KEYBOARD Chr( K_ESC )
+   // Msg( "Automatski pokrećem asistenta (opcija A)!", 1 )
+   // lKalkAsistentAuto := .T.
+   // KEYBOARD Chr( K_ESC )
    kalk_unos_asistent()
 
    my_close_all_dbf()
@@ -1915,9 +1930,9 @@ FUNCTION VPCSifUDok()
    ENDDO
    my_unlock()
 
-   //Msg( "Automatski pokrećem asistenta (opcija A) !", 1 )
-   //lKalkAsistentAuto := .T.
-   //KEYBOARD Chr( K_ESC )
+   // Msg( "Automatski pokrećem asistenta (opcija A) !", 1 )
+   // lKalkAsistentAuto := .T.
+   // KEYBOARD Chr( K_ESC )
    kalk_unos_asistent()
 
    my_close_all_dbf()

@@ -86,7 +86,6 @@ STATIC FUNCTION kalk_auto_import_setup()
 
 
    nX := 1
-
    Box(, 10, 70 )
 
    @ m_x + nX, m_y + 2 SAY "Podesenja importa ********"
@@ -128,7 +127,7 @@ STATIC FUNCTION kalk_auto_import_setup()
 
 FUNCTION kalk_auto_import_racuni()
 
-   //LOCAL cCtrl_art := "N"
+   // LOCAL cCtrl_art := "N"
    PRIVATE cExpPath
    PRIVATE cImpFile
 
@@ -136,18 +135,16 @@ FUNCTION kalk_auto_import_racuni()
 
    cExpPath := get_liste_za_import_path()
 
-
    cFFilt := GetImpFilter() // filter za import MP ili VP
 
-   //IF prag_odstupanja_nc_sumnjiv() > 0 .AND. Pitanje(, "Ispusti artikle sa sumnjivom NC (D/N)",  "N" ) == "D"
-  //    cCtrl_art := "D"
-   //ENDIF
+   // IF prag_odstupanja_nc_sumnjiv() > 0 .AND. Pitanje(, "Ispusti artikle sa sumnjivom NC (D/N)",  "N" ) == "D"
+   // cCtrl_art := "D"
+   // ENDIF
 
 
    IF get_file_list( cFFilt, cExpPath, @cImpFile ) == 0 // daj pregled fajlova za import, te setuj varijablu cImpFile
       RETURN .F.
    ENDIF
-
 
    IF CheckFile( cImpFile ) == 0 // provjeri da li je fajl za import prazan
       MsgBeep( "Odabrani fajl je prazan!#Prekidam operaciju !" )
@@ -184,7 +181,7 @@ FUNCTION kalk_auto_import_racuni()
    ENDIF
 
 
-   IF from_kalk_imp_temp_to_pript( aFaktEx, lFtSkip, lNegative ) == 0  //, cCtrl_art ) == 0
+   IF from_kalk_imp_temp_to_pript( aFaktEx, lFtSkip, lNegative ) == 0  // , cCtrl_art ) == 0
       MsgBeep( "Operacija prekinuta!" )
       RETURN .F.
    ENDIF
@@ -202,7 +199,7 @@ FUNCTION kalk_auto_import_racuni()
 
 
 
-/*    GetImpFilter
+/*
  *     Vraca filter za naziv dokumenta u zavisnosti sta je odabrano VP ili MP
  */
 STATIC FUNCTION GetImpFilter()
@@ -1322,7 +1319,7 @@ STATIC FUNCTION kalk_postoji_faktura_a()
  *  - lNegative - prvo prebaci negativne fakture
  * - cCtrl_art - preskoci sporne artikle NC u hendeku ! na osnovu CACHE tabele
  */
-STATIC FUNCTION from_kalk_imp_temp_to_pript( aFExist, lFSkip, lNegative )//, cCtrl_art )
+STATIC FUNCTION from_kalk_imp_temp_to_pript( aFExist, lFSkip, lNegative )// , cCtrl_art )
 
    LOCAL cBrojKalk
    LOCAL cTipDok
@@ -1582,6 +1579,7 @@ STATIC FUNCTION from_kalk_imp_temp_to_pript( aFExist, lFSkip, lNegative )//, cCt
 
    ENDIF
 */
+
    RETURN 1
 
 
@@ -1768,7 +1766,8 @@ FUNCTION kalk_imp_obradi_sve_dokumente_iz_pript( nPocniOd, lStampaj, lOstaviBrdo
    LOCAL cNoviKalkBrDok := ""
    LOCAL nUvecaj := 0
    LOCAL cMKonto, cPKonto
-   LOCAL lAsPokreni
+
+   // LOCAL lAsPokreni
 
    o_kalk_pripr()
    o_kalk_pript()
@@ -1884,7 +1883,7 @@ FUNCTION kalk_imp_obradi_sve_dokumente_iz_pript( nPocniOd, lStampaj, lOstaviBrdo
          ENDIF
 
          kalk_imp_set_check_point( nPCRec ) // snimi zapis u params da znas dokle si dosao
-         IF kalk_imp_obradi_dokument( cIdVd, lAsPokreni, lStampaj )
+         IF kalk_imp_obradi_dokument( cIdVd, lStampaj )
             kalk_imp_set_check_point( nPTRec )
          ELSE
             MsgBeep( "prekid operacije importa !" )
@@ -2029,7 +2028,7 @@ STATIC FUNCTION kalk_imp_continue_from_check_point()
  *  brief Obrada jednog dokumenta
  *  param cIdVd - id vrsta dokumenta
  */
-STATIC FUNCTION kalk_imp_obradi_dokument( cIdVd, lAsPokreni, lStampaj )
+STATIC FUNCTION kalk_imp_obradi_dokument( cIdVd, lStampaj )
 
    LOCAL nRslt
 
@@ -2037,31 +2036,25 @@ STATIC FUNCTION kalk_imp_obradi_dokument( cIdVd, lAsPokreni, lStampaj )
    // 2. azuriraj kalk
    // 3. azuriraj FIN
 
+   // PRIVATE lKalkAsistentUToku := .F.
 
-
-   PRIVATE lKalkAsistentUToku := .F.
-
-   IF lAsPokreni == nil
-      lAsPokreni := .T.
-   ENDIF
+   // IF lAsPokreni == nil
+   // lAsPokreni := .T.
+   // ENDIF
 
    IF lStampaj == nil
       lStampaj := .T.
    ENDIF
 
-   IF lAsPokreni
-      kalk_pripr_obrada_stavki_sa_asistentom()
-   ELSE
-      o_kalk_edit()
-   ENDIF
-
+   // IF lAsPokreni
+   kalk_pripr_obrada_stavki_sa_asistentom()
+   // ELSE
+   // o_kalk_edit()
+   // ENDIF
    IF lStampaj == .T.
       kalk_stampa_dokumenta( nil, nil, .T. ) // odstampaj kalk
    ENDIF
-
-
    kalk_azuriranje_dokumenta( .T. ) // azuriraj kalk
-
    o_kalk_edit()
 
 
@@ -2070,11 +2063,11 @@ STATIC FUNCTION kalk_imp_obradi_dokument( cIdVd, lAsPokreni, lStampaj )
 
       IF nRslt == 1 // vezni dokument u kalk_pripremi je ok
 
-         IF lAsPokreni
-            kalk_pripr_obrada_stavki_sa_asistentom()
-         ELSE
-            o_kalk_edit()
-         ENDIF
+         // IF lAsPokreni
+         kalk_pripr_obrada_stavki_sa_asistentom()
+         // ELSE
+         // o_kalk_edit()
+         // ENDIF
 
          IF lStampaj == .T.
             kalk_stampa_dokumenta( nil, nil, .T. )

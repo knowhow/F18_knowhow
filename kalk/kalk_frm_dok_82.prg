@@ -104,9 +104,9 @@ FUNCTION Get1_82()
    lGenStavke := .F.
    IF _TBankTr <> "X"
       IF !Empty( gMetodaNC )
-         MsgO( "Racunam stanje na skladistu" )
+         //MsgO( "Racunam stanje na skladistu" )
          kalk_get_nabavna_mag( _idfirma, _idroba, _idkonto, @nKolS, @nKolZN, @nc1, @nc2, @dDatNab )
-         MsgC()
+         //MsgC()
       ENDIF
       IF dDatNab > _DatDok; Beep( 1 );Msg( "Datum nabavke je " + DToC( dDatNab ), 4 );ENDIF
       IF gMetodaNC $ "13"; _nc := nc1; ELSEIF gMetodaNC == "2"; _nc := nc2; ENDIF

@@ -130,9 +130,9 @@ FUNCTION kalk_get_1_11()
          nc1 := nc2 := 0
          dDatNab := CToD( "" )
          IF _kolicina > 0
-            MsgO( "Racunam stanje na skladistu" )
+            //MsgO( "Racunam stanje na skladistu" )
             kalk_get_nabavna_mag( _idfirma, _idroba, _idkonto2, @nKolS, @nKolZN, @nc1, @nc2, @dDatNab )
-            MsgC()
+            //MsgC()
          ELSE
             MsgO( "Racunam stanje prodavnice" )
             kalk_get_nabavna_prod( _idfirma, _idroba, _idkonto, @nKolS, @nKolZN, @nc1, @nc2, dDatNab )

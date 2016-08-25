@@ -114,7 +114,6 @@ STATIC FUNCTION set_print_codes( cOpt )
       set_epson_print_codes()
 
    CASE cOpt == "0"
-      AltD()
       gPrinter := "0"
       set_0_sekvence()
 

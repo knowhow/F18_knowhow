@@ -103,12 +103,10 @@ FUNCTION fin_specifikacija_suban()
          cIdFirma := PadR( gFirma + ";", 30 )
          @ m_x + 3, m_y + 2 SAY "Firma: " GET cIdFirma PICT "@!S20"
       ELSE
-         IF gNW == "D"
-            @ m_x + 3, m_y + 2 SAY "Firma "
-            ?? gFirma, "-", gNFirma
-         ELSE
-            @ m_x + 3, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| IF( !Empty( cIdFirma ), P_Firma( @cIdFirma ), ), cidfirma := Left( cidfirma, 2 ), .T. }
-         ENDIF
+
+         @ m_x + 3, m_y + 2 SAY "Firma "
+         ?? gFirma, "-", gNFirma
+
       ENDIF
       @ m_x + 4, m_y + 2 SAY "Konto   " GET qqKonto  PICT "@!S50"
       @ m_x + 5, m_y + 2 SAY "Partner " GET qqPartner PICT "@!S50"
@@ -153,7 +151,7 @@ FUNCTION fin_specifikacija_suban()
       USE
 
       cSqlWhere := parsiraj_sql( "idkonto", qqKonto )
-      cSqlWhere += " AND " + parsiraj_sql( "idpartner", qqPartner )
+      cSqlWhere += " AND " + parsiraj_sql( "idpartner", Trim( qqPartner) )
 
       IF gDUFRJ == "D"
          aUsl3 := Parsiraj( cIdFirma, "IdFirma" )
@@ -161,7 +159,7 @@ FUNCTION fin_specifikacija_suban()
       ENDIF
       aBV := Parsiraj( qqBrDok, "UPPER(BRDOK)", "C" )
       aVN := Parsiraj( cVN, "IDVN", "C" )
-      IF aBV <> NIL .AND. aVN <> NIL .AND. IIF( gDUFRJ == "D", aUsl3 <> NIL .AND. aUsl4 <> NIL, .T. )
+      IF aBV <> NIL .AND. aVN <> NIL .AND. iif( gDUFRJ == "D", aUsl3 <> NIL .AND. aUsl4 <> NIL, .T. )
          EXIT
       ENDIF
    ENDDO

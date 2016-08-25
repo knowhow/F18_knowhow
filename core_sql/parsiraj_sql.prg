@@ -19,31 +19,40 @@
 FUNCTION parsiraj_sql( cFieldName, cConditionParam, lNot )
 
    LOCAL _ret := ""
-   LOCAL aConditions := TOKTONIZ( cConditionParam, ";" )
+   LOCAL aConditions
    LOCAL lPrazno := .F.
    LOCAL cCondition
+   LOCAL lTackaZarez := .F.
+
+   IF ";" $ cConditionParam
+      cConditionParam := Trim( cConditionParam )
+      lTacKaZarez := .T.
+   ENDIF
+
+   aConditions := TOKTONIZ( cConditionParam, ";" )
 
    IF lNot == NIL
       lNot := .F.
    ENDIF
-
-   IF LEN( cConditionParam ) == 0
+    AltD()
+   IF Len( cConditionParam ) == 0
       lPrazno := .T.
    ENDIF
 
    FOR EACH cCondition in aConditions
 
-      IF lPrazno
+
+      IF lPrazno .OR. Len( cCondition ) == 0
          LOOP
       ENDIF
 
       _ret += "  OR " + cFieldName
 
-      IF Len( aConditions ) > 1
+      IF lTackaZarez
          IF lNot
             _ret += " NOT "
          ENDIF
-         _ret += " LIKE " + sql_quote( AllTrim( cCondition ) + "%" )
+         _ret += " LIKE " + sql_quote( Trim( cCondition ) + "%" )
       ELSE
          IF lNot
             _ret += " <> "

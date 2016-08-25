@@ -197,7 +197,7 @@ FUNCTION Get1_80( atrib )
 // PROTUSTAVKA 80-ka, druga strana
 // _odlval nalazi se u knjiz, filuje staru vrijenost
 // _odlvalb nalazi se u knjiz, filuje staru vrijenost nabavke
-FUNCTION Get1_80b()
+FUNCTION kalk_get_1_80_protustavka()
 
    LOCAL cSvedi := fetch_metric( "kalk_dok_80_predispozicija_set_cijena", my_user(), " " )
    LOCAL _x := 2
@@ -376,9 +376,9 @@ STATIC FUNCTION VKol( x_kord )
       dDatNab := CToD( "" )
 
       IF !Empty( gMetodaNC )
-         MsgO( "Računam stanje u prodavnici" )
+         //MsgO( "Računam stanje u prodavnici" )
          kalk_get_nabavna_prod( _idfirma, _idroba, _idkonto, @nKolS, @nKolZN, @nC1, @nC2, @dDatNab )
-         MsgC()
+         //MsgC()
          @ x_kord, m_y + 30 SAY "Ukupno na stanju "
          @ x_kord, Col() + 2 SAY nKols PICT pickol
       ENDIF

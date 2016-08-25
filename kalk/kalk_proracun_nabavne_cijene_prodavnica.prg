@@ -20,7 +20,7 @@ FUNCTION kalk_get_nabavna_prod( cIdFirma, cIdroba, cIdkonto, nKolicina, nKolZN, 
    LOCAL nUlKol
    LOCAL nSkiniKol
    LOCAL nZadnjaUlaznaNC
-   LOCAL nTmp
+   LOCAL nTmp, nLen
 
    nKolicina := 0
 
@@ -33,6 +33,7 @@ FUNCTION kalk_get_nabavna_prod( cIdFirma, cIdroba, cIdkonto, nKolicina, nKolZN, 
       ENDIF
    ENDIF
 */
+   MsgO( "Računam stanje u prodavnici:" + AllTrim( cIdKonto ) + "/" + cIdRoba )
 
    find_kalk_by_pkonto_idroba( cIdFirma, cIdKonto, cIdRoba )
    GO BOTTOM
@@ -43,9 +44,7 @@ FUNCTION kalk_get_nabavna_prod( cIdFirma, cIdroba, cIdkonto, nKolicina, nKolZN, 
       _ERROR := "1"
    ENDIF
 
-
    nLen := 1
-
    nKolicina := 0
 
    nIzlNV := 0 // ukupna izlazna nabavna vrijednost
@@ -106,5 +105,6 @@ FUNCTION kalk_get_nabavna_prod( cIdFirma, cIdroba, cIdkonto, nKolicina, nKolZN, 
    ENDIF
 
    SELECT kalk_pripr
+   MsgC()
 
    RETURN .T.

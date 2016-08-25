@@ -54,7 +54,8 @@ METHOD TKalkMod:programski_modul_osnovni_meni()
    LOCAL Izbor := 1
 
    AAdd( opc,   "1. unos/ispravka dokumenata                " )
-   AAdd( opcexe, {|| kalk_unos_dokumenta() } )
+   AAdd( opcexe, {|| kalk_pripr_obrada() } )
+   
    AAdd( opc,   "2. izvještaji" )
    AAdd( opcexe, {|| kalk_meni_mag_izvjestaji() } )
    AAdd( opc,   "3. pregled dokumenata" )

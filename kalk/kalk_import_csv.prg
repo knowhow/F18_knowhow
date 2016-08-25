@@ -878,7 +878,7 @@ STATIC FUNCTION kalk_import_csv_obradi_dokument( lAsPokreni, lStampaj )
    // 2. azuriraj kalk
    // 3. azuriraj FIN
 
-   PRIVATE lKalkAsistentUToku := .F.
+   //PRIVATE lKalkAsistentUToku := .F.
 
    IF lAsPokreni == nil
       lAsPokreni := .T.

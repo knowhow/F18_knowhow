@@ -63,8 +63,10 @@ FUNCTION RekProd()
    AAdd( _opcexe, {|| kalk_dnevni_promet_prodavnice() } )
   */
 
+/*
    AAdd( _opc, "4. pregled prometa prodavnica za period" )
    AAdd( _opcexe, {|| PPProd() } )
+*/
 
 /*
    AAdd( _opc, "5. (vise)dnevni promet za sve objekte" )

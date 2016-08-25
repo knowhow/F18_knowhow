@@ -40,8 +40,9 @@ FUNCTION kalk_get_nabavna_prod( cIdFirma, cIdroba, cIdkonto, nKolicina, nKolZN, 
 
    IF cIdfirma + cIdkonto + cIdroba == field->idfirma + field->pkonto + field->idroba .AND. _datdok < field->datdok
 
-      error_bar( "KA_" + cIdfirma + "-" + cIdkonto + "-" + cIdroba, " KA_KART_PROD " + cIdkonto + "-" + Trim( cIdroba ) + " postoje stavke na datum< " + DToC( field->datdok ) )
-      _ERROR := "1"
+      error_bar( "KA_" + cIdfirma + "-" + Trim( cIdkonto )  + "-" + Trim( cIdroba ), ;
+         " KA_PROD " + Trim( cIdkonto ) + "-" + Trim( cIdroba ) + " postoje stavke na datum " + DToC( field->datdok ) )
+      // _ERROR := "1"
    ENDIF
 
    nLen := 1

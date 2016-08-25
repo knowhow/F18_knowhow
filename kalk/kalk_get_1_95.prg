@@ -93,7 +93,7 @@ FUNCTION kalk_get_1_95()
    ENDIF
 
    _MKonto := _Idkonto2
-   check_datum_posljednje_kalkulacije()
+   //check_datum_posljednje_kalkulacije()
    //DuplRoba()
 
    SELECT koncij

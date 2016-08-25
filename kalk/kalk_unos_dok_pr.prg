@@ -116,7 +116,7 @@ FUNCTION kalk_unos_dok_pr()
    _MKonto := _Idkonto
    _MU_I := "1"
 
-   check_datum_posljednje_kalkulacije()
+   //check_datum_posljednje_kalkulacije()
 
    IF fNovi
       SELECT ROBA

@@ -74,8 +74,8 @@ FUNCTION kalk_get_1_12()
 
    _PKonto := _Idkonto
    _MKonto := _Idkonto2
-   kalk_dat_poslj_promjene_prod()
-   check_datum_posljednje_kalkulacije()
+   //kalk_dat_poslj_promjene_prod()
+   //check_datum_posljednje_kalkulacije()
    // DuplRoba()
 
    _GKolicina := 0

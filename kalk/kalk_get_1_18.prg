@@ -49,7 +49,7 @@ FUNCTION kalk_get_1_18()
    SELECT kalk_pripr  // napuni tarifu
 
    _MKonto := _Idkonto
-   check_datum_posljednje_kalkulacije()
+   //check_datum_posljednje_kalkulacije()
    //DuplRoba()
 
    dDatNab := CToD( "" )

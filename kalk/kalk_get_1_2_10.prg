@@ -126,7 +126,7 @@ FUNCTION kalk_get_1_10()
 
    _MKonto := _Idkonto
    _MU_I := "1"
-   check_datum_posljednje_kalkulacije()
+   //check_datum_posljednje_kalkulacije()
 
    SELECT TARIFA
    HSEEK _IdTarifa

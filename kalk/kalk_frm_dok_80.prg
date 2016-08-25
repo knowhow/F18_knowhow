@@ -117,7 +117,7 @@ FUNCTION Get1_80( atrib )
 
    _pkonto := _idkonto
 
-   kalk_dat_poslj_promjene_prod()
+   //kalk_dat_poslj_promjene_prod()
    //DuplRoba()
 
    IF fNovi
@@ -244,7 +244,7 @@ FUNCTION kalk_get_1_80_protustavka()
 
    _pkonto := _idkonto
 
-   kalk_dat_poslj_promjene_prod()
+   //kalk_dat_poslj_promjene_prod()
 
    PRIVATE fMarza := " "
 

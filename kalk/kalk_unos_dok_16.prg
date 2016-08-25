@@ -90,7 +90,7 @@ FUNCTION kalk_get_1_16()
    _MKonto := _Idkonto
    _MU_I := "1"
 
-   check_datum_posljednje_kalkulacije()
+   //check_datum_posljednje_kalkulacije()
    //DuplRoba()
    _GKolicina := 0
    IF fNovi
@@ -162,7 +162,7 @@ FUNCTION Get1_16bPDV()
 
    _PKonto := _Idkonto
 
-   kalk_dat_poslj_promjene_prod()
+   //kalk_dat_poslj_promjene_prod()
    //DuplRoba()
 
    PRIVATE fMarza := " "

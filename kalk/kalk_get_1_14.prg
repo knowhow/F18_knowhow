@@ -90,7 +90,7 @@ FUNCTION kalk_get_1_14()
       _FCJ := roba->PlC
    ENDIF
 
-   check_datum_posljednje_kalkulacije()
+   //check_datum_posljednje_kalkulacije()
    //DuplRoba()
 
    IF fNovi

@@ -125,7 +125,7 @@ FUNCTION kalk_unos_dok_81( atrib )
    SELECT kalk_pripr
 
    _pkonto := _idkonto
-   kalk_dat_poslj_promjene_prod()
+   //kalk_dat_poslj_promjene_prod()
 
    ++ _x
    IF _use_rok

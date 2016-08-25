@@ -93,8 +93,8 @@ FUNCTION kalk_get_1_41()
    _PKonto := _Idkonto
 
 
-   check_datum_posljednje_kalkulacije()
-   kalk_dat_poslj_promjene_prod()
+   //check_datum_posljednje_kalkulacije()
+   //kalk_dat_poslj_promjene_prod()
 
    _GKolicina := 0
    _GKolicin2 := 0

@@ -92,7 +92,7 @@ FUNCTION kalk_get_1_94()
 
 
 
-   check_datum_posljednje_kalkulacije()
+   //check_datum_posljednje_kalkulacije()
    //DuplRoba()
 
    _GKolicina := 0

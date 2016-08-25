@@ -47,13 +47,13 @@ FUNCTION kalk_get_1_19()
 
 
    _MKonto := _Idkonto
-   kalk_dat_poslj_promjene_prod()
+   //kalk_dat_poslj_promjene_prod()
 
    SELECT koncij
    SEEK Trim( _idkonto )
    SELECT kalk_pripr  // napuni tarifu
 
-   kalk_dat_poslj_promjene_prod()
+   //kalk_dat_poslj_promjene_prod()
    //DuplRoba()
 
    dDatNab := CToD( "" )

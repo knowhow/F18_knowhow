@@ -89,8 +89,8 @@ FUNCTION kalk_get_1_11()
 
    SELECT kalk_pripr  // napuni tarifu
 
-   check_datum_posljednje_kalkulacije()
-   kalk_dat_poslj_promjene_prod()
+   //check_datum_posljednje_kalkulacije()
+   //kalk_dat_poslj_promjene_prod()
    //DuplRoba()
 
 

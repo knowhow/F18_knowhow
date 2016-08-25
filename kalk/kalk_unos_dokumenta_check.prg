@@ -180,37 +180,32 @@ FUNCTION DuplRoba()
 
 /*
  *     Ispituje da li je datum zadnje promjene na zadanom magacinu i za zadani artikal noviji od one koja se unosi
- */
 
-FUNCTION check_datum_posljednje_kalkulacije()
 
-/*
-   SELECT kalk
-   --SET ORDER TO TAG "3"
-   SEEK _idfirma + _mkonto + _idroba + Chr( 254 )
-   SKIP -1
-*/
 
-   info_bar( "kalk_unos", "START chk datdok: " + _IdFirma + "/" + _MKonto + "/" + _IdRoba )
+--FUNCTION check_datum_posljednje_kalkulacije()
+
+
+
    find_kalk_by_mkonto_idroba( _IdFirma, _MKonto, _IdRoba )
-   info_bar( "kalk_unos", "END chk datdok: " + _IdFirma + "/" + _MKonto + "/" + _IdRoba )
-   GO BOTTOM
 
+   GO BOTTOM
    IF _idfirma + _idkonto + _idroba == field->idfirma + field->mkonto + field->idroba .AND. _datdok < field->datdok
-      error_bar( "KA_" + _idfirma + "-" + _idvd + "-" + _brdok, _mkonto + " / " + _idroba + " zadnji dokument: " + DToC( field->datdok ) )
+      error_bar( "KA_" + _idfirma + "-" + _idvd + "-" + trim(_brdok), trim(_mkonto) + " / " + trim(_idroba) + " zadnji dokument: " + DToC( field->datdok ) )
       //_ERROR := "1"
    ENDIF
 
    SELECT kalk_pripr
 
    RETURN .T.
-
+ */
 
 /*
  *  Ispituje da li je datum zadnje promjene na zadanoj prodavnici i za zadani artikal noviji od one koja se unosi
  */
 
-FUNCTION kalk_dat_poslj_promjene_prod()
+/*
+--FUNCTION kalk_dat_poslj_promjene_prod()
 
    find_kalk_by_pkonto_idroba( _IdFirma, _IdKonto, _IdRoba )
    GO BOTTOM
@@ -223,7 +218,7 @@ FUNCTION kalk_dat_poslj_promjene_prod()
    SELECT kalk_pripr
 
    RETURN .T.
-
+*/
 
 
 /* kalk_sljedeci_broj(cidfirma,cIdvD,nMjesta)

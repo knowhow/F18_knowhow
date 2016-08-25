@@ -66,7 +66,7 @@ FUNCTION kalk_stampa_dok_pr()
             .AND. field->idpartner + field->brfaktp + DToS( field->datfaktp ) == cIdpartner + cBrFaktp + DToS( dDatfaktp )
 
 
-         kalk_unos_troskovi()
+         kalk_set_troskovi_priv_vars_ntrosakx_nmarzax()
 
          SELECT ROBA
          HSEEK kalk_pripr->IdRoba

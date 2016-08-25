@@ -29,7 +29,7 @@ FUNCTION kalk_stampa_dok_im()
    PRIVATE nMarza
    PRIVATE nMarza2
 
-   // iznosi troskova i marzi koji se izracunavaju u kalk_unos_troskovi()
+   // iznosi troskova i marzi koji se izracunavaju u kalk_set_troskovi_priv_vars_ntrosakx_nmarzax()
 
    nStr := 0
    cIdPartner := IdPartner
@@ -84,8 +84,8 @@ FUNCTION kalk_stampa_dok_im()
 
    DO WHILE !Eof() .AND. cIdFirma == IdFirma .AND.  cBrDok == BrDok .AND. cIdVD == IdVd
 
-      kalk_unos_troskovi()
-      RptSeekRT()
+      kalk_set_troskovi_priv_vars_ntrosakx_nmarzax()
+      kalk_pozicioniraj_roba_tarifa_by_kalk_fields()
       print_nova_strana( 125, @nStr, 3 )
       SKol := Kolicina
 

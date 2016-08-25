@@ -18,7 +18,7 @@ FUNCTION leg_StKalkPR()
 
    PRIVATE nPrevoz, nCarDaz, nZavTr, nBankTr, nSpedTr, nMarza, nMarza2
 
-   // iznosi troskova i marzi koji se izracunavaju u kalk_unos_troskovi()
+   // iznosi troskova i marzi koji se izracunavaju u kalk_set_troskovi_priv_vars_ntrosakx_nmarzax()
 
    nStr := 0
    cIdPartner := IdPartner; cBrFaktP := BrFaktP; dDatFaktP := DatFaktP
@@ -57,11 +57,10 @@ FUNCTION leg_StKalkPR()
    endif
 */
 
-         kalk_unos_troskovi()
+         kalk_set_troskovi_priv_vars_ntrosakx_nmarzax()
 
-         SELECT ROBA; HSEEK kalk_pripr->IdRoba
-         SELECT TARIFA; HSEEK kalk_pripr->IdTarifa
          SELECT kalk_pripr
+         kalk_pozicioniraj_roba_tarifa_by_kalk_fields()
 
          IF PRow() > ( page_length() )
             FF
@@ -90,11 +89,11 @@ FUNCTION leg_StKalkPR()
          nU5 := nSpedTr * SKol
          nU6 := nCarDaz * SKol
          nU7 := nZavTr * SKol
-         nU8 := NC *    ( Kolicina - Gkolicina - GKolicin2 )
-         nU9 := nMarza * ( Kolicina - Gkolicina - GKolicin2 )
-         nUA := VPC   * ( Kolicina - Gkolicina - GKolicin2 )
+         nU8 := field->NC *   ( field->Kolicina - field->Gkolicina - field->GKolicin2 )
+         nU9 := nMarza * ( field->Kolicina - field->Gkolicina - field->GKolicin2 )
+         nUA := VPC   * ( field->Kolicina - field->Gkolicina - field->GKolicin2 )
 
-         IF Val( Rbr ) > 900
+         IF Val( field->Rbr ) > 900
             nT += nU; nT1 += nU1
             nT3 += nU3; nT4 += nU4; nT5 += nU5; nT6 += nU6
             nT7 += nU7; nT8 += nU8; nT9 += nU9; nTA += nUA
@@ -107,8 +106,8 @@ FUNCTION leg_StKalkPR()
             ? m
 
          ENDIF
-         @ PRow() + 1, 0 SAY  Rbr PICTURE "999"
-         IF Val( rbr ) < 900
+         @ PRow() + 1, 0 SAY  field->Rbr PICTURE "999"
+         IF Val( field->rbr ) < 900
             @  PRow(), PCol() + 1 SAY  idkonto
          ELSE
             @  PRow(), PCol() + 1 SAY  Space( 7 )

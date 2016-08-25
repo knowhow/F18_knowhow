@@ -746,23 +746,24 @@ FUNCTION UkupnoKolM( nTotalUlaz, nTotalIzlaz )
 // }
 
 
-FUNCTION RptSeekRT()
+FUNCTION kalk_pozicioniraj_roba_tarifa_by_kalk_fields()
 
-   // {
+
    LOCAL nArea
 
    nArea := Select()
+
    SELECT ROBA
    HSEEK ( nArea )->IdRoba
+
    SELECT tarifa
    HSEEK ( nArea )->IdTarifa
    SELECT ( nArea )
 
-   RETURN
-// }
+   RETURN .T.
 
 
-/* UzmiIzP(cSta)
+/*
  *     Uzmi iz parametara
  *   param: cSta - "KOL", "NV", "MPV", MPVBP"...
  */

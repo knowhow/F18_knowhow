@@ -18,7 +18,7 @@ FUNCTION kalk_stampa_dok_80( fBezNc )
 
    PRIVATE nPrevoz, nCarDaz, nZavTr, nBankTr, nSpedTr, nMarza, nMarza2
 
-   // iznosi troskova i marzi koji se izracunavaju u kalk_unos_troskovi()
+   // iznosi troskova i marzi koji se izracunavaju u kalk_set_troskovi_priv_vars_ntrosakx_nmarzax()
 
    IF fbezNc == NIL
       fBezNC := .F.
@@ -107,7 +107,7 @@ FUNCTION kalk_stampa_dok_80( fBezNc )
             cIdkont := Idkonto
          ENDIF
 
-         kalk_unos_troskovi()
+         kalk_set_troskovi_priv_vars_ntrosakx_nmarzax()
 
          IF Empty( idkonto2 )
             vise_kalk_dok_u_pripremi( cIdd )
@@ -120,10 +120,10 @@ FUNCTION kalk_stampa_dok_80( fBezNc )
             ENDIF
          ENDIF
 
-         kalk_unos_troskovi()
-         RptSeekRT()
+         kalk_set_troskovi_priv_vars_ntrosakx_nmarzax()
+         kalk_pozicioniraj_roba_tarifa_by_kalk_fields()
 
-         Tarifa( field->pkonto, field->idroba, @aPorezi )
+         get_tarifa_by_koncij_region_roba_idtarifa_2_3( field->pkonto, field->idroba, @aPorezi )
 
          aIPor := RacPorezeMP( aPorezi, field->mpc, field->mpcSaPP, field->nc )
 

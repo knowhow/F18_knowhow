@@ -67,13 +67,13 @@ FUNCTION kalk_stampa_dok_41()
       // formiraj varijable _....
       Scatter()
 
-      RptSeekRT()
+      kalk_pozicioniraj_roba_tarifa_by_kalk_fields()
 
       // izracunaj nMarza2
       MarzaMPR()
-      kalk_unos_troskovi()
+      kalk_set_troskovi_priv_vars_ntrosakx_nmarzax()
 
-      Tarifa( pkonto, idRoba, @aPorezi, _idtarifa )
+      get_tarifa_by_koncij_region_roba_idtarifa_2_3( pkonto, idRoba, @aPorezi, _idtarifa )
 
       // uracunaj i popust
       // racporezemp( matrica, mp_bez_pdv, mp_sa_pdv, nc )
@@ -395,7 +395,7 @@ FUNCTION PDVRekTar41( cIdFirma, cIdVd, cBrDok, nStr )
       SELECT tarifa
       HSEEK cIdtarifa
 
-      Tarifa( kalk_pripr->pkonto, kalk_pripr->idroba, @aPorezi, kalk_pripr->idtarifa )
+      get_tarifa_by_koncij_region_roba_idtarifa_2_3( kalk_pripr->pkonto, kalk_pripr->idroba, @aPorezi, kalk_pripr->idtarifa )
 
       SELECT kalk_pripr
 
@@ -410,7 +410,7 @@ FUNCTION PDVRekTar41( cIdFirma, cIdVd, cBrDok, nStr )
 
          set_pdv_public_vars()
 
-         Tarifa( kalk_pripr->pkonto, kalk_pripr->idRoba, @aPorezi, kalk_pripr->idtarifa )
+         get_tarifa_by_koncij_region_roba_idtarifa_2_3( kalk_pripr->pkonto, kalk_pripr->idRoba, @aPorezi, kalk_pripr->idtarifa )
 
          // mpc bez poreza sa uracunatim popustom
          nU1 += field->mpc * field->kolicina

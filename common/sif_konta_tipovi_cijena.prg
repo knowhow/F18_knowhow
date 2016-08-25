@@ -36,7 +36,7 @@ FUNCTION P_KonCij( CId, dx, dy )
 
 
    IF KONCIJ->( FieldPos( "IDRJ" ) <> 0 )
-      AAdd ( ImeKol, { "RJ", {|| idrj }, "IDRJ"} )
+      AAdd ( ImeKol, { "RJ", {|| idrj }, "IDRJ" } )
       AAdd ( ImeKol, { "Sint.RJ", {|| sidrj }, "SIDRJ" } )
       AAdd ( ImeKol, { "Banka", {|| banka }, "BANKA" } )
    ENDIF
@@ -76,9 +76,9 @@ FUNCTION P_KonCij( CId, dx, dy )
       AAdd ( ImeKol, { "Sif.dir.TOPS-a", {|| SIFTOPS }, "SIFTOPS", {|| .T. }, {|| .T. } } )
    ENDIF
 
-   IF KONCIJ->( FieldPos( "REGION" ) ) <> 0
-      AAdd ( ImeKol, { "Region", {|| Region }, "Region", {|| .T. }, {|| .T. } } )
-   ENDIF
+
+   AAdd ( ImeKol, { "Region", {|| Region }, "Region", {|| .T. }, {|| .T. } } )
+
 
    IF KONCIJ->( FieldPos( "SUFIKS" ) ) <> 0
       AAdd ( ImeKol, { "Sfx KALK", {|| sufiks }, "sufiks", {|| .T. }, {|| .T. } } )

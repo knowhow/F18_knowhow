@@ -88,7 +88,7 @@ STATIC FUNCTION valid_roba( cIdRoba, cIdTarifa, lNoviDokument, aPorezi )
    P_Roba( @cIdRoba )
 
    IF lNoviDokument
-      cTarifa := Tarifa( _IdKonto, cIdRoba, @aPorezi ) // nadji odgovarajucu tarifu regiona
+      cTarifa := get_tarifa_by_koncij_region_roba_idtarifa_2_3( _IdKonto, cIdRoba, @aPorezi ) // nadji odgovarajucu tarifu regiona
    ELSE
 
       SELECT TARIFA // za postojece dokumente uzmi u obzir unesenu tarifu
@@ -128,7 +128,7 @@ FUNCTION VRoba( lSay )
    ENDIF
 
    IF fNovi
-      cTarifa := Tarifa( _idkonto, _idroba, @aPorezi )
+      cTarifa := get_tarifa_by_koncij_region_roba_idtarifa_2_3( _idkonto, _idroba, @aPorezi )
    ELSE
       // za postojece dokumente uzmi u obzir unesenu tarifu
       SELECT TARIFA

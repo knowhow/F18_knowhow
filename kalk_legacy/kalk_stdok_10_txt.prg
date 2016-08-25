@@ -82,8 +82,8 @@ FUNCTION kalk_stampa_dok_10_txt()
 
    DO WHILE !Eof() .AND. cIdFirma == IdFirma .AND.  cBrDok == BrDok .AND. cIdVD == IdVD
       vise_kalk_dok_u_pripremi( cIdd )
-      RptSeekRT()
-      kalk_unos_troskovi()
+      kalk_pozicioniraj_roba_tarifa_by_kalk_fields()
+      kalk_set_troskovi_priv_vars_ntrosakx_nmarzax()
       print_nova_strana( 125, @nStr, 2 )
       IF gKalo == "1"
          SKol := field->Kolicina - field->GKolicina - field->GKolicin2

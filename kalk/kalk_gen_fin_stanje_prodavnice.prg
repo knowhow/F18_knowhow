@@ -266,7 +266,7 @@ FUNCTION kalk_gen_fin_stanje_prodavnice( vars )
 
          SELECT kalk
 
-         Tarifa( field->pkonto, field->idRoba, @aPorezi )
+         get_tarifa_by_koncij_region_roba_idtarifa_2_3( field->pkonto, field->idRoba, @aPorezi )
 
          set_pdv_public_vars()
 
@@ -319,7 +319,7 @@ FUNCTION kalk_gen_fin_stanje_prodavnice( vars )
 
          ELSEIF field->pu_i == "I"
 
-            Tarifa( field->pkonto, field->idRoba, @aPorezi )
+            get_tarifa_by_koncij_region_roba_idtarifa_2_3( field->pkonto, field->idRoba, @aPorezi )
 
             _mp_izlaz += DokMpc( field->idvd, aPorezi ) * field->gkolicin2
             _mp_izlaz_p += field->mpcsapp * field->gkolicin2

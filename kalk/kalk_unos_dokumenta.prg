@@ -1807,7 +1807,7 @@ FUNCTION kalk_set_diskont_mpc()
       HSEEK kalk_pripr->idroba
       SELECT TARIFA
       HSEEK ROBA->idtarifa
-      Tarifa( kalk_pripr->pKonto, kalk_pripr->idRoba, @aPorezi )
+      get_tarifa_by_koncij_region_roba_idtarifa_2_3( kalk_pripr->pKonto, kalk_pripr->idRoba, @aPorezi )
       SELECT kalk_pripr
       Scatter()
 

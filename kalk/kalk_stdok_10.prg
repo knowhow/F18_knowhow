@@ -70,8 +70,8 @@ FUNCTION kalk_stampa_dok_10()
 
    DO WHILE !Eof() .AND. cIdFirma == IdFirma .AND.  cBrDok == BrDok .AND. cIdVD == IdVD
       vise_kalk_dok_u_pripremi( cIdd )
-      RptSeekRT()
-      kalk_unos_troskovi()
+      kalk_pozicioniraj_roba_tarifa_by_kalk_fields()
+      kalk_set_troskovi_priv_vars_ntrosakx_nmarzax()
 
       check_nova_strana( bZagl, s_oPDF )
 

@@ -18,7 +18,7 @@ MEMVAR _Prevoz, _BankTr
  *     Proracun iznosa troskova pri unosu u kalk_pripremi
  */
 
-FUNCTION kalk_unos_troskovi()
+FUNCTION kalk_set_troskovi_priv_vars_ntrosakx_nmarzax()
 
    LOCAL nStvarnaKolicina := 0
 
@@ -29,13 +29,13 @@ FUNCTION kalk_unos_troskovi()
    ENDIF
 
 
-   IF TPrevoz == "%"
-      nPrevoz := Prevoz / 100 * FCj2
-   ELSEIF TPrevoz == "A"
-      nPrevoz := Prevoz
-   ELSEIF TPrevoz == "U"
+   IF field->TPrevoz == "%"
+      nPrevoz := field->Prevoz / 100 * field->FCj2
+   ELSEIF field->TPrevoz == "A"
+      nPrevoz := field->Prevoz
+   ELSEIF field->TPrevoz == "U"
       IF nStvarnaKolicina <> 0
-         nPrevoz := Prevoz / nStvarnaKolicina
+         nPrevoz := field->Prevoz / nStvarnaKolicina
       ELSE
          nPrevoz := 0
       ENDIF
@@ -43,13 +43,13 @@ FUNCTION kalk_unos_troskovi()
       nPrevoz := 0
    ENDIF
 
-   IF TCarDaz == "%"
-      nCarDaz := CarDaz / 100 * FCj2
-   ELSEIF TCarDaz == "A"
-      nCarDaz := CarDaz
-   ELSEIF TCarDaz == "U"
+   IF field->TCarDaz == "%"
+      nCarDaz := field->CarDaz / 100 * field->FCj2
+   ELSEIF field->TCarDaz == "A"
+      nCarDaz := field->CarDaz
+   ELSEIF field->TCarDaz == "U"
       IF nStvarnaKolicina <> 0
-         nCarDaz := CarDaz / nStvarnaKolicina
+         nCarDaz := field->CarDaz / nStvarnaKolicina
       ELSE
          nCarDaz := 0
       ENDIF
@@ -57,13 +57,13 @@ FUNCTION kalk_unos_troskovi()
       nCarDaz := 0
    ENDIF
 
-   IF TZavTr == "%"
-      nZavTr := ZavTr / 100 * FCj2
-   ELSEIF TZavTr == "A"
-      nZavTr := ZavTr
-   ELSEIF TZavTr == "U"
+   IF field->TZavTr == "%"
+      nZavTr := field->ZavTr / 100 * field->FCj2
+   ELSEIF field->TZavTr == "A"
+      nZavTr := field->ZavTr
+   ELSEIF field->TZavTr == "U"
       IF nStvarnaKolicina <> 0
-         nZavTr := ZavTr / nStvarnaKolicina
+         nZavTr := field->ZavTr / nStvarnaKolicina
       ELSE
          nZavTr := 0
       ENDIF
@@ -71,13 +71,13 @@ FUNCTION kalk_unos_troskovi()
       nZavTr := 0
    ENDIF
 
-   IF TBankTr == "%"
-      nBankTr := BankTr / 100 * FCj2
-   ELSEIF TBankTr == "A"
-      nBankTr := BankTr
-   ELSEIF TBankTr == "U"
+   IF field->TBankTr == "%"
+      nBankTr := field->BankTr / 100 * field->FCj2
+   ELSEIF field->TBankTr == "A"
+      nBankTr := field->BankTr
+   ELSEIF field->TBankTr == "U"
       IF nStvarnaKolicina <> 0
-         nBankTr := BankTr / nStvarnaKolicina
+         nBankTr := field->BankTr / nStvarnaKolicina
       ELSE
          nBankTr := 0
       ENDIF
@@ -85,13 +85,13 @@ FUNCTION kalk_unos_troskovi()
       nBankTr := 0
    ENDIF
 
-   IF TSpedTr == "%"
-      nSpedTr := SpedTr / 100 * FCj2
-   ELSEIF TSpedTr == "A"
-      nSpedTr := SpedTr
-   ELSEIF TSpedTr == "U"
+   IF field->TSpedTr == "%"
+      nSpedTr := field->SpedTr / 100 * field->FCj2
+   ELSEIF field->TSpedTr == "A"
+      nSpedTr := field->SpedTr
+   ELSEIF field->TSpedTr == "U"
       IF nStvarnaKolicina <> 0
-         nSpedTr := SpedTr / nStvarnaKolicina
+         nSpedTr := field->SpedTr / nStvarnaKolicina
       ELSE
          nSpedTr := 0
       ENDIF
@@ -99,40 +99,23 @@ FUNCTION kalk_unos_troskovi()
       nSpedTr := 0
    ENDIF
 
-   IF IdVD $ "14#94#15"   // izlaz po vp
-      IF roba->tip == "V"
-         nMarza := VPC - VPC * Rabatv / 100 -NC
-      ELSEIF roba->tip == "X"
-         nMarza := VPC * ( 1 -Rabatv / 100 ) -NC - mpcsapp * tarifa->opp / 100
-      ELSE
-         nMarza := VPC * ( 1 -Rabatv / 100 ) -NC
-      ENDIF
-   ELSEIF idvd == "24"  // usluge
-      nMarza := marza
-   ELSEIF idvd $ "11#12#13"
-      nMarza := VPC - FCJ
+   IF field->IdVD $ "14#94#15"   // izlaz po vp
+      nMarza := field->VPC * ( 1 -field->Rabatv / 100 ) -field->NC
+
+   ELSEIF field->idvd $ "11#12#13"
+      nMarza := field->VPC - field->FCJ
    ELSE
-      nMarza := VPC - NC
+      nMarza := field->VPC - field->NC
    ENDIF
 
-   IF ( idvd $ "11#12#13" )
-      IF ( roba->tip == "K" )
-         nMarza2 := MPC - VPC - nPrevoz
-      ELSEIF ( roba->tip == "X" )
-         MsgBeep( "nije odradjeno" )
-      ELSE
-         nMarza2 := MPC - VPC - nPrevoz
-      ENDIF
-   ELSEIF ( ( idvd $ "41#42#43#81" ) )
-      IF ( roba->tip == "V" )
-         nMarza2 := ( MPC - roba->VPC ) + roba->vpc - NC
-      ELSEIF ( roba->tip == "X" )
-         MsgBeep( "nije odradjeno" )
-      ELSE
-         nMarza2 := MPC - NC
-      ENDIF
+   IF ( field->idvd $ "11#12#13" )
+      nMarza2 := field->MPC - field->VPC - nPrevoz
+
+   ELSEIF ( ( field->idvd $ "41#42#43#81" ) )
+      nMarza2 := field->MPC - field->NC
+
    ELSE
-      nMarza2 := MPC - VPC
+      nMarza2 := field->MPC - field->VPC
    ENDIF
 
    RETURN .T.

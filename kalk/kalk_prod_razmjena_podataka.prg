@@ -174,7 +174,7 @@ FUNCTION fakt_kalk_prenos_11_11()
             REPLACE idvd WITH "11"
             REPLACE brdok WITH cBrKalk
             REPLACE datdok WITH dDatKalk
-            REPLACE idtarifa WITH Tarifa( cPKonto, fakt->idroba, @aPorezi )
+            REPLACE idtarifa WITH get_tarifa_by_koncij_region_roba_idtarifa_2_3( cPKonto, fakt->idroba, @aPorezi )
             REPLACE brfaktp WITH ""
             REPLACE datfaktp WITH fakt->datdok
             REPLACE idkonto   WITH cPKonto
@@ -357,7 +357,7 @@ FUNCTION prod_fa_ka_prenos_otpr()
                idvd WITH "11", ;   // izlazna faktura
             brdok WITH cBrKalk, ;
                datdok WITH dDatKalk, ;
-               idtarifa WITH Tarifa( cPKonto, fakt->idroba, @aPorezi ), ;
+               idtarifa WITH get_tarifa_by_koncij_region_roba_idtarifa_2_3( cPKonto, fakt->idroba, @aPorezi ), ;
                brfaktp WITH fakt->brdok, ;
                datfaktp WITH fakt->datdok, ;
                idkonto   WITH cPKonto, ;
@@ -524,7 +524,7 @@ FUNCTION FaKaPrenosRacunMP()
 
                PRIVATE aPorezi := {}
 
-               Tarifa( cIdKonto, fakt->idRoba, @aPorezi )
+               get_tarifa_by_koncij_region_roba_idtarifa_2_3( cIdKonto, fakt->idRoba, @aPorezi )
 
                nMPVBP := MpcBezPor( fakt->( kolicina * cijena ), aPorezi )
 
@@ -605,7 +605,7 @@ FUNCTION FaKaPrenosRacunMP()
 
                PRIVATE aPorezi := {}
 
-               Tarifa( cIdKonto, fakt->idRoba, @aPorezi )
+               get_tarifa_by_koncij_region_roba_idtarifa_2_3( cIdKonto, fakt->idRoba, @aPorezi )
 
                nMPVBP := MpcBezPor( fakt->( kolicina * cijena ), aPorezi )
 
@@ -885,7 +885,7 @@ FUNCTION FaKaPrenos_cm_u_prodavnicu()
             ENDIF
             cPKonto := cIdKonto
             PRIVATE aPorezi := {}
-            cIdTarifa := Tarifa( cPKonto, fakt->idroba, @aPorezi )
+            cIdTarifa := get_tarifa_by_koncij_region_roba_idtarifa_2_3( cPKonto, fakt->idroba, @aPorezi )
             SELECT kalk_pripr
             APPEND BLANK
             REPLACE idfirma WITH cIdFirma, ;
@@ -1319,7 +1319,7 @@ FUNCTION FaKaPrenosRacunMPParagon()
                SELECT kalk_pripr
 
                PRIVATE aPorezi := {}
-               Tarifa( cIdKonto, fakt->idRoba, @aPorezi )
+               get_tarifa_by_koncij_region_roba_idtarifa_2_3( cIdKonto, fakt->idRoba, @aPorezi )
                nMPVBP := MpcBezPor( fakt->( kolicina * cijena ), aPorezi )
 
                APPEND BLANK
@@ -1408,7 +1408,7 @@ FUNCTION FaKaPrenosRacunMPParagon()
 
                   PRIVATE aPorezi := {}
 
-                  Tarifa( cIdKonto, fakt->idRoba, @aPorezi )
+                  get_tarifa_by_koncij_region_roba_idtarifa_2_3( cIdKonto, fakt->idRoba, @aPorezi )
 
                   nMPVBP := MpcBezPor( fakt->( kolicina * cijena ), aPorezi )
 

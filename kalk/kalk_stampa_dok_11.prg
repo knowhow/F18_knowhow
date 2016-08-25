@@ -101,7 +101,7 @@ FUNCTION kalk_stampa_dok_11( fZaTops )
 
       vise_kalk_dok_u_pripremi( cIdd )
 
-      RptSeekRT()
+      kalk_pozicioniraj_roba_tarifa_by_kalk_fields()
 
       Scatter()
 
@@ -113,7 +113,7 @@ FUNCTION kalk_stampa_dok_11( fZaTops )
 
       set_pdv_public_vars()
 
-      Tarifa( field->pkonto, field->idRoba, @aPorezi, field->idtarifa )
+      get_tarifa_by_koncij_region_roba_idtarifa_2_3( field->pkonto, field->idRoba, @aPorezi, field->idtarifa )
       aIPor := RacPorezeMP( aPorezi, field->mpc, field->mpcSaPP, field->nc )
 
       nPor1 := aIPor[ 1 ]

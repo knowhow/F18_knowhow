@@ -18,7 +18,7 @@ FUNCTION kalk_stampa_dok_18()
    LOCAL nCol1 := nCol2 := 0, npom := 0, nCR := 0
 
    PRIVATE nPrevoz, nCarDaz, nZavTr, nBankTr, nSpedTr, nMarza, nMarza2
-   // iznosi troskova i marzi koji se izracunavaju u kalk_unos_troskovi()
+   // iznosi troskova i marzi koji se izracunavaju u kalk_set_troskovi_priv_vars_ntrosakx_nmarzax()
 
    IF cSeek != 'IZDOKS'  // stampa se vise dokumenata odjednom
       nStr := 1
@@ -68,11 +68,13 @@ FUNCTION kalk_stampa_dok_18()
 */
 
 
-      SELECT ROBA; HSEEK kalk_pripr->IdRoba
-      SELECT TARIFA; HSEEK kalk_pripr->IdTarifa
+      SELECT ROBA
+      HSEEK kalk_pripr->IdRoba
+      SELECT TARIFA
+      HSEEK kalk_pripr->IdTarifa
       SELECT kalk_pripr
 
-      kalk_unos_troskovi()
+      kalk_set_troskovi_priv_vars_ntrosakx_nmarzax()
 
       IF PRow() > page_length()
          FF

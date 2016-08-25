@@ -48,7 +48,7 @@ FUNCTION P_Tarifa( cid, dx, dy )
  * param: cIdTar - oznaka tarife, ovaj parametar je nil, ali se koristi za izvjestaje radi starih dokumenata (gdje je bilo promjene tarifa)
  */
 
-FUNCTION Tarifa( cIdKonto, cIdRoba, aPorezi, cIdTar )
+FUNCTION get_tarifa_by_koncij_region_roba_idtarifa_2_3( cIdKonto, cIdRoba, aPorezi, cIdTar )
 
    LOCAL cTarifa
    LOCAL lUsedRoba
@@ -74,19 +74,17 @@ FUNCTION Tarifa( cIdKonto, cIdRoba, aPorezi, cIdTar )
       IF !Found()
          cPolje := "IdTarifa"
       ELSE
-         IF FieldPos( "region" ) <> 0
-            IF ( koncij->region == "1" .OR. koncij->region == " " )
-               cPolje := "IdTarifa"
-            ELSEIF koncij->region == "2"
-               cPolje := "IdTarifa2"
-            ELSEIF koncij->region == "3"
-               cPolje := "IdTarifa3"
-            ELSE
-               cPolje := "IdTarifa"
-            ENDIF
+
+         IF ( koncij->region == "1" .OR. koncij->region == " " )
+            cPolje := "IdTarifa"
+         ELSEIF koncij->region == "2"
+            cPolje := "IdTarifa2"
+         ELSEIF koncij->region == "3"
+            cPolje := "IdTarifa3"
          ELSE
             cPolje := "IdTarifa"
          ENDIF
+
       ENDIF
    ENDIF
 
@@ -306,7 +304,7 @@ FUNCTION KorekTar()
 
             PRIVATE aPorezi := {}
             IF gModul == "KALK"
-               cTekIdTarifa := Tarifa( ( nKumArea )->PKONTO, ( nKumArea )->IdRoba, @aPorezi )
+               cTekIdTarifa := get_tarifa_by_koncij_region_roba_idtarifa_2_3( ( nKumArea )->PKONTO, ( nKumArea )->IdRoba, @aPorezi )
             ELSE
                cTekIdTarifa := roba->IdTarifa
             ENDIF

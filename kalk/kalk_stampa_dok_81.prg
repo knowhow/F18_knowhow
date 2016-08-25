@@ -22,7 +22,7 @@ FUNCTION StKalk81( fzatops )
    nMarza := nMarza2 := nPRUC := 0
    aPorezi := {}
 
-   // iznosi troskova i marzi koji se izracunavaju u kalk_unos_troskovi()
+   // iznosi troskova i marzi koji se izracunavaju u kalk_set_troskovi_priv_vars_ntrosakx_nmarzax()
 
    nStr := 0
    cIdPartner := IdPartner; cBrFaktP := BrFaktP; dDatFaktP := DatFaktP
@@ -106,7 +106,7 @@ FUNCTION StKalk81( fzatops )
     endif
 */
 
-      kalk_unos_troskovi()
+      kalk_set_troskovi_priv_vars_ntrosakx_nmarzax()
 
       SELECT ROBA
       HSEEK kalk_pripr->IdRoba
@@ -115,7 +115,7 @@ FUNCTION StKalk81( fzatops )
 
       SELECT kalk_pripr
 
-      Tarifa( field->pkonto, field->idRoba, @aPorezi )
+      get_tarifa_by_koncij_region_roba_idtarifa_2_3( field->pkonto, field->idRoba, @aPorezi )
       aIPor := RacPorezeMP( aPorezi, field->mpc, field->mpcSaPP, field->nc )
 
       nPor1 := aIPor[ 1 ]
@@ -319,7 +319,7 @@ FUNCTION kalk_stampa_dok_81()
    PRIVATE nPrevoz, nCarDaz, nZavTr, nBankTr, nSpedTr, nMarza, nMarza2, nPRUC
 
    nMarza := nMarza2 := nPRUC := 0
-   // iznosi troskova i marzi koji se izracunavaju u kalk_unos_troskovi()
+   // iznosi troskova i marzi koji se izracunavaju u kalk_set_troskovi_priv_vars_ntrosakx_nmarzax()
 
    nStr := 0
    cIdPartner := IdPartner
@@ -398,8 +398,8 @@ FUNCTION kalk_stampa_dok_81()
     endif
 */
 
-      kalk_unos_troskovi()
-      Tarifa( field->pkonto, field->idRoba, @aPorezi )
+      kalk_set_troskovi_priv_vars_ntrosakx_nmarzax()
+      get_tarifa_by_koncij_region_roba_idtarifa_2_3( field->pkonto, field->idRoba, @aPorezi )
 
       SELECT ROBA
       HSEEK kalk_pripr->IdRoba

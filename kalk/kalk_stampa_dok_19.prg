@@ -19,7 +19,7 @@ FUNCTION kalk_stampa_dok_19()
 
    PRIVATE nPrevoz, nCarDaz, nZavTr, nBankTr, nSpedTr, nMarza, nMarza2, aPorezi
 
-   // iznosi troskova i marzi koji se izracunavaju u kalk_unos_troskovi()
+   // iznosi troskova i marzi koji se izracunavaju u kalk_set_troskovi_priv_vars_ntrosakx_nmarzax()
 
    aPorezi := {}
    nStr := 0
@@ -59,11 +59,11 @@ FUNCTION kalk_stampa_dok_19()
    DO WHILE !Eof() .AND. cIdFirma == IdFirma .AND.  cBrDok == BrDok .AND. cIdVd == IdVd
 
       vise_kalk_dok_u_pripremi( cIdd )
-      RptSeekRT()
-      kalk_unos_troskovi()
+      kalk_pozicioniraj_roba_tarifa_by_kalk_fields()
+      kalk_set_troskovi_priv_vars_ntrosakx_nmarzax()
       set_pdv_public_vars()
 
-      Tarifa( kalk_pripr->pkonto, kalk_pripr->idroba, @aPorezi )
+      get_tarifa_by_koncij_region_roba_idtarifa_2_3( kalk_pripr->pkonto, kalk_pripr->idroba, @aPorezi )
 
       // nova cijena
       nMpcSaPP1 := field->mpcSaPP + field->fcj
@@ -161,7 +161,7 @@ FUNCTION Obraz19()
    LOCAL nCol1 := nCol2 := 0, npom := 0
 
    PRIVATE nPrevoz, nCarDaz, nZavTr, nBankTr, nSpedTr, nMarza, nMarza2
-   // iznosi troskova i marzi koji se izracunavaju u kalk_unos_troskovi()
+   // iznosi troskova i marzi koji se izracunavaju u kalk_set_troskovi_priv_vars_ntrosakx_nmarzax()
 
    nStr := 0
    cIdPartner := IdPartner

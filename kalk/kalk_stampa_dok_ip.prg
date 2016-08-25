@@ -19,7 +19,7 @@ FUNCTION kalk_stampa_dok_ip( fZaTops )
 
    PRIVATE nPrevoz, nCarDaz, nZavTr, nBankTr, nSpedTr, nMarza, nMarza2, aPorezi
 
-   // iznosi troskova i marzi koji se izracunavaju u kalk_unos_troskovi()
+   // iznosi troskova i marzi koji se izracunavaju u kalk_set_troskovi_priv_vars_ntrosakx_nmarzax()
 
    aPorezi := {}
    nStr := 0
@@ -95,7 +95,7 @@ FUNCTION kalk_stampa_dok_ip( fZaTops )
          Msg( "Unutar kalkulacije se pojavilo vise dokumenata !", 6 )
       ENDIF
 */
-      kalk_unos_troskovi()
+      kalk_set_troskovi_priv_vars_ntrosakx_nmarzax()
 
       SELECT ROBA
       HSEEK kalk_pripr->IdRoba
@@ -243,7 +243,7 @@ FUNCTION StObrazSL()
 
    PRIVATE nPrevoz, nCarDaz, nZavTr, nBankTr, nSpedTr, nMarza, nMarza2
 
-   // iznosi troskova i marzi koji se izracunavaju u kalk_unos_troskovi()
+   // iznosi troskova i marzi koji se izracunavaju u kalk_set_troskovi_priv_vars_ntrosakx_nmarzax()
 
    nStr := 0
    cIdPartner := IdPartner
@@ -280,7 +280,7 @@ FUNCTION StObrazSL()
          Msg( "Unutar kalkulacije se pojavilo vise dokumenata !", 6 )
       ENDIF
 */
-      kalk_unos_troskovi()
+      kalk_set_troskovi_priv_vars_ntrosakx_nmarzax()
 
       SELECT ROBA; HSEEK kalk_pripr->IdRoba
       SELECT TARIFA; HSEEK kalk_pripr->IdTarifa

@@ -11,7 +11,7 @@
 
 #include "f18.ch"
 
-/* kalk_kontiranje_gen_finmat()
+/*
  *   param: fstara - .f. znaci poziv iz tabele pripreme, .t. radi se o azuriranoj kalkulaciji pa se prvo getuje broj dokumenta (cIdFirma,cIdVD,cBrdok)
  *     Pravi rekapitulaciju kalkulacija a ako je ulazni parametar fstara==.t. poziva se i kontiranje dokumenta
  */
@@ -20,7 +20,7 @@ FUNCTION kalk_kontiranje_gen_finmat()
 
    PARAMETERS fStara, cIdFirma, cIdVd, cBrDok, lAuto
 
-
+   LOCAL nPom
    LOCAL fPrvi
    LOCAL n1 := n2 := n3 := n4 := n5 := n6 := n7 := n8 := n9 := na := nb := 0
    LOCAL nTot1 := nTot2 := nTot3 := nTot4 := nTot5 := nTot6 := nTot7 := nTot8 := nTot9 := nTota := nTotb := 0
@@ -39,7 +39,7 @@ FUNCTION kalk_kontiranje_gen_finmat()
    aPorezi := {}
 
    IF PCount() == 0
-      fstara := .F.
+      fStara := .F.
    ENDIF
 
    IF lAuto == nil
@@ -207,13 +207,13 @@ FUNCTION kalk_kontiranje_gen_finmat()
 
             ENDIF
 */
-            // iznosi troskova koji se izracunavaju u kalk_unos_troskovi()
+            // iznosi troskova koji se izracunavaju u kalk_set_troskovi_priv_vars_ntrosakx_nmarzax()
             PRIVATE nPrevoz, nCarDaz, nZavTr, nBankTr, nSpedTr, nMarza, nMarza2
 
             nFV := FCj * Kolicina
 
             IF gKalo == "1"
-               nKolicina := kalk_pripr->(Kolicina - GKolicina - GKolicin2)
+               nKolicina := kalk_pripr->( Kolicina - GKolicina - GKolicin2 )
             ELSE
                nKolicina := kalk_pripr->Kolicina
             ENDIF
@@ -226,8 +226,8 @@ FUNCTION kalk_kontiranje_gen_finmat()
 
             SELECT KALK_PRIPR
 
-            Tarifa( pkonto, idroba, @aPorezi )
-            kalk_unos_troskovi()
+            get_tarifa_by_koncij_region_roba_idtarifa_2_3( pkonto, idroba, @aPorezi )
+            kalk_set_troskovi_priv_vars_ntrosakx_nmarzax()
             set_pdv_public_vars()
 
 
@@ -304,12 +304,12 @@ FUNCTION kalk_kontiranje_gen_finmat()
                REPLACE   Rabat     WITH Round( kalk_pripr->( nFV * Rabat / 100 ), nZaokruzenje )
             ENDIF
 
-            IF idvd == "IP"
+            IF field->idvd == "IP"
                REPLACE  GKV2  WITH Round( kalk_pripr->( ( Gkolicina - Kolicina ) * MPcSAPP ), nZaokruzenje ), ;
                   GKol2 WITH kalk_pripr->( Gkolicina - Kolicina )
             ENDIF
 
-            IF idvd $ "14#94"
+            IF field->idvd $ "14#94"
                REPLACE  MPVSaPP   WITH  kalk_pripr->( VPC * ( 1 -RabatV / 100 ) * ( Kolicina - GKolicina - GKolicin2 ) )
             ENDIF
 

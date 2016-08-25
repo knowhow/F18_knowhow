@@ -34,8 +34,8 @@ FUNCTION parsiraj_sql( cFieldName, cConditionParam, lNot )
    IF lNot == NIL
       lNot := .F.
    ENDIF
-    AltD()
-   IF Len( cConditionParam ) == 0
+
+   IF Len( cConditionParam ) == 0 // "ako se proslijedi prazan string ''", ali ako se proslijedi '      ' to je validan partner u suban kartici
       lPrazno := .T.
    ENDIF
 
@@ -64,10 +64,10 @@ FUNCTION parsiraj_sql( cFieldName, cConditionParam, lNot )
 
    NEXT
 
-   _ret := Right( _ret, Len( _ret ) - 5 )
+   _ret := Right( _ret, Len( _ret ) - 5 ) // " OR  Idkonto LIKE '2110%'" => "Idkonto LIKE '2110%'"
 
-   IF " OR " $ _ret
-      _ret := " ( " + _ret + " ) "
+   IF " OR " $ _ret  // "Idkonto LIKE '2110%' OR  IdPartner LIKE '12589%'" => "(Idkonto LIKE '2110%' OR  IdPartner LIKE '12589%')"
+      _ret := " (" + _ret + ") "
    ENDIF
 
    IF Empty( _ret )
@@ -115,8 +115,7 @@ FUNCTION parsiraj_sql_date_interval( cFieldName, date1, date2 )
       ENDIF
 
    ELSEIF PCount() <= 1
-      _ret := "TRUE"
-      // samo jedan datumski uslov
+      _ret := "TRUE" // samo jedan datumski uslov
    ELSE
       _ret := cFieldName + "::char(20) LIKE " + sql_quote( _sql_date_str( date1 ) + "%" )
    ENDIF

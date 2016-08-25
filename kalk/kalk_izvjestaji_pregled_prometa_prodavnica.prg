@@ -12,7 +12,7 @@
 #include "f18.ch"
 
 
-
+/*
 #define NAZIV_PROD_LEN 15
 
 
@@ -501,7 +501,7 @@ STATIC FUNCTION AFPos( cIdKonto, cVisaNiza, nCijena, nCijenaBp, nKolicina )
    SELECT pos
 
    RETURN
-// }
+
 
 STATIC FUNCTION ScanPromVp( dDatumOd, dDatumDo, cTKumPath )
 
@@ -569,3 +569,5 @@ STATIC FUNCTION ARFPromVp( cIdKonto, nPolog01, nPolog02, nPolog03, nPolog04, nPo
 
    RETURN
 // }
+
+*/

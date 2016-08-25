@@ -188,9 +188,9 @@ FUNCTION CreTblRek2()
 
 /* CrePPProd()
  *     Kreiraj tabelu kalk_ppprod
- *  \sa tbl_kalk_ppprod
+ *  sa tbl_kalk_ppprod
  *
- */
+
 
 FUNCTION CrePPProd()
 
@@ -237,7 +237,7 @@ FUNCTION CrePPProd()
    INDEX ON idkonto TO "konto"
 
    RETURN
-
+*/
 
 
 FUNCTION GenRekap1( aUsl1, aUsl2, aUslR, cKartica, cVarijanta, cKesiraj, fSMark,  cK1, cK7, cK9, cIdKPovrata, aUslSez )

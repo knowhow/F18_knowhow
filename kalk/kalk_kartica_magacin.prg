@@ -559,7 +559,13 @@ FUNCTION kalk_kartica_magacin()
                IF Round( nSredNC, 4 ) == 0
                   nOdstupanje := 0
                ELSE
-                  nOdstupanje := Round( ( nSredNc - nNc ) / nSredNc * 100, 0 )
+                  nOdstupanje := Abs( Round( ( nSredNc - nNc ) / nSredNc * 100, 0 ) )
+               ENDIF
+
+               IF Round( nNc, 4 ) == 0 // a nStanje <> 0
+                  nOdstupanje := 9999
+               ELSE
+                  nOdstupanje := Max( Abs( Round( ( nSredNc - nNc ) / nNc * 100, 0 ) ), nOdstupanje )
                ENDIF
             ENDIF
 

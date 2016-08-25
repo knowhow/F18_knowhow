@@ -68,28 +68,30 @@ FUNCTION standardna_stopa_marze( nSet )
 
 FUNCTION korekcija_nabavne_cijene_sa_zadnjom_ulaznom( nKolicina, nZadnjaUlaznaNC, nSrednjaNabavnaCijena )
 
-   LOCAL nTmp, nOdst
+   LOCAL nOdst
    LOCAL nTmp_n_stanje, nTmp_n_nv, nTmp_s_nv
 
-   IF !(  prag_odstupanja_nc_sumnjiv() > 0 .AND. nSrednjaNabavnaCijena >= 0 .AND. nZadnjaUlaznaNC > 0 )
-      // koriguj samo akoj je prag odstupanja > 0, nc <>0, i zadnjanc <> 0
+   IF Round( nSrednjaNabavnaCijena, 4 ) == 0 .AND. Round( nZadnjaUlaznaNC, 4 ) > 0
+      nSrednjaNabavnaCijena := nZadnjaUlaznaNC
       RETURN nSrednjaNabavnaCijena
    ENDIF
 
-   nTmp := Round( nSrednjaNabavnaCijena, 4 ) - Round( nZadnjaUlaznaNC, 4 )
-   nOdst := ( nTmp / Round( nZadnjaUlaznaNC, 4 ) ) * 100
+   IF  prag_odstupanja_nc_sumnjiv() == 0 .OR. Round( nZadnjaUlaznaNC, 4 ) <= 0
+      RETURN nSrednjaNabavnaCijena
+   ENDIF
 
-   IF ( Abs( nOdst ) > prag_odstupanja_nc_sumnjiv() ) .OR. ( Round( nSrednjaNabavnaCijena, 4 ) == 0 ) // ako je srednja nabavna cijena 0 takodje koriguj
-
-      IF ! Round( nSrednjaNabavnaCijena, 4 ) == 0
-
-         MsgBeep( "Odstupanje #" + AllTrim( Str( Abs( nOdst ) ) ) + " %" + "#" + ;
-            "artikal: " + AllTrim( _idroba ) + " " + PadR( roba->naz, 15 ) + ;
-            "# srednja.nc:" + AllTrim( Str( nSrednjaNabavnaCijena, 12, 2 ) ) + ", zadnji ulaz nc:" + AllTrim( Str( nZadnjaUlaznaNC, 12, 2 ) ), .F. )
-      ENDIF
+   nOdst := ( Round( nSrednjaNabavnaCijena, 4 ) - Round( nZadnjaUlaznaNC, 4 ) ) / ;
+      Min( Round( nZadnjaUlaznaNC, 4 ), Round( nSrednjaNabavnaCijena, 4 )  ) * 100
 
 
-      IF ( Round( nSrednjaNabavnaCijena, 4 ) == 0 ) .OR. Pitanje(, "Napraviti korekciju NC na zadnju ulaznu (D/N)?", "N" ) == "D"
+
+   IF Abs( nOdst ) > prag_odstupanja_nc_sumnjiv()
+
+      MsgBeep( "Odstupanje #" + AllTrim( Str( Abs( nOdst ) ) ) + " %" + "#" + ;
+         "artikal: " + AllTrim( _idroba ) + " " + PadR( roba->naz, 15 ) + ;
+         "# srednja.nc:" + AllTrim( Str( nSrednjaNabavnaCijena, 12, 2 ) ) + ", zadnji ulaz nc:" + AllTrim( Str( nZadnjaUlaznaNC, 12, 2 ) ), .F. )
+
+      IF Pitanje(, "Korigovati NC na zadnju ulaznu (D/N)?", "N" ) == "D"
          nSrednjaNabavnaCijena := nZadnjaUlaznaNC
       ENDIF
    ENDIF
@@ -636,7 +638,7 @@ FUNCTION PrerRab()
 
 FUNCTION kalk_valid_kolicina_mag()
 
-   IF (( _nc < 0 ) .AND. !( _idvd $ "11#12#13#22" )) .OR. ( _fcj < 0 .AND. _idvd $ "11#12#13#22" )
+   IF ( ( _nc < 0 ) .AND. !( _idvd $ "11#12#13#22" ) ) .OR. ( _fcj < 0 .AND. _idvd $ "11#12#13#22" )
       // kod 11-ke se unosi fcj
       Msg( _idroba + " Nabavna cijena manja od 0 ! STOP!" )
       error_bar( "kalk_mag", _mkonto + "/" + _idroba + " Nabavna cijena manja od 0 !" )

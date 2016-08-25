@@ -13,17 +13,11 @@
 
 
 
-// -------------------------------------------------------------
-// realizacija prodavnice  41-fakture maloprodaje
-// 42-gotovina
-// -------------------------------------------------------------
-
 FUNCTION kalk_get_1_41()
 
    LOCAL lRet
 
-   pIzgSt := .F.
-   // izgenerisane stavke jos ne postoje
+   pIzgSt := .F. // izgenerisane stavke jos ne postoje
    PRIVATE aPorezi := {}
 
    IF fNovi
@@ -87,14 +81,14 @@ FUNCTION kalk_get_1_41()
    HSEEK _IdTarifa
    SELECT koncij
 
-   SEEK Trim( _idkonto )
+   SEEK _idkonto
    SELECT kalk_pripr  // napuni tarifu
 
    _PKonto := _Idkonto
 
 
-   //check_datum_posljednje_kalkulacije()
-   //kalk_dat_poslj_promjene_prod()
+   // check_datum_posljednje_kalkulacije()
+   // kalk_dat_poslj_promjene_prod()
 
    _GKolicina := 0
    _GKolicin2 := 0
@@ -127,8 +121,8 @@ FUNCTION kalk_get_1_41()
 
 
    IF roba->( FieldPos( "PLC" ) ) <> 0
-      // stavi plansku cijenu
-      _vpc := roba->plc
+
+      _vpc := roba->plc // stavi plansku cijenu
    ENDIF
 
    set_pdv_public_vars()
@@ -148,9 +142,9 @@ FUNCTION kalk_get_1_41()
          IF !Empty( gMetodaNC )
             nc1 := 0
             nc2 := 0
-            //MsgO( "Racunam stanje u prodavnici" )
+
             kalk_get_nabavna_prod( _idfirma, _idroba, _idkonto, @nKolS, @nKolZN, @nc1, @nc2 )
-            //MsgC()
+
             IF dDatNab > _DatDok
                Beep( 1 )
                Msg( "Datum nabavke je " + DToC( dDatNab ), 4 )
@@ -174,11 +168,9 @@ FUNCTION kalk_get_1_41()
 
    ENDIF
 
-   IF IsPdv()
-      @ m_x + 17, m_y + 2 SAY "PRODAJNA CJENA  (PC):"
-   ELSE
-      @ m_x + 17, m_y + 2 SAY "MALOPROD. CJENA (MPC):"
-   ENDIF
+
+   @ m_x + 17, m_y + 2 SAY "PRODAJNA CJENA  (PC):"
+
 
    @ m_x + 17, m_y + 50 GET _mpc PICT PicDEM WHEN W_MPC_( IdVd, .F., @aPorezi ) VALID V_Mpc_( _IdVd, .F., @aPorezi )
 
@@ -189,11 +181,7 @@ FUNCTION kalk_get_1_41()
 
    SayPorezi( 19 )
 
-   IF IsPDV()
-      @ m_x + 20, m_y + 2 SAY "MPC SA PDV    :"
-   ELSE
-      @ m_x + 20, m_y + 2 SAY "MPC SA POREZOM:"
-   ENDIF
+   @ m_x + 20, m_y + 2 SAY "MPC SA PDV    :"
 
    @ m_x + 20, m_y + 50 GET _mpcsapp PICT PicDEM VALID V_MpcSaPP_( _IdVd, .F., @aPorezi, .T. )
 
@@ -201,12 +189,12 @@ FUNCTION kalk_get_1_41()
 
    ESC_RETURN K_ESC
 
-   // izlaz iz prodavnice
+
    _PKonto := _Idkonto
-   _PU_I := "5"
+   _PU_I := "5" // izlaz iz prodavnice
    nStrana := 2
 
-   FillIzgStavke( pIzgSt )
+   kalk_puni_polja_za_izgenerisane_stavke( pIzgSt )
 
    RETURN LastKey()
 

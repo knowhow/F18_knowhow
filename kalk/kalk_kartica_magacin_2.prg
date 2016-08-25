@@ -13,11 +13,11 @@
 
 
 
-/* KM2()
+/* kalk_kartica_magacin_pomoc_unos_14()
  *  Magacinska kartica kao pomoc pri unosu 14-ke
  */
 
-FUNCTION KM2()
+FUNCTION kalk_kartica_magacin_pomoc_unos_14()
 
    LOCAL nR1, nR2, nR3
    PRIVATE GetList := {}

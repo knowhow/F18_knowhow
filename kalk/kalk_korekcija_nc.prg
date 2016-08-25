@@ -99,7 +99,8 @@ FUNCTION TraziRbr( cKljuc )
 
 
    LOCAL cVrati := "  1"
-   SELECT kalk_pripr; GO TOP
+   SELECT kalk_pripr
+   GO TOP
    SEEK cKljuc
    SKIP -1
    IF idfirma + idvd + brdok == Left( cKljuc, 12 )

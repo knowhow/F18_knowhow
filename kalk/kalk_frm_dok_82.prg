@@ -21,7 +21,7 @@ FUNCTION Get1_82()
    // izgenerisane stavke jos ne postoje
    // private cisMarza:=0
 
-   SET KEY K_ALT_K TO KM2()
+   SET KEY K_ALT_K TO kalk_kartica_magacin_pomoc_unos_14()
 
    IF nRbr == 1 .OR. !fnovi
       @  m_x + 7, m_y + 2   SAY "Faktura Broj:" GET _BrFaktP

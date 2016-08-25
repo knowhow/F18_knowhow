@@ -154,6 +154,6 @@ FUNCTION kalk_get_1_12()
    _MKonto := _Idkonto2;_MU_I := "1"
    _PKonto := _Idkonto; _PU_I := "5"
 
-   FillIzgStavke( pIzgSt )
+   kalk_puni_polja_za_izgenerisane_stavke( pIzgSt )
 
    RETURN LastKey()

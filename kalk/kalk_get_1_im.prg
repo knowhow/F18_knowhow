@@ -20,15 +20,15 @@ FUNCTION kalk_get_1_im()
    _DatFaktP := _datdok
 
    @ m_x + 8, m_y + 2  SAY "Konto koji zaduzuje" GET _IdKonto VALID  P_Konto( @_IdKonto, 21, 5 ) PICT "@!"
-   //IF gNW <> "X"
-  //    @ m_x + 8, m_y + 35  SAY "Zaduzuje: "   GET _IdZaduz  PICT "@!" VALID Empty( _idZaduz ) .OR. P_Firma( @_IdZaduz, 21, 5 )
-   //ENDIF
+   // IF gNW <> "X"
+   // @ m_x + 8, m_y + 35  SAY "Zaduzuje: "   GET _IdZaduz  PICT "@!" VALID Empty( _idZaduz ) .OR. P_Firma( @_IdZaduz, 21, 5 )
+   // ENDIF
    READ
    ESC_RETURN K_ESC
 
    @ m_x + 10, m_y + 66 SAY "Tarif.br->"
 
-kalk_pripr_form_get_roba( @_idRoba, @_idTarifa, _IdVd, fNovi, _kord_x, m_y + 2, @aPorezi )
+   kalk_pripr_form_get_roba( @_idRoba, @_idTarifa, _IdVd, fNovi, _kord_x, m_y + 2, @aPorezi )
 /*
    IF roba_barkod_pri_unosu()
       @ m_x + 11, m_y + 2 SAY "Artikal  " GET _IdRoba PICT "@!S10" WHEN {|| _idRoba := PadR( _idRoba, Val( --gDuzSifIni ) ), .T. } VALID {|| P_Roba( @_IdRoba ), say_from_valid( 11, 23, Trim( Left( roba->naz, 40 ) ) + " (" + ROBA->jmj + ")", 40 ), _IdTarifa := iif( fNovi, ROBA->idtarifa, _IdTarifa ), .T. }
@@ -48,7 +48,7 @@ kalk_pripr_form_get_roba( @_idRoba, @_idTarifa, _IdVd, fNovi, _kord_x, m_y + 2, 
    HSEEK _IdTarifa
    SELECT kalk_pripr
 
-   //DuplRoba()
+   // DuplRoba()
    @ m_x + 13, m_y + 2   SAY "Knjizna kolicina " GET _GKolicina PICTURE PicKol WHEN {|| iif( gMetodaNC == " ", .T., .F. ) }
    @ m_x + 13, Col() + 2 SAY "Popisana Kolicina" GET _Kolicina PICTURE PicKol
    @ m_x + 15, m_y + 2    SAY "CIJENA" GET _vpc PICT picdem

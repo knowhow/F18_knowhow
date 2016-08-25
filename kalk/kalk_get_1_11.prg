@@ -224,7 +224,6 @@ FUNCTION kalk_get_1_11()
 
    nStrana := 2
 
-   FillIzgStavke( pIzgSt )
+   kalk_puni_polja_za_izgenerisane_stavke( pIzgSt )
 
    RETURN LastKey()
-// }

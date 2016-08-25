@@ -26,7 +26,6 @@
 FUNCTION kalk_get_nabavna_mag( cIdFirma, cIdRoba, cIdKonto, nKolicina, nKolZN, nNC, nSrednjaNabavnaCijena, dDatNab )
 
    LOCAL nPom
-   LOCAL fProso
    LOCAL nIzlNV
    LOCAL nIzlKol
    LOCAL nUlNV

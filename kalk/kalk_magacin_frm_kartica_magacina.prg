@@ -62,4 +62,4 @@ FUNCTION KMag()
 
    SELECT kalk_pripr
 
-   RETURN
+   RETURN .T.

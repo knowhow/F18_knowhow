@@ -13,7 +13,7 @@
 
 FUNCTION kalk_get_nabavna_prod( cIdFirma, cIdroba, cIdkonto, nKolicina, nKolZN, nNC, nSrednjaNabavnaCijena, dDatNab )
 
-   LOCAL nPom, fProso
+   LOCAL nPom
    LOCAL nIzlNV
    LOCAL nIzlKol
    LOCAL nUlNV

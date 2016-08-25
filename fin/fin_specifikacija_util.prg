@@ -286,6 +286,7 @@ FUNCTION PrikK1K4( lK )
       ENDIF
       ? "Radna jedinica: " + cIdRj + " - " + cRjNaz
    ENDIF
+
    IF lK
       IF _fin_params[ "fin_k1" ] .AND. !Len( ck1 ) == 0
          IF !fproso
@@ -345,4 +346,4 @@ FUNCTION PrikK1K4( lK )
       ?
    ENDIF
 
-   RETURN
+   RETURN .T.

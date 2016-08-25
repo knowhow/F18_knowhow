@@ -19,7 +19,7 @@ FUNCTION kalk_get_1_14()
 
    pIzgSt := .F.
 
-   SET KEY K_ALT_K TO KM2()
+   SET KEY K_ALT_K TO kalk_kartica_magacin_pomoc_unos_14()
 
    IF nRbr == 1 .AND. fnovi
       _DatFaktP := _datdok
@@ -118,9 +118,9 @@ FUNCTION kalk_get_1_14()
    IF _TBankTr <> "X"   // ako je X onda su stavke vec izgenerisane
 
       IF !Empty( gMetodaNC )
-         MsgO( "Računam stanje na skladištu" )
+
          kalk_get_nabavna_mag( _idfirma, _idroba, _idkonto2, @nKolS, @nKolZN, @nc1, @nc2, @dDatNab )
-         MsgC()
+         
          @ m_x + 12, m_y + 30   SAY "Ukupno na stanju "
          @ m_x + 12, Col() + 2 SAY nKols PICT pickol
       ENDIF

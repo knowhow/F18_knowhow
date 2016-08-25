@@ -126,7 +126,7 @@ FUNCTION kalk_get_1_10()
 
    _MKonto := _Idkonto
    _MU_I := "1"
-   //check_datum_posljednje_kalkulacije()
+   // check_datum_posljednje_kalkulacije()
 
    SELECT TARIFA
    HSEEK _IdTarifa
@@ -460,9 +460,9 @@ FUNCTION V_kol10()
       dDatNab := CToD( "" )
 
       IF !Empty( gMetodaNC )
-         MsgO( "Računam stanje na skladištu" )
+
          kalk_get_nabavna_mag( _idfirma, _idroba, _mkonto, @nKolS, @nKolZN, @nC1, @nC2, @dDatNab )
-         MsgC()
+
          @ m_x + 12, m_y + 30   SAY "Ukupno na stanju "; @ m_x + 12, Col() + 2 SAY nKols PICT pickol
       ENDIF
 

@@ -78,7 +78,8 @@ FUNCTION Iz12u97()
    @ m_x + 4, m_y + 2 SAY "Dokument koji se formira (96/97)" GET cIdVdI VALID cIdVdI $ "96#97"
    @ m_x + 5, m_y + 2 SAY "Datum dokumenta koji se formira" GET dDatDok VALID !Empty( dDatDok )
    @ m_x + 7, m_y + 2 SAY "Prenijeti na konto (prazno-ne prenositi)" GET cKontoSklad
-   READ; ESC_BCR
+   READ
+   ESC_BCR
    BoxC()
 
    // utvrdimo broj nove kalkulacije
@@ -441,7 +442,7 @@ FUNCTION KorekPC()
 
 
    cBrNiv :=  kalk_get_next_broj_v5( gFirma, "18", NIL )
-   
+
    find_kalk_by_mkonto_idroba( gFirma, gMagac )
    GO TOP
    DO WHILE !Eof() .AND. idfirma + mkonto = gFirma + cMagac

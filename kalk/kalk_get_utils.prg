@@ -150,12 +150,12 @@ FUNCTION SayPorezi( nRow )
 
 
 
-/* FillIzgStavke(pIzgStavke)
+/* 
  *     Puni polja izgenerisane stavke
  *   param: pIzgStavke - .f. ne puni, .t. puni
  */
 
-FUNCTION FillIzgStavke( pIzgStavke )
+FUNCTION kalk_puni_polja_za_izgenerisane_stavke( pIzgStavke )
 
 
    IF pIzgSt .AND. _kolicina > 0 .AND. LastKey() <> K_ESC // izgenerisane stavke postoje

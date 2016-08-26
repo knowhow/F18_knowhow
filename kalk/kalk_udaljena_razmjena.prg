@@ -30,6 +30,7 @@ FUNCTION kalk_udaljena_razmjena_podataka()
 
    AAdd( _opc, "1. => kalk export podataka               " )
    AAdd( _opcexe, {|| _kalk_export() } )
+
    AAdd( _opc, "2. <= kalk import podataka    " )
    AAdd( _opcexe, {|| _kalk_import() } )
 
@@ -67,8 +68,8 @@ STATIC FUNCTION _kalk_export()
    // arhiviraj podatke
    IF _exported_rec > 0
 
-      // kompresuj ih u zip fajl za prenos
-      _error := _compress_files( "kalk", __export_dbf_path )
+
+      _error := _compress_files( "kalk", __export_dbf_path ) // kompresuj ih u zip fajl za prenos
 
       // sve u redu
       IF _error == 0
@@ -89,8 +90,6 @@ STATIC FUNCTION _kalk_export()
    IF ( _exported_rec > 0 )
 
       MsgBeep( "Exportovao " + AllTrim( Str( _exported_rec ) ) + " dokumenta." )
-
-      // printaj izvjestaj
       print_imp_exp_report( _a_data )
 
    ENDIF
@@ -135,7 +134,6 @@ STATIC FUNCTION _kalk_import()
    ENDIF
 
    IF !import_file_exist( _imp_file )
-      // nema fajla za import ?
       MsgBeep( "import fajl ne postoji !? prekidam operaciju" )
       RETURN .F.
    ENDIF
@@ -568,7 +566,6 @@ STATIC FUNCTION kalk_import_podataka( vars, a_details )
    ENDIF
 
    kalk_o_exp_tabele( __import_dbf_path, _fmk_import )
-
    kalk_o_tabele()
 
    SELECT e_doks
@@ -591,6 +588,7 @@ STATIC FUNCTION kalk_import_podataka( vars, a_details )
       select_o_kalk_pript()
       my_flock()
       my_dbf_zap()
+
    ELSE
       o_kalk()   // za azuriranje
       o_kalk_doks() // za azuriranje
@@ -784,6 +782,7 @@ STATIC FUNCTION kalk_import_podataka( vars, a_details )
       SELECT pript
       my_unlock()
       kalk_imp_obradi_sve_dokumente_iz_pript( 0, .F., .T. ) // .F. - ne stampati, .T. - ostaviti broj dokumenta koji stoji u pript
+
    ELSE  // dokumenti idu direktno na stanje
       IF lOk
          hParams := hb_Hash()

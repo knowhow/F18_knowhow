@@ -20,6 +20,7 @@ FUNCTION kalk_get_next_broj_v5( cIdFirma, cIdVd, cIdKonto )
 
    LOCAL cSufiks := Space( 3 )
 
+   AltD()
    IF is_brojac_po_kontima() .AND. cIdKonto != NIL
       cSufiks := kalk_sufiks_brdok( cIdKonto )
    ENDIF
@@ -84,6 +85,7 @@ STATIC FUNCTION kalk_sljedeci_brdok( cTipKalk, cIdFirma, cSufiks )
       nLenGlavni := 8 - nLenSufiks // duzina sifre se mora prilagoditi sufiksu
    ENDIF
 
+   AltD()
    IF is_brojac_po_kontima() .AND. !Empty( cSufiks ) // samo trazi ako ima sufiks npr '/T '
       find_kalk_doks_za_tip_sufix_zadnji_broj( cIdFirma, cTipKalk, cSufiks )
    ELSE // ako je sufiks prazan, onda se samo gleda tip
@@ -168,6 +170,21 @@ FUNCTION kalk_fix_brdok( cBrKalk )
    ENDIF
 
    RETURN cBrKalk
+
+
+
+
+FUNCTION kalk_broj_ima_sufiks( cBrDok )
+
+   IF "/" $ cBrdok
+      RETURN .T.
+   ENDIF
+
+   IF "-" $ cBrdok
+      RETURN .T.
+   ENDIF
+
+   RETURN .F.
 
 /*
     uvecava broj kalkulacije sa stepenom uvecanja nUvecaj
@@ -338,9 +355,7 @@ FUNCTION kalk_sufiks_brdok( cIdKonto )
    SEEK cIdKonto
 
    IF Found()
-      IF FieldPos( "sufiks" ) <> 0
-         cSufiks := field->sufiks
-      ENDIF
+      cSufiks := field->sufiks
    ENDIF
    PopWa()
 

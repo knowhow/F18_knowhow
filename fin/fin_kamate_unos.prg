@@ -25,8 +25,9 @@ FUNCTION fin_kamate_menu()
    LOCAL _opc := {}
    LOCAL _opcexe := {}
 
-   AAdd( _opc, "1. obračun pojedinacnog dokumenta              " )
+   AAdd( _opc, "1. obračun pojedinačnog dokumenta              " )
    AAdd( _opcexe, {|| kamate_obracun_pojedinacni() } )
+
    AAdd( _opc, "2. unos/ispravka pripreme kamata   " )
    AAdd( _opcexe, {|| kamate_unos() } )
    AAdd( _opc, "3. prenos FIN->kamate         " )

@@ -86,7 +86,6 @@ FUNCTION find_kalk_doks_za_tip_zadnji_broj( cIdFirma, cIdvd )
       hParams[ "idvd" ] := cIdVd
    ENDIF
 
-
    hParams[ "order_by" ] := "idfirma,idvd,brdok"
    hParams[ "indeks" ] := .F.  // ne trositi vrijeme na kreiranje indeksa
    hParams[ "desc" ] := .T.
@@ -711,6 +710,10 @@ FUNCTION use_sql_kalk_doks( hParams )
    IF hb_HHasKey( hParams, "alias" )
       cTable := hParams[ "alias" ]
    ENDIF
+
+#ifdef F18_DEBUG
+    ?E cSql
+#endif
 
    SELECT ( F_KALK_DOKS )
    use_sql( cTable, cSql )

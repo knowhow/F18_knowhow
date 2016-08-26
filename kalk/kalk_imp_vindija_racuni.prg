@@ -1758,6 +1758,7 @@ STATIC FUNCTION kalk_imp_temp_to_roba()
 
 /*
  *     Obrada importovanih dokumenata pript -> pripr
+ *     lOstaviBrdok - kalk_imprort sa udaljene lokacije koristi brojeve
  */
 
 FUNCTION kalk_imp_obradi_sve_dokumente_iz_pript( nPocniOd, lStampaj, lOstaviBrdok )
@@ -1766,8 +1767,6 @@ FUNCTION kalk_imp_obradi_sve_dokumente_iz_pript( nPocniOd, lStampaj, lOstaviBrdo
    LOCAL cNoviKalkBrDok := ""
    LOCAL nUvecaj := 0
    LOCAL cMKonto, cPKonto
-
-   // LOCAL lAsPokreni
 
    o_kalk_pripr()
    o_kalk_pript()
@@ -1835,6 +1834,10 @@ FUNCTION kalk_imp_obradi_sve_dokumente_iz_pript( nPocniOd, lStampaj, lOstaviBrdo
 
       IF lOstaviBrdok
          cNoviKalkBrDok := cBrDok
+         IF !kalk_broj_ima_sufiks( cBrDok )
+            MsgBeep( "kalk_import - pript, brojevi dokumenata moraju imati sufiks !## STOP!" )
+            RETURN .F.
+         ENDIF
       ELSE
          cNoviKalkBrDok := kalk_get_next_broj_v5( cFirma, cIdVd, kalk_konto_za_brojac( cIdVd, cMKonto, cPKonto ) )  // daj konacni novi broj dokumenta kalk
       ENDIF

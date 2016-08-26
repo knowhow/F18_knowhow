@@ -438,7 +438,7 @@ FUNCTION ShowSadVr()
       nOstalo := 0
       _datum := aSred[ _i, 2 ]
       _datotp := aSred[ _i, 3 ]
-      izracunaj_os_amortizaciju( _datum, iif( !Empty( _datotp ), Min( gDatObr, _datotp ), gDatObr ), 100 )
+      izracunaj_os_amortizaciju( _datum, iif( !Empty( _datotp ), Min( os_datum_obracuna(), _datotp ), os_datum_obracuna() ), 100 )
       // napuni _amp
       aSred[ _i, 6 ] = _amp
    NEXT

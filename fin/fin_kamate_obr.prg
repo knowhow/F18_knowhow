@@ -23,6 +23,7 @@ FUNCTION kamate_obracun_pojedinacni( fVise )
    LOCAL dDatOd := CToD( "01.02.92" )
    LOCAL dDatDo := CToD( "30.09.96" )
 
+
    PRIVATE cVarObracuna := "Z"
 
    IF fvise = NIL
@@ -177,6 +178,7 @@ FUNCTION kamate_obracun_pojedinacni( fVise )
 
    ENDDO
 
+
    ? m
    ?
    ? "Ukupno kamata    :", Transform( nKumKam, "999,999,999,999,999.99" )
@@ -190,11 +192,13 @@ FUNCTION kamate_obracun_pojedinacni( fVise )
    ?
 
    FF
+
+
    end_print()
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
 
 

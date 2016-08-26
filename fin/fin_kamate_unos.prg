@@ -11,42 +11,40 @@
 
 #include "f18.ch"
 
-STATIC picdem := "9999999999.99"
-STATIC gDatObr
-STATIC gKumKam
-STATIC gPdvObr
 
-// -----------------------------------------------
-// glavni menij za obradu kamata
-// -----------------------------------------------
+STATIC s_dDatumObracuna
+STATIC s_cFinKamPrikazKumulativDN := "N"
+STATIC s_cObracunPdvDN := "N"
+
+
 FUNCTION fin_kamate_menu()
 
    LOCAL _izbor := 1
    LOCAL _opc := {}
    LOCAL _opcexe := {}
 
-   AAdd( _opc, "1. obračun pojedinačnog dokumenta              " )
-   AAdd( _opcexe, {|| kamate_obracun_pojedinacni() } )
+   AAdd( _opc, "1. prenos FIN->kamate                     " )
+   AAdd( _opcexe, {|| prenos_fin_kam() } )
 
    AAdd( _opc, "2. unos/ispravka pripreme kamata   " )
    AAdd( _opcexe, {|| kamate_unos() } )
-   AAdd( _opc, "3. prenos FIN->kamate         " )
-   AAdd( _opcexe, {|| prenos_fin_kam() } )
-   AAdd( _opc, "4. kontrola cjelovitosti kamatnih stopa   " )
+
+   AAdd( _opc, "3. kontrola cjelovitosti kamatnih stopa   " )
    AAdd( _opcexe, {|| kontrola_cjelovitosti_ks() } )
-   AAdd( _opc, "5. lista kamatnih stopa  " )
+   AAdd( _opc, "4. lista kamatnih stopa  " )
    AAdd( _opcexe, {|| p_ks() } )
 
-   gDatObr := Date()
+   AAdd( _opc, "P. obračun pojedinačnog dokumenta              " )
+   AAdd( _opcexe, {|| kamate_obracun_pojedinacni() } )
+
+   fin_kam_datum_obracuna( Date() )
 
    f18_menu( "kamat", .F., _izbor, _opc, _opcexe )
 
    RETURN .T.
 
 
-// ---------------------------------------------
-// unos kamata
-// ---------------------------------------------
+
 FUNCTION kamate_unos()
 
    LOCAL _i
@@ -72,10 +70,10 @@ FUNCTION kamate_unos()
    NEXT
 
    Box(, _x, _y )
-   @ m_x + ( _x - 2 ), m_y + 2 SAY " <c-N>  Nove Stavke      ³ <ENT> Ispravi stavku   ³ <c-T> Brisi Stavku"
-   @ m_x + ( _x - 1 ), m_y + 2 SAY " <c-A>  Ispravka Dokum.  ³ <c-P> Stampa svi KL    ³ <c-U> Lista uk.dug"
-   @ m_x + _x, m_y + 2 SAY " <c-F9> Brisi pripremu   ³ <a-P> Stampa pojedinac.³                   "
-   my_db_edit( "PNal", _x, _y, {|| _key_handler() }, "", "KAMATE Priprema.....ÍÍÍÍÍ", , , , , 3 )
+   @ m_x + ( _x - 2 ), m_y + 2 SAY " <c-N>  Nove Stavke      | <ENT> Ispravi stavku   | <c-T> Brisi Stavku"
+   @ m_x + ( _x - 1 ), m_y + 2 SAY " <c-A>  Ispravka Dokum.  | <c-P> Stampa svi KL    | <c-U> Lista uk.dug"
+   @ m_x + _x, m_y + 2 SAY " <c-F9> Brisi pripremu   | <a-P> Stampa pojedinac.³                   "
+   my_db_edit( "PNal", _x, _y, {|| fin_kamate_key_handler() }, "", "KAMATE Priprema.....", , , , , 3 )
    BoxC()
 
    my_close_all_dbf()
@@ -95,7 +93,7 @@ STATIC FUNCTION O_Edit()
    SET ORDER TO TAG "1"
    GO TOP
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -150,10 +148,8 @@ STATIC FUNCTION PostojiLi( idp, brd, dod, fNovi )
    RETURN _vrati
 
 
-// -----------------------------------------------
-// obrada dogadjaja tastature
-// -----------------------------------------------
-STATIC FUNCTION _key_handler()
+
+STATIC FUNCTION fin_kamate_key_handler()
 
    LOCAL nTr2
 
@@ -326,12 +322,13 @@ STATIC FUNCTION _key_handler()
       READ
       BoxC()
 
+altd()
       IF !start_print()
          RETURN .F.
       ENDIF
 
-      IF ObracV( cIdPartner, .F., cVarObrac ) > nKamMala
-         ObracV( cIdPartner, nil, cVarObrac )
+      IF fin_kamate_obracun_sa_kamatni_list( cIdPartner, .F., cVarObrac ) > nKamMala
+         fin_kamate_obracun_sa_kamatni_list( cIdPartner, .T., cVarObrac )
       ENDIF
 
       end_print()
@@ -352,7 +349,7 @@ STATIC FUNCTION _key_handler()
 
 
 
-STATIC FUNCTION rekalkulisi_osnovni_dug()
+FUNCTION fin_kamate_rekalkulisi_osnovni_dug()
 
    LOCAL _date := Date()
    LOCAL _t_rec, _id_partner
@@ -365,7 +362,7 @@ STATIC FUNCTION rekalkulisi_osnovni_dug()
    READ
    BoxC()
 
-   gDatObr := _date
+   fin_kam_datum_obracuna( _date )
 
    SELECT kam_pripr
    GO TOP
@@ -395,7 +392,7 @@ STATIC FUNCTION rekalkulisi_osnovni_dug()
                _racun := _racun - ( _predhodni - field->osnovica )
             ENDIF
 
-            _racun := iznosnadan( _racun, _date, field->datod )
+            _racun := fin_kam_iznos_na_dan( _racun, _date, field->datod )
             _predhodni := field->osnovica
             SKIP
          ENDDO
@@ -414,12 +411,11 @@ STATIC FUNCTION rekalkulisi_osnovni_dug()
 
    ENDDO
 
-   RETURN
+   RETURN .T.
 
 
 
-// ------------------------------------------------------
-STATIC FUNCTION kreiraj_pomocnu_tabelu()
+FUNCTION fin_kamate_kreiraj_pomocnu_tabelu()
 
    LOCAL aDbf := {}
 
@@ -438,498 +434,29 @@ STATIC FUNCTION kreiraj_pomocnu_tabelu()
    my_use_temp( "POM", my_home() + "pom.dbf", .F., .T. )
    GO TOP
 
-   RETURN
+   RETURN .T.
 
 
-// -------------------------------------------------------
-STATIC FUNCTION fin_kamate_print()
+FUNCTION fin_kam_prikaz_kumulativ( cSet )
 
-   LOCAL _mala_kamata := 15
-   LOCAL _var_obr := "Z"
-   LOCAL _kum_kam := "D"
-   LOCAL _pdv_obr := "D"
-
-   IF pitanje(, "Rekalkulisati osnovni dug ?", "N" ) == "D"
-      rekalkulisi_osnovni_dug()
+   IF cSet != NIL
+      s_cFinKamPrikazKumulativDN := cSet
    ENDIF
 
-   // kreiraj pomocnu tabelu
-   kreiraj_pomocnu_tabelu()
+   RETURN s_cFinKamPrikazKumulativDN
 
-   Box(, 6, 70 )
+FUNCTION fin_kam_obracun_pdv( cSet )
 
-   @ m_x + 1, m_y + 2 SAY "Ne ispisuj kam.listove za iznos kamata ispod" GET _mala_kamata ;
-      PICT "999999.99"
-
-   @ m_x + 2, m_y + 2 SAY "Varijanta (Z-zatezna kamata,P-prosti kamatni racun)" GET _var_obr ;
-      VALID _var_obr $ "ZP" PICT "@!"
-
-   @ m_x + 4, m_y + 2 SAY "Prikazivati kolonu 'kumulativ kamate' (D/N) ?" GET _kum_kam ;
-      VALID _kum_kam $ "DN" PICT "@!"
-
-   @ m_x + 5, m_y + 2 SAY "Dodaj PDV na obracun kamate (D/N) ?" GET _pdv_obr ;
-      VALID _pdv_obr $ "DN" PICT "@!"
-
-   READ
-
-   BoxC()
-
-   gKumKam := _kum_kam
-   gPdvObr := _pdv_obr
-
-   IF !start_print()
-      RETURN .F.
+   IF cSet != NIL
+      s_cObracunPdvDN := cSet
    ENDIF
 
-   ?
+   RETURN s_cObracunPdvDN
 
-   O_KAM_PRIPR
-   SELECT kam_pripr
-   GO TOP
+FUNCTION fin_kam_datum_obracuna( dSet )
 
-   DO WHILE !Eof()
-
-      _id_partner := field->idpartner
-
-      PRIVATE nOsnDug := 0
-      PRIVATE nKamate := 0
-      PRIVATE nSOsnSD := 0
-      PRIVATE nPdv := 0
-      PRIVATE nPdvTotal := 0
-      PRIVATE nKamTotal := 0
-
-      IF ObracV( _id_partner, .F., _var_obr ) > _mala_kamata
-
-         my_flock()
-
-         SELECT pom
-         APPEND BLANK
-
-         REPLACE field->idpartner WITH _id_partner
-         REPLACE field->osndug WITH nOsnDug
-         REPLACE field->kamate WITH nKamate
-         REPLACE field->pdv WITH nPdvTotal
-
-         my_unlock()
-
-         SELECT kam_pripr
-
-         ObracV( _id_partner, .T., _var_obr )
-
-      ENDIF
-
-      SELECT kam_pripr
-      SEEK _id_partner + Chr( 250 )
-
-   ENDDO
-
-   end_print()
-
-   O_KAM_PRIPR
-   SELECT kam_pripr
-   GO TOP
-
-   RETURN
-
-
-
-// -----------------------------------------------------------
-// obracun kamate
-// -----------------------------------------------------------
-STATIC FUNCTION ObracV( cIdPartner, fprint, cVarObrac )
-
-   LOCAL nKumKamSD := 0
-   LOCAL cTxtPdv
-   LOCAL cTxtUkupno
-
-   IF fprint == NIL
-      fprint := .T.
+   IF dSet != NIL
+      s_dDatumObracuna := dSet
    ENDIF
 
-   nGlavn := 2892359.28
-   dDatOd := CToD( "01.02.92" )
-   dDatDo := CToD( "30.09.96" )
-
-   O_KS
-   SELECT ks
-   SET ORDER TO TAG "2"
-
-   nStr := 0
-
-   IF fprint
-
-      nPdvTotal := nKamate * ( 17 / 100 )
-
-      cTxtPdv := "PDV (17%)"
-      cTxtPdv += " "
-      cTxtPdv += Replicate( ".", 44 )
-      cTxtPdv += Str( nPdvTotal, 12, 2 )
-      cTxtPdv += " KM"
-
-      cTxtUkupno := "Ukupno sa PDV"
-      cTxtUkupno += " "
-      cTxtUkupno += Replicate( ".", 40 )
-      cTxtUkupno += Str( nKamate + nPdvTotal, 12, 2 )
-      cTxtUkupno += " KM"
-
-      ?
-      P_10CPI
-      ?? PadC( "- Strana " + Str( ++nStr, 4 ) + "-", 80 )
-      ?
-
-      SELECT partn
-      HSEEK cIdPartner
-
-      cPom := Trim( partn->adresa )
-
-      IF !Empty( partn->telefon )
-         cPom += ", TEL:" + partn->telefon
-      ENDIF
-
-      cPom := PadR( cPom, 42 )
-      dDatPom := gDatObr
-
-   ENDIF
-
-   SELECT kam_pripr
-   SEEK cIdPartner
-
-   IF fPrint
-
-      IF PRow() > 40
-         FF
-         ?
-         P_10CPI
-         ?? PadC( "- Strana " + Str( ++nStr, 4 ) + "-", 80 )
-         ?
-      ENDIF
-
-      P_10CPI
-      B_ON
-      ? Space( 20 ), PadC( "K A M A T N I    L I S T", 30 )
-      B_OFF
-
-      IF gKumKam == "N"
-         P_12CPI
-      ELSE
-         P_COND
-      ENDIF
-
-      ?
-      ?
-      ?
-
-      IF cVarObrac == "Z"
-         m := " ---------- -------- -------- --- ------------- ------------- -------- ------- -------------" + IF( gKumKam == "D", " -------------", "" )
-      ELSE
-         m := " ---------- -------- -------- --- ------------- ------------- -------- -------------" + IF( gKumKam == "D", " -------------", "" )
-      ENDIF
-
-      NStrana( "1" )
-
-   ENDIF
-
-   nSKumKam := 0
-   SELECT kam_pripr
-   cIdPartner := field->idpartner
-
-   IF !fprint
-      nOsnDug := field->osndug
-   ENDIF
-
-   DO WHILE !Eof() .AND. field->idpartner == cIdPartner
-
-      fStampajBr := .T.
-      fPrviBD := .T.
-      nKumKamBD := 0
-      nKumKamSD := 0
-      cBrDok := field->brdok
-      cM1 := field->m1
-      nOsnovSD := kam_pripr->osnovica
-
-      DO WHILE !Eof() .AND. field->idpartner == cIdpartner .AND. field->brdok == cBrdok
-
-         dDatOd := kam_pripr->datod
-         dDatdo := kam_pripr->datdo
-         nOsnovSD := kam_pripr->osnovica
-
-         IF fprviBD
-            nGlavnBD := kam_pripr->osnovica
-            fPrviBD := .F.
-         ELSE
-
-            IF cVarObrac == "Z"
-               nGlavnBD := kam_pripr->osnovica + nKumKamSD
-            ELSE
-               nGlavnBD := kam_pripr->osnovica
-            ENDIF
-         ENDIF
-
-         nGlavn := nGlavnBD
-
-         SELECT ks
-         SEEK DToS( dDatOd )
-
-         IF dDatOd < field->DatOd .OR. Eof()
-            SKIP -1
-         ENDIF
-
-         DO WHILE .T.
-
-            dDDatDo := Min( field->DatDO, dDatDo )
-            nPeriod := dDDatDo - dDatOd + 1
-
-            IF ( cVarObrac == "P" )
-               IF ( Prestupna( Year( dDatOd ) ) )
-                  nExp := 366
-               ELSE
-                  nExp := 365
-               ENDIF
-            ELSE
-               IF field->tip == "G"
-                  IF field->duz == 0
-                     nExp := 365
-                  ELSE
-                     nExp := field->duz
-                  ENDIF
-               ELSEIF field->tip == "M"
-                  IF field->duz == 0
-                     dExp := "01."
-                     IF Month( ddDatdo ) == 12
-                        dExp += "01." + AllTrim( Str( Year( dDDatdo ) + 1 ) )
-                     ELSE
-                        dExp += AllTrim( Str( Month( dDDatdo ) + 1 ) ) + "." + AllTrim( Str( Year( dDDatdo ) ) )
-                     ENDIF
-                     nExp := Day( CToD( dExp ) - 1 )
-                  ELSE
-                     nExp := field->duz
-                  ENDIF
-               ELSEIF field->tip == "3"
-                  nExp := field->duz
-               ELSE
-                  nExp := field->duz
-               ENDIF
-            ENDIF
-
-            IF field->den <> 0 .AND. dDatOd == field->datod
-               IF fprint
-                  ? "********* Izvrsena Denominacija osnovice sa koeficijentom:", den, "****"
-               ENDIF
-               nOsnovSD := Round( nOsnovSD * field->den, 2 )
-               nGlavn := Round( nGlavn * field->den, 2 )
-               nKumKamSD := Round( nKumKamSD * field->den, 2 )
-            ENDIF
-
-            IF ( cVarObrac == "Z" )
-               nKKam := ( ( 1 + field->stkam / 100 ) ^ ( nPeriod / nExp ) - 1.00000 )
-               nIznKam := nKKam * nGlavn
-            ELSE
-               nKStopa := field->stkam / 100
-               cPom777 := my_get_from_ini( "KAM", "FormulaZaProstuKamatu", "nGlavn*nKStopa*nPeriod/nExp", KUMPATH )
-               nIznKam := &( cPom777 )
-            ENDIF
-
-            nIznKam := Round( nIznKam, 2 )
-
-            IF fprint
-
-               IF PRow() > 55
-                  FF
-                  Nstrana()
-               ENDIF
-
-               IF fStampajbr
-                  ? " " + cBrdok + " "
-                  fStampajBr := .F.
-               ELSE
-                  ? " " + Space( 10 ) + " "
-               ENDIF
-
-               ?? dDatOd, dDDatDo
-
-               @ PRow(), PCol() + 1 SAY nPeriod PICT "999"
-               @ PRow(), PCol() + 1 SAY nOsnovSD PICT picdem
-               @ PRow(), PCol() + 1 SAY nGlavn PICT picdem
-
-               IF ( cVarObrac == "Z" )
-                  @ PRow(), PCol() + 1 SAY field->tip
-                  @ PRow(), PCol() + 1 SAY field->stkam PICT "999.99"
-                  @ PRow(), PCol() + 1 SAY nKKam * 100 PICT "9999.99"
-               ELSE
-                  @ PRow(), PCol() + 1 SAY field->stkam PICT "999.99"
-               ENDIF
-
-               nCol1 := PCol() + 1
-               @ PRow(), PCol() + 1 SAY nIznKam PICT picdem
-
-            ENDIF
-
-            IF ( cVarObrac == "Z" )
-               nGlavnBD += nIznKam
-            ENDIF
-
-            nKumKamBD += nIznKam
-            nKumKamSD += nIznKam
-
-            IF ( cVarObrac == "Z" )
-               nGlavn += nIznKam
-            ENDIF
-
-            IF fprint .AND. gKumKam == "D"
-               @ PRow(), PCol() + 1 SAY nKumKamSD PICT picdem
-            ENDIF
-
-            IF dDatDo <= field->DatDo
-               SELECT kam_pripr
-               EXIT
-            ENDIF
-
-            SKIP
-
-            IF Eof()
-               Msg( "PARTNER: " + kam_pripr->idpartner + ", BR.DOK.: " + kam_pripr->brdok + ;
-                  "#GRESKA : Fali datumski interval u kam.stopama!", 10 )
-               EXIT
-            ENDIF
-
-            dDatOd := field->DatOd
-
-         ENDDO
-
-         SELECT kam_pripr
-         SKIP
-
-      ENDDO
-
-      nKumKamSD := IznosNaDan( nKumKamSD, gDatObr, IF( Empty( cM1 ), KS->datdo, KS2->datdo ), cM1 )
-
-      IF fprint
-         IF PRow() > 59
-            FF
-            Nstrana()
-         ENDIF
-         ? m
-         ? " UKUPNO ZA", cBrdok
-         @ PRow(), nCol1 SAY nKumKamBD PICT picdem
-
-         ? " UKUPNO NA DAN", gDatObr, ":"
-         @ PRow(), nCol1 SAY nKumKamSD PICT picdem
-         ? m
-      ENDIF
-
-      nSKumKam += nKumKamSD
-
-      SELECT kam_pripr
-
-   ENDDO
-
-   IF fprint
-
-      IF PRow() > 54
-         FF
-         NStrana()
-      ENDIF
-
-      ? m
-      ? " SVEUKUPNO KAMATA NA DAN " + DToC( gDatObr ) + ":"
-      @ PRow(), PCol() SAY nOsnDug PICT picdem
-      @ PRow(), ncol1  SAY nSKumKam PICT picdem
-      ? m
-
-      P_10CPI
-
-      IF PRow() < 62 + dodatni_redovi_po_stranici()
-         FOR i := 1 TO 62 + dodatni_redovi_po_stranici() - PRow()
-            ?
-         NEXT
-      ENDIF
-
-      _potpis()
-
-      FF
-
-   ENDIF
-
-   IF !fprint
-      nKamate := nSKumKam
-   ENDIF
-
-   RETURN nSKumKam
-
-
-
-STATIC FUNCTION _potpis()
-
-   ?  PadC( "     Obradio:                                 Direktor:    ", 80 )
-   ?
-   ?  PadC( "_____________________                    __________________", 80 )
-   ?
-
-   RETURN
-
-
-
-STATIC FUNCTION NStrana( cTip, cVarObrac )
-
-   IF cTip == NIL
-      cTip := ""
-   ENDIF
-
-   IF cTip == ""
-      ?
-      P_10CPI
-      ?? PadC( "- Strana " + Str( ++nStr, 4 ) + "-", 80 )
-      ?
-   ENDIF
-
-   IF cTip == "1" .OR. cTip = ""
-
-      IF gKumKam == "N"
-         P_12CPI
-      ELSE
-         P_COND
-      ENDIF
-
-      ? m
-
-      IF cVarObrac == "Z"
-         ? "   Broj          Period      dana     ostatak       kamatna   Tip kam  Konform.    Iznos    " + IF( gKumKam == "D", "   kumulativ   ", "" )
-         ? "  racuna                              racuna       osnovica   i stopa   koef       kamate   " + IF( gKumKam == "D", "    kamate     ", "" )
-      ELSE
-         ? "   Broj          Period      dana     ostatak       kamatna    Stopa       Iznos    " + IF( gKumKam == "D", "   kumulativ   ", "" )
-         ? "  racuna                              racuna       osnovica                kamate   " + IF( gKumKam == "D", "    kamate     ", "" )
-      ENDIF
-
-      ? m
-
-   ENDIF
-
-   RETURN
-
-
-
-STATIC FUNCTION IznosNaDan( nIznos, dTrazeni, dProsli, cM1 )
-
-   // * dtrazeni = 30.06.98
-   // * dprosli  = 15.05.94
-   // * znaci: uracunaj sve denominacije od 15.05.94 do 30.06.98
-   LOCAL nK := 1
-
-   PushWA()
-   SELECT KS
-   GO TOP
-   DO WHILE !Eof()
-      IF DToS( dTrazeni ) < DToS( DatOd )
-         EXIT
-      ELSEIF DToS( dProsli ) >= DToS( DatOd )
-         SKIP 1
-         LOOP
-      ENDIF
-      IF field->den <> 0
-         nK := nK * field->den
-      ENDIF
-      SKIP 1
-   ENDDO
-   PopWA()
-
-   RETURN nIznos * nK
+   RETURN s_dDatumObracuna

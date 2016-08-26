@@ -203,17 +203,17 @@ FUNCTION firma_pdv_broj( partn_id )
    Opis: vraća karaketristiku REGB iz tabele SIFK za partnera
 */
 
-STATIC FUNCTION get_partn_regb( partn_id )
+FUNCTION get_partn_regb( partn_id )
 
    RETURN AllTrim( IzSifKPartn( "REGB", partn_id, .F. ) )
 
 
-STATIC FUNCTION get_partn_pdvb( partn_id )
+FUNCTION get_partn_pdvb( partn_id )
 
    RETURN AllTrim( IzSifKPartn( "PDVB", partn_id, .F. ) )
 
 
-STATIC FUNCTION get_partn_idbr( partn_id )
+FUNCTION get_partn_idbr( partn_id )
 
    RETURN AllTrim( IzSifKPartn( "IDBR", partn_id, .F. ) )
 

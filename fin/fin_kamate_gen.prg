@@ -12,9 +12,7 @@
 #include "f18.ch"
 
 
-// ------------------------------------------
-// prenos podataka iz fin u kam
-// ------------------------------------------
+
 FUNCTION prenos_fin_kam()
 
    LOCAL _id_konto := PadR( "2110", 7 )
@@ -56,9 +54,9 @@ FUNCTION prenos_fin_kam()
 
    BoxC()
 
-
-   find_suban_by_konto_partner( gFirma, _id_konto, NIL, NIL, "IdFirma,IdKonto,IdPartner,brdok" )
-
+   MsgO( "Prenos podataka sa servera ..." )
+   find_suban_by_konto_partner( gFirma, _id_konto, _partneri, NIL, "IdFirma,IdKonto,IdPartner,brdok" )
+   MsgC()
 
    IF !Empty( _usl )
       _filter := _usl
@@ -66,6 +64,7 @@ FUNCTION prenos_fin_kam()
    ELSE
       SET FILTER TO
    ENDIF
+   GO TOP
 
    DO WHILE !Eof() .AND. field->idkonto == _id_konto .AND. field->idfirma == gFirma
 
@@ -172,8 +171,7 @@ FUNCTION prenos_fin_kam()
       my_flock()
 
       DO WHILE !Eof() .AND. _id_partner == field->idpartner
-         REPLACE field->osndug WITH _osn_dug
-         // nafiluj osnovni dug
+         REPLACE field->osndug WITH _osn_dug // nafiluj osnovni dug
          SKIP
       ENDDO
 
@@ -195,9 +193,7 @@ FUNCTION prenos_fin_kam()
       _t_rec := RecNo()
       SKIP -1
       IF field->datod <= field->datdo .AND. _tmp == field->brdok .AND. field->osndug = 0
-         // ako se radi o zadnjoj uplati vec postojeceg racuna
-         // ne brisi !
-         SKIP
+         SKIP // ako se radi o zadnjoj uplati vec postojeceg racuna ne brisi !
          LOOP
       ENDIF
 
@@ -217,4 +213,4 @@ FUNCTION prenos_fin_kam()
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.

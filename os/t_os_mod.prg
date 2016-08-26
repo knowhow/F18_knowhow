@@ -95,8 +95,7 @@ METHOD programski_modul_osnovni_meni
 
 METHOD set_module_gvars()
 
-
-   PUBLIC gDatObr := Date()
+   os_datum_obracuna( Date() )
    PUBLIC gRJ := "00"
    PUBLIC gValuta := "KM "
    PUBLIC gPicI := "99999999.99"
@@ -112,7 +111,7 @@ METHOD set_module_gvars()
 
    gRJ := fetch_metric( "os_radna_jedinica", nil, gRJ )
    gOsSii := fetch_metric( "os_sii_modul", my_user(), gOsSii )
-   gDatObr := fetch_metric( "os_datum_obrade", my_user(), gDatObr )
+   os_datum_obracuna( fetch_metric( "os_datum_obrade", my_user(), Date() ) )
    gPicI := fetch_metric( "os_prikaz_iznosa", nil, gPicI )
    gMetodObr := fetch_metric( "os_metoda_obracuna", nil, gMetodObr )
    gIBJ := fetch_metric( "os_id_broj_je_unikatan", nil, gIBJ )

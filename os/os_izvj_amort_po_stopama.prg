@@ -122,7 +122,7 @@ FUNCTION os_amortizacija_po_stopama()
    ENDIF
 
    ? _mod_name + ": Pregled obracuna amortizacije po grupama amortizacionih stopa"
-   ?? "", PrikazVal(), "    Datum:", gDatObr
+   ?? "", PrikazVal(), "    Datum:", os_datum_obracuna()
 
    IF !Empty( cFiltK1 )
       ? "Filter grupacija K1 pravljen po uslovu: '" + Trim( cFiltK1 ) + "'"
@@ -151,8 +151,8 @@ FUNCTION os_amortizacija_po_stopama()
             IF PRow() > 60; FF; os_zagl_amort(); ENDIF
             IF !( ( cON == "N" .AND. datotp_prazan() ) .OR. ;
                   ( con == "O" .AND. !datotp_prazan() ) .OR. ;
-                  ( con == "B" .AND. Year( datum ) = Year( gdatobr ) ) .OR. ;
-                  ( con == "G" .AND. Year( datum ) < Year( gdatobr ) ) .OR. ;
+                  ( con == "B" .AND. Year( datum ) = Year( os_datum_obracuna() ) ) .OR. ;
+                  ( con == "G" .AND. Year( datum ) < Year( os_datum_obracuna() ) ) .OR. ;
                   Empty( con ) )
                SKIP 1
                LOOP
@@ -166,7 +166,7 @@ FUNCTION os_amortizacija_po_stopama()
                select_promj()
                HSEEK _sr_id
                fIma := .F.
-               DO WHILE !Eof() .AND. field->id == _sr_id .AND. field->datum <= gDatObr
+               DO WHILE !Eof() .AND. field->id == _sr_id .AND. field->datum <= os_datum_obracuna()
                   fIma := .T.
                   SKIP
                ENDDO
@@ -187,7 +187,7 @@ FUNCTION os_amortizacija_po_stopama()
                _sr_id := field->id
                select_promj()
                HSEEK _sr_id
-               DO WHILE !Eof() .AND. field->id == _sr_id .AND. field->datum <= gDatObr
+               DO WHILE !Eof() .AND. field->id == _sr_id .AND. field->datum <= os_datum_obracuna()
                   nA1 := 0
                   nA2 := amp
                   IF nabvr - otpvr - amp > 0
@@ -238,7 +238,7 @@ FUNCTION os_amortizacija_po_stopama()
                   select_promj()
                   HSEEK _sr_id
 
-                  DO WHILE !Eof() .AND. field->id == _sr_id .AND. field->datum <= gDatObr
+                  DO WHILE !Eof() .AND. field->id == _sr_id .AND. field->datum <= os_datum_obracuna()
                      ? Space( 5 ), Space( Len( id ) ), Space( Len( _sr_id_rj ) ), datum, opis
                      nA1 := 0; nA2 := amp
                      @ PRow(), ncol1    SAY nabvr * nBBK PICT gpici

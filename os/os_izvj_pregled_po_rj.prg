@@ -166,27 +166,27 @@ FUNCTION os_pregled_po_rj()
          LOOP
       ENDIF
 
-      IF ( cON = "B" .AND. Year( gdatobr ) <> Year( field->datum ) )
+      IF ( cON = "B" .AND. Year( os_datum_obracuna() ) <> Year( field->datum ) )
          // nije novonabavljeno
          SKIP
          LOOP
          // prikazi samo novonabavlj.
       ENDIF
 
-      IF ( cON = "G" .AND. Year( gdatobr ) = Year( field->datum ) )
+      IF ( cON = "G" .AND. Year( os_datum_obracuna() ) = Year( field->datum ) )
          // iz protekle godine
          SKIP
          LOOP
          // prikazi samo novonabavlj.
       ENDIF
 
-      IF ( !datotp_prazan() .AND. Year( datotp ) <= Year( gdatobr ) ) .AND. cON $ "NB"
+      IF ( !datotp_prazan() .AND. Year( datotp ) <= Year( os_datum_obracuna() ) ) .AND. cON $ "NB"
          // otpisano sredstvo , a zelim prikaz neotpisanih
          SKIP
          LOOP
       ENDIF
 
-      IF ( datotp_prazan() .AND. Year( datotp ) < Year( gdatobr ) ) .AND. cON == "O"
+      IF ( datotp_prazan() .AND. Year( datotp ) < Year( os_datum_obracuna() ) ) .AND. cON == "O"
          // neotpisano, a zelim prikaz otpisanih
          SKIP
          LOOP
@@ -351,7 +351,7 @@ FUNCTION ZglPrj()
 
    SELECT ( nArr )
 
-   ?? "     Datum:", gDatObr
+   ?? "     Datum:", os_datum_obracuna()
 
    ? "Radna jedinica:", cIdrj, rj->naz
 

@@ -56,7 +56,7 @@ FUNCTION os_obracun_amortizacije()
    o_os_sii()
    o_os_sii_promj()
 
-   dDatObr := gDatObr
+   dDatObr := os_datum_obracuna()
    cFiltK1 := Space( 40 )
    cVarPrik := "N"
 
@@ -795,7 +795,7 @@ FUNCTION os_obracun_revalorizacije()
    o_os_sii()
    o_os_sii_promj()
 
-   dDatObr := gDatObr
+   dDatObr := os_datum_obracuna()
    cFiltK1 := Space( 40 )
 
    Box( "#OBRACUN REVALORIZACIJE", 3, 60 )

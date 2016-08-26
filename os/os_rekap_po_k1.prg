@@ -73,20 +73,20 @@ FUNCTION os_rekapitulacija_po_k1()
          cTRj := field->idrj
          DO WHILE !Eof() .AND. cK1 == field->k1 .AND. cTRj == field->idrj
             select_os_sii()
-            IF ( cON = "B" .AND. Year( gdatobr ) <> Year( field->datum ) )
+            IF ( cON = "B" .AND. Year( os_datum_obracuna() ) <> Year( field->datum ) )
                // nije novonabavljeno
                SKIP
                LOOP
                // prikazi samo novonabavlj.
             ENDIF
 
-            IF ( !Empty( field->datotp ) .AND. Year( field->datotp ) = Year( gdatobr ) ) .AND. cON $ "NB"
+            IF ( !Empty( field->datotp ) .AND. Year( field->datotp ) = Year( os_datum_obracuna() ) ) .AND. cON $ "NB"
                // otpisano sredstvo , a zelim prikaz neotpisanih
                SKIP
                LOOP
             ENDIF
 
-            IF ( Empty( field->datotp ) .OR. Year( field->datotp ) < Year( gdatobr ) ) .AND. cON == "O"
+            IF ( Empty( field->datotp ) .OR. Year( field->datotp ) < Year( os_datum_obracuna() ) ) .AND. cON == "O"
                // neotpisano, a zelim prikaz otpisanih
                SKIP
                LOOP
@@ -170,7 +170,7 @@ STATIC FUNCTION ZglK1()
       ?? "sredstava otpisanih u toku godine"
    ENDIF
 
-   ?? "     Datum:", gDatObr
+   ?? "     Datum:", os_datum_obracuna()
 
    SELECT rj
    SEEK cIdRj

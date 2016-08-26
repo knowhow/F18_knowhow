@@ -166,7 +166,7 @@ FUNCTION os_pregled_po_kontima()
       ?? "(samo efekata revalorizacije)"
    ENDIF
 
-   ?? "", PrikazVal(), "    Datum:", gDatObr
+   ?? "", PrikazVal(), "    Datum:", os_datum_obracuna()
 
    IF !Empty( cFiltK1 )
       ? "Filter grupacija K1 pravljen po uslovu: '" + Trim( cFiltK1 ) + "'"
@@ -240,7 +240,7 @@ FUNCTION os_pregled_po_kontima()
 
          DO WHILE !Eof() .AND. ( idrj = cidrj .OR. Empty( cidrj ) )  .AND. idkonto == cidkonto
 
-            IF datum > gDatObr
+            IF datum > os_datum_obracuna()
                // preskoci sredstva van obracuna
                SKIP
                LOOP
@@ -253,8 +253,8 @@ FUNCTION os_pregled_po_kontima()
 
             IF ( cON == "N" .AND. datotp_prazan() ) .OR. ;
                   ( con == "O"  .AND. !datotp_prazan() ) .OR. ;
-                  ( con == "B"  .AND. Year( datum ) = Year( gdatobr ) ) .OR. ;
-                  ( con == "G"  .AND. Year( datum ) < Year( gdatobr ) ) .OR. ;
+                  ( con == "B"  .AND. Year( datum ) = Year( os_datum_obracuna() ) ) .OR. ;
+                  ( con == "G"  .AND. Year( datum ) < Year( os_datum_obracuna() ) ) .OR. ;
                   Empty( con )
 
                fIma := .T.
@@ -291,11 +291,11 @@ FUNCTION os_pregled_po_kontima()
                   select_promj()
                   HSEEK _sr_id
                   fIma := .F.
-                  DO WHILE !Eof() .AND. field->id == _sr_id .AND. field->datum <= gDatObr
+                  DO WHILE !Eof() .AND. field->id == _sr_id .AND. field->datum <= os_datum_obracuna()
                      IF ( cON == "N" .AND. Empty( _sr_dat_otp ) ) .OR. ;
                            ( con = "O"  .AND. !Empty( _sr_dat_otp ) ) .OR. ;
-                           ( con == "B"  .AND. Year( _sr_datum ) = Year( gdatobr ) ) .OR. ;
-                           ( con == "G"  .AND. Year( field->datum ) < Year( gdatobr ) ) .OR. ;
+                           ( con == "B"  .AND. Year( _sr_datum ) = Year( os_datum_obracuna() ) ) .OR. ;
+                           ( con == "G"  .AND. Year( field->datum ) < Year( os_datum_obracuna() ) ) .OR. ;
                            Empty( cON )
                         fIma := .T.
                      ENDIF
@@ -340,11 +340,11 @@ FUNCTION os_pregled_po_kontima()
 
                   select_promj()
                   HSEEK _sr_id
-                  DO WHILE !Eof() .AND. field->id == _sr_id .AND. field->datum <= gDatObr
+                  DO WHILE !Eof() .AND. field->id == _sr_id .AND. field->datum <= os_datum_obracuna()
                      IF ( cON == "N" .AND. Empty( _sr_dat_otp ) ) .OR. ;
                            ( con = "O"  .AND. !Empty( _sr_dat_otp ) ) .OR. ;
-                           ( con == "B"  .AND. Year( _sr_datum ) = Year( gdatobr ) ) .OR. ;
-                           ( con == "G"  .AND. Year( field->datum ) < Year( gdatobr ) ) .OR. ;
+                           ( con == "B"  .AND. Year( _sr_datum ) = Year( os_datum_obracuna() ) ) .OR. ;
+                           ( con == "G"  .AND. Year( field->datum ) < Year( os_datum_obracuna() ) ) .OR. ;
                            Empty( con )
                         IF cDodaj == "1"
                            nA1 := nabvr
@@ -427,11 +427,11 @@ FUNCTION os_pregled_po_kontima()
                      select_promj()
                      HSEEK _sr_id
 
-                     DO WHILE !Eof() .AND. field->id == _sr_id .AND. field->datum <= gDatObr
+                     DO WHILE !Eof() .AND. field->id == _sr_id .AND. field->datum <= os_datum_obracuna()
                         IF ( cON == "N" .AND. Empty( _sr_dat_otp ) ) .OR. ;
                               ( con = "O"  .AND. !Empty( _sr_dat_otp ) ) .OR. ;
-                              ( con == "B"  .AND. Year( _sr_datum ) = Year( gdatobr ) ) .OR. ;
-                              ( con == "G"  .AND. Year( field->datum ) < Year( gdatobr ) ) .OR. ;
+                              ( con == "B"  .AND. Year( _sr_datum ) = Year( os_datum_obracuna() ) ) .OR. ;
+                              ( con == "G"  .AND. Year( field->datum ) < Year( os_datum_obracuna() ) ) .OR. ;
                               Empty( con )
                            IF cRekapKonta == "N"
                               ? Space( 5 ), Space( Len( _sr_id ) ), Space( Len( _sr_id_rj ) )

@@ -13,6 +13,19 @@
 #include "f18.ch"
 
 
+
+STATIC s_dDatumObracuna
+
+
+FUNCTION os_datum_obracuna( dSet )
+
+   IF dSet != NIL
+      s_dDatumObracuna := dSet
+   ENDIF
+
+   RETURN s_dDatumObracuna
+
+
 // -----------------------------------
 // parametar datum obrade ...
 // -----------------------------------
@@ -36,7 +49,7 @@ FUNCTION os_set_datum_obrade()
       set_metric( "os_datum_obrade", my_user(), _dat_obr )
       set_metric( "os_sii_modul", my_user(), _os_sii )
 
-      gDatObr := _dat_obr
+      fin_kam_datum_obracuna( _dat_obr )
       gOsSii := _os_sii
 
    ENDIF
@@ -87,7 +100,7 @@ FUNCTION os_parametri()
 // -----------------------------------
 FUNCTION _os_sii_parametri()
 
-   LOCAL _dat_obr := gDatObr
+   LOCAL _dat_obr := os_datum_obracuna()
    LOCAL _pic_iznos := gPicI
    LOCAL _metoda := gMetodObr
    LOCAL _id_unikat := gIBJ
@@ -145,7 +158,7 @@ FUNCTION _os_sii_parametri()
       gRJ := _os_rj
 
       set_metric( "os_datum_obrade", my_user(), _dat_obr )
-      gDatObr := _dat_obr
+      fin_kam_datum_obracuna( _dat_obr )
 
       set_metric( "os_prikaz_iznosa", nil, _pic_iznos )
       gPicI := _pic_iznos

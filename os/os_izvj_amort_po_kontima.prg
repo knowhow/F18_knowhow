@@ -129,7 +129,7 @@ FUNCTION os_amortizacija_po_kontima()
    ENDIF
 
    ? _mod_name + ": Pregled obracuna amortizacije po kontima i amortizacionim grupama "
-   ?? "", PrikazVal(), "    Datum:", gDatObr
+   ?? "", PrikazVal(), "    Datum:", os_datum_obracuna()
 
    IF !Empty( cFiltK1 )
       ? "Filter grupacija K1 pravljen po uslovu: '" + Trim( cFiltK1 ) + "'"
@@ -232,8 +232,8 @@ STATIC FUNCTION FFor1()
 
    IF !( ( cON == "N" .AND. datotp_prazan() ) .OR. ;
          ( con == "O" .AND. !datotp_prazan() ) .OR. ;
-         ( con == "B" .AND. Year( datum ) = Year( gdatobr ) ) .OR. ;
-         ( con == "G" .AND. Year( datum ) < Year( gdatobr ) ) .OR. ;
+         ( con == "B" .AND. Year( datum ) = Year( os_datum_obracuna() ) ) .OR. ;
+         ( con == "G" .AND. Year( datum ) < Year( os_datum_obracuna() ) ) .OR. ;
          Empty( con ) )
       RETURN .F.
    ENDIF
@@ -255,14 +255,14 @@ STATIC FUNCTION FFor1()
       select_promj()
       HSEEK _sr_id
 
-      IF cPromj == "2" .AND. !Eof() .AND. field->id == _sr_id .AND. field->datum <= gDatObr .OR. cPromj == "3"
+      IF cPromj == "2" .AND. !Eof() .AND. field->id == _sr_id .AND. field->datum <= os_datum_obracuna() .OR. cPromj == "3"
          IF cPromj == "3"
             AAdd( gaDodStavke, ;
                { Str( nRBr, 4 ) + ".", _sr_id, _sr_id_rj, _sr_datum,;
                _sr_naz, _sr_jmj, _sr_kol, , , , , } )
             lVrati := .F.
          ENDIF
-         DO WHILE !Eof() .AND. field->id == _sr_id .AND. field->datum <= gDatObr
+         DO WHILE !Eof() .AND. field->id == _sr_id .AND. field->datum <= os_datum_obracuna()
 
             AAdd( gaDodStavke, ;
                {,,, datum, opis,,, nabvr * nBBK, otpvr * nBBK, amp * nBBK, otpvr * nBBK + amp * nBBK, nabvr * nBBK - amp * nBBK - otpvr * nBBK } )
@@ -347,8 +347,8 @@ STATIC FUNCTION FFor1s()
 
    IF !( ( cON == "N" .AND. datotp_prazan() ) .OR. ;
          ( con == "O" .AND. !datotp_prazan() ) .OR. ;
-         ( con == "B" .AND. Year( datum ) = Year( gdatobr ) ) .OR. ;
-         ( con == "G" .AND. Year( datum ) < Year( gdatobr ) ) .OR. ;
+         ( con == "B" .AND. Year( datum ) = Year( os_datum_obracuna() ) ) .OR. ;
+         ( con == "G" .AND. Year( datum ) < Year( os_datum_obracuna() ) ) .OR. ;
          Empty( con ) )
       RETURN .F.
    ENDIF
@@ -372,7 +372,7 @@ STATIC FUNCTION FFor1s()
       select_promj()
       HSEEK _sr_id
 
-      IF cPromj == "2" .AND. !Eof() .AND. field->id == _sr_id .AND. field->datum <= gDatObr .OR. cPromj == "3"
+      IF cPromj == "2" .AND. !Eof() .AND. field->id == _sr_id .AND. field->datum <= os_datum_obracuna() .OR. cPromj == "3"
 
          IF cPromj == "3"
             AAdd( gaDodStavke, ;
@@ -381,7 +381,7 @@ STATIC FUNCTION FFor1s()
             lVrati := .F.
          ENDIF
 
-         DO WHILE !Eof() .AND. field->id == _sr_id .AND. field->datum <= gDatObr
+         DO WHILE !Eof() .AND. field->id == _sr_id .AND. field->datum <= os_datum_obracuna()
             AAdd( gaDodStavke, ;
                {,,, datum, opis,,, nabvr * nBBK, otpvr * nBBK, amp * nBBK, otpvr * nBBK + amp * nBBK, nabvr * nBBK - amp * nBBK - otpvr * nBBK } )
             nNab9 += nabvr * nBBK;  nOtp9 += otpvr * nBBK;  nAmo9 += amp * nBBK
@@ -493,7 +493,7 @@ FUNCTION fsvpromj()
       SEEK _sr_id
 
       IF Found()
-         DO WHILE !Eof() .AND. field->id == _sr_id .AND. field->datum <= gDatObr
+         DO WHILE !Eof() .AND. field->id == _sr_id .AND. field->datum <= os_datum_obracuna()
             IF ( field->nabvr - field->otpvr - field->amp ) > 0
                lImaSadVr := .T.
             ENDIF

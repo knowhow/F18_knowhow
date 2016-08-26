@@ -145,7 +145,7 @@ STATIC FUNCTION _gen_xml( params )
    // header
    xml_node( "fid", to_xml_encoding( gFirma ) )
    xml_node( "fnaz", to_xml_encoding( gNFirma ) )
-   xml_node( "datum", DToC( gDatObr ) )
+   xml_node( "datum", DToC( os_datum_obracuna() ) )
    xml_node( "kid", to_xml_encoding( _idrj ) )
    xml_node( "knaz", "" )
    xml_node( "pid", "" )
@@ -154,22 +154,22 @@ STATIC FUNCTION _gen_xml( params )
 
    DO WHILE !Eof()
 
-      IF ( _prikaz == "B" .AND. Year( gDatobr ) <> Year( field->datum ) )
+      IF ( _prikaz == "B" .AND. Year( os_datum_obracuna() ) <> Year( field->datum ) )
          SKIP
          LOOP
       ENDIF
 
-      IF ( _prikaz == "G" .AND. Year( gdatobr ) = Year( field->datum ) )
+      IF ( _prikaz == "G" .AND. Year( os_datum_obracuna() ) = Year( field->datum ) )
          SKIP
          LOOP
       ENDIF
 
-      IF ( !Empty( datotp ) .AND. Year( datotp ) <= Year( gdatobr ) ) .AND. _prikaz $ "NB"
+      IF ( !Empty( datotp ) .AND. Year( datotp ) <= Year( os_datum_obracuna() ) ) .AND. _prikaz $ "NB"
          SKIP
          LOOP
       ENDIF
 
-      IF ( Empty( datotp ) .AND. Year( datotp ) < Year( gdatobr ) ) .AND. _prikaz == "O"
+      IF ( Empty( datotp ) .AND. Year( datotp ) < Year( os_datum_obracuna() ) ) .AND. _prikaz == "O"
          SKIP
          LOOP
       ENDIF

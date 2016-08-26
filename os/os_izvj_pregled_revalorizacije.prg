@@ -73,7 +73,7 @@ FUNCTION os_pregled_revalorizacije()
       ? "Radna jedinica:", cidrj, rj->naz
    ENDIF
    ? "OS: Pregled obracuna revalorizacije po kontima "
-   ?? "", PrikazVal(), "    Datum:", gDatObr
+   ?? "", PrikazVal(), "    Datum:", os_datum_obracuna()
    P_COND2
 
    PRIVATE m := "----- ---------- ---- -------- ------------------------------ --- ------" + REPL( " " + REPL( "-", Len( gPicI ) ), 5 )
@@ -124,8 +124,8 @@ FUNCTION os_pregled_revalorizacije()
 
             IF !( ( cON == "N" .AND. datotp_prazan() ) .OR. ;
                   ( con == "O" .AND. !datotp_prazan() ) .OR. ;
-                  ( con == "B" .AND. Year( field->datum ) = Year( gdatobr ) ) .OR. ;
-                  ( con == "G" .AND. Year( field->datum ) < Year( gdatobr ) ) .OR. ;
+                  ( con == "B" .AND. Year( field->datum ) = Year( os_datum_obracuna() ) ) .OR. ;
+                  ( con == "G" .AND. Year( field->datum ) < Year( os_datum_obracuna() ) ) .OR. ;
                   Empty( con ) )
                SKIP 1
                LOOP
@@ -145,7 +145,7 @@ FUNCTION os_pregled_revalorizacije()
 
                fIma := .F.
 
-               DO WHILE !Eof() .AND. field->id == _sr_id .AND. field->datum <= gDatObr
+               DO WHILE !Eof() .AND. field->id == _sr_id .AND. field->datum <= os_datum_obracuna()
                   fIma := .T.
                   SKIP
                ENDDO
@@ -180,7 +180,7 @@ FUNCTION os_pregled_revalorizacije()
                select_promj()
                HSEEK os->id
 
-               DO WHILE !Eof() .AND. field->id == _sr_id .AND. field->datum <= gDatObr
+               DO WHILE !Eof() .AND. field->id == _sr_id .AND. field->datum <= os_datum_obracuna()
                   ? Space( 5 ), Space( Len( _sr_id ) ), Space( Len( _sr_id_rj ) ), field->datum, field->opis
                   nA1 := 0
                   nA2 := field->amp

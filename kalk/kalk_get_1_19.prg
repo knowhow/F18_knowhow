@@ -29,7 +29,7 @@ FUNCTION kalk_get_1_19()
 
    @ m_x + 10, m_y + 66 SAY "Tarif.br->"
 
-   kalk_pripr_form_get_roba( @_idRoba, @_idTarifa, _idVd, fNovi, m_x + 11, m_y + 2, @aPorezi )
+   kalk_pripr_form_get_roba( @_idRoba, @_idTarifa, _idVd, kalk_is_novi_dokument(), m_x + 11, m_y + 2, @aPorezi )
 /*
    IF roba_barkod_pri_unosu()
     --  @ m_x + 11, m_y + 2   SAY "Artikal  " GET _IdRoba PICT "@!S10" when {|| _IdRoba := PadR( _idroba, Val( --gDuzSifIni ) ), .T. } VALID VRoba()
@@ -57,7 +57,7 @@ FUNCTION kalk_get_1_19()
    //DuplRoba()
 
    dDatNab := CToD( "" )
-   IF fnovi
+   IF kalk_is_novi_dokument()
       _Kolicina := 0
    ENDIF
 
@@ -76,7 +76,7 @@ FUNCTION kalk_get_1_19()
 
    nStCj := nNCJ := 0
 
-   IF fnovi
+   IF kalk_is_novi_dokument()
       SELECT koncij
       SEEK Trim( _idkonto )
       nStCj := Round( kalk_get_mpc_by_koncij_pravilo(), 3 )
@@ -87,7 +87,7 @@ FUNCTION kalk_get_1_19()
    _PKonto := _Idkonto
    _PU_I := "3"
 
-   IF fnovi .AND.  dozvoljeno_azuriranje_sumnjivih_stavki()
+   IF kalk_is_novi_dokument() .AND.  dozvoljeno_azuriranje_sumnjivih_stavki()
       kalk_fakticka_mpc( @nStCj, _idfirma, _pkonto, _idroba )
    ENDIF
 

@@ -127,7 +127,7 @@ FUNCTION VRoba( lSay )
       say_from_valid( 11, 23, Trim( Left( roba->naz, 40 ) ) + " (" + AllTrim( roba->jmj ) + ")", 40 )
    ENDIF
 
-   IF fNovi
+   IF xx--fNovi
       cTarifa := get_tarifa_by_koncij_region_roba_idtarifa_2_3( _idkonto, _idroba, @aPorezi )
    ELSE
       // za postojece dokumente uzmi u obzir unesenu tarifu
@@ -136,7 +136,7 @@ FUNCTION VRoba( lSay )
       set_pdv_array( @aPorezi )
    ENDIF
 
-   IF fNovi
+   IF xx--fNovi
       _idtarifa := cTarifa
    ENDIF
 

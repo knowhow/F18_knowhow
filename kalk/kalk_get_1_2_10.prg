@@ -12,8 +12,18 @@
 
 #include "f18.ch"
 
-STATIC __k_val // konverzija valute
+STATIC s_cKonverzijaValuteDN // konverzija valute
 STATIC aPorezi := {}
+STATIC s_lIsNoviDokument := .F.
+
+FUNCTION kalk_is_novi_dokument( lSet )
+
+   IF lSet != NIL
+      s_lIsNoviDokument := lSet
+   ENDIF
+
+   RETURN s_lIsNoviDokument
+
 
 FUNCTION kalk_get_1_10()
 
@@ -21,18 +31,21 @@ FUNCTION kalk_get_1_10()
    LOCAL _kord_x := 0
    LOCAL _unos_left := 40
 
+   AltD()
    gVarijanta := "2"
-   __k_val := "N"
+   s_cKonverzijaValuteDN := "N"
 
-   IF nRbr == 1 .AND. fNovi
+   IF nRbr == 1 .AND. kalk_is_novi_dokument()
       _DatFaktP := _datdok
    ENDIF
 
-   IF nRbr == 1  .OR. !fNovi .OR. gMagacin == "1"
+   IF nRbr == 1  .OR. !kalk_is_novi_dokument() .OR. gMagacin == "1"
 
       _kord_x := m_x + _x
 
-      @ m_x + _x, m_y + 2 SAY "DOBAVLJAC:" GET _IdPartner PICT "@!" valid {|| Empty( _IdPartner ) .OR. P_Firma( @_IdPartner ), ispisi_naziv_sifre( F_PARTN, _idpartner, _kord_x - 1, 22, 20 ), _ino_dob( _idpartner ) }
+      @ m_x + _x, m_y + 2 SAY8 "DOBAVLJAČ:" GET _IdPartner PICT "@!" ;
+         valid {|| Empty( _IdPartner ) .OR. P_Firma( @_IdPartner ), ispisi_naziv_sifre( F_PARTN, _idpartner, _kord_x - 1, 22, 20 ), ;
+         ino_dobavljac_set_konverzija_valute( _idpartner, @s_cKonverzijaValuteDN ) }
 
       @ m_x + _x, 50 SAY "Broj fakture:" GET _BrFaktP
 
@@ -74,7 +87,7 @@ FUNCTION kalk_get_1_10()
       // ?? _IdZaduz
       // ENDIF
 
-      _ino_dob( _idpartner )
+      ino_dobavljac_set_konverzija_valute( _idpartner, @s_cKonverzijaValuteDN )
 
    ENDIF
 
@@ -83,32 +96,9 @@ FUNCTION kalk_get_1_10()
    _kord_x := m_x + _x
 
 
-   kalk_pripr_form_get_roba( @_idRoba, @_idTarifa, _IdVd, fNovi, _kord_x, m_y + 2, @aPorezi, _idPartner )
+   kalk_pripr_form_get_roba( @_idRoba, @_idTarifa, _IdVd, kalk_is_novi_dokument(), _kord_x, m_y + 2, @aPorezi, _idPartner )
 
-/* kalk 10
-   IF roba_barkod_pri_unosu()
-      @ m_x + _x, m_y + 2 SAY "Artikal  " GET _IdRoba ;
-         PICT "@!S10" ;
-         WHEN {|| _idroba := PadR( _idroba, Val( --gDuzSifIni ) ), .T. } ;
-         VALID {|| ;
-         _idroba := iif( Len( Trim( _idroba ) ) < 10, Left( _idroba, 10 ), _idroba ), ;
-         _ocitani_barkod := _idroba, ;
-         P_Roba( @_IdRoba ), ;
-         if ( !tezinski_barkod_get_tezina( @_ocitani_barkod, @_kolicina ), .T., .T. ), ;
-         ispisi_naziv_sifre( F_ROBA, _idroba, _kord_x, 25, 40 ), ;
-         _IdTarifa := iif( fnovi, ROBA->idtarifa, _IdTarifa ), kalk_zadnji_ulazi_info( _idpartner, _idroba, "M" ), .T. }
-   ELSE
-      @ m_x + _x, m_y + 2  SAY "Artikal  " GET _IdRoba ;
-         PICT "@!" ;
-         VALID {|| ;
-         _idroba := iif( Len( Trim( _idroba ) ) < 10, Left( _idroba, 10 ), _idroba ), ;
-         P_Roba( @_IdRoba, nil, nil, NIL ), ;
-         ispisi_naziv_sifre( F_ROBA, _idroba, _kord_x, 25, 40 ), ;
-         _IdTarifa := iif( fnovi, ROBA->idtarifa, _IdTarifa ), kalk_zadnji_ulazi_info( _idpartner, _idroba, "M" ), ;
-         .T. }
 
-   ENDIF
-*/
 
    @ m_x + _x, m_y + ( MAXCOLS() - 20  ) SAY "Tarifa:" GET _IdTarifa WHEN gPromTar == "N" VALID P_Tarifa( @_IdTarifa )
 
@@ -135,7 +125,7 @@ FUNCTION kalk_get_1_10()
    ++ _x
    @ m_x + _x, m_y + 2 SAY8 "Količina " GET _Kolicina PICT PicKol VALID _Kolicina <> 0
 
-   IF fNovi
+   IF kalk_is_novi_dokument()
       SELECT ROBA
       HSEEK _IdRoba
       _VPC := KoncijVPC()
@@ -153,10 +143,10 @@ FUNCTION kalk_get_1_10()
    @ m_x + _x, m_y + 2 SAY "Fakturna cijena:"
 
    IF gDokKVal == "D"
-      @ m_x + _x, Col() + 1 SAY "pr.->" GET __k_val VALID _val_konv( __k_val ) PICT "@!"
+      @ m_x + _x, Col() + 1 SAY "pr.->" GET s_cKonverzijaValuteDN VALID kalk_ulaz_preracun_fakturne_cijene( s_cKonverzijaValuteDN ) PICT "@!"
    ENDIF
 
-   @ m_x + _x, m_y + _unos_left GET _fcj PICT gPicNC VALID {|| _fcj > 0 .AND. _set_konv( @_fcj, @__k_val ) } WHEN V_kol10()
+   @ m_x + _x, m_y + _unos_left GET _fcj PICT gPicNC VALID {|| _fcj > 0 .AND. _set_konv( @_fcj, @s_cKonverzijaValuteDN ) } WHEN V_kol10()
 
    ++ _x
    @ m_x + _x, m_y + 2 SAY "Rabat (%):"
@@ -186,13 +176,10 @@ FUNCTION kalk_get_1_10()
 
 
 
-// --------------------------------------------------
-// da li je dobavljac ino, setuje valutiranje
-// --------------------------------------------------
-STATIC FUNCTION _ino_dob( cPartn )
+STATIC FUNCTION ino_dobavljac_set_konverzija_valute( cPartn, s_cKonverzijaValuteDN )
 
-   IF gDokKVal == "D" .AND. fNovi .AND. isInoDob( cPartn )
-      __k_val := "D"
+   IF gDokKVal == "D" .AND. kalk_is_novi_dokument() .AND. isInoDob( cPartn )
+      s_cKonverzijaValuteDN := "D"
    ENDIF
 
    RETURN .T.
@@ -202,7 +189,7 @@ STATIC FUNCTION _ino_dob( cPartn )
 // ---------------------------------------
 // validacija unosa preracuna
 // ---------------------------------------
-FUNCTION _val_konv( cDn )
+FUNCTION kalk_ulaz_preracun_fakturne_cijene( cDn )
 
    LOCAL lRet := .T.
 
@@ -264,7 +251,7 @@ STATIC FUNCTION kalk_get_2_10( x_kord )
    IF _sa_troskovima
 
 
-      _auto_set_trosk( fNovi )   // automatski setuj troskove
+      _auto_set_trosk( kalk_is_novi_dokument() )   // automatski setuj troskove
 
       // TROSKOVNIK
 

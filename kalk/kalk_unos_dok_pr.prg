@@ -12,7 +12,7 @@
 #include "f18.ch"
 
 MEMVAR GetList, m_x, m_y
-MEMVAR nRbr, fNovi, fMarza, nStrana
+MEMVAR nRbr, fMarza, nStrana
 MEMVAR _IdFirma, _IdVd, _BrDok, _TBankTr, _TPrevoz, _TSpedTr, _TZavTr, _TCarDaz, _SpedTr, _ZavTr, _BankTr, _CarDaz, _MArza, _Prevoz
 MEMVAR _TMarza, _IdKonto, _IdKonto2, _IdTarifa, _IDRoba, _Kolicina, _DatFaktP, _datDok, _brFaktP, _VPC, _NC, _FCJ, _FCJ2, _Rabat
 MEMVAR _MKonto, _MU_I, _Error
@@ -38,7 +38,7 @@ FUNCTION kalk_unos_dok_pr()
 
    SELECT kalk_pripr
 
-   IF nRbr < 10 .AND. fNovi
+   IF nRbr < 10 .AND. kalk_is_novi_dokument()
       _DatFaktP := _datDok
    ENDIF
 
@@ -56,14 +56,16 @@ FUNCTION kalk_unos_dok_pr()
    IF nRbr < 10
       @ m_x + 12, m_y + 2 SAY8 "Proizvod  " GET _IdRoba PICT "@!" ;
          VALID  {|| P_Roba( @_IdRoba, NIL, NIL, "IDP" ), ;
-         say_from_valid( 12, 24, Trim( Left( roba->naz, 40 ) ) + " (" + ROBA->jmj + ")", 40 ), _IdTarifa := iif( fnovi, ROBA->idtarifa, _IdTarifa ), .T. }
+         say_from_valid( 12, 24, Trim( Left( roba->naz, 40 ) ) + " (" + ROBA->jmj + ")", 40 ),;
+          _IdTarifa := iif( kalk_is_novi_dokument(), ROBA->idtarifa, _IdTarifa ), .T. }
 
       @ m_x + 13, m_y + 2 SAY8 "Količina  " GET _Kolicina PICT PicKol ;
          VALID {|| _Kolicina <> 0 .AND. iif( InRange( nRbr, 10, 99 ), error_bar( _idFirma + "-" + _idvd + "-" + _brdok, "PR dokument max 9 artikala" ), .T. ) }
 
    ELSE
 
-      @ m_x + 12, m_y + 2  SAY8 "Sirovina  " GET _IdRoba PICT "@!" valid  {|| P_Roba( @_IdRoba ), say_from_valid( 12, 24, Trim( Left( roba->naz, 40 ) ) + " (" + ROBA->jmj + ")", 40 ), _IdTarifa := iif( fnovi, ROBA->idtarifa, _IdTarifa ), .T. }
+      @ m_x + 12, m_y + 2  SAY8 "Sirovina  " GET _IdRoba PICT "@!" valid  {|| P_Roba( @_IdRoba ), say_from_valid( 12, 24, Trim( Left( roba->naz, 40 ) ) + " (" + ROBA->jmj + ")", 40 ),;
+       _IdTarifa := iif( kalk_is_novi_dokument(), ROBA->idtarifa, _IdTarifa ), .T. }
       @ m_x + 13, m_y + 2   SAY8 "Količina  " GET _Kolicina PICTURE PicKol VALID _Kolicina <> 0
 
       @ m_x + 15, m_y + 2   SAY "N.CJ Sirovina:"
@@ -118,7 +120,7 @@ FUNCTION kalk_unos_dok_pr()
 
    //check_datum_posljednje_kalkulacije()
 
-   IF fNovi
+   IF kalk_is_novi_dokument()
       SELECT ROBA
       HSEEK _IdRoba
       _VPC := KoncijVPC()

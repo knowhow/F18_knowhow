@@ -23,11 +23,11 @@ FUNCTION Get1_80( atrib )
    PRIVATE aPorezi := {}
    PRIVATE fMarza := " "
 
-   IF nRbr == 1 .AND. fnovi
+   IF nRbr == 1 .AND. kalk_is_novi_dokument()
       _DatFaktP := _datdok
    ENDIF
 
-   IF nRbr == 1 .OR. !fnovi
+   IF nRbr == 1 .OR. !kalk_is_novi_dokument()
 
       _kord_x := m_x + _x
 
@@ -88,7 +88,7 @@ FUNCTION Get1_80( atrib )
 
    _x += 2
 
-   kalk_pripr_form_get_roba( @_idRoba, @_idTarifa, _IdVd, fNovi, m_x + _x, m_y + 2, @aPorezi )
+   kalk_pripr_form_get_roba( @_idRoba, @_idTarifa, _IdVd, kalk_is_novi_dokument(), m_x + _x, m_y + 2, @aPorezi )
 
    @ m_x + _x, m_y + ( MAXCOLS() - 20 ) SAY "Tarifa:" GET _IdTarifa  WHEN gPromTar == "N" VALID P_Tarifa( @_IdTarifa )
 
@@ -120,7 +120,7 @@ FUNCTION Get1_80( atrib )
    //kalk_dat_poslj_promjene_prod()
    //DuplRoba()
 
-   IF fNovi
+   IF kalk_is_novi_dokument()
 
       SELECT koncij
       SEEK Trim( _idkonto )
@@ -206,7 +206,8 @@ FUNCTION kalk_get_1_80_protustavka()
    PRIVATE aPorezi := {}
    PRIVATE PicDEM := "9999999.99999999"
 
-   fnovi := .T.
+   kalk_is_novi_dokument( .T. )
+
 
    PicKol := "999999.999"
 
@@ -223,11 +224,8 @@ FUNCTION kalk_get_1_80_protustavka()
    _x := 12
    _kord_x := m_x + _x
 
-   kalk_pripr_form_get_roba( @_idRoba, @_idTarifa, _IdVd, fNovi, m_x + _x, m_y + 2, @aPorezi )
-/*
-   --@ m_x + _x, m_y + 2 SAY "Artikal  " GET _IdRoba PICT "@!" ;
-    --  VALID {|| VRoba_lv( fNovi, @aPorezi ), ispisi_naziv_sifre( F_ROBA, _idroba, _kord_x, 21, 20 ) }
-*/
+   kalk_pripr_form_get_roba( @_idRoba, @_idTarifa, _IdVd, kalk_is_novi_dokument(), m_x + _x, m_y + 2, @aPorezi )
+
 
 
    @ m_x + _x, m_y + ( MAXCOLS() - 20 ) SAY "Tarifa:" ;

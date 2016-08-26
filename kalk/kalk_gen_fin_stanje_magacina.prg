@@ -291,7 +291,7 @@ FUNCTION kalk_gen_fin_stanje_magacina( vars )
 
       @ m_x + 2, m_y + 2 SAY "Dokument: " + _id_d_firma + "-" + _tip_dok + "-" + _d_br_dok
 
-      _add_to_exp( _id_d_firma, _tip_dok, _d_br_dok, _dat_dok, _tip_dok_naz, _id_partner, ;
+      kalk_fin_stanje_add_to_r_export( _id_d_firma, _tip_dok, _d_br_dok, _dat_dok, _tip_dok_naz, _id_partner, ;
          _partn_naziv, _partn_mjesto, _partn_ptt, _partn_adresa, _br_fakt, ;
          _nv_ulaz, _nv_izlaz, _nv_ulaz - _nv_izlaz, ;
          _vp_ulaz, _vp_izlaz, _vp_ulaz - _vp_izlaz, ;
@@ -349,7 +349,7 @@ STATIC FUNCTION _cre_tmp_tbl()
 // ---------------------------------------
 // dodaj podatke u r_export tabelu
 // ---------------------------------------
-STATIC FUNCTION _add_to_exp( id_firma, id_tip_dok, broj_dok, datum_dok, vrsta_dok, id_partner, ;
+STATIC FUNCTION kalk_fin_stanje_add_to_r_export( id_firma, id_tip_dok, broj_dok, datum_dok, vrsta_dok, id_partner, ;
       part_naz, part_mjesto, part_ptt, part_adr, broj_fakture, ;
       n_v_dug, n_v_pot, n_v_saldo, ;
       v_p_dug, v_p_pot, v_p_saldo, ;

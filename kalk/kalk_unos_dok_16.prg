@@ -21,7 +21,7 @@ FUNCTION kalk_get_1_16()
 
    SET KEY K_ALT_K TO KM94()
 
-   IF nRbr == 1 .AND. fnovi
+   IF nRbr == 1 .AND. kalk_is_novi_dokument()
       _DatFaktP := _datdok
    ENDIF
 
@@ -29,7 +29,7 @@ FUNCTION kalk_get_1_16()
       _TMarza := "%"
    ENDIF
 
-   IF nRbr == 1 .OR. !fNovi
+   IF nRbr == 1 .OR. !kalk_is_novi_dokument()
 
       IF _idvd $ "94#97"
          @  m_x + 6, m_y + 2   SAY "KUPAC:" GET _IdPartner PICT "@!" VALID Empty( _IdPartner ) .OR. P_Firma( @_IdPartner, 6, 18 )
@@ -60,14 +60,8 @@ FUNCTION kalk_get_1_16()
 
    @ m_x + 10, m_y + 66 SAY "Tarif.br "
 
-   kalk_pripr_form_get_roba( @_idRoba, @_idTarifa, _IdVd, fNovi, m_x + 11, m_y + 2, @aPorezi )
-   /*
-   IF roba_barkod_pri_unosu()
-      @ m_x + 11, m_y + 2   SAY "Artikal  " GET _IdRoba PICT "@!S10" when {|| _idRoba := PadR( _idRoba, Val( --gDuzSifIni ) ), .T. } valid  {|| P_Roba( @_IdRoba ), say_from_valid( 11, 23, Trim( Left( roba->naz, 40 ) ) + " (" + ROBA->jmj + ")", 40 ), _IdTarifa := iif( fnovi, ROBA->idtarifa, _IdTarifa ), .T. }
-   ELSE
-      @ m_x + 11, m_y + 2   SAY "Artikal  " GET _IdRoba PICT "@!" valid  {|| P_Roba( @_IdRoba ), say_from_valid( 11, 23, Trim( Left( roba->naz, 40 ) ) + " (" + ROBA->jmj + ")", 40 ), _IdTarifa := iif( fnovi, ROBA->idtarifa, _IdTarifa ), .T. }
-   ENDIF
-   */
+   kalk_pripr_form_get_roba( @_idRoba, @_idTarifa, _IdVd, kalk_is_novi_dokument(), m_x + 11, m_y + 2, @aPorezi )
+
 
    @ m_x + 11, m_y + 70 GET _IdTarifa WHEN gPromTar == "N" VALID P_Tarifa( @_IdTarifa )
 
@@ -93,7 +87,7 @@ FUNCTION kalk_get_1_16()
    //check_datum_posljednje_kalkulacije()
    //DuplRoba()
    _GKolicina := 0
-   IF fNovi
+   IF kalk_is_novi_dokument()
       SELECT ROBA
       HSEEK _IdRoba
       IF koncij->naz == "P2"
@@ -136,7 +130,8 @@ FUNCTION Get1_16bPDV()
 
    LOCAL cSvedi := " "
 
-   fnovi := .T.
+kalk_is_novi_dokument( .T. )
+
    PRIVATE PicDEM := "9999999.99999999", PicKol := "999999.999"
 
    Beep( 1 )

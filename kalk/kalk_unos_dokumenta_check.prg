@@ -151,7 +151,7 @@ FUNCTION DuplRoba()
    dkolicina := _kolicina
    dfcj := _fcj
    DO WHILE !Eof() .AND. _idfirma + _idvd + _brdok + _idroba == idfirma + idvd + brdok + idroba
-      IF Val( rbr ) <> nRbr .AND. ( nRRec <> RecNo() .OR. fnovi )
+      IF Val( rbr ) <> nRbr .AND. ( nRRec <> RecNo() .OR. -----fnovi )
          Beep( 2 )
          // skocio je na donji zapis
          IF Pitanje(, "Artikal " + _idroba + " se pojavio vise puta unutar - spojiti ?", "N" ) == "D"

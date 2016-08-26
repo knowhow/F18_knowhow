@@ -20,7 +20,7 @@ FUNCTION kalk_get_1_41()
    pIzgSt := .F. // izgenerisane stavke jos ne postoje
    PRIVATE aPorezi := {}
 
-   IF fNovi
+   IF kalk_is_novi_dokument()
       _DatFaktP := _datdok
    ENDIF
 
@@ -59,7 +59,7 @@ FUNCTION kalk_get_1_41()
 
    @ m_x + 10, m_y + 66 SAY "Tarif.br->"
 
-   kalk_pripr_form_get_roba( @_idRoba, @_idTarifa, _idVd, fNovi, m_x + 11, m_y + 2, @aPorezi )
+   kalk_pripr_form_get_roba( @_idRoba, @_idTarifa, _idVd, kalk_is_novi_dokument(), m_x + 11, m_y + 2, @aPorezi )
 /*
    IF roba_barkod_pri_unosu()
       --@ m_x + 11, m_y + 2   SAY "Artikal  " GET _IdRoba PICT "@!S10" when {|| _IdRoba := PadR( _idroba, Val( --gDuzSifIni ) ), .T. } VALID VRoba()
@@ -93,7 +93,7 @@ FUNCTION kalk_get_1_41()
    _GKolicina := 0
    _GKolicin2 := 0
 
-   IF fNovi
+   IF kalk_is_novi_dokument()
 
       SELECT koncij
       SEEK Trim( _idkonto )
@@ -115,7 +115,7 @@ FUNCTION kalk_get_1_41()
 
    ENDIF
 
-   IF ( dozvoljeno_azuriranje_sumnjivih_stavki() .AND. ( _MpcSAPP == 0 .OR. fNovi ) )
+   IF ( dozvoljeno_azuriranje_sumnjivih_stavki() .AND. ( _MpcSAPP == 0 .OR. kalk_is_novi_dokument() ) )
       kalk_fakticka_mpc( @_MPCSAPP, _idfirma, _idkonto, _idroba )
    ENDIF
 

@@ -40,9 +40,9 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
    LOCAL __dat_nal
    LOCAL __opis
    LOCAL __p_naz
-   LOCAL __k_naz
-   LOCAL __dug
-   LOCAL __pot
+   LOCAL cKontoNaziv
+   LOCAL nDuguje
+   LOCAL nPotrazuje
    LOCAL _fin_params := fin_params()
    LOCAL _fakt_params := fakt_params()
    LOCAL cLibreOffice := "N"
@@ -457,7 +457,7 @@ altd()
 
       DO WHILE !Eof() .AND. cIdKonto == IdKonto .AND. iif( gDUFRJ != "D", IdFirma == cIdFirma, .T. )
 
-         __k_naz := ""
+         cKontoNaziv := ""
          __p_naz := ""
 
          nPDugBHD := 0
@@ -512,9 +512,9 @@ altd()
 
          SELECT KONTO
          HSEEK cIdKonto
-         __k_naz := field->naz
+         cKontoNaziv := field->naz
 
-         @ PRow(), PCol() + 2 SAY __k_naz
+         @ PRow(), PCol() + 2 SAY cKontoNaziv
          ? "Partner: "
          @ PRow(), PCol() + 1 SAY iif( cBrza == "D" .AND. RTrim( qqPartner ) == ";", ":  SVI", cIdPartner )
          IF cRasclaniti == "D"
@@ -822,15 +822,15 @@ altd()
             IF cExpDbf == "D" .AND. !( lOtvoreneStavke .AND. OtvSt == "9" )
 
                IF field->d_p == "1"
-                  __dug := field->iznosbhd
-                  __pot := 0
+                  nDuguje := field->iznosbhd
+                  nPotrazuje := 0
                ELSE
-                  __dug := 0
-                  __pot := field->iznosbhd
+                  nDuguje := 0
+                  nPotrazuje := field->iznosbhd
                ENDIF
 
-               _add_to_export( cIdKonto, __k_naz, cIdPartner, __p_naz, __vr_nal, __br_nal, __r_br, ;
-                  __br_veze, __dat_nal, __dat_val, __opis, __dug, __pot, ( __dug - __pot ) )
+               fin_suban_add_item_to_r_export( cIdKonto, cKontoNaziv, cIdPartner, __p_naz, __vr_nal, __br_nal, __r_br, ;
+                  __br_veze, __dat_nal, __dat_val, __opis, nDuguje, nPotrazuje, ( nDuguje - nPotrazuje ) )
             ENDIF
 
             SKIP 1
@@ -1039,7 +1039,7 @@ FUNCTION fin_kartica_dbf_struct()
 /*
    upisuje u export tabelu podatke
 */
-STATIC FUNCTION _add_to_export( cKonto, cK_naz, cPartn, cP_naz, cVn, cBr, nRbr, cBrVeze, dDatum, dDatVal, cOpis, nDug, nPot, nSaldo )
+STATIC FUNCTION fin_suban_add_item_to_r_export( cKonto, cK_naz, cPartn, cP_naz, cVn, cBr, nRbr, cBrVeze, dDatum, dDatVal, cOpis, nDug, nPot, nSaldo )
 
    LOCAL nTArea := Select()
 

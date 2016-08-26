@@ -28,14 +28,8 @@ FUNCTION kalk_get_1_im()
 
    @ m_x + 10, m_y + 66 SAY "Tarif.br->"
 
-   kalk_pripr_form_get_roba( @_idRoba, @_idTarifa, _IdVd, fNovi, _kord_x, m_y + 2, @aPorezi )
-/*
-   IF roba_barkod_pri_unosu()
-      @ m_x + 11, m_y + 2 SAY "Artikal  " GET _IdRoba PICT "@!S10" WHEN {|| _idRoba := PadR( _idRoba, Val( --gDuzSifIni ) ), .T. } VALID {|| P_Roba( @_IdRoba ), say_from_valid( 11, 23, Trim( Left( roba->naz, 40 ) ) + " (" + ROBA->jmj + ")", 40 ), _IdTarifa := iif( fNovi, ROBA->idtarifa, _IdTarifa ), .T. }
-   ELSE
-      @ m_x + 11, m_y + 2 SAY "Artikal  " GET _IdRoba PICT "@!" VALID {|| P_Roba( @_IdRoba ), say_from_valid( 11, 23, Trim( Left( roba->naz, 40 ) ) + " (" + ROBA->jmj + ")", 40 ), _IdTarifa := iif( fNovi, ROBA->idtarifa, _IdTarifa ), .T. }
-   ENDIF
-  */
+   kalk_pripr_form_get_roba( @_idRoba, @_idTarifa, _IdVd, kalk_is_novi_dokument(), _kord_x, m_y + 2, @aPorezi )
+
    @ m_x + 11, m_y + 70 GET _IdTarifa WHEN gPromTar == "N" VALID P_Tarifa( @_IdTarifa )
 
    READ

@@ -23,7 +23,7 @@ FUNCTION leg_Get1_PR()
 
    SELECT kalk_pripr
 
-   IF nRbr == 1 .AND. fnovi
+   IF nRbr == 1 .AND. kalk_is_novi_dokument()
       _DatFaktP := _datdok
    ENDIF
 
@@ -32,7 +32,8 @@ FUNCTION leg_Get1_PR()
       @ m_x + 6, m_y + 2 SAY "Broj fakture" GET _brfaktp
       @ m_x + 7, m_y + 2 SAY "Mag .got.proizvoda zaduzuje" GET _IdKonto VALID  P_Konto( @_IdKonto, 21, 5 ) PICT "@!"
       @ m_x + 8, m_y + 2 SAY "Mag. sirovina razduzuje    " GET _IdKonto2 PICT "@!" VALID P_Konto( @_IdKonto2 )
-      @ m_x + 12, m_y + 2 SAY "Proizvod  " GET _IdRoba PICT "@!" valid  {|| P_Roba( @_IdRoba ), say_from_valid( 12, 24, Trim( Left( roba->naz, 40 ) ) + " (" + ROBA->jmj + ")", 40 ), _IdTarifa := iif( fnovi, ROBA->idtarifa, _IdTarifa ), .T. }
+      @ m_x + 12, m_y + 2 SAY "Proizvod  " GET _IdRoba PICT "@!" valid  {|| P_Roba( @_IdRoba ), say_from_valid( 12, 24, Trim( Left( roba->naz, 40 ) ) + " (" + ROBA->jmj + ")", 40 ),;
+       _IdTarifa := iif( kalk_is_novi_dokument(), ROBA->idtarifa, _IdTarifa ), .T. }
       @ m_x + 12, m_y + 70 GET _IdTarifa WHEN gPromTar == "N" VALID P_Tarifa( @_IdTarifa )
 
       SELECT tarifa
@@ -172,7 +173,8 @@ FUNCTION leg_Get1_PR()
    @ m_x + 11, m_y + 66 SAY "Tarif.brĿ"
 
    IF nRbr <> 1
-      @ m_x + 12, m_y + 2  SAY "Sirovina  " GET _IdRoba PICT "@!" valid  {|| P_Roba( @_IdRoba ), say_from_valid( 12, 24, Trim( Left( roba->naz, 40 ) ) + " (" + ROBA->jmj + ")", 40 ), _IdTarifa := iif( fnovi, ROBA->idtarifa, _IdTarifa ), .T. }
+      @ m_x + 12, m_y + 2  SAY "Sirovina  " GET _IdRoba PICT "@!" valid  {|| P_Roba( @_IdRoba ), say_from_valid( 12, 24, Trim( Left( roba->naz, 40 ) ) + " (" + ROBA->jmj + ")", 40 ), ;
+      _IdTarifa := iif( kalk_is_novi_dokument(), ROBA->idtarifa, _IdTarifa ), .T. }
       @ m_x + 13, m_y + 2   SAY "Kolicina  " GET _Kolicina PICTURE PicKol VALID _Kolicina <> 0
    ENDIF
 
@@ -215,7 +217,7 @@ FUNCTION leg_Get1_PR()
 
    //check_datum_posljednje_kalkulacije()
 
-   IF fNovi
+   IF kalk_is_novi_dokument()
       SELECT ROBA
       HSEEK _IdRoba
       _VPC := KoncijVPC()
@@ -263,7 +265,7 @@ FUNCTION leg_Get1_PR()
    IF nRbr == 1
       _fcj := nNV / _kolicina
    ELSE
-      IF !fnovi
+      IF !kalk_is_novi_dokument()
          GO TOP
          IF Val( rbr ) = 1
             RREPLACE fcj WITH nNv / kolicina

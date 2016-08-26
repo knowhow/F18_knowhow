@@ -23,7 +23,7 @@ FUNCTION Get1_82()
 
    SET KEY K_ALT_K TO kalk_kartica_magacin_pomoc_unos_14()
 
-   IF nRbr == 1 .OR. !fnovi
+   IF nRbr == 1 .OR. !kalk_is_novi_dokument()
       @  m_x + 7, m_y + 2   SAY "Faktura Broj:" GET _BrFaktP
       @  m_x + 7, Col() + 2 SAY "Datum:" GET _DatFaktP   ;
          valid {|| .T. }
@@ -51,15 +51,8 @@ FUNCTION Get1_82()
    @ m_x + 10, m_y + 66 SAY "Tarif.br->"
 
 
-   kalk_pripr_form_get_roba( @_idRoba, @_idTarifa, _IdVd, fNovi, m_x + 11, m_y + 2, @aPorezi )
+   kalk_pripr_form_get_roba( @_idRoba, @_idTarifa, _IdVd, kalk_is_novi_dokument(), m_x + 11, m_y + 2, @aPorezi )
 
-/*
-   IF roba_barkod_pri_unosu()
-      -- @ m_x + 11, m_y + 2   SAY "Artikal  " GET _IdRoba PICT "@!S10" when {|| _idRoba := PadR( _idRoba, Val( gDuzSifIni ) ), .T. } valid  {|| P_Roba( @_IdRoba ), say_from_valid( 11, 23, Trim( Left( roba->naz, 40 ) ) + " (" + ROBA->jmj + ")", 40 ), _IdTarifa := iif( fnovi, ROBA->idtarifa, _IdTarifa ), .T. }
-   ELSE
-      --@ m_x + 11, m_y + 2   SAY "Artikal  " GET _IdRoba PICT "@!" valid  {|| P_Roba( @_IdRoba ), say_from_valid( 11, 23, Trim( Left( roba->naz, 40 ) ) + " (" + ROBA->jmj + ")", 40 ), _IdTarifa := iif( fnovi, ROBA->idtarifa, _IdTarifa ), .T. }
-   ENDIF
-*/
 
    @ m_x + 11, m_y + 70 GET _IdTarifa WHEN gPromTar == "N" VALID P_Tarifa( @_IdTarifa )
 
@@ -84,13 +77,14 @@ FUNCTION Get1_82()
 
    _GKolicina := 0
 
-   IF fNovi
+   IF kalk_is_novi_dokument()
       SELECT ROBA
       HSEEK _IdRoba
       _VPC := KoncijVPC()
       _NC := NC
    ENDIF
-   IF dozvoljeno_azuriranje_sumnjivih_stavki() .AND. fNovi
+
+   IF dozvoljeno_azuriranje_sumnjivih_stavki() .AND. kalk_is_novi_dokument()
       kalk_vpc_po_kartici( @_VPC, _idfirma, _idkonto, _idroba )
       SELECT kalk_pripr
    ENDIF

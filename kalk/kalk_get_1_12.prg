@@ -21,7 +21,7 @@ FUNCTION kalk_get_1_12()
 
    _GKolicina := _GKolicin2 := 0
    _IdPartner := ""
-   IF nRbr == 1 .OR. !fnovi
+   IF nRbr == 1 .OR. !kalk_is_novi_dokument()
       @ m_x + 6, m_y + 2   SAY "Otpremnica - Broj:" GET _BrFaktP
       @ m_x + 6, Col() + 2 SAY "Datum:" GET _DatFaktP
       _DatFaktP := _datdok
@@ -48,7 +48,7 @@ FUNCTION kalk_get_1_12()
    ENDIF
    @ m_x + 10, m_y + 66 SAY "Tarif.br->"
 
-   kalk_pripr_form_get_roba( @_idRoba, @_idTarifa, _IdVd, fNovi, m_x + 11, m_y + 2, @aPorezi )
+   kalk_pripr_form_get_roba( @_idRoba, @_idTarifa, _IdVd, kalk_is_novi_dokument(), m_x + 11, m_y + 2, @aPorezi )
    /*
    IF roba_barkod_pri_unosu()
     --  @ m_x + 11, m_y + 2   SAY "Artikal  " GET _IdRoba PICT "@!S10" when {|| _IdRoba := PadR( _idroba, Val( --gDuzSifIni ) ), .T. } VALID VRoba()
@@ -80,7 +80,7 @@ FUNCTION kalk_get_1_12()
 
    _GKolicina := 0
 
-   IF fNovi
+   IF kalk_is_novi_dokument()
       SELECT koncij
       SEEK Trim( _idkonto )
       SELECT ROBA

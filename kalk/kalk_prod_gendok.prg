@@ -388,7 +388,7 @@ FUNCTION NivPoProc()
          ENDIF
 
          PRIVATE aPorezi := {}
-         PRIVATE fNovi := .T.
+         --PRIVATE fNovi := .T.
          --VRoba( .F. )
          // P_Tarifa(@_idTarifa)
          SELECT kalk_pripr

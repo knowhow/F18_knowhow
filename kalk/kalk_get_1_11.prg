@@ -19,13 +19,13 @@ FUNCTION kalk_get_1_11()
 
    pIzgSt := .F.   // izgenerisane stavke jos ne postoje
 
-   IF nRbr == 1 .AND. fnovi
+   IF nRbr == 1 .AND. kalk_is_novi_dokument()
       _DatFaktP := _datdok
    ENDIF
 
    PRIVATE aPorezi := {}
 
-   IF nRbr == 1  .OR. !fnovi
+   IF nRbr == 1  .OR. !kalk_is_novi_dokument()
       _GKolicina := _GKolicin2 := 0
       IF _IdVD $ "11#12#13#22"
          _IdPartner := ""
@@ -61,7 +61,7 @@ FUNCTION kalk_get_1_11()
 
    @ m_x + 10, m_y + 66 SAY "Tarifa ->"
 
-   kalk_pripr_form_get_roba( @_idRoba, @_idTarifa, _IdVd, fNovi, m_x + 11, m_y + 2, @aPorezi )
+   kalk_pripr_form_get_roba( @_idRoba, @_idTarifa, _IdVd, kalk_is_novi_dokument(), m_x + 11, m_y + 2, @aPorezi )
    /*
    IF roba_barkod_pri_unosu()
     --  @ m_x + 11, m_y + 2   SAY "Artikal  " GET _IdRoba PICT "@!S10" when {|| _IdRoba := PadR( _idroba, Val(-- gDuzSifIni ) ), .T. } VALID VRoba()
@@ -95,7 +95,7 @@ FUNCTION kalk_get_1_11()
 
 
    _GKolicina := _GKolicin2 := 0
-   IF fNovi
+   IF kalk_is_novi_dokument()
       SELECT roba
       _MPCSaPP := kalk_get_mpc_by_koncij_pravilo( _pkonto )
 
@@ -170,11 +170,11 @@ FUNCTION kalk_get_1_11()
    SEEK Trim( _idkonto )
    SELECT kalk_pripr
 
-   IF fNovi
+   IF kalk_is_novi_dokument()
       _TPrevoz := "R"
    ENDIF
 
-   IF nRBr == 1 .OR. !fNovi // prva stavka
+   IF nRBr == 1 .OR. !kalk_is_novi_dokument() // prva stavka
       @ m_x + 15, m_y + 2 SAY "MP trosak (A,R):" GET _TPrevoz VALID _tPrevoz $ "AR"
       @ m_x + 15, Col() + 2 GET _prevoz PICT PICDEM
    ELSE

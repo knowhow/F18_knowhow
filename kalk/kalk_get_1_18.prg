@@ -26,15 +26,8 @@ FUNCTION kalk_get_1_18()
 
    @ m_x + 10, m_y + 66 SAY "Tarif.br->"
 
-   kalk_pripr_form_get_roba( @_idRoba, @_idTarifa, _IdVd, fNovi, m_x + 11, m_y + 2, @aPorezi )
-/*
-   IF roba_barkod_pri_unosu()
-    --  @ m_x + 11, m_y + 2   SAY "Artikal  " GET _IdRoba PICT "@!S10" when {|| _idRoba := PadR( _idRoba, Val(-- gDuzSifIni ) ), .T. } valid  {|| P_Roba( @_IdRoba ), say_from_valid( 11, 23, Trim( Left( roba->naz, 40 ) ) + " (" + ROBA->jmj + ")", 40 ), _IdTarifa := iif( fnovi, ROBA->idtarifa, _IdTarifa ), .T. }
-   ELSE
-    --  @ m_x + 11, m_y + 2   SAY "Artikal  " GET _IdRoba PICT "@!" valid  {|| P_Roba( @_IdRoba ), say_from_valid( 11, 23, Trim( Left( roba->naz, 40 ) ) + " (" + ROBA->jmj + ")", 40 ), _IdTarifa := iif( fnovi, ROBA->idtarifa, _IdTarifa ), .T. }
-   ENDIF
+   kalk_pripr_form_get_roba( @_idRoba, @_idTarifa, _IdVd, kalk_is_novi_dokument(), m_x + 11, m_y + 2, @aPorezi )
 
-*/
    @ m_x + 11, m_y + 70 GET _IdTarifa WHEN gPromTar == "N" VALID P_Tarifa( @_IdTarifa )
    READ
    ESC_RETURN K_ESC
@@ -53,30 +46,30 @@ FUNCTION kalk_get_1_18()
    //DuplRoba()
 
    dDatNab := CToD( "" )
-   IF fnovi
+   IF kalk_is_novi_dokument()
       _Kolicina := 0
    ENDIF
    lGenStavke := .F.
    IF !Empty( gmetodaNC ) .AND. _TBankTr <> "X"
-      MsgO( "Racunam kolicinu robe na skladistu" )
+
       IF gKolicFakt == "D"
          KalkNaF( _idroba, @_kolicina )
       ELSE
          kalk_get_nabavna_mag( _idfirma, _idroba, _idkonto, @_kolicina, NIL, NIL, NIL, @dDatNab )
       ENDIF
-      MsgC()
+
    ENDIF
    IF dDatNab > _DatDok; Beep( 1 );Msg( "Datum nabavke je " + DToC( dDatNab ), 4 );ENDIF
 
    @ m_x + 12, m_y + 2   SAY "Kolicina " GET _Kolicina PICTURE PicKol VALID _kolicina > 0
 
-   IF fnovi .AND. gMagacin == "2" .AND. _TBankTr <> "X"
+   IF kalk_is_novi_dokument() .AND. gMagacin == "2" .AND. _TBankTr <> "X"
       nStCj := KoncijVPC()
    ELSE
       nStCj := _MPCSAPP
    ENDIF
 
-   IF fnovi
+   IF kalk_is_novi_dokument()
       nNCj := 0
    ELSE
       nNCJ := _VPC + nStCj

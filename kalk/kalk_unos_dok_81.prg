@@ -36,24 +36,24 @@ FUNCTION kalk_unos_dok_81( atrib )
    ENDIF
 
    IF _use_opis
-      IF !fNovi
+      IF !kalk_is_novi_dokument()
          _opis := PadR( atrib[ "opis" ], 300 )
       ENDIF
    ENDIF
 
    IF _use_rok
-      IF !fNovi
+      IF !kalk_is_novi_dokument()
          _rok := CToD( AllTrim( atrib[ "rok" ] ) )
       ENDIF
    ENDIF
 
    __k_val := "N"
 
-   IF nRbr == 1 .AND. fNovi
+   IF nRbr == 1 .AND. kalk_is_novi_dokument()
       _datfaktp := _datdok
    ENDIF
 
-   IF nRbr == 1 .OR. !fNovi
+   IF nRbr == 1 .OR. !kalk_is_novi_dokument()
 
       ++ _x
       _kord_x := m_x + _x
@@ -104,7 +104,7 @@ FUNCTION kalk_unos_dok_81( atrib )
    _x += 2
    _kord_x := m_x + _x
 
-   kalk_pripr_form_get_roba( @_idRoba, @_idTarifa, _IdVd, fNovi, _kord_x, m_y + 2, @aPorezi, _idPartner )
+   kalk_pripr_form_get_roba( @_idRoba, @_idTarifa, _IdVd, kalk_is_novi_dokument(), _kord_x, m_y + 2, @aPorezi, _idPartner )
 
 
 
@@ -139,7 +139,7 @@ FUNCTION kalk_unos_dok_81( atrib )
    ++ _x
    @ m_x + _x, m_y + 2 SAY8 "Količina " GET _kolicina PICT PicKol VALID _kolicina <> 0
 
-   IF fNovi
+   IF kalk_is_novi_dokument()
       SELECT koncij
       SEEK Trim( _idkonto )
       SELECT roba
@@ -157,7 +157,7 @@ FUNCTION kalk_unos_dok_81( atrib )
 
    IF gDokKVal == "D"
       // konverzija valute...
-      @ m_x + _x, Col() + 1 SAY "pr.->" GET __k_val VALID _val_konv( __k_val ) PICT "@!"
+      @ m_x + _x, Col() + 1 SAY "pr.->" GET __k_val VALID kalk_ulaz_preracun_fakturne_cijene( __k_val ) PICT "@!"
    ENDIF
 
    @ m_x + _x, m_y + _unos_left GET _fcj ;

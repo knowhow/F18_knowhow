@@ -15,8 +15,8 @@
 
 FUNCTION Get1_RN()
 
-   // ovim funkcijama je proslije|en parametar fnovi kao privatna varijabla
-   IF nRbr == 1 .AND. fnovi
+
+   IF nRbr == 1 .AND. kalk_is_novi_dokument()
       _DatFaktP := _datdok
    ENDIF
 
@@ -28,7 +28,7 @@ FUNCTION Get1_RN()
       RETURN  LastKey()
    ENDIF
 
-   IF nRbr == 1  .OR. !fnovi .OR. gMagacin == "1"
+   IF nRbr == 1  .OR. !kalk_is_novi_dokument() .OR. gMagacin == "1"
       @  m_x + 6, m_y + 2   SAY "ZATVORITI RADNI NALOG:" GET _IdZaduz2 PICT "@!"
       @  m_x + 7, m_y + 2   SAY "Mag. proivod. u toku :" GET _IdKonto2 PICT "@!" VALID P_Konto( @_IdKonto2 )
       @ m_x + 10, m_y + 2   SAY "Mag. gotovih proizvoda zaduzuje" GET _IdKonto VALID  P_Konto( @_IdKonto, 24 ) PICT "@!"
@@ -157,7 +157,8 @@ FUNCTION Get1_RN()
 
    @ m_x + 11, m_y + 66 SAY "Tarif.brĿ"
    @ m_x + 12, m_y + 2  SAY "Proizvod  " GET _IdRoba PICT "@!" ;
-      valid  {|| P_Roba( @_IdRoba ), say_from_valid( 12, 25, Trim( roba->naz ) + " (" + ROBA->jmj + ")", 40 ), _IdTarifa := iif( fnovi, ROBA->idtarifa, _IdTarifa ), .T. }
+      valid  {|| P_Roba( @_IdRoba ), say_from_valid( 12, 25, Trim( roba->naz ) + " (" + ROBA->jmj + ")", 40 ), ;
+      _IdTarifa := iif( kalk_is_novi_dokument(), ROBA->idtarifa, _IdTarifa ), .T. }
    @ m_x + 12, m_y + 70 GET _IdTarifa WHEN gPromTar == "N" VALID P_Tarifa( @_IdTarifa )
 
    read; ESC_RETURN K_ESC
@@ -172,7 +173,7 @@ FUNCTION Get1_RN()
 
    @ m_x + 13, m_y + 2   SAY "Kolicina " GET _Kolicina PICTURE PicKol VALID _Kolicina <> 0
    READ
-   IF fNovi
+   IF kalk_is_novi_dokument()
       SELECT ROBA; HSEEK _IdRoba
       IF koncij->naz == "P2"
          _VPC := PlC
@@ -193,7 +194,7 @@ FUNCTION Get1_RN()
    ENDIF
 
    @ m_x + 15, m_y + 2   SAY "N.CJ.(DEM/JM):"
-   @ m_x + 15, m_y + 50  GET _FCJ PICTURE PicDEM VALID _fcj > 0 when {|| _fcj := iif( nRbr > 1 .AND. fnovi, _vpc, _fcj ), V_kol10() }
+   @ m_x + 15, m_y + 50  GET _FCJ PICTURE PicDEM VALID _fcj > 0 when {|| _fcj := iif( nRbr > 1 .AND. kalk_is_novi_dokument(), _vpc, _fcj ), V_kol10() }
 
 /*
    --IF gNW <> "X"

@@ -81,7 +81,8 @@ FUNCTION kalk_pripr_obrada( lAObrada )
    // USE
 
    o_kalk_edit()
-   PRIVATE fNovi := .F.
+
+   kalk_is_novi_dokument( .F. )
    PRIVATE PicCDEM := gPicCDEM
    PRIVATE PicProc := gPicProc
    PRIVATE PicDEM := gPicDEM
@@ -406,6 +407,7 @@ FUNCTION kalk_pripr_key_handler( lAObrada )
       RETURN DE_CONT
 
    CASE Ch == K_ENTER
+      kalk_is_novi_dokument( .F. )
       RETURN kalk_edit_stavka()
 
    CASE ( Ch == K_CTRL_A )
@@ -413,7 +415,7 @@ FUNCTION kalk_pripr_key_handler( lAObrada )
 
 
    CASE Ch == K_CTRL_N
-      fNovi := .T.
+      kalk_is_novi_dokument( .T. )
       RETURN kalk_unos_nova_stavka()
 
    CASE Ch == K_CTRL_F8 .OR. ( is_mac() .AND. Ch == K_F8 )
@@ -1310,7 +1312,7 @@ FUNCTION SetNcTo0()
 
 
 
-FUNCTION kalk_edit_priprema( fNovi, atrib )
+FUNCTION kalk_edit_priprema( lNoviDokument, atrib )
 
    PRIVATE nMarza := 0
    PRIVATE nMarza2 := 0
@@ -1329,9 +1331,9 @@ FUNCTION kalk_edit_priprema( fNovi, atrib )
       SetKey( K_CTRL_K, {|| a_val_convert() } )
 
       IF nStrana == 1
-         nR := kalk_unos_1( fNovi, @atrib )
+         nR := kalk_unos_1( lNoviDokument, @atrib )
       ELSEIF nStrana == 2
-         nR := kalk_unos_2( fNovi )
+         nR := kalk_unos_2( lNoviDokument )
       ENDIF
 
       SetKey( K_PGDN, NIL )
@@ -1374,12 +1376,12 @@ FUNCTION kalk_edit_priprema( fNovi, atrib )
  *  Prva strana/prozor maske unosa/ispravke stavke dokumenta
  */
 
-FUNCTION kalk_unos_1( fNovi, atrib )
+FUNCTION kalk_unos_1( lNoviDokument, atrib )
 
    PRIVATE pIzgSt := .F.
    PRIVATE Getlist := {}
 
-   IF kalk_header_get1( fNovi ) == 0
+   IF kalk_header_get1( lNoviDokument ) == 0
       RETURN K_ESC
    ENDIF
 
@@ -1488,12 +1490,8 @@ FUNCTION ispisi_naziv_sifre( area, id, x, y, len )
 
 
 
-/*
- *  param fnovi
- *  Druga strana/prozor maske unosa/ispravke stavke dokumenta
- */
 
-FUNCTION kalk_unos_2( fNovi )
+FUNCTION kalk_unos_2()
 
    IF _idvd == "RN"
       RETURN Get2_RN()
@@ -1506,13 +1504,13 @@ FUNCTION kalk_unos_2( fNovi )
 
 
 
-FUNCTION kalk_header_get1( fNovi )
+FUNCTION kalk_header_get1( lNoviDokument )
 
-   IF fnovi
+   IF lNoviDokument
       _idfirma := gFirma
    ENDIF
 
-   IF fnovi .AND. _TBankTr == "X"
+   IF lNoviDokument .AND. _TBankTr == "X"
       _TBankTr := "%"
    ENDIF
 
@@ -1530,7 +1528,7 @@ FUNCTION kalk_header_get1( fNovi )
    ESC_RETURN 0
 
 
-   IF fNovi .AND. gBrojacKalkulacija == "D" .AND. ( _idfirma <> idfirma .OR. _idvd <> idvd )
+   IF lNoviDokument .AND. gBrojacKalkulacija == "D" .AND. ( _idfirma <> idfirma .OR. _idvd <> idvd )
 
       _brDok := get_kalk_brdok( _idfirma, _idvd, _idkonto, _idkonto2 )
 
@@ -2022,7 +2020,7 @@ FUNCTION PopustKaoNivelacijaMP()
       _mpcsapp := Round( _mpcsapp - _rabatv, 2 )
       _rabatv := 0
       PRIVATE aPorezi := {}
-      PRIVATE fNovi := .F.
+      ---PRIVATE fNovi := .F.
       VRoba( .F. )
       WMpc( .T. )
       _error := " "

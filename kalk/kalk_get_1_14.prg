@@ -21,11 +21,11 @@ FUNCTION kalk_get_1_14()
 
    SET KEY K_ALT_K TO kalk_kartica_magacin_pomoc_unos_14()
 
-   IF nRbr == 1 .AND. fnovi
+   IF nRbr == 1 .AND. kalk_is_novi_dokument()
       _DatFaktP := _datdok
    ENDIF
 
-   IF nRbr == 1 .OR. !fnovi
+   IF nRbr == 1 .OR. !kalk_is_novi_dokument()
       @ m_x + 6, m_y + 2   SAY "KUPAC:" GET _IdPartner PICT "@!" VALID Empty( _IdPartner ) .OR. P_Firma( @_IdPartner, 6, 18 )
       @ m_x + 7, m_y + 2   SAY "Faktura Broj:" GET _BrFaktP
       @ m_x + 7, Col() + 2 SAY "Datum:" GET _DatFaktP   valid {|| .T. }
@@ -37,7 +37,6 @@ FUNCTION kalk_get_1_14()
       PRIVATE cNBrDok := _brdok
       @ m_x + 9, m_y + 2 SAY8 "Magacinski konto razdužuje"  GET _IdKonto2  valid ( Empty( _IdKonto2 ) .OR. P_Konto( @_IdKonto2, 21, 5 ) )
 
-      // .AND. MarkBrDok( fNovi )
 
    ELSE
       @ m_x + 6, m_y + 2   SAY8 "KUPAC: "; ?? _IdPartner
@@ -54,14 +53,8 @@ FUNCTION kalk_get_1_14()
 
    @ m_x + 10, m_y + 66 SAY "Tarif.br "
 
-   kalk_pripr_form_get_roba( @_idRoba, @_idTarifa, _IdVd, fNovi, m_x + 11, m_y + 2, @aPorezi )
-/*
-   IF roba_barkod_pri_unosu()
-  --    @ m_x + 11, m_y + 2   SAY8 "Artikal  " GET _IdRoba PICT "@!S10" when {|| _IdRoba := PadR( _idroba, Val( --gDuzSifIni ) ), .T. } valid  {|| P_Roba( @_IdRoba ), say_from_valid( 11, 23, Trim( Left( roba->naz, 40 ) ) + " (" + ROBA->jmj + ")", 40 ), _IdTarifa := iif( fnovi, ROBA->idtarifa, _IdTarifa ), .T. }
-   ELSE
-  --    @ m_x + 11, m_y + 2   SAY8 "Artikal  " GET _IdRoba PICT "@!" valid  {|| P_Roba( @_IdRoba ), say_from_valid( 11, 23, Trim( Left( roba->naz, 40 ) ) + " (" + ROBA->jmj + ")", 40 ), _IdTarifa := iif( fnovi, ROBA->idtarifa, _IdTarifa ), .T. }
-   ENDIF
-*/
+   kalk_pripr_form_get_roba( @_idRoba, @_idTarifa, _IdVd, kalk_is_novi_dokument(), m_x + 11, m_y + 2, @aPorezi )
+
 
    @ m_x + 11, m_y + 70 GET _IdTarifa WHEN gPromTar == "N" VALID P_Tarifa( @_IdTarifa )
 
@@ -93,14 +86,14 @@ FUNCTION kalk_get_1_14()
    //check_datum_posljednje_kalkulacije()
    //DuplRoba()
 
-   IF fNovi
+   IF kalk_is_novi_dokument()
       SELECT roba
       _VPC := KoncijVPC()
       _NC := NC
       SELECT kalk_pripr
    ENDIF
 
-   IF dozvoljeno_azuriranje_sumnjivih_stavki() .AND. fNovi
+   IF dozvoljeno_azuriranje_sumnjivih_stavki() .AND. kalk_is_novi_dokument()
       SELECT kalk_pripr
    ENDIF
 
@@ -120,7 +113,7 @@ FUNCTION kalk_get_1_14()
       IF !Empty( gMetodaNC )
 
          kalk_get_nabavna_mag( _idfirma, _idroba, _idkonto2, @nKolS, @nKolZN, @nc1, @nc2, @dDatNab )
-         
+
          @ m_x + 12, m_y + 30   SAY "Ukupno na stanju "
          @ m_x + 12, Col() + 2 SAY nKols PICT pickol
       ENDIF

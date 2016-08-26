@@ -189,7 +189,7 @@ STATIC FUNCTION get_exp_fields( aArr, cIdVd, lVpcCij, lMpcCij )
 
 
 
-FUNCTION kt_exp_create( cIdVd, lVpcCij, lMpcCij )
+FUNCTION kcreate_dbf_r_export( cIdVd, lVpcCij, lMpcCij )
 
 
    LOCAL cExpTbl := "R_EXPORT.DBF"
@@ -225,7 +225,7 @@ STATIC FUNCTION fill_exp( cIdFirma, cIdVd,  cBrDok, lVpcCij, lMpcCij )
    // + stavka preknjizenja = pdv
    // - stavka = ppp
 
-   kt_exp_create( cIdVd, lVpcCij, lMpcCij )
+   kcreate_dbf_r_export( cIdVd, lVpcCij, lMpcCij )
 
    O_R_EXP
    // set ORDER to TAG "ROB"

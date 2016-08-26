@@ -37,7 +37,7 @@ FUNCTION g_sast_list()
 
    // kreiraj kroz export tabelu ovaj pregled....
    aFields := _g_fields()
-   t_exp_create( aFields )
+   create_dbf_r_export( aFields )
 
    O_R_EXP
 
@@ -138,7 +138,7 @@ FUNCTION g_sast_list()
 
 
    IF lExpDbf == .T.
-      tbl_export()
+      open_r_export_table()
    ENDIF
 
    RETURN

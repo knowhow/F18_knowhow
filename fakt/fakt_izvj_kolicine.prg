@@ -237,7 +237,7 @@ FUNCTION spec_kol_partn()
    ENDIF
 
    aExpFields := _g_exp_fields( aRoba )
-   t_exp_create( aExpFields )
+   create_dbf_r_export( aExpFields )
 
    _o_tables()
 
@@ -326,7 +326,7 @@ FUNCTION spec_kol_partn()
 
    BoxC()
 
-   tbl_export()
+   open_r_export_table()
 
    RETURN
 

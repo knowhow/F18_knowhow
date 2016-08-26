@@ -146,7 +146,7 @@ STATIC FUNCTION cre_r_tbl( nVar )
 
    ENDIF
 
-   t_exp_create( aDbf )
+   create_dbf_r_export( aDbf )
 
    o_rxp( nVar )
 

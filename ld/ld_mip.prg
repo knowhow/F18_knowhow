@@ -153,7 +153,7 @@ FUNCTION mip_tmp_tbl()
    AAdd( aDbf, { "BOL_PREKO", "C", 1, 0 } )
    AAdd( aDbf, { "PRINT", "C", 1, 0 } )
 
-   t_exp_create( aDbf )
+   create_dbf_r_export( aDbf )
 
    O_R_EXP
    INDEX ON idradn + Str( godina, 4 ) + Str( mjesec, 2 ) + vr_ispl TAG "1"

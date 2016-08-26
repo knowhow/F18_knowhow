@@ -23,9 +23,9 @@ FUNCTION fakt_export_dokument_lo()
 
    aDbf := _g_fields()
 
-   t_exp_create( aDbf )
+   create_dbf_r_export( aDbf )
    _exp_dok()
-   tbl_export()
+   open_r_export_table()
 
    RETURN .T.
 

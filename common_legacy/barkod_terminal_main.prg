@@ -239,6 +239,6 @@ STATIC FUNCTION cre_tmp()
    AAdd( aFields, { "tk", "N", 8, 2 } )
    AAdd( aFields, { "tc", "N", 8, 2 } )
 
-   t_exp_create( aFields )
+   create_dbf_r_export( aFields )
 
    RETURN

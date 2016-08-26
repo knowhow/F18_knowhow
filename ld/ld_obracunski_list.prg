@@ -194,7 +194,7 @@ FUNCTION ol_tmp_tbl()
    AAdd( aDbf, { "TP_4", "N", 12, 2 } )
    AAdd( aDbf, { "TP_5", "N", 12, 2 } )
 
-   t_exp_create( aDbf )
+   create_dbf_r_export( aDbf )
 
    O_R_EXP
    INDEX ON idradn + Str( godina, 4 ) + Str( mjesec, 2 ) TAG "1"

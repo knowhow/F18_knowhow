@@ -39,7 +39,7 @@ STATIC FUNCTION cre_tmp( cPath )
    AAdd( aFields, { "pot2", "N", 15, 2 } )
    AAdd( aFields, { "saldo2", "N", 15, 2 } )
 
-   t_exp_create( aFields )
+   create_dbf_r_export( aFields )
 
    o_tmp( cPath )
 
@@ -543,7 +543,7 @@ TODO: izbaciti
 
    // ako je export izvjestaja onda ne pozivaj stampu !
    IF lExpRpt
-      tbl_export()
+      open_r_export_table()
       my_close_all_dbf()
       RETURN
    ENDIF

@@ -251,7 +251,7 @@ FUNCTION lager_lista_magacin()
    IF lExpDbf == .T.
       // exportuj report....
       aExpFields := g_exp_fields()
-      t_exp_create( aExpFields )
+      create_dbf_r_export( aExpFields )
    ENDIF
 
    kalk_open_tables()
@@ -901,7 +901,7 @@ FUNCTION lager_lista_magacin()
 
 
    IF lExpDbf == .T.
-      tbl_export() // lansiraj report
+      open_r_export_table() // lansiraj report
    ENDIF
 
    gPicDem := cPicDem

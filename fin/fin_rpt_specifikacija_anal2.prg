@@ -28,7 +28,7 @@ STATIC FUNCTION cre_tmp( cPath )
    AAdd( aDbf, { "pot", "N", 15, 5  } )
    AAdd( aDbf, { "saldo", "N", 15, 5  } )
 
-   t_exp_create( aDbf )
+   create_dbf_r_export( aDbf )
 
    o_tmp( cPath )
 

@@ -678,7 +678,7 @@ METHOD export2DBF
    // exportuj report....
    aExpFields := g_exp_fields()
 
-   t_exp_create( aExpFields )
+   create_dbf_r_export( aExpFields )
 
    // kopiraj sve iz rpt_tmp u r_export
    O_RPT_TMP
@@ -726,7 +726,7 @@ METHOD export2DBF
    REPLACE field->i_stanje WITH nI_ulaz - nI_izlaz
    REPLACE field->rabat WITH nI_rabat
 
-   tbl_export()
+   open_r_export_table()
 
    RETURN
 

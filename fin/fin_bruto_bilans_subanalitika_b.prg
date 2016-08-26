@@ -59,7 +59,7 @@ FUNCTION fin_bb_subanalitika_b( params )
 
    IF lExpRpt
       aExpFields := struktura_pomocne_tabele_eksporta()
-      t_exp_create( aExpFields )
+      create_dbf_r_export( aExpFields )
    ENDIF
 
    O_KONTO
@@ -508,7 +508,7 @@ FUNCTION fin_bb_subanalitika_b( params )
    my_close_all_dbf()
 
    IF lExpRpt
-      tbl_export()
+      open_r_export_table()
    ENDIF
 
    RETURN

@@ -241,7 +241,7 @@ FUNCTION exp_roba_dbf() // export robe u dbf
    AAdd( aDbf, { "VPC", "N", 12, 2 } )
    AAdd( aDbf, { "MPC", "N", 12, 2 } )
 
-   t_exp_create( aDbf )
+   create_dbf_r_export( aDbf )
    O_R_EXP
    O_ROBA
    SELECT roba

@@ -280,8 +280,7 @@ STATIC FUNCTION _export_dbf( table, rpt_vars )
       RETURN .F.
    ENDIF
 
-   _struct := fin_kartica_dbf_struct()
-   t_exp_create( _struct )
+   create_dbf_r_export( fin_suban_export_dbf_struct() )
 
    O_R_EXP
 

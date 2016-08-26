@@ -645,7 +645,7 @@ STATIC FUNCTION mnu_ios_print()
    // eksport podataka u dbf tabelu
    IF _export_dbf == "D"
       _exp_fields := g_exp_fields()
-      t_exp_create( _exp_fields )
+      create_dbf_r_export( _exp_fields )
    ENDIF
 
    // otvori mi tabele

@@ -37,7 +37,7 @@ FUNCTION fakt_real_maloprodaje()
       RETURN .F.
    ENDIF
 
-   fakt_realiz_pdv_cre_tbl_export()
+   fakt_realiz_pdv_cre_open_r_export_table()
    fakt_gen_rekapitulacija_mp( _params )
 
    SELECT r_export
@@ -421,7 +421,7 @@ STATIC FUNCTION get_naziv_vrsta_placanja( tip_dok, vrsta_p )
    RETURN _ret
 
 
-STATIC FUNCTION fakt_realiz_pdv_cre_tbl_export()
+STATIC FUNCTION fakt_realiz_pdv_cre_open_r_export_table()
 
    LOCAL aDbf := {}
 
@@ -444,7 +444,7 @@ STATIC FUNCTION fakt_realiz_pdv_cre_tbl_export()
    AAdd( aDbf, { "c_pdv", "N", _FNUM, _FDEC } )
    AAdd( aDbf, { "uk_fakt", "N", _FNUM, _FDEC } )
 
-   t_exp_create( aDbf )
+   create_dbf_r_export( aDbf )
    SELECT ( F_R_EXP )
    my_usex ( "r_export" )
 

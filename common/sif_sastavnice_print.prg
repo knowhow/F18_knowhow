@@ -463,7 +463,7 @@ FUNCTION pr_dupl_sast()
    AAdd( aDbf, { "SAST", "C", 150, 0 } )
    AAdd( aDbf, { "MARK", "C", 1, 0 } )
 
-   t_exp_create( aDbf )
+   create_dbf_r_export( aDbf )
    O_R_EXP
    INDEX ON sast TAG "1"
 
@@ -672,7 +672,7 @@ FUNCTION _exp_sast_dbf()
    AAdd( aDbf, { "VPC", "N", 12, 2 } )
    AAdd( aDbf, { "MPC", "N", 12, 2 } )
 
-   t_exp_create( aDbf )
+   create_dbf_r_export( aDbf )
 
    O_R_EXP
    O_SAST

@@ -43,7 +43,7 @@ FUNCTION rpt_prspec()
          RETURN
       ENDIF
 
-      tbl_export()
+      open_r_export_table()
 
       RETURN
 
@@ -114,7 +114,7 @@ STATIC FUNCTION _gen_rpt( cBrFakt, cValuta, dDatOd, dDatDo, cRekap )
    LOCAL _idx
 
    aFields := _g_fields()
-   t_exp_create( aFields )
+   create_dbf_r_export( aFields )
 
    _idx := my_home() + "brfakt_pr.idx"
 

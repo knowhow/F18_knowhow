@@ -1285,7 +1285,7 @@ METHOD FinBrutoBilans:create_r_export()
    AAdd( _dbf, { "sld_dug", "N", 18, 2 } )
    AAdd( _dbf, { "sld_pot", "N", 18, 2 } )
 
-   t_exp_create( _dbf )
+   create_dbf_r_export( _dbf )
 
    O_R_EXP
 

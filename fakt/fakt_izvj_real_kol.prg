@@ -163,7 +163,7 @@ FUNCTION fakt_specif_prodaje_real_kolicina()
 
    IF lExpRpt == .T. // export dokumenta
       aExpFields := get_rpt_fields()
-      t_exp_create( aExpFields )
+      create_dbf_r_export( aExpFields )
    ENDIF
 
    _o_tables()
@@ -551,7 +551,7 @@ FUNCTION fakt_specif_prodaje_real_kolicina()
 
    // lansiraj export....
    IF lExpRpt
-      tbl_export()
+      open_r_export_table()
    ENDIF
 
    RETURN

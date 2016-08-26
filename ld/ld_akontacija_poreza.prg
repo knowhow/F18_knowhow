@@ -93,7 +93,7 @@ STATIC FUNCTION cre_tmp_tbl()
    AAdd( aDbf, { "IZN_POR", "N", 12, 2 } )
    AAdd( aDbf, { "DOP_PIO", "N", 12, 2 } )
 
-   t_exp_create( aDbf )
+   create_dbf_r_export( aDbf )
 
    RETURN
 

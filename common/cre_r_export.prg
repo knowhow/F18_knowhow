@@ -15,7 +15,7 @@
 STATIC s_cExportDbf := "r_export"
 
 
-FUNCTION t_exp_create( aFieldList, lCloseDbfs )
+FUNCTION create_dbf_r_export( aFieldList, lCloseDbfs )
 
    LOCAL cImeDbf, cImeCdx
 
@@ -44,7 +44,7 @@ FUNCTION t_exp_create( aFieldList, lCloseDbfs )
    RETURN .T.
 
 
-FUNCTION tbl_export()
+FUNCTION open_r_export_table()
 
    LOCAL _cmd
 

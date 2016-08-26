@@ -142,7 +142,7 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
    READ
 
 
-altd()
+   AltD()
    DO WHILE .T.
 
       IF gDUFRJ == "D"
@@ -201,8 +201,8 @@ altd()
       ESC_BCR
 
       IF cExpDbf == "D"
-         aExpFields := fin_kartica_dbf_struct() // inicijalizuj export
-         t_exp_create( aExpFields )
+         aExpFields := fin_suban_export_dbf_struct()
+         create_dbf_r_export( aExpFields )
       ENDIF
 
       IF !( cK14 $ "123" ) .AND. ( cSazeta == "D" .OR. gNW == "D" )
@@ -344,14 +344,6 @@ altd()
       iif( gTroskovi == "D" .AND. Len( cFunk ) <> 0, ".and.funk=" + dbf_quote( cFunk ), "" ) + ;
       iif( gTroskovi == "D" .AND. Len( cFond ) <> 0, ".and.fond=" + dbf_quote( cFond ), "" ) // + ;
 
-   // iif( gDUFRJ == "D", ".and." + aUsl4, ;
-   // iif( Len( cIdFirma ) < 2, ".and. IDFIRMA=" + dbf_quote( cIdFirma ), "" )
-   // + ;
-
-   // iif( Len( cIdFirma ) < 2 .AND. cBrza == "D", ".and.IDKONTO==" + dbf_quote( qqKonto ), "" )
-
-   // + ;
-   // iif( Len( cIdFirma ) < 2 .AND. cBrza == "D" .AND. !( RTrim( qqPartner ) == ";" ), ".and.IDPARTNER==" + dbf_quote( qqPartner ), "" ) )
 
    IF !Empty( qqBrDok )
       cFilter += ( ".and." + aBV )
@@ -381,23 +373,6 @@ altd()
       ENDIF
    ENDIF
 
-/*
-   IF Len( cIdFirma ) < 2 .OR. gDUFRJ == "D"
-      GO TOP
-   ELSE
-      IF cBrza == "N"
-         //HSEEK cIdFirma
-      ELSE
-         IF RTrim( qqPartner ) == ";"
-            SET ORDER TO TAG "5"
-            GO TOP
-            HSEEK cIdFirma + qqKonto
-         ELSE
-            HSEEK cIdFirma + qqKonto + qqPartner
-         ENDIF
-      ENDIF
-   ENDIF
-*/
    GO TOP
 
    EOF RET
@@ -1007,7 +982,7 @@ altd()
 
    IF cExpDbf == "D"
       my_close_all_dbf()
-      tbl_export()
+      open_r_export_table()
    ENDIF
 
    my_close_all_dbf()
@@ -1015,7 +990,7 @@ altd()
    RETURN .T.
 
 
-FUNCTION fin_kartica_dbf_struct()
+FUNCTION fin_suban_export_dbf_struct()
 
    LOCAL aDbf := {}
 
@@ -1036,9 +1011,7 @@ FUNCTION fin_kartica_dbf_struct()
 
    RETURN aDbf
 
-/*
-   upisuje u export tabelu podatke
-*/
+
 STATIC FUNCTION fin_suban_add_item_to_r_export( cKonto, cK_naz, cPartn, cP_naz, cVn, cBr, nRbr, cBrVeze, dDatum, dDatVal, cOpis, nDug, nPot, nSaldo )
 
    LOCAL nTArea := Select()

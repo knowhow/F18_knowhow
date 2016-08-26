@@ -17,7 +17,7 @@
 FUNCTION st_sv_nal()
 
    aFields := get_exp_fields()
-   t_exp_create( aFields )
+   create_dbf_r_export( aFields )
 
    o_suban()
    O_KONTO
@@ -57,7 +57,7 @@ FUNCTION st_sv_nal()
 
    BoxC()
 
-   tbl_export()
+   open_r_export_table()
 
    RETURN .T.
 

@@ -766,7 +766,7 @@ STATIC FUNCTION _cre_tmp_tbl()
    AAdd( _dbf, { "saldo_i_2", "N", 15, 3 } )
 
    // kreiraj tabelu
-   t_exp_create( _dbf )
+   create_dbf_r_export( _dbf )
 
    O_R_EXP
    // indeksiraj...

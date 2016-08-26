@@ -274,7 +274,7 @@ STATIC FUNCTION export_podataka_u_dbf( table, rpt_vars )
    ENDIF
 
    _struct := fin_specifikacija_dbf_struct()
-   t_exp_create( _struct )
+   create_dbf_r_export( _struct )
 
    O_R_EXP
 

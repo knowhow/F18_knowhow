@@ -341,7 +341,7 @@ STATIC FUNCTION _cre_tmp_tbl()
    AAdd( _dbf, { "t_cardaz", "N", 15, 2 } )
    AAdd( _dbf, { "t_zav", "N", 15, 2 } )
 
-   t_exp_create( _dbf )
+   create_dbf_r_export( _dbf )
 
    RETURN _dbf
 

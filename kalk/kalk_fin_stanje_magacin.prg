@@ -388,7 +388,7 @@ FUNCTION finansijsko_stanje_magacin()
 
    // pregled izvjestaja nakon generisanja u spreadsheet aplikaciji
    IF _export
-      tbl_export()
+      open_r_export_table()
    ENDIF
 
    my_close_all_dbf()
@@ -456,7 +456,7 @@ STATIC FUNCTION _cre_tmp_tbl()
    AAdd( _dbf, { "vp_saldo", "N", 15, 2 } )
    AAdd( _dbf, { "vp_rabat", "N", 15, 2 } )
 
-   t_exp_create( _dbf )
+   create_dbf_r_export( _dbf )
 
    RETURN _dbf
 

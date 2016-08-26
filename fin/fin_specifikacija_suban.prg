@@ -169,7 +169,7 @@ FUNCTION fin_specifikacija_suban()
 
    IF lExpRpt
       aSSFields := get_ss_fields( gRj, FIELD_PARTNER_ID_LENGTH )
-      t_exp_create( aSSFields )
+      create_dbf_r_export( aSSFields )
    ENDIF
 
    IF gDUFRJ != "D"
@@ -547,7 +547,7 @@ FUNCTION fin_specifikacija_suban()
    end_print( xPrintOpt )
 
    IF lExpRpt
-      tbl_export()
+      open_r_export_table()
    ENDIF
 
    closeret

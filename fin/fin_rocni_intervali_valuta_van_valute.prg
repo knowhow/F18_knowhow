@@ -131,7 +131,7 @@ FUNCTION fin_spec_otv_stavke_rocni_intervali( lKartica )
 
    IF lExpRpt == .T.
       aExpFld := get_ost_fields( cSaRokom, FIELD_PARTNER_ID_LENGTH )
-      t_exp_create( aExpFld )
+      create_dbf_r_export( aExpFld )
    ENDIF
 
    SELECT ( F_TRFP2 )
@@ -810,7 +810,7 @@ FUNCTION fin_spec_otv_stavke_rocni_intervali( lKartica )
    end_print()
 
    IF lExpRpt == .T.
-      tbl_export()
+      open_r_export_table()
    ENDIF
 
    SELECT ( F_POM )

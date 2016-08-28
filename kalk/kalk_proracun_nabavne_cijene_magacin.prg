@@ -42,6 +42,9 @@ FUNCTION kalk_get_nabavna_mag( cIdFirma, cIdRoba, cIdKonto, nKolicina, nKolZN, n
 
    nKolicina := 0
 
+   IF Empty( gMetodaNC )  .OR. ( roba->tip $ "UT" )
+      RETURN .F.
+   ENDIF
 /*
 --   IF lAutoObr == .T.
       IF knab_cache( cIdKonto, cIdroba, @nUlKol, @nIzlKol, @nKolicina, @nUlNv, @nIzlNv, @nSrednjaNabavnaCijena ) == 1   // uzmi stanje iz cache tabele
@@ -50,7 +53,7 @@ FUNCTION kalk_get_nabavna_mag( cIdFirma, cIdRoba, cIdKonto, nKolicina, nKolZN, n
       ENDIF
    ENDIF
 */
-   MsgO( "Računam stanje u magacinu: " + AllTrim( cIdKonto ) + "/" + cIdRoba )
+   MsgO( "Proračun stanja u magacinu: " + AllTrim( cIdKonto ) + "/" + cIdRoba )
    my_use_refresh_stop()
 
 
@@ -90,7 +93,6 @@ FUNCTION kalk_get_nabavna_mag( cIdFirma, cIdRoba, cIdKonto, nKolicina, nKolZN, n
             nUlKol    += nKolNeto
             nUlNV     += ( nKolNeto * field->nc )
 
-
             IF field->idvd $ "10#16" // zapamti uvijek zadnju ulaznu NC
                nZadnjaUlaznaNC := field->nc
             ENDIF
@@ -111,7 +113,6 @@ FUNCTION kalk_get_nabavna_mag( cIdFirma, cIdRoba, cIdKonto, nKolicina, nKolZN, n
             nUVr_poz := nUlNv
             nIVr_poz := nIzlNv
          ENDIF
-
 
       ENDIF
       SKIP

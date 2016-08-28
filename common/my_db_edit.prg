@@ -27,7 +27,7 @@ MEMVAR cPom77I, cPom77U, aTBGets, GET // koristeno u editpolja
  * param cImeBoxa - ime box-a
  * param xw - duzina
  * param yw - sirina
- * param bUserF - kodni blok, user funkcija
+ * param bKeyHandler - kodni blok, user funkcija
  * param cMessTop - poruka na vrhu
  * p10 - bPodvuci
  * return NIL
@@ -47,12 +47,16 @@ MEMVAR cPom77I, cPom77U, aTBGets, GET // koristeno u editpolja
 */
 
 
-FUNCTION my_db_edit( cImeBoxa, xw, yw, bUserF, cMessTop, cMessBot, lInvert, ;
+FUNCTION my_db_edit( cImeBoxa, xw, yw, bKeyHandler, cMessTop, cMessBot, lInvert, ;
       aMessage, nFreeze, bPodvuci, nPrazno, nGPrazno, aPoredak, skipBlock )
 
    LOCAL _params := hb_Hash()
-   LOCAL nRez
-   LOCAL nPored, xcpos, ycpos
+   LOCAL nKeyHandlerRetEvent
+   LOCAL nPored // , xcpos, ycpos
+   LOCAL lExitBrowse := .F.
+   LOCAL lKeyHandlerStarted := .F.
+
+   // LOCAL nKeyStd
 
    PRIVATE  bGoreRed := NIL
    PRIVATE  bDoleRed := NIL
@@ -127,11 +131,12 @@ FUNCTION my_db_edit( cImeBoxa, xw, yw, bUserF, cMessTop, cMessBot, lInvert, ;
    _params[ "gprazno" ]       := nGPrazno
    _params[ "podvuci_b" ]     := bPodvuci
 
-   create_tbrowsedb( _params, .T. )
+   my_db_edit_create_tb_var_objekat( _params, .T. )
 
    DO WHILE .T.
 
-      Ch := Inkey()
+      // Ch := Inkey()
+      nKeyHandlerRetEvent := -99
 
       IF Deleted()
          SKIP
@@ -143,33 +148,61 @@ FUNCTION my_db_edit( cImeBoxa, xw, yw, bUserF, cMessTop, cMessBot, lInvert, ;
          Tb:RefreshCurrent()
       ENDIF
 
-
-      DO WHILE !TB:stable .AND. ( Ch := Inkey() ) == 0
+      lKeyHandlerStarted := .F.
+      DO WHILE !TB:stabilize() .AND. ( Ch := NextKey() ) == 0 // .AND. ( Ch := Inkey() ) == 0
          Tb:stabilize()
+         // Ch := Inkey(0)
+         Eval( bKeyHandler, .T. )  // .T. - lPrviPoziv
+         lKeyHandlerStarted := .T.
       ENDDO
 
-      IF TB:stable .AND. ( Ch := Inkey() ) == 0
-
-         IF bUserF <> NIL
-            xcpos := Row()
-            ycpos := Col()
-            Eval( bUserF )
-            @ xcpos, ycpos SAY ""
-         ENDIF
-
-         Ch := Inkey( 0 )
+      // nKeyStd := hb_keyStd( Ch := Inkey( 0, hb_bitOr( Set( _SET_EVENTMASK ), HB_INKEY_EXT ) ) )
+      Ch := Inkey( 0 )
+      IF !lKeyHandlerStarted
+         nKeyHandlerRetEvent := Eval( bKeyHandler, .F. )
       ENDIF
 
-      IF bUserF <> NIL
+      // IF bKeyHandler <> NIL  .AND. ( Ch := Inkey() ) == 0
+      // DO WHILE !TB:stabilize()
+      // END
+      // xcpos := Row()
+      // ycpos := Col()
+
+
+      // AltD()
+      // @ xcpos, ycpos SAY ""
+      // ELSE
+      // nKeyHandlerRetEvent := DE_CONT
+      // ENDIF
+/*
+      IF TB:stable
+         Ch := Inkey( 0 )
+      ENDIF
+*/
+
+/*
+      IF TB:stable .AND. ( Ch := Inkey() ) == 0
+
+         Ch := Inkey( 0 )
+
+      ENDIF
+*/
+
+
+
+/*
+      IF bKeyHandler <> NIL
 
          DO WHILE !TB:stabilize()
          END
 
-         nRez := Eval( bUserF )
+         nKeyHandlerRetEvent := Eval( bKeyHandler )
+         altd()
 
       ELSE
-         nRez := DE_CONT
+         nKeyHandlerRetEvent := DE_CONT
       ENDIF
+*/
 
       DO CASE
 
@@ -198,41 +231,40 @@ FUNCTION my_db_edit( cImeBoxa, xw, yw, bUserF, cMessTop, cMessBot, lInvert, ;
       CASE Ch == K_PGDN
          TB:PageDown()
 
-      OTHERWISE
-         standardne_browse_komande_dbf( Tb, Ch, @nRez, nPored, aPoredak )
+      CASE  Ch == K_CTRL_END .OR. Ch == K_ESC
+         lExitBrowse := .T.
+         nKeyHandlerRetEvent := DE_ABORT
 
+      OTHERWISE
+         IF !lExitBrowse
+            nKeyHandlerRetEvent := my_db_edit_standardne_komande( Tb, Ch, @nKeyHandlerRetEvent, nPored, aPoredak )
+         ENDIF
       ENDCASE
 
-      DO CASE
 
-      CASE nRez == DE_REFRESH
+      SWITCH nKeyHandlerRetEvent
+      CASE DE_REFRESH
          TB:RefreshAll()
          @ m_x + 1, m_y + yw - 6 SAY Str( RecCount2(), 5 )
+         EXIT
 
-      CASE Ch == K_ESC
-
+      CASE DE_ABORT
          IF nPrazno == 0
             BoxC()
          ENDIF
+         lExitBrowse := .T.
          EXIT
+      ENDSWITCH
 
-      CASE nRez == DE_ABORT .OR. Ch == K_CTRL_END .OR. Ch == K_ESC
-
-         IF nPrazno == 0
-            BoxC()
-         ENDIF
-
+      IF lExitBrowse
          EXIT
-
-
-      ENDCASE
-
+      ENDIF
    ENDDO
 
    RETURN .T.
 
 
-FUNCTION create_tbrowsedb( params, lIzOBJDB )
+FUNCTION my_db_edit_create_tb_var_objekat( params, lIzOBJDB )
 
    LOCAL i, k
    LOCAL _rows, _width, _rows_prazno, _rows_poruke
@@ -317,8 +349,7 @@ STATIC FUNCTION ForceStable()
 
 
 
-
-FUNCTION standardne_browse_komande_dbf( TB, Ch, nRez, nPored, aPoredak )
+FUNCTION my_db_edit_standardne_komande( TB, nKey, nKeyHandlerRetEvent, nPored, aPoredak )
 
    LOCAL _tr := hb_UTF8ToStr( "Traži:" ), _zam := "Zamijeni sa:"
    LOCAL _last_srch := "N"
@@ -328,59 +359,133 @@ FUNCTION standardne_browse_komande_dbf( TB, Ch, nRez, nPored, aPoredak )
    LOCAL _sect, _pict
    LOCAL bTekCol
    LOCAL cSmj
+   LOCAL nRez
 
    DO CASE
 
-   CASE Ch == K_CTRL_F
+   CASE nKey == K_CTRL_F
 
       bTekCol := ( TB:getColumn( TB:colPos ) ):Block
 
-      IF ValType( Eval( bTekCol ) ) == "C"
+      IF ValType( Eval( bTekCol ) ) != "C"
+         RETURN DE_CONT
+      ENDIF
 
-         Box( "bFind", 2, 50, .F. )
+      Box( "bFind", 2, 50, .F. )
+      PRIVATE GetList := {}
+      SET CURSOR ON
+      cLoc := PadR( cLoc, 40 )
+      cSmj := "+"
+      @ m_x + 1, m_y + 2 SAY _tr GET cLoc PICT "@!"
+      @ m_x + 2, m_y + 2 SAY "Prema dolje (+), gore (-)" GET cSmj VALID cSmj $ "+-"
+      READ
+      BoxC()
+
+      IF LastKey() == K_ESC
+         RETURN DE_CONT
+      ENDIF
+
+      cLoc := Trim( cLoc )
+      aUf := nil
+      IF Right( cLoc, 1 ) == ";"
+         Beep( 1 )
+         aUF := parsiraj( cLoc, "EVAL(bTekCol)" )
+      ENDIF
+      Tb:hitTop := TB:hitBottom := .F.
+      DO WHILE !( Tb:hitTop .OR. TB:hitBottom )
+         IF aUF <> NIL
+            IF Tacno( aUF )
+               EXIT
+            ENDIF
+         ELSE
+            IF Upper( Left( Eval( bTekCol ), Len( cLoc ) ) ) == cLoc
+               EXIT
+            ENDIF
+         ENDIF
+         IF cSmj == "+"
+            Tb:down()
+            Tb:Stabilize()
+         ELSE
+            Tb:Up()
+            Tb:Stabilize()
+         ENDIF
+
+      ENDDO
+      Tb:hitTop := TB:hitBottom := .F.
+      RETURN DE_REFRESH
+
+
+
+   CASE nKey == K_ALT_R
+
+      PRIVATE cKolona
+
+      IF !tb_editabilna_kolona( TB, ImeKol )
+         RETURN DE_CONT
+      ENDIF
+
+
+      IF Empty( ImeKol[ TB:colPos, 3 ] )
+         RETURN DE_CONT
+      ENDIF
+
+      cKolona := ImeKol[ TB:ColPos, 3 ]
+
+      IF ValType( &cKolona ) $ "CD"
+
+         Box(, 3, 60, .F. )
+
          PRIVATE GetList := {}
          SET CURSOR ON
-         cLoc := PadR( cLoc, 40 )
-         cSmj := "+"
-         @ m_x + 1, m_y + 2 SAY _tr GET cLoc PICT "@!"
-         @ m_x + 2, m_y + 2 SAY "Prema dolje (+), gore (-)" GET cSmj VALID cSmj $ "+-"
+
+         @ m_x + 1, m_y + 2 SAY "Uzmi podatke posljednje pretrage ?" GET _last_srch VALID _last_srch $ "DN" PICT "@!"
+
          READ
+
+         _sect := "_brow_fld_find_" + AllTrim( Lower( cKolona ) )
+         _trazi_val := &cKolona
+
+         IF _last_srch == "D"
+            _trazi_val := fetch_metric( _sect, "<>", _trazi_val )
+         ENDIF
+
+         _zamijeni_val := _trazi_val
+         _sect := "_brow_fld_repl_" + AllTrim( Lower( cKolona ) )
+
+         IF _last_srch == "D"
+            _zamijeni_val := fetch_metric( _sect, "<>", _zamijeni_val )
+         ENDIF
+
+         _pict := ""
+
+         IF ValType( _trazi_val ) == "C" .AND. Len( _trazi_val ) > 45
+            _pict := "@S45"
+         ENDIF
+
+         @ m_x + 2, m_y + 2 SAY PadR( _tr, 12 ) GET _trazi_val PICT _pict
+         @ m_x + 3, m_y + 2 SAY PadR( _zam, 12 ) GET _zamijeni_val PICT _pict
+
+         READ
+
          BoxC()
 
-         IF LastKey() <> K_ESC
-
-            cLoc := Trim( cLoc )
-            aUf := nil
-            IF Right( cLoc, 1 ) == ";"
-               Beep( 1 )
-               aUF := parsiraj( cLoc, "EVAL(bTekCol)" )
-            ENDIF
-            Tb:hitTop := TB:hitBottom := .F.
-            DO WHILE !( Tb:hitTop .OR. TB:hitBottom )
-               IF aUF <> NIL
-                  IF Tacno( aUF )
-                     EXIT
-                  ENDIF
-               ELSE
-                  IF Upper( Left( Eval( bTekCol ), Len( cLoc ) ) ) == cLoc
-                     EXIT
-                  ENDIF
-               ENDIF
-               IF cSmj == "+"
-                  Tb:down()
-                  Tb:Stabilize()
-               ELSE
-                  Tb:Up()
-                  Tb:Stabilize()
-               ENDIF
-
-            ENDDO
-            Tb:hitTop := TB:hitBottom := .F.
+         IF LastKey() == K_ESC
+            RETURN DE_CONT
          ENDIF
+
+         IF replace_kolona_in_table( cKolona, _trazi_val, _zamijeni_val, _last_srch )
+            TB:RefreshAll()
+            RETURN DE_REFRESH
+         ENDIF
+
+         RETURN DE_CONT
+
       ENDIF
 
+      RETURN DE_CONT
 
-   CASE Ch == K_ALT_R
+
+   CASE nKey == K_ALT_S
 
       PRIVATE cKolona
 
@@ -388,111 +493,48 @@ FUNCTION standardne_browse_komande_dbf( TB, Ch, nRez, nPored, aPoredak )
          RETURN DE_CONT
       ENDIF
 
-
-
-      IF !Empty( ImeKol[ TB:colPos, 3 ] )
-
-         cKolona := ImeKol[ TB:ColPos, 3 ]
-
-         IF ValType( &cKolona ) $ "CD"
-
-            Box(, 3, 60, .F. )
-
-            PRIVATE GetList := {}
-            SET CURSOR ON
-
-            @ m_x + 1, m_y + 2 SAY "Uzmi podatke posljednje pretrage ?" GET _last_srch VALID _last_srch $ "DN" PICT "@!"
-
-            READ
-
-            _sect := "_brow_fld_find_" + AllTrim( Lower( cKolona ) )
-            _trazi_val := &cKolona
-
-            IF _last_srch == "D"
-               _trazi_val := fetch_metric( _sect, "<>", _trazi_val )
-            ENDIF
-
-            _zamijeni_val := _trazi_val
-            _sect := "_brow_fld_repl_" + AllTrim( Lower( cKolona ) )
-
-            IF _last_srch == "D"
-               _zamijeni_val := fetch_metric( _sect, "<>", _zamijeni_val )
-            ENDIF
-
-            _pict := ""
-
-            IF ValType( _trazi_val ) == "C" .AND. Len( _trazi_val ) > 45
-               _pict := "@S45"
-            ENDIF
-
-            @ m_x + 2, m_y + 2 SAY PadR( _tr, 12 ) GET _trazi_val PICT _pict
-            @ m_x + 3, m_y + 2 SAY PadR( _zam, 12 ) GET _zamijeni_val PICT _pict
-
-            READ
-
-            BoxC()
-
-            IF LastKey() == K_ESC
-               RETURN DE_CONT
-            ENDIF
-
-            IF replace_kolona_in_table( cKolona, _trazi_val, _zamijeni_val, _last_srch )
-               TB:RefreshAll()
-            ELSE
-               RETURN DE_CONT
-            ENDIF
-
-         ENDIF
-      ENDIF
-
-
-   CASE Ch == K_ALT_S
-
-      PRIVATE cKolona
-
-      IF !tb_editabilna_kolona( TB, ImeKol )
+      IF Empty( ImeKol[ TB:colPos, 3 ] )
          RETURN DE_CONT
       ENDIF
 
-      IF !Empty( ImeKol[ TB:colPos, 3 ] )
+      cKolona := ImeKol[ TB:ColPos, 3 ]
 
-         cKolona := ImeKol[ TB:ColPos, 3 ]
+      IF ValType( &cKolona ) == "N"
 
-         IF ValType( &cKolona ) == "N"
+         Box(, 3, 66, .F. )
 
-            Box(, 3, 66, .F. )
+         PRIVATE GetList := {}
+         SET CURSOR ON
 
-            PRIVATE GetList := {}
-            SET CURSOR ON
+         _trazi_val := &cKolona
+         _trazi_usl := Space( 80 )
 
-            _trazi_val := &cKolona
-            _trazi_usl := Space( 80 )
+         @ m_x + 1, m_y + 2 SAY "Postavi na:" GET _trazi_val
+         @ m_x + 2, m_y + 2 SAY "Uslov za obuhvatanje stavki (prazno-sve):" GET _trazi_usl ;
+            PICT "@S20" ;
+            VALID Empty( _trazi_usl ) .OR. alt_s_provjeri_tip_uslova( _trazi_usl, "Greška! Neispravno postavljen uslov!" )
+         READ
 
-            @ m_x + 1, m_y + 2 SAY "Postavi na:" GET _trazi_val
-            @ m_x + 2, m_y + 2 SAY "Uslov za obuhvatanje stavki (prazno-sve):" GET _trazi_usl ;
-               PICT "@S20" ;
-               VALID Empty( _trazi_usl ) .OR. alt_s_provjeri_tip_uslova( _trazi_usl, "Greška! Neispravno postavljen uslov!" )
-            READ
+         BoxC()
 
-            BoxC()
+         IF LastKey() == K_ESC
+            RETURN DE_CONT
+         ENDIF
 
-            IF LastKey() == K_ESC
-               RETURN DE_CONT
-            ENDIF
-
-            IF zamjeni_numericka_polja_u_tabeli( cKolona, _trazi_val, _trazi_usl )
-               TB:RefreshAll()
-            ELSE
-               RETURN DE_CONT
-            ENDIF
-
+         IF zamjeni_numericka_polja_u_tabeli( cKolona, _trazi_val, _trazi_usl )
+            TB:RefreshAll()
+            RETURN DE_REFRESH
+         ELSE
+            RETURN DE_CONT
          ENDIF
 
       ENDIF
 
+      RETURN DE_CONT
 
 
-   CASE Ch == K_CTRL_U .AND. nPored > 1
+
+   CASE nKey == K_CTRL_U .AND. nPored > 1
 
       PRIVATE GetList := {}
       nRez := IndexOrd()
@@ -506,17 +548,17 @@ FUNCTION standardne_browse_komande_dbf( TB, Ch, nRez, nPored, aPoredak )
 
       IF LastKey() != K_ESC
          dbSetOrder( nRez + 1 )
-         nRez := DE_REFRESH
-      ELSE
-         nRez := DE_CONT
+         RETURN DE_REFRESH
       ENDIF
 
+      RETURN DE_CONT
+
    OTHERWISE
-      goModul:gProc( Ch )
+      nKeyHandlerRetEvent := goModul:gProc( nKey, nKeyHandlerRetEvent )
 
    ENDCASE
 
-   RETURN .T.
+   RETURN nKeyHandlerRetEvent
 
 
 

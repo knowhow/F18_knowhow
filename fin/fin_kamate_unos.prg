@@ -322,7 +322,6 @@ STATIC FUNCTION fin_kamate_key_handler()
       READ
       BoxC()
 
-altd()
       IF !start_print()
          RETURN .F.
       ENDIF

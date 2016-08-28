@@ -87,8 +87,8 @@ FUNCTION kalk_get_1_95()
    ENDIF
 
    _MKonto := _Idkonto2
-   //check_datum_posljednje_kalkulacije()
-   //DuplRoba()
+   // check_datum_posljednje_kalkulacije()
+   // DuplRoba()
 
    SELECT koncij
    SEEK Trim( _idkonto2 )
@@ -129,16 +129,11 @@ FUNCTION kalk_get_1_95()
 
    IF _TBankTr <> "X"
 
-      IF !Empty( gMetodaNC )  .AND. !( roba->tip $ "UT" )
+      kalk_get_nabavna_mag( _idfirma, _idroba, _idkonto2, @nKolS, @nKolZN, @nc1, @nc2, @dDatNab )
 
-         //MsgO( "Racunam stanje na skladistu" )
-         kalk_get_nabavna_mag( _idfirma, _idroba, _idkonto2, @nKolS, @nKolZN, @nc1, @nc2, @dDatNab )
-         //MsgC()
+      @ m_x + 12, m_y + 30   SAY "Ukupno na stanju "; @ m_x + 12, Col() + 2 SAY nKols PICT pickol
+      @ m_x + 13, m_y + 30   SAY "Srednja nc "; @ m_x + 13, Col() + 2 SAY nc2 PICT pickol
 
-         @ m_x + 12, m_y + 30   SAY "Ukupno na stanju "; @ m_x + 12, Col() + 2 SAY nKols PICT pickol
-         @ m_x + 13, m_y + 30   SAY "Srednja nc "; @ m_x + 13, Col() + 2 SAY nc2 PICT pickol
-
-      ENDIF
 
       IF dDatNab > _DatDok; Beep( 1 ); Msg( "Datum nabavke je " + DToC( dDatNab ), 4 ); ENDIF
 

@@ -481,7 +481,7 @@ FUNCTION KaKaProd( nUlaz, nIzlaz, nMPV, nNV )
 
 
 
-/* NCuMP(_idfirma,_idroba,_idkonto,nKolicina,dDatDok)
+/*
  *     Proracun stanja i nabavne vrijednosti za zadani artikal i prodavnicu
  */
 
@@ -497,9 +497,9 @@ FUNCTION NCuMP( _idfirma, _idroba, _idkonto, nKolicina, dDatDok )
    _datdok   := dDatDok
    SELECT KALK
    PushWA()
-   //MsgO( "Računam stanje u prodavnici" )
+
    kalk_get_nabavna_prod( _idfirma, PadR( _idroba, Len( idroba ) ), _idkonto, @nKolS, @nKolZN, @nc1, @nc2, @dDatNab )
-   //MsgC()
+
    SELECT KALK
    PopWA()
    SELECT ( nArr )

@@ -33,9 +33,9 @@ FUNCTION Get1_82()
 
       @ m_x + 9, m_y + 2 SAY "Magacinski konto razduzuje"  GET _IdKonto ;
          VALID Empty( _IdKonto ) .OR. P_Konto( @_IdKonto, 21, 5 )
-      //IF gNW <> "X"
-      //   @ m_x + 9, m_y + 40 SAY "Razduzuje:" GET _IdZaduz   PICT "@!"  VALID Empty( _idZaduz ) .OR. P_Firma( @_IdZaduz, 21, 5 )
-      //ENDIF
+      // IF gNW <> "X"
+      // @ m_x + 9, m_y + 40 SAY "Razduzuje:" GET _IdZaduz   PICT "@!"  VALID Empty( _idZaduz ) .OR. P_Firma( @_IdZaduz, 21, 5 )
+      // ENDIF
    ELSE
       // @  m_x+6,m_y+2   SAY "KUPAC: "; ?? _IdPartner
       @  m_x + 7, m_y + 2   SAY "Faktura Broj: "; ?? _BrFaktP
@@ -43,9 +43,9 @@ FUNCTION Get1_82()
       _IdZaduz := ""
       _Idkonto2 := ""
       @ m_x + 9, m_y + 2 SAY "Magacinski konto razduzuje "; ?? _IdKonto
-      //IF gNW <> "X"
-      //   @ m_x + 9, m_y + 40 SAY "Razduzuje: "; ?? _IdZaduz
-      //ENDIF
+      // IF gNW <> "X"
+      // @ m_x + 9, m_y + 40 SAY "Razduzuje: "; ?? _IdZaduz
+      // ENDIF
    ENDIF
 
    @ m_x + 10, m_y + 66 SAY "Tarif.br->"
@@ -56,7 +56,7 @@ FUNCTION Get1_82()
 
    @ m_x + 11, m_y + 70 GET _IdTarifa WHEN gPromTar == "N" VALID P_Tarifa( @_IdTarifa )
 
-   read
+   READ
    ESC_RETURN K_ESC
 
    IF roba_barkod_pri_unosu()
@@ -70,8 +70,8 @@ FUNCTION Get1_82()
    SELECT kalk_pripr  // napuni tarifu
 
    _MKonto := _Idkonto2
-   //DuplRoba()
-   //check_datum_posljednje_kalkulacije()
+   // DuplRoba()
+   // check_datum_posljednje_kalkulacije()
 
    @ m_x + 12, m_y + 2   SAY "Kolicina " GET _Kolicina PICTURE PicKol VALID _Kolicina <> 0
 
@@ -97,11 +97,9 @@ FUNCTION Get1_82()
 
    lGenStavke := .F.
    IF _TBankTr <> "X"
-      IF !Empty( gMetodaNC )
-         //MsgO( "Racunam stanje na skladistu" )
-         kalk_get_nabavna_mag( _idfirma, _idroba, _idkonto, @nKolS, @nKolZN, @nc1, @nc2, @dDatNab )
-         //MsgC()
-      ENDIF
+
+      kalk_get_nabavna_mag( _idfirma, _idroba, _idkonto, @nKolS, @nKolZN, @nc1, @nc2, @dDatNab )
+
       IF dDatNab > _DatDok; Beep( 1 );Msg( "Datum nabavke je " + DToC( dDatNab ), 4 );ENDIF
       IF gMetodaNC $ "13"; _nc := nc1; ELSEIF gMetodaNC == "2"; _nc := nc2; ENDIF
    ENDIF
@@ -124,7 +122,7 @@ FUNCTION Get1_82()
 
    @ m_x + 20, m_y + 2 SAY "MPC SA POREZOM:"
    @ m_x + 20, m_y + 50 GET _MPCSaPP  PICTURE PicDEM ;
-      valid {|| _mpc := iif( _mpcsapp <> 0,_mpcsapp / ( 1 + _opp ) / ( 1 + _PPP ), _mpc ), ;
+      valid {|| _mpc := iif( _mpcsapp <> 0, _mpcsapp / ( 1 + _opp ) / ( 1 + _PPP ), _mpc ), ;
       _marza2 := 0, ;
       Marza2R(), ShowGets(), .T. }
    read; ESC_RETURN K_ESC
@@ -159,7 +157,7 @@ FUNCTION Get1_82()
                marza  WITH _vpc - kalk_pripr->nc, ;   // mora se uzeti nc iz ove stavke
             mu_i WITH  _mu_i, ;
                pkonto WITH _pkonto, ;
-               pu_i WITH  _pu_i,;
+               pu_i WITH  _pu_i, ;
                error WITH "0"
          ENDIF
          SKIP

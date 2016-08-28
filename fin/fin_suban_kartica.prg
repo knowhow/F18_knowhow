@@ -141,8 +141,6 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
    @ m_x + nX, Col() + 2 SAY8 "Sažeta kartica (bez opisa) D/N" GET cSazeta  PICT "@!" VALID cSazeta $ "DN"
    READ
 
-
-   AltD()
    DO WHILE .T.
 
       IF gDUFRJ == "D"

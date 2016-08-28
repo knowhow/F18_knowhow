@@ -117,8 +117,8 @@ FUNCTION Get1_80( atrib )
 
    _pkonto := _idkonto
 
-   //kalk_dat_poslj_promjene_prod()
-   //DuplRoba()
+   // kalk_dat_poslj_promjene_prod()
+   // DuplRoba()
 
    IF kalk_is_novi_dokument()
 
@@ -242,7 +242,7 @@ FUNCTION kalk_get_1_80_protustavka()
 
    _pkonto := _idkonto
 
-   //kalk_dat_poslj_promjene_prod()
+   // kalk_dat_poslj_promjene_prod()
 
    PRIVATE fMarza := " "
 
@@ -373,13 +373,12 @@ STATIC FUNCTION VKol( x_kord )
 
       dDatNab := CToD( "" )
 
-      IF !Empty( gMetodaNC )
-         //MsgO( "Računam stanje u prodavnici" )
-         kalk_get_nabavna_prod( _idfirma, _idroba, _idkonto, @nKolS, @nKolZN, @nC1, @nC2, @dDatNab )
-         //MsgC()
-         @ x_kord, m_y + 30 SAY "Ukupno na stanju "
-         @ x_kord, Col() + 2 SAY nKols PICT pickol
-      ENDIF
+
+      kalk_get_nabavna_prod( _idfirma, _idroba, _idkonto, @nKolS, @nKolZN, @nC1, @nC2, @dDatNab )
+
+      @ x_kord, m_y + 30 SAY "Ukupno na stanju "
+      @ x_kord, Col() + 2 SAY nKols PICT pickol
+
 
       IF dDatNab > _DatDok
          Beep( 1 )

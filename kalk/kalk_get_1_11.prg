@@ -130,13 +130,10 @@ FUNCTION kalk_get_1_11()
          nc1 := nc2 := 0
          dDatNab := CToD( "" )
          IF _kolicina > 0
-            //MsgO( "Racunam stanje na skladistu" )
             kalk_get_nabavna_mag( _idfirma, _idroba, _idkonto2, @nKolS, @nKolZN, @nc1, @nc2, @dDatNab )
-            //MsgC()
          ELSE
-            MsgO( "Racunam stanje prodavnice" )
             kalk_get_nabavna_prod( _idfirma, _idroba, _idkonto, @nKolS, @nKolZN, @nc1, @nc2, dDatNab )
-            MsgC()
+
          ENDIF
          IF dDatNab > _DatDok; Beep( 1 );Msg( "Datum nabavke je " + DToC( dDatNab ), 4 );ENDIF
          IF gMetodaNC $ "13"; _fcj := nc1; ELSEIF gMetodaNC == "2"; _fcj := nc2; ENDIF

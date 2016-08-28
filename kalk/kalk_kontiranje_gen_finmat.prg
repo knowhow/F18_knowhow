@@ -376,8 +376,7 @@ FUNCTION kalk_kontiranje_gen_finmat()
             my_close_all_dbf()
          ENDIF
 
-         AltD()
-         // ovo ispod kontiranje je visak!?
+         AltD() // ovo ispod kontiranje je visak!?
          kalk_kontiranje_fin_naloga( .F., NIL, lViseKalk, NIL, _fin_auto_broj == "D" )  // kontiranje dokumenta
 
 

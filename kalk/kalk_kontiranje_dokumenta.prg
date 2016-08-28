@@ -246,13 +246,12 @@ FUNCTION kalk_kontiranje_fin_naloga( fAuto, lAGen, lViseKalk, cNalog, lAutoBroja
    nRbr := 0
    nRbr2 := 0
 
-   MsgO( "Prenos KALK -> FIN / " + cIdVN + " - " + cBrNalF  )
+   MsgO( "KALK( shema kontiranja TRFP ) -> FINMAT -> FIN / " + cIdVN + " - " + cBrNalF  )
 
    SELECT finmat
    PRIVATE cKonto1 := NIL
 
    DO WHILE !Eof()
-
 
       cIDVD := finmat->IdVD
       cBrDok := finmat->BrDok
@@ -347,14 +346,12 @@ FUNCTION kalk_kontiranje_fin_naloga( fAuto, lAGen, lViseKalk, cNalog, lAutoBroja
                IF gBaznaV == "P"
                   //nIz := ROUND7( nIz, Right( trfp->naz, 2 ) )
                   //nIz2 := ROUND7( nIz * Kurs( dDFDok, "P", "D" ), Right( trfp->naz, 2 ) )
-
                   nIz := nIz
                   nIz2 :=  nIz * Kurs( dDFDok, "P", "D" )
 
                ELSE
                   //nIz2 := ROUND7( nIz, Right( trfp->naz, 2 ) )
                   // nIz := ROUND7( nIz2 * Kurs( dDFDok, "D", "P" ), Right( trfp->naz, 2 ) )
-
                   nIz2 := nIz
                   nIz := nIz2 * Kurs( dDFDok, "D", "P" )
 
@@ -597,6 +594,7 @@ FUNCTION kalk_kontiranje_fin_naloga( fAuto, lAGen, lViseKalk, cNalog, lAutoBroja
             SKIP
          ENDDO // trfp->id==cIDVD
 
+/*
          IF gAMat <> "0"     // za materijalni nalog
 
             SELECT trmp
@@ -686,6 +684,7 @@ FUNCTION kalk_kontiranje_fin_naloga( fAuto, lAGen, lViseKalk, cNalog, lAutoBroja
             ENDDO // trmp->id = cIDVD
 
          ENDIF    // za materijalni nalog
+*/
 
          SELECT finmat
          SKIP

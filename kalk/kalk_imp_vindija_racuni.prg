@@ -311,8 +311,8 @@ STATIC FUNCTION kalk_import_txt_roba()
       RETURN .F.
    ENDIF
 
-   // provjeri da li je fajl za import prazan
-   IF CheckFile( cImpFile ) == 0
+
+   IF CheckFile( cImpFile ) == 0  // provjeri da li je fajl za import prazan
       MsgBeep( "Odabrani fajl je prazan!#Prekidam operaciju !" )
       RETURN .F.
    ENDIF
@@ -2033,56 +2033,50 @@ STATIC FUNCTION kalk_imp_continue_from_check_point()
  */
 STATIC FUNCTION kalk_imp_obradi_dokument( cIdVd, lStampaj )
 
-   LOCAL nRslt
-
-   // 1. pokreni asistenta
-   // 2. azuriraj kalk
-   // 3. azuriraj FIN
-
-   // PRIVATE lKalkAsistentUToku := .F.
-
-   // IF lAsPokreni == nil
-   // lAsPokreni := .T.
-   // ENDIF
+   LOCAL nRslt, lPrvi := .T.
 
    IF lStampaj == nil
       lStampaj := .T.
    ENDIF
 
-   // IF lAsPokreni
-   kalk_pripr_obrada_stavki_sa_asistentom()
-   // ELSE
-   // o_kalk_edit()
+
+   // kalk_pripr_obrada_stavki_sa_asistentom()
+
+   // IF lStampaj == .T.
+   // kalk_stampa_dokumenta( nil, nil, .T. ) // odstampaj kalk
    // ENDIF
-   IF lStampaj == .T.
-      kalk_stampa_dokumenta( nil, nil, .T. ) // odstampaj kalk
-   ENDIF
-   kalk_azuriranje_dokumenta( .T. ) // azuriraj kalk
-   o_kalk_edit()
+   // kalk_azuriranje_dokumenta( .T. ) // azuriraj kalk
+   // o_kalk_edit()
+
+   kalk_asistent_pause( .F. )
 
 
-   DO WHILE ( nRslt := provjeri_stanje_kalk_pripreme( cIdVd ) <> 0 )
+   DO WHILE (  ( nRslt := provjeri_stanje_kalk_pripreme( cIdVd ) ) <> 0 )
 
 
-      IF nRslt == 1 // vezni dokument u kalk_pripremi je ok
+      IF lPrvi .OR. ( nRslt == 1 ) // vezni dokument u kalk_pripremi je ok
 
-         // IF lAsPokreni
          kalk_pripr_obrada_stavki_sa_asistentom()
-         // ELSE
-         // o_kalk_edit()
-         // ENDIF
+
+         IF kalk_asistent_pause() .AND. Pitanje( , "Prekid operacije ?", "N" ) == "D"
+            RETURN .F.
+         ENDIF
 
          IF lStampaj == .T.
             kalk_stampa_dokumenta( nil, nil, .T. )
          ENDIF
-
          kalk_azuriranje_dokumenta( .T. )
          o_kalk_edit()
 
       ENDIF
 
 
-      IF nRslt >= 2 // vezni dokument u pripremi ne pripada azuriranom dokumentu, sta sa njim
+      IF lPrvi
+         lPrvi := .F.
+         LOOP
+      ENDIF
+
+      IF  nRslt >= 2 // vezni dokument u pripremi ne pripada azuriranom dokumentu, sta sa njim
 
          error_bar( "kalk_auto_imp", "postoji dokument u pripremi koji je sumnjiv" )
 
@@ -2096,6 +2090,7 @@ STATIC FUNCTION kalk_imp_obradi_dokument( cIdVd, lStampaj )
          o_kalk_edit()
 
       ENDIF
+
 
    ENDDO
 
@@ -2113,7 +2108,6 @@ STATIC FUNCTION provjeri_stanje_kalk_pripreme( cIdVd )
 
    SELECT kalk_pripr
    GO TOP
-
 
    IF RecCount() == 0
       RETURN 0 // provjeri da li je kalk_priprema prazna, ako je prazna vrati 0
@@ -2209,7 +2203,7 @@ STATIC FUNCTION provjeri_vezne_dokumente_za_95( cVezniDok )
 
 
 
-/* FillDobSifra()
+/*
  *     Popunjavanje polja sifradob prema kljucu
  */
 

@@ -175,7 +175,6 @@ FUNCTION ld_specifikacija_plate_samostalni_obr_2002()
 
    cIniName := _proizvj_ini
 
-   AltD()
    hRec := hb_Hash()
 
    oReport := YargReport():New( "ld_obr_2002", "xlsx" )
@@ -340,7 +339,6 @@ FUNCTION ld_specifikacija_plate_samostalni_obr_2002()
       nkD2X := get_dopr( cDopr2, "S" )
       nkD3X := get_dopr( cDopr3, "S" )
 
-      AltD()
 
       nPom := nKD1X // stope na bruto
       hRec[ "stopa_19" ] := FormNum2( nPom, 16, gPici3 ) + "%"

@@ -31,7 +31,6 @@ FUNCTION kalk_get_1_10()
    LOCAL _kord_x := 0
    LOCAL _unos_left := 40
 
-   AltD()
    gVarijanta := "2"
    s_cKonverzijaValuteDN := "N"
 

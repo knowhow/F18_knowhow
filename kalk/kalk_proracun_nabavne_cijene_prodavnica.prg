@@ -33,7 +33,12 @@ FUNCTION kalk_get_nabavna_prod( cIdFirma, cIdroba, cIdkonto, nKolicina, nKolZN, 
       ENDIF
    ENDIF
 */
-   MsgO( "Računam stanje u prodavnici:" + AllTrim( cIdKonto ) + "/" + cIdRoba )
+
+   IF Empty( gMetodaNC )
+      RETURN .F.
+   ENDIF
+
+   MsgO( "Proračun stanja u prodavnici: " + AllTrim( cIdKonto ) + "/" + cIdRoba )
 
    find_kalk_by_pkonto_idroba( cIdFirma, cIdKonto, cIdRoba )
    GO BOTTOM

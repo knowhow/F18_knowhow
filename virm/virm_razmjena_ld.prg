@@ -684,7 +684,7 @@ STATIC FUNCTION virm_rekap_ld( cId, ;
 
 STATIC FUNCTION virm_o_tables()
 
-   AltD()
+
    SELECT ( F_BANKE )
    IF !Used()
       O_BANKE

@@ -668,7 +668,6 @@ FUNCTION fakt_to_flink( hDeviceParams, cFirma, cTipDok, cBrDok )
    SELECT fakt_doks
    SEEK cFirma + cTipDok + cBrDok
 
-   AltD()
    flink_name( hDeviceParams[ "out_file" ] )
    flink_path( hDeviceParams[ "out_dir" ] )
 

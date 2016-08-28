@@ -65,7 +65,6 @@ FUNCTION fin_asistent_otv_st()
       RETURN .F.
    ENDIF
 
-   AltD()
 
    MsgO( "Preuzimanje podataka sa SQL servera ..." )
    // SELECT suban

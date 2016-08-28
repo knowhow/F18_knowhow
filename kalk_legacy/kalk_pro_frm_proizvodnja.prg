@@ -32,8 +32,8 @@ FUNCTION leg_Get1_PR()
       @ m_x + 6, m_y + 2 SAY "Broj fakture" GET _brfaktp
       @ m_x + 7, m_y + 2 SAY "Mag .got.proizvoda zaduzuje" GET _IdKonto VALID  P_Konto( @_IdKonto, 21, 5 ) PICT "@!"
       @ m_x + 8, m_y + 2 SAY "Mag. sirovina razduzuje    " GET _IdKonto2 PICT "@!" VALID P_Konto( @_IdKonto2 )
-      @ m_x + 12, m_y + 2 SAY "Proizvod  " GET _IdRoba PICT "@!" valid  {|| P_Roba( @_IdRoba ), say_from_valid( 12, 24, Trim( Left( roba->naz, 40 ) ) + " (" + ROBA->jmj + ")", 40 ),;
-       _IdTarifa := iif( kalk_is_novi_dokument(), ROBA->idtarifa, _IdTarifa ), .T. }
+      @ m_x + 12, m_y + 2 SAY "Proizvod  " GET _IdRoba PICT "@!" valid  {|| P_Roba( @_IdRoba ), say_from_valid( 12, 24, Trim( Left( roba->naz, 40 ) ) + " (" + ROBA->jmj + ")", 40 ), ;
+         _IdTarifa := iif( kalk_is_novi_dokument(), ROBA->idtarifa, _IdTarifa ), .T. }
       @ m_x + 12, m_y + 70 GET _IdTarifa WHEN gPromTar == "N" VALID P_Tarifa( @_IdTarifa )
 
       SELECT tarifa
@@ -120,11 +120,9 @@ FUNCTION leg_Get1_PR()
                   dDatNab := CToD( "" )
                   IF _TBankTr <> "X"
                      // ako je X onda su stavke vec izgenerisane
-                     IF !Empty( gMetodaNC )  .AND. !( roba->tip $ "UT" )
-                        //MsgO( "Racunam stanje na skladistu" )
-                        kalk_get_nabavna_mag( _idfirma, sast->id2, _idkonto2, @nKolS, @nKolZN, @nc1, @nc2, @dDatNab )
-                        //MsgC()
-                     ENDIF
+
+                     kalk_get_nabavna_mag( _idfirma, sast->id2, _idkonto2, @nKolS, @nKolZN, @nc1, @nc2, @dDatNab )
+
                      IF dDatNab > _DatDok
                         Beep( 1 )
                         Msg( "Datum nabavke je " + DToC( dDatNab ) + " sirovina " + sast->id2, 4 )
@@ -155,18 +153,18 @@ FUNCTION leg_Get1_PR()
       ENDIF
       SELECT kalk_pripr
       GO nTPriPrec
-      //IF gNW <> "X"
-      //   @ m_x + 10, m_y + 42  SAY "Zaduzuje: "   GET _IdZaduz  PICT "@!" VALID Empty( _idZaduz ) .OR. P_Firma( @_IdZaduz, 24 )
-      //ENDIF
+      // IF gNW <> "X"
+      // @ m_x + 10, m_y + 42  SAY "Zaduzuje: "   GET _IdZaduz  PICT "@!" VALID Empty( _idZaduz ) .OR. P_Firma( @_IdZaduz, 24 )
+      // ENDIF
       READ
       ESC_RETURN K_ESC
    ELSE
 
       @ m_x + 7, m_y + 2   SAY "Mag. gotovih proizvoda zaduzuje ";?? _IdKonto
       @ m_x + 8, m_y + 2   SAY "Magacin sirovina razduzuje      ";?? _IdKonto2
-      //IF gNW <> "X"
-      //   @ m_x + 10, m_y + 42  SAY "Zaduzuje: "; ?? _IdZaduz
-      //ENDIF
+      // IF gNW <> "X"
+      // @ m_x + 10, m_y + 42  SAY "Zaduzuje: "; ?? _IdZaduz
+      // ENDIF
 
    ENDIF
 
@@ -174,7 +172,7 @@ FUNCTION leg_Get1_PR()
 
    IF nRbr <> 1
       @ m_x + 12, m_y + 2  SAY "Sirovina  " GET _IdRoba PICT "@!" valid  {|| P_Roba( @_IdRoba ), say_from_valid( 12, 24, Trim( Left( roba->naz, 40 ) ) + " (" + ROBA->jmj + ")", 40 ), ;
-      _IdTarifa := iif( kalk_is_novi_dokument(), ROBA->idtarifa, _IdTarifa ), .T. }
+         _IdTarifa := iif( kalk_is_novi_dokument(), ROBA->idtarifa, _IdTarifa ), .T. }
       @ m_x + 13, m_y + 2   SAY "Kolicina  " GET _Kolicina PICTURE PicKol VALID _Kolicina <> 0
    ENDIF
 
@@ -190,12 +188,9 @@ FUNCTION leg_Get1_PR()
       dDatNab := CToD( "" )
 
       IF _TBankTr <> "X"
-         // ako je X onda su stavke vec izgenerisane
-         IF !Empty( gMetodaNC )  .AND. !( roba->tip $ "UT" )
-            //MsgO( "Racunam stanje na skladistu" )
-            kalk_get_nabavna_mag( _idfirma, _idroba, _idkonto2, @nKolS, @nKolZN, @nc1, @nc2, @dDatNab )
-            //MsgC()
-         ENDIF
+
+         kalk_get_nabavna_mag( _idfirma, _idroba, _idkonto2, @nKolS, @nKolZN, @nc1, @nc2, @dDatNab )
+
          IF dDatNab > _DatDok
             Beep( 1 )
             Msg( "Datum nabavke je " + DToC( dDatNab ) + " sirovina " + sast->id2, 4 )
@@ -215,7 +210,7 @@ FUNCTION leg_Get1_PR()
    _MKonto := _Idkonto
    _MU_I := "1"
 
-   //check_datum_posljednje_kalkulacije()
+   // check_datum_posljednje_kalkulacije()
 
    IF kalk_is_novi_dokument()
       SELECT ROBA
@@ -255,7 +250,7 @@ FUNCTION leg_Get1_PR()
          ENDIF
          IF nRbr == 1 .AND. gkolicina < kolicina
             Beep( 2 )
-            Msg( "Na stanju " + idkonto2 + " se nalazi samo " + Str( gkolicina, 9, 2 ) + " sirovine " + idroba,0 )
+            Msg( "Na stanju " + idkonto2 + " se nalazi samo " + Str( gkolicina, 9, 2 ) + " sirovine " + idroba, 0 )
             _error := "1"
          ENDIF
       ENDIF

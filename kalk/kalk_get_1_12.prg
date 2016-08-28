@@ -108,9 +108,7 @@ FUNCTION kalk_get_1_12()
    lGenStavke := .F.
    IF _TBankTr <> "X"
       IF !Empty( gMetodaNC )
-         // MsgO( "Racunam stanje na skladistu" )
          kalk_get_nabavna_prod( _idfirma, _idroba, _idkonto, @nKolS, @nKolZN, @nc1, @nc2, dDatNab )
-         // MsgC()
          IF dDatNab > _DatDok
             Beep( 1 )
             Msg( "Datum nabavke je " + DToC( dDatNab ), 4 )

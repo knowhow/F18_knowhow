@@ -15,8 +15,8 @@
 STATIC aPorezi := {}
 
 
-// direktni ulaz u prodavnicu
-FUNCTION kalk_unos_dok_81( atrib )
+
+FUNCTION kalk_unos_dok_81( hParams )
 
    LOCAL _x := 5
    LOCAL _kord_x := 0
@@ -27,23 +27,23 @@ FUNCTION kalk_unos_dok_81( atrib )
    LOCAL _rok := CToD( "" )
    LOCAL _krabat := NIL
 
-   IF hb_HHasKey( atrib, "opis" )
+   IF hb_HHasKey( hParams, "opis" )
       _use_opis := .T.
    ENDIF
 
-   IF hb_HHasKey( atrib, "rok" )
+   IF hb_HHasKey( hParams, "rok" )
       _use_rok := .T.
    ENDIF
 
    IF _use_opis
       IF !kalk_is_novi_dokument()
-         _opis := PadR( atrib[ "opis" ], 300 )
+         _opis := PadR( hParams[ "opis" ], 300 )
       ENDIF
    ENDIF
 
    IF _use_rok
       IF !kalk_is_novi_dokument()
-         _rok := CToD( AllTrim( atrib[ "rok" ] ) )
+         _rok := CToD( AllTrim( hParams[ "rok" ] ) )
       ENDIF
    ENDIF
 
@@ -190,13 +190,13 @@ FUNCTION kalk_unos_dok_81( atrib )
 
    _fcj2 := _fcj * ( 1 - _rabat / 100 )
 
-   // setuj atribute
+   // setuj hParamsute
    IF _use_opis
-      atrib[ "opis" ] := _opis
+      hParams[ "opis" ] := _opis
    ENDIF
 
    IF _use_rok
-      atrib[ "rok" ] := DToC( _rok )
+      hParams[ "rok" ] := DToC( _rok )
    ENDIF
 
    obracun_kalkulacija_tip_81_pdv( _x )
@@ -277,9 +277,7 @@ STATIC FUNCTION VKol()
       dDatNab := CToD( "" )
 
       IF !Empty( gMetodaNC )
-         //MsgO( "Racunam stanje na u prodavnici" )
          kalk_get_nabavna_prod( _idfirma, _idroba, _idkonto, @nKolS, @nKolZN, @nc1, @nc2, @dDatNab )
-         //MsgC()
          @ m_x + 12, m_y + 30 SAY "Ukupno na stanju "
          @ m_x + 12, Col() + 2 SAY nKols PICT pickol
       ENDIF

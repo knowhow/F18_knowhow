@@ -49,7 +49,6 @@ FUNCTION fin_kupci_pregled_dugovanja()
       cSql += " WHERE i_ukupno<>0 "
    ENDIF
 
-   AltD()
    // cSql += " WHERE i_ukupno"+to_xml_encoding("<>")+"0"
    // cSql += " AND idkonto=" + to_xml_encoding(sql_quote( Padr( "2110", 7) ))
    oReport:aSql := { cSql }

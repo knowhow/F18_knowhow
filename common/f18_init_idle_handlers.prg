@@ -15,11 +15,13 @@ STATIC aIdleHandlers := {}
 STATIC s_nIdleRefresh := 0 // start idle refresh in seconds()
 STATIC s_nIdleDisplayCounter := 0 // counter
 
-FUNCTION add_idle_handlers()
+FUNCTION add_global_idle_handlers()
 
    AAdd( aIdleHandlers, hb_idleAdd( {||  hb_DispOutAt( maxrows(),  maxcols() - 8, Time(), F18_COLOR_INFO_PANEL ) } ) )
    AAdd( aIdleHandlers, hb_idleAdd( {||  hb_DispOutAt( maxrows(),  maxcols() - 8 - 8 - 1, "< CALC >", F18_COLOR_INFO_PANEL ), ;
       iif( !in_calc() .AND. MINRECT( maxrows(), maxcols() - 8 - 8 - 1, maxrows(), maxcols() - 8 - 1 ), Calc(), NIL ) } ) )
+
+   //hb_idleAdd( aIdleHandlers, hb_idleAdd( {|| hb_DispOutAt( maxrows(), 1, "< PAUSE >", F18_COLOR_INFO_PANEL ), kalk_asistent_pause() } ) )
 
    RETURN .T.
 
@@ -99,7 +101,7 @@ PROCEDURE on_idle_dbf_refresh()
    RETURN
 
 
-FUNCTION remove_idle_handlers()
+FUNCTION remove_global_idle_handlers()
 
    AEval( aIdleHandlers, {| pHandlerID | hb_idleDel( pHandlerID ) } )
    aIdleHandlers := {}

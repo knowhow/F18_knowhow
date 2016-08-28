@@ -114,7 +114,7 @@ METHOD run()
       ::lStarted := .F.
    ENDIF
 
-   add_idle_handlers()  //BUG_CPU100
+   add_global_idle_handlers()  //BUG_CPU100
    start_f18_program_module( self, .T. )
 
    ::lStarted := .T.
@@ -126,12 +126,12 @@ METHOD run()
 
    ::MMenu() // osnovni meni programskog modula
 
-   remove_idle_handlers()
+   remove_global_idle_handlers()
 
    RETURN .T.
 
 
-METHOD gProc( Ch )
+METHOD gProc( nKey, nKeyHandlerRetEvent )
 
    LOCAL lPushWa
    LOCAL nI
@@ -139,47 +139,47 @@ METHOD gProc( Ch )
    DO CASE
 
 #ifdef __PLATFORM__DARWIN
-   CASE ( Ch == K_F12 )
+   CASE ( nKey == K_F12 )
 #else
-   CASE ( Ch == K_INS )
+   CASE ( nKey == K_INS )
 #endif
       show_insert_over_stanje( .T. )
-      RETURN DE_CONT
+      //RETURN DE_CONT
 
-   CASE Ch == Asc( "i" ) .OR. Ch == Asc( "I" )
+   CASE nKey == Asc( "i" ) .OR. nKey == Asc( "I" )
       show_infos()
-      RETURN DE_CONT
+      //RETURN DE_CONT
 
-   CASE Ch == Asc( "e" ) .OR. Ch == Asc( "E" )
+   CASE nKey == Asc( "e" ) .OR. nKey == Asc( "E" )
       show_errors()
-      RETURN DE_CONT
+      //RETURN DE_CONT
 
-   CASE ( Ch == K_SH_F1 )
+   CASE ( nKey == K_SH_F1 )
       Calc()
 
-   CASE ( Ch == K_SH_F6 )
+   CASE ( nKey == K_SH_F6 )
       f18_promjena_sezone()
 
-   CASE ( Ch == K_SH_F2 .OR. Ch == K_CTRL_F2 )
+   CASE ( nKey == K_SH_F2 .OR. nKey == K_CTRL_F2 )
       PPrint()
 
-   CASE Ch == K_SH_F10
+   CASE nKey == K_SH_F10
       ::gParams()
 
-   CASE Ch == K_SH_F9
+   CASE nKey == K_SH_F9
       Adresar()
 
    OTHERWISE
       IF !( "U" $ Type( "gaKeys" ) )
          FOR nI := 1 TO Len( gaKeys )
-            IF ( Ch == gaKeys[ nI, 1 ] )
+            IF ( nKey == gaKeys[ nI, 1 ] )
                Eval( gaKeys[ nI, 2 ] )
             ENDIF
          NEXT
       ENDIF
    ENDCASE
 
-   RETURN .T.
+   RETURN nKeyHandlerRetEvent
 
 
 

@@ -1091,7 +1091,6 @@ STATIC FUNCTION edit_fakt_priprema( fNovi, items_atrib )
 
          ENDIF
 
-altd()
          IF ( fakt_pripr->( FieldPos( "idrelac" ) ) <> 0 .AND. _idtipdok $ "#11#" )
             ++ _x2
             @ m_x + _x2, m_y + 51  SAY "       Relacija:" GET _idrelac PICT "@S10"

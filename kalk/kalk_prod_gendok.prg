@@ -968,11 +968,11 @@ FUNCTION Iz11u412()
 
       IF !Empty( gMetodaNC ) .AND. cPoMetodiNC == "D"
          nc1 := nc2 := 0
-         // MsgO("Racunam stanje u prodavnici")
+
          ?
          kalk_get_nabavna_prod( _idfirma, _idroba, _idkonto, 0, 0, @nc1, @nc2, )
 
-         // MsgC()
+
          // if dDatNab>_DatDok; Beep(1);Msg("Datum nabavke je "+dtoc(dDatNab),4);endif
          IF gMetodaNC $ "13"; _fcj := nc1; ELSEIF gMetodaNC == "2"; _fcj := nc2; ENDIF
       ENDIF
@@ -1062,12 +1062,11 @@ FUNCTION Iz10u11()
 
       IF !Empty( gMetodaNC ) .AND. cPoMetodiNC == "D"
          nc1 := nc2 := 0
-         // MsgO("Racunam stanje u prodavnici")
+
 
          // ? ?           ?
          kalk_get_nabavna_prod( _idfirma, _idroba, _idkonto, 0, 0, @nc1, @nc2, )
 
-         // MsgC()
          // if dDatNab>_DatDok; Beep(1);Msg("Datum nabavke je "+dtoc(dDatNab),4);endif
          IF gMetodaNC $ "13"; _fcj := nc1; ELSEIF gMetodaNC == "2"; _fcj := nc2; ENDIF
       ENDIF

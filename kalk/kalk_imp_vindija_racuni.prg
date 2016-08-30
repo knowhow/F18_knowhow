@@ -2060,6 +2060,8 @@ STATIC FUNCTION kalk_imp_obradi_dokument( cIdVd, lStampaj )
          kalk_pripr_obrada_stavki_sa_asistentom()
          IF automatska_obrada_error() .AND. Pitanje( , "Automatska obrada greske, prekid obrade ?", "D" ) == "D"
             RETURN .F.
+         ELSE
+            automatska_obrada_error( .F. ) // ako se trazi nastavak, onda stavi prekid
          ENDIF
          IF kalk_asistent_pause() .AND. Pitanje( , "Asistent pauza, Prekid obrade ?", "N" ) == "D"
             RETURN .F.
@@ -2110,11 +2112,13 @@ STATIC FUNCTION provjeri_stanje_kalk_pripreme( cIdVd )
    LOCAL nNrRec, nTmp, nPrviDok, cPrviDok, nUzorak
 
    SELECT kalk_pripr
-   GO TOP
 
-   IF RecCount() == 0
+
+   IF RecCount2() == 0
       RETURN 0 // provjeri da li je kalk_priprema prazna, ako je prazna vrati 0
    ENDIF
+
+   GO TOP
 
 
    nNrRec := RecCount2()
@@ -2134,7 +2138,7 @@ STATIC FUNCTION provjeri_stanje_kalk_pripreme( cIdVd )
    ENDIF
 
    DO CASE
-   CASE cIdVd == "14"
+   CASE cIdVd $ "14#KO"
       RETURN provjeri_vezne_dokumente_za_14( cPrviDok )
 
 
@@ -2162,9 +2166,7 @@ STATIC FUNCTION provjeri_stanje_kalk_pripreme( cIdVd )
  */
 STATIC FUNCTION provjeri_vezne_dokumente_za_14( cVezniDok )
 
-   IF cVezniDok $ "19#95#16#11"
-      RETURN 1
-   ENDIF
+   // iza 14 ne moze biti veznih dokumenata
 
    RETURN 2
 
@@ -2174,7 +2176,7 @@ STATIC FUNCTION provjeri_vezne_dokumente_za_14( cVezniDok )
  */
 STATIC FUNCTION provjeri_vezne_dokumente_za_41( cVezniDok )
 
-   IF cVezniDok $ "19#95#16#11"
+   IF cVezniDok $ "19"
       RETURN 1
    ENDIF
 
@@ -2186,7 +2188,7 @@ STATIC FUNCTION provjeri_vezne_dokumente_za_41( cVezniDok )
  */
 STATIC FUNCTION provjeri_vezne_dokumente_za_11( cVezniDok )
 
-   IF cVezniDok $ "19#95#16#11"
+   IF cVezniDok $ "19"
       RETURN 1
    ENDIF
 
@@ -2198,7 +2200,7 @@ STATIC FUNCTION provjeri_vezne_dokumente_za_11( cVezniDok )
  */
 STATIC FUNCTION provjeri_vezne_dokumente_za_95( cVezniDok )
 
-   IF cVezniDok $ "18#19#95#16#11"
+   IF cVezniDok $ "16"
       RETURN 1
    ENDIF
 

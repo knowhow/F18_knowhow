@@ -17,7 +17,7 @@ MEMVAR cExpPath, cImpFile
 
 STATIC s_cKalkAutoImportPodatakaKonto := nil
 STATIC __stampaj // stampanje dokumenata .t. or .f.
-STATIC s_lAutom := .T. // Automatski asistent i ažuriranje naloga (D/N)
+// STATIC s_lAutom := .T. // Automatski asistent i ažuriranje naloga (D/N)
 
 FUNCTION meni_import_vindija()
 
@@ -1783,9 +1783,9 @@ FUNCTION kalk_imp_obradi_sve_dokumente_iz_pript( nPocniOd, lStampaj, lOstaviBrdo
 
    hb_default( @lOstaviBrdok, .F. ) // ostavi broj dokumenta koji se nalazi u pript
 
-   IF Pitanje(, "Automatski asistent i ažuriranje naloga (D/N)?", "D" ) == "D"
-      s_lAutom := .T.
-   ENDIF
+   // IF Pitanje(, "Automatski asistent i ažuriranje naloga (D/N)?", "D" ) == "D"
+   // s_lAutom := .T.
+   // ENDIF
 
 
    SELECT pript // iz kalk_pript prebaci u kalk_pripr jednu po jednu kalkulaciju
@@ -1877,24 +1877,24 @@ FUNCTION kalk_imp_obradi_sve_dokumente_iz_pript( nPocniOd, lStampaj, lOstaviBrdo
       ENDDO
 
 
-      IF s_lAutom // nakon sto smo prebacili dokument u kalk_pripremu oznaciti dokle smo stigli
+      // IF s_lAutom // nakon sto smo prebacili dokument u kalk_pripremu oznaciti dokle smo stigli
 
-         IF automatska_obrada_error()
-            MsgBeep( "prekid operacije importa - greške u automatskoj obradi!" )
-            BoxC()
-            RETURN .F.
-         ENDIF
-
-         kalk_imp_set_check_point( nPCRec ) // snimi zapis u params da znas dokle si dosao
-         IF kalk_imp_obradi_dokument( cIdVd, lStampaj )
-            kalk_imp_set_check_point( nPTRec )
-         ELSE
-            MsgBeep( "prekid operacije importa !" )
-            BoxC()
-            RETURN .F.
-         ENDIF
-         o_kalk_pript()
+      IF automatska_obrada_error()
+         MsgBeep( "prekid operacije importa - greške u automatskoj obradi!" )
+         BoxC()
+         RETURN .F.
       ENDIF
+
+      kalk_imp_set_check_point( nPCRec ) // snimi zapis u params da znas dokle si dosao
+      IF kalk_imp_obradi_dokument( cIdVd, lStampaj )
+         kalk_imp_set_check_point( nPTRec )
+      ELSE
+         MsgBeep( "prekid operacije importa !" )
+         BoxC()
+         RETURN .F.
+      ENDIF
+      o_kalk_pript()
+      // ENDIF
 
       SELECT pript
       GO nPTRec
@@ -1910,10 +1910,11 @@ FUNCTION kalk_imp_obradi_sve_dokumente_iz_pript( nPocniOd, lStampaj, lOstaviBrdo
    RETURN .T.
 
 
+/*
 FUNCTION kalk_imp_autom()
 
    RETURN s_lAutom
-
+*/
 
 
 FUNCTION update_kalk_14_datval( cBrojKalk, dDatVal )
@@ -2057,8 +2058,10 @@ STATIC FUNCTION kalk_imp_obradi_dokument( cIdVd, lStampaj )
       IF lPrvi .OR. ( nRslt == 1 ) // vezni dokument u kalk_pripremi je ok
 
          kalk_pripr_obrada_stavki_sa_asistentom()
-
-         IF kalk_asistent_pause() .AND. Pitanje( , "Prekid operacije ?", "N" ) == "D"
+         IF automatska_obrada_error() .AND. Pitanje( , "Automatska obrada greske, prekid obrade ?", "D" ) == "D"
+            RETURN .F.
+         ENDIF
+         IF kalk_asistent_pause() .AND. Pitanje( , "Asistent pauza, Prekid obrade ?", "N" ) == "D"
             RETURN .F.
          ENDIF
 

@@ -133,6 +133,9 @@ FUNCTION kalk_pripr_obrada( lAsistentObrada )
 
    pIdlePause  := hb_idleAdd( {|| kalk_asistent_pause_handler( lAsistentObrada ) } )
 
+   IF lAsistentObrada
+      KEYBOARD Chr( K_LEFT )
+   ENDIF
    my_db_edit( "PNal", nMaxRow, nMaxCol, {| lPrviPoziv | kalk_pripr_key_handler( lAsistentObrada ) }, "<F5>-kartica magacin, <F6>-kartica prodavnica", "Priprema...", , , , bPodvuci, 4 )
 
    BoxC()
@@ -787,6 +790,9 @@ FUNCTION kalk_edit_sve_stavke( lAsistentObrada, lStartPocetak )
       ENDIF
 
       IF kalk_edit_stavka( .F., @hParams ) == K_ESC
+         IF lAsistentObrada
+            automatska_obrada_error( .T. ) // iz stavke se izaslo sa ESC tokom automatske obrade
+         ENDIF
          EXIT
       ENDIF
 
@@ -926,7 +932,6 @@ FUNCTION kalk_asistent_pause( lSet )
 FUNCTION kalk_asistent_start()
 
    s_lAsistentStart := .T.
-   KEYBOARD Chr ( K_LEFT ) // bilo koja tipka da se okine keyboard handler
    kalk_edit_sve_stavke( .T., .T. )
 
    RETURN DE_REFRESH

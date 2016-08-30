@@ -478,6 +478,7 @@ FUNCTION kalk_valid_kolicina_prod()
       MsgBeep( _idroba + "NC <= 0 ! STOP !" )
       error_bar( "prod", _pkonto + " " + _idroba + " nc <= 0" )
       _ERROR := "1"
+      automatska_obrada_error( .T. )
       RETURN .F.
    ENDIF
 

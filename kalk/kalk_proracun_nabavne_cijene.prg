@@ -87,7 +87,7 @@ FUNCTION korekcija_nabavne_cijene_sa_zadnjom_ulaznom( nKolicina, nZadnjaUlaznaNC
 
       MsgBeep( "Odstupanje #" + AllTrim( Str( Abs( nOdst ) ) ) + " %" + "#" + ;
          "artikal: " + AllTrim( _idroba ) + " " + PadR( roba->naz, 15 ) + ;
-         "# srednja nc:" + AllTrim( say_cijena( nSrednjaNabavnaCijena ) ) + ", zadnji ulaz nc:" + AllTrim( say_cijena( nZadnjaUlaznaNC ) ), .F. )
+         "# srednja nc:" + AllTrim( say_cijena( nSrednjaNabavnaCijena ) ) + ", zadnji ulaz nc:" + AllTrim( say_cijena( nZadnjaUlaznaNC ) ) )
 
       IF Pitanje(, "Korigovati NC na zadnju ulaznu (D/N)?", "N" ) == "D"
          nSrednjaNabavnaCijena := nZadnjaUlaznaNC
@@ -234,8 +234,8 @@ FUNCTION Marza( fmarza )
    ENDIF
    AEval( GetList, {| o| o:display() } )
 
-   RETURN
-// }
+   RETURN .T.
+
 
 
 
@@ -382,7 +382,7 @@ FUNCTION ObSetVPC( nNovaVrijednost )
 
 FUNCTION UzmiVPCSif( cMKonto, lKoncij )
 
-   // {
+
    LOCAL nCV := 0, nArr := Select()
    IF lKoncij = NIL; lKoncij := .F. ; ENDIF
    SELECT KONCIJ
@@ -641,6 +641,7 @@ FUNCTION kalk_valid_kolicina_mag()
       Msg( _idroba + " Nabavna cijena <= 0 ! STOP!" )
       error_bar( "kalk_mag", _mkonto + "/" + _idroba + " Nabavna cijena <= 0 !" )
       _ERROR := "1"
+      automatska_obrada_error( .T. )
       RETURN .F.
    ENDIF
 

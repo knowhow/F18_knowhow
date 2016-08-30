@@ -126,9 +126,9 @@ FUNCTION kalk_get_nabavna_mag( cIdFirma, cIdRoba, cIdKonto, nKolicina, nKolZN, n
       // nSrednjaNabavnaCijena := ( nUVr_poz - nIVr_poz ) / nKol_poz // srednja nabavna cijena
       nSrednjaNabavnaCijena :=  ( nUlNv - nIzlNv  ) / nKolicina
 
-      IF nSrednjaNabavnaCijena < 0 // kartica je prolupala, srednja nabavna cijena negativna
-         nSrednjaNabavnaCijena := 0
-      ENDIF
+      //IF nSrednjaNabavnaCijena < 0 // kartica je prolupala, srednja nabavna cijena negativna
+         //nSrednjaNabavnaCijena := 0
+      //ENDIF
    ENDIF
 
    nSrednjaNabavnaCijena := korekcija_nabavne_cijene_sa_zadnjom_ulaznom( nKolicina, nZadnjaUlaznaNC, nSrednjaNabavnaCijena )

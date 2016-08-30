@@ -905,13 +905,14 @@ FUNCTION DatVal()
    IF Empty( dDatVal )
 
 
-      IF kalk_imp_autom() // osloni se na rok placanja
+      //IF kalk_imp_autom() // osloni se na rok placanja
          nRokPartner := IzSifkPartn( "ROKP", finmat->idpartner, .T. )
          IF nRokPartner != NIL
             _uvecaj := nRokPartner
          ENDIF
          dDatVal := finmat->datfaktp + _uvecaj
 
+/*
       ELSE
 
          Box(, 3, 60 )
@@ -930,7 +931,7 @@ FUNCTION DatVal()
          BoxC()
 
       ENDIF
-
+*/
    ENDIF
 
 /*

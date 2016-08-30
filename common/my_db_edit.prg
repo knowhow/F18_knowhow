@@ -157,9 +157,9 @@ FUNCTION my_db_edit( cImeBoxa, xw, yw, bKeyHandler, cMessTop, cMessBot, lInvert,
       DO WHILE !TB:stabilize() .AND. ( Ch := NextKey() ) == 0 // .AND. ( Ch := Inkey() ) == 0
          Tb:stabilize()
          // Ch := Inkey(0)
-         IF !in_calc()
-            Eval( bKeyHandler, .T. )  // .T. - lPrviPoziv
-         ENDIF
+         //IF !in_calc()
+          //  Eval( bKeyHandler, .T. )  // .T. - lPrviPoziv
+         //ENDIF
          // lKeyHandlerStarted := .T.
       ENDDO
 

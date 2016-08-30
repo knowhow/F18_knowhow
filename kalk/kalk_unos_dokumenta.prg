@@ -155,13 +155,13 @@ FUNCTION kalk_pripr_key_handler( lAsistentObrada )
    LOCAL iSekv
    LOCAL _log_info
 
-   //hb_default( @lPrviPoziv, .F. )
+   // hb_default( @lPrviPoziv, .F. )
    hb_default( @lAsistentObrada, .F. )
 
 
    IF lAsistentObrada .AND. !kalk_asistent_pause()
 
-         //( lPrviPoziv .OR. is_kalk_asistent_started() ) .AND. ;
+      // ( lPrviPoziv .OR. is_kalk_asistent_started() ) .AND. ;
       kalk_asistent_start()
       IF !kalk_asistent_pause()
          kalk_asistent_send_esc() // prekid browse funkcije
@@ -181,7 +181,7 @@ FUNCTION kalk_pripr_key_handler( lAsistentObrada )
    DO CASE
 
    CASE Upper( Chr( Ch ) ) == "C" // Asistent Continue
-       RETURN DE_CONT
+      RETURN DE_CONT
 
    CASE Ch == K_ALT_K
       RETURN kalk_kontiraj_alt_k()
@@ -261,7 +261,7 @@ FUNCTION kalk_pripr_key_handler( lAsistentObrada )
       RETURN kalk_unos_nova_stavka()
 
    CASE ( Ch == K_CTRL_A )
-      RETURN kalk_edit_sve_stavke( .F. )
+      RETURN kalk_edit_sve_stavke( .F., .F. )
 
 
    CASE Ch == K_CTRL_F8 .OR. ( is_mac() .AND. Ch == K_F8 )
@@ -564,7 +564,6 @@ FUNCTION kalk_unos_nova_stavka()
    LOCAL _rok, _opis
    LOCAL _rbr_uvecaj := 0
 
-
    aNC_ctrl := {} // isprazni kontrolnu matricu
 
    _rok := fetch_metric( "kalk_definisanje_roka_trajanja", NIL, "N" ) == "D"
@@ -718,7 +717,7 @@ FUNCTION kalk_unos_nova_stavka()
 
 
 
-FUNCTION kalk_edit_sve_stavke( lAsistentObrada )
+FUNCTION kalk_edit_sve_stavke( lAsistentObrada, lStartPocetak )
 
    LOCAL hParams := hb_Hash()
    LOCAL _dok
@@ -729,6 +728,11 @@ FUNCTION kalk_edit_sve_stavke( lAsistentObrada )
 
    PushWA()
    SELECT kalk_pripr
+
+   IF lStartPocetak
+      GO TOP
+   ENDIF
+   hb_default( @lStartPocetak, .F. )
 
    _rok := fetch_metric( "kalk_definisanje_roka_trajanja", NIL, "N" ) == "D"
    _opis := fetch_metric( "kalk_dodatni_opis_kod_unosa_dokumenta", NIL, "N" ) == "D"
@@ -892,7 +896,7 @@ PROCEDURE kalk_asistent_pause_handler( lAsistentObrada )
    hb_DispOutAt( maxrows(), 1, cButton, F18_COLOR_INFO_PANEL )
 
    IF  MINRECT( maxrows(), 1, maxrows(), 12 ) .OR. ;
-      ( kalk_asistent_pause() .AND. Upper( Chr( kalk_edit_last_key() ) ) == "C" )
+         ( kalk_asistent_pause() .AND. Upper( Chr( kalk_edit_last_key() ) ) == "C" )
 
       IF kalk_asistent_pause() // switch pause
          kalk_asistent_pause( .F. )
@@ -916,18 +920,14 @@ FUNCTION kalk_asistent_pause( lSet )
       s_nAsistentPauseSeconds := Seconds()
    ENDIF
 
-
    RETURN s_lAsistentPause
 
 
 FUNCTION kalk_asistent_start()
 
    s_lAsistentStart := .T.
-   IF ValType( Tb ) != "O" // browse objekat
-      RETURN DE_ABORT
-   ENDIF
    KEYBOARD Chr ( K_LEFT ) // bilo koja tipka da se okine keyboard handler
-   kalk_edit_sve_stavke( .T. )
+   kalk_edit_sve_stavke( .T., .T. )
 
    RETURN DE_REFRESH
 

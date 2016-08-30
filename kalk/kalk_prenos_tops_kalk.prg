@@ -67,14 +67,11 @@ STATIC FUNCTION tops_kalk_import_meni()
    LOCAL lIzvrsitiPrenos, nMeniOdabir, _a_tmp1, _a_tmp2
    LOCAL cTopsDest := kalk_destinacija_topska()
    LOCAL cTopsKalkImeDbf
-
-   select_o_kalk_pripr()
-   IF reccount2() > 0
-      MsgBeep( "kalk priprema mora biti prazna##STOP!" )
-      RETURN .F.
-   ENDIF
+   LOCAL lStampaj
 
    aProdajnaMjesta := get_sva_prodajna_mjesta_iz_koncij()
+
+   lStampaj := ( Pitanje( NIL,"Želite li štampati kalk dokumente?", "D" ) == "D" )
 
    IF Len( aProdajnaMjesta ) == 0
       MsgBeep( "U tabeli koncij nisu definisana prodajna mjesta !" ) // imamo problem, nema prodajnih mjesta
@@ -91,7 +88,7 @@ STATIC FUNCTION tops_kalk_import_meni()
       BrisiSFajlove( cPosImportLokacija ) // brisi sve fajlove starije od 28 dana
       aTopskaDbfs := Directory( cPosImportLokacija + cDbfImportUslov ) // fajlove u matricu po pattern-u
 
-      //ASort( aTopskaDbfs,,, { | x, y | DToS( x[ 3 ] ) + x[ 4 ] < DToS( y[ 3 ] ) + y[ 4 ] } ) // datum + vrijeme 
+      // ASort( aTopskaDbfs,,, { | x, y | DToS( x[ 3 ] ) + x[ 4 ] < DToS( y[ 3 ] ) + y[ 4 ] } ) // datum + vrijeme
 
       AEval( aTopskaDbfs, {| aElem| AAdd( aOpcije, ;
          PadR( AllTrim( aProdajnaMjesta[ nI ] ) + SLASH + Trim( aElem[ 1 ] ), 20 ) + " " + ;
@@ -101,7 +98,7 @@ STATIC FUNCTION tops_kalk_import_meni()
 
    NEXT
 
-   ASort( aOpcije ,,, {| x, y| Right( x, 19 ) < Right( y, 19 ) } ) // R/X + datum + vrijeme
+   ASort( aOpcije,,, {| x, y| Right( x, 19 ) < Right( y, 19 ) } ) // R/X + datum + vrijeme
 
    _h := Array( Len( aOpcije ) )
    FOR _n := 1 TO Len( _h )
@@ -120,25 +117,30 @@ STATIC FUNCTION tops_kalk_import_meni()
 
    DO WHILE .T.
 
-      nMeniOdabir := Menu( "izdat", aOpcije, nMeniOdabir, .F. )
-
+      nMeniOdabir := Menu( "topk", aOpcije, nMeniOdabir, .F. )
       IF nMeniOdabir == 0
          EXIT
-      ELSE
-
-         cTopsKalkImeDbf := cTopsDest + AllTrim( Left( aOpcije[ nMeniOdabir ], 20 ) )
-         tops_kalk_view_txt( cTopsKalkImeDbf )
-
-         IF Pitanje(, "Želite li izvrsiti prenos TOPS->KALK ?", "D" ) == "D"
-            tops_kalk_fill_kalk_pripr( cTopsKalkImeDbf )
-            kalk_pripr_auto_obrada_i_azuriranje( .F. ) // bez stampe
-            lIzvrsitiPrenos := .T.
-            // nMeniOdabir := 0
-            nMeniOdabir++
-         ELSE
-            LOOP
-         ENDIF
       ENDIF
+
+      cTopsKalkImeDbf := cTopsDest + AllTrim( Left( aOpcije[ nMeniOdabir ], 20 ) )
+      tops_kalk_view_txt( cTopsKalkImeDbf )
+
+      IF Pitanje(, "Želite li izvrsiti prenos TOPS->KALK ?", "D" ) == "N"
+         nMeniOdabir++
+         LOOP
+      ENDIF
+
+      IF !tops_kalk_fill_kalk_pripr( cTopsKalkImeDbf )
+         nMeniOdabir := 0
+         lIzvrsitiPrenos := .F.
+         LOOP
+      ENDIF
+
+      kalk_pripr_auto_obrada_i_azuriranje( lStampaj )
+      lIzvrsitiPrenos := .T.
+      // nMeniOdabir := 0
+      nMeniOdabir++
+
    ENDDO
 
    IF !lIzvrsitiPrenos
@@ -160,6 +162,11 @@ FUNCTION tops_kalk_fill_kalk_pripr( cTopskaImeDbf ) // , lAutoRazduzenje )
 
    // LOCAL _razd_type := "1"
 
+   select_o_kalk_pripr()
+   IF reccount2() > 0
+      MsgBeep( "kalk priprema mora biti prazna##STOP!" )
+      RETURN .F.
+   ENDIF
 
    SELECT ( F_TMP_TOPSKA )  // otvori temp tabelu
    my_use_temp( "TOPSKA", cTopskaImeDbf )

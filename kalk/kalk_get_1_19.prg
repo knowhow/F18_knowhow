@@ -112,7 +112,7 @@ FUNCTION kalk_get_1_19()
 
    _mpc := MpcBezPor( nNCj, aPorezi, , _nc ) -MpcBezPor( nStCj, aPorezi, , _nc )
 
-   IF Pitanje(, "Staviti u sifrarnik novu cijenu", gDefNiv ) == "D"
+   IF Pitanje(, "Staviti u šifrarnik novu cijenu", gDefNiv ) == "D"
       SELECT koncij
       SEEK Trim( _idkonto )
       SELECT roba

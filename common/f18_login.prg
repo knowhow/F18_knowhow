@@ -714,20 +714,20 @@ METHOD F18Login:database_array()
 METHOD F18Login:administrative_options( x_pos, y_pos )
 
    LOCAL _x, _y
-   LOCAL _menuop, _menuexec, _mnu_choice
+   LOCAL aMeniOpcije, _menuexec, _mnu_choice
 
    _x := x_pos
    _y := ( MAXCOLS() / 2 ) -5
 
-   // resetuj...
-   _menuop := {}
+
+   aMeniOpcije := {} // resetuj
    _menuexec := {}
 
-   _set_menu_choices( @_menuop, @_menuexec )
+   _set_menu_choices( @aMeniOpcije, @_menuexec )
 
    DO WHILE .T.
 
-      _mnu_choice := Achoice2( _x, _y + 1, _x + 5, _y + 40, _menuop, .T., "MenuFunc", 1 )
+      _mnu_choice := Achoice3( _x, _y + 1, _x + 5, _y + 40, aMeniOpcije, 1 )
 
       DO CASE
       CASE _mnu_choice == 0

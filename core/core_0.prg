@@ -46,7 +46,7 @@ FUNCTION harbour_init()
 
    // Set( _SET_IDLEREPEAT, .F. ) // .T. default
 
-   hb_idleAdd( {|| on_idle_dbf_refresh() } )  //BUG_CPU100
+   hb_idleAdd( {|| on_idle_dbf_refresh() } )  // BUG_CPU100
 
    // hb_idleAdd( {|| idle_eval() } ) - izaziva erore
 

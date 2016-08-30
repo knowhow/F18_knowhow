@@ -135,6 +135,11 @@ FUNCTION my_db_edit( cImeBoxa, xw, yw, bKeyHandler, cMessTop, cMessBot, lInvert,
 
    DO WHILE .T.
 
+      IF in_calc()
+         hb_idleSleep( 0.5 )
+         LOOP
+      ENDIF
+
       // Ch := Inkey()
       nKeyHandlerRetEvent := -99
 
@@ -152,15 +157,26 @@ FUNCTION my_db_edit( cImeBoxa, xw, yw, bKeyHandler, cMessTop, cMessBot, lInvert,
       DO WHILE !TB:stabilize() .AND. ( Ch := NextKey() ) == 0 // .AND. ( Ch := Inkey() ) == 0
          Tb:stabilize()
          // Ch := Inkey(0)
-         Eval( bKeyHandler, .T. )  // .T. - lPrviPoziv
-         lKeyHandlerStarted := .T.
+         IF !in_calc()
+            Eval( bKeyHandler, .T. )  // .T. - lPrviPoziv
+         ENDIF
+         // lKeyHandlerStarted := .T.
       ENDDO
 
-      // nKeyStd := hb_keyStd( Ch := Inkey( 0, hb_bitOr( Set( _SET_EVENTMASK ), HB_INKEY_EXT ) ) )
+      IF in_calc()
+         hb_idleSleep( 0.5 )
+         LOOP
+      ENDIF
+
+      // nKeyStd := hb_keyStd( nKey := Inkey( 0, hb_bitOr( Set( _SET_EVENTMASK ), HB_INKEY_EXT ) ) )
       Ch := Inkey( 0 )
-      IF !lKeyHandlerStarted
+      // Ch := Inkey( 0, HB_INKEY_ALL )
+
+      // IF !lKeyHandlerStarted
+      IF !in_calc()
          nKeyHandlerRetEvent := Eval( bKeyHandler, .F. )
       ENDIF
+      // ENDIF
 
       // IF bKeyHandler <> NIL  .AND. ( Ch := Inkey() ) == 0
       // DO WHILE !TB:stabilize()

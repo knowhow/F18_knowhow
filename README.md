@@ -80,3 +80,11 @@ F18:	 63.8%
 F18_Ubuntu_i686_1.7.136.gz                                             100% 3085KB   3.0MB/s   00:00 
 </pre>
 
+
+###
+
+vise instanci F18
+
+    ./F18 --dbf-prefix 1
+
+    ./F18 --dbf-prefix 2

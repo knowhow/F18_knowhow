@@ -102,6 +102,7 @@ METHOD F18Backup:Backup_now( auto )
 
    RETURN .T.
 
+
 METHOD F18Backup:Backup_company()
 
    LOCAL _ok := .F.

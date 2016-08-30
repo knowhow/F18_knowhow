@@ -18,8 +18,7 @@ STATIC s_nIdleDisplayCounter := 0 // counter
 FUNCTION add_global_idle_handlers()
 
    AAdd( aIdleHandlers, hb_idleAdd( {||  hb_DispOutAt( maxrows(),  maxcols() - 8, Time(), F18_COLOR_INFO_PANEL ) } ) )
-   AAdd( aIdleHandlers, hb_idleAdd( {||  hb_DispOutAt( maxrows(),  maxcols() - 8 - 8 - 1, "< CALC >", F18_COLOR_INFO_PANEL ), ;
-      iif( !in_calc() .AND. MINRECT( maxrows(), maxcols() - 8 - 8 - 1, maxrows(), maxcols() - 8 - 1 ), Calc(), NIL ) } ) )
+   AAdd( aIdleHandlers, hb_idleAdd( {||  calc_on_idle_handler() } ) )
 
    //hb_idleAdd( aIdleHandlers, hb_idleAdd( {|| hb_DispOutAt( maxrows(), 1, "< PAUSE >", F18_COLOR_INFO_PANEL ), kalk_asistent_pause() } ) )
 

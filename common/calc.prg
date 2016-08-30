@@ -11,23 +11,46 @@
 
 #include "f18.ch"
 
-THREAD STATIC s_lInCalculator := .F.
+STATIC s_lInCalculator := .F.
 
 
-FUNCTION in_calc()
+FUNCTION in_calc( lSet )
+
+   IF lSet != NIL
+      s_lInCalculator := lSet
+   ENDIF
+
    RETURN s_lInCalculator
+
+PROCEDURE calc_on_idle_handler()
+
+   hb_DispOutAt( maxrows(),  maxcols() - 8 - 8 - 1, "< CALC >", F18_COLOR_INFO_PANEL )
+   IF !in_calc() .AND. MINRECT( maxrows(), maxcols() - 8 - 8 - 1, maxrows(), maxcols() - 8 - 1, .F. )
+      in_calc( .T. )
+      SET CURSOR OFF
+      SET CONSOLE OFF
+      hb_threadStart( @Calc(), NIL )
+   ENDIF
+
+   RETURN
 
 
 FUNCTION Calc()
 
    LOCAL GetList := {}
-   PRIVATE cIzraz := Space( 40 )
+   LOCAL cIzraz
 
-   IF s_lInCalculator
-      RETURN .F.
-   ENDIF
-   
-   s_lInCalculator := .T.
+   // IF s_lInCalculator
+   // hb_idleSleep( 5 )
+   // RETURN 0
+   // ENDIF
+
+   // remove_global_idle_handlers()
+   // Set( _SET_EVENTMASK, INKEY_KEYBOARD )
+
+   PRIVATE m_x := 10, m_y := 10
+
+   cIzraz := Space( 120 )
 
    bKeyOld1 := SetKey( K_ALT_K, {|| Konv() } )
    bKeyOld2 := SetKey( K_ALT_V, {|| DefKonv() } )
@@ -35,14 +58,22 @@ FUNCTION Calc()
    Box(, 3, 60 )
 
    SET CURSOR ON
+   //SET( _SET_CURSOR, 16 )
    SET ESCAPE ON
+   //ReadInsert()
+   //hb_gtInfo( HB_GTI_CURSORBLINKRATE, 1000 )
 
+   //cTermCP := Upper( "UTF8" )
+   //cHostCP := Upper( "UTF8" )
+   //hb_cdpSelect( cHostCP )
+   //hb_SetTermCP( cTermCP, cHostCP, .F.  )
+   
    DO WHILE .T.
 
       @ m_x, m_y + 42 SAY "<a-K> kursiranje"
       @ m_x + 4, m_y + 30 SAY "<a-V> programiranje kursiranja"
       @ m_x + 1, m_y + 2 SAY "KALKULATOR: unesite izraz, npr: '(1+33)*1.2' :"
-      @ m_x + 2, m_y + 2 GET cIzraz
+      @ m_x + 2, m_y + 2 GET cIzraz PICT "@S40"
 
       READ
 
@@ -52,7 +83,8 @@ FUNCTION Calc()
       IF Type( cIzraz ) <> "N"
 
          IF Upper( Left( cIzraz, 1 ) ) <> "K"
-            @ m_x + 3, m_y + 2 SAY "ERR"
+            @ m_x + 3, m_y + 2 SAY "ERR:" + Trim( cIzraz )
+            ?E "calc error:", Trim( cIzraz ), Len( Trim( cIzraz ) )
          ELSE
             @ m_x + 3, m_y + 2 SAY kbroj( SubStr( cizraz, 2 ) )
          ENDIF
@@ -66,15 +98,18 @@ FUNCTION Calc()
          EXIT
       ENDIF
 
-      Inkey()
+      // Inkey()
 
    ENDDO
    BoxC()
 
+   in_calc( .F. )
+
    IF Type( cIzraz ) <> "N"
       IF Upper( Left( cIzraz, 1 ) ) <> "K"
-         SetKey( K_ALT_K, bKeyOld1 ); SetKey( K_ALT_V, bKeyOld2 )
-         s_lInCalculator := .F.
+         SetKey( K_ALT_K, bKeyOld1 )
+         SetKey( K_ALT_V, bKeyOld2 )
+
          RETURN 0
       ELSE
          PRIVATE cVar := ReadVar()
@@ -84,9 +119,8 @@ FUNCTION Calc()
          ENDIF
          SetKey( K_ALT_K, bKeyOld1 )
          SetKey( K_ALT_V, bKeyOld2 )
-         s_lInCalculator := .F.
-         RETURN 0
       ENDIF
+
    ELSE
       PRIVATE cVar := ReadVar()
       IF Type( cVar ) == "N"
@@ -94,13 +128,10 @@ FUNCTION Calc()
       ENDIF
       SetKey( K_ALT_K, bKeyOld1 )
       SetKey( K_ALT_V, bKeyOld2 )
-      s_lInCalculator := .F.
       RETURN &cIzraz
    ENDIF
 
-   s_lInCalculator := .F.
-
-   RETURN 1
+   RETURN 0
 
 
 

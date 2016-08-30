@@ -11,8 +11,10 @@
 
 #include "f18.ch"
 
-THREAD STATIC aMenuStack:={} // thread safe
+THREAD STATIC aMenuStack := {} // thread safe
 
+
+MEMVAR m_x, m_y, Ch, goModul
 
 FUNCTION f18_menu( cIzp, main_menu, izbor, opc, opcexe )
 
@@ -34,11 +36,10 @@ FUNCTION f18_menu( cIzp, main_menu, izbor, opc, opcexe )
       DO CASE
       CASE izbor == 0
          IF main_menu
-            cOdgovor := Pitanje( "", 'Želite izaći iz programa ?', 'N' )
+            cOdgovor := Pitanje( "", "Želite izaći iz programa ?", 'N' )
             IF cOdgovor == "D"
                EXIT
             ELSEIF cOdgovor == "L"
-               // TODO: brisati Prijava()
                Izbor := 1
                @ 4, 5 SAY ""
                LOOP
@@ -75,30 +76,35 @@ FUNCTION f18_menu( cIzp, main_menu, izbor, opc, opcexe )
 
 FUNCTION Menu_SC( cIzp, lMain )
 
-  //pretpostavljamo privatne varijable Izbor, Opc, OpcExe
-  RETURN f18_menu( cIzp, lMain, Izbor, Opc, Opcexe )
+   // pretpostavljamo privatne varijable Izbor, Opc, OpcExe
+
+   RETURN f18_menu( cIzp, lMain, Izbor, Opc, Opcexe )
 
 
-/*  Menu(MenuId,Items,ItemNo,Inv)
+
+/*
  *
  *  Prikazuje zadati meni, vraca odabranu opciju
  *
- *  MenuId  - identifikacija menija     C
- *  Items   - niz opcija za izbor       {}
- *  ItemNo  - Broj pocetne pozicije     N
- *  Inv     - da li je meni F18_COLOR_INVERT ovan  L
+ *  cMeniId  - identifikacija menija     C
+ *  aItems   - niz opcija za izbor       {}
+ *  nItemNo  - Broj pocetne pozicije     N
+ *  lInvert     - da li je meni F18_COLOR_INVERT ovan  L
  *
  *  Broj izabrane opcije, 0 kraj
  *
- */
+ Privatna varijable:
+  - Ch - character
 
-FUNCTION MENU( MenuId, Items, ItemNo, Inv, cHelpT, nPovratak, aFixKoo, nMaxVR )
+*/
 
-   LOCAL Length
-   LOCAL N
-   LOCAL OldC
-   LOCAL LocalC
-   LOCAL LocalIC
+FUNCTION MENU( cMeniId, aItems, nItemNo, lInvert, cHelpT, nPovratak, aFixKoo, nMaxVR )
+
+   LOCAL nLength
+   LOCAL nN1
+   LOCAL cOldColor
+   LOCAL cLocalColor
+   LOCAL cLocalInvertedColor
    LOCAL ItemSav
    LOCAL i
    LOCAL aMenu := {}
@@ -120,34 +126,33 @@ FUNCTION MENU( MenuId, Items, ItemNo, Inv, cHelpT, nPovratak, aFixKoo, nMaxVR )
       lFK := .T.
    ENDIF
 
-   N := IF( Len( Items ) > nMaxVR, nMaxVR, Len( Items ) )
-   Length := Len( Items[ 1 ] ) + 1
+   nN1 := iif( Len( aItems ) > nMaxVR, nMaxVR, Len( aItems ) )
+   nLength := Len( aItems[ 1 ] ) + 1
 
-   IF Inv == NIL
-      Inv := .F.
+   IF lInvert == NIL
+      lInvert := .F.
    ENDIF
 
-   LocalC  := iif( Inv, F18_COLOR_INVERT, F18_COLOR_NORMAL )
-   LocalIC := iif( Inv, F18_COLOR_NORMAL, F18_COLOR_INVERT  )
+   cLocalColor  := iif( lInvert, F18_COLOR_INVERT, F18_COLOR_NORMAL )
+   cLocalInvertedColor := iif( lInvert, F18_COLOR_NORMAL, F18_COLOR_INVERT  )
 
-
-   OldC := SetColor( LocalC )
+   cOldColor := SetColor( cLocalColor )
 
    // Ako se meni zove prvi put, upisi ga na stek
-   IF Len( aMenuStack ) == 0 .OR. ( Len( aMenuStack ) <> 0 .AND. MenuId <> ( StackTop( aMenuStack ) )[ 1 ] )
+   IF Len( aMenuStack ) == 0 .OR. ( Len( aMenuStack ) <> 0 .AND. cMeniId <> ( StackTop( aMenuStack ) )[ 1 ] )
       IF lFK
          m_x := aFixKoo[ 1 ]
          m_y := aFixKoo[ 2 ]
       ELSE
-         // odredi koordinate menija
-         Calc_xy( @m_x, @m_y, N, Length )
+
+         Calc_xy( @m_x, @m_y, nN1, nLength ) // odredi koordinate menija
       ENDIF
 
-      StackPush( aMenuStack, { MenuId, ;
+      StackPush( aMenuStack, { cMeniId, ;
          m_x, ;
          m_y, ;
-         SaveScreen( m_x, m_y, m_x + N + 2 -IF( lFK, 1, 0 ), m_y + Length + 4 -IF( lFK, 1, 0 ) ), ;
-         ItemNo, ;
+         SaveScreen( m_x, m_y, m_x + nN1 + 2 -IF( lFK, 1, 0 ), m_y + nLength + 4 - iif( lFK, 1, 0 ) ), ;
+         nItemNo, ;
          cHelpT;
          } )
 
@@ -158,78 +163,76 @@ FUNCTION MENU( MenuId, Items, ItemNo, Inv, cHelpT, nPovratak, aFixKoo, nMaxVR )
 
    END IF
 
-   @ m_x, m_y CLEAR TO m_x + N + 1, m_y + Length + 3
+   @ m_x, m_y CLEAR TO m_x + nN1 + 1, m_y + nLength + 3
    IF lFK
-      @ m_x, m_y TO m_x + N + 1, m_y + Length + 3
+      @ m_x, m_y TO m_x + nN1 + 1, m_y + nLength + 3
    ELSE
-      @ m_x, m_y TO m_x + N + 1, m_y + Length + 3 DOUBLE
-      @ m_x + N + 2, m_y + 1 SAY Replicate( Chr( 177 ), Length + 4 )
+      @ m_x, m_y TO m_x + nN1 + 1, m_y + nLength + 3 DOUBLE
+      @ m_x + nN1 + 2, m_y + 1 SAY Replicate( Chr( 177 ), nLength + 4 )
 
-      FOR i := 1 TO N + 1
-         @ m_x + i, m_y + Length + 4 SAY Chr( 177 )
+      FOR i := 1 TO nN1 + 1
+         @ m_x + i, m_y + nLength + 4 SAY Chr( 177 )
       NEXT
 
    ENDIF
 
    SetColor( F18_COLOR_INVERT  )
-   IF ItemNo == 0
+   IF nItemNo == 0
       CentrTxt( h[ 1 ], MAXROWS() -1 )
    END IF
 
-   SetColor( LocalC )
-   IF Len( Items ) > nMaxVR
-      ItemNo := AChoice3( m_x + 1, m_y + 2, m_x + N + 1, m_y + Length + 1, Items, .T., "MenuFunc", RetItem( ItemNo ), RetItem( ItemNo ) -1 )
-   ELSE
-      ItemNo := Achoice2( m_x + 1, m_y + 2, m_x + N + 1, m_y + Length + 1, Items, .T., "MenuFunc", RetItem( ItemNo ), RetItem( ItemNo ) -1 )
-   ENDIF
+   SetColor( cLocalColor )
 
-   nTItemNo := RetItem( ItemNo )
+   // IF Len( aItems ) > nMaxVR
+   nItemNo := AChoice3( m_x + 1, m_y + 2, m_x + nN1 + 1, m_y + nLength + 1, aItems, RetItem( nItemNo ) ) // , RetItem( nItemNo )-1 )
+   // ELSE
+   // nItemNo := Achoice2( m_x + 1, m_y + 2, m_x + nN1 + 1, m_y + nLength + 1, aItems, .T., "MenuFunc", RetItem( nItemNo ), RetItem( nItemNo ) -1 )
+   // ENDIF
+
+   nTItemNo := RetItem( nItemNo )
 
    aMenu := StackTop( aMenuStack )
    m_x := aMenu[ 2 ]
    m_y := aMenu[ 3 ]
    aMenu[ 5 ] := nTItemNo
 
-   @ m_x, m_y TO m_x + N + 1, m_y + Length + 3
+   @ m_x, m_y TO m_x + nN1 + 1, m_y + nLength + 3
 
-   //
-   // Ako nije pritisnuto ESC, <-, ->, oznaci izabranu opciju
-   //
-   IF nTItemNo <> 0
-      SetColor( LocalIC )
-      @ m_x + Min( nTItemNo, nMaxVR ), m_y + 1 SAY8 " " + Items[ nTItemNo ] + " "
+
+   IF nTItemNo <> 0 // Ako nije pritisnuto ESC, <-, ->, oznaci izabranu opciju
+      SetColor( cLocalInvertedColor )
+      @ m_x + Min( nTItemNo, nMaxVR ), m_y + 1 SAY8 " " + aItems[ nTItemNo ] + " "
       @ m_x + Min( nTItemNo, nMaxVR ), m_y + 2 SAY ""
    END IF
 
    Ch := LastKey()
 
 
-   IF Ch == K_ESC .OR. nTItemNo == 0 .OR. nTItemNo == nPovratak  // Ako je ESC meni treba odmah izbrisati (ItemNo=0),  skini meni sa steka
-      @ m_x, m_y CLEAR TO m_x + N + 2 -IF( lFK, 1, 0 ), m_y + Length + 4 - iif( lFK, 1, 0 )
+   IF Ch == K_ESC .OR. nTItemNo == 0 .OR. nTItemNo == nPovratak  // Ako je ESC meni treba odmah izbrisati (nItemNo=0),  skini meni sa steka
+      @ m_x, m_y CLEAR TO m_x + nN1 + 2 - iif( lFK, 1, 0 ), m_y + nLength + 4 - iif( lFK, 1, 0 )
       aMenu := StackPop( aMenuStack )
-      RestScreen( m_x, m_y, m_x + N + 2 -iif( lFK, 1, 0 ), m_y + Length + 4 - iif( lFK, 1, 0 ), aMenu[ 4 ] )
+      RestScreen( m_x, m_y, m_x + nN1 + 2 -iif( lFK, 1, 0 ), m_y + nLength + 4 - iif( lFK, 1, 0 ), aMenu[ 4 ] )
    END IF
 
 
-   SetColor( OldC )
-   SET( _SET_DEVICE, cPom )
+   SetColor( cOldColor )
+   Set( _SET_DEVICE, cPom )
 
-   RETURN ItemNo
+   RETURN nItemNo
 
 
+FUNCTION meni_fiksna_lokacija( nX1, nY1, aNiz, nIzb )
 
-FUNCTION Menu2( x1, y1, aNiz, nIzb )
-
-   LOCAL xM := 0, yM := 0
+   LOCAL xM := 0, nYm := 0
 
    xM := Len( aNiz )
-   AEval( aNiz, {| x| IF( Len( x ) > yM, yM := Len( x ), ) } )
+   AEval( aNiz, {| x| iif( Len( x ) > nYm, nYm := Len( x ), ) } )
 
-   Prozor1( x1, y1, x1 + xM + 1, y1 + yM + 1,,,,,, 0 )
+   Prozor1( nX1, nY1, nX1 + xM + 1, nY1 + nYm + 1,,,,,, 0 )
 
-      nIzb := Achoice2( x1 + 1, y1 + 1, x1 + xM, y1 + yM, aNiz,, "KorMenu2", nIzb )
+   nIzb := Achoice3( nX1 + 1, nY1 + 1, nX1 + xM, nY1 + nYm, aNiz, nIzb )
 
-    Prozor0()
+   Prozor0()
 
    RETURN nIzb
 
@@ -249,58 +252,68 @@ FUNCTION KorMenu2
 
 
 
-FUNCTION Achoice2( x1, y1, x2, y2, Items, f1, cFunc, nItemNo )
+FUNCTION AChoice3( nX1, nY1, nX2, nY2, aItems, nItemNo )
 
-   LOCAL i
-   LOCAL ii
-   LOCAL nWidth
-   LOCAL nLen
-   LOCAL fExit
-   LOCAL fFirst
-   LOCAL nOldCurs
-   LOCAL nOldItemNo
-   LOCAL cSavC
+   LOCAL nI, nWidth, nLen, nOldCurs, cOldColor, nOldItemNo, cSavC
+   LOCAL nGornja
+   LOCAL nVisina
    LOCAL nCtrlKeyVal := 0
+   LOCAL nChar
+   LOCAL lExitFromMeni
 
    IF nItemNo == 0
-      RETURN 0
+      RETURN nItemNo
    ENDIF
 
-   fExit := .F.
-
+   lExitFromMeni := .F.
 
    nOldCurs := iif( SetCursor() == 0, 0, iif( ReadInsert(), 2, 1 ) )
+   cOldColor := SetColor()
    SET CURSOR OFF
 
-   nWidth := y2 - y1
-   nLen := Len( Items )
+   nWidth := nY2 - nY1
+   nLen := Len( aItems )
+   nVisina := nX2 - nX1
+   nGornja := iif( nItemNo > nVisina, nItemNo - nVisina + 1, 1 )
 
-   @ x1, y1 CLEAR TO x2 - 1, y2
-
-   FOR i := 1 TO nLen
-      @ x1 + i - 1, y1 SAY8 PadR( Items[ i ], nWidth ) ;
-         COLOR IIF(i == nItemNo,  hb_ColorIndex( SetColor(), 4),  hb_ColorIndex(SetColor(), 0))
-   NEXT
-
-   fFirst := .T.
+   @ nX1, nY1 CLEAR TO nX2 - 1, nY2
 
    DO WHILE .T.
 
-      IF !fFirst
-         @ x1 + nOldItemNo - 1, y1 SAY8 PadR( Items[ nOldItemNo ], nWidth ) ;
-          COLOR hb_ColorIndex( SetColor(), 0)
-
-         @ x1 + nItemNo - 1, y1 SAY8 PadR( Items[ nItemNo ], nWidth ) ;
-         COLOR hb_ColorIndex( SetColor(), 4)
+      IF in_calc()
+         hb_idleSleep( 0.5 )
+         LOOP
       ENDIF
-      fFirst := .F.
+      IF nVisina < nLen
+         @   nX2, nY1 + Int( nWidth / 2 ) SAY iif( nGornja == 1, " ^ ", iif( nItemNo == nLen, " v ", " v " ) )
+         @   nX1 - 1, nY1 + Int( nWidth / 2 ) SAY iif( nGornja == 1, " v ", iif( nItemNo == nLen, " ^ ", " ^ " ) )
+      ENDIF
 
-      IF fExit
+      FOR nI := nGornja TO nVisina + nGornja - 1
+         IF nI == nItemNo
+            IF Left( cOldColor, 3 ) == Left( F18_COLOR_NORMAL, 3 )
+               SetColor( F18_COLOR_INVERT  )
+            ELSE
+               SetColor( F18_COLOR_NORMAL )
+            ENDIF
+         ELSE
+            SetColor( cOldColor )
+         ENDIF
+         IF nLen >= nI
+            @ nX1 + nI - nGornja, nY1 SAY8 PadR( aItems[ nI ], nWidth )
+         ENDIF
+      NEXT
+
+      SetColor( F18_COLOR_INVERT  )
+      SetColor( cOldColor )
+
+      IF lExitFromMeni
          EXIT
       ENDIF
 
-      nChar := Inkey(0)
-      IF VALTYPE( goModul) == "O"
+      nChar := Inkey( 0 )
+
+      IF ValType( goModul ) == "O"
          goModul:GProc( nChar )
       ENDIF
 
@@ -321,20 +334,16 @@ FUNCTION Achoice2( x1, y1, x2, y2, Items, f1, cFunc, nItemNo )
          EXIT
 
       CASE IsAlpha( Chr( nChar ) ) .OR. IsDigit( Chr( nChar ) )
-         FOR ii := 1 TO nLen
-
+         FOR nI := 1 TO nLen
             IF IsDigit( Chr( nChar ) ) // cifra
-               IF Chr( nChar ) $ Left( Items[ ii ], 3 )
-
-                  nItemNo := ii // provjera postojanja broja u stavki samo u prva 3 karaktera
-                  fexit := .T.
+               IF Chr( nChar ) $ Left( aItems[ nI ], 3 ) // provjera postojanja
+                  nItemNo := nI  // broja u stavki samo u prva 3 karaktera
+                  lExitFromMeni := .T.
                ENDIF
-            ELSE
-               // veliko slovo se trazi
-               // po citavom stringu
-               IF Upper( Chr( nChar ) ) $ Items[ ii ]
-                  nItemNo := ii
-                  fexit := .T.
+            ELSE // veliko slovo se trazi po citavom stringu - promijenjeno
+               IF ( aItems[ nI ] <> NIL ) .AND. Upper( Chr( nChar ) ) $ Left( aItems[ nI ], 3 )
+                  nItemNo := nI
+                  lExitFromMeni := .T.
                ENDIF
             ENDIF
          NEXT
@@ -342,140 +351,26 @@ FUNCTION Achoice2( x1, y1, x2, y2, Items, f1, cFunc, nItemNo )
       CASE nChar == K_CTRL_N
          nCtrlKeyVal := 10000
          EXIT
+
       CASE nChar == K_F2
          nCtrlKeyVal := 20000
          EXIT
+
       CASE nChar == K_CTRL_T
          nCtrlKeyVal := 30000
          EXIT
-      OTHERWISE
-
 
       ENDCASE
 
       IF nItemNo > nLen
          nItemNo--
       ENDIF
-
-      IF nItemNo < 1
-         nItemNo++
-      ENDIF
-   ENDDO
-
-   SetCursor( iif( nOldCurs == 0, 0, iif( ReadInsert(), 2, 1 ) ) )
-
-   RETURN nItemNo + nCtrlKeyVal
-
-
-/* AChoice3(x1,y1,x2,y2,Items,f1,cFunc,nItemNo)
- *     AChoice za broj stavki > 16
- *  \todo Ugasiti stari Achoice ??, ne trebaju nam dva
- */
-
-FUNCTION AChoice3( x1, y1, x2, y2, Items, f1, cFunc, nItemNo )
-
-   LOCAL i, ii, nWidth, nLen, fExit, fFirst, nOldCurs, cOldColor, nOldItemNo, cSavC
-   LOCAL nGornja
-   LOCAL nVisina
-   LOCAL nCtrlKeyVal := 0
-
-   IF nItemNo == 0
-      RETURN nItemNo
-   ENDIF
-
-   fExit := .F.
-
-   nOldCurs := iif( SetCursor() == 0, 0, iif( ReadInsert(), 2, 1 ) )
-   cOldColor := SetColor()
-   SET CURSOR OFF
-
-   nWidth := y2 - y1
-   nLen := Len( Items )
-   nVisina := x2 - x1
-   nGornja := iif( nItemNo > nVisina, nItemNo - nVisina + 1, 1 )
-
-   @ x1, y1 CLEAR TO x2 - 1, y2
-
-   DO WHILE .T.
-
-      IF nVisina < nLen
-         @   x2, y1 + Int( ( y2 - y1 ) / 2 ) SAY iif( nGornja == 1, " ^ ", iif( nItemNo == nLen, " v ", " v " ) )
-         @   x1 - 1, y1 + Int( ( y2 - y1 ) / 2 ) SAY iif( nGornja == 1, " v ", iif( nItemNo == nLen, " ^ ", " ^ " ) )
-      ENDIF
-
-      FOR i := nGornja TO nVisina + nGornja - 1
-         IF i == nItemNo
-            IF Left( cOldColor, 3 ) == Left( F18_COLOR_NORMAL, 3 )
-               SetColor( F18_COLOR_INVERT  )
-            else
-               SetColor( F18_COLOR_NORMAL )
-            ENDIF
-         ELSE
-            SetColor( cOldColor )
-         ENDIF
-         @ x1 + i - nGornja, y1 SAY8 PadR( Items[ i ], nWidth )
-      NEXT
-
-
-      SetColor( F18_COLOR_INVERT  )
-      SetColor( cOldColor )
-
-      IF fExit
-         exit
-      ENDIF
-
-      nChar := Inkey(0)
-
-      IF VALTYPE( goModul) == "O"
-         goModul:GProc( nChar )
-      ENDIF
-
-      nOldItemNo := nItemNo
-      DO CASE
-      CASE nChar == K_ESC
-         nItemNo := 0
-         EXIT
-      CASE nChar == K_HOME
-         nItemNo := 1
-      CASE nChar == K_END
-         nItemNo := nLen
-      CASE nChar == K_DOWN
-         nItemNo++
-      CASE nChar == K_UP
-         nItemNo--
-      CASE nChar == K_ENTER
-         EXIT
-      CASE IsAlpha( Chr( nChar ) ) .OR. IsDigit( Chr( nChar ) )
-         FOR ii := 1 TO nLen
-            IF IsDigit( Chr( nChar ) ) // cifra
-               IF Chr( nChar ) $ Left( Items[ ii ], 3 ) // provjera postojanja
-                  nItemNo := ii    // broja u stavki samo u prva 3 karaktera
-                  fexit := .T.
-               ENDIF
-            ELSE // veliko slovo se trazi po citavom stringu - promijenjeno
-               IF ( Items[ ii ] <> NIL ) .AND. Upper( Chr( nChar ) ) $ Left( Items[ ii ], 3 )
-                  nItemNo := ii
-                  fexit := .T.
-               ENDIF
-            ENDIF
-         NEXT
-
-      CASE nChar == K_CTRL_N
-         nCtrlKeyVal := 10000
-         EXIT
-      CASE nChar == K_F2
-         nCtrlKeyVal := 20000
-         EXIT
-      CASE nChar == K_CTRL_T
-         nCtrlKeyVal := 30000
-         EXIT
-
-      ENDCASE
-
-      IF nItemNo > nLen; nItemNo--; ENDIF
       IF nItemNo < 1; nItemNo++; ENDIF
+
       nGornja := iif( nItemNo > nVisina, nItemNo - nVisina + 1, 1 )
+
    ENDDO
+
    SetCursor( iif( nOldCurs == 0, 0, iif( ReadInsert(), 2, 1 ) ) )
    SetColor( cOldColor )
 

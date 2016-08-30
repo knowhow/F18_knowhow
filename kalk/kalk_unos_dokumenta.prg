@@ -133,7 +133,7 @@ FUNCTION kalk_pripr_obrada( lAsistentObrada )
 
    pIdlePause  := hb_idleAdd( {|| kalk_asistent_pause_handler( lAsistentObrada ) } )
 
-   my_db_edit( "PNal", nMaxRow, nMaxCol, {| lPrviPoziv | kalk_pripr_key_handler( lPrviPoziv, lAsistentObrada ) }, "<F5>-kartica magacin, <F6>-kartica prodavnica", "Priprema...", , , , bPodvuci, 4 )
+   my_db_edit( "PNal", nMaxRow, nMaxCol, {| lPrviPoziv | kalk_pripr_key_handler( lAsistentObrada ) }, "<F5>-kartica magacin, <F6>-kartica prodavnica", "Priprema...", , , , bPodvuci, 4 )
 
    BoxC()
 
@@ -149,20 +149,19 @@ FUNCTION kalk_pripr_obrada( lAsistentObrada )
    RETURN .T.
 
 
-FUNCTION kalk_pripr_key_handler( lPrviPoziv, lAsistentObrada )
+FUNCTION kalk_pripr_key_handler( lAsistentObrada )
 
    LOCAL nTr2
    LOCAL iSekv
    LOCAL _log_info
 
-   hb_default( @lPrviPoziv, .F. )
+   //hb_default( @lPrviPoziv, .F. )
    hb_default( @lAsistentObrada, .F. )
 
 
-   IF lAsistentObrada .AND. ;
-         ( lPrviPoziv .OR. is_kalk_asistent_started() ) .AND. ;
-         !kalk_asistent_pause()
+   IF lAsistentObrada .AND. !kalk_asistent_pause()
 
+         //( lPrviPoziv .OR. is_kalk_asistent_started() ) .AND. ;
       kalk_asistent_start()
       IF !kalk_asistent_pause()
          kalk_asistent_send_esc() // prekid browse funkcije
@@ -188,12 +187,10 @@ FUNCTION kalk_pripr_key_handler( lPrviPoziv, lAsistentObrada )
       RETURN kalk_kontiraj_alt_k()
 
    CASE Ch == K_SH_F9
-
       renumeracija_kalk_pripr( nil, nil, .F. )
       RETURN DE_REFRESH
 
    CASE Ch == K_SH_F8
-
       IF kalk_pripr_brisi_od_do()
          RETURN DE_REFRESH
       ENDIF
@@ -228,7 +225,6 @@ FUNCTION kalk_pripr_key_handler( lPrviPoziv, lAsistentObrada )
       RETURN DE_REFRESH
 
    CASE Ch == K_CTRL_P
-
       my_close_all_dbf()
       kalk_stampa_dokumenta()
       my_close_all_dbf()
@@ -237,7 +233,6 @@ FUNCTION kalk_pripr_key_handler( lPrviPoziv, lAsistentObrada )
       RETURN DE_REFRESH
 
    CASE Ch == K_CTRL_T
-
       IF Pitanje(, "Želite izbrisati ovu stavku (D/N) ?", "D" ) == "D"
 
          _log_info := kalk_pripr->idfirma + "-" + kalk_pripr->idvd + "-" + kalk_pripr->brdok
@@ -258,12 +253,10 @@ FUNCTION kalk_pripr_key_handler( lPrviPoziv, lAsistentObrada )
 
 
    CASE Ch == K_ENTER
-
       kalk_is_novi_dokument( .F. )
       RETURN kalk_ispravka_postojeca_stavka()
 
    CASE Ch == K_CTRL_N
-
       kalk_is_novi_dokument( .T. )
       RETURN kalk_unos_nova_stavka()
 
@@ -571,8 +564,8 @@ FUNCTION kalk_unos_nova_stavka()
    LOCAL _rok, _opis
    LOCAL _rbr_uvecaj := 0
 
-   // isprazni kontrolnu matricu
-   aNC_ctrl := {}
+
+   aNC_ctrl := {} // isprazni kontrolnu matricu
 
    _rok := fetch_metric( "kalk_definisanje_roka_trajanja", NIL, "N" ) == "D"
    _opis := fetch_metric( "kalk_dodatni_opis_kod_unosa_dokumenta", NIL, "N" ) == "D"
@@ -893,7 +886,7 @@ PROCEDURE kalk_asistent_pause_handler( lAsistentObrada )
    IF !kalk_asistent_pause()
       cButton := "< As Pause >"
    ELSE
-      cButton := "< As CCont >"
+      cButton := "< As Cont  >"
    ENDIF
 
    hb_DispOutAt( maxrows(), 1, cButton, F18_COLOR_INFO_PANEL )
@@ -903,8 +896,9 @@ PROCEDURE kalk_asistent_pause_handler( lAsistentObrada )
 
       IF kalk_asistent_pause() // switch pause
          kalk_asistent_pause( .F. )
+         KEYBOARD Chr ( K_LEFT ) // bilo koja tipka da se okine keyboard handler
       ELSE
-         MsgBeep( "Asistent : " + cButton + " pauza##" + "Nastavak: ukucati 'CC' ili miš na dugme <As CCont>" )
+         MsgBeep( "Asistent : " + cButton + " pauza##" + "Nastavak: ukucati 'C' ili miš na dugme <As Cont>" )
          kalk_asistent_pause( .T. )
          CLEAR TYPEAHEAD
          KEYBOARD Chr ( K_ESC ) // povrat u browse objekat
@@ -925,12 +919,14 @@ FUNCTION kalk_asistent_pause( lSet )
 
    RETURN s_lAsistentPause
 
+
 FUNCTION kalk_asistent_start()
 
    s_lAsistentStart := .T.
    IF ValType( Tb ) != "O" // browse objekat
       RETURN DE_ABORT
    ENDIF
+   KEYBOARD Chr ( K_LEFT ) // bilo koja tipka da se okine keyboard handler
    kalk_edit_sve_stavke( .T. )
 
    RETURN DE_REFRESH

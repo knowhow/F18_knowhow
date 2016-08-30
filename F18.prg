@@ -81,7 +81,7 @@ STATIC FUNCTION cre_arg_v_hash( hash )
 
 FUNCTION program_module_menu( arg_v )
 
-   LOCAL menuOp := {}
+   LOCAL aMeniOpcije := {}
    LOCAL menuExec := {}
    LOCAL mnu_choice
    LOCAL mnu_left := 2
@@ -134,13 +134,13 @@ FUNCTION program_module_menu( arg_v )
 
       ENDIF
 
-      menuOp := {}
+      aMeniOpcije := {}
       menuExec := {}
 
-      set_program_module_menu( @menuop, @menuexec, arg_v[ "p3" ], arg_v[ "p4" ], arg_v[ "p5" ], arg_v[ "p6" ], arg_v[ "p7" ] )
+      set_program_module_menu( @aMeniOpcije, @menuexec, arg_v[ "p3" ], arg_v[ "p4" ], arg_v[ "p5" ], arg_v[ "p6" ], arg_v[ "p7" ] )
       info_bar( "init", "gen program_module_menu end" )
 
-      mnu_choice := Achoice2( mnu_top, mnu_left, mnu_bottom, mnu_right, menuop, .T., "MenuFunc", 1 )
+      mnu_choice := Achoice3( mnu_top, mnu_left, mnu_bottom, mnu_right, aMeniOpcije, 1 )
       SetColor( cOldColors )
 
       DO CASE
@@ -168,7 +168,7 @@ FUNCTION program_module_menu( arg_v )
 
 
 
-STATIC FUNCTION set_program_module_menu( menuop, menuexec, p3, p4, p5, p6, p7 )
+STATIC FUNCTION set_program_module_menu( aMeniOpcije, menuexec, p3, p4, p5, p6, p7 )
 
    LOCAL _count := 0
    LOCAL cMenuBrojac
@@ -176,51 +176,51 @@ STATIC FUNCTION set_program_module_menu( menuop, menuexec, p3, p4, p5, p6, p7 )
 
    IF f18_use_module( "fin" )
       cMenuBrojac := PadL( AllTrim( Str( ++_count ) ), 2 )
-      AAdd( menuop, cMenuBrojac + ". FIN   # finansijsko poslovanje                 " )
+      AAdd( aMeniOpcije, cMenuBrojac + ". FIN   # finansijsko poslovanje                 " )
       AAdd( menuexec, {|| MainFin( my_user(), "dummy", p3, p4, p5, p6, p7 ) } )
    ENDIF
 
    IF f18_use_module( "kalk" )
       cMenuBrojac := PadL( AllTrim( Str( ++_count ) ), 2 )
-      AAdd( menuop, cMenuBrojac + ". KALK  # robno-materijalno poslovanje" )
+      AAdd( aMeniOpcije, cMenuBrojac + ". KALK  # robno-materijalno poslovanje" )
       AAdd( menuexec, {|| MainKalk( my_user(), "dummy", p3, p4, p5, p6, p7 ) } )
    ENDIF
 
    IF f18_use_module( "fakt" )
       cMenuBrojac := PadL( AllTrim( Str( ++_count ) ), 2 )
-      AAdd( menuop, cMenuBrojac + ". FAKT  # fakturisanje" )
+      AAdd( aMeniOpcije, cMenuBrojac + ". FAKT  # fakturisanje" )
       AAdd( menuexec, {|| MainFakt( my_user(), "dummy", p3, p4, p5, p6, p7 ) } )
    ENDIF
 
    IF f18_use_module( "epdv" )
       cMenuBrojac := PadL( AllTrim( Str( ++_count ) ), 2 )
-      AAdd( menuop, cMenuBrojac + ". ePDV  # elektronska evidencija PDV-a" )
+      AAdd( aMeniOpcije, cMenuBrojac + ". ePDV  # elektronska evidencija PDV-a" )
       AAdd( menuexec, {|| MainEpdv( my_user(), "dummy", p3, p4, p5, p6, p7 ) } )
    ENDIF
 
    IF f18_use_module( "ld" )
       cMenuBrojac := PadL( AllTrim( Str( ++_count ) ), 2 )
-      AAdd( menuop, cMenuBrojac + ". LD    # obračun plata" )
+      AAdd( aMeniOpcije, cMenuBrojac + ". LD    # obračun plata" )
       AAdd( menuexec, {|| MainLd( my_user(), "dummy", p3, p4, p5, p6, p7 ) } )
    ENDIF
 
 
    IF f18_use_module( "os" )
       cMenuBrojac := PadL( AllTrim( Str( ++_count ) ), 2 )
-      AAdd( menuop, cMenuBrojac + ". OS/SII# osnovna sredstva i sitan inventar" )
+      AAdd( aMeniOpcije, cMenuBrojac + ". OS/SII# osnovna sredstva i sitan inventar" )
       AAdd( menuexec, {|| MainOs( my_user(), "dummy", p3, p4, p5, p6, p7 ) } )
    ENDIF
 
    IF f18_use_module( "virm" )
       cMenuBrojac := PadL( AllTrim( Str( ++_count ) ), 2 )
-      AAdd( menuop, cMenuBrojac + ". VIRM  # virmani" )
+      AAdd( aMeniOpcije, cMenuBrojac + ". VIRM  # virmani" )
       AAdd( menuexec, {|| MainVirm( my_user(), "dummy", p3, p4, p5, p6, p7 ) } )
    ENDIF
 
 #ifdef F18_RNAL
    IF f18_use_module( "rnal" )
       cMenuBrojac := PadL( AllTrim( Str( ++_count ) ), 2 )
-      AAdd( menuop, cMenuBrojac + ". RNAL  # radni nalozi" )
+      AAdd( aMeniOpcije, cMenuBrojac + ". RNAL  # radni nalozi" )
       AAdd( menuexec, {|| MainRnal( my_user(), "dummy", p3, p4, p5, p6, p7 ) } )
    ENDIF
 #endif
@@ -228,7 +228,7 @@ STATIC FUNCTION set_program_module_menu( menuop, menuexec, p3, p4, p5, p6, p7 )
 #ifdef F18_POS
    IF f18_use_module( "pos" )
       cMenuBrojac := PadL( AllTrim( Str( ++_count ) ), 2 )
-      AAdd( menuop, cMenuBrojac + ". POS   # maloprodajna kasa" )
+      AAdd( aMeniOpcije, cMenuBrojac + ". POS   # maloprodajna kasa" )
       AAdd( menuexec, {|| MainPos( my_user(), "dummy", p3, p4, p5, p6, p7 ) } )
    ENDIF
 #endif
@@ -236,7 +236,7 @@ STATIC FUNCTION set_program_module_menu( menuop, menuexec, p3, p4, p5, p6, p7 )
 #ifdef F18_MAT
    IF f18_use_module( "mat" )
       cMenuBrojac := PadL( AllTrim( Str( ++_count ) ), 2 )
-      AAdd( menuop, cMenuBrojac + ". MAT   # materijalno" )
+      AAdd( aMeniOpcije, cMenuBrojac + ". MAT   # materijalno" )
       AAdd( menuexec, {|| MainMat( my_user(), "dummy", p3, p4, p5, p6, p7 ) } )
    ENDIF
 #endif
@@ -244,38 +244,38 @@ STATIC FUNCTION set_program_module_menu( menuop, menuexec, p3, p4, p5, p6, p7 )
 #ifdef F18_KADEV
    IF f18_use_module( "kadev" )
       cMenuBrojac := PadL( AllTrim( Str( ++_count ) ), 2 )
-      AAdd( menuop, cMenuBrojac + ". KADEV  # kadrovska evidencija" )
+      AAdd( aMeniOpcije, cMenuBrojac + ". KADEV  # kadrovska evidencija" )
       AAdd( menuexec, {|| MainKadev( my_user(), "dummy", p3, p4, p5, p6, p7 ) } )
    ENDIF
 #endif
 
    IF f18_use_module( "reports" )
       cMenuBrojac := PadL( AllTrim( Str( ++_count ) ), 2 )
-      AAdd( menuop, cMenuBrojac + ". REPORTS  # izvještajni modul" )
+      AAdd( aMeniOpcije, cMenuBrojac + ". REPORTS  # izvještajni modul" )
       AAdd( menuexec, {|| MainReports( my_user(), "dummy", p3, p4, p5, p6, p7 ) } )
    ENDIF
 
 
-   AAdd( menuop, "---------------------------------------------" )
+   AAdd( aMeniOpcije, "---------------------------------------------" )
    AAdd( menuexec, {|| NIL } )
 
 
-   AAdd( menuop, " S. promjena sezone" )
+   AAdd( aMeniOpcije, " S. promjena sezone" )
    AAdd( menuexec, {|| f18_promjena_sezone() } )
-   AAdd( menuop, " B. backup podataka" )
+   AAdd( aMeniOpcije, " B. backup podataka" )
    AAdd( menuexec, {|| f18_backup_data() } )
 
 
-   AAdd( menuop, " P. parametri aplikacije" )
+   AAdd( aMeniOpcije, " P. parametri aplikacije" )
    AAdd( menuexec, {|| set_parametre_f18_aplikacije() } )
-   AAdd( menuop, " W. pregled log-a" )
+   AAdd( aMeniOpcije, " W. pregled log-a" )
    AAdd( menuexec, {|| f18_view_log() } )
 
-   AAdd( menuop, " V. vpn podrška" )
+   AAdd( aMeniOpcije, " V. vpn podrška" )
    AAdd( menuexec, {|| vpn_support() } )
 
 
-   AAdd( menuop, " X. diag info" )
+   AAdd( aMeniOpcije, " X. diag info" )
    AAdd( menuexec, {|| diag_info() } )
 
    RETURN .T.

@@ -111,6 +111,7 @@ FUNCTION is_in_dbf_refresh_queue( cTable )
 
    RETURN .F.
 
+
 FUNCTION add_to_dbf_refresh_queue( cTable )
 
    LOCAL nPos, lRet := .F.

@@ -11,13 +11,28 @@
 
 #include "f18.ch"
 
-FUNCTION MINRECT( nTop, nLeft, nBott, nRight)
-LOCAL lInside := .F.
+/*
+   lMouseOver - .T. - dovoljno je da je mouse na poziciji dugmeta
+*/
 
-IF MROW() >= nTop .AND. MROW() <= nBott
-     IF MCOL() >= nLeft .AND. MCOL() <= nRight
-        lInside := .T.
-    ENDIF
-ENDIF
+FUNCTION MINRECT( nTop, nLeft, nBott, nRight, lMouseOver )
 
-RETURN( lInside )
+   LOCAL lInside := .F.
+   LOCAL nKey
+
+   hb_default( @lMouseOver, .T. )
+
+   IF MRow() >= nTop .AND. MRow() <= nBott
+      IF MCol() >= nLeft .AND. MCol() <= nRight
+         IF lMouseOver
+            lInside := .T.
+         ELSE
+            nKey := Inkey( 0.1, hb_bitOr( INKEY_LDOWN, INKEY_LUP  ) )
+            IF nKey == K_LBUTTONDOWN
+               lInside := .T.
+            ENDIF
+         ENDIF
+      ENDIF
+   ENDIF
+
+   RETURN( lInside )

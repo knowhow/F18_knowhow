@@ -320,9 +320,9 @@ FUNCTION f18_run( cCommand, hOutput, lAlwaysOk, lAsync )
    ?E cCommand, _ret, "stdout:", cStdOut, "stderr:", cStdErr
 
    IF _ret == 0
-      info_bar( "run1", cCommand + " : " + cStdOut + "/" + cStdErr )
+      info_bar( "run1", cCommand + " : " + cStdOut + " : " + cStdErr )
    ELSE
-      error_bar( "run1", cCommand + cStdOut + "/" + cStdErr )
+      error_bar( "run1", cCommand + cStdOut + " : " + cStdErr )
 
       _prefix := get_run_prefix( cCommand )
 
@@ -339,19 +339,19 @@ FUNCTION f18_run( cCommand, hOutput, lAlwaysOk, lAsync )
 
 
       IF _ret == 0
-         info_bar( "run2", _prefix + cCommand + " : " + cStdOut + "/" + cStdErr )
+         info_bar( "run2", _prefix + cCommand + " : " + cStdOut + " : " + cStdErr )
       ELSE
-         error_bar( "run2", _prefix + cCommand + " : " + cStdOut + "/" + cStdErr )
+         error_bar( "run2", _prefix + cCommand + " : " + cStdOut + " : " + cStdErr )
 
          _ret := __run_system( cCommand )  // npr. copy komanda trazi system run a ne hbprocess run
          ?E cCommand, _ret, "stdout:", cStdOut, "stderr:", cStdErr
          IF _ret <> 0 .AND. !lAlwaysOk
 
-            error_bar( "run3", cCommand + " : " + cStdOut + "/" + cStdErr )
-            _msg := "ERR run cmd: "  + cCommand + " : " + cStdOut + "/" + cStdErr
+            error_bar( "run3", cCommand + " : " + cStdOut + " : " + cStdErr )
+            _msg := "ERR run cmd: "  + cCommand + " : " + cStdOut + " : " + cStdErr
             log_write( _msg, 2 )
          ELSE
-            info_bar( "run3", cCommand + " : " + cStdOut + "/" + cStdErr )
+            info_bar( "run3", cCommand + " : " + cStdOut + " : " + cStdErr )
 
          ENDIF
 

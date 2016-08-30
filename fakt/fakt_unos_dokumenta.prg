@@ -980,7 +980,7 @@ STATIC FUNCTION edit_fakt_priprema( fNovi, items_atrib )
 
       _old_tip_dok := field->idtipdok
 
-      _n_menu := Menu2( 5, 30, _a_tipdok, _n_menu )
+      _n_menu := meni_fiksna_lokacija( 5, 30, _a_tipdok, _n_menu )
 
       m_x := __mx
       m_y := __my

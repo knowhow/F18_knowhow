@@ -2057,21 +2057,9 @@ STATIC FUNCTION kalk_imp_obradi_dokument( cIdVd, lStampaj )
 
       IF lPrvi .OR. ( nRslt == 1 ) // vezni dokument u kalk_pripremi je ok
 
-         kalk_pripr_obrada_stavki_sa_asistentom()
-         IF automatska_obrada_error() .AND. Pitanje( , "Automatska obrada greske, prekid obrade ?", "D" ) == "D"
-            RETURN .F.
-         ELSE
-            automatska_obrada_error( .F. ) // ako se trazi nastavak, onda stavi prekid
-         ENDIF
-         IF kalk_asistent_pause() .AND. Pitanje( , "Asistent pauza, Prekid obrade ?", "N" ) == "D"
+         IF !kalk_pripr_auto_obrada_i_azuriranje( lStampaj )
             RETURN .F.
          ENDIF
-
-         IF lStampaj == .T.
-            kalk_stampa_dokumenta( nil, nil, .T. )
-         ENDIF
-         kalk_azuriranje_dokumenta( .T. )
-         o_kalk_edit()
 
       ENDIF
 
@@ -2101,6 +2089,29 @@ STATIC FUNCTION kalk_imp_obradi_dokument( cIdVd, lStampaj )
 
    RETURN .T.
 
+
+
+FUNCTION kalk_pripr_auto_obrada_i_azuriranje( lStampaj )
+
+   hb_default( @lStampaj, .F. )
+
+   kalk_pripr_obrada_stavki_sa_asistentom()
+   IF automatska_obrada_error() .AND. Pitanje( , "Automatska obrada greske, prekid obrade ?", "D" ) == "D"
+      RETURN .F.
+   ELSE
+      automatska_obrada_error( .F. ) // ako se trazi nastavak, onda stavi prekid
+   ENDIF
+   IF kalk_asistent_pause() .AND. Pitanje( , "Asistent pauza, Prekid obrade ?", "N" ) == "D"
+      RETURN .F.
+   ENDIF
+
+   IF lStampaj == .T.
+      kalk_stampa_dokumenta( nil, nil, .T. )
+   ENDIF
+   kalk_azuriranje_dokumenta( .T. )
+   o_kalk_edit()
+
+   RETURN .T.
 
 /*
  *   Provjeri da li je kalk_priprema prazna

@@ -178,7 +178,6 @@ FUNCTION kalk_pripr_key_handler( lAsistentObrada )
    ENDIF
 
    select_o_kalk_pripr()
-
    kalk_edit_last_key( Ch )
 
    DO CASE
@@ -730,8 +729,12 @@ FUNCTION kalk_edit_sve_stavke( lAsistentObrada, lStartPocetak )
    LOCAL nDug, nPot, _t_rec
 
    PushWA()
-   SELECT kalk_pripr
 
+   select_o_tarifa()
+   select_o_roba()
+   select_o_koncij()
+
+   select_o_kalk_pripr()
    IF lStartPocetak
       GO TOP
    ENDIF

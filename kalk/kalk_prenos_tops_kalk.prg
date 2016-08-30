@@ -14,34 +14,152 @@
 #define D_MAX_FILES     150
 
 
-FUNCTION kalk_preuzmi_tops_dokumente( cTopskaImeDbf, lAutoRazduzenje, nBarkodoviIzmjena, cIdKontoMagacin )
+FUNCTION kalk_preuzmi_tops_dokumente()
 
-   LOCAL cBrKalk, cIdVdPos
-   LOCAL cBrDok, cIdKontoProdavnica, _r_br
-   LOCAL _bk_tmp
-   LOCAL _app_rec
-   LOCAL aRobaReportData := {}
-   LOCAL _count := 0
-   LOCAL _razd_type := "1"
+   // cTopskaImeDbf, lAutoRazduzenje, nBarkodoviIzmjena, cIdKontoMagacin )
+
 
    // opcija za automatko svodjeje prodavnice na 0
    // ---------------------------------------------
    // prenese se tops promet u dokument 11
    // pa se prenese tops promet u dokument 42
-   IF lAutoRazduzenje == NIL
-      lAutoRazduzenje := fetch_metric( "kalk_tops_prenos_auto_razduzenje", my_user(), "N" )
-   ENDIF
+   // IF lAutoRazduzenje == NIL
+   // lAutoRazduzenje := fetch_metric( "kalk_tops_prenos_auto_razduzenje", my_user(), "N" )
+   // ENDIF
 
    tops_kalk_o_import_tabele() // otvori tabele bitne za import podataka
 
-   IF cTopskaImeDbf == NIL
+   // IF cTopskaImeDbf == NIL
+   tops_kalk_import_meni()
 
-      IF !tops_kalk_get_import_file( @cTopskaImeDbf )
+
+  /*
+     IF ( cIdVdPos == "42" .AND. lAutoRazduzenje == "D" )
+        cBrKalk  := kalk_get_next_broj_v5( gFirma, "11", NIL )
+     ELSE
+
+        IF find_kalk_doks_by_broj_dokumenta( gFirma, cIdVdPos, cBrKalk )
+           Msg( "Vec postoji dokument pod brojem " + gFirma + "-" + cIdVdPos + "-" + cBrKalk + "#Prenos nece biti izvrsen" )
+           my_close_all_dbf()
+           RETURN .F.
+        ENDIF
+
+     ENDIF
+
          my_close_all_dbf()
          RETURN .F.
       ENDIF
+   ENDIF
+*/
+
+   RETURN .T.
+
+
+
+STATIC FUNCTION tops_kalk_import_meni()
+
+   LOCAL aOpcije := {}
+   LOCAL cPosImportLokacija
+   LOCAL aProdajnaMjesta, cProdajnaMjesta
+   LOCAL lReturn := .T.
+   LOCAL nI, aTopskaDbfs, _opt, _h, _n
+   LOCAL cDbfImportUslov := "TK*.DBF"
+   LOCAL lIzvrsitiPrenos, nMeniOdabir, _a_tmp1, _a_tmp2
+   LOCAL cTopsDest := kalk_destinacija_topska()
+   LOCAL cTopsKalkImeDbf
+
+   select_o_kalk_pripr()
+   IF reccount2() > 0
+      MsgBeep( "kalk priprema mora biti prazna##STOP!" )
+      RETURN .F.
+   ENDIF
+
+   aProdajnaMjesta := get_sva_prodajna_mjesta_iz_koncij()
+
+   IF Len( aProdajnaMjesta ) == 0
+      MsgBeep( "U tabeli koncij nisu definisana prodajna mjesta !" ) // imamo problem, nema prodajnih mjesta
+      lReturn := .F.
+      RETURN lReturn
+   ENDIF
+
+   cProdajnaMjesta := ""
+   FOR nI := 1 TO Len( aProdajnaMjesta )
+
+      cProdajnaMjesta += AllTrim( aProdajnaMjesta[ nI ] ) + "; "
+      cPosImportLokacija := cTopsDest + AllTrim( aProdajnaMjesta[ nI ] ) + SLASH  // putanja
+
+      BrisiSFajlove( cPosImportLokacija ) // brisi sve fajlove starije od 28 dana
+      aTopskaDbfs := Directory( cPosImportLokacija + cDbfImportUslov ) // fajlove u matricu po pattern-u
+
+      //ASort( aTopskaDbfs,,, { | x, y | DToS( x[ 3 ] ) + x[ 4 ] < DToS( y[ 3 ] ) + y[ 4 ] } ) // datum + vrijeme 
+
+      AEval( aTopskaDbfs, {| aElem| AAdd( aOpcije, ;
+         PadR( AllTrim( aProdajnaMjesta[ nI ] ) + SLASH + Trim( aElem[ 1 ] ), 20 ) + " " + ;
+         UChkPostoji() + " " + DToC( aElem[ 3 ] ) + " " + aElem[ 4 ] ;
+         ) }, 1, D_MAX_FILES ) // dodaj u matricu za odabir
+
+
+   NEXT
+
+   ASort( aOpcije ,,, {| x, y| Right( x, 19 ) < Right( y, 19 ) } ) // R/X + datum + vrijeme
+
+   _h := Array( Len( aOpcije ) )
+   FOR _n := 1 TO Len( _h )
+      _h[ _n ] := ""
+   NEXT
+
+   IF Len( aOpcije ) == 0 // ima li stavki za preuzimanje ?
+
+      MsgBeep( "U direktoriju za prenos TOPS->KALK nema podataka ?##" + cTopsDest + "## ProdMj: " + cProdajnaMjesta )
+      RETURN .F.
 
    ENDIF
+
+   nMeniOdabir := 1
+   lIzvrsitiPrenos := .F.
+
+   DO WHILE .T.
+
+      nMeniOdabir := Menu( "izdat", aOpcije, nMeniOdabir, .F. )
+
+      IF nMeniOdabir == 0
+         EXIT
+      ELSE
+
+         cTopsKalkImeDbf := cTopsDest + AllTrim( Left( aOpcije[ nMeniOdabir ], 20 ) )
+         tops_kalk_view_txt( cTopsKalkImeDbf )
+
+         IF Pitanje(, "Želite li izvrsiti prenos TOPS->KALK ?", "D" ) == "D"
+            tops_kalk_fill_kalk_pripr( cTopsKalkImeDbf )
+            kalk_pripr_auto_obrada_i_azuriranje( .F. ) // bez stampe
+            lIzvrsitiPrenos := .T.
+            // nMeniOdabir := 0
+            nMeniOdabir++
+         ELSE
+            LOOP
+         ENDIF
+      ENDIF
+   ENDDO
+
+   IF !lIzvrsitiPrenos
+      RETURN .F.
+   ENDIF
+
+   RETURN lReturn
+
+
+FUNCTION tops_kalk_fill_kalk_pripr( cTopskaImeDbf ) // , lAutoRazduzenje )
+
+   LOCAL cBrKalk, cIdVdPos
+   LOCAL _r_br, _n_rbr
+   LOCAL cBrDok, cIdKontoProdavnica
+   LOCAL _bk_tmp
+   LOCAL _app_rec
+   LOCAL aRobaReportData := {}
+   LOCAL _count := 0
+
+   // LOCAL _razd_type := "1"
+
 
    SELECT ( F_TMP_TOPSKA )  // otvori temp tabelu
    my_use_temp( "TOPSKA", cTopskaImeDbf )
@@ -51,29 +169,13 @@ FUNCTION kalk_preuzmi_tops_dokumente( cTopskaImeDbf, lAutoRazduzenje, nBarkodovi
    cBrKalk := Left( StrTran( DToC( field->datum ), ".", "" ), 4 ) + "/" + AllTrim( field->idpos ) // utvrditi broj kalkulacije
    cIdVdPos := field->idvd
 
-
    SELECT koncij // provjeri da li postoji podesenje za ovaj fajl importa
    LOCATE FOR koncij->idprodmjes == topska->idpos
 
    IF !Found()
-      MsgBeep( "U sifrarniku KONTA-TIPOVI CIJENA nije postavljeno#nigdje prodajno mjesto :" + field->idprodmjes + "#Prenos nije izvrsen." )
+      MsgBeep( "U šifarniku KONTA-TIPOVI CIJENA nije postavljeno#nigdje prodajno mjesto :" + field->idprodmjes + "#Prenos nije izvrsen." )
       my_close_all_dbf()
       RETURN .F.
-   ENDIF
-
-   // SELECT kalk
-
-   IF ( cIdVdPos == "42" .AND. lAutoRazduzenje == "D" )
-      cBrKalk  := kalk_get_next_broj_v5( gFirma, "11", NIL )
-   ELSE
-
-
-      IF find_kalk_doks_by_broj_dokumenta( gFirma, cIdVdPos, cBrKalk )
-         Msg( "Vec postoji dokument pod brojem " + gFirma + "-" + cIdVdPos + "-" + cBrKalk + "#Prenos nece biti izvrsen" )
-         my_close_all_dbf()
-         RETURN .F.
-      ENDIF
-
    ENDIF
 
    SELECT topska
@@ -84,27 +186,33 @@ FUNCTION kalk_preuzmi_tops_dokumente( cTopskaImeDbf, lAutoRazduzenje, nBarkodovi
    // 1 - ubaci samo nove
    // 2 - zamjeni sve
 
+/*
    IF nBarkodoviIzmjena == NIL
       nBarkodoviIzmjena := tops_kalk_get_nacin_zamjene_barkodova()
    ENDIF
+*/
 
+/*
    IF ( cIdVdPos == "42" .AND. lAutoRazduzenje == "D" ) .OR. ( cIdVdPos == "12" )  // konto magacina za razduzenje
       IF cIdKontoMagacin == NIL
          cIdKontoMagacin := tops_kalk_get_magacinski_konto()
       ENDIF
    ENDIF
+*/
 
+/*
    IF lAutoRazduzenje == "D"  // konacno idemo na import
       _razd_type := auto_razd // razduziti kao 11 ili kao 42
    ENDIF
+*/
 
    _r_br := "0"
 
-   MsgO( "Prenos stavki POS -> KALK priprema ... sačekajte !" )
+   MsgO( "Prenos stavki POS -> KALK priprema ..." )
 
    DO WHILE !Eof()
 
-      cBrDok := cBrKalk
+      // cBrDok := cBrKalk
       cIdKontoProdavnica := koncij->id
 
       _n_rbr := RbrUNum( _r_br ) + 1
@@ -116,18 +224,18 @@ FUNCTION kalk_preuzmi_tops_dokumente( cTopskaImeDbf, lAutoRazduzenje, nBarkodovi
 
       IF ( cIdVdPos == "42" .OR. cIdVdPos == "12" )
 
-         IF lAutoRazduzenje == "D" .AND. _razd_type == "2"
-            tops_kalk_import_row_11( cBrDok, cIdKontoProdavnica, cIdKontoMagacin, _r_br )
-         ELSE
-            tops_kalk_import_row_42( cBrDok, cIdKontoProdavnica, cIdKontoMagacin, _r_br )
-         ENDIF
+         // IF lAutoRazduzenje == "D" .AND. _razd_type == "2"
+         // tops_kalk_import_row_11( cBrDok, cIdKontoProdavnica, cIdKontoMagacin, _r_br )
+         // ELSE
+         tops_kalk_import_row_42( cBrKalk, cIdKontoProdavnica, _r_br )
+         // ENDIF
 
       ELSEIF ( cIdVdPos == "IN" )
-         tops_kalk_import_row_ip( cBrDok, cIdKontoProdavnica, cIdKontoMagacin, _r_br )  // inventura
+         tops_kalk_import_row_ip( cBrKalk, cIdKontoProdavnica, _r_br )  // inventura
 
       ENDIF
 
-
+/*
       IF nBarkodoviIzmjena > 0 // zamjena barkod-a ako postoji
 
          SELECT roba
@@ -144,6 +252,7 @@ FUNCTION kalk_preuzmi_tops_dokumente( cTopskaImeDbf, lAutoRazduzenje, nBarkodovi
          ENDIF
 
       ENDIF
+*/
 
       ++ _count
       SELECT topska
@@ -154,22 +263,35 @@ FUNCTION kalk_preuzmi_tops_dokumente( cTopskaImeDbf, lAutoRazduzenje, nBarkodovi
    MsgC()
 
    my_close_all_dbf()
-   tops_kalk_show_report_roba( aRobaReportData )  // prikazi report
+   // tops_kalk_show_report_roba( aRobaReportData )  // prikazi report o razlikama cijena pos-kalk
 
-   IF ( _count > 0 .AND. lAutoRazduzenje == "N" )
-
+   IF ( _count > 0 ) // .AND. lAutoRazduzenje == "N"
       IF FErase( cTopskaImeDbf ) == -1 // pobrisi fajlove
          MsgBeep( "Problem sa brisanjem fajla !" )
       ENDIF
-      FErase( StrTran( cTopskaImeDbf, ".dbf", ".txt" ) )
+      FErase( get_topska_ime_txt( cTopskaImeDbf ) )
    ENDIF
 
    RETURN .T.
 
 
+STATIC FUNCTION tops_kalk_view_txt( cTopskaImeDbf )
+
+   LOCAL cTopskaImeTxt := get_topska_ime_txt( cTopskaImeDbf )
+
+   RETURN editor( cTopskaImeTxt )
 
 
+STATIC FUNCTION get_topska_ime_txt( cTopskaImeDbf )
 
+   LOCAL cRet
+
+   cRet := StrTran( cTopskaImeDbf, ".dbf", ".txt" )
+   cRet := StrTran( cRet, ".DBF", ".TXT" )
+
+   RETURN cRet
+
+/*
 FUNCTION kalk_preuzmi_tops_dokumente_auto()
 
    LOCAL _file := my_home() + "tk_auto.dbf"
@@ -230,9 +352,9 @@ FUNCTION kalk_preuzmi_tops_dokumente_auto()
 
    RETURN .T.
 
+*/
 
-
-
+/*
 STATIC FUNCTION tops_kalk_get_nacin_zamjene_barkodova()
 
    LOCAL _ret := 0
@@ -262,7 +384,9 @@ STATIC FUNCTION tops_kalk_get_nacin_zamjene_barkodova()
 
    RETURN _ret
 
+*/
 
+/*
 STATIC FUNCTION kalk_tops_get_parametri_prenosa( params )
 
    LOCAL _ok := .F.
@@ -314,9 +438,9 @@ STATIC FUNCTION kalk_tops_get_parametri_prenosa( params )
 
    RETURN _ok
 
+*/
 
-
-
+/*
 STATIC FUNCTION tops_kalk_get_magacinski_konto()
 
    LOCAL _konto := PadR( "1320", 7 )
@@ -334,9 +458,9 @@ STATIC FUNCTION tops_kalk_get_magacinski_konto()
 
    RETURN _konto
 
+*/
 
-
-
+/*
 STATIC FUNCTION tops_kalk_show_report_roba( aReportData )
 
    LOCAL _i
@@ -371,7 +495,7 @@ STATIC FUNCTION tops_kalk_show_report_roba( aReportData )
 
    RETURN .T.
 
-
+*/
 
 
 STATIC FUNCTION tops_kalk_import_roba( aRobaImportReport, cTipMpc, lUpdateRoba )
@@ -443,7 +567,7 @@ STATIC FUNCTION tops_kalk_import_roba( aRobaImportReport, cTipMpc, lUpdateRoba )
      formiraj stavku inventure prodavnice
 */
 
-STATIC FUNCTION tops_kalk_import_row_ip( cBrDok, cIdKontoProdavnica, cIdKontoMagacin, r_br )
+STATIC FUNCTION tops_kalk_import_row_ip( cBrDok, cIdKontoProdavnica, r_br )
 
    LOCAL _tip_dok := "IP"
    LOCAL _t_area := Select()
@@ -486,7 +610,7 @@ STATIC FUNCTION tops_kalk_import_row_ip( cBrDok, cIdKontoProdavnica, cIdKontoMag
       REPLACE field->gkolicina WITH _kolicina
       REPLACE field->gkolicin2 with ( gkolicina - kolicina )
       REPLACE field->idkonto WITH cIdKontoProdavnica
-      REPLACE field->idkonto2 WITH cIdKontoProdavnica
+      // REPLACE field->idkonto2 WITH cIdKontoProdavnica
       REPLACE field->pkonto WITH cIdKontoProdavnica
       REPLACE field->idroba WITH topska->idroba
       REPLACE field->rbr WITH r_br
@@ -511,7 +635,7 @@ STATIC FUNCTION tops_kalk_import_row_ip( cBrDok, cIdKontoProdavnica, cIdKontoMag
    RETURN .T.
 
 
-
+/*
 STATIC FUNCTION tops_kalk_import_row_11( cBrDok, cIdKontoProdavnica, cIdKontoMagacin, r_br )
 
    LOCAL _tip_dok := "11"
@@ -547,10 +671,10 @@ STATIC FUNCTION tops_kalk_import_row_11( cBrDok, cIdKontoProdavnica, cIdKontoMag
    SELECT ( _t_area )
 
    RETURN .T.
+*/
 
 
-
-STATIC FUNCTION tops_kalk_import_row_42( cBrDok, cIdKontoProdavnica, cIdKontoMagacin, r_br )
+STATIC FUNCTION tops_kalk_import_row_42( cBrDok, cIdKontoProdavnica, r_br )
 
    LOCAL _t_area := Select()
    LOCAL _opp
@@ -623,87 +747,6 @@ STATIC FUNCTION get_sva_prodajna_mjesta_iz_koncij()
 
    RETURN _a_pm
 
-
-
-STATIC FUNCTION tops_kalk_get_import_file( cTopsKalkImeDbf )
-
-   LOCAL aOpcije := {}
-   LOCAL cPosImportLokacija
-   LOCAL aProdajnaMjesta, cProdajnaMjesta
-   LOCAL lReturn := .T.
-   LOCAL nI, aTopskaDbfs, _opt, _h, _n
-   LOCAL cDbfImportUslov := "T*.DBF"
-   LOCAL lIzvrsitiPrenos, nMeniOdabir, _a_tmp1, _a_tmp2
-   LOCAL cTopsDest := kalk_destinacija_topska()
-
-   aProdajnaMjesta := get_sva_prodajna_mjesta_iz_koncij()
-
-   IF Len( aProdajnaMjesta ) == 0
-      MsgBeep( "U tabeli koncij nisu definisana prodajna mjesta !" ) // imamo problem, nema prodajnih mjesta
-      lReturn := .F.
-      RETURN lReturn
-   ENDIF
-
-   cProdajnaMjesta := ""
-   FOR nI := 1 TO Len( aProdajnaMjesta )
-
-   cProdajnaMjesta += AllTrim( aProdajnaMjesta[ nI ] ) + "; "
-      cPosImportLokacija := cTopsDest + AllTrim( aProdajnaMjesta[ nI ] ) + SLASH  // putanja koju cu koristiti
-
-      BrisiSFajlove( cPosImportLokacija ) // brisi sve fajlove starije od 28 dana
-      aTopskaDbfs := Directory( cPosImportLokacija + cDbfImportUslov ) // fajlove u matricu po pattern-u
-
-      ASort( aTopskaDbfs,,, {| x, y| DToS( x[ 3 ] ) + x[ 4 ] > DToS( y[ 3 ] ) + y[ 4 ] } )
-
-      AEval( aTopskaDbfs, {| aElem| AAdd( aOpcije, PadR( AllTrim( aProdajnaMjesta[ nI ] ) + ;
-         SLASH + Trim( aElem[ 1 ] ), 20 ) + " " + ;
-         UChkPostoji() + " " + DToC( aElem[ 3 ] ) + " " + aElem[ 4 ] ;
-         ) }, 1, D_MAX_FILES ) // dodaj u matricu za odabir
-
-
-   NEXT
-
-   ASort( aOpcije,,, {| x, y| Right( x, 19 ) > Right( y, 19 ) } ) // R/X + datum + vrijeme
-
-   _h := Array( Len( aOpcije ) )
-   FOR _n := 1 TO Len( _h )
-      _h[ _n ] := ""
-   NEXT
-
-   IF Len( aOpcije ) == 0 // ima li stavki za preuzimanje ?
-
-      MsgBeep( "U direktoriju za prenos TOPS->KALK nema podataka ?##" + cTopsDest + "## ProdMj: " + cProdajnaMjesta )
-      RETURN .F.
-
-   ENDIF
-
-   nMeniOdabir := 1
-   lIzvrsitiPrenos := .F.
-
-   DO WHILE .T.
-
-      nMeniOdabir := Menu( "izdat", aOpcije, nMeniOdabir, .F. )
-
-      IF nMeniOdabir == 0
-         EXIT
-      ELSE
-
-         cTopsKalkImeDbf := cTopsDest + AllTrim( Left( aOpcije[ nMeniOdabir ], 20 ) )
-
-         IF Pitanje(, "Želite li izvrsiti prenos TOPS->KALK ?", "D" ) == "D"
-            lIzvrsitiPrenos := .T.
-            nMeniOdabir := 0
-         ELSE
-            LOOP
-         ENDIF
-      ENDIF
-   ENDDO
-
-   IF !lIzvrsitiPrenos
-      RETURN .F.
-   ENDIF
-
-   RETURN lReturn
 
 
 

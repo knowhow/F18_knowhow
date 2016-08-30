@@ -112,6 +112,15 @@ FUNCTION o_tarifa()
    RETURN .T.
 
 
+FUNCTION select_o_tarifa()
+
+   SELECT F_TARIFA
+   IF !Used()
+      RETURN o_tarifa()
+   ENDIF
+
+   RETURN .T.
+
 
 FUNCTION select_o_roba()
 

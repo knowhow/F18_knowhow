@@ -23,7 +23,7 @@ FUNCTION kalk_razmjena_podataka()
    AAdd( _opc, "2. fakt -> kalk" )
    AAdd( _opcexe, {|| fakt_kalk() } )
    AAdd( _opc, "3. tops -> kalk" )
-   AAdd( _opcexe, {|| mnu_prenos_tops_u_kalk() } )
+   AAdd( _opcexe, {|| kalk_preuzmi_tops_dokumente() } )
 
    AAdd( _opc, "4. kalk -> tops" )
    AAdd( _opcexe, {|| kalk_tops_meni() } )
@@ -48,7 +48,7 @@ FUNCTION kalk_razmjena_podataka()
    RETURN .T.
 
 
-
+/*
 STATIC FUNCTION mnu_prenos_tops_u_kalk()
 
    LOCAL _opc := {}
@@ -58,13 +58,14 @@ STATIC FUNCTION mnu_prenos_tops_u_kalk()
    AAdd( _opc, "1. prenos podataka pos->kalk                        " )
    AAdd( _opcexe, {|| kalk_preuzmi_tops_dokumente() } )
 
+
    AAdd( _opc, "2. prenos podataka pos->kalk (razduzi automatski)" )
    AAdd( _opcexe, {|| kalk_preuzmi_tops_dokumente_auto() } )
 
-/*
-   AAdd( _opc, "3. pos->kalk 96 po normativima za period " )
-   AAdd( _opcexe, {|| tops_nor_96() } )
-*/
+  -- AAdd( _opc, "3. pos->kalk 96 po normativima za period " )
+--   AAdd( _opcexe, {|| tops_nor_96() } )
+
    f18_menu( "rpka", .F., _izbor, _opc, _opcexe )
 
    RETURN .T.
+*/

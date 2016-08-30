@@ -366,25 +366,25 @@ FUNCTION f18_run( cCommand, hOutput, lAlwaysOk, lAsync )
 
    RETURN _ret
 
-FUNCTION get_run_prefix( cCmd )
+FUNCTION get_run_prefix( cCommand )
 
-   LOCAL _prefix
+   LOCAL cPrefix
+
 #ifdef __PLATFORM__WINDOWS
-
-   _prefix := "cmd /c "
+   cPrefix := "cmd /c "
 #else
 #ifdef __PLATFORM__DARWIN
-   _prefix := "open "
+   cPrefix := "open "
 #else
-   _prefix := "xdg-open "
+   cPrefix := "xdg-open "
 #endif
 #endif
 
-   IF Left( cCmd, 4 ) == "java"
-      _prefix := ""
+   IF cCommand != NIL .AND. Left( cCommand, 4 ) == "java"
+      cPrefix := ""
    ENDIF
 
-   RETURN _prefix
+   RETURN cPrefix
 
 
 FUNCTION f18_open_document( cDocument )

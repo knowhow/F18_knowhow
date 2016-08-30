@@ -46,16 +46,16 @@ FUNCTION create_dbf_r_export( aFieldList, lCloseDbfs )
 
 FUNCTION open_r_export_table()
 
-   LOCAL _cmd
+   LOCAL cCommand
 
    my_close_all_dbf()
 
-   _cmd := s_cExportDbf + ".dbf"
+   cCommand := get_run_prefix() + my_home() + my_dbf_prefix() + s_cExportDbf + ".dbf"
 
-   log_write( "Export " + s_cExportDbf + " cmd: " + _cmd, 9 )
+   //log_write( "Export " + s_cExportDbf + " cmd: " + _cmd, 9 )
 
-   DirChange( my_home() )
-   IF f18_run( _cmd ) <> 0
+   //DirChange( my_home() )
+   IF f18_run( cCommand ) <> 0
       MsgBeep( "Problem sa pokretanjem ?!" )
    ENDIF
 

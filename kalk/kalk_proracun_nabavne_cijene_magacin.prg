@@ -17,13 +17,13 @@
 
   4) kolicina na stanju
   5) nKolZN - kolicina koja je na stanju od zadnje nabavke
-  6) nNC - zadnja nabavna cijena
+  6) nNcZadnjaNabavka - zadnja nabavna cijena
   7) nSrednjaNabavnaCijena - srednja nabavna cijena
   8) param dDatNab - datum nabavke
 
 */
 
-FUNCTION kalk_get_nabavna_mag( cIdFirma, cIdRoba, cIdKonto, nKolicina, nKolZN, nNC, nSrednjaNabavnaCijena, dDatNab )
+FUNCTION kalk_get_nabavna_mag( cIdFirma, cIdRoba, cIdKonto, nKolicina, nKolZN, nNcZadnjaNabavka, nSrednjaNabavnaCijena, dDatNab )
 
    LOCAL nPom
    LOCAL nIzlNV
@@ -32,7 +32,6 @@ FUNCTION kalk_get_nabavna_mag( cIdFirma, cIdRoba, cIdKonto, nKolicina, nKolZN, n
    LOCAL nUlKol
    LOCAL nSkiniKol
    LOCAL nKolNeto
-   LOCAL nZadnjaUlaznaNC
    LOCAL nKol_poz := 0 // posljednje pozitivno stanje
    LOCAL nUVr_poz, nIVr_poz
    LOCAL nUKol_poz, nIKol_poz
@@ -42,7 +41,7 @@ FUNCTION kalk_get_nabavna_mag( cIdFirma, cIdRoba, cIdKonto, nKolicina, nKolZN, n
 
    nKolicina := 0
 
-   IF Empty( gMetodaNC )  .OR. ( roba->tip $ "UT" )
+   IF Empty( kalk_metoda_nc() )  .OR. ( roba->tip $ "UT" )
       RETURN .F.
    ENDIF
 /*
@@ -72,7 +71,7 @@ FUNCTION kalk_get_nabavna_mag( cIdFirma, cIdRoba, cIdKonto, nKolicina, nKolZN, n
    nUlNV := 0
    nIzlKol := 0 // ukupna izlazna kolicina
    nUlKol := 0 // ulazna kolicina
-   nZadnjaUlaznaNC := 0
+   nNcZadnjaNabavka := 0
 
 
    GO TOP
@@ -93,7 +92,7 @@ FUNCTION kalk_get_nabavna_mag( cIdFirma, cIdRoba, cIdKonto, nKolicina, nKolZN, n
             nUlNV     += ( nKolNeto * field->nc )
 
             IF field->idvd $ "10#16" // zapamti uvijek zadnju ulaznu NC
-               nZadnjaUlaznaNC := field->nc
+               nNcZadnjaNabavka := field->nc
             ENDIF
 
          ELSE
@@ -129,7 +128,7 @@ FUNCTION kalk_get_nabavna_mag( cIdFirma, cIdRoba, cIdKonto, nKolicina, nKolZN, n
       //ENDIF
    ENDIF
 
-   nSrednjaNabavnaCijena := korekcija_nabavne_cijene_sa_zadnjom_ulaznom( nKolicina, nZadnjaUlaznaNC, nSrednjaNabavnaCijena )
+   nSrednjaNabavnaCijena := korekcija_nabavne_cijene_sa_zadnjom_ulaznom( nKolicina, nNcZadnjaNabavka, nSrednjaNabavnaCijena )
 
    nKolicina := Round( nKolicina, 4 )
    nSrednjaNabavnaCijena := korekcija_nabavna_cijena_0( nSrednjaNabavnaCijena )

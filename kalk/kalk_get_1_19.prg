@@ -62,7 +62,7 @@ FUNCTION kalk_get_1_19()
    ENDIF
 
    lGenStavke := .F.
-   IF !Empty( gmetodaNC ) .AND. _TBankTr <> "X"
+   IF !Empty( kalk_metoda_nc() ) .AND. _TBankTr <> "X"
       MsgO( "Racunam kolicinu u prodavnici" )
       kalk_get_nabavna_prod( _idfirma, _idroba, _idkonto, @_kolicina, NIL, NIL, @_nc, @dDatNab )
       MsgC()

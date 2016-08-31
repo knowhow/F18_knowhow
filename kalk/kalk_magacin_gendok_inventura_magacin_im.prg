@@ -19,14 +19,15 @@ FUNCTION kalk_generacija_inventura_magacin_im()
    LOCAL cPosition := "2"
    LOCAL cCijenaTip := "2"
    LOCAL cSrSort := "N"
-   LOCAL cIdFirma, cIdKonto, dDatDok, lOsvjezi
+   LOCAL cIdFirma, cIdRoba, cIdKonto, dDatDok, lOsvjezi
+   LOCAL nRbr
 
    lOsvjezi := .F.
 
    o_kalk_pripr()
    GO TOP
 
-   IF idvd == "IM"
+   IF field->idvd == "IM"
       IF Pitanje(, "U pripremi je dokument IM. Generisati samo knjižne podatke?", "D" ) == "D"
          lOsvjezi := .T.
       ENDIF
@@ -46,7 +47,7 @@ FUNCTION kalk_generacija_inventura_magacin_im()
 
       Box(, 10, 70 )
       cIdFirma := gFirma
-      cIdKonto := PadR( "1310", gDuzKonto )
+      cIdKonto := PadR( "1320", gDuzKonto )
       dDatDok := Date()
       cArtikli := Space( 30 )
       @ m_x + 1, m_Y + 2 SAY "Magacin:" GET  cIdKonto VALID P_Konto( @cIdKonto )
@@ -55,8 +56,7 @@ FUNCTION kalk_generacija_inventura_magacin_im()
       @ m_x + 4, m_Y + 2 SAY "(prazno-sve):" GET cArtikli
       @ m_x + 5, m_Y + 2 SAY "(Grupacija broj mjesta) :" GET cPosition
       @ m_x + 6, m_Y + 2 SAY "Cijene (1-VPC, 2-NC) :" GET cCijenaTIP VALID cCijenaTIP $ "12"
-      @ m_x + 7, m_y + 2 SAY8 "sortirati po šifri dobavljača :" GET cSRSort ;
-         VALID cSRSort $ "DN" PICT "@!"
+      @ m_x + 7, m_y + 2 SAY8 "sortirati po šifri dobavljača :" GET cSRSort VALID cSRSort $ "DN" PICT "@!"
       @ m_x + 8, m_y + 2 SAY "generisati stavke sa stanjem 0 (D/N)" GET cNule ;
          PICT "@!" VALID cNule $ "DN"
       READ
@@ -65,7 +65,6 @@ FUNCTION kalk_generacija_inventura_magacin_im()
    ENDIF
 
    o_koncij()
-
 
 
    IF lOsvjezi
@@ -78,14 +77,15 @@ FUNCTION kalk_generacija_inventura_magacin_im()
    // SET ORDER TO TAG "3"
 
 
-   MsgO( "Generacija dokumenta IM - " + cBrdok )
-
    SELECT koncij
    SEEK Trim( cIdKonto )
 
+   MsgO( "Preuzimanje podataka sa servera ..." )
    find_kalk_by_mkonto_idroba( cIdFirma, cIdkonto )
    GO TOP
+   MsgC()
 
+   MsgO( "Generacija dokumenta IM - " + cBrdok )
 
    DO WHILE !Eof() .AND. cIdFirma + cIdKonto == field->idfirma + field->mkonto
 
@@ -122,8 +122,7 @@ FUNCTION kalk_generacija_inventura_magacin_im()
          SKIP
       ENDDO
 
-      IF cNule == "D" .OR. ;
-            ( ( Round( nUlaz - nIzlaz, 4 ) <> 0 ) .OR. ( Round( nVpvU - nVpvI, 4 ) <> 0 ) )
+      IF cNule == "D" .OR. ( ( Round( nUlaz - nIzlaz, 4 ) <> 0 ) .OR. ( Round( nVpvU - nVpvI, 4 ) <> 0 ) )
 
          SELECT roba
          HSEEK cIdroba
@@ -182,12 +181,12 @@ FUNCTION kalk_generacija_inventura_magacin_im()
       SET RELATION TO
 
    ENDIF
-
    MsgC()
 
    my_close_all_dbf()
 
    RETURN .T.
+
 
 
 

@@ -256,7 +256,7 @@ FUNCTION find_kalk_by_mkonto_idroba_idvd( cIdFirma, cIdVd, cIdKonto, cIdRoba, cO
 
    RETURN !Eof()
 
-FUNCTION find_kalk_by_mkonto_idroba( cIdFirma, cIdKonto, cIdRoba, cOrderBy, lReport )
+FUNCTION find_kalk_by_mkonto_idroba( cIdFirma, cIdKonto, cIdRoba, cOrderBy, lReport, cAlias )
 
    LOCAL hParams := hb_Hash()
 
@@ -271,6 +271,9 @@ FUNCTION find_kalk_by_mkonto_idroba( cIdFirma, cIdKonto, cIdRoba, cOrderBy, lRep
    ENDIF
    IF cIdRoba != NIL
       hParams[ "idroba" ] := cIdRoba
+   ENDIF
+   IF cAlias != NIL
+      hParams[ "alias" ] := cAlias
    ENDIF
    hParams[ "order_by" ] := cOrderBy
 
@@ -351,9 +354,10 @@ FUNCTION use_kalk_doks2( hParams )
    RETURN use_sql_kalk_doks2( hParams )
 
 
+/*
 FUNCTION use_kalk_kalk( hParams )
-   RETURN use_sql_kalk_kalk( hParams )
-
+   --RETURN use_sql_kalk_kalk( hParams )
+*/
 
 FUNCTION use_kalk_kalk_atributi( hParams )
    RETURN use_sql_kalk_kalk_atributi( hParams )
@@ -706,13 +710,12 @@ FUNCTION use_sql_kalk_doks( hParams )
    ENDIF
 
 
-
    IF hb_HHasKey( hParams, "alias" )
       cTable := hParams[ "alias" ]
    ENDIF
 
 #ifdef F18_DEBUG
-    ?E cSql
+   ?E cSql
 #endif
 
    SELECT ( F_KALK_DOKS )
@@ -891,9 +894,9 @@ STATIC FUNCTION sql_kalk_doks2_order( hParams )
    RETURN cOrder
 
 
+/*
 
-
-FUNCTION use_sql_kalk_kalk( hParams )
+--FUNCTION use_sql_kalk_kalk( hParams )
 
    LOCAL cSql, cWhere, cOrder
    LOCAL cTable := "KALK_KALK"
@@ -1044,7 +1047,7 @@ STATIC FUNCTION sql_kalk_kalk_order( hParams )
    ENDIF
 
    RETURN cOrder
-
+*/
 
 
 FUNCTION use_sql_kalk_kalk_atributi( hParams )

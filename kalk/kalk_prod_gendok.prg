@@ -966,7 +966,7 @@ FUNCTION Iz11u412()
       _pu_i      := "5"
       _error     := "0"
 
-      IF !Empty( gMetodaNC ) .AND. cPoMetodiNC == "D"
+      IF !Empty( kalk_metoda_nc() ) .AND. cPoMetodiNC == "D"
          nc1 := nc2 := 0
 
          ?
@@ -974,7 +974,7 @@ FUNCTION Iz11u412()
 
 
          // if dDatNab>_DatDok; Beep(1);Msg("Datum nabavke je "+dtoc(dDatNab),4);endif
-         IF gMetodaNC $ "13"; _fcj := nc1; ELSEIF gMetodaNC == "2"; _fcj := nc2; ENDIF
+         IF kalk_metoda_nc() $ "13"; _fcj := nc1; ELSEIF kalk_metoda_nc() == "2"; _fcj := nc2; ENDIF
       ENDIF
 
       _nc     := _fcj
@@ -1060,7 +1060,7 @@ FUNCTION Iz10u11()
       _pu_i      := "1"
       _error     := "0"
 
-      IF !Empty( gMetodaNC ) .AND. cPoMetodiNC == "D"
+      IF !Empty( kalk_metoda_nc() ) .AND. cPoMetodiNC == "D"
          nc1 := nc2 := 0
 
 
@@ -1068,7 +1068,7 @@ FUNCTION Iz10u11()
          kalk_get_nabavna_prod( _idfirma, _idroba, _idkonto, 0, 0, @nc1, @nc2, )
 
          // if dDatNab>_DatDok; Beep(1);Msg("Datum nabavke je "+dtoc(dDatNab),4);endif
-         IF gMetodaNC $ "13"; _fcj := nc1; ELSEIF gMetodaNC == "2"; _fcj := nc2; ENDIF
+         IF kalk_metoda_nc() $ "13"; _fcj := nc1; ELSEIF kalk_metoda_nc() == "2"; _fcj := nc2; ENDIF
       ENDIF
 
       _nc     := _fcj

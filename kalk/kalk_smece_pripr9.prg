@@ -61,7 +61,7 @@ FUNCTION kalk_pregled_smece_pripr9()
    @ m_x + 19, m_y + 2 SAY "<P> Povrat dokumenta u pripremu "
    @ m_x + 20, m_y + 2 SAY "               "
 
-   IF gCijene == "1" .AND. gMetodaNC == " "
+   IF gCijene == "1" .AND. kalk_metoda_nc() == " "
       Soboslikar( { { m_x + 17, m_y + 1, m_x + 20, m_y + 77 } }, 23, 14 )
    ENDIF
 

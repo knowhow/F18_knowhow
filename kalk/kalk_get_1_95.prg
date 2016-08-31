@@ -139,13 +139,13 @@ FUNCTION kalk_get_1_95()
 
       IF !( roba->tip $ "UT" )
 
-         IF gMetodaNC $ "13"
+         IF kalk_metoda_nc() $ "13"
             _nc := nc1
-         ELSEIF gMetodaNC == "2"
+         ELSEIF kalk_metoda_nc() == "2"
             _nc := nc2
          ENDIF
 
-         IF gMetodaNc == "2"
+         IF kalk_metoda_nc() == "2"
             IF _kolicina > 0
 
                SELECT roba

@@ -23,6 +23,8 @@ STATIC s_cF18CurrentDirectory := NIL
 
 THREAD STATIC s_cF18Home := NIL // svaki thread ima svoj my home ovisno o tekucoj bazi
 
+STATIC s_cRunOnStartParam
+
 
 THREAD STATIC __log_handle := NIL
 
@@ -123,7 +125,7 @@ FUNCTION post_login()
    server_log_enable()
    set_init_fiscal_params()
 
-   run_on_startup()
+   run_on_start()
 
    set_parametre_f18_aplikacije( .T. )
    set_hot_keys()
@@ -670,31 +672,55 @@ FUNCTION set_hot_keys()
    RETURN .T.
 
 
-FUNCTION run_on_startup()
+
+FUNCTION run_on_start_param( cParam )
+
+   IF cParam != NIL
+      s_cRunOnStartParam := cParam
+   ENDIF
+
+   RETURN s_cRunOnStartParam
+
+
+FUNCTION run_on_start()
 
    LOCAL _ini, _fakt_doks, cRun, oModul
+   LOCAL cModul
 
    IF s_lAlreadyRunStartup
       RETURN .F.
    ENDIF
 
+   altd()
    s_lAlreadyRunStartup := .T.
 
-   _ini := hb_Hash()
-   _ini[ "run" ] := ""
-   _ini[ "modul" ] := "FIN"
+   //_ini := hb_Hash()
+   //_ini[ "run" ] := ""
+   //_ini[ "modul" ] := "FIN"
 
-   f18_ini_config_read( "startup" + iif( test_mode(), "_test", "" ), @_ini, .F. )
+   IF run_on_start_param() == NIL
+      RETURN .F.
+   ENDIF
+   // f18_ini_config_read( "startup" + iif( test_mode(), "_test", "" ), @_ini, .F. )
 
-   cRun := _ini[ "run" ]
+   // cRun := _ini[ "run" ]
+   cRun := run_on_start_param()
 
-   IF !Empty( cRun )
+   IF Empty( cRun )
       RETURN .F.
    ENDIF
 
    info_bar( "init", "run_on_start" )
 
-   SWITCH _ini[ "modul" ]
+   IF Left( cRun, 5 ) == "kalk_"
+      cModul := "KALK"
+   ELSEIF Left( cRun, 5 ) == "fakt_"
+      cModul := "FAKT"
+   ELSEIF Left( cRun, 4 ) == "fin_"
+      cModul := "FIN"
+   ENDIF
+
+   SWITCH cModul
    CASE "FIN"
       oModul := TFinMod():new( NIL, "FIN", f18_ver(), f18_ver_date(), my_user(), "dummy" )
       EXIT

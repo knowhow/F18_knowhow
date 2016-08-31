@@ -276,7 +276,7 @@ STATIC FUNCTION VKol()
       nc1 := nc2 := 0
       dDatNab := CToD( "" )
 
-      IF !Empty( gMetodaNC )
+      IF !Empty( kalk_metoda_nc() )
          kalk_get_nabavna_prod( _idfirma, _idroba, _idkonto, @nKolS, @nKolZN, @nc1, @nc2, @dDatNab )
          @ m_x + 12, m_y + 30 SAY "Ukupno na stanju "
          @ m_x + 12, Col() + 2 SAY nKols PICT pickol

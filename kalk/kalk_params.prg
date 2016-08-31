@@ -14,7 +14,7 @@
 
 STATIC s_cKalkFinIstirBroj := NIL
 STATIC s_cKalkPreuzimanjeTroskovaIzSifRoba := NIL
-
+STATIC s_cKalkMetodaNc := NIL
 
 MEMVAR m_x, m_y
 
@@ -321,17 +321,19 @@ FUNCTION kalk_par_razno()
 
 
 
-/* kalk_par_metoda_nc()
+/*
  *     Ispravka parametara "METODA NC, ISPRAVKA DOKUMENATA"
  */
 
 FUNCTION kalk_par_metoda_nc()
 
+   LOCAL cMetodaNc := kalk_metoda_nc()
+
    PRIVATE  GetList := {}
 
    Box(, 4, 75, .F., "METODA NC, ISPRAVKA DOKUMENATA" )
-   @ m_x + 1, m_y + 2 SAY "Metoda nabavne cijene: bez kalk./zadnja/prosjecna/prva ( /1/2/3)" GET gMetodaNC ;
-      VALID gMetodaNC $ " 123" .AND. metodanc_info()
+   @ m_x + 1, m_y + 2 SAY "Metoda nabavne cijene: bez kalk./zadnja/prosjecna/prva ( /1/2/3)" GET cMetodaNc ;
+      VALID cMetodaNC $ " 123" .AND. metodanc_info()
    @ m_x + 2, m_y + 2 SAY "Program omogucava /ne omogucava azuriranje sumnjivih dokumenata (1/2)" GET gCijene ;
       VALID  gCijene $ "12"
    @ m_x + 4, m_y + 2 SAY "Tekuci odgovor na pitanje o promjeni cijena ?" GET gDefNiv ;
@@ -341,7 +343,7 @@ FUNCTION kalk_par_metoda_nc()
 
    IF LastKey() <> K_ESC
 
-      set_metric( "kalk_metoda_nc", nil, gMetodaNC )
+      kalk_metoda_nc ( cMetodaNC )
       set_metric( "kalk_promjena_cijena_odgovor", nil, gDefNiv )
       set_metric( "kalk_azuriranje_sumnjivih_dokumenata", nil, gCijene )
       set_metric( "kalk_broj_decimala_za_kolicinu", nil, gDecKol )
@@ -378,7 +380,7 @@ FUNCTION sumnjive_stavke_error( lForce )
 
 FUNCTION metodanc_info()
 
-   IF gMetodanc == " "
+   IF kalk_metoda_nc() == " "
       Beep( 2 )
       Msg( "Ova metoda omogucava da izvrsite proizvoljne ispravke#" + ;
          "Program ce Vam omoguciti da ispravite bilo koji dokument#" + ;
@@ -386,7 +388,7 @@ FUNCTION metodanc_info()
          "odgovarajuce kartice.#" + ;
          "Ako ste neiskusan korisnik konsultujte uputstvo !", 0 )
 
-   ELSEIF gMetodaNC $ "13"
+   ELSEIF kalk_metoda_nc() $ "13"
       Beep( 2 )
       Msg( "Ovu metodu obracuna nabavne cijene ne preporucujemo !#" + ;
          "Molimo Vas da usvojite metodu  2 - srednja nabavna cijena !", 0 )
@@ -572,3 +574,16 @@ FUNCTION kalk_par_troskovi_24()
    ENDIF
 
    RETURN NIL
+
+
+FUNCTION kalk_metoda_nc( cSet )
+
+   IF s_cKalkMetodaNc == NIL
+      s_cKalkMetodaNc := fetch_metric( "kalk_metoda_nc", nil, "2" )
+   ENDIF
+   IF cSet != NIL
+      s_cKalkMetodaNc := cSet
+      set_metric( "kalk_metod_nc", nil, cSet )
+   ENDIF
+
+   RETURN s_cKalkMetodaNc

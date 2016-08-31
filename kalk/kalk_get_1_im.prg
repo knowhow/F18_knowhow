@@ -43,7 +43,7 @@ FUNCTION kalk_get_1_im()
    SELECT kalk_pripr
 
    // DuplRoba()
-   @ m_x + 13, m_y + 2   SAY "Knjizna kolicina " GET _GKolicina PICTURE PicKol WHEN {|| iif( gMetodaNC == " ", .T., .F. ) }
+   @ m_x + 13, m_y + 2   SAY "Knjizna kolicina " GET _GKolicina PICTURE PicKol WHEN {|| iif( kalk_metoda_nc() == " ", .T., .F. ) }
    @ m_x + 13, Col() + 2 SAY "Popisana Kolicina" GET _Kolicina PICTURE PicKol
    @ m_x + 15, m_y + 2    SAY "CIJENA" GET _vpc PICT picdem
 

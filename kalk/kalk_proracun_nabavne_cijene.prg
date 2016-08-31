@@ -634,7 +634,7 @@ FUNCTION PrerRab()
 
 // Koristi sljedece privatne varijable:
 // nKols
-// gMetodaNC
+// kalk_metoda_nc()
 // _TBankTr - "X"  - ne provjeravaj - vrati .t.
 // ---------------------------------------------
 // Daje poruke:
@@ -654,7 +654,7 @@ FUNCTION kalk_valid_kolicina_mag()
 
    IF roba->tip $ "UTY"; RETURN .T. ; ENDIF // usluge
 
-   IF Empty( gMetodaNC ) .OR. _TBankTR == "X" // bez ograde
+   IF Empty( kalk_metoda_nc() ) .OR. _TBankTR == "X" // bez ograde
       RETURN .T.
    ENDIF
 

@@ -445,7 +445,7 @@ FUNCTION V_kol10()
       nc1 := nc2 := 0
       dDatNab := CToD( "" )
 
-      IF !Empty( gMetodaNC )
+      IF !Empty( kalk_metoda_nc() )
 
          kalk_get_nabavna_mag( _idfirma, _idroba, _mkonto, @nKolS, @nKolZN, @nC1, @nC2, @dDatNab )
 
@@ -457,9 +457,9 @@ FUNCTION V_kol10()
          Msg( "Datum nabavke je " + DToC( dDatNab ), 4 )
       ENDIF
       IF _idvd == "16"  // storno prijema
-         IF gMetodaNC $ "13"
+         IF kalk_metoda_nc() $ "13"
             _nc := nC1
-         ELSEIF gMetodaNC == "2"
+         ELSEIF kalk_metoda_nc() == "2"
             _nc := nc2
          ENDIF
       ENDIF

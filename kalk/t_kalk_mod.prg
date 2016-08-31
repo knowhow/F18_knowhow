@@ -55,7 +55,7 @@ METHOD TKalkMod:programski_modul_osnovni_meni()
 
    AAdd( opc,   "1. unos/ispravka dokumenata                " )
    AAdd( opcexe, {|| kalk_pripr_obrada() } )
-   
+
    AAdd( opc,   "2. izvještaji" )
    AAdd( opcexe, {|| kalk_meni_mag_izvjestaji() } )
    AAdd( opc,   "3. pregled dokumenata" )
@@ -108,7 +108,6 @@ METHOD TKalkMod:set_module_gvars()
    info_bar( ::cName, ::cName + " kalk set gvars start " )
 
    PUBLIC KursLis := "1"
-   PUBLIC gMetodaNC := "2"
    PUBLIC gDefNiv := "D"
    PUBLIC gDecKol := 5
    PUBLIC gKalo := "2"
@@ -258,7 +257,7 @@ METHOD TKalkMod:set_module_gvars()
    gKalo := fetch_metric( "kalk_kolicina_kalo", nil, gKalo )
    gVodiKalo := fetch_metric( "kalk_voditi_kalo", nil, gVodiKalo )
    gNiv14 := fetch_metric( "kalk_tip_nivelacije_14", nil, gNiv14 )
-   gMetodaNC := fetch_metric( "kalk_metoda_nc", nil, gMetodaNC )
+
    gDecKol := fetch_metric( "kalk_broj_decimala_za_kolicinu", nil, gDeckol )
    gDefNiv := fetch_metric( "kalk_promjena_cijena_odgovor", nil, gDefNiv )
    gVarEv := fetch_metric( "kalk_varijanta_evidencije", nil, gVarEv )

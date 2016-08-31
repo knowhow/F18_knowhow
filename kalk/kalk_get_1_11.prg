@@ -126,7 +126,7 @@ FUNCTION kalk_get_1_11()
    nc2 := 0
    lGenStavke := .F.
    IF _TBankTr <> "X"
-      IF !Empty( gMetodaNC )
+      IF !Empty( kalk_metoda_nc() )
          nc1 := nc2 := 0
          dDatNab := CToD( "" )
          IF _kolicina > 0
@@ -136,7 +136,7 @@ FUNCTION kalk_get_1_11()
 
          ENDIF
          IF dDatNab > _DatDok; Beep( 1 );Msg( "Datum nabavke je " + DToC( dDatNab ), 4 );ENDIF
-         IF gMetodaNC $ "13"; _fcj := nc1; ELSEIF gMetodaNC == "2"; _fcj := nc2; ENDIF
+         IF kalk_metoda_nc() $ "13"; _fcj := nc1; ELSEIF kalk_metoda_nc() == "2"; _fcj := nc2; ENDIF
       ENDIF
    ENDIF
 

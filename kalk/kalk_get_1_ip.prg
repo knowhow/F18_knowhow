@@ -52,7 +52,7 @@ FUNCTION kalk_get_1_ip()
 
    // proracunava knjizno stanje robe na prodavnici
    // kada je dokument prenesen iz tops-a onda ovo ne bi trebalo da radi
-   IF !Empty( gMetodaNC ) .AND. _nc = 0 .AND. _mpcsapp = 0
+   IF !Empty( kalk_metoda_nc() ) .AND. _nc = 0 .AND. _mpcsapp = 0
       knjizst()
    ENDIF
 
@@ -68,7 +68,7 @@ FUNCTION kalk_get_1_ip()
    ++ _x
 
    @ m_x + _x, m_y + 2 SAY PadL( "KNJIZNA KOLICINA:", _left ) GET _gkolicina PICT PicKol  ;
-      WHEN {|| iif( gMetodaNC == " ", .T., .F. ) }
+      WHEN {|| iif( kalk_metoda_nc() == " ", .T., .F. ) }
 
    @ m_x + _x, Col() + 2 SAY "POPISANA KOLICINA:" GET _kolicina VALID VKol() PICT PicKol
 

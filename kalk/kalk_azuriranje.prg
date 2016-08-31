@@ -310,7 +310,7 @@ STATIC FUNCTION kalk_generisati_zavisne_dokumente( lAuto )
    IF nije_dozvoljeno_azuriranje_sumnjivih_stavki()
       lGen := .T.
    ELSE
-      IF gMetodaNC == " "
+      IF kalk_metoda_nc() == " "
          lGen := .F.
       ELSEIF lAuto == .T.
          lGen := .T.
@@ -528,14 +528,14 @@ STATIC FUNCTION kalk_provjera_integriteta( aDoks, lViseDok )
 
       DO WHILE !Eof() .AND. cIdFirma == field->idfirma .AND. cIdVd == field->idvd .AND. cBrdok == field->brdok
 
-         IF gMetodaNC <> " " .AND. ( field->error == "1" .AND. field->tbanktr == "X" )
+         IF kalk_metoda_nc() <> " " .AND. ( field->error == "1" .AND. field->tbanktr == "X" )
             Beep( 2 )
             MSG( "Izgenerisane stavke su ispravljane, ažuriranje neće biti izvršeno !", 6 )
             my_close_all_dbf()
             RETURN .F.
          ENDIF
 
-         IF gMetodaNC <> " " .AND. field->error == "1"
+         IF kalk_metoda_nc() <> " " .AND. field->error == "1"
             Beep( 2 )
             MSG( "Utvrđena greška pri obradi dokumenta, rbr: " + field->rbr, 6 )
             my_close_all_dbf()
@@ -543,7 +543,7 @@ STATIC FUNCTION kalk_provjera_integriteta( aDoks, lViseDok )
          ENDIF
 
          // TODO: cleanup sumnjive stavke
-         // IF gMetodaNC <> " " .AND. field->error == " "
+         // IF kalk_metoda_nc() <> " " .AND. field->error == " "
          //
          // MsgBeep( "Dokument je izgenerisan, pokrenuti opciju <A> za obradu", 6 )
          // my_close_all_dbf()
@@ -592,7 +592,7 @@ STATIC FUNCTION kalk_provjera_integriteta( aDoks, lViseDok )
 
    ENDDO
 
-   IF gMetodaNC <> " " .AND. nBrDoks > 1
+   IF kalk_metoda_nc() <> " " .AND. nBrDoks > 1
       Beep( 1 )
       Msg( "U pripremi se nalazi više dokumenata.#Prebaci ih u smeće, pa obradi pojedinačno." )
       my_close_all_dbf()
@@ -628,9 +628,9 @@ STATIC FUNCTION kalk_provjeri_duple_dokumente( aRezim )
       aRezim := {}
 
       //AAdd( aRezim, gCijene )
-      //AAdd( aRezim, gMetodaNC )
+      //AAdd( aRezim, kalk_metoda_nc() )
       //gCijene   := "1"
-      //gMetodaNC := " "
+      //kalk_metoda_nc() := " "
       // ENDIF
 
    ELSEIF nije_dozvoljeno_azuriranje_sumnjivih_stavki()
@@ -644,7 +644,7 @@ STATIC FUNCTION kalk_provjeri_duple_dokumente( aRezim )
             IF Pitanje(, "Želite li dokument ažurirati bez obzira na sumnjive stavke? (D/N)", "N" ) == "D"
                aRezim := {}
                //AAdd( aRezim, gCijene )
-               //AAdd( aRezim, gMetodaNC )
+               //AAdd( aRezim, kalk_metoda_nc() )
                //gCijene   := "1"
             ENDIF
             EXIT

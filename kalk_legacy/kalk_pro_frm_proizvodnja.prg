@@ -128,7 +128,7 @@ FUNCTION leg_Get1_PR()
                         Msg( "Datum nabavke je " + DToC( dDatNab ) + " sirovina " + sast->id2, 4 )
                      ENDIF
                      IF _kolicina >= 0 .OR. Round( _NC, 3 ) == 0 .AND. !( roba->tip $ "UT" )
-                        IF gMetodanc == "2"
+                        IF kalk_metoda_nc() == "2"
                            SELECT roba
                            _rec := dbf_get_rec()
                            _rec[ "nc" ] := _nc

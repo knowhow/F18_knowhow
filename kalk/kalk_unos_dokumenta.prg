@@ -125,7 +125,7 @@ FUNCTION kalk_pripr_obrada( lAsistentObrada )
    @ m_x + nMaxRow, m_y + 2 SAY8 _opt_row
 
 /*
-   IF gCijene == "1" .AND. gMetodaNC == " "
+   IF gCijene == "1" .AND. kalk_metoda_nc() == " "
       Soboslikar( { { nMaxRow - 3, m_y + 1, nMaxRow, m_y + 77 } }, 23, 14 )
    ENDIF
 */
@@ -1039,7 +1039,7 @@ FUNCTION kalk_meni_f10()
       CASE izbor == 8
          GenNivP()
       CASE izbor == 9
-         // aRezim := { gCijene, gMetodaNC }
+         // aRezim := { gCijene, kalk_metoda_nc() }
          O_PARAMS
          PRIVATE cSection := "K", cHistory := " "; aHistory := {}
          cIspravka := "D"
@@ -1047,8 +1047,8 @@ FUNCTION kalk_meni_f10()
          SELECT params
          USE
 /*
-      --   IF gCijene <> aRezim[ 1 ] .OR. gMetodaNC <> aRezim[ 2 ]
-            IF !dozvoljeno_azuriranje_sumnjivih_stavki() .AND. gMetodaNC == " "
+      --   IF gCijene <> aRezim[ 1 ] .OR. kalk_metoda_nc() <> aRezim[ 2 ]
+            IF !dozvoljeno_azuriranje_sumnjivih_stavki() .AND. kalk_metoda_nc() == " "
                Soboslikar( { { m_x + 17, m_y + 1, m_x + 20, m_y + 77 } }, 23, 14 )
             ELSEIF aRezim[ 1 ] == "1" .AND. aRezim[ 2 ] == " "
                Soboslikar( { { m_x + 17, m_y + 1, m_x + 20, m_y + 77 } }, 14, 23 )

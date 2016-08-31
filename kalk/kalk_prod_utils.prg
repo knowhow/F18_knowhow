@@ -463,7 +463,7 @@ FUNCTION kalk_valid_kolicina_prod()
 
    LOCAL ppKolicina
 
-   IF Empty( gMetodaNC ) .OR. _TBankTr == "X"
+   IF Empty( kalk_metoda_nc() ) .OR. _TBankTr == "X"
       RETURN .T.
    ENDIF
 

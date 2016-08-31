@@ -140,7 +140,7 @@ FUNCTION DuplRoba()
 
 
    // pojava robe vise puta unutar kalkulacije!!!
-   IF ( ( roba->tip $ "UTY" ) .OR. Empty( gMetodaNC ) .OR. gMagacin == "1" )
+   IF ( ( roba->tip $ "UTY" ) .OR. Empty( kalk_metoda_nc() ) .OR. gMagacin == "1" )
       RETURN .T.
    ENDIF
    SELECT kalk_pripr

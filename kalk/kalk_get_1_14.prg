@@ -110,7 +110,7 @@ FUNCTION kalk_get_1_14()
 
    IF _TBankTr <> "X"   // ako je X onda su stavke vec izgenerisane
 
-      IF !Empty( gMetodaNC )
+      IF !Empty( kalk_metoda_nc() )
 
          kalk_get_nabavna_mag( _idfirma, _idroba, _idkonto2, @nKolS, @nKolZN, @nc1, @nc2, @dDatNab )
 
@@ -126,7 +126,7 @@ FUNCTION kalk_get_1_14()
       // Vindija trazi da se uvijek nudi srednja nabavna cijena
       // kada malo razmislim najbolje da se ona uvijek nudi
       // if _kolicina >= 0
-      IF gMetodaNC == "2"
+      IF kalk_metoda_nc() == "2"
          _nc := nc2
       ENDIF
 

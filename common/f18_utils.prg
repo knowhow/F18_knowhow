@@ -15,9 +15,7 @@ FUNCTION usex( cTable )
    RETURN my_use( cTable )
 
 
-// --------------------------------------------------
-// kreira direktorij ako ne postoji
-// --------------------------------------------------
+
 FUNCTION f18_create_dir( cLocation )
 
    LOCAL _len
@@ -67,7 +65,6 @@ FUNCTION set_f18_params()
 
    LOCAL _i := 1
 
-
    cParams := "" // setuj ulazne parametre
 
    DO WHILE _i <= PCount()
@@ -90,8 +87,10 @@ FUNCTION set_f18_params()
 
       CASE cTok == "--dbf-prefix"   // prefix privatni dbf
 
-          dbf_prefix( hb_PValue( _i++ ) )
+         dbf_prefix( hb_PValue( _i++ ) )
 
+      CASE cTok == "--run-on-start"
+         run_on_start_param( hb_PValue( _i++ ) )
 
       CASE cTok == "-h"
          cHostName := hb_PValue( _i++ )

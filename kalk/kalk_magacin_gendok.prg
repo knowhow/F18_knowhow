@@ -50,6 +50,9 @@ FUNCTION kalk_inventura_magacin_im_meni()
    AAdd( Opc, "2. inventura-razlika prema postojecoj IM" )
    AAdd( opcexe, {|| kalk_generisanje_inventure_razlike_magacin_im() } )
 
+   AAdd( Opc, "3. magacin generacija 95 usklađenje nc" )
+   AAdd( opcexe, {|| kalk_gen_uskladjenje_nc_95() } )
+
    PRIVATE Izbor := 1
    Menu_SC( "mmi" )
 
@@ -219,7 +222,7 @@ FUNCTION InvManj()
 
             _nc := 0; nc1 := 0; nc2 := 0
             kalk_get_nabavna_mag( _idfirma, _idroba, _idkonto, 0, 0, @nc1, @nc2, _datdok )
-            IF gMetodaNC $ "13"; _nc := nc1; ELSEIF gMetodaNC == "2"; _nc := nc2; ENDIF
+            IF kalk_metoda_nc() $ "13"; _nc := nc1; ELSEIF kalk_metoda_nc() == "2"; _nc := nc2; ENDIF
             SELECT kalk_pripr9
 
             _idpartner := ""

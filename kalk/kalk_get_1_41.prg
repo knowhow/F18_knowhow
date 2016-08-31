@@ -139,7 +139,7 @@ FUNCTION kalk_get_1_41()
 
       // ako je X onda su stavke vec izgenerisane
       IF _TBankTr <> "X"
-         IF !Empty( gMetodaNC )
+         IF !Empty( kalk_metoda_nc() )
             nc1 := 0
             nc2 := 0
 
@@ -149,9 +149,9 @@ FUNCTION kalk_get_1_41()
                Beep( 1 )
                Msg( "Datum nabavke je " + DToC( dDatNab ), 4 )
             ENDIF
-            IF gMetodaNC $ "13"
+            IF kalk_metoda_nc() $ "13"
                _fcj := nc1
-            ELSEIF gMetodaNC == "2"
+            ELSEIF kalk_metoda_nc() == "2"
                _fcj := nc2
             ENDIF
          ENDIF

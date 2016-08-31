@@ -35,7 +35,7 @@ FUNCTION kalk_nivelacija_11()
    PRIVATE cIdVD := field->idvd
    PRIVATE cBrDok := field->brdok
 
-   IF !( cIdvd $ "11#81" ) .AND. !Empty( gMetodaNC )
+   IF !( cIdvd $ "11#81" ) .AND. !Empty( kalk_metoda_nc() )
       my_close_all_dbf()
       RETURN .F.
    ENDIF

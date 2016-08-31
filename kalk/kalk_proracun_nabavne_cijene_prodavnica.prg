@@ -11,7 +11,7 @@
 
 #include "f18.ch"
 
-FUNCTION kalk_get_nabavna_prod( cIdFirma, cIdroba, cIdkonto, nKolicina, nKolZN, nNC, nSrednjaNabavnaCijena, dDatNab )
+FUNCTION kalk_get_nabavna_prod( cIdFirma, cIdroba, cIdkonto, nKolicina, nKolZN, nNcZadnjaNabavka, nSrednjaNabavnaCijena, dDatNab )
 
    LOCAL nPom
    LOCAL nIzlNV
@@ -19,7 +19,6 @@ FUNCTION kalk_get_nabavna_prod( cIdFirma, cIdroba, cIdkonto, nKolicina, nKolZN, 
    LOCAL nUlNV
    LOCAL nUlKol
    LOCAL nSkiniKol
-   LOCAL nZadnjaUlaznaNC
    LOCAL nTmp, nLen
 
    nKolicina := 0
@@ -34,7 +33,7 @@ FUNCTION kalk_get_nabavna_prod( cIdFirma, cIdroba, cIdkonto, nKolicina, nKolZN, 
    ENDIF
 */
 
-   IF Empty( gMetodaNC )
+   IF Empty( kalk_metoda_nc() )
       RETURN .F.
    ENDIF
 
@@ -57,7 +56,7 @@ FUNCTION kalk_get_nabavna_prod( cIdFirma, cIdroba, cIdkonto, nKolicina, nKolZN, 
    nIzlKol := 0 // ukupna izlazna kolicina
    nUlNV := 0
    nUlKol := 0 // ulazna kolicina
-   nZadnjaUlaznaNC := 0
+   nNcZadnjaNabavka := 0
 
    GO TOP
    DO WHILE !Eof() .AND. cIdFirma + cIdKonto + cIdroba == idFirma + pkonto + idroba .AND. _datdok >= datdok
@@ -69,7 +68,7 @@ FUNCTION kalk_get_nabavna_prod( cIdFirma, cIdroba, cIdkonto, nKolicina, nKolZN, 
             nUlNV     += ( Abs( field->kolicina ) * field->nc )  // ulaznom kolicinom
 
             IF field->idvd $ "11#80#81"
-               nZadnjaUlaznaNC := field->nc
+               nNcZadnjaNabavka := field->nc
             ENDIF
 
          ELSE
@@ -100,7 +99,7 @@ FUNCTION kalk_get_nabavna_prod( cIdFirma, cIdroba, cIdkonto, nKolicina, nKolZN, 
    ENDIF
 
 
-   nSrednjaNabavnaCijena := korekcija_nabavne_cijene_sa_zadnjom_ulaznom( nKolicina, nZadnjaUlaznaNC, nSrednjaNabavnaCijena )
+   nSrednjaNabavnaCijena := korekcija_nabavne_cijene_sa_zadnjom_ulaznom( nKolicina, nNcZadnjaNabavka, nSrednjaNabavnaCijena )
 
    nKolicina := Round( nKolicina, 4 )
 

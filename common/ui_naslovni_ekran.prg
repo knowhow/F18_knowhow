@@ -60,10 +60,10 @@ FUNCTION crtaj_naslovni_ekran( lClear )
    show_podaci_organizacija()
 
    @ 4, 5 SAY ""
+   show_dbf_prefix()
    show_insert_over_stanje()
 
-
-   @ 0, MAXCOLS() - 11 SAY "bring.out" COLOR F18_COLOR_NORMAL
+   @ 0, MAXCOLS() - 14 SAY "bring.out" COLOR F18_COLOR_NORMAL
 
    RETURN .T.
 
@@ -72,13 +72,24 @@ STATIC FUNCTION show_podaci_organizacija()
 
    @ 0, 15 SAY AllTrim( gTS ) + " :"
    @ Row(), Col() + 2  SAY AllTrim( gNFirma ) + ", baza (" + my_server_params()[ "database" ] + ")" ;
-      COLOR IIF( in_tekuca_godina(), F18_COLOR_NAGLASENO, F18_COLOR_NAGLASENO_2 )
+      COLOR iif( in_tekuca_godina(), F18_COLOR_NAGLASENO, F18_COLOR_NAGLASENO_2 )
 
    RETURN .T.
 
 
 FUNCTION swap_insert_over_stanje()
    RETURN show_insert_over_stanje( .T. )
+
+FUNCTION show_dbf_prefix()
+
+   LOCAL cPrefix
+   IF !Empty( my_dbf_prefix() )
+      cPrefix := "[" + Strtran( my_dbf_prefix(), "/", "" ) + "]"
+      @ 0, MAXCOLS() - 4 SAY cPrefix COLOR F18_COLOR_NAGLASENO
+   ENDIF
+
+
+   RETURN .T.
 
 FUNCTION show_insert_over_stanje( lSWap )
 
@@ -102,9 +113,7 @@ FUNCTION show_insert_over_stanje( lSWap )
       cState := '< OVER >'
    ENDIF
 
-
-   @ 0, MAXCOLS() - 20 SAY  cState COLOR F18_COLOR_INVERT
-
+   @ 0, MAXCOLS() - 23 SAY  cState COLOR F18_COLOR_INVERT
 
    SetPos( nX, nY )
 
@@ -152,7 +161,7 @@ FUNCTION f18_ispisi_status_podrucja( position )
 FUNCTION f18_ispisi_status_modula()
 
    LOCAL _module := Lower( goModul:cName )
-   LOCAL _in_use := f18_use_module( IIF( _module == "pos", "pos", _module ) )
+   LOCAL _in_use := f18_use_module( iif( _module == "pos", "pos", _module ) )
    LOCAL _color := F18_COLOR_STATUS
 
    IF !_in_use

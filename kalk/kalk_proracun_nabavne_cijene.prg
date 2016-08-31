@@ -70,13 +70,14 @@ FUNCTION korekcija_nabavne_cijene_sa_zadnjom_ulaznom( nKolicina, nZadnjaUlaznaNC
 
    LOCAL nOdst
    LOCAL nTmp_n_stanje, nTmp_n_nv, nTmp_s_nv
+   LOCAL cPonudi
 
    IF Round( nSrednjaNabavnaCijena, 4 ) == 0 .AND. Round( nZadnjaUlaznaNC, 4 ) > 0
       nSrednjaNabavnaCijena := nZadnjaUlaznaNC
       RETURN nSrednjaNabavnaCijena
    ENDIF
 
-   IF  prag_odstupanja_nc_sumnjiv() == 0 .OR. Round( nZadnjaUlaznaNC, 4 ) <= 0
+   IF prag_odstupanja_nc_sumnjiv() == 0 .OR. Round( nZadnjaUlaznaNC, 4 ) <= 0
       RETURN nSrednjaNabavnaCijena
    ENDIF
 
@@ -86,10 +87,16 @@ FUNCTION korekcija_nabavne_cijene_sa_zadnjom_ulaznom( nKolicina, nZadnjaUlaznaNC
    IF Abs( nOdst ) > prag_odstupanja_nc_sumnjiv()
 
       MsgBeep( "Odstupanje #" + AllTrim( Str( Abs( nOdst ) ) ) + " %" + "#" + ;
-         "artikal: " + AllTrim( _idroba ) + " " + PadR( roba->naz, 15 ) + ;
+         "artikal: " + AllTrim( _idroba ) + " " + PadR( roba->naz, 15 ) + "#" + ;
+         "količina na stanju: " + pic_kol( nKolicina ) + " # " +;
          "# srednja nc:" + AllTrim( say_cijena( nSrednjaNabavnaCijena ) ) + ", zadnji ulaz nc:" + AllTrim( say_cijena( nZadnjaUlaznaNC ) ) )
 
-      IF Pitanje(, "Korigovati NC na zadnju ulaznu (D/N)?", "N" ) == "D"
+      IF nKolicina <= 0
+         cPonudi := "D" // kartica je u minusu - najbolje razduzi prema posljednjem ulazu
+      ELSE
+         cPonudi := "N" // metodom srednje nabavne cijene razduzi
+      ENDIF
+      IF Pitanje(, "Korigovati NC na zadnju ulaznu (D/N)?", cPonudi ) == "D"
          nSrednjaNabavnaCijena := nZadnjaUlaznaNC
       ENDIF
    ENDIF
@@ -382,8 +389,8 @@ FUNCTION ObSetVPC( nNovaVrijednost )
 
 FUNCTION UzmiVPCSif( cMKonto, lKoncij )
 
-
    LOCAL nCV := 0, nArr := Select()
+
    IF lKoncij = NIL; lKoncij := .F. ; ENDIF
    SELECT KONCIJ
    nRec := RecNo()

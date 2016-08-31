@@ -76,7 +76,7 @@ FUNCTION kalk_get_nabavna_mag( cIdFirma, cIdRoba, cIdKonto, nKolicina, nKolZN, n
 
 
    GO TOP
-   DO WHILE !Eof() .AND. ( ( cIdFirma + cIdKonto + cIdRoba ) == ( idFirma + mkonto + idroba ) ) .AND. _datdok >= datdok
+   DO WHILE !Eof() .AND. ( ( cIdFirma + cIdKonto + cIdRoba ) == ( field->idFirma + field->mkonto + field->idroba ) ) .AND. _datdok >= datdok
 
       IF field->mu_i == "1" .OR. field->mu_i == "5"
 
@@ -87,7 +87,6 @@ FUNCTION kalk_get_nabavna_mag( cIdFirma, cIdRoba, cIdKonto, nKolicina, nKolZN, n
          ENDIF
 
          IF ( field->mu_i == "1" .AND.  field->kolicina > 0 ) .OR. ( field->mu_i == "5" .AND. field->kolicina < 0 )
-
 
             nKolicina += nKolNeto // ulazi plus, storno izlaza
             nUlKol    += nKolNeto
@@ -104,7 +103,6 @@ FUNCTION kalk_get_nabavna_mag( cIdFirma, cIdRoba, cIdKonto, nKolicina, nKolZN, n
             nIzlNV    += ( nKolNeto * field->nc )
 
          ENDIF
-
 
          IF Round( nKolicina, 8 ) > 0  // ako je kolicinsko stanje pozitivno zapamti ga
             nKol_poz := nKolicina
@@ -132,7 +130,6 @@ FUNCTION kalk_get_nabavna_mag( cIdFirma, cIdRoba, cIdKonto, nKolicina, nKolZN, n
    ENDIF
 
    nSrednjaNabavnaCijena := korekcija_nabavne_cijene_sa_zadnjom_ulaznom( nKolicina, nZadnjaUlaznaNC, nSrednjaNabavnaCijena )
-
 
    nKolicina := Round( nKolicina, 4 )
    nSrednjaNabavnaCijena := korekcija_nabavna_cijena_0( nSrednjaNabavnaCijena )

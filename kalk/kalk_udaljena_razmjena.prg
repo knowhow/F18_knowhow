@@ -177,7 +177,7 @@ STATIC FUNCTION _kalk_import()
 // -------------------------------------------
 // uslovi exporta dokumenta
 // -------------------------------------------
-STATIC FUNCTION _vars_export( vars )
+STATIC FUNCTION _vars_export( hParams )
 
    LOCAL _ret := .F.
    LOCAL _dat_od := fetch_metric( "kalk_export_datum_od", my_user(), Date() - 30 )
@@ -235,11 +235,11 @@ STATIC FUNCTION _vars_export( vars )
       // export path, set static var
       __export_dbf_path := AllTrim( _exp_path )
 
-      vars[ "datum_od" ] := _dat_od
-      vars[ "datum_do" ] := _dat_do
-      vars[ "konta" ] := _konta
-      vars[ "vrste_dok" ] := _vrste_dok
-      vars[ "export_sif" ] := _exp_sif
+      hParams[ "datum_od" ] := _dat_od
+      hParams[ "datum_do" ] := _dat_do
+      hParams[ "konta" ] := _konta
+      hParams[ "vrste_dok" ] := _vrste_dok
+      hParams[ "export_sif" ] := _exp_sif
 
    ENDIF
 
@@ -250,7 +250,7 @@ STATIC FUNCTION _vars_export( vars )
 // -------------------------------------------
 // uslovi importa dokumenta
 // -------------------------------------------
-STATIC FUNCTION _vars_import( vars )
+STATIC FUNCTION _vars_import( hParams )
 
    LOCAL _ret := .F.
    LOCAL _dat_od := fetch_metric( "kalk_import_datum_od", my_user(), CToD( "" ) )
@@ -327,14 +327,14 @@ STATIC FUNCTION _vars_import( vars )
       // set static var
       __import_dbf_path := AllTrim( _imp_path )
 
-      vars[ "datum_od" ] := _dat_od
-      vars[ "datum_do" ] := _dat_do
-      vars[ "konta" ] := _konta
-      vars[ "vrste_dok" ] := _vrste_dok
-      vars[ "zamjeniti_dokumente" ] := _zamjeniti_dok
-      vars[ "zamjeniti_sifre" ] := _zamjeniti_sif
-      vars[ "import_iz_fmk" ] := _iz_fmk
-      vars[ "pript" ] := ( cPript == "D" )
+      hParams[ "datum_od" ] := _dat_od
+      hParams[ "datum_do" ] := _dat_do
+      hParams[ "konta" ] := _konta
+      hParams[ "vrste_dok" ] := _vrste_dok
+      hParams[ "zamjeniti_dokumente" ] := _zamjeniti_dok
+      hParams[ "zamjeniti_sifre" ] := _zamjeniti_sif
+      hParams[ "import_iz_fmk" ] := _iz_fmk
+      hParams[ "pript" ] := ( cPript == "D" )
 
    ENDIF
 
@@ -345,24 +345,24 @@ STATIC FUNCTION _vars_import( vars )
 // -------------------------------------------
 // export podataka
 // -------------------------------------------
-STATIC FUNCTION __export( vars, a_details )
+STATIC FUNCTION __export( hParams, a_details )
 
    LOCAL _ret := 0
-   LOCAL _id_firma, _id_vd, _br_dok
-   LOCAL _app_rec
+   LOCAL cIdFirma, cIdVd, cBrDok
+   LOCAL aDoksRec
    LOCAL _cnt := 0
    LOCAL _dat_od, _dat_do, _konta, _vrste_dok, _export_sif
    LOCAL _usl_mkonto, _usl_pkonto
    LOCAL _id_partn, _p_konto, _m_konto
    LOCAL _id_roba
-   LOCAL _detail_rec
+   LOCAL aDokDetail
 
-   // uslovi za export ce biti...
-   _dat_od := vars[ "datum_od" ]
-   _dat_do := vars[ "datum_do" ]
-   _konta := AllTrim( vars[ "konta" ] )
-   _vrste_dok := AllTrim( vars[ "vrste_dok" ] )
-   _export_sif := AllTrim( vars[ "export_sif" ] )
+
+   _dat_od := hParams[ "datum_od" ]
+   _dat_do := hParams[ "datum_do" ]
+   _konta := AllTrim( hParams[ "konta" ] )
+   _vrste_dok := AllTrim( hParams[ "vrste_dok" ] )
+   _export_sif := AllTrim( hParams[ "export_sif" ] )
 
    _cre_exp_tbls( __export_dbf_path ) // kreiraj tabele exporta
    kalk_o_exp_tabele( __export_dbf_path ) // otvori export tabele za pisanje podataka
@@ -380,9 +380,9 @@ STATIC FUNCTION __export( vars, a_details )
 
    DO WHILE !Eof()
 
-      _id_firma := field->idfirma
-      _id_vd := field->idvd
-      _br_dok := field->brdok
+      cIdFirma := field->idfirma
+      cIdVd := field->idvd
+      cBrDok := field->brdok
       _id_partn := field->idpartner
       _p_konto := field->pkonto
       _m_konto := field->mkonto
@@ -416,51 +416,51 @@ STATIC FUNCTION __export( vars, a_details )
 
       // ako je sve zadovoljeno !
       // dodaj zapis u tabelu e_doks
-      _app_rec := dbf_get_rec()
+      aDoksRec := dbf_get_rec()
 
-      _detail_rec := hb_Hash()
-      _detail_rec[ "dokument" ] := _app_rec[ "idfirma" ] + "-" + _app_rec[ "idvd" ] + "-" + _app_rec[ "brdok" ]
-      _detail_rec[ "idpartner" ] := _app_rec[ "idpartner" ]
-      _detail_rec[ "idkonto" ] := ""
-      _detail_rec[ "partner" ] := ""
-      _detail_rec[ "iznos" ] := 0
-      _detail_rec[ "datum" ] := _app_rec[ "datdok" ]
-      _detail_rec[ "tip" ] := "export"
+      aDokDetail := hb_Hash()
+      aDokDetail[ "dokument" ] := aDoksRec[ "idfirma" ] + "-" + aDoksRec[ "idvd" ] + "-" + aDoksRec[ "brdok" ]
+      aDokDetail[ "idpartner" ] := aDoksRec[ "idpartner" ]
+      aDokDetail[ "idkonto" ] := ""
+      aDokDetail[ "partner" ] := ""
+      aDokDetail[ "iznos" ] := 0
+      aDokDetail[ "datum" ] := aDoksRec[ "datdok" ]
+      aDokDetail[ "tip" ] := "export"
 
       // dodaj u detalje
-      add_to_details( @a_details, _detail_rec )
+      export_import_add_to_details( @a_details, aDokDetail )
 
       SELECT e_doks
       APPEND BLANK
-      dbf_update_rec( _app_rec )
+      dbf_update_rec( aDoksRec )
 
       ++ _cnt
-      @ m_x + 2, m_y + 2 SAY PadR(  PadL( AllTrim( Str( _cnt ) ), 6 ) + ". " + "dokument: " + _id_firma + "-" + _id_vd + "-" + AllTrim( _br_dok ), 50 )
+      @ m_x + 2, m_y + 2 SAY PadR(  PadL( AllTrim( Str( _cnt ) ), 6 ) + ". " + "dokument: " + cIdFirma + "-" + cIdVd + "-" + AllTrim( cBrDok ), 50 )
 
       // dodaj zapis i u tabelu e_kalk
-      find_kalk_by_broj_dokumenta( _id_firma, _id_vd, _br_dok )
+      find_kalk_by_broj_dokumenta( cIdFirma, cIdVd, cBrDok )
 
-      DO WHILE !Eof() .AND. field->idfirma == _id_firma .AND. field->idvd == _id_vd .AND. field->brdok == _br_dok
+      DO WHILE !Eof() .AND. field->idfirma == cIdFirma .AND. field->idvd == cIdVd .AND. field->brdok == cBrDok
 
          _id_roba := field->idroba
 
          // upisi zapis u tabelu e_kalk
-         _app_rec := dbf_get_rec()
+         aDoksRec := dbf_get_rec()
          SELECT e_kalk
          APPEND BLANK
-         dbf_update_rec( _app_rec )
+         dbf_update_rec( aDoksRec )
 
          // uzmi sada robu sa ove stavke pa je ubaci u e_roba
          SELECT roba
          HSEEK _id_roba
          IF Found() .AND. _export_sif == "D"
-            _app_rec := dbf_get_rec()
+            aDoksRec := dbf_get_rec()
             SELECT e_roba
             SET ORDER TO TAG "ID"
             SEEK _id_roba
             IF !Found()
                APPEND BLANK
-               dbf_update_rec( _app_rec )
+               dbf_update_rec( aDoksRec )
                // napuni i sifk, sifv parametre
                _fill_sifk( "ROBA", _id_roba )
             ENDIF
@@ -476,13 +476,13 @@ STATIC FUNCTION __export( vars, a_details )
       SELECT partn
       HSEEK _id_partn
       IF Found() .AND. _export_sif == "D"
-         _app_rec := dbf_get_rec()
+         aDoksRec := dbf_get_rec()
          SELECT e_partn
          SET ORDER TO TAG "ID"
          SEEK _id_partn
          IF !Found()
             APPEND BLANK
-            dbf_update_rec( _app_rec )
+            dbf_update_rec( aDoksRec )
             // napuni i sifk, sifv parametre
             _fill_sifk( "PARTN", _id_partn )
          ENDIF
@@ -494,13 +494,13 @@ STATIC FUNCTION __export( vars, a_details )
       SELECT konto
       HSEEK _m_konto
       IF Found() .AND. _export_sif == "D"
-         _app_rec := dbf_get_rec()
+         aDoksRec := dbf_get_rec()
          SELECT e_konto
          SET ORDER TO TAG "ID"
          SEEK _m_konto
          IF !Found()
             APPEND BLANK
-            dbf_update_rec( _app_rec )
+            dbf_update_rec( aDoksRec )
          ENDIF
       ENDIF
 
@@ -508,13 +508,13 @@ STATIC FUNCTION __export( vars, a_details )
       SELECT konto
       HSEEK _p_konto
       IF Found() .AND. _export_sif == "D"
-         _app_rec := dbf_get_rec()
+         aDoksRec := dbf_get_rec()
          SELECT e_konto
          SET ORDER TO TAG "ID"
          SEEK _p_konto
          IF !Found()
             APPEND BLANK
-            dbf_update_rec( _app_rec )
+            dbf_update_rec( aDoksRec )
          ENDIF
       ENDIF
 
@@ -534,32 +534,33 @@ STATIC FUNCTION __export( vars, a_details )
 
 
 
-STATIC FUNCTION kalk_import_podataka( vars, a_details )
+STATIC FUNCTION kalk_import_podataka( hParams, a_details )
 
    LOCAL _ret := 0
-   LOCAL _id_firma, _id_vd, _br_dok
-   LOCAL _app_rec
+   LOCAL cIdFirma, cIdVd, cBrDok
+   LOCAL aDoksRec
    LOCAL _cnt := 0
    LOCAL _dat_od, _dat_do, _konta, _vrste_dok, _zamjeniti_dok, _zamjeniti_sif, _iz_fmk
    LOCAL _usl_mkonto, _usl_pkonto
    LOCAL _roba_id, _partn_id, _konto_id
    LOCAL _sif_exist
    LOCAL _fmk_import := .F.
-   LOCAL _redni_broj := 0
+   LOCAL nRedniRbroj := 0
    LOCAL _total_doks := 0
    LOCAL _total_kalk := 0
    LOCAL _gl_brojac := 0
-   LOCAL _detail_rec
+   LOCAL aDokDetail
    LOCAL lOk := .T.
-   LOCAL hParams
+   LOCAL hRec
 
-   _dat_od := vars[ "datum_od" ]
-   _dat_do := vars[ "datum_do" ]
-   _konta := vars[ "konta" ]
-   _vrste_dok := vars[ "vrste_dok" ]
-   _zamjeniti_dok := vars[ "zamjeniti_dokumente" ]
-   _zamjeniti_sif := vars[ "zamjeniti_sifre" ]
-   _iz_fmk := vars[ "import_iz_fmk" ]
+
+   _dat_od := hParams[ "datum_od" ]
+   _dat_do := hParams[ "datum_do" ]
+   _konta := hParams[ "konta" ]
+   _vrste_dok := hParams[ "vrste_dok" ]
+   _zamjeniti_dok := hParams[ "zamjeniti_dokumente" ]
+   _zamjeniti_sif := hParams[ "zamjeniti_sifre" ]
+   _iz_fmk := hParams[ "import_iz_fmk" ]
 
    IF _iz_fmk == "D"
       _fmk_import := .T.
@@ -575,7 +576,7 @@ STATIC FUNCTION kalk_import_podataka( vars, a_details )
    _total_kalk := RECCOUNT2()
 
 
-   IF vars[ "pript" ]
+   IF hParams[ "pript" ]
       IF pitanje(, "izbrisati tabele pripreme fin_pripr, kalk_pripr, pript ?", "D" ) == "N"
          RETURN .F.
       ENDIF
@@ -612,9 +613,9 @@ STATIC FUNCTION kalk_import_podataka( vars, a_details )
 
    DO WHILE !Eof()
 
-      _id_firma := field->idfirma
-      _id_vd := field->idvd
-      _br_dok := field->brdok
+      cIdFirma := field->idfirma
+      cIdVd := field->idvd
+      cBrDok := field->brdok
       _dat_dok := field->datdok
 
       IF _dat_od <> CToD( "" )
@@ -656,26 +657,25 @@ STATIC FUNCTION kalk_import_podataka( vars, a_details )
          ENDIF
       ENDIF
 
-      IF find_kalk_doks_by_broj_dokumenta( _id_firma, _id_vd, _br_dok )
+      IF find_kalk_doks_by_broj_dokumenta( cIdFirma, cIdVd, cBrDok )
 
-         _detail_rec := hb_Hash()
-         _detail_rec[ "dokument" ] := _id_firma + "-" + _id_vd + "-" + _br_dok
-         _detail_rec[ "datum" ] := _dat_dok
-         _detail_rec[ "idpartner" ] := ""
-         _detail_rec[ "partner" ] := ""
-         _detail_rec[ "idkonto" ] := ""
-         _detail_rec[ "iznos" ] := 0
+         aDokDetail := hb_Hash()
+         aDokDetail[ "dokument" ] := cIdFirma + "-" + cIdVd + "-" + cBrDok
+         aDokDetail[ "datum" ] := _dat_dok
+         aDokDetail[ "idpartner" ] := ""
+         aDokDetail[ "partner" ] := ""
+         aDokDetail[ "idkonto" ] := ""
+         aDokDetail[ "iznos" ] := 0
 
          IF _zamjeniti_dok == "D"
-
-            _detail_rec[ "tip" ] := "delete"
-            add_to_details( @a_details, _detail_rec )
-            lOk := del_kalk_doc( _id_firma, _id_vd, _br_dok )
+            aDokDetail[ "tip" ] := "delete"
+            export_import_add_to_details( @a_details, aDokDetail )
+            lOk := del_kalk_doc( cIdFirma, cIdVd, cBrDok )
 
          ELSE
 
-            _detail_rec[ "tip" ] := "x"
-            add_to_details( @a_details, _detail_rec )
+            aDokDetail[ "tip" ] := "x"
+            export_import_add_to_details( @a_details, aDokDetail )
             SELECT e_doks
             SKIP
             LOOP
@@ -689,65 +689,64 @@ STATIC FUNCTION kalk_import_podataka( vars, a_details )
       ENDIF
 
       SELECT e_doks
-      _app_rec := dbf_get_rec()
+      aDoksRec := dbf_get_rec()
 
-      _detail_rec := hb_Hash()
-      _detail_rec[ "dokument" ] := _app_rec[ "idfirma" ] + "-" + _app_rec[ "idvd" ] + "-" + _app_rec[ "brdok" ]
-      _detail_rec[ "idpartner" ] := _app_rec[ "idpartner" ]
-      _detail_rec[ "idkonto" ] := ""
-      _detail_rec[ "partner" ] := ""
-      _detail_rec[ "iznos" ] := 0
-      _detail_rec[ "datum" ] := _app_rec[ "datdok" ]
-      _detail_rec[ "tip" ] := "import"
-      add_to_details( @a_details, _detail_rec )
+      aDokDetail := hb_Hash()
+      aDokDetail[ "dokument" ] := aDoksRec[ "idfirma" ] + "-" + aDoksRec[ "idvd" ] + "-" + aDoksRec[ "brdok" ]
+      aDokDetail[ "idpartner" ] := aDoksRec[ "idpartner" ]
+      aDokDetail[ "idkonto" ] := ""
+      aDokDetail[ "partner" ] := ""
+      aDokDetail[ "iznos" ] := 0
+      aDokDetail[ "datum" ] := aDoksRec[ "datdok" ]
+      aDokDetail[ "tip" ] := "import"
+      export_import_add_to_details( @a_details, aDokDetail )
 
-      _app_rec[ "podbr" ] := ""
+      aDoksRec[ "podbr" ] := ""
+      aDoksRec[ "sifra" ] := "import"
 
-      IF !vars[ "pript" ]
+      IF !hParams[ "pript" ]
          SELECT kalk_doks
          APPEND BLANK
-         lOk := update_rec_server_and_dbf( "kalk_doks", _app_rec, 1, "CONT" )
+         lOk := update_rec_server_and_dbf( "kalk_doks", aDoksRec, 1, "CONT" )
          IF !lOk
             EXIT
          ENDIF
       ENDIF
 
       ++ _cnt
-      @ m_x + 3, m_y + 2 SAY PadR( PadL( AllTrim( Str( _cnt ) ), 5 ) + ". dokument: " + _id_firma + "-" + _id_vd + "-" + _br_dok, 60 )
+      @ m_x + 3, m_y + 2 SAY PadR( PadL( AllTrim( Str( _cnt ) ), 5 ) + ". dokument: " + cIdFirma + "-" + cIdVd + "-" + cBrDok, 60 )
 
       SELECT e_kalk
       SET ORDER TO TAG "1"
       GO TOP
-      SEEK _id_firma + _id_vd + _br_dok
+      SEEK cIdFirma + cIdVd + cBrDok
 
-      _redni_broj := 0
+      nRedniRbroj := 0
 
-      DO WHILE !Eof() .AND. field->idfirma == _id_firma .AND. field->idvd == _id_vd .AND. field->brdok == _br_dok
+      DO WHILE !Eof() .AND. field->idfirma == cIdFirma .AND. field->idvd == cIdVd .AND. field->brdok == cBrDok
 
-         _app_rec := dbf_get_rec()
+         aDoksRec := dbf_get_rec()
 
-         hb_HDel( _app_rec, "roktr" )
-         hb_HDel( _app_rec, "datkurs" )
+         hb_HDel( aDoksRec, "roktr" )
+         hb_HDel( aDoksRec, "datkurs" )
 
-         _app_rec[ "rbr" ] := PadL( AllTrim( Str( ++_redni_broj ) ), 3 )
-         _app_rec[ "podbr" ] := ""
+         aDoksRec[ "rbr" ] := PadL( AllTrim( Str( ++nRedniRbroj ) ), 3 )
+         aDoksRec[ "podbr" ] := ""
 
-         _gl_brojac += _redni_broj
+         _gl_brojac += nRedniRbroj
 
-         @ m_x + 3, m_y + 40 SAY "stavka: " + AllTrim( Str( _gl_brojac ) ) + " / " + _app_rec[ "rbr" ]
+         @ m_x + 3, m_y + 40 SAY "stavka: " + AllTrim( Str( _gl_brojac ) ) + " / " + aDoksRec[ "rbr" ]
 
-         IF vars[ "pript" ]
-
+         IF hParams[ "pript" ]
             hRec := dbf_get_rec()
             SELECT pript
             APPEND BLANK
             dbf_update_rec( hRec )
-
          ELSE
 
             SELECT kalk
             APPEND BLANK
-            lOk := update_rec_server_and_dbf( "kalk_kalk", _app_rec, 1, "CONT" )
+            lOk := update_rec_server_and_dbf( "kalk_kalk", aDoksRec, 1, "CONT" )
             IF !lOk
                EXIT
             ENDIF
@@ -778,7 +777,7 @@ STATIC FUNCTION kalk_import_podataka( vars, a_details )
 
    ENDIF
 
-   IF vars[ "pript" ]
+   IF hParams[ "pript" ]
       SELECT pript
       my_unlock()
       kalk_imp_obradi_sve_dokumente_iz_pript( 0, .F., .T. ) // .F. - ne stampati, .T. - ostaviti broj dokumenta koji stoji u pript

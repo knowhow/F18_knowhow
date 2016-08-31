@@ -540,7 +540,7 @@ STATIC FUNCTION __export( vars, a_details )
       _detail_rec[ "datum" ] := _app_rec[ "datdok" ]
       _detail_rec[ "tip" ] := "export"
 
-      add_to_details( @a_details, _detail_rec )
+      export_import_add_to_details( @a_details, _detail_rec )
 
       SELECT e_doks
       APPEND BLANK
@@ -663,15 +663,15 @@ STATIC FUNCTION __export( vars, a_details )
    RETURN _ret
 
 
-FUNCTION add_to_details( details, rec )
+FUNCTION export_import_add_to_details( aDetails, hRec )
 
-   AAdd( details, { rec[ "tip" ], ;
-      rec[ "dokument" ], ;
-      rec[ "idpartner" ], ;
-      rec[ "idkonto" ], ;
-      rec[ "partner" ], ;
-      rec[ "iznos" ], ;
-      rec[ "datum" ] } )
+   AAdd( aDetails, { hRec[ "tip" ], ;
+      hRec[ "dokument" ], ;
+      hRec[ "idpartner" ], ;
+      hRec[ "idkonto" ], ;
+      hRec[ "partner" ], ;
+      hRec[ "iznos" ], ;
+      hRec[ "datum" ] } )
 
    RETURN .T.
 
@@ -794,12 +794,12 @@ STATIC FUNCTION __import( vars, a_details )
 
          IF _zamjeniti_dok == "D"
             _detail_rec[ "tip" ] := "delete"
-            add_to_details( @a_details, _detail_rec )
+            export_import_add_to_details( @a_details, _detail_rec )
             _ok := .T.
             _ok := del_fakt_doc( _id_firma, _id_vd, _br_dok )
          ELSE
             _detail_rec[ "tip" ] := "x"
-            add_to_details( @a_details, _detail_rec )
+            export_import_add_to_details( @a_details, _detail_rec )
             SKIP
             LOOP
          ENDIF
@@ -818,7 +818,7 @@ STATIC FUNCTION __import( vars, a_details )
       _detail_rec[ "datum" ] := _app_rec[ "datdok" ]
       _detail_rec[ "tip" ] := "import"
 
-      add_to_details( @a_details, _detail_rec )
+      export_import_add_to_details( @a_details, _detail_rec )
 
       SELECT fakt_doks
       APPEND BLANK

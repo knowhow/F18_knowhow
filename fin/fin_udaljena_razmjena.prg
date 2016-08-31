@@ -430,7 +430,7 @@ STATIC FUNCTION __export( vars, a_details )
       _detail_rec[ "tip" ] := "export"
 
       // dodaj u detalje
-      add_to_details( @a_details, _detail_rec )
+      export_import_add_to_details( @a_details, _detail_rec )
 
       SELECT e_nalog
       APPEND BLANK
@@ -642,14 +642,14 @@ STATIC FUNCTION __import( vars, a_details )
          IF _zamjeniti_dok == "D"
 
             _detail_rec[ "tip" ] := "delete"
-            add_to_details( @a_details, _detail_rec )
+            export_import_add_to_details( @a_details, _detail_rec )
 
             lOk := brisi_dokument_iz_kumulativa( _id_firma, _id_vd, _br_dok )
 
          ELSE
 
             _detail_rec[ "tip" ] := "x"
-            add_to_details( @a_details, _detail_rec )
+            export_import_add_to_details( @a_details, _detail_rec )
 
             SELECT e_nalog
             SKIP
@@ -675,7 +675,7 @@ STATIC FUNCTION __import( vars, a_details )
       _detail_rec[ "iznos" ] := 0
       _detail_rec[ "tip" ] := "import"
 
-      add_to_details( @a_details, _detail_rec )
+      export_import_add_to_details( @a_details, _detail_rec )
 
       SELECT nalog
       APPEND BLANK

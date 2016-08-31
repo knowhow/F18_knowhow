@@ -12,9 +12,7 @@
 #include "f18.ch"
 
 
-// ------------------------------------------------
-// stampa kalkulacije tipa "IM"
-// ------------------------------------------------
+
 FUNCTION kalk_stampa_dok_im()
 
    LOCAL nCol1 := 0
@@ -164,8 +162,8 @@ FUNCTION kalk_stampa_dok_im()
    @ PRow(), PCol() + 1 SAY 0 PICT gPicDem
    @ PRow(), PCol() + 1 SAY 0 PICT gPicDem
    @ PRow(), PCol() + 1 SAY nTot4 PICT IF( nTot4 > 0, gPicDem, Replicate( " ", Len( PicDEM ) ) )
-   @ PRow(), PCol() + 1 SAY IF( nTot4 < 0, -nTot4, nTot4 )  PICT IF( nTot4 < 0, gPicDem, Replicate( " ", Len( gPicDem ) ) )
+   @ PRow(), PCol() + 1 SAY IIF( nTot4 < 0, -nTot4, nTot4 )  PICT IF( nTot4 < 0, gPicDem, Replicate( " ", Len( gPicDem ) ) )
 
    ? m
 
-   RETURN
+   RETURN .T.

@@ -19,12 +19,16 @@ FUNCTION GenMag()
    LOCAL _opcexe := {}
    LOCAL _izbor := 1
 
-   AAdd( _opc, "1. početno stanje                                            " )
-   AAdd( _opcexe, {|| kalk_mag_pocetno_stanje() } )
-   AAdd( _opc, "2. početno stanje (stara opcija)" )
-   AAdd( _opcexe, {|| PocStMag() } )
+   AAdd( _opc, "1. magacin početno stanje                    " )
+   AAdd( _opcexe, {|| kalk_pocetno_stanje_magacin() } )
+
+/*
+   AAdd( _opc, "2. magacin početno stanje (stara opcija)" )
+   AAdd( _opcexe, {|| kalk_pocetno_stanje_magacin_legacy() } )
+   */
+
    AAdd( _opc, "3. inventure" )
-   AAdd( _opcexe, {|| MnuMInv() } )
+   AAdd( _opcexe, {|| kalk_inventura_magacin_im_meni() } )
 /*
    AAdd( _opc, "4. nivelacija po zadatom %" )
    AAdd( _opcexe, {|| MNivPoProc() } )
@@ -36,20 +40,20 @@ FUNCTION GenMag()
 
 
 
-FUNCTION MnuMInv()
+FUNCTION kalk_inventura_magacin_im_meni()
 
    PRIVATE Opc := {}
    PRIVATE opcexe := {}
 
-   AAdd( Opc, "1. dokument inventure                       " )
-   AAdd( opcexe, {|| kalk_generisi_inventuru_magacina() } )
-   AAdd( Opc, "2. inventura-razlika prema postojecoj IM    " )
-   AAdd( opcexe, {|| kalk_generisanje_inventure_razlike() } )
+   AAdd( Opc, "1. dokument inventure magacin                   " )
+   AAdd( opcexe, {|| kalk_generacija_inventura_magacin_im() } )
+   AAdd( Opc, "2. inventura-razlika prema postojecoj IM" )
+   AAdd( opcexe, {|| kalk_generisanje_inventure_razlike_magacin_im() } )
 
    PRIVATE Izbor := 1
    Menu_SC( "mmi" )
 
-   RETURN
+   RETURN .T.
 
 
 

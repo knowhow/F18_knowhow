@@ -1033,7 +1033,7 @@ FUNCTION kalk_meni_f10()
       CASE izbor == 5
          kalk_povrat_najstariji_dokument_iz_pripr9()
       CASE izbor == 6
-         kalk_generisi_inventuru_magacina()
+         kalk_generacija_inventura_magacin_im()
       CASE izbor == 7
          kalk_generisi_ip()
       CASE izbor == 8

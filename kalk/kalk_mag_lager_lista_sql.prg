@@ -214,7 +214,7 @@ FUNCTION kalk_mag_lager_lista_vars( params, ps )
 
 
 
-FUNCTION kalk_mag_pocetno_stanje()
+FUNCTION kalk_pocetno_stanje_magacin()
 
    LOCAL _ps := .T.
    LOCAL _param := NIL

@@ -1131,11 +1131,11 @@ FUNCTION Zagllager_lista_magacin()
 
 
 
-/* PocStMag()
+/* kalk_pocetno_stanje_magacin_legacy()
  *     Generacija pocetnog stanja magacina
  */
 
-FUNCTION PocStMag()
+FUNCTION kalk_pocetno_stanje_magacin_legacy()
 
    lager_lista_magacin( .T. )
 

@@ -64,7 +64,7 @@ FUNCTION update_table_konto( zamjena_sifre )
 
    LOCAL lRet := .F.
    LOCAL lOk := .T.
-   LOCAL _app_rec
+   LOCAL hRec
    LOCAL _sif_exist := .T.
    LOCAL hParams
 
@@ -80,12 +80,12 @@ FUNCTION update_table_konto( zamjena_sifre )
 
    DO WHILE !Eof()
 
-      _app_rec := dbf_get_rec()
+      hRec := dbf_get_rec()
 
-      update_rec_konto_struct( @_app_rec )
+      update_rec_konto_struct( @hRec )
 
       SELECT konto
-      HSEEK _app_rec[ "id" ]
+      HSEEK hRec[ "id" ]
 
       _sif_exist := .T.
       IF !Found()
@@ -94,7 +94,7 @@ FUNCTION update_table_konto( zamjena_sifre )
 
       IF !_sif_exist .OR. ( _sif_exist .AND. zamjena_sifre == "D" )
 
-         @ m_x + 3, m_y + 2 SAY "import partn id: " + _app_rec[ "id" ] + " : " + PadR( _app_rec[ "naz" ], 20 )
+         @ m_x + 3, m_y + 2 SAY "import partn id: " + hRec[ "id" ] + " : " + PadR( hRec[ "naz" ], 20 )
 
          SELECT konto
 
@@ -102,7 +102,7 @@ FUNCTION update_table_konto( zamjena_sifre )
             APPEND BLANK
          ENDIF
 
-         lOk := update_rec_server_and_dbf( "konto", _app_rec, 1, "CONT" )
+         lOk := update_rec_server_and_dbf( "konto", hRec, 1, "CONT" )
 
          IF !lOk .AND. !_sif_exist
             delete_with_rlock()
@@ -140,7 +140,7 @@ FUNCTION update_table_partn( zamjena_sifre )
 
    LOCAL lRet := .F.
    LOCAL lOk := .T.
-   LOCAL _app_rec
+   LOCAL hRec
    LOCAL _sif_exist := .T.
    LOCAL hParams
 
@@ -156,12 +156,12 @@ FUNCTION update_table_partn( zamjena_sifre )
 
    DO WHILE !Eof()
 
-      _app_rec := dbf_get_rec()
+      hRec := dbf_get_rec()
 
-      update_rec_partn_struct( @_app_rec )
+      update_rec_partn_struct( @hRec )
 
       SELECT partn
-      HSEEK _app_rec[ "id" ]
+      HSEEK hRec[ "id" ]
 
       _sif_exist := .T.
       IF !Found()
@@ -170,7 +170,7 @@ FUNCTION update_table_partn( zamjena_sifre )
 
       IF !_sif_exist .OR. ( _sif_exist .AND. zamjena_sifre == "D" )
 
-         @ m_x + 3, m_y + 2 SAY "import partn id: " + _app_rec[ "id" ] + " : " + PadR( _app_rec[ "naz" ], 20 )
+         @ m_x + 3, m_y + 2 SAY "import partn id: " + hRec[ "id" ] + " : " + PadR( hRec[ "naz" ], 20 )
 
          SELECT partn
 
@@ -178,7 +178,7 @@ FUNCTION update_table_partn( zamjena_sifre )
             APPEND BLANK
          ENDIF
 
-         lOk := update_rec_server_and_dbf( "partn", _app_rec, 1, "CONT" )
+         lOk := update_rec_server_and_dbf( "partn", hRec, 1, "CONT" )
 
          IF !lOk .AND. !_sif_exist
             delete_with_rlock()
@@ -212,7 +212,7 @@ FUNCTION update_table_roba( zamjena_sifre )
 
    LOCAL lRet := .F.
    LOCAL lOk := .T.
-   LOCAL _app_rec
+   LOCAL hRec
    LOCAL _sif_exist := .T.
    LOCAL hParams
 
@@ -228,12 +228,12 @@ FUNCTION update_table_roba( zamjena_sifre )
 
    DO WHILE !Eof()
 
-      _app_rec := dbf_get_rec()
+      hRec := dbf_get_rec()
 
-      update_rec_roba_struct( @_app_rec )
+      update_rec_roba_struct( @hRec )
 
       SELECT roba
-      HSEEK _app_rec[ "id" ]
+      HSEEK hRec[ "id" ]
 
       _sif_exist := .T.
       IF !Found()
@@ -242,7 +242,7 @@ FUNCTION update_table_roba( zamjena_sifre )
 
       IF !_sif_exist .OR. ( _sif_exist .AND. zamjena_sifre == "D" )
 
-         @ m_x + 3, m_y + 2 SAY "import roba id: " + _app_rec[ "id" ] + " : " + PadR( _app_rec[ "naz" ], 20 )
+         @ m_x + 3, m_y + 2 SAY "import roba id: " + hRec[ "id" ] + " : " + PadR( hRec[ "naz" ], 20 )
 
          SELECT roba
 
@@ -250,7 +250,7 @@ FUNCTION update_table_roba( zamjena_sifre )
             APPEND BLANK
          ENDIF
 
-         lOk := update_rec_server_and_dbf( "roba", _app_rec, 1, "CONT" )
+         lOk := update_rec_server_and_dbf( "roba", hRec, 1, "CONT" )
 
          IF !lOk .AND. !_sif_exist
             delete_with_rlock()
@@ -409,12 +409,9 @@ STATIC FUNCTION update_rec_roba_struct( rec )
 
 
 
-// ---------------------------------------------------------
-// update tabela sifk, sifv na osnovu pomocnih tabela
-// ---------------------------------------------------------
 FUNCTION update_sifk_sifv()
 
-   LOCAL _app_rec
+   LOCAL hRec
 
    SELECT e_sifk
    SET ORDER TO TAG "ID2"
@@ -422,22 +419,21 @@ FUNCTION update_sifk_sifv()
 
    DO WHILE !Eof()
 
-      _app_rec := dbf_get_rec()
-
-      update_rec_sifk_struct( @_app_rec )
+      hRec := dbf_get_rec( .T. ) // konvertuj stringove u utf8
+      update_rec_sifk_struct( @hRec )
 
       SELECT sifk
       SET ORDER TO TAG "ID2"
       GO TOP
-      SEEK _app_rec[ "id" ] + _app_rec[ "oznaka" ]
+      SEEK hRec[ "id" ] + hRec[ "oznaka" ]
 
       IF !Found()
          APPEND BLANK
       ENDIF
 
-      @ m_x + 3, m_y + 2 SAY "import sifk id: " + _app_rec[ "id" ] + ", oznaka: " + _app_rec[ "oznaka" ]
+      @ m_x + 3, m_y + 2 SAY "import sifk id: " + hRec[ "id" ] + ", oznaka: " + hRec[ "oznaka" ]
 
-      update_rec_server_and_dbf( "sifk", _app_rec, 1, "FULL" )
+      update_rec_server_and_dbf( "sifk", hRec, 1, "FULL" )
 
       SELECT e_sifk
       SKIP
@@ -450,19 +446,19 @@ FUNCTION update_sifk_sifv()
 
    DO WHILE !Eof()
 
-      _app_rec := dbf_get_rec()
+      hRec := dbf_get_rec( .T. ) // konvertuj stringove u utf8
       SELECT sifv
       SET ORDER TO TAG "ID"
       GO TOP
-      SEEK _app_rec[ "id" ] + _app_rec[ "oznaka" ] + _app_rec[ "idsif" ] + _app_rec[ "naz" ]
+      SEEK hRec[ "id" ] + hRec[ "oznaka" ] + hRec[ "idsif" ] + hRec[ "naz" ]
 
       IF !Found()
          APPEND BLANK
       ENDIF
 
-      @ m_x + 3, m_y + 2 SAY "import sifv id: " + _app_rec[ "id" ] + ", oznaka: " + _app_rec[ "oznaka" ] + ", sifra: " + _app_rec[ "idsif" ]
+      @ m_x + 3, m_y + 2 SAY "import sifv id: " + hRec[ "id" ] + ", oznaka: " + hRec[ "oznaka" ] + ", sifra: " + hRec[ "idsif" ]
 
-      update_rec_server_and_dbf( "sifv", _app_rec, 1, "FULL" )
+      update_rec_server_and_dbf( "sifv", hRec, 1, "FULL" )
 
       SELECT e_sifv
       SKIP

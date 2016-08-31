@@ -15,10 +15,10 @@
   update podataka za jedan dbf zapis na serveru
   mijenja zapis na serveru, pa ako je sve ok onda uradi update dbf-a
 
- update_rec_server_and_dbf( table, values, 1, "FULL") - zapocni/zavrsi transakciju unutar funkcije
+ update_rec_server_and_dbf( cTabela, values, 1, "FULL") - zapocni/zavrsi transakciju unutar funkcije
 */
 
-FUNCTION update_rec_server_and_dbf( table, values, algoritam, transaction )
+FUNCTION update_rec_server_and_dbf( cTabela, values, algoritam, cTransaction )
 
    LOCAL _ids := {}
    LOCAL _pos
@@ -38,7 +38,7 @@ FUNCTION update_rec_server_and_dbf( table, values, algoritam, transaction )
    _ret := .T.
 
 
-   IF transaction == "FULL"
+   IF cTransaction == "FULL"
       lLock := .T.
    ELSE
       lLock := .F.
@@ -46,7 +46,7 @@ FUNCTION update_rec_server_and_dbf( table, values, algoritam, transaction )
 
 
    // trebamo where str za values rec
-   set_table_values_algoritam_vars( @table, @values, @algoritam, @transaction, @_a_dbf_rec, @_alg, @_where_str, @_alg_tag )
+   set_table_values_algoritam_vars( @cTabela, @values, @algoritam, @cTransaction, @_a_dbf_rec, @_alg, @_where_str, @_alg_tag )
 
    IF Alias() <> _a_dbf_rec[ "alias" ]
       _msg := "ERR "  + RECI_GDJE_SAM0 + " ALIAS() = " + Alias() + " <> " + _a_dbf_rec[ "alias" ]
@@ -56,28 +56,26 @@ FUNCTION update_rec_server_and_dbf( table, values, algoritam, transaction )
       RETURN .F.
    ENDIF
 
-   // log_write( "START: update_rec_server_and_dbf " + table, 9 )
+   // log_write( "START: update_rec_server_and_dbf " + cTabela, 9 )
 
    _values_dbf := dbf_get_rec()
 
    // trebamo where str za stanje dbf-a
-   set_table_values_algoritam_vars( @table, @_values_dbf, @algoritam, @transaction, @_a_dbf_rec, @_alg, @_where_str_dbf, @_alg_tag )
+   set_table_values_algoritam_vars( @cTabela, @_values_dbf, @algoritam, @cTransaction, @_a_dbf_rec, @_alg, @_where_str_dbf, @_alg_tag )
 
-   IF transaction $ "FULL#BEGIN"
+   IF cTransaction $ "FULL#BEGIN"
       run_sql_query( "BEGIN" )
-      unlock_semaphore( table )
-      lock_semaphore( table )
+      unlock_semaphore( cTabela )
+      lock_semaphore( cTabela )
    ENDIF
 
+   IF !sql_table_update( cTabela, "del", nil, _where_str ) // izbrisi sa servera stare vrijednosti za values
 
-   // izbrisi sa servera stare vrijednosti za values
-   IF !sql_table_update( table, "del", nil, _where_str )
-
-      IF transaction == "FULL"
+      IF cTransaction == "FULL"
          run_sql_query( "ROLLBACK" )
       ENDIF
 
-      _msg := "ERROR: sql delete " + table +  " , ROLLBACK, where: " + _where_str
+      _msg := "ERROR: sql delete " + cTabela +  " , ROLLBACK, where: " + _where_str
       log_write( _msg, 1 )
       Alert( _msg )
 
@@ -98,13 +96,13 @@ FUNCTION update_rec_server_and_dbf( table, values, algoritam, transaction )
       // trebamo uraditi i delete id=id_stari
       // to radimo upravo u sljedecoj sekvenci
       //
-      IF !sql_table_update( table, "del", nil, _where_str_dbf )
+      IF !sql_table_update( cTabela, "del", nil, _where_str_dbf )
 
-         IF transaction == "FULL"
+         IF cTransaction == "FULL"
             run_sql_query( "ROLLBACK" )
          ENDIF
 
-         _msg := "ERROR: sql delete " + table +  " , ROLLBACK, where: " + _where_str_dbf
+         _msg := "ERROR: sql delete " + cTabela +  " , ROLLBACK, where: " + _where_str_dbf
          ?E _msg
          error_bar( "sql_table", _msg )
 
@@ -114,14 +112,14 @@ FUNCTION update_rec_server_and_dbf( table, values, algoritam, transaction )
 
    ENDIF
 
-   IF _ret .AND. !sql_table_update( table, "ins", values )
+   IF _ret .AND. !sql_table_update( cTabela, "ins", values )
 
-      IF transaction == "FULL"
+      IF cTransaction == "FULL"
          run_sql_query( "ROLLBACK" )
-         // unlock_semaphore( table )
+         // unlock_semaphore( cTabela )
       ENDIF
 
-      _msg := RECI_GDJE_SAM + "ERRORY: sql_insert: " + table + " , ROLLBACK values: " + pp( values )
+      _msg := RECI_GDJE_SAM + "ERRORY: sql_insert: " + cTabela + " , ROLLBACK values: " + pp( values )
       log_write( _msg, 1 )
       Alert( _msg )
 
@@ -129,10 +127,9 @@ FUNCTION update_rec_server_and_dbf( table, values, algoritam, transaction )
 
    ENDIF
 
-   // stanje u dbf-u (_values_dbf)
-   _full_id_dbf := get_dbf_rec_primary_key( _alg[ "dbf_key_fields" ], _values_dbf )
-   // stanje podataka u mem rec varijabli values
-   _full_id_mem := get_dbf_rec_primary_key( _alg[ "dbf_key_fields" ], values )
+
+   _full_id_dbf := get_dbf_rec_primary_key( _alg[ "dbf_key_fields" ], _values_dbf ) // stanje u dbf-u (_values_dbf)
+   _full_id_mem := get_dbf_rec_primary_key( _alg[ "dbf_key_fields" ], values ) // stanje podataka u mem rec varijabli values
 
    // stavi id-ove na server
    AAdd( _ids, _alg_tag + _full_id_mem )
@@ -140,13 +137,12 @@ FUNCTION update_rec_server_and_dbf( table, values, algoritam, transaction )
       AAdd( _ids, _alg_tag + _full_id_dbf )
    ENDIF
 
-   IF !push_ids_to_semaphore( table, _ids )
+   IF !push_ids_to_semaphore( cTabela, _ids )
 
-      IF transaction == "FULL"
+      IF cTransaction == "FULL"
          run_sql_query( "ROLLBACK" )
-         ?E "ERR ", RECI_GDJE_SAM0, + "push_ids_to_semaphore " + table + "/ ids=", _alg_tag, _ids, " ! ROLLBACK"
+         ?E "ERR ", RECI_GDJE_SAM0, + "push_ids_to_semaphore " + cTabela + "/ ids=", _alg_tag, _ids, " ! ROLLBACK"
       ENDIF
-
 
       // log_write( _msg, 1 )
       // Alert( _msg )
@@ -159,20 +155,20 @@ FUNCTION update_rec_server_and_dbf( table, values, algoritam, transaction )
 
       IF dbf_update_rec( values )
 
-         IF transaction $ "FULL#END"
+         IF cTransaction $ "FULL#END"
             hParams := hb_Hash()
-            hParams[ "unlock" ] := { table }
+            hParams[ "unlock" ] := { cTabela }
             run_sql_query( "COMMIT" )
          ENDIF
          _ret := .T.
 
       ELSE
 
-         IF transaction == "FULL"
+         IF cTransaction == "FULL"
             run_sql_query( "ROLLBACK" )
          ENDIF
 
-         _msg := "ERR: " + RECI_GDJE_SAM0 + "dbf_update_rec " + table +  " ! ROLLBACK"
+         _msg := "ERR: " + RECI_GDJE_SAM0 + "dbf_update_rec " + cTabela +  " ! ROLLBACK"
          log_write( _msg, 1 )
          Alert( _msg )
 
@@ -182,7 +178,7 @@ FUNCTION update_rec_server_and_dbf( table, values, algoritam, transaction )
 
    ENDIF
 
-   // log_write( "END update_rec_server_and_dbf " + table, 9 )
+   // log_write( "END update_rec_server_and_dbf " + cTabela, 9 )
 
    RETURN _ret
 
@@ -190,7 +186,7 @@ FUNCTION update_rec_server_and_dbf( table, values, algoritam, transaction )
 // ----------------------------------------------------------------------
 // algoritam = 1 - nivo zapisa, 2 - dokument ...
 // ----------------------------------------------------------------------
-FUNCTION delete_rec_server_and_dbf( table, values, algoritam, transaction )
+FUNCTION delete_rec_server_and_dbf( cTabela, values, algoritam, cTransaction )
 
    LOCAL _ids := {}
    LOCAL _pos
@@ -207,7 +203,7 @@ FUNCTION delete_rec_server_and_dbf( table, values, algoritam, transaction )
    LOCAL lLock
    LOCAL hParams
 
-   IF transaction == "FULL"
+   IF cTransaction == "FULL"
       lLock := .T.
    ELSE
       lLock := .F.
@@ -215,7 +211,7 @@ FUNCTION delete_rec_server_and_dbf( table, values, algoritam, transaction )
 
    _ret := .T.
 
-   set_table_values_algoritam_vars( @table, @values, @algoritam, @transaction, @_a_dbf_rec, @_alg, @_where_str, @_alg_tag )
+   set_table_values_algoritam_vars( @cTabela, @values, @algoritam, @cTransaction, @_a_dbf_rec, @_alg, @_where_str, @_alg_tag )
 
    IF Alias() <> _a_dbf_rec[ "alias" ]
       _msg := "ERR "  + RECI_GDJE_SAM0 + " ALIAS() = " + Alias() + " <> " + _a_dbf_rec[ "alias" ]
@@ -226,19 +222,19 @@ FUNCTION delete_rec_server_and_dbf( table, values, algoritam, transaction )
 
    // log_write( "delete rec server, poceo", 9 )
 
-   IF transaction $ "FULL#BEGIN"
+   IF cTransaction $ "FULL#BEGIN"
       run_sql_query( "BEGIN" )
-      unlock_semaphore( table )
-      lock_semaphore( table )
+      unlock_semaphore( cTabela )
+      lock_semaphore( cTabela )
    ENDIF
 
 
-   IF sql_table_update( table, "del", nil, _where_str )
+   IF sql_table_update( cTabela, "del", nil, _where_str )
 
       IF !_a_dbf_rec[ "sql" ]
          _full_id := get_dbf_rec_primary_key( _alg[ "dbf_key_fields" ], values )
          AAdd( _ids, _alg_tag + _full_id )
-         push_ids_to_semaphore( table, _ids )
+         push_ids_to_semaphore( cTabela, _ids )
 
          SELECT ( _a_dbf_rec[ "wa" ] )
          IF !Used()
@@ -250,12 +246,12 @@ FUNCTION delete_rec_server_and_dbf( table, values, algoritam, transaction )
       IF index_tag_num( _alg[ "dbf_tag" ] ) < 1
          IF !_a_dbf_rec[ "sql" ]
 
-            IF transaction == "FULL"
+            IF cTransaction == "FULL"
                run_sql_query( "ROLLBACK" )
-               // unlock_semaphore( table )
+               // unlock_semaphore( cTabela )
             ENDIF
 
-            _msg := "ERROR: " + RECI_GDJE_SAM0 + " tabela: " + table + " DBF_TAG " + _alg[ "dbf_tag" ]
+            _msg := "ERROR: " + RECI_GDJE_SAM0 + " tabela: " + cTabela + " DBF_TAG " + _alg[ "dbf_tag" ]
             error_bar( "del_rec", _msg )
             ?E _msg
             RaiseError( _msg )
@@ -290,12 +286,12 @@ FUNCTION delete_rec_server_and_dbf( table, values, algoritam, transaction )
          my_unlock()
 
 #ifdef F18_DEBUG_SYNC
-         ?E "table: " + table + ", pobrisano iz lokalnog dbf-a broj zapisa = " + AllTrim( Str( _count ) )
+         ?E "cTabela: " + cTabela + ", pobrisano iz lokalnog dbf-a broj zapisa = " + AllTrim( Str( _count ) )
 #endif
 
-         IF transaction $ "FULL#END"
+         IF cTransaction $ "FULL#END"
             hParams := hb_Hash()
-            hParams[ "unlock" ] := { table }
+            hParams[ "unlock" ] := { cTabela }
             run_sql_query( "COMMIT", hParams )
          ENDIF
 
@@ -303,9 +299,9 @@ FUNCTION delete_rec_server_and_dbf( table, values, algoritam, transaction )
 
       ELSE
 
-         IF transaction == "FULL"
+         IF cTransaction == "FULL"
             run_sql_query( "ROLLBACK" )
-            _msg := "delete rec server " + table + " nije lockovana ! ROLLBACK"
+            _msg := "delete rec server " + cTabela + " nije lockovana ! ROLLBACK"
             ?E _msg
             Alert( _msg )
          ENDIF
@@ -317,9 +313,9 @@ FUNCTION delete_rec_server_and_dbf( table, values, algoritam, transaction )
 
    ELSE
 
-      IF transaction == "FULL"
+      IF cTransaction == "FULL"
          run_sql_query( "ROLLBACK" )
-         _msg := "delete rec server, " + table + " transakcija neuspjesna ! ROLLBACK"
+         _msg := "delete rec server, " + cTabela + " transakcija neuspjesna ! ROLLBACK"
          Alert( _msg )
          ?E _msg
       ENDIF
@@ -334,7 +330,7 @@ FUNCTION delete_rec_server_and_dbf( table, values, algoritam, transaction )
 
 
 
-FUNCTION delete_all_dbf_and_server( table )
+FUNCTION delete_all_dbf_and_server( cTabela )
 
    LOCAL _ids := {}
    LOCAL _pos
@@ -344,7 +340,7 @@ FUNCTION delete_all_dbf_and_server( table )
    LOCAL _msg
    LOCAL _rec
 
-   _a_dbf_rec := get_a_dbf_rec( table, .T. )
+   _a_dbf_rec := get_a_dbf_rec( cTabela, .T. )
    reopen_exclusive( _a_dbf_rec[ "table" ] )
 
    unlock_semaphore(  _a_dbf_rec[ "table" ] )
@@ -368,7 +364,7 @@ FUNCTION delete_all_dbf_and_server( table )
 
    ELSE
 
-      _msg := table + "transakcija neuspjesna ! ROLLBACK"
+      _msg := cTabela + "transakcija neuspjesna ! ROLLBACK"
       Alert( _msg )
       log_write( _msg, 1 )
 
@@ -383,7 +379,7 @@ FUNCTION delete_all_dbf_and_server( table )
 // --------------------------------------------------------------------------------------------------------------
 // inicijalizacija varijabli koje koriste update and delete_from_server_and_dbf  funkcije
 // ---------------------------------------------------------------------------------------------------------------
-STATIC FUNCTION set_table_values_algoritam_vars( table, values, algoritam, transaction, a_dbf_rec, alg, where_str, alg_tag )
+STATIC FUNCTION set_table_values_algoritam_vars( cTabela, values, algoritam, cTransaction, a_dbf_rec, alg, where_str, alg_tag )
 
    LOCAL _key
    LOCAL _count := 0
@@ -392,14 +388,14 @@ STATIC FUNCTION set_table_values_algoritam_vars( table, values, algoritam, trans
    LOCAL lSqlTable, uValue
    LOCAL _msg
 
-   IF table == NIL
-      table := Alias()
+   IF cTabela == NIL
+      cTabela := Alias()
    ENDIF
 
-   a_dbf_rec := get_a_dbf_rec( table )
+   a_dbf_rec := get_a_dbf_rec( cTabela )
 
    // ako je alias proslijedjen kao ulazni parametar, prebaci se na dbf_table
-   table := a_dbf_rec[ "table" ]
+   cTabela := a_dbf_rec[ "table" ]
 
 
    IF values == NIL
@@ -407,7 +403,7 @@ STATIC FUNCTION set_table_values_algoritam_vars( table, values, algoritam, trans
       values := dbf_get_rec()
 
       IF ( a_dbf_rec[ "alias" ] != _alias )
-         RaiseError( "values matrica razlicita od tabele ALIAS():" + _alias + " table=" + table )
+         RaiseError( "values matrica razlicita od tabele ALIAS():" + _alias + " cTabela=" + cTabela )
       ENDIF
 
    ENDIF
@@ -417,9 +413,9 @@ STATIC FUNCTION set_table_values_algoritam_vars( table, values, algoritam, trans
    ENDIF
 
    // nema zapoceta transakcija
-   IF transaction == NIL
+   IF cTransaction == NIL
       // pocni i zavrsi trasakciju
-      transaction := "FULL"
+      cTransaction := "FULL"
    ENDIF
 
 
@@ -433,7 +429,7 @@ STATIC FUNCTION set_table_values_algoritam_vars( table, values, algoritam, trans
 
          // ne gledaj numericke kljuceve, koji su array stavke
          IF !hb_HHasKey( values, _key )
-            _msg := RECI_GDJE_SAM + "# tabela:" + table + "#bug - nepostojeći kljuc:" + _key +  "#values:" + pp( values )
+            _msg := RECI_GDJE_SAM + "# tabela:" + cTabela + "#bug - nepostojeći kljuc:" + _key +  "#values:" + pp( values )
             log_write( _msg, 1 )
             MsgBeep( _msg )
             error_bar( "set_t_alg", _msg )

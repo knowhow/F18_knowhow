@@ -11,7 +11,10 @@
 
 #include "f18.ch"
 
-FUNCTION kalk_get_nabavna_prod( cIdFirma, cIdroba, cIdkonto, nKolicina, nKolZN, nNcZadnjaNabavka, nSrednjaNabavnaCijena, dDatNab )
+MEMVAR _datdok
+
+FUNCTION kalk_get_nabavna_prod( cIdFirma, cIdroba, cIdkonto, nKolicina, nKolZN, ;
+      nNcZadnjaNabavka, nSrednjaNabavnaCijena, dDatNab, nSrednjaNcPoUlazima, nNabavnaVrijednost )
 
    LOCAL nPom
    LOCAL nIzlNV
@@ -20,6 +23,7 @@ FUNCTION kalk_get_nabavna_prod( cIdFirma, cIdroba, cIdkonto, nKolicina, nKolZN, 
    LOCAL nUlKol
    LOCAL nSkiniKol
    LOCAL nTmp, nLen
+   LOCAL nUlaziNV := 0, nUlaziKolicina := 0
 
    nKolicina := 0
 
@@ -43,7 +47,6 @@ FUNCTION kalk_get_nabavna_prod( cIdFirma, cIdroba, cIdkonto, nKolicina, nKolZN, 
    GO BOTTOM
 
    IF cIdfirma + cIdkonto + cIdroba == field->idfirma + field->pkonto + field->idroba .AND. _datdok < field->datdok
-
       error_bar( "KA_" + cIdfirma + "-" + Trim( cIdkonto )  + "-" + Trim( cIdroba ), ;
          " KA_PROD " + Trim( cIdkonto ) + "-" + Trim( cIdroba ) + " postoje stavke na datum " + DToC( field->datdok ) )
       // _ERROR := "1"
@@ -57,9 +60,11 @@ FUNCTION kalk_get_nabavna_prod( cIdFirma, cIdroba, cIdkonto, nKolicina, nKolZN, 
    nUlNV := 0
    nUlKol := 0 // ulazna kolicina
    nNcZadnjaNabavka := 0
+   nKolZN := 0
 
    GO TOP
-   DO WHILE !Eof() .AND. cIdFirma + cIdKonto + cIdroba == idFirma + pkonto + idroba .AND. _datdok >= datdok
+   DO WHILE !Eof() .AND. cIdFirma + cIdKonto + cIdroba == field->idFirma + field->pkonto + field->idroba ;
+         .AND. _datdok >= field->datdok
 
       IF field->pu_i == "1" .OR. field->pu_i == "5"
          IF ( field->pu_i == "1" .AND. field->kolicina > 0 ) .OR. ( field->pu_i == "5" .AND. field->kolicina < 0 )
@@ -67,8 +72,11 @@ FUNCTION kalk_get_nabavna_prod( cIdFirma, cIdroba, cIdkonto, nKolicina, nKolZN, 
             nUlKol    += Abs( field->kolicina )       // sve sto udje u magacin strpati pod
             nUlNV     += ( Abs( field->kolicina ) * field->nc )  // ulaznom kolicinom
 
-            IF field->idvd $ "11#80#81"
+            IF field->idvd $ "11#80#81" .AND. field->kolicina > 0
                nNcZadnjaNabavka := field->nc
+               nKolZn := field->kolicina
+               nUlaziNV += field->nc * field->kolicina
+               nUlaziKolicina := field->kolicina
             ENDIF
 
          ELSE
@@ -86,23 +94,27 @@ FUNCTION kalk_get_nabavna_prod( cIdFirma, cIdroba, cIdkonto, nKolicina, nKolZN, 
 
    ENDDO
 
+   IF Round( nUlaziKolicina, 4 ) <> 0
+      nSrednjaNcPoUlazima := nUlaziNV / nUlaziKolicina
+   ELSE
+      nSrednjaNcPoUlazima := 0
+   ENDIF
+
+   nNabavnaVrijednost :=  ( nUlNv - nIzlNv  )
+
    // IF Round( nKol_poz, 8 ) == 0 // utvrdi srednju nabavnu cijenu na osnovu posljednjeg pozitivnog stanja
-   IF Round( nKolicina, 0 ) == 0
+   IF Round( nKolicina, 4 ) == 0
       nSrednjaNabavnaCijena := 0
    ELSE
       // nSrednjaNabavnaCijena := ( nUVr_poz - nIVr_poz ) / nKol_poz // srednja nabavna cijena
-      nSrednjaNabavnaCijena :=  ( nUlNv - nIzlNv  ) / nKolicina
-
-      //IF nSrednjaNabavnaCijena < 0 // kartica je prolupala, srednja nabavna cijena negativna
-      //   nSrednjaNabavnaCijena := 0
-      //ENDIF
+      nSrednjaNabavnaCijena :=  nNabavnaVrijednost / nKolicina
+      // IF nSrednjaNabavnaCijena < 0 // kartica je prolupala, srednja nabavna cijena negativna
+      // nSrednjaNabavnaCijena := 0
+      // ENDIF
    ENDIF
 
-
-   nSrednjaNabavnaCijena := korekcija_nabavne_cijene_sa_zadnjom_ulaznom( nKolicina, nNcZadnjaNabavka, nSrednjaNabavnaCijena )
-
+   nSrednjaNabavnaCijena := korekcija_nabavne_cijene_sa_zadnjom_ulaznom( nKolicina, nKolZN, nNcZadnjaNabavka, nSrednjaNabavnaCijena )
    nKolicina := Round( nKolicina, 4 )
-
    nSrednjaNabavnaCijena := korekcija_nabavna_cijena_0( nSrednjaNabavnaCijena )
 
    IF Round( nSrednjaNabavnaCijena, 4 ) <= 0

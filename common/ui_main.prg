@@ -18,7 +18,7 @@ THREAD STATIC aMsgStack := {}
 
 
 
-FUNCTION Calc_xy( m_x, m_y, N, Length )
+FUNCTION Calc_xy( m_x, m_y, N, nSirina )
 
    LOCAL x, y
 
@@ -32,17 +32,17 @@ FUNCTION Calc_xy( m_x, m_y, N, Length )
    IF ( MAXROWS() - 2 - x ) >=  ( N + 2 )
       m_x := x + 1
 
-      IF Length + y + 3 <= MAXCOLS() - 4
+      IF nSirina + y + 3 <= MAXCOLS() - 4
          m_y := y + 3
-      ELSEIF ( y + 5 ) < ( MAXCOLS() - 2 ) .AND.  ( y - Length > 0 )
-         m_y := y - Length + 5
+      ELSEIF ( y + 5 ) < ( MAXCOLS() - 2 ) .AND.  ( y - nSirina > 0 )
+         m_y := y - nSirina + 5
       ELSE
-         m_y := Int( ( MAXCOLS() - 2 - Length ) / 2 )
+         m_y := Int( ( MAXCOLS() - 2 - nSirina ) / 2 )
       END IF
 
    ELSE
       m_x := Int( ( MAXROWS() - 3 - N ) / 2 + 1 )
-      m_y := Int( ( MAXCOLS() - Length - 2 ) / 2 )
+      m_y := Int( ( MAXCOLS() - nSirina - 2 ) / 2 )
    END IF
 
    RETURN .T.
@@ -103,7 +103,7 @@ FUNCTION what_action( nItemNo )
    RETURN cAction
 
 
-/* fn Msg(Text,Sec, xPos)
+/*
 *   brief Ispisuje tekst i ceka <Sec> sekundi
 *   param xPos je pozicija ukoliko se ne zeli centrirati poruka
 *   note Maksimalna duzina jednog reda je 72 slova
@@ -235,18 +235,18 @@ FUNCTION MsgC( msg_x1, msg_y1, msg_x2, msg_y2 )
    RETURN .T.
 
 
-/* Box(BoxId, N, Length, Inv, chMsg, cHelpT)
- *     Otvara prozor BoxID dimenzija (N x Length), F18_COLOR_INVERT ovan
+/* Box(cBoxId, N, nSirina, Inv, chMsg, cHelpT)
+ *     Otvara prozor cBoxId dimenzija (N x nSirina), F18_COLOR_INVERT ovan
  *         (Inv=.T. ili ne)
  *
  *   param: chMsg - tip C -> prikaz poruke
  *   param: A -> ispisuje opcije pomocu fje OpcTipke
- *   param: boxid se ne koristi
+ *   param: cBoxId se ne koristi
  */
 
-FUNCTION Box( BoxId, NA1, Length, lInvert, chMsg, cHelpT )
+FUNCTION Box( cBoxId, nVisina, nSirina, lInvert, chMsg, cHelpT )
 
-   LOCAL x1, y1, x2, y2
+   LOCAL nX1, nY1, nX2, nY2
    LOCAL LocalC, cPom, cNaslovBoxa
    LOCAL _m_x, _m_y, _nA1
 
@@ -254,30 +254,29 @@ FUNCTION Box( BoxId, NA1, Length, lInvert, chMsg, cHelpT )
    cPom := Set( _SET_DEVICE )
    cNaslovBoxa := ""
 
-   IF BoxID <> NIL .AND. Left( BoxID, 1 ) == "#"
-      cNaslovBoxa := SubStr( BoxID, 2 )
+   IF cBoxId <> NIL .AND. Left( cBoxId, 1 ) == "#"
+      cNaslovBoxa := SubStr( cBoxId, 2 )
    ENDIF
 
    SET DEVICE TO SCREEN
 
    _m_x := m_x
    _m_y := m_y
-   _nA1 := NA1
+   _nA1 := nVisina
 
-   Calc_xy( @_m_x, @_m_y, @_nA1, Length )
-
+   Calc_xy( @_m_x, @_m_y, @_nA1, nSirina )
 
    // stvori prostor za prikaz
    IF ValType( chMsg ) == "A"
 
-      BoxId := OpcTipke( chMsg )
+      cBoxId := OpcTipke( chMsg )
 
-      IF _m_x + _NA1 > MAXROWS() - 3 - BoxId
+      IF _m_x + _NA1 > MAXROWS() - 3 - cBoxId
 
-         _m_x := MAXROWS() - 4 - BoxId - _nA1
+         _m_x := MAXROWS() - 4 - cBoxId - _nA1
 
          IF _m_x < 1
-            _nA1 := MAXROWS() - 5 - BoxId
+            _nA1 := MAXROWS() - 5 - cBoxId
             _m_x := 1
          ENDIF
 
@@ -291,15 +290,15 @@ FUNCTION Box( BoxId, NA1, Length, lInvert, chMsg, cHelpT )
 
    m_x := _m_x
    m_y := _m_y
-   NA1 := _nA1
+   nVisina := _nA1
 
    StackPush( aBoxStack, ;
       {  m_x, ;
       m_y, ;
-      NA1,   ;
-      Length, ;
-      SaveScreen( m_x, m_y, m_x + NA1 + 1, m_Y + Length + 2 ), ;
-      iif( ValType( chMsg ) != "A", "", BoxId ), ;
+      nVisina,   ;
+      nSirina, ;
+      SaveScreen( m_x, m_y, m_x + nVisina + 1, m_Y + nSirina + 2 ), ;
+      iif( ValType( chMsg ) != "A", "", cBoxId ), ;
       Row(), ;
       Col(), ;
       iif( SetCursor() == 0, 0, iif( ReadInsert(), 2, 1 ) ), ;
@@ -315,8 +314,8 @@ FUNCTION Box( BoxId, NA1, Length, lInvert, chMsg, cHelpT )
 
    SetColor( LocalC )
 
-   Scroll( m_x, m_y, m_x + NA1 + 1, m_Y + Length + 2 )
-   @ m_x, m_y TO m_x + NA1 + 1, m_y + Length + 2 DOUBLE
+   Scroll( m_x, m_y, m_x + nVisina + 1, m_Y + nSirina + 2 )
+   @ m_x, m_y TO m_x + nVisina + 1, m_y + nSirina + 2 DOUBLE
 
    IF !Empty( cNaslovBoxa )
       @ m_x, m_y + 2 SAY8 cNaslovBoxa COLOR "GR+/B"
@@ -338,12 +337,12 @@ FUNCTION BoxC()
 
    m_x := aBoxPar[ 1 ]
    m_y := aBoxPar[ 2 ]
-   NA1 := aBoxPar[ 3 ]
-   Length := aBoxPar[ 4 ]
+   nVisina := aBoxPar[ 3 ]
+   nSirina := aBoxPar[ 4 ]
 
 
-   Scroll( m_x, m_y, m_x + NA1 + 1, m_y + Length + 2 )
-   RestScreen( m_x, m_y, m_x + NA1 + 1, m_y + Length + 2, aBoxPar[ 5 ] )
+   Scroll( m_x, m_y, m_x + nVisina + 1, m_y + nSirina + 2 )
+   RestScreen( m_x, m_y, m_x + nVisina + 1, m_y + nSirina + 2, aBoxPar[ 5 ] )
 
    @ AboxPar[ 7 ], aBoxPar[ 8 ] SAY ""
 
@@ -356,8 +355,8 @@ FUNCTION BoxC()
       aBoxPar := StackTop( aBoxStack )
       m_x := aBoxPar[ 1 ]
       m_y := aBoxPar[ 2 ]
-      NA1 := aBoxPar[ 3 ]
-      Length := aBoxPar[ 4 ]
+      nVisina := aBoxPar[ 3 ]
+      nSirina := aBoxPar[ 4 ]
    ENDIF
 
    SET( _SET_DEVICE, cPom )
@@ -900,14 +899,14 @@ FUNCTION FormPicL( cPic, nDuz )
 
 
 
-FUNCTION VarEdit( aNiz, x1, y1, x2, y2, cNaslov, cBoje )
+FUNCTION VarEdit( aNiz, nX1, nY1, nX2, nY2, cNaslov, cBoje )
 
    LOCAL GetList := {}, cBsstara := ShemaBoja( cBoje ), pom1, pom3, pom4, pom5, nP := 0
    LOCAL cPomUI := Set( _SET_DEVICE )
 
    PushWa()
    SET DEVICE TO SCREEN
-   Prozor1( x1, y1, x2, y2, cNaslov, cBNaslova,, cBOkvira, cBTeksta, 2 )
+   Prozor1( nX1, nY1, nX2, nY2, cNaslov, cBNaslova,, cBOkvira, cBTeksta, 2 )
    FOR i := 1 TO Len( aNiz )
       cPom := aNiz[ i, 2 ]
       IF aNiz[ i, 3 ] == NIL .OR. Len( aNiz[ i, 3 ] ) == 0; aNiz[ i, 3 ] := ".t."; ENDIF
@@ -922,7 +921,7 @@ FUNCTION VarEdit( aNiz, x1, y1, x2, y2, cNaslov, cBoje )
       ENDIF
 
       pom1 := aNiz[ i, 1 ]; pom4 := aNiz[ i, 4 ]; pom5 := aNiz[ i, 5 ]
-      @ x1 + 1 + i, y1 + 2 SAY8 PadR( pom1, y2 - y1 - 4 -iif( "S" $ pom4, DuzMaske( pom4 ), iif( Empty( pom4 ), LENx( &( cPom ) ), Len( Transform( &cPom, pom4 ) ) ) ), "." ) GET &cPom WHEN &pom5 VALID &pom3 PICT pom4
+      @ nX1 + 1 + i, nY1 + 2 SAY8 PadR( pom1, nY2 - nY1 - 4 -iif( "S" $ pom4, DuzMaske( pom4 ), iif( Empty( pom4 ), LENx( &( cPom ) ), Len( Transform( &cPom, pom4 ) ) ) ), "." ) GET &cPom WHEN &pom5 VALID &pom3 PICT pom4
    NEXT
    PRIVATE MGetList := GetList
    READ

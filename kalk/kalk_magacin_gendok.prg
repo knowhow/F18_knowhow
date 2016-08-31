@@ -29,6 +29,10 @@ FUNCTION GenMag()
 
    AAdd( _opc, "3. inventure" )
    AAdd( _opcexe, {|| kalk_inventura_magacin_im_meni() } )
+
+
+   AAdd( _opc, "4. magacin generacija 95 usklađenje nc" )
+   AAdd( _opcexe, {|| kalk_gen_uskladjenje_nc_95() } )
 /*
    AAdd( _opc, "4. nivelacija po zadatom %" )
    AAdd( _opcexe, {|| MNivPoProc() } )
@@ -50,8 +54,6 @@ FUNCTION kalk_inventura_magacin_im_meni()
    AAdd( Opc, "2. inventura-razlika prema postojecoj IM" )
    AAdd( opcexe, {|| kalk_generisanje_inventure_razlike_magacin_im() } )
 
-   AAdd( Opc, "3. magacin generacija 95 usklađenje nc" )
-   AAdd( opcexe, {|| kalk_gen_uskladjenje_nc_95() } )
 
    PRIVATE Izbor := 1
    Menu_SC( "mmi" )
@@ -91,7 +93,7 @@ FUNCTION Iz12u97()
 
    // utvrdimo broj nove kalkulacije
    find_kalk_doks_by_broj_dokumenta( cIdFirma, cIdVdI )
-   //SELECT KALK_DOKS; SEEK cIdFirma + cIdVdI + Chr( 255 ); SKIP -1
+   // SELECT KALK_DOKS; SEEK cIdFirma + cIdVdI + Chr( 255 ); SKIP -1
    GO BOTTOM
    IF cIdFirma + cIdVdI == IDFIRMA + IDVD
       cBrDokI := brdok
@@ -158,7 +160,7 @@ FUNCTION InvManj()
    o_koncij()
    o_kalk_pripr()
    o_kalk_pripr2()
-   //o_kalk()
+   // o_kalk()
    O_SIFK
    O_SIFV
    O_ROBA
@@ -618,8 +620,8 @@ FUNCTION kalk_generisi_prijem16_iz_otpreme96()
    kalk_fix_brdok_add_1( @cBrUlaz )
 */
 
-   //PRIVATE cBrUlaz := kalk_get_next_broj_v5( cIdFirma, "16", field->idkonto )
-   cBrUlaz := "G" + SUBSTR( field->brdok, 2 )
+   // PRIVATE cBrUlaz := kalk_get_next_broj_v5( cIdFirma, "16", field->idkonto )
+   cBrUlaz := "G" + SubStr( field->brdok, 2 )
 
 
    SELECT kalk_pripr
@@ -760,7 +762,6 @@ FUNCTION kalk_gen_16_iz_96()
  */
 
 FUNCTION Iz16u14()
-
 
    o_kalk_edit()
 

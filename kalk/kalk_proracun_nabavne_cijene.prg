@@ -12,7 +12,7 @@
 #include "f18.ch"
 
 
-MEMVAR _idroba, _Kolicina
+MEMVAR _mkonto, _idroba, _Kolicina, m_x, m_y, GetList
 
 STATIC s_nPragOdstupanjaNCSumnjiv := NIL
 STATIC s_nStandarnaStopaMarze := NIL
@@ -66,11 +66,11 @@ FUNCTION standardna_stopa_marze( nSet )
    RETURN s_nStandarnaStopaMarze
 
 
-FUNCTION korekcija_nabavne_cijene_sa_zadnjom_ulaznom( nKolicina, nZadnjaUlaznaNC, nSrednjaNabavnaCijena )
+FUNCTION korekcija_nabavne_cijene_sa_zadnjom_ulaznom( nKolicina, nZadnjiUlazKol, nZadnjaUlaznaNC, nSrednjaNabavnaCijena )
 
    LOCAL nOdst
-   LOCAL nTmp_n_stanje, nTmp_n_nv, nTmp_s_nv
-   LOCAL cPonudi
+   LOCAL cDN
+   LOCAL nX
 
    IF Round( nSrednjaNabavnaCijena, 4 ) == 0 .AND. Round( nZadnjaUlaznaNC, 4 ) > 0
       nSrednjaNabavnaCijena := nZadnjaUlaznaNC
@@ -86,19 +86,44 @@ FUNCTION korekcija_nabavne_cijene_sa_zadnjom_ulaznom( nKolicina, nZadnjaUlaznaNC
 
    IF Abs( nOdst ) > prag_odstupanja_nc_sumnjiv()
 
+      CLEAR TYPEAHEAD
+/*
       MsgBeep( "Odstupanje #" + AllTrim( Str( Abs( nOdst ) ) ) + " %" + "#" + ;
          "artikal: " + AllTrim( _idroba ) + " " + PadR( roba->naz, 15 ) + "#" + ;
          "količina na stanju: " + say_kolicina( nKolicina ) + " # " +;
          "# srednja nc:" + AllTrim( say_cijena( nSrednjaNabavnaCijena ) ) + ", zadnji ulaz nc:" + AllTrim( say_cijena( nZadnjaUlaznaNC ) ) )
-
+*/
       IF nKolicina <= 0
-         cPonudi := "D" // kartica je u minusu - najbolje razduzi prema posljednjem ulazu
+         cDN := "D" // kartica je u minusu - najbolje razduzi prema posljednjem ulazu
       ELSE
-         cPonudi := "N" // metodom srednje nabavne cijene razduzi
+         cDN := "N" // metodom srednje nabavne cijene razduzi
       ENDIF
+/*
       IF Pitanje(, "Korigovati NC na zadnju ulaznu (D/N)?", cPonudi ) == "D"
          nSrednjaNabavnaCijena := nZadnjaUlaznaNC
       ENDIF
+      */
+
+      nX := 2
+      Box( "#" + "== Odstupanje NC " + AllTrim( _mkonto ) + "/" + AllTrim( _idroba ) + " ===", 12, 70, .T. )
+
+      @ m_x + nX, m_y + 2   SAY     "Artikal: " + AllTrim( _idroba ) + "-"+ PadR( roba->naz, 20 )
+      nX += 2
+      @ m_x + nX++, m_y + 2 SAY8 "  količina na stanju: " + AllTrim( say_kolicina( nKolicina ) )
+      @ m_x + nX, m_y + 2 SAY8 "            Srednja NC: " + AllTrim( say_cijena( nSrednjaNabavnaCijena ) ) + " <"
+      nX  += 2
+      @ m_x + nX++, m_y + 2 SAY8 "količina zadnji ulaz: " + AllTrim( say_kolicina( nZadnjiUlazKol ) )
+      @ m_x + nX++, m_y + 2 SAY8 "      NC Zadnji ulaz: " + AllTrim( say_cijena( nZadnjaUlaznaNC ) ) + " <"
+      nX += 2
+      @ m_x + nX++, m_y + 2 SAY8 " Korigovati NC na zadnju ulaznu: D/N ?"  GET cDn VALID cDn $ "DN" PICT "@!"
+
+      READ
+      BoxC()
+
+      IF cDN == "D"
+         nSrednjaNabavnaCijena := nZadnjaUlaznaNC
+      ENDIF
+
    ENDIF
 
    RETURN nSrednjaNabavnaCijena

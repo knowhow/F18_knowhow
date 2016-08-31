@@ -256,12 +256,13 @@ FUNCTION find_kalk_by_mkonto_idroba_idvd( cIdFirma, cIdVd, cIdKonto, cIdRoba, cO
 
    RETURN !Eof()
 
-FUNCTION find_kalk_by_mkonto_idroba( cIdFirma, cIdKonto, cIdRoba, cOrderBy, lReport, cAlias )
+FUNCTION find_kalk_by_mkonto_idroba( cIdFirma, cIdKonto, cIdRoba, cOrderBy, lReport, cAlias, cDistinct )
 
    LOCAL hParams := hb_Hash()
 
    hb_default( @cOrderBy, "idfirma,mkonto,idroba,datdok,podbr,mu_i,idvd" )
    hb_default( @lReport, .T. )
+   hb_default( @cDistinct, "" )
 
    IF cIdFirma != NIL
       hParams[ "idfirma" ] := cIdFirma
@@ -276,6 +277,10 @@ FUNCTION find_kalk_by_mkonto_idroba( cIdFirma, cIdKonto, cIdRoba, cOrderBy, lRep
       hParams[ "alias" ] := cAlias
    ENDIF
    hParams[ "order_by" ] := cOrderBy
+
+   IF cDistinct != NIL
+      hParams[ "distinct" ] := cDistinct
+   ENDIF
 
    IF lReport
       hParams[ "polja" ] := "rpt_magacin" // samo polja potrebna za magacin
@@ -388,6 +393,8 @@ FUNCTION use_sql_kalk( hParams )
    LOCAL cSql
    LOCAL lReportMagacin := .F.
    LOCAL lReportProdavnica := .F.
+   LOCAL lAlias := .F.
+   LOCAL cDistinct := .F.
 
    default_if_nil( @hParams, hb_Hash() )
 
@@ -397,7 +404,15 @@ FUNCTION use_sql_kalk( hParams )
    IF hb_HHasKey( hParams, "polja" ) .AND. hParams[ "polja" ] == "rpt_prod"
       lReportProdavnica := .T.
    ENDIF
+
+   IF hb_HHasKey( hParams, "distinct" )
+      cDistinct := hParams[ "distinct" ]
+   ENDIF
+
    cSql := "SELECT "
+   IF !Empty( cDistinct )
+      cSql += " DISTINCT ON (" + cDistinct + ") "
+   ENDIF
    cSql += coalesce_char_zarez( "kalk_kalk.idfirma", 2 )
    cSql += coalesce_char_zarez( "kalk_kalk.idvd", 2 )
    cSql += coalesce_char_zarez( "kalk_kalk.brdok", 8 )
@@ -492,12 +507,17 @@ FUNCTION use_sql_kalk( hParams )
 
    IF hb_HHasKey( hParams, "alias" )
       cTable := hParams[ "alias" ]
+      lAlias := .T.
    ENDIF
 
    IF hb_HHasKey( hParams, "wa" )
       SELECT ( hParams[ "wa" ] )
    ELSE
-      SELECT ( F_KALK )
+      IF !lAlias
+         SELECT ( F_KALK )
+      ELSE
+         SELECT 0
+      ENDIF
    ENDIF
 
 

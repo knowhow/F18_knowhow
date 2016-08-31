@@ -447,7 +447,7 @@ FUNCTION V_kol10()
 
       IF !Empty( kalk_metoda_nc() )
 
-         kalk_get_nabavna_mag( _idfirma, _idroba, _mkonto, @nKolS, @nKolZN, @nC1, @nC2, @dDatNab )
+         kalk_get_nabavna_mag( _datdok, _idfirma, _idroba, _mkonto, @nKolS, @nKolZN, @nC1, @nC2, @dDatNab )
 
          @ m_x + 12, m_y + 30   SAY "Ukupno na stanju "; @ m_x + 12, Col() + 2 SAY nKols PICT pickol
       ENDIF

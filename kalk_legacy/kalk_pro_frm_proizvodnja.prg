@@ -121,7 +121,7 @@ FUNCTION leg_Get1_PR()
                   IF _TBankTr <> "X"
                      // ako je X onda su stavke vec izgenerisane
 
-                     kalk_get_nabavna_mag( _idfirma, sast->id2, _idkonto2, @nKolS, @nKolZN, @nc1, @nc2, @dDatNab )
+                     kalk_get_nabavna_mag( _datdok, _idfirma, sast->id2, _idkonto2, @nKolS, @nKolZN, @nc1, @nc2, @dDatNab )
 
                      IF dDatNab > _DatDok
                         Beep( 1 )
@@ -189,7 +189,7 @@ FUNCTION leg_Get1_PR()
 
       IF _TBankTr <> "X"
 
-         kalk_get_nabavna_mag( _idfirma, _idroba, _idkonto2, @nKolS, @nKolZN, @nc1, @nc2, @dDatNab )
+         kalk_get_nabavna_mag( _datdok, _idfirma, _idroba, _idkonto2, @nKolS, @nKolZN, @nc1, @nc2, @dDatNab )
 
          IF dDatNab > _DatDok
             Beep( 1 )

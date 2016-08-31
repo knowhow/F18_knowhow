@@ -55,7 +55,7 @@ FUNCTION kalk_get_1_18()
       IF gKolicFakt == "D"
          KalkNaF( _idroba, @_kolicina )
       ELSE
-         kalk_get_nabavna_mag( _idfirma, _idroba, _idkonto, @_kolicina, NIL, NIL, NIL, @dDatNab )
+         kalk_get_nabavna_mag( _datdok, _idfirma, _idroba, _idkonto, @_kolicina, NIL, NIL, NIL, @dDatNab )
       ENDIF
 
    ENDIF

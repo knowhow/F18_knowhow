@@ -98,7 +98,7 @@ FUNCTION Get1_82()
    lGenStavke := .F.
    IF _TBankTr <> "X"
 
-      kalk_get_nabavna_mag( _idfirma, _idroba, _idkonto, @nKolS, @nKolZN, @nc1, @nc2, @dDatNab )
+      kalk_get_nabavna_mag( _datdok, _idfirma, _idroba, _idkonto, @nKolS, @nKolZN, @nc1, @nc2, @dDatNab )
 
       IF dDatNab > _DatDok; Beep( 1 );Msg( "Datum nabavke je " + DToC( dDatNab ), 4 );ENDIF
       IF kalk_metoda_nc() $ "13"; _nc := nc1; ELSEIF kalk_metoda_nc() == "2"; _nc := nc2; ENDIF

@@ -89,5 +89,5 @@ vise instanci F18
 
     ./F18 --dbf-prefix 2
 
-    ./F18 --run-on-start kalk_gen_uskladjenje_nc_95()
+    ./F18 --run-on-start kalk_gen_uskladjenje_nc_95\(\)
 

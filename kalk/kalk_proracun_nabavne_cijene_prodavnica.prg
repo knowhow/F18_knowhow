@@ -14,7 +14,8 @@
 MEMVAR _datdok
 
 FUNCTION kalk_get_nabavna_prod( cIdFirma, cIdroba, cIdkonto, nKolicina, nKolZN, ;
-      nNcZadnjaNabavka, nSrednjaNabavnaCijena, dDatNab, nSrednjaNcPoUlazima, nNabavnaVrijednost )
+      nNcZadnjaNabavka, nSrednjaNabavnaCijena, dDatNab, ;
+      nSrednjaNcPoUlazima, nNabavnaVrijednost, lSilent )
 
    LOCAL nPom
    LOCAL nIzlNV
@@ -26,7 +27,7 @@ FUNCTION kalk_get_nabavna_prod( cIdFirma, cIdroba, cIdkonto, nKolicina, nKolZN, 
    LOCAL nUlaziNV := 0, nUlaziKolicina := 0
 
    nKolicina := 0
-
+   hb_default( @lSilent, .F. )
 /*
   -- IF lAutoObr == .T.
 
@@ -75,8 +76,9 @@ FUNCTION kalk_get_nabavna_prod( cIdFirma, cIdroba, cIdkonto, nKolicina, nKolZN, 
             IF field->idvd $ "11#80#81" .AND. field->kolicina > 0
                nNcZadnjaNabavka := field->nc
                nKolZn := field->kolicina
+
                nUlaziNV += field->nc * field->kolicina
-               nUlaziKolicina := field->kolicina
+               nUlaziKolicina += field->kolicina
             ENDIF
 
          ELSE
@@ -113,7 +115,7 @@ FUNCTION kalk_get_nabavna_prod( cIdFirma, cIdroba, cIdkonto, nKolicina, nKolZN, 
       // ENDIF
    ENDIF
 
-   nSrednjaNabavnaCijena := korekcija_nabavne_cijene_sa_zadnjom_ulaznom( nKolicina, nKolZN, nNcZadnjaNabavka, nSrednjaNabavnaCijena )
+   nSrednjaNabavnaCijena := korekcija_nabavne_cijene_sa_zadnjom_ulaznom( nKolicina, nKolZN, nNcZadnjaNabavka, nSrednjaNabavnaCijena, lSilent )
    nKolicina := Round( nKolicina, 4 )
    nSrednjaNabavnaCijena := korekcija_nabavna_cijena_0( nSrednjaNabavnaCijena )
 

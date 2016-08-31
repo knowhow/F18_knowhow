@@ -20,16 +20,21 @@ FUNCTION kalk_gen_uskladjenje_nc_95()
    LOCAL hParams := hb_Hash(), hRec
    LOCAL nKolicina, nKolZn, nNcZadnjaNabavka, nSrednjaNabavnaCijena, dDatNab
    LOCAL nNabavnaVrijednost, nSrednjaNcPoUlazima
-   LOCAL nRbr
+   LOCAL nRbr, dDatDo, nOdstupanje
 
    hParams[ "idkonto" ] := PadR( "13202", 7 )
    hParams[ "datdok" ] := Date()
+   hParams[ "prag" ] := prag_odstupanja_nc_sumnjiv()
 
 
    select_o_kalk_pripr()
    IF reccount2() > 0
-      MsgBeep( "kalk priprema nije prazna!# STOP" )
-      RETURN .F.
+      IF Pitanje(, "Brisati pripremu ?", "N" ) == "D"
+         my_dbf_zap()
+      ELSE
+         MsgBeep( "kalk priprema nije prazna!# STOP" )
+         RETURN .F.
+      ENDIF
    ENDIF
 
    IF !get_vars( @hParams )
@@ -39,8 +44,7 @@ FUNCTION kalk_gen_uskladjenje_nc_95()
 
 
    MsgO( "Preuzimanje podataka sa servera ..." )
-   AltD()
-   find_kalk_by_mkonto_idroba( cIdFirma, hParams[ "idkonto" ], PadR( "V104050", 10 ), ;
+   find_kalk_by_mkonto_idroba( cIdFirma, hParams[ "idkonto" ], NIL, ;
       "kalk_kalk.idroba,kalk_kalk.mkonto", NIL, "kalk_select", "kalk_kalk.idroba" )
    // ( cIdFirma, cIdKonto, cIdRoba, cOrderBy, lReport, cAlias )
    GO TOP
@@ -51,18 +55,21 @@ FUNCTION kalk_gen_uskladjenje_nc_95()
    select_o_tarifa()
 
    SELECT kalk_select
-   AltD()
 
    nRbr := 1
    DO WHILE !kalk_select->( Eof() )
 
       cIdroba := field->idroba
+      dDatDo := hParams[ "datdok" ]
       Scatter() // public vars zapisa
-      kalk_get_nabavna_mag( cIdFirma, cIdRoba, hParams[ "idkonto" ], ;
-         @nKolicina, @nKolZN, @nNcZadnjaNabavka, @nSrednjaNabavnaCijena, @dDatNab, @nNabavnaVrijednost, @nSrednjaNcPoUlazima )
+      kalk_pozicioniraj_roba_tarifa_by_kalk_fields()
+
+      kalk_get_nabavna_mag( dDatDo, cIdFirma, cIdRoba, hParams[ "idkonto" ], ;
+         @nKolicina, @nKolZN, @nNcZadnjaNabavka, @nSrednjaNabavnaCijena, @dDatNab, ;
+         @nNabavnaVrijednost, @nSrednjaNcPoUlazima, .T. )
 
       SELECT kalk_pripr
-      APPEND BLANK
+
       hRec := dbf_get_rec()
       hRec[ "idfirma" ] := cIdFirma
       hRec[ "idvd" ] := "95"
@@ -70,30 +77,48 @@ FUNCTION kalk_gen_uskladjenje_nc_95()
       hRec[ "brfaktp" ] := "NC" + DToS( hParams[ "datdok" ] )
       hRec[ "idkonto2" ] := hParams[ "idkonto" ]
       hRec[ "mkonto" ] := hParams[ "idkonto" ]
-
-      IF Abs( Round( nKolicina, 4 ) ) == 0
-         hRec[ "nc" ] := nNabavnaVrijednost
-         hRec[ "kolicina" ] := -1
+      hRec[ "mu_i" ] := "5"
+      IF Round( nKolicina, 3 ) == 0
+         hRec[ "kolicina" ] := 1
+         IF Round( nNabavnaVrijednost, 3 ) == 0
+            nOdstupanje := 0
+         ELSE
+            hRec[ "nc" ] := nNabavnaVrijednost + 0.000001 // kartica ima NV, a kolicinu 0, popraviti
+            nOdstupanje := 1000
+         ENDIF
       ELSE
-         hRec[ "kolicina" ] := -nKolicina
+         hRec[ "kolicina" ] := nKolicina
          hRec[ "nc" ] := nNabavnaVrijednost / nKolicina // srednja nc po kartici
+         nOdstupanje := Min( Abs( nSrednjaNcPoUlazima ), Abs( hRec[ "nc" ] ) )
+         IF nOdstupanje > 0 // procenat odstupanja srednje nc po ulazima od srednje nc po kartici
+            nOdstupanje := Abs( nSrednjaNcPoUlazima - hRec[ "nc" ] ) / nOdstupanje * 100
+         ENDIF
       ENDIF
+
+      IF nOdstupanje < hParams[ "prag" ] // nije znacajno odstupanje
+         SELECT kalk_select
+         SKIP
+         LOOP
+      ENDIF
+
       hRec[ "idroba" ] := cIdRoba
       hRec[ "datdok" ] := hParams[ "datdok" ]
       hRec[ "rbr" ] := Str( nRbr++, 3 )
       hRec[ "idtarifa" ] := roba->idtarifa
-      kalk_pozicioniraj_roba_tarifa_by_kalk_fields()
+
+
+      SELECT kalk_pripr
+      APPEND BLANK
       dbf_update_rec( hRec )
 
       APPEND BLANK
-      IF Abs( Round( nKolicina, 4 ) ) == 0
-         hRec[ "kolicina" ] := 1
-         hRec[ "nc" ] := 0
+      IF Abs( Round( nKolicina, 3 ) ) == 0
+         hRec[ "kolicina" ] := -1
+         hRec[ "nc" ] := 0.000001
       ELSE
-         hRec[ "nc" ] := 0
-         hRec[ "kolicina" ] := nSrednjaNcPoUlazima
+         hRec[ "kolicina" ] := -nKolicina
+         hRec[ "nc" ] := nSrednjaNcPoUlazima
       ENDIF
-
       hRec[ "rbr" ] := Str( nRbr++, 3 )
       dbf_update_rec( hRec )
 
@@ -107,8 +132,10 @@ FUNCTION kalk_gen_uskladjenje_nc_95()
 STATIC FUNCTION get_vars( hParams )
 
    Box( "bv", 10, 80 )
-   @ m_x + 1, m_y + 2 SAY " Magacinski konto: " GET  hParams[ "idkonto" ]
-   @ m_x + 2, m_y + 2 SAY " Datum dokumenta " GET hParams[ "datdok" ]
+   @ m_x + 1, m_y + 2 SAY "  Magacinski konto: " GET  hParams[ "idkonto" ]
+   @ m_x + 2, m_y + 2 SAY "   Datum dokumenta: " GET hParams[ "datdok" ]
+   @ m_x + 3, m_y + 2 SAY "prag odstupanja NC: " GET hParams[ "prag" ]
+
 
    READ
    BoxC()

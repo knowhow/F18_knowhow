@@ -11,22 +11,23 @@
 
 #include "f18.ch"
 
-MEMVAR _idroba, _datdok
+MEMVAR _idroba
 
 /*
   Racuna nabavnu cijenu i stanje robe u magacinu
-   kalk_get_nabavna_mag(cIdFirma, cIdRoba, cIdKonto, 4-nKolicina, 5-nKolZN, 6-nNC, 7-nSrednjaNabavnaCijena, 8-dDatNab)
-
-  4) kolicina na stanju
-  5) nKolZN - kolicina koja je na stanju od zadnje nabavke
-  6) nNcZadnjaNabavka - zadnja nabavna cijena
-  7) nSrednjaNabavnaCijena - srednja nabavna cijena
-  8) param dDatNab - datum nabavke
+   1 - dDatDo datum do kojeg se obracunava
+   2-4 cIdFirma, cIdRoba, cIdKonto,
+  5) kolicina na stanju
+  6) nKolZN - kolicina koja je na stanju od zadnje nabavke
+  7) nNcZadnjaNabavka - zadnja nabavna cijena
+  8) nSrednjaNabavnaCijena - srednja nabavna cijena
+  9- dDatNab - datum nabavke
 
 */
 
-FUNCTION kalk_get_nabavna_mag( cIdFirma, cIdRoba, cIdKonto, nKolicina, nKolZN, ;
-      nNcZadnjaNabavka, nSrednjaNabavnaCijena, dDatNab, nSrednjaNcMatematika, nNabavnaVrijednost )
+FUNCTION kalk_get_nabavna_mag( dDatDo, cIdFirma, cIdRoba, cIdKonto, ;
+      nKolicina, nKolZN, nNcZadnjaNabavka, nSrednjaNabavnaCijena, dDatNab, ;
+      nNabavnaVrijednost, nSrednjaNcPoUlazima, lSilent )
 
    LOCAL nPom
    LOCAL nIzlNV
@@ -36,15 +37,17 @@ FUNCTION kalk_get_nabavna_mag( cIdFirma, cIdRoba, cIdKonto, nKolicina, nKolZN, ;
    LOCAL nSkiniKol
    LOCAL nKolNeto
    LOCAL nKol_poz := 0 // posljednje pozitivno stanje
-   LOCAL nUVr_poz, nIVr_poz
-   LOCAL nUKol_poz, nIKol_poz
+
+   // LOCAL nUVr_poz, nIVr_poz
+   // LOCAL nUKol_poz, nIKol_poz
    LOCAL nTmp
    LOCAL nTmp_n_stanje, nTmp_n_nv, nTmp_s_nv
    LOCAL cIdVd, nLen
-   LOCAL nUlaziNV := 0, nUlaziKolicina := 0, nSrednjaNcPoUlazima
+   LOCAL nUlaziNV := 0, nUlaziKolicina := 0
 
    nKolicina := 0
 
+   hb_default( @lSilent, .F. )
    IF Empty( kalk_metoda_nc() )  .OR. ( roba->tip $ "UT" )
       RETURN .F.
    ENDIF
@@ -63,7 +66,8 @@ FUNCTION kalk_get_nabavna_mag( cIdFirma, cIdRoba, cIdKonto, nKolicina, nKolZN, ;
    find_kalk_by_mkonto_idroba( cIdFirma, cIdKonto, cIdRoba )
    GO BOTTOM
 
-   IF ( ( cIdFirma + cIdKonto + cIdRoba ) == ( field->idfirma + field->mkonto + field->idroba ) ) .AND. _datdok < field->datdok
+   IF ( ( cIdFirma + cIdKonto + cIdRoba ) == ( field->idfirma + field->mkonto + field->idroba ) ) ;
+         .AND. dDatDo < field->datdok
       error_bar( "KA_" + cIdfirma + "/" + cIdKonto + "/" + cIdRoba, "Postoji dokument " + field->idfirma + "-" + field->idvd + "-" + field->brdok + " na datum: " + DToC( field->datdok ), 4 )
       // _ERROR := "1"
    ENDIF
@@ -81,7 +85,8 @@ FUNCTION kalk_get_nabavna_mag( cIdFirma, cIdRoba, cIdKonto, nKolicina, nKolZN, ;
 
 
    GO TOP
-   DO WHILE !Eof() .AND. ( ( cIdFirma + cIdKonto + cIdRoba ) == ( field->idFirma + field->mkonto + field->idroba ) ) .AND. _datdok >= field->datdok
+   DO WHILE !Eof() .AND. ( ( cIdFirma + cIdKonto + cIdRoba ) == ( field->idFirma + field->mkonto + field->idroba ) ) ;
+         .AND. dDatDo >= field->datdok
 
       IF field->mu_i == "1" .OR. field->mu_i == "5"
 
@@ -100,8 +105,9 @@ FUNCTION kalk_get_nabavna_mag( cIdFirma, cIdRoba, cIdKonto, nKolicina, nKolZN, ;
             IF field->idvd $ "10#16" .AND. field->kolicina > 0 // zapamti uvijek zadnju ulaznu NC
                nNcZadnjaNabavka := field->nc
                nKolZn := field->kolicina
+
                nUlaziNV += field->nc * field->kolicina
-               nUlaziKolicina := field->kolicina
+               nUlaziKolicina += field->kolicina
             ENDIF
 
          ELSE
@@ -112,6 +118,7 @@ FUNCTION kalk_get_nabavna_mag( cIdFirma, cIdRoba, cIdKonto, nKolicina, nKolZN, ;
 
          ENDIF
 
+/*
          IF Round( nKolicina, 8 ) > 0  // ako je kolicinsko stanje pozitivno zapamti ga
             nKol_poz := nKolicina
             nUKol_poz := nUlKol
@@ -119,13 +126,14 @@ FUNCTION kalk_get_nabavna_mag( cIdFirma, cIdRoba, cIdKonto, nKolicina, nKolZN, ;
             nUVr_poz := nUlNv
             nIVr_poz := nIzlNv
          ENDIF
+*/
 
       ENDIF
       SKIP
 
    ENDDO
 
-   nNabavnaVrijednost :=  ( nUlNv - nIzlNv  )
+   nNabavnaVrijednost := nUlNv - nIzlNv
 
    IF Round( nUlaziKolicina, 4 ) <> 0
       nSrednjaNcPoUlazima := nUlaziNV / nUlaziKolicina
@@ -144,7 +152,7 @@ FUNCTION kalk_get_nabavna_mag( cIdFirma, cIdRoba, cIdKonto, nKolicina, nKolZN, ;
       // ENDIF
    ENDIF
 
-   nSrednjaNabavnaCijena := korekcija_nabavne_cijene_sa_zadnjom_ulaznom( nKolicina, nKolZN, nNcZadnjaNabavka, nSrednjaNabavnaCijena )
+   nSrednjaNabavnaCijena := korekcija_nabavne_cijene_sa_zadnjom_ulaznom( nKolicina, nKolZN, nNcZadnjaNabavka, nSrednjaNabavnaCijena, lSilent )
 
    nKolicina := Round( nKolicina, 4 )
    nSrednjaNabavnaCijena := korekcija_nabavna_cijena_0( nSrednjaNabavnaCijena )

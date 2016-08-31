@@ -112,7 +112,7 @@ FUNCTION kalk_get_1_14()
 
       IF !Empty( kalk_metoda_nc() )
 
-         kalk_get_nabavna_mag( _idfirma, _idroba, _idkonto2, @nKolS, @nKolZN, @nc1, @nc2, @dDatNab )
+         kalk_get_nabavna_mag( _datdok, _idfirma, _idroba, _idkonto2, @nKolS, @nKolZN, @nc1, @nc2, @dDatNab )
 
          @ m_x + 12, m_y + 30   SAY "Ukupno na stanju "
          @ m_x + 12, Col() + 2 SAY nKols PICT pickol

@@ -611,7 +611,7 @@ FUNCTION OdBanku( cIdPartn, cDefault, fsilent )
 
       DO WHILE .T.
 
-         izbor := menu( "ab-1", aBanke, izbor, .F., "1" )
+         izbor := meni_0( "ab-1", aBanke, izbor, .F., "1" )
 
          IF izbor = 0
             EXIT

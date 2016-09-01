@@ -368,7 +368,7 @@ METHOD popup
    AAdd( opc, "3. generisi dopremu za kolicinu viska" )
    AAdd( opcexe, {|| ::genDokVisak() } )
 
-   Menu_SC( "ppin" )
+   f18_menu_sa_priv_vars_opc_opcexe_izbor( "ppin" )
 
    RETURN NIL
 

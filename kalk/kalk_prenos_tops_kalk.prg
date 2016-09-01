@@ -117,7 +117,7 @@ STATIC FUNCTION tops_kalk_import_meni()
 
    DO WHILE .T.
 
-      nMeniOdabir := Menu( "topk", aOpcije, nMeniOdabir, .F. )
+      nMeniOdabir := meni_0( "topk", aOpcije, nMeniOdabir, .F. )
       IF nMeniOdabir == 0
          EXIT
       ENDIF

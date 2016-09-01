@@ -139,7 +139,7 @@
 #xcommand O_KALKSEZ       => select(F_KALKSEZ);  my_use  ("KALK")  ; set order to "1"
 #xcommand O_ROBASEZ       => select(F_ROBASEZ);  my_use  ("ROBA")  ; set order to tag "ID"
 #xcommand O_KALKX         => select(F_KALK);  usex  (KUMPATH +"kalk")  ; set order to tag "1"
-#xcommand O_KALKS         => select(F_KALKS);  my_use  ("kalks")  ; set order to tag "1"
+
 
 #xcommand XO_KALK         => select (F_FAKT);  my_use ("kalk2", "kalk_kalk" ) ; set order to tag "1"
 

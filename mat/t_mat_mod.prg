@@ -77,7 +77,7 @@ METHOD programski_modul_osnovni_meni()
    AAdd( opc, "X. parametri" )
    AAdd( opcexe, {|| mat_parametri() } )
 
-   Menu_SC( "gmat", .T. )
+   f18_menu_sa_priv_vars_opc_opcexe_izbor( "gmat", .T. )
 
    RETURN .T.
 

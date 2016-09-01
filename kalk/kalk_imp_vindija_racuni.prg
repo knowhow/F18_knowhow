@@ -55,7 +55,7 @@ FUNCTION meni_import_vindija()
    AAdd( opcexe, {|| kalk_imp_set_konto_zaduz_prodavnica_za_prod_mjesto() } )
 
 
-   Menu_SC( "itx" )
+   f18_menu_sa_priv_vars_opc_opcexe_izbor( "itx" )
 
    RETURN .T.
 

@@ -71,7 +71,7 @@ METHOD programski_modul_osnovni_meni
 
    PRIVATE Izbor := 1
 
-   Menu_SC( "gvir", .T. )
+   f18_menu_sa_priv_vars_opc_opcexe_izbor( "gvir", .T. )
 
    RETURN .T.
 

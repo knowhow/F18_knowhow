@@ -27,7 +27,7 @@ FUNCTION fakt_kalk()
 
 
    PRIVATE Izbor := 1
-   Menu_SC( "faka" )
+   f18_menu_sa_priv_vars_opc_opcexe_izbor( "faka" )
    CLOSERET
 
    RETURN .T.

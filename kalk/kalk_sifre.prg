@@ -77,6 +77,7 @@ FUNCTION KalkRobaBlock( Ch )
       PopWA()
       RETURN nRet
 
+/*
    ELSEIF Upper( Chr( Ch ) ) == "O"
 
       IF roba->( FieldPos( "strings" ) ) == 0
@@ -88,6 +89,7 @@ FUNCTION KalkRobaBlock( Ch )
       SELECT roba
       PopWa()
       RETURN 7
+*/
 
    ELSEIF Upper( Chr( Ch ) ) == "S"
 

@@ -55,7 +55,7 @@ FUNCTION MMenuUpA()
    AAdd( opc, "P. promjena seta cijena" )
    AAdd( opcexe, {|| PromIDCijena() } )
 
-   Menu_SC( "upra" )
+   f18_menu_sa_priv_vars_opc_opcexe_izbor( "upra" )
 
    closeret
 
@@ -80,7 +80,7 @@ FUNCTION MMenuUpK()
    AAdd( opc, "A. administracija pos-a" )
    AAdd( opcexe, {|| pos_admin_menu() } )
 
-   Menu_SC( "uprk" )
+   f18_menu_sa_priv_vars_opc_opcexe_izbor( "uprk" )
 
    RETURN .F.
 
@@ -101,7 +101,7 @@ FUNCTION MMenuUpS()
    AAdd( opc, "S. šifarnici" )
    AAdd( opcexe, {|| pos_sifarnici() } )
 
-   Menu_SC( "uprs" )
+   f18_menu_sa_priv_vars_opc_opcexe_izbor( "uprs" )
    closeret
 
    RETURN .F.
@@ -126,6 +126,6 @@ FUNCTION pos_menu_dokumenti()
    AAdd( opc, "R. reklamacija-povrat u magacin" )
    AAdd( opcexe, {|| Zaduzenje( VD_REK ) } )
 
-   Menu_SC( "pzdo" )
+   f18_menu_sa_priv_vars_opc_opcexe_izbor( "pzdo" )
 
    RETURN

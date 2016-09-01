@@ -35,7 +35,7 @@ FUNCTION pos_main_menu_admin()
    AAdd( opc, "A. administracija pos-a" )
    AAdd( opcexe, {|| pos_admin_menu() } )
 
-   Menu_SC( "adm" )
+   f18_menu_sa_priv_vars_opc_opcexe_izbor( "adm" )
 
 
 FUNCTION SetPM( nPosSetPM )
@@ -87,6 +87,6 @@ FUNCTION pos_admin_menu()
 
    ENDIF
 
-   Menu_SC( "aadm" )
+   f18_menu_sa_priv_vars_opc_opcexe_izbor( "aadm" )
 
    RETURN .F.

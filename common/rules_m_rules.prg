@@ -22,6 +22,6 @@ FUNCTION menu_rules()
    AAdd( opc, "1. RULES (pravila)                " )
    AAdd( opcexe, {|| p_rules() } )
 
-   Menu_SC( "rules" )
+   f18_menu_sa_priv_vars_opc_opcexe_izbor( "rules" )
 
    RETURN .T.

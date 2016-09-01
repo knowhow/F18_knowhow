@@ -73,7 +73,7 @@ METHOD programski_modul_osnovni_meni
    AAdd( opc, "X. parametri plate " )
    AAdd( opcexe, {|| ld_parametri() } )
 
-   Menu_SC( "gld", .T. )
+   f18_menu_sa_priv_vars_opc_opcexe_izbor( "gld", .T. )
 
    RETURN .T.
 

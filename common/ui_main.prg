@@ -49,29 +49,6 @@ FUNCTION Calc_xy( m_x, m_y, N, nSirina )
 
 
 
-// vrati pravu vrijednost itema...
-FUNCTION retitem( nItemNo )
-
-   LOCAL nRetItem
-   LOCAL cAction
-
-   cAction := what_action( nItemNo )
-
-   DO CASE
-   CASE cAction == "K_CTRL_N"
-      nRetItem := nItemNo - 10000
-   CASE cAction == "K_F2"
-      nRetItem := nItemNo - 20000
-   CASE cAction == "K_CTRL_T"
-      nRetItem := nItemNo - 30000
-   OTHERWISE
-      nRetItem := nItemNo
-   ENDCASE
-
-   RETURN nRetItem
-
-
-
 FUNCTION range( nVal, nMin, nMax )
 
    LOCAL lRet
@@ -85,22 +62,6 @@ FUNCTION range( nVal, nMin, nMax )
    RETURN lRet
 
 
-FUNCTION what_action( nItemNo )
-
-   LOCAL cAction
-
-   DO CASE
-   CASE RANGE( nItemNo, 10000, 10999 )
-      cAction := "K_CTRL_N"
-   CASE RANGE( nItemNo, 20000, 20999 )
-      cAction := "K_F2"
-   CASE RANGE( nItemNo, 30000, 30999 )
-      cAction := "K_CTRL_T"
-   OTHERWISE
-      cAction := ""
-   ENDCASE
-
-   RETURN cAction
 
 
 /*

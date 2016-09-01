@@ -23,7 +23,7 @@ FUNCTION pos_menu_robmat()
    AAdd( opc, "2. generacija dokumenata" )
    AAdd( opcexe, {|| pos_menu_gendok() } )
 
-   Menu_SC( "mrbm" )
+   f18_menu_sa_priv_vars_opc_opcexe_izbor( "mrbm" )
 
    RETURN .T.
 
@@ -45,6 +45,6 @@ FUNCTION pos_menu_gendok()
 
 
    Izbor := 1
-   Menu_SC( "gdok" )
+   f18_menu_sa_priv_vars_opc_opcexe_izbor( "gdok" )
 
    RETURN

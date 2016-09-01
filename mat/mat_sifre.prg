@@ -50,7 +50,7 @@ FUNCTION mat_sifrarnik()
    AAdd( opcexe, {|| p_sifk() } )
 
 
-   Menu_sc( "m_rpt" )
+   f18_menu_sa_priv_vars_opc_opcexe_izbor( "m_rpt" )
 
    RETURN
 

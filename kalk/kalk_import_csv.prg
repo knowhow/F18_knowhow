@@ -41,7 +41,7 @@ FUNCTION MnuImpCSV()
    AAdd( opc, "6. podesenja importa " )
    AAdd( opcexe, {|| kalk_auto_import_setup() } )
 
-   Menu_SC( "ics" )
+   f18_menu_sa_priv_vars_opc_opcexe_izbor( "ics" )
 
    RETURN .T.
 

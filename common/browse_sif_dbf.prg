@@ -991,7 +991,7 @@ FUNCTION SifPopup( nOrder )
    AAdd( opcexe, {|| copy_to_sifk() } )
 
    Izbor := 1
-   Menu_Sc( "bsif" )
+   f18_menu_sa_priv_vars_opc_opcexe_izbor( "bsif" )
 
    RETURN 0
 

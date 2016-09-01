@@ -74,7 +74,7 @@ FUNCTION kalk_generisi_tops_dokumente( cIdFirma, cIdVd, cBrDok )
    kalk_tops_o_gen_tables( _lFromKumulativ ) // otvori tabele
 
    IF _lFromKumulativ
-      open_kalk_as_pripr( .T., cIdFirma, cIdVd, cBrDok ) // .T. => SQL table
+      open_kalk_as_pripr( cIdFirma, cIdVd, cBrDok ) // .T. => SQL table
    ENDIF
 
    _cre_katops_dbf( my_home() + _katops_table, _lFromKumulativ ) // kreiraj tabelu katops, ona ce se kreirati u privatnom direktoriju

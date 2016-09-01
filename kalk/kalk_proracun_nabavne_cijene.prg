@@ -94,18 +94,6 @@ FUNCTION korekcija_nabavne_cijene_sa_zadnjom_ulaznom( nKolicina, nZadnjiUlazKol,
       ENDIF
       IF !lSilent
          CLEAR TYPEAHEAD
-/*
-      MsgBeep( "Odstupanje #" + AllTrim( Str( Abs( nOdst ) ) ) + " %" + "#" + ;
-         "artikal: " + AllTrim( _idroba ) + " " + PadR( roba->naz, 15 ) + "#" + ;
-         "količina na stanju: " + say_kolicina( nKolicina ) + " # " +;
-         "# srednja nc:" + AllTrim( say_cijena( nSrednjaNabavnaCijena ) ) + ", zadnji ulaz nc:" + AllTrim( say_cijena( nZadnjaUlaznaNC ) ) )
-*/
-
-/*
-      IF Pitanje(, "Korigovati NC na zadnju ulaznu (D/N)?", cPonudi ) == "D"
-         nSrednjaNabavnaCijena := nZadnjaUlaznaNC
-      ENDIF
-      */
 
          nX := 2
          Box( "#" + "== Odstupanje NC " + AllTrim( _mkonto ) + "/" + AllTrim( _idroba ) + " ===", 12, 70, .T. )

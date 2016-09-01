@@ -68,6 +68,6 @@ FUNCTION MnuZakljRacuna()
    AAdd( opc, "3. setuj sve RN na zakljuceno      " )
    AAdd( opcexe, {|| SetujZakljuceno() } )
 
-   Menu_SC( "zrn" )
+   f18_menu_sa_priv_vars_opc_opcexe_izbor( "zrn" )
 
    RETURN .T.

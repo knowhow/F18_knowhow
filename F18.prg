@@ -140,7 +140,7 @@ FUNCTION program_module_menu( arg_v )
       set_program_module_menu( @aMeniOpcije, @menuexec, arg_v[ "p3" ], arg_v[ "p4" ], arg_v[ "p5" ], arg_v[ "p6" ], arg_v[ "p7" ] )
       info_bar( "init", "gen program_module_menu end" )
 
-      mnu_choice := Achoice3( mnu_top, mnu_left, mnu_bottom, mnu_right, aMeniOpcije, 1 )
+      mnu_choice := meni_0_inkey( mnu_top, mnu_left, mnu_bottom, mnu_right, aMeniOpcije, 1 )
       SetColor( cOldColors )
 
       DO CASE

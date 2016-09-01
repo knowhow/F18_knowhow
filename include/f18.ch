@@ -104,8 +104,8 @@
 // VAR aColors           INIT { "W+/BG", "N/BG", "R/BG", "N+/BG", "W+/B", "GR+/B", "W/B", "N/W", "R/W", "N/BG", "R/BG" }
 
 // "Border", "Text", "Text High", "Text PPO", "Text Selected", ;
-// "Text High Sel.", "Text PPO Sel.", "Menu", "Menu High", ;
-// "Menu Selected", "Menu High Sel."
+// "Text High Sel.", "Text PPO Sel.", "meni_0", "meni_0 High", ;
+// "meni_0 Selected", "meni_0 High Sel."
 
 //#define F18_COLOR_NORMAL         "W/B,R/N+,,,N/W"
 //#define F18_COLOR_NORMAL           "G/N,N/G,R/W,W/RB,G/W"  //green na crnoj podlozi

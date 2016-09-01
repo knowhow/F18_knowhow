@@ -37,12 +37,10 @@ FUNCTION kalk_stampa_dok_41()
 
    SELECT kalk_pripr
 
-   // daj mi liniju za izvjestaj
    _line := _get_line( cIdVd )
 
    ? _line
 
-   // ispisi header izvjestaja
    _print_report_header( cIdvd )
 
    ? _line
@@ -139,12 +137,12 @@ FUNCTION kalk_stampa_dok_41()
 
       ENDIF
 
-      // mpc ili prodajna cijena uvecana za rabat
-      @ PRow(), PCol() + 1 SAY ( field->mpc + field->rabatv ) PICT PicCDEM
+
+      @ PRow(), PCol() + 1 SAY ( field->mpc + field->rabatv ) PICT PicCDEM// mpc ili prodajna cijena uvecana za rabat
 
       nCol1 := PCol() + 1
 
-      // popusti...
+
       IF field->idvd <> "47"
 
          // popust
@@ -233,10 +231,7 @@ FUNCTION kalk_stampa_dok_41()
    // prodajna vrijednost
    @ PRow(), PCol() + 1 SAY nTot5 PICT PicDEM
 
-   IF !IsPDV()
-      @ PRow(), PCol() + 1 SAY Space( Len( picproc ) )
-      @ PRow(), PCol() + 1 SAY Space( Len( picproc ) )
-   ENDIF
+
 
    // popust
    @ PRow(), PCol() + 1 SAY nTot9 PICT PicDEM
@@ -263,18 +258,16 @@ FUNCTION kalk_stampa_dok_41()
    nRec := RecNo()
 
    // rekapitulacija tarifa PDV
-   PDVRekTar41( cIdFirma, cIdVd, cBrDok, @nStr )
+   kalk_stdok_41_rekap_pdv( cIdFirma, cIdVd, cBrDok, @nStr )
 
    SET ORDER TO TAG "1"
    GO nRec
 
-   RETURN
+   RETURN .T.
 
 
 
-// ------------------------------------------
-// vraca liniju
-// ------------------------------------------
+
 STATIC FUNCTION _get_line( id_vd )
 
    LOCAL _line
@@ -331,20 +324,16 @@ STATIC FUNCTION _get_rekap_line()
 // ---------------------------------------------------
 STATIC FUNCTION _print_rekap_header()
 
-   IF glUgost
-      ?  "* Tar *  PDV%    *  P.P %   *   MPV    *    PDV   *   P.Potr *  Popust  * MPVSAPDV*"
-   ELSE
-      ?  "* Tar *  PDV%    *  Prod.   *  Popust  * Prod.vr. *   PDV   * MPV-Pop. *  MPV    *"
-      ?  "*     *          *   vr.    *          * - popust *   PDV   *  sa PDV  * sa PDV  *"
-   ENDIF
+   ?  "* Tar *  PDV%    *  Prod.   *  Popust  * Prod.vr. *   PDV   * MPV-Pop. *  MPV    *"
+   ?  "*     *          *   vr.    *          * - popust *   PDV   *  sa PDV  * sa PDV  *"
 
-   RETURN
+   RETURN .T.
 
 
 // --------------------------------------------------
 // rekapitulacija tarifa na dokumentu
 // --------------------------------------------------
-FUNCTION PDVRekTar41( cIdFirma, cIdVd, cBrDok, nStr )
+FUNCTION kalk_stdok_41_rekap_pdv( cIdFirma, cIdVd, cBrDok, nStr )
 
    LOCAL nTot1
    LOCAL nTot2
@@ -356,17 +345,12 @@ FUNCTION PDVRekTar41( cIdFirma, cIdVd, cBrDok, nStr )
    LOCAL _line
 
    SELECT kalk_pripr
-   SET ORDER TO TAG "2"
+   SET ORDER TO TAG "1"
    SEEK cIdfirma + cIdvd + cBrdok
 
-   // daj mi liniju za izvjestaj
    _line := _get_rekap_line()
-
    ? _line
-
-   // stampaj header
    _print_rekap_header()
-
    ? _line
 
    nTot1 := 0
@@ -495,9 +479,6 @@ FUNCTION PDVRekTar41( cIdFirma, cIdVd, cBrDok, nStr )
    // popust
    @ PRow(), PCol() + 1 SAY nTotP PICT picdem
 
-   IF glUgost
-      @ PRow(), PCol() + 1 SAY nTot2b PICT picdem
-   ENDIF
 
    // prodajna vrijednost - popust
    @ PRow(), PCol() + 1 SAY nTot1 PICT picdem

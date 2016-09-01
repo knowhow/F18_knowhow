@@ -26,6 +26,6 @@ FUNCTION fin_izvjestaji_ostali()
       AAdd( opcexe, {|| IzvjPogonK() } )
    ENDIF
 
-   Menu_SC( "ost" )
+   f18_menu_sa_priv_vars_opc_opcexe_izbor( "ost" )
 
    RETURN .F.

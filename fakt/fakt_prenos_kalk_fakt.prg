@@ -33,7 +33,7 @@ FUNCTION KaFak()
    AAdd( opc, "3. parametri prenosa" )
    AAdd( opcexe, {|| _params() } )
 
-   Menu_SC( "prenosfakt" )
+   f18_menu_sa_priv_vars_opc_opcexe_izbor( "prenosfakt" )
 
    RETURN .T.
 

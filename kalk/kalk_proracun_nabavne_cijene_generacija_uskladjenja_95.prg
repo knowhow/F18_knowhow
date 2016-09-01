@@ -11,21 +11,22 @@
 
 #include "f18.ch"
 
-MEMVAR gFirma
+MEMVAR gFirma, m_x, m_y
 
-FUNCTION kalk_gen_uskladjenje_nc_95()
+FUNCTION kalk_gen_uskladjenje_nc_95( hParams )
 
    LOCAL cIdFirma := gFirma, cIdRoba
    LOCAL cBrDok
-   LOCAL hParams := hb_Hash(), hRec
+   LOCAL hRec
    LOCAL nKolicina, nKolZn, nNcZadnjaNabavka, nSrednjaNabavnaCijena, dDatNab
    LOCAL nNabavnaVrijednost, nSrednjaNcPoUlazima
    LOCAL nRbr, dDatDo, nOdstupanje
+   LOCAL nCnt, cInfo
 
-   hParams[ "idkonto" ] := PadR( "13202", 7 )
+   hb_default( @hParams, hb_Hash() )
+   hParams[ "idkonto" ] := PadR( "1320", 7 )
    hParams[ "datdok" ] := Date()
    hParams[ "prag" ] := prag_odstupanja_nc_sumnjiv()
-
 
    select_o_kalk_pripr()
    IF reccount2() > 0
@@ -37,26 +38,46 @@ FUNCTION kalk_gen_uskladjenje_nc_95()
       ENDIF
    ENDIF
 
-   IF !get_vars( @hParams )
+
+   IF hb_HHasKey( hParams, "brdok" ) // uzmi dokument cije ce stavke biti osnova npr. 10-10-000222
+      find_kalk_by_broj_dokumenta( hParams[ "idfirma" ], hParams[ "idvd" ], hParams[ "brdok" ], "kalk_select", F_KALK_SELECT )
+      hParams[ "idkonto" ] := field->mkonto // iz dokumenta uzeti konto i datum do koga se kartica sravnjava
+      hParams[ "datdok" ] := field->datdok
+      hParams[ "brfaktp" ] := field->idvd + "-" + SubStr( field->brdok, 2 ) // idvd=10, brdok=01000055 => 10-1000055
+      cInfo := "prema ulazu: " + hParams[ "idfirma" ] + "-" + hParams[ "idvd" ] + "-" + hParams[ "brdok" ]
+   ELSE
+
+      IF !get_vars( @hParams )
+         RETURN .F.
+      ENDIF
+
+      MsgO( "Preuzimanje podataka sa servera ..." )
+      find_kalk_by_mkonto_idroba( cIdFirma, hParams[ "idkonto" ], NIL, ;
+         "kalk_kalk.idroba,kalk_kalk.mkonto", NIL, "kalk_select", "kalk_kalk.idroba" )
+      // ( cIdFirma, cIdKonto, cIdRoba, cOrderBy, lReport, cAlias )
+      MsgC()
+
+      hParams[ "brfaktp" ] := "NC" + DToS( hParams[ "datdok" ] ) // oznaka npr. NC20160901
+      cInfo := "lager magacin: " + hParams[ "idkonto" ]
+   ENDIF
+
+   GO TOP
+
+
+   IF Eof()
+      MsgBeep( "nema stavki za obradu !? STOP" )
       RETURN .F.
    ENDIF
-   cBrDok := kalk_get_next_broj_v5( cIdFirma, "95", NIL )
-
-
-   MsgO( "Preuzimanje podataka sa servera ..." )
-   find_kalk_by_mkonto_idroba( cIdFirma, hParams[ "idkonto" ], NIL, ;
-      "kalk_kalk.idroba,kalk_kalk.mkonto", NIL, "kalk_select", "kalk_kalk.idroba" )
-   // ( cIdFirma, cIdKonto, cIdRoba, cOrderBy, lReport, cAlias )
-   GO TOP
-   MsgC()
 
    select_o_roba()
    select_o_koncij()
    select_o_tarifa()
+   cBrDok := kalk_get_next_broj_v5( cIdFirma, "95", NIL )
 
    SELECT kalk_select
 
    nRbr := 1
+   nCnt := 0
    DO WHILE !kalk_select->( Eof() )
 
       cIdroba := field->idroba
@@ -74,7 +95,7 @@ FUNCTION kalk_gen_uskladjenje_nc_95()
       hRec[ "idfirma" ] := cIdFirma
       hRec[ "idvd" ] := "95"
       hRec[ "brdok" ] := cBrDok
-      hRec[ "brfaktp" ] := "NC" + DToS( hParams[ "datdok" ] )
+      hRec[ "brfaktp" ] := hParams[ "brfaktp" ]
       hRec[ "idkonto2" ] := hParams[ "idkonto" ]
       hRec[ "mkonto" ] := hParams[ "idkonto" ]
       hRec[ "mu_i" ] := "5"
@@ -110,7 +131,7 @@ FUNCTION kalk_gen_uskladjenje_nc_95()
       SELECT kalk_pripr
       APPEND BLANK
       dbf_update_rec( hRec )
-
+      nCnt++
       APPEND BLANK
       IF Abs( Round( nKolicina, 3 ) ) == 0
          hRec[ "kolicina" ] := -1
@@ -126,16 +147,17 @@ FUNCTION kalk_gen_uskladjenje_nc_95()
       SKIP
    ENDDO
 
+   MsgBeep( "Usklađenje NC " + cInfo + "#izvršeno za " + AllTrim( Str( nCnt ) ) + " artikala" )
+
    RETURN .T.
 
 
 STATIC FUNCTION get_vars( hParams )
 
-   Box( "bv", 10, 80 )
+   Box( "bv", 5, 75 )
    @ m_x + 1, m_y + 2 SAY "  Magacinski konto: " GET  hParams[ "idkonto" ]
    @ m_x + 2, m_y + 2 SAY "   Datum dokumenta: " GET hParams[ "datdok" ]
    @ m_x + 3, m_y + 2 SAY "prag odstupanja NC: " GET hParams[ "prag" ]
-
 
    READ
    BoxC()

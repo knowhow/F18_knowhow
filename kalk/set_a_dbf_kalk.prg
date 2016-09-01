@@ -25,7 +25,6 @@ FUNCTION set_a_dbf_kalk()
    set_a_dbf_sifarnik( "objekti", "OBJEKTI", F_OBJEKTI    )
 
    set_a_dbf_temp( "kalk_imp_temp", "KALK_IMP_TEMP", F_KALK_IMP_TEMP )
-   set_a_dbf_temp( "kalk_kalks", "KALKS", F_KALKS        )
    set_a_dbf_temp( "_kalk_kalk", "_KALK", F__KALK        )
    set_a_dbf_temp( "kalk_pripr", "KALK_PRIPR", F_KALK_PRIPR   )
    set_a_dbf_temp( "kalk_pripr2", "KALK_PRIPR2", F_KALK_PRIPR2  )

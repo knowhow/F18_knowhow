@@ -359,6 +359,6 @@ FUNCTION list_kup_data( aKupci )
    NEXT
 
    Izbor := 1
-   Menu_SC( "kup" )
+   f18_menu_sa_priv_vars_opc_opcexe_izbor( "kup" )
 
    RETURN nIzbor

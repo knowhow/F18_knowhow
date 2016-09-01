@@ -525,7 +525,7 @@ STATIC FUNCTION ios_generacija_podataka( params )
 
 
 // ----------------------------------------------------------------
-// IOS print menu
+// IOS print meni_0
 // ----------------------------------------------------------------
 STATIC FUNCTION mnu_ios_print()
 

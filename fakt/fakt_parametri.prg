@@ -62,7 +62,7 @@ FUNCTION mnu_fakt_params()
    AAdd( opc, "R. postaviti parametre - razno                 " )
    AAdd( opcexe, {|| fakt_par_razno() } )
 
-   Menu_SC( "parf" )
+   f18_menu_sa_priv_vars_opc_opcexe_izbor( "parf" )
 
 
    fakt_params( .T. )

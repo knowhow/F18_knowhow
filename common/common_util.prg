@@ -175,7 +175,7 @@ FUNCTION get_file_list_array( cPath, cFilter, cFile, lSilent )
 
    IF Len( opcF ) > 1
       DO WHILE .T. .AND. LastKey() != K_ESC
-         IzbF := Menu( "imp", OpcF, IzbF, .F. )
+         IzbF := meni_0( "imp", OpcF, IzbF, .F. )
          IF IzbF == 0
             EXIT
          ELSE

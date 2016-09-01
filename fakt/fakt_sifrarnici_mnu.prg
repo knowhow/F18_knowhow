@@ -30,6 +30,6 @@ FUNCTION fakt_sifrarnik()
    AAdd( opc, "U. ugovori" )
    AAdd( opcexe, {|| o_ugov(), SifUgovori() } )
 
-   Menu_SC( "fsif" )
+   f18_menu_sa_priv_vars_opc_opcexe_izbor( "fsif" )
 
    RETURN .T.

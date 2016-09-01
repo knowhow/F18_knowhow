@@ -87,9 +87,6 @@ FUNCTION kalk_stampa_dok_14()
 
       nVPCIzbij := 0
 
-      IF roba->tip == "X"
-         nVPCIzbij := ( MPCSAPP / ( 1 + tarifa->opp / 100 ) * tarifa->opp / 100 )
-      ENDIF
 
       nTot4 +=  ( nU4 := Round( NC * Kolicina * iif( idvd = "15", -1, 1 ), gZaokr )     )  // nv
 
@@ -156,6 +153,7 @@ FUNCTION kalk_stampa_dok_14()
       IF roba_barkod_pri_unosu() .AND. !Empty( roba->barkod )
          ?? ", BK: " + roba->barkod
       ENDIF
+
       @ PRow() + 1, 4 SAY IdRoba
       @ PRow(), PCol() + 1 SAY Kolicina * iif( idvd = "15", -1, 1 )  PICTURE PicKol
       nC1 := PCol() + 1
@@ -173,21 +171,16 @@ FUNCTION kalk_stampa_dok_14()
       @ PRow(), PCol() + 1 SAY RABATV              PICTURE PicProc
       @ PRow(), PCol() + 1 SAY VPC * ( 1 -RABATV / 100 ) -nVPCIzbij  PICTURE PiccDEM
 
-      IF roba->tip $ "VKX"
-         @ PRow(), PCol() + 1 SAY PadL( "VT-" + Str( tarifa->opp, 5, 2 ) + "%", Len( picproc ) )
+
+      IF idvd = "15"
+         @ PRow(), PCol() + 1 SAY 0          PICTURE PicProc
       ELSE
-         IF idvd = "15"
-            @ PRow(), PCol() + 1 SAY 0          PICTURE PicProc
-         ELSE
-            @ PRow(), PCol() + 1 SAY MPC        PICTURE PicProc
-         ENDIF
+         @ PRow(), PCol() + 1 SAY MPC        PICTURE PicProc
       ENDIF
 
-      IF roba->tip = "X"  // nafta , kolona VPC SA PP
-         @ PRow(), PCol() + 1 SAY VPC PICTURE PicCDEM
-      ELSE
-         @ PRow(), PCol() + 1 SAY VPC * ( 1 -RabatV / 100 ) * ( 1 + mpc / 100 ) PICTURE PicCDEM
-      ENDIF
+
+      @ PRow(), PCol() + 1 SAY VPC * ( 1 -RabatV / 100 ) * ( 1 + mpc / 100 ) PICTURE PicCDEM
+
 
       // 2. DRUGI RED
       @ PRow() + 1, 4 SAY IdTarifa + roba->tip
@@ -234,7 +227,6 @@ STATIC FUNCTION zagl()
    ENDIF
 
    ? "KALK BR:",  cIdFirma + "-" + cIdVD + "-" + cBrDok, ", Datum:", DatDok
-
 
    SELECT PARTN
    HSEEK cIdPartner

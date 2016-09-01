@@ -60,7 +60,7 @@ METHOD programski_modul_osnovni_meni()
    AAdd( opcexe, {|| NIL } )
 
 
-   Menu_SC( "grep", .T., .F. )
+   f18_menu_sa_priv_vars_opc_opcexe_izbor( "grep", .T., .F. )
 
    RETURN
 

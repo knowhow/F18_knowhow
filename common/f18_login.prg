@@ -727,7 +727,7 @@ METHOD F18Login:administrative_options( x_pos, y_pos )
 
    DO WHILE .T.
 
-      _mnu_choice := Achoice3( _x, _y + 1, _x + 5, _y + 40, aMeniOpcije, 1 )
+      _mnu_choice := meni_0_inkey( _x, _y + 1, _x + 5, _y + 40, aMeniOpcije, 1 )
 
       DO CASE
       CASE _mnu_choice == 0

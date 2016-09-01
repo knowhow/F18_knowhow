@@ -221,7 +221,7 @@ STATIC FUNCTION _pick_srodstvo( aSr )
 
    NEXT
 
-   Menu_sc( "izbor" )
+   f18_menu_sa_priv_vars_opc_opcexe_izbor( "izbor" )
 
    IF LastKey() == K_ESC
 

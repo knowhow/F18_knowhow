@@ -125,11 +125,11 @@ function MUPPER(cInput)
    cInput:=STRTRAN(cInput,"}","]")
    cInput:=STRTRAN(cInput,"`","@")
  ELSE  // "8"
-   cInput:=STRTRAN(cInput,"ç","æ")
-   cInput:=STRTRAN(cInput,"Ð","Ñ")
-   cInput:=STRTRAN(cInput,"Ÿ","¬")
-   cInput:=STRTRAN(cInput,"†","")
-   cInput:=STRTRAN(cInput,"§","¦")
+   cInput:=STRTRAN(cInput,"ï¿½","ï¿½")
+   cInput:=STRTRAN(cInput,"ï¿½","ï¿½")
+   cInput:=STRTRAN(cInput,"ï¿½","ï¿½")
+   cInput:=STRTRAN(cInput,"ï¿½","ï¿½")
+   cInput:=STRTRAN(cInput,"ï¿½","ï¿½")
  ENDIF
 return UPPER(cInput)
 
@@ -142,11 +142,11 @@ function MLOWER(cInput)
    cInput:=STRTRAN(cInput,"]","}")
    cInput:=STRTRAN(cInput,"@","`")
  ELSE  // "8"
-   cInput:=STRTRAN(cInput,"æ","ç")
-   cInput:=STRTRAN(cInput,"Ñ","Ð")
-   cInput:=STRTRAN(cInput,"¬","Ÿ")
-   cInput:=STRTRAN(cInput,"","†")
-   cInput:=STRTRAN(cInput,"¦","§")
+   cInput:=STRTRAN(cInput,"ï¿½","ï¿½")
+   cInput:=STRTRAN(cInput,"ï¿½","ï¿½")
+   cInput:=STRTRAN(cInput,"ï¿½","ï¿½")
+   cInput:=STRTRAN(cInput,"ï¿½","ï¿½")
+   cInput:=STRTRAN(cInput,"ï¿½","ï¿½")
  ENDIF
 return LOWER(cInput)
 
@@ -164,16 +164,16 @@ FUNCTION BtoE(cInput)
    cInput:=STRTRAN(cInput,"}","c"+CHR(255))
    cInput:=STRTRAN(cInput,"`","z"+CHR(255))
  ELSE  // "8"
-   cInput:=STRTRAN(cInput,"æ","S"+CHR(255))
-   cInput:=STRTRAN(cInput,"Ñ","D"+CHR(255))
-   cInput:=STRTRAN(cInput,"¬","C"+CHR(254))
-   cInput:=STRTRAN(cInput,"","C"+CHR(255))
-   cInput:=STRTRAN(cInput,"¦","Z"+CHR(255))
-   cInput:=STRTRAN(cInput,"ç","s"+CHR(255))
-   cInput:=STRTRAN(cInput,"Ð","d"+CHR(255))
-   cInput:=STRTRAN(cInput,"Ÿ","c"+CHR(254))
-   cInput:=STRTRAN(cInput,"†","c"+CHR(255))
-   cInput:=STRTRAN(cInput,"§","z"+CHR(255))
+   cInput:=STRTRAN(cInput,"ï¿½","S"+CHR(255))
+   cInput:=STRTRAN(cInput,"ï¿½","D"+CHR(255))
+   cInput:=STRTRAN(cInput,"ï¿½","C"+CHR(254))
+   cInput:=STRTRAN(cInput,"ï¿½","C"+CHR(255))
+   cInput:=STRTRAN(cInput,"ï¿½","Z"+CHR(255))
+   cInput:=STRTRAN(cInput,"ï¿½","s"+CHR(255))
+   cInput:=STRTRAN(cInput,"ï¿½","d"+CHR(255))
+   cInput:=STRTRAN(cInput,"ï¿½","c"+CHR(254))
+   cInput:=STRTRAN(cInput,"ï¿½","c"+CHR(255))
+   cInput:=STRTRAN(cInput,"ï¿½","z"+CHR(255))
  ENDIF
 RETURN PADR(cInput,100)
 
@@ -181,7 +181,7 @@ RETURN PADR(cInput,100)
 function MsgPPromj()
  Box(,22,34)
   @ m_x+ 1,m_y+2 SAY "Vazeca polja su:                "
-  @ m_x+ 2,m_y+2 SAY "ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ"
+  @ m_x+ 2,m_y+2 SAY "ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½"
   @ m_x+ 3,m_y+2 SAY " DATUMOD- dat.pocetka promjene  "
   @ m_x+ 4,m_y+2 SAY " DATUMDO- dat.kraja promjene    "
   @ m_x+ 5,m_y+2 SAY "   NATR1- numer.karakteristika 1"
@@ -307,7 +307,7 @@ function ZadDanGO(dPDanGO,nDanaGO)
   DO WHILE nDanaGO>0
     IF DOW(dPDanGO)==7; ++nSubota; ENDIF
     SEEK dPDanGO
-    IF !FOUND()  // znaŸi radni je dan
+    IF !FOUND()  // znaï¿½i radni je dan
       --nDanaGO      // smanjujemo preostali broj dana GO
     ENDIF
     IF nDanaGO>0; ++dPDanGO; ENDIF
@@ -324,7 +324,7 @@ function DatVrGO(dZDanGO)
   DO WHILE .t.
     ++dZDanGO
     SEEK dZDanGO
-    IF !FOUND()      // znaŸi radni je dan
+    IF !FOUND()      // znaï¿½i radni je dan
       EXIT
     ENDIF
   ENDDO
@@ -354,11 +354,11 @@ function IzborFajla(cPutanja,cAtrib)
  AEVAL(opc,{|x| AADD(h,IscitajZF(SUBSTR(x,4)))})
  IF LEN(opc)<1
    MsgBeep("'"+cPutanja+"': ne postoji nijedan trazeni fajl!##Obratite se servisu bring.out-a")
-   Izb:=0    // <- ovo mo§da i ne treba
+   Izb:=0    // <- ovo moï¿½da i ne treba
    RETURN ""
  ENDIF
- Izb:=Menu("",opc,Izb,.t.,"1-1")
- IF Izb>0; Menu("",opc,0,.f.); ENDIF
+ Izb:=meni_0("",opc,Izb,.t.,"1-1")
+ IF Izb>0; meni_0("",opc,0,.f.); ENDIF
 return IF( Izb==0 , "" , SUBSTR(opc[izb],4) )
 
 

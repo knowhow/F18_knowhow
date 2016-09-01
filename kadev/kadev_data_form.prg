@@ -106,7 +106,7 @@ Izb3:=1
 
 do while .t.
 
-    Izb3 := Menu( "izobr", opc, izb3, .f. )
+    Izb3 := meni_0( "izobr", opc, izb3, .f. )
 
     do case
 
@@ -428,7 +428,7 @@ h[2]:="Definicija redova i zaglavlja (po grupama), kolona obrasca"
 
 do while .t.
     
-    Izb11:=Menu("edmeni",opc,Izb11,.F.)
+    Izb11:=meni_0("edmeni",opc,Izb11,.F.)
 
     DO CASE
 

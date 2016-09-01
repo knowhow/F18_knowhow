@@ -49,7 +49,7 @@ FUNCTION SifreHOpc()
    ENDIF
 
    Izbor := 1
-   Menu_SC( "sifo" )
+   f18_menu_sa_priv_vars_opc_opcexe_izbor( "sifo" )
 
    RETURN
 
@@ -85,7 +85,7 @@ FUNCTION SifreHSpec()
    ENDIF
 
    Izbor := 1
-   Menu_SC( "sifs" )
+   f18_menu_sa_priv_vars_opc_opcexe_izbor( "sifs" )
 
    RETURN
 
@@ -127,6 +127,6 @@ FUNCTION tops_sifarnici()
    o_pos_sifre()
 
    Izbor := 1
-   Menu_SC( "sift" )
+   f18_menu_sa_priv_vars_opc_opcexe_izbor( "sift" )
 
    RETURN

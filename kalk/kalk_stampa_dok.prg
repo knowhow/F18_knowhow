@@ -94,7 +94,7 @@ FUNCTION kalk_stampa_dokumenta( lAzuriraniDokument, cSeek, lAuto )
 
 
             IF lAzuriraniDokument // stampa azuriranog KALK dokumenta
-               open_kalk_as_pripr( .T., cIdFirma, cIdVd, cBrDok )
+               open_kalk_as_pripr( cIdFirma, cIdVd, cBrDok )
             ENDIF
          ENDIF
 
@@ -255,7 +255,7 @@ FUNCTION kalk_stampa_dokumenta( lAzuriraniDokument, cSeek, lAuto )
 
       IF lAzuriraniDokument // stampa azuriranog KALK dokumenta
          cBrDok := kalk_fix_brdok_add_1( cBrDok )
-         open_kalk_as_pripr( .T., cIdFirma, cIdVd, cBrDok )
+         open_kalk_as_pripr( cIdFirma, cIdVd, cBrDok )
       ENDIF
 
    ENDDO  // vrti kroz kalkulacije

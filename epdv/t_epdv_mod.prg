@@ -68,7 +68,7 @@ METHOD programski_modul_osnovni_meni()
    AAdd( opc, "X. parametri" )
    AAdd( opcexe, {|| epdv_parametri() } )
 
-   Menu_SC( "gpdv", .T., .F. )
+   f18_menu_sa_priv_vars_opc_opcexe_izbor( "gpdv", .T., .F. )
 
    RETURN .T.
 

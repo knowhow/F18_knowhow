@@ -42,6 +42,6 @@ FUNCTION fin_izvjestaji()
    AAdd( opc, "8. blagajnicki nalog" )
    AAdd( opcexe, {|| blag_azur() } )
 
-   Menu_SC( "izvj" )
+   f18_menu_sa_priv_vars_opc_opcexe_izbor( "izvj" )
 
    RETURN .F.

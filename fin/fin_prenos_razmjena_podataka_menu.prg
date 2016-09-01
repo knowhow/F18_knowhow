@@ -30,7 +30,7 @@ FUNCTION fin_razmjena_podataka_meni()
    AAdd( opc, "6. pos->fin " )
    AAdd( opcexe, {|| PosFin() } )
 
-   Menu_SC( "raz" )
+   f18_menu_sa_priv_vars_opc_opcexe_izbor( "raz" )
 
    RETURN .T.
 
@@ -48,6 +48,6 @@ FUNCTION PosFin()
    AAdd( opc, "1. pos polozi                   " )
    AAdd( opcexe, {|| PromVP2Fin() } )
 
-   Menu_SC( "pf" )
+   f18_menu_sa_priv_vars_opc_opcexe_izbor( "pf" )
 
    RETURN

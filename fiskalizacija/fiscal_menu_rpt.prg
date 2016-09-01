@@ -242,7 +242,7 @@ FUNCTION fiskalni_izvjestaji_komande( low_level, from_pos )
    _m_x := m_x
    _m_y := m_y
 
-   Menu_SC( "izvf" )
+   f18_menu_sa_priv_vars_opc_opcexe_izbor( "izvf" )
 
    m_x := _m_x
    m_y := _m_y

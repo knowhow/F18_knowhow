@@ -177,7 +177,7 @@ FUNCTION g_sk_flist( cField )
       NEXT
 
       Izbor := 1
-      Menu_SC( "skf" )
+      f18_menu_sa_priv_vars_opc_opcexe_izbor( "skf" )
    ENDIF
 
    cField := aFields[ nField, 1 ]

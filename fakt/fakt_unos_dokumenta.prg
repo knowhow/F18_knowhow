@@ -1609,7 +1609,7 @@ STATIC FUNCTION popup_fakt_unos_dokumenta()
 
    DO WHILE .T.
 
-      Izbor := menu( "prip", opc, Izbor, .F. )
+      Izbor := meni_0( "prip", opc, Izbor, .F. )
 
       DO CASE
       CASE Izbor == 0

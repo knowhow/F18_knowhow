@@ -75,7 +75,7 @@ FUNCTION opci_sifarnici()
 
    PRIVATE Izbor := 1
    gMeniSif := .T.
-   Menu_SC( "ssvi" )
+   f18_menu_sa_priv_vars_opc_opcexe_izbor( "ssvi" )
    gMeniSif := .F.
 
    my_close_all_dbf()

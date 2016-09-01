@@ -101,7 +101,7 @@ METHOD programski_modul_osnovni_meni()
    AAdd( opc, "X. parametri" )
    AAdd( opcexe, {|| m_par() } )
 
-   Menu_SC( "grn", .T. )
+   f18_menu_sa_priv_vars_opc_opcexe_izbor( "grn", .T. )
 
    RETURN .T.
 

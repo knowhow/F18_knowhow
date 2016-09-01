@@ -511,7 +511,7 @@ FUNCTION mnu_otv_stolovi( aStol )
 
    Izbor := 1
    // 0 - ako se kaze <ESC>
-   Menu_SC( "o_s" )
+   f18_menu_sa_priv_vars_opc_opcexe_izbor( "o_s" )
 
    RETURN nSelected
 

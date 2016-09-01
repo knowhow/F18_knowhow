@@ -43,6 +43,6 @@ FUNCTION epdv_izvjestaji()
    AAdd( opcexe, {|| nil } )
 
 
-   Menu_SC( "rpt" )
+   f18_menu_sa_priv_vars_opc_opcexe_izbor( "rpt" )
 
    RETURN

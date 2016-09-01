@@ -888,7 +888,7 @@ METHOD VirmExportTxt:get_export_list()
    NEXT
 
    DO WHILE .T. .AND. LastKey() != K_ESC
-      _izbor := Menu( "choice", _opc, _izbor, .F. )
+      _izbor := meni_0( "choice", _opc, _izbor, .F. )
       IF _izbor == 0
          EXIT
       ELSE

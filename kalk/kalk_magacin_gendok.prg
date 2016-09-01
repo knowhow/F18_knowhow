@@ -56,7 +56,7 @@ FUNCTION kalk_inventura_magacin_im_meni()
 
 
    PRIVATE Izbor := 1
-   Menu_SC( "mmi" )
+   f18_menu_sa_priv_vars_opc_opcexe_izbor( "mmi" )
 
    RETURN .T.
 

@@ -77,7 +77,7 @@
 #define F__KALK     86
 #define F_LOGK      87
 #define F_LOGKD     88
-#define F_KALKS     89
+#define F_KALK_SELECT   89
 #define F_KALK_PRIPR     90
 #define F_KALK_PRIPR2    91
 #define F_KALK_PRIPR9    92

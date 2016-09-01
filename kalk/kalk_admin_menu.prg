@@ -67,7 +67,7 @@ FUNCTION MenuSK()
    AAdd( opcexe, {|| NaPrimPak() } )
 
    PRIVATE Izbor := 1
-   Menu_SC( "kska" )
+   f18_menu_sa_priv_vars_opc_opcexe_izbor( "kska" )
 
    my_close_all_dbf()
 

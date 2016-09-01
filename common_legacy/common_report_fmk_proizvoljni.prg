@@ -112,7 +112,7 @@ FUNCTION proizvoljni_izvjestaji()
 
    DO WHILE .T.
 
-      izbor := Menu( "ProIzv", opc, izbor, .F. )
+      izbor := meni_0( "ProIzv", opc, izbor, .F. )
 
       DO CASE
       CASE izbor == 0

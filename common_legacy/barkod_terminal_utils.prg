@@ -46,7 +46,7 @@ FUNCTION get_file_list( cFilter, cPath, cImpFile )
    IzbF := 1
    lRet := .F.
    DO WHILE .T. .AND. LastKey() != K_ESC
-      IzbF := Menu( "imp", OpcF, IzbF, .F. )
+      IzbF := meni_0( "imp", OpcF, IzbF, .F. )
       IF IzbF == 0
          EXIT
       ELSE

@@ -26,7 +26,7 @@ FUNCTION epdv_admin_menu()
    AAdd( opc, "2. renumeracija g_r_br KIF" )
    AAdd( opcexe, {|| rn_gr( "KIF" ) } )
 
-   Menu_SC( "adm" )
+   f18_menu_sa_priv_vars_opc_opcexe_izbor( "adm" )
 
    RETURN
 

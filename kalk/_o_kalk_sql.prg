@@ -525,11 +525,11 @@ FUNCTION use_sql_kalk( hParams )
    use_sql( cTable, cSql )
 
    IF is_sql_rdd_treba_indeks( hParams )
-      INDEX ON ( field->idfirma + field->idvd + field->brdok ) TAG "1" TO cTable
-      INDEX ON ( field->idfirma + field->mkonto + field->idzaduz2 + field->idvd + field->brdok ) TAG "2" TO cTable
-      INDEX ON ( field->idfirma + DToS( field->datdok ) + field->podbr + field->idvd + field->brdok ) TAG "3" TO cTable
-      INDEX ON ( field->datdok ) TAG "DAT" TO cTable
-      INDEX ON ( field->brfaktp + field->idvd ) TAG "V_BRF" TO cTable
+      INDEX ON ( idfirma + idvd + brdok ) TAG "1" TO cTable
+      INDEX ON ( idfirma + mkonto + idzaduz2 + idvd + brdok ) TAG "2" TO cTable
+      INDEX ON ( idfirma + DToS( datdok ) + podbr + idvd + brdok ) TAG "3" TO cTable
+      INDEX ON ( datdok ) TAG "DAT" TO cTable
+      INDEX ON ( brfaktp + idvd ) TAG "V_BRF" TO cTable
 
       INDEX ON idFirma + IdVD + BrDok + RBr  TAG "1" TO cTable
       INDEX ON idFirma + idvd + brdok + IDTarifa TAG "2" TO cTable
@@ -742,11 +742,11 @@ FUNCTION use_sql_kalk_doks( hParams )
    use_sql( cTable, cSql )
 
    IF is_sql_rdd_treba_indeks( hParams )
-      INDEX ON ( field->idfirma + field->idvd + field->brdok ) TAG "1" TO cTable
-      INDEX ON ( field->idfirma + field->mkonto + field->idzaduz2 + field->idvd + field->brdok ) TAG "2" TO cTable
-      INDEX ON ( field->idfirma + DToS( field->datdok ) + field->podbr + field->idvd + field->brdok ) TAG "3" TO cTable
-      INDEX ON ( field->datdok ) TAG "DAT" TO cTable
-      INDEX ON ( field->brfaktp + field->idvd ) TAG "V_BRF" TO cTable
+      INDEX ON ( idfirma + idvd + brdok ) TAG "1" TO cTable
+      INDEX ON ( idfirma + mkonto + idzaduz2 + idvd + brdok ) TAG "2" TO cTable
+      INDEX ON ( idfirma + DToS( datdok ) + podbr + idvd + brdok ) TAG "3" TO cTable
+      INDEX ON ( datdok ) TAG "DAT" TO cTable
+      INDEX ON ( brfaktp + idvd ) TAG "V_BRF" TO cTable
       SET ORDER TO TAG "1"
       GO TOP
    ENDIF
@@ -864,9 +864,9 @@ FUNCTION use_sql_kalk_doks2( hParams )
    use_sql( cTable, cSql )
 
    IF is_sql_rdd_treba_indeks( hParams )
-      INDEX ON ( field->idfirma + field->idvd + field->brdok ) TAG "1" TO cTable
-      INDEX ON ( field->idfirma + DToS( field->datval ) + field->idvd + field->brdok ) TAG "2" TO cTable
-      INDEX ON ( field->datval ) TAG "DAT" TO cTable
+      INDEX ON ( idfirma + idvd + brdok ) TAG "1" TO cTable
+      INDEX ON ( idfirma + DToS( datval ) + idvd + brdok ) TAG "2" TO cTable
+      INDEX ON ( datval ) TAG "DAT" TO cTable
       SET ORDER TO TAG "1"
       GO TOP
    ENDIF
@@ -1105,7 +1105,7 @@ FUNCTION use_sql_kalk_kalk_atributi( hParams )
    use_sql( cTable, cSql )
 
    IF is_sql_rdd_treba_indeks( hParams )
-      INDEX ON ( field->idfirma + field->idtipdok + field->brdok ) TAG "1" TO cTable
+      INDEX ON ( idfirma + idtipdok + brdok ) TAG "1" TO cTable
       SET ORDER TO TAG "1"
       GO TOP
    ENDIF

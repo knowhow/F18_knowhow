@@ -36,7 +36,7 @@ FUNCTION prenos_fakt_kalk_prodavnica()
    AAdd( Opc, "7. fakt->kalk (15->15) izlaz iz MP putem VP" )
    AAdd( opcexe, {||  FaKaPrenos_izlaz_putem_vp() } )
    PRIVATE Izbor := 1
-   Menu_SC( "fkpr" )
+   f18_menu_sa_priv_vars_opc_opcexe_izbor( "fkpr" )
    my_close_all_dbf()
 
    RETURN .T.

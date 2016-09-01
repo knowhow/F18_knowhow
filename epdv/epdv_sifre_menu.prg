@@ -42,6 +42,6 @@ FUNCTION epdv_sifarnici()
    AAdd( opcexe, {|| P_SifK() } )
 
 
-   Menu_SC( "sif" )
+   f18_menu_sa_priv_vars_opc_opcexe_izbor( "sif" )
 
    RETURN

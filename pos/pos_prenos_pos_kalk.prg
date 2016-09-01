@@ -226,7 +226,7 @@ STATIC FUNCTION get_import_file( br_dok, destinacija, import_fajl )
    _izbor := 1
    _prenesi := .F.
    DO WHILE .T.
-      _izbor := Menu( "k2p", _opc, _izbor, .F. )
+      _izbor := meni_0( "k2p", _opc, _izbor, .F. )
       IF _izbor == 0
          EXIT
       ELSE

@@ -1000,7 +1000,7 @@ FUNCTION OstaleOpcije()
    PRIVATE am_x := m_x, am_y := m_y
    my_close_all_dbf()
    DO WHILE .T.
-      Izbor := menu( "prip", opc, Izbor, .F. )
+      Izbor := meni_0( "prip", opc, Izbor, .F. )
       DO CASE
       CASE Izbor == 0
          EXIT

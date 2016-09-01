@@ -41,7 +41,7 @@ FUNCTION fin_kontrolni_izvjestaji_meni()
    AAdd( opcexe, {|| p_rules(,,, aRuleCols, bRuleBlock ) } )
 
 
-   Menu_SC( "adm" )
+   f18_menu_sa_priv_vars_opc_opcexe_izbor( "adm" )
 
    RETURN .T.
 

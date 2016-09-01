@@ -937,7 +937,7 @@ STATIC FUNCTION _show_orphaned_items( orph )
       AAdd( opcexe, {|| NIL } )
    NEXT
 
-   menu_sc( "orph" )
+   f18_menu_sa_priv_vars_opc_opcexe_izbor( "orph" )
 
    IF LastKey() == K_ESC
       ch := 0

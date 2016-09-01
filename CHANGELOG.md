@@ -344,7 +344,7 @@
 1.7.66  2014-04-25, vsasa, hernad
 
   - vsasa: FIN - dnevnik naloga MONTH()  
-  - hernad: FAKT, menu funkcija odabira dokumenta - greška
+  - hernad: FAKT, meni_0 funkcija odabira dokumenta - greška
 
 1.7.65  2014-04-25, vsasa
 
@@ -544,7 +544,7 @@
   - VIRM, generisani virmani imaju redni broj 0
   - get_attr_from_server_to_dbf() korekcija
   - RNAL, tabela dodatnih operacija iskočila iz glavne forme
-  - RNAL, odabir elementa artikla menu problem
+  - RNAL, odabir elementa artikla meni_0 problem
   - FIN, bruto bilans PTXT print - bugfix
 
 1.7.20  2014-03-31, vsasa

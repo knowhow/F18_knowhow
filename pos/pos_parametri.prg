@@ -138,7 +138,7 @@ FUNCTION pos_param_principi_rada()
    AAdd( opcexe, {|| ParPrBase() } )
 
 
-   Menu_SC( "prr" )
+   f18_menu_sa_priv_vars_opc_opcexe_izbor( "prr" )
 
    RETURN .F.
 

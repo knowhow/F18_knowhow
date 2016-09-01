@@ -75,7 +75,7 @@ FUNCTION pos_izvjestaji_tops()
       AAdd( opcexe, {|| fiskalni_izvjestaji_komande( NIL, .T. ) } )
    ENDIF
 
-   Menu_SC( "izvt" )
+   f18_menu_sa_priv_vars_opc_opcexe_izbor( "izvt" )
 
    RETURN .F.
 
@@ -124,7 +124,7 @@ FUNCTION pos_izvjestaji_hops()
    AAdd( opc, "A. štampa azuriranih dokumenata" )
    AAdd( opcexe, {|| pos_lista_azuriranih_dokumenata() } )
 
-   Menu_SC( "izvh" )
+   f18_menu_sa_priv_vars_opc_opcexe_izbor( "izvh" )
 
    RETURN
 

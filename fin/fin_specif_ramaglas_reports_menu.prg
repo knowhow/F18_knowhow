@@ -29,6 +29,6 @@ FUNCTION IzvjPogonK()
    AAdd( opc, "1. specifikacija troskova po radnim nalozima" )
    AAdd( opcexe, {|| SpecTrosRN() } )
 
-   Menu_SC( "izPK" )
+   f18_menu_sa_priv_vars_opc_opcexe_izbor( "izPK" )
 
    RETURN .F.

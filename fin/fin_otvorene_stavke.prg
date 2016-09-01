@@ -50,7 +50,7 @@ FUNCTION fin_otvorene_stavke_meni()
    AAdd( opcexe, {|| fin_brisanje_markera_otvorenih_stavki() } )
 
    Izbor := 1
-   Menu_SC( "oas" )
+   f18_menu_sa_priv_vars_opc_opcexe_izbor( "oas" )
 
    RETURN .T.
 

@@ -14,37 +14,38 @@
 THREAD STATIC aMenuStack := {} // thread safe
 
 
-MEMVAR m_x, m_y, Ch, goModul
+MEMVAR m_x, m_y, goModul
 
-FUNCTION f18_menu( cIzp, main_menu, izbor, opc, opcexe )
+FUNCTION f18_menu( cIzp, lOsnovniMeni, nIzbor, aOpc, aOpcExe )
 
    LOCAL cOdgovor
-   LOCAL nIzbor
    LOCAL _menu_opc
 
-   IF main_menu == NIL
-      main_menu := .F.
+   IF lOsnovniMeni == NIL
+      lOsnovniMeni := .F.
    ENDIF
 
-   IF main_menu
+   IF lOsnovniMeni
       @ 4, 5 SAY ""
    ENDIF
 
    DO WHILE .T.
-      Izbor := menu( cIzp, opc, izbor, .F. )
-      nIzbor := retitem( izbor )
+      nIzbor := meni_0( cIzp, aOpc, nIzbor, .F. )
+
+      // nIzbor := retitem( nIzbor )
+
       DO CASE
-      CASE izbor == 0
-         IF main_menu
+      CASE nIzbor == 0
+         IF lOsnovniMeni
             cOdgovor := Pitanje( "", "Želite izaći iz programa ?", 'N' )
             IF cOdgovor == "D"
-               EXIT
+               RETURN .F.
             ELSEIF cOdgovor == "L"
-               Izbor := 1
+               nIzbor := 1
                @ 4, 5 SAY ""
                LOOP
             ELSE
-               Izbor := 1
+               nIzbor := 1
                @ 4, 5 SAY ""
                LOOP
             ENDIF
@@ -54,9 +55,8 @@ FUNCTION f18_menu( cIzp, main_menu, izbor, opc, opcexe )
 
       OTHERWISE
 
-         IF opcexe[ nIzbor ] <> nil
-
-            _menu_opc := opcexe[ nIzbor ]
+         IF aOpcExe[ nIzbor ] <> nil
+            _menu_opc := aOpcExe[ nIzbor ]
 
             IF ValType( _menu_opc ) == "B"
                Eval( _menu_opc )
@@ -65,47 +65,62 @@ FUNCTION f18_menu( cIzp, main_menu, izbor, opc, opcexe )
             ENDIF
 
          ENDIF
+
       ENDCASE
 
    ENDDO
 
-   RETURN
+   RETURN .T.
 
 
 
-
-FUNCTION Menu_SC( cIzp, lMain )
+FUNCTION f18_menu_sa_priv_vars_opc_opcexe_izbor( cIzp, lMain )
 
    // pretpostavljamo privatne varijable Izbor, Opc, OpcExe
+   RETURN f18_menu( cIzp, lMain, Izbor, Opc, OpcExe )
 
-   RETURN f18_menu( cIzp, lMain, Izbor, Opc, Opcexe )
 
 
+FUNCTION meni_fiksna_lokacija( nX1, nY1, aNiz, nIzb )
+
+   LOCAL xM := 0, nYm := 0
+
+   xM := Len( aNiz )
+   AEval( aNiz, {| x| iif( Len( x ) > nYm, nYm := Len( x ), ) } )
+
+   Prozor1( nX1, nY1, nX1 + xM + 1, nY1 + nYm + 1,,,,,, 0 )
+
+   nIzb := meni_0_inkey( nX1 + 1, nY1 + 1, nX1 + xM, nY1 + nYm, aNiz, nIzb )
+
+   Prozor0()
+
+   RETURN nIzb
 
 /*
  *
  *  Prikazuje zadati meni, vraca odabranu opciju
  *
  *  cMeniId  - identifikacija menija     C
- *  aItems   - niz opcija za izbor       {}
+ *  aItems   - niz opcija za nIzbor       {}
  *  nItemNo  - Broj pocetne pozicije     N
  *  lInvert     - da li je meni F18_COLOR_INVERT ovan  L
  *
  *  Broj izabrane opcije, 0 kraj
  *
- Privatna varijable:
-  - Ch - character
 
 */
 
-FUNCTION MENU( cMeniId, aItems, nItemNo, lInvert, cHelpT, nPovratak, aFixKoo, nMaxVR )
+FUNCTION meni_0( cMeniId, aItems, nItemNo, lInvert, cHelpT, nPovratak, aFixKoo, nMaxVR )
 
    LOCAL nLength
    LOCAL nN1
    LOCAL cOldColor
    LOCAL cLocalColor
    LOCAL cLocalInvertedColor
-   LOCAL ItemSav
+   LOCAL nTItemNo
+   LOCAL nChar
+
+   // LOCAL ItemSav
    LOCAL i
    LOCAL aMenu := {}
    LOCAL cPom := Set( _SET_DEVICE )
@@ -184,12 +199,12 @@ FUNCTION MENU( cMeniId, aItems, nItemNo, lInvert, cHelpT, nPovratak, aFixKoo, nM
    SetColor( cLocalColor )
 
    // IF Len( aItems ) > nMaxVR
-   nItemNo := AChoice3( m_x + 1, m_y + 2, m_x + nN1 + 1, m_y + nLength + 1, aItems, RetItem( nItemNo ) ) // , RetItem( nItemNo )-1 )
+   nItemNo := meni_0_inkey( m_x + 1, m_y + 2, m_x + nN1 + 1, m_y + nLength + 1, aItems, nItemNo ) // RetItem( nItemNo ) ) // , RetItem( nItemNo )-1 )
    // ELSE
    // nItemNo := Achoice2( m_x + 1, m_y + 2, m_x + nN1 + 1, m_y + nLength + 1, aItems, .T., "MenuFunc", RetItem( nItemNo ), RetItem( nItemNo ) -1 )
    // ENDIF
 
-   nTItemNo := RetItem( nItemNo )
+   nTItemNo := nItemNo //nTItemNo := RetItem( nItemNo )
 
    aMenu := StackTop( aMenuStack )
    m_x := aMenu[ 2 ]
@@ -198,22 +213,19 @@ FUNCTION MENU( cMeniId, aItems, nItemNo, lInvert, cHelpT, nPovratak, aFixKoo, nM
 
    @ m_x, m_y TO m_x + nN1 + 1, m_y + nLength + 3
 
-
    IF nTItemNo <> 0 // Ako nije pritisnuto ESC, <-, ->, oznaci izabranu opciju
       SetColor( cLocalInvertedColor )
       @ m_x + Min( nTItemNo, nMaxVR ), m_y + 1 SAY8 " " + aItems[ nTItemNo ] + " "
       @ m_x + Min( nTItemNo, nMaxVR ), m_y + 2 SAY ""
    END IF
 
-   Ch := LastKey()
+   nChar := LastKey()
 
-
-   IF Ch == K_ESC .OR. nTItemNo == 0 .OR. nTItemNo == nPovratak  // Ako je ESC meni treba odmah izbrisati (nItemNo=0),  skini meni sa steka
+   IF nChar == K_ESC .OR. nTItemNo == 0 .OR. nTItemNo == nPovratak  // Ako je ESC meni treba odmah izbrisati (nItemNo=0),  skini meni sa steka
       @ m_x, m_y CLEAR TO m_x + nN1 + 2 - iif( lFK, 1, 0 ), m_y + nLength + 4 - iif( lFK, 1, 0 )
       aMenu := StackPop( aMenuStack )
       RestScreen( m_x, m_y, m_x + nN1 + 2 -iif( lFK, 1, 0 ), m_y + nLength + 4 - iif( lFK, 1, 0 ), aMenu[ 4 ] )
    END IF
-
 
    SetColor( cOldColor )
    Set( _SET_DEVICE, cPom )
@@ -221,43 +233,44 @@ FUNCTION MENU( cMeniId, aItems, nItemNo, lInvert, cHelpT, nPovratak, aFixKoo, nM
    RETURN nItemNo
 
 
-FUNCTION meni_fiksna_lokacija( nX1, nY1, aNiz, nIzb )
+/*
+--FUNCTION retitem( nItemNo )
 
-   LOCAL xM := 0, nYm := 0
-
-   xM := Len( aNiz )
-   AEval( aNiz, {| x| iif( Len( x ) > nYm, nYm := Len( x ), ) } )
-
-   Prozor1( nX1, nY1, nX1 + xM + 1, nY1 + nYm + 1,,,,,, 0 )
-
-   nIzb := Achoice3( nX1 + 1, nY1 + 1, nX1 + xM, nY1 + nYm, aNiz, nIzb )
-
-   Prozor0()
-
-   RETURN nIzb
-
-
-FUNCTION KorMenu2
-
-   LOCAL nVrati := 2, nTipka := LastKey()
+   LOCAL nRetItem
+   LOCAL cAction
 
    DO CASE
-   CASE nTipka == K_ESC
-      nVrati := 0
-   CASE nTipka == K_ENTER
-      nVrati := 1
+   CASE RANGE( nItemNo, 10000, 10999 )
+      cAction := "K_CTRL_N"
+   CASE RANGE( nItemNo, 20000, 20999 )
+      cAction := "K_F2"
+   CASE RANGE( nItemNo, 30000, 30999 )
+      cAction := "K_CTRL_T"
+   OTHERWISE
+      cAction := ""
    ENDCASE
 
-   RETURN nVrati
+   DO CASE
+   CASE cAction == "K_CTRL_N"
+      nRetItem := nItemNo - 10000
+   CASE cAction == "K_F2"
+      nRetItem := nItemNo - 20000
+   CASE cAction == "K_CTRL_T"
+      nRetItem := nItemNo - 30000
+   OTHERWISE
+      nRetItem := nItemNo
+   ENDCASE
+
+   RETURN nRetItem
+*/
 
 
-
-FUNCTION AChoice3( nX1, nY1, nX2, nY2, aItems, nItemNo )
+FUNCTION meni_0_inkey( nX1, nY1, nX2, nY2, aItems, nItemNo )
 
    LOCAL nI, nWidth, nLen, nOldCurs, cOldColor, nOldItemNo, cSavC
    LOCAL nGornja
    LOCAL nVisina
-   LOCAL nCtrlKeyVal := 0
+   //LOCAL nCtrlKeyVal := 0
    LOCAL nChar
    LOCAL lExitFromMeni
 
@@ -284,6 +297,7 @@ FUNCTION AChoice3( nX1, nY1, nX2, nY2, aItems, nItemNo )
          hb_idleSleep( 0.5 )
          LOOP
       ENDIF
+
       IF nVisina < nLen
          @   nX2, nY1 + Int( nWidth / 2 ) SAY iif( nGornja == 1, " ^ ", iif( nItemNo == nLen, " v ", " v " ) )
          @   nX1 - 1, nY1 + Int( nWidth / 2 ) SAY iif( nGornja == 1, " v ", iif( nItemNo == nLen, " ^ ", " ^ " ) )
@@ -330,6 +344,7 @@ FUNCTION AChoice3( nX1, nY1, nX2, nY2, aItems, nItemNo )
          nItemNo++
       CASE nChar == K_UP
          nItemNo--
+
       CASE nChar == K_ENTER
          EXIT
 
@@ -348,17 +363,17 @@ FUNCTION AChoice3( nX1, nY1, nX2, nY2, aItems, nItemNo )
             ENDIF
          NEXT
 
-      CASE nChar == K_CTRL_N
-         nCtrlKeyVal := 10000
-         EXIT
+      //CASE nChar == K_CTRL_N
+      //   nCtrlKeyVal := 10000
+      //   EXIT
 
-      CASE nChar == K_F2
-         nCtrlKeyVal := 20000
-         EXIT
+      //CASE nChar == K_F2
+      //   nCtrlKeyVal := 20000
+      //   EXIT
 
-      CASE nChar == K_CTRL_T
-         nCtrlKeyVal := 30000
-         EXIT
+      //CASE nChar == K_CTRL_T
+    //     nCtrlKeyVal := 30000
+    //     EXIT
 
       ENDCASE
 
@@ -374,4 +389,4 @@ FUNCTION AChoice3( nX1, nY1, nX2, nY2, aItems, nItemNo )
    SetCursor( iif( nOldCurs == 0, 0, iif( ReadInsert(), 2, 1 ) ) )
    SetColor( cOldColor )
 
-   RETURN nItemNo + nCtrlKeyVal
+   RETURN nItemNo //+ nCtrlKeyVal

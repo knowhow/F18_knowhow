@@ -19,6 +19,7 @@ FUNCTION kalkulacija_cijena( azurirana )
    LOCAL _template
    LOCAL _tip := "V"
    LOCAL _predisp := .F.
+   LOCAL cOk
 
    IF azurirana == NIL
       azurirana := .T.
@@ -67,7 +68,7 @@ FUNCTION kalkulacija_cijena( azurirana )
       RETURN .F.
    ENDIF
 
-   IF !Empty ( kalkulacija_ima_sve_cijene( _vars["id_firma"], _vars["tip_dok"], _vars["br_dok"] ))
+   IF !Empty ( cOk := kalkulacija_ima_sve_cijene( _vars["id_firma"], _vars["tip_dok"], _vars["br_dok"] ))
       MsgBeep( "Unutar kalkulacije nedostaju pojedine cijene bitne za obračun!##Stavke: " + cOk )
       //RETURN .F.
    ENDIF
@@ -94,7 +95,7 @@ FUNCTION kalkulacija_cijena( azurirana )
 
    ENDCASE
 
-   RETURN
+   RETURN .T.
 
 
 FUNCTION mp_predispozicija( firma, tip_dok, br_dok )

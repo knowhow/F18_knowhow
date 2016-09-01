@@ -45,7 +45,7 @@ FUNCTION kalk_pregled_dokumenata()
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
 
 FUNCTION kalk_ostale_operacije_doks()

@@ -18,6 +18,7 @@ FUNCTION kalk_stampa_dokumenta( lAzuriraniDokument, cSeek, lAuto )
    LOCAL nCol1
    LOCAL nCol2
    LOCAL nPom
+   LOCAL cOk
    PRIVATE cIdfirma, cIdvd, cBrdok
 
    nCol1 := 0
@@ -109,7 +110,7 @@ FUNCTION kalk_stampa_dokumenta( lAzuriraniDokument, cSeek, lAuto )
       ENDIF
 
 
-      IF !Empty( kalkulacija_ima_sve_cijene( cIdFirma, cIdVd, cBrDok ) ) // provjeri da li kalkulacija ima sve cijene ?
+      IF !Empty( cOk := kalkulacija_ima_sve_cijene( cIdFirma, cIdVd, cBrDok ) ) // provjeri da li kalkulacija ima sve cijene ?
          MsgBeep( "Unutar kalkulacije nedostaju pojedine cijene bitne za obračun!##Stavke: " + cOk )
          //my_close_all_dbf()
          //RETURN .F.

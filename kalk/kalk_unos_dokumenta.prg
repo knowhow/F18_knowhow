@@ -1938,12 +1938,10 @@ FUNCTION kalk_open_tables_unos( lAzuriraniDok, cIdFirma, cIdVD, cBrDok )
 
 
 
-// ---------------------------------------------------------------------
-// provjerava da li kalkulacija ima sve potrebne cijene
-// ---------------------------------------------------------------------
+
 FUNCTION kalkulacija_ima_sve_cijene( firma, tip_dok, br_dok )
 
-   LOCAL _ok := .T.
+   LOCAL cOk := ""
    LOCAL _area := Select()
    LOCAL _t_rec := RecNo()
 
@@ -1951,15 +1949,15 @@ FUNCTION kalkulacija_ima_sve_cijene( firma, tip_dok, br_dok )
 
       IF field->idvd $ "11#41#42#RN#19"
          IF field->fcj == 0
-            _ok := .F.
-            MsgBeep( "Stavka broj " + AllTrim( field->rbr ) + " FCJ <= 0 !" )
-            EXIT
+            cOk += Alltrim( field->rbr ) + ";"
+            //MsgBeep( "Stavka broj " + AllTrim( field->rbr ) + " FCJ <= 0 !" )
+            //EXIT
          ENDIF
       ELSEIF field->idvd $ "10#16#96#94#95#14#80#81#"
          IF field->nc == 0
-            _ok := .F.
-            MsgBeep( "Stavka broj " + AllTrim( field->rbr ) + " NC <= 0 !" )
-            EXIT
+            cOk += Alltrim( field->rbr ) + ";"
+            //MsgBeep( "Stavka broj " + AllTrim( field->rbr ) + " NC <= 0 !" )
+            //EXIT
          ENDIF
       ENDIF
 
@@ -1970,7 +1968,7 @@ FUNCTION kalkulacija_ima_sve_cijene( firma, tip_dok, br_dok )
    SELECT ( _area )
    GO ( _t_rec )
 
-   RETURN _ok
+   RETURN cOk
 
 
 

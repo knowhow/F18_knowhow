@@ -27,7 +27,7 @@ FUNCTION kalkulacija_cijena( azurirana )
    o_tables( azurirana )
 
    IF azurirana .AND. !get_vars( @_vars )
-      RETURN
+      RETURN .F.
    ENDIF
 
    IF !azurirana
@@ -38,7 +38,7 @@ FUNCTION kalkulacija_cijena( azurirana )
    ENDIF
 
    IF ! ( _vars[ "tip_dok" ] $ "10#16#95#96#81#80" )
-      RETURN
+      RETURN .F.
    ENDIF
 
    IF _vars[ "tip_dok" ] $ "10#16#95#96"
@@ -60,16 +60,16 @@ FUNCTION kalkulacija_cijena( azurirana )
 
    IF !File( F18_TEMPLATE_LOCATION + _template )
       MsgBeep( "Template fajl ne postoji: " + F18_TEMPLATE_LOCATION + _template )
-      RETURN
+      RETURN .F.
    ENDIF
 
    IF !seek_dokument( _vars, azurirana )
-      RETURN
+      RETURN .F.
    ENDIF
 
-   IF !kalkulacija_ima_sve_cijene( _vars["id_firma"], _vars["tip_dok"], _vars["br_dok"] )
-      MsgBeep( "Unutar kalkulacije nedostaju pojedine cijene bitne za obračun!#Štampanje onemogućeno." )
-      RETURN
+   IF !Empty ( kalkulacija_ima_sve_cijene( _vars["id_firma"], _vars["tip_dok"], _vars["br_dok"] ))
+      MsgBeep( "Unutar kalkulacije nedostaju pojedine cijene bitne za obračun!##Stavke: " + cOk )
+      //RETURN .F.
    ENDIF
 
    DO CASE

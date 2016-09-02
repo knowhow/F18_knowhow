@@ -98,20 +98,20 @@ FUNCTION kalk_meni_f10()
    AAdd( aOpc, "O. briši sve protu-stavke" )
    AAdd( aOpcExe, {|| ProtStErase() } )
 
-   AAdd( aOpc, "P. setuj sve NC na 0" )
-   AAdd( aOpcExe, {|| SetNcTo0() } )
-
    AAdd( aOpc, "R. renumeracija kalk priprema" )
    AAdd( aOpcexe, {|| renumeracija_kalk_pripr( nil, nil, .F. ) } )
 
-   AAdd( aOpc, "S. provjeri duple stavke u pripremi" )
-   AAdd( aOpcExe, {|| kalk_printaj_duple_stavke_iz_pripreme() } )
+   // AAdd( aOpc, "P. duple stavke u pripremi - provjeri" )
+   // AAdd( aOpcExe, {|| kalk_printaj_duple_stavke_iz_pripreme() } )
+
+   AAdd( aOpc, "S. spoji duple stavke u pripremi" )
+   AAdd( aOpcExe, {||  kalk_pripr_spoji_duple_artikle() } )
+
 
    AAdd( aOpc, "U. uskladi nc sa dokumentom 95 prema posljednjem dokumentu" )
    AAdd( aOpcExe, {|| kalk_uskladi_nc_sa_95_prema_zadnjem_ulazu() } )
 
 
-      AltD()
    f18_menu( "kf10", .F., nIzbor, aOpc, aOpcExe )
 
    o_kalk_edit()
@@ -285,8 +285,8 @@ FUNCTION ProtStErase()
    RETURN .T.
 
 
-
-FUNCTION SetNcTo0()
+/*
+FUNCTION ()
 
    IF Pitanje(, "Setovati NC na 0 (D/N)?", "N" ) == "N"
       RETURN .F.
@@ -306,14 +306,13 @@ FUNCTION SetNcTo0()
    GO TOP
 
    RETURN .T.
+*/
 
-
-
+/*
 STATIC FUNCTION kalk_printaj_duple_stavke_iz_pripreme()
 
-   LOCAL _data := {}
-   LOCAL _dup := {}
-   LOCAL _scan, _i
+   LOCAL aRobaDupli := {}
+   LOCAL nScan, _i
 
    O_ROBA
    o_kalk_pripr()
@@ -328,12 +327,12 @@ STATIC FUNCTION kalk_printaj_duple_stavke_iz_pripreme()
 
       SELECT kalk_pripr
 
-      _scan := AScan( _data, {| var| VAR[ 1 ] == kalk_pripr->idroba } )
+      nScan := AScan( aRobaDupli, {| var| VAR[ 1 ] == kalk_pripr->idroba } )
 
-      IF _scan == 0
-         AAdd( _data, { kalk_pripr->idroba } )
+      IF nScan == 0
+         AAdd( aRobaDupli, { kalk_pripr->idroba } )
       ELSE
-         AAdd( _dup, { kalk_pripr->idroba, roba->naz, roba->barkod, kalk_pripr->rbr } )
+         AAdd( aRobaDupli, { kalk_pripr->idroba, roba->naz, roba->barkod, kalk_pripr->rbr } )
       ENDIF
 
       SKIP
@@ -342,7 +341,7 @@ STATIC FUNCTION kalk_printaj_duple_stavke_iz_pripreme()
 
    GO TOP
 
-   IF Len( _dup ) > 0
+   IF Len( aRobaDupli ) > 0
 
       START PRINT CRET .F.
 
@@ -351,16 +350,85 @@ STATIC FUNCTION kalk_printaj_duple_stavke_iz_pripreme()
       ? PadR( "R.br", 5 ) + " " + PadR( "Rb.st", 5 ) + " " + PadR( "ID", 10 ) + " " + PadR( "NAZIV", 40 ) + " " + PadR( "BARKOD", 13 )
       ? Replicate( "-", 80 )
 
-      FOR _i := 1 TO Len( _dup )
+      FOR _i := 1 TO Len( aRobaDupli )
          ? PadL( AllTrim( Str( _i, 5 ) ) + ".", 5 )
-         @ PRow(), PCol() + 1 SAY PadR( _dup[ _i, 4 ], 5 )
-         @ PRow(), PCol() + 1 SAY _dup[ _i, 1 ]
-         @ PRow(), PCol() + 1 SAY PadR( _dup[ _i, 2 ], 40 )
-         @ PRow(), PCol() + 1 SAY _dup[ _i, 3 ]
+         @ PRow(), PCol() + 1 SAY PadR( aRobaDupli[ _i, 4 ], 5 )
+         @ PRow(), PCol() + 1 SAY aRobaDupli[ _i, 1 ]
+         @ PRow(), PCol() + 1 SAY PadR( aRobaDupli[ _i, 2 ], 40 )
+         @ PRow(), PCol() + 1 SAY aRobaDupli[ _i, 3 ]
       NEXT
 
       ENDPRINT
 
    ENDIF
+
+   RETURN .T.
+
+*/
+
+FUNCTION kalk_pripr_spoji_duple_artikle()
+
+   LOCAL hRec, nPozicija, cIdRoba, nKolicina, nRbr, bRobaFilter
+
+   IF Pitanje(, "Spojiti duple artikle (D/N)?", "N" ) == "N"
+      RETURN .F.
+   ENDIF
+
+   PushWa()
+
+   bRobaFilter := {|| field->idRoba == cIdRoba .AND. ;
+      Round( field->fcj, 4 ) == Round( hRec[ "fcj" ], 4 ) .AND. ;
+      Round( field->nc, 4 ) == Round( hRec[ "nc" ], 4 ) .AND. ;
+      Round( field->vpc, 4 ) == Round( hRec[ "vpc" ], 4 ) .AND. ;
+      Round( field->rabatv, 4 ) == Round( hRec[ "rabatv" ], 4 ) .AND. ;
+      Round( field->mpc, 4 ) == Round( hRec[ "mpc" ], 4 ) .AND. ;
+      Round( field->mpcsapp, 4 ) == Round( hRec[ "mpcsapp" ], 4 )  }
+
+
+   SELECT kalk_pripr
+   GO TOP
+
+   IF !my_flock()
+      MsgBeep( "flock kalk_pripr neuspjesno ?! STOP!" )
+      RETURN .F.
+   ENDIF
+
+   MsgO( "Prolaz kroz kalk_pripremu ..." )
+   DO WHILE !Eof()
+
+      AltD()
+      hRec := dbf_get_rec()
+      nPozicija := RecNo()
+      cIdRoba := field->idroba
+      IF field->kolicina == 0
+         SKIP
+         LOOP
+      ENDIF
+
+      GO TOP
+      nKolicina := 0
+      dbEval( {|| nKolicina += field->Kolicina }, bRobaFilter ) // saberi kolicinu
+      GO TOP
+      dbEval( {|| field->kolicina := 0 }, bRobaFilter ) // setuj kolicina=0 za sve cIdRoba
+
+      GO nPozicija  // prvu stavku napuni sa kolicinom
+      hRec[ "kolicina" ] := nKolicina // ukupna kolicina za cIdRoba
+      dbf_update_rec( hRec, .T. ) // no-lock
+
+      SKIP
+   ENDDO
+   dbEval( {|| dbDelete() }, {|| field->kolicina == 0 } ) // viska stavke
+
+   nRbr := 1
+   ordSetFocus( 0 )
+   GO TOP
+   dbEval( {|| field->rbr := Str( nRbr, 3 ), nRbr++ } )  // renumeracija
+   MsgC()
+
+   my_unlock()
+   MsgC()
+
+
+   PopWa()
 
    RETURN .T.

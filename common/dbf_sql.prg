@@ -12,17 +12,17 @@
 #include "f18.ch"
 
 // ------------------------------
-// no_lock - ne zakljucavaj
+// lNoLock - ne zakljucavaj
 // ------------------------------
-FUNCTION dbf_update_rec( vars, no_lock )
+FUNCTION dbf_update_rec( hRec, lNoLock )
 
    LOCAL _key
    LOCAL _field_b
    LOCAL _msg
    LOCAL _a_dbf_rec
 
-   IF no_lock == NIL
-      no_lock := .F.
+   IF lNoLock == NIL
+      lNoLock := .F.
    ENDIF
 
    IF !Used()
@@ -33,11 +33,11 @@ FUNCTION dbf_update_rec( vars, no_lock )
       RETURN .F.
    ENDIF
 
-   IF no_lock .OR. my_rlock()
+   IF lNoLock .OR. my_rlock()
 
       _a_dbf_rec := get_a_dbf_rec( Alias(), .F. )
 
-      FOR EACH _key in vars:Keys
+      FOR EACH _key in hRec:Keys
 
          // blacklistovano polje
          IF field_in_blacklist( _key, _a_dbf_rec[ "blacklisted" ] )
@@ -52,12 +52,12 @@ FUNCTION dbf_update_rec( vars, no_lock )
          ELSE
             _field_b := FieldBlock( _key )
             // napuni field sa vrijednosti
-            Eval( _field_b, vars[ _key ] )
+            Eval( _field_b, hRec[ _key ] )
          ENDIF
 
       NEXT
 
-      IF !no_lock
+      IF !lNoLock
          my_unlock()
       ENDIF
    ELSE

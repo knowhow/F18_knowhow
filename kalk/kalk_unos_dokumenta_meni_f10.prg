@@ -54,7 +54,7 @@ FUNCTION kalk_meni_f10()
    ENDIF
 
    AAdd( aOpc, "B. pretvori 11 -> 41  ili  11 -> 42"        )
-   AAdd( aOpcExe, {||  Iz11u412() } )
+   AAdd( aOpcExe, {||  kalk_iz_11_u_41_42() } )
 
    AAdd( aOpc, "C. promijeni predznak za količine"          )
    AAdd( aOpcExe, {||  kalk_plus_minus_kol() } )
@@ -76,7 +76,7 @@ FUNCTION kalk_meni_f10()
    AAdd( aOpcExe, {|| Iz12u97()  } )  // 11,12 -> 96,97
 
    AAdd( aOpc, "J. zaduženje prodavnice iz magacina (10->11)"  )
-   AAdd( aOpcExe, {|| Iz10u11() } )
+   AAdd( aOpcExe, {|| kalk_iz_10_u_11() } )
 
    AAdd( aOpc, "K. veleprodaja na osnovu dopreme u magacin (16->14)" )
    AAdd( aOpcExe, {|| Iz16u14() } )

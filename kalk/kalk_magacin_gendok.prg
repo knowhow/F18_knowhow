@@ -83,7 +83,7 @@ FUNCTION Iz12u97()
    @ m_x + 0, m_y + 5 SAY "FORMIRANJE DOKUMENTA 96/97 NA OSNOVU DOKUMENTA 11/12"
    @ m_x + 2, m_y + 2 SAY "Dokument: " + cIdFirma + "-"
    @ Row(), Col() GET cIdVdU VALID cIdVdU $ "11#12"
-   @ Row(), Col() SAY "-" GET cBrDokU VALID postoji_kalk_dok( cIdFirma + cIdVdU + cBrDokU )
+   @ Row(), Col() SAY "-" GET cBrDokU VALID is_kalk_postoji_dokument( cIdFirma, cIdVdU, cBrDokU )
    @ m_x + 4, m_y + 2 SAY "Dokument koji se formira (96/97)" GET cIdVdI VALID cIdVdI $ "96#97"
    @ m_x + 5, m_y + 2 SAY "Datum dokumenta koji se formira" GET dDatDok VALID !Empty( dDatDok )
    @ m_x + 7, m_y + 2 SAY "Prenijeti na konto (prazno-ne prenositi)" GET cKontoSklad
@@ -714,7 +714,7 @@ FUNCTION kalk_gen_16_iz_96()
    Box(, 6, 75 )
    @ m_x + 0, m_y + 5 SAY "FORMIRANJE DOKUMENTA 16 NA OSNOVU DOKUMENTA 96"
    @ m_x + 2, m_y + 2 SAY "Dokument: " + cIdFirma + "-" + cIdVdU + "-"
-   @ Row(), Col() GET cBrDokU VALID postoji_kalk_dok( cIdFirma + cIdVdU + cBrDokU )
+   --@ Row(), Col() GET cBrDokU VALID is_kalk_postoji_dokument( cIdFirma + cIdVdU + cBrDokU )
    @ m_x + 4, m_y + 2 SAY "Datum dokumenta koji se formira" GET dDatDok VALID !Empty( dDatDok )
    READ; ESC_BCR
    BoxC()
@@ -782,7 +782,7 @@ FUNCTION Iz16u14()
    @ m_x + 0, m_y + 5 SAY "FORMIRANJE DOKUMENTA 14 NA OSNOVU DOKUMENTA 16"
    @ m_x + 2, m_y + 2 SAY "Dokument: " + cIdFirma + "-"
    @ Row(), Col() SAY cIdVdU
-   @ Row(), Col() SAY "-" GET cBrDokU VALID postoji_kalk_dok( cIdFirma + cIdVdU + cBrDokU )
+   @ Row(), Col() SAY "-" GET cBrDokU VALID is_kalk_postoji_dokument( cIdFirma, cIdVdU, cBrDokU )
    @ m_x + 3, m_y + 2 SAY "Datum dokumenta koji se formira" GET dDatDok VALID !Empty( dDatDok )
    @ m_x + 4, m_y + 2 SAY "Broj fakture" GET cBrFaktP
    @ m_x + 5, m_y + 2 SAY "Datum fakture" GET dDatFaktP

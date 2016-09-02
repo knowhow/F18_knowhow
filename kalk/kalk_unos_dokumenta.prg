@@ -1480,7 +1480,7 @@ FUNCTION MPCSAPPiz80uSif()
    Box(, 4, 75 )
    @ m_x + 0, m_y + 5 SAY8 "FORMIRANJE MPC U šifarnikU OD MPCSAPP DOKUMENTA TIPA 80"
    @ m_x + 2, m_y + 2 SAY8 "Dokument: " + cIdFirma + "-" + cIdVdU + "-"
-   @ Row(), Col() GET cBrDokU VALID postoji_kalk_dok( cIdFirma + cIdVdU + cBrDokU )
+   @ Row(), Col() GET cBrDokU VALID is_kalk_postoji_dokument( cIdFirma + cIdVdU + cBrDokU )
    READ
    ESC_BCR
    BoxC()

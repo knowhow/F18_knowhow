@@ -24,7 +24,7 @@ FUNCTION storno_kalk_dokument()
    @ m_x + 0, m_y + 5 SAY "STORNO DOKUMENTA PROMJENOM PREDZNAKA NA KOLICINI"
    @ m_x + 2, m_y + 2 SAY "Dokument: " + cIdFirma + "-"
    @ Row(), Col() GET cIdVdU
-   @ Row(), Col() SAY "-" GET cBrDokU VALID postoji_kalk_dok( cIdFirma + cIdVdU + cBrDokU )
+   @ Row(), Col() SAY "-" GET cBrDokU VALID is_kalk_postoji_dokument( cIdFirma, cIdVdU, cBrDokU )
    @ m_x + 4, m_y + 2 SAY "Datum dokumenta koji se formira" GET dDatDok VALID !Empty( dDatDok )
    READ; ESC_BCR
    BoxC()
@@ -52,17 +52,18 @@ FUNCTION storno_kalk_dokument()
 
 
 
-/* postoji_kalk_dok(cDok)
+/* is_kalk_postoji_dokument(cDok)
  *     Ispituje postojanje zadanog dokumenta medju azuriranim
  */
 
-FUNCTION postoji_kalk_dok( cDok )
+FUNCTION is_kalk_postoji_dokument( cIdFirma, cIdvd, cBrDok )
 
-   // {
+
    LOCAL lVrati := .F., nArr := Select()
-   SELECT kalk_doks
-   HSEEK cDok
-   IF Found()
+
+   find_kalk_doks_by_broj_dokumenta( cIdFirma, cIdVd, cBrDok )
+
+   IF !EOF()
       lVrati := .T.
    ELSE
       MsgBeep( "Dokument pod brojem koji ste unijeli ne postoji!" )
@@ -70,4 +71,3 @@ FUNCTION postoji_kalk_dok( cDok )
    SELECT ( nArr )
 
    RETURN lVrati
-// }

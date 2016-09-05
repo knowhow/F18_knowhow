@@ -447,7 +447,7 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
          nZDugDEM := 0
          nZPotDEM := 0
 
-         cIdPartner := IdPartner
+         cIdPartner := hb_UTF8ToStr( field->IdPartner )
 
          nTarea := Select()
 
@@ -518,7 +518,7 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
 
          lPrviProlaz := .T.  // prvi prolaz
 
-         DO WHILE !Eof() .AND. cIdKonto == IdKonto .AND. ( cIdPartner == IdPartner .OR. ( cBrza == "D" .AND. RTrim( qqPartner ) == ";" ) ) .AND. Rasclan() .AND. iif( gDUFRJ != "D", IdFirma == cIdFirma, .T. )
+         DO WHILE !Eof() .AND. cIdKonto == IdKonto .AND. ( cIdPartner == hb_UTF8ToStr( field->IdPartner ) .OR. ( cBrza == "D" .AND. RTrim( qqPartner ) == ";" ) ) .AND. Rasclan() .AND. iif( gDUFRJ != "D", IdFirma == cIdFirma, .T. )
 
             IF check_nova_strana( bZagl, oPdf, .F., 6, 0 )
 
@@ -546,7 +546,7 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
             IF cPredh == "2" .AND. lPrviProlaz
                lPrviProlaz := .F.
 
-               DO WHILE !Eof() .AND. cIdKonto == IdKonto .AND. ( cIdPartner == IdPartner .OR. ( cBrza == "D" .AND. RTrim( qqPartner ) == ";" ) ) ;
+               DO WHILE !Eof() .AND. cIdKonto == IdKonto .AND. ( cIdPartner == hb_UTF8ToStr( field->IdPartner ) .OR. ( cBrza == "D" .AND. RTrim( qqPartner ) == ";" ) ) ;
                      .AND. Rasclan() .AND. dDatOd > DatDok  .AND. iif( gDUFRJ != "D", IdFirma == cIdFirma, .T. )
 
                   IF lOtvoreneStavke .AND. OtvSt == "9"
@@ -632,7 +632,7 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
                   @ PRow(), PCol() + 1 SAY nDugDEM - nPotDEM PICT picbhd
                ENDIF
 
-               IF !( cIdKonto == IdKonto .AND. ( cIdPartner == IdPartner .OR. ( cBrza == "D" .AND. RTrim( qqPartner ) == ";" ) ) ) .AND. Rasclan()
+               IF !( cIdKonto == IdKonto .AND. ( cIdPartner == hb_UTF8ToStr( field->IdPartner ) .OR. ( cBrza == "D" .AND. RTrim( qqPartner ) == ";" ) ) ) .AND. Rasclan()
                   LOOP
                ENDIF
 
@@ -1050,10 +1050,10 @@ FUNCTION Telefon( cTel )
 
    nSelect := Select()
    SELECT partn
-   HSEEK suban->idpartner
-   SELECT ( nselect )
+   HSEEK hb_UTF8ToStr( suban->idpartner )
+   SELECT ( nSelect )
 
-   RETURN partn->telefon = cTel
+   RETURN ( partn->telefon == cTel )
 
 
 

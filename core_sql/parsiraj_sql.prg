@@ -27,6 +27,8 @@ FUNCTION parsiraj_sql( cFieldName, cConditionParam, lNot )
    IF ";" $ cConditionParam
       cConditionParam := Trim( cConditionParam )
       lTacKaZarez := .T.
+   ELSEIF Len( cConditionParam ) > 99 // dugacki uslov Idkonto=SPACE(100) param, znaci da je uslov za vise konta
+      cConditionParam := Trim( cConditionParam )
    ENDIF
 
    aConditions := TOKTONIZ( cConditionParam, ";" )

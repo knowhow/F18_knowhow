@@ -180,6 +180,7 @@ FUNCTION fin_specifikacija_suban()
       O_RJ
    ENDIF
 
+altd()
    O_PARTN
    O_KONTO
    MsgO( "Preuzimanje podataka sa SQL servera ..." )
@@ -323,7 +324,7 @@ FUNCTION fin_specifikacija_suban()
          nTArea := Select()
 
          cIdKonto := IdKonto
-         cIdPartner := IdPartner
+         cIdPartner := hb_UTF8ToStr( field->idPartner )
 
          IF !Empty( cOpcine )
             SELECT partn
@@ -357,7 +358,7 @@ FUNCTION fin_specifikacija_suban()
             nDugujeBHD := 0
             nPotrazujeBHD := 0
          ENDIF
-         DO WHILE !Eof() .AND. cIdKonto == IdKonto .AND. IdPartner == cIdPartner .AND. RasclanRJ()
+         DO WHILE !Eof() .AND. cIdKonto == IdKonto .AND. hb_UTF8ToStr( field->IdPartner ) == cIdPartner .AND. RasclanRJ()
             IF cRascFunkFond == "D"
                cGetFunkFond := idrj + funk + fond
                cGetIdRj := idrj
@@ -410,8 +411,8 @@ FUNCTION fin_specifikacija_suban()
                   HSEEK cIdKonto
                   SELECT SUBAN
                   cPom := AllTrim( KONTO->naz ) + " (" + AllTrim( AllTrim( PARTN->naz ) + PN2() ) + ")"
-                  ?? PadR( cPom, nDOpis - DifIdP( cidpartner ) )
-                  IF Len( cPom ) > nDOpis - DifIdP( cidpartner )
+                  ?? PadR( cPom, nDOpis - DifIdP( cIdpartner ) )
+                  IF Len( cPom ) > nDOpis - DifIdP( cIdpartner )
                      cLDrugi := SubStr( cPom, nDOpis + 1 )
                   ENDIF
                ELSE
@@ -465,7 +466,7 @@ FUNCTION fin_specifikacija_suban()
                   cRj_naz := nil
                ENDIF
 
-               fill_ss_tbl( cIdKonto, cIdPartner, IF( Empty( cIdPartner ), konto->naz, AllTrim( partn->naz ) ), nD, nP, nD - nP, cRj_id, cRj_naz )
+               fill_ss_tbl( cIdKonto, cIdPartner, IIF( Empty( cIdPartner ), konto->naz, AllTrim( partn->naz ) ), nD, nP, nD - nP, cRj_id, cRj_naz )
             ENDIF
 
             nKd += nD
@@ -567,7 +568,7 @@ FUNCTION getmjesto( cMjesto )
    LOCAL nSel := Select()
 
    SELECT partn
-   SEEK ( nsel )->idpartner
+   SEEK ( nSel )->idpartner
    fRet := .F.
    IF mjesto = cMjesto
       fRet := .T.
@@ -617,8 +618,6 @@ STATIC FUNCTION FFor1()
    RETURN .T.
 
 
-/* fn FSvaki1()
- */
 
 STATIC FUNCTION FSvaki1()
 

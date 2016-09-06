@@ -11,7 +11,6 @@
 
 #include "f18.ch"
 
-
 STATIC __line
 STATIC __txt1
 STATIC __txt2
@@ -862,7 +861,7 @@ FUNCTION lager_lista_magacin()
    @ PRow(), PCol() + 1 SAY ntNVI PICT pic_format( gPicDem, ntNVI )
    @ PRow(), PCol() + 1 SAY ntNV PICT pic_format( gPicDem, ntNV )
 
-   IF IsPDV() .AND. cDoNab == "N"
+   IF cDoNab == "N"
       IF _vpc_iz_sif == "D"
          // PV - samo u pdv rezimu
          @ PRow(), PCol() + 1 SAY ntVPVU PICT pic_format( gPicDem, ntVPVU )
@@ -935,7 +934,7 @@ STATIC FUNCTION pic_format( cPicture, nNum )
 // --------------------------------------
 STATIC FUNCTION g_exp_fields()
 
-   aDbf := {}
+   LOCAL aDbf := {}
 
    AAdd( aDbf, { "IDROBA", "C", 10, 0 } )
    AAdd( aDbf, { "SIFRADOB", "C", 10, 0 } )
@@ -991,8 +990,7 @@ STATIC FUNCTION fill_exp_tbl( nVar, cIdRoba, cSifDob, cNazRoba, cTarifa, ;
    REPLACE field->nv WITH nNV
    REPLACE field->nc WITH nNC
 
-   IF cDoNab == "D"
-      // resetuj varijable
+   IF cDoNab == "D"  // resetuj varijable
       nPVDug := 0
       nPVPot := 0
       nPV := 0

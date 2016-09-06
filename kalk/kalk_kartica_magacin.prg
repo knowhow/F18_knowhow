@@ -138,10 +138,10 @@ FUNCTION kalk_kartica_magacin()
 
       IF Right( Trim( cIdroba ), 1 ) == ";"
          fVeci := .F.
-         cIdr := Trim( StrTran( cIdroba, ";", "" ) )
+         cIdR := Trim( StrTran( cIdroba, ";", "" ) )
 
       ELSEIF Right( Trim( cIdRoba ), 1 ) == ">"
-         cIdr := Trim( StrTran( cIdroba, ">", "" ) )
+         cIdR := Trim( StrTran( cIdroba, ">", "" ) )
          fVeci := .T.
       ENDIF
 
@@ -170,7 +170,6 @@ FUNCTION kalk_kartica_magacin()
    nKolicina := 0
 
 
-
    PRIVATE cFilt := ".t."
 
    IF !Empty( cIdPartner )
@@ -184,7 +183,7 @@ FUNCTION kalk_kartica_magacin()
    IF Empty( cIdRoba )
       find_kalk_by_mkonto_idroba_idvd( cIdFirma, cIdVd, cIdKonto, NIL, cOrderBy )
    ELSE
-      find_kalk_by_mkonto_idroba_idvd( cIdFirma, cIdVd, cIdKonto, cIdRoba, cOrderBy )
+      find_kalk_by_mkonto_idroba_idvd( cIdFirma, cIdVd, cIdKonto, hb_StrToUtf8( cIdRoba ), cOrderBy )
    ENDIF
 
    IF !( cFilt == ".t." )
@@ -214,7 +213,7 @@ FUNCTION kalk_kartica_magacin()
 
    zagl_mag_kart()
 
-   DO WHILE !Eof() .AND. iif( fVeci, idfirma + mkonto + idroba >= cIdFirma + cIdKonto + cIdR, idfirma + mkonto + idroba = cIdFirma + cIdKonto + cIdR )
+   DO WHILE !Eof() .AND. iif( fVeci, idfirma + mkonto + hb_UTF8ToStr( field->idroba ) >= cIdFirma + cIdKonto + cIdR, idfirma + mkonto + hb_UTF8ToStr( field->idroba ) == cIdFirma + cIdKonto + cIdR )
 
       IF field->mkonto <> cIdKonto .OR. field->idfirma <> cIdFirma
          EXIT

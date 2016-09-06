@@ -520,8 +520,10 @@ FUNCTION use_sql_kalk( hParams )
       ENDIF
    ENDIF
 
-
+#ifdef F18_DEBUG
    ?E cSql
+#endif
+
    use_sql( cTable, cSql )
 
    IF is_sql_rdd_treba_indeks( hParams )

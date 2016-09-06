@@ -85,7 +85,6 @@ FUNCTION kalk_kartica_magacin()
 
          @ m_x + 2, m_y + 2 SAY "Konto  " GET cIdKonto VALID P_Konto( @cIdKonto )
 
-
          form_get_roba_id( @cIdRoba, m_x + 3, m_y + 2 )
 
 
@@ -183,7 +182,7 @@ FUNCTION kalk_kartica_magacin()
    IF Empty( cIdRoba )
       find_kalk_by_mkonto_idroba_idvd( cIdFirma, cIdVd, cIdKonto, NIL, cOrderBy )
    ELSE
-      find_kalk_by_mkonto_idroba_idvd( cIdFirma, cIdVd, cIdKonto, hb_StrToUtf8( cIdRoba ), cOrderBy )
+      find_kalk_by_mkonto_idroba_idvd( cIdFirma, cIdVd, cIdKonto, cIdRoba, cOrderBy )
    ENDIF
 
    IF !( cFilt == ".t." )

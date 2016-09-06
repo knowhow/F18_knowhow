@@ -136,8 +136,8 @@ STATIC FUNCTION _ios_spec_get_line()
 // ----------------------------------------------------------
 STATIC FUNCTION _ios_spec_vars( params )
 
-   LOCAL _id_firma := gFirma
-   LOCAL _id_konto := fetch_metric( "ios_spec_id_konto", my_user(), Space( 7 ) )
+   LOCAL cIdFirma := gFirma
+   LOCAL cIdKonto := fetch_metric( "ios_spec_id_konto", my_user(), Space( 7 ) )
    LOCAL _saldo_nula := "D"
    LOCAL _datum_do := Date()
 
@@ -147,7 +147,7 @@ STATIC FUNCTION _ios_spec_vars( params )
    @ m_x + 1, m_y + 6 SAY "SPECIFIKACIJA IOS-a"
    @ m_x + 3, m_y + 2 SAY "Firma "
    ?? gFirma, "-", gNFirma
-   @ m_x + 4, m_y + 2 SAY "Konto: " GET _id_konto VALID P_Konto( @_id_konto )
+   @ m_x + 4, m_y + 2 SAY "Konto: " GET cIdKonto VALID P_Konto( @cIdKonto )
    @ m_x + 5, m_y + 2 SAY "Datum do kojeg se generise  :" GET _datum_do
    @ m_x + 6, m_y + 2 SAY "Prikaz partnera sa saldom 0 :" GET _saldo_nula ;
       VALID _saldo_nula $ "DN" PICT "@!"
@@ -162,12 +162,12 @@ STATIC FUNCTION _ios_spec_vars( params )
    ENDIF
 
    // snimi parametre
-   set_metric( "ios_spec_id_konto", my_user(), _id_konto )
-   _id_firma := Left( _id_firma, 2 )
+   set_metric( "ios_spec_id_konto", my_user(), cIdKonto )
+   cIdFirma := Left( cIdFirma, 2 )
 
    // napuni matricu sa parametrima
-   params[ "id_konto" ] := _id_konto
-   params[ "id_firma" ] := _id_firma
+   params[ "id_konto" ] := cIdKonto
+   params[ "id_firma" ] := cIdFirma
    params[ "saldo_nula" ] := _saldo_nula
    params[ "datum_do" ] := _datum_do
 
@@ -179,7 +179,7 @@ STATIC FUNCTION _ios_spec_vars( params )
 
 STATIC FUNCTION ios_specifikacija( params )
 
-   LOCAL _datum_do, _id_firma, _id_konto, _saldo_nula
+   LOCAL _datum_do, cIdFirma, cIdKonto, _saldo_nula
    LOCAL _line
    LOCAL _id_partner, _rbr
    LOCAL _auto := .F.
@@ -196,8 +196,8 @@ STATIC FUNCTION ios_specifikacija( params )
    ENDIF
 
    // iz parametara uzmi uslove...
-   _id_firma := params[ "id_firma" ]
-   _id_konto := params[ "id_konto" ]
+   cIdFirma := params[ "id_firma" ]
+   cIdKonto := params[ "id_konto" ]
    _datum_do := params[ "datum_do" ]
    _saldo_nula := params[ "saldo_nula" ]
 
@@ -206,7 +206,7 @@ STATIC FUNCTION ios_specifikacija( params )
    O_PARTN
    O_KONTO
 
-   find_suban_by_broj_dokumenta(  _id_firma, _id_konto )
+   find_suban_by_broj_dokumenta(  cIdFirma, cIdKonto )
 
    EOF CRET
 
@@ -223,12 +223,12 @@ STATIC FUNCTION ios_specifikacija( params )
    nUkBHDDS := nUkBHDPS := 0
    nUkDEMDS := nUkDEMPS := 0
 
-   DO WHILE !Eof() .AND. _id_firma == field->idfirma .AND. _id_konto == field->idkonto
+   DO WHILE !Eof() .AND. cIdFirma == field->idfirma .AND. cIdKonto == field->idkonto
 
       _id_partner := field->idpartner
 
-      DO WHILE !Eof() .AND. _id_firma == field->idfirma ;
-            .AND. _id_konto == field->idkonto ;
+      DO WHILE !Eof() .AND. cIdFirma == field->idfirma ;
+            .AND. cIdKonto == field->idkonto ;
             .AND. _id_partner == field->idpartner
 
          // ako je datum veci od datuma do kojeg generisem
@@ -262,12 +262,12 @@ STATIC FUNCTION ios_specifikacija( params )
 
          // daj mi prvi put zaglavlje
          IF _rbr == 0
-            _spec_zaglavlje( _id_firma, _id_partner, _line )
+            _spec_zaglavlje( cIdFirma, _id_partner, _line )
          ENDIF
 
          IF PRow() > 61 + dodatni_redovi_po_stranici()
             FF
-            _spec_zaglavlje( _id_firma, _id_partner, _line )
+            _spec_zaglavlje( cIdFirma, _id_partner, _line )
          ENDIF
 
          @ PRow() + 1, 0 SAY+ + _rbr PICT "9999"
@@ -323,7 +323,7 @@ STATIC FUNCTION ios_specifikacija( params )
 
    IF PRow() > 61 + dodatni_redovi_po_stranici()
       FF
-      _spec_zaglavlje( _id_firma, _id_partner, _line )
+      _spec_zaglavlje( cIdFirma, _id_partner, _line )
    ENDIF
 
    @ PRow() + 1, 0 SAY _line
@@ -398,7 +398,7 @@ STATIC FUNCTION _spec_zaglavlje( id_firma, id_partner, line )
 // -------------------------------------------------------
 STATIC FUNCTION ios_generacija_podataka( params )
 
-   LOCAL _datum_do, _id_firma, _id_konto, _saldo_nula
+   LOCAL _datum_do, cIdFirma, cIdKonto, _saldo_nula
    LOCAL _id_partner, _rec, _cnt
    LOCAL _auto := .F.
    LOCAL _dug_1, _dug_2, _u_dug_1, _u_dug_2
@@ -418,8 +418,8 @@ STATIC FUNCTION ios_generacija_podataka( params )
    ENDIF
 
    // iz parametara uzmi uslove...
-   _id_firma := params[ "id_firma" ]
-   _id_konto := params[ "id_konto" ]
+   cIdFirma := params[ "id_firma" ]
+   cIdKonto := params[ "id_konto" ]
    _datum_do := params[ "datum_do" ]
    _saldo_nula := params[ "saldo_nula" ]
 
@@ -432,10 +432,10 @@ STATIC FUNCTION ios_generacija_podataka( params )
    SELECT ios
    my_dbf_zap()
 
-   SELECT suban
-   SET ORDER TO TAG "1"
-
-   SEEK _id_firma + _id_konto
+   //SELECT suban
+   //SET ORDER TO TAG "1"
+   //SEEK cIdFirma + cIdKonto
+   find_suban_by_konto_partner( cIdFirma, cIdKonto )
 
    EOF CRET
 
@@ -445,7 +445,7 @@ STATIC FUNCTION ios_generacija_podataka( params )
 
    @ m_x + 1, m_y + 2 SAY "sacekajte trenutak... generisem podatke u pomocnu tabelu"
 
-   DO WHILE !Eof() .AND. _id_firma == field->idfirma .AND. _id_konto == field->idkonto
+   DO WHILE !Eof() .AND. cIdFirma == field->idfirma .AND. cIdKonto == field->idkonto
 
       _id_partner := field->idpartner
 
@@ -460,8 +460,8 @@ STATIC FUNCTION ios_generacija_podataka( params )
       _saldo_1 := 0
       _saldo_2 := 0
 
-      DO WHILE !Eof() .AND. _id_firma == field->idfirma ;
-            .AND. _id_konto == field->idkonto ;
+      DO WHILE !Eof() .AND. cIdFirma == field->idfirma ;
+            .AND. cIdKonto == field->idkonto ;
             .AND. _id_partner == field->idpartner
 
          // ako je datum veci od datuma do kojeg generisem
@@ -498,8 +498,8 @@ STATIC FUNCTION ios_generacija_podataka( params )
 
          _rec := dbf_get_rec()
 
-         _rec[ "idfirma" ] := _id_firma
-         _rec[ "idkonto" ] := _id_konto
+         _rec[ "idfirma" ] := cIdFirma
+         _rec[ "idkonto" ] := cIdKonto
          _rec[ "idpartner" ] := _id_partner
          _rec[ "iznosbhd" ] := _saldo_1
          _rec[ "iznosdem" ] := _saldo_2
@@ -532,8 +532,8 @@ STATIC FUNCTION mnu_ios_print()
    LOCAL _datum_do := Date()
    LOCAL _params := hb_Hash()
    LOCAL _gen_par := hb_Hash()
-   LOCAL _id_firma := gFirma
-   LOCAL _id_konto := fetch_metric( "ios_print_id_konto", my_user(), Space( 7 ) )
+   LOCAL cIdFirma := gFirma
+   LOCAL cIdKonto := fetch_metric( "ios_print_id_konto", my_user(), Space( 7 ) )
    LOCAL _id_partner := fetch_metric( "ios_print_id_partner", my_user(), Space( 6 ) )
    LOCAL _din_dem := "1"
    LOCAL _kao_kartica := fetch_metric( "ios_print_kartica", my_user(), "D" )
@@ -570,7 +570,7 @@ STATIC FUNCTION mnu_ios_print()
    ?? gFirma, "-", gNFirma
 
    ++ _x
-   @ m_x + _x, m_y + 2 SAY "Konto       :" GET _id_konto VALID P_Konto( @_id_konto )
+   @ m_x + _x, m_y + 2 SAY "Konto       :" GET cIdKonto VALID P_Konto( @cIdKonto )
    ++ _x
    @ m_x + _x, m_y + 2 SAY "Partner     :" GET _id_partner ;
       VALID Empty( _id_partner ) .OR.  P_Firma( @_id_partner ) PICT "@!"
@@ -617,13 +617,13 @@ STATIC FUNCTION mnu_ios_print()
 
    BoxC()
 
-   set_metric( "ios_print_id_konto", my_user(), _id_konto )
+   set_metric( "ios_print_id_konto", my_user(), cIdKonto )
    set_metric( "ios_print_id_partner", my_user(), _id_partner )
    set_metric( "ios_print_kartica", my_user(), _kao_kartica )
    set_metric( "ios_print_prelom", my_user(), _prelomljeno )
    set_metric( "ios_print_tip", my_user(), _print_tip )
 
-   _id_firma := Left( _id_firma, 2 )
+   cIdFirma := Left( cIdFirma, 2 )
 
    // definisi clan i setuj staticku varijablu
    ios_clan_setup( .F. )
@@ -632,8 +632,8 @@ STATIC FUNCTION mnu_ios_print()
    IF _auto_gen == "D"
 
       _gen_par := hb_Hash()
-      _gen_par[ "id_konto" ] := _id_konto
-      _gen_par[ "id_firma" ] := _id_firma
+      _gen_par[ "id_konto" ] := cIdKonto
+      _gen_par[ "id_firma" ] := cIdFirma
       _gen_par[ "saldo_nula" ] := "D"
       _gen_par[ "datum_do" ] := _datum_do
 
@@ -648,7 +648,7 @@ STATIC FUNCTION mnu_ios_print()
       create_dbf_r_export( _exp_fields )
    ENDIF
 
-   // otvori mi tabele
+   // otvori tabele
    O_KONTO
    O_PARTN
    o_suban()
@@ -659,7 +659,7 @@ STATIC FUNCTION mnu_ios_print()
    SELECT ios
    GO TOP
 
-   SEEK _id_firma + _id_konto
+   SEEK cIdFirma + cIdKonto
 
    NFOUND CRET
 
@@ -682,14 +682,13 @@ STATIC FUNCTION mnu_ios_print()
 
    SELECT ios
 
-   DO WHILE !Eof() .AND. _id_firma == field->idfirma ;
-         .AND. _id_konto == field->idkonto
+   DO WHILE !Eof() .AND. cIdFirma == field->idfirma .AND. cIdKonto == field->idkonto
 
-      _partn_id := field->idpartner
+      cIdPartner := field->idpartner
 
       // pronadji za partnera...
       IF !Empty( _id_partner )
-         IF _partn_id <> _id_partner
+         IF cIdPartner <> _id_partner
             SKIP
             LOOP
          ENDIF
@@ -697,9 +696,9 @@ STATIC FUNCTION mnu_ios_print()
 
       // spremi mi _params matricu
       _params := hb_Hash()
-      _params[ "id_partner" ] := _partn_id
-      _params[ "id_konto" ] := _id_konto
-      _params[ "id_firma" ] := _id_firma
+      _params[ "id_partner" ] := cIdPartner
+      _params[ "id_konto" ] := cIdKonto
+      _params[ "id_firma" ] := cIdFirma
       _params[ "din_dem" ] := _din_dem
       _params[ "datum_do" ] := _datum_do
       _params[ "ios_datum" ] := _ios_date
@@ -746,7 +745,7 @@ STATIC FUNCTION mnu_ios_print()
 
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 // ------------------------------------------------------
@@ -813,8 +812,8 @@ STATIC FUNCTION _xml_partner( subnode, id_partner )
 STATIC FUNCTION print_ios_xml( params )
 
    LOCAL _rbr
-   LOCAL _id_firma := params[ "id_firma" ]
-   LOCAL _id_konto := params[ "id_konto" ]
+   LOCAL cIdFirma := params[ "id_firma" ]
+   LOCAL cIdKonto := params[ "id_konto" ]
    LOCAL _id_partner := params[ "id_partner" ]
    LOCAL _iznos_bhd := params[ "iznos_bhd" ]
    LOCAL _iznos_dem := params[ "iznos_dem" ]
@@ -850,7 +849,7 @@ STATIC FUNCTION print_ios_xml( params )
    xml_subnode( "ios_item", .F. )
 
    // maticna firma
-   IF !_xml_partner( "firma", _id_firma )
+   IF !_xml_partner( "firma", cIdFirma )
    ENDIF
 
    // partner
@@ -858,7 +857,7 @@ STATIC FUNCTION print_ios_xml( params )
    ENDIF
 
    xml_node( "ios_datum", DToC( _ios_date ) )
-   xml_node( "id_konto", to_xml_encoding( _id_konto ) )
+   xml_node( "id_konto", to_xml_encoding( cIdKonto ) )
    xml_node( "id_partner", to_xml_encoding( _id_partner ) )
 
    _total_bhd := _iznos_bhd
@@ -889,10 +888,10 @@ STATIC FUNCTION print_ios_xml( params )
 
    IF _kao_kartica == "D"
       //SET ORDER TO TAG "1"
-      find_suban_by_konto_partner( _id_firma, _id_konto, _id_partner, NIL, "idfirma,idvn,brnal")
+      find_suban_by_konto_partner( cIdFirma, cIdKonto, _id_partner, NIL, "idfirma,idvn,brnal")
    ELSE
       //SET ORDER TO TAG "3"
-      find_suban_by_konto_partner( _id_firma, _id_konto, _id_partner, NIL, "IdFirma,IdKonto,IdPartner,brdok" )
+      find_suban_by_konto_partner( cIdFirma, cIdKonto, _id_partner, NIL, "IdFirma,IdKonto,IdPartner,brdok" )
    ENDIF
 
 
@@ -912,8 +911,8 @@ STATIC FUNCTION print_ios_xml( params )
 
    _rbr := 0
 
-   DO WHILE !Eof() .AND. _id_firma == field->IdFirma ;
-         .AND. _id_konto == field->IdKonto ;
+   DO WHILE !Eof() .AND. cIdFirma == field->IdFirma ;
+         .AND. cIdKonto == field->IdKonto ;
          .AND. _id_partner == field->IdPartner
 
       __br_dok := field->brdok
@@ -926,8 +925,8 @@ STATIC FUNCTION print_ios_xml( params )
       _pot_2 := 0
       __otv_st := field->otvst
 
-      DO WHILE !Eof() .AND. _id_firma == field->IdFirma ;
-            .AND. _id_konto == field->IdKonto ;
+      DO WHILE !Eof() .AND. cIdFirma == field->IdFirma ;
+            .AND. cIdKonto == field->IdKonto ;
             .AND. _id_partner == field->IdPartner ;
             .AND. ( _kao_kartica == "D" .OR. field->brdok == __br_dok )
 
@@ -1116,8 +1115,8 @@ STATIC FUNCTION print_ios_txt( params )
 
    LOCAL _rbr
    LOCAL _n_opis := 0
-   LOCAL _id_firma := params[ "id_firma" ]
-   LOCAL _id_konto := params[ "id_konto" ]
+   LOCAL cIdFirma := params[ "id_firma" ]
+   LOCAL cIdKonto := params[ "id_konto" ]
    LOCAL _id_partner := params[ "id_partner" ]
    LOCAL _iznos_bhd := params[ "iznos_bhd" ]
    LOCAL _iznos_dem := params[ "iznos_dem" ]
@@ -1132,10 +1131,10 @@ STATIC FUNCTION print_ios_txt( params )
    ?
 
    @ PRow(), 58 SAY "OBRAZAC: I O S"
-   @ PRow() + 1, 1 SAY _id_firma
+   @ PRow() + 1, 1 SAY cIdFirma
 
    SELECT partn
-   HSEEK _id_firma
+   HSEEK cIdFirma
 
    @ PRow(), 5 SAY AllTrim( partn->naz )
    @ PRow(), PCol() + 1 SAY AllTrim( partn->naz2 )
@@ -1143,7 +1142,7 @@ STATIC FUNCTION print_ios_txt( params )
    @ PRow() + 1, 5 SAY partn->Adresa
    @ PRow() + 1, 5 SAY partn->ptt
    @ PRow() + 1, 5 SAY partn->ZiroR
-   @ PRow() + 1, 5 SAY firma_pdv_broj( _id_firma )
+   @ PRow() + 1, 5 SAY firma_pdv_broj( cIdFirma )
 
    ?
 
@@ -1172,7 +1171,7 @@ STATIC FUNCTION print_ios_txt( params )
    @ PRow(), PCol() + 1 SAY "GODINE"
    ?
    ?
-   @ PRow(), 0 SAY "VA�E STANJE NA KONTU" ; @ PRow(), PCol() + 1 SAY _id_konto
+   @ PRow(), 0 SAY "VA�E STANJE NA KONTU" ; @ PRow(), PCol() + 1 SAY cIdKonto
    @ PRow(), PCol() + 1 SAY " - " + _id_partner
    @ PRow() + 1, 0 SAY "PREMA NA�IM POSLOVNIM KNJIGAMA NA DAN:"
    @ PRow(), 39 SAY _ios_date
@@ -1225,10 +1224,10 @@ STATIC FUNCTION print_ios_txt( params )
 
    IF _kao_kartica == "D"
       //SET ORDER TO TAG "1"
-      find_suban_by_konto_partner( _id_firma, _id_konto, _id_partner, NIL, "idfirma,idvn,brnal")
+      find_suban_by_konto_partner( cIdFirma, cIdKonto, _id_partner, NIL, "idfirma,idvn,brnal")
    ELSE
       //SET ORDER TO TAG "3"
-      find_suban_by_konto_partner( _id_firma, _id_konto, _id_partner, NIL, "IdFirma,IdKonto,IdPartner,brdok" )
+      find_suban_by_konto_partner( cIdFirma, cIdKonto, _id_partner, NIL, "IdFirma,IdKonto,IdPartner,brdok" )
    ENDIF
 
 
@@ -1241,8 +1240,8 @@ STATIC FUNCTION print_ios_txt( params )
       _prelomljeno := "N"
    ENDIF
 
-   DO WHILE !Eof() .AND. _id_firma == field->IdFirma ;
-         .AND. _id_konto == field->IdKonto ;
+   DO WHILE !Eof() .AND. cIdFirma == field->IdFirma ;
+         .AND. cIdKonto == field->IdKonto ;
          .AND. _id_partner == field->IdPartner
 
       cBrDok := field->brdok
@@ -1255,8 +1254,8 @@ STATIC FUNCTION print_ios_txt( params )
       nPDEM := 0
       cOtvSt := field->otvst
 
-      DO WHILE !Eof() .AND. _id_firma == field->IdFirma ;
-            .AND. _id_konto == field->IdKonto ;
+      DO WHILE !Eof() .AND. cIdFirma == field->IdFirma ;
+            .AND. cIdKonto == field->IdKonto ;
             .AND. _id_partner == field->IdPartner ;
             .AND. ( _kao_kartica == "D" .OR. field->brdok == cBrdok )
 

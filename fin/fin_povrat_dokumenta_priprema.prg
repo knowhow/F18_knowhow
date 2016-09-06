@@ -33,10 +33,7 @@ FUNCTION fin_povrat_naloga( lStorno )
    O_FIN_PRIPR
 
 
-/*
-   SELECT SUBAN
-   SET ORDER TO TAG "4"
-*/
+
    cIdFirma         := gFirma
    cIdFirma2        := gFirma
    cIdVN := cIdVN2  := Space( 2 )
@@ -101,7 +98,7 @@ FUNCTION fin_povrat_naloga( lStorno )
    ENDIF
 
    IF !fin_nalog_brisi_iz_kumulativa( cIdFirma, cIdVn, cBrNal )
-      MsgBeep( "Greška sa brisanjem naloga iz kumulativa !#Poništavam operaciju." )
+      MsgBeep( "Greška sa brisanjem FIN naloga iz kumulativa !#Poništavam operaciju." )
    ENDIF
 
    my_close_all_dbf()
@@ -110,8 +107,7 @@ FUNCTION fin_povrat_naloga( lStorno )
 
 
 
-
-STATIC FUNCTION fin_nalog_brisi_iz_kumulativa( cIdFirma, cIdVn, cBrNal )
+FUNCTION fin_nalog_brisi_iz_kumulativa( cIdFirma, cIdVn, cBrNal )
 
    LOCAL _rec, cTbl
    LOCAL lOk := .T.

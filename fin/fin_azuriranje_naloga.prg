@@ -17,24 +17,25 @@ STATIC __tbl_anal := "fin_anal"
 STATIC __tbl_sint := "fin_sint"
 
 
-FUNCTION fin_azuriranje_naloga( automatic )
+FUNCTION fin_azuriranje_naloga( lAutomatikaAzuriranja )
 
    LOCAL oServer := sql_data_conn()
-   LOCAL aNalozi, _i
+   LOCAL aNalozi, nI
    LOCAL cIdFirma, cIdVn, cBrNal
    LOCAL lViseNalogaUPripremi := .F.
    LOCAL lRet := .F.
    LOCAL lOk := .T.
    LOCAL hParams := hb_Hash()
+   LOCAL cOdgovorDupliNalog := "N"
 
-   IF ( automatic == NIL )
-      automatic := .F.
+   IF ( lAutomatikaAzuriranja == NIL )
+      lAutomatikaAzuriranja := .F.
    ENDIF
 
    o_fin_za_azuriranje()
 
-   IF fin_pripr->( RecCount() == 0 ) .OR. ( !automatic .AND. Pitanje(, "Izvršiti ažuriranje fin naloga ? (D/N)?", "D" ) == "N" )
-      RETURN lRet
+   IF fin_pripr->( RecCount() == 0 ) .OR. ( !lAutomatikaAzuriranja .AND. Pitanje(, "Izvršiti ažuriranje fin naloga ? (D/N)?", "D" ) == "N" )
+      RETURN .F.
    ENDIF
 
 #ifdef F18_DEBUG_FIN_AZUR
@@ -51,13 +52,31 @@ FUNCTION fin_azuriranje_naloga( automatic )
       o_fin_za_azuriranje()
    ENDIF
 
-   IF !fin_provjera_prije_azuriranja_naloga( automatic, aNalozi )
+   IF !fin_provjera_prije_azuriranja_naloga( lAutomatikaAzuriranja, aNalozi )
       RETURN lRet
    ENDIF
 
+   IF lAutomatikaAzuriranja
+      cOdgovorDupliNalog := "D"
+   ENDIF
+
+   FOR nI := 1 TO Len( aNalozi ) // brisanje duplih naloga
+      cIdFirma := aNalozi[ nI, 1 ]
+      cIdVn := aNalozi[ nI, 2 ]
+      cBrNal := aNalozi[ nI, 3 ]
+      IF fin_dokument_postoji( cIdFirma, cIdVn, cBrNal )
+         IF Pitanje( , "Izbrisati postojeći FIN nalog: "  + cIdFirma + "-" + cIdVn + "-" + cBrNal + " ?", cOdgovorDupliNalog ) == "D"
+            IF fin_nalog_brisi_iz_kumulativa( cIdFirma, cIdVn, cBrNal )
+               log_write( "F18_DOK_OPER: brisanje duplog fin naloga: " + cIdFirma + "-" + cIdVn + "-" + cBrNal, 2 )
+            ELSE
+               MsgBeep( "Greška sa brisanjem FIN naloga " + cIdFirma + "-" + cIdVn + "-" + cBrNal + "!#Poništavam operaciju." )
+            ENDIF
+         ENDIF
+      ENDIF
+   NEXT
 
 
-   FOR _i := 1 TO Len( aNalozi )
+   FOR nI := 1 TO Len( aNalozi )
 
       run_sql_query( "BEGIN" )
 
@@ -68,15 +87,15 @@ FUNCTION fin_azuriranje_naloga( automatic )
          RETURN lRet
       ENDIF
 */
-      cIdFirma := aNalozi[ _i, 1 ]
-      cIdVn := aNalozi[ _i, 2 ]
-      cBrNal := aNalozi[ _i, 3 ]
+      cIdFirma := aNalozi[ nI, 1 ]
+      cIdVn := aNalozi[ nI, 2 ]
+      cBrNal := aNalozi[ nI, 3 ]
 
       IF fin_dokument_postoji( cIdFirma, cIdVn, cBrNal )
 
          MsgBeep( "Nalog " + cIdFirma + "-" + cIdVn + "-" + AllTrim( cBrNal ) + " već postoji ažuriran !" )
          automatska_obrada_error( .T. )
-         
+
          IF !lViseNalogaUPripremi
             run_sql_query( "ROLLBACK" )
             RETURN lRet
@@ -101,7 +120,7 @@ FUNCTION fin_azuriranje_naloga( automatic )
       fin_pripr_delete( cIdFirma + cIdVn + cBrNal )
 
 /*
-      IF !fin_azur_dbf( automatic, cIdFirma, cIdVn, cBrNal )
+      IF !fin_azur_dbf( lAutomatikaAzuriranja, cIdFirma, cIdVn, cBrNal )
 
          run_sql_query( "ROLLBACK" )
          log_write( "F18_DOK_OPER: greška kod ažuriranja fin naloga: " + cIdFirma + "-" + cIdVn + "-" + cBrNal, 2 )
@@ -195,7 +214,7 @@ FUNCTION fin_azur_sql( oServer, id_firma, id_vn, br_nal )
 
    LOCAL _ok := .T.
    LOCAL _ids := {}
-   LOCAL _tmp_id, _count, _tmp_doc, _rec, _msg, _i
+   LOCAL _tmp_id, _count, _tmp_doc, _rec, _msg, nI
    LOCAL _ids_doc := {}
    LOCAL _ids_tmp := {}
    LOCAL _ids_suban := {}
@@ -333,7 +352,7 @@ FUNCTION fin_azur_sql( oServer, id_firma, id_vn, br_nal )
 
 STATIC FUNCTION fin_provjera_prije_azuriranja_naloga( auto, lista_naloga )
 
-   LOCAL _t_area, _i, _t_rec
+   LOCAL _t_area, nI, _t_rec
    LOCAL cIdFirma, cIdVn, cBrNal
    LOCAL _vise_naloga := .F.
    LOCAL _ok := .F.
@@ -368,11 +387,11 @@ STATIC FUNCTION fin_provjera_prije_azuriranja_naloga( auto, lista_naloga )
       RETURN _ok
    ENDIF
 
-   FOR _i := 1 TO Len( lista_naloga )
+   FOR nI := 1 TO Len( lista_naloga )
 
-      cIdFirma := lista_naloga[ _i, 1 ]
-      cIdVn := lista_naloga[ _i, 2 ]
-      cBrNal := lista_naloga[ _i, 3 ]
+      cIdFirma := lista_naloga[ nI, 1 ]
+      cIdVn := lista_naloga[ nI, 2 ]
+      cBrNal := lista_naloga[ nI, 3 ]
 
       SELECT fin_pripr
       SET ORDER TO TAG "1"
@@ -436,7 +455,7 @@ STATIC FUNCTION fin_provjeri_konto_partn( lista_naloga )
 
 STATIC FUNCTION prikazi_greske_provjere_konta_i_partnera( err )
 
-   LOCAL _i
+   LOCAL nI
    LOCAL _cnt := 0
    LOCAL _head, _line
 
@@ -466,11 +485,11 @@ STATIC FUNCTION prikazi_greske_provjere_konta_i_partnera( err )
    ?U _head
    ? _line
 
-   FOR _i := 1 TO Len( err )
+   FOR nI := 1 TO Len( err )
       ? PadL( AllTrim( Str( ++_cnt ) ), 4 ) + "."
-      @ PRow(), PCol() + 1 SAY PadR( err[ _i, 1 ], 10 )
-      @ PRow(), PCol() + 1 SAY PadR( err[ _i, 2 ], 10 )
-      @ PRow(), PCol() + 1 SAY AllTrim( err[ _i, 3 ] )
+      @ PRow(), PCol() + 1 SAY PadR( err[ nI, 1 ], 10 )
+      @ PRow(), PCol() + 1 SAY PadR( err[ nI, 2 ], 10 )
+      @ PRow(), PCol() + 1 SAY AllTrim( err[ nI, 3 ] )
 
    NEXT
 
@@ -579,7 +598,7 @@ STATIC FUNCTION fin_saldo_provjera_psuban( id_firma, id_vn, br_nal )
 STATIC FUNCTION fin_p_tabele_provjera( lista_naloga )
 
    LOCAL _ok := .F.
-   LOCAL _i
+   LOCAL nI
    LOCAL cIdFirma, cIdVn, cBrNal
 
    SELECT psuban
@@ -597,11 +616,11 @@ STATIC FUNCTION fin_p_tabele_provjera( lista_naloga )
       RETURN .F.
    ENDIF
 
-   FOR _i := 1 TO Len( lista_naloga )
+   FOR nI := 1 TO Len( lista_naloga )
 
-      cIdFirma := lista_naloga[ _i, 1 ]
-      cIdVn := lista_naloga[ _i, 2 ]
-      cBrNal := lista_naloga[ _i, 3 ]
+      cIdFirma := lista_naloga[ nI, 1 ]
+      cIdVn := lista_naloga[ nI, 2 ]
+      cBrNal := lista_naloga[ nI, 3 ]
 
       SELECT psuban
       SET ORDER TO TAG "1"

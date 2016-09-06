@@ -220,7 +220,7 @@ FUNCTION kalk_kartica_magacin()
          EXIT
       ENDIF
 
-      cIdRoba := field->idroba
+      cIdRoba := hb_UTF8ToStr( field->idroba )
       SELECT roba
       HSEEK cIdRoba
 
@@ -242,7 +242,7 @@ FUNCTION kalk_kartica_magacin()
       cLastPar := ""
       cSKGrup := ""
 
-      DO WHILE !Eof() .AND. cIdFirma + cIdKonto + cIdRoba == field->idFirma + field->mkonto + field->idroba
+      DO WHILE !Eof() .AND. cIdFirma + cIdKonto + cIdRoba == field->idFirma + field->mkonto + hb_UTF8ToStr( field->idroba )
          nNVd := nNVp := nVPVd := nVPVp := 0
 
          IF lBezG2 .AND. field->idvd == "14"

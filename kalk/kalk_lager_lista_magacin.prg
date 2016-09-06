@@ -384,9 +384,9 @@ FUNCTION lager_lista_magacin()
    PRIVATE nRbr := 0
 
    DO WHILE !Eof() .AND. iif( fSint .AND. lSaberiStanjeZaSvaKonta, idfirma, idfirma + mkonto ) == ;
-         cidfirma + cSintK .AND. IspitajPrekid()
+         cIdfirma + cSintK .AND. IspitajPrekid()
 
-      cIdRoba := Idroba
+      cIdRoba := hb_UTF8ToStr( field->Idroba )
 
       nUlaz := 0
       nIzlaz := 0
@@ -419,8 +419,8 @@ FUNCTION lager_lista_magacin()
          LOOP
       ENDIF
 
-      // uslov za roba - grupacija
-      IF !Empty( qqRGr ) .OR. !Empty( qqRGr2 )
+
+      IF !Empty( qqRGr ) .OR. !Empty( qqRGr2 ) // uslov za roba - grupacija
          IF !IsInGroup( qqRGr, qqRGr2, roba->id )
             SELECT kalk
             SKIP
@@ -483,7 +483,7 @@ FUNCTION lager_lista_magacin()
 
 
 
-      DO WHILE !Eof() .AND. iif( fSint .AND. lSaberiStanjeZaSvaKonta, cIdFirma + cIdRoba == idFirma + idroba, cIdFirma + cIdKonto + cIdRoba == idFirma + mkonto + idroba ) .AND. IspitajPrekid()
+      DO WHILE !Eof() .AND. iif( fSint .AND. lSaberiStanjeZaSvaKonta, cIdFirma + cIdRoba == idFirma + hb_UTF8ToStr( field->idroba ), cIdFirma + cIdKonto + cIdRoba == idFirma + mkonto + hb_UTF8ToStr( field->idroba ) ) .AND. IspitajPrekid()
 
          IF roba->tip $ "TU"
             SKIP
@@ -584,7 +584,7 @@ FUNCTION lager_lista_magacin()
          aNaz := Sjecistr( roba->naz, 20 )
          NovaStrana( bZagl )
 
-         // rbr, idroba, naziv...
+         // rbr, idroba, naziv
 
          ? Str( ++nRbr, 6 ) + ".", cIdRoba
          nCr := PCol() + 1
@@ -617,7 +617,8 @@ FUNCTION lager_lista_magacin()
 
                APPEND BLANK
 
-               REPLACE idfirma WITH cidfirma, idroba WITH cIdRoba, ;
+               REPLACE idfirma WITH cIdfirma, ;
+                  idroba WITH cIdRoba, ;
                   idkonto WITH cIdKonto, ;
                   datdok WITH dDatDo + 1, ;
                   idtarifa WITH roba->idtarifa, ;
@@ -641,7 +642,7 @@ FUNCTION lager_lista_magacin()
                   // 1 stavka (minus)
                   APPEND BLANK
 
-                  REPLACE idfirma WITH cidfirma
+                  REPLACE idfirma WITH cIdfirma
                   REPLACE idroba WITH cIdRoba
                   REPLACE idkonto WITH cIdKonto
                   REPLACE datdok WITH dDatDo + 1
@@ -660,7 +661,7 @@ FUNCTION lager_lista_magacin()
                   // 2 stavka (plus i nv)
                   APPEND BLANK
 
-                  REPLACE idfirma WITH cidfirma
+                  REPLACE idfirma WITH cIdfirma
                   REPLACE idroba WITH cIdRoba
                   REPLACE idkonto WITH cIdKonto
                   REPLACE datdok WITH dDatDo + 1

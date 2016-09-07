@@ -24,6 +24,8 @@ FUNCTION parsiraj_sql( cFieldName, cConditionParam, lNot )
    LOCAL cCondition
    LOCAL lTackaZarez := .F.
 
+   hb_default( @cConditionParam, "" )
+
    IF ";" $ cConditionParam
       cConditionParam := Trim( cConditionParam )
       lTacKaZarez := .T.

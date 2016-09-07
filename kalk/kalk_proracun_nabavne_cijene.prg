@@ -30,7 +30,7 @@ STATIC s_nStandarnaStopaMarze := NIL
 FUNCTION prag_odstupanja_nc_sumnjiv( nSet )
 
    IF  s_nPragOdstupanjaNCSumnjiv == NIL
-      s_nPragOdstupanjaNCSumnjiv := fetch_metric( "prag_odstupanja_nc_sumnjiv", NIL, 24.99 ) // 99%
+      s_nPragOdstupanjaNCSumnjiv := fetch_metric( "prag_odstupanja_nc_sumnjiv", NIL, 99.99 ) // 99,99%
    ENDIF
 
    IF nSet != NIL

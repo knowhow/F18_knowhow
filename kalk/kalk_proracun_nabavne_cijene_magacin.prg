@@ -35,7 +35,7 @@ FUNCTION kalk_get_nabavna_mag( dDatDo, cIdFirma, cIdRoba, cIdKonto, ;
    LOCAL nUlNV
    LOCAL nUlKol
    LOCAL nSkiniKol
-   LOCAL nKolNeto
+   LOCAL nKolicinaAbs
    LOCAL nKol_poz := 0 // posljednje pozitivno stanje
 
    // LOCAL nUVr_poz, nIVr_poz
@@ -91,30 +91,29 @@ FUNCTION kalk_get_nabavna_mag( dDatDo, cIdFirma, cIdRoba, cIdKonto, ;
       IF field->mu_i == "1" .OR. field->mu_i == "5"
 
          IF field->IdVd == "10"
-            nKolNeto := Abs( field->kolicina - field->gKolicina - field->gKolicin2 )
+            nKolicinaAbs := Abs( field->kolicina - field->gKolicina - field->gKolicin2 )
          ELSE
-            nKolNeto := Abs( field->kolicina )
+            nKolicinaAbs := Abs( field->kolicina )
          ENDIF
 
          IF ( field->mu_i == "1" .AND.  field->kolicina > 0 ) .OR. ( field->mu_i == "5" .AND. field->kolicina < 0 )
 
-            nKolicina += nKolNeto // ulazi plus, storno izlaza
-            nUlKol    += nKolNeto
-            nUlNV     += ( nKolNeto * field->nc )
+            nKolicina += nKolicinaAbs // ulazi plus, storno izlaza
+            nUlKol    += nKolicinaAbs
+            nUlNV     += ( nKolicinaAbs * field->nc )
 
-            IF field->idvd $ "10#16" .AND. field->kolicina > 0 // zapamti uvijek zadnju ulaznu NC
+            IF field->idvd $ "10#16" .AND. field->kolicina > 0 // zapamtiti uvijek zadnju ulaznu NC
                nNcZadnjaNabavka := field->nc
                nKolZn := field->kolicina
-
-               nUlaziNV += field->nc * field->kolicina
-               nUlaziKolicina += field->kolicina
+               nUlaziNV += field->nc * nKolicinaAbs
+               nUlaziKolicina += nKolicinaAbs
             ENDIF
 
          ELSE
 
-            nKolicina -= nKolNeto
-            nIzlKol   += nKolNeto
-            nIzlNV    += ( nKolNeto * field->nc )
+            nKolicina -= nKolicinaAbs
+            nIzlKol   += nKolicinaAbs
+            nIzlNV    += ( nKolicinaAbs * field->nc )
 
          ENDIF
 

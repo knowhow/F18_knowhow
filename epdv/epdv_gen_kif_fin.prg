@@ -81,8 +81,8 @@ FUNCTION fin_kif( dD1, dD2, cSezona )
 
          cTdSrc := td_src
 
-         // set id tarifu u kif dokumentu
-         cIdTar := s_id_tar
+
+         cIdTar := s_id_tar  // set id tarifu u kif dokumentu
          cIdPart := s_id_part
 
          cKatP := kat_p
@@ -252,7 +252,7 @@ STATIC FUNCTION gen_fin_kif_item( cSezona )
          nRecnoSuban := suban->( RecNo() )
          // datum kif-a
          _datum := suban->datdok
-         _id_part := suban->idpartner
+         _id_part := hb_Utf8ToStr( suban->idpartner )
          _opis := cOpis
 
          // ##opis## je djoker - zamjenjuje se sa opisom koji se nalazi u

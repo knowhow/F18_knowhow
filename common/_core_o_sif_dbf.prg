@@ -19,3 +19,8 @@ FUNCTION o_konto()
 FUNCTION o_partn()
 
    RETURN o_dbf_table( F_PARTN, "partn", "ID" )
+
+
+FUNCTION select_o_partner()
+
+   RETURN select_o_dbf( "PARTN", F_PARTN, "partn", "ID" )

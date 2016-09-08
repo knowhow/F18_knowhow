@@ -299,7 +299,7 @@ FUNCTION pos_prenos_inv_2_kalk( id_pos, id_vd, dat_dok, br_dok )
    IF !Found()
       MsgBeep( "POS tabela nema stavki !" )
       SELECT ( _t_area )
-      RETURN
+      RETURN .F.
    ENDIF
 
    MsgO( "Eksport dokumenta u toku ..." )
@@ -593,9 +593,10 @@ STATIC FUNCTION _cre_pom_table()
 
 
 
-// --------------------------------------------------------------------------
-// kreira izlazni fajl za multi prodajna mjesta režim
-// --------------------------------------------------------------------------
+/*
+ kreira izlazni fajl za multi prodajna mjesta režim
+*/
+
 STATIC FUNCTION tops_kalk_create_topska( id_pos, datum_od, datum_do, v_dok, prefix )
 
    LOCAL _prefix := "tk"
@@ -624,7 +625,7 @@ STATIC FUNCTION tops_kalk_create_topska( id_pos, datum_od, datum_do, v_dok, pref
 
    DirChange( my_home() )
 
-   _table_name := get_topskalk_export_file( "1", _export_location, datum_do, prefix )
+   _table_name := get_tops_kalk_export_file( "1", _export_location, datum_do, prefix )
 
    _dest_file := _export_location + _table_name + ".dbf"
 

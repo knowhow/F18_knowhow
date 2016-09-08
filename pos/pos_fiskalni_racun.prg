@@ -456,16 +456,16 @@ STATIC FUNCTION pos_to_tring( id_pos, tip_dok, datum, rn_broj, items, storno )
 
 
 
-// -------------------------------------------
-// popravlja naziv artikla
-// -------------------------------------------
+/* -------------------------------------------
+ popravlja naziv artikla
+*/
 STATIC FUNCTION _fix_naz( cR_naz, cNaziv )
 
    cNaziv := PadR( cR_naz, 30 )
 
    DO CASE
 
-   CASE AllTrim( flik_type() ) == "FLINK"
+   CASE AllTrim( flink_type() ) == "FLINK"
       cNaziv := StrKzn( cNaziv, "8", "E" )
       cNaziv := Lower( cNaziv )
       cNaziv := StrTran( cNaziv, ",", "." )

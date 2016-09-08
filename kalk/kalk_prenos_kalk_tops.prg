@@ -277,7 +277,7 @@ STATIC FUNCTION kalk_tops_kreiraj_fajl_prenosa( datum, aPosLokacije, broj_stavki
 
       DirChange( my_home() ) // nakon dir create prebaci se na my_local_folder
 
-      _dest_patt := get_topskalkcExporPosDir_file( "2", cExporPosDir, datum ) // pronadji naziv fajla koji je dozvoljen
+      _dest_patt := get_tops_kalk_export_file( "2", cExporPosDir, datum ) // pronadji naziv fajla koji je dozvoljen
 
       _dest_file := cExporPosDir + StrTran( _table_name, "katops.", _dest_patt + "." ) // kopiraj katops.dbf na destinaciju
       _ret := _dest_file
@@ -298,7 +298,7 @@ STATIC FUNCTION kalk_tops_kreiraj_fajl_prenosa( datum, aPosLokacije, broj_stavki
 // ---------------------------------------------------------------
 // vraca naziv fajla za export
 // ---------------------------------------------------------------
-FUNCTION get_topskalkcExporPosDir_file( topskalk, export_path, datum, prefix )
+FUNCTION get_tops_kalk_export_file( topskalk, export_path, datum, prefix )
 
    LOCAL _file := ""
    LOCAL _prefix := "kt"

@@ -73,7 +73,7 @@ FUNCTION korekcija_nabavne_cijene_sa_zadnjom_ulaznom( nKolicina, nZadnjiUlazKol,
    LOCAL nX
    LOCAL GetList := {}
 
-altd()
+   AltD()
    hb_default( @lSilent, .F. )
    IF Round( nSrednjaNabavnaCijena, 4 ) == 0 .AND. Round( nZadnjaUlaznaNC, 4 ) > 0
       nSrednjaNabavnaCijena := nZadnjaUlaznaNC
@@ -89,7 +89,7 @@ altd()
 
    IF Abs( nOdst ) > prag_odstupanja_nc_sumnjiv()
 
-      IF nKolicina <= 0
+      IF ( nKolicina <= 0 ) .OR. ( nSrednjaNabavnaCijena < 0 )
          cDN := "D" // kartica je u minusu - najbolje razduzi prema posljednjem ulazu
       ELSE
          cDN := "N" // metodom srednje nabavne cijene razduzi

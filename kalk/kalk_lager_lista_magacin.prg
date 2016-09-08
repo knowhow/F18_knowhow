@@ -49,13 +49,9 @@ FUNCTION lager_lista_magacin()
    LOCAL dL_ulaz := CToD( "" )
    LOCAL dL_izlaz := CToD( "" )
 
-   cPicDem := gPicDem
-   cPicCDem := gPicCDem
-   cPicKol := gPicKol
-
-   gPicDem := Replicate( "9", Val( gFPicDem ) ) + gPicDem
-   gPicCDem := Replicate( "9", Val( gFPicCDem ) ) + gPicCDem
-   gPicKol := Replicate( "9", Val( gFPicKol ) ) + gPicKol
+   //pPicDem := global_pic_iznos()
+   //pPicCDem := global_pic_cijena()
+   //pPicKol := global_pic_kolicina()
 
    cIdFirma := gFirma
    cPrikazDob := "N"
@@ -605,9 +601,9 @@ FUNCTION lager_lista_magacin()
          nCol0 := PCol() + 1
 
          // ulaz, izlaz, stanje
-         @ PRow(), PCol() + 1 SAY nKJMJ * nUlaz          PICT gPicKol
-         @ PRow(), PCol() + 1 SAY nKJMJ * nIzlaz         PICT gPicKol
-         @ PRow(), PCol() + 1 SAY nKJMJ * ( nUlaz - nIzlaz ) PICT gPicKol
+         @ PRow(), PCol() + 1 SAY say_kolicina( nKJMJ * nUlaz          )
+         @ PRow(), PCol() + 1 SAY say_kolicina( nKJMJ * nIzlaz         )
+         @ PRow(), PCol() + 1 SAY say_kolicina( nKJMJ * ( nUlaz - nIzlaz ) )
 
          IF fPocStanje
 
@@ -690,25 +686,25 @@ FUNCTION lager_lista_magacin()
 
 
          // NV
-         @ PRow(), PCol() + 1 SAY nNVU PICT gPicDem
-         @ PRow(), PCol() + 1 SAY nNVI PICT gPicDem
-         @ PRow(), PCol() + 1 SAY nNVU - nNVI PICT gPicDem
+         @ PRow(), PCol() + 1 SAY say_iznos( nNVU )
+         @ PRow(), PCol() + 1 SAY say_iznos( nNVI  )
+         @ PRow(), PCol() + 1 SAY say_iznos( nNVU - nNVI )
 
          IF cDoNab == "N"
 
 
             IF _vpc_iz_sif == "D"
                // sa vpc iz sifrarnika robe
-               @ PRow(), PCol() + 1 SAY nVPVU PICT gPicDem
-               @ PRow(), PCol() + 1 SAY nRabat PICT gPicDem
-               @ PRow(), PCol() + 1 SAY nVPVI PICT gPicDem
-               @ PRow(), PCol() + 1 SAY nVPVU - nVPVI PICT gPicDem
+               @ PRow(), PCol() + 1 SAY say_iznos( nVPVU )
+               @ PRow(), PCol() + 1 SAY say_iznos( nRabat )
+               @ PRow(), PCol() + 1 SAY say_iznos( nVPVI )
+               @ PRow(), PCol() + 1 SAY say_iznos( nVPVU - nVPVI )
             ELSE
                // sa vpc iz tabele kalk
-               @ PRow(), PCol() + 1 SAY nVPVRU PICT gPicDem
-               @ PRow(), PCol() + 1 SAY nRabat PICT gPicDem
-               @ PRow(), PCol() + 1 SAY nVPVRI PICT gPicDem
-               @ PRow(), PCol() + 1 SAY nVPVRU - nVPVRI PICT gPicDem
+               @ PRow(), PCol() + 1 SAY say_iznos( nVPVRU )
+               @ PRow(), PCol() + 1 SAY say_iznos( nRabat )
+               @ PRow(), PCol() + 1 SAY say_iznos( nVPVRI )
+               @ PRow(), PCol() + 1 SAY say_iznos( nVPVRU - nVPVRI )
             ENDIF
 
          ENDIF
@@ -743,37 +739,37 @@ FUNCTION lager_lista_magacin()
 
 
          IF cMink <> "N" .AND. nMink > 0
-            @ PRow(), ncol0    SAY PadR( "min.kolic:", Len( gPicKol ) )
-            @ PRow(), PCol() + 1 SAY nKJMJ * nMink  PICT gPicKol
+            @ PRow(), ncol0    SAY PadR( "min.kolic:", Len( global_pic_kolicina() ) )
+            @ PRow(), PCol() + 1 SAY say_kolicina( nKJMJ * nMink  )
          ENDIF
 
 
          // ulaz - prazno
-         @ PRow(), nCol0 SAY Space( Len( gPicKol ) )
+         @ PRow(), nCol0 SAY Space( Len( global_pic_kolicina() ) )
          // izlaz - prazno
-         @ PRow(), PCol() + 1 SAY Space( Len( gPicKol ) )
+         @ PRow(), PCol() + 1 SAY Space( Len( global_pic_kolicina() ) )
          // stanje - prazno
-         @ PRow(), PCol() + 1 SAY Space( Len( gPicKol ) )
+         @ PRow(), PCol() + 1 SAY Space( Len( global_pic_kolicina() ) )
          // nv.dug - prazno
-         @ PRow(), PCol() + 1 SAY Space( Len( gPicDem ) )
+         @ PRow(), PCol() + 1 SAY Space( Len( global_pic_iznos() ) )
          // nv.pot - prazno
-         @ PRow(), PCol() + 1 SAY Space( Len( gPicDem ) )
+         @ PRow(), PCol() + 1 SAY Space( Len( global_pic_iznos() ) )
          // prikazi NC
          IF Round( nUlaz - nIzlaz, 4 ) <> 0
 
-            @ PRow(), PCol() + 1 SAY ( nNVU - nNVI ) / ( nUlaz - nIzlaz ) PICT gPicDem
+            @ PRow(), PCol() + 1 SAY say_iznos( ( nNVU - nNVI ) / ( nUlaz - nIzlaz ) )
 
          ENDIF
          IF cDoNab == "N"
             // pv.dug - prazno
-            @ PRow(), PCol() + 1 SAY Space( Len( gPicDem ) )
+            @ PRow(), PCol() + 1 SAY Space( Len( global_pic_iznos() ) )
             // rabat - prazno
-            @ PRow(), PCol() + 1 SAY Space( Len( gPicDem ) )
+            @ PRow(), PCol() + 1 SAY Space( Len( global_pic_iznos() ) )
             // pv.pot - prazno
-            @ PRow(), PCol() + 1 SAY Space( Len( gPicDem ) )
+            @ PRow(), PCol() + 1 SAY Space( Len( global_pic_iznos() ) )
             // prikazi PC
             IF Round( nUlaz - nIzlaz, 4 ) <> 0
-               @ PRow(), PCol() + 1 SAY nVPCIzSif PICT gpiccdem
+               @ PRow(), PCol() + 1 SAY say_cijena( nVPCIzSif )
             ENDIF
          ENDIF
 
@@ -849,31 +845,31 @@ FUNCTION lager_lista_magacin()
    ? __line
    ? "UKUPNO:"
 
-   @ PRow(), nCol0 SAY ntUlaz PICT pic_format( gPicKol, ntUlaz )
-   @ PRow(), PCol() + 1 SAY ntIzlaz PICT pic_format( gPicKol, ntIzlaz )
-   @ PRow(), PCol() + 1 SAY ntUlaz - ntIzlaz PICT pic_format( gPicKol, ( ntUlaz - ntIzlaz ) )
+   @ PRow(), nCol0 SAY say_kolicina( ntUlaz )
+   @ PRow(), PCol() + 1 SAY say_kolicina( ntIzlaz )
+   @ PRow(), PCol() + 1 SAY say_kolicina( ntUlaz - ntIzlaz )
 
    nCol1 := PCol() + 1
 
 
    // NV
-   @ PRow(), PCol() + 1 SAY ntNVU PICT pic_format( gPicDem, ntNVU )
-   @ PRow(), PCol() + 1 SAY ntNVI PICT pic_format( gPicDem, ntNVI )
-   @ PRow(), PCol() + 1 SAY ntNV PICT pic_format( gPicDem, ntNV )
+   @ PRow(), PCol() + 1 SAY say_kolicina( ntNVU )
+   @ PRow(), PCol() + 1 SAY say_kolicina( ntNVI )
+   @ PRow(), PCol() + 1 SAY say_kolicina( ntNV )
 
    IF cDoNab == "N"
       IF _vpc_iz_sif == "D"
          // PV - samo u pdv rezimu
-         @ PRow(), PCol() + 1 SAY ntVPVU PICT pic_format( gPicDem, ntVPVU )
-         @ PRow(), PCol() + 1 SAY ntRabat PICT pic_format( gPicDem, ntRabat )
-         @ PRow(), PCol() + 1 SAY ntVPVI PICT pic_format( gPicDem, ntVPVI )
-         @ PRow(), PCol() + 1 SAY ntVPVU - NtVPVI PICT pic_format( gPicDem, ( ntVPVU - ntVPVI ) )
+         @ PRow(), PCol() + 1 SAY say_kolicina( ntVPVU )
+         @ PRow(), PCol() + 1 SAY say_kolicina( ntRabat )
+         @ PRow(), PCol() + 1 SAY say_kolicina( ntVPVI )
+         @ PRow(), PCol() + 1 SAY say_kolicina( ntVPVU - NtVPVI )
       ELSE
          // PV - samo u pdv rezimu
-         @ PRow(), PCol() + 1 SAY ntVPVRU PICT pic_format( gPicDem, ntVPVU )
-         @ PRow(), PCol() + 1 SAY ntRabat PICT pic_format( gPicDem, ntRabat )
-         @ PRow(), PCol() + 1 SAY ntVPVRI PICT pic_format( gPicDem, ntVPVI )
-         @ PRow(), PCol() + 1 SAY ntVPVRU - NtVPVRI PICT pic_format( gPicDem, ( ntVPVRU - ntVPVRI ) )
+         @ PRow(), PCol() + 1 SAY say_kolicina( ntVPVRU )
+         @ PRow(), PCol() + 1 SAY say_kolicina( ntRabat )
+         @ PRow(), PCol() + 1 SAY say_kolicina( ntVPVRI )
+         @ PRow(), PCol() + 1 SAY say_kolicina( ntVPVRU - NtVPVRI )
       ENDIF
    ENDIF
 
@@ -904,29 +900,13 @@ FUNCTION lager_lista_magacin()
       open_r_export_table() // lansiraj report
    ENDIF
 
-   gPicDem := cPicDem
-   gPicCDem := cPicCDem
-   gPicKol := cPicKol
 
    my_close_all_dbf()
 
    RETURN .T.
 
 
-/*
-   sredjivanje formata ispisa
-*/
-STATIC FUNCTION pic_format( cPicture, nNum )
 
-   LOCAL cPictureOut
-
-   IF "*" $ Transform( nNum, cPicture )
-      cPictureOut := StrTran( cPicture, ".", "9" ) // jednostavno ukini decimalno mjesto kod ispisa
-   ELSE
-      cPictureOut := cPicture
-   ENDIF
-
-   RETURN cPictureOut
 
 
 // --------------------------------------
@@ -1042,7 +1022,7 @@ STATIC FUNCTION _set_zagl( cLine, cTxt1, cTxt2, cTxt3, cSredCij )
    nPom := 3
    AAdd( aLLM, { nPom, PadC( "jmj", nPom ), PadC( "", nPom ), PadC( "3", nPom ) } )
 
-   nPom := Len( gPicKol )
+   nPom := Len( global_pic_kolicina() )
    // ulaz
    AAdd( aLLM, { nPom, PadC( "ulaz", nPom ), PadC( "", nPom ), PadC( "4", nPom ) } )
    // izlaz
@@ -1054,7 +1034,7 @@ STATIC FUNCTION _set_zagl( cLine, cTxt1, cTxt2, cTxt3, cSredCij )
 
    // NV podaci
    // -------------------------------
-   nPom := Len( gPicCDem )
+   nPom := Len( global_pic_cijena() )
    // nv dug.
    AAdd( aLLM, { nPom, PadC( "NV.Dug.", nPom ), PadC( "", nPom ), PadC( "6", nPom ) } )
    // nv pot.
@@ -1064,7 +1044,7 @@ STATIC FUNCTION _set_zagl( cLine, cTxt1, cTxt2, cTxt3, cSredCij )
 
    IF cDoNab == "N"
 
-      nPom := Len( gPicCDem )
+      nPom := Len( global_pic_cijena() )
       // pv.dug
       AAdd( aLLM, { nPom, PadC( "PV.Dug.", nPom ), PadC( "", nPom ), PadC( "8", nPom ) } )
       // rabat
@@ -1080,7 +1060,7 @@ STATIC FUNCTION _set_zagl( cLine, cTxt1, cTxt2, cTxt3, cSredCij )
 
    IF cSredCij == "D"
 
-      nPom := Len( gPicCDem )
+      nPom := Len( global_pic_cijena() )
       // sredi cijene
       AAdd( aLLM, { nPom, PadC( "Sred.cij", nPom ), PadC( "", nPom ), PadC( "", nPom ) } )
 

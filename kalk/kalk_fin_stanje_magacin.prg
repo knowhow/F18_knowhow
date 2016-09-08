@@ -28,8 +28,8 @@ FUNCTION finansijsko_stanje_magacin()
 
    _o_tbl()
 
-   PicDem := Replicate( "9", Val( gFPicDem ) ) + gPicDem
-   PicCDem := Replicate( "9", Val( gFPicCDem ) ) + gPicCDem
+   PicDEM := global_pic_iznos()
+   PicCDEM := global_pic_cijena()
 
    cIdKonto := PadR( "1320", gDuzKonto )
    dDatOd := CToD( "" )

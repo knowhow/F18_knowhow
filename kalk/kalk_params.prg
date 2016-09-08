@@ -403,16 +403,21 @@ FUNCTION kalk_par_cijene()
    PRIVATE  GetList := {}
 
    Box(, 10, 60, .F., "PARAMETRI PRIKAZA - PICTURE KODOVI" )
+
+
    @ m_x + 1, m_y + 2 SAY "Prikaz Cijene  " GET gPicCDem
    @ m_x + 2, m_y + 2 SAY "Prikaz procenta" GET gPicProc
    @ m_x + 3, m_y + 2 SAY "Prikaz iznosa  " GET gPicDem
    @ m_x + 4, m_y + 2 SAY "Prikaz kolicine" GET gPicKol
+
+   
    @ m_x + 5, m_y + 2 SAY "Ispravka NC    " GET gPicNC
    @ m_x + 6, m_y + 2 SAY "Decimale za kolicine" GET gDecKol PICT "9"
    @ m_x + 7, m_y + 2 SAY Replicate( "-", 30 )
-   @ m_x + 8, m_y + 2 SAY8 "Dodatno proširenje cijene" GET gFPicCDem
-   @ m_x + 9, m_y + 2 SAY8 "Dodatno proširenje iznosa" GET gFPicDem
-   @ m_x + 10, m_y + 2 SAY8 "Dodatno proširenje količine" GET gFPicKol
+
+   //@ m_x + 8, m_y + 2 SAY8 "Dodatno proširenje cijene" GET gFPicCDem
+   //@ m_x + 9, m_y + 2 SAY8 "Dodatno proširenje iznosa" GET gFPicDem
+   //@ m_x + 10, m_y + 2 SAY8 "Dodatno proširenje količine" GET gFPicKol
    READ
    BoxC()
 
@@ -422,9 +427,9 @@ FUNCTION kalk_par_cijene()
       set_metric( "kalk_format_prikaza_iznosa", nil, gPicDEM )
       set_metric( "kalk_format_prikaza_kolicine", nil, gPicKol )
       set_metric( "kalk_format_prikaza_nabavne_cijene", nil, gPicNC )
-      set_metric( "kalk_format_prikaza_cijene_prosirenje", nil, gFPicCDem )
-      set_metric( "kalk_format_prikaza_iznosa_prosirenje", nil, gFPicDem )
-      set_metric( "kalk_format_prikaza_kolicine_prosirenje", nil, gFPicKol )
+      //set_metric( "kalk_format_prikaza_cijene_prosirenje", nil, gFPicCDem )
+      //set_metric( "kalk_format_prikaza_iznosa_prosirenje", nil, gFPicDem )
+      //set_metric( "kalk_format_prikaza_kolicine_prosirenje", nil, gFPicKol )
       set_metric( "kalk_broj_decimala_za_kolicinu", nil, gDecKol )
    ENDIF
 

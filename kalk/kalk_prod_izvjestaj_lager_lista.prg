@@ -41,12 +41,13 @@ FUNCTION lager_lista_prodavnica()
 
    _is_rok := fetch_metric( "kalk_definisanje_roka_trajanja", NIL, "N" ) == "D"
 
-   gPicCDEM := Replicate( "9", Val( gFPicCDem ) ) + gPicCDEM
-   gPicDEM := Replicate( "9", Val( gFPicDem ) ) + gPicDem
-   gPicKol := Replicate( "9", Val( gFPicKol ) ) + gPicKol
+   gPicCDEM := global_pic_cijena()
+   gPicDEM := global_pic_iznos()
+   gPicKol := global_pic_kolicina()
 
    cIdFirma := gFirma
    cIdKonto := PadR( "1320", gDuzKonto )
+
    O_SIFK
    O_SIFV
    O_ROBA

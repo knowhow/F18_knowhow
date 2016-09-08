@@ -22,8 +22,8 @@ FUNCTION Rfinansijsko_stanje_prodavnica()
 
    aPorezi := {}
 
-   PicDem := Replicate( "9", Val( gFPicDem ) ) + gPicDem
-   PicCDem := Replicate( "9", Val( gFPicCDem ) ) + gPicCDem
+   PicDEM := global_pic_iznos()
+   PicCDEM := global_pic_cijena()
 
    cIdFirma := gFirma
    cIdKonto := PadR( "132.", gDuzKonto )
@@ -295,11 +295,11 @@ FUNCTION Rfinansijsko_stanje_prodavnica()
    cRTTxt1 := SetRptLineAndText( aRptRTar, 1, "*" )
    cRTTxt2 := SetRptLineAndText( aRptRTar, 2, "*" )
 
-   IF Val( gFPicDem ) > 0
+   //IF Val( gFPicDem ) > 0
       P_COND2
-   ELSE
-      P_COND
-   ENDIF
+   //ELSE
+    //  P_COND
+   //ENDIF
 
    ?
    ?
@@ -385,11 +385,11 @@ FUNCTION ZaglRfinansijsko_stanje_prodavnica()
 
    SELECT kalk
 
-   IF Val( gFPicDem ) > 0
+   //IF Val( gFPicDem ) > 0
       P_COND2
-   ELSE
-      P_COND
-   ENDIF
+   //ELSE
+    //  P_COND
+   //ENDIF
 
    ?
    ? cLine

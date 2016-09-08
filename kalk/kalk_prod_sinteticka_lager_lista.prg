@@ -14,8 +14,8 @@
 
 FUNCTION sint_lager_lista_prodavnice()
 
-   PicCDem := Replicate( "9", Val( gFPicCDem ) ) + gPicCDem
-   PicDem := Replicate( "9", Val( gFPicDem ) ) + gPicDem
+   PicCDEM := global_pic_cijena()
+   PicDEM := global_pic_iznos()
 
    cIdFirma := gFirma
    qqKonto := PadR( "132;", 60 )

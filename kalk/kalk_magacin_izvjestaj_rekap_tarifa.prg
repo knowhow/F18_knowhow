@@ -20,9 +20,9 @@ FUNCTION RekMagTar()
    LOCAL nTT1 := nTT4 := nTT5 := nTT6 := nTT7 := 0
    LOCAL n1 := n4 := n5 := n6 := n7 := 0
    LOCAL nCol1 := 0
-   LOCAL PicCDEM := Replicate( "9", Val( gFPicCDem ) ) + gPicCDEM
+   LOCAL PicCDEM := global_pic_cijena()
    LOCAL PicProc := gPicProc
-   LOCAL PicDEM := Replicate( "9", Val( gFPicDem ) ) + gPicDem
+   LOCAL PicDEM := global_pic_iznos()
    LOCAL Pickol := gPicKol
 
    dDat1 := dDat2 := CToD( "" )

@@ -33,10 +33,13 @@ FUNCTION kalk_kartica_magacin()
 
    PRIVATE fKNabC := .F.
    PRIVATE fVeci := .F.
-   PRIVATE PicCDEM := Replicate( "9", Val( gFPicCDem ) ) + gPicCDEM
+
+   PRIVATE PicCDEM := global_pic_cijena()
    PRIVATE PicProc := gPicProc
-   PRIVATE PicDEM := Replicate( "9", Val( gFPicDem ) ) + gPicDem
-   PRIVATE Pickol :=  "@Z " + Replicate( "9", Val( gFPicKol ) ) + gPickol
+   PRIVATE PicDEM := global_pic_iznos()
+   PRIVATE PicKol := global_pic_kolicina()
+
+altd()
 
    kartica_magacin_open_tabele()
 
@@ -729,7 +732,7 @@ STATIC FUNCTION _set_zagl( cLine, cTxt1, cTxt2, cPVSS, cPicKol, cPicCDem )
    // partner
    AAdd( aKMag, { nPom, PadC( "Part-", nPom ), PadC( "ner", nPom ) } )
 
-   nPom := Len( PicKol ) - 3
+   nPom := Len( PicKol )
    // ulaz, izlaz, stanje
    AAdd( aKMag, { nPom, PadC( "Ulaz", nPom ), PadC( "1", nPom ) } )
    AAdd( aKMag, { nPom, PadC( "Izlaz", nPom ), PadC( "2", nPom ) } )
@@ -754,14 +757,13 @@ STATIC FUNCTION _set_zagl( cLine, cTxt1, cTxt2, cPVSS, cPicKol, cPicCDem )
    // NV
    AAdd( aKMag, { nPom, PadC( "NV", nPom ), PadC( "", nPom ) } )
 
-   nPom := Len( PicKol ) - 3
+   nPom := Len( PicKol )
    // RABAT
    AAdd( aKMag, { nPom, PadC( "RABAT", nPom ), PadC( "", nPom ) } )
 
    nPom := Len( PicDem )
    // PC
    AAdd( aKMag, { nPom, PadC( "PC", nPom ), PadC( "bez PDV", nPom ) } )
-
 
 
    cLine := SetRptLineAndText( aKMag, 0 )

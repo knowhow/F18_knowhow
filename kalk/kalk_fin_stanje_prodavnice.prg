@@ -24,8 +24,8 @@ FUNCTION finansijsko_stanje_prodavnica()
    LOCAL dDatOd, dDatDo
    LOCAL cIdFirma
 
-   PicDem := Replicate( "9", Val( gFPicDem ) ) + gPicDem
-   PicCDem := Replicate( "9", Val( gFPicCDem ) ) + gPicCDem
+   PicDEM := global_pic_iznos()
+   PicCDEM := global_pic_cijena()
 
    cIdFirma := gFirma
    cIdKonto := PadR( "133", gDuzKonto )
@@ -357,11 +357,11 @@ FUNCTION Zaglfinansijsko_stanje_prodavnica( dDatOd, dDatDo )
    HSEEK cIdKonto
    Preduzece()
 
-   IF Val( gFPicDem ) > 0
+   //IF Val( gFPicDem ) > 0
       P_COND2
-   ELSE
-      P_COND
-   ENDIF
+   //ELSE
+  //    P_COND
+   //ENDIF
 
    ?? "KALK: Finansijsko stanje za period", dDatOd, "-", dDatDo, " NA DAN "
    ?? Date(), Space( 10 ), "Str:", Str( ++nTStrana, 3 )

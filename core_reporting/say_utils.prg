@@ -14,21 +14,21 @@
 
 FUNCTION say_kolicina( nVar, cPic )
 
-   hb_default( @cPic, "999999999.999" )
+   hb_default( @cPic, global_pic_kolicina() )
 
    RETURN say_pict( nVar, cPic, .T. )
 
 
 FUNCTION say_iznos( nVar, cPic )
 
-   hb_default( @cPic, "9999999999.99" )
+   hb_default( @cPic, global_pic_iznos() )
 
    RETURN say_pict( nVar, cPic )
 
 
 FUNCTION say_cijena( nVar, cPic )
 
-   hb_default( @cPic, "999999999.999" )
+   hb_default( @cPic, global_pic_cijena() )
 
    RETURN say_pict( nVar, cPic )
 
@@ -60,3 +60,31 @@ FUNCTION say_pict( nVar, cPicture, lZero )
    NEXT
 
    RETURN Transform( nVar, cPicture ) // ako nista ne odgovara
+
+
+
+/*
+      sredjivanje formata ispisa
+*/
+FUNCTION pic_format( cPicture, nNum )
+
+   LOCAL cPictureOut
+
+   IF "*" $ Transform( nNum, cPicture )
+      cPictureOut := StrTran( cPicture, ".", "9" ) // jednostavno ukini decimalno mjesto kod ispisa
+   ELSE
+      cPictureOut := cPicture
+   ENDIF
+
+   RETURN cPictureOut
+
+
+FUNCTION global_pic_iznos()
+   RETURN "99" + gPicDEM
+
+
+FUNCTION global_pic_kolicina()
+   RETURN "99" + gPicKol
+
+FUNCTION global_pic_cijena()
+   RETURN "99" + gPicCDem

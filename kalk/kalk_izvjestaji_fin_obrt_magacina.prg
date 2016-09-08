@@ -24,9 +24,9 @@ FUNCTION kalk_finansijski_obrt()
    LOCAL nRekaRecCount
 
    PRIVATE  nCol1 := 0
-   PRIVATE PicCDem := Replicate( "9", Val( gFPicCDem ) ) + gPicCDem
+   PRIVATE PicCDEM := global_pic_cijena()
    PRIVATE PicProc := gPicProc
-   PRIVATE PicDEM  := Replicate( "9", Val( gFPicDem ) ) + gPicDEM
+   PRIVATE PicDEM := global_pic_iznos()
    PRIVATE Pickol := "@ 999999"
    // sirina kolone "+povecanje -snizenje" je za 3
    // karaktera veca od ostalih, tj. ima vise cifara

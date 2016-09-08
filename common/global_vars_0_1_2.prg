@@ -256,9 +256,9 @@ FUNCTION set_global_vars_roba()
    PUBLIC gPicProc
    PUBLIC gPicDEM
    PUBLIC gPickol
-   PUBLIC gFPicCDem
-   PUBLIC gFPicDem
-   PUBLIC gFPicKol
+   //PUBLIC gFPicCDem
+   //PUBLIC gFPicDem
+   //PUBLIC gFPicKol
 
    PUBLIC gDuzSifIni
 
@@ -283,9 +283,9 @@ FUNCTION set_global_vars_roba()
    gPicDEM := "9999999.99"
    gPicKol := "999999.999"
 
-   gFPicCDem := "3"
-   gFPicDem := "3"
-   gFPicKol := "3"
+   //gFPicCDem := "3"
+   //gFPicDem := "3"
+   //gFPicKol := "3"
 
    gDuzSifINI := "10"
 

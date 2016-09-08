@@ -31,10 +31,10 @@ FUNCTION kalk_kartica_prodavnica()
    LOCAL nNc, nSredNc, nOdstupanje, cTransakcija
    LOCAL cPrikSredNc := "N"
 
-   PRIVATE PicCDEM := Replicate( "9", Val( gFPicCDem ) ) + gPicCDEM
+   PRIVATE PicCDEM := global_pic_cijena()
    PRIVATE PicProc := gPicProc
-   PRIVATE PicDEM := Replicate( "9", Val( gFPicDem ) ) + gPicDem
-   PRIVATE Pickol := "@Z " + Replicate( "9", Val( gFPicKol ) ) + gPickol
+   PRIVATE PicDEM := global_pic_iznos()
+   PRIVATE PicKol := global_pic_kolicina()
    PRIVATE nMarza, nMarza2, nPRUC, aPorezi
 
    _is_rok := fetch_metric( "kalk_definisanje_roka_trajanja", NIL, "N" ) == "D"
@@ -461,12 +461,12 @@ STATIC FUNCTION _set_zagl( cLine, cTxt1 )
    nPom := 6
    AAdd( aKProd, { nPom, PadC( "Partn", nPom ) } )
 
-   nPom := 13
+   nPom := Len( global_pic_kolicina() )
    AAdd( aKProd, { nPom, PadC( "Ulaz", nPom ) } )
    AAdd( aKProd, { nPom, PadC( "Izlaz", nPom ) } )
    AAdd( aKProd, { nPom, PadC( "Stanje", nPom ) } )
 
-   nPom := 13
+   nPom := Len( global_pic_iznos() )
    AAdd( aKProd, { nPom, PadC( "NC", nPom ) } )
    AAdd( aKProd, { nPom, PadC( "PC", nPom ) } )
    AAdd( aKProd, { nPom, PadC( "PC sa PDV", nPom ) } )
@@ -476,6 +476,7 @@ STATIC FUNCTION _set_zagl( cLine, cTxt1 )
    cTxt1 := SetRptLineAndText( aKProd, 1, "*" )
 
    RETURN .T.
+
 
 
 FUNCTION Test( cIdRoba )

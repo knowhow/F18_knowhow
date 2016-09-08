@@ -522,7 +522,8 @@ FUNCTION postoji_partner( cIdPartner )
    LOCAL lRet
 
    PushWA()
-   SELECT PARTN
+
+   select_o_partner()
    SET ORDER TO TAG ID
    SEEK  cIdPartner
 

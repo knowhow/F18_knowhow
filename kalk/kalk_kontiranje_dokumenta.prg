@@ -111,6 +111,7 @@ FUNCTION kalk_kontiranje_fin_naloga( lAutomatskiSetBrojNaloga, lAGen, lViseKalk,
       ENDIF
    ENDIF
 
+
    lAFin := ( gAFin == "D" )
 
    IF lAFin
@@ -128,7 +129,7 @@ FUNCTION kalk_kontiranje_fin_naloga( lAutomatskiSetBrojNaloga, lAGen, lViseKalk,
       RETURN .F.
    ENDIF
 
-   lAFin2 := ( !lAutomatskiSetBrojNaloga .AND. gAFin <> "0" )
+   lAFin2 := !lAutomatskiSetBrojNaloga
    lAMat := ( lAutomatskiSetBrojNaloga .AND. gAMat == "D" )
 
    IF lAMat .AND. f18_use_module( "mat" )
@@ -144,7 +145,8 @@ FUNCTION kalk_kontiranje_fin_naloga( lAutomatskiSetBrojNaloga, lAGen, lViseKalk,
 
    IF lAFin .OR. lAFin2
 
-      O_FIN_PRIPR
+      //O_FIN_PRIPR
+      select_o_fin_pripr()
       SET ORDER TO TAG "1"
       GO TOP
 
@@ -230,7 +232,7 @@ FUNCTION kalk_kontiranje_fin_naloga( lAutomatskiSetBrojNaloga, lAGen, lViseKalk,
             @ m_x + 1, m_y + 2 SAY "Broj naloga u FIN  " + finmat->idfirma + " - " + cIdvn + " -" GET cBrNalF
          ENDIF
 
-         IF idvd <> "24" .AND. lAMat2
+         IF lAMat2
             @ m_x + 2, m_y + 2 SAY "Broj naloga u MAT  " + finmat->idfirma + " - " + cIdvn + " -" GET cBrNalM
          ENDIF
 
@@ -246,9 +248,9 @@ FUNCTION kalk_kontiranje_fin_naloga( lAutomatskiSetBrojNaloga, lAGen, lViseKalk,
    nRbr := 0
    nRbr2 := 0
 
-   MsgO( "KALK( shema kontiranja TRFP ) -> FINMAT -> FIN / " + cIdVN + " - " + cBrNalF  )
-
    SELECT finmat
+   MsgO( "KALK(shema, [" + Alltrim( finmat->brdok ) + "/" + Alltrim( finmat->brfaktp) + "]) -> FINMAT -> FIN / " + cIdVN + " - " + cBrNalF  )
+
    PRIVATE cKonto1 := NIL
 
    DO WHILE !Eof()

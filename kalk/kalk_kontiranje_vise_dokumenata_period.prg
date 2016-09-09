@@ -47,13 +47,13 @@ FUNCTION kontiranje_vise_dokumenata_period_auto()
       lAutomatskiSetBrojNaloga := .T.
    ENDIF
 
-   kont_dokumente( lAutomatskiSetBrojNaloga, dDatOd, dDatDo, cIdVD, cId_mkto, cId_pkto )
+   kalk_kontiranje_dokumenata( lAutomatskiSetBrojNaloga, dDatOd, dDatDo, cIdVD, cId_mkto, cId_pkto )
 
    RETURN .T.
 
 
 
-STATIC FUNCTION kont_dokumente( lAutomatskiSetBrojNaloga, dDatOd, dDatDo, cIdVD, cId_mkto, cId_pkto )
+STATIC FUNCTION kalk_kontiranje_dokumenata( lAutomatskiSetBrojNaloga, dDatOd, dDatDo, cIdVD, cId_mkto, cId_pkto )
 
    LOCAL nCount := 0
    LOCAL nTNRec
@@ -68,14 +68,12 @@ STATIC FUNCTION kont_dokumente( lAutomatskiSetBrojNaloga, dDatOd, dDatDo, cIdVD,
 
    find_kalk_doks_by_tip_datum( NIL, cIdVD, dDatOd, dDatDo )
 
-
    cId_mkto := AllTrim( cId_mkto )
    cId_pkto := AllTrim( cId_pkto )
 
    GO TOP
 
    DO WHILE !Eof()
-
 
       IF !Empty( cId_mkto ) // provjeri magacinska konta
          IF ! ( AllTrim( field->mkonto ) $ cId_mkto )

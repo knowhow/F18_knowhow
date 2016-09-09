@@ -115,11 +115,14 @@ FUNCTION kalk_kontiranje_gen_finmat()
       ENDIF
 
 
-      IF idvd == "80" .AND. !Empty( idkonto2 ) // potrebno je ispitati da li je predispozicija !
+      IF field->idvd == "80" .AND. !Empty( idkonto2 ) // potrebno je ispitati da li je predispozicija !
          _predispozicija := .T.
       ENDIF
 
-      EOF CRET
+      //EOF CRET
+      IF Eof()
+         RETURN .F.
+      ENDIF
 
       IF fStara .AND. lAuto == .F.
 

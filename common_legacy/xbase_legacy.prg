@@ -356,7 +356,7 @@ FUNCTION nErr( oe )
 
 FUNCTION EofFndRet( lEof, lClose )
 
-   LOCAL fRet := .F., cStr := "Ne postoje traženi podaci.."
+   LOCAL fRet := .F., cStr := "Ne postoje traženi podaci !"
 
    IF lEof // eof()
       IF Eof()

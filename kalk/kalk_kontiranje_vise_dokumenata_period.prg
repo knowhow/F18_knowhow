@@ -11,7 +11,7 @@
 
 #include "f18.ch"
 
-
+MEMVAR m_x, m_y, GetList
 
 FUNCTION kontiranje_vise_dokumenata_period_auto()
 
@@ -20,8 +20,10 @@ FUNCTION kontiranje_vise_dokumenata_period_auto()
    LOCAL cIdVD := "14"
    LOCAL cId_mkto := PadR( "", 100 )
    LOCAL cId_pkto := PadR( "", 100 )
+   LOCAL cAutomatskiSetBrojNaloga := iif( is_kalk_fin_isti_broj(), "D", "N" )
+   LOCAL lAutomatskiSetBrojNaloga := .F.
 
-   Box( , 5, 65 )
+   Box( , 6, 65 )
 
    @ m_x + 1, m_y + 2 SAY "Datum od:" GET dDatOd
    @ m_x + 1, Col() + 1 SAY "do:" GET dDatDo
@@ -31,6 +33,7 @@ FUNCTION kontiranje_vise_dokumenata_period_auto()
    @ m_x + 3, m_y + 2 SAY "mag.konta (prazno-sva):" GET cId_mkto PICT "@S20"
    @ m_x + 4, m_y + 2 SAY " pr.konta (prazno-sva):" GET cId_pkto PICT "@S20"
 
+   @ m_x + 6, m_y + 2 SAY "Automatska generacija brojeva FIN naloga ?" GET cAutomatskiSetBrojNaloga PICT "@!"
 
    READ
 
@@ -40,17 +43,24 @@ FUNCTION kontiranje_vise_dokumenata_period_auto()
       RETURN .F.
    ENDIF
 
-   kont_dokumente( dDatOd, dDatDo, cIdVD, cId_mkto, cId_pkto )
+   IF cAutomatskiSetBrojNaloga == "D"
+      lAutomatskiSetBrojNaloga := .T.
+   ENDIF
+
+   kont_dokumente( lAutomatskiSetBrojNaloga, dDatOd, dDatDo, cIdVD, cId_mkto, cId_pkto )
 
    RETURN .T.
 
 
-STATIC FUNCTION kont_dokumente( dDatOd, dDatDo, cIdVD, cId_mkto, cId_pkto )
+
+STATIC FUNCTION kont_dokumente( lAutomatskiSetBrojNaloga, dDatOd, dDatDo, cIdVD, cId_mkto, cId_pkto )
 
    LOCAL nCount := 0
    LOCAL nTNRec
    LOCAL cBrFinNalog := NIL
    LOCAL cD_firma, cD_tipd, cD_brdok
+
+   hb_default( @lAutomatskiSetBrojNaloga, .T. )
 
    IF Empty( cIdVD )
       cIdVD := NIL
@@ -91,11 +101,13 @@ STATIC FUNCTION kont_dokumente( dDatOd, dDatDo, cIdVD, cId_mkto, cId_pkto )
       kalk_kontiranje_gen_finmat( .T., cD_firma, cD_tipd, cD_brdok, .T. )  // napuni FINMAT
 
 
-      //IF is_kalk_fin_isti_broj()
-      //   cBrFinNalog := cD_brdok
-      //ENDIF
+      // IF is_kalk_fin_isti_broj()
+      // cBrFinNalog := cD_brdok
+      // ENDIF
 
-      kalk_kontiranje_fin_naloga( .T., .T., .T., NIL, .T. ) // kontiraj
+      kalk_kontiranje_fin_naloga( lAutomatskiSetBrojNaloga, .T., .T., NIL, lAutomatskiSetBrojNaloga ) // kontiraj
+      // kalk_kontiranje_fin_naloga( lAutomatskiSetBrojNaloga, lAGen, lViseKalk, cNalog, lAutoBrojac )
+
 
       ++ nCount
 

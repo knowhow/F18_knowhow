@@ -19,15 +19,15 @@ STATIC dDatMax
 
  kontiranje naloga
 
- fAuto - .t. automatski se odrjedjuje broj naloga koji se formira,
- .f. getuje se broj formiranog naloga - default vrijednost
+ lAutomatskiSetBrojNaloga - .t. automatski se odrjedjuje broj naloga koji se formira,
+                            .f. unosi se broj formiranog naloga
  lAGen - automatsko generisanje
  lViseKalk - vise kalkulacija
  cNalog - zadani broj FIN naloga, ako je EMPTY() ne uzima se !
 
 */
 
-FUNCTION kalk_kontiranje_fin_naloga( fAuto, lAGen, lViseKalk, cNalog, lAutoBrojac )
+FUNCTION kalk_kontiranje_fin_naloga( lAutomatskiSetBrojNaloga, lAGen, lViseKalk, cNalog, lAutoBrojac )
 
    LOCAL cIdFirma
    LOCAL cIdVd
@@ -98,8 +98,8 @@ FUNCTION kalk_kontiranje_fin_naloga( fAuto, lAGen, lViseKalk, cNalog, lAutoBroja
       O_VALUTE
    ENDIF
 
-   IF fAuto == NIL
-      fAuto := .F.
+   IF lAutomatskiSetBrojNaloga == NIL
+      lAutomatskiSetBrojNaloga := .F.
    ENDIF
 
    IF ( cNalog == NIL )
@@ -128,8 +128,8 @@ FUNCTION kalk_kontiranje_fin_naloga( fAuto, lAGen, lViseKalk, cNalog, lAutoBroja
       RETURN .F.
    ENDIF
 
-   lAFin2 := ( !fAuto .AND. gAFin <> "0" )
-   lAMat := ( fAuto .AND. gAMat == "D" )
+   lAFin2 := ( !lAutomatskiSetBrojNaloga .AND. gAFin <> "0" )
+   lAMat := ( lAutomatskiSetBrojNaloga .AND. gAMat == "D" )
 
    IF lAMat .AND. f18_use_module( "mat" )
       Beep( 1 )
@@ -137,7 +137,7 @@ FUNCTION kalk_kontiranje_fin_naloga( fAuto, lAGen, lViseKalk, cNalog, lAutoBroja
       O_TRMP
    ENDIF
 
-   lAMat2 := ( !fAuto .AND. gAMat <> "0" )
+   lAMat2 := ( !lAutomatskiSetBrojNaloga .AND. gAMat <> "0" )
 
    cBrNalF := ""
    cBrNalM := ""
@@ -204,7 +204,7 @@ FUNCTION kalk_kontiranje_fin_naloga( fAuto, lAGen, lViseKalk, cNalog, lAutoBroja
 
       SET CURSOR ON
 
-      IF fAuto
+      IF lAutomatskiSetBrojNaloga
          IF !lAFin
             cBrNalF := ""
          ELSE

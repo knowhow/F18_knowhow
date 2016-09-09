@@ -21,7 +21,7 @@ STATIC __trosk
 // ----------------------------------------------
 // Menij opcije import txt
 // ----------------------------------------------
-FUNCTION MnuImpCSV()
+FUNCTION meni_import_csv()
 
    PRIVATE izbor := 1
    PRIVATE opc := {}

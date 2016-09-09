@@ -33,7 +33,7 @@ FUNCTION kontiranje_vise_dokumenata_period_auto()
    @ m_x + 3, m_y + 2 SAY "mag.konta (prazno-sva):" GET cId_mkto PICT "@S20"
    @ m_x + 4, m_y + 2 SAY " pr.konta (prazno-sva):" GET cId_pkto PICT "@S20"
 
-   IF !is_kalk_fin_isti_broj() // ako je parametar fin-kalk broj identican, onda uvijek
+   IF is_kalk_fin_isti_broj() // ako je parametar fin-kalk broj identican, onda uvijek
     cAutomatskiSetBrojNaloga := "D"
    ELSE
       @ m_x + 6, m_y + 2 SAY "Automatska generacija brojeva FIN naloga ?" GET cAutomatskiSetBrojNaloga PICT "@!"

@@ -20,7 +20,7 @@ FUNCTION kontiranje_vise_dokumenata_period_auto()
    LOCAL cIdVD := "14"
    LOCAL cId_mkto := PadR( "", 100 )
    LOCAL cId_pkto := PadR( "", 100 )
-   LOCAL cAutomatskiSetBrojNaloga := iif( is_kalk_fin_isti_broj(), "D", "N" )
+   LOCAL cAutomatskiSetBrojNaloga := "N"
    LOCAL lAutomatskiSetBrojNaloga := .F.
 
    Box( , 6, 65 )
@@ -33,7 +33,11 @@ FUNCTION kontiranje_vise_dokumenata_period_auto()
    @ m_x + 3, m_y + 2 SAY "mag.konta (prazno-sva):" GET cId_mkto PICT "@S20"
    @ m_x + 4, m_y + 2 SAY " pr.konta (prazno-sva):" GET cId_pkto PICT "@S20"
 
-   @ m_x + 6, m_y + 2 SAY "Automatska generacija brojeva FIN naloga ?" GET cAutomatskiSetBrojNaloga PICT "@!"
+   IF !is_kalk_fin_isti_broj() // ako je parametar fin-kalk broj identican, onda uvijek
+    cAutomatskiSetBrojNaloga := "D"
+   ELSE
+      @ m_x + 6, m_y + 2 SAY "Automatska generacija brojeva FIN naloga ?" GET cAutomatskiSetBrojNaloga PICT "@!"
+   ENDIF
 
    READ
 
@@ -95,9 +99,7 @@ STATIC FUNCTION kalk_kontiranje_dokumenata( lAutomatskiSetBrojNaloga, dDatOd, dD
       cD_tipd := field->idvd
       cD_brdok := field->brdok
 
-
       kalk_kontiranje_gen_finmat( .T., cD_firma, cD_tipd, cD_brdok, .T. )  // napuni FINMAT
-
 
       // IF is_kalk_fin_isti_broj()
       // cBrFinNalog := cD_brdok

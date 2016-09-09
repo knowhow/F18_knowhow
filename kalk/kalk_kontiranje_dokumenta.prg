@@ -723,10 +723,10 @@ FUNCTION kalk_kontiranje_fin_naloga( lAutomatskiSetBrojNaloga, lAGen, lViseKalk,
 
    MsgC()
 
-   IF !lViseKalk // ako je vise kalkulacija ne zatvaraj tabele
-      my_close_all_dbf()
-      RETURN .T.
-   ENDIF
+   //IF !lViseKalk // ako je vise kalkulacija ne zatvaraj tabele
+  //    my_close_all_dbf()
+    //  RETURN .T.
+  // ENDIF
 
    RETURN .T.
 

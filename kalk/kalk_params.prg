@@ -12,7 +12,7 @@
 #include "f18.ch"
 
 
-STATIC s_cKalkFinIstirBroj := NIL
+STATIC s_cKalkFinIstiBroj := NIL
 STATIC s_cKalkPreuzimanjeTroskovaIzSifRoba := NIL
 STATIC s_cKalkMetodaNc := NIL
 
@@ -410,14 +410,14 @@ FUNCTION kalk_par_cijene()
    @ m_x + 3, m_y + 2 SAY "Prikaz iznosa  " GET gPicDem
    @ m_x + 4, m_y + 2 SAY "Prikaz kolicine" GET gPicKol
 
-   
+
    @ m_x + 5, m_y + 2 SAY "Ispravka NC    " GET gPicNC
    @ m_x + 6, m_y + 2 SAY "Decimale za kolicine" GET gDecKol PICT "9"
    @ m_x + 7, m_y + 2 SAY Replicate( "-", 30 )
 
-   //@ m_x + 8, m_y + 2 SAY8 "Dodatno proširenje cijene" GET gFPicCDem
-   //@ m_x + 9, m_y + 2 SAY8 "Dodatno proširenje iznosa" GET gFPicDem
-   //@ m_x + 10, m_y + 2 SAY8 "Dodatno proširenje količine" GET gFPicKol
+   // @ m_x + 8, m_y + 2 SAY8 "Dodatno proširenje cijene" GET gFPicCDem
+   // @ m_x + 9, m_y + 2 SAY8 "Dodatno proširenje iznosa" GET gFPicDem
+   // @ m_x + 10, m_y + 2 SAY8 "Dodatno proširenje količine" GET gFPicKol
    READ
    BoxC()
 
@@ -427,9 +427,9 @@ FUNCTION kalk_par_cijene()
       set_metric( "kalk_format_prikaza_iznosa", nil, gPicDEM )
       set_metric( "kalk_format_prikaza_kolicine", nil, gPicKol )
       set_metric( "kalk_format_prikaza_nabavne_cijene", nil, gPicNC )
-      //set_metric( "kalk_format_prikaza_cijene_prosirenje", nil, gFPicCDem )
-      //set_metric( "kalk_format_prikaza_iznosa_prosirenje", nil, gFPicDem )
-      //set_metric( "kalk_format_prikaza_kolicine_prosirenje", nil, gFPicKol )
+      // set_metric( "kalk_format_prikaza_cijene_prosirenje", nil, gFPicCDem )
+      // set_metric( "kalk_format_prikaza_iznosa_prosirenje", nil, gFPicDem )
+      // set_metric( "kalk_format_prikaza_kolicine_prosirenje", nil, gFPicKol )
       set_metric( "kalk_broj_decimala_za_kolicinu", nil, gDecKol )
    ENDIF
 
@@ -439,18 +439,28 @@ FUNCTION kalk_par_cijene()
 
 FUNCTION is_kalk_fin_isti_broj()
 
-   IF s_cKalkFinIstirBroj == NIL
-      s_cKalkFinIstirBroj := fetch_metric( "kalk_fin_isti_broj", NIL, "D" )
+   RETURN kalk_fin_isti_broj() == "D"
+
+
+FUNCTION kalk_fin_isti_broj( cSet )
+
+   IF s_cKalkFinIstiBroj == NIL
+      s_cKalkFinIstiBroj := fetch_metric( "kalk_fin_isti_broj", NIL, "D" )
    ENDIF
 
-   RETURN s_cKalkFinIstirBroj == "D"
+   IF cSet != NIL
+      s_cKalkFinIstiBroj := cSet
+      set_metric( "kalk_fin_isti_broj", NIL, cSet )
+   ENDIF
+
+   RETURN s_cKalkFinIstiBroj
 
 
 FUNCTION kalk_par_zavisni_dokumenti()
 
    LOCAL cTopsDest := PadR( kalk_destinacija_topska(), 100 )
    LOCAL _auto_razduzenje := fetch_metric( "kalk_tops_prenos_auto_razduzenje", my_user(), "N" )
-   LOCAL cKalkFinIstiBroj := fetch_metric( "kalk_fin_isti_broj", NIL, "D" )
+   LOCAL cKalkFinIstiBroj := kalk_fin_isti_broj()
 
    PRIVATE  GetList := {}
 
@@ -487,7 +497,7 @@ FUNCTION kalk_par_zavisni_dokumenti()
       set_metric( "kalk_prenos_fakt", f18_user(), gFakt )
       kalk_destinacija_topska( cTopsDest )
       set_metric( "kalk_tops_prenos_auto_razduzenje", my_user(), _auto_razduzenje )
-      set_metric( "kalk_fin_isti_broj", NIL, cKalkFinIstiBroj )
+      kalk_fin_isti_broj( cKalkFinIstiBroj )
 
    ENDIF
 

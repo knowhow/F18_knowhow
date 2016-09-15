@@ -34,7 +34,7 @@ FUNCTION meni_import_vindija()
    AAdd( opc, "1. import vindija računi                 " )
    AAdd( opcexe, {|| kalk_auto_import_racuni() } )
    AAdd( opc, "2. import vindija partner" )
-   AAdd( opcexe, {|| ImpTxtPartn() } )
+   AAdd( opcexe, {|| kalk_import_txt_partner() } )
    AAdd( opc, "3. import vindija roba" )
    AAdd( opcexe, {|| kalk_import_txt_roba() } )
    AAdd( opc, "4. popuna polja šifra dobavljača " )
@@ -234,11 +234,12 @@ STATIC FUNCTION GetImpFilter()
 
 
 /*
- *  Import sifrarnika partnera
+ *  Import sifarnika partnera
  */
-STATIC FUNCTION ImpTxtPartn()
 
-   LOCAL cFFilt
+STATIC FUNCTION kalk_import_txt_partner()
+
+   LOCAL cFFilt, lEdit
 
    PRIVATE cExpPath
    PRIVATE cImpFile
@@ -1641,6 +1642,8 @@ STATIC FUNCTION kalk_imp_get_konto_by_tip_pm_poslovnica( cTipDok, cPm, cTip, cPo
 
 STATIC FUNCTION kalk_imp_temp_to_partn( lEditOld )
 
+LOCAL hRec
+
    O_PARTN
    O_SIFK
    O_SIFV
@@ -1684,18 +1687,23 @@ STATIC FUNCTION kalk_imp_temp_to_partn( lEditOld )
          LOOP
       ENDIF
 
-      REPLACE id WITH kalk_imp_temp->idpartner
+      hRec := dbf_get_rec()
+
+      hRec[ "id" ] := kalk_imp_temp->idpartner
       cNaz := kalk_imp_temp->naz
-      REPLACE naz WITH KonvZnWin( @cNaz, "8" )
-      REPLACE ptt WITH kalk_imp_temp->ptt
+      hRec[ "naz" ] := KonvZnWin( @cNaz, "8" )
+      hRec[ "ptt" ] := kalk_imp_temp->ptt
       cMjesto := kalk_imp_temp->mjesto
-      REPLACE mjesto WITH KonvZnWin( @cMjesto, "8" )
+      hRec[ "mjesto" ] := KonvZnWin( @cMjesto, "8" )
       cAdres := kalk_imp_temp->adresa
-      REPLACE adresa WITH KonvZnWin( @cAdres, "8" )
-      REPLACE ziror WITH kalk_imp_temp->ziror
-      REPLACE telefon WITH kalk_imp_temp->telefon
-      REPLACE fax WITH kalk_imp_temp->fax
-      REPLACE idops WITH kalk_imp_temp->idops
+      hRec[ "adresa" ] := KonvZnWin( @cAdres, "8" )
+      hRec[ "ziror" ] := kalk_imp_temp->ziror
+      hRec[ "telefon" ] := kalk_imp_temp->telefon
+      hRec[ "fax" ] := kalk_imp_temp->fax
+      hRec[ "idops" ] := kalk_imp_temp->idops
+
+      dbf_update_rec( hRec )
+
       // ubaci --vezne-- podatke i u sifK tabelu
       USifK( "PARTN", "ROKP", kalk_imp_temp->idpartner, kalk_imp_temp->rokpl )
       USifK( "PARTN", "PORB", kalk_imp_temp->idpartner, kalk_imp_temp->porbr )

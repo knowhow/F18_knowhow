@@ -1702,7 +1702,7 @@ LOCAL hRec
       hRec[ "fax" ] := kalk_imp_temp->fax
       hRec[ "idops" ] := kalk_imp_temp->idops
 
-      dbf_update_rec( hRec )
+      update_rec_server_and_dbf( Alias(), hRec, 1, "FULL" )
 
       // ubaci --vezne-- podatke i u sifK tabelu
       USifK( "PARTN", "ROKP", kalk_imp_temp->idpartner, kalk_imp_temp->rokpl )
@@ -1763,6 +1763,8 @@ STATIC FUNCTION kalk_imp_temp_to_roba()
 
       ENDIF
 
+      update_rec_server_and_dbf( Alias(), hRec, 1, "FULL" )
+      
       SELECT kalk_imp_temp
       SKIP
    ENDDO

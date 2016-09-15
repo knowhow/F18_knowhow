@@ -287,7 +287,7 @@ FUNCTION p_to_doksrc( cPPath, cKPath )
    // provjeri broj zapisa...
    IF p_doksrc->( RecCount2() ) == 0
       SELECT ( nTArea )
-      RETURN
+      RETURN .F.
    ENDIF
 
    // izbrisi ako vec postoji taj dokument...

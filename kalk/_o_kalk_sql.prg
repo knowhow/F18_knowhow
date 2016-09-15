@@ -293,6 +293,26 @@ FUNCTION find_kalk_by_mkonto_idroba( cIdFirma, cIdKonto, cIdRoba, cOrderBy, lRep
    RETURN !Eof()
 
 
+   FUNCTION find_kalk_by_pkonto_idroba_idvd( cIdFirma, cIdKonto, cIdRoba )
+
+      LOCAL hParams := hb_Hash()
+
+      IF cIdFirma != NIL
+         hParams[ "idfirma" ] := cIdFirma
+      ENDIF
+      IF cIdKonto != NIL
+         hParams[ "pkonto" ] := cIdKonto
+      ENDIF
+      IF cIdRoba != NIL
+         hParams[ "idroba" ] := cIdRoba
+      ENDIF
+      hParams[ "order_by" ] := "idfirma,pkonto,idroba,datdok,podbr,pu_i,idvd"
+
+      use_sql_kalk( hParams )
+      GO TOP
+
+      RETURN !Eof()
+
 FUNCTION find_kalk_by_pkonto_idroba( cIdFirma, cIdKonto, cIdRoba )
 
    LOCAL hParams := hb_Hash()

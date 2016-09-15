@@ -25,7 +25,7 @@ FUNCTION kalk_kartica_magacin()
    LOCAL cTxt1
    LOCAL cTxt2
    LOCAL cPrikSredNc := "N"
-   LOCAL cIdvd := Space( 50 )
+   LOCAL cIdvd := Space( 100 )
    LOCAL nNc, nSredNc, nOdstupanje, cTransakcija
    LOCAL lPrikaziObradjeno := .F.
    LOCAL cOrderBy
@@ -38,8 +38,6 @@ FUNCTION kalk_kartica_magacin()
    PRIVATE PicProc := gPicProc
    PRIVATE PicDEM := global_pic_iznos()
    PRIVATE PicKol := global_pic_kolicina()
-
-altd()
 
    kartica_magacin_open_tabele()
 
@@ -90,7 +88,6 @@ altd()
 
          form_get_roba_id( @cIdRoba, m_x + 3, m_y + 2 )
 
-
          IF !Empty( cRNT1 )
             @ m_x + 4, m_y + 2 SAY "Broj radnog naloga:" GET cRNalBroj PICT "@S20"
          ENDIF
@@ -113,7 +110,6 @@ altd()
 
          IF cExportDN == "D"
             lExport := .T.
-
             create_dbf_r_export( kalk_kartica_magacin_export_dbf_struct() )
          ENDIF
          IF !Empty( cRnT1 ) .AND. !Empty( cRNalBroj )

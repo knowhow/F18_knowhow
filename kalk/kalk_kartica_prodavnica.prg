@@ -30,6 +30,8 @@ FUNCTION kalk_kartica_prodavnica()
    LOCAL cIdR := ""
    LOCAL nNc, nSredNc, nOdstupanje, cTransakcija
    LOCAL cPrikSredNc := "N"
+   LOCAL cIdvd := Space( 100 )
+   LOCAL hParams := hb_Hash(), cExportDN := "N", lExport := .F.
 
    PRIVATE PicCDEM := global_pic_cijena()
    PRIVATE PicProc := gPicProc
@@ -64,10 +66,9 @@ FUNCTION kalk_kartica_prodavnica()
       dDatDo := fetch_metric( "kalk_kartica_prod_datum_do", my_user(), dDatDo )
       cPredh := fetch_metric( "kalk_kartica_prod_prethodni_promet", my_user(), cPredh )
 
-      Box(, 8, 60 )
+      Box(, 11, 60 )
 
       DO WHILE .T.
-
 
          @ m_x + 1, m_y + 2 SAY "Firma "
          ?? gFirma, "-", gNFirma
@@ -80,8 +81,11 @@ FUNCTION kalk_kartica_prodavnica()
          @ m_x + 5, m_y + 2 SAY "Datum od " GET dDatOd
          @ m_x + 5, Col() + 2 SAY "do" GET dDatDo
          @ m_x + 6, m_y + 2 SAY "sa prethodnim prometom (D/N)" GET cPredh PICT "@!" VALID cpredh $ "DN"
+         @ m_x + 7, m_y + 2 SAY "Tip dokumenta (;) :"  GET cIdVd PICT "@S20"
 
-         @ m_x + 8, m_y + 2 SAY "Prikaz srednje nabavne cijene ?" GET cPrikSredNc VALID cPrikSredNc $ "DN" PICT "@!"
+         @ m_x + 9, m_y + 2 SAY "Prikaz srednje nabavne cijene ?" GET cPrikSredNc VALID cPrikSredNc $ "DN" PICT "@!"
+
+         @ m_x + 11, m_y + 2 SAY "Eksport u dbf:"  GET cExportDn PICT "@!" VALID cExportDN $ "DN"
 
          READ
          ESC_BCR
@@ -102,6 +106,11 @@ FUNCTION kalk_kartica_prodavnica()
 
       ENDIF
 
+      IF cExportDN == "D"
+         lExport := .T.
+         create_dbf_r_export( kalk_kartica_prodavnica_export_dbf_struct() )
+      ENDIF
+
       IF Empty( cIdRoba )
          IF Pitanje(, "Niste zadali šifru artikla, izlistati sve kartice (D/N) ?", "N" ) == "N"
             my_close_all_dbf()
@@ -119,7 +128,7 @@ FUNCTION kalk_kartica_prodavnica()
    nKolicina := 0
 
    MsgO( "Preuzimanje podataka sa SQL servera ..." )
-   find_kalk_by_pkonto_idroba( cIdFirma, cIdKonto, iif( Empty( cIdRoba ), NIL, cIdRoba ) )
+   find_kalk_by_pkonto_idroba_idvd( cIdFirma, cIdKonto, cIdVd, iif( Empty( cIdRoba ), NIL, cIdRoba ) )
    MsgC()
 
    PRIVATE cFilt := ".t."
@@ -404,6 +413,25 @@ FUNCTION kalk_kartica_prodavnica()
             ?
          ENDIF
 
+         IF lExport
+            hParams[ "idkonto" ] := cIdKonto
+            hParams[ "idroba" ] := cIdRoba
+            hParams[ "idpartner" ] := cIdPartner
+            hParams[ "kolicina" ] := field->kolicina
+            hParams[ "brdok" ] := field->brdok
+            hParams[ "idvd" ] := field->idvd
+            hParams[ "datdok" ] := field->datdok
+            hParams[ "brfaktp" ] := field->brfaktp
+            hParams[ "nc" ] := nNc
+            hParams[ "nv" ] := nNV
+            hParams[ "rabatv" ] := field->rabatv
+            hParams[ "vpc" ] := field->vpc
+            hParams[ "mpc" ] := field->mpcsapp
+            hParams[ "stanje" ] := nUlaz - nIzlaz
+
+            kalk_kartica_prodavnica_add_item_to_r_export( hParams )
+         ENDIF
+
          SKIP
 
       ENDDO
@@ -683,3 +711,52 @@ FUNCTION naprometniji_artikli_prodavnica()
    CLOSERET
 
    RETURN .T.
+
+
+STATIC FUNCTION kalk_kartica_prodavnica_add_item_to_r_export( hParams )
+
+   LOCAL nTArea := Select()
+
+   O_R_EXP
+   SELECT r_export
+
+   APPEND BLANK
+   REPLACE field->idkonto WITH hParams[ "idkonto" ], ;
+      field->idvd WITH hParams[ "idvd" ], ;
+      field->idroba WITH hParams[ "idroba" ], ;
+      field->brdok WITH hParams[ "brdok" ], ;
+      field->datdok WITH hParams[ "datdok" ], ;
+      field->kolicina WITH hParams[ "kolicina" ], ;
+      field->nc WITH hParams[ "nc" ], ;
+      field->stanje WITH hParams[ "stanje" ], ;
+      field->nv WITH hParams[ "nv" ], ;
+      field->rabatv WITH hParams[ "rabatv" ], ;
+      field->vpc WITH hParams[ "vpc" ], ;
+      field->mpc WITH hParams[ "mpc" ], ;
+      field->brfaktp WITH hParams[ "brfaktp" ], ;
+      field->idpartner WITH hParams[ "idpartner" ]
+
+   SELECT ( nTArea )
+
+   RETURN .T.
+
+FUNCTION kalk_kartica_prodavnica_export_dbf_struct()
+
+   LOCAL aDbf := {}
+
+   AAdd( aDbf, { "idkonto", "C", 7, 0 }  )
+   AAdd( aDbf, { "idroba", "C", 10, 0 }  )
+   AAdd( aDbf, { "idpartner", "C", 6, 0 }  )
+   AAdd( aDbf, { "idvd", "C", 2, 0 }  )
+   AAdd( aDbf, { "brdok", "C", 8, 0 }  )
+   AAdd( aDbf, { "brfaktp", "C", 10, 0 }  )
+   AAdd( aDbf, { "datdok", "D", 8, 0 }  )
+   AAdd( aDbf, { "kolicina", "N", 15, 3 }  )
+   AAdd( aDbf, { "stanje", "N", 15, 3 }  )
+   AAdd( aDbf, { "nc", "N", 15, 3 }  )
+   AAdd( aDbf, { "nv", "N", 15, 3 }  )
+   AAdd( aDbf, { "rabatv", "N", 15, 3 }  )
+   AAdd( aDbf, { "vpc", "N", 15, 3 }  )
+   AAdd( aDbf, { "mpc", "N", 15, 3 }  )
+
+   RETURN aDbf

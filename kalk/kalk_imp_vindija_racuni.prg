@@ -1642,7 +1642,7 @@ STATIC FUNCTION kalk_imp_get_konto_by_tip_pm_poslovnica( cTipDok, cPm, cTip, cPo
 
 STATIC FUNCTION kalk_imp_temp_to_partn( lEditOld )
 
-LOCAL hRec, lNovi
+   LOCAL hRec, lNovi, cTmpPar
 
    O_PARTN
    O_SIFK
@@ -1736,29 +1736,30 @@ STATIC FUNCTION kalk_imp_temp_to_roba()
       SELECT roba
       SET ORDER TO TAG "SIFRADOB" // pronadji robu
 
-      hRec := dbf_get_rec()
+
       cTmpSif := AllTrim( kalk_imp_temp->sifradob )
 
       SEEK cTmpSif
-      IF Found()
 
+      IF Found()
+         hRec := dbf_get_rec()
          IF kalk_imp_temp->idpm == "001" // mjenja se VPC
             hRec[ "vpc" ] := kalk_imp_temp->mpc
-            //IF field->vpc <> kalk_imp_temp->mpc
-            //   RREPLACE field->vpc WITH kalk_imp_temp->mpc
-            //ENDIF
+            // IF field->vpc <> kalk_imp_temp->mpc
+            // RREPLACE field->vpc WITH kalk_imp_temp->mpc
+            // ENDIF
 
          ELSEIF kalk_imp_temp->idpm == "002" // mjenja se VPC2
             hRec[ "vpc2" ] := kalk_imp_temp->mpc
-            //IF field->vpc2 <> kalk_imp_temp->mpc
-            //   RREPLACE field->vpc2 WITH kalk_imp_temp->mpc
-            //ENDIF
+            // IF field->vpc2 <> kalk_imp_temp->mpc
+            // RREPLACE field->vpc2 WITH kalk_imp_temp->mpc
+            // ENDIF
 
          ELSEIF kalk_imp_temp->idpm == "003"   // mjenja se MPC
             hRec[ "mpc" ] := kalk_imp_temp->mpc
-            //IF field->mpc <> kalk_imp_temp->mpc
-            //   RREPLACE field->mpc WITH kalk_imp_temp->mpc
-            //ENDIF
+            // IF field->mpc <> kalk_imp_temp->mpc
+            // RREPLACE field->mpc WITH kalk_imp_temp->mpc
+            // ENDIF
          ENDIF
          update_rec_server_and_dbf( Alias(), hRec, 1, "FULL" )
 

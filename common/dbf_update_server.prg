@@ -131,8 +131,8 @@ FUNCTION update_rec_server_and_dbf( cTabela, values, algoritam, cTransaction )
    _full_id_dbf := get_dbf_rec_primary_key( _alg[ "dbf_key_fields" ], _values_dbf ) // stanje u dbf-u (_values_dbf)
    _full_id_mem := get_dbf_rec_primary_key( _alg[ "dbf_key_fields" ], values ) // stanje podataka u mem rec varijabli values
 
-   // stavi id-ove na server
-   AAdd( _ids, _alg_tag + _full_id_mem )
+
+   AAdd( _ids, _alg_tag + _full_id_mem ) // stavi id-ove na server
    IF ( _full_id_dbf <> _full_id_mem ) .AND. !Empty( _full_id_dbf )
       AAdd( _ids, _alg_tag + _full_id_dbf )
    ENDIF

@@ -1642,7 +1642,7 @@ STATIC FUNCTION kalk_imp_get_konto_by_tip_pm_poslovnica( cTipDok, cPm, cTip, cPo
 
 STATIC FUNCTION kalk_imp_temp_to_partn( lEditOld )
 
-LOCAL hRec
+LOCAL hRec, lNovi
 
    O_PARTN
    O_SIFK
@@ -1760,11 +1760,12 @@ STATIC FUNCTION kalk_imp_temp_to_roba()
             //   RREPLACE field->mpc WITH kalk_imp_temp->mpc
             //ENDIF
          ENDIF
+         update_rec_server_and_dbf( Alias(), hRec, 1, "FULL" )
 
       ENDIF
 
-      update_rec_server_and_dbf( Alias(), hRec, 1, "FULL" )
-      
+
+
       SELECT kalk_imp_temp
       SKIP
    ENDDO

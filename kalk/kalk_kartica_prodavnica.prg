@@ -128,7 +128,7 @@ FUNCTION kalk_kartica_prodavnica()
    nKolicina := 0
 
    MsgO( "Preuzimanje podataka sa SQL servera ..." )
-   find_kalk_by_pkonto_idroba_idvd( cIdFirma, cIdKonto, cIdVd, iif( Empty( cIdRoba ), NIL, cIdRoba ) )
+   find_kalk_by_pkonto_idroba_idvd( cIdFirma, cIdVd, cIdKonto, iif( Empty( cIdRoba ), NIL, cIdRoba ) )
    MsgC()
 
    PRIVATE cFilt := ".t."
@@ -416,7 +416,6 @@ FUNCTION kalk_kartica_prodavnica()
          IF lExport
             hParams[ "idkonto" ] := cIdKonto
             hParams[ "idroba" ] := cIdRoba
-            hParams[ "idpartner" ] := cIdPartner
             hParams[ "kolicina" ] := field->kolicina
             hParams[ "brdok" ] := field->brdok
             hParams[ "idvd" ] := field->idvd
@@ -467,6 +466,9 @@ FUNCTION kalk_kartica_prodavnica()
    ENDDO
 
    my_close_all_dbf()
+   IF lExport
+      open_r_export_table()
+   ENDIF
 
    FF
    ENDPRINT
@@ -733,8 +735,7 @@ STATIC FUNCTION kalk_kartica_prodavnica_add_item_to_r_export( hParams )
       field->rabatv WITH hParams[ "rabatv" ], ;
       field->vpc WITH hParams[ "vpc" ], ;
       field->mpc WITH hParams[ "mpc" ], ;
-      field->brfaktp WITH hParams[ "brfaktp" ], ;
-      field->idpartner WITH hParams[ "idpartner" ]
+      field->brfaktp WITH hParams[ "brfaktp" ]
 
    SELECT ( nTArea )
 
@@ -746,7 +747,6 @@ FUNCTION kalk_kartica_prodavnica_export_dbf_struct()
 
    AAdd( aDbf, { "idkonto", "C", 7, 0 }  )
    AAdd( aDbf, { "idroba", "C", 10, 0 }  )
-   AAdd( aDbf, { "idpartner", "C", 6, 0 }  )
    AAdd( aDbf, { "idvd", "C", 2, 0 }  )
    AAdd( aDbf, { "brdok", "C", 8, 0 }  )
    AAdd( aDbf, { "brfaktp", "C", 10, 0 }  )

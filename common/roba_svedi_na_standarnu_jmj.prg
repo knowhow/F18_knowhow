@@ -73,7 +73,7 @@ FUNCTION svedi_na_jedinicu_mjere( nKol, cIdRoba, cJMJ )
 
    LOCAL nVrati := 0, nArr := Select(), aNaz := {}, nKoeficijent := 1, nPozicija := 0
    LOCAL cSvedi
-   LOCAL cPom, cJmjRoba
+   LOCAL cPom, cJmjRoba, oError
 
    cSvedi := IzSifk( "ROBA", "SJMJ", cIdRoba, .F. )
 
@@ -82,7 +82,11 @@ FUNCTION svedi_na_jedinicu_mjere( nKol, cIdRoba, cJMJ )
       nPozicija := At( "_", cSvedi ) // slijedi preracunavanje 0.1_KG
       IF nPozicija > 0
          cPom   := AllTrim( SubStr( cSvedi, nPozicija + 1 ) )
-         nKoeficijent   := &cPom  // "0.1" => 0.1 numeric
+         BEGIN SEQUENCE WITH {| err| Break( err ) }
+            nKoeficijent   := &cPom  // "0.1" => 0.1 numeric
+         RECOVER USING oError
+            error_bar( "sjmj_" + cIdRoba,  oError:description + " : " + cPom )
+         END SEQUENCE
          nVrati := nKol * nKoeficijent
          cJMJ   := AllTrim( Left( cSvedi, nPozicija - 1 ) )
       ELSE

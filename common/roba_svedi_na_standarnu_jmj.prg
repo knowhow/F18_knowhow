@@ -64,14 +64,14 @@ FUNCTION is_roba_trazi_po_sifradob()
 
 
 
-// ----------------------------------
-// svedi na standardnu jedinicu mjere
-// ( npr. KOM->LIT ili KOM->KG )
-// ----------------------------------
+/* ----------------------------------
+ svedi na standardnu jedinicu mjere
+ ( npr. KOM->LIT ili KOM->KG )
+*/
 
 FUNCTION svedi_na_jedinicu_mjere( nKol, cIdRoba, cJMJ )
 
-   LOCAL nVrati := 0, nArr := Select(), aNaz := {}, nKoeficijent := 1, n_Pos := 0
+   LOCAL nVrati := 0, nArr := Select(), aNaz := {}, nKoeficijent := 1, nPozicija := 0
    LOCAL cSvedi
    LOCAL cPom, cJmjRoba
 
@@ -79,17 +79,21 @@ FUNCTION svedi_na_jedinicu_mjere( nKol, cIdRoba, cJMJ )
 
    IF !Empty( cSvedi )
 
-      n_Pos := At( "_", cSvedi ) // slijedi preracunavanje 0.1_KG
-      cPom   := AllTrim( SubStr( cSvedi, n_Pos + 1 ) )
-      nKoeficijent   := &cPom  // "0.1" => 0.1 numeric
-      nVrati := nKol * nKoeficijent
-      cJMJ   := AllTrim( Left( cSvedi, n_Pos - 1 ) )
+      nPozicija := At( "_", cSvedi ) // slijedi preracunavanje 0.1_KG
+      IF nPozicija > 0
+         cPom   := AllTrim( SubStr( cSvedi, nPozicija + 1 ) )
+         nKoeficijent   := &cPom  // "0.1" => 0.1 numeric
+         nVrati := nKol * nKoeficijent
+         cJMJ   := AllTrim( Left( cSvedi, nPozicija - 1 ) )
+      ELSE
+         nVrati := nKol
+      ENDIF
+
    ELSE
 
       cJmjRoba := find_roba_jmj( cIdRoba )
-
-      IF cJmjRoba == "KOM" // nema definisano svodjenje na jednicu mjere
-         MsgBeep( cIdRoba + "nema definisanu težinu !?" )
+      IF IsVindija() .AND. cJmjRoba == "KOM" // nema definisano svodjenje na jednicu mjere
+         error_bar( "sjmj_" + AllTrim( cIdRoba ), cIdRoba + " nema definisanu težinu !?" )
       ENDIF
 
       nVrati := nKol // artikal je vec u osnovnoj JMJ

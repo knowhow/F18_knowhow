@@ -195,8 +195,6 @@ FUNCTION kalk_raspored_troskova( fSilent )
 
          IF cIdVd $ "10#16#81#80"
             nUkupanIznosFakture += Round( field->fcj * ( 1 - field->Rabat / 100 ) * field->kolicina, gZaokr ) // zaduzenje magacina,prodavnice
-
-
          ENDIF
 
          IF cIdVd $ "11#12#13"

@@ -307,7 +307,7 @@ STATIC FUNCTION kalk_import_txt_roba()
 
    cExpPath := get_liste_za_import_path()
 
-   cFFilt := "s*.s??"
+   cFFilt := "S*.S??"
 
 
    IF get_file_list( cFFilt, cExpPath, @cImpFile ) == 0 // pregled fajlova za import, te setuj varijablu cImpFile
@@ -887,7 +887,7 @@ STATIC FUNCTION CheckRoba()
 
    LOCAL cLine
 
-   aPomRoba := SDobExist( .T. )
+   aPomRoba := provjera_roba_po_sifradob_postoji( .T. )
 
    IF ( Len( aPomRoba ) > 0 )
 
@@ -902,22 +902,20 @@ STATIC FUNCTION CheckRoba()
       FOR i := 1 TO Len( aPomRoba )
 
 
-
          cLine := aPomRoba[ i, 2 ]
          cLine += " " + aPomRoba[ i, 9 ]
 
          IF aPomRoba[ i, 1 ] == "1"
 
             IF aPomRoba[ i, 3 ] == "001"
-
                nCijena := aPomRoba[ i, 6 ] // vpc
 
             ELSEIF aPomRoba[ i, 3 ] == "002"
-
                nCijena := aPomRoba[ i, 7 ]  // vpc2
-            ELSEIF aPomRoba[ i, 3 ] == "003"
 
+            ELSEIF aPomRoba[ i, 3 ] == "003"
                nCijena := aPomRoba[ i, 8 ] // mpc
+
             ENDIF
 
             cLine += Str( nCijena, 12, 2 )
@@ -929,7 +927,7 @@ STATIC FUNCTION CheckRoba()
             ENDIF
 
          ELSE
-            ?? " ovog artikla nema u sifrarniku !"
+            ? cLine, " ovog artikla nema u sifarniku !"
          ENDIF
 
 
@@ -946,12 +944,9 @@ STATIC FUNCTION CheckRoba()
 
 
 
-// --------------------------------------------------------
-// provjerava da li postoji roba po sifri dobavljaca
-// --------------------------------------------------------
-STATIC FUNCTION SDobExist()
+STATIC FUNCTION provjera_roba_po_sifradob_postoji()
 
-   LOCAL aRet
+   LOCAL aRet, cInd
 
    O_ROBA
    SELECT kalk_imp_temp
@@ -964,7 +959,6 @@ STATIC FUNCTION SDobExist()
       SELECT roba
       SET ORDER TO TAG "SIFRADOB"
       GO TOP
-
       SEEK kalk_imp_temp->sifradob
 
       IF Found()
@@ -1731,17 +1725,24 @@ STATIC FUNCTION kalk_imp_temp_to_roba()
    SELECT kalk_imp_temp
    GO TOP
 
+   Box(, 3, 60 )
    DO WHILE !Eof()
 
       SELECT roba
       SET ORDER TO TAG "SIFRADOB" // pronadji robu
 
-
       cTmpSif := AllTrim( kalk_imp_temp->sifradob )
-
       SEEK cTmpSif
 
       IF Found()
+
+         @ m_x + 1, m_y + 2 SAY "      ID: " + roba->id
+         @ m_x + 2, m_y + 2 SAY "SIFRADOB: " + kalk_imp_temp->sifradob
+
+         IF Trim( kalk_imp_temp->sifradob ) == "11417"
+            AltD()
+         ENDIF
+
          hRec := dbf_get_rec()
          IF kalk_imp_temp->idpm == "001" // mjenja se VPC
             hRec[ "vpc" ] := kalk_imp_temp->mpc
@@ -1769,7 +1770,10 @@ STATIC FUNCTION kalk_imp_temp_to_roba()
 
       SELECT kalk_imp_temp
       SKIP
+
    ENDDO
+
+   BoxC()
 
    RETURN 1
 

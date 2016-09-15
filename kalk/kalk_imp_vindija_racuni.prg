@@ -299,6 +299,8 @@ STATIC FUNCTION ImpTxtPartn()
 
 STATIC FUNCTION kalk_import_txt_roba()
 
+   LOCAL lEdit
+
    PRIVATE cExpPath
    PRIVATE cImpFile
 
@@ -1712,6 +1714,8 @@ STATIC FUNCTION kalk_imp_temp_to_partn( lEditOld )
 
 STATIC FUNCTION kalk_imp_temp_to_roba()
 
+   LOCAL cTmpSif, hRec
+
    O_ROBA
    O_SIFK
    O_SIFV
@@ -1721,30 +1725,32 @@ STATIC FUNCTION kalk_imp_temp_to_roba()
 
    DO WHILE !Eof()
 
-      // pronadji robu
       SELECT roba
-      SET ORDER TO TAG "SIFRADOB"
+      SET ORDER TO TAG "SIFRADOB" // pronadji robu
 
+      hRec := dbf_get_rec()
       cTmpSif := AllTrim( kalk_imp_temp->sifradob )
 
       SEEK cTmpSif
-
       IF Found()
 
          IF kalk_imp_temp->idpm == "001" // mjenja se VPC
-            IF field->vpc <> kalk_imp_temp->mpc
-               RREPLACE field->vpc WITH kalk_imp_temp->mpc
-            ENDIF
+            hRec[ "vpc" ] := kalk_imp_temp->mpc
+            //IF field->vpc <> kalk_imp_temp->mpc
+            //   RREPLACE field->vpc WITH kalk_imp_temp->mpc
+            //ENDIF
 
          ELSEIF kalk_imp_temp->idpm == "002" // mjenja se VPC2
-            IF field->vpc2 <> kalk_imp_temp->mpc
-               RREPLACE field->vpc2 WITH kalk_imp_temp->mpc
-            ENDIF
+            hRec[ "vpc2" ] := kalk_imp_temp->mpc
+            //IF field->vpc2 <> kalk_imp_temp->mpc
+            //   RREPLACE field->vpc2 WITH kalk_imp_temp->mpc
+            //ENDIF
 
          ELSEIF kalk_imp_temp->idpm == "003"   // mjenja se MPC
-            IF field->mpc <> kalk_imp_temp->mpc
-               RREPLACE field->mpc WITH kalk_imp_temp->mpc
-            ENDIF
+            hRec[ "mpc" ] := kalk_imp_temp->mpc
+            //IF field->mpc <> kalk_imp_temp->mpc
+            //   RREPLACE field->mpc WITH kalk_imp_temp->mpc
+            //ENDIF
          ENDIF
 
       ENDIF

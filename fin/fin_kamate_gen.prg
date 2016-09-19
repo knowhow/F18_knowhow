@@ -11,18 +11,21 @@
 
 #include "f18.ch"
 
-
+MEMVAR m_x, m_y
 
 FUNCTION prenos_fin_kam()
 
-   LOCAL _id_konto := PadR( "2110", 7 )
-   LOCAL _dat_obr := Date()
-   LOCAL _limit_dana := 0
+   LOCAL cIdKonto := PadR( "2110", 7 )
+   LOCAL dDatObracuna := Date()
+   LOCAL nMinimumDanaZaObracun := 0
    LOCAL _zatvorene := "D"
-   LOCAL _dodaj_dana := 30
+   LOCAL nDodajDanaDatValEmpty := 30
    LOCAL _partneri := Space( 100 )
    LOCAL _usl, _rec
    LOCAL _filter := ""
+   LOCAL GetList := {}
+   LOCAL cIdPartner, nOsnovniDug, cBrojDokumenta
+   LOCAL nTekuciRec
 
    O_KAM_PRIPR
    O_KONTO
@@ -30,13 +33,13 @@ FUNCTION prenos_fin_kam()
 
    Box( "#PRENOS RACUNA ZA OBRACUN FIN->KAM", 8, 65 )
 
-   @ m_x + 1, m_y + 2 SAY "Konto:         " GET _id_konto VALID P_Konto( @_id_konto )
-   @ m_x + 2, m_y + 2 SAY "Datum obracuna:" GET _dat_obr
+   @ m_x + 1, m_y + 2 SAY "Konto:         " GET cIdKonto VALID P_Konto( @cIdKonto )
+   @ m_x + 2, m_y + 2 SAY "Datum obracuna:" GET dDatObracuna
    @ m_x + 3, m_y + 2 SAY "Uzeti u obzir samo racune cije je"
-   @ m_x + 4, m_y + 2 SAY "valutiranje starije od (br.dana)" GET _limit_dana PICT "9999999"
+   @ m_x + 4, m_y + 2 SAY "valutiranje starije od (br.dana)" GET nMinimumDanaZaObracun PICT "9999999"
    @ m_x + 5, m_y + 2 SAY "Uzeti u obzir stavke koje su zatvorene? (D/N)" GET _zatvorene PICT "@!" VALID _zatvorene $ "DN"
    @ m_x + 6, m_y + 2 SAY "Ukoliko nije naveden datum valutiranja"
-   @ m_x + 7, m_y + 2 SAY "na datum dokumenta dodaj (br.dana)    " GET _dodaj_dana PICT "99"
+   @ m_x + 7, m_y + 2 SAY "na datum dokumenta dodaj (br.dana)    " GET nDodajDanaDatValEmpty PICT "99"
    @ m_x + 8, m_y + 2 SAY "Partneri" GET _partneri PICT "@!S50"
 
    DO WHILE .T.
@@ -55,7 +58,7 @@ FUNCTION prenos_fin_kam()
    BoxC()
 
    MsgO( "Prenos podataka sa servera ..." )
-   find_suban_by_konto_partner( gFirma, _id_konto, _partneri, NIL, "IdFirma,IdKonto,IdPartner,brdok" )
+   find_suban_by_konto_partner( gFirma, cIdKonto, _partneri, NIL, "IdFirma,IdKonto,IdPartner,brdok" )
    MsgC()
 
    IF !Empty( _usl )
@@ -66,36 +69,35 @@ FUNCTION prenos_fin_kam()
    ENDIF
    GO TOP
 
-   DO WHILE !Eof() .AND. field->idkonto == _id_konto .AND. field->idfirma == gFirma
+   DO WHILE !Eof() .AND. field->idkonto == cIdKonto .AND. field->idfirma == gFirma
 
-      _id_partner := field->idpartner
-      // osnovni dug
-      _osn_dug := 0
+      cIdPartner := field->idpartner // osnovni dug
+      nOsnovniDug := 0
 
-      DO WHILE !Eof() .AND. field->idkonto == _id_konto .AND. field->idpartner == _id_partner .AND. field->idfirma == gFirma
+      DO WHILE !Eof() .AND. field->idkonto == cIdKonto .AND. field->idpartner == cIdPartner .AND. field->idfirma == gFirma
 
-         _br_dok := field->brdok
+         cBrojDokumenta := field->brdok
 
          _duguje := 0
          _potrazuje := 0
-         _dat_pocetka := CToD( "" )
+         dDatOdZaBrDok := CToD( "" )
 
-         _tmp := "XYZYXYYXXX"
+         cTmpBrDok := "XYZYXYYXXX"
 
-         DO WHILE !Eof() .AND. field->idkonto == _id_konto .AND. field->idpartner == _id_partner ;
-               .AND. field->brdok == _br_dok  .AND. field->idfirma == gFirma
+         DO WHILE !Eof() .AND. field->idkonto == cIdKonto .AND. field->idpartner == cIdPartner ;
+               .AND. field->brdok == cBrojDokumenta  .AND. field->idfirma == gFirma
 
-            IF field->brdok == _tmp .OR. field->datdok > _dat_obr
+            IF ( field->brdok == cTmpBrDok ) .OR. ( field->datdok > dDatObracuna ) .OR. ;
+               ( fix_dat_var( field->datval, .T. ) > dDatObracuna )
                SKIP
                LOOP
             ENDIF
 
-            IF field->otvst = "9" .AND. _zatvorene == "N"
-               // samo otvorene stavke
+            IF field->otvst = "9" .AND. _zatvorene == "N" // samo otvorene stavke
                IF field->d_p == "1"
-                  _osn_dug += field->iznosbhd
+                  nOsnovniDug += field->iznosbhd
                ELSE
-                  _osn_dug -= field->iznosbhd
+                  nOsnovniDug -= field->iznosbhd
                ENDIF
                SKIP
                LOOP
@@ -103,58 +105,64 @@ FUNCTION prenos_fin_kam()
 
             IF field->d_p == "1"
 
-               IF Empty( _dat_pocetka )
+               IF Empty( dDatOdZaBrDok )
                   IF Empty( fix_dat_var( field->datval, .T. ) )
-                     _dat_pocetka := field->datdok + _dodaj_dana
+                     dDatOdZaBrDok := field->datdok + nDodajDanaDatValEmpty
                   ELSE
-                     // datum valutiranja
-                     _dat_pocetka := fix_dat_var( field->datval, .T. )
+                     dDatOdZaBrDok := fix_dat_var( field->datval, .T. ) // datum valutiranja
                   ENDIF
                ENDIF
 
                _duguje += field->iznosbhd
-               _osn_dug += field->iznosbhd
+               nOsnovniDug += field->iznosbhd
 
             ELSE
 
-               IF !Empty( _dat_pocetka )
-                  // vec je nastalo dugovanje!!
-                  _dat_pocetka := field->datdok
+               IF !Empty( dDatOdZaBrDok )  // vec je nastalo dugovanje
+                  dDatOdZaBrDok := field->datdok
                ENDIF
 
                _potrazuje += field->iznosbhd
-               _osn_dug -= field->iznosbhd
+               nOsnovniDug -= field->iznosbhd
 
             ENDIF
 
-            IF !Empty( _dat_pocetka )
+            IF !Empty( dDatOdZaBrDok )
 
                SELECT kam_pripr
 
-               IF ( field->idpartner + field->idkonto + field->brdok == _id_partner + _id_konto + _br_dok )
-                  // vec postoji prosli dio racuna
-                  // njega zatvori sa
-                  // predhodnim danom
-                  IF field->datod >= _dat_pocetka
-                     // slijedeca promjena na isti datum
+               IF ( field->idpartner + field->idkonto + field->brdok == cIdPartner + cIdKonto + cBrojDokumenta )
+                  // vec postoji prosli dio racuna, njega zatvoriti sa predhodnim danom
+                  IF field->datod >= dDatOdZaBrDok // slijedeca promjena na isti datum
                      RREPLACE field->osnovica WITH field->osnovica + suban->( iif( d_p == "1", iznosbhd, -iznosbhd ) )
                      SELECT suban
                      SKIP
                      LOOP
                   ELSE
-                     RREPLACE field->datdo WITH _dat_pocetka - 1
+                     RREPLACE field->datdo WITH dDatOdZaBrDok - 1
                   ENDIF
+
+               ELSE // ovaj brdok se prvi put pojavljuje
+
+                  // IF ( field->idpartner + field->idkonto + field->brdok <> cIdPartner + cIdKonto + cBrojDokumenta ) ;
+                  // .AND. ( dDatObracuna - nMinimumDanaZaObracun < dDatOdZaBrDok ) // onda ne pohranjuj
+                  IF ( dDatObracuna - nMinimumDanaZaObracun ) >= dDatOdZaBrDok
+                     // cTmpBrDok := cBrojDokumenta
+                     // ELSE
+                     APPEND BLANK
+                     RREPLACE idpartner WITH cIdPartner, ;
+                        idkonto WITH cIdKonto, ;
+                        osnovica WITH _duguje - _potrazuje, ;
+                        brdok WITH cBrojDokumenta, ;
+                        datod WITH dDatOdZaBrDok, ;
+                        datdo WITH dDatObracuna
+                  ELSE
+                     cTmpBrDok := cBrojDokumenta
+                  ENDIF
+
                ENDIF
 
-               IF ( field->idpartner + field->idkonto + field->brdok <> _id_partner + _id_konto + _br_dok ) ;
-                     .AND. ( _dat_obr - _limit_dana < _dat_pocetka )
-                  // onda ne pohranjuj
-                  _tmp := _br_dok
-               ELSE
 
-                  APPEND BLANK
-                  RREPLACE idpartner WITH _id_partner, idkonto WITH _id_konto, osnovica WITH _duguje - _potrazuje, brdok WITH _br_dok, datod WITH _dat_pocetka, datdo WITH _dat_obr
-               ENDIF
             ENDIF
 
             SELECT suban
@@ -165,19 +173,19 @@ FUNCTION prenos_fin_kam()
       ENDDO
 
       SELECT kam_pripr
-      _t_rec := RecNo()
-      SEEK _id_partner
+      nTekuciRec := RecNo()
+      SEEK cIdPartner
 
       my_flock()
 
-      DO WHILE !Eof() .AND. _id_partner == field->idpartner
-         REPLACE field->osndug WITH _osn_dug // nafiluj osnovni dug
+      DO WHILE !Eof() .AND. cIdPartner == field->idpartner
+         REPLACE field->osndug WITH nOsnovniDug // nafiluj osnovni dug
          SKIP
       ENDDO
 
       my_unlock()
 
-      GO _t_rec
+      GO nTekuciRec
       SELECT suban
 
    ENDDO
@@ -186,13 +194,13 @@ FUNCTION prenos_fin_kam()
    SET ORDER TO TAG "1"
    GO TOP
 
-   _tmp := "XYZXYZSC"
+   cTmpBrDok := "XYZXYZSC"
 
    DO WHILE !Eof()
       SKIP
-      _t_rec := RecNo()
+      nTekuciRec := RecNo()
       SKIP -1
-      IF field->datod <= field->datdo .AND. _tmp == field->brdok .AND. field->osndug = 0
+      IF field->datod <= field->datdo .AND. cTmpBrDok == field->brdok .AND. field->osndug = 0
          SKIP // ako se radi o zadnjoj uplati vec postojeceg racuna ne brisi !
          LOOP
       ENDIF
@@ -200,10 +208,10 @@ FUNCTION prenos_fin_kam()
       IF field->datod >= field->datdo .OR. field->osndug <= 0
          my_delete()
       ELSE
-         _tmp := field->brdok
+         cTmpBrDok := field->brdok
       ENDIF
 
-      GO _t_rec
+      GO nTekuciRec
 
    ENDDO
 

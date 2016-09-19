@@ -11,17 +11,28 @@
 
 #include "f18.ch"
 
+MEMVAR gFirma, M
+
 STATIC picdem := "9999999999.99"
 
-FUNCTION fin_kamate_obracun_sa_kamatni_list( cIdPartner, lPrintKamatniList, cVarObrac )
+/*
+   cVarijantaKamatnogRacuna: Z - zatezne kamate 
+*/
 
-   LOCAL nKumKamSD := 0
+FUNCTION fin_kamate_obracun_sa_kamatni_list( cIdPartner, lPrintKamatniList, cVarijantaKamatnogRacuna )
+
+   LOCAL nKamataUkupnoBrDok := 0, nKamataUkupnoNaDan
    LOCAL cTxtPdv
    LOCAL cTxtUkupno
    LOCAL hParams := hb_Hash()
-   LOCAL nOsnovSd
+   LOCAL nOstatakRacuna
    LOCAL hRec
-   LOCAL nOsnDug, nSKumKam
+   LOCAL nOsnDug, nKamataUkupno
+   LOCAL nGlavn, dDatOd, dDatDo
+   LOCAL lPrvaStavkaZaBrDok
+   LOCAL nGlavnicaZaBrDok
+   LOCAL i, cM1, nCol1
+   LOCAL cBrDok
 
    IF lPrintKamatniList == NIL
       lPrintKamatniList := .T.
@@ -105,7 +116,7 @@ FUNCTION fin_kamate_obracun_sa_kamatni_list( cIdPartner, lPrintKamatniList, cVar
       ?
       ?
 
-      IF cVarObrac == "Z"
+      IF cVarijantaKamatnogRacuna == "Z"
          m := " ---------- -------- -------- --- ------------- ------------- -------- ------- -------------" + iif( fin_kam_prikaz_kumulativ() == "D", " -------------", "" )
       ELSE
          m := " ---------- -------- -------- --- ------------- ------------- -------- -------------" + iif( fin_kam_prikaz_kumulativ() == "D", " -------------", "" )
@@ -115,44 +126,45 @@ FUNCTION fin_kamate_obracun_sa_kamatni_list( cIdPartner, lPrintKamatniList, cVar
 
    ENDIF
 
-   nSKumKam := 0
-   nOsnovSD := 0
+   nKamataUkupno := 0
+   nOstatakRacuna := 0
    SELECT kam_pripr
    cIdPartner := field->idpartner
 
    // IF !lPrintKamatniList
-   nOsnDug := field->osndug
+   nOsnDug := kam_pripr->osndug
    // ENDIF
 
    DO WHILE !Eof() .AND. field->idpartner == cIdPartner
 
       fStampajBr := .T.
-      fPrviBD := .T.
-      nKumKamBD := 0
-      nKumKamSD := 0
+      lPrvaStavkaZaBrDok := .T.
+
+      //nKamataZaBrDok := 0
+      nKamataUkupnoBrDok := 0
       cBrDok := field->brdok
       cM1 := field->m1
-      nOsnovSD := kam_pripr->osnovica
+      nOstatakRacuna := kam_pripr->osnovica
 
-      DO WHILE !Eof() .AND. field->idpartner == cIdpartner .AND. field->brdok == cBrdok
+      DO WHILE !Eof() .AND. field->idpartner == cIdpartner .AND. field->brdok == cBrDok
 
          dDatOd := kam_pripr->datod
          dDatdo := kam_pripr->datdo
-         nOsnovSD := kam_pripr->osnovica
+         nOstatakRacuna := kam_pripr->osnovica
 
-         IF fprviBD
-            nGlavnBD := kam_pripr->osnovica
-            fPrviBD := .F.
+         IF lPrvaStavkaZaBrDok
+            nGlavnicaZaBrDok := kam_pripr->osnovica
+            lPrvaStavkaZaBrDok := .F.
          ELSE
 
-            IF cVarObrac == "Z"
-               nGlavnBD := kam_pripr->osnovica + nKumKamSD
+            IF cVarijantaKamatnogRacuna == "Z"
+               nGlavnicaZaBrDok := kam_pripr->osnovica + nKamataUkupnoBrDok
             ELSE
-               nGlavnBD := kam_pripr->osnovica
+               nGlavnicaZaBrDok := kam_pripr->osnovica
             ENDIF
          ENDIF
 
-         nGlavn := nGlavnBD
+         nGlavn := nGlavnicaZaBrDok
 
          SELECT ks
          SEEK DToS( dDatOd )
@@ -166,7 +178,7 @@ FUNCTION fin_kamate_obracun_sa_kamatni_list( cIdPartner, lPrintKamatniList, cVar
             dDDatDo := Min( field->DatDO, dDatDo )
             nPeriod := dDDatDo - dDatOd + 1
 
-            IF ( cVarObrac == "P" )
+            IF ( cVarijantaKamatnogRacuna == "P" )
                IF ( Prestupna( Year( dDatOd ) ) )
                   nExp := 366
                ELSE
@@ -202,18 +214,20 @@ FUNCTION fin_kamate_obracun_sa_kamatni_list( cIdPartner, lPrintKamatniList, cVar
                IF lPrintKamatniList
                   ? "********* Izvrsena Denominacija osnovice sa koeficijentom:", den, "****"
                ENDIF
-               nOsnovSD := Round( nOsnovSD * field->den, 2 )
+               nOstatakRacuna := Round( nOstatakRacuna * field->den, 2 )
                nGlavn := Round( nGlavn * field->den, 2 )
-               nKumKamSD := Round( nKumKamSD * field->den, 2 )
+               nKamataUkupnoBrDok := Round( nKamataUkupnoBrDok * field->den, 2 )
             ENDIF
 
-            IF ( cVarObrac == "Z" )
+            IF ( cVarijantaKamatnogRacuna == "Z" )
                nKKam := ( ( 1 + field->stkam / 100 ) ^ ( nPeriod / nExp ) - 1.00000 )
                nIznKam := nKKam * nGlavn
             ELSE
                nKStopa := field->stkam / 100
-               cPom777 := my_get_from_ini( "KAM", "FormulaZaProstuKamatu", "nGlavn*nKStopa*nPeriod/nExp", KUMPATH )
-               nIznKam := &( cPom777 )
+               //cPom777 := my_get_from_ini( "KAM", "FormulaZaProstuKamatu", "nGlavn*nKStopa*nPeriod/nExp", KUMPATH )
+               //nIznKam := &( cPom777 )
+               nIznKam := nGlavn*nKStopa*nPeriod/nExp
+
             ENDIF
 
             nIznKam := Round( nIznKam, 2 )
@@ -235,10 +249,10 @@ FUNCTION fin_kamate_obracun_sa_kamatni_list( cIdPartner, lPrintKamatniList, cVar
                ?? dDatOd, dDDatDo
 
                @ PRow(), PCol() + 1 SAY nPeriod PICT "999"
-               @ PRow(), PCol() + 1 SAY nOsnovSD PICT picdem
+               @ PRow(), PCol() + 1 SAY nOstatakRacuna PICT picdem
                @ PRow(), PCol() + 1 SAY nGlavn PICT picdem
 
-               IF ( cVarObrac == "Z" )
+               IF ( cVarijantaKamatnogRacuna == "Z" )
                   @ PRow(), PCol() + 1 SAY field->tip
                   @ PRow(), PCol() + 1 SAY field->stkam PICT "999.99"
                   @ PRow(), PCol() + 1 SAY nKKam * 100 PICT "9999.99"
@@ -251,19 +265,19 @@ FUNCTION fin_kamate_obracun_sa_kamatni_list( cIdPartner, lPrintKamatniList, cVar
 
             ENDIF
 
-            IF ( cVarObrac == "Z" )
-               nGlavnBD += nIznKam
+            IF ( cVarijantaKamatnogRacuna == "Z" )
+               nGlavnicaZaBrDok += nIznKam
             ENDIF
 
-            nKumKamBD += nIznKam
-            nKumKamSD += nIznKam
+            //nKamataZaBrDok += nIznKam
+            nKamataUkupnoBrDok += nIznKam
 
-            IF ( cVarObrac == "Z" )
+            IF ( cVarijantaKamatnogRacuna == "Z" )
                nGlavn += nIznKam
             ENDIF
 
             IF lPrintKamatniList .AND. fin_kam_prikaz_kumulativ() == "D"
-               @ PRow(), PCol() + 1 SAY nKumKamSD PICT picdem
+               @ PRow(), PCol() + 1 SAY nKamataUkupnoBrDok PICT picdem
             ENDIF
 
             IF dDatDo <= field->DatDo
@@ -288,7 +302,7 @@ FUNCTION fin_kamate_obracun_sa_kamatni_list( cIdPartner, lPrintKamatniList, cVar
 
       ENDDO
 
-      nKumKamSD := fin_kam_iznos_na_dan( nKumKamSD, fin_kam_datum_obracuna(), iif( Empty( cM1 ), KS->datdo, KS2->datdo ), cM1 )
+      nKamataUkupnoNaDan := fin_kam_iznos_na_dan( nKamataUkupnoBrDok, fin_kam_datum_obracuna(), iif( Empty( cM1 ), KS->datdo, KS2->datdo ), cM1 )
 
       IF lPrintKamatniList
          IF PRow() > 59
@@ -297,14 +311,14 @@ FUNCTION fin_kamate_obracun_sa_kamatni_list( cIdPartner, lPrintKamatniList, cVar
          ENDIF
          ? m
          ? " UKUPNO ZA", cBrdok
-         @ PRow(), nCol1 SAY nKumKamBD PICT picdem
+         @ PRow(), nCol1 SAY nKamataUkupnoBrDok  PICT picdem
 
          ? " UKUPNO NA DAN", fin_kam_datum_obracuna(), ":"
-         @ PRow(), nCol1 SAY nKumKamSD PICT picdem
+         @ PRow(), nCol1 SAY nKamataUkupnoNaDan PICT picdem
          ? m
       ENDIF
 
-      nSKumKam += nKumKamSD
+      nKamataUkupno += nKamataUkupnoBrDok
 
       SELECT kam_pripr
 
@@ -320,7 +334,7 @@ FUNCTION fin_kamate_obracun_sa_kamatni_list( cIdPartner, lPrintKamatniList, cVar
       ? m
       ? " SVEUKUPNO KAMATA NA DAN " + DToC( fin_kam_datum_obracuna() ) + ":"
       @ PRow(), PCol() SAY nOsnDug PICT picdem
-      @ PRow(), nCol1  SAY nSKumKam PICT picdem
+      @ PRow(), nCol1  SAY nKamataUkupno PICT picdem
       ? m
 
       P_10CPI
@@ -358,7 +372,7 @@ FUNCTION fin_kamate_obracun_sa_kamatni_list( cIdPartner, lPrintKamatniList, cVar
       hParams[ "kupac_idbr" ] := get_partn_idbr( cIdPartner )
 
       hParams[ "osndug" ] := nOsnDug
-      hParams[ "kamate" ] := nSKumKam
+      hParams[ "kamate" ] := nKamataUkupno
 
       print_opomena_pred_tuzbu( hParams )
 
@@ -374,10 +388,10 @@ FUNCTION fin_kamate_obracun_sa_kamatni_list( cIdPartner, lPrintKamatniList, cVar
    ENDIF
 
    // IF !lPrintKamatniList
-   nKamate := nSKumKam
+   nKamate := nKamataUkupno
    // ENDIF
 
-   RETURN nSKumKam
+   RETURN nKamataUkupno
 
 
 
@@ -392,7 +406,7 @@ STATIC FUNCTION _potpis()
 
 
 
-STATIC FUNCTION NStrana( cTip, cVarObrac )
+STATIC FUNCTION NStrana( cTip, cVarijantaKamatnogRacuna )
 
    IF cTip == NIL
       cTip := ""
@@ -415,12 +429,13 @@ STATIC FUNCTION NStrana( cTip, cVarObrac )
 
       ? m
 
-      IF cVarObrac == "Z"
-         ? "   Broj          Period      dana     ostatak       kamatna   Tip kam  Konform.    Iznos    " + IF( fin_kam_prikaz_kumulativ() == "D", "   kumulativ   ", "" )
-         ? "  racuna                              racuna       osnovica   i stopa   koef       kamate   " + IF( fin_kam_prikaz_kumulativ() == "D", "    kamate     ", "" )
+      IF cVarijantaKamatnogRacuna == "Z"
+         ? "   Broj          Period      dana     ostatak       kamatna   Tip kam  Konform.    Iznos    " + IIF( fin_kam_prikaz_kumulativ() == "D", "   kumulativ   ", "" )
+         ? "  racuna                              racuna       osnovica   i stopa   koef       kamate   " + IIF( fin_kam_prikaz_kumulativ() == "D", "    kamate     ", "" )
+
       ELSE
-         ? "   Broj          Period      dana     ostatak       kamatna    Stopa       Iznos    " + IF( fin_kam_prikaz_kumulativ() == "D", "   kumulativ   ", "" )
-         ? "  racuna                              racuna       osnovica                kamate   " + IF( fin_kam_prikaz_kumulativ() == "D", "    kamate     ", "" )
+         ? "   Broj          Period      dana     ostatak       kamatna    Stopa       Iznos    " + IIF( fin_kam_prikaz_kumulativ() == "D", "   kumulativ   ", "" )
+         ? "  racuna                              racuna       osnovica                kamate   " + IIF( fin_kam_prikaz_kumulativ() == "D", "    kamate     ", "" )
       ENDIF
 
       ? m
@@ -435,16 +450,16 @@ FUNCTION fin_kam_iznos_na_dan( nIznos, dTrazeni, dProsli, cM1 )
 
    // * dtrazeni = 30.06.98
    // * dprosli  = 15.05.94
-   // * znaci: uracunaj sve denominacije od 15.05.94 do 30.06.98
+   // * znaci: uracunati sve denominacije od 15.05.94 do 30.06.98
    LOCAL nK := 1
 
    PushWA()
    SELECT KS
    GO TOP
    DO WHILE !Eof()
-      IF DToS( dTrazeni ) < DToS( DatOd )
+      IF DToS( dTrazeni ) < DToS( field->DatOd )
          EXIT
-      ELSEIF DToS( dProsli ) >= DToS( DatOd )
+      ELSEIF DToS( dProsli ) >= DToS( field->DatOd )
          SKIP 1
          LOOP
       ENDIF

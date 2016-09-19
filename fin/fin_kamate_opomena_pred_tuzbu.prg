@@ -43,8 +43,8 @@ FUNCTION print_opomena_pred_tuzbu( hParams )
    ?U
    ?U "Prilažemo Vam kamatni list prema važećim zakonskim stopama."
    ?U
-   ?U "Molimo Vas da u ROKU OD 7 dana izmirite dospjeli dug po računima ...", say_iznos( hParams[ "osndug" ], "999999.99" ), " KM,"
-   ?U "te kamatu u visini    ..............................................", say_iznos( hParams[ "kamate" ], "999999.99" ), " KM."
+   ?U "Molimo Vas da u ROKU OD 7 dana izmirite dospjeli dug po računima ..", say_iznos( hParams[ "osndug" ], "99999999.99" ), " KM,"
+   ?U "te kamatu u visini    .............................................", say_iznos( hParams[ "kamate" ], "99999999.99" ), " KM."
    ?U "U suprotnom, bićemo prisiljeni da svoja prava ostvarimo sudskim putem."
    ?U
    ?U "Ovaj dopis sa obračunom kamata šaljemo Vam poštom sa povratnicom."

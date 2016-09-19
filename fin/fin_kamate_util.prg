@@ -91,6 +91,7 @@ STATIC FUNCTION fill( nRataIznos, nDanUplate, lNaredni )
 
    RETURN
 
+
 // ---------------------------------------
 // dodaj mjesec
 // --------------------------------------
@@ -103,7 +104,7 @@ STATIC FUNCTION add_month( nMonth, nYear )
       nMonth ++
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -143,4 +144,4 @@ FUNCTION kontrola_cjelovitosti_ks()
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.

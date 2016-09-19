@@ -11,6 +11,8 @@
 
 #include "f18.ch"
 
+MEMVAR m_x, m_y
+
 FUNCTION kalk_azuriranje_dokumenta( lAuto )
 
    LOCAL lViseDok := .F.

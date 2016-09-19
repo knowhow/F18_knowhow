@@ -11,18 +11,20 @@
 
 #include "f18.ch"
 
+MEMVAR m_x, m_y
+
 FUNCTION fin_kamate_print()
 
+   LOCAL cIdPartner
    LOCAL _mala_kamata := 15
-   LOCAL _var_obr := "Z"
+   LOCAL cVarijantaKamatnogRacuna := "Z" // zatezne kamate
    LOCAL _kum_kam := "D"
    LOCAL _pdv_obr := "D"
-
+   LOCAL GetList := {}
 
    IF pitanje(, "Rekalkulisati osnovni dug ?", "N" ) == "D"
       fin_kamate_rekalkulisi_osnovni_dug()
    ENDIF
-
 
    fin_kamate_kreiraj_pomocnu_tabelu()
 
@@ -31,8 +33,8 @@ FUNCTION fin_kamate_print()
    @ m_x + 1, m_y + 2 SAY "Ne ispisuj kam.listove za iznos kamata ispod" GET _mala_kamata ;
       PICT "999999.99"
 
-   @ m_x + 2, m_y + 2 SAY "Varijanta (Z-zatezna kamata,P-prosti kamatni racun)" GET _var_obr ;
-      VALID _var_obr $ "ZP" PICT "@!"
+   @ m_x + 2, m_y + 2 SAY "Varijanta (Z-zatezna kamata, P-prosti kamatni racun)" GET cVarijantaKamatnogRacuna ;
+      VALID cVarijantaKamatnogRacuna $ "ZP" PICT "@!"
 
    @ m_x + 4, m_y + 2 SAY "Prikazivati kolonu 'kumulativ kamate' (D/N) ?" GET _kum_kam ;
       VALID _kum_kam $ "DN" PICT "@!"
@@ -59,7 +61,7 @@ FUNCTION fin_kamate_print()
 
    DO WHILE !Eof()
 
-      _id_partner := field->idpartner
+      cIdPartner := field->idpartner
 
       PRIVATE nOsnDug := 0
       PRIVATE nKamate := 0
@@ -68,27 +70,27 @@ FUNCTION fin_kamate_print()
       PRIVATE nPdvTotal := 0
       PRIVATE nKamTotal := 0
 
-      IF fin_kamate_obracun_sa_kamatni_list( _id_partner, .F., _var_obr ) > _mala_kamata
+      IF fin_kamate_obracun_sa_kamatni_list( cIdPartner, .F., cVarijantaKamatnogRacuna ) > _mala_kamata
 
          my_flock()
 
          SELECT pom
          APPEND BLANK
 
-         REPLACE field->idpartner WITH _id_partner
-         REPLACE field->osndug WITH nOsnDug
-         REPLACE field->kamate WITH nKamate
-         REPLACE field->pdv WITH nPdvTotal
+         REPLACE field->idpartner WITH cIdPartner, ;
+            field->osndug WITH nOsnDug, ;
+            field->kamate WITH nKamate, ;
+            field->pdv WITH nPdvTotal
 
          my_unlock()
 
          SELECT kam_pripr
-         fin_kamate_obracun_sa_kamatni_list( _id_partner, .T., _var_obr )
+         fin_kamate_obracun_sa_kamatni_list( cIdPartner, .T., cVarijantaKamatnogRacuna )
 
       ENDIF
 
       SELECT kam_pripr
-      SEEK _id_partner + Chr( 250 )
+      SEEK cIdPartner + Chr( 250 )
 
    ENDDO
 

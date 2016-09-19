@@ -224,8 +224,8 @@ STATIC FUNCTION fin_kamate_key_handler()
 
       RETURN DE_REFRESH
 
-      // unos nove stavke
-   CASE Ch == K_CTRL_N
+
+   CASE Ch == K_CTRL_N   // unos nove stavke
 
       nDug := 0
       nPot := 0

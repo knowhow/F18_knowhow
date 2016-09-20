@@ -710,9 +710,10 @@ FUNCTION _decompress_files( imp_file, import_dbf_path, import_zip_name )
    RETURN _error
 
 
-// --------------------------------------------------
-// popunjava sifrarnike sifk, sifv
-// --------------------------------------------------
+/*
+  popunjava sifrarnike e_sifk, e_sifv
+*/
+
 FUNCTION fill_sifk_sifv( cSifarnik, cIdSifra )
 
    LOCAL _rec
@@ -740,15 +741,6 @@ FUNCTION fill_sifk_sifv( cSifarnik, cIdSifra )
    ENDIF
 
    use_sql_sifv( PadR( cSifarnik, 8 ), "*", cIdSifra )
-   // INDEX ON ID + IDSIF TAG IDIDSIF TO "sifv"
-
-   // use_sql_sifv( cDbf, cOznaka, xIdSif, xVrijednost )
-
-   // SELECT sifv
-   // SET ORDER TO TAG "IDIDSIF"
-
-   // SEEK PadR( cSifarnik, 8 ) + cIdSifra
-
    GO TOP
    DO WHILE !Eof() .AND. field->id == PadR( cSifarnik, 8 ) .AND.    field->idsif == PadR( cIdSifra, 15 )
 

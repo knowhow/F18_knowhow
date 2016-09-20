@@ -29,10 +29,10 @@ FUNCTION kalk_udaljena_razmjena_podataka()
    __export_zip_name := "kalk_exp.zip"
 
    AAdd( _opc, "1. => kalk export podataka               " )
-   AAdd( _opcexe, {|| _kalk_export() } )
+   AAdd( _opcexe, {|| kalk_export_start() } )
 
    AAdd( _opc, "2. <= kalk import podataka    " )
-   AAdd( _opcexe, {|| _kalk_import() } )
+   AAdd( _opcexe, {|| kalk_import_start() } )
 
    f18_menu( "razmjena", .F., _izbor, _opc, _opcexe )
 
@@ -44,7 +44,7 @@ FUNCTION kalk_udaljena_razmjena_podataka()
 // ----------------------------------------
 // export podataka modula KALK
 // ----------------------------------------
-STATIC FUNCTION _kalk_export()
+STATIC FUNCTION kalk_export_start()
 
    LOCAL _vars := hb_Hash()
    LOCAL _exported_rec
@@ -59,15 +59,13 @@ STATIC FUNCTION _kalk_export()
    // pobrisi u folderu tmp fajlove ako postoje
    delete_exp_files( __export_dbf_path, "kalk" ) // pobrisi u folderu tmp fajlove ako postoje
 
-
-   _exported_rec := __export( _vars, @_a_data )  // exportuj podatake
+   _exported_rec := kalk_export( _vars, @_a_data )  // exportuj podatake
 
    // zatvori sve tabele prije operacije pakovanja
    my_close_all_dbf()
 
    // arhiviraj podatke
    IF _exported_rec > 0
-
 
       _error := _compress_files( "kalk", __export_dbf_path ) // kompresuj ih u zip fajl za prenos
 
@@ -101,7 +99,7 @@ STATIC FUNCTION _kalk_export()
 
 
 
-STATIC FUNCTION _kalk_import()
+STATIC FUNCTION kalk_import_start()
 
    LOCAL _imported_rec
    LOCAL _vars := hb_Hash()
@@ -184,7 +182,7 @@ STATIC FUNCTION _vars_export( hParams )
    LOCAL _dat_do := fetch_metric( "kalk_export_datum_do", my_user(), Date() )
    LOCAL _konta := fetch_metric( "kalk_export_lista_konta", my_user(), PadR( "1320;", 200 ) )
    LOCAL _vrste_dok := fetch_metric( "kalk_export_vrste_dokumenata", my_user(), PadR( "10;11;", 200 ) )
-   LOCAL _exp_sif := fetch_metric( "kalk_export_sifrarnik", my_user(), "D" )
+   LOCAL cExportSifarnika := fetch_metric( "kalk_export_sifrarnik", my_user(), "D" )
    LOCAL _exp_path := fetch_metric( "kalk_export_path", my_user(), PadR( "", 300 ) )
    LOCAL _x := 1
 
@@ -210,7 +208,7 @@ STATIC FUNCTION _vars_export( hParams )
 
    ++ _x
    ++ _x
-   @ m_x + _x, m_y + 2 SAY "Eksportovati sifrarnike (D/N) ?" GET _exp_sif PICT "@!" VALID _exp_sif $ "DN"
+   @ m_x + _x, m_y + 2 SAY "Eksportovati sifarnike (D/N/F) ?" GET cExportSifarnika PICT "@!" VALID cExportSifarnika $ "DNF"
 
    ++ _x
    ++ _x
@@ -229,7 +227,7 @@ STATIC FUNCTION _vars_export( hParams )
       set_metric( "kalk_export_datum_do", my_user(), _dat_do )
       set_metric( "kalk_export_lista_konta", my_user(), _konta )
       set_metric( "kalk_export_vrste_dokumenata", my_user(), _vrste_dok )
-      set_metric( "kalk_export_sifrarnik", my_user(), _exp_sif )
+      set_metric( "kalk_export_sifrarnik", my_user(), cExportSifarnika )
       set_metric( "kalk_export_path", my_user(), _exp_path )
 
       // export path, set static var
@@ -239,7 +237,7 @@ STATIC FUNCTION _vars_export( hParams )
       hParams[ "datum_do" ] := _dat_do
       hParams[ "konta" ] := _konta
       hParams[ "vrste_dok" ] := _vrste_dok
-      hParams[ "export_sif" ] := _exp_sif
+      hParams[ "export_sif" ] := cExportSifarnika
 
    ENDIF
 
@@ -342,16 +340,13 @@ STATIC FUNCTION _vars_import( hParams )
 
 
 
-// -------------------------------------------
-// export podataka
-// -------------------------------------------
-STATIC FUNCTION __export( hParams, a_details )
+STATIC FUNCTION kalk_export( hParams, a_details )
 
    LOCAL _ret := 0
    LOCAL cIdFirma, cIdVd, cBrDok
    LOCAL aDoksRec
    LOCAL _cnt := 0
-   LOCAL _dat_od, _dat_do, _konta, _vrste_dok, _export_sif
+   LOCAL _dat_od, _dat_do, _konta, _vrste_dok, cExportSif
    LOCAL cUslMagacinKonto, cUslProdKonto
    LOCAL _id_partn, _p_konto, _m_konto
    LOCAL _id_roba
@@ -362,7 +357,7 @@ STATIC FUNCTION __export( hParams, a_details )
    _dat_do := hParams[ "datum_do" ]
    _konta := AllTrim( hParams[ "konta" ] )
    _vrste_dok := AllTrim( hParams[ "vrste_dok" ] )
-   _export_sif := AllTrim( hParams[ "export_sif" ] )
+   cExportSif := AllTrim( hParams[ "export_sif" ] )
 
    _cre_exp_tbls( __export_dbf_path ) // kreiraj tabele exporta
    kalk_o_exp_tabele( __export_dbf_path ) // otvori export tabele za pisanje podataka
@@ -446,7 +441,7 @@ STATIC FUNCTION __export( hParams, a_details )
 
          SELECT roba
          HSEEK _id_roba // uzmi sada robu sa ove stavke pa je ubaci u e_roba
-         IF Found() .AND. _export_sif == "D"
+         IF Found() .AND. cExportSif == "D"
             hRec := dbf_get_rec()
             SELECT e_roba
             SET ORDER TO TAG "ID"
@@ -464,10 +459,12 @@ STATIC FUNCTION __export( hParams, a_details )
 
       ENDDO
 
-      // e sada mozemo komotno ici na export partnera
+
+
+      // e sada mozemo  ici na export partnera
       SELECT partn
       HSEEK _id_partn
-      IF Found() .AND. _export_sif == "D"
+      IF Found() .AND. cExportSif == "D"
          aDoksRec := dbf_get_rec()
          SELECT e_partn
          SET ORDER TO TAG "ID"
@@ -480,12 +477,10 @@ STATIC FUNCTION __export( hParams, a_details )
          ENDIF
       ENDIF
 
-      // i konta, naravno
-
-      // prvo M_KONTO
+      // i konta, naravno, prvo M_KONTO
       SELECT konto
       HSEEK _m_konto
-      IF Found() .AND. _export_sif == "D"
+      IF Found() .AND. cExportSif == "D"
          aDoksRec := dbf_get_rec()
          SELECT e_konto
          SET ORDER TO TAG "ID"
@@ -499,7 +494,7 @@ STATIC FUNCTION __export( hParams, a_details )
       // zatim P_KONTO
       SELECT konto
       HSEEK _p_konto
-      IF Found() .AND. _export_sif == "D"
+      IF Found() .AND. cExportSif == "D"
          aDoksRec := dbf_get_rec()
          SELECT e_konto
          SET ORDER TO TAG "ID"
@@ -514,6 +509,26 @@ STATIC FUNCTION __export( hParams, a_details )
       SKIP
 
    ENDDO
+
+
+   IF cExportSif == "F" // full export sifarnika robe
+      SELECT roba
+      GO TOP
+      _cnt := 0
+      DO WHILE !Eof()
+
+         hRec := dbf_get_rec()
+         SELECT e_roba
+         SET ORDER TO TAG "ID"
+         APPEND BLANK
+         dbf_update_rec( hRec )
+         @ m_x + 2, m_y + 2 SAY PadR(  PadL( AllTrim( Str( ++_cnt ) ), 6 ) + ". " + "roba: " + hRec[ "id" ] , 50 )
+         fill_sifk_sifv( "ROBA", hRec[ "id" ] ) // napuni i sifk, sifv parametre
+
+         SELECT ROBA
+         SKIP
+      ENDDO
+   ENDIF
 
    BoxC()
 

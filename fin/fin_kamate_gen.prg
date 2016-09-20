@@ -27,7 +27,7 @@ FUNCTION prenos_fin_kam()
    LOCAL cIdPartner, nOsnovniDug, cBrojDokumenta
    LOCAL nTekuciRec
 
-   O_KAM_PRIPR
+   select_o_kam_pripr()
    O_KONTO
    O_PARTN
 

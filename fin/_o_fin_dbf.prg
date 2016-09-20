@@ -41,6 +41,16 @@ FUNCTION select_o_fin_pripr()
    RETURN select_o_dbf( "FIN_PRIPR", F_FIN_PRIPR, "fin_pripr", "1" )
 
 
+FUNCTION select_o_kam_kamat()
+
+   RETURN select_o_dbf( "KAM_KAMAT", F_KAMAT, "kam_kamat", "1" )
+
+
+FUNCTION select_o_kam_pripr()
+
+   RETURN select_o_dbf( "KAM_PRIPR", F_KAMPRIPR, "kam_pripr", "1" )
+
+
 FUNCTION o_nalog( lSql, cIdVN )
 
    hb_default( @lSql, .F. )

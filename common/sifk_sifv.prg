@@ -11,9 +11,10 @@
 
 #include "f18.ch"
 
-// ----------------------------------------------------------
-// kopiranje vrijednosti nekog polja u neko SIFK polje
-// ----------------------------------------------------------
+/*
+   kopiranje vrijednosti nekog polja u neko SIFK polje
+*/
+
 FUNCTION copy_to_sifk()
 
    LOCAL cTable := Alias()
@@ -186,40 +187,43 @@ FUNCTION g_sk_flist( cField )
 
 
 
-FUNCTION IzSifkPartn( dbf_name, ozna, u_id_sif, return_nil )
+FUNCTION IzSifkPartn( cDbfName, ozna, u_id_sif, return_nil )
 
    LOCAL xSif
 
    IF ValType( u_id_sif ) != "O"
-        xSif := Unicode():New( u_id_sif, is_partn_sql() )
+      xSif := Unicode():New( u_id_sif, is_partn_sql() )
    ELSE
-        xSif := u_id_sif
+      xSif := u_id_sif
    ENDIF
-   RETURN  IzSifk( "PARTN", dbf_name, ozna, xSif, return_nil )
+
+   RETURN  IzSifk( "PARTN", cDbfName, ozna, xSif, return_nil )
 
 
-FUNCTION IzSifkKonto( dbf_name, ozna, u_id_sif, return_nil )
+FUNCTION IzSifkKonto( cDbfName, ozna, u_id_sif, return_nil )
 
    LOCAL xSif
 
    IF ValType( u_id_sif ) != "O"
-        xSif := Unicode():New( u_id_sif, is_konto_sql() )
+      xSif := Unicode():New( u_id_sif, is_konto_sql() )
    ELSE
-        xSif := u_id_sif
+      xSif := u_id_sif
    ENDIF
-   RETURN  IzSifk( "KONTO", dbf_name, ozna, xSif, return_nil )
+
+   RETURN  IzSifk( "KONTO", cDbfName, ozna, xSif, return_nil )
 
 
-FUNCTION IzSifkRoba( dbf_name, ozna, u_id_sif, return_nil )
+FUNCTION IzSifkRoba( cDbfName, ozna, u_id_sif, return_nil )
 
    LOCAL xSif
 
    IF ValType( u_id_sif ) != "O"
-        xSif := Unicode():New( u_id_sif, is_roba_sql() )
+      xSif := Unicode():New( u_id_sif, is_roba_sql() )
    ELSE
-        xSif := u_id_sif
+      xSif := u_id_sif
    ENDIF
-   RETURN  IzSifk( "ROBA", dbf_name, ozna, xSif, return_nil )
+
+   RETURN  IzSifk( "ROBA", cDbfName, ozna, xSif, return_nil )
 
 
 FUNCTION IzSifk( cDbfName, ozna, u_id_sif, return_nil )
@@ -235,9 +239,9 @@ FUNCTION IzSifk( cDbfName, ozna, u_id_sif, return_nil )
 // -----------------------------------------------------------
 // get_karakter_value
 // Izvlaci vrijednost iz tabele SIFK
-// param dbf_name ime DBF-a
+// param cDbfName ime DBF-a
 // param oznaka oznaka BARK , GR1 itd
-// param id_sif       sifra u sifrarniku, npr  000000232  ,
+// param cIdSif       sifra u sifrarniku, npr  000000232  ,
 // ili "00000232,XXX1233233" pri pretrazivanju
 
 /*
@@ -252,7 +256,7 @@ FUNCTION IzSifk( cDbfName, ozna, u_id_sif, return_nil )
                   .T. => ""  - "" za nedefinisanu vrijednost
 */
 
-FUNCTION get_sifk_value ( dbf_name, ozna, u_id_sif, return_nil )
+FUNCTION get_sifk_value ( cDbfName, ozna, u_id_sif, return_nil )
 
    LOCAL _ret := ""
    LOCAL _sifk_tip, _sifk_duzina, _sifk_veza, uIdSif
@@ -260,18 +264,18 @@ FUNCTION get_sifk_value ( dbf_name, ozna, u_id_sif, return_nil )
 
    // ID default polje
    IF u_id_sif == NIL
-      u_id_sif := ( dbf_name )->ID
-      IF !Empty( dbf_name )
-         lSql := is_sql_table( dbf_name )
+      u_id_sif := ( cDbfName )->ID
+      IF !Empty( cDbfName )
+         lSql := is_sql_table( cDbfName )
       ENDIF
    ENDIF
 
    u_id_sif := Unicode():New( u_id_sif, lSql )
-   dbf_name := PadR( dbf_name, SIFK_LEN_DBF )
+   cDbfName := PadR( cDbfName, SIFK_LEN_DBF )
    ozna     := PadR( ozna, SIFK_LEN_OZNAKA )
    uIdSif   := u_id_sif:PadR( SIFK_LEN_IDSIF )
 
-   use_sql_sifk( dbf_name, ozna )
+   use_sql_sifk( cDbfName, ozna )
    _ret := NIL
 
    GO TOP
@@ -291,7 +295,7 @@ FUNCTION get_sifk_value ( dbf_name, ozna, u_id_sif, return_nil )
 
    SELECT F_SIFV
    // proslijedi unicode objekat, to je najsigurnije
-   use_sql_sifv( dbf_name, ozna, u_id_sif )
+   use_sql_sifv( cDbfName, ozna, u_id_sif )
    GO TOP
    IF Eof()
       _ret := get_sifv_value( _sifk_tip, _sifk_duzina, "" )
@@ -306,7 +310,7 @@ FUNCTION get_sifk_value ( dbf_name, ozna, u_id_sif, return_nil )
    IF _sifk_veza == "N"
       _ret := ToStr( _ret )
       SKIP
-      DO WHILE !Eof() .AND.  ( ( id + oznaka + idsif ) == ( dbf_name + ozna + uIdSif ) )
+      DO WHILE !Eof() .AND.  ( ( id + oznaka + idsif ) == ( cDbfName + ozna + uIdSif ) )
          _ret += "," + ToStr( get_sifv_value( _sifk_tip, _sifk_duzina, sifv->naz ) )
          SKIP
       ENDDO
@@ -364,7 +368,6 @@ FUNCTION get_sifk_naz( cDBF, cOznaka )
 
 FUNCTION IzSifkWV( cDBF, cOznaka, cWhen, cValid )
 
-
    PushWA()
 
    cDBF := PadR( cDBF, SIFK_LEN_DBF )
@@ -396,7 +399,7 @@ FUNCTION IzSifkWV( cDBF, cOznaka, cWhen, cValid )
 // iz ovoga se vidi da je "," nedozvoljen znak u ID-u
 // ------------------------------------------------------------------
 
-FUNCTION USifk( dbf_name, ozna, u_id_sif, val, transaction )
+FUNCTION USifk( cDbfName, ozna, u_id_sif, val, transaction )
 
    LOCAL _i
    LOCAL ntrec, numtok
@@ -415,12 +418,12 @@ FUNCTION USifk( dbf_name, ozna, u_id_sif, val, transaction )
    cIdSif := ( Unicode():New( u_id_sif ) ):getString()
    PushWA()
 
-   dbf_name := PadR( dbf_name, SIFK_LEN_DBF )
+   cDbfName := PadR( cDbfName, SIFK_LEN_DBF )
    ozna     := PadR( ozna, SIFK_LEN_OZNAKA )
    cIdSif   := PadR( cIdSif, SIFK_LEN_IDSIF )
 
    SELECT F_SIFK
-   use_sql_sifk( dbf_name, ozna )
+   use_sql_sifk( cDbfName, ozna )
    GO TOP
    IF Eof() .OR. !( sifk->tip $ "CDN" )
       PopWa()
@@ -428,7 +431,7 @@ FUNCTION USifk( dbf_name, ozna, u_id_sif, val, transaction )
    ENDIF
 
    SELECT F_SIFV
-   use_sql_sifv( dbf_name, ozna, cIdSif )
+   use_sql_sifv( cDbfName, ozna, cIdSif )
 
    SELECT sifk
    _sifk_rec := dbf_get_rec()
@@ -459,7 +462,7 @@ FUNCTION USifk( dbf_name, ozna, u_id_sif, val, transaction )
 
 
 
-STATIC FUNCTION update_sifv_n_relation( sifk_rec, id_sif, vals )
+STATIC FUNCTION update_sifv_n_relation( sifk_rec, cIdSif, vals )
 
    LOCAL _i, _numtok, _tmp, _naz, _values
    LOCAL _sifv_rec
@@ -467,11 +470,11 @@ STATIC FUNCTION update_sifv_n_relation( sifk_rec, id_sif, vals )
    _sifv_rec := hb_Hash()
    _sifv_rec[ "id" ] := sifk_rec[ "id" ]
    _sifv_rec[ "oznaka" ] := sifk_rec[ "oznaka" ]
-   _sifv_rec[ "idsif" ] := id_sif
+   _sifv_rec[ "idsif" ] := cIdSif
 
    // veza 1->N posebno se tretira
    SELECT sifv
-   brisi_sifv_item( sifk_rec[ "id" ], sifk_rec[ "oznaka" ], id_sif )
+   brisi_sifv_item( sifk_rec[ "id" ], sifk_rec[ "oznaka" ], cIdSif )
 
    IF ! HB_ISCHAR( vals )
       ?E "update_sifv_n_relation vals != char"
@@ -494,42 +497,42 @@ STATIC FUNCTION update_sifv_n_relation( sifk_rec, id_sif, vals )
 
 
 
-STATIC FUNCTION update_sifv_1_relation( sifk_rec, id_sif, value )
+STATIC FUNCTION update_sifv_1_relation( sifk_rec, cIdSif, value )
 
    LOCAL _sifv_rec
 
    _sifv_rec := hb_Hash()
    _sifv_rec[ "id" ] := sifk_rec[ "id" ]
    _sifv_rec[ "oznaka" ] := sifk_rec[ "oznaka" ]
-   _sifv_rec[ "idsif" ] := id_sif
+   _sifv_rec[ "idsif" ] := cIdSif
 
    value := PadR( value, sifk_rec[ "duzina" ] )
 
    // veza 1-1
    SELECT  SIFV
-   brisi_sifv_item( sifk_rec[ "id" ], sifk_rec[ "oznaka" ], id_sif )
+   brisi_sifv_item( sifk_rec[ "id" ], sifk_rec[ "oznaka" ], cIdSif )
 
    APPEND BLANK
 
    _sifv_rec[ "naz" ] := get_sifv_naz( value, sifk_rec )
    _sifv_rec[ "naz" ] := PadR( _sifv_rec[ "naz" ], 50 )
 
-   // zakljucavanje se desava u nadfunkciji
-   update_rec_server_and_dbf( "sifv", _sifv_rec, 1, "CONT" )
+   update_rec_server_and_dbf( "sifv", _sifv_rec, 1, "CONT" ) // zakljucavanje se desava u nadfunkciji
 
    RETURN .T.
 
 
 
-STATIC FUNCTION brisi_sifv_item( dbf_name, ozn, id_sif )
+FUNCTION brisi_sifv_item( cDbfName, cOznaka, cIdSif, cTran )
 
    LOCAL _sifv_rec := hb_Hash()
 
-   _sifv_rec[ "id" ]     := dbf_name
-   _sifv_rec[ "oznaka" ] := ozn
-   _sifv_rec[ "idsif" ]  := id_sif
+   hb_default( @cTran, "CONT" )
+   _sifv_rec[ "id" ]     := cDbfName
+   _sifv_rec[ "oznaka" ] := cOznaka
+   _sifv_rec[ "idsif" ]  := cIdSif
 
-   RETURN delete_rec_server_and_dbf( "sifv", _sifv_rec, 2, "CONT" )
+   RETURN delete_rec_server_and_dbf( "sifv", _sifv_rec, 2, cTran )
 
 
 
@@ -604,7 +607,7 @@ FUNCTION update_sifk_na_osnovu_ime_kol_from_global_var( ime_kol, var_prefix, nov
             lOk := USifk( _alias, SubStr( ImeKol[ _i, 3 ], 7 ), uId, Eval( _field_b ), transaction )
          ENDIF
          IF !lOk
-           EXIT
+            EXIT
          ENDIF
       ENDIF
    NEXT
@@ -635,7 +638,7 @@ STATIC FUNCTION val_fld( cField )
 // ------------------------------------------------------------------
 // formiranje matrice na osnovu podataka iz tabele sifv
 // ------------------------------------------------------------------
-FUNCTION array_from_sifv( dbf, oznaka, id_sif )
+FUNCTION array_from_sifv( dbf, oznaka, cIdSif )
 
    LOCAL _arr := {}
    LOCAL _t_area := Select()
@@ -644,11 +647,11 @@ FUNCTION array_from_sifv( dbf, oznaka, id_sif )
    oznaka := PadR( oznaka, 4 )
 
    SELECT F_SIFV
-   use_sql_sifv( dbf, oznaka, id_sif )
+   use_sql_sifv( dbf, oznaka, cIdSif )
    SET ORDER TO TAG "ID"
    GO TOP
 
-   DO WHILE !Eof() .AND. field->id + field->oznaka + field->idsif = dbf + oznaka + id_sif
+   DO WHILE !Eof() .AND. field->id + field->oznaka + field->idsif = dbf + oznaka + cIdSif
       IF !Empty( naz )
          AAdd( _arr, AllTrim( field->naz ) )
       ENDIF

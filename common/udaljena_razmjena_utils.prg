@@ -57,10 +57,11 @@ FUNCTION get_import_file( modul, import_dbf_path )
    RETURN _file
 
 
-// ----------------------------------------------------------------
-// update tabele konto na osnovu pomocne tabele
-// ----------------------------------------------------------------
-FUNCTION update_table_konto( zamjena_sifre )
+/*
+ update tabele konto na osnovu pomocne tabele
+*/
+
+FUNCTION update_table_konto( lZamijenitiSifre )
 
    LOCAL lRet := .F.
    LOCAL lOk := .T.
@@ -81,7 +82,6 @@ FUNCTION update_table_konto( zamjena_sifre )
    DO WHILE !Eof()
 
       hRec := dbf_get_rec()
-
       update_rec_konto_struct( @hRec )
 
       SELECT konto
@@ -92,9 +92,9 @@ FUNCTION update_table_konto( zamjena_sifre )
          _sif_exist := .F.
       ENDIF
 
-      IF !_sif_exist .OR. ( _sif_exist .AND. zamjena_sifre == "D" )
+      IF !_sif_exist .OR. ( _sif_exist .AND. lZamijenitiSifre == "D" )
 
-         @ m_x + 3, m_y + 2 SAY "import partn id: " + hRec[ "id" ] + " : " + PadR( hRec[ "naz" ], 20 )
+         @ m_x + 3, m_y + 2 SAY "import konto id: " + hRec[ "id" ] + " : " + PadR( hRec[ "naz" ], 20 )
 
          SELECT konto
 
@@ -111,7 +111,7 @@ FUNCTION update_table_konto( zamjena_sifre )
       ENDIF
 
       IF !lOk
-        EXIT
+         EXIT
       ENDIF
 
       SELECT e_konto
@@ -121,7 +121,7 @@ FUNCTION update_table_konto( zamjena_sifre )
 
    IF lOk
       lRet := .T.
-      hParams := hb_hash()
+      hParams := hb_Hash()
       hParams[ "unlock" ] :=  { "konto" }
       run_sql_query( "COMMIT", hParams )
 
@@ -133,10 +133,11 @@ FUNCTION update_table_konto( zamjena_sifre )
 
 
 
-// -----------------------------------------------------------
-// update tabele partnera na osnovu pomocne tabele
-// -----------------------------------------------------------
-FUNCTION update_table_partn( zamjena_sifre )
+/*
+   update tabele partnera na osnovu pomocne tabele
+*/
+
+FUNCTION update_table_partn( lZamijenitiSifre )
 
    LOCAL lRet := .F.
    LOCAL lOk := .T.
@@ -168,7 +169,7 @@ FUNCTION update_table_partn( zamjena_sifre )
          _sif_exist := .F.
       ENDIF
 
-      IF !_sif_exist .OR. ( _sif_exist .AND. zamjena_sifre == "D" )
+      IF !_sif_exist .OR. ( _sif_exist .AND. lZamijenitiSifre == "D" )
 
          @ m_x + 3, m_y + 2 SAY "import partn id: " + hRec[ "id" ] + " : " + PadR( hRec[ "naz" ], 20 )
 
@@ -197,7 +198,7 @@ FUNCTION update_table_partn( zamjena_sifre )
 
    IF lOk
       lRet := .T.
-      hParams := hb_hash()
+      hParams := hb_Hash()
       hParams[ "unlock" ] :=  { "partn" }
       run_sql_query( "COMMIT", hParams )
    ELSE
@@ -208,7 +209,7 @@ FUNCTION update_table_partn( zamjena_sifre )
 
 
 
-FUNCTION update_table_roba( zamjena_sifre )
+FUNCTION update_table_roba( lZamijenitiSifre )
 
    LOCAL lRet := .F.
    LOCAL lOk := .T.
@@ -240,7 +241,7 @@ FUNCTION update_table_roba( zamjena_sifre )
          _sif_exist := .F.
       ENDIF
 
-      IF !_sif_exist .OR. ( _sif_exist .AND. zamjena_sifre == "D" )
+      IF !_sif_exist .OR. ( _sif_exist .AND. lZamijenitiSifre == "D" )
 
          @ m_x + 3, m_y + 2 SAY "import roba id: " + hRec[ "id" ] + " : " + PadR( hRec[ "naz" ], 20 )
 
@@ -269,7 +270,7 @@ FUNCTION update_table_roba( zamjena_sifre )
 
    IF lOk
       lRet := .T.
-      hParams := hb_hash()
+      hParams := hb_Hash()
       hParams[ "unlock" ] :=  { "roba" }
       run_sql_query( "COMMIT", hParams )
 
@@ -281,27 +282,27 @@ FUNCTION update_table_roba( zamjena_sifre )
 
 
 
-STATIC FUNCTION update_rec_sifk_struct( rec )
+STATIC FUNCTION update_rec_sifk_struct( hRec )
 
-   IF hb_HHasKey( rec, "unique" )
-      rec[ "f_unique" ] := rec[ "unique" ]
-      hb_HDel( rec, "unique" )
+   IF hb_HHasKey( hRec, "unique" )
+      hRec[ "f_unique" ] := hRec[ "unique" ]
+      hb_HDel( hRec, "unique" )
    ENDIF
 
-   IF hb_HHasKey( rec, "decimal" )
-      rec[ "f_decimal" ] := rec[ "decimal" ]
-      hb_HDel( rec, "decimal" )
+   IF hb_HHasKey( hRec, "decimal" )
+      hRec[ "f_decimal" ] := hRec[ "decimal" ]
+      hb_HDel( hRec, "decimal" )
    ENDIF
 
-   IF !hb_HHasKey( rec, "match_code" ) .OR. rec["match_code"] == NIL
-      rec[ "match_code" ] := PadR("", 10)
+   IF !hb_HHasKey( hRec, "match_code" ) .OR. hRec[ "match_code" ] == NIL
+      hRec[ "match_code" ] := PadR( "", 10 )
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 
-STATIC FUNCTION update_rec_konto_struct( rec )
+STATIC FUNCTION update_rec_konto_struct( hRec )
 
    LOCAL _struct := {}
 
@@ -309,9 +310,9 @@ STATIC FUNCTION update_rec_konto_struct( rec )
    AAdd( _struct, "pozbilu" )
    AAdd( _struct, "pozbils" )
 
-   dodaj_u_hash_matricu( _struct, @rec )
+   dodaj_u_hash_matricu( _struct, @hRec )
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -320,8 +321,8 @@ STATIC FUNCTION dodaj_u_hash_matricu( polja, hash )
 
    LOCAL _field
 
-   IF polja == NIL .OR. LEN( polja ) == 0
-      RETURN
+   IF polja == NIL .OR. Len( polja ) == 0
+      RETURN .F.
    ENDIF
 
    FOR EACH _field in polja
@@ -330,7 +331,7 @@ STATIC FUNCTION dodaj_u_hash_matricu( polja, hash )
       ENDIF
    NEXT
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -339,8 +340,8 @@ STATIC FUNCTION brisi_iz_hash_matrice( polja, hash )
 
    LOCAL _field
 
-   IF polja == NIL .OR. LEN( polja ) == 0
-      RETURN
+   IF polja == NIL .OR. Len( polja ) == 0
+      RETURN .F.
    ENDIF
 
    FOR EACH _field in polja
@@ -349,7 +350,7 @@ STATIC FUNCTION brisi_iz_hash_matrice( polja, hash )
       ENDIF
    NEXT
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -357,26 +358,26 @@ STATIC FUNCTION brisi_iz_hash_matrice( polja, hash )
 // --------------------------------------------------
 // update strukture zapisa tabele partn
 // --------------------------------------------------
-STATIC FUNCTION update_rec_partn_struct( rec )
+STATIC FUNCTION update_rec_partn_struct( hRec )
 
    LOCAL _add := {}
    LOCAL _remove := {}
 
    AAdd( _add, "match_code" )
-   dodaj_u_hash_matricu( _add, @rec )
+   dodaj_u_hash_matricu( _add, @hRec )
 
    AAdd( _remove, "brisano" )
    AAdd( _remove, "rejon" )
-   brisi_iz_hash_matrice( _remove, @rec )
+   brisi_iz_hash_matrice( _remove, @hRec )
 
-   RETURN
+   RETURN .T.
 
 
 
 // --------------------------------------------------
 // update strukture zapisa tabele roba
 // --------------------------------------------------
-STATIC FUNCTION update_rec_roba_struct( rec )
+STATIC FUNCTION update_rec_roba_struct( hRec )
 
    LOCAL _add := {}
    LOCAL _remove := {}
@@ -397,21 +398,29 @@ STATIC FUNCTION update_rec_roba_struct( rec )
    AAdd( _add, "mpc8" )
    AAdd( _add, "mpc9" )
 
-   dodaj_u_hash_matricu( _add, @rec )
+   dodaj_u_hash_matricu( _add, @hRec )
 
    AAdd( _remove, "carina" )
    AAdd( _remove, "_m1_" )
    AAdd( _remove, "brisano" )
 
-   brisi_iz_hash_matrice( _remove, @rec )
+   brisi_iz_hash_matrice( _remove, @hRec )
 
    RETURN .T.
 
 
 
-FUNCTION update_sifk_sifv()
+FUNCTION update_sifk_sifv( lFullTransaction )
 
-   LOCAL hRec
+   LOCAL hRec, cTran
+
+   hb_default( @lFullTransaction, .T. )
+
+   IF lFullTransaction
+      cTran := "FULL"
+   ELSE
+      cTran := "CONT"
+   ENDIF
 
    SELECT e_sifk
    SET ORDER TO TAG "ID2"
@@ -433,7 +442,7 @@ FUNCTION update_sifk_sifv()
 
       @ m_x + 3, m_y + 2 SAY "import sifk id: " + hRec[ "id" ] + ", oznaka: " + hRec[ "oznaka" ]
 
-      update_rec_server_and_dbf( "sifk", hRec, 1, "FULL" )
+      update_rec_server_and_dbf( "sifk", hRec, 1, cTran )
 
       SELECT e_sifk
       SKIP
@@ -444,28 +453,33 @@ FUNCTION update_sifk_sifv()
    SET ORDER TO TAG "ID"
    GO TOP
 
-   DO WHILE !Eof()
-
+   DO WHILE !Eof() // brisanje sifv
       hRec := dbf_get_rec( .T. ) // konvertuj stringove u utf8
       SELECT sifv
-      SET ORDER TO TAG "ID"
+      brisi_sifv_item( hRec[ "id" ], hRec[ "oznaka" ], hRec[ "idsif" ], cTran )
+      SELECT e_sifv
+      SKIP
+   ENDDO
+
+   SELECT e_sifv
+   GO TOP
+   DO WHILE !Eof() // e_sifv -> sifv
+
+      hRec := dbf_get_rec( .T. ) // konvertuj stringove u utf8
+      use_sql_sifv( hRec[ "id" ], hRec[ "oznaka" ], hRec[ "idsif" ] )
       GO TOP
-      SEEK hRec[ "id" ] + hRec[ "oznaka" ] + hRec[ "idsif" ] + hRec[ "naz" ]
-
-      IF !Found()
+      IF Eof()
          APPEND BLANK
+         @ m_x + 3, m_y + 2 SAY "import sifv id: " + hRec[ "id" ] + ", oznaka: " + hRec[ "oznaka" ] + ", sifra: " + hRec[ "idsif" ]
+         update_rec_server_and_dbf( "sifv", hRec, 1, cTran )
       ENDIF
-
-      @ m_x + 3, m_y + 2 SAY "import sifv id: " + hRec[ "id" ] + ", oznaka: " + hRec[ "oznaka" ] + ", sifra: " + hRec[ "idsif" ]
-
-      update_rec_server_and_dbf( "sifv", hRec, 1, "FULL" )
 
       SELECT e_sifv
       SKIP
 
    ENDDO
 
-   RETURN
+   RETURN .T.
 
 
 // ---------------------------------------------
@@ -474,7 +488,6 @@ FUNCTION update_sifk_sifv()
 FUNCTION _dir_create( use_path )
 
    LOCAL _ret := .T.
-
 
    IF DirChange( use_path ) != 0
       _cre := MakeDir ( use_path )
@@ -700,7 +713,7 @@ FUNCTION _decompress_files( imp_file, import_dbf_path, import_zip_name )
 // --------------------------------------------------
 // popunjava sifrarnike sifk, sifv
 // --------------------------------------------------
-FUNCTION _fill_sifk( sifrarnik, id_sif )
+FUNCTION fill_sifk_sifv( cSifarnik, cIdSifra )
 
    LOCAL _rec
 
@@ -726,16 +739,18 @@ FUNCTION _fill_sifk( sifrarnik, id_sif )
 
    ENDIF
 
-   use_sql_sifv()
+   use_sql_sifv( PadR( cSifarnik, 8 ), "*", cIdSifra )
    // INDEX ON ID + IDSIF TAG IDIDSIF TO "sifv"
 
-   SELECT sifv
-   SET ORDER TO TAG "IDIDSIF"
+   // use_sql_sifv( cDbf, cOznaka, xIdSif, xVrijednost )
 
-   SEEK PadR( sifrarnik, 8 ) + id_sif
+   // SELECT sifv
+   // SET ORDER TO TAG "IDIDSIF"
 
-   DO WHILE !Eof() .AND. field->id = PadR( sifrarnik, 8 ) ;
-         .AND. field->idsif = PadR( id_sif, Len( id_sif ) )
+   // SEEK PadR( cSifarnik, 8 ) + cIdSifra
+
+   GO TOP
+   DO WHILE !Eof() .AND. field->id == PadR( cSifarnik, 8 ) .AND.    field->idsif == PadR( cIdSifra, 15 )
 
       _rec := dbf_get_rec()
       SELECT e_sifv
@@ -747,4 +762,4 @@ FUNCTION _fill_sifk( sifrarnik, id_sif )
 
    PopWa()
 
-   RETURN
+   RETURN .T.

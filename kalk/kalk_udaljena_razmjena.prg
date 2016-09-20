@@ -258,7 +258,7 @@ STATIC FUNCTION _vars_import( hParams )
    LOCAL _konta := fetch_metric( "kalk_import_lista_konta", my_user(), PadR( "", 200 ) )
    LOCAL _vrste_dok := fetch_metric( "kalk_import_vrste_dokumenata", my_user(), PadR( "", 200 ) )
    LOCAL _zamjeniti_dok := fetch_metric( "kalk_import_zamjeniti_dokumente", my_user(), "N" )
-   LOCAL _zamjeniti_sif := fetch_metric( "kalk_import_zamjeniti_sifre", my_user(), "N" )
+   LOCAL lZamijenitiSifre := fetch_metric( "kalk_import_zamjeniti_sifre", my_user(), "N" )
    LOCAL _iz_fmk := fetch_metric( "kalk_import_iz_fmk", my_user(), "N" )
    LOCAL _imp_path := fetch_metric( "kalk_import_path", my_user(), PadR( "", 300 ) )
    LOCAL _x := 1
@@ -290,7 +290,7 @@ STATIC FUNCTION _vars_import( hParams )
 
    ++ _x
 
-   @ m_x + _x, m_y + 2 SAY "Zamjeniti postojece sifre novim (D/N):" GET _zamjeniti_sif PICT "@!" VALID _zamjeniti_sif $ "DN"
+   @ m_x + _x, m_y + 2 SAY "Zamjeniti postojece sifre novim (D/N):" GET lZamijenitiSifre PICT "@!" VALID lZamijenitiSifre $ "DN"
 
    ++ _x
    ++ _x
@@ -319,7 +319,7 @@ STATIC FUNCTION _vars_import( hParams )
       set_metric( "kalk_import_lista_konta", my_user(), _konta )
       set_metric( "kalk_import_vrste_dokumenata", my_user(), _vrste_dok )
       set_metric( "kalk_import_zamjeniti_dokumente", my_user(), _zamjeniti_dok )
-      set_metric( "kalk_import_zamjeniti_sifre", my_user(), _zamjeniti_sif )
+      set_metric( "kalk_import_zamjeniti_sifre", my_user(), lZamijenitiSifre )
       set_metric( "kalk_import_iz_fmk", my_user(), _iz_fmk )
       set_metric( "kalk_import_path", my_user(), _imp_path )
       set_metric( "kalk_import_pript", my_user(), cPript )
@@ -332,7 +332,7 @@ STATIC FUNCTION _vars_import( hParams )
       hParams[ "konta" ] := _konta
       hParams[ "vrste_dok" ] := _vrste_dok
       hParams[ "zamjeniti_dokumente" ] := _zamjeniti_dok
-      hParams[ "zamjeniti_sifre" ] := _zamjeniti_sif
+      hParams[ "zamjeniti_sifre" ] := lZamijenitiSifre
       hParams[ "import_iz_fmk" ] := _iz_fmk
       hParams[ "pript" ] := ( cPript == "D" )
 
@@ -352,11 +352,11 @@ STATIC FUNCTION __export( hParams, a_details )
    LOCAL aDoksRec
    LOCAL _cnt := 0
    LOCAL _dat_od, _dat_do, _konta, _vrste_dok, _export_sif
-   LOCAL _usl_mkonto, _usl_pkonto
+   LOCAL cUslMagacinKonto, cUslProdKonto
    LOCAL _id_partn, _p_konto, _m_konto
    LOCAL _id_roba
    LOCAL aDokDetail
-
+   LOCAL hRec
 
    _dat_od := hParams[ "datum_od" ]
    _dat_do := hParams[ "datum_do" ]
@@ -366,7 +366,6 @@ STATIC FUNCTION __export( hParams, a_details )
 
    _cre_exp_tbls( __export_dbf_path ) // kreiraj tabele exporta
    kalk_o_exp_tabele( __export_dbf_path ) // otvori export tabele za pisanje podataka
-
 
    kalk_o_tabele()
 
@@ -388,15 +387,13 @@ STATIC FUNCTION __export( hParams, a_details )
       _m_konto := field->mkonto
 
 
+      IF !Empty( _konta ) // lista konta
 
-      // lista konta...
-      IF !Empty( _konta )
+         cUslMagacinKonto := Parsiraj( AllTrim( _konta ), "mkonto" )
+         cUslProdKonto := Parsiraj( AllTrim( _konta ), "pkonto" )
 
-         _usl_mkonto := Parsiraj( AllTrim( _konta ), "mkonto" )
-         _usl_pkonto := Parsiraj( AllTrim( _konta ), "pkonto" )
-
-         IF !( &_usl_mkonto )
-            IF !( &_usl_pkonto )
+         IF !( &cUslMagacinKonto )
+            IF !( &cUslProdKonto )
                SKIP
                LOOP
             ENDIF
@@ -404,8 +401,7 @@ STATIC FUNCTION __export( hParams, a_details )
 
       ENDIF
 
-      // lista dokumenata...
-      IF !Empty( _vrste_dok )
+      IF !Empty( _vrste_dok ) // lista dokumenata
          IF !( field->idvd $ _vrste_dok )
             SKIP
             LOOP
@@ -413,10 +409,7 @@ STATIC FUNCTION __export( hParams, a_details )
       ENDIF
 
 
-
-      // ako je sve zadovoljeno !
-      // dodaj zapis u tabelu e_doks
-      aDoksRec := dbf_get_rec()
+      aDoksRec := dbf_get_rec()   // ako je sve zadovoljeno dodaj zapis u tabelu e_doks
 
       aDokDetail := hb_Hash()
       aDokDetail[ "dokument" ] := aDoksRec[ "idfirma" ] + "-" + aDoksRec[ "idvd" ] + "-" + aDoksRec[ "brdok" ]
@@ -450,19 +443,18 @@ STATIC FUNCTION __export( hParams, a_details )
          APPEND BLANK
          dbf_update_rec( aDoksRec )
 
-         // uzmi sada robu sa ove stavke pa je ubaci u e_roba
+
          SELECT roba
-         HSEEK _id_roba
+         HSEEK _id_roba // uzmi sada robu sa ove stavke pa je ubaci u e_roba
          IF Found() .AND. _export_sif == "D"
-            aDoksRec := dbf_get_rec()
+            hRec := dbf_get_rec()
             SELECT e_roba
             SET ORDER TO TAG "ID"
             SEEK _id_roba
             IF !Found()
                APPEND BLANK
-               dbf_update_rec( aDoksRec )
-               // napuni i sifk, sifv parametre
-               _fill_sifk( "ROBA", _id_roba )
+               dbf_update_rec( hRec )
+               fill_sifk_sifv( "ROBA", _id_roba ) // napuni i sifk, sifv parametre
             ENDIF
          ENDIF
 
@@ -484,7 +476,7 @@ STATIC FUNCTION __export( hParams, a_details )
             APPEND BLANK
             dbf_update_rec( aDoksRec )
             // napuni i sifk, sifv parametre
-            _fill_sifk( "PARTN", _id_partn )
+            fill_sifk_sifv( "PARTN", _id_partn )
          ENDIF
       ENDIF
 
@@ -540,8 +532,8 @@ STATIC FUNCTION kalk_import_podataka( hParams, a_details )
    LOCAL cIdFirma, cIdVd, cBrDok
    LOCAL aDoksRec
    LOCAL _cnt := 0
-   LOCAL _dat_od, _dat_do, _konta, _vrste_dok, _zamjeniti_dok, _zamjeniti_sif, _iz_fmk
-   LOCAL _usl_mkonto, _usl_pkonto
+   LOCAL _dat_od, _dat_do, _konta, _vrste_dok, _zamjeniti_dok, lZamijenitiSifre, _iz_fmk
+   LOCAL cUslMagacinKonto, cUslProdKonto
    LOCAL _roba_id, _partn_id, _konto_id
    LOCAL _sif_exist
    LOCAL _fmk_import := .F.
@@ -552,16 +544,17 @@ STATIC FUNCTION kalk_import_podataka( hParams, a_details )
    LOCAL aDokDetail
    LOCAL lOk := .T.
    LOCAL hRec
-
+   LOCAL lFullTransaction
 
    _dat_od := hParams[ "datum_od" ]
    _dat_do := hParams[ "datum_do" ]
    _konta := hParams[ "konta" ]
    _vrste_dok := hParams[ "vrste_dok" ]
    _zamjeniti_dok := hParams[ "zamjeniti_dokumente" ]
-   _zamjeniti_sif := hParams[ "zamjeniti_sifre" ]
+   lZamijenitiSifre := hParams[ "zamjeniti_sifre" ]
    _iz_fmk := hParams[ "import_iz_fmk" ]
 
+   AltD()
    IF _iz_fmk == "D"
       _fmk_import := .T.
    ENDIF
@@ -636,11 +629,11 @@ STATIC FUNCTION kalk_import_podataka( hParams, a_details )
 
       IF !Empty( _konta )
 
-         _usl_mkonto := Parsiraj( AllTrim( _konta ), "mkonto" )
-         _usl_pkonto := Parsiraj( AllTrim( _konta ), "pkonto" )
+         cUslMagacinKonto := Parsiraj( AllTrim( _konta ), "mkonto" )
+         cUslProdKonto := Parsiraj( AllTrim( _konta ), "pkonto" )
 
-         IF !( &_usl_mkonto )
-            IF !( &_usl_pkonto )
+         IF !( &cUslMagacinKonto )
+            IF !( &cUslProdKonto )
                SELECT e_doks
                SKIP
                LOOP
@@ -767,13 +760,21 @@ STATIC FUNCTION kalk_import_podataka( hParams, a_details )
 
    ENDDO
 
+   AltD()
    IF _cnt >= 0 .AND. lOk
 
       @ m_x + 3, m_y + 2 SAY PadR( "", 69 )
-      update_table_roba( _zamjeniti_sif )
-      update_table_partn( _zamjeniti_sif )
-      update_table_konto( _zamjeniti_sif )
-      update_sifk_sifv()
+      update_table_roba( lZamijenitiSifre )
+      update_table_partn( lZamijenitiSifre )
+      update_table_konto( lZamijenitiSifre )
+
+      IF hParams[ "pript" ]
+         lFullTransaction := .T.
+      ELSE
+         lFullTransaction := .F.
+      ENDIF
+
+      update_sifk_sifv( lFullTransaction )
 
    ENDIF
 
@@ -792,7 +793,6 @@ STATIC FUNCTION kalk_import_podataka( hParams, a_details )
          MsgBeep( "Problem sa ažuriranjem dokumenta na server !" )
       ENDIF
    ENDIF
-
 
 
    BoxC()
@@ -858,14 +858,14 @@ STATIC FUNCTION _cre_exp_tbls( cDbfPath )
    USE
    CREATE ( cDbfPath + "e_doks" ) from ( cDbfPath + "struct" )
 
-   // tabela roba
-   O_ROBA
+
+   O_ROBA // tabela roba
    COPY STRUCTURE EXTENDED to ( cDbfPath + "struct" )
    USE
    CREATE ( cDbfPath + "e_roba" ) from ( cDbfPath + "struct" )
 
-   // tabela partn
-   O_PARTN
+
+   O_PARTN // tabela partn
    COPY STRUCTURE EXTENDED to ( cDbfPath + "struct" )
    USE
    CREATE ( cDbfPath + "e_partn" ) from ( cDbfPath + "struct" )
@@ -908,18 +908,18 @@ STATIC FUNCTION kalk_o_tabele()
 
 
 // ----------------------------------------------------
-// otvranje export tabela
+// otvaranje export tabela
 // ----------------------------------------------------
-STATIC FUNCTION kalk_o_exp_tabele( cDbfPath, from_fmk )
+STATIC FUNCTION kalk_o_exp_tabele( cDbfPath, lFromFmk )
 
-   LOCAL _dbf_name
+   LOCAL cDbfName
 
    IF ( cDbfPath == NIL )
       cDbfPath := my_home() + my_dbf_prefix()
    ENDIF
 
-   IF ( from_fmk == NIL )
-      from_fmk := .F.
+   IF ( lFromFmk == NIL )
+      lFromFmk := .F.
    ENDIF
 
    // log_write( "otvaram kalk tabele importa i pravim indekse...", 9 )
@@ -927,70 +927,70 @@ STATIC FUNCTION kalk_o_exp_tabele( cDbfPath, from_fmk )
    // zatvori sve prije otvaranja ovih tabela
    my_close_all_dbf()
 
-   _dbf_name := "e_kalk.dbf"
-   IF from_fmk
-      _dbf_name := Upper( _dbf_name )
+   cDbfName := "e_kalk.dbf"
+   IF lFromFmk
+      cDbfName := Upper( cDbfName )
    ENDIF
    SELECT ( F_TMP_E_KALK )
-   my_use_temp( "E_KALK", cDbfPath + _dbf_name, .F., .T. )
+   my_use_temp( "E_KALK", cDbfPath + cDbfName, .F., .T. )
    INDEX on ( idfirma + idvd + brdok ) TAG "1"
    ?E Alias(), ordKey()
 
-   // log_write( "otvorio i indeksirao: " + cDbfPath + _dbf_name, 5 )
+   // log_write( "otvorio i indeksirao: " + cDbfPath + cDbfName, 5 )
 
-   _dbf_name := "e_doks.dbf"
-   IF from_fmk
-      _dbf_name := Upper( _dbf_name )
+   cDbfName := "e_doks.dbf"
+   IF lFromFmk
+      cDbfName := Upper( cDbfName )
    ENDIF
    SELECT ( F_TMP_E_DOKS )
-   my_use_temp( "E_DOKS", cDbfPath + _dbf_name, .F., .T. )
+   my_use_temp( "E_DOKS", cDbfPath + cDbfName, .F., .T. )
    INDEX on ( idfirma + idvd + brdok ) TAG "1"
    ?E Alias(), ordKey()
-   // log_write( "otvorio i indeksirao: " + cDbfPath + _dbf_name, 5 )
+   // log_write( "otvorio i indeksirao: " + cDbfPath + cDbfName, 5 )
 
-   _dbf_name := "e_roba.dbf"
-   IF from_fmk
-      _dbf_name := Upper( _dbf_name )
+   cDbfName := "e_roba.dbf"
+   IF lFromFmk
+      cDbfName := Upper( cDbfName )
    ENDIF
    SELECT ( F_TMP_E_ROBA )
-   my_use_temp( "E_ROBA", cDbfPath + _dbf_name, .F., .T. )
+   my_use_temp( "E_ROBA", cDbfPath + cDbfName, .F., .T. )
    INDEX on ( id ) TAG "ID"
    ?E Alias(), ordKey()
 
-   _dbf_name := "e_partn.dbf"
-   IF from_fmk
-      _dbf_name := Upper( _dbf_name )
+   cDbfName := "e_partn.dbf"
+   IF lFromFmk
+      cDbfName := Upper( cDbfName )
    ENDIF
    SELECT ( F_TMP_E_PARTN )
-   my_use_temp( "E_PARTN", cDbfPath + _dbf_name, .F., .T. )
+   my_use_temp( "E_PARTN", cDbfPath + cDbfName, .F., .T. )
    INDEX on ( id ) TAG "ID"
    ?E Alias(), ordKey()
 
-   _dbf_name := "e_konto.dbf"
-   IF from_fmk
-      _dbf_name := Upper( _dbf_name )
+   cDbfName := "e_konto.dbf"
+   IF lFromFmk
+      cDbfName := Upper( cDbfName )
    ENDIF
    SELECT ( F_TMP_E_KONTO )
-   my_use_temp( "E_KONTO", cDbfPath + _dbf_name, .F., .T. )
+   my_use_temp( "E_KONTO", cDbfPath + cDbfName, .F., .T. )
    INDEX on ( id ) TAG "ID"
    ?E Alias(), ordKey()
 
-   _dbf_name := "e_sifk.dbf"
-   IF from_fmk
-      _dbf_name := Upper( _dbf_name )
+   cDbfName := "e_sifk.dbf"
+   IF lFromFmk
+      cDbfName := Upper( cDbfName )
    ENDIF
    SELECT ( F_TMP_E_SIFK )
-   my_use_temp( "E_SIFK", cDbfPath + _dbf_name, .F., .T. )
+   my_use_temp( "E_SIFK", cDbfPath + cDbfName, .F., .T. )
    INDEX on ( id + sort + naz ) TAG "ID"
    INDEX on ( id + oznaka ) TAG "ID2"
    ?E Alias(), ordKey()
 
-   _dbf_name := "e_sifv.dbf"
-   IF from_fmk
-      _dbf_name := Upper( _dbf_name )
+   cDbfName := "e_sifv.dbf"
+   IF lFromFmk
+      cDbfName := Upper( cDbfName )
    ENDIF
    SELECT ( F_TMP_E_SIFV )
-   my_use_temp( "E_SIFV", cDbfPath + _dbf_name, .F., .T. )
+   my_use_temp( "E_SIFV", cDbfPath + cDbfName, .F., .T. )
    INDEX on ( id + oznaka + idsif + naz ) TAG "ID"
    INDEX on ( id + idsif ) TAG "IDIDSIF"
    ?E Alias(), ordKey()

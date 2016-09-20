@@ -84,11 +84,12 @@ FUNCTION kamate_unos()
 // otvaranje potrebnih tabela
 STATIC FUNCTION O_Edit()
 
+
    O_KS
    O_PARTN
    O_KONTO
-   O_KAM_PRIPR
-   O_KAM_KAMAT
+   select_o_kam_pripr()
+   select_o_kam_kamat()
    SELECT kam_pripr
    SET ORDER TO TAG "1"
    GO TOP
@@ -301,7 +302,7 @@ STATIC FUNCTION fin_kamate_key_handler()
          USE
       ENDIF
 
-      O_KAM_PRIPR
+      select_o_kam_pripr()
       SELECT ( nArr )
       RETURN DE_REFRESH
 
@@ -332,7 +333,7 @@ STATIC FUNCTION fin_kamate_key_handler()
 
       end_print()
 
-      O_KAM_PRIPR
+      select_o_kam_pripr()
       SELECT kam_pripr
       GO TOP
 

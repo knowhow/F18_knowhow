@@ -466,7 +466,7 @@ STATIC FUNCTION __export( vars, a_details )
                APPEND BLANK
                dbf_update_rec( _app_rec )
                // napuni i sifk, sifv parametre
-               _fill_sifk( "KONTO", _id_konto )
+               fill_sifk_sifv( "KONTO", _id_konto )
             ENDIF
          ENDIF
 
@@ -482,7 +482,7 @@ STATIC FUNCTION __export( vars, a_details )
                APPEND BLANK
                dbf_update_rec( _app_rec )
                // napuni i sifk, sifv parametre
-               _fill_sifk( "PARTN", _id_partner )
+               fill_sifk_sifv( "PARTN", _id_partner )
             ENDIF
          ENDIF
 

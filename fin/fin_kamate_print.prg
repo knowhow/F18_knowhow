@@ -55,7 +55,7 @@ FUNCTION fin_kamate_print()
 
    ?
 
-   O_KAM_PRIPR
+   select_o_kam_pripr()
    SELECT kam_pripr
    GO TOP
 
@@ -96,7 +96,7 @@ FUNCTION fin_kamate_print()
 
    end_print()
 
-   O_KAM_PRIPR
+   select_o_kam_pripr()
    SELECT kam_pripr
    GO TOP
 

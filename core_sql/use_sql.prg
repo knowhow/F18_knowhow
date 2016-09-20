@@ -446,7 +446,12 @@ FUNCTION use_sql_sifv( cDbf, cOznaka, xIdSif, xVrijednost )
    lSql := is_sql_table( cDbf )
 
    cSql := "SELECT * from " + F18_PSQL_SCHEMA_DOT + "sifv"
-   cSql += " WHERE id=" + sql_quote_u( cDbf ) + " AND oznaka=" + sql_quote_u( cOznaka )
+
+   cSql += " WHERE id=" + sql_quote_u( cDbf )
+
+   IF cOznaka != "*" // * - sve oznake
+      cSql += " AND oznaka=" + sql_quote_u( cOznaka )
+   ENDIF
 
    IF xIdSif == NIL
       IF Empty( cDbf )

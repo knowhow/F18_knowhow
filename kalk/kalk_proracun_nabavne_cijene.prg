@@ -186,13 +186,12 @@ FUNCTION MarzaVP( cIdVd, lNaprijed )
 
 
 
-/* Marza(fmarza)
+/*
  *     Proracun veleprodajne marze
  */
 
 FUNCTION Marza( fmarza )
 
-   // {
    LOCAL SKol := 0, nPPP
 
    IF fmarza == NIL
@@ -205,7 +204,6 @@ FUNCTION Marza( fmarza )
 
    IF roba->tip $ "VKX"
       nPPP := 1 / ( 1 + tarifa->opp / 100 )
-      IF roba->tip = "X"; nPPP := nPPP * _mpcsapp / _vpc; ENDIF
    ELSE
       nPPP := 1
    ENDIF
@@ -226,11 +224,7 @@ FUNCTION Marza( fmarza )
          // nmarza/_nc := ( (_vpc*nppp - roba->mpc -_vpc)/_nc-1)
       ENDIF
       IF _TMarza == "%"
-         IF roba->tip = "X"
-            _Marza := 100 * ( ( _VPC * nPPP - roba->mpc - _vpc ) / _NC - 1 )
-         ELSE
-            _Marza := 100 * ( _VPC * nPPP / _NC - 1 )
-         ENDIF
+         _Marza := 100 * ( _VPC * nPPP / _NC - 1 )
       ELSEIF _TMarza == "A"
          _Marza := nMarza
       ELSEIF _TMarza == "U"
@@ -260,7 +254,6 @@ FUNCTION Marza( fmarza )
    AEval( GetList, {| o| o:display() } )
 
    RETURN .T.
-
 
 
 
@@ -420,17 +413,16 @@ FUNCTION UzmiVPCSif( cMKonto, lKoncij )
    SELECT ( nArr )
 
    RETURN nCV
-// }
 
 
 
-/* NabCj()
+/*
  *     Proracun nabavne cijene za ulaznu kalkulaciju 10
  */
 
 FUNCTION NabCj()
 
-   // {
+
    LOCAL Skol
 
    IF gKalo == "1"

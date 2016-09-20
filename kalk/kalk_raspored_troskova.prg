@@ -121,9 +121,7 @@ FUNCTION kalk_set_troskovi_priv_vars_ntrosakx_nmarzax()
    RETURN .T.
 
 
-
-
-FUNCTION kalk_raspored_troskova( fSilent )
+FUNCTION kalk_raspored_troskova( lSilent, hTrosakSet, cSet, nSetStep )
 
    LOCAL nStUc := 20
    LOCAL cTipPrevoz := "0", nIznosPrevoz
@@ -131,20 +129,41 @@ FUNCTION kalk_raspored_troskova( fSilent )
    LOCAL cTipBankTr := "0", nIznosBankTr
    LOCAL cTipSpedTr := "0", nIznosSpedTr
    LOCAL cTipZavTr := "0", nIznosZavTr
-   LOCAL UBankTr, UPrevoz, UZavTr, USpedTr, UCarDaz
+   LOCAL nUBankTr, nUPrevoz, nUZavTr, nUSpedTr, nUCarDaz
    LOCAL nUkupanIznosFakture, nUkupnoTezina, nUkupnoKolicina, cJmj
    LOCAL cIdFirma, cIdVd, cBrDok
    LOCAL nPrviRec
+   LOCAL nSet, nSetEnd, lExit := .F. // end for next petlje
+   LOCAL nProcKorak := 0.01
+   LOCAL cOdgovor := "N"
 
-   IF fsilent == NIL
-      fsilent := .F.
+   IF lSilent == NIL
+      lSilent := .F.
    ENDIF
-   IF !fsilent .AND.  Pitanje(, "Rasporediti troškove (D/N) ?", "N" ) == "N"
+   IF !lSilent .AND. ( cSet == NIL  ) .AND. ( cOdgovor := Pitanje(, "Rasporediti troškove (D/N/X) ?", "N", "DNX" ) ) == "N"
       RETURN .F.
    ENDIF
 
    PRIVATE qqTar := ""
    PRIVATE aUslTar := ""
+
+   IF cSet == NIL
+      nSetEnd := 1
+      cSet := ""
+   ELSE
+
+      hTrosakSet[ cSet + "_last"   ] := hTrosakSet[ cSet + "_0" ]
+      hTrosakSet[ cSet + "_last_2" ] := hTrosakSet[ cSet + "_0" ]
+
+      IF nSetStep != NIL
+         nSetEnd := 1
+         hTrosakSet[ cSet + "_step" ] := nSetStep
+      ELSE
+         nSetEnd := 1000
+         hTrosakSet[ cSet + "_step" ] := 0
+      ENDIF
+
+   ENDIF
 
    IF field->idvd $ "16#80"
       Box(, 1, 55 )
@@ -198,225 +217,363 @@ FUNCTION kalk_raspored_troskova( fSilent )
          ENDIF
 
          IF cIdVd $ "11#12#13"
-            nUkupanIznosFakture += Round( fcj * kolicina, gZaokr ) // magacin-> prodavnica,povrat
+            nUkupanIznosFakture += Round( field->fcj * field->kolicina, gZaokr ) // magacin-> prodavnica,povrat
          ENDIF
 
          IF cIdVd $ "RN"
             IF Val( Rbr ) < 900
-               nUkProV += Round( vpc * kolicina, gZaokr )
+               nUkProV += Round( field->vpc * field->kolicina, gZaokr )
             ELSE
-               nUkupanIznosFakture += Round( nc * kolicina, gZaokr )  // sirovine
+               nUkupanIznosFakture += Round( field->nc * field->kolicina, gZaokr )  // sirovine
             ENDIF
          ENDIF
          SKIP
       ENDDO
 
       IF cIdVd $ "10#16#81#80#RN"  // zaduzenje magacina,prodavnice
-         GO nPrviRec
 
-         cTipPrevoz := "0"
-         nIznosPrevoz := 0
+         Box(, 3, 60, iif( Empty( cSet ), .T., .F. ) )
+         FOR nSet := 1 TO nSetEnd
+            GO nPrviRec
 
-         cTipCarDaz := "0"
-         nIznosCarDaz := 0
+            cTipPrevoz := "0"
+            nIznosPrevoz := 0
 
-         cTipBankTr := "0"
-         nIznosBankTr := 0
+            cTipCarDaz := "0"
+            nIznosCarDaz := 0
 
-         cTipSpedTr := "0"
-         nIznosSpedTr := 0
+            cTipBankTr := "0"
+            nIznosBankTr := 0
 
-         cTipZavTr := "0"
-         nIznosZavTr := 0
+            cTipSpedTr := "0"
+            nIznosSpedTr := 0
 
-         cTipPrevoz := field->TPrevoz
-         nIznosPrevoz := field->Prevoz
+            cTipZavTr := "0"
+            nIznosZavTr := 0
 
-         cTipCarDaz :=  field->TCarDaz
-         nIznosCarDaz := field->CarDaz
+            cTipPrevoz := field->TPrevoz
+            nIznosPrevoz := field->Prevoz
 
-         cTipBankTr := field->TBankTr
-         nIznosBankTr := field->BankTr
+            cTipCarDaz :=  field->TCarDaz
+            nIznosCarDaz := field->CarDaz
 
-         cTipSpedTr := field->TSpedTr
-         nIznosSpedTr := field->SpedTr
+            cTipBankTr := field->TBankTr
+            nIznosBankTr := field->BankTr
 
-         cTipZavTr := field->TZavTr
-         nIznosZavTr := field->ZavTr
+            cTipSpedTr := field->TSpedTr
+            nIznosSpedTr := field->SpedTr
 
-         UBankTr := 0   // do sada utroseno na bank tr itd, radi "sitnisha"
-         UPrevoz := 0
-         UZavTr := 0
-         USpedTr := 0
-         UCarDaz := 0
-         DO WHILE !Eof() .AND. cIdFirma == idfirma .AND. cIdVd == idvd .AND. cBrDok == BrDok
+            cTipZavTr := field->TZavTr
+            nIznosZavTr := field->ZavTr
 
-            Scatter()
+            nUBankTr := 0   // do sada utroseno na bank tr itd, radi "sitnisha"
+            nUPrevoz := 0
+            nUZavTr := 0
+            nUSpedTr := 0
+            nUCarDaz := 0
 
-            IF _idvd $ "RN" .AND. Val( _rbr ) < 900
-               _fcj := _fcj2 := _vpc / nUKProV * nUkupanIznosFakture // nabavne cijene izmisli proporcionalno prodajnim
-            ENDIF
-
-            IF cTipPrevoz $ "RT"  // troskovi 1 - R - raspored, T - raspored po tezini
-               IF Round( nUkupanIznosFakture, 4 ) == 0
-                  _Prevoz := 0
-               ELSE
-
-                  IF cTipPrevoz == "T"
-                     cJmj := "KG "
-                     _Prevoz := Round( svedi_na_jedinicu_mjere( _kolicina, _idroba, cJmj ) / nUkupnoTezina * nIznosPrevoz, gZaokr )
-                  ELSE
-                     _Prevoz := Round( _fcj * ( 1 -_Rabat / 100 ) * _kolicina / nUkupanIznosFakture * nIznosPrevoz, gZaokr )
+            IF nSetStep == NIL .AND. !Empty( cSet ) // nSetStep != NIL - obraditi sa definisanim stepom
+               IF ( hTrosakSet[ cSet ] - hTrosakSet[ cSet + "_last" ] ) > 0
+                  IF hTrosakSet[ cSet ] - hTrosakSet[ cSet + "_last_2" ] < 0
+                     nProcKorak := nProcKorak / 2 // zadnji veci, a predzadnji rezultat manji, znaci treba smanjiti korak
                   ENDIF
-
-                  UPrevoz += _Prevoz
-
-                  IF Abs( nIznosPrevoz - UPrevoz ) < 0.1 // sitnish, baci ga na zadnju st.
-                     SKIP
-                     IF ! ( !Eof() .AND. cIdFirma == idfirma .AND. cIdVd == idvd .AND. cBrDok == BrDok )
-                        _Prevoz += ( nIznosPrevoz - UPrevoz )
-                     ENDIF
-                     SKIP -1
+                  IF nSetStep == NIL
+                     hTrosakSet[ cSet + "_step" ] += nProcKorak
+                  ENDIF
+               ELSE
+                  IF hTrosakSet[ cSet ] - hTrosakSet[ cSet + "_last_2" ] > 0
+                     nProcKorak := nProcKorak / 2 // zadnji manji, a predzadnji rezultat veci
+                  ENDIF
+                  IF nSetStep == NIL
+                     hTrosakSet[ cSet + "_step" ] -= nProcKorak
                   ENDIF
                ENDIF
-               _TPrevoz := "U"
             ENDIF
 
 
-            IF cTipCarDaz $ "RT"   // troskovi 2
-               IF Round( nUkupanIznosFakture, 4 ) == 0
-                  _CarDaz := 0
-               ELSE
-                  IF cTipCarDaz == "T"
-                     cJmj := "KG "
-                     _CarDaz := Round( svedi_na_jedinicu_mjere( _kolicina, _idroba, cJmj ) / nUkupnoTezina * nIznosCarDaz, gZaokr )
-                  ELSE
-                     _CarDaz := Round( _fcj * ( 1 -_Rabat / 100 ) * _kolicina / nUkupanIznosFakture * nIznosCarDaz, gZaokr )
-                  ENDIF
+            @ m_x + 1, m_y + 2 SAY "Step set " + cSet + " step: " + AllTrim( say_iznos( nSet ) )
 
-                  UCardaz += _Cardaz
-                  IF Abs( nIznosCarDaz - UCardaz ) < 0.1 // sitniç, baci ga na zadnju st.
-                     SKIP
-                     IF ! ( !Eof() .AND. cIdFirma == idfirma .AND. cIdVd == idvd .AND. cBrDok == BrDok )
-                        _Cardaz += ( nIznosCarDaz - UCardaz )
-                     ENDIF
-                     SKIP -1
-                  ENDIF
+            IF !Empty( cSet )
+               ??  " / " +  AllTrim( say_iznos( hTrosakSet[ cSet + "_step" ] ) )
+            ENDIF
+
+            DO WHILE !Eof() .AND. cIdFirma == field->idfirma .AND. cIdVd == field->idvd .AND. cBrDok == field->BrDok
+
+               Scatter()
+
+               IF _idvd $ "RN" .AND. Val( _rbr ) < 900
+                  _fcj := _fcj2 := _vpc / nUKProV * nUkupanIznosFakture // nabavne cijene izmisli proporcionalno prodajnim
                ENDIF
-               _TCarDaz := "U"
-            ENDIF
 
-            IF cTipBankTr  $ "RT" // troskovi 3
-               IF Round( nUkupanIznosFakture, 4 ) == 0
-                  _BankTr := 0
-               ELSE
-
-                  IF cTipCarDaz == "T"
-                     cJmj := "KG "
-                     _BankTr := Round( svedi_na_jedinicu_mjere( _kolicina, _idroba, cJmj ) / nUkupnoTezina * nIznosBankTr, gZaokr )
+               IF cTipPrevoz $ "RT"  // troskovi 1 - R - raspored, T - raspored po tezini
+                  IF Round( nUkupanIznosFakture, 4 ) == 0
+                     _Prevoz := 0
                   ELSE
 
-                     _BankTr := Round( _fcj * ( 1 -_Rabat / 100 ) * _kolicina / nUkupanIznosFakture * nIznosBankTr, gZaokr )
-                  ENDIF
-
-                  UBankTr += _BankTr
-                  IF Abs( nIznosBankTr - UBankTr ) < 0.1 // sitniç, baci ga na zadnju st.
-                     SKIP
-                     IF ! ( !Eof() .AND. cIdFirma == idfirma .AND. cIdVd == idvd .AND. cBrDok == BrDok )
-                        _BankTr += ( nIznosBankTr - UBankTr )
+                     IF cTipPrevoz == "T"
+                        cJmj := "KG "
+                        _Prevoz := Round( svedi_na_jedinicu_mjere( _kolicina, _idroba, cJmj ) / nUkupnoTezina * nIznosPrevoz, gZaokr )
+                     ELSE
+                        _Prevoz := Round( _fcj * ( 1 -_Rabat / 100 ) * _kolicina / nUkupanIznosFakture * nIznosPrevoz, gZaokr )
                      ENDIF
-                     SKIP -1
+
+                     nUPrevoz += _Prevoz
+                     IF Abs( nIznosPrevoz - nUPrevoz ) < 0.1 // sitnish, baci ga na zadnju st.
+                        SKIP
+                        IF ! ( !Eof() .AND. cIdFirma == idfirma .AND. cIdVd == idvd .AND. cBrDok == BrDok )
+                           _Prevoz += ( nIznosPrevoz - nUPrevoz )
+                        ENDIF
+                        SKIP -1
+                     ENDIF
                   ENDIF
+                  _TPrevoz := "U"
+
+
+               ELSEIF cTipPrevoz == "%"
+
+                  IF cSet == "prevoz" .AND. _Prevoz > 0
+                     _Prevoz += hTrosakSet[ cSet + "_step" ]
+                  ENDIF
+                  nUPrevoz += _fcj * ( 1 - _Rabat / 100 ) * _kolicina * _Prevoz / 100
                ENDIF
-               _TBankTr := "U"
-            ENDIF
 
-            IF cTipSpedTr  $ "RT"  // troskovi 4
-               IF Round( nUkupanIznosFakture, 4 ) == 0
-                  _SpedTr := 0
-               ELSE
 
-                  IF cTipCarDaz == "T"
-                     cJmj := "KG "
-                     _SpedTr := Round( svedi_na_jedinicu_mjere( _kolicina, _idroba, cJmj ) / nUkupnoTezina * nIznosSpedTr, gZaokr )
+               IF cTipCarDaz $ "RT"   // troskovi 2
+                  IF Round( nUkupanIznosFakture, 4 ) == 0
+                     _CarDaz := 0
+                  ELSE
+                     IF cTipCarDaz == "T"
+                        cJmj := "KG "
+                        _CarDaz := Round( svedi_na_jedinicu_mjere( _kolicina, _idroba, cJmj ) / nUkupnoTezina * nIznosCarDaz, gZaokr )
+                     ELSE
+                        _CarDaz := Round( _fcj * ( 1 -_Rabat / 100 ) * _kolicina / nUkupanIznosFakture * nIznosCarDaz, gZaokr )
+                     ENDIF
+
+                     nUCarDaz += _Cardaz
+                     IF Abs( nIznosCarDaz - nUCarDaz ) < 0.1 // sitniç, baci ga na zadnju st.
+                        SKIP
+                        IF ! ( !Eof() .AND. cIdFirma == idfirma .AND. cIdVd == idvd .AND. cBrDok == BrDok )
+                           _Cardaz += ( nIznosCarDaz - nUCarDaz )
+                        ENDIF
+                        SKIP -1
+                     ENDIF
+                  ENDIF
+                  _TCarDaz := "U"
+
+               ELSEIF cTipCarDaz == "%"
+                  IF cSet == "cardaz" .AND. _CarDaz > 0
+                     _CarDaz += hTrosakSet[ cSet + "_step" ]
+                  ENDIF
+                  nUCarDaz += _fcj * ( 1 - _Rabat / 100 ) * _kolicina * _Cardaz / 100
+               ENDIF
+
+               IF cTipBankTr  $ "RT" // troskovi 3
+                  IF Round( nUkupanIznosFakture, 4 ) == 0
+                     _BankTr := 0
                   ELSE
 
-                     _SpedTr := Round( _fcj * ( 1 -_Rabat / 100 ) * _kolicina / nUkupanIznosFakture * nIznosSpedTr, gZaokr )
-                  ENDIF
-
-                  USpedTr += _SpedTr
-                  IF Abs( nIznosSpedTr - USpedTr ) < 0.1 // sitnish baci ga na zadnju st.
-                     SKIP
-                     IF ! ( !Eof() .AND. cIdFirma == idfirma .AND. cIdVd == idvd .AND. cBrDok == BrDok )
-                        _SpedTr += ( nIznosSpedTr - USpedTr )
+                     IF cTipCarDaz == "T"
+                        cJmj := "KG "
+                        _BankTr := Round( svedi_na_jedinicu_mjere( _kolicina, _idroba, cJmj ) / nUkupnoTezina * nIznosBankTr, gZaokr )
+                     ELSE
+                        _BankTr := Round( _fcj * ( 1 -_Rabat / 100 ) * _kolicina / nUkupanIznosFakture * nIznosBankTr, gZaokr )
                      ENDIF
-                     SKIP -1
+
+                     nUBankTr += _BankTr
+                     IF Abs( nIznosBankTr - nUBankTr ) < 0.1 // sitniç, baci ga na zadnju st.
+                        SKIP
+                        IF ! ( !Eof() .AND. cIdFirma == idfirma .AND. cIdVd == idvd .AND. cBrDok == BrDok )
+                           _BankTr += ( nIznosBankTr - nUBankTr )
+                        ENDIF
+                        SKIP -1
+                     ENDIF
                   ENDIF
+                  _TBankTr := "U"
+
+               ELSEIF cTipBankTr == "%"
+
+                  IF cSet == "banktr" .AND. _Prevoz > 0
+                     _BankTr += hTrosakSet[ cSet + "_step" ]
+                  ENDIF
+                  nUBankTr += _fcj * ( 1 - _Rabat / 100 ) * _kolicina * _BankTr / 100
                ENDIF
-               _TSpedTr := "U"
-            ENDIF
 
-
-            IF cTipZavTr $ "RT"   // troskovi 5
-               IF Round( nUkupanIznosFakture, 4 ) == 0
-                  _ZavTr := 0
-               ELSE
-
-                  IF cTipZavTr == "T"
-                     cJmj := "KG "
-                     _ZavTr := Round( svedi_na_jedinicu_mjere( _kolicina, _idroba, cJmj ) / nUkupnoTezina * nIznosZavTr, gZaokr )
+               IF cTipSpedTr  $ "RT"  // troskovi 4
+                  IF Round( nUkupanIznosFakture, 4 ) == 0
+                     _SpedTr := 0
                   ELSE
-                     _ZavTr := Round( _fcj * ( 1 -_Rabat / 100 ) * _kolicina / nUkupanIznosFakture * nIznosZavTr, gZaokr )
-                  ENDIF
 
+                     IF cTipCarDaz == "T"
+                        cJmj := "KG "
+                        _SpedTr := Round( svedi_na_jedinicu_mjere( _kolicina, _idroba, cJmj ) / nUkupnoTezina * nIznosSpedTr, gZaokr )
+                     ELSE
 
-                  UZavTR += _ZavTR
-                  IF Abs( nIznosZavTr - UZavTR ) < 0.1 // sitnish, baci ga na zadnju st.
-                     SKIP
-                     IF ! ( !Eof() .AND. cIdFirma == idfirma .AND. cIdVd == idvd .AND. cBrDok == BrDok )
-                        _ZavTR += ( nIznosZavTr - UZavTR )
+                        _SpedTr := Round( _fcj * ( 1 -_Rabat / 100 ) * _kolicina / nUkupanIznosFakture * nIznosSpedTr, gZaokr )
                      ENDIF
-                     SKIP -1
+
+                     nUSpedTr += _SpedTr
+                     IF Abs( nIznosSpedTr - nUSpedTr ) < 0.1 // sitnish baci ga na zadnju st.
+                        SKIP
+                        IF ! ( !Eof() .AND. cIdFirma == idfirma .AND. cIdVd == idvd .AND. cBrDok == BrDok )
+                           _SpedTr += ( nIznosSpedTr - nUSpedTr )
+                        ENDIF
+                        SKIP -1
+                     ENDIF
                   ENDIF
+                  _TSpedTr := "U"
+
+               ELSEIF cTipSpedTr == "%"
+                  IF cSet == "spedtr" .AND. _SpedTr > 0
+                     _SpedTr += hTrosakSet[ cSet + "_step" ]
+                  ENDIF
+                  nUSpedTr += _fcj * ( 1 - _rabat / 100 ) * _kolicina * _SpedTr / 100
                ENDIF
-               _TZavTr := "U"
-            ENDIF
 
-            SELECT roba
-            SELECT tarifa
-            HSEEK _idtarifa
 
-            SELECT kalk_pripr
-            IF _idvd == "RN"
-               IF Val( _rbr ) < 900
+               IF cTipZavTr $ "RT"   // troskovi 5
+                  IF Round( nUkupanIznosFakture, 4 ) == 0
+                     _ZavTr := 0
+                  ELSE
+
+                     IF cTipZavTr == "T"
+                        cJmj := "KG "
+                        _ZavTr := Round( svedi_na_jedinicu_mjere( _kolicina, _idroba, cJmj ) / nUkupnoTezina * nIznosZavTr, gZaokr )
+                     ELSE
+                        _ZavTr := Round( _fcj * ( 1 -_Rabat / 100 ) * _kolicina / nUkupanIznosFakture * nIznosZavTr, gZaokr )
+                     ENDIF
+
+                     nUZavTr += _ZavTR
+                     IF Abs( nIznosZavTr - nUZavTr ) < 0.1 // sitnish, baci ga na zadnju st.
+                        SKIP
+                        IF ! ( !Eof() .AND. cIdFirma == idfirma .AND. cIdVd == idvd .AND. cBrDok == BrDok )
+                           _ZavTR += ( nIznosZavTr - nUZavTr )
+                        ENDIF
+                        SKIP -1
+                     ENDIF
+                  ENDIF
+                  _TZavTr := "U"
+
+               ELSEIF cTipZavTr == "%"
+                  IF cSet == "zavtr" .AND. _ZavTr > 0
+                     _ZavTr += hTrosakSet[ cSet + "_step" ]
+                  ENDIF
+                  nUZavTr += _fcj * ( 1 - _Rabat / 100 ) * _kolicina * _ZavTr / 100
+               ENDIF
+
+               SELECT roba
+               SELECT tarifa
+               HSEEK _idtarifa
+
+               SELECT kalk_pripr
+               IF _idvd == "RN"
+                  IF Val( _rbr ) < 900
+                     NabCj()
+                  ENDIF
+               ELSE
                   NabCj()
                ENDIF
-            ELSE
-               NabCj()
-            ENDIF
-            IF _idvd == "16"
-               _nc := _vpc * ( 1 -nStUc / 100 )
-            ENDIF
-            IF _idvd == "80"
-               _nc := _mpc - _mpcsapp * nStUc / 100
-               _vpc := _nc
-               _TMarza2 := "A"
-               _Marza2 := _mpc - _nc
-            ENDIF
-            IF koncij->naz == "N1"; _VPC := _NC; ENDIF
-            IF _idvd == "RN"
-               IF Val( _rbr ) < 900
+
+               IF _idvd == "16"
+                  _nc := _vpc * ( 1 - nStUc / 100 )
+               ENDIF
+               IF _idvd == "80"
+                  _nc := _mpc - _mpcsapp * nStUc / 100
+                  _vpc := _nc
+                  _TMarza2 := "A"
+                  _Marza2 := _mpc - _nc
+               ENDIF
+
+               IF koncij->naz == "N1"
+                  _VPC := _NC
+               ENDIF
+               IF _idvd == "RN"
+                  IF Val( _rbr ) < 900
+                     Marza()
+                  ENDIF
+               ELSE
                   Marza()
                ENDIF
-            ELSE
-               Marza()
+
+               IF nSetEnd == 1
+                  my_rlock()
+                  Gather()
+                  my_unlock()
+               ENDIF
+               SKIP
+            ENDDO
+
+
+            @ m_x + 3, m_y + 2 SAY "Step set " + cSet + " iznos: "
+            SWITCH cSet
+            CASE "prevoz"
+               ?? say_iznos( nUPrevoz )
+               hTrosakSet[ "prevoz_last_2" ] := hTrosakSet[ "prevoz_last" ]
+               hTrosakSet[ "prevoz_last" ] := nUPrevoz
+               IF nSetStep == NIL .AND.  Round( hTrosakSet[ "prevoz" ] - nUPrevoz, 2 ) == 0
+                  MsgBeep( "HIT 1!" )
+                  lExit := .T.
+               ENDIF
+               EXIT
+
+            CASE "banktr"
+               ?? say_iznos( nUBankTr )
+               hTrosakSet[ "banktr_last_2" ] := hTrosakSet[ "banktr_last" ]
+               hTrosakSet[ "banktr_last" ] := nUBankTr
+               IF nSetStep == NIL .AND. Round( hTrosakSet[ "banktr" ] - nUBanktr, 2 ) == 0
+                  MsgBeep( "HIT 2!" )
+                  lExit := .T.
+               ENDIF
+               EXIT
+
+            CASE "spedtr"
+               ?? say_iznos( nUSpedtr )
+               hTrosakSet[ "spedtr_last_2" ] := hTrosakSet[ "spedtr_last" ]
+               hTrosakSet[ "spedtr_last" ] := nUSpedTr
+               IF nSetStep == NIL .AND. Round( hTrosakSet[ "spedtr" ] - nUSpedTr, 2 ) == 0
+                  MsgBeep( "HIT spedtr!" )
+                  lExit := .T.
+               ENDIF
+               EXIT
+
+            CASE "zavtr"
+               ?? say_iznos( nUZavTr )
+               hTrosakSet[ "zavtr_last_2" ] := hTrosakSet[ "zavtr_last" ]
+               hTrosakSet[ "zavtr_last" ] := nUZavTr
+               IF nSetStep == NIL .AND. Round( hTrosakSet[ "zavtr" ] - nUZavTr, 2 ) == 0
+                  MsgBeep( "HIT zavtr!" )
+                  lExit := .T.
+               ENDIF
+               EXIT
+
+
+            CASE "cardaz"
+               ?? say_iznos( nUCarDaz )
+               hTrosakSet[ "cardaz_last_2" ] := hTrosakSet[ "cardaz_last" ]
+               hTrosakSet[ "cardaz_last" ] := nUCarDaz
+               IF nSetStep == NIL .AND. Round( hTrosakSet[ "cardaz" ] - nUCarDaz, 2 ) == 0
+                  MsgBeep( "HIT cardaz!" )
+                  lExit := .T.
+               ENDIF
+               EXIT
+
+            ENDSWITCH
+
+
+            IF lExit
+               EXIT
             ENDIF
-            my_rlock()
-            Gather()
-            my_unlock()
-            SKIP
-         ENDDO
+
+         NEXT
+         BoxC()
+
+         IF !Empty( cSet ) .AND. lExit // prodadjen step, promijeni tabelu
+            IF nSet > 1 .AND. nSetStep == NIL // nije bio poziv sa zadanim stepom
+               kalk_raspored_troskova( lSilent, hTrosakSet, cSet, hTrosakSet[ cSet + "_step" ] )
+            ENDIF
+         ENDIF
+
       ENDIF // cIdVd $ 10
+
 
       IF cIdVd $ "11#12#13"
          GO nPrviRec
@@ -460,4 +617,82 @@ FUNCTION kalk_raspored_troskova( fSilent )
 
    GO TOP
 
+
+   IF cOdgovor == "X" .AND. !lSilent .AND. cIdVd == "10" .AND. hTrosakSet == NIL
+
+      hTrosakSet := raspored_procent_tr( cTipPrevoz, nUPrevoz, cTipCarDaz, nUCarDaz, ;
+         cTipBankTr, nUBankTr, cTipSpedTr, nUSpedTr, cTipZavTr, nUZavTr )
+
+
+      IF hb_HHasKey( hTrosakSet, "prevoz" ) .AND. ( hTrosakSet[ "prevoz" ] - hTrosakSet[ "prevoz_0" ]  <> 0 )
+         kalk_raspored_troskova( lSilent, hTrosakSet, "prevoz" )
+      ENDIF
+
+      IF hb_HHasKey( hTrosakSet, "cardaz" ) .AND. ( hTrosakSet[ "cardaz" ] - hTrosakSet[ "cardaz_0" ]  <> 0 )
+         kalk_raspored_troskova( lSilent, hTrosakSet, "cardaz" )
+      ENDIF
+
+      IF hb_HHasKey( hTrosakSet, "banktr" ) .AND. ( hTrosakSet[ "banktr" ] - hTrosakSet[ "banktr_0" ]  <> 0 )
+         kalk_raspored_troskova( lSilent, hTrosakSet, "banktr" )
+      ENDIF
+
+      IF hb_HHasKey( hTrosakSet, "zavtr" ) .AND. ( hTrosakSet[ "zavtr" ] - hTrosakSet[ "zavtr_0" ]  <> 0 )
+         kalk_raspored_troskova( lSilent, hTrosakSet, "zavtr" )
+      ENDIF
+
+
+   ENDIF
+
    RETURN .T.
+   
+
+
+FUNCTION raspored_procent_tr( cTipPrevoz, nIznosPrevoz, cTipCarDaz, nIznosCarDaz, ;
+      cTipBankTr, nIznosBankTr, cTipSpedTr, nIznosSpedTr, cTipZavTr, nIznosZavTr )
+
+   LOCAL hRet := hb_Hash(), GetList := {}, cKey
+
+   Box( "##Postavi % trosak", 7, 60 )
+
+   IF cTipPrevoz == "%"  .AND. Round(  nIznosPrevoz, 3 ) >  0
+      hRet[ "prevoz_0" ] := nIznosPrevoz
+      hRet[ "prevoz" ] := nIznosPrevoz
+      @ m_x + 1, m_y + 2 SAY  " [T1] : " + say_iznos( nIznosPrevoz ) GET hRet[ "prevoz" ]
+
+   ENDIF
+
+   IF cTipBankTr == "%" .AND. Round(  nIznosBankTr, 3 ) >  0
+      hRet[ "banktr_0" ] := nIznosBankTr
+      hRet[ "banktr" ] := nIznosBankTr
+      @ m_x + 2, m_y + 2 SAY  " [T2]  " + say_iznos( nIznosBankTr ) GET hRet[ "banktr" ]
+   ENDIF
+
+   IF cTipSpedTr == "%" .AND. Round(  nIznosSpedTr, 3 ) >  0
+      hRet[ "spedtr_0" ] := nIznosSpedTr
+      hRet[ "spedtr" ] := nIznosSpedTr
+      @ m_x + 3, m_y + 2 SAY  " [T3]  " + say_iznos( nIznosSpedTr ) GET hRet[ "spedtr" ]
+   ENDIF
+
+   IF cTipCarDaz == "%" .AND. Round(  nIznosCarDaz, 3 ) >  0
+      hRet[ "cardaz_0" ] := nIznosCarDaz
+      hRet[ "cardaz" ] := nIznosCarDaz
+      @ m_x + 4, m_y + 2 SAY  " [T4]  " + say_iznos( nIznosCarDaz ) GET hRet[ "cardaz" ]
+   ENDIF
+
+   IF cTipZavTr == "%" .AND. Round(  nIznosZavTr, 3 ) >  0
+      hRet[ "zavtr_0" ] := nIznosCarDaz
+      hRet[ "zavtr" ] := nIznosZavTr
+      @ m_x + 5, m_y + 2 SAY  " [T5]  " + say_iznos( nIznosZavTr ) GET hRet[ "zavtr" ]
+   ENDIF
+
+   READ
+
+   BoxC()
+
+   IF LastKey() == K_ESC
+      FOR EACH cKey in hRet:Keys
+         hRet[ cKey ] := 0
+      NEXT
+   ENDIF
+
+   RETURN hRet

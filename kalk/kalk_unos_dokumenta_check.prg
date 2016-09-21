@@ -13,6 +13,26 @@
 #include "f18.ch"
 
 
+
+
+FUNCTION datum_not_empty_upozori_godina( dDate, cMsg )
+
+   hb_default( @cMsg, "DATUM" )
+
+
+   IF Empty( dDate )
+      MsgBeep( cMsg + ": Obavezno unijeti datum !" )
+      RETURN .F.
+   ENDIF
+
+   IF Year( dDate ) != Year( Date() )
+      MsgBeep( "UPOZORENJE:" + cMsg + ": datum <> tekuća godina !?" )
+      RETURN .T.
+
+   ENDIF
+
+   RETURN .T.
+
 FUNCTION o_kalk_tabele_izvj()
 
    O_SIFK
@@ -748,7 +768,6 @@ FUNCTION UkupnoKolM( nTotalUlaz, nTotalIzlaz )
 
 FUNCTION kalk_pozicioniraj_roba_tarifa_by_kalk_fields()
 
-
    LOCAL nArea
 
    nArea := Select()
@@ -828,8 +847,8 @@ FUNCTION UzmiIzP( cSta )
 
 FUNCTION kalk_gen_11_iz_10( cBrDok )
 
-
    LOCAL nArr
+
    nArr := Select()
    O_TARIFA
    o_koncij()

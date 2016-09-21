@@ -23,9 +23,10 @@ FUNCTION kalk_get_1_95()
    ENDIF
 
    IF nRbr == 1 .OR. !kalk_is_novi_dokument() .OR. gMagacin == "1"
-      @  m_x + 5, m_y + 2   SAY "Dokument Broj:" GET _BrFaktP
+      @  m_x + 5, m_y + 2   SAY "Dokument Broj:" GET _BrFaktP VALID !Empty( _BrFaktP )
       @  m_x + 5, Col() + 1 SAY "Datum:" GET _DatFaktP   ;
-         valid {|| .T. }
+        VALID { ||  datum_not_empty_upozori_godina( _datFaktP, "Datum fakture" ) }
+
 
       _IdZaduz := ""
       @ m_x + 8, m_y + 2 SAY8 "Magacinski konto razdužuje"  GET _IdKonto2 ;

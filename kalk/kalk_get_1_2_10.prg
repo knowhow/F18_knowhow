@@ -46,9 +46,8 @@ FUNCTION kalk_get_1_10()
          valid {|| Empty( _IdPartner ) .OR. P_Firma( @_IdPartner ), ispisi_naziv_sifre( F_PARTN, _idpartner, _kord_x - 1, 22, 20 ), ;
          ino_dobavljac_set_konverzija_valute( _idpartner, @s_cKonverzijaValuteDN ) }
 
-      @ m_x + _x, 50 SAY "Broj fakture:" GET _BrFaktP
-
-      @ m_x + _x, Col() + 1 SAY "Datum:" GET _DatFaktP
+      @ m_x + _x, 50 SAY "Broj fakture:" GET _BrFaktP VALID !Empty ( _brFaktP )
+      @ m_x + _x, Col() + 1 SAY "Datum:" GET _DatFaktP VALID {||  datum_not_empty_upozori_godina( _datFaktP, "Datum fakture" ) }
 
 
       ++ _x

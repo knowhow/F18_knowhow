@@ -1110,7 +1110,6 @@ FUNCTION kalk_unos_2()
 
 
 
-
 FUNCTION kalk_header_get1( lNoviDokument )
 
    IF lNoviDokument
@@ -1132,20 +1131,24 @@ FUNCTION kalk_header_get1( lNoviDokument )
    @  m_x + 2, Col() SAY "Vrsta:" GET _idvd VALID P_TipDok( @_idvd, 2, 25 ) PICT "@!"
 
    READ
+
    ESC_RETURN 0
 
 
    IF lNoviDokument .AND. gBrojacKalkulacija == "D" .AND. ( _idfirma <> idfirma .OR. _idvd <> idvd )
 
-      _brDok := get_kalk_brdok( _idfirma, _idvd, _idkonto, _idkonto2 )
+      _brDok := get_kalk_brdok( _idfirma, _idvd, @_idkonto, @_idkonto2 )
 
       SELECT kalk_pripr
 
    ENDIF
 
-   @ m_x + 2, m_y + 40  SAY "Broj:" GET _brdok valid {|| !kalk_dokument_postoji( _idfirma, _idvd, _brdok ) }
+   @ m_x + 2, m_y + 40  SAY "Broj:" GET _brdok ;
+      valid {|| !kalk_dokument_postoji( _idfirma, _idvd, _brdok ) }
 
-   @ m_x + 2, Col() + 2 SAY "Datum:" GET _datdok
+   @ m_x + 2, Col() + 2 SAY "Datum:" GET _datdok ;
+      VALID {||  datum_not_empty_upozori_godina( _datDok, "Datum KALK" ) }
+
 
    @ m_x + 3, m_y + 2  SAY "Redni broj stavke:" GET nRBr PICT '9999' ;
       VALID {|| valid_kalk_rbr_stavke( _idvd ) }
@@ -1242,7 +1245,6 @@ STATIC FUNCTION kalk_izmjeni_sve_stavke_dokumenta( old_dok, new_dok )
       _rec[ "brdok" ] := _tek_dok[ "brdok" ]
 
       dbf_update_rec( _rec )
-
       GO ( _t_rec )
 
    ENDDO
@@ -1253,7 +1255,6 @@ STATIC FUNCTION kalk_izmjeni_sve_stavke_dokumenta( old_dok, new_dok )
    GO TOP
 
    RETURN .T.
-
 
 
 
@@ -1317,6 +1318,7 @@ FUNCTION kalk_zagl_firma()
    ?
 
    RETURN .T.
+
 
 
 STATIC FUNCTION NazProdObj()

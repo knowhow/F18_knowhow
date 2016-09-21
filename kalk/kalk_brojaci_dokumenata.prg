@@ -478,14 +478,14 @@ FUNCTION get_kalk_brdok( _idfirma, _idvd, _idkonto, _idkonto2 )
 
    IF is_brojac_po_kontima()
 
-      Box( "#Glavni konto", 3, 70 )
+      Box( "#Glavni konto za brojač", 3, 70 )
       IF _idvd $ "10#16#18#IM#"
          @ m_x + 2, m_y + 2 SAY8 "Magacinski konto: " GET _idKonto VALID P_Konto( @_idKonto ) PICT "@!"
          READ
 
          cIdKonto := _idKonto
       ELSE
-         @ m_x + 2, m_y + 2 SAY8 "Prodavniki konto: " GET _idKonto2 VALID P_Konto( @_idKonto2 ) PICT "@!"
+         @ m_x + 2, m_y + 2 SAY8 "Prodavnički konto: " GET _idKonto2 VALID P_Konto( @_idKonto2 ) PICT "@!"
          READ
          cIdKonto := _idKonto2
       ENDIF

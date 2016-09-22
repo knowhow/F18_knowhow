@@ -316,7 +316,7 @@ FUNCTION leg_Get2_PR()
    @ m_x + 5, m_y + 40 GET _CarDaz PICTURE PicDEM
 
    @ m_x + 6, m_y + 2 SAY cRNT5 + cSPom GET _TZavTr VALID _TZavTr $ "%AUR" PICTURE "@!"
-   @ m_x + 6, m_y + 40 GET _ZavTr PICTURE PicDEM VALID {|| NabCj(), .T. }
+   @ m_x + 6, m_y + 40 GET _ZavTr PICTURE PicDEM VALID {|| kalk_nabcj(), .T. }
 
    @ m_x + 8, m_y + 2 SAY "CIJENA KOST.  "
    @ m_x + 8, m_y + 50 GET _NC PICTURE PicDEM

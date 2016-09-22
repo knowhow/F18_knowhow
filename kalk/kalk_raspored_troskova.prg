@@ -11,114 +11,9 @@
 
 #include "f18.ch"
 
-MEMVAR _Prevoz, _BankTr
+MEMVAR _Prevoz, _BankTr, _ZavTr, _CarDaz, _SpedTr
+MEMVAR _fcj, _rabat, _kolicina
 
-
-/*
- *     Proracun iznosa troskova pri unosu u kalk_pripremi
- */
-
-FUNCTION kalk_set_troskovi_priv_vars_ntrosakx_nmarzax()
-
-   LOCAL nStvarnaKolicina := 0
-
-   IF gKalo == "1"
-      nStvarnaKolicina := Kolicina - GKolicina - GKolicin2
-   ELSE
-      nStvarnaKolicina := Kolicina
-   ENDIF
-
-
-   IF field->TPrevoz == "%"
-      nPrevoz := field->Prevoz / 100 * field->FCj2
-   ELSEIF field->TPrevoz == "A"
-      nPrevoz := field->Prevoz
-   ELSEIF field->TPrevoz == "U"
-      IF nStvarnaKolicina <> 0
-         nPrevoz := field->Prevoz / nStvarnaKolicina
-      ELSE
-         nPrevoz := 0
-      ENDIF
-   ELSE
-      nPrevoz := 0
-   ENDIF
-
-   IF field->TCarDaz == "%"
-      nCarDaz := field->CarDaz / 100 * field->FCj2
-   ELSEIF field->TCarDaz == "A"
-      nCarDaz := field->CarDaz
-   ELSEIF field->TCarDaz == "U"
-      IF nStvarnaKolicina <> 0
-         nCarDaz := field->CarDaz / nStvarnaKolicina
-      ELSE
-         nCarDaz := 0
-      ENDIF
-   ELSE
-      nCarDaz := 0
-   ENDIF
-
-   IF field->TZavTr == "%"
-      nZavTr := field->ZavTr / 100 * field->FCj2
-   ELSEIF field->TZavTr == "A"
-      nZavTr := field->ZavTr
-   ELSEIF field->TZavTr == "U"
-      IF nStvarnaKolicina <> 0
-         nZavTr := field->ZavTr / nStvarnaKolicina
-      ELSE
-         nZavTr := 0
-      ENDIF
-   ELSE
-      nZavTr := 0
-   ENDIF
-
-   IF field->TBankTr == "%"
-      nBankTr := field->BankTr / 100 * field->FCj2
-   ELSEIF field->TBankTr == "A"
-      nBankTr := field->BankTr
-   ELSEIF field->TBankTr == "U"
-      IF nStvarnaKolicina <> 0
-         nBankTr := field->BankTr / nStvarnaKolicina
-      ELSE
-         nBankTr := 0
-      ENDIF
-   ELSE
-      nBankTr := 0
-   ENDIF
-
-   IF field->TSpedTr == "%"
-      nSpedTr := field->SpedTr / 100 * field->FCj2
-   ELSEIF field->TSpedTr == "A"
-      nSpedTr := field->SpedTr
-   ELSEIF field->TSpedTr == "U"
-      IF nStvarnaKolicina <> 0
-         nSpedTr := field->SpedTr / nStvarnaKolicina
-      ELSE
-         nSpedTr := 0
-      ENDIF
-   ELSE
-      nSpedTr := 0
-   ENDIF
-
-   IF field->IdVD $ "14#94#15"   // izlaz po vp
-      nMarza := field->VPC * ( 1 -field->Rabatv / 100 ) -field->NC
-
-   ELSEIF field->idvd $ "11#12#13"
-      nMarza := field->VPC - field->FCJ
-   ELSE
-      nMarza := field->VPC - field->NC
-   ENDIF
-
-   IF ( field->idvd $ "11#12#13" )
-      nMarza2 := field->MPC - field->VPC - nPrevoz
-
-   ELSEIF ( ( field->idvd $ "41#42#43#81" ) )
-      nMarza2 := field->MPC - field->NC
-
-   ELSE
-      nMarza2 := field->MPC - field->VPC
-   ENDIF
-
-   RETURN .T.
 
 
 FUNCTION kalk_raspored_troskova( lSilent, hTrosakSet, cSet, nSetStep )
@@ -136,6 +31,7 @@ FUNCTION kalk_raspored_troskova( lSilent, hTrosakSet, cSet, nSetStep )
    LOCAL nSet, nSetEnd, lExit := .F. // end for next petlje
    LOCAL nProcKorak := 0.01
    LOCAL cOdgovor := "N"
+   LOCAL nDodaj, nFV, nStavkaObracunato, nDeltaStvarnoObracunato, nUkupnoObracunato, nNovaStopa
 
    IF lSilent == NIL
       lSilent := .F.
@@ -151,6 +47,9 @@ FUNCTION kalk_raspored_troskova( lSilent, hTrosakSet, cSet, nSetStep )
       nSetEnd := 1
       cSet := ""
    ELSE
+      IF cSet != "cardaz"
+        MsgBeep( "Implementiran ALG-2 samo za cardaz!")
+      ENDIF
 
       hTrosakSet[ cSet + "_last"   ] := hTrosakSet[ cSet + "_0" ]
       hTrosakSet[ cSet + "_last_2" ] := hTrosakSet[ cSet + "_0" ]
@@ -233,6 +132,7 @@ FUNCTION kalk_raspored_troskova( lSilent, hTrosakSet, cSet, nSetStep )
       IF cIdVd $ "10#16#81#80#RN"  // zaduzenje magacina,prodavnice
 
          Box(, 3, 60, iif( Empty( cSet ), .T., .F. ) )
+         lExit := .F.
          FOR nSet := 1 TO nSetEnd
             GO nPrviRec
 
@@ -288,14 +188,15 @@ FUNCTION kalk_raspored_troskova( lSilent, hTrosakSet, cSet, nSetStep )
                      hTrosakSet[ cSet + "_step" ] -= nProcKorak
                   ENDIF
                ENDIF
-            ENDIF
 
+            ENDIF
 
             @ m_x + 1, m_y + 2 SAY "Step set " + cSet + " step: " + AllTrim( say_iznos( nSet ) )
 
             IF !Empty( cSet )
                ??  " / " +  AllTrim( say_iznos( hTrosakSet[ cSet + "_step" ] ) )
             ENDIF
+
 
             DO WHILE !Eof() .AND. cIdFirma == field->idfirma .AND. cIdVd == field->idvd .AND. cBrDok == field->BrDok
 
@@ -361,10 +262,28 @@ FUNCTION kalk_raspored_troskova( lSilent, hTrosakSet, cSet, nSetStep )
                   _TCarDaz := "U"
 
                ELSEIF cTipCarDaz == "%"
+                  /*
                   IF cSet == "cardaz" .AND. _CarDaz > 0
                      _CarDaz += hTrosakSet[ cSet + "_step" ]
                   ENDIF
                   nUCarDaz += _fcj * ( 1 - _Rabat / 100 ) * _kolicina * _Cardaz / 100
+                  */
+
+                  // dodaj=iznos_carine_stavka_0/ukupno_obracunata_carina_0*ukupno_razlika_carina
+                  nFV := _fcj * ( 1 - _Rabat / 100 ) * _kolicina
+                  nStavkaObracunato := nFV * _Cardaz / 100
+                  IF cSet == "cardaz" .AND. _CarDaz > 0
+                     nDeltaStvarnoObracunato := hTrosakSet[ cSet ] - hTrosakSet[ cSet + "_0" ]
+                     nUkupnoObracunato :=  hTrosakSet[ cSet + "_0" ]
+                     nDodaj := nStavkaObracunato / nUkupnoObracunato * nDeltaStvarnoObracunato
+                     // nova_stopa = (iznos_carine_stavka_0+dodaj)/fakt_vrijednost
+                     nNovaStopa := ( nStavkaObracunato + nDodaj ) / nFV * 100
+                     _CarDaz := nNovaStopa
+                     nUCarDaz += nFV * nNovaStopa / 100
+                  ELSE
+                     nUCarDaz += nStavkaObracunato
+                  ENDIF
+
                ENDIF
 
                IF cTipBankTr  $ "RT" // troskovi 3
@@ -467,10 +386,10 @@ FUNCTION kalk_raspored_troskova( lSilent, hTrosakSet, cSet, nSetStep )
                SELECT kalk_pripr
                IF _idvd == "RN"
                   IF Val( _rbr ) < 900
-                     NabCj()
+                     kalk_nabcj()
                   ENDIF
                ELSE
-                  NabCj()
+                  kalk_nabcj()
                ENDIF
 
                IF _idvd == "16"
@@ -566,9 +485,10 @@ FUNCTION kalk_raspored_troskova( lSilent, hTrosakSet, cSet, nSetStep )
          NEXT
          BoxC()
 
-         IF !Empty( cSet ) .AND. lExit // prodadjen step, promijeni tabelu
-            IF nSet > 1 .AND. nSetStep == NIL // nije bio poziv sa zadanim stepom
-               kalk_raspored_troskova( lSilent, hTrosakSet, cSet, hTrosakSet[ cSet + "_step" ] )
+         IF !Empty( cSet ) .AND. lExit // pronadjen step, promijeni tabelu
+         altd()
+            IF nSetEnd > 1 .AND. nSetStep == NIL // nije bio poziv sa zadanim stepom
+               RETURN kalk_raspored_troskova( lSilent, hTrosakSet, cSet, hTrosakSet[ cSet + "_step" ] )
             ENDIF
          ENDIF
 
@@ -625,26 +545,26 @@ FUNCTION kalk_raspored_troskova( lSilent, hTrosakSet, cSet, nSetStep )
 
 
       IF hb_HHasKey( hTrosakSet, "prevoz" ) .AND. ( hTrosakSet[ "prevoz" ] - hTrosakSet[ "prevoz_0" ]  <> 0 )
-         kalk_raspored_troskova( lSilent, hTrosakSet, "prevoz" )
+         RETURN kalk_raspored_troskova( lSilent, hTrosakSet, "prevoz" )
       ENDIF
 
       IF hb_HHasKey( hTrosakSet, "cardaz" ) .AND. ( hTrosakSet[ "cardaz" ] - hTrosakSet[ "cardaz_0" ]  <> 0 )
-         kalk_raspored_troskova( lSilent, hTrosakSet, "cardaz" )
+         RETURN kalk_raspored_troskova( lSilent, hTrosakSet, "cardaz" )
       ENDIF
 
       IF hb_HHasKey( hTrosakSet, "banktr" ) .AND. ( hTrosakSet[ "banktr" ] - hTrosakSet[ "banktr_0" ]  <> 0 )
-         kalk_raspored_troskova( lSilent, hTrosakSet, "banktr" )
+         RETURN kalk_raspored_troskova( lSilent, hTrosakSet, "banktr" )
       ENDIF
 
       IF hb_HHasKey( hTrosakSet, "zavtr" ) .AND. ( hTrosakSet[ "zavtr" ] - hTrosakSet[ "zavtr_0" ]  <> 0 )
-         kalk_raspored_troskova( lSilent, hTrosakSet, "zavtr" )
+         RETURN kalk_raspored_troskova( lSilent, hTrosakSet, "zavtr" )
       ENDIF
 
 
    ENDIF
 
    RETURN .T.
-   
+
 
 
 FUNCTION raspored_procent_tr( cTipPrevoz, nIznosPrevoz, cTipCarDaz, nIznosCarDaz, ;
@@ -696,3 +616,111 @@ FUNCTION raspored_procent_tr( cTipPrevoz, nIznosPrevoz, cTipCarDaz, nIznosCarDaz
    ENDIF
 
    RETURN hRet
+
+
+
+/*
+ *     Proracun iznosa troskova pri unosu u kalk_pripremi
+*/
+
+FUNCTION kalk_set_troskovi_priv_vars_ntrosakx_nmarzax()
+
+   LOCAL nStvarnaKolicina := 0
+
+   IF gKalo == "1"
+      nStvarnaKolicina := field->Kolicina - field->GKolicina - field->GKolicin2
+   ELSE
+      nStvarnaKolicina := field->Kolicina
+   ENDIF
+
+
+   IF field->TPrevoz == "%"
+      nPrevoz := field->Prevoz / 100 * field->FCj2
+   ELSEIF field->TPrevoz == "A"
+      nPrevoz := field->Prevoz
+   ELSEIF field->TPrevoz == "U"
+      IF nStvarnaKolicina <> 0
+         nPrevoz := field->Prevoz / nStvarnaKolicina
+      ELSE
+         nPrevoz := 0
+      ENDIF
+   ELSE
+      nPrevoz := 0
+   ENDIF
+
+   IF field->TCarDaz == "%"
+      nCarDaz := field->CarDaz / 100 * field->FCj2
+   ELSEIF field->TCarDaz == "A"
+      nCarDaz := field->CarDaz
+   ELSEIF field->TCarDaz == "U"
+      IF nStvarnaKolicina <> 0
+         nCarDaz := field->CarDaz / nStvarnaKolicina
+      ELSE
+         nCarDaz := 0
+      ENDIF
+   ELSE
+      nCarDaz := 0
+   ENDIF
+
+   IF field->TZavTr == "%"
+      nZavTr := field->ZavTr / 100 * field->FCj2
+   ELSEIF field->TZavTr == "A"
+      nZavTr := field->ZavTr
+   ELSEIF field->TZavTr == "U"
+      IF nStvarnaKolicina <> 0
+         nZavTr := field->ZavTr / nStvarnaKolicina
+      ELSE
+         nZavTr := 0
+      ENDIF
+   ELSE
+      nZavTr := 0
+   ENDIF
+
+   IF field->TBankTr == "%"
+      nBankTr := field->BankTr / 100 * field->FCj2
+   ELSEIF field->TBankTr == "A"
+      nBankTr := field->BankTr
+   ELSEIF field->TBankTr == "U"
+      IF nStvarnaKolicina <> 0
+         nBankTr := field->BankTr / nStvarnaKolicina
+      ELSE
+         nBankTr := 0
+      ENDIF
+   ELSE
+      nBankTr := 0
+   ENDIF
+
+   IF field->TSpedTr == "%"
+      nSpedTr := field->SpedTr / 100 * field->FCj2
+   ELSEIF field->TSpedTr == "A"
+      nSpedTr := field->SpedTr
+   ELSEIF field->TSpedTr == "U"
+      IF nStvarnaKolicina <> 0
+         nSpedTr := field->SpedTr / nStvarnaKolicina
+      ELSE
+         nSpedTr := 0
+      ENDIF
+   ELSE
+      nSpedTr := 0
+   ENDIF
+
+   IF field->IdVD $ "14#94#15"   // izlaz po vp
+      nMarza := field->VPC * ( 1 -field->Rabatv / 100 ) -field->NC
+
+   ELSEIF field->idvd $ "11#12#13"
+      nMarza := field->VPC - field->FCJ
+   ELSE
+      nMarza := field->VPC - field->NC
+   ENDIF
+
+   IF ( field->idvd $ "11#12#13" )
+      nMarza2 := field->MPC - field->VPC - nPrevoz
+
+   ELSEIF ( ( field->idvd $ "41#42#43#81" ) )
+      nMarza2 := field->MPC - field->NC
+
+   ELSE
+      nMarza2 := field->MPC - field->VPC
+   ENDIF
+
+   RETURN .T.

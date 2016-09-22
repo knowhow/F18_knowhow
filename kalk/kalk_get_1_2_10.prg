@@ -272,7 +272,7 @@ STATIC FUNCTION kalk_get_2_10( x_kord )
 
       ++ _x
       @ m_x + _x, m_y + _unos_left + 10 SAY c10T5 + cSPom GET _TZavTr VALID _TZavTr $ "%AURT" PICTURE "@!"
-      @ m_x + _x, Col() + 2 GET _ZavTr PICT PicDEM VALID {|| NabCj(), .T. }
+      @ m_x + _x, Col() + 2 GET _ZavTr PICT PicDEM VALID {|| kalk_nabcj(), .T. }
 
       _x += 2
 

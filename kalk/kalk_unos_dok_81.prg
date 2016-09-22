@@ -341,7 +341,7 @@ STATIC FUNCTION obracun_kalkulacija_tip_81_pdv( x_kord )
       ++ _x
       @ m_x + _x, m_y + _unos_left SAY c10T5 + cSPom GET _TZavTr VALID _TZavTr $ "%AUR" PICT "@!"
       @ m_x + _x, Col() + 2 GET _ZavTr PICT PicDEM ;
-         VALID {|| NabCj(), .T. }
+         VALID {|| kalk_nabcj(), .T. }
 
       ++ _x
       ++ _x

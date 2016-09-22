@@ -420,7 +420,7 @@ FUNCTION UzmiVPCSif( cMKonto, lKoncij )
  *     Proracun nabavne cijene za ulaznu kalkulaciju 10
  */
 
-FUNCTION NabCj()
+FUNCTION kalk_nabcj()
 
 
    LOCAL Skol

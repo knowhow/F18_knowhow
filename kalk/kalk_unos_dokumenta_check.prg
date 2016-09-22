@@ -607,7 +607,7 @@ FUNCTION ObracunPorezaUvoz()
             _&cPom := skol * _nc * 0.1
          ENDIF
 
-         NabCj()
+         kalk_nabcj()
          my_rlock()
          Gather()
          my_unlock()

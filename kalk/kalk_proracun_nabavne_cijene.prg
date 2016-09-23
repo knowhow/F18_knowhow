@@ -73,7 +73,6 @@ FUNCTION korekcija_nabavne_cijene_sa_zadnjom_ulaznom( nKolicina, nZadnjiUlazKol,
    LOCAL nX
    LOCAL GetList := {}
 
-   AltD()
    hb_default( @lSilent, .F. )
    IF Round( nSrednjaNabavnaCijena, 4 ) == 0 .AND. Round( nZadnjaUlaznaNC, 4 ) > 0
       nSrednjaNabavnaCijena := nZadnjaUlaznaNC

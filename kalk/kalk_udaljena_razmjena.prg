@@ -569,7 +569,7 @@ STATIC FUNCTION kalk_import_podataka( hParams, a_details )
    lZamijenitiSifre := hParams[ "zamjeniti_sifre" ]
    _iz_fmk := hParams[ "import_iz_fmk" ]
 
-   AltD()
+
    IF _iz_fmk == "D"
       _fmk_import := .T.
    ENDIF
@@ -775,7 +775,7 @@ STATIC FUNCTION kalk_import_podataka( hParams, a_details )
 
    ENDDO
 
-   AltD()
+
    IF _cnt >= 0 .AND. lOk
 
       @ m_x + 3, m_y + 2 SAY PadR( "", 69 )

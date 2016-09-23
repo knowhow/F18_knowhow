@@ -486,7 +486,7 @@ FUNCTION kalk_raspored_troskova( lSilent, hTrosakSet, cSet, nSetStep )
          BoxC()
 
          IF !Empty( cSet ) .AND. lExit // pronadjen step, promijeni tabelu
-         altd()
+
             IF nSetEnd > 1 .AND. nSetStep == NIL // nije bio poziv sa zadanim stepom
                RETURN kalk_raspored_troskova( lSilent, hTrosakSet, cSet, hTrosakSet[ cSet + "_step" ] )
             ENDIF

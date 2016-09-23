@@ -2221,6 +2221,8 @@ STATIC FUNCTION provjeri_stanje_kalk_pripreme( cIdVd )
    CASE cIdVD == "95"
       RETURN provjeri_vezne_dokumente_za_95( cPrviDok )
 
+   CASE cIdVD == "96"
+      RETURN provjeri_vezne_dokumente_za_96( cPrviDok )
    ENDCASE
 
    RETURN 0
@@ -2275,6 +2277,16 @@ STATIC FUNCTION provjeri_vezne_dokumente_za_95( cVezniDok )
    RETURN 2
 
 
+   /*
+    *     Provjeri vezne dokumente za tip dokumenta 96
+    */
+STATIC FUNCTION provjeri_vezne_dokumente_za_96( cVezniDok )
+
+   IF cVezniDok $ "16"
+      RETURN 1
+   ENDIF
+
+   RETURN 2
 
 /*
  *     Popunjavanje polja sifradob prema kljucu

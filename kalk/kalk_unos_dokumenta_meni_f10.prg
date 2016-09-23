@@ -396,7 +396,6 @@ FUNCTION kalk_pripr_spoji_duple_artikle()
    MsgO( "Prolaz kroz kalk_pripremu ..." )
    DO WHILE !Eof()
 
-      AltD()
       hRec := dbf_get_rec()
       nPozicija := RecNo()
       cIdRoba := field->idroba

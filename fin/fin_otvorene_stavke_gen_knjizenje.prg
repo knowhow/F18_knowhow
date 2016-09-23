@@ -320,13 +320,13 @@ FUNCTION knjizenje_gen_otvorene_stavke()
 
    ImeKol := {}
 
-   AAdd( ImeKol, { "Br.Veze",     {|| BrDok }   } )
-   AAdd( ImeKol, { "Dat.Dok.",   {|| DatDok }  } )
-   AAdd( ImeKol, { "Dat.Val.",   {|| DatVal }  } )
-   AAdd( ImeKol, { "Dat.ZPR.",   {|| DatZPR }   } )
+   AAdd( ImeKol, { "Br.Veze",     {|| field->BrDok }   } )
+   AAdd( ImeKol, { "Dat.Dok.",   {|| field->DatDok }  } )
+   AAdd( ImeKol, { "Dat.Val.",   {|| field->DatVal }  } )
+   AAdd( ImeKol, { "Dat.ZPR.",   {|| field->DatZPR }   } )
    AAdd( ImeKol, { PadR( "Duguje " + AllTrim( ValDomaca() ), 14 ), {|| Str( ( iif( D_P == "1", iznosbhd, 0 ) ), 14, 2 ) }     } )
    AAdd( ImeKol, { PadR( "Potraz." + AllTrim( ValDomaca() ), 14 ), {|| Str( ( iif( D_P == "2", iznosbhd, 0 ) ), 14, 2 ) }     } )
-   AAdd( ImeKol, { PadR( "Uplaceno", 14 ), {|| Str( uplaceno, 14, 2 ) }     } )
+   AAdd( ImeKol, { PadR( "Uplaceno", 14 ), {|| Str( field->uplaceno, 14, 2 ) }     } )
 
    Kol := {}
 
@@ -364,7 +364,6 @@ FUNCTION knjizenje_gen_otvorene_stavke()
    lMarker3 := .F.
 
    GO TOP
-
    DO WHILE !Eof()
       IF field->m2 = "3"
          lMarker3 := .T.
@@ -391,7 +390,6 @@ FUNCTION knjizenje_gen_otvorene_stavke()
             REPLACE field->m2 WITH ""
 
             SELECT fin_pripr
-
             IF lGenerisano
                APPEND BLANK
             ELSE
@@ -441,7 +439,7 @@ FUNCTION knjizenje_gen_otvorene_stavke()
             wd_p      := _D_p
             wIznosBhd := ostav->uplaceno
 
-            IF ostav->uplaceno <> ostav->iznosbhd
+            IF ostav->uplaceno <> ostav->iznosbhd  //xxxxx
                wOpis := Trim( cOpis ) + ", DIO"
             ENDIF
 

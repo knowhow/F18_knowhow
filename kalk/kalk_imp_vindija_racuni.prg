@@ -1099,7 +1099,6 @@ STATIC FUNCTION  kalk_imp_set_konto_zaduz_prodavnica_za_prod_mjesto( cPoslovnica
 
    cKonto := PadR( fetch_metric(  "kalk_imp_prod_zad_" + cPoslovnica + "_" + cIdProdajnoMjesto, NIL,  Space( 7 ) ), 7 )
 
-
    @ m_x + 3, m_y + 2 SAY8 "KALK 11 prod konto zaduzuje: " GET cKonto
 
    READ
@@ -1271,7 +1270,7 @@ STATIC FUNCTION kalk_postoji_faktura_a()
 
    LOCAL cBrFakt
    LOCAL cTDok
-   LOCAL aRet, cDok
+   LOCAL aRet, cDok, cBrOriginal
 
    // IF nRight == nil
    // nRight := 0
@@ -1639,14 +1638,17 @@ STATIC FUNCTION kalk_imp_get_konto_by_tip_pm_poslovnica( cTipDok, cIdProdajnoMje
    CASE cTipDok == "11"
       IF cTip == "R"
          cRet := kalk_imp_get_konto_za_tip_dokumenta_poslovnica( cTipDok, cTip, cPoslovnica ) // razduzuje magacin
-      ELSE
+      ELSE // zaduzuje prodavnica
          cRet := kalk_imp_get_konto_zaduz_prodavnica_za_prod_mjesto( cPoslovnica, cIdProdajnoMjesto ) // zaduzuje prodavnica
       ENDIF
 
    CASE cTipDok == "41"
       cRet := kalk_imp_get_konto_za_tip_dokumenta_poslovnica( cTipDok, cTip, cPoslovnica )
 
-   CASE cTipDok $ "95#96"
+   CASE cTipDok == "95"
+      cRet := kalk_imp_get_konto_za_tip_dokumenta_poslovnica( cTipDok, cTip, cPoslovnica )
+
+   CASE cTipDok $ "96"
       IF cTip == "R"
          cRet := kalk_imp_get_konto_za_tip_dokumenta_poslovnica( cTipDok, cTip, cPoslovnica )
       ELSE

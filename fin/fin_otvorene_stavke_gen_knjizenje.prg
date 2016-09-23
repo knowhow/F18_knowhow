@@ -122,7 +122,7 @@ STATIC FUNCTION fin_cre_open_dbf_ostav()
 
 FUNCTION knjizenje_gen_otvorene_stavke()
 
-   LOCAL fGenerisano
+   LOCAL lGenerisano
    LOCAL nNaz := 1
    LOCAL nRec := RecNo()
    LOCAL _col, _row
@@ -130,6 +130,11 @@ FUNCTION knjizenje_gen_otvorene_stavke()
    LOCAL nCnt
    LOCAL cBrDok, cOtvSt, dDatDok
    LOCAL hParams
+   LOCAL lSumirano, nZbir
+   LOCAL cPrirkto
+   LOCAL lMarker3
+   LOCAL nDug, nPot, nDug2, nPot2
+   LOCAL nUDug2, nUPot2, nUDug, nUPot
 
    lAsist := .T.
    lSumirano := .F.
@@ -170,7 +175,6 @@ FUNCTION knjizenje_gen_otvorene_stavke()
    picDEM := FormPicL( "9 " + gPicDEM, 9 )
 
    cIdKonto := _idkonto
-
    cIdFirma := Left( cIdFirma, 2 )
 
    // SELECT ( F_SUBAN )
@@ -197,18 +201,17 @@ FUNCTION knjizenje_gen_otvorene_stavke()
    nUkPotBHD := 0
 
    MsgO( "Preuzimanje podataka sa SQL servera ..." )
-   hParams := hb_hash()
+   hParams := hb_Hash()
    hParams[ "idfirma" ] := cIdFirma
    hParams[ "idkonto" ] := cIdKonto
    hParams[ "idpartner" ] := cIdPartner
    hParams[ "otvst" ] := " "
-   hParams[ "order_by"] := "IdFirma,IdKonto,IdPartner,brdok"
+   hParams[ "order_by" ] := "IdFirma,IdKonto,IdPartner,brdok"
 
    find_suban_by_konto_partner( @hParams  )
    MsgC()
 
    dDatDok := CToD( "" )
-
    cPrirkto := "1"  // priroda konta - dugovni 1, potrazni 2
 
    SELECT ( F_TRFP2 )
@@ -239,7 +242,7 @@ FUNCTION knjizenje_gen_otvorene_stavke()
    nUDug := 0
    nUPot := 0
 
-   fPrviprolaz := .T.
+   // fPrviprolaz := .T.
 
    nCnt := 0
    Box( , 1, 40 )
@@ -253,6 +256,7 @@ FUNCTION knjizenje_gen_otvorene_stavke()
       nPot2 := 0
       nDug := 0
       nPot := 0
+
 
       ++nCnt
       IF nCnt % 500 == 0
@@ -337,8 +341,8 @@ FUNCTION knjizenje_gen_otvorene_stavke()
 
    SET CURSOR ON
 
-   @ m_x + _row - 2, m_y + 1 SAY '<Enter> Izaberi/ostavi stavku'
-   @ m_x + _row - 1, m_y + 1 SAY '<F10>   Asistent'
+   @ m_x + _row - 2, m_y + 1 SAY "<Enter> Izaberi/ostavi stavku"
+   @ m_x + _row - 1, m_y + 1 SAY "<F10>   Asistent"
    @ m_x + _row,    m_y + 1 SAY ""
 
    ?? "  IZNOS Koji zatvaramo: " + iif( cDugPot == "1", "duguje", "potrazuje" ) + " " + AllTrim( Str( nIznos ) )
@@ -357,21 +361,21 @@ FUNCTION knjizenje_gen_otvorene_stavke()
 
    nNaz := Kurs( _datdok )
 
-   fM3 := .F.
+   lMarker3 := .F.
 
    GO TOP
 
    DO WHILE !Eof()
       IF field->m2 = "3"
-         fm3 := .T.
+         lMarker3 := .T.
          EXIT
       ENDIF
       SKIP
    ENDDO
 
-   fGenerisano := .F.
+   lGenerisano := .F.
 
-   IF fM3 .AND. Pitanje( "", "Izgenerisati stavke u nalogu za knjizenje ?", "D" ) == "D"
+   IF lMarker3 .AND. Pitanje( "", "Izgenerisati stavke u nalogu za knjiženje ?", "D" ) == "D"
 
       SELECT ( F_OSTAV )
       GO TOP
@@ -388,7 +392,7 @@ FUNCTION knjizenje_gen_otvorene_stavke()
 
             SELECT fin_pripr
 
-            IF fGenerisano
+            IF lGenerisano
                APPEND BLANK
             ELSE
                IF !fNovi
@@ -401,21 +405,21 @@ FUNCTION knjizenje_gen_otvorene_stavke()
                   APPEND BLANK
                ENDIF
 
-               fGenerisano := .T. // prvi put
+               lGenerisano := .T. // prvi put
 
             ENDIF
 
             Scatter( "w" )
 
-            widfirma  := cIdfirma
-            widvn     := _idvn
-            wbrnal    := _brnal
-            widtipdok := _idtipdok
-            wdATvAL   := CToD( "" )
-            wdatdok   := _datdok
-            wopis     := ""
+            wIdfirma  := cIdfirma
+            wIdvn     := _idvn
+            wBrnal    := _brnal
+            wIdtipdok := _idtipdok
+            wDatVal   := CToD( "" )
+            wDatDok   := _datdok
+            wOpis     := ""
             wIdkonto  := cIdKonto
-            widpartner := cIdPartner
+            wIdpartner := cIdPartner
             wOpis     := cOpis
             wk1       := _k1
             wk2       := _k2
@@ -442,7 +446,7 @@ FUNCTION knjizenje_gen_otvorene_stavke()
             ENDIF
 
             wBrDok    := ostav->brdok
-            wIznosdem := IIF( Round( nNaz, 4 ) == 0, 0, wiznosbhd / nNaz )
+            wIznosdem := iif( Round( nNaz, 4 ) == 0, 0, wiznosbhd / nNaz )
 
             Gather( "w" )
 
@@ -461,7 +465,7 @@ FUNCTION knjizenje_gen_otvorene_stavke()
 
    BoxC()
 
-   IF fGenerisano
+   IF lGenerisano
 
       --nRbr
 
@@ -472,8 +476,8 @@ FUNCTION knjizenje_gen_otvorene_stavke()
       IF fNovi
          my_delete()
       ELSE
-         // pa ga za svaki slucaj pohrani
-         my_rlock()
+
+         my_rlock() // pa ga za svaki slucaj pohrani
          Gather()
          my_unlock()
       ENDIF
@@ -491,7 +495,7 @@ FUNCTION knjizenje_gen_otvorene_stavke()
    SELECT ( F_FIN_PRIPR )
    my_unlock()
 
-   IF !fGenerisano
+   IF !lGenerisano
       IF !Used()
          o_fin_edit()
          SELECT ( F_FIN_PRIPR )

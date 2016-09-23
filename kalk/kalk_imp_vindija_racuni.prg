@@ -81,6 +81,7 @@ STATIC FUNCTION kalk_auto_import_setup()
 
    LOCAL nX
    LOCAL GetList := {}
+   LOCAL cAImpRKonto
 
    cAImpRKonto := PadR( kalk_auto_import_podataka_konto(), 7 )
 
@@ -198,10 +199,10 @@ FUNCTION kalk_auto_import_racuni()
    RETURN .T.
 
 
-
 /*
  *     Vraca filter za naziv dokumenta u zavisnosti sta je odabrano VP ili MP
  */
+
 STATIC FUNCTION GetImpFilter()
 
    LOCAL cVPMP := "V", cRet
@@ -425,56 +426,57 @@ STATIC FUNCTION set_adbf_roba( aDbf )
 
 
 /*
- *     Setovanje pravila upisa zapisa u temp tabelu
+ *   Setovanje pravila upisa zapisa u temp tabelu
  *   param: aRule - matrica pravila
  */
 STATIC FUNCTION kalk_imp_set_rule_dok( aRule )
 
-   // idfirma
+   // 1- idfirma
    AAdd( aRule, { "SUBSTR(cVar, 1, 2)" } )
-   // idtipdok
+   // 2-idtipdok
    AAdd( aRule, { "SUBSTR(cVar, 4, 2)" } )
-   // brdok
+   // 3-brdok
    AAdd( aRule, { "SUBSTR(cVar, 7, 8)" } )
-   // datdok
+   // 4-datdok
    AAdd( aRule, { "CTOD(SUBSTR(cVar, 16, 10))" } )
-   // idpartner
+   // 5-idpartner
    AAdd( aRule, { "SUBSTR(cVar, 27, 6)" } )
-   // id pm
+   // 6-id pm
    AAdd( aRule, { "SUBSTR(cVar, 34, 3)" } )
-   // dindem
+   // 7-dindem
    AAdd( aRule, { "SUBSTR(cVar, 38, 3)" } )
-   // zaokr
+   // 8-zaokr
    AAdd( aRule, { "VAL(SUBSTR(cVar, 42, 1))" } )
-   // rbr
+   // 9-rbr
    AAdd( aRule, { "STR(VAL(SUBSTR(cVar, 44, 3)),3)" } )
-   // idroba
+   // 10-idroba
    AAdd( aRule, { "ALLTRIM(SUBSTR(cVar, 48, 5))" } )
-   // kolicina
+   // 11-kolicina
    AAdd( aRule, { "VAL(SUBSTR(cVar, 54, 16))" } )
-   // cijena
+   // 12-cijena
    AAdd( aRule, { "VAL(SUBSTR(cVar, 71, 16))" } )
-   // rabat
+   // 13-rabat
    AAdd( aRule, { "VAL(SUBSTR(cVar, 88, 14))" } )
-   // porez
+   // 14-porez
    AAdd( aRule, { "VAL(SUBSTR(cVar, 103, 14))" } )
-   // procenat rabata
+   // 15-procenat rabata
    AAdd( aRule, { "VAL(SUBSTR(cVar, 118, 14))" } )
-   // datum valute
+   // 16-datum valute
    AAdd( aRule, { "CTOD(SUBSTR(cVar, 133, 10))" } )
-   // obracunska kolicina
+   // 17-obracunska kolicina
    AAdd( aRule, { "VAL(SUBSTR(cVar, 144, 16))" } )
-   // poslovna jedinica "kod"
+   // 18-poslovna jedinica "kod"
    AAdd( aRule, { "SUBSTR(cVar, 161, 3)" } )
 
    RETURN .T.
 
 
 
-/* SetRulePartn(aRule)
+/*
  *     Setovanje pravila upisa zapisa u temp tabelu
  *   param: aRule - matrica pravila
  */
+
 STATIC FUNCTION SetRulePartn( aRule )
 
    // id
@@ -608,7 +610,7 @@ STATIC FUNCTION kalk_imp_txt_to_temp( aDbf, aRules, cTxtFile )
 
 
 
-/* CheckFile(cTxtFile)
+/*
  *     Provjerava da li je fajl prazan
  *   param: cTxtFile - txt fajl
  */
@@ -633,6 +635,7 @@ STATIC FUNCTION cre_kalk_imp_temp( aDbf )
    IF aDbf[ 1, 1 ] == "idpartner" // provjeri jesu li partneri ili dokumenti ili je roba
 
       create_index( "1", "idpartner", cTmpTbl ) // partner
+
    ELSEIF aDbf[ 1, 1 ] == "idpm"
 
       create_index( "1", "sifradob", cTmpTbl ) // roba
@@ -721,7 +724,7 @@ STATIC FUNCTION kalk_imp_check_broj_fakture_exist( aFakt )
 
 
 
-/* kalk_imp_check_partn_roba_exist
+/*
  *     Provjera da li postoje sve sifre u sifarnicima za dokumente
  */
 STATIC FUNCTION kalk_imp_check_partn_roba_exist()
@@ -767,15 +770,21 @@ STATIC FUNCTION kalk_imp_check_partn_roba_exist()
 
 FUNCTION kalk_imp_partn_exist( lPartNaz )
 
+   LOCAL aRet
+
    O_PARTN
    SELECT kalk_imp_temp
    GO TOP
 
-   IF lPartNaz == nil
+   IF lPartNaz == NIL
       lPartNaz := .F.
    ENDIF
 
    aRet := {}
+
+   IF kalk_imp_temp->idtipdok == "96" // partner prazan
+      RETURN aRet
+   ENDIF
 
    DO WHILE !Eof()
       SELECT partn
@@ -857,7 +866,7 @@ FUNCTION kalk_imp_roba_exist( lSifraDob )
  */
 STATIC FUNCTION CheckPartn()
 
-   aPomPart := kalk_imp_partn_exist( .T. )
+   LOCAL i, aPomPart := kalk_imp_partn_exist( .T. )
 
    IF ( Len( aPomPart ) > 0 )
 
@@ -885,9 +894,7 @@ STATIC FUNCTION CheckPartn()
 // --------------------------------------------------------------------------
 STATIC FUNCTION CheckRoba()
 
-   LOCAL cLine
-
-   aPomRoba := provjera_roba_po_sifradob_postoji( .T. )
+   LOCAL i, cLine, aPomRoba := provjera_roba_po_sifradob_postoji( .T. )
 
    IF ( Len( aPomRoba ) > 0 )
 
@@ -981,11 +988,12 @@ STATIC FUNCTION provjera_roba_po_sifradob_postoji()
 
 
 
-/* get_kalk_tip_by_vind_fakt_tip(cFaktTD)
- *     Vraca kalk tip dokumenta na osnovu fakt tip dokumenta
+/*
+ *   Vraca kalk tip dokumenta na osnovu fakt tip dokumenta
  *   param: cFaktTD - fakt tip dokumenta
  */
-STATIC FUNCTION get_kalk_tip_by_vind_fakt_tip( cFaktTD, cPm )
+
+STATIC FUNCTION get_kalk_tip_by_vind_fakt_tip( cFaktTD, cIdProdajnoMjesto )
 
    LOCAL cRet := ""
 
@@ -999,16 +1007,19 @@ STATIC FUNCTION get_kalk_tip_by_vind_fakt_tip( cFaktTD, cPm )
       cRet := "14"
 
 
-   CASE ( cFaktTD == "11" .AND. cPm < "200" ) // zaduzenje prodavnica KALK 11
+   CASE ( cFaktTD == "11" .AND. cIdProdajnoMjesto < "200" ) // zaduzenje prodavnica KALK 11
       cRet := "11"
 
-   CASE ( cFaktTD == "11" .AND. cPm >= "200" ) // diskont vindija FAKT 11 -> KALK 41
+   CASE ( cFaktTD == "11" .AND. cIdProdajnoMjesto >= "200" ) // diskont vindija FAKT 11 -> KALK 41
       cRet := "41"
 
 
    CASE cFaktTD $ "90#91#92" // kalo, rastur - otpis radio se u kalku
       cRet := "95"
 
+
+   CASE cFaktTD $ "96"  // otprema - medjuskladisnica
+      cRet := "96"
 
    CASE cFaktTD == "70" // Knjizna obavjest 70 -> KALK KO
       cRet := "KO"
@@ -1065,16 +1076,16 @@ STATIC FUNCTION kalk_imp_get_konto_zaduz_prodavnica_za_prod_mjesto( cPoslovnica,
    040 poslovnica, prodajno mjesto 0001, konto 13300
 
 */
-STATIC FUNCTION  kalk_imp_set_konto_zaduz_prodavnica_za_prod_mjesto( cPoslovnica, cPm )
+STATIC FUNCTION  kalk_imp_set_konto_zaduz_prodavnica_za_prod_mjesto( cPoslovnica, cIdProdajnoMjesto )
 
    LOCAL hKonta := hb_Hash(), cKonto
 
    Box(, 10, 75 )
    IF cPoslovnica == NIL
       cPoslovnica := Space( 3 )
-      cPm := Space( 3 )
+      cIdProdajnoMjesto := Space( 3 )
       @ m_x + 1, m_y + 2 SAY "Poslovnica:" GET cPoslovnica
-      @ m_x + 2, m_y + 2 SAY "Prodajno mjesto:" GET cPm
+      @ m_x + 2, m_y + 2 SAY "Prodajno mjesto:" GET cIdProdajnoMjesto
       READ
       IF LastKey() == K_ESC
          BoxC()
@@ -1082,11 +1093,11 @@ STATIC FUNCTION  kalk_imp_set_konto_zaduz_prodavnica_za_prod_mjesto( cPoslovnica
       ENDIF
    ELSE
       @ m_x + 1, m_y + 2 SAY "Poslovnica: " + cPoslovnica
-      @ m_x + 2, m_y + 2 SAY "Prodajno mjesto: " + cPm
+      @ m_x + 2, m_y + 2 SAY "Prodajno mjesto: " + cIdProdajnoMjesto
    ENDIF
 
 
-   cKonto := PadR( fetch_metric(  "kalk_imp_prod_zad_" + cPoslovnica + "_" + cPm, NIL,  Space( 7 ) ), 7 )
+   cKonto := PadR( fetch_metric(  "kalk_imp_prod_zad_" + cPoslovnica + "_" + cIdProdajnoMjesto, NIL,  Space( 7 ) ), 7 )
 
 
    @ m_x + 3, m_y + 2 SAY8 "KALK 11 prod konto zaduzuje: " GET cKonto
@@ -1098,7 +1109,7 @@ STATIC FUNCTION  kalk_imp_set_konto_zaduz_prodavnica_za_prod_mjesto( cPoslovnica
       RETURN .F.
    ENDIF
 
-   set_metric( "kalk_imp_prod_zad_" + cPoslovnica + "_" + cPm, NIL, cKonto )
+   set_metric( "kalk_imp_prod_zad_" + cPoslovnica + "_" + cIdProdajnoMjesto, NIL, cKonto )
 
    RETURN .T.
 
@@ -1138,7 +1149,7 @@ STATIC FUNCTION set_kalk_imp_parametri_za_poslovnica( cPoslovnica )
 
    LOCAL hKonta := hb_Hash(), cTipDok, cZadRazd
 
-   Box(, 10, 75 )
+   Box(, 11, 75 )
    IF cPoslovnica == NIL
       cPoslovnica := Space( 3 )
       @ m_x + 1, m_y + 2 SAY "Poslovnica:" GET cPoslovnica
@@ -1176,6 +1187,12 @@ STATIC FUNCTION set_kalk_imp_parametri_za_poslovnica( cPoslovnica )
    cZadRazd := "R"
    hKonta[ "95R" ] := fetch_metric(  "kalk_imp_" + cPoslovnica + "_" + cTipDok + "_" + cZadRazd, NIL,  Space( 7 ) )
 
+   cTipDok := "96"
+   cZadRazd := "Z"
+   hKonta[ "96Z" ] := fetch_metric(  "kalk_imp_" + cPoslovnica + "_" + cTipDok + "_" + cZadRazd, NIL,  Space( 7 ) )
+   cZadRazd := "R"
+   hKonta[ "96R" ] := fetch_metric(  "kalk_imp_" + cPoslovnica + "_" + cTipDok + "_" + cZadRazd, NIL,  Space( 7 ) )
+
    cTipDok := "KO"
    cZadRazd := "Z"
    hKonta[ "KOZ" ] := fetch_metric(  "kalk_imp_" + cPoslovnica + "_" + cTipDok + "_" + cZadRazd, NIL,  Space( 7 ) )
@@ -1195,8 +1212,11 @@ STATIC FUNCTION set_kalk_imp_parametri_za_poslovnica( cPoslovnica )
    @ m_x + 6, m_y + 2 SAY "KALK 95 KTO ZAD: " GET hKonta[ "95Z" ]
    @ m_x + 6, Col() + 2 SAY "KALK 95 KTO RAZD: " GET hKonta[ "95R" ]
 
-   @ m_x + 7, m_y + 2 SAY "KALK KO KTO ZAD: " GET hKonta[ "KOZ" ]
-   @ m_x + 7, Col() + 2 SAY "KALK KO KTO RAZD: " GET hKonta[ "KOR" ]
+   @ m_x + 7, m_y + 2 SAY "KALK 96 KTO ZAD: " GET hKonta[ "96Z" ]
+   @ m_x + 7, Col() + 2 SAY "KALK 96 KTO RAZD: " GET hKonta[ "96R" ]
+
+   @ m_x + 8, m_y + 2 SAY "KALK KO KTO ZAD: " GET hKonta[ "KOZ" ]
+   @ m_x + 8, Col() + 2 SAY "KALK KO KTO RAZD: " GET hKonta[ "KOR" ]
 
    READ
    BoxC()
@@ -1224,6 +1244,12 @@ STATIC FUNCTION set_kalk_imp_parametri_za_poslovnica( cPoslovnica )
    set_metric( "kalk_imp_" + cPoslovnica + "_" + cTipDok + "_" + cZadRazd, NIL, hKonta[ cTipDok + cZadRazd ] )
 
    cTipDok := "95"
+   cZadRazd := "Z"
+   set_metric( "kalk_imp_" + cPoslovnica + "_" + cTipDok + "_" + cZadRazd, NIL, hKonta[ cTipDok + cZadRazd ] )
+   cZadRazd := "R"
+   set_metric( "kalk_imp_" + cPoslovnica + "_" + cTipDok + "_" + cZadRazd, NIL, hKonta[ cTipDok + cZadRazd ] )
+
+   cTipDok := "96"
    cZadRazd := "Z"
    set_metric( "kalk_imp_" + cPoslovnica + "_" + cTipDok + "_" + cZadRazd, NIL, hKonta[ cTipDok + cZadRazd ] )
    cZadRazd := "R"
@@ -1326,7 +1352,7 @@ STATIC FUNCTION from_kalk_imp_temp_to_pript( aFExist, lFSkip, lNegative )// , cC
    LOCAL aArr_ctrl := {}
    LOCAL cIdKontoZaduzuje, cIdKontoRazduzuje
    LOCAL nRbr, nUvecaj, nCnt, cPredhodniFaktDokument, cPredhodniTipDokumenta, cPredhodnoProdMjesto, aPom
-   LOCAL cFakt, cTDok, cPm
+   LOCAL cFakt, cTDok, cIdProdajnoMjesto
    LOCAL nFExist, nT_scan, cTmpArt
    LOCAL cIdKontoTmp, cSifraDobavljaca, cIdRobaTmp
 
@@ -1365,7 +1391,7 @@ STATIC FUNCTION from_kalk_imp_temp_to_pript( aFExist, lFSkip, lNegative )// , cC
 
       cFakt := AllTrim( kalk_imp_temp->brdok )
       cTDok := get_kalk_tip_by_vind_fakt_tip( AllTrim( kalk_imp_temp->idtipdok ), kalk_imp_temp->idpm )
-      cPm := kalk_imp_temp->idpm
+      cIdProdajnoMjesto := kalk_imp_temp->idpm
       cIdPJ := kalk_imp_temp->idpj
 
 /*
@@ -1420,7 +1446,7 @@ STATIC FUNCTION from_kalk_imp_temp_to_pript( aFExist, lFSkip, lNegative )// , cC
       // nUvecaj := 0
       // ENDIF
 
-      IF ( cFakt <> cPredhodniFaktDokument ) // .OR. (cTDok == "11" .AND. (cPm <> cPredhodnoProdMjesto) )
+      IF ( cFakt <> cPredhodniFaktDokument ) // .OR. (cTDok == "11" .AND. (cIdProdajnoMjesto <> cPredhodnoProdMjesto) )
          ++ nUvecaj
          cBrojKalk := kalk_imp_get_next_temp_broj( nUvecaj )
          nRbr := 0
@@ -1434,6 +1460,7 @@ STATIC FUNCTION from_kalk_imp_temp_to_pript( aFExist, lFSkip, lNegative )// , cC
       GO TOP
       SEEK cTmpArt
 
+      AltD()
       cIdKontoZaduzuje := kalk_imp_get_konto_by_tip_pm_poslovnica( cTDok, kalk_imp_temp->idpm, "Z", cIdPJ )
       cIdKontoRazduzuje := kalk_imp_get_konto_by_tip_pm_poslovnica( cTDok, kalk_imp_temp->idpm, "R", cIdPJ )
 
@@ -1489,7 +1516,7 @@ STATIC FUNCTION from_kalk_imp_temp_to_pript( aFExist, lFSkip, lNegative )// , cC
 
       cPredhodniFaktDokument := cFakt
       cPredhodniTipDokumenta := cTDok
-      cPredhodnoProdMjesto := cPm
+      cPredhodnoProdMjesto := cIdProdajnoMjesto
 
       ++ nCnt
       SELECT kalk_imp_temp
@@ -1592,15 +1619,17 @@ FUNCTION kalk_imp_get_next_temp_broj( nUvecaj )
    RETURN cResult
 
 
-/* kalk_imp_get_konto_by_tip_pm_poslovnica(cTipDok, cPm, cTip)
+/* kalk_imp_get_konto_by_tip_pm_poslovnica(cTipDok, cIdProdajnoMjesto, cTip)
  *     Varaca konto za trazeni tip dokumenta i prodajno mjesto
  *   param: cTipDok - tip dokumenta
- *   param: cPm - prodajno mjesto
+ *   param: cIdProdajnoMjesto - prodajno mjesto
  *   param: cTip - tip "Z" zad. i "R" razd.
  *   param: cPoslovnica - poslovnica tuzla ili sarajevo
  */
 
-STATIC FUNCTION kalk_imp_get_konto_by_tip_pm_poslovnica( cTipDok, cPm, cTip, cPoslovnica )
+STATIC FUNCTION kalk_imp_get_konto_by_tip_pm_poslovnica( cTipDok, cIdProdajnoMjesto, cTip, cPoslovnica )
+
+   LOCAL cRet
 
    DO CASE
 
@@ -1611,14 +1640,18 @@ STATIC FUNCTION kalk_imp_get_konto_by_tip_pm_poslovnica( cTipDok, cPm, cTip, cPo
       IF cTip == "R"
          cRet := kalk_imp_get_konto_za_tip_dokumenta_poslovnica( cTipDok, cTip, cPoslovnica ) // razduzuje magacin
       ELSE
-         cRet := kalk_imp_get_konto_zaduz_prodavnica_za_prod_mjesto( cPoslovnica, cPm ) // zaduzuje prodavnica
+         cRet := kalk_imp_get_konto_zaduz_prodavnica_za_prod_mjesto( cPoslovnica, cIdProdajnoMjesto ) // zaduzuje prodavnica
       ENDIF
 
    CASE cTipDok == "41"
       cRet := kalk_imp_get_konto_za_tip_dokumenta_poslovnica( cTipDok, cTip, cPoslovnica )
 
-   CASE cTipDok == "95"
-      cRet := kalk_imp_get_konto_za_tip_dokumenta_poslovnica( cTipDok, cTip, cPoslovnica )
+   CASE cTipDok $ "95#96"
+      IF cTip == "R"
+         cRet := kalk_imp_get_konto_za_tip_dokumenta_poslovnica( cTipDok, cTip, cPoslovnica )
+      ELSE
+         cRet := kalk_imp_get_konto_za_tip_dokumenta_poslovnica( cTipDok, cTip, cIdProdajnoMjesto )
+      ENDIF
 
    CASE cTipDok == "KO"
       cRet := kalk_imp_get_konto_za_tip_dokumenta_poslovnica( cTipDok, cTip, cPoslovnica )

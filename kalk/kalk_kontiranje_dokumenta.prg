@@ -145,7 +145,7 @@ FUNCTION kalk_kontiranje_fin_naloga( lAutomatskiSetBrojNaloga, lAGen, lViseKalk,
 
    IF lAFin .OR. lAFin2
 
-      //O_FIN_PRIPR
+      // O_FIN_PRIPR
       select_o_fin_pripr()
       SET ORDER TO TAG "1"
       GO TOP
@@ -249,7 +249,7 @@ FUNCTION kalk_kontiranje_fin_naloga( lAutomatskiSetBrojNaloga, lAGen, lViseKalk,
    nRbr2 := 0
 
    SELECT finmat
-   MsgO( "KALK(shema, [" + Alltrim( finmat->brdok ) + "/" + Alltrim( finmat->brfaktp) + "]) -> FINMAT -> FIN / " + cIdVN + " - " + cBrNalF  )
+   MsgO( "KALK(shema, [" + AllTrim( finmat->brdok ) + "/" + AllTrim( finmat->brfaktp ) + "]) -> FINMAT -> FIN / " + cIdVN + " - " + cBrNalF  )
 
    PRIVATE cKonto1 := NIL
 
@@ -346,13 +346,13 @@ FUNCTION kalk_kontiranje_fin_naloga( lAutomatskiSetBrojNaloga, lAGen, lViseKalk,
                ENDIF
 
                IF gBaznaV == "P"
-                  //nIz := ROUND7( nIz, Right( trfp->naz, 2 ) )
-                  //nIz2 := ROUND7( nIz * Kurs( dDFDok, "P", "D" ), Right( trfp->naz, 2 ) )
+                  // nIz := ROUND7( nIz, Right( trfp->naz, 2 ) )
+                  // nIz2 := ROUND7( nIz * Kurs( dDFDok, "P", "D" ), Right( trfp->naz, 2 ) )
                   nIz := nIz
                   nIz2 :=  nIz * Kurs( dDFDok, "P", "D" )
 
                ELSE
-                  //nIz2 := ROUND7( nIz, Right( trfp->naz, 2 ) )
+                  // nIz2 := ROUND7( nIz, Right( trfp->naz, 2 ) )
                   // nIz := ROUND7( nIz2 * Kurs( dDFDok, "D", "P" ), Right( trfp->naz, 2 ) )
                   nIz2 := nIz
                   nIz := nIz2 * Kurs( dDFDok, "D", "P" )
@@ -725,10 +725,10 @@ FUNCTION kalk_kontiranje_fin_naloga( lAutomatskiSetBrojNaloga, lAGen, lViseKalk,
 
    MsgC()
 
-   //IF !lViseKalk // ako je vise kalkulacija ne zatvaraj tabele
-  //    my_close_all_dbf()
-    //  RETURN .T.
-  // ENDIF
+   // IF !lViseKalk // ako je vise kalkulacija ne zatvaraj tabele
+   // my_close_all_dbf()
+   // RETURN .T.
+   // ENDIF
 
    RETURN .T.
 
@@ -907,12 +907,14 @@ FUNCTION DatVal()
    IF Empty( dDatVal )
 
 
-      //IF kalk_imp_autom() // osloni se na rok placanja
-         nRokPartner := IzSifkPartn( "ROKP", finmat->idpartner, .T. )
-         IF nRokPartner != NIL
-            _uvecaj := nRokPartner
-         ENDIF
-         dDatVal := finmat->datfaktp + _uvecaj
+      // IF kalk_imp_autom() // osloni se na rok placanja
+      nRokPartner := IzSifkPartn( "ROKP", finmat->idpartner, .T. )
+      IF ValType( nRokPartner ) == "N"
+         _uvecaj := nRokPartner
+      ENDIF
+      IF !Empty( fix_dat_var( finmat->datFaktP, .T. ) )
+         dDatVal := finmat->datFaktP + _uvecaj
+      ENDIF
 
 /*
       ELSE

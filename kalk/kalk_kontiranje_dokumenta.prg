@@ -11,9 +11,9 @@
 
 #include "f18.ch"
 
-
 STATIC dDatMax
 
+MEMVAR dDatVal // funkcija datval setuje privatnu varijablu dDatVal
 
 /*
 
@@ -905,7 +905,6 @@ FUNCTION DatVal()
 
 
    IF Empty( dDatVal )
-
 
       // IF kalk_imp_autom() // osloni se na rok placanja
       nRokPartner := IzSifkPartn( "ROKP", finmat->idpartner, .T. )

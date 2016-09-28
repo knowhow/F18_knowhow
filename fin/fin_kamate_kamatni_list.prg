@@ -16,7 +16,7 @@ MEMVAR gFirma, M
 STATIC picdem := "9999999999.99"
 
 /*
-   cVarijantaKamatnogRacuna: Z - zatezne kamate 
+   cVarijantaKamatnogRacuna: Z - zatezne kamate
 */
 
 FUNCTION fin_kamate_obracun_sa_kamatni_list( cIdPartner, lPrintKamatniList, cVarijantaKamatnogRacuna )
@@ -352,9 +352,9 @@ FUNCTION fin_kamate_obracun_sa_kamatni_list( cIdPartner, lPrintKamatniList, cVar
 
       SELECT Partn
       HSEEK PadR( gFirma, 6 )
-      hRec := dbf_get_rec()
+      hRec := dbf_get_rec( .T. )
       hParams[ "naziv" ] := hRec[ "naz" ]
-      hParams[ "adresa" ] :=  hRec[ "adresa" ]
+      hParams[ "adresa" ] := hRec[ "adresa" ]
       hParams[ "tel" ] := hRec[ "telefon" ]
       hParams[ "fax" ] := hRec[ "fax" ]
       hParams[ "idbr" ] := get_partn_idbr( PadR( gFirma, 6 ) )
@@ -365,7 +365,7 @@ FUNCTION fin_kamate_obracun_sa_kamatni_list( cIdPartner, lPrintKamatniList, cVar
 
       SELECT Partn
       HSEEK cIdPartner
-      hRec := dbf_get_rec()
+      hRec := dbf_get_rec( .T. )
       hParams[ "kupac_1" ] := hRec[ "id" ] + " - " + hRec[ "naz" ]
       hParams[ "kupac_2" ] := hRec[ "ptt" ] + " " + hRec[ "mjesto" ]
       hParams[ "kupac_3" ] := hRec[ "adresa" ]

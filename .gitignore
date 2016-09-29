@@ -1,4 +1,5 @@
 */*.bak
+*/*.BAK
 home
 .h
 *.bak

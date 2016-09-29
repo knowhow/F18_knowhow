@@ -11,6 +11,9 @@
 
 #include "f18.ch"
 
+STATIC s_nFinPriprRedniBroj
+
+
 MEMVAR m_x, m_y, Ch, KursLis, gnLOst, gPotpis, lBlagAsis, cBlagIDVN
 MEMVAR Kol, ImeKol
 
@@ -138,14 +141,15 @@ FUNCTION edit_fin_priprema()
    LOCAL _fin_params := fin_params()
    LOCAL lOstavDUMMY := .F.
    LOCAL lDugmeOtvoreneStavke
+   LOCAL nFinRbr := fin_pripr_redni_broj()
 
    PARAMETERS fNovi
 
-   IF fNovi .AND. nRbr == 1
+   IF fin_pripr_nova_stavka() .AND. fin_pripr_redni_broj() == 1
       _IdFirma := gFirma
    ENDIF
 
-   IF fNovi
+   IF fin_pripr_nova_stavka()
       _OtvSt := " "
    ENDIF
 
@@ -184,7 +188,8 @@ FUNCTION edit_fin_priprema()
    SET KEY K_ALT_O TO knjizenje_gen_otvorene_stavke()
 
    @ m_x + 3, m_y + 55 SAY "Broj:" GET _brnal VALID fin_valid_provjeri_postoji_nalog( _idfirma, _idvn, _brnal ) .AND. !Empty( _brnal )
-   @ m_x + 5, m_y + 2 SAY "Redni broj stavke naloga:" GET nRbr PICTURE "99999" ;
+   @ m_x + 5, m_y + 2 SAY "Redni broj stavke naloga:" GET nFinRbr PICTURE "99999" ;
+      WHEN {|| fin_pripr_redni_broj( nFinRbr ), .T. } ;
       VALID {|| lDugmeOtvoreneStavke := .T., .T. }
 
    @ m_x + 7, m_y + 2 SAY "DOKUMENT: "
@@ -257,7 +262,6 @@ FUNCTION edit_fin_priprema()
 
    @ m_x + 16, m_y + 2  SAY8 "Duguje/Potražuje (1/2):" GET _D_P VALID V_DP() .AND. fin_pravilo_dug_pot() .AND. fin_pravilo_broj_veze()
 
-
    @ m_x + 16, m_y + 46  GET _IznosBHD  PICTURE "999999999999.99"  WHEN {|| .T. } ;
       VALID {|| lDugmeOtvoreneStavke := .T., .T. }
 
@@ -286,11 +290,21 @@ FUNCTION edit_fin_priprema()
    SET KEY K_ALT_K TO
 
    _k3 := K3U256( _k3 )
-   _Rbr := nRbr
+   _Rbr := fin_pripr_redni_broj()
 
    SELECT fin_pripr
 
    RETURN 1
+
+
+
+FUNCTION fin_pripr_redni_broj( nSet )
+
+   IF nSet != NIL
+      s_nFinPriprRedniBroj := nSet
+   ENDIF
+
+   RETURN s_nFinPriprRedniBroj
 
 
 FUNCTION edit_fin_pripr_key_handler()
@@ -323,7 +337,7 @@ FUNCTION edit_fin_pripr_key_handler()
 
    CASE Ch == K_F8 // brisi stavke u pripremi od - do
 
-      IF fin_brisi_stavke_od_do() == 1
+      IF fin_pripr_brisi_stavke_od_do() == 1
          RETURN DE_REFRESH
       ELSE
          RETURN DE_CONT
@@ -379,7 +393,7 @@ FUNCTION edit_fin_pripr_key_handler()
       Box( "ist", MAXROWS() - 5, MAXCOLS() - 8, .F. )
       set_global_vars_from_dbf( "_" )
 
-      nRbr := _Rbr
+      fin_pripr_redni_broj( _Rbr )
 
       IF edit_fin_priprema( .F. ) == 0
          BoxC()
@@ -407,7 +421,8 @@ FUNCTION edit_fin_pripr_key_handler()
          nTR2 := RecNo()
          SKIP -1
          set_global_vars_from_dbf()
-         nRbr := _Rbr
+         fin_pripr_redni_broj( _Rbr )
+
          @ m_x + 1, m_y + 1 CLEAR TO m_x + MAXROWS() - 8, m_y + MAXCOLS() - 10
          IF edit_fin_priprema( .F. ) == 0
             EXIT
@@ -456,6 +471,7 @@ FUNCTION edit_fin_pripr_key_handler()
 
 
       DO WHILE .T.
+
          set_global_vars_from_dbf()
 
          IF ( IsRamaGlas() )
@@ -464,7 +480,7 @@ FUNCTION edit_fin_pripr_key_handler()
             _brDok := Space( Len( _brDok ) )
          ENDIF
 
-         nRbr := _Rbr + 1
+         fin_pripr_redni_broj( _Rbr + 1 )
 
          @ m_x + 1, m_y + 1 CLEAR TO m_x + MAXROWS() - 5, m_y + MAXCOLS() - 8
 
@@ -875,10 +891,7 @@ STATIC FUNCTION set_datval_datdok()
 
 
 
-// ----------------------------------------
-// brisi stavke iz pripreme od-do
-// ----------------------------------------
-STATIC FUNCTION fin_brisi_stavke_od_do()
+STATIC FUNCTION fin_pripr_brisi_stavke_od_do()
 
    LOCAL nRet := 1
    LOCAL GetList := {}
@@ -993,7 +1006,7 @@ FUNCTION OstaleOpcije()
    PRIVATE opc[ 4 ]
 
    opc[ 1 ] := "1. novi datum->datum, stari datum->dat.valute "
-   opc[ 2 ] := "2. podijeli nalog na vise dijelova"
+   // opc[ 2 ] := "2. podijeli nalog na vise dijelova"
 
    h[ 1 ] := h[ 2 ] := h[ 3 ] := h[ 4 ] := ""
    PRIVATE Izbor := 1
@@ -1006,8 +1019,8 @@ FUNCTION OstaleOpcije()
          EXIT
       CASE izbor == 1
          SetDatUPripr()
-      CASE izbor == 2
-         PodijeliN()
+         // CASE izbor == 2
+         // PodijeliN()
       ENDCASE
    ENDDO
    m_x := am_x
@@ -1015,183 +1028,6 @@ FUNCTION OstaleOpcije()
    o_fin_edit()
 
    RETURN .T.
-
-
-
-
-FUNCTION PodijeliN()
-
-   LOCAL _rec
-   LOCAL nDug, nPot
-   LOCAL nRbr1 := nRbr2 := nRbr3 := nRbr4 := 0
-   LOCAL cBRnal1, cBrnal2, cBrnal3, cBrnal4, cBrnal5
-   LOCAL dDatDok
-   LOCAL cPomKTO := "9999999"
-   LOCAL cIdFirma, cIdVN, cBrNal
-
-   IF !spec_funkcije_sifra( "PVNAPVN" )
-      RETURN
-   ENDIF
-
-   O_FIN_PRIPR
-
-   cBRnal1 := cBrnal2 := cBrnal3 := cBrnal4 := cBrnal5 := fin_pripr->brnal
-   dDatDok := fin_pripr->datdok
-
-   Box( , 10, 60 )
-
-   @ m_x + 1, m_y + 2 SAY "Redni broj / 1 " GET nRbr1
-   @ m_x + 1, Col() + 2 SAY "novi broj naloga" GET cBRNAL1
-   @ m_x + 2, m_y + 2 SAY "Redni broj / 2 " GET nRbr2
-   @ m_x + 2, Col() + 2 SAY "novi broj naloga" GET cBRNAL2
-   @ m_x + 3, m_y + 2 SAY "Redni broj / 3 " GET nRbr3
-   @ m_x + 3, Col() + 2 SAY "novi broj naloga" GET cBRNAL3
-   @ m_x + 4, m_y + 2 SAY "Redni broj / 4 " GET nRbr4
-   @ m_x + 4, Col() + 2 SAY "novi broj naloga" GET cBRNAL4
-
-   @ m_x + 6, m_y + 6 SAY "Zadnji dio, broj naloga  " GET cBrnal5
-   @ m_x + 8, m_y + 6 SAY "Pomocni konto  " GET cPomKTO
-   @ m_x + 9, m_y + 6 SAY "Datum dokumenta" GET dDatDok
-
-   READ
-
-   Boxc()
-
-   IF LastKey() == K_ESC
-      my_close_all_dbf()
-      RETURN DE_CONT
-   ENDIF
-
-
-   nDug := nPot := 0
-
-   cIdfirma := idfirma
-   cIdVN    := IDVN
-   cBrnal   := BRNAL
-
-   GO TOP
-   MsgO( "Prvi krug..." )
-
-   DO WHILE !Eof()
-
-      IF d_p == "1"
-         nDug += iznosbhd
-      ELSE
-         nPot += iznosbhd
-      ENDIF
-
-      IF nRbr1 <> 0 .AND. nRbr1 == fin_pripr->Rbr
-         nRbr := nRbr1
-
-      ELSEIF nRbr2 <> 0 .AND. nRbr2 == fin_pripr->Rb
-         nRbr := nRbr2
-
-      ELSEIF nRbr3 <> 0 .AND. nRbr3 == fin_pripr->Rbr
-         nRbr := nRbr3
-
-      ELSEIF nRbr4 <> 0 .AND. nRbr4 == fin_pripr->Rbr
-         nRbr := nRbr4
-      ELSE
-         nRbr := 0  // nista
-      ENDIF
-
-      IF nRbr <> 0
-
-         APPEND BLANK
-         _rec := dbf_get_rec()
-         _rec[ "idvn" ]    := cIdvn
-         _rec[ "idfirma" ] := cIdfirma
-         _rec[ "brnal" ]   := cBrnal
-         _rec[ "idkonto" ] := cPomKTO
-         _rec[ "datdok" ]  := dDatDok
-
-
-         IF nDug > nPot // dugovni saldo
-            _rec[ "d_p" ]      := "2"
-            _rec[ "iznosbhd" ] :=  nDug - nPot
-         ELSE
-            _rec[ "d_p" ]      := "1"
-            _rec[ "iznosbhd" ] :=  nPot - nDug
-         ENDIF
-
-         _rec[ "rbr" ] := Str( nRbr, 5 )
-         dbf_update_rec( _rec )
-
-         // slijedi dodavanje protustavke
-         APPEND BLANK
-         _rec[ "iznosbhd" ] :=  -_rec[ "iznosbhd" ]
-         _rec[ "opis" ]     := ">prenos iz p.n.<"
-         dbf_update_rec( _rec )
-
-         IF _d_p == "2"
-            nPot := iznosbhd
-            nDug := 0
-         ELSE
-            nDug := iznosbhd
-            nPot := 0
-         ENDIF
-
-      ENDIF
-
-
-      SKIP
-   ENDDO
-
-   MsgC()
-
-   MsgO( "Drugi krug..." )
-   SET ORDER TO
-   GO TOP
-   my_flock()
-   DO WHILE !Eof()
-      IF nRbr1 <> 0 .AND. fin_pripr->Rbr <= nRbr1
-         IF opis = ">prenos iz p.n.<"   .AND. idkonto = cPomKTO
-            IF nRbr2 = 0
-               REPLACE brnal WITH cBrnal5
-            ELSE
-               REPLACE brnal WITH cBrnal2
-            ENDIF
-         ELSE
-            REPLACE brnal WITH cBrnal1
-         ENDIF
-      ELSEIF nRbr2 <> 0 .AND.  fin_pripr->Rbr <= nRbr2
-         IF opis = ">prenos iz p.n.<"     .AND. idkonto = cPomKTO
-            IF nRbr3 = 0
-               REPLACE brnal WITH cBrnal5
-            ELSE
-               REPLACE brnal WITH cBrnal3
-            ENDIF
-         ELSE
-            REPLACE brnal WITH cBrnal2
-         ENDIF
-      ELSEIF nRbr3 <> 0 .AND. fin_pripr->Rbr <= nRbr3
-         IF opis = ">prenos iz p.n.<"      .AND. idkonto = cPomKTO
-            IF nRbr4 = 0
-               REPLACE brnal WITH cBrnal5
-            ELSE
-               REPLACE brnal WITH cBrnal4
-            ENDIF
-         ELSE
-            REPLACE brnal WITH cBrnal3
-         ENDIF
-      ELSEIF nRbr4 <> 0 .AND. fin_pripr->Rbr <= nRbr4
-         IF opis = ">prenos iz p.n.<"    .AND. idkonto = cPomKTO
-            REPLACE brnal WITH cBrnal5
-         ELSE
-            REPLACE brnal WITH cBrnal4
-         ENDIF
-      ELSE
-         REPLACE brnal WITH cBrnal5
-      ENDIF
-      SKIP
-   ENDDO
-   my_unlock()
-   MsgC()
-
-   my_close_all_dbf()
-
-   RETURN DE_REFRESH
-
 
 
 FUNCTION BrDokOK()

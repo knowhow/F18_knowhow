@@ -105,10 +105,6 @@ STATIC FUNCTION fin_parametri_obrade_naloga()
 
    ++ nX
 
-   @ m_x + nX, m_y + 2 SAY "Pri pomoci asistenta provjeri i spoji duple uplate za partn.? (D/N)" GET gOAsDuPartn VALID gOAsDuPartn $ "DN" PICT "@!"
-
-   ++ nX
-
    @ m_x + nX, m_y + 2 SAY "Timeout kod azuriranja naloga (sec.):" ;
       GET gAzurTimeout PICT "99999"
 
@@ -209,7 +205,6 @@ FUNCTION fin_read_params()
 
    gSaKrIz := fetch_metric( "fin_kreiranje_sintetike", nil, gSaKrIz )
    gVSubOp := fetch_metric( "fin_subanalitika_prikaz_naziv_konto_partner", nil, gVSubOp )
-   gOAsDuPartn := fetch_metric( "fin_asistent_spoji_duple_uplate", nil, gOAsDuPartn )
    gAzurTimeOut := fetch_metric( "fin_azuriranje_timeout", nil, gAzurTimeOut )
 
    // po user-u parametri
@@ -249,7 +244,6 @@ FUNCTION fin_write_params()
    set_metric( "fin_picbhd", nil, gPicBHD )
    set_metric( "fin_kreiranje_sintetike", nil, gSaKrIz )
    set_metric( "fin_subanalitika_prikaz_naziv_konto_partner", nil, gVSubOp )
-   set_metric( "fin_asistent_spoji_duple_uplate", nil, gOAsDuPartn )
    set_metric( "fin_azuriranje_timeout", nil, gAzurTimeOut )
 
    // po user-u

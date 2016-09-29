@@ -96,7 +96,6 @@ PROCEDURE set_global_vars_0()
    PUBLIC gnLOSt := 0
    PUBLIC gPotpis := "N"
    PUBLIC gnKZBDana := 0
-   PUBLIC gOAsDuPartn := "N"
    PUBLIC gAzurTimeOut := 120
    PUBLIC g_knjiz_help := "N"
    PUBLIC gMjRj := "N"

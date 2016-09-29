@@ -24,7 +24,6 @@ FUNCTION harbour_init()
 
    f18_init_threads()
 
-
    hb_cdpSelect( "SL852" )
    hb_SetTermCP( "SLISO" )
 
@@ -45,9 +44,7 @@ FUNCTION harbour_init()
    SetColor( F18_COLOR_NORMAL )
 
    // Set( _SET_IDLEREPEAT, .F. ) // .T. default
-
    hb_idleAdd( {|| on_idle_dbf_refresh() } )  // BUG_CPU100
-
    // hb_idleAdd( {|| idle_eval() } ) - izaziva erore
 
    RETURN .T.

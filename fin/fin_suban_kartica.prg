@@ -66,7 +66,7 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
    PRIVATE picBHD := FormPicL( gPicBHD, 16 )
    PRIVATE picDEM := FormPicL( gPicDEM, 12 )
 
-   PRIVATE cSazeta := "N"
+   //PRIVATE cSazeta := "N"
    PRIVATE cK14 := "2" // default prikazati datval
 
    cDinDem := "1"
@@ -86,7 +86,7 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
    cKumul := fetch_metric( "fin_kart_kumul", my_user(), cKumul )
    cPredh := fetch_metric( "fin_kart_predhodno_stanje", my_user(), cPredh )
    cBrza := fetch_metric( "fin_kart_brza", my_user(), cBrza )
-   cSazeta := fetch_metric( "fin_kart_sazeta", my_user(), cSazeta )
+   //cSazeta := fetch_metric( "fin_kart_sazeta", my_user(), cSazeta )
    cIdFirma := fetch_metric( "fin_kart_org_id", my_user(), cIdFirma )
    qqKonto := fetch_metric( "fin_kart_konto", my_user(), qqKonto )
    qqPartner := fetch_metric( "fin_kart_partner", my_user(), qqPartner )
@@ -138,7 +138,7 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
    @ m_x + ( ++nX ), m_y + 2 SAY "BEZ/SA kumulativnim prometom  (1/2):" GET cKumul
    @ m_x + ( ++nX ), m_y + 2 SAY "BEZ/SA prethodnim prometom (1/2):" GET cPredh
    @ m_x + ( ++nX ), m_y + 2 SAY "Brza kartica (D/N)" GET cBrza PICT "@!" VALID cBrza $ "DN"
-   @ m_x + nX, Col() + 2 SAY8 "Sažeta kartica (bez opisa) D/N" GET cSazeta  PICT "@!" VALID cSazeta $ "DN"
+   //@ m_x + nX, Col() + 2 SAY8 "Sažeta kartica (bez opisa) D/N" GET cSazeta  PICT "@!" VALID cSazeta $ "DN"
    READ
 
    DO WHILE .T.
@@ -175,7 +175,7 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
          cDinDem := "1"
       ENDIF
 
-      @ m_x + ( ++nX ), m_y + 2 SAY "Prikaz  K1-K4 (1); Dat.Valute (2); oboje (3)" + iif( _fin_params[ "fin_tip_dokumenta" ] .AND. cSazeta == "N", "; nista (4)", "" )  GET cK14 VALID cK14 $ "123" + iif( _fin_params[ "fin_tip_dokumenta" ] .AND. cSazeta == "N", "4", "" )
+      @ m_x + ( ++nX ), m_y + 2 SAY "Prikaz  K1-K4 (1); Dat.Valute (2); oboje (3)" + iif( _fin_params[ "fin_tip_dokumenta" ], "; nista (4)", "" )  GET cK14 VALID cK14 $ "123" + iif( _fin_params[ "fin_tip_dokumenta" ], "4", "" )
 
       cRasclaniti := "N"
 
@@ -203,16 +203,16 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
          create_dbf_r_export( aExpFields )
       ENDIF
 
-      IF !( cK14 $ "123" ) .AND. ( cSazeta == "D" .OR. gNW == "D" )
+      IF !( cK14 $ "123" ) //.AND. ( cSazeta == "D" .OR. gNW == "D" )
          cK14 := "3"
       ENDIF
-      IF cSazeta == "N"
+      //IF cSazeta == "N"
          IF cDinDem == "3"
             nC1 := 59 + iif( _fin_params[ "fin_tip_dokumenta" ], 17, 0 )
          ELSE
             nC1 := 63 + iif( _fin_params[ "fin_tip_dokumenta" ], 17, 0 )
          ENDIF
-      ENDIF
+      //ENDIF
 
       IF cDinDem == "3"
          cKumul := "1"
@@ -246,14 +246,14 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
    ENDDO
    BoxC()
 
-   IF cSazeta == "D"
-      PRIVATE picBHD := FormPicL( gPicBHD, 14 )
-   ENDIF
+   //IF cSazeta == "D"
+    //  PRIVATE picBHD := FormPicL( gPicBHD, 14 )
+   //ENDIF
 
    set_metric( "fin_kart_kumul", my_user(), cKumul )
    set_metric( "fin_kart_predhodno_stanje", my_user(), cPredh )
    set_metric( "fin_kart_brza", my_user(), cBrza )
-   set_metric( "fin_kart_sazeta", my_user(), cSazeta )
+   //set_metric( "fin_kart_sazeta", my_user(), cSazeta )
    set_metric( "fin_kart_org_id", my_user(), cIdFirma )
    set_metric( "fin_kart_konto", my_user(), qqKonto )
    set_metric( "fin_kart_partner", my_user(), qqPartner )
@@ -268,9 +268,9 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
    cIdFirma := Trim( cIdFirma )
 
    IF cDinDem == "3"
-      IF cSazeta == "D"
-         m := "-- -------- ---------- -------- -------- -------------- -------------- -------------- ------------ ------------ ------------"
-      ELSE
+      //IF cSazeta == "D"
+      //   m := "-- -------- ---------- -------- -------- -------------- -------------- -------------- ------------ ------------ ------------"
+      //ELSE
          IF _fin_params[ "fin_tip_dokumenta" ] .AND. cK14 == "4"
             m := "-- -------- ---- ---------------- ---------- -------- ---------------- ---------------- ---------------- --------------- ------------- ------------ ------------"
          ELSEIF _fin_params[ "fin_tip_dokumenta" ]
@@ -278,21 +278,21 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
          ELSE
             m := "-- -------- ---- ---------- -------- -------- ---------------- ---------------- ---------------- --------------- ------------- ------------ ------------"
          ENDIF
-      ENDIF
+      //ENDIF
    ELSEIF cKumul == "1"
-      IF cSazeta == "D"
-         m := "-- -------- ---------- -------- -------- -------------- -------------- --------------"
-      ELSE
+      //IF cSazeta == "D"
+      //   m := "-- -------- ---------- -------- -------- -------------- -------------- --------------"
+      //ELSE
          IF _fin_params[ "fin_tip_dokumenta" ]
             m := "-- -------- ---- ---------------- ---------- -------- -------- -------------------- ---------------- ----------------- ---------------"
          ELSE
             m := "-- -------- ---- ---------- -------- -------- -------------------- ---------------- ----------------- ---------------"
          ENDIF
-      ENDIF
+      //ENDIF
    ELSE
-      IF cSazeta == "D"
-         m := "-- -------- ---------- -------- -------- -------------- ------------- --------------- -------------- --------------"
-      ELSE
+      //IF cSazeta == "D"
+      //   m := "-- -------- ---------- -------- -------- -------------- ------------- --------------- -------------- --------------"
+      //ELSE
          IF _fin_params[ "fin_tip_dokumenta" ] .AND. cK14 == "4"
             m := "-- -------- ---- ---------------- ---------- -------- -------------------- ---------------- ----------------- ---------------- ----------------- ---------------"
          ELSEIF _fin_params[ "fin_tip_dokumenta" ]
@@ -300,7 +300,7 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
          ELSE
             m := "-- -------- ---- ---------- -------- -------- -------------------- ---------------- ----------------- ---------------- ----------------- ---------------"
          ENDIF
-      ENDIF
+      //ENDIF
    ENDIF
 
    lVrsteP := .F.
@@ -570,13 +570,13 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
                ENDDO  // prethodni promet
 
                ? "PROMET DO "; ?? dDatOd
-               IF cSazeta == "D"
-                  IF cDinDem == "3"
-                     @ PRow(), 36 SAY ""
-                  ELSE
-                     @ PRow(), 36 SAY ""
-                  ENDIF
-               ELSE
+               //IF cSazeta == "D"
+              //    IF cDinDem == "3"
+              //       @ PRow(), 36 SAY ""
+              //    ELSE
+              //       @ PRow(), 36 SAY ""
+              //    ENDIF
+               //ELSE
                   IF cDinDem == "3"
                      IF _fin_params[ "fin_tip_dokumenta" ]
                         @ PRow(), 58 + iif( cK14 == "4", 8, 17 ) SAY ""
@@ -590,7 +590,7 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
                         @ PRow(), 62 SAY ""
                      ENDIF
                   ENDIF
-               ENDIF
+               //ENDIF
 
                nC1 := PCol() + 1
                IF cDinDem == "1"
@@ -650,7 +650,7 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
 
                ? field->IdVN
                @ PRow(), PCol() + 1 SAY field->BrNal
-               IF cSazeta == "N"
+               //IF cSazeta == "N"
                   @ PRow(), PCol() + 1 SAY RBr PICT '99999'
                   IF _fin_params[ "fin_tip_dokumenta" ]
                      @ PRow(), PCol() + 1 SAY IdTipDok
@@ -658,7 +658,7 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
                      HSEEK SUBAN->IdTipDok
                      @ PRow(), PCol() + 1 SAY PadR( naz, 13 )
                   ENDIF
-               ENDIF
+               //ENDIF
 
                SELECT SUBAN
 
@@ -674,7 +674,7 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
                   @ PRow(), nc7 SAY get_datval_field()
                ENDIF
 
-               IF cSazeta == "N"
+               //IF cSazeta == "N"
                   IF cDinDem == "3"
                      nSirOp := 16
                      nCOpis := PCol() + 1
@@ -684,7 +684,7 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
                      nCOpis := PCol() + 1
                      @ PRow(), PCol() + 1 SAY PadR( cOpis := AllTrim( hb_UTF8ToStr( field->Opis ) ), 20 )
                   ENDIF
-               ENDIF
+               //ENDIF
 
                nC1 := PCol() + 1
             ENDIF
@@ -1102,13 +1102,13 @@ FUNCTION zagl_suban_kartica( cBrza )
    SELECT SUBAN
 
    IF cDinDem == "3"
-      IF cSazeta == "D"
-         ?  "----------- --------------------------- ---------------------------- -------------- -------------------------- ------------"
-         ?  "*NALOG     *    D O K U M E N T        *      PROMET  " + ValDomaca() + "          *    SALDO     *       PROMET  " + ValPomocna() + "       *   SALDO   *"
-         ?  "----------- ------------------- -------- -----------------------------     " + ValDomaca() + "     * -------------------------    " + ValPomocna() + "    *"
-         ?  "*V.* BR    *   BROJ   * DATUM  *" + iif( cK14 == "1", " K1-K4 ", " VALUTA" ) + "*     DUG     *      POT     *              *      DUG    *   POT      *           *"
-         ?  "*N.*       *          *        *       *                            *              *             *            *           *"
-      ELSE
+    //  IF cSazeta == "D"
+      //   ?  "----------- --------------------------- ---------------------------- -------------- -------------------------- ------------"
+        // ?  "*NALOG     *    D O K U M E N T        *      PROMET  " + ValDomaca() + "          *    SALDO     *       PROMET  " + ValPomocna() + "       *   SALDO   *"
+    //     ?  "----------- ------------------- -------- -----------------------------     " + ValDomaca() + "     * -------------------------    " + ValPomocna() + "    *"
+      //   ?  "*V.* BR    *   BROJ   * DATUM  *" + iif( cK14 == "1", " K1-K4 ", " VALUTA" ) + "*     DUG     *      POT     *              *      DUG    *   POT      *           *"
+      //   ?  "*N.*       *          *        *       *                            *              *             *            *           *"
+      //ELSE
          IF _fin_params[ "fin_tip_dokumenta" ] .AND. cK14 == "4"
             ? "----------------- ----------------------------------------------------- --------------------------------- -------------- -------------------------- -------------"
             ? "*  NALOG         *               D  O  K  U  M  E  N  T                *          PROMET  " + ValDomaca() + "           *    SALDO     *       PROMET  " + ValPomocna() + "       *   SALDO    *"
@@ -1128,17 +1128,17 @@ FUNCTION zagl_suban_kartica( cBrza )
             ? "*V.*BR     *  R. *   BROJ   *  DATUM *" + iif( cK14 == "1", " K1-K4  ", " VALUTA " ) + "*    OPIS        *     DUG       *       POT       *              *      DUG    *   POT      *            *"
             ? "*N.*       *  Br.*          *        *        *                *               *                 *              *             *            *            *"
          ENDIF
-      ENDIF
+      //ENDIF
 
    ELSEIF cKumul == "1"
 
-      IF cSazeta == "D"
-         ?U "------------ ---------------------------- --------------------------- ---------------"
-         ?U "* NALOG     *      D O K U M E N T       *       P R O M E T         *    SALDO     *"
-         ?U "------------ ------------------- -------- ---------------------------               *"
-         ?U "*V.*BR  *   BROJ   *  DATUM *" + iif( cK14 == "1", " K1-K4  ", " VALUTA " ) + "*    DUGUJE   *   POTRAŽUJE  *             *"
-         ?U "*N.*    *          *        *        *            *              *              *"
-      ELSE
+      //IF cSazeta == "D"
+      //   ?U "------------ ---------------------------- --------------------------- ---------------"
+      //   ?U "* NALOG     *      D O K U M E N T       *       P R O M E T         *    SALDO     *"
+      //   ?U "------------ ------------------- -------- ---------------------------               *"
+    //     ?U "*V.*BR  *   BROJ   *  DATUM *" + iif( cK14 == "1", " K1-K4  ", " VALUTA " ) + "*    DUGUJE   *   POTRAŽUJE  *             *"
+      //   ?U "*N.*    *          *        *        *            *              *              *"
+      //ELSE
          IF _fin_params[ "fin_tip_dokumenta" ]
             ?U  "----------------- ------------------------------------------------------------------ ---------------------------------- ---------------"
             ?U  "*  NALOG         *                       D  O  K  U  M  E  N  T                     *           P R O M E T            *    SALDO     *"
@@ -1152,15 +1152,15 @@ FUNCTION zagl_suban_kartica( cBrza )
             ?U  "*V.*BR     * R.  *   BROJ   *  DATUM *" + iif( cK14 == "1", " K1-K4  ", " VALUTA " ) + "*    OPIS            *    DUGUJE     *    POTRAŽUJE     *              *"
             ?U  "*N.*       * Br. *          *        *        *                    *               *                  *              *"
          ENDIF
-      ENDIF
+      //ENDIF
    ELSE
-      IF cSazeta == "D"
-         ?U  "------------ ---------------------------- --------------------------- ----------------------------- ---------------"
-         ?U  "* NALOG     *    D O K U M E N T         *        P R O M E T        *      K U M U L A T I V      *    SALDO     *"
-         ?U  "------------ ------------------- -------- --------------------------- ------------------------------              *"
-         ?U  "*V.*BR      *   BROJ   *  DATUM *" + iif( cK14 == "1", " K1-K4  ", " VALUTA " ) + "*   DUGUJE   *  POTRAŽUJE   *    DUGUJE    *  POTRAŽUJE   *              *"
-         ?  "*N.*        *          *        *        *            *              *              *              *              *"
-      ELSE
+      //IF cSazeta == "D"
+      //   ?U  "------------ ---------------------------- --------------------------- ----------------------------- ---------------"
+      //   ?U  "* NALOG     *    D O K U M E N T         *        P R O M E T        *      K U M U L A T I V      *    SALDO     *"
+      //   ?U  "------------ ------------------- -------- --------------------------- ------------------------------              *"
+      //   ?U  "*V.*BR      *   BROJ   *  DATUM *" + iif( cK14 == "1", " K1-K4  ", " VALUTA " ) + "*   DUGUJE   *  POTRAŽUJE   *    DUGUJE    *  POTRAŽUJE   *              *"
+      //   ?  "*N.*        *          *        *        *            *              *              *              *              *"
+      //ELSE
          IF _fin_params[ "fin_tip_dokumenta" ] .AND. cK14 == "4"
             ?U  "---------------- --------------------------------------------------------- ---------------------------------- ---------------------------------- ---------------"
             ?U  "*  NALOG        *               D  O  K  U  M  E  N  T                    *           P R O M E T            *           K U M U L A T I V      *    SALDO     *"
@@ -1180,7 +1180,7 @@ FUNCTION zagl_suban_kartica( cBrza )
             ?U  "*V.*BR     *  R. *   BROJ   *  DATUM *" + iif( cK14 == "1", " K1-K4  ", " VALUTA " ) + "*    OPIS            *    DUGUJE     *    POTRAZUJE     *    DUGUJE     *    POTRAŽUJE     *              *"
             ?U  "*N.*       *  Br.*          *        *        *                    *               *                  *               *                  *              *"
          ENDIF
-      ENDIF
+      //ENDIF
    ENDIF
    ? m
 
@@ -1204,7 +1204,6 @@ FUNCTION Rasclan()
 
 
 /*
-    V_Firma
      Validacija firme - unesi firmu po referenci
      cIdfirma  - id firme
  */

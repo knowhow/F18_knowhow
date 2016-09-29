@@ -110,7 +110,7 @@
 //#define F18_COLOR_NORMAL         "W/B,R/N+,,,N/W"
 //#define F18_COLOR_NORMAL           "G/N,N/G,R/W,W/RB,G/W"  //green na crnoj podlozi
 //#define F18_COLOR_NORMAL           "N/BG,W+/B,W/R,N/G,N/W"
-#define F18_COLOR_NORMAL           "W/B,R+/N,W/R+,N/G,N/W" // bijela/plava,crvena+/crna  
+#define F18_COLOR_NORMAL           "W/B,R/N,W/R,N/G,N/W" // bijela/plava,crvena/crna  
 
 //#define F18_COLOR_INVERT           "N/W,R/N+,,,R/B+"
 #define F18_COLOR_INVERT           hb_ColorIndex(F18_COLOR_NORMAL, 4)+","+hb_ColorIndex(F18_COLOR_NORMAL, 3)+","+hb_ColorIndex(F18_COLOR_NORMAL, 2)+","+hb_ColorIndex(F18_COLOR_NORMAL, 1)+","+hb_ColorIndex(F18_COLOR_NORMAL, 0)
@@ -120,7 +120,6 @@
 #define F18_COLOR_NAGLASENO_2      "R/N"
 
 #define F18_COLOR_ORGANIZACIJA     hb_ColorIndex(F18_COLOR_NORMAL, 4)+","+hb_ColorIndex(F18_COLOR_NORMAL, 3)+","+hb_ColorIndex(F18_COLOR_NORMAL, 2)+","+hb_ColorIndex(F18_COLOR_NORMAL, 1)+","+hb_ColorIndex(F18_COLOR_NORMAL, 0)
-
 
 
 #define F18_COLOR_NORMAL_BW        "W/N,N/W,,,N/W"

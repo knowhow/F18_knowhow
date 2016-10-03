@@ -14,14 +14,14 @@
 STATIC s_cF18UtilPath
 
 STATIC __xml_file
-STATIC __output_odt
+STATIC cOutOdtFile
 STATIC __output_pdf
 STATIC __template
 STATIC __template_filename
 STATIC __jod_converter := "jodconverter-cli.jar"
 STATIC s_cJodReportsJar := "jodreports-cli.jar"
 STATIC s_cJavaRunCmd := "java -Xmx128m -jar"
-STATIC __util_path
+STATIC cKnowhowUtilPath
 STATIC __current_odt
 
 
@@ -50,7 +50,7 @@ FUNCTION generisi_odt_iz_xml( cTemplate, cXml_file, cOutput_file, lBezPitanja )
    LOCAL _cmd
    LOCAL _error
    LOCAL _util_path
-   LOCAL _jod_full_path
+   LOCAL cJodReportsFullPath
    LOCAL cErr := ""
    LOCAL cOdgovor := "D"
 
@@ -73,12 +73,12 @@ FUNCTION generisi_odt_iz_xml( cTemplate, cXml_file, cOutput_file, lBezPitanja )
    ENDIF
 
    IF ( cOutput_file == NIL )
-      __output_odt := my_home() + naziv_izlaznog_odt_fajla()
+      cOutOdtFile := my_home() + naziv_izlaznog_odt_fajla()
    ELSE
-      __output_odt := cOutput_file
+      cOutOdtFile := cOutput_file
    ENDIF
 
-   __current_odt := __output_odt
+   __current_odt := cOutOdtFile
 
    _ok := copy_template_to_my_home( cTemplate )
 
@@ -88,14 +88,14 @@ FUNCTION generisi_odt_iz_xml( cTemplate, cXml_file, cOutput_file, lBezPitanja )
 
    brisi_odt_fajlove_iz_home_path()
 
-   ?E "ODT report gen: pobrisao fajl " + __output_odt
+   ?E "ODT report gen: pobrisao fajl " + cOutOdtFile
 
    _template := my_home() + cTemplate
 
-   __util_path := get_util_path()
-   _jod_full_path := __util_path + s_cJodReportsJar
+   cKnowhowUtilPath := get_knowhow_util_path()
+   cJodReportsFullPath := cKnowhowUtilPath + s_cJodReportsJar
 
-   IF !File( AllTrim( _jod_full_path ) )
+   IF !File( AllTrim( cJodReportsFullPath ) )
       log_write( "ODT report gen: " + s_cJodReportsJar + " ne postoji na lokaciji !", 7 )
       MsgBeep( "java jar: " + s_cJodReportsJar + " ne postoji !" )
       RETURN lRet
@@ -104,17 +104,17 @@ FUNCTION generisi_odt_iz_xml( cTemplate, cXml_file, cOutput_file, lBezPitanja )
 #ifdef __PLATFORM__WINDOWS
    _template := '"' + _template + '"'
    __xml_file := '"' + __xml_file + '"'
-   __output_odt := '"' + __output_odt + '"'
-   _jod_full_path := '"' + _jod_full_path + '"'
+   cOutOdtFile := '"' + cOutOdtFile + '"'
+   cJodReportsFullPath := '"' + cJodReportsFullPath + '"'
 #endif
 
    __template := _template
    __template_filename := cTemplate
 
-   _cmd := s_cJavaRunCmd + " " + _jod_full_path + " "
+   _cmd := s_cJavaRunCmd + " " + cJodReportsFullPath + " "
    _cmd += _template + " "
    _cmd += __xml_file + " "
-   _cmd += __output_odt
+   _cmd += cOutOdtFile
 
    log_write( "ODT report gen, cmd: " + _cmd, 7 )
 
@@ -223,7 +223,7 @@ STATIC FUNCTION brisi_odt_fajlove_iz_home_path()
 
 
 
-STATIC FUNCTION get_util_path()
+STATIC FUNCTION get_knowhow_util_path()
 
    LOCAL aFiles, cPath := ""
 
@@ -271,12 +271,12 @@ FUNCTION f18_odt_copy( cOutput_file, cDestination_file )
    LOCAL _ok := .F.
 
    IF ( cOutput_file == NIL )
-      __output_odt := __current_odt
+      cOutOdtFile := __current_odt
    ELSE
-      __output_odt := cOutput_file
+      cOutOdtFile := cOutput_file
    ENDIF
 
-   FileCopy( __output_odt, cDestination_file )
+   FileCopy( cOutOdtFile, cDestination_file )
 
    RETURN .T.
 
@@ -302,12 +302,12 @@ FUNCTION prikazi_odt( cOutput_file )
    LOCAL cOdgovor
 
    IF ( cOutput_file == NIL )
-      __output_odt := __current_odt
+      cOutOdtFile := __current_odt
    ELSE
-      __output_odt := cOutput_file
+      cOutOdtFile := cOutput_file
    ENDIF
 
-   IF !File( __output_odt )
+   IF !File( cOutOdtFile )
       MsgBeep( "Nema fajla za prikaz !" )
       RETURN lOk
    ENDIF
@@ -319,7 +319,7 @@ FUNCTION prikazi_odt( cOutput_file )
    ? "Prikaz odt fajla u toku ... fajl: ..." + Right( __current_odt, 20 )
 
 #ifndef TEST
-   nError := f18_open_document( __output_odt )
+   nError := f18_open_document( cOutOdtFile )
 #endif
 
    RESTORE SCREEN FROM cScreen
@@ -460,14 +460,14 @@ STATIC FUNCTION odt_email_attachment( lIzlazniOdt )
 FUNCTION konvertuj_odt_u_pdf( cInput_file, cOutput_file, lOverwrite_file )
 
    LOCAL _ret := .F.
-   LOCAL _jod_full_path, _util_path
+   LOCAL cJodReportsFullPath, _util_path
    LOCAL _cmd
    LOCAL _screen, _error
 
    IF ( cInput_file == NIL )
-      __output_odt := __current_odt
+      cOutOdtFile := __current_odt
    ELSE
-      __output_odt := cInput_file
+      cOutOdtFile := cInput_file
    ENDIF
 
    IF ( cOutput_file == NIL )
@@ -481,7 +481,7 @@ FUNCTION konvertuj_odt_u_pdf( cInput_file, cOutput_file, lOverwrite_file )
    ENDIF
 
 #ifdef __PLATFORM__WINDOWS
-   __output_odt := '"' + __output_odt + '"'
+   cOutOdtFile := '"' + cOutOdtFile + '"'
    __output_pdf := '"' + __output_pdf + '"'
 #endif
 
@@ -491,10 +491,10 @@ FUNCTION konvertuj_odt_u_pdf( cInput_file, cOutput_file, lOverwrite_file )
       RETURN _ret
    ENDIF
 
-   _util_path := get_util_path()
-   _jod_full_path := _util_path + __jod_converter
+   _util_path := get_knowhow_util_path()
+   cJodReportsFullPath := _util_path + __jod_converter
 
-   IF !File( AllTrim( _jod_full_path ) )
+   IF !File( AllTrim( cJodReportsFullPath ) )
       log_write( "ODT report conv: " + __jod_converter + " ne postoji na lokaciji !", 7 )
       MsgBeep( "Aplikacija " + __jod_converter + " ne postoji !" )
       RETURN _ret
@@ -503,11 +503,11 @@ FUNCTION konvertuj_odt_u_pdf( cInput_file, cOutput_file, lOverwrite_file )
    log_write( "ODT report convert start", 9 )
 
 #ifdef __PLATFORM__WINDOWS
-   _jod_full_path := '"' + _jod_full_path + '"'
+   cJodReportsFullPath := '"' + cJodReportsFullPath + '"'
 #endif
 
-   _cmd := s_cJavaRunCmd + " " + _jod_full_path + " "
-   _cmd += __output_odt + " "
+   _cmd := s_cJavaRunCmd + " " + cJodReportsFullPath + " "
+   _cmd += cOutOdtFile + " "
    _cmd += __output_pdf
 
    log_write( "ODT report convert, cmd: " + _cmd, 7 )

@@ -1181,7 +1181,7 @@ STATIC FUNCTION rpt_dok_na_stanju( aDoks )
    RETURN
 
 
-// --------------------------------------------------------------
+/*
 // da li je vezni tops dokument na stanju
 //
 // funkcija vraca nNaStanju
@@ -1215,9 +1215,9 @@ STATIC FUNCTION tops_dok_na_stanju( cFirma, cIdVd, cBrDok, cKonto )
    AddBS( @cTSPath )
 
    // otvori kalk_doksRC i kalk_doks
-   IF File( cTKPath + "DOKSRC.DBF" )
+   --IF File( cTKPath + "DOKSRC.DBF" )
       SELECT ( 248 )
-      USE ( cTKPath + "DOKSRC" ) ALIAS TDOKSRC
+      --USE ( cTKPath + "DOKSRC" ) ALIAS TDOKSRC
       SET ORDER TO TAG "2"
    ELSE
       SELECT ( nTArea )
@@ -1232,7 +1232,7 @@ STATIC FUNCTION tops_dok_na_stanju( cFirma, cIdVd, cBrDok, cKonto )
       RETURN -1
    ENDIF
 
-   SELECT tdoksrc
+   --SELECT tdoksrc
    GO TOP
    SEEK PadR( "KALK", 10 ) + cFirma + cIdvd + cBrDok
 
@@ -1307,3 +1307,5 @@ STATIC FUNCTION c_p_tbl()
    USE
 
    RETURN
+
+*/

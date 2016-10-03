@@ -40,9 +40,11 @@ METHOD mMenu()
    Fx := 4
    Fy := 8
 
+/*
    IF gSamoProdaja == "N"
-      cre_doksrc()
+      --cre_doksrc()
    ENDIF
+*/
 
    // predradnje
    pos_init_dbfs()

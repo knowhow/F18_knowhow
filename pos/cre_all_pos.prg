@@ -356,7 +356,8 @@ FUNCTION cre_all_pos( ver )
 
 
    // kreiraj tabele dok_src : DOK_SRC
-   cre_doksrc( ver )
+   //cre_doksrc( ver )
+   
    create_porezna_faktura_temp_dbfs()
 
    RETURN .T.

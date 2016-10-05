@@ -77,7 +77,7 @@ FUNCTION ld_specifikacija_plate_samostalni_obr_2002()
    cFirmAdresa := Space( 35 )
    cFirmOpc := Space( 35 )
    cFirmVD := Space( 50 )
-   cRadn := Space( _LR_ )
+   cRadn := Space( LEN_IDRADNIK )
 
 
    OSpecif()

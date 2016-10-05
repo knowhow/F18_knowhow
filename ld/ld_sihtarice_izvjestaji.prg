@@ -26,7 +26,7 @@ STATIC __tp5
 FUNCTION ld_utrosak_po_sihtaricama()
 
    LOCAL cRj := Space( 60 )
-   LOCAL cRadnik := Space( _LR_ )
+   LOCAL cRadnik := Space( LEN_IDRADNIK )
    LOCAL cGroup := Space( 7 )
    LOCAL cTipRpt := "1"
    LOCAL cIdRj

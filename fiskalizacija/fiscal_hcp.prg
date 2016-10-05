@@ -79,15 +79,15 @@ FUNCTION hcp_rn( dev_params, items, head, storno, rn_total )
       _customer := .T.
    ENDIF
 
-   // brisi tmp fajlove ako su ostali...
-   hcp_delete_tmp( dev_params, _del_all )
+
+   hcp_delete_tmp( dev_params, _del_all ) // brisi tmp fajlove ako su ostali
 
    IF rn_total == nil
       rn_total := 0
    ENDIF
 
-   // ako je storno posalji pred komandu
-   IF storno
+
+   IF storno // ako je storno posalji pred komandu
 
       // daj mi storno komandu
       _rn_reklamni := AllTrim( items[ 1, 8 ] )
@@ -110,8 +110,8 @@ FUNCTION hcp_rn( dev_params, items, head, storno, rn_total )
 
    IF _customer = .T.
 
-      // dodaj kupca...
-      _err_level := hcp_cli( dev_params, head )
+
+      _err_level := hcp_cli( dev_params, head ) // dodaj kupca
 
       IF _err_level > 0
          RETURN _err_level
@@ -190,8 +190,8 @@ FUNCTION hcp_rn( dev_params, items, head, storno, rn_total )
          _tmp := 'BCR="' + AllTrim( _art_barkod ) + '"'
       ENDIF
 
-      // poreska stopa
-      _tmp += _razmak1 + 'VAT="' + _tarifa + '"'
+
+      _tmp += _razmak1 + 'VAT="' + _tarifa + '"' // poreska stopa
       // jedinica mjere
       _tmp += _razmak1 + 'MES="' + _art_jmj + '"'
       // odjeljenje

@@ -318,16 +318,15 @@ FUNCTION fiscal_txt_get_tarifa( tarifa_id, pdv, drv )
    LOCAL _tar := "2"
    LOCAL _tmp
 
-   // PDV17 -> PDV1 ili PDV7NP -> PDV7 ili PDV0IZ -> PDV0 ili PDVM
-   _tmp := Left( Upper( AllTrim( tarifa_id ) ), 4 )
+
+   _tmp := Left( Upper( AllTrim( tarifa_id ) ), 4 ) // PDV17 -> PDV1 ili PDV7NP -> PDV7 ili PDV0IZ -> PDV0 ili PDVM
 
    DO CASE
 
    CASE ( _tmp == "PDV1" .OR. _tmp == "PDV7" ) .AND. pdv == "D"
 
-      // PDV je tarifna skupina "E"
 
-      IF drv == "TRING"
+      IF drv == "TRING" // PDV je tarifna skupina "E"
          _tar := "E"
       ELSEIF drv == "FPRINT"
          _tar := "2"
@@ -339,9 +338,7 @@ FUNCTION fiscal_txt_get_tarifa( tarifa_id, pdv, drv )
 
    CASE _tmp == "PDV0" .AND. pdv == "D"
 
-      // bez PDV-a je tarifna skupina "K"
-
-      IF drv == "TRING"
+      IF drv == "TRING" // bez PDV-a je tarifna skupina "K"
          _tar := "K"
       ELSEIF drv == "FPRINT"
          _tar := "4"
@@ -361,8 +358,7 @@ FUNCTION fiscal_txt_get_tarifa( tarifa_id, pdv, drv )
 
    CASE pdv == "N"
 
-      // ne-pdv obveznik, skupina "A"
-      IF drv == "TRING"
+      IF drv == "TRING" // ne-pdv obveznik, skupina "A"
          _tar := "A"
       ELSEIF drv == "FPRINT"
          _tar := "1"

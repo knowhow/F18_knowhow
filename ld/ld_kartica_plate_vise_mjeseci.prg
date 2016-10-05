@@ -18,7 +18,7 @@ FUNCTION ld_kartica_plate_za_vise_mjeseci()
    LOCAL nC1 := 20
    LOCAL i
 
-   cIdRadn := Space( _LR_ )
+   cIdRadn := fetch_metric( "ld_izvj_radnik", my_user(), Space( LEN_IDRADNIK ) )
    cIdRj := gRj
    cMjesec := gMjesec
    cMjesec2 := gmjesec
@@ -29,7 +29,7 @@ FUNCTION ld_kartica_plate_za_vise_mjeseci()
    brisi_pomocnu_tabelu()
    otvori_tabele()
 
-   cIdRadn := Space( _LR_ )
+
    cSatiVO := "S"
 
    Box(, 6, 77 )
@@ -50,6 +50,8 @@ FUNCTION ld_kartica_plate_za_vise_mjeseci()
       ESC_BCR
    ENDIF
    BoxC()
+
+   set_metric( "ld_izvj_radnik", my_user(), cIdRadn )
 
    SELECT LD
 

@@ -17,7 +17,7 @@ FUNCTION ld_pregled_primanja()
 
    LOCAL nC1 := 20
 
-   cIdRadn := Space( _LR_ )
+   cIdRadn := Space( LEN_IDRADNIK )
    cIdRj := gRj
    cMjesec := gMjesec
    cGodina := gGodina
@@ -153,7 +153,7 @@ FUNCTION ld_pregled_primanja()
    EOF CRET
 
    nStrana := 0
-   m := "----- " + Replicate( "-", _LR_ ) + " ---------------------------------- " + IF( lKredit .AND. !Empty( cSifKred ), REPL( "-", Len( RADKR->naosnovu ) + 1 ), "-" + REPL( "-", Len( gPicS ) ) ) + " ----------- -----------"
+   m := "----- " + Replicate( "-", LEN_IDRADNIK ) + " ---------------------------------- " + IF( lKredit .AND. !Empty( cSifKred ), REPL( "-", Len( RADKR->naosnovu ) + 1 ), "-" + REPL( "-", Len( gPicS ) ) ) + " ----------- -----------"
    IF cdod == "D"
       IF Type( ckolona ) $ "UUIUE"
          Msg( "Nepostojeca kolona" )
@@ -312,9 +312,9 @@ FUNCTION ZPregPrim()
    ?
    ? m
    IF lKredit .AND. !Empty( cSifKred )
-      ? " Rbr  " + PadC( "Sifra ", _LR_ ) + "          " + _l( "Naziv radnika" ) + "               " + PadC( "Na osnovu", Len( RADKR->naosnovu ) ) + "      " + _l( "Iznos" )
+      ? " Rbr  " + PadC( "Sifra ", LEN_IDRADNIK ) + "          " + _l( "Naziv radnika" ) + "               " + PadC( "Na osnovu", Len( RADKR->naosnovu ) ) + "      " + _l( "Iznos" )
    ELSE
-      ? " Rbr  " + PadC( "Sifra ", _LR_ ) + "          " + _l( "Naziv radnika" ) + "               " + iif( tippr->fiksan == "P", " %  ", "Sati" ) + "      " + _l( "Iznos" )
+      ? " Rbr  " + PadC( "Sifra ", LEN_IDRADNIK ) + "          " + _l( "Naziv radnika" ) + "               " + iif( tippr->fiksan == "P", " %  ", "Sati" ) + "      " + _l( "Iznos" )
    ENDIF
    ? m
 

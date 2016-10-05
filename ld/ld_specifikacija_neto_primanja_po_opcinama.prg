@@ -21,7 +21,7 @@ FUNCTION ld_specifikacija_neto_primanja_po_opcinama()
    LOCAL nC1 := 20
    LOCAL cKBenef := " ", cVPosla := "  "
 
-   cIdRadn := Space( _LR_ )
+   cIdRadn := Space( LEN_IDRADNIK )
    cIdRj := gRj
    cMjesec := gMjesec
    cGodina := gGodina

@@ -20,7 +20,7 @@ FUNCTION ld_platni_spisak()
    LOCAL lSviRadnici := .F.
    LOCAL cSviRadn := "N"
 
-   cIdRadn := Space( _LR_ )
+   cIdRadn := Space( LEN_IDRADNIK )
    cIdRj := gRj
    cMjesec := gMjesec
    cGodina := gGodina
@@ -145,7 +145,7 @@ FUNCTION ld_platni_spisak()
 
    nStrana := 0
 
-   m := "----- " + Replicate( "-", _LR_ ) + " ----------------------------------- ----------- -------------------------"
+   m := "----- " + Replicate( "-", LEN_IDRADNIK ) + " ----------------------------------- ----------- -------------------------"
    bZagl := {|| ZPlatSp() }
 
    SELECT ld_rj
@@ -311,7 +311,7 @@ FUNCTION ld_platni_spisak_tekuci_racun( cVarijanta )
    LOCAL nC1 := 20
    LOCAL cVarSort
 
-   cIdRadn := Space( _LR_ )
+   cIdRadn := Space( LEN_IDRADNIK )
    cIdRj := gRj
    cMjesec := gMjesec
    cGodina := gGodina
@@ -340,7 +340,7 @@ FUNCTION ld_platni_spisak_tekuci_racun( cVarijanta )
    ENDIF
 
    cZaBanku := "N"
-   cIDBanka := Space( _LR_ )
+   cIDBanka := Space( LEN_IDRADNIK )
    cDrugiDio := "D"
    cVarSort := fetch_metric( "ld_platni_spisak_sortiranje", my_user(), cVarSort )
 
@@ -656,7 +656,7 @@ FUNCTION ld_pregled_isplate_za_tekuci_racun( cVarijanta )
 
    LOCAL nC1 := 20
 
-   cIdRadn := Space( _LR_ )
+   cIdRadn := Space( LEN_IDRADNIK )
    cIdRj := gRj
    cMjesec := gMjesec
    cGodina := gGodina

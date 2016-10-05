@@ -34,7 +34,7 @@ FUNCTION ld_rekapitulacija_sql( lSvi )
    cMainLine := _gmainline()
    cMainLine := Replicate( "-", 2 ) + cMainLine
 
-   cIdRadn := Space( _LR_ )
+   cIdRadn := Space( LEN_IDRADNIK )
    cIdRj := gRj
    nMjesec := gMjesec
    nGodina := gGodina

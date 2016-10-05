@@ -210,7 +210,7 @@ FUNCTION ld_olp_gip_obrazac()
    LOCAL nKrug := 1
    LOCAL cRj := Space( 60 )
    LOCAL cRJDef := Space( 2 )
-   LOCAL cRadnik := Space( _LR_ )
+   LOCAL cRadnik := Space( LEN_IDRADNIK )
    LOCAL cPrimDobra := Space( 100 )
    LOCAL cIdRj
    LOCAL cMj_od

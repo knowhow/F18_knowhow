@@ -23,7 +23,7 @@ FUNCTION ld_unos_obracuna()
    PRIVATE cIdRadn
    PRIVATE nPlacenoRSati
 
-   cIdRadn := Space( _LR_ )
+   cIdRadn := Space( LEN_IDRADNIK )
    GetList := {}
    cRj     := gRj
    nGodina := gGodina

@@ -36,7 +36,7 @@ FUNCTION ld_kartica_plate( cIdRj, cMjesec, cGodina, cIdRadn, cObrac )
    cNKNS := "N"
 
    IF ( PCount() < 4 )
-      cIdRadn := Space( _LR_ )
+      cIdRadn := Space( LEN_IDRADNIK )
       cIdRj := gRj
       cMjesec := gMjesec
       cGodina := gGodina
@@ -71,7 +71,7 @@ FUNCTION ld_kartica_plate( cIdRj, cMjesec, cGodina, cIdRadn, cObrac )
       RPar( "VS", @cVarSort )
       RPar( "2K", @c2K1L )
       RPar( "NK", @cNKNS )
-      cIdRadn := Space( _LR_ )
+      cIdRadn := Space( LEN_IDRADNIK )
       Box(, 8, 75 )
       @ m_x + 1, m_y + 2 SAY _l( "Radna jedinica (prazno-sve rj): " )  GET cIdRJ VALID Empty( cidrj ) .OR. P_LD_RJ( @cidrj )
       @ m_x + 2, m_y + 2 SAY _l( "Mjesec: " ) GET cMjesec PICT "99"

@@ -51,7 +51,7 @@ FUNCTION BrisiRadnika()
 
    DO WHILE .T.
 
-      cIdRadn := Space( _LR_ )
+      cIdRadn := Space( LEN_IDRADNIK )
       cIdRj := gRj
       cMjesec := gMjesec
       cGodina := gGodina
@@ -171,7 +171,7 @@ FUNCTION BrisiMjesec()
 
       O_LD
 
-      cIdRadn := Space( _LR_ )
+      cIdRadn := Space( LEN_IDRADNIK )
       cIdRj := gRj
       cMjesec := gMjesec
       cGodina := gGodina

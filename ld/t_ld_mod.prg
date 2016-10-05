@@ -129,7 +129,6 @@ METHOD set_module_gvars()
    PUBLIC gPotpRpt := "N"
    PUBLIC gPotp1 := PadR( "PADL('Potpis:',70)", 150 )
    PUBLIC gPotp2 := PadR( "PADL('_________________',70)", 150 )
-   PUBLIC _LR_ := 6
    PUBLIC _LK_ := 6
    PUBLIC lViseObr := .T.
    PUBLIC lVOBrisiCDX := .F.

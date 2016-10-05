@@ -41,7 +41,7 @@ FUNCTION ld_novi_kredit()
    LOCAL i
    LOCAL _vals
    LOCAL nOstalo, nTekMj, nTekGodina
-   LOCAL cIdRadn  := Space( _LR_ )
+   LOCAL cIdRadn  := Space( LEN_IDRADNIK )
    LOCAL nMjesec  := gMjesec
    LOCAL nGodina  := gGodina
    LOCAL cIdKred  := Space( _LK_ )
@@ -203,7 +203,7 @@ FUNCTION ld_ispravka_kredita
    PARAMETERS cIdRadn, cIdKred, cNaOsnovu
 
    IF PCount() == 0
-      cIdRadn := Space( _LR_ )
+      cIdRadn := Space( LEN_IDRADNIK )
       cIdKRed := Space( _LK_ )
       cNaOsnovu := Space( 20 )
    ENDIF
@@ -616,7 +616,7 @@ FUNCTION ld_lista_kredita()
 
    O_RADKR
 
-   PRIVATE m := "----- " + Replicate( "-", _LR_ ) + " ------------------------------- " + Replicate( "-", 39 )
+   PRIVATE m := "----- " + Replicate( "-", LEN_IDRADNIK ) + " ------------------------------- " + Replicate( "-", 39 )
 
    cIdKred := Space( _LK_ )
 
@@ -905,14 +905,14 @@ FUNCTION ld_lista_kredita_zaglavlje()
    ?
    ? m
    IF cRateDN == "N"
-      ? " Rbr *" + PadC( "Sifra ", _LR_ ) + "*    Radnik                         Br.Rata    Iznos      Potpis"
+      ? " Rbr *" + PadC( "Sifra ", LEN_IDRADNIK ) + "*    Radnik                         Br.Rata    Iznos      Potpis"
    ELSEIF cRateDN == "T"
-      ? " Rbr *" + PadC( "Sifra ", _LR_ ) + "*    Radnik                           Ukupno       Placeno       Ostalo"
+      ? " Rbr *" + PadC( "Sifra ", LEN_IDRADNIK ) + "*    Radnik                           Ukupno       Placeno       Ostalo"
    ELSEIF cRateDN == "R"
-      ? " Red.*" + PadC( " ", _LR_ ) + "*                                  Partija kr.   Broj     Iznos                   Ostatak"
-      ? " br. *" + PadC( "Sifra ", _LR_ ) + "*    Radnik                        (na osnovu)   rata     kredita      Rata         duga "
+      ? " Red.*" + PadC( " ", LEN_IDRADNIK ) + "*                                  Partija kr.   Broj     Iznos                   Ostatak"
+      ? " br. *" + PadC( "Sifra ", LEN_IDRADNIK ) + "*    Radnik                        (na osnovu)   rata     kredita      Rata         duga "
    ELSE
-      ? " Rbr *" + PadC( "Sifra ", _LR_ ) + "*    Radnik                        Mjesec/godina/Rata"
+      ? " Rbr *" + PadC( "Sifra ", LEN_IDRADNIK ) + "*    Radnik                        Mjesec/godina/Rata"
    ENDIF
    ? m
 
@@ -1140,7 +1140,7 @@ FUNCTION ld_brisanje_kredita()
    LOCAL _rec
    LOCAL hParams
 
-   cIdRadn := Space( _LR_ )
+   cIdRadn := Space( LEN_IDRADNIK )
    cIdKRed := Space( _LK_ )
    cNaOsnovu := Space( 20 )
    cBrisi := "N"

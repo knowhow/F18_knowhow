@@ -29,7 +29,7 @@ FUNCTION ld_pregled_plata_za_period()
    LOCAL cDoprNez := "90"
    LOCAL cDoprD4 := cDoprD5 := cDoprD6 := Space( 2 )
    LOCAL cObracun := gObracun
-   LOCAL cM4TipoviPrimanja := fetch_metric( "ld_izvj_m4_primanja", my_user(), Space( 100 ) )
+   LOCAL cM4TipoviIzdvojitiPrimanja := fetch_metric( "ld_m4_izdvojena_primanja", NIL, Space( 100 ) )
    LOCAL nCount
 
    LOCAL cTotal := "N"
@@ -68,8 +68,7 @@ FUNCTION ld_pregled_plata_za_period()
    @ m_x + 14, m_y + 2 SAY8 " Šifra dodatnog doprinosa 5 : " GET cDoprD5
    @ m_x + 15, m_y + 2 SAY8 " Šifra dodatnog doprinosa 6 : " GET cDoprD6
 
-   @ m_x + 17, m_y + 2 SAY8 "Primanja koja se za M4 izdvajaju (npr. 18;24;):" ;
-      GET cM4TipoviPrimanja PICT "@S20"
+   @ m_x + 17, m_y + 2 SAY8 "Izdvojena primanja (bolovanje, neplaceno) za M4:" GET cM4TipoviIzdvojitiPrimanja PICT "@S20"
 
    @ m_x + 19, m_y + 2 SAY8 "Prikazati ukupno za sve mjesece (D/N)" GET cTotal PICT "@!" VALID cTotal $ "DN"
 
@@ -87,7 +86,7 @@ FUNCTION ld_pregled_plata_za_period()
    ENDIF
 
    set_metric( "ld_izvj_radnik", my_user(), cRadnik )
-   set_metric( "ld_izvj_m4_primanja", my_user(), cM4TipoviPrimanja )
+   set_metric( "ld_m4_izdvojena_primanja", NIL, cM4TipoviIzdvojitiPrimanja )
    set_metric( "ld_izv_mjesec_od", my_user(), cMjesec )
    set_metric( "ld_izv_godina", my_user(), cGodina )
    set_metric( "ld_izv_mjesec_do", my_user(), cMjesecDo )
@@ -98,7 +97,7 @@ FUNCTION ld_pregled_plata_za_period()
 
    napuni_podatke( cRj, cGodina, cMjesec, cMjesecDo, cRadnik, ;
       cDoprPio, cDoprZdr, cDoprNez, cObracun, cDoprD4, cDoprD5, cDoprD6, ;
-      cM4TipoviPrimanja, cTotal, cOpcStan, cKanton )
+      cM4TipoviIzdvojitiPrimanja, cTotal, cOpcStan, cKanton )
 
    IF cTotal == "N"
       prikazi_pregled( cRj, cGodina, cMjesec, cMjesecDo, cRadnik, ;
@@ -113,7 +112,7 @@ FUNCTION ld_pregled_plata_za_period()
 
 STATIC FUNCTION napuni_podatke( cRj, cGodina, cMjesec, cMjesecDo, ;
       cRadnik, cDoprPio, cDoprZdr, cDoprNez, cObracun, cDop4, cDop5, cDop6, ;
-      cM4TipoviPrimanja, cTotal, cOpcStan, cKanton )
+      cM4TipoviIzdvojitiPrimanja, cTotal, cOpcStan, cKanton )
 
    LOCAL i
    LOCAL cPom
@@ -249,18 +248,7 @@ STATIC FUNCTION napuni_podatke( cRj, cGodina, cMjesec, cMjesecDo, ;
          nRadIznosM4 := 0 // redovan rad iznos, sati
          nRadSatiM4 := 0
 
-altd()
-         IF !Empty( cM4TipoviPrimanja )
-            FOR nPrimanje := 1 TO 60
-               cPom := PadL( AllTrim( Str( nPrimanje ) ), 2, "0" )
-               IF ld->( FieldPos( "I" + cPom ) ) <= 0
-               altd()
-                  EXIT
-               ENDIF
-               nBolovanjeIznosM4 += iif( cPom $ cM4TipoviPrimanja, LD->&( "I" + cPom ), 0 )
-               nBolovanjeSatiM4 += iif( cPom $ cM4TipoviPrimanja, LD->&( "S" + cPom ), 0 )
-            NEXT
-         ENDIF
+         sum_primanja_za_tipove_primanja( cM4TipoviIzdvojitiPrimanja, @nBolovanjeIznosM4, @nBolovanjeSatiM4 )
 
 
          nPrim += field->uneto // primanja
@@ -271,7 +259,7 @@ altd()
          nL_odb += nLOdbitak
 
 
-         IF (nBolovanjeIznosM4 != 0) .OR. (nBolovanjeSatiM4 != 0)  // radni sati ukupni
+         IF ( nBolovanjeIznosM4 != 0 ) .OR. ( nBolovanjeSatiM4 != 0 )  // radni sati ukupni
             nRadSatiM4 := ( field->usati - nBolovanjeSatiM4 )
             nRadIznosM4 := ( field->uneto - nBolovanjeIznosM4 )
          ELSE
@@ -481,6 +469,22 @@ altd()
 
    RETURN .T.
 
+
+FUNCTION sum_primanja_za_tipove_primanja( cM4TipoviIzdvojitiPrimanja, nBolovanjeIznosM4, nBolovanjeSatiM4 )
+
+   LOCAL nPrimanje, cPom
+
+   IF !Empty( cM4TipoviIzdvojitiPrimanja )
+      FOR nPrimanje := 1 TO 60
+         cPom := PadL( AllTrim( Str( nPrimanje ) ), 2, "0" )
+         IF cPom $ cM4TipoviIzdvojitiPrimanja .AND. ( ld->( FieldPos( "I" + cPom ) ) != 0 )
+            nBolovanjeIznosM4 += iif( cPom $ cM4TipoviIzdvojitiPrimanja, LD->&( "I" + cPom ), 0 )
+            nBolovanjeSatiM4 += iif( cPom $ cM4TipoviIzdvojitiPrimanja, LD->&( "S" + cPom ), 0 )
+         ENDIF
+      NEXT
+   ENDIF
+
+   RETURN .T.
 
 
 STATIC FUNCTION prikazi_pregled( cRj, cGodina, cMjOd, cMjDo, cRadnik, ;

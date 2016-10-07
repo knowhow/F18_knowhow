@@ -745,3 +745,7 @@ FUNCTION dodatni_redovi_po_stranici( nSet )
 FUNCTION page_length()
 
    RETURN fetch_metric( "rpt_duzina_stranice", my_user(), 60 ) + dodatni_redovi_po_stranici()
+
+FUNCTION page_length_landscape()
+
+   RETURN page_length() - 20

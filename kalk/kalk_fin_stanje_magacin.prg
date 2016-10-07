@@ -396,9 +396,7 @@ FUNCTION finansijsko_stanje_magacin()
    RETURN .T.
 
 
-// -----------------------------------------
-// zaglavlje izvjestaja
-// -----------------------------------------
+
 STATIC FUNCTION Zaglfinansijsko_stanje_magacin()
 
    Preduzece()
@@ -414,7 +412,7 @@ STATIC FUNCTION Zaglfinansijsko_stanje_magacin()
       HSEEK cIdkonto
    ENDIF
 
-   ?? "KALK: Finansijsko stanje za period", dDatOd, "-", dDatDo, " NA DAN "
+   ?? "KALK:MAG Finansijsko stanje za period", dDatOd, "-", dDatDo, " NA DAN "
    ?? Date(), Space( 10 ), "Str:", Str( ++nTStrana, 3 )
 
    IF cViseKonta == "N"

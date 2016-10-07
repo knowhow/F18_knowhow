@@ -24,8 +24,8 @@ FUNCTION finansijsko_stanje_prodavnica()
    LOCAL dDatOd, dDatDo
    LOCAL cIdFirma
 
-   PicDEM := global_pic_iznos()
-   PicCDEM := global_pic_cijena()
+   cPicIznos := global_pic_iznos()
+   cPicCijena := global_pic_cijena()
 
    cIdFirma := gFirma
    cIdKonto := PadR( "133", gDuzKonto )
@@ -47,11 +47,7 @@ FUNCTION finansijsko_stanje_prodavnica()
 
    DO WHILE .T.
 
-      IF gNW $ "DX"
-         @ m_x + 1, m_y + 2 SAY "Firma "; ?? gFirma, "-", gNFirma
-      ELSE
-         @ m_x + 1, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| P_Firma( @cIdFirma ), cIdfirma := Left( cidfirma, 2 ), .T. }
-      ENDIF
+      @ m_x + 1, m_y + 2 SAY "Firma "; ?? gFirma, "-", gNFirma
 
       @ m_x + 2, m_y + 2 SAY "Konto   " GET cIdKonto VALID P_Konto( @cIdKonto )
       @ m_x + 4, m_y + 2 SAY "Tarife  " GET qqTarifa PICT "@!S50"
@@ -143,18 +139,18 @@ FUNCTION finansijsko_stanje_prodavnica()
    AAdd( aRFLLP, { 6, "Redni", " broj" } )
    AAdd( aRFLLP, { 8, "", " Datum" } )
    AAdd( aRFLLP, { 11, " Broj", "dokumenta" } )
-   AAdd( aRFLLP, { Len( PicDem ), "  NV", " duguje" } )
-   AAdd( aRFLLP, { Len( PicDem ), "  NV", " potraz." } )
-   AAdd( aRFLLP, { Len( PicDem ), "  NV", " ukupno" } )
+   AAdd( aRFLLP, { Len( cPicIznos ), "  NV", " duguje" } )
+   AAdd( aRFLLP, { Len( cPicIznos ), "  NV", " potraz." } )
+   AAdd( aRFLLP, { Len( cPicIznos ), "  NV", " ukupno" } )
 
-   AAdd( aRFLLP, { Len( PicDem ), "   PV", " duguje" } )
-   AAdd( aRFLLP, { Len( PicDem ), "   PV", " potraz." } )
-   AAdd( aRFLLP, { Len( PicDem ), "   PV", " ukupno" } )
-   AAdd( aRFLLP, { Len( PicDem ), " PV sa PDV", " duguje" } )
-   AAdd( aRFLLP, { Len( PicDem ), " PV sa PDV", " potraz." } )
-   AAdd( aRFLLP, { Len( PicDem ), " Popust", "" } )
-   AAdd( aRFLLP, { Len( PicDem ), " PV sa PDV", " - pop." } )
-   AAdd( aRFLLP, { Len( PicDem ), " PV sa PDV", " ukupno" } )
+   AAdd( aRFLLP, { Len( cPicIznos ), "   PV", " duguje" } )
+   AAdd( aRFLLP, { Len( cPicIznos ), "   PV", " potraz." } )
+   AAdd( aRFLLP, { Len( cPicIznos ), "   PV", " ukupno" } )
+   AAdd( aRFLLP, { Len( cPicIznos ), " PV sa PDV", " duguje" } )
+   AAdd( aRFLLP, { Len( cPicIznos ), " PV sa PDV", " potraz." } )
+   AAdd( aRFLLP, { Len( cPicIznos ), " Popust", "" } )
+   AAdd( aRFLLP, { Len( cPicIznos ), " PV sa PDV", " - pop." } )
+   AAdd( aRFLLP, { Len( cPicIznos ), " PV sa PDV", " ukupno" } )
 
 
    PRIVATE cLine := SetRptLineAndText( aRFLLP, 0 )
@@ -162,7 +158,9 @@ FUNCTION finansijsko_stanje_prodavnica()
    PRIVATE cText2 := SetRptLineAndText( aRFLLP, 2, "*" )
 
    start PRINT cret
+
    ?
+   gpO_Land()
 
    PRIVATE nTStrana := 0
    PRIVATE bZagl := {|| Zaglfinansijsko_stanje_prodavnica( dDatOd, dDatDo ) }
@@ -188,8 +186,8 @@ FUNCTION finansijsko_stanje_prodavnica()
    showkorner( ncmslogova, 1, 16 )
    showkorner( 0, 100 )
 
-   // kolicine ulaz/izlaz
-   PRIVATE nKU := nKI := 0
+
+   PRIVATE nKU := nKI := 0 // kolicine ulaz/izlaz
 
    nKolUlaz := 0
    nKolIzlaz := 0
@@ -262,9 +260,7 @@ FUNCTION finansijsko_stanje_prodavnica()
 
             ENDIF
 
-         ELSEIF pu_i == "3"
-
-            // nivelacija
+         ELSEIF pu_i == "3" // nivelacija
             nMPVBU += mpc * kolicina
             nMPVU += mpcsapp * kolicina
 
@@ -286,12 +282,12 @@ FUNCTION finansijsko_stanje_prodavnica()
          LOOP
       ENDIF
 
-      IF PRow() > page_length()
+      IF PRow() > page_length_landscape()
          FF
          Eval( bZagl )
       ENDIF
 
-      ? Str( ++nrbr, 5 ) + ".", dDatDok, cBroj
+      ? Str( ++nRbr, 5 ) + ".", dDatDok, cBroj
       nCol1 := PCol() + 1
 
       ntNVU += nNVU
@@ -303,42 +299,42 @@ FUNCTION finansijsko_stanje_prodavnica()
       ntPopust += nPopust
       ntMPVIP += nMPVIP
 
-      @ PRow(), PCol() + 1 SAY nNVU PICT picdem
-      @ PRow(), PCol() + 1 SAY nNVI PICT picdem
-      @ PRow(), PCol() + 1 SAY ntNVU - ntNVI PICT picdem
-      @ PRow(), PCol() + 1 SAY nMPVBU PICT picdem
-      @ PRow(), PCol() + 1 SAY nMPVBI PICT picdem
-      @ PRow(), PCol() + 1 SAY ntMPVBU - ntMPVBI PICT picdem
-      @ PRow(), PCol() + 1 SAY nMPVU PICT picdem
-      @ PRow(), PCol() + 1 SAY nMPVI PICT picdem
+      @ PRow(), PCol() + 1 SAY nNVU PICT cPicIznos
+      @ PRow(), PCol() + 1 SAY nNVI PICT cPicIznos
+      @ PRow(), PCol() + 1 SAY ntNVU - ntNVI PICT cPicIznos
+      @ PRow(), PCol() + 1 SAY nMPVBU PICT cPicIznos
+      @ PRow(), PCol() + 1 SAY nMPVBI PICT cPicIznos
+      @ PRow(), PCol() + 1 SAY ntMPVBU - ntMPVBI PICT cPicIznos
+      @ PRow(), PCol() + 1 SAY nMPVU PICT cPicIznos
+      @ PRow(), PCol() + 1 SAY nMPVI PICT cPicIznos
 
       IF IsPDV()
-         @ PRow(), PCol() + 1 SAY nPopust PICT picdem
-         @ PRow(), PCol() + 1 SAY nMPVIP PICT picdem
+         @ PRow(), PCol() + 1 SAY nPopust PICT cPicIznos
+         @ PRow(), PCol() + 1 SAY nMPVIP PICT cPicIznos
       ENDIF
 
-      @ PRow(), PCol() + 1 SAY ntMPVU - ntMPVI PICT picdem
+      @ PRow(), PCol() + 1 SAY ntMPVU - ntMPVI PICT cPicIznos
 
    ENDDO
 
    ? cLine
    ? "UKUPNO:"
 
-   @ PRow(), nCol1    SAY ntNVU PICT picdem
-   @ PRow(), PCol() + 1 SAY ntNVI PICT picdem
-   @ PRow(), PCol() + 1 SAY ntNVU - ntNVI PICT picdem
-   @ PRow(), PCol() + 1 SAY ntMPVBU PICT picdem
-   @ PRow(), PCol() + 1 SAY ntMPVBI PICT picdem
-   @ PRow(), PCol() + 1 SAY ntMPVBU - ntMPVBI PICT picdem
-   @ PRow(), PCol() + 1 SAY ntMPVU PICT picdem
-   @ PRow(), PCol() + 1 SAY ntMPVI PICT picdem
+   @ PRow(), nCol1    SAY ntNVU PICT cPicIznos
+   @ PRow(), PCol() + 1 SAY ntNVI PICT cPicIznos
+   @ PRow(), PCol() + 1 SAY ntNVU - ntNVI PICT cPicIznos
+   @ PRow(), PCol() + 1 SAY ntMPVBU PICT cPicIznos
+   @ PRow(), PCol() + 1 SAY ntMPVBI PICT cPicIznos
+   @ PRow(), PCol() + 1 SAY ntMPVBU - ntMPVBI PICT cPicIznos
+   @ PRow(), PCol() + 1 SAY ntMPVU PICT cPicIznos
+   @ PRow(), PCol() + 1 SAY ntMPVI PICT cPicIznos
 
    IF IsPDV()
-      @ PRow(), PCol() + 1 SAY ntPopust PICT picdem
-      @ PRow(), PCol() + 1 SAY ntMPVIP PICT picdem
+      @ PRow(), PCol() + 1 SAY ntPopust PICT cPicIznos
+      @ PRow(), PCol() + 1 SAY ntMPVIP PICT cPicIznos
    ENDIF
 
-   @ PRow(), PCol() + 1 SAY ntMPVU - ntMPVI PICT picdem
+   @ PRow(), PCol() + 1 SAY ntMPVU - ntMPVI PICT cPicIznos
 
    ? cLine
 
@@ -348,22 +344,22 @@ FUNCTION finansijsko_stanje_prodavnica()
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
-// zaglavlje fin.stanje
+
 FUNCTION Zaglfinansijsko_stanje_prodavnica( dDatOd, dDatDo )
 
    SELECT konto
    HSEEK cIdKonto
    Preduzece()
 
-   //IF Val( gFPicDem ) > 0
-      P_COND2
-   //ELSE
-  //    P_COND
-   //ENDIF
+   // IF Val( gFPicDem ) > 0
+   // P_COND2
+   // ELSE
+   P_COND
+   // ENDIF
 
-   ?? "KALK: Finansijsko stanje za period", dDatOd, "-", dDatDo, " NA DAN "
+   ?? "KALK:PROD Finansijsko stanje za period", dDatOd, "-", dDatDo, " NA DAN "
    ?? Date(), Space( 10 ), "Str:", Str( ++nTStrana, 3 )
    ? "Prodavnica:", cIdKonto, "-", konto->naz
 

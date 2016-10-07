@@ -315,7 +315,7 @@ FUNCTION ld_kartica_plate_redovan_rad( cIdRj, cMjesec, cGodina, cIdRadn, cObrac,
 
       nBo := bruto_osn( nOsnZaBr, cRTipRada, nLicOdbitak )
 
-      IF UBenefOsnovu()
+      IF is_radn_k4_bf_ide_u_benef_osnovu()
 
          nTmp2 := nOsnZaBr - IF( !Empty( gBFForm ),  &( gBFForm ), 0 )
          nBFo := bruto_osn( nTmp2, cRTipRada, nLicOdbitak )

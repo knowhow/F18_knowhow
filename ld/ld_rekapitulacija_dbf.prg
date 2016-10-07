@@ -640,7 +640,7 @@ STATIC FUNCTION _calc_totals( lSvi, a_benef )
       // ukupno bruto osnova
       nURadn_bo += nRadn_bo
 
-      IF UBenefOsnovu()
+      IF is_radn_k4_bf_ide_u_benef_osnovu()
 
          // beneficirani staz za radnika
          nRadn_bbo := bruto_osn( _oosnneto - if( !Empty( gBFForm ), &gBFForm, 0 ), cTipRada, nKoefLO, nRSpr_koef )
@@ -790,7 +790,7 @@ STATIC FUNCTION _calc_totals( lSvi, a_benef )
       nUNetoOsnova += _oUNeto
       // ukupno neto osnova
 
-      IF UBenefOsnovu()
+      IF is_radn_k4_bf_ide_u_benef_osnovu()
          nUBNOsnova += _oUNeto - if( !Empty( gBFForm ), &gBFForm, 0 )
       ENDIF
 
@@ -1854,7 +1854,7 @@ STATIC FUNCTION napr_obracun( lSvi, a_benef )
       nDoprOsnOst += _oosnostalo
       // ostalo - osonova za obracun doprinosa
 
-      IF UBenefOsnovu()
+      IF is_radn_k4_bf_ide_u_benef_osnovu()
 
          _bn_osnova := _oUNeto - if( !Empty( gBFForm ), &gBFForm, 0 )
          nUBNOsnova += _bn_osnova

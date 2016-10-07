@@ -262,7 +262,7 @@ FUNCTION IzracDopr( cDopr, nKLO, cTipRada, nSpr_koef )
 
       nBo := bruto_osn( Max( _UNeto, PAROBR->prosld * gPDLimit / 100 ), cTipRada, nKlo, nSPr_koef )
 
-      IF UBenefOsnovu()
+      IF is_radn_k4_bf_ide_u_benef_osnovu()
 
          IF !Empty( gBFForm )
             gBFForm := StrTran( gBFForm, "_", "" )

@@ -106,7 +106,6 @@ METHOD set_module_gvars()
    PUBLIC gSihtGroup := "N"
    PUBLIC gFUPrim := PadR( "UNETO+I24+I25", 50 )
    PUBLIC gBFForm := PadR( "", 100 )
-   PUBLIC gBenefSati := 1
    PUBLIC gFURaz := PadR( "", 60 )
    PUBLIC gFUSati := PadR( "USATI", 50 )
    PUBLIC gFURSati := PadR( "", 50 )

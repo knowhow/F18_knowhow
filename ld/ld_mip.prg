@@ -18,6 +18,202 @@ STATIC __ispl_s := 0
 
 
 
+FUNCTION ld_mip_obrazac()
+
+   LOCAL nC1 := 20
+   LOCAL i
+   LOCAL cTPNaz
+   LOCAL nKrug := 1
+   LOCAL cRj := Space( 60 )
+   LOCAL cRJDef := Space( 2 )
+   LOCAL cRadnik := fetch_metric( "ld_izvj_radnik", my_user(), Space( LEN_IDRADNIK ) )
+   LOCAL cTipPrimIsplateUslugeIliDobra := Space( 100 )
+   LOCAL cIdRj
+   LOCAL cDopr10 := "10"
+   LOCAL cDopr11 := "11"
+   LOCAL cDopr12 := "12"
+   LOCAL cDopr1X := "1X"
+   LOCAL cDopr20 := "20"
+   LOCAL cDopr21 := "21"
+   LOCAL cDopr22 := "22"
+   LOCAL cDopr2D := Space( 100 )
+   LOCAL cDoprDod := Space( 100 )
+   LOCAL cTipoviPrimanjaNeUlazeBeneficirani := Space( 100 )
+   LOCAL cTipoviPrimanjaBolovanje := PadR( "18;", 100 )
+   LOCAL cTipoviPrimanjaBolovanjePreko := PadR( "18;24;", 100 )
+   LOCAL cObracun := gObracun
+   LOCAL cWinPrint := "E"
+   LOCAL nOper := 1
+   LOCAL cIsplSaberi := "D"
+   LOCAL cNule := "N"
+   LOCAL cMipView := "N"
+   LOCAL _pojed := .F.
+   LOCAL cErr := ""
+   LOCAL nX
+   LOCAL cMj :=  fetch_metric( "ld_izv_mjesec_od", my_user(), gMjesec )
+   LOCAL cGod := fetch_metric( "ld_izv_godina", my_user(), gGodina )
+
+   mip_tmp_tbl()
+
+   cIdRj := gRj
+
+   cPredNaz := PadR( fetch_metric( "obracun_plata_preduzece_naziv", NIL, "" ), 100 )
+   cPredJMB := PadR( fetch_metric( "obracun_plata_preduzece_id_broj", NIL, "" ), 13 )
+   cPredSDJ := PadR( fetch_metric( "obracun_plata_sifra_djelatnosti", NIL, "" ), 20 )
+   cTipoviPrimanjaBolovanje := PadR( fetch_metric( "obracun_plata_mip_tip_pr_bolovanje", NIL, cTipoviPrimanjaBolovanje ), 100 )
+   cTipoviPrimanjaNeUlazeBeneficirani := PadR( fetch_metric( "obracun_plata_mip_tip_pr_ne_benef", NIL, cTipoviPrimanjaNeUlazeBeneficirani ), 100 )
+
+   cTipoviPrimanjaBolovanjePreko := PadR( fetch_metric( "obracun_plata_mip_tip_pr_bolovanje_42_dana", NIL, cTipoviPrimanjaBolovanjePreko ), 100 )
+   cDoprDod := PadR( fetch_metric( "obracun_plata_mip_dodatni_dopr_ut", NIL, cDoprDod ), 100 )
+   cRjDef := PadR( fetch_metric( "obracun_plata_mip_def_rj_isplata", NIL, cRjDef ), 2 )
+   dDatPodn := Date()
+
+   nPorGodina := 2011
+   nBrZahtjeva := 1
+
+
+   ol_o_tbl()
+
+   Box( "#MIP OBRAZAC ZA RADNIKE", 22, 75 )
+
+   @ m_x + 1, m_y + 2 SAY "Radne jedinice: " GET cRj PICT "@!S25"
+   @ m_x + 2, m_y + 2 SAY "Za period:" GET cMj PICT "99"
+   @ m_x + 2, Col() + 1 SAY "/" GET cGod PICT "9999"
+
+   @ m_x + 2, Col() + 2 SAY "Obracun:" GET cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
+
+   @ m_x + 4, m_y + 2 SAY "Radnik (prazno-svi radnici): " GET cRadnik VALID Empty( cRadnik ) .OR. P_RADN( @cRadnik )
+
+   @ m_x + 6, m_y + 2 SAY " TIPOVI PRIMANJA:"
+   @ m_x + 7, m_y + 2 SAY " .. isplate u usl. ili dobrima:" GET cTipPrimIsplateUslugeIliDobra PICT "@S30"
+   @ m_x + 8, m_y + 2 SAY " .. ne ulaze u beneficirani:"  GET cTipoviPrimanjaNeUlazeBeneficirani PICT "@S30"
+   @ m_x + 9, m_y + 2 SAY " .. bolovanje:" GET cTipoviPrimanjaBolovanje PICT "@S30"
+   @ m_x + 10, m_y + 2 SAY8 " .. bolovanje preko 42 dana, trudničko:" GET cTipoviPrimanjaBolovanjePreko PICT "@S30"
+
+
+   nX := 12
+   @ m_x + nX, m_y + 2 SAY "   Doprinos iz pio: " GET cDopr10
+   @ m_x + nX++, Col() + 2 SAY "na pio: " GET cDopr20
+
+   @ m_x + nX, m_y + 2 SAY "   Doprinos iz zdr: " GET cDopr11
+   @ m_x + nX, Col() + 2 SAY "na zdr: " GET cDopr21
+   @ m_x + nX++, Col() + 2 SAY "dod.dopr.na zdr: " GET cDopr2D PICT "@S10"
+
+   @ m_x + nX, m_y + 2 SAY "   Doprinos iz nez: " GET cDopr12
+   @ m_x + nX++, Col() + 2 SAY "na nez: " GET cDopr22
+
+   @ m_x + nX++, m_y + 2 SAY "Doprinos iz ukupni: " GET cDopr1X
+   @ m_x + nX++, m_y + 2 SAY " dod.dopr. benef.: " GET cDoprDod PICT "@S30"
+
+   @ m_x + nX, m_y + 2 SAY "Naziv preduzeca: " GET cPredNaz PICT "@S30"
+   @ m_x + nX++, Col() + 1 SAY "JID: " GET cPredJMB
+
+   @ m_x + nX++, m_y + 2 SAY "Sifra djelatnosti: " GET cPredSDJ PICT "@S20"
+   @ m_x + nX, m_y + 2 SAY "Def.RJ" GET cRJDef
+   @ m_x + nX, Col() + 2 SAY "Sabrati isplate za isti mj ?" GET cIsplSaberi VALID cIsplSaberi $ "DN" PICT "@!"
+   @ m_x + nX, Col() + 2 SAY "obracun 0 ?" GET cNule VALID cNule $ "DN" PICT "@!"
+   @ m_x + nX++, Col() + 2 SAY "pregled ?" GET cMipView VALID cMipView $ "DN" PICT "@!"
+
+   @ m_x + nX++, m_y + 2 SAY "Stampa/Export ?" GET cWinPrint PICT "@!"  VALID cWinPrint $ "ES"
+
+   READ
+
+   IF cWinPrint == "E"
+      @ m_x + nX++, m_y + 2 SAY "Datum podnosenja:" GET dDatPodn
+      READ
+
+   ENDIF
+
+   dD_start := Date()
+   dD_end := Date()
+
+   _fix_d_per( cMj, cGod, @dD_start, @dD_end )
+
+   dPer := Date()
+
+   mip_get_period( cMj, cGod, @dPer )
+
+   clvbox()
+
+   ESC_BCR
+
+   BoxC()
+
+   IF LastKey() == K_ESC
+      RETURN .F.
+   ENDIF
+
+   IF ld_provjeri_dat_isplate_za_mjesec( cGod, cMj, IF( !Empty( cRjDef ), cRjDef, NIL ) ) > 0
+
+      IF !Empty( cRjDef )
+         cErr := "Nije definisan datum isplate za radnu jedinicu '" + cRjDef +  "'."
+      ELSE
+         cErr := "Za pojedine radne jedinice nije definisan datum isplate."
+      ENDIF
+
+      IF cWinPrint == "S"
+         cErr += "#Obrazac će biti prikazan bez datuma isplate."
+         MsgBeep( cErr )
+      ELSE
+         cErr += "#Molimo ispravite pa ponovo pokrenite ovu opciju."
+         MsgBeep( cErr )
+         RETURN .F.
+      ENDIF
+
+   ENDIF
+
+   __mj := cMj
+   __god := cGod
+
+   IF cWinPrint == "S"
+      __xml := 1
+   ELSE
+      __xml := 0
+   ENDIF
+
+   IF cIsplSaberi == "D"
+      __ispl_s := 1
+   ENDIF
+
+   set_metric( "obracun_plata_preduzece_naziv", NIL, AllTrim( cPredNaz ) )
+   set_metric( "obracun_plata_preduzece_id_broj", NIL, cPredJMB )
+   set_metric( "obracun_plata_sifra_djelatnosti", NIL, cPredSDJ )
+   set_metric( "obracun_plata_mip_tip_pr_bolovanje", NIL, AllTrim( cTipoviPrimanjaBolovanje ) )
+   set_metric( "obracun_plata_mip_tip_pr_ne_benef", NIL, AllTrim( cTipoviPrimanjaNeUlazeBeneficirani ) )
+   set_metric( "obracun_plata_mip_tip_pr_bolovanje_42_dana", NIL, AllTrim( cTipoviPrimanjaBolovanjePreko ) )
+   set_metric( "obracun_plata_mip_dodatni_dopr_ut", NIL, AllTrim( cDoprDod ) )
+   set_metric( "obracun_plata_mip_def_rj_isplata", NIL, cRjDef )
+
+   IF !Empty( cRadnik )
+      _pojed := .T.
+      __xml := 1
+   ENDIF
+
+   SELECT ld
+
+   mip_sort( cRj, cGod, cMj, cRadnik, cObracun )
+
+   mip_fill_data( cRj, cRjDef, cGod, cMj, cRadnik, ;
+      cTipPrimIsplateUslugeIliDobra, cTipoviPrimanjaNeUlazeBeneficirani, cTipoviPrimanjaBolovanje, cTipoviPrimanjaBolovanjePreko, cDopr10, cDopr11, cDopr12, ;
+      cDopr1X, cDopr20, cDopr21, cDopr22, cDoprDod, cDopr2D, cObracun, ;
+      cNule )
+
+   IF cMipView == "D"
+      mip_view()
+   ENDIF
+
+   IF __xml == 1
+      _xml_print( _pojed )
+   ELSE
+      nBrZahtjeva := g_br_zaht()
+      _xml_export( cMj, cGod )
+      MsgBeep( "Obradjeno " + AllTrim( Str( nBrZahtjeva ) ) + " radnika." )
+   ENDIF
+
+   RETURN .T.
+
+
+
 FUNCTION mip_sort( cRj, cGod, cMj, cRadnik, cObr )
 
    LOCAL cFilter := ""
@@ -55,13 +251,13 @@ FUNCTION mip_sort( cRj, cGod, cMj, cRadnik, cObr )
    RETURN .T.
 
 
-STATIC FUNCTION _ins_tbl( cRadnik, cIdRj, nGodina, nMjesec, ;
+STATIC FUNCTION mip_insert_record_r_export( cRadnik, cIdRj, nGodina, nMjesec, ;
       cTipRada, cVrIspl, cR_ime, cR_jmb, cR_opc, dDatIsplate, ;
-      nSati, nSatiB, nSatiT, nStUv, nBruto, nO_prih, nU_opor, ;
+      nBrojRadnihSati, nSatiB, nRadnihSatiUvecanoTrajanje, nStUv, nBruto, nO_prih, nU_opor, ;
       nU_d_pio, nU_d_zdr, nU_d_pms, nU_d_nez, nU_d_iz, ;
       nU_dn_pio, nU_dn_zdr, nU_dn_nez, nU_dn_dz, ;
       nUm_prih, nKLO, nLODB, nOsn_por, nIzn_por, ;
-      cR_rmj, lBolPreko )
+      cSifraRadnogMjestaUvecanoTrajanje, lBolPreko )
 
    LOCAL nTArea := Select()
 
@@ -79,9 +275,9 @@ STATIC FUNCTION _ins_tbl( cRadnik, cIdRj, nGodina, nMjesec, ;
    REPLACE r_jmb WITH cR_jmb
    REPLACE r_opc WITH cR_opc
    REPLACE d_isp WITH dDatIsplate
-   REPLACE r_sati WITH nSati
+   REPLACE r_sati WITH nBrojRadnihSati //  6)  broj radnih sati ${rad.r_sati}
    REPLACE r_satib WITH nSatiB
-   REPLACE r_satit WITH nSatiT
+   REPLACE r_satit WITH nRadnihSatiUvecanoTrajanje
    REPLACE r_stuv WITH nSTUv
    REPLACE bruto WITH nBruto
    REPLACE o_prih WITH nO_prih
@@ -100,7 +296,7 @@ STATIC FUNCTION _ins_tbl( cRadnik, cIdRj, nGodina, nMjesec, ;
    REPLACE l_odb WITH nLODB
    REPLACE osn_por WITH nOsn_por
    REPLACE izn_por WITH nIzn_por
-   REPLACE r_rmj WITH cR_rmj
+   REPLACE r_rmj WITH cSifraRadnogMjestaUvecanoTrajanje // 23) Šifra radnog mjesta sa uvećanim trajanjem ${rad.r_rmj}, radn->ben_srmj
 
    IF lBolPreko = .T.
       REPLACE bol_preko WITH "1"
@@ -110,7 +306,7 @@ STATIC FUNCTION _ins_tbl( cRadnik, cIdRj, nGodina, nMjesec, ;
 
    SELECT ( nTArea )
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -158,197 +354,6 @@ FUNCTION mip_tmp_tbl()
    O_R_EXP
    INDEX ON idradn + Str( godina, 4 ) + Str( mjesec, 2 ) + vr_ispl TAG "1"
 
-   RETURN
-
-
-FUNCTION ld_mip_obrazac()
-
-   LOCAL nC1 := 20
-   LOCAL i
-   LOCAL cTPNaz
-   LOCAL nKrug := 1
-   LOCAL cRj := Space( 60 )
-   LOCAL cRJDef := Space( 2 )
-   LOCAL cRadnik := Space( LEN_IDRADNIK )
-   LOCAL cPrimDobra := Space( 100 )
-   LOCAL cIdRj
-   LOCAL cMj_od
-   LOCAL cMj_do
-   LOCAL cGod_od
-   LOCAL cGod_do
-   LOCAL cDopr10 := "10"
-   LOCAL cDopr11 := "11"
-   LOCAL cDopr12 := "12"
-   LOCAL cDopr1X := "1X"
-   LOCAL cDopr20 := "20"
-   LOCAL cDopr21 := "21"
-   LOCAL cDopr22 := "22"
-   LOCAL cDopr2D := Space( 100 )
-   LOCAL cDoprDod := Space( 100 )
-   LOCAL cTP_off := Space( 100 )
-   LOCAL cTP_bol := PadR( "18;", 100 )
-   LOCAL cBolPreko := PadR( "18;24;", 100 )
-   LOCAL cObracun := gObracun
-   LOCAL cWinPrint := "E"
-   LOCAL nOper := 1
-   LOCAL cIsplSaberi := "D"
-   LOCAL cNule := "N"
-   LOCAL cMipView := "N"
-   LOCAL _pojed := .F.
-   LOCAL cErr := ""
-
-   mip_tmp_tbl()
-
-   cIdRj := gRj
-   cMj := gMjesec
-   cGod := gGodina
-
-   cPredNaz := PadR( fetch_metric( "obracun_plata_preduzece_naziv", NIL, "" ), 100 )
-   cPredJMB := PadR( fetch_metric( "obracun_plata_preduzece_id_broj", NIL, "" ), 13 )
-   cPredSDJ := PadR( fetch_metric( "obracun_plata_sifra_djelatnosti", NIL, "" ), 20 )
-   cTp_bol := PadR( fetch_metric( "obracun_plata_mip_tip_pr_bolovanje", NIL, cTp_bol ), 100 )
-   cBolPreko := PadR( fetch_metric( "obracun_plata_mip_tip_pr_bolovanje_42_dana", NIL, cBolPreko ), 100 )
-   cDoprDod := PadR( fetch_metric( "obracun_plata_mip_dodatni_dopr_ut", NIL, cDoprDod ), 100 )
-   cRjDef := PadR( fetch_metric( "obracun_plata_mip_def_rj_isplata", NIL, cRjDef ), 2 )
-   dDatPodn := Date()
-
-   nPorGodina := 2011
-   nBrZahtjeva := 1
-
-
-   ol_o_tbl()
-
-   Box( "#MIP OBRAZAC ZA RADNIKE", 20, 75 )
-
-   @ m_x + 1, m_y + 2 SAY "Radne jedinice: " GET cRj PICT "@!S25"
-   @ m_x + 2, m_y + 2 SAY "Za period:" GET cMj PICT "99"
-   @ m_x + 2, Col() + 1 SAY "/" GET cGod PICT "9999"
-
-   @ m_x + 2, Col() + 2 SAY "Obracun:" GET cObracun WHEN HelpObr( .T., cObracun ) VALID ValObr( .T., cObracun )
-
-   @ m_x + 4, m_y + 2 SAY "Radnik (prazno-svi radnici): " GET cRadnik ;
-      VALID Empty( cRadnik ) .OR. P_RADN( @cRadnik )
-   @ m_x + 5, m_y + 2 SAY "           Isplate u usl. ili dobrima:" GET cPrimDobra PICT "@S30"
-   @ m_x + 6, m_y + 2 SAY "Tipovi koji ne ulaze u obrazac (sati):"  GET cTP_off PICT "@S30"
-   @ m_x + 7, m_y + 2 SAY "Izdvojena primanja (bolovanje):" ;
-      GET cTP_bol PICT "@S30"
-   @ m_x + 8, m_y + 2 SAY "Sifre bolovanja preko 42 dana:" ;
-      GET cBolPreko PICT "@S30"
-
-   @ m_x + 9, m_y + 2 SAY "   Doprinos iz pio: " GET cDopr10
-   @ m_x + 9, Col() + 2 SAY "na pio: " GET cDopr20
-   @ m_x + 10, m_y + 2 SAY "   Doprinos iz zdr: " GET cDopr11
-   @ m_x + 10, Col() + 2 SAY "na zdr: " GET cDopr21
-   @ m_x + 10, Col() + 2 SAY "dod.dopr.na zdr: " GET cDopr2D PICT "@S10"
-   @ m_x + 11, m_y + 2 SAY "   Doprinos iz nez: " GET cDopr12
-   @ m_x + 11, Col() + 2 SAY "na nez: " GET cDopr22
-   @ m_x + 12, m_y + 2 SAY "Doprinos iz ukupni: " GET cDopr1X
-   @ m_x + 13, m_y + 2 SAY " dod.dopr. benef.: " GET cDoprDod PICT "@S30"
-   @ m_x + 15, m_y + 2 SAY "Naziv preduzeca: " GET cPredNaz PICT "@S30"
-   @ m_x + 15, Col() + 1 SAY "JID: " GET cPredJMB
-   @ m_x + 16, m_y + 2 SAY "Sifra djelatnosti: " GET cPredSDJ PICT "@S20"
-   @ m_x + 17, m_y + 2 SAY "Def.RJ" GET cRJDef
-   @ m_x + 17, Col() + 2 SAY "Sabrati isplate za isti mj ?" GET cIsplSaberi ;
-      VALID cIsplSaberi $ "DN" PICT "@!"
-   @ m_x + 17, Col() + 2 SAY "obracun 0 ?" GET cNule ;
-      VALID cNule $ "DN" PICT "@!"
-   @ m_x + 17, Col() + 2 SAY "pregled ?" GET cMipView ;
-      VALID cMipView $ "DN" PICT "@!"
-   @ m_x + 18, m_y + 2 SAY "Stampa/Export ?" GET cWinPrint PICT "@!" ;
-      VALID cWinPrint $ "ES"
-   READ
-
-   IF cWinPrint == "E"
-      @ m_x + 19, m_y + 2 SAY "Datum podnosenja:" GET dDatPodn
-      READ
-
-   ENDIF
-
-   dD_start := Date()
-   dD_end := Date()
-
-   _fix_d_per( cMj, cGod, @dD_start, @dD_end )
-
-   dPer := Date()
-
-   g_per( cMj, cGod, @dPer )
-
-   clvbox()
-
-   ESC_BCR
-
-   BoxC()
-
-   IF LastKey() == K_ESC
-      RETURN .F.
-   ENDIF
-
-   IF ld_provjeri_dat_isplate_za_mjesec( cGod, cMj, IF( !Empty( cRjDef ), cRjDef, NIL ) ) > 0
-
-      IF !EMPTY( cRjDef )
-         cErr := "Nije definisan datum isplate za radnu jedinicu '" + cRjDef +  "'."
-      ELSE
-         cErr := "Za pojedine radne jedinice nije definisan datum isplate."
-      ENDIF
-
-      IF cWinPrint == "S"
-         cErr += "#Obrazac će biti prikazan bez datuma isplate."
-         MsgBeep( cErr )
-      ELSE
-         cErr += "#Molimo ispravite pa ponovo pokrenite ovu opciju."
-         MsgBeep( cErr )
-         RETURN
-      ENDIF
-
-   ENDIF
-
-   __mj := cMj
-   __god := cGod
-
-   IF cWinPrint == "S"
-      __xml := 1
-   ELSE
-      __xml := 0
-   ENDIF
-
-   IF cIsplSaberi == "D"
-      __ispl_s := 1
-   ENDIF
-
-   set_metric( "obracun_plata_preduzece_naziv", NIL, AllTrim( cPredNaz ) )
-   set_metric( "obracun_plata_preduzece_id_broj", NIL, cPredJMB )
-   set_metric( "obracun_plata_sifra_djelatnosti", NIL, cPredSDJ )
-   set_metric( "obracun_plata_mip_tip_pr_bolovanje", NIL, AllTrim( cTp_bol ) )
-   set_metric( "obracun_plata_mip_tip_pr_bolovanje_42_dana", NIL, AllTrim( cBolPreko ) )
-   set_metric( "obracun_plata_mip_dodatni_dopr_ut", NIL, AllTrim( cDoprDod ) )
-   set_metric( "obracun_plata_mip_def_rj_isplata", NIL, cRjDef )
-
-   IF !Empty( cRadnik )
-      _pojed := .T.
-      __xml := 1
-   ENDIF
-
-   SELECT ld
-
-   mip_sort( cRj, cGod, cMj, cRadnik, cObracun )
-
-   mip_fill_data( cRj, cRjDef, cGod, cMj, cRadnik, ;
-      cPrimDobra, cTP_off, cTP_bol, cBolPreko, cDopr10, cDopr11, cDopr12, ;
-      cDopr1X, cDopr20, cDopr21, cDopr22, cDoprDod, cDopr2D, cObracun, ;
-      cNule )
-
-   IF cMipView == "D"
-      mip_view()
-   ENDIF
-
-   IF __xml == 1
-      _xml_print( _pojed )
-   ELSE
-      nBrZahtjeva := g_br_zaht()
-      _xml_export( cMj, cGod )
-      MsgBeep( "Obradjeno " + AllTrim( Str( nBrZahtjeva ) ) + " radnika." )
-   ENDIF
-
    RETURN .T.
 
 
@@ -372,7 +377,7 @@ STATIC FUNCTION _fix_d_per( nMj, nGod, dStart, dEnd )
 
    dEnd := CToD( cTmp )
 
-   RETURN
+   RETURN .T.
 
 
 STATIC FUNCTION _xml_head()
@@ -381,7 +386,7 @@ STATIC FUNCTION _xml_head()
 
    xml_head( .T., cStr )
 
-   RETURN
+   RETURN .T.
 
 
 STATIC FUNCTION _xml_export( mjesec, godina )
@@ -391,7 +396,7 @@ STATIC FUNCTION _xml_export( mjesec, godina )
    LOCAL _output_file := ""
 
    IF __xml == 1
-      RETURN
+      RETURN .F.
    ENDIF
 
    _id_br  := fetch_metric( "org_id_broj", NIL, PadR( "<POPUNI>", 13 ) )
@@ -433,8 +438,8 @@ STATIC FUNCTION _xml_export( mjesec, godina )
 
    DirChange( _lokacija )
 
-   // napuni xml fajl
-   _fill_e_xml( _id_br + ".xml" )
+
+   mipmip_glavna_fill_xml( _id_br + ".xml" )
 
    cMsg := "Generacija obrasca završena.#"
    cMsg += "Fajl se nalazi na desktopu u folderu F18_dokumenti."
@@ -447,17 +452,14 @@ STATIC FUNCTION _xml_export( mjesec, godina )
 
    _output_file := "mip_" + AllTrim( my_server_params()[ "database" ] ) + "_" + AllTrim( mjesec ) + "_" + AllTrim( godina ) + ".xml"
 
-   // kopiraj fajl na desktop
-   f18_copy_to_desktop( _lokacija, _id_br + ".xml", _output_file )
 
-   RETURN
+   f18_copy_to_desktop( _lokacija, _id_br + ".xml", _output_file ) // kopiraj fajl na desktop
+
+   RETURN .T.
 
 
 
-// --------------------------------------------
-// filuje xml fajl sa podacima za export
-// --------------------------------------------
-STATIC FUNCTION _fill_e_xml( file )
+STATIC FUNCTION mipmip_glavna_fill_xml( file )
 
    LOCAL nTArea := Select()
    LOCAL nU_dn_pio
@@ -468,14 +470,13 @@ STATIC FUNCTION _fill_e_xml( file )
    LOCAL nU_dopr
    LOCAL nU_lodb
    LOCAL nU_porez
-   LOCAL _ima_bol_preko := .F.
+   LOCAL lImaBolovanjePreko42 := .F.
    LOCAL _id_br, _naziv, _adresa, _mjesto
    LOCAL cPredSDJ
 
    // otvori xml za upis
    create_xml( file )
 
-   // upisi header
    _xml_head()
 
    // ovo ne treba zato sto je u headeru sadrzan ovaj prvi sub-node !!!
@@ -488,8 +489,8 @@ STATIC FUNCTION _fill_e_xml( file )
    _mjesto   := fetch_metric( "org_mjesto", NIL, PadR( "<POPUNI mjesto>", 100 ) )
    cPredSDJ := fetch_metric( "obracun_plata_sifra_djelatnosti", NIL, Space( 20 ) )
 
-   // <podacioposlodavcu>
-   xml_subnode( "PodaciOPoslodavcu", .F. )
+
+   xml_subnode( "PodaciOPoslodavcu", .F. ) // <podacioposlodavcu>
 
    // naziv firme
    xml_node( "JIBPoslodavca", AllTrim( _id_br ) )
@@ -515,8 +516,7 @@ STATIC FUNCTION _fill_e_xml( file )
 
    xml_subnode( "Obrazac1023", .F. )
 
-   // dio1
-   xml_subnode( "Dio1", .F. )
+   xml_subnode( "Dio1", .F. )  // dio1
 
    xml_node( "JibJmb", AllTrim( _id_br ) )
    xml_node( "Naziv", to_xml_encoding( AllTrim( _naziv ) ) )
@@ -539,10 +539,10 @@ STATIC FUNCTION _fill_e_xml( file )
          LOOP
       ENDIF
 
-      // po radniku
-      cT_radnik := field->idradn
 
-      // pronadji radnika u sifrarniku
+      cT_radnik := field->idradn // po radniku
+
+
       SELECT radn
       SEEK cT_radnik
 
@@ -552,7 +552,7 @@ STATIC FUNCTION _fill_e_xml( file )
 
       nR_sati := 0
       nR_satib := 0
-      nR_satit := 0
+      nRadnihSatiUvecanoTrajanje := 0
       nO_prih := 0
       nBruto := 0
       nU_opor := 0
@@ -567,7 +567,7 @@ STATIC FUNCTION _fill_e_xml( file )
       nOsnPor := 0
       nIznPor := 0
 
-      _ima_bol_preko := .F.
+      lImaBolovanjePreko42 := .F.
 
       DO WHILE !Eof() .AND. field->idradn == cT_radnik
 
@@ -581,10 +581,10 @@ STATIC FUNCTION _fill_e_xml( file )
          cR_ime := field->r_ime
          dD_ispl := field->d_isp
 
-         IF !_ima_bol_preko
+         IF !lImaBolovanjePreko42
             nR_sati += field->r_sati
             nR_satib += field->r_satib
-            nR_satit += field->r_satit
+            nRadnihSatiUvecanoTrajanje += field->r_satit
          ENDIF
 
          nBruto += field->bruto
@@ -601,7 +601,7 @@ STATIC FUNCTION _fill_e_xml( file )
          nOsnPor += field->osn_por
          nIznPor += field->izn_por
          nR_stuv := field->r_stuv
-         cR_rmj := field->r_rmj
+         cSifraRadnogMjestaUvecanoTrajanje := field->r_rmj
          cR_opc := field->r_opc
 
          nU_dn_pio += field->u_dn_pio
@@ -619,14 +619,16 @@ STATIC FUNCTION _fill_e_xml( file )
          // bol_preko = "1"
          IF field->bol_preko == "1"
 
-            _ima_bol_preko := .T.
+            lImaBolovanjePreko42 := .T.
 
             nR_sati := field->r_sati
             nR_satib := field->r_satib
 
-            IF nR_satiT <> 0 .AND. gBenefSati == 1
-               nR_satiT := field->r_sati
+/* hernad ne razumijem?!
+          --  IF nRadnihSatiUvecanoTrajanje <> 0 .AND. is_beneficirani_staz_redovan_rad()
+               nRadnihSatiUvecanoTrajanje := field->r_sati
             ENDIF
+*/
 
          ENDIF
 
@@ -635,49 +637,34 @@ STATIC FUNCTION _fill_e_xml( file )
 
       xml_subnode( "PodaciOPrihodima", .F. )
 
-      xml_node( "VrstaIsplate", ;
-         to_xml_encoding( AllTrim( cVr_ispl ) ) )
+      xml_node( "VrstaIsplate", to_xml_encoding( AllTrim( cVr_ispl ) ) )
       xml_node( "Jmb", AllTrim( cR_jmb ) )
-      xml_node( "ImePrezime", ;
-         to_xml_encoding( AllTrim( cR_ime ) ) )
+      xml_node( "ImePrezime", to_xml_encoding( AllTrim( cR_ime ) ) )
       xml_node( "DatumIsplate", xml_date( dD_ispl ) )
-      xml_node( "RadniSati", ;
-         Str( nR_sati, 12, 2 ) )
-      xml_node( "RadniSatiBolovanje", ;
-         Str( nR_satib, 12, 2 ) )
+      xml_node( "RadniSati", Str( nR_sati, 12, 2 ) )
+      xml_node( "RadniSatiBolovanje", Str( nR_satib, 12, 2 ) )
       xml_node( "BrutoPlaca", Str( nBruto, 12, 2 ) )
-      xml_node( "KoristiIDrugiOporeziviPrihodi", ;
-         Str( nO_prih, 12, 2 ) )
-      xml_node( "UkupanPrihod", ;
-         Str( nU_opor, 12, 2 ) )
-      xml_node( "IznosPIO", ;
-         Str( nU_d_pio, 12, 2 ) )
-      xml_node( "IznosZO", ;
-         Str( nU_d_zdr, 12, 2 ) )
-      xml_node( "IznosNezaposlenost", ;
-         Str( nU_d_nez, 12, 2 ) )
+      xml_node( "KoristiIDrugiOporeziviPrihodi", Str( nO_prih, 12, 2 ) )
+      xml_node( "UkupanPrihod", Str( nU_opor, 12, 2 ) )
+      xml_node( "IznosPIO", Str( nU_d_pio, 12, 2 ) )
+      xml_node( "IznosZO", Str( nU_d_zdr, 12, 2 ) )
+      xml_node( "IznosNezaposlenost", Str( nU_d_nez, 12, 2 ) )
       xml_node( "Doprinosi", Str( nU_d_iz, 12, 2 ) )
-      xml_node( "PrihodUmanjenZaDoprinose", ;
-         Str( nUm_prih, 12, 2 ) )
-      xml_node( "FaktorLicnogOdbitka", ;
-         Str( nR_klo, 12, 2 ) )
+      xml_node( "PrihodUmanjenZaDoprinose", Str( nUm_prih, 12, 2 ) )
+      xml_node( "FaktorLicnogOdbitka", Str( nR_klo, 12, 2 ) )
       xml_node( "IznosLicnogOdbitka", Str( nL_odb, 12, 2 ) )
       xml_node( "OsnovicaPoreza", Str( nOsnpor, 12, 2 ) )
       xml_node( "IznosPoreza", Str( nIznpor, 12, 2 ) )
 
       cTmp := "false"
 
-      IF nR_satit > 0
+      IF nRadnihSatiUvecanoTrajanje > 0 // beneficirani radni staz
          cTmp := "true"
-
-         xml_node( "RadniSatiUT", Str( nR_satit, 12, 2 ) )
+         xml_node( "RadniSatiUT", Str( nRadnihSatiUvecanoTrajanje, 12, 2 ) )
          xml_node( "StepenUvecanja", Str( nR_stuv, 12, 0 ) )
-         xml_node( "SifraRadnogMjestaUT", AllTrim( cR_rmj )  )
-         xml_node( "DoprinosiPIOMIOzaUT", ;
-            Str( nU_d_pms, 12, 2 )  )
-
-         // true or false
-         xml_node( "BeneficiraniStaz", AllTrim( cTmp ) )
+         xml_node( "SifraRadnogMjestaUT", AllTrim( cSifraRadnogMjestaUvecanoTrajanje )  )
+         xml_node( "DoprinosiPIOMIOzaUT", Str( nU_d_pms, 12, 2 )  )
+         xml_node( "BeneficiraniStaz", AllTrim( cTmp ) ) // true or false
 
       ENDIF
 
@@ -687,11 +674,10 @@ STATIC FUNCTION _fill_e_xml( file )
 
    ENDDO
 
-   xml_subnode( "Dio2", .T. )
-   // kraj dio2
+   xml_subnode( "Dio2", .T. ) // kraj dio2
 
-   // dio3
-   xml_subnode( "Dio3", .F. )
+
+   xml_subnode( "Dio3", .F. ) // dio3
    xml_node( "PIO", Str( nU_dn_pio, 12, 2 ) )
    xml_node( "ZO", Str( nU_dn_zdr, 12, 2 ) )
    xml_node( "OsiguranjeOdNezaposlenosti", Str( nU_dn_nez, 12, 2 ) )
@@ -703,8 +689,8 @@ STATIC FUNCTION _fill_e_xml( file )
    xml_subnode( "Dio3", .T. )
    // dio3
 
-   // dio4
-   xml_subnode( "Dio4IzjavaPoslodavca", .F. )
+
+   xml_subnode( "Dio4IzjavaPoslodavca", .F. ) // dio4
    xml_node( "JibJmbPoslodavca", AllTrim( cPredJmb ) )
    xml_node( "DatumUnosa", xml_date( dDatPodn ) )
    xml_node( "NazivPoslodavca", to_xml_encoding( AllTrim( cPredNaz ) ) )
@@ -719,20 +705,17 @@ STATIC FUNCTION _fill_e_xml( file )
 
    xml_subnode( "Obrazac1023", .T. )
 
-   // zatvori <PaketniUvoz...>
-   xml_subnode( "PaketniUvozObrazaca", .T. )
+   xml_subnode( "PaketniUvozObrazaca", .T. ) // zatvori <PaketniUvoz...>
 
    SELECT ( nTArea )
 
    close_xml()
 
-   RETURN
+   RETURN .T.
 
 
-// --------------------------------------
-// vraca period
-// --------------------------------------
-STATIC FUNCTION g_per( cMj, cGod, dPer )
+
+STATIC FUNCTION mip_get_period( cMj, cGod, dPer )
 
    LOCAL cTmp := ""
 
@@ -741,7 +724,7 @@ STATIC FUNCTION g_per( cMj, cGod, dPer )
 
    dPer := CToD( cTmp )
 
-   RETURN
+   RETURN .T.
 
 
 STATIC FUNCTION _xml_print( lPojedinacni )
@@ -750,36 +733,35 @@ STATIC FUNCTION _xml_print( lPojedinacni )
    LOCAL _xml_file := my_home() + "data.xml"
 
    IF __xml == 0
-      RETURN
+      RETURN .F.
    ENDIF
 
    IF lPojedinacni == .T.
       _template := "ld_pmip.odt"
    ENDIF
 
-   _fill_xml( _xml_file )
+   mip_glavna_fill_xml( _xml_file )
 
    IF generisi_odt_iz_xml( _template, _xml_file )
       prikazi_odt()
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
-STATIC FUNCTION _fill_xml( xml_file )
+STATIC FUNCTION mip_glavna_fill_xml( xml_file )
 
    LOCAL nTArea := Select()
-   LOCAL _ima_bol_preko := .F.
+   LOCAL lImaBolovanjePreko42 := .F.
+   LOCAL nRadnihSatiUvecanoTrajanje
 
-   // otvori xml za upis
    create_xml( xml_file )
-   // upisi header
    xml_head()
 
    xml_subnode( "mip", .F. )
 
-   // naziv firme
-   xml_node( "p_naz", to_xml_encoding( AllTrim( cPredNaz ) ) )
+
+   xml_node( "p_naz", to_xml_encoding( AllTrim( cPredNaz ) ) ) // naziv firme
    xml_node( "p_jmb", AllTrim( cPredJmb ) )
    xml_node( "p_sdj", AllTrim( cPredSDJ ) )
    xml_node( "p_per", g_por_per() )
@@ -798,7 +780,7 @@ STATIC FUNCTION _fill_xml( xml_file )
    SET ORDER TO TAG "1"
    GO TOP
 
-   // saberi totale...
+   // saberi totale
    DO WHILE !Eof()
 
       IF field->print == "X"
@@ -844,8 +826,8 @@ STATIC FUNCTION _fill_xml( xml_file )
          LOOP
       ENDIF
 
-      // po radniku
-      cT_radnik := field->idradn
+
+      cT_radnik := field->idradn // po radniku
 
       xml_subnode( "radnik", .F. )
 
@@ -857,10 +839,10 @@ STATIC FUNCTION _fill_xml( xml_file )
 
       nR_sati := 0
       nR_satib := 0
-      nR_satit := 0
+      nRadnihSatiUvecanoTrajanje := 0
       cStuv := ""
       nR_StUv := 0
-      cR_rmj := ""
+      cSifraRadnogMjestaUvecanoTrajanje := ""
       nBruto := 0
       nO_prih := 0
       nU_opor := 0
@@ -875,10 +857,10 @@ STATIC FUNCTION _fill_xml( xml_file )
       nOsn_por := 0
       nIzn_por := 0
 
-      _ima_bol_preko := .F.
+      lImaBolovanjePreko42 := .F.
 
-      // provrti obracune
-      DO WHILE !Eof() .AND. field->idradn == cT_radnik
+
+      DO WHILE !Eof() .AND. field->idradn == cT_radnik // provrti obracune
 
          IF field->print == "X"
             SKIP
@@ -888,14 +870,14 @@ STATIC FUNCTION _fill_xml( xml_file )
          // za obrazac i treba zadnja isplata
          dD_isp := field->d_isp
 
-         IF !_ima_bol_preko
+         IF !lImaBolovanjePreko42
             nR_sati += field->r_sati
             nR_satib += field->r_satib
-            nR_satit += field->r_satit
+            nRadnihSatiUvecanoTrajanje += field->r_satit
          ENDIF
 
          nR_stuv := field->r_stuv
-         cR_rmj := field->r_rmj
+         cSifraRadnogMjestaUvecanoTrajanje := field->r_rmj
          nBruto += field->bruto
          nO_prih += field->o_prih
          nU_opor += field->u_opor
@@ -910,20 +892,18 @@ STATIC FUNCTION _fill_xml( xml_file )
          nIzn_por += field->izn_por
          nU_d_pms += field->u_d_pms
 
-         // ako je isti radnik kao i ranije
-         // i bolovanje preko 42 dana
-         // uzmi puni fond sati sa stavke bolovanja
-         // bol_preko = "1"
-         IF field->bol_preko == "1"
+         IF field->bol_preko == "1" // ako je isti radnik kao i ranije, i bolovanje preko 42 dana, uzmi puni fond sati sa stavke bolovanja bol_preko = "1"
 
-            _ima_bol_preko := .T.
+            lImaBolovanjePreko42 := .T.
 
             nR_sati := field->r_sati
             nR_satib := field->r_satib
 
-            IF nR_satiT <> 0 .AND. gBenefSati == 1
-               nR_satiT := field->r_sati
+/* hernad ne razumijem !
+          --  IF nRadnihSatiUvecanoTrajanje <> 0 .AND. is_beneficirani_staz_redovan_rad()
+               nRadnihSatiUvecanoTrajanje := field->r_sati
             ENDIF
+*/
 
          ENDIF
 
@@ -936,7 +916,7 @@ STATIC FUNCTION _fill_xml( xml_file )
       xml_node( "d_isp", DToC( dD_isp ) )
       xml_node( "r_sati", Str( nR_sati, 12, 2 ) )
       xml_node( "r_satib", Str( nR_satiB, 12, 2 ) )
-      xml_node( "r_satit", Str( nR_satiT, 12, 2 ) )
+      xml_node( "r_satit", Str( nRadnihSatiUvecanoTrajanje, 12, 2 ) ) // 21) Broj radnih sati sa uvećanim trajanjem ${rad.r_satit}
       xml_node( "r_stuv", cStUv )
       xml_node( "bruto", Str( nBruto, 12, 2 ) )
       xml_node( "o_prih", Str( nO_prih, 12, 2 ) )
@@ -951,21 +931,19 @@ STATIC FUNCTION _fill_xml( xml_file )
       xml_node( "l_odb", Str( nL_odb, 12, 2 ) )
       xml_node( "osn_por", Str( nOsn_por, 12, 2 ) )
       xml_node( "izn_por", Str( nIzn_por, 12, 2 ) )
-      xml_node( "r_rmj", cR_rmj )
+      xml_node( "r_rmj", cSifraRadnogMjestaUvecanoTrajanje )
 
       xml_subnode( "radnik", .T. )
 
    ENDDO
 
-   // zatvori <mip>
-   xml_subnode( "mip", .T. )
+
+   xml_subnode( "mip", .T. ) // zatvori <mip>
 
    SELECT ( nTArea )
+   close_xml() // zatvori xml fajl
 
-   // zatvori xml fajl
-   close_xml()
-
-   RETURN
+   RETURN .T.
 
 
 // ----------------------------------------------------------
@@ -982,11 +960,8 @@ STATIC FUNCTION g_por_per()
 
 
 
-// ---------------------------------------------------------
-// napuni podatke u pomocnu tabelu za izvjestaj
-// ---------------------------------------------------------
 FUNCTION mip_fill_data( cRj, cRjDef, cGod, cMj, ;
-      cRadnik, cPrimDobra, cTP_off, cTP_bol, cBolPreko, cDopr10, ;
+      cRadnik, cTipPrimIsplateUslugeIliDobra,  cTipoviPrimanjaNeUlazeBeneficirani, cTipoviPrimanjaBolovanje, cTipoviPrimanjaBolovanjePreko, cDopr10, ;
       cDopr11, cDopr12, ;
       cDopr1X, cDopr20, cDopr21, cDopr22, cDoprDod, cDopr2D, cObracun, cNule )
 
@@ -996,11 +971,14 @@ FUNCTION mip_fill_data( cRj, cRjDef, cGod, cMj, ;
    LOCAL t
    LOCAL o
    LOCAL cPom
-   LOCAL nPrDobra
-   LOCAL nTP_off, nTP_off_sati
-   LOCAL nTP_bol
+   LOCAL nPrimanjaUslugeIliDobraIznos, nPrimanjaUslugeIliDobraSati
+   LOCAL nPrimanjaNeUlazeUBeneficiraniIznos, nPrimanjaNeUlazeUBeneficiraniSati
+   LOCAL nBolovanjaSati, nBolovanjaIznos
    LOCAL nTrosk := 0
    LOCAL lInRS := .F.
+   LOCAL nRadnihSatiUvecanoTrajanje // polje 21) set
+   LOCAL lImaBovanjaPreko42, nBolovanjaPreko42Iznos := 0, nBolovanjaPreko42Sati := 0
+   LOCAL nBrojRadnihSati
 
    lDatIspl := .F.
    IF obracuni->( FieldPos( "DAT_ISPL" ) ) <> 0
@@ -1037,8 +1015,8 @@ FUNCTION mip_fill_data( cRj, cRjDef, cGod, cMj, ;
       cTipRada := get_ld_rj_tip_rada( ld->idradn, ld->idrj )
       lInRS := radnik_iz_rs( radn->idopsst, radn->idopsrad )
 
-      // samo pozicionira bazu PAROBR na odgovarajuci zapis
-      ParObr( ld->mjesec, ld->godina, ld->obr, ld->idrj )
+
+      ParObr( ld->mjesec, ld->godina, ld->obr, ld->idrj ) // samo pozicionira bazu PAROBR na odgovarajuci zapis
 
       SELECT radn
       SEEK cT_radnik
@@ -1051,9 +1029,9 @@ FUNCTION mip_fill_data( cRj, cRjDef, cGod, cMj, ;
 
       SELECT ld
 
-      nSati := 0
+      nBrojRadnihSati := 0
       nSatiB := 0
-      nSatiT := 0
+      nRadnihSatiUvecanoTrajanje := 0
       nStUv := 0
       nBruto := 0
       nO_prih := 0
@@ -1074,44 +1052,43 @@ FUNCTION mip_fill_data( cRj, cRjDef, cGod, cMj, ;
       nTrosk := 0
       nBrDobra := 0
       nNeto := 0
-      nPrDobra := 0
-      nTP_off := 0
-      nTP_off_sati := 0
-      nTP_bol := 0
+      nPrimanjaUslugeIliDobraIznos := 0
+      nPrimanjaUslugeIliDobraSati := 0
+      nPrimanjaNeUlazeUBeneficiraniIznos := 0
+      nPrimanjaNeUlazeUBeneficiraniSati := 0
+      nBolovanjaSati := 0
+      nBolovanjaIznos := 0
 
       cR_ime := ""
       cR_jmb := ""
       cR_opc := ""
-      cR_rmj := ""
+      cSifraRadnogMjestaUvecanoTrajanje := ""
 
       DO WHILE !Eof() .AND. field->idradn == cT_radnik
 
-         IF ld_date( field->godina, field->mjesec ) < ;
-               ld_date( cGod, cMj )
+         IF ld_date( field->godina, field->mjesec ) <  ld_date( cGod, cMj )
             SKIP
             LOOP
          ENDIF
 
-         IF ld_date( field->godina, field->mjesec ) > ;
-               ld_date( cGod, cMj )
+         IF ld_date( field->godina, field->mjesec ) > ld_date( cGod, cMj )
             SKIP
             LOOP
          ENDIF
 
-         // radna jedinica
-         cRadJed := ld->idrj
+
+         cRadJed := ld->idrj // radna jedinica
 
          SELECT radn
 
          cR_ime := AllTrim( radn->ime ) + " " + AllTrim( radn->naz )
          cR_jmb := AllTrim( radn->matbr )
          cR_opc := g_ops_code( radn->idopsst )
-         cR_rmj := ""
+         cSifraRadnogMjestaUvecanoTrajanje := ""
 
          SELECT ld
 
-         // uvijek provjeri tip rada, ako ima vise obracuna
-         cTipRada := get_ld_rj_tip_rada( ld->idradn, ld->idrj )
+         cTipRada := get_ld_rj_tip_rada( ld->idradn, ld->idrj ) // uvijek provjeri tip rada, ako ima vise obracuna
          cTrosk := radn->trosk
          lInRS := radnik_iz_rs( radn->idopsst, radn->idopsrad )
 
@@ -1122,145 +1099,96 @@ FUNCTION mip_fill_data( cRj, cRjDef, cGod, cMj, ;
 
          ParObr( ld->mjesec, ld->godina, ld->obr, ld->idrj )
 
-         // puni fond sati za ovaj mjesec
-         nFondSati := parobr->k1
 
-         nPrDobra := 0
-         nTP_off := 0
-         nTP_bol := 0
+         nFondSati := parobr->k1 // puni fond sati za ovaj mjesec
 
-         IF !Empty( cPrimDobra )
-            FOR t := 1 TO 60
-               cPom := IF( t > 9, Str( t, 2 ), "0" + Str( t, 1 ) )
-               IF ld->( FieldPos( "I" + cPom ) ) <= 0
-                  EXIT
-               ENDIF
-               nPrDobra += IF( cPom $ cPrimDobra, LD->&( "I" + cPom ), 0 )
-            NEXT
+         nPrimanjaUslugeIliDobraIznos := 0
+         //nPrimanjaNeUlazeUBeneficiraniIznos := 0
+         nBolovanjaSati := 0
+
+
+         sum_primanja_za_tipove_primanja( cTipPrimIsplateUslugeIliDobra, @nPrimanjaUslugeIliDobraIznos, @nPrimanjaUslugeIliDobraSati )
+
+         sum_primanja_za_tipove_primanja( cTipoviPrimanjaNeUlazeBeneficirani, @nPrimanjaNeUlazeUBeneficiraniIznos, @nPrimanjaNeUlazeUBeneficiraniSati )
+         sum_primanja_za_tipove_primanja( cTipoviPrimanjaBolovanje, @nBolovanjaIznos, @nBolovanjaSati )
+
+         lImaBovanjaPreko42 := .F. // provjeri da li ima bolovanja preko 42 dana ili trudnickog bolovanja
+         sum_primanja_za_tipove_primanja( cTipoviPrimanjaBolovanjePreko, @nBolovanjaPreko42Iznos, @nBolovanjaPreko42Sati )
+         IF Round( nBolovanjaPreko42Iznos, 2 ) != 0 .OR. Round( nBolovanjaPreko42Sati, 2 ) != 0
+            lImaBovanjaPreko42 := .T.
          ENDIF
 
-         IF !Empty( cTP_off ) // tip primanja koja ne ulaze u obrazac
-            FOR o := 1 TO 60
-               cPom := IIF( o > 9, Str( o, 2 ), "0" + Str( o, 1 ) )
-               IF ld->( FieldPos( "I" + cPom ) ) <= 0
-                  EXIT
-               ENDIF
-               nTP_off += IIF( cPom $ cTP_off, LD->&( "I" + cPom ), 0 )
-               nTP_off_sati += IIF( cPom $ cTP_off, LD->&( "I" + cPom ), 0 )
-            NEXT
-         ENDIF
+         nNeto := ld->uneto
+         nKLO := g_klo( ld->ulicodb )
+         nL_odb := ld->ulicodb
+         nBrojRadnihSati := ld->usati
+         nSatiB := nBolovanjaSati
 
-         IF !Empty( cTP_bol )
-            FOR b := 1 TO 60
-               cPom := IIF( b > 9, Str( b, 2 ), "0" + Str( b, 1 ) )
-               IF ld->( FieldPos( "S" + cPom ) ) <= 0
-                  EXIT
-               ENDIF
-               nTP_bol += IIF( cPom $ cTP_bol, LD->&( "S" + cPom ), 0 )
-            NEXT
-         ENDIF
-
-         // provjeri da li ima bolovanja preko 42 dana ili trudnickog bolovanja
-
-         lImaBPreko := .F.
-
-         IF !Empty( cBolPreko )
-
-            FOR c := 1 TO 60
-               cPom := IF( c > 9, Str( c, 2 ), "0" + Str( c, 1 ) )
-               IF ld->( FieldPos( "S" + cPom ) ) <= 0
-                  EXIT
-               ENDIF
-
-               IF cPom $ cBolPreko .AND. LD->&( "S" + cPom ) <> 0
-
-                  lImaBPreko := .T.
-                  EXIT
-               ENDIF
-
-            NEXT
-
-         ENDIF
-
-         nNeto := field->uneto
-         nKLO := g_klo( field->ulicodb )
-         nL_odb := field->ulicodb
-         nSati := field->usati
-         nSatiB := nTP_bol
-
-         IF lImaBPreko  // uzmi puni fond sati
-            nSati := nFondSati
+         IF lImaBovanjaPreko42  // uzmi puni fond sati
+            nBrojRadnihSati := nFondSati
             nSatiB := nFondSati
          ENDIF
 
-         nSatiT := 0
+         nRadnihSatiUvecanoTrajanje := 0
 
-         // tipovi primanja koji ne ulaze u bruto osnovicu - ovo ne postoji
-         IF ( nTP_off > 0 )
-            //nNeto := ( nNeto - nTP_off )  - ovo ne postoji
-            nSati := ( nSati - nTP_off_sati ) // tipovi primanja koji ne ulaze u sate
+         IF ( nBolovanjaIznos != 0 ) .OR. ( nBolovanjaSati != 0 )
+
+            // nNeto := ( nNeto - nPrimanjaNeUlazeUBeneficiraniIznos )  - ovo ne postoji
+            //nBrojRadnihSati := ( nBrojRadnihSati - nPrimanjaNeUlazeUBeneficiraniSati ) // tipovi primanja koji ne ulaze u sate
+            nBrojRadnihSati := nBrojRadnihSati - nBolovanjaSati
          ENDIF
 
          nBruto := bruto_osn( nNeto, cTipRada, nL_odb )
-
          nMBruto := nBruto
 
-         // prvo provjeri hoces li racunati mbruto
-         IF calc_mbruto()
-            // minimalni bruto
-            nMBruto := min_bruto( nBruto, field->usati )
+
+         IF calc_mbruto() // prvo provjeri hoces li racunati mbruto
+            nMBruto := min_bruto( nBruto, field->usati ) // minimalni bruto
          ENDIF
 
-         // ovo preskoci, nema ovdje GIP-a
-         IF nMBruto <= 0 .AND. cNule == "N"
+
+         IF nMBruto <= 0 .AND. cNule == "N" // ovo preskoci, nema ovdje GIP-a
             SELECT ld
             SKIP
             LOOP
          ENDIF
 
-         // bruto primanja u uslugama ili dobrima
-         // za njih posebno izracunaj bruto osnovicu
-         IF nPrDobra > 0
-            nBrDobra := bruto_osn( nPrDobra, cTipRada, nL_odb )
+
+         IF nPrimanjaUslugeIliDobraIznos > 0 // bruto primanja u uslugama ili dobrima, za njih posebno izracunaj bruto osnovicu
+            nBrDobra := bruto_osn( nPrimanjaUslugeIliDobraIznos, cTipRada, nL_odb )
          ENDIF
 
          nBr_benef := 0
          nU_d_pms := 0
          cBen_stopa := ""
 
-         // beneficirani staz
-         _a_benef := {}
 
-         // beneficirani radnici
-         IF UBenefOsnovu()
+         _a_benef := {} // beneficirani staz
 
-            // sati beneficiranog su sati redovnog rada
-            IF gBenefSati == 1
-               nSatiT := nSati
-            ELSE
-               nSatiT := field->usati
-            ENDIF
 
-            // benef.stepen
-            nStUv := benefstepen()
+         IF is_radn_k4_bf_ide_u_benef_osnovu()
+
+//altd()
+            //IF is_beneficirani_staz_redovan_rad()
+               nRadnihSatiUvecanoTrajanje := nBrojRadnihSati - nPrimanjaNeUlazeUBeneficiraniSati
+            //ELSE
+            //   nRadnihSatiUvecanoTrajanje := field->usati
+            //ENDIF
+
+
+            nStUv := benefstepen() // benef.stepen
             cBen_stopa := AllTrim( radn->k3 )
 
-            IF radn->( FieldPos( "BEN_SRMJ" ) ) <> 0
-               cR_rmj := AllTrim( radn->ben_srmj )
-            ENDIF
+            cSifraRadnogMjestaUvecanoTrajanje := AllTrim( radn->ben_srmj ) // set sifra stopa beneficiranog radnog staza
 
-            // promjeni parametre za benef. primanja
             cFFTmp := gBFForm
             gBFForm := StrTran( gBFForm, "_", "" )
 
-            nBr_Benef := bruto_osn( nNeto - ;
-               IF( !Empty( gBFForm ), &gBFForm, 0 ), ;
-               cTipRada, nL_odb )
+            nBr_Benef := bruto_osn( nNeto - iif( !Empty( gBFForm ), &gBFForm, 0 ), cTipRada, nL_odb )
 
             add_to_a_benef( @_a_benef, cBen_stopa, nStUv, nBr_Benef )
 
-            // vrati parametre
-            gBFForm := cFFtmp
+            gBFForm := cFFtmp // vrati parametre
 
          ENDIF
 
@@ -1282,11 +1210,11 @@ FUNCTION mip_fill_data( cRj, cRjDef, cGod, cMj, ;
          nU_dn_zdr := Round( nMBruto * nDopr21 / 100, 4 )
          nU_dn_nez := Round( nMBruto * nDopr22 / 100, 4 )
 
-         // zbirni je zbir ova tri doprinosa
-         nU_d_iz := Round( nU_d_pio + nU_d_zdr + nU_d_nez, 4 )
 
-         // dodatni doprinosi iz beneficije
-         IF !Empty( cDoprDod )
+         nU_d_iz := Round( nU_d_pio + nU_d_zdr + nU_d_nez, 4 ) // zbirni je zbir ova tri doprinosa
+
+
+         IF !Empty( cDoprDod ) // dodatni doprinosi iz beneficije
 
             aD_Dopr := TokToNiz( cDoprDod, ";" )
 
@@ -1301,8 +1229,8 @@ FUNCTION mip_fill_data( cRj, cRjDef, cGod, cMj, ;
             NEXT
          ENDIF
 
-         // dodatni doprinosi na
-         IF !Empty( cDopr2D )
+
+         IF !Empty( cDopr2D ) // dodatni doprinosi na
 
             aD2_Dopr := TokToNiz( cDopr2D, ";" )
 
@@ -1321,24 +1249,23 @@ FUNCTION mip_fill_data( cRj, cRjDef, cGod, cMj, ;
          nUM_prih := ( nBruto - nU_d_iz )
          nPorOsn := ( nBruto - nU_d_iz ) - nL_odb
 
-         // ako je neoporeziv radnik, nema poreza
-         IF !radn_oporeziv( radn->id, ld->idrj ) .OR. ;
-               ( nBruto - nU_d_iz ) < nL_odb
+
+         IF !radn_oporeziv( radn->id, ld->idrj ) .OR. ( nBruto - nU_d_iz ) < nL_odb // ako je neoporeziv radnik, nema poreza
             nPorOsn := 0
          ENDIF
 
-         // porez je ?
-         nPorez := izr_porez( nPorOsn, "B" )
+
+         nPorez := izr_porez( nPorOsn, "B" )  // porez je ?
 
          SELECT ld
 
-         // na ruke je
-         nNaRuke := Round( nBruto - nU_d_iz - nPorez + nTrosk, 2 )
+
+         nNaRuke := Round( nBruto - nU_d_iz - nPorez + nTrosk, 2 ) // na ruke je
 
          nIsplata := nNaRuke
 
-         // da li se radi o minimalcu ?
-         IF cTipRada $ " #I#N#"
+
+         IF cTipRada $ " #I#N#"  // da li se radi o minimalcu ?
             nIsplata := min_neto( nIsplata, field->usati )
          ENDIF
 
@@ -1356,27 +1283,23 @@ FUNCTION mip_fill_data( cRj, cRjDef, cGod, cMj, ;
 
          IF lDatIspl
 
-            // radna jedinica
-            cTmpRj := field->idrj
+
+            cTmpRj := field->idrj // radna jedinica
             IF !Empty( cRJDef )
                cTmpRj := cRJDef
             ENDIF
 
-            dDatIspl := g_isp_date( cTmpRJ, ;
-               field->godina, ;
-               field->mjesec, ;
-               cObr, @nMjIspl, ;
-               @cIsplZa, @cVrstaIspl )
+            dDatIspl := g_isp_date( cTmpRJ, field->godina, field->mjesec, cObr, @nMjIspl, @cIsplZa, @cVrstaIspl )
          ENDIF
 
-         // vrstu isplate cu uzeti iz LD->V_ISPL
-         IF Empty( field->v_ispl )
+
+         IF Empty( field->v_ispl )  // vrstu isplate cu uzeti iz LD->V_ISPL
             cVrstaIspl := "1"
          ELSE
             cVrstaIspl := AllTrim( field->v_ispl )
          ENDIF
 
-         _ins_tbl( cT_radnik, ;
+         mip_insert_record_r_export( cT_radnik, ;
             cRadJed, ;
             nGodina, ;
             nMjesec, ;
@@ -1386,9 +1309,9 @@ FUNCTION mip_fill_data( cRj, cRjDef, cGod, cMj, ;
             cR_jmb, ;
             cR_opc, ;
             dDatIspl, ;
-            nSati, ;
+            nBrojRadnihSati, ;
             nSatiB, ;
-            nSatiT, ;
+            nRadnihSatiUvecanoTrajanje, ;
             nStUv, ;
             nBruto, ;
             nO_prih, ;
@@ -1407,8 +1330,8 @@ FUNCTION mip_fill_data( cRj, cRjDef, cGod, cMj, ;
             nL_odb, ;
             nPorOsn, ;
             nPorez, ;
-            cR_rmj, ;
-            lImaBPreko )
+            cSifraRadnogMjestaUvecanoTrajanje, ;
+            lImaBovanjaPreko42 )
 
          SELECT ld
          SKIP
@@ -1417,4 +1340,4 @@ FUNCTION mip_fill_data( cRj, cRjDef, cGod, cMj, ;
 
    ENDDO
 
-   RETURN
+   RETURN .T.

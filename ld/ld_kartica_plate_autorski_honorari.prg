@@ -99,14 +99,14 @@ FUNCTION ld_kartica_plate_autorski_honorar( cIdRj, cMjesec, cGodina, cIdRadn, cO
 
    nBo := bruto_osn( nOsnZaBr, cRTipRada, nLicOdbitak )
 
-   IF UBenefOsnovu()
+   IF is_radn_k4_bf_ide_u_benef_osnovu()
       _bn_osnova := bruto_osn( nOsnZaBr - if( !Empty( gBFForm ), &gBFForm, 0 ), cRTipRada, nLicOdbitak )
       _bn_stepen := BenefStepen()
       add_to_a_benef( @_a_benef, AllTrim( radn->k3 ), _bn_stepen, _bn_osnova )
    ENDIF
 
-   // izracunava bruto sa troskovima 30%
-   nBSaTr := ( nBo * 1.2500 )
+
+   nBSaTr := ( nBo * 1.2500 ) // izracunava bruto sa troskovima 30%
    // troskovi su
    nTrosk := nBSaTr * ( gAHTrosk / 100 )
 

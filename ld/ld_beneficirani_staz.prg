@@ -15,7 +15,7 @@
 // ------------------------------------------
 // da li radnik ide u benef osnovu
 // ------------------------------------------
-FUNCTION UBenefOsnovu()
+FUNCTION is_radn_k4_bf_ide_u_benef_osnovu()
 
    IF radn->k4 == "BF"
       RETURN .T.

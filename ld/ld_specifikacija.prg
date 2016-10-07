@@ -547,7 +547,7 @@ FUNCTION ld_specifikacija_plate()
       _a_benef := {}
 
       // beneficirani radnici
-      IF UBenefOsnovu()
+      IF is_radn_k4_bf_ide_u_benef_osnovu()
 
          cFFTmp := gBFForm
          gBFForm := StrTran( gBFForm, "_", "" )

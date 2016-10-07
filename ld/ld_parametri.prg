@@ -13,6 +13,7 @@
 #include "f18.ch"
 
 
+STATIC s_cBeneficiraniTip
 
 FUNCTION ld_parametri()
 
@@ -48,8 +49,7 @@ FUNCTION ld_parametri()
 
 
 
-FUNCTION ld_get_params()
-
+FUNCTION ld_get_params( hParams )
 
    gGodina := fetch_metric( "ld_godina", my_user(), gGodina )
    gRj := fetch_metric( "ld_rj", my_user(), gRj )
@@ -74,7 +74,11 @@ FUNCTION ld_get_params()
    gMRM := fetch_metric( "ld_minuli_rad_koef_muskarci", NIL, gMRM )
    gPDLimit := fetch_metric( "ld_donji_limit_poreza_doprinosa", NIL, gPDLimit )
    gBFForm := fetch_metric( "ld_formula_beneficirani_staz", NIL, gBFForm )
-   gBenefSati := fetch_metric( "ld_sati_beneficirani_staz_tip", NIL, gBenefSati )
+
+   IF hParams != NIL
+      hParams[ "benef_tip" ] := param_ld_sati_beneficirani_staz_tip()
+   ENDIF
+
    gOsnLOdb := fetch_metric( "ld_osnovni_licni_odbitak_iznos", NIL, gOsnLOdb )
    gUgTrosk := fetch_metric( "ld_trosak_ugovori", NIL, gUgTrosk )
    gAhTrosk := fetch_metric( "ld_trosak_honorari", NIL, gAhTrosk )
@@ -108,6 +112,27 @@ FUNCTION ld_get_params()
 
    RETURN .T.
 
+
+FUNCTION param_ld_sati_beneficirani_staz_tip( nSet )
+
+   // hernad: ne razumijem !?
+   IF s_cBeneficiraniTip == NIL
+      s_cBeneficiraniTip := fetch_metric( "ld_sati_beneficirani_staz_tip", NIL, 1 )
+   ENDIF
+
+   IF nSet != NIL
+      s_cBeneficiraniTip := nSet
+      set_metric( "ld_sati_beneficirani_staz_tip", NIL, nSet )
+   ENDIF
+
+   RETURN s_cBeneficiraniTip
+
+
+FUNCTION is_beneficirani_staz_redovan_rad()
+
+   // hernad: ne razumijem !?
+
+   RETURN param_ld_sati_beneficirani_staz_tip() == 1
 
 
 
@@ -184,7 +209,10 @@ FUNCTION ld_set_forma()
 
 FUNCTION ld_set_formule()
 
-   PRIVATE GetList := {}
+   LOCAL hParams := hb_Hash()
+   LOCAL GetList := {}
+
+   ld_get_params( @hParams )
 
    Box(, 19, 77 )
 
@@ -210,7 +238,7 @@ FUNCTION ld_set_formule()
    @ m_x + 16, m_y + 2 SAY "Trosak - autorski honorar (%):" GET gAhTrosk PICT "999.99"
 
    @ m_x + 18, m_y + 2 SAY "Kod benef.gledaj formulu:" GET gBFForm PICT "@!S30"
-   @ m_x + 19, m_y + 2 SAY "Sati benef. (1 - ukupni, 2 - po obracunu):" GET gBenefSati PICT "9"
+   @ m_x + 19, m_y + 2 SAY "Sati benef. (1 - ukupni, 2 - po obracunu):" GET hParams[ "benef_tip" ] PICT "9"
 
    READ
 
@@ -227,7 +255,7 @@ FUNCTION ld_set_formule()
       set_metric( "ld_minuli_rad_koef_muskarci", NIL, gMRM )
       set_metric( "ld_donji_limit_poreza_doprinosa", NIL, gPDLimit )
       set_metric( "ld_formula_beneficirani_staz", NIL, gBFForm )
-      set_metric( "ld_sati_beneficirani_staz_tip", NIL, gBenefSati )
+      param_ld_sati_beneficirani_staz_tip( hParams[ "benef_tip" ] )
       set_metric( "ld_osnovni_licni_odbitak_iznos", NIL, gOsnLOdb )
       set_metric( "ld_trosak_ugovori", NIL, gUgTrosk )
       set_metric( "ld_trosak_honorari", NIL, gAhTrosk )

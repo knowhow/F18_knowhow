@@ -1,16 +1,16 @@
 /*
- * This file is part of the bring.out FMK, a free and open source
- * accounting software suite,
- * Copyright (c) 1996-2011 by bring.out doo Sarajevo.
+ * This file is part of the bring.out knowhow ERP, a free and open source
+ * Enterprise Resource Planning software suite,
+ * Copyright (c) 1994-2011 by bring.out doo Sarajevo.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including FMK specific Exhibits)
- * is available in the file LICENSE_CPAL_bring.out_FMK.md located at the
+ * is available in the file LICENSE_CPAL_bring.out_knowhow.md located at the
  * root directory of this source code archive.
  * By using this software, you agree to be bound by its terms.
  */
 
-
 #include "f18.ch"
+
 
 STATIC aHeader := {}
 STATIC aZaglLen := {}
@@ -29,9 +29,7 @@ STATIC cPart := ""
 
 STATIC cRptBrDok := 0
 
-// -------------------------------------------
-// kif izvjestaj
-// -------------------------------------------
+
 FUNCTION rpt_kif( nBrDok, cIdTarifa )
 
    LOCAL cHeader
@@ -97,13 +95,11 @@ FUNCTION rpt_kif( nBrDok, cIdTarifa )
       nX += 2
 
       @ m_x + nX, m_y + 2 SAY "Tarifa (prazno svi)  ? " GET cTar ;
-         VALID {|| Empty( cTar ) .OR. P_Tarifa( @cTar ) } ;
-         PICT "@!"
+         VALID {|| Empty( cTar ) .OR. P_Tarifa( @cTar ) }  PICT "@!"
       nX += 1
 
       @ m_x + nX, m_y + 2 SAY "Partner (prazno svi) ? " GET cPart ;
-         VALID {|| Empty( cPart ) .OR. P_Partneri( @cPart ) } ;
-         PICT "@!"
+         VALID {|| Empty( cPart ) .OR. P_Partneri( @cPart ) } PICT "@!"
 
       nX += 2
 
@@ -182,7 +178,6 @@ FUNCTION rpt_kif( nBrDok, cIdTarifa )
    my_close_all_dbf()
 
    IF _export == "D"
-
       _file := my_home() + "epdv_r_kif.dbf"
       f18_open_document( _file )
 
@@ -212,7 +207,7 @@ STATIC FUNCTION get_r_fields( aArr )
    AAdd( aArr, { "i_pdv",   "N",  18, 2 } )
    AAdd( aArr, { "i_uk",   "N",  18, 2 } )
 
-   RETURN
+   RETURN .T.
 
 STATIC FUNCTION cre_r_tbl()
 
@@ -229,7 +224,7 @@ STATIC FUNCTION cre_r_tbl()
 
    CREATE_INDEX( "br_dok", "br_dok", "epdv_r_" +  cTbl, .T. )
 
-   RETURN
+   RETURN .T.
 
 STATIC FUNCTION fill_rpt( nBrDok )
 
@@ -355,7 +350,7 @@ STATIC FUNCTION fill_rpt( nBrDok )
    SELECT ( nIzArea )
    SET FILTER TO
 
-   RETURN
+   RETURN .T.
 
 
 STATIC FUNCTION show_rpt()
@@ -489,7 +484,7 @@ STATIC FUNCTION show_rpt()
    FF
    ENDPRINT
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -503,7 +498,7 @@ STATIC FUNCTION kif_nova_stranica( nCurrLine, nPageLimit, lSvakaHeader )
       ENDIF
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -546,7 +541,7 @@ STATIC FUNCTION zaglavlje_kif()
 
    kif_linija()
 
-   RETURN
+   RETURN .T.
 
 
 STATIC FUNCTION kif_linija()
@@ -558,4 +553,4 @@ STATIC FUNCTION kif_linija()
       ?? " "
    NEXT
 
-   RETURN
+   RETURN .T.

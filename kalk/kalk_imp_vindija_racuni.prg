@@ -217,19 +217,18 @@ STATIC FUNCTION GetImpFilter()
    READ
    BoxC()
 
-   // filter za veleprodaju
-   cRet := "R*.R??"
 
-   // postavi filter za fajlove
+   cRet := "R*.R??" // filter za veleprodaju
+
+
    DO CASE
-   CASE cVPMP == "M"
+   CASE cVPMP == "M" // maloprodaja
       cRet := "M*.M??"
    CASE cVPMP == "V"
       cRet := "R*.R??"
    ENDCASE
 
    RETURN cRet
-
 
 
 
@@ -352,76 +351,83 @@ STATIC FUNCTION kalk_import_txt_roba()
 
    RETURN .T.
 
+STATIC FUNCTION kalk_imp_temp_to_roba()
 
+   LOCAL cTmpSif, hRec, lOk, hParams
+
+   O_ROBA
+   O_SIFK
+   O_SIFV
+
+   SELECT kalk_imp_temp
+   GO TOP
+
+   IF  !begin_sql_tran_lock_tables( { "roba" } )
+      MsgBeep( "roba sql lock neuspjesno !? STOP!")
+      RETURN .F.
+   ENDIF
+
+   Box(, 3, 60 )
+   DO WHILE !Eof()
+
+      SELECT roba
+      SET ORDER TO TAG "SIFRADOB" // pronadji robu
+
+      cTmpSif := AllTrim( kalk_imp_temp->sifradob )
+      SEEK cTmpSif
+
+      IF Found()
+
+         @ m_x + 1, m_y + 2 SAY "      ID: " + roba->id
+         @ m_x + 2, m_y + 2 SAY "SIFRADOB: " + kalk_imp_temp->sifradob
 
 /*
- *     Setuj matricu sa poljima tabele dokumenata RACUN
- *   param: aDbf - matrica
+         IF Trim( kalk_imp_temp->sifradob ) == "11417"
+            AltD()
+         ENDIF
  */
-STATIC FUNCTION SetTblDok( aDbf )
 
-   AAdd( aDbf, { "idfirma", "C", 2, 0 } )
-   AAdd( aDbf, { "idtipdok", "C", 2, 0 } )
-   AAdd( aDbf, { "brdok", "C", 8, 0 } )
-   AAdd( aDbf, { "datdok", "D", 8, 0 } )
-   AAdd( aDbf, { "idpartner", "C", 6, 0 } )
-   AAdd( aDbf, { "idpm", "C", 3, 0 } )
-   AAdd( aDbf, { "dindem", "C", 3, 0 } )
-   AAdd( aDbf, { "zaokr", "N", 1, 0 } )
-   AAdd( aDbf, { "rbr", "C", 3, 0 } )
-   AAdd( aDbf, { "idroba", "C", 10, 0 } )
-   AAdd( aDbf, { "kolicina", "N", 14, 5 } )
-   AAdd( aDbf, { "cijena", "N", 14, 5 } )
-   AAdd( aDbf, { "rabat", "N", 14, 5 } )
-   AAdd( aDbf, { "porez", "N", 14, 5 } )
-   AAdd( aDbf, { "rabatp", "N", 14, 5 } )
-   AAdd( aDbf, { "datval", "D", 8, 0 } )
-   AAdd( aDbf, { "obrkol", "N", 14, 5 } )
-   AAdd( aDbf, { "idpj", "C", 3, 0 } )
-   AAdd( aDbf, { "dtype", "C", 3, 0 } )
+         hRec := dbf_get_rec()
+         IF kalk_imp_temp->idpm == "001" // mjenja se VPC
+            hRec[ "vpc" ] := kalk_imp_temp->mpc
+            // IF field->vpc <> kalk_imp_temp->mpc
+            // RREPLACE field->vpc WITH kalk_imp_temp->mpc
+            // ENDIF
 
-   RETURN .T.
+         ELSEIF kalk_imp_temp->idpm == "002" // mjenja se VPC2
+            hRec[ "vpc2" ] := kalk_imp_temp->mpc
+            // IF field->vpc2 <> kalk_imp_temp->mpc
+            // RREPLACE field->vpc2 WITH kalk_imp_temp->mpc
+            // ENDIF
 
-/*
- *     Set polja tabele partner
- *   param: aDbf - matrica sa def.polja
- */
-STATIC FUNCTION set_adbf_partner( aDbf )
+         ELSEIF kalk_imp_temp->idpm == "003"   // mjenja se MPC
+            hRec[ "mpc" ] := kalk_imp_temp->mpc
+            // IF field->mpc <> kalk_imp_temp->mpc
+            // RREPLACE field->mpc WITH kalk_imp_temp->mpc
+            // ENDIF
+         ENDIF
+         lOk := update_rec_server_and_dbf( Alias(), hRec, 1, "CONT" )
 
-   AAdd( aDbf, { "idpartner", "C", 6, 0 } )
-   AAdd( aDbf, { "naz", "C", 25, 0 } )
-   AAdd( aDbf, { "ptt", "C", 5, 0 } )
-   AAdd( aDbf, { "mjesto", "C", 16, 0 } )
-   AAdd( aDbf, { "adresa", "C", 24, 0 } )
-   AAdd( aDbf, { "ziror", "C", 22, 0 } )
-   AAdd( aDbf, { "telefon", "C", 12, 0 } )
-   AAdd( aDbf, { "fax", "C", 12, 0 } )
-   AAdd( aDbf, { "idops", "C", 4, 0 } )
-   AAdd( aDbf, { "rokpl", "N", 5, 0 } )
-   AAdd( aDbf, { "porbr", "C", 16, 0 } )
-   AAdd( aDbf, { "idbroj", "C", 16, 0 } )
-   AAdd( aDbf, { "ustn", "C", 20, 0 } )
-   AAdd( aDbf, { "brupis", "C", 20, 0 } )
-   AAdd( aDbf, { "brjes", "C", 20, 0 } )
-
-   RETURN .T.
+      ENDIF
 
 
+      SELECT kalk_imp_temp
+      SKIP
 
-// -------------------------------------
-// matrica sa strukturom
-// tabele ROBA
-// -------------------------------------
-STATIC FUNCTION set_adbf_roba( aDbf )
+   ENDDO
 
-   AAdd( aDbf, { "idpm", "C", 3, 0 } )
-   AAdd( aDbf, { "datum", "C", 10, 0 } )
-   AAdd( aDbf, { "sifradob", "C", 10, 0 } )
-   AAdd( aDbf, { "naz", "C", 30, 0 } )
-   AAdd( aDbf, { "mpc", "N", 15, 5 } )
+   BoxC()
 
-   RETURN .T.
+   IF lOk
+      hParams := hb_Hash()
+      hParams[ "unlock" ] :=  { "roba" }
+      run_sql_query( "COMMIT", hParams )
+   ELSE
+      run_sql_query( "ROLLBACK" )
+      MsgBeep( "SQL roba transakcija neuspjesna !")
+   ENDIF
 
+   RETURN 1
 
 
 
@@ -1749,68 +1755,6 @@ STATIC FUNCTION kalk_imp_temp_to_partn( lEditOld )
 
 
 
-STATIC FUNCTION kalk_imp_temp_to_roba()
-
-   LOCAL cTmpSif, hRec
-
-   O_ROBA
-   O_SIFK
-   O_SIFV
-
-   SELECT kalk_imp_temp
-   GO TOP
-
-   Box(, 3, 60 )
-   DO WHILE !Eof()
-
-      SELECT roba
-      SET ORDER TO TAG "SIFRADOB" // pronadji robu
-
-      cTmpSif := AllTrim( kalk_imp_temp->sifradob )
-      SEEK cTmpSif
-
-      IF Found()
-
-         @ m_x + 1, m_y + 2 SAY "      ID: " + roba->id
-         @ m_x + 2, m_y + 2 SAY "SIFRADOB: " + kalk_imp_temp->sifradob
-
-         IF Trim( kalk_imp_temp->sifradob ) == "11417"
-            AltD()
-         ENDIF
-
-         hRec := dbf_get_rec()
-         IF kalk_imp_temp->idpm == "001" // mjenja se VPC
-            hRec[ "vpc" ] := kalk_imp_temp->mpc
-            // IF field->vpc <> kalk_imp_temp->mpc
-            // RREPLACE field->vpc WITH kalk_imp_temp->mpc
-            // ENDIF
-
-         ELSEIF kalk_imp_temp->idpm == "002" // mjenja se VPC2
-            hRec[ "vpc2" ] := kalk_imp_temp->mpc
-            // IF field->vpc2 <> kalk_imp_temp->mpc
-            // RREPLACE field->vpc2 WITH kalk_imp_temp->mpc
-            // ENDIF
-
-         ELSEIF kalk_imp_temp->idpm == "003"   // mjenja se MPC
-            hRec[ "mpc" ] := kalk_imp_temp->mpc
-            // IF field->mpc <> kalk_imp_temp->mpc
-            // RREPLACE field->mpc WITH kalk_imp_temp->mpc
-            // ENDIF
-         ENDIF
-         update_rec_server_and_dbf( Alias(), hRec, 1, "FULL" )
-
-      ENDIF
-
-
-
-      SELECT kalk_imp_temp
-      SKIP
-
-   ENDDO
-
-   BoxC()
-
-   RETURN 1
 
 
 /*
@@ -2391,9 +2335,9 @@ STATIC FUNCTION FillDobSifra()
 
 
 /*
-    *   Brisanje fajla cTxtFile
-    *   param: cTxtFile - fajl za brisanje
-*/
+ *   Brisanje fajla cTxtFile
+ *   param: cTxtFile - fajl za brisanje
+ */
 
 FUNCTION kalk_imp_brisi_txt( cTxtFile )
 
@@ -2406,5 +2350,76 @@ FUNCTION kalk_imp_brisi_txt( cTxtFile )
    IF FErase( cTxtFile ) == -1
       MsgBeep( "Ne mogu izbrisati " + cTxtFile )
    ENDIF
+
+   RETURN .T.
+
+
+
+   /*
+    *     Setuj matricu sa poljima tabele dokumenata RACUN
+    *   param: aDbf - matrica
+    */
+
+STATIC FUNCTION SetTblDok( aDbf )
+
+   AAdd( aDbf, { "idfirma", "C", 2, 0 } )
+   AAdd( aDbf, { "idtipdok", "C", 2, 0 } )
+   AAdd( aDbf, { "brdok", "C", 8, 0 } )
+   AAdd( aDbf, { "datdok", "D", 8, 0 } )
+   AAdd( aDbf, { "idpartner", "C", 6, 0 } )
+   AAdd( aDbf, { "idpm", "C", 3, 0 } )
+   AAdd( aDbf, { "dindem", "C", 3, 0 } )
+   AAdd( aDbf, { "zaokr", "N", 1, 0 } )
+   AAdd( aDbf, { "rbr", "C", 3, 0 } )
+   AAdd( aDbf, { "idroba", "C", 10, 0 } )
+   AAdd( aDbf, { "kolicina", "N", 14, 5 } )
+   AAdd( aDbf, { "cijena", "N", 14, 5 } )
+   AAdd( aDbf, { "rabat", "N", 14, 5 } )
+   AAdd( aDbf, { "porez", "N", 14, 5 } )
+   AAdd( aDbf, { "rabatp", "N", 14, 5 } )
+   AAdd( aDbf, { "datval", "D", 8, 0 } )
+   AAdd( aDbf, { "obrkol", "N", 14, 5 } )
+   AAdd( aDbf, { "idpj", "C", 3, 0 } )
+   AAdd( aDbf, { "dtype", "C", 3, 0 } )
+
+   RETURN .T.
+
+   /*
+    *     Set polja tabele partner
+    *   param: aDbf - matrica sa def.polja
+    */
+STATIC FUNCTION set_adbf_partner( aDbf )
+
+   AAdd( aDbf, { "idpartner", "C", 6, 0 } )
+   AAdd( aDbf, { "naz", "C", 25, 0 } )
+   AAdd( aDbf, { "ptt", "C", 5, 0 } )
+   AAdd( aDbf, { "mjesto", "C", 16, 0 } )
+   AAdd( aDbf, { "adresa", "C", 24, 0 } )
+   AAdd( aDbf, { "ziror", "C", 22, 0 } )
+   AAdd( aDbf, { "telefon", "C", 12, 0 } )
+   AAdd( aDbf, { "fax", "C", 12, 0 } )
+   AAdd( aDbf, { "idops", "C", 4, 0 } )
+   AAdd( aDbf, { "rokpl", "N", 5, 0 } )
+   AAdd( aDbf, { "porbr", "C", 16, 0 } )
+   AAdd( aDbf, { "idbroj", "C", 16, 0 } )
+   AAdd( aDbf, { "ustn", "C", 20, 0 } )
+   AAdd( aDbf, { "brupis", "C", 20, 0 } )
+   AAdd( aDbf, { "brjes", "C", 20, 0 } )
+
+   RETURN .T.
+
+
+
+// -------------------------------------
+// matrica sa strukturom
+// tabele ROBA
+// -------------------------------------
+STATIC FUNCTION set_adbf_roba( aDbf )
+
+   AAdd( aDbf, { "idpm", "C", 3, 0 } )
+   AAdd( aDbf, { "datum", "C", 10, 0 } )
+   AAdd( aDbf, { "sifradob", "C", 10, 0 } )
+   AAdd( aDbf, { "naz", "C", 30, 0 } )
+   AAdd( aDbf, { "mpc", "N", 15, 5 } )
 
    RETURN .T.

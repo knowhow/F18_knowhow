@@ -353,7 +353,7 @@ STATIC FUNCTION kalk_import_txt_roba()
 
 STATIC FUNCTION kalk_imp_temp_to_roba()
 
-   LOCAL cTmpSif, hRec, lOk, hParams
+   LOCAL cTmpSif, hRec, lOk, hParams, lPromjena
 
    O_ROBA
    O_SIFK
@@ -363,7 +363,7 @@ STATIC FUNCTION kalk_imp_temp_to_roba()
    GO TOP
 
    IF  !begin_sql_tran_lock_tables( { "roba" } )
-      MsgBeep( "roba sql lock neuspjesno !? STOP!")
+      MsgBeep( "roba sql lock neuspjesno !? STOP!" )
       RETURN .F.
    ENDIF
 
@@ -387,26 +387,27 @@ STATIC FUNCTION kalk_imp_temp_to_roba()
          ENDIF
  */
 
+         lPromjena := .F. // desila se promjena cijene
          hRec := dbf_get_rec()
          IF kalk_imp_temp->idpm == "001" // mjenja se VPC
             hRec[ "vpc" ] := kalk_imp_temp->mpc
-            // IF field->vpc <> kalk_imp_temp->mpc
-            // RREPLACE field->vpc WITH kalk_imp_temp->mpc
-            // ENDIF
+            lPromjena :=  hRec[ "vpc" ] <> kalk_imp_temp->mpc
+
 
          ELSEIF kalk_imp_temp->idpm == "002" // mjenja se VPC2
             hRec[ "vpc2" ] := kalk_imp_temp->mpc
-            // IF field->vpc2 <> kalk_imp_temp->mpc
-            // RREPLACE field->vpc2 WITH kalk_imp_temp->mpc
-            // ENDIF
+            lPromjena :=  hRec[ "vpc2" ] <> kalk_imp_temp->mpc
+
 
          ELSEIF kalk_imp_temp->idpm == "003"   // mjenja se MPC
             hRec[ "mpc" ] := kalk_imp_temp->mpc
-            // IF field->mpc <> kalk_imp_temp->mpc
-            // RREPLACE field->mpc WITH kalk_imp_temp->mpc
-            // ENDIF
+            lPromjena :=  hRec[ "mpc" ] <> kalk_imp_temp->mpc
+
          ENDIF
-         lOk := update_rec_server_and_dbf( Alias(), hRec, 1, "CONT" )
+
+         IF lPromjena
+            lOk := update_rec_server_and_dbf( Alias(), hRec, 1, "CONT" )
+         ENDIF
 
       ENDIF
 
@@ -424,7 +425,7 @@ STATIC FUNCTION kalk_imp_temp_to_roba()
       run_sql_query( "COMMIT", hParams )
    ELSE
       run_sql_query( "ROLLBACK" )
-      MsgBeep( "SQL roba transakcija neuspjesna !")
+      MsgBeep( "SQL roba transakcija neuspjesna !" )
    ENDIF
 
    RETURN 1

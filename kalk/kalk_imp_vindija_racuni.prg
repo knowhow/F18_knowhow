@@ -386,27 +386,31 @@ STATIC FUNCTION kalk_imp_temp_to_roba()
             AltD()
          ENDIF
  */
-
+         IF Trim( kalk_imp_temp->sifradob ) == "03038"
+            AltD()
+         ENDIF
          lPromjena := .F. // desila se promjena cijene
+
          hRec := dbf_get_rec()
          IF kalk_imp_temp->idpm == "001" // mjenja se VPC
+            lPromjena :=  ( hRec[ "vpc" ] <> kalk_imp_temp->mpc )
             hRec[ "vpc" ] := kalk_imp_temp->mpc
-            lPromjena :=  hRec[ "vpc" ] <> kalk_imp_temp->mpc
 
 
          ELSEIF kalk_imp_temp->idpm == "002" // mjenja se VPC2
+            lPromjena :=  ( hRec[ "vpc2" ] <> kalk_imp_temp->mpc )
             hRec[ "vpc2" ] := kalk_imp_temp->mpc
-            lPromjena :=  hRec[ "vpc2" ] <> kalk_imp_temp->mpc
 
 
          ELSEIF kalk_imp_temp->idpm == "003"   // mjenja se MPC
+            lPromjena :=  ( hRec[ "mpc" ] <> kalk_imp_temp->mpc )
             hRec[ "mpc" ] := kalk_imp_temp->mpc
-            lPromjena :=  hRec[ "mpc" ] <> kalk_imp_temp->mpc
+
 
          ENDIF
 
          IF lPromjena
-            lOk := update_rec_server_and_dbf( Alias(), hRec, 1, "CONT" )
+            lOk := lOk .AND. update_rec_server_and_dbf( "roba", hRec, 1, "CONT" )
          ENDIF
 
       ENDIF
@@ -419,6 +423,7 @@ STATIC FUNCTION kalk_imp_temp_to_roba()
 
    BoxC()
 
+   AltD()
    IF lOk
       hParams := hb_Hash()
       hParams[ "unlock" ] :=  { "roba" }

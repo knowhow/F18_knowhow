@@ -353,7 +353,7 @@ STATIC FUNCTION kalk_import_txt_roba()
 
 STATIC FUNCTION kalk_imp_temp_to_roba()
 
-   LOCAL cTmpSif, hRec, lOk, hParams, lPromjena
+   LOCAL cTmpSif, hRec, lOk := .T., hParams, lPromjena
 
    O_ROBA
    O_SIFK

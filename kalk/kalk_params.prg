@@ -121,9 +121,8 @@ FUNCTION kalk_par_varijante_prikaza()
 
    @ m_x + nX, Col() + 1 SAY c10T5 GET gRobaTr5Tip VALID gRobaTr5Tip $ " %URA" PICT "@!"
 
-   nX += 1
-
-   @ m_x + nX, m_y + 2 SAY "10 - pomoc sa koverzijom valute pri unosu dokumenta (D/N)" GET gDokKVal VALID gDokKVal $ "DN" PICT "@!"
+   //nX += 1
+   //@ m_x + nX, m_y + 2 SAY "10 - pomoc sa koverzijom valute pri unosu dokumenta (D/N)" GET gDokKVal VALID gDokKVal $ "DN" PICT "@!"
 
    nX += 2
 
@@ -189,7 +188,7 @@ FUNCTION kalk_par_varijante_prikaza()
       set_metric( "kalk_trosak_3_tip", nil, gRobaTr3Tip )
       set_metric( "kalk_trosak_4_tip", nil, gRobaTr4Tip )
       set_metric( "kalk_trosak_5_tip", nil, gRobaTr5Tip )
-      set_metric( "kalk_konverzija_valute_na_unosu", nil, gDokKVal )
+      //set_metric( "kalk_konverzija_valute_na_unosu", nil, gDokKVal )
 
    ENDIF
 

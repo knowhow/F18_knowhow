@@ -155,10 +155,10 @@ FUNCTION kalk_unos_dok_81( hParams )
    ++ _x
    @ m_x + _x, m_y + 2 SAY "Fakturna cijena:"
 
-   IF gDokKVal == "D"
+   //IF gDokKVal == "D"
       // konverzija valute...
-      @ m_x + _x, Col() + 1 SAY "pr.->" GET __k_val VALID kalk_ulaz_preracun_fakturne_cijene( __k_val ) PICT "@!"
-   ENDIF
+      @ m_x + _x, Col() + 1 SAY "EUR->" GET __k_val VALID kalk_ulaz_preracun_fakturne_cijene( __k_val ) PICT "@!"
+   //ENDIF
 
    @ m_x + _x, m_y + _unos_left GET _fcj ;
       PICT PicDEM ;
@@ -306,7 +306,7 @@ STATIC FUNCTION obracun_kalkulacija_tip_81_pdv( x_kord )
    LOCAL _x := x_kord + 2
    LOCAL _unos_left := 40
    LOCAL _kord_x
-   LOCAL _sa_troskovima := .T.
+   LOCAL lSaTroskovima := .T.
    PRIVATE getlist := {}
    PRIVATE fMarza := " "
 
@@ -319,7 +319,7 @@ STATIC FUNCTION obracun_kalkulacija_tip_81_pdv( x_kord )
    IF Empty( _TZavTr );  _TZavTr := "%" ; ENDIF
    IF Empty( _TMarza );  _TMarza := "%" ; ENDIF
 
-   IF _sa_troskovima == .T.
+   IF lSaTroskovima == .T.
 
       // TROSKOVNIK
       @ m_x + _x, m_y + 2 SAY "Raspored troskova kalkulacije ->"

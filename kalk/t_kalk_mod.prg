@@ -181,7 +181,7 @@ METHOD TKalkMod:set_module_gvars()
    PUBLIC gRobaTr5Tip := "%"
 
    // dokument. koverzija valute
-   PUBLIC gDokKVal := "N"
+   //PUBLIC gDokKVal := "N"
    // time out kod azuriranja dokumenta
    PUBLIC gAzurTimeout := 150
    // time out kod azuriranja fin dokumenta
@@ -280,7 +280,7 @@ METHOD TKalkMod:set_module_gvars()
    gRobaTr3Tip := fetch_metric( "kalk_trosak_3_tip", nil, gRobaTr3Tip )
    gRobaTr4Tip := fetch_metric( "kalk_trosak_4_tip", nil, gRobaTr4Tip )
    gRobaTr5Tip := fetch_metric( "kalk_trosak_5_tip", nil, gRobaTr5Tip )
-   gDokKVal := fetch_metric( "kalk_konverzija_valute_na_unosu", nil, gDokKVal )
+   //gDokKVal := fetch_metric( "kalk_konverzija_valute_na_unosu", nil, gDokKVal )
 
    g10Porez := fetch_metric( "kalk_dokument_10_prikaz_ukalk_poreza", nil, g10Porez )
    g11BezNC := fetch_metric( "kalk_dokument_11_bez_nc", nil, g11bezNC )

@@ -16,6 +16,8 @@ STATIC s_cKonverzijaValuteDN // konverzija valute
 STATIC aPorezi := {}
 STATIC s_lIsNoviDokument := .F.
 
+MEMVAR m_x, m_y
+
 FUNCTION kalk_is_novi_dokument( lSet )
 
    IF lSet != NIL
@@ -84,7 +86,6 @@ FUNCTION kalk_get_1_10()
       // @ m_x + _x, m_y + 42 SAY "Zaduzuje: "
       // ?? _IdZaduz
       // ENDIF
-
       ino_dobavljac_set_konverzija_valute( _idpartner, @s_cKonverzijaValuteDN )
 
    ENDIF
@@ -93,10 +94,7 @@ FUNCTION kalk_get_1_10()
 
    _kord_x := m_x + _x
 
-
    kalk_pripr_form_get_roba( @_idRoba, @_idTarifa, _IdVd, kalk_is_novi_dokument(), _kord_x, m_y + 2, @aPorezi, _idPartner )
-
-
 
    @ m_x + _x, m_y + ( MAXCOLS() - 20  ) SAY "Tarifa:" GET _IdTarifa WHEN gPromTar == "N" VALID P_Tarifa( @_IdTarifa )
 
@@ -140,9 +138,9 @@ FUNCTION kalk_get_1_10()
    ++ _x
    @ m_x + _x, m_y + 2 SAY "Fakturna cijena:"
 
-   IF gDokKVal == "D"
-      @ m_x + _x, Col() + 1 SAY "pr.->" GET s_cKonverzijaValuteDN VALID kalk_ulaz_preracun_fakturne_cijene( s_cKonverzijaValuteDN ) PICT "@!"
-   ENDIF
+   // IF gDokKVal == "D"
+   @ m_x + _x, Col() + 1 SAY "EUR (D/N)->" GET s_cKonverzijaValuteDN VALID kalk_ulaz_preracun_fakturne_cijene( s_cKonverzijaValuteDN ) PICT "@!"
+   // ENDIF
 
    @ m_x + _x, m_y + _unos_left GET _fcj PICT gPicNC VALID {|| _fcj > 0 .AND. _set_konv( @_fcj, @s_cKonverzijaValuteDN ) } WHEN V_kol10()
 
@@ -161,14 +159,13 @@ FUNCTION kalk_get_1_10()
    ENDIF
    */
 
-
    READ
 
    ESC_RETURN K_ESC
 
    _FCJ2 := _FCJ * ( 1 - _Rabat / 100 )
 
-   kalk_get_2_10( _x )
+   kalk_get_2_10( _x, _idPartner )
 
    RETURN LastKey()
 
@@ -176,7 +173,8 @@ FUNCTION kalk_get_1_10()
 
 STATIC FUNCTION ino_dobavljac_set_konverzija_valute( cPartn, s_cKonverzijaValuteDN )
 
-   IF gDokKVal == "D" .AND. kalk_is_novi_dokument() .AND. isInoDob( cPartn )
+   // IF gDokKVal == "D" .AND.
+   IF kalk_is_novi_dokument() .AND. isInoDob( cPartn )
       s_cKonverzijaValuteDN := "D"
    ENDIF
 
@@ -218,13 +216,13 @@ FUNCTION _set_konv( nFcj, cPretv )
 
 
 
-STATIC FUNCTION kalk_get_2_10( x_kord )
+STATIC FUNCTION kalk_get_2_10( x_kord, cIdPartner )
 
    LOCAL cSPom := " (%,A,U,R,T) "
    LOCAL _x := x_kord + 4
    LOCAL _unos_left := 40
    LOCAL _kord_x
-   LOCAL _sa_troskovima := .T.
+   LOCAL lSaTroskovima := .T., cTroskoviDN := "D"
    PRIVATE getlist := {}
 
    IF Empty( _TPrevoz )
@@ -246,13 +244,21 @@ STATIC FUNCTION kalk_get_2_10( x_kord )
       _TMarza := "%"
    ENDIF
 
-   IF _sa_troskovima
+   IF !isInoDob( cIdPartner ) // domaci
+      cTroskoviDN := "N"
+   ENDIF
 
+   IF Pitanje( , "Unos zavisnih troškova ?", cTroskoviDN ) == "D"
+      lSaTroskovima := .T.
+   ELSE
+      lSaTroskovima := .F.
+   ENDIF
+
+   IF lSaTroskovima
 
       _auto_set_trosk( kalk_is_novi_dokument() )   // automatski setuj troskove
 
       // TROSKOVNIK
-
       @ m_x + _x, m_y + 2 SAY "Raspored troskova kalkulacije ->"
 
       @ m_x + _x, m_y + _unos_left + 10 SAY c10T1 + cSPom GET _TPrevoz VALID _TPrevoz $ "%AURT" PICTURE "@!"

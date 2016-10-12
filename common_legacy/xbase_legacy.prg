@@ -50,7 +50,7 @@ FUNCTION Gather( cZn )
    RETURN NIL
 
 
-/* Scatter(cZn)
+/* Scatter
   *    vrijednosti field varijabli tekuceg sloga prebacuje u public varijable
   *
   *  param: cZn - Default = "_"; odredjuje prefixs varijabli koje ce generisati
@@ -84,7 +84,7 @@ FUNCTION set_global_vars_from_dbf( zn, lConvertToUtf )
    ENDIF
 
    hb_default( @lConvertToUtf, .F. )
-   
+
    _struct := dbStruct()
 
    FOR _i := 1 TO Len( _struct )

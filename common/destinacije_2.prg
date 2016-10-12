@@ -263,7 +263,7 @@ STATIC FUNCTION edit_dest( lNova )
    ENDIF
 
    // bivsi gather()
-   _rec := get_dbf_global_memvars()
+   _rec := get_hash_record_from_global_vars()
    update_rec_server_and_dbf( Alias(), _rec, 1, "FULL" )
 
    IF lNova

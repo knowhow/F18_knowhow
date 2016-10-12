@@ -873,7 +873,7 @@ STATIC FUNCTION elem_edit( nArt_id, lNewRec, cType, nEl_no )
 
    IF Empty( cType ) .AND. LastKey() == K_ESC .AND. lNewRec
 
-      _rec := get_dbf_global_memvars( NIL, .F. )
+      _rec := get_hash_record_from_global_vars( NIL, .F. )
       delete_rec_server_and_dbf( Alias(), _rec, 1, "FULL" )
 
       RETURN 0
@@ -894,7 +894,7 @@ STATIC FUNCTION elem_edit( nArt_id, lNewRec, cType, nEl_no )
 
    ENDIF
 
-   _rec := get_dbf_global_memvars( NIL, .F. )
+   _rec := get_hash_record_from_global_vars( NIL, .F. )
    update_rec_server_and_dbf( Alias(), _rec, 1, "FULL" )
 
    IF lNewRec
@@ -920,7 +920,7 @@ STATIC FUNCTION e_no_edit()
    BoxC()
 
    IF LastKey() <> K_ESC
-      _rec := get_dbf_global_memvars( NIL, .F. )
+      _rec := get_hash_record_from_global_vars( NIL, .F. )
       update_rec_server_and_dbf( Alias(), _rec, 1, "FULL" )
    ENDIF
 
@@ -1056,12 +1056,12 @@ STATIC FUNCTION e_att_edit( nEl_id, lNewRec )
    BoxC()
 
    IF LastKey() == K_ESC .AND. lNewRec
-      _rec := get_dbf_global_memvars( NIL, .F. )
+      _rec := get_hash_record_from_global_vars( NIL, .F. )
       delete_rec_server_and_dbf( Alias(), _rec, 1, "FULL" )
       RETURN 0
    ENDIF
 
-   _rec := get_dbf_global_memvars( NIL, .F. )
+   _rec := get_hash_record_from_global_vars( NIL, .F. )
    update_rec_server_and_dbf( Alias(), _rec, 1, "FULL" )
 
    RETURN 1
@@ -1118,12 +1118,12 @@ STATIC FUNCTION e_aops_edit( nEl_id, lNewRec )
    BoxC()
 
    IF LastKey() == K_ESC .AND. lNewRec
-      _rec := get_dbf_global_memvars( NIL, .F. )
+      _rec := get_hash_record_from_global_vars( NIL, .F. )
       delete_rec_server_and_dbf( Alias(), _rec, 1, "FULL" )
       RETURN 0
    ENDIF
 
-   _rec := get_dbf_global_memvars( NIL, .F. )
+   _rec := get_hash_record_from_global_vars( NIL, .F. )
    update_rec_server_and_dbf( Alias(), _rec, 1, "FULL" )
 
    RETURN 1

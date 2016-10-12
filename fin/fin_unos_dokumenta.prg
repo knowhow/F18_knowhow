@@ -399,7 +399,7 @@ FUNCTION edit_fin_pripr_key_handler()
          BoxC()
          RETURN DE_CONT
       ELSE
-         dbf_update_rec( get_dbf_global_memvars( "_" ), .F. )
+         dbf_update_rec( get_hash_record_from_global_vars( "_" ), .F. )
          BrisiPBaze()
          BoxC()
          RETURN DE_REFRESH
@@ -442,7 +442,7 @@ FUNCTION edit_fin_pripr_key_handler()
          Inkey( 10 )
 
          SELECT fin_pripr
-         dbf_update_rec( get_dbf_global_memvars(), .F. )
+         dbf_update_rec( get_hash_record_from_global_vars(), .F. )
          GO nTR2
       ENDDO
 
@@ -504,7 +504,7 @@ FUNCTION edit_fin_pripr_key_handler()
 
          SELECT fin_pripr
          APPEND BLANK
-         dbf_update_rec( get_dbf_global_memvars(), .F. )
+         dbf_update_rec( get_hash_record_from_global_vars(), .F. )
 
 
 

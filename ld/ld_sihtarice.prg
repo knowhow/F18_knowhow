@@ -104,7 +104,7 @@ FUNCTION def_siht( lNew )
          EXIT
       ENDIF
 
-      _vals := get_dbf_global_memvars()
+      _vals := get_hash_record_from_global_vars()
 
       update_rec_server_and_dbf( "ld_radsiht", _vals, 1, "FULL" )
 

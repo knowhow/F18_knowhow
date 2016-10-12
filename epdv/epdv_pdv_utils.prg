@@ -55,7 +55,7 @@ FUNCTION save_pdv_obracun( dDatOd, dDatDo )
       // datum azuriranja
       _datum_2 := Date()
 
-      _rec := get_dbf_global_memvars()
+      _rec := get_hash_record_from_global_vars()
 
       update_rec_server_and_dbf( "epdv_pdv", _rec, 1, "FULL" )
 

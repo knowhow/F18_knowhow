@@ -213,7 +213,7 @@ STATIC FUNCTION unos_osn( lNew, cIdRadn, nZ_id )
    ENDIF
 
 
-   _vals := get_dbf_global_memvars()
+   _vals := get_hash_record_from_global_vars()
    update_rec_server_and_dbf( "ld_pk_radn", _vals, 1, "FULL" )
 
    RETURN field->lo_ufakt

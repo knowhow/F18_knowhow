@@ -545,7 +545,7 @@ FUNCTION EdK_02()
       set_global_vars_from_dbf()
 
       IF ent_K_0()
-         _rec := get_dbf_global_memvars()
+         _rec := get_hash_record_from_global_vars()
          update_rec_server_and_dbf( "kadev_0", _rec, 1, "FULL" )
       ENDIF
 

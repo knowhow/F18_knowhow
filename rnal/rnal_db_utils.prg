@@ -187,7 +187,7 @@ FUNCTION setuj_novi_id_tabele( nId, cIdField, lAuto, cont )
 
    &cIdField := nId
 
-   _rec := get_dbf_global_memvars( NIL, .F. )
+   _rec := get_hash_record_from_global_vars( NIL, .F. )
 
    update_rec_server_and_dbf( Alias(), _rec, 1, cont )
 

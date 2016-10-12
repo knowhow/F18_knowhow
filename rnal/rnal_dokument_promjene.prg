@@ -174,7 +174,7 @@ FUNCTION _ch_ship()
       _obj_id := nObj_id
    ENDIF
 
-   _rec := get_dbf_global_memvars()
+   _rec := get_hash_record_from_global_vars()
    update_rec_server_and_dbf( Alias(), _rec, 1, "FULL" )
 
    log_write( "F18_DOK_OPER: rnal, promjena podataka isporuke naloga broj: " + AllTrim( Str( nDoc_no ) ), 2 )
@@ -250,7 +250,7 @@ FUNCTION _ch_pay()
       _doc_pay_id := nDoc_pay_id
    ENDIF
 
-   _rec := get_dbf_global_memvars()
+   _rec := get_hash_record_from_global_vars()
    update_rec_server_and_dbf( Alias(), _rec, 1, "FULL" )
 
    log_write( "F18_DOK_OPER: rnal, promjena podataka placanja naloga broj: " + AllTrim( Str( nDoc_no ) ), 2 )
@@ -328,7 +328,7 @@ FUNCTION _ch_cont( lNew )
       _cont_add_d := cCont_desc
    ENDIF
 
-   _rec := get_dbf_global_memvars()
+   _rec := get_hash_record_from_global_vars()
    update_rec_server_and_dbf( Alias(), _rec, 1, "FULL" )
 
    log_write( "F18_DOK_OPER: rnal, promjena podataka kontakta naloga broj: " + AllTrim( Str( nDoc_no ) ), 2 )

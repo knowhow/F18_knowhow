@@ -242,7 +242,7 @@ STATIC FUNCTION data_handler()
       set_global_vars_from_dbf()
 
       IF ent_K_0()
-         _rec := get_dbf_global_memvars()
+         _rec := get_hash_record_from_global_vars()
          update_rec_server_and_dbf( "kadev_0", _rec, 1, "FULL" )
 
          // if Ch == K_CTRL_N
@@ -329,7 +329,7 @@ STATIC FUNCTION data_handler()
       // daj mi promjene...
       get_4( NIL, .F. )
 
-      _rec := get_dbf_global_memvars()
+      _rec := get_hash_record_from_global_vars()
       update_rec_server_and_dbf( "kadev_0", _rec, 1, "FULL" )
 
       BoxC()
@@ -739,7 +739,7 @@ STATIC FUNCTION erup( arr )
          SELECT kadev_1
 
          // gather()
-         _rec := get_dbf_global_memvars()
+         _rec := get_hash_record_from_global_vars()
          update_rec_server_and_dbf( "kadev_1", _rec, 1, "FULL" )
 
          // scatter
@@ -780,7 +780,7 @@ STATIC FUNCTION erup( arr )
    SET ORDER TO TAG "1"
    SELECT kadev_1
 
-   _rec := get_dbf_global_memvars()
+   _rec := get_hash_record_from_global_vars()
    update_rec_server_and_dbf( "kadev_1", _rec, 1, "FULL" )
 
    IF !_ima_podataka
@@ -1220,7 +1220,7 @@ FUNCTION EdPromj( ch )
       IF LastKey() <> K_ESC
 
          SELECT kadev_1
-         _rec := get_dbf_global_memvars( "q", .F. )
+         _rec := get_hash_record_from_global_vars( "q", .F. )
          update_rec_server_and_dbf( "kadev_1", _rec, 1, "FULL" )
 
          IF ( Ch == K_CTRL_N .AND. Pitanje( "p09", "Zelite li azurirati ovu promjenu ?", "D" ) == "D" ) ;

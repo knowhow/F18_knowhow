@@ -113,10 +113,10 @@ FUNCTION dbf_get_rec( lConvertToUtf )
             IF cRet[ _ime_polja ] == NIL
                cRet[ _ime_polja ] := Space( _struct[ _i, 3 ] )
             ENDIF
-            IF lSql // sql tabela
+            IF lSql // sql tabela utf->str
                cRet[ _ime_polja ] := hb_UTF8ToStr( cRet[ _ime_polja ] )
             ENDIF
-            IF lConvertToUtf
+            IF lConvertToUtf // str->utf
                cRet[ _ime_polja ] := hb_StrToUTF8( cRet[ _ime_polja ] )
             ENDIF
 

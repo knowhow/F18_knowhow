@@ -698,7 +698,7 @@ FUNCTION snimi_promjene_sifarnika( lNovi, cTekuciZapis )
 
    lSqlTable := is_sql_table( cAlias )
 
-   _rec := get_dbf_global_memvars( "w", NIL, lSqlTable )
+   _rec := get_hash_record_from_global_vars( "w", NIL, lSqlTable )
 
 
    IF  !begin_sql_tran_lock_tables( { cAlias } )
@@ -773,7 +773,7 @@ FUNCTION snimi_promjene_cirkularne_ispravke_sifarnika()
 
    lSqlTable := is_sql_table( Alias() )
 
-   _vars := get_dbf_global_memvars( "w", NIL, lSqlTable )
+   _vars := get_hash_record_from_global_vars( "w", NIL, lSqlTable )
    _alias := Lower( Alias() )
 
    IF !begin_sql_tran_lock_tables( { _alias  } )

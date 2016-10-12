@@ -16,52 +16,26 @@
 // geerise public vars wId, wNaz ..
 // sa vrijednostima dbf polja Id, Naz
 // -------------------------------------
-FUNCTION set_global_memvars_from_dbf( zn )
+FUNCTION set_global_memvars_from_dbf( cPrefixVarijabla )
 
-   RETURN set_global_vars_from_dbf( zn )
+   RETURN set_global_vars_from_dbf( cPrefixVarijabla )
 
 
-// --------------------------------------------------
-// TODO: ime set_global_vars_from_dbf je legacy
-// --------------------------------------------------
-FUNCTION set_global_vars_from_dbf( zn )
 
-   LOCAL _i, _struct, _field, _var
 
-   PRIVATE cImeP, cVar
 
-   IF zn == NIL
-      zn := "_"
-   ENDIF
-
-   _struct := dbStruct()
-
-   FOR _i := 1 TO Len( _struct )
-      _field := _struct[ _i, 1 ]
-
-      IF !( "#" + _field + "#" $ "#BRISANO#_OID_#_COMMIT_#" )
-         _var := zn + _field
-         // kreiram public varijablu sa imenom vrijednosti _var varijable
-         __mvPublic( _var )
-         Eval( MemVarBlock( _var ), Eval( FieldBlock( _field ) ) )
-
-      ENDIF
-   NEXT
-
-   RETURN .T.
-
-FUNCTION get_dbf_global_memvars( zn, rel, lUtf )
+FUNCTION get_hash_record_from_global_vars( cPrefixVarijabla, lReleaseVarFromMemory, lUtf )
 
    LOCAL _ime_polja, _i, _struct
    LOCAL _ret := hb_Hash()
 
-   IF zn == nil
-      zn := "_"
+   IF cPrefixVarijabla == nil
+      cPrefixVarijabla := "_"
    ENDIF
 
    // da li da pobrisem odmah iz memorije...
-   IF rel == NIL
-      rel := .T.
+   IF lReleaseVarFromMemory == NIL
+      lReleaseVarFromMemory := .T.
    ENDIF
 
    IF lUtf == NIL
@@ -77,16 +51,15 @@ FUNCTION get_dbf_global_memvars( zn, rel, lUtf )
       IF !( "#" + _ime_polja + "#" $ "#BRISANO#_OID_#_COMMIT_#" )
 
          // punimo hash matricu sa vrijednostima public varijabli
-         // _ret["idfirma"] := wIdFirma, za zn = "w"
-         _ret[ Lower( _ime_polja ) ] := Eval( MemVarBlock( zn + _ime_polja ) )
+         // _ret["idfirma"] := wIdFirma, za cPrefixVarijabla = "w"
+         _ret[ Lower( _ime_polja ) ] := Eval( MemVarBlock( cPrefixVarijabla + _ime_polja ) )
 
          IF ( ValType( _ret[ Lower( _ime_polja ) ] ) == "C" ) .AND.  lUtf
             _ret[ Lower( _ime_polja ) ] := hb_StrToUTF8 ( _ret[ Lower( _ime_polja ) ]  )
          ENDIF
 
-         IF rel
-            // oslobadja public ili private varijablu
-            __mvXRelease( zn + _ime_polja )
+         IF lReleaseVarFromMemory // oslobadja public ili private varijablu
+            __mvXRelease( cPrefixVarijabla + _ime_polja )
          ENDIF
 
       ENDIF

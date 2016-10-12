@@ -318,7 +318,7 @@ do case
          		return DE_CONT
       		endif
     	else
-      		_rec := get_dbf_global_memvars("s")
+      		_rec := get_hash_record_from_global_vars("s")
             update_rec_server_and_dbf( "kadev_rjrmj", _rec, 1, "FULL" )
       		return DE_REFRESH
     	endif

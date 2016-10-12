@@ -258,7 +258,7 @@ FUNCTION EdOsob()
                APPEND BLANK
 
                // daj mi iz globalnih varijabli
-               _rec := get_dbf_global_memvars()
+               _rec := get_hash_record_from_global_vars()
 
                update_rec_server_and_dbf( Alias(), _rec, 1, "FULL" )
 
@@ -284,7 +284,7 @@ FUNCTION EdOsob()
                // azuriranje OSOB.DBF
                _korsif := CryptSC( _korsif )
                // daj mi iz globalnih varijabli
-               _rec := get_dbf_global_memvars()
+               _rec := get_hash_record_from_global_vars()
 
                update_rec_server_and_dbf( Alias(), _rec, 1, "FULL" )
 

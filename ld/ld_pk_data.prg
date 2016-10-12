@@ -214,7 +214,7 @@ FUNCTION unos_clan( lNew )
             APPEND BLANK
          ENDIF
 
-         _vals := get_dbf_global_memvars()
+         _vals := get_hash_record_from_global_vars()
          update_rec_server_and_dbf( "ld_pk_data", _vals, 1, "CONT" )
 
          IF lNew == .F.

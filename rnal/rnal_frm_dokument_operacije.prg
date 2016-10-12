@@ -93,7 +93,7 @@ FUNCTION e_doc_ops( nDoc_no, lNew, nArt_id, nItem_no )
             APPEND BLANK
          ENDIF
 
-         _rec := get_dbf_global_memvars( NIL, .F. )
+         _rec := get_hash_record_from_global_vars( NIL, .F. )
 
          dbf_update_rec( _rec )
 

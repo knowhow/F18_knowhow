@@ -47,7 +47,7 @@ FUNCTION pos_azuriraj_zaduzenje( cBrDok, cIdVd )
       ENDIF
    ENDIF
 
-   _rec := get_dbf_global_memvars()
+   _rec := get_hash_record_from_global_vars()
 
    lOk := update_rec_server_and_dbf( "pos_doks", _rec, 1, "CONT" )
 
@@ -76,7 +76,7 @@ FUNCTION pos_azuriraj_zaduzenje( cBrDok, cIdVd )
          _idvd := cIdVd
          _rbr := PadL( AllTrim( Str( ++nCount ) ), 5 )
 
-         _rec := get_dbf_global_memvars()
+         _rec := get_hash_record_from_global_vars()
 
          lOk := update_rec_server_and_dbf( "pos_pos", _rec, 1, "CONT" )
 

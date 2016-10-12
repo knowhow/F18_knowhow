@@ -534,7 +534,7 @@ FUNCTION edit_ugovor( lNovi )
       APPEND BLANK
    ENDIF
 
-   _vars := get_dbf_global_memvars()
+   _vars := get_hash_record_from_global_vars()
 
    IF !update_rec_server_and_dbf( Alias(), _vars, 1, "FULL" )
       delete_with_rlock()
@@ -850,7 +850,7 @@ FUNCTION EdUgov2()
       IF LastKey() != K_ESC
 
          APPEND BLANK
-         _vars := get_dbf_global_memvars()
+         _vars := get_hash_record_from_global_vars()
          IF !update_rec_server_and_dbf( Alias(), _vars, 1, "FULL" )
             delete_with_rlock()
          ENDIF

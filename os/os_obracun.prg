@@ -207,7 +207,7 @@ FUNCTION os_obracun_amortizacije()
 
          PRIVATE cId := _id
 
-         _rec := get_dbf_global_memvars()
+         _rec := get_hash_record_from_global_vars()
 
          SET DEVICE TO SCREEN
 
@@ -258,7 +258,7 @@ FUNCTION os_obracun_amortizacije()
 
             ENDIF
 
-            _rec := get_dbf_global_memvars()
+            _rec := get_hash_record_from_global_vars()
 
             SET DEVICE TO SCREEN
 
@@ -349,7 +349,7 @@ FUNCTION os_obracun_amortizacije()
             PRIVATE cId := _id
 
             // sinhronizuj podatke sql/server
-            _rec := get_dbf_global_memvars()
+            _rec := get_hash_record_from_global_vars()
 
             SET DEVICE TO SCREEN
 
@@ -401,7 +401,7 @@ FUNCTION os_obracun_amortizacije()
                nUkupno += Round( _amp, 2 )
 
                // sinhronizuj podatke sql/server
-               _rec := get_dbf_global_memvars()
+               _rec := get_hash_record_from_global_vars()
 
                SET DEVICE TO SCREEN
 

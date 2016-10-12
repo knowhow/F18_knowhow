@@ -492,7 +492,7 @@ do case
         if Ch==K_F4
             append blank
         endif
-        _rec := get_dbf_global_memvars()
+        _rec := get_hash_record_from_global_vars()
         update_rec_server_and_dbf( "kadev_globusl", _rec, 1, "FULL" )
 
         return DE_REFRESH
@@ -549,7 +549,7 @@ do case
             append blank
         endif
 
-        _rec := get_dbf_global_memvars()
+        _rec := get_hash_record_from_global_vars()
 
         if !hb_hhaskey( _rec, "id_uslova" )
             _rec["id_uslova"] := ""

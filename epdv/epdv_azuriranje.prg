@@ -87,7 +87,7 @@ FUNCTION azur_ku_ki( cTbl )
          SELECT ( nKArea )
          APPEND BLANK
 
-         _rec := get_dbf_global_memvars()
+         _rec := get_hash_record_from_global_vars()
          dbf_update_rec( _rec )
 
          SELECT ( nPArea )

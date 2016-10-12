@@ -59,7 +59,7 @@ FUNCTION ld_unos_obracuna()
 
          IF ( nPom <> 0 )
 
-            _vals := get_dbf_global_memvars()
+            _vals := get_hash_record_from_global_vars()
             _vals[ "varobr" ] := gVarObracun
 
             IF !update_rec_server_and_dbf( "ld_ld",  _vals, 1, "FULL" )

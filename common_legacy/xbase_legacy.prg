@@ -55,18 +55,61 @@ FUNCTION Gather( cZn )
   *
   *  param: cZn - Default = "_"; odredjuje prefixs varijabli koje ce generisati
   *
-  * \code
+  * code
   *
   *  use ROBA
   *  Scatter("_")
   *  ? _id, _naz, _jmj
   *
-  * \endcode
+  * endcode
   *
   */
 
-FUNCTION Scatter( cZn )
-   RETURN set_global_vars_from_dbf( cZn )
+FUNCTION Scatter( cZn, lUtf )
+   RETURN set_global_vars_from_dbf( cZn, lUtf )
+
+
+// --------------------------------------------------
+// TODO: ime set_global_vars_from_dbf je legacy
+// --------------------------------------------------
+FUNCTION set_global_vars_from_dbf( zn, lConvertToUtf )
+
+   LOCAL _i, _struct, _field, _var
+   LOCAL lSql := ( rddName() ==  "SQLMIX" )
+
+   PRIVATE cImeP, cVar
+
+   IF zn == NIL
+      zn := "_"
+   ENDIF
+
+   hb_default( @lConvertToUtf, .F. )
+   
+   _struct := dbStruct()
+
+   FOR _i := 1 TO Len( _struct )
+      _field := _struct[ _i, 1 ]
+
+      IF !( "#" + _field + "#" $ "#BRISANO#_OID_#_COMMIT_#" )
+         _var := zn + _field
+         // kreiram public varijablu sa imenom vrijednosti _var varijable
+         __mvPublic( _var )
+         Eval( MemVarBlock( _var ), Eval( FieldBlock( _field ) ) )
+         IF lSql
+
+         ENDIF
+
+         IF lSql // sql tabela utf->str
+            _var := hb_UTF8ToStr( _var )
+         ENDIF
+         IF lConvertToUtf // str->utf
+            _var := hb_StrToUTF8( _var )
+         ENDIF
+
+      ENDIF
+   NEXT
+
+   RETURN .T.
 
 
 FUNCTION GatherR( cZn )
@@ -88,7 +131,8 @@ FUNCTION GatherR( cZn )
             if &cVar == xField // ako nije promjenjen broj
                LOOP
             ENDIF
-            SELECT ( aRel[ j, 3 ] ); SET ORDER TO aRel[ j, 5 ]
+            SELECT ( aRel[ j, 3 ] )
+            SET ORDER TO aRel[ j, 5 ]
             DO WHILE .T.
                IF FLock()
                   SEEK xField
@@ -122,9 +166,9 @@ FUNCTION GatherR( cZn )
    RETURN NIL
 
 
-/* Gather2(cZn)
+/*
 *      Gather ne versi rlock-unlock
-*   \note Gather2 pretpostavlja zakljucan zapis !!
+*   note Gather2 pretpostavlja zakljucan zapis !!
 */
 
 FUNCTION Gather2( zn )
@@ -148,7 +192,7 @@ FUNCTION Gather2( zn )
       ENDIF
    NEXT
 
-   RETURN
+   RETURN .T.
 
 
 FUNCTION delete2()

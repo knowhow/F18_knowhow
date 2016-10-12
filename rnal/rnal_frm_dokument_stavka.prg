@@ -72,7 +72,7 @@ FUNCTION e_doc_item( nDoc_no, lNew )
             APPEND BLANK
          ENDIF
 
-         _rec := get_dbf_global_memvars( NIL, .F. )
+         _rec := get_hash_record_from_global_vars( NIL, .F. )
          // update zapisa...
          dbf_update_rec( _rec )
 

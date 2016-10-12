@@ -183,7 +183,7 @@ FUNCTION e_doc_it2( nDoc_no, nDoc_it_no, lNew )
             APPEND BLANK
          ENDIF
 
-         _rec := get_dbf_global_memvars( NIL, .F. )
+         _rec := get_hash_record_from_global_vars( NIL, .F. )
 
          dbf_update_rec( _rec )
 

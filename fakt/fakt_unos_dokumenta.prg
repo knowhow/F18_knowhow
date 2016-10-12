@@ -517,7 +517,7 @@ STATIC FUNCTION fakt_dodaj_ispravi_stavku( novi, item_hash, items_atrib )
    ENDIF
 
    // dodaj zapis u tabelu FAKT_PRIPR
-   _rec := get_dbf_global_memvars( "_" )
+   _rec := get_hash_record_from_global_vars( "_" )
    dbf_update_rec( _rec, .F. )
 
    // hash matrica koja sadrži update-ovan zapis

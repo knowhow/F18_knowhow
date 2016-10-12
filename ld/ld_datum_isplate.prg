@@ -78,11 +78,6 @@ FUNCTION unos_datuma_isplate_place()
    O_OBRACUNI
    O_LD_RJ
 
-   IF obracuni->( FieldPos( "DAT_ISPL" ) ) == 0 .OR. obracuni->( FieldPos( "OBR" ) ) == 0
-      MsgBeep( "Potrebna modifikacija struktura LD.CHS !!!#Prekidam operaciju" )
-      RETURN .F.
-   ENDIF
-
 
    Box(, 20, 65 )
 
@@ -238,21 +233,20 @@ FUNCTION unos_datuma_isplate_place()
 
       nGodina := nGod
 
-      s_isp_date( cRJ, nGodina - 1, 12, cObr, dDatPr, nMjPr, cIsZaPr, ;
-         cVrIsPr )
+      ld_obracun_set_datum_isplate( cRJ, nGodina - 1, 12, cObr, dDatPr, nMjPr, cIsZaPr, cVrIsPr )
 
-      s_isp_date( cRJ, nGodina, 1, cObr, dDat1, nMj1, cIsZa1, cVrIs1 )
-      s_isp_date( cRJ, nGodina, 2, cObr, dDat2, nMj2, cIsZa2, cVrIs2 )
-      s_isp_date( cRJ, nGodina, 3, cObr, dDat3, nMj3, cIsZa3, cVrIs3 )
-      s_isp_date( cRJ, nGodina, 4, cObr, dDat4, nMj4, cIsZa4, cVrIs4 )
-      s_isp_date( cRJ, nGodina, 5, cObr, dDat5, nMj5, cIsZa5, cVrIs5 )
-      s_isp_date( cRJ, nGodina, 6, cObr, dDat6, nMj6, cIsZa6, cVrIs6 )
-      s_isp_date( cRJ, nGodina, 7, cObr, dDat7, nMj7, cIsZa7, cVrIs7 )
-      s_isp_date( cRJ, nGodina, 8, cObr, dDat8, nMj8, cIsZa8, cVrIs8 )
-      s_isp_date( cRJ, nGodina, 9, cObr, dDat9, nMj9, cIsZa9, cVrIs9 )
-      s_isp_date( cRJ, nGodina, 10, cObr, dDat10, nMj10, cIsZa10, cVrIs10 )
-      s_isp_date( cRJ, nGodina, 11, cObr, dDat11, nMj11, cIsZa11, cVrIs11 )
-      s_isp_date( cRJ, nGodina, 12, cObr, dDat12, nMj12, cIsZa12, cVrIs12 )
+      ld_obracun_set_datum_isplate( cRJ, nGodina, 1, cObr, dDat1, nMj1, cIsZa1, cVrIs1 )
+      ld_obracun_set_datum_isplate( cRJ, nGodina, 2, cObr, dDat2, nMj2, cIsZa2, cVrIs2 )
+      ld_obracun_set_datum_isplate( cRJ, nGodina, 3, cObr, dDat3, nMj3, cIsZa3, cVrIs3 )
+      ld_obracun_set_datum_isplate( cRJ, nGodina, 4, cObr, dDat4, nMj4, cIsZa4, cVrIs4 )
+      ld_obracun_set_datum_isplate( cRJ, nGodina, 5, cObr, dDat5, nMj5, cIsZa5, cVrIs5 )
+      ld_obracun_set_datum_isplate( cRJ, nGodina, 6, cObr, dDat6, nMj6, cIsZa6, cVrIs6 )
+      ld_obracun_set_datum_isplate( cRJ, nGodina, 7, cObr, dDat7, nMj7, cIsZa7, cVrIs7 )
+      ld_obracun_set_datum_isplate( cRJ, nGodina, 8, cObr, dDat8, nMj8, cIsZa8, cVrIs8 )
+      ld_obracun_set_datum_isplate( cRJ, nGodina, 9, cObr, dDat9, nMj9, cIsZa9, cVrIs9 )
+      ld_obracun_set_datum_isplate( cRJ, nGodina, 10, cObr, dDat10, nMj10, cIsZa10, cVrIs10 )
+      ld_obracun_set_datum_isplate( cRJ, nGodina, 11, cObr, dDat11, nMj11, cIsZa11, cVrIs11 )
+      ld_obracun_set_datum_isplate( cRJ, nGodina, 12, cObr, dDat12, nMj12, cIsZa12, cVrIs12 )
 
    ENDIF
 
@@ -305,7 +299,7 @@ FUNCTION g_isp_date( cRj, nGod, nMjesec, cObr, nMjIsp, cIsplZa, cVrsta )
    RETURN dDate
 
 
-STATIC FUNCTION s_isp_date( cRj, nGod, nMjesec, cObr, dDatIspl, nMjIspl, cIsplZa, cVrsta )
+STATIC FUNCTION ld_obracun_set_datum_isplate( cRj, nGod, nMjesec, cObr, dDatIspl, nMjIspl, cIsplZa, cVrsta )
 
    LOCAL _rec
    LOCAL _field_ids, _where_cond

@@ -13,7 +13,7 @@
 
 STATIC __mj
 STATIC __god
-STATIC __xml := 0
+STATIC s_lExportXml := .T.
 STATIC __ispl_s := 0
 
 
@@ -42,7 +42,7 @@ FUNCTION ld_mip_obrazac()
    LOCAL cTipoviPrimanjaBolovanje := PadR( "18;", 100 )
    LOCAL cTipoviPrimanjaBolovanjePreko := PadR( "18;24;", 100 )
    LOCAL cObracun := gObracun
-   LOCAL cWinPrint := "E"
+   LOCAL cStampaExport := "E"
    LOCAL nOper := 1
    LOCAL cIsplSaberi := "D"
    LOCAL cNule := "N"
@@ -114,11 +114,11 @@ FUNCTION ld_mip_obrazac()
    @ m_x + nX, Col() + 2 SAY "obracun 0 ?" GET cNule VALID cNule $ "DN" PICT "@!"
    @ m_x + nX++, Col() + 2 SAY "pregled ?" GET cMipView VALID cMipView $ "DN" PICT "@!"
 
-   @ m_x + nX++, m_y + 2 SAY "Stampa/Export ?" GET cWinPrint PICT "@!"  VALID cWinPrint $ "ES"
+   @ m_x + nX++, m_y + 2 SAY "Stampa/Export ?" GET cStampaExport PICT "@!"  VALID cStampaExport $ "ES"
 
    READ
 
-   IF cWinPrint == "E"
+   IF cStampaExport == "E"
       @ m_x + nX++, m_y + 2 SAY "Datum podnosenja:" GET dDatPodn
       READ
 
@@ -143,15 +143,15 @@ FUNCTION ld_mip_obrazac()
       RETURN .F.
    ENDIF
 
-   IF ld_provjeri_dat_isplate_za_mjesec( cGod, cMj, IF( !Empty( cRjDef ), cRjDef, NIL ) ) > 0
+   IF ld_provjeri_dat_isplate_za_mjesec( cGod, cMj, iif( !Empty( cRjDef ), cRjDef, NIL ) ) > 0
 
       IF !Empty( cRjDef )
          cErr := "Nije definisan datum isplate za radnu jedinicu '" + cRjDef +  "'."
       ELSE
-         cErr := "Za pojedine radne jedinice nije definisan datum isplate."
+         cErr := "Za pojedine radne jedinice nije definisan datum isplate.#Podesiti u <Obračun/Administracija obračuna>"
       ENDIF
 
-      IF cWinPrint == "S"
+      IF cStampaExport == "S"
          cErr += "#Obrazac će biti prikazan bez datuma isplate."
          MsgBeep( cErr )
       ELSE
@@ -165,10 +165,10 @@ FUNCTION ld_mip_obrazac()
    __mj := cMj
    __god := cGod
 
-   IF cWinPrint == "S"
-      __xml := 1
+   IF cStampaExport == "S"
+      s_lExportXml := .F.
    ELSE
-      __xml := 0
+      s_lExportXml := .T.
    ENDIF
 
    IF cIsplSaberi == "D"
@@ -186,7 +186,8 @@ FUNCTION ld_mip_obrazac()
 
    IF !Empty( cRadnik )
       _pojed := .T.
-      __xml := 1
+      s_lExportXml := .F.
+      MsgBeep( "Za jednog radnika se ne vrši export, samo štampa!")
    ENDIF
 
    SELECT ld
@@ -202,12 +203,14 @@ FUNCTION ld_mip_obrazac()
       mip_view()
    ENDIF
 
-   IF __xml == 1
-      _xml_print( _pojed )
-   ELSE
+   IF s_lExportXml
+
       nBrZahtjeva := g_br_zaht()
-      _xml_export( cMj, cGod )
+      mip_xml_export( cMj, cGod )
       MsgBeep( "Obradjeno " + AllTrim( Str( nBrZahtjeva ) ) + " radnika." )
+
+   ELSE
+      mip_print_odt( _pojed )
    ENDIF
 
    RETURN .T.
@@ -239,7 +242,7 @@ FUNCTION mip_sort( cRj, cGod, cMj, cRadnik, cObr )
    ENDIF
 
    IF Empty( cRadnik )
-      INDEX ON Str( godina ) + Str( mjesec ) + SortPrez( idradn ) + idrj TAG "MIP1" TO ( my_home() + "ld_tmp" )
+      INDEX ON Str( field->godina ) + Str( field->mjesec ) + SortPrez( field->idradn ) + idrj TAG "MIP1" TO ( my_home() + "ld_tmp" )
       GO TOP
       SEEK Str( cGod, 4 ) + Str( cMj, 2 ) + cRadnik
    ELSE
@@ -275,7 +278,7 @@ STATIC FUNCTION mip_insert_record_r_export( cRadnik, cIdRj, nGodina, nMjesec, ;
    REPLACE r_jmb WITH cR_jmb
    REPLACE r_opc WITH cR_opc
    REPLACE d_isp WITH dDatIsplate
-   REPLACE r_sati WITH nBrojRadnihSati //  6)  broj radnih sati ${rad.r_sati}
+   REPLACE r_sati WITH nBrojRadnihSati // 6)  broj radnih sati ${rad.r_sati}
    REPLACE r_satib WITH nSatiB
    REPLACE r_satit WITH nRadnihSatiUvecanoTrajanje
    REPLACE r_stuv WITH nSTUv
@@ -389,13 +392,13 @@ STATIC FUNCTION _xml_head()
    RETURN .T.
 
 
-STATIC FUNCTION _xml_export( mjesec, godina )
+STATIC FUNCTION mip_xml_export( nMjesec, nGodina )
 
    LOCAL _cre, cMsg, _id_br, _naziv, _adresa, _mjesto, _lokacija
    LOCAL _a_files, _error
-   LOCAL _output_file := ""
+   LOCAL cOutputFile := ""
 
-   IF __xml == 1
+   IF !s_lExportXml
       RETURN .F.
    ENDIF
 
@@ -450,10 +453,11 @@ STATIC FUNCTION _xml_export( mjesec, godina )
 
    my_close_all_dbf()
 
-   _output_file := "mip_" + AllTrim( my_server_params()[ "database" ] ) + "_" + AllTrim( mjesec ) + "_" + AllTrim( godina ) + ".xml"
+   AltD()
+   cOutputFile := "mip_" + AllTrim( my_server_params()[ "database" ] ) + "_" + AllTrim( Str( nMjesec ) ) + "_" + AllTrim( Str( nGodina ) ) + ".xml"
 
 
-   f18_copy_to_desktop( _lokacija, _id_br + ".xml", _output_file ) // kopiraj fajl na desktop
+   f18_copy_to_desktop( _lokacija, _id_br + ".xml", cOutputFile ) // kopiraj fajl na desktop
 
    RETURN .T.
 
@@ -727,12 +731,12 @@ STATIC FUNCTION mip_get_period( cMj, cGod, dPer )
    RETURN .T.
 
 
-STATIC FUNCTION _xml_print( lPojedinacni )
+STATIC FUNCTION mip_print_odt( lPojedinacni )
 
    LOCAL _template := "ld_mip.odt"
    LOCAL _xml_file := my_home() + "data.xml"
 
-   IF __xml == 0
+   IF s_lExportXml
       RETURN .F.
    ENDIF
 
@@ -989,14 +993,12 @@ FUNCTION mip_fill_data( cRj, cRjDef, cGod, cMj, ;
 
    DO WHILE !Eof()
 
-      IF ld_date( field->godina, field->mjesec ) < ;
-            ld_date( cGod, cMj )
+      IF ld_date( field->godina, field->mjesec ) < ld_date( cGod, cMj )
          SKIP
          LOOP
       ENDIF
 
-      IF ld_date( field->godina, field->mjesec ) > ;
-            ld_date( cGod, cMj )
+      IF ld_date( field->godina, field->mjesec ) > ld_date( cGod, cMj )
          SKIP
          LOOP
       ENDIF
@@ -1103,7 +1105,7 @@ FUNCTION mip_fill_data( cRj, cRjDef, cGod, cMj, ;
          nFondSati := parobr->k1 // puni fond sati za ovaj mjesec
 
          nPrimanjaUslugeIliDobraIznos := 0
-         //nPrimanjaNeUlazeUBeneficiraniIznos := 0
+         // nPrimanjaNeUlazeUBeneficiraniIznos := 0
          nBolovanjaSati := 0
 
 
@@ -1134,7 +1136,7 @@ FUNCTION mip_fill_data( cRj, cRjDef, cGod, cMj, ;
          IF ( nBolovanjaIznos != 0 ) .OR. ( nBolovanjaSati != 0 )
 
             // nNeto := ( nNeto - nPrimanjaNeUlazeUBeneficiraniIznos )  - ovo ne postoji
-            //nBrojRadnihSati := ( nBrojRadnihSati - nPrimanjaNeUlazeUBeneficiraniSati ) // tipovi primanja koji ne ulaze u sate
+            // nBrojRadnihSati := ( nBrojRadnihSati - nPrimanjaNeUlazeUBeneficiraniSati ) // tipovi primanja koji ne ulaze u sate
             nBrojRadnihSati := nBrojRadnihSati - nBolovanjaSati
          ENDIF
 
@@ -1168,12 +1170,12 @@ FUNCTION mip_fill_data( cRj, cRjDef, cGod, cMj, ;
 
          IF is_radn_k4_bf_ide_u_benef_osnovu()
 
-//altd()
-            //IF is_beneficirani_staz_redovan_rad()
-               nRadnihSatiUvecanoTrajanje := nBrojRadnihSati - nPrimanjaNeUlazeUBeneficiraniSati
-            //ELSE
-            //   nRadnihSatiUvecanoTrajanje := field->usati
-            //ENDIF
+            // altd()
+            // IF is_beneficirani_staz_redovan_rad()
+            nRadnihSatiUvecanoTrajanje := nBrojRadnihSati - nPrimanjaNeUlazeUBeneficiraniSati
+            // ELSE
+            // nRadnihSatiUvecanoTrajanje := field->usati
+            // ENDIF
 
 
             nStUv := benefstepen() // benef.stepen

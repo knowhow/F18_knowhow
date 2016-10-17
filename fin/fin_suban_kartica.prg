@@ -194,10 +194,10 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
 
       UpitK1K4( 14 )
 
-      @ Row() + 1, m_y + 2 SAY "Uslov za broj veze: " GET qqBrDok PICT "@!S30"
-      @ Row() + 1, m_y + 2 SAY "(prazno-svi; 61_SP_2-spoji uplate za naloge tipa 61;"
-      @ Row() + 1, m_y + 2 SAY " **_SP_2 - spojiti uplate za sve vrste naloga) "
-
+      @ Row() + 1, m_y + 2 SAY8 "Uslov za broj veze: " GET qqBrDok PICT "@!S30"
+      @ Row() + 1, m_y + 2 SAY8 "(prazno-svi; 61_SP_2-spoji uplate za naloge tipa 61;"
+      @ Row() + 1, m_y + 2 SAY8 " **_SP_2 - kupci spojiti uplate za sve vrste naloga; "
+      @ Row() + 1, m_y + 2 SAY8 " **_SP_1 - dobavljači spojiti plaćanja za sve vrste naloga)"
       IF cBrza <> "D"
          @ Row() + 1, m_y + 2 SAY8 "Uslov za naziv konta (prazno-svi) " GET qqNazKonta PICT "@!S20"
       ENDIF
@@ -427,8 +427,7 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
 
    bEvalSubanKartFirma := {|| !Eof() .AND. iif( gDUFRJ != "D", field->IdFirma == cIdFirma, .T. ) }
    bEvalSubanKartKonto := {|| !Eof() .AND. cIdKonto == field->IdKonto .AND. iif( gDUFRJ != "D", field->IdFirma == cIdFirma, .T. ) }
-   bEvalSubanKartPartner :=   {|| !Eof() .AND. cIdKonto == field->IdKonto ;
-      .AND. ( cIdPartner == hb_UTF8ToStr( field->IdPartner ) ;
+   bEvalSubanKartPartner :=  {|| !Eof() .AND. cIdKonto == field->IdKonto .AND. ( cIdPartner == hb_UTF8ToStr( field->IdPartner ) ;
       .OR. ( cBrza == "D" .AND. RTrim( qqPartner ) == ";" ) ) ;
       .AND. Rasclan() .AND. iif( gDUFRJ != "D", IdFirma == cIdFirma, .T. ) }
 
@@ -669,8 +668,7 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
 
             hRec := dbf_get_rec()
             nSpojeno := 0
-            DO WHILE lSpojiUplate .AND. hRec[ "datdok" ] == field->datdok .AND. ;
-                  hRec[ "otvst" ] == field->otvst .AND. ;
+            DO WHILE lSpojiUplate .AND. hRec[ "datdok" ] == field->datdok .AND. hRec[ "otvst" ] == field->otvst .AND. ;
                   field->idvn == hRec[ "idvn" ] .AND. field->d_p == hRec[ "d_p" ] .AND. ;
                   ( field->idvn == cIdVnIzvod .OR. cIdVnIzvod == "**" ) .AND. field->d_p == cSpojiDP .AND. ;
                   Eval( bEvalSubanKartPartner )
@@ -678,7 +676,7 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
                IF nSpojeno > 0
                   hRec[ "iznosbhd" ] += field->iznosbhd
                   hRec[ "iznosdem" ] += field->iznosdem
-                  hRec[ "opis" ] := iif( cSpojiDP == "2", "uplate", "isplate" ) + " na dan " + DToC( field->datdok )
+                  hRec[ "opis" ] := iif( cSpojiDP == "2", "uplate", "placanja" ) + " na dan " + DToC( field->datdok )
                   hRec[ "brdok" ] := iif( hRec[ "otvst" ] == "9", "Z", "O" ) + "-" + DToC( field->datdok )
                ENDIF
                nSpojeno ++
@@ -697,7 +695,7 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
                __r_br := hRec[ "rbr" ]
                __dat_nal := hRec[ "datdok" ]
                __dat_val := fix_dat_var( hRec[ "datval" ], .T. )
-               __opis := hb_UTF8ToStr( hRec[ "opis" ] )
+               __opis := hRec[ "opis" ]
                __br_veze := hRec[ "brdok" ]
 
 
@@ -731,11 +729,11 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
                IF cDinDem == "3"
                   nSirOp := 16
                   nCOpis := PCol() + 1
-                  @ PRow(), PCol() + 1 SAY PadR( cOpis := AllTrim( hb_UTF8ToStr( hRec[ "opis" ] ) ), 16 )
+                  @ PRow(), PCol() + 1 SAY PadR( cOpis := AllTrim( hRec[ "opis" ] ), 16 )
                ELSE
                   nSirOp := 20
                   nCOpis := PCol() + 1
-                  @ PRow(), PCol() + 1 SAY PadR( cOpis := AllTrim( hb_UTF8ToStr( hRec[ "opis" ] ) ), 20 )
+                  @ PRow(), PCol() + 1 SAY PadR( cOpis := AllTrim( hRec[ "opis" ] ), 20 )
                ENDIF
                // ENDIF
 

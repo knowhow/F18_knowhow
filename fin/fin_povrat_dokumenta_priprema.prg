@@ -119,13 +119,17 @@ FUNCTION fin_nalog_brisi_iz_kumulativa( cIdFirma, cIdVn, cBrNal )
    _rec[ "idvn" ] := cIdVn
    _rec[ "brnal" ] := cBrNal
 
+altd()
+
    run_sql_query( "BEGIN" )
 
+/*
    IF !f18_lock_tables( { "fin_suban", "fin_nalog", "fin_sint", "fin_anal" }, .T. )
       run_sql_query( "ROLLBACK" )
       MsgBeep( "Ne mogu zaključati tabele !#Operacija povrata poništena." )
       RETURN .F.
    ENDIF
+*/
 
    Box(, 5, 70 )
 
@@ -159,7 +163,7 @@ FUNCTION fin_nalog_brisi_iz_kumulativa( cIdFirma, cIdVn, cBrNal )
 
    IF lOk
       lRet := .T.
-      hParams[ "unlock" ] := { "fin_suban", "fin_nalog", "fin_sint", "fin_anal" }
+      //hParams[ "unlock" ] := { "fin_suban", "fin_nalog", "fin_sint", "fin_anal" }
       run_sql_query( "COMMIT", hParams )
 
       log_write( "F18_DOK_OPER: POVRAT_FIN: " + cIdFirma + "-" + cIdVn + "-" + cBrNal, 2 )

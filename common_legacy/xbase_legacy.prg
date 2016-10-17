@@ -95,15 +95,13 @@ FUNCTION set_global_vars_from_dbf( zn, lConvertToUtf )
          // kreiram public varijablu sa imenom vrijednosti _var varijable
          __mvPublic( _var )
          Eval( MemVarBlock( _var ), Eval( FieldBlock( _field ) ) )
-         IF lSql
-
-         ENDIF
-
-         IF lSql // sql tabela utf->str
-            _var := hb_UTF8ToStr( _var )
-         ENDIF
-         IF lConvertToUtf // str->utf
-            _var := hb_StrToUTF8( _var )
+         IF ValType( &_var ) == "C"
+            IF lSql // sql tabela utf->str
+               &_var := hb_UTF8ToStr( &_var )
+            ENDIF
+            IF lConvertToUtf // str->utf
+               &_var := hb_StrToUTF8( &_var )
+            ENDIF
          ENDIF
 
       ENDIF

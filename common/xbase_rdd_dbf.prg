@@ -90,7 +90,10 @@ FUNCTION my_dbf_prefix( aDbfRec )
 
 /*
    uzima sva polja iz tekuceg dbf zapisa
+   kada je sql dbf konvertuje u 852 encoding
+
 */
+
 FUNCTION dbf_get_rec( lConvertToUtf )
 
    LOCAL _ime_polja, _i, _struct
@@ -103,7 +106,6 @@ FUNCTION dbf_get_rec( lConvertToUtf )
    FOR _i := 1 TO Len( _struct )
 
       _ime_polja := Lower( _struct[ _i, 1 ] )
-
 
       IF !( "#" + _ime_polja + "#" $ "#BRISANO#_OID_#_COMMIT_#" )
 

@@ -133,8 +133,8 @@ FUNCTION run_sql_query( cQry, hParams )
             LOG_CALL_STACK cLogMsg
             ?E cLogMsg
             IF is_in_main_thread()
-               //AltD() // sql transaction error
-               //Alert( "SQL transactions error !" )
+               // AltD() // sql transaction error
+               // Alert( "SQL transactions error !" )
                automatska_obrada_error( .T. )
             ENDIF
             hb_mutexUnlock( s_mtxMutex )
@@ -179,7 +179,6 @@ FUNCTION run_sql_query( cQry, hParams )
       quit_1
    ENDIF
 
-
    FOR nI := 1 TO nRetry
 
 
@@ -193,6 +192,8 @@ FUNCTION run_sql_query( cQry, hParams )
 
       RECOVER
 
+         altd()
+         ?E "SQL ERRRRROR:", cQry
          hb_idleSleep( 1 )
 
       END SEQUENCE

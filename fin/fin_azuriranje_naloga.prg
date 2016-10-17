@@ -106,6 +106,9 @@ FUNCTION fin_azuriranje_naloga( lAutomatikaAzuriranja )
 
       ENDIF
 
+
+      altd()
+
       IF !fin_azur_sql( oServer, cIdFirma, cIdVn, cBrNal )
 
          run_sql_query( "ROLLBACK" )
@@ -210,11 +213,11 @@ FUNCTION o_fin_za_azuriranje()
 
 
 
-FUNCTION fin_azur_sql( oServer, id_firma, id_vn, br_nal )
+FUNCTION fin_azur_sql( oServer, cIdFirma, cIdVn, cBrNal )
 
    LOCAL _ok := .T.
    LOCAL _ids := {}
-   LOCAL _tmp_id, _count, _tmp_doc, _rec, _msg, nI
+   LOCAL _tmp_id, _count, _tmp_doc, hRec, _msg, nI
    LOCAL _ids_doc := {}
    LOCAL _ids_tmp := {}
    LOCAL _ids_suban := {}
@@ -230,19 +233,19 @@ FUNCTION fin_azur_sql( oServer, id_firma, id_vn, br_nal )
    SELECT psuban
    SET ORDER TO TAG "1"
    GO TOP
-   SEEK id_firma + id_vn + br_nal
+   SEEK cIdFirma + cIdVn + cBrNal
 
    _count := 0
 
-   DO WHILE !Eof() .AND. field->idfirma == id_firma .AND. field->idvn == id_vn .AND. field->brnal == br_nal
+   DO WHILE !Eof() .AND. field->idfirma == cIdFirma .AND. field->idvn == cIdVn .AND. field->brnal == cBrNal
 
-      _rec := dbf_get_rec()
+      hRec := dbf_get_rec()
 
       ++ _count
 
       IF _count == 1
 
-         _tmp_id := _rec[ "idfirma" ] + _rec[ "idvn" ] + _rec[ "brnal" ]
+         _tmp_id := hRec[ "idfirma" ] + hRec[ "idvn" ] + hRec[ "brnal" ]
 
          AAdd( _ids_suban, "#2" + _tmp_id )
          AAdd( _ids_anal, "#2" + _tmp_id )
@@ -254,7 +257,7 @@ FUNCTION fin_azur_sql( oServer, id_firma, id_vn, br_nal )
 
       ENDIF
 
-      IF !sql_table_update( "fin_suban", "ins", _rec )
+      IF !sql_table_update( "fin_suban", "ins", hRec )
          _ok := .F.
          EXIT
       ENDIF
@@ -271,13 +274,13 @@ FUNCTION fin_azur_sql( oServer, id_firma, id_vn, br_nal )
       SELECT panal
       SET ORDER TO TAG "1"
       GO TOP
-      SEEK id_firma + id_vn + br_nal
+      SEEK cIdFirma + cIdVn + cBrNal
 
-      DO WHILE !Eof() .AND. field->idfirma == id_firma .AND. field->idvn == id_vn .AND. field->brnal == br_nal
+      DO WHILE !Eof() .AND. field->idfirma == cIdFirma .AND. field->idvn == cIdVn .AND. field->brnal == cBrNal
 
-         _rec := dbf_get_rec()
+         hRec := dbf_get_rec()
 
-         IF !sql_table_update( "fin_anal", "ins", _rec )
+         IF !sql_table_update( "fin_anal", "ins", hRec )
             _ok := .F.
             EXIT
          ENDIF
@@ -296,13 +299,13 @@ FUNCTION fin_azur_sql( oServer, id_firma, id_vn, br_nal )
       SELECT psint
       SET ORDER TO TAG "1"
       GO TOP
-      SEEK id_firma + id_vn + br_nal
+      SEEK cIdFirma + cIdVn + cBrNal
 
-      DO WHILE !Eof() .AND. field->idfirma == id_firma .AND. field->idvn == id_vn .AND. field->brnal == br_nal
+      DO WHILE !Eof() .AND. field->idfirma == cIdFirma .AND. field->idvn == cIdVn .AND. field->brnal == cBrNal
 
-         _rec := dbf_get_rec()
+         hRec := dbf_get_rec()
 
-         IF !sql_table_update( "fin_sint", "ins", _rec )
+         IF !sql_table_update( "fin_sint", "ins", hRec )
             _ok := .F.
             EXIT
          ENDIF
@@ -320,13 +323,13 @@ FUNCTION fin_azur_sql( oServer, id_firma, id_vn, br_nal )
       SELECT pnalog
       SET ORDER TO TAG "1"
       GO TOP
-      SEEK id_firma + id_vn + br_nal
+      SEEK cIdFirma + cIdVn + cBrNal
 
-      DO WHILE !Eof() .AND. field->idfirma == id_firma .AND. field->idvn == id_vn .AND. field->brnal == br_nal
+      DO WHILE !Eof() .AND. field->idfirma == cIdFirma .AND. field->idvn == cIdVn .AND. field->brnal == cBrNal
 
-         _rec := dbf_get_rec()
+         hRec := dbf_get_rec()
 
-         IF !sql_table_update( "fin_nalog", "ins", _rec )
+         IF !sql_table_update( "fin_nalog", "ins", hRec )
             _ok := .F.
             EXIT
          ENDIF
@@ -337,12 +340,14 @@ FUNCTION fin_azur_sql( oServer, id_firma, id_vn, br_nal )
 
    ENDIF
 
+/*
    IF _ok
       _ok := push_ids_to_semaphore( __tbl_suban, _ids_suban ) .AND. ;
          push_ids_to_semaphore( __tbl_sint, _ids_sint  ) .AND. ;
          push_ids_to_semaphore( __tbl_anal, _ids_anal  ) .AND. ;
          push_ids_to_semaphore( __tbl_nalog, _ids_nalog )
    ENDIF
+*/
 
    BoxC()
 
@@ -505,7 +510,7 @@ STATIC FUNCTION prikazi_greske_provjere_konta_i_partnera( err )
 
 
 
-STATIC FUNCTION fin_p_provjeri_redni_broj( id_firma, id_vn, br_nal )
+STATIC FUNCTION fin_p_provjeri_redni_broj( cIdFirma, cIdVn, cBrNal )
 
    LOCAL _ok := .T.
    LOCAL _tmp
@@ -513,9 +518,9 @@ STATIC FUNCTION fin_p_provjeri_redni_broj( id_firma, id_vn, br_nal )
    SELECT psuban
    SET ORDER TO TAG "1"
    GO TOP
-   SEEK id_firma + id_vn + br_nal
+   SEEK cIdFirma + cIdVn + cBrNal
 
-   DO WHILE !Eof() .AND. field->idfirma == id_firma .AND. field->idvn == id_vn .AND. field->brnal == br_nal
+   DO WHILE !Eof() .AND. field->idfirma == cIdFirma .AND. field->idvn == cIdVn .AND. field->brnal == cBrNal
 
       _tmp := field->rbr
 
@@ -523,7 +528,7 @@ STATIC FUNCTION fin_p_provjeri_redni_broj( id_firma, id_vn, br_nal )
 
       IF _tmp == field->rbr
          _ok := .F.
-         MsgBeep( "Nalog " + id_firma + "-" + id_vn + "-" + br_nal + " nema ispravne redne brojeve !" )
+         MsgBeep( "Nalog " + cIdFirma + "-" + cIdVn + "-" + cBrNal + " nema ispravne redne brojeve !" )
          RETURN _ok
       ENDIF
 
@@ -553,7 +558,7 @@ STATIC FUNCTION fin_p_nalog_bez_provjere( auto )
 
 
 
-STATIC FUNCTION fin_saldo_provjera_psuban( id_firma, id_vn, br_nal )
+STATIC FUNCTION fin_saldo_provjera_psuban( cIdFirma, cIdVn, cBrNal )
 
    LOCAL _ok := .F.
    LOCAL _tmp, _saldo
@@ -566,11 +571,11 @@ STATIC FUNCTION fin_saldo_provjera_psuban( id_firma, id_vn, br_nal )
    SELECT psuban
    SET ORDER TO TAG "1"
    GO TOP
-   SEEK id_firma + id_vn + br_nal
+   SEEK cIdFirma + cIdVn + cBrNal
 
    _saldo := 0
 
-   DO WHILE !Eof() .AND. field->idfirma == id_firma .AND. field->idvn == id_vn .AND. field->brnal == br_nal
+   DO WHILE !Eof() .AND. field->idfirma == cIdFirma .AND. field->idvn == cIdVn .AND. field->brnal == cBrNal
 
       IF field->d_p == "1"
          _saldo += field->iznosbhd
@@ -584,7 +589,7 @@ STATIC FUNCTION fin_saldo_provjera_psuban( id_firma, id_vn, br_nal )
 
    IF Round( _saldo, 4 ) <> 0
       Beep( 3 )
-      Msg( "Neophodna ravnoteža naloga " + id_firma + "-" + id_vn + "-" + AllTrim( br_nal ) + "##, ažuriranje neće biti izvršeno!" )
+      Msg( "Neophodna ravnoteža naloga " + cIdFirma + "-" + cIdVn + "-" + AllTrim( cBrNal ) + "##, ažuriranje neće biti izvršeno!" )
       RETURN _ok
    ENDIF
 
@@ -641,7 +646,7 @@ STATIC FUNCTION fin_p_tabele_provjera( lista_naloga )
 
 
 /*
-FUNCTION fin_azur_dbf( auto, id_firma, id_vn, br_nal )
+FUNCTION fin_azur_dbf( auto, cIdFirma, cIdVn, cBrNal )
 
    LOCAL _n_c
    LOCAL _t_area := Select()
@@ -654,11 +659,11 @@ FUNCTION fin_azur_dbf( auto, id_firma, id_vn, br_nal )
    SELECT psuban
    SET ORDER TO TAG "1"
    GO TOP
-   SEEK id_firma + id_vn + br_nal
+   SEEK cIdFirma + cIdVn + cBrNal
 
    _saldo := 0
 
-   DO WHILE !Eof() .AND. field->idfirma == id_firma .AND. field->idvn == id_vn .AND. field->brnal == br_nal
+   DO WHILE !Eof() .AND. field->idfirma == cIdFirma .AND. field->idvn == cIdVn .AND. field->brnal == cBrNal
 
       _ctrl := field->idfirma + field->idvn + field->brnal
 
@@ -793,7 +798,7 @@ FUNCTION psuban_konto_check( arr, silent )
 
 FUNCTION panal_anal( cNalogId )
 
-   LOCAL _rec
+   LOCAL hRec
 
    @ m_x + 3, m_y + 2 SAY "ANALITIKA       "
 
@@ -802,12 +807,12 @@ FUNCTION panal_anal( cNalogId )
 
    DO WHILE !Eof() .AND. cNalogId == IdFirma + IdVn + BrNal
 
-      _rec := dbf_get_rec()
+      hRec := dbf_get_rec()
 
       SELECT ANAL
       APPEND BLANK
 
-      dbf_update_rec( _rec, .F. )
+      dbf_update_rec( hRec, .F. )
 
       SELECT PANAL
       SKIP
@@ -821,7 +826,7 @@ FUNCTION panal_anal( cNalogId )
 
 FUNCTION psint_sint( cNalogId )
 
-   LOCAL _rec
+   LOCAL hRec
 
    @ m_x + 3, m_y + 2 SAY "SINTETIKA       "
    SELECT PSINT
@@ -829,12 +834,12 @@ FUNCTION psint_sint( cNalogId )
 
    DO WHILE !Eof() .AND. cNalogId == IdFirma + IdVn + BrNal
 
-      _rec := dbf_get_rec()
+      hRec := dbf_get_rec()
 
       SELECT SINT
 
       APPEND BLANK
-      dbf_update_rec( _rec, .F. )
+      dbf_update_rec( hRec, .F. )
 
       SELECT PSINT
       SKIP
@@ -848,19 +853,19 @@ FUNCTION psint_sint( cNalogId )
 
 FUNCTION pnalog_nalog( cNalogId )
 
-   LOCAL _rec
+   LOCAL hRec
 
    SELECT pnalog
    SEEK cNalogId
 
    IF Found()
 
-      _rec := dbf_get_rec()
+      hRec := dbf_get_rec()
 
       SELECT nalog
       APPEND BLANK
 
-      dbf_update_rec( _rec, .F. )
+      dbf_update_rec( hRec, .F. )
 
    ELSE
 
@@ -877,7 +882,7 @@ FUNCTION psuban_suban( cNalogId )
 
    LOCAL nSaldo := 0
    LOCAL nC := 0
-   LOCAL _rec
+   LOCAL hRec, hRec2
 
    @ m_x + 3, m_y + 2 SAY "SUBANALITIKA   "
 
@@ -895,19 +900,19 @@ FUNCTION psuban_suban( cNalogId )
 
       @ m_x + 3, m_y + 25 SAY ++nC  PICT "99999999999"
 
-      _rec := dbf_get_rec()
+      hRec := dbf_get_rec()
 
-      IF _rec[ "d_p" ] == "1"
-         nSaldo := _rec[ "iznosbhd" ]
+      IF hRec[ "d_p" ] == "1"
+         nSaldo := hRec[ "iznosbhd" ]
       ELSE
-         nSaldo := -_rec[ "iznosbhd" ]
+         nSaldo := -hRec[ "iznosbhd" ]
       ENDIF
 
-      find_suban_by_konto_partner( _rec[ "idfirma" ], _rec[ "idkonto" ], _rec[ "idpartner" ], _rec[ "brdok" ] )
+      find_suban_by_konto_partner( hRec[ "idfirma" ], hRec[ "idkonto" ], hRec[ "idpartner" ], hRec[ "brdok" ] )
 
       nRec := RecNo()
-      DO WHILE  !Eof() .AND. ( _rec[ "idfirma" ] + _rec[ "idkonto" ] + _rec[ "idpartner" ] + _rec[ "brdok" ] ) == ( IdFirma + IdKonto + IdPartner + BrDok )
-         IF _rec[ "d_p" ] == "1"
+      DO WHILE  !Eof() .AND. ( hRec[ "idfirma" ] + hRec[ "idkonto" ] + hRec[ "idpartner" ] + hRec[ "brdok" ] ) == ( IdFirma + IdKonto + IdPartner + BrDok )
+         IF hRec[ "d_p" ] == "1"
             nSaldo += field->IznosBHD
          ELSE
             nSaldo -= field->IznosBHD
@@ -918,23 +923,23 @@ FUNCTION psuban_suban( cNalogId )
       IF Abs( Round( nSaldo, 3 ) ) <= gnLOSt
 
          GO nRec
-         DO WHILE  !Eof() .AND. ( _rec[ "idfirma" ] + _rec[ "idkonto" ] + _rec[ "idpartner" ] + _rec[ "brdok" ] ) == ( IdFirma + IdKonto + IdPartner + BrDok )
+         DO WHILE  !Eof() .AND. ( hRec[ "idfirma" ] + hRec[ "idkonto" ] + hRec[ "idpartner" ] + hRec[ "brdok" ] ) == ( IdFirma + IdKonto + IdPartner + BrDok )
 
-            _rec_2 := dbf_get_rec()
-            _rec_2[ "otvst" ] := "9"
-            update_rec_server_and_dbf( "fin_suban", _rec_2, 1, "FULL" )
+            hRec2 := dbf_get_rec()
+            hRec2[ "otvst" ] := "9"
+            update_rec_server_and_dbf( "fin_suban", hRec2, 1, "FULL" )
 
             SKIP
 
          ENDDO
-         _rec[ "otvSt" ] := "9"
+         hRec[ "otvSt" ] := "9"
 
       ENDIF
 
       SELECT SUBAN
       APPEND BLANK
 
-      dbf_update_rec( _rec, .T. )
+      dbf_update_rec( hRec, .T. )
 
       SELECT PSUBAN
       SKIP
@@ -971,14 +976,14 @@ FUNCTION fin_pripr_delete( cNalogId )
    RETURN .T.
 
 
-FUNCTION fin_dokument_postoji( id_firma, id_vn, br_nal )
+FUNCTION fin_dokument_postoji( cIdFirma, cIdVn, cBrNal )
 
    LOCAL lExist := .F.
    LOCAL cWhere
 
-   cWhere := "idfirma = " + sql_quote( id_firma )
-   cWhere += " AND idvn = " + sql_quote( id_vn )
-   cWhere += " AND brnal = " + sql_quote( br_nal )
+   cWhere := "idfirma = " + sql_quote( cIdFirma )
+   cWhere += " AND idvn = " + sql_quote( cIdVn )
+   cWhere += " AND brnal = " + sql_quote( cBrNal )
 
    IF table_count( F18_PSQL_SCHEMA_DOT + "fin_nalog", cWhere ) > 0
       lExist := .T.

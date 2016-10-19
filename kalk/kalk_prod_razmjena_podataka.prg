@@ -11,6 +11,7 @@
 
 #include "f18.ch"
 
+MEMVAR m_x, m_y
 
 FUNCTION prenos_fakt_kalk_prodavnica()
 
@@ -18,23 +19,23 @@ FUNCTION prenos_fakt_kalk_prodavnica()
    PRIVATE opcexe := {}
 
    AAdd( Opc, "1. fakt->kalk (13->11) otpremnica maloprodaje        " )
-   AAdd( opcexe, {||  prod_fa_ka_prenos_otpr() } )
+   AAdd( opcexe, {||  fakt_13_kalk_11() } )
 
    AAdd( Opc, "2. fakt->kalk (11->41) racun maloprodaje" )
-   AAdd( opcexe, {||  FaKaPrenosRacunMP()  } )
+   AAdd( opcexe, {||  fakt_11_kalk_41()  } )
 
    AAdd( Opc, "3. fakt->kalk (11->42) paragon" )
-   AAdd( opcexe, {||  FaKaPrenosRacunMPParagon()  } )
+   AAdd( opcexe, {||  fakt_11_kalk_42()  } )
 
-   AAdd( Opc, "4. fakt->kalk (11->11) racun mp u razduzenje mag." )
-   AAdd( opcexe, {||  fakt_kalk_prenos_11_11()  } )
+   AAdd( Opc, "4. fakt->kalk (11->11) zaduzenje diskonta" )
+   AAdd( opcexe, {||  fakt_11_kalk_prenos_11()  } )
 
    AAdd( Opc, "5. fakt->kalk (01->81) doprema u prod" )
-   AAdd( opcexe, {||  FaKaPrenos_01_doprema() } )
-   AAdd( Opc, "6. fakt->kalk (13->80) prenos iz c.m. u prodavnicu" )
-   AAdd( opcexe, {||  FaKaPrenos_cm_u_prodavnicu()  } )
+   AAdd( opcexe, {||  fakt_01_kalk_81() } )
+   AAdd( Opc, "6. fakt->kalk (13->80) prenos iz cmag. u prodavnicu" )
+   AAdd( opcexe, {||  fakt_13_kalk_80()  } )
    AAdd( Opc, "7. fakt->kalk (15->15) izlaz iz MP putem VP" )
-   AAdd( opcexe, {||  FaKaPrenos_izlaz_putem_vp() } )
+   AAdd( opcexe, {||  fakt_15_kalk_15() } )
    PRIVATE Izbor := 1
    f18_menu_sa_priv_vars_opc_opcexe_izbor( "fkpr" )
    my_close_all_dbf()
@@ -43,7 +44,7 @@ FUNCTION prenos_fakt_kalk_prodavnica()
 
 
 
-FUNCTION fakt_kalk_prenos_11_11()
+FUNCTION fakt_11_kalk_prenos_11()
 
    LOCAL cIdFirma := gFirma
    LOCAL cIdTipDok := "11"
@@ -53,6 +54,11 @@ FUNCTION fakt_kalk_prenos_11_11()
    LOCAL dFaktDo := Date()
    LOCAL cArtPocinju := Space( 10 )
    LOCAL nLeftArt := 0
+   LOCAL dDatKalk, cIdKonto, cIdKonto2, cIdZaduz, cIdZaduz2, cSabirati, cCjenSif
+   LOCAL nX
+   LOCAL cFaktBrDokumenti := Space( 150 ), cFilterBrDok
+   LOCAL nPos, aDokumenti
+   LOCAL aGetList := {}
 
    o_kalk_pripr()
    o_koncij()
@@ -80,31 +86,40 @@ FUNCTION fakt_kalk_prenos_11_11()
 
    kalk_set_brkalk_za_idvd( "11", @cBrKalk )
 
-   Box(, 15, 60 )
+   Box(, 15, 70 )
 
 
    DO WHILE .T.
 
       nRBr := 0
+      nX := 1
 
-      @ m_x + 1, m_y + 2   SAY "Broj kalkulacije 11 -" GET cBrKalk PICT "@!"
-      @ m_x + 1, Col() + 2 SAY "Datum:" GET dDatKalk
-      @ m_x + 3, m_y + 2   SAY "Magac. konto razduzuje:" GET cIdKonto2 PICT "@!" VALID P_Konto( @cIdKonto2 )
-      @ m_x + 4, m_y + 2   SAY "Prodavn. konto zaduzuje :" GET cIdKonto  PICT "@!" VALID P_Konto( @cIdKonto )
+      @ m_x + nX++, m_y + 2   SAY "Broj kalkulacije 11 -" GET cBrKalk PICT "@!"
+      @ m_x + nX++, Col() + 2 SAY "Datum:" GET dDatKalk
+      @ m_x + nX++, m_y + 2  SAY8 "            Magacinski konto razdužuje:" GET cIdKonto2 PICT "@!" VALID P_Konto( @cIdKonto2 )
+      @ m_x + nX++, m_y + 2  SAY8 "Prodavnički konto (diskonto) zadužuje :" GET cIdKonto  PICT "@!" VALID P_Konto( @cIdKonto )
 
       cFaktFirma := cIdFirma
 
-      @ m_x + 6, m_y + 2 SAY "Fakture tipa 11 u periodu od" GET dFaktOd
-      @ m_x + 6, Col() + 1 SAY "do" GET dFaktDo
+      nX++
 
-      @ m_x + 7, m_y + 2 SAY "Uzimati MPC iz sifrarnika (D/N) ?" GET cCjenSif VALID cCjenSif $ "DN" PICT "@!"
+      @ m_x + nX++, m_y + 2 SAY "Brojevi dokumenata (BRDOK1;BRDOK2;)" GET cFaktBrDokumenti PICT "@!S20"
+      READ
+      IF LastKey() == K_ESC
+         EXIT
+      ENDIF
 
-      @ m_x + 8, m_y + 2 SAY "Sabirati iste artikle (D/N) ?" GET cSabirati VALID cSabirati $ "DN" PICT "@!"
 
-      @ m_x + 9, m_y + 2 SAY "Uslov za artikle koji pocinju sa:" GET cArtPocinju
+      IF Empty( cFaktBrDokumenti )
+         @ m_x + nX, m_y + 2 SAY "Fakture tipa 11 u periodu od" GET dFaktOd
+         @ m_x + nX++, Col() + 1 SAY "do" GET dFaktDo
+      ENDIF
+
+      @ m_x + nX++, m_y + 2 SAY8 "Uzimati MPC iz šifarnika (D/N) ?" GET cCjenSif VALID cCjenSif $ "DN" PICT "@!"
+      @ m_x + nX++, m_y + 2 SAY8 "Sabirati iste artikle (D/N) ?" GET cSabirati VALID cSabirati $ "DN" PICT "@!"
+      @ m_x + nX++, m_y + 2 SAY8 "Uslov za artikle koji počinju sa:" GET cArtPocinju
 
       READ
-
       IF LastKey() == K_ESC
          EXIT
       ENDIF
@@ -116,25 +131,45 @@ FUNCTION fakt_kalk_prenos_11_11()
       cArtPocinju := Trim( cArtPocinju )
       nLeftArt := Len( cArtPocinju )
 
+      IF !Empty( cFaktBrDokumenti )
+         cFilterBrDok := Parsiraj( cFaktBrDokumenti, "BRDOK" )
+         SET FILTER TO &cFilterBrDok
+         GO TOP
+         AltD()
+      ELSE
+         cFilterBrDok := ".t."
+      ENDIF
+
+
       SEEK cFaktFirma + cIdTipDok
 
       MsgO( "Generacija podataka: " + cFaktFirma + "-" + cIdTipDok )
 
-      DO WHILE !Eof() .AND. cFaktFirma + cIdTipDok == IdFirma + IdTipDok
+
+      aDokumenti := {}
+
+      DO WHILE !Eof() .AND. cFaktFirma + cIdTipDok == field->IdFirma + field->IdTipDok
 
 
-         IF fakt->datdok < dFaktOd .OR. fakt->datdok > dFaktDo // datumska provjera
+         IF cFilterBrDok == ".t."
+            IF fakt->datdok < dFaktOd .OR. fakt->datdok > dFaktDo // datumska provjera
+               SKIP
+               LOOP
+            ENDIF
+         ENDIF
+
+
+         IF nLeftArt > 0 .AND. Left( fakt->idroba, nLeftArt ) != cArtPocinju
             SKIP
             LOOP
          ENDIF
 
-         IF nLeftArt > 0 .AND. Left( idroba, nLeftArt ) != cArtPocinju
-            SKIP
-            LOOP
+         nPos := AScan( aDokumenti, {| cBrDok | cBrDok == fakt->brdok } )
+         IF nPos == 0
+            AAdd( aDokumenti, fakt->brdok )
          ENDIF
 
-
-         IF AllTrim( podbr ) == "."  .OR. idroba = "U" // usluge ne prenosi takodjer
+         IF AllTrim( fakt->podbr ) == "."  .OR. fakt->idroba == "U" // usluge ne prenosi takodjer
             SKIP
             LOOP
          ENDIF
@@ -168,26 +203,25 @@ FUNCTION fakt_kalk_prenos_11_11()
          IF !Found()
 
             APPEND BLANK
-
-            REPLACE idfirma WITH cIdFirma
-            REPLACE rbr WITH Str( ++nRbr, 3 )
-            REPLACE idvd WITH "11"
-            REPLACE brdok WITH cBrKalk
-            REPLACE datdok WITH dDatKalk
-            REPLACE idtarifa WITH get_tarifa_by_koncij_region_roba_idtarifa_2_3( cPKonto, fakt->idroba, @aPorezi )
-            REPLACE brfaktp WITH ""
-            REPLACE datfaktp WITH fakt->datdok
-            REPLACE idkonto   WITH cPKonto
-            REPLACE idzaduz  WITH cidzaduz
-            REPLACE idkonto2  WITH cidkonto2
-            REPLACE idzaduz2  WITH cidzaduz2
-            REPLACE idroba WITH fakt->idroba
-            REPLACE nc  WITH ROBA->nc
-            REPLACE vpc WITH fakt->cijena
-            REPLACE rabatv WITH fakt->rabat
-            REPLACE mpc WITH fakt->porez
-            REPLACE tmarza2 WITH "A"
-            REPLACE tprevoz WITH "A"
+            REPLACE idfirma WITH cIdFirma, ;
+               rbr WITH Str( ++nRbr, 3 ), ;
+               idvd WITH "11", ;
+               brdok WITH cBrKalk, ;
+               datdok WITH dDatKalk, ;
+               idtarifa WITH get_tarifa_by_koncij_region_roba_idtarifa_2_3( cPKonto, fakt->idroba, @aPorezi ), ;
+               brfaktp WITH "", ;
+               datfaktp WITH fakt->datdok, ;
+               idkonto   WITH cPKonto, ;
+               idzaduz  WITH cidzaduz, ;
+               idkonto2  WITH cidkonto2, ;
+               idzaduz2  WITH cidzaduz2, ;
+               idroba WITH fakt->idroba, ;
+               nc  WITH ROBA->nc, ;
+               vpc WITH fakt->cijena, ;
+               rabatv WITH fakt->rabat, ;
+               mpc WITH fakt->porez, ;
+               tmarza2 WITH "A", ;
+               tprevoz WITH "A"
 
             IF cCjenSif == "D"
                REPLACE mpcsapp WITH kalk_get_mpc_by_koncij_pravilo()
@@ -198,8 +232,7 @@ FUNCTION fakt_kalk_prenos_11_11()
          ENDIF
 
          my_rlock() // saberi kolicine za jedan artikal
-         REPLACE kolicina WITH ( kolicina + fakt->kolicina )
-
+         REPLACE kolicina WITH ( kolicina + fakt->kolicina ) // kalk_pripr
 
          SELECT fakt
          SKIP
@@ -225,28 +258,27 @@ FUNCTION fakt_kalk_prenos_11_11()
 
       SELECT fakt
 
-      @ m_x + 10, m_y + 2 SAY "Dokument je prenesen !"
+      @ m_x + 10, m_y + 2 SAY "KALK Dokument izgenerisan !"
 
       kalk_fix_brdok_add_1( @cBrKalk )
-
       Inkey( 4 )
 
       @ m_x + 8, m_y + 2 SAY Space( 30 )
       @ m_x + 10, m_y + 2 SAY Space( 40 )
 
+      MsgBeep( "Prenos dokumenata (broj): " + AllTrim( Str( Len( aDokumenti ) ) ) )
    ENDDO
 
    Boxc()
+
    my_close_all_dbf()
 
    RETURN .T.
 
 
 
-// -----------------------------------------
-// prenos 13->11
-// -----------------------------------------
-FUNCTION prod_fa_ka_prenos_otpr()
+
+FUNCTION fakt_13_kalk_11()
 
    LOCAL cIdFirma := gFirma
    LOCAL cIdTipDok := "13"
@@ -282,17 +314,17 @@ FUNCTION prod_fa_ka_prenos_otpr()
       @ m_x + 1, m_y + 2   SAY "Broj kalkulacije 11 -" GET cBrKalk PICT "@!"
       @ m_x + 1, Col() + 2 SAY "Datum:" GET dDatKalk
       @ m_x + 3, m_y + 2   SAY "Magac. konto razduzuje:" GET cIdKonto2 PICT "@!" VALID P_Konto( @cIdKonto2 )
-      //IF gNW <> "X"
-        // @ m_x + 3, Col() + 2 SAY "Razduzuje:" GET cIdZaduz2  PICT "@!"      VALID Empty( cidzaduz2 ) .OR. P_Firma( @cIdZaduz2 )
-      //ENDIF
+      // IF gNW <> "X"
+      // @ m_x + 3, Col() + 2 SAY "Razduzuje:" GET cIdZaduz2  PICT "@!"      VALID Empty( cidzaduz2 ) .OR. P_Firma( @cIdZaduz2 )
+      // ENDIF
 
       IF gVar13u11 == "1"
          @ m_x + 4, m_y + 2   SAY "Prodavn. konto zaduzuje :" GET cIdKonto  PICT "@!" VALID P_Konto( @cIdKonto )
       ENDIF
 
-      //IF gNW <> "X"
-        // @ m_x + 4, Col() + 2 SAY "Zaduzuje:" GET cIdZaduz  PICT "@!"      VALID Empty( cidzaduz ) .OR. P_Firma( @cIdZaduz )
-      //ENDIF
+      // IF gNW <> "X"
+      // @ m_x + 4, Col() + 2 SAY "Zaduzuje:" GET cIdZaduz  PICT "@!"      VALID Empty( cidzaduz ) .OR. P_Firma( @cIdZaduz )
+      // ENDIF
 
       cFaktFirma := cIdFirma
       @ m_x + 6, m_y + 2 SAY "Broj otpremnice u MP: " GET cFaktFirma
@@ -401,11 +433,11 @@ FUNCTION prod_fa_ka_prenos_otpr()
 
 
 
-/* FaKaPrenosRacunMP()
+/*
  *     Prenos maloprodajnih kalkulacija FAKT->KALK (11->41)
  */
 
-FUNCTION FaKaPrenosRacunMP()
+FUNCTION fakt_11_kalk_41()
 
    PRIVATE cIdFirma := gFirma
    PRIVATE cIdTipDok := "11"
@@ -439,9 +471,9 @@ FUNCTION FaKaPrenosRacunMP()
       @ m_x + 1, m_y + 2 SAY "Broj kalkulacije 41 -" GET cBrKalk PICT "@!"
       @ m_x + 1, Col() + 2 SAY "Datum:" GET dDatKalk
       @ m_x + 3, m_y + 2 SAY "Konto razduzuje :" GET cIdKonto  PICT "@!" VALID P_Konto( @cIdKonto )
-      //IF gNW <> "X"
-        // @ m_x + 3, Col() + 2 SAY "Razduzuje:" GET cIdZaduz  PICT "@!"      VALID Empty( cidzaduz ) .OR. P_Firma( @cIdZaduz )
-      //ENDIF
+      // IF gNW <> "X"
+      // @ m_x + 3, Col() + 2 SAY "Razduzuje:" GET cIdZaduz  PICT "@!"      VALID Empty( cidzaduz ) .OR. P_Firma( @cIdZaduz )
+      // ENDIF
       @ m_x + 5, m_y + 2 SAY "Napraviti zbirnu kalkulaciju (D/N): " GET cZbirno VALID cZbirno $ "DN" PICT "@!"
       READ
 
@@ -492,10 +524,10 @@ FUNCTION FaKaPrenosRacunMP()
 
             SELECT kalk_pripr
             LOCATE FOR BrFaktP = cBrDok
-            // da li je faktura vec prenesena
-            IF Found()
+
+            IF Found() // da li je faktura vec prenesena
                Beep( 4 )
-               @ m_x + 8, m_y + 2 SAY "Dokument je vec prenesen !!"
+               @ m_x + 8, m_y + 2 SAY "Dokument je vec prenesen !"
                Inkey( 4 )
                @ m_x + 8, m_y + 2 SAY Space( 30 )
                LOOP
@@ -657,14 +689,14 @@ FUNCTION FaKaPrenosRacunMP()
    RETURN .T.
 
 
-/* FaKaPrenos_01_doprema()
+/*
  *     Prenos FAKT->KALK (01->81)
  */
 
-FUNCTION FaKaPrenos_01_doprema()
+FUNCTION fakt_01_kalk_81()
 
-   // {
    LOCAL cIdFirma := gFirma, cIdTipDok := "01", cBrDok := cBrKalk := Space( 8 )
+
    o_kalk_pripr()
    o_kalk()
    O_ROBA
@@ -691,9 +723,9 @@ FUNCTION FaKaPrenos_01_doprema()
       @ m_x + 1, m_y + 2   SAY "Broj kalkulacije 81 -" GET cBrKalk PICT "@!"
       @ m_x + 1, Col() + 2 SAY "Datum:" GET dDatKalk
       @ m_x + 3, m_y + 2   SAY "Konto razduzuje :" GET cIdKonto  PICT "@!" VALID P_Konto( @cIdKonto )
-      //IF gNW <> "X"
-      //   @ m_x + 3, Col() + 2 SAY "Zaduzuje:" GET cIdZaduz  PICT "@!"      VALID Empty( cidzaduz ) .OR. P_Firma( @cIdZaduz )
-      //ENDIF
+      // IF gNW <> "X"
+      // @ m_x + 3, Col() + 2 SAY "Zaduzuje:" GET cIdZaduz  PICT "@!"      VALID Empty( cidzaduz ) .OR. P_Firma( @cIdZaduz )
+      // ENDIF
 
       cFaktFirma := cIdFirma
       @ m_x + 6, m_y + 2 SAY "Broj fakture: " GET cFaktFirma
@@ -789,13 +821,12 @@ FUNCTION FaKaPrenos_01_doprema()
 
 
 
-/* FaKaPrenos_cm_u_prodavnicu()
+/*
  *     Otprema u mp->kalk (13->80) prebaci u prodajni objekt
  */
 
-FUNCTION FaKaPrenos_cm_u_prodavnicu()
+FUNCTION fakt_13_kalk_80()
 
-   // {
    LOCAL cIdFirma := gFirma, cIdTipDok := "13", cBrDok := cBrKalk := Space( 8 )
 
    o_kalk_pripr()
@@ -825,13 +856,13 @@ FUNCTION FaKaPrenos_cm_u_prodavnicu()
       @ m_x + 1, m_y + 2   SAY "Broj kalkulacije 80 -" GET cBrKalk PICT "@!"
       @ m_x + 1, Col() + 2 SAY "Datum:" GET dDatKalk
       @ m_x + 3, m_y + 2   SAY "Prodavn. konto zaduzuje :" GET cIdKonto  PICT "@!" VALID P_Konto( @cIdKonto )
-      //IF gNW <> "X"
-      //   @ m_x + 3, Col() + 2 SAY "Zaduzuje:" GET cIdZaduz  PICT "@!"      VALID Empty( cidzaduz ) .OR. P_Firma( @cIdZaduz )
-      //ENDIF
+      // IF gNW <> "X"
+      // @ m_x + 3, Col() + 2 SAY "Zaduzuje:" GET cIdZaduz  PICT "@!"      VALID Empty( cidzaduz ) .OR. P_Firma( @cIdZaduz )
+      // ENDIF
       @ m_x + 4, m_y + 2   SAY "CM. konto razduzuje:" GET cIdKonto2 PICT "@!" VALID P_Konto( @cIdKonto2 )
-      //IF gNW <> "X"
-      //   @ m_x + 4, Col() + 2 SAY "Razduzuje:" GET cIdZaduz2  PICT "@!"      VALID Empty( cidzaduz2 ) .OR. P_Firma( @cIdZaduz2 )
-      //ENDIF
+      // IF gNW <> "X"
+      // @ m_x + 4, Col() + 2 SAY "Razduzuje:" GET cIdZaduz2  PICT "@!"      VALID Empty( cidzaduz2 ) .OR. P_Firma( @cIdZaduz2 )
+      // ENDIF
 
       cFaktFirma := cIdFirma
       @ m_x + 6, m_y + 2 SAY "Broj otpremnice u MP: " GET cFaktFirma
@@ -952,13 +983,12 @@ FUNCTION FaKaPrenos_cm_u_prodavnicu()
 
 
 
-/* FaKaPrenos_izlaz_putem_vp()
+/*
  *     Izlaz iz MP putem VP, FAKT15->KALK15
  */
 
-FUNCTION FaKaPrenos_izlaz_putem_vp()
+FUNCTION fakt_15_kalk_15()
 
-   // {
    LOCAL cIdFirma := gFirma, cIdTipDok := "15", cBrDok := cBrKalk := Space( 8 )
    LOCAL dDatPl := CToD( "" )
    LOCAL fDoks2 := .F.
@@ -992,13 +1022,13 @@ FUNCTION FaKaPrenos_izlaz_putem_vp()
       @ m_x + 1, m_y + 2   SAY "Broj kalkulacije 15 -" GET cBrKalk PICT "@!"
       @ m_x + 1, Col() + 2 SAY "Datum:" GET dDatKalk
       @ m_x + 3, m_y + 2   SAY "Magac. konto razduzuje:" GET cIdKonto2 PICT "@!" VALID P_Konto( @cIdKonto2 )
-      //IF gNW <> "X"
-      //   @ m_x + 3, Col() + 2 SAY "Razduzuje:" GET cIdZaduz2  PICT "@!"      VALID Empty( cidzaduz2 ) .OR. P_Firma( @cIdZaduz2 )
-      //ENDIF
+      // IF gNW <> "X"
+      // @ m_x + 3, Col() + 2 SAY "Razduzuje:" GET cIdZaduz2  PICT "@!"      VALID Empty( cidzaduz2 ) .OR. P_Firma( @cIdZaduz2 )
+      // ENDIF
       @ m_x + 4, m_y + 2   SAY "Prodavn. konto razduzuje :" GET cIdKonto  PICT "@!" VALID P_Konto( @cIdKonto )
-      //IF gNW <> "X"
-    //     @ m_x + 4, Col() + 2 SAY "Zaduzuje:" GET cIdZaduz  PICT "@!"      VALID Empty( cidzaduz ) .OR. P_Firma( @cIdZaduz )
-      //ENDIF
+      // IF gNW <> "X"
+      // @ m_x + 4, Col() + 2 SAY "Zaduzuje:" GET cIdZaduz  PICT "@!"      VALID Empty( cidzaduz ) .OR. P_Firma( @cIdZaduz )
+      // ENDIF
 
       cFaktFirma := cIdFirma
       @ m_x + 6, m_y + 2 SAY "Broj fakture: " GET cFaktFirma
@@ -1130,31 +1160,18 @@ FUNCTION FaKaPrenos_izlaz_putem_vp()
    RETURN .T.
 
 
-// ------------------------------------------------------
-// otvori tabele potrebne za prenos dokumenata
-// ------------------------------------------------------
-STATIC FUNCTION _o_prenos_tbls()
-
-   o_kalk_pripr()
-   o_kalk()
-   O_ROBA
-   O_KONTO
-   O_PARTN
-   O_TARIFA
-   O_FAKT
-
-   RETURN
 
 
-// ------------------------------------------------------------------------
-// prenos fakt->kalk dokumenti tipa 11 u paragon blok kalk->42
-// ------------------------------------------------------------------------
-FUNCTION FaKaPrenosRacunMPParagon()
+/*
+   prenos fakt->kalk dokumenti tipa 11 u paragon blok kalk->42
+*/
+
+FUNCTION fakt_11_kalk_42()
 
    LOCAL _razl_cijene := "D"
    LOCAL _kalk_tip_dok := "42"
    LOCAL _auto_razd := 2
-   LOCAL _x := 1
+   LOCAL nX := 1
    LOCAL _x_dok_info := 16
    LOCAL _zbirni_prenos := "D"
    LOCAL _dat_kalk := Date()
@@ -1170,7 +1187,7 @@ FUNCTION FaKaPrenosRacunMPParagon()
    cIdZaduz := Space( 6 )
    cBrkalk := Space( 8 )
 
-   // otvori tabele za prenos...
+
    _o_prenos_tbls()
 
    Box(, 15, 60 )
@@ -1179,9 +1196,9 @@ FUNCTION FaKaPrenosRacunMPParagon()
 
       nRBr := 0
 
-      _x := 1
+      nX := 1
 
-      @ m_x + _x, m_y + 2 SAY "Generisati kalk dokument (1) 11 (2) 42 ?" GET _auto_razd PICT "9"
+      @ m_x + nX, m_y + 2 SAY "Generisati kalk dokument (1) 11 (2) 42 ?" GET _auto_razd PICT "9"
 
       READ
 
@@ -1193,55 +1210,55 @@ FUNCTION FaKaPrenosRacunMPParagon()
 
       kalk_set_brkalk_za_idvd( _kalk_tip_dok, @cBrKalk )
 
-      ++ _x
-      ++ _x
+      ++ nX
+      ++ nX
 
-      @ m_x + _x, m_y + 2 SAY "Broj kalkulacije " + _kalk_tip_dok + " -" GET cBrKalk PICT "@!"
-      @ m_x + _x, Col() + 2 SAY "Datum:" GET _dat_kalk
+      @ m_x + nX, m_y + 2 SAY "Broj kalkulacije " + _kalk_tip_dok + " -" GET cBrKalk PICT "@!"
+      @ m_x + nX, Col() + 2 SAY "Datum:" GET _dat_kalk
 
-      ++ _x
-      @ m_x + _x, m_y + 2 SAY "Konto razduzuje:" GET cIdKonto ;
+      ++ nX
+      @ m_x + nX, m_y + 2 SAY "Konto razduzuje:" GET cIdKonto ;
          PICT "@!" ;
          VALID P_Konto( @cIdKonto )
 
       IF _auto_razd == 1
-         @ m_x + _x, Col() + 1 SAY "zaduzuje:" GET cIdKtoZad ;
+         @ m_x + nX, Col() + 1 SAY "zaduzuje:" GET cIdKtoZad ;
             PICT "@!" ;
             VALID P_Konto( @cIdKtoZad )
       ENDIF
 
-      //IF gNW <> "X"
-      //   @ m_x + _x, Col() + 2 SAY "Partner razduzuje:" GET cIdZaduz ;
-      //      PICT "@!" ;
-      //      VALID Empty( cIdZaduz ) .OR. P_Firma( @cIdZaduz )
-      //ENDIF
+      // IF gNW <> "X"
+      // @ m_x + nX, Col() + 2 SAY "Partner razduzuje:" GET cIdZaduz ;
+      // PICT "@!" ;
+      // VALID Empty( cIdZaduz ) .OR. P_Firma( @cIdZaduz )
+      // ENDIF
 
-      ++ _x
-      ++ _x
+      ++ nX
+      ++ nX
 
-      @ m_x + _x, m_y + 2 SAY "Napraviti zbirnu kalkulaciju (D/N): " ;
+      @ m_x + nX, m_y + 2 SAY "Napraviti zbirnu kalkulaciju (D/N): " ;
          GET _zbirni_prenos ;
          VALID _zbirni_prenos $ "DN" ;
          PICT "@!"
 
-      ++ _x
+      ++ nX
 
-      @ m_x + _x, m_y + 2 SAY "Razdvoji artikle razlicitih cijena (D/N): " ;
+      @ m_x + nX, m_y + 2 SAY "Razdvoji artikle razlicitih cijena (D/N): " ;
          GET _razl_cijene ;
          VALID _razl_cijene $ "DN" ;
          PICT "@!"
 
       READ
 
-      ++ _x
+      ++ nX
 
       IF _zbirni_prenos == "N"
 
          cFaktFirma := cIdFirma
 
-         @ m_x + _x, m_y + 2 SAY "Broj fakture: " GET cFaktFirma
-         @ m_x + _x, Col() + 2 SAY "- " + cIdTipDok
-         @ m_x + _x, Col() + 2 SAY "-" GET cBrDok
+         @ m_x + nX, m_y + 2 SAY "Broj fakture: " GET cFaktFirma
+         @ m_x + nX, Col() + 2 SAY "- " + cIdTipDok
+         @ m_x + nX, Col() + 2 SAY "-" GET cBrDok
 
          READ
 
@@ -1355,13 +1372,13 @@ FUNCTION FaKaPrenosRacunMPParagon()
          dOdDatFakt := Date()
          dDoDatFakt := Date()
 
-         @ m_x + _x, m_y + 2 SAY "ID firma FAKT: " GET cFaktFirma
+         @ m_x + nX, m_y + 2 SAY "ID firma FAKT: " GET cFaktFirma
 
-         ++ _x
+         ++ nX
 
-         @ m_x + _x, m_y + 2 SAY "Datum fakture: "
-         @ m_x + _x, Col() + 2 SAY "od " GET dOdDatFakt
-         @ m_x + _x, Col() + 2 SAY "do " GET dDoDatFakt
+         @ m_x + nX, m_y + 2 SAY "Datum fakture: "
+         @ m_x + nX, Col() + 2 SAY "od " GET dOdDatFakt
+         @ m_x + nX, Col() + 2 SAY "do " GET dDoDatFakt
 
          READ
 
@@ -1472,5 +1489,22 @@ FUNCTION FaKaPrenosRacunMPParagon()
    Boxc()
 
    my_close_all_dbf()
+
+   RETURN .T.
+
+
+
+// ------------------------------------------------------
+// otvori tabele potrebne za prenos dokumenata
+// ------------------------------------------------------
+STATIC FUNCTION _o_prenos_tbls()
+
+   o_kalk_pripr()
+   o_kalk()
+   O_ROBA
+   O_KONTO
+   O_PARTN
+   O_TARIFA
+   O_FAKT
 
    RETURN .T.

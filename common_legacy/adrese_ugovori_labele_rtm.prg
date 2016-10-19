@@ -18,7 +18,7 @@ FUNCTION kreiraj_adrese_iz_ugovora()
    LOCAL _n_sort, _dat_do, _g_dat
    LOCAL _filter := ""
    LOCAL _index_sort := ""
-   LOCAL _rec, _usl_partner, _usl_mjesto, _usl_ptt
+   LOCAL _rec, cFiltUslovPartner, _usl_mjesto, _usl_ptt
    LOCAL _ima_destinacija
    LOCAL _count := 0
    LOCAL _total_kolicina := 0
@@ -62,11 +62,11 @@ FUNCTION kreiraj_adrese_iz_ugovora()
          RETURN .F.
       ENDIF
 
-      _usl_partner := Parsiraj( _partner, "IDPARTNER" )
+      cFiltUslovPartner := Parsiraj( _partner, "IDPARTNER" )
       _usl_ptt  := Parsiraj( _ptt, "PTT"       )
       _usl_mjesto := Parsiraj( _mjesto, "MJESTO" )
 
-      IF _usl_partner <> NIL .AND. _usl_mjesto <> NIL .AND. _usl_ptt <> NIL
+      IF cFiltUslovPartner <> NIL .AND. _usl_mjesto <> NIL .AND. _usl_ptt <> NIL
          EXIT
       ENDIF
 
@@ -139,7 +139,7 @@ FUNCTION kreiraj_adrese_iz_ugovora()
       ENDIF
 
       IF !Empty( _partner )
-         IF !( &_usl_partner )
+         IF !( &cFiltUslovPartner )
             SELECT rugov
             SKIP
             LOOP

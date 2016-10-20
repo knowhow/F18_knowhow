@@ -62,7 +62,7 @@ FUNCTION kalk_get_1_ip()
    SELECT kalk_pripr
 
 
-   //DuplRoba()
+   // DuplRoba()
 
    ++ _x
    ++ _x
@@ -107,6 +107,8 @@ FUNCTION kalk_get_1_ip()
 
 FUNCTION kalk_generisi_ip()
 
+   LOCAL cIdFirma, cIdKonto, cIdRoba
+
    O_KONTO
    O_TARIFA
    O_SIFK
@@ -139,15 +141,15 @@ FUNCTION kalk_generisi_ip()
 
    SET ORDER TO TAG "4"
 
-   MsgO( "Generacija dokumenta IP - " + cbrdok )
+   MsgO( "Generacija dokumenta IP - " + cBrdok )
 
    SELECT koncij
-   SEEK Trim( cidkonto )
-   SELECT kalk
+   SEEK Trim( cIdkonto )
 
-   HSEEK cIdfirma + cIdkonto
 
-   DO WHILE !Eof() .AND. cidfirma + cidkonto == idfirma + pkonto
+   find_kalk_by_pkonto_idroba( cIdFirma, cIdKonto )
+
+   DO WHILE !Eof() .AND. cIdfirma + cIdkonto == field->idfirma + field->pkonto
 
       cIdRoba := Idroba
       nUlaz := nIzlaz := 0
@@ -159,7 +161,7 @@ FUNCTION kalk_generisi_ip()
 
       SELECT kalk
 
-      DO WHILE !Eof() .AND. cidfirma + cidkonto + cidroba == idFirma + pkonto + idroba
+      DO WHILE !Eof() .AND. cIdfirma + cIdkonto + cIdroba == idFirma + pkonto + idroba
 
          IF ddatdok < datdok  // preskoci
             SKIP
@@ -402,6 +404,7 @@ FUNCTION gen_ip_razlika()
    // SELECT kalk
    // HSEEK cIdFirma + cIdKonto
    find_kalk_by_pkonto_idroba( cIdFirma, cIdKonto )
+   GO TOP
 
    DO WHILE !Eof() .AND. cIdFirma + cIdKonto == idfirma + pkonto
 

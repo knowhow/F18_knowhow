@@ -81,7 +81,7 @@ FUNCTION izracunaj_uneto_usati_za_radnika()
 
 
 
-/* ParObr(nMjesec, nGodina, cObr, cIdRj)
+/*
  *     Parametri obracuna
  *   param: nMjesec - mjesec
  *   param: nGodina - godina
@@ -360,7 +360,7 @@ FUNCTION Prosj3( cTip, cTip2 )
 
 
 
-/* UPrim()
+/*
  *     Racuna ukupna primanja
  */
 
@@ -377,7 +377,7 @@ FUNCTION UPrim()
    return &c719
 
 
-/* USati()
+/*
  *     Racuna ukupne sate
  */
 FUNCTION USati()

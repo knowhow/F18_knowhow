@@ -11,8 +11,11 @@
 
 #include "f18.ch"
 
+MEMVAR m, PicBHD, PicDEM
 
 FUNCTION fin_sinteticki_nalog( lAzuriraniDokument )
+
+   LOCAL dDatNal
 
    IF lAzuriraniDokument == NIL
       lAzuriraniDokument := .T.
@@ -50,7 +53,7 @@ FUNCTION fin_sinteticki_nalog( lAzuriraniDokument )
          RETURN .F.
       ENDIF
 
-      dDatNal := datnal
+      dDatNal := field->datnal
 
       SELECT PANAL
 
@@ -197,17 +200,17 @@ FUNCTION zagl_sinteticki_nalog( dDatNal )
    P_COND
    F10CPI
    ?? gTS + ":", gNFirma
-
+/*
    IF gNW == "N"
       SELECT partn
       HSEEK cIdfirma
       SELECT panal
       ? cidfirma, "-", partn->naz
    ENDIF
-
+*/
    ?
    P_COND
-   ? "FIN: ANALITIKA/SINTETIKA -  NALOG ZA KNJIZENJE BROJ : "
+   ?U "FIN: ANALITIKA/SINTETIKA -  NALOG ZA KNJIŽENJE BROJ : "
    @ PRow(), PCol() + 2 SAY cIdFirma + " - " + cIdVn + " - " + cBrNal
 
    IF gDatNal == "D"
@@ -225,7 +228,7 @@ FUNCTION zagl_sinteticki_nalog( dDatNal )
    P_NRED
    ?? m
    P_NRED
-   ?? "*RED*" + PadC( IF( gDatNal == "D", "", "DATUM" ), 8 ) + "*           NAZIV KONTA                               *            IZNOS U " + ValDomaca() + "           *" + IF( fin_jednovalutno(), "", "     IZNOS U " + ValPomocna() + "       *" )
+   ?? "*RED*" + PadC( IIF( gDatNal == "D", "", "DATUM" ), 8 ) + "*           NAZIV KONTA                               *            IZNOS U " + ValDomaca() + "           *" + IF( fin_jednovalutno(), "", "     IZNOS U " + ValPomocna() + "       *" )
    P_NRED
    ?? "    *        *                                                      ----------------------------------- " + IF( fin_jednovalutno(), "", "-------------------------" )
    P_NRED
@@ -233,7 +236,7 @@ FUNCTION zagl_sinteticki_nalog( dDatNal )
    P_NRED
    ?? m
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -244,7 +247,7 @@ STATIC FUNCTION nova_strana( dDatNal )
       zagl_sinteticki_nalog( dDatnal )
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -262,4 +265,4 @@ STATIC FUNCTION close_open_panal()
    O_TNAL
    o_nalog()
 
-   RETURN
+   RETURN .T.

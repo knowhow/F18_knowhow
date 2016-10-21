@@ -12,10 +12,10 @@
 #include "f18.ch"
 
 
-FUNCTION fin_sinteticki_nalog( kumulativ )
+FUNCTION fin_sinteticki_nalog( lAzuriraniDokument )
 
-   IF kumulativ == NIL
-      kumulativ := .T.
+   IF lAzuriraniDokument == NIL
+      lAzuriraniDokument := .T.
    ENDIF
 
    PicBHD := "@Z " + FormPicL( gPicBHD, 17 )
@@ -23,13 +23,13 @@ FUNCTION fin_sinteticki_nalog( kumulativ )
 
    M := "---- -------- ------- --------------------------------------------- ----------------- -----------------" + IF( fin_jednovalutno(), "-", " ------------ ------------" )
 
-   IF kumulativ
+   IF lAzuriraniDokument
 
       close_open_panal()
 
-      cIdVN := SPACE( 2 )
+      cIdVN := Space( 2 )
       cIdFirma := gFirma
-      cBrNal := SPACE( 8 )
+      cBrNal := Space( 8 )
 
       Box( "", 1, 35 )
       @ m_x + 1, m_y + 2 SAY "Nalog:"
@@ -44,9 +44,12 @@ FUNCTION fin_sinteticki_nalog( kumulativ )
       ESC_BCR
       BoxC()
 
-      SELECT nalog
-      SEEK cidfirma + cidvn + cbrnal
-      NFOUND CRET
+      find_nalog_by_broj_dokumenta( cIdFirma, cIdVn, cBrNal )
+      IF Eof()
+         my_close_all_dbf()
+         RETURN .F.
+      ENDIF
+
       dDatNal := datnal
 
       SELECT PANAL
@@ -178,7 +181,7 @@ FUNCTION fin_sinteticki_nalog( kumulativ )
 
    end_print()
 
-   IF kumulativ
+   IF lAzuriraniDokument
       my_close_all_dbf()
    ENDIF
 
@@ -237,8 +240,8 @@ FUNCTION zagl_sinteticki_nalog( dDatNal )
 STATIC FUNCTION nova_strana( dDatNal )
 
    IF PRow() > ( 61 + dodatni_redovi_po_stranici() )
-       FF
-       zagl_sinteticki_nalog( dDatnal )
+      FF
+      zagl_sinteticki_nalog( dDatnal )
    ENDIF
 
    RETURN

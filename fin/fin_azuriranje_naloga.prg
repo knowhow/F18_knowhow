@@ -215,7 +215,7 @@ FUNCTION o_fin_za_azuriranje()
 
 FUNCTION fin_azur_sql( oServer, cIdFirma, cIdVn, cBrNal )
 
-   LOCAL _ok := .T.
+   LOCAL lOkAzuriranje := .T.
    LOCAL _ids := {}
    LOCAL _tmp_id, _count, _tmp_doc, hRec, _msg, nI
    LOCAL _ids_doc := {}
@@ -258,7 +258,7 @@ FUNCTION fin_azur_sql( oServer, cIdFirma, cIdVn, cBrNal )
       ENDIF
 
       IF !sql_table_update( "fin_suban", "ins", hRec )
-         _ok := .F.
+         lOkAzuriranje := .F.
          EXIT
       ENDIF
 
@@ -267,7 +267,7 @@ FUNCTION fin_azur_sql( oServer, cIdFirma, cIdVn, cBrNal )
    ENDDO
 
 
-   IF _ok
+   IF lOkAzuriranje
 
       @ m_x + 2, m_y + 2 SAY "fin_anal -> server"
 
@@ -281,7 +281,7 @@ FUNCTION fin_azur_sql( oServer, cIdFirma, cIdVn, cBrNal )
          hRec := dbf_get_rec()
 
          IF !sql_table_update( "fin_anal", "ins", hRec )
-            _ok := .F.
+            lOkAzuriranje := .F.
             EXIT
          ENDIF
 
@@ -292,7 +292,7 @@ FUNCTION fin_azur_sql( oServer, cIdFirma, cIdVn, cBrNal )
    ENDIF
 
 
-   IF _ok
+   IF lOkAzuriranje
 
       @ m_x + 3, m_y + 2 SAY "fin_sint -> server"
 
@@ -306,7 +306,7 @@ FUNCTION fin_azur_sql( oServer, cIdFirma, cIdVn, cBrNal )
          hRec := dbf_get_rec()
 
          IF !sql_table_update( "fin_sint", "ins", hRec )
-            _ok := .F.
+            lOkAzuriranje := .F.
             EXIT
          ENDIF
 
@@ -316,7 +316,7 @@ FUNCTION fin_azur_sql( oServer, cIdFirma, cIdVn, cBrNal )
 
    ENDIF
 
-   IF _ok
+   IF lOkAzuriranje
 
       @ m_x + 4, m_y + 2 SAY "fin_nalog -> server"
 
@@ -327,10 +327,10 @@ FUNCTION fin_azur_sql( oServer, cIdFirma, cIdVn, cBrNal )
 
       DO WHILE !Eof() .AND. field->idfirma == cIdFirma .AND. field->idvn == cIdVn .AND. field->brnal == cBrNal
 
-         hRec := dbf_get_rec()
+         hRec := dbf_get_rec() // pnalog
 
          IF !sql_table_update( "fin_nalog", "ins", hRec )
-            _ok := .F.
+            lOkAzuriranje := .F.
             EXIT
          ENDIF
 
@@ -341,8 +341,8 @@ FUNCTION fin_azur_sql( oServer, cIdFirma, cIdVn, cBrNal )
    ENDIF
 
 /*
-   IF _ok
-      _ok := push_ids_to_semaphore( __tbl_suban, _ids_suban ) .AND. ;
+   IF lOkAzuriranje
+      lOkAzuriranje := push_ids_to_semaphore( __tbl_suban, _ids_suban ) .AND. ;
          push_ids_to_semaphore( __tbl_sint, _ids_sint  ) .AND. ;
          push_ids_to_semaphore( __tbl_anal, _ids_anal  ) .AND. ;
          push_ids_to_semaphore( __tbl_nalog, _ids_nalog )
@@ -351,52 +351,52 @@ FUNCTION fin_azur_sql( oServer, cIdFirma, cIdVn, cBrNal )
 
    BoxC()
 
-   RETURN _ok
+   RETURN lOkAzuriranje
 
 
 
-STATIC FUNCTION fin_provjera_prije_azuriranja_naloga( auto, lista_naloga )
+STATIC FUNCTION fin_provjera_prije_azuriranja_naloga( auto, aListaNaloga )
 
-   LOCAL _t_area, nI, _t_rec
+   LOCAL nSelectArea, nI, _t_rec
    LOCAL cIdFirma, cIdVn, cBrNal
    LOCAL _vise_naloga := .F.
-   LOCAL _ok := .F.
+   LOCAL lOkAzuriranje := .F.
 
-   _t_area := Select()
+   nSelectArea := Select()
 #ifdef F18_DEBUG_FIN_AZUR
    AltD() // F18_DEBUG_FIN_AZUR
 #endif
 
-   IF Len( lista_naloga ) > 1
+   IF Len( aListaNaloga ) > 1
       _vise_naloga := .T.
    ENDIF
 
    IF !_vise_naloga .AND. fin_p_nalog_bez_provjere( auto )
-      _ok := .T.
-      RETURN _ok
+      lOkAzuriranje := .T.
+      RETURN lOkAzuriranje
    ENDIF
 
 
-   IF !fin_p_tabele_provjera( lista_naloga )
+   IF !fin_p_tabele_provjera( aListaNaloga )
 
       IF !_vise_naloga
          MsgBeep( "Potrebno izvršiti štampu naloga prije ažuriranja !" )
       ENDIF
 
-      RETURN _ok
+      RETURN lOkAzuriranje
 
    ENDIF
 
-   IF !fin_provjeri_konto_partn( lista_naloga )
+   IF !fin_provjeri_konto_partn( aListaNaloga )
       MsgBeep( "Ispravite greške sa nepostojećim šiframa pa pokusajte ponovo !" )
-      RETURN _ok
+      RETURN lOkAzuriranje
    ENDIF
 
-   FOR nI := 1 TO Len( lista_naloga )
+   FOR nI := 1 TO Len( aListaNaloga )
 
-      cIdFirma := lista_naloga[ nI, 1 ]
-      cIdVn := lista_naloga[ nI, 2 ]
-      cBrNal := lista_naloga[ nI, 3 ]
+      cIdFirma := aListaNaloga[ nI, 1 ]
+      cIdVn := aListaNaloga[ nI, 2 ]
+      cBrNal := aListaNaloga[ nI, 3 ]
 
       SELECT fin_pripr
       SET ORDER TO TAG "1"
@@ -407,31 +407,31 @@ STATIC FUNCTION fin_provjera_prije_azuriranja_naloga( auto, lista_naloga )
 
       IF Len( AllTrim( field->brnal ) ) < 8
          MsgBeep( "Broj naloga mora biti sa vodećim nulama !" )
-         SELECT ( _t_area )
-         RETURN _ok
+         SELECT ( nSelectArea )
+         RETURN lOkAzuriranje
       ENDIF
 
       IF !fin_p_provjeri_redni_broj( cIdFirma, cIdVn, cBrNal )
-         SELECT ( _t_area )
-         RETURN _ok
+         SELECT ( nSelectArea )
+         RETURN lOkAzuriranje
       ENDIF
 
 
       IF !fin_saldo_provjera_psuban( cIdFirma, cIdVn, cBrNal )
-         SELECT ( _t_area )
-         RETURN _ok
+         SELECT ( nSelectArea )
+         RETURN lOkAzuriranje
       ENDIF
 
    NEXT
 
-   _ok := .T.
+   lOkAzuriranje := .T.
 
-   RETURN _ok
+   RETURN lOkAzuriranje
 
 
-STATIC FUNCTION fin_provjeri_konto_partn( lista_naloga )
+STATIC FUNCTION fin_provjeri_konto_partn( aListaNaloga )
 
-   LOCAL _ok := .F.
+   LOCAL lOkAzuriranje := .F.
    LOCAL _err := {}
 
    SELECT psuban
@@ -450,12 +450,12 @@ STATIC FUNCTION fin_provjeri_konto_partn( lista_naloga )
       o_fin_za_azuriranje()
       SELECT fin_pripr
       GO TOP
-      RETURN _ok
+      RETURN lOkAzuriranje
    ENDIF
 
-   _ok := .T.
+   lOkAzuriranje := .T.
 
-   RETURN _ok
+   RETURN lOkAzuriranje
 
 
 STATIC FUNCTION prikazi_greske_provjere_konta_i_partnera( err )
@@ -512,7 +512,7 @@ STATIC FUNCTION prikazi_greske_provjere_konta_i_partnera( err )
 
 STATIC FUNCTION fin_p_provjeri_redni_broj( cIdFirma, cIdVn, cBrNal )
 
-   LOCAL _ok := .T.
+   LOCAL lOkAzuriranje := .T.
    LOCAL _tmp
 
    SELECT psuban
@@ -527,14 +527,14 @@ STATIC FUNCTION fin_p_provjeri_redni_broj( cIdFirma, cIdVn, cBrNal )
       SKIP 1
 
       IF _tmp == field->rbr
-         _ok := .F.
+         lOkAzuriranje := .F.
          MsgBeep( "Nalog " + cIdFirma + "-" + cIdVn + "-" + cBrNal + " nema ispravne redne brojeve !" )
-         RETURN _ok
+         RETURN lOkAzuriranje
       ENDIF
 
    ENDDO
 
-   RETURN _ok
+   RETURN lOkAzuriranje
 
 
 
@@ -542,7 +542,7 @@ STATIC FUNCTION fin_p_provjeri_redni_broj( cIdFirma, cIdVn, cBrNal )
 
 STATIC FUNCTION fin_p_nalog_bez_provjere( auto )
 
-   LOCAL _ok := .F.
+   LOCAL lOkAzuriranje := .F.
 
    SELECT psuban
    SET ORDER TO TAG "1"
@@ -550,22 +550,22 @@ STATIC FUNCTION fin_p_nalog_bez_provjere( auto )
 
    IF RecCount2() > 9999 .AND. !auto
       IF Pitanje(, "Staviti na stanje bez provjere (D/N) ?", "N" ) == "D"
-         _ok := .T.
+         lOkAzuriranje := .T.
       ENDIF
    ENDIF
 
-   RETURN _ok
+   RETURN lOkAzuriranje
 
 
 
 STATIC FUNCTION fin_saldo_provjera_psuban( cIdFirma, cIdVn, cBrNal )
 
-   LOCAL _ok := .F.
+   LOCAL lOkAzuriranje := .F.
    LOCAL _tmp, _saldo
 
    IF gRavnot == "N"
-      _ok := .T.
-      RETURN _ok
+      lOkAzuriranje := .T.
+      RETURN lOkAzuriranje
    ENDIF
 
    SELECT psuban
@@ -590,19 +590,19 @@ STATIC FUNCTION fin_saldo_provjera_psuban( cIdFirma, cIdVn, cBrNal )
    IF Round( _saldo, 4 ) <> 0
       Beep( 3 )
       Msg( "Neophodna ravnoteža naloga " + cIdFirma + "-" + cIdVn + "-" + AllTrim( cBrNal ) + "##, ažuriranje neće biti izvršeno!" )
-      RETURN _ok
+      RETURN lOkAzuriranje
    ENDIF
 
-   _ok := .T.
+   lOkAzuriranje := .T.
 
-   RETURN _ok
-
-
+   RETURN lOkAzuriranje
 
 
-STATIC FUNCTION fin_p_tabele_provjera( lista_naloga )
 
-   LOCAL _ok := .F.
+
+STATIC FUNCTION fin_p_tabele_provjera( aListaNaloga )
+
+   LOCAL lOkAzuriranje := .F.
    LOCAL nI
    LOCAL cIdFirma, cIdVn, cBrNal
 
@@ -621,11 +621,11 @@ STATIC FUNCTION fin_p_tabele_provjera( lista_naloga )
       RETURN .F.
    ENDIF
 
-   FOR nI := 1 TO Len( lista_naloga )
+   FOR nI := 1 TO Len( aListaNaloga )
 
-      cIdFirma := lista_naloga[ nI, 1 ]
-      cIdVn := lista_naloga[ nI, 2 ]
-      cBrNal := lista_naloga[ nI, 3 ]
+      cIdFirma := aListaNaloga[ nI, 1 ]
+      cIdVn := aListaNaloga[ nI, 2 ]
+      cBrNal := aListaNaloga[ nI, 3 ]
 
       SELECT psuban
       SET ORDER TO TAG "1"
@@ -634,14 +634,14 @@ STATIC FUNCTION fin_p_tabele_provjera( lista_naloga )
 
       IF !Found()
          MsgBeep( "Nalog " + cIdFirma + "-" + cIdVn + "-" + AllTrim( cBrNal ) + " ne postoji u PSUBAN !" )
-         RETURN _ok
+         RETURN lOkAzuriranje
       ENDIF
 
    NEXT
 
-   _ok := .T.
+   lOkAzuriranje := .T.
 
-   RETURN _ok
+   RETURN lOkAzuriranje
 
 
 
@@ -649,10 +649,10 @@ STATIC FUNCTION fin_p_tabele_provjera( lista_naloga )
 FUNCTION fin_azur_dbf( auto, cIdFirma, cIdVn, cBrNal )
 
    LOCAL _n_c
-   LOCAL _t_area := Select()
+   LOCAL nSelectArea := Select()
    LOCAL _saldo
    LOCAL _ctrl
-   LOCAL _ok := .T.
+   LOCAL lOkAzuriranje := .T.
 
    Box( "ad", 10, MAXCOLS() - 10 )
 
@@ -690,7 +690,7 @@ FUNCTION fin_azur_dbf( auto, cIdFirma, cIdVn, cBrNal )
 
    BoxC()
 
-   RETURN _ok
+   RETURN lOkAzuriranje
 
 */
 
@@ -722,11 +722,11 @@ STATIC FUNCTION fin_brisi_p_tabele( close_all )
 
 FUNCTION psuban_partner_check( arr, silent )
 
-   LOCAL _ok := .T.
+   LOCAL lOkAzuriranje := .T.
    LOCAL _scan
 
    IF Empty( psuban->idpartner )
-      RETURN _ok
+      RETURN lOkAzuriranje
    ENDIF
 
    IF silent == NIL
@@ -738,7 +738,7 @@ FUNCTION psuban_partner_check( arr, silent )
 
    IF !Found()
 
-      _ok := .F.
+      lOkAzuriranje := .F.
 
       _scan := AScan( arr, {| val| val[ 1 ] + val[ 2 ] == "PARTN" + psuban->idpartner } )
 
@@ -754,17 +754,17 @@ FUNCTION psuban_partner_check( arr, silent )
 
    SELECT psuban
 
-   RETURN _ok
+   RETURN lOkAzuriranje
 
 
 
 FUNCTION psuban_konto_check( arr, silent )
 
-   LOCAL _ok := .T.
+   LOCAL lOkAzuriranje := .T.
    LOCAL _scan
 
    IF Empty( psuban->idkonto )
-      RETURN _ok
+      RETURN lOkAzuriranje
    ENDIF
 
    IF silent == NIL
@@ -776,7 +776,7 @@ FUNCTION psuban_konto_check( arr, silent )
 
    IF !Found()
 
-      _ok := .F.
+      lOkAzuriranje := .F.
 
       _scan := AScan( arr, {| val| val[ 1 ] + val[ 2 ] == "KONTO" + psuban->idkonto } )
 
@@ -792,7 +792,7 @@ FUNCTION psuban_konto_check( arr, silent )
 
    SELECT psuban
 
-   RETURN _ok
+   RETURN lOkAzuriranje
 
 
 

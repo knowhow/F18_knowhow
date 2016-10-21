@@ -47,6 +47,7 @@ FUNCTION cre_all_fin( ver )
    AAdd( aDBf, { "FUNK", "C",   5,  0 } )
    AAdd( aDBf, { "FOND", "C",   4,  0 } )
 
+/*
    _alias := "SUBAN"
    _table_name := "fin_suban"
 
@@ -78,7 +79,7 @@ FUNCTION cre_all_fin( ver )
    CREATE_INDEX( "9", "idfirma+idkonto+idrj+idpartner+DTOS(datdok)+brnal+Str(rbr,5)", _alias )
    CREATE_INDEX( "10", "idFirma+IdVN+BrNal+idkonto+DTOS(datdok)", _alias )
    AFTER_CREATE_INDEX
-
+*/
 
 
    // ----------------------------------------------------------------------------
@@ -133,8 +134,6 @@ FUNCTION cre_all_fin( ver )
    // FIN_ANAL
    // -----------------------------------------------------------
 
-   _alias := "ANAL"
-   _table_name := "fin_anal"
 
    aDbf := {}
    AAdd( aDBf, { "IDFIRMA", "C",   2,  0 } )
@@ -149,6 +148,10 @@ FUNCTION cre_all_fin( ver )
    AAdd( aDBf, { "POTDEM", "B",  8,  2 } )
 
 
+/*
+   _alias := "ANAL"
+   _table_name := "fin_anal"
+
    IF ver[ "current" ] > 0 .AND. ver[ "current" ] < 010004 // 1.0.4 - currency polja iznosi
       f18_delete_dbf( _table_name )
    ENDIF
@@ -160,7 +163,7 @@ FUNCTION cre_all_fin( ver )
    CREATE_INDEX( "4", "Idkonto", _alias )
    CREATE_INDEX( "5", "DatNal", _alias )
    AFTER_CREATE_INDEX
-
+*/
 
    // ----------------------------------------------------------------------------
    // PANAL
@@ -194,9 +197,9 @@ FUNCTION cre_all_fin( ver )
    AAdd( aDBf, { "DUGDEM", "B",  8,  2 } )
    AAdd( aDBf, { "POTDEM", "B",  8,  2 } )
 
+/*
    _alias := "SINT"
    _table_name := "fin_sint"
-
 
    IF ver[ "current" ] > 0 .AND. ver[ "current" ] < 010004 // 1.0.4 - currency polja iznosi
       f18_delete_dbf( _table_name )
@@ -207,6 +210,7 @@ FUNCTION cre_all_fin( ver )
    CREATE_INDEX( "2", "idFirma+IdVN+BrNal+Rbr", _alias )
    CREATE_INDEX( "3", "datnal", _alias )
    AFTER_CREATE_INDEX
+*/
 
    // ----------------------------------------------------------------------------
    // PSINT
@@ -238,9 +242,10 @@ FUNCTION cre_all_fin( ver )
    AAdd( aDBf, { "POTDEM", "B",   8,  2 } )
    AAdd( aDBf, { "SIFRA", "C",   6,  0 } )
 
+
+   /*
    _alias := "NALOG"
    _table_name := "fin_nalog"
-
 
    IF ver[ "current" ] > 0 .AND. ver[ "current" ] < 010004 // 1.0.4 - currency polja iznosi
       f18_delete_dbf( _table_name )
@@ -256,7 +261,7 @@ FUNCTION cre_all_fin( ver )
    CREATE_INDEX( "3", "dtos(datnal)+IdFirma+idvn+brnal", _alias )
    CREATE_INDEX( "4", "datnal", _alias )
    AFTER_CREATE_INDEX
-
+*/
 
 
    // -----------------------------------------------------------
@@ -270,7 +275,7 @@ FUNCTION cre_all_fin( ver )
       f18_delete_dbf( _table_name )
    ENDIF
    IF ver[ "current" ] > 0 .AND. ver[ "current" ] < 020001 // sifra
-       f18_delete_dbf( _table_name )
+      f18_delete_dbf( _table_name )
    ENDIF
 
    IF_NOT_FILE_DBF_CREATE

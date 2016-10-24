@@ -48,7 +48,7 @@ FUNCTION prefin_unos_naloga()
 
    qqKonto := Space( 100 )
    qqPartner := Space( 100 )
-   IF gRJ == "D"
+   IF gFinRj == "D"
       qqIdRj := Space( 100 )
    ENDIF
 
@@ -81,7 +81,7 @@ FUNCTION prefin_unos_naloga()
       ENDIF
       @ m_x + 3, m_y + 2 SAY "Konto   " GET qqKonto  PICT "@!S50"
       @ m_x + 4, m_y + 2 SAY "Partner " GET qqPartner PICT "@!S50"
-      IF gRJ == "D"
+      IF gFinRj == "D"
          @ m_x + 5, m_y + 2 SAY "Rad.jed." GET qqIdRj PICT "@!S50"
          @ m_x + 6, m_y + 2 SAY "Rasclaniti po RJ" GET cRascl PICT "@!" VALID cRascl $ "DN"
       ENDIF
@@ -116,13 +116,13 @@ FUNCTION prefin_unos_naloga()
       aUsl1 := Parsiraj( qqKonto, "IdKonto" )
       aUsl2 := Parsiraj( qqPartner, "IdPartner" )
 
-      IF gRJ == "D"
+      IF gFinRj == "D"
          IF cRascl == "D"
             lRJRascl := .T.
          ENDIF
       ENDIF
 
-      IF gRJ == "D"
+      IF gFinRj == "D"
          aUsl3 := Parsiraj( qqIdRj, "IdRj" )
       ENDIF
 
@@ -130,7 +130,7 @@ FUNCTION prefin_unos_naloga()
          EXIT
       ENDIF
 
-      IF gRJ == "D" .AND. aUsl3 <> NIL
+      IF gFinRj == "D" .AND. aUsl3 <> NIL
          EXIT
       ENDIF
 
@@ -160,13 +160,13 @@ FUNCTION prefin_unos_naloga()
 
    SELECT SUBAN
 
-   IF ( gRj == "D" .AND. lRjRascl )
+   IF ( gFinRj == "D" .AND. lRjRascl )
       SET ORDER TO TAG "9" // idfirma+idkonto+idrj+idpartner+...
    ELSE
       SET ORDER TO TAG "1"
    ENDIF
 
-   cFilt1 := "IDFIRMA=" + dbf_quote( cIdFirma ) + ".and." + aUsl1 + ".and." + aUsl2 + IF( gRJ == "D", ".and." + aUsl3, "" ) + ;
+   cFilt1 := "IDFIRMA=" + dbf_quote( cIdFirma ) + ".and." + aUsl1 + ".and." + aUsl2 + IF( gFinRj == "D", ".and." + aUsl3, "" ) + ;
       IF( Empty( dDatOd ), "", ".and.DATDOK>=" + dbf_quote( dDatOd ) ) + ;
       IF( Empty( dDatDo ), "", ".and.DATDOK<=" + dbf_quote( dDatDo ) ) + ;
       IF( fk1 == "N", "", ".and.k1=" + dbf_quote( ck1 ) ) + ;
@@ -212,7 +212,7 @@ FUNCTION prefin_unos_naloga()
       DO WHILE !Eof() .AND.  cSin == Left( idkonto, 3 )
          cIdKonto := IdKonto
          cIdPartner := IdPartner
-         IF gRj == "D"
+         IF gFinRj == "D"
             cIdRj := idRj
          ENDIF
          nD := 0
@@ -220,7 +220,7 @@ FUNCTION prefin_unos_naloga()
          nD2 := 0
          nP2 := 0
 
-         IF ( gRj == "D" .AND. lRjRascl )
+         IF ( gFinRj == "D" .AND. lRjRascl )
             bCond := {|| cIdKonto == IdKonto .AND. IdRj == cIdRj .AND. IdPartner == cIdPartner }
          ELSE
             bCond := {|| cIdKonto == IdKonto .AND. IdPartner == cIdPartner }
@@ -245,7 +245,7 @@ FUNCTION prefin_unos_naloga()
                APPEND BLANK
                REPLACE idfirma WITH cIdFirma, idpartner WITH cIdPartner, idkonto WITH cIdKonto, idvn WITH cIdVn, brnal WITH cBrNal, datdok WITH dDatDok, rbr WITH Str( ++nRbr, 4 )
                REPLACE d_p WITH iif( cStrana == "D", "1", "2" ), iznosbhd with ( nD - nP ), iznosdem with ( nD2 - nP2 )
-               IF gRj == "D"
+               IF gFinRj == "D"
                   REPLACE idrj WITH cIdRj
                ENDIF
             ENDIF
@@ -256,7 +256,7 @@ FUNCTION prefin_unos_naloga()
                APPEND BLANK
                REPLACE idfirma WITH cIdFirma, idpartner WITH cIdPartner, idkonto WITH cIdKonto, idvn WITH cIdVn, brnal WITH cBrNal, datdok WITH dDatDok, rbr WITH Str( ++nRbr, 4 )
                REPLACE  d_p WITH iif( nD - nP > 0, "2", "1" ), iznosbhd WITH Abs( nD - nP ), iznosdem WITH Abs( nD2 - nP2 )
-               IF gRj == "D"
+               IF gFinRj == "D"
                   REPLACE idrj WITH cIdRj
                ENDIF
             ENDIF
@@ -267,7 +267,7 @@ FUNCTION prefin_unos_naloga()
                APPEND BLANK
                REPLACE idfirma WITH cIdFirma, idpartner WITH cIdPartner, idkonto WITH cIdKonto, idvn WITH cIdVn, brnal WITH cBrNal, datdok WITH dDatDok, rbr WITH Str( ++nRbr, 4 )
                REPLACE  d_p WITH "1", iznosbhd WITH -nd, iznosdem WITH -nd2
-               IF gRj == "D"
+               IF gFinRj == "D"
                   REPLACE idrj WITH cIdRj
                ENDIF
             ENDIF
@@ -275,7 +275,7 @@ FUNCTION prefin_unos_naloga()
                APPEND BLANK
                REPLACE idfirma WITH cIdFirma, idpartner WITH cIdPartner, idkonto WITH cIdKonto, idvn WITH cIdVn, brnal WITH cBrNal, datdok WITH dDatDok, rbr WITH Str( ++nRbr, 4 )
                REPLACE  d_p WITH "2", iznosbhd WITH -nP, iznosdem WITH -nP2
-               IF gRj == "D"
+               IF gFinRj == "D"
                   REPLACE idrj WITH cIdRj
                ENDIF
             ENDIF

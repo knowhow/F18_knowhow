@@ -108,7 +108,7 @@ FUNCTION _os_sii_parametri()
    LOCAL _varijanta := gVObracun
    LOCAL _obr_pocetak := gVarDio
    LOCAL _obr_pocetak_datum := gDatDio
-   LOCAL _os_rj := gRJ
+   LOCAL _os_rj := gOSRj
 
    _dat_obr := fetch_metric( "os_datum_obrade", my_user(), _dat_obr )
    _pic_iznos := fetch_metric( "os_prikaz_iznosa", nil, _pic_iznos )
@@ -155,7 +155,7 @@ FUNCTION _os_sii_parametri()
       // set sql/db parametri
 
       set_metric( "os_radna_jedinica", nil, _os_rj )
-      gRJ := _os_rj
+      gOSRj := _os_rj
 
       set_metric( "os_datum_obrade", my_user(), _dat_obr )
       fin_kam_datum_obracuna( _dat_obr )

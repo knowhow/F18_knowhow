@@ -21,7 +21,7 @@ FUNCTION ld_platni_spisak()
    LOCAL cSviRadn := "N"
 
    cIdRadn := Space( LEN_IDRADNIK )
-   cIdRj := gRj
+   cIdRj := gLDRadnaJedinica
    cMjesec := gMjesec
    cGodina := gGodina
    cObracun := gObracun
@@ -312,7 +312,7 @@ FUNCTION ld_platni_spisak_tekuci_racun( cVarijanta )
    LOCAL cVarSort
 
    cIdRadn := Space( LEN_IDRADNIK )
-   cIdRj := gRj
+   cIdRj := gLDRadnaJedinica
    cMjesec := gMjesec
    cGodina := gGodina
    cObracun := gObracun
@@ -657,7 +657,7 @@ FUNCTION ld_pregled_isplate_za_tekuci_racun( cVarijanta )
    LOCAL nC1 := 20
 
    cIdRadn := Space( LEN_IDRADNIK )
-   cIdRj := gRj
+   cIdRj := gLDRadnaJedinica
    cMjesec := gMjesec
    cGodina := gGodina
    cObracun := gObracun

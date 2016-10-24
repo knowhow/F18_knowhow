@@ -68,7 +68,7 @@ FUNCTION fin_blagajna_dnevni_izvjestaj()
             _rec[ "id_partner" ] := Space( Len( _rec[ "idpartner" ] ) )
             _rec[ "d_p" ]        := iif( _rec[ "d_p" ] == "1", "2", "1" )
 
-            IF ( gRJ == "D" )
+            IF ( gFinRj == "D" )
                _rec[ "idrj" ] := Space( Len( _rec[ "idrj" ] ) )
             ENDIF
 

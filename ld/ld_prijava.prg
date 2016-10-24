@@ -29,7 +29,7 @@ FUNCTION ld_postavi_parametre_obracuna()
    @ m_x + _x, m_y + 2 SAY8 PadC( "*** PRISTUPNI PODACI ZA OBRAČUN ***", 50 )
 
    _x += 2
-   @ m_x + _x, m_y + 2 SAY8 PadL( "Radna jedinica", _pad_l ) GET gRJ VALID P_LD_Rj( @gRj ) PICT "@!"
+   @ m_x + _x, m_y + 2 SAY8 PadL( "Radna jedinica", _pad_l ) GET gLDRadnaJedinica VALID P_LD_Rj( @gLDRadnaJedinica ) PICT "@!"
 
    ++ _x
    @ m_x + _x, m_y + 2 SAY8 PadL( "Mjesec", _pad_l ) GET gMjesec PICT "99"
@@ -54,7 +54,7 @@ FUNCTION ld_postavi_parametre_obracuna()
 
       set_metric( "ld_godina", my_user(), gGodina )
       set_metric( "ld_mjesec", my_user(), gMjesec )
-      set_metric( "ld_rj", my_user(), gRj )
+      set_metric( "ld_rj", my_user(), gLDRadnaJedinica )
       set_metric( "ld_obracun", my_user(), gObracun )
       set_metric( "ld_varijanta_obracuna", NIL, gVarObracun )
 

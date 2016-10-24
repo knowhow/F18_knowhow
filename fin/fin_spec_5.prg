@@ -52,7 +52,7 @@ FUNCTION PregNDP()
    @ m_x + 10, m_y + 2 SAY "        (3) samo stavki kod kojih je bilo promjena u zadanom periodu" GET cPrik VALID cprik $ "123"
    @ m_x + 12, m_y + 2 SAY "Prikazi mjesto partnera (D/N)" GET cPG VALID cPG $ "DN"
 
-   IF gRj == "D"
+   IF gFinRj == "D"
       @ m_x + 13, m_y + 2 SAY "1-po RJ  ili  2-po partnerima (1/2)" GET cPoRP VALID cPoRP $ "12"
    ENDIF
 

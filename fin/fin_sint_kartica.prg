@@ -64,7 +64,7 @@ FUNCTION fin_sint_kartica()
       @ m_x + 8, m_y + 2 SAY "Datum od:" GET dDatOd
       @ m_x + 8, Col() + 2 SAY "do:" GET dDatDo
       cIdRJ := ""
-      IF gRJ == "D" .AND. gSAKrIz == "D"
+      IF gFinRj == "D" .AND. gSAKrIz == "D"
          cIdRJ := "999999"
          @ m_x + 9, m_y + 2 SAY "Radna jedinica (999999-sve): " GET cIdRj
       ENDIF
@@ -89,14 +89,14 @@ FUNCTION fin_sint_kartica()
    BoxC()
 
    IF cIdRj == "999999"; cidrj := ""; ENDIF
-   IF gRJ == "D" .AND. gSAKrIz == "D" .AND. "." $ cidrj
+   IF gFinRj == "D" .AND. gSAKrIz == "D" .AND. "." $ cidrj
       cidrj := Trim( StrTran( cidrj, ".", "" ) )
       // odsjeci ako je tacka. prakticno "01. " -> sve koje pocinju sa  "01"
    ENDIF
 
    MsgO( "Preuzimanje podataka sa SQL servera ..." )
 
-   IF gRJ == "D" .AND. gSAKrIz == "D" .AND. Len( cIdRJ ) <> 0
+   IF gFinRj == "D" .AND. gSAKrIz == "D" .AND. Len( cIdRJ ) <> 0
       otvori_sint_anal_kroz_temp( .T., "IDRJ='" + cIdRJ + "'" )
    ELSE
       IF cBrza == "D"
@@ -271,7 +271,7 @@ FUNCTION SinKZagl()
       ? "Firma:", cidfirma, AllTrim( partn->naz ), AllTrim( partn->naz2 )
    ENDIF
 
-   IF gRJ == "D" .AND. gSAKrIz == "D" .AND. Len( cIdRJ ) <> 0
+   IF gFinRj == "D" .AND. gSAKrIz == "D" .AND. Len( cIdRJ ) <> 0
       ? "Radna jedinica ='" + cIdRj + "'"
    ENDIF
 

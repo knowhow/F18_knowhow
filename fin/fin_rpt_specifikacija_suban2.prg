@@ -219,7 +219,7 @@ FUNCTION spec_sub()
 
       cRasclaniti := "N"
 
-      IF gRJ == "D"
+      IF gFinRj == "D"
          @ m_x + 14, m_y + 2 SAY "Rasclaniti po RJ (D/N) " ;
             GET cRasclaniti PICT "@!" ;
             VALID cRasclaniti $ "DN"
@@ -379,7 +379,7 @@ TODO: izbaciti
          cFilter += ( ".and. k4='" + ck4 + "'" )
       ENDIF
 
-      IF gRj == "D" .AND. Len( cIdrj ) <> 0
+      IF gFinRj == "D" .AND. Len( cIdrj ) <> 0
          IF gDUFRJ == "D"
             cFilter += ( ".and." + aUsl4 )
          ELSE
@@ -821,7 +821,7 @@ STATIC FUNCTION Header( cSkVar )
       ENDIF
    ENDIF
    ?
-   PrikK1k4()
+   prikaz_k1_k4_rj()
 
    SELECT r_export
 

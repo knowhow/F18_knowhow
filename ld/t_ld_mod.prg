@@ -82,7 +82,7 @@ METHOD programski_modul_osnovni_meni
 METHOD set_module_gvars()
 
    PUBLIC cFormula := ""
-   PUBLIC gRJ := "01"
+   PUBLIC gLDRadnaJedinica := "01"
    PUBLIC gnHelpObr := 0
    PUBLIC gMjesec := 1
    PUBLIC gObracun := "1"

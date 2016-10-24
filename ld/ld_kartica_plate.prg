@@ -37,7 +37,7 @@ FUNCTION ld_kartica_plate( cIdRj, cMjesec, cGodina, cIdRadn, cObrac )
 
    IF ( PCount() < 4 )
       cIdRadn := Space( LEN_IDRADNIK )
-      cIdRj := gRj
+      cIdRj := gLDRadnaJedinica
       cMjesec := gMjesec
       cGodina := gGodina
       cObracun := gObracun

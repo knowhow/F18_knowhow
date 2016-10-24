@@ -114,7 +114,7 @@ FUNCTION ld_asd_aug_obrazac()
    // kreiraj pomocnu tabelu
    cre_tmp_tbl()
 
-   cIdRj := gRj
+   cIdRj := gLDRadnaJedinica
    cMjesec := gMjesec
    cGodina := gGodina
 

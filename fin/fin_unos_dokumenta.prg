@@ -86,7 +86,7 @@ FUNCTION fin_knjizenje_naloga()
       AAdd( Kol, i )
    NEXT
 
-   IF gRj == "D" .AND. fin_pripr->( FieldPos( "IDRJ" ) ) <> 0
+   IF gFinRj == "D" .AND. fin_pripr->( FieldPos( "IDRJ" ) ) <> 0
       AAdd( ImeKol, { "RJ", {|| IdRj }, "IdRj" } )
       AAdd( Kol, 17 )
    ENDIF
@@ -153,7 +153,7 @@ FUNCTION edit_fin_priprema()
       _OtvSt := " "
    ENDIF
 
-   IF ( ( gRj == "D" ) .AND. fNovi )
+   IF ( ( gFinRj == "D" ) .AND. fNovi )
       _idrj := cTekucaRj
    ENDIF
 
@@ -237,7 +237,7 @@ FUNCTION edit_fin_priprema()
       ENDIF
    ENDIF
 
-   IF gRj == "D"
+   IF gFinRj == "D"
       @ m_x + 11, Col() + 2 SAY "RJ" GET _idrj VALID Empty( _idrj ) .OR. P_Rj( @_idrj ) PICT "@!"
    ENDIF
 
@@ -277,7 +277,7 @@ FUNCTION edit_fin_priprema()
 
    READ
 
-   IF ( gRJ == "D" .AND. cTekucaRJ <> _idrj )
+   IF ( gFinRj == "D" .AND. cTekucaRJ <> _idrj )
       cTekucaRJ := _idrj
       SetTekucaRJ( cTekucaRJ )
    ENDIF

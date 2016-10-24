@@ -78,7 +78,7 @@ STATIC FUNCTION fin_izvj_specif_txt_menu()
    AAdd( _opc, "9. pregled partnera bez prometa" )
    AAdd( _opcexe, {|| PartVanProm() } )
 
-   IF gRJ == "D" .OR. gTroskovi == "D"
+   IF gFinRj == "D" .OR. gTroskovi == "D"
       AAdd( _opc, "A. izvrsenje budzeta/pregled rashoda" )
       AAdd( _opcexe, {|| IzvrsBudz() } )
       AAdd( _opc, "B. pregled prihoda" )

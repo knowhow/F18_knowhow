@@ -126,7 +126,7 @@ FUNCTION fin_specifikacija_suban()
 
       cRasclaniti := "N"
 
-      IF gRJ == "D"
+      IF gFinRj == "D"
          @ m_x + 13, m_y + 2 SAY "Rasclaniti po RJ (D/N) "  GET cRasclaniti PICT "@!" VALID cRasclaniti $ "DN"
          @ m_x + 14, m_y + 2 SAY "Rasclaniti po RJ/FUNK/FOND? (D/N) "  GET cRascFunkFond PICT "@!" VALID cRascFunkFond $ "DN"
       ENDIF
@@ -168,7 +168,7 @@ FUNCTION fin_specifikacija_suban()
    lExpRpt := ( cExpRptDN == "D" )
 
    IF lExpRpt
-      aSSFields := get_ss_fields( gRj, FIELD_PARTNER_ID_LENGTH )
+      aSSFields := get_ss_fields( gFinRj, FIELD_PARTNER_ID_LENGTH )
       create_dbf_r_export( aSSFields )
    ENDIF
 
@@ -250,7 +250,7 @@ altd()
       cFilter += ( ".and. k4='" + ck4 + "'" )
    ENDIF
 
-   IF gRj == "D" .AND. Len( cIdrj ) <> 0
+   IF gFinRj == "D" .AND. Len( cIdrj ) <> 0
       IF gDUFRJ == "D"
          cFilter += ( ".and." + aUsl4 )
       ELSE
@@ -451,7 +451,7 @@ altd()
             ENDIF
 
             IF lExpRpt
-               IF gRj == "D" .AND. cRasclaniti == "D"
+               IF gFinRj == "D" .AND. cRasclaniti == "D"
 
                   cRj_id := cRasclan
 
@@ -679,7 +679,7 @@ FUNCTION zagl_fin_specif( cSkVar )
    ENDIF
 
    ?
-   PrikK1k4()
+   prikaz_k1_k4_rj()
 
    SELECT SUBAN
 

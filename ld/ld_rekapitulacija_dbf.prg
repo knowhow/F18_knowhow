@@ -40,7 +40,7 @@ FUNCTION ld_rekapitulacija( lSvi )
    lPorNaRekap := my_get_from_ini( "LD", "PoreziNaRekapitulaciji", "N", KUMPATH ) == "D"
 
    cIdRadn := Space( LEN_IDRADNIK )
-   cIdRj := gRj
+   cIdRj := gLDRadnaJedinica
    nMjesec := gMjesec
    nGodina := gGodina
    cObracun := gObracun

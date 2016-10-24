@@ -24,7 +24,7 @@ FUNCTION MnuSifrarnik()
    AAdd( _opcexe, {|| _menu_specif() } )
 
 
-   IF ( gRj == "D" .OR. gTroskovi == "D" )
+   IF ( gFinRj == "D" .OR. gTroskovi == "D" )
       AAdd( _opc, "3. budžet" )
       AAdd( _opcexe, {|| _menu_budzet() } )
    ENDIF

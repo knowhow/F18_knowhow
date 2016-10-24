@@ -35,7 +35,7 @@ FUNCTION fin_bb_subanalitika_b( params )
 
    PICD := FormPicL( gPicBHD, 15 )
 
-   IF gRJ == "D" .AND. ( "." $ cIdRj )
+   IF gFinRj == "D" .AND. ( "." $ cIdRj )
       cIdRj := Trim( StrTran( cIdRj, ".", "" ) )
    ENDIF
 
@@ -75,7 +75,7 @@ FUNCTION fin_bb_subanalitika_b( params )
 
    SELECT SUBAN
 
-   IF gRj == "D" .AND. Len( cIdrj ) <> 0
+   IF gFinRj == "D" .AND. Len( cIdrj ) <> 0
       cFilter += iif( Empty( cFilter ), "", ".and." ) + "idrj=" + dbf_quote( cIdRj )
    ENDIF
 
@@ -565,7 +565,7 @@ STATIC FUNCTION zagl_bb_suban( params, nStr )
       ? "Odabrana konta: " + AllTrim( params[ "konto" ] )
    ENDIF
 
-   IF gRJ == "D" .AND. Len( params[ "id_rj" ] ) <> 0
+   IF gFinRj == "D" .AND. Len( params[ "id_rj" ] ) <> 0
       ? "Radna jedinica ='" + params[ "id_rj" ] + "'"
    ENDIF
 

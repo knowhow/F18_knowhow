@@ -29,7 +29,7 @@ FUNCTION pos_postoji_roba( cId, dx, dy, barkod )
    LOCAL _zabrane
    LOCAL _i
    LOCAL _barkod := ""
-   LOCAL _vrati := .F.
+   LOCAL lSveJeOk := .F.
    LOCAL _tezina := 0
    LOCAL _order
    LOCAL _area := Select()
@@ -69,11 +69,11 @@ FUNCTION pos_postoji_roba( cId, dx, dy, barkod )
 
    SELECT ( _area )
 
-   _vrati := PostojiSifra( F_ROBA, "ID", MAXROWS() - 20, MAXCOLS() - 3, "Roba ( artikli ) ", @cId, NIL, NIL, NIL, NIL, NIL, _zabrane )
+   lSveJeOk := PostojiSifra( F_ROBA, "ID", MAXROWS() - 20, MAXCOLS() - 3, "Roba ( artikli ) ", @cId, NIL, NIL, NIL, NIL, NIL, _zabrane )
 
    IF LastKey() == K_ESC
       cId := PrevID
-      _vrati := .F.
+      lSveJeOk := .F.
    ELSE
 
       @ m_x + dx, m_y + dy SAY PadR( AllTrim( roba->naz ) + " (" + AllTrim( roba->jmj ) + ")", 50 )
@@ -90,8 +90,8 @@ FUNCTION pos_postoji_roba( cId, dx, dy, barkod )
 
    IF fetch_metric( "pos_kontrola_cijene_pri_unosu_stavke", nil, "N" ) == "D"
       IF Round( _cijena, 5 ) == 0
-         MsgBeep( "Cijena 0.00, ne mogu napraviti račun !!!" )
-         _vrati := .F.
+         MsgBeep( "Cijena 0.00, ne mogu napraviti račun !##STOP!" )
+         lSveJeOk := .F.
       ENDIF
    ENDIF
 
@@ -104,7 +104,7 @@ FUNCTION pos_postoji_roba( cId, dx, dy, barkod )
 
    SELECT ( _area )
 
-   RETURN _vrati
+   RETURN lSveJeOk
 
 
 

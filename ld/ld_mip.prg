@@ -55,7 +55,7 @@ FUNCTION ld_mip_obrazac()
 
    mip_tmp_tbl()
 
-   cIdRj := gRj
+   cIdRj := gLDRadnaJedinica
 
    cPredNaz := PadR( fetch_metric( "obracun_plata_preduzece_naziv", NIL, "" ), 100 )
    cPredJMB := PadR( fetch_metric( "obracun_plata_preduzece_id_broj", NIL, "" ), 13 )

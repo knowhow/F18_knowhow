@@ -22,7 +22,7 @@ FUNCTION ld_specifikacija_neto_primanja_po_opcinama()
    LOCAL cKBenef := " ", cVPosla := "  "
 
    cIdRadn := Space( LEN_IDRADNIK )
-   cIdRj := gRj
+   cIdRj := gLDRadnaJedinica
    cMjesec := gMjesec
    cGodina := gGodina
    cObracun := gObracun

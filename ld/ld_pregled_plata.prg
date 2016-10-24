@@ -18,7 +18,7 @@ FUNCTION pregled_plata()
    LOCAL cPrBruto := "N"
 
    cIdRadn := Space( LEN_IDRADNIK )
-   cIdRj := gRj
+   cIdRj := gLDRadnaJedinica
    cMjesec := gMjesec
    cGodina := gGodina
    cObracun := gObracun

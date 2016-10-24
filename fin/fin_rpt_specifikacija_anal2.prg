@@ -96,7 +96,7 @@ FUNCTION spec_an()
       @ m_x + 7, m_y + 2 SAY "Prikaz sintetickih konta (D/N):" GET cSK PICT "@!" VALID cSK $ "DN"
       @ m_x + 9, m_y + 2 SAY "Prikaz stavki sa saldom 0 D/N" GET cNula PICT "@!" VALID cNula  $ "DN"
       cIdRJ := ""
-      IF gRJ == "D" .AND. gSAKrIz == "D"
+      IF gFinRj == "D" .AND. gSAKrIz == "D"
          cIdRJ := "999999"
          @ m_x + 10, m_y + 2 SAY "Radna jedinica (999999-sve): " GET cIdRj
       ENDIF
@@ -127,7 +127,7 @@ FUNCTION spec_an()
       cIdRj := ""
    ENDIF
 
-   IF gRJ == "D" .AND. gSAKrIz == "D" .AND. "." $ cidrj
+   IF gFinRj == "D" .AND. gSAKrIz == "D" .AND. "." $ cidrj
       cIdRj := Trim( StrTran( cidrj, ".", "" ) )
       // odsjeci ako je tacka.
       // prakticno "01. " -> sve koje pocinju sa  "01"
@@ -154,7 +154,7 @@ FUNCTION spec_an()
 
       O_KONTO
 
-      IF gRJ == "D" .AND. gSAKrIz == "D" .AND. Len( cIdRJ ) <> 0
+      IF gFinRj == "D" .AND. gSAKrIz == "D" .AND. Len( cIdRJ ) <> 0
          otvori_sint_anal_kroz_temp( .F., "IDRJ='" + cIdRJ + "'" )
       ELSE
          o_anal()
@@ -377,7 +377,7 @@ STATIC FUNCTION Header()
       ? "Firma:", cidfirma, PadR( partn->naz, 25 ), partn->naz2
    ENDIF
 
-   IF gRJ == "D" .AND. gSAKrIz == "D" .AND. Len( cIdRJ ) <> 0
+   IF gFinRj == "D" .AND. gSAKrIz == "D" .AND. Len( cIdRJ ) <> 0
       ? "Radna jedinica ='" + cIdRj + "'"
    ENDIF
 

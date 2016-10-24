@@ -51,7 +51,7 @@ FUNCTION ld_utrosak_po_sihtaricama()
    // kreiraj pomocnu tabelu
    ol_tmp_tbl()
 
-   cIdRj := gRj
+   cIdRj := gLDRadnaJedinica
    cMj_od := gMjesec
    cMj_do := gMjesec
    cGod_od := gGodina

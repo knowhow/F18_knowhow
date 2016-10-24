@@ -36,7 +36,7 @@ FUNCTION fin_bb_analitika_b( hParams )
 
    PICD := FormPicL( gPicBHD, 15 )
 
-   IF gRJ == "D" .AND. ( "." $ cIdRj )
+   IF gFinRj == "D" .AND. ( "." $ cIdRj )
       cIdRj := Trim( StrTran( cIdRj, ".", "" ) )
    ENDIF
 
@@ -60,7 +60,7 @@ FUNCTION fin_bb_analitika_b( hParams )
    O_PARTN
    O_BBKLAS
 
-   IF gRJ == "D" .AND. Len( cIdRJ ) <> 0
+   IF gFinRj == "D" .AND. Len( cIdRJ ) <> 0
       otvori_sint_anal_kroz_temp( .F., "IDRJ='" + cIdRJ + "'" )
    ELSE
       MsgO( "Preuzimanje podataka sa SQL servera ..." )
@@ -407,7 +407,7 @@ FUNCTION zagl_bb_anal( hParams, nStr )
       ? "Odabrana konta: " + AllTrim( hParams[ "konto" ] )
    ENDIF
 
-   IF gRJ == "D" .AND. Len( hParams[ "id_rj" ] ) <> 0
+   IF gFinRj == "D" .AND. Len( hParams[ "id_rj" ] ) <> 0
       ? "Radna jedinica ='" + hParams[ "id_rj" ] + "'"
    ENDIF
 

@@ -182,7 +182,7 @@ FUNCTION UpitK1K4( mxplus, lK )
       ENDIF
    ENDIF
 
-   IF gRj == "D"
+   IF gFinRj == "D"
       IF gDUFRJ == "D" .AND. ( ProcName( 1 ) == UPPER( "fin_spec_po_suban_kontima" ) .OR. ProcName( 1 ) == UPPER("fin_suban_kartica") )
          @ m_x + mxplus + 2, m_y + 2 SAY "RJ:" GET cIdRj PICT "@!S20"
       ELSE
@@ -237,12 +237,12 @@ FUNCTION CistiK1K4( lK )
 
 
 
-/* PrikK1K4(lK)
- *     Prikazi polja od K1 do K4
+/*
+ *     Prikazi polja od K1 do K4, radnu jedinicu
  *   param: lK
  */
 
-FUNCTION PrikK1K4( lK )
+FUNCTION prikaz_k1_k4_rj( lK )
 
    LOCAL fProso := .F.
    LOCAL nArr := Select()
@@ -267,7 +267,8 @@ FUNCTION PrikK1K4( lK )
 
    cStr := "Pregled odabranih kriterija :"
 
-   IF gRJ == "D" .AND. Len( cIdRJ ) <> 0
+altd()
+   IF gFinRJ == "D" .AND. Len( cIdRJ ) <> 0
       cRjNaz := ""
       nArr := Select()
       O_RJ
@@ -296,6 +297,7 @@ FUNCTION PrikK1K4( lK )
          ENDIF
          ? "K1 =", ck1
       ENDIF
+
       IF _fin_params[ "fin_k2" ] .AND. !Len( ck2 ) = 0
          IF !fproso
             ? cM
@@ -304,6 +306,7 @@ FUNCTION PrikK1K4( lK )
          ENDIF
          ? "K2 =", ck2
       ENDIF
+
       IF _fin_params[ "fin_k3" ] .AND. !Len( ck3 ) = 0
          IF !fproso
             ? cM
@@ -324,6 +327,7 @@ FUNCTION PrikK1K4( lK )
          ENDIF
       ENDIF
    ENDIF
+
    IF gTroskovi == "D" .AND. Len( cFunk ) <> 0
       IF !fproso
          ? cM
@@ -332,6 +336,7 @@ FUNCTION PrikK1K4( lK )
       ENDIF
       ? "Funkcionalna klasif. ='" + cFunk + "'"
    ENDIF
+
    IF gTroskovi == "D" .AND. Len( cFond ) <> 0
       IF !fproso
          ? cM

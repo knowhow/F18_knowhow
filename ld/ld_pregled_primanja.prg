@@ -18,7 +18,7 @@ FUNCTION ld_pregled_primanja()
    LOCAL nC1 := 20
 
    cIdRadn := Space( LEN_IDRADNIK )
-   cIdRj := gRj
+   cIdRj := gLDRadnaJedinica
    cMjesec := gMjesec
    cGodina := gGodina
    cObracun := gObracun

@@ -110,7 +110,7 @@ FUNCTION ld_specifikacija_po_mjesecima()
    gnLMarg := 0
    gTabela := 1
    gOstr := "N"
-   cIdRj := gRj
+   cIdRj := gLDRadnaJedinica
    cGodina := gGodina
    cIdRadn := Space( 6 )
    cSvaPrim := "S"

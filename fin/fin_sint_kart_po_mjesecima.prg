@@ -48,7 +48,7 @@ FUNCTION fin_sint_kart_po_mjesecima()
       @ m_x + 4, m_y + 2 SAY "Datum od:" GET dDatOd
       @ m_x + 4, Col() + 2 SAY "do:" GET dDatDo
       cIdRJ := ""
-      IF gRJ == "D" .AND. gSAKrIz == "D"
+      IF gFinRj == "D" .AND. gSAKrIz == "D"
          cIdRJ := "999999"
          @ m_x + 5, m_y + 2 SAY "Radna jedinica (999999-sve): " GET cIdRj
       ENDIF
@@ -60,7 +60,7 @@ FUNCTION fin_sint_kart_po_mjesecima()
    BoxC()
 
    IF cIdRj == "999999"; cidrj := ""; ENDIF
-   IF gRJ == "D" .AND. gSAKrIz == "D" .AND. "." $ cidrj
+   IF gFinRj == "D" .AND. gSAKrIz == "D" .AND. "." $ cidrj
       cidrj := Trim( StrTran( cidrj, ".", "" ) )
       // odsjeci ako je tacka. prakticno "01. " -> sve koje pocinju sa  "01"
    ENDIF
@@ -75,7 +75,7 @@ FUNCTION fin_sint_kart_po_mjesecima()
    USE
 
 
-   IF gRJ == "D" .AND. gSAKrIz == "D" .AND. Len( cIdRJ ) <> 0
+   IF gFinRj == "D" .AND. gSAKrIz == "D" .AND. Len( cIdRJ ) <> 0
       otvori_sint_anal_kroz_temp( .T., "IDRJ='" + cIdRJ + "'" )
    ELSE
       o_sint()
@@ -226,7 +226,7 @@ FUNCTION ZaglSink2()
       ? "Firma:", cIdFirma, AllTrim( partn->naz ), AllTrim( partn->naz2 )
    ENDIF
 
-   IF gRJ == "D" .AND. gSAKrIz == "D" .AND. Len( cIdRJ ) <> 0
+   IF gFinRj == "D" .AND. gSAKrIz == "D" .AND. Len( cIdRJ ) <> 0
       ? "Radna jedinica ='" + cIdRj + "'"
    ENDIF
 

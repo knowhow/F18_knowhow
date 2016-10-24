@@ -262,12 +262,12 @@ FUNCTION fin_nalog_stampa_fill_psuban( cInd, lAuto, dDatNal, oNalog )
             ENDIF
 
             @ PRow() + pok, nColDok SAY iif( i - 1 <= Len( aOpis ), aOpis[ i - 1 ], Space( 20 ) )
-            IF i == 2 .AND. ( !Empty( k1 + k2 + k3 + k4 ) .OR. grj == "D" .OR. gtroskovi == "D" )
+            IF i == 2 .AND. ( !Empty( k1 + k2 + k3 + k4 ) .OR. gFinRj == "D" .OR. gtroskovi == "D" )
                ?? " " + k1 + "-" + k2 + "-" + K3Iz256( k3 ) + "-" + k4
                IF _vrste_placanja
                   ?? "(" + Ocitaj( F_VRSTEP, k4, "naz" ) + ")"
                ENDIF
-               IF gRj == "D"
+               IF gFinRj == "D"
                   ?? " RJ:", idrj
                ENDIF
                IF gTroskovi == "D"

@@ -36,7 +36,7 @@ FUNCTION ld_pregled_plata_za_period()
 
    napravi_pomocnu_tabelu()
 
-   cIdRj := gRj
+   cIdRj := gLDRadnaJedinica
    cMjesec := fetch_metric( "ld_izv_mjesec_od", my_user(), gMjesec )
    cGodina := fetch_metric( "ld_izv_godina", my_user(), gGodina )
    cMjesecDo := fetch_metric( "ld_izv_mjesec_do", my_user(), cMjesec )

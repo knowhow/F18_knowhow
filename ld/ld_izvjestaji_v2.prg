@@ -31,7 +31,7 @@ FUNCTION ld_pregled_primanja_za_period()
    LOCAL nC1 := 20
 
    cIdRadn := Space( 6 )
-   cIdRj := gRj
+   cIdRj := gLDRadnaJedinica
    cGodina := gGodina
    cObracun := gObracun
 

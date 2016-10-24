@@ -67,7 +67,7 @@ FUNCTION knjizenje_gen_otvorene_stavke()
    cDugPot := _d_p
    cOpis := _opis
 
-   IF gRJ == "D"
+   IF gFinRj == "D"
       cIdRj := _idrj
    ENDIF
 
@@ -334,7 +334,7 @@ FUNCTION knjizenje_gen_otvorene_stavke()
          wk4       := _k4
          wm1       := _m1
 
-         IF gRJ == "D"
+         IF gFinRj == "D"
             wIdrj := cIdRj
          ENDIF
 

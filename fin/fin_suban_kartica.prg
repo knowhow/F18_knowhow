@@ -131,7 +131,7 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
       cBoxName += " - OTVORENE STAVKE"
    ENDIF
 
-   Box( "#" + cBoxName, 23, 65 )
+   Box( "#" + cBoxName, 25, 65 )
 
    SET CURSOR ON
    @ m_x + nX, m_y + 2 SAY "LibreOffice kartica (D/N) ?" GET cLibreOffice PICT "@!"
@@ -188,7 +188,7 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
 
       cRasclaniti := "N"
 
-      IF gRJ == "D"
+      IF gFinRJ == "D"
          @ m_x + ( ++nX ), m_y + 2 SAY8 "Raščlaniti po RJ/FUNK/FOND; "  GET cRasclaniti PICT "@!" VALID cRasclaniti $ "DN"
       ENDIF
 
@@ -363,7 +363,7 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
       iif( fk2 .AND. Len( ck2 ) <> 0, ".and.k2=" + dbf_quote( ck2 ), "" ) + ;
       iif( fk3 .AND. Len( ck3 ) <> 0, ".and.k3=ck3", "" ) + ;
       iif( fk4 .AND. Len( ck4 ) <> 0, ".and.k4=" + dbf_quote( ck4 ), "" ) + ;
-      iif( gRj == "D" .AND. Len( cIdrj ) <> 0, iif( gDUFRJ == "D", ".and." + aUsl5, ".and.idrj=" + dbf_quote( cIdRJ ) ), "" ) + ;
+      iif( gFinRj == "D" .AND. Len( cIdrj ) <> 0, iif( gDUFRJ == "D", ".and." + aUsl5, ".and.idrj=" + dbf_quote( cIdRJ ) ), "" ) + ;
       iif( gTroskovi == "D" .AND. Len( cFunk ) <> 0, ".and.funk=" + dbf_quote( cFunk ), "" ) + ;
       iif( gTroskovi == "D" .AND. Len( cFond ) <> 0, ".and.fond=" + dbf_quote( cFond ), "" ) // + ;
 
@@ -402,8 +402,6 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
 
    nStr := 0
 
-   PrikK1k4()
-
    nSviD := 0
    nSviP := 0
    nSviD2 := 0
@@ -422,6 +420,9 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
    IF !start_print( xPrintOpt )
       RETURN .F.
    ENDIF
+
+
+   prikaz_k1_k4_rj()
 
    cIdKonto := field->IdKonto
 
@@ -834,7 +835,7 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
 
                IF cK14 == "3"
                   @ PRow() + 1, nC7 SAY hRec[ "k1" ] + "-" + hRec[ "k2" ] + "-" + K3Iz256( hRec[ "k3" ] ) + hRec[ "k4" ]
-                  IF gRj == "D"
+                  IF gFinRj == "D"
                      @ PRow(), PCol() + 1 SAY "RJ:" + hRec[ "idrj" ]
                   ENDIF
                   IF gTroskovi == "D"

@@ -57,7 +57,7 @@ STATIC FUNCTION fin_parametri_obrade_naloga()
    @ m_x + nX, Col() + 2 SAY "Unos datuma valute? (D/N):" GET gDatVal VALID gDatVal $ "DN" PICT "@!"
    ++ nX
 
-   @ m_x + nX, m_y + 2 SAY "Unos radnih jedinica ? (D/N)" GET gRJ VALID gRj $ "DN" PICT "@!"
+   @ m_x + nX, m_y + 2 SAY "Unos radnih jedinica ? (D/N)" GET gFinRj VALID gFinRj $ "DN" PICT "@!"
    @ m_x + nX, Col() + 1 SAY "Unos tipa dokumenta ? (D/N)" GET _tip_dok VALID _tip_dok $ "DN" PICT "@!"
    ++ nX
 
@@ -192,7 +192,7 @@ FUNCTION fin_read_params()
 
    gDatval := fetch_metric( "fin_evidencija_datum_valute", nil, gDatVal )
    gDatnal := fetch_metric( "fin_evidencija_datum_naloga", nil, gDatNal )
-   gRj := fetch_metric( "fin_evidencija_radne_jedinice", nil, gRj )
+   gFinRj := fetch_metric( "fin_evidencija_radne_jedinice", nil, gFinRj )
    gTroskovi := fetch_metric( "fin_evidencija_ekonomske_kategorije", nil, gTroskovi )
    gRavnot := fetch_metric( "fin_unos_ravnoteza_naloga", nil, gRavnot )
    gBrojacFinNaloga := fetch_metric( "fin_vrsta_brojaca_naloga", nil, gBrojacFinNaloga )
@@ -232,7 +232,7 @@ FUNCTION fin_write_params()
 
    set_metric( "fin_evidencija_datum_valute", nil, gDatVal )
    set_metric( "fin_evidencija_datum_naloga", nil, gDatNal )
-   set_metric( "fin_evidencija_radne_jedinice", nil, gRj )
+   set_metric( "fin_evidencija_radne_jedinice", nil, gFinRj )
    set_metric( "fin_evidencija_ekonomske_kategorije", nil, gTroskovi )
    set_metric( "fin_unos_ravnoteza_naloga", nil, gRavnot )
    set_metric( "fin_vrsta_brojaca_naloga", nil, gBrojacFinNaloga )

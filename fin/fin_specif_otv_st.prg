@@ -92,7 +92,7 @@ FUNCTION fin_specif_otvorene_stavke()
 
    GO TOP
 
-   IF gRj == "D" .AND. Len( cIdrj ) <> 0
+   IF gFinRj == "D" .AND. Len( cIdrj ) <> 0
       cFilt1 += ( ".and. idrj='" + cidrj + "'" )
    ENDIF
 
@@ -244,7 +244,7 @@ FUNCTION ZaglSpK()
    ENDIF
 
    ?
-   PrikK1k4( .F. )
+   prikaz_k1_k4_rj( .F. )
 
    nDSP := Len( PARTN->id )
 

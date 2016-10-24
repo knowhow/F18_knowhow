@@ -228,7 +228,7 @@ METHOD FinBrutoBilans:get_vars()
 
    @ m_x + _x, Col() + 1 SAY8 "Klase unutar izvještaja (D/N) ?" GET _podklase VALID _podklase $ "DN" PICT "@!"
 
-   IF gRJ == "D"
+   IF gFinRj == "D"
       ++ _x
       _id_rj := Space( 6 )
       @ m_x + _x, m_y + 2 SAY8 "Radna jedinica ( 999999-sve ): " GET _id_rj

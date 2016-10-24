@@ -18,7 +18,7 @@ FUNCTION ld_specifikacija_po_rasponima_primanja()
    gTabela := 1
    gOstr := "D"
 
-   cIdRj := gRj
+   cIdRj := gLDRadnaJedinica
    cMjesec := gMjesec
    cGodina := gGodina
    cObracun := gObracun

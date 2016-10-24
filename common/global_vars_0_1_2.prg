@@ -84,7 +84,7 @@ PROCEDURE set_global_vars_0()
    PUBLIC gSAKrIz := "N"
    PUBLIC gBezVracanja := "N"
    PUBLIC gBuIz := "N"
-   PUBLIC gRj := "N"
+   PUBLIC gFinRj := "N"
    PUBLIC gTroskovi := "N"
    PUBLIC gVSubOp := "N"
    PUBLIC gnLMONI := 120
@@ -100,7 +100,7 @@ PROCEDURE set_global_vars_0()
    PUBLIC g_knjiz_help := "N"
    PUBLIC gMjRj := "N"
 
-   PUBLIC gRj         := "N"
+   PUBLIC gFinRj         := "N"
    PUBLIC gReadOnly   := .F.
    PUBLIC gOModul     := NIL
    PUBLIC cDirPriv    := ""

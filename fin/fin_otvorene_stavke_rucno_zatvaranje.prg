@@ -36,7 +36,7 @@ FUNCTION fin_rucno_zatvaranje_otvorenih_stavki()
    ENDIF
    @ m_x + 4, m_y + 2 SAY "Konto  " GET cIdKonto  VALID  P_KontoFin( @cIdKonto )
    @ m_x + 5, m_y + 2 SAY "Partner" GET cIdPartner VALID Empty( cIdPartner ) .OR. P_Firma( @cIdPartner ) PICT "@!"
-   IF gRj == "D"
+   IF gFinRj == "D"
       cIdRj := Space( Len( RJ->id ) )
       @ m_x + 6, m_y + 2 SAY "RJ" GET cidrj PICT "@!" VALID Empty( cidrj ) .OR. P_Rj( @cidrj )
    ENDIF
@@ -54,7 +54,7 @@ FUNCTION fin_rucno_zatvaranje_otvorenih_stavki()
    SELECT SUBAN
    SET ORDER TO TAG "1"
 
-   IF gRJ == "D" .AND. !Empty( cIdRJ )
+   IF gFinRj == "D" .AND. !Empty( cIdRJ )
       SET FILTER TO IDRJ == cIdRj
    ENDIF
 

@@ -244,7 +244,7 @@ FUNCTION CistiK1K4( lK )
 
 FUNCTION prikaz_k1_k4_rj( lK )
 
-   LOCAL fProso := .F.
+   LOCAL lProsao := .F.
    LOCAL nArr := Select()
    LOCAL _fakt_params := fakt_params()
    LOCAL _fin_params := fin_params()
@@ -279,47 +279,47 @@ altd()
          cRjNaz := rj->naz
       ENDIF
 
-      SELECT ( nArr )
-      IF !fproso
+      SELECT   ( nArr )
+      IF !lProsao
          ? cM
          ? cStr
-         fProso := .T.
+         lProsao := .T.
       ENDIF
       ? "Radna jedinica: " + cIdRj + " - " + cRjNaz
    ENDIF
 
    IF lK
       IF _fin_params[ "fin_k1" ] .AND. !Len( ck1 ) == 0
-         IF !fproso
+         IF !lProsao
             ? cM
             ? cStr
-            fProso := .T.
+            lProsao := .T.
          ENDIF
          ? "K1 =", ck1
       ENDIF
 
       IF _fin_params[ "fin_k2" ] .AND. !Len( ck2 ) = 0
-         IF !fproso
+         IF !lProsao
             ? cM
             ? cStr
-            fProso := .T.
+            lProsao := .T.
          ENDIF
          ? "K2 =", ck2
       ENDIF
 
       IF _fin_params[ "fin_k3" ] .AND. !Len( ck3 ) = 0
-         IF !fproso
+         IF !lProsao
             ? cM
             ? cStr
-            fProso := .T.
+            lProsao := .T.
          ENDIF
          ? "K3 =", k3iz256( ck3 )
       ENDIF
       IF _fin_params[ "fin_k4" ] .AND. !Len( ck4 ) = 0
-         IF !fproso
+         IF !lProsao
             ? cM
             ? cStr
-            fProso := .T.
+            lProsao := .T.
          ENDIF
          ? "K4 =", ck4
          IF lVrsteP .AND. Len( ck4 ) > 1
@@ -329,24 +329,24 @@ altd()
    ENDIF
 
    IF gTroskovi == "D" .AND. Len( cFunk ) <> 0
-      IF !fproso
+      IF !lProsao
          ? cM
          ? cStr
-         fProso := .T.
+         lProsao := .T.
       ENDIF
       ? "Funkcionalna klasif. ='" + cFunk + "'"
    ENDIF
 
    IF gTroskovi == "D" .AND. Len( cFond ) <> 0
-      IF !fproso
+      IF !lProsao
          ? cM
          ? cStr
-         fProso := .T.
+         lProsao := .T.
       ENDIF
       ? "                Fond ='" + cFond + "'"
    ENDIF
 
-   IF fproso
+   IF lProsao
       ? cM
       ?
    ENDIF

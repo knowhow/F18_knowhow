@@ -28,7 +28,7 @@ FUNCTION kalk_prod_generacija_dokumenata()
    AAdd( _opc, "2. inventure    " )
    AAdd( _opcexe, {|| kalk_prod_gen_ip() } )
 
-   AAdd( _opc, "3. svedi mpc na mpc iz sifarnika dokumentom nivelacije" )
+   AAdd( _opc, "3. svedi mpc na mpc iz šifarnika dokumentom nivelacije" )
    AAdd( _opcexe, {|| kalk_prod_kartica_mpc_svedi_mpc_sif() } )
 
 
@@ -511,7 +511,7 @@ FUNCTION kalk_prod_kartica_mpc_svedi_mpc_sif()
 
    LOCAL dDok := Date()
    LOCAL nPom := 0
-   PRIVATE cMagac := fetch_metric( "kalk_sredi_karicu_mpc", my_user(), PadR( "1330", 7 ) )
+   PRIVATE cIdKontoProdavnica := fetch_metric( "kalk_sredi_karicu_mpc", my_user(), PadR( "1330", 7 ) )
 
    O_KONTO
 
@@ -520,7 +520,7 @@ FUNCTION kalk_prod_kartica_mpc_svedi_mpc_sif()
    PRIVATE cUvijekSif := "D"
 
    Box(, 6, 50 )
-   @ m_x + 1, m_y + 2 SAY "Konto prodavnice: " GET cMagac PICT "@!" VALID P_konto( @cMagac )
+   @ m_x + 1, m_y + 2 SAY "Konto prodavnice: " GET cIdKontoProdavnica PICT "@!" VALID P_konto( @cIdKontoProdavnica )
    @ m_x + 2, m_y + 2 SAY "Sravniti do odredjenog datuma:" GET cSravnitiD VALID cSravnitiD $ "DN" PICT "@!"
    @ m_x + 4, m_y + 2 SAY "Uvijek nivelisati na MPC iz sifrarnika:" GET cUvijekSif VALID cUvijekSif $ "DN" PICT "@!"
    READ
@@ -531,7 +531,7 @@ FUNCTION kalk_prod_kartica_mpc_svedi_mpc_sif()
    BoxC()
 
    o_koncij()
-   SEEK Trim( cMagac )
+   SEEK Trim( cIdKontoProdavnica )
 
    O_ROBA
    o_kalk_pripr()
@@ -545,14 +545,14 @@ FUNCTION kalk_prod_kartica_mpc_svedi_mpc_sif()
 
    cBrNiv := kalk_get_next_broj_v5( gFirma, "19", NIL )
 
-   find_kalk_by_mkonto_idroba( gFirma, cMagac )
+   find_kalk_by_pkonto_idroba( gFirma, cIdKontoProdavnica )
 
 
    Box(, 6, 65 )
 
    @ 1 + m_x, 2 + m_y SAY "Generisem nivelaciju... 19-" + cBrNiv
 
-   DO WHILE !Eof() .AND. idfirma + pkonto = gFirma + cMagac
+   DO WHILE !Eof() .AND. field->idfirma + field->pkonto == gFirma + cIdKontoProdavnica
 
       cIdRoba := Idroba
       nUlaz := nIzlaz := 0
@@ -674,7 +674,7 @@ FUNCTION kalk_prod_kartica_mpc_svedi_mpc_sif()
                kolicina WITH nStanje, ;
                idvd WITH "19", brdok WITH cBrNiv, ;
                rbr WITH Str( nRbr, 3 ), ;
-               pkonto WITH cMagac, ;
+               pkonto WITH cIdKontoProdavnica, ;
                pu_i WITH "3"
 
             IF nStanje <> 0

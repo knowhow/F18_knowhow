@@ -91,24 +91,29 @@ FUNCTION kalk_stampa_dok_19()
       @ PRow(), 4 SAY  ""
       ?? Trim( Left( ROBA->naz, 40 ) ), "(", ROBA->jmj, ")"
       @ PRow() + 1, 4 SAY IdRoba
-      @ PRow(), PCol() + 1 SAY Kolicina             PICTURE PicKol
-      @ PRow(), PCol() + 1 SAY FCJ                  PICTURE PicCDEM
+      @ PRow(), PCol() + 1 SAY Kolicina             PICTURE pickol()
+      @ PRow(), PCol() + 1 SAY FCJ                  PICTURE piccdem()
       nC0 := PCol() + 1
-      @ PRow(), PCol() + 1 SAY MPC                  PICTURE PicCDEM
+      @ PRow(), PCol() + 1 SAY MPC                  PICTURE piccdem()
       nC1 := PCol() + 1
-      @ PRow(), PCol() + 1 SAY aPorezi[ POR_PPP ]            PICTURE PicProc
-      @ PRow(), PCol() + 1 SAY nPor1                         PICTURE PicDEM
-      @ PRow(), PCol() + 1 SAY nPor1 * Kolicina                PICTURE PicDEM
-      @ PRow(), PCol() + 1 SAY MPCSAPP                       PICTURE PicCDEM
-      @ PRow(), PCol() + 1 SAY MPCSAPP + FCJ                   PICTURE PicCDEM
+      @ PRow(), PCol() + 1 SAY aPorezi[ POR_PPP ]            PICTURE picproc()
+      @ PRow(), PCol() + 1 SAY nPor1                         PICTURE picdem()
+      @ PRow(), PCol() + 1 SAY nPor1 * Kolicina                PICTURE picdem()
+      @ PRow(), PCol() + 1 SAY MPCSAPP                       PICTURE piccdem()
+      @ PRow(), PCol() + 1 SAY MPCSAPP + FCJ                   PICTURE piccdem()
 
       // 2. red
 
-      @ PRow() + 1, nC1 SAY 0                       PICTURE PicProc
-      @ PRow(), PCol() + 1 SAY nPor2                PICTURE PicDEM
-      @ PRow(), PCol() + 1 SAY nPor2 * Kolicina     PICTURE PicDEM
-      @ PRow(), PCol() + 1 SAY ( MPCSAPP / FCJ ) * 100  PICTURE picproc
-      @ PRow(), PCol() + 1 SAY Space( Len( PicCDEM ) )
+      @ PRow() + 1, nC1 SAY 0                       PICTURE picproc()
+      @ PRow(), PCol() + 1 SAY nPor2                PICTURE picdem()
+      @ PRow(), PCol() + 1 SAY nPor2 * Kolicina     PICTURE picdem()
+
+      IF Round( field->FCJ, 4 ) == 0
+         @ PRow(), PCol() + 1 SAY 9999999  PICTURE picproc() // error fcj=0
+      ELSE
+         @ PRow(), PCol() + 1 SAY (  field->MPCSAPP / field->FCJ ) * 100  PICTURE picproc()
+      ENDIF
+      @ PRow(), PCol() + 1 SAY Space( Len( piccdem() ) )
 
       SKIP
 
@@ -118,11 +123,11 @@ FUNCTION kalk_stampa_dok_19()
 
    ? m
    @ PRow() + 1, 0        SAY "Ukupno:"
-   @ PRow(), nC0        SAY  nTot3         PICTURE        PicDEM
-   @ PRow(), PCol() + 1   SAY  Space( Len( picdem ) )
-   @ PRow(), PCol() + 1   SAY  Space( Len( picdem ) )
-   @ PRow(), PCol() + 1   SAY  nTot4         PICTURE        PicDEM
-   @ PRow(), PCol() + 1   SAY  nTot5         PICTURE        PicDEM
+   @ PRow(), nC0        SAY  nTot3         PICTURE        picdem()
+   @ PRow(), PCol() + 1   SAY  Space( Len( picdem() ) )
+   @ PRow(), PCol() + 1   SAY  Space( Len( picdem() ) )
+   @ PRow(), PCol() + 1   SAY  nTot4         PICTURE        picdem()
+   @ PRow(), PCol() + 1   SAY  nTot5         PICTURE        picdem()
    ? m
 
    ?
@@ -226,9 +231,9 @@ FUNCTION Obraz19()
          U_ON
       ENDIF
       ?? rbr + " " + idroba + " " + PadR( Trim( Left( ROBA->naz, 40 ) ) + " (" + ROBA->jmj + ")", 40 )
-      @ PRow(), PCol() + 1 SAY FCJ                  PICTURE PicCDEM
-      @ PRow(), PCol() + 1 SAY MPCSAPP + FCJ          PICTURE PicCDEM
-      @ PRow(), PCol() + 1 SAY MPCSAPP              PICTURE PicCDEM
+      @ PRow(), PCol() + 1 SAY FCJ                  PICTURE piccdem()
+      @ PRow(), PCol() + 1 SAY MPCSAPP + FCJ          PICTURE piccdem()
+      @ PRow(), PCol() + 1 SAY MPCSAPP              PICTURE piccdem()
       IF cPodvuceno == "D"
          U_OFF
       ENDIF
@@ -258,4 +263,20 @@ FUNCTION Obraz19()
    ENDPRINT
 
    RETURN
-// }
+
+
+/*
+  legacy global vars
+*/
+
+FUNCTION picdem()
+   RETURN picdem
+
+FUNCTION pickol()
+   RETURN pickol
+
+FUNCTION piccdem()
+   RETURN piccdem
+
+FUNCTION picproc()
+   RETURN picproc

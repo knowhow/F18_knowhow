@@ -12,6 +12,7 @@
 
 #include "f18.ch"
 
+FIELD fcj, kolicina, mcsapp, TBankTr, pu_i, pkonto, rbr
 
 
 FUNCTION kalk_prod_generacija_dokumenata()
@@ -677,7 +678,7 @@ FUNCTION kalk_prod_kartica_mpc_svedi_mpc_sif()
                pkonto WITH cIdKontoProdavnica, ;
                pu_i WITH "3"
 
-            IF nStanje <> 0
+            IF ROUND( nStanje, 4 ) <> 0 .AND. ABS( nVPV / nStanje ) < 99999
                REPLACE fcj WITH nVPV / nStanje
                REPLACE mpcsapp WITH nRazlika
             ELSE

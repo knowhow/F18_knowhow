@@ -14,7 +14,7 @@
 
 
 
-FUNCTION GenProd()
+FUNCTION kalk_prod_generacija_dokumenata()
 
    LOCAL _opc := {}
    LOCAL _opcexe := {}
@@ -25,8 +25,12 @@ FUNCTION GenProd()
    // TODO: izbaciti
    // AADD(_opc, "2. pocetno stanje (stara opcija/legacy)")
    // AADD(_opcexe, {|| PocStProd() } )
-   AAdd( _opc, "3. inventure    " )
-   AAdd( _opcexe, {|| MnuPInv() } )
+   AAdd( _opc, "2. inventure    " )
+   AAdd( _opcexe, {|| kalk_prod_gen_ip() } )
+
+   AAdd( _opc, "3. svedi mpc na mpc iz sifarnika dokumentom nivelacije" )
+   AAdd( _opcexe, {|| kalk_prod_kartica_mpc_svedi_mpc_sif() } )
+
 
    // AAdd( _opc, "4. nivelacije" )
    // AAdd( _opcexe, {|| MnuPNivel() } )
@@ -89,7 +93,7 @@ STATIC FUNCTION MnuPNivel()
 
 
 
-STATIC FUNCTION MnuPInv()
+STATIC FUNCTION kalk_prod_gen_ip()
 
    LOCAL _opc := {}
    LOCAL _opcexe := {}
@@ -503,8 +507,7 @@ FUNCTION VratiZadNiv()
 
 
 
-// Generisanje nivelacije radi korekcije MPC
-FUNCTION KorekMPC()
+FUNCTION kalk_prod_kartica_mpc_svedi_mpc_sif()
 
    LOCAL dDok := Date()
    LOCAL nPom := 0

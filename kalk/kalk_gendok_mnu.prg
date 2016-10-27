@@ -22,7 +22,7 @@ FUNCTION kalk_mnu_generacija_dokumenta()
    AAdd( _opc, "1. magacin - generacija dokumenata    " )
    AAdd( _opcexe, {|| GenMag() } )
    AAdd( _opc, "2. prodavnica - generacija dokumenata" )
-   AAdd( _opcexe, {|| GenProd() } )
+   AAdd( _opcexe, {|| kalk_prod_generacija_dokumenata() } )
 
    //AAdd( _opc, "3. proizvodnja - generacija dokumenata" )
    //AAdd( _opcexe, {|| GenProizvodnja() } )

@@ -1142,7 +1142,7 @@ STATIC FUNCTION GRekap22()
 
 
 
-FUNCTION GenProdNc()
+FUNCTION kalk_prod_generacija_dokumenataNc()
 
    LOCAL cPKonto
    LOCAL cIdRoba

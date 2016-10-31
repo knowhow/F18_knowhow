@@ -220,7 +220,7 @@ FUNCTION ImpCSVDok()
    SetTblDok( @aDbf )
 
    // prebaci iz txt => temp tbl
-   kalk_imp_txt_to_temp( aDbf, cImpFile )
+   kalk_imp_csv_to_temp( aDbf, cImpFile )
 
    IF !CheckDok()
       MsgBeep( "Prekidamo operaciju !!!#Nepostojece sifre!!!" )
@@ -451,7 +451,7 @@ STATIC FUNCTION importost()
 // - param aDbf - struktura tabele
 // - param cTxtFile - txt fajl za import
 // --------------------------------------------------------
-FUNCTION kalk_imp_txt_to_temp( aDbf, cTxtFile )
+STATIC FUNCTION kalk_imp_csv_to_temp( aDbf, cTxtFile )
 
    LOCAL cDelimiter := ";"
    LOCAL cBrFakt

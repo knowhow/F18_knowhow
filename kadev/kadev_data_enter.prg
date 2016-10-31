@@ -627,7 +627,7 @@ FUNCTION rpt_rjes()
       NEXT
    ELSE
 
-      nLin := BrLinFajla( my_home() + AllTrim( KDV_RJES->fajl ) )
+      nLin := fajl_get_broj_linija( my_home() + AllTrim( KDV_RJES->fajl ) )
       nPocetak := 0
       nPreskociRedova := 0
 

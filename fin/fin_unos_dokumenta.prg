@@ -790,11 +790,6 @@ FUNCTION fin_konvert_valute( rec, tip )
    RETURN _ok
 
 
-
-/*
-   DinDem
-
- */
 FUNCTION konverzija_valute( p1, p2, cVar )
 
    LOCAL _kurs
@@ -816,6 +811,20 @@ FUNCTION konverzija_valute( p1, p2, cVar )
 
    RETURN .T.
 
+
+FUNCTION konverzija_km_dem( dDatDo, nIznosKM )
+
+   LOCAL nKurs, nIznosEur
+
+   PushWa()
+   nKurs := Kurs( dDatDo )
+   PopWa()
+   
+   IF Round( nKurs, 4 ) == 0
+      RETURN 0
+   ENDIF
+
+   RETURN  nIznosKM / nKurs
 
 
 STATIC FUNCTION refresh_numeric_get( oGet )

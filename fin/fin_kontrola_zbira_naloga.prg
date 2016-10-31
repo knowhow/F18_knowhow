@@ -13,6 +13,8 @@
 
 FUNCTION kontrola_zbira_naloga()
 
+   LOCAL nDug, nDug2, nPot, nPot2
+
    PushWA()
 
    SELECT ( F_FIN_PRIPR )
@@ -46,21 +48,21 @@ FUNCTION kontrola_zbira_naloga()
 
    SET ORDER TO TAG "1"
    SEEK cIdFirma + cIdVn + cBrNal
-   IF !( IdFirma + IdVn + BrNal == cIdFirma + cIdVn + cBrNal )
+   IF !( fin_pripr->IdFirma + fin_pripr->IdVn + fin_pripr->BrNal == cIdFirma + cIdVn + cBrNal )
       Msg( "Ovaj nalog nije unesen ...", 10 )
       BoxC()
       PopWa()
       RETURN DE_CONT
    ENDIF
 
-   dug := dug2 := Pot := Pot2 := 0
-   DO WHILE  !Eof() .AND. ( IdFirma + IdVn + BrNal == cIdFirma + cIdVn + cBrNal )
+   nDug := nDug2 := nPot := nPot2 := 0
+   DO WHILE  !Eof() .AND. ( fin_pripr->IdFirma + fin_pripr->IdVn + fin_pripr->BrNal == cIdFirma + cIdVn + cBrNal )
       IF D_P == "1"
-         dug  += IznosBHD
-         dug2 += iznosdem
+         nDug  += field->IznosBHD
+         nDug2 += field->iznosdem
       ELSE
-         pot  += IznosBHD
-         pot2 += iznosdem
+         nPot  += field->IznosBHD
+         nPot2 += field->iznosdem
       ENDIF
       SKIP
    ENDDO
@@ -72,18 +74,18 @@ FUNCTION kontrola_zbira_naloga()
 
    @ m_x + 5, m_y + 2 SAY "Zbir naloga:"
    @ m_x + 6, m_y + 2 SAY "     Duguje:"
-   @ m_x + 6, Col() + 2 SAY Dug PICTURE cPic
-   @ m_x + 6, Col() + 2 SAY Dug2 PICTURE cPic
+   @ m_x + 6, Col() + 2 SAY nDug PICTURE cPic
+   @ m_x + 6, Col() + 2 SAY nDug2 PICTURE cPic
    @ m_x + 7, m_y + 2 SAY "  Potrazuje:"
-   @ m_x + 7, Col() + 2 SAY Pot  PICTURE cPic
-   @ m_x + 7, Col() + 2 SAY Pot2  PICTURE cPic
+   @ m_x + 7, Col() + 2 SAY nPot  PICTURE cPic
+   @ m_x + 7, Col() + 2 SAY nPot2  PICTURE cPic
    @ m_x + 8, m_y + 2 SAY "      Saldo:"
-   @ m_x + 8, Col() + 2 SAY Dug - Pot  PICTURE cPic
-   @ m_x + 8, Col() + 2 SAY Dug2 - Pot2  PICTURE cPic
+   @ m_x + 8, Col() + 2 SAY nDug - nPot  PICTURE cPic
+   @ m_x + 8, Col() + 2 SAY nDug2 - nPot2  PICTURE cPic
    Inkey( 0 )
 
 
-   IF Round( Dug - Pot, 2 ) <> 0  .AND. gRavnot == "D"
+   IF Round( nDug - nPot, 2 ) <> 0  .AND. gRavnot == "D"
 
       cDN := "N"
       SET CURSOR ON
@@ -105,7 +107,7 @@ FUNCTION kontrola_zbira_naloga()
          IF LastKey() <> K_ESC
             _Rbr :=  _Rbr + 1
             _IdPartner := ""
-            _IznosBHD := Dug - Pot
+            _IznosBHD := nDug - nPot
             konverzija_valute( NIL, NIL, "_IZNOSBHD" )
             APPEND BLANK
             my_rlock()
@@ -121,3 +123,75 @@ FUNCTION kontrola_zbira_naloga()
    PopWA()
 
    RETURN .T.
+
+
+
+FUNCTION fin_saldo_provjera_psuban( cIdFirma, cIdVn, cBrNal )
+
+   LOCAL lOkAzuriranje := .F.
+   LOCAL _tmp, nSaldo
+
+   IF gRavnot == "N"
+      lOkAzuriranje := .T.
+      RETURN lOkAzuriranje
+   ENDIF
+
+   SELECT psuban
+   SET ORDER TO TAG "1"
+   GO TOP
+   SEEK cIdFirma + cIdVn + cBrNal
+
+   nSaldo := 0
+
+   DO WHILE !Eof() .AND. psuban->idfirma == cIdFirma .AND. psuban->idvn == cIdVn .AND. psuban->brnal == cBrNal
+
+      IF field->d_p == "1"
+         nSaldo += Round( psuban->iznosbhd, 2 )
+      ELSE
+         nSaldo -= Round( psuban->iznosbhd, 2 )
+      ENDIF
+      SKIP
+
+   ENDDO
+
+   IF Round( nSaldo, 2 ) <> 0
+      Beep( 3 )
+      Msg( "Neophodna ravnoteža naloga " + cIdFirma + "-" + cIdVn + "-" + AllTrim( cBrNal ) + "##, ažuriranje neće biti izvršeno!" )
+      RETURN .F.
+   ENDIF
+
+   lOkAzuriranje := .T.
+
+   RETURN lOkAzuriranje
+
+
+FUNCTION is_fin_nalog_u_ravnotezi( cIdFirma, cIdVn, cBrNal )
+
+   LOCAL  nDuguje, nPotrazuje
+
+   PushWA()
+
+   select_o_fin_pripr()
+
+   IF cIdFirma == NIL
+      GO TOP
+      cIdFirma := field->IdFirma
+      cIdVN := field->IdVN
+      cBrNal := field->BrNal
+   ENDIF
+
+   nDuguje := 0
+   nPotrazuje := 0
+   DO WHILE  !Eof() .AND. ( field->IdFirma + field->IdVn + field->BrNal == cIdFirma + cIdVn + cBrNal )
+      IF field->D_P == "1"
+         nDuguje  += field->IznosBHD
+      ELSE
+         nPotrazuje  += field->IznosBHD
+      ENDIF
+      SKIP
+   ENDDO
+
+   MsgBeep( "FIN nalog " + cIdFirma + " - " + cIdVn + " - " + cBrNal + "u pripremi nije u ravnoteži !?# STOP" )
+   PopWA()
+
+   RETURN Round( nDuguje - nPotrazuje, 2 ) == 0

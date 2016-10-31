@@ -44,7 +44,7 @@ FUNCTION PrethLin( cFajl, nKraj )
    RETURN .T.
 
 
-FUNCTION BrLinFajla( cImeF )
+FUNCTION fajl_get_broj_linija( cImeF )
 
    LOCAL nOfset := 0
    LOCAL nSlobMem := 0

@@ -39,6 +39,8 @@ FUNCTION kalk_kontiranje_fin_naloga( lAutomatskiSetBrojNaloga, lAGen, lViseKalk,
    LOCAL nRecNo
    LOCAL lPrvoDzok := ( fetch_metric( "kalk_kontiranje_prioritet_djokera", nil, "N" ) == "D" )
    LOCAL _fakt_params := fakt_params()
+   LOCAL nIznosKontiratiDEM
+
    PRIVATE lVrsteP := _fakt_params[ "fakt_vrste_placanja" ]
 
    IF ( lAGen == NIL )
@@ -145,7 +147,6 @@ FUNCTION kalk_kontiranje_fin_naloga( lAutomatskiSetBrojNaloga, lAGen, lViseKalk,
 
    IF lAFin .OR. lAFin2
 
-      // O_FIN_PRIPR
       select_o_fin_pripr()
       SET ORDER TO TAG "1"
       GO TOP
@@ -170,7 +171,7 @@ FUNCTION kalk_kontiranje_fin_naloga( lAutomatskiSetBrojNaloga, lAGen, lViseKalk,
    SELECT trfp
    SEEK finmat->IdVD + koncij->shema
 
-   cIdVN := IdVN
+   cIdVN := field->IdVN
    // uzmi vrstu naloga koja ce se uzeti u odnosu na prvu kalkulaciju
    // koja se kontira
 
@@ -272,7 +273,7 @@ FUNCTION kalk_kontiranje_fin_naloga( lAutomatskiSetBrojNaloga, lAGen, lViseKalk,
       PRIVATE dDatVal := CToD( "" )  // inicijalizuj datum valute
       PRIVATE cIdVrsteP := "  " // i vrstu placanja
 
-      DO WHILE cIdVD == IdVD .AND. cBrDok == BrDok .AND. !Eof()
+      DO WHILE cIdVD == finmat->IdVD .AND. cBrDok == finmat->BrDok .AND. !Eof()
 
          lDatFakt := .F.
 
@@ -292,33 +293,32 @@ FUNCTION kalk_kontiranje_fin_naloga( lAutomatskiSetBrojNaloga, lAGen, lViseKalk,
          GO TOP
          SEEK cIdVD + koncij->shema
 
-         DO WHILE !Eof() .AND. !Empty( cBrNalF ) .AND. field->idvd == cIDVD  .AND. field->shema == koncij->shema
+         DO WHILE !Eof() .AND. !Empty( cBrNalF ) .AND. trfp->idvd == cIDVD  .AND. trfp->shema == koncij->shema
 
             lDatFakt := .F.
-            cStavka := Id
+            cStavka := trfp->Id
 
             SELECT finmat
-            nIz := &cStavka
+            nIznosKontiratiDEM := &cStavka
 
             SELECT trfp
 
             IF !Empty( trfp->idtarifa ) .AND. trfp->idtarifa <> finmat->idtarifa
-               // ako u {ifrarniku parametara postoji tarifa prenosi po tarifama
-               nIz := 0
+               // ako u sifarniku parametara postoji tarifa prenosi po tarifama
+               nIznosKontiratiDEM := 0
             ENDIF
 
             IF Empty( trfp->idtarifa ) .AND. roba->tip $ "U"
-
-               nIz := 0 // roba tipa u,t
+               nIznosKontiratiDEM := 0 // roba tipa u,t
             ENDIF
 
             // iskoristeno u slucaju RN, gdje se za kontiranje stavke
             // 901-999 koriste sa tarifom XXXXXX
             IF finmat->idtarifa == "XXXXXX" .AND. trfp->idtarifa <> finmat->idtarifa
-               nIz := 0
+               nIznosKontiratiDEM := 0
             ENDIF
 
-            IF nIz <> 0
+            IF nIznosKontiratiDEM <> 0
 
                IF lPoRj // ako je iznos elementa <> 0, dodaj stavku u fpripr
                   IF TRFP->porj = "D"
@@ -333,7 +333,7 @@ FUNCTION kalk_kontiranje_fin_naloga( lAutomatskiSetBrojNaloga, lAGen, lViseKalk,
                SELECT fin_pripr
 
                IF trfp->znak == "-"
-                  nIz := -nIz
+                  nIznosKontiratiDEM := -nIznosKontiratiDEM
                ENDIF
 
                IF "#DF#" $ ( trfp->naz )
@@ -346,16 +346,16 @@ FUNCTION kalk_kontiranje_fin_naloga( lAutomatskiSetBrojNaloga, lAGen, lViseKalk,
                ENDIF
 
                IF gBaznaV == "P"
-                  // nIz := ROUND7( nIz, Right( trfp->naz, 2 ) )
-                  // nIz2 := ROUND7( nIz * Kurs( dDFDok, "P", "D" ), Right( trfp->naz, 2 ) )
-                  nIz := nIz
-                  nIz2 :=  nIz * Kurs( dDFDok, "P", "D" )
+                  // nIznosKontiratiDEM := ROUND7( nIznosKontiratiDEM, Right( trfp->naz, 2 ) )
+                  // nIznosKontiratiKM := ROUND7( nIznosKontiratiDEM * Kurs( dDFDok, "P", "D" ), Right( trfp->naz, 2 ) )
+
+                  nIznosKontiratiKM :=  nIznosKontiratiDEM * Kurs( dDFDok, "P", "D" )
 
                ELSE
-                  // nIz2 := ROUND7( nIz, Right( trfp->naz, 2 ) )
-                  // nIz := ROUND7( nIz2 * Kurs( dDFDok, "D", "P" ), Right( trfp->naz, 2 ) )
-                  nIz2 := nIz
-                  nIz := nIz2 * Kurs( dDFDok, "D", "P" )
+                  // nIznosKontiratiKM := ROUND7( nIznosKontiratiDEM, Right( trfp->naz, 2 ) )
+                  // nIznosKontiratiDEM := ROUND7( nIznosKontiratiKM * Kurs( dDFDok, "D", "P" ), Right( trfp->naz, 2 ) )
+                  nIznosKontiratiKM := nIznosKontiratiDEM
+                  nIznosKontiratiDEM := nIznosKontiratiKM * Kurs( dDFDok, "D", "P" )
 
                ENDIF
 
@@ -546,8 +546,8 @@ FUNCTION kalk_kontiranje_fin_naloga( lAutomatskiSetBrojNaloga, lAGen, lViseKalk,
                   APPEND BLANK
                ENDIF
 
-               REPLACE iznosDEM WITH iznosDEM + nIz
-               REPLACE iznosBHD WITH iznosBHD + nIz2
+               REPLACE iznosDEM WITH iznosDEM + nIznosKontiratiDEM
+               REPLACE iznosBHD WITH iznosBHD + nIznosKontiratiKM
                REPLACE idKonto  WITH cIdKonto
                REPLACE IdPartner  WITH cIdPartner
                REPLACE D_P      WITH trfp->d_P
@@ -590,103 +590,12 @@ FUNCTION kalk_kontiranje_fin_naloga( lAutomatskiSetBrojNaloga, lAGen, lViseKalk,
                   REPLACE Rbr  WITH nRbr // fin_pripr
                ENDIF
                my_unlock()
-            ENDIF // nIz <>0
+            ENDIF // nIznosKontiratiDEM <>0
 
             SELECT trfp
             SKIP
          ENDDO // trfp->id==cIDVD
 
-/*
-         IF gAMat <> "0"     // za materijalni nalog
-
-            SELECT trmp
-            HSEEK cIdVD
-
-            DO WHILE !Empty( cBrNalM ) .AND. trmp->id == cIdVD .AND. !Eof()
-
-               cIznos := naz
-
-               // mpripr
-               SELECT mpripr
-
-               cIdPartner := ""
-               IF trmp->Partner == "1"  // stavi Partnera
-                  cIdpartner := finmat->IdPartner
-               ENDIF
-
-               cIdzaduz := ""
-               IF trmp->Zaduz == "1"
-                  cIdKonto := finmat->idkonto
-                  cIdZaduz := finmat->idzaduz
-               ELSEIF trmp->Zaduz == "2"
-                  cIdKonto := finmat->idkonto2
-                  cIdZaduz := finmat->idzaduz2
-               ENDIF
-
-               cBrDok := ""
-               dDatDok := finmat->Datdok
-               IF trmp->dokument == "1"
-                  cBrDok := finmat->Brdok
-               ELSEIF trmp->dokument == "2"
-                  cBrDok := finmat->BrFaktP
-                  dDatDok := finmat->DatFaktP
-               ENDIF
-               nKol := finmat->Kolicina
-               nIz := finmat->&cIznos
-
-               IF Trim( cIznos ) == "GKV"
-                  nKol := finmat->Gkol
-               ELSEIF Trim( cIznos ) == "GKV2"
-                  nKol := finmat->GKol2
-               ELSEIF Trim( cIznos ) == "MARZA2"
-                  nKol := finmat->( Gkol + GKol2 )
-               ELSEIF  Trim( cIznos ) == "RABATV"
-                  nKol := 0
-               ENDIF
-
-               IF trmp->znak == "-"
-                  nIz := -nIz
-                  nKol := -nKol
-               ENDIF
-
-               nIz := Round( nIz, 2 )
-
-               IF nIz == 0
-                  SELECT trmp
-                  SKIP
-                  LOOP
-               ENDIF
-
-               GO BOTTOM
-               nRbr2 := Val( rbr ) + 1
-               APPEND BLANK
-
-               REPLACE IdFirma   WITH finmat->IdFirma, ; // mpripr
-               BrNal     WITH cBrNalM, ;
-                  IdVN      WITH cIdVN, ;
-                  IdPartner WITH cIdPartner, ;
-                  IdRoba    WITH finmat->idroba, ;
-                  Kolicina  WITH nKol, ;
-                  IdKonto   WITH cIdKonto, ;
-                  IdZaduz   WITH cIdZaduz, ;
-                  IdTipDok  WITH finmat->IdVD, ;
-                  BrDok     WITH cBrDok, ;
-                  DatDok    WITH dDatDok, ;
-                  Rbr       WITH Str( nRbr2, 4 ), ;
-                  IdPartner WITH cIdPartner, ;
-                  Iznos    WITH nIz, ;
-                  Iznos2   WITH Round( nIz, 2 ), ;
-                  Cijena   WITH iif( nKol <> 0, Iznos / nKol, 0 ), ;
-                  U_I      WITH trmp->u_i, ;
-                  D_P      WITH trmp->u_i
-
-
-               SELECT trmp
-               SKIP
-            ENDDO // trmp->id = cIDVD
-
-         ENDIF    // za materijalni nalog
-*/
 
          SELECT finmat
          SKIP

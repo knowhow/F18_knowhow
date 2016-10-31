@@ -78,26 +78,24 @@ FUNCTION fin_nalog_k_ctrl_p()
    RETURN NIL
 
 
-FUNCTION generisi_finansijski_nalog_iz_kalk( lAuto )
+FUNCTION kalk_generisi_finansijski_nalog( lAuto, lStampa )
 
    IF !f18_use_module( "fin" )
       RETURN .F.
    ENDIF
 
-   IF ( gaFin == "D" .OR. gaMat == "D" )
-      IF kalk_kontiranje_fin_naloga( .T., lAuto )
-         fin_nalog_priprema_auto_import( lAuto )
-      ENDIF
+   IF kalk_kontiranje_fin_naloga( .T., lAuto )
+      RETURN fin_nalog_priprema_auto_import( lAuto, lStampa )
    ENDIF
 
-   RETURN .T.
+   RETURN .F.
 
 
 /*
    Koristi se u KALK za štampu finansijskog naloga
 */
 
-FUNCTION fin_nalog_priprema_auto_import( lAuto )
+FUNCTION fin_nalog_priprema_auto_import( lAuto, lStampa )
 
    PRIVATE gDatNal := "N"
    PRIVATE gRavnot := "D"
@@ -107,155 +105,35 @@ FUNCTION fin_nalog_priprema_auto_import( lAuto )
       lAuto := .F.
    ENDIF
 
-   IF gaFin == "D"
+   hb_default( @lStampa, .F. )
 
-
-      fin_nalog_fix_greska_zaokruzenja_fin_pripr( NIL, NIL, NIL, lAuto )
-
-      IF lAuto == .F. .OR. ( lAuto == .T. .AND. gAImpPrint == "D" )
-         fin_gen_ptabele_stampa_nalozi( lAuto )
-      ELSE
-         fin_gen_psuban_stavke_auto_import()
-         fin_gen_sint_stavke_auto_import()
-      ENDIF
-
-      fin_azuriranje_naloga( lAuto )
-
+   IF !fin_nalog_fix_greska_zaokruzenja_fin_pripr( NIL, NIL, NIL, lAuto )
+      RETURN .F.
    ENDIF
 
-   RETURN .T.
-
-
-/*
---FUNCTION fin_nalog_fix_greska_zaokruzenja( lAuto )
-
-   O_KONTO
-   O_VALUTE
-   O_FIN_PRIPR
-
-   IF lAuto == nil
-      lAuto := .F.
+   IF lAuto == .F. .OR. ( lAuto == .T. .AND. lStampa )
+      fin_gen_ptabele_stampa_nalozi( lAuto ) // stampa
+   ELSE
+      fin_gen_psuban_stavke_auto_import()
+      fin_gen_sint_stavke_auto_import()
    ENDIF
 
-   Box( "kzb", 12, 70, .F., "Kontrola zbira FIN naloga" )
-
-   SET CURSOR ON
-
-   cIdFirma := IdFirma
-   cIdVN := IdVN
-   cBrNal := BrNal
-
-   @ m_x + 1, m_y + 2 SAY "Nalog broj: " + cIdfirma + "-" + cIdvn + "-" + cBrNal
-
-   SET ORDER TO TAG "1"
-   SEEK cIdFirma + cIdVn + cBrNal
-
-   PRIVATE dug := 0
-   PRIVATE dug2 := 0
-   PRIVATE Pot := 0
-   PRIVATE Pot2 := 0
-
-
-   DO WHILE  !Eof() .AND. ( IdFirma + IdVn + BrNal == cIdFirma + cIdVn + cBrNal )
-
-      IF D_P == "1"
-         dug += IznosBHD
-         dug2 += iznosdem
-      ELSE
-         pot += IznosBHD
-         pot2 += iznosdem
-      ENDIF
-
-      SKIP
-   ENDDO
-
-   SKIP -1
-
-   Scatter()
-
-   cPic := "999 999 999 999.99"
-
-   @ m_x + 5, m_y + 2 SAY "Zbir naloga:"
-   @ m_x + 6, m_y + 2 SAY "     Duguje:"
-   @ m_x + 6, Col() + 2 SAY Dug PICTURE cPic
-   @ m_x + 6, Col() + 2 SAY Dug2 PICTURE cPic
-   @ m_x + 7, m_y + 2 SAY "  Potrazuje:"
-   @ m_x + 7, Col() + 2 SAY Pot  PICTURE cPic
-   @ m_x + 7, Col() + 2 SAY Pot2  PICTURE cPic
-   @ m_x + 8, m_y + 2 SAY "      Saldo:"
-   @ m_x + 8, Col() + 2 SAY Dug - Pot  PICTURE cPic
-   @ m_x + 8, Col() + 2 SAY Dug2 - Pot2  PICTURE cPic
-
-   IF Round( Dug - Pot, 2 ) <> 0
-
-      PRIVATE cDN := "D"
-
-      IF lAuto == .F.
-
-         SET CURSOR ON
-
-         @ m_x + 10, m_y + 2 SAY "Zelite li uravnoteziti nalog (D/N) ?" GET cDN valid ( cDN $ "DN" ) PICT "@!"
-
-         READ
-
-      ELSE
-         cDN := "D" // uravnoteziti nalog ako je auto import
-      ENDIF
-
-      IF cDN == "D"
-
-         _Opis := "GRESKA ZAOKRUZ."
-         _BrDok := ""
-         _D_P := "2"
-         _IdKonto := Space( 7 )
-
-         IF lAuto == .F.
-
-            @ m_x + 11, m_y + 2 SAY "Staviti na konto ?" GET _IdKonto VALID P_Konto( @_IdKonto )
-            @ m_x + 11, Col() + 1 SAY "Datum dokumenta:" GET _DatDok
-
-            READ
-
-         ELSE
-
-            _idkonto := kalk_auto_import_podataka_konto()
-
-         ENDIF
-
-         IF lAuto == .T. .OR. LastKey() <> K_ESC
-
-            _Rbr := _Rbr + 1
-            _IdPartner := ""
-            _IznosBHD := Dug - Pot
-
-            nTArea := Select()
-
-            konverzija_valute( NIL, NIL, "_IZNOSBHD" )
-
-            SELECT ( nTArea )
-
-            APPEND BLANK
-
-            Gather()
-
-         ENDIF
-      ENDIF
+   IF !is_fin_nalog_u_ravnotezi() // pretpostavlja da je u fin_pripr jedan fin nalog
+      RETURN .F.
    ENDIF
-   BoxC()
 
-   my_close_all_dbf()
+   RETURN fin_azuriranje_naloga( lAuto )
 
-   RETURN .T.
-*/
 
 
 FUNCTION fin_nalog_fix_greska_zaokruzenja_fin_pripr( cIdFirma, cIdVn, cBrNal, lAuto )
 
-   LOCAL dug := 0
-   LOCAL dug2 := 0
-   LOCAL Pot := 0
-   LOCAL Pot2 := 0
+   LOCAL nDuguje := 0
+   LOCAL nDuguje2 := 0
+   LOCAL nPotrazuje := 0
+   LOCAL nPotrazuje2 := 0
    LOCAL lRet := .T.
+   LOCAL hRec
 
    hb_default( @lAuto, .F. ) // .T. - ispravka se vrsi bez pitanja
    PushWa()
@@ -267,6 +145,7 @@ FUNCTION fin_nalog_fix_greska_zaokruzenja_fin_pripr( cIdFirma, cIdVn, cBrNal, lA
 
    SELECT fin_pripr
    IF cIdFirma == NIL
+      GO TOP
       cIdFirma := field->idfirma
       cIdVn := field->idvn
       cBrNal := field->brnal
@@ -277,14 +156,15 @@ FUNCTION fin_nalog_fix_greska_zaokruzenja_fin_pripr( cIdFirma, cIdVn, cBrNal, lA
    my_flock()
    DO WHILE  !Eof() .AND. ( field->IdFirma + field->IdVn + field->BrNal == cIdFirma + cIdVn + cBrNal )
 
-      REPLACE field->iznosbhd WITH ROUND(field->iznosbhd, 2) // iznos KM dvije decimale
+      REPLACE field->iznosbhd WITH Round( field->iznosbhd, 2 ), ; // iznos KM dvije decimale
+      field->iznosdem WITH Round( field->iznosdem, 2 )
 
       IF field->D_P == "1"
-         dug += field->IznosBHD
-         dug2 += field->iznosdem
+         nDuguje += Round( field->IznosBHD, 2 )
+         nDuguje2 += Round( field->iznosdem, 2 )
       ELSE
-         pot += field->IznosBHD
-         pot2 += field->iznosdem
+         nPotrazuje += Round( field->IznosBHD, 2 )
+         nPotrazuje2 += Round( field->iznosdem, 2 )
       ENDIF
 
       SKIP
@@ -293,30 +173,24 @@ FUNCTION fin_nalog_fix_greska_zaokruzenja_fin_pripr( cIdFirma, cIdVn, cBrNal, lA
 
    SKIP -1
 
-   Scatter()
+   hRec := dbf_get_rec()
 
 
-   IF Round( dug - pot, 2 ) <> 0 .AND. ( lAuto .OR. (Pitanje(, "Želite li uravnotežiti nalog (D/N) ?", "D" ) == "D") )
+   IF Round( nDuguje - nPotrazuje, 2 ) <> 0 .AND. ;
+         ( lAuto .OR. ( Pitanje(, "Želite li uravnotežiti nalog (D/N) ?", "D" ) == "D" ) )
 
-      _Opis := "GRESKA ZAOKRUZ."
-      _BrDok := ""
-      _D_P := "2"
+      hRec[ "opis" ] := "GRESKA ZAOKRUZ."
+      hRec[ "brdok" ] := ""
+      hRec[ "d_p" ] := "2"
+      hRec[ "idkonto" ] := kalk_imp_txt_param_auto_import_podataka_konto()
 
-      _idkonto := kalk_auto_import_podataka_konto()
-
-
-      _Rbr := _Rbr + 1
-      _IdPartner := ""
-      _IznosBHD := Dug - Pot
-
-      nTArea := Select()
-
-      konverzija_valute( NIL, NIL, "_IZNOSBHD" )
-
-      SELECT ( nTArea )
+      hRec[ "rbr" ] := hRec[ "rbr" ] + 1 // posljednja stavka Rbr + 1
+      hRec[ "idpartner" ] := ""
+      hRec[ "iznosbhd" ] := nDuguje - nPotrazuje
+      hRec[ "iznosdem" ] := Round( konverzija_km_dem( hRec[ "datdok" ], hRec[ "iznosbhd" ] ), 2 )
 
       APPEND BLANK
-      Gather()
+      dbf_update_rec( hRec )
 
       lRet := .T.
    ELSE

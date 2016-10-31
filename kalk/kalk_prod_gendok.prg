@@ -708,7 +708,7 @@ FUNCTION kalk_prod_kartica_mpc_svedi_mpc_sif()
 
 
 // Generisanje dokumenta tipa 11 na osnovu 13-ke
-FUNCTION Iz13u11()
+FUNCTION kalk_13_to_11()
 
    O_KONTO
    o_kalk_pripr()

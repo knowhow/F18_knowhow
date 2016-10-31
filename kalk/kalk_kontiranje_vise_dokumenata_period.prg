@@ -34,7 +34,7 @@ FUNCTION kontiranje_vise_dokumenata_period_auto()
    @ m_x + 4, m_y + 2 SAY " pr.konta (prazno-sva):" GET cId_pkto PICT "@S20"
 
    IF is_kalk_fin_isti_broj() // ako je parametar fin-kalk broj identican, onda uvijek
-    cAutomatskiSetBrojNaloga := "D"
+      cAutomatskiSetBrojNaloga := "D"
    ELSE
       @ m_x + 6, m_y + 2 SAY "Automatska generacija brojeva FIN naloga ?" GET cAutomatskiSetBrojNaloga PICT "@!"
    ENDIF
@@ -57,12 +57,14 @@ FUNCTION kontiranje_vise_dokumenata_period_auto()
 
 
 
-STATIC FUNCTION kalk_kontiranje_dokumenata( lAutomatskiSetBrojNaloga, dDatOd, dDatDo, cIdVD, cId_mkto, cId_pkto )
+STATIC FUNCTION kalk_kontiranje_dokumenata( lAutomatskiSetBrojNaloga, dDatOd, dDatDo, ;
+   cIdVD, cId_mkto, cId_pkto )
 
    LOCAL nCount := 0
    LOCAL nTNRec
    LOCAL cBrFinNalog := NIL
    LOCAL cD_firma, cD_tipd, cD_brdok
+   LOCAL lError := .F.
 
    hb_default( @lAutomatskiSetBrojNaloga, .T. )
 
@@ -75,7 +77,7 @@ STATIC FUNCTION kalk_kontiranje_dokumenata( lAutomatskiSetBrojNaloga, dDatOd, dD
    cId_mkto := AllTrim( cId_mkto )
    cId_pkto := AllTrim( cId_pkto )
 
-   GO TOP
+   GO TOP // kalk_doks
 
    DO WHILE !Eof()
 
@@ -105,9 +107,11 @@ STATIC FUNCTION kalk_kontiranje_dokumenata( lAutomatskiSetBrojNaloga, dDatOd, dD
       // cBrFinNalog := cD_brdok
       // ENDIF
 
-      kalk_kontiranje_fin_naloga( lAutomatskiSetBrojNaloga, .T., .T., NIL, lAutomatskiSetBrojNaloga ) // kontiraj
-      // kalk_kontiranje_fin_naloga( lAutomatskiSetBrojNaloga, lAGen, lViseKalk, cNalog, lAutoBrojac )
-
+      IF !kalk_kontiranje_fin_naloga( lAutomatskiSetBrojNaloga, .T., .T., NIL, lAutomatskiSetBrojNaloga ) // kontiraj
+                      // parametri ( lAutomatskiSetBrojNaloga, lAGen := .T., lViseKalk := .T., cNalog := NIL, lAutoBrojac )
+         lError := .T.
+         EXIT
+      ENDIF
 
       ++ nCount
 
@@ -117,11 +121,15 @@ STATIC FUNCTION kalk_kontiranje_dokumenata( lAutomatskiSetBrojNaloga, dDatOd, dD
 
    ENDDO
 
-   IF nCount > 0
-      MsgBeep( "Kontirao " + AllTrim( Str( nCount ) ) + " dokumenata !" )
+   IF lError
+      MsgBeep( "Generacija fin dokumenta za KALK( " + cD_firma + " - " + cD_tipd + " - " + cD_brdok + " ) neuspješna !? STOP!" )
    ENDIF
 
-   RETURN .T.
+   IF nCount > 0
+      MsgBeep( "Uspješno kontirano " + AllTrim( Str( nCount ) ) + " dokumenata !" )
+   ENDIF
+
+   RETURN !lError
 
 
 

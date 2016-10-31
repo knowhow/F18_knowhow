@@ -61,71 +61,6 @@ FUNCTION meni_import_vindija()
 
 
 
-
-FUNCTION kalk_auto_import_podataka_konto( cSet )
-
-   IF s_cKalkAutoImportPodatakaKonto == nil
-      s_cKalkAutoImportPodatakaKonto := fetch_metric( "kalk_auto_import_podataka_konto", f18_user(), PadR( "1370", 7 ) )
-   ENDIF
-
-   IF cSet != NIL
-      s_cKalkAutoImportPodatakaKonto := cSet
-      set_metric( "kalk_auto_import_podataka_konto", f18_user(), cSet )
-   ENDIF
-
-   RETURN s_cKalkAutoImportPodatakaKonto
-
-
-
-STATIC FUNCTION kalk_auto_import_setup()
-
-   LOCAL nX
-   LOCAL GetList := {}
-   LOCAL cAImpRKonto
-
-   cAImpRKonto := PadR( kalk_auto_import_podataka_konto(), 7 )
-
-
-   nX := 1
-   Box(, 10, 70 )
-
-   @ m_x + nX, m_y + 2 SAY8 "Podešenja importa ********"
-
-   nX += 2
-   @ m_x + nX, m_y + 2 SAY8 "Štampati dokumente pri auto obradi (D/N)" GET gAImpPrint VALID gAImpPrint $ "DN" PICT "@!"
-
-   nX += 1
-   @ m_x + nX, m_y + 2 SAY8 "Automatska ravnoteža naloga na konto: " GET cAImpRKonto
-
-   // nX += 1
-   // @ m_x + nX, m_y + 2 SAY "Provjera broj naloga (minus karaktera):" GET gAImpRight PICT "9"
-
-
-   READ
-   BoxC()
-
-   IF LastKey() <> K_ESC
-
-      kalk_auto_import_podataka_konto( cAImpRKonto )
-
-      O_PARAMS
-
-      PRIVATE cSection := "7"
-      PRIVATE cHistory := " "
-      PRIVATE aHistory := {}
-
-      WPar( "ap", gAImpPrint )
-      // WPar( "ar", gAImpRight )
-
-      SELECT params
-      USE
-
-   ENDIF
-
-   RETURN .T.
-
-
-
 FUNCTION kalk_auto_import_racuni()
 
    // LOCAL cCtrl_art := "N"
@@ -136,7 +71,7 @@ FUNCTION kalk_auto_import_racuni()
 
    cExpPath := get_liste_za_import_path()
 
-   cFFilt := GetImpFilter() // filter za import MP ili VP
+   cFFilt := kalk_get_vp_ili_mp() // filter za import MP ili VP
 
    // IF prag_odstupanja_nc_sumnjiv() > 0 .AND. Pitanje(, "Ispusti artikle sa sumnjivom NC (D/N)",  "N" ) == "D"
    // cCtrl_art := "D"
@@ -147,7 +82,8 @@ FUNCTION kalk_auto_import_racuni()
       RETURN .F.
    ENDIF
 
-   IF CheckFile( cImpFile ) == 0 // provjeri da li je fajl za import prazan
+
+   IF fajl_get_broj_linija( cTxtFile ) == 0 // provjeri da li je fajl za import prazan
       MsgBeep( "Odabrani fajl je prazan!#Prekidam operaciju !" )
       RETURN .F.
    ENDIF
@@ -182,7 +118,7 @@ FUNCTION kalk_auto_import_racuni()
    ENDIF
 
 
-   IF from_kalk_imp_temp_to_pript( aFaktEx, lFtSkip, lNegative ) == 0  // , cCtrl_art ) == 0
+   IF kalk_imp_from_temp_to_pript( aFaktEx, lFtSkip, lNegative ) == 0  // , cCtrl_art ) == 0
       MsgBeep( "Operacija prekinuta!" )
       RETURN .F.
    ENDIF
@@ -203,7 +139,7 @@ FUNCTION kalk_auto_import_racuni()
  *     Vraca filter za naziv dokumenta u zavisnosti sta je odabrano VP ili MP
  */
 
-STATIC FUNCTION GetImpFilter()
+STATIC FUNCTION kalk_get_vp_ili_mp()
 
    LOCAL cVPMP := "V", cRet
 
@@ -220,7 +156,6 @@ STATIC FUNCTION GetImpFilter()
 
    cRet := "R*.R??" // filter za veleprodaju
 
-
    DO CASE
    CASE cVPMP == "M" // maloprodaja
       cRet := "M*.M??"
@@ -229,57 +164,6 @@ STATIC FUNCTION GetImpFilter()
    ENDCASE
 
    RETURN cRet
-
-
-
-
-/*
- *   Setovanje pravila upisa zapisa u temp tabelu
- *   param: aRule - matrica pravila
- */
-
-STATIC FUNCTION kalk_imp_set_rule_dok( aRule )
-
-   // 1- idfirma
-   AAdd( aRule, { "SUBSTR(cVar, 1, 2)" } )
-   // 2-idtipdok
-   AAdd( aRule, { "SUBSTR(cVar, 4, 2)" } )
-   // 3-brdok
-   AAdd( aRule, { "SUBSTR(cVar, 7, 8)" } )
-   // 4-datdok
-   AAdd( aRule, { "CTOD(SUBSTR(cVar, 16, 10))" } )
-   // 5-idpartner
-   AAdd( aRule, { "SUBSTR(cVar, 27, 6)" } )
-   // 6-id pm
-   AAdd( aRule, { "SUBSTR(cVar, 34, 3)" } )
-   // 7-dindem
-   AAdd( aRule, { "SUBSTR(cVar, 38, 3)" } )
-   // 8-zaokr
-   AAdd( aRule, { "VAL(SUBSTR(cVar, 42, 1))" } )
-   // 9-rbr
-   AAdd( aRule, { "STR(VAL(SUBSTR(cVar, 44, 3)),3)" } )
-   // 10-idroba
-   AAdd( aRule, { "ALLTRIM(SUBSTR(cVar, 48, 5))" } )
-   // 11-kolicina
-   AAdd( aRule, { "VAL(SUBSTR(cVar, 54, 16))" } )
-   // 12-cijena
-   AAdd( aRule, { "VAL(SUBSTR(cVar, 71, 16))" } )
-   // 13-rabat
-   AAdd( aRule, { "VAL(SUBSTR(cVar, 88, 14))" } )
-   // 14-porez
-   AAdd( aRule, { "VAL(SUBSTR(cVar, 103, 14))" } )
-   // 15-procenat rabata
-   AAdd( aRule, { "VAL(SUBSTR(cVar, 118, 14))" } )
-   // 16-datum valute
-   AAdd( aRule, { "CTOD(SUBSTR(cVar, 133, 10))" } )
-   // 17-obracunska kolicina
-   AAdd( aRule, { "VAL(SUBSTR(cVar, 144, 16))" } )
-   // 18-poslovna jedinica "kod"
-   AAdd( aRule, { "SUBSTR(cVar, 161, 3)" } )
-
-   RETURN .T.
-
-
 
 
 
@@ -359,80 +243,535 @@ FUNCTION kalk_imp_txt_to_temp( aDbf, aRules, cTxtFile )
 
 
 /*
- *     Provjerava da li je fajl prazan
- *   param: cTxtFile - txt fajl
- */
-FUNCTION CheckFile( cTxtFile )
+*  kopira podatke iz pomocne tabele u tabelu KALK->PRIPT
+*  - aFExist matrica sa postojecim fakturama
+*  - lFSkip preskaci postojece fakture
+*  - lNegative - prvo prebaci negativne fakture
+* - cCtrl_art - preskoci sporne artikle NC u hendeku ! na osnovu CACHE tabele
+*/
 
-   RETURN BrLinFajla( cTxtFile )
+STATIC FUNCTION kalk_imp_from_temp_to_pript( aFExist, lFSkip, lNegative )// , cCtrl_art )
 
-
-
-STATIC FUNCTION cre_kalk_imp_temp( aDbf )
-
-   LOCAL cTmpTbl := "kalk_imp_temp"
-
-   IF File( f18_ime_dbf( cTmpTbl ) ) .AND. FErase( f18_ime_dbf( cTmpTbl ) ) == -1
-      MsgBeep( "Ne mogu izbrisati kalk_imp_temp.dbf !" )
-
-   ENDIF
-
-   DbCreate2( cTmpTbl, aDbf )
-
-
-   IF aDbf[ 1, 1 ] == "idpartner" // provjeri jesu li partneri ili dokumenti ili je roba
-
-      create_index( "1", "idpartner", cTmpTbl ) // partner
-
-   ELSEIF aDbf[ 1, 1 ] == "idpm"
-
-      create_index( "1", "sifradob", cTmpTbl ) // roba
-   ELSE
-
-      create_index( "1", "idfirma+idtipdok+brdok+rbr", cTmpTbl ) // dokumenti
-      create_index( "2", "dtype+idfirma+idtipdok+brdok+rbr", cTmpTbl )
-   ENDIF
-
-   RETURN .T.
-
-
-
-FUNCTION cre_kalk_priprt()
-
-   // LOCAL cKalkPript := "kalk_pript"
-
-   my_close_all_dbf()
-
-/*
-   FErase( my_home() + cKalkPript + ".dbf" )
-   FErase( my_home() + cKalkPript + ".cdx" )
+   LOCAL cBrojKalk
+   LOCAL cTipDok
+   LOCAL cIdKonto
+   LOCAL cIdKonto2
+   LOCAL cIdPJ
+   LOCAL aArr_ctrl := {}
+   LOCAL cIdKontoZaduzuje, cIdKontoRazduzuje
+   LOCAL nRbr, nUvecaj, nCnt, cPredhodniFaktDokument, cPredhodniTipDokumenta, cPredhodnoProdMjesto, aPom
+   LOCAL cFakt, cTDok, cIdProdajnoMjesto
+   LOCAL nFExist, nT_scan, cTmpArt
+   LOCAL cIdKontoTmp, cSifraDobavljaca, cIdRobaTmp
 
    o_kalk_pripr()
+   o_koncij()
 
-   // napravi pript sa strukturom tabele kalk_pripr
-   COPY STRUCTURE EXTENDED to ( my_home() + "struct" )
-   CREATE ( my_home() + cKalkPript ) from ( my_home() + "struct" )
 
-   USE
-
-   SELECT ( F_PRIPT )
-   my_use_temp( "PRIPT", my_home() + cKalkPript, .F., .T. )
-
-   INDEX on ( idfirma + idvd + brdok ) TAG "1"
-   INDEX on ( idfirma + idvd + brdok + idroba ) TAG "2"
-
-   USE
-*/
+   O_ROBA
    o_kalk_pript()
-   my_dbf_zap()
+
+   SELECT kalk_imp_temp
+
+   IF lNegative == nil
+      lNegative := .F.
+   ENDIF
+
+   IF lNegative == .T.
+      SET ORDER TO TAG "2"
+   ELSE
+      SET ORDER TO TAG "1"
+   ENDIF
+
+   GO TOP
+
+   nRbr := 0
+   nUvecaj := 0
+   nCnt := 0
+
+   cPredhodniFaktDokument := "XXXXXX"
+   cPredhodniTipDokumenta := "XX"
+   cPredhodnoProdMjesto := "XXX"
+   aPom := {}
+
+   MsgO( "tmp -> pript ..." )
+   DO WHILE !Eof()
+
+      cFakt := AllTrim( kalk_imp_temp->brdok )
+      cTDok := get_kalk_tip_by_vind_fakt_tip( AllTrim( kalk_imp_temp->idtipdok ), kalk_imp_temp->idpm )
+      cIdProdajnoMjesto := kalk_imp_temp->idpm
+      cIdPJ := kalk_imp_temp->idpj
+
+   /*
+         IF cCtrl_art == "D"   // pregledaj CACHE, da li treba preskociti ovaj artikal
+
+            nT_scan := 0
+
+            cIdKontoTmp := kalk_imp_get_konto_by_tip_pm_poslovnica( cTDok, kalk_imp_temp->idpm, "R", cIdPJ )
+
+            SELECT roba
+            SET ORDER TO TAG "ID_VSD"
+            cSifraDobavljaca := PadL( AllTrim( kalk_imp_temp->idroba ), 5, "0" )
+
+            SEEK cSifraDobavljaca // aha trazi se po sifri dobavljaca 52 => 00052
+            cIdRobaTmp := field->id
+
+            O_CACHE
+            SELECT cache
+            SET ORDER TO TAG "1"
+            GO TOP
+            SEEK PadR( cIdKontoTmp, 7 ) + PadR( cIdRobaTmp, 10 )
+
+
+            IF Found() .AND. prag_odstupanja_nc_sumnjiv() > 0 .AND. ( field->odst > prag_odstupanja_nc_sumnjiv() ) // dodaj sporne u kontrolnu matricu
+
+               nT_scan := AScan( aArr_ctrl, ;
+                  {| xVal| xVal[ 1 ] + PadR( xVal[ 2 ], 10 ) == cTDok + PadR( AllTrim( cFakt ), 10 ) } )
+
+               IF nT_scan = 0
+                  AAdd( aArr_ctrl, { cTDok, PadR( AllTrim( cFakt ), 10 ) } )
+               ENDIF
+
+            ENDIF
+
+            SELECT kalk_imp_temp
+         ENDIF
+   */
+
+      IF lFSkip // ako je ukljucena opcija preskakanja postojecih faktura
+         IF Len( aFExist ) > 0
+            nFExist := AScan( aFExist, {| aVal| AllTrim( aVal[ 1 ] ) == cFakt } )
+            IF nFExist > 0
+               SELECT kalk_imp_temp  // prekoci onda ovaj zapis i idi dalje
+               SKIP
+               LOOP
+            ENDIF
+         ENDIF
+      ENDIF
+
+
+      // IF cTDok <> cPredhodniTipDokumenta // promjena tipa dokumenta
+      // nUvecaj := 0
+      // ENDIF
+
+      IF ( cFakt <> cPredhodniFaktDokument ) // .OR. (cTDok == "11" .AND. (cIdProdajnoMjesto <> cPredhodnoProdMjesto) )
+         ++ nUvecaj
+         cBrojKalk := kalk_imp_get_next_temp_broj( nUvecaj )
+         nRbr := 0
+         AAdd( aPom, { cTDok, cBrojKalk, cFakt } )
+      ENDIF
+
+
+      SELECT roba   // pronadji robu
+      SET ORDER TO TAG "ID_VSD"
+      cTmpArt := PadL( AllTrim( kalk_imp_temp->idroba ), 5, "0" )
+      GO TOP
+      SEEK cTmpArt
+
+      AltD()
+      cIdKontoZaduzuje := kalk_imp_get_konto_by_tip_pm_poslovnica( cTDok, kalk_imp_temp->idpm, "Z", cIdPJ )
+      cIdKontoRazduzuje := kalk_imp_get_konto_by_tip_pm_poslovnica( cTDok, kalk_imp_temp->idpm, "R", cIdPJ )
+
+      SELECT koncij // pozicionirati se na konto zaduzuje
+      SET ORDER TO TAG "ID"
+      GO TOP
+      SEEK cIdKontoZaduzuje
+
+
+      select_o_kalk_pript()
+
+      APPEND BLANK // pript
+      REPLACE idfirma WITH gFirma, ;
+         rBr WITH Str( ++nRbr, 3 ), ;
+         idvd WITH cTDok, ;
+         brdok WITH cBrojKalk, ;
+         datdok WITH kalk_imp_temp->datdok, ;
+         idpartner WITH kalk_imp_temp->idpartner, ;
+         idtarifa WITH ROBA->idtarifa, ;
+         brfaktp WITH cFakt, ;
+         datfaktp WITH kalk_imp_temp->datdok, ;
+         datval WITH kalk_imp_temp->datval
+
+
+      REPLACE idkonto WITH cIdKontoZaduzuje // konto zaduzuje
+      REPLACE idkonto2 WITH cIdKontoRazduzuje // konto razduzuje
+      REPLACE idzaduz2 WITH ""
+
+
+      IF cTDok $ "11#41" // spec.za tip dok 11
+
+         REPLACE tmarza2 WITH "A"
+         REPLACE tprevoz WITH "A"
+
+         IF cTDok == "11"
+            REPLACE pkonto WITH cIdKontoZaduzuje, ;
+               mkonto WITH cIdKontoRazduzuje, ;
+               mpcsapp WITH kalk_get_mpc_by_koncij_pravilo( cIdKontoZaduzuje )
+         ELSE
+            REPLACE mpcsapp WITH kalk_imp_temp->cijena
+         ENDIF
+
+      ENDIF
+
+      REPLACE kolicina WITH kalk_imp_temp->kolicina
+      REPLACE idroba WITH roba->id
+      REPLACE nc WITH ROBA->nc
+
+      REPLACE vpc WITH kalk_imp_temp->cijena
+      REPLACE rabatv WITH kalk_imp_temp->rabatp
+
+      REPLACE mpc WITH kalk_imp_temp->porez
+
+      cPredhodniFaktDokument := cFakt
+      cPredhodniTipDokumenta := cTDok
+      cPredhodnoProdMjesto := cIdProdajnoMjesto
+
+      ++ nCnt
+      SELECT kalk_imp_temp
+      SKIP
+
+   ENDDO
+   MsgC()
+
+   IF nCnt > 0 // izvjestaj o prebacenim dokumentima
+
+      ASort( aPom,,, {| x, y| x[ 1 ] + "-" + x[ 2 ] < y[ 1 ] + "-" + y[ 2 ] } )
+
+      START PRINT EDITOR
+      ? "========================================"
+      ? "Generisani sljedeci dokumenti:          "
+      ? "========================================"
+      ? "Dokument     * Sporna NC"
+      ? "----------------------------------------"
+
+      FOR i := 1 TO Len( aPom )
+
+         cT_tipdok := aPom[ i, 1 ]
+         cT_brdok := aPom[ i, 2 ]
+         cT_brfakt := aPom[ i, 3 ]
+         cT_ctrl := ""
+
+   /*
+            IF cCtrl_art == "D" .AND. Len( aArr_ctrl ) > 0
+               nT_scan := AScan( aArr_ctrl, {| xVal| xVal[ 1 ] + PadR( xVal[ 2 ], 10 ) == cT_tipdok + PadR( cT_brfakt, 10 ) } )
+
+               IF nT_scan <> 0
+                  cT_ctrl := " !!! ERROR !!!"
+               ENDIF
+            ENDIF
+   */
+         ? cT_tipdok + " - " + cT_brdok, cT_ctrl
+
+      NEXT
+
+      ?
+      FF
+      ENDPRINT
+
+   ENDIF
+
+   /*
+      IF cCtrl_art == "D" .AND. Len( aArr_ctrl ) > 0
+
+         START PRINT EDITOR
+
+         ?
+         ? "Ispusteni dokumenti:"
+         ? "------------------------------------"
+
+         FOR xy := 1 TO Len( aArr_ctrl )
+            ? aArr_ctrl[ xy, 1 ] + "-" + aArr_ctrl[ xy, 2 ]
+         NEXT
+
+         FF
+         ENDPRINT
+
+      ENDIF
+   */
+
+   /*
+      IF cCtrl_art == "D" .AND. Len( aArr_ctrl ) > 0 // pobrisi ispustene dokumente
+
+         nT_scan := 0
+
+         SELECT pript
+         SET ORDER TO TAG "0"
+         GO TOP
+
+         DO WHILE !Eof()
+
+            nT_scan := AScan( aArr_ctrl, {| xval| xval[ 1 ] + PadR( xval[ 2 ], 10 ) == field->idvd + PadR( field->brfaktp, 10 ) } )
+
+            IF nT_scan <> 0
+               DELETE
+            ENDIF
+
+            SKIP
+         ENDDO
+
+      ENDIF
+   */
+
+   RETURN 1
+
+
+
+/*
+ *     Obrada importovanih dokumenata pript -> pripr
+ *     ( funkcija se koristi i za prenos kalk -> kalk)
+ *     lOstaviBrdok - kalk_imprort sa udaljene lokacije koristi brojeve
+ */
+
+FUNCTION kalk_imp_obradi_sve_dokumente_iz_pript( nPocniOd, lStampaj, lOstaviBrdok )
+
+   LOCAL dDatVal
+   LOCAL cNoviKalkBrDok := ""
+   LOCAL nUvecaj := 0
+   LOCAL cMKonto, cPKonto
+   LOCAL nTekucaWA, nStCnt, cBBTipDok
+   LOCAL nPTRec, nPCRec, cBRdok, cFirma, cIdVd
+   LOCAL hRec
+
+   o_kalk_pripr()
+   o_kalk_pript()
+
+   automatska_obrada_error( .F. )
+
+   IF lStampaj == nil
+      lStampaj := .T.
+   ENDIF
+
+   IF nPocniOd == nil
+      nPocniOd := 0
+   ENDIF
+
+   hb_default( @lOstaviBrdok, .F. ) // ostavi broj dokumenta koji se nalazi u pript
+
+   // IF Pitanje(, "Automatski asistent i ažuriranje naloga (D/N)?", "D" ) == "D"
+   // s_lAutom := .T.
+   // ENDIF
+
+
+   SELECT pript // iz kalk_pript prebaci u kalk_pripr jednu po jednu kalkulaciju
+   SET ORDER TO TAG "1"
+
+   IF nPocniOd == 0
+      GO TOP
+   ELSE
+      GO nPocniOd
+   ENDIF
+
+
+   cBBTipDok := Space( 30 ) // uzmi parametre koje ces dokumente prenositi
+   Box(, 3, 70 )
+   @ 1 + m_x, 2 + m_y SAY "Prenos sljedecih tipova dokumenata ( kalk pript -> pripr) :"
+   @ 3 + m_x, 2 + m_y SAY "Tip dokumenta (prazno-svi):" GET cBBTipDok PICT "@S25"
+   READ
+   BoxC()
+
+   IF !Empty( cBBTipDok )
+      cBBTipDok := AllTrim( cBBTipDok )
+   ENDIF
+
+   // SetKey(K_F3,{|| kalk_imp_set_check_point(nPTRec)})
+
+   Box(, 10, 79 )
+   @ 1 + m_x, 2 + m_y SAY8 "Obrada dokumenata iz pomoćne tabele:" COLOR f18_color_i()
+   @ 2 + m_x, 2 + m_y SAY8 "======================================="
+
+   DO WHILE !Eof()
+
+      nPTRec := RecNo()
+      nPCRec := nPTRec
+      cBrDok := field->brdok
+      cFirma := field->idfirma
+      cIdVd  := field->idvd
+      cPKonto := field->pkonto
+      cMKonto := field->mkonto
+
+      IF !Empty( cBBTipDok ) .AND. !( cIdVd $ cBBTipDok )
+         SKIP
+         LOOP
+      ENDIF
+
+      nTekucaWA := Select()
+
+      IF lOstaviBrdok
+         cNoviKalkBrDok := cBrDok
+         IF !kalk_broj_ima_sufiks( cBrDok )
+            MsgBeep( "kalk_import - pript, brojevi dokumenata moraju imati sufiks !## STOP!" )
+            RETURN .F.
+         ENDIF
+      ELSE
+         cNoviKalkBrDok := kalk_get_next_broj_v5( cFirma, cIdVd, kalk_konto_za_brojac( cIdVd, cMKonto, cPKonto ) )  // daj konacni novi broj dokumenta kalk
+      ENDIF
+
+      SELECT ( nTekucaWA )
+
+      @ 3 + m_x, 2 + m_y SAY "KALK IMP Prebacujem: " + cFirma + "-" + cIdVd + "-" + cBrDok + " /"  + cNoviKalkBrDok
+
+      nStCnt := 0
+      DO WHILE !Eof() .AND. field->brdok == cBrDok .AND. field->idfirma == cFirma .AND. field->idvd == cIdVd
+
+
+         SELECT kalk_pripr // jedan po jedan row azuriraj u kalk_pripr
+         APPEND BLANK
+         // Scatter()
+
+
+         SELECT pript
+         dDatVal := pript->datval
+         // Scatter()
+         hRec := dbf_get_rec()
+
+         SELECT kalk_pripr
+         hRec[ "brdok" ] := cNoviKalkBrDok
+         dbf_update_rec( hRec )
+
+         IF hRec[ "idvd" ] == "14"
+            update_kalk_14_datval( cNoviKalkBrDok, dDatVal )
+         ENDIF
+
+         SELECT pript
+         SKIP
+         ++ nStCnt
+
+         nPTRec := RecNo()
+
+         @ 5 + m_x, 13 + m_y SAY Space( 5 )
+         @ 5 + m_x, 2 + m_y SAY "Broj stavki:" + AllTrim( Str( nStCnt ) )
+      ENDDO
+
+
+      // IF s_lAutom // nakon sto smo prebacili dokument u kalk_pripremu oznaciti dokle smo stigli
+
+      IF automatska_obrada_error()
+         MsgBeep( "prekid operacije importa - greške u automatskoj obradi!" )
+         BoxC()
+         RETURN .F.
+      ENDIF
+
+      kalk_imp_set_check_point( nPCRec ) // snimi zapis u params da znas dokle si dosao
+      IF kalk_imp_obradi_dokument_u_pripremi( cIdVd, lStampaj )
+         kalk_imp_set_check_point( nPTRec )
+      ELSE
+         MsgBeep( "prekid operacije importa !" )
+         BoxC()
+         RETURN .F.
+      ENDIF
+      o_kalk_pript()
+      // ENDIF
+
+      SELECT pript
+      GO nPTRec
+
+   ENDDO
+
+   BoxC()
+
+   IF automatska_obrada_error()
+      RETURN .F.
+   ENDIF
 
    RETURN .T.
 
 
 
-/* kalk_imp_check_broj_fakture_exist()
+   /*
+    *  Obrada jednog dokumenta
+    *  param cIdVd - id vrsta dokumenta
+    */
+
+STATIC FUNCTION kalk_imp_obradi_dokument_u_pripremi( cIdVd, lStampaj )
+
+   LOCAL nRslt, lPrvi := .T.
+
+   IF lStampaj == nil
+      lStampaj := .T.
+   ENDIF
+
+
+   // kalk_pripr_obrada_stavki_sa_asistentom()
+
+   // IF lStampaj == .T.
+   // kalk_stampa_dokumenta( nil, nil, .T. ) // odstampaj kalk
+   // ENDIF
+   // kalk_azuriranje_dokumenta( .T. ) // azuriraj kalk
+   // o_kalk_edit()
+
+   kalk_asistent_pause( .F. )
+
+
+   DO WHILE (  ( nRslt := provjeri_stanje_kalk_pripreme( cIdVd ) ) <> 0 )
+
+
+      IF lPrvi .OR. ( nRslt == 1 ) // vezni dokument u kalk_pripremi je ok
+
+         IF !kalk_pripr_auto_obrada_i_azuriranje( lStampaj )
+            RETURN .F.
+         ENDIF
+
+      ENDIF
+
+      IF lPrvi
+         lPrvi := .F.
+         LOOP
+      ENDIF
+
+      IF  nRslt >= 2 // vezni dokument u pripremi ne pripada azuriranom dokumentu, sta sa njim
+
+         error_bar( "kalk_auto_imp", "postoji dokument u pripremi koji je sumnjiv" )
+
+         MsgBeep( "Postoji dokument u kalk_pripremi koji je sumljiv!#Radi se o veznom dokumentu ili nekoj drugoj gresci...#Obradite ovaj dokument i autoimport ce nastaviti dalje sa radom !" )
+         IF LastKey() == K_ESC
+            IF Pitanje(, "Prekid operacije?", "N" ) == "D"
+               RETURN .F.
+            ENDIF
+         ENDIF
+         kalk_pripr_obrada()
+         o_kalk_edit()
+
+      ENDIF
+
+
+   ENDDO
+
+   RETURN .T.
+
+
+
+FUNCTION kalk_pripr_auto_obrada_i_azuriranje( lStampaj )
+
+   hb_default( @lStampaj, .F. )
+
+   kalk_pripr_obrada_stavki_sa_asistentom()
+   IF automatska_obrada_error() .AND. Pitanje( , "Automatska obrada greške, prekid obrade ?", "D" ) == "D"
+      RETURN .F.
+   ELSE
+      automatska_obrada_error( .F. ) // ako se trazi nastavak, onda stavi prekid
+   ENDIF
+
+   IF kalk_asistent_pause() .AND. Pitanje( , "Asistent pauza, Prekid obrade ?", "N" ) == "D"
+      RETURN .F.
+   ENDIF
+
+   IF lStampaj == .T.
+      kalk_stampa_dokumenta( nil, nil, .T. )
+   ENDIF
+   kalk_azuriranje_dokumenta( .T., lStampaj )
+   o_kalk_edit()
+
+   RETURN .T.
+
+
+
+// == SEKCIJA ====================== provjere - validacije =========================================
+
+
+/*
  *     Provjeri da li postoji broj fakture u azuriranim dokumentima
  */
+
 STATIC FUNCTION kalk_imp_check_broj_fakture_exist( aFakt )
 
    LOCAL i
@@ -474,6 +813,7 @@ STATIC FUNCTION kalk_imp_check_broj_fakture_exist( aFakt )
 /*
  *     Provjera da li postoje sve sifre u sifarnicima za dokumente
  */
+
 STATIC FUNCTION kalk_imp_check_partn_roba_exist()
 
    LOCAL lSifDob := .T.
@@ -551,11 +891,11 @@ FUNCTION kalk_imp_partn_exist( lPartNaz )
    RETURN aRet
 
 
-// -------------------------------------------------------------
-// Provjera da li postoje sifre artikla u sifraniku
-//
-// lSifraDob - pretraga po sifri dobavljaca
-// -------------------------------------------------------------
+/*
+ Provjera da li postoje sifre artikla u sifraniku
+ lSifraDob - pretraga po sifri dobavljaca
+*/
+
 FUNCTION kalk_imp_roba_exist( lSifraDob )
 
    IF lSifraDob == nil
@@ -607,8 +947,94 @@ FUNCTION kalk_imp_roba_exist( lSifraDob )
    RETURN aRet
 
 
+/*
+ *   vraca matricu sa parovima faktura -> pojavljuje se u azur.kalk
+ */
+STATIC FUNCTION kalk_postoji_faktura_a()
+
+   LOCAL cBrFakt
+   LOCAL cTDok
+   LOCAL aRet, cDok, cBrOriginal
+
+   // IF nRight == nil
+   // nRight := 0
+   // ENDIF
+
+   // o_kalk_doks()
+
+   SELECT kalk_imp_temp
+   GO TOP
+
+   aRet := {}
+   cDok := "XXXXXX"
+
+   DO WHILE !Eof()
+
+      cBrFakt := AllTrim( kalk_imp_temp->brdok )
+      cBrOriginal := cBrFakt
+
+      // IF nRight > 0
+      // cBrFakt := PadR( cBrFakt, Len( cBrFakt ) - nRight )
+      // ENDIF
+
+      cTDok := get_kalk_tip_by_vind_fakt_tip( AllTrim( kalk_imp_temp->idtipdok ), kalk_imp_temp->idpm )
+
+      IF cBrFakt == cDok
+         SKIP
+         LOOP
+      ENDIF
+
+/*
+      SELECT kalk_doks
+
+      IF nRight > 0
+         SET ORDER TO TAG "V_BRF2"
+      ELSE
+         SET ORDER TO TAG "V_BRF"
+      ENDIF
+
+      GO TOP
+
+      IF nRight > 0
+         SEEK cTDok + cBrFakt
+      ELSE
+         SEEK PadR( cBrFakt, 10 ) + cTDok
+      ENDIF
+*/
+
+      // IF Found()
+      IF find_kalk_doks_by_broj_fakture( cTDok,  PadR( cBrFakt, 10 ) )
+         AAdd( aRet, { cBrOriginal, kalk_doks->idfirma + "-" + kalk_doks->idvd + "-" + AllTrim( kalk_doks->brdok ) } )
+      ENDIF
+
+      SELECT kalk_imp_temp
+      SKIP
+
+      cDok := cBrFakt
+
+   ENDDO
+
+   RETURN aRet
 
 
+
+
+
+
+
+FUNCTION kalk_imp_get_next_temp_broj( nUvecaj )
+
+   LOCAL nX := 1, cResult := "00001   "
+
+   FOR nX := 1 TO nUvecaj
+      cResult := PadR( novasifra( AllTrim( cResult ) ), 5 ) + Right( cResult, 3 )
+   NEXT
+
+   RETURN cResult
+
+
+
+// =================== veze =====================================================
 
 
 /*
@@ -735,6 +1161,7 @@ STATIC FUNCTION  kalk_imp_set_konto_zaduz_prodavnica_za_prod_mjesto( cPoslovnica
 
    RETURN .T.
 
+
 /* -----------------------------------------------------------
 
 Vraca konto za odredjeni tipdokumenta
@@ -755,6 +1182,7 @@ cTipDok - tip dokumenta
  kalk_imp_050_14_R = 1200   // kalk 14 kto razduzuje
 
 */
+
 STATIC FUNCTION kalk_imp_get_konto_za_tip_dokumenta_poslovnica( cTipDok, cZadRazd, cPoslovnica )
 
    LOCAL cRet := fetch_metric( "kalk_imp_" + cPoslovnica + "_" + cTipDok + "_" + cZadRazd, NIL,  "XXXX" )
@@ -887,364 +1315,7 @@ STATIC FUNCTION set_kalk_imp_parametri_za_poslovnica( cPoslovnica )
 
 
 /*
- *     vraca matricu sa parovima faktura -> pojavljuje se u azur.kalk
- */
-
-STATIC FUNCTION kalk_postoji_faktura_a()
-
-   LOCAL cBrFakt
-   LOCAL cTDok
-   LOCAL aRet, cDok, cBrOriginal
-
-   // IF nRight == nil
-   // nRight := 0
-   // ENDIF
-
-   // o_kalk_doks()
-
-   SELECT kalk_imp_temp
-   GO TOP
-
-   aRet := {}
-   cDok := "XXXXXX"
-
-   DO WHILE !Eof()
-
-      cBrFakt := AllTrim( kalk_imp_temp->brdok )
-      cBrOriginal := cBrFakt
-
-      // IF nRight > 0
-      // cBrFakt := PadR( cBrFakt, Len( cBrFakt ) - nRight )
-      // ENDIF
-
-      cTDok := get_kalk_tip_by_vind_fakt_tip( AllTrim( kalk_imp_temp->idtipdok ), kalk_imp_temp->idpm )
-
-      IF cBrFakt == cDok
-         SKIP
-         LOOP
-      ENDIF
-
-/*
-      SELECT kalk_doks
-
-      IF nRight > 0
-         SET ORDER TO TAG "V_BRF2"
-      ELSE
-         SET ORDER TO TAG "V_BRF"
-      ENDIF
-
-      GO TOP
-
-      IF nRight > 0
-         SEEK cTDok + cBrFakt
-      ELSE
-         SEEK PadR( cBrFakt, 10 ) + cTDok
-      ENDIF
-*/
-
-      // IF Found()
-      IF find_kalk_doks_by_broj_fakture( cTDok,  PadR( cBrFakt, 10 ) )
-         AAdd( aRet, { cBrOriginal, kalk_doks->idfirma + "-" + kalk_doks->idvd + "-" + AllTrim( kalk_doks->brdok ) } )
-      ENDIF
-
-      SELECT kalk_imp_temp
-      SKIP
-
-      cDok := cBrFakt
-
-   ENDDO
-
-   RETURN aRet
-
-
-/*
- *  kopira podatke iz pomocne tabele u tabelu KALK->PRIPT
-
- *  - aFExist matrica sa postojecim fakturama
- *  - lFSkip preskaci postojece fakture
- *  - lNegative - prvo prebaci negativne fakture
- * - cCtrl_art - preskoci sporne artikle NC u hendeku ! na osnovu CACHE tabele
- */
-
-STATIC FUNCTION from_kalk_imp_temp_to_pript( aFExist, lFSkip, lNegative )// , cCtrl_art )
-
-   LOCAL cBrojKalk
-   LOCAL cTipDok
-   LOCAL cIdKonto
-   LOCAL cIdKonto2
-   LOCAL cIdPJ
-   LOCAL aArr_ctrl := {}
-   LOCAL cIdKontoZaduzuje, cIdKontoRazduzuje
-   LOCAL nRbr, nUvecaj, nCnt, cPredhodniFaktDokument, cPredhodniTipDokumenta, cPredhodnoProdMjesto, aPom
-   LOCAL cFakt, cTDok, cIdProdajnoMjesto
-   LOCAL nFExist, nT_scan, cTmpArt
-   LOCAL cIdKontoTmp, cSifraDobavljaca, cIdRobaTmp
-
-   o_kalk_pripr()
-   o_koncij()
-
-
-   O_ROBA
-   o_kalk_pript()
-
-   SELECT kalk_imp_temp
-
-   IF lNegative == nil
-      lNegative := .F.
-   ENDIF
-
-   IF lNegative == .T.
-      SET ORDER TO TAG "2"
-   ELSE
-      SET ORDER TO TAG "1"
-   ENDIF
-
-   GO TOP
-
-   nRbr := 0
-   nUvecaj := 0
-   nCnt := 0
-
-   cPredhodniFaktDokument := "XXXXXX"
-   cPredhodniTipDokumenta := "XX"
-   cPredhodnoProdMjesto := "XXX"
-   aPom := {}
-
-   MsgO( "tmp -> pript ..." )
-   DO WHILE !Eof()
-
-      cFakt := AllTrim( kalk_imp_temp->brdok )
-      cTDok := get_kalk_tip_by_vind_fakt_tip( AllTrim( kalk_imp_temp->idtipdok ), kalk_imp_temp->idpm )
-      cIdProdajnoMjesto := kalk_imp_temp->idpm
-      cIdPJ := kalk_imp_temp->idpj
-
-/*
-      IF cCtrl_art == "D"   // pregledaj CACHE, da li treba preskociti ovaj artikal
-
-         nT_scan := 0
-
-         cIdKontoTmp := kalk_imp_get_konto_by_tip_pm_poslovnica( cTDok, kalk_imp_temp->idpm, "R", cIdPJ )
-
-         SELECT roba
-         SET ORDER TO TAG "ID_VSD"
-         cSifraDobavljaca := PadL( AllTrim( kalk_imp_temp->idroba ), 5, "0" )
-
-         SEEK cSifraDobavljaca // aha trazi se po sifri dobavljaca 52 => 00052
-         cIdRobaTmp := field->id
-
-         O_CACHE
-         SELECT cache
-         SET ORDER TO TAG "1"
-         GO TOP
-         SEEK PadR( cIdKontoTmp, 7 ) + PadR( cIdRobaTmp, 10 )
-
-
-         IF Found() .AND. prag_odstupanja_nc_sumnjiv() > 0 .AND. ( field->odst > prag_odstupanja_nc_sumnjiv() ) // dodaj sporne u kontrolnu matricu
-
-            nT_scan := AScan( aArr_ctrl, ;
-               {| xVal| xVal[ 1 ] + PadR( xVal[ 2 ], 10 ) == cTDok + PadR( AllTrim( cFakt ), 10 ) } )
-
-            IF nT_scan = 0
-               AAdd( aArr_ctrl, { cTDok, PadR( AllTrim( cFakt ), 10 ) } )
-            ENDIF
-
-         ENDIF
-
-         SELECT kalk_imp_temp
-      ENDIF
-*/
-
-      IF lFSkip // ako je ukljucena opcija preskakanja postojecih faktura
-         IF Len( aFExist ) > 0
-            nFExist := AScan( aFExist, {| aVal| AllTrim( aVal[ 1 ] ) == cFakt } )
-            IF nFExist > 0
-               SELECT kalk_imp_temp  // prekoci onda ovaj zapis i idi dalje
-               SKIP
-               LOOP
-            ENDIF
-         ENDIF
-      ENDIF
-
-
-      // IF cTDok <> cPredhodniTipDokumenta // promjena tipa dokumenta
-      // nUvecaj := 0
-      // ENDIF
-
-      IF ( cFakt <> cPredhodniFaktDokument ) // .OR. (cTDok == "11" .AND. (cIdProdajnoMjesto <> cPredhodnoProdMjesto) )
-         ++ nUvecaj
-         cBrojKalk := kalk_imp_get_next_temp_broj( nUvecaj )
-         nRbr := 0
-         AAdd( aPom, { cTDok, cBrojKalk, cFakt } )
-      ENDIF
-
-
-      SELECT roba   // pronadji robu
-      SET ORDER TO TAG "ID_VSD"
-      cTmpArt := PadL( AllTrim( kalk_imp_temp->idroba ), 5, "0" )
-      GO TOP
-      SEEK cTmpArt
-
-      AltD()
-      cIdKontoZaduzuje := kalk_imp_get_konto_by_tip_pm_poslovnica( cTDok, kalk_imp_temp->idpm, "Z", cIdPJ )
-      cIdKontoRazduzuje := kalk_imp_get_konto_by_tip_pm_poslovnica( cTDok, kalk_imp_temp->idpm, "R", cIdPJ )
-
-      SELECT koncij // pozicionirati se na konto zaduzuje
-      SET ORDER TO TAG "ID"
-      GO TOP
-      SEEK cIdKontoZaduzuje
-
-
-      select_o_kalk_pript()
-
-      APPEND BLANK // pript
-      REPLACE idfirma WITH gFirma, ;
-         rBr WITH Str( ++nRbr, 3 ), ;
-         idvd WITH cTDok, ;
-         brdok WITH cBrojKalk, ;
-         datdok WITH kalk_imp_temp->datdok, ;
-         idpartner WITH kalk_imp_temp->idpartner, ;
-         idtarifa WITH ROBA->idtarifa, ;
-         brfaktp WITH cFakt, ;
-         datfaktp WITH kalk_imp_temp->datdok, ;
-         datval WITH kalk_imp_temp->datval
-
-
-      REPLACE idkonto WITH cIdKontoZaduzuje // konto zaduzuje
-      REPLACE idkonto2 WITH cIdKontoRazduzuje // konto razduzuje
-      REPLACE idzaduz2 WITH ""
-
-
-      IF cTDok $ "11#41" // spec.za tip dok 11
-
-         REPLACE tmarza2 WITH "A"
-         REPLACE tprevoz WITH "A"
-
-         IF cTDok == "11"
-            REPLACE pkonto WITH cIdKontoZaduzuje, ;
-               mkonto WITH cIdKontoRazduzuje, ;
-               mpcsapp WITH kalk_get_mpc_by_koncij_pravilo( cIdKontoZaduzuje )
-         ELSE
-            REPLACE mpcsapp WITH kalk_imp_temp->cijena
-         ENDIF
-
-      ENDIF
-
-      REPLACE kolicina WITH kalk_imp_temp->kolicina
-      REPLACE idroba WITH roba->id
-      REPLACE nc WITH ROBA->nc
-
-      REPLACE vpc WITH kalk_imp_temp->cijena
-      REPLACE rabatv WITH kalk_imp_temp->rabatp
-
-      REPLACE mpc WITH kalk_imp_temp->porez
-
-      cPredhodniFaktDokument := cFakt
-      cPredhodniTipDokumenta := cTDok
-      cPredhodnoProdMjesto := cIdProdajnoMjesto
-
-      ++ nCnt
-      SELECT kalk_imp_temp
-      SKIP
-
-   ENDDO
-   MsgC()
-
-   IF nCnt > 0 // izvjestaj o prebacenim dokumentima
-
-      ASort( aPom,,, {| x, y| x[ 1 ] + "-" + x[ 2 ] < y[ 1 ] + "-" + y[ 2 ] } )
-
-      START PRINT EDITOR
-      ? "========================================"
-      ? "Generisani sljedeci dokumenti:          "
-      ? "========================================"
-      ? "Dokument     * Sporna NC"
-      ? "----------------------------------------"
-
-      FOR i := 1 TO Len( aPom )
-
-         cT_tipdok := aPom[ i, 1 ]
-         cT_brdok := aPom[ i, 2 ]
-         cT_brfakt := aPom[ i, 3 ]
-         cT_ctrl := ""
-
-/*
-         IF cCtrl_art == "D" .AND. Len( aArr_ctrl ) > 0
-            nT_scan := AScan( aArr_ctrl, {| xVal| xVal[ 1 ] + PadR( xVal[ 2 ], 10 ) == cT_tipdok + PadR( cT_brfakt, 10 ) } )
-
-            IF nT_scan <> 0
-               cT_ctrl := " !!! ERROR !!!"
-            ENDIF
-         ENDIF
-*/
-         ? cT_tipdok + " - " + cT_brdok, cT_ctrl
-
-      NEXT
-
-      ?
-      FF
-      ENDPRINT
-
-   ENDIF
-
-/*
-   IF cCtrl_art == "D" .AND. Len( aArr_ctrl ) > 0
-
-      START PRINT EDITOR
-
-      ?
-      ? "Ispusteni dokumenti:"
-      ? "------------------------------------"
-
-      FOR xy := 1 TO Len( aArr_ctrl )
-         ? aArr_ctrl[ xy, 1 ] + "-" + aArr_ctrl[ xy, 2 ]
-      NEXT
-
-      FF
-      ENDPRINT
-
-   ENDIF
-*/
-
-/*
-   IF cCtrl_art == "D" .AND. Len( aArr_ctrl ) > 0 // pobrisi ispustene dokumente
-
-      nT_scan := 0
-
-      SELECT pript
-      SET ORDER TO TAG "0"
-      GO TOP
-
-      DO WHILE !Eof()
-
-         nT_scan := AScan( aArr_ctrl, {| xval| xval[ 1 ] + PadR( xval[ 2 ], 10 ) == field->idvd + PadR( field->brfaktp, 10 ) } )
-
-         IF nT_scan <> 0
-            DELETE
-         ENDIF
-
-         SKIP
-      ENDDO
-
-   ENDIF
-*/
-
-   RETURN 1
-
-
-
-FUNCTION kalk_imp_get_next_temp_broj( nUvecaj )
-
-   LOCAL nX := 1, cResult := "00001   "
-
-   FOR nX := 1 TO nUvecaj
-      cResult := PadR( novasifra( AllTrim( cResult ) ), 5 ) + Right( cResult, 3 )
-   NEXT
-
-   RETURN cResult
-
-
-/* kalk_imp_get_konto_by_tip_pm_poslovnica(cTipDok, cIdProdajnoMjesto, cTip)
- *     Varaca konto za trazeni tip dokumenta i prodajno mjesto
+ *   Vraca konto za trazeni tip dokumenta i prodajno mjesto
  *   param: cTipDok - tip dokumenta
  *   param: cIdProdajnoMjesto - prodajno mjesto
  *   param: cTip - tip "Z" zad. i "R" razd.
@@ -1289,167 +1360,6 @@ STATIC FUNCTION kalk_imp_get_konto_by_tip_pm_poslovnica( cTipDok, cIdProdajnoMje
 
 
 
-/*
- *     Obrada importovanih dokumenata pript -> pripr
- *     lOstaviBrdok - kalk_imprort sa udaljene lokacije koristi brojeve
- */
-
-FUNCTION kalk_imp_obradi_sve_dokumente_iz_pript( nPocniOd, lStampaj, lOstaviBrdok )
-
-   LOCAL dDatVal
-   LOCAL cNoviKalkBrDok := ""
-   LOCAL nUvecaj := 0
-   LOCAL cMKonto, cPKonto
-
-   o_kalk_pripr()
-   o_kalk_pript()
-
-   automatska_obrada_error( .F. )
-
-   IF lStampaj == nil
-      lStampaj := .T.
-   ENDIF
-
-   IF nPocniOd == nil
-      nPocniOd := 0
-   ENDIF
-
-   hb_default( @lOstaviBrdok, .F. ) // ostavi broj dokumenta koji se nalazi u pript
-
-   // IF Pitanje(, "Automatski asistent i ažuriranje naloga (D/N)?", "D" ) == "D"
-   // s_lAutom := .T.
-   // ENDIF
-
-
-   SELECT pript // iz kalk_pript prebaci u kalk_pripr jednu po jednu kalkulaciju
-   SET ORDER TO TAG "1"
-
-   IF nPocniOd == 0
-      GO TOP
-   ELSE
-      GO nPocniOd
-   ENDIF
-
-
-   cBBTipDok := Space( 30 ) // uzmi parametre koje ces dokumente prenositi
-   Box(, 3, 70 )
-   @ 1 + m_x, 2 + m_y SAY "Prenos sljedecih tipova dokumenata ( kalk pript -> pripr) :"
-   @ 3 + m_x, 2 + m_y SAY "Tip dokumenta (prazno-svi):" GET cBBTipDok PICT "@S25"
-   READ
-   BoxC()
-
-   IF !Empty( cBBTipDok )
-      cBBTipDok := AllTrim( cBBTipDok )
-   ENDIF
-
-   // SetKey(K_F3,{|| kalk_imp_set_check_point(nPTRec)})
-
-   Box(, 10, 79 )
-   @ 1 + m_x, 2 + m_y SAY8 "Obrada dokumenata iz pomoćne tabele:" COLOR f18_color_i()
-   @ 2 + m_x, 2 + m_y SAY "======================================="
-
-   DO WHILE !Eof()
-
-      nPTRec := RecNo()
-      nPCRec := nPTRec
-      cBrDok := field->brdok
-      cFirma := field->idfirma
-      cIdVd  := field->idvd
-      cPKonto := field->pkonto
-      cMKonto := field->mkonto
-
-      IF !Empty( cBBTipDok ) .AND. !( cIdVd $ cBBTipDok )
-         SKIP
-         LOOP
-      ENDIF
-
-      nT_area := Select()
-
-      IF lOstaviBrdok
-         cNoviKalkBrDok := cBrDok
-         IF !kalk_broj_ima_sufiks( cBrDok )
-            MsgBeep( "kalk_import - pript, brojevi dokumenata moraju imati sufiks !## STOP!" )
-            RETURN .F.
-         ENDIF
-      ELSE
-         cNoviKalkBrDok := kalk_get_next_broj_v5( cFirma, cIdVd, kalk_konto_za_brojac( cIdVd, cMKonto, cPKonto ) )  // daj konacni novi broj dokumenta kalk
-      ENDIF
-
-      SELECT ( nT_area )
-
-      @ 3 + m_x, 2 + m_y SAY "KALK IMP Prebacujem: " + cFirma + "-" + cIdVd + "-" + cBrDok + " /"  + cNoviKalkBrDok
-
-      nStCnt := 0
-      DO WHILE !Eof() .AND. field->brdok == cBrDok .AND. field->idfirma == cFirma .AND. field->idvd == cIdVd
-
-
-         SELECT kalk_pripr // jedan po jedan row azuriraj u kalk_pripr
-         APPEND BLANK
-         Scatter()
-
-         SELECT pript
-         dDatVal := pript->datval
-         Scatter()
-
-         SELECT kalk_pripr
-         _brdok := cNoviKalkBrDok
-         Gather()
-
-         IF _idvd == "14"
-            update_kalk_14_datval( cNoviKalkBrDok, dDatVal )
-         ENDIF
-
-         SELECT pript
-         SKIP
-         ++ nStCnt
-
-         nPTRec := RecNo()
-
-         @ 5 + m_x, 13 + m_y SAY Space( 5 )
-         @ 5 + m_x, 2 + m_y SAY "Broj stavki:" + AllTrim( Str( nStCnt ) )
-      ENDDO
-
-
-      // IF s_lAutom // nakon sto smo prebacili dokument u kalk_pripremu oznaciti dokle smo stigli
-
-      IF automatska_obrada_error()
-         MsgBeep( "prekid operacije importa - greške u automatskoj obradi!" )
-         BoxC()
-         RETURN .F.
-      ENDIF
-
-      kalk_imp_set_check_point( nPCRec ) // snimi zapis u params da znas dokle si dosao
-      IF kalk_imp_obradi_dokument( cIdVd, lStampaj )
-         kalk_imp_set_check_point( nPTRec )
-      ELSE
-         MsgBeep( "prekid operacije importa !" )
-         BoxC()
-         RETURN .F.
-      ENDIF
-      o_kalk_pript()
-      // ENDIF
-
-      SELECT pript
-      GO nPTRec
-
-   ENDDO
-
-   BoxC()
-
-   IF automatska_obrada_error()
-      RETURN .F.
-   ENDIF
-
-   RETURN .T.
-
-
-/*
-FUNCTION kalk_imp_autom()
-
-   RETURN s_lAutom
-*/
-
-
 FUNCTION update_kalk_14_datval( cBrojKalk, dDatVal )
 
    LOCAL hRec
@@ -1486,6 +1396,25 @@ FUNCTION get_kalk_14_datval( cBrojKalk )
    RETURN dRet
 
 
+
+// ================== parametri - Rpar, WPara checkpoint ==================
+
+
+
+FUNCTION kalk_imp_txt_param_auto_import_podataka_konto( cSet )
+
+   IF s_cKalkAutoImportPodatakaKonto == nil
+      s_cKalkAutoImportPodatakaKonto := fetch_metric( "kalk_auto_import_podataka_konto", f18_user(), PadR( "1370", 7 ) )
+   ENDIF
+
+   IF cSet != NIL
+      s_cKalkAutoImportPodatakaKonto := cSet
+      set_metric( "kalk_auto_import_podataka_konto", f18_user(), cSet )
+   ENDIF
+
+   RETURN s_cKalkAutoImportPodatakaKonto
+
+
 /*  kalk_imp_set_check_point
  *  Snima momenat do kojeg je dosao pri obradi dokumenata
  */
@@ -1510,7 +1439,53 @@ STATIC FUNCTION kalk_imp_set_check_point( nPRec )
 
 
 
-/* kalk_imp_continue_from_check_point
+STATIC FUNCTION kalk_auto_import_setup()
+
+   LOCAL nX
+   LOCAL GetList := {}
+   LOCAL cAImpRKonto
+
+   cAImpRKonto := PadR( kalk_imp_txt_param_auto_import_podataka_konto(), 7 )
+
+   nX := 1
+   Box(, 10, 70 )
+
+   @ m_x + nX, m_y + 2 SAY8 "Podešenja importa ********"
+
+   nX += 2
+   @ m_x + nX, m_y + 2 SAY8 "Štampati dokumente pri auto obradi (D/N)" GET gAImpPrint VALID gAImpPrint $ "DN" PICT "@!"
+   nX += 1
+   @ m_x + nX, m_y + 2 SAY8 "Automatska ravnoteža naloga na konto: " GET cAImpRKonto
+
+   // nX += 1
+   // @ m_x + nX, m_y + 2 SAY "Provjera broj naloga (minus karaktera):" GET gAImpRight PICT "9"
+
+
+   READ
+   BoxC()
+
+   IF LastKey() <> K_ESC
+
+      kalk_imp_txt_param_auto_import_podataka_konto( cAImpRKonto )
+
+      O_PARAMS
+
+      PRIVATE cSection := "7"
+      PRIVATE cHistory := " "
+      PRIVATE aHistory := {}
+
+      WPar( "ap", gAImpPrint )
+      // WPar( "ar", gAImpRight )
+
+      SELECT params
+      USE
+
+   ENDIF
+
+   RETURN .T.
+
+
+/*
  *  Pokrece ponovo obradu od momenta do kojeg je stao
  */
 STATIC FUNCTION kalk_imp_continue_from_check_point()
@@ -1560,93 +1535,6 @@ STATIC FUNCTION kalk_imp_continue_from_check_point()
    RETURN .T.
 
 
-
-/*
- *  Obrada jednog dokumenta
- *  param cIdVd - id vrsta dokumenta
- */
-
-STATIC FUNCTION kalk_imp_obradi_dokument( cIdVd, lStampaj )
-
-   LOCAL nRslt, lPrvi := .T.
-
-   IF lStampaj == nil
-      lStampaj := .T.
-   ENDIF
-
-
-   // kalk_pripr_obrada_stavki_sa_asistentom()
-
-   // IF lStampaj == .T.
-   // kalk_stampa_dokumenta( nil, nil, .T. ) // odstampaj kalk
-   // ENDIF
-   // kalk_azuriranje_dokumenta( .T. ) // azuriraj kalk
-   // o_kalk_edit()
-
-   kalk_asistent_pause( .F. )
-
-
-   DO WHILE (  ( nRslt := provjeri_stanje_kalk_pripreme( cIdVd ) ) <> 0 )
-
-
-      IF lPrvi .OR. ( nRslt == 1 ) // vezni dokument u kalk_pripremi je ok
-
-         IF !kalk_pripr_auto_obrada_i_azuriranje( lStampaj )
-            RETURN .F.
-         ENDIF
-
-      ENDIF
-
-
-      IF lPrvi
-         lPrvi := .F.
-         LOOP
-      ENDIF
-
-      IF  nRslt >= 2 // vezni dokument u pripremi ne pripada azuriranom dokumentu, sta sa njim
-
-         error_bar( "kalk_auto_imp", "postoji dokument u pripremi koji je sumnjiv" )
-
-         MsgBeep( "Postoji dokument u kalk_pripremi koji je sumljiv!#Radi se o veznom dokumentu ili nekoj drugoj gresci...#Obradite ovaj dokument i autoimport ce nastaviti dalje sa radom !" )
-         IF LastKey() == K_ESC
-            IF Pitanje(, "Prekid operacije?", "N" ) == "D"
-               RETURN .F.
-            ENDIF
-         ENDIF
-         kalk_pripr_obrada()
-         o_kalk_edit()
-
-      ENDIF
-
-
-   ENDDO
-
-   RETURN .T.
-
-
-
-FUNCTION kalk_pripr_auto_obrada_i_azuriranje( lStampaj )
-
-   hb_default( @lStampaj, .F. )
-
-   kalk_pripr_obrada_stavki_sa_asistentom()
-   IF automatska_obrada_error() .AND. Pitanje( , "Automatska obrada greške, prekid obrade ?", "D" ) == "D"
-      RETURN .F.
-   ELSE
-      automatska_obrada_error( .F. ) // ako se trazi nastavak, onda stavi prekid
-   ENDIF
-
-   IF kalk_asistent_pause() .AND. Pitanje( , "Asistent pauza, Prekid obrade ?", "N" ) == "D"
-      RETURN .F.
-   ENDIF
-
-   IF lStampaj == .T.
-      kalk_stampa_dokumenta( nil, nil, .T. )
-   ENDIF
-   kalk_azuriranje_dokumenta( .T. )
-   o_kalk_edit()
-
-   RETURN .T.
 
 /*
  *   Provjeri da li je kalk_priprema prazna
@@ -1890,6 +1778,54 @@ FUNCTION kalk_imp_brisi_txt( cTxtFile )
 
 
 
+   /*
+    *   Setovanje pravila upisa zapisa u temp tabelu
+    *   param: aRule - matrica pravila
+    */
+
+STATIC FUNCTION kalk_imp_set_rule_dok( aRule )
+
+   // 1- idfirma
+   AAdd( aRule, { "SUBSTR(cVar, 1, 2)" } )
+   // 2-idtipdok
+   AAdd( aRule, { "SUBSTR(cVar, 4, 2)" } )
+   // 3-brdok
+   AAdd( aRule, { "SUBSTR(cVar, 7, 8)" } )
+   // 4-datdok
+   AAdd( aRule, { "CTOD(SUBSTR(cVar, 16, 10))" } )
+   // 5-idpartner
+   AAdd( aRule, { "SUBSTR(cVar, 27, 6)" } )
+   // 6-id pm
+   AAdd( aRule, { "SUBSTR(cVar, 34, 3)" } )
+   // 7-dindem
+   AAdd( aRule, { "SUBSTR(cVar, 38, 3)" } )
+   // 8-zaokr
+   AAdd( aRule, { "VAL(SUBSTR(cVar, 42, 1))" } )
+   // 9-rbr
+   AAdd( aRule, { "STR(VAL(SUBSTR(cVar, 44, 3)),3)" } )
+   // 10-idroba
+   AAdd( aRule, { "ALLTRIM(SUBSTR(cVar, 48, 5))" } )
+   // 11-kolicina
+   AAdd( aRule, { "VAL(SUBSTR(cVar, 54, 16))" } )
+   // 12-cijena
+   AAdd( aRule, { "VAL(SUBSTR(cVar, 71, 16))" } )
+   // 13-rabat
+   AAdd( aRule, { "VAL(SUBSTR(cVar, 88, 14))" } )
+   // 14-porez
+   AAdd( aRule, { "VAL(SUBSTR(cVar, 103, 14))" } )
+   // 15-procenat rabata
+   AAdd( aRule, { "VAL(SUBSTR(cVar, 118, 14))" } )
+   // 16-datum valute
+   AAdd( aRule, { "CTOD(SUBSTR(cVar, 133, 10))" } )
+   // 17-obracunska kolicina
+   AAdd( aRule, { "VAL(SUBSTR(cVar, 144, 16))" } )
+   // 18-poslovna jedinica "kod"
+   AAdd( aRule, { "SUBSTR(cVar, 161, 3)" } )
+
+   RETURN .T.
+
+
+
 /*
  *   Setuj matricu sa poljima tabele dokumenata RACUN
  *   param: aDbf - matrica
@@ -1916,5 +1852,65 @@ STATIC FUNCTION kalk_imp_txt_set_a_dbf_temp( aDbf )
    AAdd( aDbf, { "obrkol", "N", 14, 5 } )
    AAdd( aDbf, { "idpj", "C", 3, 0 } )
    AAdd( aDbf, { "dtype", "C", 3, 0 } )
+
+   RETURN .T.
+
+
+STATIC FUNCTION cre_kalk_imp_temp( aDbf )
+
+   LOCAL cTmpTbl := "kalk_imp_temp"
+
+   IF File( f18_ime_dbf( cTmpTbl ) ) .AND. FErase( f18_ime_dbf( cTmpTbl ) ) == -1
+      MsgBeep( "Ne mogu izbrisati kalk_imp_temp.dbf !" )
+
+   ENDIF
+
+   DbCreate2( cTmpTbl, aDbf )
+
+   IF aDbf[ 1, 1 ] == "idpartner" // provjeri jesu li partneri ili dokumenti ili je roba
+
+      create_index( "1", "idpartner", cTmpTbl ) // partner
+
+   ELSEIF aDbf[ 1, 1 ] == "idpm"
+
+      create_index( "1", "sifradob", cTmpTbl ) // roba
+   ELSE
+
+      create_index( "1", "idfirma+idtipdok+brdok+rbr", cTmpTbl ) // dokumenti
+      create_index( "2", "dtype+idfirma+idtipdok+brdok+rbr", cTmpTbl )
+   ENDIF
+
+   RETURN .T.
+
+
+
+FUNCTION cre_kalk_priprt()
+
+   // LOCAL cKalkPript := "kalk_pript"
+
+   my_close_all_dbf()
+
+   /*
+      FErase( my_home() + cKalkPript + ".dbf" )
+      FErase( my_home() + cKalkPript + ".cdx" )
+
+      o_kalk_pripr()
+
+      // napravi pript sa strukturom tabele kalk_pripr
+      COPY STRUCTURE EXTENDED to ( my_home() + "struct" )
+      CREATE ( my_home() + cKalkPript ) from ( my_home() + "struct" )
+
+      USE
+
+      SELECT ( F_PRIPT )
+      my_use_temp( "PRIPT", my_home() + cKalkPript, .F., .T. )
+
+      INDEX on ( idfirma + idvd + brdok ) TAG "1"
+      INDEX on ( idfirma + idvd + brdok + idroba ) TAG "2"
+
+      USE
+   */
+   o_kalk_pript()
+   my_dbf_zap()
 
    RETURN .T.

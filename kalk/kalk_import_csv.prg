@@ -54,7 +54,7 @@ STATIC FUNCTION kalk_auto_import_setup()
    LOCAL nX
    LOCAL GetList := {}
 
-   LOCAL cAImpRKonto := PadR( kalk_auto_import_podataka_konto(), 7 )
+   LOCAL cAImpRKonto := PadR( kalk_imp_txt_param_auto_import_podataka_konto(), 7 )
 
 
    nX := 1
@@ -73,7 +73,7 @@ STATIC FUNCTION kalk_auto_import_setup()
 
    IF LastKey() <> K_ESC
 
-      kalk_auto_import_podataka_konto( cAImpRKonto )
+      kalk_imp_txt_param_auto_import_podataka_konto( cAImpRKonto )
       O_PARAMS
 
       PRIVATE cSection := "7"
@@ -161,7 +161,7 @@ FUNCTION ImpCSVOst()
    ENDIF
 
    // provjeri da li je fajl za import prazan
-   IF CheckFile( cImpFile ) == 0
+   IF fajl_get_broj_linija( cImpFile ) == 0
       MsgBeep( "Odabrani fajl je prazan!#!!! Prekidam operaciju !!!" )
       RETURN
    ENDIF
@@ -208,7 +208,7 @@ FUNCTION ImpCSVDok()
    ENDIF
 
    // provjeri da li je fajl za import prazan
-   IF CheckFile( cImpFile ) == 0
+   IF fajl_get_broj_linija( cImpFile ) == 0
       MsgBeep( "Odabrani fajl je prazan!#!!! Prekidam operaciju !!!" )
       RETURN
    ENDIF
@@ -398,7 +398,7 @@ FUNCTION Txt2TOst( aDbf, cTxtFile )
 
    MsgBeep( "Import txt => temp - OK" )
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -442,7 +442,7 @@ STATIC FUNCTION importost()
 
    SELECT ( nTarea )
 
-   RETURN
+   RETURN .T.
 
 
 // --------------------------------------------------------
@@ -475,7 +475,7 @@ STATIC FUNCTION kalk_imp_csv_to_temp( aDbf, cTxtFile )
 
    IF !File( f18_ime_dbf( "TEMP" ) )
       MsgBeep( "Ne mogu kreirati fajl TEMP.DBF!" )
-      RETURN
+      RETURN .F.
    ENDIF
 
    // zatim iscitaj fajl i ubaci podatke u tabelu

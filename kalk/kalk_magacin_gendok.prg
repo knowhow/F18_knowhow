@@ -149,11 +149,7 @@ FUNCTION Iz12u97()
 
 
 
-/* InvManj()
- *     Generise dok.95 za manjak i visak ili 95 za manjak, a 16 u smecu za visak
- */
-
-FUNCTION InvManj()
+FUNCTION kalk_generisi_95_za_manjak_16_za_visak()
 
    LOCAL nFaktVPC := 0, lOdvojiVisak := .F., nBrSl := 0
 

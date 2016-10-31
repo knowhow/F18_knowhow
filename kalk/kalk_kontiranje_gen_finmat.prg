@@ -22,9 +22,9 @@ FUNCTION kalk_kontiranje_gen_finmat()
 
    LOCAL nPom
    LOCAL fPrvi
-   LOCAL n1 := n2 := n3 := n4 := n5 := n6 := n7 := n8 := n9 := na := nb := 0
-   LOCAL nTot1 := nTot2 := nTot3 := nTot4 := nTot5 := nTot6 := nTot7 := nTot8 := nTot9 := nTota := nTotb := 0
-   LOCAL nCol1 := nCol2 := nCol3 := 0
+   LOCAL n1 := 0, n2 := 0, n3 := 0, n4 := 0, n5 := 0, n6 := 0, n7 := 0, n8 := 0, n9 := 0, na := 0, nb := 0
+   LOCAL nTot1 := 0, nTot2 := 0, nTot3 := 0, nTot4 := 0, nTot5 := 0, nTot6 := 0, nTot7 := 0, nTot8 := 0, nTot9 := 0, nTota := 0, nTotb := 0, nTotC := 0
+   LOCAL nCol1 := 0, nCol2 := 0, nCol3 := 0
    LOCAL cFinAutoBrojDN := "N"
 
    // LOCAL nZaokruzenje := gZaokr
@@ -123,7 +123,7 @@ FUNCTION kalk_kontiranje_gen_finmat()
       _predispozicija := .T.
    ENDIF
 
-   // EOF CRET
+
    IF Eof()
       RETURN .F.
    ENDIF
@@ -160,17 +160,9 @@ FUNCTION kalk_kontiranje_gen_finmat()
 
       BoxC()
 
-      AltD()
       IF LastKey() == K_ESC .OR. cDalje <> "D"
 
          RETURN .F.
-/*
-            IF lViseKalk
-               EXIT
-            ELSE
-               LOOP
-            ENDIF
-*/
 
       ENDIF
 
@@ -208,18 +200,7 @@ FUNCTION kalk_kontiranje_gen_finmat()
             ENDIF
          ENDIF
 
-/*
-            IF gMagacin <> "1" .AND. (  idpartner + brfaktp + idkonto + idkonto2 <> cidd  )
-               SET DEVICE TO SCREEN
-               IF ! ( ( idvd $ "16#80" )  .AND. !Empty( idkonto2 )  )
-                  IF !idvd $ "24"
-                     // Beep( 2 )
-                     // Msg( "Unutar kalkulacije se pojavilo vise dokumenata !", 6 )
-                  ENDIF
-               ENDIF
 
-            ENDIF
-*/
          // iznosi troskova koji se izracunavaju u kalk_set_troskovi_priv_vars_ntrosakx_nmarzax()
          PRIVATE nPrevoz, nCarDaz, nZavTr, nBankTr, nSpedTr, nMarza, nMarza2
 
@@ -325,18 +306,6 @@ FUNCTION kalk_kontiranje_gen_finmat()
             REPLACE  MPVSaPP   WITH  kalk_pripr->( VPC * ( 1 -RabatV / 100 ) * ( Kolicina - GKolicina - GKolicin2 ) )
          ENDIF
 
-/*
-            IF !Empty( kalk_pripr->mu_i )
-               SELECT tarifa
-               HSEEK roba->idtarifa
-               SELECT finmat
-               REPLACE UPOREZV WITH  Round( kalk_pripr->( nMarza * kolicina * TARIFA->OPP / 100 / ( 1 + TARIFA->OPP / 100 ) ), nZaokruzenje )
-
-               SELECT tarifa
-               HSEEK roba->idtarifa
-               SELECT finmat
-            ENDIF
-*/
 
          IF gKalo == "2" .AND.  kalk_pripr->idvd $ "10#81"  // kalo ima vrijednost po NC
             REPLACE GKV   WITH Round( kalk_pripr->( GKolicina * NC ), nZaokruzenje ), ;   // vrijednost transp.kala
@@ -366,7 +335,6 @@ FUNCTION kalk_kontiranje_gen_finmat()
          SKIP
       ENDDO // brdok
 
-
       IF fStara
          EXIT
       ENDIF
@@ -384,48 +352,12 @@ FUNCTION kalk_kontiranje_gen_finmat()
       // ovo ispod kontiranje se koristi kada se kontira azurirani dokument
       kalk_kontiranje_fin_naloga( .F., NIL, lViseKalk, NIL, cFinAutoBrojDN == "D" )  // kontiranje dokumenta
 
-
       IF cAutoRav == "D" // automatska ravnoteza naloga
          kontrola_zbira_naloga( .T. )
       ENDIF
 
    ENDIF
-/*
-      IF !fStara .OR. lAuto == .T.
-         EXIT
-      ELSE
 
-         cIdFirma := idfirma
-         cIdVd := idvd
-         cBrdok := brdok
-
-         IF !lViseKalk
-            my_close_all_dbf()
-         ENDIF
-
-         AltD() // ovo ispod kontiranje je visak!?
-         kalk_kontiranje_fin_naloga( .F., NIL, lViseKalk, NIL, cFinAutoBrojDN == "D" )  // kontiranje dokumenta
-
-
-         IF cAutoRav == "D" // automatska ravnoteza naloga
-            kontrola_zbira_naloga( .T. )
-         ENDIF
-
-         // ne vrti se ukrug u ovoj do wile petlji
-         IF lViseKalk
-            EXIT
-         ENDIF
-      ENDIF
-*/
-
-/*
-   ENDDO
-*/
-
-   //IF fStara .AND. !lViseKalk
-  //    SELECT kalk_pripr
-  //    USE
-   //ENDIF
 
    IF !lViseKalk
       my_close_all_dbf()

@@ -32,7 +32,7 @@ FUNCTION kalk_import_txt_partner()
    ENDIF
 
 
-   IF CheckFile( cImpFile ) == 0 // provjeri da li je fajl za import prazan
+   IF fajl_get_broj_linija( cImpFile ) == 0 // provjeri da li je fajl za import prazan
       MsgBeep( "Odabrani fajl je prazan!#Prekid operacije !" )
       RETURN .F.
    ENDIF
@@ -93,7 +93,7 @@ FUNCTION kalk_import_txt_roba()
    ENDIF
 
 
-   IF CheckFile( cImpFile ) == 0  // provjeri da li je fajl za import prazan
+   IF fajl_get_broj_linija( cImpFile ) == 0  // provjeri da li je fajl za import prazan
       MsgBeep( "Odabrani fajl je prazan!#Prekidam operaciju !" )
       RETURN .F.
    ENDIF

@@ -23,7 +23,6 @@ FUNCTION fin_azuriranje_naloga( lAutomatikaAzuriranja )
    LOCAL aNalozi, nI
    LOCAL cIdFirma, cIdVn, cBrNal
    LOCAL lViseNalogaUPripremi := .F.
-   LOCAL lRet := .F.
    LOCAL lOk := .T.
    LOCAL hParams := hb_Hash()
    LOCAL cOdgovorDupliNalog := "N"
@@ -53,7 +52,7 @@ FUNCTION fin_azuriranje_naloga( lAutomatikaAzuriranja )
    ENDIF
 
    IF !fin_provjera_prije_azuriranja_naloga( lAutomatikaAzuriranja, aNalozi )
-      RETURN lRet
+      RETURN .F.
    ENDIF
 
    IF lAutomatikaAzuriranja
@@ -79,14 +78,6 @@ FUNCTION fin_azuriranje_naloga( lAutomatikaAzuriranja )
    FOR nI := 1 TO Len( aNalozi )
 
       run_sql_query( "BEGIN" )
-
-/*
-      IF !f18_lock_tables( { __tbl_suban, __tbl_anal, __tbl_sint, __tbl_nalog }, .T. )
-         run_sql_query( "ROLLBACK" )
-         MsgBeep( "Ne mogu napraviti zaključavanje tabela !#Poništavam operaciju ažuriranja naloga." )
-         RETURN lRet
-      ENDIF
-*/
       cIdFirma := aNalozi[ nI, 1 ]
       cIdVn := aNalozi[ nI, 2 ]
       cBrNal := aNalozi[ nI, 3 ]
@@ -98,7 +89,7 @@ FUNCTION fin_azuriranje_naloga( lAutomatikaAzuriranja )
 
          IF !lViseNalogaUPripremi
             run_sql_query( "ROLLBACK" )
-            RETURN lRet
+            RETURN .F.
 
          ELSE
             LOOP
@@ -107,52 +98,29 @@ FUNCTION fin_azuriranje_naloga( lAutomatikaAzuriranja )
       ENDIF
 
 
-      altd()
-
       IF !fin_azur_sql( oServer, cIdFirma, cIdVn, cBrNal )
 
          run_sql_query( "ROLLBACK" )
          log_write( "F18_DOK_OPER: greška kod ažuriranja fin naloga: " + cIdFirma + "-" + cIdVn + "-" + cBrNal, 2 )
-
          MsgBeep( "Problem sa ažuriranjem naloga na SQL server !" )
-
-         RETURN lRet
+         RETURN .F.
 
       ENDIF
 
       fin_pripr_delete( cIdFirma + cIdVn + cBrNal )
 
-/*
-      IF !fin_azur_dbf( lAutomatikaAzuriranja, cIdFirma, cIdVn, cBrNal )
-
-         run_sql_query( "ROLLBACK" )
-         log_write( "F18_DOK_OPER: greška kod ažuriranja fin naloga: " + cIdFirma + "-" + cIdVn + "-" + cBrNal, 2 )
-         MsgBeep( "Problem sa ažuriranjem naloga u DBF tabele !" )
-
-         RETURN lRet
-
-      ENDIF
-*/
-
-/*
-      hParams[ "unlock" ] := { __tbl_suban, __tbl_anal, __tbl_sint, __tbl_nalog }
-      run_sql_query( "COMMIT", hParams )
-*/
       run_sql_query( "COMMIT" )
 
       log_write( "F18_DOK_OPER: azuriranje fin naloga: " + cIdFirma + "-" + cIdVn + "-" + cBrNal, 2 )
 
    NEXT
 
-
    SELECT fin_pripr
    my_dbf_pack()
 
    fin_brisi_p_tabele( .T. )
 
-   lRet := .T.
-
-   RETURN lRet
+   RETURN .T.
 
 
 
@@ -185,31 +153,6 @@ STATIC FUNCTION fin_nalozi_iz_pripreme_u_matricu()
    GO TOP
 
    RETURN _data
-
-
-
-FUNCTION o_fin_za_azuriranje()
-
-   my_close_all_dbf()
-
-   O_KONTO
-   O_PARTN
-   O_SIFK
-   O_SIFV
-
-   o_suban()
-   o_anal()
-   o_sint()
-   o_nalog()
-
-   o_fin_psuban()
-   O_PANAL
-   O_PSINT
-   O_PNALOG
-
-   O_FIN_PRIPR
-
-   RETURN .T.
 
 
 
@@ -558,46 +501,6 @@ STATIC FUNCTION fin_p_nalog_bez_provjere( auto )
 
 
 
-STATIC FUNCTION fin_saldo_provjera_psuban( cIdFirma, cIdVn, cBrNal )
-
-   LOCAL lOkAzuriranje := .F.
-   LOCAL _tmp, _saldo
-
-   IF gRavnot == "N"
-      lOkAzuriranje := .T.
-      RETURN lOkAzuriranje
-   ENDIF
-
-   SELECT psuban
-   SET ORDER TO TAG "1"
-   GO TOP
-   SEEK cIdFirma + cIdVn + cBrNal
-
-   _saldo := 0
-
-   DO WHILE !Eof() .AND. field->idfirma == cIdFirma .AND. field->idvn == cIdVn .AND. field->brnal == cBrNal
-
-      IF field->d_p == "1"
-         _saldo += field->iznosbhd
-      ELSE
-         _saldo -= field->iznosbhd
-      ENDIF
-
-      SKIP
-
-   ENDDO
-
-   IF Round( _saldo, 4 ) <> 0
-      Beep( 3 )
-      Msg( "Neophodna ravnoteža naloga " + cIdFirma + "-" + cIdVn + "-" + AllTrim( cBrNal ) + "##, ažuriranje neće biti izvršeno!" )
-      RETURN lOkAzuriranje
-   ENDIF
-
-   lOkAzuriranje := .T.
-
-   RETURN lOkAzuriranje
-
-
 
 
 STATIC FUNCTION fin_p_tabele_provjera( aListaNaloga )
@@ -645,54 +548,6 @@ STATIC FUNCTION fin_p_tabele_provjera( aListaNaloga )
 
 
 
-/*
-FUNCTION fin_azur_dbf( auto, cIdFirma, cIdVn, cBrNal )
-
-   LOCAL _n_c
-   LOCAL nSelectArea := Select()
-   LOCAL _saldo
-   LOCAL _ctrl
-   LOCAL lOkAzuriranje := .T.
-
-   Box( "ad", 10, MAXCOLS() - 10 )
-
-   SELECT psuban
-   SET ORDER TO TAG "1"
-   GO TOP
-   SEEK cIdFirma + cIdVn + cBrNal
-
-   _saldo := 0
-
-   DO WHILE !Eof() .AND. field->idfirma == cIdFirma .AND. field->idvn == cIdVn .AND. field->brnal == cBrNal
-
-      _ctrl := field->idfirma + field->idvn + field->brnal
-
-      @ m_x + 1, m_y + 2 SAY8 "DBF: ažuriram nalog: " + field->idfirma + "-" + field->idvn + "-" + AllTrim( field->brnal )
-
-      IF field->d_p == "1"
-         _saldo += field->iznosbhd
-      ELSE
-         _saldo -= field->iznosbhd
-      ENDIF
-
-      SKIP
-
-   ENDDO
-
-   pnalog_nalog( _ctrl )
-   panal_anal( _ctrl )
-   psint_sint( _ctrl )
-   psuban_suban( _ctrl )
-
-   fin_pripr_delete( _ctrl )
-
-   SELECT psuban
-
-   BoxC()
-
-   RETURN lOkAzuriranje
-
-*/
 
 STATIC FUNCTION fin_brisi_p_tabele( close_all )
 
@@ -990,3 +845,31 @@ FUNCTION fin_dokument_postoji( cIdFirma, cIdVn, cBrNal )
    ENDIF
 
    RETURN lExist
+
+
+
+
+
+
+FUNCTION o_fin_za_azuriranje()
+
+   my_close_all_dbf()
+
+   O_KONTO
+   O_PARTN
+   O_SIFK
+   O_SIFV
+
+   o_suban()
+   o_anal()
+   o_sint()
+   o_nalog()
+
+   o_fin_psuban()
+   O_PANAL
+   O_PSINT
+   O_PNALOG
+
+   O_FIN_PRIPR
+
+   RETURN .T.

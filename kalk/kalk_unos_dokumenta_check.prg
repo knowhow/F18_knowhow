@@ -906,15 +906,14 @@ FUNCTION kalk_gen_11_iz_10( cBrDok )
 
    SELECT ( nArr )
 
-   MsgBeep( "Formirao dokument " + AllTrim( gFirma ) + "-11-" + AllTrim( cBrDok ) )
+   MsgBeep( "Formiran dokument " + AllTrim( gFirma ) + "-11-" + AllTrim( cBrDok ) )
 
-   RETURN
-// }
+   RETURN .T.
 
 
-FUNCTION Get11FromSmece( cBrDok )
+FUNCTION kalk_get_11_from_pripr9_smece( cBrDok )
 
-   // {
+
    LOCAL nArr
    nArr := Select()
 

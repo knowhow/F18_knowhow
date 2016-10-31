@@ -13,7 +13,7 @@
 
 MEMVAR m_x, m_y
 
-FUNCTION kalk_azuriranje_dokumenta( lAuto )
+FUNCTION kalk_azuriranje_dokumenta( lAuto, lStampaj )
 
    LOCAL lViseDok := .F.
    LOCAL aRezim := {}
@@ -69,31 +69,23 @@ FUNCTION kalk_azuriranje_dokumenta( lAuto )
       RETURN .F.
    ENDIF
 
-   lGenerisiZavisne := kalk_generisati_zavisne_dokumente( lAuto )
+   lGenerisiZavisne := kalk_check_generisati_zavisne_dokumente( lAuto )
 
    IF lGenerisiZavisne == .T.
-      kalk_zavisni_dokumenti()
+      kalk_nivelacija_11()
+      kalk_generisi_prijem16_iz_otpreme96()
+      kalk_13_to_11()
+      kalk_generisi_95_za_manjak_16_za_visak()
    ENDIF
 
    IF !kalk_azur_sql()
-
-/*
-      o_kalk_za_azuriranje()
-
-      IF !kalk_azur_dbf( lAuto, lViseDok, aOstaju, aRezim ) // , lBrStDoks )
-         MsgBeep( "Neuspješno ažuriranje KALK dokumenta u DBF tabele !" )
-         RETURN .F.
-      ENDIF
-   ELSE
-*/
-
       MsgBeep( "Neuspješno ažuriranja KALK dokumenta u SQL bazu !" )
       RETURN .F.
    ENDIF
 
    DokAttr():new( "kalk", F_KALK_ATTR ):zap_attr_dbf()
 
-   kalk_zavisni_nakon_azuriranja( lGenerisiZavisne, lAuto )
+   kalk_gen_zavisni_fin_fakt_nakon_azuriranja( lGenerisiZavisne, lAuto, lStampaj )
 
    IF lViseDok == .T. .AND. Len( aOstaju ) > 0
       kalk_ostavi_samo_duple( aOstaju )
@@ -199,11 +191,11 @@ STATIC FUNCTION kalk_vrati_iz_pripr2()
 
 
 /*
-   generisanje zavisnih dokumenata nakon azuriranja kalkulacije
+   generisanje zavisnih dokumenata (fin, fakt) nakon azuriranja kalkulacije
    mozda cemo dobiti i nove dokumente u pripremi
 */
 
-STATIC FUNCTION kalk_zavisni_nakon_azuriranja( lGenerisi, lAuto )
+STATIC FUNCTION kalk_gen_zavisni_fin_fakt_nakon_azuriranja( lGenerisi, lAuto, lStampa )
 
    LOCAL lForm11 := .F.
    LOCAL cNext11 := ""
@@ -220,22 +212,20 @@ STATIC FUNCTION kalk_zavisni_nakon_azuriranja( lGenerisi, lAuto )
 
    // SELECT KALK
 
-   IF lGenerisi = .T.
-
+   IF lGenerisi == .T.
 
       kalk_kontiranje_gen_finmat()
-
-      generisi_finansijski_nalog_iz_kalk( lAuto )
+      kalk_generisi_finansijski_nalog( lAuto, lStampa )
 
       gAFin := lgAFin
       gAMat := lgAMat
 
-      formiraj_fakt_zavisne_dokumente()
+      kalk_generisi_fakt_dokument()
 
    ENDIF
 
    IF lForm11
-      Get11FromSmece( cNext11 )
+      kalk_get_11_from_pripr9_smece( cNext11 )
    ENDIF
 
    RETURN .T.
@@ -243,14 +233,14 @@ STATIC FUNCTION kalk_zavisni_nakon_azuriranja( lGenerisi, lAuto )
 
 
 
-STATIC FUNCTION formiraj_fakt_zavisne_dokumente()
+STATIC FUNCTION kalk_generisi_fakt_dokument()
 
    LOCAL cOdg := "D"
 
    o_kalk_pripr()
 
    IF !f18_use_module( "fakt" )
-      RETURN
+      RETURN .F.
    ENDIF
 
    IF gAFakt != "D"
@@ -279,7 +269,6 @@ STATIC FUNCTION formiraj_fakt_zavisne_dokumente()
 // ----------------------------------------------------------------
 STATIC FUNCTION kalk_ostavi_samo_duple( lViseDok, aOstaju )
 
-
    SELECT kalk_pripr // izbrisi samo azurirane
 
    GO TOP
@@ -302,10 +291,7 @@ STATIC FUNCTION kalk_ostavi_samo_duple( lViseDok, aOstaju )
 
 
 
-// -------------------------------------------------------
-// treba li generisati dokumente ?
-// -------------------------------------------------------
-STATIC FUNCTION kalk_generisati_zavisne_dokumente( lAuto )
+STATIC FUNCTION kalk_check_generisati_zavisne_dokumente( lAuto )
 
    LOCAL lGen := .F.
 
@@ -325,148 +311,6 @@ STATIC FUNCTION kalk_generisati_zavisne_dokumente( lAuto )
 
 
 
-STATIC FUNCTION kalk_zavisni_dokumenti()
-
-   kalk_nivelacija_11()
-   kalk_generisi_prijem16_iz_otpreme96()
-   Iz13u11()
-   InvManj()
-
-   RETURN .T.
-
-
-/*
-STATIC FUNCTION kalk_azur_dbf( lAuto, lViseDok, aOstaju, aRezim ) // , lBrStDoks )
-
-   LOCAL cIdFirma, _rec
-   LOCAL cIdVd
-   LOCAL cBrDok
-   LOCAL cNPodBr
-   LOCAL nNv := 0
-   LOCAL nVpv := 0
-   LOCAL nMpv := 0
-   LOCAL nRabat := 0
-   LOCAL cOpis
-   LOCAL nBrStavki
-
-   MsgO( "Ažuriranje kalk pripr ->  DBF kalk" )
-
-   SELECT kalk_pripr
-   GO TOP
-
-   cIdFirma := field->idfirma
-
-   SELECT kalk_doks
-   SET ORDER TO TAG "3"
-   SEEK cIdfirma + DToS( kalk_pripr->datdok ) + Chr( 255 )
-   SKIP -1
-
-   IF field->datdok == kalk_pripr->datdok
-      IF  kalk_pripr->idvd $ "18#19" .AND. kalk_pripr->TBankTr == "X"
-         IF Len( field->podbr ) > 1
-            cNPodbr := chr256( asc256( field->podbr ) -3 )
-         ELSE
-            cNPodbr := Chr( Asc( field->podbr ) -3 )
-         ENDIF
-      ELSE
-         IF Len( field->podbr ) > 1
-            cNPodbr := chr256( asc256( field->podbr ) + 6 )
-         ELSE
-            cNPodbr := Chr( Asc( field->podbr ) + 6 )
-         ENDIF
-      ENDIF
-   ELSE
-      IF Len( field->podbr ) > 1
-         cNPodbr := chr256( 30 * 256 + 30 )
-      ELSE
-         cNPodbr := Chr( 30 )
-      ENDIF
-   ENDIF
-
-   SELECT kalk_pripr
-   GO TOP
-
-   DO WHILE !Eof()
-
-      cIdFirma := field->idfirma
-      cBrDok := field->brdok
-      cIdvd := field->idvd
-
-      IF lViseDok .AND. AScan( aOstaju, cIdFirma + cIdVd + cBrDok ) <> 0 // preskoci postojece
-         SKIP 1
-         LOOP
-      ENDIF
-
-      SELECT kalk_doks
-      APPEND BLANK
-      _rec := dbf_get_rec()
-      _rec[ "idfirma" ] := cIdFirma
-      _rec[ "idvd" ] := cIdVd
-      _rec[ "brdok" ] := cBrDok
-      _rec[ "datdok" ] := kalk_pripr->datdok
-      _rec[ "idpartner" ] := kalk_pripr->idpartner
-      _rec[ "mkonto" ] := kalk_pripr->mkonto
-      _rec[ "pkonto" ] := kalk_pripr->pkonto
-      _rec[ "idzaduz" ] := kalk_pripr->idzaduz
-      _rec[ "idzaduz2" ] := kalk_pripr->idzaduz2
-      _rec[ "brfaktp" ] := kalk_pripr->brfaktp
-      dbf_update_rec( _rec, .T. )
-
-      SELECT kalk_pripr
-      nBrStavki := 0
-
-      DO WHILE !Eof() .AND. cIdfirma == field->idfirma .AND. cBrdok == field->brdok .AND. cIdvd == field->idvd
-
-         ++ nBrStavki
-         _rec := dbf_get_rec()
-         _rec[ "podbr" ] := cNPodbr
-
-         SELECT kalk
-         APPEND BLANK
-         dbf_update_rec( _rec, .T. )
-
-         IF cIdVd == "97" // protustavka
-
-            _rec := dbf_get_rec()
-            APPEND BLANK
-            _rec[ "tbanktr" ] := "X"
-            _rec[ "mkonto" ] := _idkonto
-            _rec[ "mu_i" ] := "1"
-            _rec[ "rbr" ] := PadL( Str( 900 + Val( AllTrim( _rbr ) ), 3 ), 3 )
-            dbf_update_rec( _rec, .T. )
-
-         ENDIF
-
-         SELECT kalk_pripr
-
-         IF !( cIdVd $ "97" )
-            kalk_set_doks_total_fields( @nNv, @nVpv, @nMpv, @nRabat )
-         ENDIF
-
-         SKIP
-
-      ENDDO
-
-      SELECT kalk_doks  // azuriranje vrijednosti u kalk doks
-      _rec := dbf_get_rec()
-      _rec[ "nv" ] := nNv
-      _rec[ "vpv" ] := nVpv
-      _rec[ "rabat" ] := nRabat
-      _rec[ "mpv" ] := nMpv
-      _rec[ "podbr" ] := cNPodBr
-      // IF lBrStDoks
-      // _rec[ "ukstavki" ] := nBrStavki
-      // ENDIF
-      dbf_update_rec( _rec, .T. )
-
-      SELECT kalk_pripr
-
-   ENDDO
-
-   MsgC()
-
-   RETURN .T.
-*/
 
 STATIC FUNCTION kalk_provjera_cijena()
 
@@ -629,10 +473,10 @@ STATIC FUNCTION kalk_provjeri_duple_dokumente( aRezim )
       lViseDok := .T.
       aRezim := {}
 
-      //AAdd( aRezim, gCijene )
-      //AAdd( aRezim, kalk_metoda_nc() )
-      //gCijene   := "1"
-      //kalk_metoda_nc() := " "
+      // AAdd( aRezim, gCijene )
+      // AAdd( aRezim, kalk_metoda_nc() )
+      // gCijene   := "1"
+      // kalk_metoda_nc() := " "
       // ENDIF
 
    ELSEIF nije_dozvoljeno_azuriranje_sumnjivih_stavki()
@@ -645,9 +489,9 @@ STATIC FUNCTION kalk_provjeri_duple_dokumente( aRezim )
             error_bar( field->idfirma + "-" + field->idvd + "-" + field->brdok, " /  Rbr." + field->rbr + " sumnjiva! " )
             IF Pitanje(, "Želite li dokument ažurirati bez obzira na sumnjive stavke? (D/N)", "N" ) == "D"
                aRezim := {}
-               //AAdd( aRezim, gCijene )
-               //AAdd( aRezim, kalk_metoda_nc() )
-               //gCijene   := "1"
+               // AAdd( aRezim, gCijene )
+               // AAdd( aRezim, kalk_metoda_nc() )
+               // gCijene   := "1"
             ENDIF
             EXIT
          ENDIF

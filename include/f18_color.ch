@@ -51,16 +51,16 @@
 // "Text High Sel.", "Text PPO Sel.", "meni_0", "meni_0 High", ;
 // "meni_0 Selected", "meni_0 High Sel."
 
-//#define f18_color_normal()         "W/B,R/N+,,,N/W"
-//#define f18_color_normal()           "G/N,N/G,R/W,W/RB,G/W"  //green na crnoj podlozi
-//#define f18_color_normal()           "N/BG,W+/B,W/R,N/G,N/W"
+
 #define F18_COLOR_NORMAL                "W/B,R/N,W/R,N/G,N/W" // bijela/plava,crvena/crna
-#define F18_COLOR_NORMAL_STARA_SEZONA   "BG/N,R/BG,W/R,N/G,N/W" // bijela/cyan,crvena/crna
+#define F18_COLOR_NORMAL_STARA_SEZONA   "W+/N,R/BG,W/R,N/G,GR+/N" // bijela/crna,crvena/crna
+//#define F18_COLOR_NORMAL_STARA_SEZONA   "N/BG,W/B,W/R,N/G,N/W" // bijela/cyan,crvena/crna
+
 
 #define F18_COLOR_INFO_PANEL       hb_ColorIndex(SetColor(), 0)
 #define F18_COLOR_ERROR_PANEL      hb_ColorIndex(SetColor(), 2)
 #define F18_COLOR_NAGLASENO        "GR+/B"
-#define F18_COLOR_NAGLASENO_STARA_SEZONA  "GR+/N"
+#define F18_COLOR_NAGLASENO_STARA_SEZONA  "W+/N"
 
 #define F18_COLOR_ORGANIZACIJA     hb_ColorIndex(f18_color_normal(), 4)+","+hb_ColorIndex(f18_color_normal(), 3)+","+hb_ColorIndex(f18_color_normal(), 2)+","+hb_ColorIndex(f18_color_normal(), 1)+","+hb_ColorIndex(f18_color_normal(), 0)
 

@@ -13,6 +13,7 @@
 
 STATIC s_nMainWindow
 
+MEMVAR m_x, m_y
 
 FUNCTION open_main_window()
 
@@ -22,5 +23,136 @@ FUNCTION open_main_window()
    s_nMainWindow := WOpen( 0, 0, MaxRow(), MaxCol() )
    WSelect( s_nMainWindow )
 
-
    RETURN s_nMainWindow
+
+
+FUNCTION ispisi_velikim_slovima( cIzn, nStartX, nYRight, cColor )
+
+   LOCAL cChar, nCnt
+   LOCAL nY, nX, cOldColor
+
+   hb_default( @cColor, f18_color_normal() )
+
+   cOldColor := SetColor( cColor )
+
+   nY := m_y + nYRight
+   FOR nCnt := Len ( cIzn ) TO 1 STEP -1
+      cChar := SubStr ( cIzn, nCnt, 1 )
+      nX := m_x + nStartX + 2
+
+      DO CASE
+      CASE cChar = "1"
+         nY -= 8
+         @ nX++, nY + 1 SAY8 "██"
+         @ nX++, nY + 2 SAY8 "█"
+         @ nX++, nY + 2 SAY8 "█"
+         @ nX++, nY + 2 SAY8 "█"
+         @ nX++, nY + 2 SAY8 "█"
+         @ nX++, nY + 2 SAY8 "█"
+         @ nX++, nY + 2 SAY8 "█"
+         @ nX++, nY SAY8 "█████"
+      CASE cChar = "2"
+         nY -= 8
+         @ nX++, nY SAY8 "███████"
+         @ nX++, nY + 6   SAY8 "█"
+         @ nX++, nY + 6   SAY8 "█"
+         @ nX++, nY SAY8 "███████"
+         @ nX++, nY SAY8 "█"
+         @ nX++, nY SAY8 "█"
+         @ nX++, nY SAY8 "█" ; @ Row(), Col() + 5 SAY8 "█"
+         @ nX++, nY SAY8 "███████"
+      CASE cChar = "3"
+         nY -= 8
+         @ nX++, nY SAY8 " ██████"
+         @ nX++, nY + 6     SAY8 "█"
+         @ nX++, nY + 6     SAY8 "█"
+         @ nX++, nY + 2 SAY8 "████"
+         @ nX++, nY + 6     SAY8 "█"
+         @ nX++, nY + 6     SAY8 "█"
+         @ nX++, nY + 6     SAY8 "█"
+         @ nX++, nY SAY8 "███████"
+      CASE cChar = "4"
+         nY -= 8
+         @ nX++, nY SAY8 "█"
+         @ nX++, nY SAY8 "█"
+         @ nX++, nY SAY8 "█" ; @ Row(), Col() + 5 SAY8 "█"
+         @ nX++, nY SAY8 "█" ; @ Row(), Col() + 5 SAY8 "█"
+         @ nX++, nY SAY8 "███████"
+         @ nX++, nY + 6     SAY8 "█"
+         @ nX++, nY + 6     SAY8 "█"
+         @ nX++, nY + 6     SAY8 "█"
+
+      CASE cChar = "5"
+         nY -= 8
+         @ nX++, nY SAY8 "███████"
+         @ nX++, nY SAY8 "█"
+         @ nX++, nY SAY8 "█"
+         @ nX++, nY SAY8 "███████"
+         @ nX++, nY + 6   SAY8 "█"
+         @ nX++, nY + 6   SAY8 "█"
+         @ nX++, nY SAY8 "█" ; @ Row(), Col() + 5 SAY8 "█"
+         @ nX++, nY SAY8 "███████"
+      CASE cChar = "6"
+         nY -= 8
+         @ nX++, nY SAY8 "███████"
+         @ nX++, nY SAY8 "█"
+         @ nX++, nY SAY8 "█"
+         @ nX++, nY SAY8 "███████"
+         @ nX++, nY SAY8 "█" ; @ Row(), Col() + 5 SAY8 "█"
+         @ nX++, nY SAY8 "█" ; @ Row(), Col() + 5 SAY8 "█"
+         @ nX++, nY SAY8 "█" ; @ Row(), Col() + 5 SAY8 "█"
+         @ nX++, nY SAY8 "███████"
+      CASE cChar = "7"
+         nY -= 8
+         @ nX++, nY SAY8 "███████"
+         @ nX++, nY + 6     SAY8 "█"
+         @ nX++, nY + 5    SAY8 "█"
+         @ nX++, nY + 4   SAY8 "█"
+         @ nX++, nY + 3  SAY8 "█"
+         @ nX++, nY + 2  SAY8 "█"
+         @ nX++, nY + 1 SAY8 "█"
+         @ nX++, nY SAY8 "█"
+      CASE cChar = "8"
+         nY -= 8
+         @ nX++, nY SAY8 "███████"
+         @ nX++, nY SAY8 "█" ; @ Row(), Col() + 5 SAY8 "█"
+         @ nX++, nY SAY8 "█" ; @ Row(), Col() + 5 SAY8 "█"
+         @ nX++, nY + 1 SAY8 "█████"
+         @ nX++, nY SAY8 "█" ; @ Row(), Col() + 5 SAY8 "█"
+         @ nX++, nY SAY8 "█" ; @ Row(), Col() + 5 SAY8 "█"
+         @ nX++, nY SAY8 "█" ; @ Row(), Col() + 5 SAY8 "█"
+         @ nX++, nY SAY8 "███████"
+      CASE cChar = "9"
+         nY -= 8
+         @ nX++, nY SAY8 "███████"
+         @ nX++, nY SAY8 "█" ; @ Row(), Col() + 5 SAY8 "█"
+         @ nX++, nY SAY8 "█" ; @ Row(), Col() + 5 SAY8 "█"
+         @ nX++, nY SAY8 "███████"
+         @ nX++, nY + 6     SAY8 "█"
+         @ nX++, nY + 6     SAY8 "█"
+         @ nX++, nY SAY8 "█" ; @ Row(), Col() + 5 SAY8 "█"
+         @ nX++, nY SAY8 "███████"
+      CASE cChar = "0"
+         nY -= 8
+         @ nX++, nY + 1 SAY8 "█████"
+         @ nX++, nY SAY8 "█" ; @ Row(), Col() + 5 SAY8 "█"
+         @ nX++, nY SAY8 "█" ; @ Row(), Col() + 5 SAY8 "█"
+         @ nX++, nY SAY8 "█" ; @ Row(), Col() + 5 SAY8 "█"
+         @ nX++, nY SAY8 "█" ; @ Row(), Col() + 5 SAY8 "█"
+         @ nX++, nY SAY8 "█" ; @ Row(), Col() + 5 SAY8 "█"
+         @ nX++, nY SAY8 "█" ; @ Row(), Col() + 5 SAY8 "█"
+         @ nX++, nY + 1 SAY8 "█████"
+      CASE cChar = "."
+         nY -= 4
+         nX += 7
+         @ nX, nY SAY8 "███"
+      CASE cChar = "-"
+         nY -= 6
+         nX += 3
+         @ nX, nY SAY8 "█████"
+      ENDCASE
+   NEXT
+
+   SetColor( cOldColor )
+
+   RETURN .T.

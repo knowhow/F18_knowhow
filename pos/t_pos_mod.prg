@@ -135,7 +135,7 @@ FUNCTION pos_main_menu_level( Fx, Fy )
 METHOD setScreen()
 
    pripremi_naslovni_ekran( self )
-   crtaj_naslovni_ekran( .T. )
+   crtaj_naslovni_ekran()
 
    RETURN .T.
 

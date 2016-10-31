@@ -34,30 +34,28 @@ FUNCTION pripremi_naslovni_ekran( oApp )
 
 
 
-FUNCTION crtaj_naslovni_ekran( lClear )
+FUNCTION crtaj_naslovni_ekran()
 
+   LOCAL cColorNormal
    LOCAL nMaxCols := MAXCOLS()
    LOCAL nMaxRows := MAXROWS()
 
-   SetColor( f18_color_normal() )
-
-   IF lClear
-      CLEAR
-   ENDIF
+   cColorNormal := f18_color_normal( .T. )
+   SetColor( cColorNormal )
 
 
-altd()
+   CLEAR
+
+
+   // start zaglavlje
    @ 0, 2 SAY '<ESC> Izlaz' COLOR f18_color_invert()
    @ 0, Col() + 2 SAY Date() COLOR f18_color_invert()
+
    @ nMaxRows - 1, nMaxCols - 16  SAY f18_lib_ver()
 
-   DispBox( 2, 0, 4, nMaxCols - 1, B_DOUBLE + BOX_CHAR_BACKGROUND_HEAD, f18_color_normal() )
+   DispBox( 2, 0, 4, nMaxCols - 1, B_DOUBLE + BOX_CHAR_BACKGROUND_HEAD, cColorNormal )
 
-   IF lClear
-      DispBox( 5, 0, nMaxRows - 1, nMaxCols - 1, B_DOUBLE + BOX_CHAR_BACKGROUND, f18_color_invert()  )
-   ENDIF
-
-   @ 3, 1 SAY PadC( gNaslov, nMaxCols - 8 ) COLOR f18_color_normal()
+   @ 3, 1 SAY PadC( gNaslov, nMaxCols - 8 ) COLOR cColorNormal
 
    show_podaci_organizacija()
 
@@ -65,7 +63,17 @@ altd()
    show_dbf_prefix()
    show_insert_over_stanje()
 
-   @ 0, MAXCOLS() - 14 SAY "bring.out" COLOR f18_color_normal()
+   @ 0, MAXCOLS() - 14 SAY "bring.out" COLOR cColorNormal
+
+   cColorNormal := f18_color_normal( .F. )
+   SetColor( cColorNormal )
+
+   // povrsina iza menija
+      DispBox( 5, 0, nMaxRows - 1, nMaxCols - 1, B_DOUBLE + BOX_CHAR_BACKGROUND, f18_color_invert()  )
+
+      ispisi_velikim_slovima( AllTrim( Str( tekuca_sezona() ) ), 20, MAXCOLS() - 5, ;
+         iif( in_tekuca_godina(), F18_COLOR_NAGLASENO, F18_COLOR_NAGLASENO_STARA_SEZONA ) )
+
 
    RETURN .T.
 
@@ -82,16 +90,18 @@ STATIC FUNCTION show_podaci_organizacija()
 FUNCTION swap_insert_over_stanje()
    RETURN show_insert_over_stanje( .T. )
 
+
 FUNCTION show_dbf_prefix()
 
    LOCAL cPrefix
+
    IF !Empty( my_dbf_prefix() )
-      cPrefix := "[" + Strtran( my_dbf_prefix(), "/", "" ) + "]"
+      cPrefix := "[" + StrTran( my_dbf_prefix(), "/", "" ) + "]"
       @ 0, MAXCOLS() - 4 SAY cPrefix COLOR F18_COLOR_NAGLASENO
    ENDIF
 
-
    RETURN .T.
+
 
 FUNCTION show_insert_over_stanje( lSWap )
 
@@ -115,7 +125,7 @@ FUNCTION show_insert_over_stanje( lSWap )
       cState := '< OVER >'
    ENDIF
 
-   @ 0, MAXCOLS() - 23 SAY  cState COLOR f18_color_invert()
+   @ 0, MAXCOLS() - 23 SAY cState COLOR f18_color_invert( .T. )
 
    SetPos( nX, nY )
 

@@ -32,8 +32,6 @@ FUNCTION f18_menu( cIzp, lOsnovniMeni, nIzbor, aOpc, aOpcExe )
    DO WHILE .T.
       nIzbor := meni_0( cIzp, aOpc, nIzbor, .F. )
 
-      // nIzbor := retitem( nIzbor )
-
       DO CASE
       CASE nIzbor == 0
          IF lOsnovniMeni
@@ -77,6 +75,7 @@ FUNCTION f18_menu( cIzp, lOsnovniMeni, nIzbor, aOpc, aOpcExe )
 FUNCTION f18_menu_sa_priv_vars_opc_opcexe_izbor( cIzp, lMain )
 
    // pretpostavljamo privatne varijable Izbor, Opc, OpcExe
+
    RETURN f18_menu( cIzp, lMain, Izbor, Opc, OpcExe )
 
 
@@ -121,10 +120,9 @@ FUNCTION meni_0( cMeniId, aItems, nItemNo, lInvert, cHelpT, nPovratak, aFixKoo, 
    LOCAL nChar
 
    // LOCAL ItemSav
-   LOCAL i
    LOCAL aMenu := {}
    LOCAL cPom := Set( _SET_DEVICE )
-   LOCAL lFK := .F.
+   LOCAL lFiksneKoordinate := .F.
 
    SET DEVICE TO SCREEN
 
@@ -138,7 +136,7 @@ FUNCTION meni_0( cMeniId, aItems, nItemNo, lInvert, cHelpT, nPovratak, aFixKoo, 
       aFixKoo := {}
    ENDIF
    IF Len( aFixKoo ) == 2
-      lFK := .T.
+      lFiksneKoordinate := .T.
    ENDIF
 
    nN1 := iif( Len( aItems ) > nMaxVR, nMaxVR, Len( aItems ) )
@@ -149,13 +147,13 @@ FUNCTION meni_0( cMeniId, aItems, nItemNo, lInvert, cHelpT, nPovratak, aFixKoo, 
    ENDIF
 
    cLocalColor  := iif( lInvert, f18_color_invert(), f18_color_normal() )
-   cLocalInvertedColor := iif( lInvert, f18_color_normal(), f18_color_invert()  )
+   cLocalInvertedColor := iif( lInvert, f18_color_normal(), f18_color_invert() )
 
    cOldColor := SetColor( cLocalColor )
 
    // Ako se meni zove prvi put, upisi ga na stek
    IF Len( aMenuStack ) == 0 .OR. ( Len( aMenuStack ) <> 0 .AND. cMeniId <> ( StackTop( aMenuStack ) )[ 1 ] )
-      IF lFK
+      IF lFiksneKoordinate
          m_x := aFixKoo[ 1 ]
          m_y := aFixKoo[ 2 ]
       ELSE
@@ -166,7 +164,7 @@ FUNCTION meni_0( cMeniId, aItems, nItemNo, lInvert, cHelpT, nPovratak, aFixKoo, 
       StackPush( aMenuStack, { cMeniId, ;
          m_x, ;
          m_y, ;
-         SaveScreen( m_x, m_y, m_x + nN1 + 2 -IF( lFK, 1, 0 ), m_y + nLength + 4 - iif( lFK, 1, 0 ) ), ;
+         SaveScreen( m_x, m_y, m_x + nN1 + 2 - iif( lFiksneKoordinate, 1, 0 ), m_y + nLength + 4 - iif( lFiksneKoordinate, 1, 0 ) ), ;
          nItemNo, ;
          cHelpT;
          } )
@@ -178,33 +176,20 @@ FUNCTION meni_0( cMeniId, aItems, nItemNo, lInvert, cHelpT, nPovratak, aFixKoo, 
 
    END IF
 
-   @ m_x, m_y CLEAR TO m_x + nN1 + 1, m_y + nLength + 3
-   IF lFK
-      @ m_x, m_y TO m_x + nN1 + 1, m_y + nLength + 3
-   ELSE
-      @ m_x, m_y TO m_x + nN1 + 1, m_y + nLength + 3 DOUBLE
-      @ m_x + nN1 + 2, m_y + 1 SAY Replicate( Chr( 177 ), nLength + 4 )
+   SetColor( f18_color_invert() )
 
-      FOR i := 1 TO nN1 + 1
-         @ m_x + i, m_y + nLength + 4 SAY Chr( 177 )
-      NEXT
-
-   ENDIF
-
-   SetColor( f18_color_invert()  )
    IF nItemNo == 0
       CentrTxt( h[ 1 ], MAXROWS() -1 )
    END IF
 
    SetColor( cLocalColor )
 
-   // IF Len( aItems ) > nMaxVR
-   nItemNo := meni_0_inkey( m_x + 1, m_y + 2, m_x + nN1 + 1, m_y + nLength + 1, aItems, nItemNo ) // RetItem( nItemNo ) ) // , RetItem( nItemNo )-1 )
-   // ELSE
-   // nItemNo := Achoice2( m_x + 1, m_y + 2, m_x + nN1 + 1, m_y + nLength + 1, aItems, .T., "MenuFunc", RetItem( nItemNo ), RetItem( nItemNo ) -1 )
-   // ENDIF
 
-   nTItemNo := nItemNo //nTItemNo := RetItem( nItemNo )
+   nItemNo := meni_0_inkey(  m_x + 1, m_y + 2, m_x + nN1 + 1, m_y + nLength + 1, aItems, nItemNo, ;
+      .T., lFiksneKoordinate )
+
+
+   nTItemNo := nItemNo // nTItemNo := RetItem( nItemNo )
 
    aMenu := StackTop( aMenuStack )
    m_x := aMenu[ 2 ]
@@ -222,9 +207,10 @@ FUNCTION meni_0( cMeniId, aItems, nItemNo, lInvert, cHelpT, nPovratak, aFixKoo, 
    nChar := LastKey()
 
    IF nChar == K_ESC .OR. nTItemNo == 0 .OR. nTItemNo == nPovratak  // Ako je ESC meni treba odmah izbrisati (nItemNo=0),  skini meni sa steka
-      @ m_x, m_y CLEAR TO m_x + nN1 + 2 - iif( lFK, 1, 0 ), m_y + nLength + 4 - iif( lFK, 1, 0 )
+      @ m_x, m_y CLEAR TO m_x + nN1 + 2 - iif( lFiksneKoordinate, 1, 0 ), m_y + nLength + 4 - iif( lFiksneKoordinate, 1, 0 )
       aMenu := StackPop( aMenuStack )
-      RestScreen( m_x, m_y, m_x + nN1 + 2 -iif( lFK, 1, 0 ), m_y + nLength + 4 - iif( lFK, 1, 0 ), aMenu[ 4 ] )
+
+      RestScreen( m_x, m_y, m_x + nN1 + 2 -iif( lFiksneKoordinate, 1, 0 ), m_y + nLength + 4 - iif( lFiksneKoordinate, 1, 0 ), aMenu[ 4 ] )
    END IF
 
    SetColor( cOldColor )
@@ -265,18 +251,22 @@ FUNCTION meni_0( cMeniId, aItems, nItemNo, lInvert, cHelpT, nPovratak, aFixKoo, 
 */
 
 
-FUNCTION meni_0_inkey( nX1, nY1, nX2, nY2, aItems, nItemNo )
+FUNCTION meni_0_inkey( nX1, nY1, nX2, nY2, aItems, nItemNo, lOkvir, lFiksneKoordinate )
 
    LOCAL nI, nWidth, nLen, nOldCurs, cOldColor, nOldItemNo, cSavC
    LOCAL nGornja
    LOCAL nVisina
-   //LOCAL nCtrlKeyVal := 0
+
+   // LOCAL nCtrlKeyVal := 0
    LOCAL nChar
    LOCAL lExitFromMeni
+
+   hb_default( @lOkvir, .F. ) // iscrtavanje okvira
 
    IF nItemNo == 0
       RETURN nItemNo
    ENDIF
+
 
    lExitFromMeni := .F.
 
@@ -284,14 +274,17 @@ FUNCTION meni_0_inkey( nX1, nY1, nX2, nY2, aItems, nItemNo )
    cOldColor := SetColor()
    SET CURSOR OFF
 
-   nWidth := nY2 - nY1
-   nLen := Len( aItems )
-   nVisina := nX2 - nX1
-   nGornja := iif( nItemNo > nVisina, nItemNo - nVisina + 1, 1 )
-
-   @ nX1, nY1 CLEAR TO nX2 - 1, nY2
-
    DO WHILE .T.
+
+      nWidth := nY2 - nY1
+      nLen := Len( aItems )
+      nVisina := nX2 - nX1
+      nGornja := iif( nItemNo > nVisina, nItemNo - nVisina + 1, 1 )
+
+      @ nX1, nY1 CLEAR TO nX2 - 1, nY2
+      IF lOkvir
+         meni_0_okvir( nX1, nY1, nX2, nY2, lFiksneKoordinate )
+      ENDIF
 
       IF in_calc()
          hb_idleSleep( 0.5 )
@@ -299,8 +292,8 @@ FUNCTION meni_0_inkey( nX1, nY1, nX2, nY2, aItems, nItemNo )
       ENDIF
 
       IF nVisina < nLen
-         @   nX2, nY1 + Int( nWidth / 2 ) SAY iif( nGornja == 1, " ^ ", iif( nItemNo == nLen, " v ", " v " ) )
-         @   nX1 - 1, nY1 + Int( nWidth / 2 ) SAY iif( nGornja == 1, " v ", iif( nItemNo == nLen, " ^ ", " ^ " ) )
+         @  nX2, nY1 + Int( nWidth / 2 ) SAY iif( nGornja == 1, " ^ ", iif( nItemNo == nLen, " v ", " v " ) )
+         @  nX1 - 1, nY1 + Int( nWidth / 2 ) SAY iif( nGornja == 1, " v ", iif( nItemNo == nLen, " ^ ", " ^ " ) )
       ENDIF
 
       FOR nI := nGornja TO nVisina + nGornja - 1
@@ -318,7 +311,7 @@ FUNCTION meni_0_inkey( nX1, nY1, nX2, nY2, aItems, nItemNo )
          ENDIF
       NEXT
 
-      SetColor( f18_color_invert()  )
+      SetColor( f18_color_invert() )
       SetColor( cOldColor )
 
       IF lExitFromMeni
@@ -363,17 +356,17 @@ FUNCTION meni_0_inkey( nX1, nY1, nX2, nY2, aItems, nItemNo )
             ENDIF
          NEXT
 
-      //CASE nChar == K_CTRL_N
-      //   nCtrlKeyVal := 10000
-      //   EXIT
+         // CASE nChar == K_CTRL_N
+         // nCtrlKeyVal := 10000
+         // EXIT
 
-      //CASE nChar == K_F2
-      //   nCtrlKeyVal := 20000
-      //   EXIT
+         // CASE nChar == K_F2
+         // nCtrlKeyVal := 20000
+         // EXIT
 
-      //CASE nChar == K_CTRL_T
-    //     nCtrlKeyVal := 30000
-    //     EXIT
+         // CASE nChar == K_CTRL_T
+         // nCtrlKeyVal := 30000
+         // EXIT
 
       ENDCASE
 
@@ -389,4 +382,27 @@ FUNCTION meni_0_inkey( nX1, nY1, nX2, nY2, aItems, nItemNo )
    SetCursor( iif( nOldCurs == 0, 0, iif( ReadInsert(), 2, 1 ) ) )
    SetColor( cOldColor )
 
-   RETURN nItemNo //+ nCtrlKeyVal
+   RETURN nItemNo // + nCtrlKeyVal
+
+
+
+// STATIC FUNCTION meni_0_okvir(  nN1, nLength, lFiksneKoordinate )
+STATIC FUNCTION meni_0_okvir( nX1, nY1, nX2, nY2, lFiksneKoordinate )
+
+   LOCAL nI, nLength := nY2 - nY1
+
+   @ nX1 - 1, nY1 - 2 CLEAR TO nX2, nY2 + 2
+   IF lFiksneKoordinate
+      @ nX1 - 1, nY1 - 2 TO nX2, nY2 + 2
+   ELSE
+
+      @ nX1 - 1, nY1 - 2 TO nX2, nY2 + 2 DOUBLE // okvir duple linije
+
+      FOR nI := 1 TO (nX2 - nX1 + 2)
+         @ nX1 + nI - 1, nY1 + nLength + 3 SAY Chr( 177 ) // sjena desno
+      NEXT
+      @ nX2 + 1, nY1 - 1 SAY Replicate( Chr( 177 ), nLength + 5 ) // sjena dno
+
+   ENDIF
+
+   RETURN .T.

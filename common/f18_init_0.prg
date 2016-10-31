@@ -33,10 +33,9 @@ FUNCTION start_f18_program_module( oApp, lSezone )
 
    oApp:set_module_gvars()
 
-altd()
    open_main_window()
    pripremi_naslovni_ekran( oApp )
-   crtaj_naslovni_ekran( .T. )
+   crtaj_naslovni_ekran()
 
    RETURN .T.
 

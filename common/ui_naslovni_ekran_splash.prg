@@ -28,7 +28,7 @@ FUNCTION naslovni_ekran_splash_screen( cNaslov, cVer )
    WBox()
 
    WSelect( nWin )
-   SetColor( f18_color_invert() )
+   //SetColor( f18_color_invert() )
    DispBox( 0, 0, MaxRow(), MaxCol(), Replicate( " ", 9 ) )
    SetPos( 0, 0 )
 

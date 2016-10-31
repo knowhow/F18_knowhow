@@ -161,14 +161,6 @@ STATIC FUNCTION kalk_imp_temp_to_roba()
          @ m_x + 1, m_y + 2 SAY "      ID: " + roba->id
          @ m_x + 2, m_y + 2 SAY "SIFRADOB: " + kalk_imp_temp->sifradob
 
-/*
-         IF Trim( kalk_imp_temp->sifradob ) == "11417"
-            AltD()
-         ENDIF
- */
-         IF Trim( kalk_imp_temp->sifradob ) == "03038"
-            AltD()
-         ENDIF
          lPromjena := .F. // desila se promjena cijene
 
          hRec := dbf_get_rec()

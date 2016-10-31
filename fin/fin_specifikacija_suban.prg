@@ -180,7 +180,6 @@ FUNCTION fin_specifikacija_suban()
       O_RJ
    ENDIF
 
-altd()
    O_PARTN
    O_KONTO
    MsgO( "Preuzimanje podataka sa SQL servera ..." )

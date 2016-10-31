@@ -119,8 +119,6 @@ FUNCTION fin_nalog_brisi_iz_kumulativa( cIdFirma, cIdVn, cBrNal )
    _rec[ "idvn" ] := cIdVn
    _rec[ "brnal" ] := cBrNal
 
-altd()
-
    run_sql_query( "BEGIN" )
 
 /*

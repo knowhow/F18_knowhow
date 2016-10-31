@@ -135,7 +135,6 @@ FUNCTION fakt_11_kalk_prenos_11()
          cFilterBrDok := Parsiraj( cFaktBrDokumenti, "BRDOK" )
          SET FILTER TO &cFilterBrDok
          GO TOP
-         AltD()
       ELSE
          cFilterBrDok := ".t."
       ENDIF

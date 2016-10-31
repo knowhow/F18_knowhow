@@ -83,7 +83,7 @@ FUNCTION kalk_auto_import_racuni()
    ENDIF
 
 
-   IF fajl_get_broj_linija( cTxtFile ) == 0 // provjeri da li je fajl za import prazan
+   IF fajl_get_broj_linija( cImpFile ) == 0
       MsgBeep( "Odabrani fajl je prazan!#Prekidam operaciju !" )
       RETURN .F.
    ENDIF
@@ -368,7 +368,6 @@ STATIC FUNCTION kalk_imp_from_temp_to_pript( aFExist, lFSkip, lNegative )// , cC
       GO TOP
       SEEK cTmpArt
 
-      AltD()
       cIdKontoZaduzuje := kalk_imp_get_konto_by_tip_pm_poslovnica( cTDok, kalk_imp_temp->idpm, "Z", cIdPJ )
       cIdKontoRazduzuje := kalk_imp_get_konto_by_tip_pm_poslovnica( cTDok, kalk_imp_temp->idpm, "R", cIdPJ )
 

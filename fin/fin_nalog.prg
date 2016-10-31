@@ -107,6 +107,7 @@ FUNCTION fin_nalog_priprema_auto_import( lAuto, lStampa )
 
    hb_default( @lStampa, .F. )
 
+
    IF !fin_nalog_fix_greska_zaokruzenja_fin_pripr( NIL, NIL, NIL, lAuto )
       RETURN .F.
    ENDIF
@@ -175,26 +176,28 @@ FUNCTION fin_nalog_fix_greska_zaokruzenja_fin_pripr( cIdFirma, cIdVn, cBrNal, lA
 
    hRec := dbf_get_rec()
 
-
-   IF Round( nDuguje - nPotrazuje, 2 ) <> 0 .AND. ;
-         ( lAuto .OR. ( Pitanje(, "Želite li uravnotežiti nalog (D/N) ?", "D" ) == "D" ) )
-
-      hRec[ "opis" ] := "GRESKA ZAOKRUZ."
-      hRec[ "brdok" ] := ""
-      hRec[ "d_p" ] := "2"
-      hRec[ "idkonto" ] := kalk_imp_txt_param_auto_import_podataka_konto()
-
-      hRec[ "rbr" ] := hRec[ "rbr" ] + 1 // posljednja stavka Rbr + 1
-      hRec[ "idpartner" ] := ""
-      hRec[ "iznosbhd" ] := nDuguje - nPotrazuje
-      hRec[ "iznosdem" ] := Round( konverzija_km_dem( hRec[ "datdok" ], hRec[ "iznosbhd" ] ), 2 )
-
-      APPEND BLANK
-      dbf_update_rec( hRec )
-
+   IF Round( nDuguje - nPotrazuje, 2 ) == 0
       lRet := .T.
    ELSE
-      lRet := .F.
+
+      IF  ( lAuto .OR. ( Pitanje(, "Želite li uravnotežiti nalog (D/N) ?", "D" ) == "D" ) )
+
+         hRec[ "opis" ] := "GRESKA ZAOKRUZ."
+         hRec[ "brdok" ] := ""
+         hRec[ "d_p" ] := "2"
+         hRec[ "idkonto" ] := kalk_imp_txt_param_auto_import_podataka_konto()
+
+         hRec[ "rbr" ] := hRec[ "rbr" ] + 1 // posljednja stavka Rbr + 1
+         hRec[ "idpartner" ] := ""
+         hRec[ "iznosbhd" ] := nDuguje - nPotrazuje
+         hRec[ "iznosdem" ] := Round( konverzija_km_dem( hRec[ "datdok" ], hRec[ "iznosbhd" ] ), 2 )
+
+         APPEND BLANK
+         dbf_update_rec( hRec )
+         lRet := .T.
+      ELSE
+         lRet := .F.
+      ENDIF
 
    ENDIF
 

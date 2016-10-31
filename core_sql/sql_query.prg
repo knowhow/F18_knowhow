@@ -192,7 +192,6 @@ FUNCTION run_sql_query( cQry, hParams )
 
       RECOVER
 
-         altd()
          ?E "SQL ERRRRROR:", cQry
          hb_idleSleep( 1 )
 

@@ -58,11 +58,11 @@ FUNCTION kontrola_zbira_naloga()
    nDug := nDug2 := nPot := nPot2 := 0
    DO WHILE  !Eof() .AND. ( fin_pripr->IdFirma + fin_pripr->IdVn + fin_pripr->BrNal == cIdFirma + cIdVn + cBrNal )
       IF D_P == "1"
-         nDug  += field->IznosBHD
-         nDug2 += field->iznosdem
+         nDug  += Round( field->IznosBHD, 2 )
+         nDug2 += Round( field->iznosdem, 2 )
       ELSE
-         nPot  += field->IznosBHD
-         nPot2 += field->iznosdem
+         nPot  += Round( field->IznosBHD, 2 )
+         nPot2 += Round( field->iznosdem, 2 )
       ENDIF
       SKIP
    ENDDO
@@ -167,7 +167,7 @@ FUNCTION fin_saldo_provjera_psuban( cIdFirma, cIdVn, cBrNal )
 
 FUNCTION is_fin_nalog_u_ravnotezi( cIdFirma, cIdVn, cBrNal )
 
-   LOCAL  nDuguje, nPotrazuje
+   LOCAL  nDuguje, nPotrazuje, lRavnoteza
 
    PushWA()
 
@@ -191,7 +191,12 @@ FUNCTION is_fin_nalog_u_ravnotezi( cIdFirma, cIdVn, cBrNal )
       SKIP
    ENDDO
 
-   MsgBeep( "FIN nalog " + cIdFirma + " - " + cIdVn + " - " + cBrNal + "u pripremi nije u ravnoteži !?# STOP" )
    PopWA()
 
-   RETURN Round( nDuguje - nPotrazuje, 2 ) == 0
+   lRavnoteza := ( Round( nDuguje - nPotrazuje, 2 ) == 0 )
+
+   IF !lRavnoteza
+      MsgBeep( "FIN nalog " + cIdFirma + " - " + cIdVn + " - " + cBrNal + "##u pripremi nije u ravnoteži !?# STOP" )
+   ENDIF
+
+   RETURN lRavnoteza

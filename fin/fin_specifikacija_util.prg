@@ -267,7 +267,6 @@ FUNCTION prikaz_k1_k4_rj( lK )
 
    cStr := "Pregled odabranih kriterija :"
 
-altd()
    IF gFinRJ == "D" .AND. Len( cIdRJ ) <> 0
       cRjNaz := ""
       nArr := Select()

@@ -146,7 +146,7 @@ FUNCTION os_pregled_po_kontima()
    select_os_sii()
 
    P_10CPI
-   ? gTS + ":", gnFirma
+   ? tip_organizacije() + ":", gnFirma
 
    IF !Empty( cIdrj )
       ? "Radna jedinica:", cIdRj, rj->naz

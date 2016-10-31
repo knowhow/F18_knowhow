@@ -179,7 +179,7 @@ FUNCTION ld_pregled_primanja_za_period()
 FUNCTION ZPregPrimPer()
 
    P_12CPI
-   ? Upper( Trim( gTS ) ) + ":", gnFirma
+   ? Upper( Trim( tip_organizacije() ) ) + ":", gnFirma
    ?
    ? "Pregled primanja za period od", cMjesecOd, "do", cMjesecDo, "mjesec " + IspisObr()
    ?? cGodina
@@ -200,7 +200,7 @@ FUNCTION ZPregPrimPer()
 FUNCTION ZSRO()
 
    P_COND
-   ? Upper( gTS ) + ":", gnFirma
+   ? Upper( tip_organizacije() ) + ":", gnFirma
    ?
    IF Empty( cidrj )
       ? "Pregled za sve RJ ukupno:"

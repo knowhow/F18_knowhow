@@ -76,7 +76,7 @@ METHOD ReportCommon:get_company( id_firma )
    LOCAL _data, oRow
    LOCAL _comp
 
-   _comp := AllTrim( gTS ) + ": "
+   _comp := AllTrim( tip_organizacije() ) + ": "
 
    IF gNW == "D"
       _comp += gFirma + " - " + AllTrim( gNFirma )

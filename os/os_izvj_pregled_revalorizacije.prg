@@ -68,7 +68,7 @@ FUNCTION os_pregled_revalorizacije()
    ENDIF
 
    P_10CPI
-   ? gTS + ":", gnFirma
+   ? tip_organizacije() + ":", gnFirma
    IF !Empty( cidrj )
       ? "Radna jedinica:", cidrj, rj->naz
    ENDIF

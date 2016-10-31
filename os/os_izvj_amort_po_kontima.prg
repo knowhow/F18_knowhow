@@ -119,7 +119,7 @@ FUNCTION os_amortizacija_po_kontima()
 
    P_12CPI
 
-   ? gTS + ":", gnFirma
+   ? tip_organizacije() + ":", gnFirma
 
    IF !Empty( cidrj )
       SELECT rj

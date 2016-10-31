@@ -283,7 +283,7 @@ FUNCTION ld_pregled_primanja()
 FUNCTION ZPregPrim()
 
    P_12CPI
-   ? Upper( gTS ) + ":", gnFirma
+   ? Upper( tip_organizacije() ) + ":", gnFirma
    ?
    IF Empty( cidrj )
       ? _l( "Pregled za sve RJ ukupno:" )

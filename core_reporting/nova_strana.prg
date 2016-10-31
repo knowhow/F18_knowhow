@@ -11,12 +11,12 @@
 
 #include "f18.ch"
 
-MEMVAR gTS, gNFirma
+MEMVAR gNFirma
 
 FUNCTION zagl_organizacija( nLeft )
 
    ? " "
-   ? Space( nLeft ) + AllTrim( gTS ) + " :", AllTrim( gNFirma ) + ", baza (" + my_server_params()[ "database" ] + ")"
+   ? Space( nLeft ) + AllTrim( tip_organizacije() ) + " :", AllTrim( gNFirma ) + ", baza (" + my_server_params()[ "database" ] + ")"
    ? " "
 
    RETURN .T.

@@ -97,7 +97,7 @@ FUNCTION os_pregled_amortizacije()
    select_os_sii()
 
    P_10CPI
-   ? gTS + ":", gnFirma
+   ? tip_organizacije() + ":", gnFirma
 
    IF !Empty( cIdrj )
       ? "Radna jedinica:", cIdrj, rj->naz

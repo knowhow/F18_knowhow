@@ -1305,7 +1305,7 @@ FUNCTION kalk_zagl_firma()
    I_OFF
    ? "Subjekt:"
    U_ON
-   ?? PadC( Trim( gTS ) + " " + Trim( gNFirma ), 39 )
+   ?? PadC( Trim( tip_organizacije() ) + " " + Trim( gNFirma ), 39 )
    U_OFF
    ? "Prodajni objekat:"
    U_ON

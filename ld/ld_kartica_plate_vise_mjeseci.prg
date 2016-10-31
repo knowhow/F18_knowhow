@@ -306,7 +306,7 @@ STATIC FUNCTION zaglavlje_izvjestaja()
 
    ?? " PLATE ZA PERIOD OD " + Str( cMjesec, 2 ) + " DO " + Str( cMjesec2, 2 )
    ?? " / " + Str( godina, 4 )
-   ?? " ZA " + Upper( Trim( gTs ) )
+   ?? " ZA " + Upper( Trim( tip_organizacije() ) )
    ?? " " + AllTrim( gNFirma )
    ? "RJ: " + idrj + " " + AllTrim( ld_rj->naz )
    ? idradn + "-" + RADNIK_PREZ_IME + " Mat.br: " + radn->matbr + " STR.SPR: " + idstrspr

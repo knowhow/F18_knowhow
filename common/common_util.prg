@@ -212,7 +212,7 @@ FUNCTION preduzece()
    P_10CPI
    B_ON
 
-   ? AllTrim( gTS ) + ": "
+   ? AllTrim( tip_organizacije() ) + ": "
 
    // IF gNW == "D"
    ?? gFirma, "-", AllTrim( gNFirma )

@@ -199,7 +199,7 @@ FUNCTION zagl_sinteticki_nalog( dDatNal )
    ?
    P_COND
    F10CPI
-   ?? gTS + ":", gNFirma
+   ?? tip_organizacije() + ":", gNFirma
 /*
    IF gNW == "N"
       SELECT partn

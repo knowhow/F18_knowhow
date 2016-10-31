@@ -11,12 +11,28 @@
 
 #include "f18.ch"
 
+STATIC s_cTipOroganizacije
+
+FUNCTION tip_organizacije( cTip )
+
+   IF s_cTipOroganizacije == NIL
+      s_cTipOroganizacije := fetch_metric( "tip_subjekta", nil, "Preduzece" )
+   ENDIF
+
+   IF cTip != NIL
+      set_metric( "tip_subjekta", nil, cTip )
+      s_cTipOroganizacije := cTip
+   ENDIF
+
+   RETURN s_cTipOroganizacije
+
 
 
 FUNCTION parametri_organizacije( set_params )
 
    LOCAL _x := 1
    LOCAL _left := 20
+   LOCAL cTipOrganizacije := tip_organizacije()
 
    info_bar( "init", "parametri organizacije - start" )
    IF ( set_params == nil )
@@ -31,7 +47,7 @@ FUNCTION parametri_organizacije( set_params )
    PUBLIC gFirma := fetch_metric( "org_id", nil, gFirma )
    PUBLIC gNFirma := PadR( fetch_metric( "org_naziv", nil, gNFirma ), 50 )
    PUBLIC gMjStr := fetch_metric( "org_mjesto", nil, gMjStr )
-   PUBLIC gTS := fetch_metric( "tip_subjekta", nil, gTS )
+
    PUBLIC gTabela := fetch_metric( "tip_tabele", nil, gTabela )
    PUBLIC gBaznaV := fetch_metric( "bazna_valuta", nil, gBaznaV )
    PUBLIC gPDV := fetch_metric( "pdv_global", nil, gPDV )
@@ -56,7 +72,7 @@ FUNCTION parametri_organizacije( set_params )
       @ m_x + _x, m_y + 2 SAY PadL( "Grad:", _left ) GET gMjStr PICT "@S20"
 
       ++ _x
-      @ m_x + _x, m_y + 2 SAY PadL( "Tip subjekta:", _left ) GET gTS PICT "@S10"
+      @ m_x + _x, m_y + 2 SAY PadL( "Tip subjekta/organizacije:", _left ) GET cTipOrganizacije PICT "@S10"
       @ m_x + _x, Col() + 1 SAY "U sistemu pdv-a (D/N) ?" GET gPDV VALID gPDV $ "DN" PICT "@!"
 
       ++ _x
@@ -79,7 +95,7 @@ FUNCTION parametri_organizacije( set_params )
             RETURN .F.
          ENDIF
          set_metric( "zaokruzenje", nil, gZaokr )
-         set_metric( "tip_subjekta", nil, gTS )
+         tip_organizacije( cTipOrganizacije)
          set_metric( "org_naziv", nil, gNFirma )
          set_metric( "bazna_valuta", nil, gBaznaV )
          set_metric( "pdv_global", nil, gPDV )

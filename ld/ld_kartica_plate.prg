@@ -261,7 +261,7 @@ FUNCTION ZaglKar()
       ENDDO
    ENDIF
 
-   ?U "OBRAČUN PLATE ZA" + Space( 1 ) + Str( mjesec, 2 ) + "/" + Str( godina, 4 ) + " (obr. " + IspisObr() + ")", " ZA " + Upper( Trim( gTS ) ), gNFirma
+   ?U "OBRAČUN PLATE ZA" + Space( 1 ) + Str( mjesec, 2 ) + "/" + Str( godina, 4 ) + " (obr. " + IspisObr() + ")", " ZA " + Upper( Trim( tip_organizacije() ) ), gNFirma
    ? "RJ:", idrj, ld_rj->naz
    ? idradn, "-", RADNIK_PREZ_IME, "  Mat.br:", radn->matbr
    ShowHiredFromTo( radn->hiredfrom, radn->hiredto, "" )

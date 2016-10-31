@@ -724,7 +724,7 @@ FUNCTION ld_lista_kredita()
       IF fsvi
          ?
          ? StrTran( m, "-", "*" )
-         ? gTS + ":", cIdKred, kred->naz
+         ? tip_organizacije() + ":", cIdKred, kred->naz
          ? StrTran( m, "-", "*" )
       ENDIF
       cOsn := ""

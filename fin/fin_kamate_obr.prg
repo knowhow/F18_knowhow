@@ -56,7 +56,7 @@ FUNCTION kamate_obracun_pojedinacni( fVise )
    ?
    ?
    B_ON
-   ? Space( 45 ), "Preduzece:", gNFirma
+   ?U Space( 45 ), "Preduzeće:", gNFirma
    B_OFF
    ?
    ? "Partner: _____________________________________"

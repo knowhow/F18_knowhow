@@ -133,7 +133,7 @@ FUNCTION UnosSiht()
       START PRINT CRET
 
       P_12CPI
-      ? gTS + ":", gnFirma
+      ? tip_organizacije() + ":", gnFirma
       ?? "; Radna jedinica:", cIdRj
       ?
       ? "Godina:", Str( ngodina, 4 ), "/", Str( nmjesec, 2 )

@@ -217,7 +217,6 @@ FUNCTION set_global_vars_2()
    PUBLIC gOznVal := "KM"
    PUBLIC gFirma := "10"
    PUBLIC gNFirma := PadR( "", 50 )
-   PUBLIC gTS := PadR( "Preduzece", 20 )
    PUBLIC gBaznaV := "D"
    PUBLIC gZaokr := 2
    PUBLIC gTabela := 0

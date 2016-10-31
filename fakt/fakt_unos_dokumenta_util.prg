@@ -615,7 +615,7 @@ FUNCTION UzorTxt()
 
       ENDIF
 
-      SetColor( F18_COLOR_INVERT  )
+      SetColor( f18_color_invert()  )
 
       PRIVATE fUMemu := .T.
 
@@ -623,7 +623,7 @@ FUNCTION UzorTxt()
 
       fUMemu := NIL
 
-      SetColor( F18_COLOR_NORMAL )
+      SetColor( f18_color_normal() )
 
       BoxC()
 
@@ -711,13 +711,13 @@ FUNCTION UzorTxt2( cList, redni_broj )
             ENDIF
          ENDIF
 
-         SetColor( F18_COLOR_INVERT  )
+         SetColor( f18_color_invert()  )
          PRIVATE fUMemu := .T.
 
          _txt2 := MemoEdit( _txt2, m_x + 3, m_y + 1, m_x + 9, m_y + 76 )
 
          fUMemu := NIL
-         SetColor( F18_COLOR_NORMAL )
+         SetColor( f18_color_normal() )
 
          IF LastKey() == K_ESC
             EXIT

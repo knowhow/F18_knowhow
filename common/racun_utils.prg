@@ -10,7 +10,7 @@
  */
 
 #include "f18.ch"
-
+#include "f18_color.ch"
 
 
 /* ShowIznRac(nIznos)
@@ -25,7 +25,7 @@ FUNCTION ShowIznRac( nIznos )
 
    Box (, 9, 77 )
    cIzn := AllTrim ( Transform ( nIznos, "9999999.99" ) )
-   @ m_x, m_y + 28 SAY8 "  IZNOS RAČUNA JE  " COLOR F18_COLOR_INVERT
+   @ m_x, m_y + 28 SAY8 "  IZNOS RAČUNA JE  " COLOR f18_color_invert()
    NextY := m_y + 76
    FOR nCnt := Len ( cIzn ) TO 1 STEP -1
       Char := SubStr ( cIzn, nCnt, 1 )

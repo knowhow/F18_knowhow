@@ -10,7 +10,7 @@
  */
 
 #include "f18.ch"
-
+#include "f18_color.ch"
 
 STATIC __relogin_opt := .F.
 
@@ -32,6 +32,8 @@ FUNCTION Main( p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11 )
    set_global_vars_0()
    f18_error_block()
    set_screen_dimensions()
+
+   naslovni_ekran_splash_screen( "F18", f18_ver() )
 
    IF no_sql_mode()
       set_f18_home( "f18_test" )

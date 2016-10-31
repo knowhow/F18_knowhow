@@ -286,7 +286,7 @@ FUNCTION ispisi_iznos_racuna_box( iznos )
 
    cIzn := AllTrim ( Transform ( iznos, "9999999.99" ) )
 
-   @ m_x, m_y + 28 SAY8 "  IZNOS RAČUNA JE  " COLOR F18_COLOR_INVERT
+   @ m_x, m_y + 28 SAY8 "  IZNOS RAČUNA JE  " COLOR f18_color_invert()
 
    NextY := m_y + 76
 
@@ -546,6 +546,6 @@ FUNCTION pos_status_traka()
       @ _x, _y + 1 SAY8 Replicate( "█", MAXCOLS() - 2 )
    ENDIF
 
-   @ _x - 1, _y + 1 SAY PadC ( Razrijedi ( gKorIme ), MAXCOLS() - 2 ) COLOR F18_COLOR_INVERT
+   @ _x - 1, _y + 1 SAY PadC ( Razrijedi ( gKorIme ), MAXCOLS() - 2 ) COLOR f18_color_invert()
 
    RETURN .T.

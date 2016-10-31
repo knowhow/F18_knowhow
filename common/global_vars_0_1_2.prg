@@ -30,7 +30,7 @@ PROCEDURE set_global_vars_0()
    PUBLIC gReadOnly := .F.
    PUBLIC gProcPrenos := "N"
    PUBLIC gInstall := .F.
-   PUBLIC gfKolor := "D"
+   //PUBLIC gfKolor := "D"
    PUBLIC gPrinter := "R"
    PUBLIC gPtxtSw := nil
    PUBLIC gPDFSw := nil
@@ -182,7 +182,7 @@ FUNCTION set_global_vars_1()
    PUBLIC gcDirekt := "V", gShemaVF := "B5", gSKSif := "D"
    PUBLIC gKodnaS := "8"
    PUBLIC g50f := " "
-   PUBLIC gFKolor := "D"
+   //PUBLIC gFKolor := "D"
 
    O_GPARAMS
    PRIVATE cSection := "1", cHistory := " "; aHistory := {}
@@ -199,7 +199,7 @@ FUNCTION set_global_vars_1()
    Rpar( "pV", @gPDFViewer )
    Rpar( "pA", @gPDFPAuto )
    Rpar( "dP", @gDefPrinter )
-   Rpar( "FK", @gFKolor )
+   //Rpar( "FK", @gFKolor )
 
    SELECT ( F_GPARAMS )
    USE

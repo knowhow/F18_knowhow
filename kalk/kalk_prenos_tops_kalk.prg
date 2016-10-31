@@ -407,7 +407,7 @@ STATIC FUNCTION kalk_tops_get_parametri_prenosa( params )
 
    Box(, 8, 70 )
 
-   @ m_x + _x, m_y + 2 SAY "*** Automatsko razduzenje prodavnice ***" COLOR F18_COLOR_I
+   @ m_x + _x, m_y + 2 SAY "*** Automatsko razduzenje prodavnice ***" COLOR f18_color_i()
 
    ++ _x
    ++ _x

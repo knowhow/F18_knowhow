@@ -10,6 +10,7 @@
  */
 
 #include "f18.ch"
+#include "f18_color.ch"
 
 STATIC aIdleHandlers := {}
 STATIC s_nIdleRefresh := 0 // start idle refresh in seconds()
@@ -20,7 +21,7 @@ FUNCTION add_global_idle_handlers()
    AAdd( aIdleHandlers, hb_idleAdd( {||  hb_DispOutAt( maxrows(),  maxcols() - 8, Time(), F18_COLOR_INFO_PANEL ) } ) )
    AAdd( aIdleHandlers, hb_idleAdd( {||  calc_on_idle_handler() } ) )
 
-   //hb_idleAdd( aIdleHandlers, hb_idleAdd( {|| hb_DispOutAt( maxrows(), 1, "< PAUSE >", F18_COLOR_INFO_PANEL ), kalk_asistent_pause() } ) )
+   // hb_idleAdd( aIdleHandlers, hb_idleAdd( {|| hb_DispOutAt( maxrows(), 1, "< PAUSE >", F18_COLOR_INFO_PANEL ), kalk_asistent_pause() } ) )
 
    RETURN .T.
 
@@ -46,7 +47,9 @@ PROCEDURE on_idle_dbf_refresh()
 
       s_nIdleRefresh := Seconds()
       IF Seconds() - s_nIdleDisplayCounter > 15
+#ifdef F18_DEBUG_THREAD
          ?E "START in idle dbf refresh", Seconds()
+#endif
          s_nIdleDisplayCounter := Seconds()
       ENDIF
    ENDIF

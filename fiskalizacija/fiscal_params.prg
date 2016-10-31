@@ -192,7 +192,7 @@ FUNCTION globalne_postavke_fiskalni_uredjaj()
    ENDIF
 
    _x += 2
-   @ m_x + _x, m_y + 2 SAY8 PadR( "**** Podešenje uređaja", 60 ) COLOR F18_COLOR_I
+   @ m_x + _x, m_y + 2 SAY8 PadR( "**** Podešenje uređaja", 60 ) COLOR f18_color_i()
 
    _dev_tmp := PadL( AllTrim( Str( nDeviceId ) ), 2, "0" )
    _dev_name := PadR( fetch_metric( "fiscal_device_" + _dev_tmp + "_name", NIL, "" ), 100 )
@@ -247,7 +247,7 @@ FUNCTION globalne_postavke_fiskalni_uredjaj()
 
    _x += 2
 
-   @ m_x + _x, m_y + 2 SAY PadR( "**** Parametri artikla", 60 ) COLOR F18_COLOR_I
+   @ m_x + _x, m_y + 2 SAY PadR( "**** Parametri artikla", 60 ) COLOR f18_color_i()
 
    ++ _x
    @ m_x + _x, m_y + 2 SAY8 "Za artikal koristiti plu [D/P] (stat./dinam.) [I] id, [B] barkod:" GET _dev_plu ;
@@ -257,7 +257,7 @@ FUNCTION globalne_postavke_fiskalni_uredjaj()
    @ m_x + _x, m_y + 2 SAY8 "(dinamički) inicijalni PLU kod:" GET _dev_init_plu PICT "999999"
 
    _x += 2
-   @ m_x + _x, m_y + 2 SAY8 PadR( "**** Parametri rada sa uređajem", 60 ) COLOR F18_COLOR_I
+   @ m_x + _x, m_y + 2 SAY8 PadR( "**** Parametri rada sa uređajem", 60 ) COLOR f18_color_i()
 
    ++ _x
    @ m_x + _x, m_y + 2 SAY8 "Auto depozit:" GET _dev_avans PICT "999999.99"
@@ -344,7 +344,7 @@ FUNCTION korisnik_postavke_fiskalni_uredjaj()
    _cUserName := AllTrim( GetUserName( _user_id ) )
 
    _x += 2
-   @ m_x + _x, m_y + 2 SAY8 PadR( "*** Podešenja rada sa uređajem", 60 ) COLOR F18_COLOR_I
+   @ m_x + _x, m_y + 2 SAY8 PadR( "*** Podešenja rada sa uređajem", 60 ) COLOR f18_color_i()
 
    ++ _x
    _dev_tmp := PadL( AllTrim( Str( nDeviceId ) ), 2, "0" )

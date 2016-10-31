@@ -10,6 +10,8 @@
  */
 
 #include "f18.ch"
+#include "f18_color.ch"
+
 
 #define BOX_HEIGHT (MAXROWS() - 8)
 #define BOX_WIDTH  (MAXCOLS() - 6)

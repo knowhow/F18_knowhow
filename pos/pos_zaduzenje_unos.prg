@@ -173,7 +173,7 @@ FUNCTION Zaduzenje
       Box (, 20, 77,, { "<*> - Ispravka stavke ", "Storno - negativna kolicina" } )
       @ m_x, m_y + 4 SAY8 PadC( "PRIPREMA " + NaslovDok( cIdVd ) + " NA ODJELJENJE " + ;
          AllTrim( ODJ->Naz ) + iif( !Empty( cIdDio ), ;
-         "-" + DIO->Naz, "" ), 70 ) COLOR F18_COLOR_INVERT
+         "-" + DIO->Naz, "" ), 70 ) COLOR f18_color_invert()
 
       oBrowse := FormBrowse( m_x + 6, m_y + 1, m_x + 19, m_y + 77, ImeKol, Kol, ;
          { BROWSE_PODVUCI_2, BROWSE_PODVUCI, BROWSE_COL_SEP }, 0 )

@@ -360,7 +360,7 @@ FUNCTION ld_krediti_redefinisanje_rata()
 
    Box(, 6, 60 )
 
-   @ m_x + 1, m_y + 2 SAY "*** podaci o kreditu" COLOR F18_COLOR_I
+   @ m_x + 1, m_y + 2 SAY "*** podaci o kreditu" COLOR f18_color_i()
 
    @ m_x + 3, m_y + 2 SAY "kredit na osnovu" GET cNaOsnovu
 

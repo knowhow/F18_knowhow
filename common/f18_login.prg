@@ -10,6 +10,7 @@
  */
 
 #include "f18.ch"
+#include "f18_color.ch"
 
 MEMVAR GetList
 
@@ -383,7 +384,6 @@ METHOD F18Login:promjena_sezone( cDatabase, cSezona )
             ::promjena_sezone( cTrenutnaDatabase, cTrenutnaSezona )
          ENDIF
       ENDIF
-
       CLOSE ALL
 
 

@@ -10,6 +10,7 @@
  */
 
 #include "f18.ch"
+#include "f18_color.ch"
 
 MEMVAR TB, Ch, GetList, goModul
 MEMVAR m_x, m_y

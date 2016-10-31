@@ -10,7 +10,7 @@
  */
 
 #include "f18.ch"
-
+#include "f18_color.ch"
 
 
 FUNCTION set_parametre_f18_aplikacije( just_set )
@@ -87,7 +87,7 @@ FUNCTION set_parametre_f18_aplikacije( just_set )
       _pos_x := 2
       _pos_y := 3
 
-      @ _pos_x, _pos_y SAY "Odabir modula za glavni meni ***" COLOR F18_COLOR_I
+      @ _pos_x, _pos_y SAY "Odabir modula za glavni meni ***" COLOR f18_color_i()
 
       @ _pos_x + _x, _pos_y SAY Space( 2 ) + "FIN:" GET _fin PICT "@!"
       @ _pos_x + _x, Col() + 1 SAY "KALK:" GET _kalk PICT "@!"
@@ -105,13 +105,13 @@ FUNCTION set_parametre_f18_aplikacije( just_set )
       @ _pos_x + _x, Col() + 1 SAY "REPORTS:" GET _reports PICT "@!"
 
       _x += 2
-      @ _pos_x + _x, _pos_y SAY "Maticni podaci korisnika ***" COLOR F18_COLOR_I
+      @ _pos_x + _x, _pos_y SAY "Maticni podaci korisnika ***" COLOR f18_color_i()
 
       _x += 2
       @ _pos_x + _x, _pos_y SAY PadL( "Puno ime i prezime:", _left ) GET _proper_name PICT "@S30"
 
       _x += 2
-      @ _pos_x + _x, _pos_y SAY "Email parametri ***" COLOR F18_COLOR_I
+      @ _pos_x + _x, _pos_y SAY "Email parametri ***" COLOR f18_color_i()
 
       ++ _x
       @ _pos_x + _x, _pos_y SAY PadL( "email server:", _left ) GET _email_server PICT "@S30"
@@ -128,14 +128,14 @@ FUNCTION set_parametre_f18_aplikacije( just_set )
       @ _pos_x + _x, _pos_y SAY PadL( "cc adrese:", _left ) GET _email_cc PICT "@S70"
 
       _x += 2
-      @ _pos_x + _x, _pos_y SAY "Parametri log-a ***" COLOR F18_COLOR_I
+      @ _pos_x + _x, _pos_y SAY "Parametri log-a ***" COLOR f18_color_i()
 
       ++ _x
       @ _pos_x + _x, _pos_y SAY8 "Briši stavke log tabele starije od broja dana (def. 30):" GET _log_delete_interval PICT "9999"
 
 
       _x += 2
-      @ _pos_x + _x, _pos_y SAY "Backup parametri ***" COLOR F18_COLOR_I
+      @ _pos_x + _x, _pos_y SAY "Backup parametri ***" COLOR f18_color_i()
       ++ _x
       @ _pos_x + _x, _pos_y SAY8 "Automatski backup podataka organizacije (interval dana 0 - ne radi ništa):" GET _backup_company PICT "999"
 
@@ -151,7 +151,7 @@ FUNCTION set_parametre_f18_aplikacije( just_set )
 #endif
 
       _x += 2
-      @ _pos_x + _x, _pos_y SAY "Ostali parametri ***" COLOR F18_COLOR_I
+      @ _pos_x + _x, _pos_y SAY "Ostali parametri ***" COLOR f18_color_i()
       ++ _x
       @ _pos_x + _x, _pos_y SAY8 "Dužina stranice za izvještaje ( def: 60 ):" GET _rpt_page_len PICT "999"
 
@@ -161,7 +161,7 @@ FUNCTION set_parametre_f18_aplikacije( just_set )
       @ _pos_x + _x, Col() + 2 SAY "Nivo logiranja (0..9)" GET _log_level PICT "9" VALID _log_level >= 0 .AND. _log_level < 10
 
       _x += 2
-      @ _pos_x + _x, _pos_y SAY "Kompatibilnost ***" COLOR F18_COLOR_I
+      @ _pos_x + _x, _pos_y SAY "Kompatibilnost ***" COLOR f18_color_i()
       ++ _x
       @ _pos_x + _x, _pos_y SAY "LD rekap dbf:" GET cLdRekapDbf PICT "!@" VALID cLdRekapDbf $ "DN"
       @ _pos_x + _x, Col() + 2 SAY "KALK PR:" GET cLegacyKalkPr PICT "!@" VALID cLegacyKalkPr $ "DN"
@@ -310,7 +310,7 @@ FUNCTION f18_set_active_modules()
    Box(, 10, 70 )
 
    // 1
-   @ m_x + _x, m_y + 2 SAY "*** Odabir modula za glavni meni ***" COLOR F18_COLOR_I
+   @ m_x + _x, m_y + 2 SAY "*** Odabir modula za glavni meni ***" COLOR f18_color_i()
 
    ++ _x
    ++ _x

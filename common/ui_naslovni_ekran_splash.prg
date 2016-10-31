@@ -20,13 +20,7 @@ FUNCTION naslovni_ekran_splash_screen( cNaslov, cVer )
    LOCAL nWin
    LOCAL nXStart, nYStart
 
-   //lInvert := .F.
 
-   //Alert( F18_COLOR_INVERT )
-
-   //@ MAXROWS() / 2 - 10, MAXCOLS() / 2 - 30 SAY ""
-
-   //WSetShadow( 1 % 8 )
    nXStart := MAXROW() / 2 - 10
    nYStart := MAXCOL() / 2 - 30
 
@@ -34,12 +28,7 @@ FUNCTION naslovni_ekran_splash_screen( cNaslov, cVer )
    WBox()
 
    WSelect( nWin )
-   //WBoard( 5, 5, 20, 75 )
-   //WMode( .T., .T., .T., .T. )
-   //WSetShadow( 7 )
-   //SetClearA( 10 * 16 + 14 )
-   //SetClearB( 35 )
-   SetColor( F18_COLOR_INVERT )
+   SetColor( f18_color_invert() )
    DispBox( 0, 0, MaxRow(), MaxCol(), Replicate( " ", 9 ) )
    SetPos( 0, 0 )
 
@@ -57,8 +46,6 @@ FUNCTION naslovni_ekran_splash_screen( cNaslov, cVer )
   Inkey( 5 )
 
   WClose( nWin )
-
-  open_main_window()
 
 #ifdef F18_DEBUG
    ?E  "maxrow: " + hb_valToStr(MaxRow()) + " maxcol: " + hb_valToStr(MaxCol())

@@ -10,6 +10,7 @@
  */
 
 #include "f18.ch"
+#include "f18_color.ch"
 
 
 
@@ -21,9 +22,6 @@ FUNCTION pripremi_naslovni_ekran( oApp )
 
    AFill( h, "" )
    nOldCursor := iif( ReadInsert(), 2, 1 )
-
-   set_standardne_boje()
-
 
 
 #ifdef __PLATFORM__DARWIN
@@ -38,24 +36,28 @@ FUNCTION pripremi_naslovni_ekran( oApp )
 
 FUNCTION crtaj_naslovni_ekran( lClear )
 
-   LOCAL _max_cols := MAXCOLS()
-   LOCAL _max_rows := MAXROWS()
+   LOCAL nMaxCols := MAXCOLS()
+   LOCAL nMaxRows := MAXROWS()
+
+   SetColor( f18_color_normal() )
 
    IF lClear
       CLEAR
    ENDIF
 
-   @ 0, 2 SAY '<ESC> Izlaz' COLOR F18_COLOR_INVERT
-   @ 0, Col() + 2 SAY Date() COLOR F18_COLOR_INVERT
-   @ _max_rows - 1, _max_cols - 16  SAY f18_lib_ver()
 
-   DispBox( 2, 0, 4, _max_cols - 1, B_DOUBLE + BOX_CHAR_BACKGROUND_HEAD, F18_COLOR_NORMAL )
+altd()
+   @ 0, 2 SAY '<ESC> Izlaz' COLOR f18_color_invert()
+   @ 0, Col() + 2 SAY Date() COLOR f18_color_invert()
+   @ nMaxRows - 1, nMaxCols - 16  SAY f18_lib_ver()
+
+   DispBox( 2, 0, 4, nMaxCols - 1, B_DOUBLE + BOX_CHAR_BACKGROUND_HEAD, f18_color_normal() )
 
    IF lClear
-      DispBox( 5, 0, _max_rows - 1, _max_cols - 1, B_DOUBLE + BOX_CHAR_BACKGROUND, F18_COLOR_INVERT  )
+      DispBox( 5, 0, nMaxRows - 1, nMaxCols - 1, B_DOUBLE + BOX_CHAR_BACKGROUND, f18_color_invert()  )
    ENDIF
 
-   @ 3, 1 SAY PadC( gNaslov, _max_cols - 8 ) COLOR F18_COLOR_NORMAL
+   @ 3, 1 SAY PadC( gNaslov, nMaxCols - 8 ) COLOR f18_color_normal()
 
    show_podaci_organizacija()
 
@@ -63,7 +65,7 @@ FUNCTION crtaj_naslovni_ekran( lClear )
    show_dbf_prefix()
    show_insert_over_stanje()
 
-   @ 0, MAXCOLS() - 14 SAY "bring.out" COLOR F18_COLOR_NORMAL
+   @ 0, MAXCOLS() - 14 SAY "bring.out" COLOR f18_color_normal()
 
    RETURN .T.
 
@@ -72,7 +74,7 @@ STATIC FUNCTION show_podaci_organizacija()
 
    @ 0, 15 SAY AllTrim( gTS ) + " :"
    @ Row(), Col() + 2  SAY AllTrim( gNFirma ) + ", baza (" + my_server_params()[ "database" ] + ")" ;
-      COLOR iif( in_tekuca_godina(), F18_COLOR_NAGLASENO, F18_COLOR_NAGLASENO_2 )
+      COLOR iif( in_tekuca_godina(), F18_COLOR_NAGLASENO, F18_COLOR_NAGLASENO_STARA_SEZONA )
 
    RETURN .T.
 
@@ -113,7 +115,7 @@ FUNCTION show_insert_over_stanje( lSWap )
       cState := '< OVER >'
    ENDIF
 
-   @ 0, MAXCOLS() - 23 SAY  cState COLOR F18_COLOR_INVERT
+   @ 0, MAXCOLS() - 23 SAY  cState COLOR f18_color_invert()
 
    SetPos( nX, nY )
 

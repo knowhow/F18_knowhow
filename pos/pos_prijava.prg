@@ -55,7 +55,7 @@ FUNCTION pos_prijava( Fx, Fy )
       ENDIF
 
       SET CURSOR OFF
-      SetColor ( F18_COLOR_NORMAL )
+      SetColor ( f18_color_normal() )
 
       IF pos_set_user( cKorSif, nSifLen, @cLevel ) == 0
          LOOP

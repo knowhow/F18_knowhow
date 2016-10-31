@@ -175,14 +175,14 @@ STATIC FUNCTION forma_osnovnih_podataka( nBoxX, nBoxY )
 
    nX += 1
    @ m_x + nX, m_y + 2 SAY PadL( "Mjesto isporuke :", nLeft ) GET _doc_ship_p VALID {|| sh_place_pattern( @_doc_ship_p ) } PICT "@S46" WHEN set_opc_box( nBoxX, 50, "mjesto gdje se roba isporucuje", "/RP - rg prod. /T - tvornica nar." )
-   @ m_x + nX, Col() SAY ">" COLOR F18_COLOR_I
+   @ m_x + nX, Col() SAY ">" COLOR f18_color_i()
 
    nX += 1
    @ m_x + nX, m_y + 2 SAY PadL( "Kontakt osoba (*):", nLeft ) GET cContid VALID {|| s_contacts( @cContid, _cust_id, cContId ), set_var( @_cont_id, @cContid ), show_it( g_cont_desc( _cont_id ), 35 ) } WHEN set_opc_box( nBoxX, 50, "0 - otvori sifrarnik" )
 
    nX += 1
    @ m_x + nX, m_y + 2 SAY PadL( "dodatni opis:", nLeft + 2 ) GET _cont_add_d PICT "@S44" WHEN set_opc_box( nBoxX, 50, "dodatni opis kontakta" )
-   @ m_x + nX, Col() SAY ">" COLOR F18_COLOR_I
+   @ m_x + nX, Col() SAY ">" COLOR f18_color_i()
 
    nX += 3
 
@@ -197,17 +197,17 @@ STATIC FUNCTION forma_osnovnih_podataka( nBoxX, nBoxY )
    @ m_x + nX, m_y + 2 SAY8 PadL( "Plaćeno (D/N)? (*):", nLeft ) GET _doc_paid VALID _doc_paid $ "DN" PICT "@!" WHEN set_opc_box( nBoxX, 50 )
 
    @ m_x + nX, Col() + 2 SAY8 "dod.nap.plać:" GET _doc_pay_de PICT "@S29" WHEN set_opc_box( nBoxX, 50, "dodatne napomene vezane za placanje" )
-   @ m_x + nX, Col() SAY ">" COLOR F18_COLOR_I
+   @ m_x + nX, Col() SAY ">" COLOR f18_color_i()
 
    nX += 2
 
    @ m_x + nX, m_y + 2 SAY PadL( "Kratki opis (*):", nLeft ) GET _doc_sh_des VALID !Empty( _doc_sh_des ) PICT "@S46" WHEN set_opc_box( nBoxX, 50, "kratki opis naloga (asocijacija)", "npr: ulazna stijena, vrata ..." )
-   @ m_x + nX, Col() SAY ">" COLOR F18_COLOR_I
+   @ m_x + nX, Col() SAY ">" COLOR f18_color_i()
 
    nX += 1
 
    @ m_x + nX, m_y + 2 SAY PadL( "Dod.opis naloga:", nLeft ) GET _doc_desc VALID chk_mandatory( _doc_desc, _doc_priori ) PICT "@S46" WHEN set_opc_box( nBoxX, 50, "dodatni opis naloga" )
-   @ m_x + nX, Col() SAY ">" COLOR F18_COLOR_I
+   @ m_x + nX, Col() SAY ">" COLOR f18_color_i()
 
    READ
 

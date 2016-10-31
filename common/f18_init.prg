@@ -314,8 +314,6 @@ FUNCTION set_screen_dimensions()
 
    // hb_gtInfo( HB_GTI_ALTENTER, .T. )
 
-   open_main_window()
-
    RETURN .T.
 
 
@@ -691,7 +689,6 @@ FUNCTION run_on_start()
       RETURN .F.
    ENDIF
 
-   altd()
    s_lAlreadyRunStartup := .T.
 
    //_ini := hb_Hash()

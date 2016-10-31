@@ -141,10 +141,10 @@ STATIC FUNCTION kadev_radnik_info_by_params( jmbg )
 
    Box(, 12, 70 )
 
-   @ m_x + 1, m_y + 2 SAY "Radnik: " + jmbg COLOR F18_COLOR_I
+   @ m_x + 1, m_y + 2 SAY "Radnik: " + jmbg COLOR f18_color_i()
    @ m_x + 3, m_y + 2 SAY "Podaci od " + DToC( _datum_od ) + " do " + DToC( _datum_do )
-   @ m_x + 5, m_y + 2 SAY "STATUS = [" + _status[ "status" ] + "]" COLOR F18_COLOR_I
-   @ m_x + 7, m_y + 2 SAY "Podaci radnog staza:" COLOR F18_COLOR_I
+   @ m_x + 5, m_y + 2 SAY "STATUS = [" + _status[ "status" ] + "]" COLOR f18_color_i()
+   @ m_x + 7, m_y + 2 SAY "Podaci radnog staza:" COLOR f18_color_i()
    @ m_x + 8, m_y + 2 SAY Replicate( "-", 60 )
    @ m_x + 9, m_y + 2 SAY  "(1)    efektivni:" + _staz[ "rst_ef_info" ]
    @ m_x + 10, m_y + 2 SAY "(2) beneficirani:" + _staz[ "rst_ben_info" ]
@@ -191,7 +191,7 @@ STATIC FUNCTION kadev_status_radnika( jmbg )
       RETURN
    ENDIF
 
-   @ m_x + _pos_x, m_y + _pos_y SAY "STATUS: [" + _status[ "status" ] + "] / Radni staz:" COLOR F18_COLOR_I
+   @ m_x + _pos_x, m_y + _pos_y SAY "STATUS: [" + _status[ "status" ] + "] / Radni staz:" COLOR f18_color_i()
    @ m_x + _pos_x + 1, m_y + _pos_y SAY "(1)  efekt.: " + _staz[ "rst_ef_info" ]
    @ m_x + _pos_x + 2, m_y + _pos_y SAY "(2)  benef.: " + _staz[ "rst_ben_info" ]
    @ m_x + _pos_x + 3, m_y + _pos_y SAY "(3) ef/ben.: " + _staz[ "rst_uk_info" ]

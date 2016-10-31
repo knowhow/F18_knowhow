@@ -103,7 +103,7 @@ FUNCTION meni_fiksna_lokacija( nX1, nY1, aNiz, nIzb )
  *  cMeniId  - identifikacija menija     C
  *  aItems   - niz opcija za nIzbor       {}
  *  nItemNo  - Broj pocetne pozicije     N
- *  lInvert     - da li je meni F18_COLOR_INVERT ovan  L
+ *  lInvert     - da li je meni f18_color_invert() ovan  L
  *
  *  Broj izabrane opcije, 0 kraj
  *
@@ -148,8 +148,8 @@ FUNCTION meni_0( cMeniId, aItems, nItemNo, lInvert, cHelpT, nPovratak, aFixKoo, 
       lInvert := .F.
    ENDIF
 
-   cLocalColor  := iif( lInvert, F18_COLOR_INVERT, F18_COLOR_NORMAL )
-   cLocalInvertedColor := iif( lInvert, F18_COLOR_NORMAL, F18_COLOR_INVERT  )
+   cLocalColor  := iif( lInvert, f18_color_invert(), f18_color_normal() )
+   cLocalInvertedColor := iif( lInvert, f18_color_normal(), f18_color_invert()  )
 
    cOldColor := SetColor( cLocalColor )
 
@@ -191,7 +191,7 @@ FUNCTION meni_0( cMeniId, aItems, nItemNo, lInvert, cHelpT, nPovratak, aFixKoo, 
 
    ENDIF
 
-   SetColor( F18_COLOR_INVERT  )
+   SetColor( f18_color_invert()  )
    IF nItemNo == 0
       CentrTxt( h[ 1 ], MAXROWS() -1 )
    END IF
@@ -305,10 +305,10 @@ FUNCTION meni_0_inkey( nX1, nY1, nX2, nY2, aItems, nItemNo )
 
       FOR nI := nGornja TO nVisina + nGornja - 1
          IF nI == nItemNo
-            IF Left( cOldColor, 3 ) == Left( F18_COLOR_NORMAL, 3 )
-               SetColor( F18_COLOR_INVERT  )
+            IF Left( cOldColor, 3 ) == Left( f18_color_normal(), 3 )
+               SetColor( f18_color_invert()  )
             ELSE
-               SetColor( F18_COLOR_NORMAL )
+               SetColor( f18_color_normal() )
             ENDIF
          ELSE
             SetColor( cOldColor )
@@ -318,7 +318,7 @@ FUNCTION meni_0_inkey( nX1, nY1, nX2, nY2, aItems, nItemNo )
          ENDIF
       NEXT
 
-      SetColor( F18_COLOR_INVERT  )
+      SetColor( f18_color_invert()  )
       SetColor( cOldColor )
 
       IF lExitFromMeni

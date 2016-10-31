@@ -10,7 +10,7 @@
  */
 
 #include "f18.ch"
-
+#include "f18_color.ch"
 
 CLASS F18Backup
 

@@ -770,9 +770,9 @@ STATIC FUNCTION fnd_partn( xPartn, nCustId, cDesc  )
 
    Box(, 5, MAXCOLS() - 15 )
    @ m_x + 1, m_y + 2 SAY8 "Naručioc: "
-   @ m_x + 1, Col() + 1 SAY AllTrim( Str( nCustId ) ) COLOR F18_COLOR_I
+   @ m_x + 1, Col() + 1 SAY AllTrim( Str( nCustId ) ) COLOR f18_color_i()
    @ m_x + 1, Col() + 1 SAY " -> "
-   @ m_x + 1, Col() + 1 SAY PadR( cDesc, 50 ) + ".." COLOR F18_COLOR_I
+   @ m_x + 1, Col() + 1 SAY PadR( cDesc, 50 ) + ".." COLOR f18_color_i()
    @ m_x + 2, m_y + 2 SAY8 "nije definisan u relacijama, pronađite njegov par !"
    @ m_x + 4, m_y + 2 SAY8 "šifra u knjigovodstvu: " GET xPartn VALID p_firma( @xPartn )
    READ
@@ -801,9 +801,9 @@ STATIC FUNCTION fnd_roba( xRoba, nArtId, cDesc )
 
    Box(, 5, 70 )
    @ m_x + 1, m_y + 2 SAY "Artikal:"
-   @ m_x + 1, Col() + 1 SAY AllTrim( Str( nArtId ) ) COLOR F18_COLOR_I
+   @ m_x + 1, Col() + 1 SAY AllTrim( Str( nArtId ) ) COLOR f18_color_i()
    @ m_x + 1, Col() + 1 SAY " -> "
-   @ m_x + 1, Col() + 1 SAY PadR( cDesc, 50 ) + ".." COLOR F18_COLOR_I
+   @ m_x + 1, Col() + 1 SAY PadR( cDesc, 50 ) + ".." COLOR f18_color_i()
    @ m_x + 2, m_y + 2 SAY "nije definisan u tabeli relacija, pronadjite njegov par !!!"
    @ m_x + 4, m_y + 2 SAY "sifra u FMK =" GET xRoba VALID p_roba( @xRoba )
    READ

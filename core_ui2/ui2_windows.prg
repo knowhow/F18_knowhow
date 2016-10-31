@@ -22,4 +22,5 @@ FUNCTION open_main_window()
    s_nMainWindow := WOpen( 0, 0, MaxRow(), MaxCol() )
    WSelect( s_nMainWindow )
 
+
    RETURN s_nMainWindow

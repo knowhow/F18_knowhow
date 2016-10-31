@@ -79,7 +79,7 @@ METHOD showLine( cTekst, cRow )
 
 METHOD showSezona( cSezona )
 
-   @ 3, MAXCOLS() -10 SAY "Sez: " + cSezona COLOR F18_COLOR_INVERT
+   @ 3, MAXCOLS() -10 SAY "Sez: " + cSezona COLOR f18_color_invert()
 
    RETURN .T.
 
@@ -96,16 +96,16 @@ METHOD showMainScreen( lClear )
       CLEAR
    ENDIF
 
-   @ 0, 2 SAY '<ESC> Izlaz' COLOR F18_COLOR_INVERT
-   @ 0, Col() + 2 SAY danasnji_datum() COLOR F18_COLOR_INVERT
+   @ 0, 2 SAY '<ESC> Izlaz' COLOR f18_color_invert()
+   @ 0, Col() + 2 SAY danasnji_datum() COLOR f18_color_invert()
 
-   DispBox( 2, 0, 4, MAXCOLS() - 1, B_DOUBLE + ' ', F18_COLOR_NORMAL )
+   DispBox( 2, 0, 4, MAXCOLS() - 1, B_DOUBLE + ' ', f18_color_normal() )
 
    IF lClear
-      DispBox( 5, 0, MAXROWS() - 1, MAXCOLS() - 1, B_DOUBLE + BOX_CHAR_BACKGROUND, F18_COLOR_INVERT  )
+      DispBox( 5, 0, MAXROWS() - 1, MAXCOLS() - 1, B_DOUBLE + BOX_CHAR_BACKGROUND, f18_color_invert()  )
    ENDIF
 
-   @ _ver_pos, 1 SAY PadC( gNaslov + ' Ver.' + f18_ver(), MAXCOLS() - 8 ) COLOR F18_COLOR_NORMAL
+   @ _ver_pos, 1 SAY PadC( gNaslov + ' Ver.' + f18_ver(), MAXCOLS() - 8 ) COLOR f18_color_normal()
 
    f18_ispisi_status_log_levela()
    f18_ispisi_status_podrucja( _ver_pos )

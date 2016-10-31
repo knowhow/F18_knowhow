@@ -11,6 +11,7 @@
 
 #include "f18.ch"
 
+
 FUNCTION harbour_init()
 
    rddSetDefault( RDDENGINE )
@@ -20,7 +21,6 @@ FUNCTION harbour_init()
    // epoha je u stvari 1999, 2000 itd
    SET EPOCH TO 1960
    SET DATE TO GERMAN
-
 
    f18_init_threads()
 
@@ -41,7 +41,7 @@ FUNCTION harbour_init()
    SET ESCAPE ON
    SET SOFTSEEK ON
 
-   SetColor( F18_COLOR_NORMAL )
+   SetColor( f18_color_normal() )
 
    // Set( _SET_IDLEREPEAT, .F. ) // .T. default
    hb_idleAdd( {|| on_idle_dbf_refresh() } )  // BUG_CPU100

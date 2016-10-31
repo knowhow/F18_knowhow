@@ -184,6 +184,31 @@ FUNCTION my_server_params( hSqlParams )
    RETURN s_psqlServer_params
 
 
+FUNCTION tekuca_sezona()
+
+   LOCAL hDbServerParams
+   LOCAL pRegex
+   LOCAL aMatch
+
+   hDbServerParams := my_server_params()
+   pRegex := hb_regexComp( "(.*)_(\d+)" )
+   IF !hb_HHasKey( hDbServerParams, "database" )
+      RETURN( Year( Date() ) )
+   ENDIF
+
+   aMatch := hb_regex( pRegex, hDbServerParams[ "database" ] )
+
+   IF Len( aMatch ) > 0 // aMatch[1]="test_2016" aMatch[2]="test", aMatch[3]="2016"
+      RETURN Val( aMatch[ 3 ] )
+   ENDIF
+
+   RETURN -1
+
+
+FUNCTION in_tekuca_godina()
+
+   RETURN tekuca_sezona() == Year( Date() )
+
 
 FUNCTION my_server_login( hSqlParams, nConnType )
 
@@ -279,25 +304,9 @@ FUNCTION f18_login_loop( lAutoConnect, arg_v )
          IF LastKey() == K_ESC
             RETURN .F.
          ENDIF
-/*          TODO: 2 x ESC ulkoniti
-            info_bar( "info", "<ESC> za izlaz iz aplikacije" )
-            oLogin:disconnect( 0 )
-            oLogin:disconnect( 1 )
-            print_sql_connections()
-
-            Inkey( 0 )
-            IF LastKey() == K_ESC // 2 x ESC
-
-               ?E "num sql connections:", num_sql_connections()
-               ?E
-               RETURN .F.
-            ENDIF
-
-         ENDIF
-*/
       ELSE
          IF oLogin:lOrganizacijaSpojena
-            show_sacekaj()
+            //show_sacekaj()
             oLogin:disconnect( 0 )
             program_module_menu( arg_v )
             oLogin:disconnect( 1 )
@@ -309,7 +318,7 @@ FUNCTION f18_login_loop( lAutoConnect, arg_v )
    RETURN .T.
 
 
-
+/*
 STATIC FUNCTION show_sacekaj()
 
    LOCAL _x, _y
@@ -320,17 +329,10 @@ STATIC FUNCTION show_sacekaj()
 
    CLEAR SCREEN
 
-   // _txt := PadC( ". . .  S A Č E K A J T E    T R E N U T A K  . . .", _y )
-   // @ _x, 2 SAY8 _txt
-
-   // _txt := PadC( ". . . . . . k o n e k c i j a    n a    b a z u   u   t o k u . . . . . . .", _y )
-   // @ _x + 1, 2 SAY8 _txt
-
-
-   naslovni_ekran_splash_screen( "F18", f18_ver() )
+   --naslovni_ekran_splash_screen( "F18", f18_ver() )
 
    RETURN .T.
-
+*/
 
 
 FUNCTION f18_promjena_sezone()

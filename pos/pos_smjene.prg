@@ -73,7 +73,7 @@ FUNCTION OdrediSmjenu( lOdredi )
 
 
    Box(, 8, 50 )
-   @ m_x, m_y + 1 SAY " DEFINISANJE DATUMA" + iif ( gVsmjene == "D", " I SMJENE ", " " ) COLOR F18_COLOR_INVERT
+   @ m_x, m_y + 1 SAY " DEFINISANJE DATUMA" + iif ( gVsmjene == "D", " I SMJENE ", " " ) COLOR f18_color_invert()
 
    DO WHILE !( cOK $ "Dd" )
       BoxCLS()

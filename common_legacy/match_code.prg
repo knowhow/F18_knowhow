@@ -29,7 +29,7 @@ FUNCTION m_code_src()
    cSrch := Space( 20 )
    SET CURSOR ON
    @ m_x + 1, m_y + 2 SAY "Match code:" GET cSrch VALID !Empty( cSrch )
-   @ m_x + 3, m_y + 2 SAY "Uslovi za pretragu:" COLOR F18_COLOR_I
+   @ m_x + 3, m_y + 2 SAY "Uslovi za pretragu:" COLOR f18_color_i()
    @ m_x + 4, m_y + 2 SAY " /ABC = m.code pocinje sa 'ABC'  ('ABC001')"
    @ m_x + 5, m_y + 2 SAY " ABC/ = m.code zavrsava sa 'ABC' ('001ABC')"
    @ m_x + 6, m_y + 2 SAY " #ABC = 'ABC' je unutar m.code  ('01ABC11')"

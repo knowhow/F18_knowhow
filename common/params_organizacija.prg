@@ -46,7 +46,7 @@ FUNCTION parametri_organizacije( set_params )
 
       Box(, 10, 70 )
 
-      @ m_x + _x, m_y + 2 SAY8 "Inicijalna podešenja organizacije ***" COLOR F18_COLOR_I
+      @ m_x + _x, m_y + 2 SAY8 "Inicijalna podešenja organizacije ***" COLOR f18_color_i()
       ++ _x
       ++ _x
       @ m_x + _x, m_y + 2 SAY PadL( "Oznaka firme:", _left ) GET gFirma

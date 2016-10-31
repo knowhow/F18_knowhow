@@ -1819,7 +1819,7 @@ FUNCTION kalk_imp_obradi_sve_dokumente_iz_pript( nPocniOd, lStampaj, lOstaviBrdo
    // SetKey(K_F3,{|| kalk_imp_set_check_point(nPTRec)})
 
    Box(, 10, 79 )
-   @ 1 + m_x, 2 + m_y SAY8 "Obrada dokumenata iz pomoćne tabele:" COLOR F18_COLOR_I
+   @ 1 + m_x, 2 + m_y SAY8 "Obrada dokumenata iz pomoćne tabele:" COLOR f18_color_i()
    @ 2 + m_x, 2 + m_y SAY "======================================="
 
    DO WHILE !Eof()

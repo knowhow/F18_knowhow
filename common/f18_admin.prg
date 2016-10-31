@@ -11,6 +11,7 @@
 
 #include "f18.ch"
 
+MEMVAR m_x, m_y, GetList
 
 CLASS F18Admin
 
@@ -265,7 +266,7 @@ METHOD F18Admin:update_app_form( upd_params )
 
    Box(, 14, 65 )
 
-   @ m_x + _x, m_y + 2 SAY PadR( "## UPDATE F18 APP ##", 64 ) COLOR F18_COLOR_I
+   @ m_x + _x, m_y + 2 SAY PadR( "## UPDATE F18 APP ##", 64 ) COLOR f18_color_i()
 
    ++ _x
    ++ _x
@@ -330,8 +331,8 @@ METHOD F18Admin:update_app_form( upd_params )
       RETURN _ok
    ENDIF
 
-   // setuj postavke...
-   ::update_app_f18 := ( _upd_f == "D" )
+
+   ::update_app_f18 := ( _upd_f == "D" ) // setuj postavke
    ::update_app_templates := ( _upd_t == "D" )
 
    if ::update_app_f18
@@ -781,12 +782,12 @@ METHOD F18Admin:razdvajanje_sezona()
    LOCAL _params
    LOCAL _dbs := {}
    LOCAL _i
-   LOCAL _my_params, _t_user, _t_pwd, _t_database
+   LOCAL hDbServerParams, cTekuciUser, cTekucaPassword, cTekucaDb
    LOCAL _qry
-   LOCAL _from_sess, _to_sess
-   LOCAL _db_from, _db_to
+   LOCAL nFromSezona, nToSezona
+   LOCAL cDatabaseFrom, cDatabaseTo
    LOCAL _db := Space( 100 )
-   LOCAL _db_delete := "N"
+   LOCAL cDeletePostojecaDbDN := "N"
    LOCAL _count := 0
    LOCAL aRezultati := {}
    LOCAL oRow
@@ -800,18 +801,18 @@ METHOD F18Admin:razdvajanje_sezona()
 #endif
    // pg_terminate_all_data_db_connections()
 
-   _from_sess := Year( Date() ) - 1
-   _to_sess := Year( Date() )
+   nFromSezona := Year( Date() ) - 1
+   nToSezona := Year( Date() )
 
    SET CURSOR ON
    SET CONFIRM ON
 
    Box(, 7, 60 )
-   @ m_x + 1, m_y + 2 SAY8 "Otvaranje baze za novu sezonu ***" COLOR F18_COLOR_I
-   @ m_x + 3, m_y + 2 SAY8 "Vrsi se prenos sa godine:" GET _from_sess PICT "9999"
-   @ m_x + 3, Col() + 1 SAY8 "na godinu:" GET _to_sess PICT "9999" VALID ( _to_sess > _from_sess .AND. _to_sess - _from_sess == 1 )
+   @ m_x + 1, m_y + 2 SAY8 "Otvaranje baze za novu sezonu ***" COLOR f18_color_i()
+   @ m_x + 3, m_y + 2 SAY8 "Vrsi se prenos sa godine:" GET nFromSezona PICT "9999"
+   @ m_x + 3, Col() + 1 SAY8 "na godinu:" GET nToSezona PICT "9999" VALID ( nToSezona > nFromSezona .AND. nToSezona - nFromSezona == 1 )
    @ m_x + 5, m_y + 2 SAY8 "Baza (prazno-sve):" GET _db PICT "@S30"
-   @ m_x + 6, m_y + 2 SAY8 "Ako baza postoji, pobriši je ? (D/N)" GET _db_delete VALID _db_delete $ "DN" PICT "@!"
+   @ m_x + 6, m_y + 2 SAY8 "Ako baza postoji, pobriši je ? (D/N)" GET cDeletePostojecaDbDN VALID cDeletePostojecaDbDN $ "DN" PICT "@!"
    READ
    BoxC()
 
@@ -821,10 +822,10 @@ METHOD F18Admin:razdvajanje_sezona()
       RETURN .F.
    ENDIF
 
-   _my_params := my_server_params()
-   _t_user := _my_params[ "user" ]
-   _t_pwd := _my_params[ "password" ]
-   _t_database := _my_params[ "database" ]
+   hDbServerParams := my_server_params()
+   cTekuciUser := hDbServerParams[ "user" ]
+   cTekucaPassword := hDbServerParams[ "password" ]
+   cTekucaDb := hDbServerParams[ "database" ]
 
 
    IF !::relogin_as_admin()
@@ -835,9 +836,9 @@ METHOD F18Admin:razdvajanje_sezona()
    _qry := "SELECT datname FROM pg_database "
 
    IF Empty( _db )
-      _qry += "WHERE datname LIKE '%_" + AllTrim( Str( _from_sess ) ) + "' "
+      _qry += "WHERE datname LIKE '%_" + AllTrim( Str( nFromSezona ) ) + "' "
    ELSE
-      _qry += "WHERE datname = " + sql_quote( AllTrim( _db ) + "_" + AllTrim( Str( _from_sess ) ) )
+      _qry += "WHERE datname = " + sql_quote( AllTrim( _db ) + "_" + AllTrim( Str( nFromSezona ) ) )
    ENDIF
    _qry += "ORDER BY datname;"
 
@@ -845,9 +846,7 @@ METHOD F18Admin:razdvajanje_sezona()
    _dbs := postgres_sql_query( _qry )
    _dbs:GoTo( 1 )
 
-   // treba da imamo listu baza...
-   // uzemomo sa select-om sve sto ima 2013 recimo
-   // i onda cemo provrtiti te baze i napraviti 2014
+   // treba da imamo listu baza,  uzmemo sa select-om sve sto ima npr. 2013, i onda cemo provrtiti te baze i napraviti 2014
    Box(, 3, 65 )
 
    DO WHILE !_dbs:Eof()
@@ -855,25 +854,24 @@ METHOD F18Admin:razdvajanje_sezona()
       oRow := _dbs:GetRow()
 
       // test_2013
-      _db_from := AllTrim( oRow:FieldGet( 1 ) )
+      cDatabaseFrom := AllTrim( oRow:FieldGet( 1 ) )
       // test_2014
-      _db_to := StrTran( _db_from, "_" + AllTrim( Str( _from_sess ) ), "_" + AllTrim( Str( _to_sess ) ) )
+      cDatabaseTo := StrTran( cDatabaseFrom, "_" + AllTrim( Str( nFromSezona ) ), "_" + AllTrim( Str( nToSezona ) ) )
 
       @ m_x + 1, m_y + 2 SAY Space( 60 )
-      @ m_x + 1, m_y + 2 SAY "Kreiranje baze: " +  _db_from + " > " + _db_to
+      @ m_x + 1, m_y + 2 SAY "Kreiranje baze: " +  cDatabaseFrom + " > " + cDatabaseTo
 
-      // init parametri za razdvajanje...
-      // pocetno stanje je 1
+
       _params := hb_Hash()
-      _params[ "db_type" ] := 1
-      _params[ "db_name" ] := _db_to
-      _params[ "db_template" ] := _db_from
-      _params[ "db_drop" ] := _db_delete
+      _params[ "db_type" ] := 1 // init parametri za razdvajanje, pocetno stanje je 1
+      _params[ "db_name" ] := cDatabaseTo
+      _params[ "db_template" ] := cDatabaseFrom
+      _params[ "db_drop" ] := cDeletePostojecaDbDN
       _params[ "db_comment" ] := ""
 
       IF ! ::create_new_pg_db( _params )
-         AAdd( aRezultati, { _db_to, _db_from, "ERR" } )
-         error_bar( "nova_sezona", _db_from + " -> " + _db_to )
+         AAdd( aRezultati, { cDatabaseTo, cDatabaseFrom, "ERR" } )
+         error_bar( "nova_sezona", cDatabaseFrom + " -> " + cDatabaseTo )
       ELSE
          ++ _count
       ENDIF
@@ -884,9 +882,7 @@ METHOD F18Admin:razdvajanje_sezona()
 
    BoxC()
 
-
-   ::relogin_as( _t_user, _t_pwd, _t_database )
-
+   ::relogin_as( cTekuciUser, cTekucaPassword, cTekucaDb )
 
    IF Len( aRezultati ) > 0
       MsgBeep( "Postoje greške kod otvaranja sezone !" )
@@ -903,10 +899,10 @@ METHOD F18Admin:razdvajanje_sezona()
 
 METHOD F18Admin:create_new_pg_db( params )
 
-   LOCAL _db_name, _db_template, _db_drop, _db_type, _db_comment
+   LOCAL cDatabaseName, _db_template, _db_drop, _db_type, _db_comment
    LOCAL _qry
    LOCAL oQuery, aRezultati
-   LOCAL _db_params, _t_user, _t_pwd, _t_database
+   LOCAL _db_params, cTekuciUser, cTekucaPassword, cTekucaDb
 
    // 1) params read
    // ===============================================================
@@ -919,23 +915,21 @@ METHOD F18Admin:create_new_pg_db( params )
 
       params := hb_Hash()
 
-      // CREATE DATABASE name OWNER admin TEMPLATE templ;
-      IF !::create_new_pg_db_params( @params )
+      IF !::create_new_pg_db_params( @params ) // CREATE DATABASE name OWNER admin TEMPLATE templ;
          RETURN .F.
       ENDIF
 
    ENDIF
 
    // uzmi parametre koje ces koristiti dalje...
-   _db_name := params[ "db_name" ]
+   cDatabaseName := params[ "db_name" ]
    _db_template := params[ "db_template" ]
    _db_drop := params[ "db_drop" ] == "D"
    _db_type := params[ "db_type" ]
    _db_comment := params[ "db_comment" ]
 
    IF Empty( _db_template ) .OR. Left( _db_template, 5 ) == "empty"
-      // ovo ce biti prazna baza uvijek...
-      _db_type := 0
+      _db_type := 0 // ovo ce biti prazna baza uvijek
    ENDIF
 
    IF ! ::relogin_as_admin( "postgres" )
@@ -943,52 +937,52 @@ METHOD F18Admin:create_new_pg_db( params )
    ENDIF
 
    IF _db_drop
-      IF !::drop_pg_db( _db_name )
+      IF !::drop_pg_db( cDatabaseName )
          RETURN .F.
       ENDIF
    ELSE
 
       _qry := "SELECT COUNT(*) FROM pg_database "
-      _qry += "WHERE datname = " + sql_quote( _db_name )
+      _qry += "WHERE datname = " + sql_quote( cDatabaseName )
       oQuery := postgres_sql_query( _qry )
       IF oQuery:GetRow( 1 ):FieldGet( 1 ) > 0
-         error_bar( "nova_sezona", "baza " + _db_name + " vec postoji" )
+         error_bar( "nova_sezona", "baza " + cDatabaseName + " vec postoji" )
          RETURN .F. // baza vec postoji
       ENDIF
    ENDIF
 
-   _qry := "CREATE DATABASE " + _db_name + " OWNER admin"
+   _qry := "CREATE DATABASE " + cDatabaseName + " OWNER admin"
    IF !Empty( _db_template )
       _qry += " TEMPLATE " + _db_template
    ENDIF
    _qry += ";"
 
-   info_bar( "nova_sezona", "db create: " + _db_name  )
+   info_bar( "nova_sezona", "db create: " + cDatabaseName  )
    oQuery := postgres_sql_query( _qry )
    IF sql_error_in_query( oQuery, "CREATE", sql_postgres_conn() )
       RETURN .F.
    ENDIF
 
 
-   _qry := "GRANT ALL ON DATABASE " + _db_name + " TO admin;"
-   _qry += "GRANT ALL ON DATABASE " + _db_name + " TO xtrole WITH GRANT OPTION;"
+   _qry := "GRANT ALL ON DATABASE " + cDatabaseName + " TO admin;"
+   _qry += "GRANT ALL ON DATABASE " + cDatabaseName + " TO xtrole WITH GRANT OPTION;"
 
-   info_bar( "nova_sezona", "grant admin, xtrole: " + _db_name )
+   info_bar( "nova_sezona", "grant admin, xtrole: " + cDatabaseName )
    oQuery := postgres_sql_query( _qry )
    IF sql_error_in_query( oQuery, "GRANT", sql_postgres_conn() )
       RETURN .F.
    ENDIF
 
    IF !Empty( _db_comment )
-      _qry := "COMMENT ON DATABASE " + _db_name + " IS " + sql_quote( hb_StrToUTF8( _db_comment ) ) + ";"
+      _qry := "COMMENT ON DATABASE " + cDatabaseName + " IS " + sql_quote( hb_StrToUTF8( _db_comment ) ) + ";"
       info_bar( "nova_sezona", "Postavljam opis baze..." )
       run_sql_query( _qry )
    ENDIF
 
 
    IF _db_type > 0
-      info_bar( "nova_sezona", "brisanje podataka " + _db_name )
-      ::delete_db_data_all( _db_name, _db_type )
+      info_bar( "nova_sezona", "brisanje podataka " + cDatabaseName )
+      ::delete_db_data_all( cDatabaseName, _db_type )
    ENDIF
 
    RETURN .T.
@@ -1042,7 +1036,7 @@ METHOD F18Admin:relogin_as( cUser, cPwd, cDatabase )
 METHOD F18Admin:drop_pg_db( db_name )
 
    LOCAL cQry, oQry
-   LOCAL _my_params
+   LOCAL hDbServerParams
 
    IF db_name == NIL
 
@@ -1195,7 +1189,7 @@ METHOD F18Admin:create_new_pg_db_params( params )
 
    LOCAL _ok := .F.
    LOCAL _x := 1
-   LOCAL _db_name := Space( 50 )
+   LOCAL cDatabaseName := Space( 50 )
    LOCAL _db_template := Space( 50 )
    LOCAL _db_year := AllTrim( Str( Year( Date() ) ) )
    LOCAL _db_comment := Space( 100 )
@@ -1209,7 +1203,7 @@ METHOD F18Admin:create_new_pg_db_params( params )
 
    ++ _x
    ++ _x
-   @ m_x + _x, m_y + 2 SAY "Naziv nove baze:" GET _db_name VALID _new_db_valid( _db_name ) PICT "@S30"
+   @ m_x + _x, m_y + 2 SAY "Naziv nove baze:" GET cDatabaseName VALID _new_db_valid( cDatabaseName ) PICT "@S30"
    @ m_x + _x, Col() + 1 SAY "godina:" GET _db_year PICT "@S4" VALID !Empty( _db_year )
 
    ++ _x
@@ -1242,7 +1236,7 @@ METHOD F18Admin:create_new_pg_db_params( params )
    ENDIF
 
    // formiranje strina naziva baze...
-   _db_str := AllTrim( _db_name ) + "_" + AllTrim( _db_year )
+   _db_str := AllTrim( cDatabaseName ) + "_" + AllTrim( _db_year )
 
 
    // template empty

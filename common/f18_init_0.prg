@@ -15,11 +15,7 @@
 FUNCTION programski_modul()
    RETURN gModul
 
-FUNCTION tekuca_sezona()
-   RETURN RIGHT( my_server_params()[ "database" ], 4 )
 
-FUNCTION in_tekuca_godina()
-   RETURN VAL( tekuca_sezona() ) == YEAR( Date() )
 
 
 FUNCTION start_f18_program_module( oApp, lSezone )
@@ -35,13 +31,12 @@ FUNCTION start_f18_program_module( oApp, lSezone )
       RETURN .T.
    ENDIF
 
-   //info_bar( oApp:cName, oApp:cName + " : start_program_module set global vars - start " )
    oApp:set_module_gvars()
-   //info_bar( oApp:cName, oApp:cName + " : start_program_module set global vars - end" )
 
+altd()
+   open_main_window()
    pripremi_naslovni_ekran( oApp )
    crtaj_naslovni_ekran( .T. )
-
 
    RETURN .T.
 

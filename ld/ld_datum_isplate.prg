@@ -81,7 +81,7 @@ FUNCTION unos_datuma_isplate_place()
 
    Box(, 20, 65 )
 
-   @ m_x + nX, m_y + 2 SAY "*** Unos datuma isplata placa" COLOR F18_COLOR_I
+   @ m_x + nX, m_y + 2 SAY "*** Unos datuma isplata placa" COLOR f18_color_i()
 
    ++nX
    ++nX

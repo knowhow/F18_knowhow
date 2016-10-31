@@ -35,14 +35,7 @@ FUNCTION P_RVrsta( cid, dx, dy )
    RETURN PostojiSifra( F_RVRSTA, 1, 10, 75, "Vrste artikala", @cid, dx, dy )
 
 
-FUNCTION P_PlSezona( cId )
 
-   cPom := IzSifKRoba( "SEZ", roba->id, .F. )
-   IF ( Empty( cId ) .AND. !Empty( cPom ) .AND. Pitanje(, "Konverzija na osnovu polja SEZONA", "D" ) == "D" )
-      cId := SubStr( cPom, 3 )
-   ENDIF
-
-   RETURN .T.
 
 
 FUNCTION P_TPurchase( cId )

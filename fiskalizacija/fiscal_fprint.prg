@@ -391,7 +391,7 @@ FUNCTION fprint_sold_plu( dev_params )
    LOCAL cType := "0"
 
    Box(, 4, 50 )
-   @ m_x + 1, m_y + 2 SAY "**** uslovi pregleda artikala ****" COLOR F18_COLOR_I
+   @ m_x + 1, m_y + 2 SAY "**** uslovi pregleda artikala ****" COLOR f18_color_i()
    @ m_x + 3, m_y + 2 SAY8 "0 - samo u današnjem prometu "
    @ m_x + 4, m_y + 2 SAY "1 - svi programirani          -> " GET cType ;
       VALID cType $ "01"
@@ -426,7 +426,7 @@ FUNCTION fprint_daily_rpt( dev_params )
    cType := fetch_metric( "fiscal_fprint_daily_type", my_user(), cType )
 
    Box(, 4, 55 )
-   @ m_x + 1, m_y + 2 SAY8 "**** varijanta dnevnog izvještaja ****" COLOR F18_COLOR_I
+   @ m_x + 1, m_y + 2 SAY8 "**** varijanta dnevnog izvještaja ****" COLOR f18_color_i()
    @ m_x + 3, m_y + 2 SAY8 "0 - z-report (dnevni izvještaj)"
    @ m_x + 4, m_y + 2 SAY8 "2 - x-report   (presjek stanja) -> " GET cType ;
       VALID cType $ "02"

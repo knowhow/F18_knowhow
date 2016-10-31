@@ -27,7 +27,7 @@ STATIC last_nY
 // --------------------------------------------------
 // print string
 // nRotate - 0 - bez rotiranja, 3 - 270 stepeni
-// nInvert - 0 - ne F18_COLOR_INVERT uj background, 1 - F18_COLOR_INVERT 
+// nInvert - 0 - ne f18_color_invert() uj background, 1 - f18_color_invert() 
 // nFontSize - 1 - najmanji, 5 - najveci
 // --------------------------------------------------
 FUNCTION epl2_string( nX, nY, cString, lAbsolute, nFontSize, nRotate, nInvert )

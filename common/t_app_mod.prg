@@ -263,7 +263,7 @@ METHOD gParams()
    @ m_x + 9, m_y + 2 SAY "Default odgovor na pitanje 'Izlaz direktno na printer?' (D/N/V/E)" GET gcDirekt VALID gcDirekt $ "DNVER" PICT "@!"
    @ m_x + 10, m_y + 2 SAY "Shema boja za prikaz na ekranu 'V' (B1/B2/.../B7):" GET gShemaVF
    @ m_x + 12, Col() + 2 SAY "Zaok 50f (5):" GET g50f    VALID g50f    $ " 5" PICT "9"
-   @ m_x + 14, m_y + 2 SAY "Omoguciti kolor-prikaz? (D/N)" GET gFKolor VALID gFKolor $ "DN" PICT "@!"
+   //@ m_x + 14, m_y + 2 SAY "Omoguciti kolor-prikaz? (D/N)" GET gFKolor VALID gFKolor $ "DN" PICT "@!"
    @ m_x + 15, Col() + 2 SAY "SQL log ? (D/N)" GET gSql PICT "@!"
 
    @ m_x + 18, m_y + 2 SAY "PDF stampa (N/D/X)?" GET gPDFPrint VALID {|| gPDFPrint $ "DNX" .AND. if( gPDFPrint $ "XD", pdf_box(), .T. ) } PICT "@!"
@@ -304,7 +304,7 @@ METHOD gParams()
       Wpar( "pt", gPTKonv )
       Wpar( "SK", gSKSif )
       Wpar( "DO", gcDirekt )
-      Wpar( "FK", gFKolor )
+      //Wpar( "FK", gFKolor )
       Wpar( "S9", gSQL )
       Wpar( "SB", gShemaVF )
       Wpar( "Ad", Trim( gArhDir ) )

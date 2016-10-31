@@ -10,6 +10,7 @@
  */
 
 #include "f18.ch"
+#include "f18_color.ch"
 
 STATIC s_lInCalculator := .F.
 
@@ -67,7 +68,7 @@ FUNCTION Calc()
    //cHostCP := Upper( "UTF8" )
    //hb_cdpSelect( cHostCP )
    //hb_SetTermCP( cTermCP, cHostCP, .F.  )
-   
+
    DO WHILE .T.
 
       @ m_x, m_y + 42 SAY "<a-K> kursiranje"

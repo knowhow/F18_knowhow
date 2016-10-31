@@ -10,7 +10,7 @@
  */
 
 #include "f18.ch"
-
+#include "f18_color.ch"
 
 THREAD STATIC aBoxStack := {}
 THREAD STATIC aPrStek := {}
@@ -111,7 +111,7 @@ FUNCTION Msg( uText, sec, xPos )
 
    msg_y1 := ( MAXCOLS() - l - 7 ) / 2
    msg_y2 := MAXCOLS() - msg_y1
-   StackPush( aMsgStack, { iif( SetCursor() == 0, 0, iif( ReadInsert(), 2, 1 ) ), SetColor( F18_COLOR_INVERT  ), l, ;
+   StackPush( aMsgStack, { iif( SetCursor() == 0, 0, iif( ReadInsert(), 2, 1 ) ), SetColor( f18_color_invert()  ), l, ;
       SaveScreen( msg_x1, msg_y1, msg_x2, msg_y2 ) } )
 
    @ msg_x1, msg_y1 CLEAR TO msg_x2, msg_y2
@@ -160,7 +160,7 @@ FUNCTION MsgO( cText, sec, lUtf )
 
 
    StackPush( aMsgStack, ;
-      { iif( SetCursor() == 0, 0, iif( ReadInsert(), 2, 1 ) ), SetColor( F18_COLOR_INVERT  ), nLen, ;
+      { iif( SetCursor() == 0, 0, iif( ReadInsert(), 2, 1 ) ), SetColor( f18_color_invert()  ), nLen, ;
       SaveScreen( msg_x1, msg_y1, msg_x2, msg_y2 ) } )
 
    @ msg_x1, msg_y1 CLEAR TO msg_x2, msg_y2
@@ -197,7 +197,7 @@ FUNCTION MsgC( msg_x1, msg_y1, msg_x2, msg_y2 )
 
 
 /* Box(cBoxId, N, nSirina, Inv, chMsg, cHelpT)
- *     Otvara prozor cBoxId dimenzija (N x nSirina), F18_COLOR_INVERT ovan
+ *     Otvara prozor cBoxId dimenzija (N x nSirina), f18_color_invert() ovan
  *         (Inv=.T. ili ne)
  *
  *   param: chMsg - tip C -> prikaz poruke
@@ -208,7 +208,7 @@ FUNCTION MsgC( msg_x1, msg_y1, msg_x2, msg_y2 )
 FUNCTION Box( cBoxId, nVisina, nSirina, lInvert, chMsg, cHelpT )
 
    LOCAL nX1, nY1, nX2, nY2
-   LOCAL LocalC, cPom, cNaslovBoxa
+   LOCAL cColor, cPom, cNaslovBoxa
    LOCAL _m_x, _m_y, _nA1
 
 
@@ -271,9 +271,9 @@ FUNCTION Box( cBoxId, nVisina, nSirina, lInvert, chMsg, cHelpT )
       lInvert := .F.
    ENDIF
 
-   LocalC := iif ( lInvert, F18_COLOR_INVERT , F18_COLOR_NORMAL )
+   cColor := iif ( lInvert, f18_color_invert() , f18_color_normal() )
 
-   SetColor( LocalC )
+   SetColor( cColor )
 
    Scroll( m_x, m_y, m_x + nVisina + 1, m_Y + nSirina + 2 )
    @ m_x, m_y TO m_x + nVisina + 1, m_y + nSirina + 2 DOUBLE
@@ -989,17 +989,6 @@ FUNCTION UGlavnomMeniju()
 
 
 
-FUNCTION set_standardne_boje()
-
-
-   IF Type( "gFKolor" ) <> "C"
-      gFKolor := "D"
-   ENDIF
-
-
-   RETURN NIL
-
-
 
 
 
@@ -1145,20 +1134,7 @@ FUNCTION IzreziPath( cPath, cTekst )
 
 
 
-FUNCTION SezonskeBoje()
 
-
-   IF Type( "gFKolor" ) <> "C"
-      gFKolor := "D"
-   ENDIF
-
-
-   RETURN NIL
-
-
-// -----------------------------------------------------------------
-// browsanje forme
-// -----------------------------------------------------------------
 FUNCTION FormBrowse( nT, nL, nB, nR, aImeKol, aKol, aHFCS, nFreeze, bIstakni )
 
    LOCAL oBrowse     // browse object

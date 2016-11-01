@@ -69,11 +69,12 @@ FUNCTION crtaj_naslovni_ekran()
    SetColor( cColorNormal )
 
    // povrsina iza menija
-      DispBox( 5, 0, nMaxRows - 1, nMaxCols - 1, B_DOUBLE + BOX_CHAR_BACKGROUND, f18_color_invert()  )
+   DispBox( 5, 0, nMaxRows - 1, nMaxCols - 1, B_DOUBLE + BOX_CHAR_BACKGROUND, f18_color_invert()  )
 
+   IF !in_tekuca_godina()
       ispisi_velikim_slovima( AllTrim( Str( tekuca_sezona() ) ), 20, MAXCOLS() - 5, ;
          iif( in_tekuca_godina(), F18_COLOR_NAGLASENO, F18_COLOR_NAGLASENO_STARA_SEZONA ) )
-
+   ENDIF
 
    RETURN .T.
 

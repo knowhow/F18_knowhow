@@ -274,6 +274,8 @@ FUNCTION meni_0_inkey( nX1, nY1, nX2, nY2, aItems, nItemNo, lOkvir, lFiksneKoord
    cOldColor := SetColor()
    SET CURSOR OFF
 
+   @ nX1, nY1 CLEAR TO nX2 - 1, nY2
+
    DO WHILE .T.
 
       nWidth := nY2 - nY1
@@ -281,7 +283,6 @@ FUNCTION meni_0_inkey( nX1, nY1, nX2, nY2, aItems, nItemNo, lOkvir, lFiksneKoord
       nVisina := nX2 - nX1
       nGornja := iif( nItemNo > nVisina, nItemNo - nVisina + 1, 1 )
 
-      @ nX1, nY1 CLEAR TO nX2 - 1, nY2
       IF lOkvir
          meni_0_okvir( nX1, nY1, nX2, nY2, lFiksneKoordinate )
       ENDIF
@@ -307,7 +308,7 @@ FUNCTION meni_0_inkey( nX1, nY1, nX2, nY2, aItems, nItemNo, lOkvir, lFiksneKoord
             SetColor( cOldColor )
          ENDIF
          IF nLen >= nI
-            @ nX1 + nI - nGornja, nY1 SAY8 PadR( aItems[ nI ], nWidth )
+            @ nX1 + nI - nGornja, nY1 SAY PadRU( aItems[ nI ], nWidth )
          ENDIF
       NEXT
 
@@ -391,7 +392,9 @@ STATIC FUNCTION meni_0_okvir( nX1, nY1, nX2, nY2, lFiksneKoordinate )
 
    LOCAL nI, nLength := nY2 - nY1
 
-   @ nX1 - 1, nY1 - 2 CLEAR TO nX2, nY2 + 2
+   //@ nX1 - 1, nY1 - 2 CLEAR TO nX2, nY2 + 2
+   @ nX1 , nY1 - 1 CLEAR TO nX2 - 1, nY1 - 1 // ispis lijeve praznine (#) :  |#1. opcija 1 %|
+   @ nX1,  nY2     CLEAR TO nX2 - 1, nY2 + 1 // ispis desne praznine (%)  :  |#2. opcija 2 %|
    IF lFiksneKoordinate
       @ nX1 - 1, nY1 - 2 TO nX2, nY2 + 2
    ELSE

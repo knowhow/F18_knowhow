@@ -40,6 +40,7 @@ FUNCTION kalk_kontiranje_fin_naloga( lAutomatskiSetBrojNaloga, lAGen, lViseKalk,
    LOCAL lPrvoDzok := ( fetch_metric( "kalk_kontiranje_prioritet_djokera", nil, "N" ) == "D" )
    LOCAL _fakt_params := fakt_params()
    LOCAL nIznosKontiratiDEM
+   LOCAL hRecTrfp
 
    PRIVATE lVrsteP := _fakt_params[ "fakt_vrste_placanja" ]
 
@@ -296,6 +297,7 @@ FUNCTION kalk_kontiranje_fin_naloga( lAutomatskiSetBrojNaloga, lAGen, lViseKalk,
          DO WHILE !Eof() .AND. !Empty( cBrNalF ) .AND. trfp->idvd == cIDVD  .AND. trfp->shema == koncij->shema
 
             lDatFakt := .F.
+            hRecTrfp := dbf_get_rec()
             cStavka := trfp->Id
 
             SELECT finmat
@@ -364,19 +366,19 @@ FUNCTION kalk_kontiranje_fin_naloga( lAutomatskiSetBrojNaloga, lAGen, lViseKalk,
                ELSEIF "IDKONT2" == PadR( trfp->IdKonto, 7 )
                   cIdKonto := finmat->idkonto2
                ELSE
-                  cIdKonto := trfp->Idkonto
+                  cIdKonto := hRecTrfp[ "idkonto" ]
                ENDIF
 
                IF lPrvoDzok
                   cPomFK777 := Trim( gFunKon1 )
-                  cIdkonto := StrTran( cidkonto, "F1", &cPomFK777 )
+                  cIdkonto := StrTran( cIdkonto, "F1", &cPomFK777 )
                   cPomFK777 := Trim( gFunKon2 )
-                  cIdkonto := StrTran( cidkonto, "F2", &cPomFK777 )
+                  cIdkonto := StrTran( cIdkonto, "F2", &cPomFK777 )
 
-                  cIdkonto := StrTran( cidkonto, "A1", Right( Trim( finmat->idkonto ), 1 ) )
-                  cIdkonto := StrTran( cidkonto, "A2", Right( Trim( finmat->idkonto ), 2 ) )
-                  cIdkonto := StrTran( cidkonto, "B1", Right( Trim( finmat->idkonto2 ), 1 ) )
-                  cIdkonto := StrTran( cidkonto, "B2", Right( Trim( finmat->idkonto2 ), 2 ) )
+                  cIdkonto := StrTran( cIdkonto, "A1", Right( Trim( finmat->idkonto ), 1 ) )
+                  cIdkonto := StrTran( cIdkonto, "A2", Right( Trim( finmat->idkonto ), 2 ) )
+                  cIdkonto := StrTran( cIdkonto, "B1", Right( Trim( finmat->idkonto2 ), 1 ) )
+                  cIdkonto := StrTran( cIdkonto, "B2", Right( Trim( finmat->idkonto2 ), 2 ) )
                ENDIF
 
                IF ( cIdkonto = 'KK' )  .OR.  ( cIdkonto = 'KP' )  .OR. ( cIdkonto = 'KO' ) // pocinje sa KK, KO, KP
@@ -408,14 +410,14 @@ FUNCTION kalk_kontiranje_fin_naloga( lAutomatskiSetBrojNaloga, lAGen, lViseKalk,
 
                ELSEIF !lPrvoDzok
                   cPomFK777 := Trim( gFunKon1 )
-                  cIdkonto := StrTran( cidkonto, "F1", &cPomFK777 )
+                  cIdkonto := StrTran( cIdkonto, "F1", &cPomFK777 )
                   cPomFK777 := Trim( gFunKon2 )
-                  cIdkonto := StrTran( cidkonto, "F2", &cPomFK777 )
+                  cIdkonto := StrTran( cIdkonto, "F2", &cPomFK777 )
 
-                  cIdkonto := StrTran( cidkonto, "A1", Right( Trim( finmat->idkonto ), 1 ) )
-                  cIdkonto := StrTran( cidkonto, "A2", Right( Trim( finmat->idkonto ), 2 ) )
-                  cIdkonto := StrTran( cidkonto, "B1", Right( Trim( finmat->idkonto2 ), 1 ) )
-                  cIdkonto := StrTran( cidkonto, "B2", Right( Trim( finmat->idkonto2 ), 2 ) )
+                  cIdkonto := StrTran( cIdkonto, "A1", Right( Trim( finmat->idkonto ), 1 ) )
+                  cIdkonto := StrTran( cIdkonto, "A2", Right( Trim( finmat->idkonto ), 2 ) )
+                  cIdkonto := StrTran( cIdkonto, "B1", Right( Trim( finmat->idkonto2 ), 1 ) )
+                  cIdkonto := StrTran( cIdkonto, "B2", Right( Trim( finmat->idkonto2 ), 2 ) )
                ENDIF
 
                IF ValType( cIdKonto ) != "C"
@@ -558,16 +560,17 @@ FUNCTION kalk_kontiranje_fin_naloga( lAutomatskiSetBrojNaloga, lAGen, lViseKalk,
                   IdTipDok WITH finmat->IdVD, ;
                   BrDok    WITH cBrDok
 
+
                REPLACE DatDok   WITH dDatDok
                REPLACE opis     WITH trfp->naz
 
-               IF Left( Right( trfp->naz, 2 ), 1 ) $ ".;"  // nacin zaokruzenja
-                  REPLACE opis WITH Left( trfp->naz, Len( trfp->naz ) -2 )
+               IF Left( Right( hRecTrfp[ "naz" ], 2 ), 1 ) $ ".;"  // nacin zaokruzenja
+                  REPLACE opis WITH Left( hRecTrfp[ "naz" ], Len( hRecTrfp[ "naz" ] ) -2 )
                ENDIF
 
                IF "#V#" $  trfp->naz  // stavi datum valutiranja
                   REPLACE datval WITH dDatVal
-                  REPLACE opis WITH StrTran( trfp->naz, "#V#", "" )
+                  REPLACE opis WITH StrTran( hRecTrfp[ "naz" ], "#V#", "" )
                   IF lVrsteP
                      REPLACE k4 WITH cIdVrsteP
                   ENDIF
@@ -575,11 +578,11 @@ FUNCTION kalk_kontiranje_fin_naloga( lAutomatskiSetBrojNaloga, lAGen, lViseKalk,
 
                // kontiraj radnu jedinicu
                IF "#RJ1#" $  trfp->naz  // stavi datum valutiranja
-                  REPLACE IdRJ WITH cRj1, opis WITH StrTran( trfp->naz, "#RJ1#", "" )
+                  REPLACE IdRJ WITH cRj1, opis WITH StrTran( hRecTrfp[ "naz" ], "#RJ1#", "" )
                ENDIF
 
                IF "#RJ2#" $  trfp->naz  // stavi datum valutiranja
-                  REPLACE IdRJ WITH cRj2, opis WITH StrTran( trfp->naz, "#RJ2#", "" )
+                  REPLACE IdRJ WITH cRj2, opis WITH StrTran( hRecTrfp[ "naz" ], "#RJ2#", "" )
                ENDIF
 
                IF lPoRj

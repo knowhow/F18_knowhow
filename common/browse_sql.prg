@@ -69,6 +69,7 @@ FUNCTION my_db_edit_sql( cImeBoxa, xw, yw, bUserF, cMessTop, cMessBot, lInvert, 
    PRIVATE  nTBLine   := 1      // tekuca linija-kod viselinijskog browsa
    PRIVATE  nTBLastLine := 1  // broj linija kod viselinijskog browsa
    PRIVATE  TBPomjerise := "" // ako je ">2" pomjeri se lijevo dva
+
    // ovo se moze setovati u when/valid fjama
 
    PRIVATE  TBSkipBlock := {| nSkip| SkipDB( nSkip, @nTBLine ) }
@@ -224,13 +225,15 @@ FUNCTION my_db_edit_sql( cImeBoxa, xw, yw, bUserF, cMessTop, cMessBot, lInvert, 
 
    ENDDO
 
-   RETURN
+   RETURN .T.
 
 
 STATIC FUNCTION browse_only( params, lIzOBJDB )
 
    LOCAL i, j, k
    LOCAL _rows, _width
+   LOCAL lSql := ( rddName() == "SQLMIX" )
+   LOCAL bShowField
 
    IF lIzOBJDB == NIL
       lIzOBJDB := .F.
@@ -275,8 +278,11 @@ STATIC FUNCTION browse_only( params, lIzOBJDB )
 
       i := AScan( Kol, k )
       IF i <> 0
+
          // TODO: SQL vraca nil .and. (ImeKol[i,2] <> NIL)
-         TCol := TBColumnNew( ImeKol[ i, 1 ], ImeKol[ i, 2 ] )
+          bShowField := ImeKol[ i, 2 ]
+         TCol := TBColumnNew( ImeKol[ i, 1 ], bShowField )
+
 
          IF params[ "podvuci_b" ] <> NIL
             TCol:colorBlock := {|| iif( Eval( params[ "podvuci_b" ] ), { 5, 2 }, { 1, 2 } ) }
@@ -296,7 +302,10 @@ STATIC FUNCTION browse_only( params, lIzOBJDB )
       Tb:Freeze := params[ "freeze" ]
    ENDIF
 
-   RETURN
+   RETURN .T.
+
+
+
 
 
 STATIC FUNCTION ForceStable()
@@ -601,7 +610,7 @@ STATIC FUNCTION EditPolja( nX, nY, xIni, cNazPolja, bWhen, bValid, cBoje )
 
 STATIC FUNCTION TBPomjeranje( TB, cPomjeranje )
 
-   LOCAL cPomTB
+   LOCAL cPomTB, i
 
    IF ( cPomjeranje ) = ">"
       cPomTb := SubStr( cPomjeranje, 2, 1 )
@@ -629,8 +638,6 @@ STATIC FUNCTION TBPomjeranje( TB, cPomjeranje )
    ELSEIF ( cPomjeranje ) = "0"
       TB:PanHome()
    ENDIF
-
-
 
 FUNCTION browse_brisi_stavku( lPack )
 

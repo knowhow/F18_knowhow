@@ -13,7 +13,7 @@
 
 
 
-FUNCTION P_KonCij( CId, dx, dy )
+FUNCTION P_KonCij( cId, dx, dy )
 
    LOCAL lRet
    LOCAL i
@@ -29,9 +29,9 @@ FUNCTION P_KonCij( CId, dx, dy )
 
    o_koncij()
 
-   AAdd( ImeKol, { "ID", {|| id }, "id", {|| .T. }, {|| sifra_postoji( wId ) } } )
+   AAdd( ImeKol, { "ID", {|| dbf_get_rec()[ "id" ] }, "id", {|| .T. }, {|| sifra_postoji( wId ) } } )
    AAdd( ImeKol, { PadC( "Shema", 5 ), {|| PadC( shema, 5 ) }, "shema" } )
-   AAdd( ImeKol, { "Tip", {|| naz }, "naz" } )
+   AAdd( ImeKol, { "Tip", {|| dbf_get_rec()[ "naz" ] }, "naz" } )
    AAdd( ImeKol, { "PM", {|| idprodmjes }, "idprodmjes" } )
 
 
@@ -47,7 +47,7 @@ FUNCTION P_KonCij( CId, dx, dy )
    ENDIF
 
    IF KONCIJ->( FieldPos( "KK1" ) ) <> 0
-      AAdd ( ImeKol, { "KK1", {|| KK1 }, "KK1" } )
+      AAdd ( ImeKol, { "KK1", {|| dbf_get_rec()[ "kk1" ] }, "KK1" } )
       AAdd ( ImeKol, { PadC( "KK2", 7 ), {|| KK2 }, "KK2", {|| .T. }, {|| Empty( wKK2 ) .OR. P_Konto( @wKK2 ) } } )
       AAdd ( ImeKol, { PadC( "KK3", 7 ), {|| KK3 }, "KK3", {|| .T. }, {|| Empty( wKK3 ) .OR. P_Konto( @wKK3 ) } } )
       AAdd ( ImeKol, { PadC( "KK4", 7 ), {|| KK4 }, "KK4", {|| .T. }, {|| Empty( wKK4 ) .OR. P_Konto( @wKK4 ) } } )
@@ -90,7 +90,7 @@ FUNCTION P_KonCij( CId, dx, dy )
 
    SELECT ( nTArea )
 
-   lRet := PostojiSifra( F_KONCIJ, 1, MAXROWS() - 10, MAXCOLS() - 15, "Lista: Konta - tipovi cijena", @cId, dx, dy )
+   lRet := p_sifra( F_KONCIJ, 1, MAXROWS() - 10, MAXCOLS() - 15, "Lista: Konta - tipovi cijena", @cId, dx, dy )
 
    RETURN lRet
 

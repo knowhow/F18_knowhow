@@ -70,7 +70,7 @@ FUNCTION lock_semaphore( table )
       _user_locked := get_semaphore_locked_by_me_status_user( table )
       _err_msg := ToStr( Time() ) + " : table locked : " + table + " user: " + _user_locked
       ?E _err_msg
-      info_bar( "sem", _err_msg)
+      info_bar( "sem", _err_msg )
       error_bar( "bug", log_stack( 1 ) )
 
       hb_idleSleep( SEMAPHORE_LOCK_RETRY_IDLE_TIME )
@@ -103,8 +103,7 @@ FUNCTION unlock_semaphore( cTable  )
    LOCAL _user_locked
    LOCAL cSemaphoreStatus
    LOCAL nLockSeconds
-   LOCAL hParams := hb_hash()
-
+   LOCAL hParams := hb_Hash()
 
    IF skip_semaphore_sync( cTable )
       RETURN .T.
@@ -734,7 +733,6 @@ FUNCTION we_need_dbf_refresh( cTable )
 
    LOCAL aDbfRec
 
-
    IF cTable == NIL
       IF !Used() .OR. ( rddName() $  "SQLMIX#ARRAYRDD" )
          RETURN .F.
@@ -798,12 +796,10 @@ FUNCTION dbf_refresh( cTable )
 
    in_dbf_refresh( cTable, .T. )
 
-   ?E "go-to-sync: ", Time(), cTable, hb_threadSelf()
 
    dbf_refresh_ids_or_full( cTable )
    dbf_refresh_0( cTable )
    dbf_refresh_ids_or_full( cTable )
-
 
 
    set_last_refresh( cTable )
@@ -820,10 +816,12 @@ STATIC FUNCTION dbf_refresh_ids_or_full( cTable )
    hVersions := get_semaphore_version_h( cTable )
    IF ( hVersions[ "version" ] == -1 )
       update_dbf_from_server( cTable, "FULL" )
+      ?E "dbf_refresh_full: ", Time(), cTable, hb_threadSelf()
       hVersions := get_semaphore_version_h( cTable )
    ENDIF
 
-   IF ( hVersions[ "version" ] < hVersions[ 'last_version' ] )
+   IF ( hVersions[ "version" ] < hVersions[ "last_version" ] )
+      ?E "dbf_refresh_ids: ", Time(), cTable, hVersions[ "last_version" ], hVersions[ "version" ], hb_threadSelf()
       update_dbf_from_server( cTable, "IDS" )
    ENDIF
    PopWa()
@@ -886,7 +884,7 @@ FUNCTION skip_semaphore_sync( xArg )
    LOCAL hRec
    LOCAL cTable
 
-   //RETURN .T.  // BUG_CPU100
+   // RETURN .T.  // BUG_CPU100
    IF ValType( xArg ) == "H"
       hRec := xArg
       cTable := hRec[ "table" ]

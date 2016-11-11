@@ -689,7 +689,7 @@ FUNCTION snimi_promjene_sifarnika( lNovi, cTekuciZapis )
 
    LOCAL lRet := .F.
    LOCAL lOk := .T.
-   LOCAL _rec
+   LOCAL hRec
    LOCAL cAlias := Lower( Alias() )
    LOCAL cEditovaniZapis
    LOCAL lSqlTable
@@ -698,16 +698,15 @@ FUNCTION snimi_promjene_sifarnika( lNovi, cTekuciZapis )
 
    lSqlTable := is_sql_table( cAlias )
 
-   _rec := get_hash_record_from_global_vars( "w", NIL, lSqlTable )
-
+   // hRec := get_hash_record_from_global_vars( "w", NIL, lSqlTable )
+   hRec := get_hash_record_from_global_vars( "w", NIL, .F. ) // uvijek napraviti cp852 enkodiran string
 
    IF  !begin_sql_tran_lock_tables( { cAlias } )
       RETURN .F.
    ENDIF
 
 
-
-   IF lNovi .AND. is_sifra_postoji_u_sifarniku( _rec )
+   IF lNovi .AND. is_sifra_postoji_u_sifarniku( hRec )
       run_sql_query( "COMMIT" )
       Msgbeep( "Šifra koju želite dodati već postoji u šifarniku !" )
       RETURN lRet
@@ -718,7 +717,7 @@ FUNCTION snimi_promjene_sifarnika( lNovi, cTekuciZapis )
       APPEND BLANK
    ENDIF
 
-   lOk := update_rec_server_and_dbf( cAlias, _rec, 1, "CONT" )
+   lOk := update_rec_server_and_dbf( cAlias, hRec, 1, "CONT" )
 
    IF lOk
       lOk := update_sifk_na_osnovu_ime_kol_from_global_var( ImeKol, "w", lNovi, "CONT" )
@@ -773,7 +772,8 @@ FUNCTION snimi_promjene_cirkularne_ispravke_sifarnika()
 
    lSqlTable := is_sql_table( Alias() )
 
-   _vars := get_hash_record_from_global_vars( "w", NIL, lSqlTable )
+   _vars := get_hash_record_from_global_vars( "w", NIL, .F. )
+   // _vars := get_hash_record_from_global_vars( "w", NIL, lSqlTable )
    _alias := Lower( Alias() )
 
    IF !begin_sql_tran_lock_tables( { _alias  } )
@@ -799,7 +799,7 @@ FUNCTION snimi_promjene_cirkularne_ispravke_sifarnika()
       MsgBeep( "Greška sa operacijom cirkularne ispravke !#Operacija prekinuta." )
    ENDIF
 
-   set_global_vars_from_dbf( "w" )
+   set_global_vars_from_dbf( "w", .F. )
 
    RETURN lRet
 
@@ -927,6 +927,7 @@ FUNCTION sif_sql_getlist( var_name, GetList, lZabIsp, aZabIsp, lShowGrup, Ch, nG
       &var_name := Eval( ImeKol[ i, 2 ] )
       GO tmpRec
    ENDIF
+
 
    IF ValType( &var_name ) == "C"
       &var_name = hb_UTF8ToStr( &var_name )

@@ -93,8 +93,8 @@ FUNCTION set_global_vars_from_dbf( zn, lConvertToUtf )
       IF !( "#" + _field + "#" $ "#BRISANO#_OID_#_COMMIT_#" )
          _var := zn + _field
          // kreiram public varijablu sa imenom vrijednosti _var varijable
-         __mvPublic( _var )
-         Eval( MemVarBlock( _var ), Eval( FieldBlock( _field ) ) )
+         __mvPublic( _var ) // wNaz
+         Eval( MemVarBlock( _var ), Eval( FieldBlock( _field ) ) ) // wNaz <-- SADRŽAJ
          IF ValType( &_var ) == "C"
             IF lSql // sql tabela utf->str
                &_var := hb_UTF8ToStr( &_var )

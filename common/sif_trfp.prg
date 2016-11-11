@@ -24,8 +24,8 @@ FUNCTION P_TRFP( cId, dx, dy )
    ImeKol := {  ;
       { "Kalk",  {|| PadC( IdVD, 4 ) },    "IdVD"                  }, ;
       { PadC( "Shema", 5 ),    {|| PadC( shema, 5 ) },      "shema"                    }, ;
-      { PadC( "ID", 10 ),    {|| id },      "id"                    }, ;
-      { PadC( "Naziv", 20 ), {|| naz },     "naz"                   }, ;
+      { PadC( "ID", 10 ),    {|| dbf_get_rec()[ "id" ] },      "id"                    }, ;
+      { PadC( "Naziv", 20 ), {|| dbf_get_rec()[ "naz" ] },     "naz"                   }, ;
       { "Konto  ", {|| idkonto },        "Idkonto", {|| .T. }, {|| ( "KO" $ wIdkonto ) .OR. ( "KP" $ wIdkonto ) .OR. ( "KK" $ widkonto ) .OR. ( "?" $ widkonto ) .OR. ( "A" $ widkonto ) .OR. ( "B" $ widkonto ) .OR. ( "F" $ widkonto ) .OR. ( "IDKONT" $ widkonto ) .OR.  P_konto( @wIdkonto ) }   }, ;
       { "Tarifa", {|| idtarifa },        "IdTarifa"              }, ;
       { "D/P",   {|| PadC( D_P, 3 ) },      "D_P"                   }, ;
@@ -226,9 +226,9 @@ FUNCTION TrfpB( Ch )
 
 FUNCTION UndoSheme( lKopi )
 
-   
    LOCAL cPom := "170771.POM", cStari := SIFPATH + "TRFP.ST", cTekuci := SIFPATH + "TRFP.DBF"
    LOCAL cStari2 := SIFPATH + "TRFPI1.ST", cTekuci2 := SIFPATH + "TRFP.CDX"
+
    IF lKopi == NIL; lKopi := .F. ; ENDIF
    IF lKopi
       SELECT TRFP

@@ -11,15 +11,17 @@
 
 #include "f18.ch"
 
-// ------------------------------
-// lNoLock - ne zakljucavaj
-// ------------------------------
+/*
+ lNoLock - ne zakljucavaj
+*/
+
 FUNCTION dbf_update_rec( hRec, lNoLock )
 
    LOCAL _key
    LOCAL _field_b
    LOCAL _msg
    LOCAL _a_dbf_rec
+   LOCAL lSql := ( rddName() == "SQLMIX" )
 
    IF lNoLock == NIL
       lNoLock := .F.
@@ -29,7 +31,7 @@ FUNCTION dbf_update_rec( hRec, lNoLock )
       _msg := "dbf_update_rec - nema otvoren dbf"
       log_write( _msg, 1 )
       Alert( _msg )
-      //QUIT_1
+      // QUIT_1
       RETURN .F.
    ENDIF
 
@@ -51,8 +53,13 @@ FUNCTION dbf_update_rec( hRec, lNoLock )
             log_write( _msg, 1 )
          ELSE
             _field_b := FieldBlock( _key )
+
             // napuni field sa vrijednosti
+            IF ValType( hRec[ _key ] ) == "C" .AND. lSql
+               hRec[ _key ] := hb_StrToUTF8( hRec[ _key ] )  // proklete_kvacice - konvertuj SQLMix record u UTF-8
+            ENDIF
             Eval( _field_b, hRec[ _key ] )
+            
          ENDIF
 
       NEXT

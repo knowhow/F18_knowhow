@@ -91,13 +91,13 @@ FUNCTION sql_quote_u( xVar )
 
 
 
-FUNCTION sql_where_from_dbf_key_fields( dbf_key_fields, rec, lSqlTable )
+FUNCTION sql_where_from_dbf_key_fields( aDbfKeyFields, hRecord, lSqlTable )
 
    LOCAL _ret, _pos, _item, _key
 
-   // npr dbf_key_fields := {{"godina", 4}, "idrj", {"mjesec", 2}, "obr", "idradn" }
+   // npr aDbfKeyFields := {{"godina", 4}, "idrj", {"mjesec", 2}, "obr", "idradn" }
    _ret := ""
-   FOR EACH _item in dbf_key_fields
+   FOR EACH _item in aDbfKeyFields
 
       IF !Empty( _ret )
          _ret += " AND "
@@ -106,17 +106,17 @@ FUNCTION sql_where_from_dbf_key_fields( dbf_key_fields, rec, lSqlTable )
       IF ValType( _item ) == "A"
          // numeric
          _key := Lower( _item[ 1 ] )
-         check_hash_key( rec, _key )
-         _ret += _item[ 1 ] + "=" + Str( rec[ _key ], _item[ 2 ] )
+         check_hash_key( hRecord, _key )
+         _ret += _item[ 1 ] + "=" + Str( hRecord[ _key ], _item[ 2 ] )
 
       ELSEIF ValType( _item ) == "C"
          _key := Lower( _item )
-         check_hash_key( rec, _key )
-         IF lSqlTable
-            _ret += _item + "=" + sql_quote_u( rec[ _key ] )
-         ELSE
-            _ret += _item + "=" + sql_quote( rec[ _key ] )
-         ENDIF
+         check_hash_key( hRecord, _key )
+         //IF lSqlTable
+          //  _ret += _item + "=" + sql_quote_u( hRecord[ _key ] )
+         //ELSE
+            _ret += _item + "=" + sql_quote( hRecord[ _key ] )
+         //ENDIF
 
       ELSE
          MsgBeep( ProcName( 1 ) + "valtype _item ?!" )

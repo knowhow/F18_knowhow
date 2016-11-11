@@ -442,12 +442,16 @@ STATIC FUNCTION set_table_values_algoritam_vars( cTabela, hRecord, algoritam, cT
             // hRecord['id'] = '0' => '0     '
             set_rec_from_dbstruct( @a_dbf_rec )
 
-            uValue := Unicode():New( hRecord[ _key ], lSqlTable )
+
+/* uvijek je  hRecord db_get_rec()  uvijek cp852 enkodiran
+            uValue := Unicode():New( hRecord[ _key ], lSqlTable ) // unicode value
+
             hRecord[ _key ] := uValue:PadR( a_dbf_rec[ "dbf_fields_len" ][ _key ][ 2 ] )
             IF !lSqlTable
                // DBFCDX tabela mora sadržati CP 852 string
                hRecord[ _key ] := hb_UTF8ToStr( hRecord[ _key ] )
             ENDIF
+*/
 
             // provjeri prvi dio kljuca
             // ako je # onda obavezno setuj tag
@@ -471,4 +475,4 @@ STATIC FUNCTION set_table_values_algoritam_vars( cTabela, hRecord, algoritam, cT
       alg_tag := "#" + AllTrim( Str( algoritam ) )
    ENDIF
 
-   RETURN
+   RETURN .T.

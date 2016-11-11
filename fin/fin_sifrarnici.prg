@@ -368,7 +368,7 @@ FUNCTION P_ParEK( cId, dx, dy )
 
 
 
-/* P_TRFP3(cId,dx,dy)
+/* 
  *     Otvara sifrarnik shema kontiranja obracuna LD
  *   param: cId
  *   param: dx

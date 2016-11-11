@@ -30,7 +30,8 @@ FUNCTION sql_table_update( cTable, cSqlOperator, hRecord, cWhereStr, lSilent )
    LOCAL _len
    LOCAL _a_dbf_rec, _alg
    LOCAL _dbf_fields, _sql_fields, _sql_order, _dbf_wa, _dbf_alias, _sql_tbl
-   //LOCAL lSqlDbf := .F. hRecord je uvijek 852 enkodiran!
+
+   // LOCAL lSqlDbf := .F. hRecord je uvijek 852 enkodiran!
 
    IF lSilent == NIL
       lSilent := .F.
@@ -42,9 +43,9 @@ FUNCTION sql_table_update( cTable, cSqlOperator, hRecord, cWhereStr, lSilent )
          cTable := Alias()
       ENDIF
 
-      //IF USED() .AND. ( rddName() == "SQLMIX" )
-      //     lSqlDbf := .T.  // u sql tabeli su utf enkodirani stringovi
-      //ENDIF
+      // IF USED() .AND. ( rddName() == "SQLMIX" )
+      // lSqlDbf := .T.  // u sql tabeli su utf enkodirani stringovi
+      // ENDIF
 
       _a_dbf_rec := get_a_dbf_rec( cTable )
 
@@ -69,7 +70,7 @@ FUNCTION sql_table_update( cTable, cSqlOperator, hRecord, cWhereStr, lSilent )
 
    ENDIF
 
-   //log_write( "sql table update, poceo", 9, lSilent )
+   // log_write( "sql table update, poceo", 9, lSilent )
 
    DO CASE
 
@@ -130,9 +131,9 @@ FUNCTION sql_table_update( cTable, cSqlOperator, hRecord, cWhereStr, lSilent )
 
          IF ValType( hRecord[ _tmp ] ) == "N"
             IF  _a_dbf_rec[ "dbf_fields_len" ][ _tmp ][ 1 ] == "I"
-              _tmp_2 := STR( hRecord[ _tmp ], 5, 0 )
+               _tmp_2 := Str( hRecord[ _tmp ], 5, 0 )
             ELSE
-              _tmp_2 := Str( hRecord[ _tmp ], _a_dbf_rec[ "dbf_fields_len" ][ _tmp ][ 2 ], _a_dbf_rec[ "dbf_fields_len" ][ _tmp ][ 3 ] )
+               _tmp_2 := Str( hRecord[ _tmp ], _a_dbf_rec[ "dbf_fields_len" ][ _tmp ][ 2 ], _a_dbf_rec[ "dbf_fields_len" ][ _tmp ][ 3 ] )
             ENDIF
 
             IF Left( _tmp_2, 1 ) == "*"
@@ -143,11 +144,11 @@ FUNCTION sql_table_update( cTable, cSqlOperator, hRecord, cWhereStr, lSilent )
                cQuery += _tmp_2
             ENDIF
          ELSE
-            //IF lSqlDbf
-            //    cQuery += sql_quote_u( hRecord[ _tmp ] ) // sql tabela sadrzi utf-8 enkodirane podatke
-            //ELSE
-                cQuery += sql_quote( hRecord[ _tmp ] )
-            //ENDIF
+            // IF lSqlDbf
+            // cQuery += sql_quote_u( hRecord[ _tmp ] ) // sql tabela sadrzi utf-8 enkodirane podatke
+            // ELSE
+            cQuery += sql_quote( hRecord[ _tmp ] )
+            // ENDIF
          ENDIF
 
          IF nI < Len( _a_dbf_rec[ "dbf_fields" ] )
@@ -160,10 +161,10 @@ FUNCTION sql_table_update( cTable, cSqlOperator, hRecord, cWhereStr, lSilent )
 
    END CASE
 
-   //?E "sql table update", cQuery
+   // ?E "sql table update", cQuery
    oQueryRet := run_sql_query( cQuery )
 
-   log_write( "sql table update, table: " + IIF( cTable == NIL, "NIL", cTable ) + ", op: " + cSqlOperator + ", qry: " + cQuery, 8, lSilent )
+   log_write( "sql table update, table: " + iif( cTable == NIL, "NIL", cTable ) + ", op: " + cSqlOperator + ", qry: " + cQuery, 8, lSilent )
    log_write( "sql table update, VALTYPE(oQueryRet): " + ValType( oQueryRet ), 9, lSilent )
    log_write( "sql table update, zavrsio", 9, lSilent )
 

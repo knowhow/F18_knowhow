@@ -158,9 +158,9 @@ FUNCTION my_db_edit( cImeBoxa, xw, yw, bKeyHandler, cMessTop, cMessBot, lInvert,
       DO WHILE !TB:stabilize() .AND. ( Ch := NextKey() ) == 0 // .AND. ( Ch := Inkey() ) == 0
          Tb:stabilize()
          // Ch := Inkey(0)
-         //IF !in_calc()
-          //  Eval( bKeyHandler, .T. )  // .T. - lPrviPoziv
-         //ENDIF
+         // IF !in_calc()
+         // Eval( bKeyHandler, .T. )  // .T. - lPrviPoziv
+         // ENDIF
          // lKeyHandlerStarted := .T.
       ENDDO
 
@@ -286,6 +286,8 @@ FUNCTION my_db_edit_create_tb_var_objekat( params, lIzOBJDB )
    LOCAL i, k
    LOCAL _rows, _width, _rows_prazno, _rows_poruke
    LOCAL TCol
+   LOCAL bShowField
+   LOCAL lSql := ( rddName() == "SQLMIX" )
 
    IF lIzOBJDB == NIL
       lIzOBJDB := .F.
@@ -330,7 +332,10 @@ FUNCTION my_db_edit_create_tb_var_objekat( params, lIzOBJDB )
 
       i := AScan( Kol, k )
       IF i <> 0  .AND. ( ImeKol[ i, 2 ] <> NIL )     // kodni blok <> 0
-         TCol := TBColumnNew( ImeKol[ i, 1 ], ImeKol[ i, 2 ] )
+
+         bShowField := ImeKol[ i, 2 ]
+
+         TCol := TBColumnNew( ImeKol[ i, 1 ], bShowField  )
 
          IF params[ "podvuci_b" ] <> NIL
             TCol:colorBlock := {|| iif( Eval( params[ "podvuci_b" ], TCol ), { 5, 2 }, { 1, 2 } ) }

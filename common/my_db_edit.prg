@@ -334,7 +334,6 @@ FUNCTION my_db_edit_create_tb_var_objekat( params, lIzOBJDB )
       IF i <> 0  .AND. ( ImeKol[ i, 2 ] <> NIL )     // kodni blok <> 0
 
          bShowField := ImeKol[ i, 2 ]
-
          TCol := TBColumnNew( ImeKol[ i, 1 ], bShowField  )
 
          IF params[ "podvuci_b" ] <> NIL

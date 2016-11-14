@@ -40,7 +40,7 @@ FUNCTION kalk_kontiranje_fin_naloga( lAutomatskiSetBrojNaloga, lAGen, lViseKalk,
    LOCAL lPrvoDzok := ( fetch_metric( "kalk_kontiranje_prioritet_djokera", nil, "N" ) == "D" )
    LOCAL _fakt_params := fakt_params()
    LOCAL nIznosKontiratiDEM
-   LOCAL hRecTrfp
+   LOCAL hRecTrfp, cStavka
 
    PRIVATE lVrsteP := _fakt_params[ "fakt_vrste_placanja" ]
 
@@ -298,19 +298,19 @@ FUNCTION kalk_kontiranje_fin_naloga( lAutomatskiSetBrojNaloga, lAGen, lViseKalk,
 
             lDatFakt := .F.
             hRecTrfp := dbf_get_rec()
-            cStavka := trfp->Id
+            cStavka := hRecTrfp[ "id" ]
 
             SELECT finmat
             nIznosKontiratiDEM := &cStavka
 
             SELECT trfp
 
-            IF !Empty( trfp->idtarifa ) .AND. trfp->idtarifa <> finmat->idtarifa
+            IF !Empty( hRecTrfp[ "idtarifa" ] ) .AND. hRecTrfp[ "idtarifa" ] <> finmat->idtarifa
                // ako u sifarniku parametara postoji tarifa prenosi po tarifama
                nIznosKontiratiDEM := 0
             ENDIF
 
-            IF Empty( trfp->idtarifa ) .AND. roba->tip $ "U"
+            IF Empty( hRecTrfp[ "idtarifa" ] ) .AND. roba->tip $ "U"
                nIznosKontiratiDEM := 0 // roba tipa u,t
             ENDIF
 
@@ -334,11 +334,11 @@ FUNCTION kalk_kontiranje_fin_naloga( lAutomatskiSetBrojNaloga, lAGen, lViseKalk,
 
                SELECT fin_pripr
 
-               IF trfp->znak == "-"
+               IF hRecTrfp[ "znak" ] == "-"
                   nIznosKontiratiDEM := -nIznosKontiratiDEM
                ENDIF
 
-               IF "#DF#" $ ( trfp->naz )
+               IF "#DF#" $ ( hRecTrfp[ "naz" ] )
                   lDatFakt := .T.
                ENDIF
 
@@ -361,9 +361,9 @@ FUNCTION kalk_kontiranje_fin_naloga( lAutomatskiSetBrojNaloga, lAGen, lViseKalk,
 
                ENDIF
 
-               IF "IDKONTO" == PadR( trfp->IdKonto, 7 )
+               IF "IDKONTO" == PadR( hRecTrfp[ "idkonto" ], 7 )
                   cIdKonto := finmat->idkonto
-               ELSEIF "IDKONT2" == PadR( trfp->IdKonto, 7 )
+               ELSEIF "IDKONT2" == PadR( hRecTrfp[ "idkonto" ], 7 )
                   cIdKonto := finmat->idkonto2
                ELSE
                   cIdKonto := hRecTrfp[ "idkonto" ]
@@ -392,7 +392,7 @@ FUNCTION kalk_kontiranje_fin_naloga( lAutomatskiSetBrojNaloga, lAGen, lViseKalk,
                      GO nRecNo
                      // vrati se na glavni konto
                      SELECT fin_pripr
-                     // finansije, priprema
+
                   ELSEIF Right( Trim( cIdkonto ), 3 ) == "(1)"  // trazi idkonto
                      SELECT koncij
                      nRecNo := RecNo()
@@ -403,7 +403,7 @@ FUNCTION kalk_kontiranje_fin_naloga( lAutomatskiSetBrojNaloga, lAGen, lViseKalk,
                      GO nRecNo
                      // vrati se na glavni konto
                      SELECT fin_pripr
-                     // finansije, priprema
+
                   ELSE
                      cIdkonto := koncij->( &cIdkonto )
                   ENDIF
@@ -441,29 +441,28 @@ FUNCTION kalk_kontiranje_fin_naloga( lAutomatskiSetBrojNaloga, lAGen, lViseKalk,
                cBrDok := Space( 8 )
                dDatDok := finmat->datdok
 
-               IF trfp->Dokument == "R"
+               IF hRecTrfp[ "dokument" ] == "R"
                   // radni nalog
                   cBrDok := finmat->idZaduz2
-               ELSEIF trfp->Dokument == "1"
+               ELSEIF hRecTrfp[ "dokument" ] == "1"
                   cBrDok := finmat->brdok
-               ELSEIF trfp->Dokument == "2"
+               ELSEIF hRecTrfp[ "dokument" ] == "2"
                   cBrDok := finmat->brfaktp
                   dDatDok := finmat->datfaktp
-               ELSEIF trfp->Dokument == "3"
+               ELSEIF hRecTrfp[ "dokument" ] == "3"
                   dDatDok := dDatNal
-               ELSEIF trfp->Dokument == "9"
-
+               ELSEIF hRecTrfp[ "dokument" ] == "9"
                   dDatDok := dDatMax // koristi se za vise kalkulacija
                ENDIF
 
                cIdPartner := Space( 6 )
-               IF trfp->Partner == "1"  // stavi Partnera
+               IF hRecTrfp[ "partner" ] == "1"  // stavi Partnera
                   cIdPartner := finmat->IdPartner
-               ELSEIF trfp->Partner == "2"   // stavi  Lice koje se zaduzuje
+               ELSEIF hRecTrfp[ "partner" ] == "2"   // stavi  Lice koje se zaduzuje
                   cIdpartner := finmat->IdZaduz
-               ELSEIF trfp->Partner == "3"   // stavi  Lice koje se zaduz2
+               ELSEIF hRecTrfp[ "partner" ] == "3"   // stavi  Lice koje se zaduz2
                   cIdpartner := finmat->IdZaduz2
-               ELSEIF trfp->Partner == "A"
+               ELSEIF hRecTrfp[ "partner" ] == "A"
                   cIdpartner := cPartner1
                   IF !Empty( dDatFakt1 )
                      DatDok := dDatFakt1
@@ -471,7 +470,7 @@ FUNCTION kalk_kontiranje_fin_naloga( lAutomatskiSetBrojNaloga, lAGen, lViseKalk,
                   IF !Empty( cBrFakt1 )
                      cBrDok := cBrFakt1
                   ENDIF
-               ELSEIF trfp->Partner == "B"
+               ELSEIF hRecTrfp[ "partner" ] == "B"
                   cIdpartner := cPartner2
                   IF !Empty( dDatFakt2 )
                      dDatDok := dDatFakt2
@@ -479,7 +478,7 @@ FUNCTION kalk_kontiranje_fin_naloga( lAutomatskiSetBrojNaloga, lAGen, lViseKalk,
                   IF !Empty( cBrFakt2 )
                      cBrDok := cBrFakt2
                   ENDIF
-               ELSEIF trfp->Partner == "C"
+               ELSEIF hRecTrfp[ "partner" ] == "C"
                   cIdpartner := cPartner3
                   IF !Empty( dDatFakt3 )
                      dDatDok := dDatFakt3
@@ -487,7 +486,7 @@ FUNCTION kalk_kontiranje_fin_naloga( lAutomatskiSetBrojNaloga, lAGen, lViseKalk,
                   IF !Empty( cBrFakt3 )
                      cBrDok := cBrFakt3
                   ENDIF
-               ELSEIF trfp->Partner == "D"
+               ELSEIF hRecTrfp[ "partner" ] == "D"
                   cIdpartner := cPartner4
                   IF !Empty( dDatFakt4 )
                      dDatDok := dDatFakt4
@@ -495,7 +494,7 @@ FUNCTION kalk_kontiranje_fin_naloga( lAutomatskiSetBrojNaloga, lAGen, lViseKalk,
                   IF !Empty( cBrFakt4 )
                      cBrDok := cBrFakt4
                   ENDIF
-               ELSEIF trfp->Partner == "E"
+               ELSEIF hRecTrfp[ "partner" ] == "E"
                   cIdpartner := cPartner5
                   IF !Empty( dDatFakt5 )
                      dDatDok := dDatFakt5
@@ -503,7 +502,7 @@ FUNCTION kalk_kontiranje_fin_naloga( lAutomatskiSetBrojNaloga, lAGen, lViseKalk,
                   IF !Empty( cBrFakt5 )
                      cBrDok := cBrFakt5
                   ENDIF
-               ELSEIF trfp->Partner == "O"   // stavi  banku
+               ELSEIF hRecTrfp[ "partner" ] == "O"   // stavi  banku
                   cIdpartner := KONCIJ->banka
                ENDIF
 
@@ -515,9 +514,9 @@ FUNCTION kalk_kontiranje_fin_naloga( lAutomatskiSetBrojNaloga, lAGen, lViseKalk,
                   fExist := .F.
                   DO WHILE !Eof() .AND. finmat->idfirma + cidvn + cBrNalF == IdFirma + idvn + BrNal
                      IF IdKonto == cIdKonto .AND. IdPartner == cIdPartner .AND. ;
-                           trfp->d_p == d_p  .AND. idtipdok == finmat->idvd .AND. ;
+                           hRecTrfp[ "d_p" ] == d_p  .AND. idtipdok == finmat->idvd .AND. ;
                            PadR( brdok, 10 ) == PadR( cBrDok, 10 ) .AND. datdok == dDatDok .AND. ;
-                           IF( lPoRj, Trim( idrj ) == Trim( cIdRj ), .T. )
+                           iif( lPoRj, Trim( idrj ) == Trim( cIdRj ), .T. )
                         // provjeriti da li se vec nalazi stavka koju dodajemo
                         fExist := .T.
                         EXIT
@@ -526,8 +525,8 @@ FUNCTION kalk_kontiranje_fin_naloga( lAutomatskiSetBrojNaloga, lAGen, lViseKalk,
                   ENDDO
 
                   IF !fExist
-                     // fin_pripr
-                     SEEK finmat->idfirma + cIdVN + cBrNalF + "ZZZZ"
+
+                     SEEK finmat->idfirma + cIdVN + cBrNalF + "ZZZZ" // fin_pripr
                      SKIP -1
                      IF fin_pripr->( idfirma + idvn + brnal ) == finmat->idfirma + cIdVN + cBrNalF
                         nRbr := fin_pripr->Rbr + 1
@@ -537,8 +536,8 @@ FUNCTION kalk_kontiranje_fin_naloga( lAutomatskiSetBrojNaloga, lAGen, lViseKalk,
                      APPEND BLANK
                   ENDIF
                ELSE
-                  // fin_pripr
-                  SEEK finmat->idfirma + cIdVN + cBrNalF + "ZZZZ"
+
+                  SEEK finmat->idfirma + cIdVN + cBrNalF + "ZZZZ" // fin_pripr
                   SKIP -1
                   IF idfirma + idvn + brnal == finmat->idfirma + cIdVN + cBrNalF
                      nRbr := Rbr + 1
@@ -552,23 +551,21 @@ FUNCTION kalk_kontiranje_fin_naloga( lAutomatskiSetBrojNaloga, lAGen, lViseKalk,
                REPLACE iznosBHD WITH iznosBHD + nIznosKontiratiKM
                REPLACE idKonto  WITH cIdKonto
                REPLACE IdPartner  WITH cIdPartner
-               REPLACE D_P      WITH trfp->d_P
+               REPLACE D_P      WITH hRecTrfp[ "d_p" ]
 
-               REPLACE idFirma  WITH finmat->idfirma, ;
-                  IdVN     WITH cIdVN, ;
-                  BrNal    WITH cBrNalF, ;
-                  IdTipDok WITH finmat->IdVD, ;
-                  BrDok    WITH cBrDok
-
-
-               REPLACE DatDok   WITH dDatDok
-               REPLACE opis     WITH trfp->naz
+               REPLACE fin_pripr->idFirma  WITH finmat->idfirma, ;
+                  fin_pripr->IdVN     WITH cIdVN, ;
+                  fin_pripr->BrNal    WITH cBrNalF, ;
+                  fin_pripr->IdTipDok WITH finmat->IdVD, ;
+                  fin_pripr->BrDok    WITH cBrDok, ;
+                  fin_pripr->DatDok   WITH dDatDok,;
+                  fin_pripr->opis     WITH hRecTrfp[ "naz" ]
 
                IF Left( Right( hRecTrfp[ "naz" ], 2 ), 1 ) $ ".;"  // nacin zaokruzenja
-                  REPLACE opis WITH Left( hRecTrfp[ "naz" ], Len( hRecTrfp[ "naz" ] ) -2 )
+                  REPLACE opis WITH Left( hRecTrfp[ "naz" ], Len( hRecTrfp[ "naz" ] ) - 2 )
                ENDIF
 
-               IF "#V#" $  trfp->naz  // stavi datum valutiranja
+               IF "#V#" $  hRecTrfp[ "naz" ]  // stavi datum valutiranja
                   REPLACE datval WITH dDatVal
                   REPLACE opis WITH StrTran( hRecTrfp[ "naz" ], "#V#", "" )
                   IF lVrsteP
@@ -577,11 +574,11 @@ FUNCTION kalk_kontiranje_fin_naloga( lAutomatskiSetBrojNaloga, lAGen, lViseKalk,
                ENDIF
 
                // kontiraj radnu jedinicu
-               IF "#RJ1#" $  trfp->naz  // stavi datum valutiranja
+               IF "#RJ1#" $  hRecTrfp[ "naz" ]  // stavi datum valutiranja
                   REPLACE IdRJ WITH cRj1, opis WITH StrTran( hRecTrfp[ "naz" ], "#RJ1#", "" )
                ENDIF
 
-               IF "#RJ2#" $  trfp->naz  // stavi datum valutiranja
+               IF "#RJ2#" $  hRecTrfp[ "naz" ]  // stavi datum valutiranja
                   REPLACE IdRJ WITH cRj2, opis WITH StrTran( hRecTrfp[ "naz" ], "#RJ2#", "" )
                ENDIF
 

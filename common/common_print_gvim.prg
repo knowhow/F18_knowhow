@@ -21,7 +21,7 @@ STATIC last_nX
 STATIC last_nY
 STATIC txt_in_name
 STATIC txt_out_name
-STATIC desktop_path
+STATIC s_cDesktopPath
 
 // ----------------------------------------------------
 // dodaje opciju u matricu opcija...
@@ -97,7 +97,7 @@ STATIC FUNCTION r_gvim_cmd( aArgs, aOpts )
    cRunGvim := PRIVPATH + "run_gvim.bat"
 
    // putanja do desktopa
-   desktop_path := '%HOMEDRIVE%%HOMEPATH%\Desktop\'
+   s_cDesktopPath := '%HOMEDRIVE%%HOMEPATH%\Desktop\'
 
    cGvimCmd += 'gvim'
 
@@ -131,7 +131,7 @@ STATIC FUNCTION r_gvim_cmd( aArgs, aOpts )
       txt_out_name += ".TXT"
    ENDIF
 
-   cGvimCmd += '"' + desktop_path + txt_out_name + '"'
+   cGvimCmd += '"' + s_cDesktopPath + txt_out_name + '"'
 
    SET PRINTER to ( cRunGvim )
    SET PRINTER ON
@@ -141,11 +141,11 @@ STATIC FUNCTION r_gvim_cmd( aArgs, aOpts )
 
    // pobrisi swap fajl ako je ostao... ali prvo attribut promjeni
    // posto je swp hidden...
-   ? 'ATTRIB -H "' + desktop_path + '.' + txt_out_name + '.swp"'
-   ? 'DEL "' + desktop_path + '.' + txt_out_name + '.swp"'
+   ? 'ATTRIB -H "' + s_cDesktopPath + '.' + txt_out_name + '.swp"'
+   ? 'DEL "' + s_cDesktopPath + '.' + txt_out_name + '.swp"'
 
    // komanda kopiranja fajla outf.txt na desktop
-   ? 'COPY ' + PRIVPATH + txt_in_name + ' "' + desktop_path + txt_out_name + '"'
+   ? 'COPY ' + PRIVPATH + txt_in_name + ' "' + s_cDesktopPath + txt_out_name + '"'
 
    // komanda za pokretanje gvima
    ? cGvimCmd

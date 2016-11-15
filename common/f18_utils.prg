@@ -275,7 +275,7 @@ FUNCTION f18_copy_to_desktop( file_path, file_name, output_file )
 
 
 
-FUNCTION create_f18_dokumenti_on_desktop( desktop_path )
+FUNCTION create_f18_dokumenti_on_desktop( s_cDesktopPath )
 
    LOCAL _home_path
    LOCAL _desk_path := ""
@@ -294,10 +294,10 @@ FUNCTION create_f18_dokumenti_on_desktop( desktop_path )
    ENDIF
 #endif
 
-   desktop_path := _desk_path + _desk_folder + SLASH
+   s_cDesktopPath := _desk_path + _desk_folder + SLASH
 
-   IF DirChange( '"' + desktop_path + '"' ) != 0
-      _cre := MakeDir( desktop_path )
+   IF DirChange( '"' + s_cDesktopPath + '"' ) != 0
+      _cre := MakeDir( s_cDesktopPath )
    ENDIF
 
    DirChange( my_home() )

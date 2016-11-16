@@ -34,12 +34,9 @@ FUNCTION lager_lista_prodavnica()
    LOCAL _curr_user := "<>"
    LOCAL cMpcIzSif := "N"
    LOCAL cMinK := "N"
-   LOCAL _is_rok := .F.
    LOCAL _istek_roka := CToD( "" )
    LOCAL _item_istek_roka, _hAttrId, _sh_item_istek_roka
    LOCAL _print := "1"
-
-   _is_rok := fetch_metric( "kalk_definisanje_roka_trajanja", NIL, "N" ) == "D"
 
    gPicCDEM := global_pic_cijena()
    gPicDEM := global_pic_iznos()
@@ -117,9 +114,6 @@ FUNCTION lager_lista_prodavnica()
       @ m_x + 9, m_y + 2 SAY "Datum od " GET dDatOd
       @ m_x + 9, Col() + 2 SAY "do" GET dDatDo
 
-      IF _is_rok
-         @ m_x + 9, Col() + 1 SAY "Datum isteka roka:" GET _istek_roka
-      ENDIF
 
       @ m_x + 10, m_y + 2 SAY "Varijanta stampe TXT/ODT (1/2)" GET _print VALID _print $ "12" PICT "@!"
 
@@ -281,7 +275,7 @@ FUNCTION lager_lista_prodavnica()
 
    DO WHILE !Eof() .AND. cIdFirma + cIdKonto == field->idfirma + field->pkonto .AND. IspitajPrekid()
 
-      cIdRoba := field->Idroba
+      cIdRoba := hb_UTF8ToStr( field->Idroba )
 
       IF lSMark .AND. SkLoNMark( "ROBA", cIdroba )
          SKIP
@@ -330,37 +324,14 @@ FUNCTION lager_lista_prodavnica()
          LOOP
       ENDIF
 
-      DO WHILE !Eof() .AND. cIdfirma + cIdkonto + cIdroba == field->idFirma + field->pkonto + field->idroba .AND. IspitajPrekid()
+      DO WHILE !Eof() .AND. cIdfirma + cIdkonto + cIdroba == field->idFirma + field->pkonto + hb_UTF8ToStr( field->idroba ) .AND. IspitajPrekid()
 
          IF lSMark .AND. SkLoNMark( "ROBA", cIdroba )
             SKIP
             LOOP
          ENDIF
 
-         // provjeri mi i datum isteka roka kod artikala
-         IF _is_rok
 
-            IF !Empty( _istek_roka )
-
-               _hAttrId := hb_Hash()
-               _hAttrId[ "idfirma" ] := field->idfirma
-               _hAttrId[ "idtipdok" ] := field->idvd
-               _hAttrId[ "brdok" ] := field->brdok
-               _hAttrId[ "rbr" ] := field->rbr
-
-               _item_istek_roka := CToD( get_kalk_attr_rok( _hAttrId, .T. ) )
-
-               IF DToC( _item_istek_roka ) == DToC( CToD( "" ) ) .OR. _item_istek_roka > _istek_roka
-                  SELECT kalk
-                  SKIP
-                  LOOP
-               ELSE
-                  _sh_item_istek_roka := _item_istek_roka
-               ENDIF
-
-            ENDIF
-
-         ENDIF
 
          IF cPredhStanje == "D"
             IF field->datdok < dDatOd
@@ -670,12 +641,6 @@ FUNCTION lager_lista_prodavnica()
             ? Space( 6 ) + roba->barkod
          ENDIF
 
-         IF _is_rok .AND. !Empty( _istek_roka ) .AND. !Empty( _sh_item_istek_roka )
-            IF !roba_barkod_pri_unosu()
-               ? Space( 6 )
-            ENDIF
-            ?? " rok istice:", DToC( _sh_item_istek_roka ), " dana:", AllTrim( Str( _sh_item_istek_roka - Date() ) )
-         ENDIF
 
       ENDIF
 

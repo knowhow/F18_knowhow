@@ -474,7 +474,7 @@ FUNCTION lager_lista_magacin()
          LOOP
       ENDIF
 
-      cIdkonto := mkonto
+      cIdkonto := kalk->mkonto
 
 
 

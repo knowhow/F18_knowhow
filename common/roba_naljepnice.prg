@@ -18,7 +18,7 @@
  2 - prikaz naljepnica sa novom cijenom, kao i prekrizenom starom cijenom
 */
 
-FUNCTION roba_naljepnice( lCloseAll )
+FUNCTION roba_naljepnice()
 
    LOCAL cVarijanta
    LOCAL cKolicina
@@ -27,13 +27,12 @@ FUNCTION roba_naljepnice( lCloseAll )
    LOCAL _template := "rlab1.odt"
    LOCAL _len_naz := 25
 
-   hb_default( @lCloseAll, .T. )
+
 
    cVarijanta := "1"
    cKolicina := "N"
 
    IF GetVars( @cVarijanta, @cKolicina, @_tkm_no, @_len_naz ) == 0
-      my_close_all_dbf()
       RETURN .F.
    ENDIF
 

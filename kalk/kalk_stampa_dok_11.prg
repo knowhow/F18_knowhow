@@ -57,7 +57,7 @@ FUNCTION kalk_stampa_dok_11( fZaTops )
 
    @ PRow(), 123 SAY "Str:" + Str( ++nStr, 3 )
 
-   SELECT PARTN
+   select_o_partn()
    HSEEK cIdPartner
 
    ? "OTPREMNICA Broj:", cBrFaktP, "Datum:", dDatFaktP
@@ -80,7 +80,7 @@ FUNCTION kalk_stampa_dok_11( fZaTops )
 
    m := "--- ---------- ---------- " + iif( g11bezNC == "D", "", "---------- " ) + "---------- ---------- " + IF( g11bezNC == "D", "", "---------- ---------- " ) + "---------- ---------- ---------- --------- -----------"
 
-   SELECT koncij
+   select_o_koncij()
    SEEK Trim( kalk_pripr->mkonto )
    SELECT kalk_pripr
 
@@ -104,7 +104,6 @@ FUNCTION kalk_stampa_dok_11( fZaTops )
       kalk_pozicioniraj_roba_tarifa_by_kalk_fields()
 
       Scatter()
-
 
       Marza2()
 

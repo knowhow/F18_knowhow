@@ -48,13 +48,14 @@ FUNCTION roba_naljepnice( lCloseAll )
    SELECT rlabele
    IF RecCount() == 0
       MsgBeep( "Nije generisano ništa#Greška - STOP!" )
-      my_close_all_dbf()
+      USE
+      //my_close_all_dbf()
       RETURN .F.
    ENDIF
 
    _gen_xml( _xml_file, _tkm_no, _len_naz )
 
-   my_close_all_dbf()
+   //my_close_all_dbf()
 
    IF generisi_odt_iz_xml( _template, _xml_file )
       prikazi_odt()
@@ -307,7 +308,7 @@ STATIC FUNCTION Printroba_naljepnice( cVarijanta )
 // ----------------------------------------------------------
 STATIC FUNCTION _gen_xml( xml_file, tkm_no, len_naz )
 
-   LOCAL _t_area := Select()
+
 
    create_xml( xml_file )
    xml_head()
@@ -339,10 +340,11 @@ STATIC FUNCTION _gen_xml( xml_file, tkm_no, len_naz )
       SKIP
    ENDDO
 
+   USE
+
    xml_subnode( "lab", .T. )
 
    close_xml()
 
-   SELECT ( _t_area )
 
-   RETURN
+   RETURN .T.

@@ -19,6 +19,7 @@ FUNCTION kalk_stampa_dokumenta( lAzuriraniDokument, cSeek, lAuto )
    LOCAL nCol2
    LOCAL nPom
    LOCAL cOk
+   LOCAL cNaljepniceDN := "N"
    PRIVATE cIdfirma, cIdvd, cBrdok
 
    nCol1 := 0
@@ -77,7 +78,7 @@ FUNCTION kalk_stampa_dokumenta( lAzuriraniDokument, cSeek, lAuto )
       IF !lAuto
 
          IF ( cSeek == "" )
-            Box( "", 4, 65 )
+            Box( "", 6, 65 )
             SET CURSOR ON
             @ m_x + 1, m_y + 2 SAY "KALK Dok broj:"
 
@@ -85,8 +86,10 @@ FUNCTION kalk_stampa_dokumenta( lAzuriraniDokument, cSeek, lAuto )
             @ m_x + 1, Col() + 1 SAY "-" GET cIdVD  PICT "@!"
             @ m_x + 1, Col() + 1 SAY "-" GET cBrDok valid {|| cBrdok := kalk_fix_brdok( cBrDok ), .T. }
 
-            @ m_x + 3, m_y + 2 SAY "(Brdok: '00000022', '22' -> '00000022', '00005/TZ'"
-            @ m_x + 4, m_y + 2 SAY "        '22#  ' -> '22   ', '0022' -> '00000022' ) "
+            @ m_x + 3, m_y + 2 SAY8 "(Brdok: '00000022', '22' -> '00000022', '00005/TZ'"
+            @ m_x + 4, m_y + 2 SAY8 "        '22#  ' -> '22   ', '0022' -> '00000022' ) "
+
+            @ m_x + 6, m_y + 2 SAY8 "Štampa naljepnica D/N ?" GET cNaljepniceDN  PICT "@!" VALID cNaljepniceDN $ "DN"
             READ
 
             ESC_BCR
@@ -112,8 +115,8 @@ FUNCTION kalk_stampa_dokumenta( lAzuriraniDokument, cSeek, lAuto )
 
       IF !Empty( cOk := kalkulacija_ima_sve_cijene( cIdFirma, cIdVd, cBrDok ) ) // provjeri da li kalkulacija ima sve cijene ?
          MsgBeep( "Unutar kalkulacije nedostaju pojedine cijene bitne za obračun!##Stavke: " + cOk )
-         //my_close_all_dbf()
-         //RETURN .F.
+         // my_close_all_dbf()
+         // RETURN .F.
       ENDIF
 
       IF ( cSeek != 'IZDOKS' )
@@ -254,6 +257,11 @@ FUNCTION kalk_stampa_dokumenta( lAzuriraniDokument, cSeek, lAuto )
       ENDIF
 
       IF lAzuriraniDokument // stampa azuriranog KALK dokumenta
+         IF cNaljepniceDN == "D"
+            open_kalk_as_pripr( cIdFirma, cIdVd, cBrDok )
+            roba_naljepnice()
+         ENDIF
+
          cBrDok := kalk_fix_brdok_add_1( cBrDok )
          open_kalk_as_pripr( cIdFirma, cIdVd, cBrDok )
       ENDIF

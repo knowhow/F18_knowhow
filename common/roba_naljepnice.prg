@@ -13,12 +13,12 @@
 
 
 
-// Omogucava izradu naljepnica u dvije varijante:
-// 1 - prikaz naljepnica sa tekucom cijenom
-// 2 - prikaz naljepnica sa novom cijenom, kao i prekrizenom starom cijenom
+/* Omogucava izradu naljepnica u dvije varijante:
+ 1 - prikaz naljepnica sa tekucom cijenom
+ 2 - prikaz naljepnica sa novom cijenom, kao i prekrizenom starom cijenom
+*/
 
-
-FUNCTION RLabele()
+FUNCTION roba_naljepnice( lCloseAll )
 
    LOCAL cVarijanta
    LOCAL cKolicina
@@ -26,6 +26,8 @@ FUNCTION RLabele()
    LOCAL _xml_file := my_home() + "data.xml"
    LOCAL _template := "rlab1.odt"
    LOCAL _len_naz := 25
+
+   hb_default( @lCloseAll, .T. )
 
    cVarijanta := "1"
    cKolicina := "N"
@@ -35,17 +37,17 @@ FUNCTION RLabele()
       RETURN .F.
    ENDIF
 
-   cre_rlabele()
+   cre_roba_naljepnice()
 
    IF cVarijanta == "2"
       _template := "rlab2.odt"
    ENDIF
 
-   KaFillRLabele( cKolicina )
+   roba_naljepnice_napuni_iz_kalk( cKolicina )
 
    SELECT rlabele
    IF RecCount() == 0
-      MsgBeep( "Nije generisano nista! greska..." )
+      MsgBeep( "Nije generisano ništa#Greška - STOP!" )
       my_close_all_dbf()
       RETURN .F.
    ENDIF
@@ -63,7 +65,7 @@ FUNCTION RLabele()
 
 STATIC FUNCTION GetVars( cVarijanta, cKolicina, tkm_no, len_naz )
 
-   LOCAL lOpened
+   // LOCAL lOpened
    LOCAL cIdVd
 
    cIdVd := "XX"
@@ -76,11 +78,7 @@ STATIC FUNCTION GetVars( cVarijanta, cKolicina, tkm_no, len_naz )
 
    IF ( gModul == "KALK" )
 
-      SELECT ( F_KALK_PRIPR )
-      IF !Used()
-         o_kalk_pripr()
-         lOpened := .F.
-      ENDIF
+      select_o_kalk_pripr()
 
       PushWA()
       SELECT kalk_pripr
@@ -97,14 +95,12 @@ STATIC FUNCTION GetVars( cVarijanta, cKolicina, tkm_no, len_naz )
 
    Box(, 10, 65 )
 
-   @ m_x + 1, m_y + 2 SAY "Broj labela zavisi od kolicine artikla (D/N):" ;
-      GET cKolicina VALID cKolicina $ "DN" PICT "@!"
+   @ m_x + 1, m_y + 2 SAY "Broj labela zavisi od kolicine artikla (D/N):" GET cKolicina VALID cKolicina $ "DN" PICT "@!"
 
    @ m_x + 3, m_y + 2 SAY "1 - standardna naljepnica"
    @ m_x + 4, m_y + 2 SAY "2 - sa prikazom stare cijene (prekrizeno)"
 
-   @ m_x + 6, m_y + 3 SAY "Odaberi zeljenu varijantu " ;
-      GET cVarijanta VALID cVarijanta $ "12"
+   @ m_x + 6, m_y + 3 SAY "Odaberi zeljenu varijantu "  GET cVarijanta VALID cVarijanta $ "12"
 
    @ m_x + 7, m_y + 2 SAY "Broj TKM:" GET tkm_no
 
@@ -114,11 +110,11 @@ STATIC FUNCTION GetVars( cVarijanta, cKolicina, tkm_no, len_naz )
 
    BoxC()
 
-   IF ( gModul == "KALK" )
-      IF ( !lOpened )
-         USE
-      ENDIF
-   ENDIF
+   // IF ( gModul == "KALK" )
+   // IF ( !lOpened )
+   // USE
+   // ENDIF
+   // ENDIF
 
    IF ( LastKey() == K_ESC )
       RETURN 0
@@ -132,10 +128,11 @@ STATIC FUNCTION GetVars( cVarijanta, cKolicina, tkm_no, len_naz )
 
 
 
-// -------------------------------------------------------------
-// Kreira tabelu rLabele u privatnom direktoriju
-// -------------------------------------------------------------
-STATIC FUNCTION cre_rlabele()
+/*
+ Kreira tabelu rLabele u privatnom direktoriju
+*/
+
+STATIC FUNCTION cre_roba_naljepnice()
 
    LOCAL aDbf
    LOCAL _tbl
@@ -189,19 +186,19 @@ STATIC FUNCTION cre_rlabele()
 
 
 
-// -------------------------------------------------------------------------
-// Puni tabelu rLabele podacima na osnovu dokumenta iz pripreme modula KALK
-//
-// cKolicina - D ili N, broj labela zavisi od kolicine robe
-// -------------------------------------------------------------------------
-STATIC FUNCTION KaFillRLabele( cKolicina )
+/*
+ Puni tabelu rLabele podacima na osnovu dokumenta iz pripreme modula KALK
+ cKolicina - D ili N, broj labela zavisi od kolicine robe
+*/
+
+STATIC FUNCTION roba_naljepnice_napuni_iz_kalk( cKolicina )
 
    LOCAL cDok
    LOCAL nBr_labela := 0
    LOCAL _predisp := .F.
 
-   O_ROBA
-   o_kalk_pripr()
+   select_o_roba()
+   select_o_kalk_pripr()
 
    SELECT kalk_pripr
    SET ORDER TO TAG "1"
@@ -216,8 +213,7 @@ STATIC FUNCTION KaFillRLabele( cKolicina )
 
    cDok := ( field->idFirma + field->idVd + field->brDok )
 
-   DO WHILE ( !Eof() .AND. cDok == ( field->idFirma + field->idVd + ;
-         field->brDok ) )
+   DO WHILE ( !Eof() .AND. cDok == ( field->idFirma + field->idVd + field->brDok ) )
 
       IF _predisp
          IF field->idkonto2 <> "XXX"
@@ -285,7 +281,7 @@ STATIC FUNCTION KaFillRLabele( cKolicina )
 // ---------------------------------------------------------------
 // Prodji kroz pripremu FAKT-a i napuni tabelu rLabele
 // ---------------------------------------------------------------
-STATIC FUNCTION FaFillRLabele()
+STATIC FUNCTION FaFillroba_naljepnice()
    RETURN NIL
 
 
@@ -297,7 +293,7 @@ STATIC FUNCTION FaFillRLabele()
 // "2" - za dokument nivelacije - prikazuju snizenje,
 // gdje se vidi i precrtana stara cijena
 // -------------------------------------------------------------------
-STATIC FUNCTION PrintRLabele( cVarijanta )
+STATIC FUNCTION Printroba_naljepnice( cVarijanta )
 
    LOCAL _rtm_naziv := AllTrim( "rLab" + cVarijanta )
 

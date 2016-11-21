@@ -211,7 +211,7 @@ FUNCTION kalk_pripr_key_handler( lAsistentObrada )
 
       IF Pitanje(, "Štampa naljepnica za robu (D/N) ?", "D" ) == "D"
          my_close_all_dbf()
-         RLabele()
+         roba_naljepnice()
          o_kalk_edit()
          RETURN DE_REFRESH
 

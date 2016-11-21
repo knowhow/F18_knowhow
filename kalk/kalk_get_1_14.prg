@@ -15,7 +15,7 @@ STATIC aPorezi := {}
 
 FUNCTION kalk_get_1_14()
 
-   LOCAL dDatVal := CToD( "" )
+   LOCAL dDatVal := CToD( "" ), nNabCj1, nNabCj2
 
    pIzgSt := .F.
 
@@ -103,8 +103,8 @@ FUNCTION kalk_get_1_14()
 
    nKolS := 0
    nKolZN := 0
-   nc1 := 0
-   nc2 := 0
+   nNabCj1 := 0
+   nNabCj2 := 0
    dDatNab := CToD( "" )
    lGenStavke := .F.
 
@@ -112,7 +112,7 @@ FUNCTION kalk_get_1_14()
 
       IF !Empty( kalk_metoda_nc() )
 
-         kalk_get_nabavna_mag( _datdok, _idfirma, _idroba, _idkonto2, @nKolS, @nKolZN, @nc1, @nc2, @dDatNab )
+         kalk_get_nabavna_mag( _datdok, _idfirma, _idroba, _idkonto2, @nKolS, @nKolZN, @nNabCj1, @nNabCj2, @dDatNab )
 
          @ m_x + 12, m_y + 30   SAY "Ukupno na stanju "
          @ m_x + 12, Col() + 2 SAY nKols PICT pickol
@@ -127,7 +127,7 @@ FUNCTION kalk_get_1_14()
       // kada malo razmislim najbolje da se ona uvijek nudi
       // if _kolicina >= 0
       IF kalk_metoda_nc() == "2"
-         _nc := nc2
+         _nc := nNabCj2
       ENDIF
 
    ENDIF

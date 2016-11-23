@@ -30,21 +30,21 @@ STATIC FUNCTION _get_vars( vars )
    LOCAL _id_firma := gFirma
    LOCAL _dat_od := CToD( "" )
    LOCAL _dat_do := CToD( "" )
-   LOCAL _usl_kto := PadR( "", 7 )
-   LOCAL _usl_kto2 := PadR( "", 7 )
-   LOCAL _usl_partn := PadR( "", 6 )
+   LOCAL cIdKonto := PadR( "", 7 )
+   LOCAL cIdKonto2 := PadR( "", 7 )
+   LOCAL cIdPartner := PadR( "", 6 )
    LOCAL _sa_datumom := "D"
-   LOCAL _po_vezi := "D"
+   LOCAL cSabratiPoBrojevimaVeze := "D"
    LOCAL _prelom := "N"
    LOCAL _x := 1
    LOCAL _ret := .T.
 
-   _usl_kto := fetch_metric( "fin_komen_konto", my_user(), _usl_kto )
-   _usl_kto2 := fetch_metric( "fin_komen_konto_2", my_user(), _usl_kto2 )
-   _usl_partn := fetch_metric( "fin_komen_partn", my_user(), _usl_partn )
+   cIdKonto := fetch_metric( "fin_komen_konto", my_user(), cIdKonto )
+   cIdKonto2 := fetch_metric( "fin_komen_konto_2", my_user(), cIdKonto2 )
+   cIdPartner := fetch_metric( "fin_komen_partn", my_user(), cIdPartner )
    _dat_od := fetch_metric( "fin_komen_datum_od", my_user(), _dat_od )
    _dat_do := fetch_metric( "fin_komen_datum_do", my_user(), _dat_do )
-   _po_vezi := fetch_metric( "fin_komen_po_vezi", my_user(), _po_vezi )
+   cSabratiPoBrojevimaVeze := fetch_metric( "fin_komen_po_vezi", my_user(), cSabratiPoBrojevimaVeze )
    _prelom := fetch_metric( "fin_komen_prelomljeno", my_user(), _prelom )
    _sa_datumom := fetch_metric( "fin_komen_br_racuna_sa_datumom", my_user(), _sa_datumom )
 
@@ -66,11 +66,11 @@ STATIC FUNCTION _get_vars( vars )
       ENDIF
 
       ++ _x
-      @ m_x + _x, m_y + 2 SAY "Konto duguje   " GET _usl_kto  VALID P_KontoFin( @_usl_kto )
+      @ m_x + _x, m_y + 2 SAY "Konto duguje   " GET cIdKonto  VALID P_KontoFin( @cIdKonto )
       ++ _x
-      @ m_x + _x, m_y + 2 SAY8 "Konto potražuje" GET _usl_kto2  VALID P_KontoFin( @_usl_kto2 ) .AND. _usl_kto2 > _usl_kto
+      @ m_x + _x, m_y + 2 SAY8 "Konto potražuje" GET cIdKonto2  VALID P_KontoFin( @cIdKonto2 ) .AND. cIdKonto2 > cIdKonto
       ++ _x
-      @ m_x + _x, m_y + 2 SAY8 "Partner-dužnik " GET _usl_partn VALID P_Firma( @_usl_partn )  PICT "@!"
+      @ m_x + _x, m_y + 2 SAY8 "Partner-dužnik " GET cIdPartner VALID P_Firma( @cIdPartner )  PICT "@!"
       ++ _x
       @ m_x + _x, m_y + 2 SAY8 "Datum dokumenta od:" GET _dat_od
       @ m_x + _x, Col() + 2 SAY "do" GET _dat_do   VALID _dat_od <= _dat_do
@@ -78,7 +78,7 @@ STATIC FUNCTION _get_vars( vars )
       ++ _x
       ++ _x
 
-      @ m_x + _x, m_y + 2 SAY "Sabrati po brojevima veze D/N ?"  GET _po_vezi VALID _po_vezi $ "DN" PICT "@!"
+      @ m_x + _x, m_y + 2 SAY "Sabrati po brojevima veze D/N ?"  GET cSabratiPoBrojevimaVeze VALID cSabratiPoBrojevimaVeze $ "DN" PICT "@!"
       @ m_x + _x, Col() + 2 SAY "Prikaz prebijenog stanja " GET _prelom VALID _prelom $ "DN" PICT "@!"
 
       ++ _x
@@ -99,21 +99,21 @@ STATIC FUNCTION _get_vars( vars )
       RETURN _ret
    ENDIF
 
-   set_metric( "fin_komen_konto", my_user(), _usl_kto )
-   set_metric( "fin_komen_konto_2", my_user(), _usl_kto2 )
-   set_metric( "fin_komen_partn", my_user(), _usl_partn )
+   set_metric( "fin_komen_konto", my_user(), cIdKonto )
+   set_metric( "fin_komen_konto_2", my_user(), cIdKonto2 )
+   set_metric( "fin_komen_partn", my_user(), cIdPartner )
    set_metric( "fin_komen_datum_od", my_user(), _dat_od )
    set_metric( "fin_komen_datum_do", my_user(), _dat_do )
-   set_metric( "fin_komen_po_vezi", my_user(), _po_vezi )
+   set_metric( "fin_komen_po_vezi", my_user(), cSabratiPoBrojevimaVeze )
    set_metric( "fin_komen_prelomljeno", my_user(), _prelom )
    set_metric( "fin_komen_br_racuna_sa_datumom", my_user(), _sa_datumom )
 
-   vars[ "konto" ] := _usl_kto
-   vars[ "konto2" ] := _usl_kto2
-   vars[ "partn" ] := _usl_partn
+   vars[ "konto" ] := cIdKonto
+   vars[ "konto2" ] := cIdKonto2
+   vars[ "partn" ] := cIdPartner
    vars[ "dat_od" ] := _dat_od
    vars[ "dat_do" ] := _dat_do
-   vars[ "po_vezi" ] := _po_vezi
+   vars[ "po_vezi" ] := cSabratiPoBrojevimaVeze
    vars[ "prelom" ] := _prelom
    vars[ "firma" ] := _id_firma
    vars[ "sa_datumom" ] := _sa_datumom
@@ -128,7 +128,7 @@ FUNCTION kompenzacija()
    LOCAL _i, _n
    LOCAL _row := MAXROWS() - 10
    LOCAL _col := MAXCOLS() - 6
-   LOCAL _usl_kto, _usl_kto2
+   LOCAL cIdKonto, cIdKonto2
 
    picBHD := FormPicL( gPicBHD, 16 )
    picDEM := FormPicL( gPicDEM, 12 )
@@ -149,16 +149,16 @@ FUNCTION kompenzacija()
       _is_gen := .T.
 
       IF !_get_vars( @_vars )
-         RETURN
+         RETURN .F.
       ENDIF
 
-      _usl_kto := _vars[ "konto" ]
-      _usl_kto2 := _vars[ "konto2" ]
+      cIdKonto := _vars[ "konto" ]
+      cIdKonto2 := _vars[ "konto2" ]
 
    ELSE
 
-      _usl_kto := PadR( "", 7 )
-      _usl_kto2 := _usl_kto
+      cIdKonto := PadR( "", 7 )
+      cIdKonto2 := cIdKonto
 
    ENDIF
 
@@ -206,7 +206,7 @@ FUNCTION kompenzacija()
          m_y += ( _col / 2 ) + 1
       ENDIF
 
-      my_db_edit( "komp1", _row - 7, ( _col / 2 ) - 1, {|| key_handler( _vars ) }, "", if( Alias() == "KOMP_DUG", "DUGUJE " + _usl_kto, "POTRAZUJE " + _usl_kto2 ), , , , , 1 )
+      my_db_edit( "komp1", _row - 7, ( _col / 2 ) - 1, {|| key_handler( _vars ) }, "", if( Alias() == "KOMP_DUG", "DUGUJE " + cIdKonto, "POTRAZUJE " + cIdKonto2 ), , , , , 1 )
 
       IF LastKey() == K_ESC
          EXIT
@@ -218,7 +218,7 @@ FUNCTION kompenzacija()
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
 
 STATIC FUNCTION zap_tabele_kompenzacije()
@@ -229,22 +229,22 @@ STATIC FUNCTION zap_tabele_kompenzacije()
    SELECT komp_pot
    my_dbf_zap()
 
-   RETURN
+   RETURN .T.
 
 
 
 STATIC FUNCTION _gen_kompen( vars )
 
-   LOCAL _usl_kto := vars[ "konto" ]
-   LOCAL _usl_kto2 := vars[ "konto2" ]
-   LOCAL _usl_partn := vars[ "partn" ]
+   LOCAL cIdKonto := vars[ "konto" ]
+   LOCAL cIdKonto2 := vars[ "konto2" ]
+   LOCAL cIdPartner := vars[ "partn" ]
    LOCAL _dat_od := vars[ "dat_od" ]
    LOCAL _dat_do := vars[ "dat_do" ]
-   LOCAL _po_vezi := vars[ "po_vezi" ]
+   LOCAL cSabratiPoBrojevimaVeze := vars[ "po_vezi" ]
    LOCAL _sa_datumom := vars[ "sa_datumom" ]
    LOCAL _prelom := vars[ "prelom" ]
    LOCAL _id_firma := vars[ "firma" ]
-   LOCAL _filter, __opis_br_dok
+   LOCAL cFilter, __opis_br_dok
    LOCAL _id_konto, _id_partner, _prolaz, _prosao
    LOCAL _otv_st, _t_id_konto
    LOCAL _br_dok
@@ -263,34 +263,34 @@ STATIC FUNCTION _gen_kompen( vars )
    // SELECT SUBAN
 
 
-
-   _filter := ".t."
+   cFilter := ".t."
 
    IF !Empty( _dat_od )
-      _filter += " .and. DATDOK >= " + dbf_quote( _dat_od )
+      cFilter += " .and. DATDOK >= " + dbf_quote( _dat_od )
    ENDIF
 
    IF !Empty( _dat_do )
-      _filter += " .and. DATDOK <= " + dbf_quote( _dat_do )
+      cFilter += " .and. DATDOK <= " + dbf_quote( _dat_do )
    ENDIF
 
    cOrderBy := "IdFirma,IdKonto,IdPartner,brdok,datdok"
 
-   IF _po_vezi == "D"
-      // SET ORDER TO TAG "3"
-      cOrderBy := "idfirma,idvn,brnal"
-   ENDIF
+   // IF cSabratiPoBrojevimaVeze == "D"
+   // SET ORDER TO TAG "3"
+   // cOrderBy := "idfirma,idvn,brnal"
+   // ENDIF
 
-   IF !find_suban_by_konto_partner( _id_firma, _usl_kto, _usl_partn, NIL, cOrderBy )
-      find_suban_by_konto_partner( _id_firma, _usl_kto2, _usl_partn, NIL, cOrderBy )
-   ENDIF
+   // IF !find_suban_by_konto_partner( _id_firma, cIdKonto, cIdPartner, NIL, cOrderBy )
+   // find_suban_by_konto_partner( _id_firma, cIdKonto2, cIdPartner, NIL, cOrderBy )
+   // ENDIF
+   find_suban_by_konto_partner( _id_firma, cIdKonto + ";" + cIdKonto2 + ";", cIdPartner, NIL, cOrderBy, .T. ) // lIndex = .T.
 
 
    MsgO( "setujem filter... " )
-   IF _filter == ".t."
+   IF cFilter == ".t."
       SET FILTER TO
    ELSE
-      SET FILTER to &( _filter )
+      SET FILTER to &( cFilter )
    ENDIF
    MsgC()
 
@@ -309,12 +309,12 @@ STATIC FUNCTION _gen_kompen( vars )
    _id_konto := field->idkonto
 
    _prolaz := 0
-   IF Empty( _usl_partn )
+   IF Empty( cIdPartner )
       _prolaz := 1
-      HSEEK _id_firma + _usl_kto
+      HSEEK _id_firma + cIdKonto
       IF Eof()
          _prolaz := 2
-         HSEEK _id_firma + _usl_kto2
+         HSEEK _id_firma + cIdKonto2
       ENDIF
    ENDIF
 
@@ -325,9 +325,9 @@ STATIC FUNCTION _gen_kompen( vars )
    DO WHILE .T.
 
       IF !Eof() .AND. field->idfirma == _id_firma .AND. ;
-            ( ( _prolaz == 0 .AND. ( field->idkonto == _usl_kto .OR. field->idkonto == _usl_kto2 ) ) .OR. ;
-            ( _prolaz == 1 .AND. field->idkonto = _usl_kto ) .OR. ;
-            ( _prolaz == 2 .AND. field->idkonto = _usl_kto2 ) )
+            ( ( _prolaz == 0 .AND. ( field->idkonto == cIdKonto .OR. field->idkonto == cIdKonto2 ) ) .OR. ;
+            ( _prolaz == 1 .AND. field->idkonto = cIdKonto ) .OR. ;
+            ( _prolaz == 2 .AND. field->idkonto = cIdKonto2 ) )
       ELSE
          EXIT
       ENDIF
@@ -348,8 +348,7 @@ STATIC FUNCTION _gen_kompen( vars )
       _id_partner := field->idpartner
       _prosao := .F.
 
-      DO WHILE !Eof() .AND. field->IdFirma == _id_firma .AND. field->idpartner == _id_partner ;
-            .AND. ( field->idkonto == _usl_kto .OR. field->idkonto == _usl_kto2 )
+      DO WHILE !Eof() .AND. field->IdFirma == _id_firma .AND. field->idpartner == _id_partner .AND. ( field->idkonto == cIdKonto .OR. field->idkonto == cIdKonto2 )
 
          _id_konto := field->idkonto
          _otv_st := field->otvst
@@ -359,7 +358,7 @@ STATIC FUNCTION _gen_kompen( vars )
             _prosao := .T.
 
             SELECT suban
-            IF _id_konto == _usl_kto
+            IF _id_konto == cIdKonto
                SELECT komp_dug
             ELSE
                SELECT komp_pot
@@ -395,12 +394,12 @@ STATIC FUNCTION _gen_kompen( vars )
          _d_dem := 0
          _p_dem := 0
 
-         IF _po_vezi == "D"
+         IF cSabratiPoBrojevimaVeze == "D"
 
             _br_dok := field->brdok
 
             DO WHILE !Eof() .AND. field->IdFirma == _id_firma .AND. field->idpartner == _id_partner ;
-                  .AND. ( field->idkonto == _usl_kto .OR. field->idkonto == _usl_kto2 ) .AND. field->brdok == _br_dok
+                  .AND. ( field->idkonto == cIdKonto .OR. field->idkonto == cIdKonto2 ) .AND. field->brdok == _br_dok
                IF field->d_p == "1"
                   _d_bhd += field->iznosbhd
                   _d_dem += field->iznosdem
@@ -438,7 +437,7 @@ STATIC FUNCTION _gen_kompen( vars )
          ELSE
 
             // otvorena stavka
-            IF _t_id_konto == _usl_kto
+            IF _t_id_konto == cIdKonto
                SELECT komp_dug
                IF _d_bhd > 0
                   RREPLACE field->iznosbhd WITH _d_bhd
@@ -474,13 +473,13 @@ STATIC FUNCTION _gen_kompen( vars )
 
          ENDIF
 
-         IF _po_vezi <> "D"
+         IF cSabratiPoBrojevimaVeze <> "D"
             SKIP
          ENDIF
 
          IF _prolaz == 0 .OR. _prolaz == 1
-            IF ( field->idkonto <> _id_konto .OR. field->idpartner <> _id_partner ) .AND. _id_konto == _usl_kto
-               HSEEK _id_firma + _usl_kto2 + _id_partner
+            IF ( field->idkonto <> _id_konto .OR. field->idpartner <> _id_partner ) .AND. _id_konto == cIdKonto
+               HSEEK _id_firma + cIdKonto2 + _id_partner
             ENDIF
          ENDIF
 
@@ -494,10 +493,10 @@ STATIC FUNCTION _gen_kompen( vars )
       IF _prolaz == 0
          EXIT
       ELSEIF _prolaz == 1
-         SEEK _id_firma + _usl_kto + _id_partner + Chr( 255 )
-         IF _usl_kto <> field->idkonto
+         SEEK _id_firma + cIdKonto + _id_partner + Chr( 255 )
+         IF cIdKonto <> field->idkonto
             _prolaz := 2
-            SEEK _id_firma + _usl_kto2
+            SEEK _id_firma + cIdKonto2
             _id_partner := Replicate( "", Len( field->idpartner ) )
             IF !Found()
                EXIT
@@ -507,11 +506,11 @@ STATIC FUNCTION _gen_kompen( vars )
 
       IF nprolaz == 2
          DO WHILE .T.
-            SEEK _id_firma + _usl_kto2 + _id_partner + Chr( 255 )
+            SEEK _id_firma + cIdKonto2 + _id_partner + Chr( 255 )
             _t_rec := RecNo()
-            IF field->idkonto == _usl_kto2
+            IF field->idkonto == cIdKonto2
                _id_partner := field->idpartner
-               HSEEK _id_firma + _usl_kto + _id_partner
+               HSEEK _id_firma + cIdKonto + _id_partner
                IF !Found()
                   GO ( _t_rec )
                   EXIT
@@ -527,7 +526,7 @@ STATIC FUNCTION _gen_kompen( vars )
 
    BoxC()
 
-   RETURN
+   RETURN .T.
 
 
 STATIC FUNCTION key_handler( vars )
@@ -632,7 +631,7 @@ STATIC FUNCTION print_kompen( vars )
    LOCAL _valuta := "D"
    LOCAL _saldo
    LOCAL _ret := .T.
-   LOCAL _filter := "komp*.odt"
+   LOCAL cFilter := "komp*.odt"
    LOCAL _template := ""
    LOCAL _templates_path := F18_TEMPLATE_LOCATION
    LOCAL _xml_file := my_home() + "data.xml"
@@ -692,7 +691,7 @@ STATIC FUNCTION print_kompen( vars )
       RETURN _ret
    ENDIF
 
-   IF get_file_list_array( _templates_path, _filter, @_template, .T. ) == 0
+   IF get_file_list_array( _templates_path, cFilter, @_template, .T. ) == 0
       RETURN
    ENDIF
 

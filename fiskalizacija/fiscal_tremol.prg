@@ -47,10 +47,11 @@ STATIC __zahtjev_nula := "0"
 // aKupac[5] - grad stanovanja
 
 
-// --------------------------------------------------------------------------
-// stampa fiskalnog racuna tring fiskalizacija
-// --------------------------------------------------------------------------
-FUNCTION tremol_rn( dev_params, items, head, lStornoRacun, cContinue )
+/*
+ stampa fiskalnog racuna tring fiskalizacija
+*/
+
+FUNCTION tremol_rn( dev_params, aRacunStavke, aRnHeader, lStornoRacun, cContinue )
 
    LOCAL _racun_broj, _vr_plac, _total_plac, _xml, _i
    LOCAL _reklamni_broj, _kolicina, _cijena, _rabat
@@ -63,20 +64,20 @@ FUNCTION tremol_rn( dev_params, items, head, lStornoRacun, cContinue )
    LOCAL _fiscal_no := 0
    LOCAL _fisc_txt, _fisc_rek_txt, _fisc_cust_txt, _f_name
 
-   // pobrisi tmp fajlove i ostalo sto je u input direktoriju
-   tremol_delete_tmp( dev_params )
+
+   tremol_delete_tmp( dev_params )  // pobrisi tmp fajlove i ostalo sto je u input direktoriju
 
    IF cContinue == nil
       cContinue := "0"
    ENDIF
 
-   // ima podataka kupca !
-   IF head <> NIL .AND. Len( head ) > 0
+
+   IF aRnHeader <> NIL .AND. Len( aRnHeader ) > 0  // ima podataka kupca
       _customer := .T.
    ENDIF
 
-   // to je zapravo broj racuna !!!
-   _racun_broj := items[ 1, 1 ]
+
+   _racun_broj := aRacunStavke[ 1, 1 ] // to je zapravo broj racuna
 
    _f_name := fiscal_out_filename( dev_params[ "out_file" ], _racun_broj )
 
@@ -96,7 +97,7 @@ FUNCTION tremol_rn( dev_params, items, head, lStornoRacun, cContinue )
 
 
    IF lStornoRacun // ukljuci storno triger
-      _fisc_rek_txt := ' RefundReceipt="' + AllTrim( items[ 1, 8 ] ) + '"'
+      _fisc_rek_txt := ' RefundReceipt="' + AllTrim( aRacunStavke[ 1, 8 ] ) + '"'
    ENDIF
 
    // ukljuci kupac triger
@@ -108,10 +109,10 @@ FUNCTION tremol_rn( dev_params, items, head, lStornoRacun, cContinue )
       // aKupac[4] - postanski broj
       // aKupac[5] - grad stanovanja
 
-      _cust_id := AllTrim( head[ 1, 1 ] )
-      _cust_name := to_xml_encoding( AllTrim( head[ 1, 2 ] ) )
-      _cust_addr := to_xml_encoding( AllTrim( head[ 1, 3 ] ) )
-      _cust_city := to_xml_encoding( AllTrim( head[ 1, 5 ] ) )
+      _cust_id := AllTrim( aRnHeader[ 1, 1 ] )
+      _cust_name := to_xml_encoding( AllTrim( aRnHeader[ 1, 2 ] ) )
+      _cust_addr := to_xml_encoding( AllTrim( aRnHeader[ 1, 3 ] ) )
+      _cust_city := to_xml_encoding( AllTrim( aRnHeader[ 1, 5 ] ) )
 
       _fisc_cust_txt += _razmak1 + 'CompanyID="' + _cust_id + '"'
       _fisc_cust_txt += _razmak1 + 'CompanyName="' + _cust_name + '"'
@@ -126,17 +127,18 @@ FUNCTION tremol_rn( dev_params, items, head, lStornoRacun, cContinue )
 
    _total_plac := 0
 
-   FOR _i := 1 TO Len( items )
+   FOR _i := 1 TO Len( aRacunStavke )
 
-      _art_plu := items[ _i, 9 ]
-      _art_barkod := items[ _i, 12 ]
-      _art_id := items[ _i, 3 ]
-      _art_naz := PadR( items[ _i, 4 ], 32 )
-      _art_jmj := _g_jmj( items[ _i, 16 ] )
-      _cijena := items[ _i, 5 ]
-      _kolicina := items[ _i, 6 ]
-      _rabat := items[ _i, 11 ]
-      _tarifa := fiscal_txt_get_tarifa( items[ _i, 7 ], dev_params[ "pdv" ], "TREMOL" )
+      _art_plu := aRacunStavke[ _i, 9 ]
+      _art_barkod := aRacunStavke[ _i, 12 ]
+      _art_id := aRacunStavke[ _i, 3 ]
+      //_art_naz := PadR( aRacunStavke[ _i, 4 ], 32 )
+      _art_naz := aRacunStavke[ _i, 4 ]
+      _art_jmj := _g_jmj( aRacunStavke[ _i, 16 ] )
+      _cijena := aRacunStavke[ _i, 5 ]
+      _kolicina := aRacunStavke[ _i, 6 ]
+      _rabat := aRacunStavke[ _i, 11 ]
+      _tarifa := fiscal_txt_get_tarifa( aRacunStavke[ _i, 7 ], dev_params[ "pdv" ], "TREMOL" )
       _dep := "1"
 
       _tmp := ""
@@ -169,10 +171,10 @@ FUNCTION tremol_rn( dev_params, items, head, lStornoRacun, cContinue )
    // "VIRMAN"
    // "KARTICA"
 
-   _vr_plac := fiscal_txt_get_vr_plac( items[ 1, 13 ], "TREMOL" )
-   _total_plac := items[ 1, 14 ]
+   _vr_plac := fiscal_txt_get_vr_plac( aRacunStavke[ 1, 13 ], "TREMOL" )
+   _total_plac := aRacunStavke[ 1, 14 ]
 
-   IF items[ 1, 13 ] <> "0" .AND. !lStornoRacun
+   IF aRacunStavke[ 1, 13 ] <> "0" .AND. !lStornoRacun
 
       _tmp := 'Type="' + _vr_plac + '"'
       _tmp += _razmak1 + 'Amount="' + AllTrim( Str( _total_plac, 12, 2 ) ) + '"'

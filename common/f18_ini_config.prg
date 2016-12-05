@@ -1,7 +1,10 @@
 #include "f18.ch"
 
+#ifdef __PLATFORM__DARWIN
+#define INI_FNAME "f18_config.ini"
+#else
 #define INI_FNAME ".f18_config.ini"
-
+#endif
 
 FUNCTION f18_ini_config_read( sect, ini, global )
 

@@ -160,7 +160,7 @@ FUNCTION a_val_convert()
 
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -187,7 +187,7 @@ FUNCTION kbroj( cSifra )
       ENDIF
    NEXT
    nPom := Val( cPom )
-   nP3 := 0
+   nPom3 := 0
    nKontrola := 0
    FOR i := 1 TO 9
       nPom3 := nPom % 10 // cifra pod rbr i
@@ -212,7 +212,7 @@ FUNCTION round2( nizraz, niznos )
    // =" " odraÐuje obini round()
 
    LOCAL nPom, nPom2, nZnak
-   IF g50f = "5"
+   IF g50f == "5"
 
       npom := Abs( nizraz - Int( nizraz ) )
       nznak = nizraz - Int( nizraz )

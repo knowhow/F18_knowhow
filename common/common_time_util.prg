@@ -29,35 +29,35 @@ FUNCTION DInRange( dDat, d1, d2 )
 
 FUNCTION GMJD( nBrdana )
 
-   LOCAL ostatak
-   LOCAL godina
-   LOCAL mjeseci
-   LOCAL dana
+   LOCAL nOstatak
+   LOCAL nGodina
+   LOCAL nMjeseci
+   LOCAL nDana
 
-   godina := ( nBrDana / 365.125 )
-   ostatak := nBrDana % 365.125
-   mjeseci := ( ostatak / 30.41 )
-   ostatak := ostatak % 30.41
-   dana := Round( ostatak, 0 )
-   godina := Int( godina )
-   mjeseci := Int( mjeseci )
+   nGodina := ( nBrDana / 365.125 )
+   nOstatak := nBrDana % 365.125
+   nMjeseci := ( nOstatak / 30.41 )
+   nOstatak := nOstatak % 30.41
+   nDana := Round( nOstatak, 0 )
+   nGodina := Int( nGodina )
+   nMjeseci := Int( nMjeseci )
 
-   IF dana == 30
-      dana := 0
-      mjeseci ++
+   IF nDana == 30
+      nDana := 0
+      nMjeseci ++
    ENDIF
 
-   IF mjeseci == 13
-      mjeseci := 0
-      godina ++
+   IF nMjeseci == 13
+      nMjeseci := 0
+      nGodina ++
    ENDIF
 
-   RETURN { godina, mjeseci, dana }
+   RETURN { nGodina, nMjeseci, nDana }
 
 
 
-FUNCTION GMJD2N( god, mj, dana )
-   RETURN ( god * 365.125 ) + ( mj * 30.41 ) + dana
+FUNCTION GMJD2N( god, mj, nDana )
+   RETURN ( god * 365.125 ) + ( mj * 30.41 ) + nDana
 
 
 // datum1 - manji datum, datum2 - ve}i datum
@@ -73,7 +73,7 @@ FUNCTION ADDGMJD( aRE, aRB )
    nPom := aRE[ 3 ] + aRB[ 3 ]
 
    IF nPom > 30
-      aRU[ 3 ] := nPom % 30 // dana
+      aRU[ 3 ] := nPom % 30 // nDana
       aRU[ 2 ] += Int( nPom / 30 )
    ELSE
       aRU[ 3 ] := nPom

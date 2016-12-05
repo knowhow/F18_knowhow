@@ -128,7 +128,7 @@ FUNCTION use_sql_opstine()
 
 
 /*
-   use_sql_rj() => otvori šifarnik radnih jedinica sa prilagođenim poljima
+   otvori šifarnik radnih jedinica sa prilagođenim poljima
 */
 
 FUNCTION use_sql_rj()

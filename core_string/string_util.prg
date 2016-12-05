@@ -418,7 +418,7 @@ FUNCTION Slovima( nIzn, cDinDem )
 
 STATIC FUNCTION Stotice( nIzn, cRez, fDecimale, fMnozina, cDinDem )
 
-   LOCAL fDec, fSto := .F., i
+   LOCAL fDec, fSto := .F., i, nPom, aSl
 
    IF ( nPom := Int( nIzn / 100 ) ) >= 1
       aSl := { "stotinu", "dvijestotine", "tristotine", "četiristotine", ;
@@ -497,7 +497,7 @@ STATIC FUNCTION Stotice( nIzn, cRez, fDecimale, fMnozina, cDinDem )
 
 FUNCTION CreateHashString( aColl )
 
-   cHStr := ""
+   LOCAL cHStr := "", i
 
    // Ako je duzina matrice 0 izadji
    IF Len( aColl ) == 0
@@ -514,11 +514,13 @@ FUNCTION CreateHashString( aColl )
    RETURN cHStr
 
 
-/* ReadHashString(cHashString)
+/*
  *     Iscitava hash string u matricu
- *  \return aColl - matrica popunjena podacima iz stringa
+ *  return aColl - matrica popunjena podacima iz stringa
  */
 FUNCTION ReadHashString( cHashString )
+
+   LOCAL aColl
 
    IF Len( cHashString ) == 0
       cHashString := ""
@@ -531,15 +533,17 @@ FUNCTION ReadHashString( cHashString )
 
 
 
-/*  StrToArray(cStr, nLen)
+/*
  *     Kreiraj array na osnovu stringa
  *   param: cStr - string
  *   param: nLen - na svakih nLen upisi novu stavku u array
  */
+
 FUNCTION StrToArray( cStr, nLen )
 
-   aColl := {}
-   cTmp := ""
+   LOCAL aColl := {}
+   LOCAL cTmp := "", nCnt, i
+
    cStr := AllTrim( cStr )
 
    IF ( Len( cStr ) < nLen )
@@ -563,9 +567,10 @@ FUNCTION StrToArray( cStr, nLen )
 
 
 
-/*  FlushMemo(aMemo)
+/*
  *     Vraca vrijednost memo niza u string
  */
+
 FUNCTION FlushMemo( aMemo )
 
    LOCAL i, cPom
@@ -736,7 +741,7 @@ FUNCTION _u( cStr )
 FUNCTION ToStrU( val )
 
    RETURN hb_UTF8ToStr( ToStr( val ) )
-   
+
 
 FUNCTION _upadr( cUtf, nNum )
 

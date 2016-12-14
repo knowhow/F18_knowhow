@@ -32,7 +32,8 @@ STATIC aToken2 := { ".or.", ".and.", ".or." }
 
 FUNCTION Parsiraj( cFilterUpit, cImeSifre, cTip, lRekurzivno, nSifWA )
 
-   LOCAL cStartSifra, cOperator, nPoz1, nPos, nPoz1End, nsiflen
+   LOCAL cStartSifra, cOperator, nPoz1, nPos, nPoz1End, nSiflen
+   LOCAL cIzraz, cLijevo, cDesno
 
    LOCAL cVeznik := "", cToken := "", cIddd
 
@@ -54,14 +55,14 @@ FUNCTION Parsiraj( cFilterUpit, cImeSifre, cTip, lRekurzivno, nSifWA )
 
       IF !Empty( cFilterUpit )
          nPos := AtToken( cFilterUpit, ";" )  // 12121;21212;1A -> 1A
-         nsiflen := Len( cFilterUpit )
+         nSiflen := Len( cFilterUpit )
          PushWA()
          SELECT ( nSifWA )
          IF nPos <> 0
-            cIddd := PadR( SubStr( cFilterUpit, nPos ), Len( id ) )
+            cIddd := PadR( SubStr( cFilterUpit, nPos ), Len( field->id ) )
             cFilterUpit := Left( cFilterUpit, nPos -1 )
          ELSE
-            cIddd := PadR( cFilterUpit, Len( id ) )
+            cIddd := PadR( cFilterUpit, Len( field->id ) )
             cFilterUpit := ""
          ENDIF
 
@@ -120,7 +121,7 @@ FUNCTION Parsiraj( cFilterUpit, cImeSifre, cTip, lRekurzivno, nSifWA )
          cProlaz := "("
       ENDIF
 
-      IF npoz1 =-999
+      IF nPoz1 =-999
          cProlaz := "DE"
       ENDIF
 
@@ -231,11 +232,11 @@ FUNCTION Parsiraj( cFilterUpit, cImeSifre, cTip, lRekurzivno, nSifWA )
 
    ENDDO
 
-   IF !Empty( cizraz )
+   IF !Empty( cIzraz )
       IF !lRekurzivno // nije rekurzivni poziv
-         cIzraz := "(" + cizraz + ")"
+         cIzraz := "(" + cIzraz + ")"
          cFilterUpit := cStartSifra
-         RETURN cizraz
+         RETURN cIzraz
       ENDIF
    ELSE
       RETURN ".t."
@@ -374,13 +375,18 @@ FUNCTION NextToken( cSif, cVeznik )
 
 
 
-FUNCTION Tacno( cIzraz )
+FUNCTION Tacno( cIzraz, xVar )
 
-   LOCAL cPom, lRet
+   LOCAL lRet, xVal := ""
 
-   cPom := cIzraz
+   IF ValType( xVar ) == "B"
+      xVal := Eval( xVar )
+   ENDIF
 
-   lRet := &cPom
+   AltD()
+   cIzraz := StrTran( cIzraz, "Eval(xVar)", "'" + xVal + "'" )
+
+   lRet := &cIzraz
 
    IF ValType( lRet ) == "L"
       RETURN lRet
@@ -413,6 +419,8 @@ FUNCTION TacnoN( cIzraz, bIni, bWhile, bSkip, bEnd )
 
 
 FUNCTION SkLoNMark( cSifDBF, cId )
+
+   LOCAL nArea
 
    nArea := Select()
    SELECT ( cSifDBF )

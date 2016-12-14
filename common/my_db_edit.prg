@@ -262,7 +262,7 @@ FUNCTION my_db_edit( cImeBoxa, xw, yw, bKeyHandler, cMessTop, cMessBot, lInvert,
       SWITCH nKeyHandlerRetEvent
       CASE DE_REFRESH
          TB:RefreshAll()
-         @ m_x + 1, m_y + yw - 6 SAY Str( RecCount2(), 5 )
+         @ m_x + 1, m_y + yw -6 SAY Str( RecCount2(), 5 )
          EXIT
 
       CASE DE_ABORT
@@ -318,7 +318,7 @@ FUNCTION my_db_edit_create_tb_var_objekat( params, lIzOBJDB )
    @ m_x + params[ "xw" ] + 1,  m_y + 2   SAY params[ "msg_bott" ] COLOR F18_COLOR_MSG_BOTTOM
 
    @ m_x + params[ "xw" ] + 1,  Col() + 1 SAY iif( !lIzOBJDB, REPL( BROWSE_PODVUCI_2, 42 ), "" )
-   @ m_x + 1, m_y + params[ "yw" ] - 6    SAY Str( my_reccount(), 5 )
+   @ m_x + 1, m_y + params[ "yw" ] -6    SAY Str( my_reccount(), 5 )
 
 
    TB := TBrowseDB( m_x + 2 + iif( _rows_prazno > 4, 1, _rows_prazno ), m_y + 1, ;
@@ -374,7 +374,7 @@ FUNCTION my_db_edit_standardne_komande( TB, nKey, nKeyHandlerRetEvent, nPored, a
 
    LOCAL _tr := hb_UTF8ToStr( "Traži:" ), _zam := "Zamijeni sa:"
    LOCAL _last_srch := "N"
-   LOCAL i, aUF
+   LOCAL i, cIzraz
    LOCAL cLoc := Space( 40 )
    LOCAL _trazi_val, _zamijeni_val, _trazi_usl
    LOCAL _sect, _pict
@@ -407,15 +407,16 @@ FUNCTION my_db_edit_standardne_komande( TB, nKey, nKeyHandlerRetEvent, nPored, a
       ENDIF
 
       cLoc := Trim( cLoc )
-      aUf := nil
+      cIzraz := NIL
       IF Right( cLoc, 1 ) == ";"
          Beep( 1 )
-         aUF := parsiraj( cLoc, "EVAL(bTekCol)" )
+         AltD()
+         cIzraz := parsiraj( cLoc, "Eval(xVar)" )
       ENDIF
       Tb:hitTop := TB:hitBottom := .F.
       DO WHILE !( Tb:hitTop .OR. TB:hitBottom )
-         IF aUF <> NIL
-            IF Tacno( aUF )
+         IF cIzraz <> NIL
+            IF Tacno( cIzraz, TB:getColumn(Tb:colPos):block() )
                EXIT
             ENDIF
          ELSE
@@ -724,7 +725,7 @@ FUNCTION replace_kolona_in_table( cKolona, trazi_val, zamijeni_val, last_search 
 
          _rec := dbf_get_rec()
 
-         cDio1 := Left( trazi_val, Len( Trim( trazi_val ) ) - 2 )
+         cDio1 := Left( trazi_val, Len( Trim( trazi_val ) ) -2 )
          cDio2 := Left( zamijeni_val, Len( Trim( zamijeni_val ) ) -2 )
 
          IF Right( Trim( trazi_val ), 2 ) == "**" .AND. cDio1 $  _rec[ Lower( cKolona ) ]
@@ -837,7 +838,7 @@ STATIC FUNCTION EditPolja( nX, nY, xIni, cNazPolja, bWhen, bValid )
       IF nY + nSirina > MAXCOLS() -2
 
          FOR i := 1 TO Len( aTBGets )
-            aTBGets[ i ]:Col := aTBGets[ i ]:Col   - ( nY + nSirina - 78 )
+            aTBGets[ i ]:Col := aTBGets[ i ]:Col   - ( nY + nSirina -78 )
             // smanji col koordinate
          NEXT
       ENDIF

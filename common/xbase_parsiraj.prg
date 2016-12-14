@@ -40,10 +40,10 @@ FUNCTION Parsiraj( cFilterUpit, cImeSifre, cTip, lRekurzivno, nSifWA )
       lRekurzivno := .F.
    ENDIF
 
-   cFilterUpit := TRIM( cFilterUpit )
+   cFilterUpit := Trim( cFilterUpit )
 
-   IF nSifWA == NIL .AND. !EMPTY(cFilterUpit) .and. Right( cFilterUpit , 1 ) <> ";"
-        cFilterUpit := cFilterUpit + ";"
+   IF nSifWA == NIL .AND. !Empty( cFilterUpit ) .AND. Right( cFilterUpit, 1 ) <> ";"
+      cFilterUpit := cFilterUpit + ";"
    ENDIF
 
    IF !lRekurzivno
@@ -59,7 +59,7 @@ FUNCTION Parsiraj( cFilterUpit, cImeSifre, cTip, lRekurzivno, nSifWA )
          SELECT ( nSifWA )
          IF nPos <> 0
             cIddd := PadR( SubStr( cFilterUpit, nPos ), Len( id ) )
-            cFilterUpit := Left( cFilterUpit, nPos - 1 )
+            cFilterUpit := Left( cFilterUpit, nPos -1 )
          ELSE
             cIddd := PadR( cFilterUpit, Len( id ) )
             cFilterUpit := ""
@@ -96,8 +96,8 @@ FUNCTION Parsiraj( cFilterUpit, cImeSifre, cTip, lRekurzivno, nSifWA )
       // (>10.I.<11);
       IF nPoz1 > 0 .AND. nPoz1End > nPoz1
 
-         cLijevo := SubStr( cFilterUpit, 1, nPoz1 - 1 )
-         cDesno := SubStr( cFilterUpit, nPoz1 + 1, nPoz1end - nPoz1 - 1 )
+         cLijevo := SubStr( cFilterUpit, 1, nPoz1 -1 )
+         cDesno := SubStr( cFilterUpit, nPoz1 + 1, nPoz1end - nPoz1 -1 )
          cIza :=   SubStr( cFilterUpit, nPoz1end + 1 )
 
          IF !Empty( clijevo )
@@ -120,7 +120,7 @@ FUNCTION Parsiraj( cFilterUpit, cImeSifre, cTip, lRekurzivno, nSifWA )
          cProlaz := "("
       ENDIF
 
-      IF npoz1 =- 999
+      IF npoz1 =-999
          cProlaz := "DE"
       ENDIF
 
@@ -129,7 +129,7 @@ FUNCTION Parsiraj( cFilterUpit, cImeSifre, cTip, lRekurzivno, nSifWA )
       IF cOperator == "#"
          IF Empty( cProlaz ) .AND. nPoz1 > 0
             nPoz1end := Nexttoken( @cFilterUpit, @cToken )
-            cDesno := SubStr( cFilterUpit, nPoz1 + 1, nPoz1end - nPoz1 - 1 )
+            cDesno := SubStr( cFilterUpit, nPoz1 + 1, nPoz1end - nPoz1 -1 )
             cFilterUpit := SubStr( cFilterUpit, nPoz1End + 1 )
             cIzraz += cDesno
             cProlaz += "#"
@@ -156,8 +156,8 @@ FUNCTION Parsiraj( cFilterUpit, cImeSifre, cTip, lRekurzivno, nSifWA )
       IF cOperator == "--" .AND. Empty( cProlaz ) .AND. npoz1 > 0
 
          nPoz1end := NextToken( @cFilterUpit, @cToken )
-         cLijevo := Left( cFilterUpit, nPoz1 - 1 )
-         cDesno := SubStr( cFilterUpit, nPoz1 + 2, nPoz1end - nPoz1 - 2 )
+         cLijevo := Left( cFilterUpit, nPoz1 -1 )
+         cDesno := SubStr( cFilterUpit, nPoz1 + 2, nPoz1end - nPoz1 -2 )
          DO CASE
          CASE cTip == "C"
             cIzraz += "(" + cImeSifre + ">='" + cLijevo + "'.and." + cImeSifre + "<='" + cDesno + "')"
@@ -173,8 +173,8 @@ FUNCTION Parsiraj( cFilterUpit, cImeSifre, cTip, lRekurzivno, nSifWA )
 
       IF cOperator == "$" .AND. Empty( cProlaz ) .AND. npoz1 > 0
          nPoz1end := NextToken( @cFilterUpit, @cToken )
-         cLijevo := Left( cFilterUpit, nPoz1 - 1 )
-         cDesno := SubStr( cFilterUpit, nPoz1 + 1, nPoz1end - nPoz1 - 1 )
+         cLijevo := Left( cFilterUpit, nPoz1 -1 )
+         cDesno := SubStr( cFilterUpit, nPoz1 + 1, nPoz1end - nPoz1 -1 )
          IF cTip == "C"
             cIzraz += "'" + cDesno + "'$" + cImeSifre
          ELSE
@@ -187,7 +187,7 @@ FUNCTION Parsiraj( cFilterUpit, cImeSifre, cTip, lRekurzivno, nSifWA )
       IF cOperator $ "*?" .AND. Empty( cProlaz ) .AND. npoz1 > 0
          nPoz1 := 1
          nPoz1end := NextToken( @cFilterUpit, @cToken )
-         cLijevo := Left( cFilterUpit, nPoz1End - 1 )
+         cLijevo := Left( cFilterUpit, nPoz1End -1 )
          IF cTip == "C"
             cIzraz += "LIKE('" + cLijevo + "'," + cImeSifre + ")"
          ELSE
@@ -200,7 +200,7 @@ FUNCTION Parsiraj( cFilterUpit, cImeSifre, cTip, lRekurzivno, nSifWA )
       IF cOperator == "" .AND. cProlaz == "" // nista od gornjih operatora
          nPoz1 := NextToken( @cFilterUpit, @cToken )
          IF nPoz1 > 0
-            cLijevo := Left( cFilterUpit, nPoz1 - 1 )
+            cLijevo := Left( cFilterUpit, nPoz1 -1 )
             DO CASE
             CASE cTip == "C"
                cIzraz += cImeSifre + "='" + clijevo + "'"
@@ -324,7 +324,7 @@ FUNCTION VeznikRight( cLijevo, cVeznik )
       cLijevo += ";"  // dodaj ; da izraz bude regularan
    ENDIF
    IF Right( clijevo, 2 ) == ");"
-      cLijevo := Left( clijevo, Len( clijevo - 1 ) )
+      cLijevo := Left( clijevo, Len( clijevo -1 ) )
    ENDIF
 
 FUNCTION VeznikLeft( cIza, cVeznik )
@@ -348,7 +348,7 @@ FUNCTION VeznikLeft( cIza, cVeznik )
       cIza += ";"  // dodaj ; da izraz bude regularan
    ENDIF
    IF Right( ciza, 2 ) == ");"
-      ciza := Left( ciza, Len( ciza - 1 ) )
+      ciza := Left( ciza, Len( ciza -1 ) )
    ENDIF
 
 FUNCTION NextToken( cSif, cVeznik )
@@ -367,19 +367,26 @@ FUNCTION NextToken( cSif, cVeznik )
    IF nPoz = 9999;  nPoz := 0; ENDIF
 
    IF nPoz <> 0
-      cSif := Left( cSif, nPoz - 1 ) + ";" + SubStr( cSif, nPoz + Len( aTokens[ itek ] ) )
+      cSif := Left( cSif, nPoz -1 ) + ";" + SubStr( cSif, nPoz + Len( aTokens[ itek ] ) )
    ENDIF
 
    RETURN nPoz
 
 
 
-FUNCTION Tacno( cizraz )
+FUNCTION Tacno( cIzraz )
 
-   PRIVATE cPom
+   LOCAL cPom, lRet
+
    cPom := cIzraz
 
-   return &cPom
+   lRet := &cPom
+
+   IF ValType( lRet ) == "L"
+      RETURN lRet
+   ENDIF
+
+   RETURN .F.
 
 
 

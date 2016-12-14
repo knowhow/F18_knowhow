@@ -141,7 +141,8 @@ FUNCTION prefin_unos_naloga()
 
    O_FIN_PRIPR
    O_KONTO
-   o_suban()
+   //o_suban()
+   find_suban_za_period( cIdFirma, dDatOd, dDatDo )
 
    IF cK1 == "9"
       cK1 := ""
@@ -160,11 +161,13 @@ FUNCTION prefin_unos_naloga()
 
    SELECT SUBAN
 
+/*
    IF ( gFinRj == "D" .AND. lRjRascl )
       SET ORDER TO TAG "9" // idfirma+idkonto+idrj+idpartner+...
    ELSE
       SET ORDER TO TAG "1"
    ENDIF
+*/
 
    cFilt1 := "IDFIRMA=" + dbf_quote( cIdFirma ) + ".and." + aUsl1 + ".and." + aUsl2 + IF( gFinRj == "D", ".and." + aUsl3, "" ) + ;
       IF( Empty( dDatOd ), "", ".and.DATDOK>=" + dbf_quote( dDatOd ) ) + ;
@@ -200,7 +203,7 @@ FUNCTION prefin_unos_naloga()
 
    SELECT fin_pripr
    GO BOTTOM
-   nRbr := Val( rbr )
+   nRbr := field->rbr
    SELECT suban
 
    DO WHILE !Eof()
@@ -243,7 +246,7 @@ FUNCTION prefin_unos_naloga()
          IF cPreknjizi == "T"
             IF Round( nD - nP, 2 ) <> 0
                APPEND BLANK
-               REPLACE idfirma WITH cIdFirma, idpartner WITH cIdPartner, idkonto WITH cIdKonto, idvn WITH cIdVn, brnal WITH cBrNal, datdok WITH dDatDok, rbr WITH Str( ++nRbr, 4 )
+               REPLACE idfirma WITH cIdFirma, idpartner WITH cIdPartner, idkonto WITH cIdKonto, idvn WITH cIdVn, brnal WITH cBrNal, datdok WITH dDatDok, field->rbr WITH ++nRbr
                REPLACE d_p WITH iif( cStrana == "D", "1", "2" ), iznosbhd with ( nD - nP ), iznosdem with ( nD2 - nP2 )
                IF gFinRj == "D"
                   REPLACE idrj WITH cIdRj
@@ -254,7 +257,7 @@ FUNCTION prefin_unos_naloga()
          IF cPreknjizi == "P"
             IF Round( nD - nP, 2 ) <> 0
                APPEND BLANK
-               REPLACE idfirma WITH cIdFirma, idpartner WITH cIdPartner, idkonto WITH cIdKonto, idvn WITH cIdVn, brnal WITH cBrNal, datdok WITH dDatDok, rbr WITH Str( ++nRbr, 4 )
+               REPLACE idfirma WITH cIdFirma, idpartner WITH cIdPartner, idkonto WITH cIdKonto, idvn WITH cIdVn, brnal WITH cBrNal, datdok WITH dDatDok, field->rbr WITH ++nRbr
                REPLACE  d_p WITH iif( nD - nP > 0, "2", "1" ), iznosbhd WITH Abs( nD - nP ), iznosdem WITH Abs( nD2 - nP2 )
                IF gFinRj == "D"
                   REPLACE idrj WITH cIdRj
@@ -265,7 +268,7 @@ FUNCTION prefin_unos_naloga()
          IF cPreknjizi == "S"
             IF Round( nD, 3 ) <> 0
                APPEND BLANK
-               REPLACE idfirma WITH cIdFirma, idpartner WITH cIdPartner, idkonto WITH cIdKonto, idvn WITH cIdVn, brnal WITH cBrNal, datdok WITH dDatDok, rbr WITH Str( ++nRbr, 4 )
+               REPLACE idfirma WITH cIdFirma, idpartner WITH cIdPartner, idkonto WITH cIdKonto, idvn WITH cIdVn, brnal WITH cBrNal, datdok WITH dDatDok, field->rbr WITH ++nRbr
                REPLACE  d_p WITH "1", iznosbhd WITH -nd, iznosdem WITH -nd2
                IF gFinRj == "D"
                   REPLACE idrj WITH cIdRj
@@ -273,7 +276,7 @@ FUNCTION prefin_unos_naloga()
             ENDIF
             IF Round( nP, 3 ) <> 0
                APPEND BLANK
-               REPLACE idfirma WITH cIdFirma, idpartner WITH cIdPartner, idkonto WITH cIdKonto, idvn WITH cIdVn, brnal WITH cBrNal, datdok WITH dDatDok, rbr WITH Str( ++nRbr, 4 )
+               REPLACE idfirma WITH cIdFirma, idpartner WITH cIdPartner, idkonto WITH cIdKonto, idvn WITH cIdVn, brnal WITH cBrNal, datdok WITH dDatDok, rbr WITH  ++nRbr
                REPLACE  d_p WITH "2", iznosbhd WITH -nP, iznosdem WITH -nP2
                IF gFinRj == "D"
                   REPLACE idrj WITH cIdRj

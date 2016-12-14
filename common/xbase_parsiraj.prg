@@ -394,9 +394,9 @@ FUNCTION TacnoN( cIzraz, bIni, bWhile, bSkip, bEnd )
 
    LOCAL i, fRez := .F.
 
-   PRIVATE cPom
+   LOCAL cPom
 
-   IF cizraz = ".t."
+   IF cIzraz = ".t."
       RETURN .T.
    ENDIF
 

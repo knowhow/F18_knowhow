@@ -175,7 +175,7 @@ METHOD onKeyboard()
       close_open_fakt_tabele()
       RETURN DE_REFRESH
 
-   case ::nCh == K_CTRL_F9
+   case ::nCh == k_ctrl_f9()
       ::deleteAll()
       RETURN DE_REFRESH
 

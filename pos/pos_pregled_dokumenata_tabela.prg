@@ -223,7 +223,7 @@ FUNCTION pos_stampa_dokumenta_key_handler( dDat0, dDat1 )
 
       RETURN DE_CONT
 
-   CASE Ch == K_CTRL_F9
+   CASE Ch == k_ctrl_f9()
 
       _id_pos := field->idpos
       _id_vd := field->idvd

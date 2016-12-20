@@ -122,7 +122,7 @@ STATIC FUNCTION sast_key_handler( Ch )
 
    DO CASE
 
-   CASE Ch == K_CTRL_F9
+   CASE Ch == k_ctrl_f9()
       // brisanje sastavnica i proizvoda
       bris_sast()
       nReturn := 7
@@ -199,7 +199,7 @@ STATIC FUNCTION ost_opc_sast() // ostale opcije nad sastavnicama
 STATIC FUNCTION EdSastBlok( char )
 
    DO CASE
-   CASE char == K_CTRL_F9
+   CASE char == k_ctrl_f9()
       MsgBeep( "Nedozvoljena opcija !!!" )
       RETURN 7
    ENDCASE

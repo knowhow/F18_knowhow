@@ -175,7 +175,7 @@ FUNCTION my_db_edit( cImeBoxa, xw, yw, bKeyHandler, cMessTop, cMessBot, lInvert,
 
       // IF !lKeyHandlerStarted
       IF !in_calc()
-         nKeyHandlerRetEvent := Eval( bKeyHandler, .F. )
+         nKeyHandlerRetEvent := Eval( bKeyHandler, Ch )
       ENDIF
       // ENDIF
 
@@ -776,7 +776,7 @@ FUNCTION StandTBTipke()
 
    IF Ch == K_ESC .OR. Ch == K_CTRL_T .OR. Ch = K_CTRL_P .OR. Ch = K_CTRL_N .OR. ;
          Ch == K_ALT_A .OR. Ch == K_ALT_P .OR. Ch = K_ALT_S .OR. Ch = K_ALT_R .OR. ;
-         Ch == K_DEL .OR. Ch = K_F2 .OR. Ch = K_F4 .OR. Ch = K_CTRL_F9 .OR. Ch = 0
+         Ch == K_DEL .OR. Ch = K_F2 .OR. Ch = K_F4 .OR. Ch = k_ctrl_f9() .OR. Ch = 0
       RETURN .T.
    ENDIF
 

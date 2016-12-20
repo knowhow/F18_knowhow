@@ -56,7 +56,7 @@ FUNCTION pos_postoji_roba( cId, dx, dy, barkod )
    NEXT
 
    IF pos_prodavac()
-      _zabrane := { K_CTRL_T, K_CTRL_N, K_F4, K_F2, K_CTRL_F9 }
+      _zabrane := { K_CTRL_T, K_CTRL_N, K_F4, K_F2, k_ctrl_f9() }
    ELSE
       _zabrane := {}
    ENDIF

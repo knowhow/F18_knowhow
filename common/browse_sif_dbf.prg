@@ -585,7 +585,7 @@ STATIC FUNCTION sif_komande( nDbf, cNaslov, bBlok, aZabrane, aZabIsp )
    CASE Ch == K_CTRL_T
       RETURN sifarnik_brisi_stavku()
 
-   CASE Ch == K_CTRL_F9
+   CASE Ch == k_ctrl_f9()
       RETURN sifarnik_brisi_sve()
 
    CASE Ch == K_F10

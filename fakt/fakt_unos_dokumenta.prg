@@ -339,7 +339,7 @@ STATIC FUNCTION fakt_pripr_keyhandler()
       RETURN DE_REFRESH
 
 
-   CASE Ch == K_CTRL_F9
+   CASE Ch == k_ctrl_f9()
 
       fakt_brisanje_pripreme()
       RETURN DE_REFRESH

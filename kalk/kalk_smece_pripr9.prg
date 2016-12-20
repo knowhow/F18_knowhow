@@ -85,7 +85,7 @@ FUNCTION ka_pripr9_key_handler()
       kalk_del_smece_pripr9( idfirma, idvd, brdok )
 
       RETURN DE_REFRESH
-   CASE Ch == K_CTRL_F9 // brisanje kompletnog kalk_pripr9
+   CASE Ch == k_ctrl_f9() // brisanje kompletnog kalk_pripr9
       ErP9All()
       RETURN DE_REFRESH
 

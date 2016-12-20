@@ -76,3 +76,12 @@ FUNCTION browse_dbf( cDbf )
    RESTORE SCREEN FROM cScr
 
    RETURN Alias()
+
+
+FUNCTION k_ctrl_f9()
+
+   IF is_mac()
+      RETURN hb_keyCode( "9" )
+   ENDIF
+
+   RETURN K_CTRL_F9

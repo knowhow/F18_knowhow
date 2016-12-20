@@ -208,7 +208,7 @@ STATIC FUNCTION epdv_kif_key_handler()
 
       RETURN DE_REFRESH
 
-   CASE ( Ch  == K_CTRL_F9 )
+   CASE ( Ch  == k_ctrl_f9() )
 
       IF Pitanje( , D_ZELITE_LI_IZBRISATI_PRIPREMU, "N" ) == "D"
          my_dbf_zap()

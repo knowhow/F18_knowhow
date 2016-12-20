@@ -463,7 +463,7 @@ STATIC FUNCTION ed_sql_sif( nDbf, cNaslov, bBlok, aZabrane, aZabIsp )
       IF Empty( gidfilter )
          SET FILTER TO
       ELSE
-         SET FILTER TO Eval( ImeKol[ TB:ColPos, 2 ] ) == gidfilter
+         SET FILTER TO Eval( ImeKol[ TB:ColPos, 2 ] ) == gIdfilter
          GO TOP
       ENDIF
       RETURN DE_REFRESH
@@ -471,7 +471,7 @@ STATIC FUNCTION ed_sql_sif( nDbf, cNaslov, bBlok, aZabrane, aZabIsp )
    CASE Ch == K_CTRL_T
       RETURN sifarnik_brisi_stavku()
 
-   CASE Ch == K_CTRL_F9
+   CASE Ch == k_ctrl_f9()
       RETURN sifarnik_brisi_sve()
 
    CASE Ch == K_F10

@@ -316,7 +316,7 @@ STATIC FUNCTION _k_handler()
          RETURN DE_REFRESH
       ENDIF
 
-   CASE Ch = K_CTRL_F9
+   CASE Ch = k_ctrl_f9()
       RETURN browse_brisi_pripremu()
 
    ENDCASE

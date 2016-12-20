@@ -273,7 +273,7 @@ FUNCTION kalk_pripr_key_handler( lAsistentObrada )
       kalk_raspored_troskova()
       RETURN DE_REFRESH
 
-   CASE Ch == K_CTRL_F9
+   CASE Ch == k_ctrl_f9()
       IF Pitanje(, "Želite izbrisati kompletnu tabelu pripreme (D/N) ?", "N" ) == "D"
          cOpis := kalk_pripr->idfirma + "-" + kalk_pripr->idvd + "-" + kalk_pripr->brdok
          my_dbf_zap()

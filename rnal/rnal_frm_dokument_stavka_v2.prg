@@ -86,7 +86,7 @@ STATIC FUNCTION it2_handler()
          nRet := DE_REFRESH
       ENDIF
 
-   CASE ( Ch == K_CTRL_F9 )
+   CASE ( Ch == k_ctrl_f9() )
 
       IF Pitanje(, "Izbrisati kompletnu tabelu ?", "N" ) == "D"
          IF Pitanje(, "Sigurni 100% ?", "N" ) == "D"

@@ -165,7 +165,7 @@ STATIC FUNCTION fin_kamate_key_handler()
    CASE Ch == K_CTRL_T
       RETURN browse_brisi_stavku()
 
-   CASE Ch = K_CTRL_F9
+   CASE Ch = k_ctrl_f9()
       RETURN browse_brisi_pripremu()
 
       // ispravka stavke

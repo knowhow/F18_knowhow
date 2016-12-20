@@ -207,7 +207,7 @@ FUNCTION to_keystrokes( a_polja, a_init )
          DO CASE
 
          CASE _key == "<CTRLF9>"
-            AAdd( a_init, K_CTRL_F9 )
+            AAdd( a_init, k_ctrl_f9() )
 
          CASE _key == "<ESC>"
             AAdd( a_init, K_ESC )

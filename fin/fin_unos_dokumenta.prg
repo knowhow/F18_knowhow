@@ -124,7 +124,7 @@ FUNCTION fin_knjizenje_naloga()
 
    @ m_x + _x_row, m_y + 2 SAY8 _opt_row
 
-   my_db_edit( "PN2", _x_row, _y_row, {|| edit_fin_pripr_key_handler() }, "", "Priprema...", , , , , _help_columns )
+   my_db_edit( "PN2", _x_row, _y_row, {| nCh | edit_fin_pripr_key_handler( nCh ) }, "", "FIN Priprema", , , , , _help_columns )
 
    BoxC()
 
@@ -307,7 +307,7 @@ FUNCTION fin_pripr_redni_broj( nSet )
    RETURN s_nFinPriprRedniBroj
 
 
-FUNCTION edit_fin_pripr_key_handler()
+FUNCTION edit_fin_pripr_key_handler( nCh )
 
    LOCAL nTr2
    LOCAL lLogUnos := .F.
@@ -327,7 +327,7 @@ FUNCTION edit_fin_pripr_key_handler()
 
    DO CASE
 
-   CASE Ch == K_ALT_F5 // setuj datdok na osnovu datval
+   CASE nCh == K_ALT_F5 // setuj datdok na osnovu datval
 
       IF set_datval_datdok()
          RETURN DE_REFRESH
@@ -335,7 +335,7 @@ FUNCTION edit_fin_pripr_key_handler()
          RETURN DE_CONT
       ENDIF
 
-   CASE Ch == K_F8 // brisi stavke u pripremi od - do
+   CASE nCh == K_F8 // brisi stavke u pripremi od - do
 
       IF fin_pripr_brisi_stavke_od_do() == 1
          RETURN DE_REFRESH
@@ -343,12 +343,12 @@ FUNCTION edit_fin_pripr_key_handler()
          RETURN DE_CONT
       ENDIF
 
-   CASE Ch == K_F9
+   CASE nCh == K_F9
 
       sredi_rbr_fin_nalog()
       RETURN DE_REFRESH
 
-   CASE Ch == K_ALT_T
+   CASE nCh == K_ALT_T
 
       IF brisi_fin_pripr_po_uslovu()
          RETURN DE_REFRESH
@@ -356,7 +356,7 @@ FUNCTION edit_fin_pripr_key_handler()
          RETURN DE_CONT
       ENDIF
 
-   CASE Ch == K_CTRL_T
+   CASE nCh == K_CTRL_T
 
       IF Pitanje(, "Želite izbrisati ovu stavku ?", "D" ) == "D"
 
@@ -383,12 +383,12 @@ FUNCTION edit_fin_pripr_key_handler()
 
       RETURN DE_CONT
 
-   CASE Ch == K_F5
+   CASE nCh == K_F5
 
       kontrola_zbira_naloga()
       RETURN DE_REFRESH
 
-   CASE Ch == K_ENTER
+   CASE nCh == K_ENTER
 
       Box( "ist", MAXROWS() - 5, MAXCOLS() - 8, .F. )
       set_global_vars_from_dbf( "_" )
@@ -405,7 +405,7 @@ FUNCTION edit_fin_pripr_key_handler()
          RETURN DE_REFRESH
       ENDIF
 
-   CASE Ch == K_CTRL_A
+   CASE nCh == K_CTRL_A
 
       PushWA()
       SELECT fin_pripr
@@ -450,7 +450,7 @@ FUNCTION edit_fin_pripr_key_handler()
       BoxC()
       RETURN DE_REFRESH
 
-   CASE Ch == K_CTRL_N
+   CASE nCh == K_CTRL_N
 
       SELECT fin_pripr
       nDug := 0
@@ -513,7 +513,7 @@ FUNCTION edit_fin_pripr_key_handler()
 
       RETURN DE_REFRESH
 
-   CASE Ch == K_CTRL_F9
+   CASE nCh == k_ctrl_f9()
 
       IF Pitanje(, "Želite li izbrisati pripremu !?", "N" ) == "D"
 
@@ -530,7 +530,7 @@ FUNCTION edit_fin_pripr_key_handler()
 
       RETURN DE_REFRESH
 
-   CASE Ch == K_CTRL_P
+   CASE nCh == K_CTRL_P
 
       fin_set_broj_dokumenta()
       fin_nalog_k_ctrl_p()
@@ -539,24 +539,24 @@ FUNCTION edit_fin_pripr_key_handler()
       RETURN DE_REFRESH
 
 
-   CASE Upper( Chr( Ch ) ) == "X"
+   CASE Upper( Chr( nCh ) ) == "X"
 
       fin_azuriraj_x()
       RETURN DE_REFRESH
 
 
-   CASE is_key_alt_a( Ch )
+   CASE is_key_alt_a( nCh )
 
       fin_set_broj_dokumenta()
       fin_azuriranje_naloga()
       o_fin_edit()
       RETURN DE_REFRESH
 
-   CASE Upper( Chr( Ch ) ) == "B"
+   CASE Upper( Chr( nCh ) ) == "B"
       fin_set_broj_dokumenta()
       RETURN DE_REFRESH
 
-   CASE Ch == K_ALT_B
+   CASE nCh == K_ALT_B
 
       fin_set_broj_dokumenta()
       my_close_all_dbf()
@@ -574,14 +574,14 @@ FUNCTION edit_fin_pripr_key_handler()
       RETURN DE_CONT
 
 #ifdef __PLATFORM__DARWIN
-   CASE Ch == Asc( "0" )
+   CASE nCh == Asc( "0" )
 #else
-   CASE Ch == K_F10
+   CASE nCh == K_F10
 #endif
       OstaleOpcije()
       RETURN DE_REFRESH
 
-   CASE Upper( Chr( Ch ) ) == "P"
+   CASE Upper( Chr( nCh ) ) == "P"
 
       IF RecCount2() != 0
          MsgBeep( "Povrat nije nedozvoljen, priprema nije prazna !" )
@@ -819,7 +819,7 @@ FUNCTION konverzija_km_dem( dDatDo, nIznosKM )
    PushWa()
    nKurs := Kurs( dDatDo )
    PopWa()
-   
+
    IF Round( nKurs, 4 ) == 0
       RETURN 0
    ENDIF

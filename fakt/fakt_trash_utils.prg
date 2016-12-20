@@ -73,7 +73,7 @@ FUNCTION fa_pripr9_key_handler()
       // brisanje dokumenta iz pripr9
       bris_smece( idfirma, idtipdok, brdok )
       RETURN DE_REFRESH
-   CASE Ch == K_CTRL_F9
+   CASE Ch == k_ctrl_f9()
       // brisanje kompletnog pripr9
       bris_svo_smece()
       RETURN DE_REFRESH

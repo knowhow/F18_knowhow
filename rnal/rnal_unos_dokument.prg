@@ -487,7 +487,7 @@ STATIC FUNCTION key_handler()
 
       ENDIF
 
-   CASE Ch == K_CTRL_F9
+   CASE Ch == k_ctrl_f9()
 
       // brisanje sve iz stavki ili operacija
 

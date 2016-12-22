@@ -69,7 +69,7 @@ FUNCTION specif_dugovanja_po_rocnim_intervalima()
    @ m_x + 7, m_y + 2 SAY "Interval 4: do (dana)" GET nDoDana4 PICT "999"
    @ m_x + 10, m_y + 2 SAY "Prikaz iznosa (format)" GET PICPIC PICT "@!"
    @ m_x + 11, m_y + 2 SAY "Uslov po opcini (prazno - nista)" GET cOpcine
-   @ m_x + 12, m_y + 2 SAY "Partner (prazno-svi):" GET _partner VALID Empty( _partner ) .OR. P_Firma( @_partner )
+   @ m_x + 12, m_y + 2 SAY "Partner (prazno-svi):" GET _partner VALID Empty( _partner ) .OR. p_partner( @_partner )
    @ m_x + 13, m_y + 2 SAY "Izvjestaj za (1)KM (2)EURO" GET cValuta VALID cValuta $ "12"
 
    READ

@@ -116,7 +116,7 @@ STATIC FUNCTION _g_params()
    @ m_x + 1, m_y + 2 SAY "*** parametri importa dokumenta"
 
    @ m_x + 3, m_y + 2 SAY "Konto zaduzuje  :" GET cMKto VALID P_Konto( @cMKto )
-   @ m_x + 4, m_y + 2 SAY "Sifra dobavljaca:" GET cPart VALID P_Firma( @cPart )
+   @ m_x + 4, m_y + 2 SAY "Sifra dobavljaca:" GET cPart VALID p_partner( @cPart )
    READ
    BoxC()
 

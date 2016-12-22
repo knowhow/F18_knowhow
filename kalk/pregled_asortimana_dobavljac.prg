@@ -80,7 +80,7 @@ STATIC FUNCTION frm_vars( vars )
    _x += 2
    @ m_x + _x, m_y + 2 SAY8 "Prodavnički konto:" GET _p_konto VALID P_Konto( @_p_konto )
    ++ _x
-   @ m_x + _x, m_y + 2 SAY8 "Dobavljač:" GET _dob VALID P_Firma( @_dob )
+   @ m_x + _x, m_y + 2 SAY8 "Dobavljač:" GET _dob VALID p_partner( @_dob )
    _x += 2
    @ m_x + _x, m_y + 2 SAY8 "Artikli (prazno-svi):" GET _artikli PICT "@S35"
    ++ _x

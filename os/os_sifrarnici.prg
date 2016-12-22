@@ -41,7 +41,7 @@ FUNCTION os_sifarnici()
    AAdd( _opc, "7. grupacije K1" )
    AAdd( _opcexe, {|| p_k1() } )
    AAdd( _opc, "8. partneri" )
-   AAdd( _opcexe, {|| p_partneri() } )
+   AAdd( _opcexe, {|| p_partner() } )
    AAdd( _opc, "9. valute" )
    AAdd( _opcexe, {|| p_valuta() } )
 
@@ -87,7 +87,7 @@ FUNCTION P_OS( cId, dx, dy )
    ENDIF
 
    IF os_fld_partn_exist()
-      AAdd ( ImeKol, { "Dobavljac", {|| idPartner }, "idPartner", {|| .T. }, {|| P_Firma( @wIdPartner ) }   } )
+      AAdd ( ImeKol, { "Dobavljac", {|| idPartner }, "idPartner", {|| .T. }, {|| p_partner( @wIdPartner ) }   } )
    ENDIF
 
    IF os_postoji_polje( "brsoba" )

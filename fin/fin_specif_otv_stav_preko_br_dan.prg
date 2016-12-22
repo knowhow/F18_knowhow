@@ -55,7 +55,7 @@ FUNCTION fin_spec_otv_stavke_preko_dana()
       @ m_x + 3, m_y + 2 SAY "Firma "
       ?? gFirma, "-", gNFirma
    ELSE
-      @ m_x + 3, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| P_Firma( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
+      @ m_x + 3, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
    ENDIF
    PRIVATE cViseManje := ">"
    @ m_x + 4, m_y + 2 SAY "KONTO  " GET cIdKonto VALID P_KontoFin( @cIdKonto )

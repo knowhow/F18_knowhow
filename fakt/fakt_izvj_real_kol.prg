@@ -92,7 +92,7 @@ FUNCTION fakt_specif_prodaje_real_kolicina()
 
       nX := nX + 3
 
-      @ m_x + nX, m_y + 2 SAY "Uslov po sifri partnera (prazno svi) "  GET qqPartn PICT "@!" valid {|| Empty( qqPartn ) .OR. P_Firma( @qqPartn ) }
+      @ m_x + nX, m_y + 2 SAY "Uslov po sifri partnera (prazno svi) "  GET qqPartn PICT "@!" valid {|| Empty( qqPartn ) .OR. p_partner( @qqPartn ) }
 
       ++nX
 

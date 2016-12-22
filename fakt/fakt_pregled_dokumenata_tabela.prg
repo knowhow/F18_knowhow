@@ -106,7 +106,7 @@ FUNCTION fakt_lista_dokumenata_tabelarni_pregled( lVrsteP, lOpcine, cFilter )
 
    ASize( adImeKol, Len( adImeKol ) + 1 )
    AIns( adImeKol, 6 )
-   adImeKol[ 6 ] := { "ID PARTNER", {|| idpartner }, "idpartner", {|| .T. }, {|| P_Firma( @widpartner ) }, "V" }
+   adImeKol[ 6 ] := { "ID PARTNER", {|| idpartner }, "idpartner", {|| .T. }, {|| p_partner( @widpartner ) }, "V" }
 
    adKol := {}
    FOR i := 1 TO Len( adImeKol )

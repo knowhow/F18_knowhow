@@ -73,7 +73,7 @@ FUNCTION i_dodaj_sifru_partner()
 
    _a_polja := { _kod, "<ENTER>",  _naz, "<PGDN>" }
 
-   test_procedure_with_keystrokes( {|| P_Firma() }, key_test_dodaj_id_u_sifarnik( _a_polja ) )
+   test_procedure_with_keystrokes( {|| p_partner() }, key_test_dodaj_id_u_sifarnik( _a_polja ) )
 
 
    // rec_99 treba da sadrzi broj zapisa

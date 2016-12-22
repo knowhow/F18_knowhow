@@ -92,7 +92,7 @@ FUNCTION kalk_kartica_magacin()
             @ m_x + 4, m_y + 2 SAY "Broj radnog naloga:" GET cRNalBroj PICT "@S20"
          ENDIF
 
-         @ m_x + 5, m_y + 2 SAY "Partner (prazno-svi)"  GET cIdPArtner  VALID Empty( cIdPartner ) .OR. P_Firma( @cIdPartner )  PICT "@!"
+         @ m_x + 5, m_y + 2 SAY "Partner (prazno-svi)"  GET cIdPArtner  VALID Empty( cIdPartner ) .OR. p_partner( @cIdPartner )  PICT "@!"
          @ m_x + 7, m_y + 2 SAY "Datum od " GET dDatOd
          @ m_x + 7, Col() + 2 SAY "do" GET dDatDo
          @ m_x + 8, m_y + 2 SAY "sa prethodnim prometom (D/N)" GET cPredh PICT "@!" VALID cpredh $ "DN"

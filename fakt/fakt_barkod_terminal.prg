@@ -217,7 +217,7 @@ STATIC FUNCTION _gForm( aParam )
 
    // partner
    @ m_x + nX, m_y + 2 SAY "Partner:" GET cPartner ;
-      VALID Empty( cPartner ) .OR. p_firma( @cPartner )
+      VALID Empty( cPartner ) .OR. p_partner( @cPartner )
 
    ++ nX
    ++ nX

@@ -1126,7 +1126,7 @@ FUNCTION kalk_header_get1( lNoviDokument )
       @  m_x + 1, m_y + 2 SAY "Firma: "
       ?? gFirma, "-", gNFirma
    ELSE
-      @  m_x + 1, m_y + 2 SAY "Firma:" GET _IdFirma VALID P_Firma( @_IdFirma, 1, 25 ) .AND. Len( Trim( _idFirma ) ) <= 2
+      @  m_x + 1, m_y + 2 SAY "Firma:" GET _IdFirma VALID p_partner( @_IdFirma, 1, 25 ) .AND. Len( Trim( _idFirma ) ) <= 2
    ENDIF
 
    @  m_x + 2, m_y + 2 SAY "KALKULACIJA: "

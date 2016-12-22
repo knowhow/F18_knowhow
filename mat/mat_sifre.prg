@@ -31,7 +31,7 @@ FUNCTION mat_sifrarnik()
    O_TARIFA
 
    AAdd( opc, "1. partneri                            " )
-   AAdd( opcexe, {|| p_firma() } )
+   AAdd( opcexe, {|| p_partner() } )
    AAdd( opc, "2. konto        " )
    AAdd( opcexe, {|| p_konto() } )
    AAdd( opc, "3. vrste naloga  " )

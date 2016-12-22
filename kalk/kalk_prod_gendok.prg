@@ -935,7 +935,7 @@ FUNCTION kalk_iz_11_u_41_42()
       @ m_x + 0, m_y + 5 SAY "FORMIRANJE DOKUMENTA 41 NA OSNOVU DOKUMENTA 11"
       @ m_x + 2, m_y + 2 SAY "Broj maloprodajne fakture" GET cBrFaktP
       @ m_x + 3, m_y + 2 SAY "Datum fakture            " GET dDatFaktP
-      @ m_x + 4, m_y + 2 SAY "Sifra kupca              " GET cIdPartner VALID Empty( cIdPartner ) .OR. P_Firma( @cIdPartner )
+      @ m_x + 4, m_y + 2 SAY "Sifra kupca              " GET cIdPartner VALID Empty( cIdPartner ) .OR. p_partner( @cIdPartner )
       READ
       BoxC()
    ENDIF

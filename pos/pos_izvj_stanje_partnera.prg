@@ -30,7 +30,7 @@ FUNCTION pos_rpt_stanje_partnera()
 
    DO WHILE .T.
       IF !VarEdit( { ;
-            { "Sifra partnera (prazno-svi)", "cGost", "IF(!EMPTY(cGost),P_Firma(@cGost),.t.)", "@!", }, ;
+            { "Sifra partnera (prazno-svi)", "cGost", "IF(!EMPTY(cGost),p_partner(@cGost),.t.)", "@!", }, ;
             { "Prikaz partnera sa stanjem 0 (D/N)", "cNula", "cNula$'DN'", "@!", }, ;
             { "Prikazati stanje od dana ", "dDatOd", ".t.",, }, ;
             { "Prikazati stanje do dana ", "dDat", ".t.",, }, ;
@@ -293,7 +293,7 @@ FUNCTION I_RnGostiju()
    // maska za postavljanje uslova
    // /////////////////////////////
    DO WHILE .T.
-      IF !VarEdit( { { "Sifra gosta/partner/sobe (prazno-svi)", "cGost", "IF(!EMPTY(cGost),P_Firma(@cGost),.t.)",, }, { "Prikazati goste sa stanjem 0 (D/N)", "cNula", "cNula$'DN'", "@!", }, { "Prikazati stanje na dan ", "dDat", "dDat<=gDatum",, }, { "Prikazati specifikaciju", "cSpec", "cSpec$'DN'", "@!", } }, 11, 5, 17, 74, 'USLOVI ZA IZVJESTAJ "STANJE RACUNA GOSTIJU"', "B1" )
+      IF !VarEdit( { { "Sifra gosta/partner/sobe (prazno-svi)", "cGost", "IF(!EMPTY(cGost),p_partner(@cGost),.t.)",, }, { "Prikazati goste sa stanjem 0 (D/N)", "cNula", "cNula$'DN'", "@!", }, { "Prikazati stanje na dan ", "dDat", "dDat<=gDatum",, }, { "Prikazati specifikaciju", "cSpec", "cSpec$'DN'", "@!", } }, 11, 5, 17, 74, 'USLOVI ZA IZVJESTAJ "STANJE RACUNA GOSTIJU"', "B1" )
          CLOSERET
       ELSE
          EXIT

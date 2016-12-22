@@ -782,7 +782,7 @@ FUNCTION Iz16u14()
    @ m_x + 3, m_y + 2 SAY "Datum dokumenta koji se formira" GET dDatDok VALID !Empty( dDatDok )
    @ m_x + 4, m_y + 2 SAY "Broj fakture" GET cBrFaktP
    @ m_x + 5, m_y + 2 SAY "Datum fakture" GET dDatFaktP
-   @ m_x + 6, m_y + 2 SAY "Kupac" GET cIdPartner VALID P_Firma( @cIdPartner )
+   @ m_x + 6, m_y + 2 SAY "Kupac" GET cIdPartner VALID p_partner( @cIdPartner )
    READ; ESC_BCR
    BoxC()
 

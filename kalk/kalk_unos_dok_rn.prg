@@ -143,7 +143,7 @@ FUNCTION Get1_RN()
       GO  nTPriPrec
       SELECT kalk_pripr
     //  IF gNW <> "X"
-      //   @ m_x + 10, m_y + 42  SAY "Zaduzuje: "   GET _IdZaduz  PICT "@!" VALID Empty( _idZaduz ) .OR. P_Firma( @_IdZaduz, 24 )
+      //   @ m_x + 10, m_y + 42  SAY "Zaduzuje: "   GET _IdZaduz  PICT "@!" VALID Empty( _idZaduz ) .OR. p_partner( @_IdZaduz, 24 )
       //ENDIF
       read; ESC_RETURN K_ESC
    ELSE

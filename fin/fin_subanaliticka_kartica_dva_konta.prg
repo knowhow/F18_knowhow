@@ -80,7 +80,7 @@ FUNCTION fin_suban_kartica2( lOtvSt )
          @ m_x + 5, m_y + 2 SAY "Firma "
          ?? gFirma, "-", gNFirma
       //ELSE
-      //   @ m_x + 5, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| P_Firma( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
+      //   @ m_x + 5, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
       //ENDIF
       cPrelomljeno := "N"
       IF cBrza = "D"
@@ -89,7 +89,7 @@ FUNCTION fin_suban_kartica2( lOtvSt )
          qqPartner := PadR( qqPartner, 6 )
          @ m_x + 6, m_y + 2 SAY "Konto   " GET qqKonto  VALID P_KontoFin( @qqKonto )
          @ m_x + 7, m_y + 2 SAY "Konto 2 " GET qqKonto2  VALID P_KontoFin( @qqKonto2 ) .AND. qqKonto2 > qqkonto
-         @ m_x + 8, m_y + 2 SAY "Partner (prazno svi)" GET qqPartner valid ( ";" $ qqpartner ) .OR. Empty( qqPartner ) .OR. P_Firma( @qqPartner )  PICT "@!"
+         @ m_x + 8, m_y + 2 SAY "Partner (prazno svi)" GET qqPartner valid ( ";" $ qqpartner ) .OR. Empty( qqPartner ) .OR. p_partner( @qqPartner )  PICT "@!"
       ENDIF
 
       @ m_x + 9, m_y + 2 SAY "Datum dokumenta od:" GET dDatod

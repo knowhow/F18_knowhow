@@ -26,13 +26,13 @@ FUNCTION kalk_get_1_41()
 
    IF _idvd == "41"
 
-      @  m_x + 6,  m_y + 2 SAY "KUPAC:" GET _IdPartner PICT "@!" VALID Empty( _IdPartner ) .OR. P_Firma( @_IdPartner, 5, 30 )
+      @  m_x + 6,  m_y + 2 SAY "KUPAC:" GET _IdPartner PICT "@!" VALID Empty( _IdPartner ) .OR. p_partner( @_IdPartner, 5, 30 )
       @  m_x + 7,  m_y + 2 SAY "Faktura Broj:" GET _BrFaktP
       @  m_x + 7, Col() + 2 SAY "Datum:" GET _DatFaktP
 
    ELSEIF _idvd == "43"
 
-      @  m_x + 6,  m_y + 2 SAY "DOBAVLJAC KOMIS.ROBE:" GET _IdPartner PICT "@!" VALID Empty( _IdPartner ) .OR. P_Firma( @_IdPartner, 5, 30 )
+      @  m_x + 6,  m_y + 2 SAY "DOBAVLJAC KOMIS.ROBE:" GET _IdPartner PICT "@!" VALID Empty( _IdPartner ) .OR. p_partner( @_IdPartner, 5, 30 )
 
    ELSE
 
@@ -45,7 +45,7 @@ FUNCTION kalk_get_1_41()
    @ m_x + 8, m_y + 2   SAY "Prodavnicki Konto razduzuje" GET _IdKonto VALID  P_Konto( @_IdKonto, 21, 5 ) PICT "@!"
 
    // IF gNW <> "X"
-   // @ m_x + 8, m_y + 50  SAY "Razduzuje: "   GET _IdZaduz  PICT "@!" VALID Empty( _idZaduz ) .OR. P_Firma( @_IdZaduz, 21, 5 )
+   // @ m_x + 8, m_y + 50  SAY "Razduzuje: "   GET _IdZaduz  PICT "@!" VALID Empty( _idZaduz ) .OR. p_partner( @_IdZaduz, 21, 5 )
    // ENDIF
 
    _idkonto2 := ""

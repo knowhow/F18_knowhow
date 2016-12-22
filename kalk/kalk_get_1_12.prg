@@ -29,13 +29,13 @@ FUNCTION kalk_get_1_12()
       @ m_x + 8, m_y + 2   SAY "Prodavnicki konto razduzuje " GET _IdKonto VALID P_Konto( @_IdKonto, 21, 5 ) PICT "@!"
 
       // IF gNW <> "X"
-      // @ m_x + 8, m_y + 40  SAY "Razduzuje "   GET _IdZaduz  PICT "@!" VALID Empty( _idZaduz ) .OR. P_Firma( @_IdZaduz, 21, 5 )
+      // @ m_x + 8, m_y + 40  SAY "Razduzuje "   GET _IdZaduz  PICT "@!" VALID Empty( _idZaduz ) .OR. p_partner( @_IdZaduz, 21, 5 )
       // ENDIF
 
       @ m_x + 9, m_y + 2   SAY "Magacinski konto zaduzuje   "  GET _IdKonto2 ;
          VALID Empty( _IdKonto2 ) .OR. P_Konto( @_IdKonto2, 24 )
       // IF gNW <> "X"
-      // @ m_x + 9, m_y + 40  SAY "Zaduzuje  " GET _IdZaduz2   PICT "@!"  VALID Empty( _idZaduz2 ) .OR. P_Firma( @_IdZaduz2, 21, 5 )
+      // @ m_x + 9, m_y + 40  SAY "Zaduzuje  " GET _IdZaduz2   PICT "@!"  VALID Empty( _idZaduz2 ) .OR. p_partner( @_IdZaduz2, 21, 5 )
       // ENDIF
       read; ESC_RETURN K_ESC
    ELSE

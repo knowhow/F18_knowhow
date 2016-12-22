@@ -57,7 +57,7 @@ FUNCTION v_part( cIdPart, cIdTar, cTbl, lShow )
       lShow := .T.
    ENDIF
 
-   p_partneri( @cIdPart )
+   p_partner( @cIdPart )
 
    IF IsIno( cIdPart )
       IF lShow

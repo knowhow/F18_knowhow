@@ -774,7 +774,7 @@ STATIC FUNCTION fnd_partn( xPartn, nCustId, cDesc  )
    @ m_x + 1, Col() + 1 SAY " -> "
    @ m_x + 1, Col() + 1 SAY PadR( cDesc, 50 ) + ".." COLOR f18_color_i()
    @ m_x + 2, m_y + 2 SAY8 "nije definisan u relacijama, pronađite njegov par !"
-   @ m_x + 4, m_y + 2 SAY8 "šifra u knjigovodstvu: " GET xPartn VALID p_firma( @xPartn )
+   @ m_x + 4, m_y + 2 SAY8 "šifra u knjigovodstvu: " GET xPartn VALID p_partner( @xPartn )
    READ
    BoxC()
 

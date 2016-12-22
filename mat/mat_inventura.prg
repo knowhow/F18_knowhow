@@ -414,13 +414,13 @@ STATIC FUNCTION _get_inv_vars( vars )
       ?? gFirma, "-", gNFirma
    ELSE
       @ m_x + 2, m_y + 2 SAY "Firma: " GET _id_firma ;
-         VALID {|| P_Firma( @_id_firma ), _id_firma := Left( _id_firma, 2 ), .T. }
+         VALID {|| p_partner( @_id_firma ), _id_firma := Left( _id_firma, 2 ), .T. }
    ENDIF
 
    @ m_x + 3, m_y + 2 SAY "  Konto " GET _konto ;
       VALID P_Konto( @_konto )
    @ m_x + 4, m_y + 2 SAY "Partner " GET _partner ;
-      VALID Empty( _partner ) .OR. P_Firma( @_partner )
+      VALID Empty( _partner ) .OR. p_partner( @_partner )
    @ m_x + 5, m_y + 2 SAY "  Datum " GET _datum
 
    READ
@@ -585,7 +585,7 @@ FUNCTION mat_obracun_inv()
    IF gNW $ "DR"
       @ m_x + 2, m_y + 2 SAY "Firma "; ?? gFirma, "-", gNFirma
    ELSE
-      @ m_x + 2, m_y + 2 SAY "Firma: " GET cIdF valid {|| P_Firma( @cIdF ), cidf := Left( cidf, 2 ), .T. }
+      @ m_x + 2, m_y + 2 SAY "Firma: " GET cIdF valid {|| p_partner( @cIdF ), cidf := Left( cidf, 2 ), .T. }
    ENDIF
    @ m_x + 3, m_y + 2 SAY "Konto  " GET cIdK VALID P_Konto( @cIdK )
    @ m_x + 4, m_y + 2 SAY "Datum  " GET cIdD
@@ -731,7 +731,7 @@ FUNCTION mat_nal_inventure()
    @ m_x + 4, Col() + 4 SAY "Datum  " GET cIdD
    @ m_x + 5, m_y + 2 SAY "Tip dokumenta" GET cIdTipDok
    @ m_x + 6, m_y + 2 SAY "Konto  " GET cIdK VALID P_Konto( @cIdK )
-   @ m_x + 7, m_y + 2 SAY "Zaduzuje" GET cIdZaduz VALID Empty( @cIdZaduz ) .OR. P_Firma( @cIdZaduz )
+   @ m_x + 7, m_y + 2 SAY "Zaduzuje" GET cIdZaduz VALID Empty( @cIdZaduz ) .OR. p_partner( @cIdZaduz )
    READ; ESC_BCR
 
    BoxC()

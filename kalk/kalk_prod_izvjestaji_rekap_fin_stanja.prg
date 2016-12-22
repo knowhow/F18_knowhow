@@ -50,7 +50,7 @@ FUNCTION Rfinansijsko_stanje_prodavnica()
          @ m_x + 1, m_y + 2 SAY "Firma "
          ?? gFirma, "-", gNFirma
       ELSE
-         @ m_x + 1, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| P_Firma( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
+         @ m_x + 1, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
       ENDIF
       @ m_x + 2, m_y + 2 SAY "Konto   " GET cIdKonto VALID "." $ cidkonto .OR. P_Konto( @cIdKonto )
       @ m_x + 4, m_y + 2 SAY "Tarife  " GET qqTarifa PICT "@!S50"

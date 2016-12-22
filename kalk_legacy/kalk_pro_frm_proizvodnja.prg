@@ -154,7 +154,7 @@ FUNCTION leg_Get1_PR()
       SELECT kalk_pripr
       GO nTPriPrec
       // IF gNW <> "X"
-      // @ m_x + 10, m_y + 42  SAY "Zaduzuje: "   GET _IdZaduz  PICT "@!" VALID Empty( _idZaduz ) .OR. P_Firma( @_IdZaduz, 24 )
+      // @ m_x + 10, m_y + 42  SAY "Zaduzuje: "   GET _IdZaduz  PICT "@!" VALID Empty( _idZaduz ) .OR. p_partner( @_IdZaduz, 24 )
       // ENDIF
       READ
       ESC_RETURN K_ESC

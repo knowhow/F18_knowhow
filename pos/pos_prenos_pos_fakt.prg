@@ -66,7 +66,7 @@ FUNCTION Real2Fakt()
 
    Box( "#PRENOS REALIZACIJE POS->FAKT", 6, 70 )
    @ m_x + 2, m_y + 2 SAY "Prodajno mjesto " GET cIdPos PICT "@!" VALID !Empty( cIdPos ) .OR. P_Kase( @cIdPos, 2, 25 )
-   @ m_x + 3, m_y + 2 SAY "Partner gotovinski " GET cIdPartnG PICT "@!" VALID Empty( cIdPartnG ) .OR. P_Firma( @cIdPartnG, 3, 28 )
+   @ m_x + 3, m_y + 2 SAY "Partner gotovinski " GET cIdPartnG PICT "@!" VALID Empty( cIdPartnG ) .OR. p_partner( @cIdPartnG, 3, 28 )
    @ m_x + 4, m_y + 2 SAY "Prenos bez cijene i rabata? (D/N)" GET cBezCijena VALID cBezCijena $ "DN" PICT "@!"
    @ m_x + 5, m_y + 2 SAY "Prenos za period" GET dDatOd
    @ m_x + 5, Col() + 2 SAY "-" GET dDatDo
@@ -234,7 +234,7 @@ FUNCTION Stanje2Fakt()
 
    Box( "#PRENOS STANJA ROBE POS->FAKT", 5, 70 )
    @ m_x + 2, m_y + 2 SAY "Prodajno mjesto " GET cIdPos PICT "@!" VALID !Empty( cIdPos ) .OR. P_Kase( @cIdPos, 2, 25 )
-   @ m_x + 3, m_y + 2 SAY "Partner/dost.vozilo " GET cIdPartnG PICT "@!" VALID Empty( cIdPartnG ) .OR. P_Firma( @cIdPartnG, 3, 28 )
+   @ m_x + 3, m_y + 2 SAY "Partner/dost.vozilo " GET cIdPartnG PICT "@!" VALID Empty( cIdPartnG ) .OR. p_partner( @cIdPartnG, 3, 28 )
    @ m_x + 4, m_y + 2 SAY "Stanje robe na dan" GET dDatDo
    READ
    ESC_BCR

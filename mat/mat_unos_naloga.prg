@@ -133,7 +133,7 @@ STATIC FUNCTION mat_edit_priprema( fNovi )
       @  m_x + 1, m_y + 2 SAY "Firma: "
       ?? gFirma, "-", gNFirma
    ELSE
-      @  m_x + 1, m_y + 2 SAY "Firma:" GET _IdFirma VALID {|| P_Firma( @_IdFirma, 1, 20 ), _idfirma := Left( _idfirma, 2 ), .T. }
+      @  m_x + 1, m_y + 2 SAY "Firma:" GET _IdFirma VALID {|| p_partner( @_IdFirma, 1, 20 ), _idfirma := Left( _idfirma, 2 ), .T. }
    ENDIF
 
    @ m_x + 3, m_y + 2 SAY "NALOG:   Vrsta:"  GET _IdVN    VALID P_VN( @_IdVN, 3, 23 )
@@ -158,8 +158,8 @@ STATIC FUNCTION mat_edit_priprema( fNovi )
    @  m_x + 5, m_y + 2  SAY "Redni broj stavke naloga:" GET nRbr PICTURE "9999"
 
    IF gKupZad == "D"
-      @ m_x + 7, m_y + 2    SAY "Dobavljac/Kupac" GET _IdPartner VALID Empty( _IdPartner ) .OR. P_Firma( @_IdPartner, 24 )
-      @ m_x + 7, m_y + 40   SAY "Zaduzuje " GET _IdZaduz PICT "@!" VALID Empty( _IdZaduz ) .OR. P_Firma( @_IdZaduz, 24 )
+      @ m_x + 7, m_y + 2    SAY "Dobavljac/Kupac" GET _IdPartner VALID Empty( _IdPartner ) .OR. p_partner( @_IdPartner, 24 )
+      @ m_x + 7, m_y + 40   SAY "Zaduzuje " GET _IdZaduz PICT "@!" VALID Empty( _IdZaduz ) .OR. p_partner( @_IdZaduz, 24 )
    ENDIF
 
    @  m_x + 9, m_y + 2  SAY "DOKUMENT:"
@@ -389,7 +389,7 @@ FUNCTION mat_pripr_key_handler()
       cBrNal := BrNal
 
       @ m_x + 1, m_y + 1 SAY "       Firma:" GET cFirma
-      // VALID P_Firma(@cFirma,1,20) .and. len(trim(cFirma))<=2
+      // VALID p_partner(@cFirma,1,20) .and. len(trim(cFirma))<=2
       @ m_x + 2, m_y + 1 SAY "Vrsta mat_naloga:" GET cIdVn VALID P_VN( @cIdVN, 2, 20 )
       @ m_x + 3, m_y + 1 SAY " Broj mat_naloga:" GET cBrNal
 

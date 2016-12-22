@@ -145,7 +145,7 @@ FUNCTION fakt_fin_prenos()
          ELSE
             cTxt := ""
          ENDIF
-         @ m_x + 6, m_y + 2 SAY "Sifra partnera:"  GET cIdpartner PICT "@!" VALID P_Firma( @cIdPartner )
+         @ m_x + 6, m_y + 2 SAY "Sifra partnera:"  GET cIdpartner PICT "@!" VALID p_partner( @cIdPartner )
          READ
          BoxC()
       ENDIF

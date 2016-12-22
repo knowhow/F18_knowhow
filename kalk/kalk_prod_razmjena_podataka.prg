@@ -314,7 +314,7 @@ FUNCTION fakt_13_kalk_11()
       @ m_x + 1, Col() + 2 SAY "Datum:" GET dDatKalk
       @ m_x + 3, m_y + 2   SAY "Magac. konto razduzuje:" GET cIdKonto2 PICT "@!" VALID P_Konto( @cIdKonto2 )
       // IF gNW <> "X"
-      // @ m_x + 3, Col() + 2 SAY "Razduzuje:" GET cIdZaduz2  PICT "@!"      VALID Empty( cidzaduz2 ) .OR. P_Firma( @cIdZaduz2 )
+      // @ m_x + 3, Col() + 2 SAY "Razduzuje:" GET cIdZaduz2  PICT "@!"      VALID Empty( cidzaduz2 ) .OR. p_partner( @cIdZaduz2 )
       // ENDIF
 
       IF gVar13u11 == "1"
@@ -322,7 +322,7 @@ FUNCTION fakt_13_kalk_11()
       ENDIF
 
       // IF gNW <> "X"
-      // @ m_x + 4, Col() + 2 SAY "Zaduzuje:" GET cIdZaduz  PICT "@!"      VALID Empty( cidzaduz ) .OR. P_Firma( @cIdZaduz )
+      // @ m_x + 4, Col() + 2 SAY "Zaduzuje:" GET cIdZaduz  PICT "@!"      VALID Empty( cidzaduz ) .OR. p_partner( @cIdZaduz )
       // ENDIF
 
       cFaktFirma := cIdFirma
@@ -471,7 +471,7 @@ FUNCTION fakt_11_kalk_41()
       @ m_x + 1, Col() + 2 SAY "Datum:" GET dDatKalk
       @ m_x + 3, m_y + 2 SAY "Konto razduzuje :" GET cIdKonto  PICT "@!" VALID P_Konto( @cIdKonto )
       // IF gNW <> "X"
-      // @ m_x + 3, Col() + 2 SAY "Razduzuje:" GET cIdZaduz  PICT "@!"      VALID Empty( cidzaduz ) .OR. P_Firma( @cIdZaduz )
+      // @ m_x + 3, Col() + 2 SAY "Razduzuje:" GET cIdZaduz  PICT "@!"      VALID Empty( cidzaduz ) .OR. p_partner( @cIdZaduz )
       // ENDIF
       @ m_x + 5, m_y + 2 SAY "Napraviti zbirnu kalkulaciju (D/N): " GET cZbirno VALID cZbirno $ "DN" PICT "@!"
       READ
@@ -517,7 +517,7 @@ FUNCTION fakt_11_kalk_41()
 
             cIdPartner := IdPartner
 
-            @ m_x + 14, m_y + 2 SAY "Sifra partnera:" GET cIdpartner PICT "@!" VALID P_Firma( @cIdPartner )
+            @ m_x + 14, m_y + 2 SAY "Sifra partnera:" GET cIdpartner PICT "@!" VALID p_partner( @cIdPartner )
 
             READ
 
@@ -614,7 +614,7 @@ FUNCTION fakt_11_kalk_41()
 
                cIdPartner := IdPartner
 
-               @ m_x + 14, m_y + 2 SAY "Sifra partnera:" GET cIdpartner PICT "@!" VALID P_Firma( @cIdPartner )
+               @ m_x + 14, m_y + 2 SAY "Sifra partnera:" GET cIdpartner PICT "@!" VALID p_partner( @cIdPartner )
 
                READ
 
@@ -723,7 +723,7 @@ FUNCTION fakt_01_kalk_81()
       @ m_x + 1, Col() + 2 SAY "Datum:" GET dDatKalk
       @ m_x + 3, m_y + 2   SAY "Konto razduzuje :" GET cIdKonto  PICT "@!" VALID P_Konto( @cIdKonto )
       // IF gNW <> "X"
-      // @ m_x + 3, Col() + 2 SAY "Zaduzuje:" GET cIdZaduz  PICT "@!"      VALID Empty( cidzaduz ) .OR. P_Firma( @cIdZaduz )
+      // @ m_x + 3, Col() + 2 SAY "Zaduzuje:" GET cIdZaduz  PICT "@!"      VALID Empty( cidzaduz ) .OR. p_partner( @cIdZaduz )
       // ENDIF
 
       cFaktFirma := cIdFirma
@@ -752,7 +752,7 @@ FUNCTION fakt_01_kalk_81()
             cTxt := ""
          ENDIF
          cIdPartner := IdPartner
-         @ m_x + 14, m_y + 2 SAY "Sifra partnera:"  GET cIdpartner PICT "@!" VALID P_Firma( @cIdPartner )
+         @ m_x + 14, m_y + 2 SAY "Sifra partnera:"  GET cIdpartner PICT "@!" VALID p_partner( @cIdPartner )
          READ
 
          SELECT kalk_pripr
@@ -856,11 +856,11 @@ FUNCTION fakt_13_kalk_80()
       @ m_x + 1, Col() + 2 SAY "Datum:" GET dDatKalk
       @ m_x + 3, m_y + 2   SAY "Prodavn. konto zaduzuje :" GET cIdKonto  PICT "@!" VALID P_Konto( @cIdKonto )
       // IF gNW <> "X"
-      // @ m_x + 3, Col() + 2 SAY "Zaduzuje:" GET cIdZaduz  PICT "@!"      VALID Empty( cidzaduz ) .OR. P_Firma( @cIdZaduz )
+      // @ m_x + 3, Col() + 2 SAY "Zaduzuje:" GET cIdZaduz  PICT "@!"      VALID Empty( cidzaduz ) .OR. p_partner( @cIdZaduz )
       // ENDIF
       @ m_x + 4, m_y + 2   SAY "CM. konto razduzuje:" GET cIdKonto2 PICT "@!" VALID P_Konto( @cIdKonto2 )
       // IF gNW <> "X"
-      // @ m_x + 4, Col() + 2 SAY "Razduzuje:" GET cIdZaduz2  PICT "@!"      VALID Empty( cidzaduz2 ) .OR. P_Firma( @cIdZaduz2 )
+      // @ m_x + 4, Col() + 2 SAY "Razduzuje:" GET cIdZaduz2  PICT "@!"      VALID Empty( cidzaduz2 ) .OR. p_partner( @cIdZaduz2 )
       // ENDIF
 
       cFaktFirma := cIdFirma
@@ -1022,11 +1022,11 @@ FUNCTION fakt_15_kalk_15()
       @ m_x + 1, Col() + 2 SAY "Datum:" GET dDatKalk
       @ m_x + 3, m_y + 2   SAY "Magac. konto razduzuje:" GET cIdKonto2 PICT "@!" VALID P_Konto( @cIdKonto2 )
       // IF gNW <> "X"
-      // @ m_x + 3, Col() + 2 SAY "Razduzuje:" GET cIdZaduz2  PICT "@!"      VALID Empty( cidzaduz2 ) .OR. P_Firma( @cIdZaduz2 )
+      // @ m_x + 3, Col() + 2 SAY "Razduzuje:" GET cIdZaduz2  PICT "@!"      VALID Empty( cidzaduz2 ) .OR. p_partner( @cIdZaduz2 )
       // ENDIF
       @ m_x + 4, m_y + 2   SAY "Prodavn. konto razduzuje :" GET cIdKonto  PICT "@!" VALID P_Konto( @cIdKonto )
       // IF gNW <> "X"
-      // @ m_x + 4, Col() + 2 SAY "Zaduzuje:" GET cIdZaduz  PICT "@!"      VALID Empty( cidzaduz ) .OR. P_Firma( @cIdZaduz )
+      // @ m_x + 4, Col() + 2 SAY "Zaduzuje:" GET cIdZaduz  PICT "@!"      VALID Empty( cidzaduz ) .OR. p_partner( @cIdZaduz )
       // ENDIF
 
       cFaktFirma := cIdFirma
@@ -1062,7 +1062,7 @@ FUNCTION fakt_15_kalk_15()
             cIdPartner := idpartner
          ENDIF
          PRIVATE cBeze := " "
-         @ m_x + 14, m_y + 2 SAY "Sifra partnera:"  GET cIdpartner PICT "@!" VALID P_Firma( @cIdPartner )
+         @ m_x + 14, m_y + 2 SAY "Sifra partnera:"  GET cIdpartner PICT "@!" VALID p_partner( @cIdPartner )
          @ m_x + 15, m_y + 2 SAY "<ENTER> - prenos" GET cBeze
          READ; ESC_BCR
 
@@ -1229,7 +1229,7 @@ FUNCTION fakt_11_kalk_42()
       // IF gNW <> "X"
       // @ m_x + nX, Col() + 2 SAY "Partner razduzuje:" GET cIdZaduz ;
       // PICT "@!" ;
-      // VALID Empty( cIdZaduz ) .OR. P_Firma( @cIdZaduz )
+      // VALID Empty( cIdZaduz ) .OR. p_partner( @cIdZaduz )
       // ENDIF
 
       ++ nX

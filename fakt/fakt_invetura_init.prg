@@ -407,7 +407,7 @@ METHOD vldPartner()
    IF ( Right( cSif, 1 ) = "." .AND. Len( csif ) <= 7 )
       nPos := RAt( ".", cSif )
       cSif := Left( cSif, nPos - 1 )
-      P_Firma( PadR( cSif, 6 ) )
+      p_partner( PadR( cSif, 6 ) )
       ::cPartner := PadR( partn->naz, 30 )
 
       IF my_get_from_ini( 'FAKT', 'NaslovPartnTelefon', 'D' ) == "D"

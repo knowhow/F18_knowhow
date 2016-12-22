@@ -583,7 +583,7 @@ STATIC FUNCTION _get_vars( params )
       ?? gFirma, "-", gNFirma
    ELSE
       @ m_x + _cnt, m_y + 2 SAY "Firma: " GET _firma ;
-         VALID {|| P_Firma( @_firma ), _firma := Left( _firma, 2 ), .T. }
+         VALID {|| p_partner( @_firma ), _firma := Left( _firma, 2 ), .T. }
    ENDIF
 
    ++ _cnt

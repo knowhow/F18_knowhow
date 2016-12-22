@@ -134,7 +134,7 @@ FUNCTION kalk_2_fakt()
 
       // partner kojem se fakturise.....
       IF lToRacun == .T.
-         @ m_x + 4, m_y + 2 SAY "Partner kojem se fakturise:" GET cFaktPartn VALID p_firma( @cFaktPartn )
+         @ m_x + 4, m_y + 2 SAY "Partner kojem se fakturise:" GET cFaktPartn VALID p_partner( @cFaktPartn )
 
          READ
 
@@ -413,7 +413,7 @@ FUNCTION kalkp_2_fakt()
          @ m_x + 1, Col() + 1 SAY cIdFirma PICT "@!"
       ENDIF
 
-      @ m_x + 2, m_y + 2 SAY "Kalk partner" GET cIdPartner  VALID P_Firma( @cIdPartner )
+      @ m_x + 2, m_y + 2 SAY "Kalk partner" GET cIdPartner  VALID p_partner( @cIdPartner )
       @ m_x + 3, m_y + 2 SAY "Vrste KALK dokumenata" GET qqIdVd PICT "@!S30"
       @ m_x + 4, m_y + 2 SAY "Za period od" GET dOd
       @ m_x + 4, Col() + 1 SAY "do" GET dDo
@@ -440,7 +440,7 @@ FUNCTION kalkp_2_fakt()
       ENDIF
 
       IF lToRacun == .T.
-         @ m_x + 8, m_y + 2 SAY "Fakturisati partneru" GET cFaktPartn VALID p_firma( @cFaktPartn )
+         @ m_x + 8, m_y + 2 SAY "Fakturisati partneru" GET cFaktPartn VALID p_partner( @cFaktPartn )
          READ
          IF LastKey() == K_ESC
             EXIT

@@ -138,7 +138,7 @@ METHOD FaktDokumenti:pretvori_otpremnice_u_racun()
    @ m_x + 3, m_y + 2 SAY "Radna jedinica" GET  _idfirma PICT "@!"
    @ m_x + 3, Col() + 1 SAY " - " + _idtipdok + " / " PICT "@!"
    @ m_x + 3, Col() + 1 SAY "Partner ID:" GET _idpartner PICT "@!" ;
-      VALID {|| P_Firma( @_idpartner ),  ispisi_partn( _idpartner, m_x + MAXROWS() -12, m_y + 18 ) }
+      VALID {|| p_partner( @_idpartner ),  ispisi_partn( _idpartner, m_x + MAXROWS() -12, m_y + 18 ) }
 
    READ
 

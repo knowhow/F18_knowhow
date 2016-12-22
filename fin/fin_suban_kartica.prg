@@ -166,7 +166,7 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
          qqKonto := PadR( qqKonto, 7 )
          qqPartner := PadR( qqPartner, Len( partn->id ) )
          @ m_x + ( ++nX ), m_y + 2 SAY "Konto  " GET qqKonto  VALID P_KontoFin( @qqKonto )
-         @ m_x + ( ++nX ), m_y + 2 SAY "Partner" GET qqPartner VALID Empty( qqPartner ) .OR. RTrim( qqPartner ) == ";" .OR. P_Firma( @qqPartner ) PICT "@!"
+         @ m_x + ( ++nX ), m_y + 2 SAY "Partner" GET qqPartner VALID Empty( qqPartner ) .OR. RTrim( qqPartner ) == ";" .OR. p_partner( @qqPartner ) PICT "@!"
       ELSE
          qqKonto := PadR( qqkonto, 100 )
          qqPartner := PadR( qqPartner, 100 )
@@ -1264,7 +1264,7 @@ FUNCTION Rasclan()
 
 FUNCTION V_Firma( cIdFirma )
 
-   P_Firma( @cIdFirma )
+   p_partner( @cIdFirma )
    cIdFirma := Trim( cIdFirma )
    cIdFirma := Left( cIdFirma, 2 )
 

@@ -49,7 +49,7 @@ Box(,8,70)
   if gNW $ "DX"
    @ m_x+1,m_y+2 SAY "Firma "; ?? gFirma,"-",gNFirma
   else
-   @ m_x+1,m_y+2 SAY "Firma: " GET cIdFirma valid {|| P_Firma(@cIdFirma),cidfirma:=left(cidfirma,2),.t.}
+   @ m_x+1,m_y+2 SAY "Firma: " GET cIdFirma valid {|| p_partner(@cIdFirma),cidfirma:=left(cidfirma,2),.t.}
   endif
   @ m_x+2,m_y+2 SAY "Magacinski konto:" GET cidKonto pict "@!" valid P_Konto(@cIdKonto)
   @ m_x+4,m_y+2 SAY "Period:" GET dDat1

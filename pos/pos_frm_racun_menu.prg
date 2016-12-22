@@ -320,7 +320,7 @@ STATIC FUNCTION form_zakljuci_racun( params )
    ENDIF
 
    IF _def_partner
-      @ m_x + 4, m_y + 2 SAY "Kupac:" GET _id_partner PICT "@!" VALID P_Firma( @_id_partner )
+      @ m_x + 4, m_y + 2 SAY "Kupac:" GET _id_partner PICT "@!" VALID p_partner( @_id_partner )
    ELSE
       _id_partner := Space( 6 )
    ENDIF

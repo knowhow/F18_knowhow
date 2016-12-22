@@ -77,7 +77,7 @@ FUNCTION prefin_unos_naloga()
          @ m_x + 2, m_y + 2 SAY "Firma "
          ?? gFirma, "-", gNFirma
       ELSE
-         @ m_x + 2, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| P_Firma( @cIdFirma ), cIdFirma := Left( cIdFirma, 2 ), .T. }
+         @ m_x + 2, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cIdFirma := Left( cIdFirma, 2 ), .T. }
       ENDIF
       @ m_x + 3, m_y + 2 SAY "Konto   " GET qqKonto  PICT "@!S50"
       @ m_x + 4, m_y + 2 SAY "Partner " GET qqPartner PICT "@!S50"

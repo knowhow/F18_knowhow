@@ -53,7 +53,7 @@ FUNCTION Uplate()
    DO WHILE .T.
 
       @ m_x + 0, m_y + 20 SAY PadC( " EVIDENCIJA UPLATA - KUPCI ", 35, Chr( 205 ) )
-      @ m_x + 1, m_y + 2 SAY8 "Šifra partnera:" GET cIdPartner VALID P_Firma( @cIdPartner, 1, 26 )
+      @ m_x + 1, m_y + 2 SAY8 "Šifra partnera:" GET cIdPartner VALID p_partner( @cIdPartner, 1, 26 )
       @ m_x + 2, m_y + 2 SAY8 "Tip dokumenta zaduženja:" GET qqTipDok PICT "@!S20"
       @ m_x + 3, m_y + 2 SAY8 "Zaduženja od datuma    :"  GET dDatOd
       @ m_x + 3, Col() + 1 SAY "do:"  GET dDatDo

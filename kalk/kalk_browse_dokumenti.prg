@@ -218,7 +218,7 @@ STATIC FUNCTION usl_browse_kalk_dokumenti( cFirma, cIdVd, dDatOd, dDatDo, ;
    @ nX + m_x, 2 + m_y SAY "Prodavnicki konto (prazno-svi)" GET cProdKto PICT "@S30"
 
    nX := nX + 2
-   @ nX + m_x, 2 + m_y SAY "Partner:" GET cPartner VALID Empty( cPartner ) .OR. p_firma( @cPartner )
+   @ nX + m_x, 2 + m_y SAY "Partner:" GET cPartner VALID Empty( cPartner ) .OR. p_partner( @cPartner )
 
    READ
    BoxC()

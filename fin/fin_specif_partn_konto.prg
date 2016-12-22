@@ -34,7 +34,7 @@ FUNCTION fin_spec_partnera_na_kontu()
    IF gNW == "D"
       @ m_x + 3, m_y + 2 SAY "Firma "; ?? gFirma, "-", gNFirma
    ELSE
-      @ m_x + 3, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| P_Firma( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
+      @ m_x + 3, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
    ENDIF
    @ m_x + 4, m_y + 2 SAY "Konto  " GET qqKonto PICTURE "@!S50"
    @ m_x + 5, m_y + 2 SAY "Partner" GET qqPartner PICTURE "@!S50"

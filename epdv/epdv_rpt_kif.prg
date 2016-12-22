@@ -99,7 +99,7 @@ FUNCTION rpt_kif( nBrDok, cIdTarifa )
       nX += 1
 
       @ m_x + nX, m_y + 2 SAY "Partner (prazno svi) ? " GET cPart ;
-         VALID {|| Empty( cPart ) .OR. P_Partneri( @cPart ) } PICT "@!"
+         VALID {|| Empty( cPart ) .OR. p_partner( @cPart ) } PICT "@!"
 
       nX += 2
 

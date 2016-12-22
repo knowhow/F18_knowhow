@@ -59,7 +59,7 @@ FUNCTION KSintKont()
       IF gNW $ "DR"
          @ m_x + 3, m_y + 2 SAY "Firma "; ?? gFirma, "-", gNFirma
       ELSE
-         @ m_x + 3, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| P_Firma( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
+         @ m_x + 3, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
       ENDIF
       @ m_x + 4, m_y + 2 SAY KonSeks( "KONTO" ) + ":  " GET qqKonto PICTURE "@S50"
       READ;  ESC_BCR
@@ -240,7 +240,7 @@ FUNCTION KAnKPoj()
          @ m_x + 2, m_y + 2 SAY "Firma "; ?? gFirma, "-", gNFirma
          cIdFirma := gFirma
       ELSE
-         @ m_x + 2, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| P_Firma( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
+         @ m_x + 2, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
       ENDIF
       @ m_x + 3, m_y + 2 SAY KonSeks( "KONTO  " ) + "  : " GET qqKonto  PICTURE "@S50"
       READ;  ESC_BCR
@@ -377,7 +377,7 @@ FUNCTION KAnKKonto()
       @ m_x + 2, m_y + 2 SAY "Firma "; ?? gFirma, "-", gNFirma
       cIdFirma := gFirma
    ELSE
-      @ m_x + 2, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| P_Firma( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
+      @ m_x + 2, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
    ENDIF
    READ;  ESC_BCR
    BoxC()
@@ -553,7 +553,7 @@ FUNCTION KSuban()
          ?? gFirma, "-", gNFirma
       ELSE
          @ m_x + 3, m_y + 2 SAY "Firma: " GET _id_firma ;
-            VALID {|| P_Firma( @_id_firma ), _id_firma := Left( _id_firma, 2 ), .T. }
+            VALID {|| p_partner( @_id_firma ), _id_firma := Left( _id_firma, 2 ), .T. }
       ENDIF
 
       IF _brza_k == "D"

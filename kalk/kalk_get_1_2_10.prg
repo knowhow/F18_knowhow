@@ -45,7 +45,7 @@ FUNCTION kalk_get_1_10()
       _kord_x := m_x + _x
 
       @ m_x + _x, m_y + 2 SAY8 "DOBAVLJAČ:" GET _IdPartner PICT "@!" ;
-         valid {|| Empty( _IdPartner ) .OR. P_Firma( @_IdPartner ), ispisi_naziv_sifre( F_PARTN, _idpartner, _kord_x - 1, 22, 20 ), ;
+         valid {|| Empty( _IdPartner ) .OR. p_partner( @_IdPartner ), ispisi_naziv_sifre( F_PARTN, _idpartner, _kord_x - 1, 22, 20 ), ;
          ino_dobavljac_set_konverzija_valute( _idpartner, @s_cKonverzijaValuteDN ) }
 
       @ m_x + _x, 50 SAY "Broj fakture:" GET _BrFaktP VALID !Empty ( _brFaktP )
@@ -58,7 +58,7 @@ FUNCTION kalk_get_1_10()
       @ m_x + _x, m_y + 2 SAY "Magacinski Konto zaduzuje" GET _IdKonto valid {|| P_Konto( @_IdKonto ), ispisi_naziv_sifre( F_KONTO, _idkonto, _kord_x, 40, 30 ) } PICT "@!"
 
       // IF gNW <> "X"
-      // @ m_x + _x, m_y + 42  SAY "Zaduzuje: " GET _IdZaduz  PICT "@!" VALID Empty( _idZaduz ) .OR. P_Firma( @_IdZaduz )
+      // @ m_x + _x, m_y + 42  SAY "Zaduzuje: " GET _IdZaduz  PICT "@!" VALID Empty( _idZaduz ) .OR. p_partner( @_IdZaduz )
       // ENDIF
 
       IF !Empty( cRNT1 )

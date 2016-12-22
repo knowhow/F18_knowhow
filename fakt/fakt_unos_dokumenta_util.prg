@@ -32,7 +32,7 @@ FUNCTION IzSifre( silent )
       _sif := Left( _sif, _pos - 1 )
 
       IF !silent
-         P_Firma( PadR( _sif, 6 ) )
+         p_partner( PadR( _sif, 6 ) )
       ENDIF
 
       _idpartner := partn->id

@@ -755,8 +755,8 @@ FUNCTION fin_prekart()
       { "R.br",          {|| RBr     }, "rbr", {|| wRbr() }, {|| .T. } }, ;
       { "Konto",         {|| IdKonto }, "IdKonto", {|| .T. }, {|| P_Konto( @_IdKonto ), .T. } }, ;
       { "Novi konto",    {|| konto2  }, "konto2", {|| .T. }, {|| P_Konto( @_konto2 ), .T. } }, ;
-      { "Partner",       {|| IdPartner }, "IdPartner", {|| .T. }, {|| P_Firma( @_idpartner ), .T. } }, ;
-      { "Novi partner",  {|| part2  }, "part2", {|| .T. }, {|| P_Firma( @_part2 ), .T. } }, ;
+      { "Partner",       {|| IdPartner }, "IdPartner", {|| .T. }, {|| p_partner( @_idpartner ), .T. } }, ;
+      { "Novi partner",  {|| part2  }, "part2", {|| .T. }, {|| p_partner( @_part2 ), .T. } }, ;
       { "Br.veze ",      {|| BrDok   }, "BrDok" }, ;
       { "Datum",         {|| DatDok  }, "DatDok" }, ;
       { "D/P",           {|| D_P     }, "D_P" }, ;

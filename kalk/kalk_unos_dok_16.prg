@@ -32,7 +32,7 @@ FUNCTION kalk_get_1_16()
    IF nRbr == 1 .OR. !kalk_is_novi_dokument()
 
       IF _idvd $ "94#97"
-         @  m_x + 6, m_y + 2   SAY "KUPAC:" GET _IdPartner PICT "@!" VALID Empty( _IdPartner ) .OR. P_Firma( @_IdPartner, 6, 18 )
+         @  m_x + 6, m_y + 2   SAY "KUPAC:" GET _IdPartner PICT "@!" VALID Empty( _IdPartner ) .OR. p_partner( @_IdPartner, 6, 18 )
       ENDIF
       @  m_x + 7, m_y + 2   SAY "Faktura/Otpremnica Broj:" GET _BrFaktP
       @  m_x + 7, Col() + 2 SAY "Datum:" GET _DatFaktP  valid {|| .T. }

@@ -32,7 +32,7 @@ FUNCTION kalk_get_1_95()
       @ m_x + 8, m_y + 2 SAY8 "Magacinski konto razdužuje"  GET _IdKonto2 ;
          VALID Empty( _IdKonto2 ) .OR. P_Konto( @_IdKonto2, 21, 5 )
       // IF gNW <> "X"
-      // @ m_x + 8, m_y + 40 SAY "Razdužuje:" GET _IdZaduz2   PICT "@!"  VALID Empty( _idZaduz2 ) .OR. P_Firma( @_IdZaduz2, 21, 5 )
+      // @ m_x + 8, m_y + 40 SAY "Razdužuje:" GET _IdZaduz2   PICT "@!"  VALID Empty( _idZaduz2 ) .OR. p_partner( @_IdZaduz2, 21, 5 )
       // ELSE
       IF !Empty( cRNT1 ) .AND. _idvd $ "97#96#95"
          IF ( IsRamaGlas() )
@@ -48,14 +48,14 @@ FUNCTION kalk_get_1_95()
 
          IF ( _idvd == "95" .AND. IsVindija() )
 
-            @ m_x + 9, m_y + 40 SAY "Šifra veze otpisa:" GET _IdPartner  VALID Empty( _idPartner ) .OR. P_Firma( @_IdPartner, 21, 5 ) PICT "@!"
+            @ m_x + 9, m_y + 40 SAY "Šifra veze otpisa:" GET _IdPartner  VALID Empty( _idPartner ) .OR. p_partner( @_IdPartner, 21, 5 ) PICT "@!"
 
          ELSEIF gMagacin == "1"
-            @ m_x + 9, m_y + 40 SAY8 "Partner zadužuje:" GET _IdPartner  VALID Empty( _idPartner ) .OR. P_Firma( @_IdPartner, 21, 5 ) PICT "@!"
+            @ m_x + 9, m_y + 40 SAY8 "Partner zadužuje:" GET _IdPartner  VALID Empty( _idPartner ) .OR. p_partner( @_IdPartner, 21, 5 ) PICT "@!"
 
          ELSE
             IF _idvd == "96"
-               @ m_x + 9, m_y + 40 SAY8 "Partner zadužuje:" GET _IdPartner  VALID Empty( _idPartner ) .OR. P_Firma( @_IdPartner, 21, 5 ) PICT "@!"
+               @ m_x + 9, m_y + 40 SAY8 "Partner zadužuje:" GET _IdPartner  VALID Empty( _idPartner ) .OR. p_partner( @_IdPartner, 21, 5 ) PICT "@!"
             ENDIF
          ENDIF
 

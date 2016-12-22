@@ -38,7 +38,7 @@ FUNCTION Get1_80( atrib )
       @ m_x + _x, m_y + 2 SAY "Konto zaduzuje/razduzuje:" GET _IdKonto VALID {|| P_Konto( @_IdKonto ), ispisi_naziv_sifre( F_KONTO, _idkonto, _kord_x - 1, 40, 20 ) } PICT "@!"
 
       // IF gNW <> "X"
-      // @ m_x + _x, m_y + 50  SAY "Partner zaduzuje:" GET _IdZaduz PICT "@!" VALID Empty( _idZaduz ) .OR. P_Firma( @_IdZaduz )
+      // @ m_x + _x, m_y + 50  SAY "Partner zaduzuje:" GET _IdZaduz PICT "@!" VALID Empty( _idZaduz ) .OR. p_partner( @_IdZaduz )
       // ENDIF
 
       ++ _x
@@ -47,7 +47,7 @@ FUNCTION Get1_80( atrib )
       @ m_x + _x, m_y + 2 SAY "Prenos na konto:" GET _IdKonto2 VALID {|| Empty( _idkonto2 ) .OR. P_Konto( @_IdKonto2 ), ispisi_naziv_sifre( F_KONTO, _idkonto2, _kord_x, 30, 20 )  } PICT "@!"
 
       // IF gNW <> "X"
-      // @ m_x + _x, m_y + 50 SAY "Partner zaduzuje:" GET _IdZaduz2 PICT "@!" VALID Empty( _idZaduz ) .OR. P_Firma( @_IdZaduz2 )
+      // @ m_x + _x, m_y + 50 SAY "Partner zaduzuje:" GET _IdZaduz2 PICT "@!" VALID Empty( _idZaduz ) .OR. p_partner( @_IdZaduz2 )
       // ENDIF
 
       READ

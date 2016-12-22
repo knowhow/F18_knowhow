@@ -447,7 +447,7 @@ FUNCTION P_ULIMIT( cId, dx, dy )
    PRIVATE ImeKol, Kol := {}
 
    ImeKol := { { "ID ", {|| id       }, "id", {|| .T. }, {|| vpsifra( wId ) },, "999" }, ;
-      { "ID partnera", {|| idpartner }, "idpartner", {|| .T. }, {|| P_Firma( @wIdPartner ) } }, ;
+      { "ID partnera", {|| idpartner }, "idpartner", {|| .T. }, {|| p_partner( @wIdPartner ) } }, ;
       { "Limit", {|| f_limit    }, "f_limit"      };
       }
    FOR i := 1 TO Len( ImeKol ); AAdd( Kol, i ); NEXT

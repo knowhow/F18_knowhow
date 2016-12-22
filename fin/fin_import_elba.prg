@@ -364,7 +364,7 @@ STATIC FUNCTION get_elba_stavka_from_txt( aItem )
       hRet[ "partner" ] := PadR( hRet[ "partner_opis" ], 3 ) + ".."
 
       IF Pitanje( PadR( hRet[ "opis" ], 70 ), PadR( "TRAŽITI " + hRet[ "partner_opis" ] + " -> " +  hRet[ "partner" ], 80 ), " " ) == "D"
-         p_firma( @hRet[ "partner" ] )
+         p_partner( @hRet[ "partner" ] )
          IF Pitanje( , "SET " + hRet[ "partner_opis" ] + " -> " +  hRet[ "partner" ], "D" ) == "D"
             set_banku_za_partnera( hRet[ "partner" ], hRet[ "banka" ] )
          ENDIF
@@ -430,7 +430,7 @@ STATIC FUNCTION put_elba_item_into_pripr( hFinItem, cImpView )
 
       @ m_x + 6, m_y + 2 SAY Space( 70 )
       @ m_x + 6, m_y + 2 SAY PadR( hFinItem[ "partner_opis" ], 45 ) + " -> partner: " ;
-         GET hFinItem[ "partner" ] VALID postoji_partner( hFinItem[ "partner" ] ) .AND. P_Firma( @hFinItem[ "partner" ] )
+         GET hFinItem[ "partner" ] VALID postoji_partner( hFinItem[ "partner" ] ) .AND. p_partner( @hFinItem[ "partner" ] )
 
       @ m_x + 7, m_y + 2 SAY8 "datum knjiženja:" GET hFinItem[ "datdok" ]
       @ m_x + 7, Col() + 2 SAY8 "broj veze:" GET hFinItem[ "brdok" ]
@@ -685,7 +685,7 @@ STATIC FUNCTION get_partner_za_isplate_sa_zr( cTxt, cTrRN )
 
       cPartnId := PadR( cDesc, 3 ) + ".."
 
-      p_firma( @cPartnId )
+      p_partner( @cPartnId )
 
       set_banku_za_partnera( cPartnId, cTrRN )
 

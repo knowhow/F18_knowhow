@@ -20,7 +20,7 @@ FUNCTION epdv_sifarnici()
    PRIVATE Izbor := 1
 
    AAdd( opc, "1. partneri               " )
-   AAdd( opcexe, {|| p_partneri() } )
+   AAdd( opcexe, {|| p_partner() } )
    AAdd( opc, "-------------------------" )
    AAdd( opcexe, {|| nil } )
 

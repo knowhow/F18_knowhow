@@ -32,10 +32,10 @@ FUNCTION fin_rucno_zatvaranje_otvorenih_stavki()
    IF gNW == "D"
       @ m_x + 3, m_y + 2 SAY "Firma "; ?? gFirma, "-", gNFirma
    ELSE
-      @ m_x + 3, m_y + 2 SAY "Firma  " GET cIdFirma valid {|| P_Firma( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
+      @ m_x + 3, m_y + 2 SAY "Firma  " GET cIdFirma valid {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
    ENDIF
    @ m_x + 4, m_y + 2 SAY "Konto  " GET cIdKonto  VALID  P_KontoFin( @cIdKonto )
-   @ m_x + 5, m_y + 2 SAY "Partner" GET cIdPartner VALID Empty( cIdPartner ) .OR. P_Firma( @cIdPartner ) PICT "@!"
+   @ m_x + 5, m_y + 2 SAY "Partner" GET cIdPartner VALID Empty( cIdPartner ) .OR. p_partner( @cIdPartner ) PICT "@!"
    IF gFinRj == "D"
       cIdRj := Space( Len( RJ->id ) )
       @ m_x + 6, m_y + 2 SAY "RJ" GET cidrj PICT "@!" VALID Empty( cidrj ) .OR. P_Rj( @cidrj )

@@ -31,14 +31,14 @@ FUNCTION kalk_get_1_94()
 
    IF nRbr == 1 .OR. !kalk_is_novi_dokument() .OR. gMagacin == "1"
       IF _idvd $ "94#97"
-         @  m_x + 6, m_y + 2   SAY "KUPAC:" GET _IdPartner PICT "@!" VALID Empty( _IdPartner ) .OR. P_Firma( @_IdPartner, 6, 18 )
+         @  m_x + 6, m_y + 2   SAY "KUPAC:" GET _IdPartner PICT "@!" VALID Empty( _IdPartner ) .OR. p_partner( @_IdPartner, 6, 18 )
       ENDIF
       @  m_x + 7, m_y + 2   SAY "Faktura/Otpremnica Broj:" GET _BrFaktP
       @  m_x + 7, Col() + 2 SAY "Datum:" GET _DatFaktP   valid {|| .T. }
 
       @ m_x + 9, m_y + 2 SAY "Magacinski konto zaduzuje"  GET _IdKonto VALID Empty( _IdKonto ) .OR. P_Konto( @_IdKonto, 21, 5 )
       // IF gNW <> "X"
-      // @ m_x + 9, m_y + 40 SAY "Zaduzuje:" GET _IdZaduz   PICT "@!"  VALID Empty( _idZaduz ) .OR. P_Firma( @_IdZaduz, 21, 5 )
+      // @ m_x + 9, m_y + 40 SAY "Zaduzuje:" GET _IdZaduz   PICT "@!"  VALID Empty( _idZaduz ) .OR. p_partner( @_IdZaduz, 21, 5 )
       // ELSE
       IF !Empty( cRNT1 )
          @ m_x + 9, m_y + 40 SAY "Rad.nalog:"   GET _IdZaduz2  PICT "@!"
@@ -48,7 +48,7 @@ FUNCTION kalk_get_1_94()
       IF _idvd == "16"
          @ m_x + 10, m_y + 2   SAY "Prenos na konto          " GET _IdKonto2   VALID Empty( _idkonto2 ) .OR. P_Konto( @_IdKonto2, 21, 5 ) PICT "@!"
          // IF gNW <> "X"
-         // @ m_x + 10, m_y + 35  SAY "Zaduzuje: "   GET _IdZaduz2  PICT "@!" VALID Empty( _idZaduz ) .OR. P_Firma( @_IdZaduz2, 21, 5 )
+         // @ m_x + 10, m_y + 35  SAY "Zaduzuje: "   GET _IdZaduz2  PICT "@!" VALID Empty( _idZaduz ) .OR. p_partner( @_IdZaduz2, 21, 5 )
          // ENDIF
       ENDIF
 

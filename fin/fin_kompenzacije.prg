@@ -62,7 +62,7 @@ STATIC FUNCTION _get_vars( vars )
          @ m_x + _x, m_y + 2 SAY "Firma "
          ?? gFirma, "-", PadR( gNFirma, 30 )
       ELSE
-         @ m_x + _x, m_y + 2 SAY "Firma: " GET _id_firma valid {|| P_Firma( @_id_firma ), _id_firma := Left( _id_firma, 2 ), .T. }
+         @ m_x + _x, m_y + 2 SAY "Firma: " GET _id_firma valid {|| p_partner( @_id_firma ), _id_firma := Left( _id_firma, 2 ), .T. }
       ENDIF
 
       ++ _x
@@ -70,7 +70,7 @@ STATIC FUNCTION _get_vars( vars )
       ++ _x
       @ m_x + _x, m_y + 2 SAY8 "Konto potražuje" GET cIdKonto2  VALID P_KontoFin( @cIdKonto2 ) .AND. cIdKonto2 > cIdKonto
       ++ _x
-      @ m_x + _x, m_y + 2 SAY8 "Partner-dužnik " GET cIdPartner VALID P_Firma( @cIdPartner )  PICT "@!"
+      @ m_x + _x, m_y + 2 SAY8 "Partner-dužnik " GET cIdPartner VALID p_partner( @cIdPartner )  PICT "@!"
       ++ _x
       @ m_x + _x, m_y + 2 SAY8 "Datum dokumenta od:" GET _dat_od
       @ m_x + _x, Col() + 2 SAY "do" GET _dat_do   VALID _dat_od <= _dat_do
@@ -659,10 +659,10 @@ STATIC FUNCTION print_kompen( vars )
    @ m_x + _x, m_y + 2 SAY "Broj kompenzacije: " GET _br_komp
 
    ++ _x
-   @ m_x + _x, m_y + 2 SAY8 "Šifra (ID) povjerioca: " GET _id_pov VALID P_Firma( @_id_pov ) PICT "@!"
+   @ m_x + _x, m_y + 2 SAY8 "Šifra (ID) povjerioca: " GET _id_pov VALID p_partner( @_id_pov ) PICT "@!"
 
    ++ _x
-   @ m_x + _x, m_y + 2 SAY8 "   Šifra (ID) dužnika: " GET _id_partn VALID P_Firma( @_id_partn ) PICT "@!"
+   @ m_x + _x, m_y + 2 SAY8 "   Šifra (ID) dužnika: " GET _id_partn VALID p_partner( @_id_partn ) PICT "@!"
    READ
    BoxC()
 

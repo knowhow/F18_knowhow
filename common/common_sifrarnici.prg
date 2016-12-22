@@ -19,7 +19,7 @@ FUNCTION opci_sifarnici()
 
    AAdd( opc, "1. partneri                          " )
 
-   AAdd( opcexe, {|| P_Firma() } )
+   AAdd( opcexe, {|| p_partner() } )
 
    IF ( programski_modul() <> "FIN" )
       AAdd( opc, "2. konta" )

@@ -557,7 +557,7 @@ FUNCTION fakt_ispravka_podataka_azuriranog_dokumenta( id_firma, tip_dok, br_dok 
 
    ++ _x
    ++ _x
-   @ m_x + _x, m_y + 2 SAY "Partner:" GET __idpartn VALID p_firma( @__idpartn )
+   @ m_x + _x, m_y + 2 SAY "Partner:" GET __idpartn VALID p_partner( @__idpartn )
 
    ++ _x
    @ m_x + _x, m_y + 2 SAY "Datum otpremnice:" GET __dat_otpr

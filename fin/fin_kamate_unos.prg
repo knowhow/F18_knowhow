@@ -107,7 +107,7 @@ STATIC FUNCTION ispravka_unosa( l_novi )
 
    SET CURSOR ON
 
-   @ m_x + 1, m_y + 2  SAY "Partner  :" GET _IdPartner PICT "@!" VALID P_Firma( @_idpartner )
+   @ m_x + 1, m_y + 2  SAY "Partner  :" GET _IdPartner PICT "@!" VALID p_partner( @_idpartner )
    @ m_x + 3, m_y + 2  SAY "Broj Veze:" GET _BrDok
    @ m_x + 5, m_y + 2  SAY "Datum od  " GET _datOd VALID PostojiLi( _idPartner, _brDok, _datOd, l_novi )
    @ m_x + 5, Col() + 2 SAY "do" GET _datDo

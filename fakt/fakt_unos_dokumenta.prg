@@ -1021,7 +1021,7 @@ STATIC FUNCTION edit_fakt_priprema( fNovi, items_atrib )
          _x += 2
          @ _part_x := m_x + _x, _part_y := m_y + 2 SAY "Partner:" GET _idpartner ;
             PICT "@!" ;
-            VALID {|| P_Firma( @_idpartner ), ;
+            VALID {|| p_partner( @_idpartner ), ;
             IzSifre(), !Empty( _idpartner) .AND. ispisi_partn( _idpartner, _part_x, _part_y + 18 ) }
 
          _x += 2

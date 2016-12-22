@@ -28,7 +28,7 @@ FUNCTION kalk_get_1_ip()
 
    // IF gNW <> "X"
    // @ m_x + _x, m_y + 35 SAY "Zaduzuje: " GET _idzaduz PICT "@!" ;
-   // VALID Empty( _idzaduz ) .OR. P_Firma( @_idzaduz, _x, 35 )
+   // VALID Empty( _idzaduz ) .OR. p_partner( @_idzaduz, _x, 35 )
    // ENDIF
 
    READ

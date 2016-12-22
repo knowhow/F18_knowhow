@@ -573,7 +573,7 @@ STATIC FUNCTION mnu_ios_print()
    @ m_x + _x, m_y + 2 SAY "Konto       :" GET cIdKonto VALID P_Konto( @cIdKonto )
    ++ _x
    @ m_x + _x, m_y + 2 SAY "Partner     :" GET _id_partner ;
-      VALID Empty( _id_partner ) .OR.  P_Firma( @_id_partner ) PICT "@!"
+      VALID Empty( _id_partner ) .OR.  p_partner( @_id_partner ) PICT "@!"
 
    IF fin_dvovalutno()
       ++ _x

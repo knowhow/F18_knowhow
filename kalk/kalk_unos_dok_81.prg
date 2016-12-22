@@ -59,7 +59,7 @@ FUNCTION kalk_unos_dok_81( hParams )
       _kord_x := m_x + _x
 
       @ m_x + _x, m_y + 2 SAY8 "DOBAVLJAČ:" GET _IdPartner PICT "@!" ;
-         VALID {|| Empty( _IdPartner ) .OR. P_Firma( @_IdPartner ), ispisi_naziv_sifre( F_PARTN, _idpartner, _kord_x - 1, 22, 20 ) }
+         VALID {|| Empty( _IdPartner ) .OR. p_partner( @_IdPartner ), ispisi_naziv_sifre( F_PARTN, _idpartner, _kord_x - 1, 22, 20 ) }
       @ m_x + _x, 50 SAY "Broj fakture:" GET _brfaktp
       @ m_x + _x, Col() + 1 SAY "Datum:" GET _datfaktp
 
@@ -70,7 +70,7 @@ FUNCTION kalk_unos_dok_81( hParams )
          VALID {|| P_Konto( @_IdKonto ), ispisi_naziv_sifre( F_KONTO, _idkonto, _kord_x, 40, 30 ) } PICT "@!"
 
       // IF gNW <> "X"
-      // @ m_x + _x, m_y + 42 SAY8 "Zadužuje: " GET _idzaduz PICT "@!" VALID Empty( _idzaduz ) .OR. P_Firma( @_idzaduz )
+      // @ m_x + _x, m_y + 42 SAY8 "Zadužuje: " GET _idzaduz PICT "@!" VALID Empty( _idzaduz ) .OR. p_partner( @_idzaduz )
       // ENDIF
 
       READ

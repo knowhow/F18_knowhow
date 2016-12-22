@@ -92,7 +92,7 @@ STATIC FUNCTION prenos()
       @ m_x + 1, m_y + 2   SAY "Broj mat_naloga mat " + gVN + " -" GET cBrMat PICT "@!"
       @ m_x + 1, Col() + 2 SAY "Datum:" GET dDatMat
       @ m_x + 3, m_y + 2   SAY "Konto zaduzuje :" GET cIdKonto  PICT "@!" VALID P_Konto( @cIdKonto )
-      @ m_x + 3, Col() + 2 SAY "Zaduzuje:" GET cIdZaduz  PICT "@!"      VALID Empty( cidzaduz2 ) .OR. P_Firma( @cIdZaduz )
+      @ m_x + 3, Col() + 2 SAY "Zaduzuje:" GET cIdZaduz  PICT "@!"      VALID Empty( cidzaduz2 ) .OR. p_partner( @cIdZaduz )
 
       @ m_x + 6, m_y + 2 SAY "Broj fakture: " + cIdFirma
       @ m_x + 6, Col() + 1 SAY "- " + cidtipdok
@@ -120,7 +120,7 @@ STATIC FUNCTION prenos()
          ENDIF
          Inkey( 0 )
          // cIdPartner:=space(6)
-         // @ m_x+14,m_y+2 SAY "Sifra partnera:"  GET cIdpartner pict "@!" valid P_Firma(@cIdPartner)
+         // @ m_x+14,m_y+2 SAY "Sifra partnera:"  GET cIdpartner pict "@!" valid p_partner(@cIdPartner)
          READ
 
          SELECT mat_pripr

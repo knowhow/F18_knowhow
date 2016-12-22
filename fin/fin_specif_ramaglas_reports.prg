@@ -38,7 +38,7 @@ if gNW=="D"
 	@ m_x+2,m_y+2 SAY "Firma "
 	?? gFirma,"-",gNFirma
 else
-	@ m_x+2,m_y+2 SAY "Firma: " GET cIdFirma valid {|| P_Firma(@cIdFirma),cidfirma:=left(cidfirma,2),.t.}
+	@ m_x+2,m_y+2 SAY "Firma: " GET cIdFirma valid {|| p_partner(@cIdFirma),cidfirma:=left(cidfirma,2),.t.}
 endif
 
 @ m_x+4, m_y+2 SAY "Radni nalozi (uslov):" GET qqRN

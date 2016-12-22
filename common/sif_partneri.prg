@@ -68,12 +68,12 @@ FUNCTION cre_sif_partn( ver )
 
 /*
    cId := "00001"
-   p_partneri( @cId, 10, 5 ) => provjera šifre, ako ne postoji prikaze šifarnik
+   p_partner( @cId, 10, 5 ) => provjera šifre, ako ne postoji prikaze šifarnik
                                 ako postoji prikaže na m_x + 10, m_y + 5 naziv
 
    lEmptIdOk := .F.  // default je .T.
 
-   p_partneri( @cId, 10, 5, lEmptyIdOk ) => ako je cId == "    ",
+   p_partner( @cId, 10, 5, lEmptyIdOk ) => ako je cId == "    ",
                                  lEmptyIdOk == .T. - prihvata cId to kao validnu sifru,
                                  lEmptyIdOk == .F. - ne prihvata kao validnu sifru
 
@@ -81,7 +81,7 @@ FUNCTION cre_sif_partn( ver )
 
 */
 
-FUNCTION p_partneri( cId, dx, dy, lEmptyIdOk )
+FUNCTION p_partner( cId, dx, dy, lEmptyIdOk )
 
    LOCAL cN2Fin
    LOCAL nI
@@ -90,6 +90,7 @@ FUNCTION p_partneri( cId, dx, dy, lEmptyIdOk )
    PRIVATE ImeKol
    PRIVATE Kol
 
+altd()
    IF lEmptyIdOk == NIL
       lEmptyIdOk := .T.
    ENDIF
@@ -133,6 +134,7 @@ FUNCTION p_partneri( cId, dx, dy, lEmptyIdOk )
    SELECT PARTN
    sifk_fill_ImeKol( "PARTN", @ImeKol, @Kol )
 
+
    xRet := PostojiSifra( F_PARTN, 1, maxrows() - 15, maxcols() - 15, "Lista Partnera", @cId, dx, dy, {| Ch| partn_k_handler( Ch ) },,,,, { "ID" } )
 
    PopWa()
@@ -158,10 +160,6 @@ STATIC FUNCTION partn_k_handler( Ch )
 
    RETURN DE_CONT
 
-
-FUNCTION P_Firma( cId, dx, dy )
-
-   RETURN P_Partneri( @cId, @dx, @dy )
 
 
 // -------------------------------------

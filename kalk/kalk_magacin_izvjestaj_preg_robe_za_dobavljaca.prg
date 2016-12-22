@@ -33,7 +33,7 @@ FUNCTION PRobDob()
 
    Box( "#PREGLED ROBE ZA DOBAVLJACA", 6, 70 )
    @ m_x + 2, m_y + 2 SAY "Artikal (prazno-svi)" GET cIdRoba VALID Empty( cIdRoba ) .OR. P_Roba( @cIdRoba ) PICT "@!"
-   @ m_x + 3, m_y + 2 SAY "Dobavljac           " GET cIdPartner VALID P_Firma( @cIdPartner ) PICT "@!"
+   @ m_x + 3, m_y + 2 SAY "Dobavljac           " GET cIdPartner VALID p_partner( @cIdPartner ) PICT "@!"
    @ m_x + 4, m_y + 2 SAY "Za period od" GET dOd
    @ m_x + 4, Col() + 2 SAY "do" GET dDo
    @ m_x + 5, m_y + 2 SAY "Koliko prethodnih sezona gledati? (0/1/2/3)" GET nPrSez VALID nPrSez < 4 PICT "9"

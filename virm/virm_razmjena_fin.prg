@@ -100,7 +100,7 @@ FUNCTION virm_prenos_fin()
             Beep( 1 )
             cIdBanka2 := Space( 3 )
             @ m_x + 1, m_y + 2 SAY ckome_txt + " " + fin_pripr->brdok + Str( fin_pripr->iznosbhd, 12, 2 )
-            @ m_x + 2, m_y + 2 SAY "Primaoc (partner/banka):" GET _u_korist VALID P_Firma( @_u_korist )  PICT "@!"
+            @ m_x + 2, m_y + 2 SAY "Primaoc (partner/banka):" GET _u_korist VALID p_partner( @_u_korist )  PICT "@!"
             @ m_x + 2, Col() + 2 GET _IdBanka2 valid {|| OdBanku( cu_korist, @_IdBanka2 ), SetPrimaoc() }
             READ
             cKome_txt := _kome_txt

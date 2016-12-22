@@ -68,7 +68,7 @@ FUNCTION IzvrsBudz()
          cIdFirma := gFirma
          @ m_x + 1, m_y + 2 SAY "Firma "; ?? gFirma, "-", gNFirma
       ELSE
-         @ m_x + 1, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| P_Firma( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
+         @ m_x + 1, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
       ENDIF
 
       @ m_x + 3, m_y + 2 SAY "         Konta (prazno-sva)" GET cIdKonto PICT "@S30@!" VALID {|| aUslK := Parsiraj ( cIdKonto, "IdKonto" ), iif ( aUslK == NIL, .F., .T. ) }
@@ -1063,7 +1063,7 @@ FUNCTION Prihodi()
          @ m_x + 1, m_y + 2 SAY "Firma "
          ?? gFirma, "-", gNFirma
       ELSE
-         @ m_x + 1, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| P_Firma( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
+         @ m_x + 1, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
       ENDIF
       @ m_x + 3, m_y + 2 SAY "         Konta (prazno-sva)" GET cIdKonto PICT "@S30@!" VALID {|| aUslK := Parsiraj ( cIdKonto, "IdKonto", "C" ), iif ( aUslK == NIL, .F., .T. ) }
       @ m_x + 4, m_y + 2 SAY " Razdjel/glava (prazno-svi)" GET cIdRj PICT "@S30@!" VALID {|| aUslRj := Parsiraj ( cIdRj, "IdRj" ), iif ( aUslRj == NIL, .F., .T. ) }

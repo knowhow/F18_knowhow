@@ -210,7 +210,7 @@ FUNCTION spec_kol_partn()
 
    ++ _x
 
-   @ m_x + _x, m_y + 2 SAY "Distributer   " GET cDistrib VALID P_Firma( @cDistrib )
+   @ m_x + _x, m_y + 2 SAY "Distributer   " GET cDistrib VALID p_partner( @cDistrib )
 
    ++ _x
    ++ _x

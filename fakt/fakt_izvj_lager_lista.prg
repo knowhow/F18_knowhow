@@ -133,7 +133,7 @@ FUNCTION fakt_lager_lista()
       IF gNW $ "DR"
          @ m_x + 1, m_y + 2 SAY "RJ (prazno svi) " GET cIdFirma valid {|| Empty( cIdFirma ) .OR. cidfirma == gFirma .OR. P_RJ( @cIdFirma ), cIdFirma := Left( cIdFirma, 2 ), .T. }
       ELSE
-         @ m_x + 1, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| P_Firma( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
+         @ m_x + 1, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
       ENDIF
       @ m_x + 2, m_y + 2 SAY "Roba   "  GET qqRoba   PICT "@!S40"
       @ m_x + 3, m_y + 2 SAY "Naziv partnera (prazno - svi)"  GET qqPartn   PICT "@!"

@@ -113,7 +113,7 @@ STATIC FUNCTION _get_vars( rpt_vars )
       @ m_x + _x, m_y + 2 SAY "Konto   " GET _konto VALID !Empty( _konto ) .AND. P_KontoFin( @_konto )
       ++ _x
       @ m_x + _x, m_y + 2 SAY "Partner " GET _partner VALID Empty( _partner ) .OR. ;
-         RTrim( _partner ) == ";" .OR. P_Firma( @_partner ) PICT "@!"
+         RTrim( _partner ) == ";" .OR. p_partner( @_partner ) PICT "@!"
 
    ELSE
 

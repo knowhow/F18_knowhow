@@ -81,7 +81,7 @@ FUNCTION kalk_stampa_liste_dokumenata()
 
       @ m_x + 3, m_y + 2 SAY8 "Od datuma "  GET dDatOd
       @ m_x + 3, Col() + 1 SAY8 "do"  GET dDatDo
-      @ m_x + 5, m_y + 2 SAY8 "Partner" GET cIdPartner PICT "@!" VALID Empty( cidpartner ) .OR. P_Firma( @cIdPartner )
+      @ m_x + 5, m_y + 2 SAY8 "Partner" GET cIdPartner PICT "@!" VALID Empty( cidpartner ) .OR. p_partner( @cIdPartner )
       @ m_x + 6, m_y + 2 SAY8 " Magacinska konta:" GET _mkonto PICT "@S30"
       @ m_x + 7, m_y + 2 SAY8 "Prodavnička konta:" GET _pkonto PICT "@S30"
       @ m_x + 8, m_y + 2 SAY8 "Brojevi dokumenata (prazno-svi)" GET qqBrDok PICT "@!S40"

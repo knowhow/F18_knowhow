@@ -36,7 +36,7 @@ local _opcexe:={}
 local _izbor:=1
 
 AADD(_opc, "1. partneri                    ")
-AADD(_opcexe, {|| P_Firma()})
+AADD(_opcexe, {|| p_partner()})
 AADD(_opc, "2. valute")
 AADD(_opcexe, {|| P_Valuta()})
 AADD(_opc, "3. opcine")

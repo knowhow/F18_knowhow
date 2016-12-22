@@ -82,7 +82,7 @@ STATIC FUNCTION set_a_kol( aImeKol, aKol )
    aImeKol := {}
    aKol := {}
 
-   AAdd( aImeKol, { "Ugovor", {|| PadR( Trim( id ) + "/" + Trim( IdPartner ) + ":" + g_part_name( IdPartner ), 34 ) }, "Idpartner", {|| sifra_postoji( wid ), .T. }, {|| P_Firma( @wIdPartner ) } } )
+   AAdd( aImeKol, { "Ugovor", {|| PadR( Trim( id ) + "/" + Trim( IdPartner ) + ":" + g_part_name( IdPartner ), 34 ) }, "Idpartner", {|| sifra_postoji( wid ), .T. }, {|| p_partner( @wIdPartner ) } } )
 
    AAdd( aImeKol, { "Opis", {|| PadR( Trim( naz ) + ": " + vrati_opis_ugovora( id ), 30 )  }, "naz" } )
    AAdd( aImeKol, { "DatumOd", {|| DatOd }, "DatOd" } )
@@ -419,7 +419,7 @@ FUNCTION edit_ugovor( lNovi )
 
    ++ nX
 
-   @ m_x + nX, m_y + 2 SAY PadL( "Partner", nBoxLen ) GET _idpartner VALID {|| x := P_Firma( @_IdPartner ), MSAY2( m_x + 2, m_y + 35, Ocitaj( F_PARTN, _IdPartner, "NazPartn()" ) ), x } PICT "@!"
+   @ m_x + nX, m_y + 2 SAY PadL( "Partner", nBoxLen ) GET _idpartner VALID {|| x := p_partner( @_IdPartner ), MSAY2( m_x + 2, m_y + 35, Ocitaj( F_PARTN, _IdPartner, "NazPartn()" ) ), x } PICT "@!"
 
    IF is_dest()
 
@@ -951,7 +951,7 @@ FUNCTION OsvjeziPrikUg( lWhen, lNew )
    @ m_x + 1, m_y + 30 SAY "Opis ugovora   :" GET wnaz WHEN lWhen
    @ m_x + 2, m_y + 1 SAY "PARTNER        :" GET widpartner ;
       WHEN lWhen ;
-      VALID !lWhen .OR. P_Firma( @widpartner ) .AND. MSAY2( m_x + 2, 30, Ocitaj( F_PARTN, wIdPartner, "NazPartn()" ) ) PICT "@!"
+      VALID !lWhen .OR. p_partner( @widpartner ) .AND. MSAY2( m_x + 2, 30, Ocitaj( F_PARTN, wIdPartner, "NazPartn()" ) ) PICT "@!"
 
    @ m_x + 3, m_y + 1 SAY "DATUM UGOVORA  :" GET wdatod ;
       WHEN lWhen

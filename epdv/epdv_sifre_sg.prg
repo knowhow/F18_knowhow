@@ -96,7 +96,7 @@ STATIC FUNCTION set_a_kol( aKol, aImeKol )
    AAdd( aImeKol, { "Set.Tar", {|| s_id_tar }, "s_id_tar", {|| .T. }, {|| .T. } } )
 
    // setuj id tar u kuf/kif
-   AAdd( aImeKol, { "Set.Par", {|| s_id_part }, "s_id_part", {|| .T. }, {|| Empty( ws_id_part ) .OR. P_Partneri( @ws_id_part ), .T. } } )
+   AAdd( aImeKol, { "Set.Par", {|| s_id_part }, "s_id_part", {|| .T. }, {|| Empty( ws_id_part ) .OR. p_partner( @ws_id_part ), .T. } } )
 
    // setuj id tar u kuf/kif
    AAdd( aImeKol, { "Set.Br.Dok", {|| s_br_dok }, "s_br_dok", {|| .T. }, {|| .T. } } )

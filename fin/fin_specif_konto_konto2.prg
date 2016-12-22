@@ -43,7 +43,7 @@ FUNCTION SpecKK2( lOtvSt )
       IF gNW == "D"
          @ m_x + 3, m_y + 2 SAY "Firma "; ?? gFirma, "-", gNFirma
       ELSE
-         @ m_x + 3, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| P_Firma( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
+         @ m_x + 3, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
       ENDIF
 
       qqKonto := PadR( qqKonto, 7 )

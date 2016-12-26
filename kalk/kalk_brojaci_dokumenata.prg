@@ -156,7 +156,7 @@ FUNCTION kalk_fix_brdok( cBrKalk )
    LOCAL nLenGlavni := kalk_duzina_brojaca_dokumenta()
    LOCAL nLenSufiks := 8 - nLenGlavni
 
-   IF "/" $ cBrKalk  .OR. "-" $ cBrKalk .OR. "G" $ cBrKalk  // ne mijenjati nista za G000002, 00002/TZ, 00002-TZ
+   IF "/" $ cBrKalk  .OR. "-" $ cBrKalk .OR. slovo_unutar( cBrKalk ) // ne mijenjati nista za G000002, 00002/TZ, 00002-TZ
       RETURN cBrKalk
    ENDIF
 
@@ -170,6 +170,17 @@ FUNCTION kalk_fix_brdok( cBrKalk )
 
    RETURN cBrKalk
 
+FUNCTION slovo_unutar( cString )
+
+   LOCAL aMatch, pRegex := hb_regexComp( ".*[a-zA-Z].*" )
+
+altd()
+   aMatch := hb_regex( pRegex, cString )
+   IF Len( aMatch ) > 0
+      RETURN .T.
+   ENDIF
+
+   RETURN .F.
 
 
 
@@ -263,7 +274,7 @@ FUNCTION kalk_reset_broj_dokumenta( firma, tip_dokumenta, broj_dokumenta, konto 
    _broj := fetch_metric( _param, nil, _broj )
 
    IF Val( broj_dokumenta ) == _broj
-      -- _broj
+      --_broj
       // smanji globalni brojac za 1
       set_metric( _param, nil, _broj )
    ENDIF
@@ -325,7 +336,7 @@ FUNCTION kalk_novi_broj_dokumenta( firma, tip_dokumenta, konto )
    _broj := Max( _broj, _broj_dok ) // uzmi sta je vece, dokument broj ili globalni brojac
 
    // uvecaj broj
-   ++ _broj
+   ++_broj
 
    // ovo ce napraviti string prave duzine...
    // dodaj i sufiks na kraju ako treba

@@ -58,11 +58,10 @@ FUNCTION Get1_RN()
       SET ORDER TO TAG "2"
       // CREATE_INDEX("DOKSi2","IdFirma+MKONTO+idzaduz2+idvd+brdok","DOKS")
 
-      SEEK _idfirma + _idkonto + _idzaduz2 + "RN"
-      // npr: 10 5100 564   RN
-      IF Found()
+
+      IF find_kalk_doks_by_broj_radnog_naloga( _IdFirma, _IdKonto, _IdZaduz2, "RN" )  // npr: 10 5100 564   RN
          Beep( 2 )
-         Msg( "Vec postoji dokument RN broj " + kalk_doks->brdok + " za ovaj radni nalog" )
+         Msg( "Vec postoji dokument RN broj " + kalk_doks->brdok + " za radni nalog:"  + _IdZaduz2 )
          SELECT kalk_pripr
          KEYBOARD K_ESC
          nStrana := 3

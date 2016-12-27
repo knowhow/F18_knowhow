@@ -98,6 +98,31 @@ FUNCTION find_kalk_doks_za_tip_zadnji_broj( cIdFirma, cIdvd )
    RETURN ! Eof()
 
 
+FUNCTION find_kalk_doks_by_broj_radnog_naloga( cIdFirma, cIdKonto, cIdZaduz2, cIdVd )
+
+   LOCAL hParams := hb_Hash()
+
+   IF cIdFirma <> NIL
+      hParams[ "idfirma" ] := cIdFirma
+   ENDIF
+
+   IF cIdVd <> NIL .AND. !( Empty( cIdVd ) )
+      hParams[ "idvd" ] := cIdVd
+   ENDIF
+
+   IF cIdZaduz2 <> NIL
+      hParams[ "idzaduz2" ] := cIdZaduz2
+   ENDIF
+
+   hParams[ "indeks" ] := .F.  // ne trositi vrijeme na kreiranje indeksa
+
+   use_sql_kalk_doks( hParams )
+   GO TOP
+
+   RETURN ! Eof()
+
+
+
 FUNCTION find_kalk_doks_by_broj_fakture( cIdVd, cBrFaktP )
 
    LOCAL hParams := hb_Hash()
@@ -810,6 +835,13 @@ STATIC FUNCTION sql_kalk_doks_where( hParams )
          cWhere += " AND "
       ENDIF
       cWhere += "brfaktp = " + sql_quote( hParams[ "broj_fakture" ] )
+   ENDIF
+
+   IF hb_HHasKey( hParams, "idzaduz2" )
+      IF !Empty( cWhere )
+         cWhere += " AND "
+      ENDIF
+      cWhere += "idzaduz2 = " + sql_quote( hParams[ "idzaduz2" ] )
    ENDIF
 
    IF hb_HHasKey( hParams, "brdok_sfx" )

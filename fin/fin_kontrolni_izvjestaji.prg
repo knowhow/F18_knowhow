@@ -21,8 +21,8 @@ FUNCTION fin_kontrolni_izvjestaji_meni()
    //AAdd( opc, "1. provjera integriteta tabela - ima u suban nema u nalog " )
    //AAdd( opcexe, {|| check_ima_u_suban_nema_u_nalog() } )
 
-   AAdd( opc, "2. pregled datumskih grešaka u nalozima" )
-   AAdd( opcexe, {|| daterr_rpt() } )
+   //AAdd( opc, "2. pregled datumskih grešaka u nalozima" )
+   //AAdd( opcexe, {|| daterr_rpt() } )
 
 #ifdef F18_FMK
    AAdd( opc, "4. kontrola podataka nakon importa iz FMK" )

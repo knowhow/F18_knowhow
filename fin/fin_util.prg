@@ -216,7 +216,7 @@ STATIC FUNCTION _g_gr_date()
 
    RETURN dDate
 
-
+/*
 
 // ----------------------------------------------------------------
 // report sa greskama sa datumom na nalozima izazvanim opcijom
@@ -242,8 +242,7 @@ FUNCTION daterr_rpt()
 
    o_suban()
    SELECT suban
-   SET ORDER TO TAG "10"
-   // idfirma+idvn+brnal+idkonto+datdok
+   SET ORDER TO TAG "10" // idfirma+idvn+brnal+idkonto+datdok
 
    o_anal()
    SELECT anal
@@ -302,9 +301,9 @@ FUNCTION daterr_rpt()
 
       dSubanDate := field->datdok
 
-      // 1. provjeri prvo da li je razlicit datum naloga i subanalitike
 
-      IF __t_date <> dSubanDate
+
+      IF __t_date <> dSubanDate // 1. provjeri prvo da li je razlicit datum naloga i subanalitike
 
          // uzmi datum sa prve stavke subanilitike
 
@@ -325,9 +324,7 @@ FUNCTION daterr_rpt()
          ENDDO
 
 
-         // provjeri analitiku
-
-         SELECT anal
+         SELECT anal  // provjeri analitiku
          GO TOP
          SEEK __idfirma + __idvn + __brnal
 
@@ -363,12 +360,12 @@ FUNCTION daterr_rpt()
          lVeci := .F.
 
 
-         // mjesec granicnog datuma
-         nGrMonth := Month( dGrDate )
+
+         nGrMonth := Month( dGrDate )  // mjesec granicnog datuma
 
          // to znaci da nalog mora da sadrzi samo taj mjesec ili manji
 
-         // prodji po nalogu....
+         // prodji po nalogu
          DO WHILE !Eof() .AND. suban->( idfirma + idvn + brnal ) == ;
                ( __idfirma + __idvn + __brnal )
 
@@ -387,8 +384,7 @@ FUNCTION daterr_rpt()
 
             ENDIF
 
-            // ako u subanalitici ima veci datum od
-            // granicnog datuma i iskace iz mjeseca
+            // ako u subanalitici ima veci datum od granicnog datuma i iskace iz mjeseca
             IF suban->datdok > dGrDate .AND. ;
                   Month( suban->datdok ) > nGrMonth
 
@@ -399,8 +395,7 @@ FUNCTION daterr_rpt()
 
          ENDDO
 
-         // ako unutar jednog naloga ima i veci i manji datum od
-         // granicnog datuma pretpostavljamo da je to error
+         // ako unutar jednog naloga ima i veci i manji datum od granicnog datuma pretpostavljamo da je to error
 
          IF lManji == .T. .AND. lVeci == .T.
 
@@ -441,7 +436,7 @@ FUNCTION daterr_rpt()
 
    RETURN
 
-
+*/
 
 FUNCTION BBMnoziSaK( cTip )
 

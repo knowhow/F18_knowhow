@@ -15,7 +15,6 @@
 
 FUNCTION Get1_RN()
 
-
    IF nRbr == 1 .AND. kalk_is_novi_dokument()
       _DatFaktP := _datdok
    ENDIF
@@ -54,8 +53,8 @@ FUNCTION Get1_RN()
       my_unlock()
       my_dbf_pack()
 
-      SELECT kalk_doks
-      SET ORDER TO TAG "2"
+      // SELECT kalk_doks
+      // SET ORDER TO TAG "2"
       // CREATE_INDEX("DOKSi2","IdFirma+MKONTO+idzaduz2+idvd+brdok","DOKS")
 
 
@@ -68,23 +67,23 @@ FUNCTION Get1_RN()
          RETURN  LastKey()
       ENDIF
 
-      SEEK _idfirma + _idkonto2 + _idzaduz2  // 10 5000 564
+      find_kalk_doks_by_broj_radnog_naloga( _IdFirma, _IdKonto2, _IdZaduz2, "RN" )
+      GO TOP
+      // SEEK _idfirma + _idkonto2 + _idzaduz2  // 10 5000 564
       nII := 0
       nCntR := 0
-      DO WHILE !Eof() .AND. ;
-            ( _idfirma + _idkonto2 + _idzaduz2 = idfirma + mkonto + idzaduz2 )
+      DO WHILE !Eof() .AND. ( _idfirma + _idkonto2 + _idzaduz2 == idfirma + mkonto + idzaduz2 )
 
-         SELECT kalk
-         SET ORDER TO TAG "1"
-         SEEK kalk_doks->( idfirma + idvd + brdok )
-         nKolicina := 0   ; nNabV := 0
-         DO WHILE !Eof() .AND. kalk_doks->( idfirma + idvd + brdok ) == ( idfirma + idvd + brdok )
+
+         find_kalk_by_broj_dokumenta( kalk_doks->idfirma,  kalk_doks->idvd, kalk_doks->brdok )
+         nKolicina := 0
+         nNabV := 0
+         DO WHILE !Eof() // napuni kalk_pripr sa ovim kalk dokumentom
 
 
             SELECT kalk_pripr
             SET ORDER TO TAG "3" // kalk pripr tag 3 idFirma+idvd+brdok+idroba+rbr
             SEEK _idfirma + _idvd + _brdok + kalk->idroba + "9" // nadji odgovoarajucu stavku iznad 900
-
 
             IF !Found()
                ++nCntR
@@ -101,21 +100,18 @@ FUNCTION Get1_RN()
                   idtarifa WITH "XXXXXX", ;
                   brfaktp WITH _brfaktp
 
-
-
             ENDIF
 
             my_rlock()
             IF KALK->mu_i == "1"
-               REPLACE kolicina WITH kalk->kolicina + kolicina, ;
-                  nc WITH nc + kalk->( kolicina * nc )
+               REPLACE kolicina WITH kalk->kolicina + kolicina,  nc WITH nc + kalk->( kolicina * nc )
             ELSEIF KALK->mu_i = "5"
-               REPLACE kolicina WITH -kalk->kolicina + kolicina, ;
-                  nc WITH nc - kalk->( kolicina * nc )
+               REPLACE kolicina WITH -kalk->kolicina + kolicina, nc WITH nc - kalk->( kolicina * nc )
             ENDIF
             my_unlock()
 
-            SELECT kalk_pripr; SET ORDER TO TAG "1"
+            SELECT kalk_pripr
+            SET ORDER TO TAG "1"
             SELECT kalk
             SKIP
 
@@ -125,15 +121,15 @@ FUNCTION Get1_RN()
          SKIP
       ENDDO
 
-      SELECT kalk_pripr; SET ORDER TO TAG "1"; GO TOP
+      SELECT kalk_pripr
+      SET ORDER TO TAG "1"
+      GO TOP
       nNV := 0
       my_flock()
       DO WHILE !Eof()
          IF Val( RBr ) > 900
             nNV += NC  // ovo je u stvari nabavna vrijednost
-            REPLACE NC WITH NC / Kolicina, ;
-               vpc WITH NC, ;
-               fcj WITH nc
+            REPLACE NC WITH NC / Kolicina,  vpc WITH NC, fcj WITH nc
          ENDIF
          SKIP
       ENDDO
@@ -141,20 +137,22 @@ FUNCTION Get1_RN()
 
       GO  nTPriPrec
       SELECT kalk_pripr
-    //  IF gNW <> "X"
-      //   @ m_x + 10, m_y + 42  SAY "Zaduzuje: "   GET _IdZaduz  PICT "@!" VALID Empty( _idZaduz ) .OR. p_partner( @_IdZaduz, 24 )
-      //ENDIF
-      read; ESC_RETURN K_ESC
+      // IF gNW <> "X"
+      // @ m_x + 10, m_y + 42  SAY "Zaduzuje: "   GET _IdZaduz  PICT "@!" VALID Empty( _idZaduz ) .OR. p_partner( @_IdZaduz, 24 )
+      // ENDIF
+      READ
+
+      ESC_RETURN K_ESC
    ELSE
 
-      @ m_x + 10, m_y + 2   SAY "Mag. gotovih proizvoda zaduzuje ";?? _IdKonto
-      //IF gNW <> "X"
-      //   @ m_x + 10, m_y + 42  SAY "Zaduzuje: "; ?? _IdZaduz
-      //ENDIF
+      @ m_x + 10, m_y + 2   SAY "Mag. gotovih proizvoda zaduzuje "; ?? _IdKonto
+      // IF gNW <> "X"
+      // @ m_x + 10, m_y + 42  SAY "Zaduzuje: "; ?? _IdZaduz
+      // ENDIF
    ENDIF
 
 
-   @ m_x + 11, m_y + 66 SAY "Tarif.brĿ"
+   @ m_x + 11, m_y + 66 SAY "Tarif.br->"
    @ m_x + 12, m_y + 2  SAY "Proizvod  " GET _IdRoba PICT "@!" ;
       valid  {|| P_Roba( @_IdRoba ), say_from_valid( 12, 25, Trim( roba->naz ) + " (" + ROBA->jmj + ")", 40 ), ;
       _IdTarifa := iif( kalk_is_novi_dokument(), ROBA->idtarifa, _IdTarifa ), .T. }
@@ -163,17 +161,19 @@ FUNCTION Get1_RN()
    read; ESC_RETURN K_ESC
    SELECT koncij; HSEEK Trim( _idkonto ); SELECT kalk_pripr
 
-   _MKonto := _Idkonto; _MU_I := "1"
-   //check_datum_posljednje_kalkulacije()
+   _MKonto := _Idkonto
+   _MU_I := "1"
+   // check_datum_posljednje_kalkulacije()
 
    SELECT TARIFA
    HSEEK _IdTarifa  // postavi TARIFA na pravu poziciju
    SELECT kalk_pripr  // napuni tarifu
 
-   @ m_x + 13, m_y + 2   SAY "Kolicina " GET _Kolicina PICTURE PicKol VALID _Kolicina <> 0
+   @ m_x + 13, m_y + 2   SAY8 "Količina " GET _Kolicina PICTURE PicKol VALID _Kolicina <> 0
    READ
    IF kalk_is_novi_dokument()
-      SELECT ROBA; HSEEK _IdRoba
+      SELECT ROBA
+      HSEEK _IdRoba
       IF koncij->naz == "P2"
          _VPC := PlC
       ELSE
@@ -210,7 +210,7 @@ FUNCTION Get1_RN()
    _FCJ2 := _FCJ * ( 1 -_Rabat / 100 )
 
    RETURN LastKey()
-// }
+
 
 
 
@@ -292,4 +292,3 @@ FUNCTION Get2_RN()
    nStrana := 3
 
    RETURN LastKey()
-// }

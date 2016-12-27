@@ -98,7 +98,7 @@ FUNCTION find_kalk_doks_za_tip_zadnji_broj( cIdFirma, cIdvd )
    RETURN ! Eof()
 
 
-FUNCTION find_kalk_doks_by_broj_radnog_naloga( cIdFirma, cIdKonto, cIdZaduz2, cIdVd )
+FUNCTION find_kalk_doks_by_broj_radnog_naloga( cIdFirma, cMKonto, cIdZaduz2, cIdVd )
 
    LOCAL hParams := hb_Hash()
 
@@ -106,13 +106,19 @@ FUNCTION find_kalk_doks_by_broj_radnog_naloga( cIdFirma, cIdKonto, cIdZaduz2, cI
       hParams[ "idfirma" ] := cIdFirma
    ENDIF
 
-   IF cIdVd <> NIL .AND. !( Empty( cIdVd ) )
-      hParams[ "idvd" ] := cIdVd
+   IF cMKonto <> NIL .AND. !( Empty( cMKonto ) )
+      hParams[ "mkonto" ] := cMKonto
    ENDIF
+
 
    IF cIdZaduz2 <> NIL
       hParams[ "idzaduz2" ] := cIdZaduz2
    ENDIF
+
+   IF cIdVd <> NIL .AND. !( Empty( cIdVd ) )
+      hParams[ "idvd" ] := cIdVd
+   ENDIF
+
 
    hParams[ "indeks" ] := .F.  // ne trositi vrijeme na kreiranje indeksa
 
@@ -842,6 +848,21 @@ STATIC FUNCTION sql_kalk_doks_where( hParams )
          cWhere += " AND "
       ENDIF
       cWhere += "idzaduz2 = " + sql_quote( hParams[ "idzaduz2" ] )
+   ENDIF
+
+   IF hb_HHasKey( hParams, "mkonto" )
+      IF !Empty( cWhere )
+         cWhere += " AND "
+      ENDIF
+      cWhere += "mkonto = " + sql_quote( hParams[ "mkonto" ] )
+   ENDIF
+
+
+   IF hb_HHasKey( hParams, "pkonto" )
+      IF !Empty( cWhere )
+         cWhere += " AND "
+      ENDIF
+      cWhere += "pkonto = " + sql_quote( hParams[ "pkonto" ] )
    ENDIF
 
    IF hb_HHasKey( hParams, "brdok_sfx" )

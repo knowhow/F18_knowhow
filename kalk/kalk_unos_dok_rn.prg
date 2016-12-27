@@ -15,6 +15,7 @@
 
 FUNCTION Get1_RN()
 
+altd()
    IF nRbr == 1 .AND. kalk_is_novi_dokument()
       _DatFaktP := _datdok
    ENDIF
@@ -28,9 +29,9 @@ FUNCTION Get1_RN()
    ENDIF
 
    IF nRbr == 1  .OR. !kalk_is_novi_dokument() .OR. gMagacin == "1"
-      @  m_x + 6, m_y + 2   SAY "ZATVORITI RADNI NALOG:" GET _IdZaduz2 PICT "@!"
-      @  m_x + 7, m_y + 2   SAY "Mag. proivod. u toku :" GET _IdKonto2 PICT "@!" VALID P_Konto( @_IdKonto2 )
-      @ m_x + 10, m_y + 2   SAY "Mag. gotovih proizvoda zaduzuje" GET _IdKonto VALID  P_Konto( @_IdKonto, 24 ) PICT "@!"
+      @  m_x + 6, m_y + 2   SAY8 "  ZATVORITI RADNI NALOG :" GET _IdZaduz2 PICT "@!"
+      @  m_x + 7, m_y + 2   SAY8 "Mag. proizvodnje u toku :" GET _IdKonto2 PICT "@!" VALID P_Konto( @_IdKonto2 )
+      @ m_x + 10, m_y + 2   SAY8 "Mag. gotovih proizvoda zadužuje:" GET _IdKonto VALID  P_Konto( @_IdKonto, 24 ) PICT "@!"
       READ
       _BrFaktP := _idzaduz2
       // sada trazim trebovanja u proizvod. u toku i filujem u stavke od 100 pa nadalje
@@ -58,7 +59,7 @@ FUNCTION Get1_RN()
       // CREATE_INDEX("DOKSi2","IdFirma+MKONTO+idzaduz2+idvd+brdok","DOKS")
 
 
-      IF find_kalk_doks_by_broj_radnog_naloga( _IdFirma, _IdKonto, _IdZaduz2, "RN" )  // npr: 10 5100 564   RN
+      IF find_kalk_doks_by_broj_radnog_naloga( _IdFirma, _IdKonto, _IdZaduz2, "RN" )  // npr: 10-1200-564-RN, gdje je 1200 magacin gotovih proizvoda
          Beep( 2 )
          Msg( "Vec postoji dokument RN broj " + kalk_doks->brdok + " za radni nalog:"  + _IdZaduz2 )
          SELECT kalk_pripr
@@ -67,19 +68,16 @@ FUNCTION Get1_RN()
          RETURN  LastKey()
       ENDIF
 
-      find_kalk_doks_by_broj_radnog_naloga( _IdFirma, _IdKonto2, _IdZaduz2, "RN" )
+      find_kalk_doks_by_broj_radnog_naloga( _IdFirma, _IdKonto2, _IdZaduz2, NIL ) // 10-1100-564, 1100 - magacin sirovina, gdje su ovo ulazi
       GO TOP
-      // SEEK _idfirma + _idkonto2 + _idzaduz2  // 10 5000 564
       nII := 0
       nCntR := 0
-      DO WHILE !Eof() .AND. ( _idfirma + _idkonto2 + _idzaduz2 == idfirma + mkonto + idzaduz2 )
-
+      DO WHILE !Eof() // proci kroz sve kalk dokumente za odredjeni idzaduz2 - broj radnog naloga
 
          find_kalk_by_broj_dokumenta( kalk_doks->idfirma,  kalk_doks->idvd, kalk_doks->brdok )
          nKolicina := 0
          nNabV := 0
          DO WHILE !Eof() // napuni kalk_pripr sa ovim kalk dokumentom
-
 
             SELECT kalk_pripr
             SET ORDER TO TAG "3" // kalk pripr tag 3 idFirma+idvd+brdok+idroba+rbr
@@ -159,7 +157,9 @@ FUNCTION Get1_RN()
    @ m_x + 12, m_y + 70 GET _IdTarifa WHEN gPromTar == "N" VALID P_Tarifa( @_IdTarifa )
 
    read; ESC_RETURN K_ESC
-   SELECT koncij; HSEEK Trim( _idkonto ); SELECT kalk_pripr
+   SELECT koncij
+   HSEEK Trim( _idkonto )
+   SELECT kalk_pripr
 
    _MKonto := _Idkonto
    _MU_I := "1"

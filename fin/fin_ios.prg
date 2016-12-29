@@ -249,19 +249,19 @@ altd()
    RETURN .T.
 
 
-STATIC FUNCTION print_ios_xml( params )
+STATIC FUNCTION print_ios_xml( hParams )
 
    LOCAL _rbr
-   LOCAL cIdFirma := params[ "id_firma" ]
-   LOCAL cIdKonto := params[ "id_konto" ]
-   LOCAL _id_partner := params[ "id_partner" ]
-   LOCAL _iznos_bhd := params[ "iznos_bhd" ]
-   LOCAL _iznos_dem := params[ "iznos_dem" ]
-   LOCAL _din_dem := params[ "din_dem" ]
-   LOCAL _datum_do := params[ "datum_do" ]
-   LOCAL _ios_date := params[ "ios_datum" ]
-   LOCAL _kao_kartica := params[ "kartica" ]
-   LOCAL _prelomljeno := params[ "prelom" ]
+   LOCAL cIdFirma := hParams[ "id_firma" ]
+   LOCAL cIdKonto := hParams[ "id_konto" ]
+   LOCAL _id_partner := hParams[ "id_partner" ]
+   LOCAL _iznos_bhd := hParams[ "iznos_bhd" ]
+   LOCAL _iznos_dem := hParams[ "iznos_dem" ]
+   LOCAL _din_dem := hParams[ "din_dem" ]
+   LOCAL _datum_do := hParams[ "datum_do" ]
+   LOCAL _ios_date := hParams[ "ios_datum" ]
+   LOCAL _kao_kartica := hParams[ "kartica" ]
+   LOCAL _prelomljeno := hParams[ "prelom" ]
    LOCAL _saldo_1, _saldo_2, __saldo_1, __saldo_2
    LOCAL _dug_1, _dug_2, _u_dug_1, _u_dug_2, _u_dug_1z, _u_dug_2z
    LOCAL _pot_1, _pot_2, _u_pot_1, _u_pot_2, _u_pot_1z, _u_pot_2z
@@ -629,7 +629,7 @@ STATIC FUNCTION _ios_spec_get_line()
 // ----------------------------------------------------------
 // uslovi izvjestaja IOS specifikacija
 // ----------------------------------------------------------
-STATIC FUNCTION _ios_spec_vars( params )
+STATIC FUNCTION _ios_spec_vars( hParams )
 
    LOCAL cIdFirma := gFirma
    LOCAL cIdKonto := fetch_metric( "ios_spec_id_konto", my_user(), Space( 7 ) )
@@ -661,10 +661,10 @@ STATIC FUNCTION _ios_spec_vars( params )
    cIdFirma := Left( cIdFirma, 2 )
 
    // napuni matricu sa parametrima
-   params[ "id_konto" ] := cIdKonto
-   params[ "id_firma" ] := cIdFirma
-   params[ "saldo_nula" ] := _saldo_nula
-   params[ "datum_do" ] := _datum_do
+   hParams[ "id_konto" ] := cIdKonto
+   hParams[ "id_firma" ] := cIdFirma
+   hParams[ "saldo_nula" ] := _saldo_nula
+   hParams[ "datum_do" ] := _datum_do
 
    RETURN .T.
 
@@ -672,29 +672,29 @@ STATIC FUNCTION _ios_spec_vars( params )
 
 
 /*
-STATIC FUNCTION ios_specifikacija( params )
+STATIC FUNCTION ios_specifikacija( hParams )
 
    LOCAL _datum_do, cIdFirma, cIdKonto, _saldo_nula
    LOCAL _line
    LOCAL _id_partner, _rbr
    LOCAL _auto := .F.
 
-   IF params == NIL
-      params := hb_Hash()
+   IF hParams == NIL
+      hParams := hb_Hash()
    ELSE
       _auto := .T.
    ENDIF
 
    // uslovi izvjestaja
-   IF !_auto .AND. !_ios_spec_vars( @params )
+   IF !_auto .AND. !_ios_spec_vars( @hParams )
       RETURN .F.
    ENDIF
 
    // iz parametara uzmi uslove
-   cIdFirma := params[ "id_firma" ]
-   cIdKonto := params[ "id_konto" ]
-   _datum_do := params[ "datum_do" ]
-   _saldo_nula := params[ "saldo_nula" ]
+   cIdFirma := hParams[ "id_firma" ]
+   cIdKonto := hParams[ "id_konto" ]
+   _datum_do := hParams[ "datum_do" ]
+   _saldo_nula := hParams[ "saldo_nula" ]
 
    _line := _ios_spec_get_line()
 
@@ -887,40 +887,40 @@ STATIC FUNCTION _spec_zaglavlje( id_firma, id_partner, line )
 */
 
 
-STATIC FUNCTION ios_generacija_podataka( params )
+STATIC FUNCTION ios_generacija_podataka( hParams )
 
    LOCAL _datum_do, cIdFirma, cIdKonto, _saldo_nula
-   LOCAL _id_partner, _rec, _cnt
+   LOCAL _id_partner, hRec, _cnt
    LOCAL _auto := .F.
    LOCAL _dug_1, _dug_2, _u_dug_1, _u_dug_2
    LOCAL _pot_1, _pot_2, _u_pot_1, _u_pot_2
    LOCAL _saldo_1, _saldo_2
 
-   IF params == NIL
+   IF hParams == NIL
       MsgBeep( "Napomena: ova opcija puni pomocnu tabelu na osnovu koje se#stampaju IOS obrasci" )
-      params := hb_Hash()
+      hParams := hb_Hash()
    ELSE
       _auto := .T.
    ENDIF
 
    // uslovi izvjestaja
-   IF !_auto .AND. !_ios_spec_vars( @params )
+   IF !_auto .AND. !_ios_spec_vars( @hParams )
       RETURN .F.
    ENDIF
 
-   // iz parametara uzmi uslove...
-   cIdFirma := params[ "id_firma" ]
-   cIdKonto := params[ "id_konto" ]
-   _datum_do := params[ "datum_do" ]
-   _saldo_nula := params[ "saldo_nula" ]
+   // iz parametara uzmi uslove
+   cIdFirma := hParams[ "id_firma" ]
+   cIdKonto := hParams[ "id_konto" ]
+   _datum_do := hParams[ "datum_do" ]
+   _saldo_nula := hParams[ "saldo_nula" ]
 
    O_PARTN
    O_KONTO
    o_suban()
    O_IOS
 
-   // reset tabele IOS
-   SELECT ios
+
+   SELECT ios  // reset tabele IOS
    my_dbf_zap()
 
    // SELECT suban
@@ -934,7 +934,8 @@ STATIC FUNCTION ios_generacija_podataka( params )
 
    Box(, 3, 65 )
 
-   @ m_x + 1, m_y + 2 SAY "sacekajte trenutak... generisem podatke u pomocnu tabelu"
+   @ m_x + 1, m_y + 2 SAY8 "sačekajte ... generacija ios pomoćne tabele"
+   altd()
 
    DO WHILE !Eof() .AND. cIdFirma == field->idfirma .AND. cIdKonto == field->idkonto
 
@@ -951,12 +952,10 @@ STATIC FUNCTION ios_generacija_podataka( params )
       _saldo_1 := 0
       _saldo_2 := 0
 
-      DO WHILE !Eof() .AND. cIdFirma == field->idfirma ;
-            .AND. cIdKonto == field->idkonto ;
-            .AND. _id_partner == field->idpartner
+      DO WHILE !Eof() .AND. cIdFirma == field->idfirma  .AND. cIdKonto == field->idkonto  .AND. _id_partner == field->idpartner
 
-         // ako je datum veci od datuma do kojeg generisem
-         IF field->datdok > _datum_do
+
+         IF field->datdok > _datum_do        // ako je datum veci od datuma do kojeg generisem
             SKIP
             LOOP
          ENDIF
@@ -987,15 +986,15 @@ STATIC FUNCTION ios_generacija_podataka( params )
          SELECT ios
          APPEND BLANK
 
-         _rec := dbf_get_rec()
+         hRec := dbf_gethRec()
 
-         _rec[ "idfirma" ] := cIdFirma
-         _rec[ "idkonto" ] := cIdKonto
-         _rec[ "idpartner" ] := _id_partner
-         _rec[ "iznosbhd" ] := _saldo_1
-         _rec[ "iznosdem" ] := _saldo_2
+         hRec[ "idfirma" ] := cIdFirma
+         hRec[ "idkonto" ] := cIdKonto
+         hRec[ "idpartner" ] := _id_partner
+         hRec[ "iznosbhd" ] := _saldo_1
+         hRec[ "iznosdem" ] := _saldo_2
 
-         dbf_update_rec( _rec )
+         dbf_updatehRec( hRec )
 
          @ m_x + 3, m_y + 2 SAY PadR( "Partner: " + _id_partner + ", saldo: " + AllTrim( Str( _saldo_1, 12, 2 ) ), 60 )
 
@@ -1076,21 +1075,21 @@ STATIC FUNCTION _xml_partner( subnode, id_partner )
 // -----------------------------------------
 // ispivanje stavki IOS-a u TXT formatu
 // -----------------------------------------
-STATIC FUNCTION print_ios_txt( params )
+STATIC FUNCTION print_ios_txt( hParams )
 
    LOCAL _rbr
    LOCAL _n_opis := 0
-   LOCAL cIdFirma := params[ "id_firma" ]
-   LOCAL cIdKonto := params[ "id_konto" ]
-   LOCAL _id_partner := params[ "id_partner" ]
-   LOCAL _iznos_bhd := params[ "iznos_bhd" ]
-   LOCAL _iznos_dem := params[ "iznos_dem" ]
-   LOCAL _din_dem := params[ "din_dem" ]
-   LOCAL _datum_do := params[ "datum_do" ]
-   LOCAL _ios_date := params[ "ios_datum" ]
-   LOCAL _export_dbf := params[ "export_dbf" ]
-   LOCAL _kao_kartica := params[ "kartica" ]
-   LOCAL _prelomljeno := params[ "prelom" ]
+   LOCAL cIdFirma := hParams[ "id_firma" ]
+   LOCAL cIdKonto := hParams[ "id_konto" ]
+   LOCAL _id_partner := hParams[ "id_partner" ]
+   LOCAL _iznos_bhd := hParams[ "iznos_bhd" ]
+   LOCAL _iznos_dem := hParams[ "iznos_dem" ]
+   LOCAL _din_dem := hParams[ "din_dem" ]
+   LOCAL _datum_do := hParams[ "datum_do" ]
+   LOCAL _ios_date := hParams[ "ios_datum" ]
+   LOCAL _export_dbf := hParams[ "export_dbf" ]
+   LOCAL _kao_kartica := hParams[ "kartica" ]
+   LOCAL _prelomljeno := hParams[ "prelom" ]
    LOCAL _naz_partner
 
    ?

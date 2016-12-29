@@ -62,7 +62,7 @@ STATIC FUNCTION mnu_ios_print()
    LOCAL _kao_kartica := fetch_metric( "ios_print_kartica", my_user(), "D" )
    LOCAL _prelomljeno := fetch_metric( "ios_print_prelom", my_user(), "N" )
    LOCAL _export_dbf := "N"
-   LOCAL _print_tip := fetch_metric( "ios_print_tip", my_user(), "2" )
+   LOCAL _print_tip := fetch_metric( "ios_print_tip", my_user(), "1" )
    LOCAL _auto_gen := fetch_metric( "ios_auto_gen", my_user(), "D" )
    LOCAL _ios_date := Date()
    LOCAL _x := 1
@@ -75,7 +75,7 @@ STATIC FUNCTION mnu_ios_print()
 
    Box(, 16, 65, .F. )
 
-   @ m_x + _x, m_y + 2 SAY " Stampa IOS-a **** "
+   @ m_x + _x, m_y + 2 SAY8 " Štampa IOS-a **** "
 
    ++_x
    ++_x
@@ -98,34 +98,28 @@ STATIC FUNCTION mnu_ios_print()
 
    IF fin_dvovalutno()
       ++_x
-      @ m_x + _x, m_y + 2 SAY "Prikaz " + ;
-         AllTrim( ValDomaca() ) + "/" + ;
-         AllTrim( ValPomocna() ) + " (1/2)" ;
+      @ m_x + _x, m_y + 2 SAY "Prikaz " +   AllTrim( ValDomaca() ) + "/" +  AllTrim( ValPomocna() ) + " (1/2)" ;
          GET _din_dem VALID _din_dem $ "12"
    ENDIF
 
    ++_x
    ++_x
-   @ m_x + _x, m_y + 2 SAY "Prikaz prebijenog stanja " GET _prelomljeno ;
-      VALID _prelomljeno $ "DN" PICT "@!"
+   @ m_x + _x, m_y + 2 SAY8 "Prikaz prebijenog stanja " GET _prelomljeno  VALID _prelomljeno $ "DN" PICT "@!"
 
    ++_x
-   @ m_x + _x, m_y + 2 SAY "Prikaz identicno kartici " GET _kao_kartica ;
-      VALID _kao_kartica $ "DN" PICT "@!"
+   @ m_x + _x, m_y + 2 SAY8 "Prikaz identično kartici " GET _kao_kartica  VALID _kao_kartica $ "DN" PICT "@!"
 
    ++_x
    ++_x
-   @ m_x + _x, m_y + 2 SAY "Eksport podataka u dbf (D/N) ?" GET _export_dbf ;
-      VALID _export_dbf $ "DN" PICT "@!"
+   @ m_x + _x, m_y + 2 SAY8 "Eksport podataka u dbf (D/N) ?" GET _export_dbf   VALID _export_dbf $ "DN" PICT "@!"
 
    ++_x
 
-   @ m_x + _x, m_y + 2 SAY "Nacin stampe ODT/TXT (1/2) ?" GET _print_tip ;
-      VALID _print_tip $ "12"
+   @ m_x + _x, m_y + 2 SAY8 "Način stampe ODT/TXT (1/2) ?" GET _print_tip   VALID _print_tip $ "12"
 
    ++_x
 
-   @ m_x + _x, m_y + 2 SAY "Generisi podatke IOS-a automatski kod pokretanja (D/N) ?" GET _auto_gen ;
+   @ m_x + _x, m_y + 2 SAY8 "Generiši podatke IOS-a automatski kod pokretanja (D/N) ?" GET _auto_gen ;
       VALID _auto_gen $ "DN" PICT "@!"
 
 

@@ -265,7 +265,7 @@ STATIC FUNCTION print_ios_xml( hParams )
    LOCAL _ios_date := hParams[ "ios_datum" ]
    LOCAL _kao_kartica := hParams[ "kartica" ]
    LOCAL _prelomljeno := hParams[ "prelom" ]
-   LOCAL _saldo_1, _saldo_2, __saldo_1, __saldo_2
+   LOCAL nSaldo1, nSaldo2, __saldo_1, __saldo_2
    LOCAL _dug_1, _dug_2, _u_dug_1, _u_dug_2, _u_dug_1z, _u_dug_2z
    LOCAL _pot_1, _pot_2, _u_pot_1, _u_pot_2, _u_pot_1z, _u_pot_2z
 
@@ -292,13 +292,8 @@ STATIC FUNCTION print_ios_xml( hParams )
    xml_subnode( "ios_item", .F. )
 
 
-   // IF !_xml_partner( "firma", cIdFirma )    // maticna firma
-   // ENDIF
    _xml_partner( "firma", cIdFirma )
 
-
-   // IF !_xml_partner( "partner", cIdPartner )    // partner
-   // ENDIF
    _xml_partner( "partner", cIdPartner )
 
    xml_node( "ios_datum", DToC( _ios_date ) )
@@ -487,8 +482,8 @@ STATIC FUNCTION print_ios_xml( hParams )
    ENDDO
 
 
-   _saldo_1 := ( _u_dug_1 - _u_pot_1 ) // saldo
-   _saldo_2 := ( _u_dug_2 - _u_pot_2 )
+   nSaldo1 := ( _u_dug_1 - _u_pot_1 ) // saldo
+   nSaldo2 := ( _u_dug_2 - _u_pot_2 )
 
    IF _din_dem == "1"
 
@@ -501,11 +496,11 @@ STATIC FUNCTION print_ios_xml( hParams )
          xml_node( "greska", ""  )
       ENDIF
 
-      IF _saldo_1 >= 0
-         xml_node( "saldo", AllTrim( Str( _saldo_1, 12, 2 ) ) )
+      IF nSaldo1 >= 0
+         xml_node( "saldo", AllTrim( Str( nSaldo1, 12, 2 ) ) )
       ELSE
-         _saldo_1 := -_saldo_1
-         xml_node( "saldo", AllTrim( Str( _saldo_1, 12, 2 ) ) )
+         nSaldo1 := -nSaldo1
+         xml_node( "saldo", AllTrim( Str( nSaldo1, 12, 2 ) ) )
       ENDIF
 
    ELSE
@@ -519,11 +514,11 @@ STATIC FUNCTION print_ios_xml( hParams )
          xml_node( "greska", ""  )
       ENDIF
 
-      IF _saldo_2 >= 0
-         xml_node( "saldo", AllTrim( Str( _saldo_2, 12, 2 ) ) )
+      IF nSaldo2 >= 0
+         xml_node( "saldo", AllTrim( Str( nSaldo2, 12, 2 ) ) )
       ELSE
-         _saldo_2 := -_saldo_2
-         xml_node( "saldo", AllTrim( Str( _saldo_2, 12, 2 ) ) )
+         nSaldo2 := -nSaldo2
+         xml_node( "saldo", AllTrim( Str( nSaldo2, 12, 2 ) ) )
       ENDIF
 
    ENDIF
@@ -547,7 +542,7 @@ STATIC FUNCTION print_ios_xml( hParams )
 
 STATIC FUNCTION ios_clan_setup( setup_box )
 
-   LOCAL _txt := ""
+   LOCAL cTxt := ""
    LOCAL _clan
 
    IF setup_box == NIL
@@ -555,12 +550,12 @@ STATIC FUNCTION ios_clan_setup( setup_box )
    ENDIF
 
    // ovo je tekuci defaultni clan
-   _txt := "Prema clanu 28. stav 4. Zakona o racunovodstvu i reviziji u FBIH (Sl.novine FBIH, broj 83/09) "
-   _txt += "na ovu nasu konfirmaciju ste duzni odgovoriti u roku od osam dana. "
-   _txt += "Ukoliko u tom roku ne primimo potvrdu ili osporavanje iskazanog stanja, smatracemo da je "
-   _txt += "usaglasavanje izvrseno i da je stanje isto."
+   cTxt := "Prema clanu 28. stav 4. Zakona o racunovodstvu i reviziji u FBIH (Sl.novine FBIH, broj 83/09) "
+   cTxt += "na ovu nasu konfirmaciju ste duzni odgovoriti u roku od osam dana. "
+   cTxt += "Ukoliko u tom roku ne primimo potvrdu ili osporavanje iskazanog stanja, smatracemo da je "
+   cTxt += "usaglasavanje izvrseno i da je stanje isto."
 
-   _clan := PadR( fetch_metric( "ios_clan_txt", NIL, _txt ), 500 )
+   _clan := PadR( fetch_metric( "ios_clan_txt", NIL, cTxt ), 500 )
 
    IF setup_box
       Box(, 2, 70 )
@@ -574,7 +569,7 @@ STATIC FUNCTION ios_clan_setup( setup_box )
       ENDIF
    ENDIF
 
-   // snimi parametar
+
    set_metric( "ios_clan_txt", NIL, AllTrim( _clan ) )
    __ios_clan := AllTrim( _clan )
 
@@ -591,7 +586,7 @@ STATIC FUNCTION _ios_spec_vars( hParams )
 
    LOCAL cIdFirma := gFirma
    LOCAL cIdKonto := fetch_metric( "ios_spec_id_konto", my_user(), Space( 7 ) )
-   LOCAL _saldo_nula := "D"
+   LOCAL cPrikazSaSaldoNulaDN := "D"
    LOCAL _datum_do := Date()
 
    O_KONTO
@@ -602,8 +597,7 @@ STATIC FUNCTION _ios_spec_vars( hParams )
    ?? gFirma, "-", gNFirma
    @ m_x + 4, m_y + 2 SAY "Konto: " GET cIdKonto VALID P_Konto( @cIdKonto )
    @ m_x + 5, m_y + 2 SAY "Datum do kojeg se generise  :" GET _datum_do
-   @ m_x + 6, m_y + 2 SAY "Prikaz partnera sa saldom 0 :" GET _saldo_nula ;
-      VALID _saldo_nula $ "DN" PICT "@!"
+   @ m_x + 6, m_y + 2 SAY "Prikaz partnera sa saldom 0 :" GET cPrikazSaSaldoNulaDN VALID cPrikazSaSaldoNulaDN $ "DN" PICT "@!"
    READ
    BoxC()
 
@@ -618,10 +612,9 @@ STATIC FUNCTION _ios_spec_vars( hParams )
    set_metric( "ios_spec_id_konto", my_user(), cIdKonto )
    cIdFirma := Left( cIdFirma, 2 )
 
-   // napuni matricu sa parametrima
    hParams[ "id_konto" ] := cIdKonto
    hParams[ "id_firma" ] := cIdFirma
-   hParams[ "saldo_nula" ] := _saldo_nula
+   hParams[ "saldo_nula" ] := cPrikazSaSaldoNulaDN
    hParams[ "datum_do" ] := _datum_do
 
    RETURN .T.
@@ -632,7 +625,7 @@ STATIC FUNCTION _ios_spec_vars( hParams )
 /*
 STATIC FUNCTION ios_specifikacija( hParams )
 
-   LOCAL _datum_do, cIdFirma, cIdKonto, _saldo_nula
+   LOCAL _datum_do, cIdFirma, cIdKonto, cPrikazSaSaldoNulaDN
    LOCAL _line
    LOCAL cIdPartner, _rbr
    LOCAL _auto := .F.
@@ -652,7 +645,7 @@ STATIC FUNCTION ios_specifikacija( hParams )
    cIdFirma := hParams[ "id_firma" ]
    cIdKonto := hParams[ "id_konto" ]
    _datum_do := hParams[ "datum_do" ]
-   _saldo_nula := hParams[ "saldo_nula" ]
+   cPrikazSaSaldoNulaDN := hParams[ "saldo_nula" ]
 
    _line := _ios_spec_get_line()
 
@@ -710,7 +703,7 @@ STATIC FUNCTION ios_specifikacija( hParams )
       nSaldoBHD := nDugBHD - nPotBHD
       nSaldoDEM := nDugDEM - nPotDEM
 
-      IF _saldo_nula == "D" .OR. Round( nSaldoBHD, 2 ) <> 0
+      IF cPrikazSaSaldoNulaDN == "D" .OR. Round( nSaldoBHD, 2 ) <> 0
          // ako je iznos <> 0
 
          // daj mi prvi put zaglavlje
@@ -847,12 +840,12 @@ STATIC FUNCTION _spec_zaglavlje( id_firma, id_partner, line )
 
 STATIC FUNCTION ios_generacija_podataka( hParams )
 
-   LOCAL _datum_do, cIdFirma, cIdKonto, _saldo_nula
-   LOCAL cIdPartner, hRec, _cnt
+   LOCAL _datum_do, cIdFirma, cIdKonto, cPrikazSaSaldoNulaDN
+   LOCAL cIdPartner, hRec, nCount
    LOCAL _auto := .F.
    LOCAL _dug_1, _dug_2, _u_dug_1, _u_dug_2
    LOCAL _pot_1, _pot_2, _u_pot_1, _u_pot_2
-   LOCAL _saldo_1, _saldo_2
+   LOCAL nSaldo1, nSaldo2
    LOCAL cIdPartnerTekuci
 
    IF hParams == NIL
@@ -867,13 +860,12 @@ STATIC FUNCTION ios_generacija_podataka( hParams )
       RETURN .F.
    ENDIF
 
-   // iz parametara uzmi uslove
    cIdFirma := hParams[ "id_firma" ]
    cIdKonto := hParams[ "id_konto" ]
    cIdPartner := hParams[ "id_partner" ]
 
    _datum_do := hParams[ "datum_do" ]
-   _saldo_nula := hParams[ "saldo_nula" ]
+   cPrikazSaSaldoNulaDN := hParams[ "saldo_nula" ]
 
    O_PARTN
    O_KONTO
@@ -891,8 +883,7 @@ STATIC FUNCTION ios_generacija_podataka( hParams )
 
    EOF CRET
 
-   _cnt := 0
-
+   nCount := 0
    Box(, 3, 65 )
 
    @ m_x + 1, m_y + 2 SAY8 "sačekajte ... generacija ios pomoćne tabele"
@@ -900,7 +891,7 @@ STATIC FUNCTION ios_generacija_podataka( hParams )
 
    DO WHILE !Eof() .AND. cIdFirma == field->idfirma .AND. cIdKonto == field->idkonto
 
-      cIdPartnerTekuci := field->idpartner
+      cIdPartnerTekuci := hb_Utf8ToStr( field->idpartner )
 
       _dug_1 := 0
       _u_dug_1 := 0
@@ -910,8 +901,8 @@ STATIC FUNCTION ios_generacija_podataka( hParams )
       _u_pot_1 := 0
       _pot_2 := 0
       _u_pot_2 := 0
-      _saldo_1 := 0
-      _saldo_2 := 0
+      nSaldo1 := 0
+      nSaldo2 := 0
 
       DO WHILE !Eof() .AND. cIdFirma == field->idfirma  .AND. cIdKonto == field->idkonto  .AND. cIdPartnerTekuci == field->idpartner
 
@@ -939,27 +930,26 @@ STATIC FUNCTION ios_generacija_podataka( hParams )
 
       ENDDO
 
-      _saldo_1 := _dug_1 - _pot_1
-      _saldo_2 := _dug_2 - _pot_2
+      nSaldo1 := _dug_1 - _pot_1
+      nSaldo2 := _dug_2 - _pot_2
 
-      IF _saldo_nula == "D" .OR. Round( _saldo_1, 2 ) <> 0
+      IF cPrikazSaSaldoNulaDN == "D" .OR. Round( nSaldo1, 2 ) <> 0
 
          SELECT ios
          APPEND BLANK
-
          hRec := dbf_get_rec()
 
          hRec[ "idfirma" ] := cIdFirma
          hRec[ "idkonto" ] := cIdKonto
          hRec[ "idpartner" ] := cIdPartnerTekuci
-         hRec[ "iznosbhd" ] := _saldo_1
-         hRec[ "iznosdem" ] := _saldo_2
+         hRec[ "iznosbhd" ] := nSaldo1
+         hRec[ "iznosdem" ] := nSaldo2
 
          dbf_update_rec( hRec )
 
-         @ m_x + 3, m_y + 2 SAY PadR( "Partner: " + cIdPartner + ", saldo: " + AllTrim( Str( _saldo_1, 12, 2 ) ), 60 )
+         @ m_x + 3, m_y + 2 SAY PadR( "Partner: " + cIdPartner + ", saldo: " + AllTrim( Str( nSaldo1, 12, 2 ) ), 60 )
 
-         ++_cnt
+         ++nCount
 
       ENDIF
 
@@ -969,7 +959,7 @@ STATIC FUNCTION ios_generacija_podataka( hParams )
 
    BoxC()
 
-   RETURN _cnt
+   RETURN nCount
 
 
 

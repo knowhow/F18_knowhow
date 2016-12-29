@@ -292,9 +292,9 @@ STATIC FUNCTION print_ios_xml( hParams )
    xml_subnode( "ios_item", .F. )
 
 
-   _xml_partner( "firma", cIdFirma )
+   ios_xml_partner( "firma", cIdFirma )
 
-   _xml_partner( "partner", cIdPartner )
+   ios_xml_partner( "partner", cIdPartner )
 
    xml_node( "ios_datum", DToC( _ios_date ) )
    xml_node( "id_konto", to_xml_encoding( cIdKonto ) )
@@ -891,7 +891,7 @@ STATIC FUNCTION ios_generacija_podataka( hParams )
 
    DO WHILE !Eof() .AND. cIdFirma == field->idfirma .AND. cIdKonto == field->idkonto
 
-      cIdPartnerTekuci := hb_Utf8ToStr( field->idpartner )
+      cIdPartnerTekuci := hb_Utf8ToStr( field->idpartner ) // idpartner cp852
 
       _dug_1 := 0
       _u_dug_1 := 0
@@ -964,11 +964,7 @@ STATIC FUNCTION ios_generacija_podataka( hParams )
 
 
 
-// ------------------------------------------------------
-// upisi u xml fajl podatke partnera
-// u odredjeni subnode
-// ------------------------------------------------------
-STATIC FUNCTION _xml_partner( subnode, cIdPartner )
+STATIC FUNCTION ios_xml_partner( cSubnode, cIdPartner )
 
    LOCAL _ret := .T.
    LOCAL _jib, cPdvBroj, cIdBroj
@@ -982,7 +978,7 @@ STATIC FUNCTION _xml_partner( subnode, cIdPartner )
       RETURN _ret
    ENDIF
 
-   xml_subnode( subnode, .F. )
+   xml_subnode( cSubnode, .F. )
 
    IF Empty( cIdPartner )
       xml_node( "id", to_xml_encoding( "-" ) )
@@ -1014,7 +1010,7 @@ STATIC FUNCTION _xml_partner( subnode, cIdPartner )
       xml_node( "idbbr", cIdBroj )
    ENDIF
 
-   xml_subnode( subnode, .T. )
+   xml_subnode( cSubnode, .T. )
 
    RETURN _ret
 

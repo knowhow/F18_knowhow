@@ -946,7 +946,7 @@ STATIC FUNCTION ios_generacija_podataka( hParams )
 
          dbf_update_rec( hRec )
 
-         @ m_x + 3, m_y + 2 SAY PadR( "Partner: " + cIdPartner + ", saldo: " + AllTrim( Str( nSaldo1, 12, 2 ) ), 60 )
+         @ m_x + 3, m_y + 2 SAY PadR( "Partner: " + cIdPartnerTekuci + ", saldo: " + AllTrim( Str( nSaldo1, 12, 2 ) ), 60 )
 
          ++nCount
 

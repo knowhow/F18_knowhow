@@ -32,13 +32,13 @@ FUNCTION ios()
    R1 := R1 + " " + ValDomaca()
    R2 := R2 + " " + ValPomocna()
 
-   AAdd( _opc, "1. specifikacija IOS-a (pregled podataka prije štampe) " )
-   AAdd( _opcexe, {|| ios_specifikacija() } )
-   AAdd( _opc, "2. štampa IOS-a" )
+   //AAdd( _opc, "1. specifikacija IOS-a (pregled podataka prije štampe) " )
+   //AAdd( _opcexe, {|| ios_specifikacija() } )
+   AAdd( _opc, "1. štampa IOS-a" )
    AAdd( _opcexe, {|| mnu_ios_print() } )
-   AAdd( _opc, "3. generisanje podataka za štampu IOS-a" )
-   AAdd( _opcexe, {|| ios_generacija_podataka() } )
-   AAdd( _opc, "4. podesenje član-a" )
+   //AAdd( _opc, "3. generisanje podataka za štampu IOS-a" )
+   //AAdd( _opcexe, {|| ios_generacija_podataka() } )
+   AAdd( _opc, "2. podešenje član-a" )
    AAdd( _opcexe, {|| ios_clan_setup() } )
 
 
@@ -152,7 +152,7 @@ STATIC FUNCTION mnu_ios_print()
       _gen_par[ "id_firma" ] := cIdFirma
       _gen_par[ "saldo_nula" ] := "D"
       _gen_par[ "datum_do" ] := _datum_do
-      ios_generacija_podataka( _gen_par )     // generisi podatke u IOS tabelu
+      //ios_generacija_podataka( _gen_par )     // generisi podatke u IOS tabelu
 
    ENDIF
 
@@ -678,7 +678,7 @@ STATIC FUNCTION _ios_spec_vars( params )
 
 
 
-
+/*
 STATIC FUNCTION ios_specifikacija( params )
 
    LOCAL _datum_do, cIdFirma, cIdKonto, _saldo_nula
@@ -891,14 +891,11 @@ STATIC FUNCTION _spec_zaglavlje( id_firma, id_partner, line )
 
    RETURN .T.
 
+*/
 
 
 
-
-// -------------------------------------------------------
-// specifikacija IOS-a
-// -------------------------------------------------------
-
+/*
 STATIC FUNCTION ios_generacija_podataka( params )
 
    LOCAL _datum_do, cIdFirma, cIdKonto, _saldo_nula
@@ -1023,7 +1020,7 @@ STATIC FUNCTION ios_generacija_podataka( params )
 
    RETURN _cnt
 
-
+*/
 
 
 

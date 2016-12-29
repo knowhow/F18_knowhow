@@ -15,7 +15,9 @@
 
 FUNCTION Get1_RN()
 
-altd()
+   LOCAL nNV
+
+   AltD()
    IF nRbr == 1 .AND. kalk_is_novi_dokument()
       _DatFaktP := _datdok
    ENDIF
@@ -126,8 +128,8 @@ altd()
       my_flock()
       DO WHILE !Eof()
          IF Val( RBr ) > 900
-            nNV += NC  // ovo je u stvari nabavna vrijednost
-            REPLACE NC WITH NC / Kolicina,  vpc WITH NC, fcj WITH nc
+            nNV += field->NC  // ovo je u stvari nabavna vrijednost
+            REPLACE NC WITH field->NC / field->Kolicina,  vpc WITH field->NC, fcj WITH field->nc
          ENDIF
          SKIP
       ENDDO
@@ -143,7 +145,8 @@ altd()
       ESC_RETURN K_ESC
    ELSE
 
-      @ m_x + 10, m_y + 2   SAY "Mag. gotovih proizvoda zaduzuje "; ?? _IdKonto
+      @ m_x + 10, m_y + 2   SAY "Mag. gotovih proizvoda zaduzuje "
+      ?? _IdKonto
       // IF gNW <> "X"
       // @ m_x + 10, m_y + 42  SAY "Zaduzuje: "; ?? _IdZaduz
       // ENDIF

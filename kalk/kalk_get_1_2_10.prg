@@ -62,7 +62,7 @@ FUNCTION kalk_get_1_10()
       // ENDIF
 
       IF !Empty( cRNT1 )
-         @ m_x + _x, m_y + 42  SAY "Rad.nalog:" GET _IdZaduz2  PICT "@!"
+         @ m_x + _x, m_y + 60  SAY "Rad.nalog:" GET _IdZaduz2  PICT "@!"
       ENDIF
 
       READ

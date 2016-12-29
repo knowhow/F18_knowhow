@@ -24,8 +24,7 @@ FUNCTION kalk_get_1_95()
 
    IF nRbr == 1 .OR. !kalk_is_novi_dokument() .OR. gMagacin == "1"
       @  m_x + 5, m_y + 2   SAY "Dokument Broj:" GET _BrFaktP VALID !Empty( _BrFaktP )
-      @  m_x + 5, Col() + 1 SAY "Datum:" GET _DatFaktP   ;
-        VALID { ||  datum_not_empty_upozori_godina( _datFaktP, "Datum fakture" ) }
+      @  m_x + 5, Col() + 1 SAY "Datum:" GET _DatFaktP  VALID { ||  datum_not_empty_upozori_godina( _datFaktP, "Datum fakture" ) }
 
 
       _IdZaduz := ""
@@ -36,9 +35,9 @@ FUNCTION kalk_get_1_95()
       // ELSE
       IF !Empty( cRNT1 ) .AND. _idvd $ "97#96#95"
          IF ( IsRamaGlas() )
-            @ m_x + 8, m_y + 40 SAY "Rad.nalog:" GET _IdZaduz2 PICT "@!" VALID RadNalOK()
+            @ m_x + 8, m_y + 60 SAY "Rad.nalog:" GET _IdZaduz2 PICT "@!" VALID RadNalOK()
          ELSE
-            @ m_x + 8, m_y + 40 SAY "Rad.nalog:" GET _IdZaduz2   PICT "@!"
+            @ m_x + 8, m_y + 60 SAY "Rad.nalog:" GET _IdZaduz2   PICT "@!"
          ENDIF
       ENDIF
       // ENDIF

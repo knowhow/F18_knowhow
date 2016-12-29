@@ -32,12 +32,12 @@ FUNCTION ios()
    R1 := R1 + " " + ValDomaca()
    R2 := R2 + " " + ValPomocna()
 
-   //AAdd( _opc, "1. specifikacija IOS-a (pregled podataka prije štampe) " )
-   //AAdd( _opcexe, {|| ios_specifikacija() } )
+   // AAdd( _opc, "1. specifikacija IOS-a (pregled podataka prije štampe) " )
+   // AAdd( _opcexe, {|| ios_specifikacija() } )
    AAdd( _opc, "1. štampa IOS-a            " )
    AAdd( _opcexe, {|| mnu_ios_print() } )
-   //AAdd( _opc, "3. generisanje podataka za štampu IOS-a" )
-   //AAdd( _opcexe, {|| ios_generacija_podataka() } )
+   // AAdd( _opc, "3. generisanje podataka za štampu IOS-a" )
+   // AAdd( _opcexe, {|| ios_generacija_podataka() } )
    AAdd( _opc, "2. podešenje član-a" )
    AAdd( _opcexe, {|| ios_clan_setup() } )
 
@@ -53,8 +53,8 @@ FUNCTION ios()
 STATIC FUNCTION mnu_ios_print()
 
    LOCAL _datum_do := Date()
-   LOCAL _params := hb_Hash()
-   LOCAL _gen_par := hb_Hash()
+   LOCAL hParams := hb_Hash()
+   LOCAL hParametriGenIOS := hb_Hash()
    LOCAL cIdFirma := gFirma
    LOCAL cIdKonto := fetch_metric( "ios_print_id_konto", my_user(), Space( 7 ) )
    LOCAL cIdPartner := fetch_metric( "ios_print_id_partner", my_user(), Space( 6 ) )
@@ -69,6 +69,7 @@ STATIC FUNCTION mnu_ios_print()
    LOCAL _launch, _exp_fields
    LOCAL _xml_file := my_home() + "data.xml"
    LOCAL _template := "ios.odt"
+   LOCAL cIdPartnerTekuci
 
    O_KONTO
    O_PARTN
@@ -140,12 +141,17 @@ STATIC FUNCTION mnu_ios_print()
 
    IF _auto_gen == "D"    // generisi podatke u tabelu prije same stampe
 
-      _gen_par := hb_Hash()
-      _gen_par[ "id_konto" ] := cIdKonto
-      _gen_par[ "id_firma" ] := cIdFirma
-      _gen_par[ "saldo_nula" ] := "D"
-      _gen_par[ "datum_do" ] := _datum_do
-      ios_generacija_podataka( _gen_par )     // generisi podatke u IOS tabelu
+      hParametriGenIOS := hb_Hash()
+      hParametriGenIOS[ "id_konto" ] := cIdKonto
+      hParametriGenIOS[ "id_firma" ] := cIdFirma
+      hParametriGenIOS[ "id_partner" ] := NIL
+      IF !Empty( cIdPartner )
+         hParametriGenIOS[ "id_partner" ] := cIdPartner
+      ENDIF
+
+      hParametriGenIOS[ "saldo_nula" ] := "D"
+      hParametriGenIOS[ "datum_do" ] := _datum_do
+      ios_generacija_podataka( hParametriGenIOS )     // generisi podatke u IOS tabelu
 
    ENDIF
 
@@ -181,38 +187,35 @@ STATIC FUNCTION mnu_ios_print()
       xml_subnode( "ios", .F. )
    ENDIF
 
-altd()
+   AltD()
    SELECT ios
 
    DO WHILE !Eof() .AND. cIdFirma == field->idfirma .AND. cIdKonto == field->idkonto
 
-      cIdPartner := field->idpartner
+      cIdPartnerTekuci := field->idpartner
 
-
-      IF !Empty( cIdPartner )       // pronadji za partnera
-         IF cIdPartner <> cIdPartner
-            SKIP
-            LOOP
-         ENDIF
+      IF !Empty( cIdPartner ) .AND. cIdPartner <> cIdPartnerTekuci
+         SKIP
+         LOOP
       ENDIF
 
-      _params := hb_Hash()
-      _params[ "id_partner" ] := cIdPartner
-      _params[ "id_konto" ] := cIdKonto
-      _params[ "id_firma" ] := cIdFirma
-      _params[ "din_dem" ] := _din_dem
-      _params[ "datum_do" ] := _datum_do
-      _params[ "ios_datum" ] := _ios_date
-      _params[ "export_dbf" ] := _export_dbf
-      _params[ "iznos_bhd" ] := ios->iznosbhd
-      _params[ "iznos_dem" ] := ios->iznosdem
-      _params[ "kartica" ] := _kao_kartica
-      _params[ "prelom" ] := _prelomljeno
+      hParams := hb_Hash()
+      hParams[ "id_partner" ] := cIdPartnerTekuci
+      hParams[ "id_konto" ] := cIdKonto
+      hParams[ "id_firma" ] := cIdFirma
+      hParams[ "din_dem" ] := _din_dem
+      hParams[ "datum_do" ] := _datum_do
+      hParams[ "ios_datum" ] := _ios_date
+      hParams[ "export_dbf" ] := _export_dbf
+      hParams[ "iznos_bhd" ] := ios->iznosbhd
+      hParams[ "iznos_dem" ] := ios->iznosdem
+      hParams[ "kartica" ] := _kao_kartica
+      hParams[ "prelom" ] := _prelomljeno
 
       IF _print_tip == "2"
-         print_ios_txt( _params )
+         print_ios_txt( hParams )
       ELSE
-         print_ios_xml( _params )
+         print_ios_xml( hParams )
       ENDIF
 
       SKIP
@@ -291,10 +294,12 @@ STATIC FUNCTION print_ios_xml( hParams )
 
    // IF !_xml_partner( "firma", cIdFirma )    // maticna firma
    // ENDIF
+   _xml_partner( "firma", cIdFirma )
 
 
    // IF !_xml_partner( "partner", cIdPartner )    // partner
    // ENDIF
+   _xml_partner( "partner", cIdPartner )
 
    xml_node( "ios_datum", DToC( _ios_date ) )
    xml_node( "id_konto", to_xml_encoding( cIdKonto ) )
@@ -351,9 +356,7 @@ STATIC FUNCTION print_ios_xml( hParams )
 
    _rbr := 0
 
-   DO WHILE !Eof() .AND. cIdFirma == field->IdFirma ;
-         .AND. cIdKonto == field->IdKonto ;
-         .AND. cIdPartner == field->IdPartner
+   DO WHILE !Eof() .AND. cIdFirma == field->IdFirma .AND. cIdKonto == field->IdKonto  .AND. cIdPartner == field->IdPartner
 
       __br_dok := field->brdok
       __dat_dok := field->datdok
@@ -542,10 +545,6 @@ STATIC FUNCTION print_ios_xml( hParams )
 
 
 
-
-// --------------------------------------------------
-// podesenje clan-a za stampu IOS-a
-// --------------------------------------------------
 STATIC FUNCTION ios_clan_setup( setup_box )
 
    LOCAL _txt := ""
@@ -581,47 +580,6 @@ STATIC FUNCTION ios_clan_setup( setup_box )
 
    RETURN .T.
 
-
-
-
-// ---------------------------------------------------------
-// linija za specifikaciju iosa
-// ---------------------------------------------------------
-STATIC FUNCTION _ios_spec_get_line()
-
-   LOCAL _line
-   LOCAL _space := Space( 1 )
-
-   _line := "-----"
-   _line += _space
-   _line += "------"
-   _line += _space
-   _line += "------------------------------------"
-   _line += _space
-   _line += "-----"
-   _line += _space
-   _line += "-----------------"
-   _line += _space
-   _line += "---------------"
-   _line += _space
-   _line += "----------------"
-   _line += _space
-   _line += "----------------"
-   _line += _space
-   _line += "----------------"
-
-   IF fin_dvovalutno()
-      _line += _space
-      _line += "------------"
-      _line += _space
-      _line += "------------"
-      _line += _space
-      _line += "------------"
-      _line += _space
-      _line += "------------"
-   ENDIF
-
-   RETURN _line
 
 
 
@@ -895,6 +853,7 @@ STATIC FUNCTION ios_generacija_podataka( hParams )
    LOCAL _dug_1, _dug_2, _u_dug_1, _u_dug_2
    LOCAL _pot_1, _pot_2, _u_pot_1, _u_pot_2
    LOCAL _saldo_1, _saldo_2
+   LOCAL cIdPartnerTekuci
 
    IF hParams == NIL
       MsgBeep( "Napomena: ova opcija puni pomocnu tabelu na osnovu koje se#stampaju IOS obrasci" )
@@ -911,6 +870,8 @@ STATIC FUNCTION ios_generacija_podataka( hParams )
    // iz parametara uzmi uslove
    cIdFirma := hParams[ "id_firma" ]
    cIdKonto := hParams[ "id_konto" ]
+   cIdPartner := hParams[ "id_partner" ]
+
    _datum_do := hParams[ "datum_do" ]
    _saldo_nula := hParams[ "saldo_nula" ]
 
@@ -926,7 +887,7 @@ STATIC FUNCTION ios_generacija_podataka( hParams )
    // SELECT suban
    // SET ORDER TO TAG "1"
    // SEEK cIdFirma + cIdKonto
-   find_suban_by_konto_partner( cIdFirma, cIdKonto )
+   find_suban_by_konto_partner( cIdFirma, cIdKonto, cIdPartner )
 
    EOF CRET
 
@@ -935,11 +896,11 @@ STATIC FUNCTION ios_generacija_podataka( hParams )
    Box(, 3, 65 )
 
    @ m_x + 1, m_y + 2 SAY8 "sačekajte ... generacija ios pomoćne tabele"
-   altd()
+   AltD()
 
    DO WHILE !Eof() .AND. cIdFirma == field->idfirma .AND. cIdKonto == field->idkonto
 
-      cIdPartner := field->idpartner
+      cIdPartnerTekuci := field->idpartner
 
       _dug_1 := 0
       _u_dug_1 := 0
@@ -952,7 +913,7 @@ STATIC FUNCTION ios_generacija_podataka( hParams )
       _saldo_1 := 0
       _saldo_2 := 0
 
-      DO WHILE !Eof() .AND. cIdFirma == field->idfirma  .AND. cIdKonto == field->idkonto  .AND. cIdPartner == field->idpartner
+      DO WHILE !Eof() .AND. cIdFirma == field->idfirma  .AND. cIdKonto == field->idkonto  .AND. cIdPartnerTekuci == field->idpartner
 
 
          IF field->datdok > _datum_do        // ako je datum veci od datuma do kojeg generisem
@@ -990,7 +951,7 @@ STATIC FUNCTION ios_generacija_podataka( hParams )
 
          hRec[ "idfirma" ] := cIdFirma
          hRec[ "idkonto" ] := cIdKonto
-         hRec[ "idpartner" ] := cIdPartner
+         hRec[ "idpartner" ] := cIdPartnerTekuci
          hRec[ "iznosbhd" ] := _saldo_1
          hRec[ "iznosdem" ] := _saldo_2
 
@@ -1067,7 +1028,6 @@ STATIC FUNCTION _xml_partner( subnode, cIdPartner )
    xml_subnode( subnode, .T. )
 
    RETURN _ret
-
 
 
 
@@ -1266,7 +1226,6 @@ STATIC FUNCTION print_ios_txt( hParams )
             cOtvSt := " "
 
          ELSE
-            // zatvorene stavke
 
             IF field->D_P == "1"
                nDugBHDZ += field->IznosBHD
@@ -1497,15 +1456,40 @@ STATIC FUNCTION print_ios_txt( hParams )
    @ PRow(), 0 SAY "_________________________________________________________________________"
    ?
    ?
-   @ PRow(), 48 SAY "DU�NIK:"
+   @ PRow(), 48 SAY8 "DUŽNIK:"
    @ PRow() + 1, 40 SAY "_______________________ M.P."
    @ PRow() + 1, 44 SAY "( MJESTO I DATUM )"
 
    SELECT ios
 
-   RETURN
+   RETURN .T.
 
 
+
+
+
+// ---------------------------------------------------------
+// filovanje tabele sa podacima
+// ---------------------------------------------------------
+STATIC FUNCTION fill_exp_tbl( cIdPart, cNazPart, cBrRn, cOpis, dDatum, dValuta, nDug, nPot )
+
+   LOCAL _t_area := Select()
+
+   O_R_EXP
+   APPEND BLANK
+
+   REPLACE field->idpartner WITH cIdPart
+   REPLACE field->partner WITH cNazPart
+   REPLACE field->brrn WITH cBrRn
+   REPLACE field->opis WITH cOpis
+   REPLACE field->datum WITH dDatum
+   REPLACE field->valuta WITH dValuta
+   REPLACE field->duguje WITH nDug
+   REPLACE field->potrazuje WITH nPot
+
+   SELECT ( _t_area )
+
+   RETURN .T.
 
 
 // ------------------------------------------
@@ -1529,28 +1513,41 @@ STATIC FUNCTION g_exp_fields()
 
 
 
-
 // ---------------------------------------------------------
-// filovanje tabele sa podacima
+// linija za specifikaciju iosa
 // ---------------------------------------------------------
-STATIC FUNCTION fill_exp_tbl( cIdPart, cNazPart, ;
-      cBrRn, cOpis, dDatum, dValuta, ;
-      nDug, nPot )
+STATIC FUNCTION _ios_spec_get_line()
 
-   LOCAL _t_area := Select()
+   LOCAL _line
+   LOCAL _space := Space( 1 )
 
-   O_R_EXP
-   APPEND BLANK
+   _line := "-----"
+   _line += _space
+   _line += "------"
+   _line += _space
+   _line += "------------------------------------"
+   _line += _space
+   _line += "-----"
+   _line += _space
+   _line += "-----------------"
+   _line += _space
+   _line += "---------------"
+   _line += _space
+   _line += "----------------"
+   _line += _space
+   _line += "----------------"
+   _line += _space
+   _line += "----------------"
 
-   REPLACE field->idpartner WITH cIdPart
-   REPLACE field->partner WITH cNazPart
-   REPLACE field->brrn WITH cBrRn
-   REPLACE field->opis WITH cOpis
-   REPLACE field->datum WITH dDatum
-   REPLACE field->valuta WITH dValuta
-   REPLACE field->duguje WITH nDug
-   REPLACE field->potrazuje WITH nPot
+   IF fin_dvovalutno()
+      _line += _space
+      _line += "------------"
+      _line += _space
+      _line += "------------"
+      _line += _space
+      _line += "------------"
+      _line += _space
+      _line += "------------"
+   ENDIF
 
-   SELECT ( _t_area )
-
-   RETURN
+   RETURN _line

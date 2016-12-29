@@ -986,7 +986,7 @@ STATIC FUNCTION ios_generacija_podataka( hParams )
          SELECT ios
          APPEND BLANK
 
-         hRec := dbf_gethRec()
+         hRec := dbf_get_rec()
 
          hRec[ "idfirma" ] := cIdFirma
          hRec[ "idkonto" ] := cIdKonto
@@ -994,7 +994,7 @@ STATIC FUNCTION ios_generacija_podataka( hParams )
          hRec[ "iznosbhd" ] := _saldo_1
          hRec[ "iznosdem" ] := _saldo_2
 
-         dbf_updatehRec( hRec )
+         dbf_update_rec( hRec )
 
          @ m_x + 3, m_y + 2 SAY PadR( "Partner: " + _id_partner + ", saldo: " + AllTrim( Str( _saldo_1, 12, 2 ) ), 60 )
 

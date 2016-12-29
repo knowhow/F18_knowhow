@@ -904,10 +904,9 @@ STATIC FUNCTION ios_generacija_podataka( hParams )
       nSaldo1 := 0
       nSaldo2 := 0
 
-      DO WHILE !Eof() .AND. cIdFirma == field->idfirma  .AND. cIdKonto == field->idkonto  .AND. cIdPartnerTekuci == field->idpartner
+      DO WHILE !Eof() .AND. cIdFirma == field->idfirma  .AND. cIdKonto == field->idkonto  .AND. cIdPartnerTekuci == hb_Utf8ToStr( field->idpartner )
 
-
-         IF field->datdok > _datum_do        // ako je datum veci od datuma do kojeg generisem
+         IF field->datdok > _datum_do // ako je datum veci od datuma do kojeg generisem
             SKIP
             LOOP
          ENDIF

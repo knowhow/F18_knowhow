@@ -8,22 +8,10 @@ Status](https://secure.travis-ci.org/knowhow/F18_knowhow.png?branch=master)](htt
 
 ### windows MSYS2
 
-pacman -Sy git  mingw-w64-i686-make
-pacman -Sy  mingw-w64-i686-gcc mingw-w64-i686-postgresql mingw-w64-i686-openssl
-pacman  -Sy base-devel msys2-devel mingw-w64-i686-toolchain upx p7zip
+    #pacman -Sy git  mingw-w64-i686-make
+    pacman -Sy   mingw-w64-i686-postgresql mingw-w64-i686-openssl
+    pacman  -Sy base-devel msys2-devel mingw-w64-i686-toolchain upx p7zip
 
-export MINGW=i686-w64-mingw32
-export CC=$MINGW-gcc
-export CXX=$MINGW-g++
-export CPP=$MINGW-cpp
-export AR=$MINGW-ar
-export RANLIB=$MINGW-ranlib
-export ADD2LINE=$MINGW-addr2line
-export AS=$MINGW-as
-export WINDRES=$MINGW-windres
-export LD=$MINGW-ld
-export NM=$MINGW-nm
-export STRIP=$MINGW-strip
 
 ### database init
 

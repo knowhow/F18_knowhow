@@ -25,8 +25,8 @@ FUNCTION datum_not_empty_upozori_godina( dDate, cMsg )
       RETURN .F.
    ENDIF
 
-   IF Year( dDate ) != Year( Date() )
-      MsgBeep( "UPOZORENJE:" + cMsg + ": datum <> tekuća godina !?" )
+   IF Year( dDate ) !=  tekuca_sezona()
+      MsgBeep( "UPOZORENJE:" + cMsg + ": datum <> tekuća sezona !?" )
       RETURN .T.
 
    ENDIF

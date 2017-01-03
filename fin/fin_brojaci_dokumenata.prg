@@ -14,9 +14,9 @@
 
 FUNCTION fin_novi_broj_dokumenta( firma, tip_dokumenta )
 
-   LOCAL _broj := 0
-   LOCAL _broj_nalog := 0
-   LOCAL _len_broj := 8
+   LOCAL nBroj := 0
+   LOCAL nBrojNalog := 0
+   LOCAL nBrojNalogDuzina := 8
    LOCAL _param
    LOCAL _tmp, _rest
    LOCAL _ret := ""
@@ -33,30 +33,28 @@ FUNCTION fin_novi_broj_dokumenta( firma, tip_dokumenta )
       _param := "fin" + "/" + firma
    ENDIF
 
-   _broj := fetch_metric( _param, nil, _broj )
+   nBroj := fetch_metric( _param, nil, nBroj )
 
    // konsultuj i doks uporedo
    IF gBrojacFinNaloga == "2" // Brojac naloga: 1 - (firma,vn,brnal), 2 - (firma,brnal)
       find_nalog_by_broj_dokumenta( firma, tip_dokumenta, NIL, "idfirma,brnal" )
    ELSE
       find_nalog_by_broj_dokumenta( firma, tip_dokumenta )
-
    ENDIF
    GO BOTTOM
 
    IF field->idfirma == firma .AND. iif( gBrojacFinNaloga == "1", field->idvn == tip_dokumenta, .T. )
-      _broj_nalog := Val( field->brnal )
+      nBrojNalog := Val( field->brnal )
    ELSE
-      _broj_nalog := 0
+      nBrojNalog := 0
    ENDIF
 
 
-   _broj := Max( _broj, _broj_nalog ) // uzmi sta je vece, nalog broj ili globalni brojac
-   ++ _broj
+   nBroj := Max( nBroj, nBrojNalog ) // uzmi sta je vece, nalog broj ili globalni brojac
+   ++ nBroj
+   _ret := PadL( AllTrim( Str( nBroj ) ), nBrojNalogDuzina, "0" ) // ovo ce napraviti string prave duzine
 
-   _ret := PadL( AllTrim( Str( _broj ) ), _len_broj, "0" ) // ovo ce napraviti string prave duzine
-
-   set_metric( _param, nil, _broj ) // upisi ga u globalni parametar
+   set_metric( _param, nil, nBroj ) // upisi ga u globalni parametar
 
    SELECT ( _t_area )
 
@@ -69,7 +67,7 @@ FUNCTION fin_set_broj_dokumenta()
    LOCAL _broj_dokumenta
    LOCAL _t_rec, _rec
    LOCAL _firma, _td, _null_brdok
-   LOCAL _len_broj := 8
+   LOCAL nBrojNalogDuzina := 8
 
    PushWA()
 
@@ -124,7 +122,7 @@ FUNCTION fin_set_broj_dokumenta()
 FUNCTION fin_set_param_broj_dokumenta()
 
    LOCAL _param
-   LOCAL _broj := 0
+   LOCAL nBroj := 0
    LOCAL _broj_old
    LOCAL _firma := gFirma
    LOCAL _tip_dok := "10"
@@ -151,10 +149,10 @@ FUNCTION fin_set_param_broj_dokumenta()
       _param := "fin" + "/" + _firma
    ENDIF
 
-   _broj := fetch_metric( _param, nil, _broj )
-   _broj_old := _broj
+   nBroj := fetch_metric( _param, nil, nBroj )
+   _broj_old := nBroj
 
-   @ m_x + 2, m_y + 2 SAY "Zadnji broj naloga:" GET _broj PICT "99999999"
+   @ m_x + 2, m_y + 2 SAY "Zadnji broj naloga:" GET nBroj PICT "99999999"
 
    READ
 
@@ -162,8 +160,8 @@ FUNCTION fin_set_param_broj_dokumenta()
 
    IF LastKey() != K_ESC
       // snimi broj u globalni brojac
-      IF _broj <> _broj_old
-         set_metric( _param, nil, _broj )
+      IF nBroj <> _broj_old
+         set_metric( _param, nil, nBroj )
       ENDIF
    ENDIF
 
@@ -184,14 +182,14 @@ FUNCTION fin_prazan_broj_naloga()
 FUNCTION fin_reset_broj_dokumenta( firma, tip_dokumenta, broj_dokumenta )
 
    LOCAL _param
-   LOCAL _broj := 0
+   LOCAL nBroj := 0
 
    _param := "fin" + "/" + firma + "/" + tip_dokumenta // param: fin/10/10
-   _broj := fetch_metric( _param, nil, _broj )
+   nBroj := fetch_metric( _param, nil, nBroj )
 
-   IF Val( broj_dokumenta ) == _broj
-      -- _broj // smanji globalni brojac za 1
-      set_metric( _param, nil, _broj )
+   IF Val( broj_dokumenta ) == nBroj
+      -- nBroj // smanji globalni brojac za 1
+      set_metric( _param, nil, nBroj )
    ENDIF
 
    RETURN .T.

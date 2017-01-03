@@ -11,8 +11,6 @@
 
 #include "f18.ch"
 
-
-
 FUNCTION cre_sif_konto( ver )
 
    LOCAL _created

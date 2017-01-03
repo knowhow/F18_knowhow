@@ -12,9 +12,6 @@
 #include "f18.ch"
 
 
-// --------------------------------
-// otvori xml fajl za upis
-// --------------------------------
 FUNCTION create_xml( cFile )
 
    IF cFile == nil
@@ -28,9 +25,6 @@ FUNCTION create_xml( cFile )
    RETURN .T.
 
 
-// ----------------------------------------------------
-// xml header
-// ----------------------------------------------------
 FUNCTION xml_head( lWrite, cTxt )
 
    LOCAL cTmp := '<?xml version="1.0" encoding="UTF-8"?>'
@@ -108,9 +102,8 @@ FUNCTION xml_subnode_start( cName, lWrite )
 FUNCTION xml_subnode_end( cName, lWrite )
    RETURN xml_subnode( cName, .T., lWrite )
 
-// ----------------------------------------------
-// xml subnode
-// ----------------------------------------------
+
+
 FUNCTION xml_subnode( cName, lEscape, lWrite )
 
    LOCAL cTmp
@@ -168,11 +161,6 @@ STATIC FUNCTION _bracket( cStr, lEsc )
 
 
 
-
-
-// --------------------------------
-// zatvori fajl za upis
-// --------------------------------
 FUNCTION close_xml()
 
    SET PRINTER TO
@@ -182,9 +170,6 @@ FUNCTION close_xml()
    RETURN .T.
 
 
-// ----------------------------------------------
-// datum za xml dokument
-// ----------------------------------------------
 FUNCTION xml_date( dDate )
 
    LOCAL cRet := ""

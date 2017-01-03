@@ -19,7 +19,7 @@ FUNCTION fakt_razmjena_podataka()
    LOCAL _izbor := 1
 
    AAdd( _opc, "1. kalk <-> fakt                  " )
-   AAdd( _opcexe, {|| KaFak() } )
+   AAdd( _opcexe, {|| kalk_fakt() } )
    AAdd( _opc, "3. import barkod terminal" )
    AAdd( _opcexe, {|| fakt_import_bterm() } )
    AAdd( _opc, "4. export barkod terminal" )

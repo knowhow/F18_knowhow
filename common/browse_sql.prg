@@ -203,7 +203,7 @@ FUNCTION my_db_edit_sql( cImeBoxa, xw, yw, bUserF, cMessTop, cMessBot, lInvert, 
 
       CASE nRez == DE_REFRESH
          TB:RefreshAll()
-         @ m_x + 1, m_y + yw - 6 SAY Str( RecCount(), 5 )
+         @ m_x + 1, m_y + yw -6 SAY Str( RecCount(), 5 )
 
       CASE Ch == K_ESC
 
@@ -264,7 +264,7 @@ STATIC FUNCTION browse_only( params, lIzOBJDB )
 
 
    @ m_x + params[ "xw" ] + 1,  Col() + 1 SAY iif( !lIzOBJDB, REPL( BROWSE_PODVUCI_2, 42 ), "" )
-   @ m_x + 1, m_y + params[ "yw" ] - 6    SAY Str( RecCount(), 5 )
+   @ m_x + 1, m_y + params[ "yw" ] -6    SAY Str( RecCount(), 5 )
 
 
    TB := TBrowseDB( m_x + 2 + params[ "prazno" ], m_y + 1, m_x + _rows - _rows_poruke, m_y + _width )
@@ -280,7 +280,7 @@ STATIC FUNCTION browse_only( params, lIzOBJDB )
       IF i <> 0
 
          // TODO: SQL vraca nil .and. (ImeKol[i,2] <> NIL)
-          bShowField := ImeKol[ i, 2 ]
+         bShowField := ImeKol[ i, 2 ]
          TCol := TBColumnNew( ImeKol[ i, 1 ], bShowField )
 
 
@@ -577,7 +577,7 @@ STATIC FUNCTION EditPolja( nX, nY, xIni, cNazPolja, bWhen, bValid, cBoje )
       IF nY + nSirina > MAXCOLS() -2
 
          FOR i := 1 TO Len( aTBGets )
-            aTBGets[ i ]:Col := aTBGets[ i ]:Col  - ( nY + nSirina - 78 ) // smanji col koordinate
+            aTBGets[ i ]:Col := aTBGets[ i ]:Col  - ( nY + nSirina -78 ) // smanji col koordinate
 
          NEXT
       ENDIF

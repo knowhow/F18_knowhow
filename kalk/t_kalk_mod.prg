@@ -210,7 +210,7 @@ METHOD TKalkMod:set_module_gvars()
 
    PUBLIC glZabraniVisakIP
    PUBLIC glBrojacPoKontima := .F.
-   PUBLIC gcSLObrazac
+   //PUBLIC gcSLObrazac
    PUBLIC ZAOKRUZENJE := 2
 
    // inicijalizujem ovu varijablu uvijek pri startu
@@ -313,7 +313,7 @@ METHOD TKalkMod:set_module_gvars()
    glZabraniVisakIP := fetch_metric( "kalk_zabrani_visak_kod_ip", nil, glZabraniVisakIP )
    glBrojacPoKontima := fetch_metric( "kalk_brojac_dokumenta_po_kontima", nil, glBrojacPoKontima )
 
-   gcSlObracun := fetch_metric( "kalk_sl_obrazac", nil, gcSLObrazac )
+   //gcSlObracun := fetch_metric( "kalk_sl_obrazac", nil, gcSLObrazac )
 
    gRobaBlock := {| Ch| KalkRobaBlock( Ch ) }
 

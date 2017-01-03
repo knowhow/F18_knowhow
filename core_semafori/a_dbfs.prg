@@ -92,9 +92,8 @@ FUNCTION set_a_dbfs()
 
    RETURN .T.
 
-// ------------------------------------------------
-// za sve tabele kreiraj dbf_fields strukturu
-// ------------------------------------------------
+
+
 FUNCTION set_a_dbfs_key_fields()
 
    LOCAL _key
@@ -216,13 +215,11 @@ FUNCTION get_a_dbf_rec_by_wa( nWa )
 
    RETURN NIL
 
+
 /*
-
-tbl - dbf_table ili alias
-_only_basic_params - samo table, alias, wa
-
+  tbl - dbf_table ili alias
+  _only_basic_params - samo table, alias, wa
 */
-
 FUNCTION get_a_dbf_rec( cTable, _only_basic_params )
 
    LOCAL _msg, _rec, _keys, cDbfTable, _key

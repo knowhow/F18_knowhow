@@ -1,7 +1,6 @@
 export HB_ARCHITECTURE=win
 export HB_COMPILER=mingw
 
-
 C_ROOT=C:
 
 
@@ -18,10 +17,13 @@ export HB_INSTALL_PREFIX=$HB_ROOT
 
 export MSYS2=c:\\msys32\\mingw32
 
-export PATH=$MSYS2\\bin:$PATH
+export PATH=/c/msys32/mingw32/bin:$HB_ROOT\\bin:$PATH
+
+#export PATH=$MSYS2\\bin:$PATH
 export HB_WITH_PGSQL=$MSYS2\\include
 export HB_WITH_OPENSSL=$MSYS2\\include
 
+#export HB_CCPREFIX=${MINGW}-
 . scripts/set_envars.sh
 
 

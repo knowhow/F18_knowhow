@@ -24,21 +24,16 @@ FUNCTION fin_kontrolni_izvjestaji_meni()
    //AAdd( opc, "2. pregled datumskih grešaka u nalozima" )
    //AAdd( opcexe, {|| daterr_rpt() } )
 
-#ifdef F18_FMK
-   AAdd( opc, "4. kontrola podataka nakon importa iz FMK" )
-   AAdd( opcexe, {|| fmk_provjera_za_migraciju_f18() } )
-#endif
-
-   AAdd( opc, "------------------------------------------------------" )
-   AAdd( opcexe, {|| NIL } )
-
-   AAdd( opc, "B. podešenje brojača naloga" )
+   AAdd( opc, "N. podešenje brojača naloga" )
    AAdd( opcexe, {|| fin_set_param_broj_dokumenta() } )
 
-   AAdd( opc, "------------------------------------------------------" )
-   AAdd( opcexe, {|| NIL } )
    AAdd( opc, "R. fmk pravila - rules " )
    AAdd( opcexe, {|| p_rules(,,, aRuleCols, bRuleBlock ) } )
+
+   #ifdef F18_FMK
+      AAdd( opc, "F. kontrola podataka nakon importa iz FMK" )
+      AAdd( opcexe, {|| fmk_provjera_za_migraciju_f18() } )
+   #endif
 
 
    f18_menu_sa_priv_vars_opc_opcexe_izbor( "adm" )

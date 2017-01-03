@@ -220,7 +220,7 @@ FUNCTION kalk_generisanje_inventure_razlike_magacin_im()
    cIdVd := "IM"
 
    // kopiraj postojecu IM u pript
-   IF cp_dok_pript( cIdFirma, cIdVd, cOldBrDok ) == 0
+   IF !kalk_copy_kalk_u_pript( cIdFirma, cIdVd, cOldBrDok )
       RETURN .F.
    ENDIF
 

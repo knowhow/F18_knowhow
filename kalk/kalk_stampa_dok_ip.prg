@@ -36,7 +36,7 @@ FUNCTION kalk_stampa_dok_ip( fZaTops )
    IF !fZaTops
       cSamoObraz := Pitanje(, "Prikaz samo obrasca inventure (D-da,N-ne,S-sank lista) ?",, "DNS" )
       IF cSamoObraz == "S"
-         StObrazSL()
+         stampa_obrasca_inventure_sank_lista()
          RETURN
       ENDIF
    ELSE
@@ -233,11 +233,11 @@ FUNCTION kalk_stampa_dok_ip( fZaTops )
 
 
 
-/* StObrazSL()
+/* stampa_obrasca_inventure_sank_lista
  *     Stampa forme obrasca sank liste
  */
 
-FUNCTION StObrazSL()
+FUNCTION stampa_obrasca_inventure_sank_lista()
 
    LOCAL nCol1 := nCol2 := 0, npom := 0
 
@@ -298,11 +298,11 @@ FUNCTION StObrazSL()
       ?? idroba, Left( ROBA->naz, 40 - 13 ), "(" + ROBA->jmj + ")"
       nPosKol := 1
       @ PRow(), PCol() + 1 SAY IdTarifa
-      IF gcSLObrazac == "2"
+      //IF gcSLObrazac == "2"
          @ PRow(), PCol() + nPosKol SAY Kolicina  PICTURE PicKol
-      ELSE
-         @ PRow(), PCol() + nPosKol SAY GKolicina  PICTURE PicKol
-      ENDIF
+      //ELSE
+      //   @ PRow(), PCol() + nPosKol SAY GKolicina  PICTURE PicKol
+      //ENDIF
       @ PRow(), PCol() + 1 SAY 0  PICTURE Replicate( "_", Len( PicKol ) )
       @ PRow(), PCol() + 1 SAY 0  PICTURE Replicate( "_", Len( PicKol ) )
       @ PRow(), PCol() + 1 SAY 0  PICTURE Replicate( "_", Len( PicKol ) )

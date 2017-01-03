@@ -913,8 +913,8 @@ FUNCTION kalk_gen_11_iz_10( cBrDok )
 
 FUNCTION kalk_get_11_from_pripr9_smece( cBrDok )
 
-
    LOCAL nArr
+
    nArr := Select()
 
    o_kalk_pripr9()
@@ -1017,7 +1017,7 @@ FUNCTION kopiraj_set_cijena()
 
    DO WHILE !Eof()
 
-      ++ _i
+      ++_i
       _rec := dbf_get_rec()
       // kopiraj cijenu...
       _rec[ _tmp2 ] := _rec[ _tmp1 ]
@@ -1040,7 +1040,8 @@ FUNCTION kopiraj_set_cijena()
 
 
 // kopiraj stavke u pript tabelu iz KALK
-FUNCTION cp_dok_pript( cIdFirma, cIdVd, cBrDok )
+
+FUNCTION kalk_copy_kalk_u_pript( cIdFirma, cIdVd, cBrDok )
 
    // kreiraj pript
    cre_kalk_priprt()
@@ -1048,14 +1049,16 @@ FUNCTION cp_dok_pript( cIdFirma, cIdVd, cBrDok )
    o_kalk_pript()
    o_kalk()
 
-   SELECT kalk
-   SET ORDER TO TAG "1"
+   find_kalk_by_broj_dokumenta( cIdFirma, cIDVd, cBrDok )
+   GO TOP
+   //SELECT kalk
+   //SET ORDER TO TAG "1"
 
-   HSEEK cIdFirma + cIdVd + cBrDok
+   //HSEEK cIdFirma + cIdVd + cBrDok
 
    IF Found()
       MsgO( "Kopiram dokument u pript..." )
-      DO WHILE !Eof() .AND. ( kalk->( idfirma + idvd + brdok ) == cIdFirma + cIdVd + cBrDok )
+      DO WHILE !Eof()  // .AND. ( kalk->( idfirma + idvd + brdok ) == cIdFirma + cIdVd + cBrDok )
          Scatter()
          SELECT pript
          APPEND BLANK
@@ -1065,11 +1068,11 @@ FUNCTION cp_dok_pript( cIdFirma, cIdVd, cBrDok )
       ENDDO
       MsgC()
    ELSE
-      MsgBeep( "Dokument " + cIdFirma + "-" + cIdVd + "-" + AllTrim( cBrDok ) + " ne postoji !!!" )
-      RETURN 0
+      MsgBeep( "Dokument " + cIdFirma + "-" + cIdVd + "-" + AllTrim( cBrDok ) + " ne postoji !" )
+      RETURN .F.
    ENDIF
 
-   RETURN 1
+   RETURN .T.
 
 
 

@@ -17,7 +17,7 @@
 // ------------------------------------------------
 // kalkulacija -> faktura : prenos
 // ------------------------------------------------
-FUNCTION KaFak()
+FUNCTION kalk_fakt()
 
    LOCAL izb := 1
    PUBLIC gDirKalk := ""

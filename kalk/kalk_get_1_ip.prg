@@ -369,7 +369,7 @@ FUNCTION gen_ip_razlika()
 
    // prvo izvuci postojecu inventuru u PRIPT
    // ona ce sluziti za usporedbu...
-   IF cp_dok_pript( cIdFirma, cIdVd, cOldBrDok ) == 0
+   IF !kalk_copy_kalk_u_pript( cIdFirma, cIdVd, cOldBrDok )
       MsgC()
       RETURN .F.
    ENDIF

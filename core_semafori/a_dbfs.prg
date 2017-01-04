@@ -220,9 +220,10 @@ FUNCTION get_a_dbf_rec_by_wa( nWa )
   tbl - dbf_table ili alias
   _only_basic_params - samo table, alias, wa
 */
+
 FUNCTION get_a_dbf_rec( cTable, _only_basic_params )
 
-   LOCAL _msg, _rec, _keys, cDbfTable, _key
+   LOCAL _msg, hDbfRecord, _keys, cDbfTable, _key
    LOCAL nI, cMsg, cDatabase := my_database(), hServerParams := my_server_params()
 
    cDbfTable := "x"
@@ -240,10 +241,9 @@ FUNCTION get_a_dbf_rec( cTable, _only_basic_params )
    IF hb_HHasKey( s_hF18Dbfs[ cDatabase ], cTable )
       cDbfTable := cTable
    ELSE
-      // probaj preko aliasa
-      FOR EACH _key IN s_hF18Dbfs[ cDatabase ]:Keys
-         IF ValType( cTable ) == "N"
-            // zadana je workarea
+
+      FOR EACH _key IN s_hF18Dbfs[ cDatabase ]:Keys // probaj preko aliasa
+         IF ValType( cTable ) == "N"  // zadana je workarea
             IF s_hF18Dbfs[ cDatabase ][ _key ][ "wa" ] == cTable
                cDbfTable := _key
                EXIT
@@ -261,34 +261,34 @@ FUNCTION get_a_dbf_rec( cTable, _only_basic_params )
    IF cDbfTable == "x"
       _msg := "ERROR: x dbf alias " + cTable + " ne postoji u a_dbf_rec ?!"
 
-      _rec := hb_Hash()
-      _rec[ "temp" ] := .T.
-      _rec[ "table" ] := cTable
-      _rec[ "alias" ] := cTable
-      _rec[ "sql" ] := .F.
-      _rec[ "sif" ] := .F.
-      _rec[ "wa" ] := 6000
+      hDbfRecord := hb_Hash()
+      hDbfRecord[ "temp" ] := .T.
+      hDbfRecord[ "table" ] := cTable
+      hDbfRecord[ "alias" ] := cTable
+      hDbfRecord[ "sql" ] := .F.
+      hDbfRecord[ "sif" ] := .F.
+      hDbfRecord[ "wa" ] := 6000
 
       LOG_CALL_STACK _msg
       ?E _msg
-      RETURN _rec
+      RETURN hDbfRecord
 
    ENDIF
 
    IF hb_HHasKey( s_hF18Dbfs[ cDatabase ], cDbfTable )
-      _rec := s_hF18Dbfs[ cDatabase ][ cDbfTable ] // preferirani set parametara
+      hDbfRecord := s_hF18Dbfs[ cDatabase ][ cDbfTable ] // preferirani set parametara
    ELSE
-      _rec := hb_Hash()
-      _rec[ "table" ] := cDbfTable
-      _rec[ "alias" ] := Alias()
-      _rec[ "wa" ] := Select()
-      _rec[ "temp" ] := .T.
-      _rec[ "chk0" ] := .F.
-      _rec[ "sql" ] := .F.
-      _rec[ "sif" ] := .F.
+      hDbfRecord := hb_Hash()
+      hDbfRecord[ "table" ] := cDbfTable
+      hDbfRecord[ "alias" ] := Alias()
+      hDbfRecord[ "wa" ] := Select()
+      hDbfRecord[ "temp" ] := .T.
+      hDbfRecord[ "chk0" ] := .F.
+      hDbfRecord[ "sql" ] := .F.
+      hDbfRecord[ "sif" ] := .F.
    ENDIF
 
-   IF !hb_HHasKey( _rec, "table" ) .OR. _rec[ "table" ] == NIL
+   IF !hb_HHasKey( hDbfRecord, "table" ) .OR. hDbfRecord[ "table" ] == NIL
       _msg := RECI_GDJE_SAM + " set_a_dbf nije definisan za table= " + cTable
       Alert( _msg )
       log_write( _msg, 2 )
@@ -296,40 +296,40 @@ FUNCTION get_a_dbf_rec( cTable, _only_basic_params )
       QUIT_1
    ENDIF
 
-   IF !hb_HHasKey( _rec, "blacklisted" ) // ako nema definisane blackliste, setuj je ali kao NIL
-      _rec[ "blacklisted" ] := NIL
+   IF !hb_HHasKey( hDbfRecord, "blacklisted" ) // ako nema definisane blackliste, setuj je ali kao NIL
+      hDbfRecord[ "blacklisted" ] := NIL
    ENDIF
 
-   IF !hb_HHasKey( _rec, "sql" )
-      _rec[ "sql" ] := .F.
+   IF !hb_HHasKey( hDbfRecord, "sql" )
+      hDbfRecord[ "sql" ] := .F.
    ENDIF
 
-   IF !hb_HHasKey( _rec, "chk0" )
-      _rec[ "chk0" ] := .F.
+   IF !hb_HHasKey( hDbfRecord, "chk0" )
+      hDbfRecord[ "chk0" ] := .F.
    ENDIF
 
-   IF !hb_HHasKey( _rec, "sif" )
-      _rec[ "sif" ] := .F.
+   IF !hb_HHasKey( hDbfRecord, "sif" )
+      hDbfRecord[ "sif" ] := .F.
    ENDIF
 
    IF _only_basic_params
-      RETURN _rec
+      RETURN hDbfRecord
    ENDIF
 
-   // nije zadano - na osnovu strukture dbf-a
-   IF !hb_HHasKey( _rec, "dbf_fields" ) .OR. _rec[ "dbf_fields" ] == NIL
-      set_dbf_fields_from_struct( @_rec )
+
+   IF !hb_HHasKey( hDbfRecord, "dbf_fields" ) .OR. hDbfRecord[ "dbf_fields" ] == NIL  // nije zadano - na osnovu strukture dbf-a
+      set_dbf_fields_from_struct( @hDbfRecord )
    ENDIF
 
-   IF !hb_HHasKey( _rec, "sql_order" )
-      IF hb_HHasKey( _rec, "algoritam" )
+   IF !hb_HHasKey( hDbfRecord, "sql_order" )
+      IF hb_HHasKey( hDbfRecord, "algoritam" )
          // dbf_key_fields stavke su "C" za datumska i char polja, "A" za numericka polja
          // npr: { {"godina", 4, 0}, "datum", "id" }
-         _rec[ "sql_order" ] := sql_order_from_key_fields( _rec[ "algoritam" ][ 1 ][ "dbf_key_fields" ] )
+         hDbfRecord[ "sql_order" ] := sql_order_from_key_fields( hDbfRecord[ "algoritam" ][ 1 ][ "dbf_key_fields" ] )
       ENDIF
    ENDIF
 
-   RETURN _rec
+   RETURN hDbfRecord
 
 
 FUNCTION set_a_dbf_rec_chk0( cTable )
@@ -399,7 +399,7 @@ FUNCTION is_sifarnik( cTable )
 FUNCTION dbf_alias_has_semaphore( alias )
 
    LOCAL _ret := .F.
-   LOCAL _rec, cDbfTable, _key
+   LOCAL hDbfRecord, cDbfTable, _key
    LOCAL cDatabase := my_database()
 
    // ako nema parametra uzmi tekuci alias na kome se nalazimo
@@ -430,8 +430,8 @@ FUNCTION dbf_alias_has_semaphore( alias )
 
    IF hb_HHasKey( s_hF18Dbfs[ cDatabase ], cDbfTable )
 
-      _rec := s_hF18Dbfs[ cDatabase ][ cDbfTable ]
-      IF _rec[ "temp" ] == .F.
+      hDbfRecord := s_hF18Dbfs[ cDatabase ][ cDbfTable ]
+      IF hDbfRecord[ "temp" ] == .F.
          _ret := .T. // tabela ima semafor
       ENDIF
 

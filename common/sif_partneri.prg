@@ -90,7 +90,6 @@ FUNCTION p_partner( cId, dx, dy, lEmptyIdOk )
    PRIVATE ImeKol
    PRIVATE Kol
 
-altd()
    IF lEmptyIdOk == NIL
       lEmptyIdOk := .T.
    ENDIF

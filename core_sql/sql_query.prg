@@ -27,14 +27,14 @@ FUNCTION automatska_obrada_error( lSet )
 
 FUNCTION set_sql_search_path()
 
-   LOCAL _path := my_server_search_path()
+   LOCAL cSqlSearchPath := my_server_search_path()
 
-   LOCAL _qry := "SET search_path TO " + _path + ";"
-   LOCAL _result
+   LOCAL cQuery := "SET search_path TO " + cSqlSearchPath + ";"
+   LOCAL oQuery
 
-   _result := run_sql_query( _qry )
+   oQuery := run_sql_query( cQuery )
 
-   IF sql_error_in_query( _result, "SET" )
+   IF sql_error_in_query( oQuery, "SET" )
       RETURN .F.
 #ifdef F18_DEBUG_SQL
    ELSE
@@ -156,7 +156,7 @@ FUNCTION run_sql_query( cQry, hParams )
 
          IF nPos > 0
             ADel( s_aTransactions, nPos )
-            ASize( s_aTransactions, Len( s_aTransactions ) - 1 )
+            ASize( s_aTransactions, Len( s_aTransactions ) -1 )
          ENDIF
          hb_mutexUnlock( s_mtxMutex )
 
@@ -301,6 +301,9 @@ FUNCTION sql_error_in_query( oQry, cTip, oServer )
 
    IF is_var_objekat_tpqquery( oQry ) .AND. !Empty( oQry:ErrorMsg() )
       LOG_CALL_STACK cLogMsg
+#ifdef F18_DEBUG
+      AltD()  // sql_error_in_query
+#endif
       ?E oQry:ErrorMsg(), cLogMsg
       error_bar( "sql", oQry:ErrorMsg() )
       RETURN .T.
@@ -313,6 +316,9 @@ FUNCTION sql_error_in_query( oQry, cTip, oServer )
    IF cTip $ "BEGIN#SET#INSERT#UPDATE#DELETE#DROP#CREATE#GRANT#"
       IF is_var_objekat_tpqserver( oServer ) .AND. !Empty( oServer:ErrorMsg() )
          LOG_CALL_STACK cLogMsg
+#ifdef F18_DEBUG
+         AltD()  // sql_error_in_query
+#endif
          ?E oServer:ErrorMsg(), cLogMsg
          RETURN .T.
       ELSE

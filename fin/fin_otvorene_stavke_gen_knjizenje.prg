@@ -52,7 +52,6 @@ FUNCTION knjizenje_gen_otvorene_stavke()
    cIdFirma := gFirma
    cIdPartner := _idpartner
 
-   AltD()
 
    IF nZbir <> 0
       IF fin_pripr_nova_stavka()

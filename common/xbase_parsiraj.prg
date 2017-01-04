@@ -383,7 +383,6 @@ FUNCTION Tacno( cIzraz, xVar )
       xVal := Eval( xVar )
    ENDIF
 
-   AltD()
    cIzraz := StrTran( cIzraz, "Eval(xVar)", "'" + xVal + "'" )
 
    lRet := &cIzraz

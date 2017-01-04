@@ -391,7 +391,7 @@ FUNCTION fill_dbf_from_server( dbf_table, sql_query, sql_fetch_time, dbf_write_t
    BEGIN SEQUENCE WITH {| err| Break( err ) }
       DO WHILE !oDataSet:Eof()
 
-         ++ nCounterDataset
+         ++nCounterDataset
          APPEND BLANK
 
          FOR _i := 1 TO Len( aDbfFields )
@@ -527,7 +527,7 @@ FUNCTION update_semaphore_version_after_push( table, to_myself )
    ENDIF
 
    _ver_user := _last_ver
-   ++ _ver_user
+   ++_ver_user
    cVerUser := AllTrim( Str( _ver_user ) )
 
    IF !insert_semaphore_if_not_exists( table )
@@ -733,6 +733,10 @@ FUNCTION we_need_dbf_refresh( cTable )
 
    LOCAL aDbfRec
 
+   IF in_no_refresh_operations()
+      RETURN .F.
+   ENDIF
+
    IF cTable == NIL
       IF !Used() .OR. ( rddName() $  "SQLMIX#ARRAYRDD" )
          RETURN .F.
@@ -800,7 +804,6 @@ FUNCTION dbf_refresh( cTable )
    dbf_refresh_ids_or_full( cTable )
    dbf_refresh_0( cTable )
    dbf_refresh_ids_or_full( cTable )
-
 
    set_last_refresh( cTable )
    in_dbf_refresh( cTable, .F. )

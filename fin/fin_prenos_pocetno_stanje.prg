@@ -494,12 +494,13 @@ FUNCTION switch_to_database( hDbParams, cDatabase, nYear )
    my_server_logout()
 
    IF nYear <> Year( Date() )
-      hDbParams[ "database" ] := Left( cDatabase, Len( cDatabase ) -4 ) + AllTrim( Str( nYear ) )
+      hDbParams[ "database" ] := Left( cDatabase, Len( cDatabase ) - 4 ) + AllTrim( Str( nYear ) )
    ELSE
       hDbParams[ "database" ] := cDatabase
    ENDIF
    my_server_params( hDbParams )
    my_server_login( hDbParams )
+   set_sql_search_path()
 
    RETURN .T.
 

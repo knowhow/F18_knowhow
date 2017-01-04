@@ -86,7 +86,7 @@ METHOD F18Admin:update_app()
    LOCAL _ver_params := hb_Hash()
    LOCAL _upd_params := hb_Hash()
    LOCAL _upd_file := ""
-   LOCAL _ok := .F.
+   LOCAL lOk := .F.
 
    ::update_app_info_file := "UPDATE_INFO"
    ::update_app_script_file := "f18_upd.sh"
@@ -241,16 +241,16 @@ METHOD F18Admin:update_app_run_script( update_file )
 
 METHOD F18Admin:update_app_form( upd_params )
 
-   LOCAL _ok := .F.
+   LOCAL lOk := .F.
    LOCAL _f_ver_prim := 1
    LOCAL _f_ver_sec := 7
    LOCAL _f_ver_third := Space( 10 )
    LOCAL _t_ver_prim := 1
    LOCAL _t_ver_sec := 5
    LOCAL _t_ver_third := Space( 10 )
-   LOCAL _x := 1
-   LOCAL _col_app, _col_temp, _line
-   LOCAL _upd_f, _upd_t, _pos
+   LOCAL nX := 1
+   LOCAL _col_app, _col_temp, cLine
+   LOCAL _upd_f, _upd_t, nPos
 
    _upd_f := "D"
    _upd_t := "N"
@@ -266,60 +266,60 @@ METHOD F18Admin:update_app_form( upd_params )
 
    Box(, 14, 65 )
 
-   @ m_x + _x, m_y + 2 SAY PadR( "## UPDATE F18 APP ##", 64 ) COLOR f18_color_i()
+   @ m_x + nX, m_y + 2 SAY PadR( "## UPDATE F18 APP ##", 64 ) COLOR f18_color_i()
 
-   ++_x
-   ++_x
-   @ m_x + _x, m_y + 2 SAY _line := ( Replicate( "-", 10 ) + " " + Replicate( "-", 20 ) + " " + Replicate( "-", 20 ) )
+   ++nX
+   ++nX
+   @ m_x + nX, m_y + 2 SAY cLine := ( Replicate( "-", 10 ) + " " + Replicate( "-", 20 ) + " " + Replicate( "-", 20 ) )
 
-   ++_x
-   @ m_x + _x, m_y + 2 SAY PadR( "[INFO]", 10 ) + "/" + PadC( "Trenutna", 20 ) + "/" + PadC( "Dostupna", 20 )
+   ++nX
+   @ m_x + nX, m_y + 2 SAY PadR( "[INFO]", 10 ) + "/" + PadC( "Trenutna", 20 ) + "/" + PadC( "Dostupna", 20 )
 
-   ++_x
-   @ m_x + _x, m_y + 2 SAY _line
+   ++nX
+   @ m_x + nX, m_y + 2 SAY cLine
 
-   ++_x
-   @ m_x + _x, m_y + 2 SAY PadR( "F18", 10 ) + " " + PadC( f18_ver(), 20 )
-   @ m_x + _x, Col() SAY " "
-   @ m_x + _x, Col() SAY PadC( upd_params[ "f18" ], 20 ) COLOR _col_app
+   ++nX
+   @ m_x + nX, m_y + 2 SAY PadR( "F18", 10 ) + " " + PadC( f18_ver(), 20 )
+   @ m_x + nX, Col() SAY " "
+   @ m_x + nX, Col() SAY PadC( upd_params[ "f18" ], 20 ) COLOR _col_app
 
-   ++_x
-   @ m_x + _x, m_y + 2 SAY PadR( "template", 10 ) + " " + PadC( f18_template_ver(), 20 )
-   @ m_x + _x, Col() SAY " "
-   @ m_x + _x, Col() SAY PadC( upd_params[ "templates" ], 20 ) COLOR _col_temp
+   ++nX
+   @ m_x + nX, m_y + 2 SAY PadR( "template", 10 ) + " " + PadC( f18_template_ver(), 20 )
+   @ m_x + nX, Col() SAY " "
+   @ m_x + nX, Col() SAY PadC( upd_params[ "templates" ], 20 ) COLOR _col_temp
 
-   ++_x
+   ++nX
 
-   @ m_x + _x, m_y + 2 SAY _line
+   @ m_x + nX, m_y + 2 SAY cLine
 
-   ++_x
-   ++_x
-   _pos := _x
+   ++nX
+   ++nX
+   nPos := nX
 
-   @ m_x + _x, m_y + 2 SAY "       Update F18 ?" GET _upd_f PICT "@!" VALID _upd_f $ "DN"
+   @ m_x + nX, m_y + 2 SAY "       Update F18 ?" GET _upd_f PICT "@!" VALID _upd_f $ "DN"
 
    READ
 
    IF _upd_f == "D"
-      @ m_x + _x, m_y + 25 SAY "VERZIJA:" GET _f_ver_prim PICT "99" VALID _f_ver_prim > 0
-      @ m_x + _x, Col() + 1 SAY "." GET _f_ver_sec PICT "99" VALID _f_ver_sec > 0
-      @ m_x + _x, Col() + 1 SAY "." GET _f_ver_third PICT "@S10"
+      @ m_x + nX, m_y + 25 SAY "VERZIJA:" GET _f_ver_prim PICT "99" VALID _f_ver_prim > 0
+      @ m_x + nX, Col() + 1 SAY "." GET _f_ver_sec PICT "99" VALID _f_ver_sec > 0
+      @ m_x + nX, Col() + 1 SAY "." GET _f_ver_third PICT "@S10"
 
    ENDIF
 
-   ++_x
-   ++_x
-   _pos := _x
+   ++nX
+   ++nX
+   nPos := nX
 
-   @ m_x + _x, m_y + 2 SAY "  Update template ?" GET _upd_t PICT "@!" VALID _upd_t $ "DN"
+   @ m_x + nX, m_y + 2 SAY "  Update template ?" GET _upd_t PICT "@!" VALID _upd_t $ "DN"
 
    READ
 
    IF _upd_t == "D"
 
-      @ m_x + _x, m_y + 25 SAY "VERZIJA:" GET _t_ver_prim PICT "99" VALID _t_ver_prim > 0
-      @ m_x + _x, Col() + 1 SAY "." GET _t_ver_sec PICT "99" VALID _t_ver_sec > 0
-      @ m_x + _x, Col() + 1 SAY "." GET _t_ver_third PICT "@S10"
+      @ m_x + nX, m_y + 25 SAY "VERZIJA:" GET _t_ver_prim PICT "99" VALID _t_ver_prim > 0
+      @ m_x + nX, Col() + 1 SAY "." GET _t_ver_sec PICT "99" VALID _t_ver_sec > 0
+      @ m_x + nX, Col() + 1 SAY "." GET _t_ver_third PICT "@S10"
 
       READ
 
@@ -328,7 +328,7 @@ METHOD F18Admin:update_app_form( upd_params )
    BoxC()
 
    IF LastKey() == K_ESC
-      RETURN _ok
+      RETURN lOk
    ENDIF
 
 
@@ -348,28 +348,22 @@ METHOD F18Admin:update_app_form( upd_params )
          ::update_app_f18_version := "#LAST#"
       ENDIF
 
-      _ok := .T.
+      lOk := .T.
 
    ENDIF
 
-   if ::update_app_templates
-      // sastavi mi verziju
-      IF !Empty( _t_ver_third )
-         // zadana verzija
-         ::update_app_templates_version := AllTrim( Str( _t_ver_prim ) ) + ;
-            "." + ;
-            AllTrim( Str( _t_ver_sec ) ) + ;
-            "." + ;
-            AllTrim( _t_ver_third )
+   if ::update_app_templates  // sastavi mi verziju
+      IF !Empty( _t_ver_third ) // zadana verzija
+         ::update_app_templates_version := AllTrim( Str( _t_ver_prim ) ) + "." +  AllTrim( Str( _t_ver_sec ) ) + "." +  AllTrim( _t_ver_third )
       ELSE
          ::update_app_templates_version := "#LAST#"
       ENDIF
 
-      _ok := .T.
+      lOk := .T.
 
    ENDIF
 
-   RETURN _ok
+   RETURN lOk
 
 
 
@@ -378,7 +372,7 @@ METHOD F18Admin:update_app_form( upd_params )
 METHOD F18Admin:update_app_get_versions()
 
    LOCAL _urls := hb_Hash()
-   LOCAL _o_file, _tmp, _a_tmp
+   LOCAL _o_file, cTmp, _a_tmp
    LOCAL _file := my_home_root() + ::update_app_info_file
    LOCAL _count := 0
 
@@ -390,12 +384,12 @@ METHOD F18Admin:update_app_get_versions()
       RETURN SELF
    ENDIF
 
-   _tmp := ""
+   cTmp := ""
 
-   // prodji kroz svaku liniju i procitaj zapise
-   DO WHILE _o_file:MoreToRead()
-      _tmp := hb_StrToUTF8( _o_file:ReadLine() )
-      _a_tmp := TokToNiz( _tmp, "=" )
+
+   DO WHILE _o_file:MoreToRead() // prodji kroz svaku liniju i procitaj zapise
+      cTmp := hb_StrToUTF8( _o_file:ReadLine() )
+      _a_tmp := TokToNiz( cTmp, "=" )
       IF Len( _a_tmp ) > 1
          ++_count
          _urls[ AllTrim( Lower( _a_tmp[ 1 ] ) ) ] := AllTrim( _a_tmp[ 2 ] )
@@ -415,7 +409,7 @@ METHOD F18Admin:update_app_get_versions()
 
 METHOD F18Admin:f18_upd_download()
 
-   LOCAL _ok := .F.
+   LOCAL lOk := .F.
    LOCAL _path := my_home_root()
    LOCAL _url
    LOCAL _script
@@ -460,7 +454,7 @@ METHOD F18Admin:get_os_name()
 
 METHOD F18Admin:wget_download( url, filename, location, erase_file, silent, only_newer )
 
-   LOCAL _ok := .F.
+   LOCAL lOk := .F.
    LOCAL _cmd := ""
    LOCAL _h, _lenght
 
@@ -528,8 +522,8 @@ METHOD F18Admin:wget_download( url, filename, location, erase_file, silent, only
 
 METHOD F18Admin:update_db()
 
-   LOCAL _ok := .F.
-   LOCAL _x := 1
+   LOCAL lOk := .F.
+   LOCAL nX := 1
    LOCAL _version := Space( 50 )
    LOCAL _db_list := {}
    LOCAL _server := my_server_params()
@@ -541,23 +535,23 @@ METHOD F18Admin:update_db()
 
    Box(, 10, 70 )
 
-   @ m_x + _x, m_y + 2 SAY "**** upgrade db-a / unesite verziju ..."
-   ++_x
-   ++_x
-   @ m_x + _x, m_y + 2 SAY "     verzija db-a (npr. 4.6.1):" GET _version PICT "@S30" VALID !Empty( _version )
-   ++_x
-   ++_x
-   @ m_x + _x, m_y + 2 SAY "naziv baze / prazno update-sve:" GET cDatabase PICT "@S30"
-   ++_x
-   ++_x
-   @ m_x + _x, m_y + 2 SAY "Update template [empty] baza (D/N) ?" GET _upd_empty VALID _upd_empty $ "DN" PICT "@!"
+   @ m_x + nX, m_y + 2 SAY "**** upgrade db-a / unesite verziju ..."
+   ++nX
+   ++nX
+   @ m_x + nX, m_y + 2 SAY "     verzija db-a (npr. 4.6.1):" GET _version PICT "@S30" VALID !Empty( _version )
+   ++nX
+   ++nX
+   @ m_x + nX, m_y + 2 SAY "naziv baze / prazno update-sve:" GET cDatabase PICT "@S30"
+   ++nX
+   ++nX
+   @ m_x + nX, m_y + 2 SAY "Update template [empty] baza (D/N) ?" GET _upd_empty VALID _upd_empty $ "DN" PICT "@!"
 
    READ
 
    BoxC()
 
    IF LastKey() == K_ESC
-      RETURN _ok
+      RETURN lOk
    ENDIF
 
    // snimi parametre...
@@ -575,19 +569,18 @@ METHOD F18Admin:update_db()
       _db_list := my_login():database_array()
    ENDIF
 
-   IF _upd_empty == "D"
-      // dodaj i empty template tabele u update shemu...
+   IF _upd_empty == "D"   // dodaj i empty template tabele u update shemu
+
       AAdd( _db_list, { "empty" } )
       AAdd( _db_list, { "empty_sezona" } )
    ENDIF
 
-   // download fajla sa interneta...
-   IF !::update_db_download()
-      RETURN _ok
+   IF !::update_db_download()    // download fajla sa interneta
+      RETURN lOk
    ENDIF
 
    IF ! ::update_db_all( _db_list )
-      RETURN _ok
+      RETURN lOk
    ENDIF
 
    IF Len( ::update_db_result ) > 0
@@ -595,15 +588,15 @@ METHOD F18Admin:update_db()
 
    ENDIF
 
-   _ok := .T.
+   lOk := .T.
 
-   RETURN _ok
+   RETURN lOk
 
 
 
 METHOD F18Admin:update_db_download()
 
-   LOCAL _ok := .F.
+   LOCAL lOk := .F.
    LOCAL _ver := ::_update_params[ "version" ]
    LOCAL _cmd := ""
    LOCAL _path := my_home_root()
@@ -622,30 +615,30 @@ METHOD F18Admin:update_db_download()
 
    ENDIF
 
-   // download fajla
-   if ::wget_download( _url, _file, _path + _file )
+
+   if ::wget_download( _url, _file, _path + _file )  // download fajla
       ::_update_params[ "file" ] := AllTrim( _path ) + AllTrim( _file )
-      _ok := .T.
+      lOk := .T.
    ENDIF
 
-   RETURN _ok
+   RETURN lOk
 
 
 
 METHOD F18Admin:update_db_all( arr )
 
    LOCAL nI
-   LOCAL _ok := .F.
+   LOCAL lOk := .F.
 
    FOR nI := 1 TO Len( arr )
       IF ! ::update_db_company( AllTrim( arr[ nI, 1 ] ) )
-         RETURN _ok
+         RETURN lOk
       ENDIF
    NEXT
 
-   _ok := .T.
+   lOk := .T.
 
-   RETURN _ok
+   RETURN lOk
 
 
 METHOD F18Admin:update_db_command( database )
@@ -712,7 +705,7 @@ METHOD F18Admin:update_db_company( cOrganizacija )
    LOCAL nI
    LOCAL cDatabase
    LOCAL _cmd
-   LOCAL _ok := .F.
+   LOCAL lOk := .F.
 
    IF AllTrim( cOrganizacija ) $ "#empty#empty_sezona#"
 
@@ -757,21 +750,21 @@ METHOD F18Admin:update_db_company( cOrganizacija )
       _cmd := ::update_db_command( cDatabase )
 
       IF _cmd == NIL
-         RETURN _ok
+         RETURN lOk
       ENDIF
 
       MsgO( "Vršim update baze " + cDatabase )
 
-      _ok := hb_run( _cmd )
-      AAdd( ::update_db_result, { cOrganizacija, cDatabase, _cmd, _ok } ) // ubaci u matricu rezultat
+      lOk := hb_run( _cmd )
+      AAdd( ::update_db_result, { cOrganizacija, cDatabase, _cmd, lOk } ) // ubaci u matricu rezultat
 
       MsgC()
 
    NEXT
 
-   _ok := .T.
+   lOk := .T.
 
-   RETURN _ok
+   RETURN lOk
 
 
 
@@ -824,7 +817,7 @@ METHOD F18Admin:razdvajanje_sezona()
       RETURN .F.
    ENDIF
 
-   pg_terminate_all_data_db_connections()
+   //pg_terminate_all_data_db_connections()
 
 
    hDbServerParams := my_server_params()
@@ -1011,6 +1004,7 @@ METHOD F18Admin:relogin_as_admin( cDatabase )
    hSqlParams[ "database" ] := cDatabase
 
    IF my_server_login( hSqlParams, nConnType )
+      set_sql_search_path()
       RETURN .T.
    ENDIF
 
@@ -1192,8 +1186,8 @@ METHOD F18Admin:delete_db_data_all( db_name, data_type )
 // -------------------------------------------------------------------
 METHOD F18Admin:create_new_pg_db_params( params )
 
-   LOCAL _ok := .F.
-   LOCAL _x := 1
+   LOCAL lOk := .F.
+   LOCAL nX := 1
    LOCAL cDatabaseName := Space( 50 )
    LOCAL _db_template := Space( 50 )
    LOCAL _db_year := AllTrim( Str( Year( Date() ) ) )
@@ -1204,40 +1198,40 @@ METHOD F18Admin:create_new_pg_db_params( params )
 
    Box(, 12, 70 )
 
-   @ m_x + _x, m_y + 2 SAY "*** KREIRANJE NOVE BAZE PODATAKA ***"
+   @ m_x + nX, m_y + 2 SAY "*** KREIRANJE NOVE BAZE PODATAKA ***"
 
-   ++_x
-   ++_x
-   @ m_x + _x, m_y + 2 SAY "Naziv nove baze:" GET cDatabaseName VALID _new_db_valid( cDatabaseName ) PICT "@S30"
-   @ m_x + _x, Col() + 1 SAY "godina:" GET _db_year PICT "@S4" VALID !Empty( _db_year )
+   ++nX
+   ++nX
+   @ m_x + nX, m_y + 2 SAY "Naziv nove baze:" GET cDatabaseName VALID _new_db_valid( cDatabaseName ) PICT "@S30"
+   @ m_x + nX, Col() + 1 SAY "godina:" GET _db_year PICT "@S4" VALID !Empty( _db_year )
 
-   ++_x
-   @ m_x + _x, m_y + 2 SAY "Opis baze (*):" GET _db_comment PICT "@S50"
+   ++nX
+   @ m_x + nX, m_y + 2 SAY "Opis baze (*):" GET _db_comment PICT "@S50"
 
-   ++_x
-   ++_x
-   @ m_x + _x, m_y + 2 SAY "Koristiti kao uzorak postojeću bazu (*):"
+   ++nX
+   ++nX
+   @ m_x + nX, m_y + 2 SAY "Koristiti kao uzorak postojeću bazu (*):"
 
-   ++_x
-   @ m_x + _x, m_y + 2 SAY "Naziv:" GET _db_template PICT "@S40"
+   ++nX
+   @ m_x + nX, m_y + 2 SAY "Naziv:" GET _db_template PICT "@S40"
 
-   ++_x
-   ++_x
-   @ m_x + _x, m_y + 2 SAY "Brisi bazu ako vec postoji ! (D/N)" GET _db_drop VALID _db_drop $ "DN" PICT "@!"
+   ++nX
+   ++nX
+   @ m_x + nX, m_y + 2 SAY "Brisi bazu ako vec postoji ! (D/N)" GET _db_drop VALID _db_drop $ "DN" PICT "@!"
 
-   ++_x
-   @ m_x + _x, m_y + 2 SAY "Pražnjenje podataka (1) pocetno stanje (2) sve" GET _db_type PICT "9"
+   ++nX
+   @ m_x + nX, m_y + 2 SAY "Pražnjenje podataka (1) pocetno stanje (2) sve" GET _db_type PICT "9"
 
-   ++_x
-   ++_x
-   @ m_x + _x, m_y + 2 SAY "*** opcije markirane kao (*) nisu obavezne"
+   ++nX
+   ++nX
+   @ m_x + nX, m_y + 2 SAY "*** opcije markirane kao (*) nisu obavezne"
 
    READ
 
    BoxC()
 
    IF LastKey() == K_ESC
-      RETURN _ok
+      RETURN lOk
    ENDIF
 
    // formiranje strina naziva baze...
@@ -1260,9 +1254,9 @@ METHOD F18Admin:create_new_pg_db_params( params )
    params[ "db_type" ] := _db_type
    params[ "db_comment" ] := AllTrim( _db_comment )
 
-   _ok := .T.
+   lOk := .T.
 
-   RETURN _ok
+   RETURN lOk
 
 
 
@@ -1272,11 +1266,11 @@ METHOD F18Admin:create_new_pg_db_params( params )
 // ----------------------------------------------------------
 STATIC FUNCTION _new_db_valid( db_name )
 
-   LOCAL _ok := .F.
+   LOCAL lOk := .F.
 
    IF Empty( db_name )
       MsgBeep( "Naziv baze ne može biti prazno !" )
-      RETURN _ok
+      RETURN lOk
    ENDIF
 
    IF ( "-" $ db_name .OR. ;
@@ -1286,10 +1280,10 @@ STATIC FUNCTION _new_db_valid( db_name )
          "." $ db_name )
 
       MsgBeep( "Naziv baze ne moze sadržavati znakove .:- itd... !" )
-      RETURN _ok
+      RETURN lOk
 
    ENDIF
 
-   _ok := .T.
+   lOk := .T.
 
-   RETURN _ok
+   RETURN lOk

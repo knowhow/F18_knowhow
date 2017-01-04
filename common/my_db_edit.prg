@@ -214,7 +214,6 @@ FUNCTION my_db_edit( cImeBoxa, xw, yw, bKeyHandler, cMessTop, cMessBot, lInvert,
          END
 
          nKeyHandlerRetEvent := Eval( bKeyHandler )
-         altd()
 
       ELSE
          nKeyHandlerRetEvent := DE_CONT
@@ -410,7 +409,6 @@ FUNCTION my_db_edit_standardne_komande( TB, nKey, nKeyHandlerRetEvent, nPored, a
       cIzraz := NIL
       IF Right( cLoc, 1 ) == ";"
          Beep( 1 )
-         AltD()
          cIzraz := parsiraj( cLoc, "Eval(xVar)" )
       ENDIF
       Tb:hitTop := TB:hitBottom := .F.

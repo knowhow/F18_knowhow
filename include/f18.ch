@@ -227,12 +227,10 @@
                       ;endif
 
 #command ESC_RETURN <x> => if lastkey()=K_ESC;
-                           ; altd()          ;
                            ;return <x>       ;
                            ;end
 
 #command ESC_RETURN    => if lastkey()=K_ESC;
-                           ; altd()         ;
                            ;return          ;
                            ;end
 

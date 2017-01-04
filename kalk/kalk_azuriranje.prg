@@ -22,6 +22,7 @@ FUNCTION kalk_azuriranje_dokumenta( lAuto, lStampaj )
 
    // LOCAL lBrStDoks := .F.
 
+altd()
    IF ( lAuto == nil )
       lAuto := .F.
    ENDIF
@@ -551,7 +552,7 @@ STATIC FUNCTION kalk_azur_sql()
 
    LOCAL _ok := .T.
    LOCAL lRet := .F.
-   LOCAL _record_dok, _record_item
+   LOCAL hRecKalkDok, hRecKalkKalk
    LOCAL _doks_nv := 0
    LOCAL _doks_vpv := 0
    LOCAL _doks_mpv := 0
@@ -581,11 +582,13 @@ STATIC FUNCTION kalk_azur_sql()
 
    run_sql_query( "BEGIN" )
 
+/*
    IF !f18_lock_tables( { _tbl_kalk, _tbl_doks }, .T. )
       run_sql_query( "ROLLBACK" )
       MsgBeep( "Ne mogu zaključati tabele !#Prekidam operaciju." )
       RETURN lRet
    ENDIF
+*/
 
    o_kalk()  // otvoriti samo radi strukture tabele
    o_kalk_doks() // otvoriti samo radi strukture tabele
@@ -603,41 +606,41 @@ STATIC FUNCTION kalk_azur_sql()
       cIdVd := field->idVd
       cBrDok := field->brDok
 
-      _record_dok := hb_Hash()
-      _record_dok[ "idfirma" ] := cIdFirma
-      _record_dok[ "idvd" ] := cIdVd
-      _record_dok[ "brdok" ] := cBrDok
-      _record_dok[ "datdok" ] := field->datdok
-      _record_dok[ "brfaktp" ] := field->brfaktp
-      _record_dok[ "idpartner" ] := field->idpartner
-      _record_dok[ "idzaduz" ] := field->idzaduz
-      _record_dok[ "idzaduz2" ] := field->idzaduz2
-      _record_dok[ "pkonto" ] := field->pkonto
-      _record_dok[ "mkonto" ] := field->mkonto
-      _record_dok[ "podbr" ] := field->podbr
-      _record_dok[ "sifra" ] := Space( 6 )
+      hRecKalkDok := hb_Hash()
+      hRecKalkDok[ "idfirma" ] := cIdFirma
+      hRecKalkDok[ "idvd" ] := cIdVd
+      hRecKalkDok[ "brdok" ] := cBrDok
+      hRecKalkDok[ "datdok" ] := field->datdok
+      hRecKalkDok[ "brfaktp" ] := field->brfaktp
+      hRecKalkDok[ "idpartner" ] := field->idpartner
+      hRecKalkDok[ "idzaduz" ] := field->idzaduz
+      hRecKalkDok[ "idzaduz2" ] := field->idzaduz2
+      hRecKalkDok[ "pkonto" ] := field->pkonto
+      hRecKalkDok[ "mkonto" ] := field->mkonto
+      hRecKalkDok[ "podbr" ] := field->podbr
+      hRecKalkDok[ "sifra" ] := Space( 6 )
 
-      _tmp_id := _record_dok[ "idfirma" ] + _record_dok[ "idvd" ] + _record_dok[ "brdok" ]
+      _tmp_id := hRecKalkDok[ "idfirma" ] + hRecKalkDok[ "idvd" ] + hRecKalkDok[ "brdok" ]
       AAdd( _ids_kalk, "#2" + _tmp_id )  // kalk_kalk brisi sve stavke za jedan dokument
-      _log_dok := _record_dok[ "idfirma" ] + "-" + _record_dok[ "idvd" ] + "-" + _record_dok[ "brdok" ]
+      _log_dok := hRecKalkDok[ "idfirma" ] + "-" + hRecKalkDok[ "idvd" ] + "-" + hRecKalkDok[ "brdok" ]
 
       DO WHILE !Eof() .AND.  Eval( bDokument, cIdFirma, cIdVd, cBrDok )
 
          kalk_set_doks_total_fields( @_doks_nv, @_doks_vpv, @_doks_mpv, @_doks_rabat )
 
-         _record_item := dbf_get_rec()
-         IF !sql_table_update( "kalk_kalk", "ins", _record_item )
+         hRecKalkKalk := dbf_get_rec()
+         IF !sql_table_update( "kalk_kalk", "ins", hRecKalkKalk )
             _ok := .F.
             EXIT
          ENDIF
 
-         IF _record_item[ "idvd" ] == "97"
-            _record_item[ "tbanktr" ] := "X"
-            _record_item[ "mkonto" ] := _record_item[ "idkonto" ]
-            _record_item[ "mu_i" ] := "1"
-            _record_item[ "rbr" ] := PadL( Str( 900 + Val( AllTrim( _record_item[ "rbr" ] ) ), 3 ), 3 )
+         IF hRecKalkKalk[ "idvd" ] == "97"
+            hRecKalkKalk[ "tbanktr" ] := "X"
+            hRecKalkKalk[ "mkonto" ] := hRecKalkKalk[ "idkonto" ]
+            hRecKalkKalk[ "mu_i" ] := "1"
+            hRecKalkKalk[ "rbr" ] := PadL( Str( 900 + Val( AllTrim( hRecKalkKalk[ "rbr" ] ) ), 3 ), 3 )
 
-            IF !sql_table_update( "kalk_kalk", "ins", _record_item )
+            IF !sql_table_update( "kalk_kalk", "ins", hRecKalkKalk )
                _ok := .F.
                EXIT
             ENDIF
@@ -648,16 +651,16 @@ STATIC FUNCTION kalk_azur_sql()
 
       IF _ok = .T.
 
-         _record_dok[ "nv" ] := _doks_nv
-         _record_dok[ "vpv" ] := _doks_vpv
-         _record_dok[ "rabat" ] := _doks_rabat
-         _record_dok[ "mpv" ] := _doks_mpv
+         hRecKalkDok[ "nv" ] := _doks_nv
+         hRecKalkDok[ "vpv" ] := _doks_vpv
+         hRecKalkDok[ "rabat" ] := _doks_rabat
+         hRecKalkDok[ "mpv" ] := _doks_mpv
 
-         _tmp_id := _record_dok[ "idfirma" ] + _record_dok[ "idvd" ] + _record_dok[ "brdok" ]
+         _tmp_id := hRecKalkDok[ "idfirma" ] + hRecKalkDok[ "idvd" ] + hRecKalkDok[ "brdok" ]
          AAdd( _ids_doks, _tmp_id )
 
          @ m_x + 2, m_y + 2 SAY "kalk_doks -> server: " + _tmp_id
-         IF !sql_table_update( "kalk_doks", "ins", _record_dok )
+         IF !sql_table_update( "kalk_doks", "ins", hRecKalkDok )
             _ok := .F.
          ENDIF
 
@@ -667,9 +670,9 @@ STATIC FUNCTION kalk_azur_sql()
 
          @ m_x + 3, m_y + 2 SAY "kalk_atributi -> server "
          oAttr := DokAttr():new( "kalk", F_KALK_ATTR )
-         oAttr:hAttrId[ "idfirma" ] := _record_dok[ "idfirma" ]
-         oAttr:hAttrId[ "idtipdok" ] := _record_dok[ "idvd" ]
-         oAttr:hAttrId[ "brdok" ] := _record_dok[ "brdok" ]
+         oAttr:hAttrId[ "idfirma" ] := hRecKalkDok[ "idfirma" ]
+         oAttr:hAttrId[ "idtipdok" ] := hRecKalkDok[ "idvd" ]
+         oAttr:hAttrId[ "brdok" ] := hRecKalkDok[ "brdok" ]
 
          _ok := oAttr:push_attr_from_dbf_to_server()
 

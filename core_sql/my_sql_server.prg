@@ -160,12 +160,12 @@ PROCEDURE print_sql_connections()
 
 FUNCTION my_server_params( hSqlParams )
 
-   LOCAL  _key
+   LOCAL  cKey
 
    IF !is_in_main_thread()
       IF hSqlParams <> NIL
-         FOR EACH _key in hSqlParams:Keys
-            s_psqlServer_params_thread[ _key ] := hSqlParams[ _key ]
+         FOR EACH cKey in hSqlParams:Keys
+            s_psqlServer_params_thread[ cKey ] := hSqlParams[ cKey ]
          NEXT
       ELSE
          IF HB_ISNIL( s_psqlServer_params_thread )
@@ -176,8 +176,8 @@ FUNCTION my_server_params( hSqlParams )
    ENDIF
 
    IF hSqlParams <> NIL
-      FOR EACH _key in hSqlParams:Keys
-         s_psqlServer_params[ _key ] := hSqlParams[ _key ]
+      FOR EACH cKey in hSqlParams:Keys
+         s_psqlServer_params[ cKey ] := hSqlParams[ cKey ]
       NEXT
    ENDIF
 
@@ -208,6 +208,7 @@ FUNCTION tekuca_sezona()
 FUNCTION in_tekuca_godina()
 
    RETURN tekuca_sezona() == Year( Date() )
+
 
 
 FUNCTION my_server_login( hSqlParams, nConnType )
@@ -306,7 +307,7 @@ FUNCTION f18_login_loop( lAutoConnect, arg_v )
          ENDIF
       ELSE
          IF oLogin:lOrganizacijaSpojena
-            //show_sacekaj()
+            // show_sacekaj()
             oLogin:disconnect( 0 )
             program_module_menu( arg_v )
             oLogin:disconnect( 1 )
@@ -347,25 +348,15 @@ FUNCTION f18_promjena_sezone()
 
 
 
+FUNCTION my_server_search_path()
 
+   LOCAL cKey := "search_path"
 
-
-
-
-
-FUNCTION my_server_search_path( path )
-
-   LOCAL _key := "search_path"
-
-   IF path == nil
-      IF !hb_HHasKey( s_psqlServer_params, _key )
-         s_psqlServer_params[ _key ] := F18_PSQL_SCHEMA + ", public"
-      ENDIF
-   ELSE
-      s_psqlServer_params[ _key ] := path
+   IF !hb_HHasKey( s_psqlServer_params, cKey )
+      s_psqlServer_params[ cKey ] := F18_PSQL_SCHEMA + ", public"
    ENDIF
 
-   RETURN s_psqlServer_params[ _key ]
+   RETURN s_psqlServer_params[ cKey ]
 
 
 FUNCTION f18_user()

@@ -15,10 +15,11 @@
 STATIC aIdleHandlers := {}
 STATIC s_nIdleRefresh := 0 // start idle refresh in seconds()
 STATIC s_nIdleDisplayCounter := 0 // counter
+STATIC s_lNoRefreshOperation := .F.
 
 FUNCTION add_global_idle_handlers()
 
-   AAdd( aIdleHandlers, hb_idleAdd( {||  hb_DispOutAt( maxrows(),  maxcols() - 8, Time(), F18_COLOR_INFO_PANEL ) } ) )
+   AAdd( aIdleHandlers, hb_idleAdd( {||  hb_DispOutAt( maxrows(),  maxcols() -8, Time(), F18_COLOR_INFO_PANEL ) } ) )
    AAdd( aIdleHandlers, hb_idleAdd( {||  calc_on_idle_handler() } ) )
 
    // hb_idleAdd( aIdleHandlers, hb_idleAdd( {|| hb_DispOutAt( maxrows(), 1, "< PAUSE >", F18_COLOR_INFO_PANEL ), kalk_asistent_pause() } ) )
@@ -74,6 +75,10 @@ PROCEDURE on_idle_dbf_refresh()
       RETURN
    ENDIF
 
+   IF in_no_refresh_operations()
+      s_nIdleRefresh := 0
+      RETURN
+   ENDIF
 
    process_dbf_refresh_queue()
 
@@ -101,6 +106,24 @@ PROCEDURE on_idle_dbf_refresh()
    s_nIdleRefresh := 0
 
    RETURN
+
+
+
+PROCEDURE stop_refresh_operations()
+
+   s_lNoRefreshOperation := .T.
+
+   RETURN
+
+
+PROCEDURE start_refresh_operations()
+
+   s_lNoRefreshOperation := .F.
+
+
+FUNCTION in_no_refresh_operations()
+
+   RETURN s_lNoRefreshOperation
 
 
 FUNCTION remove_global_idle_handlers()

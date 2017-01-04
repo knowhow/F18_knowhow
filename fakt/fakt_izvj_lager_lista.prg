@@ -745,7 +745,7 @@ FUNCTION fakt_zagl_lager_lista()
 // -----------------------------------------------------------------
 // uslovi izvjestaja lager lista
 // -----------------------------------------------------------------
-FUNCTION fakt_lager_lista_vars( param, ps )
+FUNCTION fakt_lager_lista_vars( param, lPocetnoStanje )
 
    LOCAL _ret := 1
    LOCAL _x := 1
@@ -754,10 +754,10 @@ FUNCTION fakt_lager_lista_vars( param, ps )
    LOCAL _stavke_nula, _tip_prikaza
    LOCAL _date_ps
 
-   IF ps == NIL
+   IF lPocetnoStanje == NIL
       // nije pocetno stanje
       _date_ps := NIL
-      ps := .F.
+      lPocetnoStanje := .F.
       _date_from := fetch_metric( "fakt_lager_lista_datum_od", my_user(), Date() )
       _date_to := fetch_metric( "fakt_lager_lista_datum_do", my_user(), Date() )
    ELSE
@@ -797,7 +797,7 @@ FUNCTION fakt_lager_lista_vars( param, ps )
    ++ _x
    @ m_x + _x, m_y + 2 SAY8 "Prikaz količina ( U-samo ulaz, I-samo izlaz, S-sve )" GET _tip_prikaza VALID _tip_prikaza $ "UIS" PICT "@!"
 
-   IF ps
+   IF lPocetnoStanje
       ++ _x
       ++ _x
       @ m_x + _x, m_y + 2 SAY8 "Datum početnog stanja:" GET _date_ps
@@ -813,7 +813,7 @@ FUNCTION fakt_lager_lista_vars( param, ps )
 
    // snimi db parametre
    // nemoj ako je pocetno stanje u pitanju...
-   IF !ps
+   IF !lPocetnoStanje
       set_metric( "fakt_lager_lista_datum_od", my_user(), _date_from )
       set_metric( "fakt_lager_lista_datum_do", my_user(), _date_to )
    ENDIF
@@ -927,7 +927,7 @@ STATIC FUNCTION lager_lista_xml( table, params )
 
 
 
-FUNCTION fakt_lager_lista_sql( param, ps )
+FUNCTION fakt_lager_lista_sql( param, lPocetnoStanje )
 
    LOCAL _table
    LOCAL _tek_database := my_server_params()[ "database" ]
@@ -939,17 +939,17 @@ FUNCTION fakt_lager_lista_sql( param, ps )
       ENDIF
    ENDIF
 
-   IF ps == NIL
-      ps := .F.
+   IF lPocetnoStanje == NIL
+      lPocetnoStanje := .F.
    ENDIF
 
-   _table := fakt_lager_lista_get_data( param, ps )
+   _table := fakt_lager_lista_get_data( param, lPocetnoStanje )
 
    RETURN _table
 
 
 
-STATIC FUNCTION fakt_lager_lista_get_data( params, ps )
+STATIC FUNCTION fakt_lager_lista_get_data( params, lPocetnoStanje )
 
    LOCAL _tek_database := my_server_params()[ "database" ]
    LOCAL _db_params := my_server_params()
@@ -965,15 +965,16 @@ STATIC FUNCTION fakt_lager_lista_get_data( params, ps )
    _usl_tip_dok := params[ "dokumenti" ]
    _date_ps := params[ "datum_ps" ]
 
-   IF ps == NIL
-      ps := .F.
+   IF lPocetnoStanje == NIL
+      lPocetnoStanje := .F.
    ENDIF
 
-   IF ps
+   IF lPocetnoStanje
       my_server_logout()
       _db_params[ "database" ] := Left( _tek_database, Len( _tek_database ) - 4 ) + AllTrim( Str( Year( _date_from ) ) )
       my_server_params( _db_params )
       my_server_login( _db_params )
+      set_sql_search_path()
    ENDIF
 
    _server := sql_data_conn()
@@ -1015,11 +1016,12 @@ STATIC FUNCTION fakt_lager_lista_get_data( params, ps )
       _table := NIL
    ENDIF
 
-   IF ps
+   IF lPocetnoStanje
       my_server_logout()
       _db_params[ "database" ] := Left( _tek_database, Len( _tek_database ) - 4 ) + AllTrim( Str( Year( _date_ps ) ) )
       my_server_params( _db_params )
       my_server_login( _db_params )
+      set_sql_search_path()
    ENDIF
 
    RETURN _table

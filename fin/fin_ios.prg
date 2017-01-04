@@ -187,7 +187,6 @@ STATIC FUNCTION mnu_ios_print()
       xml_subnode( "ios", .F. )
    ENDIF
 
-   AltD()
    SELECT ios
 
    DO WHILE !Eof() .AND. cIdFirma == field->idfirma .AND. cIdKonto == field->idkonto
@@ -887,7 +886,6 @@ STATIC FUNCTION ios_generacija_podataka( hParams )
    Box(, 3, 65 )
 
    @ m_x + 1, m_y + 2 SAY8 "sačekajte ... generacija ios pomoćne tabele"
-   AltD()
 
    DO WHILE !Eof() .AND. cIdFirma == field->idfirma .AND. cIdKonto == field->idkonto
 

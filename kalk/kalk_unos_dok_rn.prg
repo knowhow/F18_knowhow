@@ -17,7 +17,6 @@ FUNCTION Get1_RN()
 
    LOCAL nNV
 
-   AltD()
    IF nRbr == 1 .AND. kalk_is_novi_dokument()
       _DatFaktP := _datdok
    ENDIF

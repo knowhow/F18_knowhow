@@ -453,7 +453,7 @@ STATIC FUNCTION mip_xml_export( nMjesec, nGodina )
 
    my_close_all_dbf()
 
-   AltD()
+
    cOutputFile := "mip_" + AllTrim( my_server_params()[ "database" ] ) + "_" + AllTrim( Str( nMjesec ) ) + "_" + AllTrim( Str( nGodina ) ) + ".xml"
 
 

@@ -15,38 +15,38 @@ THREAD STATIC s_hParametri := NIL
 THREAD STATIC s_lError := .F.
 
 
-FUNCTION fetch_metric( sect, user, default_value )
+FUNCTION fetch_metric( cSection, cUser, default_value )
 
-   LOCAL _temp_qry
-   LOCAL _table
-   LOCAL _ret := ""
+   LOCAL cQuery
+   LOCAL oQuery
+   LOCAL cRet := ""
    LOCAL xRet
 
    IF default_value == NIL
       default_value := ""
    ENDIF
 
-   IF user != NIL
-      IF user == "<>"
-         sect += "/" + f18_user()
+   IF cUser != NIL
+      IF cUser == "<>"
+         cSection += "/" + f18_user()
       ELSE
-         sect += "/" + user
+         cSection += "/" + cUser
       ENDIF
    ENDIF
 
 
-   IF hb_HHasKey( s_hParametri, sect ) .AND. !parametar_dinamican( sect )
+   IF hb_HHasKey( s_hParametri, cSection ) .AND. !parametar_dinamican( cSection )
 #ifdef F18_DEBUG_PARAMS
-      ?E "fetch param cache hit: ", sect
+      ?E "fetch param cache hit: ", cSection
 #endif
-      RETURN s_hParametri[ sect ]
+      RETURN s_hParametri[ cSection ]
    ENDIF
 
-   _temp_qry := "SELECT " + F18_PSQL_SCHEMA + ".fetchmetrictext(" + sql_quote( sect )  + ")"
+   cQuery := "SELECT " + F18_PSQL_SCHEMA + ".fetchmetrictext(" + sql_quote( cSection )  + ")"
 
-   _table := run_sql_query( _temp_qry )
+   oQuery := run_sql_query( cQuery )
 
-   IF sql_error_in_query( _table, "SELECT" )
+   IF sql_error_in_query( oQuery, "SELECT" )
       s_lError := .T.
       RETURN default_value
    ELSE
@@ -54,18 +54,18 @@ FUNCTION fetch_metric( sect, user, default_value )
    ENDIF
 
 
-   IF sql_query_bez_zapisa( _table )
+   IF sql_query_bez_zapisa( oQuery )
       RETURN default_value
    ENDIF
 
-   _ret := _table:FieldGet( 1 )
+   cRet := oQuery:FieldGet( 1 )
 
-   IF _ret == "!!notfound!!"
+   IF cRet == "!!notfound!!"
       xRet := default_value
    ELSE
 
-      xRet := str_to_val( _ret, default_value )
-      s_hParametri[ sect ] :=  xRet
+      xRet := str_to_val( cRet, default_value )
+      s_hParametri[ cSection ] :=  xRet
    ENDIF
 
    RETURN xRet
@@ -75,55 +75,56 @@ FUNCTION fetch_metric_error()
    RETURN s_lError
 
 
-FUNCTION parametar_dinamican( cSection )
 
-   IF "auto_plu_" $ cSection
+FUNCTION parametar_dinamican( cSectionIn )
+
+   IF "auto_plu_" $ cSectionIn
       RETURN .T.
    ENDIF
 
-   IF "_doc_no" $ cSection
+   IF "_doc_no" $ cSectionIn
       RETURN .T.
    ENDIF
 
-   IF "_brojac_" $ cSection  // brojaci se moraju uvijek citati sa servera
+   IF "_brojac_" $ cSectionIn  // brojaci se moraju uvijek citati sa servera
       RETURN .T.
    ENDIF
-   IF "_counter_" $ cSection
+   IF "_counter_" $ cSectionIn
       RETURN .T.
    ENDIF
 
-   IF Left( cSection, 5 ) == "fakt/"  // fakt brojaci
+   IF Left( cSectionIn, 5 ) == "fakt/"  // fakt brojaci
       RETURN .T.
    ENDIF
 
    RETURN .F.
 
 
-FUNCTION set_metric( sect, user, value )
+FUNCTION set_metric( cSection, cUser, xValue )
 
    LOCAL oQry
-   LOCAL _temp_qry
+   LOCAL cQuery
    LOCAL _val
 
-   IF user != NIL
-      IF user == "<>"
-         sect += "/" + f18_user()
+   IF cUser != NIL
+      IF cUser == "<>"
+         cSection += "/" + f18_user()
       ELSE
-         sect += "/" + user
+         cSection += "/" + cUser
       ENDIF
    ENDIF
 
    SET CENTURY ON
-   _val := hb_ValToStr( value )
+   _val := hb_ValToStr( xValue )
    SET CENTURY OFF
 
-   _temp_qry := "SELECT " + F18_PSQL_SCHEMA + ".setmetric(" + sql_quote( sect ) + "," + sql_quote( _val ) +  ")"
-   oQry := run_sql_query( _temp_qry )
+   cQuery := "SELECT " + F18_PSQL_SCHEMA + ".setmetric(" + sql_quote( cSection ) + "," + sql_quote( _val ) +  ")"
+   oQry := run_sql_query( cQuery )
    IF sql_error_in_query( oQry, "SELECT" )
       RETURN .F.
    ENDIF
 
-   s_hParametri[ sect ] := value
+   s_hParametri[ cSection ] := xValue
 
    RETURN .T.
 
@@ -154,35 +155,35 @@ STATIC FUNCTION str_to_val( str_val, default_value )
 // ----------------------------------------------------------
 // set/get globalne parametre F18
 // ----------------------------------------------------------
-FUNCTION get_set_global_param( param_name, value, def_value )
+FUNCTION get_set_global_param( cParamName, xValue, def_value )
 
-   LOCAL _ret
+   LOCAL cRet
 
-   IF value == NIL
-      _ret := fetch_metric( param_name, NIL, def_value )
+   IF xValue == NIL
+      cRet := fetch_metric( cParamName, NIL, def_value )
    ELSE
-      set_metric( param_name, NIL, value )
-      _ret := value
+      set_metric( cParamName, NIL, xValue )
+      cRet := xValue
    ENDIF
 
-   RETURN _ret
+   RETURN cRet
 
 
 // ----------------------------------------------------------
 // set/get user parametre F18
 // ----------------------------------------------------------
-FUNCTION get_set_user_param( param_name, value, def_value )
+FUNCTION get_set_user_param( cParamName, xValue, def_value )
 
-   LOCAL _ret
+   LOCAL cRet
 
-   IF value == NIL
-      _ret := fetch_metric( param_name, my_user(), def_value )
+   IF xValue == NIL
+      cRet := fetch_metric( cParamName, my_user(), def_value )
    ELSE
-      set_metric( param_name, my_user(), value )
-      _ret := value
+      set_metric( cParamName, my_user(), xValue )
+      cRet := xValue
    ENDIF
 
-   RETURN _ret
+   RETURN cRet
 
 
 

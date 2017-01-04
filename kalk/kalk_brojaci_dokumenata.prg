@@ -174,7 +174,6 @@ FUNCTION slovo_unutar( cString )
 
    LOCAL aMatch, pRegex := hb_regexComp( ".*[a-zA-Z].*" )
 
-altd()
    aMatch := hb_regex( pRegex, cString )
    IF Len( aMatch ) > 0
       RETURN .T.

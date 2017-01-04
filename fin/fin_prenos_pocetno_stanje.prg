@@ -83,11 +83,11 @@ FUNCTION fin_pocetno_stanje_sql()
    hParams[ "sintetika" ] := nSintetikaDuzina
    hParams[ "copy_sif" ] := cFinPrenosPocetnoStanjeDN
 
-   get_data( hParams, @_data, @_konto_data, @_partn_data )
+   fin_pocetno_stanje_get_data( hParams, @_data, @_konto_data, @_partn_data )
 
    IF _data == NIL
       MsgBeep( "Ne postoje traženi podaci... prekidam operaciju !" )
-      RETURN
+      RETURN .F.
    ENDIF
 
    IF !fin_poc_stanje_insert_into_fin_pripr( _data, _konto_data, _partn_data, hParams )
@@ -125,6 +125,8 @@ STATIC FUNCTION fin_poc_stanje_insert_into_fin_pripr( oDataset, oKontoDataset, o
    LOCAL lOk := .T.
    LOCAL hParams, cBrojVezeDok, oRow2
    LOCAL cIdKontoPriprema, cIdPartnerPriprema
+   LOCAL cTipPrenosaPS
+   LOCAL bEvalPartner
 
    open_tabele_za_pocetno_stanje()
 
@@ -144,8 +146,7 @@ STATIC FUNCTION fin_poc_stanje_insert_into_fin_pripr( oDataset, oKontoDataset, o
       cIdKonto := PadR( oRow:FieldGet( oRow:FieldPos( "idkonto" ) ), 7 )
       cIdPartner := PadR( hb_UTF8ToStr( oRow:FieldGet( oRow:FieldPos( "idpartner" ) ) ), 6 )
       cBrojVeze := PadR( hb_UTF8ToStr( oRow:FieldGet( oRow:FieldPos( "brdok" ) ) ), 20 )
-      dDatDok := oRow:FieldGet( oRow:FieldPos( "datdok" ) )
-      dDatVal := fix_dat_var( oRow:FieldGet( oRow:FieldPos( "datval" ) ), .T. )
+
       cOtvSt := oRow:FieldGet( oRow:FieldPos( "otvst" ) )
 
       SELECT pkonto
@@ -160,23 +161,39 @@ STATIC FUNCTION fin_poc_stanje_insert_into_fin_pripr( oDataset, oKontoDataset, o
       cBrojVezeDok := ""
       dDatumValute := NIL
 
-      DO WHILE !oDataset:Eof() .AND. PadR( oDataset:FieldGet( oDataset:FieldPos( "idkonto" ) ), 7 ) == cIdKonto ;
-            .AND. iif( cTipPrenosaPS $ "1#2", PadR( hb_UTF8ToStr( oDataset:FieldGet( oDataset:FieldPos( "idpartner" ) ) ), 6 ) == cIdPartner, .T. ) ;
-            .AND. iif( cTipPrenosaPS == "1", PadR( hb_UTF8ToStr( oDataset:FieldGet( oDataset:FieldPos( "brdok" ) ) ), 20 ) == cBrojVeze, .T. )
+
+      bEvalPartner :=  !oDataset:Eof() .AND. ;
+         PadR( oDataset:FieldGet( oDataset:FieldPos( "idkonto" ) ), 7 ) == cIdKonto ;
+         .AND. iif( cTipPrenosaPS $ "1#2", PadR( hb_UTF8ToStr( oDataset:FieldGet( oDataset:FieldPos( "idpartner" ) ) ), 6 ) == cIdPartner, .T. )
+
+
+      DO WHILE Eval( bPartner )
+
+         DO WHILE cTipPrenosaPS == "1" .AND. Eval( bPartner ) .AND. cOtvSt == "9" // po otvorenim stavkama, zatvorena stavka idi dalje
+            oDatabase:Skip()
+            LOOP
+         ENDDO
 
          oRow2 := oDataset:GetRow()
          nSaldoZaBrDok += oRow2:FieldGet( oRow2:FieldPos( "saldo" ) )
+         dDatDok := oRow:FieldGet( oRow:FieldPos( "datdok" ) )
+         dDatVal := fix_dat_var( oRow:FieldGet( oRow:FieldPos( "datval" ) ), .T. )
 
-         IF cTipPrenosaPS == "1"
-            cBrojVezeDok := PadR( hb_UTF8ToStr( oRow2:FieldGet( oRow2:FieldPos( "brdok" ) ) ), 20 )
-            dDatumValute := fix_dat_var( oRow2:FieldGet( oRow2:FieldPos( "datval" ) ), .T. )
-            IF dDatumValute == CToD( "" )
-               dDatumValute := oRow2:FieldGet( oRow2:FieldPos( "datdok" ) )
-            ENDIF
+         IF dDatVal == CToD( "" )
+            dDatVal := oRow2:FieldGet( oRow2:FieldPos( "datdok" ) )
          ENDIF
+
+         IF cTipPrenosaPS == "1" // po otvorenim stavkama
+            cBrojVezeDok := PadR( hb_UTF8ToStr( oRow2:FieldGet( oRow2:FieldPos( "brdok" ) ) ), 20 )
+
+
+         ENDIF
+
+
          oDataset:Skip()
 
       ENDDO
+
 
       IF Round( nSaldoZaBrDok, 2 ) == 0
          LOOP
@@ -190,7 +207,7 @@ STATIC FUNCTION fin_poc_stanje_insert_into_fin_pripr( oDataset, oKontoDataset, o
       APPEND BLANK
 
       hRecord := dbf_get_rec()
-      hRecord[ "idfirma" ] := gFirma
+      hRecord[ "idfirma" ] := self_organizacija_id()
       hRecord[ "idvn" ] := cIdVn
       hRecord[ "brnal" ] := cBrNal
       hRecord[ "datdok" ] := dDatumPocetnoStanje
@@ -203,7 +220,7 @@ STATIC FUNCTION fin_poc_stanje_insert_into_fin_pripr( oDataset, oKontoDataset, o
          hRecord[ "brdok" ] := "PS" // saldo partnera ili saldo konta
       ELSE
          hRecord[ "brdok" ] := cBrojVezeDok
-         hRecord[ "datval" ] := fix_dat_var( dDatumValute, .T. )
+         hRecord[ "datval" ] := fix_dat_var( dDatVal, .T. )
       ENDIF
 
       IF cTipPrenosaPS == "1"  // po ptvorenim stavkama
@@ -259,11 +276,9 @@ STATIC FUNCTION fin_poc_stanje_insert_into_fin_pripr( oDataset, oKontoDataset, o
             IF lOk
                lOk := append_sif_konto( PadR( Left( cIdKontoPriprema, 1 ), 7 ), oKontoDataset )
             ENDIF
-
             IF lOk
                lOk := append_sif_konto( PadR( Left( cIdKontoPriprema, 2 ), 7 ), oKontoDataset )
             ENDIF
-
             IF lOk
                lOk := append_sif_konto( PadR( Left( cIdKontoPriprema, 3 ), 7 ), oKontoDataset )
             ENDIF
@@ -312,6 +327,7 @@ STATIC FUNCTION append_sif_konto( cIdKonto, oKontoDataset )
    LOCAL lAppend := .F.
    LOCAL oRow
    LOCAL lOk := .T.
+   LOCAL hRecord
 
    select_o_konto()
    SELECT konto
@@ -359,6 +375,7 @@ STATIC FUNCTION append_sif_partn( cIdPartner, oPartnerDataset )
    LOCAL lAppend := .F.
    LOCAL oRow
    LOCAL lOk := .T.
+   LOCAL hRecord
 
    select_o_partner()
    SELECT partn
@@ -421,7 +438,7 @@ STATIC FUNCTION prazni_fin_priprema()
 
 
 
-STATIC FUNCTION get_data( hParam, oFinQuery, oKontoDataset, oPartnerDataset )
+STATIC FUNCTION fin_pocetno_stanje_get_data( hParam, oFinQuery, oKontoDataset, oPartnerDataset )
 
    LOCAL cQuery, cQuery2, cQuery3, cWhere
    LOCAL dDatumOdStaraGodina := hParam[ "datum_od" ]
@@ -435,7 +452,7 @@ STATIC FUNCTION get_data( hParam, oFinQuery, oKontoDataset, oPartnerDataset )
 
    cWhere := " WHERE "
    cWhere += _sql_date_parse( "sub.datdok", dDatumOdStaraGodina, dDatumDoStaraGodina )
-   cWhere += " AND " + _sql_cond_parse( "sub.idfirma", gFirma )
+   cWhere += " AND " + _sql_cond_parse( "sub.idfirma", self_organizacija_id() )
 
    cQuery := " SELECT " + ;
       "sub.idkonto, " + ;
@@ -494,7 +511,7 @@ FUNCTION switch_to_database( hDbParams, cDatabase, nYear )
    my_server_logout()
 
    IF nYear <> Year( Date() )
-      hDbParams[ "database" ] := Left( cDatabase, Len( cDatabase ) - 4 ) + AllTrim( Str( nYear ) )
+      hDbParams[ "database" ] := Left( cDatabase, Len( cDatabase ) -4 ) + AllTrim( Str( nYear ) )
    ELSE
       hDbParams[ "database" ] := cDatabase
    ENDIF

@@ -174,7 +174,7 @@ FUNCTION fakt_fin_prenos()
          SELECT FINMAT
          APPEND BLANK
          cIdVD := fakt->IdTipdok
-         RREPLACE IdFirma   WITH gFirma, ;
+         RREPLACE IdFirma   WITH self_organizacija_id(), ;
             IdTarifa  WITH roba->IdTarifa, ;
             IdPartner WITH cIdPartner, ;
             IdVD      WITH cIdVD, ;
@@ -543,10 +543,10 @@ FUNCTION get_nabavna_cijena_iz_kalk( cIdRoba, cKonSir )
 
    LOCAL x := 0, nArr := Select(), nNV, nUlaz, nIzlaz
 
-   find_kalk_by_mkonto_idroba( gFirma, cKonSir, cIdRoba )
+   find_kalk_by_mkonto_idroba( self_organizacija_id(), cKonSir, cIdRoba )
 
    nNV := nUlaz := nIzlaz := 0
-   DO WHILE !Eof() .AND. idfirma + mkonto + idroba == gFirma + cKonSir + cIdRoba
+   DO WHILE !Eof() .AND. idfirma + mkonto + idroba == self_organizacija_id() + cKonSir + cIdRoba
       IF mu_i == "1" .AND. !( idvd $ "12#22#94" )
          nUlaz  += kolicina - gkolicina - gkolicin2
          nNV    += nc * ( kolicina - gkolicina - gkolicin2 )

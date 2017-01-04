@@ -37,7 +37,7 @@ FUNCTION kalk_gen_fin_stanje_prodavnice( vars )
    LOCAL _datum_do := Date()
    LOCAL _tarife := ""
    LOCAL _vrste_dok := ""
-   LOCAL _id_firma := gFirma
+   LOCAL _id_firma := self_organizacija_id()
    LOCAL _vise_konta := .F.
    LOCAL _t_area, _t_rec
    LOCAL _ulaz, _izlaz, _rabatv, _rabatm

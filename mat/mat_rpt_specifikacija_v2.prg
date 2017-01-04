@@ -28,7 +28,7 @@ FUNCTION mat_specifikacija()
    O_PARTN
    O_KONTO
 
-   cIdFirma := gFirma
+   cIdFirma := self_organizacija_id()
    qqKonto := qqPartn := Space( 55 )
    cIdTarifa := Space( 6 )
    dDATOD = dDatDO := CToD( "" )
@@ -53,7 +53,7 @@ FUNCTION mat_specifikacija()
    ENDIF
 
    IF gNW $ "DR"
-      @ m_x + 4, m_y + 2 SAY "Firma "; ?? gFirma, "-", gNFirma
+      @ m_x + 4, m_y + 2 SAY "Firma "; ?? self_organizacija_id(), "-", self_organizacija_naziv()
    ELSE
       @ m_x + 4, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
    ENDIF
@@ -402,7 +402,7 @@ FUNCTION IArtPoPogonima()
       ENDIF
 
       P_10CPI
-      ?? gnFirma
+      ?? self_organizacija_naziv()
       ?
       ? "DATUM  : " + SrediDat( Date() )
       ? "POGONI : " + IF( Empty( qqPartner ), "SVI", Trim( qqPartner ) )
@@ -450,7 +450,7 @@ FUNCTION IArtPoPogonima()
       ENDIF
 
       P_10CPI
-      ?? gnFirma
+      ?? self_organizacija_naziv()
       ?
       ? "DATUM  : " + SrediDat( Date() )
       ? "ARTIKAL: " + cIdRoba + " - " + ROBA->naz

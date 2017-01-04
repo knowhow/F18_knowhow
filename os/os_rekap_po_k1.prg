@@ -160,7 +160,7 @@ STATIC FUNCTION ZglK1()
 
    P_12CPI
 
-   ?? Upper( tip_organizacije() ) + ":", gNFirma
+   ?? Upper( tip_organizacije() ) + ":", self_organizacija_naziv()
    ?
    ? _mod_name + ": Rekapitulacija po grupama - k1 "
 

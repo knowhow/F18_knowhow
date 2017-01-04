@@ -42,7 +42,7 @@ FUNCTION fakt_pregled_liste_dokumenata()
    qqVrsteP := Space( 20 )
    dDatVal0 := dDatVal1 := CToD( "" )
 
-   cIdfirma := gFirma
+   cIdfirma := self_organizacija_id()
    dDatOd := CToD( "" )
    dDatDo := Date()
    qqTipDok := ""
@@ -75,7 +75,7 @@ FUNCTION fakt_pregled_liste_dokumenata()
 
       IF gNW $ "DR"
          cIdFirma := PadR( cIdfirma, 2 )
-         @ m_x + 1, m_y + 2 SAY "RJ prazno svi" GET cIdFirma valid {|| Empty( cidfirma ) .OR. cidfirma == gfirma .OR. P_RJ( @cIdFirma ), cIdFirma := Left( cIdFirma, 2 ), .T. }
+         @ m_x + 1, m_y + 2 SAY "RJ prazno svi" GET cIdFirma valid {|| Empty( cidfirma ) .OR. cidfirma == self_organizacija_id() .OR. P_RJ( @cIdFirma ), cIdFirma := Left( cIdFirma, 2 ), .T. }
          READ
       ELSE
          @ m_x + 1, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cIdFirma := Left( cIdFirma, 2 ), .T. }
@@ -735,7 +735,7 @@ FUNCTION fakt_real_partnera()
    O_VALUTE
    O_RJ
 
-   cIdfirma := gFirma
+   cIdfirma := self_organizacija_id()
    dDatOd := CToD( "" )
    dDatDo := Date()
 
@@ -764,7 +764,7 @@ FUNCTION fakt_real_partnera()
 
    DO WHILE .T.
       cIdFirma := PadR( cidfirma, 2 )
-      @ m_x + 1, m_y + 2 SAY "RJ            " GET cIdFirma valid {|| Empty( cidfirma ) .OR. cidfirma == gfirma .OR. P_RJ( @cIdFirma ), cIdFirma := Left( cIdFirma, 2 ), .T. }
+      @ m_x + 1, m_y + 2 SAY "RJ            " GET cIdFirma valid {|| Empty( cidfirma ) .OR. cidfirma == self_organizacija_id() .OR. P_RJ( @cIdFirma ), cIdFirma := Left( cIdFirma, 2 ), .T. }
       @ m_x + 2, m_y + 2 SAY "Tip dokumenta " GET qqTipDok PICT "@!S20"
       @ m_x + 3, m_y + 2 SAY "Od datuma "  GET dDatOd
       @ m_x + 3, Col() + 1 SAY "do"  GET dDatDo

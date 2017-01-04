@@ -38,7 +38,7 @@ FUNCTION prefin_unos_naloga()
    SELECT params
    USE
 
-   cIdFirma := gFirma
+   cIdFirma := self_organizacija_id()
    picBHD := FormPicL( "9 " + gPicBHD, 20 )
 
    O_PARTN
@@ -75,7 +75,7 @@ FUNCTION prefin_unos_naloga()
       @ m_x + 1, m_y + 6 SAY "PREKNJIZENJE SUBANALITICKIH KONTA"
       IF gNW == "D"
          @ m_x + 2, m_y + 2 SAY "Firma "
-         ?? gFirma, "-", gNFirma
+         ?? self_organizacija_id(), "-", self_organizacija_naziv()
       ELSE
          @ m_x + 2, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cIdFirma := Left( cIdFirma, 2 ), .T. }
       ENDIF

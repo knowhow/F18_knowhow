@@ -16,7 +16,7 @@
 FUNCTION virm_parametri()
 
    LOCAL _firma := PadR( fetch_metric( "virm_org_id", nil, "" ), 6 )
-   LOCAL _firma_naziv := fetch_metric( "virm_org_naz", nil, PadR( gNFirma, 100 ) )
+   LOCAL _firma_naziv := fetch_metric( "virm_org_naz", nil, PadR( self_organizacija_naziv(), 100 ) )
    LOCAL _pict := fetch_metric( "virm_iznos_pict", nil, PadR( "999999999.99", 12 ) )
    LOCAL _nule := fetch_metric( "virm_stampati_nule", nil, "N" )
    LOCAL _sys_datum := fetch_metric( "virm_sys_datum_uplate", nil, "D" )

@@ -51,7 +51,7 @@ FUNCTION NaPrimPak()
    // utvrdimo broj nove kalkulacije
    // ------------------------------
    cIdVdI := "80"
-   cIdFirma := gFirma
+   cIdFirma := self_organizacija_id()
 
    find_kalk_doks_by_broj_dokumenta( cIdFirma, cIdVdI )
    //SELECT kalk_doks; SEEK cIdFirma + cIdVdI + Chr( 255 ); SKIP -1
@@ -232,7 +232,7 @@ FUNCTION NaPrPak2()
    // utvrdimo broj nove kalkulacije
    // ------------------------------
    cIdVdI := "80"
-   cIdFirma := gFirma
+   cIdFirma := self_organizacija_id()
    SELECT kalk_doks; SEEK cIdFirma + cIdVdI + Chr( 255 ); SKIP -1
    IF cIdFirma + cIdVdI == IDFIRMA + IDVD
       cBrDok := brdok

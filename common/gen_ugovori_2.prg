@@ -267,7 +267,7 @@ FUNCTION gen_ug_2()
          // uzmi firmu na osnovu artikla
          cIdFirma := g_idfirma( cIdArt )
       ELSE
-         cIdFirma := gFirma
+         cIdFirma := self_organizacija_id()
       ENDIF
 
       ++ _count
@@ -349,7 +349,7 @@ FUNCTION gen_ug_2()
 STATIC FUNCTION g_idfirma( cArt_id )
 
    LOCAL nTArea := Select()
-   LOCAL cFirma := gFirma
+   LOCAL cFirma := self_organizacija_id()
 
    SELECT roba
    GO TOP
@@ -1060,7 +1060,7 @@ STATIC FUNCTION postoji_generacija( dDatObr, cIdArt )
 STATIC FUNCTION vrati_nazad( dDatObr, cIdArt )
 
    LOCAL cBrDokOdDo
-   LOCAL cFirma := gFirma
+   LOCAL cFirma := self_organizacija_id()
 
    SELECT gen_ug
    SET ORDER TO TAG "dat_obr"

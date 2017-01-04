@@ -75,7 +75,7 @@ FUNCTION kalk_kontiranje_gen_finmat()
          cIdVD := IdVD
          cBrdok := brdok
          IF Empty( cIdFirma )
-            cIdFirma := gFirma
+            cIdFirma := self_organizacija_id()
          ENDIF
          lViseKalk := .F.
 
@@ -321,7 +321,7 @@ FUNCTION kalk_kontiranje_gen_finmat()
 
          IF ( kalk_pripr->IdVD $ "41#42" )
             REPLACE Rabat WITH kalk_pripr->RabatV * kalk_pripr->kolicina // popust maloprodaje se smjesta ovdje
-            IF AllTrim( gnFirma ) == "TEST FIRMA"
+            IF AllTrim( self_organizacija_naziv() ) == "TEST FIRMA"
                MsgBeep( "Popust MP = finmat->rabat " + Str( Rabat, 10, 2 ) )
             ENDIF
          ENDIF

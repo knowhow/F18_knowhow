@@ -66,7 +66,7 @@ FUNCTION Iz12u97()
 
    o_kalk_edit()
 
-   cIdFirma    := gFirma
+   cIdFirma    := self_organizacija_id()
    cIdVdU      := "12"
    cIdVdI      := "97"
    cBrDokU     := Space( Len( kalk_pripr->brdok ) )
@@ -292,7 +292,7 @@ FUNCTION MNivPoProc()
    O_ROBA
    cVarijanta := "3"
    Box(, 7, 60 )
-   cIdFirma := gFirma
+   cIdFirma := self_organizacija_id()
    cIdkonto := PadR( "1310", 7 )
    dDatDok := Date()
    @ m_x + 1, m_Y + 2 SAY "Magacin    :" GET  cidkonto VALID P_Konto( @cidkonto )
@@ -446,11 +446,11 @@ FUNCTION KorekPC()
    PRIVATE nRbr := 0
 
 
-   cBrNiv :=  kalk_get_next_broj_v5( gFirma, "18", NIL )
+   cBrNiv :=  kalk_get_next_broj_v5( self_organizacija_id(), "18", NIL )
 
-   find_kalk_by_mkonto_idroba( gFirma, gMagac )
+   find_kalk_by_mkonto_idroba( self_organizacija_id(), gMagac )
    GO TOP
-   DO WHILE !Eof() .AND. idfirma + mkonto = gFirma + cMagac
+   DO WHILE !Eof() .AND. idfirma + mkonto = self_organizacija_id() + cMagac
 
       cIdRoba := Idroba; nUlaz := nIzlaz := 0; nVPVU := nVPVI := nNVU := nNVI := 0; nRabat := 0
       SELECT roba
@@ -463,7 +463,7 @@ FUNCTION KorekPC()
       nUlazVPC  := UzmiVPCSif( cIdKonto, .T. )
       nPosljVPC := nUlazVPC
       nRobaVPC  := nUlazVPC
-      DO WHILE !Eof() .AND. gFirma + cidkonto + cidroba == idFirma + mkonto + idroba
+      DO WHILE !Eof() .AND. self_organizacija_id() + cidkonto + cidroba == idFirma + mkonto + idroba
 
          IF roba->tip $ "TU"; skip; loop; ENDIF
          IF cSravnitiD == "D"
@@ -542,7 +542,7 @@ FUNCTION KorekPC()
          IF Round( nRazlika, 4 ) <> 0
             ++nRbr
             APPEND BLANK
-            REPLACE idfirma WITH gFirma, idroba WITH cIdRoba, idkonto WITH cIdKonto, ;
+            REPLACE idfirma WITH self_organizacija_id(), idroba WITH cIdRoba, idkonto WITH cIdKonto, ;
                datdok WITH dDok, ;
                idtarifa WITH roba->idtarifa, ;
                datfaktp WITH dDok, ;
@@ -694,7 +694,7 @@ FUNCTION kalk_gen_16_iz_96()
 
 
 
-   LOCAL cIdFirma    := gFirma
+   LOCAL cIdFirma    := self_organizacija_id()
    LOCAL cIdVdU      := "96"
    LOCAL cIdVdI      := "16"
    LOCAL cBrDokU     := Space( Len( kalk_pripr->brdok ) )
@@ -761,7 +761,7 @@ FUNCTION Iz16u14()
 
    o_kalk_edit()
 
-   cIdFirma    := gFirma
+   cIdFirma    := self_organizacija_id()
    cIdVdU      := "16"
    cIdVdI      := "14"
    cBrDokU     := Space( Len( kalk_pripr->brdok ) )

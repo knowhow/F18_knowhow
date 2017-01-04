@@ -85,7 +85,7 @@ FUNCTION LdFin()
                SELECT fin_pripr
                APPEND BLANK
                REPLACE idvn     WITH trfp3->idvn
-               REPLACE idfirma  WITH gFirma
+               REPLACE idfirma  WITH self_organizacija_id()
                REPLACE brnal    WITH cBrNal
                REPLACE rbr      WITH Str( ++nRBr, 4 )
                REPLACE datdok   WITH dDatum
@@ -115,7 +115,7 @@ FUNCTION LdFin()
             APPEND BLANK
 
             REPLACE idvn     WITH trfp3->idvn
-            REPLACE idfirma  WITH gFirma
+            REPLACE idfirma  WITH self_organizacija_id()
             REPLACE brnal    WITH cBrNal
             REPLACE rbr      WITH Str( ++nRBr, 4 )
             REPLACE datdok   WITH dDatum
@@ -197,7 +197,7 @@ FUNCTION ah_rld( cId, cTag, cOpis )
          APPEND BLANK
 
          REPLACE idvn WITH trfp3->idvn
-         REPLACE idfirma WITH gFirma
+         REPLACE idfirma WITH self_organizacija_id()
          REPLACE brnal WITH cBrNal
          REPLACE rbr WITH Str( ++nRBr, 4 )
          REPLACE datdok WITH dDatum

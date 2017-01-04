@@ -124,7 +124,7 @@ FUNCTION fin_set_param_broj_dokumenta()
    LOCAL _param
    LOCAL nBroj := 0
    LOCAL _broj_old
-   LOCAL _firma := gFirma
+   LOCAL _firma := self_organizacija_id()
    LOCAL _tip_dok := "10"
 
    Box(, 2, 60 )

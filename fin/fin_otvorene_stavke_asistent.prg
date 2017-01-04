@@ -32,7 +32,7 @@ FUNCTION fin_asistent_otv_st()
    o_suban()
 
    // ovo su parametri kartice
-   cIdFirma := gFirma
+   cIdFirma := self_organizacija_id()
    cIdKonto := Space( Len( suban->idkonto ) )
    cIdPartner := Space( Len( suban->idPartner ) )
 

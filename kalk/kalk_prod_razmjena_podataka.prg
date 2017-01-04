@@ -46,7 +46,7 @@ FUNCTION prenos_fakt_kalk_prodavnica()
 
 FUNCTION fakt_11_kalk_prenos_11()
 
-   LOCAL cIdFirma := gFirma
+   LOCAL cIdFirma := self_organizacija_id()
    LOCAL cIdTipDok := "11"
    LOCAL cBrDok := Space( 8 )
    LOCAL cBrKalk := Space( 8 )
@@ -279,7 +279,7 @@ FUNCTION fakt_11_kalk_prenos_11()
 
 FUNCTION fakt_13_kalk_11()
 
-   LOCAL cIdFirma := gFirma
+   LOCAL cIdFirma := self_organizacija_id()
    LOCAL cIdTipDok := "13"
    LOCAL cBrDok := Space( 8 )
    LOCAL cBrKalk := Space( 8 )
@@ -438,7 +438,7 @@ FUNCTION fakt_13_kalk_11()
 
 FUNCTION fakt_11_kalk_41()
 
-   PRIVATE cIdFirma := gFirma
+   PRIVATE cIdFirma := self_organizacija_id()
    PRIVATE cIdTipDok := "11"
    PRIVATE cBrDok := Space( 8 )
    PRIVATE cBrKalk := Space( 8 )
@@ -694,7 +694,7 @@ FUNCTION fakt_11_kalk_41()
 
 FUNCTION fakt_01_kalk_81()
 
-   LOCAL cIdFirma := gFirma, cIdTipDok := "01", cBrDok := cBrKalk := Space( 8 )
+   LOCAL cIdFirma := self_organizacija_id(), cIdTipDok := "01", cBrDok := cBrKalk := Space( 8 )
 
    o_kalk_pripr()
    o_kalk()
@@ -826,7 +826,7 @@ FUNCTION fakt_01_kalk_81()
 
 FUNCTION fakt_13_kalk_80()
 
-   LOCAL cIdFirma := gFirma, cIdTipDok := "13", cBrDok := cBrKalk := Space( 8 )
+   LOCAL cIdFirma := self_organizacija_id(), cIdTipDok := "13", cBrDok := cBrKalk := Space( 8 )
 
    o_kalk_pripr()
    o_koncij()
@@ -988,7 +988,7 @@ FUNCTION fakt_13_kalk_80()
 
 FUNCTION fakt_15_kalk_15()
 
-   LOCAL cIdFirma := gFirma, cIdTipDok := "15", cBrDok := cBrKalk := Space( 8 )
+   LOCAL cIdFirma := self_organizacija_id(), cIdTipDok := "15", cBrDok := cBrKalk := Space( 8 )
    LOCAL dDatPl := CToD( "" )
    LOCAL fDoks2 := .F.
 
@@ -1175,7 +1175,7 @@ FUNCTION fakt_11_kalk_42()
    LOCAL _zbirni_prenos := "D"
    LOCAL _dat_kalk := Date()
 
-   PRIVATE cIdFirma := gFirma
+   PRIVATE cIdFirma := self_organizacija_id()
    PRIVATE cIdTipDok := "11"
    PRIVATE cBrDok := Space( 8 )
    PRIVATE cBrKalk := Space( 8 )

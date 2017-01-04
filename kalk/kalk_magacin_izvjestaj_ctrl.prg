@@ -182,7 +182,7 @@ STATIC FUNCTION g_vars( dD_from, dD_to, cIdFirma, cIdKonto, cProdKto, ;
 
    dD_from := CToD( "01.01.09" )
    dD_to := CToD( "31.12.09" )
-   cIdFirma := gFirma
+   cIdFirma := self_organizacija_id()
    cIdKonto := PadR( "1010;", 150 )
    cTDokList := PadR( "10;11;12;", 20 )
    cArtfilter := PadR( "2;3;", 100 )

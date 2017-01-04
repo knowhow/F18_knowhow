@@ -18,7 +18,7 @@ FUNCTION TopsFakt()
    LOCAL cLokacija := PadR( "A:" + SLASH, 40 )
    LOCAL cTopsFakt
    LOCAL nRBr
-   LOCAL cIdRj := gFirma
+   LOCAL cIdRj := self_organizacija_id()
    LOCAL cCijeneIzSif := "D"
    LOCAL cRabatDN := "N"
    LOCAL nRacuna := 0

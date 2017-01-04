@@ -190,7 +190,7 @@ FUNCTION spec_kol_partn()
 
    _o_tables()
 
-   cIdfirma := gFirma
+   cIdfirma := self_organizacija_id()
    dDatOd := CToD( "" )
    dDatDo := Date()
    cDistrib := PadR( "10", 6 )
@@ -201,7 +201,7 @@ FUNCTION spec_kol_partn()
 
    @ m_x + _x, m_y + 2 SAY "RJ            " GET cIdFirma ;
       VALID {|| Empty( cIdFirma ) .OR. ;
-      cIdFirma == gFirma .OR. P_RJ( @cIdFirma ), cIdFirma := Left( cIdFirma, 2 ), .T. }
+      cIdFirma == self_organizacija_id() .OR. P_RJ( @cIdFirma ), cIdFirma := Left( cIdFirma, 2 ), .T. }
 
    ++ _x
 

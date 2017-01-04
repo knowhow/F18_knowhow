@@ -119,7 +119,7 @@ FUNCTION fakt_zagl_firma()
    B_OFF
    I_OFF
 
-   ?? "Subjekt:"; U_ON; ?? PadC( Trim( tip_organizacije() ) + " " + Trim( gNFirma ), 39 ); U_OFF
+   ?? "Subjekt:"; U_ON; ?? PadC( Trim( tip_organizacije() ) + " " + Trim( self_organizacija_naziv() ), 39 ); U_OFF
    ?  "Prodajni objekat:"; U_ON; ?? PadC( AllTrim( NazProdObj() ), 30 ) ; U_OFF
    ?  "(poslovnica-poslovna jedinica)"
    ?  "Datum:"; U_ON; ?? PadC( SrediDat( DATDOK ), 18 ); U_OFF

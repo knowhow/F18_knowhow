@@ -199,7 +199,7 @@ STATIC FUNCTION _cre_xml( data, params )
 
    xml_subnode( "spec", .F. )
 
-   xml_node( "firma", to_xml_encoding( gNFirma ) )
+   xml_node( "firma", to_xml_encoding( self_organizacija_naziv() ) )
    xml_node( "godina", Str( params[ "godina" ] ) )
    xml_node( "mjesec", Str( params[ "mjesec" ] ) )
    xml_node( "kreditor", to_xml_encoding( params[ "kreditor" ] ) )

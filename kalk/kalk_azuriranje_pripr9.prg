@@ -106,7 +106,7 @@ FUNCTION kalk_povrat_dokumenta_iz_pripr9( cIdFirma, cIdVd, cBrDok )
    ENDIF
 
    IF !lSilent
-      cIdFirma := gFirma
+      cIdFirma := self_organizacija_id()
       cIdVD := Space( 2 )
       cBrDok := Space( 8 )
    ENDIF
@@ -240,7 +240,7 @@ FUNCTION kalk_povrat_najstariji_dokument_iz_pripr9()
 
    SELECT kalk_pripr9
    SET ORDER TO TAG "3" // kalk_pripr9
-   cidfirma := gfirma
+   cidfirma := self_organizacija_id()
    cIdVD := Space( 2 )
    cBrDok := Space( 8 )
 

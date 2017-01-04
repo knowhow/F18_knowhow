@@ -56,7 +56,7 @@ FUNCTION kalk_kartica_prodavnica()
 
    IF PCount() == 0
 
-      cIdFirma := gFirma
+      cIdFirma := self_organizacija_id()
       cIdRoba := Space( 10 )
       cIdKonto := PadR( "1330", 7 )
       cPredh := "N"
@@ -71,7 +71,7 @@ FUNCTION kalk_kartica_prodavnica()
       DO WHILE .T.
 
          @ m_x + 1, m_y + 2 SAY "Firma "
-         ?? gFirma, "-", gNFirma
+         ?? self_organizacija_id(), "-", self_organizacija_naziv()
 
 
          @ m_x + 2, m_y + 2 SAY "Konto " GET cIdKonto VALID P_Konto( @cIdKonto )
@@ -600,7 +600,7 @@ FUNCTION naprometniji_artikli_prodavnica()
 
    O_ROBA
 
-   find_kalk_za_period( gFirma, NIL, NIL, NIL, dDat0, dDat1, "idroba,idvd" )
+   find_kalk_za_period( self_organizacija_id(), NIL, NIL, NIL, dDat0, dDat1, "idroba,idvd" )
 
    cFilt := aUsl1 + " .and. " + aUsl2 + ' .and. PU_I=="5"' + ' .and. !(IDVD $ "12#13#22")'
 

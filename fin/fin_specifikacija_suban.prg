@@ -11,7 +11,7 @@
 
 #include "f18.ch"
 
-MEMVAR gFirma, gPicBHD, picBHD, qqKonto, qqPartner, qqBrDok
+MEMVAR gPicBHD, picBHD, qqKonto, qqPartner, qqBrDok
 MEMVAR gDUFRJ
 MEMVAR cIdFirma, cIdRj, dDatOd, dDatDo, cFunk, cFond, cNula
 MEMVAR cSkVar, cRasclaniti, cRascFunkFond, cN2Fin
@@ -57,7 +57,7 @@ FUNCTION fin_specifikacija_suban()
    SELECT params
    USE
 
-   cIdFirma := gFirma
+   cIdFirma := self_organizacija_id()
    picBHD := FormPicL( "9 " + gPicBHD, 20 )
 
    qqKonto := qqPartner := Space( 100 )
@@ -100,12 +100,12 @@ FUNCTION fin_specifikacija_suban()
    DO WHILE .T.
       @ m_x + 1, m_y + 6 SAY8 "SPECIFIKACIJA SUBANALITIČKIH KONTA"
       IF gDUFRJ == "D"
-         cIdFirma := PadR( gFirma + ";", 30 )
+         cIdFirma := PadR( self_organizacija_id() + ";", 30 )
          @ m_x + 3, m_y + 2 SAY "Firma: " GET cIdFirma PICT "@!S20"
       ELSE
 
          @ m_x + 3, m_y + 2 SAY "Firma "
-         ?? gFirma, "-", gNFirma
+         ?? self_organizacija_id(), "-", self_organizacija_naziv()
 
       ENDIF
       @ m_x + 4, m_y + 2 SAY "Konto   " GET qqKonto  PICT "@!S50"
@@ -666,10 +666,10 @@ FUNCTION zagl_fin_specif( cSkVar )
    ENDIF
 
    IF gNW == "D"
-      ? "Firma:", gFirma, gNFirma
+      ? "Firma:", self_organizacija_id(), self_organizacija_naziv()
    ELSE
       IF Empty( cIdFirma )
-         ? "Firma:", gNFirma, "(SVE RJ)"
+         ? "Firma:", self_organizacija_naziv(), "(SVE RJ)"
       ELSE
          SELECT PARTN
          HSEEK cIdFirma

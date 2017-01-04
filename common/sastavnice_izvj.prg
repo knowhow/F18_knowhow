@@ -98,7 +98,7 @@ FUNCTION ISast()
       P_10CPI
       ? "Pregled proizvoda koji nemaju definisane sastavnice"
       ?
-      ? gNFirma, Space( 20 ), "na dan", Date()
+      ? self_organizacija_naziv(), Space( 20 ), "na dan", Date()
       GO TOP
       P_12CPI
       ?
@@ -144,7 +144,7 @@ FUNCTION ISast()
 
       ? "Pregled sastavnica-normativa za proizvode"
       ?
-      ? gNFirma, Space( 20 ), "na dan", Date()
+      ? self_organizacija_naziv(), Space( 20 ), "na dan", Date()
 
       GO TOP
 

@@ -133,7 +133,7 @@ FUNCTION PrenosFin()
    IF lPrenos4 .OR. lPrenos5 .OR. lPrenos6
       // SELECT ( F_SUBAN )
       // usex ( "suban" )
-      find_suban_by_broj_dokumenta( gFirma )
+      find_suban_by_broj_dokumenta( self_organizacija_id() )
       IF lPrenos4
          INDEX ON idfirma + idkonto + idpartner + idrj + funk + fond TO SUBSUB
       ENDIF
@@ -160,7 +160,7 @@ FUNCTION PrenosFin()
       ENDIF
    ELSE
 
-      find_suban_by_konto_partner( gFirma )
+      find_suban_by_konto_partner( self_organizacija_id() )
 
       // SELECT ( F_SUBAN )
       // usex ( "suban" )
@@ -668,7 +668,7 @@ FUNCTION fin_prekart()
    PRIVATE _id_partner := fetch_metric( "fin_preb_kart_id_partner", my_user(), Space( 60 ) )
    PRIVATE _dat_od := fetch_metric( "fin_preb_kart_dat_od", my_user(), CToD( "" ) )
    PRIVATE _dat_do := fetch_metric( "fin_preb_kart_dat_do", my_user(), CToD( "" ) )
-   PRIVATE _id_firma := gFirma
+   PRIVATE _id_firma := self_organizacija_id()
 
    Msg( "Ova opcija omogucava prebacivanje svih ili dijela stavki sa#" + ;
       "postojeceg na drugi konto. Zeljeni konto je u tabeli prikazan#" + ;

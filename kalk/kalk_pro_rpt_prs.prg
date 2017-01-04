@@ -129,7 +129,7 @@ STATIC FUNCTION _gen_rpt( cBrFakt, cValuta, dDatOd, dDatDo, cRekap )
    GO TOP
 
    // kreiraj index
-   INDEX ON ( "brfakt" ) TO ( _idx ) FOR ( idfirma == gFirma .AND. Idv == "PR" )
+   INDEX ON ( "brfakt" ) TO ( _idx ) FOR ( idfirma == self_organizacija_id() .AND. Idv == "PR" )
    dbSetIndex( _idx )
 
    GO TOP

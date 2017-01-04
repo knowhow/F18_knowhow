@@ -33,7 +33,7 @@ FUNCTION fin_automatsko_zatvaranje_otvorenih_stavki( lAuto, cKto, cPtn )
       cKto := ""
    ENDIF
 
-   cIdFirma := gFirma
+   cIdFirma := self_organizacija_id()
    cIdKonto := Space( 7 )
    cIdPartner := Space( 6 )
 
@@ -61,7 +61,7 @@ FUNCTION fin_automatsko_zatvaranje_otvorenih_stavki( lAuto, cKto, cPtn )
       @ m_x + 1, m_y + 2 SAY "AUTOMATSKO ZATVARANJE STAVKI"
 
       @ m_x + 3, m_y + 2 SAY "Firma "
-      ?? gFirma, "-", AllTrim( gNFirma )
+      ?? self_organizacija_id(), "-", AllTrim( self_organizacija_naziv() )
 
       @ m_x + 4, m_y + 2 SAY "Konto: " GET cIdKonto VALID P_KontoFin( @cIdKonto )
       @ m_x + 5, m_y + 2 SAY "Partner (prazno-svi): " GET cIdPartner ;

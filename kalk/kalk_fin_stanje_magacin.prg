@@ -49,7 +49,7 @@ FUNCTION finansijsko_stanje_magacin()
 
       IF gNW $ "DX"
          @ m_x + 1, m_y + 2 SAY "Firma "
-         ?? gFirma, "-", gNFirma
+         ?? self_organizacija_id(), "-", self_organizacija_naziv()
       ELSE
          @ m_x + 1, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
       ENDIF
@@ -119,7 +119,7 @@ FUNCTION finansijsko_stanje_magacin()
 
    ENDIF
 
-   cIdFirma := gFirma
+   cIdFirma := self_organizacija_id()
    hParams := hb_Hash()
 
    hParams[ "idfirma" ] := cIdFirma

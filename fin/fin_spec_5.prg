@@ -17,8 +17,8 @@ FUNCTION PregNDP()
    Box( "#PREGLED NOVIH DUGOVANJA/POTRAZIVANJA", 15, 72 )
 
    IF gNW == "D"
-      cIdFirma := gfirma
-      @ m_x + 1, m_y + 2 SAY "Firma "; ?? gFirma, "-", gNFirma
+      cIdFirma := self_organizacija_id()
+      @ m_x + 1, m_y + 2 SAY "Firma "; ?? self_organizacija_id(), "-", self_organizacija_naziv()
    ELSE
       cidfirma := "10"
       @ m_x + 1, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }

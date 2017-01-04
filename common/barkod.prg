@@ -77,7 +77,7 @@ FUNCTION KaLabelBKod()
 
    nRezerva := 0
 
-   cLinija2 := PadR( "Uvoznik:" + gNFirma, 45 )
+   cLinija2 := PadR( "Uvoznik:" + self_organizacija_naziv(), 45 )
 
    Box(, 4, 75 )
    @ m_x + 0, m_y + 25 SAY " LABELIRANJE BAR KODOVA "
@@ -213,7 +213,7 @@ FUNCTION FaLabelBKod()
    nRezerva := 0
 
    cLinija1 := PadR( "Proizvoljan tekst", 45 )
-   cLinija2 := PadR( "Uvoznik:" + gNFirma, 45 )
+   cLinija2 := PadR( "Uvoznik:" + self_organizacija_naziv(), 45 )
    Box(, 4, 75 )
    @ m_x + 0, m_y + 25 SAY " LABELIRANJE BAR KODOVA "
    @ m_x + 2, m_y + 2 SAY "Rezerva (broj komada):" GET nRezerva VALID nRezerva >= 0 PICT "99"

@@ -38,7 +38,7 @@ FUNCTION fakt_stanje_robe()
 
    _o_tables()
 
-   cIdfirma := gFirma
+   cIdfirma := self_organizacija_id()
    qqRoba := ""
    dDatOd := CToD( "" )
    dDatDo := Date()
@@ -72,7 +72,7 @@ FUNCTION fakt_stanje_robe()
 
    DO WHILE .T.
       IF gNW $ "DR"
-         @ m_x + 1, m_y + 2 SAY "RJ (prazno svi) " GET cIdFirma valid {|| Empty( cIdFirma ) .OR. cidfirma == gFirma .OR. P_RJ( @cIdFirma ), cIdFirma := Left( cIdFirma, 2 ), .T. }
+         @ m_x + 1, m_y + 2 SAY "RJ (prazno svi) " GET cIdFirma valid {|| Empty( cIdFirma ) .OR. cidfirma == self_organizacija_id() .OR. P_RJ( @cIdFirma ), cIdFirma := Left( cIdFirma, 2 ), .T. }
       ELSE
          @ m_x + 1, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
       ENDIF

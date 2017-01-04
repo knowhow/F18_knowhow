@@ -17,7 +17,7 @@ FUNCTION SpecSubPro()
    PRIVATE cSk := "N"
    PRIVATE cSkVar := "N"
 
-   cIdFirma := gFirma
+   cIdFirma := self_organizacija_id()
    picBHD := FormPicL( "9 " + gPicBHD, 20 )
 
    O_KONTO
@@ -47,7 +47,7 @@ FUNCTION SpecSubPro()
    DO WHILE .T.
       @ m_x + 1, m_y + 6 SAY "SPECIFIKACIJA SUBANALITIKA - PROIZV.SORT."
       IF gNW == "D"
-         @ m_x + 3, m_y + 2 SAY "Firma "; ?? gFirma, "-", gNFirma
+         @ m_x + 3, m_y + 2 SAY "Firma "; ?? self_organizacija_id(), "-", self_organizacija_naziv()
       ELSE
          @ m_x + 3, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
       ENDIF

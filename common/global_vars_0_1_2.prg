@@ -30,7 +30,7 @@ PROCEDURE set_global_vars_0()
    PUBLIC gReadOnly := .F.
    PUBLIC gProcPrenos := "N"
    PUBLIC gInstall := .F.
-   //PUBLIC gfKolor := "D"
+   // PUBLIC gfKolor := "D"
    PUBLIC gPrinter := "R"
    PUBLIC gPtxtSw := nil
    PUBLIC gPDFSw := nil
@@ -182,7 +182,7 @@ FUNCTION set_global_vars_1()
    PUBLIC gcDirekt := "V", gShemaVF := "B5", gSKSif := "D"
    PUBLIC gKodnaS := "8"
    PUBLIC g50f := " "
-   //PUBLIC gFKolor := "D"
+   // PUBLIC gFKolor := "D"
 
    O_GPARAMS
    PRIVATE cSection := "1", cHistory := " "; aHistory := {}
@@ -199,7 +199,7 @@ FUNCTION set_global_vars_1()
    Rpar( "pV", @gPDFViewer )
    Rpar( "pA", @gPDFPAuto )
    Rpar( "dP", @gDefPrinter )
-   //Rpar( "FK", @gFKolor )
+   // Rpar( "FK", @gFKolor )
 
    SELECT ( F_GPARAMS )
    USE
@@ -215,8 +215,9 @@ FUNCTION set_global_vars_2()
    init_printer()
 
    PUBLIC gOznVal := "KM"
-   PUBLIC gFirma := "10"
-   PUBLIC gNFirma := PadR( "", 50 )
+
+   PUBLIC gFirma
+   PUBLIC gNFirma
    PUBLIC gBaznaV := "D"
    PUBLIC gZaokr := 2
    PUBLIC gTabela := 0
@@ -238,6 +239,8 @@ FUNCTION set_global_vars_2()
    gSqlLogBase := ""
    gReadOnly := .F.
 
+   self_organizacija_id( "10" )
+   self_organizacija_naziv( PadR( "", 50 ) )
 
    info_bar( "init", "set global_vars_2 - end" )
 
@@ -254,9 +257,10 @@ FUNCTION set_global_vars_roba()
    PUBLIC gPicProc
    PUBLIC gPicDEM
    PUBLIC gPickol
-   //PUBLIC gFPicCDem
-   //PUBLIC gFPicDem
-   //PUBLIC gFPicKol
+
+   // PUBLIC gFPicCDem
+   // PUBLIC gFPicDem
+   // PUBLIC gFPicKol
 
    PUBLIC gDuzSifIni
 
@@ -281,9 +285,9 @@ FUNCTION set_global_vars_roba()
    gPicDEM := "9999999.99"
    gPicKol := "999999.999"
 
-   //gFPicCDem := "3"
-   //gFPicDem := "3"
-   //gFPicKol := "3"
+   // gFPicCDem := "3"
+   // gFPicDem := "3"
+   // gFPicKol := "3"
 
    gDuzSifINI := "10"
 

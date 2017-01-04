@@ -382,7 +382,7 @@ FUNCTION blag_azur()
    ENDIF
 
    dDatdok := datdok
-   cIdFirma := gFirma
+   cIdFirma := self_organizacija_id()
    cTipDok := Space( 2 )
    cBrDok := Space( 8 )
 

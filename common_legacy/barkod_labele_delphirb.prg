@@ -269,7 +269,7 @@ STATIC FUNCTION print_delphi_label( aStampati, modul )
    nRezerva := 0
 
    cLinija1 := PadR( "Proizvoljan tekst", 45 )
-   cLinija2 := PadR( "Uvoznik:" + AllTrim( gNFirma ), 45 )
+   cLinija2 := PadR( "Uvoznik:" + AllTrim( self_organizacija_naziv() ), 45 )
 
    Box(, 4, 75 )
 

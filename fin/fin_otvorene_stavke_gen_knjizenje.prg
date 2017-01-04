@@ -11,7 +11,7 @@
 
 #include "f18.ch"
 
-MEMVAR gFirma
+
 MEMVAR Ch
 MEMVAR m_x, m_y
 MEMVAR _idfirma, _opis, _d_p, _iznosbhd, _idrj, _idpartner, _idkonto
@@ -49,7 +49,7 @@ FUNCTION knjizenje_gen_otvorene_stavke()
       RETURN ( NIL )
    ENDIF
 
-   cIdFirma := gFirma
+   cIdFirma := self_organizacija_id()
    cIdPartner := _idpartner
 
 

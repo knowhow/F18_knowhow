@@ -387,7 +387,7 @@ STATIC FUNCTION __export( vars, a_details )
 
    @ m_x + 1, m_y + 2 SAY "... export fin dokumenata u toku"
 
-   find_nalog_za_period( gFirma, NIL, _dat_od, _dat_do )
+   find_nalog_za_period( self_organizacija_id(), NIL, _dat_od, _dat_do )
 
    DO WHILE !Eof()
 

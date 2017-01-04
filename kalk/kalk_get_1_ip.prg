@@ -117,7 +117,7 @@ FUNCTION kalk_generisi_ip()
 
    Box(, 4, 50 )
 
-   cIdFirma := gFirma
+   cIdFirma := self_organizacija_id()
    cIdkonto := PadR( "1320", 7 )
    dDatDok := Date()
    cNulirati := "N"
@@ -271,9 +271,9 @@ FUNCTION kalk_ip_roba( id_konto, id_roba, dat_dok, kolicina, nc, fc, mpcsapp )
 
    SELECT kalk
    SET ORDER TO TAG "4"
-   HSEEK gFirma + id_konto + id_roba
+   HSEEK self_organizacija_id() + id_konto + id_roba
 
-   DO WHILE !Eof() .AND. field->idfirma == gFirma .AND. field->pkonto == id_konto .AND. field->idroba == id_roba
+   DO WHILE !Eof() .AND. field->idfirma == self_organizacija_id() .AND. field->pkonto == id_konto .AND. field->idroba == id_roba
 
       IF dat_dok < field->datdok
          // preskoci
@@ -346,7 +346,7 @@ FUNCTION gen_ip_razlika()
 
    Box(, 4, 50 )
 
-   cIdFirma := gFirma
+   cIdFirma := self_organizacija_id()
    cIdkonto := PadR( "1330", 7 )
    dDatDok := Date()
    cOldBrDok := Space( 8 )

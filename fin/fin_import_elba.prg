@@ -284,7 +284,7 @@ STATIC FUNCTION get_elba_stavka_from_txt( aItem )
 
 
 
-   hRet[ "idfirma" ] := gFirma
+   hRet[ "idfirma" ] := self_organizacija_id()
    hRet[ "transakcija" ] := aItem[ 1 ]
    hRet[ "datdok" ] := elba_fix_dat_var( aItem[ 2 ] )
 

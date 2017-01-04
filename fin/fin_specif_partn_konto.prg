@@ -22,7 +22,7 @@ FUNCTION fin_spec_partnera_na_kontu()
    // format izvjestaja
    cPG := "D"
    // prikazi grad partnera
-   cIdFirma := gFirma
+   cIdFirma := self_organizacija_id()
    nIznos := nIznos2 := 0
    cDP := "1"
    qqKonto := qqPartner := Space( 100 )
@@ -32,7 +32,7 @@ FUNCTION fin_spec_partnera_na_kontu()
    Box( "skpoi", 10, 70, .F. )
    @ m_x + 1, m_y + 2 SAY "SPECIFIKACIJA PARTNERA NA KONTU"
    IF gNW == "D"
-      @ m_x + 3, m_y + 2 SAY "Firma "; ?? gFirma, "-", gNFirma
+      @ m_x + 3, m_y + 2 SAY "Firma "; ?? self_organizacija_id(), "-", self_organizacija_naziv()
    ELSE
       @ m_x + 3, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
    ENDIF

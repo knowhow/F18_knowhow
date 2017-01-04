@@ -56,7 +56,7 @@ FUNCTION kamate_obracun_pojedinacni( fVise )
    ?
    ?
    B_ON
-   ?U Space( 45 ), "Preduzeće:", gNFirma
+   ?U Space( 45 ), "Preduzeće:", self_organizacija_naziv()
    B_OFF
    ?
    ? "Partner: _____________________________________"

@@ -64,7 +64,7 @@ FUNCTION kalk_kartica_magacin()
 
    IF cIdKonto == NIL
 
-      cIdFirma := gFirma
+      cIdFirma := self_organizacija_id()
       cIdRoba := Space( 10 )
       cIdKonto := PadR( "1320", gDuzKonto )
 
@@ -82,7 +82,7 @@ FUNCTION kalk_kartica_magacin()
       DO WHILE .T.
 
          @ m_x + 1, m_y + 2 SAY "Firma "
-         ?? gFirma, "-", gNFirma
+         ?? self_organizacija_id(), "-", self_organizacija_naziv()
 
          @ m_x + 2, m_y + 2 SAY "Konto  " GET cIdKonto VALID P_Konto( @cIdKonto )
 

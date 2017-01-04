@@ -90,7 +90,7 @@ FUNCTION IspisFirme( cIdRj )
 
    ?? "Firma: "
    B_ON
-   ?? gNFirma
+   ?? self_organizacija_naziv()
    B_OFF
    IF !Empty( cidrj )
       SELECT rj

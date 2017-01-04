@@ -837,12 +837,12 @@ FUNCTION zagl_rekapitulacija_plata_svi()
    B_ON
 
    IF nMjesec == nMjesecDo
-      ? _l( "Firma:" ), gNFirma, "  " + _l( "Mjesec:" ), Str( nMjesec, 2 ) + IspisObr()
+      ? _l( "Firma:" ), self_organizacija_naziv(), "  " + _l( "Mjesec:" ), Str( nMjesec, 2 ) + IspisObr()
       ?? "    " + _l( "Godina:" ), Str( nGodina, 4 )
       B_OFF
       ? IF( gBodK == "1", _l( "Vrijednost boda:" ), _l( "Vr.koeficijenta:" ) ), Transform( parobr->vrbod, "99999.99999" )
    ELSE
-      ? _l( "Firma:" ), gNFirma, "  " + _l( "Za mjesece od:" ), Str( nMjesec, 2 ), "do", Str( nMjesecDo, 2 ) + IspisObr()
+      ? _l( "Firma:" ), self_organizacija_naziv(), "  " + _l( "Za mjesece od:" ), Str( nMjesec, 2 ), "do", Str( nMjesecDo, 2 ) + IspisObr()
       ?? "    " + _l( "Godina:" ), Str( nGodina, 4 )
       B_OFF
    ENDIF

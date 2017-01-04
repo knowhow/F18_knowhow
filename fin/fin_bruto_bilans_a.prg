@@ -11,7 +11,6 @@
 
 #include "f18.ch"
 
-MEMVAR gFirma
 
 CLASS FinBrutoBilans
 
@@ -77,7 +76,7 @@ METHOD FinBrutoBilans:New( _tip_ )
 METHOD FinBrutoBilans:init_params()
 
    ::hParams := hb_Hash()
-   ::hParams[ "idfirma" ] := gFirma
+   ::hParams[ "idfirma" ] := self_organizacija_id()
    ::hParams[ "datum_od" ] := CToD( "" )
    ::hParams[ "datum_do" ] := Date()
    ::hParams[ "konto" ] := ""
@@ -204,7 +203,7 @@ METHOD FinBrutoBilans:get_vars()
    ++ _x
    ++ _x
    @ m_x + _x, m_y + 2 SAY "Firma "
-   ?? gFirma, "-", AllTrim( gNFirma )
+   ?? self_organizacija_id(), "-", AllTrim( self_organizacija_naziv() )
 
    ++ _x
    @ m_x + _x, m_y + 2 SAY "Konta (prazno-sva):" GET _konto PICT "@!S40"
@@ -262,7 +261,7 @@ METHOD FinBrutoBilans:get_vars()
    set_metric( "fin_bb_pod_klase", _user, _podklase )
    set_metric( "fin_bb_format", _user, _format )
 
-   ::hParams[ "idfirma" ] := gFirma
+   ::hParams[ "idfirma" ] := self_organizacija_id()
    ::hParams[ "konto" ] := AllTrim( _konto )
    ::hParams[ "datum_od" ] := _dat_od
    ::hParams[ "datum_do" ] := _dat_do
@@ -330,7 +329,7 @@ METHOD FinBrutoBilans:get_data()
 
    ENDIF
 
-   _where := "WHERE sub.idfirma = " + _filter_quote( gFirma )
+   _where := "WHERE sub.idfirma = " + _filter_quote( self_organizacija_id() )
    _where += " AND " + _sql_date_parse( _date_field, _dat_od, _dat_do )
 
    IF !Empty( _konto )
@@ -536,8 +535,8 @@ METHOD FinBrutoBilans:gen_xml()
    xml_subnode( "bilans", .F. )
 
    // header podaci
-   xml_node( "firma", to_xml_encoding( gFirma ) )
-   xml_node( "naz", to_xml_encoding( gNFirma ) )
+   xml_node( "firma", to_xml_encoding( self_organizacija_id() ) )
+   xml_node( "naz", to_xml_encoding( self_organizacija_naziv() ) )
    xml_node( "datum", DToC( Date() ) )
    xml_node( "datum_od", DToC( ::hParams[ "datum_od" ] ) )
    xml_node( "datum_do", DToC( ::hParams[ "datum_do" ] ) )

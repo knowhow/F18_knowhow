@@ -19,13 +19,13 @@ FUNCTION BrowseRn()
    -- o_kalk()
    O_KONTO
    cmkonto := Space( 7 )
-   cIdFirma := gFirma
+   cIdFirma := self_organizacija_id()
    Box(, 7, 66, )
    SET CURSOR ON
 
    @ m_x + 1, m_y + 2 SAY "ISPRAVKA BROJA VEZE - RADNI NALOZI"
    IF gNW $ "DX"
-      @ m_x + 3, m_y + 2 SAY "Firma "; ?? gFirma, "-", gNFirma
+      @ m_x + 3, m_y + 2 SAY "Firma "; ?? self_organizacija_id(), "-", self_organizacija_naziv()
    ELSE
       @ m_x + 3, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
    ENDIF

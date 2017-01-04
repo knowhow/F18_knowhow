@@ -15,7 +15,7 @@
 
 FUNCTION kalk_pregled_smece_pripr9()
 
-   PRIVATE aUslFirma := gFirma
+   PRIVATE aUslFirma := self_organizacija_id()
    PRIVATE aUslDok := Space( 50 )
    PRIVATE dDat1 := CToD( "" )
    PRIVATE dDat2 := Date()

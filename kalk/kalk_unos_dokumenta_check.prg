@@ -903,7 +903,7 @@ FUNCTION kalk_gen_11_iz_10( cBrDok )
 
    SELECT ( nArr )
 
-   MsgBeep( "Formiran dokument " + AllTrim( gFirma ) + "-11-" + AllTrim( cBrDok ) )
+   MsgBeep( "Formiran dokument " + AllTrim( self_organizacija_id() ) + "-11-" + AllTrim( cBrDok ) )
 
    RETURN .T.
 

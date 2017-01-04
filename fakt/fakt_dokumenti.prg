@@ -13,7 +13,6 @@
 #include "f18.ch"
 
 MEMVAR m_x, m_y, GetList
-MEMVAR gFirma
 
 CLASS FaktDokumenti
 
@@ -125,7 +124,7 @@ METHOD FaktDokumenti:pretvori_otpremnice_u_racun()
       RETURN .F.
    ENDIF
 
-   _idfirma   := gFirma
+   _idfirma   := self_organizacija_id()
    _idtipdok  := "12"
    _idpartner := Space( 6 )
    _suma      := 0

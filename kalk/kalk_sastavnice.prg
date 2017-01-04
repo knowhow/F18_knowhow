@@ -243,11 +243,11 @@ STATIC FUNCTION g_kalk_stanje( cIdRoba, cKto )
       //SELECT kalk
       //SET ORDER TO TAG "3"
       //GO TOP
-      //SEEK gFirma + cKto + cIdRoba
+      //SEEK self_organizacija_id() + cKto + cIdRoba
 
-      find_kalk_by_mkonto_idroba( gFirma, cKto, cIdRoba )
+      find_kalk_by_mkonto_idroba( self_organizacija_id(), cKto, cIdRoba )
 
-      DO WHILE !Eof() .AND. idfirma + mkonto + idroba == gFirma + cKto + cIdRoba
+      DO WHILE !Eof() .AND. idfirma + mkonto + idroba == self_organizacija_id() + cKto + cIdRoba
 
          IF mu_i == "1"
 

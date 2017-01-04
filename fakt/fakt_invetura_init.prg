@@ -167,7 +167,7 @@ METHOD newItem()
    ::nPKolicina := 0
    ::nCijena := 0
    ::cIdVd := "IM"
-   ::cIdRj := gFirma
+   ::cIdRj := self_organizacija_id()
 
    if ::nRbr == nil
       ::nRbr := 1
@@ -284,7 +284,7 @@ METHOD vldRj()
    IF Empty( ::cIdRj )
       RETURN .F.
    ENDIF
-   if ::cIdRj == gFirma
+   if ::cIdRj == self_organizacija_id()
       RETURN .T.
    ENDIF
 

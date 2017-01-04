@@ -305,7 +305,7 @@ STATIC FUNCTION zaglavlje_izvjestaja( nStr )
 
    LOCAL nObjekata
 
-   ? tip_organizacije() + ":", gNFirma, Space( 40 ), "Strana:" + Str( ++nStr, 3 )
+   ? tip_organizacije() + ":", self_organizacija_naziv(), Space( 40 ), "Strana:" + Str( ++nStr, 3 )
    ?
    ?U  "Količinsko stanje " + IIF( cPrikProd == "D", "zaliha i prodaje", "zaliha" ) + " artikala po objektima za period:"
    ?? dDatOd, "-", dDatDo

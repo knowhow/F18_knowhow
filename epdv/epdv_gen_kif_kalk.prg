@@ -170,7 +170,7 @@ STATIC FUNCTION gen_kalk_kif_item( cSezona )
 
    close_open_kalk_epdv_tables()
 
-   find_kalk_za_period( gFirma, cTdSrc, NIL, NIL, dDatOd, dDatDo )
+   find_kalk_za_period( self_organizacija_id(), cTdSrc, NIL, NIL, dDatOd, dDatDo )
 
    SELECT KALK
    PRIVATE cFilter := ".T."

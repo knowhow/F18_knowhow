@@ -39,7 +39,7 @@ METHOD mMenu()
 
    CLOSE ALL
 
-   @ 1, 2 SAY PadC( gNFirma, 50, "*" )
+   @ 1, 2 SAY PadC( self_organizacija_naziv(), 50, "*" )
    @ 4, 5 SAY ""
 
    ::programski_modul_osnovni_meni()

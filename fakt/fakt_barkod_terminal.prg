@@ -163,7 +163,7 @@ STATIC FUNCTION _gForm( aParam )
    LOCAL GetList := {}
    LOCAL nX := 1
    LOCAL cVpMp := "1"
-   LOCAL cFirma := gFirma
+   LOCAL cFirma := self_organizacija_id()
    LOCAL cTipDok := Space( 2 )
    LOCAL cBrDok := Space( 8 )
    LOCAL cPartner := Space( 6 )

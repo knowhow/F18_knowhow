@@ -15,7 +15,7 @@
 FUNCTION storno_kalk_dokument()
 
    o_kalk_edit()
-   cIdFirma := gFirma
+   cIdFirma := self_organizacija_id()
    cIdVdU   := "  "
    cBrDokU  := Space( Len( kalk_pripr->brdok ) )
    dDatDok    := CToD( "" )

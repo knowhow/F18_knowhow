@@ -561,7 +561,7 @@ STATIC FUNCTION _get_vars( params )
    LOCAL _ret := .T.
    LOCAL _konta := Space( 200 )
    LOCAL _artikli := Space( 200 )
-   LOCAL _firma := gFirma
+   LOCAL _firma := self_organizacija_id()
    LOCAL _date := Date()
    LOCAL _int_1 := 6
    LOCAL _int_2 := 12
@@ -580,7 +580,7 @@ STATIC FUNCTION _get_vars( params )
 
    IF gNW == "D"
       @ m_x + _cnt, m_y + 2 SAY "Firma "
-      ?? gFirma, "-", gNFirma
+      ?? self_organizacija_id(), "-", self_organizacija_naziv()
    ELSE
       @ m_x + _cnt, m_y + 2 SAY "Firma: " GET _firma ;
          VALID {|| p_partner( @_firma ), _firma := Left( _firma, 2 ), .T. }

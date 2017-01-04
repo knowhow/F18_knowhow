@@ -45,7 +45,7 @@ FUNCTION fakt_specif_prodaje_real_kolicina()
    // partneri po grupama
    lGroup := p_group()
 
-   cIdfirma := gFirma
+   cIdfirma := self_organizacija_id()
    dDatOd := CToD( "" )
    dDatDo := Date()
    qqTipDok := Space( 20 )
@@ -74,7 +74,7 @@ FUNCTION fakt_specif_prodaje_real_kolicina()
 
       cIdFirma := PadR( cIdFirma, 2 )
 
-      @ m_x + nX, m_y + 2 SAY "RJ            " GET cIdFirma valid {|| Empty( cIdFirma ) .OR. cIdFirma == gFirma .OR. P_RJ( @cIdFirma ), cIdFirma := Left( cIdFirma, 2 ), .T. }
+      @ m_x + nX, m_y + 2 SAY "RJ            " GET cIdFirma valid {|| Empty( cIdFirma ) .OR. cIdFirma == self_organizacija_id() .OR. P_RJ( @cIdFirma ), cIdFirma := Left( cIdFirma, 2 ), .T. }
 
       ++nX
 

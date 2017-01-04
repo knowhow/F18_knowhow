@@ -27,7 +27,7 @@ STATIC FUNCTION _o_tables()
 
 STATIC FUNCTION _get_vars( vars )
 
-   LOCAL _id_firma := gFirma
+   LOCAL _id_firma := self_organizacija_id()
    LOCAL _dat_od := CToD( "" )
    LOCAL _dat_do := CToD( "" )
    LOCAL cIdKonto := PadR( "", 7 )
@@ -60,7 +60,7 @@ STATIC FUNCTION _get_vars( vars )
 
       IF gNW == "D"
          @ m_x + _x, m_y + 2 SAY "Firma "
-         ?? gFirma, "-", PadR( gNFirma, 30 )
+         ?? self_organizacija_id(), "-", PadR( self_organizacija_naziv(), 30 )
       ELSE
          @ m_x + _x, m_y + 2 SAY "Firma: " GET _id_firma valid {|| p_partner( @_id_firma ), _id_firma := Left( _id_firma, 2 ), .T. }
       ENDIF
@@ -142,7 +142,7 @@ FUNCTION kompenzacija()
    _vars[ "dat_do" ] := Date()
    _vars[ "po_vezi" ] := "D"
    _vars[ "prelom" ] := "N"
-   _vars[ "firma" ] := gFirma
+   _vars[ "firma" ] := self_organizacija_id()
 
    IF Pitanje(, "Izgenerisati stavke za kompenzaciju (D/N) ?", "N" ) == "D"
 

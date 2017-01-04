@@ -42,7 +42,7 @@ FUNCTION lager_lista_prodavnica()
    gPicDEM := global_pic_iznos()
    gPicKol := global_pic_kolicina()
 
-   cIdFirma := gFirma
+   cIdFirma := self_organizacija_id()
    cIdKonto := PadR( "1320", gDuzKonto )
 
    O_SIFK
@@ -99,7 +99,7 @@ FUNCTION lager_lista_prodavnica()
    DO WHILE .T.
       IF gNW $ "DX"
          @ m_x + 1, m_y + 2 SAY "Firma "
-         ?? gFirma, "-", gNFirma
+         ?? self_organizacija_id(), "-", self_organizacija_naziv()
       ELSE
          @ m_x + 1, m_y + 2 SAY "Firma  " GET cIdFirma valid {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
       ENDIF
@@ -182,7 +182,7 @@ FUNCTION lager_lista_prodavnica()
    o_koncij()
 
    MsgO( "Preuzimanje podataka sa SQL servera ..." )
-   find_kalk_by_pkonto_idroba( gFirma, cIdKonto )
+   find_kalk_by_pkonto_idroba( self_organizacija_id(), cIdKonto )
    MsgC()
 
    PRIVATE lSMark := .F.
@@ -211,7 +211,7 @@ FUNCTION lager_lista_prodavnica()
    IF _print == "2"
       // odt stampa
       _params := hb_Hash()
-      _params[ "idfirma" ] := gFirma
+      _params[ "idfirma" ] := self_organizacija_id()
       _params[ "idkonto" ] := cIdKonto
       _params[ "nule" ] := cNula == "D"
       _params[ "datum_od" ] := dDatOd
@@ -979,8 +979,8 @@ STATIC FUNCTION _gen_xml( params )
    xml_node( "dat_do", DToC( params[ "datum_do" ] ) )
    xml_node( "dat", DToC( Date() ) )
    xml_node( "tip", "PRODAVNICA" )
-   xml_node( "fid", to_xml_encoding( gFirma ) )
-   xml_node( "fnaz", to_xml_encoding( gNFirma ) )
+   xml_node( "fid", to_xml_encoding( self_organizacija_id() ) )
+   xml_node( "fnaz", to_xml_encoding( self_organizacija_naziv() ) )
    xml_node( "kid", to_xml_encoding( params[ "idkonto" ] ) )
    xml_node( "knaz", to_xml_encoding( AllTrim( konto->naz ) ) )
 

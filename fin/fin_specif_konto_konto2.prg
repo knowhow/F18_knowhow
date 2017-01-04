@@ -9,7 +9,7 @@ FUNCTION SpecKK2( lOtvSt )
 
    LOCAL fK1 := fk2 := fk3 := fk4 := "N", nC1 := 35
 
-   cIdFirma := gFirma
+   cIdFirma := self_organizacija_id()
 
    PRIVATE picBHD := FormPicL( "9 " + gPicBHD, 16 )
    PRIVATE picDEM := FormPicL( "9 " + gPicDEM, 14 ), cPG := "D"
@@ -24,7 +24,7 @@ FUNCTION SpecKK2( lOtvSt )
    cKumul := cPredh := "1"
    PRIVATE qqKonto := qqKonto2 := qqPartner := ""
 
-   IF gNW == "D";cIdFirma := gFirma; ENDIF
+   IF gNW == "D";cIdFirma := self_organizacija_id(); ENDIF
    cK1 := cK2 := "9"; cK3 := cK4 := "99"
 
    IF my_get_from_ini( "FIN", "LimitiPoUgovoru_PoljeK3", "N", SIFPATH ) == "D"
@@ -41,7 +41,7 @@ FUNCTION SpecKK2( lOtvSt )
    DO WHILE .T.
 
       IF gNW == "D"
-         @ m_x + 3, m_y + 2 SAY "Firma "; ?? gFirma, "-", gNFirma
+         @ m_x + 3, m_y + 2 SAY "Firma "; ?? self_organizacija_id(), "-", self_organizacija_naziv()
       ELSE
          @ m_x + 3, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
       ENDIF
@@ -275,7 +275,7 @@ STATIC FUNCTION Zagl7()
    @ PRow(), 125 SAY "Str:" + Str( ++nStr, 3 )
 
    IF gNW == "D"
-      ? "Firma:", gFirma, gNFirma
+      ? "Firma:", self_organizacija_id(), self_organizacija_naziv()
    ELSE
       SELECT PARTN; HSEEK cIdFirma
       ? "Firma:", cidfirma, PadR( partn->naz, 25 ), partn->naz2

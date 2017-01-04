@@ -53,7 +53,7 @@ STATIC FUNCTION _get_vars( params )
 
    // inicijalizujem def.parametre
    _fmt := "2"
-   _firma := gFirma
+   _firma := self_organizacija_id()
    _konta := Space( 200 )
    _artikli := Space( 200 )
    _dat_od := CToD( "" )
@@ -96,7 +96,7 @@ STATIC FUNCTION _get_vars( params )
 
    IF gNW $ "DR"
       @ m_x + _cnt, m_y + 2 SAY "Firma "
-      ?? gFirma, "-", gNFirma
+      ?? self_organizacija_id(), "-", self_organizacija_naziv()
    ELSE
       @ m_x + _cnt, m_y + 2 SAY "Firma: " GET _firma ;
          VALID {|| p_partner( @_firma ), _firma := Left( _firma, 2 ), .T. }

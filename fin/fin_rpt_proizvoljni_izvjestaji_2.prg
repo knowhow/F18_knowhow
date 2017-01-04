@@ -207,7 +207,7 @@ Box(, 20, 70 )
 
 
     if gNW=="N"
-       cIdFirma:=gFirma
+       cIdFirma:=self_organizacija_id()
        @ m_x+7,m_y+2 SAY "Firma (prazno-sve) " GET cIDFirma
     endif
 
@@ -642,7 +642,7 @@ UzmiIzIni(cIniName,'Varijable','Funkcija',cFunkc,'WRITE')
 UzmiIzIni(cIniName,'Varijable','FunkcijaNaz',funk->naz,'WRITE')
 UzmiIzIni(cIniName,'Varijable','DatumOd',dtoc(dOd),'WRITE')
 UzmiIzIni(cIniName,'Varijable','DatumDo',dtoc(dDo),'WRITE')
-UzmiIzIni(cIniName,'Varijable','Firma',gNFirma,'WRITE')
+UzmiIzIni(cIniName,'Varijable','Firma',self_organizacija_naziv(),'WRITE')
 
 if !empty(cUIdKonto)
     UzmiIzIni(cIniName,'Varijable','Konto',cUIdKonto,"WRITE")

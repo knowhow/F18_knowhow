@@ -41,7 +41,7 @@ FUNCTION kalk_mag_lager_lista_sql( hParams, lPocetnoStanje )
 
    cWhere := " WHERE "
    cWhere += _sql_date_parse( "k.datdok", dDatOd, dDatDo )
-   cWhere += " AND " + _sql_cond_parse( "k.idfirma", gFirma )
+   cWhere += " AND " + _sql_cond_parse( "k.idfirma", self_organizacija_id() )
    cWhere += " AND " + _sql_cond_parse( "k.mkonto", cIdKontoMagacin )
 
    cQuery := " SELECT " + ;
@@ -144,7 +144,7 @@ FUNCTION kalk_mag_lager_lista_vars( hParams, lPocetnoStanje )
 
    @ m_x + nX, m_y + 2 SAY "Firma "
 
-   ?? gFirma, "-", AllTrim( gNFirma )
+   ?? self_organizacija_id(), "-", AllTrim( self_organizacija_naziv() )
 
    ++nX
    ++nX
@@ -265,7 +265,7 @@ STATIC FUNCTION kalk_mag_insert_ps_into_pripr( oDataSet, hParams )
    O_ROBA
    O_TARIFA
 
-   cBrKalk := kalk_get_next_broj_v5( gFirma, cIdVd, cIdKontoMagacin )
+   cBrKalk := kalk_get_next_broj_v5( self_organizacija_id(), cIdVd, cIdKontoMagacin )
 
 
    IF Empty( cBrKalk )
@@ -311,7 +311,7 @@ STATIC FUNCTION kalk_mag_insert_ps_into_pripr( oDataSet, hParams )
 
       hRec := dbf_get_rec()
 
-      hRec[ "idfirma" ] := gFirma
+      hRec[ "idfirma" ] := self_organizacija_id()
       hRec[ "idvd" ] := cIdVd
       hRec[ "brdok" ] := cBrKalk
       hRec[ "rbr" ] := Str( ++nCount, 3 )

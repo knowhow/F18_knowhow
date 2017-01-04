@@ -42,7 +42,7 @@ FUNCTION kalk_nivelacija_11()
 
    PRIVATE cBrNiv := "0"
 
-   cBrNiv := kalk_get_next_broj_v5( gFirma, "19", kalk_pripr->idkonto  )
+   cBrNiv := kalk_get_next_broj_v5( self_organizacija_id(), "19", kalk_pripr->idkonto  )
 
    SELECT kalk_pripr
    GO TOP

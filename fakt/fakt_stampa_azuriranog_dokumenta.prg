@@ -16,7 +16,7 @@ FUNCTION fakt_stampa_azuriranog()
 
    PRIVATE cIdFirma, cIdTipDok, cBrDok
 
-   cIdFirma := gFirma
+   cIdFirma := self_organizacija_id()
    cIdTipDok := "10"
    cBrdok := Space( 8 )
 

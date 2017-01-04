@@ -53,7 +53,7 @@ FUNCTION lager_lista_magacin()
    //pPicCDem := global_pic_cijena()
    //pPicKol := global_pic_kolicina()
 
-   cIdFirma := gFirma
+   cIdFirma := self_organizacija_id()
    cPrikazDob := "N"
    cIdKonto := PadR( "1310", gDuzKonto )
 
@@ -131,7 +131,7 @@ FUNCTION lager_lista_magacin()
    DO WHILE .T.
 
       @ m_x + 1, m_y + 2 SAY "Firma "
-      ?? gFirma, "-", gNFirma
+      ?? self_organizacija_id(), "-", self_organizacija_naziv()
 
       @ m_x + 2, m_y + 2 SAY "Konto   " GET cIdKonto VALID "." $ cidkonto .OR. P_Konto( @cIdKonto )
       @ m_x + 3, m_y + 2 SAY "Artikli " GET qqRoba PICT "@!S50"
@@ -314,7 +314,7 @@ FUNCTION lager_lista_magacin()
    IF _print == "2"
       // stampa dokumenta u odt formatu
       _params := hb_Hash()
-      _params[ "idfirma" ] := gFirma
+      _params[ "idfirma" ] := self_organizacija_id()
       _params[ "idkonto" ] := cIdKonto
       _params[ "roba_naz" ] := cArtikalNaz
       _params[ "group_1" ] := qqRGr
@@ -1208,8 +1208,8 @@ STATIC FUNCTION _gen_xml( params )
    xml_node( "dat", DToC( Date() ) )
    xml_node( "kid", to_xml_encoding( params[ "idkonto" ] ) )
    xml_node( "knaz", to_xml_encoding( AllTrim( konto->naz ) ) )
-   xml_node( "fid", to_xml_encoding( gFirma ) )
-   xml_node( "fnaz", to_xml_encoding( gNFirma ) )
+   xml_node( "fid", to_xml_encoding( self_organizacija_id() ) )
+   xml_node( "fnaz", to_xml_encoding( self_organizacija_naziv() ) )
    xml_node( "tip", "MAGACIN" )
 
    DO WHILE !Eof() .AND. field->idfirma + field->mkonto = _idfirma + _sintk .AND. IspitajPrekid()

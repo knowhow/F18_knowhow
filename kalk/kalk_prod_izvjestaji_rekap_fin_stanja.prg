@@ -25,7 +25,7 @@ FUNCTION Rfinansijsko_stanje_prodavnica()
    PicDEM := global_pic_iznos()
    PicCDEM := global_pic_cijena()
 
-   cIdFirma := gFirma
+   cIdFirma := self_organizacija_id()
    cIdKonto := PadR( "132.", gDuzKonto )
 
    O_SIFK
@@ -48,7 +48,7 @@ FUNCTION Rfinansijsko_stanje_prodavnica()
    DO WHILE .T.
       IF gNW $ "DX"
          @ m_x + 1, m_y + 2 SAY "Firma "
-         ?? gFirma, "-", gNFirma
+         ?? self_organizacija_id(), "-", self_organizacija_naziv()
       ELSE
          @ m_x + 1, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
       ENDIF

@@ -37,7 +37,7 @@ FUNCTION kalk_povrat_dokumenta()
 
    otvori_kalk_tabele_za_povrat()
 
-   _id_firma := gFirma
+   _id_firma := self_organizacija_id()
    _id_vd := Space( 2 )
    _br_dok := Space( 8 )
 
@@ -235,7 +235,7 @@ STATIC FUNCTION kalk_povrat_prema_kriteriju()
    LOCAL _usl_id_vd
    LOCAL lBrisiKumulativ := .F.
    LOCAL _filter
-   LOCAL _id_firma := gFirma
+   LOCAL _id_firma := self_organizacija_id()
    LOCAL _rec
    LOCAL _del_rec
    LOCAL _hAttrId, oAttr, __firma, __idvd, __brdok
@@ -427,7 +427,7 @@ STATIC FUNCTION povrat_najnovije_kalkulacije()
    SELECT kalk
    SET ORDER TO TAG "5"
 
-   cIdfirma := gFirma
+   cIdfirma := self_organizacija_id()
    cIdVD := Space( 2 )
    cBrDok := Space( 8 )
 

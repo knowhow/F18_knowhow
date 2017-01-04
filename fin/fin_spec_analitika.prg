@@ -9,7 +9,7 @@ FUNCTION SpecPoK()
    LOCAL cSK := "N"
    PRIVATE nC := 66
 
-   cIdFirma := gFirma
+   cIdFirma := self_organizacija_id()
    picBHD := FormPicL( "9 " + gPicBHD, 20 )
 
    O_PARTN
@@ -27,7 +27,7 @@ FUNCTION SpecPoK()
    DO WHILE .T.
       @ m_x + 1, m_y + 6 SAY "SPECIFIKACIJA ANALITICKIH KONTA"
       IF gNW == "D"
-         @ m_x + 3, m_y + 2 SAY "Firma "; ?? gFirma, "-", gNFirma
+         @ m_x + 3, m_y + 2 SAY "Firma "; ?? self_organizacija_id(), "-", self_organizacija_naziv()
       ELSE
          @ m_x + 3, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
       ENDIF
@@ -170,7 +170,7 @@ STATIC FUNCTION Zagl5()
    @ PRow(), 125 SAY "Str:" + Str( ++nStr, 3 )
 
    IF gNW == "D"
-      ? "Firma:", gFirma, gNFirma
+      ? "Firma:", self_organizacija_id(), self_organizacija_naziv()
    ELSE
       SELECT PARTN; HSEEK cIdFirma
       ? "Firma:", cidfirma, PadR( partn->naz, 25 ), partn->naz2

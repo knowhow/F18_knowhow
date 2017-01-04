@@ -20,7 +20,7 @@ FUNCTION PrPromRn()
    qqIDVN  := "I1;I2;"
    qqKonto := "2000;"
    dOd     := dDo := Date()
-   cNazivFirme := gNFirma
+   cNazivFirme := self_organizacija_naziv()
 
    PRIVATE picBHD := FormPicL( gPicBHD, 16 )
    PRIVATE picDEM := FormPicL( gPicDEM, 12 )

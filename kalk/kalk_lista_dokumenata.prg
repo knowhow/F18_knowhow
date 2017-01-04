@@ -29,7 +29,7 @@ FUNCTION kalk_stampa_liste_dokumenata()
 
    PRIVATE qqTipDok
    PRIVATE ddatod, ddatdo
-   PRIVATE cIdfirma := gFirma // fn preduzece trazi privatnu varijablu
+   PRIVATE cIdfirma := self_organizacija_id() // fn preduzece trazi privatnu varijablu
 
    my_close_all_dbf()
 

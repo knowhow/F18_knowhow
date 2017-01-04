@@ -573,7 +573,7 @@ STATIC FUNCTION kalk_imp_csv_to_temp( aDbf, cTxtFile )
 
       // pa uzimamo samo sta nam treba
 
-      REPLACE idfirma WITH gFirma
+      REPLACE idfirma WITH self_organizacija_id()
       REPLACE idtipdok WITH "01"
       REPLACE brdok WITH cBrDok
       REPLACE datdok WITH dDatDok
@@ -795,7 +795,7 @@ STATIC FUNCTION TTbl2Kalk()
    cTDok := GetKTipDok( AllTrim( temp->idtipdok ) )
 
 
-   cBrojKalk :=  kalk_get_next_broj_v5( gFirma, cTDok, NIL )
+   cBrojKalk :=  kalk_get_next_broj_v5( self_organizacija_id(), cTDok, NIL )
 
    DO WHILE !Eof()
 
@@ -808,7 +808,7 @@ STATIC FUNCTION TTbl2Kalk()
       SELECT kalk_pripr
       APPEND BLANK
 
-      REPLACE idfirma WITH gFirma
+      REPLACE idfirma WITH self_organizacija_id()
       REPLACE rbr WITH Str( ++nRbr, 3 )
 
       // uzmi pravilan tip dokumenta za kalk

@@ -25,7 +25,7 @@ function SpecTrosRN()
 
 picBHD:=FormPicL("9 "+gPicBHD,17)
 
-cIdFirma:=gFirma
+cIdFirma:=self_organizacija_id()
 qqRN:=SPACE(40)
 dOd:=CTOD("")
 dDo:=DATE()
@@ -36,7 +36,7 @@ Box("#SPECIFIKACIJA TROSKOVA PO RADNIM NALOZIMA",10,75)
 
 if gNW=="D"
 	@ m_x+2,m_y+2 SAY "Firma "
-	?? gFirma,"-",gNFirma
+	?? self_organizacija_id(),"-",self_organizacija_naziv()
 else
 	@ m_x+2,m_y+2 SAY "Firma: " GET cIdFirma valid {|| p_partner(@cIdFirma),cidfirma:=left(cidfirma,2),.t.}
 endif

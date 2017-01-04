@@ -1115,7 +1115,7 @@ FUNCTION kalk_unos_2()
 FUNCTION kalk_header_get1( lNoviDokument )
 
    IF lNoviDokument
-      _idfirma := gFirma
+      _idfirma := self_organizacija_id()
    ENDIF
 
    IF lNoviDokument .AND. _TBankTr == "X"
@@ -1124,7 +1124,7 @@ FUNCTION kalk_header_get1( lNoviDokument )
 
    IF gNW $ "DX"
       @  m_x + 1, m_y + 2 SAY "Firma: "
-      ?? gFirma, "-", gNFirma
+      ?? self_organizacija_id(), "-", self_organizacija_naziv()
    ELSE
       @  m_x + 1, m_y + 2 SAY "Firma:" GET _IdFirma VALID p_partner( @_IdFirma, 1, 25 ) .AND. Len( Trim( _idFirma ) ) <= 2
    ENDIF
@@ -1305,7 +1305,7 @@ FUNCTION kalk_zagl_firma()
    I_OFF
    ? "Subjekt:"
    U_ON
-   ?? PadC( Trim( tip_organizacije() ) + " " + Trim( gNFirma ), 39 )
+   ?? PadC( Trim( tip_organizacije() ) + " " + Trim( self_organizacija_naziv() ), 39 )
    U_OFF
    ? "Prodajni objekat:"
    U_ON
@@ -1477,7 +1477,7 @@ FUNCTION MPCSAPPiz80uSif()
 
    o_kalk_edit()
 
-   cIdFirma := gFirma
+   cIdFirma := self_organizacija_id()
    cIdVdU   := "80"
    cBrDokU  := Space( Len( kalk_pripr->brdok ) )
 

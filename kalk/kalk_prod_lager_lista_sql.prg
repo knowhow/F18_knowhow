@@ -40,7 +40,7 @@ FUNCTION kalk_prod_lager_lista_sql( params, ps )
 
    _where := " WHERE "
    _where += _sql_date_parse( "k.datdok", _dat_od, _dat_do )
-   _where += " AND " + _sql_cond_parse( "k.idfirma", gFirma )
+   _where += " AND " + _sql_cond_parse( "k.idfirma", self_organizacija_id() )
    _where += " AND " + _sql_cond_parse( "k.pkonto", _p_konto )
 
    _qry := " SELECT " + ;
@@ -142,7 +142,7 @@ FUNCTION kalk_prod_lager_lista_vars( params, ps )
 
    @ m_x + _x, m_y + 2 SAY "Firma "
 
-   ?? gFirma, "-", AllTrim( gNFirma )
+   ?? self_organizacija_id(), "-", AllTrim( self_organizacija_naziv() )
 
    ++ _x
    ++ _x
@@ -257,9 +257,9 @@ STATIC FUNCTION kalk_prod_insert_ps_into_pripr( data, params )
 
    IF glBrojacPoKontima
       //_sufix := kalk_sufiks_brdok( _p_konto )
-      _kalk_broj := kalk_get_next_broj_v5( gFirma, _kalk_tip, _p_konto )
+      _kalk_broj := kalk_get_next_broj_v5( self_organizacija_id(), _kalk_tip, _p_konto )
    ELSE
-      _kalk_broj := kalk_get_next_broj_v5( gFirma, _kalk_tip, NIL )
+      _kalk_broj := kalk_get_next_broj_v5( self_organizacija_id(), _kalk_tip, NIL )
    ENDIF
 
    IF Empty( _kalk_broj )
@@ -305,7 +305,7 @@ STATIC FUNCTION kalk_prod_insert_ps_into_pripr( data, params )
 
       _rec := dbf_get_rec()
 
-      _rec[ "idfirma" ] := gFirma
+      _rec[ "idfirma" ] := self_organizacija_id()
       _rec[ "idvd" ] := _kalk_tip
       _rec[ "brdok" ] := _kalk_broj
       _rec[ "rbr" ] := Str( ++_count, 3 )

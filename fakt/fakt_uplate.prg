@@ -174,7 +174,7 @@ FUNCTION UkZaduz()
    LOCAL nArr := Select(), nVrati := 0
 
    SELECT ( F_FAKT_DOKS )
-   SEEK gFirma + cIdPartner
+   SEEK self_organizacija_id() + cIdPartner
 
    DO WHILE !Eof() .AND. idpartner == cIdPartner
       IF datdok >= dDatOd .AND. datdok <= dDatDo .AND. &aUslTD

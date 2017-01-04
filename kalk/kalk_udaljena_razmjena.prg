@@ -369,7 +369,7 @@ STATIC FUNCTION kalk_export( hParams, a_details )
    @ m_x + 1, m_y + 2 SAY "... export kalk dokumenata u toku"
 
 
-   find_kalk_doks_by_tip_datum( gFirma, NIL, _dat_od, _dat_do )
+   find_kalk_doks_by_tip_datum( self_organizacija_id(), NIL, _dat_od, _dat_do )
 
 
    DO WHILE !Eof()

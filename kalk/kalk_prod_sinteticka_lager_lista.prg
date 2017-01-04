@@ -17,7 +17,7 @@ FUNCTION sint_lager_lista_prodavnice()
    PicCDEM := global_pic_cijena()
    PicDEM := global_pic_iznos()
 
-   cIdFirma := gFirma
+   cIdFirma := self_organizacija_id()
    qqKonto := PadR( "132;", 60 )
    O_SIFK
    O_SIFV
@@ -41,7 +41,7 @@ FUNCTION sint_lager_lista_prodavnice()
    DO WHILE .T.
       IF gNW $ "DX"
          @ m_x + 1, m_y + 2 SAY "Firma "
-         ?? gFirma, "-", gNFirma
+         ?? self_organizacija_id(), "-", self_organizacija_naziv()
       ELSE
          @ m_x + 1, m_y + 2 SAY "Firma  " GET cIdFirma valid {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
       ENDIF

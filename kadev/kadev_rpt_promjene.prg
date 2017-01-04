@@ -190,8 +190,8 @@ STATIC FUNCTION _cre_xml( params )
    xml_subnode( "rpt", .F. )
 
    // header ...
-   xml_node( "f_id", to_xml_encoding( gFirma ) )
-   xml_node( "f_naz", to_xml_encoding( gNFirma ) )
+   xml_node( "f_id", to_xml_encoding( self_organizacija_id() ) )
+   xml_node( "f_naz", to_xml_encoding( self_organizacija_naziv() ) )
 
    xml_node( "dat_od", DToC( params[ "datum_od" ] ) )
    xml_node( "dat_do", DToC( params[ "datum_do" ] ) )

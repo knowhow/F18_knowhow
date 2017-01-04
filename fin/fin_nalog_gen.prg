@@ -121,7 +121,7 @@ FUNCTION box_fin_nalog( cIdFirma, cIdVn, cBrNal, dDatNal )
    @ m_x + 1, m_y + 2 SAY "Nalog broj:"
 
    IF gNW == "D"
-      cIdFirma := gFirma
+      cIdFirma := self_organizacija_id()
       @ m_x + 1, Col() + 1 SAY cIdFirma
    ELSE
       @ m_x + 1, Col() + 1 GET cIdFirma

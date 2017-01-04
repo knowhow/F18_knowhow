@@ -372,7 +372,7 @@ FUNCTION fin_nalog_zaglavlje( dDatNal )
 
    B_ON
 
-   ?? Upper( tip_organizacije() ) + ":", gNFirma
+   ?? Upper( tip_organizacije() ) + ":", self_organizacija_naziv()
    ?
    nArr := Select()
 

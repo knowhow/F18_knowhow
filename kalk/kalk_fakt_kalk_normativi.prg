@@ -40,7 +40,7 @@ FUNCTION kalk_fakt_kalk_prenos_normativi( dD_from, dD_to, cIdKonto2, cIdTipDok, 
    LOCAL lTest := .F.
    LOCAL cBrDok := Space( 8 )
    LOCAL cBrKalk := Space( 8 )
-   LOCAL cIdFirma := gFirma
+   LOCAL cIdFirma := self_organizacija_id()
    LOCAL cIdKonto := PadR( "", 7 )
    LOCAL cIdZaduz2 := Space( 6 )
 
@@ -388,7 +388,7 @@ STATIC FUNCTION o_tbl_roba( lTest, cSezSif )
 // -------------------------------------------------------
 FUNCTION PrenosNoFakt()
 
-   LOCAL cIdFirma := gFirma
+   LOCAL cIdFirma := self_organizacija_id()
    LOCAL cIdTipDok := "10"
    LOCAL cBrDok := Space( 8 )
    LOCAL cBrKalk := Space( 8 )
@@ -522,7 +522,7 @@ FUNCTION PrenosNoFakt()
 // ----------------------------------------------------------------------
 FUNCTION PrenosNo2()
 
-   LOCAL cIdFirma := gFirma
+   LOCAL cIdFirma := self_organizacija_id()
    LOCAL cIdTipDok := "10;11;12;      "
    LOCAL cBrDok := Space( 8 )
    LOCAL cBrKalk := Space( 8 )

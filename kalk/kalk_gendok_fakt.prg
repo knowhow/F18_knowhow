@@ -15,7 +15,7 @@
 
 FUNCTION P_Fakt()
 
-   LOCAL cIdFirma := gFirma, cIdTipDok := "10", cBrDok := Space( 8 ), cBrFakt
+   LOCAL cIdFirma := self_organizacija_id(), cIdTipDok := "10", cBrDok := Space( 8 ), cBrFakt
    LOCAL cDir := Space( 25 ), cFaktFirma := "", lRJKonto := .F.
    LOCAL lRJKon97 := .F.
    LOCAL lRJKon97_2 := .F.

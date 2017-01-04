@@ -11,7 +11,7 @@
 
 #include "f18.ch"
 
-MEMVAR gFirma, M
+MEMVAR M
 
 STATIC picdem := "9999999999.99"
 
@@ -351,13 +351,13 @@ FUNCTION fin_kamate_obracun_sa_kamatni_list( cIdPartner, lPrintKamatniList, cVar
 
 
       SELECT Partn
-      HSEEK PadR( gFirma, 6 )
+      HSEEK PadR( self_organizacija_id(), 6 )
       hRec := dbf_get_rec( .T. )
       hParams[ "naziv" ] := hRec[ "naz" ]
       hParams[ "adresa" ] := hRec[ "adresa" ]
       hParams[ "tel" ] := hRec[ "telefon" ]
       hParams[ "fax" ] := hRec[ "fax" ]
-      hParams[ "idbr" ] := get_partn_idbr( PadR( gFirma, 6 ) )
+      hParams[ "idbr" ] := get_partn_idbr( PadR( self_organizacija_id(), 6 ) )
       hParams[ "mjesto" ] := hRec[ "mjesto" ]
       hParams[ "ptt" ] := hRec[ "ptt" ]
       hParams[ "ziror" ] := hRec[ "ziror" ]

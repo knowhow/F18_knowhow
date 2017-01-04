@@ -58,7 +58,7 @@ FUNCTION prenos_fin_kam()
    BoxC()
 
    MsgO( "Prenos podataka sa servera ..." )
-   find_suban_by_konto_partner( gFirma, cIdKonto, _partneri, NIL, "IdFirma,IdKonto,IdPartner,brdok" )
+   find_suban_by_konto_partner( self_organizacija_id(), cIdKonto, _partneri, NIL, "IdFirma,IdKonto,IdPartner,brdok" )
    MsgC()
 
    IF !Empty( _usl )
@@ -69,12 +69,12 @@ FUNCTION prenos_fin_kam()
    ENDIF
    GO TOP
 
-   DO WHILE !Eof() .AND. field->idkonto == cIdKonto .AND. field->idfirma == gFirma
+   DO WHILE !Eof() .AND. field->idkonto == cIdKonto .AND. field->idfirma == self_organizacija_id()
 
       cIdPartner := field->idpartner // osnovni dug
       nOsnovniDug := 0
 
-      DO WHILE !Eof() .AND. field->idkonto == cIdKonto .AND. field->idpartner == cIdPartner .AND. field->idfirma == gFirma
+      DO WHILE !Eof() .AND. field->idkonto == cIdKonto .AND. field->idpartner == cIdPartner .AND. field->idfirma == self_organizacija_id()
 
          cBrojDokumenta := field->brdok
 
@@ -85,7 +85,7 @@ FUNCTION prenos_fin_kam()
          cTmpBrDok := "XYZYXYYXXX"
 
          DO WHILE !Eof() .AND. field->idkonto == cIdKonto .AND. field->idpartner == cIdPartner ;
-               .AND. field->brdok == cBrojDokumenta  .AND. field->idfirma == gFirma
+               .AND. field->brdok == cBrojDokumenta  .AND. field->idfirma == self_organizacija_id()
 
             IF ( field->brdok == cTmpBrDok ) .OR. ( field->datdok > dDatObracuna ) .OR. ;
                ( fix_dat_var( field->datval, .T. ) > dDatObracuna )

@@ -79,10 +79,10 @@ METHOD ReportCommon:get_company( id_firma )
    _comp := AllTrim( tip_organizacije() ) + ": "
 
    IF gNW == "D"
-      _comp += gFirma + " - " + AllTrim( gNFirma )
+      _comp += self_organizacija_id() + " - " + AllTrim( self_organizacija_naziv() )
    ELSE
       IF id_firma == NIL
-         id_firma := gFirma
+         id_firma := self_organizacija_id()
       ENDIF
       _data := select_all_records_from_table( F18_PSQL_SCHEMA_DOT + "partn", { "naz", "naz2" }, { "id = " + sql_quote( id_firma ) } )
       oRow := _data:GetRow( 1 )

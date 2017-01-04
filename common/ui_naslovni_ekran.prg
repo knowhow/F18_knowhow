@@ -82,7 +82,7 @@ FUNCTION crtaj_naslovni_ekran()
 STATIC FUNCTION show_podaci_organizacija()
 
    @ 0, 15 SAY AllTrim( tip_organizacije() ) + " :"
-   @ Row(), Col() + 2  SAY AllTrim( gNFirma ) + ", baza (" + my_server_params()[ "database" ] + ")" ;
+   @ Row(), Col() + 2  SAY AllTrim( self_organizacija_naziv() ) + ", baza (" + my_server_params()[ "database" ] + ")" ;
       COLOR iif( in_tekuca_godina(), F18_COLOR_NAGLASENO, F18_COLOR_NAGLASENO_STARA_SEZONA )
 
    RETURN .T.

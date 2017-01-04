@@ -18,7 +18,7 @@
 // --------------------------------------------
 FUNCTION browse_kalk_dokumenti()
 
-   LOCAL cFirma := gFirma
+   LOCAL cFirma := self_organizacija_id()
    LOCAL cIdVd := PadR( "", 30 )
    LOCAL dDatOd := Date() - 7
    LOCAL dDatDo := Date()
@@ -242,7 +242,7 @@ FUNCTION kalk_pregled_dokumenata_hronoloski()
    -- o_kalk()
    O_KONTO
 
-   cIdFirma := gFirma
+   cIdFirma := self_organizacija_id()
    cIdFirma := Left( cIdFirma, 2 )
 
    o_kalk_doks()

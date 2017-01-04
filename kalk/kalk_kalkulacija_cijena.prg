@@ -184,7 +184,7 @@ STATIC FUNCTION o_tables( azurirana )
 
 STATIC FUNCTION get_vars( vars )
 
-   LOCAL _firma := gFirma
+   LOCAL _firma := self_organizacija_id()
    LOCAL _tip := "10"
    LOCAL _broj := Space( 8 )
    LOCAL _ret := .F.
@@ -277,8 +277,8 @@ STATIC FUNCTION gen_kalk_predispozicija_xml( vars )
 
    xml_subnode( "kalk", .F. )
 
-   xml_node( "org_id", AllTrim( gFirma ) )
-   xml_node( "org_naziv", to_xml_encoding( AllTrim( gNFirma ) ) )
+   xml_node( "org_id", AllTrim( self_organizacija_id() ) )
+   xml_node( "org_naziv", to_xml_encoding( AllTrim( self_organizacija_naziv() ) ) )
 
    xml_node( "dok_naziv", to_xml_encoding( AllTrim( tdok->naz ) ) )
    xml_node( "dok_tip", field->idvd )
@@ -446,8 +446,8 @@ STATIC FUNCTION gen_kalk_mp_xml( vars )
 
    xml_subnode( "kalk", .F. )
 
-   xml_node( "org_id", AllTrim( gFirma ) )
-   xml_node( "org_naziv", to_xml_encoding( AllTrim( gNFirma ) ) )
+   xml_node( "org_id", AllTrim( self_organizacija_id() ) )
+   xml_node( "org_naziv", to_xml_encoding( AllTrim( self_organizacija_naziv() ) ) )
 
    xml_node( "dok_naziv", to_xml_encoding( AllTrim( tdok->naz ) ) )
    xml_node( "dok_tip", field->idvd )
@@ -651,8 +651,8 @@ STATIC FUNCTION gen_kalk_vp_xml( vars )
 
    xml_subnode( "kalk", .F. )
 
-   xml_node( "org_id", AllTrim( gFirma ) )
-   xml_node( "org_naziv", to_xml_encoding( AllTrim( gNFirma ) ) )
+   xml_node( "org_id", AllTrim( self_organizacija_id() ) )
+   xml_node( "org_naziv", to_xml_encoding( AllTrim( self_organizacija_naziv() ) ) )
 
    xml_node( "dok_naziv", to_xml_encoding( AllTrim( tdok->naz ) ) )
    xml_node( "dok_tip", field->idvd )

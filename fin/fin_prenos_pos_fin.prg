@@ -103,7 +103,7 @@ FUNCTION PromVP2Fin()
 
    MsgO( "Kontiram nalog ..." )
    // daj naredni broj naloga
-   PRIVATE cBrNal := fin_novi_broj_dokumenta( gFirma, cTipNal )
+   PRIVATE cBrNal := fin_novi_broj_dokumenta( self_organizacija_id(), cTipNal )
    PRIVATE nRBr := 0
    PRIVATE nIznos := 0
    PRIVATE nIznDEM := 0
@@ -157,7 +157,7 @@ STATIC FUNCTION Azur2Pripr( cBrojNal, dDatNal )
    SELECT fin_pripr
    APPEND BLANK
    REPLACE idvn WITH trfp2->idvn
-   REPLACE idfirma WITH gFirma
+   REPLACE idfirma WITH self_organizacija_id()
    REPLACE brnal WITH cBrojNal
    REPLACE rbr WITH Str( ++nRBr, 4 )
    REPLACE datdok WITH dDatNal

@@ -23,18 +23,17 @@ STATIC nStr := 0
 STATIC nDuzStrKorekcija := 0
 STATIC nSw6
 
-/* public F18 varijable koje lib koristi */ 
+/* public F18 varijable koje lib koristi */
 MEMVAR PicKol, PicDem, PicCDEM
-MEMVAR gFirma
 MEMVAR __print_opt
 
 
-/* 
+/*
    Korištenje:
    ----------
    - Prije poziva napniti drn.dbf, za to se koristi npr. fakt_stdok_pdv()
 
-   Primjeri korištenja: 
+   Primjeri korištenja:
   ---------------------
    fakt/fakt_print_narudzbenica.prg
    - FUNCTION fakt_print_narudzbenica( cIdFirma, cIdTipDok, cBrDok )
@@ -114,27 +113,27 @@ STATIC FUNCTION generisi_rpt()
 
    SELECT rn
    DO WHILE !Eof()
-	
+
       cNazivDobra := NazivDobra( rn->idroba, rn->robanaz, rn->jmj )
       aNazivDobra := SjeciStr( cNazivDobra, LEN_NAZIV() )
-	
+
       ? RAZMAK()
-	
+
       IF Empty( rn->podbr )
          ?? PadL( rn->rbr + ")", LEN_RBR() )
       ELSE
          ?? PadL( rn->rbr + "." + AllTrim( rn->podbr ), LEN_RBR() )
       ENDIF
       ?? " "
-	
+
       // idroba, naziv robe, kolicina, jmj
       ?? PadR( aNazivDobra[ 1 ], LEN_NAZIV() )
       ?? " "
       ?? show_number( rn->kolicina, PIC_KOLICINA() )
       ?? " "
-	
+
       IF nSw6 > 0
-	
+
          // cijena bez pdv
          ?? show_number( rn->cjenbpdv, PIC_CIJENA() )
          ?? " "
@@ -163,7 +162,7 @@ STATIC FUNCTION generisi_rpt()
          ?? Space( LEN_RBR() )
          ?? PadR( aNazivDobra[ 2 ], LEN_NAZIV() )
       ENDIF
-	
+
       // provjeri za novu stranicu
       IF PRow() > ( nDodRedova + LEN_STRANICA() - DSTR_KOREKCIJA() )
          ++nStr
@@ -324,7 +323,7 @@ STATIC FUNCTION print_total( cValuta )
       ? RAZMAK()
       ?? PadL( _l( "Popust (" ) + cValuta + ") :", LEN_UKUPNO() )
       ?? show_number( drn->ukpopust, PIC_VRIJEDNOST() )
-		
+
       ? RAZMAK()
       ?? PadL( _l( "Uk.bez.PDV-popust (" ) + cValuta + ") :", LEN_UKUPNO() )
       ?? show_number( drn->ukbpdvpop, PIC_VRIJEDNOST() )
@@ -343,7 +342,7 @@ STATIC FUNCTION print_total( cValuta )
       ?? PadL( _l( "Zaokruzenje :" ), LEN_UKUPNO() )
       ?? show_number( drn->zaokr, PIC_VRIJEDNOST() )
    ENDIF
-	
+
    ? cLine
    ? RAZMAK()
    // ipak izleti za dva karaktera rekapitulacija u bold rezimu
@@ -353,7 +352,7 @@ STATIC FUNCTION print_total( cValuta )
    ?? Transform( drn->ukupno, PIC_VRIJEDNOST() )
    B_OFF
 
-	
+
    cSlovima := get_dtxt_opis( "D04" )
    ? RAZMAK()
    B_ON
@@ -421,7 +420,7 @@ STATIC FUNCTION nar_header()
       O_PARTN
    ENDIF
 
-   SEEK gFirma
+   SEEK self_organizacija_id()
 
    cNaziv2  := AllTrim( partn->naz )
    cMjesto2 := AllTrim( partn->ptt ) + " " + AllTrim( partn->mjesto )
@@ -638,4 +637,3 @@ STATIC FUNCTION DSTR_KOREKCIJA()
    ENDIF
 
    RETURN nPom
-

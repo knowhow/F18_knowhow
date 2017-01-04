@@ -1204,7 +1204,7 @@ FUNCTION IsRobaInProdavnica( cPKonto, cIdRoba )
 
    SELECT kalk
    SET ORDER TO TAG "4"
-   SEEK gFirma + cPKonto + cIdRoba
+   SEEK self_organizacija_id() + cPKonto + cIdRoba
 
    IF Found()
       RETURN .T.
@@ -1229,7 +1229,7 @@ FUNCTION GetNcForProdavnica( cPKonto, cIdRoba )
    ENDIF
 
    _DatDok = Date()
-   kalk_get_nabavna_prod( gFirma, cIdRoba, cPKonto, @nKolS, @nKolZN, @nNc1, @nSredNc, @dDatNab )
+   kalk_get_nabavna_prod( self_organizacija_id(), cIdRoba, cPKonto, @nKolS, @nKolZN, @nNc1, @nSredNc, @dDatNab )
 
    RETURN nSredNc
 
@@ -1313,7 +1313,7 @@ FUNCTION SetIdPartnerRoba()
 
       @ m_x + 1, m_y + 2 SAY iif( cGodina == "", "2003", cGodina )
 
-      SEEK gFirma + "10"
+      SEEK self_organizacija_id() + "10"
       DO WHILE !Eof() .AND. ( IdVd == "10" )
 
          @ m_x + 2, m_y + 2 SAY kalk->IdRoba

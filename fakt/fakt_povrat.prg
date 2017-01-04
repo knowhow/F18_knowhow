@@ -29,7 +29,7 @@ FUNCTION povrat_fakt_dokumenta( rezerv, id_firma, id_tip_dok, br_dok, test )
    ENDIF
 
    IF ( PCount() == 0 )
-      _vars[ "idfirma" ]  := gFirma
+      _vars[ "idfirma" ]  := self_organizacija_id()
       _vars[ "idtipdok" ] := Space( 2 )
       _vars[ "brdok" ]    := Space( 8 )
    ELSE
@@ -282,14 +282,14 @@ FUNCTION povrat_fakt_po_kriteriju( br_dok, dat_dok, tip_dok, firma )
       ENDIF
 
       _vars[ "tip_dok" ] := PadR( tip_dok, 200 )
-      _vars[ "rj" ] := gFirma
+      _vars[ "rj" ] := self_organizacija_id()
 
    ELSE
 
       _vars[ "br_dok" ] := Space( 200 )
       _vars[ "datumi" ] := Space( 200 )
       _vars[ "tip_dok" ] := Space( 200 )
-      _vars[ "rj" ] := gFirma
+      _vars[ "rj" ] := self_organizacija_id()
 
    ENDIF
 

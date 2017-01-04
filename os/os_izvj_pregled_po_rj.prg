@@ -334,7 +334,7 @@ FUNCTION ZglPrj()
    ENDIF
 
    P_10CPI
-   ?? Upper( tip_organizacije() ) + ":", gNFirma
+   ?? Upper( tip_organizacije() ) + ":", self_organizacija_naziv()
    ?
    ? _mod_name + ": Pregled "
 

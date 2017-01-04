@@ -1089,7 +1089,7 @@ STATIC FUNCTION procenat_doprinosa( cDop )
 
 STATIC FUNCTION pregled_zaglavlje( cRj, cGodina, cMjOd, cMjDo, cRadnik, cOpcina, cKanton )
 
-   ? Upper( tip_organizacije() ) + ":", gnFirma
+   ? Upper( tip_organizacije() ) + ":", self_organizacija_naziv()
    ?
 
    IF Empty( cRj )

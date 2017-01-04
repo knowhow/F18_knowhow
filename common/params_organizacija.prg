@@ -33,6 +33,8 @@ FUNCTION parametri_organizacije( set_params )
    LOCAL _x := 1
    LOCAL _left := 20
    LOCAL cTipOrganizacije := tip_organizacije()
+   LOCAL cOrganizacijaId := self_organizacija_id()
+   LOCAL cOrganizacijaNaz := self_organizacija_naziv()
 
    info_bar( "init", "parametri organizacije - start" )
    IF ( set_params == nil )
@@ -44,42 +46,39 @@ FUNCTION parametri_organizacije( set_params )
       RETURN .F.
    ENDIF
 
-   PUBLIC gFirma := fetch_metric( "org_id", nil, gFirma )
-   PUBLIC gNFirma := PadR( fetch_metric( "org_naziv", nil, gNFirma ), 50 )
    PUBLIC gMjStr := fetch_metric( "org_mjesto", nil, gMjStr )
 
    PUBLIC gTabela := fetch_metric( "tip_tabele", nil, gTabela )
    PUBLIC gBaznaV := fetch_metric( "bazna_valuta", nil, gBaznaV )
    PUBLIC gPDV := fetch_metric( "pdv_global", nil, gPDV )
 
-   IF Empty( AllTrim( gNFirma ) )
-      gNFirma := PadR( "", 50 )
+
+   IF Empty( AllTrim( self_organizacija_naziv() ) )
       set_params := .T.
    ENDIF
 
-   // setovati parametre org.jedinice
-   IF set_params == .T.
+   IF set_params == .T.  // setovati parametre org.jedinice
 
       Box(, 10, 70 )
 
       @ m_x + _x, m_y + 2 SAY8 "Inicijalna podešenja organizacije ***" COLOR f18_color_i()
-      ++ _x
-      ++ _x
-      @ m_x + _x, m_y + 2 SAY PadL( "Oznaka firme:", _left ) GET gFirma
-      @ m_x + _x, Col() + 2 SAY "naziv:" GET gNFirma PICT "@S35"
+      ++_x
+      ++_x
+      @ m_x + _x, m_y + 2 SAY PadL( "Oznaka firme:", _left ) GET cOrganizacijaId
+      @ m_x + _x, Col() + 2 SAY "naziv:" GET cOrganizacijaNaz PICT "@S35"
 
-      ++ _x
+      ++_x
       @ m_x + _x, m_y + 2 SAY PadL( "Grad:", _left ) GET gMjStr PICT "@S20"
 
-      ++ _x
+      ++_x
       @ m_x + _x, m_y + 2 SAY PadL( "Tip subjekta/organizacije:", _left ) GET cTipOrganizacije PICT "@S10"
       @ m_x + _x, Col() + 1 SAY "U sistemu pdv-a (D/N) ?" GET gPDV VALID gPDV $ "DN" PICT "@!"
 
-      ++ _x
-      ++ _x
+      ++_x
+      ++_x
       @ m_x + _x, m_y + 2 SAY PadL( "Bazna valuta (D/P):", _left ) GET gBaznaV PICT "@!" VALID gBaznaV $ "DPO"
 
-      ++ _x
+      ++_x
       @ m_x + _x, m_y + 2 SAY PadL( "Zaokruzenje:", _left ) GET gZaokr
 
       READ
@@ -91,12 +90,12 @@ FUNCTION parametri_organizacije( set_params )
       ENDIF
 
       IF LastKey() <> K_ESC
-         IF !set_metric( "org_id", nil, gFirma )
-            RETURN .F.
-         ENDIF
+         self_organizacija_id( cOrganizacijaId )
+         self_organizacija_naziv( cOrganizacijaNaz )
+
          set_metric( "zaokruzenje", nil, gZaokr )
-         tip_organizacije( cTipOrganizacije)
-         set_metric( "org_naziv", nil, gNFirma )
+         tip_organizacije( cTipOrganizacije )
+
          set_metric( "bazna_valuta", nil, gBaznaV )
          set_metric( "pdv_global", nil, gPDV )
          set_metric( "org_mjesto", nil, gMjStr )

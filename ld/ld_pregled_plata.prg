@@ -377,7 +377,7 @@ STATIC FUNCTION zagl_pregled_plata()
 
    P_COND2
 
-   ? Upper( tip_organizacije() ) + ":", gnFirma
+   ? Upper( tip_organizacije() ) + ":", self_organizacija_naziv()
    ?
 
    IF Empty( cIdrj )

@@ -59,7 +59,7 @@ FUNCTION fin_spec_otv_stavke_rocni_intervali( lKartica )
    O_KONTO
 
 
-   cIdFirma := gFirma
+   cIdFirma := self_organizacija_id()
    cIdkonto := Space( 7 )
    cIdPartner := PadR( "", FIELD_PARTNER_ID_LENGTH )
    dNaDan := Date()
@@ -966,7 +966,7 @@ FUNCTION Zfin_spec_otv_stavke_rocni_intervali( fStrana, lSvi, PICPIC )
       SELECT PARTN
       HSEEK cIdFirma
 
-      ? "FIRMA:", cIdFirma, "-", gNFirma
+      ? "FIRMA:", cIdFirma, "-", self_organizacija_naziv()
 
       SELECT KONTO
       HSEEK cIdKonto
@@ -998,7 +998,7 @@ FUNCTION Zfin_spec_otv_stavke_rocni_intervali( fStrana, lSvi, PICPIC )
       ??U "FIN.P:  SPECIFIKACIJA OTVORENIH STAVKI PO ROČNIM INTERVALIMA NA DAN "; ?? dNaDan
       SELECT PARTN
       HSEEK cIdFirma
-      ? "FIRMA:", cIdFirma, "-", gNFirma
+      ? "FIRMA:", cIdFirma, "-", self_organizacija_naziv()
       SELECT KONTO
       HSEEK cIdKonto
 

@@ -126,12 +126,12 @@ STATIC FUNCTION mat_edit_priprema( fNovi )
    PRIVATE nKurs := 0
 
    IF fnovi .AND. nRbr == 1
-      _idfirma := gFirma
+      _idfirma := self_organizacija_id()
    ENDIF
 
    IF gNW $ "DR"
       @  m_x + 1, m_y + 2 SAY "Firma: "
-      ?? gFirma, "-", gNFirma
+      ?? self_organizacija_id(), "-", self_organizacija_naziv()
    ELSE
       @  m_x + 1, m_y + 2 SAY "Firma:" GET _IdFirma VALID {|| p_partner( @_IdFirma, 1, 20 ), _idfirma := Left( _idfirma, 2 ), .T. }
    ENDIF
@@ -865,7 +865,7 @@ STATIC FUNCTION Zagl11()
    LOCAL nArr
 
    P_10CPI
-   ?? gnFirma
+   ?? self_organizacija_naziv()
    IF gkonto == "N"
       P_COND
    ELSE

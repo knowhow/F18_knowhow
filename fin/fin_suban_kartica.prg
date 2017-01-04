@@ -12,7 +12,7 @@
 #include "f18.ch"
 
 MEMVAR m, GetList, m_x, m_y
-MEMVAR gNFirma, gFirma, gDUFRJ, gTroskovi
+MEMVAR gDUFRJ, gTroskovi
 MEMVAR cIdFirma, cIdKonto, fk1, fk2, fk3, fk4, cK1, cK2, cK3, cK4
 MEMVAR qqKonto, qqPartner
 MEMVAR nStr
@@ -70,7 +70,7 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
    PRIVATE fK3 := _fin_params[ "fin_k3" ]
    PRIVATE fK4 := _fin_params[ "fin_k4" ]
 
-   PRIVATE cIdFirma := gFirma
+   PRIVATE cIdFirma := self_organizacija_id()
    PRIVATE lOtvoreneStavke := lOtvSt
    PRIVATE c1K1Z := "N"
    PRIVATE picBHD := FormPicL( gPicBHD, 16 )
@@ -106,7 +106,7 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
    cDinDem := fetch_metric( "fin_kart_valuta", my_user(), cDinDem )
    c1K1Z := fetch_metric( "fin_kart_kz", my_user(), c1K1Z )
    cK14 := fetch_metric( "fin_kart_k14", my_user(), cK14 )
-   cIdFirma := gFirma
+   cIdFirma := self_organizacija_id()
 
    cK1 := "9"
    cK2 := "9"
@@ -154,12 +154,12 @@ FUNCTION fin_suban_kartica( lOtvst ) // param lOtvst  - .t. otvorene stavke
    DO WHILE .T.
 
       IF gDUFRJ == "D"
-         cIdFirma := PadR( gFirma + ";", 30 )
+         cIdFirma := PadR( self_organizacija_id() + ";", 30 )
          @ m_x + ( ++nX ), m_y + 2 SAY "Firma: " GET cIdFirma PICT "@!S20"
       ELSE
 
          @ m_x + ( ++nX ), m_y + 2 SAY "Firma "
-         ?? gFirma, "-", gNFirma
+         ?? self_organizacija_id(), "-", self_organizacija_naziv()
       ENDIF
 
       IF cBrza == "D"

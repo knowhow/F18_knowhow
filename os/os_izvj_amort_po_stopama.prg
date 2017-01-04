@@ -115,7 +115,7 @@ FUNCTION os_amortizacija_po_stopama()
    select_os_sii()
 
    P_10CPI
-   ? tip_organizacije() + ":", gnFirma
+   ? tip_organizacije() + ":", self_organizacija_naziv()
 
    IF !Empty( cidrj )
       ? "Radna jedinica:", cidrj, rj->naz

@@ -33,7 +33,7 @@ FUNCTION kalk_kol_stanje_artikla_magacin( m_konto, id_roba, datum_do )
       " END ) as stanje_m " + ;
       " FROM " + F18_PSQL_SCHEMA_DOT + "kalk_kalk " + ;
       " WHERE " + ;
-      " idfirma = " + sql_quote( gFirma ) + ;
+      " idfirma = " + sql_quote( self_organizacija_id() ) + ;
       " AND mkonto = " + sql_quote( m_konto ) + ;
       " AND idroba = " + sql_quote( id_roba ) + ;
       " AND " + _sql_date_parse( "datdok", CToD( "" ), datum_do )
@@ -69,7 +69,7 @@ FUNCTION kalk_kol_stanje_artikla_prodavnica( p_konto, id_roba, datum_do )
       " WHEN pu_i = 'I' THEN -gkolicin2 ELSE 0 END ) as stanje_p " + ;
       " FROM " + F18_PSQL_SCHEMA_DOT + "kalk_kalk " + ;
       " WHERE " + ;
-      " idfirma = " + sql_quote( gFirma ) + ;
+      " idfirma = " + sql_quote( self_organizacija_id() ) + ;
       " AND pkonto = " + sql_quote( p_konto ) + ;
       " AND idroba = " + sql_quote( id_roba ) + ;
       " AND " + _sql_date_parse( "datdok", CToD( "" ), datum_do )

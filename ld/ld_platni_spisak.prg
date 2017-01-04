@@ -267,7 +267,7 @@ FUNCTION ZPlatSp()
    ?
    P_12CPI
 
-   ? Upper( tip_organizacije() ) + ":", gnFirma
+   ? Upper( tip_organizacije() ) + ":", self_organizacija_naziv()
    ?
 
    IF Empty( cidrj )
@@ -609,7 +609,7 @@ FUNCTION ZPlatSpTR()
 
    ? _l( "Poslovna BANKA:" ) + Space( 1 ), cIDBanka, "-", kred->naz
    ?
-   ? Upper( tip_organizacije() ) + ":", gnFirma
+   ? Upper( tip_organizacije() ) + ":", self_organizacija_naziv()
    ?
 
    IF Empty( cIdRj )
@@ -874,7 +874,7 @@ FUNCTION ZIsplataTR()
    ?
    ? _l( "Poslovna BANKA:" ) + Space( 1 ), cIDTBanka, "-", kred->naz
    ?
-   ? Upper( tip_organizacije() ) + ":", gnFirma
+   ? Upper( tip_organizacije() ) + ":", self_organizacija_naziv()
    ?
 
    IF Empty( cidrj )

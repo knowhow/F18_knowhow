@@ -336,7 +336,7 @@ STATIC FUNCTION zagl_bb_grupe( params, nStr )
    @ PRow(), REP1_LEN - 15 SAY "Str:" + Str( ++nStr, 3 )
 
    IF gNW == "D"
-      ? "Firma:", gFirma, gNFirma
+      ? "Firma:", self_organizacija_id(), self_organizacija_naziv()
    ELSE
       ? "Firma:"
       @ PRow(), PCol() + 2 SAY params[ "idfirma" ]

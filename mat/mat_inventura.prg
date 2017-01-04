@@ -72,7 +72,7 @@ FUNCTION mat_unos_pop_listi()
 // ------------------------------------------------
 FUNCTION mat_inv_gen()
 
-   LOCAL _id_firma := gFirma
+   LOCAL _id_firma := self_organizacija_id()
    LOCAL _datum := Date()
    LOCAL _konto := Space( 7 )
    LOCAL _r_br
@@ -395,7 +395,7 @@ STATIC FUNCTION _form_data( r_br, vars )
 STATIC FUNCTION _get_inv_vars( vars )
 
    LOCAL _ret := .T.
-   LOCAL _id_firma := gFirma
+   LOCAL _id_firma := self_organizacija_id()
    LOCAL _konto := Space( 7 )
    LOCAL _datum := Date()
    LOCAL _partner := Space( 6 )
@@ -411,7 +411,7 @@ STATIC FUNCTION _get_inv_vars( vars )
 
    IF gNW $ "DR"
       @ m_x + 2, m_y + 2 SAY "Firma "
-      ?? gFirma, "-", gNFirma
+      ?? self_organizacija_id(), "-", self_organizacija_naziv()
    ELSE
       @ m_x + 2, m_y + 2 SAY "Firma: " GET _id_firma ;
          VALID {|| p_partner( @_id_firma ), _id_firma := Left( _id_firma, 2 ), .T. }
@@ -574,7 +574,7 @@ STATIC FUNCTION ZPrUnKol( vars, line )
 
 FUNCTION mat_obracun_inv()
 
-   cIdF := gFirma
+   cIdF := self_organizacija_id()
    cIdK := Space( 7 )
    cIdD := Date()
    cIdF := Left( cIdF, 2 )
@@ -583,7 +583,7 @@ FUNCTION mat_obracun_inv()
    Box( "", 4, 60 )
    @ m_x + 1, m_y + 6 SAY "OBRACUN INVENTURE"
    IF gNW $ "DR"
-      @ m_x + 2, m_y + 2 SAY "Firma "; ?? gFirma, "-", gNFirma
+      @ m_x + 2, m_y + 2 SAY "Firma "; ?? self_organizacija_id(), "-", self_organizacija_naziv()
    ELSE
       @ m_x + 2, m_y + 2 SAY "Firma: " GET cIdF valid {|| p_partner( @cIdF ), cidf := Left( cidf, 2 ), .T. }
    ENDIF
@@ -711,7 +711,7 @@ FUNCTION mat_obracun_inv()
 
 FUNCTION mat_nal_inventure()
 
-   cIdF := gFirma
+   cIdF := self_organizacija_id()
    cIdK := Space( 7 )
    cIdD := Date()
    IF File( PRIVPATH + "invent.mem" )
@@ -819,7 +819,7 @@ FUNCTION mat_inv_obr_poreza()
 
    LOCAL cIdDir
 
-   cIdF := gFirma
+   cIdF := self_organizacija_id()
    cIdK := Space( 7 )
    cIdD := Date()
    cIdX := Space( 35 )
@@ -957,8 +957,8 @@ FUNCTION mat_popisna_lista()
          SELECT partn
          HSEEK _id_firma
 
-         xml_node( "fid", to_xml_encoding( gFirma ) )
-         xml_node( "fnaz", to_xml_encoding( gNFirma ) )
+         xml_node( "fid", to_xml_encoding( self_organizacija_id() ) )
+         xml_node( "fnaz", to_xml_encoding( self_organizacija_naziv() ) )
 
          IF !Empty( _konto )
 

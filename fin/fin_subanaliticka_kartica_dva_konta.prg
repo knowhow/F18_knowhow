@@ -27,7 +27,7 @@ FUNCTION fin_suban_kartica2( lOtvSt )
 
    PRIVATE lOtvoreneStavke := lOtvSt
 
-   cIdFirma := gFirma
+   cIdFirma := self_organizacija_id()
 
    PRIVATE picBHD := FormPicL( gPicBHD, 16 )
    PRIVATE picDEM := FormPicL( gPicDEM, 12 )
@@ -56,7 +56,7 @@ FUNCTION fin_suban_kartica2( lOtvSt )
       lOtvoreneStavke := .F.
    ENDIF
    IF gNW == "D"
-      cIdFirma := gFirma
+      cIdFirma := self_organizacija_id()
    ENDIF
 
    cK1 := cK2 := "9"
@@ -78,7 +78,7 @@ FUNCTION fin_suban_kartica2( lOtvSt )
    DO WHILE .T.
       //IF gNW == "D"
          @ m_x + 5, m_y + 2 SAY "Firma "
-         ?? gFirma, "-", gNFirma
+         ?? self_organizacija_id(), "-", self_organizacija_naziv()
       //ELSE
       //   @ m_x + 5, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
       //ENDIF
@@ -603,7 +603,7 @@ FUNCTION ZaglSif2( fStrana )
    ENDIF
 
    IF gNW == "D"
-      ? "Firma:", gFirma, "-", gNFirma
+      ? "Firma:", self_organizacija_id(), "-", self_organizacija_naziv()
    ELSE
       SELECT PARTN; HSEEK cIdFirma
       ? "Firma:", cIdFirma, AllTrim( partn->naz ), AllTrim( partn->naz2 )

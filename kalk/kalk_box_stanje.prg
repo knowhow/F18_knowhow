@@ -38,7 +38,7 @@ FUNCTION KalkStanje( cIdRoba )
    SEEK cIdRoba
 */
 
-   find_kalk_za_period( gFirma, NIL, NIL, cIdRoba )
+   find_kalk_za_period( self_organizacija_id(), NIL, NIL, cIdRoba )
 
 
    aStanje := {}

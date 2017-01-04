@@ -17,7 +17,7 @@
 
 FUNCTION Pripr9View()
 
-   PRIVATE aUslFirma := gFirma
+   PRIVATE aUslFirma := self_organizacija_id()
    PRIVATE aUslDok := Space( 50 )
    PRIVATE dDat1 := CToD( "" )
    PRIVATE dDat2 := Date()
@@ -316,7 +316,7 @@ FUNCTION povrat_smece( cIdFirma, cIdtipdok, cBrDok )
    ENDIF
 
    IF !lSilent
-      cIdFirma := gFirma
+      cIdFirma := self_organizacija_id()
       cIdtipdok := Space( Len( field->idtipdok ) )
       cBrDok := Space( Len( field->brdok ) )
    ENDIF

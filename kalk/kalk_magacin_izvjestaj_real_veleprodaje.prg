@@ -33,7 +33,7 @@ O_TARIFA
 O_PARTN
 
 private dDat1:=dDat2:=ctod("")
-cIdFirma:=gFirma
+cIdFirma:=self_organizacija_id()
 cIdKonto:=padr("1310",7)
 
 if IsVindija()
@@ -47,7 +47,7 @@ Box(,8,70)
  do while .t.
  set cursor on
   if gNW $ "DX"
-   @ m_x+1,m_y+2 SAY "Firma "; ?? gFirma,"-",gNFirma
+   @ m_x+1,m_y+2 SAY "Firma "; ?? self_organizacija_id(),"-",self_organizacija_naziv()
   else
    @ m_x+1,m_y+2 SAY "Firma: " GET cIdFirma valid {|| p_partner(@cIdFirma),cidfirma:=left(cidfirma,2),.t.}
   endif

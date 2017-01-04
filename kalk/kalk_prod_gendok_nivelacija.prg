@@ -76,10 +76,10 @@ FUNCTION get_nivel_p()
    nUvecaj := 1
    FOR nCnt := 1 TO Len( aProd )
       // daj broj kalkulacije
-      cBrKalk := kalk_get_next_kalk_doc_uvecaj( gFirma, "19", nUvecaj )
+      cBrKalk := kalk_get_next_kalk_doc_uvecaj( self_organizacija_id(), "19", nUvecaj )
       cPKonto := aProd[ nCnt, 1 ]
 
-      @ 2 + m_x, 2 + m_y SAY Str( nCnt, 3 ) + " Prodavnica: " + AllTrim( cPKonto ) + "   dokument: " + gFirma + "-19-" + AllTrim( cBrKalk )
+      @ 2 + m_x, 2 + m_y SAY Str( nCnt, 3 ) + " Prodavnica: " + AllTrim( cPKonto ) + "   dokument: " + self_organizacija_id() + "-19-" + AllTrim( cBrKalk )
 
       gen_nivel_p( cPKonto, dDatDok, cBrKalk, lGlStanje )
 
@@ -120,7 +120,7 @@ FUNCTION gen_nivel_p( cPKonto, dDatDok, cBrKalk, lGledajStanje )
 
    nRbr := 0
 
-   cIdFirma := gFirma
+   cIdFirma := self_organizacija_id()
 
    SELECT koncij
    SEEK Trim( cPKonto )
@@ -436,7 +436,7 @@ FUNCTION gen_zcnivel( cPKonto, dDatDok, cBrKalk )
 
    nRbr := 0
 
-   cIdFirma := gFirma
+   cIdFirma := self_organizacija_id()
 
    SELECT koncij
    SEEK Trim( cPKonto )
@@ -995,7 +995,7 @@ FUNCTION o_pr_cijena()
       ENDIF
 
       // stampaj obrazac
-      st_pr_cijena( gFirma, "19", aDoks[ i, 1 ], cPodvuceno, cProred )
+      st_pr_cijena( self_organizacija_id(), "19", aDoks[ i, 1 ], cPodvuceno, cProred )
    NEXT
 
    RETURN

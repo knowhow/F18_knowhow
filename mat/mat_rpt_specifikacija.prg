@@ -120,7 +120,7 @@ FUNCTION PoMjeTros()
       { cRoba6, {|| nRoba6             }, .T., "N", 10, 2, 1, 8 } }
 
    P_10CPI
-   ?? gnFirma
+   ?? self_organizacija_naziv()
    ?
    ? "DATUM:", SrediDat( Date() )
    ? "USLOV ZA VRSTU NALOGA:" + IF( Empty( qqIDVN ), "SVI NALOZI", Trim( qqIDVN ) )
@@ -247,7 +247,7 @@ FUNCTION CArDob()
       { "CIJENA", {|| IF( kolicina == 0, IZNOS, IZNOS / KOLICINA )     }, .F., "N", 12, 2, 1, 4 } }
 
    P_10CPI
-   ?? gnFirma
+   ?? self_organizacija_naziv()
    ?
    ? "DATUM:", SrediDat( Date() )
    ? "USLOV ZA VRSTU NALOGA:" + IF( Empty( qqIDVN ), "SVI NALOZI", Trim( qqIDVN ) )

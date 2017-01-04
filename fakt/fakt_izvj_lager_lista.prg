@@ -85,7 +85,7 @@ FUNCTION fakt_lager_lista()
    lSaberikol := .F.
    nKU := nKI := 0
 
-   cIdfirma := gFirma
+   cIdfirma := self_organizacija_id()
    qqRoba := ""
    dDatOd := CToD( "" )
    dDatDo := Date()
@@ -116,7 +116,7 @@ FUNCTION fakt_lager_lista()
 
 
    IF gNW $ "DR"
-      // cIdfirma:=gFirma
+      // cIdfirma:=self_organizacija_id()
    ENDIF
    qqRoba := PadR( qqRoba, 60 )
    qqPartn := PadR( qqPartn, 20 )
@@ -131,7 +131,7 @@ FUNCTION fakt_lager_lista()
 
    DO WHILE .T.
       IF gNW $ "DR"
-         @ m_x + 1, m_y + 2 SAY "RJ (prazno svi) " GET cIdFirma valid {|| Empty( cIdFirma ) .OR. cidfirma == gFirma .OR. P_RJ( @cIdFirma ), cIdFirma := Left( cIdFirma, 2 ), .T. }
+         @ m_x + 1, m_y + 2 SAY "RJ (prazno svi) " GET cIdFirma valid {|| Empty( cIdFirma ) .OR. cidfirma == self_organizacija_id() .OR. P_RJ( @cIdFirma ), cIdFirma := Left( cIdFirma, 2 ), .T. }
       ELSE
          @ m_x + 1, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
       ENDIF
@@ -772,7 +772,7 @@ FUNCTION fakt_lager_lista_vars( param, lPocetnoStanje )
    _usl_roba := Space( 300 )
    _usl_partn := Space( 300 )
    _usl_tip_dok := Space( 200 )
-   _id_firma := gFirma
+   _id_firma := self_organizacija_id()
 
    Box(, 10, 70 )
 
@@ -857,10 +857,10 @@ STATIC FUNCTION lager_lista_xml( table, params )
    xml_subnode( "lager", .F. )
 
    // podaci zaglavlja...
-   // xml_node( "firma", gFirma )
-   // xml_node( "datum_od", gFirma )
-   // xml_node( "datum_do", gFirma )
-   // xml_node( "roba", gFirma )
+   // xml_node( "firma", self_organizacija_id() )
+   // xml_node( "datum_od", self_organizacija_id() )
+   // xml_node( "datum_do", self_organizacija_id() )
+   // xml_node( "roba", self_organizacija_id() )
 
    table:GoTo( 1 )
 

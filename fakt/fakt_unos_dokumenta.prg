@@ -935,7 +935,7 @@ STATIC FUNCTION edit_fakt_priprema( fNovi, items_atrib )
       IF __redni_broj == 1
 
          _n_menu := iif( Val( gIMenu ) < 1, Asc( gIMenu ) - 55, Val( gIMenu ) )
-         _idfirma := gFirma
+         _idfirma := self_organizacija_id()
 
          IF !Empty( _params[ "def_rj" ] )
             _idfirma := _params[ "def_rj" ]
@@ -961,16 +961,16 @@ STATIC FUNCTION edit_fakt_priprema( fNovi, items_atrib )
    IF ( __redni_broj == 1 .AND. Val( _podbr ) < 1 )
 
       IF RecCount() == 0
-         _idFirma := gFirma
+         _idFirma := self_organizacija_id()
       ENDIF
 
       IF !Empty( _params[ "def_rj" ] )
          _idfirma := _params[ "def_rj" ]
       ENDIF
 
-      @ m_x + _x, m_y + 2 SAY PadR( gNFirma, 20 )
+      @ m_x + _x, m_y + 2 SAY PadR( self_organizacija_naziv(), 20 )
 
-      @ m_x + _x, Col() + 2 SAY " RJ:" GET _idfirma PICT "@!" VALID {|| Empty( _idfirma ) .OR. _idfirma == gFirma ;
+      @ m_x + _x, Col() + 2 SAY " RJ:" GET _idfirma PICT "@!" VALID {|| Empty( _idfirma ) .OR. _idfirma == self_organizacija_id() ;
          .OR. P_RJ( @_idfirma ) .AND. V_Rj(), _idfirma := Left( _idfirma, 2 ), .T. }
 
       READ
@@ -1131,7 +1131,7 @@ STATIC FUNCTION edit_fakt_priprema( fNovi, items_atrib )
 
    ELSE
 
-      @ m_x + _x, m_y + 2 SAY PadR( gNFirma, 20 )
+      @ m_x + _x, m_y + 2 SAY PadR( self_organizacija_naziv(), 20 )
 
       ?? "  RJ:", _idfirma
 

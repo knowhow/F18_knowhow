@@ -42,8 +42,8 @@ FUNCTION usporedna_lista_fakt_kalk()
    SET ORDER TO TAG "3"
    // idroba
 
-   cKalkFirma := gFirma
-   cIdfirma := gFirma
+   cKalkFirma := self_organizacija_id()
+   cIdfirma := self_organizacija_id()
    qqRoba := ""
    dDatOd := CToD( "" )
    dDatDo := Date()
@@ -91,7 +91,7 @@ FUNCTION usporedna_lista_fakt_kalk()
 
       cIdFirma := Left( cIdFirma, 2 )
 
-      @ m_x + 1, m_y + 2 SAY "RJ" GET cIdFirma VALID {|| cIdfirma == gFirma .OR. P_RJ( @cIdFirma ), cIdFirma := Left( cIdFirma, 2 ), .T. }
+      @ m_x + 1, m_y + 2 SAY "RJ" GET cIdFirma VALID {|| cIdfirma == self_organizacija_id() .OR. P_RJ( @cIdFirma ), cIdFirma := Left( cIdFirma, 2 ), .T. }
 
       IF lViseKonta
          @ m_x + 2, m_y + 2 SAY "Konto u KALK"  GET qqKonto ;

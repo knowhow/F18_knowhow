@@ -215,7 +215,7 @@ FUNCTION preduzece()
    ? AllTrim( tip_organizacije() ) + ": "
 
    // IF gNW == "D"
-   ?? gFirma, "-", AllTrim( gNFirma )
+   ?? self_organizacija_id(), "-", AllTrim( self_organizacija_naziv() )
 
 /*
      ELSE
@@ -224,8 +224,8 @@ FUNCTION preduzece()
          O_PARTN
       ENDIF
       SELECT partn
-      HSEEK gFirma
-      ?? gFirma, AllTrim( partn->naz ), AllTrim( partn->naz2 )
+      HSEEK self_organizacija_id()
+      ?? self_organizacija_id(), AllTrim( partn->naz ), AllTrim( partn->naz2 )
    ENDIF
 */
 

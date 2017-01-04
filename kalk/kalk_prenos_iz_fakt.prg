@@ -47,11 +47,11 @@ FUNCTION prenos_fakt_kalk_magacin()
 FUNCTION fakt_kalk_prenos_10_14()
 
    LOCAL nRabat := 0
-   LOCAL cIdFirma := gFirma
+   LOCAL cIdFirma := self_organizacija_id()
    LOCAL cIdTipDok := "10"
    LOCAL cBrDok := Space( 8 )
    LOCAL cBrKalk := Space( 8 )
-   LOCAL cFaktFirma := gFirma
+   LOCAL cFaktFirma := self_organizacija_id()
    LOCAL dDatPl := CToD( "" )
    LOCAL _params := fakt_params()
 
@@ -272,7 +272,7 @@ FUNCTION fakt_kalk_prenos_10_14()
 
 FUNCTION fakt_kalk_prenos( cIndik )
 
-   LOCAL cIdFirma := gFirma
+   LOCAL cIdFirma := self_organizacija_id()
    LOCAL cIdTipDok := "12"
    LOCAL cBrDok := Space( 8 )
    LOCAL cBrKalk := Space( 8 )
@@ -513,8 +513,8 @@ altd()
 
 FUNCTION kalk_fakt_prenos_period()
 
-   LOCAL _id_firma := gFirma
-   LOCAL _fakt_id_firma := gFirma
+   LOCAL _id_firma := self_organizacija_id()
+   LOCAL _fakt_id_firma := self_organizacija_id()
    LOCAL _tip_dok_fakt := PadR( "12;", 150 )
    LOCAL _dat_fakt_od, _dat_fakt_do
    LOCAL _br_kalk_dok := Space( 8 )

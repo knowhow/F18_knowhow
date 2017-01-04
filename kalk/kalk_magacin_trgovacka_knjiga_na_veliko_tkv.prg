@@ -278,7 +278,7 @@ STATIC FUNCTION _get_line()
 // -----------------------------------------
 STATIC FUNCTION tkv_zaglavlje( vars )
 
-   ? gFirma, "-", AllTrim( gNFirma )
+   ? self_organizacija_id(), "-", AllTrim( self_organizacija_naziv() )
    ?
    ? Space( 10 ), "TRGOVACKA KNJIGA NA VELIKO (TKV) za period od:", vars[ "datum_od" ], "do:", vars[ "datum_do" ]
    ?

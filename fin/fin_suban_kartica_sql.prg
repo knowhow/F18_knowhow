@@ -101,7 +101,7 @@ STATIC FUNCTION _get_vars( rpt_vars )
    ++ _x
    ++ _x
    @ m_x + _x, m_y + 2 SAY "Firma "
-   ?? gFirma, "-", AllTrim( gNFirma )
+   ?? self_organizacija_id(), "-", AllTrim( self_organizacija_naziv() )
 
    ++ _x
    ++ _x
@@ -227,7 +227,7 @@ STATIC FUNCTION _cre_rpt( rpt_vars, otv_stavke )
       "FROM " + F18_PSQL_SCHEMA_DOT + "fin_suban s " + ;
       "JOIN " + F18_PSQL_SCHEMA_DOT + "partn p ON s.idpartner = p.id " + ;
       "JOIN " + F18_PSQL_SCHEMA_DOT + "konto k ON s.idkonto = k.id " + ;
-      "WHERE idfirma = " + sql_quote( gfirma )
+      "WHERE idfirma = " + sql_quote( self_organizacija_id() )
 
    _qry += " AND " + _sql_date_parse( "s.datdok", _datum_od, _datum_do )
 
@@ -345,8 +345,8 @@ STATIC FUNCTION _cre_xml( table, rpt_vars )
 
    xml_subnode( "kartica", .F. )
 
-   xml_node( "f_id", gFirma )
-   xml_node( "f_naz", to_xml_encoding( gNFirma ) )
+   xml_node( "f_id", self_organizacija_id() )
+   xml_node( "f_naz", to_xml_encoding( self_organizacija_naziv() ) )
    xml_node( "f_mj", to_xml_encoding( gMjStr ) )
 
    xml_node( "datum", DToC( Date() ) )

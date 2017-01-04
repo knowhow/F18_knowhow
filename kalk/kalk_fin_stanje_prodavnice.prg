@@ -27,7 +27,7 @@ FUNCTION finansijsko_stanje_prodavnica()
    cPicIznos := global_pic_iznos()
    cPicCijena := global_pic_cijena()
 
-   cIdFirma := gFirma
+   cIdFirma := self_organizacija_id()
    cIdKonto := PadR( "133", gDuzKonto )
 
    o_koncij()
@@ -47,7 +47,7 @@ FUNCTION finansijsko_stanje_prodavnica()
 
    DO WHILE .T.
 
-      @ m_x + 1, m_y + 2 SAY "Firma "; ?? gFirma, "-", gNFirma
+      @ m_x + 1, m_y + 2 SAY "Firma "; ?? self_organizacija_id(), "-", self_organizacija_naziv()
 
       @ m_x + 2, m_y + 2 SAY "Konto   " GET cIdKonto VALID P_Konto( @cIdKonto )
       @ m_x + 4, m_y + 2 SAY "Tarife  " GET qqTarifa PICT "@!S50"

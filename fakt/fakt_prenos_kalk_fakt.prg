@@ -71,7 +71,7 @@ STATIC FUNCTION _params()
 // -----------------------------------------
 FUNCTION kalk_2_fakt()
 
-   LOCAL cIdFirma := gFirma
+   LOCAL cIdFirma := self_organizacija_id()
    LOCAL cIdTipDok := "10"
    LOCAL cBrDok := Space( 8 )
    LOCAL cBrFakt
@@ -389,7 +389,7 @@ FUNCTION kalkp_2_fakt()
    SET ORDER TO TAG "3"
    // idfirma+idroba+rbr
 
-   cIdFirma   := gFirma
+   cIdFirma   := self_organizacija_id()
    dOd := Date()
    dDo := Date()
    dDatPl := Date()

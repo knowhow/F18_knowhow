@@ -207,7 +207,7 @@ STATIC FUNCTION kalk_gen_zavisni_fin_fakt_nakon_azuriranja( lGenerisi, lAuto, lS
 
    IF Generisati11_ku()
       lForm11 := .T.
-      cNext11 := kalk_get_next_broj_v5( gFirma, "11", NIL )
+      cNext11 := kalk_get_next_broj_v5( self_organizacija_id(), "11", NIL )
       kalk_gen_11_iz_10( cNext11 )
    ENDIF
 

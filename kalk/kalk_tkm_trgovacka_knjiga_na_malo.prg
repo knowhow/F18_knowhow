@@ -219,7 +219,7 @@ STATIC FUNCTION _get_line()
 
 STATIC FUNCTION tkm_zaglavlje( vars )
 
-   ?U gFirma, "-", AllTrim( gNFirma )
+   ?U self_organizacija_id(), "-", AllTrim( self_organizacija_naziv() )
    ?
    ?U Space( 10 ), "TRGOVAČKA KNJIGA NA MALO (TKM) za period od:"
    ?? vars[ "datum_od" ], "do:", vars[ "datum_do" ]

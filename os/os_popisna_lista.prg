@@ -143,8 +143,8 @@ STATIC FUNCTION _gen_xml( params )
    xml_subnode( "inv", .F. )
 
    // header
-   xml_node( "fid", to_xml_encoding( gFirma ) )
-   xml_node( "fnaz", to_xml_encoding( gNFirma ) )
+   xml_node( "fid", to_xml_encoding( self_organizacija_id() ) )
+   xml_node( "fnaz", to_xml_encoding( self_organizacija_naziv() ) )
    xml_node( "datum", DToC( os_datum_obracuna() ) )
    xml_node( "kid", to_xml_encoding( _idrj ) )
    xml_node( "knaz", "" )

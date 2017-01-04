@@ -32,7 +32,7 @@ FUNCTION fin_nalog_azurirani()
    O_TDOK
 
    cIdVN := Space( 2 )
-   cIdFirma := gFirma
+   cIdFirma := self_organizacija_id()
    cBrNal := Space( 8 )
 
    Box( "", 2, 35 )

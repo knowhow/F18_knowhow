@@ -47,8 +47,8 @@ FUNCTION mat_povrat_naloga( lStorno )
    SELECT MAT_SUBAN
    SET ORDER TO TAG "4"
 
-   cIdFirma := gFirma
-   cIdFirma2 := gFirma
+   cIdFirma := self_organizacija_id()
+   cIdFirma2 := self_organizacija_id()
    cIdVN := cIdVN2  := Space( 2 )
    cBrNal := cBrNal2 := Space( 4 )
 

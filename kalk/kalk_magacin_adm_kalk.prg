@@ -51,16 +51,16 @@ FUNCTION KorekNC2()
 
    SELECT kalk
 
-   --cBr95 := kalk_sljedeci( gFirma, "95" )
+   --cBr95 := kalk_sljedeci( self_organizacija_id(), "95" )
 
    SELECT koncij
    SEEK Trim( cMagac )
 
    SELECT kalk
    //SET ORDER TO TAG "3"
-   HSEEK gFirma + cMagac
+   HSEEK self_organizacija_id() + cMagac
 
-   DO WHILE !Eof() .AND. idfirma + mkonto = gFirma + cMagac
+   DO WHILE !Eof() .AND. idfirma + mkonto = self_organizacija_id() + cMagac
 
       cIdRoba := Idroba
       nUlaz := nIzlaz := 0
@@ -76,7 +76,7 @@ FUNCTION KorekNC2()
       ENDIF
 
       cIdkonto := mkonto
-      DO WHILE !Eof() .AND. gFirma + cidkonto + cidroba == idFirma + mkonto + idroba
+      DO WHILE !Eof() .AND. self_organizacija_id() + cidkonto + cidroba == idFirma + mkonto + idroba
 
          IF roba->tip $ "TU"
             SKIP
@@ -109,7 +109,7 @@ FUNCTION KorekNC2()
          IF Round( roba->nc - ( nNVU - nNVI ) / ( nulaz - nizlaz ), 4 ) <> 0
             ++nRbr
             APPEND BLANK
-            REPLACE idfirma WITH gFirma, idroba WITH cIdRoba, idkonto2 WITH cIdKonto, ;
+            REPLACE idfirma WITH self_organizacija_id(), idroba WITH cIdRoba, idkonto2 WITH cIdKonto, ;
                datdok WITH dDok, ;
                idtarifa WITH roba->idtarifa, ;
                datfaktp WITH dDok, ;
@@ -122,7 +122,7 @@ FUNCTION KorekNC2()
                vpc WITH KoncijVPC(), ;
                marza WITH KoncijVPC() -( nNVU - nNVI ) / ( nulaz - nizlaz )
             APPEND BLANK
-            REPLACE idfirma WITH gFirma, idroba WITH cIdRoba, idkonto2 WITH cIdKonto, ;
+            REPLACE idfirma WITH self_organizacija_id(), idroba WITH cIdRoba, idkonto2 WITH cIdKonto, ;
                datdok WITH dDok, ;
                idtarifa WITH roba->idtarifa, ;
                datfaktp WITH dDok, ;

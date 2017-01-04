@@ -15,7 +15,7 @@ MEMVAR m
 
 FUNCTION fin_sint_kart_po_mjesecima()
 
-   cIdFirma := gFirma
+   cIdFirma := self_organizacija_id()
    qqKonto := ""
    dDatOd := dDAtDo := CToD( "" )
 
@@ -31,7 +31,7 @@ FUNCTION fin_sint_kart_po_mjesecima()
    PRIVATE cSection := "2", cHistory := " ", aHistory := {}
    Params1()
    RPar( "c1", @cIdFirma ); RPar( "c2", @qqKonto ); RPar( "d1", @dDatOd ); RPar( "d2", @dDatDo )
-   IF gNW == "D";cIdFirma := gFirma; ENDIF
+   IF gNW == "D";cIdFirma := self_organizacija_id(); ENDIF
    qqKonto := PadR( qqKonto, 100 )
 
    Box( "", 5, 75 )
@@ -40,7 +40,7 @@ FUNCTION fin_sint_kart_po_mjesecima()
       @ m_x + 1, m_y + 2 SAY8 "KARTICA (SINTETIČKI KONTO) PO MJESECIMA"
 
       IF gNW == "D"
-         @ m_x + 2, m_y + 2 SAY "Firma "; ?? gFirma, "-", gNFirma
+         @ m_x + 2, m_y + 2 SAY "Firma "; ?? self_organizacija_id(), "-", self_organizacija_naziv()
       ELSE
          @ m_x + 2, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
       ENDIF
@@ -220,7 +220,7 @@ FUNCTION ZaglSink2()
    @ PRow(), 125 SAY "Str." + Str( ++nStr, 3 )
 
    IF gNW == "D"
-      ? "Firma:", gFirma, "-", gNFirma
+      ? "Firma:", self_organizacija_id(), "-", self_organizacija_naziv()
    ELSE
       SELECT PARTN; HSEEK cIdFirma
       ? "Firma:", cIdFirma, AllTrim( partn->naz ), AllTrim( partn->naz2 )

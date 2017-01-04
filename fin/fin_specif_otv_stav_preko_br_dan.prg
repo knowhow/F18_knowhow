@@ -19,7 +19,7 @@ FUNCTION fin_spec_otv_stavke_preko_dana()
    picBHD := FormPicL( "9 " + gPicBHD, 16 )
    picDEM := FormPicL( "9 " + gPicDEM, 16 )
 
-   cIdFirma := gFirma; nIznosBHD := 0; nDana := 30; cIdKonto := Space( 7 )
+   cIdFirma := self_organizacija_id(); nIznosBHD := 0; nDana := 30; cIdKonto := Space( 7 )
 
    O_KONTO
    O_PARTN
@@ -53,7 +53,7 @@ FUNCTION fin_spec_otv_stavke_preko_dana()
    @ m_x + 1, m_y + 2 SAY "OTVORENE STAVKE PREKO/DO ODREDJENOG BROJA DANA"
    IF gNW == "D"
       @ m_x + 3, m_y + 2 SAY "Firma "
-      ?? gFirma, "-", gNFirma
+      ?? self_organizacija_id(), "-", self_organizacija_naziv()
    ELSE
       @ m_x + 3, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
    ENDIF
@@ -299,7 +299,7 @@ FUNCTION ZaglSpBrDana()
    @ PRow(), 123 SAY "Str:" + Str( ++nStr, 3 )
 
    IF gNW == "D"
-      ? "Firma:", gFirma, gNFirma
+      ? "Firma:", self_organizacija_id(), self_organizacija_naziv()
    ELSE
       SELECT PARTN; HSEEK cIdFirma
       ? "Firma:", cidfirma, PadR( partn->naz, 25 ), partn->naz2

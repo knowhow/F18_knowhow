@@ -40,7 +40,7 @@ FUNCTION specif_dugovanja_po_rocnim_intervalima()
    O_KONTO
 
 
-   cIdFirma := gFirma
+   cIdFirma := self_organizacija_id()
    cIdkonto := PadR( "2110", 7 )
    cIdPartner := PadR( "", FIELD_PARTNER_ID_LENGTH )
    dNaDan := Date()
@@ -58,7 +58,7 @@ FUNCTION specif_dugovanja_po_rocnim_intervalima()
    Box(, 13, 60 )
 
    @ m_x + 1, m_y + 2 SAY "Firma "
-   ?? gFirma, "-", gNFirma
+   ?? self_organizacija_id(), "-", self_organizacija_naziv()
 
 
    @ m_x + 2, m_y + 2 SAY "Konto:               " GET cIdkonto   PICT "@!"  VALID P_konto( @cIdkonto )
@@ -453,7 +453,7 @@ FUNCTION ZaglDuznici( fStrana, lSvi )
    SELECT PARTN
    HSEEK cIdFirma
 
-   ? "FIRMA:", cIdFirma, "-", gNFirma
+   ? "FIRMA:", cIdFirma, "-", self_organizacija_naziv()
 
    SELECT KONTO
    HSEEK cIdKonto

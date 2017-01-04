@@ -186,7 +186,7 @@ FUNCTION ld_specifikacija_po_rj()
    AAdd( aKol, { "UKUPNO", {|| nUkupno }, .T., "N", 15, 2, 1, ++nKol } )
 
    P_10CPI
-   ?? gnFirma
+   ?? self_organizacija_naziv()
    ?
    ? "Mjesec: od", Str( cMjesecOd, 2 ) + ".", "do", Str( cMjesecDo, 2 ) + "."
    ?? "    Godina:", Str( cGodina, 4 )

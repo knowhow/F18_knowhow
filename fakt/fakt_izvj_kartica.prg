@@ -48,7 +48,7 @@ FUNCTION fakt_kartica()
       // idroba+dtos(datDok)
    ENDIF
 
-   cIdfirma := gFirma
+   cIdfirma := self_organizacija_id()
    PRIVATE qqRoba := ""
    PRIVATE dDatOd := CToD( "" )
    PRIVATE dDatDo := Date()
@@ -91,7 +91,7 @@ FUNCTION fakt_kartica()
       @ m_x + 1, m_y + 2 SAY "Brza kartica (D/N)" GET cBrza PICT "@!" VALID cBrza $ "DN"
       READ
       IF gNW $ "DR"
-         @ m_x + 2, m_y + 2 SAY "RJ (prazno svi) " GET cIdFirma valid {|| Empty( cIdFirma ) .OR. cidfirma == gFirma .OR. P_RJ( @cIdFirma ), cIdFirma := Left( cIdFirma, 2 ), .T. }
+         @ m_x + 2, m_y + 2 SAY "RJ (prazno svi) " GET cIdFirma valid {|| Empty( cIdFirma ) .OR. cidfirma == self_organizacija_id() .OR. P_RJ( @cIdFirma ), cIdFirma := Left( cIdFirma, 2 ), .T. }
       ELSE
          @ m_x + 2, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cIdFirma := Left( cIdFirma, 2 ), .T. }
       ENDIF

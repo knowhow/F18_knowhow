@@ -51,7 +51,7 @@ FUNCTION mat_st_sint_nalog( fnovi )
       O_MAT_ANAL
       SELECT mat_anal
       SET ORDER TO TAG "2"
-      cIdFirma := gFirma
+      cIdFirma := self_organizacija_id()
       cIdVN := Space( 2 )
       cBrNal := Space( 4 )
    ENDIF

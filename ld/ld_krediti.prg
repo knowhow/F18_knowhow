@@ -874,7 +874,7 @@ FUNCTION ld_lista_kredita_zaglavlje()
 
    IF cRateDN == "R"
       ?? "LD, izvjestaj na dan:", Date()
-      ? "FIRMA   :", gNFirma
+      ? "FIRMA   :", self_organizacija_naziv()
       ?
       IF !fsvi
          ? "Kreditor:", cidkred, kred->naz

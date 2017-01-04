@@ -143,7 +143,7 @@ STATIC FUNCTION _izdvoji_ulaze( vars )
    _dat_do := vars[ "datum_do" ]
    _artikli := vars[ "artikli" ]
    _dob := vars[ "dobavljac" ]
-   _id_firma := gFirma
+   _id_firma := self_organizacija_id()
 
    IF _dat_od <> CToD( "" )
       _date += "kalk.datdok >= " + sql_quote( _dat_od )
@@ -244,7 +244,7 @@ STATIC FUNCTION _izdvoji_prodaju( vars )
    _dat_do := vars[ "datum_do" ]
    _artikli := vars[ "artikli" ]
    _dob := vars[ "dobavljac" ]
-   _id_firma := gFirma
+   _id_firma := self_organizacija_id()
 
    IF _dat_od <> CToD( "" )
       _date += "kalk.datdok >= " + sql_quote( _dat_od ) + " "
@@ -347,7 +347,7 @@ STATIC FUNCTION print_frm_asort_nar( vars )
    xml_subnode( "nar", .F. )
 
    // podaci matične firme
-   xml_node( "firma", to_xml_encoding( gNFirma ) )
+   xml_node( "firma", to_xml_encoding( self_organizacija_naziv() ) )
    xml_node( "f_adr", to_xml_encoding( fetch_metric( "org_adresa", nil, "" ) ) )
    xml_node( "f_mj", to_xml_encoding( gMjStr ) )
    xml_node( "f_tel", to_xml_encoding( fetch_metric( "fakt_zagl_telefon", nil, "" ) ) )

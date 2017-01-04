@@ -266,7 +266,7 @@ STATIC FUNCTION napravi_filter_na_tabeli_ld( cIdRj, cGodina, cMjesec, cObracun, 
 STATIC FUNCTION zaglavlje_izvjestaja( cVPosla, cKBenef )
 
    P_COND
-   ? Upper( tip_organizacije() ) + ":", gnFirma
+   ? Upper( tip_organizacije() ) + ":", self_organizacija_naziv()
    ?
 
    IF Empty( cidrj )

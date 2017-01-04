@@ -14,11 +14,11 @@
 STATIC s_cKalkDestinacijaTopska := NIL
 STATIC s_cTxtPrint
 
-MEMVAR m_x, m_y, gFirma, GetList
+MEMVAR m_x, m_y, GetList
 
 FUNCTION kalk_tops_meni()
 
-   LOCAL cIDFirma := gFirma
+   LOCAL cIDFirma := self_organizacija_id()
    LOCAL cIdVd := "80"
    LOCAL cBrDok := Space( 8 )
 
@@ -126,7 +126,7 @@ FUNCTION kalk_generisi_tops_dokumente( cIdFirma, cIdVd, cBrDok )
 
       _dat_dok := kalk_pripr->datdok
 
-      REPLACE field->idfirma WITH gFirma
+      REPLACE field->idfirma WITH self_organizacija_id()
       REPLACE field->idvd WITH kalk_pripr->idvd
       REPLACE field->idpos WITH koncij->idprodmjes
       REPLACE field->datdok WITH kalk_pripr->datdok

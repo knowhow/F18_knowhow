@@ -51,13 +51,13 @@ FUNCTION KSintKont()
 
    O_PARTN
 
-   cIdFirma := gFirma
+   cIdFirma := self_organizacija_id()
    qqKonto := Space( 100 )
    Box( "KSK", 4, 60, .F. )
    DO WHILE .T.
       @ m_x + 1, m_y + 2 SAY "SINTETICKA KARTICA"
       IF gNW $ "DR"
-         @ m_x + 3, m_y + 2 SAY "Firma "; ?? gFirma, "-", gNFirma
+         @ m_x + 3, m_y + 2 SAY "Firma "; ?? self_organizacija_id(), "-", self_organizacija_naziv()
       ELSE
          @ m_x + 3, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
       ENDIF
@@ -237,8 +237,8 @@ FUNCTION KAnKPoj()
    DO WHILE .T.
       @ m_x + 1, m_y + 6 SAY "ANALITICKA KARTICA"
       IF gNW $ "DR"
-         @ m_x + 2, m_y + 2 SAY "Firma "; ?? gFirma, "-", gNFirma
-         cIdFirma := gFirma
+         @ m_x + 2, m_y + 2 SAY "Firma "; ?? self_organizacija_id(), "-", self_organizacija_naziv()
+         cIdFirma := self_organizacija_id()
       ELSE
          @ m_x + 2, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
       ENDIF
@@ -374,8 +374,8 @@ FUNCTION KAnKKonto()
    Box( "kankko", 2, 60, .F. )
    @ m_x + 1, m_y + 2 SAY "ANALITICKA KARTICA - PO " + KonSeks( "KONT" ) + "IMA"
    IF gNW $ "DR"
-      @ m_x + 2, m_y + 2 SAY "Firma "; ?? gFirma, "-", gNFirma
-      cIdFirma := gFirma
+      @ m_x + 2, m_y + 2 SAY "Firma "; ?? self_organizacija_id(), "-", self_organizacija_naziv()
+      cIdFirma := self_organizacija_id()
    ELSE
       @ m_x + 2, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
    ENDIF
@@ -512,7 +512,7 @@ FUNCTION KSuban()
    LOCAL _preth_p := "1"
    LOCAL _col_1
    LOCAL _col_2
-   LOCAL _id_firma := gFirma
+   LOCAL _id_firma := self_organizacija_id()
    LOCAL _dat_od := CToD( "" )
    LOCAL _dat_do := CToD( "" )
 
@@ -537,7 +537,7 @@ FUNCTION KSuban()
    RPar( "d2", @_dat_do )
 
    IF gNW $ "DR"
-      _id_firma := gFirma
+      _id_firma := self_organizacija_id()
    ENDIF
 
    @ m_x + 1, m_y + 2 SAY "SUBANALITICKA KARTICA"
@@ -550,7 +550,7 @@ FUNCTION KSuban()
 
       IF gNW $ "DR"
          @ m_x + 3, m_y + 2 SAY "Firma "
-         ?? gFirma, "-", gNFirma
+         ?? self_organizacija_id(), "-", self_organizacija_naziv()
       ELSE
          @ m_x + 3, m_y + 2 SAY "Firma: " GET _id_firma ;
             VALID {|| p_partner( @_id_firma ), _id_firma := Left( _id_firma, 2 ), .T. }

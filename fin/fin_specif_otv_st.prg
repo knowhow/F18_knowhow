@@ -17,7 +17,7 @@ FUNCTION fin_specif_otvorene_stavke()
    LOCAL nKolTot := 85
    PRIVATE bZagl := {|| ZaglSPK() }
 
-   cIdFirma := gFirma
+   cIdFirma := self_organizacija_id()
    nRok := 0
    cIdKonto := Space( 7 )
    picBHD := FormPicL( "9 " + gPicBHD, 21 )
@@ -41,7 +41,7 @@ FUNCTION fin_specif_otvorene_stavke()
       SET CURSOR ON
       @ m_x + 1, m_y + 2 SAY "SPECIFIKACIJA OTVORENIH STAVKI"
       IF gNW == "D"
-         @ m_x + 3, m_y + 2 SAY "Firma "; ?? gFirma, "-", gNFirma
+         @ m_x + 3, m_y + 2 SAY "Firma "; ?? self_organizacija_id(), "-", self_organizacija_naziv()
       ELSE
          @ m_x + 3, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
       ENDIF
@@ -233,7 +233,7 @@ FUNCTION ZaglSpK()
    @ PRow(), 125 SAY "Str:" + Str( ++nStr, 3 )
 
    IF gNW == "D"
-      ? "Firma:", gFirma, gNFirma
+      ? "Firma:", self_organizacija_id(), self_organizacija_naziv()
    ELSE
       SELECT PARTN; HSEEK cIdFirma
       ? "Firma:", cidfirma, partn->naz, partn->naz2

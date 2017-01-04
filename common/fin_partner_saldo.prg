@@ -114,12 +114,12 @@ FUNCTION fin_partner_prikaz_stanja_ekran( cPartner, cKKup, cKDob )
    PRIVATE GetList := {}
 
    IF cKKUP <> NIL
-      nSKup := get_fin_partner_saldo( cPartner, cKKup, gFirma )
-      dDate := g_dpupl_part( cPartner, cKKup, gFirma )
+      nSKup := get_fin_partner_saldo( cPartner, cKKup, self_organizacija_id() )
+      dDate := g_dpupl_part( cPartner, cKKup, self_organizacija_id() )
    ENDIF
 
    IF cKDOB <> NIL
-      nSDob := get_fin_partner_saldo( cPartner, cKDob, gFirma )
+      nSDob := get_fin_partner_saldo( cPartner, cKDob, self_organizacija_id() )
    ENDIF
 
    nSaldo := nSKup + nSDob

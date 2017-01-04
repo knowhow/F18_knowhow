@@ -35,11 +35,11 @@ FUNCTION kalk_preuzmi_tops_dokumente()
 
   /*
      IF ( cIdVdPos == "42" .AND. lAutoRazduzenje == "D" )
-        cBrKalk  := kalk_get_next_broj_v5( gFirma, "11", NIL )
+        cBrKalk  := kalk_get_next_broj_v5( self_organizacija_id(), "11", NIL )
      ELSE
 
-        IF find_kalk_doks_by_broj_dokumenta( gFirma, cIdVdPos, cBrKalk )
-           Msg( "Vec postoji dokument pod brojem " + gFirma + "-" + cIdVdPos + "-" + cBrKalk + "#Prenos nece biti izvrsen" )
+        IF find_kalk_doks_by_broj_dokumenta( self_organizacija_id(), cIdVdPos, cBrKalk )
+           Msg( "Vec postoji dokument pod brojem " + self_organizacija_id() + "-" + cIdVdPos + "-" + cBrKalk + "#Prenos nece biti izvrsen" )
            my_close_all_dbf()
            RETURN .F.
         ENDIF
@@ -608,7 +608,7 @@ STATIC FUNCTION tops_kalk_import_row_ip( cBrDok, cIdKontoProdavnica, r_br )
    IF !Found() // kalk_pripr
 
       APPEND BLANK
-      REPLACE field->idfirma WITH gFirma
+      REPLACE field->idfirma WITH self_organizacija_id()
       REPLACE field->idvd WITH _tip_dok
       REPLACE field->brdok WITH cBrDok
       REPLACE field->datdok WITH topska->datum
@@ -658,7 +658,7 @@ STATIC FUNCTION tops_kalk_import_row_11( cBrDok, cIdKontoProdavnica, cIdKontoMag
 
    APPEND BLANK
 
-   REPLACE field->idfirma WITH gFirma
+   REPLACE field->idfirma WITH self_organizacija_id()
    REPLACE field->idvd WITH _tip_dok
    REPLACE field->brdok WITH cBrDok
    REPLACE field->datdok WITH topska->datum
@@ -700,7 +700,7 @@ STATIC FUNCTION tops_kalk_import_row_42( cBrDok, cIdKontoProdavnica, r_br )
 
    APPEND BLANK
 
-   REPLACE field->idfirma WITH gFirma
+   REPLACE field->idfirma WITH self_organizacija_id()
    REPLACE field->idvd WITH topska->idvd
    REPLACE field->brdok WITH cBrDok
    REPLACE field->datdok WITH topska->datum

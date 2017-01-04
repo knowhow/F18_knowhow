@@ -146,7 +146,7 @@ FUNCTION edit_fin_priprema()
    PARAMETERS fNovi
 
    IF fin_pripr_nova_stavka() .AND. fin_pripr_redni_broj() == 1
-      _IdFirma := gFirma
+      _IdFirma := self_organizacija_id()
    ENDIF
 
    IF fin_pripr_nova_stavka()
@@ -162,7 +162,7 @@ FUNCTION edit_fin_priprema()
 
    IF gNW == "D"
       @  m_x + 1, m_y + 2 SAY8 "Firma: "
-      ?? gFirma, "-", gNFirma
+      ?? self_organizacija_id(), "-", self_organizacija_naziv()
       @  m_x + 3, m_y + 2 SAY "NALOG: "
       @  m_x + 3, m_y + 14 SAY "Vrsta:" GET _idvn VALID browse_tnal( @_IdVN, 3, 26 ) PICT "@!"
    ELSE

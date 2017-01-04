@@ -17,7 +17,7 @@ FUNCTION rekap_finansijsko_stanje_magacin()
    LOCAL nKolUlaz
    LOCAL nKolIzlaz
 
-   cIdFirma := gFirma
+   cIdFirma := self_organizacija_id()
    cidKonto := PadR( "132", gDuzKonto )
    o_kalk_tabele_izvj()
 
@@ -31,7 +31,7 @@ FUNCTION rekap_finansijsko_stanje_magacin()
    Box(, 10, 60 )
    DO WHILE .T.
       IF gNW $ "DX"
-         @ m_x + 1, m_y + 2 SAY "Firma "; ?? gFirma, "-", gNFirma
+         @ m_x + 1, m_y + 2 SAY "Firma "; ?? self_organizacija_id(), "-", self_organizacija_naziv()
       ELSE
          @ m_x + 1, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
       ENDIF

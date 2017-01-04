@@ -184,7 +184,7 @@ STATIC FUNCTION _grupno_params( params )
    LOCAL _tip_gen := "1"
    LOCAL _gen_pdf := "N"
 
-   _id_firma := fetch_metric( "export_odt_grupno_firma", my_user(), gFirma )
+   _id_firma := fetch_metric( "export_odt_grupno_firma", my_user(), self_organizacija_id() )
    _id_tip_dok := fetch_metric( "export_odt_grupno_tip_dok", my_user(), "10" )
    _datum_od := fetch_metric( "export_odt_grupno_datum_od", my_user(), Date() )
    _datum_do := fetch_metric( "export_odt_grupno_datum_do", my_user(), Date() )

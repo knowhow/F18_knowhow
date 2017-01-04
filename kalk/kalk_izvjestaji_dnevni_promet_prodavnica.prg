@@ -284,7 +284,7 @@ STATIC FUNCTION ScanKalk( dDan, aR, dDatDo, cPKto )
    -- o_kalk() // idFirma+dtos(datdok)+podbr+idvd+brdok
    SET ORDER TO TAG "5"
 
-   SEEK gFirma + DToS( dDan )
+   SEEK self_organizacija_id() + DToS( dDan )
 
    IF ( dDatDo <> nil )
       bDatCond := {|| DToS( datdok ) >= DToS( dDan ) .AND. DToS( datdok ) <= DToS( dDatDo ) }

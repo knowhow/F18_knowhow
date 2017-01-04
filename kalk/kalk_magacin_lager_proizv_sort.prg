@@ -144,7 +144,7 @@ FUNCTION KaLagM()
 
 
    SELECT kalk
-   SEEK gFirma + oRpt:cIdKonto
+   SEEK self_organizacija_id() + oRpt:cIdKonto
    EOF CRET
 
    nRec := 0
@@ -552,7 +552,7 @@ METHOD printHeader
    ?
    P_COND
    @ PRow(), 100 SAY "Str." + Str( ::nStr, 3 )
-   ? "Preduzece: ", gNFirma,
+   ? "Preduzece: ", self_organizacija_naziv(),
    ?
    PushWA()
 

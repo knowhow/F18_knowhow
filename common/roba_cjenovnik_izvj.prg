@@ -38,7 +38,7 @@ FUNCTION CjenR()
    cIniName := EXEPATH + 'ProIzvj.ini'
 
    // Iscita var Linija1 iz FMK.INI/KUMPATH u PROIZVJ.INI
-   UzmiIzIni( cIniName, 'Varijable', 'Linija1', my_get_from_ini( "Zaglavlje", "Linija1", gNFirma, KUMPATH ), 'WRITE' )
+   UzmiIzIni( cIniName, 'Varijable', 'Linija1', my_get_from_ini( "Zaglavlje", "Linija1", self_organizacija_naziv(), KUMPATH ), 'WRITE' )
    UzmiIzIni( cIniName, 'Varijable', 'Linija2', my_get_from_ini( "Zaglavlje", "Linija2", "-", KUMPATH ), 'WRITE' )
    UzmiIzIni( cIniName, 'Varijable', 'Linija3', my_get_from_ini( "Zaglavlje", "Linija3", "-", KUMPATH ), 'WRITE' )
    UzmiIzIni( cIniName, 'Varijable', 'Linija4', my_get_from_ini( "Zaglavlje", "Linija4", "-", KUMPATH ), 'WRITE' )

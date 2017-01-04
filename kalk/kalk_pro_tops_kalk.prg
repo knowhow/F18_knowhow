@@ -25,7 +25,7 @@ FUNCTION tops_nor_96( cIdFirma, cIdTipDok, cIdZaduz2, cIdKonto2, cIdKonto, ;
    LOCAL cBrKalk := Space( 8 )
 
    IF PCount() == 0
-      cIdFirma := gFirma
+      cIdFirma := self_organizacija_id()
       cIdTipDok := PadR( "42;", 20 )
       cIdZaduz2 := Space( 6 )
       cIdkonto2 := PadR( "1310", 7 )
@@ -213,7 +213,7 @@ FUNCTION tops_nor_96( cIdFirma, cIdTipDok, cIdZaduz2, cIdKonto2, cIdKonto, ;
                ELSE
                   SELECT kalk_pripr
                   APPEND BLANK
-                  REPLACE idfirma WITH gFirma
+                  REPLACE idfirma WITH self_organizacija_id()
                   REPLACE rbr WITH Str( ++nRbr, 3 )
                   REPLACE idvd WITH "96"
                   REPLACE brdok WITH cBrKalk

@@ -14,7 +14,7 @@
 
 FUNCTION fin_sint_kartica()
 
-   cIdFirma := gFirma
+   cIdFirma := self_organizacija_id()
    qqKonto := ""
    dDatOd := fetch_metric( "fin_kart_datum_od", my_user(), CToD( "" ) )
    dDatDo := fetch_metric( "fin_kart_datum_do", my_user(), CToD( "" ) )
@@ -40,14 +40,14 @@ FUNCTION fin_sint_kartica()
    RPar( "c3", @cBrza )
    RPar( "c4", @cPredh )
 
-   IF gNW == "D"; cIdFirma := gFirma; ENDIF
+   IF gNW == "D"; cIdFirma := self_organizacija_id(); ENDIF
 
    Box( "", 9, 75 )
    DO WHILE .T.
       SET CURSOR ON
       @ m_x + 1, m_y + 2 SAY "KARTICA (SINTETICKI KONTO)"
       IF gNW == "D"
-         @ m_x + 2, m_y + 2 SAY "Firma "; ?? gFirma, "-", gNFirma
+         @ m_x + 2, m_y + 2 SAY "Firma "; ?? self_organizacija_id(), "-", self_organizacija_naziv()
       ELSE
          @ m_x + 2, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
       ENDIF
@@ -264,7 +264,7 @@ FUNCTION SinKZagl()
    @ PRow(), 125 SAY "Str." + Str( ++nStr, 3 )
 
    IF gNW == "D"
-      ? "Firma:", gFirma, gNFirma
+      ? "Firma:", self_organizacija_id(), self_organizacija_naziv()
    ELSE
       SELECT PARTN
       HSEEK cIdFirma

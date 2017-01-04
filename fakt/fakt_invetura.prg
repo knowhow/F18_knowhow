@@ -377,7 +377,7 @@ METHOD genDok()
 
    LOCAL cIdRj
 
-   cIdRj := gFirma
+   cIdRj := self_organizacija_id()
    Box(, 2, 40 )
    @ m_x + 1, m_y + 2 SAY "RJ:" GET cIdRj
    READ
@@ -398,7 +398,7 @@ METHOD genDokManjak()
    LOCAL cIdRj
    LOCAL cBrDok
 
-   cIdRj := gFirma
+   cIdRj := self_organizacija_id()
    cBrDok := Space( Len( field->brDok ) )
    DO WHILE .T.
       Box(, 4, 60 )
@@ -440,7 +440,7 @@ METHOD genDokVisak
    LOCAL cIdRj
    LOCAL cBrDok
 
-   cIdRj := gFirma
+   cIdRj := self_organizacija_id()
    cBrDok := Space( Len( field->brDok ) )
 
    DO WHILE .T.

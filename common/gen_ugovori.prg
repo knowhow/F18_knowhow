@@ -210,14 +210,14 @@ FUNCTION gen_ug()
       ENDIF
 
       SELECT fakt_pripr
-      SEEK gFirma + cidtipdok + "È"
+      SEEK self_organizacija_id() + cidtipdok + "È"
       SKIP -1
       IF idtipdok <> cIdTipdok
          SEEK "È" // idi na kraj, nema zeljenih dokumenata
       ENDIF
 
       SELECT fakt
-      SEEK gFirma + cidtipdok + "È"
+      SEEK self_organizacija_id() + cidtipdok + "È"
       SKIP -1
 
       IF idtipdok <> cIdTipdok
@@ -281,7 +281,7 @@ FUNCTION gen_ug()
          SELECT fakt_pripr
 
          IF my_get_from_ini( 'FAKT_Ugovori', "SumirajIstuSifru", 'D' ) == "D" .AND. ;
-               IdFirma + idtipdok + brdok + idroba == gFirma + cIDTipDok + PadR( cBrDok, Len( brdok ) ) + RUGOV->idroba
+               IdFirma + idtipdok + brdok + idroba == self_organizacija_id() + cIDTipDok + PadR( cBrDok, Len( brdok ) ) + RUGOV->idroba
             Scatter()
             _kolicina += RUGOV->kolicina
             // tag "1": "IdFirma+idtipdok+brdok+rbr+podbr"
@@ -374,7 +374,7 @@ FUNCTION gen_ug()
             _txt := Chr( 16 ) + _txt1 + Chr( 17 )
          ENDIF
 
-         _idfirma := gFirma
+         _idfirma := self_organizacija_id()
          _zaokr := ugov->zaokr
          _rbr := Str( ++nRbr, 3 )
          _idtipdok := cidtipdok

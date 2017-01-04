@@ -31,7 +31,7 @@ FUNCTION fin_sinteticki_nalog( lAzuriraniDokument )
       close_open_panal()
 
       cIdVN := Space( 2 )
-      cIdFirma := gFirma
+      cIdFirma := self_organizacija_id()
       cBrNal := Space( 8 )
 
       Box( "", 1, 35 )
@@ -199,7 +199,7 @@ FUNCTION zagl_sinteticki_nalog( dDatNal )
    ?
    P_COND
    F10CPI
-   ?? tip_organizacije() + ":", gNFirma
+   ?? tip_organizacije() + ":", self_organizacija_naziv()
 /*
    IF gNW == "N"
       SELECT partn

@@ -259,7 +259,7 @@ STATIC FUNCTION __r_head( dD_from, dD_to )
 STATIC FUNCTION __gen_fin( dD_from, dD_to, cGroup, cKtoList )
 
    LOCAL cFilter := ""
-   LOCAL cIdFirma := gFirma
+   LOCAL cIdFirma := self_organizacija_id()
    LOCAL cIdKonto
    LOCAL cIdPartner
 
@@ -453,7 +453,7 @@ STATIC FUNCTION __gen_fin( dD_from, dD_to, cGroup, cKtoList )
 STATIC FUNCTION __gen2_fin( dD_from, dD_to, cGroup, cKtoList )
 
    LOCAL cFilter := ""
-   LOCAL cIdFirma := gFirma
+   LOCAL cIdFirma := self_organizacija_id()
    LOCAL cIdKonto
    LOCAL cIdPartner
 
@@ -641,7 +641,7 @@ STATIC FUNCTION __gen2_fin( dD_from, dD_to, cGroup, cKtoList )
 STATIC FUNCTION __gen_kalk( dD_from, dD_to, cKto )
 
    LOCAL cPath := StrTran( KUMPATH, "FIN", "KALK" )
-   LOCAL cIdFirma := gFirma
+   LOCAL cIdFirma := self_organizacija_id()
    LOCAL cLine
    LOCAL cTxt
    LOCAL nIzlNV

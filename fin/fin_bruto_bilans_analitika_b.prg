@@ -391,7 +391,7 @@ FUNCTION zagl_bb_anal( hParams, nStr )
    @ PRow(), REP1_LEN - 15 SAY "Str:" + Str( ++nStr, 3 )
 
    // IF gNW == "D"
-   ? "Firma:", gFirma, gNFirma
+   ? "Firma:", self_organizacija_id(), self_organizacija_naziv()
    /*
     ELSE
       ? "Firma:"

@@ -83,7 +83,7 @@ STATIC FUNCTION get_vars( dD_f, dD_t, cId_f, cId_td )
 
    dD_f := Date() -60
    dD_t := Date()
-   cId_f := PadR( gFirma + ";", 100 )
+   cId_f := PadR( self_organizacija_id() + ";", 100 )
    cId_td := PadR( "10;", 100 )
 
    Box(, 5, 65 )

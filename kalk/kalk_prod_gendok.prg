@@ -124,7 +124,7 @@ FUNCTION GenNivP()
 
    Box(, 4, 70 )
 
-   cIdFirma := gFirma
+   cIdFirma := self_organizacija_id()
    cIdVD := "19"
    cOldDok := Space( 8 )
    cIdkonto := PadR( "1330", 7 )
@@ -264,7 +264,7 @@ FUNCTION NivPoProc()
    cVarijanta := "2"
 
    Box(, 7, 60 )
-   cIdFirma := gFirma
+   cIdFirma := self_organizacija_id()
    cIdkonto := PadR( "1320", 7 )
    dDatDok := Date()
    @ m_x + 1, m_Y + 2 SAY "Prodavnica :" GET  cidkonto VALID P_Konto( @cidkonto )
@@ -428,7 +428,7 @@ FUNCTION VratiZadNiv()
    O_ROBA
 
    Box(, 4, 60 )
-   cIdFirma := gFirma
+   cIdFirma := self_organizacija_id()
    cIdKonto := PadR( "1320", 7 )
    dDatDok := Date()
    @ m_x + 1, m_Y + 2 SAY "Prodavnica :" GET  cIdKonto VALID P_Konto( @cIdKonto )
@@ -544,16 +544,16 @@ FUNCTION kalk_prod_kartica_mpc_svedi_mpc_sif()
    lGenerisao := .F.
    PRIVATE nRbr := 0
 
-   cBrNiv := kalk_get_next_broj_v5( gFirma, "19", NIL )
+   cBrNiv := kalk_get_next_broj_v5( self_organizacija_id(), "19", NIL )
 
-   find_kalk_by_pkonto_idroba( gFirma, cIdKontoProdavnica )
+   find_kalk_by_pkonto_idroba( self_organizacija_id(), cIdKontoProdavnica )
 
 
    Box(, 6, 65 )
 
    @ 1 + m_x, 2 + m_y SAY "Generisem nivelaciju... 19-" + cBrNiv
 
-   DO WHILE !Eof() .AND. field->idfirma + field->pkonto == gFirma + cIdKontoProdavnica
+   DO WHILE !Eof() .AND. field->idfirma + field->pkonto == self_organizacija_id() + cIdKontoProdavnica
 
       cIdRoba := Idroba
       nUlaz := nIzlaz := 0
@@ -580,7 +580,7 @@ FUNCTION kalk_prod_kartica_mpc_svedi_mpc_sif()
       @ 2 + m_x, 2 + m_y SAY "ID roba: " + cIdRoba
       @ 3 + m_x, 2 + m_y SAY "Cijena u sifrarniku " + AllTrim( Str( nUlazVpc ) )
 
-      DO WHILE !Eof() .AND. gFirma + cidkonto + cidroba == idFirma + pkonto + idroba
+      DO WHILE !Eof() .AND. self_organizacija_id() + cidkonto + cidroba == idFirma + pkonto + idroba
 
          IF roba->tip $ "TU"
             SKIP
@@ -668,7 +668,7 @@ FUNCTION kalk_prod_kartica_mpc_svedi_mpc_sif()
 
             APPEND BLANK
 
-            REPLACE idfirma WITH gFirma, idroba WITH cIdRoba, idkonto WITH cIdKonto, ;
+            REPLACE idfirma WITH self_organizacija_id(), idroba WITH cIdRoba, idkonto WITH cIdKonto, ;
                datdok WITH dDok, ;
                idtarifa WITH roba->idtarifa, ;
                datfaktp WITH dDok, ;
@@ -904,7 +904,7 @@ FUNCTION Gen41S()
 FUNCTION kalk_iz_11_u_41_42()
 
    o_kalk_edit()
-   cIdFirma := gFirma
+   cIdFirma := self_organizacija_id()
    cIdVdU   := "11"
    cIdVdI   := "4"
    cBrDokU  := Space( Len( kalk_pripr->brdok ) )
@@ -1002,7 +1002,7 @@ FUNCTION kalk_iz_11_u_41_42()
 FUNCTION kalk_iz_10_u_11()
 
    o_kalk_edit()
-   cIdFirma := gFirma
+   cIdFirma := self_organizacija_id()
    cIdVdU   := "10"
    cIdVdI   := "11"
    cBrDokU  := Space( Len( kalk_pripr->brdok ) )
@@ -1096,7 +1096,7 @@ FUNCTION kalk_iz_10_u_11()
 // generisi 80-ku na osnovu IP-a
 FUNCTION gen_ip_80()
 
-   LOCAL cIdFirma := gFirma
+   LOCAL cIdFirma := self_organizacija_id()
    LOCAL cTipDok := "IP"
    LOCAL cIpBrDok := Space( 8 )
    LOCAL dDat80 := Date()
@@ -1127,7 +1127,7 @@ FUNCTION gen_ip_80()
    o_kalk_pript()
    o_kalk_pripr()
 
-   cNxt80 := kalk_get_next_kalk_doc_uvecaj( gFirma, "80" )
+   cNxt80 := kalk_get_next_kalk_doc_uvecaj( self_organizacija_id(), "80" )
 
    // obradi dokument u kalk_pripremu -> konvertuj u 80
    SELECT pript

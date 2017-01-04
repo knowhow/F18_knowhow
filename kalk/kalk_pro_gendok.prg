@@ -36,7 +36,7 @@ FUNCTION GenProizvodnja()
 
 FUNCTION Iz47u96Norm()
 
-   LOCAL cIdFirma := gFirma, cBrDok := cBrKalk := Space( 8 )
+   LOCAL cIdFirma := self_organizacija_id(), cBrDok := cBrKalk := Space( 8 )
 
    o_kalk_pripr()
    -- o_kalk()

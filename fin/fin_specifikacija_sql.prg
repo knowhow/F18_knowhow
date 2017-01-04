@@ -87,7 +87,7 @@ STATIC FUNCTION uslovi_izvjestaja( rpt_vars )
    SET CURSOR ON
 
    @ m_x + _x, m_y + 2 SAY "Firma "
-   ?? gFirma, "-", AllTrim( gNFirma )
+   ?? self_organizacija_id(), "-", AllTrim( self_organizacija_naziv() )
 
    ++ _x
    ++ _x
@@ -205,7 +205,7 @@ STATIC FUNCTION _cre_rpt( rpt_vars )
       _rj_fond_funk := " sub.idrj, sub.fond, sub.funk, "
    ENDIF
 
-   _where_cond := "WHERE sub.idfirma = " + sql_quote( gfirma )
+   _where_cond := "WHERE sub.idfirma = " + sql_quote( self_organizacija_id() )
    _where_cond += " AND " + _sql_date_parse( "sub.datdok", _datum_od, _datum_do )
    IF !Empty( _konto )
       _where_cond += " AND " + _sql_cond_parse( "sub.idkonto", _konto )
@@ -372,8 +372,8 @@ STATIC FUNCTION _cre_xml( table, rpt_vars )
 
    xml_subnode( "specif", .F. )
 
-   xml_node( "f_id", gFirma )
-   xml_node( "f_naz", to_xml_encoding( gNFirma ) )
+   xml_node( "f_id", self_organizacija_id() )
+   xml_node( "f_naz", to_xml_encoding( self_organizacija_naziv() ) )
    xml_node( "f_mj", to_xml_encoding( gMjStr ) )
 
    xml_node( "datum", DToC( Date() ) )

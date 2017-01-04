@@ -203,7 +203,7 @@ FUNCTION gen_cache()
    LOCAL nUlKol
    LOCAL nKolNeto
    LOCAL cIdKonto
-   LOCAL cIdFirma := gFirma
+   LOCAL cIdFirma := self_organizacija_id()
    LOCAL cIdRoba
    LOCAL cMKtoLst
    LOCAL cPKtoLst

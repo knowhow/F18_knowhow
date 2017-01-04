@@ -139,13 +139,13 @@ FUNCTION fin_kartica_otvorene_stavke_po_broju_veze( fSolo, fTiho, bFilter )
       o_suban()
       O_PARTN
       O_KONTO
-      cIdFirma := gFirma
+      cIdFirma := self_organizacija_id()
       cIdkonto := Space( 7 )
       cIdPartner := Space( 6 )
 
       Box(, 5, 60 )
       IF gNW == "D"
-         @ m_x + 1, m_y + 2 SAY "Firma "; ?? gFirma, "-", gNFirma
+         @ m_x + 1, m_y + 2 SAY "Firma "; ?? self_organizacija_id(), "-", self_organizacija_naziv()
       ELSE
          @ m_x + 1, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
       ENDIF
@@ -594,7 +594,7 @@ FUNCTION fin_zagl_ostav_grupisano_po_br_veze( fStrana, lEx )
 
    SELECT PARTN
    HSEEK cIdFirma
-   ? "FIRMA:", cIdFirma, "-", gNFirma
+   ? "FIRMA:", cIdFirma, "-", self_organizacija_naziv()
 
    SELECT KONTO
    HSEEK cIdKonto

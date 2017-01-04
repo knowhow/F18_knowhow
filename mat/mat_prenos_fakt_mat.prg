@@ -45,7 +45,7 @@ STATIC FUNCTION parametri_prenosa()
    BoxC()
    gDirFakt := Trim( gDirFakt )
    WPar( "df", gDirFakt )
-   WPar( "fi", gFirma )
+   WPar( "fi", self_organizacija_id() )
    WPar( "vn", gVN )
    WPar( "vd", gVD )
    SELECT 99; USE
@@ -56,7 +56,7 @@ STATIC FUNCTION parametri_prenosa()
 STATIC FUNCTION prenos()
 
    LOCAL gVn := "10"
-   LOCAL cIdFirma := gFirma, cIdTipDok := "11", cBrdok := Space( 8 ), cBrMat := "", ;
+   LOCAL cIdFirma := self_organizacija_id(), cIdTipDok := "11", cBrdok := Space( 8 ), cBrMat := "", ;
       cIdZaduz := Space( 6 )
 
    O_MAT_PRIPR

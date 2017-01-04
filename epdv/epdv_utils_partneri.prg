@@ -77,7 +77,7 @@ FUNCTION my_firma( lRetArray )
    LOCAL cMjesto
    LOCAL cIdBroj
    LOCAL cPtt
-   LOCAL cPom := gNFirma
+   LOCAL cPom := self_organizacija_naziv()
    LOCAL _fields
 
    PushWA()
@@ -90,18 +90,18 @@ FUNCTION my_firma( lRetArray )
 
    SELECT partn
    SET ORDER TO TAG "ID"
-   SEEK gFirma
+   SEEK self_organizacija_id()
 
    IF !Found()
       APPEND BLANK
       _fields := dbf_get_rec()
-      _fields[ "id" ] := gFirma
+      _fields[ "id" ] := self_organizacija_id()
       update_rec_server_and_dbf( "partn", _fields, 1, "FULL" )
    ENDIF
 
    cNaziv := naz
    cMjesto := mjesto
-   cIdBroj := firma_pdv_broj( gFirma )
+   cIdBroj := firma_pdv_broj( self_organizacija_id() )
    cAdresa := adresa
    cPtt := ptt
 
@@ -121,7 +121,7 @@ FUNCTION my_firma( lRetArray )
 
          update_rec_server_and_dbf( nil, _fields, 1, "FULL" )
 
-         USifK( "PARTN", "REGB", gFirma, Unicode():New( cIdBroj, .F. ) )
+         USifK( "PARTN", "REGB", self_organizacija_id(), Unicode():New( cIdBroj, .F. ) )
 
       ELSE
          MsgBeep( "Nepopunjeni podaci o matičnoj firmi !" )
@@ -181,7 +181,7 @@ FUNCTION part_rejon( cIdPart )
 
    o_partn_sifk()
    GO TOP
-   SEEK gFirma
+   SEEK self_organizacija_id()
 
    cRejon := IzSifKPartn( "REJO", Unicode():New( cIdPart, .F. ), .F. )
 

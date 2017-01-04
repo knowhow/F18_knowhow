@@ -1934,12 +1934,12 @@ STATIC FUNCTION ZaglSvi()
    B_ON
 
    IF nMjesec == nMjesecDo
-      ? Lokal( "Firma:" ), gNFirma, "  " + Lokal( "Mjesec:" ), Str( nMjesec, 2 ) + IspisObr()
+      ? Lokal( "Firma:" ), self_organizacija_naziv(), "  " + Lokal( "Mjesec:" ), Str( nMjesec, 2 ) + IspisObr()
       ?? "    " + Lokal( "Godina:" ), Str( nGodina, 4 )
       B_OFF
       ? IF( gBodK == "1", Lokal( "Vrijednost boda:" ), Lokal( "Vr.koeficijenta:" ) ), Transform( parobr->vrbod, "99999.99999" )
    ELSE
-      ? Lokal( "Firma:" ), gNFirma, "  " + Lokal( "Za mjesece od:" ), Str( nMjesec, 2 ), "do", Str( nMjesecDo, 2 ) + IspisObr()
+      ? Lokal( "Firma:" ), self_organizacija_naziv(), "  " + Lokal( "Za mjesece od:" ), Str( nMjesec, 2 ), "do", Str( nMjesecDo, 2 ) + IspisObr()
       ?? "    " + Lokal( "Godina:" ), Str( nGodina, 4 )
       B_OFF
    ENDIF

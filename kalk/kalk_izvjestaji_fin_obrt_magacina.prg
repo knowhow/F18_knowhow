@@ -604,7 +604,7 @@ FUNCTION ZagOPoMF()
    // if gPrinter<>"R"
    // B_ON
    // endif
-   ?? tip_organizacije() + ":", gNFirma, Space( 40 ), "Strana:" + Str( ++nStr, 3 )
+   ?? tip_organizacije() + ":", self_organizacija_naziv(), Space( 40 ), "Strana:" + Str( ++nStr, 3 )
    ?
    ?  "Pregled FINANSIJSKOG OBRTA za period:", dDatOd, "-", dDAtDo
    IspisNaDan( 10 )

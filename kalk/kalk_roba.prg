@@ -255,7 +255,7 @@ STATIC FUNCTION _kalk_get_ulazi( partner, roba, mag_prod )
    ENDIF
 
    _qry := "SELECT idkonto, idvd, brdok, datdok, fcj, rabat FROM " + F18_PSQL_SCHEMA_DOT + "kalk_kalk WHERE idfirma = " + ;
-      sql_quote( gfirma ) + ;
+      sql_quote( self_organizacija_id() ) + ;
       " AND idpartner = " + sql_quote( partner ) + ;
       " AND idroba = " + sql_quote( roba ) + ;
       " AND " + _u_i + " = " + sql_quote( "1" ) + ;

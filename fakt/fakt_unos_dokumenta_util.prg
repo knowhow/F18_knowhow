@@ -50,7 +50,7 @@ FUNCTION IzSifre( silent )
 
 FUNCTION V_Rj()
 
-   IF gDetPromRj == "D" .AND. gFirma <> _IdFirma
+   IF gDetPromRj == "D" .AND. self_organizacija_id() <> _IdFirma
       Beep ( 3 )
       Msg ( "Mijenjate radnu jedinicu!#" )
    ENDIF

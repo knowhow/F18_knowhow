@@ -40,13 +40,13 @@ FUNCTION kalk_generacija_inventura_magacin_im()
    O_ROBA
 
    IF lOsvjezi
-      cIdFirma := gFirma
+      cIdFirma := self_organizacija_id()
       cIdKonto := kalk_pripr->idKonto
       dDatDok := kalk_pripr->datDok
    ELSE
 
       Box(, 10, 70 )
-      cIdFirma := gFirma
+      cIdFirma := self_organizacija_id()
       cIdKonto := PadR( "1320", gDuzKonto )
       dDatDok := Date()
       cArtikli := Space( 30 )
@@ -195,7 +195,7 @@ FUNCTION kalk_generisanje_inventure_razlike_magacin_im()
    O_KONTO
 
    Box(, 8, 70 )
-   cIdFirma := gFirma
+   cIdFirma := self_organizacija_id()
    cIdKonto := PadR( "1310", gDuzKonto )
    dDatDok := Date()
    cArtikli := Space( 30 )

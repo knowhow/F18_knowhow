@@ -59,7 +59,7 @@ FUNCTION roba_pregled_prodaje_po_grupama()
    MsgO( "Preuzimanje podataka sa SQL servera" )
    // SELECT KALK
    // SET ORDER TO TAG "7"   // idroba+idvd
-   find_kalk_za_period( gFirma, NIL, NIL, NIL, dOd, dDo, "idroba,idvd" )
+   find_kalk_za_period( self_organizacija_id(), NIL, NIL, NIL, dOd, dDo, "idroba,idvd" )
    MsgC()
 
    MsgO( "generisanje tabele prodaje po grupama ..." )

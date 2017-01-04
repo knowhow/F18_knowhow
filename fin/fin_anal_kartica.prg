@@ -19,7 +19,7 @@ FUNCTION fin_anal_kartica()
    LOCAL oPdf, xPrintOpt
    LOCAL lKarticaNovaStrana := .F., nTmp
 
-   cIdFirma := gFirma
+   cIdFirma := self_organizacija_id()
    qqKonto := ""
    cBrza := "D"
    cPTD := "N"
@@ -43,7 +43,7 @@ FUNCTION fin_anal_kartica()
    RPar( "c4", @cPredh )
    RPar( "c8", @cPTD )
    //IF gNW == "D";
-   cIdFirma := gFirma
+   cIdFirma := self_organizacija_id()
    // ENDIF
 
    Box( "", 9, 65, .F. )
@@ -51,7 +51,7 @@ FUNCTION fin_anal_kartica()
       SET CURSOR ON
       @ m_x + 1, m_y + 2 SAY8 "ANALITIČKA KARTICA"
       //IF gNW == "D"
-         @ m_x + 2, m_y + 2 SAY "Firma "; ?? gFirma, "-", gNFirma
+         @ m_x + 2, m_y + 2 SAY "Firma "; ?? self_organizacija_id(), "-", self_organizacija_naziv()
       //ELSE
       //   @ m_x + 2, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| Empty( cIdFirma ) .OR. p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
       //ENDIF
@@ -338,7 +338,7 @@ FUNCTION zagl_anal_kartica()
       @ PRow(), 125 SAY "Str." + Str( ++nStr, 3 )
    ENDIF
 
-   ?U "Firma:", gFirma, "-", gNFirma
+   ?U "Firma:", self_organizacija_id(), "-", self_organizacija_naziv()
 
    IF gFinRj == "D" .AND. gSAKrIz == "D" .AND. Len( cIdRJ ) <> 0
       ? "Radna jedinica ='" + cIdRj + "'"

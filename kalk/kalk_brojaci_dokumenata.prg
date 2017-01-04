@@ -11,7 +11,7 @@
 
 #include "f18.ch"
 
-MEMVAR m_x, m_y, GetList, glBrojacPoKontima, gBrojacKalkulacija, gFirma
+MEMVAR m_x, m_y, GetList, glBrojacPoKontima, gBrojacKalkulacija
 
 STATIC s_nLenKalkBrojac
 
@@ -125,7 +125,7 @@ FUNCTION kalk_set_brkalk_za_idvd( cIdVd, cBrKalk )
 
    IF gBrojacKalkulacija == "D"
 
-      find_kalk_doks_za_tip_zadnji_broj( gFirma, cIdVd )
+      find_kalk_doks_za_tip_zadnji_broj( self_organizacija_id(), cIdVd )
       GO BOTTOM
       IF field->idvd <> cIdVd
          cBrKalk := Space( 8 )
@@ -434,7 +434,7 @@ FUNCTION kalk_set_param_broj_dokumenta()
    LOCAL _param
    LOCAL _broj := 0
    LOCAL _broj_old
-   LOCAL _firma := gFirma
+   LOCAL _firma := self_organizacija_id()
    LOCAL _tip_dok := "10"
    LOCAL _sufix := ""
    LOCAL _konto := PadR( "1330", 7 )

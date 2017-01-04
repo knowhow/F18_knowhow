@@ -318,7 +318,7 @@ STATIC FUNCTION _gen_xml( xml_file, tkm_no, len_naz )
    SET ORDER TO TAG "1"
    GO TOP
 
-   xml_node( "pred", to_xml_encoding( AllTrim( gNFirma ) ) )
+   xml_node( "pred", to_xml_encoding( AllTrim( self_organizacija_naziv() ) ) )
    xml_node( "grad", to_xml_encoding( AllTrim( gMjStr ) ) )
    xml_node( "tkm", to_xml_encoding( AllTrim( tkm_no ) ) )
    xml_node( "dok", to_xml_encoding( AllTrim( rlabele->evbr ) ) )

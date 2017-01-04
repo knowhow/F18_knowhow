@@ -108,7 +108,7 @@ STATIC FUNCTION dodaj_stavku_inventure( cIdRj, cIdRoba, cBrDok, nKolicina, cRbr 
       cTxt := ""
       AddTxt( @cTxt, "" )
       AddTxt( @cTxt, "" )
-      AddTxt( @cTxt, gNFirma )
+      AddTxt( @cTxt, self_organizacija_naziv() )
       AddTxt( @cTxt, "RJ:" + cIdRj )
       AddTxt( @cTxt, gMjStr )
       REPLACE txt WITH cTxt
@@ -194,7 +194,7 @@ STATIC FUNCTION dodaj_stavku_inventure_manjka( cIdRj, cIdRoba, cBrDok, nKolicina
       cTxt := ""
       AddTxt( @cTxt, "" )
       AddTxt( @cTxt, "" )
-      AddTxt( @cTxt, gNFirma )
+      AddTxt( @cTxt, self_organizacija_naziv() )
       AddTxt( @cTxt, "RJ:" + cIdRj )
       AddTxt( @cTxt, gMjStr )
       REPLACE txt WITH cTxt
@@ -267,7 +267,7 @@ STATIC FUNCTION dodaj_stavku_inventure_viska( cIdRj, cIdRoba, cBrDok, nKolicina,
       cTxt := ""
       AddTxt( @cTxt, "" )
       AddTxt( @cTxt, "" )
-      AddTxt( @cTxt, gNFirma )
+      AddTxt( @cTxt, self_organizacija_naziv() )
       AddTxt( @cTxt, "RJ:" + cIdRj )
       AddTxt( @cTxt, gMjStr )
       REPLACE txt WITH cTxt

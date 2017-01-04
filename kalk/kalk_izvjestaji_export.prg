@@ -36,7 +36,7 @@ FUNCTION krpt_export()
    LOCAL lAkciznaRoba := .F.
    LOCAL lZasticeneCijene := .F.
 
-   cIdFirma := gFirma
+   cIdFirma := self_organizacija_id()
    cBrDok := PadR( "00000", 8 )
    cIdVd := "80"
    cLauncher := PadR( cLauncher, 70 )
@@ -45,7 +45,7 @@ FUNCTION krpt_export()
    Box(, 14, 70 )
 
    @ m_x + 1, m_y + 2 SAY "Dokument "
-   @ m_x + 2, m_y + 2 SAY gFirma + " - " GET  cIdVd
+   @ m_x + 2, m_y + 2 SAY self_organizacija_id() + " - " GET  cIdVd
    @ m_x + 2, Col() + 2 SAY " - " GET cBrDok
 
 

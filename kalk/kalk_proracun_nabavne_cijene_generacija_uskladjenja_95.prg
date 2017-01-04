@@ -11,11 +11,11 @@
 
 #include "f18.ch"
 
-MEMVAR gFirma, m_x, m_y
+MEMVAR m_x, m_y
 
 FUNCTION kalk_gen_uskladjenje_nc_95( hParams )
 
-   LOCAL cIdFirma := gFirma, cIdRoba
+   LOCAL cIdFirma := self_organizacija_id(), cIdRoba
    LOCAL cBrDok
    LOCAL hRec
    LOCAL nKolicina, nKolZn, nNcZadnjaNabavka, nSrednjaNabavnaCijena, dDatNab

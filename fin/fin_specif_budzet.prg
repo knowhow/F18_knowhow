@@ -22,7 +22,7 @@ FUNCTION IzvrsBudz()
    PRIVATE picBHD := FormPicL( gPicBHD, 15 )
    PRIVATE picDEM := FormPicL( gPicDEM, 12 )
    PRIVATE cIdKonto
-   PRIVATE cIdFirma := Space( Len( gFirma ) )
+   PRIVATE cIdFirma := Space( Len( self_organizacija_id() ) )
    PRIVATE cIdRj := Space( 50 )
    PRIVATE cFunk := Space( 60 )
    PRIVATE dDatOd := CToD( "" )
@@ -65,8 +65,8 @@ FUNCTION IzvrsBudz()
 
       // procenat ucesca perioda u godisnjem planu
       IF gNW == "D"
-         cIdFirma := gFirma
-         @ m_x + 1, m_y + 2 SAY "Firma "; ?? gFirma, "-", gNFirma
+         cIdFirma := self_organizacija_id()
+         @ m_x + 1, m_y + 2 SAY "Firma "; ?? self_organizacija_id(), "-", self_organizacija_naziv()
       ELSE
          @ m_x + 1, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
       ENDIF
@@ -1028,7 +1028,7 @@ FUNCTION Prihodi()
    PRIVATE picBHD := FormPicL( gPicBHD, 15 )
    PRIVATE picDEM := FormPicL( gPicDEM, 12 )
    PRIVATE cIdKonto
-   PRIVATE cIdFirma := Space( Len( gFirma ) )
+   PRIVATE cIdFirma := Space( Len( self_organizacija_id() ) )
    PRIVATE cIdRj := Space( 50 )
    PRIVATE cFunk := Space( 60 )
    PRIVATE dDatOd := CToD( "" )
@@ -1059,9 +1059,9 @@ FUNCTION Prihodi()
       // procenat ucesca perioda u godisnjem planu
 
       IF gNW == "D"
-         cIdFirma := gFirma
+         cIdFirma := self_organizacija_id()
          @ m_x + 1, m_y + 2 SAY "Firma "
-         ?? gFirma, "-", gNFirma
+         ?? self_organizacija_id(), "-", self_organizacija_naziv()
       ELSE
          @ m_x + 1, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
       ENDIF

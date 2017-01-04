@@ -19,7 +19,7 @@ FUNCTION PartVanProm()
    LOCAL   dDatOd := CToD ( "" ), dDatDo := Date ()
    PRIVATE picBHD := FormPicL( gPicBHD, 16 )
    PRIVATE picDEM := FormPicL( gPicDEM, 12 )
-   PRIVATE cIdKonto := Space ( 7 ), cIdFirma := Space ( Len ( gFirma ) ), ;
+   PRIVATE cIdKonto := Space ( 7 ), cIdFirma := Space ( Len ( self_organizacija_id() ) ), ;
       cKrit := Space ( 60 ), aUsl
 
    O_KONTO
@@ -29,8 +29,8 @@ FUNCTION PartVanProm()
    Box (, 11, 60 )
    @ m_x, m_y + 15 SAY "PREGLED PARTNERA BEZ PROMETA"
    IF gNW == "D"
-      cIdFirma := gFirma
-      @ m_x + 2, m_y + 2 SAY "Firma "; ?? gFirma, "-", gNFirma
+      cIdFirma := self_organizacija_id()
+      @ m_x + 2, m_y + 2 SAY "Firma "; ?? self_organizacija_id(), "-", self_organizacija_naziv()
    ELSE
       @ m_x + 2, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
    ENDIF
@@ -55,7 +55,7 @@ FUNCTION PartVanProm()
    INI
    ?
    F10CPI
-   ?? Space ( 5 ) + "Firma:", gNFirma
+   ?? Space ( 5 ) + "Firma:", self_organizacija_naziv()
    ? PadC ( "PARTNERI BEZ PROMETA", 80 )
    ? PadC ( "na dan " + DToC ( Date() ) + ".", 80 )
    ?

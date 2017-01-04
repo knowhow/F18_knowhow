@@ -85,7 +85,7 @@ endif
 
 
 aHeader := {}
-AADD(aHeader, "Preduzece: " + gNFirma)
+AADD(aHeader, "Preduzece: " + self_organizacija_naziv())
 AADD(aHeader, cTName + " : " + cRptNaziv +  DTOC(dDate) + ", za period :" + DTOC(dDatOd) + "-" + DTOC(dDatDo) )
 
 aZagl:={}

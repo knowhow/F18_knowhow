@@ -23,7 +23,7 @@ FUNCTION kalk_mag_promet_grupe_partnera()
    nlPK := Len( s_cPictKolicina )
    nlPI := Len( s_cPictIznos )
 
-   cIdFirma := gFirma
+   cIdFirma := self_organizacija_id()
    cIdKonto := PadR( "1310", gDuzKonto )
 
    PRIVATE nVPVU := nVPVI := nNVU := nNVI := 0
@@ -42,7 +42,7 @@ FUNCTION kalk_mag_promet_grupe_partnera()
    DO WHILE .T.
 
       IF gNW $ "DX"
-         @ m_x + 2, m_y + 2 SAY "Firma "; ?? gFirma, "-", gNFirma
+         @ m_x + 2, m_y + 2 SAY "Firma "; ?? self_organizacija_id(), "-", self_organizacija_naziv()
       ELSE
          @ m_x + 2, m_y + 2 SAY "Firma: " GET cIdFirma valid {|| p_partner( @cIdFirma ), cidfirma := Left( cidfirma, 2 ), .T. }
       ENDIF

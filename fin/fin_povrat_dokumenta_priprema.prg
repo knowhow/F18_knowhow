@@ -34,8 +34,8 @@ FUNCTION fin_povrat_naloga( lStorno )
 
 
 
-   cIdFirma         := gFirma
-   cIdFirma2        := gFirma
+   cIdFirma         := self_organizacija_id()
+   cIdFirma2        := self_organizacija_id()
    cIdVN := cIdVN2  := Space( 2 )
    cBrNal := cBrNal2 := Space( 8 )
 

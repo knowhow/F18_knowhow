@@ -73,7 +73,7 @@ FUNCTION fin_stampa_liste_naloga()
       cIdVN := NIL
    ENDIF
 
-   find_nalog_za_period( gFirma, cIdVn, dDatOd, dDatDo, cOrderBy  )
+   find_nalog_za_period( self_organizacija_id(), cIdVn, dDatOd, dDatDo, cOrderBy  )
 
 
    IF cInteg == "D"

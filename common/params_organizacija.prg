@@ -53,7 +53,7 @@ FUNCTION parametri_organizacije( set_params )
    PUBLIC gPDV := fetch_metric( "pdv_global", nil, gPDV )
 
 
-   IF Empty( AllTrim( self_organizacija_naziv() ) )
+   IF Empty( self_organizacija_naziv() )
       set_params := .T.
    ENDIF
 

@@ -11,8 +11,9 @@
 
 #include "f18.ch"
 
-MEMVAR gModul, goModul, gFirma, gNFirma
+MEMVAR gModul, goModul
 
+STATIC s_cFirma, s_cFirmaNaz
 
 FUNCTION programski_modul()
    RETURN gModul
@@ -20,28 +21,29 @@ FUNCTION programski_modul()
 
 FUNCTION self_organizacija_id( cId )
 
+
    IF cId != NIL
-      gFirma := cId
+      s_cFirma := cId
    ENDIF
 
-   IF gFirma == NIL
-      gFirma := fetch_metric( "org_id", nil, "10" )
+   IF s_cFirma == NIL
+      s_cFirma := fetch_metric( "org_id", nil, "10" )
    ENDIF
 
-   RETURN gFirma
+   RETURN s_cFirma
 
 
 FUNCTION self_organizacija_naziv( cNaz )
 
    IF cNaz != NIL
-      gNFirma := cNaz
+      s_cFirmaNaz := cNaz
    ENDIF
 
-   IF gNFirma == NIL
-      gNFirma :=  PadR( fetch_metric( "org_naziv", nil, "" ), 50 )
+   IF s_cFirmaNaz == NIL
+      s_cFirmaNaz :=  PadR( fetch_metric( "org_naziv", nil, "" ), 50 )
    ENDIF
 
-   RETURN gNFirma
+   RETURN s_cFirmaNaz
 
 
 FUNCTION start_f18_program_module( oApp, lSezone )

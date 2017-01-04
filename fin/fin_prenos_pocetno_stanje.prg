@@ -20,6 +20,7 @@ FUNCTION fin_pocetno_stanje_sql()
    LOCAL hParams := hb_Hash()
    LOCAL nSintetikaDuzina
    LOCAL _data, _partn_data, _konto_data
+   LOCAL cKontaUslov := PadR( "", 100 )
 
    _k_1 := fetch_metric( "fin_prenos_pocetno_stanje_k1", NIL, "9" )
    _k_2 := fetch_metric( "fin_prenos_pocetno_stanje_k2", NIL, "9" )
@@ -48,6 +49,8 @@ FUNCTION fin_pocetno_stanje_sql()
 
    @ m_x + 5, m_y + 2 SAY8 "Klasa duguje (kupci)         :" GET cFinKlasaDuguje
    @ m_x + 6, m_y + 2 SAY8 "Klasa potražuje (dobavljači) :" GET cFinKlasaPotrazuje
+
+   @ m_x + 7, m_y + 2 SAY8 "Uslov za konta :" GET cKontaUslov PICT "@S30"
 
    @ m_x + 8, m_y + 2 SAY8 "Grupišem konta na broj mjesta ?" GET nSintetikaDuzina PICT "9"
    @ m_x + 9, m_y + 2 SAY8 "Kopiraj nepostojeće sifre (konto/partn) (D/N)?" GET cFinPrenosPocetnoStanjeDN VALID cFinPrenosPocetnoStanjeDN $ "DN" PICT "@!"
@@ -82,6 +85,8 @@ FUNCTION fin_pocetno_stanje_sql()
    hParams[ "datum_ps" ] := dDatumPocetnoStanje
    hParams[ "sintetika" ] := nSintetikaDuzina
    hParams[ "copy_sif" ] := cFinPrenosPocetnoStanjeDN
+   hParams[ "konto_uslov" ] := cKontaUslov
+
 
    fin_pocetno_stanje_get_data( hParams, @_data, @_konto_data, @_partn_data )
 
@@ -120,12 +125,12 @@ STATIC FUNCTION fin_poc_stanje_insert_into_fin_pripr( oDataset, oKontoDataset, o
    LOCAL _ret := .F.
    LOCAL oRow, _duguje, _potrazuje, cIdKonto, cIdPartner
    LOCAL dDatDok, dDatVal, cOtvSt, cBrojVeze
-   LOCAL hRecord, nSaldoZaBrDok
+   LOCAL hRecord, nSaldoBrDokOtvSt
    LOCAL nRbr := 0
    LOCAL lOk := .T.
-   LOCAL hParams, cBrojVezeDok, oRow2
+   LOCAL hParams, cBrojVezeDok
    LOCAL cIdKontoPriprema, cIdPartnerPriprema
-   LOCAL cTipPrenosaPS
+   LOCAL cTipPrenosaPS, cOpis
    LOCAL bEvalPartner
 
    open_tabele_za_pocetno_stanje()
@@ -136,17 +141,22 @@ STATIC FUNCTION fin_poc_stanje_insert_into_fin_pripr( oDataset, oKontoDataset, o
 
    MsgO( "Formiranje dokumenta početnog stanja u tabeli pripreme..." )
 
-   nSaldoZaBrDok := 0
+   // cTipPrenosaPS - 0 saldo konta, 1 - otvorene stavke, 2 - saldo partnera
 
    oDataset:GoTo( 1 )
+   bEvalPartner :=  {|| !oDataset:Eof() .AND. PadR( oRow:FieldGet( oRow:FieldPos( "idkonto" ) ), 7 ) == cIdKonto ;
+      .AND. iif( cTipPrenosaPS $ "12", PadR( hb_UTF8ToStr( oRow:FieldGet( oRow:FieldPos( "idpartner" ) ) ), 6 ) == cIdPartner, .T. ) ;
+      .AND. iif( cTipPrenosaPS == "1", PadR( hb_UTF8ToStr( oRow:FieldGet( oRow:FieldPos( "brdok" ) ) ), 20 ) == cBrojVeze, .T. ) ;
+      .AND. iif( cTipPrenosaPS == "1", oRow:FieldGet( oRow:FieldPos( "otvst" ) ) == cOtvSt, .T. ) ;
+      }
+
 
    DO WHILE !oDataset:Eof()
 
-      oRow := oDataset:GetRow()
+      oRow := oDataSet:GetRow()
       cIdKonto := PadR( oRow:FieldGet( oRow:FieldPos( "idkonto" ) ), 7 )
       cIdPartner := PadR( hb_UTF8ToStr( oRow:FieldGet( oRow:FieldPos( "idpartner" ) ) ), 6 )
       cBrojVeze := PadR( hb_UTF8ToStr( oRow:FieldGet( oRow:FieldPos( "brdok" ) ) ), 20 )
-
       cOtvSt := oRow:FieldGet( oRow:FieldPos( "otvst" ) )
 
       SELECT pkonto
@@ -157,45 +167,33 @@ STATIC FUNCTION fin_poc_stanje_insert_into_fin_pripr( oDataset, oKontoDataset, o
          cTipPrenosaPS := pkonto->tip  // 1-otvorene stavke, 2-saldo partnera
       ENDIF
 
-      nSaldoZaBrDok := 0
-      cBrojVezeDok := ""
-      dDatumValute := NIL
+      nSaldoBrDokOtvSt := 0
 
 
-      bEvalPartner :=  !oDataset:Eof() .AND. ;
-         PadR( oDataset:FieldGet( oDataset:FieldPos( "idkonto" ) ), 7 ) == cIdKonto ;
-         .AND. iif( cTipPrenosaPS $ "1#2", PadR( hb_UTF8ToStr( oDataset:FieldGet( oDataset:FieldPos( "idpartner" ) ) ), 6 ) == cIdPartner, .T. )
+      DO WHILE Eval( bEvalPartner )
 
-
-      DO WHILE Eval( bPartner )
-
-         DO WHILE cTipPrenosaPS == "1" .AND. Eval( bPartner ) .AND. cOtvSt == "9" // po otvorenim stavkama, zatvorena stavka idi dalje
-            oDatabase:Skip()
-            LOOP
-         ENDDO
-
-         oRow2 := oDataset:GetRow()
-         nSaldoZaBrDok += oRow2:FieldGet( oRow2:FieldPos( "saldo" ) )
          dDatDok := oRow:FieldGet( oRow:FieldPos( "datdok" ) )
-         dDatVal := fix_dat_var( oRow:FieldGet( oRow:FieldPos( "datval" ) ), .T. )
 
+         dDatVal := fix_dat_var( oRow:FieldGet( oRow:FieldPos( "datval" ) ), .T. )
          IF dDatVal == CToD( "" )
-            dDatVal := oRow2:FieldGet( oRow2:FieldPos( "datdok" ) )
+            dDatVal := oRow:FieldGet( oRow:FieldPos( "datdok" ) )
          ENDIF
 
          IF cTipPrenosaPS == "1" // po otvorenim stavkama
-            cBrojVezeDok := PadR( hb_UTF8ToStr( oRow2:FieldGet( oRow2:FieldPos( "brdok" ) ) ), 20 )
-
-
+            cOpis := hb_UTF8ToStr( oRow:FieldGet( oRow:FieldPos( "opis" ) ) )
          ENDIF
 
-
+         nSaldoBrDokOtvSt += oRow:FieldGet( oRow:FieldPos( "saldo" ) )
          oDataset:Skip()
+         oRow := oDataset:GetRow() // nakon skip refresh oRow podaci
 
       ENDDO
 
+      IF cTipPrenosaPS == "1" .AND. cOtvSt == "9" // stavka zatvorena
+         nSaldoBrDokOtvSt := 0
+      ENDIF
 
-      IF Round( nSaldoZaBrDok, 2 ) == 0
+      IF Round( nSaldoBrDokOtvSt, 2 ) == 0
          LOOP
       ENDIF
 
@@ -219,26 +217,27 @@ STATIC FUNCTION fin_poc_stanje_insert_into_fin_pripr( oDataset, oKontoDataset, o
       IF cTipPrenosaPS $ "0#2"
          hRecord[ "brdok" ] := "PS" // saldo partnera ili saldo konta
       ELSE
-         hRecord[ "brdok" ] := cBrojVezeDok
+         hRecord[ "brdok" ] := cBrojVeze
          hRecord[ "datval" ] := fix_dat_var( dDatVal, .T. )
       ENDIF
 
       IF cTipPrenosaPS == "1"  // po ptvorenim stavkama
          IF Left( cIdKonto, 1 ) == cKontoKlasaPotrazuje
             hRecord[ "d_p" ] := "2"  // dobavljaci
-            hRecord[ "iznosbhd" ] := -( nSaldoZaBrDok )
+            hRecord[ "iznosbhd" ] := -( nSaldoBrDokOtvSt )
          ELSE
             hRecord[ "d_p" ] := "1" // kupci
-            hRecord[ "iznosbhd" ] := nSaldoZaBrDok
+            hRecord[ "iznosbhd" ] := nSaldoBrDokOtvSt
          ENDIF
+         hRecord[ "opis" ] := cOpis
 
       ELSE // saldo partnera
-         IF Round( nSaldoZaBrDok, 2 ) > 0
+         IF Round( nSaldoBrDokOtvSt, 2 ) > 0
             hRecord[ "d_p" ] := "1"
-            hRecord[ "iznosbhd" ] := Abs( nSaldoZaBrDok )
+            hRecord[ "iznosbhd" ] := Abs( nSaldoBrDokOtvSt )
          ELSE
             hRecord[ "d_p" ] := "2"
-            hRecord[ "iznosbhd" ] := Abs( nSaldoZaBrDok )
+            hRecord[ "iznosbhd" ] := Abs( nSaldoBrDokOtvSt )
          ENDIF
       ENDIF
 
@@ -449,24 +448,38 @@ STATIC FUNCTION fin_pocetno_stanje_get_data( hParam, oFinQuery, oKontoDataset, o
    LOCAL cDatabase := my_server_params()[ "database" ]
    LOCAL nYearSezona := Year( dDatumDoStaraGodina )
    LOCAL nYearTekucaGodina := Year( dDatumPocetnoStanje )
+   LOCAL cKtoUslov
+
+/*
+   cQuery := " SELECT " + ;
+      "idkonto,idpartner,datdok,COALESCE(datval,('1900-01-01'::date)) AS datval,brdok,COALESCE(opis,''::text) AS opis,otvst, " + ;
+      "SUM( CASE WHEN sub.d_p = '1' THEN sub.iznosbhd ELSE -sub.iznosbhd END ) AS saldo " + ;
+      " FROM " + F18_PSQL_SCHEMA_DOT + "fin_suban sub "
+*/
+
+   cQuery := " SELECT " + ;
+      "idkonto,idpartner,datdok,datval,brdok,COALESCE(opis,''::text) AS opis,otvst, " + ;
+      "SUM( CASE WHEN sub.d_p = '1' THEN sub.iznosbhd ELSE -sub.iznosbhd END ) AS saldo " + ;
+      " FROM " + F18_PSQL_SCHEMA_DOT + "fin_suban sub "
 
    cWhere := " WHERE "
    cWhere += _sql_date_parse( "sub.datdok", dDatumOdStaraGodina, dDatumDoStaraGodina )
    cWhere += " AND " + _sql_cond_parse( "sub.idfirma", self_organizacija_id() )
 
-   cQuery := " SELECT " + ;
-      "sub.idkonto, " + ;
-      "sub.idpartner, " + ;
-      "sub.datdok, " + ;
-      "sub.datval, " + ;
-      "sub.brdok, " + ;
-      "sub.otvst, " + ;
-      "SUM( CASE WHEN sub.d_p = '1' THEN sub.iznosbhd ELSE -sub.iznosbhd END ) AS saldo " + ;
-      " FROM " + F18_PSQL_SCHEMA_DOT + "fin_suban sub "
+   IF !Empty( hParam[ "konto_uslov" ] )
+      AltD()
+      IF Left( hParam[ "konto_uslov" ], 1 ) == "!"   // !211;
+         cKtoUslov :=  SubStr( hParam[ "konto_uslov" ], 2 )
+         cWhere += " AND NOT " + _sql_cond_parse( "sub.idkonto", cKtoUslov )
+      ELSE
+         cWhere += " AND " + _sql_cond_parse( "sub.idkonto", hParam[ "konto_uslov" ] )
+      ENDIF
+   ENDIF
 
    cQuery += cWhere
-   cQuery += " GROUP BY sub.idkonto, sub.idpartner, sub.brdok, sub.datdok, sub.datval, sub.otvst "
-   cQuery += " ORDER BY sub.idkonto, sub.idpartner, sub.brdok, sub.datdok, sub.datval, sub.otvst "
+
+   cQuery += " GROUP BY idkonto,idpartner,brdok,datdok,datval,otvst,opis "
+   cQuery += " ORDER BY idkonto,idpartner,brdok,datdok,datval,otvst "
 
    switch_to_database( hServerParams, cDatabase, nYearSezona )
 

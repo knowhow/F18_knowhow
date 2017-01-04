@@ -553,34 +553,34 @@ METHOD F18Login:odabir_organizacije()
 METHOD F18Login:get_database_sessions( database )
 
    LOCAL _session := ""
-   LOCAL _table, oRow, _db, _qry
+   LOCAL oDataSet, oRow, _db, cQuery
    LOCAL _arr := {}
 
    IF Empty( database )
       RETURN NIL
    ENDIF
 
-   _qry := "SELECT DISTINCT substring( datname, '" + AllTrim( database ) +  "_([0-9]+)') AS godina " + ;
+   cQuery := "SELECT DISTINCT substring( datname, '" + AllTrim( database ) +  "_([0-9]+)') AS godina " + ;
       "FROM pg_database " + ;
       "ORDER BY godina"
 
-   _table := postgres_sql_query( _qry )
-   IF sql_error_in_query( _table, "SELECT", sql_postgres_conn() )
+   oDataSet := postgres_sql_query( cQuery )
+   IF sql_error_in_query( oDataSet, "SELECT", sql_postgres_conn() )
       RETURN NIL
    ENDIF
 
-   _table:GoTo( 1 )
+   oDataSet:GoTo( 1 )
 
-   DO WHILE !_table:Eof()
+   DO WHILE !oDataSet:Eof()
 
-      oRow := _table:GetRow()
+      oRow := oDataSet:GetRow()
       _session := oRow:FieldGet( oRow:FieldPos( "godina" ) )
 
       IF !Empty( _session )
          AAdd( _arr, { _session } )
       ENDIF
 
-      _table:skip()
+      oDataSet:skip()
 
    ENDDO
 
@@ -592,18 +592,18 @@ METHOD F18Login:get_database_sessions( database )
 METHOD F18Login:get_database_top_session( database )
 
    LOCAL _session := ""
-   LOCAL _table, oRow, _db, _qry
+   LOCAL oDataSet, oRow, _db, cQuery
 
-   _qry := "SELECT MAX( DISTINCT substring( datname, '" + AllTrim( database ) +  "_([0-9]+)') ) AS godina " + ;
+   cQuery := "SELECT MAX( DISTINCT substring( datname, '" + AllTrim( database ) +  "_([0-9]+)') ) AS godina " + ;
       "FROM pg_database " + ;
       "ORDER BY godina"
 
-   _table := postgres_sql_query( _qry )
-   IF sql_error_in_query( _table, "SELECT", sql_postgres_conn() )
+   oDataSet := postgres_sql_query( cQuery )
+   IF sql_error_in_query( oDataSet, "SELECT", sql_postgres_conn() )
       RETURN NIL
    ENDIF
 
-   oRow := _table:GetRow()
+   oRow := oDataSet:GetRow()
    _session := oRow:FieldGet( oRow:FieldPos( "godina" ) )
 
    RETURN _session
@@ -613,7 +613,7 @@ METHOD F18Login:get_database_top_session( database )
 METHOD F18Login:get_database_description( database, cSezona )
 
    LOCAL _descr := ""
-   LOCAL _table, oRow, _qry
+   LOCAL oDataSet, oRow, cQuery
    LOCAL _database_name := ""
 
    IF Empty( database )
@@ -622,17 +622,17 @@ METHOD F18Login:get_database_description( database, cSezona )
 
    _database_name := database + IF( !Empty( cSezona ), "_" + cSezona, "" )
 
-   _qry := "SELECT description AS opis " + ;
+   cQuery := "SELECT description AS opis " + ;
       "FROM pg_shdescription " + ;
       "JOIN pg_database on objoid = pg_database.oid " + ;
       "WHERE datname = " + sql_quote( _database_name )
 
-   _table := postgres_sql_query( _qry )
-   IF sql_error_in_query( _table, "SELECT", sql_postgres_conn() )
+   oDataSet := postgres_sql_query( cQuery )
+   IF sql_error_in_query( oDataSet, "SELECT", sql_postgres_conn() )
       RETURN NIL
    ENDIF
 
-   oRow := _table:GetRow()
+   oRow := oDataSet:GetRow()
 
    IF oRow <> NIL
       _descr := hb_UTF8ToStr( oRow:FieldGet( oRow:FieldPos( "opis" ) ) )
@@ -669,7 +669,7 @@ METHOD F18Login:get_database_browse_array( arr )
 
 METHOD F18Login:database_array()
 
-   LOCAL _table, oRow, _db, _qry
+   LOCAL oDataSet, oRow, _db, cQuery
    LOCAL _tmp := {}
    LOCAL _filter_db := "empty#empty_sezona"
    LOCAL _where := ""
@@ -680,21 +680,21 @@ METHOD F18Login:database_array()
       _where += " AND " + _sql_cond_parse( "datname", ::_include_db_filter + " " )
    ENDIF
 
-   _qry := "SELECT DISTINCT substring( datname, '(.*)_[0-9]+') AS datab " + ;
+   cQuery := "SELECT DISTINCT substring( datname, '(.*)_[0-9]+') AS datab " + ;
       " FROM pg_database " + ;
       _where + ;
       " ORDER BY datab "
 
-   _table := postgres_sql_query( _qry )
-   IF sql_error_in_query( _table, "SELECT", sql_postgres_conn() )
+   oDataSet := postgres_sql_query( cQuery )
+   IF sql_error_in_query( oDataSet, "SELECT", sql_postgres_conn() )
       RETURN NIL
    ENDIF
 
-   _table:GoTo( 1 )
+   oDataSet:GoTo( 1 )
 
-   DO WHILE !_table:Eof()
+   DO WHILE !oDataSet:Eof()
 
-      oRow := _table:GetRow()
+      oRow := oDataSet:GetRow()
       _db := oRow:FieldGet( oRow:FieldPos( "datab" ) )
 
       // filter za tabele
@@ -702,7 +702,7 @@ METHOD F18Login:database_array()
          AAdd( _tmp, { _db } )
       ENDIF
 
-      _table:Skip()
+      oDataSet:Skip()
 
    ENDDO
 

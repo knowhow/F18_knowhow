@@ -216,8 +216,6 @@ FUNCTION set_global_vars_2()
 
    PUBLIC gOznVal := "KM"
 
-   PUBLIC gFirma
-   PUBLIC gNFirma
    PUBLIC gBaznaV := "D"
    PUBLIC gZaokr := 2
    PUBLIC gTabela := 0
@@ -239,8 +237,6 @@ FUNCTION set_global_vars_2()
    gSqlLogBase := ""
    gReadOnly := .F.
 
-   self_organizacija_id( "10" )
-   self_organizacija_naziv( PadR( "", 50 ) )
 
    info_bar( "init", "set global_vars_2 - end" )
 

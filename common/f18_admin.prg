@@ -554,7 +554,7 @@ METHOD F18Admin:update_db()
       RETURN lOk
    ENDIF
 
-   // snimi parametre...
+   // snimi parametre
    ::_update_params := hb_Hash()
    ::_update_params[ "version" ] := AllTrim( _version )
    ::_update_params[ "database" ] := AllTrim( cDatabase )
@@ -792,6 +792,8 @@ METHOD F18Admin:razdvajanje_sezona()
    ENDIF
 #endif
 
+   stop_refresh_operations()
+
    nFromSezona := Year( Date() ) -1
    nToSezona := Year( Date() )
 
@@ -810,15 +812,16 @@ METHOD F18Admin:razdvajanje_sezona()
    SET CONFIRM OFF
 
    IF LastKey() == K_ESC
+      start_refresh_operations()
       RETURN .F.
    ENDIF
 
    IF Pitanje(, "Konekcije svih korisnika na bazu biti prekinute! Nastaviti?", " " ) == "N"
+      start_refresh_operations()
       RETURN .F.
    ENDIF
 
-   //pg_terminate_all_data_db_connections()
-
+   pg_terminate_all_data_db_connections()
 
    hDbServerParams := my_server_params()
    cTekuciUser := hDbServerParams[ "user" ]
@@ -828,6 +831,7 @@ METHOD F18Admin:razdvajanje_sezona()
 
    IF !::relogin_as_admin()
       Alert( "login kao admin neuspjesan !?" )
+      start_refresh_operations()
       RETURN .F.
    ENDIF
 
@@ -889,6 +893,8 @@ METHOD F18Admin:razdvajanje_sezona()
    IF _count > 0
       MsgBeep( "Uspješno kreirano " + AllTrim( Str( _count ) ) + " baza" )
    ENDIF
+
+   start_refresh_operations()
 
    RETURN .T.
 

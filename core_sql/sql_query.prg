@@ -29,7 +29,7 @@ FUNCTION set_sql_search_path()
 
    LOCAL cSqlSearchPath := my_server_search_path()
 
-   LOCAL cQuery := "SET search_path TO " + cSqlSearchPath + ";"
+   LOCAL cQuery := "SET search_path TO " + cSqlSearchPath
    LOCAL oQuery
 
    oQuery := run_sql_query( cQuery )

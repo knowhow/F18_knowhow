@@ -353,7 +353,7 @@ FUNCTION my_server_search_path()
    LOCAL cKey := "search_path"
 
    IF !hb_HHasKey( s_psqlServer_params, cKey )
-      s_psqlServer_params[ cKey ] := F18_PSQL_SCHEMA + ", public"
+      s_psqlServer_params[ cKey ] := F18_PSQL_SCHEMA + ",public"
    ENDIF
 
    RETURN s_psqlServer_params[ cKey ]

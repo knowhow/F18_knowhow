@@ -435,7 +435,7 @@ FUNCTION EofFndRet( lEof, lClose )
 
 FUNCTION spec_funkcije_sifra( cSif )
 
-   LOCAL lGw_Status
+   LOCAL lGw_Status, cSifra
 
    lGw_Status := IF( "U" $ Type( "GW_STATUS" ), "-", gw_status )
 
@@ -449,7 +449,7 @@ FUNCTION spec_funkcije_sifra( cSif )
 
    Box(, 2, 70 )
    cSifra := Space( 8 )
-   @ m_x + 1, m_y + 2 SAY "Sifra za koristenje specijalnih funkcija:"
+   @ m_x + 1, m_y + 2 SAY8 "Šifra za korištenje specijalnih funkcija:"
    cSifra := Upper( GetSecret( cSifra ) )
    BoxC()
 

@@ -26,6 +26,7 @@ FUNCTION pg_terminate_all_data_db_connections()
 
    RETURN sql_error_in_query( oQry, "SELECT", sql_postgres_conn() )
 
+
 FUNCTION pg_terminate_data_db_connection()
 
    LOCAL cQuery, oQry

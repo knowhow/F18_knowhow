@@ -268,32 +268,32 @@ METHOD F18Admin:update_app_form( upd_params )
 
    @ m_x + _x, m_y + 2 SAY PadR( "## UPDATE F18 APP ##", 64 ) COLOR f18_color_i()
 
-   ++ _x
-   ++ _x
+   ++_x
+   ++_x
    @ m_x + _x, m_y + 2 SAY _line := ( Replicate( "-", 10 ) + " " + Replicate( "-", 20 ) + " " + Replicate( "-", 20 ) )
 
-   ++ _x
+   ++_x
    @ m_x + _x, m_y + 2 SAY PadR( "[INFO]", 10 ) + "/" + PadC( "Trenutna", 20 ) + "/" + PadC( "Dostupna", 20 )
 
-   ++ _x
+   ++_x
    @ m_x + _x, m_y + 2 SAY _line
 
-   ++ _x
+   ++_x
    @ m_x + _x, m_y + 2 SAY PadR( "F18", 10 ) + " " + PadC( f18_ver(), 20 )
    @ m_x + _x, Col() SAY " "
    @ m_x + _x, Col() SAY PadC( upd_params[ "f18" ], 20 ) COLOR _col_app
 
-   ++ _x
+   ++_x
    @ m_x + _x, m_y + 2 SAY PadR( "template", 10 ) + " " + PadC( f18_template_ver(), 20 )
    @ m_x + _x, Col() SAY " "
    @ m_x + _x, Col() SAY PadC( upd_params[ "templates" ], 20 ) COLOR _col_temp
 
-   ++ _x
+   ++_x
 
    @ m_x + _x, m_y + 2 SAY _line
 
-   ++ _x
-   ++ _x
+   ++_x
+   ++_x
    _pos := _x
 
    @ m_x + _x, m_y + 2 SAY "       Update F18 ?" GET _upd_f PICT "@!" VALID _upd_f $ "DN"
@@ -307,8 +307,8 @@ METHOD F18Admin:update_app_form( upd_params )
 
    ENDIF
 
-   ++ _x
-   ++ _x
+   ++_x
+   ++_x
    _pos := _x
 
    @ m_x + _x, m_y + 2 SAY "  Update template ?" GET _upd_t PICT "@!" VALID _upd_t $ "DN"
@@ -397,7 +397,7 @@ METHOD F18Admin:update_app_get_versions()
       _tmp := hb_StrToUTF8( _o_file:ReadLine() )
       _a_tmp := TokToNiz( _tmp, "=" )
       IF Len( _a_tmp ) > 1
-         ++ _count
+         ++_count
          _urls[ AllTrim( Lower( _a_tmp[ 1 ] ) ) ] := AllTrim( _a_tmp[ 2 ] )
       ENDIF
    ENDDO
@@ -542,14 +542,14 @@ METHOD F18Admin:update_db()
    Box(, 10, 70 )
 
    @ m_x + _x, m_y + 2 SAY "**** upgrade db-a / unesite verziju ..."
-   ++ _x
-   ++ _x
+   ++_x
+   ++_x
    @ m_x + _x, m_y + 2 SAY "     verzija db-a (npr. 4.6.1):" GET _version PICT "@S30" VALID !Empty( _version )
-   ++ _x
-   ++ _x
+   ++_x
+   ++_x
    @ m_x + _x, m_y + 2 SAY "naziv baze / prazno update-sve:" GET cDatabase PICT "@S30"
-   ++ _x
-   ++ _x
+   ++_x
+   ++_x
    @ m_x + _x, m_y + 2 SAY "Update template [empty] baza (D/N) ?" GET _upd_empty VALID _upd_empty $ "DN" PICT "@!"
 
    READ
@@ -721,7 +721,7 @@ METHOD F18Admin:update_db_company( cOrganizacija )
 
       IF Left( cOrganizacija, 1 ) == "!"
 
-         cOrganizacija := Right( AllTrim( cOrganizacija ), Len( AllTrim( cOrganizacija ) ) - 1 )
+         cOrganizacija := Right( AllTrim( cOrganizacija ), Len( AllTrim( cOrganizacija ) ) -1 )
 
          AAdd( aListaSezona, { "empty" } ) // rucno zadan naziv baze, ne gledati sezone
 
@@ -732,10 +732,10 @@ METHOD F18Admin:update_db_company( cOrganizacija )
 
       ELSE
 
-         IF SubStr( cOrganizacija, Len( cOrganizacija ) - 3, 1 ) $ "1#2"
+         IF SubStr( cOrganizacija, Len( cOrganizacija ) -3, 1 ) $ "1#2"
 
             AAdd( aListaSezona, { Right( AllTrim( cOrganizacija ), 4 ) } ) // vec postoji zadana sezona, samo je dodati u matricu
-            cOrganizacija := PadR( AllTrim( cOrganizacija ), Len( AllTrim( cOrganizacija ) ) - 5  )
+            cOrganizacija := PadR( AllTrim( cOrganizacija ), Len( AllTrim( cOrganizacija ) ) -5  )
          ELSE
             aListaSezona := my_login():get_database_sessions( cOrganizacija )
          ENDIF
@@ -799,7 +799,7 @@ METHOD F18Admin:razdvajanje_sezona()
    ENDIF
 #endif
 
-   nFromSezona := Year( Date() ) - 1
+   nFromSezona := Year( Date() ) -1
    nToSezona := Year( Date() )
 
    SET CURSOR ON
@@ -820,8 +820,12 @@ METHOD F18Admin:razdvajanje_sezona()
       RETURN .F.
    ENDIF
 
-   // pg_terminate_all_data_db_connections()
-   pg_terminate_data_db_connection()
+   IF Pitanje(, "Konekcije svih korisnika na bazu biti prekinute! Nastaviti?", " " ) == "N"
+      RETURN .F.
+   ENDIF
+
+   pg_terminate_all_data_db_connections()
+
 
    hDbServerParams := my_server_params()
    cTekuciUser := hDbServerParams[ "user" ]
@@ -874,7 +878,7 @@ METHOD F18Admin:razdvajanje_sezona()
          AAdd( aRezultati, { cDatabaseTo, cDatabaseFrom, "ERR" } )
          error_bar( "nova_sezona", cDatabaseFrom + " -> " + cDatabaseTo )
       ELSE
-         ++ _count
+         ++_count
       ENDIF
 
       _dbs:Skip()
@@ -1202,30 +1206,30 @@ METHOD F18Admin:create_new_pg_db_params( params )
 
    @ m_x + _x, m_y + 2 SAY "*** KREIRANJE NOVE BAZE PODATAKA ***"
 
-   ++ _x
-   ++ _x
+   ++_x
+   ++_x
    @ m_x + _x, m_y + 2 SAY "Naziv nove baze:" GET cDatabaseName VALID _new_db_valid( cDatabaseName ) PICT "@S30"
    @ m_x + _x, Col() + 1 SAY "godina:" GET _db_year PICT "@S4" VALID !Empty( _db_year )
 
-   ++ _x
+   ++_x
    @ m_x + _x, m_y + 2 SAY "Opis baze (*):" GET _db_comment PICT "@S50"
 
-   ++ _x
-   ++ _x
+   ++_x
+   ++_x
    @ m_x + _x, m_y + 2 SAY "Koristiti kao uzorak postojeću bazu (*):"
 
-   ++ _x
+   ++_x
    @ m_x + _x, m_y + 2 SAY "Naziv:" GET _db_template PICT "@S40"
 
-   ++ _x
-   ++ _x
+   ++_x
+   ++_x
    @ m_x + _x, m_y + 2 SAY "Brisi bazu ako vec postoji ! (D/N)" GET _db_drop VALID _db_drop $ "DN" PICT "@!"
 
-   ++ _x
+   ++_x
    @ m_x + _x, m_y + 2 SAY "Pražnjenje podataka (1) pocetno stanje (2) sve" GET _db_type PICT "9"
 
-   ++ _x
-   ++ _x
+   ++_x
+   ++_x
    @ m_x + _x, m_y + 2 SAY "*** opcije markirane kao (*) nisu obavezne"
 
    READ

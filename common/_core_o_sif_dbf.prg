@@ -15,6 +15,10 @@ FUNCTION o_konto()
 
    RETURN o_dbf_table( F_KONTO, "konto", "ID" )
 
+FUNCTION select_o_konto()
+
+   RETURN select_o_dbf( F_KONTO, "konto", "ID" )
+   
 
 FUNCTION o_partn()
 

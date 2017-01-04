@@ -35,9 +35,9 @@ FUNCTION fin_pocetno_stanje_sql()
    nSintetikaDuzina := fetch_metric( "fin_prenos_pocetno_stanje_sint", NIL, 3 )
    cFinPrenosPocetnoStanjeDN := fetch_metric( "fin_prenos_pocetno_stanje_sif", NIL, "N" )
 
-   dDatumOdStaraGodina := CToD( "01.01." + AllTrim( Str( nYear( Date() ) -1 ) ) )
-   dDatumDoStaraGodina := CToD( "31.12." + AllTrim( Str( nYear( Date() ) -1 ) ) )
-   dDatumPocetnoStanje := CToD( "01.01." + AllTrim( Str( nYear( Date() ) ) ) )
+   dDatumOdStaraGodina := CToD( "01.01." + AllTrim( Str( Year( Date() ) -1 ) ) )
+   dDatumDoStaraGodina := CToD( "31.12." + AllTrim( Str( Year( Date() ) -1 ) ) )
+   dDatumPocetnoStanje := CToD( "01.01." + AllTrim( Str( Year( Date() ) ) ) )
 
    Box(, 9, 60 )
 
@@ -125,7 +125,6 @@ STATIC FUNCTION fin_poc_stanje_insert_into_fin_pripr( oDataset, oKontoDataset, o
    LOCAL lOk := .T.
    LOCAL hParams, cBrojVezeDok, oRow2
    LOCAL cIdKontoPriprema, cIdPartnerPriprema
-   LOCAL oRow2
 
    open_tabele_za_pocetno_stanje()
 
@@ -489,12 +488,12 @@ STATIC FUNCTION get_data( hParam, oFinQuery, oKontoDataset, oPartnerDataset )
 FUNCTION switch_to_database( hDbParams, cDatabase, nYear )
 
    IF nYear == NIL
-      nYear := nYear( Date() )
+      nYear := Year( Date() )
    ENDIF
 
    my_server_logout()
 
-   IF nYear <> nYear( Date() )
+   IF nYear <> Year( Date() )
       hDbParams[ "database" ] := Left( cDatabase, Len( cDatabase ) -4 ) + AllTrim( Str( nYear ) )
    ELSE
       hDbParams[ "database" ] := cDatabase

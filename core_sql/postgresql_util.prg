@@ -24,20 +24,18 @@ FUNCTION pg_terminate_all_data_db_connections()
 
    oQry := postgres_sql_query( cQuery )
 
-
    RETURN sql_error_in_query( oQry, "SELECT", sql_postgres_conn() )
 
-   FUNCTION pg_terminate_data_db_connection()
+FUNCTION pg_terminate_data_db_connection()
 
-      LOCAL cQuery, oQry
+   LOCAL cQuery, oQry
 
-      cQuery :=  "SELECT pg_terminate_backend( pid ), pid "
-      cQuery +=  " FROM pg_stat_activity "
-      cQuery +=  " WHERE  pid in "
-      cQuery +=  " (SELECT pid FROM pg_stat_activity where username=current_user AND client_port=inet_client_port() AND datname <> 'postgres')"
-
-
-      oQry := postgres_sql_query( cQuery )
+   cQuery :=  "SELECT pg_terminate_backend( pid ), pid "
+   cQuery +=  " FROM pg_stat_activity "
+   cQuery +=  " WHERE  pid in "
+   cQuery +=  " (SELECT pid FROM pg_stat_activity where username=current_user AND client_port=inet_client_port() AND datname <> 'postgres')"
 
 
-      RETURN sql_error_in_query( oQry, "SELECT", sql_postgres_conn() )
+   oQry := postgres_sql_query( cQuery )
+
+   RETURN sql_error_in_query( oQry, "SELECT", sql_postgres_conn() )

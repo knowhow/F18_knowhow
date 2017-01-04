@@ -533,11 +533,11 @@ METHOD F18Admin:update_db()
    LOCAL _version := Space( 50 )
    LOCAL _db_list := {}
    LOCAL _server := my_server_params()
-   LOCAL _database := ""
+   LOCAL cDatabase := ""
    LOCAL _upd_empty := "N"
    PRIVATE GetList := {}
 
-   _database := Space( 50 )
+   cDatabase := Space( 50 )
 
    Box(, 10, 70 )
 
@@ -547,7 +547,7 @@ METHOD F18Admin:update_db()
    @ m_x + _x, m_y + 2 SAY "     verzija db-a (npr. 4.6.1):" GET _version PICT "@S30" VALID !Empty( _version )
    ++ _x
    ++ _x
-   @ m_x + _x, m_y + 2 SAY "naziv baze / prazno update-sve:" GET _database PICT "@S30"
+   @ m_x + _x, m_y + 2 SAY "naziv baze / prazno update-sve:" GET cDatabase PICT "@S30"
    ++ _x
    ++ _x
    @ m_x + _x, m_y + 2 SAY "Update template [empty] baza (D/N) ?" GET _upd_empty VALID _upd_empty $ "DN" PICT "@!"
@@ -563,14 +563,14 @@ METHOD F18Admin:update_db()
    // snimi parametre...
    ::_update_params := hb_Hash()
    ::_update_params[ "version" ] := AllTrim( _version )
-   ::_update_params[ "database" ] := AllTrim( _database )
+   ::_update_params[ "database" ] := AllTrim( cDatabase )
    ::_update_params[ "host" ] := _server[ "host" ]
    ::_update_params[ "port" ] := _server[ "port" ]
    ::_update_params[ "file" ] := "?"
    ::_update_params[ "updade_empty" ] := _upd_empty
 
-   IF !Empty( _database )
-      AAdd( _db_list, { AllTrim( _database ) } )
+   IF !Empty( cDatabase )
+      AAdd( _db_list, { AllTrim( cDatabase ) } )
    ELSE
       _db_list := my_login():database_array()
    ENDIF
@@ -634,11 +634,11 @@ METHOD F18Admin:update_db_download()
 
 METHOD F18Admin:update_db_all( arr )
 
-   LOCAL _i
+   LOCAL nI
    LOCAL _ok := .F.
 
-   FOR _i := 1 TO Len( arr )
-      IF ! ::update_db_company( AllTrim( arr[ _i, 1 ] ) )
+   FOR nI := 1 TO Len( arr )
+      IF ! ::update_db_company( AllTrim( arr[ nI, 1 ] ) )
          RETURN _ok
       ENDIF
    NEXT
@@ -706,65 +706,64 @@ METHOD F18Admin:update_db_command( database )
 
 
 
-METHOD F18Admin:update_db_company( company )
+METHOD F18Admin:update_db_company( cOrganizacija )
 
-   LOCAL _sess_list := {}
-   LOCAL _i
-   LOCAL _database
+   LOCAL aListaSezona := {}
+   LOCAL nI
+   LOCAL cDatabase
    LOCAL _cmd
    LOCAL _ok := .F.
 
-   IF AllTrim( company ) $ "#empty#empty_sezona#"
-      // ovo su template tabele...
-      AAdd( _sess_list, { "empty" } )
+   IF AllTrim( cOrganizacija ) $ "#empty#empty_sezona#"
+
+      AAdd( aListaSezona, { "empty" } ) // ovo su template tabele
    ELSE
 
-      IF Left( company, 1 ) == "!"
+      IF Left( cOrganizacija, 1 ) == "!"
 
-         company := Right( AllTrim( company ), Len( AllTrim( company ) ) - 1 )
+         cOrganizacija := Right( AllTrim( cOrganizacija ), Len( AllTrim( cOrganizacija ) ) - 1 )
 
-         AAdd( _sess_list, { "empty" } ) // rucno zadan naziv baze, ne gledati sezone
+         AAdd( aListaSezona, { "empty" } ) // rucno zadan naziv baze, ne gledati sezone
 
-      ELSEIF ! ( "_" $ company )
+      ELSEIF ! ( "_" $ cOrganizacija )
 
 
-         _sess_list := my_login():get_database_sessions( company ) // nema sezone, uzeti sa servera
+         aListaSezona := my_login():get_database_sessions( cOrganizacija ) // nema sezone, uzeti sa servera
 
       ELSE
 
-         IF SubStr( company, Len( company ) - 3, 1 ) $ "1#2"
-            // vec postoji zadana sezona, samo je dodati u matricu
-            AAdd( _sess_list, { Right( AllTrim( company ), 4 ) } )
-            company := PadR( AllTrim( company ), Len( AllTrim( company ) ) - 5  )
+         IF SubStr( cOrganizacija, Len( cOrganizacija ) - 3, 1 ) $ "1#2"
+
+            AAdd( aListaSezona, { Right( AllTrim( cOrganizacija ), 4 ) } ) // vec postoji zadana sezona, samo je dodati u matricu
+            cOrganizacija := PadR( AllTrim( cOrganizacija ), Len( AllTrim( cOrganizacija ) ) - 5  )
          ELSE
-            _sess_list := my_login():get_database_sessions( company )
+            aListaSezona := my_login():get_database_sessions( cOrganizacija )
          ENDIF
 
       ENDIF
 
    ENDIF
 
-   FOR _i := 1 TO Len( _sess_list )
+   FOR nI := 1 TO Len( aListaSezona )
 
-      // ako je ovaj marker uzmi cisto ono sto je navedeno...
-      IF _sess_list[ _i, 1 ] == "empty"
-         // ovo je za empty template tabele..
-         _database := AllTrim( company )
+
+      IF aListaSezona[ nI, 1 ] == "empty" // ako je ovaj marker uzmi cisto ono sto je navedeno
+
+         cDatabase := AllTrim( cOrganizacija ) // ovo je za empty template tabele
       ELSE
-         _database := AllTrim( company ) + "_" + AllTrim( _sess_list[ _i, 1 ] )
+         cDatabase := AllTrim( cOrganizacija ) + "_" + AllTrim( aListaSezona[ nI, 1 ] )
       ENDIF
 
-      _cmd := ::update_db_command( _database )
+      _cmd := ::update_db_command( cDatabase )
 
       IF _cmd == NIL
          RETURN _ok
       ENDIF
 
-      MsgO( "Vršim update baze " + _database )
+      MsgO( "Vršim update baze " + cDatabase )
 
       _ok := hb_run( _cmd )
-      // ubaci u matricu rezultat...
-      AAdd( ::update_db_result, { company, _database, _cmd, _ok } )
+      AAdd( ::update_db_result, { cOrganizacija, cDatabase, _cmd, _ok } ) // ubaci u matricu rezultat
 
       MsgC()
 
@@ -781,7 +780,7 @@ METHOD F18Admin:razdvajanje_sezona()
 
    LOCAL _params
    LOCAL _dbs := {}
-   LOCAL _i
+   LOCAL nI
    LOCAL hDbServerParams, cTekuciUser, cTekucaPassword, cTekucaDb
    LOCAL _qry
    LOCAL nFromSezona, nToSezona
@@ -795,11 +794,10 @@ METHOD F18Admin:razdvajanje_sezona()
 #ifndef F18_DEBUG
 
    IF !spec_funkcije_sifra( "ADMIN" )
-      MsgBeep( "Opcija zasticena !" )
+      MsgBeep( "Opcija zaštićena šifrom !" )
       RETURN .F.
    ENDIF
 #endif
-   // pg_terminate_all_data_db_connections()
 
    nFromSezona := Year( Date() ) - 1
    nToSezona := Year( Date() )
@@ -809,7 +807,7 @@ METHOD F18Admin:razdvajanje_sezona()
 
    Box(, 7, 60 )
    @ m_x + 1, m_y + 2 SAY8 "Otvaranje baze za novu sezonu ***" COLOR f18_color_i()
-   @ m_x + 3, m_y + 2 SAY8 "Vrsi se prenos sa godine:" GET nFromSezona PICT "9999"
+   @ m_x + 3, m_y + 2 SAY8 "Vrši se prenos sa godine:" GET nFromSezona PICT "9999"
    @ m_x + 3, Col() + 1 SAY8 "na godinu:" GET nToSezona PICT "9999" VALID ( nToSezona > nFromSezona .AND. nToSezona - nFromSezona == 1 )
    @ m_x + 5, m_y + 2 SAY8 "Baza (prazno-sve):" GET _db PICT "@S30"
    @ m_x + 6, m_y + 2 SAY8 "Ako baza postoji, pobriši je ? (D/N)" GET cDeletePostojecaDbDN VALID cDeletePostojecaDbDN $ "DN" PICT "@!"
@@ -821,6 +819,9 @@ METHOD F18Admin:razdvajanje_sezona()
    IF LastKey() == K_ESC
       RETURN .F.
    ENDIF
+
+   // pg_terminate_all_data_db_connections()
+   pg_terminate_data_db_connection()
 
    hDbServerParams := my_server_params()
    cTekuciUser := hDbServerParams[ "user" ]

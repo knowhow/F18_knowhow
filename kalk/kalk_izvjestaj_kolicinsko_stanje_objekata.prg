@@ -52,7 +52,7 @@ FUNCTION kalk_izvj_stanje_po_objektima()
    LOCAL n5
    LOCAL n6
    LOCAL n7
-   LOCAL nRecno, _rec
+   LOCAL nRecno, hRec
    LOCAL cPodvuci
    LOCAL lMarkiranaRoba
    PRIVATE dDatOd
@@ -132,10 +132,10 @@ FUNCTION kalk_izvj_stanje_po_objektima()
 
       GO TOP
       DO WHILE !Eof()
-         _rec := dbf_get_rec()
-         _rec[ "prodg" ] := 0
-         _rec[ "zalg" ] := 0
-         dbf_update_rec( _rec )
+         hRec := dbf_get_rec()
+         hRec[ "prodg" ] := 0
+         hRec[ "zalg" ] := 0
+         dbf_update_rec( hRec )
          SKIP
       ENDDO
 
@@ -473,21 +473,21 @@ STATIC FUNCTION ispisi_zalihe( cG1, cIdTarifa, cIdRoba, cDUslov )
       ENDIF
       SELECT pobjekti
       IF roba->k2 <> "X"
-         _rec := dbf_get_rec()
-         _rec[ "zalt" ] := _rec[ "zalt" ] + rekap1->k2
-         _rec[ "zalu" ] := _rec[ "zalu" ] + rekap1->k2
-         _rec[ "zalg" ] := _rec[ "zalg" ] + rekap1->k2
-         dbf_update_rec( _rec )
+         hRec := dbf_get_rec()
+         hRec[ "zalt" ] := hRec[ "zalt" ] + rekap1->k2
+         hRec[ "zalu" ] := hRec[ "zalu" ] + rekap1->k2
+         hRec[ "zalg" ] := hRec[ "zalg" ] + rekap1->k2
+         dbf_update_rec( hRec )
       ENDIF
       SKIP
    ENDDO
 
    IF ( roba->k2 <> "X" )
-      _rec := dbf_get_rec()
-      _rec[ "zalt" ] := _rec[ "zalt" ] + nK2
-      _rec[ "zalu" ] := _rec[ "zalu" ] + nK2
-      _rec[ "zalg" ] := _rec[ "zalg" ] + nK2
-      dbf_update_rec( _rec )
+      hRec := dbf_get_rec()
+      hRec[ "zalt" ] := hRec[ "zalt" ] + nK2
+      hRec[ "zalu" ] := hRec[ "zalu" ] + nK2
+      hRec[ "zalg" ] := hRec[ "zalg" ] + nK2
+      dbf_update_rec( hRec )
    ENDIF
 
    RETURN
@@ -534,11 +534,11 @@ STATIC FUNCTION ispisi_prodaju( cG1, cIdTarifa, cIdRoba, cDUslov )
       SELECT pobjekti
       IF ( roba->k2 <> "X" )
 
-         _rec := dbf_get_rec()
-         _rec[ "prodt" ] := _rec[ "prodt" ] + rekap1->k1
-         _rec[ "produ" ] := _rec[ "produ" ] + rekap1->k1
-         _rec[ "prodg" ] := _rec[ "prodg" ] + rekap1->k1
-         dbf_update_rec( _rec )
+         hRec := dbf_get_rec()
+         hRec[ "prodt" ] := hRec[ "prodt" ] + rekap1->k1
+         hRec[ "produ" ] := hRec[ "produ" ] + rekap1->k1
+         hRec[ "prodg" ] := hRec[ "prodg" ] + rekap1->k1
+         dbf_update_rec( hRec )
 
       ENDIF
       SKIP
@@ -546,11 +546,11 @@ STATIC FUNCTION ispisi_prodaju( cG1, cIdTarifa, cIdRoba, cDUslov )
 
    IF roba->k2 <> "X"
 
-      _rec := dbf_get_rec()
-      _rec[ "prodt" ] := _rec[ "prodt" ] + nK1
-      _rec[ "produ" ] := _rec[ "produ" ] + nK1
-      _rec[ "prodg" ] := _rec[ "prodg" ] + nK1
-      dbf_update_rec( _rec )
+      hRec := dbf_get_rec()
+      hRec[ "prodt" ] := hRec[ "prodt" ] + nK1
+      hRec[ "produ" ] := hRec[ "produ" ] + nK1
+      hRec[ "prodg" ] := hRec[ "prodg" ] + nK1
+      dbf_update_rec( hRec )
 
    ENDIF
 
@@ -601,7 +601,7 @@ FUNCTION brisi_tabelu_pobjekti()
 
 FUNCTION napuni_tabelu_pobjekti_iz_objekti()
 
-   LOCAL _rec
+   LOCAL hRec
 
    O_POBJEKTI
    O_OBJEKTI
@@ -612,10 +612,10 @@ FUNCTION napuni_tabelu_pobjekti_iz_objekti()
    GO TOP
 
    DO WHILE !Eof()
-      _rec := dbf_get_rec()
+      hRec := dbf_get_rec()
       SELECT pobjekti
 	  APPEND BLANK
-	  dbf_update_rec( _rec )
+	  dbf_update_rec( hRec )
 	  SELECT objekti
 	  SKIP
    ENDDO
@@ -628,21 +628,21 @@ FUNCTION napuni_tabelu_pobjekti_iz_objekti()
 
 FUNCTION resetuj_vrijednosti_tabele_pobjekti()
 
-   LOCAL _rec
+   LOCAL hRec
 
    SELECT pobjekti
    GO TOP
 
    DO WHILE !Eof()
 
-      _rec := dbf_get_rec()
+      hRec := dbf_get_rec()
 
-      _rec["prodtu"] := 0
-      _rec["produ"] := 0
-      _rec["zaltu"] := 0
-      _rec["zalu"] := 0
+      hRec["prodtu"] := 0
+      hRec["produ"] := 0
+      hRec["zaltu"] := 0
+      hRec["zalu"] := 0
 
-      dbf_update_rec( _rec )
+      dbf_update_rec( hRec )
 
       SKIP
 

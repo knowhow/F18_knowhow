@@ -102,7 +102,7 @@ FUNCTION mp_predispozicija( firma, tip_dok, br_dok )
 
    LOCAL _ret := .F.
    LOCAL _t_area := Select()
-   LOCAL _rec
+   LOCAL hRec
 
    IF tip_dok <> "80"
       RETURN _ret
@@ -112,7 +112,7 @@ FUNCTION mp_predispozicija( firma, tip_dok, br_dok )
    GO TOP
    SEEK firma + tip_dok + br_dok
 
-   _rec := RecNo()
+   hRec := RecNo()
 
    DO WHILE !Eof() .AND. field->idfirma + field->idvd + field->brdok == firma + tip_dok + br_dok
       IF field->idkonto2 = "XXX"

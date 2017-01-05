@@ -399,45 +399,45 @@ STATIC FUNCTION insert_into_rexport( id_firma, id_tip_dok, broj_dok, d_opis, dat
       tr_bank, tr_sped, tr_carina, tr_zavisni )
 
    LOCAL _t_area := Select()
-   LOCAL _rec
+   LOCAL hRec
 
    O_R_EXP
 
    APPEND BLANK
 
-   _rec := hb_Hash()
-   _rec[ "idfirma" ] := id_firma
-   _rec[ "idvd" ] := id_tip_dok
-   _rec[ "brdok" ] := broj_dok
-   _rec[ "opis" ] := d_opis
-   _rec[ "datum" ] := datum_dok
-   _rec[ "vr_dok" ] := vrsta_dok
-   _rec[ "idpartner" ] := id_partner
-   _rec[ "part_naz" ] := part_naz
-   _rec[ "part_mj" ] := part_mjesto
-   _rec[ "part_ptt" ] := part_ptt
-   _rec[ "part_adr" ] := part_adr
-   _rec[ "br_fakt" ] := broj_fakture
-   _rec[ "nv_dug" ] := n_v_dug
-   _rec[ "nv_pot" ] := n_v_pot
-   _rec[ "nv_saldo" ] := n_v_saldo
-   _rec[ "mp_dug" ] := m_p_dug
-   _rec[ "mp_pot" ] := m_p_pot
-   _rec[ "mp_saldo" ] := m_p_saldo
-   _rec[ "mpp_dug" ] := m_pp_dug
-   _rec[ "mpp_pot" ] := m_pp_pot
-   _rec[ "mpp_saldo" ] := m_pp_saldo
-   _rec[ "mp_rabat" ] := m_p_rabat
-   _rec[ "vp_rabat" ] := v_p_rabat
-   _rec[ "mp_porez" ] := m_p_porez
-   _rec[ "t_prevoz" ] := tr_prevoz
-   _rec[ "t_prevoz2" ] := tr_prevoz_2
-   _rec[ "t_bank" ] := tr_bank
-   _rec[ "t_sped" ] := tr_sped
-   _rec[ "t_cardaz" ] := tr_carina
-   _rec[ "t_zav" ] := tr_zavisni
+   hRec := hb_Hash()
+   hRec[ "idfirma" ] := id_firma
+   hRec[ "idvd" ] := id_tip_dok
+   hRec[ "brdok" ] := broj_dok
+   hRec[ "opis" ] := d_opis
+   hRec[ "datum" ] := datum_dok
+   hRec[ "vr_dok" ] := vrsta_dok
+   hRec[ "idpartner" ] := id_partner
+   hRec[ "part_naz" ] := part_naz
+   hRec[ "part_mj" ] := part_mjesto
+   hRec[ "part_ptt" ] := part_ptt
+   hRec[ "part_adr" ] := part_adr
+   hRec[ "br_fakt" ] := broj_fakture
+   hRec[ "nv_dug" ] := n_v_dug
+   hRec[ "nv_pot" ] := n_v_pot
+   hRec[ "nv_saldo" ] := n_v_saldo
+   hRec[ "mp_dug" ] := m_p_dug
+   hRec[ "mp_pot" ] := m_p_pot
+   hRec[ "mp_saldo" ] := m_p_saldo
+   hRec[ "mpp_dug" ] := m_pp_dug
+   hRec[ "mpp_pot" ] := m_pp_pot
+   hRec[ "mpp_saldo" ] := m_pp_saldo
+   hRec[ "mp_rabat" ] := m_p_rabat
+   hRec[ "vp_rabat" ] := v_p_rabat
+   hRec[ "mp_porez" ] := m_p_porez
+   hRec[ "t_prevoz" ] := tr_prevoz
+   hRec[ "t_prevoz2" ] := tr_prevoz_2
+   hRec[ "t_bank" ] := tr_bank
+   hRec[ "t_sped" ] := tr_sped
+   hRec[ "t_cardaz" ] := tr_carina
+   hRec[ "t_zav" ] := tr_zavisni
 
-   dbf_update_rec( _rec )
+   dbf_update_rec( hRec )
 
    SELECT ( _t_area )
 

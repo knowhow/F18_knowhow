@@ -149,9 +149,9 @@ FUNCTION kalk_get_1_95()
             IF _kolicina > 0
 
                SELECT roba
-               _rec := dbf_get_rec()
-               _rec[ "nc" ] := _nc
-               update_rec_server_and_dbf( Alias(), _rec, 1, "FULL" )
+               hRec := dbf_get_rec()
+               hRec[ "nc" ] := _nc
+               update_rec_server_and_dbf( Alias(), hRec, 1, "FULL" )
                SELECT kalk_pripr // nafiluj sifrarnik robe sa nc sirovina, robe
             ENDIF
          ENDIF

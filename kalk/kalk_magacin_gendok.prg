@@ -51,8 +51,9 @@ FUNCTION kalk_inventura_magacin_im_meni()
 
    AAdd( Opc, "1. dokument inventure magacin                   " )
    AAdd( opcexe, {|| kalk_generacija_inventura_magacin_im() } )
-   AAdd( Opc, "2. inventura-razlika prema postojecoj IM" )
-   AAdd( opcexe, {|| kalk_generisanje_inventure_razlike_magacin_im() } )
+
+   AAdd( Opc, "2. inventura-razlika prema postojećoj inventuri" )
+   AAdd( opcexe, {|| kalk_generisanje_inventure_razlike_postojeca_magacin_im() } )
 
 
    PRIVATE Izbor := 1

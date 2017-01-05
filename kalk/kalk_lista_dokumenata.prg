@@ -277,9 +277,9 @@ FUNCTION kalk_stampa_liste_dokumenata()
             ENDDO
 
             SELECT kalk_doks
-            _rec := dbf_get_rec()
-            _rec[ "ukstavki" ] := nStavki
-            update_rec_server_and_dbf( "kalk_doks", _rec, 1, "FULL" )
+            hRec := dbf_get_rec()
+            hRec[ "ukstavki" ] := nStavki
+            update_rec_server_and_dbf( "kalk_doks", hRec, 1, "FULL" )
 
          ENDIF
 

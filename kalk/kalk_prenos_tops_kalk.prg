@@ -508,7 +508,7 @@ STATIC FUNCTION tops_kalk_show_report_roba( aReportData )
 STATIC FUNCTION tops_kalk_import_roba( aRobaImportReport, cTipMpc, lUpdateRoba )
 
    LOCAL _t_area := Select()
-   LOCAL _rec, _mpc_naz
+   LOCAL hRec, _mpc_naz
 
    IF topska->( FieldPos( "robanaz" ) ) == 0  // ako nema ovog polja, nista ne radi !
       RETURN .F.
@@ -524,27 +524,27 @@ STATIC FUNCTION tops_kalk_import_roba( aRobaImportReport, cTipMpc, lUpdateRoba )
    IF !Found()
 
       APPEND BLANK
-      _rec := dbf_get_rec()
-      _rec[ "id" ] := topska->idroba
-      _rec[ "naz" ] := topska->robanaz
-      _rec[ "idtarifa" ] := topska->idtarifa
-      _rec[ "barkod" ] := topska->barkod
+      hRec := dbf_get_rec()
+      hRec[ "id" ] := topska->idroba
+      hRec[ "naz" ] := topska->robanaz
+      hRec[ "idtarifa" ] := topska->idtarifa
+      hRec[ "barkod" ] := topska->barkod
       IF topska->( FieldPos( "jmj" ) ) <> 0
-         _rec[ "jmj" ] := topska->jmj
+         hRec[ "jmj" ] := topska->jmj
       ENDIF
       IF AllTrim( cTipMpc ) == "M1" .OR. Empty( cTipMpc )
-         _rec[ "mpc" ] := topska->mpc
+         hRec[ "mpc" ] := topska->mpc
       ELSE
          _mpc_naz := StrTran( cTipMpc, "M", "mpc" ) // M3 -> mpc3
-         _rec[ _mpc_naz ] := topska->mpc
+         hRec[ _mpc_naz ] := topska->mpc
       ENDIF
 
-      update_rec_server_and_dbf( "roba", _rec, 1, "FULL" )
+      update_rec_server_and_dbf( "roba", hRec, 1, "FULL" )
       AAdd( aRobaImportReport, { topska->idroba, topska->robanaz, topska->mpc, 0 } ) // dodaj u kontrolnu matricu
 
    ELSE
 
-      _rec := dbf_get_rec()
+      hRec := dbf_get_rec()
 
       IF AllTrim( cTipMpc ) == "M1" .OR. Empty( cTipMpc )
          _mpc_naz := "mpc"
@@ -552,13 +552,13 @@ STATIC FUNCTION tops_kalk_import_roba( aRobaImportReport, cTipMpc, lUpdateRoba )
          _mpc_naz := StrTran( cTipMpc, "M", "mpc" ) // M3 -> mpc3
       ENDIF
 
-      IF Round( _rec[ _mpc_naz ], 2 ) <> Round( topska->mpc, 2 )
+      IF Round( hRec[ _mpc_naz ], 2 ) <> Round( topska->mpc, 2 )
 
-         AAdd( aRobaImportReport, { topska->idroba, topska->robanaz, topska->mpc, _rec[ _mpc_naz ] } )
-         _rec[ _mpc_naz ] := topska->mpc
+         AAdd( aRobaImportReport, { topska->idroba, topska->robanaz, topska->mpc, hRec[ _mpc_naz ] } )
+         hRec[ _mpc_naz ] := topska->mpc
 
          IF lUpdateRoba
-            update_rec_server_and_dbf( "roba", _rec, 1, "FULL" )
+            update_rec_server_and_dbf( "roba", hRec, 1, "FULL" )
          ENDIF
 
       ENDIF

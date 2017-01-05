@@ -92,10 +92,10 @@ FUNCTION ProvjeriSif( clDok, cImePoljaID, nOblSif, clFor, lTest )
 
                IF !Found()
                   APPEND BLANK
-                  _rec := dbf_get_rec()
-                  _rec[ "id" ] := fakt->idroba
-                  _rec[ "naz" ] :=  "!!! KONTROLOM UTVRDJENO"
-                  update_rec_server_and_dbf( "roba", _rec, 1, "FULL" )
+                  hRec := dbf_get_rec()
+                  hRec[ "id" ] := fakt->idroba
+                  hRec[ "naz" ] :=  "!!! KONTROLOM UTVRDJENO"
+                  update_rec_server_and_dbf( "roba", hRec, 1, "FULL" )
                ENDIF
                SELECT ( nTArea )
 

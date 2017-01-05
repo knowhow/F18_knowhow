@@ -388,7 +388,7 @@ FUNCTION ScanMKonto( dDatOd, dDatDo, cIdKPovrata, cKartica, cVarijanta, cKesiraj
    LOCAL nGGo
    LOCAL nMpc
    LOCAL cSeek
-   LOCAL _rec
+   LOCAL hRec
 
    IF Empty( kalk->mKonto )
       RETURN 0
@@ -400,15 +400,15 @@ FUNCTION ScanMKonto( dDatOd, dDatDo, cIdKPovrata, cKartica, cVarijanta, cKesiraj
 
       APPEND BLANK
 
-      _rec := dbf_get_rec()
+      hRec := dbf_get_rec()
 
       // radi promjene tarifa promjenio sam kalk->idtarifa u roba->idtarifa
       // replace objekat with kalk->mKonto, idroba with kalk->idroba, idtarifa with kalk->idtarifa, g1 with roba->k1
 
-      _rec[ "objekat" ] := kalk->mkonto
-      _rec[ "idroba" ] := kalk->idroba
-      _rec[ "idtarifa" ] := roba->idtarifa
-      _rec[ "g1" ] := roba->k1
+      hRec[ "objekat" ] := kalk->mkonto
+      hRec[ "idroba" ] := kalk->idroba
+      hRec[ "idtarifa" ] := roba->idtarifa
+      hRec[ "g1" ] := roba->k1
 
       IF ( cKartica == "D" )
          // ocitaj sa kartica
@@ -428,35 +428,35 @@ FUNCTION ScanMKonto( dDatOd, dDatDo, cIdKPovrata, cKartica, cVarijanta, cKesiraj
             GO nGGo
 
             SELECT rekap1
-            _rec[ "mpc" ] := nMpc
+            hRec[ "mpc" ] := nMpc
 
          ENDIF
       ELSE
 
-         _rec[ "mpc" ] := roba->mpc
+         hRec[ "mpc" ] := roba->mpc
 
       ENDIF
 
    ELSE
-      _rec := dbf_get_rec()
+      hRec := dbf_get_rec()
    ENDIF
 
    IF kalk->mu_i == "1"
 
       IF kalk->datdok <= dDatDo
          // stanje zalihe
-         _rec[ "k2" ] := _rec[ "k2" ] + kalk->kolicina
+         hRec[ "k2" ] := hRec[ "k2" ] + kalk->kolicina
       ENDIF
 
       IF cVarijanta <> "1"
          // u pregledu kretanja zaliha ovo nam ne treba
          IF ( kalk->datdok < dDatOd )
             // predhodno stanje
-            _rec[ "k0" ] := _rec[ "k0" ] + kalk->kolicina
+            hRec[ "k0" ] := hRec[ "k0" ] + kalk->kolicina
          ENDIF
          IF DInRange( kalk->datdok, dDatOd, dDatDo )
             // tekuci prijem
-            _rec[ "k4" ] := _rec[ "k4" ] + kalk->kolicina
+            hRec[ "k4" ] := hRec[ "k4" ] + kalk->kolicina
          ENDIF
       ENDIF
 
@@ -466,12 +466,12 @@ FUNCTION ScanMKonto( dDatOd, dDatDo, cIdKPovrata, cKartica, cVarijanta, cKesiraj
          // u pregledu kretanja zaliha ovo nam ne treba
          IF ( kalk->datdok < dDatOd )
             // predhodno stanje
-            _rec[ "k0" ] := _rec[ "k0" ] - kalk->kolicina
+            hRec[ "k0" ] := hRec[ "k0" ] - kalk->kolicina
          ENDIF
       ENDIF
       IF kalk->datdok <= dDatDo
          // stanje trenutne zalihe
-         _rec[ "k2" ] := _rec[ "k2" ] - kalk->kolicina
+         hRec[ "k2" ] := hRec[ "k2" ] - kalk->kolicina
       ENDIF
 
       IF kalk->idvd $ "14#94"
@@ -479,12 +479,12 @@ FUNCTION ScanMKonto( dDatOd, dDatDo, cIdKPovrata, cKartica, cVarijanta, cKesiraj
             // u pregledu kretanja zaliha ovo nam ne treba
             IF ( kalk->datdok <= dDatDo )
                // kumulativna prodaja
-               _rec[ "k3" ] := _rec[ "k3" ] + kalk->kolicina
+               hRec[ "k3" ] := hRec[ "k3" ] + kalk->kolicina
             ENDIF
          ENDIF
          IF DInRange( kalk->datDok, dDatOd, dDatDo )
             // stanje trenutne prodaje
-            _rec[ "k1" ] := _rec[ "k1" ] + kalk->kolicina
+            hRec[ "k1" ] := hRec[ "k1" ] + kalk->kolicina
          ENDIF
       ENDIF
 
@@ -493,13 +493,13 @@ FUNCTION ScanMKonto( dDatOd, dDatDo, cIdKPovrata, cKartica, cVarijanta, cKesiraj
       IF ( kalk->datDok = dDatDo )
          // dokument nivelacije na dan inventure
          IF ( cVarijanta <> "1" )
-            _rec[ "novampc" ] := kalk->mpcsapp + kalk->vpc
+            hRec[ "novampc" ] := kalk->mpcsapp + kalk->vpc
          ENDIF
-         _rec[ "mpc" ] := kalk->mpcsapp
+         hRec[ "mpc" ] := kalk->mpcsapp
       ENDIF
    ENDIF
 
-   dbf_update_rec( _rec )
+   dbf_update_rec( hRec )
 
    RETURN 1
 
@@ -511,7 +511,7 @@ FUNCTION ScanPKonto( dDatOd, dDatDo, cIdKPovrata, cKartica, cVarijanta, cKesiraj
    LOCAL nGGo
    LOCAL nMpc
    LOCAL cSeek
-   LOCAL _rec
+   LOCAL hRec
 
    IF Empty( kalk->pkonto )
       RETURN 0
@@ -523,12 +523,12 @@ FUNCTION ScanPKonto( dDatOd, dDatDo, cIdKPovrata, cKartica, cVarijanta, cKesiraj
 
       APPEND BLANK
 
-      _rec := dbf_get_rec()
+      hRec := dbf_get_rec()
 
-      _rec[ "objekat" ] := kalk->pkonto
-      _rec[ "idroba" ] := kalk->idroba
-      _rec[ "idtarifa" ] := roba->idtarifa
-      _rec[ "g1" ] := roba->k1
+      hRec[ "objekat" ] := kalk->pkonto
+      hRec[ "idroba" ] := kalk->idroba
+      hRec[ "idtarifa" ] := roba->idtarifa
+      hRec[ "g1" ] := roba->k1
 
       IF ( cKartica == "D" )
          // ocitaj sa kartica
@@ -546,14 +546,14 @@ FUNCTION ScanPKonto( dDatOd, dDatDo, cIdKPovrata, cKartica, cVarijanta, cKesiraj
          dbSetOrder( nGGOrd )
          GO nGGo
          SELECT rekap1
-         _rec[ "mpc" ] := nMpc
+         hRec[ "mpc" ] := nMpc
       ELSE
-         _rec[ "mpc" ] := roba->mpc
+         hRec[ "mpc" ] := roba->mpc
       ENDIF
 
    ELSE
 
-      _rec := dbf_get_rec()
+      hRec := dbf_get_rec()
 
    ENDIF
 
@@ -563,23 +563,23 @@ FUNCTION ScanPKonto( dDatOd, dDatDo, cIdKPovrata, cKartica, cVarijanta, cKesiraj
       // odnosno internog dokumenta
 
       IF kalk->datdok <= dDatDo  // kumulativno stanje
-         _rec[ "k2" ] += kalk->kolicina  // zalihe
+         hRec[ "k2" ] += kalk->kolicina  // zalihe
       ENDIF
       IF ( cVarijanta <> "1" )
          IF kalk->datdok < dDatOd
             // predhodno stanje
-            _rec[ "k0" ] += kalk->kolicina
+            hRec[ "k0" ] += kalk->kolicina
          ENDIF
          IF DInRange( kalk->datdok, dDatOd, dDatDo )
             // tekuci prijem
-            _rec[ "k4" ] += kalk->kolicina
+            hRec[ "k4" ] += kalk->kolicina
          ENDIF
       ELSE
          IF DInRange( kalk->datdok, dDatOd, dDatDo )
             // tekuci prijem
             IF kalk->idvd == "80" .AND. !Empty( kalk->idkonto2 )
                // bilo je promjena po osnovu predispozicije
-               _rec[ "k4pp" ] += kalk->kolicina
+               hRec[ "k4pp" ] += kalk->kolicina
             ENDIF
          ENDIF
       ENDIF
@@ -590,10 +590,10 @@ FUNCTION ScanPKonto( dDatOd, dDatDo, cIdKPovrata, cKartica, cVarijanta, cKesiraj
       IF kalk->datdok = dDatDo
          // dokument nivelacije na dan inventure
          IF cVarijanta <> "1"
-            _rec[ "novampc" ] := kalk->( fcj + mpcsapp )
+            hRec[ "novampc" ] := kalk->( fcj + mpcsapp )
          ENDIF
          // stara cijena
-         _rec[ "mpc" ] := kalk->fcj
+         hRec[ "mpc" ] := kalk->fcj
 
       ENDIF
 
@@ -609,9 +609,9 @@ FUNCTION ScanPKonto( dDatOd, dDatDo, cIdKPovrata, cKartica, cVarijanta, cKesiraj
          IF kalk->datdok < dDatOd
             IF kalk->pu_i == "5"
                // predhodno stanje
-               _rec[ "k0" ] -= kalk->kolicina
+               hRec[ "k0" ] -= kalk->kolicina
             ELSE
-               _rec[ "k0" ] -= Abs( kalk->kolicina )
+               hRec[ "k0" ] -= Abs( kalk->kolicina )
             ENDIF
          ENDIF
       ENDIF
@@ -619,9 +619,9 @@ FUNCTION ScanPKonto( dDatOd, dDatDo, cIdKPovrata, cKartica, cVarijanta, cKesiraj
       IF ( kalk->datdok <= dDatDo )
          IF kalk->pu_i == "5"
             // zaliha
-            _rec[ "k2" ] -= kalk->kolicina
+            hRec[ "k2" ] -= kalk->kolicina
          ELSE
-            _rec[ "k2" ] -= Abs( kalk->kolicina )
+            hRec[ "k2" ] -= Abs( kalk->kolicina )
          ENDIF
       ENDIF
 
@@ -629,12 +629,12 @@ FUNCTION ScanPKonto( dDatOd, dDatDo, cIdKPovrata, cKartica, cVarijanta, cKesiraj
          // prodaja
          IF DInRange( kalk->datdok, dDatOd, dDatDo )
             // tekuca prodaja
-            _rec[ "k1" ] += kalk->kolicina
+            hRec[ "k1" ] += kalk->kolicina
          ENDIF
          IF ( cVarijanta <> "1" )
             IF kalk->datdok <= dDatDo
                // kumulativna prodaja
-               _rec[ "k3" ] += kalk->kolicina
+               hRec[ "k3" ] += kalk->kolicina
             ENDIF
          ENDIF
 
@@ -648,30 +648,30 @@ FUNCTION ScanPKonto( dDatOd, dDatDo, cIdKPovrata, cKartica, cVarijanta, cKesiraj
                IF DInRange( kalk->datdok, dDatOd, dDatDo )
                   // tekuce reklamacije
                   // reklamacije u mjesecu
-                  _rec[ "k5" ] += Abs( kalk->kolicina )
+                  hRec[ "k5" ] += Abs( kalk->kolicina )
                ENDIF
                IF kalk->datdok <= dDatDo
                   // kumulativno reklamacije
-                  _rec[ "k7" ] += Abs( kalk->kolicina )
+                  hRec[ "k7" ] += Abs( kalk->kolicina )
                ENDIF
             ELSE
                IF DInRange( kalk->datdok, dDatOd, dDatDo )
                   // izlaz-otprema po ostalim osnovama
-                  _rec[ "k6" ] += Abs( kalk->kolicina )
+                  hRec[ "k6" ] += Abs( kalk->kolicina )
                ENDIF
             ENDIF
          ELSE
             IF DInRange( kalk->datdok, dDatOd, dDatDo )
                IF kalk->idvd == "80" .AND. !Empty( kalk->idkonto2 )
                   // bilo je promjena po osnovu predispozicije
-                  _rec[ "k4pp" ] += kalk->kolicina
+                  hRec[ "k4pp" ] += kalk->kolicina
                ENDIF
             ENDIF
          ENDIF
       ENDIF
    ENDIF
 
-   dbf_update_rec( _rec )
+   dbf_update_rec( hRec )
 
    RETURN 1
 

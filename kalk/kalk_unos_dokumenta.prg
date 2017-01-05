@@ -1173,7 +1173,7 @@ STATIC FUNCTION kalk_izmjeni_sve_stavke_dokumenta( old_dok, new_dok )
    LOCAL _old_firma := old_dok[ "idfirma" ]
    LOCAL _old_brdok := old_dok[ "brdok" ]
    LOCAL _old_tipdok := old_dok[ "idvd" ]
-   LOCAL _rec, _tek_dok, _t_rec
+   LOCAL hRec, _tek_dok, _t_rec
    LOCAL _new_firma := new_dok[ "idfirma" ]
    LOCAL _new_brdok := new_dok[ "brdok" ]
    LOCAL _new_tipdok := new_dok[ "idvd" ]
@@ -1205,24 +1205,24 @@ STATIC FUNCTION kalk_izmjeni_sve_stavke_dokumenta( old_dok, new_dok )
       _t_rec := RecNo()
       SKIP -1
 
-      _rec := dbf_get_rec()
-      _rec[ "idfirma" ] := _tek_dok[ "idfirma" ]
-      _rec[ "idvd" ] := _tek_dok[ "idvd" ]
-      _rec[ "brdok" ] := _tek_dok[ "brdok" ]
-      _rec[ "datdok" ] := _tek_dok[ "datdok" ]
+      hRec := dbf_get_rec()
+      hRec[ "idfirma" ] := _tek_dok[ "idfirma" ]
+      hRec[ "idvd" ] := _tek_dok[ "idvd" ]
+      hRec[ "brdok" ] := _tek_dok[ "brdok" ]
+      hRec[ "datdok" ] := _tek_dok[ "datdok" ]
 
       IF !_vise_konta
-         _rec[ "idpartner" ] := _tek_dok[ "idpartner" ]
+         hRec[ "idpartner" ] := _tek_dok[ "idpartner" ]
       ENDIF
 
-      IF ! ( _rec[ "idvd" ] $ "16#80" ) .AND. !_vise_konta
-         _rec[ "idkonto" ] := _tek_dok[ "idkonto" ]
-         _rec[ "idkonto2" ] := _tek_dok[ "idkonto2" ]
-         _rec[ "pkonto" ] := _tek_dok[ "pkonto" ]
-         _rec[ "mkonto" ] := _tek_dok[ "mkonto" ]
+      IF ! ( hRec[ "idvd" ] $ "16#80" ) .AND. !_vise_konta
+         hRec[ "idkonto" ] := _tek_dok[ "idkonto" ]
+         hRec[ "idkonto2" ] := _tek_dok[ "idkonto2" ]
+         hRec[ "pkonto" ] := _tek_dok[ "pkonto" ]
+         hRec[ "mkonto" ] := _tek_dok[ "mkonto" ]
       ENDIF
 
-      dbf_update_rec( _rec )
+      dbf_update_rec( hRec )
 
       GO ( _t_rec )
 
@@ -1240,13 +1240,13 @@ STATIC FUNCTION kalk_izmjeni_sve_stavke_dokumenta( old_dok, new_dok )
       _t_rec := RecNo()
       SKIP -1
 
-      _rec := dbf_get_rec()
+      hRec := dbf_get_rec()
 
-      _rec[ "idfirma" ] := _tek_dok[ "idfirma" ]
-      _rec[ "idtipdok" ] := _tek_dok[ "idvd" ]
-      _rec[ "brdok" ] := _tek_dok[ "brdok" ]
+      hRec[ "idfirma" ] := _tek_dok[ "idfirma" ]
+      hRec[ "idtipdok" ] := _tek_dok[ "idvd" ]
+      hRec[ "brdok" ] := _tek_dok[ "brdok" ]
 
-      dbf_update_rec( _rec )
+      dbf_update_rec( hRec )
       GO ( _t_rec )
 
    ENDDO

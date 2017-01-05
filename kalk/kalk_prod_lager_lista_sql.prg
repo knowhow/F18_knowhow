@@ -303,45 +303,45 @@ STATIC FUNCTION kalk_prod_insert_ps_into_pripr( data, params )
       SELECT kalk_pripr
       APPEND BLANK
 
-      _rec := dbf_get_rec()
+      hRec := dbf_get_rec()
 
-      _rec[ "idfirma" ] := self_organizacija_id()
-      _rec[ "idvd" ] := _kalk_tip
-      _rec[ "brdok" ] := _kalk_broj
-      _rec[ "rbr" ] := Str( ++_count, 3 )
+      hRec[ "idfirma" ] := self_organizacija_id()
+      hRec[ "idvd" ] := _kalk_tip
+      hRec[ "brdok" ] := _kalk_broj
+      hRec[ "rbr" ] := Str( ++_count, 3 )
 
-      _rec[ "datdok" ] := _kalk_datum
-      _rec[ "idroba" ] := _id_roba
-      _rec[ "idkonto" ] := _p_konto
-      _rec[ "pkonto" ] := _p_konto
+      hRec[ "datdok" ] := _kalk_datum
+      hRec[ "idroba" ] := _id_roba
+      hRec[ "idkonto" ] := _p_konto
+      hRec[ "pkonto" ] := _p_konto
 
-      _rec[ "idtarifa" ] := get_tarifa_by_koncij_region_roba_idtarifa_2_3( _p_konto, _id_roba, @aPorezi )
+      hRec[ "idtarifa" ] := get_tarifa_by_koncij_region_roba_idtarifa_2_3( _p_konto, _id_roba, @aPorezi )
 
       set_pdv_public_vars()
 
-      _rec[ "tcardaz" ] := "%"
-      _rec[ "pu_i" ] := "1"
-      _rec[ "brfaktp" ] := PadR( "PS", Len( _rec[ "brfaktp" ] ) )
-      _rec[ "datfaktp" ] := _kalk_datum
-      _rec[ "tmarza2" ] := "A"
+      hRec[ "tcardaz" ] := "%"
+      hRec[ "pu_i" ] := "1"
+      hRec[ "brfaktp" ] := PadR( "PS", Len( hRec[ "brfaktp" ] ) )
+      hRec[ "datfaktp" ] := _kalk_datum
+      hRec[ "tmarza2" ] := "A"
 
-      _rec[ "kolicina" ] := ( _ulaz - _izlaz )
-      _rec[ "nc" ] := ( _nvu - _nvi ) / ( _ulaz - _izlaz )
-      _rec[ "fcj" ] := _rec[ "nc" ]
-      _rec[ "vpc" ] := _rec[ "nc" ]
-      _rec[ "error" ] := "0"
-      _rec[ "mpcsapp" ] := Round( ( _mpvu - _mpvi ) / ( _ulaz - _izlaz ), 2 )
+      hRec[ "kolicina" ] := ( _ulaz - _izlaz )
+      hRec[ "nc" ] := ( _nvu - _nvi ) / ( _ulaz - _izlaz )
+      hRec[ "fcj" ] := hRec[ "nc" ]
+      hRec[ "vpc" ] := hRec[ "nc" ]
+      hRec[ "error" ] := "0"
+      hRec[ "mpcsapp" ] := Round( ( _mpvu - _mpvi ) / ( _ulaz - _izlaz ), 2 )
 
       IF params[ "set_mpc" ]
-         _rec[ "mpcsapp" ] := kalk_get_mpc_by_koncij_pravilo()
+         hRec[ "mpcsapp" ] := kalk_get_mpc_by_koncij_pravilo()
       ENDIF
 
-      IF _rec[ "mpcsapp" ] <> 0
-         _rec[ "mpc" ] := MpcBezPor( _rec[ "mpcsapp" ], aPorezi, NIL, _rec[ "nc" ] )
-         _rec[ "marza2" ] := _rec[ "mpc" ] - _rec[ "nc" ]
+      IF hRec[ "mpcsapp" ] <> 0
+         hRec[ "mpc" ] := MpcBezPor( hRec[ "mpcsapp" ], aPorezi, NIL, hRec[ "nc" ] )
+         hRec[ "marza2" ] := hRec[ "mpc" ] - hRec[ "nc" ]
       ENDIF
 
-      dbf_update_rec( _rec )
+      dbf_update_rec( hRec )
 
       data:Skip()
 

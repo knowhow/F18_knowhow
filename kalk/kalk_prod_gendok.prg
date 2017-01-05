@@ -1118,7 +1118,7 @@ FUNCTION gen_ip_80()
    ENDIF
 
    // kopiraj dokument u pript
-   IF !kalk_copy_kalk_u_pript( cIdFirma, cTipDok, cIpBrDok )
+   IF !kalk_copy_kalk_azuriran_u_pript( cIdFirma, cTipDok, cIpBrDok )
       RETURN .F.
    ENDIF
 

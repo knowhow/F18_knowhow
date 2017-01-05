@@ -138,7 +138,7 @@ FUNCTION fakt_kalk_prenos_10_14()
 
          cIdPartner := Space( 6 )
 
-         altd()
+
          IF !Empty( fakt->idpartner )
             cIdPartner := fakt->idpartner
          ENDIF
@@ -385,7 +385,6 @@ FUNCTION fakt_kalk_prenos( cIndik )
             cTxt := ""
          ENDIF
 
-altd()
          cIdPartner := fakt->idpartner // uzmi i partnera za prebaciti
          cBeze := " "
 

@@ -153,15 +153,15 @@ FUNCTION st_dok_status( cFirma, cIdVd, cBrDok )
 // ----------------------------------------
 STATIC FUNCTION brow_keyhandler( Ch )
 
-   LOCAL _rec
+   LOCAL hRec
    LOCAL _br_fakt
 
    DO CASE
 
    CASE Ch == K_F2
 
-      _rec := dbf_get_rec()
-      _br_fakt := _rec[ "brfaktp" ]
+      hRec := dbf_get_rec()
+      _br_fakt := hRec[ "brfaktp" ]
 
       Box(, 3, 60 )
       @ m_x + 1, m_y + 2 SAY "Ispravka podataka dokumenta ***"
@@ -173,8 +173,8 @@ STATIC FUNCTION brow_keyhandler( Ch )
          RETURN DE_CONT
       ENDIF
 
-      _rec[ "brfaktp" ] := _br_fakt
-      update_rec_server_and_dbf( "kalk_doks", _rec, 1, "FULL" )
+      hRec[ "brfaktp" ] := _br_fakt
+      update_rec_server_and_dbf( "kalk_doks", hRec, 1, "FULL" )
       RETURN DE_REFRESH
 
    CASE Ch == K_CTRL_P

@@ -398,7 +398,7 @@ FUNCTION StaviMPCSif( nCijena, lUpit )
    LOCAL lAzuriraj
    LOCAL lRet := .F.
    LOCAL lIsteCijene
-   LOCAL _rec
+   LOCAL hRec
 
    IF lUpit == nil
       lUpit := .F.
@@ -444,10 +444,10 @@ FUNCTION StaviMPCSif( nCijena, lUpit )
    IF lAzuriraj
       PushWA()
       SELECT ROBA
-      _rec := dbf_get_rec()
-      _rec[ cMpc ] := nCijena
+      hRec := dbf_get_rec()
+      hRec[ cMpc ] := nCijena
 
-      update_rec_server_and_dbf( Alias(), _rec, 1, "FULL" )
+      update_rec_server_and_dbf( Alias(), hRec, 1, "FULL" )
 
       PopWa()
       lRet := .T.

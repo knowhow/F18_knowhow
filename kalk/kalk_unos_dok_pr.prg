@@ -260,7 +260,7 @@ FUNCTION kalk_pripr_napuni_sirovine_za( nRbr, _idroba, _kolicina )
 
    LOCAL nRbr100
    LOCAL nKolS, nKolZN, nC1, nC2, dDatNab
-   LOCAL _rec
+   LOCAL hRec
 
    SELECT ROBA
    HSEEK _idroba
@@ -320,9 +320,9 @@ FUNCTION kalk_pripr_napuni_sirovine_za( nRbr, _idroba, _kolicina )
       IF _kolicina >= 0 .OR. Round( _NC, 3 ) == 0 .AND. !( roba->tip $ "UT" )
 
          SELECT roba
-         _rec := dbf_get_rec()
-         _rec[ "nc" ] := _nc
-         update_rec_server_and_dbf( Alias(), _rec, 1, "FULL" ) // nafiluj sifarnik robe sa nc sirovina, robe
+         hRec := dbf_get_rec()
+         hRec[ "nc" ] := _nc
+         update_rec_server_and_dbf( Alias(), hRec, 1, "FULL" ) // nafiluj sifarnik robe sa nc sirovina, robe
 
       ENDIF
 

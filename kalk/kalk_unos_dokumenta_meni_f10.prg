@@ -219,26 +219,26 @@ STATIC FUNCTION kalk_dokument_prenos_cijena()
       DO WHILE !Eof()
 
          _update := .T.
-         _rec := dbf_get_rec()
+         hRec := dbf_get_rec()
 
          SELECT roba
-         HSEEK _rec[ "idroba" ]
+         HSEEK hRec[ "idroba" ]
 
          IF !Found()
-            MsgBeep( "Nepostojeća šifra artikla " + _rec[ "idroba" ] )
+            MsgBeep( "Nepostojeća šifra artikla " + hRec[ "idroba" ] )
             SELECT kalk_pripr
             SKIP
             LOOP
          ENDIF
 
          SELECT kalk_pripr
-         _rec[ "mpcsapp" ] := kalk_get_mpc_by_koncij_pravilo()
+         hRec[ "mpcsapp" ] := kalk_get_mpc_by_koncij_pravilo()
 
-         IF Round( _rec[ "mpcsapp" ], 2 ) <= 0
-            MsgBeep( "Artikal " + _rec[ "idroba" ] + " cijena <= 0 !"  )
+         IF Round( hRec[ "mpcsapp" ], 2 ) <= 0
+            MsgBeep( "Artikal " + hRec[ "idroba" ] + " cijena <= 0 !"  )
          ENDIF
 
-         dbf_update_rec( _rec )
+         dbf_update_rec( hRec )
 
          SKIP
 

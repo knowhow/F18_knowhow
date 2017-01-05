@@ -23,7 +23,7 @@ FUNCTION kalk_azuriranje_tabele_pripr9()
    LOCAL cIdvd
    LOCAL cBrDok
    LOCAL _a_pripr
-   LOCAL _i, _rec, _scan
+   LOCAL _i, hRec, _scan
    LOCAL _id_firma, _id_vd, _br_dok
 
    o_kalk_pripr9()
@@ -61,12 +61,12 @@ FUNCTION kalk_azuriranje_tabele_pripr9()
 
          DO WHILE !Eof() .AND. field->idfirma + field->idvd + field->brdok == _id_firma + _id_vd + _br_dok
 
-            _rec := dbf_get_rec()
+            hRec := dbf_get_rec()
 
             SELECT kalk_pripr9
             APPEND BLANK
 
-            dbf_update_rec( _rec )
+            dbf_update_rec( hRec )
 
             SELECT kalk_pripr
             SKIP
@@ -91,7 +91,7 @@ FUNCTION kalk_azuriranje_tabele_pripr9()
 FUNCTION kalk_povrat_dokumenta_iz_pripr9( cIdFirma, cIdVd, cBrDok )
 
    LOCAL nRec
-   LOCAL _rec
+   LOCAL hRec
 
    lSilent := .T.
 

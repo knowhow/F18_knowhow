@@ -327,9 +327,9 @@ STATIC FUNCTION kalk_get_2_10( x_kord, cIdPartner )
       IF ( roba->mpc == 0 .OR. roba->mpc <> Round( _mpcsapp, 2 ) ) .AND. Pitanje(, "Staviti MPC u sifrarnik" ) == "D"
 
          SELECT roba
-         _rec := dbf_get_rec()
-         _rec[ "mpc" ] := _mpcsapp
-         update_rec_server_and_dbf( Alias(), _rec, 1, "FULL" )
+         hRec := dbf_get_rec()
+         hRec[ "mpc" ] := _mpcsapp
+         update_rec_server_and_dbf( Alias(), hRec, 1, "FULL" )
 
          SELECT kalk_pripr
 

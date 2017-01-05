@@ -16,7 +16,7 @@
 FUNCTION kalk_povrat_dokumenta()
 
    LOCAL lBrisiKumulativ
-   LOCAL _rec
+   LOCAL hRec
    LOCAL _id_firma
    LOCAL _id_vd
    LOCAL _br_dok
@@ -153,11 +153,11 @@ STATIC FUNCTION otvori_kalk_tabele_za_povrat()
 STATIC FUNCTION brisi_dokument_iz_tabele_doks( cIdFirma, cIdVd, cBrDok )
 
    LOCAL lOk := .T.
-   LOCAL _rec
+   LOCAL hRec
 
    IF find_kalk_doks_by_broj_dokumenta( cIdFirma, cIdVd, cBrDok )
-      _rec := dbf_get_rec()
-      lOk := delete_rec_server_and_dbf( "kalk_doks", _rec, 1, "CONT" )
+      hRec := dbf_get_rec()
+      lOk := delete_rec_server_and_dbf( "kalk_doks", hRec, 1, "CONT" )
    ENDIF
 
    RETURN lOk
@@ -167,11 +167,11 @@ STATIC FUNCTION brisi_dokument_iz_tabele_doks( cIdFirma, cIdVd, cBrDok )
 STATIC FUNCTION brisi_dokument_iz_tabele_doks2( cIdFirma, cIdVd, cBrDok )
 
    LOCAL lOk := .T.
-   LOCAL _rec
+   LOCAL hRec
 
    IF find_kalk_doks2_by_broj_dokumenta( cIdFirma, cIdVd, cBrDok )
-      _rec := dbf_get_rec()
-      lOk := delete_rec_server_and_dbf( "kalk_doks2", _rec, 1, "CONT" )
+      hRec := dbf_get_rec()
+      lOk := delete_rec_server_and_dbf( "kalk_doks2", hRec, 1, "CONT" )
    ENDIF
 
    RETURN lOk
@@ -181,11 +181,11 @@ STATIC FUNCTION brisi_dokument_iz_tabele_doks2( cIdFirma, cIdVd, cBrDok )
 STATIC FUNCTION brisi_dokument_iz_tabele_kalk( cIdFirma, cIdVd, cBrDok )
 
    LOCAL lOk := .T.
-   LOCAL _rec
+   LOCAL hRec
 
    IF find_kalk_by_broj_dokumenta( cIdFirma, cIdVd, cBrDok )
-      _rec := dbf_get_rec()
-      lOk := delete_rec_server_and_dbf( "kalk_kalk", _rec, 2, "CONT" )
+      hRec := dbf_get_rec()
+      lOk := delete_rec_server_and_dbf( "kalk_kalk", hRec, 2, "CONT" )
    ENDIF
 
    RETURN lOk
@@ -196,7 +196,7 @@ STATIC FUNCTION brisi_dokument_iz_tabele_kalk( cIdFirma, cIdVd, cBrDok )
 
 STATIC FUNCTION kalk_kopiraj_dokument_u_tabelu_pripreme( cFirma, cIdVd, cBroj )
 
-   LOCAL _rec
+   LOCAL hRec
 
    find_kalk_by_broj_dokumenta( cFirma, cIdVd, cBroj )
 
@@ -205,13 +205,13 @@ STATIC FUNCTION kalk_kopiraj_dokument_u_tabelu_pripreme( cFirma, cIdVd, cBroj )
    DO WHILE !Eof() .AND. cFirma == field->IdFirma .AND. cIdVd == field->IdVD .AND. cBroj == field->BrDok
 
       SELECT kalk
-      _rec := dbf_get_rec()
+      hRec := dbf_get_rec()
       SELECT kalk_pripr
 
-      IF ! ( _rec[ "idvd" ] $ "97" .AND. _rec[ "tbanktr" ] == "X" )
+      IF ! ( hRec[ "idvd" ] $ "97" .AND. hRec[ "tbanktr" ] == "X" )
          APPEND ncnl
-         _rec[ "error" ] := ""
-         dbf_update_rec( _rec )
+         hRec[ "error" ] := ""
+         dbf_update_rec( hRec )
       ENDIF
 
       SELECT kalk
@@ -236,7 +236,7 @@ STATIC FUNCTION kalk_povrat_prema_kriteriju()
    LOCAL lBrisiKumulativ := .F.
    LOCAL _filter
    LOCAL _id_firma := self_organizacija_id()
-   LOCAL _rec
+   LOCAL hRec
    LOCAL _del_rec
    LOCAL _hAttrId, oAttr, __firma, __idvd, __brdok
    LOCAL lOk := .T.
@@ -292,15 +292,15 @@ STATIC FUNCTION kalk_povrat_prema_kriteriju()
          __idvd := field->idvd
          __brdok := field->brdok
 
-         _rec := dbf_get_rec()
+         hRec := dbf_get_rec()
 
          SELECT kalk_pripr
 
-         IF ! ( _rec[ "idvd" ] $ "97" .AND. _rec[ "tbanktr" ] == "X" )
+         IF ! ( hRec[ "idvd" ] $ "97" .AND. hRec[ "tbanktr" ] == "X" )
 
             APPEND ncnl
-            _rec[ "error" ] := ""
-            dbf_update_rec( _rec )
+            hRec[ "error" ] := ""
+            dbf_update_rec( hRec )
 
             _hAttrId := hb_Hash()
             _hAttrId[ "idfirma" ] := __firma
@@ -419,7 +419,7 @@ STATIC FUNCTION povrat_najnovije_kalkulacije()
    LOCAL cBrsm
    LOCAL fbof
    LOCAL nVraceno := 0
-   LOCAL _rec, _del_rec
+   LOCAL hRec, _del_rec
    LOCAL lOk := .T.
 
    otvori_kalk_tabele_za_povrat()
@@ -462,36 +462,36 @@ STATIC FUNCTION povrat_najnovije_kalkulacije()
 
          SELECT kalk
 
-         _rec := dbf_get_rec()
+         hRec := dbf_get_rec()
 
-         IF !( _rec[ "tbanktr" ] == "X" )
+         IF !( hRec[ "tbanktr" ] == "X" )
 
             SELECT kalk_pripr
             APPEND BLANK
 
-            _rec[ "error" ] := ""
-            dbf_update_rec( _rec )
+            hRec[ "error" ] := ""
+            dbf_update_rec( hRec )
 
             nVraceno ++
 
-         ELSEIF _rec[ "tbanktr" ] == "X" .AND. ( _rec[ "mu_i" ] == "5" .OR. _rec[ "pu_i" ] == "5" )
+         ELSEIF hRec[ "tbanktr" ] == "X" .AND. ( hRec[ "mu_i" ] == "5" .OR. hRec[ "pu_i" ] == "5" )
 
             SELECT kalk_pripr
 
-            IF rbr <> _rec[ "rbr" ] .OR. ( idfirma + idvd + brdok ) <> _rec[ "idfirma" ] + _rec[ "idvd" ] + _rec[ "brdok" ]
+            IF rbr <> hRec[ "rbr" ] .OR. ( idfirma + idvd + brdok ) <> hRec[ "idfirma" ] + hRec[ "idvd" ] + hRec[ "brdok" ]
                nVraceno++
                APPEND BLANK
-               _rec[ "error" ] := ""
+               hRec[ "error" ] := ""
             ELSE
-               _rec[ "kolicinai" ] += kalk_pripr->kolicina
+               hRec[ "kolicinai" ] += kalk_pripr->kolicina
             ENDIF
 
-            _rec[ "error" ] := ""
-            _rec[ "tbanktr" ] := ""
+            hRec[ "error" ] := ""
+            hRec[ "tbanktr" ] := ""
 
-            dbf_update_rec( _rec )
+            dbf_update_rec( hRec )
 
-         ELSEIF _rec[ "tbanktr" ] == "X" .AND. ( _rec[ "mu_i" ] == "3" .OR. _rec[ "pu_i" ] == "3" )
+         ELSEIF hRec[ "tbanktr" ] == "X" .AND. ( hRec[ "mu_i" ] == "3" .OR. hRec[ "pu_i" ] == "3" )
             IF cBrSm <> ( cBrSm := idfirma + "-" + idvd + "-" + brdok )
                Beep( 1 )
                Msg( "Dokument: " + cbrsm + " je izgenerisan,te je izbrisan bespovratno" )

@@ -357,41 +357,41 @@ STATIC FUNCTION kalk_fin_stanje_add_to_r_export( id_firma, id_tip_dok, broj_dok,
       tr_bank, tr_sped, tr_carina, tr_zavisni )
 
    LOCAL _t_area := Select()
-   LOCAL _rec
+   LOCAL hRec
 
    O_R_EXP
 
    APPEND BLANK
 
-   _rec := hb_Hash()
-   _rec[ "idfirma" ] := id_firma
-   _rec[ "idvd" ] := id_tip_dok
-   _rec[ "brdok" ] := broj_dok
-   _rec[ "datum" ] := datum_dok
-   _rec[ "vr_dok" ] := vrsta_dok
-   _rec[ "idpartner" ] := id_partner
-   _rec[ "part_naz" ] := part_naz
-   _rec[ "part_mj" ] := part_mjesto
-   _rec[ "part_ptt" ] := part_ptt
-   _rec[ "part_adr" ] := part_adr
-   _rec[ "br_fakt" ] := broj_fakture
-   _rec[ "nv_dug" ] := n_v_dug
-   _rec[ "nv_pot" ] := n_v_pot
-   _rec[ "nv_saldo" ] := n_v_saldo
-   _rec[ "vp_dug" ] := v_p_dug
-   _rec[ "vp_pot" ] := v_p_pot
-   _rec[ "vp_saldo" ] := v_p_saldo
-   _rec[ "vp_rabat" ] := v_p_rabat
-   _rec[ "marza" ] := marza
-   _rec[ "marza2" ] := marza_2
-   _rec[ "t_prevoz" ] := tr_prevoz
-   _rec[ "t_prevoz2" ] := tr_prevoz_2
-   _rec[ "t_bank" ] := tr_bank
-   _rec[ "t_sped" ] := tr_sped
-   _rec[ "t_cardaz" ] := tr_carina
-   _rec[ "t_zav" ] := tr_zavisni
+   hRec := hb_Hash()
+   hRec[ "idfirma" ] := id_firma
+   hRec[ "idvd" ] := id_tip_dok
+   hRec[ "brdok" ] := broj_dok
+   hRec[ "datum" ] := datum_dok
+   hRec[ "vr_dok" ] := vrsta_dok
+   hRec[ "idpartner" ] := id_partner
+   hRec[ "part_naz" ] := part_naz
+   hRec[ "part_mj" ] := part_mjesto
+   hRec[ "part_ptt" ] := part_ptt
+   hRec[ "part_adr" ] := part_adr
+   hRec[ "br_fakt" ] := broj_fakture
+   hRec[ "nv_dug" ] := n_v_dug
+   hRec[ "nv_pot" ] := n_v_pot
+   hRec[ "nv_saldo" ] := n_v_saldo
+   hRec[ "vp_dug" ] := v_p_dug
+   hRec[ "vp_pot" ] := v_p_pot
+   hRec[ "vp_saldo" ] := v_p_saldo
+   hRec[ "vp_rabat" ] := v_p_rabat
+   hRec[ "marza" ] := marza
+   hRec[ "marza2" ] := marza_2
+   hRec[ "t_prevoz" ] := tr_prevoz
+   hRec[ "t_prevoz2" ] := tr_prevoz_2
+   hRec[ "t_bank" ] := tr_bank
+   hRec[ "t_sped" ] := tr_sped
+   hRec[ "t_cardaz" ] := tr_carina
+   hRec[ "t_zav" ] := tr_zavisni
 
-   dbf_update_rec( _rec )
+   dbf_update_rec( hRec )
 
    SELECT ( _t_area )
 

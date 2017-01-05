@@ -792,7 +792,7 @@ FUNCTION DatVal()
 
    LOCAL _uvecaj := 15
 
-   // LOCAL _rec
+   // LOCAL hRec
    LOCAL nRokPartner
 
    PRIVATE GetList := {}
@@ -849,21 +849,21 @@ FUNCTION DatVal()
 /*
       IF !find_kalk_doks2_by_broj_dokumenta( finmat->idfirma, finmat->idvd, finmat->brdok )
          APPEND BLANK // ovo se moze desiti ako je neko mjenjao dokumenta u KALK
-         _rec := dbf_get_rec()
-         _rec[ "idfirma" ] := finmat->idfirma
-         _rec[ "idvd" ] := finmat->idvd
-         _rec[ "brdok" ] := finmat->brdok
+         hRec := dbf_get_rec()
+         hRec[ "idfirma" ] := finmat->idfirma
+         hRec[ "idvd" ] := finmat->idvd
+         hRec[ "brdok" ] := finmat->brdok
       ELSE
-         _rec := dbf_get_rec()
+         hRec := dbf_get_rec()
       ENDIF
 
-      _rec[ "datval" ] := dDatVal
+      hRec[ "datval" ] := dDatVal
 
       IF lVrsteP
-         _rec[ "k2" ] := cIdVrsteP
+         hRec[ "k2" ] := cIdVrsteP
       ENDIF
 
-      update_rec_server_and_dbf( "kalk_doks2", _rec, 1, "FULL" )
+      update_rec_server_and_dbf( "kalk_doks2", hRec, 1, "FULL" )
 
 */
 

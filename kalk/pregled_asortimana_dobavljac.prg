@@ -207,19 +207,19 @@ STATIC FUNCTION _izdvoji_ulaze( vars )
       SELECT r_export
       APPEND BLANK
 
-      _rec := dbf_get_rec()
+      hRec := dbf_get_rec()
 
-      _rec[ "idpartner" ] := _dob
-      _rec[ "idkonto" ] := oRow:FieldGet( oRow:FieldPos( "pkonto" ) )
-      _rec[ "idroba" ] := PadR( oRow:FieldGet( oRow:FieldPos( "idroba" ) ), 10 )
-      _rec[ "barkod" ] := PadR( oRow:FieldGet( oRow:FieldPos( "barkod" ) ), 13 )
-      _rec[ "naziv" ] := oRow:FieldGet( oRow:FieldPos( "robanaz" ) )
-      _rec[ "tarifa" ] := oRow:FieldGet( oRow:FieldPos( "idtarifa" ) )
-      _rec[ "jmj" ] := oRow:FieldGet( oRow:FieldPos( "jmj" ) )
-      _rec[ "ulaz" ] := oRow:FieldGet( oRow:FieldPos( "ulaz" ) )
-      _rec[ "stanje" ] := ( _rec[ "ulaz" ] - _rec[ "izlaz" ] )
+      hRec[ "idpartner" ] := _dob
+      hRec[ "idkonto" ] := oRow:FieldGet( oRow:FieldPos( "pkonto" ) )
+      hRec[ "idroba" ] := PadR( oRow:FieldGet( oRow:FieldPos( "idroba" ) ), 10 )
+      hRec[ "barkod" ] := PadR( oRow:FieldGet( oRow:FieldPos( "barkod" ) ), 13 )
+      hRec[ "naziv" ] := oRow:FieldGet( oRow:FieldPos( "robanaz" ) )
+      hRec[ "tarifa" ] := oRow:FieldGet( oRow:FieldPos( "idtarifa" ) )
+      hRec[ "jmj" ] := oRow:FieldGet( oRow:FieldPos( "jmj" ) )
+      hRec[ "ulaz" ] := oRow:FieldGet( oRow:FieldPos( "ulaz" ) )
+      hRec[ "stanje" ] := ( hRec[ "ulaz" ] - hRec[ "izlaz" ] )
 
-      dbf_update_rec( _rec )
+      dbf_update_rec( hRec )
 
    NEXT
 
@@ -307,10 +307,10 @@ STATIC FUNCTION _izdvoji_prodaju( vars )
 
          ++ _cnt
 
-         _rec := dbf_get_rec()
-         _rec[ "izlaz" ] := oRow:FieldGet( oRow:FieldPos( "izlaz" ) )
-         _rec[ "stanje" ] := ( _rec[ "ulaz" ] - _rec[ "izlaz" ]  )
-         dbf_update_rec( _rec )
+         hRec := dbf_get_rec()
+         hRec[ "izlaz" ] := oRow:FieldGet( oRow:FieldPos( "izlaz" ) )
+         hRec[ "stanje" ] := ( hRec[ "ulaz" ] - hRec[ "izlaz" ]  )
+         dbf_update_rec( hRec )
 
       ENDIF
 

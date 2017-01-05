@@ -368,7 +368,7 @@ FUNCTION PratiKMag( cIdFirma, cIdKonto, cIdRoba )
 FUNCTION ObSetVPC( nNovaVrijednost )
 
    LOCAL nArr := Select()
-   LOCAL _rec
+   LOCAL hRec
    PRIVATE cPom := "VPC"
 
    IF koncij->naz == "P2"
@@ -380,11 +380,11 @@ FUNCTION ObSetVPC( nNovaVrijednost )
    ENDIF
 
    SELECT roba
-   _rec := dbf_get_rec()
+   hRec := dbf_get_rec()
 
-   _rec[ Lower( cPom ) ] := nNovaVrijednost
+   hRec[ Lower( cPom ) ] := nNovaVrijednost
 
-   update_rec_server_and_dbf( "roba", _rec, 1, "FULL" )
+   update_rec_server_and_dbf( "roba", hRec, 1, "FULL" )
 
    SELECT ( nArr )
 
@@ -715,10 +715,10 @@ FUNCTION V_RabatV()
          READ
 
          SELECT roba
-         _rec := dbf_get_rec()
+         hRec := dbf_get_rec()
 
-         _rec[ Lower( cPom ) ] := _vpc
-         update_rec_server_and_dbf( "roba", _rec, 1, "FULL" )
+         hRec[ Lower( cPom ) ] := _vpc
+         update_rec_server_and_dbf( "roba", hRec, 1, "FULL" )
 
          SELECT kalk_pripr
          BoxC()

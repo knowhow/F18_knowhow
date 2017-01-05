@@ -23,8 +23,7 @@ FUNCTION kalk_get_1_ip()
 
    _datfaktp := _datdok
 
-   @ m_x + _x, m_y + 2 SAY "Konto koji zaduzuje" GET _IdKonto ;
-      VALID P_Konto( @_IdKonto, _x, 35 ) PICT "@!"
+   @ m_x + _x, m_y + 2 SAY "Konto koji zaduzuje" GET _IdKonto  VALID P_Konto( @_IdKonto, _x, 35 ) PICT "@!"
 
    // IF gNW <> "X"
    // @ m_x + _x, m_y + 35 SAY "Zaduzuje: " GET _idzaduz PICT "@!" ;
@@ -118,11 +117,11 @@ FUNCTION kalk_generisi_ip()
    Box(, 4, 50 )
 
    cIdFirma := self_organizacija_id()
-   cIdkonto := PadR( "1320", 7 )
+   cIdkonto := PadR( "1330", 7 )
    dDatDok := Date()
    cNulirati := "N"
 
-   @ m_x + 1, m_Y + 2 SAY "Prodavnica:" GET  cidkonto VALID P_Konto( @cidkonto )
+   @ m_x + 1, m_Y + 2 SAY "Prodavnica:" GET  cIdkonto VALID P_Konto( @cIdkonto )
    @ m_x + 2, m_Y + 2 SAY "Datum     :  " GET  dDatDok
    @ m_x + 3, m_Y + 2 SAY "Nulirati lager (D/N)" GET cNulirati VALID cNulirati $ "DN" PICT "@!"
 
@@ -200,27 +199,30 @@ FUNCTION kalk_generisi_ip()
          SKIP
       ENDDO
 
-      IF ( Round( nulaz - nizlaz, 4 ) <> 0 ) .OR. ( Round( nmpvu - nmpvi, 4 ) <> 0 )
+      IF ( Round( nUlaz - nIzlaz, 4 ) <> 0 ) .OR. ( Round( nMpvu - nMpvi, 4 ) <> 0 )
          SELECT roba
          HSEEK cidroba
          SELECT kalk_pripr
          scatter()
          APPEND ncnl
-         _idfirma := cidfirma; _idkonto := cidkonto; _pkonto := cidkonto; _pu_i := "I"
-         _idroba := cidroba; _idtarifa := roba->idtarifa
-         _idvd := "IP"; _brdok := cbrdok
+         _idfirma := cIdfirma; _idkonto := cIdkonto; _pkonto := cIdkonto; _pu_i := "I"
+         _idroba := cIdroba
+         _idtarifa := roba->idtarifa
+         _idvd := "IP"
+         _brdok := cbrdok
 
-         _rbr := RedniBroj( ++nrbr )
+         _rbr := RedniBroj( ++nRbr )
          _kolicina := _gkolicina := nUlaz - nIzlaz
          IF cNulirati == "D"
             _kolicina := 0
          ENDIF
          _datdok := _DatFaktP := ddatdok
          _ERROR := ""
-         _fcj := nmpvu - nmpvi // stanje mpvsapp
-         IF Round( nulaz - nizlaz, 4 ) <> 0
-            _mpcsapp := Round( ( nMPVU - nMPVI ) / ( nulaz - nizlaz ), 3 )
-            _nc := Round( ( nnvu - nnvi ) / ( nulaz - nizlaz ), 3 )
+
+         _fcj := nMpvu - nMpvi // stanje mpvsapp
+         IF Round( nUlaz - nIzlaz, 4 ) <> 0
+            _mpcsapp := Round( ( nMPVU - nMPVI ) / ( nUlaz - nIzlaz ), 3 )
+            _nc := Round( ( nNvu - nNvi ) / ( nUlaz - nIzlaz ), 3 )
          ELSE
             _mpcsapp := 0
          ENDIF
@@ -234,7 +236,7 @@ FUNCTION kalk_generisi_ip()
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
 
 // ---------------------------------------------------------------------------
@@ -320,19 +322,20 @@ FUNCTION kalk_ip_roba( id_konto, id_roba, dat_dok, kolicina, nc, fc, mpcsapp )
 
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 
-// --------------------------------------------------------------------------
+/* --------------------------------------------------------------------------
 // generacija inventure - razlike postojece inventure
 // postojeca inventura se kopira u pomocnu tabelu i sluzi kao usporedba
 // svi artikli koji se nadju unutar ove inventure ce biti preskoceni
 // i zanemareni u novoj inventuri
-// --------------------------------------------------------------------------
+*/
+
 FUNCTION gen_ip_razlika()
 
-   LOCAL _rec
+   LOCAL hRec
    LOCAL nUlaz
    LOCAL nIzlaz
    LOCAL nMPVU
@@ -362,14 +365,14 @@ FUNCTION gen_ip_razlika()
    BoxC()
 
    IF Pitanje(, "Generisati inventuru (D/N)", "D" ) == "N"
-      RETURN
+      RETURN .F.
    ENDIF
 
    MsgO( "kopiram postojecu inventuru ... " )
 
    // prvo izvuci postojecu inventuru u PRIPT
    // ona ce sluziti za usporedbu...
-   IF !kalk_copy_kalk_u_pript( cIdFirma, cIdVd, cOldBrDok )
+   IF !kalk_copy_kalk_azuriran_u_pript( cIdFirma, cIdVd, cOldBrDok )
       MsgC()
       RETURN .F.
    ENDIF
@@ -484,42 +487,42 @@ FUNCTION gen_ip_razlika()
          SELECT kalk_pripr
          APPEND BLANK
 
-         _rec := dbf_get_rec()
+         hRec := dbf_get_rec()
 
-         _rec[ "idfirma" ] := cIdfirma
-         _rec[ "idkonto" ] := cIdkonto
-         _rec[ "mkonto" ] := ""
-         _rec[ "pkonto" ] := cIdkonto
-         _rec[ "mu_i" ] := ""
-         _rec[ "pu_i" ] := "I"
-         _rec[ "idroba" ] := cIdroba
-         _rec[ "idtarifa" ] := roba->idtarifa
-         _rec[ "idvd" ] := "IP"
-         _rec[ "brdok" ] := cBrdok
-         _rec[ "rbr" ] := RedniBroj( ++nRbr )
+         hRec[ "idfirma" ] := cIdfirma
+         hRec[ "idkonto" ] := cIdkonto
+         hRec[ "mkonto" ] := ""
+         hRec[ "pkonto" ] := cIdkonto
+         hRec[ "mu_i" ] := ""
+         hRec[ "pu_i" ] := "I"
+         hRec[ "idroba" ] := cIdroba
+         hRec[ "idtarifa" ] := roba->idtarifa
+         hRec[ "idvd" ] := "IP"
+         hRec[ "brdok" ] := cBrdok
+         hRec[ "rbr" ] := RedniBroj( ++nRbr )
 
          // kolicinu odmah setuj na 0
-         _rec[ "kolicina" ] := 0
+         hRec[ "kolicina" ] := 0
 
          // popisana kolicina je trenutno stanje
-         _rec[ "gkolicina" ] := nUlaz - nIzlaz
+         hRec[ "gkolicina" ] := nUlaz - nIzlaz
 
-         _rec[ "datdok" ] := dDatDok
-         _rec[ "datfaktp" ] := dDatdok
+         hRec[ "datdok" ] := dDatDok
+         hRec[ "datfaktp" ] := dDatdok
 
-         _rec[ "error" ] := ""
-         _rec[ "fcj" ] := nMpvu - nMpvi
+         hRec[ "error" ] := ""
+         hRec[ "fcj" ] := nMpvu - nMpvi
 
          // stanje mpvsapp
          IF Round( nUlaz - nIzlaz, 4 ) <> 0
             // treba li ovo zaokruzivati ????
-            _rec[ "mpcsapp" ] := Round( ( nMPVU - nMPVI ) / ( nUlaz - nIzlaz ), 3 )
-            _rec[ "nc" ] := Round( ( nNvu - nNvi ) / ( nUlaz - nIzlaz ), 3 )
+            hRec[ "mpcsapp" ] := Round( ( nMPVU - nMPVI ) / ( nUlaz - nIzlaz ), 3 )
+            hRec[ "nc" ] := Round( ( nNvu - nNvi ) / ( nUlaz - nIzlaz ), 3 )
          ELSE
-            _rec[ "mpcsapp" ] := 0
+            hRec[ "mpcsapp" ] := 0
          ENDIF
 
-         dbf_update_rec( _rec )
+         dbf_update_rec( hRec )
 
          @ m_x + 2, m_y + 2 SAY "Broj stavki: " + PadR( AllTrim( Str( ++_cnt, 12, 0 ) ), 20 )
          @ m_x + 3, m_y + 2 SAY "    Artikal: " + PadR( AllTrim( cIdroba ), 20 )

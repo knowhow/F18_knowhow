@@ -967,7 +967,7 @@ FUNCTION kopiraj_set_cijena()
    LOCAL _set_from := " "
    LOCAL _set_to := "1"
    LOCAL _tip := "M"
-   LOCAL _tmp1, _tmp2, _rec
+   LOCAL _tmp1, _tmp2, hRec
    LOCAL _tmp, _count, _i
 
    SET CURSOR ON
@@ -1015,15 +1015,15 @@ FUNCTION kopiraj_set_cijena()
    DO WHILE !Eof()
 
       ++_i
-      _rec := dbf_get_rec()
+      hRec := dbf_get_rec()
       // kopiraj cijenu...
-      _rec[ _tmp2 ] := _rec[ _tmp1 ]
+      hRec[ _tmp2 ] := hRec[ _tmp1 ]
 
       _tmp := AllTrim( Str( _i, 12 ) ) + "/" + AllTrim( Str( _count, 12 ) )
 
       @ m_x + 1, m_y + 2 SAY PadR( "odradio: " + _tmp, 60 )
 
-      update_rec_server_and_dbf( "roba", _rec, 1, "FULL" )
+      update_rec_server_and_dbf( "roba", hRec, 1, "FULL" )
 
       SKIP
 
@@ -1034,42 +1034,6 @@ FUNCTION kopiraj_set_cijena()
    RETURN .T.
 
 
-
-
-// kopiraj stavke u pript tabelu iz KALK
-
-FUNCTION kalk_copy_kalk_u_pript( cIdFirma, cIdVd, cBrDok )
-
-   // kreiraj pript
-   cre_kalk_priprt()
-
-   o_kalk_pript()
-   o_kalk()
-
-   find_kalk_by_broj_dokumenta( cIdFirma, cIDVd, cBrDok )
-   GO TOP
-   //SELECT kalk
-   //SET ORDER TO TAG "1"
-
-   //HSEEK cIdFirma + cIdVd + cBrDok
-
-   IF Found()
-      MsgO( "Kopiram dokument u pript..." )
-      DO WHILE !Eof()  // .AND. ( kalk->( idfirma + idvd + brdok ) == cIdFirma + cIdVd + cBrDok )
-         Scatter()
-         SELECT pript
-         APPEND BLANK
-         Gather()
-         SELECT kalk
-         SKIP
-      ENDDO
-      MsgC()
-   ELSE
-      MsgBeep( "Dokument " + cIdFirma + "-" + cIdVd + "-" + AllTrim( cBrDok ) + " ne postoji !" )
-      RETURN .F.
-   ENDIF
-
-   RETURN .T.
 
 
 

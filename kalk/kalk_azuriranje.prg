@@ -22,7 +22,6 @@ FUNCTION kalk_azuriranje_dokumenta( lAuto, lStampaj )
 
    // LOCAL lBrStDoks := .F.
 
-altd()
    IF ( lAuto == nil )
       lAuto := .F.
    ENDIF
@@ -113,7 +112,7 @@ altd()
 STATIC FUNCTION kalk_vrati_iz_pripr2()
 
    LOCAL lPrebaci := .F.
-   LOCAL _rec
+   LOCAL hRec
 
    o_kalk_pripr()
    o_kalk_pripr2()
@@ -174,10 +173,10 @@ STATIC FUNCTION kalk_vrati_iz_pripr2()
       SELECT kalk_pripr2
       DO WHILE !Eof()
 
-         _rec := dbf_get_rec()
+         hRec := dbf_get_rec()
          SELECT kalk_pripr
          APPEND BLANK
-         dbf_update_rec( _rec )
+         dbf_update_rec( hRec )
          SELECT kalk_pripr2
          SKIP
 

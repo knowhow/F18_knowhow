@@ -17,7 +17,7 @@
 // ---------------------------------------------------------------------
 FUNCTION kalk_nivelacija_11()
 
-   LOCAL _sufix, _rec
+   LOCAL _sufix, hRec
 
    O_TARIFA
    o_koncij()
@@ -52,15 +52,15 @@ FUNCTION kalk_nivelacija_11()
 
    DO WHILE !Eof() .AND. cIdFirma == idfirma .AND. cIdvd == idvd .AND. cBrdok == brdok
 
-      _rec := dbf_get_rec()
+      hRec := dbf_get_rec()
 
       scatter()
 
       SELECT koncij
-      SEEK Trim( _rec[ "idkonto" ] )
+      SEEK Trim( hRec[ "idkonto" ] )
 
       SELECT roba
-      HSEEK _rec[ "idroba" ]
+      HSEEK hRec[ "idroba" ]
 
       SELECT tarifa
       HSEEK roba->idtarifa
@@ -71,11 +71,11 @@ FUNCTION kalk_nivelacija_11()
       nMPC := kalk_get_mpc_by_koncij_pravilo()
 
       IF dozvoljeno_azuriranje_sumnjivih_stavki()
-         kalk_fakticka_mpc( @nMPC, _rec[ "idfirma" ], _rec[ "pkonto" ], _rec[ "idroba" ] )
+         kalk_fakticka_mpc( @nMPC, hRec[ "idfirma" ], hRec[ "pkonto" ], hRec[ "idroba" ] )
          SELECT kalk_pripr
       ENDIF
 
-      IF _rec[ "mpcsapp" ] <> nMPC // izvrsiti nivelaciju
+      IF hRec[ "mpcsapp" ] <> nMPC // izvrsiti nivelaciju
 
          IF !fNivelacija
             // prva stavka za nivelaciju
@@ -86,23 +86,23 @@ FUNCTION kalk_nivelacija_11()
          PRIVATE nKolZn := nKols := nc1 := nc2 := 0
          PRIVATE dDatNab := CToD( "" )
 
-         kalk_get_nabavna_prod( _rec[ "idfirma" ], _rec[ "idroba" ], _rec[ "idkonto" ], @nKolS, @nKolZN, @nc1, @nc2, @dDatNab )
+         kalk_get_nabavna_prod( hRec[ "idfirma" ], hRec[ "idroba" ], hRec[ "idkonto" ], @nKolS, @nKolZN, @nc1, @nc2, @dDatNab )
 
-         IF dDatNab > _rec[ "datdok" ]
+         IF dDatNab > hRec[ "datdok" ]
             Beep( 1 )
             Msg( "Datum nabavke je " + DToC( dDatNab ), 4 )
-            _rec[ "error" ] := "1"
+            hRec[ "error" ] := "1"
          ENDIF
 
          SELECT kalk_pripr2
          // append blank
 
-         _rec[ "idpartner" ] := ""
-         _rec[ "vpc" ] := 0
-         _rec[ "gkolicina" ] := 0
-         _rec[ "gkolicin2" ] := 0
-         _rec[ "marza2" ] := 0
-         _rec[ "tmarza2" ] := "A"
+         hRec[ "idpartner" ] := ""
+         hRec[ "vpc" ] := 0
+         hRec[ "gkolicina" ] := 0
+         hRec[ "gkolicin2" ] := 0
+         hRec[ "marza2" ] := 0
+         hRec[ "tmarza2" ] := "A"
 
          PRIVATE cOsn := "2", nStCj := nNCJ := 0
 
@@ -110,41 +110,41 @@ FUNCTION kalk_nivelacija_11()
 
          nNCJ := kalk_pripr->MPCSaPP
 
-         _rec[ "mpcsapp" ] := nNCj - nStCj
-         _rec[ "mpc" ] := 0
-         _rec[ "fcj" ] := nStCj
+         hRec[ "mpcsapp" ] := nNCj - nStCj
+         hRec[ "mpc" ] := 0
+         hRec[ "fcj" ] := nStCj
 
-         IF _rec[ "mpc" ] <> 0
-            _rec[ "mpcsapp" ] := ( 1 + tarifa->opp / 100 ) * _rec[ "mpc" ] * ( 1 + tarifa->ppp / 100 )
+         IF hRec[ "mpc" ] <> 0
+            hRec[ "mpcsapp" ] := ( 1 + tarifa->opp / 100 ) * hRec[ "mpc" ] * ( 1 + tarifa->ppp / 100 )
          ELSE
-            _rec[ "mpc" ] := _rec[ "mpcsapp" ] / ( 1 + tarifa->opp / 100 ) / ( 1 + tarifa->ppp / 100 )
+            hRec[ "mpc" ] := hRec[ "mpcsapp" ] / ( 1 + tarifa->opp / 100 ) / ( 1 + tarifa->ppp / 100 )
          ENDIF
 
          IF cPromCj == "D"
             SELECT koncij
-            SEEK Trim( _rec[ "idkonto" ] )
+            SEEK Trim( hRec[ "idkonto" ] )
             SELECT roba
-            StaviMPCSif( _rec[ "fcj" ] + _rec[ "mpcsapp" ] )
+            StaviMPCSif( hRec[ "fcj" ] + hRec[ "mpcsapp" ] )
          ENDIF
 
          SELECT kalk_pripr2
 
-         _rec[ "pkonto" ] := _rec[ "idkonto" ]
-         _rec[ "pu_i" ] := "3"
-         _rec[ "mkonto" ] := ""
-         _rec[ "mu_i" ] := ""
+         hRec[ "pkonto" ] := hRec[ "idkonto" ]
+         hRec[ "pu_i" ] := "3"
+         hRec[ "mkonto" ] := ""
+         hRec[ "mu_i" ] := ""
 
-         _rec[ "kolicina" ] := nKolS
-         _rec[ "brdok" ] := cBrniv
-         _rec[ "idvd" ] := "19"
+         hRec[ "kolicina" ] := nKolS
+         hRec[ "brdok" ] := cBrniv
+         hRec[ "idvd" ] := "19"
 
-         _rec[ "tbanktr" ] := "X"
-         _rec[ "error" ] := ""
+         hRec[ "tbanktr" ] := "X"
+         hRec[ "error" ] := ""
 
-         IF Round( _rec[ "kolicina" ], 3 ) <> 0
+         IF Round( hRec[ "kolicina" ], 3 ) <> 0
             APPEND ncnl
-            _rec[ "rbr" ] := Str( ++nRbr, 3 )
-            dbf_update_rec( _rec )
+            hRec[ "rbr" ] := Str( ++nRbr, 3 )
+            dbf_update_rec( hRec )
          ENDIF
 
       ENDIF

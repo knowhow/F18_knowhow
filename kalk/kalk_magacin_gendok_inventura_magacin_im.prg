@@ -190,13 +190,16 @@ FUNCTION kalk_generacija_inventura_magacin_im()
 
 
 
-FUNCTION kalk_generisanje_inventure_razlike_magacin_im()
+FUNCTION kalk_generisanje_inventure_razlike_postojeca_magacin_im()
+
+   LOCAL cIdFirma, cIdKonto, dDatDok, cArtikli, cPosition, cOldBrDok
+   LOCAL cIdRoba, cCijenaTIP, cIdVd, cBrDok
 
    O_KONTO
 
    Box(, 8, 70 )
    cIdFirma := self_organizacija_id()
-   cIdKonto := PadR( "1310", gDuzKonto )
+   cIdKonto := PadR( "1320", gDuzKonto )
    dDatDok := Date()
    cArtikli := Space( 30 )
    cPosition := "2"
@@ -208,19 +211,21 @@ FUNCTION kalk_generisanje_inventure_razlike_magacin_im()
    @ m_x + 4, m_Y + 2 SAY "(prazno-sve):" GET cArtikli
    @ m_x + 5, m_Y + 2 SAY "(Grupacija broj mjesta) :" GET cPosition
    @ m_x + 6, m_Y + 2 SAY "Cijene (1-VPC, 2-NC) :" GET cCijenaTIP VALID cCijenaTIP $ "12"
-   @ m_x + 8, m_Y + 2 SAY "Na osnovu dokumenta " + cIdFirma + "-IM" GET cOldBrDok
+   @ m_x + 8, m_Y + 2 SAY "Na osnovu dokumenta " + cIdFirma + "-IM" GET cOldBrDok ;
+      VALID {|| cOldBrDok := kalk_fix_brdok( cOldBrDok ), .T. }
+
    READ
    ESC_BCR
    BoxC()
 
    IF Pitanje(, "Generisati inventuru magacina (D/N)", "D" ) == "N"
-      RETURN
+      RETURN .F.
    ENDIF
 
    cIdVd := "IM"
 
-   // kopiraj postojecu IM u pript
-   IF !kalk_copy_kalk_u_pript( cIdFirma, cIdVd, cOldBrDok )
+   AltD()
+   IF !kalk_copy_kalk_azuriran_u_pript( cIdFirma, cIdVd, cOldBrDok )  // kopiraj postojecu IM u pript
       RETURN .F.
    ENDIF
 
@@ -234,7 +239,7 @@ FUNCTION kalk_generisanje_inventure_razlike_magacin_im()
    // o_kalk_doks()
    // o_kalk()
 
-   PRIVATE cBrDok := kalk_get_next_broj_v5( cIdFirma, "IM", NIL )
+   cBrDok := kalk_get_next_broj_v5( cIdFirma, "IM", NIL )
 
 
    nRbr := 0
@@ -245,8 +250,9 @@ FUNCTION kalk_generisanje_inventure_razlike_magacin_im()
    SELECT koncij
    SEEK Trim( cIdKonto )
 
-
+   MsgO( "Preuzimanje podataka sa servera: " + cIdFirma + "-" + cIdKonto )
    find_kalk_by_mkonto_idroba( cIdFirma, cIdKonto )
+   MsgC()
 
    DO WHILE !Eof() .AND. cIdFirma + cIdKonto == field->idfirma + field->mkonto
 
@@ -255,7 +261,6 @@ FUNCTION kalk_generisanje_inventure_razlike_magacin_im()
       SELECT pript
       SET ORDER TO TAG "2"
       HSEEK cIdFirma + cIdVd + cOldBrDok + cIdRoba
-
 
       IF Found() // ako sam nasao prekoci ovaj zapis
          SELECT kalk
@@ -277,6 +282,7 @@ FUNCTION kalk_generisanje_inventure_razlike_magacin_im()
       nNVU := 0
       nNVI := 0
       nRabat := 0
+
       DO WHILE !Eof() .AND. cIdFirma + cIdKonto + cIdRoba == idFirma + mkonto + idroba
          IF dDatdok < field->datdok
             SKIP
@@ -307,6 +313,7 @@ FUNCTION kalk_generisanje_inventure_razlike_magacin_im()
    my_close_all_dbf()
 
    RETURN .T.
+
 
 
 

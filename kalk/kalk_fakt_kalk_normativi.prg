@@ -643,9 +643,9 @@ FUNCTION PrenosNo2()
          HSEEK kalk_pripr->idroba
 
          IF Found()
-            _rec := dbf_get_rec()
-            _rec[ "nc" ] := kalk_pripr->fcj
-            update_rec_server_and_dbf( "roba", _rec, 1, "FULL" )
+            hRec := dbf_get_rec()
+            hRec[ "nc" ] := kalk_pripr->fcj
+            update_rec_server_and_dbf( "roba", hRec, 1, "FULL" )
          ENDIF
 
          SELECT kalk_pripr

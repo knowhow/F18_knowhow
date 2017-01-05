@@ -111,9 +111,9 @@ FUNCTION kalk_get_1_18()
    IF gMPCPomoc == "D"
       IF ( roba->mpc == 0 .OR. roba->mpc <> Round( _mpcpom, 2 ) ) .AND. Round( _mpcpom, 2 ) <> 0 .AND. Pitanje(, "Staviti MPC u sifrarnik" ) == "D"
          SELECT roba
-         _rec := dbf_get_rec()
-         _rec[ "mpc" ] := _mpcpom
-         update_rec_server_and_dbf( Alias(), _rec, 1, "FULL" )
+         hRec := dbf_get_rec()
+         hRec[ "mpc" ] := _mpcpom
+         update_rec_server_and_dbf( Alias(), hRec, 1, "FULL" )
          SELECT kalk_pripr
       ENDIF
    ENDIF

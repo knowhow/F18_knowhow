@@ -376,7 +376,7 @@ FUNCTION kalk_sufiks_brdok( cIdKonto )
 FUNCTION kalk_set_broj_dokumenta()
 
    LOCAL _broj_dokumenta
-   LOCAL _t_rec, _rec
+   LOCAL _t_rec, hRec
    LOCAL _firma, _td, _null_brdok
    LOCAL _konto := ""
 
@@ -411,9 +411,9 @@ FUNCTION kalk_set_broj_dokumenta()
       SKIP -1
 
       IF field->idfirma == _firma .AND. field->idvd == _td .AND. field->brdok == _null_brdok
-         _rec := dbf_get_rec()
-         _rec[ "brdok" ] := _broj_dokumenta
-         dbf_update_rec( _rec )
+         hRec := dbf_get_rec()
+         hRec[ "brdok" ] := _broj_dokumenta
+         dbf_update_rec( hRec )
       ENDIF
 
       GO ( _t_rec )

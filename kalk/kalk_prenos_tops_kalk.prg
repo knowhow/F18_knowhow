@@ -71,7 +71,7 @@ STATIC FUNCTION tops_kalk_import_meni()
 
    aProdajnaMjesta := get_sva_prodajna_mjesta_iz_koncij()
 
-   lStampaj := ( Pitanje( NIL,"Želite li štampati kalk dokumente?", "D" ) == "D" )
+   lStampaj := ( Pitanje( NIL, "Želite li štampati kalk dokumente?", "D" ) == "D" )
 
    IF Len( aProdajnaMjesta ) == 0
       MsgBeep( "U tabeli koncij nisu definisana prodajna mjesta !" ) // imamo problem, nema prodajnih mjesta
@@ -153,12 +153,13 @@ STATIC FUNCTION tops_kalk_import_meni()
 FUNCTION tops_kalk_fill_kalk_pripr( cTopskaImeDbf ) // , lAutoRazduzenje )
 
    LOCAL cBrKalk, cIdVdPos
-   LOCAL _r_br, _n_rbr
+   LOCAL cRedniBroj, nRedniBroj
    LOCAL cBrDok, cIdKontoProdavnica
    LOCAL _bk_tmp
    LOCAL _app_rec
-   LOCAL aRobaReportData := {}
-   LOCAL _count := 0
+
+   // LOCAL aRobaReportData := {}
+   LOCAL nCount := 0
 
    // LOCAL _razd_type := "1"
 
@@ -185,8 +186,8 @@ FUNCTION tops_kalk_fill_kalk_pripr( cTopskaImeDbf ) // , lAutoRazduzenje )
       RETURN .F.
    ENDIF
 
-   SELECT topska
-   GO TOP
+   //SELECT topska
+   //GO TOP
 
    // nacin zamjene barkod-ova
    // 0 - ne mjenjaj
@@ -213,32 +214,55 @@ FUNCTION tops_kalk_fill_kalk_pripr( cTopskaImeDbf ) // , lAutoRazduzenje )
    ENDIF
 */
 
-   _r_br := "0"
+   cRedniBroj := "0"
 
    MsgO( "Prenos stavki POS -> KALK priprema ..." )
 
+   SELECT roba
+   SET ORDER TO TAG "ID"
+
+   SELECT topska
+   GO TOP
+   DO WHILE !Eof()
+
+      SELECT roba
+      SEEK topska->idroba
+      IF !Found()
+         MsgBeep( "artikal " + topska->idroba + " ne postoji u KALK roba ?!#STOP operacije!" )
+         my_close_all_dbf()
+         RETURN .F.
+      ENDIF
+      SELECT topska
+      SKIP
+
+   ENDDO
+
+
+   SELECT TOPSKA
+   GO TOP
    DO WHILE !Eof()
 
       // cBrDok := cBrKalk
       cIdKontoProdavnica := koncij->id
 
-      _n_rbr := RbrUNum( _r_br ) + 1
-      _r_br := RedniBroj( _n_rbr )
+      nRedniBroj := RbrUNum( cRedniBroj ) + 1
+      cRedniBroj := RedniBroj( nRedniBroj )
 
+/*
       // provjeri da li roba postoji u sifarniku, ako ne postoji dodaj, dodati u kontrolnu matricu ove informacije
-
-      tops_kalk_import_roba( @aRobaReportData, AllTrim( koncij->naz ) )
+      tops_kalk_import_roba( AllTrim( koncij->naz ) )
+*/
 
       IF ( cIdVdPos == "42" .OR. cIdVdPos == "12" )
 
          // IF lAutoRazduzenje == "D" .AND. _razd_type == "2"
-         // tops_kalk_import_row_11( cBrDok, cIdKontoProdavnica, cIdKontoMagacin, _r_br )
+         // tops_kalk_import_row_11( cBrDok, cIdKontoProdavnica, cIdKontoMagacin, cRedniBroj )
          // ELSE
-         tops_kalk_import_row_42( cBrKalk, cIdKontoProdavnica, _r_br )
+         tops_kalk_import_row_42( cBrKalk, cIdKontoProdavnica, cRedniBroj )
          // ENDIF
 
       ELSEIF ( cIdVdPos == "IN" )
-         tops_kalk_import_row_ip( cBrKalk, cIdKontoProdavnica, _r_br )  // inventura
+         tops_kalk_import_row_ip( cBrKalk, cIdKontoProdavnica, cRedniBroj )  // inventura
 
       ENDIF
 
@@ -261,7 +285,7 @@ FUNCTION tops_kalk_fill_kalk_pripr( cTopskaImeDbf ) // , lAutoRazduzenje )
       ENDIF
 */
 
-      ++ _count
+      ++nCount
       SELECT topska
       SKIP
 
@@ -272,7 +296,7 @@ FUNCTION tops_kalk_fill_kalk_pripr( cTopskaImeDbf ) // , lAutoRazduzenje )
    my_close_all_dbf()
    // tops_kalk_show_report_roba( aRobaReportData )  // prikazi report o razlikama cijena pos-kalk
 
-   IF ( _count > 0 ) // .AND. lAutoRazduzenje == "N"
+   IF ( nCount > 0 ) // .AND. lAutoRazduzenje == "N"
       IF FErase( cTopskaImeDbf ) == -1 // pobrisi fajlove
          MsgBeep( "Problem sa brisanjem fajla !" )
       ENDIF
@@ -451,7 +475,7 @@ STATIC FUNCTION kalk_tops_get_parametri_prenosa( params )
 STATIC FUNCTION tops_kalk_get_magacinski_konto()
 
    LOCAL _konto := PadR( "1320", 7 )
-   LOCAL _t_area := Select()
+   LOCAL nDbfArea := Select()
 
    O_KONTO
    SELECT konto
@@ -461,7 +485,7 @@ STATIC FUNCTION tops_kalk_get_magacinski_konto()
    READ
    BoxC()
 
-   SELECT ( _t_area )
+   SELECT ( nDbfArea )
 
    RETURN _konto
 
@@ -504,22 +528,24 @@ STATIC FUNCTION tops_kalk_show_report_roba( aReportData )
 
 */
 
+/*
+STATIC FUNCTION tops_kalk_import_roba( cTipMpc )
 
-STATIC FUNCTION tops_kalk_import_roba( aRobaImportReport, cTipMpc, lUpdateRoba )
-
-   LOCAL _t_area := Select()
-   LOCAL hRec, _mpc_naz
+   LOCAL nDbfArea := Select()
+   LOCAL hRec, cMpcNaziv
 
    IF topska->( FieldPos( "robanaz" ) ) == 0  // ako nema ovog polja, nista ne radi !
+      MsgBepp( "tposka->robanaz nedostaje, import se nece izvršiti" )
       RETURN .F.
    ENDIF
 
-   IF lUpdateRoba == NIL
-      lUpdateRoba := .F.
-   ENDIF
+   // IF lUpdateRoba == NIL
+   // lUpdateRoba := .F.
+   // ENDIF
 
    SELECT roba
    HSEEK topska->idroba
+
 
    IF !Found()
 
@@ -535,39 +561,38 @@ STATIC FUNCTION tops_kalk_import_roba( aRobaImportReport, cTipMpc, lUpdateRoba )
       IF AllTrim( cTipMpc ) == "M1" .OR. Empty( cTipMpc )
          hRec[ "mpc" ] := topska->mpc
       ELSE
-         _mpc_naz := StrTran( cTipMpc, "M", "mpc" ) // M3 -> mpc3
-         hRec[ _mpc_naz ] := topska->mpc
+         cMpcNaziv := StrTran( cTipMpc, "M", "mpc" ) // M3 -> mpc3
+         hRec[ cMpcNaziv ] := topska->mpc
       ENDIF
 
       update_rec_server_and_dbf( "roba", hRec, 1, "FULL" )
-      AAdd( aRobaImportReport, { topska->idroba, topska->robanaz, topska->mpc, 0 } ) // dodaj u kontrolnu matricu
+      //AAdd( aRobaImportReport, { topska->idroba, topska->robanaz, topska->mpc, 0 } ) // dodaj u kontrolnu matricu
 
    ELSE
 
-      hRec := dbf_get_rec()
-
+      hRec := dbf_get_rec() //roba
       IF AllTrim( cTipMpc ) == "M1" .OR. Empty( cTipMpc )
-         _mpc_naz := "mpc"
+         cMpcNaziv := "mpc"
       ELSE
-         _mpc_naz := StrTran( cTipMpc, "M", "mpc" ) // M3 -> mpc3
+         cMpcNaziv := StrTran( cTipMpc, "M", "mpc" ) // M3 -> mpc3
       ENDIF
 
-      IF Round( hRec[ _mpc_naz ], 2 ) <> Round( topska->mpc, 2 )
+      IF Round( hRec[ cMpcNaziv ], 2 ) <> Round( topska->mpc, 2 )
 
-         AAdd( aRobaImportReport, { topska->idroba, topska->robanaz, topska->mpc, hRec[ _mpc_naz ] } )
-         hRec[ _mpc_naz ] := topska->mpc
-
-         IF lUpdateRoba
-            update_rec_server_and_dbf( "roba", hRec, 1, "FULL" )
-         ENDIF
+         //AAdd( aRobaImportReport, { topska->idroba, topska->robanaz, topska->mpc, hRec[ cMpcNaziv ] } )
+         hRec[ cMpcNaziv ] := topska->mpc  // hRec[ "mpc2" ] := topska->mpc
+         //IF lUpdateRoba
+          //  update_rec_server_and_dbf( "roba", hRec, 1, "FULL" )
+         //ENDIF
 
       ENDIF
 
    ENDIF
 
-   SELECT ( _t_area )
+   SELECT ( nDbfArea )
 
    RETURN .T.
+*/
 
 
 /*
@@ -577,7 +602,7 @@ STATIC FUNCTION tops_kalk_import_roba( aRobaImportReport, cTipMpc, lUpdateRoba )
 STATIC FUNCTION tops_kalk_import_row_ip( cBrDok, cIdKontoProdavnica, r_br )
 
    LOCAL _tip_dok := "IP"
-   LOCAL _t_area := Select()
+   LOCAL nDbfArea := Select()
    LOCAL _kolicina := 0
    LOCAL _nc := 0
    LOCAL _fc := 0
@@ -637,7 +662,7 @@ STATIC FUNCTION tops_kalk_import_row_ip( cBrDok, cIdKontoProdavnica, r_br )
 
    my_unlock()
 
-   SELECT ( _t_area )
+   SELECT ( nDbfArea )
 
    RETURN .T.
 
@@ -646,7 +671,7 @@ STATIC FUNCTION tops_kalk_import_row_ip( cBrDok, cIdKontoProdavnica, r_br )
 STATIC FUNCTION tops_kalk_import_row_11( cBrDok, cIdKontoProdavnica, cIdKontoMagacin, r_br )
 
    LOCAL _tip_dok := "11"
-   LOCAL _t_area := Select()
+   LOCAL nDbfArea := Select()
 
    IF ( topska->kolicina == 0 )
       RETURN .F.
@@ -675,7 +700,7 @@ STATIC FUNCTION tops_kalk_import_row_11( cBrDok, cIdKontoProdavnica, cIdKontoMag
 
    my_unlock()
 
-   SELECT ( _t_area )
+   SELECT ( nDbfArea )
 
    RETURN .T.
 */
@@ -683,7 +708,7 @@ STATIC FUNCTION tops_kalk_import_row_11( cBrDok, cIdKontoProdavnica, cIdKontoMag
 
 STATIC FUNCTION tops_kalk_import_row_42( cBrDok, cIdKontoProdavnica, r_br )
 
-   LOCAL _t_area := Select()
+   LOCAL nDbfArea := Select()
    LOCAL _opp
 
    IF ( topska->kolicina == 0 )
@@ -715,7 +740,6 @@ STATIC FUNCTION tops_kalk_import_row_42( cBrDok, cIdKontoProdavnica, r_br )
 
    IF Round( topska->stmpc, 2 ) <> 0
       IF _opp > 0
-
          REPLACE field->rabatv with ( topska->stmpc / ( 1 + ( _opp / 100 ) ) )  // izbijamo PDV iz ove stavke ako je tarifa PDV17
       ELSE
          REPLACE field->rabatv WITH topska->stmpc // tarifa nije PDV17
@@ -724,7 +748,7 @@ STATIC FUNCTION tops_kalk_import_row_42( cBrDok, cIdKontoProdavnica, r_br )
 
    my_unlock()
 
-   SELECT ( _t_area )
+   SELECT ( nDbfArea )
 
    RETURN .T.
 

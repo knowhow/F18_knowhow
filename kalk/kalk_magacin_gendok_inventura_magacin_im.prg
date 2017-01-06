@@ -57,15 +57,13 @@ FUNCTION kalk_generacija_inventura_magacin_im()
       @ m_x + 5, m_Y + 2 SAY "(Grupacija broj mjesta) :" GET cPosition
       @ m_x + 6, m_Y + 2 SAY "Cijene (1-VPC, 2-NC) :" GET cCijenaTIP VALID cCijenaTIP $ "12"
       @ m_x + 7, m_y + 2 SAY8 "sortirati po šifri dobavljača :" GET cSRSort VALID cSRSort $ "DN" PICT "@!"
-      @ m_x + 8, m_y + 2 SAY "generisati stavke sa stanjem 0 (D/N)" GET cNule ;
-         PICT "@!" VALID cNule $ "DN"
+      @ m_x + 8, m_y + 2 SAY "generisati stavke sa stanjem 0 (D/N)" GET cNule PICT "@!" VALID cNule $ "DN"
       READ
       ESC_BCR
       BoxC()
    ENDIF
 
    o_koncij()
-
 
    IF lOsvjezi
       PRIVATE cBrDok := kalk_pripr->brdok
@@ -116,7 +114,6 @@ FUNCTION kalk_generacija_inventura_magacin_im()
          IF cCijenaTIP == "2"
             RowNC( @nNVU, @nNVI )
          ENDIF
-
          RowKolicina( @nUlaz, @nIzlaz )
 
          SKIP

@@ -355,7 +355,7 @@ STATIC FUNCTION kalk_imp_from_temp_to_pript( aFExist, lFSkip, lNegative )// , cC
       // ENDIF
 
       IF ( cFakt <> cPredhodniFaktDokument ) // .OR. (cTDok == "11" .AND. (cIdProdajnoMjesto <> cPredhodnoProdMjesto) )
-         ++ nUvecaj
+         ++nUvecaj
          cBrojKalk := kalk_imp_get_next_temp_broj( nUvecaj )
          nRbr := 0
          AAdd( aPom, { cTDok, cBrojKalk, cFakt } )
@@ -425,7 +425,7 @@ STATIC FUNCTION kalk_imp_from_temp_to_pript( aFExist, lFSkip, lNegative )// , cC
       cPredhodniTipDokumenta := cTDok
       cPredhodnoProdMjesto := cIdProdajnoMjesto
 
-      ++ nCnt
+      ++nCnt
       SELECT kalk_imp_temp
       SKIP
 
@@ -633,7 +633,7 @@ FUNCTION kalk_imp_obradi_sve_dokumente_iz_pript( nPocniOd, lStampaj, lOstaviBrdo
 
          SELECT pript
          SKIP
-         ++ nStCnt
+         ++nStCnt
 
          nPTRec := RecNo()
 
@@ -818,7 +818,7 @@ STATIC FUNCTION kalk_imp_check_partn_roba_exist()
    LOCAL lSifDob := .T.
 
    aPomPart := kalk_imp_partn_exist()
-   aPomRoba  := kalk_imp_roba_exist( lSifDob )
+   aPomRoba  := kalk_imp_roba_exist_sifradob( lSifDob )
 
    IF ( Len( aPomPart ) > 0 .OR. Len( aPomRoba ) > 0 )
 
@@ -895,11 +895,9 @@ FUNCTION kalk_imp_partn_exist( lPartNaz )
  lSifraDob - pretraga po sifri dobavljaca
 */
 
-FUNCTION kalk_imp_roba_exist( lSifraDob )
+FUNCTION kalk_imp_roba_exist_sifradob()
 
-   IF lSifraDob == nil
-      lSifraDob := .F.
-   ENDIF
+   LOCAL aRet, cTmpRoba, nRes, cNazRoba
 
    O_ROBA
    SELECT kalk_imp_temp
@@ -909,11 +907,11 @@ FUNCTION kalk_imp_roba_exist( lSifraDob )
 
    DO WHILE !Eof()
 
-      IF lSifraDob == .T.
-         cTmpRoba := PadL( AllTrim( kalk_imp_temp->idroba ), 5, "0" )
-      ELSE
-         cTmpRoba := AllTrim( kalk_imp_temp->idroba )
-      ENDIF
+      // IF lSifraDob == .T.
+      cTmpRoba := PadL( AllTrim( kalk_imp_temp->idroba ), 5, "0" )
+      // ELSE
+      // cTmpRoba := AllTrim( kalk_imp_temp->idroba )
+      // ENDIF
 
       cNazRoba := ""
 
@@ -924,13 +922,12 @@ FUNCTION kalk_imp_roba_exist( lSifraDob )
 
       SELECT roba
 
-      IF lSifraDob == .T.
-         SET ORDER TO TAG "ID_VSD"
-      ENDIF
+      // IF lSifraDob == .T.
+      SET ORDER TO TAG "ID_VSD"
+      // ENDIF
 
       GO TOP
       SEEK cTmpRoba
-
 
       IF !Found() // ako nisi nasao dodaj robu u matricu
          nRes := AScan( aRet, {| aVal| aVal[ 1 ] == cTmpRoba } )

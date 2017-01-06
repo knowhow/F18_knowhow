@@ -39,7 +39,7 @@ FUNCTION kalk_get_1_ip()
    kalk_pripr_form_get_roba( @_idRoba, @_idTarifa, _IdVd, kalk_is_novi_dokument(), m_x + _x, m_y + 2, @aPorezi )
 
 
-   @ m_x + _x, m_y + ( MAXCOLS() - 20 ) SAY "Tarifa:" GET _idtarifa WHEN gPromTar == "N" VALID P_Tarifa( @_idtarifa )
+   @ m_x + _x, m_y + ( MAXCOLS() -20 ) SAY "Tarifa:" GET _idtarifa WHEN gPromTar == "N" VALID P_Tarifa( @_idtarifa )
 
    READ
 
@@ -49,22 +49,30 @@ FUNCTION kalk_get_1_ip()
       _idroba := Left( _idroba, 10 )
    ENDIF
 
+/*
    // proracunava knjizno stanje robe na prodavnici
    // kada je dokument prenesen iz tops-a onda ovo ne bi trebalo da radi
-   IF !Empty( kalk_metoda_nc() ) .AND. _nc = 0 .AND. _mpcsapp = 0
-      knjizst()
+   IF !Empty( kalk_metoda_nc() ) .AND. _nc == 0 .AND. _mpcsapp == 0
+      knjizno_stanje_prodavnica()
    ENDIF
+*/
 
    SELECT tarifa
    HSEEK _idtarifa
+
+   SELECT ROBA
+   SET ORDER TO TAG "ID"
+   SEEK _idroba
+   
+   _mpcsapp := kalk_get_mpc_by_koncij_pravilo( _IdKonto )
 
    SELECT kalk_pripr
 
 
    // DuplRoba()
 
-   ++ _x
-   ++ _x
+   ++_x
+   ++_x
 
    @ m_x + _x, m_y + 2 SAY PadL( "KNJIZNA KOLICINA:", _left ) GET _gkolicina PICT PicKol  ;
       WHEN {|| iif( kalk_metoda_nc() == " ", .T., .F. ) }
@@ -75,12 +83,12 @@ FUNCTION kalk_get_1_ip()
    _tmp := "P.CIJENA (SA PDV):"
 
 
-   ++ _x
-   ++ _x
+   ++_x
+   ++_x
    @ m_x + _x, m_y + 2 SAY PadL( "NABAVNA CIJENA:", _left ) GET _nc PICT picdem
 
-   ++ _x
-   ++ _x
+   ++_x
+   ++_x
    @ m_x + _x, m_y + 2 SAY PadL( _tmp, _left ) GET _mpcsapp PICT picdem
 
    READ

@@ -356,7 +356,9 @@ FUNCTION kalk_fakticka_mpc( nMPC, cIdFirma, cPKonto, cIdRoba, dDatum )
 
 
 
-
+/*
+   mora biti pozicioniran na zapis u roba
+*/
 FUNCTION kalk_get_mpc_by_koncij_pravilo( cIdKonto )
 
    LOCAL nCV := 0, cRule

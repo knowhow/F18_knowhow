@@ -290,11 +290,11 @@ FUNCTION MMarza2()
 
 
 
-/* KnjizSt()
+/* knjizno_stanje_prodavnica()
  *     Proracun knjiznog stanja za zadanu robu i prodavnicu
- */
 
-FUNCTION KnjizSt()
+
+FUNCTION knjizno_stanje_prodavnica()
 
    LOCAL nUlaz := nIzlaz := 0
    LOCAL nMPVU := nMPVI := nNVU := nNVI := 0
@@ -375,7 +375,9 @@ FUNCTION KnjizSt()
 
    SELECT kalk_pripr
 
-   RETURN
+   RETURN .T.
+*/
+
 
 // -------------------------------------------------
 // brisanje pripreme od do

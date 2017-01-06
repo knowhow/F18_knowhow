@@ -18,24 +18,25 @@ FUNCTION prenos_fakt_kalk_prodavnica()
    PRIVATE Opc := {}
    PRIVATE opcexe := {}
 
-   AAdd( Opc, "1. fakt->kalk (13->11) otpremnica maloprodaje        " )
+   AAdd( Opc, "1. fakt 13 -> kalk 11 otpremnica maloprodaje        " )
    AAdd( opcexe, {||  fakt_13_kalk_11() } )
 
-   AAdd( Opc, "2. fakt->kalk (11->41) racun maloprodaje" )
+   AAdd( Opc, "2. fakt 11 -> kalk 41 racun maloprodaje" )
    AAdd( opcexe, {||  fakt_11_kalk_41()  } )
 
-   AAdd( Opc, "3. fakt->kalk (11->42) paragon" )
+   AAdd( Opc, "3. fakt 11 -> kalk 42 paragon" )
    AAdd( opcexe, {||  fakt_11_kalk_42()  } )
 
-   AAdd( Opc, "4. fakt->kalk (11->11) zaduzenje diskonta" )
+   AAdd( Opc, "4. fakt 11 -> kalk 11 zaduzenje diskonta" )
    AAdd( opcexe, {||  fakt_11_kalk_prenos_11()  } )
 
-   AAdd( Opc, "5. fakt->kalk (01->81) doprema u prod" )
+   AAdd( Opc, "5. fakt 01 -> kalk 81 doprema u prod" )
    AAdd( opcexe, {||  fakt_01_kalk_81() } )
-   AAdd( Opc, "6. fakt->kalk (13->80) prenos iz cmag. u prodavnicu" )
+   
+   AAdd( Opc, "6. fakt 13 -> kalk 80 prenos iz cmag. u prodavnicu" )
    AAdd( opcexe, {||  fakt_13_kalk_80()  } )
-   AAdd( Opc, "7. fakt->kalk (15->15) izlaz iz MP putem VP" )
-   AAdd( opcexe, {||  fakt_15_kalk_15() } )
+   //AAdd( Opc, "7. fakt 15 -> kalk 15 izlaz iz MP putem VP" )
+   //AAdd( opcexe, {||  fakt_15_kalk_15() } )
    PRIVATE Izbor := 1
    f18_menu_sa_priv_vars_opc_opcexe_izbor( "fkpr" )
    my_close_all_dbf()
@@ -984,7 +985,7 @@ FUNCTION fakt_13_kalk_80()
 
 /*
  *     Izlaz iz MP putem VP, FAKT15->KALK15
- */
+
 
 FUNCTION fakt_15_kalk_15()
 
@@ -1158,7 +1159,7 @@ FUNCTION fakt_15_kalk_15()
 
    RETURN .T.
 
-
+ */
 
 
 /*
@@ -1217,13 +1218,10 @@ FUNCTION fakt_11_kalk_42()
 
       ++ nX
       @ m_x + nX, m_y + 2 SAY "Konto razduzuje:" GET cIdKonto ;
-         PICT "@!" ;
-         VALID P_Konto( @cIdKonto )
+         PICT "@!"  VALID P_Konto( @cIdKonto )
 
       IF _auto_razd == 1
-         @ m_x + nX, Col() + 1 SAY "zaduzuje:" GET cIdKtoZad ;
-            PICT "@!" ;
-            VALID P_Konto( @cIdKtoZad )
+         @ m_x + nX, Col() + 1 SAY "zaduzuje:" GET cIdKtoZad  PICT "@!" VALID P_Konto( @cIdKtoZad )
       ENDIF
 
       // IF gNW <> "X"
@@ -1236,16 +1234,12 @@ FUNCTION fakt_11_kalk_42()
       ++ nX
 
       @ m_x + nX, m_y + 2 SAY "Napraviti zbirnu kalkulaciju (D/N): " ;
-         GET _zbirni_prenos ;
-         VALID _zbirni_prenos $ "DN" ;
-         PICT "@!"
+         GET _zbirni_prenos  VALID _zbirni_prenos $ "DN"  PICT "@!"
 
       ++ nX
 
       @ m_x + nX, m_y + 2 SAY "Razdvoji artikle razlicitih cijena (D/N): " ;
-         GET _razl_cijene ;
-         VALID _razl_cijene $ "DN" ;
-         PICT "@!"
+         GET _razl_cijene VALID _razl_cijene $ "DN"  PICT "@!"
 
       READ
 
@@ -1312,7 +1306,7 @@ FUNCTION fakt_11_kalk_42()
 
             SELECT fakt
             IF !ProvjeriSif( "!eof() .and. '" + cFaktFirma + cIdTipDok + cBrDok + "'==IdFirma+IdTipDok+BrDok", "IDROBA", F_ROBA )
-               MsgBeep( "U ovom dokumentu nalaze se sifre koje ne postoje u tekucem sifrarniku!#Prenos nije izvrsen!" )
+               MsgBeep( "U ovom dokumentu nalaze se sifre koje ne postoje u tekucem sifarniku!#Prenos nije izvrsen!" )
                LOOP
             ENDIF
 

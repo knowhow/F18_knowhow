@@ -816,13 +816,15 @@ STATIC FUNCTION kalk_imp_check_broj_fakture_exist( aFakt )
 
 STATIC FUNCTION kalk_imp_check_partn_roba_exist()
 
-   LOCAL aPomPart, aPomRoba
+   LOCAL aPomPart := {}, aPomRoba := {}
 
    aPomPart := kalk_imp_partn_exist()
-   aPomRoba  := kalk_imp_roba_exist_sifradob()
+
+   IF Len( aPomPart )  == 0
+      aPomRoba := kalk_imp_roba_exist_sifradob()
+   ENDIF
 
    IF ( Len( aPomPart ) > 0 .OR. Len( aPomRoba ) > 0 )
-
 
       start_print_editor()
 
@@ -855,17 +857,13 @@ STATIC FUNCTION kalk_imp_check_partn_roba_exist()
 
 
 
-FUNCTION kalk_imp_partn_exist( lPartNaz )
+FUNCTION kalk_imp_partn_exist()
 
-   LOCAL aRet
+   LOCAL aRet, nCount := 0
 
    O_PARTN
    SELECT kalk_imp_temp
    GO TOP
-
-   IF lPartNaz == NIL
-      lPartNaz := .F.
-   ENDIF
 
    aRet := {}
 
@@ -873,20 +871,21 @@ FUNCTION kalk_imp_partn_exist( lPartNaz )
       RETURN aRet
    ENDIF
 
+   Box( "#Sifra partnera provjera", 3, 50 )
+
    DO WHILE !Eof()
       SELECT partn
       GO TOP
       SEEK kalk_imp_temp->idpartner
+      ++nCount
+      @ m_x + 1, m_y + 2 SAY Str( nCount, 5 ) + " : " + kalk_imp_temp->idpartner
       IF !Found()
-         IF lPartNaz
-            AAdd( aRet, { kalk_imp_temp->idpartner, kalk_imp_temp->naz } )
-         ELSE
-            AAdd( aRet, { kalk_imp_temp->idpartner } )
-         ENDIF
+         AAdd( aRet, { kalk_imp_temp->idpartner } )
       ENDIF
       SELECT kalk_imp_temp
       SKIP
    ENDDO
+   BoxC()
 
    RETURN aRet
 
@@ -898,18 +897,25 @@ FUNCTION kalk_imp_partn_exist( lPartNaz )
 
 FUNCTION kalk_imp_roba_exist_sifradob()
 
-   LOCAL aRet, cIdRobaSifraDobavljaca, nRes, cNazRoba
+   LOCAL aRet, cIdRobaSifraDobavljaca, nRes, cNazRoba, nCount := 0
 
-   O_ROBA
+   // O_ROBA
    SELECT kalk_imp_temp
    GO TOP
 
    aRet := {}
 
+   Box( "#Sifra roba (sifradob) provjera", 3, 50 )
+
    DO WHILE !Eof()
+
+      ++nCount
 
       // IF lSifraDob == .T.
       cIdRobaSifraDobavljaca := PadL( AllTrim( kalk_imp_temp->idroba ), 5, "0" )
+
+      @ m_x + 1, m_y + 2 SAY Str( nCount, 5 ) + " : " + cIdRobaSifraDobavljaca
+
       // ELSE
       // cIdRobaSifraDobavljaca := AllTrim( kalk_imp_temp->idroba )
       // ENDIF
@@ -932,16 +938,19 @@ FUNCTION kalk_imp_roba_exist_sifradob()
 */
 
 
-      IF !find_roba_by_sifradob( cIdRobaSifraDobavljaca )
+      IF !find_roba_by_sifradob( cIdRobaSifraDobavljaca, .T. )
          nRes := AScan( aRet, {| aVal| aVal[ 1 ] == cIdRobaSifraDobavljaca } )
          IF nRes == 0
             AAdd( aRet, { cIdRobaSifraDobavljaca, cNazRoba } )
          ENDIF
       ENDIF
 
+
       SELECT kalk_imp_temp
       SKIP
    ENDDO
+
+   BoxC()
 
    RETURN aRet
 

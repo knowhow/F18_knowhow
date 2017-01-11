@@ -35,17 +35,22 @@ FUNCTION find_roba_by_sifradob( cIdSifraDob, cOrderBy, cWhere )
    RETURN ! Eof()
 
 
-FUNCTION find_roba_by_id( cId, cOrderBy, cWhere )
+FUNCTION find_roba_by_id( cId, lCheckOnly, cWhere )
 
    LOCAL hParams := hb_Hash()
 
-   hb_default( @cOrderBy, "id,naz" )
+   hb_default( @lCheckOnly, .F. )
+
+   IF lCheckOnly
+      hParams[ "check_only" ] := .T.
+   ENDIF
 
    IF cId <> NIL
       hParams[ "id" ] := cId
    ENDIF
 
-   hParams[ "order_by" ] := cOrderBy
+   // hParams[ "order_by" ] := cOrderBy
+
 
    hParams[ "indeks" ] := .F.
 
@@ -124,33 +129,42 @@ FUNCTION use_sql_roba( hParams )
 
    LOCAL cTable := "ROBA"
    LOCAL cWhere, cOrder
-   LOCAL cSql
+   LOCAL cSql, lCheckOnly := .F.
 
    default_if_nil( @hParams, hb_Hash() )
 
-   cSql := "SELECT "
-   cSql += coalesce_char_zarez( "id", 10 )
-   cSql += coalesce_char_zarez( "sifradob", 20 )
-   cSql += coalesce_char_zarez( "naz", 250 )
-   cSql += coalesce_char_zarez( "jmj", 3 )
-   cSql += coalesce_char_zarez( "idtarifa", 6 )
-   cSql += coalesce_char_zarez( "tip", 1 )
-   cSql += coalesce_char_zarez( "opis", 200 )
-   cSql += coalesce_char_zarez( "k1", 4 )
-   cSql += coalesce_char_zarez( "k2", 4 )
-   cSql += coalesce_char_zarez( "barkod", 13 )
+   IF hb_HHasKey( hParams, "check_only" ) .AND. hParams[ "check_only" ] == .T.
+      lCheckOnly := .T.
+   ENDIF
 
-   cSql += coalesce_num_num_zarez( "n1", 12, 2 )
-   cSql += coalesce_num_num_zarez( "n2", 12, 2 )
-   cSql += coalesce_num_num_zarez( "carina", 5, 2 )
-   cSql += coalesce_num_num_zarez( "nc", 18, 8 )
-   cSql += coalesce_num_num_zarez( "vpc", 18, 8 )
-   cSql += coalesce_num_num_zarez( "vpc2", 18, 8 )
-   cSql += coalesce_num_num_zarez( "mpc", 18, 8 )
-   cSql += coalesce_num_num_zarez( "mpc2", 18, 8 )
-   cSql += coalesce_num_num_zarez( "mpc3", 18, 8 )
-   cSql += coalesce_num_num_zarez( "mpc4", 18, 8 )
-   cSql += coalesce_num_num( "mpc5", 18, 8 )
+   cSql := "SELECT "
+
+   IF lCheckOnly
+      cSql += coalesce_char( "id", 10 )
+   ELSE
+      cSql += coalesce_char_zarez( "id", 10 )
+      cSql += coalesce_char_zarez( "sifradob", 20 )
+      cSql += coalesce_char_zarez( "naz", 250 )
+      cSql += coalesce_char_zarez( "jmj", 3 )
+      cSql += coalesce_char_zarez( "idtarifa", 6 )
+      cSql += coalesce_char_zarez( "tip", 1 )
+      cSql += coalesce_char_zarez( "opis", 200 )
+      cSql += coalesce_char_zarez( "k1", 4 )
+      cSql += coalesce_char_zarez( "k2", 4 )
+      cSql += coalesce_char_zarez( "barkod", 13 )
+
+      cSql += coalesce_num_num_zarez( "n1", 12, 2 )
+      cSql += coalesce_num_num_zarez( "n2", 12, 2 )
+      cSql += coalesce_num_num_zarez( "carina", 5, 2 )
+      cSql += coalesce_num_num_zarez( "nc", 18, 8 )
+      cSql += coalesce_num_num_zarez( "vpc", 18, 8 )
+      cSql += coalesce_num_num_zarez( "vpc2", 18, 8 )
+      cSql += coalesce_num_num_zarez( "mpc", 18, 8 )
+      cSql += coalesce_num_num_zarez( "mpc2", 18, 8 )
+      cSql += coalesce_num_num_zarez( "mpc3", 18, 8 )
+      cSql += coalesce_num_num_zarez( "mpc4", 18, 8 )
+      cSql += coalesce_num_num( "mpc5", 18, 8 )
+   ENDIF
 
    cSql += " FROM fmk.roba"
 

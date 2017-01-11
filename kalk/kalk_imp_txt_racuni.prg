@@ -274,7 +274,7 @@ STATIC FUNCTION kalk_imp_from_temp_to_pript( aFExist, lFSkip, lNegative )// , cC
    select_o_roba()
    o_kalk_pript()
 
-   SELECT kalk_imp_temp
+   select_o_kalk_imp_temp()
 
    IF lNegative == nil
       lNegative := .F.

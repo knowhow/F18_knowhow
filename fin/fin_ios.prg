@@ -12,7 +12,6 @@
 #include "f18.ch"
 
 
-
 STATIC picBHD
 STATIC picDEM
 STATIC R1
@@ -21,7 +20,7 @@ STATIC __ios_clan := ""
 
 
 
-FUNCTION ios()
+FUNCTION fin_ios_meni()
 
    LOCAL _izbor := 1
    LOCAL _opc := {}
@@ -93,8 +92,7 @@ STATIC FUNCTION mnu_ios_print()
    ++_x
    @ m_x + _x, m_y + 2 SAY "Konto       :" GET cIdKonto VALID P_Konto( @cIdKonto )
    ++_x
-   @ m_x + _x, m_y + 2 SAY "Partner     :" GET cIdPartner ;
-      VALID Empty( cIdPartner ) .OR.  p_partner( @cIdPartner ) PICT "@!"
+   @ m_x + _x, m_y + 2 SAY "Partner     :" GET cIdPartner VALID Empty( cIdPartner ) .OR.  p_partner( @cIdPartner ) PICT "@!"
 
    IF fin_dvovalutno()
       ++_x
@@ -119,8 +117,7 @@ STATIC FUNCTION mnu_ios_print()
 
    ++_x
 
-   @ m_x + _x, m_y + 2 SAY8 "Generiši podatke IOS-a automatski kod pokretanja (D/N) ?" GET _auto_gen ;
-      VALID _auto_gen $ "DN" PICT "@!"
+   @ m_x + _x, m_y + 2 SAY8 "Generiši podatke IOS-a automatski kod pokretanja (D/N) ?" GET _auto_gen  VALID _auto_gen $ "DN" PICT "@!"
 
 
    READ
@@ -350,7 +347,7 @@ STATIC FUNCTION print_ios_xml( hParams )
 
    _rbr := 0
 
-   DO WHILE !Eof() .AND. cIdFirma == field->IdFirma .AND. cIdKonto == field->IdKonto  .AND. cIdPartner == field->IdPartner
+   DO WHILE !Eof() .AND. cIdFirma == suban->IdFirma .AND. cIdKonto == suban->IdKonto  .AND. cIdPartner == hb_Utf8ToStr( suban->IdPartner )
 
       __br_dok := field->brdok
       __dat_dok := field->datdok
@@ -362,10 +359,9 @@ STATIC FUNCTION print_ios_xml( hParams )
       _pot_2 := 0
       __otv_st := field->otvst
 
-      DO WHILE !Eof() .AND. cIdFirma == field->IdFirma ;
-            .AND. cIdKonto == field->IdKonto ;
-            .AND. cIdPartner == field->IdPartner ;
-            .AND. ( _kao_kartica == "D" .OR. field->brdok == __br_dok )
+      DO WHILE !Eof() .AND. cIdFirma == suban->IdFirma .AND. cIdKonto == field->IdKonto ;
+            .AND. cIdPartner == hb_Utf8ToStr( suban->IdPartner ) ;
+            .AND. ( _kao_kartica == "D" .OR. suban->brdok == __br_dok )
 
          IF field->datdok > _datum_do
             SKIP
@@ -375,7 +371,6 @@ STATIC FUNCTION print_ios_xml( hParams )
          IF field->otvst = " "
 
             IF _kao_kartica == "D"
-
 
                xml_subnode( "data_kartica", .F. )
 

@@ -36,7 +36,7 @@ FUNCTION fin_otvorene_stavke_meni()
    AAdd( opcexe, {|| fin_specif_otvorene_stavke() } )
 
    AAdd( opc, "6. ios" )
-   AAdd( opcexe, {|| IOS() } )
+   AAdd( opcexe, {|| fin_ios_meni() } )
    AAdd( opc, "7. kartice grupisane po brojevima veze" )
    AAdd( opcexe, {|| fin_kartica_otvorene_stavke_po_broju_veze( .T. ) } )
 

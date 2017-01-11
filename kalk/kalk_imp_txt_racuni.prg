@@ -222,8 +222,7 @@ FUNCTION kalk_imp_txt_to_temp( aDbf, aRules, cTxtFile )
 
    SELECT kalk_imp_temp
 
-   // proci kroz temp i napuni da li je dtype pozitivno ili negativno
-   // ali samo ako je u pitanju racun tabela... !
+   // proci kroz temp i napuni da li je dtype pozitivno ili negativno ali samo ako je u pitanju racun tabela... !
    IF kalk_imp_temp->( FieldPos( "idtipdok" ) ) <> 0
       GO TOP
       my_flock()
@@ -866,7 +865,8 @@ FUNCTION kalk_imp_partn_exist()
    LOCAL aRet, nCount := 0
 
    O_PARTN
-   SELECT kalk_imp_temp
+   select_o_kalk_imp_temp()
+
    GO TOP
 
    aRet := {}
@@ -904,7 +904,7 @@ FUNCTION kalk_imp_roba_exist_sifradob()
    LOCAL aRet, cIdRobaSifraDobavljaca, nRes, cNazRoba, nCount := 0
 
    // O_ROBA
-   SELECT kalk_imp_temp
+   select_o_kalk_imp_temp()
    GO TOP
 
    aRet := {}
@@ -972,8 +972,7 @@ STATIC FUNCTION kalk_postoji_faktura_a()
    // ENDIF
 
    // o_kalk_doks()
-
-   SELECT kalk_imp_temp
+   select_o_kalk_imp_temp()
    GO TOP
 
    aRet := {}

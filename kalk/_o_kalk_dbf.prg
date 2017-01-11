@@ -40,6 +40,11 @@ FUNCTION o_kalk_imp_temp()
    RETURN o_dbf_table( F_KALK_IMP_TEMP, "kalk_imp_temp", NIL )
 
 
+FUNCTION select_o_kalk_imp_temp()
+
+   RETURN select_o_dbf( "KALK_IMP_TEMP", F_KALK_IMP_TEMP, "kalk_imp_temp", NIL )
+
+
 FUNCTION o_kalk_pript()
    RETURN o_dbf_table( F_PRIPT, { "PRIPT", "kalk_pript" }, "1" )
 

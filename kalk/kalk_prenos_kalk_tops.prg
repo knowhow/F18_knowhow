@@ -52,8 +52,8 @@ FUNCTION kalk_tops_meni()
 FUNCTION kalk_generisi_tops_dokumente( cIdFirma, cIdVd, cBrDok )
 
    LOCAL _katops_table := "katops.dbf"
-   LOCAL _rbr, _dat_dok
-   LOCAL _aPosLokacije
+   LOCAL nRbr, dDatDok
+   LOCAL aPosLokacije
    LOCAL _lFromKumulativ := .T.
    LOCAL _total := 0
    LOCAL cStavke := ""
@@ -92,11 +92,11 @@ FUNCTION kalk_generisi_tops_dokumente( cIdFirma, cIdVd, cBrDok )
 
    SEEK cIdFirma + cIdVd + cBrDok
 
-   _rbr := 0
-   _dat_dok := Date()
+   nRbr := 0
+   dDatDok := Date()
 
 
-   _aPosLokacije := {} // matrica pos mjesta koje kaci kalkulacija
+   aPosLokacije := {} // matrica pos mjesta koje kaci kalkulacija
 
    DO WHILE !Eof() .AND. field->idfirma == cIdFirma .AND. field->idvd == cIdVd .AND. field->brdok == cBrDok
 
@@ -120,11 +120,11 @@ FUNCTION kalk_generisi_tops_dokumente( cIdFirma, cIdVd, cBrDok )
       APPEND BLANK
 
       cPm := koncij->idprodmjes
-      IF AScan( _aPosLokacije, {| x| x == koncij->idprodmjes } ) == 0
-         AAdd( _aPosLokacije, koncij->idprodmjes )
+      IF AScan( aPosLokacije, {| x| x == koncij->idprodmjes } ) == 0
+         AAdd( aPosLokacije, koncij->idprodmjes )
       ENDIF
 
-      _dat_dok := kalk_pripr->datdok
+      dDatDok := kalk_pripr->datdok
 
       REPLACE field->idfirma WITH self_organizacija_id()
       REPLACE field->idvd WITH kalk_pripr->idvd
@@ -159,7 +159,6 @@ FUNCTION kalk_generisi_tops_dokumente( cIdFirma, cIdVd, cBrDok )
 
       IF kalk_pripr->pu_i == "3" // radi se o nivelaciji,  mpc - stara cijena
          REPLACE field->mpc WITH kalk_pripr->fcj
-
          REPLACE field->mpc2 WITH kalk_pripr->fcj + kalk_pripr->mpcsapp // mpc2 - nova cijena
       ENDIF
 
@@ -172,7 +171,7 @@ FUNCTION kalk_generisi_tops_dokumente( cIdFirma, cIdVd, cBrDok )
       ENDIF
 
       _total += ( field->kolicina * field->mpc ) // saberi total
-      ++ _rbr
+      ++ nRbr
 
       SELECT kalk_pripr
       SKIP
@@ -183,11 +182,11 @@ FUNCTION kalk_generisi_tops_dokumente( cIdFirma, cIdVd, cBrDok )
    SELECT katops
    USE
 
-   IF _rbr > 0
-      kalk_tops_print_report( cIdFirma, cIdVd, cBrDok, _rbr, _total, cStavke, cPm, cPKonto ) // , _exp_file ) // ispisi report
+   IF nRbr > 0
+      kalk_tops_print_report( cIdFirma, cIdVd, cBrDok, nRbr, _total, cStavke, cPm, cPKonto ) // , _exp_file ) // ispisi report
 
       // _exp_file :=
-      kalk_tops_kreiraj_fajl_prenosa( _dat_dok, _aPosLokacije, _rbr ) // napravi i prebaci izlazne fajlove gdje trebaju
+      kalk_tops_kreiraj_fajl_prenosa( dDatDok, aPosLokacije, nRbr ) // napravi i prebaci izlazne fajlove gdje trebaju
 
       my_close_all_dbf()
 

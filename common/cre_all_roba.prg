@@ -85,7 +85,7 @@ FUNCTION cre_sif_roba( ver )
    CREATE_INDEX( "NAZ", "LEFT(naz,40)", _alias )
    CREATE_INDEX( "BARKOD", "BARKOD", _alias )
    CREATE_INDEX( "SIFRADOB", "SIFRADOB", _alias )
-   CREATE_INDEX( "ID_VSD", "SIFRADOB",  _alias )
+   // CREATE_INDEX( "ID_VSD", "SIFRADOB",  _alias )
    CREATE_INDEX( "PLU", "str(fisc_plu, 10)",  _alias )
    CREATE_INDEX( "IDP", { "id+tip", 'tip=="P"' },  _alias )
    AFTER_CREATE_INDEX

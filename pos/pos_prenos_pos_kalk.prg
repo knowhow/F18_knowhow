@@ -113,7 +113,7 @@ STATIC FUNCTION _brisi_fajlove_importa( import_file )
    FileDelete( import_file )
    FileDelete( StrTran( import_file, ".dbf", ".txt" ) )
 
-   RETURN
+   RETURN .T.
 
 
 STATIC FUNCTION uslovi_za_insert_ispunjeni()
@@ -262,7 +262,7 @@ STATIC FUNCTION _o_real_table()
    o_pos_pos()
    o_pos_doks()
 
-   RETURN
+   RETURN .T.
 
 
 

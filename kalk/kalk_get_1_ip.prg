@@ -63,7 +63,7 @@ FUNCTION kalk_get_1_ip()
    SELECT ROBA
    SET ORDER TO TAG "ID"
    SEEK _idroba
-   
+
    _mpcsapp := kalk_get_mpc_by_koncij_pravilo( _IdKonto )
 
    SELECT kalk_pripr
@@ -181,35 +181,36 @@ FUNCTION kalk_generisi_ip()
          ENDIF
 
          IF pu_i == "1"
-            nUlaz += kolicina - GKolicina - GKolicin2
-            nMPVU += mpcsapp * kolicina
-            nNVU += nc * kolicina
+            nUlaz += field->kolicina - field->GKolicina - field->GKolicin2
+            nMPVU += field->mpcsapp * field->kolicina
+            nNVU += field->nc * field->kolicina
 
          ELSEIF pu_i == "5"  .AND. !( idvd $ "12#13#22" )
-            nIzlaz += kolicina
-            nMPVI += mpcsapp * kolicina
-            nNVI += nc * kolicina
+            nIzlaz += field->kolicina
+            nMPVI += field->mpcsapp * field->kolicina
+            nNVI += field->nc * field->kolicina
 
          ELSEIF pu_i == "5"  .AND. ( idvd $ "12#13#22" )
             // povrat
-            nUlaz -= kolicina
-            nMPVU -= mpcsapp * kolicina
-            nNvu -= nc * kolicina
+            nUlaz -= field->kolicina
+            nMPVU -= field->mpcsapp * field->kolicina
+            nNvu -= field->nc * field->kolicina
 
          ELSEIF pu_i == "3"    // nivelacija
-            nMPVU += mpcsapp * kolicina
+            nMPVU += field->mpcsapp * field->kolicina
 
          ELSEIF pu_i == "I"
-            nIzlaz += gkolicin2
-            nMPVI += mpcsapp * gkolicin2
-            nNVI += nc * gkolicin2
+            nIzlaz += field->gkolicin2
+            nMPVI += field->mpcsapp * field->gkolicin2
+            nNVI += field->nc * field->gkolicin2
          ENDIF
          SKIP
       ENDDO
 
       IF ( Round( nUlaz - nIzlaz, 4 ) <> 0 ) .OR. ( Round( nMpvu - nMpvi, 4 ) <> 0 )
          SELECT roba
-         HSEEK cidroba
+         HSEEK cIdroba
+
          SELECT kalk_pripr
          scatter()
          APPEND ncnl
@@ -247,90 +248,7 @@ FUNCTION kalk_generisi_ip()
    RETURN .T.
 
 
-// ---------------------------------------------------------------------------
-// inventurno stanje artikla
-// ---------------------------------------------------------------------------
-FUNCTION kalk_ip_roba( id_konto, id_roba, dat_dok, kolicina, nc, fc, mpcsapp )
 
-   LOCAL _t_area := Select()
-   LOCAL _ulaz, _izlaz, _mpvu, _mpvi, _rabat, _nvu, _nvi
-
-   _ulaz := 0
-   _izlaz := 0
-   _mpvu := 0
-   _mpvi := 0
-   _rabat := 0
-   _nvu := 0
-   _nvi := 0
-
-   kolicina := 0
-   nc := 0
-   fc := 0
-   mpcsapp := 0
-
-   SELECT roba
-   HSEEK id_roba
-
-   IF roba->tip $ "UI"
-      SELECT ( _t_area )
-      RETURN
-   ENDIF
-
-   SELECT koncij
-   HSEEK id_konto
-
-   SELECT kalk
-   SET ORDER TO TAG "4"
-   HSEEK self_organizacija_id() + id_konto + id_roba
-
-   DO WHILE !Eof() .AND. field->idfirma == self_organizacija_id() .AND. field->pkonto == id_konto .AND. field->idroba == id_roba
-
-      IF dat_dok < field->datdok
-         // preskoci
-         SKIP
-         LOOP
-      ENDIF
-
-      IF field->pu_i == "1"
-         _ulaz += field->kolicina - field->gkolicina - field->gkolicin2
-         _mpvu += field->mpcsapp * field->kolicina
-         _nvu += field->nc * field->kolicina
-
-      ELSEIF field->pu_i == "5" .AND. !( field->idvd $ "12#13#22" )
-         _izlaz += field->kolicina
-         _mpvi += field->mpcsapp * field->kolicina
-         _nvi += field->nc * field->kolicina
-
-      ELSEIF field->pu_i == "5" .AND. ( field->idvd $ "12#13#22" )
-         // povrat
-         _ulaz -= field->kolicina
-         _mpvu -= field->mpcsapp * field->kolicina
-         _nvu -= field->nc * field->kolicina
-
-      ELSEIF field->pu_i == "3"
-         // nivelacija
-         _mpvu += field->mpcsapp * field->kolicina
-
-      ELSEIF field->pu_i == "I"
-         _izlaz += field->gkolicin2
-         _mpvi += field->mpcsapp * field->gkolicin2
-         _nvi += field->nc * field->gkolicin2
-      ENDIF
-
-      SKIP
-
-   ENDDO
-
-   IF Round( _ulaz - _izlaz, 4 ) <> 0
-
-      kolicina := _ulaz - _izlaz
-      fcj := _mpvu - _mpvi
-      mpcsapp := Round( ( _mpvu - _mpvi ) / ( _ulaz - _izlaz ), 3 )
-      nc := Round( ( _nvu - _nvi ) / ( _ulaz - _izlaz ), 3 )
-
-   ENDIF
-
-   RETURN .T.
 
 
 
@@ -462,25 +380,25 @@ FUNCTION gen_ip_razlika()
          ENDIF
 
          IF field->pu_i == "1"
-            nUlaz += kolicina - GKolicina - GKolicin2
-            nMPVU += mpcsapp * kolicina
-            nNVU += nc * kolicina
+            nUlaz += field->kolicina - field->GKolicina - field->GKolicin2
+            nMPVU += field->mpcsapp * field->kolicina
+            nNVU += field->nc * field->kolicina
          ELSEIF field->pu_i == "5"  .AND. !( field->idvd $ "12#13#22" )
-            nIzlaz += kolicina
-            nMPVI += mpcsapp * kolicina
-            nNVI += nc * kolicina
+            nIzlaz += field->kolicina
+            nMPVI += field->mpcsapp * field->kolicina
+            nNVI += field->nc * field->kolicina
          ELSEIF field->pu_i == "5"  .AND. ( field->idvd $ "12#13#22" )
             // povrat
-            nUlaz -= kolicina
-            nMPVU -= mpcsapp * kolicina
-            nNvu -= nc * kolicina
+            nUlaz -= field->kolicina
+            nMPVU -= field->mpcsapp * field->kolicina
+            nNvu -= field->nc * field->kolicina
          ELSEIF field->pu_i == "3"
             // nivelacija
-            nMPVU += mpcsapp * kolicina
+            nMPVU += field->mpcsapp * field->kolicina
          ELSEIF field->pu_i == "I"
-            nIzlaz += gkolicin2
-            nMPVI += mpcsapp * gkolicin2
-            nNVI += nc * gkolicin2
+            nIzlaz += field->gkolicin2
+            nMPVI += field->mpcsapp * field->gkolicin2
+            nNVI += field->nc * field->gkolicin2
          ENDIF
 
          SKIP

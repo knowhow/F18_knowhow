@@ -261,7 +261,7 @@ STATIC FUNCTION kalk_imp_from_temp_to_pript( aFExist, lFSkip, lNegative )// , cC
    LOCAL cIdKontoZaduzuje, cIdKontoRazduzuje
    LOCAL nRbr, nUvecaj, nCnt, cPredhodniFaktDokument, cPredhodniTipDokumenta, cPredhodnoProdMjesto, aPom
    LOCAL cFakt, cTDok, cIdProdajnoMjesto
-   LOCAL nFExist, nT_scan, cTmpArt
+   LOCAL nFExist, nT_scan, cIdRobaSifraDob
    LOCAL cIdKontoTmp, cSifraDobavljaca, cIdRobaTmp
 
    o_kalk_pripr()
@@ -310,7 +310,7 @@ STATIC FUNCTION kalk_imp_from_temp_to_pript( aFExist, lFSkip, lNegative )// , cC
             cIdKontoTmp := kalk_imp_get_konto_by_tip_pm_poslovnica( cTDok, kalk_imp_temp->idpm, "R", cIdPJ )
 
             SELECT roba
-            SET ORDER TO TAG "ID_VSD"
+            -- SET ORDER TO TAG "ID_VSD"
             cSifraDobavljaca := PadL( AllTrim( kalk_imp_temp->idroba ), 5, "0" )
 
             SEEK cSifraDobavljaca // aha trazi se po sifri dobavljaca 52 => 00052
@@ -361,12 +361,15 @@ STATIC FUNCTION kalk_imp_from_temp_to_pript( aFExist, lFSkip, lNegative )// , cC
          AAdd( aPom, { cTDok, cBrojKalk, cFakt } )
       ENDIF
 
+/*
 
-      SELECT roba   // pronadji robu
-      SET ORDER TO TAG "ID_VSD"
-      cTmpArt := PadL( AllTrim( kalk_imp_temp->idroba ), 5, "0" )
+      SELECT roba   // pronadji robu sifra dobavljaca
+      --SET ORDER TO TAG "ID_VSD"
+      cIdRobaSifraDob := PadL( AllTrim( kalk_imp_temp->idroba ), 5, "0" )
       GO TOP
-      SEEK cTmpArt
+      SEEK cIdRobaSifraDob
+*/
+      find_roba_by_sifradob( cIdRobaSifraDob )
 
       cIdKontoZaduzuje := kalk_imp_get_konto_by_tip_pm_poslovnica( cTDok, kalk_imp_temp->idpm, "Z", cIdPJ )
       cIdKontoRazduzuje := kalk_imp_get_konto_by_tip_pm_poslovnica( cTDok, kalk_imp_temp->idpm, "R", cIdPJ )
@@ -391,11 +394,9 @@ STATIC FUNCTION kalk_imp_from_temp_to_pript( aFExist, lFSkip, lNegative )// , cC
          datfaktp WITH kalk_imp_temp->datdok, ;
          datval WITH kalk_imp_temp->datval
 
-
       REPLACE idkonto WITH cIdKontoZaduzuje // konto zaduzuje
       REPLACE idkonto2 WITH cIdKontoRazduzuje // konto razduzuje
       REPLACE idzaduz2 WITH ""
-
 
       IF cTDok $ "11#41" // spec.za tip dok 11
 
@@ -815,10 +816,10 @@ STATIC FUNCTION kalk_imp_check_broj_fakture_exist( aFakt )
 
 STATIC FUNCTION kalk_imp_check_partn_roba_exist()
 
-   LOCAL lSifDob := .T.
+   LOCAL aPomPart, aPomRoba
 
    aPomPart := kalk_imp_partn_exist()
-   aPomRoba  := kalk_imp_roba_exist_sifradob( lSifDob )
+   aPomRoba  := kalk_imp_roba_exist_sifradob()
 
    IF ( Len( aPomPart ) > 0 .OR. Len( aPomRoba ) > 0 )
 
@@ -836,8 +837,8 @@ STATIC FUNCTION kalk_imp_check_partn_roba_exist()
       ENDIF
 
       IF ( Len( aPomRoba ) > 0 )
-         ? "Lista nepostojecih artikala:"
-         ? "----------------------------"
+         ?U "Lista nepostojećih artikala (sifradob):"
+         ? "-------------------------------------------"
          ?
          FOR ii := 1 TO Len( aPomRoba )
             ? aPomRoba[ ii, 1 ]
@@ -897,7 +898,7 @@ FUNCTION kalk_imp_partn_exist( lPartNaz )
 
 FUNCTION kalk_imp_roba_exist_sifradob()
 
-   LOCAL aRet, cTmpRoba, nRes, cNazRoba
+   LOCAL aRet, cIdRobaSifraDobavljaca, nRes, cNazRoba
 
    O_ROBA
    SELECT kalk_imp_temp
@@ -908,9 +909,9 @@ FUNCTION kalk_imp_roba_exist_sifradob()
    DO WHILE !Eof()
 
       // IF lSifraDob == .T.
-      cTmpRoba := PadL( AllTrim( kalk_imp_temp->idroba ), 5, "0" )
+      cIdRobaSifraDobavljaca := PadL( AllTrim( kalk_imp_temp->idroba ), 5, "0" )
       // ELSE
-      // cTmpRoba := AllTrim( kalk_imp_temp->idroba )
+      // cIdRobaSifraDobavljaca := AllTrim( kalk_imp_temp->idroba )
       // ENDIF
 
       cNazRoba := ""
@@ -920,19 +921,21 @@ FUNCTION kalk_imp_roba_exist_sifradob()
          cNazRoba := AllTrim( kalk_imp_temp->nazroba )
       ENDIF
 
+/*
       SELECT roba
 
       // IF lSifraDob == .T.
-      SET ORDER TO TAG "ID_VSD"
+      -- SET ORDER TO TAG "ID_VSD"  // sifra dobavljaca
       // ENDIF
-
       GO TOP
-      SEEK cTmpRoba
+      SEEK cIdRobaSifraDobavljaca
+*/
 
-      IF !Found() // ako nisi nasao dodaj robu u matricu
-         nRes := AScan( aRet, {| aVal| aVal[ 1 ] == cTmpRoba } )
+
+      IF !find_roba_by_sifradob( cIdRobaSifraDobavljaca )
+         nRes := AScan( aRet, {| aVal| aVal[ 1 ] == cIdRobaSifraDobavljaca } )
          IF nRes == 0
-            AAdd( aRet, { cTmpRoba, cNazRoba } )
+            AAdd( aRet, { cIdRobaSifraDobavljaca, cNazRoba } )
          ENDIF
       ENDIF
 

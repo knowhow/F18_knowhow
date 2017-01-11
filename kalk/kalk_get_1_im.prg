@@ -52,8 +52,8 @@ FUNCTION kalk_get_1_im()
 
    _MKonto := _Idkonto
 
-   // inventura
-   _MU_I := "I"
+
+   _MU_I := "I" // inventura
 
    _PKonto := ""
    _PU_I := ""

@@ -186,8 +186,8 @@ FUNCTION tops_kalk_fill_kalk_pripr( cTopskaImeDbf ) // , lAutoRazduzenje )
       RETURN .F.
    ENDIF
 
-   //SELECT topska
-   //GO TOP
+   // SELECT topska
+   // GO TOP
 
    // nacin zamjene barkod-ova
    // 0 - ne mjenjaj
@@ -218,16 +218,18 @@ FUNCTION tops_kalk_fill_kalk_pripr( cTopskaImeDbf ) // , lAutoRazduzenje )
 
    MsgO( "Prenos stavki POS -> KALK priprema ..." )
 
-   SELECT roba
-   SET ORDER TO TAG "ID"
+   // SELECT roba
+   // SET ORDER TO TAG "ID"
 
    SELECT topska
    GO TOP
    DO WHILE !Eof()
 
-      SELECT roba
-      SEEK topska->idroba
-      IF !Found()
+      // SELECT roba
+      // SEEK topska->idroba
+      IF !find_roba_by_id( topska->idroba )
+
+         // IF !Found()
          MsgBeep( "artikal " + topska->idroba + " ne postoji u KALK roba ?!#STOP operacije!" )
          my_close_all_dbf()
          RETURN .F.
@@ -244,7 +246,6 @@ FUNCTION tops_kalk_fill_kalk_pripr( cTopskaImeDbf ) // , lAutoRazduzenje )
 
       // cBrDok := cBrKalk
       cIdKontoProdavnica := koncij->id
-
       nRedniBroj := RbrUNum( cRedniBroj ) + 1
       cRedniBroj := RedniBroj( nRedniBroj )
 
@@ -599,7 +600,7 @@ STATIC FUNCTION tops_kalk_import_roba( cTipMpc )
      formiraj stavku inventure prodavnice
 */
 
-STATIC FUNCTION tops_kalk_import_row_ip( cBrDok, cIdKontoProdavnica, r_br )
+STATIC FUNCTION tops_kalk_import_row_ip( cBrDok, cIdKontoProdavnica, nRbr )
 
    LOCAL _tip_dok := "IP"
    LOCAL nDbfArea := Select()
@@ -614,7 +615,7 @@ STATIC FUNCTION tops_kalk_import_row_ip( cBrDok, cIdKontoProdavnica, r_br )
    ENDIF
 
 
-   kalk_ip_roba( cIdKontoProdavnica, topska->idroba, topska->datum, @_kolicina, @_nc, @_fc, @_mpcsapp ) // sracunaj za ovu stavku stanje inventurno u kalk-u
+   kalk_roba_prodavnica_stanje( cIdKontoProdavnica, topska->idroba, topska->datum, @_kolicina, @_nc, @_fc, @_mpcsapp ) // sracunaj za ovu stavku stanje inventurno u kalk-u
 
    IF _kolicina == 0 // nema ga na stanju, morat cemo preci na rucni rad racunice
       _mpcsapp := topska->mpc
@@ -645,7 +646,7 @@ STATIC FUNCTION tops_kalk_import_row_ip( cBrDok, cIdKontoProdavnica, r_br )
       // REPLACE field->idkonto2 WITH cIdKontoProdavnica
       REPLACE field->pkonto WITH cIdKontoProdavnica
       REPLACE field->idroba WITH topska->idroba
-      REPLACE field->rbr WITH r_br
+      REPLACE field->rbr WITH nRbr
       REPLACE field->idtarifa WITH topska->idtarifa
       REPLACE field->mpcsapp WITH _mpcsapp
       REPLACE field->nc WITH _nc
@@ -668,7 +669,7 @@ STATIC FUNCTION tops_kalk_import_row_ip( cBrDok, cIdKontoProdavnica, r_br )
 
 
 /*
-STATIC FUNCTION tops_kalk_import_row_11( cBrDok, cIdKontoProdavnica, cIdKontoMagacin, r_br )
+STATIC FUNCTION tops_kalk_import_row_11( cBrDok, cIdKontoProdavnica, cIdKontoMagacin, nRbr )
 
    LOCAL _tip_dok := "11"
    LOCAL nDbfArea := Select()
@@ -692,7 +693,7 @@ STATIC FUNCTION tops_kalk_import_row_11( cBrDok, cIdKontoProdavnica, cIdKontoMag
    REPLACE field->idkonto WITH cIdKontoProdavnica
    REPLACE field->idkonto2 WITH cIdKontoMagacin
    REPLACE field->idroba WITH topska->idroba
-   REPLACE field->rbr WITH r_br
+   REPLACE field->rbr WITH nRbr
    REPLACE field->tmarza2 WITH "%"
    REPLACE field->idtarifa WITH topska->idtarifa
    REPLACE field->mpcsapp WITH topska->( mpc - stmpc )
@@ -706,7 +707,7 @@ STATIC FUNCTION tops_kalk_import_row_11( cBrDok, cIdKontoProdavnica, cIdKontoMag
 */
 
 
-STATIC FUNCTION tops_kalk_import_row_42( cBrDok, cIdKontoProdavnica, r_br )
+STATIC FUNCTION tops_kalk_import_row_42( cBrDok, cIdKontoProdavnica, nRbr )
 
    LOCAL nDbfArea := Select()
    LOCAL _opp
@@ -733,7 +734,7 @@ STATIC FUNCTION tops_kalk_import_row_42( cBrDok, cIdKontoProdavnica, r_br )
    REPLACE field->kolicina WITH topska->kolicina
    REPLACE field->idkonto WITH cIdKontoProdavnica
    REPLACE field->idroba WITH topska->idroba
-   REPLACE field->rbr WITH r_br
+   REPLACE field->rbr WITH nRbr
    REPLACE field->tmarza2 WITH "%"
    REPLACE field->idtarifa WITH topska->idtarifa
    REPLACE field->mpcsapp WITH topska->mpc
@@ -801,6 +802,96 @@ STATIC FUNCTION tops_kalk_o_import_tabele()
    SELECT ( F_KONCIJ )
    IF !Used()
       o_koncij()
+   ENDIF
+
+   RETURN .T.
+
+
+
+
+FUNCTION kalk_roba_prodavnica_stanje( cIdKontoProdavnica, cIdRoba, dDatDok, nKolicina, nNabCj, nFakturnaCijena, nMaloprodajnaCijena )
+
+   LOCAL _t_area := Select()
+   LOCAL _ulaz, _izlaz, _mpvu, _mpvi, _rabat, _nvu, _nvi
+
+   _ulaz := 0
+   _izlaz := 0
+   _mpvu := 0
+   _mpvi := 0
+   _rabat := 0
+   _nvu := 0
+   _nvi := 0
+
+   nKolicina := 0
+   nNabCj := 0
+   nFakturnaCijena := 0
+   nMaloprodajnaCijena := 0
+
+
+   // SELECT roba
+   // HSEEK cIdRoba
+   IF !find_roba_by_id( cIdRoba )
+      RETURN .F.
+   ENDIF
+
+   IF roba->tip $ "UI"
+      SELECT ( _t_area )
+      RETURN .F.
+   ENDIF
+
+   SELECT koncij
+   HSEEK cIdKontoProdavnica
+
+   SELECT kalk
+   SET ORDER TO TAG "4"
+   HSEEK self_organizacija_id() + cIdKontoProdavnica + cIdRoba
+
+   DO WHILE !Eof() .AND. field->idfirma == self_organizacija_id() .AND. field->pkonto == cIdKontoProdavnica .AND. field->idroba == cIdRoba
+
+      IF dDatDok < field->datdok
+         // preskoci
+         SKIP
+         LOOP
+      ENDIF
+
+      IF field->pu_i == "1"
+         _ulaz += field->Kolicina - field->gkolicina - field->gkolicin2
+         _mpvu += field->mpcsapp * field->kolicina
+         _nvu += field->nc * field->kolicina
+
+      ELSEIF field->pu_i == "5" .AND. !( field->idvd $ "12#13#22" )
+         _izlaz += field->kolicina
+         _mpvi += field->mpcsapp * field->kolicina
+         _nvi += field->nc * field->kolicina
+
+      ELSEIF field->pu_i == "5" .AND. ( field->idvd $ "12#13#22" )
+         // povrat
+         _ulaz -= field->kolicina
+         _mpvu -= field->mpcsapp * field->kolicina
+         _nvu -= field->nc * field->kolicina
+
+      ELSEIF field->pu_i == "3"
+         // nivelacija
+         _mpvu += field->mpcsapp * field->kolicina
+
+      ELSEIF field->pu_i == "I"
+         _izlaz += field->gkolicin2
+         _mpvi += field->mpcsapp * field->gkolicin2
+         _nvi += field->nc * field->gkolicin2
+      ENDIF
+
+      SKIP
+
+   ENDDO
+
+
+   IF Round( _ulaz - _izlaz, 4 ) <> 0
+
+      nKolicina := _ulaz - _izlaz
+      nFakturnaCijena := _mpvu - _mpvi
+      nMaloprodajnaCijena := Round( ( _mpvu - _mpvi ) / ( _ulaz - _izlaz ), 3 )
+      nNabCj := Round( ( _nvu - _nvi ) / ( _ulaz - _izlaz ), 3 )
+
    ENDIF
 
    RETURN .T.

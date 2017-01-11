@@ -23,6 +23,7 @@ FUNCTION kalk_get_1_95()
    ENDIF
 
    IF nRbr == 1 .OR. !kalk_is_novi_dokument() .OR. gMagacin == "1"
+
       @  m_x + 5, m_y + 2   SAY "Dokument Broj:" GET _BrFaktP VALID !Empty( _BrFaktP )
       @  m_x + 5, Col() + 1 SAY "Datum:" GET _DatFaktP  VALID { ||  datum_not_empty_upozori_godina( _datFaktP, "Datum fakture" ) }
 
@@ -63,6 +64,7 @@ FUNCTION kalk_get_1_95()
       ENDIF
 
    ELSE
+
       @  m_x + 6, m_y + 2   SAY "Dokument Broj: "; ?? _BrFaktP
       @  m_x + 6, Col() + 2 SAY "Datum: "; ?? _DatFaktP
       _IdZaduz := ""
@@ -98,18 +100,17 @@ FUNCTION kalk_get_1_95()
 
    @ m_x + 13, m_y + 2   SAY8 "Količina " GET _Kolicina PICTURE PicKol VALID _Kolicina <> 0
 
-
-
    _GKolicina := 0
    IF kalk_is_novi_dokument()
 
-      SELECT ROBA; HSEEK _IdRoba
+      SELECT ROBA
+      HSEEK _IdRoba
+
       IF koncij->naz == "P2"
          _VPC := PLC
       ELSE
          _VPC := KoncijVPC()
       ENDIF
-
       _NC := NC
    ENDIF
 
@@ -147,7 +148,6 @@ FUNCTION kalk_get_1_95()
 
          IF kalk_metoda_nc() == "2"
             IF _kolicina > 0
-
                SELECT roba
                hRec := dbf_get_rec()
                hRec[ "nc" ] := _nc
@@ -167,10 +167,6 @@ FUNCTION kalk_get_1_95()
    _Marza := 0; _TMarza := "A"; _VPC := _NC
 
 
-
-   IF !IsPDV()
-      _mpcsapp := 0
-   ENDIF
 
    nStrana := 2
    _marza := _vpc - _nc
@@ -213,8 +209,8 @@ FUNCTION kalk_get_1_95()
    ENDIF
 
    SET KEY K_ALT_K TO
-
    RETURN LastKey()
+
 
 
 

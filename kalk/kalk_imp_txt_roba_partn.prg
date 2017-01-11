@@ -150,13 +150,16 @@ STATIC FUNCTION kalk_imp_temp_to_roba()
    Box(, 3, 60 )
    DO WHILE !Eof()
 
-      SELECT roba
-      SET ORDER TO TAG "SIFRADOB" // pronadji robu
-
       cTmpSif := AllTrim( kalk_imp_temp->sifradob )
-      SEEK cTmpSif
 
-      IF Found()
+/*
+      SELECT roba
+      -- SET ORDER TO TAG "SIFRADOB" // pronadji robu
+
+      SEEK cTmpSif
+*/
+      IF find_roba_by_sifradob( cTmpSif )
+
 
          @ m_x + 1, m_y + 2 SAY "      ID: " + roba->id
          @ m_x + 2, m_y + 2 SAY "SIFRADOB: " + kalk_imp_temp->sifradob
@@ -351,12 +354,15 @@ STATIC FUNCTION provjera_roba_po_sifradob_postoji()
 
    DO WHILE !Eof()
 
+/*
       SELECT roba
       SET ORDER TO TAG "SIFRADOB"
       GO TOP
       SEEK kalk_imp_temp->sifradob
 
       IF Found()
+*/
+      IF find_roba_by_sifradob( kalk_imp_temp->sifradob )
          cInd := "1"
       ELSE
          cInd := "0"
@@ -375,10 +381,10 @@ STATIC FUNCTION provjera_roba_po_sifradob_postoji()
 
 
 
-   /*
+/*
     *     kopira podatke iz pomocne tabele u tabelu PARTN
     *   param: lEditOld - ispraviti stare zapise
-    */
+*/
 
 STATIC FUNCTION kalk_imp_temp_to_partn( lEditOld )
 

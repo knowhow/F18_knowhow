@@ -105,6 +105,8 @@ FUNCTION kalk_auto_import_racuni()
       RETURN .F.
    ENDIF
 
+   my_close_all_dbf()
+
    IF kalk_imp_check_broj_fakture_exist( @aFaktEx )
       IF Pitanje(, "Preskočiti ove dokumente prilikom importa (D/N)?", "D" ) == "D"
          lFtSkip := .T.
@@ -264,11 +266,13 @@ STATIC FUNCTION kalk_imp_from_temp_to_pript( aFExist, lFSkip, lNegative )// , cC
    LOCAL nFExist, nT_scan, cIdRobaSifraDob
    LOCAL cIdKontoTmp, cSifraDobavljaca, cIdRobaTmp
 
+   my_close_all_dbf()
+
    o_kalk_pripr()
    o_koncij()
 
 
-   O_ROBA
+   select_o_roba()
    o_kalk_pript()
 
    SELECT kalk_imp_temp

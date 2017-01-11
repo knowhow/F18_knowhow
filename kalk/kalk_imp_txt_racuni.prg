@@ -945,7 +945,6 @@ FUNCTION kalk_imp_roba_exist_sifradob()
          ENDIF
       ENDIF
 
-
       SELECT kalk_imp_temp
       SKIP
    ENDDO

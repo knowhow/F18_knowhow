@@ -368,10 +368,11 @@ STATIC FUNCTION kalk_imp_from_temp_to_pript( aFExist, lFSkip, lNegative )// , cC
 
       SELECT roba   // pronadji robu sifra dobavljaca
       --SET ORDER TO TAG "ID_VSD"
-      cIdRobaSifraDob := PadL( AllTrim( kalk_imp_temp->idroba ), 5, "0" )
+
       GO TOP
       SEEK cIdRobaSifraDob
 */
+      cIdRobaSifraDob := PadL( AllTrim( kalk_imp_temp->idroba ), 5, "0" )
       find_roba_by_sifradob( cIdRobaSifraDob )
 
       cIdKontoZaduzuje := kalk_imp_get_konto_by_tip_pm_poslovnica( cTDok, kalk_imp_temp->idpm, "Z", cIdPJ )
@@ -416,14 +417,14 @@ STATIC FUNCTION kalk_imp_from_temp_to_pript( aFExist, lFSkip, lNegative )// , cC
 
       ENDIF
 
-      REPLACE kolicina WITH kalk_imp_temp->kolicina
-      REPLACE idroba WITH roba->id
-      REPLACE nc WITH ROBA->nc
+      AltD()
+      REPLACE kolicina WITH kalk_imp_temp->kolicina, ;
+         idroba WITH roba->id, ;
+         nc WITH ROBA->nc, ;
+         vpc WITH kalk_imp_temp->cijena, ;
+         rabatv WITH kalk_imp_temp->rabatp, ;
+         mpc WITH kalk_imp_temp->porez
 
-      REPLACE vpc WITH kalk_imp_temp->cijena
-      REPLACE rabatv WITH kalk_imp_temp->rabatp
-
-      REPLACE mpc WITH kalk_imp_temp->porez
 
       cPredhodniFaktDokument := cFakt
       cPredhodniTipDokumenta := cTDok

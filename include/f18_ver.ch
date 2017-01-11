@@ -11,8 +11,8 @@
 
 #define F18_VER_DEFINED
 
-#define F18_VER       "2.3.92"
-#define F18_VER_DATE  "06.01.2017"
+#define F18_VER       "2.3.93"
+#define F18_VER_DATE  "11.01.2017"
 #define F18_DEV_PERIOD  "1994-2017"
 
 #define F18_LIB_VER   "22.5.0"

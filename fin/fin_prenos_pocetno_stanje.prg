@@ -53,7 +53,7 @@ FUNCTION fin_pocetno_stanje_sql()
    @ m_x + 7, m_y + 2 SAY8 "Uslov za konta :" GET cKontaUslov PICT "@S30"
 
    @ m_x + 8, m_y + 2 SAY8 "Grupišem konta na broj mjesta ?" GET nSintetikaDuzina PICT "9"
-   @ m_x + 9, m_y + 2 SAY8 "Kopiraj nepostojeće sifre (konto/partn) (D/N)?" GET cFinPrenosPocetnoStanjeDN VALID cFinPrenosPocetnoStanjeDN $ "DN" PICT "@!"
+   // @ m_x + 9, m_y + 2 SAY8 "Kopiraj nepostojeće sifre (konto/partn) (D/N)?" GET cFinPrenosPocetnoStanjeDN VALID cFinPrenosPocetnoStanjeDN $ "DN" PICT "@!"
 
    READ
 
@@ -63,6 +63,13 @@ FUNCTION fin_pocetno_stanje_sql()
 
    IF LastKey() == K_ESC
       RETURN .F.
+   ENDIF
+
+   IF !in_tekuca_godina()
+      MsgBeep( "Opcija se pokreće u novoj godini da bi se napravilo početno stanje predhodne godine" )
+      IF Pitanje( "Prekinuti izvršenje prenosa D/N", "D" ) == "D"
+         RETURN .F.
+      ENDIF
    ENDIF
 
    set_metric( "fin_klasa_duguje", NIL, cFinKlasaDuguje )
@@ -131,7 +138,7 @@ STATIC FUNCTION fin_poc_stanje_insert_into_fin_pripr( oDataset, oKontoDataset, o
    LOCAL hParams, cBrojVezeDok
    LOCAL cIdKontoPriprema, cIdPartnerPriprema
    LOCAL cTipPrenosaPS, cOpis
-   LOCAL bEvalPartner
+   LOCAL bEvalPartnerOrOtvorenaStavka, lPrvaStavka, nCnt
 
    open_tabele_za_pocetno_stanje()
 
@@ -139,20 +146,24 @@ STATIC FUNCTION fin_poc_stanje_insert_into_fin_pripr( oDataset, oKontoDataset, o
       RETURN _ret
    ENDIF
 
-   MsgO( "Formiranje dokumenta početnog stanja u tabeli pripreme..." )
+
+
+   Box( "#Formiranje dokumenta početnog stanja ...", 2, 50 )
 
    // cTipPrenosaPS - 0 saldo konta, 1 - otvorene stavke, 2 - saldo partnera
 
    oDataset:GoTo( 1 )
-   bEvalPartner :=  {|| !oDataset:Eof() .AND. PadR( oRow:FieldGet( oRow:FieldPos( "idkonto" ) ), 7 ) == cIdKonto ;
+   bEvalPartnerOrOtvorenaStavka :=  {|| !oDataset:Eof() .AND. PadR( oRow:FieldGet( oRow:FieldPos( "idkonto" ) ), 7 ) == cIdKonto ;
       .AND. iif( cTipPrenosaPS $ "12", PadR( hb_UTF8ToStr( oRow:FieldGet( oRow:FieldPos( "idpartner" ) ) ), 6 ) == cIdPartner, .T. ) ;
-      .AND. iif( cTipPrenosaPS == "1", PadR( hb_UTF8ToStr( oRow:FieldGet( oRow:FieldPos( "brdok" ) ) ), 20 ) == cBrojVeze, .T. ) ;
-      .AND. iif( cTipPrenosaPS == "1", oRow:FieldGet( oRow:FieldPos( "otvst" ) ) == cOtvSt, .T. ) ;
+      .AND. iif( cTipPrenosaPS == "1", .F., .T. ) ;
       }
+
+   nCnt := 0
 
 
    DO WHILE !oDataset:Eof()
 
+      @ m_x + 1, m_y + 2 SAY Str( nCnt++, 7 )
       oRow := oDataSet:GetRow()
       cIdKonto := PadR( oRow:FieldGet( oRow:FieldPos( "idkonto" ) ), 7 )
       cIdPartner := PadR( hb_UTF8ToStr( oRow:FieldGet( oRow:FieldPos( "idpartner" ) ) ), 6 )
@@ -169,9 +180,10 @@ STATIC FUNCTION fin_poc_stanje_insert_into_fin_pripr( oDataset, oKontoDataset, o
 
       nSaldoBrDokOtvSt := 0
 
+      lPrvaStavka := .T.
+      DO WHILE lPrvaStavka .OR. Eval( bEvalPartnerOrOtvorenaStavka )
 
-      DO WHILE Eval( bEvalPartner )
-
+         lPrvaStavka := .F.
          dDatDok := oRow:FieldGet( oRow:FieldPos( "datdok" ) )
 
          dDatVal := fix_dat_var( oRow:FieldGet( oRow:FieldPos( "datval" ) ), .T. )
@@ -246,7 +258,8 @@ STATIC FUNCTION fin_poc_stanje_insert_into_fin_pripr( oDataset, oKontoDataset, o
 
    ENDDO
 
-   MsgC()
+   BoxC()
+   // MsgC()
 
    IF cFinPrenosPocetnoStanjeDN == "D"
 

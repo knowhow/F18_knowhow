@@ -639,6 +639,9 @@ STATIC FUNCTION TBPomjeranje( TB, cPomjeranje )
       TB:PanHome()
    ENDIF
 
+   RETURN .T.
+   
+
 FUNCTION browse_brisi_stavku( lPack )
 
    IF lPack == NIL

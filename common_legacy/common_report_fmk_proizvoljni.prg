@@ -32,11 +32,11 @@ FUNCTION proizvoljni_izvjestaji()
    PRIVATE cPIKSif := ""
    PRIVATE cPIImeKP := ""
 
-   //IF programski_modul() == "KALK"
-  //    OtBazPIKalk()
-   //ELSE
-      OtBazPIFin()
-   //ENDIF
+   // IF programski_modul() == "KALK"
+   // OtBazPIKalk()
+   // ELSE
+   OtBazPIFin()
+   // ENDIF
 
    // # hash na pocetku kaze - obavezno browsaj !
    P_Proizv( @cBrI, NIL, NIL, "#Odaberi izvjestaj :" )
@@ -53,13 +53,13 @@ FUNCTION proizvoljni_izvjestaji()
       // formira varijable cV1, cV2 redom !!!!1
 
       FOR i := 2 TO nTokens
-         cPom := "cV" + AllTrim( Str( i - 1 ) )
+         cPom := "cV" + AllTrim( Str( i -1 ) )
          &cPom := PadR( UzmiIzIni( EXEPATH + 'ProIzvj.ini', 'Varijable0', AllTrim( Token( izvje->naz, "#", i ) ), "", 'READ' ), 45 )
       NEXT
 
 
       FOR i := 2 TO nTokens
-         cPom := "cV" + AllTrim( Str( i - 1 ) )
+         cPom := "cV" + AllTrim( Str( i -1 ) )
          @ m_X + i, m_y + 2 SAY PadR( Token( izvje->naz, "#", i ), 20 )
          @ m_x + i, Col() + 2 GET &cPom
       NEXT
@@ -70,7 +70,7 @@ FUNCTION proizvoljni_izvjestaji()
 
       // popuni ini fajl vrijednostima
       FOR i := 2 TO nTokens
-         cPom := "cV" + AllTrim( Str( i - 1 ) )
+         cPom := "cV" + AllTrim( Str( i -1 ) )
          UzmiIzIni( EXEPATH + 'ProIzvj.ini', 'Varijable0', AllTrim( Token( izvje->naz, "#", i ) ), &cPom, 'WRITE' )
       NEXT
 
@@ -98,9 +98,9 @@ FUNCTION proizvoljni_izvjestaji()
 
    PrikaziTI( cBrI )
 
-   //IF programski_modul() == "KALK"
-  //    GenProIzvKalk()
-  //    OtBazPIKalk()
+   // IF programski_modul() == "KALK"
+   // GenProIzvKalk()
+   // OtBazPIKalk()
    IF programski_modul() == "FIN"
       GenProIzvFin()
       OtBazPIFin()
@@ -118,9 +118,9 @@ FUNCTION proizvoljni_izvjestaji()
       CASE izbor == 0
          EXIT
       CASE izbor == 1
-         //IF programski_modul() == "KALK"
-        //    GenProIzvKalk()
-        //    OtBazPIKalk()
+         // IF programski_modul() == "KALK"
+         // GenProIzvKalk()
+         // OtBazPIKalk()
          IF programski_modul() == "FIN"
             GenProIzvFin()
             OtBazPIFin()
@@ -136,8 +136,8 @@ FUNCTION proizvoljni_izvjestaji()
       CASE izbor == 5
          P_KolProIzv()
       CASE izbor == 6
-         //IF programski_modul() == "KALK"
-          //  ParSviIzvjKalk()
+         // IF programski_modul() == "KALK"
+         // ParSviIzvjKalk()
          IF programski_modul() == "FIN"
             ParSviIzvjFin()
          ENDIF
@@ -240,7 +240,7 @@ STATIC FUNCTION P_ZagProIzv( cId, dx, dy, lSamoStampaj )
       RETURN
    ENDIF
 
-   RETURN PostojiSifra( F_Baze( "ZAGLI" ), "1", 10, 77, "ZAGLAVLJE IZVJESTAJA BR." + AllTrim( Str( nTekIzv ) ),@cId, dx, dy, {| Ch| APBlok( Ch ) } )
+   RETURN PostojiSifra( F_Baze( "ZAGLI" ), "1", 10, 77, "ZAGLAVLJE IZVJESTAJA BR." + AllTrim( Str( nTekIzv ) ), @cId, dx, dy, {| Ch| APBlok( Ch ) } )
 
 
 STATIC FUNCTION APBlok( Ch )
@@ -343,7 +343,7 @@ STATIC FUNCTION P_KolProIzv( cId, dx, dy, lSamoStampaj )
    ENDIF
    FOR i := 1 TO Len( ImeKol ); AAdd( Kol, i ); NEXT
 
-   RETURN PostojiSifra( F_Baze( "KOLIZ" ), "1", 10, 77, "KOLONE IZVJESTAJA BR." + AllTrim( Str( nTekIzv ) ),@cId, dx, dy, {| Ch| APBlok( Ch ) } )
+   RETURN PostojiSifra( F_Baze( "KOLIZ" ), "1", 10, 77, "KOLONE IZVJESTAJA BR." + AllTrim( Str( nTekIzv ) ), @cId, dx, dy, {| Ch| APBlok( Ch ) } )
 
 
 
@@ -414,15 +414,15 @@ STATIC FUNCTION KonIzBlok()
       QOPodv( "IZVJE.DBF, (KUMPATH='" + Trim( KUMPATH ) + "')" )
 
       ?
-      ? PadL( "Sifra",17 ); ?? ":", id
-      ? PadL( "Naziv",17 ); ?? ":", Trim( naz )
-      ? PadL( "Filter klj.baze",17 ); ?? ":", Trim( uslov )
-      ? PadL( "Kljucno polje",17 ); ?? ":", Trim( kpolje )
-      ? PadL( "Opis klj.polja",17 ); ?? ":", Trim( imekp )
+      ? PadL( "Sifra", 17 ); ?? ":", id
+      ? PadL( "Naziv", 17 ); ?? ":", Trim( naz )
+      ? PadL( "Filter klj.baze", 17 ); ?? ":", Trim( uslov )
+      ? PadL( "Kljucno polje", 17 ); ?? ":", Trim( kpolje )
+      ? PadL( "Opis klj.polja", 17 ); ?? ":", Trim( imekp )
       ? PadL( "Baza sif.k.polja", 17 ); ?? ":", Trim( ksif )
-      ? PadL( "Kljucna baza",17 ); ?? ":", Trim( kbaza )
-      ? PadL( "Kljucni indeks",17 ); ?? ":", Trim( kindeks )
-      ? PadL( "Tip tabele",17 ); ?? ":", tiptab
+      ? PadL( "Kljucna baza", 17 ); ?? ":", Trim( kbaza )
+      ? PadL( "Kljucni indeks", 17 ); ?? ":", Trim( kindeks )
+      ? PadL( "Tip tabele", 17 ); ?? ":", tiptab
 
 
       FF
@@ -654,14 +654,14 @@ FUNCTION TxtUKod( cTxt, cBUI )
    IF "U" $ cBUI; gPU_ON(); ENDIF
    IF "I" $ cBUI; gPI_ON(); ENDIF
    SetPRC( nRow, nCol )
-   SET( _SET_PRINTER, lPrinter )
+   Set( _SET_PRINTER, lPrinter )
    ?? cTxt
    lPrinter := Set( _SET_PRINTER, .T. ); nRow := PRow(); nCol := PCol()
    IF "B" $ cBUI; gPB_OFF(); ENDIF
    IF "U" $ cBUI; gPU_OFF(); ENDIF
    IF "I" $ cBUI; gPI_OFF(); ENDIF
    SetPRC( nRow, nCol )
-   SET( _SET_PRINTER, lPrinter )
+   Set( _SET_PRINTER, lPrinter )
 
    RETURN ""
 
@@ -669,7 +669,7 @@ FUNCTION TxtUKod( cTxt, cBUI )
 
 FUNCTION StKod( cKod )
 
-   Setpxlat(); QQOut( cKod )
+   QQOut( cKod )
 
    RETURN ""
 
@@ -685,7 +685,7 @@ PROCEDURE RazvijUslove( cUsl )
       nPoz := At( "#", cUsl )
       cPom := "USL" + AllTrim( Str( ++i ) )
       IF nPoz > 0
-         REPLACE &cPom WITH Left( cUsl, nPoz - 1 )
+         REPLACE &cPom WITH Left( cUsl, nPoz -1 )
          cUsl := SubStr( cUsl, nPoz + 1 )
       ELSE
          REPLACE &cPom WITH Trim( cUsl )
@@ -915,8 +915,8 @@ FUNCTION StTabPI()
 
       cPom77 := "{|| " + KOLIZ->formula + " }"
 
-      AAdd( aKol, { KOLIZ->naz, &cPom77., KOLIZ->sumirati == "D",;
-         AllTrim( KOLIZ->tip ), KOLIZ->sirina, KOLIZ->decimale,;
+      AAdd( aKol, { KOLIZ->naz, &cPom77., KOLIZ->sumirati == "D", ;
+         AllTrim( KOLIZ->tip ), KOLIZ->sirina, KOLIZ->decimale, ;
          nRed, KOLIZ->rbr  } )
       SKIP 1
    ENDDO
@@ -1005,7 +1005,7 @@ FUNCTION StZagPI()
    LOCAL xKOT := 0
 
    IF !start_print()
-     RETURN .F.
+      RETURN .F.
    ENDIF
 
    SELECT ZAGLI
@@ -1041,7 +1041,7 @@ FUNCTION DoHasha( cT )
 
    LOCAL n := At( "#", cT )
 
-   RETURN IF( n = 0, cT, Left( cT, n - 1 ) )
+   RETURN IF( n = 0, cT, Left( cT, n -1 ) )
 
 
 

@@ -518,7 +518,7 @@ METHOD FinBrutoBilans:gen_xml()
    LOCAL _sint_len := 3
    LOCAL _kl_len := 1
    LOCAL _a_klase := {}
-   LOCAL _klasa, _i, _count
+   LOCAL _klasa, nI, _count
    LOCAL _u_ps_dug := _u_ps_pot := _u_kum_dug := _u_kum_pot := _u_tek_dug := _u_tek_pot := _u_sld_dug := _u_sld_pot := 0
    LOCAL _t_ps_dug := _t_ps_pot := _t_kum_dug := _t_kum_pot := _t_tek_dug := _t_tek_pot := _t_sld_dug := _t_sld_pot := 0
    LOCAL _tt_ps_dug := _tt_ps_pot := _tt_kum_dug := _tt_kum_pot := _tt_tek_dug := _tt_tek_pot := _tt_sld_dug := _tt_sld_pot := 0
@@ -728,19 +728,19 @@ METHOD FinBrutoBilans:gen_xml()
 
    xml_subnode( "total", .F. )
 
-   FOR _i := 1 TO Len( _a_klase )
+   FOR nI := 1 TO Len( _a_klase )
 
       xml_subnode( "item", .F. )
 
-      xml_node( "klasa", to_xml_encoding( _a_klase[ _i, 1 ] ) )
-      xml_node( "ps_dug", AllTrim( Str( _a_klase[ _i, 2 ], 12, 2 ) ) )
-      xml_node( "ps_pot", AllTrim( Str( _a_klase[ _i, 3 ], 12, 2 ) ) )
-      xml_node( "tek_dug", AllTrim( Str( _a_klase[ _i, 4 ], 12, 2 ) ) )
-      xml_node( "tek_pot", AllTrim( Str( _a_klase[ _i, 5 ], 12, 2 ) ) )
-      xml_node( "kum_dug", AllTrim( Str( _a_klase[ _i, 6 ], 12, 2 ) ) )
-      xml_node( "kum_pot", AllTrim( Str( _a_klase[ _i, 7 ], 12, 2 ) ) )
-      xml_node( "sld_dug", AllTrim( Str( _a_klase[ _i, 8 ], 12, 2 ) ) )
-      xml_node( "sld_pot", AllTrim( Str( _a_klase[ _i, 9 ], 12, 2 ) ) )
+      xml_node( "klasa", to_xml_encoding( _a_klase[ nI, 1 ] ) )
+      xml_node( "ps_dug", AllTrim( Str( _a_klase[ nI, 2 ], 12, 2 ) ) )
+      xml_node( "ps_pot", AllTrim( Str( _a_klase[ nI, 3 ], 12, 2 ) ) )
+      xml_node( "tek_dug", AllTrim( Str( _a_klase[ nI, 4 ], 12, 2 ) ) )
+      xml_node( "tek_pot", AllTrim( Str( _a_klase[ nI, 5 ], 12, 2 ) ) )
+      xml_node( "kum_dug", AllTrim( Str( _a_klase[ nI, 6 ], 12, 2 ) ) )
+      xml_node( "kum_pot", AllTrim( Str( _a_klase[ nI, 7 ], 12, 2 ) ) )
+      xml_node( "sld_dug", AllTrim( Str( _a_klase[ nI, 8 ], 12, 2 ) ) )
+      xml_node( "sld_pot", AllTrim( Str( _a_klase[ nI, 9 ], 12, 2 ) ) )
 
       xml_subnode( "item", .T. )
 
@@ -821,7 +821,7 @@ METHOD FinBrutoBilans:print_txt()
 
    LOCAL _line, _i_col
    LOCAL _a_klase := {}
-   LOCAL _klasa, _i, _count, _sint, _id_konto, _id_partner, __partn, __klasa, __sint, __konto
+   LOCAL _klasa, nI, _count, _sint, _id_konto, _id_partner, __partn, __klasa, __sint, __konto
    LOCAL _u_ps_dug := _u_ps_pot := _u_kum_dug := _u_kum_pot := _u_tek_dug := _u_tek_pot := _u_sld_dug := _u_sld_pot := 0
    LOCAL _t_ps_dug := _t_ps_pot := _t_kum_dug := _t_kum_pot := _t_tek_dug := _t_tek_pot := _t_sld_dug := _t_sld_pot := 0
    LOCAL _tt_ps_dug := _tt_ps_pot := _tt_kum_dug := _tt_kum_pot := _tt_tek_dug := _tt_tek_pot := _tt_sld_dug := _tt_sld_pot := 0
@@ -1132,30 +1132,30 @@ METHOD FinBrutoBilans:rekapitulacija_klasa()
    ? hb_UTF8ToStr( "*        *    DUGUJE     *   POTRAŽUJE   *    DUGUJE     *   POTRAŽUJE   *     DUGUJE    *    POTRAŽUJE *" )
    ? _line
 
-   FOR _i := 1 TO Len( ::klase )
+   FOR nI := 1 TO Len( ::klase )
 
-      @ PRow() + 1, 4 SAY ::klase[ _i, 1 ]
+      @ PRow() + 1, 4 SAY ::klase[ nI, 1 ]
 
       // ps dug / ps pot
-      @ PRow(), 10 SAY ::klase[ _i, 2 ] PICT ::pict_iznos
-      @ PRow(), PCol() + 1 SAY ::klase[ _i, 3 ] PICT ::pict_iznos
+      @ PRow(), 10 SAY ::klase[ nI, 2 ] PICT ::pict_iznos
+      @ PRow(), PCol() + 1 SAY ::klase[ nI, 3 ] PICT ::pict_iznos
 
       // kum dug / tek pot
-      @ PRow(), PCol() + 1 SAY ::klase[ _i, 6 ] PICT ::pict_iznos
-      @ PRow(), PCol() + 1 SAY ::klase[ _i, 7 ] PICT ::pict_iznos
+      @ PRow(), PCol() + 1 SAY ::klase[ nI, 6 ] PICT ::pict_iznos
+      @ PRow(), PCol() + 1 SAY ::klase[ nI, 7 ] PICT ::pict_iznos
 
       // sld dug / sld pot
-      @ PRow(), PCol() + 1 SAY ::klase[ _i, 8 ] PICT ::pict_iznos
-      @ PRow(), PCol() + 1 SAY ::klase[ _i, 9 ] PICT ::pict_iznos
+      @ PRow(), PCol() + 1 SAY ::klase[ nI, 8 ] PICT ::pict_iznos
+      @ PRow(), PCol() + 1 SAY ::klase[ nI, 9 ] PICT ::pict_iznos
 
-      _kl_ps_dug += ::klase[ _i, 2 ]
-      _kl_ps_pot += ::klase[ _i, 3 ]
+      _kl_ps_dug += ::klase[ nI, 2 ]
+      _kl_ps_pot += ::klase[ nI, 3 ]
 
-      _kl_kum_dug += ::klase[ _i, 6 ]
-      _kl_kum_pot += ::klase[ _i, 7 ]
+      _kl_kum_dug += ::klase[ nI, 6 ]
+      _kl_kum_pot += ::klase[ nI, 7 ]
 
-      _kl_sld_dug += ::klase[ _i, 8 ]
-      _kl_sld_pot += ::klase[ _i, 9 ]
+      _kl_sld_dug += ::klase[ nI, 8 ]
+      _kl_sld_pot += ::klase[ nI, 9 ]
 
    NEXT
 

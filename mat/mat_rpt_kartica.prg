@@ -85,7 +85,7 @@ FUNCTION KSintKont()
    START PRINT CRET
 
    m := "------- ---- -----------"
-   FOR _i := 1 TO 4
+   FOR nI := 1 TO 4
       m += " " + Replicate( "-", Len( PicDEM ) )
    NEXT
 
@@ -262,7 +262,7 @@ FUNCTION KAnKPoj()
    START PRINT CRET
 
    m := "-- ---- --- -------- "
-   FOR _i := 1 TO 4
+   FOR nI := 1 TO 4
       m += " " + Replicate( "-", Len( PICDEM ) )
    NEXT
 
@@ -399,7 +399,7 @@ FUNCTION KAnKKonto()
    A := 0
 
    m := "------- ---------------------------------"
-   FOR _i := 1 TO 6
+   FOR nI := 1 TO 6
       m += " " + Replicate( "-", Len( PICDEM ) )
    NEXT
 
@@ -676,12 +676,12 @@ FUNCTION KSuban()
 
    m := "-- ---- -- -------- -------- ------"
 
-   FOR _i := 1 TO 3
+   FOR nI := 1 TO 3
       m += " " + Replicate( "-", Len( PICKOL ) )
    NEXT
 
-   _i := 1
-   FOR _i := 1 TO 5
+   nI := 1
+   FOR nI := 1 TO 5
       m += " " + Replicate( "-", Len( PICDEM ) )
    NEXT
 

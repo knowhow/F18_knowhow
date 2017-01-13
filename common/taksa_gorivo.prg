@@ -122,7 +122,7 @@ FUNCTION valid_dodaj_taksu_za_gorivo()
 
 STATIC FUNCTION error_dodaj_stavku_takse_goriva()
    MsgBeep( "Pobrisati stavku TAKGORI-M iz pripreme pa ponoviti operciju ažuriranja !" )
-   RETURN
+   RETURN .T.
 
 
 

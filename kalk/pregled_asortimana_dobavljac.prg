@@ -135,7 +135,7 @@ STATIC FUNCTION _izdvoji_ulaze( vars )
    LOCAL _dat_od, _dat_do, _dob, _artikli, _p_konto, _id_firma
    LOCAL _qry_ret, _table
    LOCAL _data := {}
-   LOCAL _i, oRow
+   LOCAL nI, oRow
    LOCAL _cnt := 0
 
    _p_konto := vars[ "p_konto" ]
@@ -198,11 +198,11 @@ STATIC FUNCTION _izdvoji_ulaze( vars )
 
    _table:GoTo(1)
 
-   FOR _i := 1 TO _table:LastRec()
+   FOR nI := 1 TO _table:LastRec()
 
       ++ _cnt
 
-      oRow := _table:GetRow( _i )
+      oRow := _table:GetRow( nI )
 
       SELECT r_export
       APPEND BLANK
@@ -235,7 +235,7 @@ STATIC FUNCTION _izdvoji_prodaju( vars )
    LOCAL _dat_od, _dat_do, _dob, _artikli, _p_konto, _id_firma
    LOCAL _qry_ret, _table
    LOCAL _data := {}
-   LOCAL _i, oRow
+   LOCAL nI, oRow
    LOCAL _cnt := 0
    LOCAL _id_roba
 
@@ -290,11 +290,11 @@ STATIC FUNCTION _izdvoji_prodaju( vars )
    _table := run_sql_query( _qry )
    _table:GoTo(1)
 
-   FOR _i := 1 TO _table:LastRec()
+   FOR nI := 1 TO _table:LastRec()
 
       ++ _cnt
 
-      oRow := _table:GetRow( _i )
+      oRow := _table:GetRow( nI )
 
       _id_roba := oRow:FieldGet( oRow:FieldPos( "idroba" ) )
 

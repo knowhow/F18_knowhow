@@ -58,23 +58,23 @@ FUNCTION ld_kartica_plate_upravni_odbor( cIdRj, cMjesec, cGodina, cIdRadn, cObra
       IF tippr->( FieldPos( "TPR_TIP" ) ) <> 0
          // uzmi osnovice
          IF tippr->tpr_tip == "N"
-            nOsnNeto += _i&cPom
+            nOsnNeto += _I&cPom
          ELSEIF tippr->tpr_tip == "2"
-            nOsnOstalo += _i&cPom
+            nOsnOstalo += _I&cPom
          ELSEIF tippr->tpr_tip == " "
             // standardni tekuci sistem
             IF tippr->uneto == "D"
-               nOsnNeto += _i&cPom
+               nOsnNeto += _I&cPom
             ELSE
-               nOsnOstalo += _i&cPom
+               nOsnOstalo += _I&cPom
             ENDIF
          ENDIF
       ELSE
          // standardni tekuci sistem
          IF tippr->uneto == "D"
-            nOsnNeto += _i&cPom
+            nOsnNeto += _I&cPom
          ELSE
-            nOsnOstalo += _i&cPom
+            nOsnOstalo += _I&cPom
          ENDIF
       ENDIF
 
@@ -94,7 +94,7 @@ FUNCTION ld_kartica_plate_upravni_odbor( cIdRj, cMjesec, cGodina, cIdRadn, cObra
 
       IF tippr->( Found() ) .AND. tippr->aktivan == "D"
 
-         IF _i&cpom <> 0 .OR. _s&cPom <> 0
+         IF _I&cpom <> 0 .OR. _S&cPom <> 0
 
             cTpNaz := tippr->naz
 
@@ -103,21 +103,21 @@ FUNCTION ld_kartica_plate_upravni_odbor( cIdRj, cMjesec, cGodina, cIdRadn, cObra
 
             IF tippr->fiksan $ "DN"
 
-               @ PRow(), PCol() + 8 SAY _s&cPom  PICT gpics
+               @ PRow(), PCol() + 8 SAY _S&cPom  PICT gpics
                ?? " s"
-               @ PRow(), 60 + Len( cLMSK ) SAY _i&cPom PICT gpici
+               @ PRow(), 60 + Len( cLMSK ) SAY _I&cPom PICT gpici
 
             ELSEIF tippr->fiksan == "P"
 
-               @ PRow(), PCol() + 8 SAY _s&cPom  PICT "999.99%"
-               @ PRow(), 60 + Len( cLMSK ) SAY _i&cPom        PICT gpici
+               @ PRow(), PCol() + 8 SAY _S&cPom  PICT "999.99%"
+               @ PRow(), 60 + Len( cLMSK ) SAY _I&cPom        PICT gpici
             ELSEIF tippr->fiksan == "B"
 
-               @ PRow(), PCol() + 8 SAY _s&cPom  PICT "999999"; ?? " b"
-               @ PRow(), 60 + Len( cLMSK ) SAY _i&cPom        PICT gpici
+               @ PRow(), PCol() + 8 SAY _S&cPom  PICT "999999"; ?? " b"
+               @ PRow(), 60 + Len( cLMSK ) SAY _I&cPom        PICT gpici
             ELSEIF tippr->fiksan == "C"
 
-               @ PRow(), 60 + Len( cLMSK ) SAY _i&cPom        PICT gpici
+               @ PRow(), 60 + Len( cLMSK ) SAY _I&cPom        PICT gpici
             ENDIF
          ENDIF
       ENDIF

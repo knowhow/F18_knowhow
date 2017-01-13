@@ -310,7 +310,7 @@ STATIC FUNCTION _set_box( box_x, box_y )
 
 STATIC FUNCTION _set_a_kol( a_ime_kol, a_kol )
 
-   LOCAL _i
+   LOCAL nI
 
    a_ime_kol := {}
    a_kol := {}
@@ -347,8 +347,8 @@ STATIC FUNCTION _set_a_kol( a_ime_kol, a_kol )
       {|| .T. } } )
 
 
-   FOR _i := 1 TO Len( a_ime_kol )
-      AAdd( a_kol, _i )
+   FOR nI := 1 TO Len( a_ime_kol )
+      AAdd( a_kol, nI )
    NEXT
 
    RETURN

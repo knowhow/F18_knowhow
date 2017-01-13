@@ -810,7 +810,7 @@
 
 1.4.247 2013-11-19, vsasa
 
-  - poziv funkcije _sql_get_value() ispravljen
+  - poziv funkcije sql_get_field_za_uslov) ispravljen
 
 1.4.246 2013-11-19, vsasa
 

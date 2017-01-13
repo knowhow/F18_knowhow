@@ -50,23 +50,23 @@ FUNCTION ld_kartica_plate_autorski_honorar( cIdRj, cMjesec, cGodina, cIdRadn, cO
       IF tippr->( FieldPos( "TPR_TIP" ) ) <> 0
          // uzmi osnovice
          IF tippr->tpr_tip == "N"
-            nOsnNeto += _i&cPom
+            nOsnNeto += _I&cPom
          ELSEIF tippr->tpr_tip == "2"
-            nOsnOstalo += _i&cPom
+            nOsnOstalo += _I&cPom
          ELSEIF tippr->tpr_tip == " "
             // standardni tekuci sistem
             IF tippr->uneto == "D"
-               nOsnNeto += _i&cPom
+               nOsnNeto += _I&cPom
             ELSE
-               nOsnOstalo += _i&cPom
+               nOsnOstalo += _I&cPom
             ENDIF
          ENDIF
       ELSE
          // standardni tekuci sistem
          IF tippr->uneto == "D"
-            nOsnNeto += _i&cPom
+            nOsnNeto += _I&cPom
          ELSE
-            nOsnOstalo += _i&cPom
+            nOsnOstalo += _I&cPom
          ENDIF
       ENDIF
 

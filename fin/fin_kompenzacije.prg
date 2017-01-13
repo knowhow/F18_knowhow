@@ -125,7 +125,7 @@ FUNCTION kompenzacija()
 
    LOCAL _is_gen := .F.
    LOCAL _vars := hb_Hash()
-   LOCAL _i, _n
+   LOCAL nI, _n
    LOCAL _row := MAXROWS() - 10
    LOCAL _col := MAXCOLS() - 6
    LOCAL cIdKonto, cIdKonto2
@@ -173,8 +173,8 @@ FUNCTION kompenzacija()
       }
 
    Kol := {}
-   FOR _i := 1 TO Len( ImeKol )
-      AAdd( Kol, _i )
+   FOR nI := 1 TO Len( ImeKol )
+      AAdd( Kol, nI )
    NEXT
 
    Box(, _row, _col )

@@ -97,7 +97,7 @@ FUNCTION unlock_semaphore( cTable  )
 
    LOCAL _qry
    LOCAL _ret
-   LOCAL _i
+   LOCAL nI
    LOCAL _err_msg
    LOCAL _user   := f18_user()
    LOCAL _user_locked
@@ -345,7 +345,7 @@ FUNCTION table_count( cTable, condition )
 FUNCTION fill_dbf_from_server( dbf_table, sql_query, sql_fetch_time, dbf_write_time, lShowInfo )
 
    LOCAL nCounterDataset := 0
-   LOCAL _i, cField := "x"
+   LOCAL cField := "x"
    LOCAL oDataSet
    LOCAL aDbfRec, aDbfFields, cSyncalias, cFullDbf, cFullIdx
    LOCAL nI, cMsg, cCallMsg := "", oError
@@ -394,17 +394,17 @@ FUNCTION fill_dbf_from_server( dbf_table, sql_query, sql_fetch_time, dbf_write_t
          ++nCounterDataset
          APPEND BLANK
 
-         FOR _i := 1 TO Len( aDbfFields )
+         FOR nI := 1 TO Len( aDbfFields )
 
 /*
          IF log_level() > 8
-            ?E "for petlja ", _i, " fill_dbf:", dbf_table, "a_dbf_rec dbf_fields: ", pp( aDbfFields )
+            ?E "for petlja ", nI, " fill_dbf:", dbf_table, "a_dbf_rec dbf_fields: ", pp( aDbfFields )
          ENDIF
   */
 
-            cField := aDbfFields[ _i ]
+            cField := aDbfFields[ nI ]
 #ifdef F18_SIMULATE_BUG
-            IF  nCounterDataset == 100 .AND. _i == 1 .AND.  aDbfRec[ "table" ] == 'fin_suban'
+            IF  nCounterDataset == 100 .AND. nI == 1 .AND.  aDbfRec[ "table" ] == 'fin_suban'
                IF s_nBug1 < 2
                   cField := "simulate_bug"
                   s_nBug1++

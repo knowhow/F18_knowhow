@@ -114,7 +114,7 @@ FUNCTION st_pf_a4( lStartPrint, cDocumentName )
    LOCAL cArtikal
    LOCAL cSlovima
    LOCAL cLine
-   LOCAL _i
+   LOCAL nI
 
    // lijeva margina
    PRIVATE nLMargina
@@ -249,11 +249,11 @@ FUNCTION st_pf_a4( lStartPrint, cDocumentName )
       IF Len( aNazivDobra ) > 1
 
          // OSTALI REDOVI
-         FOR _i := 2 TO Len( aNazivDobra )
+         FOR nI := 2 TO Len( aNazivDobra )
             ? RAZMAK
             ?? " "
             ?? Space( LEN_RBR )
-            ?? PadR( aNazivDobra[ _i ], LEN_NAZIV )
+            ?? PadR( aNazivDobra[ nI ], LEN_NAZIV )
          NEXT
 
       ENDIF

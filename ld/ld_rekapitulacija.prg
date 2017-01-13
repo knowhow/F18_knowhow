@@ -743,8 +743,8 @@ STATIC FUNCTION _ld_calc_totals( lSvi, a_benef )
          SELECT tippr
          SEEK cPom
          SELECT ld
-         aRekap[ i, 1 ] += _s&cPom  // sati
-         nIznos := _i&cPom
+         aRekap[ i, 1 ] += _S&cPom  // sati
+         nIznos := _I&cPom
 
          aRekap[ i, 2 ] += nIznos  // iznos
 

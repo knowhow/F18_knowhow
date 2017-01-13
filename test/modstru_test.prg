@@ -16,7 +16,7 @@ STATIC _table_name := "f18_test"
 FUNCTION create_test_f18_dbf()
 
    LOCAL _dbf_struct := {}
-   LOCAL _i
+   LOCAL nI
 
    // tabele sa strukturom sifarnika (id je primarni ključ)
    set_a_dbf_sifarnik( _table_name, "F18_TEST", 500      )
@@ -36,10 +36,10 @@ FUNCTION create_test_f18_dbf()
 
    my_usex( _table_name )
 
-   FOR _i := 1 TO 50
+   FOR nI := 1 TO 50
       APPEND BLANK
-      REPLACE id WITH Str( _i, 2 )
-      REPLACE naz WITH "naz" + Str( _i, 2 )
+      REPLACE id WITH Str( nI, 2 )
+      REPLACE naz WITH "naz" + Str( nI, 2 )
    NEXT
 
    RETURN .F.

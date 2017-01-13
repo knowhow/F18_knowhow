@@ -350,22 +350,22 @@ STATIC FUNCTION prikazi_primanja()
    IF "U" $ Type( "cLMSK" ); cLMSK := ""; ENDIF
    IF "U" $ Type( "l2kolone" ); l2kolone := .F. ; ENDIF
    IF tippr->( Found() ) .AND. tippr->aktivan == "D"
-      IF _i&cpom <> 0 .OR. _s&cPom <> 0
+      IF _I&cpom <> 0 .OR. _S&cPom <> 0
          ? cLMSK + tippr->id + "-" + tippr->naz, tippr->opis
          nC1 := PCol()
          IF tippr->uneto == "N"
-            nIznos := Abs( _i&cPom )
+            nIznos := Abs( _I&cPom )
          ELSE
-            nIznos := _i&cPom
+            nIznos := _I&cPom
          ENDIF
          IF tippr->fiksan $ "DN"
-            @ PRow(), PCol() + 8 SAY _s&cPom  PICT gpics; ?? " s"
+            @ PRow(), PCol() + 8 SAY _S&cPom  PICT gpics; ?? " s"
             @ PRow(), 60 + Len( cLMSK ) SAY niznos        PICT gpici
          ELSEIF tippr->fiksan == "P"
-            @ PRow(), PCol() + 8 SAY _s&cPom  PICT "999.99%"
+            @ PRow(), PCol() + 8 SAY _S&cPom  PICT "999.99%"
             @ PRow(), 60 + Len( cLMSK ) SAY niznos        PICT gpici
          ELSEIF tippr->fiksan == "B"
-            @ PRow(), PCol() + 8 SAY Abs( _s&cPom )  PICT "999999"; ?? " b"
+            @ PRow(), PCol() + 8 SAY Abs( _S&cPom )  PICT "999999"; ?? " b"
             @ PRow(), 60 + Len( cLMSK ) SAY niznos        PICT gpici
          ELSEIF tippr->fiksan == "C"
             IF !( "SUMKREDITA" $ tippr->formula )

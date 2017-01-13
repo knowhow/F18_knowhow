@@ -34,7 +34,7 @@ FUNCTION update_dbf_from_server( table, algoritam )
    LOCAL _retry := 3
    LOCAL _key_blocks := {}
    LOCAL _key_block
-   LOCAL _i, _fld, _dbf_fields, _sql_fields, _sql_order
+   LOCAL nI, _fld, _dbf_fields, _sql_fields, _sql_order
    LOCAL _sql_in := {}
    LOCAL _queries
    LOCAL _dbf_index_tags := {}

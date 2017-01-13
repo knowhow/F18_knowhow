@@ -284,9 +284,9 @@ STATIC FUNCTION _export_dbf( table, rpt_vars )
 
    O_R_EXP
 
-   FOR _i := 1 TO table:LastRec()
+   FOR nI := 1 TO table:LastRec()
 
-      oRow := table:GetRow( _i )
+      oRow := table:GetRow( nI )
 
       SELECT r_export
       APPEND BLANK
@@ -322,7 +322,7 @@ STATIC FUNCTION _export_dbf( table, rpt_vars )
 
 STATIC FUNCTION _cre_xml( table, rpt_vars )
 
-   LOCAL _i, oRow, oItem
+   LOCAL nI, oRow, oItem
    LOCAL PIC_VRIJEDNOST := PadL( AllTrim( Right( PicDem, LEN_VRIJEDNOST ) ), LEN_VRIJEDNOST, "9" )
    LOCAL _u_dug1 := 0
    LOCAL _u_dug2 := 0
@@ -382,7 +382,7 @@ STATIC FUNCTION _cre_xml( table, rpt_vars )
       xml_node( "konto", to_xml_encoding( hb_UTF8ToStr( _id_konto ) ) )
 
       IF !Empty( _id_konto )
-         _naz_konto := _sql_get_value( "konto", "naz", { { "id", AllTrim( _id_konto ) } } )
+         _naz_konto := sql_get_field_za_uslov( "konto", "naz", { { "id", AllTrim( _id_konto ) } } )
       ELSE
          _naz_konto := ""
       ENDIF
@@ -390,7 +390,7 @@ STATIC FUNCTION _cre_xml( table, rpt_vars )
       xml_node( "konto_naz", to_xml_encoding( _naz_konto ) )
       xml_node( "partner", to_xml_encoding( hb_UTF8ToStr( _id_partner ) ) )
       IF !Empty( _id_partner )
-         _naz_partner := _sql_get_value( "partn", "naz", { { "id", AllTrim( _id_partner ) } } )
+         _naz_partner := sql_get_field_za_uslov( "partn", "naz", { { "id", AllTrim( _id_partner ) } } )
       ELSE
          _naz_partner := ""
       ENDIF

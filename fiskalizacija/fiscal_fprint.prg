@@ -1394,7 +1394,7 @@ FUNCTION fprint_read_error( dev_params, fiscal_no, storno, time_out )
 
    LOCAL _err_level := 0
    LOCAL _f_name
-   LOCAL _i
+   LOCAL nI
    LOCAL _err_tmp
    LOCAL _err_line
    LOCAL _time

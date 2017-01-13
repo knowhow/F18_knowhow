@@ -96,24 +96,24 @@ FUNCTION my_dbf_prefix( aDbfRec )
 
 FUNCTION dbf_get_rec( lConvertToUtf )
 
-   LOCAL _ime_polja, _i, _struct
+   LOCAL _ime_polja, nI, _struct
    LOCAL cRet := hb_Hash()
    LOCAL lSql := ( rddName() ==  "SQLMIX" )
 
    hb_default( @lConvertToUtf, .F. )
 
    _struct := dbStruct()
-   FOR _i := 1 TO Len( _struct )
+   FOR nI := 1 TO Len( _struct )
 
-      _ime_polja := Lower( _struct[ _i, 1 ] )
+      _ime_polja := Lower( _struct[ nI, 1 ] )
 
       IF !( "#" + _ime_polja + "#" $ "#BRISANO#_OID_#_COMMIT_#" )
 
          cRet[ _ime_polja ] := Eval( FieldBlock( _ime_polja ) )
 
-         IF _struct[ _i, 2 ] == "C"
+         IF _struct[ nI, 2 ] == "C"
             IF cRet[ _ime_polja ] == NIL
-               cRet[ _ime_polja ] := Space( _struct[ _i, 3 ] )
+               cRet[ _ime_polja ] := Space( _struct[ nI, 3 ] )
             ENDIF
             IF lSql // sql tabela utf->str
                cRet[ _ime_polja ] := hb_UTF8ToStr( cRet[ _ime_polja ] )
@@ -123,7 +123,7 @@ FUNCTION dbf_get_rec( lConvertToUtf )
             ENDIF
 
          ENDIF
-         IF  _struct[ _i, 2 ] == "D"
+         IF  _struct[ nI, 2 ] == "D"
             cRet[ _ime_polja ]  := fix_dat_var( cRet[ _ime_polja ] )
          ENDIF
       ENDIF

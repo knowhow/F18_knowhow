@@ -26,7 +26,7 @@ FUNCTION set_global_memvars_from_dbf( cPrefixVarijabla )
 
 FUNCTION get_hash_record_from_global_vars( cPrefixVarijabla, lReleaseVarFromMemory, lUtf )
 
-   LOCAL _ime_polja, _i, _struct
+   LOCAL _ime_polja, nI, _struct
    LOCAL _ret := hb_Hash()
 
    IF cPrefixVarijabla == nil
@@ -44,9 +44,9 @@ FUNCTION get_hash_record_from_global_vars( cPrefixVarijabla, lReleaseVarFromMemo
 
    _struct := dbStruct()
 
-   FOR _i := 1 TO Len( _struct )
+   FOR nI := 1 TO Len( _struct )
 
-      _ime_polja := _struct[ _i, 1 ]
+      _ime_polja := _struct[ nI, 1 ]
 
       IF !( "#" + _ime_polja + "#" $ "#BRISANO#_OID_#_COMMIT_#" )
 

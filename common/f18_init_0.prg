@@ -49,7 +49,7 @@ FUNCTION self_organizacija_naziv( cNaz )
 FUNCTION start_f18_program_module( oApp, lSezone )
 
    LOCAL cImeDbf
-   LOCAL _i
+   LOCAL nI
 
    gModul   := oApp:cName
    goModul  := oApp

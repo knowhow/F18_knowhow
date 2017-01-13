@@ -19,7 +19,7 @@ FUNCTION get_fin_partner_saldo( id_partner, id_konto, id_firma )
 
    LOCAL _qry, _qry_ret, _table
    LOCAL _data := {}
-   LOCAL _i, oRow
+   LOCAL nI, oRow
    LOCAL _saldo := 0
 
    _qry := "SELECT SUM( CASE WHEN d_p = '1' THEN iznosbhd ELSE -iznosbhd END ) AS saldo FROM " + F18_PSQL_SCHEMA + ".fin_suban " + ;
@@ -47,7 +47,7 @@ FUNCTION g_dpupl_part( id_partner, id_konto, id_firma )
 
    LOCAL _qry, _qry_ret, _table
    LOCAL _data := {}
-   LOCAL _i, oRow
+   LOCAL nI, oRow
    LOCAL _max := CToD( "" )
 
    _qry := "SELECT MAX( datdok ) AS uplata FROM " + F18_PSQL_SCHEMA + ".fin_suban " + ;
@@ -76,7 +76,7 @@ FUNCTION datum_posljednje_promjene_kupac_dobavljac( id_partner, id_konto, id_fir
 
    LOCAL _qry, _qry_ret, _table
    LOCAL _data := {}
-   LOCAL _i, oRow
+   LOCAL nI, oRow
    LOCAL _max := CToD( "" )
 
    _qry := "SELECT MAX( datdok ) AS uplata FROM " + F18_PSQL_SCHEMA + ".fin_suban " + ;

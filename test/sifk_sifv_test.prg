@@ -15,7 +15,7 @@ FUNCTION sifk_sifv_test()
 
    LOCAL _ime_f := "tsifv_k"
    LOCAL _dbf_struct := {}
-   LOCAL _i, _rec
+   LOCAL nI, _rec
    LOCAL _id_sif, _karakteristika, _karakteristika_n
    LOCAL _header
    LOCAL _tmp

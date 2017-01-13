@@ -23,7 +23,7 @@ FUNCTION kalk_azuriranje_tabele_pripr9()
    LOCAL cIdvd
    LOCAL cBrDok
    LOCAL _a_pripr
-   LOCAL _i, hRec, _scan
+   LOCAL nI, hRec, _scan
    LOCAL _id_firma, _id_vd, _br_dok
 
    o_kalk_pripr9()
@@ -291,18 +291,18 @@ FUNCTION kalk_povrat_najstariji_dokument_iz_pripr9()
 
 STATIC FUNCTION postoji_li_dokument_u_pripr9( arr )
 
-   LOCAL _i
+   LOCAL nI
    LOCAL _ctrl
 
-   FOR _i := 1 TO Len( arr )
+   FOR nI := 1 TO Len( arr )
 
-      _ctrl := arr[ _i, 1 ] + arr[ _i, 2 ] + arr[ _i, 3 ]
+      _ctrl := arr[ nI, 1 ] + arr[ nI, 2 ] + arr[ nI, 3 ]
 
       SELECT kalk_pripr9
       SEEK _ctrl
 
       IF Found()
-         arr[ _i, 4 ] := 1
+         arr[ nI, 4 ] := 1
       ENDIF
 
    NEXT

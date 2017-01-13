@@ -63,7 +63,7 @@ METHOD VirmExportTxt:New()
 METHOD VirmExportTxt:_dbf_struct()
 
    LOCAL _dbf := {}
-   LOCAL _i, _a_tmp
+   LOCAL nI, _a_tmp
 
    // struktura...
    AAdd( _dbf, { "RBR", "N",  3, 0 } )
@@ -451,7 +451,7 @@ METHOD VirmExportTxt:get_export_line_macro( var )
 METHOD VirmExportTxt:get_macro_line( var )
 
    LOCAL _macro := ""
-   LOCAL _i, _curr_struct
+   LOCAL nI, _curr_struct
    LOCAL cSeparator, cSeparatorFormula
    LOCAL _a_struct
 
@@ -469,18 +469,18 @@ METHOD VirmExportTxt:get_macro_line( var )
    ENDIF
    _a_struct := TokToNiz( _curr_struct, cSeparatorFormula )
 
-   FOR _i := 1 TO Len( _a_struct )
+   FOR nI := 1 TO Len( _a_struct )
 
-      IF !Empty( _a_struct[ _i ] )
+      IF !Empty( _a_struct[ nI ] )
 
 
-         IF _i > 1 // plusevi izmedju
+         IF nI > 1 // plusevi izmedju
             _macro += " + "
          ENDIF
 
-         _macro += _a_struct[ _i ] // makro
+         _macro += _a_struct[ nI ] // makro
 
-         IF _i < Len( _a_struct )
+         IF nI < Len( _a_struct )
             _macro += ' + "' + cSeparator + '" '
          ENDIF
 
@@ -861,7 +861,7 @@ METHOD VirmExportTxt:get_export_params( id )
 METHOD VirmExportTxt:get_export_list()
 
    LOCAL _id := 0
-   LOCAL _i
+   LOCAL nI
    LOCAL _param_name := "virm_export_"
    LOCAL _opc, _opcexe, _izbor := 1
    LOCAL _m_x := m_x
@@ -870,14 +870,14 @@ METHOD VirmExportTxt:get_export_list()
    _opc := {}
    _opcexe := {}
 
-   FOR _i := 1 TO 20
+   FOR nI := 1 TO 20
 
-      ::export_setup_read_params( _i )
+      ::export_setup_read_params( nI )
 
       if ::formula_params[ "name" ] <> NIL .AND. !Empty( ::formula_params[ "name" ] )
 
          _tmp := ""
-         _tmp += PadL( AllTrim( Str( _i ) ) + ".", 4 )
+         _tmp += PadL( AllTrim( Str( nI ) ) + ".", 4 )
          _tmp += PadR( ::formula_params[ "name" ], 40 )
 
          AAdd( _opc, _tmp )

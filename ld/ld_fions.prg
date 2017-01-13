@@ -54,16 +54,16 @@ FUNCTION izracunaj_uneto_usati_za_radnika()
 
       IF tippr->( Found() ) .AND. tippr->aktivan == "D"
 
-         nIznos += _i&cTmp
+         nIznos += _I&cTmp
 
          IF tippr->ufs == "D"
-            nSati += _s&cTmp
+            nSati += _S&cTmp
          ENDIF
 
          IF tippr->uneto == "D"
-            nNeto += _i&cTmp
+            nNeto += _I&cTmp
          ELSE
-            nOdbici += _i&cTmp
+            nOdbici += _I&cTmp
          ENDIF
 
       ENDIF

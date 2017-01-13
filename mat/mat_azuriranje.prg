@@ -187,7 +187,7 @@ STATIC FUNCTION _mat_azur_sql()
    LOCAL _tbl_anal
    LOCAL _tbl_sint
    LOCAL _tbl_nalog
-   LOCAL _i
+   LOCAL nI
    LOCAL _ids_suban := {}
    LOCAL _ids_sint := {}
    LOCAL _ids_anal := {}

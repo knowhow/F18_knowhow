@@ -140,7 +140,7 @@ STATIC FUNCTION _set_os_promj_tables()
 // ------------------------------------------------------
 STATIC FUNCTION _rpt_info( info )
 
-   LOCAL _i
+   LOCAL nI
 
    START PRINT CRET
 
@@ -150,8 +150,8 @@ STATIC FUNCTION _rpt_info( info )
    ? "Operacija                        Iznos       Ostalo"
    ? Replicate( "-", 70 )
 
-   FOR _i := 1 TO Len( info )
-      ? PadR( info[ _i, 1 ], 50 ), info[ _i, 2 ], PadR( info[ _i, 3 ], 30 )
+   FOR nI := 1 TO Len( info )
+      ? PadR( info[ nI, 1 ], 50 ), info[ nI, 2 ], PadR( info[ nI, 3 ], 30 )
    NEXT
 
    FF
@@ -332,10 +332,10 @@ STATIC FUNCTION _row_to_rec( row )
    LOCAL _field_name
    LOCAL _field_val
 
-   FOR _i := 1 TO row:FCount()
+   FOR nI := 1 TO row:FCount()
 
-      _field_name := row:FieldName( _i )
-      _field_value := row:FieldGet( _i )
+      _field_name := row:FieldName( nI )
+      _field_value := row:FieldGet( nI )
 
       IF ValType( _field_value ) == "C"
          _field_value := hb_UTF8ToStr( _field_value )
@@ -356,7 +356,7 @@ STATIC FUNCTION _row_to_rec( row )
 // -----------------------------------------------------
 STATIC FUNCTION _insert_into_os( data )
 
-   LOCAL _i
+   LOCAL nI
    LOCAL _table
    LOCAL _row, _rec
 
@@ -394,7 +394,7 @@ STATIC FUNCTION _insert_into_os( data )
 // -----------------------------------------------------
 STATIC FUNCTION _insert_into_promj( data )
 
-   LOCAL _i
+   LOCAL nI
    LOCAL _table
    LOCAL _row, _rec
 
@@ -438,7 +438,7 @@ STATIC FUNCTION _os_generacija_nakon_ps( info )
    LOCAL _ok := .F.
    LOCAL _table_promj
    LOCAL _data := {}
-   LOCAL _i, _count, _otpis_count
+   LOCAL nI, _count, _otpis_count
    LOCAL _pos_x, _pos_y
    LOCAL hParams
 

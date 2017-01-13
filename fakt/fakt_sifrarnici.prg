@@ -326,18 +326,18 @@ FUNCTION P_FTxt( cId, dx, dy )
 
 FUNCTION PrikFTxt( top_pos, left_pos, bott_pos, text_length )
 
-   LOCAL _i := 0
+   LOCAL nI := 0
    LOCAL _arr := {}
 
    @ top_pos, 6 SAY "uzorak teksta id: " + field->id
 
    _arr := TXTuNIZ( field->naz, text_length - 1 - left_pos )
 
-   FOR _i := 1 TO bott_pos
-      IF _i > Len( _arr )
-         @ top_pos + _i, left_pos + 1 SAY Space( text_length - 1 - left_pos )
+   FOR nI := 1 TO bott_pos
+      IF nI > Len( _arr )
+         @ top_pos + nI, left_pos + 1 SAY Space( text_length - 1 - left_pos )
       ELSE
-         @ top_pos + _i, left_pos + 1 SAY PadR( _arr[ _i ], text_length - 1 - left_pos )
+         @ top_pos + nI, left_pos + 1 SAY PadR( _arr[ nI ], text_length - 1 - left_pos )
       ENDIF
    NEXT
 

@@ -148,7 +148,7 @@ STATIC FUNCTION _fakt_import()
 
 FUNCTION print_imp_exp_report( data )
 
-   LOCAL _i, _cnt
+   LOCAL nI, _cnt
    LOCAL _line
    LOCAL _x_docs, _import_docs, _delete_docs, _exp_docs
    LOCAL _descr
@@ -195,9 +195,9 @@ FUNCTION print_imp_exp_report( data )
    _delete_docs := 0
    _exp_docs := 0
 
-   FOR _i := 1 TO Len( data )
+   FOR nI := 1 TO Len( data )
 
-      _descr := AllTrim( DATA[ _i, 1 ] )
+      _descr := AllTrim( DATA[ nI, 1 ] )
 
       IF _descr == "x"
          ++ _x_docs
@@ -211,10 +211,10 @@ FUNCTION print_imp_exp_report( data )
 
       ? PadL( AllTrim( Str( ++_cnt ) ), 4 ) + "."
       @ PRow(), PCol() + 1 SAY PadL( _descr, 10 )
-      @ PRow(), PCol() + 1 SAY PadR( DATA[ _i, 2 ], 16 )
-      @ PRow(), PCol() + 1 SAY DToC( DATA[ _i, 7 ] )
-      @ PRow(), PCol() + 1 SAY PadR( DATA[ _i, 5 ], 27 ) + "..."
-      @ PRow(), PCol() + 1 SAY Str( DATA[ _i, 6 ], 12, 2 )
+      @ PRow(), PCol() + 1 SAY PadR( DATA[ nI, 2 ], 16 )
+      @ PRow(), PCol() + 1 SAY DToC( DATA[ nI, 7 ] )
+      @ PRow(), PCol() + 1 SAY PadR( DATA[ nI, 5 ], 27 ) + "..."
+      @ PRow(), PCol() + 1 SAY Str( DATA[ nI, 6 ], 12, 2 )
 
    NEXT
 

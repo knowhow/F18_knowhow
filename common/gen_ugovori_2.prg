@@ -985,7 +985,7 @@ STATIC FUNCTION add_to_generated_data( data, ;
 // ----------------------------------------------------------------------
 STATIC FUNCTION info_generated_data( data )
 
-   LOCAL _i
+   LOCAL nI
    LOCAL _cnt := 0
 
    START PRINT CRET
@@ -1000,16 +1000,16 @@ STATIC FUNCTION info_generated_data( data )
    ? PadR( "R.br", 5 ), PadR( "dokument", 15 ), PadR( "partner", 34 ), PadR( "destinacija", 100 )
    ? Replicate( "-", 150 )
 
-   FOR _i := 1 TO Len( data )
+   FOR nI := 1 TO Len( data )
 
       SELECT partn
-      HSEEK DATA[ _i, 4 ]
+      HSEEK DATA[ nI, 4 ]
 
       ? PadL( AllTrim( Str( ++_cnt ) ), 4 ) + "."
 
-      @ PRow(), PCol() + 1 SAY PadR( DATA[ _i, 1 ] + "-" + DATA[ _i, 2 ] + "-" + AllTrim( DATA[ _i, 3 ] ), 15 )
-      @ PRow(), PCol() + 1 SAY PadR( DATA[ _i, 4 ], 6 ) + " - " + PadR( partn->naz, 25 )
-      @ PRow(), PCol() + 1 SAY PadR( DATA[ _i, 5 ], 100 )
+      @ PRow(), PCol() + 1 SAY PadR( DATA[ nI, 1 ] + "-" + DATA[ nI, 2 ] + "-" + AllTrim( DATA[ nI, 3 ] ), 15 )
+      @ PRow(), PCol() + 1 SAY PadR( DATA[ nI, 4 ], 6 ) + " - " + PadR( partn->naz, 25 )
+      @ PRow(), PCol() + 1 SAY PadR( DATA[ nI, 5 ], 100 )
 
    NEXT
 

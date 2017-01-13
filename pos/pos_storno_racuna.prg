@@ -17,7 +17,7 @@
 FUNCTION pos_vrati_broj_racuna_iz_fiskalnog( fisc_rn, broj_racuna, datum_racuna )
 
    LOCAL _qry, _qry_ret, _table
-   LOCAL _i, oRow
+   LOCAL nI, oRow
    LOCAL _id_pos := gIdPos
    LOCAL _rn_broj := ""
    LOCAL _ok := .F.
@@ -71,7 +71,7 @@ FUNCTION pos_vrati_broj_racuna_iz_fiskalnog( fisc_rn, broj_racuna, datum_racuna 
 STATIC FUNCTION izaberi_racun_iz_liste( arr, broj_racuna, datum_racuna )
 
    LOCAL _ret := 0
-   LOCAL _i, _n
+   LOCAL nI, _n
    LOCAL _tmp
    LOCAL _izbor := 1
    LOCAL _opc := {}
@@ -79,13 +79,13 @@ STATIC FUNCTION izaberi_racun_iz_liste( arr, broj_racuna, datum_racuna )
    LOCAL _m_x := m_x
    LOCAL _m_y := m_y
 
-   FOR _i := 1 TO Len( arr )
+   FOR nI := 1 TO Len( arr )
 
       _tmp := ""
-      _tmp += DToC( arr[ _i, 1 ] )
+      _tmp += DToC( arr[ nI, 1 ] )
       _tmp += " racun: "
-      _tmp += PadR( PadL( AllTrim( gIdPos ), 2 ) + "-" + AllTrim( arr[ _i, 2 ]  ), 10 )
-      _tmp += PadL( AllTrim( Str( arr[ _i, 4 ] - arr[ _i, 5 ], 12, 2 ) ), 10 )
+      _tmp += PadR( PadL( AllTrim( gIdPos ), 2 ) + "-" + AllTrim( arr[ nI, 2 ]  ), 10 )
+      _tmp += PadL( AllTrim( Str( arr[ nI, 4 ] - arr[ nI, 5 ], 12, 2 ) ), 10 )
 
       AAdd( _opc, _tmp )
       AAdd( _opcexe, {|| "" } )

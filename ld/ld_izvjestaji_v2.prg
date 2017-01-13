@@ -126,9 +126,9 @@ FUNCTION ld_pregled_primanja_za_period()
          IF cMjesecod > _mjesec .OR. cMjesecdo < _mjesec
             skip; LOOP
          ENDIF
-         wi&cTip += _i&cTip
+         wi&cTip += _I&cTip
          IF ! ( lViseObr .AND. Empty( cObracun ) .AND. _obr <> "1" )
-            ws&cTip += _s&cTip
+            ws&cTip += _S&cTip
          ENDIF
          IF fRacunaj
             nKolona += &cKolona

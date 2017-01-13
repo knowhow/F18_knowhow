@@ -731,7 +731,7 @@ FUNCTION _add_to_field( field_value, new_value )
    LOCAL _tmp
    LOCAL _a_tmp
    LOCAL _seek
-   LOCAL _i
+   LOCAL nI
 
    _tmp := AllTrim( field_value )
    _a_tmp := TokToNiz( _tmp, _sep )
@@ -744,9 +744,9 @@ FUNCTION _add_to_field( field_value, new_value )
    ENDIF
 
    // zatim daj u listu sve stavke
-   FOR _i := 1 TO Len( _a_tmp )
-      IF !Empty( _a_tmp[ _i ] )
-         _ret += _a_tmp[ _i ] + _sep
+   FOR nI := 1 TO Len( _a_tmp )
+      IF !Empty( _a_tmp[ nI ] )
+         _ret += _a_tmp[ nI ] + _sep
       ENDIF
    NEXT
 

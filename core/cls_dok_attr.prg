@@ -222,7 +222,7 @@ METHOD get_attr_from_server( cAttr )  CLASS DokAttr
 METHOD get_attr_from_server_to_dbf()  CLASS DokAttr
 
    LOCAL aAttribs
-   LOCAL _i, hRec
+   LOCAL nI, hRec
 
    aAttribs := ::get_attrs_from_server_for_document()
 
@@ -234,7 +234,7 @@ METHOD get_attr_from_server_to_dbf()  CLASS DokAttr
    ::open_attr_dbf()
    GO TOP
 
-   FOR _i := 1 TO Len( aAttribs )
+   FOR nI := 1 TO Len( aAttribs )
 
       APPEND BLANK
 
@@ -242,9 +242,9 @@ METHOD get_attr_from_server_to_dbf()  CLASS DokAttr
       hRec[ "idfirma" ] := ::hAttrId[ "idfirma" ]
       hRec[ "idtipdok" ] := ::hAttrId[ "idtipdok" ]
       hRec[ "brdok" ] := ::hAttrId[ "brdok" ]
-      hRec[ "rbr" ] := aAttribs[ _i, 1 ]
-      hRec[ "atribut" ] := aAttribs[ _i, 2 ]
-      hRec[ "value" ] := aAttribs[ _i, 3 ]
+      hRec[ "rbr" ] := aAttribs[ nI, 1 ]
+      hRec[ "atribut" ] := aAttribs[ nI, 2 ]
+      hRec[ "value" ] := aAttribs[ nI, 3 ]
 
       dbf_update_rec( hRec )
 
@@ -618,14 +618,14 @@ cleanup_attrs( F_FAKT_PRIPR, _a_fakt_doks )
 METHOD cleanup_attrs( nArrPriprema, aAttrIds )  CLASS DokAttr
 
    LOCAL _dok_params
-   LOCAL _i
+   LOCAL nI
 
-   FOR _i := 1 TO Len( aAttrIds )
+   FOR nI := 1 TO Len( aAttrIds )
 
       _dok_params := hb_Hash()
-      _dok_params[ "idfirma" ] := aAttrIds[ _i, 1 ]
-      _dok_params[ "idtipdok" ] := aAttrIds[ _i, 2 ]
-      _dok_params[ "brdok" ] := aAttrIds[ _i, 3 ]
+      _dok_params[ "idfirma" ] := aAttrIds[ nI, 1 ]
+      _dok_params[ "idtipdok" ] := aAttrIds[ nI, 2 ]
+      _dok_params[ "brdok" ] := aAttrIds[ nI, 3 ]
       ::attr_delete_duplicate( _dok_params )
 
    NEXT

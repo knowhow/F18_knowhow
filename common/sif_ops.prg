@@ -14,7 +14,7 @@
 
 FUNCTION P_Ops( cId, dx, dy )
 
-   LOCAL _i, hWorkArea, xRet
+   LOCAL nI, hWorkArea, xRet
    PRIVATE ImeKol
    PRIVATE Kol
 
@@ -38,8 +38,8 @@ FUNCTION P_Ops( cId, dx, dy )
    AAdd( ImeKol, { PadR( "Naziv", 25 ), {|| PadR( ToStrU( naz ), 25 ) }, "naz" } )
    AAdd( ImeKol, { PadR( "Reg", 3 ), {|| reg }, "reg" } )
 
-   FOR _i := 1 TO Len( ImeKol )
-      AAdd( Kol, _i )
+   FOR nI := 1 TO Len( ImeKol )
+      AAdd( Kol, nI )
    NEXT
 
    xRet := p_sifra( F_OPS, 1, MAXROWS() - 15, MAXCOLS() - 10, "MP: Lista općina", @cId, dx, dy )
@@ -57,7 +57,7 @@ FUNCTION P_Ops( cId, dx, dy )
 
 FUNCTION P_Banke( cId, dx, dy )
 
-   LOCAL _arr, _i
+   LOCAL _arr, nI
    PRIVATE ImeKol
    PRIVATE Kol
 
@@ -71,8 +71,8 @@ FUNCTION P_Banke( cId, dx, dy )
    AAdd( ImeKol, { "Adresa", {|| adresa }, "adresa" } )
 
    Kol := {}
-   FOR _i := 1 TO Len( ImeKol )
-      AAdd( Kol, _i )
+   FOR nI := 1 TO Len( ImeKol )
+      AAdd( Kol, nI )
    NEXT
 
    SELECT ( _arr )

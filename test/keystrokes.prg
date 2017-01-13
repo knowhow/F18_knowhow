@@ -66,17 +66,17 @@ FUNCTION get_test_tag()
 FUNCTION gen_test_keystrokes( stavke )
 
    LOCAL _ret := hb_Hash()
-   LOCAL _kod, _i, _j, _num
+   LOCAL _kod, nI, _j, _num
    LOCAL _keys
    LOCAL _a_new
 
    _keys := {}
-   FOR _i := 1 TO Len( stavke[ 'get' ] )
-      _a_new := { stavke[ 'get' ][ _i ] }
-      to_keystrokes( stavke[ 'keys' ][ _i ], @_a_new )
+   FOR nI := 1 TO Len( stavke[ 'get' ] )
+      _a_new := { stavke[ 'get' ][ nI ] }
+      to_keystrokes( stavke[ 'keys' ][ nI ], @_a_new )
 
       // if VALTYPE(_a_new[1] ) != "C"
-      // Alert(ALLTRIM(STR(_i)) + "/" + pp(_a_new[1]) + " ?!")
+      // Alert(ALLTRIM(STR(nI)) + "/" + pp(_a_new[1]) + " ?!")
       // endif
       AAdd( _keys, _a_new )
    NEXT
@@ -114,7 +114,7 @@ FUNCTION test_procedure_with_keystrokes( b_proc, h_keystrokes )
 
    LOCAL _task, _var_key, _key_test, _key_tests := {}
    LOCAL _tmp
-   LOCAL _i := 1
+   LOCAL nI := 1
    LOCAL _cnt := 0
 
    // key sekvenca koju treba izvrsiti
@@ -135,7 +135,7 @@ FUNCTION test_procedure_with_keystrokes( b_proc, h_keystrokes )
       stop_keystrokes_task()
 
 
-      _i++
+      nI++
    NEXT
 
    RETURN
@@ -146,17 +146,17 @@ FUNCTION test_procedure_with_keystrokes( b_proc, h_keystrokes )
 // ----------------------------------
 FUNCTION to_keystrokes( a_polja, a_init )
 
-   LOCAL _i, _j, _num, _key
+   LOCAL nI, _j, _num, _key
 
-   FOR _i := 1 TO Len( a_polja )
+   FOR nI := 1 TO Len( a_polja )
 
-      IF ValType( a_polja[ _i ] ) == "B"
+      IF ValType( a_polja[ nI ] ) == "B"
 
-         AAdd( a_init, a_polja[ _i ] )
+         AAdd( a_init, a_polja[ nI ] )
          LOOP
 
-      ELSEIF ValType( a_polja[ _i ] ) <> "C"
-         _msg := "apolja clanovi moraju biti char" + pp( a_polja[ _i ] )
+      ELSEIF ValType( a_polja[ nI ] ) <> "C"
+         _msg := "apolja clanovi moraju biti char" + pp( a_polja[ nI ] )
          Alert( _msg )
          log_write( _msg, 2 )
          QUIT
@@ -164,37 +164,37 @@ FUNCTION to_keystrokes( a_polja, a_init )
 
       DO CASE
 
-      CASE Left( a_polja[ _i ], 8 ) == "<CTRLF9>"
-         _key := Left( a_polja[ _i ], 8 )
-         _num := SubStr( a_polja[ _i ], 9 )
+      CASE Left( a_polja[ nI ], 8 ) == "<CTRLF9>"
+         _key := Left( a_polja[ nI ], 8 )
+         _num := SubStr( a_polja[ nI ], 9 )
 
-      CASE Left( a_polja[ _i ], 7 ) == "<ENTER>" .OR. ;
-            Left( a_polja[ _i ], 7 ) == "<CTRLT>" .OR. ;
-            Left( a_polja[ _i ], 7 ) == "<CTRLN>" .OR. ;
-            Left( a_polja[ _i ], 7 ) == "<CTRLP>"
+      CASE Left( a_polja[ nI ], 7 ) == "<ENTER>" .OR. ;
+            Left( a_polja[ nI ], 7 ) == "<CTRLT>" .OR. ;
+            Left( a_polja[ nI ], 7 ) == "<CTRLN>" .OR. ;
+            Left( a_polja[ nI ], 7 ) == "<CTRLP>"
 
          // <ENTER5> => 5 x enter
-         _key := Left( a_polja[ _i ], 7 )
-         _num := SubStr( a_polja[ _i ], 8 )
-      CASE Left( a_polja[ _i ], 6 ) == "<DOWN>" .OR. ;
-            Left( a_polja[ _i ], 6 ) == "<PGDN>" .OR. ;
-            Left( a_polja[ _i ], 6 ) == "<HOME>" .OR. ;
-            Left( a_polja[ _i ], 6 ) == "<ALTA>" .OR. ;
-            Left( a_polja[ _i ], 6 ) == "<ALTP>" .OR. ;
-            Left( a_polja[ _i ], 6 ) == "<LEFT>"
+         _key := Left( a_polja[ nI ], 7 )
+         _num := SubStr( a_polja[ nI ], 8 )
+      CASE Left( a_polja[ nI ], 6 ) == "<DOWN>" .OR. ;
+            Left( a_polja[ nI ], 6 ) == "<PGDN>" .OR. ;
+            Left( a_polja[ nI ], 6 ) == "<HOME>" .OR. ;
+            Left( a_polja[ nI ], 6 ) == "<ALTA>" .OR. ;
+            Left( a_polja[ nI ], 6 ) == "<ALTP>" .OR. ;
+            Left( a_polja[ nI ], 6 ) == "<LEFT>"
 
 
-         _key := Left( a_polja[ _i ], 6 )
-         _num := SubStr( a_polja[ _i ], 7 )
+         _key := Left( a_polja[ nI ], 6 )
+         _num := SubStr( a_polja[ nI ], 7 )
 
 
-      CASE Left( a_polja[ _i ], 5 ) == "<ESC>"
+      CASE Left( a_polja[ nI ], 5 ) == "<ESC>"
          // <ESC> => 1 x escape
-         _key := Left( a_polja[ _i ], 5 )
-         _num := SubStr( a_polja[ _i ], 6 )
+         _key := Left( a_polja[ nI ], 5 )
+         _num := SubStr( a_polja[ nI ], 6 )
 
       OTHERWISE
-         AAdd( a_init, a_polja[ _i ] )
+         AAdd( a_init, a_polja[ nI ] )
          LOOP
       END CASE
 
@@ -255,23 +255,23 @@ FUNCTION to_keystrokes( a_polja, a_init )
 FUNCTION test_keystrokes()
 
    LOCAL _var_name
-   LOCAL _i, _j, _expected_var_name
+   LOCAL nI, _j, _expected_var_name
    LOCAL _buffer, _current_tag, _tag
 
    log_write( "START test_keystrokes: " + AllTrim( Str( __keystroke_step ) ), 3 )
 
-   FOR _i := 1 TO Len( __keystrokes )
+   FOR nI := 1 TO Len( __keystrokes )
 
-      IF ( __keystroke_step ) <> _i
-         log_write( "test_keystrokes loop" + AllTrim( Str( _i ) ), 3 )
+      IF ( __keystroke_step ) <> nI
+         log_write( "test_keystrokes loop" + AllTrim( Str( nI ) ), 3 )
 
-         IF _i == Len( __keystrokes )
+         IF nI == Len( __keystrokes )
             stop_keystrokes_task()
          ENDIF
          LOOP
       ENDIF
 
-      _expected_var_name := __keystrokes[ _i, 1 ]
+      _expected_var_name := __keystrokes[ nI, 1 ]
 
       IF ValType( _expected_var_name ) == "B"
          // npr. { {|| !eof()},  {|| delete_with_rlock()},  {|| log_write("ne treba nista brisati", 2)} }
@@ -279,10 +279,10 @@ FUNCTION test_keystrokes()
          // izvrsi trazeni izraz
          _ret := Eval( _expected_var_name )
          IF _ret
-            _bl2 := __keystrokes[ _i, 2 ]
+            _bl2 := __keystrokes[ nI, 2 ]
          ELSE
 
-            _bl2 := __keystrokes[ _i, 3 ]
+            _bl2 := __keystrokes[ nI, 3 ]
          ENDIF
 
          IF ( ValType( _bl2 ) == "B" )
@@ -326,9 +326,9 @@ FUNCTION test_keystrokes()
             IF  ProcName( 3 ) == "OBJDBEDIT"
                // nalazimo se u objdbeditu
                // to i zelimo
-               log_write( "DBEDIT step: " + AllTrim( Str( _i ) ), 3 )
+               log_write( "DBEDIT step: " + AllTrim( Str( nI ) ), 3 )
             ELSE
-               log_write( "nismo se jos vratili u DBEDIT: " + AllTrim( Str( _i ) ) + "procname 4-1:" + ProcName( 4 ) + " / " +  ProcName( 3 ) + " / " + ProcName( 2 ) + "/" + ProcName( 1 ), 3 )
+               log_write( "nismo se jos vratili u DBEDIT: " + AllTrim( Str( nI ) ) + "procname 4-1:" + ProcName( 4 ) + " / " +  ProcName( 3 ) + " / " + ProcName( 2 ) + "/" + ProcName( 1 ), 3 )
                EXIT
             ENDIF
          ELSE
@@ -345,10 +345,10 @@ FUNCTION test_keystrokes()
       ENDIF
 
       _buffer := {}
-      FOR _j := 2 TO Len( __keystrokes[ _i ] )
-         AAdd( _buffer, __keystrokes[ _i, _j ] )
+      FOR _j := 2 TO Len( __keystrokes[ nI ] )
+         AAdd( _buffer, __keystrokes[ nI, _j ] )
       NEXT
-      log_write( "test step " + pp( _i ) + "buffer " + pp( _buffer ), 3 )
+      log_write( "test step " + pp( nI ) + "buffer " + pp( _buffer ), 3 )
       put_to_keyboard_buffer( _buffer )
 
       __keystroke_step ++
@@ -361,18 +361,18 @@ FUNCTION test_keystrokes()
 
 STATIC FUNCTION put_to_keyboard_buffer( buffer )
 
-   LOCAL _i
+   LOCAL nI
 
    // CLEAR TYPEAHEAD
-   FOR _i := 1 TO Len( buffer )
+   FOR nI := 1 TO Len( buffer )
 
-      IF ValType( buffer[ _i ] ) == "C" .OR.  ValType( buffer[ _i ] ) == "N"
-         hb_keyPut( buffer[ _i ] )
-      ELSEIF ValType( buffer[ _i ] ) == "B"
+      IF ValType( buffer[ nI ] ) == "C" .OR.  ValType( buffer[ nI ] ) == "N"
+         hb_keyPut( buffer[ nI ] )
+      ELSEIF ValType( buffer[ nI ] ) == "B"
          // ako je kodni blok izvrsi ga
-         Eval( buffer[ _i ] )
+         Eval( buffer[ nI ] )
       ELSE
-         Alert( "buffer tip: "  + ValType( buffer[ _i ] ) + " ?!" )
+         Alert( "buffer tip: "  + ValType( buffer[ nI ] ) + " ?!" )
       ENDIF
 
 #ifdef SLOW_TESTS

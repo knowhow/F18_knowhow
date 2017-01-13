@@ -106,7 +106,7 @@ STATIC FUNCTION stampaj_tkm( vars )
    LOCAL _n_opis, _n_iznosi
    LOCAL _t_dug, _t_pot, _t_rabat
    LOCAL _a_opis := {}
-   LOCAL _i
+   LOCAL nI
 
    _line := _get_line()
 
@@ -172,9 +172,9 @@ STATIC FUNCTION stampaj_tkm( vars )
       _t_pot += field->mp_pot + field->mp_porez
       _t_rabat += field->mp_rabat
 
-      FOR _i := 2 TO Len( _a_opis )
+      FOR nI := 2 TO Len( _a_opis )
          ?
-         @ PRow(), _n_opis SAY _a_opis[ _i ]
+         @ PRow(), _n_opis SAY _a_opis[ nI ]
       NEXT
 
       SKIP

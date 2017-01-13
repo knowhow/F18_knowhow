@@ -214,7 +214,7 @@ STATIC FUNCTION _fakt_get_izlazi( partner, roba )
 
    LOCAL _qry, _qry_ret, _table
    LOCAL _data := {}
-   LOCAL _i, oRow
+   LOCAL nI, oRow
 
    _qry := "SELECT idfirma, idtipdok, brdok, datdok, cijena, rabat FROM " + F18_PSQL_SCHEMA_DOT + "fakt_fakt " + ;
       " WHERE idpartner = " + sql_quote( partner ) + ;
@@ -225,9 +225,9 @@ STATIC FUNCTION _fakt_get_izlazi( partner, roba )
    _table := run_sql_query( _qry )
    _table:GoTo( 1 )
 
-   FOR _i := 1 TO _table:LastRec()
+   FOR nI := 1 TO _table:LastRec()
 
-      oRow := _table:GetRow( _i )
+      oRow := _table:GetRow( nI )
 
       AAdd( _data, { oRow:FieldGet( oRow:FieldPos( "idfirma" ) ), ;
          oRow:FieldGet( oRow:FieldPos( "idtipdok" ) ) + "-" + AllTrim( oRow:FieldGet( oRow:FieldPos( "brdok" ) ) ), ;
@@ -247,7 +247,7 @@ STATIC FUNCTION _kalk_get_ulazi( partner, roba, mag_prod )
 
    LOCAL _qry, _qry_ret, _table
    LOCAL _data := {}
-   LOCAL _i, oRow
+   LOCAL nI, oRow
    LOCAL _u_i := "pu_i"
 
    IF mag_prod == "M"
@@ -264,9 +264,9 @@ STATIC FUNCTION _kalk_get_ulazi( partner, roba, mag_prod )
    _table := run_sql_query( _qry )
    _table:GoTo( 1 )
 
-   FOR _i := 1 TO _table:LastRec()
+   FOR nI := 1 TO _table:LastRec()
 
-      oRow := _table:GetRow( _i )
+      oRow := _table:GetRow( nI )
 
       AAdd( _data, { oRow:FieldGet( oRow:FieldPos( "idkonto" ) ), ;
          oRow:FieldGet( oRow:FieldPos( "idvd" ) ) + "-" + AllTrim( oRow:FieldGet( oRow:FieldPos( "brdok" ) ) ), ;
@@ -288,7 +288,7 @@ STATIC FUNCTION _prikazi_info( ulazi, mag_prod, ul_count )
    LOCAL _head := ""
    LOCAL _ok := " "
    LOCAL _n := 4
-   LOCAL _i, _len
+   LOCAL nI, _len
 
    _len := Len( ulazi )
 
@@ -312,19 +312,19 @@ STATIC FUNCTION _prikazi_info( ulazi, mag_prod, ul_count )
       @ m_x + 2, m_y + 2 SAY _head
       @ m_x + 3, m_y + 2 SAY Replicate( "-", 59 )
 
-      FOR _i := _len to ( _len - ul_count ) STEP -1
+      FOR nI := _len to ( _len - ul_count ) STEP -1
 
-         IF _i > 0
+         IF nI > 0
 
-            _line := PadR( ulazi[ _i, 1 ], 7 )
+            _line := PadR( ulazi[ nI, 1 ], 7 )
             _line += " "
-            _line += PadR( ulazi[ _i, 2 ], 10 )
+            _line += PadR( ulazi[ nI, 2 ], 10 )
             _line += " "
-            _line += DToC( ulazi[ _i, 3 ] )
+            _line += DToC( ulazi[ nI, 3 ] )
             _line += " "
-            _line += Str( ulazi[ _i, 4 ], 12, 3 )
+            _line += Str( ulazi[ nI, 4 ], 12, 3 )
             _line += " "
-            _line += Str( ulazi[ _i, 5 ], 12, 3 ) + "%"
+            _line += Str( ulazi[ nI, 5 ], 12, 3 ) + "%"
 
             @ m_x + _n, m_y + 2 SAY _line
             ++ _n

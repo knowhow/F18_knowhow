@@ -138,7 +138,7 @@ FUNCTION choose_f18_user_from_list( oper_id )
 STATIC FUNCTION izaberi_f18_korisnika( arr )
 
    LOCAL _ret := 0
-   LOCAL _i, _n
+   LOCAL nI, _n
    LOCAL _tmp
    LOCAL _choice := 0
    LOCAL _izbor := 1
@@ -147,11 +147,11 @@ STATIC FUNCTION izaberi_f18_korisnika( arr )
    LOCAL _m_x := m_x
    LOCAL _m_y := m_y
 
-   FOR _i := 1 TO Len( arr )
+   FOR nI := 1 TO Len( arr )
 
       _tmp := ""
-      _tmp += PadL( AllTrim( Str( _i ) ) + ")", 3 )
-      _tmp += " " + PadR( arr[ _i, 2 ], 30 )
+      _tmp += PadL( AllTrim( Str( nI ) ) + ")", 3 )
+      _tmp += " " + PadR( arr[ nI, 2 ], 30 )
 
       AAdd( _opc, _tmp )
       AAdd( _opcexe, {|| "" } )
@@ -178,7 +178,7 @@ FUNCTION get_list_f18_users()
 
    LOCAL _qry, _table
    LOCAL _list := {}
-   LOCAL _row
+   LOCAL _row, nI
 
    _qry := "SELECT usr_id AS id, usr_username AS name, usr_propername AS fullname, usr_email AS email " + ;
       "FROM public.usr " + ;
@@ -192,9 +192,9 @@ FUNCTION get_list_f18_users()
 
    _table:GoTo( 1 )
 
-   FOR _i := 1 TO _table:LastRec()
+   FOR nI := 1 TO _table:LastRec()
 
-      _row := _table:GetRow( _i )
+      _row := _table:GetRow( nI )
 
       AAdd( _list, { _row:FieldGet( _row:FieldPos( "id" ) ), ;
          _row:FieldGet( _row:FieldPos( "name" ) ), ;

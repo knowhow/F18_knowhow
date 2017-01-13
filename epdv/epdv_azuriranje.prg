@@ -130,7 +130,7 @@ FUNCTION kuf_kif_azur_sql( tbl, next_g_rbr, next_br_dok )
    LOCAL lOk := .T.
    LOCAL record := hb_Hash()
    LOCAL _tbl_epdv
-   LOCAL _i
+   LOCAL nI
    LOCAL _tmp_id
    LOCAL _ids := {}
    LOCAL __area

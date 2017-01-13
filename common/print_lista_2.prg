@@ -520,14 +520,14 @@ FUNCTION nPodStr( cPod, cStr )
 // ---------------------------------------------------
 STATIC FUNCTION sredi_crtice( arr, tip )
 
-   LOCAL _i
+   LOCAL nI
    LOCAL _konv := fetch_metric( "proiz_fin_konverzija", my_user(), "N" )
 
 #ifdef __PLATFORM__WINDOWS
 
-   FOR _i := 1 TO Len( arr )
+   FOR nI := 1 TO Len( arr )
       IF _konv == "D"
-         arr[ _i ] := to_win1250_encoding( arr[ _i ] )
+         arr[ nI ] := to_win1250_encoding( arr[ nI ] )
       ENDIF
    NEXT
 

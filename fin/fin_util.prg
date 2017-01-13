@@ -84,7 +84,7 @@ FUNCTION fin_print_ostatak_opisa( cO, nCO, bUslov, nSir )
 
 FUNCTION check_ima_u_suban_nema_u_nalog()
 
-   LOCAL _i
+   LOCAL nI
    LOCAL _area
    LOCAL _alias
    LOCAL _n_scan
@@ -98,11 +98,11 @@ FUNCTION check_ima_u_suban_nema_u_nalog()
    o_anal()
    o_sint()
 
-   FOR _i := 1 TO 3
+   FOR nI := 1 TO 3
 
-      IF _i == 1
+      IF nI == 1
          _alias := "suban"
-      ELSEIF _i == 2
+      ELSEIF nI == 2
          _alias := "anal"
       ELSE
          _alias := "sint"
@@ -150,7 +150,7 @@ FUNCTION check_ima_u_suban_nema_u_nalog()
 // -----------------------------------------------
 STATIC FUNCTION _ispisi_greske( a_error )
 
-   LOCAL _i
+   LOCAL nI
 
    IF Len( a_error ) == 0 .OR. a_error == NIL
       RETURN .T.
@@ -168,9 +168,9 @@ STATIC FUNCTION _ispisi_greske( a_error )
    ? "Potrebno odraditi korekciju sljedecih naloga:"
    ? "---------------------------------------------"
 
-   FOR _i := 1 TO Len( a_error )
+   FOR nI := 1 TO Len( a_error )
 
-      ? PadL( "tabela: " + a_error[ _i, 1 ], 15 ) + ", " + a_error[ _i, 2 ]
+      ? PadL( "tabela: " + a_error[ nI, 1 ], 15 ) + ", " + a_error[ nI, 2 ]
 
    NEXT
 

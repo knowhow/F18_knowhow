@@ -75,7 +75,7 @@ FUNCTION ImaUOps( cOStan, cORada )
 
 STATIC FUNCTION _create_mtemp()
 
-   LOCAL _i, _struct
+   LOCAL nI, _struct
    LOCAL _table := "mtemp"
    LOCAL _ret := .T.
 
@@ -89,9 +89,9 @@ STATIC FUNCTION _create_mtemp()
    // ovdje cemo sva numericka polja prosiriti za 4 mjesta
    // (izuzeci su polja GODINA i MJESEC)
 
-   FOR _i := 1 TO Len( _struct )
-      IF _struct[ _i, 2 ] == "N" .AND. !( Upper( AllTrim( _struct[ _i, 1 ] ) ) $ "GODINA#MJESEC" )
-         _struct[ _i, 3 ] += 4
+   FOR nI := 1 TO Len( _struct )
+      IF _struct[ nI, 2 ] == "N" .AND. !( Upper( AllTrim( _struct[ nI, 1 ] ) ) $ "GODINA#MJESEC" )
+         _struct[ nI, 3 ] += 4
       ENDIF
    NEXT
 

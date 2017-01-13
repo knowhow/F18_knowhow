@@ -197,7 +197,7 @@ METHOD RnalCsvImport:csv_browse()
    LOCAL _header := "Pregled importovanih podataka CSV fajla..."
    LOCAL _x := m_x
    LOCAL _y := m_y
-   LOCAL _i
+   LOCAL nI
    PRIVATE ImeKol := {}
    PRIVATE Kol := {}
    PRIVATE GetList := {}
@@ -210,8 +210,8 @@ METHOD RnalCsvImport:csv_browse()
    AAdd( ImeKol, { PadC( "Oblik", 10 ), {|| shape }, "shape" } )
    AAdd( ImeKol, { PadC( "Marker", 6 ), {|| marker }, "marker" } )
 
-   FOR _i := 1 TO Len( ImeKol )
-      AAdd( Kol, _i )
+   FOR nI := 1 TO Len( ImeKol )
+      AAdd( Kol, nI )
    NEXT
 
    SELECT csvimp

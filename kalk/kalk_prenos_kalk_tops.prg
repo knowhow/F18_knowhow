@@ -252,7 +252,7 @@ FUNCTION kalk_destinacija_topska( cSet )
 
 STATIC FUNCTION kalk_tops_kreiraj_fajl_prenosa( datum, aPosLokacije, broj_stavki )
 
-   LOCAL _i, _n
+   LOCAL nI, _n
    LOCAL _dest_file, _dest_patt
    LOCAL _integ := {}
    LOCAL _table_name := "katops.dbf"
@@ -301,7 +301,7 @@ FUNCTION get_tops_kalk_export_file( topskalk, export_path, datum, prefix )
 
    LOCAL _file := ""
    LOCAL _prefix := "kt"
-   LOCAL _i, _tmp
+   LOCAL nI, _tmp
    LOCAL _tmp_date := Right( DToS( datum ), 4 )
 
    IF topskalk == "1"
@@ -317,9 +317,9 @@ FUNCTION get_tops_kalk_export_file( topskalk, export_path, datum, prefix )
    // naziv fajla treba da bude
    // kt110401, kt110402 itd...
 
-   FOR _i := 1 TO 99
+   FOR nI := 1 TO 99
 
-      _tmp := PadL( AllTrim( Str( _i ) ), 2, "0" ) // nastavak na fajl
+      _tmp := PadL( AllTrim( Str( nI ) ), 2, "0" ) // nastavak na fajl
       _file := _prefix + _tmp_date + _tmp
 
       IF !File( export_path + _file + ".dbf" )

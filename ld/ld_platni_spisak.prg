@@ -801,7 +801,7 @@ FUNCTION ld_pregled_isplate_za_tekuci_racun( cVarijanta )
          IF Empty( cIdTipPr )
             nIznosTP := _uiznos
          ELSE
-            nIznosTP := _i&cIdTipPr
+            nIznosTP := _I&cIdTipPr
          ENDIF
 
          IF nIznosTP = 0

@@ -21,7 +21,7 @@ STATIC FUNCTION set_articles()
 
    LOCAL _x := 1
    LOCAL _count := 40
-   LOCAL _tmp, _i
+   LOCAL _tmp, nI
    LOCAL _ok := .T.
    LOCAL _art_1, _art_2, _art_3, _art_4, _art_5, _art_6, _art_7, _art_8, _art_9, _art_10
    LOCAL _art_11, _art_12, _art_13, _art_14, _art_15, _art_16, _art_17, _art_18, _art_19, _art_20
@@ -30,9 +30,9 @@ STATIC FUNCTION set_articles()
    LOCAL _var, _valid_block
 
    // procitaj paramtre iz sql/db
-   FOR _i := 1 TO _count
-      _var := "_art_" + AllTrim( Str( _i ) )
-      &_var := PadR( fetch_metric( "fakt_pregled_prodaje_rpt_artikal_" + PadL( AllTrim( Str( _i ) ), 2, "0" ), NIL, Space( 10 ) ), 10 )
+   FOR nI := 1 TO _count
+      _var := "_art_" + AllTrim( Str( nI ) )
+      &_var := PadR( fetch_metric( "fakt_pregled_prodaje_rpt_artikal_" + PadL( AllTrim( Str( nI ) ), 2, "0" ), NIL, Space( 10 ) ), 10 )
    NEXT
 
    Box(, ( _count / 2 ) + 3, 65 )
@@ -42,19 +42,19 @@ STATIC FUNCTION set_articles()
    ++ _x
    ++ _x
 
-   _i := 1
+   nI := 1
 
    // prikaz u 2 reda
-   FOR _i := 1 TO _count
+   FOR nI := 1 TO _count
 
-      _var := "_art_" + AllTrim( Str( _i ) )
-      _valid_block := "EMPTY(_art_" + AllTrim( Str( _i ) ) + ") .or. P_Roba(@_art_" + AllTrim( Str( _i ) ) + ")"
+      _var := "_art_" + AllTrim( Str( nI ) )
+      _valid_block := "EMPTY(_art_" + AllTrim( Str( nI ) ) + ") .or. P_Roba(@_art_" + AllTrim( Str( nI ) ) + ")"
 
-      IF _i % 2 == 0
-         @ m_x + _x, Col() + 2 SAY "Artikal " +  PadL( AllTrim( Str( _i ) ), 2 ) + ":" GET &_var VALID &_valid_block
+      IF nI % 2 == 0
+         @ m_x + _x, Col() + 2 SAY "Artikal " +  PadL( AllTrim( Str( nI ) ), 2 ) + ":" GET &_var VALID &_valid_block
          ++ _x
       ELSE
-         @ m_x + _x, m_y + 2 SAY "Artikal " +  PadL( AllTrim( Str( _i ) ), 2 ) + ":" GET &_var VALID &_valid_block
+         @ m_x + _x, m_y + 2 SAY "Artikal " +  PadL( AllTrim( Str( nI ) ), 2 ) + ":" GET &_var VALID &_valid_block
       ENDIF
 
    NEXT
@@ -66,10 +66,10 @@ STATIC FUNCTION set_articles()
    // snimi parametre
    IF LastKey() != K_ESC
       // snimi parametre
-      _i := 1
-      FOR _i := 1 TO _count
-         _var := "_art_" + AllTrim( Str( _i ) )
-         set_metric( "fakt_pregled_prodaje_rpt_artikal_" + PadL( AllTrim( Str( _i ) ), 2, "0" ), NIL, AllTrim( &_var ) )
+      nI := 1
+      FOR nI := 1 TO _count
+         _var := "_art_" + AllTrim( Str( nI ) )
+         set_metric( "fakt_pregled_prodaje_rpt_artikal_" + PadL( AllTrim( Str( nI ) ), 2, "0" ), NIL, AllTrim( &_var ) )
       NEXT
    ENDIF
 
@@ -85,15 +85,15 @@ STATIC FUNCTION set_articles()
 STATIC FUNCTION _g_ini_roba()
 
    LOCAL _arr := {}
-   LOCAL _i
+   LOCAL nI
    LOCAL _param_count := 40
    LOCAL _item
    LOCAL _count := 0
 
-   FOR _i := 1 TO _param_count
+   FOR nI := 1 TO _param_count
 
       // item uzimam iz sql/db
-      _item := fetch_metric( "fakt_pregled_prodaje_rpt_artikal_" + PadL( AllTrim( Str( _i ) ), 2, "0" ), NIL, "" )
+      _item := fetch_metric( "fakt_pregled_prodaje_rpt_artikal_" + PadL( AllTrim( Str( nI ) ), 2, "0" ), NIL, "" )
 
       IF !Empty( _item )
          ++ _count
@@ -113,7 +113,7 @@ STATIC FUNCTION _g_ini_roba()
 STATIC FUNCTION _g_exp_fields( article_arr )
 
    LOCAL aFields := {}
-   LOCAL _i
+   LOCAL nI
 
    AAdd( aFields, { "rbr", "C", 10, 0 } )
    AAdd( aFields, { "distrib", "C", 60, 0 } )
@@ -125,8 +125,8 @@ STATIC FUNCTION _g_exp_fields( article_arr )
    AAdd( aFields, { "pm_adresa", "C", 60, 0 } )
    AAdd( aFields, { "pm_kt_br", "C", 20, 0 } )
 
-   FOR _i := 1 TO Len( article_arr )
-      AAdd( aFields, { article_arr[ _i, 2 ], "N", 15, 5 } )
+   FOR nI := 1 TO Len( article_arr )
+      AAdd( aFields, { article_arr[ nI, 2 ], "N", 15, 5 } )
    NEXT
 
    AAdd( aFields, { "ukupno", "N", 15, 5 } )
@@ -141,7 +141,7 @@ STATIC FUNCTION fill_exp_tbl( cRbr, cDistrib, cPmId, cPmNaz, ;
       cPmTip, cPmMj, cPmPtt, cPmAdr, cPmKtBr, aRoba )
 
    LOCAL _t_area
-   LOCAL _i
+   LOCAL nI
    LOCAL _total := 0
 
    _t_area := Select()
@@ -159,9 +159,9 @@ STATIC FUNCTION fill_exp_tbl( cRbr, cDistrib, cPmId, cPmNaz, ;
    REPLACE field->pm_kt_br WITH cPmKtBr
 
    // dodaj za robu...
-   FOR _i := 1 TO Len( aRoba )
-      REPLACE field->&( aRoba[ _i, 2 ] ) WITH aRoba[ _i, 3 ]
-      _total += aRoba[ _i, 3 ]
+   FOR nI := 1 TO Len( aRoba )
+      REPLACE field->&( aRoba[ nI, 2 ] ) WITH aRoba[ nI, 3 ]
+      _total += aRoba[ nI, 3 ]
    NEXT
 
    REPLACE field->ukupno WITH _total
@@ -354,10 +354,10 @@ STATIC FUNCTION _k_br( partner_id )
 // -----------------------------------------------
 STATIC FUNCTION _reset_aroba( arr )
 
-   LOCAL _i
+   LOCAL nI
 
-   FOR _i := 1 TO Len( arr )
-      arr[ _i, 3 ] := 0
+   FOR nI := 1 TO Len( arr )
+      arr[ nI, 3 ] := 0
    NEXT
 
    RETURN .T.

@@ -278,9 +278,9 @@ STATIC FUNCTION export_podataka_u_dbf( table, rpt_vars )
 
    O_R_EXP
 
-   FOR _i := 1 TO table:LastRec()
+   FOR nI := 1 TO table:LastRec()
 
-      oRow := table:GetRow( _i )
+      oRow := table:GetRow( nI )
 
       cKontoId := query_row( oRow, "konto_id" )
       cPartnerId := query_row( oRow, "partner_id" )
@@ -342,7 +342,7 @@ FUNCTION fin_specifikacija_dbf_struct()
 
 STATIC FUNCTION _cre_xml( table, rpt_vars )
 
-   LOCAL _i, oRow, oItem
+   LOCAL nI, oRow, oItem
    LOCAL PIC_VRIJEDNOST := PadL( AllTrim( Right( PicDem, LEN_VRIJEDNOST ) ), LEN_VRIJEDNOST, "9" )
    LOCAL _dug := 0
    LOCAL _pot := 0

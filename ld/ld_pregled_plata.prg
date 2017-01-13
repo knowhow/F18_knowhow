@@ -224,7 +224,7 @@ FUNCTION pregled_plata()
 
          IF tippr->( Found() ) .AND. tippr->aktivan == "D"
 
-            nIznos := _i&cpom
+            nIznos := _I&cpom
 
             IF tippr->uneto == "N" .AND. nIznos <> 0
 

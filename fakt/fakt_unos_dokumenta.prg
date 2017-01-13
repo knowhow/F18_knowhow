@@ -24,7 +24,7 @@ STATIC __redni_broj
 
 FUNCTION fakt_unos_dokumenta()
 
-   LOCAL _i, _x_pos, _y_pos, _x, _y
+   LOCAL nI, _x_pos, _y_pos, _x, _y
    LOCAL _opt_d, _opt_row
    LOCAL _sep := BROWSE_COL_SEP
    PRIVATE ImeKol, Kol
@@ -65,8 +65,8 @@ FUNCTION fakt_unos_dokumenta()
    ENDIF
 
    Kol := {}
-   FOR _i := 1 TO Len( ImeKol )
-      AAdd( Kol, _i )
+   FOR nI := 1 TO Len( ImeKol )
+      AAdd( Kol, nI )
    NEXT
 
    // marker fiskalnih racuna
@@ -369,7 +369,7 @@ STATIC FUNCTION fakt_pripr_keyhandler()
 
       PRIVATE _broj_entera := 30
 
-      FOR _i := 1 TO Int( RecCount2() / 15 ) + 1
+      FOR nI := 1 TO Int( RecCount2() / 15 ) + 1
          _sekv := Chr( K_CTRL_A )
          FOR _n := 1 TO Min( RecCount2(), 15 ) * 20
             _sekv += __enter_seq

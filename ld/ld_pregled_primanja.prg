@@ -213,22 +213,22 @@ FUNCTION ld_pregled_primanja()
             Eval( bZagl )
          ENDIF
 
-         IF _i&cTip <> 0 .OR. _s&cTip <> 0
+         IF _I&cTip <> 0 .OR. _S&cTip <> 0
             ? Str( ++nRbr, 4 ) + ".", idradn, RADNIK_PREZ_IME
             nC1 := PCol() + 1
             IF lKredit .AND. !Empty( cSifKred )
                @ PRow(), PCol() + 1 SAY RADKR->naosnovu
             ELSEIF tippr->fiksan == "P"
-               @ PRow(), PCol() + 1 SAY _s&cTip  PICT "999.99"
+               @ PRow(), PCol() + 1 SAY _S&cTip  PICT "999.99"
             ELSE
-               @ PRow(), PCol() + 1 SAY _s&cTip  PICT gpics
+               @ PRow(), PCol() + 1 SAY _S&cTip  PICT gpics
             ENDIF
             IF lKredit .AND. !Empty( cSifKred )
                @ PRow(), PCol() + 1 SAY -RADKR->placeno  PICT gpici
                nT2 += ( -RADKR->placeno )
             ELSE
-               @ PRow(), PCol() + 1 SAY _i&cTip  PICT gpici
-               nT1 += _s&cTip; nT2 += _i&cTip
+               @ PRow(), PCol() + 1 SAY _I&cTip  PICT gpici
+               nT1 += _S&cTip; nT2 += _I&cTip
             ENDIF
             IF cdod == "D"
                @ PRow(), PCol() + 1 SAY &ckolona

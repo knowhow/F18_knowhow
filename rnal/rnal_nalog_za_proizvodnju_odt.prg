@@ -127,7 +127,7 @@ STATIC FUNCTION procitaj_parametre_naloga( params, groups_total )
 STATIC FUNCTION kreiraj_xml_fajl( groups, params )
 
    LOCAL _ok := .F.
-   LOCAL _i, _group_id
+   LOCAL nI, _group_id
    LOCAL _groups_count, _groups_total
    LOCAL _doc_rbr
    LOCAL _doc_it_type
@@ -182,20 +182,20 @@ STATIC FUNCTION kreiraj_xml_fajl( groups, params )
    xml_node( "cont_desc_2", to_xml_encoding( params[ "kontakt_opis" ] ) )
    xml_node( "cont_desc_3", to_xml_encoding( params[ "kontakt_opis_2" ] ) )
 
-   FOR _i := 1 TO Len( groups )
+   FOR nI := 1 TO Len( groups )
 
       _a_items := {}
 
       xml_subnode( "nalog", .F. )
 
-      _group_id := groups[ _i, 1 ]
+      _group_id := groups[ nI, 1 ]
 
       params[ "nalog_grupa" ] := AllTrim( Str( _group_id ) )
       params[ "nalog_grupa_naziv" ] := get_art_docgr( _group_id )
       xml_node( "gr_no", params[ "nalog_grupa" ] )
       xml_node( "gr_desc", to_xml_encoding( params[ "nalog_grupa_naziv" ] ) )
 
-      xml_node( "pg_no", AllTrim( Str( _i ) ) )
+      xml_node( "pg_no", AllTrim( Str( nI ) ) )
       xml_node( "pg_total", AllTrim( Str( Len( groups ) ) ) )
 
       SELECT t_docit
@@ -403,7 +403,7 @@ FUNCTION _xml_repromaterijal( a_items, groups, group_id, params )
 
    LOCAL _t_area := Select()
    LOCAL _t_rec := RecNo()
-   LOCAL _doc_no, _doc_it_no, _i
+   LOCAL _doc_no, _doc_it_no, nI
 
    SELECT t_docit2
    GO TOP
@@ -414,10 +414,10 @@ FUNCTION _xml_repromaterijal( a_items, groups, group_id, params )
 
    xml_subnode( "rekap", .F. )
 
-   FOR _i := 1 TO Len( a_items )
+   FOR nI := 1 TO Len( a_items )
 
-      _doc_no := a_items[ _i, 1 ]
-      _doc_it_no := a_items[ _i, 2 ]
+      _doc_no := a_items[ nI, 1 ]
+      _doc_it_no := a_items[ nI, 2 ]
 
       IF Len( groups ) > 1 .AND. group_id <> rnal_zadnja_grupa_stavke( _doc_no, _doc_it_no )
          LOOP

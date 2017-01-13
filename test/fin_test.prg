@@ -16,7 +16,7 @@ LOCAL _user := f18_user()
 LOCAL _server := sql_data_conn()
 
 
-local _i, _rec
+local nI, _rec
 
 SELECT F_SUBAN
 my_usex("suban")
@@ -26,14 +26,14 @@ _sql_query_2( _server, "delete from fmk.fin_suban where idvn='9X'")
 
 
 log_disable()
-for _i := 1 to 10
+for nI := 1 to 10
     for _j:= 1 to 5
 
         APPEND BLANK
         _rec := dbf_get_rec()
         _rec["idfirma"] := "10"
         _rec["idvn"] := "9X"
-        _rec["brnal"] := PADL(ALLTRIM(STR(_i, 8)), 8, "0")
+        _rec["brnal"] := PADL(ALLTRIM(STR(nI, 8)), 8, "0")
         _rec["rbr"] := STR(_j, 4)
         _rec["iznosbhd"] := 100
         _rec["iznosdem"] := 0

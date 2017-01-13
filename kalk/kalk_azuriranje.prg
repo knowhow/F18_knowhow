@@ -558,7 +558,7 @@ STATIC FUNCTION kalk_azur_sql()
    LOCAL _doks_rabat := 0
    LOCAL _tbl_kalk
    LOCAL _tbl_doks
-   LOCAL _i, _n
+   LOCAL nI, _n
    LOCAL _tmp_id
    LOCAL _ids := {}
    LOCAL _ids_kalk := {}

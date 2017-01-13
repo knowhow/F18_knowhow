@@ -184,7 +184,7 @@ STATIC FUNCTION get_import_file( br_dok, destinacija, import_fajl )
    LOCAL _prodajno_mjesto, _id_pos, _prefix
    LOCAL _imp_files := {}
    LOCAL _opc := {}
-   LOCAL _h, _i
+   LOCAL _h, nI
    LOCAL _izbor
    LOCAL _prenesi
 
@@ -211,8 +211,8 @@ STATIC FUNCTION get_import_file( br_dok, destinacija, import_fajl )
    ASort( _opc,,, {| x, y| Right( x, 17 ) > Right( y, 17 ) } )
 
    _h := Array( Len( _opc ) )
-   FOR _i := 1 TO Len( _h )
-      _h[ _i ] := ""
+   FOR nI := 1 TO Len( _h )
+      _h[ nI ] := ""
    NEXT
 
    IF Len( _opc ) == 0

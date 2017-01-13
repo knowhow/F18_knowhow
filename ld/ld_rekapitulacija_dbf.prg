@@ -761,8 +761,8 @@ STATIC FUNCTION _calc_totals( lSvi, a_benef )
          SELECT tippr
          SEEK cPom
          SELECT ld
-         aRekap[ i, 1 ] += _s&cPom  // sati
-         nIznos := _i&cPom
+         aRekap[ i, 1 ] += _S&cPom  // sati
+         nIznos := _I&cPom
 
          aRekap[ i, 2 ] += nIznos  // iznos
 
@@ -1822,8 +1822,8 @@ STATIC FUNCTION napr_obracun( lSvi, a_benef )
          SELECT tippr
          SEEK cPom
          SELECT ld
-         aRekap[ i, 1 ] += _s&cPom  // sati
-         nIznos := _i&cPom
+         aRekap[ i, 1 ] += _S&cPom  // sati
+         nIznos := _I&cPom
 
          aRekap[ i, 2 ] += nIznos  // iznos
 
@@ -1988,8 +1988,8 @@ STATIC FUNCTION IspisTP( lSvi )
          FF
       ENDIF
       cPom := PadL( AllTrim( Str( i ) ), 2, "0" )
-      _s&cPom := aRekap[ i, 1 ]   // nafiluj ove varijable radi prora~una dodatnih stavki
-      _i&cPom := aRekap[ i, 2 ]
+      _S&cPom := aRekap[ i, 1 ]   // nafiluj ove varijable radi prora~una dodatnih stavki
+      _I&cPom := aRekap[ i, 2 ]
 
       cPom := PadL( AllTrim( Str( i ) ), 2, "0" )
       SELECT tippr

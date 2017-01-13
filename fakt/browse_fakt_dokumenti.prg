@@ -34,7 +34,7 @@ ENDCLASS
 
 METHOD BrowseFaktDokumenti:New( top, left, bottom, right, fakt_dokumenti )
 
-   LOCAL _i, _item, _col
+   LOCAL nI, _item, _col
 
    ::super:New( top, left, bottom, right )
 

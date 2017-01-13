@@ -63,7 +63,7 @@ FUNCTION stampa_nalog_proizvodnje( lTemporary, nDoc_no )
 FUNCTION rnal_stampa_obracunski_list( temp, doc_no, a_docs )
 
    LOCAL _gn := .T.
-   LOCAL _i
+   LOCAL nI
    LOCAL _ii
    LOCAL _docs := ""
    LOCAL _flag := "N"
@@ -96,13 +96,13 @@ FUNCTION rnal_stampa_obracunski_list( temp, doc_no, a_docs )
 
    my_use_refresh_stop()
 
-   FOR _i := 1 TO Len( a_docs )
+   FOR nI := 1 TO Len( a_docs )
 
-      IF a_docs[ _i, 1 ] < 0
+      IF a_docs[ nI, 1 ] < 0
          LOOP
       ENDIF
 
-      __doc_no := a_docs[ _i, 1 ]
+      __doc_no := a_docs[ nI, 1 ]
 
       SELECT docs
       GO TOP

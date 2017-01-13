@@ -21,7 +21,7 @@ FUNCTION azur_fakt( lSilent )
    LOCAL _id_tip_dok
    LOCAL _ok
    LOCAL _msg
-   LOCAL _i
+   LOCAL nI
 
    IF ( lSilent == nil )
       lSilent := .F.
@@ -61,11 +61,11 @@ FUNCTION azur_fakt( lSilent )
 
    MsgO( "Ažuriranje dokumenata u toku ..." )
 
-   FOR _i := 1 TO Len( _a_fakt_doks )
+   FOR nI := 1 TO Len( _a_fakt_doks )
 
-      _id_firma   := _a_fakt_doks[ _i, 1 ]
-      _id_tip_dok := _a_fakt_doks[ _i, 2 ]
-      _br_dok     := _a_fakt_doks[ _i, 3 ]
+      _id_firma   := _a_fakt_doks[ nI, 1 ]
+      _id_tip_dok := _a_fakt_doks[ nI, 2 ]
+      _br_dok     := _a_fakt_doks[ nI, 3 ]
 
       IF fakt_dokument_postoji( _id_firma, _id_tip_dok, _br_dok )
          MsgBeep( "Dokument " + _id_firma + "-" + _id_tip_dok + "-" + AllTrim( _br_dok ) + " već postoji ažuriran u bazi !" )

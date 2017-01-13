@@ -431,7 +431,7 @@ FUNCTION fiscal_txt_get_vr_plac( id_plac, drv )
 
 FUNCTION provjeri_kolicine_i_cijene_fiskalnog_racuna( items, storno, nLevel, drv )
 
-   LOCAL _i, _cijena, _plu_cijena, _kolicina, _naziv
+   LOCAL nI, _cijena, _plu_cijena, _kolicina, _naziv
    LOCAL _fix := 0
    LOCAL _ret := 0
    LOCAL lImaGreska := .F.
@@ -450,14 +450,14 @@ FUNCTION provjeri_kolicine_i_cijene_fiskalnog_racuna( items, storno, nLevel, drv
       storno := .F.
    ENDIF
 
-   FOR _i := 1 TO Len( items )
+   FOR nI := 1 TO Len( items )
 
       lImaGreska := .F.
 
-      _cijena := Round( items[ _i, 5 ], 4 )
-      _plu_cijena := Round( items[ _i, 10 ], 4 )
-      _kolicina := Round( items[ _i, 6 ], 4 )
-      _naziv := items[ _i, 4 ]
+      _cijena := Round( items[ nI, 5 ], 4 )
+      _plu_cijena := Round( items[ nI, 10 ], 4 )
+      _kolicina := Round( items[ nI, 6 ], 4 )
+      _naziv := items[ nI, 4 ]
 
       IF ( !is_ispravna_kolicina( _naziv, _kolicina ) .OR. !is_ispravna_cijena( _naziv, _cijena ) ) .OR. !is_ispravna_cijena( _naziv, _plu_cijena )
 
@@ -467,10 +467,10 @@ FUNCTION provjeri_kolicine_i_cijene_fiskalnog_racuna( items, storno, nLevel, drv
 
             prepakuj_vrijednosti_na_100_komada( @_kolicina, @_cijena, @_plu_cijena, @_naziv )
 
-            items[ _i, 5 ] := _cijena
-            items[ _i, 10 ] := _plu_cijena
-            items[ _i, 6 ] := _kolicina
-            items[ _i, 4 ] := _naziv
+            items[ nI, 5 ] := _cijena
+            items[ nI, 10 ] := _plu_cijena
+            items[ nI, 6 ] := _kolicina
+            items[ nI, 4 ] := _naziv
 
             lImaGreska := .F.
             ++ _fix

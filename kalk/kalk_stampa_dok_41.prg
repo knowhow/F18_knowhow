@@ -305,10 +305,10 @@ STATIC FUNCTION _print_report_header( id_vd )
 STATIC FUNCTION _get_rekap_line()
 
    LOCAL _line
-   LOCAL _i
+   LOCAL nI
 
    _line := "------ "
-   FOR _i := 1 TO 7
+   FOR nI := 1 TO 7
       _line += Replicate( "-", 10 ) + " "
    NEXT
 

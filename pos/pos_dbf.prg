@@ -288,7 +288,7 @@ FUNCTION pos_stanje_artikla( id_pos, id_roba )
 
    LOCAL _qry, _qry_ret, _table
    LOCAL _data := {}
-   LOCAL _i, oRow
+   LOCAL nI, oRow
    LOCAL _stanje := 0
 
    _qry := "SELECT SUM( CASE WHEN idvd IN ('16') THEN kolicina WHEN idvd IN ('42') THEN -kolicina WHEN idvd IN ('IN') THEN -(kolicina - kol2) ELSE 0 END ) AS stanje FROM " + F18_PSQL_SCHEMA_DOT + "pos_pos " + ;

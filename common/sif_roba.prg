@@ -309,7 +309,7 @@ FUNCTION OFmkRoba()
 FUNCTION sifre_artikli_provjera_mp_cijena()
 
    LOCAL _check := {}
-   LOCAL _i, _n, _x, _mpc
+   LOCAL nI, _n, _x, _mpc
    LOCAL _line
    LOCAL _decimal := 2
 
@@ -401,21 +401,21 @@ FUNCTION sifre_artikli_provjera_mp_cijena()
 
    ? _line
 
-   FOR _i := 1 TO Len( _check )
+   FOR nI := 1 TO Len( _check )
 
       ? PadL( AllTrim( Str( ++_count ) ) + ".", 6 )
       // id
-      @ PRow(), PCol() + 1 SAY _check[ _i, 1 ]
+      @ PRow(), PCol() + 1 SAY _check[ nI, 1 ]
       // barkod
-      @ PRow(), PCol() + 1 SAY _check[ _i, 2 ]
+      @ PRow(), PCol() + 1 SAY _check[ nI, 2 ]
       // naziv
-      @ PRow(), PCol() + 1 SAY PadR( _check[ _i, 3 ], 30 )
+      @ PRow(), PCol() + 1 SAY PadR( _check[ nI, 3 ], 30 )
 
       // setovi cijena...
       FOR _x := 1 TO 9
 
          // mpc, mpc2, mpc3...
-         _cijena := _check[ _i, 3 + _x ]
+         _cijena := _check[ nI, 3 + _x ]
 
          IF Round( _cijena, 4 ) == 0
             _tmp := PadR( "", 15 )
@@ -521,7 +521,7 @@ STATIC FUNCTION __dupli_bk_sql()
 // -----------------------------------------------
 STATIC FUNCTION __dupli_bk_rpt( data )
 
-   LOCAL _i
+   LOCAL nI
 
    IF ValType( data ) == "L" .OR. Len( data ) == 0
       MsgBeep( "Nema podataka za prikaz !" )

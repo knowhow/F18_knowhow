@@ -144,7 +144,7 @@ TEST_LINE( test_var( "rec_part_99" ) == 1,  .T. )
 STATIC FUNCTION key_test_dodaj_id_u_sifarnik( a_polja )
 
    LOCAL _ret := hb_Hash()
-   LOCAL _kod, _i, _j, _num
+   LOCAL _kod, nI, _j, _num
    LOCAL _keys
    LOCAL _a_new := { "WID" }
    LOCAL _vars

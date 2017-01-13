@@ -128,9 +128,9 @@ FUNCTION ld_kartica_plate_za_vise_mjeseci()
             FOR i := 1 TO cLDpolja
                cPom := PadL( AllTrim( Str( i ) ), 2, "0" )
                IF !lViseObr .OR. cSatiVO == "S" .OR. cSatiVO == _obr
-                  ws&cPom += _s&cPom
+                  ws&cPom += _S&cPom
                ENDIF
-               wi&cPom += _i&cPom
+               wi&cPom += _I&cPom
             NEXT
             wUIznos += _UIznos
             IF !lViseObr .OR. cSatiVO == "S" .OR. cSatiVO == _obr
@@ -149,9 +149,9 @@ FUNCTION ld_kartica_plate_za_vise_mjeseci()
             cPom := PadL( AllTrim( Str( i ) ), 2, "0" )
             SELECT tippr; SEEK cPom
             IF !lViseObr .OR. cSatiVO == "S" .OR. cSatiVO == _obr
-               ws&cPom += _s&cPom
+               ws&cPom += _S&cPom
             ENDIF
-            wi&cPom += _i&cPom
+            wi&cPom += _I&cPom
          NEXT
          SELECT ld
          wUIznos += _UIznos

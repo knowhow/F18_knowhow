@@ -142,11 +142,11 @@ FUNCTION fakt_memo_field_to_txt( memo_field )
 
    LOCAL _txt := ""
    LOCAL _val := ""
-   LOCAL _i
+   LOCAL nI
 
-   FOR _i := 1 TO Len( memo_field )
+   FOR nI := 1 TO Len( memo_field )
 
-      _tmp := memo_field[ _i ]
+      _tmp := memo_field[ nI ]
 
       IF ValType( _tmp ) == "D"
          _val := DToC( _tmp )

@@ -118,7 +118,7 @@ FUNCTION BrisiRadnika()
 
                FOR i := 1 TO cLDPolja
                   cPom := PadL( AllTrim( Str( i ) ), 2, "0" )
-                  nPom += ( Abs( _i&cPom ) + Abs( _s&cPom ) )
+                  nPom += ( Abs( _I&cPom ) + Abs( _S&cPom ) )
                   // ako su sve nule
                NEXT
 

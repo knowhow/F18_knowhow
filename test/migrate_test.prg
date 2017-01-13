@@ -86,12 +86,12 @@ return .t.
 // ---------------------------------------------
 // ---------------------------------------------
 function add_sample_data_t_1(dbf, num)
-local _i
+local nI
 
 USE (dbf) EXCLUSIVE NEW 
-for _i := 1 to num
-  field->id  := STR(_i, 4)
-  field->naz := "naz " + STR(_i, 4)
+for nI := 1 to num
+  field->id  := STR(nI, 4)
+  field->naz := "naz " + STR(nI, 4)
 next
 USE
 

@@ -260,7 +260,7 @@ FUNCTION P_Funk( cId, dx, dy )
 // -------------------------------------------
 FUNCTION P_KS( cId, dx, dy )
 
-   LOCAL _i
+   LOCAL nI
    PRIVATE imekol := {}
    PRIVATE kol := {}
 
@@ -275,8 +275,8 @@ FUNCTION P_KS( cId, dx, dy )
    AAdd( imekol, { PadR( "DENOM", 15 ), {|| den }, "den" } )
    AAdd( imekol, { PadR( "Duz.", 4 ), {|| duz }, "duz" } )
 
-   FOR _i := 1 TO Len( imekol )
-      AAdd( kol, _i )
+   FOR nI := 1 TO Len( imekol )
+      AAdd( kol, nI )
    NEXT
 
    RETURN p_sifra( F_KS, 1, MAXROWS() -10, MAXCOLS() -5, "Lista kamatni stopa", @cId, dx, dy )

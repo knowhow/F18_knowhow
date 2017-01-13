@@ -12,7 +12,7 @@
 #include "f18.ch"
 
 function dbf_test()
-local _i
+local nI
 local _plaho_dugacko_polje
 local _ime_f
 local _dbf_struct := {}

@@ -21,7 +21,7 @@
  *   param: Ako nisu zadani, uzima se da je cValIz="P", a cValU="D"
  *   param: Ako je zadano samo neko cValIz<>"P", cValU ce biti "P"
  *
- *  \return f-ja vraca protuvrijednost jedinice valute cValIz u valuti cValU
+ *  return f-ja vraca protuvrijednost jedinice valute cValIz u valuti cValU
  */
 FUNCTION Kurs( datum, val_iz, val_u )
 
@@ -130,7 +130,7 @@ FUNCTION Kurs( datum, val_iz, val_u )
 FUNCTION ValDomaca()
 
    LOCAL _ret
-   _ret := hb_UTF8ToStr( _sql_get_value( F18_PSQL_SCHEMA + ".valute", "naz2", { { "tip", "D" } } ) )
+   _ret := hb_UTF8ToStr( sql_get_field_za_uslov( F18_PSQL_SCHEMA + ".valute", "naz2", { { "tip", "D" } } ) )
 
    RETURN _ret
 
@@ -139,7 +139,7 @@ FUNCTION ValDomaca()
 FUNCTION ValPomocna()
 
    LOCAL _ret
-   _ret := hb_UTF8ToStr( _sql_get_value( F18_PSQL_SCHEMA + ".valute", "naz2", { { "tip", "P" } } ) )
+   _ret := hb_UTF8ToStr( sql_get_field_za_uslov( F18_PSQL_SCHEMA + ".valute", "naz2", { { "tip", "P" } } ) )
 
    RETURN _ret
 

@@ -667,8 +667,8 @@ FUNCTION fakt_ispravka_podataka_azuriranog_dokumenta( id_firma, tip_dok, br_dok 
          __txt += Chr( 16 ) + DToC( __dat_pl ) + Chr( 17 )
 
          IF Len( _t_txt ) > 9
-            FOR _i := 10 TO Len( _t_txt )
-               __txt += Chr( 16 ) + _t_txt[ _i ] + Chr( 17 )
+            FOR nI := 10 TO Len( _t_txt )
+               __txt += Chr( 16 ) + _t_txt[ nI ] + Chr( 17 )
             NEXT
          ENDIF
 

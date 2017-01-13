@@ -22,7 +22,7 @@ FUNCTION PostojiSifra( nDbf, nNtx, nVisina, nSirina, cNaslov, cID, dx, dy,  bBlo
 
    LOCAL cRet, cIdBK
    LOCAL hRec
-   LOCAL _i
+   LOCAL nI
    LOCAL _komande := { "<c-N> Novi", "<F2>  Ispravka", "<ENT> Odabir", _to_str( "<c-T> Briši" ), "<c-P> Print", ;
       "<F4>  Dupliciraj", _to_str( "<c-F9> Briši SVE" ), _to_str( "<c-F> Traži" ), "<a-S> Popuni kol.", ;
       "<a-R> Zamjena vrij.", "<c-A> Cirk.ispravka" }
@@ -37,8 +37,8 @@ FUNCTION PostojiSifra( nDbf, nNtx, nVisina, nSirina, cNaslov, cID, dx, dy,  bBlo
       aZabIsp := {}
    ENDIF
 
-   FOR _i := 1 TO Len( aZabIsp )
-      aZabIsp[ _i ] := Upper( aZabIsp[ _i ] )
+   FOR nI := 1 TO Len( aZabIsp )
+      aZabIsp[ nI ] := Upper( aZabIsp[ nI ] )
    NEXT
 
    PushWA()
@@ -805,26 +805,26 @@ FUNCTION browse_edit_stavka( Ch, nOrder, aZabIsp, lNovi )
 
 
 
-STATIC FUNCTION set_w_var( ImeKol, _i, show_grup )
+STATIC FUNCTION set_w_var( ImeKol, nI, show_grup )
 
    LOCAL _tmp, _var_name
 
-   IF Left( ImeKol[ _i, 3 ], 6 ) != "SIFK->"
+   IF Left( ImeKol[ nI, 3 ], 6 ) != "SIFK->"
 
-      _var_name := "w" + ImeKol[ _i, 3 ]
+      _var_name := "w" + ImeKol[ nI, 3 ]
       // npr WVPC2
       // ako provjerimo strukturu, onda mozemo vidjeti da trebamo uzeti
       // varijablu karakteristike("ROBA","V2")
 
    ELSE
       // ako je SIFK->GRUP, prikazuj status
-      IF Alias() == "PARTN" .AND. Right( ImeKol[ _i, 3 ], 4 ) == "GRUP"
+      IF Alias() == "PARTN" .AND. Right( ImeKol[ nI, 3 ], 4 ) == "GRUP"
          show_grup := .T.
       ENDIF
 
-      _var_name := "wSifk_" + SubStr( ImeKol[ _i, 3 ], 7 )
+      _var_name := "wSifk_" + SubStr( ImeKol[ nI, 3 ], 7 )
 
-      _tmp := IzSifk( Alias(), SubStr( ImeKol[ _i, 3 ], 7 ) )
+      _tmp := IzSifk( Alias(), SubStr( ImeKol[ nI, 3 ], 7 ) )
 
       IF _tmp == NIL
          // ne koristi se !!!
@@ -954,7 +954,7 @@ STATIC FUNCTION add_match_code( ImeKol, Kol )
 
 FUNCTION SetSifVars()
 
-   LOCAL _i, _struct
+   LOCAL nI, _struct
    PRIVATE cImeP
    PRIVATE cVar
 
@@ -962,8 +962,8 @@ FUNCTION SetSifVars()
 
    SkratiAZaD( @_struct )
 
-   FOR _i := 1 TO Len( _struct )
-      cImeP := _struct[ _i, 1 ]
+   FOR nI := 1 TO Len( _struct )
+      cImeP := _struct[ nI, 1 ]
       cVar := "w" + cImeP
 
       &cVar := &cImeP

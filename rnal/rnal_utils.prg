@@ -66,7 +66,7 @@ FUNCTION info_priority( nPadR )
 FUNCTION broj_stakala( arr, qtty )
 
    LOCAL _count := 0
-   LOCAL _i
+   LOCAL nI
    LOCAL _gr_name
 
    IF arr == NIL .OR. Len( arr ) == 0
@@ -76,8 +76,8 @@ FUNCTION broj_stakala( arr, qtty )
    // arr
    // { nElNo, cGrValCode, cGrVal, cAttJoker, cAttValCode, cAttVal }
 
-   FOR _i := 1 TO Len( arr )
-      _gr_name := AllTrim( arr[ _i, 4 ] )
+   FOR nI := 1 TO Len( arr )
+      _gr_name := AllTrim( arr[ nI, 4 ] )
       IF _gr_name == "<GL_TYPE>"
          ++ _count
       ENDIF

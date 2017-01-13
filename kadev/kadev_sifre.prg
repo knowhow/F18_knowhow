@@ -490,7 +490,7 @@ return DE_CONT
 
 static function pregledaj_defrjes()
 parameters cId
-local _i
+local nI
 private GetList := {}
 private ImeKol := {}
 private Kol := {}
@@ -512,8 +512,8 @@ Box(,15,77)
            { "Prior.unosa"    , {|| priun   } , "priun"    } ;
          }
 
-    for _i := 1 to LEN( ImeKol )
-        AADD( Kol, _i )
+    for nI := 1 to LEN( ImeKol )
+        AADD( Kol, nI )
     next
 
     set cursor on

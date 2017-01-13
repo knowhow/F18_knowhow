@@ -166,7 +166,7 @@ STATIC FUNCTION print_log_data( data, params, print_to_file )
 
    LOCAL _row
    LOCAL _user, _txt, _date
-   LOCAL _a_txt, _tmp, _i, _pos_y
+   LOCAL _a_txt, _tmp, nI, _pos_y
    LOCAL _txt_len := 100
    LOCAL _log_file := DToS( Date() ) + "_" + StrTran( Time(), ":", "" ) + "_log.txt"
    LOCAL _log_path := my_home_root()
@@ -208,12 +208,12 @@ STATIC FUNCTION print_log_data( data, params, print_to_file )
 
       _a_txt := SjeciStr( _txt, _txt_len )
 
-      FOR _i := 1 TO Len( _a_txt )
-         IF _i > 1
+      FOR nI := 1 TO Len( _a_txt )
+         IF nI > 1
             ?
-            @ PRow(), _pos_y SAY Pad( _a_txt[ _i ], _txt_len )
+            @ PRow(), _pos_y SAY Pad( _a_txt[ nI ], _txt_len )
          ELSE
-            @ PRow(), _pos_y := PCol() + 1 SAY PadR( _a_txt[ _i ], _txt_len )
+            @ PRow(), _pos_y := PCol() + 1 SAY PadR( _a_txt[ nI ], _txt_len )
          ENDIF
       NEXT
 

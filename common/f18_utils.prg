@@ -60,14 +60,14 @@ FUNCTION f18_help()
 
 FUNCTION set_f18_params()
 
-   LOCAL _i := 1
+   LOCAL nI := 1
 
    cParams := "" // setuj ulazne parametre
 
-   DO WHILE _i <= PCount()
+   DO WHILE nI <= PCount()
 
 
-      cTok := hb_PValue( _i++ ) // ucitaj parametar
+      cTok := hb_PValue( nI++ ) // ucitaj parametar
 
 
       DO CASE
@@ -84,37 +84,37 @@ FUNCTION set_f18_params()
 
       CASE cTok == "--dbf-prefix"   // prefix privatni dbf
 
-         dbf_prefix( hb_PValue( _i++ ) )
+         dbf_prefix( hb_PValue( nI++ ) )
 
       CASE cTok == "--run-on-start"
-         run_on_start_param( hb_PValue( _i++ ) )
+         run_on_start_param( hb_PValue( nI++ ) )
 
       CASE cTok == "-h"
-         cHostName := hb_PValue( _i++ )
+         cHostName := hb_PValue( nI++ )
          cParams += Space( 1 ) + "hostname=" + cHostName
 
       CASE cTok == "-y"
-         nPort := Val( hb_PValue( _i++ ) )
+         nPort := Val( hb_PValue( nI++ ) )
          cParams += Space( 1 ) + "port=" + AllTrim( Str( nPort ) )
 
       CASE cTok == "-d"
-         cDataBase := hb_PValue( _i++ )
+         cDataBase := hb_PValue( nI++ )
          cParams += Space( 1 ) + "database=" + cDatabase
 
       CASE cTok == "-u"
-         cUser := hb_PValue( _i++ )
+         cUser := hb_PValue( nI++ )
          cParams += Space( 1 ) + "user=" + cUser
 
       CASE cTok == "-p"
-         cPassWord := hb_PValue( _i++ )
+         cPassWord := hb_PValue( nI++ )
          cParams += Space( 1 ) + "password=" + cPassword
 
       CASE cTok == "-t"
-         cDBFDataPath := hb_PValue( _i++ )
+         cDBFDataPath := hb_PValue( nI++ )
          cParams += Space( 1 ) + "dbf data path=" + cDBFDataPath
 
       CASE cTok == "-e"
-         cSchema := hb_PValue( _i++ )
+         cSchema := hb_PValue( nI++ )
          cParams += Space( 1 ) + "schema=" + cSchema
       ENDCASE
 
@@ -128,7 +128,7 @@ FUNCTION set_f18_params()
 
 FUNCTION pp( x )
 
-   LOCAL _key, _i
+   LOCAL _key, nI
    LOCAL _tmp
    LOCAL _type
 
@@ -146,8 +146,8 @@ FUNCTION pp( x )
 
    IF _type  == "A"
       _tmp += "(array): "
-      FOR _i := 1 TO Len( x )
-         _tmp +=  AllTrim( pp( _i ) ) + " / " + pp( x[ _i ] ) + " ; "
+      FOR nI := 1 TO Len( x )
+         _tmp +=  AllTrim( pp( nI ) ) + " / " + pp( x[ nI ] ) + " ; "
       NEXT
       RETURN _tmp
    ENDIF

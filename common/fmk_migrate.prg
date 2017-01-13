@@ -64,12 +64,12 @@ FUNCTION fmk_migrate( cur_dir )
 
 FUNCTION push_fmk_dbf_to_server( cur_dir, dbf_name )
 
-   LOCAL _i, _org_id, _pos, _tmp_1, _tmp_2
+   LOCAL nI, _org_id, _pos, _tmp_1, _tmp_2
    LOCAL _year
    LOCAL _curr_year := Year( Date() )
 
-   FOR _i := 1 TO 99
-      _org_id := AllTrim( Str( _i, 2 ) )
+   FOR nI := 1 TO 99
+      _org_id := AllTrim( Str( nI, 2 ) )
 
       FOR _year := 1994 TO _curr_year
 

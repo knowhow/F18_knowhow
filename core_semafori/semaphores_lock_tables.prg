@@ -56,14 +56,14 @@ FUNCTION begin_sql_tran_lock_tables( aTables )
 FUNCTION f18_lock_tables( aTables )
 
    LOCAL _ok := .T.
-   LOCAL _i, _tbl, _dbf_rec
+   LOCAL nI, _tbl, _dbf_rec
 
    IF Len( aTables ) == NIL
       RETURN .T.
    ENDIF
 
-   FOR _i := 1 TO Len( aTables )
-      _dbf_rec := get_a_dbf_rec( aTables[ _i ], .T. )
+   FOR nI := 1 TO Len( aTables )
+      _dbf_rec := get_a_dbf_rec( aTables[ nI ], .T. )
       _tbl := _dbf_rec[ "table" ]
       IF !_dbf_rec[ "sql" ]
          unlock_semaphore( _tbl )
@@ -87,15 +87,15 @@ FUNCTION f18_lock_tables( aTables )
 
 FUNCTION f18_unlock_tables( aTables )
 
-   LOCAL _i, _tbl, _dbf_rec
+   LOCAL nI, _tbl, _dbf_rec
    LOCAL cMsg
 
    IF Len( aTables ) == NIL
       RETURN .F.
    ENDIF
 
-   FOR _i := 1 TO Len( aTables )
-      _dbf_rec := get_a_dbf_rec( aTables[ _i ], .T. )
+   FOR nI := 1 TO Len( aTables )
+      _dbf_rec := get_a_dbf_rec( aTables[ nI ], .T. )
       _tbl := _dbf_rec[ "table" ]
       IF !_dbf_rec[ "sql" ]
          IF !unlock_semaphore( _tbl )

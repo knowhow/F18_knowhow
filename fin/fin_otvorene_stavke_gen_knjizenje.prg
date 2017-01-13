@@ -23,7 +23,7 @@ FUNCTION knjizenje_gen_otvorene_stavke()
    LOCAL nNaz := 1
    LOCAL nRec := RecNo()
    LOCAL _col, _row
-   LOCAL _rec, _i
+   LOCAL _rec, nI
    LOCAL nCnt
    LOCAL cBrDok, cOtvSt, dDatDok
    LOCAL hParams
@@ -234,8 +234,8 @@ FUNCTION knjizenje_gen_otvorene_stavke()
 
    Kol := {}
 
-   FOR _i := 1 TO Len( ImeKol )
-      AAdd( Kol, _i )
+   FOR nI := 1 TO Len( ImeKol )
+      AAdd( Kol, nI )
    NEXT
 
    _row := MAXROWS() - 10

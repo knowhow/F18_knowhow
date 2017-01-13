@@ -454,7 +454,7 @@ FUNCTION tezinski_barkod_get_tezina( barkod, tezina )
    LOCAL _tez_div := fetch_metric( "barkod_tezinski_djelitelj", nil, 10000 )
    LOCAL _val_tezina := 0
    LOCAL _a_prefix
-   LOCAL _i
+   LOCAL nI
 
    IF _tb == "N"
       RETURN .F.
@@ -504,7 +504,7 @@ FUNCTION tezinski_barkod( id, tezina, pop_push )
    LOCAL _tez_div := fetch_metric( "barkod_tezinski_djelitelj", nil, 10000 )
    LOCAL _val_tezina := 0
    LOCAL _a_prefix
-   LOCAL _i
+   LOCAL nI
 
    IF pop_push == NIL
       pop_push := .T.

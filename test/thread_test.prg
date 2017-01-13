@@ -18,12 +18,12 @@
 thread static _t_var := 0
  
 function test_thread()
-local _i, _threads, _ret, _sum
+local nI, _threads, _ret, _sum
 
 
 _threads:= {}
 
-for _i := 1 TO 5
+for nI := 1 TO 5
   AADD( _threads, hb_threadStart( @th_func() ) )
 next
 
@@ -34,7 +34,7 @@ TEST_LINE(_sum, 50)
 
 _t_var += 2
 
-for _i := 1 TO 2
+for nI := 1 TO 2
   AADD( _threads, hb_threadStart( @th_func_2() ) )
 next
 AEval( _threads, { |th_id| hb_threadJoin( th_id) } )
@@ -51,9 +51,9 @@ return 10
 // -------------------------
 // -------------------------
 function th_func_2()
-local _i
+local nI
 
-for _i :=1 to  10
+for nI :=1 to  10
   _t_var += 10
   ? "spavam ..."
   hb_IdleSleep(0.5)

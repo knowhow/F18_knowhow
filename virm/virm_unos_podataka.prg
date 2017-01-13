@@ -419,7 +419,7 @@ FUNCTION stampa_virmana_drb()
 
    LOCAL _br_virmana := 999
    LOCAL _marker := "N"
-   LOCAL _i
+   LOCAL nI
    LOCAL _konverzija := fetch_metric( "virm_konverzija_delphirb", nil, "5" )
 
    BEGIN SEQUENCE
@@ -438,7 +438,7 @@ FUNCTION stampa_virmana_drb()
    READ
    BoxC()
 
-   _i := 1
+   nI := 1
 
    SELECT virm_pripr
    SET ORDER TO TAG "1"
@@ -484,10 +484,10 @@ FUNCTION stampa_virmana_drb()
       SELECT virm_pripr
       SKIP
 
-      IF _i >= _br_virmana
+      IF nI >= _br_virmana
          EXIT
       ENDIF
-      _i ++
+      nI ++
 
    ENDDO
 

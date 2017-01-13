@@ -247,7 +247,7 @@ FUNCTION kopi( path, ime_dbf, curr_stru, new_stru, brisi_dbf, rename_dbf, stru_c
    LOCAL _ime_p, _tmp
    LOCAL _ime_file, _ime_tmp, _ime_bak
    LOCAL _cdx_file
-   LOCAL _f, _i, _ime_p_new
+   LOCAL _f, nI, _ime_p_new
    LOCAL _cnt
 
    _f := path + ime_dbf + "."
@@ -311,28 +311,28 @@ FUNCTION kopi( path, ime_dbf, curr_stru, new_stru, brisi_dbf, rename_dbf, stru_c
 
          APPEND BLANK
 
-         FOR _i := 1 TO Len( curr_stru )
+         FOR nI := 1 TO Len( curr_stru )
 
-            _ime_p := curr_stru[ _i, 1 ]
+            _ime_p := curr_stru[ nI, 1 ]
 
-            IF Len( curr_stru[ _i ] ) > 4
+            IF Len( curr_stru[ nI ] ) > 4
 
-               _ime_p_new := curr_stru[ _i, 5 ]
+               _ime_p_new := curr_stru[ nI, 5 ]
                DO CASE
-               CASE curr_stru[ _i, 2 ] == curr_stru[ _i, 6 ]
+               CASE curr_stru[ nI, 2 ] == curr_stru[ nI, 6 ]
                   Eval( FieldBlock( _ime_p_new ),  Eval( FieldWBlock( _ime_p, 1 ) ) )
 
-               CASE ( curr_stru[ _i, 2 ] $ "BNIY" ) .AND.  ( curr_stru[ _i, 6 ] $ "BNYI" )
+               CASE ( curr_stru[ nI, 2 ] $ "BNIY" ) .AND.  ( curr_stru[ nI, 6 ] $ "BNYI" )
                   // jedan tip numerika u drugi tip numerika
                   Eval( FieldBlock( _ime_p_new ),  Eval( FieldWBlock( _ime_p, 1 ) ) )
 
-               CASE curr_stru[ _i, 2 ] == "C" .AND. ( curr_stru[ _i, 6 ] $ "BNIY" )
+               CASE curr_stru[ nI, 2 ] == "C" .AND. ( curr_stru[ nI, 6 ] $ "BNIY" )
                   Eval( FieldBlock( _ime_p_new ),  Val( Eval( FieldWBlock( _ime_p, 1 ) ) ) )
 
-               CASE ( curr_stru[ _i, 2 ] $ "BNIY" ) .AND. curr_stru[ _i, 6 ] == "C"
+               CASE ( curr_stru[ nI, 2 ] $ "BNIY" ) .AND. curr_stru[ nI, 6 ] == "C"
                   Eval( FieldBlock( _ime_p_new ),  Str( Eval( FieldWBlock( _ime_p, 1 ) ) ) )
 
-               CASE curr_stru[ _i, 2 ] == "C" .AND. curr_stru[ _i, 6 ] == "D"
+               CASE curr_stru[ nI, 2 ] == "C" .AND. curr_stru[ nI, 6 ] == "D"
                   Eval( FieldBlock( _ime_p_new ),  CToD( Eval( FieldWBlock( _ime_p, 1 ) ) ) )
 
                END CASE

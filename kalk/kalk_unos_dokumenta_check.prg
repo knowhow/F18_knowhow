@@ -970,7 +970,7 @@ FUNCTION kopiraj_set_cijena()
    LOCAL _set_to := "1"
    LOCAL _tip := "M"
    LOCAL _tmp1, _tmp2, hRec
-   LOCAL _tmp, _count, _i
+   LOCAL _tmp, _count, nI
 
    SET CURSOR ON
 
@@ -1010,18 +1010,18 @@ FUNCTION kopiraj_set_cijena()
    SET ORDER TO TAG "ID"
    GO TOP
 
-   _i := 0
+   nI := 0
 
    Box(, 1, 60 )
 
    DO WHILE !Eof()
 
-      ++_i
+      ++nI
       hRec := dbf_get_rec()
       // kopiraj cijenu...
       hRec[ _tmp2 ] := hRec[ _tmp1 ]
 
-      _tmp := AllTrim( Str( _i, 12 ) ) + "/" + AllTrim( Str( _count, 12 ) )
+      _tmp := AllTrim( Str( nI, 12 ) ) + "/" + AllTrim( Str( _count, 12 ) )
 
       @ m_x + 1, m_y + 2 SAY PadR( "odradio: " + _tmp, 60 )
 

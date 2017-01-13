@@ -115,24 +115,24 @@ METHOD ReportCommon:show_company( id_firma )
 METHOD ReportCommon:get_zaglavlje( item )
 
    LOCAL _line := ""
-   LOCAL _i, _empty_fill
+   LOCAL nI, _empty_fill
 
-   FOR _i := 1 TO Len( ::zagl_arr )
+   FOR nI := 1 TO Len( ::zagl_arr )
 
       IF item == 0
-         _line += Replicate( "-", ::zagl_arr[ _i, 1 ] )
+         _line += Replicate( "-", ::zagl_arr[ nI, 1 ] )
       ELSEIF item == 1
-         _empty_fill := ::zagl_arr[ _i, 1 ] - Len( ::zagl_arr[ _i, 2 ] )
-         _line += ::zagl_arr[ _i, 2 ] + Space( _empty_fill )
+         _empty_fill := ::zagl_arr[ nI, 1 ] - Len( ::zagl_arr[ nI, 2 ] )
+         _line += ::zagl_arr[ nI, 2 ] + Space( _empty_fill )
       ELSEIF item == 2
-         _empty_fill := ::zagl_arr[ _i, 1 ] - Len( ::zagl_arr[ _i, 3 ] )
-         _line += ::zagl_arr[ _i, 3 ] + Space( _empty_fill )
+         _empty_fill := ::zagl_arr[ nI, 1 ] - Len( ::zagl_arr[ nI, 3 ] )
+         _line += ::zagl_arr[ nI, 3 ] + Space( _empty_fill )
       ELSEIF item == 3
-         _empty_fill := ::zagl_arr[ _i, 1 ] - Len( ::zagl_arr[ _i, 4 ] )
-         _line += ::zagl_arr[ _i, 4 ] + Space( _empty_fill )
+         _empty_fill := ::zagl_arr[ nI, 1 ] - Len( ::zagl_arr[ nI, 4 ] )
+         _line += ::zagl_arr[ nI, 4 ] + Space( _empty_fill )
       ENDIF
 
-      IF _i <> Len( ::zagl_arr )
+      IF nI <> Len( ::zagl_arr )
          IF item == 0
             _line += " "
          ELSE

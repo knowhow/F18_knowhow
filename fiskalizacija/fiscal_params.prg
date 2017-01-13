@@ -570,7 +570,7 @@ FUNCTION odaberi_fiskalni_uredjaj( cIdTipDok, lFromPos, lSilent )
 FUNCTION get_fiscal_devices_list( user, tip_dok )
 
    LOCAL _arr := {}
-   LOCAL _i
+   LOCAL nI
    LOCAL _dev_max := 10
    LOCAL _dev_tmp
    LOCAL _usr_dev_list := ""
@@ -586,9 +586,9 @@ FUNCTION get_fiscal_devices_list( user, tip_dok )
 
    _usr_dev_list := fetch_metric( "fiscal_opt_usr_devices", user, "" )
 
-   FOR _i := 1 TO _dev_max
+   FOR nI := 1 TO _dev_max
 
-      _dev_tmp := PadL( AllTrim( Str( _i ) ), 2, "0" )
+      _dev_tmp := PadL( AllTrim( Str( nI ) ), 2, "0" )
 
       _dev_id := fetch_metric( "fiscal_device_" + _dev_tmp + "_id", NIL, 0 )
 
@@ -641,7 +641,7 @@ FUNCTION fiskalni_uredjaj_model()
 STATIC FUNCTION fiskalni_uredjaji_meni( arr )
 
    LOCAL _ret := 0
-   LOCAL _i, _n
+   LOCAL nI, _n
    LOCAL _tmp
    LOCAL _izbor := 1
    LOCAL _opc := {}
@@ -649,12 +649,12 @@ STATIC FUNCTION fiskalni_uredjaji_meni( arr )
    LOCAL _m_x := m_x
    LOCAL _m_y := m_y
 
-   FOR _i := 1 TO Len( arr )
+   FOR nI := 1 TO Len( arr )
 
       _tmp := ""
-      _tmp += PadL( AllTrim( Str( _i ) ) + ")", 3 )
-      _tmp += " uredjaj " + PadL( AllTrim( Str( arr[ _i, 1 ] ) ), 2, "0" )
-      _tmp += " : " + PadR( hb_StrToUTF8( arr[ _i, 2 ] ), 40 )
+      _tmp += PadL( AllTrim( Str( nI ) ) + ")", 3 )
+      _tmp += " uredjaj " + PadL( AllTrim( Str( arr[ nI, 1 ] ) ), 2, "0" )
+      _tmp += " : " + PadR( hb_StrToUTF8( arr[ nI, 2 ] ), 40 )
 
       AAdd( _opc, _tmp )
       AAdd( _opcexe, {|| "" } )

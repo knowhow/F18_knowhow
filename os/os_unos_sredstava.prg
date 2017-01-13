@@ -400,7 +400,7 @@ FUNCTION ShowSadVr()
 
    LOCAL _arr := Select()
    LOCAL _t_rec := 0
-   LOCAL _i := 0
+   LOCAL nI := 0
 
    // polja os/sii
    aVr[ 1 ] := field->nabvr
@@ -412,9 +412,9 @@ FUNCTION ShowSadVr()
 
    SEEK cId
 
-   FOR _i := Len( aSred ) TO 1 STEP -1
-      IF aSred[ _i, 1 ] > 0 .AND. aSred[ _i, 1 ] < 999999
-         ADel( aSred, _i )
+   FOR nI := Len( aSred ) TO 1 STEP -1
+      IF aSred[ nI, 1 ] > 0 .AND. aSred[ nI, 1 ] < 999999
+         ADel( aSred, nI )
          ASize( aSred, Len( aSred ) - 1 )
       ENDIF
    NEXT
@@ -428,19 +428,19 @@ FUNCTION ShowSadVr()
 
    ASort( aSred,,, {| x, y| x[ 2 ] < y[ 2 ] } )
 
-   _i := 1
+   nI := 1
 
-   FOR _i := 1 TO Len( aSred )
-      _nabvr := aSred[ _i, 4 ]
-      _otpvr := aSred[ _i, 5 ]
+   FOR nI := 1 TO Len( aSred )
+      _nabvr := aSred[ nI, 4 ]
+      _otpvr := aSred[ nI, 5 ]
       _amd := 0
       _amp := 0
       nOstalo := 0
-      _datum := aSred[ _i, 2 ]
-      _datotp := aSred[ _i, 3 ]
+      _datum := aSred[ nI, 2 ]
+      _datotp := aSred[ nI, 3 ]
       izracunaj_os_amortizaciju( _datum, iif( !Empty( _datotp ), Min( os_datum_obracuna(), _datotp ), os_datum_obracuna() ), 100 )
       // napuni _amp
-      aSred[ _i, 6 ] = _amp
+      aSred[ nI, 6 ] = _amp
    NEXT
 
    SKIP -1
@@ -467,14 +467,14 @@ FUNCTION ShowSadVr()
 FUNCTION PSadVr()
 
    LOCAL _n := 0
-   LOCAL _i := 0
+   LOCAL nI := 0
 
-   FOR _i := 1 TO Len( aSred )
-      _n += ( aSred[ _i, 4 ] -aSred[ _i, 5 ] -aSred[ _i, 6 ] )
-      IF _i == Len( aSred )
+   FOR nI := 1 TO Len( aSred )
+      _n += ( aSred[ nI, 4 ] -aSred[ nI, 5 ] -aSred[ nI, 6 ] )
+      IF nI == Len( aSred )
          aVr[ 3 ] := _n
       ENDIF
-      IF aSred[ _i, 1 ] == RecNo()
+      IF aSred[ nI, 1 ] == RecNo()
          EXIT
       ENDIF
    NEXT

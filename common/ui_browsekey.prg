@@ -130,8 +130,7 @@ FUNCTION BrowseKey( y1, x1, y2, x2, ImeKol, bfunk, uslov, traz, brkol, dx, dy, b
    RETURN ( nil )
 
 
-// ------------------------------------------------------------
-// ------------------------------------------------------------
+
 STATIC FUNCTION Korisnik( nRequest, traz, dx, dy, nCurRec, nRecCnt )
 
    LOCAL nCount

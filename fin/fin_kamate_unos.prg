@@ -47,7 +47,7 @@ FUNCTION fin_kamate_menu()
 
 FUNCTION kamate_unos()
 
-   LOCAL _i
+   LOCAL nI
    LOCAL _x := MAXROWS() - 15
    LOCAL _y := MAXCOLS() - 5
    PRIVATE ImeKol := {}
@@ -65,8 +65,8 @@ FUNCTION kamate_unos()
       { "M1",            {|| M1       }, "M1"        }  ;
       }
 
-   FOR _i := 1 TO Len( imekol )
-      AAdd( Kol, _i )
+   FOR nI := 1 TO Len( imekol )
+      AAdd( Kol, nI )
    NEXT
 
    Box(, _x, _y )

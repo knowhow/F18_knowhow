@@ -126,7 +126,7 @@ STATIC FUNCTION stampaj_tkv( vars )
    LOCAL _n_opis, _n_iznosi
    LOCAL _t_dug, _t_pot, _t_rabat
    LOCAL _a_opis := {}
-   LOCAL _i
+   LOCAL nI
    LOCAL _tip_obrasca := vars[ "tip_obrasca" ]
 
    // daj mi liniju za report...
@@ -221,9 +221,9 @@ STATIC FUNCTION stampaj_tkv( vars )
       // 2, 3... red izvjestaja...
       // radi opisnog polja...
 
-      FOR _i := 2 TO Len( _a_opis )
+      FOR nI := 2 TO Len( _a_opis )
          ?
-         @ PRow(), _n_opis SAY _a_opis[ _i ]
+         @ PRow(), _n_opis SAY _a_opis[ nI ]
       NEXT
 
       SKIP

@@ -264,7 +264,7 @@ FUNCTION UnosSiht()
          ?? Space( 10 ), Str( aSihtUk[ i ], 10, 2 )
          cPom := id  // napuni Karticu radnika !!!!!
          IF _Brbod <> 0
-            _s&cPom := aSihtUk[ i ] / _Brbod
+            _S&cPom := aSihtUk[ i ] / _Brbod
          ENDIF
          SKIP
       ENDDO

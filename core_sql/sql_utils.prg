@@ -17,15 +17,15 @@
 //
 FUNCTION sql_fields( fields )
 
-   LOCAL  _i, _sql_fields := ""
+   LOCAL  nI, _sql_fields := ""
 
    IF fields == NIL
       RETURN NIL
    ENDIF
 
-   FOR _i := 1 TO Len( fields )
-      _sql_fields += fields[ _i ]
-      IF _i < Len( fields )
+   FOR nI := 1 TO Len( fields )
+      _sql_fields += fields[ nI ]
+      IF nI < Len( fields )
          _sql_fields +=  ","
       ENDIF
    NEXT
@@ -184,7 +184,7 @@ FUNCTION _sql_cond_parse( field_name, cond, not )
 
    LOCAL _ret := ""
    LOCAL cond_arr := TokToNiz( cond, ";" )
-   LOCAL _i, _cond
+   LOCAL nI, _cond
 
    IF not == NIL
       not := .F.
@@ -227,12 +227,12 @@ FUNCTION _sql_cond_parse( field_name, cond, not )
    RETURN _ret
 
 
-// ------------------------------------------------------
-// vraca vrijednost polja po zadatom uslovu
-//
-// _sql_get_value( "partn", "naz", { { "id", "1AL001" }, { ... } } )
-// ------------------------------------------------------
-FUNCTION _sql_get_value( table_name, field_name, cond )
+/*
+ vraca vrijednost polja po zadatom uslovu
+ sql_get_field_za_uslov( "partn", "naz", { { "id", "1AL001" }, { ... } } )
+*/
+
+FUNCTION sql_get_field_za_uslov( table_name, field_name, cond )
 
    LOCAL _val
    LOCAL _qry := ""
@@ -240,7 +240,7 @@ FUNCTION _sql_get_value( table_name, field_name, cond )
    LOCAL _server := sql_data_conn()
    LOCAL _where := ""
    LOCAL _data := {}
-   LOCAL _i, oRow
+   LOCAL nI, oRow
 
    IF cond == NIL
       cond := {}
@@ -252,18 +252,18 @@ FUNCTION _sql_get_value( table_name, field_name, cond )
 
    _qry += "SELECT " + field_name + " FROM " + table_name
 
-   FOR _i := 1 TO Len( cond )
+   FOR nI := 1 TO Len( cond )
 
-      IF cond[ _i ] <> NIL
+      IF cond[ nI ] <> NIL
 
          IF !Empty( _where )
             _where += " AND "
          ENDIF
 
-         IF ValType( cond[ _i, 2 ] ) == "N"
-            _where += cond[ _i, 1 ] + " = " + Str( cond[ _i, 2 ] )
+         IF ValType( cond[ nI, 2 ] ) == "N"
+            _where += cond[ nI, 1 ] + " = " + Str( cond[ nI, 2 ] )
          ELSE
-            _where += cond[ _i, 1 ] + " = " + sql_quote( cond[ _i, 2 ] )
+            _where += cond[ nI, 1 ] + " = " + sql_quote( cond[ nI, 2 ] )
          ENDIF
 
       ENDIF
@@ -300,16 +300,16 @@ FUNCTION _sql_get_value( table_name, field_name, cond )
 // --------------------------------------------------------------------
 FUNCTION select_all_records_from_table( table, fields, where_cond, order_fields )
 
-   LOCAL _qry, _data, _i, _n, _o
+   LOCAL _qry, _data, nI, _n, _o
 
    _qry := "SELECT "
 
    IF fields == NIL
       _qry += " * "
    ELSE
-      FOR _i := 1 TO Len( fields )
-         _qry += fields[ _i ]
-         IF _i < Len( fields )
+      FOR nI := 1 TO Len( fields )
+         _qry += fields[ nI ]
+         IF nI < Len( fields )
             _qry += ","
          ENDIF
       NEXT
@@ -357,7 +357,7 @@ FUNCTION _sql_table_struct( table )
 
    LOCAL _struct := {}
    LOCAL _qry
-   LOCAL _i
+   LOCAL nI
    LOCAL _data
    LOCAL _field_name, _field_type, _field_len, _field_dec
    LOCAL _field_type_short
@@ -500,7 +500,7 @@ STATIC FUNCTION _create_insert_qry_from_hash( table, hash )
 FUNCTION _sql_query_record_to_hash( query, rec_no )
 
    LOCAL _hash := hb_Hash()
-   LOCAL _i, _field, _value, _type
+   LOCAL nI, _field, _value, _type
    LOCAL _row
 
    IF query == NIL
@@ -514,9 +514,9 @@ FUNCTION _sql_query_record_to_hash( query, rec_no )
 
    _row := query:GetRow( rec_no )
 
-   FOR _i := 1 TO _row:FCount()
-      _field := _row:FieldName( _i )
-      _value := _row:FieldGet( _i )
+   FOR nI := 1 TO _row:FCount()
+      _field := _row:FieldName( nI )
+      _value := _row:FieldGet( nI )
       IF ValType( _value ) $ "C#M"
          _value := hb_UTF8ToStr( _value )
       ENDIF
@@ -534,7 +534,7 @@ FUNCTION _sql_query_record_to_hash( query, rec_no )
 FUNCTION _sql_query_to_table( alias, qry )
 
    LOCAL _row
-   LOCAL _i
+   LOCAL nI
    LOCAL _hash
    LOCAL _field, _value
    LOCAL _count := 0
@@ -550,10 +550,10 @@ FUNCTION _sql_query_to_table( alias, qry )
       _hash := dbf_get_rec()
 
       _row := qry:GetRow()
-      _i := 1
+      nI := 1
 
-      FOR _i := 1 TO _row:FCount()
-         _field := _row:FieldName( _i )
+      FOR nI := 1 TO _row:FCount()
+         _field := _row:FieldName( nI )
          IF hb_HHasKey( _hash, Lower( _field ) )
             _value := _row:FieldGet( _row:FieldPos( Lower( _field ) ) )
             IF ValType( _value ) == "C"
@@ -582,11 +582,11 @@ FUNCTION _get_hash_from_sql_table( table )
 
    LOCAL _hash := hb_Hash()
    LOCAL _struct := _sql_table_struct( table )
-   LOCAL _i, _value, _type
+   LOCAL nI, _value, _type
 
-   FOR _i := 1 TO Len( _struct )
+   FOR nI := 1 TO Len( _struct )
 
-      _type := _struct[ _i, 2 ]
+      _type := _struct[ nI, 2 ]
 
       IF _type $ "CM"
          _value := ""
@@ -596,7 +596,7 @@ FUNCTION _get_hash_from_sql_table( table )
          _value := 0
       ENDIF
 
-      _hash[ Lower( _struct[ _i, 1 ] ) ] := _value
+      _hash[ Lower( _struct[ nI, 1 ] ) ] := _value
 
    NEXT
 
@@ -609,7 +609,7 @@ FUNCTION _get_hash_from_sql_table( table )
 STATIC FUNCTION _create_update_qry_from_hash( table, hash, where_key_fields )
 
    LOCAL _qry, _key
-   LOCAL _i
+   LOCAL nI
 
    _qry := "WITH tmp AS ( "
 
@@ -631,15 +631,15 @@ STATIC FUNCTION _create_update_qry_from_hash( table, hash, where_key_fields )
 
    _qry += " WHERE "
 
-   FOR _i := 1 TO Len( where_key_fields )
-      IF _i > 1
+   FOR nI := 1 TO Len( where_key_fields )
+      IF nI > 1
          _qry += " AND "
       ENDIF
 
-      IF ValType( hash[ where_key_fields[ _i ] ] ) == "N"
-         _qry += where_key_fields[ _i ] + " = " + Str( hash[ where_key_fields[ _i ] ] )
+      IF ValType( hash[ where_key_fields[ nI ] ] ) == "N"
+         _qry += where_key_fields[ nI ] + " = " + Str( hash[ where_key_fields[ nI ] ] )
       ELSE
-         _qry += where_key_fields[ _i ] + " = " + sql_quote( hash[ where_key_fields[ _i ] ] )
+         _qry += where_key_fields[ nI ] + " = " + sql_quote( hash[ where_key_fields[ nI ] ] )
       ENDIF
 
    NEXT

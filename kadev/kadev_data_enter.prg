@@ -19,7 +19,7 @@
 // ----------------------------------------------
 FUNCTION kadev_data()
 
-   LOCAL _i, _header, _footer
+   LOCAL nI, _header, _footer
    LOCAL _x, _y
    LOCAL _w1 := 30
    PRIVATE ImeKol := {}
@@ -73,7 +73,7 @@ FUNCTION kadev_data()
 // -----------------------------------------------------------
 STATIC FUNCTION set_kols( _imekol, _kol )
 
-   LOCAL _i
+   LOCAL nI
 
    AAdd( _imekol, { 'Prezime', {|| Prezime } } )
    AAdd( _imekol, { 'Ime oca', {|| ImeRod } } )
@@ -85,8 +85,8 @@ STATIC FUNCTION set_kols( _imekol, _kol )
    AAdd( _imekol, { 'StrSpr', {|| idstrspr } } )
    AAdd( _imekol, { 'RRASP', {|| idrrasp } } )
 
-   FOR _i := 1 TO Len( _imekol )
-      AAdd( _kol, _i )
+   FOR nI := 1 TO Len( _imekol )
+      AAdd( _kol, nI )
    NEXT
 
    RETURN
@@ -358,7 +358,7 @@ STATIC FUNCTION rjesenje_za_radnika()
 
    LOCAL _t_area
    LOCAL _ret := .F.
-   LOCAL _niz_0, _niz, _tmp, _izbaceni, _strana, _tek_strana, _i, _n, _y
+   LOCAL _niz_0, _niz, _tmp, _izbaceni, _strana, _tek_strana, nI, _n, _y
    LOCAL _postoji
 
    PRIVATE cTempVar := ""
@@ -423,11 +423,11 @@ STATIC FUNCTION rjesenje_za_radnika()
 
          _tmp := {}
 
-         FOR _i := 1 TO 20
-            IF _i + ( _tek_strana - 1 ) * 20 > Len( _niz_0 )
+         FOR nI := 1 TO 20
+            IF nI + ( _tek_strana - 1 ) * 20 > Len( _niz_0 )
                EXIT
             ELSE
-               AAdd( _tmp, _niz_0[ _i + ( _tek_strana - 1 ) * 20 ] )
+               AAdd( _tmp, _niz_0[ nI + ( _tek_strana - 1 ) * 20 ] )
             ENDIF
          NEXT
 

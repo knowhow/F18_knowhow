@@ -312,7 +312,7 @@ FUNCTION ()
 STATIC FUNCTION kalk_printaj_duple_stavke_iz_pripreme()
 
    LOCAL aRobaDupli := {}
-   LOCAL nScan, _i
+   LOCAL nScan, nI
 
    O_ROBA
    o_kalk_pripr()
@@ -350,12 +350,12 @@ STATIC FUNCTION kalk_printaj_duple_stavke_iz_pripreme()
       ? PadR( "R.br", 5 ) + " " + PadR( "Rb.st", 5 ) + " " + PadR( "ID", 10 ) + " " + PadR( "NAZIV", 40 ) + " " + PadR( "BARKOD", 13 )
       ? Replicate( "-", 80 )
 
-      FOR _i := 1 TO Len( aRobaDupli )
-         ? PadL( AllTrim( Str( _i, 5 ) ) + ".", 5 )
-         @ PRow(), PCol() + 1 SAY PadR( aRobaDupli[ _i, 4 ], 5 )
-         @ PRow(), PCol() + 1 SAY aRobaDupli[ _i, 1 ]
-         @ PRow(), PCol() + 1 SAY PadR( aRobaDupli[ _i, 2 ], 40 )
-         @ PRow(), PCol() + 1 SAY aRobaDupli[ _i, 3 ]
+      FOR nI := 1 TO Len( aRobaDupli )
+         ? PadL( AllTrim( Str( nI, 5 ) ) + ".", 5 )
+         @ PRow(), PCol() + 1 SAY PadR( aRobaDupli[ nI, 4 ], 5 )
+         @ PRow(), PCol() + 1 SAY aRobaDupli[ nI, 1 ]
+         @ PRow(), PCol() + 1 SAY PadR( aRobaDupli[ nI, 2 ], 40 )
+         @ PRow(), PCol() + 1 SAY aRobaDupli[ nI, 3 ]
       NEXT
 
       ENDPRINT

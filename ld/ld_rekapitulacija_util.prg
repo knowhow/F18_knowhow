@@ -890,8 +890,8 @@ FUNCTION IspisTP( lSvi )
          FF
       ENDIF
       cPom := PadL( AllTrim( Str( i ) ), 2, "0" )
-      _s&cPom := aRekap[ i, 1 ]   // nafiluj ove varijable radi prora~una dodatnih stavki
-      _i&cPom := aRekap[ i, 2 ]
+      _S&cPom := aRekap[ i, 1 ]   // nafiluj ove varijable radi prora~una dodatnih stavki
+      _I&cPom := aRekap[ i, 2 ]
 
       cPom := PadL( AllTrim( Str( i ) ), 2, "0" )
       SELECT tippr

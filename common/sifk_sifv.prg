@@ -401,7 +401,7 @@ FUNCTION IzSifkWV( cDBF, cOznaka, cWhen, cValid )
 
 FUNCTION USifk( cDbfName, ozna, u_id_sif, val, transaction )
 
-   LOCAL _i
+   LOCAL nI
    LOCAL ntrec, numtok
    LOCAL _sifk_rec
    LOCAL _tran
@@ -464,7 +464,7 @@ FUNCTION USifk( cDbfName, ozna, u_id_sif, val, transaction )
 
 STATIC FUNCTION update_sifv_n_relation( sifk_rec, cIdSif, vals )
 
-   LOCAL _i, _numtok, _tmp, _naz, _values
+   LOCAL nI, _numtok, _tmp, _naz, _values
    LOCAL _sifv_rec
 
    _sifv_rec := hb_Hash()
@@ -481,9 +481,9 @@ STATIC FUNCTION update_sifv_n_relation( sifk_rec, cIdSif, vals )
    ENDIF
    _numtok := NumToken( vals, "," )
 
-   FOR _i := 1 TO _numtok
+   FOR nI := 1 TO _numtok
 
-      _tmp := Token( vals, ",", _i )
+      _tmp := Token( vals, ",", nI )
       APPEND BLANK
 
       _sifv_rec[ "naz" ] := PadR( get_sifv_naz( _tmp, sifk_rec ), 50 )
@@ -589,7 +589,7 @@ FUNCTION ImaUSifv( cDBF, cOznaka, cVrijednost, cIdSif )
 
 FUNCTION update_sifk_na_osnovu_ime_kol_from_global_var( ime_kol, var_prefix, novi, transaction )
 
-   LOCAL _i, uId
+   LOCAL nI, uId
    LOCAL _alias
    LOCAL _field_b
    LOCAL _a_dbf_rec
@@ -599,12 +599,12 @@ FUNCTION update_sifk_na_osnovu_ime_kol_from_global_var( ime_kol, var_prefix, nov
 
    _alias := Alias()
 
-   FOR _i := 1 TO Len( ime_kol )
-      IF Left( ime_kol[ _i, 3 ], 6 ) == "SIFK->"
-         _field_b :=  MemVarBlock( var_prefix + "SIFK_" + SubStr( ime_kol[ _i, 3 ], 7 ) )
+   FOR nI := 1 TO Len( ime_kol )
+      IF Left( ime_kol[ nI, 3 ], 6 ) == "SIFK->"
+         _field_b :=  MemVarBlock( var_prefix + "SIFK_" + SubStr( ime_kol[ nI, 3 ], 7 ) )
          uId := Unicode():New( ( _alias )->id,  lSql )
-         IF IzSifk( _alias, SubStr( ime_kol[ _i, 3 ], 7 ), uId ) <> NIL
-            lOk := USifk( _alias, SubStr( ImeKol[ _i, 3 ], 7 ), uId, Eval( _field_b ), transaction )
+         IF IzSifk( _alias, SubStr( ime_kol[ nI, 3 ], 7 ), uId ) <> NIL
+            lOk := USifk( _alias, SubStr( ImeKol[ nI, 3 ], 7 ), uId, Eval( _field_b ), transaction )
          ENDIF
          IF !lOk
             EXIT

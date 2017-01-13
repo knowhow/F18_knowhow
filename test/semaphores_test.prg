@@ -17,7 +17,7 @@
 
 FUNCTION test_semaphores()
 
-   LOCAL _i
+   LOCAL nI
    LOCAL _ime_f
    LOCAL _dbf_struct := {}
    LOCAL _server_params
@@ -108,10 +108,10 @@ FUNCTION test_semaphores()
 
    _rec := dbf_get_rec()
 
-   FOR _i := 1 TO 500
+   FOR nI := 1 TO 500
       APPEND BLANK
-      _rec[ "id" ] := Str( _i, 4 )
-      _rec[ "naz" ] := "naz " + Str( _i, 4 )
+      _rec[ "id" ] := Str( nI, 4 )
+      _rec[ "naz" ] := "naz " + Str( nI, 4 )
       update_rec_server_and_dbf( _table_name, _rec )
    NEXT
 
@@ -172,7 +172,7 @@ use
 FUNCTION test_sem_1_from_sql_server( algoritam )
 
    LOCAL _result := .F.
-   LOCAL _i
+   LOCAL nI
    LOCAL _tbl := "test_sem_1"
 
    lock_semaphore( _tbl )
@@ -187,7 +187,7 @@ FUNCTION test_sem_1_from_sql_server( algoritam )
 FUNCTION test_sem_2_from_sql_server( algoritam )
 
    LOCAL _result := .F.
-   LOCAL _i
+   LOCAL nI
    LOCAL _tbl := "test_sem_2"
 
    _result := update_dbf_from_server( _tbl, algoritam )

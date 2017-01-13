@@ -361,7 +361,7 @@ FUNCTION stdokodt_grupno()
    LOCAL _params := hb_Hash()
    LOCAL _ctrl_data := {}
    LOCAL _tip_gen
-   LOCAL _gen_pdf, _i
+   LOCAL _gen_pdf, nI
    LOCAL _gen_jedan := {}
    LOCAL _na_lokaciju
 
@@ -420,10 +420,10 @@ FUNCTION stdokodt_grupno()
 
    CASE _tip_gen == "2"
 
-      FOR _i := 1 TO Len( _racuni )
+      FOR nI := 1 TO Len( _racuni )
 
          _gen_jedan := {}
-         AAdd( _gen_jedan, { _racuni[ _i, 1 ], _racuni[ _i, 2 ], _racuni[ _i, 3 ] } )
+         AAdd( _gen_jedan, { _racuni[ nI, 1 ], _racuni[ nI, 2 ], _racuni[ nI, 3 ] } )
 
          _fakt_dok_gen_xml( _xml_file, _gen_jedan, @_ctrl_data )
 
@@ -432,7 +432,7 @@ FUNCTION stdokodt_grupno()
          ENDIF
 
          IF __auto_odt == "D"
-            IF _racuni[ _i, 2 ] $ "12#13"
+            IF _racuni[ nI, 2 ] $ "12#13"
                _template := "f-stdk.odt"
             ELSE
                _template := "f-std.odt"
@@ -449,8 +449,8 @@ FUNCTION stdokodt_grupno()
 
          IF generisi_odt_iz_xml( _template, _xml_file, NIL, .T. )
 
-            _file_out := "fakt_" + _racuni[ _i, 1 ] + "_" + _racuni[ _i, 2 ] + "_" + ;
-               AllTrim( _racuni[ _i, 3 ] )
+            _file_out := "fakt_" + _racuni[ nI, 1 ] + "_" + _racuni[ nI, 2 ] + "_" + ;
+               AllTrim( _racuni[ nI, 3 ] )
 
             IF !Empty( _na_lokaciju )
                f18_odt_copy( NIL, AllTrim( _na_lokaciju ) + _file_out + ".odt" )

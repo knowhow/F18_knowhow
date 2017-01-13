@@ -205,7 +205,7 @@ FUNCTION cre_all_ld( ver )
    LOCAL aDbf
    LOCAL _alias, _table_name
    LOCAL _created
-   LOCAL _i, _field_sati, _field_iznos
+   LOCAL nI, _field_sati, _field_iznos
    LOCAL _tmp
 
    // -----------------------
@@ -360,10 +360,10 @@ FUNCTION cre_all_ld( ver )
    AAdd( aDBf, { 'KMinRad', 'N',   7,  2 } )
 
    // generisanje kolona iznos/sati
-   FOR _i := 1 TO __LD_FIELDS_COUNT
+   FOR nI := 1 TO __LD_FIELDS_COUNT
 
-      _field_sati := "S" + PadL( AllTrim( Str( _i ) ), 2, "0" )
-      _field_iznos := "I" + PadL( AllTrim( Str( _i ) ), 2, "0" )
+      _field_sati := "S" + PadL( AllTrim( Str( nI ) ), 2, "0" )
+      _field_iznos := "I" + PadL( AllTrim( Str( nI ) ), 2, "0" )
 
       AAdd( aDBf, { _field_sati, 'N',   6,  2 } )
       // AAdd( aDBf, { _field_iznos, 'N',  12,  2 } )

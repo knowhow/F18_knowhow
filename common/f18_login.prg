@@ -271,7 +271,7 @@ METHOD F18Login:postgres_db_login( lForceConnect )
 
 METHOD F18Login:login_odabir_organizacije()
 
-   LOCAL _i
+   LOCAL nI
    LOCAL _ret_comp
 
    IF ! ::odabir_organizacije()
@@ -813,7 +813,7 @@ METHOD F18Login:manual_enter_company_data( x_pos, y_pos )
 
 METHOD F18Login:browse_odabir_organizacije( arr, table_type )
 
-   LOCAL _i, _l
+   LOCAL nI, _l
    LOCAL _key
    LOCAL _br
    LOCAL _opt := 0
@@ -971,11 +971,11 @@ METHOD F18Login:show_info_bar( database, x_pos )
 
 STATIC FUNCTION _get_company_count( arr )
 
-   LOCAL _count := 0, _i, _n
+   LOCAL _count := 0, nI, _n
 
-   FOR _i := 1 TO Len( arr )
+   FOR nI := 1 TO Len( arr )
       FOR _n := 1 TO 4
-         IF !Empty( arr[ _i, _n ] )
+         IF !Empty( arr[ nI, _n ] )
             ++_count
          ENDIF
       NEXT

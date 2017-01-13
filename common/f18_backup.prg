@@ -114,7 +114,7 @@ METHOD F18Backup:Backup_company()
    LOCAL _admin_user := "admin"
    LOCAL _x := 7
    LOCAL _y := 2
-   LOCAL _i, _backup_file
+   LOCAL nI, _backup_file
    LOCAL _color_ok := F18_COLOR_BACKUP_OK
    LOCAL _color_err := F18_COLOR_BACKUP_ERROR
    LOCAL _line := Replicate( "-", 70 )
@@ -205,8 +205,8 @@ METHOD F18Backup:Backup_company()
 
    ++ _x
 
-   FOR _i := 10 TO 1 STEP -1
-      @ _x, _y SAY "... izlazim za " + PadL( AllTrim( Str( _i ) ), 2 ) + " sekundi"
+   FOR nI := 10 TO 1 STEP -1
+      @ _x, _y SAY "... izlazim za " + PadL( AllTrim( Str( nI ) ), 2 ) + " sekundi"
       Sleep( 1 )
    NEXT
 
@@ -224,7 +224,7 @@ METHOD F18Backup:Backup_server()
    LOCAL _admin_user := "admin"
    LOCAL _x := 7
    LOCAL _y := 2
-   LOCAL _i, _backup_file
+   LOCAL nI, _backup_file
    LOCAL _line := Replicate( "-", 70 )
    LOCAL _color_ok := "W+/B+"
    LOCAL _color_err := "W+/R+"
@@ -312,8 +312,8 @@ METHOD F18Backup:Backup_server()
 
    ++ _x
 
-   FOR _i := 10 TO 1 STEP -1
-      @ _x, _y SAY "... izlazim za " + PadL( AllTrim( Str( _i ) ), 2 ) + " sekundi"
+   FOR nI := 10 TO 1 STEP -1
+      @ _x, _y SAY "... izlazim za " + PadL( AllTrim( Str( nI ) ), 2 ) + " sekundi"
       Sleep( 1 )
    NEXT
 
@@ -376,7 +376,7 @@ METHOD F18Backup:get_backup_filename()
    LOCAL _name
    LOCAL _tmp
    LOCAL _server_params := my_server_params()
-   LOCAL _i
+   LOCAL nI
 
    _tmp := "server"
 
@@ -384,9 +384,9 @@ METHOD F18Backup:get_backup_filename()
       _tmp := AllTrim( _server_params[ "database" ] )
    ENDIF
 
-   FOR _i := 1 TO 99
+   FOR nI := 1 TO 99
 
-      _name := _tmp + "_" + DToC( Date() ) + "_" + PadL( AllTrim( Str( _i ) ), 2, "0" ) + ".backup"
+      _name := _tmp + "_" + DToC( Date() ) + "_" + PadL( AllTrim( Str( nI ) ), 2, "0" ) + ".backup"
 
       IF !File( ::backup_path + _name )
          EXIT

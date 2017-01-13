@@ -49,7 +49,7 @@ FUNCTION _db_thread_fn()
 
    LOCAL _query_b
    LOCAL _result
-   LOCAL _i
+   LOCAL nI
    LOCAL _area, _alias
    LOCAL _arr
    LOCAL _used
@@ -64,18 +64,18 @@ FUNCTION _db_thread_fn()
 
    DO WHILE .T.
 
-      FOR _i := 1 TO Len( _arr )
-         _area := _arr[ _i, 1 ]
-         _alias := _arr[ _i, 2 ]
+      FOR nI := 1 TO Len( _arr )
+         _area := _arr[ nI, 1 ]
+         _alias := _arr[ nI, 2 ]
 
          SELECT ( _area )
 
          BEGIN SEQUENCE WITH {| err| err:cargo := { ProcName( 1 ), ProcName( 2 ), ProcLine( 1 ), ProcLine( 2 ) }, Break( err ) }
             _used := .F.
             IF Used()
-               log_write_db( "_db_thread USED!:" + to_str( Time() ) + " / " + to_str( _i ) + " : "  + to_str( _area ) + " : " + to_str( _alias ) )
+               log_write_db( "_db_thread USED!:" + to_str( Time() ) + " / " + to_str( nI ) + " : "  + to_str( _area ) + " : " + to_str( _alias ) )
             ELSE
-               log_write_db( "_db_thread :" + to_str( Time() ) + " / " + to_str( _i ) + " : "  + to_str( _area ) + " : " + to_str( _alias ) )
+               log_write_db( "_db_thread :" + to_str( Time() ) + " / " + to_str( nI ) + " : "  + to_str( _area ) + " : " + to_str( _alias ) )
                my_use( _alias )
                USE
             ENDIF

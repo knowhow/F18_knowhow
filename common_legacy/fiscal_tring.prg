@@ -100,7 +100,7 @@ STATIC _tr_xrpt := "sps"
 FUNCTION tring_rn( dev_param, items, head, storno )
 
    LOCAL _xml, _vrsta_zahtjeva
-   LOCAL _i
+   LOCAL nI
    LOCAL _racun_broj
    LOCAL _vr_plac, _total_plac
    LOCAL _art_plu, _art_naz, _art_jmj, _cijena, _kolicina
@@ -183,17 +183,17 @@ FUNCTION tring_rn( dev_param, items, head, storno )
 
    xml_subnode( "StavkeRacuna", .F. )
 
-   FOR _i := 1 TO Len( items )
+   FOR nI := 1 TO Len( items )
 
-      _art_id := items[ _i, 3 ]
-      _art_naz := AllTrim( PadR( items[ _i, 4 ], 36 ) )
-      _art_jmj := items[ _i, 16 ]
-      _cijena := items[ _i, 5 ]
-      _kolicina := items[ _i, 6 ]
-      _rabat := items[ _i, 11 ]
-      _tarfa := fiscal_txt_get_tarifa( items[ _i, 7 ], dev_param[ "pdv" ], "TRING" )
+      _art_id := items[ nI, 3 ]
+      _art_naz := AllTrim( PadR( items[ nI, 4 ], 36 ) )
+      _art_jmj := items[ nI, 16 ]
+      _cijena := items[ nI, 5 ]
+      _kolicina := items[ nI, 6 ]
+      _rabat := items[ nI, 11 ]
+      _tarfa := fiscal_txt_get_tarifa( items[ nI, 7 ], dev_param[ "pdv" ], "TRING" )
       _grupa := ""
-      _plu := AllTrim( Str( items[ _i, 9 ] ) )
+      _plu := AllTrim( Str( items[ nI, 9 ] ) )
 
       xml_subnode( "RacunStavka", .F. )
 
@@ -753,7 +753,7 @@ FUNCTION tring_read_error( dev_param, fisc_no, trig )
    LOCAL _err := 0
    LOCAL _trig := trg_trig( trig )
    LOCAL _f_name
-   LOCAL _i, _time
+   LOCAL nI, _time
    LOCAL _err_data, _scan, _err_txt
    LOCAL _ok
    LOCAL _o_file

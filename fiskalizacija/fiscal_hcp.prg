@@ -63,7 +63,7 @@ STATIC _tr_foo := "footer.XML"
 FUNCTION hcp_rn( dev_params, items, head, storno, rn_total )
 
    LOCAL _xml, _f_name
-   LOCAL _i, _ibk, _rn_broj, _footer
+   LOCAL nI, _ibk, _rn_broj, _footer
    LOCAL _v_pl
    LOCAL _total_placanje
    LOCAL _rn_reklamni
@@ -163,17 +163,17 @@ FUNCTION hcp_rn( dev_params, items, head, storno, rn_total )
 
    _total_placanje := 0
 
-   FOR _i := 1 TO Len( items )
+   FOR nI := 1 TO Len( items )
 
-      _art_plu := items[ _i, 9 ]
-      _art_barkod := items[ _i, 12 ]
-      _art_id := items[ _i, 3 ]
-      _art_naz := PadR( items[ _i, 4 ], 32 )
-      _art_jmj := _g_jmj( items[ _i, 16 ] )
-      _cijena := items[ _i, 5 ]
-      _kolicina := items[ _i, 6 ]
-      _rabat := items[ _i, 11 ]
-      _tarifa := fiscal_txt_get_tarifa( items[ _i, 7 ], dev_params[ "pdv" ], "HCP" )
+      _art_plu := items[ nI, 9 ]
+      _art_barkod := items[ nI, 12 ]
+      _art_id := items[ nI, 3 ]
+      _art_naz := PadR( items[ nI, 4 ], 32 )
+      _art_jmj := _g_jmj( items[ nI, 16 ] )
+      _cijena := items[ nI, 5 ]
+      _kolicina := items[ nI, 6 ]
+      _rabat := items[ nI, 11 ]
+      _tarifa := fiscal_txt_get_tarifa( items[ nI, 7 ], dev_params[ "pdv" ], "HCP" )
       _dep := "0"
 
       _tmp := ""
@@ -304,7 +304,7 @@ FUNCTION hcp_delete_tmp( dev_params, del_all )
 // -------------------------------------------------------------------
 FUNCTION hcp_footer( dev_params, footer )
 
-   LOCAL _xml, _tmp, _i
+   LOCAL _xml, _tmp, nI
    LOCAL _err := 0
 
    _f_name := fiscal_out_filename( dev_params[ "out_file" ], __zahtjev_nula, _tr_foo )
@@ -320,9 +320,9 @@ FUNCTION hcp_footer( dev_params, footer )
 
    xml_subnode( "FOOTER" )
 
-   FOR _i := 1 TO Len( footer )
+   FOR nI := 1 TO Len( footer )
 
-      _tmp := 'TEXT="' + AllTrim( footer[ _i, 1 ] ) + '"'
+      _tmp := 'TEXT="' + AllTrim( footer[ nI, 1 ] ) + '"'
       _tmp += ' '
       _tmp += 'BOLD="false"'
 
@@ -356,7 +356,7 @@ FUNCTION hcp_footer( dev_params, footer )
 // -------------------------------------------------------------------
 FUNCTION hcp_cli( dev_params, head )
 
-   LOCAL _xml, _f_name, _tmp, _i
+   LOCAL _xml, _f_name, _tmp, nI
    LOCAL _err := 0
 
    _f_name := fiscal_out_filename( dev_params[ "out_file" ], __zahtjev_nula, _tr_cli )
@@ -372,15 +372,15 @@ FUNCTION hcp_cli( dev_params, head )
 
    xml_subnode( "CLIENTS" )
 
-   FOR _i := 1 TO Len( head )
+   FOR nI := 1 TO Len( head )
 
-      _tmp := 'IBK="' + head[ _i, 1 ] + '"'
+      _tmp := 'IBK="' + head[ nI, 1 ] + '"'
       _tmp += _razmak1 + 'NAME="' + ;
-         AllTrim( to_xml_encoding( head[ _i, 2 ] ) ) + '"'
+         AllTrim( to_xml_encoding( head[ nI, 2 ] ) ) + '"'
       _tmp += _razmak1 + 'ADDRESS="' + ;
-         AllTrim( to_xml_encoding( head[ _i, 3 ] ) ) + '"'
+         AllTrim( to_xml_encoding( head[ nI, 3 ] ) ) + '"'
       _tmp += _razmak1 + 'TOWN="' + ;
-         AllTrim( to_xml_encoding( head[ _i, 5 ] ) ) + '"'
+         AllTrim( to_xml_encoding( head[ nI, 5 ] ) ) + '"'
 
       xml_single_node( "DATA", _tmp )
 
@@ -413,7 +413,7 @@ FUNCTION hcp_plu( dev_params, items )
 
    LOCAL _xml
    LOCAL _err := 0
-   LOCAL _i, _tmp, _f_name
+   LOCAL nI, _tmp, _f_name
    LOCAL _art_plu, _art_naz, _art_jmj, _art_cijena, _art_tarifa
    LOCAL _dep, _lager
 
@@ -430,13 +430,13 @@ FUNCTION hcp_plu( dev_params, items )
 
    xml_subnode( "PLU" )
 
-   FOR _i := 1 TO Len( items )
+   FOR nI := 1 TO Len( items )
 
-      _art_plu := items[ _i, 9 ]
-      _art_naz := PadR( items[ _i, 4 ], 32 )
-      _art_jmj := _g_jmj( items[ _i, 16 ] )
-      _art_cijena := items[ _i, 5 ]
-      _art_tarifa := fiscal_txt_get_tarifa( items[ _i, 7 ], dev_params[ "pdv" ], "HCP" )
+      _art_plu := items[ nI, 9 ]
+      _art_naz := PadR( items[ nI, 4 ], 32 )
+      _art_jmj := _g_jmj( items[ nI, 16 ] )
+      _art_cijena := items[ nI, 5 ]
+      _art_tarifa := fiscal_txt_get_tarifa( items[ nI, 7 ], dev_params[ "pdv" ], "HCP" )
       _dep := "0"
       _lager := 0
 
@@ -1141,7 +1141,7 @@ FUNCTION hcp_read_billstate( dev_params, f_name, storno )
 FUNCTION hcp_read_error( dev_params, f_name, trig )
 
    LOCAL _err := 0
-   LOCAL _f_name, _i, _time
+   LOCAL _f_name, nI, _time
    LOCAL _fiscal_no, _line, _o_file
    LOCAL _err_code, _err_descr
 

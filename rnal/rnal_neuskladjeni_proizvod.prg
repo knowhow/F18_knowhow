@@ -132,7 +132,7 @@ METHOD RNALDamageDocument:get_damage_items()
 METHOD RNALDamageDocument:get_damage_items_cond( field_name )
 
    LOCAL _cond := ""
-   LOCAL _i
+   LOCAL nI
 
    if ::damage_items == NIL .OR. Len( ::damage_items ) == 0
       RETURN _cond
@@ -140,9 +140,9 @@ METHOD RNALDamageDocument:get_damage_items_cond( field_name )
 
    _cond := " AND " +  field_name + " IN ( "
 
-   FOR _i := 1 TO Len( ::damage_items )
-      _cond += AllTrim( Str( ::damage_items[ _i, 1 ] ) )
-      IF _i < Len( ::damage_items )
+   FOR nI := 1 TO Len( ::damage_items )
+      _cond += AllTrim( Str( ::damage_items[ nI, 1 ] ) )
+      IF nI < Len( ::damage_items )
          _cond += ", "
       ENDIF
    NEXT
@@ -307,7 +307,7 @@ METHOD RNALDamageDocument:configurator_edit_data()
 // ----------------------------------------------------------------------
 METHOD RNALDamageDocument:set_configurator_box_columns( ime_kol, kol )
 
-   LOCAL _i
+   LOCAL nI
 
    ime_kol := {}
    kol := {}
@@ -325,8 +325,8 @@ METHOD RNALDamageDocument:set_configurator_box_columns( ime_kol, kol )
    AAdd( ime_kol, { "Novi artikal", {|| if( art_id_2 <> 0, sh_article( art_id_2, doc_it_qtt, 0, 0 ), "ostaje isti" ) }, ;
       "art_id_2", {|| .T. }, {|| .T. } } )
 
-   FOR _i := 1 TO Len( ime_kol )
-      AAdd( kol, _i )
+   FOR nI := 1 TO Len( ime_kol )
+      AAdd( kol, nI )
    NEXT
 
    RETURN
@@ -473,7 +473,7 @@ METHOD RNALDamageDocument:get_rnal_items_data()
 
    LOCAL _qry, _table
    LOCAL _items_cond := ::get_damage_items_cond( "doc_it_no" )
-   LOCAL _i
+   LOCAL nI
 
    _qry := " SELECT * FROM " + F18_PSQL_SCHEMA_DOT + "rnal_doc_it " + ;
       " WHERE doc_no = " + AllTrim( Str( ::doc_no ) ) + _items_cond + ;

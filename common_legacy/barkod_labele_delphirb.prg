@@ -86,7 +86,7 @@ FUNCTION seek_partner( cPartner )
 // -----------------------------------------------------
 STATIC FUNCTION set_a_kol( aImeKol, aKol )
 
-   LOCAL _i
+   LOCAL nI
 
    aImeKol := {}
    aKol := {}
@@ -96,8 +96,8 @@ STATIC FUNCTION set_a_kol( aImeKol, aKol )
    AAdd( aImeKol, { "Stampati?", {|| bk_stamp_dn( aStampati[ RecNo() ] ) } } )
 
    aKol := {}
-   FOR _i := 1 TO Len( aImeKol )
-      AAdd( aKol, _i )
+   FOR nI := 1 TO Len( aImeKol )
+      AAdd( aKol, nI )
    NEXT
 
    RETURN

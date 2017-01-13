@@ -198,7 +198,7 @@ STATIC FUNCTION _cre_xml( params )
    LOCAL _a_data, oRow
    LOCAL _ok := .F.
    LOCAL _count := 0
-   LOCAL _tmp, _jmbg, _i
+   LOCAL _tmp, _jmbg, nI
 
    // uzmi podatke za izvjestaj....
    _a_data := _get_data( params )
@@ -221,23 +221,23 @@ STATIC FUNCTION _cre_xml( params )
    xml_node( "datum", DToC( Date() ) )
    xml_node( "strspr", to_xml_encoding( params[ "strspr" ] ) )
 
-   FOR _i := 1 TO Len( _a_data )
+   FOR nI := 1 TO Len( _a_data )
 
-      _jmbg := _a_data[ _i, 1 ]
+      _jmbg := _a_data[ nI, 1 ]
 
       xml_subnode( "item", .F. )
 
       xml_node( "no", AllTrim( Str( ++_count ) ) )
       xml_node( "jmbg", to_xml_encoding( _jmbg ) )
-      xml_node( "radn", to_xml_encoding( hb_UTF8ToStr( _a_data[ _i, 2 ] ) ) )
+      xml_node( "radn", to_xml_encoding( hb_UTF8ToStr( _a_data[ nI, 2 ] ) ) )
 
-      xml_node( "rj", to_xml_encoding( hb_UTF8ToStr( _a_data[ _i, 3 ] ) ) )
-      xml_node( "rmj", to_xml_encoding( hb_UTF8ToStr( _a_data[ _i, 4 ] ) ) )
-      xml_node( "strspr", to_xml_encoding( hb_UTF8ToStr( _a_data[ _i, 5 ] ) ) )
+      xml_node( "rj", to_xml_encoding( hb_UTF8ToStr( _a_data[ nI, 3 ] ) ) )
+      xml_node( "rmj", to_xml_encoding( hb_UTF8ToStr( _a_data[ nI, 4 ] ) ) )
+      xml_node( "strspr", to_xml_encoding( hb_UTF8ToStr( _a_data[ nI, 5 ] ) ) )
 
-      xml_node( "ef", to_xml_encoding( _a_data[ _i, 6 ] ) )
-      xml_node( "ben", to_xml_encoding( _a_data[ _i, 7 ] ) )
-      xml_node( "uk", to_xml_encoding( _a_data[ _i, 8 ] ) )
+      xml_node( "ef", to_xml_encoding( _a_data[ nI, 6 ] ) )
+      xml_node( "ben", to_xml_encoding( _a_data[ nI, 7 ] ) )
+      xml_node( "uk", to_xml_encoding( _a_data[ nI, 8 ] ) )
 
       xml_subnode( "item", .T. )
 

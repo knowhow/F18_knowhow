@@ -131,7 +131,7 @@ FUNCTION ld_specifikacija_neto_primanja_po_opcinama()
             SELECT ld
 
             IF tippr->( Found() ) .AND. tippr->aktivan == "D"
-               nIznos := _i&cpom
+               nIznos := _I&cpom
                IF tippr->uneto == "N" .AND. nIznos <> 0
                   IF nIznos > 0
                      nVanP += nIznos

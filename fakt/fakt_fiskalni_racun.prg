@@ -365,17 +365,17 @@ STATIC FUNCTION fakt_fiscal_o_tables()
 STATIC FUNCTION fakt_izracunaj_total( arr, partner, tip_dok )
 
    LOCAL _calc := hb_Hash()
-   LOCAL _tar, _i, _iznos
+   LOCAL _tar, nI, _iznos
    LOCAL _t_area := Select()
 
    _calc[ "ukupno" ] := 0
    _calc[ "pdv" ] := 0
    _calc[ "osnovica" ] := 0
 
-   FOR _i := 1 TO Len( arr )
+   FOR nI := 1 TO Len( arr )
 
-      _tar := PadR( arr[ _i, 1 ], 6 )
-      _iznos := arr[ _i, 2 ]
+      _tar := PadR( arr[ nI, 1 ], 6 )
+      _iznos := arr[ nI, 2 ]
 
       SELECT tarifa
       HSEEK _tar

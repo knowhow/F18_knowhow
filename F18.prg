@@ -53,7 +53,7 @@ FUNCTION Main( p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11 )
 
 STATIC FUNCTION cre_arg_v_hash( hash )
 
-   LOCAL _i := 2
+   LOCAL nI := 2
    LOCAL _param
    LOCAL _count := 0
 
@@ -70,9 +70,9 @@ STATIC FUNCTION cre_arg_v_hash( hash )
    hash[ "p10" ] := NIL
    hash[ "p11" ] := NIL
 
-   DO WHILE _i <= PCount()
+   DO WHILE nI <= PCount()
 
-      _param := hb_PValue( _i++ ) // ucitaj parametar
+      _param := hb_PValue( nI++ ) // ucitaj parametar
       hash[ "p" + AllTrim( Str( ++_count ) ) ] := _param // p1, p2, p3...
    ENDDO
 

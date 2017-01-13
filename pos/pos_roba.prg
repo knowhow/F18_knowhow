@@ -27,7 +27,7 @@ FUNCTION param_tezinski_barkod( read_par )
 FUNCTION pos_postoji_roba( cId, dx, dy, barkod )
 
    LOCAL _zabrane
-   LOCAL _i
+   LOCAL nI
    LOCAL _barkod := ""
    LOCAL lSveJeOk := .F.
    LOCAL _tezina := 0
@@ -51,8 +51,8 @@ FUNCTION pos_postoji_roba( cId, dx, dy, barkod )
    AAdd( ImeKol, { "BARKOD", {|| roba->barkod }, "" } )
    AAdd( ImeKol, { "K7", {|| roba->k7 }, "" } )
 
-   FOR _i := 1 TO Len( ImeKol )
-      AAdd( Kol, _i )
+   FOR nI := 1 TO Len( ImeKol )
+      AAdd( Kol, nI )
    NEXT
 
    IF pos_prodavac()

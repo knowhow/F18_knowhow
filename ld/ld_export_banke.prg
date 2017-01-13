@@ -58,7 +58,7 @@ METHOD LDExportTxt:New()
 METHOD LDExportTxt:_dbf_struct()
 
    LOCAL _dbf := {}
-   LOCAL _i, _a_tmp
+   LOCAL nI, _a_tmp
    LOCAL _dodatna_polja := ::export_params[ "dodatna_polja" ]
 
    // struktura...
@@ -84,9 +84,9 @@ METHOD LDExportTxt:_dbf_struct()
 
    IF !Empty( _dodatna_polja )
       _a_tmp := TokToNiz( _dodatna_polja, ";" )
-      FOR _i := 1 TO Len( _a_tmp )
-         IF !Empty( _a_tmp[ _i ] )
-            AAdd( _dbf, { Upper( _a_tmp[ _i ] ), "N", 15, 2 } )
+      FOR nI := 1 TO Len( _a_tmp )
+         IF !Empty( _a_tmp[ nI ] )
+            AAdd( _dbf, { Upper( _a_tmp[ nI ] ), "N", 15, 2 } )
          ENDIF
       NEXT
    ENDIF
@@ -269,7 +269,7 @@ METHOD LDExportTxt:fill_data_from_ld()
    LOCAL _server := sql_data_conn()
    LOCAL _count, _rec
    LOCAL _dod_polja := ::export_params[ "dodatna_polja" ]
-   LOCAL _pro_polja, _a_polja, _i
+   LOCAL _pro_polja, _a_polja, nI
    LOCAL _a_kreditor
 
    _pro_polja := ""
@@ -278,10 +278,10 @@ METHOD LDExportTxt:fill_data_from_ld()
 
       _a_polja := TokToNiz( AllTrim( _dod_polja ), ";" )
 
-      FOR _i := 1 TO Len( _a_polja )
-         IF !Empty( _a_polja[ _i ] )
+      FOR nI := 1 TO Len( _a_polja )
+         IF !Empty( _a_polja[ nI ] )
             _pro_polja += "ld."
-            _pro_polja += Lower( _a_polja[ _i ] )
+            _pro_polja += Lower( _a_polja[ nI ] )
             _pro_polja += ","
          ENDIF
       NEXT
@@ -337,11 +337,11 @@ METHOD LDExportTxt:fill_data_from_ld()
    if ::export_params[ "krediti_export" ] .AND. !Empty( ::export_params[ "kreditori" ] )
       _qry += " AND kr.idkred IN ( "
       _a_kreditor := TokToNiz( AllTrim( ::export_params[ "kreditori" ] ), ";" )
-      FOR _i := 1 TO Len( _a_kreditor )
-         IF _i > 1
+      FOR nI := 1 TO Len( _a_kreditor )
+         IF nI > 1
             _qry += ", "
          ENDIF
-         _qry += sql_quote( _a_kreditor[ _i ] )
+         _qry += sql_quote( _a_kreditor[ nI ] )
       NEXT
       _qry += " ) "
    ENDIF
@@ -402,9 +402,9 @@ METHOD LDExportTxt:fill_data_from_ld()
       ENDIF
 
       IF !Empty( _dod_polja )
-         FOR _i := 1 TO Len( _a_polja )
-            IF !Empty( _a_polja[ _i ] )
-               _rec[ Lower( _a_polja[ _i ] ) ] := oRow:FieldGet( oRow:FieldPos( Lower( _a_polja[ _i ] ) ) )
+         FOR nI := 1 TO Len( _a_polja )
+            IF !Empty( _a_polja[ nI ] )
+               _rec[ Lower( _a_polja[ nI ] ) ] := oRow:FieldGet( oRow:FieldPos( Lower( _a_polja[ nI ] ) ) )
             ENDIF
          NEXT
       ENDIF
@@ -448,7 +448,7 @@ METHOD LDExportTxt:create_txt_from_dbf()
    LOCAL _output_dir
    LOCAL _curr_struct
    LOCAL cSeparator, cSeparatorForumule
-   LOCAL _line, _i, _a_struct
+   LOCAL _line, nI, _a_struct
 
    _output_dir := my_home() + "export" + SLASH
 
@@ -473,20 +473,20 @@ METHOD LDExportTxt:create_txt_from_dbf()
    _a_struct := TokToNiz( _curr_struct, cSeparatorForumule )
    _line := ""
 
-   FOR _i := 1 TO Len( _a_struct )
+   FOR nI := 1 TO Len( _a_struct )
 
-      IF !Empty( _a_struct[ _i ] )
+      IF !Empty( _a_struct[ nI ] )
 
          // plusevi izmedju...
-         IF _i > 1
+         IF nI > 1
             _line += " + "
          ENDIF
 
          // makro
-         _line += _a_struct[ _i ]
+         _line += _a_struct[ nI ]
 
          // ako treba separator
-         IF _i < Len( _a_struct )
+         IF nI < Len( _a_struct )
             _line += ' + "' + cSeparator + '" '
          ENDIF
 
@@ -792,7 +792,7 @@ METHOD LDExportTxt:get_export_params( id )
 METHOD LDExportTxt:get_export_list()
 
    LOCAL _id := 0
-   LOCAL _i
+   LOCAL nI
    LOCAL _param_name := "ld_export_"
    LOCAL _opc, _opcexe, _izbor := 1
    LOCAL _m_x := m_x
@@ -801,14 +801,14 @@ METHOD LDExportTxt:get_export_list()
    _opc := {}
    _opcexe := {}
 
-   FOR _i := 1 TO 20
+   FOR nI := 1 TO 20
 
-      ::export_setup_read_params( _i )
+      ::export_setup_read_params( nI )
 
       if ::formula_params[ "name" ] <> NIL .AND. !Empty( ::formula_params[ "name" ] )
 
          _tmp := ""
-         _tmp += PadL( AllTrim( Str( _i ) ) + ".", 4 )
+         _tmp += PadL( AllTrim( Str( nI ) ) + ".", 4 )
          _tmp += PadR( ::formula_params[ "name" ], 40 )
 
          AAdd( _opc, _tmp )

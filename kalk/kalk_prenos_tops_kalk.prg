@@ -495,7 +495,7 @@ STATIC FUNCTION tops_kalk_get_magacinski_konto()
 /*
 STATIC FUNCTION tops_kalk_show_report_roba( aReportData )
 
-   LOCAL _i
+   LOCAL nI
    LOCAL nRazlikaPosKalkCijena := 0
 
    START PRINT CRET
@@ -507,15 +507,15 @@ STATIC FUNCTION tops_kalk_show_report_roba( aReportData )
    ? PadR( "R.br", 5 ), PadR( "ID", 10 ), PadR( "naziv", 40 ), PadR( "POS cijena", 12 ), PadR( "KALK cijena", 12 )
    ? Replicate( "-", 80 )
 
-   FOR _i := 1 TO Len( aReportData )
+   FOR nI := 1 TO Len( aReportData )
 
-      ? PadR( AllTrim( Str( _i, 4 ) ) + ".", 5 ), ;
-         aReportData[ _i, 1 ], ;
-         PadR( aReportData[ _i, 2 ], 40 ), ;
-         Str( aReportData[ _i, 3 ], 12, 2 ), ;
-         Str( aReportData[ _i, 4 ], 12, 2 )
+      ? PadR( AllTrim( Str( nI, 4 ) ) + ".", 5 ), ;
+         aReportData[ nI, 1 ], ;
+         PadR( aReportData[ nI, 2 ], 40 ), ;
+         Str( aReportData[ nI, 3 ], 12, 2 ), ;
+         Str( aReportData[ nI, 4 ], 12, 2 )
 
-      nRazlikaPosKalkCijena += aReportData[ _i, 3 ] - aReportData[ _i, 4 ]
+      nRazlikaPosKalkCijena += aReportData[ nI, 3 ] - aReportData[ nI, 4 ]
 
    NEXT
 

@@ -54,7 +54,7 @@ FUNCTION ld_unos_obracuna()
 
          FOR i := 1 TO cLDPolja
             cPom := PadL( AllTrim( Str( i ) ), 2, "0" )
-            nPom += Abs( _i&cPom ) + Abs( _s&cPom )
+            nPom += Abs( _I&cPom ) + Abs( _S&cPom )
          NEXT
 
          IF ( nPom <> 0 )

@@ -6,7 +6,7 @@ MEMVAR ImeKol, Kol
 
 FUNCTION P_K1( cId, dx, dy )
 
-   LOCAL _area, _i
+   LOCAL _area, nI
    PRIVATE ImeKol := {}
    PRIVATE Kol := {}
 
@@ -18,8 +18,8 @@ FUNCTION P_K1( cId, dx, dy )
    add_mcode( @ImeKol )
    AAdd( ImeKol, { "Naziv", {|| naz }, "naz" } )
 
-   FOR _i := 1 TO Len( ImeKol )
-      AAdd( Kol, _i )
+   FOR nI := 1 TO Len( ImeKol )
+      AAdd( Kol, nI )
    NEXT
 
    SELECT ( _area )

@@ -1844,8 +1844,8 @@ FUNCTION rpt_artikli_bez_elemenata()
 
    _count := 0
 
-   FOR _i := 1 TO Len( _error )
-      ? PadL( AllTrim( Str( ++_count ) ), 4 ) + ".", _error[ _i, 1 ], _error[ _i, 2 ]
+   FOR nI := 1 TO Len( _error )
+      ? PadL( AllTrim( Str( ++_count ) ), 4 ) + ".", _error[ nI, 1 ], _error[ nI, 2 ]
    NEXT
 
    FF

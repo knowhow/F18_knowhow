@@ -183,11 +183,11 @@ STATIC FUNCTION samo_naziv_fajla( cFajl )
 
 STATIC FUNCTION naziv_izlaznog_odt_fajla()
 
-   LOCAL _i
+   LOCAL nI
    LOCAL _tmp := "out.odt"
 
-   FOR _i := 1 TO 1000
-      _tmp := "out_" + PadL( AllTrim( Str( _i ) ), 4, "0" ) + ".odt"
+   FOR nI := 1 TO 1000
+      _tmp := "out_" + PadL( AllTrim( Str( nI ) ), 4, "0" ) + ".odt"
       IF !File( my_home() + _tmp )
          EXIT
       ENDIF
@@ -536,7 +536,7 @@ FUNCTION konvertuj_odt_u_pdf( cInput_file, cOutput_file, lOverwrite_file )
 STATIC FUNCTION naziv_izlaznog_pdf_fajla( cOut_file, lOverwrite )
 
    LOCAL _ret := .F.
-   LOCAL _i, _ext, _tmp, _wo_ext
+   LOCAL nI, _ext, _tmp, _wo_ext
 
    IF lOverwrite == NIL
       lOverwrite := .T.
@@ -552,9 +552,9 @@ STATIC FUNCTION naziv_izlaznog_pdf_fajla( cOut_file, lOverwrite )
 
    _wo_ext := Left( AllTrim( cOut_file ), Len( AllTrim( cOut_file ) ) - Len( _ext ) )
 
-   FOR _i := 1 TO 99
+   FOR nI := 1 TO 99
 
-      _tmp := _wo_ext + PadL( AllTrim( Str( _i ) ), 2, "0" ) + _ext
+      _tmp := _wo_ext + PadL( AllTrim( Str( nI ) ), 2, "0" ) + _ext
 
       IF !File( _tmp )
          cOut_file := _tmp

@@ -542,7 +542,7 @@ FUNCTION ld_obracun_napravljen_vise_puta()
    LOCAL cObracun := gObracun
    LOCAL _data := {}
    LOCAL cIdRadn, nProlaz, _count
-   LOCAL _i
+   LOCAL nI
 
    Box(, 3, 50 )
 
@@ -612,9 +612,9 @@ FUNCTION ld_obracun_napravljen_vise_puta()
    ? _l( "OBR RADNIK                      RJ     neto        sati" )
    ? "--- ------ -------------------- -- ------------- ----------"
 
-   FOR _i := 1 TO Len( _data )
+   FOR nI := 1 TO Len( _data )
 
-      ? PadR( _data[ _i, 1 ], 3 ), _data[ _i, 2 ], _data[ _i, 3 ], _data[ _i, 4 ], _data[ _i, 5 ], _data[ _i, 6 ]
+      ? PadR( _data[ nI, 1 ], 3 ), _data[ nI, 2 ], _data[ nI, 3 ], _data[ nI, 4 ], _data[ nI, 5 ], _data[ nI, 6 ]
 
    NEXT
 
@@ -781,7 +781,7 @@ FUNCTION ScatterS( cG, cM, cJ, cR, cPrefix )
       IF cPrefix == NIL
          FOR i := 1 TO cLDPolja
             cPom    := PadL( AllTrim( Str( i ) ), 2, "0" )
-            _i&cPom += i&cPom
+            _I&cPom += i&cPom
          NEXT
          _uneto   += uneto
          _uodbici += uodbici

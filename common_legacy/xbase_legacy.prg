@@ -74,7 +74,7 @@ FUNCTION Scatter( cZn, lUtf )
 // --------------------------------------------------
 FUNCTION set_global_vars_from_dbf( zn, lConvertToUtf )
 
-   LOCAL _i, _struct, _field, _var
+   LOCAL nI, _struct, _field, _var
    LOCAL lSql := ( rddName() ==  "SQLMIX" )
 
    PRIVATE cImeP, cVar
@@ -87,8 +87,8 @@ FUNCTION set_global_vars_from_dbf( zn, lConvertToUtf )
 
    _struct := dbStruct()
 
-   FOR _i := 1 TO Len( _struct )
-      _field := _struct[ _i, 1 ]
+   FOR nI := 1 TO Len( _struct )
+      _field := _struct[ nI, 1 ]
 
       IF !( "#" + _field + "#" $ "#BRISANO#_OID_#_COMMIT_#" )
          _var := zn + _field
@@ -171,7 +171,7 @@ FUNCTION GatherR( cZn )
 
 FUNCTION Gather2( zn )
 
-   LOCAL _i, _struct
+   LOCAL nI, _struct
    LOCAL _field_b, _var
 
    IF zn == nil
@@ -180,8 +180,8 @@ FUNCTION Gather2( zn )
 
    _struct := dbStruct()
 
-   FOR _i := 1 TO Len( _struct )
-      _ime_p := _struct[ _i, 1 ]
+   FOR nI := 1 TO Len( _struct )
+      _ime_p := _struct[ nI, 1 ]
       _field_b := FieldBlock( _ime_p )
       _var :=  zn + _ime_p
 

@@ -90,7 +90,7 @@ FUNCTION ld_kartica_plate_redovan_rad( cIdRj, cMjesec, cGodina, cIdRadn, cObrac,
 
       IF lFoundTipPr .AND. tippr->aktivan == "D"
 
-         IF _i&cpom <> 0 .OR. _s&cPom <> 0
+         IF _I&cPom <> 0 .OR. _S&cPom <> 0
 
             nDJ := At( "#", tippr->naz )
             cDJ := Right( AllTrim( tippr->naz ), nDJ + 1 )
@@ -102,31 +102,31 @@ FUNCTION ld_kartica_plate_redovan_rad( cIdRj, cMjesec, cGodina, cIdRadn, cObrac,
 
             IF tippr->fiksan $ "DN"
 
-               @ PRow(), PCol() + 8 SAY _s&cPom PICT gpics
+               @ PRow(), PCol() + 8 SAY _S&cPom PICT gpics
                ?? " s"
 
-               nPom := _calc_tpr( _i&cPom )
+               nPom := _calc_tpr( _I&cPom )
                @ PRow(), 60 + Len( cLMSK ) SAY nPom PICT gpici
 
 
                IF tippr->id == "01" .AND. __radni_sati == "D"
 
-                  nRRSati := _s&cPom
+                  nRRSati := _S&cPom
 
                ENDIF
 
             ELSEIF tippr->fiksan == "P"
-               nPom := _calc_tpr( _i&cPom )
-               @ PRow(), PCol() + 8 SAY _s&cPom  PICT "999.99%"
+               nPom := _calc_tpr( _I&cPom )
+               @ PRow(), PCol() + 8 SAY _S&cPom  PICT "999.99%"
                @ PRow(), 60 + Len( cLMSK ) SAY nPom  PICT gpici
 
             ELSEIF tippr->fiksan == "B"
-               nPom := _calc_tpr( _i&cPom )
-               @ PRow(), PCol() + 8 SAY _s&cPom  PICT "999999"; ?? " b"
+               nPom := _calc_tpr( _I&cPom )
+               @ PRow(), PCol() + 8 SAY _S&cPom  PICT "999999"; ?? " b"
                @ PRow(), 60 + Len( cLMSK ) SAY nPom PICT gpici
 
             ELSEIF tippr->fiksan == "C"
-               nPom := _calc_tpr( _i&cPom )
+               nPom := _calc_tpr( _I&cPom )
                @ PRow(), 60 + Len( cLMSK ) SAY nPom PICT gpici
             ENDIF
 
@@ -149,31 +149,31 @@ FUNCTION ld_kartica_plate_redovan_rad( cIdRj, cMjesec, cGodina, cIdRadn, cObrac,
                ? cLPom := cLMSK + "   ----------------------------- ----------------------------"
                ?U cLMSK + "    SUMA IZ PRETHODNIH OBRAČUNA   UKUPNO (SA OVIM OBRAČUNOM)"
                ? cLPom
-               ? cLMSK + "   " + PadC( Str( nKumPrim - Abs( _i&cPom ) ), 29 ) + " " + PadC( Str( nKumPrim ), 28 )
+               ? cLMSK + "   " + PadC( Str( nKumPrim - Abs( _I&cPom ) ), 29 ) + " " + PadC( Str( nKumPrim ), 28 )
                ? cLPom
             ENDIF
 
             IF tippr->( FieldPos( "TPR_TIP" ) ) <> 0
                // uzmi osnovice
                IF tippr->tpr_tip == "N"
-                  nOsnNeto += _i&cPom
+                  nOsnNeto += _I&cPom
                ELSEIF tippr->tpr_tip == "2"
-                  nOsnOstalo += _i&cPom
-                  IF _i&cPom > 0
-                     nOstPoz += _i&cPom
+                  nOsnOstalo += _I&cPom
+                  IF _I&cPom > 0
+                     nOstPoz += _I&cPom
                   ELSE
-                     nOstNeg += _i&cPom
+                     nOstNeg += _I&cPom
                   ENDIF
                ELSEIF tippr->tpr_tip == " "
                   // standardni tekuci sistem
                   IF tippr->uneto == "D"
-                     nOsnNeto += _i&cPom
+                     nOsnNeto += _I&cPom
                   ELSE
-                     nOsnOstalo += _i&cPom
-                     IF _i&cPom > 0
-                        nOstPoz += _i&cPom
+                     nOsnOstalo += _I&cPom
+                     IF _I&cPom > 0
+                        nOstPoz += _I&cPom
                      ELSE
-                        nOstNeg += _i&cPom
+                        nOstNeg += _I&cPom
                      ENDIF
 
                   ENDIF
@@ -183,13 +183,13 @@ FUNCTION ld_kartica_plate_redovan_rad( cIdRj, cMjesec, cGodina, cIdRadn, cObrac,
             ELSE
                // standardni tekuci sistem
                IF tippr->uneto == "D"
-                  nOsnNeto += _i&cPom
+                  nOsnNeto += _I&cPom
                ELSE
-                  nOsnOstalo += _i&cPom
-                  IF _i&cPom > 0
-                     nOstPoz += _i&cPom
+                  nOsnOstalo += _I&cPom
+                  IF _I&cPom > 0
+                     nOstPoz += _I&cPom
                   ELSE
-                     nOstNeg += _i&cPom
+                     nOstNeg += _I&cPom
                   ENDIF
                ENDIF
             ENDIF

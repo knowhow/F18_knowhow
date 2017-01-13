@@ -243,7 +243,7 @@ PROCEDURE GetApplyKSC( get, key )
 #endif
 
 #ifdef __PLATFORM__DARWIN
-   CASE ( key == K_F12)
+   CASE ( key == K_F12 )
 #else
    CASE ( key == K_INS )
 #endif
@@ -369,6 +369,7 @@ FUNCTION GetPreValSC( get )
 *
 * NOTE: bad dates are rejected in such a way as to preserve edit buffer.
 */
+
 FUNCTION GetPstValSC( get )
 
    LOCAL saveUpdated
@@ -528,10 +529,10 @@ STATIC FUNCTION SettleSC( GetList, pos )
 */
    DO CASE
    CASE ( lExitState == GE_UP )
-      pos --
+      pos--
 
    CASE ( lExitState == GE_DOWN )
-      pos ++
+      pos++
 
    CASE ( lExitState == GE_TOP )
       pos := 1
@@ -544,7 +545,7 @@ STATIC FUNCTION SettleSC( GetList, pos )
       lExitState := GE_UP
 
    CASE ( lExitState == GE_ENTER )
-      pos ++
+      pos++
 
    CASE ( lExitState < 0 .AND. -lExitState <= Len( GetList ) )
       pos := -lExitState
@@ -881,30 +882,33 @@ FUNCTION InkeySc( nSec )
 
 FUNCTION get_field_set_focus( f_name )
 
-   LOCAL _i
+   LOCAL nI
 
    __get_list := {}
 
-   FOR _i := 1 TO Len( GetList )
-      AAdd( __get_list, GetList[ _i ]:PreBlock )
+   FOR nI := 1 TO Len( GetList )
+      AAdd( __get_list, GetList[ nI ]:PreBlock )
 
-      IF GetList[ _i ]:name() == f_name
-         GetList[ _i ]:PreBlock := {|| restore_get_list(), .T. }
+      IF GetList[ nI ]:name() == f_name
+         GetList[ nI ]:PreBlock := {|| restore_get_list(), .T. }
       ELSE
-         GetList[ _i ]:PreBlock := {|| .F. }
+         GetList[ nI ]:PreBlock := {|| .F. }
       ENDIF
    NEXT
 
+   RETURN .T.
+
+
 FUNCTION restore_get_list()
 
-   LOCAL _i
+   LOCAL nI
 
-   FOR _i := 1 TO Len( GetList )
-      GetList[ _i ]:PreBlock := __get_list[ _i ]
+   FOR nI := 1 TO Len( GetList )
+      GetList[ nI ]:PreBlock := __get_list[ nI ]
    NEXT
 
-   FOR _i := Len( GetList ) TO 1 STEP -1
-      ADel( __get_list, _i )
+   FOR nI := Len( GetList ) TO 1 STEP -1
+      ADel( __get_list, nI )
    NEXT
 
    __get_list := NIL

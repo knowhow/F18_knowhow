@@ -14,12 +14,12 @@
 
 FUNCTION GlobalErrorHandler( err_obj, lShowErrorReport, lQuitApp )
 
-   LOCAL _i, _cmd
+   LOCAL cCmd
    LOCAL _out_file
-   LOCAL _msg, cLogMsg := "BUG REPORT: "
+   LOCAL cMsg, cLogMsg := "BUG REPORT: "
    LOCAL lNotify := .F.
    LOCAL bErr
-   LOCAL nI, cMsg
+   LOCAL nI
 
    IF err_obj:GenCode == 45 .AND. err_obj:SubCode == 1302
    /*
@@ -89,45 +89,45 @@ FUNCTION GlobalErrorHandler( err_obj, lShowErrorReport, lQuitApp )
    OutBug( "F18 bug report (v6.0) :", Date(), Time() )
    OutBug( Replicate( "=", 84 ) )
 
-   _msg := "Verzija programa: " + f18_ver_show( .F. )
-   OutBug( _msg )
+   cMsg := "Verzija programa: " + f18_ver_show( .F. )
+   OutBug( cMsg )
 
-   cLogMsg += _msg
+   cLogMsg += cMsg
    OutBug()
 
-   _msg := "SubSystem/severity    : " + err_obj:SubSystem + " " + to_str( err_obj:severity )
-   OutBug( _msg )
-   cLogMsg += " ; " + _msg
+   cMsg := "SubSystem/severity    : " + err_obj:SubSystem + " " + to_str( err_obj:severity )
+   OutBug( cMsg )
+   cLogMsg += " ; " + cMsg
 
-   _msg := "GenCod/SubCode/OsCode : " + to_str( err_obj:GenCode ) + " " + to_str( err_obj:SubCode ) + " " + to_str( err_obj:OsCode )
-   OutBug( _msg )
-   cLogMsg += " ; " + _msg
+   cMsg := "GenCod/SubCode/OsCode : " + to_str( err_obj:GenCode ) + " " + to_str( err_obj:SubCode ) + " " + to_str( err_obj:OsCode )
+   OutBug( cMsg )
+   cLogMsg += " ; " + cMsg
 
-   _msg := "Opis                  : " + err_obj:description
-   OutBug( _msg )
-   cLogMsg += " ; " + _msg
+   cMsg := "Opis                  : " + err_obj:description
+   OutBug( cMsg )
+   cLogMsg += " ; " + cMsg
 
-   _msg := "ImeFajla              : " + err_obj:filename
-   OutBug( _msg )
-   cLogMsg += " ; " + _msg
+   cMsg := "ImeFajla              : " + err_obj:filename
+   OutBug( cMsg )
+   cLogMsg += " ; " + cMsg
 
 
-   _msg := "Operacija             : " + err_obj:operation
-   OutBug( _msg )
-   cLogMsg += " ; " + _msg
+   cMsg := "Operacija             : " + err_obj:operation
+   OutBug( cMsg )
+   cLogMsg += " ; " + cMsg
 
-   _msg := "Argumenti             : " + to_str( err_obj:args )
-   OutBug( _msg )
-   cLogMsg += " ; " + _msg
+   cMsg := "Argumenti             : " + to_str( err_obj:args )
+   OutBug( cMsg )
+   cLogMsg += " ; " + cMsg
 
-   _msg := "canRetry/canDefault   : " + to_str( err_obj:canRetry ) + " " + to_str( err_obj:canDefault )
-   OutBug( _msg )
-   cLogMsg += " ; " + _msg
+   cMsg := "canRetry/canDefault   : " + to_str( err_obj:canRetry ) + " " + to_str( err_obj:canDefault )
+   OutBug( cMsg )
+   cLogMsg += " ; " + cMsg
 
    OutBug()
-   _msg := "CALL STACK:"
-   OutBug( _msg )
-   cLogMsg += " ; " + _msg
+   cMsg := "CALL STACK:"
+   OutBug( cMsg )
+   cLogMsg += " ; " + cMsg
 
    OutBug( "---", Replicate( "-", 80 ) )
    LOG_CALL_STACK cLogMsg
@@ -145,20 +145,20 @@ FUNCTION GlobalErrorHandler( err_obj, lShowErrorReport, lQuitApp )
    IF Used()
       current_dbf_info()
    ELSE
-      _msg := "USED() = false"
+      cMsg := "USED() = false"
    ENDIF
 
-   OutBug( _msg )
-   cLogMsg += " ; " + _msg
+   OutBug( cMsg )
+   cLogMsg += " ; " + cMsg
 
    IF err_obj:cargo <> NIL
 
       OutBug( "== CARGO", Replicate( "=", 50 ) )
-      FOR _i := 1 TO Len( err_obj:cargo )
-         IF err_obj:cargo[ _i ] == "var"
-            _msg :=  "* var " + to_str( err_obj:cargo[ ++_i ] )  + " : " + to_str( pp( err_obj:cargo[ ++_i ] ) )
-            ? _msg
-            cLogMsg += " ; " + _msg
+      FOR nI := 1 TO Len( err_obj:cargo )
+         IF err_obj:cargo[ nI ] == "var"
+            cMsg :=  "* var " + to_str( err_obj:cargo[ ++nI ] )  + " : " + to_str( pp( err_obj:cargo[ ++nI ] ) )
+            ? cMsg
+            cLogMsg += " ; " + cMsg
          ENDIF
       NEXT
       OutBug( Replicate( "-", 60 ) )
@@ -175,8 +175,8 @@ FUNCTION GlobalErrorHandler( err_obj, lShowErrorReport, lQuitApp )
       SET PRINTER TO
       SET CONSOLE ON
       IF lShowErrorReport
-         _cmd := "f18_editor " + _out_file
-         f18_run( _cmd )
+         cCmd := "f18_editor " + _out_file
+         f18_run( cCmd )
       ENDIF
       log_write( cLogMsg, 1 )
 #ifndef F18_DEBUG
@@ -203,6 +203,8 @@ FUNCTION OutBug( ... )
    ENDIF
 
    RETURN .T.
+
+
 
 STATIC FUNCTION server_info()
 
@@ -277,7 +279,7 @@ STATIC FUNCTION server_db_version_info()
 
 STATIC FUNCTION current_dbf_info()
 
-   LOCAL _struct, _i
+   LOCAL _struct, nI
 
    OutBug( "Trenutno radno podrucje:", Alias(), ", record:", RecNo(), "/", RecCount() )
 
@@ -286,8 +288,8 @@ STATIC FUNCTION current_dbf_info()
    OutBug( Replicate( "-", 60 ) )
    OutBug( "Record content:" )
    OutBug( Replicate( "-", 60 ) )
-   FOR _i := 1 TO Len( _struct )
-      OutBug( Str( _i, 3 ), PadR( _struct[ _i, 1 ], 15 ), _struct[ _i, 2 ], _struct[ _i, 3 ], _struct[ _i, 4 ], Eval( FieldBlock( _struct[ _i, 1 ] ) ) )
+   FOR nI := 1 TO Len( _struct )
+      OutBug( Str( nI, 3 ), PadR( _struct[ nI, 1 ], 15 ), _struct[ nI, 2 ], _struct[ nI, 3 ], _struct[ nI, 4 ], Eval( FieldBlock( _struct[ nI, 1 ] ) ) )
    NEXT
    OutBug( Replicate( "-", 60 ) )
 
@@ -387,7 +389,7 @@ STATIC FUNCTION send_email_attachment()
    LOCAL _a_files := {}
    LOCAL _path := my_home_root()
    LOCAL _server := my_server_params()
-   LOCAL _filename, _err
+   LOCAL _filename, nErr
    LOCAL _log_file, _log_params
    LOCAL _error_file := "error.txt"
 
@@ -411,11 +413,11 @@ STATIC FUNCTION send_email_attachment()
 
    DirChange( _path )
 
-   _err := zip_files( _path, _filename, _a_files )
+   nErr := zip_files( _path, _filename, _a_files )
 
    DirChange( my_home() )
 
-   IF _err <> 0
+   IF nErr <> 0
       RETURN .F.
    ENDIF
 

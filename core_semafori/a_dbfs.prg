@@ -534,7 +534,7 @@ FUNCTION print_a_dbfs()
 
 FUNCTION sql_order_from_key_fields( dbf_key_fields ) // "sql_order" hash na osnovu rec["dbf_fields"]
 
-   LOCAL _i, _len
+   LOCAL nI, _len
    LOCAL _sql_order
 
    // primjer: dbf_key_fields = {{"godina", 4}, "idrj", {"mjesec", 2}
@@ -542,15 +542,15 @@ FUNCTION sql_order_from_key_fields( dbf_key_fields ) // "sql_order" hash na osno
    _len := Len( dbf_key_fields )
 
    _sql_order := ""
-   FOR _i := 1 TO _len
+   FOR nI := 1 TO _len
 
-      IF ValType( dbf_key_fields[ _i ] ) == "A"
-         _sql_order += dbf_key_fields[ _i, 1 ]
+      IF ValType( dbf_key_fields[ nI ] ) == "A"
+         _sql_order += dbf_key_fields[ nI, 1 ]
       ELSE
-         _sql_order += dbf_key_fields[ _i ]
+         _sql_order += dbf_key_fields[ nI ]
       ENDIF
 
-      IF _i < _len
+      IF nI < _len
          _sql_order += ","
       ENDIF
    NEXT
@@ -649,7 +649,7 @@ FUNCTION set_dbf_fields_from_struct( xRec )
 
 FUNCTION set_rec_from_dbstruct( rec )
 
-   LOCAL _struct, _i
+   LOCAL _struct, nI
    LOCAL _fields := {}, _fields_len
 
    IF rec[ "dbf_fields" ] != NIL
@@ -661,23 +661,23 @@ FUNCTION set_rec_from_dbstruct( rec )
    _struct := dbStruct()
 
    _fields_len := hb_Hash()
-   FOR _i := 1 TO Len( _struct )
-      AAdd( _fields, Lower( _struct[ _i, 1 ] ) )
+   FOR nI := 1 TO Len( _struct )
+      AAdd( _fields, Lower( _struct[ nI, 1 ] ) )
       // char(10), num(12,2) => {{"C", 10, 0}, {"N", 12, 2}}
 
-      IF _struct[ _i, 2 ] == "B"
+      IF _struct[ nI, 2 ] == "B"
 
          // double
-         _fields_len[ Lower( _struct[ _i, 1 ] ) ] := { _struct[ _i, 2 ], 18, 8 }
+         _fields_len[ Lower( _struct[ nI, 1 ] ) ] := { _struct[ nI, 2 ], 18, 8 }
 
-      ELSEIF _struct[ _i, 2 ] == "Y" .OR. ( _struct[ _i, 2 ] == "I" .AND. _struct[ _i, 4 ] > 0 )
+      ELSEIF _struct[ nI, 2 ] == "Y" .OR. ( _struct[ nI, 2 ] == "I" .AND. _struct[ nI, 4 ] > 0 )
 
          // za currency polje stoji I 8 4 - sto znaci currency sa cetiri decimale
          // mislim da se ovdje radi o tome da se u 4 bajta stavlja integer dio, a u ostala 4 decimalni dio
-         _fields_len[ Lower( _struct[ _i, 1 ] ) ] := { _struct[ _i, 2 ], 18, _struct[ _i, 4 ] }
+         _fields_len[ Lower( _struct[ nI, 1 ] ) ] := { _struct[ nI, 2 ], 18, _struct[ nI, 4 ] }
 
       ELSE
-         _fields_len[ Lower( _struct[ _i, 1 ] ) ] := { _struct[ _i, 2 ], _struct[ _i, 3 ], _struct[ _i, 4 ] }
+         _fields_len[ Lower( _struct[ nI, 1 ] ) ] := { _struct[ nI, 2 ], _struct[ nI, 3 ], _struct[ nI, 4 ] }
 
       ENDIF
    NEXT

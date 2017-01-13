@@ -107,15 +107,15 @@ FUNCTION add_to_a_benef( a_benef, benef_id, benef_st, osnovica )
 
 FUNCTION PrikKBOBenef( a_benef )
 
-   LOCAL _i
+   LOCAL nI
    LOCAL _ben_osn := 0
 
    IF a_benef == NIL .OR. Len( a_benef ) == 0
       RETURN
    ENDIF
 
-   FOR _i := 1 TO Len( a_benef )
-      _ben_osn += a_benef[ _i, 3 ]
+   FOR nI := 1 TO Len( a_benef )
+      _ben_osn += a_benef[ nI, 3 ]
    NEXT
 
    nBO := 0

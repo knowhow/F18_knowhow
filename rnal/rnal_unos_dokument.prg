@@ -917,7 +917,7 @@ STATIC FUNCTION _show_orphaned_items( orph )
 
    LOCAL _m_x := m_x
    LOCAL _m_y := m_y
-   LOCAL _i
+   LOCAL nI
    LOCAL _tmp
    PRIVATE izbor := 1
    PRIVATE opc := {}
@@ -929,10 +929,10 @@ STATIC FUNCTION _show_orphaned_items( orph )
    AAdd( opc, "-" )
    AAdd( opcexe, {|| NIL } )
 
-   FOR _i := 1 TO Len( orph )
-      _tmp := PadL( AllTrim( Str( _i ) ) + ")", 4 )
+   FOR nI := 1 TO Len( orph )
+      _tmp := PadL( AllTrim( Str( nI ) ) + ")", 4 )
       _tmp += " nepovezana stavka "
-      _tmp += AllTrim( orph[ _i, 3 ] ) + " trazi broj: " + PadR( AllTrim( Str( orph[ _i, 2 ] ) ), 10 )
+      _tmp += AllTrim( orph[ nI, 3 ] ) + " trazi broj: " + PadR( AllTrim( Str( orph[ nI, 2 ] ) ), 10 )
       AAdd( opc, _tmp )
       AAdd( opcexe, {|| NIL } )
    NEXT

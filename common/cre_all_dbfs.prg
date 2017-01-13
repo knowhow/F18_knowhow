@@ -49,7 +49,7 @@ FUNCTION cre_all_dbfs( ver )
    cre_sif_partn( ver )
    cre_sif_adrese( ver )
 
-   proizvoljni_izvjestaji_db_cre( ver )
+   //proizvoljni_izvjestaji_db_cre( ver )
    cre_fin_mat( ver )
 
    IF f18_use_module( "fin" )

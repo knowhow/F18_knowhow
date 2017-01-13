@@ -30,8 +30,8 @@ FUNCTION fin_izvjestaji()
    AAdd( opc, "4. ročni intervali" )
    AAdd( opcexe, {|| fin_rocni_intervali_meni() } )
 
-   AAdd( opc, "5. proizvoljni izvještaji" )
-   AAdd( opcexe, {|| ProizvFin() } )
+//   AAdd( opc, "5. proizvoljni izvještaji" )
+//   AAdd( opcexe, {|| ProizvFin() } )
 
    AAdd( opc, "6. dnevnik naloga" )
    AAdd( opcexe, {|| DnevnikNaloga() } )

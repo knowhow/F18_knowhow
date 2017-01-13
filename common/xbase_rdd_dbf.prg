@@ -219,12 +219,12 @@ FUNCTION delete_with_rlock()
      .T. => briši bez pitanja
 */
 
-FUNCTION f18_delete_dbf( tbl_name )
+FUNCTION f18_delete_dbf( cTableName )
 
-   RETURN ferase_dbf( tbl_name, .T. )
+   RETURN ferase_dbf( cTableName, .T. )
 
 
-FUNCTION ferase_dbf( tbl_name, lSilent )
+FUNCTION ferase_dbf( cTableName, lSilent )
 
    LOCAL _tmp, _odg
 
@@ -234,10 +234,10 @@ FUNCTION ferase_dbf( tbl_name, lSilent )
 
    IF !lSilent
 
-      _odg := Pitanje(, "Izbrisati dbf tabelu " + tbl_name + " (L-quit) ?!", "N" )
+      _odg := Pitanje(, "Izbrisati dbf tabelu " + cTableName + " (L-quit) ?!", "N" )
 
       IF _odg == "L"
-         log_write( "ferase_dbf quit: " + tbl_name, 3 )
+         log_write( "ferase_dbf quit: " + cTableName, 3 )
          QUIT_1
       ENDIF
 
@@ -247,17 +247,17 @@ FUNCTION ferase_dbf( tbl_name, lSilent )
 
    ENDIF
 
-   log_write( "ferase_dbf : " + tbl_name, 3 )
-   tbl_name := f18_ime_dbf( tbl_name )
+   log_write( "ferase_dbf : " + cTableName, 3 )
+   cTableName := f18_ime_dbf( cTableName )
 
-   IF File( tbl_name )
-      IF FErase( tbl_name ) != 0
-         log_write( "ferase_dbf : " + tbl_name + "neuspjesno !", 3 )
+   IF File( cTableName )
+      IF FErase( cTableName ) != 0
+         log_write( "ferase_dbf : " + cTableName + "neuspjesno !", 3 )
          RETURN .F.
       ENDIF
    ENDIF
 
-   _tmp := StrTran( tbl_name, DBFEXT, INDEXEXT )
+   _tmp := StrTran( cTableName, DBFEXT, INDEXEXT )
    IF File( _tmp )
       log_write( "ferase_dbf, brisem: " + _tmp, 3 )
       IF FErase( _tmp ) != 0
@@ -266,7 +266,7 @@ FUNCTION ferase_dbf( tbl_name, lSilent )
       ENDIF
    ENDIF
 
-   _tmp := StrTran( tbl_name, DBFEXT, MEMOEXT )
+   _tmp := StrTran( cTableName, DBFEXT, MEMOEXT )
    IF File( _tmp )
       log_write( "ferase, brisem: " + _tmp, 3 )
       IF FErase( _tmp ) != 0
@@ -279,13 +279,13 @@ FUNCTION ferase_dbf( tbl_name, lSilent )
 
 
 
-FUNCTION ferase_cdx( tbl_name )
+FUNCTION ferase_cdx( cTableName )
 
    LOCAL _tmp
 
-   tbl_name := f18_ime_dbf( tbl_name )
+   cTableName := f18_ime_dbf( cTableName )
 
-   _tmp := StrTran( tbl_name, DBFEXT, INDEXEXT )
+   _tmp := StrTran( cTableName, DBFEXT, INDEXEXT )
    IF File( _tmp )
       log_write( "ferase_cdx, brisem: " + _tmp, 3 )
       IF FErase( _tmp ) != 0

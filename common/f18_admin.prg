@@ -456,7 +456,7 @@ METHOD F18Admin:wget_download( url, filename, location, erase_file, silent, only
 
    LOCAL lOk := .F.
    LOCAL _cmd := ""
-   LOCAL _h, _lenght
+   LOCAL nFileHandle, _lenght
 
    IF erase_file == NIL
       erase_file := .F.
@@ -501,13 +501,13 @@ METHOD F18Admin:wget_download( url, filename, location, erase_file, silent, only
       RETURN .F.
    ENDIF
 
-   // provjeri velicinu fajla...
-   _h := FOpen( location )
 
-   IF _h >= 0
-      _length := FSeek( _h, 0, FS_END )
-      FSeek( _h, 0 )
-      FClose( _h )
+   nFileHandle := FOpen( location ) // provjeri velicinu fajla
+
+   IF nFileHandle >= 0
+      _length := FSeek( nFileHandle, 0, FS_END )
+      FSeek( nFileHandle, 0 )
+      FClose( nFileHandle )
       IF _length <= 0
          error_bar( "upd", "Fajl " + location + " download ERROR!" )
          RETURN .F.

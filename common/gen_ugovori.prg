@@ -408,4 +408,3 @@ FUNCTION gen_ug()
    closeret
 
    RETURN
-// }

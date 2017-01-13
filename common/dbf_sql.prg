@@ -19,7 +19,7 @@ FUNCTION dbf_update_rec( hRec, lNoLock )
 
    LOCAL _key
    LOCAL _field_b
-   LOCAL _msg
+   LOCAL cMsg
    LOCAL _a_dbf_rec
    LOCAL lSql := ( rddName() == "SQLMIX" )
 
@@ -28,9 +28,9 @@ FUNCTION dbf_update_rec( hRec, lNoLock )
    ENDIF
 
    IF !Used()
-      _msg := "dbf_update_rec - nema otvoren dbf"
-      log_write( _msg, 1 )
-      Alert( _msg )
+      cMsg := "dbf_update_rec - nema otvoren dbf"
+      log_write( cMsg, 1 )
+      Alert( cMsg )
       // QUIT_1
       RETURN .F.
    ENDIF
@@ -46,11 +46,11 @@ FUNCTION dbf_update_rec( hRec, lNoLock )
             LOOP
          ENDIF
 
-         // replace polja
-         IF FieldPos( _key ) == 0
-            _msg := RECI_GDJE_SAM + "dbf field " + _key + " ne postoji u " + Alias()
-            // Alert(_msg)
-            log_write( _msg, 1 )
+
+         IF FieldPos( _key ) == 0 // replace polja
+            cMsg := RECI_GDJE_SAM + "dbf field " + _key + " ne postoji u " + Alias()
+            // Alert(cMsg)
+            log_write( cMsg, 1 )
          ELSE
             _field_b := FieldBlock( _key )
 
@@ -59,7 +59,7 @@ FUNCTION dbf_update_rec( hRec, lNoLock )
                hRec[ _key ] := hb_StrToUTF8( hRec[ _key ] )  // proklete_kvacice - konvertuj SQLMix record u UTF-8
             ENDIF
             Eval( _field_b, hRec[ _key ] )
-            
+
          ENDIF
 
       NEXT

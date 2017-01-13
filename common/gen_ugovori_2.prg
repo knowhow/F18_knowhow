@@ -568,7 +568,7 @@ STATIC FUNCTION n_partner( cId )
    SEEK cId
    SELECT ( nTArr )
 
-   RETURN
+   RETURN .T.
 
 
 // ------------------------------------
@@ -583,7 +583,7 @@ STATIC FUNCTION n_roba( cId )
    SEEK cId
    SELECT ( nTArr )
 
-   RETURN
+   RETURN .T.
 
 
 // ------------------------------------
@@ -917,9 +917,9 @@ STATIC FUNCTION g_ug_f_partner( cUId, cUPartn, dDatObr, dDatVal, nGSaldo, nGSald
    // datum zadnje uplate kupca
    dPUplKup := g_dpupl_part( cUPartn, cKtoDug )
    // datum zadnje promjene kupac
-   dPPromKup := g_dpprom_part( cUPartn, cKtoDug )
+   dPPromKup := datum_posljednje_promjene_kupac_dobavljac( cUPartn, cKtoDug )
    // datum zadnje promjene dobavljac
-   dPPromDob := g_dpprom_part( cUPartn, cKtoPot )
+   dPPromDob := datum_posljednje_promjene_kupac_dobavljac( cUPartn, cKtoPot )
 
    // dodaj stavku u gen_ug_p
    a_to_gen_p( dDatObr, cUId, cUPartn, nSaldoKup, nSaldoDob, dPUplKup, dPPromKup, dPPromDob, nFaktIzn, nFaktPdv )

@@ -12,9 +12,7 @@
 #include "f18.ch"
 
 
-// ---------------------------------------------------
-// zipovanje fajlova
-// ---------------------------------------------------
+
 FUNCTION zip_files( output_path, output_file_name, files, relative_path )
 
    LOCAL _error
@@ -32,9 +30,7 @@ FUNCTION zip_files( output_path, output_file_name, files, relative_path )
    RETURN _error
 
 
-// ---------------------------------------------------
-// unzipovanje fajlova
-// ---------------------------------------------------
+
 FUNCTION unzip_files( zip_path, zip_file_name, extract_destination, files, overwrite_file )
 
    LOCAL _error
@@ -45,8 +41,6 @@ FUNCTION unzip_files( zip_path, zip_file_name, extract_destination, files, overw
 
 
 
-// ------------------------------------------------------
-// ------------------------------------------------------
 STATIC FUNCTION __zip( zf_path, zf_name, files, relative_path )
 
    LOCAL _h_zip
@@ -134,8 +128,7 @@ STATIC FUNCTION __zip_error( err, descr )
    RETURN
 
 
-// ------------------------------------------------------
-// ------------------------------------------------------
+
 STATIC FUNCTION __unzip( zf_path, zf_name, zf_destination, files, overwrite_file )
 
    LOCAL _h_zip

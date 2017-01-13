@@ -71,10 +71,8 @@ FUNCTION g_dpupl_part( id_partner, id_konto, id_firma )
 
 
 
-// --------------------------------------------
-// datum posljednje promjene kupac / dobavljac
-// --------------------------------------------
-FUNCTION g_dpprom_part( id_partner, id_konto, id_firma )
+
+FUNCTION datum_posljednje_promjene_kupac_dobavljac( id_partner, id_konto, id_firma )
 
    LOCAL _qry, _qry_ret, _table
    LOCAL _data := {}

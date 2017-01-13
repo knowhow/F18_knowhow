@@ -47,8 +47,6 @@ METHOD ReportCommon:New()
 
 
 
-// -----------------------------------------------------------
-// -----------------------------------------------------------
 METHOD ReportCommon:set_picture_codes( _set, params )
 
    IF _set == NIL

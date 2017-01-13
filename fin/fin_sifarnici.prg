@@ -21,7 +21,7 @@
  *   param: dy
  *   param: lBlag
  */
- 
+
 FUNCTION P_KontoFin( cId, dx, dy, lBlag )
 
    LOCAL i
@@ -56,6 +56,7 @@ FUNCTION P_KontoFin( cId, dx, dy, lBlag )
    SELECT konto
    sifk_fill_ImeKol( "KONTO", @ImeKol, @Kol )
 
+/*
    IF lBlag .AND. !Left( cId, 1 ) $ "0123456789"
       SELECT KONTO
       // ukini zaostali filter
@@ -66,6 +67,7 @@ FUNCTION P_KontoFin( cId, dx, dy, lBlag )
       GO TOP
       cId := Space( Len( cId ) )
    ENDIF
+*/
 
    SELECT KONTO
    SET ORDER TO TAG "ID"

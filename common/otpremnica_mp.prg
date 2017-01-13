@@ -23,7 +23,7 @@ STATIC nDuzStrKorekcija := 0
 // lStartPrint - pozovi funkcije stampe START PRINT
 FUNCTION omp_print( lStartPrint )
 
-   // {
+
    // ako je nil onda je uvijek .t.
    IF lStartPrint == nil
       lStartPrint := .T.
@@ -327,8 +327,8 @@ FUNCTION otpr_mp_line()
 
    RETURN cLine
 
-// --------------------------------------------
-// --------------------------------------------
+
+
 STATIC FUNCTION print_total()
 
    ? cLine
@@ -559,6 +559,7 @@ STATIC FUNCTION NStr_a4( nStr, lShZagl )
    ENDIF
 
    RETURN
+
 
 // --------------------------------
 // korekcija za duzinu strane

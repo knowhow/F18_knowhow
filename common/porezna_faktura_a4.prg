@@ -1033,7 +1033,7 @@ STATIC FUNCTION NStr_a4( nStr, lShZagl )
    ENDIF
 
    RETURN
-// }
+
 
 
 // ---------------------------------------
@@ -1103,8 +1103,8 @@ STATIC FUNCTION print_total( cValuta, cLine )
    RETURN
 
 
-// --------------------------------------------
-// --------------------------------------------
+
+
 FUNCTION NazivDobra( cIdRoba, cRobaNaz, cJmj )
 
    LOCAL cPom
@@ -1118,8 +1118,7 @@ FUNCTION NazivDobra( cIdRoba, cRobaNaz, cJmj )
    RETURN cPom
 
 
-// -------------------------------------
-// -------------------------------------
+
 FUNCTION show_popust( nPopust )
 
    LOCAL cPom
@@ -1142,8 +1141,7 @@ FUNCTION show_popust( nPopust )
    RETURN PadL( cPom, LEN_PROC2 )
 
 
-// ---------------------------------------------
-// ---------------------------------------------
+
 FUNCTION p_line( cPLine, nCpi, lBold, lNewLine )
 
    IF lNewLine == nil
@@ -1182,8 +1180,7 @@ FUNCTION p_line( cPLine, nCpi, lBold, lNewLine )
    RETURN
 
 
-// ---------------------------------
-// ---------------------------------
+
 FUNCTION len_rbr( xPom )
 
    IF xPom <> NIL
@@ -1339,8 +1336,8 @@ FUNCTION len_rekap_pdv( xPom )
 
    RETURN LEN_REKAP_PDV
 
-// ------------------------------
-// ------------------------------
+
+
 FUNCTION razmak( xPom )
 
    IF xPom <> NIL
@@ -1349,8 +1346,8 @@ FUNCTION razmak( xPom )
 
    RETURN RAZMAK
 
-// ------------------------------
-// ------------------------------
+
+
 FUNCTION nSw1( xPom )
 
    IF xPom <> NIL
@@ -1358,8 +1355,9 @@ FUNCTION nSw1( xPom )
    ENDIF
 
    RETURN nSw1
-// ------------------------------
-// ------------------------------
+
+
+
 FUNCTION nSw2( xPom )
 
    IF xPom <> NIL
@@ -1367,8 +1365,9 @@ FUNCTION nSw2( xPom )
    ENDIF
 
    RETURN nSw2
-// ------------------------------
-// ------------------------------
+
+
+
 FUNCTION nSw3( xPom )
 
    IF xPom <> NIL
@@ -1377,8 +1376,8 @@ FUNCTION nSw3( xPom )
 
    RETURN nSw3
 
-// ------------------------------
-// ------------------------------
+
+
 FUNCTION nSw4( xPom )
 
    IF xPom <> NIL
@@ -1387,8 +1386,8 @@ FUNCTION nSw4( xPom )
 
    RETURN nSw4
 
-// ------------------------------
-// ------------------------------
+
+
 FUNCTION nSw5( xPom )
 
    IF xPom <> NIL
@@ -1399,8 +1398,7 @@ FUNCTION nSw5( xPom )
 
 
 
-// ------------------------------
-// ------------------------------
+
 FUNCTION lomi_tarabe( cLomi )
 
    LOCAL nPos1
@@ -1423,8 +1421,8 @@ FUNCTION lomi_tarabe( cLomi )
 
    RETURN aLomi
 
-// --------------------------
-// --------------------------
+
+
 FUNCTION IsPtxtOutput()
    RETURN gpIni == "#%INI__#"
 

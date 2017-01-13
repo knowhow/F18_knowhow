@@ -100,6 +100,7 @@ FUNCTION AddBS( cPath )
       cPath := cPath + SLASH
    ENDIF
 
+
 FUNCTION DiskPrazan( cDisk )
 
    IF DiskSpace( Asc( cDisk ) -64 ) < 15000
@@ -114,7 +115,7 @@ FUNCTION DiskPrazan( cDisk )
 
 
 
-/* \file ChangeEXT(cImeF,cExt, cExtNew, fBezAdd)
+/* file ChangeEXT(cImeF,cExt, cExtNew, fBezAdd)
  *    Promjeni ekstenziju
  *
  *  param:s cImeF   ime fajla
@@ -134,7 +135,6 @@ FUNCTION DiskPrazan( cDisk )
  * ChangeEXT("SUBAN.DBF", "DBF", "CDX", .t.)
  * SUBAN.DBF  -> SUBAN.CDX
  *
- * \endcode
  *
  */
 

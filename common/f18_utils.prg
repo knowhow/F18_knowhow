@@ -23,15 +23,12 @@ FUNCTION f18_create_dir( cLocation )
    LOCAL _create
 
    _loc := cLocation + "*.*"
-
    _loc := file_path_quote( cLocation + "*.*" )
-
    _len := ADir( _loc )
 
    IF _len == 0
 
       _create := DirMake( cLocation )
-
       IF _create <> 0
          log_write( "f18_create_dir, problem sa kreiranjem direktorija: " + cLocation, 5 )
       ENDIF
@@ -270,7 +267,7 @@ FUNCTION f18_copy_to_desktop( file_path, file_name, output_file )
 
    FileCopy( file_path + file_name, _desktop_path + output_file )
 
-   RETURN
+   RETURN .T.
 
 
 

@@ -937,10 +937,10 @@ FUNCTION _txt_djokeri( cTxt, cPartn )
    dPUplKup := g_dpupl_part( cPartn, __KTO_DUG, self_organizacija_id() )
 
    // datum zadnje promjene kupac
-   dPPromKup := g_dpprom_part( cPartn, __KTO_DUG, self_organizacija_id() )
+   dPPromKup := datum_posljednje_promjene_kupac_dobavljac( cPartn, __KTO_DUG, self_organizacija_id() )
 
    // datum zadnje promjene dobavljac
-   dPPromDob := g_dpprom_part( cPartn, __KTO_POT, self_organizacija_id() )
+   dPPromDob := datum_posljednje_promjene_kupac_dobavljac( cPartn, __KTO_POT, self_organizacija_id() )
 
 
    // -------------------------------------------------------

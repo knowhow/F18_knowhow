@@ -28,7 +28,7 @@ FUNCTION update_rec_server_and_dbf( cTabela, hRecord, algoritam, cTransaction )
    LOCAL _where_str, _where_str_dbf
    LOCAL _t_field, _t_field_dec
    LOCAL _a_dbf_rec, _alg
-   LOCAL _msg
+   LOCAL cMsg
    LOCAL _values_dbf
    LOCAL _alg_tag := ""
    LOCAL _ret
@@ -49,10 +49,10 @@ FUNCTION update_rec_server_and_dbf( cTabela, hRecord, algoritam, cTransaction )
    set_table_values_algoritam_vars( @cTabela, @hRecord, @algoritam, @cTransaction, @_a_dbf_rec, @_alg, @_where_str, @_alg_tag )
 
    IF Alias() <> _a_dbf_rec[ "alias" ]
-      _msg := "ERR "  + RECI_GDJE_SAM0 + " ALIAS() = " + Alias() + " <> " + _a_dbf_rec[ "alias" ]
-      log_write( _msg, 2 )
-      Alert( _msg )
-      error_bar( "update", _msg )
+      cMsg := "ERR "  + RECI_GDJE_SAM0 + " ALIAS() = " + Alias() + " <> " + _a_dbf_rec[ "alias" ]
+      log_write( cMsg, 2 )
+      Alert( cMsg )
+      error_bar( "update", cMsg )
       RETURN .F.
    ENDIF
 
@@ -74,9 +74,9 @@ FUNCTION update_rec_server_and_dbf( cTabela, hRecord, algoritam, cTransaction )
          run_sql_query( "ROLLBACK" )
       ENDIF
 
-      _msg := "ERROR: sql delete " + cTabela +  " , ROLLBACK, where: " + _where_str
-      log_write( _msg, 1 )
-      Alert( _msg )
+      cMsg := "ERROR: sql delete " + cTabela +  " , ROLLBACK, where: " + _where_str
+      log_write( cMsg, 1 )
+      Alert( cMsg )
 
       _ret := .F.
 
@@ -101,9 +101,9 @@ FUNCTION update_rec_server_and_dbf( cTabela, hRecord, algoritam, cTransaction )
             run_sql_query( "ROLLBACK" )
          ENDIF
 
-         _msg := "ERROR: sql delete " + cTabela +  " , ROLLBACK, where: " + _where_str_dbf
-         ?E _msg
-         error_bar( "sql_table", _msg )
+         cMsg := "ERROR: sql delete " + cTabela +  " , ROLLBACK, where: " + _where_str_dbf
+         ?E cMsg
+         error_bar( "sql_table", cMsg )
 
          RETURN .F.
 
@@ -118,9 +118,9 @@ FUNCTION update_rec_server_and_dbf( cTabela, hRecord, algoritam, cTransaction )
          // unlock_semaphore( cTabela )
       ENDIF
 
-      _msg := RECI_GDJE_SAM + "ERRORY: sql_insert: " + cTabela + " , ROLLBACK hRecord: " + pp( hRecord )
-      log_write( _msg, 1 )
-      Alert( _msg )
+      cMsg := RECI_GDJE_SAM + "ERRORY: sql_insert: " + cTabela + " , ROLLBACK hRecord: " + pp( hRecord )
+      log_write( cMsg, 1 )
+      Alert( cMsg )
 
       RETURN .F.
 
@@ -143,8 +143,8 @@ FUNCTION update_rec_server_and_dbf( cTabela, hRecord, algoritam, cTransaction )
          ?E "ERR ", RECI_GDJE_SAM0, + "push_ids_to_semaphore " + cTabela + "/ ids=", _alg_tag, _ids, " ! ROLLBACK"
       ENDIF
 
-      // log_write( _msg, 1 )
-      // Alert( _msg )
+      // log_write( cMsg, 1 )
+      // Alert( cMsg )
       _ret := .F.
 
    ENDIF
@@ -166,9 +166,9 @@ FUNCTION update_rec_server_and_dbf( cTabela, hRecord, algoritam, cTransaction )
             run_sql_query( "ROLLBACK" )
          ENDIF
 
-         _msg := "ERR: " + RECI_GDJE_SAM0 + "dbf_update_rec " + cTabela +  " ! ROLLBACK"
-         log_write( _msg, 1 )
-         Alert( _msg )
+         cMsg := "ERR: " + RECI_GDJE_SAM0 + "dbf_update_rec " + cTabela +  " ! ROLLBACK"
+         log_write( cMsg, 1 )
+         Alert( cMsg )
 
          _ret := .F.
 
@@ -195,7 +195,7 @@ FUNCTION delete_rec_server_and_dbf( cTabela, hRecord, algoritam, cTransaction )
    LOCAL _where_str
    LOCAL _t_field, _t_field_dec
    LOCAL _a_dbf_rec, _alg
-   LOCAL _msg
+   LOCAL cMsg
    LOCAL _alg_tag := ""
    LOCAL _ret
    LOCAL lIndex := .T.
@@ -213,10 +213,10 @@ FUNCTION delete_rec_server_and_dbf( cTabela, hRecord, algoritam, cTransaction )
    set_table_values_algoritam_vars( @cTabela, @hRecord, @algoritam, @cTransaction, @_a_dbf_rec, @_alg, @_where_str, @_alg_tag )
 
    IF Alias() <> _a_dbf_rec[ "alias" ]
-      _msg := "ERR "  + RECI_GDJE_SAM0 + " ALIAS() = " + Alias() + " <> " + _a_dbf_rec[ "alias" ]
-      log_write( _msg, 1 )
-      error_bar( "del_rec", _msg )
-      RaiseError( _msg )
+      cMsg := "ERR "  + RECI_GDJE_SAM0 + " ALIAS() = " + Alias() + " <> " + _a_dbf_rec[ "alias" ]
+      log_write( cMsg, 1 )
+      error_bar( "del_rec", cMsg )
+      RaiseError( cMsg )
    ENDIF
 
    // log_write( "delete rec server, poceo", 9 )
@@ -250,10 +250,10 @@ FUNCTION delete_rec_server_and_dbf( cTabela, hRecord, algoritam, cTransaction )
                // unlock_semaphore( cTabela )
             ENDIF
 
-            _msg := "ERROR: " + RECI_GDJE_SAM0 + " tabela: " + cTabela + " DBF_TAG " + _alg[ "dbf_tag" ]
-            error_bar( "del_rec", _msg )
-            ?E _msg
-            RaiseError( _msg )
+            cMsg := "ERROR: " + RECI_GDJE_SAM0 + " tabela: " + cTabela + " DBF_TAG " + _alg[ "dbf_tag" ]
+            error_bar( "del_rec", cMsg )
+            ?E cMsg
+            RaiseError( cMsg )
             RETURN .F.
          ELSE
             lIndex := .F.
@@ -300,9 +300,9 @@ FUNCTION delete_rec_server_and_dbf( cTabela, hRecord, algoritam, cTransaction )
 
          IF cTransaction == "FULL"
             run_sql_query( "ROLLBACK" )
-            _msg := "delete rec server " + cTabela + " nije lockovana ! ROLLBACK"
-            ?E _msg
-            Alert( _msg )
+            cMsg := "delete rec server " + cTabela + " nije lockovana ! ROLLBACK"
+            ?E cMsg
+            Alert( cMsg )
          ENDIF
 
 
@@ -314,9 +314,9 @@ FUNCTION delete_rec_server_and_dbf( cTabela, hRecord, algoritam, cTransaction )
 
       IF cTransaction == "FULL"
          run_sql_query( "ROLLBACK" )
-         _msg := "delete rec server, " + cTabela + " transakcija neuspjesna ! ROLLBACK"
-         Alert( _msg )
-         ?E _msg
+         cMsg := "delete rec server, " + cTabela + " transakcija neuspjesna ! ROLLBACK"
+         Alert( cMsg )
+         ?E cMsg
       ENDIF
       _ret := .F.
 
@@ -336,7 +336,7 @@ FUNCTION delete_all_dbf_and_server( cTabela )
    LOCAL _field
    LOCAL _where_str
    LOCAL _a_dbf_rec
-   LOCAL _msg
+   LOCAL cMsg
    LOCAL _rec
 
    _a_dbf_rec := get_a_dbf_rec( cTabela, .T. )
@@ -363,9 +363,9 @@ FUNCTION delete_all_dbf_and_server( cTabela )
 
    ELSE
 
-      _msg := cTabela + "transakcija neuspjesna ! ROLLBACK"
-      Alert( _msg )
-      log_write( _msg, 1 )
+      cMsg := cTabela + "transakcija neuspjesna ! ROLLBACK"
+      Alert( cMsg )
+      log_write( cMsg, 1 )
 
       run_sql_query( "ROLLBACK" )
       RETURN .F.
@@ -385,7 +385,7 @@ STATIC FUNCTION set_table_values_algoritam_vars( cTabela, hRecord, algoritam, cT
    LOCAL _use_tag := .F.
    LOCAL _alias
    LOCAL lSqlTable, uValue
-   LOCAL _msg
+   LOCAL cMsg
 
    IF cTabela == NIL
       cTabela := Alias()
@@ -428,10 +428,10 @@ STATIC FUNCTION set_table_values_algoritam_vars( cTabela, hRecord, algoritam, cT
 
          // ne gledaj numericke kljuceve, koji su array stavke
          IF !hb_HHasKey( hRecord, _key )
-            _msg := RECI_GDJE_SAM + "# tabela:" + cTabela + "#bug - nepostojeći kljuc:" + _key +  "#hRecord:" + pp( hRecord )
-            log_write( _msg, 1 )
-            MsgBeep( _msg )
-            error_bar( "set_t_alg", _msg )
+            cMsg := RECI_GDJE_SAM + "# tabela:" + cTabela + "#bug - nepostojeći kljuc:" + _key +  "#hRecord:" + pp( hRecord )
+            log_write( cMsg, 1 )
+            MsgBeep( cMsg )
+            error_bar( "set_t_alg", cMsg )
             RETURN .F.
          ENDIF
 

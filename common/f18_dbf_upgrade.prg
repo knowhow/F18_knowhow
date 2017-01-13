@@ -17,22 +17,22 @@ STATIC __ini_section := "DBF_version"
 
 FUNCTION read_dbf_version_from_config()
 
-   LOCAL _ini_params
+   LOCAL hIniParams
    LOCAL _current_dbf_ver, _new_dbf_ver
    LOCAL __ini_section := "DBF_version"
    LOCAL _ret
 
-   _ini_params := hb_Hash()
-   _ini_params[ "major" ] := "0"
-   _ini_params[ "minor" ] := "0"
-   _ini_params[ "patch" ] := "0"
+   hIniParams := hb_Hash()
+   hIniParams[ "major" ] := "0"
+   hIniParams[ "minor" ] := "0"
+   hIniParams[ "patch" ] := "0"
 
    _ret := hb_Hash()
 
-   IF !f18_ini_config_read( __ini_section, @_ini_params, .F. )
+   IF !f18_ini_config_read( __ini_section, @hIniParams, .F. )
       ?E "problem sa ini_params " + __ini_section
    ENDIF
-   _current_dbf_ver := get_version_num( _ini_params[ "major" ], _ini_params[ "minor" ], _ini_params[ "patch" ] )
+   _current_dbf_ver := get_version_num( hIniParams[ "major" ], hIniParams[ "minor" ], hIniParams[ "patch" ] )
    _new_dbf_ver     := get_version_num( F18_DBF_VER_MAJOR, F18_DBF_VER_MINOR, F18_DBF_VER_PATCH )
 
    ?E "current dbf version:" + Str( _current_dbf_ver )
@@ -47,21 +47,21 @@ FUNCTION read_dbf_version_from_config()
 
 FUNCTION write_dbf_version_to_ini_conf()
 
-   LOCAL _ini_params, cMsg, cDbfVer
+   LOCAL hIniParams, cMsg, cDbfVer
 
-   _ini_params := hb_Hash()
-   _ini_params[ "major" ] := "0"
-   _ini_params[ "minor" ] := "0"
-   _ini_params[ "patch" ] := "0"
+   hIniParams := hb_Hash()
+   hIniParams[ "major" ] := "0"
+   hIniParams[ "minor" ] := "0"
+   hIniParams[ "patch" ] := "0"
 
 
-   _ini_params[ "major" ] := F18_DBF_VER_MAJOR
-   _ini_params[ "minor" ] := F18_DBF_VER_MINOR
-   _ini_params[ "patch" ] := F18_DBF_VER_PATCH
+   hIniParams[ "major" ] := F18_DBF_VER_MAJOR
+   hIniParams[ "minor" ] := F18_DBF_VER_MINOR
+   hIniParams[ "patch" ] := F18_DBF_VER_PATCH
 
    cDbfVer := AllTrim( Str( F18_DBF_VER_MAJOR ) ) + "." + AllTrim( Str( F18_DBF_VER_MINOR ) ) + "." + AllTrim( Str( F18_DBF_VER_PATCH ) )
 
-   IF !f18_ini_config_write( __ini_section, @_ini_params, .F. )
+   IF !f18_ini_config_write( __ini_section, @hIniParams, .F. )
       cMsg := "ini_dbf: problem write dbf verzija: " + cDbfVer
       ?E cMsg
       error_bar( "ini_dbf:" + my_server_params()[ "database" ], cMsg )

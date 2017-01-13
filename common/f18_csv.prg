@@ -69,11 +69,10 @@ METHOD CsvReader:read()
       ::delimiter := ";"
    ENDIF
 
-   // kreiraj i otvori lokalni dbf
-   ::create_mem_dbf()
 
-   // otvori csv u dbf
-   ::open_csv_as_local_dbf()
+   ::create_mem_dbf()    // kreiraj i otvori lokalni dbf
+
+   ::open_csv_as_local_dbf()    // otvori csv u dbf
 
    RETURN _ok
 

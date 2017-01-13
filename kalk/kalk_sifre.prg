@@ -150,4 +150,4 @@ FUNCTION P_Objekti()
    SELECT ( nTArea )
    p_sifra( F_OBJEKTI, 1, MAXROWS() -15, MAXCOLS() -20, "Objekti" )
 
-   RETURN
+   RETURN .T.

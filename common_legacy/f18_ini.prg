@@ -30,6 +30,58 @@ STATIC INI_NAME := ''
 STATIC INI_SECTION := 'xx'
 
 
+
+
+/*
+ *  param cSection  - [SECTION]
+ *  param cVar      - Variable
+ *  param cValue    - Default value of Variable
+ *  param cLokacija - Default = EXEPATH, or PRIVPATH, or SIFPATH or KUMPATH (FileName='FMK.INI')
+ *  param lAppend   - True - ako zapisa u ini-ju nema dodaj ga, default false
+ * // uzmi vrijednost varijable Debug, sekcija Gateway, iz EXEPATH/FMK.INI
+ * cDN:=my_get_from_ini("Gateway","Debug","N",EXEPATH)
+ * \endcode
+ *
+ * \sa R_IniWrite
+ *
+ */
+
+FUNCTION my_get_from_ini( cSection, cVar, cValue, cLokacija, lAppend )
+
+   LOCAL cRez := "", nFH
+   LOCAL cNazIni := 'FMK.INI'
+
+   cLokacija := my_home_root()
+
+   IF ( lAppend == nil )
+      lAppend := .F.
+   ENDIF
+
+
+   IF !File( cLokacija + cNazIni )
+      nFH := FCreate( cLokacija + cNazIni )
+      FWrite( nFh, ";------- Ini Fajl FMK-------" )
+      FClose( nFH )
+   ENDIF
+   
+   cRez := R_IniRead( cSection, cVar,  "", cLokacija + cNazIni )
+
+   IF ( lAppend .AND. Empty( cRez ) )
+      // nije toga bilo u fmk.ini
+      R_IniWrite( cSection, cVar, cValue, cLokacija + cNazIni )
+      IniRefresh()
+      RETURN cValue
+   ELSEIF ( Empty( cRez ) )
+      IniRefresh()
+      RETURN cValue
+   ELSE
+      IniRefresh()
+      RETURN cRez
+   ENDIF
+
+   RETURN ""
+
+
 FUNCTION R_IniRead ( cSection, cEntry, cDefault, cFName, lAppend )
 
    LOCAL nHandle
@@ -373,53 +425,6 @@ STATIC FUNCTION I_At( cSearch, lUpper, nStart )
    RETURN IF ( nPos > 0, nPos + nStart - 1, 0 )
 
 
-/*
- *  param cSection  - [SECTION]
- *  param cVar      - Variable
- *  param cValue    - Default value of Variable
- *  param cLokacija - Default = EXEPATH, or PRIVPATH, or SIFPATH or KUMPATH (FileName='FMK.INI')
- *  param lAppend   - True - ako zapisa u ini-ju nema dodaj ga, default false
- * // uzmi vrijednost varijable Debug, sekcija Gateway, iz EXEPATH/FMK.INI
- * cDN:=my_get_from_ini("Gateway","Debug","N",EXEPATH)
- * \endcode
- *
- * \sa R_IniWrite
- *
- */
-
-FUNCTION my_get_from_ini( cSection, cVar, cValue, cLokacija, lAppend )
-
-   LOCAL cRez := ""
-   LOCAL cNazIni := 'FMK.INI'
-
-   cLokacija := my_home_root()
-
-   IF ( lAppend == nil )
-      lAppend := .F.
-   ENDIF
-
-
-   IF !File( cLokacija + cNazIni )
-      nFH := FCreate( cLokacija + cNazIni )
-      FWrite( nFh, ";------- Ini Fajl FMK-------" )
-      FClose( nFH )
-   ENDIF
-   cRez := R_IniRead( cSection, cVar,  "", cLokacija + cNazIni )
-
-   IF ( lAppend .AND. Empty( cRez ) )
-      // nije toga bilo u fmk.ini
-      R_IniWrite( cSection, cVar, cValue, cLokacija + cNazIni )
-      IniRefresh()
-      RETURN cValue
-   ELSEIF ( Empty( cRez ) )
-      IniRefresh()
-      RETURN cValue
-   ELSE
-      IniRefresh()
-      RETURN cRez
-   ENDIF
-
-   RETURN
 
 
 

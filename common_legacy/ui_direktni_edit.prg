@@ -12,7 +12,7 @@
 #include "f18.ch"
 
 
-
+/*
 FUNCTION DaTBDirektni( lIzOBJDB )
 
    LOCAL i, j, k
@@ -92,60 +92,7 @@ STATIC FUNCTION GoTopDB( nTBLine )
 
 
 
-FUNCTION SkipDB( nRequest, nTBLine )
 
-   // nTBLine is a reference
-   LOCAL nActually := 0
 
-   IF nRequest == 0
-      dbSkip( 0 )
 
-   ELSEIF nRequest > 0 .AND. !Eof()
-      WHILE nActually < nRequest
-         IF nTBLine < nTBLastLine
-            // This will print up to nTBLastLine of text
-            // Some of them (or even all) might be empty
-            ++nTBLine
-
-         ELSE
-            // Go to the next record
-            dbSkip( + 1 )
-            nTBLine := 1
-
-         ENDIF
-         IF Eof()
-            dbSkip( -1 )
-            nTBLine := nTBLastLine
-            EXIT
-         ENDIF
-         nActually++
-
-      END
-
-   ELSEIF nRequest < 0
-      WHILE nActually > nRequest
-         // Go to previous line
-         IF nTBLine > 1
-            --nTBLine
-
-         ELSE
-            dbSkip( -1 )
-            IF !Bof()
-               nTBLine := nTBLastLine
-
-            ELSE
-               // You need this. Believe me!
-               nTBLine := 1
-               GOTO RecNo()
-               EXIT
-
-            ENDIF
-
-         ENDIF
-         nActually--
-
-      END
-
-   ENDIF
-
-   RETURN ( nActually )
+*/

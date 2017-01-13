@@ -13,7 +13,7 @@
 
 
 // -----------------------------------------
-// funkcija za labeliranje barkodova...
+// funkcija za labeliranje barkodova
 // -----------------------------------------
 FUNCTION label_bkod()
 

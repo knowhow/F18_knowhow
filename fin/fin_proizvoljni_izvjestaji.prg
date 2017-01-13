@@ -195,7 +195,7 @@ FUNCTION ZagPPR( cI )
 
    ? cNazivFirme
    ? PadL( "Str." + AllTrim( Str( ++nStranica ) ), 80 )
-   ? PadC( StrKZN( "PREGLED PROMJENA NA RA�UNU", "8", gKodnaS ), 80 )
+   ? PadC(  "PREGLED PROMJENA NA RACUNU", 80 )
    ? PadC( "ZA PERIOD " + DToC( dOd ) + " - " + DToC( dDo ), 80 )
    ?
    IF cI == "U"

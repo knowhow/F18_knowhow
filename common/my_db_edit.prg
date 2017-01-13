@@ -261,7 +261,7 @@ FUNCTION my_db_edit( cImeBoxa, xw, yw, bKeyHandler, cMessTop, cMessBot, lInvert,
       SWITCH nKeyHandlerRetEvent
       CASE DE_REFRESH
          TB:RefreshAll()
-         @ m_x + 1, m_y + yw -6 SAY Str( RecCount2(), 5 )
+         @ m_x + 1, m_y + yw - 6 SAY Str( RecCount2(), 5 )
          EXIT
 
       CASE DE_ABORT
@@ -414,7 +414,7 @@ FUNCTION my_db_edit_standardne_komande( TB, nKey, nKeyHandlerRetEvent, nPored, a
       Tb:hitTop := TB:hitBottom := .F.
       DO WHILE !( Tb:hitTop .OR. TB:hitBottom )
          IF cIzraz <> NIL
-            IF Tacno( cIzraz, TB:getColumn(Tb:colPos):block() )
+            IF Tacno( cIzraz, TB:getColumn( Tb:colPos ):block() )
                EXIT
             ENDIF
          ELSE
@@ -836,7 +836,7 @@ STATIC FUNCTION EditPolja( nX, nY, xIni, cNazPolja, bWhen, bValid )
       IF nY + nSirina > MAXCOLS() -2
 
          FOR i := 1 TO Len( aTBGets )
-            aTBGets[ i ]:Col := aTBGets[ i ]:Col   - ( nY + nSirina -78 )
+            aTBGets[ i ]:Col := aTBGets[ i ]:Col   - ( nY + nSirina - 78 )
             // smanji col koordinate
          NEXT
       ENDIF
@@ -940,3 +940,66 @@ FUNCTION tb_editabilna_kolona( oTb, aImeKol )
    // aImeKol[ 5] kodni blok Valid
 
    RETURN Len( aImekol[ TB:colPos ] ) > 2
+
+
+
+
+
+
+FUNCTION SkipDB( nRequest, nTBLine )
+
+   // nTBLine is a reference
+   LOCAL nActually := 0
+
+   IF nRequest == 0
+      dbSkip( 0 )
+
+   ELSEIF nRequest > 0 .AND. !Eof()
+      WHILE nActually < nRequest
+         IF nTBLine < nTBLastLine
+            // This will print up to nTBLastLine of text
+            // Some of them (or even all) might be empty
+            ++nTBLine
+
+         ELSE
+            // Go to the next record
+            dbSkip( + 1 )
+            nTBLine := 1
+
+         ENDIF
+         IF Eof()
+            dbSkip( -1 )
+            nTBLine := nTBLastLine
+            EXIT
+         ENDIF
+         nActually++
+
+      END
+
+   ELSEIF nRequest < 0
+      WHILE nActually > nRequest
+         // Go to previous line
+         IF nTBLine > 1
+            --nTBLine
+
+         ELSE
+            dbSkip( -1 )
+            IF !Bof()
+               nTBLine := nTBLastLine
+
+            ELSE
+               // You need this. Believe me!
+               nTBLine := 1
+               GOTO RecNo()
+               EXIT
+
+            ENDIF
+
+         ENDIF
+         nActually--
+
+      END
+
+   ENDIF
+
+   RETURN ( nActually )

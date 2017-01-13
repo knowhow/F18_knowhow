@@ -144,6 +144,7 @@ FUNCTION rucno_zatvaranje_otv_stavki_key_handler( l_osuban )
 
    DO CASE
 
+/*
    CASE Ch == K_ALT_E .AND. FieldPos( "_OBRDOK" ) = 0
 
       IF Pitanje(, "Preći u mod direktog unosa podataka u tabelu ? (D/N)", "D" ) == "D"
@@ -151,6 +152,7 @@ FUNCTION rucno_zatvaranje_otv_stavki_key_handler( l_osuban )
          opcije_browse_pregleda()
          DaTBDirektni()
       ENDIF
+*/
 
    CASE Ch == K_ENTER
 

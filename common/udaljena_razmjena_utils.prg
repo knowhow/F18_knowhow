@@ -482,10 +482,8 @@ FUNCTION update_sifk_sifv( lFullTransaction )
    RETURN .T.
 
 
-// ---------------------------------------------
-// kreiraj direktorij ako ne postoji
-// ---------------------------------------------
-FUNCTION _dir_create( use_path )
+
+FUNCTION direktorij_kreiraj_ako_ne_postoji( use_path )
 
    LOCAL _ret := .T.
 

@@ -615,13 +615,13 @@ STATIC FUNCTION tops_kalk_create_topska( id_pos, datum_od, datum_do, v_dok, pref
       gKalkDest := AllTrim( gKalkDest ) + SLASH
    ENDIF
 
-   _dir_create( AllTrim( gKalkDest ) )
+   direktorij_kreiraj_ako_ne_postoji( AllTrim( gKalkDest ) )
 
    cIdPM := GetPm( id_pos )
 
    _export_location := AllTrim( gKalkDest ) + cIdPM + SLASH
 
-   _dir_create( AllTrim( _export_location ) )
+   direktorij_kreiraj_ako_ne_postoji( AllTrim( _export_location ) )
 
    DirChange( my_home() )
 

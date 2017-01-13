@@ -28,7 +28,7 @@ FUNCTION fakt_udaljena_razmjena_podataka()
    __import_zip_name := "fakt_exp.zip"
    __export_zip_name := "fakt_exp.zip"
 
-   _dir_create( __export_dbf_path )
+   direktorij_kreiraj_ako_ne_postoji( __export_dbf_path )
 
    AAdd( _opc, "1. => export podataka               " )
    AAdd( _opcexe, {|| _fakt_export() } )
@@ -1008,7 +1008,7 @@ STATIC FUNCTION _cre_exp_tbls( use_path )
    ENDIF
 
    // provjeri da li postoji direktorij, pa ako ne - kreiraj
-   _dir_create( use_path )
+   direktorij_kreiraj_ako_ne_postoji( use_path )
 
    // tabela fakt
    O_FAKT

@@ -264,7 +264,7 @@ STATIC FUNCTION kalk_tops_kreiraj_fajl_prenosa( datum, aPosLokacije, broj_stavki
 
    cTopsDest := kalk_destinacija_topska( cTopsDest )
 
-   _dir_create( cTopsDest ) // napravi direktorij prenosa ako ga nema
+   direktorij_kreiraj_ako_ne_postoji( cTopsDest ) // napravi direktorij prenosa ako ga nema
    cExportHomeDir := cTopsDest // export lokacija, bazna
 
 
@@ -272,7 +272,7 @@ STATIC FUNCTION kalk_tops_kreiraj_fajl_prenosa( datum, aPosLokacije, broj_stavki
 
       cExporPosDir := cExportHomeDir + AllTrim( aPosLokacije[ _n ] ) + SLASH // export ce biti u poddirektoriju kojem treba da bude, npr /prenos/1/
 
-      _dir_create( cExporPosDir ) // kreirati direktorij ako ne postoji
+      direktorij_kreiraj_ako_ne_postoji( cExporPosDir ) // kreirati direktorij ako ne postoji
 
       DirChange( my_home() ) // nakon dir create prebaci se na my_local_folder
 

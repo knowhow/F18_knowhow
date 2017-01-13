@@ -859,7 +859,7 @@ STATIC FUNCTION _cre_exp_tbls( cDbfPath )
    ENDIF
 
    // provjeri da li postoji direktorij, pa ako ne - kreiraj
-   _dir_create( cDbfPath )
+   direktorij_kreiraj_ako_ne_postoji( cDbfPath )
 
 
    o_kalk()

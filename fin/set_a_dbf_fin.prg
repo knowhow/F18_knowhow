@@ -28,7 +28,7 @@ FUNCTION set_a_dbf_fin()
    set_a_dbf_sifarnik( "fin_funk", "FUNK",       F_FUNK       )
    set_a_dbf_sifarnik( "fin_fond", "FOND",       F_FOND       )
    set_a_dbf_sifarnik( "fin_buiz", "BUIZ",       F_BUIZ       )
-   set_a_dbf_sifarnik( "fin_ulimit", "ULIMIT",       F_ULIMIT     )
+//   set_a_dbf_sifarnik( "fin_ulimit", "ULIMIT",       F_ULIMIT     )
 
    set_a_sql_sifarnik( "ks", "KS",       F_KS         )
 

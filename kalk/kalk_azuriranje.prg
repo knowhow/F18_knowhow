@@ -714,24 +714,24 @@ STATIC FUNCTION kalk_azur_sql()
 
 FUNCTION kalk_dokumenti_iz_pripreme_u_matricu()
 
-   LOCAL _arr := {}
-   LOCAL _scan
+   LOCAL aKalkDokumenti := {}
+   LOCAL nScan
 
    SELECT kalk_pripr
    GO TOP
 
    DO WHILE !Eof()
 
-      _scan := AScan( _arr, {| var | VAR[ 1 ] == field->idfirma .AND. ;
-         VAR[ 2 ] == field->idvd .AND. ;
-         VAR[ 3 ] == field->brdok  } )
+      nScan := AScan( aKalkDokumenti, {| aVar | aVar[ 1 ] == field->idfirma .AND. ;
+         aVar[ 2 ] == field->idvd .AND. ;
+         aVar[ 3 ] == field->brdok  } )
 
-      IF _scan == 0
-         AAdd( _arr, { field->idfirma, field->idvd, field->brdok, 0 } )
+      IF nScan == 0
+         AAdd( aKalkDokumenti, { field->idfirma, field->idvd, field->brdok, 0 } )
       ENDIF
 
       SKIP
 
    ENDDO
 
-   RETURN _arr
+   RETURN aKalkDokumenti

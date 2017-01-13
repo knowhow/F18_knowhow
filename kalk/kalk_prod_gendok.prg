@@ -21,12 +21,12 @@ FUNCTION kalk_prod_generacija_dokumenata()
    LOCAL _opcexe := {}
    LOCAL _izbor := 1
 
-   AAdd( _opc, "1. početno stanje prodavnica                                 " )
+   AAdd( _opc, "1. početno stanje prodavnica                               " )
    AAdd( _opcexe, {|| kalk_prod_pocetno_stanje() } )
    // TODO: izbaciti
    // AADD(_opc, "2. pocetno stanje (stara opcija/legacy)")
    // AADD(_opcexe, {|| PocStProd() } )
-   AAdd( _opc, "2. inventure    " )
+   AAdd( _opc, "2. inventura prodavnica" )
    AAdd( _opcexe, {|| kalk_prod_gen_ip() } )
 
    AAdd( _opc, "3. svedi mpc na mpc iz šifarnika dokumentom nivelacije" )
@@ -90,7 +90,7 @@ STATIC FUNCTION MnuPNivel()
 
    f18_menu( "pmn", nil, _izbor, _opc, _opcexe  )
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -114,7 +114,7 @@ STATIC FUNCTION kalk_prod_gen_ip()
 
 
 
-FUNCTION GenNivP()
+FUNCTION kalk_generisi_niv_prodavnica_na_osnovu_druge_niv()
 
    O_KONTO
    O_TARIFA

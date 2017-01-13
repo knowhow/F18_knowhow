@@ -113,7 +113,7 @@ FUNCTION kalk_get_1_ip()
 
 FUNCTION kalk_generisi_ip()
 
-   LOCAL cIdFirma, cIdKonto, cIdRoba
+   LOCAL cIdFirma, cIdKonto, cIdRoba, dDatDok, cNulirati
 
    O_KONTO
    O_TARIFA
@@ -156,7 +156,7 @@ FUNCTION kalk_generisi_ip()
 
    DO WHILE !Eof() .AND. cIdfirma + cIdkonto == field->idfirma + field->pkonto
 
-      cIdRoba := Idroba
+      cIdRoba := kalk->idroba
       nUlaz := nIzlaz := 0
       nMPVU := nMPVI := nNVU := nNVI := 0
       nRabat := 0
@@ -206,6 +206,7 @@ FUNCTION kalk_generisi_ip()
       ENDDO
 
       IF ( Round( nUlaz - nIzlaz, 4 ) <> 0 ) .OR. ( Round( nMpvu - nMpvi, 4 ) <> 0 )
+
          SELECT roba
          HSEEK cIdroba
 
@@ -216,14 +217,14 @@ FUNCTION kalk_generisi_ip()
          _idroba := cIdroba
          _idtarifa := roba->idtarifa
          _idvd := "IP"
-         _brdok := cbrdok
+         _brdok := cBrdok
 
          _rbr := RedniBroj( ++nRbr )
          _kolicina := _gkolicina := nUlaz - nIzlaz
          IF cNulirati == "D"
             _kolicina := 0
          ENDIF
-         _datdok := _DatFaktP := ddatdok
+         _datdok := _DatFaktP := dDatdok
          _ERROR := ""
 
          _fcj := nMpvu - nMpvi // stanje mpvsapp
@@ -437,8 +438,8 @@ FUNCTION gen_ip_razlika()
          hRec[ "error" ] := ""
          hRec[ "fcj" ] := nMpvu - nMpvi
 
-         // stanje mpvsapp
-         IF Round( nUlaz - nIzlaz, 4 ) <> 0
+
+         IF Round( nUlaz - nIzlaz, 4 ) <> 0 // stanje mpvsapp
             // treba li ovo zaokruzivati ????
             hRec[ "mpcsapp" ] := Round( ( nMPVU - nMPVI ) / ( nUlaz - nIzlaz ), 3 )
             hRec[ "nc" ] := Round( ( nNvu - nNvi ) / ( nUlaz - nIzlaz ), 3 )

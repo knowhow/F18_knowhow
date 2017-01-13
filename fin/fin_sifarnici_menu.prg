@@ -43,9 +43,9 @@ STATIC FUNCTION _menu_specif()
    O_KONTO
    O_KS
    O_TRFP2
-   O_TRFP3
+   //O_TRFP3
    O_PKONTO
-   O_ULIMIT
+   //O_ULIMIT
 
    AAdd( _opc, "1. kontni plan                          " )
    AAdd( _opcexe, {|| P_KontoFin() } )
@@ -53,16 +53,18 @@ STATIC FUNCTION _menu_specif()
    AAdd( _opcexe, {|| P_Trfp2() } )
    AAdd( _opc, "3. prenos konta u ng" )
    AAdd( _opcexe, {|| P_PKonto() } )
-   AAdd( _opc, "4. limiti po ugovorima" )
-   AAdd( _opcexe, {|| P_ULimit() } )
-   AAdd( _opc, "5. sheme kontiranja obracuna LD" )
-   AAdd( _opcexe, {|| P_TRFP3() } )
+
+  // AAdd( _opc, "4. limiti po ugovorima" )
+  // AAdd( _opcexe, {|| P_ULimit() } )
+
+  // AAdd( _opc, "5. sheme kontiranja obracuna LD" )
+  // AAdd( _opcexe, {|| P_TRFP3() } )
    AAdd( _opc, "6. kamatne stope" )
    AAdd( _opcexe, {|| P_KS() } )
 
    f18_menu( "sopc", .F., _izbor, _opc, _opcexe )
 
-   RETURN
+   RETURN .T.
 
 
 

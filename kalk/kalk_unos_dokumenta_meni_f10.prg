@@ -43,7 +43,7 @@ FUNCTION kalk_meni_f10()
    AAdd( aOpcExe, {|| kalk_generisi_ip() } )
 
    AAdd( aOpc,  "8. generacija nivelacije prod. na osnovu niv. za drugu prod" )
-   AAdd( aOpcExe, {||  GenNivP() } )
+   AAdd( aOpcExe, {||  kalk_generisi_niv_prodavnica_na_osnovu_druge_niv() } )
 
    AAdd( aOpc,  "9. parametri obrade - nc / obrada sumnjivih dokumenata" )
    AAdd( aOpcExe, {|| kalk_par_metoda_nc() } )

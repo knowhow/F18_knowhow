@@ -220,14 +220,19 @@ FUNCTION edit_fin_priprema()
       @ m_x + 11, Col() + 2 SAY "K2" GET _k2 PICT "@!"
    ENDIF
 
+
    IF _fin_params[ "fin_k3" ]
+/*
       IF my_get_from_ini( "FIN", "LimitiPoUgovoru_PoljeK3", "N", SIFPATH ) == "D"
          _k3 := K3Iz256( _k3 )
          @ m_x + 11, Col() + 2 SAY "K3" GET _k3 VALID Empty( _k3 ) .OR. P_ULIMIT( @_k3 ) PICT "999"
       ELSE
+*/
+
          @ m_x + 11, Col() + 2 SAY "K3" GET _k3 PICT "@!"
-      ENDIF
+//      ENDIF
    ENDIF
+
 
    IF _fin_params[ "fin_k4" ]
       IF _fakt_params[ "fakt_vrste_placanja" ]
@@ -650,7 +655,7 @@ FUNCTION o_fin_edit()
    my_close_all_dbf()
 
    O_VRSTEP
-   O_ULIMIT
+  // O_ULIMIT
 
    IF ( IsRamaGlas() )
       O_FAKT_OBJEKTI

@@ -32,7 +32,7 @@
 #define F_REFER     29
 #define F_STRINGS   30
 #define F_TRFP2     31
-#define F_TRFP3     32
+//#define F_TRFP3     32
 #define F__ROBA     33
 #define F_OBJEKTI   34
 #define F_PRODAJA   35
@@ -59,7 +59,7 @@
 #define F_BUIZ     68
 #define F__KONTO   69
 #define F__PARTN   70
-#define F_ULIMIT   72
+//#define F_ULIMIT   72
 #define F_FIDOKS   73
 #define F_FIDOKS2  74
 #define F_P_UPDATE   77

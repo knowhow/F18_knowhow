@@ -372,7 +372,7 @@ FUNCTION cre_all_fin( ver )
    AFTER_CREATE_INDEX
 
 
-   // -----------------------------------------------------------
+   /*
    // FIN_ULIMIT
    // -----------------------------------------------------------
 
@@ -389,7 +389,7 @@ FUNCTION cre_all_fin( ver )
    CREATE_INDEX( "2", "Id+idpartner", _alias )
    AFTER_CREATE_INDEX
 
-
+*/
 
    // -----------------------------------------------------------
    // FIN_KONTO

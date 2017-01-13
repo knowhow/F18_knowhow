@@ -28,7 +28,7 @@
 #xcommand O_TARIFA   => o_tarifa()
 #xcommand O_TRFP     => select (F_TRFP)    ;  use_sql_trfp()      ; set order to tag "ID"
 #xcommand O_TRFP2    => select (F_TRFP2)   ;  use_sql_trfp2()     ; set order to tag "ID"
-#xcommand O_TRFP3    => select (F_TRFP3)   ;  use_sql_sif  ("trfp3")     ; set order to tag "ID"
+//#xcommand O_TRFP3    => select (F_TRFP3)   ;  use_sql_sif  ("trfp3")     ; set order to tag "ID"
 #xcommand O_TRMP     => select (F_TRMP)    ;  use_sql_sif  ("trmp")      ; set order to tag "ID"
 #xcommand O_TNAL     => select (F_TNAL)    ;  use_sql_sif  ( "tnal" )  ; set order to tag "ID"
 #xcommand O_TDOK     => select (F_TDOK)    ;  use_sql_sif  ( "tdok" )  ; set order to tag "ID"
@@ -52,7 +52,7 @@
 
 #xcommand O_RELATION => SELECT (F_RELATION);  my_use ("relation")  ; set order to tag "1"
 #xcommand O_FINMAT   => select (F_FINMAT)  ;  my_use ("finmat")    ; set order to tag "1"
-#xcommand O_ULIMIT   => o_ulimit()
+//#xcommand O_ULIMIT   => o_ulimit()
 #xcommand O_TIPBL    => SELECT (F_TIPBL)   ;  my_use ("tipbl")      ; set order to tag "1"
 #xcommand O_VRNAL    => o_vrnal()
 

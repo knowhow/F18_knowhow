@@ -21,6 +21,7 @@
  *   param: dy
  *   param: lBlag
  */
+ 
 FUNCTION P_KontoFin( cId, dx, dy, lBlag )
 
    LOCAL i
@@ -368,12 +369,12 @@ FUNCTION P_ParEK( cId, dx, dy )
 
 
 
-/* 
+/*
  *     Otvara sifrarnik shema kontiranja obracuna LD
  *   param: cId
  *   param: dx
  *   param: dy
- */
+
 
 FUNCTION P_TRFP3( cId, dx, dy )
 
@@ -407,7 +408,7 @@ FUNCTION P_TRFP3( cId, dx, dy )
 
    RETURN PostojiSifra( F_TRFP3, 1, 15, 76, "Sheme kontiranja obracuna LD", @cId, dx, dy )
 
-
+ */
 
 
 
@@ -440,7 +441,7 @@ FUNCTION P_Roba_fin( CId, dx, dy )
  *   param: cId
  *   param: dx
  *   param: dy
- */
+
 
 FUNCTION P_ULIMIT( cId, dx, dy )
 
@@ -452,4 +453,5 @@ FUNCTION P_ULIMIT( cId, dx, dy )
       }
    FOR i := 1 TO Len( ImeKol ); AAdd( Kol, i ); NEXT
 
-   RETURN PostojiSifra( F_ULIMIT, 1, 10, 55, "Sifrarnik limita po ugovorima", @cid, dx, dy )
+  -- RETURN PostojiSifra( F_ULIMIT, 1, 10, 55, "Sifrarnik limita po ugovorima", @cid, dx, dy )
+ */

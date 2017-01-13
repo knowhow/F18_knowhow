@@ -84,10 +84,10 @@ FUNCTION o_sint()
    RETURN use_sql_sint()
 
 
-
+/*
 FUNCTION o_ulimit()
    RETURN o_dbf_table( F_ULIMIT, "ulimit", "ID" )
-
+*/
 
 FUNCTION o_vrnal()
    RETURN o_dbf_table( F_VRNAL, "vrnal", "1" )

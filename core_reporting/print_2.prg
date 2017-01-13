@@ -406,7 +406,7 @@ FUNCTION gpPicH( nRows )
 
    IF nRows > 0
       cPom := PadL( AllTrim( Str( nRows ) ), 2, "0" )
-      Setpxlat()
+  
       QQOut( "#%PH0" + cPom + "#" )
    ENDIF
 

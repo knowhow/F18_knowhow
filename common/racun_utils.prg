@@ -42,7 +42,7 @@ FUNCTION sjeci_traku( cSekv )
    IF Empty( cSekv )
       RETURN .F.
    ENDIF
-   Setpxlat()
+
    IF gPrinter <> "R"
       QQOut( cSekv )
    ENDIF
@@ -54,11 +54,11 @@ FUNCTION sjeci_traku( cSekv )
 // otvaranje ladice
 FUNCTION otvori_ladicu( cSekv )
 
-   // {
+
    IF Empty( cSekv )
       RETURN
    ENDIF
-   Setpxlat()
+
    IF gPrinter <> "R"
       QQOut( cSekv )
    ENDIF

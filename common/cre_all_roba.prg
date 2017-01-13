@@ -148,11 +148,11 @@ FUNCTION cre_sif_roba( ver )
    CREATE_INDEX( "Naziv", "LEFT(Naziv,40)+id", _alias )
 
 
-   // --------------------------------------------------------
+   /*
    // STRINGS
    // --------------------------------------------------------
 
-   _alias := "STRINGS"
+   -- _alias := "STRINGS"
    _table_name := "strings"
 
    aDBf := g_str_fields()
@@ -166,7 +166,7 @@ FUNCTION cre_sif_roba( ver )
    CREATE_INDEX( "5", "OZNAKA+STR(VEZA_1,10,0)+STR(VEZA_2,10,0)", _alias )
 
    RETURN .T.
-
+*/
 
 STATIC FUNCTION g_str_fields()
 

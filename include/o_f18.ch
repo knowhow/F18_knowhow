@@ -63,7 +63,7 @@
 #xcommand O_G_UG_P   => select(F_G_UG_P)   ;  my_use  ("gen_ug_p")  ; set order to tag "DAT_GEN"
 
 // grupe i karakteristike
-#xcommand O_STRINGS  => select(F_STRINGS)  ;  my_use ("strings")   ; set order to tag "1"
+// #xcommand O_STRINGS  => select(F_STRINGS)  ;  my_use ("strings")   ; set order to tag "1"
 
 // temp tabela za izvjestaje
 #xcommand O_R_EXP    => select (F_R_EXP)   ; my_usex ( "r_export" )

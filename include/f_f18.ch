@@ -30,7 +30,7 @@
 #define F_RJ        27
 #define F_OPS       28
 #define F_REFER     29
-#define F_STRINGS   30
+//#define F_STRINGS   30
 #define F_TRFP2     31
 //#define F_TRFP3     32
 #define F__ROBA     33

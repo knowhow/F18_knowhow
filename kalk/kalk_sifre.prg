@@ -80,12 +80,12 @@ FUNCTION KalkRobaBlock( Ch )
 /*
    ELSEIF Upper( Chr( Ch ) ) == "O"
 
-      IF roba->( FieldPos( "strings" ) ) == 0
+--      IF roba->( FieldPos( "strings" ) ) == 0
          RETURN 6
       ENDIF
       TB:Stabilize()
       PushWA()
-      m_strings( roba->strings, roba->id )
+  --    m_strings( roba->strings, roba->id )
       SELECT roba
       PopWa()
       RETURN 7

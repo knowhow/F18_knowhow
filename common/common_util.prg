@@ -29,8 +29,7 @@ FUNCTION nToLongC( nN )
    RETURN cStr
 
 
-// --------------------------------------------------------------
-// --------------------------------------------------------------
+
 FUNCTION CLongToN( cLong )
 
    LOCAL i, nExp
@@ -47,8 +46,7 @@ FUNCTION CLongToN( cLong )
    RETURN nRez
 
 
-// ---------------------------------------
-// ---------------------------------------
+
 FUNCTION Sleep( nSleep )
 
    LOCAL nStart, nCh

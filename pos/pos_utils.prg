@@ -28,7 +28,7 @@ FUNCTION gSjeciStr()
 
 FUNCTION gOtvorStr()
 
-   Setpxlat()
+
    IF gPrinter <> "R"
       QQOut( gOtvorStr )
    ENDIF

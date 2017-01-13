@@ -103,8 +103,7 @@ FUNCTION kalk_get_1_ip()
    _pkonto := _idkonto
 
    _mu_i := ""
-   _pu_i := "I"
-   // inventura
+   _pu_i := "I" // inventura
 
    nStrana := 3
 
@@ -152,7 +151,6 @@ FUNCTION kalk_generisi_ip()
 
    SELECT koncij
    SEEK Trim( cIdkonto )
-
 
    find_kalk_by_pkonto_idroba( cIdFirma, cIdKonto )
 

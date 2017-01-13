@@ -41,8 +41,7 @@ FUNCTION ld_specifikacija_plate_samostalni_obr_2002()
    PRIVATE gPici3 := "999,999,999,999.99"
 
    FOR i := 1 TO nGrupaPoslova + 1
-      AAdd( aSpec, { 0, 0, 0, 0 } )
-      // br.bodova, br.radnika, minuli rad, uneto
+      AAdd( aSpec, { 0, 0, 0, 0 } )  // br.bodova, br.radnika, minuli rad, uneto
    NEXT
 
    cIdRJ := "  "
@@ -301,7 +300,7 @@ FUNCTION ld_specifikacija_plate_samostalni_obr_2002()
       nUNetoOsnova += nNetoOsn
 
 
-      // prvo doprinosi i bruto osnova ....
+      // prvo doprinosi i bruto osnova
       nPojBrOsn := bruto_osn( nNetoOsn, cRTR, nKoefLO, nRSpr_koef )
       nBrutoOsnova += nPojBrOsn
 

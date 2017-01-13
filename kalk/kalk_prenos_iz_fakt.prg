@@ -335,7 +335,7 @@ FUNCTION fakt_kalk_prenos( cIndik )
       nRBr := 0
 
       @ m_x + 1, m_y + 2 SAY "Broj kalkulacije " + cTipKalk + " -" GET cBrKalk PICT "@!"
-      @ m_x + 1, Col() + 2 SAY "Datum:" GET dDatKalk
+
       @ m_x + 3, m_y + 2 SAY "Konto zaduzuje :" GET cIdKonto  PICT "@!" WHEN !glBrojacPoKontima VALID P_Konto( @cIdKonto )
       @ m_x + 4, m_y + 2 SAY "Konto razduzuje:" GET cIdKonto2 PICT "@!" VALID Empty( cidkonto2 ) .OR. P_Konto( @cIdKonto2 )
       // IF gNW <> "X"
@@ -343,6 +343,7 @@ FUNCTION fakt_kalk_prenos( cIndik )
       // ENDIF
 
       cFaktFirma := cIdFirma
+
 
       @ m_x + 6, m_y + 2 SAY Space( 60 )
       @ m_x + 6, m_y + 2 SAY "Broj dokumenta u FAKT: " GET cFaktFirma
@@ -388,6 +389,10 @@ FUNCTION fakt_kalk_prenos( cIndik )
          cIdPartner := fakt->idpartner // uzmi i partnera za prebaciti
          cBeze := " "
 
+         dDatKalk := fakt->datdok
+         @ m_x + 13, m_y + 2 SAY "Datum kalk:" GET dDatKalk
+
+
          IF cTipKalk $ "10"
 
             @ m_x + 14, m_y + 2 SAY8 "Šifra partnera:"  GET cIdpartner PICT "@!" VALID p_partner( @cIdPartner )
@@ -398,7 +403,7 @@ FUNCTION fakt_kalk_prenos( cIndik )
          ENDIF
 
          SELECT kalk_pripr
-         LOCATE FOR brfaktp = cBrDok
+         LOCATE FOR brfaktp == cBrDok
 
          IF Found() // da li je faktura je vec prenesena ?
             Beep( 4 )

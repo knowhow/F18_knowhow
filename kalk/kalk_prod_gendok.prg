@@ -21,8 +21,8 @@ FUNCTION kalk_prod_generacija_dokumenata()
    LOCAL _opcexe := {}
    LOCAL _izbor := 1
 
-   AAdd( _opc, "1. početno stanje                                        " )
-   AAdd( _opcexe, {|| kalk_prod_pocetno_stanje() } )
+   AAdd( _opc, "1. početno stanje prodavnica                                 " )
+   AAdd( _opcexe, {|| () } )
    // TODO: izbaciti
    // AADD(_opc, "2. pocetno stanje (stara opcija/legacy)")
    // AADD(_opcexe, {|| PocStProd() } )
@@ -100,7 +100,7 @@ STATIC FUNCTION kalk_prod_gen_ip()
    LOCAL _opcexe := {}
    LOCAL _izbor := 1
 
-   AAdd( _opc, "1. dokument inventure                       " )
+   AAdd( _opc, "1. dokument inventura prodavnica               " )
    AAdd( _opcexe, {|| kalk_generisi_ip() } )
    AAdd( _opc, "2. inventura-razlika prema postojecoj IP " )
    AAdd( _opcexe, {|| gen_ip_razlika() } )

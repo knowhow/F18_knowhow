@@ -358,7 +358,6 @@ STATIC FUNCTION ld_unos_obracuna_box( lSaveObracun )
    READ
 
    IF _radni_sati == "D"
-
       nTArea := Select()
       nSatiPreth := 0
       nSatiPreth := FillRadSati( cIdRadn, _radSat )
@@ -381,7 +380,7 @@ STATIC FUNCTION ld_unos_obracuna_box( lSaveObracun )
 
    BoxC()
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -543,7 +542,7 @@ STATIC FUNCTION kalkulacija_obracuna_plate_za_radnika( lNovi )
 
    ENDIF
 
-   RETURN
+   RETURN .T.
 
 
 

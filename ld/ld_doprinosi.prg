@@ -18,6 +18,8 @@
 // ------------------------------------------------
 FUNCTION u_dopr_iz( nDopOsn, cRTipRada )
 
+   LOCAL nU_dop_iz
+
    SELECT dopr
    GO TOP
 

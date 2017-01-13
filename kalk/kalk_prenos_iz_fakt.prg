@@ -457,6 +457,7 @@ FUNCTION fakt_kalk_prenos( cIndik )
             hRec[ "kolicina" ] := fakt->kolicina
             hRec[ "idroba" ] := fakt->idroba
             hRec[ "nc" ] := roba->nc
+            hRec[ "fcj" ] := roba->nc
             hRec[ "vpc" ] := fakt->cijena
             hRec[ "rabatv" ] := fakt->rabat
             hRec[ "mpc" ] := fakt->porez
@@ -475,7 +476,6 @@ FUNCTION fakt_kalk_prenos( cIndik )
                ENDIF
             ENDIF
 
-            // update-uj zapis
             dbf_update_rec( hRec )
 
             SELECT fakt

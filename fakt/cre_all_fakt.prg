@@ -265,7 +265,7 @@ FUNCTION cre_all_fakt( ver )
    DokAttr():new( "fakt", F_FAKT_ATTR ):create_dbf()
 
    // kreiraj relacije : RELATION
-   cre_relation( ver )
+   cre_relacije_fakt( ver )
 
    create_porezna_faktura_temp_dbfs()
 

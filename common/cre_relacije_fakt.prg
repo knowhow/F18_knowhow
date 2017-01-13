@@ -12,10 +12,11 @@
 #include "f18.ch"
 
 
-// -----------------------------------------
-// kreiranje tabele relacija
-// -----------------------------------------
-FUNCTION cre_relation( ver )
+/*
+ kreiranje tabele relacija, koristi vindija
+
+*/
+FUNCTION cre_relacije_fakt( ver )
 
    LOCAL aDbf
    LOCAL _table_name, _alias, _created

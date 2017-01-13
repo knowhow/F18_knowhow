@@ -19,7 +19,7 @@ STATIC s_lInCreAllDbfs := .F.
 
 FUNCTION cre_all_dbfs( ver )
 
-//   LOCAL _first_start := fetch_metric( "f18_first_start", my_user(), 0 )
+   // LOCAL _first_start := fetch_metric( "f18_first_start", my_user(), 0 )
 
    s_lInCreAllDbfs := .T.
 
@@ -49,7 +49,7 @@ FUNCTION cre_all_dbfs( ver )
    cre_sif_partn( ver )
    cre_sif_adrese( ver )
 
-   //proizvoljni_izvjestaji_db_cre( ver )
+   // proizvoljni_izvjestaji_db_cre( ver )
    cre_fin_mat( ver )
 
    IF f18_use_module( "fin" )
@@ -270,5 +270,45 @@ FUNCTION dbCreate2( cImeDbf, struct_dbf, driver )
    ENDIF
 
    dbCreate( cImeDbf, struct_dbf, driver )
+
+   RETURN .T.
+
+
+
+
+
+FUNCTION fill_tbl_valute()
+
+   LOCAL _rec, _tmp, _id, _qry
+   LOCAL _table := F18_PSQL_SCHEMA_DOT + "valute"
+
+   _tmp := table_count( _table )
+
+   IF _tmp == 0
+
+      _qry := "INSERT INTO " + _table
+      _qry += " ( id, naz, naz2, datum, tip, kurs1, kurs2, kurs3 ) "
+      _qry += " VALUES( "
+      _qry += " '000', "
+      _qry += " 'KONVERTIBILNA MARKA', "
+      _qry += " 'KM ', "
+      _qry += sql_quote( CToD( "01.01.04" ) ) + ", "
+      _qry += " 'D', "
+      _qry += " 1, 1, 1 "
+      _qry += " ); "
+      _qry += "INSERT INTO " + _table
+      _qry += " ( id, naz, naz2, datum, tip, kurs1, kurs2, kurs3 ) "
+      _qry += " VALUES( "
+      _qry += " '978', "
+      _qry += " 'EURO', "
+      _qry += " 'EUR', "
+      _qry += sql_quote( CToD( "01.01.04" ) ) + ", "
+      _qry += " 'P', "
+      _qry += " 0.51128, 0.51128, 0.51128 "
+      _qry += " ); "
+
+      run_sql_query( _qry )
+
+   ENDIF
 
    RETURN .T.

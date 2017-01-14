@@ -164,10 +164,8 @@ STATIC FUNCTION pos_fiscal_stavke_racuna( id_pos, tip_dok, datum, rn_broj, storn
       RETURN NIL
    ENDIF
 
-   DO WHILE !Eof() .AND. field->idpos == id_pos ;
-         .AND. field->idvd == tip_dok ;
-         .AND. DToS( field->datum ) == DToS( datum ) ;
-         .AND. field->brdok == rn_broj
+   DO WHILE !Eof() .AND. field->idpos == id_pos .AND. field->idvd == tip_dok  ;
+      .AND. DToS( field->datum ) == DToS( datum ) .AND. field->brdok == rn_broj
 
       _reklamni_racun := ""
       _rabat := 0

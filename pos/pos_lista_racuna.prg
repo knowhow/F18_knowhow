@@ -212,13 +212,6 @@ STATIC FUNCTION lista_racuna_key_handler()
 
    ENDIF
 
-   IF Upper( Chr( LastKey() ) ) == "Z"
-      PushWA()
-      print_zak_br( pos_doks->zak_br )
-      o_pos_tables()
-      PopWa()
-      RETURN DE_REFRESH
-   ENDIF
 
    IF ch == K_CTRL_V
 

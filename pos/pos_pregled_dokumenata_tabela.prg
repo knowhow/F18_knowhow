@@ -286,8 +286,9 @@ FUNCTION pos_stampa_dokumenta_key_handler( dDat0, dDat1 )
          PrepisZad( "OTPIS " )
       CASE pos_doks->IdVd == VD_REK
          PrepisZad( "REKLAMACIJA" )
-      CASE pos_doks->IdVd == VD_RZS
-         PrepisRazd()
+  //    CASE pos_doks->IdVd == VD_RZS
+  //       PrepisRazd()
+
       CASE pos_doks->IdVd == "IN"
          PrepisInvNiv( .T. )
       CASE pos_doks->IdVd == VD_NIV

@@ -53,7 +53,6 @@ STATIC FUNCTION cre_priprz()
 
 
 
-
 STATIC FUNCTION dodaj_u_sifrarnik_prioriteta( cSifra, cPrioritet, cOpis )
 
    LOCAL lOk := .T.

@@ -59,52 +59,6 @@ STATIC FUNCTION unos_stavki_racuna( lNovi )
 
 
 
-STATIC FUNCTION definisanje_stolova( cSto )
-
-   LOCAL cStZak
-   LOCAL nStStanje
-   LOCAL lRet := .F.
-
-   SET CURSOR ON
-
-   Box(, 6, 40 )
-
-   cStZak := "N"
-
-   @ m_x + 2, m_y + 10 SAY "Unesi broj stola:" GET cSto VALID ( !Empty( cSto ) .AND. Val( cSto ) > 0 ) PICT "999"
-
-   READ
-
-   IF LastKey() == K_ESC
-      MsgBeep( "Unos stola obavezan !" )
-      RETURN lRet
-   ENDIF
-
-   nStStanje := g_stanje_stola( Val( cSto ) )
-
-   @ m_x + 4, m_y + 2 SAY "Prethodno stanje stola:   " + AllTrim( Str( nStStanje ) ) + " KM"
-
-   IF nStStanje > 0
-      @ m_x + 6, m_y + 2 SAY8 "Zaključiti prethodno stanje (D/N)?" GET cStZak VALID cStZak $ "DN" PICT "@!"
-   ENDIF
-
-   READ
-
-   BoxC()
-
-   IF LastKey() == K_ESC
-      MsgBeep( "Unos novih stavki prekinut !" )
-      RETURN lRet
-   ENDIF
-
-   lRet := .T.
-
-   IF cStZak == "D"
-      zak_sto( Val( cSto ) )
-   ENDIF
-
-   RETURN lRet
-
 
 
 FUNCTION zakljuci_pos_racun()

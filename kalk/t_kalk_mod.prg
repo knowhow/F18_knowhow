@@ -191,7 +191,8 @@ METHOD TKalkMod:set_module_gvars()
    PUBLIC gCache := "N"
 
    // matrica koja sluzi u svrhu kontrole NC
-   PUBLIC aNC_ctrl := {}
+   //PUBLIC aNC_ctrl := {}
+
    // limit za otvorene stavke
    PUBLIC gnLOst := -99
 

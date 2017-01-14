@@ -510,7 +510,7 @@ FUNCTION kalk_unos_nova_stavka()
    LOCAL _rok, _opis
    LOCAL _rbr_uvecaj := 0
 
-   aNC_ctrl := {} // isprazni kontrolnu matricu
+   //aNC_ctrl := {} // isprazni kontrolnu matricu
 
    _rok := fetch_metric( "kalk_definisanje_roka_trajanja", NIL, "N" ) == "D"
    _opis := fetch_metric( "kalk_dodatni_opis_kod_unosa_dokumenta", NIL, "N" ) == "D"

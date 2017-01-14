@@ -791,14 +791,14 @@ FUNCTION p_nc_popup( cIdRoba )
 
    LOCAL nScan
 
-   nScan := AScan( aNC_ctrl, {| xVal| xVal[ 1 ] == cIdRoba } )
+   //nScan := AScan( aNC_ctrl, {| xVal| xVal[ 1 ] == cIdRoba } )
 
-   IF nScan <> 0
+   //IF nScan <> 0
 
-      nOdstupanje := Round( aNC_ctrl[ nScan, 5 ], 2 ) // prikazi odstupanje NC !
-      MsgBeep( "Odstupanje u odnosu na zadnji ulaz je#" + AllTrim( Str( nOdstupanje ) ) + " %" )
+  //    nOdstupanje := Round( aNC_ctrl[ nScan, 5 ], 2 ) // prikazi odstupanje NC !
+  //    MsgBeep( "Odstupanje u odnosu na zadnji ulaz je#" + AllTrim( Str( nOdstupanje ) ) + " %" )
 
-   ENDIF
+   //ENDIF
 
    RETURN .T.
 

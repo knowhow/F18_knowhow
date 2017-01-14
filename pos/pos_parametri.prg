@@ -144,41 +144,6 @@ FUNCTION pos_param_principi_rada()
 
 
 
-// -------------------------------------------------------------
-// -------------------------------------------------------------
-FUNCTION ParPrUgost()
-
-   LOCAL aNiz := {}
-   LOCAL cPrevPSS
-   LOCAL cPom := ""
-   PRIVATE cIdPosOld := gIdPos
-
-   cPrevPSS := gPocStaSmjene
-
-   SET CURSOR ON
-
-   aNiz := { { "Da li se vode trebovanja (D/N)", "gVodiTreb", "gVodiTreb$'DN'", "@!", } }
-   AAdd ( aNiz, { "Da li se koriste radni racuni(D/N)", "gRadniRac", "gRadniRac$'DN'", "@!", } )
-   AAdd ( aNiz, { "Ako se ne koriste, da li se racun zakljucuje direktno (D/N)", "gDirZaklj", "gDirZaklj$'DN'", "@!", } )
-   AAdd ( aNiz, { "Da li je broj stola obavezan (D/N/0)", "gBrojSto", "gBrojSto$'DN0'", "@!", } )
-   AAdd ( aNiz, { "Dijeljenje racuna, spec.opcije nad racunom (D/N)", "gRnSpecOpc", "gRnSpecOpc$'DN'", "@!", } )
-   AAdd ( aNiz, { "Da li se po zakljucenju smjene stampa stanje puktova (D/N)", "gStamStaPun", "gStamStaPun$'DN'", "@!", } )
-
-   VarEdit( aNiz, 2, 2, 24, 79, "PARAMETRI RADA PROGRAMA - UGOSTITELJSTVO", "B1" )
-
-   IF LastKey() <> K_ESC
-      MsgO( "Azuriram parametre" )
-      set_metric( "VodiTrebovanja", nil, gVodiTreb )
-      set_metric( "DirektnoZakljucivanjeRacuna", nil, gDirZaklj )
-      set_metric( "RacunSpecifOpcije", nil, gRnSpecOpc )
-      set_metric( "RadniRacuni", nil, gRadniRac )
-      set_metric( "BrojStolova", nil, gBrojSto )
-      set_metric( "StampanjePunktova", nil, gStamStaPun )
-      MsgC()
-   ENDIF
-
-   RETURN
-
 
 
 // --------------------------------------------
@@ -224,7 +189,6 @@ FUNCTION ParPrBase()
 
       MsgO( "Azuriram parametre" )
 
-      set_metric( "VodiTrebovanja", nil, gVodiTreb )
       set_metric( "AzuriranjeCijena", nil, gZadCij )
       set_metric( "VodiOdjeljenja", nil, gVodiOdj )
 

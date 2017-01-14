@@ -170,8 +170,7 @@ METHOD set_module_gvars()
    PUBLIC SC_Opisi[ 5 ]      // nazivi (opisi) setova cijena
    PUBLIC gSmjena := " "   // identifikator smjene
    PUBLIC gDatum           // datum
-   PUBLIC gVodiTreb        // da li se vode trebovanja (ako se vode, onda se i
-   // stampaju)
+
    PUBLIC gVodiOdj
    PUBLIC gRadniRac        // da li se koristi princip radnih racuna ili se
    // racuni furaju kao u trgovini
@@ -305,7 +304,6 @@ METHOD set_module_gvars()
    PUBLIC gFirTel := Space( 20 )
 
    // fiskalni parametri
-   gVodiTreb := "N"
    gVodiOdj := "N"
    gBrojSto := "0"
    gRnSpecOpc := "N"
@@ -347,7 +345,6 @@ METHOD set_module_gvars()
    // principi rada kase
    cPrevPSS := gPocStaSmjene
 
-   gVodiTreb := fetch_metric( "VodiTrebovanja", nil, gVodiTreb )
    gZadCij := fetch_metric( "AzuriranjeCijena", nil, gZadCij )
    gVodiOdj := fetch_metric( "VodiOdjeljenja", nil, gVodiOdj )
    gRadniRac := fetch_metric( "RadniRacuni", nil, gRadniRac )

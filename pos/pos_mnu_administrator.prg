@@ -71,11 +71,6 @@ FUNCTION pos_admin_menu()
    AAdd( opc, "X. briši nepostojeće dokumente" )
    AAdd( opcexe, {|| pos_brisi_nepostojece_dokumente() } )
 
-   IF gStolovi == "D"
-      AAdd( opc, "7. zakljucivanje postojecih racuna " )
-      AAdd( opcexe, {|| zak_sve_stolove() } )
-   ENDIF
-
    IF ( KLevel < L_UPRAVN )
 
       AAdd( opc, "---------------------------" )

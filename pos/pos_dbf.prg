@@ -625,7 +625,7 @@ FUNCTION pos_import_fmk_roba()
 
    CLOSE ALL
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -634,6 +634,7 @@ FUNCTION pos_brisi_nepostojece_dokumente()
    LOCAL cSql, oQry
    LOCAL cIdPos, cIdVd, cBrDok, dDatum
    LOCAL nCount := 0
+   LOCAL oRow
 
    IF !spec_funkcije_sifra( "ADMIN" )
       MsgBeep( "Opcija nije dostupna !" )

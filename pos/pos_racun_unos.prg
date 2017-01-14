@@ -130,9 +130,6 @@ FUNCTION pos_unos_racuna()
    _prebacen := OBR_NIJE
    _mu_i := R_I
 
-   IF gStolovi == "D"
-      _sto_br := Val( cSto )
-   ENDIF
 
    DO WHILE .T.
 

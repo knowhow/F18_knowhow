@@ -51,15 +51,11 @@ STATIC FUNCTION unos_stavki_racuna( lNovi )
       cSto := _pos_pripr->sto
    ENDIF
 
-   IF lNovi .AND. gStolovi == "D"
-      IF !definisanje_stolova( @cSto )
-         RETURN
-      ENDIF
-   ENDIF
+
 
    pos_unos_racuna( cBrojRacuna, cSto )
 
-   RETURN
+   RETURN .T.
 
 
 

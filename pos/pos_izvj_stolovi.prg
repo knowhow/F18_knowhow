@@ -338,12 +338,6 @@ FUNCTION print_zak_br( nZakBr )
    add_drntext( "R07", gRnPTxt2 )
    add_drntext( "R08", gRnPTxt3 )
 
-   IF gStolovi == "D"
-      // broj stola
-      add_drntext( "R11", cBrStola )
-      // vezni racuni
-      add_drntext( "R12", cVezRacuni )
-   ENDIF
 
    // Broj linija potrebnih da se ocjepi traka
    add_drntext( "P12", AllTrim( Str( nFeedLines ) ) )

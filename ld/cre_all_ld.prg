@@ -326,6 +326,7 @@ FUNCTION cre_all_ld( ver )
    CREATE_INDEX( "3", "idkred+naosnovu+idradn+str(godina)+str(mjesec)", _alias )
    CREATE_INDEX( "4", "str(godina)+str(mjesec)+idradn+naosnovu", _alias )
    AFTER_CREATE_INDEX
+   
 
    // --------------------------------------------------
    // _RADKR.DBF

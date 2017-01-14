@@ -601,7 +601,7 @@ FUNCTION Predhodni( i, cVar, cObr )
    RETURN 0
 
 
-// ***********************************
+
 FUNCTION PrimSM( cOznaka, cTipPr )
 
    //
@@ -636,8 +636,7 @@ FUNCTION PrimSM( cOznaka, cTipPr )
 
    RETURN nRez
 
-// *************************
-// *************************
+
 FUNCTION Fill( xValue, xIzn )
 
    IF Type( xIzn ) <> "UI" .AND. Type( xIzn ) <> "UE"

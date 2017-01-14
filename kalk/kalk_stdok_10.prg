@@ -32,6 +32,7 @@ FUNCTION kalk_stampa_dok_10()
    LOCAL nTot, nTot1, nTot2, nTot3, nTot4, nTot5, nTot6, nTot7, nTot8, nTot9, nTotA, nTotB, nTotP, nTotM
    LOCAL nU, nU1, nU2, nU3, nU4, nU5, nU6, nU7, nU8, nU9, nUA, nUP, nUM
    LOCAL cIdd
+   LOCAL nKolicina
 
    IF is_legacy_ptxt()
       RETURN kalk_stampa_dok_10_txt()
@@ -76,9 +77,9 @@ FUNCTION kalk_stampa_dok_10()
       check_nova_strana( bZagl, s_oPDF )
 
       IF gKalo == "1"
-         SKol := field->Kolicina - field->GKolicina - field->GKolicin2
+         nKolicina := field->Kolicina - field->GKolicina - field->GKolicin2
       ELSE
-         SKol := field->Kolicina
+         nKolicina := field->Kolicina
       ENDIF
 
       nPDVStopa := tarifa->opp
@@ -88,11 +89,11 @@ FUNCTION kalk_stampa_dok_10()
       nTot1 += ( nU1 := Round( FCj2 * ( GKolicina + GKolicin2 ), gZaokr ) )
 
       nTot2 += ( nU2 := Round( -Rabat / 100 * FCJ * Kolicina, gZaokr ) )
-      nTot3 += ( nU3 := Round( nPrevoz * SKol, gZaokr ) )
-      nTot4 += ( nU4 := Round( nBankTr * SKol, gZaokr ) )
-      nTot5 += ( nU5 := Round( nSpedTr * SKol, gZaokr ) )
-      nTot6 += ( nU6 := Round( nCarDaz * SKol, gZaokr ) )
-      nTot7 += ( nU7 := Round( nZavTr * SKol, gZaokr ) )
+      nTot3 += ( nU3 := Round( nPrevoz * nKolicina, gZaokr ) )
+      nTot4 += ( nU4 := Round( nBankTr * nKolicina, gZaokr ) )
+      nTot5 += ( nU5 := Round( nSpedTr * nKolicina, gZaokr ) )
+      nTot6 += ( nU6 := Round( nCarDaz * nKolicina, gZaokr ) )
+      nTot7 += ( nU7 := Round( nZavTr * nKolicina, gZaokr ) )
       nTot8 += ( nU8 := Round( NC *    ( Kolicina - Gkolicina - GKolicin2 ), gZaokr ) )
       nTot9 += ( nU9 := Round( nMarza * ( Kolicina - Gkolicina - GKolicin2 ), gZaokr ) )
       nTotA += ( nUA := Round( VPC   * ( Kolicina - Gkolicina - GKolicin2 ), gZaokr ) )

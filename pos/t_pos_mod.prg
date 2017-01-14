@@ -170,7 +170,6 @@ METHOD set_module_gvars()
    PUBLIC SC_Opisi[ 5 ]      // nazivi (opisi) setova cijena
    PUBLIC gSmjena := " "   // identifikator smjene
    PUBLIC gDatum           // datum
-   PUBLIC gStolovi := "N"
    PUBLIC gVodiTreb        // da li se vode trebovanja (ako se vode, onda se i
    // stampaju)
    PUBLIC gVodiOdj
@@ -351,7 +350,6 @@ METHOD set_module_gvars()
    gVodiTreb := fetch_metric( "VodiTrebovanja", nil, gVodiTreb )
    gZadCij := fetch_metric( "AzuriranjeCijena", nil, gZadCij )
    gVodiOdj := fetch_metric( "VodiOdjeljenja", nil, gVodiOdj )
-   gStolovi := fetch_metric( "Stolovi", nil, gStolovi )
    gRadniRac := fetch_metric( "RadniRacuni", nil, gRadniRac )
    gDirZaklj := fetch_metric( "DirektnoZakljucivanjeRacuna", nil, gDirZaklj )
    gRnSpecOpc := fetch_metric( "RacunSpecifOpcije", nil, gRnSpecOpc )

@@ -575,7 +575,7 @@ STATIC FUNCTION _cre_pom_table()
 
    SELECT pos_doks
 
-   NaprPom( aDbf )
+   pos_cre_pom_dbf( aDbf )
 
    SELECT ( F_POM )
    IF Used()

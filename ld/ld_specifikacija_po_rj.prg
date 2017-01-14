@@ -136,8 +136,10 @@ FUNCTION ld_specifikacija_po_rj()
          SELECT LD
       NEXT
       FOR i := 1 TO Len( aPrimK )
-         SELECT LD; cKljuc := Str( godina, 4 ) + Str( mjesec, 2 ) + idradn
-         SELECT RADKR; SEEK cKljuc
+         SELECT LD
+         cKljuc := Str( godina, 4 ) + Str( mjesec, 2 ) + idradn
+         SELECT RADKR
+         SEEK cKljuc
          IF Found()
             DO WHILE !Eof() .AND. Str( godina, 4 ) + Str( mjesec, 2 ) + idradn == cKljuc
                cIdKred := idkred
@@ -206,7 +208,7 @@ FUNCTION ld_specifikacija_po_rj()
 
    my_close_all_dbf()
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -216,7 +218,7 @@ STATIC FUNCTION zapuj_pomocnu_tabelu()
    SELECT ldt22
    my_dbf_zap()
 
-   RETURN
+   RETURN .T.
 
 
 
@@ -234,7 +236,7 @@ STATIC FUNCTION otvori_tabele()
 
    SELECT ld
 
-   RETURN
+   RETURN .T.
 
 
 

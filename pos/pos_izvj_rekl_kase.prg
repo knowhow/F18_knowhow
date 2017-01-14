@@ -171,7 +171,7 @@ STATIC FUNCTION TblCrePom()
    AAdd( aDbf, { "K1","C",  4, 0 } )
    AAdd( aDbf, { "K2","C",  4, 0 } )
 
-   NaprPom( aDbf )
+   pos_cre_pom_dbf( aDbf )
 
    SELECT ( F_POM )
    IF Used()

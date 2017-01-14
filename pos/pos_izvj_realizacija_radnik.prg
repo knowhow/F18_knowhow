@@ -115,7 +115,7 @@ FUNCTION realizacija_radnik
    AAdd ( aDbf, { "Iznos2",   "N", 20, 5 } )
    AAdd ( aDbf, { "Iznos3",   "N", 20, 5 } )
 
-   NaprPom( aDbf )
+   pos_cre_pom_dbf( aDbf )
 
    SELECT ( F_POM )
    IF Used()

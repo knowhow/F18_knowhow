@@ -137,8 +137,7 @@ STATIC FUNCTION _export_data( nVar1, nVar2, banka )
 // setuje parametre izvjestaja
 // --------------------------------------
 STATIC FUNCTION _get_vars( cRj, cMonthFrom, cMonthTo, cYear, nDays, ;
-      cHours, nHourLimit, nMinHrLimit, ;
-      nKoef, nAcontAmount, ;
+      cHours, nHourLimit, nMinHrLimit, nKoef, nAcontAmount, ;
       nRptVar1, nRptVar2, cKred, cExport )
 
    LOCAL nBoxX := 22

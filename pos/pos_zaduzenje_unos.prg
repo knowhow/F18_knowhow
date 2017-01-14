@@ -147,13 +147,13 @@ FUNCTION Zaduzenje
    IF cIdVD == "NI"
 
       my_close_all_dbf()
-      InventNivel( .F., .T., fSadaz, dDatRada )
+      pos_inventura_nivelacija( .F., .T., fSadaz, dDatRada )
       RETURN
 
    ELSEIF cIdVd == "IN"
 
       my_close_all_dbf()
-      InventNivel( .T., .T., fSadAz, dDatRada )
+      pos_inventura_nivelacija( .T., .T., fSadAz, dDatRada )
       RETURN
 
    ENDIF

@@ -12,7 +12,7 @@
 #include "f18.ch"
 
 
-FUNCTION NaprPom( aDbf, cPom )
+FUNCTION pos_cre_pom_dbf( aDbf, cPom )
 
    IF cPom == nil
       cPom := "POM"

@@ -16,7 +16,7 @@
 FUNCTION pos_azuriraj_racun( cIdPos, cBrojRacuna, cVrijeme, cNacPlac, cIdGost )
 
    LOCAL cDokument := ""
-   LOCAL _rec
+   LOCAL hRec
    LOCAL nCount := 0
    LOCAL lOk := .T.
    LOCAL lRet := .F.
@@ -52,55 +52,55 @@ FUNCTION pos_azuriraj_racun( cIdPos, cBrojRacuna, cVrijeme, cNacPlac, cIdGost )
 
    cDokument := ALLTRIM( cIdPos ) + "-" + VD_RN + "-" + ALLTRIM( cBrojRacuna ) + " " + DTOC( gDatum )
 
-   _rec := dbf_get_rec()
-   _rec[ "idpos" ] := cIdPos
-   _rec[ "idvd" ] := VD_RN
-   _rec[ "datum" ] := gDatum
-   _rec[ "brdok" ] := cBrojRacuna
-   _rec[ "vrijeme" ] := cVrijeme
-   _rec[ "idvrstep" ] := IIF( cNacPlac == NIL, gGotPlac, cNacPlac )
-   _rec[ "idgost" ] := IIF( cIdGost == NIL, "", cIdGost )
-   _rec[ "idradnik" ] := _pos_pripr->idradnik
-   _rec[ "m1" ] := OBR_NIJE
-   _rec[ "prebacen" ] := OBR_JEST
-   _rec[ "smjena" ] := _pos_pripr->smjena
+   hRec := dbf_get_rec()
+   hRec[ "idpos" ] := cIdPos
+   hRec[ "idvd" ] := VD_RN
+   hRec[ "datum" ] := gDatum
+   hRec[ "brdok" ] := cBrojRacuna
+   hRec[ "vrijeme" ] := cVrijeme
+   hRec[ "idvrstep" ] := IIF( cNacPlac == NIL, gGotPlac, cNacPlac )
+   hRec[ "idgost" ] := IIF( cIdGost == NIL, "", cIdGost )
+   hRec[ "idradnik" ] := _pos_pripr->idradnik
+   hRec[ "m1" ] := OBR_NIJE
+   hRec[ "prebacen" ] := OBR_JEST
+   hRec[ "smjena" ] := _pos_pripr->smjena
 
-   lOk := update_rec_server_and_dbf( "pos_doks", _rec, 1, "CONT" )
+   lOk := update_rec_server_and_dbf( "pos_doks", hRec, 1, "CONT" )
 
    IF lOk
 
       SELECT _pos_pripr
 
-      DO WHILE !Eof() .AND. _pos_pripr->( IdPos + IdVd + DToS( Datum ) + BrDok ) == ( cIdPos + "42" + DTOS( gDatum ) + "PRIPRE" )
+      DO WHILE !Eof() .AND. _pos_pripr->IdPos + _pos_pripr->IdVd + DToS( _pos_pripr->Datum ) + _pos_pripr->BrDok  == ( cIdPos + "42" + DTOS( gDatum ) + "PRIPRE" )
 
          SELECT pos
          APPEND BLANK
 
-         _rec := dbf_get_rec()
+         hRec := dbf_get_rec()
 
-         _rec[ "idpos" ] := cIdPos
-         _rec[ "idvd" ] := VD_RN
-         _rec[ "datum" ] := gDatum
-         _rec[ "brdok" ] := cBrojRacuna
-         _rec[ "rbr" ] := PadL( AllTrim( Str( ++ nCount ) ), 5 )
-         _rec[ "m1" ] := OBR_JEST
-         _rec[ "prebacen" ] := OBR_NIJE
-         _rec[ "iddio" ] := _pos_pripr->iddio
-         _rec[ "idodj" ] := _pos_pripr->idodj
-         _rec[ "idcijena" ] := _pos_pripr->idcijena
-         _rec[ "idradnik" ] := _pos_pripr->idradnik
-         _rec[ "idroba" ] := _pos_pripr->idroba
-         _rec[ "idtarifa" ] := _pos_pripr->idtarifa
-         _rec[ "kolicina" ] := _pos_pripr->kolicina
-         _rec[ "mu_i" ] := _pos_pripr->mu_i
-         _rec[ "ncijena" ] := _pos_pripr->ncijena
-         _rec[ "cijena" ] := _pos_pripr->cijena
-         _rec[ "smjena" ] := _pos_pripr->smjena
-         _rec[ "c_1" ] := _pos_pripr->c_1
-         _rec[ "c_2" ] := _pos_pripr->c_2
-         _rec[ "c_3" ] := _pos_pripr->c_3
+         hRec[ "idpos" ] := cIdPos
+         hRec[ "idvd" ] := VD_RN
+         hRec[ "datum" ] := gDatum
+         hRec[ "brdok" ] := cBrojRacuna
+         hRec[ "rbr" ] := PadL( AllTrim( Str( ++ nCount ) ), 5 )
+         hRec[ "m1" ] := OBR_JEST
+         hRec[ "prebacen" ] := OBR_NIJE
+         hRec[ "iddio" ] := _pos_pripr->iddio
+         hRec[ "idodj" ] := _pos_pripr->idodj
+         hRec[ "idcijena" ] := _pos_pripr->idcijena
+         hRec[ "idradnik" ] := _pos_pripr->idradnik
+         hRec[ "idroba" ] := _pos_pripr->idroba
+         hRec[ "idtarifa" ] := _pos_pripr->idtarifa
+         hRec[ "kolicina" ] := _pos_pripr->kolicina
+         hRec[ "mu_i" ] := _pos_pripr->mu_i
+         hRec[ "ncijena" ] := _pos_pripr->ncijena
+         hRec[ "cijena" ] := _pos_pripr->cijena
+         hRec[ "smjena" ] := _pos_pripr->smjena
+         hRec[ "c_1" ] := _pos_pripr->c_1
+         hRec[ "c_2" ] := _pos_pripr->c_2
+         hRec[ "c_3" ] := _pos_pripr->c_3
 
-         lOk := update_rec_server_and_dbf( "pos_pos", _rec, 1, "CONT" )
+         lOk := update_rec_server_and_dbf( "pos_pos", hRec, 1, "CONT" )
 
          IF !lOk
             EXIT
@@ -119,7 +119,7 @@ FUNCTION pos_azuriraj_racun( cIdPos, cBrojRacuna, cVrijeme, cNacPlac, cIdGost )
       lRet := .T.
       hParams[ "unlock" ] := { "pos_pos", "pos_doks" }
       run_sql_query( "COMMIT", hParams )
-      
+
       log_write( "F18_DOK_OPER, ažuriran računa " + cDokument, 2 )
    ELSE
       run_sql_query( "ROLLBACK", hParams )

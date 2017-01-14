@@ -93,7 +93,7 @@ FUNCTION pos_lista_azuriranih_dokumenata()
    PRIVATE Kol := {}
 
    cVrste := "  "
-   dDatOd := Date() - 1
+   dDatOd := Date() -1
    dDatDo := Date()
 
    Box(, 3, 60 )
@@ -122,18 +122,13 @@ FUNCTION pos_lista_azuriranih_dokumenata()
    AAdd( ImeKol, { "VP", {|| IdVrsteP } } )
    AAdd( ImeKol, { "Datum", {|| datum } } )
 
-   IF gStolovi == "D"
-      AAdd( ImeKol, { "Sto", {|| sto_br } } )
-   ELSE
-      AAdd( ImeKol, { "Smj", {|| smjena } } )
-   ENDIF
+
+   AAdd( ImeKol, { "Smj", {|| smjena } } )
+
 
    AAdd( ImeKol, { PadC( "Iznos", 10 ), {|| pos_iznos_dokumenta( NIL ) } } )
    AAdd( ImeKol, { "Radnik", {|| IdRadnik } } )
 
-   IF gStolovi == "D"
-      AAdd( ImeKol, { "Zaklj", {|| zak_br } } )
-   ENDIF
 
    FOR i := 1 TO Len( ImeKol )
       AAdd( Kol, i )
@@ -161,8 +156,8 @@ FUNCTION pos_lista_azuriranih_dokumenata()
    ENDIF
 
 
-   my_db_edit( "pos_doks", MAXROWS() - 10, MAXCOLS() - 15, ;  // params cImeBoxa, xw, yw
-   {|| pos_stampa_dokumenta_key_handler( dDatOd, dDatDo ) }, _u( "  ŠTAMPA AŽURIRANOG DOKUMENTA  " ), "POS", ; // bUserF, cMessTop, cMessBot
+   my_db_edit( "pos_doks", MAXROWS() -10, MAXCOLS() -15, ;  // params cImeBoxa, xw, yw
+      {|| pos_stampa_dokumenta_key_handler( dDatOd, dDatDo ) }, _u( "  ŠTAMPA AŽURIRANOG DOKUMENTA  " ), "POS", ; // bUserF, cMessTop, cMessBot
    .F., aOpc ) // lInvert, aMessage
 
    CLOSE ALL
@@ -317,20 +312,6 @@ FUNCTION pos_stampa_dokumenta_key_handler( dDat0, dDat1 )
 
       RETURN ( DE_REFRESH )
 
-   CASE gStolovi == "D" .AND. ( Ch == Asc( "Z" ) .OR. Ch == Asc( "z" ) )
-
-      IF pos_doks->idvd == "42"
-
-         PushWA()
-         print_zak_br( pos_doks->zak_br )
-         o_pos_tables()
-         PopWa()
-         SELECT pos_doks
-         RETURN ( DE_REFRESH )
-
-      ENDIF
-
-      RETURN ( DE_CONT )
 
 
    CASE Ch == K_CTRL_P
@@ -401,8 +382,8 @@ FUNCTION pos_pregled_stavki_racuna()
    LOCAL oBrowse
    LOCAL cPrevCol
    LOCAL _rec
-   LOCAL nMaxRow := maxrows() - 15
-   LOCAL nMaxCol := maxcols() - 35
+   LOCAL nMaxRow := maxrows() -15
+   LOCAL nMaxCol := maxcols() -35
 
 
    PRIVATE ImeKol

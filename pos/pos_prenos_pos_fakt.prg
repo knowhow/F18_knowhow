@@ -196,7 +196,7 @@ FUNCTION PripTOPSFAKT( cIdPartnG )
    AAdd( aDBF, { "IdVd", "C", 2, 0 } )
    AAdd( aDBF, { "M1", "C", 1, 0 } )
 
-   NaprPom( aDbf, "TOPSFAKT" )
+   pos_cre_pom_dbf( aDbf, "TOPSFAKT" )
 
    SELECT 7000
    USE

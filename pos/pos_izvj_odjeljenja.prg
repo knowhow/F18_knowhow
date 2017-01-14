@@ -45,7 +45,7 @@ FUNCTION realizacija_odjeljenja()
    AAdd ( aDbf, { "Iznos2",    "N", 20, 5 } )
    AAdd ( aDbf, { "Iznos3",    "N", 20, 5 } )
 
-   NaprPom( aDbf )
+   pos_cre_pom_dbf( aDbf )
 
    SELECT ( F_POM )
    my_use_temp( "POM", my_home() + "pom", .F., .F. )
@@ -390,7 +390,7 @@ FUNCTION realizacija_dio_objekta
    AAdd ( aDbf, { "Iznos",    "N", 20, 5 } )
    AAdd ( aDbf, { "Iznos2",    "N", 20, 5 } )
    AAdd ( aDbf, { "Iznos3",    "N", 20, 5 } )
-   NaprPom ( aDbf )
+   pos_cre_pom_dbf ( aDbf )
    O_POM
    INDEX ON IdDio + IdPos + IdVrsteP TAG ( "1" ) TO ( my_home() + "POM" )
    INDEX ON IdDio + IdRadnik + IdVrsteP TAG ( "2" ) TO ( my_home() + "POM" )

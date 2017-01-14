@@ -14,7 +14,7 @@
 STATIC _saldo_izn := 0
 STATIC _saldo_kol := 0
 
-FUNCTION InventNivel()
+FUNCTION pos_inventura_nivelacija()
 
    PARAMETERS fInvent, fIzZad, fSadAz, dDatRada, stanje_dn
 

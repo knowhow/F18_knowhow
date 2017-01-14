@@ -969,9 +969,7 @@ FUNCTION fill_rb_traka( cIdPos, cBrDok, dDatRn, lPrepis, aRacuni, cTime )
          cSmjena := _pos->smjena
          cTime := Left( Time(), 5 )
          cVrstaP := _pos->idvrstep
-         IF gStolovi == "D"
-            cBrStola := AllTrim( Str( _pos->sto_br ) )
-         ENDIF
+
       ELSE
          // nadji parametre kupca
          SELECT dokspf
@@ -985,9 +983,7 @@ FUNCTION fill_rb_traka( cIdPos, cBrDok, dDatRn, lPrepis, aRacuni, cTime )
          cSmjena := pos_doks->smjena
          cTime := pos_doks->vrijeme
          cVrstaP := pos_doks->idvrstep
-         IF gStolovi == "D"
-            cBrStola := AllTrim( Str( pos_doks->sto_br ) )
-         ENDIF
+
       ENDIF
 
       SELECT osob
@@ -1140,9 +1136,7 @@ FUNCTION fill_rb_traka( cIdPos, cBrDok, dDatRn, lPrepis, aRacuni, cTime )
    // sekv.za cjepanje trake
    add_drntext( "P14", gSjeciStr )
 
-   IF gStolovi == "D"
-      add_drntext( "R11", cBrStola )
-   ENDIF
+
 
    // ako je prepis
    IF lPrepis == .T.

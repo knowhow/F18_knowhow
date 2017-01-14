@@ -40,7 +40,7 @@ FUNCTION pos_top_narudzbe()
    AAdd ( aDbf, { "Iznos",    "N", 20, 3 } )
    AAdd ( aDbf, { "Iznos2",    "N", 20, 3 } )
    AAdd ( aDbf, { "Iznos3",    "N", 20, 3 } )
-   NaprPom( aDbf )
+   pos_cre_pom_dbf( aDbf )
 
    SELECT ( F_POM )
    IF Used()

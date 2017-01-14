@@ -16,7 +16,7 @@ STATIC __device_id
 STATIC __device_params
 
 
-FUNCTION fiskalni_izvjestaji_komande( low_level, from_pos )
+FUNCTION fiskalni_izvjestaji_komande( lLowLevel, from_pos )
 
    LOCAL _dev_id := 0
    LOCAL _dev_drv
@@ -27,8 +27,8 @@ FUNCTION fiskalni_izvjestaji_komande( low_level, from_pos )
    PRIVATE opc := {}
    PRIVATE opcexe := {}
 
-   IF low_level == NIL
-      low_level := .F.
+   IF lLowLevel == NIL
+      lLowLevel := .F.
    ENDIF
 
    IF from_pos == NIL
@@ -67,7 +67,7 @@ FUNCTION fiskalni_izvjestaji_komande( low_level, from_pos )
 
    CASE _dev_drv == "FPRINT"
 
-      IF !low_level
+      IF !lLowLevel
 
          AAdd( opc, "------ izvjestaji ---------------------------------" )
          AAdd( opcexe, {|| nil } )
@@ -98,7 +98,7 @@ FUNCTION fiskalni_izvjestaji_komande( low_level, from_pos )
       AAdd( opc, "8. zatvori nasilno račun (cmd 301) " )
       AAdd( opcexe, {|| fprint_komanda_301_zatvori_racun( __device_params ) } )
 
-      IF !low_level
+      IF !lLowLevel
 
          AAdd( opc, "9. proizvoljna komanda " )
          AAdd( opcexe, {|| fprint_manual_cmd( __device_params ) } )
@@ -122,7 +122,7 @@ FUNCTION fiskalni_izvjestaji_komande( low_level, from_pos )
 
    CASE _dev_drv == "HCP"
 
-      IF !low_level
+      IF !lLowLevel
 
          AAdd( opc, "------ izvještaji -----------------------" )
          AAdd( opcexe, {|| .F. } )
@@ -146,7 +146,7 @@ FUNCTION fiskalni_izvjestaji_komande( low_level, from_pos )
       AAdd( opc, "7. pošalji cmd.ok    " )
       AAdd( opcexe, {|| hcp_create_cmd_ok( __device_params ) } )
 
-      IF !low_level
+      IF !lLowLevel
 
          AAdd( opc, "8. izbaci stanje računa    " )
          AAdd( opcexe, {|| hcp_fisc_no( __device_params ) } )
@@ -157,7 +157,7 @@ FUNCTION fiskalni_izvjestaji_komande( low_level, from_pos )
 
    CASE _dev_drv == "TREMOL"
 
-      IF !low_level
+      IF !lLowLevel
 
          AAdd( opc, "------ izvještaji -----------------------" )
          AAdd( opcexe, {|| .F. } )
@@ -185,7 +185,7 @@ FUNCTION fiskalni_izvjestaji_komande( low_level, from_pos )
       AAdd( opc, "K. kopija računa    " )
       AAdd( opcexe, {|| tremol_rn_copy( __device_params ) } )
 
-      IF !low_level
+      IF !lLowLevel
 
          AAdd( opc, "R. reset artikala    " )
          AAdd( opcexe, {|| tremol_reset_plu( __device_params ) } )
@@ -195,7 +195,7 @@ FUNCTION fiskalni_izvjestaji_komande( low_level, from_pos )
       AAdd( opc, "P. unos depozita u uređaj    " )
       AAdd( opcexe, {|| tremol_polog( __device_params ) } )
 
-      IF !low_level
+      IF !lLowLevel
          AAdd( opc, "R. reset PLU " )
          AAdd( opcexe, {|| auto_plu( .T., nil, __device_params ) } )
       ENDIF
@@ -203,7 +203,7 @@ FUNCTION fiskalni_izvjestaji_komande( low_level, from_pos )
 
    CASE _dev_drv == "TRING"
 
-      IF !low_level
+      IF !lLowLevel
 
          AAdd( opc, "------ izvještaji ---------------------------------" )
          AAdd( opcexe, {|| .F. } )
@@ -225,7 +225,7 @@ FUNCTION fiskalni_izvjestaji_komande( low_level, from_pos )
       AAdd( opc, "7. zatvori (poništi) racun " )
       AAdd( opcexe, {|| tring_close_rn( __device_params ) } )
 
-      IF !low_level
+      IF !lLowLevel
 
          AAdd( opc, "8. inicijalizacija " )
          AAdd( opcexe, {|| tring_init( __device_params, "1", "" ) } )

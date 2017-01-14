@@ -1,6 +1,6 @@
 #include "f18.ch"
 
-/* SpecOstPop()
+/* 
  *     Specifikacija otvorenih stavki po kontima za partnera
  */
 FUNCTION SpecOstPop()

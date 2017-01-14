@@ -207,28 +207,6 @@ STATIC FUNCTION f_filename( cPattern, nInvoice )
    RETURN cRet
 
 
-// ---------------------------------
-// nivelacija
-// ---------------------------------
-FUNCTION fisc_nivel( cFPath, aItems, aSem_data )
-
-   // uzmi strukturu tabele za f_nivel.txt
-   aS_nivel := _g_f_struct( F_NIV )
-   // uzmi strukturu tabele za semafor
-   aS_semafor := _g_f_struct( F_SEMAFOR )
-
-   // broj nivelacije
-   nInvoice := aSem_data[ 1, 1 ]
-
-   cPom := f_filename( _F_NIV, nInvoice )
-   // upisi aItems prema aVRnTxt u PRIVPATH + "F_V_RACUN.TXT"
-   fiscal_array_to_file( cFPath, cPom, aS_nivel, aItems )
-
-   cPom := f_filename( _F_SEMAFOR, nInvoice )
-   // upisi i semafor "F_SEMAFOR.TXT"
-   fiscal_array_to_file( cFPath, cPom, aS_semafor, aSem_Data )
-
-   RETURN .T.
 
 
 

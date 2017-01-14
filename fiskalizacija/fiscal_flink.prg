@@ -444,11 +444,11 @@ FUNCTION fl_polog( cFPath, cFName, nPolog )
 
       IF nPolog = 0
          MsgBeep( "Polog mora biti <> 0 !" )
-         RETURN
+         RETURN .F.
       ENDIF
 
       IF LastKey() == K_ESC
-         RETURN
+         RETURN .F.
       ENDIF
 
    ENDIF
@@ -469,7 +469,7 @@ FUNCTION fl_polog( cFPath, cFName, nPolog )
 
    fiscal_array_to_file( cFPath, cFName, aStruct, aPolog )
 
-   RETURN
+   RETURN .T.
 
 
 

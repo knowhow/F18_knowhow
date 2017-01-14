@@ -1,6 +1,6 @@
 #include "f18.ch"
 
-/* PregNDP()
+/*
  *     Pregled novih dugovanja i potrazivanja
  */
 FUNCTION PregNDP()
@@ -93,7 +93,7 @@ FUNCTION PregNDP()
       ENDIF
    ENDIF
 
-   
+
    EOF CRET
 
    IF cPG == "D"

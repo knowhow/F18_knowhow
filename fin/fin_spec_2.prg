@@ -1,6 +1,6 @@
 #include "f18.ch"
 
-/* SpecSubPro()
+/*
  *     Specifikacija subanalitike po proizvoljnom sortiranju, verzija C52
  */
 

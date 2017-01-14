@@ -42,7 +42,7 @@ STATIC POLOG_LIMIT := 100
 // aData - podaci racuna
 // lStorno - da li se stampa storno ili ne (.T. ili .F. )
 // --------------------------------------------------------
-FUNCTION fprint_rn( dev_params, items, head, storno )
+FUNCTION fprint_rn( hFiskalniParams, items, head, storno )
 
    LOCAL _sep := ";"
    LOCAL _data := {}
@@ -55,9 +55,9 @@ FUNCTION fprint_rn( dev_params, items, head, storno )
 
    _struct := _g_f_struct( F_POS_RN ) // uzmi strukturu tabele za pos racun
 
-   _data := _fprint_rn( items, head, storno, dev_params ) // iscitaj pos matricu
+   _data := _fprint_rn( items, head, storno, hFiskalniParams ) // iscitaj pos matricu
 
-   fiscal_array_to_file( dev_params[ "out_dir" ], dev_params[ "out_file" ], _struct, _data )
+   fiscal_array_to_file( hFiskalniParams[ "out_dir" ], hFiskalniParams[ "out_file" ], _struct, _data )
 
    RETURN _err
 
@@ -83,7 +83,7 @@ STATIC FUNCTION _max_polog( polog )
 // ----------------------------------------------------
 // fprint: unos pologa u printer
 // ----------------------------------------------------
-FUNCTION fprint_polog( dev_params, nPolog, lShowBox )
+FUNCTION fprint_polog( hFiskalniParams, nPolog, lShowBox )
 
    LOCAL cSep := ";"
    LOCAL aPolog := {}
@@ -120,14 +120,14 @@ FUNCTION fprint_polog( dev_params, nPolog, lShowBox )
 
    aPolog := _fp_polog( nPolog )
 
-   fiscal_array_to_file( dev_params[ "out_dir" ], dev_params[ "out_file" ], aStruct, aPolog )
+   fiscal_array_to_file( hFiskalniParams[ "out_dir" ], hFiskalniParams[ "out_file" ], aStruct, aPolog )
 
    RETURN .T.
 
 
 
 
-FUNCTION fprint_dupliciraj_racun( dev_params, rn_params )
+FUNCTION fprint_dupliciraj_racun( hFiskalniParams, rn_params )
 
    LOCAL cSep := ";"
    LOCAL aDouble := {}
@@ -218,7 +218,7 @@ FUNCTION fprint_dupliciraj_racun( dev_params, rn_params )
    // iscitaj pos matricu
    aDouble := _fp_double( cType, dD_from, dD_to, cT_from, cT_to )
 
-   fiscal_array_to_file( dev_params[ "out_dir" ], dev_params[ "out_file" ], aStruct, aDouble )
+   fiscal_array_to_file( hFiskalniParams[ "out_dir" ], hFiskalniParams[ "out_file" ], aStruct, aDouble )
 
    RETURN .T.
 
@@ -244,7 +244,7 @@ STATIC FUNCTION _fix_time( time, fix )
 // ----------------------------------------------------
 // zatvori nasilno racun sa 0.0 KM iznosom
 // ----------------------------------------------------
-FUNCTION fprint_komanda_301_zatvori_racun( dev_params )
+FUNCTION fprint_komanda_301_zatvori_racun( hFiskalniParams )
 
    LOCAL cSep := ";"
    LOCAL aVoid := {}
@@ -256,7 +256,7 @@ FUNCTION fprint_komanda_301_zatvori_racun( dev_params )
    // iscitaj pos matricu
    aVoid := _fp_void_rn()
 
-   fiscal_array_to_file( dev_params[ "out_dir" ], dev_params[ "out_file" ], aStruct, aVoid )
+   fiscal_array_to_file( hFiskalniParams[ "out_dir" ], hFiskalniParams[ "out_file" ], aStruct, aVoid )
 
    RETURN .T.
 
@@ -265,7 +265,7 @@ FUNCTION fprint_komanda_301_zatvori_racun( dev_params )
 // ----------------------------------------------------
 // print non-fiscal tekst
 // ----------------------------------------------------
-FUNCTION fprint_nf_txt( dev_params, cTxt )
+FUNCTION fprint_nf_txt( hFiskalniParams, cTxt )
 
    LOCAL cSep := ";"
    LOCAL aTxt := {}
@@ -277,12 +277,12 @@ FUNCTION fprint_nf_txt( dev_params, cTxt )
    // iscitaj pos matricu
    aTxt := _fp_nf_txt( to_win1250_encoding( cTxt ) )
 
-   fiscal_array_to_file( dev_params[ "out_dir" ], dev_params[ "out_file" ], aStruct, aTxt )
+   fiscal_array_to_file( hFiskalniParams[ "out_dir" ], hFiskalniParams[ "out_file" ], aStruct, aTxt )
 
    RETURN .T.
 
 
-FUNCTION fprint_delete_plu( dev_params, silent )
+FUNCTION fprint_delete_plu( hFiskalniParams, silent )
 
    LOCAL cSep := ";"
    LOCAL aDel := {}
@@ -311,9 +311,9 @@ FUNCTION fprint_delete_plu( dev_params, silent )
    ENDIF
 
    aStruct := _g_f_struct( F_POS_RN )
-   aDel := _fp_del_plu( nMaxPlu, dev_params )
+   aDel := _fp_del_plu( nMaxPlu, hFiskalniParams )
 
-   fiscal_array_to_file( dev_params[ "out_dir" ], dev_params[ "out_file" ], aStruct, aDel )
+   fiscal_array_to_file( hFiskalniParams[ "out_dir" ], hFiskalniParams[ "out_file" ], aStruct, aDel )
 
    RETURN .T.
 
@@ -322,7 +322,7 @@ FUNCTION fprint_delete_plu( dev_params, silent )
 // ----------------------------------------------------
 // zatvori racun
 // ----------------------------------------------------
-FUNCTION fprint_rn_close( dev_params )
+FUNCTION fprint_rn_close( hFiskalniParams )
 
    LOCAL cSep := ";"
    LOCAL aClose := {}
@@ -334,12 +334,12 @@ FUNCTION fprint_rn_close( dev_params )
    // iscitaj pos matricu
    aClose := _fp_close_rn()
 
-   fiscal_array_to_file( dev_params[ "out_dir" ], dev_params[ "out_file" ], aStruct, aClose )
+   fiscal_array_to_file( hFiskalniParams[ "out_dir" ], hFiskalniParams[ "out_file" ], aStruct, aClose )
 
    RETURN .T.
 
 
-FUNCTION fprint_manual_cmd( dev_params )
+FUNCTION fprint_manual_cmd( hFiskalniParams )
 
    LOCAL cSep := ";"
    LOCAL aManCmd := {}
@@ -369,10 +369,10 @@ FUNCTION fprint_manual_cmd( dev_params )
 
    aStruct := _g_f_struct( F_POS_RN )
    aManCmd := _fp_man_cmd( nCmd, cCond )
-   fiscal_array_to_file( dev_params[ "out_dir" ], dev_params[ "out_file" ], aStruct, aManCmd )
+   fiscal_array_to_file( hFiskalniParams[ "out_dir" ], hFiskalniParams[ "out_file" ], aStruct, aManCmd )
 
    IF cErr == "D"
-      nErr := fprint_read_error( dev_params, 0 )
+      nErr := fprint_read_error( hFiskalniParams, 0 )
       IF nErr <> 0
          MsgBeep( "Postoji greška kod izvršenja proizvoljne komande !" )
       ENDIF
@@ -382,7 +382,7 @@ FUNCTION fprint_manual_cmd( dev_params )
 
 
 
-FUNCTION fprint_sold_plu( dev_params )
+FUNCTION fprint_sold_plu( hFiskalniParams )
 
    LOCAL cSep := ";"
    LOCAL aPlu := {}
@@ -402,17 +402,17 @@ FUNCTION fprint_sold_plu( dev_params )
       RETURN .F.
    ENDIF
 
-   fprint_delete_answer( dev_params )
+   fprint_delete_answer( hFiskalniParams )
    aStruct := _g_f_struct( F_POS_RN )
    aPlu := _fp_sold_plu( cType )
 
-   fiscal_array_to_file( dev_params[ "out_dir" ], dev_params[ "out_file" ], aStruct, aPlu )
+   fiscal_array_to_file( hFiskalniParams[ "out_dir" ], hFiskalniParams[ "out_file" ], aStruct, aPlu )
 
    RETURN .T.
 
 
 
-FUNCTION fprint_daily_rpt( dev_params )
+FUNCTION fprint_daily_rpt( hFiskalniParams )
 
    LOCAL cSep := ";"
    LOCAL aDaily := {}
@@ -457,12 +457,12 @@ FUNCTION fprint_daily_rpt( dev_params )
       RETURN .F.
    ENDIF
 
-   fprint_delete_answer( dev_params )
+   fprint_delete_answer( hFiskalniParams )
    aStruct := _g_f_struct( F_POS_RN )
    aDaily := _fp_daily_rpt( cType )
-   fiscal_array_to_file( dev_params[ "out_dir" ], dev_params[ "out_file" ], aStruct, aDaily )
+   fiscal_array_to_file( hFiskalniParams[ "out_dir" ], hFiskalniParams[ "out_file" ], aStruct, aDaily )
 
-   nErr := fprint_read_error( dev_params, 0 )
+   nErr := fprint_read_error( hFiskalniParams, 0 )
 
    IF nErr <> 0
       MsgBeep( "Greška sa štampom dnevnog izvještaja !" )
@@ -472,15 +472,15 @@ FUNCTION fprint_daily_rpt( dev_params )
    set_metric( _param_date, nil, Date() )
    set_metric( _param_time, nil, Time() )
 
-   IF dev_params[ "plu_type" ] == "D" .AND. _rpt_type == "Z"
+   IF hFiskalniParams[ "plu_type" ] == "D" .AND. _rpt_type == "Z"
 
       MsgO( "Nuliram stanje uređaja ..." )
 
-      IF dev_params[ "type" ] == "P"
-         fprint_delete_answer( dev_params )
+      IF hFiskalniParams[ "type" ] == "P"
+         fprint_delete_answer( hFiskalniParams )
          Sleep( 10 )
-         fprint_delete_plu( dev_params, .T. )
-         nErr := fprint_read_error( dev_params, 0, NIL, 500 )
+         fprint_delete_plu( hFiskalniParams, .T. )
+         nErr := fprint_read_error( hFiskalniParams, 0, NIL, 500 )
          IF nErr <> 0
             MsgBeep( "Greška sa nuliranjem stanja uređaja !" )
             RETURN .F.
@@ -488,15 +488,15 @@ FUNCTION fprint_daily_rpt( dev_params )
       ENDIF
 
       MsgC()
-      auto_plu( .T., .T., dev_params )
+      auto_plu( .T., .T., hFiskalniParams )
       MsgBeep( "Stanje fiskalnog uređaja je nulirano." )
 
    ENDIF
 
-   IF dev_params[ "auto_avans" ] <> 0 .AND. _rpt_type == "Z"
+   IF hFiskalniParams[ "auto_avans" ] <> 0 .AND. _rpt_type == "Z"
       MsgO( "Automatski unos pologa u fiskalni uređaj... sačekajte." )
       Sleep( 10 )
-      fprint_polog( dev_params, dev_params[ "auto_avans" ] )
+      fprint_polog( hFiskalniParams, hFiskalniParams[ "auto_avans" ] )
       MsgC()
    ENDIF
 
@@ -506,7 +506,7 @@ FUNCTION fprint_daily_rpt( dev_params )
 // ----------------------------------------------------
 // fiskalni izvjestaj za period
 // ----------------------------------------------------
-FUNCTION fprint_per_rpt( dev_params )
+FUNCTION fprint_per_rpt( hFiskalniParams )
 
    LOCAL cSep := ";"
    LOCAL aPer := {}
@@ -528,9 +528,9 @@ FUNCTION fprint_per_rpt( dev_params )
 
    aStruct := _g_f_struct( F_POS_RN )
    aPer := _fp_per_rpt( dD_from, dD_to )
-   fiscal_array_to_file( dev_params[ "out_dir" ], dev_params[ "out_file" ], aStruct, aPer )
+   fiscal_array_to_file( hFiskalniParams[ "out_dir" ], hFiskalniParams[ "out_file" ], aStruct, aPer )
 
-   _err_level := fprint_read_error( dev_params, 0 )
+   _err_level := fprint_read_error( hFiskalniParams, 0 )
 
    IF _err_level <> 0
       MsgBeep( "Postoji greška sa štampanjem izvještaja !" )
@@ -906,7 +906,7 @@ STATIC FUNCTION _fp_nf_txt( cTxt )
 // ---------------------------------------------------
 // brisi artikle iz uredjaja
 // ---------------------------------------------------
-STATIC FUNCTION _fp_del_plu( nMaxPlu, dev_params )
+STATIC FUNCTION _fp_del_plu( nMaxPlu, hFiskalniParams )
 
    LOCAL cTmp := ""
    LOCAL cLogic
@@ -925,7 +925,7 @@ STATIC FUNCTION _fp_del_plu( nMaxPlu, dev_params )
       nLastPlu := nMaxPlu
    ELSE
       // uzmi zadnji PLU iz parametara
-      nLastPlu := last_plu( dev_params[ "id" ] )
+      nLastPlu := last_plu( hFiskalniParams[ "id" ] )
    ENDIF
 
    SELECT ( nTArea )
@@ -1252,7 +1252,7 @@ STATIC FUNCTION _fp_void_rn()
 // ----------------------------------------------------
 // dodaj artikle za racun
 // ----------------------------------------------------
-STATIC FUNCTION _a_fp_articles( aArr, aData, lStorno, dev_params )
+STATIC FUNCTION _a_fp_articles( aArr, aData, lStorno, hFiskalniParams )
 
    LOCAL i
    LOCAL cTmp := ""
@@ -1294,7 +1294,7 @@ STATIC FUNCTION _a_fp_articles( aArr, aData, lStorno, dev_params )
       cTmp += cSep
 
       // poreska stopa
-      cTmp += fiscal_txt_get_tarifa( aData[ i, 7 ], dev_params[ "pdv" ], "FPRINT" )
+      cTmp += fiscal_txt_get_tarifa( aData[ i, 7 ], hFiskalniParams[ "pdv" ], "FPRINT" )
       cTmp += cSep
 
       // plu kod
@@ -1390,7 +1390,7 @@ FUNCTION fprint_delete_out( file_path )
 //
 // nFisc_no - broj fiskalnog isjecka
 // ------------------------------------------------
-FUNCTION fprint_read_error( dev_params, fiscal_no, storno, time_out )
+FUNCTION fprint_read_error( hFiskalniParams, fiscal_no, storno, time_out )
 
    LOCAL _err_level := 0
    LOCAL _f_name
@@ -1398,7 +1398,7 @@ FUNCTION fprint_read_error( dev_params, fiscal_no, storno, time_out )
    LOCAL _err_tmp
    LOCAL _err_line
    LOCAL _time
-   LOCAL _serial := dev_params[ "serial" ]
+   LOCAL _serial := hFiskalniParams[ "serial" ]
    LOCAL _o_file, _msg, _tmp
 
    IF storno == NIL
@@ -1406,10 +1406,10 @@ FUNCTION fprint_read_error( dev_params, fiscal_no, storno, time_out )
    ENDIF
 
    IF time_out == NIL
-      time_out := dev_params[ "timeout" ]
+      time_out := hFiskalniParams[ "timeout" ]
    ENDIF
 
-   IF dev_params[ "print_fiscal" ] == "T"
+   IF hFiskalniParams[ "print_fiscal" ] == "T"
       MsgO( "TEST: emulacija štampe na fiskalni uređaj u toku..." )
       Sleep( 4 )
       MsgC()
@@ -1419,16 +1419,16 @@ FUNCTION fprint_read_error( dev_params, fiscal_no, storno, time_out )
 
    _time := time_out
 
-   _f_name := dev_params[ "out_dir" ] + ANSW_DIR + SLASH + dev_params[ "out_answer" ]
+   _f_name := hFiskalniParams[ "out_dir" ] + ANSW_DIR + SLASH + hFiskalniParams[ "out_answer" ]
 
-   IF Empty( AllTrim( dev_params[ "out_answer" ] ) )
-      _f_name := dev_params[ "out_dir" ] + ANSW_DIR + SLASH + dev_params[ "out_file" ]
+   IF Empty( AllTrim( hFiskalniParams[ "out_answer" ] ) )
+      _f_name := hFiskalniParams[ "out_dir" ] + ANSW_DIR + SLASH + hFiskalniParams[ "out_file" ]
    ENDIF
 
    Box( , 3, 60 )
 
-   @ m_x + 1, m_y + 2 SAY8 "Uređaj ID:" + AllTrim( Str( dev_params[ "id" ] ) ) + ;
-      " : " + PadR( dev_params[ "name" ], 40 )
+   @ m_x + 1, m_y + 2 SAY8 "Uređaj ID:" + AllTrim( Str( hFiskalniParams[ "id" ] ) ) + ;
+      " : " + PadR( hFiskalniParams[ "name" ], 40 )
 
    DO WHILE _time > 0
 

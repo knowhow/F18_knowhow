@@ -51,7 +51,7 @@ STATIC __zahtjev_nula := "0"
  stampa fiskalnog racuna tring fiskalizacija
 */
 
-FUNCTION tremol_rn( dev_params, aRacunStavke, aRnHeader, lStornoRacun, cContinue )
+FUNCTION tremol_rn( hFiskalniParams, aRacunStavke, aRnHeader, lStornoRacun, cContinue )
 
    LOCAL _racun_broj, _vr_plac, _total_plac, _xml, nI
    LOCAL _reklamni_broj, _kolicina, _cijena, _rabat
@@ -65,7 +65,7 @@ FUNCTION tremol_rn( dev_params, aRacunStavke, aRnHeader, lStornoRacun, cContinue
    LOCAL _fisc_txt, _fisc_rek_txt, _fisc_cust_txt, _f_name
 
 
-   tremol_delete_tmp( dev_params )  // pobrisi tmp fajlove i ostalo sto je u input direktoriju
+   tremol_delete_tmp( hFiskalniParams )  // pobrisi tmp fajlove i ostalo sto je u input direktoriju
 
    IF cContinue == nil
       cContinue := "0"
@@ -79,9 +79,9 @@ FUNCTION tremol_rn( dev_params, aRacunStavke, aRnHeader, lStornoRacun, cContinue
 
    _racun_broj := aRacunStavke[ 1, 1 ] // to je zapravo broj racuna
 
-   _f_name := fiscal_out_filename( dev_params[ "out_file" ], _racun_broj )
+   _f_name := fiscal_out_filename( hFiskalniParams[ "out_file" ], _racun_broj )
 
-   _xml := dev_params[ "out_dir" ] + _f_name // putanja do izlaznog xml fajla
+   _xml := hFiskalniParams[ "out_dir" ] + _f_name // putanja do izlaznog xml fajla
 
 
    create_xml( _xml )
@@ -138,7 +138,7 @@ FUNCTION tremol_rn( dev_params, aRacunStavke, aRnHeader, lStornoRacun, cContinue
       _cijena := aRacunStavke[ nI, 5 ]
       _kolicina := aRacunStavke[ nI, 6 ]
       _rabat := aRacunStavke[ nI, 11 ]
-      _tarifa := fiscal_txt_get_tarifa( aRacunStavke[ nI, 7 ], dev_params[ "pdv" ], "TREMOL" )
+      _tarifa := fiscal_txt_get_tarifa( aRacunStavke[ nI, 7 ], hFiskalniParams[ "pdv" ], "TREMOL" )
       _dep := "1"
 
       _tmp := ""
@@ -198,12 +198,12 @@ FUNCTION tremol_rn( dev_params, aRacunStavke, aRnHeader, lStornoRacun, cContinue
 // --------------------------------------------------
 // restart tremol fp server
 // --------------------------------------------------
-FUNCTION tremol_restart( dev_params )
+FUNCTION tremol_restart( hFiskalniParams )
 
    LOCAL _scr
    PRIVATE _script
 
-   IF dev_params[ "restart_service" ] == "N"
+   IF hFiskalniParams[ "restart_service" ] == "N"
       RETURN .F.
    ENDIF
 
@@ -246,7 +246,7 @@ FUNCTION tremol_delete_tmp( dev_param )
 
 // -------------------------------------------------------------------
 // -------------------------------------------------------------------
-FUNCTION tremol_polog( dev_params, auto )
+FUNCTION tremol_polog( hFiskalniParams, auto )
 
    LOCAL _xml
    LOCAL _err := 0
@@ -259,7 +259,7 @@ FUNCTION tremol_polog( dev_params, auto )
    ENDIF
 
    IF auto
-      _value := dev_params[ "auto_avans" ]
+      _value := hFiskalniParams[ "auto_avans" ]
    ENDIF
 
    IF _value = 0
@@ -286,10 +286,10 @@ FUNCTION tremol_polog( dev_params, auto )
    ENDIF
 
    // izlazni fajl
-   _f_name := fiscal_out_filename( dev_params[ "out_file" ], __zahtjev_nula )
+   _f_name := fiscal_out_filename( hFiskalniParams[ "out_file" ], __zahtjev_nula )
 
    // putanja do izlaznog xml fajla
-   _xml := dev_params[ "out_dir" ] + _f_name
+   _xml := hFiskalniParams[ "out_dir" ] + _f_name
 
    // otvori xml
    create_xml( _xml )
@@ -315,7 +315,7 @@ FUNCTION tremol_polog( dev_params, auto )
 // -------------------------------------------------------------------
 // tremol reset artikala
 // -------------------------------------------------------------------
-FUNCTION tremol_reset_plu( dev_params )
+FUNCTION tremol_reset_plu( hFiskalniParams )
 
    LOCAL _xml
    LOCAL _err := 0
@@ -325,10 +325,10 @@ FUNCTION tremol_reset_plu( dev_params )
       RETURN 0
    ENDIF
 
-   _f_name := fiscal_out_filename( dev_params[ "out_file" ], __zahtjev_nula )
+   _f_name := fiscal_out_filename( hFiskalniParams[ "out_file" ], __zahtjev_nula )
 
    // putanja do izlaznog xml fajla
-   _xml := dev_params[ "out_dir" ] + _f_name
+   _xml := hFiskalniParams[ "out_dir" ] + _f_name
 
    // otvori xml
    create_xml( _xml )
@@ -350,8 +350,8 @@ FUNCTION tremol_reset_plu( dev_params )
 
    close_xml()
 
-   IF tremol_read_out( dev_params, _f_name )
-      _err := tremol_read_error( dev_params, _f_name )
+   IF tremol_read_out( hFiskalniParams, _f_name )
+      _err := tremol_read_error( hFiskalniParams, _f_name )
    ENDIF
 
    RETURN _err
@@ -361,16 +361,16 @@ FUNCTION tremol_reset_plu( dev_params )
 // -------------------------------------------------------------------
 // tremol komanda
 // -------------------------------------------------------------------
-FUNCTION tremol_cmd( dev_params, cmd )
+FUNCTION tremol_cmd( hFiskalniParams, cmd )
 
    LOCAL _xml
    LOCAL _err := 0
    LOCAL _f_name
 
-   _f_name := fiscal_out_filename( dev_params[ "out_file" ], __zahtjev_nula )
+   _f_name := fiscal_out_filename( hFiskalniParams[ "out_file" ], __zahtjev_nula )
 
    // putanja do izlaznog xml fajla
-   _xml := dev_params[ "out_dir" ] + _f_name
+   _xml := hFiskalniParams[ "out_dir" ] + _f_name
 
    // otvori xml
    create_xml( _xml )
@@ -383,9 +383,9 @@ FUNCTION tremol_cmd( dev_params, cmd )
    close_xml()
 
    // provjeri greske...
-   IF tremol_read_out( dev_params, _f_name )
+   IF tremol_read_out( hFiskalniParams, _f_name )
       // procitaj poruku greske
-      _err := tremol_read_error( dev_params, _f_name )
+      _err := tremol_read_error( hFiskalniParams, _f_name )
    ELSE
       _err := _nema_out
    ENDIF
@@ -572,7 +572,7 @@ STATIC FUNCTION _tfix_date( dDate )
 // ---------------------------------------------------
 // stampa kopije racuna
 // ---------------------------------------------------
-FUNCTION tremol_rn_copy( dev_params )
+FUNCTION tremol_rn_copy( hFiskalniParams )
 
    LOCAL _cmd
    LOCAL _racun_broj := Space( 10 )
@@ -605,7 +605,7 @@ FUNCTION tremol_rn_copy( dev_params )
 
    _cmd += _razmak1 + 'Document="' +  AllTrim( _racun_broj ) + '" /'
 
-   _err := tremol_cmd( dev_params, _cmd )
+   _err := tremol_cmd( hFiskalniParams, _cmd )
 
    RETURN
 
@@ -616,7 +616,7 @@ FUNCTION tremol_rn_copy( dev_params )
 // --------------------------------------------
 // cekanje na fajl odgovora
 // --------------------------------------------
-FUNCTION tremol_read_out( dev_params, f_name, time_out )
+FUNCTION tremol_read_out( hFiskalniParams, f_name, time_out )
 
    LOCAL _out := .T.
    LOCAL _tmp
@@ -624,7 +624,7 @@ FUNCTION tremol_read_out( dev_params, f_name, time_out )
    LOCAL _cnt := 0
 
    IF time_out == NIL
-      time_out := dev_params[ "timeout" ]
+      time_out := hFiskalniParams[ "timeout" ]
    ENDIF
 
    _time := time_out
@@ -632,13 +632,13 @@ FUNCTION tremol_read_out( dev_params, f_name, time_out )
    // napravi mi konstrukciju fajla koji cu gledati
    // replace *.xml -> *.out
    // out je fajl odgovora
-   _tmp := dev_params[ "out_dir" ] + StrTran( f_name, "xml", "out" )
+   _tmp := hFiskalniParams[ "out_dir" ] + StrTran( f_name, "xml", "out" )
 
    Box(, 3, 60 )
 
    // ispisi u vrhu id, naz uredjaja
-   @ m_x + 1, m_y + 2 SAY "Uredjaj ID: " + AllTrim( Str( dev_params[ "id" ] ) ) + ;
-      " : " + PadR( dev_params[ "name" ], 40 )
+   @ m_x + 1, m_y + 2 SAY "Uredjaj ID: " + AllTrim( Str( hFiskalniParams[ "id" ] ) ) + ;
+      " : " + PadR( hFiskalniParams[ "name" ], 40 )
 
    DO WHILE _time > 0
 
@@ -647,10 +647,10 @@ FUNCTION tremol_read_out( dev_params, f_name, time_out )
       // provjeri kada bude trecina vremena...
       IF _time = ( time_out * 0.7 ) .AND. _cnt = 0
 
-         IF dev_params[ "restart_service" ] == "D" .AND. Pitanje(, "Restartovati server", "D" ) == "D"
+         IF hFiskalniParams[ "restart_service" ] == "D" .AND. Pitanje(, "Restartovati server", "D" ) == "D"
 
             // pokreni restart proceduru
-            tremol_restart( dev_params )
+            tremol_restart( hFiskalniParams )
 
             // restartuj vrijeme
             _time := time_out
@@ -696,7 +696,7 @@ FUNCTION tremol_read_out( dev_params, f_name, time_out )
 // nFisc_no - broj fiskalnog isjecka
 //
 // ------------------------------------------------------------
-FUNCTION tremol_read_error( dev_params, f_name, fisc_no )
+FUNCTION tremol_read_error( hFiskalniParams, f_name, fisc_no )
 
    LOCAL _o_file, _fisc_txt, _err_txt, _linija, _m, _tmp
    LOCAL _a_err := {}
@@ -706,7 +706,7 @@ FUNCTION tremol_read_error( dev_params, f_name, fisc_no )
    LOCAL _f_name
 
    // primjer: c:\fiscal\00001.out
-   _f_name := AllTrim( dev_params[ "out_dir" ] + StrTran( f_name, "xml", "out" ) )
+   _f_name := AllTrim( hFiskalniParams[ "out_dir" ] + StrTran( f_name, "xml", "out" ) )
 
    fisc_no := 0
 

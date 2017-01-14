@@ -22,7 +22,7 @@ STATIC __DRV_TRING := "TRING"
 STATIC __DRV_CURRENT
 
 
-FUNCTION pos_fiskalni_racun( id_pos, datum, rn_broj, dev_params, uplaceni_iznos )
+FUNCTION pos_fiskalni_racun( id_pos, datum, rn_broj, hFiskalniParams, uplaceni_iznos )
 
    LOCAL _err_level := 0
    LOCAL _dev_drv
@@ -33,12 +33,12 @@ FUNCTION pos_fiskalni_racun( id_pos, datum, rn_broj, dev_params, uplaceni_iznos 
       uplaceni_iznos := 0
    ENDIF
 
-   IF dev_params == NIL
+   IF hFiskalniParams == NIL
       RETURN _err_level
    ENDIF
 
-   __device_id := dev_params[ "id" ]
-   __device_params := dev_params
+   __device_id := hFiskalniParams[ "id" ]
+   __device_params := hFiskalniParams
    _dev_drv := __device_params[ "drv" ]
    __DRV_CURRENT := _dev_drv
 

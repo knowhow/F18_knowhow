@@ -251,11 +251,11 @@ FUNCTION last_plu( device_id )
 // --------------------------------------------------
 // generisanje novog plug kod-a inkrementalno
 // --------------------------------------------------
-FUNCTION auto_plu( reset_plu, silent_mode, dev_params )
+FUNCTION auto_plu( reset_plu, silent_mode, hFiskalniParams )
 
    LOCAL _plu := 0
    LOCAL nDbfArea := Select()
-   LOCAL _param_name := _get_auto_plu_param_name( dev_params[ "id" ] )
+   LOCAL _param_name := _get_auto_plu_param_name( hFiskalniParams[ "id" ] )
 
    IF reset_plu == nil
       reset_plu := .F.
@@ -267,12 +267,12 @@ FUNCTION auto_plu( reset_plu, silent_mode, dev_params )
 
    IF reset_plu = .T.
       // uzmi inicijalni plu iz parametara
-      _plu := dev_params[ "plu_init" ]
+      _plu := hFiskalniParams[ "plu_init" ]
    ELSE
       _plu := fetch_metric( _param_name, nil, _plu )
       // prvi put pokrecemo opciju, uzmi init vrijednost !
       IF _plu == 0
-         _plu := dev_params[ "plu_init" ]
+         _plu := hFiskalniParams[ "plu_init" ]
       ENDIF
       // uvecaj za 1
       ++ _plu
@@ -573,7 +573,7 @@ STATIC FUNCTION prepakuj_vrijednosti_na_100_komada( nQtty, nPrice, nPPrice, cNam
    nPPrice := nPPrice * 100
    cName := Left( AllTrim( cName ), 5 ) + " x100"
 
-   RETURN
+   RETURN .T.
 
 
 

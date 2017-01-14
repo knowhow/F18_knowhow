@@ -479,7 +479,6 @@ FUNCTION get_sg_fields()
    // npr: "got. promet prodavnica Tuzla 1"
    AAdd( aDBf, { "naz", "C",   60,  0 } )
 
-
    // src - pogledaj g_src_modul(cSrc)
    AAdd( aDBf, { "src", "C",   1,  0 } )
 

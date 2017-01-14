@@ -119,7 +119,7 @@ FUNCTION rnal_uvecaj_id( wId, cFieldName, cIndexTag, lAuto )
    LOCAL cTBFilter := dbFilter()
    LOCAL _alias := AllTrim( Lower( Alias() ) )
    LOCAL _param := "rnal_" + _alias + "_no"
-   LOCAL _t_area := Select()
+   LOCAL nDbfArea := Select()
    LOCAL _value := 0
 
    IF cIndexTag == NIL

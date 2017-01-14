@@ -25,7 +25,7 @@
 FUNCTION P_KontoFin( cId, dx, dy, lBlag )
 
    LOCAL i
-   LOCAL _t_area := Select()
+   LOCAL nDbfArea := Select()
    PRIVATE ImeKol := {}
    PRIVATE Kol := {}
 
@@ -74,7 +74,7 @@ FUNCTION P_KontoFin( cId, dx, dy, lBlag )
 
    PostojiSifra( F_KONTO, 1, MAXROWS() - 17, MAXCOLS() - 10, "LKTF Lista: Konta ", @cId, dx, dy, {| Ch| KontoBlok( Ch ) },,,,, { "ID" } )
 
-   SELECT ( _t_area )
+   SELECT ( nDbfArea )
 
    RETURN .T.
 

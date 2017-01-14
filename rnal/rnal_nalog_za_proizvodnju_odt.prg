@@ -401,7 +401,7 @@ STATIC FUNCTION kreiraj_xml_fajl( groups, params )
 
 FUNCTION _xml_repromaterijal( a_items, groups, group_id, params )
 
-   LOCAL _t_area := Select()
+   LOCAL nDbfArea := Select()
    LOCAL _t_rec := RecNo()
    LOCAL _doc_no, _doc_it_no, nI
 
@@ -459,7 +459,7 @@ FUNCTION _xml_repromaterijal( a_items, groups, group_id, params )
 
    xml_subnode( "rekap", .T. )
 
-   SELECT ( _t_area )
+   SELECT ( nDbfArea )
    SET ORDER TO TAG "2"
    GO ( _t_rec )
 
@@ -484,7 +484,7 @@ FUNCTION repro_qtty_str( kol, duzina )
 FUNCTION rnal_zadnja_grupa_stavke( doc_no, doc_it_no )
 
    LOCAL _group := 1
-   LOCAL _t_area := Select()
+   LOCAL nDbfArea := Select()
 
    SELECT t_docit
    SET ORDER TO TAG "1"
@@ -498,6 +498,6 @@ FUNCTION rnal_zadnja_grupa_stavke( doc_no, doc_it_no )
       SKIP
    ENDDO
 
-   SELECT ( _t_area )
+   SELECT ( nDbfArea )
 
    RETURN _group

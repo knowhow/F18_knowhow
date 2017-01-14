@@ -641,7 +641,7 @@ STATIC FUNCTION val_fld( cField )
 FUNCTION array_from_sifv( dbf, oznaka, cIdSif )
 
    LOCAL _arr := {}
-   LOCAL _t_area := Select()
+   LOCAL nDbfArea := Select()
 
    dbf := PadR( dbf, 8 )
    oznaka := PadR( oznaka, 4 )
@@ -658,6 +658,6 @@ FUNCTION array_from_sifv( dbf, oznaka, cIdSif )
       SKIP
    ENDDO
 
-   SELECT ( _t_area )
+   SELECT ( nDbfArea )
 
    RETURN _arr

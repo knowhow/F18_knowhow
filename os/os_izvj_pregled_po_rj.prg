@@ -307,7 +307,7 @@ STATIC FUNCTION _g_exp_flds()
 // -------------------------------------------
 STATIC FUNCTION _a_to_exp( r_br, sredstvo, naziv_sredstva, jmj_sredstva, trenutna_kolicina, datum_nabavke )
 
-   LOCAL _t_area := Select()
+   LOCAL nDbfArea := Select()
 
    O_R_EXP
    APPEND BLANK
@@ -318,7 +318,7 @@ STATIC FUNCTION _a_to_exp( r_br, sredstvo, naziv_sredstva, jmj_sredstva, trenutn
    REPLACE field->kolicina WITH trenutna_kolicina
    REPLACE field->datum WITH datum_nabavke
 
-   SELECT ( _t_area )
+   SELECT ( nDbfArea )
 
    RETURN
 

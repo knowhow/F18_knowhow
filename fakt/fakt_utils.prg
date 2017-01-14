@@ -199,7 +199,7 @@ FUNCTION get_fakt_vezni_dokumenti( id_firma, tip_dok, br_dok )
 FUNCTION fakt_priprema_prazna()
 
    LOCAL _ret := .T.
-   LOCAL _t_area := Select()
+   LOCAL nDbfArea := Select()
 
    SELECT ( F_FAKT_PRIPR )
    IF !Used()
@@ -207,7 +207,7 @@ FUNCTION fakt_priprema_prazna()
    ENDIF
 
    IF RECCOUNT2() == 0
-      SELECT ( _t_area )
+      SELECT ( nDbfArea )
       RETURN _ret
    ENDIF
 
@@ -221,6 +221,6 @@ FUNCTION fakt_priprema_prazna()
 
    ENDIF
 
-   SELECT ( _t_area )
+   SELECT ( nDbfArea )
 
    RETURN _ret

@@ -1774,7 +1774,7 @@ FUNCTION _g_elem_no( aElem, nDoc_el_no, nElem_no )
 
 FUNCTION check_article_valid( art_id )
 
-   LOCAL _t_area := Select()
+   LOCAL nDbfArea := Select()
    LOCAL _valid := .T.
    LOCAL _elem := {}
 
@@ -1785,7 +1785,7 @@ FUNCTION check_article_valid( art_id )
       _valid := .F.
    ENDIF
 
-   SELECT ( _t_area )
+   SELECT ( nDbfArea )
 
    RETURN _valid
 

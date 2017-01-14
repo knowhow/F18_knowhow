@@ -17,7 +17,7 @@
 // -----------------------------------------------
 FUNCTION p_fakt_objekti( cId, dx, dy )
 
-   LOCAL _t_area := Select()
+   LOCAL nDbfArea := Select()
    PRIVATE ImeKol
    PRIVATE Kol
 
@@ -33,7 +33,7 @@ FUNCTION p_fakt_objekti( cId, dx, dy )
       AAdd( Kol, i )
    NEXT
 
-   SELECT ( _t_area )
+   SELECT ( nDbfArea )
 
    RETURN PostojiSifra( F_FAKT_OBJEKTI, 1, MAXROWS() - 15, MAXCOLS() - 20,"Lista objekata", @cId, dx, dy )
 
@@ -277,7 +277,7 @@ FUNCTION fakt_box_stanje( aStanje, cIdroba )
 FUNCTION P_FTxt( cId, dx, dy )
 
    LOCAL _vrati
-   LOCAL _t_area := Select()
+   LOCAL nDbfArea := Select()
    LOCAL _p_bottom
    LOCAL _p_top
    LOCAL _p_left
@@ -314,7 +314,7 @@ FUNCTION P_FTxt( cId, dx, dy )
 
    Prozor0()
 
-   SELECT ( _t_area )
+   SELECT ( nDbfArea )
 
    RETURN _vrati
 

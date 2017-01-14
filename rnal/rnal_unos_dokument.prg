@@ -764,7 +764,7 @@ STATIC FUNCTION key_handler()
 // ---------------------------------------------------
 STATIC FUNCTION _reset_to_zero()
 
-   LOCAL _t_area := Select()
+   LOCAL nDbfArea := Select()
    LOCAL _rec, _t_rec
 
    IF Pitanje(, "Resetovati broj dokumenta na 0 (D/N) ?", "N" ) == "N"
@@ -824,7 +824,7 @@ STATIC FUNCTION _reset_to_zero()
    _rec[ "doc_no" ] := 0
    dbf_update_rec( _rec )
 
-   SELECT ( _t_area )
+   SELECT ( nDbfArea )
 
    RETURN .T.
 
@@ -838,7 +838,7 @@ STATIC FUNCTION _check_orphaned_items()
 
    LOCAL _ok := .T.
    LOCAL _orph := {}
-   LOCAL _t_area := Select()
+   LOCAL nDbfArea := Select()
    LOCAL _t_rec := RecNo()
    LOCAL _it_no, _doc_no
 
@@ -899,7 +899,7 @@ STATIC FUNCTION _check_orphaned_items()
    SET ORDER TO TAG "1"
    GO TOP
 
-   SELECT ( _t_area )
+   SELECT ( nDbfArea )
    GO ( _t_rec )
 
    IF Len( _orph ) > 0
@@ -907,7 +907,7 @@ STATIC FUNCTION _check_orphaned_items()
       _ok := .F.
    ENDIF
 
-   SELECT ( _t_area )
+   SELECT ( nDbfArea )
 
    RETURN _ok
 

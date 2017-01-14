@@ -320,7 +320,7 @@ STATIC FUNCTION _refresh_total()
 
 STATIC FUNCTION _calc_current_total( iznos, popust )
 
-   LOCAL _t_area := Select()
+   LOCAL nDbfArea := Select()
    LOCAL _iznos := 0
    LOCAL _popust := 0
 
@@ -338,7 +338,7 @@ STATIC FUNCTION _calc_current_total( iznos, popust )
    iznos := _iznos
    popust := _popust
 
-   SELECT ( _t_area )
+   SELECT ( nDbfArea )
 
    RETURN
 

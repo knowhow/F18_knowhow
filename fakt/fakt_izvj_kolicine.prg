@@ -140,11 +140,11 @@ STATIC FUNCTION _g_exp_fields( article_arr )
 STATIC FUNCTION fill_exp_tbl( cRbr, cDistrib, cPmId, cPmNaz, ;
       cPmTip, cPmMj, cPmPtt, cPmAdr, cPmKtBr, aRoba )
 
-   LOCAL _t_area
+   LOCAL nDbfArea
    LOCAL nI
    LOCAL _total := 0
 
-   _t_area := Select()
+   nDbfArea := Select()
 
    O_R_EXP
    APPEND BLANK
@@ -166,7 +166,7 @@ STATIC FUNCTION fill_exp_tbl( cRbr, cDistrib, cPmId, cPmNaz, ;
 
    REPLACE field->ukupno WITH _total
 
-   SELECT ( _t_area )
+   SELECT ( nDbfArea )
 
    RETURN
 

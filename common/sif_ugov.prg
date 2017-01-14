@@ -143,7 +143,7 @@ STATIC FUNCTION ug_key_handler( Ch )
 
    LOCAL GetList := {}
    LOCAL nRec := 0
-   LOCAL _t_area := Select()
+   LOCAL nDbfArea := Select()
 
    DO CASE
 

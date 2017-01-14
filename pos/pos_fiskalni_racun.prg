@@ -414,7 +414,7 @@ STATIC FUNCTION pos_doks_update_fisc_rn( id_pos, tip_dok, datum, rn_broj, fisc_n
 STATIC FUNCTION pos_get_vr_plac( id_vr_pl )
 
    LOCAL _ret := "0"
-   LOCAL _t_area := Select()
+   LOCAL nDbfArea := Select()
    LOCAL _naz := ""
 
    IF Empty( id_vr_pl ) .OR. id_vr_pl == "01"
@@ -439,7 +439,7 @@ STATIC FUNCTION pos_get_vr_plac( id_vr_pl )
       _ret := "0"
    ENDCASE
 
-   SELECT ( _t_area )
+   SELECT ( nDbfArea )
 
    RETURN _ret
 

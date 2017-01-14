@@ -349,7 +349,7 @@ FUNCTION OsvPrikaz()
 // ----------------------------------------------------------
 FUNCTION StUSif()
 
-   LOCAL _t_area := Select()
+   LOCAL nDbfArea := Select()
    LOCAL _rec
    LOCAL _tmp
 
@@ -369,7 +369,7 @@ FUNCTION StUSif()
 
          update_rec_server_and_dbf( "roba", _rec, 1, "FULL" )
 
-         SELECT ( _t_area )
+         SELECT ( nDbfArea )
       ENDIF
 
    ENDIF

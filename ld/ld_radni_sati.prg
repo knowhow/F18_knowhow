@@ -100,7 +100,7 @@ FUNCTION GetStatusRSati( cIdRadn )
 // ----------------------------------------------------
 FUNCTION UbaciURadneSate( id_radnik, iznos_sati )
 
-   LOCAL _t_area := Select()
+   LOCAL nDbfArea := Select()
    LOCAL _rec
 
    SELECT radsat
@@ -120,7 +120,7 @@ FUNCTION UbaciURadneSate( id_radnik, iznos_sati )
 
    update_rec_server_and_dbf( "ld_radsat", _rec, 1, "FULL" )
 
-   SELECT ( _t_area )
+   SELECT ( nDbfArea )
 
    RETURN
 

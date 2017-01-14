@@ -36,7 +36,7 @@ FUNCTION kalk_gen_fin_stanje_magacina( vars )
    LOCAL _vrste_dok := ""
    LOCAL _id_firma := self_organizacija_id()
    LOCAL _vise_konta := .F.
-   LOCAL _t_area, _t_rec
+   LOCAL nDbfArea, _t_rec
    LOCAL _ulaz, _izlaz, _rabat
    LOCAL _nv_ulaz, _nv_izlaz, _vp_ulaz, _vp_izlaz
    LOCAL _marza, _marza_2, _tr_prevoz, _tr_prevoz_2
@@ -196,7 +196,7 @@ FUNCTION kalk_gen_fin_stanje_magacina( vars )
       _broj_dok := field->idvd + "-" + field->brdok
       _tip_dok := field->idvd
 
-      _t_area := Select()
+      nDbfArea := Select()
 
       SELECT tdok
       HSEEK _tip_dok
@@ -210,7 +210,7 @@ FUNCTION kalk_gen_fin_stanje_magacina( vars )
       _partn_mjesto := field->mjesto
       _partn_adresa := field->adresa
 
-      SELECT ( _t_area )
+      SELECT ( nDbfArea )
 
       DO WHILE !Eof() .AND. _id_firma + DToS( _dat_dok ) + _broj_dok == field->idfirma + DToS( field->datdok ) + field->idvd + "-" + field->brdok .AND. IspitajPrekid()
 
@@ -356,7 +356,7 @@ STATIC FUNCTION kalk_fin_stanje_add_to_r_export( id_firma, id_tip_dok, broj_dok,
       v_p_rabat, marza, marza_2, tr_prevoz, tr_prevoz_2, ;
       tr_bank, tr_sped, tr_carina, tr_zavisni )
 
-   LOCAL _t_area := Select()
+   LOCAL nDbfArea := Select()
    LOCAL hRec
 
    O_R_EXP
@@ -393,7 +393,7 @@ STATIC FUNCTION kalk_fin_stanje_add_to_r_export( id_firma, id_tip_dok, broj_dok,
 
    dbf_update_rec( hRec )
 
-   SELECT ( _t_area )
+   SELECT ( nDbfArea )
 
    RETURN .T.
 

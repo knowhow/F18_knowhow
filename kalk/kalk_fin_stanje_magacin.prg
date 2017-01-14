@@ -19,7 +19,7 @@
 FUNCTION finansijsko_stanje_magacin()
 
    LOCAL cTipDok, cDokNaz
-   LOCAL _t_area, _a_exp
+   LOCAL nDbfArea, _a_exp
    LOCAL _export := .F.
    LOCAL _exp_dn := "N"
    LOCAL _launch
@@ -232,7 +232,7 @@ FUNCTION finansijsko_stanje_magacin()
       cBroj := idvd + "-" + brdok
       cTipDok := idvd
 
-      _t_area := Select()
+      nDbfArea := Select()
 
       SELECT tdok
       HSEEK cTipDok
@@ -246,7 +246,7 @@ FUNCTION finansijsko_stanje_magacin()
       cPartnMj := field->mjesto
       cPartnAdr := field->adresa
 
-      SELECT ( _t_area )
+      SELECT ( nDbfArea )
 
       DO WHILE !Eof() .AND. cIdFirma + DToS( dDatDok ) + cBroj == idFirma + DToS( datdok ) + idvd + "-" + brdok .AND.  IspitajPrekid()
          IF cViseKonta == "N" .AND. ( datdok < dDatOd .OR. datdok > dDatDo .OR. mkonto <> cidkonto )
@@ -468,7 +468,7 @@ STATIC FUNCTION _add_to_exp( broj_dok, datum_dok, vrsta_dok, id_partner, ;
       v_p_dug, v_p_pot, v_p_saldo, ;
       v_p_rabat )
 
-   LOCAL _t_area := Select()
+   LOCAL nDbfArea := Select()
 
    O_R_EXP
 
@@ -491,7 +491,7 @@ STATIC FUNCTION _add_to_exp( broj_dok, datum_dok, vrsta_dok, id_partner, ;
    REPLACE field->vp_saldo WITH v_p_saldo
    REPLACE field->vp_rabat WITH v_p_rabat
 
-   SELECT ( _t_area )
+   SELECT ( nDbfArea )
 
    RETURN .T.
 

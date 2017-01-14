@@ -344,7 +344,7 @@ METHOD RNALDamageDocument:fix_items()
 // ------------------------------------------------------------------
 METHOD RNALDamageDocument:get_damage_article( doc_no, item_no, art_orig )
 
-   LOCAL _t_area := Select()
+   LOCAL nDbfArea := Select()
    LOCAL _ret := art_orig
 
    IF !::multiglass
@@ -357,7 +357,7 @@ METHOD RNALDamageDocument:get_damage_article( doc_no, item_no, art_orig )
    SEEK docno_str( doc_no ) + docit_str( item_no ) + Str( art_orig, 10, 0 )
 
    IF !Found()
-      SELECT ( _t_area )
+      SELECT ( nDbfArea )
       RETURN _ret
    ENDIF
 
@@ -365,7 +365,7 @@ METHOD RNALDamageDocument:get_damage_article( doc_no, item_no, art_orig )
       _ret := field->art_id_2
    ENDIF
 
-   SELECT ( _t_area )
+   SELECT ( nDbfArea )
 
    RETURN _ret
 

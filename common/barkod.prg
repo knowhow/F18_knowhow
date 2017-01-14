@@ -14,14 +14,14 @@
 
 FUNCTION roba_ocitaj_barkod( id_roba )
 
-   LOCAL _t_area := Select()
+   LOCAL nDbfArea := Select()
    LOCAL _bk := ""
 
    IF !Empty( id_roba )
       SELECT roba
       SEEK id_roba
       _bk := field->barkod
-      SELECT ( _t_area )
+      SELECT ( nDbfArea )
    ENDIF
 
    RETURN _bk

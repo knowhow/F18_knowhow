@@ -293,7 +293,7 @@ FUNCTION kalk_novi_broj_dokumenta( firma, tip_dokumenta, konto )
    LOCAL _param
    LOCAL _tmp, _rest
    LOCAL _ret := ""
-   LOCAL _t_area := Select()
+   LOCAL nDbfArea := Select()
    LOCAL _sufix := ""
 
    // ova funkcija se brine i za sufiks
@@ -344,7 +344,7 @@ FUNCTION kalk_novi_broj_dokumenta( firma, tip_dokumenta, konto )
    // upisi ga u globalni parametar
    set_metric( _param, nil, _broj )
 
-   SELECT ( _t_area )
+   SELECT ( nDbfArea )
 
    RETURN _ret
 

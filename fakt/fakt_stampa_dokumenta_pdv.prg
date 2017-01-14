@@ -83,18 +83,17 @@ FUNCTION fakt_stdok_pdv( cIdFirma, cIdTipDok, cBrDok, lJFill )
       ENDIF
    ENDIF
 
-   IF Val( podbr ) = 0 .AND. Val( rbr ) == 1
-   ELSE
+   IF ! ( Val( podbr ) == 0 .AND. Val( rbr ) == 1 )
       Beep( 2 )
       Msg( "Prva stavka mora biti  '1.'  ili '1 ' !", 4 )
-      RETURN
+      RETURN .F.
    ENDIF
 
    _fill_params[ "barkod" ] := lPBarkod
    _fill_params[ "samo_kolicine" ] := lSamoKol
 
    IF !fill_porfakt_data( _dok, _fill_params )
-      RETURN
+      RETURN .F.
    ENDIF
 
    IF lJFill
@@ -487,7 +486,7 @@ STATIC FUNCTION fill_porfakt_data( dok, params )
       nPom5 := Round( nPom5, ZAO_VRIJEDNOST() )
       nUkPopNaTeretProdavca += nPom5
 
-      ++ nCSum
+      ++nCSum
 
       nUkKol += nKol
 
@@ -650,7 +649,6 @@ STATIC FUNCTION fill_porfakt_data( dok, params )
    // redova izmedju broja narudbze i tabele
    add_drntext( "X03", Str( nDx3, 2, 0 ) )
 
-
    add_drntext( "X04", Str( nSw1, 2, 0 ) )
    add_drntext( "X05", Str( nSw2, 2, 0 ) )
    add_drntext( "X06", Str( nSw3, 2, 0 ) )
@@ -732,8 +730,7 @@ STATIC FUNCTION _val_gr( cId, cSifK )
    RETURN AllTrim( cRet )
 
 
-// ----------------------------------
-// ----------------------------------
+
 STATIC FUNCTION fill_potpis( cIdVD )
 
    LOCAL cPom
@@ -880,8 +877,8 @@ STATIC FUNCTION fill_dod_text( cTxt, cPartn )
       aTxt := SjeciStr( aLines[ i ], 250 )
       FOR n := 1 TO Len( aTxt )
          add_drntext( "F" + AllTrim( Str( nFId ) ), aTxt[ n ] )
-         ++ nFId
-         ++ nCnt
+         ++nFId
+         ++nCnt
       NEXT
    NEXT
 
@@ -1124,7 +1121,7 @@ STATIC FUNCTION fill_part_data( cId, lPdvObveznik )
    LOCAL cPartPTT := ""
    LOCAL aMemo := {}
    LOCAL lFromMemo := .F.
-   LOCAL _t_area := Select()
+   LOCAL nDbfArea := Select()
 
    IF Empty( AllTrim( cID ) )
       // ako je prazan partner uzmi iz memo polja
@@ -1189,9 +1186,9 @@ STATIC FUNCTION fill_part_data( cId, lPdvObveznik )
    // brupisa
    add_drntext( "K07", cBrUpisa )
 
-   SELECT ( _t_area )
+   SELECT ( nDbfArea )
 
-   RETURN
+   RETURN .T.
 
 
 STATIC FUNCTION fill_firm_data()
@@ -1200,7 +1197,7 @@ STATIC FUNCTION fill_firm_data()
    LOCAL cBanke
    LOCAL cPom
    LOCAL lPrazno
-   LOCAL _t_area := Select()
+   LOCAL nDbfArea := Select()
 
    // opci podaci
    add_drntext( "I01", gFNaziv )
@@ -1246,7 +1243,7 @@ STATIC FUNCTION fill_firm_data()
    add_drntext( "I13", AllTrim( gFText2 ) )
    add_drntext( "I14", AllTrim( gFText3 ) )
 
-   SELECT ( _t_area )
+   SELECT ( nDbfArea )
 
    RETURN
 

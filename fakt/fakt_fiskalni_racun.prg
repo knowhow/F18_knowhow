@@ -366,7 +366,7 @@ STATIC FUNCTION fakt_izracunaj_total( arr, partner, tip_dok )
 
    LOCAL _calc := hb_Hash()
    LOCAL _tar, nI, _iznos
-   LOCAL _t_area := Select()
+   LOCAL nDbfArea := Select()
 
    _calc[ "ukupno" ] := 0
    _calc[ "pdv" ] := 0
@@ -407,7 +407,7 @@ STATIC FUNCTION fakt_izracunaj_total( arr, partner, tip_dok )
    _calc[ "osnovica" ] := Round( _calc[ "osnovica" ], 2 )
    _calc[ "pdv" ] := Round( _calc[ "pdv" ], 2 )
 
-   SELECT ( _t_area )
+   SELECT ( nDbfArea )
 
    RETURN _calc
 
@@ -1028,7 +1028,7 @@ STATIC FUNCTION obrada_greske_na_liniji_55_reklamirani_racun( idfirma, idtipdok,
 STATIC FUNCTION _get_partner_for_email( id_firma, tip_dok, br_dok )
 
    LOCAL _ret := ""
-   LOCAL _t_area := Select()
+   LOCAL nDbfArea := Select()
    LOCAL _partn
    LOCAL _id_vrste_p
 
@@ -1050,7 +1050,7 @@ STATIC FUNCTION _get_partner_for_email( id_firma, tip_dok, br_dok )
       _ret += ", v.pl: " + _id_vrste_p
    ENDIF
 
-   SELECT ( _t_area )
+   SELECT ( nDbfArea )
 
    RETURN _ret
 

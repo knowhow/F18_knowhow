@@ -1451,7 +1451,7 @@ STATIC FUNCTION print_ios_txt( hParams )
 // ---------------------------------------------------------
 STATIC FUNCTION fill_exp_tbl( cIdPart, cNazPart, cBrRn, cOpis, dDatum, dValuta, nDug, nPot )
 
-   LOCAL _t_area := Select()
+   LOCAL nDbfArea := Select()
 
    O_R_EXP
    APPEND BLANK
@@ -1465,7 +1465,7 @@ STATIC FUNCTION fill_exp_tbl( cIdPart, cNazPart, cBrRn, cOpis, dDatum, dValuta, 
    REPLACE field->duguje WITH nDug
    REPLACE field->potrazuje WITH nPot
 
-   SELECT ( _t_area )
+   SELECT ( nDbfArea )
 
    RETURN .T.
 

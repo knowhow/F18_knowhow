@@ -39,7 +39,7 @@ FUNCTION kalk_gen_fin_stanje_prodavnice( vars )
    LOCAL _vrste_dok := ""
    LOCAL _id_firma := self_organizacija_id()
    LOCAL _vise_konta := .F.
-   LOCAL _t_area, _t_rec
+   LOCAL nDbfArea, _t_rec
    LOCAL _ulaz, _izlaz, _rabatv, _rabatm
    LOCAL _nv_ulaz, _nv_izlaz, _mp_ulaz, _mp_izlaz, _mp_ulaz_p, _mp_izlaz_p
    LOCAL _tr_prevoz, _tr_prevoz_2
@@ -398,7 +398,7 @@ STATIC FUNCTION insert_into_rexport( id_firma, id_tip_dok, broj_dok, d_opis, dat
       v_p_rabat, m_p_rabat, m_p_porez, tr_prevoz, tr_prevoz_2, ;
       tr_bank, tr_sped, tr_carina, tr_zavisni )
 
-   LOCAL _t_area := Select()
+   LOCAL nDbfArea := Select()
    LOCAL hRec
 
    O_R_EXP
@@ -439,7 +439,7 @@ STATIC FUNCTION insert_into_rexport( id_firma, id_tip_dok, broj_dok, d_opis, dat
 
    dbf_update_rec( hRec )
 
-   SELECT ( _t_area )
+   SELECT ( nDbfArea )
 
    RETURN .T.
 

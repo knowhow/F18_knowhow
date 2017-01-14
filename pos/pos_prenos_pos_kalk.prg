@@ -130,7 +130,7 @@ STATIC FUNCTION uslovi_za_insert_ispunjeni()
 
 STATIC FUNCTION import_row( id_vd, br_dok, id_odj )
 
-   LOCAL _t_area := Select()
+   LOCAL nDbfArea := Select()
 
    IF !uslovi_za_insert_ispunjeni()
       RETURN 0
@@ -173,7 +173,7 @@ STATIC FUNCTION import_row( id_vd, br_dok, id_odj )
    REPLACE BrDok WITH br_dok
    REPLACE DATUM WITH gDatum
 
-   SELECT ( _t_area )
+   SELECT ( nDbfArea )
 
    RETURN 1
 
@@ -271,7 +271,7 @@ FUNCTION pos_prenos_inv_2_kalk( id_pos, id_vd, dat_dok, br_dok )
    LOCAL _r_br, _rec
    LOCAL _kol
    LOCAL _iznos
-   LOCAL _t_area := Select()
+   LOCAL nDbfArea := Select()
    LOCAL _count
 
    IF id_vd <> VD_INV
@@ -298,7 +298,7 @@ FUNCTION pos_prenos_inv_2_kalk( id_pos, id_vd, dat_dok, br_dok )
 
    IF !Found()
       MsgBeep( "POS tabela nema stavki !" )
-      SELECT ( _t_area )
+      SELECT ( nDbfArea )
       RETURN .F.
    ENDIF
 
@@ -344,7 +344,7 @@ FUNCTION pos_prenos_inv_2_kalk( id_pos, id_vd, dat_dok, br_dok )
 
    IF _r_br == 0
       MsgBeep( "Ne postoji niti jedna stavka u eksport tabeli !" )
-      SELECT ( _t_area )
+      SELECT ( nDbfArea )
       RETURN
    ENDIF
 
@@ -355,7 +355,7 @@ FUNCTION pos_prenos_inv_2_kalk( id_pos, id_vd, dat_dok, br_dok )
    MsgBeep( "Kreiran fajl " + _file + "#broj stavki: " + AllTrim( Str( _r_br ) ) )
 
 
-   SELECT ( _t_area )
+   SELECT ( nDbfArea )
 
    RETURN .T.
 

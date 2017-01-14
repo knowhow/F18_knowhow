@@ -539,7 +539,7 @@ if fOtvoreno
     endif
 endif
 
-_t_area := SELECT()
+nDbfArea := SELECT()
 
 if lPom
     
@@ -550,7 +550,7 @@ if lPom
                RADSTB WITH nRstB-nRStUFb  ,;
                STATUS WITH KADEV_0->STATUS
 
-    select ( _t_area )
+    select ( nDbfArea )
 
 else
 
@@ -564,7 +564,7 @@ else
         return _ok
     endif
     
-    select ( _t_area )
+    select ( nDbfArea )
   
 endif
 

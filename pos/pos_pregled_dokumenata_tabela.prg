@@ -179,7 +179,7 @@ FUNCTION pos_stampa_dokumenta_key_handler( dDat0, dDat1 )
    LOCAL ctIdPos
    LOCAL dtDatum
    LOCAL _rec, _id_pos, _id_vd, _dat_dok, _br_dok
-   LOCAL _t_area := Select()
+   LOCAL nDbfArea := Select()
    LOCAL _tbl_filter := dbFilter()
    LOCAL _rec_no, _ok
    LOCAL _tbl_pos := "pos_pos"
@@ -238,7 +238,7 @@ FUNCTION pos_stampa_dokumenta_key_handler( dDat0, dDat1 )
 
          _o_pos_prepis_tbl()
 
-         SELECT ( _t_area )
+         SELECT ( nDbfArea )
          SET FILTER to &_tbl_filter
          GO ( _rec_no )
 

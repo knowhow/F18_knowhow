@@ -52,7 +52,7 @@ METHOD RnalCsvImport:import()
    LOCAL _struct := {}
    LOCAL _rec, _art_id, _qtty, _height, _width
    LOCAL _count := 0
-   LOCAL _t_area := Select()
+   LOCAL nDbfArea := Select()
 
    if ::params == NIL .AND. !::get_vars()
       RETURN _ok
@@ -192,7 +192,7 @@ METHOD RnalCsvImport:csv_browse()
 
    LOCAL _box_x := MAXROWS() - 10
    LOCAL _box_y := MAXCOLS() - 10
-   LOCAL _t_area := Select()
+   LOCAL nDbfArea := Select()
    LOCAL _ret := 0
    LOCAL _header := "Pregled importovanih podataka CSV fajla..."
    LOCAL _x := m_x
@@ -233,7 +233,7 @@ METHOD RnalCsvImport:csv_browse()
    m_x := _x
    m_y := _y
 
-   SELECT ( _t_area )
+   SELECT ( nDbfArea )
 
    RETURN _ret
 

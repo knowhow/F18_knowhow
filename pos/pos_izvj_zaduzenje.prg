@@ -149,7 +149,7 @@ FUNCTION PrepisZad( cNazDok )
    LOCAL cRobaNaStanju := "N"
    LOCAL cLine
    LOCAL cLine2
-   LOCAL _t_area := Select()
+   LOCAL nDbfArea := Select()
 
    START PRINT CRET
 
@@ -272,7 +272,7 @@ FUNCTION PrepisZad( cNazDok )
 
    ENDPRINT
 
-   SELECT ( _t_area )
+   SELECT ( nDbfArea )
 
    RETURN
 

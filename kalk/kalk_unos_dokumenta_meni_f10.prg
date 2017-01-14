@@ -170,7 +170,7 @@ STATIC FUNCTION kalk_dokument_prenos_cijena()
    LOCAL _opt := 2
    LOCAL _update := .F.
    LOCAL _konto := Space( 7 )
-   LOCAL _t_area := Select()
+   LOCAL nDbfArea := Select()
    PRIVATE getList := {}
 
    Box(, 7, 65 )

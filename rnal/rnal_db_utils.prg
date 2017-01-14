@@ -453,7 +453,7 @@ FUNCTION rnal_novi_broj_dokumenta()
    LOCAL _param
    LOCAL _tmp, _rest
    LOCAL _ret := ""
-   LOCAL _t_area := Select()
+   LOCAL nDbfArea := Select()
 
 
    _param := "rnal_doc_no" // param: rnal_doc_no
@@ -478,7 +478,7 @@ FUNCTION rnal_novi_broj_dokumenta()
    // upisi ga u globalni parametar
    set_metric( _param, nil, _broj )
 
-   SELECT ( _t_area )
+   SELECT ( nDbfArea )
 
    RETURN _broj
 

@@ -572,7 +572,7 @@ FUNCTION os_pregled_po_kontima()
 // -------------------------------------
 FUNCTION os_zagl_konta()
 
-   LOCAL _t_area := Select()
+   LOCAL nDbfArea := Select()
 
    select_os_sii()
 
@@ -598,6 +598,6 @@ FUNCTION os_zagl_konta()
    ? " Rbr.  Inv.broj   RJ  " + IF( cAmoGr == "D", " " + PadC( "Am.grupa", Len( field->idam ) ), "" ) + "  Datum    Sredstvo                     jmj  kol  " + " " + PadC( "NabVr", Len( gPicI ) ) + " " + PadC( "OtpVr", Len( gPicI ) ) + " " + PadC( "SadVr", Len( gPicI ) )
    ? m
 
-   SELECT ( _t_area )
+   SELECT ( nDbfArea )
 
    RETURN

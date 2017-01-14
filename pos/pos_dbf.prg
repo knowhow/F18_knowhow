@@ -382,7 +382,7 @@ FUNCTION pos_novi_broj_dokumenta( id_pos, tip_dokumenta, dat_dok )
    LOCAL _param
    LOCAL _tmp, _rest
    LOCAL _ret := ""
-   LOCAL _t_area := Select()
+   LOCAL nDbfArea := Select()
 
    IF dat_dok == NIL
       dat_dok := gDatum
@@ -411,7 +411,7 @@ FUNCTION pos_novi_broj_dokumenta( id_pos, tip_dokumenta, dat_dok )
 
    set_metric( _param, nil, _broj )
 
-   SELECT ( _t_area )
+   SELECT ( nDbfArea )
 
    RETURN _ret
 

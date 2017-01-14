@@ -1838,7 +1838,7 @@ FUNCTION fakt_brisi_stavku_pripreme()
    LOCAL _log_stavka
    LOCAL _log_artikal, _log_kolicina, _log_cijena
    LOCAL _log_datum
-   LOCAL _t_area
+   LOCAL nDbfArea
    LOCAL _rec, _t_rec
    LOCAL _tek, _prva
    LOCAL _id_tip_dok, _id_firma, _br_dok, _r_br

@@ -314,7 +314,7 @@ STATIC FUNCTION data_handler()
 
    CASE Ch == Asc( "P" ) .OR. Ch == Asc( "p" )
 
-      _t_area := Select()
+      nDbfArea := Select()
 
       Box( "uk0_1", MAXROWS() - 12, MAXCOLS() - 5, .F. )
 
@@ -334,7 +334,7 @@ STATIC FUNCTION data_handler()
 
       BoxC()
 
-      SELECT ( _t_area )
+      SELECT ( nDbfArea )
 
    CASE Ch == Asc( "R" ) .OR. Ch == Asc( "r" )
 
@@ -356,7 +356,7 @@ STATIC FUNCTION data_handler()
 // -------------------------------------------------------
 STATIC FUNCTION rjesenje_za_radnika()
 
-   LOCAL _t_area
+   LOCAL nDbfArea
    LOCAL _ret := .F.
    LOCAL _niz_0, _niz, _tmp, _izbaceni, _strana, _tek_strana, nI, _n, _y
    LOCAL _postoji
@@ -366,13 +366,13 @@ STATIC FUNCTION rjesenje_za_radnika()
    PRIVATE nGetP0 := 0
    PRIVATE nGetP1 := 0
 
-   _t_area := Select()
+   nDbfArea := Select()
 
    // otvori rjesenja...
    P_Rjes()
 
    IF LastKey() == K_ESC
-      SELECT ( _t_area )
+      SELECT ( nDbfArea )
       RETURN _ret
    ENDIF
 
@@ -453,7 +453,7 @@ STATIC FUNCTION rjesenje_za_radnika()
       ENDDO
 
       IF LastKey() == K_ESC
-         SELECT ( _t_area )
+         SELECT ( nDbfArea )
          RETURN _ret
       ENDIF
 
@@ -504,7 +504,7 @@ STATIC FUNCTION rjesenje_za_radnika()
 
    IF _postoji > 1
       MsgBeep( "Vec postoje " + Str( _postoji, 2 ) + " rjesenja!#Za istu godinu moguce je napraviti max.2 rjesenja!#Provjeriti promjene tipa G1!" )
-      SELECT ( _t_area )
+      SELECT ( nDbfArea )
       RETURN _ret
    ELSEIF _postoji > 0
       MsgBeep( "Vec postoji jedno rjesenje koje definise pravo na godisnji odmor!#Mozete napraviti rjesenje samo za drugi dio godisnjeg odmora.#Ako zelite ponovo definisati pravo, provjerite promjene tipa G1!" )
@@ -583,7 +583,7 @@ STATIC FUNCTION rjesenje_za_radnika()
       ENDDO
 
       IF LastKey() == K_ESC
-         SELECT ( _t_area )
+         SELECT ( nDbfArea )
          RETURN _ret
       ENDIF
 
@@ -597,7 +597,7 @@ STATIC FUNCTION rjesenje_za_radnika()
       ERUP( _izbaceni )
    ENDIF
 
-   SELECT ( _t_area )
+   SELECT ( nDbfArea )
    _ret := .T.
 
    RETURN _ret
@@ -703,7 +703,7 @@ FUNCTION UzmiVar( cVar )
 
 STATIC FUNCTION erup( arr )
 
-   LOCAL _t_area := Select()
+   LOCAL nDbfArea := Select()
    LOCAL _dok := ""
    LOCAL _rec, _ima_podataka, _t_id_promj
    PRIVATE cPP := ""
@@ -795,7 +795,7 @@ STATIC FUNCTION erup( arr )
       update_rec_server_and_dbf( "kadev_rjes", _rec, 1, "FULL" )
    ENDIF
 
-   SELECT ( _t_area )
+   SELECT ( nDbfArea )
 
    RETURN
 
@@ -1105,14 +1105,14 @@ STATIC FUNCTION get_4( strana, brzi_unos )
 FUNCTION EdPromj( ch )
 
    LOCAL lPom := .F.
-   LOCAL _t_area := Select()
+   LOCAL nDbfArea := Select()
 
    DO CASE
 
    CASE Ch == K_ENTER .OR. Ch == K_CTRL_N
 
       IF Eof() .AND. Ch == K_ENTER
-         SELECT ( _t_area )
+         SELECT ( nDbfArea )
          RETURN DE_CONT
       ENDIF
 

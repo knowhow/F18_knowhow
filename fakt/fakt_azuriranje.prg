@@ -338,7 +338,7 @@ STATIC FUNCTION fakt_azur_dbf( id_firma, id_tip_dok, br_dok, lSilent )
 STATIC FUNCTION naziv_partnera_za_tabelu_doks( cId_partner )
 
    LOCAL cRet := ""
-   LOCAL _t_area := Select()
+   LOCAL nDbfArea := Select()
 
    SELECT ( F_PARTN )
    IF !Used()
@@ -359,7 +359,7 @@ STATIC FUNCTION naziv_partnera_za_tabelu_doks( cId_partner )
 
    cRet := PadR( cRet, FAKT_DOKS_PARTNER_LENGTH )
 
-   SELECT ( _t_area )
+   SELECT ( nDbfArea )
 
    RETURN cRet
 

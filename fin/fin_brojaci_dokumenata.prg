@@ -20,7 +20,7 @@ FUNCTION fin_novi_broj_dokumenta( firma, tip_dokumenta )
    LOCAL _param
    LOCAL _tmp, _rest
    LOCAL _ret := ""
-   LOCAL _t_area := Select()
+   LOCAL nDbfArea := Select()
 
    // obratiti paznju na gBrojacFinNaloga... 1 ili 2
    // 1 - idfirma + idvn + brnal
@@ -56,7 +56,7 @@ FUNCTION fin_novi_broj_dokumenta( firma, tip_dokumenta )
 
    set_metric( _param, nil, nBroj ) // upisi ga u globalni parametar
 
-   SELECT ( _t_area )
+   SELECT ( nDbfArea )
 
    RETURN _ret
 

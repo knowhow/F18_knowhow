@@ -825,7 +825,7 @@ STATIC FUNCTION __import( vars, a_details )
 
 STATIC FUNCTION brisi_dokument_iz_kumulativa( id_firma, id_vd, br_dok )
 
-   LOCAL _t_area := Select()
+   LOCAL nDbfArea := Select()
    LOCAL _del_rec, _t_rec
    LOCAL lOk := .T.
 
@@ -871,7 +871,7 @@ STATIC FUNCTION brisi_dokument_iz_kumulativa( id_firma, id_vd, br_dok )
       ENDIF
    ENDIF
 
-   SELECT ( _t_area )
+   SELECT ( nDbfArea )
 
    RETURN lOk
 

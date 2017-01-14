@@ -1068,7 +1068,7 @@ FUNCTION kalk_unos_1( lNoviDokument, hParams )
 FUNCTION ispisi_naziv_sifre( area, id, x, y, len )
 
    LOCAL _naz := ""
-   LOCAL _t_area := Select()
+   LOCAL nDbfArea := Select()
 
    IF Empty( id )
       RETURN .T.
@@ -1093,7 +1093,7 @@ FUNCTION ispisi_naziv_sifre( area, id, x, y, len )
 
    @ x, y SAY PadR( _naz, len )
 
-   SELECT ( _t_area )
+   SELECT ( nDbfArea )
 
    RETURN .T.
 

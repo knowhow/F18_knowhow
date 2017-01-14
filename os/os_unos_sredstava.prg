@@ -38,7 +38,7 @@ FUNCTION unos_osnovnih_sredstava()
 
          READ
 
-         _t_area := Select()
+         nDbfArea := Select()
 
          select_os_sii()
          GO TOP
@@ -46,7 +46,7 @@ FUNCTION unos_osnovnih_sredstava()
          cIdRj := field->idrj
          _id_am := field->idam
 
-         SELECT ( _t_area )
+         SELECT ( nDbfArea )
 
          @ m_x + 2, m_y + 2 SAY "Radna jedinica: " GET cIdRj VALID {|| P_RJ( @cIdRj, 2, 35 ), cIdRj := PadR( cIdRj, 4 ), .T. }
          READ

@@ -108,7 +108,7 @@ FUNCTION g_rel_val( cType, cFrom, cTo, cId )
 // ------------------------------
 FUNCTION add_to_relation( f_from, f_to, f_from_id, f_to_id )
 
-   LOCAL _t_area := Select()
+   LOCAL nDbfArea := Select()
    LOCAL _rec
 
    SELECT ( F_RELATION )
@@ -128,7 +128,7 @@ FUNCTION add_to_relation( f_from, f_to, f_from_id, f_to_id )
 
    update_rec_server_and_dbf( "relation", _rec, 1, "FULL" )
 
-   SELECT ( _t_area )
+   SELECT ( nDbfArea )
 
    RETURN
 

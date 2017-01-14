@@ -825,7 +825,7 @@ STATIC FUNCTION kalk_import_podataka( hParams, a_details )
 // ----------------------------------------------------------
 STATIC FUNCTION del_kalk_doc( id_firma, id_vd, br_dok )
 
-   LOCAL _t_area := Select()
+   LOCAL nDbfArea := Select()
    LOCAL _del_rec
    LOCAL _ret := .F.
 
@@ -841,7 +841,7 @@ STATIC FUNCTION del_kalk_doc( id_firma, id_vd, br_dok )
       delete_rec_server_and_dbf( "kalk_kalk", _del_rec, 2, "CONT" )
    ENDIF
 
-   SELECT ( _t_area )
+   SELECT ( nDbfArea )
 
    RETURN _ret
 

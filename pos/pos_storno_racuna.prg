@@ -270,7 +270,7 @@ FUNCTION pos_storno_rn( lSilent, cSt_rn, dSt_date, cSt_fisc )
 
 STATIC FUNCTION napravi_u_pripremi_storno_dokument( rn_datum, storno_rn, broj_fiscal )
 
-   LOCAL _t_area := Select()
+   LOCAL nDbfArea := Select()
    LOCAL _t_roba, _rec
 
    SELECT ( F_POS )
@@ -319,6 +319,6 @@ STATIC FUNCTION napravi_u_pripremi_storno_dokument( rn_datum, storno_rn, broj_fi
    SELECT pos
    USE
 
-   SELECT ( _t_area )
+   SELECT ( nDbfArea )
 
    RETURN

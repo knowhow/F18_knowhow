@@ -811,7 +811,7 @@ STATIC FUNCTION tops_kalk_o_import_tabele()
 
 FUNCTION kalk_roba_prodavnica_stanje( cIdKontoProdavnica, cIdRoba, dDatDok, nKolicina, nNabCj, nFakturnaCijena, nMaloprodajnaCijena )
 
-   LOCAL _t_area := Select()
+   LOCAL nDbfArea := Select()
    LOCAL _ulaz, _izlaz, _mpvu, _mpvi, _rabat, _nvu, _nvi
 
    _ulaz := 0
@@ -835,7 +835,7 @@ FUNCTION kalk_roba_prodavnica_stanje( cIdKontoProdavnica, cIdRoba, dDatDok, nKol
    ENDIF
 
    IF roba->tip $ "UI"
-      SELECT ( _t_area )
+      SELECT ( nDbfArea )
       RETURN .F.
    ENDIF
 

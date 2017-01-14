@@ -489,7 +489,7 @@ FUNCTION EditInvNiv( dat_inv_niv )
 
 STATIC FUNCTION _calc_priprz()
 
-   LOCAL _t_area := Select()
+   LOCAL nDbfArea := Select()
    LOCAL _t_rec := RecNo()
 
    SELECT priprz
@@ -512,7 +512,7 @@ STATIC FUNCTION _calc_priprz()
 
    ENDDO
 
-   SELECT ( _t_area )
+   SELECT ( nDbfArea )
    GO ( _t_rec )
 
    RETURN
@@ -890,7 +890,7 @@ FUNCTION _pop_kol( kol )
 
 FUNCTION _set_cijena_artikla( id_vd, id_roba )
 
-   LOCAL _t_area := Select()
+   LOCAL nDbfArea := Select()
 
    IF id_vd == VD_INV
 
@@ -900,7 +900,7 @@ FUNCTION _set_cijena_artikla( id_vd, id_roba )
 
    ENDIF
 
-   SELECT ( _t_area )
+   SELECT ( nDbfArea )
 
    RETURN .T.
 
@@ -908,7 +908,7 @@ FUNCTION _set_cijena_artikla( id_vd, id_roba )
 FUNCTION _postoji_artikal_u_pripremi( id_roba )
 
    LOCAL _ok := .T.
-   LOCAL _t_area := Select()
+   LOCAL nDbfArea := Select()
    LOCAL _t_rec := RecNo()
 
    SELECT priprz
@@ -921,7 +921,7 @@ FUNCTION _postoji_artikal_u_pripremi( id_roba )
       MsgBeep( "Artikal " + AllTrim( id_roba ) + " se već nalazi u pripremi! Ako nastavite sa unosom #dodat će se vrijednost na postojeću stavku..." )
    ENDIF
 
-   SELECT ( _t_area )
+   SELECT ( nDbfArea )
    GO ( _t_rec )
 
    RETURN _ok

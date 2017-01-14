@@ -101,7 +101,7 @@ FUNCTION kalkulacija_cijena( azurirana )
 FUNCTION mp_predispozicija( firma, tip_dok, br_dok )
 
    LOCAL _ret := .F.
-   LOCAL _t_area := Select()
+   LOCAL nDbfArea := Select()
    LOCAL hRec
 
    IF tip_dok <> "80"
@@ -122,7 +122,7 @@ FUNCTION mp_predispozicija( firma, tip_dok, br_dok )
       SKIP
    ENDDO
 
-   SELECT ( _t_area )
+   SELECT ( nDbfArea )
 
    RETURN _ret
 

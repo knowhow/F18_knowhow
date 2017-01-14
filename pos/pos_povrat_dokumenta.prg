@@ -28,7 +28,7 @@ FUNCTION pos_brisi_dokument( id_pos, id_vd, dat_dok, br_dok )
    run_sql_query( "BEGIN" )
    IF !f18_lock_tables( { "pos_pos", "pos_doks" }, .T. )
       run_sql_query( "ROLLBACK" )
-      SELECT ( _t_area )
+      SELECT ( nDbfArea )
       RETURN _ret
    ENDIF
 
@@ -196,7 +196,7 @@ FUNCTION pos_povrat_dokumenta_u_pripremu()
    LOCAL cDokument
    LOCAL nCount := 0
    LOCAL _rec
-   LOCAL _t_area := Select()
+   LOCAL nDbfArea := Select()
    LOCAL _oper := "1"
    LOCAL _exist, _rec2
 
@@ -273,7 +273,7 @@ FUNCTION pos_povrat_dokumenta_u_pripremu()
 
    MsgC()
 
-   SELECT ( _t_area )
+   SELECT ( nDbfArea )
 
    IF nCount > 0
       log_write( "F18_DOK_OPER: povrat dokumenta u pripremu: " + cDokument, 2 )

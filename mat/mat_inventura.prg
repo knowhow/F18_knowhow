@@ -234,7 +234,7 @@ FUNCTION mat_inv_tabela()
 STATIC FUNCTION pr_roba( id_roba )
 
    LOCAL _txt := "!!! u sifrarniku nema stavke"
-   LOCAL _t_area := Select()
+   LOCAL nDbfArea := Select()
 
    SELECT roba
    HSEEK id_roba
@@ -245,7 +245,7 @@ STATIC FUNCTION pr_roba( id_roba )
       _txt += PadR( AllTrim( roba->naz ), 40 )
    ENDIF
 
-   SELECT ( _t_area )
+   SELECT ( nDbfArea )
 
    RETURN _txt
 

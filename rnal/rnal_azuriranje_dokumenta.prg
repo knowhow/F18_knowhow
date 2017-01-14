@@ -208,7 +208,7 @@ FUNCTION rnal_ukloni_filter_lokalnih_tabela()
 STATIC FUNCTION _provjeri_prije_azuriranja()
 
    LOCAL _ok := .T.
-   LOCAL _t_area := Select()
+   LOCAL nDbfArea := Select()
    LOCAL _tmp
 
    SELECT _doc_it
@@ -221,7 +221,7 @@ STATIC FUNCTION _provjeri_prije_azuriranja()
 
       IF _tmp == field->doc_it_no
          GO TOP
-         SELECT ( _t_area )
+         SELECT ( nDbfArea )
          _ok := .F.
          RETURN _ok
       ENDIF
@@ -230,7 +230,7 @@ STATIC FUNCTION _provjeri_prije_azuriranja()
 
    GO TOP
 
-   SELECT ( _t_area )
+   SELECT ( nDbfArea )
 
    RETURN _ok
 

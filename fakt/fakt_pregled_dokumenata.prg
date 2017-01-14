@@ -296,7 +296,7 @@ FUNCTION generisi_fakturu( is_opcine )
    LOCAL cPart
    LOCAL aMemo := {}
    LOCAL _rec
-   LOCAL _t_area := Select()
+   LOCAL nDbfArea := Select()
 
    IF Pitanje(, "Generisati fakturu na osnovu ponude ?", "D" ) == "N"
       RETURN DE_CONT
@@ -307,7 +307,7 @@ FUNCTION generisi_fakturu( is_opcine )
 
    IF fakt_pripr->( RecCount() ) <> 0
       MsgBeep( "Priprema mora biti prazna !!!" )
-      SELECT ( _t_area )
+      SELECT ( nDbfArea )
       RETURN DE_CONT
    ENDIF
 
@@ -466,7 +466,7 @@ FUNCTION fakt_tabela_komande( lOpcine, fakt_doks_filt, model )
    LOCAL _dev_id, _dev_params
    LOCAL _refresh
    LOCAL _t_rec := RecNo()
-   LOCAL _t_area := Select()
+   LOCAL nDbfArea := Select()
 
    _filter := dbFilter()
 
@@ -630,7 +630,7 @@ FUNCTION fakt_tabela_komande( lOpcine, fakt_doks_filt, model )
 
             fakt_fiskalni_racun( field->idfirma, field->idtipdok, field->brdok, .F., _dev_params )
 
-            SELECT ( _t_area )
+            SELECT ( nDbfArea )
 
             nRet := DE_REFRESH
             _refresh := .T.
@@ -689,7 +689,7 @@ FUNCTION fakt_tabela_komande( lOpcine, fakt_doks_filt, model )
 
    IF _refresh
 
-      SELECT ( _t_area )
+      SELECT ( nDbfArea )
       SET ORDER TO TAG "1"
 
       refresh_fakt_tbl_dbfs( _filter )

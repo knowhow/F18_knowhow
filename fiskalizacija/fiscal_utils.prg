@@ -254,7 +254,7 @@ FUNCTION last_plu( device_id )
 FUNCTION auto_plu( reset_plu, silent_mode, dev_params )
 
    LOCAL _plu := 0
-   LOCAL _t_area := Select()
+   LOCAL nDbfArea := Select()
    LOCAL _param_name := _get_auto_plu_param_name( dev_params[ "id" ] )
 
    IF reset_plu == nil
@@ -281,7 +281,7 @@ FUNCTION auto_plu( reset_plu, silent_mode, dev_params )
    IF reset_plu = .T. .AND. !silent_mode
       IF !spec_funkcije_sifra( "RESET" )
          MsgBeep( "Unesena pogrešna šifra !" )
-         SELECT ( _t_area )
+         SELECT ( nDbfArea )
          RETURN _plu
       ENDIF
    ENDIF
@@ -293,7 +293,7 @@ FUNCTION auto_plu( reset_plu, silent_mode, dev_params )
       MsgBeep( "Setovan početni PLU na: " + AllTrim( Str( _plu ) ) )
    ENDIF
 
-   SELECT ( _t_area )
+   SELECT ( nDbfArea )
 
    RETURN _plu
 

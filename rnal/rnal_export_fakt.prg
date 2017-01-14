@@ -335,7 +335,7 @@ FUNCTION exp_2_fmk( lTemp, nDoc_no, aDocList, lNoGen )
 
       IF !Empty( cDesc )
 
-         _t_area := Select()
+         nDbfArea := Select()
 
          _items_atrib := hb_Hash()
          _items_atrib[ "opis" ] := cDesc
@@ -349,7 +349,7 @@ FUNCTION exp_2_fmk( lTemp, nDoc_no, aDocList, lNoGen )
 
          oAttr:push_attr_from_mem_to_dbf( _items_atrib )
 
-         SELECT ( _t_area )
+         SELECT ( nDbfArea )
 
       ENDIF
 
@@ -504,7 +504,7 @@ FUNCTION exp_2_fmk( lTemp, nDoc_no, aDocList, lNoGen )
       // ubaci mi atribute u fakt_attre
       IF !Empty( cArt_sh )
 
-         _t_area := Select()
+         nDbfArea := Select()
 
          _items_atrib := hb_Hash()
          _items_atrib[ "opis" ] := cArt_sh
@@ -518,7 +518,7 @@ FUNCTION exp_2_fmk( lTemp, nDoc_no, aDocList, lNoGen )
 
          oAttr:push_attr_from_mem_to_dbf( _items_atrib )
 
-         SELECT ( _t_area )
+         SELECT ( nDbfArea )
 
       ENDIF
 
@@ -692,7 +692,7 @@ STATIC FUNCTION set_fakt_vezni_dokumenti( value )
 
    LOCAL _ok := .T.
    LOCAL _memo, _rec
-   LOCAL _t_area := Select()
+   LOCAL nDbfArea := Select()
 
    IF value == NIL
       RETURN _ok
@@ -714,7 +714,7 @@ STATIC FUNCTION set_fakt_vezni_dokumenti( value )
 
    dbf_update_rec( _rec )
 
-   SELECT ( _t_area )
+   SELECT ( nDbfArea )
 
    RETURN _ok
 

@@ -379,7 +379,7 @@ STATIC FUNCTION _get_status( status )
 // ----------------------------------------------------------------
 STATIC FUNCTION _get_doc_op_element( art_id, el_no )
 
-   LOCAL _t_area := Select()
+   LOCAL nDbfArea := Select()
    LOCAL _elem := {}
    LOCAL _art := {}
    LOCAL _art_id
@@ -396,7 +396,7 @@ STATIC FUNCTION _get_doc_op_element( art_id, el_no )
 
    _ret := g_el_descr( _art, _el_no )
 
-   SELECT ( _t_area )
+   SELECT ( nDbfArea )
 
    RETURN _ret
 
@@ -408,7 +408,7 @@ STATIC FUNCTION _get_doc_op_element( art_id, el_no )
 STATIC FUNCTION _get_doc_article( r_doc_no, r_doc_it_no )
 
    LOCAL _ret := 0
-   LOCAL _t_area := Select()
+   LOCAL nDbfArea := Select()
 
    SELECT doc_it
    SET ORDER TO TAG "1"
@@ -417,6 +417,6 @@ STATIC FUNCTION _get_doc_article( r_doc_no, r_doc_it_no )
 
    _ret := field->art_id
 
-   SELECT ( _t_area )
+   SELECT ( nDbfArea )
 
    RETURN _ret

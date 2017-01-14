@@ -136,7 +136,7 @@ FUNCTION rucno_zatvaranje_otv_stavki_key_handler( l_osuban )
    LOCAL _otv_st := " "
    LOCAL _t_rec := RecNo()
    LOCAL _tb_filter := dbFilter()
-   LOCAL _t_area := Select()
+   LOCAL nDbfArea := Select()
 
    IF l_osuban == NIL
       l_osuban := .F.
@@ -244,7 +244,7 @@ FUNCTION rucno_zatvaranje_otv_stavki_key_handler( l_osuban )
          fin_ostav_stampa_azuriranih_promjena()
 
          open_otv_stavke_tabele( l_osuban )
-         SELECT ( _t_area )
+         SELECT ( nDbfArea )
          SET FILTER to &( _tb_filter )
          GO ( _t_rec )
 
@@ -267,7 +267,7 @@ FUNCTION rucno_zatvaranje_otv_stavki_key_handler( l_osuban )
       fin_kartica_otvorene_stavke_po_broju_veze()
 
       open_otv_stavke_tabele( l_osuban )
-      SELECT ( _t_area )
+      SELECT ( nDbfArea )
       SET FILTER to &( _tb_filter )
       GO ( _t_rec )
 
@@ -279,7 +279,7 @@ FUNCTION rucno_zatvaranje_otv_stavki_key_handler( l_osuban )
       StBrVeze()
 
       open_otv_stavke_tabele( l_osuban )
-      SELECT ( _t_area )
+      SELECT ( nDbfArea )
       SET FILTER to &( _tb_filter )
       GO ( _t_rec )
 

@@ -894,7 +894,7 @@ FUNCTION flink_type()
 STATIC FUNCTION _g_sdob( id_roba )
 
    LOCAL _ret := 0
-   LOCAL _t_area := Select()
+   LOCAL nDbfArea := Select()
 
    SELECT roba
    SEEK id_roba
@@ -903,7 +903,7 @@ STATIC FUNCTION _g_sdob( id_roba )
       _ret := Val( AllTrim( field->sifradob ) )
    ENDIF
 
-   SELECT ( _t_area )
+   SELECT ( nDbfArea )
 
    RETURN _ret
 

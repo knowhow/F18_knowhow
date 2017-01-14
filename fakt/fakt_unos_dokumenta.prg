@@ -353,7 +353,7 @@ STATIC FUNCTION fakt_pripr_keyhandler()
 
    CASE Upper( Chr( Ch ) ) == "O"
 
-      _t_area := Select()
+      nDbfArea := Select()
 
       IF reccount2() <> 0
          fakt_generisi_racun_iz_pripreme()
@@ -362,7 +362,7 @@ STATIC FUNCTION fakt_pripr_keyhandler()
          _fakt_doks:pretvori_otpremnice_u_racun()
       ENDIF
 
-      SELECT ( _t_area )
+      SELECT ( nDbfArea )
       RETURN DE_REFRESH
 
    CASE Upper( Chr( Ch ) ) == "A"
@@ -1327,7 +1327,7 @@ STATIC FUNCTION _trenutno_na_stanju_kalk( id_rj, tip_dok, id_roba )
 
    LOCAL _stanje := NIL
    LOCAL _id_konto := ""
-   LOCAL _t_area := Select()
+   LOCAL nDbfArea := Select()
    LOCAL _color := "W/N+"
 
    SELECT rj
@@ -1343,7 +1343,7 @@ STATIC FUNCTION _trenutno_na_stanju_kalk( id_rj, tip_dok, id_roba )
 
    _id_konto := rj->konto
 
-   SELECT ( _t_area )
+   SELECT ( nDbfArea )
 
    IF tip_dok $ "10#12"
       _stanje := kalk_kol_stanje_artikla_magacin( _id_konto, id_roba, Date() )
@@ -1811,7 +1811,7 @@ STATIC FUNCTION _total_dokumenta()
    LOCAL _left := 20
    LOCAL _doc_total := hb_Hash()
    LOCAL _doc_total2 := 0
-   LOCAL _t_area := Select()
+   LOCAL nDbfArea := Select()
    LOCAL _din_dem
 
    IF fakt_pripr->( RecCount() ) == 0 .OR. ! ( fakt_pripr->idtipdok $ "10#11#12#20" )
@@ -1865,7 +1865,7 @@ STATIC FUNCTION _total_dokumenta()
 
    BoxC()
 
-   SELECT ( _t_area )
+   SELECT ( nDbfArea )
 
    RETURN
 
@@ -1875,7 +1875,7 @@ STATIC FUNCTION _total_dokumenta()
 // ------------------------------------------------
 STATIC FUNCTION _calc_totals( hash, din_dem )
 
-   LOCAL _t_area := Select()
+   LOCAL nDbfArea := Select()
 
    hash[ "osn" ] := 0
    hash[ "pop" ] := 0
@@ -1901,7 +1901,7 @@ STATIC FUNCTION _calc_totals( hash, din_dem )
 
    ENDIF
 
-   SELECT ( _t_area )
+   SELECT ( nDbfArea )
 
    RETURN
 

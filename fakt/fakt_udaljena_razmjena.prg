@@ -929,7 +929,7 @@ STATIC FUNCTION __import( vars, a_details )
 STATIC FUNCTION _vec_postoji_u_prometu( id_firma, id_vd, br_dok )
 
    LOCAL cWhere
-   LOCAL _t_area := Select()
+   LOCAL nDbfArea := Select()
    LOCAL _ret := .T.
 
 
@@ -942,7 +942,7 @@ STATIC FUNCTION _vec_postoji_u_prometu( id_firma, id_vd, br_dok )
       _ret := .F.
    ENDIF
 
-   SELECT ( _t_area )
+   SELECT ( nDbfArea )
 
    RETURN _ret
 
@@ -954,7 +954,7 @@ STATIC FUNCTION _vec_postoji_u_prometu( id_firma, id_vd, br_dok )
 // ----------------------------------------------------------
 STATIC FUNCTION del_fakt_doc( id_firma, id_vd, br_dok )
 
-   LOCAL _t_area := Select()
+   LOCAL nDbfArea := Select()
    LOCAL _del_rec, _t_rec
    LOCAL _ret := .F.
 
@@ -990,7 +990,7 @@ STATIC FUNCTION del_fakt_doc( id_firma, id_vd, br_dok )
       delete_rec_server_and_dbf( "fakt_doks2", _del_rec, 1, "CONT" )
    ENDIF
 
-   SELECT ( _t_area )
+   SELECT ( nDbfArea )
 
    RETURN _ret
 

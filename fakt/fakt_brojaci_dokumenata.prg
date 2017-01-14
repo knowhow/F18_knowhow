@@ -223,7 +223,7 @@ FUNCTION fakt_novi_broj_dokumenta( firma, tip_dokumenta, sufiks )
    LOCAL _param
    LOCAL _tmp, _rest
    LOCAL _ret := ""
-   LOCAL _t_area := Select()
+   LOCAL nDbfArea := Select()
    LOCAL _num_dio := fakt_brdok_numdio()
 
    IF sufiks == nil
@@ -261,7 +261,7 @@ FUNCTION fakt_novi_broj_dokumenta( firma, tip_dokumenta, sufiks )
    _ret := PadR( _ret, 8 )
    set_metric( _param, nil, _broj ) // upisi ga u globalni parametar
 
-   SELECT ( _t_area )
+   SELECT ( nDbfArea )
 
    RETURN _ret
 
@@ -505,7 +505,7 @@ FUNCTION fakt_admin_menu()
 
 FUNCTION fakt_ispravka_podataka_azuriranog_dokumenta( id_firma, tip_dok, br_dok )
 
-   LOCAL _t_area := Select()
+   LOCAL nDbfArea := Select()
    LOCAL lRet := .F.
    LOCAL _x := 1
    LOCAL _cnt
@@ -540,7 +540,7 @@ FUNCTION fakt_ispravka_podataka_azuriranog_dokumenta( id_firma, tip_dok, br_dok 
    SEEK id_firma + tip_dok + br_dok
 
    IF !Found()
-      SELECT ( _t_area )
+      SELECT ( nDbfArea )
       RETURN lRet
    ENDIF
 
@@ -580,12 +580,12 @@ FUNCTION fakt_ispravka_podataka_azuriranog_dokumenta( id_firma, tip_dok, br_dok 
    BoxC()
 
    IF LastKey() == K_ESC
-      SELECT ( _t_area )
+      SELECT ( nDbfArea )
       RETURN lRet
    ENDIF
 
    IF Pitanje(, "Izvršiti zamjenu podataka ? (D/N)", "D" ) == "N"
-      SELECT ( _t_area )
+      SELECT ( nDbfArea )
       RETURN lRet
    ENDIF
 
@@ -594,7 +594,7 @@ FUNCTION fakt_ispravka_podataka_azuriranog_dokumenta( id_firma, tip_dok, br_dok 
    IF !f18_lock_tables( { "fakt_fakt", "fakt_doks" }, .T. )
       run_sql_query( "ROLLBACK" )
       MsgBeep( "Ne mogu napraviti zaključavanje tabela.#Prekidam operaciju." )
-      SELECT ( _t_area )
+      SELECT ( nDbfArea )
       RETURN lRet
    ENDIF
 
@@ -698,6 +698,6 @@ FUNCTION fakt_ispravka_podataka_azuriranog_dokumenta( id_firma, tip_dok, br_dok 
       lRet := .F.
    ENDIF
 
-   SELECT ( _t_area )
+   SELECT ( nDbfArea )
 
    RETURN lRet
